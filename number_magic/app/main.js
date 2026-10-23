@@ -663,15 +663,30 @@ function cloudPushSoon(){
 }
 /* 주간 요약 — 알림 발송(Edge Function weekly-notify)이 프로필 state에서 읽는다.
    현재 과정이 바뀔 때만 저장(렌더마다 save 폭주 방지). 알림서비스-설계.md 참조. */
+function highWeeklySchedule(courseKey){
+  if(!window.NM_HIGH_PACING)return null;
+  const managed=S.adminPlan;
+  if(managed&&(window.NM_COURSES||{})[managed.courseKey]?.studyPlan&&managed.startDate)
+    return {courseKey:managed.courseKey,sessionIndex:managed.sessionIndex||1,startDate:managed.startDate,speed:managed.speed||1,cadence:managed.cadence||'w2'};
+  if(S.highSchedule&&(window.NM_COURSES||{})[S.highSchedule.courseKey]?.studyPlan)
+    return {...S.highSchedule,speed:S.roadSpeed||1,cadence:S.roadCadence||'w1'};
+  const course=(window.NM_COURSES||{})[courseKey];
+  if(!course?.studyPlan)return null;
+  // Anchor once; viewing another week never changes the student's completion record.
+  S.highSchedule={courseKey,sessionIndex:1,startDate:new Date(Date.now()+9*3600000).toISOString().slice(0,10)};
+  return {...S.highSchedule,speed:S.roadSpeed||1,cadence:S.roadCadence||'w1'};
+}
 function updateWeeklyDigest(){
   try{
-    const key=currentCourseKey();
+    const current=currentCourseKey(),plan=highWeeklySchedule(current),key=plan?plan.courseKey:current;
     const c=(window.NM_COURSES||{})[key];
     if(!c)return;
+    const fields={courseKey:key,courseNum:c.order,
+      courseTitle:(c.title&&c.title.ko)||key,cadence:plan?plan.cadence:S.roadCadence,
+      ...(plan?{sessionIndex:plan.sessionIndex,highPlanVersion:NM_HIGH_PACING.version,highStartDate:plan.startDate,highSpeed:plan.speed}:{})};
     const d=S.weeklyDigest||{};
-    if(d.courseKey===key&&d.cadence===S.roadCadence)return;
-    S.weeklyDigest={courseKey:key,courseNum:c.order,
-      courseTitle:(c.title&&c.title.ko)||key,cadence:S.roadCadence,at:Date.now()};
+    if(Object.keys(fields).every(k=>d[k]===fields[k])&&!!d.highStartDate===!!fields.highStartDate)return;
+    S.weeklyDigest={...fields,at:Date.now()};
     save();
   }catch(e){}
 }
@@ -2677,6 +2692,7 @@ function courseProgress(c){
   return { done: ids.filter(u=>stepDone(u,'stamp')).length, total: ids.length };
 }
 /* 주차 — 주 1회는 세션 수 그대로, 주 2회는 절반(올림) — 한 주에 두 회차 */
+function courseLessonCount(c){ return window.NM_HIGH_PACING?NM_HIGH_PACING.length(c):(c.sessions||[]).length; }
 function courseWeeks(nSessions, cadence){
   return cadence==='w2' ? Math.ceil(nSessions/2) : nSessions;
 }
@@ -2699,21 +2715,23 @@ function roadPaceMult(key){
   return (base+roadPaceDef(key).off)/base;
 }
 /* 한 과정의 주차에 목표 기준을 반영한다 — 세션 수학(위 courseWeeks)은 그대로
-   두고 배수만 곱한다. 한 주보다 짧아지지는 않는다. */
-function coursePaceWeeks(nSessions, cadence, mult){
-  return Math.max(1, Math.round(courseWeeks(nSessions,cadence)*(mult||1)));
+   두고 배수만 곱한다. 고등 묶음은 속도에 따른 소수 주수를 누적한다. */
+function coursePaceWeeks(course, cadence, mult, speed){
+  const n=typeof course==='number'?course:courseLessonCount(course);
+  if(course&&course.studyPlan)return n/(cadence==='w2'?2:1)/(speed||S.roadSpeed||1);
+  return Math.max(1, Math.round(courseWeeks(n,cadence)*(mult||1)));
 }
 /* 구간 합계 {sessions, weeks} — from~to는 과정 번호(포함).
    합계 주차는 과정별로 반올림한 값을 더하지 않고 구간 전체에 배수를 한 번
    곱해 반올림한다 — 과정마다 생기는 반올림 오차가 쌓이지 않게. */
-function roadTotals(from, to, cadence, mult){
-  let sessions=0, weeks=0, courses=0;
+function roadTotals(from, to, cadence, mult, speed){
+  let sessions=0, weeks=0, courses=0, hasHigh=false;
   roadCourseList().forEach(x=>{
     if(x.num<from||x.num>to) return;
-    const n=(x.c.sessions||[]).length;
-    sessions+=n; weeks+=courseWeeks(n,cadence); courses++;
+    const n=courseLessonCount(x.c);hasHigh=hasHigh||!!x.c.studyPlan;
+    sessions+=n; weeks+=x.c.studyPlan?n/(cadence==='w2'?2:1)/(speed||S.roadSpeed||1):courseWeeks(n,cadence)*(mult||1); courses++;
   });
-  weeks=Math.round(weeks*(mult||1));
+  weeks=hasHigh?Math.ceil(weeks-1e-9):Math.round(weeks);
   return {sessions, weeks, courses, months: Math.round(weeks/4)};
 }
 
@@ -2801,6 +2819,15 @@ function courseOutlineHtml(c){
   const lk=(k,e,z)=>ko?k:en?e:z;
   const TH=window.NM_THREADS||{};
   const nameOf=(id)=>{ const u=UNITS[id]; if(u) return esc(L(u.title)); const th=TH[id]; return th?esc(L(th.name)):esc(id); };
+  if(c.studyPlan){
+    const rows=c.studyPlan.lessons.map((group,i)=>{
+      const source=group.sourceIndices.map(j=>c.sessions[j]);
+      const units=[...new Set(source.flatMap(s=>s.magic||[]))].map(nameOf);
+      const topics=[...new Set(source.flatMap(s=>(s.drills||s.pool||[]).map(d=>d.t)))].map(nameOf);
+      return `<li class="nm-cs-ses"><span class="nm-cs-sesno">${i+1}</span><span class="nm-cs-sestxt"><b>${lk('교과 연산 묶음','Curriculum practice bundle','课内运算学习组')} ${i+1}</b><small>${lk('기존 회차','Original sessions','原课次')} ${group.startSession}–${group.endSession}${source.some(s=>s.test)?' · '+lk('과정 확인 포함','includes course check','含课程检查'):''}</small>${units.length?`<small>${units.join(' · ')}</small>`:''}<small>${topics.join(' · ')}</small></span></li>`;
+    }).join('');
+    return `<ul class="nm-cs-list">${rows}</ul>`;
+  }
   const rows=(c.sessions||[]).map((ses,i)=>{
     const no=`<span class="nm-cs-sesno">${i+1}</span>`;
     if(ses.test){
@@ -3482,10 +3509,10 @@ function crIc(name){
 function paceWeeksToFn(curNum, curFrac, cad, pace, speed){
   const mult=roadPaceMult(pace)/(speed||1);
   const cur=roadCourseList().find(x=>x.num===curNum);
-  const curW=cur?coursePaceWeeks((cur.c.sessions||[]).length,cad,mult):0;
+  const curW=cur?coursePaceWeeks(cur.c,cad,mult,speed):0;
   return target=>{
     if(target<=curNum) return 0;
-    return Math.max(0, roadTotals(curNum,target-1,cad,mult).weeks - curFrac*curW);
+    return Math.max(0, roadTotals(curNum,target-1,cad,mult,speed).weeks - curFrac*curW);
   };
 }
 /* 판정 한 벌 — 화면과 검사기(window.NM_PACE_DIAG)가 같은 것을 쓴다.
@@ -3777,7 +3804,8 @@ function renderPersonalPlan(){
   if(!box){box=document.createElement('details');box.id='nmPersonalPlan';box.className='nm-personal-plan';bar.insertAdjacentElement('afterend',box);}
   const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
   const p=S.adminPlan,now=new Date(),today=new Date(+now+9*3600000).toISOString().slice(0,10);
-  const settings=p&&NM_COURSES[p.courseKey]?p:{courseKey:currentCourseKey(),sessionIndex:1,speed:S.roadSpeed||1,amount:S.roadAmount||1,cadence:S.roadCadence||'w1',pace:S.roadPace||'p2',entryYear:S.schoolAge?.entryYear,startDate:today};
+  const highPlan=highWeeklySchedule(currentCourseKey());
+  const settings=p&&NM_COURSES[p.courseKey]?p:{courseKey:highPlan?.courseKey||currentCourseKey(),sessionIndex:highPlan?.sessionIndex||1,speed:S.roadSpeed||1,amount:S.roadAmount||1,cadence:S.roadCadence||'w1',pace:S.roadPace||'p2',entryYear:S.schoolAge?.entryYear,startDate:highPlan?.startDate||today};
   let result;try{result=NM_LEARNING_PLAN.project(NM_COURSES,{...settings,birthYear:S.schoolAge?.birthYear},{months:12,lang:S.lang,now});}catch(e){return;}
   const reference=NM_LEARNING_PLAN.recommend(NM_COURSES,settings,{lang:S.lang});
   box.innerHTML=`<summary>${lk('나의 월별 로드맵 · 12개월','My monthly roadmap · 12 months','我的月度路线图 · 12个月')}</summary><div class="nm-personal-plan-body"><p>${p?lk('학원에서 정한 개인별 시작점과 속도를 적용했어요.','Your academy’s individual starting point and pace are applied.','已应用学院设置的个人起点和速度。'):lk('현재 선택한 시작점과 속도로 예상했어요.','Estimated from your selected starting point and pace.','根据所选起点和速度估算。')} ${lk('실제 학습에 따라 달라질 수 있어요. 학년은 매년 3월에 바뀌어요.','Actual progress may vary. Grades change each March.','实际进度可能不同，年级每年3月变更。')}</p><p>${lk('시작','Start','开始')}: ${esc(settings.startDate)} · ${settings.speed}${lk('배 속도','× pace','倍速度')} · ${lk('주','Per week','每周')} ${settings.cadence==='w2'?2:1}${lk('회',' sessions','次')}</p><div class="nm-personal-plan-grid" role="list">${result.rows.map(row=>`<article role="listitem"><h4>${esc(row.month)} <small>${esc(row.schoolLabel)}</small></h4>${row.courseLabels.length?row.courseLabels.map((label,i)=>`<p><b>${esc(label)}</b><span>${esc(row.sessionLabels[i])}</span></p>`).join(''):`<p>${lk('예상 과정 없음','No course projected','暂无预计课程')}</p>`}</article>`).join('')}</div><aside><h4>${esc(reference.title)}</h4><p>${esc(reference.advice)}</p><p>${esc(reference.reference)}</p>${reference.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a>`).join(' · ')}</aside></div>`;
@@ -4279,12 +4307,13 @@ function screenCourseRoad(){
               :en?`Usually from ${schoolMonthsLabel(r.need)}`:`通常从${schoolMonthsLabel(r.need)}起`}</span>`; })()}
         </div>`;
         if(!again) html+=middlePacingHtml(c.tier);
+        if(!again&&c.studyPlan) html+=`<p class="nm-cr-cadfoot">${lk('교과 연산 24묶음 · 주 2회 기준 12주(약 3개월). 기존 회차를 합쳐 주당 학습량을 늘렸어요.','24 curriculum-practice bundles · 12 weeks at two bundles a week. Existing sessions are combined into a larger weekly workload.','24组课内运算 · 每周2组共12周（约3个月）。合并原课次，增加每周学习量。')}</p>`;
         prevTier=c.tier;
       }
       const tierDef=roadTierInfo(c.tier);
       {
-        const n=(c.sessions||[]).length;
-        const wk=coursePaceWeeks(n,cad,mult);
+        const n=courseLessonCount(c);
+        const wk=Math.ceil(coursePaceWeeks(c,cad,mult)-1e-9);
         const prog=courseProgress(c);
         const built=courseBuilt(c);
         const isNow=x.key===curKey;
@@ -4507,7 +4536,7 @@ function mountRoad3DInto(heroEl, o){
     const c=x.c, isDone=courseConquered(c), isNow=x.key===curKey;
     const isGoal=!isDone&&!isNow&&x.key===goalKey;
     const prog=courseProgress(c);
-    return { id:x.key, num:x.num, title:L(c.title), band:c.tier, sessions:(c.sessions||[]).length,
+    return { id:x.key, num:x.num, title:L(c.title), band:c.tier, sessions:courseLessonCount(c),
       state:isNow?'now':isDone?'done':isGoal?'goal':(prog.done>0?'doing':'ahead'),
       boss:!!c.boss, tower:c.tier==='challenge', when:whenMap[x.key]||'' };
   });
@@ -5655,7 +5684,23 @@ function showUnlockOverlay(queue){
   $('#nmUnlockOverlay').addEventListener('click', e=>{ if(e.target.id==='nmUnlockOverlay') close(); });
 }
 /* 그 과정에서 봉투에 담을 세션 — 마법이 있는 첫 세션(없으면 첫 세션). */
-function primarySessionOf(course,courseKey){
+function primarySessionOf(course,courseKey,weekKey){
+  const plan=highWeeklySchedule(courseKey);
+  if(plan&&weekKey){
+    const assigned=NM_HIGH_PACING.assignment(NM_COURSES,{...plan,startSession:plan.sessionIndex,weekKey});
+    if(!assigned)return null;
+    const source=assigned.weekLessons.flatMap(ref=>ref.sourceIndices.map(i=>NM_COURSES[ref.courseKey].sessions[i]));
+    return {magic:[...new Set(source.flatMap(s=>s.magic||[]))],drills:source.flatMap(s=>s.test?s.pool||[]:s.drills||[]),assignedLessons:assigned.weekLessons};
+  }
+  if(course.studyPlan&&window.NM_HIGH_PACING){
+    const start=S.adminPlan?.courseKey===courseKey?S.adminPlan.sessionIndex:null;
+    const group=NM_HIGH_PACING.select(course,{startSession:start});
+    if(group){
+      const source=group.sourceIndices.map(i=>course.sessions[i]);
+      return {magic:[...new Set(source.flatMap(s=>s.magic||[]))],drills:source.flatMap(s=>s.test?s.pool||[]:s.drills||[]),sourceIndices:group.sourceIndices};
+    }
+  }
+
   if(!course || !course.sessions) return null;
   const p=S.adminPlan;
   if(p&&p.courseKey===courseKey&&course.sessions[p.sessionIndex-1]){
@@ -5673,16 +5718,17 @@ function envItemSeed(weekKey, courseKey, i){
 /* weekKey → 그 주 봉투(placements 모델, §12). courses.js/threads.js 미로딩 시 null. */
 function envelopeForWeek(weekKey){
   if(!window.NM_COURSES || !window.NM_THREADS) return null;
-  const courseKey = currentCourseKey();
+  const current=currentCourseKey(),highPlan=highWeeklySchedule(current);
+  const courseKey = highPlan?highPlan.courseKey:current;
   const course = NM_COURSES[courseKey];
   if(!course) return null;
-  const session = primarySessionOf(course,courseKey);
+  const session = primarySessionOf(course,courseKey,weekKey);
   if(!session) return null;
   const placements = (session.drills||[]).map((d,i) => ({
     order: i+1, thread: d.t, level: d.lv, count: d.n,
     seed: envItemSeed(weekKey, courseKey, i)
   }));
-  return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, session, magic: session.magic||null, placements };
+  return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, session, highPlan, magic: session.magic||null, placements };
 }
 function mailboxEnvelopeCode(env){ return env.wsId; }
 
@@ -5872,7 +5918,7 @@ function screenMailbox(){
     if(!env){
       scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="mbBack">${t('back')}</button>
         <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div></div>
-        <div class="nm-step-body"><div class="nm-card">${lk('학습지 데이터를 아직 불러오지 못했어요.','Worksheet data is not ready yet.','学习单数据还没准备好。')}</div></div>`;
+        <div class="nm-step-body"><div class="nm-card">${lk('이 주에 배정된 학습지가 없어요. 시작일과 학습 속도를 확인해 주세요.','No worksheet is scheduled for this week. Check the start date and pace.','本周未安排学习单，请确认开始日期和学习速度。')}</div></div>`;
       $('#mbBack').onclick=()=>{S._mbWeek=null;screenMailbox();};
       return;
     }
@@ -5943,8 +5989,9 @@ function screenMailbox(){
       /* 링크 학습지(ws.html)와 같은 구성(2026-09-08 파리티) — 필산 회차 + 독셈 + 문장제, 표지·
          마법 유닛까지 exam.js weeklyEnvelope 하나가 만든다. 편집기에서 문항을 바꿔도 회차 구성은 같다. */
       const wk = (window.NM_EXAM && NM_EXAM.weeklyEnvelope)
-        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence, grade:printGradeKey(),
-            startSession:S.adminPlan?.courseKey===env.courseKey?S.adminPlan.sessionIndex:null,
+        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence, grade:printGradeKey(), compactHigh:true,
+            startSession:env.highPlan?env.highPlan.sessionIndex:S.adminPlan?.courseKey===env.courseKey?S.adminPlan.sessionIndex:null,
+            highStartDate:env.highPlan?.startDate,highSpeed:env.highPlan?.speed,highWholeWeek:true,
             /* 몇 번째 회차인가 = 이 주 전에 연 봉투 수(2026-09-30, 언어사고력 주제 순환·유아 중반 판정) */
             sessionIdx: Object.keys((S.mailbox && S.mailbox.opened) || {}).filter(function(wk){ return wk < env.weekKey; }).length }) : null;
       const items = wk ? wk.items : env.placements.map(p=>({thread:p.thread, level:p.level, n:p.count, seed:p.seed}));

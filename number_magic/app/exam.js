@@ -1717,9 +1717,9 @@ function runSessionTabs(container, items, meta){
      앉은 자리에서 "새 문제로 다시"를 누를 때마다 1씩 올라간다(채점 여부와
      무관하게 항상 보이는 버튼이라, 채점 전에 여러 번 눌러도 자연히 는다). */
   function buildTab(it){
-    const cfg = { thread: it.thread, level: it.level, count: perType, seed: it.seed, wordType: it.wordType };
+    const cfg = { ...it,thread: it.thread, level: it.level, count: it.count||perType, seed: it.seed, wordType: it.wordType };
     const numericSeed = NM_RNG.hashSeed(cfg.seed);
-    const problems = buildProblems(cfg.thread, cfg.level, cfg.count, numericSeed);
+    const problems = cfg.magicUnit?[]:buildProblems(cfg.thread, cfg.level, cfg.count, numericSeed,null,cfg.threadMix);
     applyWordProblems(problems, cfg.wordType, numericSeed);
     return {
       cfg, problems, userAnswers: new Array(cfg.count).fill(''), graded: false, gradeScore: 0,
@@ -1737,6 +1737,14 @@ function runSessionTabs(container, items, meta){
 
   function render(){
     const t = tabs[activeTab];
+    if(t.cfg.magicUnit){
+      const note=renderMagicNotePage(t.cfg,{name:printStudentName()});
+      container.innerHTML=`<div class="nm-ws-wrap nm-ws-session"><div class="nm-ws-hd">${esc(meta.title||'')}</div><div class="nm-ws-tabs">${tabs.map((x,i)=>`<button class="nm-ws-tab${i===activeTab?' active':''}" data-tabidx="${i}">${esc(x.cfg.topicName||x.cfg.magicUnit||pickL(((window.NM_THREADS||{})[x.cfg.thread]||{}).name)||x.cfg.thread)}</button>`).join('')}</div>${note?note.html:''}<button id="nm-ws-back" class="nm-ex-btn-ghost">← ${esc(lk('수업 목록으로','Back to lessons','返回课程列表'))}</button></div>`;
+      container.querySelectorAll('[data-tabidx]').forEach(b=>b.onclick=()=>{activeTab=+b.dataset.tabidx;render();});
+      container.querySelector('#nm-ws-back').onclick=()=>{if(run)run.stop();if(meta.onBack)meta.onBack();};
+      container.querySelectorAll('.nm-w2-tex, .nm-cp-tex').forEach(el=>renderKaTeX(el.dataset.tex||'',el));
+      return;
+    }
     const mode = 'online';
     const attemptNo = t.attemptNo;
     const best = bestRateFor(t.cfg.thread);
@@ -1749,11 +1757,11 @@ function runSessionTabs(container, items, meta){
     const bestHtml = best!=null
       ? `<span class="nm-grid-best">${esc(lk('최고','Best','最高'))} ${Math.round(best*100)}%</span>` : '';
     const round0Code = NM_EXAM.worksheetCode({thread:t.cfg.thread, level:t.cfg.level, count:t.cfg.count, seed:t.cfg.seed});
-    const conceptHtml = w2ConceptPanelHtml(t.cfg.thread, t.cfg.level);
-    const exampleHtml = w2ExampleHtml(t.cfg.thread, t.cfg.level, round0Code);
+    const conceptHtml = t.cfg.noTeach||t.cfg.skipConcept?'':w2ConceptPanelHtml(t.cfg.thread, t.cfg.level);
+    const exampleHtml = t.cfg.noTeach?'':w2ExampleHtml(t.cfg.thread, t.cfg.level, round0Code);
     /* 따라 풀기(§4/§build 7) — 인쇄와 같은 마크업을 화면에도 그대로(읽기 전용,
        탭을 오갈 때마다 같은 시드로 다시 만들므로 매번 같은 3문제). */
-    const guidedHtml = w2GuidedHtml(t.cfg.thread, t.cfg.level, round0Code).html;
+    const guidedHtml = t.cfg.noTeach?'':w2GuidedHtml(t.cfg.thread, t.cfg.level, round0Code).html;
 
     container.innerHTML = `
 <div class="nm-ws-wrap nm-ws-session">
@@ -1762,7 +1770,7 @@ function runSessionTabs(container, items, meta){
   </div>
   <div class="nm-ws-tabs nm-ws-session-tabs">
     ${tabs.map((x,idx) => `<button class="nm-ws-tab${idx===activeTab?' active':''}" data-tabidx="${idx}">
-      ${x.graded && x.gradeScore/x.cfg.count>=0.8 ? '✅ ' : ''}${esc(pickL(((window.NM_THREADS||{})[x.cfg.thread]||{}).name) || x.cfg.thread)}
+      ${x.graded && x.gradeScore/x.cfg.count>=0.8 ? '✅ ' : ''}${esc(x.cfg.magicUnit?x.cfg.topicName:(x.cfg.sessionLabel?x.cfg.sessionLabel+' · ':'')+(pickL(((window.NM_THREADS||{})[x.cfg.thread]||{}).name) || x.cfg.thread))}
     </button>`).join('')}
   </div>
   <div class="nm-grid-meta-row">
@@ -1806,14 +1814,14 @@ function runSessionTabs(container, items, meta){
       if(first&&window.NM_STATS) NM_STATS.record(t.cfg.thread, t.cfg.level, t.gradeScore, t.cfg.count, null);
       if(first&&evidence)evidence.attempt({id:t.evidenceId,thread:t.cfg.thread,level:t.cfg.level,correct:t.gradeScore,total:t.cfg.count,
         answered:t.userAnswers.filter(x=>String(x).trim()!=='').length,exposed:false,
-        course:meta.course||null,session:meta.session||null},run);
+        course:t.cfg.courseKey||meta.course||null,session:t.cfg.legacySession||meta.session||null},run);
       render();
     });
     container.querySelector('#nm-ws-reroll').addEventListener('click', () => {
       const ns = NM_RNG.newCode();
       const numericSeed = NM_RNG.hashSeed(ns);
       t.cfg = Object.assign({}, t.cfg, { seed: ns });
-      t.problems = buildProblems(t.cfg.thread, t.cfg.level, t.cfg.count, numericSeed);
+      t.problems = buildProblems(t.cfg.thread, t.cfg.level, t.cfg.count, numericSeed,null,t.cfg.threadMix);
       applyWordProblems(t.problems, t.cfg.wordType, numericSeed);
       t.userAnswers = new Array(t.cfg.count).fill('');
       t.graded = false; t.gradeScore = 0;
@@ -2115,12 +2123,18 @@ function getFontSize(){
 }
 function setFontSize(v){ try{ localStorage.setItem(FONT_SIZE_KEY, v); }catch(e){} }
 let pacingPrintActive = false;
+let compactHighPrintActive = false;
+function withCompactHighPrint(active, render){
+  const before=compactHighPrintActive;
+  compactHighPrintActive=!!active||before;
+  try{return render();}finally{compactHighPrintActive=before;}
+}
 function withPacingPrint(active, render){
   const before=pacingPrintActive;
   pacingPrintActive=!!active||before;
   try{return render();}finally{pacingPrintActive=before;}
 }
-function getSolveMode(){ if(pacingPrintActive) return false; try{ return localStorage.getItem(SOLVE_MODE_KEY) === '1'; }catch(e){ return false; } }
+function getSolveMode(){ if(pacingPrintActive||compactHighPrintActive) return false; try{ return localStorage.getItem(SOLVE_MODE_KEY) === '1'; }catch(e){ return false; } }
 function setSolveMode(v){ try{ localStorage.setItem(SOLVE_MODE_KEY, v?'1':'0'); }catch(e){} }
 /* ③ 학습량 배수(2026-09-25, 원장 "고정하고 속도 양 조절하기 기능 추가하자 기본값을 두고 1.5배까지").
    기본 1배 = courses.js planCounts 가 정한 문항 수 그대로. 0.7~1.5배는 **교과 칸의 그 주 드릴**만 늘리거나 줄인다
@@ -2574,7 +2588,16 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   let page = 2; // 표지가 1쪽
   const dayLabel = day => day ? lk(`${day}일차`, `Day ${day}`, `第${day}天`) : '';
   const pTxt = (from, to) => `${from === to ? from : from + '–' + to}${esc(lk('쪽','p.','页'))}`;
-  const rows = rounds.map((r, i) => {
+  const contents=[];
+  rounds.forEach(r=>{
+    const previous=contents[contents.length-1];
+    if(cv.compactHigh && r.sourceSession && previous && previous.sourceSession===r.sourceSession){
+      previous.html+=r.html;previous.problems.push(...r.problems);
+      previous.studyDays.push(...r.studyDays||[]);
+    }else contents.push({...r,problems:r.problems.slice(),studyDays:(r.studyDays||[]).slice(),
+      thName:cv.compactHigh?(r.sessionLabel||r.thName):r.thName});
+  });
+  const rows = contents.map((r, i) => {
     const n = r.problems.length, from = page, to = page + w2PagesOf(r) - 1; page = to + 1;
     const ds = (r.studyDays || []).filter((d, j, a) => a.indexOf(d) === j);
     const days = ds.length ? (ds.length === 1 ? dayLabel(ds[0]) : `${dayLabel(ds[0])}–${dayLabel(ds[ds.length-1])}`) : '';
@@ -2599,7 +2622,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     page++;
   }
   const totalPages = page - 1;
-  const kTxt = cv.cadence === 'w2' ? lk(` · ${cv.k||1}회차`, ` · session ${cv.k||1}`, ` · 第${cv.k||1}次`) : '';
+  const kTxt = cv.cadence === 'w2' && !cv.highWholeWeek ? lk(` · ${cv.k||1}회차`, ` · session ${cv.k||1}`, ` · 第${cv.k||1}次`) : '';
   const studentTag = cv.name ? ` · ${esc(cv.name)}` : '';
   const magazineC4 = +cv.courseNum === 4 && examLang() === 'ko';
   return `<div class="nm-print-cover nm-cvw${rows.length >= 9 ? ' nm-cvw-dense' : ''}${magazineC4 ? ' nm-cvw-magazine-c4' : ''}">
@@ -2608,11 +2631,11 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     ${magazineC4 ? '<div class="nm-cvw-cover-teaser"><b>이번 호의 질문</b>같은 수가 두 묶음이면 어떻게 셀까요?</div><img class="nm-cvw-cover-character" src="assets/characters/docssam.png" alt="">' : ''}
     <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}${cv.amount != null && cv.amount !== 1 ? ' · ' + esc(cv.amountLabel || `${cv.amount}×`) : ''}</p>
     <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
-    <p class="nm-cvw-tagline">${esc(lk('하루 10분으로 연산 공부','Arithmetic practice in 10 minutes a day','每天10分钟，练习计算'))}</p>
+    <p class="nm-cvw-tagline">${esc(cv.compactHigh?lk('주 2회, 12주에 이어 가는 고등 연산','High school arithmetic over 12 weeks at two lessons a week','每周两课，12周高中运算'):lk('하루 10분으로 연산 공부','Arithmetic practice in 10 minutes a day','每天10分钟，练习计算'))}</p>
     <div class="nm-cv-rule"></div>
     <p class="nm-cvw-course">${cv.name ? `<b>${esc(cv.name)}</b> · ` : ''}${cv.courseNum ? esc(lk(`과정 ${cv.courseNum}`, `Course ${cv.courseNum}`, `课程 ${cv.courseNum}`)) + ' · ' : ''}${esc(cv.courseTitle||'')}</p>
   </div>
-  ${cv.studyDays > 1 ? `<p class="nm-cvw-daily">${esc(lk(`하루 10분씩 나눠 풀어도 좋아요 · ${cv.studyDays}일 학습`, `You can split this into about 10 minutes a day · ${cv.studyDays} days`, `也可以每天学约10分钟 · 共${cv.studyDays}天`))}</p>` : ''}
+  ${cv.studyDays > 1 ? `<p class="nm-cvw-daily">${esc(cv.compactHigh?lk(`이번 수업 약 ${cv.lessonMinutes}분 · ${cv.studyDays}일로 나누기 · 주 5일이면 하루 약 ${Math.ceil(cv.weeklyMinutes/5)}분`, `This lesson: about ${cv.lessonMinutes} min across ${cv.studyDays} days · about ${Math.ceil(cv.weeklyMinutes/5)} min/day over 5 days a week`, `本课约${cv.lessonMinutes}分钟，分${cv.studyDays}天 · 每周5天则每天约${Math.ceil(cv.weeklyMinutes/5)}分钟`):lk(`하루 10분씩 나눠 풀어도 좋아요 · ${cv.studyDays}일 학습`, `You can split this into about 10 minutes a day · ${cv.studyDays} days`, `也可以每天学约10分钟 · 共${cv.studyDays}天`))}</p>` : ''}
   <table class="nm-cvw-toc">
     <thead><tr><th>${esc(lk('하루','Day','天'))}</th><th></th><th>${esc(lk('유형','Type','题型'))}</th><th>${esc(lk('문항','Items','题数'))}</th><th>${esc(lk('쪽','Page','页'))}</th><th>${esc(lk('완료','Done','完成'))}</th></tr></thead>
     <tbody>${rows.join('')}</tbody>
@@ -5906,7 +5929,7 @@ function renderDrawingRound(item, opts){
 function renderRoundPages(item, opts){
   opts=opts||{};
   const local=Object.assign({},opts,{exclude:new Set(opts.exclude||[])});
-  const result=withPacingPrint(item.pacing,()=>renderRoundPagesBody(item,local));
+  const result=withCompactHighPrint(item.compactHigh,()=>withPacingPrint(item.pacing,()=>renderRoundPagesBody(item,local)));
   result.uniqueKeys=Array.from(local.exclude);
   if(opts.exclude) result.uniqueKeys.forEach(key=>opts.exclude.add(key));
   return result;
@@ -5954,7 +5977,7 @@ function renderRoundPagesBody(item, opts){
   // 대표값·사분위수 자료열은 여러 두 자리 수와 질문을 한 수식으로 읽는다. 일반 중등식의
   // 2열 칸(약 351px)에 넣고 글자만 줄이면 자료 순서와 빈칸이 흐려지므로 MD84·MD86의
   // 비도표 계산 문항은 온전한 글자 크기의 1열×6행으로 둔다. 한 쪽 최소 6문항도 지킨다.
-  if(['MD84','MD86'].includes(item.thread)&&!['solve','train','visual','word'].includes(layout.type)){
+  if((['MD84','MD86'].includes(item.thread)||(item.compactHigh&&item.thread==='MD78'))&&!['solve','train','visual','word'].includes(layout.type)){
     Object.assign(layout,{cols:1,rows:6,perPage:6,firstRows:3,pitch:39});
   }
   // 유리화는 분자/분모 쓰기 상자가 두 층이다. 짧은 문자열 길이만으로 높이를 판정하지 않는다.
@@ -6036,7 +6059,7 @@ function renderRoundPagesBody(item, opts){
      그 띠가 개념 문장을 쓰면 개념 패널에서는 그 문장을 뺀다(중복 방지). */
   const middleLesson = examLang() === 'ko' && !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread];
   const strategyHtml = !noTeach && !middleLesson && getSolveMode() ? w2StrategyBandHtml(item.thread, item.level) : '';
-  const conceptHtml = (wordOnly || noTeach) ? ''
+  const conceptHtml = (wordOnly || noTeach || item.skipConcept) ? ''
     : w2ConceptPanelHtml(item.thread, item.level, {rampN, skipSentence: !!strategyHtml});
   const exampleMeta={};
   const exampleHtml = (noTeach || pictureOnly) ? ''
@@ -6391,7 +6414,7 @@ function pageCapacityFor(items){
    buildMixedProblemSet)은 이 경로에서 더는 쓰지 않는다 — 함수 자체는 다른
    호출부(있다면)를 위해 그대로 둔다. */
 function renderMixedSheet(items, envelopeCode, opts){
-  return withPacingPrint(opts.pacing,()=>renderMixedSheetBody(items,envelopeCode,opts));
+  return withCompactHighPrint(opts.compactHigh || items.some(it=>it.compactHigh),()=>withPacingPrint(opts.pacing,()=>renderMixedSheetBody(items,envelopeCode,opts)));
 }
 function renderMixedSheetBody(items, envelopeCode, opts){
   const perTypeCount = opts.mixed || 20;
@@ -6403,14 +6426,17 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   const studentName = opts.cover && opts.cover.name;
   const editorialC4 = !!(opts.cover && +opts.cover.courseNum === 4);
   const rounds = [];
-  const seen=new Set();
+  const seenGroups=new Map();
   let droppedWord = false;
   items.forEach(it => {
     if(it.magicUnit){
       const mg = renderMagicNotePage(it, { name: studentName, roundNo: rounds.length + 1 });
-      if(mg){ mg.__magic = { item:it, roundNo:rounds.length + 1 }; rounds.push(mg); }
+      if(mg){ mg.__magic = { item:it, roundNo:rounds.length + 1 };mg.sourceSession=it.sourceSession;mg.sessionLabel=it.sessionLabel;rounds.push(mg); }
       return;
     }
+    const source=it.sourceSession||'';
+    if(!seenGroups.has(source))seenGroups.set(source,new Set());
+    const seen=seenGroups.get(source);
     let candidateSeen=new Set(seen);
     const seenBefore=new Set(seen);
     let r = null, initialExhausted = null, usedItem = it;
@@ -6451,6 +6477,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
     }
     if(it.optionalWord && (!r || !r.problems.some(p => p.word))){ droppedWord = true; return; }
     candidateSeen.forEach(key=>seen.add(key));
+    r.sourceSession=it.sourceSession;r.sessionLabel=it.sessionLabel;
     r.__redo = { item:usedItem, count:usedItem.count || perTypeCount, roundNo:rounds.length + 1, seenBefore };
     rounds.push(r);
   });
@@ -6463,13 +6490,13 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   rounds.forEach((r, i) => {
     /* 마법 노트도 장 밴드의 잰 높이로 장을 나눈다 */
     if(r.__magic){ const mg = renderMagicNotePage(r.__magic.item, { name:studentName, roundNo:r.__magic.roundNo, band:sheetBand });
-      if(mg){ mg.__magic = r.__magic; rounds[i] = mg; } return; }
+      if(mg){ mg.__magic = r.__magic;mg.sourceSession=r.sourceSession;mg.sessionLabel=r.sessionLabel;rounds[i] = mg; } return; }
     if(!r.__redo || !r.band || r.band === sheetBand) return;
     try {
       const rr = renderRoundPages(r.__redo.item, { count:r.__redo.count, name:studentName, roundNo:r.__redo.roundNo,
         exclude:new Set(r.__redo.seenBefore), mixed:true, band:sheetBand, editorialC4 });
       const same = rr.problems.length === r.problems.length && rr.problems.every((p, k) => problemKey(p) === problemKey(r.problems[k]));
-      if(same) rounds[i] = rr;
+      if(same) rounds[i] = Object.assign(rr,{sourceSession:r.sourceSession,sessionLabel:r.sessionLabel});
     } catch(e){ /* 다시 짜지 못하면 처음 것을 둔다 */ }
   });
 
@@ -6493,22 +6520,23 @@ function renderMixedSheetBody(items, envelopeCode, opts){
      · 과정 0(유아): 회차 10부터(19회차의 중반) — 그 전엔 읽을거리 없음. 회차를 모르면(링크에 s 없음) 없음.
      · 과정 1~10(초1~2): 늘. 주제는 회차 번호로 돌고(EA-1~6), 회차를 모르면 봉투 코드로 돈다. */
   const rBand = readingAgeBand(opts, items, allProblems);
+  const highCompact=opts.compactHigh||(opts.cover&&opts.cover.compactHigh)||items.some(it=>it.compactHigh);
   const cv = opts.cover || {};
   const sIdx = (cv.sessionIdx != null && isFinite(+cv.sessionIdx)) ? +cv.sessionIdx : null;
   let langHtml = '';
-  if(!opts.pacing && opts.cover && rBand === 'young' && window.NM_LANG_THINK){
+  if(!opts.pacing && !highCompact && opts.cover && rBand === 'young' && window.NM_LANG_THINK){
     const isInfant = +cv.courseNum === 0;
     const half = isInfant ? Math.ceil(((opts.courseSessions || 19) - 1) / 2) : 0;   // 19회차 → 9(열 번째 회차)부터
     const on = isInfant ? (sIdx != null && sIdx >= half) : true;
     if(on) langHtml = NM_LANG_THINK.pageHtml(sIdx != null ? sIdx : mzHash(envelopeCode), envelopeCode, examLang(), cv.courseTitle, envelopeCode, isInfant);
   }
-  const historyHtml = (opts.pacing || rBand === 'young') ? '' : w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle, rBand);
+  const historyHtml = (opts.pacing || highCompact || rBand === 'young') ? '' : w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle, rBand);
   /* 종이 교구 지면 — 수학사 지면 다음, 정답지 앞(2026-09-08). */
-  const paperHtml = opts.pacing ? '' : w2PaperToolPageHtml(opts.cover && opts.cover.courseNum, envelopeCode);
+  const paperHtml = opts.pacing || highCompact ? '' : w2PaperToolPageHtml(opts.cover && opts.cover.courseNum, envelopeCode);
   /* 매거진 지면 — 만화 다음, 종이 교구 앞(2026-09-20). 회차 상황과 나이대로 고르고 봉투 코드로
      돌린다(과정 번호는 안 쓴다). 주간 학습지(표지가 있는 것)에만 싣는다 — 편지함 편집기가 한 회차만
      뽑을 때까지 읽을거리를 딸려 보내면 문제보다 읽을거리가 많아진다. */
-  const magazineHtml = opts.cover && !opts.pacing
+  const magazineHtml = opts.cover && !opts.pacing && !highCompact
     ? w2MagazinePageHtml(items, envelopeCode, readingAgeBand(opts, items, allProblems)) : '';
   const extraPages = (historyHtml ? 1 : 0) + (langHtml ? 1 : 0) + (magazineHtml ? 1 : 0) + (paperHtml ? 1 : 0);
   const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true });
@@ -6814,6 +6842,98 @@ function stageCheckItem(course, courseKey, seedBase){
              zh:'把学过的内容集中做一遍，没有新内容。' },
     seed: seedBase + 'stagechk'
   };
+}
+
+/* 고등의 수업 묶음은 정규 회차의 참조다. 원본 회차·진도 번호는 바꾸지 않는다. */
+function highLessons(course){ return course && course.studyPlan && course.studyPlan.lessons || null; }
+function compactHighEnvelope(course, courseKey, weekKey, opts){
+  const pacing=window.NM_HIGH_PACING, lessons=highLessons(course);
+  if(!pacing || !lessons || !opts.compactHigh || opts.legacySession)return null;
+  const lesson=pacing.select(course,{k:opts.k||1,startSession:opts.startSession,lesson:opts.lesson});
+  if(!lesson)return null;
+  const sourceIndices=lesson.sourceIndices, items=[], units=[];
+  const k=opts.k===2?2:1;
+  let first=null;
+  sourceIndices.forEach(index=>{
+    const source=course.sessions[index];
+    const child=NM_EXAM.weeklyEnvelope(course,courseKey,weekKey,{...opts,compactHigh:false,legacySession:true,k:1,
+      startSession:index+1,sessionIdx:index,seedScope:'h'+lesson.index+'k'+k+'s'+index});
+    if(!child)return;
+    if(!first)first=child;
+    const sourceItems=source.test?(source.pool||[]).map((d,i)=>({thread:d.t,level:d.lv,n:d.n,count:d.n,noTeach:true,
+      seed:(weekKey+courseKey+'h'+lesson.index+'k'+k+'s'+index+'test'+i).toLowerCase().replace(/[^a-z0-9]/g,''),
+      topicName:lk('과정 점검 · ','Course check · ','课程检查 · ')+(((window.NM_THREADS||{})[d.t]||{}).name?.ko||d.t)}))
+      :child.items.filter(it=>!String(it.seed||'').endsWith('stagechk'));
+    sourceItems.forEach(it=>items.push({...it,sourceSession:courseKey+'-S'+(index+1),courseKey,legacySession:index+1,
+      compactHigh:true,sessionLabel:lk('학습 '+(index+1),'Study '+(index+1),'学习 '+(index+1))}));
+    child.units.forEach(id=>{if(!units.includes(id))units.push(id);});
+  });
+  if(!first || !items.length)return null;
+  const concepts=new Set();
+  items.forEach(it=>{
+    if(!it.thread||it.noTeach)return;
+    const key=it.thread+'@'+it.level;
+    if(concepts.has(key))it.skipConcept=true;
+    else concepts.add(key);
+  });
+  if(sourceIndices.includes(course.sessions.length-1)){
+    const check=stageCheckItem(course,courseKey,(weekKey+courseKey+'h'+lesson.index).toLowerCase().replace(/[^a-z0-9]/g,''));
+    if(check)items.push({...check,sourceSession:courseKey+'-checkpoint',courseKey,compactHigh:true});
+  }
+  const amount=opts.amount==null?getAmount():normAmount(opts.amount);
+  const pair=Math.floor(lesson.index/2)*2;
+  const weeklyMinutes=lessons.slice(pair,pair+2).reduce((n,l)=>n+(l.estimatedMinutes??l.minutes),0);
+  const wsId='W'+weekKey+'-'+courseKey+'-H'+(lesson.index+1);
+  const cover={...first.cover,k,cadence:opts.cad==='w2'||k===2?'w2':'w1',code:wsId,compactHigh:true,
+    weekLabel:first.cover.weekLabel.replace(/-1주차$/,'-'+k+'주차'),
+    studyDays:lesson.index%2===1?2:3,lessonMinutes:Math.round(lesson.estimatedMinutes??lesson.minutes),weeklyMinutes,amount,
+    lessonIndex:lesson.index,sourceSessions:sourceIndices.map(i=>i+1),
+    sessionIdx:sourceIndices[0],courseTitle:first.title+' · '+lk('수업 '+(lesson.index+1),'Lesson '+(lesson.index+1),'第'+(lesson.index+1)+'课')};
+  const grade=opts.grade!=null?opts.grade:(window.NM_PRINT_GRADE?window.NM_PRINT_GRADE():undefined);
+  items.forEach(it=>{it.schoolTier='high';if(grade!=null)it.grade=grade;});
+  return {...first,wsId,items,units,cover,k,cad:cover.cadence,lesson,sourceSessions:sourceIndices.map(i=>i+1),
+    compactHigh:true,courseSessions:course.sessions.filter(s=>!s.test).length};
+}
+/* 시작일 이후의 예정 회차만 배정한다. 달력은 실제 학습 완료 기록을 바꾸지 않는다. */
+function scheduledHighEnvelope(course, courseKey, weekKey, opts){
+  const pacing=window.NM_HIGH_PACING, courses=window.NM_COURSES||{};
+  if(!pacing || !pacing.assignment)return null;
+  const speed=Number(opts.highSpeed)>0&&Number(opts.highSpeed)<=1.5?Number(opts.highSpeed):1;
+  const k=Number(opts.k)===2?2:1,cadence=opts.cad==='w2'||k===2?'w2':'w1';
+  const assignment=pacing.assignment(courses,{courseKey,startSession:opts.startSession||1,
+    startDate:opts.highStartDate,weekKey,cadence,speed,k});
+  if(!assignment || !assignment.lessons || !assignment.lessons.length)return null;
+  const selectedRefs=opts.highWholeWeek?assignment.weekLessons:assignment.lessons;
+  const children=selectedRefs.map(ref=>{
+    const selected=courses[ref.courseKey];
+    return selected&&compactHighEnvelope(selected,ref.courseKey,weekKey,{...opts,k:1,
+      highStartDate:null,startSession:ref.startSession,lesson:ref.lessonIndex});
+  });
+  if(children.some(child=>!child))return null;
+  const items=children.flatMap(child=>child.items),units=[...new Set(children.flatMap(child=>child.units))];
+  const courseKeys=[...new Set(selectedRefs.map(ref=>ref.courseKey))];
+  if(courseKeys.length>1)items.forEach(it=>{it.sessionLabel=it.courseKey+' · '+(it.sessionLabel||it.topicName||'');});
+  const concepts=new Set();
+  items.forEach(it=>{
+    if(!it.thread||it.noTeach)return;
+    const key=it.thread+'@'+it.level;
+    if(concepts.has(key))it.skipConcept=true;
+    else concepts.add(key);
+  });
+  const title=courseKeys.map(key=>key+' · '+pickL(courses[key].title)).join(' / ');
+  const wsId='W'+weekKey+'-'+courseKey+'-P'+(opts.highWholeWeek?'W':k)+'-V'+String(speed).replace('.','');
+  const estimatedMinutes=Number(opts.highWholeWeek?assignment.weeklyMinutes:assignment.estimatedMinutes)||children.reduce((n,child)=>n+child.cover.lessonMinutes,0);
+  const cover={...children[0].cover,code:wsId,k,cadence,
+    weekLabel:children[0].cover.weekLabel.replace(/-[12]주차$/,'-'+k+'주차'),
+    courseTitle:title+' · '+lk('수업 묶음','Lesson bundle','课程组合'),
+    lessonMinutes:Math.round(estimatedMinutes),weeklyMinutes:assignment.weeklyMinutes,
+    studyDays:opts.highWholeWeek||cadence==='w1'?5:k===2?2:3,assignedCourseKeys:courseKeys,highWholeWeek:!!opts.highWholeWeek,
+    highPlanVersion:course.studyPlan.version};
+  return {...children[0],wsId,items,units,cover,k,cad:cadence,title,
+    assignment:{...assignment,lessons:selectedRefs,estimatedMinutes},
+    lessons:selectedRefs,assignedCourseKeys:courseKeys,
+    sourceSessions:children.flatMap(child=>child.sourceSessions),
+    courseSessions:courseKeys.reduce((n,key)=>n+courses[key].sessions.filter(s=>!s.test).length,0)};
 }
 
 const NM_EXAM = {
@@ -7178,6 +7298,13 @@ const NM_EXAM = {
       /* 주기(주 1회/주 2회) — 연산 로드맵 화면과 같은 S.roadCadence를 공유
          (opts.cadence로 받고, 바꾸면 opts.onCadence로 저장을 부탁한다). */
       let roadCadence = (opts.cadence==='w2') ? 'w2' : 'w1';
+      function roadEntries(course){
+        const lessons=highLessons(course);
+        return lessons?lessons.map(lesson=>({lesson,sourceIndices:lesson.sourceIndices,
+          magic:[...new Set(lesson.sourceIndices.flatMap(i=>course.sessions[i].magic||[]))],
+          drills:lesson.sourceIndices.flatMap(i=>{const s=course.sessions[i];return s.test?s.pool||[]:s.drills||[];})}))
+          :course.sessions||[];
+      }
 
       /* ── 개인별 주차 라벨 ─────────────────────────────────
          "현재 과정의 첫 세션 = 이번 주"를 닻으로, 이후 세션에 달력 주차를
@@ -7209,7 +7336,7 @@ const NM_EXAM = {
         for(const x of list){
           if(x.key===opts.currentCourse) curSeen=true;
           if(x.key===courseKey) return curSeen ? acc : null;
-          if(curSeen) acc += (x.c.sessions||[]).length;
+          if(curSeen) acc += roadEntries(x.c).length;
         }
         return null;
       }
@@ -7224,7 +7351,7 @@ const NM_EXAM = {
         for(const x of list){
           if(x.key===opts.currentCourse) started=true;
           if(!started) continue;
-          const sess=x.c.sessions||[];
+          const sess=roadEntries(x.c);
           for(let i=0;i<sess.length;i++){
             const off=rows.length;
             const s=sess[i];
@@ -7235,7 +7362,7 @@ const NM_EXAM = {
                  단계가 바뀌는 행 앞에 구분 줄을 넣는다. stages.js 가 없으면 조용히 생략. */
               stage:(window.NM_STAGE_OF_COURSE&&window.NM_STAGE_OF_COURSE(x.c.order))||null,
               course:`${x.c.order}. ${pickL(x.c.title)||x.key}`,
-              sess:s.test?lk('과정 시험','Course Test','课程测验'):`${lk('세션','Session','课节')} ${i+1}`,
+              sess:s.lesson?lk(`수업 ${i+1} · 학습 ${s.lesson.startSession}~${s.lesson.endSession}`,`Lesson ${i+1} · studies ${s.lesson.startSession}–${s.lesson.endSession}`,`第${i+1}课 · 学习${s.lesson.startSession}~${s.lesson.endSession}`):s.test?lk('과정 시험','Course Test','课程测验'):`${lk('세션','Session','课节')} ${i+1}`,
               magic:(!s.test&&s.magic&&s.magic.length)?s.magic.map(magicLabel).join(' · '):'',
               drills:items.map(d=>`${threadLabel(d.t)}×${d.n}`).join(' · ')
             });
@@ -7318,12 +7445,12 @@ ${printWatermarkHtml()}
         const startOff = courseStartOffset(courseKey);
         const calHtml = (startOff===null) ? ''
           : `<span class="nm-ex-road-cal">🗓 ${esc(calLabelFor(startOff+i))}</span>`;
-        const nameHtml = (s.test
+        const nameHtml = (s.lesson?lk(`수업 ${i+1} · 학습 ${s.lesson.startSession}~${s.lesson.endSession}`,`Lesson ${i+1} · studies ${s.lesson.startSession}–${s.lesson.endSession}`,`第${i+1}课 · 学习${s.lesson.startSession}~${s.lesson.endSession}`):s.test
           ? `${esc(lk('세션','Session','课节'))} ${i+1} · ${esc(lk('과정 시험','Course Test','课程测验'))}`
           : `${esc(lk('세션','Session','课节'))} ${i+1}`) + calHtml;
         const magicHtml = isMagic
           ? `<span class="nm-ex-road-magic">✨ ${s.magic.map(magicLabel).map(esc).join(' · ')}</span>` : '';
-        const printed = printCountFor(courseKey, i);
+        const printed = s.lesson?Math.min(...s.sourceIndices.map(index=>printCountFor(courseKey,index))):printCountFor(courseKey, i);
         /* 첫 인쇄 전에는 "🎲 새 문제로 한 장 더" 버튼을 보여줄 이유가 없다(같은
            일을 하는 버튼이 둘이 되므로) — 인쇄한 적이 있을 때만 나타난다. */
         const reprintHtml = printed > 0 ? `<div class="nm-ex-road-printed">
@@ -7355,20 +7482,20 @@ ${printWatermarkHtml()}
         const isOpen = openCourse === x.key;
         const isCurrent = opts.currentCourse === x.key;
         const soon = !!c.comingSoon;
-        const sessCount = (c.sessions||[]).length;
+        const sessCount = roadEntries(c).length;
         return `<div class="nm-ex-road-course${isOpen?' open':''}${soon?' soon':''}" data-course-wrap="${esc(x.key)}">
           <button class="nm-ex-road-course-row" data-course-toggle="${esc(x.key)}" ${soon?'disabled':''}>
             <span class="nm-ex-road-course-num">${c.order}</span>
             <span class="nm-ex-road-course-body">
               <b>${esc(pickL(c.title))}${c.boss?' 👑':''}</b>
-              <span class="nm-ex-road-course-meta">${sessCount} ${esc(lk('세션','sessions','节'))}</span>
+              <span class="nm-ex-road-course-meta">${sessCount} ${esc(highLessons(c)?lk('수업','lessons','课'):lk('세션','sessions','节'))}${highLessons(c)?' · '+(c.sessions||[]).length+' '+esc(lk('학습 회차','study sessions','学习课次')):''}</span>
             </span>
             ${isCurrent ? `<span class="nm-ex-road-here">📍 ${esc(lk('지금 여기','You are here','当前位置'))}</span>` : ''}
             ${soon ? `<span class="nm-ex-road-soon">🚧 ${esc(lk('준비 중','Coming soon','准备中'))}</span>` : ''}
             ${soon ? '' : `<span class="nm-ex-road-caret">${isOpen?'▲':'▼'}</span>`}
           </button>
           ${(isOpen && !soon) ? `<div class="nm-ex-road-sessions">
-            ${(c.sessions||[]).map((s,i) => sessionRowHtml(s,i,x.key)).join('')}
+            ${roadEntries(c).map((s,i) => sessionRowHtml(s,i,x.key)).join('')}
           </div>` : ''}
         </div>`;
       }
@@ -7489,6 +7616,15 @@ ${printWatermarkHtml()}
            충분하다(2026-09-04 원장 지시 "웹페이지 들어가면 추가로 계속 인쇄"). */
         function doPrintSession(courseKey, sessionIdx){
           const course = NM_COURSES[courseKey];
+          if(highLessons(course)){
+            const wk=NM_EXAM.weeklyEnvelope(course,courseKey,'road',{compactHigh:true,lesson:sessionIdx,cad:roadCadence});
+            if(!wk)return;
+            const off=courseStartOffset(courseKey),cal=off==null?'':calLabelFor(off+sessionIdx)+' · ';
+            NM_EXAM.openPrintEditor(wk.items,`${cal}${courseKey} · ${lk('수업','Lesson','课')} ${sessionIdx+1}`,{
+              mixed:20,cover:wk.cover,units:wk.units,courseKey,compactHigh:true,
+              onPrint:()=>{if(opts.onPrinted)wk.lesson.sourceIndices.forEach(i=>opts.onPrinted(printKey(courseKey,i)));rerenderKeepScroll();}});
+            return;
+          }
           const session = course && course.sessions && course.sessions[sessionIdx];
           if(!session) return;
           /* 시험 회차는 풀 그대로. 나머지는 주간 봉투와 같은 세 층 순서(2026-09-25) —
@@ -7532,6 +7668,13 @@ ${printWatermarkHtml()}
            (세션 목록)으로 돌아온다. */
         function doSolveOnline(courseKey, sessionIdx){
           const course = NM_COURSES[courseKey];
+          if(highLessons(course)){
+            const wk=NM_EXAM.weeklyEnvelope(course,courseKey,'road',{compactHigh:true,lesson:sessionIdx,cad:roadCadence});
+            if(!wk)return;
+            runSessionTabs(container,wk.items,{title:`${courseKey} · ${lk('수업','Lesson','课')} ${sessionIdx+1}`,
+              course:courseKey,count:20,onBack:()=>render()});
+            return;
+          }
           const session = course && course.sessions && course.sessions[sessionIdx];
           if(!session) return;
           const raw = session.test ? (session.pool||[]) : (session.drills||[]);
@@ -8141,13 +8284,15 @@ ${round.html}
   weeklyEnvelope(course, courseKey, weekKey, opts){
     opts = opts || {};
     if(!course || !course.sessions) return null;
+    if(opts.compactHigh && !opts.legacySession && highLessons(course))return opts.highStartDate
+      ?scheduledHighEnvelope(course,courseKey,weekKey,opts):compactHighEnvelope(course,courseKey,weekKey,opts);
     const c = courseKey, w = weekKey;
     const k = Math.max(1, Math.min(2, opts.k || 1));
     const cad = (opts.cad === 'w2' || k === 2) ? 'w2' : 'w1';
     const name = opts.name || '';
     const amount = opts.amount == null ? getAmount() : normAmount(opts.amount);
     const grade = opts.grade != null ? opts.grade : (window.NM_PRINT_GRADE ? window.NM_PRINT_GRADE() : undefined);
-    const seedOf = (wk, i) => (wk + c + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const seedOf = (wk, i) => (wk + c + (opts.seedScope||'') + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g, '');
     let session = course.sessions.find(s => !s.test && s.magic && s.magic.length) || course.sessions.find(s => !s.test) || null;
     const exact = Number(opts.startSession);
     if(Number.isInteger(exact)&&exact>=1&&exact<=course.sessions.length){
@@ -8346,6 +8491,8 @@ ${answerSectionsHtml}`;
       seed: it.seed || NM_RNG.newCode(),
       topicName: it.topicName, grade: it.grade, schoolTier:it.schoolTier,
       kind:it.kind,mode:it.mode,variant:it.variant,pacing:it.pacing,noTeach:it.noTeach,
+      magicUnit:it.magicUnit,sourceSession:it.sourceSession,courseKey:it.courseKey,legacySession:it.legacySession,
+      compactHigh:it.compactHigh,skipConcept:it.skipConcept,
       creative:it.creative,role:it.role,threadMix:it.threadMix,subLabel:it.subLabel,sessionLabel:it.sessionLabel,
       overrides: Object.assign({}, it.overrides || {}),
       guideSeed: it.guideSeed || null,
@@ -8533,7 +8680,7 @@ ${answerSectionsHtml}`;
           const baseline=buildProblems(r.thread,r.level,r.__problems.length,NM_RNG.hashSeed(r.seed),null,r.threadMix);
           const unavailable=new Set([
             ...baseline.map(problemKey),
-            ...rounds.flatMap(x=>x.__uniqueKeys||((x.__problems||[]).map(problemKey)))
+            ...rounds.filter(x=>!r.sourceSession||x.sourceSession===r.sourceSession).flatMap(x=>x.__uniqueKeys||((x.__problems||[]).map(problemKey)))
           ]);
           const src=r.threadMix&&r.threadMix.length?r.threadMix[slotIndex%r.threadMix.length]
             :{t:r.thread,lv:baseline[slotIndex].__ramp?rampLevelFor(r.thread,r.level):r.level};
@@ -8578,6 +8725,7 @@ ${answerSectionsHtml}`;
 
     function roundHeadHtml(idx){
       const r = rounds[idx];
+      if(r.magicUnit)return `<div class="nm-pe-round-head"><span class="nm-pe-round-name">${esc(r.sessionLabel||'')} · ${esc(r.topicName||r.magicUnit)}</span></div>`;
       const th = (window.NM_THREADS||{})[r.thread] || {};
       const levels = th.levels || [{id:r.level}];
       if(opts.pacing || r.kind==='drawing') return `<div class="nm-pe-round-head"><span class="nm-pe-round-name">${esc(r.topicName||threadName(r.thread))} · ${r.kind==='drawing'?'직접 그리기 / 교사 확인':esc(levelLabelOf(r.thread,r.level))} · ${r.count}문항${r.noTeach?' · 복습/점검':''}</span><div class="nm-pe-round-actions"><button class="nm-pe-mini-btn" data-reroll-btn="${idx}">새 문제</button></div></div>`;
@@ -8598,10 +8746,11 @@ ${answerSectionsHtml}`;
       return mountRounds();
     }
     function mountRounds(){
-      const seen=new Set();
+      const groups=new Map();
       let failed=false;
       rounds.forEach((r,idx)=>{
-        try{ mountRoundWithExclusions(idx,seen); }
+        const key=r.sourceSession||'';if(!groups.has(key))groups.set(key,new Set());
+        try{ mountRoundWithExclusions(idx,groups.get(key)); }
         catch(error){
           if(error.code!=='NM_UNIQUE_POOL_EXHAUSTED') throw error;
           failed=true;r.__code='';
@@ -8619,6 +8768,13 @@ ${answerSectionsHtml}`;
       const roundEl = overlay.querySelector(`.nm-pe-round[data-round="${idx}"]`);
       if(!roundEl) return;
       const r = rounds[idx];
+      if(r.magicUnit){
+        const built=renderMagicNotePage(r,{name:opts.cover&&opts.cover.name,roundNo:idx+1});
+        r.__problems=[];r.__uniqueKeys=[];r.__code='';
+        roundEl.innerHTML=roundHeadHtml(idx)+(built?built.html:'');
+        roundEl.querySelectorAll('.nm-w2-tex, .nm-cp-tex').forEach(el=>renderKaTeX(el.dataset.tex||'',el));
+        return;
+      }
       const built = renderRoundPages(r, { count: r.count || perTypeCount, exclude:seen });
       r.__problems=built.problems;
       r.__uniqueKeys=built.uniqueKeys||built.problems.map(problemKey);
@@ -8685,7 +8841,7 @@ ${answerSectionsHtml}`;
           <button class="nm-pe-close" id="nm-pe-close">${esc(lk('닫기 ✕','Close ✕','关闭 ✕'))}</button>
         </div>
         <div class="nm-pe-toolbar-row">
-          ${opts.pacing?`<span class="nm-pe-opt-label">설계 분량 ${rounds.reduce((n,r)=>n+r.count,0)}문항 · 유형별 ${rounds.map(r=>r.count).join(' + ')} · 충분히 풀고 마무리</span>`:`<span class="nm-pe-opt-label">${esc(lk('문항 수','Count','题量'))}</span><div class="nm-pe-seg" id="nm-pe-count-seg">${[10,12,20,40].map(n => `<button data-n="${n}" class="${perTypeCount===n?'sel':''}">${n}</button>`).join('')}</div>`}
+          ${opts.pacing||opts.compactHigh||rounds.some(r=>r.compactHigh)?`<span class="nm-pe-opt-label">${esc(lk('설계 분량','Planned practice','计划题量'))} ${rounds.reduce((n,r)=>n+(r.count||0),0)}${esc(lk('문항',' items','题'))}</span>`:`<span class="nm-pe-opt-label">${esc(lk('문항 수','Count','题量'))}</span><div class="nm-pe-seg" id="nm-pe-count-seg">${[10,12,20,40].map(n => `<button data-n="${n}" class="${perTypeCount===n?'sel':''}">${n}</button>`).join('')}</div>`}
           <label class="nm-ex-concept-toggle" style="margin-left:4px">
             <input type="checkbox" id="nm-pe-cover-chk" ${coverOn?'checked':''}>
             <span>📘 ${esc(lk('표지','Cover','封面'))}</span>
@@ -8743,7 +8899,7 @@ ${answerSectionsHtml}`;
         try{ navigator.clipboard && navigator.clipboard.writeText(text); }catch(err){}
       });
       overlay.querySelector('#nm-pe-print').addEventListener('click', () => {
-        NM_EXAM.renderPrintMulti(rounds, label, { mixed: perTypeCount, cover: opts.cover || null, units: opts.units || null, pacing:!!opts.pacing });
+        NM_EXAM.renderPrintMulti(rounds, label, { mixed: perTypeCount, cover: opts.cover || null, units: opts.units || null, pacing:!!opts.pacing,compactHigh:opts.compactHigh||rounds.some(r=>r.compactHigh) });
         if(typeof opts.onPrint === 'function') opts.onPrint();
       });
 

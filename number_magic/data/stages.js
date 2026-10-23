@@ -14,7 +14,7 @@
 
    ── 지켜야 할 것 ──
    - 순수 대입만 한다(의존 없음). ws.html 에는 main.js 도 roadmap.js 도 없다.
-   - weeks 는 courses.js 의 **세션 수 실측값**이다(주 1회 기준). 손으로 고치지 말고
+   - weeks 는 기본 주 1회 학습 묶음 수다(고등은 high-pacing.js의 묶음, 나머지는 courses.js 회차)(주 1회 기준). 손으로 고치지 말고
      scripts/check-stages.js 로 검산한다 — 코드가 바뀌면 광고가 조용히 틀린다.
    - band(학년대)는 앱 ROAD_TIERS 문구를 그대로 쓴다. 우리 편성은 학교 진도보다 앞서 있어서
      (계산의 새싹에 구구단이 들어 있다) aheadNote 를 반드시 같이 노출한다 —
@@ -144,7 +144,7 @@ window.NM_STAGES = [
     name:{ko:'중학교 — 기호가 바뀌는 자리',en:'Middle School — where the symbols change',zh:'初中——符号改变的地方'},
     band:{ko:'중학교 1~3학년',en:'Grades 7–9',zh:'初中一~三年级'},
     chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W8-6','W8-7','W8-8','W9-1','W9-2','W9-3','W9-4','W9-5','W10-1','LAB-NUMLINE','W10-2','W10-3','W10-4','W10-5','W10-6','W10-7'],
-    tiers:['middle1','middle2','middle3'], courses:{from:29,to:37}, weeks:93,
+    tiers:['middle1','middle2','middle3'], courses:{from:29,to:37}, weeks:86,
     learn:{
       ko:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 단항식, 다항식, 연립방정식과 일차부등식, 일차함수, 경우의 수, 제곱근, 인수분해와 이차방정식, 이차함수, 산포도, 사분위수·상자그림, 산점도·상관관계.',
       en:'Integers and rationals, signs, algebraic expressions, equations and proportion, exponents and polynomials, systems and inequalities, functions, counting, roots, factorisation and quadratics, dispersion, quartiles and box plots, and scatter plots and correlation.',
@@ -158,7 +158,7 @@ window.NM_STAGES = [
       {sym:'−', tr:{ko:'0을 기준으로 반대 방향',en:'the opposite direction from zero',zh:'以0为界的相反方向'}},
       {sym:'x', tr:{ko:'아직 모르는 수의 자리 — 초1의 □가 자란 것',en:'the seat of the unknown — the □ of Grade 1, grown up',zh:'未知数的位置——小一的□长大了'}},
       {sym:'√', tr:{ko:'제곱하기 전의 나',en:'me, before I was squared',zh:'平方之前的我'}}],
-    meta:{ko:'과정 29~37 · 주 2회 기준 49주(주 1회 93주) · 실험실 2',en:'Courses 29–37 · 49 weeks at two sheets a week (93 at one) · 2 labs',zh:'课程29~37 · 每周2次约49周(每周1次93周) · 2个实验室'}
+    meta:{ko:'과정 29~37 · 주 2회 기준 46주(주 1회 86주) · 실험실 2',en:'Courses 29–37 · 46 weeks at two sheets a week (86 at one) · 2 labs',zh:'课程29~37 · 每周2次约46周(每周1次86周) · 2个实验室'}
   },
   /* 고등(2026-09-29) — 원장 "공통수학1, 공통수학2도 있어야지 / 대수 / 미적분1".
      한 칸에 네 과목을 묶어 두었던 'high' 단계를 과목마다 한 단계로 나눈다(로드맵 10단계).
@@ -168,7 +168,7 @@ window.NM_STAGES = [
     name:{ko:'공통수학1 — 다항식의 탑',en:'Common Math 1 — Tower of Polynomials',zh:'共同数学1——多项式之塔'},
     band:{ko:'고등 · 공통수학1',en:'High school · Common Math 1',zh:'高中 · 共同数学1'},
     chapters:['W11-1','W11-2'],
-    tiers:['highmath1'], courses:{from:38,to:48}, weeks:76,
+    tiers:['highmath1'], courses:{from:38,to:48}, weeks:24,
     learn:{
       ko:'다항식의 연산과 나머지정리, 곱셈공식의 확장과 항등식, 인수분해, 이차방정식의 판별식과 근과 계수의 관계, 이차부등식, 행렬.',
       en:'Operations on polynomials and the remainder theorem, extended product formulas and identities, factorisation, the discriminant and the relation between roots and coefficients, quadratic inequalities, matrices.',
@@ -180,14 +180,14 @@ window.NM_STAGES = [
     example:'f(x) = (x − 1)Q(x) + R → R = f(1)',
     symbols:[
       {sym:'f(x)', tr:{ko:'x를 넣으면 결과가 나오는 기계',en:'a machine: put x in, a result comes out',zh:'放进x就出结果的机器'}}],
-    meta:{ko:'과정 38~48 · 주 2회 기준 40주(주 1회 76주)',en:'Courses 38–48 · 40 weeks at two sheets a week (76 at one)',zh:'课程38~48 · 每周2次约40周(每周1次76周)'}
+    meta:{ko:'과정 38~48 · 주 2회 기준 12주(주 1회 24주)',en:'Courses 38–48 · 12 weeks at two sheets a week (24 at one)',zh:'课程38~48 · 每周2次约12周(每周1次24周)'}
   },
   {
     key:'common2', icon:'📍', accent:'#1b6e5b', status:'partial',
     name:{ko:'공통수학2 — 도형의 방정식 나라',en:'Common Math 2 — Land of Coordinate Geometry',zh:'共同数学2——图形方程之国'},
     band:{ko:'고등 · 공통수학2',en:'High school · Common Math 2',zh:'高中 · 共同数学2'},
     chapters:['W12-1','W12-2'],
-    tiers:['highmath2'], courses:{from:49,to:57}, weeks:67,
+    tiers:['highmath2'], courses:{from:49,to:57}, weeks:24,
     learn:{
       ko:'두 점 사이의 거리, 중점과 내분점, 직선의 방정식, 두 직선의 평행·수직 조건, 원의 방정식.',
       en:'The distance between two points, midpoints and internal division, equations of lines, conditions for parallel and perpendicular lines, equations of circles.',
@@ -199,14 +199,14 @@ window.NM_STAGES = [
     example:'(0, 0) ↔ (3, 4) → √(3² + 4²) → 5',
     symbols:[
       {sym:'(x, y)', tr:{ko:'좌표평면 위의 한 점 — 가로 x, 세로 y',en:'one point on the coordinate plane — across x, up y',zh:'坐标平面上的一个点——横x，竖y'}}],
-    meta:{ko:'과정 49~57 · 주 2회 기준 36주(주 1회 67주)',en:'Courses 49–57 · 36 weeks at two sheets a week (67 at one)',zh:'课程49~57 · 每周2次约36周(每周1次67周)'}
+    meta:{ko:'과정 49~57 · 주 2회 기준 12주(주 1회 24주)',en:'Courses 49–57 · 12 weeks at two sheets a week (24 at one)',zh:'课程49~57 · 每周2次约12周(每周1次24周)'}
   },
   {
     key:'algebra', icon:'Σ', accent:'#5b3a8f', status:'partial',
     name:{ko:'대수 — 기호의 탑',en:'Algebra — Tower of Symbols',zh:'代数——符号之塔'},
     band:{ko:'고등 · 대수',en:'High school · Algebra',zh:'高中 · 代数'},
     chapters:['W13-1','W13-2','W13-3','W13-4','W13-5'],
-    tiers:['algebra'], courses:{from:58,to:69}, weeks:92,
+    tiers:['algebra'], courses:{from:58,to:69}, weeks:24,
     learn:{
       ko:'지수와 로그·상용로그, 지수함수와 로그함수, 지수·로그 방정식과 부등식, 호도법과 삼각함수·그래프·삼각방정식, 사인·코사인법칙과 넓이, 등차·등비수열과 원리합계, Σ와 여러 가지 수열의 합, 귀납적 정의와 수학적 귀납법.',
       en:'Exponents, logarithms and common logarithms, exponential and log functions, exponential and log equations and inequalities, radians, trigonometric functions, their graphs and equations, the sine and cosine laws and area, arithmetic and geometric sequences with compound savings, Σ and sums of various sequences, and recursive definitions with mathematical induction.',
@@ -219,7 +219,7 @@ window.NM_STAGES = [
     symbols:[
       {sym:'log', tr:{ko:'지수 사다리를 거꾸로 읽어라',en:'read the ladder of exponents backwards',zh:'把指数的梯子倒过来读'}},
       {sym:'Σ', tr:{ko:'쭉 더해라',en:'add them all up',zh:'一路加下去'}}],
-    meta:{ko:'과정 58~69 · 주 2회 기준 48주(주 1회 92주)',en:'Courses 58–69 · 48 weeks at two sheets a week (92 at one)',zh:'课程58~69 · 每周2次约48周(每周1次92周)'}
+    meta:{ko:'과정 58~69 · 주 2회 기준 12주(주 1회 24주)',en:'Courses 58–69 · 12 weeks at two sheets a week (24 at one)',zh:'课程58~69 · 每周2次约12周(每周1次24周)'}
   },
   {
     key:'calculus1', icon:'∫', accent:'#0d3b66', status:'partial',

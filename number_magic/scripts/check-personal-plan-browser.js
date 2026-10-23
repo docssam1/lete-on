@@ -21,7 +21,9 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
   let checks=0;
   const context=async(width)=>{const c=await browser.newContext({viewport:{width:width||390,height:900},reducedMotion:'reduce'});await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());return c;};
   const owner='22222222-2222-4222-8222-222222222222',NAME='개인로드맵';
+  const high=process.argv.includes('--high');
   const settings={profileName:NAME,version:7,courseKey:'C4',sessionIndex:3,speed:1.5,amount:1.25,cadence:'w2',entryYear:2020,startDate:'2026-10-19',updatedAt:'2026-10-20T00:00:00.000Z'};
+  if(high)Object.assign(settings,{courseKey:'C58',sessionIndex:1,speed:1,amount:1,startDate:'2026-10-23'});
   const original={name:NAME,lang:'ko',onboarded:true,cloudLinked:true,cloudOwnerId:owner,view:'courseroad',progress:{'A-02':{done:true,steps:{stamp:true}}},account:{status:'active'},character:{number:3,color:'blue',hat:'none'},avatar:{id:'legacy',kind:'boy',look:'boy',name:'',outfit:'original'}};
   const session={access_token:'fake-owner-token',refresh_token:'fake-refresh',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:owner,email:'guardian@example.test'},password_setup_pending:false};
   const T={
@@ -66,17 +68,28 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
       assert.equal(await page.locator('#nmPersonalPlan').evaluate(e=>e.open),true);
       assert.equal(await page.locator('#nmPersonalPlan article').count(),12,tag+' 12 months');
       const startLine=await page.locator('#nmPersonalPlan .nm-personal-plan-body > p').nth(1).innerText();
-      assert(startLine.includes(settings.startDate)&&startLine.includes('1.5')&&/2/.test(startLine),tag+' custom start/speed/cadence shown: '+startLine);
+      assert(startLine.includes(settings.startDate)&&startLine.includes(String(settings.speed))&&/2/.test(startLine),tag+' custom start/speed/cadence shown: '+startLine);
       const lay=await page.evaluate(()=>{const w=innerWidth;return{scroll:document.documentElement.scrollWidth>w+2,bad:[...document.querySelectorAll('#nmPersonalPlan, #nmPersonalPlan *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(r.right>w+1||r.left<-1);}).map(e=>e.tagName+'.'+(e.className||''))};});
       assert(!lay.scroll&&lay.bad.length===0,tag+' overflow: '+lay.bad.join(','));
       if(process.env.NM_SCREENSHOT_DIR&&lang==='ko'){fs.mkdirSync(process.env.NM_SCREENSHOT_DIR,{recursive:true});await page.screenshot({path:path.join(process.env.NM_SCREENSHOT_DIR,'personal-plan-'+width+'.png')});}
       const st=await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')));
-      assert.equal(st.adminPlan.version,settings.version);assert.equal(st.roadSpeed,1.5);assert.equal(st.roadAmount,1.25);assert.equal(st.roadCadence,'w2');assert.equal(st.schoolAge.entryYear,2020);
+      assert.equal(st.adminPlan.version,settings.version);assert.equal(st.roadSpeed,settings.speed);assert.equal(st.roadAmount,settings.amount);assert.equal(st.roadCadence,'w2');assert.equal(st.schoolAge.entryYear,2020);
       for(const k of ['name','progress','character','avatar','cloudOwnerId','cloudLinked','account'])assert.deepEqual(st[k],original[k],tag+' private record '+k+' preserved');
       assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_guardian_session_v1')).access_token),'fake-owner-token');
       assert.deepEqual(calls.filter(c=>c.action!=='status'),[],tag+' only status calls');
       assert.deepEqual(writes,[],tag+' no profile/auth writes');
       assert(external.every(x=>x.method==='GET'||(x.url.includes('/functions/v1/nm-membership')||x.url.includes('/auth/v1/token?grant_type=password'))),tag+' unexpected external writes '+JSON.stringify(external));
+      if(high){
+        const result=await page.evaluate(()=>{
+          const p=NM_LEARNING_PLAN.project(NM_COURSES,{courseKey:'C58',sessionIndex:1,speed:1,cadence:'w2',pace:'p2',startDate:'2026-10-23',entryYear:2020},{now:'2026-10-23'});
+          const timing=NM_ROAD_TIMING({curKey:'C58',curFrac:0,smNow:90,cad:'w2',pace:'p2',speed:1});
+          const fast=NM_ROAD_TIMING({curKey:'C58',curFrac:0,smNow:90,cad:'w2',pace:'p2',speed:1.5});
+          return {days:(Date.parse(p.milestones.find(m=>m.key==='C69').date)-Date.parse('2026-10-23'))/86400000,weeks:timing.rows.C69.endWeeks,fast:fast.rows.C69.endWeeks};
+        });
+        assert.equal(result.days,84,tag+' calendar is 12 weeks');assert.equal(result.weeks,12,tag+' main roadmap is 12 weeks');assert.equal(result.fast,8,tag+' main 1.5× is 8 weeks');
+        assert.equal(st.weeklyDigest.highStartDate,settings.startDate,tag+' digest uses plan anchor');assert.equal(st.weeklyDigest.highSpeed,settings.speed,tag+' digest uses plan speed');
+        if(process.env.NM_EVIDENCE_DIR){fs.mkdirSync(process.env.NM_EVIDENCE_DIR,{recursive:true});await page.screenshot({path:path.join(process.env.NM_EVIDENCE_DIR,'high-road-'+width+'-'+lang+'.png')});}
+      }
       checks++;await ctx.close();
     }
     // Short link /w/?m=<32 hex>: resolves through the mocked membership function.
@@ -93,7 +106,7 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
       });
       return {ctx,page,seen,hops,external};
     };
-    const goodCfg={courseKey:'C4',week:'2026-W43',k:2,amount:0.7,cadence:'w2',sessionIndex:2};
+    const goodCfg={courseKey:high?'C58':'C4',...(high?{highPlanVersion:'20261023-high3m',highStartDate:'2026-10-19',highSpeed:1.5}:{}),week:'2026-W43',k:2,amount:0.7,cadence:'w2',sessionIndex:2};
     {
       const {ctx,page,seen,external}=await shortCtx((r,b)=>b.action==='resolve_worksheet'&&b.token===TOKEN?r.fulfill({headers:CORS,json:{config:goodCfg,redirect:'https://evil.example/x',url:'https://evil.example/y'}}):r.fulfill({status:400,headers:CORS,json:{error:'bad'}}));
       await page.goto(base+'/w/?m='+TOKEN);
@@ -101,8 +114,8 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
       const u=new URL(page.url());
       assert.equal(u.origin,base,'redirect stays on the same origin');
       assert.equal(u.pathname,'/number_magic/ws.html');
-      assert.deepEqual(Object.fromEntries(u.searchParams),{c:'C4',w:'2026-W43',k:'2',cad:'w2',amt:'0.7',s:'2',p:'1',auto:'0'});
-      assert.equal([...u.searchParams].length,8,'no extra params');
+      assert.deepEqual(Object.fromEntries(u.searchParams),{c:goodCfg.courseKey,w:'2026-W43',k:'2',cad:'w2',amt:'0.7',s:'2',p:'1',auto:'0',...(high?{hp:'1',hs:'2026-10-19',hv:'1.5'}:{})});
+      assert.equal([...u.searchParams].length,high?11:8,'no extra params');
       assert.deepEqual(seen,[{action:'resolve_worksheet',token:TOKEN}]);
       await page.waitForFunction(()=>window.NM_WS_READY!==undefined);
       assert.equal(await page.evaluate(()=>window.NM_WS_READY),true,'personalised worksheet renders');
@@ -149,6 +162,6 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
       assert.equal(seen.length,0,'legacy link makes no membership request');
       checks++;await ctx.close();
     }
-    console.log('PERSONAL_PLAN_BROWSER_OK cases='+checks+' externalWrites=0');
+    console.log('PERSONAL_PLAN_BROWSER_OK high='+high+' cases='+checks+' externalWrites=0');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

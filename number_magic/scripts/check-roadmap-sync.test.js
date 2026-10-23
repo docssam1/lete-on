@@ -45,6 +45,7 @@ function run(){
   mutant('menu duplicate','data/drill-topics.js',append('window.NM_DRILL_TOPICS[0].subs.push(window.NM_DRILL_TOPICS[0].subs[0]);'),'MENU_DUPLICATE');
   mutant('menu invalid level','data/drill-topics.js',append('window.NM_DRILL_TOPICS[0].subs[0].level=999;'),'LEVEL_UNKNOWN');
   mutant('unknown new thread requires category','data/threads.js',append("window.NM_THREADS.NEW=Object.assign({},window.NM_THREADS.AD1);"),'SCRIPT_EVAL');
+  for(const page of ['index.html','drill.html','ws.html']) mutant(page+' high pacing removed',page,s=>s.replace(/<script src="data\/high-pacing\.js[^"]*"><\/script>/,''),'PAGE_DATA');
   const w={};w.window=w;vm.createContext(w);
   vm.runInContext(read(path.join(ROOT,'data/threads.js')),w);
   for(const g of ['1-3','4-6','7-9','10-12','13-15'])vm.runInContext(read(path.join(ROOT,'data/g1/'+g+'-threads.js')),w);
