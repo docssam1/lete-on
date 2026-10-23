@@ -226,7 +226,7 @@ window.NM_STAGES = [
     name:{ko:'미적분Ⅰ — 변화의 정상',en:'Calculus I — Summit of Change',zh:'微积分Ⅰ——变化之巅'},
     band:{ko:'고등 · 미적분Ⅰ',en:'High school · Calculus I',zh:'高中 · 微积分Ⅰ'},
     chapters:['W14-1','W14-2','W14-3','W14-4','LAB-WHYCALC','LAB-CALC1'],
-    tiers:['calculus1'], courses:{from:70,to:73}, weeks:20,
+    tiers:['calculus1'], courses:{from:70,to:73}, weeks:24,
     learn:{
       ko:'함수의 극한과 연속, 미분계수와 도함수·미분법 공식, 접선·평균값 정리·증가와 감소·극값·최대와 최소·방정식과 부등식에의 활용, 다항함수의 적분·정적분의 성질, 넓이와 속도·거리.',
       en:'Limits and continuity, the derivative at a point, the derived function and the rules of differentiation, tangents, the mean value theorem, increase and decrease, extrema, maximum and minimum, applications to equations and inequalities, integrating polynomials and properties of definite integrals, area and speed and distance.',
@@ -240,7 +240,7 @@ window.NM_STAGES = [
       {sym:'lim', tr:{ko:'x가 다가가는 값',en:'the value x approaches',zh:'x趋近的值'}},
       {sym:'f′', tr:{ko:'순간의 기울기',en:'the instantaneous slope',zh:'瞬时斜率'}},
       {sym:'∫', tr:{ko:'잘게 쪼개 다 더해라',en:'cut it fine and add it all up',zh:'切细了全部加起来'}}],
-    meta:{ko:'과정 70~73 · 주 2회 기준 11주(주 1회 20주) · 실험실 2',en:'Courses 70–73 · 11 weeks at two sheets a week (20 at one) · 2 labs',zh:'课程70~73 · 每周2次约11周(每周1次20周) · 2个实验室'}
+    meta:{ko:'과정 70~73 · 주 2회 기준 12주(주 1회 24주) · 20회차 · 실험실 2',en:'Courses 70–73 · 12 weeks at two sheets a week (24 at one) · 20 sessions · 2 labs',zh:'课程70~73 · 每周2次约12周(每周1次24周) · 20课次 · 2个实验室'}
   }
 ];
 

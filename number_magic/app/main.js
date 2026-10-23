@@ -670,6 +670,9 @@ function highWeeklySchedule(courseKey){
   if(!managed&&!S.roadManual&&!S.middleCadenceDefaultVersion&&/^middle[123]$/.test((window.NM_COURSES||{})[anchorKey]?.tier||'')){
     S.roadCadence='w2';S.middleCadenceDefaultVersion='20261023-core10';
   }
+  if(!managed&&!S.roadManual&&!S.calculusCadenceDefaultVersion&&(window.NM_COURSES||{})[anchorKey]?.tier==='calculus1'){
+    S.roadCadence='w2';S.calculusCadenceDefaultVersion='20261024-calculus3m';
+  }
   if(managed&&(window.NM_COURSES||{})[managed.courseKey]?.studyPlan&&managed.startDate)
     return {courseKey:managed.courseKey,sessionIndex:managed.sessionIndex||1,startDate:managed.startDate,speed:managed.speed||1,cadence:managed.cadence||'w2'};
   if(S.highSchedule&&(window.NM_COURSES||{})[S.highSchedule.courseKey]?.studyPlan)
@@ -2722,7 +2725,7 @@ function roadPaceMult(key){
    두고 배수만 곱한다. 고등 묶음은 속도에 따른 소수 주수를 누적한다. */
 function coursePaceWeeks(course, cadence, mult, speed){
   const n=typeof course==='number'?course:courseLessonCount(course);
-  if(course&&course.studyPlan)return n/(cadence==='w2'?2:1)/(speed||S.roadSpeed||1);
+  if(course&&course.studyPlan)return NM_HIGH_PACING.durationUnits(course)/(cadence==='w2'?2:1)/(speed||S.roadSpeed||1);
   return Math.max(1, Math.round(courseWeeks(n,cadence)*(mult||1)));
 }
 /* 구간 합계 {sessions, weeks} — from~to는 과정 번호(포함).
@@ -2733,7 +2736,7 @@ function roadTotals(from, to, cadence, mult, speed){
   roadCourseList().forEach(x=>{
     if(x.num<from||x.num>to) return;
     const n=courseLessonCount(x.c);hasHigh=hasHigh||!!x.c.studyPlan;
-    sessions+=n; weeks+=x.c.studyPlan?n/(cadence==='w2'?2:1)/(speed||S.roadSpeed||1):courseWeeks(n,cadence)*(mult||1); courses++;
+    sessions+=n; weeks+=x.c.studyPlan?NM_HIGH_PACING.durationUnits(x.c)/(cadence==='w2'?2:1)/(speed||S.roadSpeed||1):courseWeeks(n,cadence)*(mult||1); courses++;
   });
   weeks=hasHigh?Math.ceil(weeks-1e-9):Math.round(weeks);
   return {sessions, weeks, courses, months: Math.round(weeks/4)};
@@ -3834,8 +3837,8 @@ function renderPersonalPlan(){
   let standardBox=document.getElementById('nmStandardPlan');
   if(!standardBox){standardBox=document.createElement('section');standardBox.id='nmStandardPlan';standardBox.className='nm-personal-plan';box.insertAdjacentElement('beforebegin',standardBox);}
   const standard=NM_LEARNING_PLAN.standard(NM_COURSES,{...settings,birthYear:S.schoolAge?.birthYear},{months:12,lang:S.lang,now});
-  const gradeEnds=new Set([31,34,37,48,57,69]);
-  const standardEnds=standard.milestones.filter(m=>gradeEnds.has(+m.key.slice(1))).slice(0,6);
+  const gradeEnds=new Set([31,34,37,48,57,69,73]);
+  const standardEnds=standard.milestones.filter(m=>gradeEnds.has(+m.key.slice(1))).slice(0,7);
   standardBox.innerHTML=`<div class="nm-personal-plan-body"><h3>${lk('현재 진도에서 이어지는 표준 로드맵','Standard roadmap from your current progress','从当前进度开始的标准路线')}</h3><p>${lk('중등은 각 학년의 1학기 연산을 기본 약 2.5개월로 잡아요. 심화를 선택하면 기본 포함 총 약 4개월이에요. 고등 각 과목은 약 3개월이며 실제 학습에 따라 달라져요.','Each middle-school grade’s first-semester arithmetic targets about 2.5 months, or about 4 months including optional deeper study. Each high-school subject targets 3 months. Actual pace may vary.','初中各年级上学期运算基础约2.5个月，选择进阶后合计约4个月。高中每科约3个月，日期随实际学习调整。')}</p>${standardEnds.map(m=>`<p><b>${esc(m.date)}</b> · ${esc(m.key+' · '+m.title)} <small>${esc(m.schoolLabel)}</small></p>`).join('')}<p>${lk('아래에서 표준·속진과 5단계 속도를 비교한 뒤 적용할 수 있어요. 이미 배운 앞부분과 완료 기록은 바꾸지 않아요.','Compare standard or accelerated study and five pace steps below, then apply. Earlier completed work is preserved.','可在下方比较标准、加速与5档速度后应用，已学内容和完成记录保留。')}</p></div>`;
   const guidance=middleStudyGuidanceState();
   if(guidance&&window.NM_MIDDLE_STUDY_GUIDANCE){
@@ -4106,7 +4109,7 @@ function screenCourseRoad(){
     const goalKey=nextGoalKey(curKey);
     const goalC=goalKey?(window.NM_COURSES||{})[goalKey]:null;
     const curC=(window.NM_COURSES||{})[curKey];
-    const middleRoute=!!curC&&/^middle[123]$/.test(curC.tier);
+    const middleRoute=!!curC&&/^middle[123]$/.test(curC.tier),calculusRoute=curC?.tier==='calculus1';
     const fresh=!mostRecentTouchedUnit();
     const courseLine=(key,c)=>`${lk('과정','Course','课程')} ${String(key).replace(/^C/,'')} · ${esc(L(c.title))}`;
 
@@ -4144,10 +4147,10 @@ function screenCourseRoad(){
       <div class="nm-cr-step">
         <div class="nm-cr-cad-h"><i>1</i>${middleRoute?lk('중등 학습 경로','Middle-school route','初中学习路径'):lk('주당 학습 묶음','Study bundles per week','每周学习组')}</div>
         <div class="nm-cr-seg" role="group" aria-label="${lk('수업 횟수','Class frequency','上课次数')}">
-          ${segBtn('cad','w1',cad==='w1',middleRoute?lk('주 1묶음 · 천천히','1 bundle per week · slower','每周1组 · 慢速'):lk('주 1묶음','1 per week','每周1组'))}
-          ${segBtn('cad','w2',cad==='w2',middleRoute?lk('주 2묶음 · 기본 2.5개월','2 bundles per week · core 2.5 months','每周2组 · 基础2.5个月'):lk('주 2묶음','2 per week','每周2组'))}
+          ${segBtn('cad','w1',cad==='w1',middleRoute?lk('주 1묶음 · 천천히','1 bundle per week · slower','每周1组 · 慢速'):calculusRoute?lk('천천히 · 24주','Slower · 24 weeks','慢速 · 24周'):lk('주 1묶음','1 per week','每周1组'))}
+          ${segBtn('cad','w2',cad==='w2',middleRoute?lk('주 2묶음 · 기본 2.5개월','2 bundles per week · core 2.5 months','每周2组 · 基础2.5个月'):calculusRoute?lk('기본 · 12주','Standard · 12 weeks','标准 · 12周'):lk('주 2묶음','2 per week','每周2组'))}
         </div>
-        <p class="nm-cr-cadnote">${cad==='w2'
+        <p class="nm-cr-cadnote">${calculusRoute?lk('기본은 20회차를 12주에 나누어 공부해요. 주마다 1~2회차가 배정되며, 속도를 바꾸면 일정도 달라져요.','The standard plan distributes 20 sessions over 12 weeks, one or two sessions each week. Changing pace changes the schedule.','标准计划将20课次分配到12周，每周1~2课次，速度改变时日程也会调整。'):cad==='w2'
           ? lk('한 주에 수업 2회 — 한 과정에 드는 주가 절반이 돼요. 더 다지고 싶으면 아래에서 속도를 낮춰요.',
                'Two classes a week — a course takes half the weeks. To consolidate more, lower the speed below.',
                '每周上课2次，一个课程所需周数减半。想多巩固，可在下面调低速度。')
@@ -4345,7 +4348,8 @@ function screenCourseRoad(){
               :en?`Usually from ${schoolMonthsLabel(r.need)}`:`通常从${schoolMonthsLabel(r.need)}起`}</span>`; })()}
         </div>`;
         if(!again) html+=middlePacingHtml(c.tier);
-        if(!again&&c.studyPlan&&!/^middle/.test(c.tier)) html+=`<p class="nm-cr-cadfoot">${lk('교과 연산 24묶음 · 주 2회 기준 12주(약 3개월). 기존 회차를 합쳐 주당 학습량을 늘렸어요.','24 curriculum-practice bundles · 12 weeks at two bundles a week. Existing sessions are combined into a larger weekly workload.','24组课内运算 · 每周2组共12周（约3个月）。合并原课次，增加每周学习量。')}</p>`;
+        if(!again&&c.studyPlan&&c.tier==='calculus1') html+=`<p class="nm-cr-cadfoot">${lk('미적분Ⅰ 20회차 · 기본 12주(약 3개월). 과정 점검 4회를 포함해 매주 1~2회차를 나누어 공부해요.','Calculus I: 20 sessions over 12 weeks (about 3 months), including four course checks. One or two sessions are scheduled each week.','微积分Ⅰ20课次，基础12周（约3个月），包含4次课程检查，每周安排1~2课次。')}</p>`;
+        else if(!again&&c.studyPlan&&!/^middle/.test(c.tier)) html+=`<p class="nm-cr-cadfoot">${lk('교과 연산 24묶음 · 주 2회 기준 12주(약 3개월). 기존 회차를 합쳐 주당 학습량을 늘렸어요.','24 curriculum-practice bundles · 12 weeks at two bundles a week. Existing sessions are combined into a larger weekly workload.','24组课内运算 · 每周2组共12周（约3个月）。合并原课次，增加每周学习量。')}</p>`;
         prevTier=c.tier;
       }
       const tierDef=roadTierInfo(c.tier);
@@ -4451,7 +4455,7 @@ function screenCourseRoad(){
       listEl.querySelectorAll('[data-study-route]').forEach(el=>window.NM_STUDY_ROUTE.mount(el,{lang:S.lang,course:gp?gp.main.course:currentCourseKey(),session:gp?gp.main.session:1,cadence:S.roadCadence}));
     }
     body.querySelectorAll('.nm-cr-seg button[data-cad]').forEach(el=>{
-      el.onclick=()=>{ S.roadCadence=el.dataset.cad; save(); draw(true); };
+      el.onclick=()=>{ S.roadCadence=el.dataset.cad; S.roadManual=true; save(); draw(true); };
     });
     body.querySelectorAll('.nm-cr-pacebtn[data-pace]').forEach(el=>{
       el.onclick=()=>{ S.roadPace=el.dataset.pace; save(); draw(true); };
@@ -8519,7 +8523,7 @@ function screenExam(){
     currentCourse: currentCourseKey(), tiers: ROAD_TIERS,
     /* 주차 라벨용 — 연산 로드맵 화면(courseroad)과 같은 설정을 공유한다 */
     cadence: S.roadCadence,
-    onCadence: c => { if(c==='w1'||c==='w2'){ S.roadCadence=c; save(); } },
+    onCadence: c => { if(c==='w1'||c==='w2'){ S.roadCadence=c; S.roadManual=true; save(); } },
     /* 세션 인쇄 회수(2026-09-04, "웹페이지 들어가면 추가로 계속 인쇄") — 참조를 그대로
        넘긴다(같은 객체를 exam.js가 읽고, onPrinted로 쓰기만 요청). */
     roadPrints: S.roadPrints,

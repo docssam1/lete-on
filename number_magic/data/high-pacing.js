@@ -5,10 +5,15 @@
   const W = typeof window !== 'undefined' ? window : globalThis;
   const VERSION = '20261023-high3m';
   const MIDDLE_VERSION = '20261023-middle25';
+  const CALCULUS_VERSION = '20261024-calculus3m';
   const HIGH_TIERS = ['highmath1', 'highmath2', 'algebra'];
   const MIDDLE_TIERS = ['middle1', 'middle2', 'middle3'];
-  const TIERS = [...MIDDLE_TIERS, ...HIGH_TIERS];
-  const TEST_SECONDS = {middle1:40, middle2:45, middle3:50, highmath1:60, highmath2:60, algebra:65};
+  const TIERS = [...MIDDLE_TIERS, ...HIGH_TIERS, 'calculus1'];
+  const TEST_SECONDS = {middle1:40, middle2:45, middle3:50, highmath1:60, highmath2:60, algebra:65, calculus1:70};
+  // The existing bands use five scheduling ticks per lesson. Calculus keeps
+  // each of its 20 source sessions whole and uses six ticks: 24 units in total,
+  // or 12 weeks at two units/week. No source lesson is split or repeated.
+  const UNIT_TICKS = 5;
   const own = (o, key) => Object.prototype.hasOwnProperty.call(o, key);
   const sessions = course => course && Array.isArray(course.sessions) ? course.sessions : [];
   const minutesOf = session => {
@@ -127,6 +132,15 @@
         if(JSON.stringify(course.studyPlan) !== JSON.stringify(plan)) course.studyPlan = plan;
       });
     });
+    list.filter(course => course && course.tier === 'calculus1' && sessions(course).length)
+      .forEach(course => {
+        const lessons = sessions(course).map((_, index) => ({
+          ...makeLesson(course, index, [index]), scheduleUnits:6 / UNIT_TICKS
+        }));
+        const plan = {version:CALCULUS_VERSION, lessons,
+          weeksW2:lessons.length * 6 / UNIT_TICKS / 2};
+        if(JSON.stringify(course.studyPlan) !== JSON.stringify(plan)) course.studyPlan = plan;
+      });
     return courses;
   }
   function lessonsOf(course){
@@ -136,6 +150,20 @@
   function length(course){
     const lessons = lessonsOf(course);
     return lessons ? lessons.length : sessions(course).length;
+  }
+  function lessonUnits(course, index){
+    const lesson = (lessonsOf(course) || [])[index == null ? 0 : index];
+    const units = Number(lesson && lesson.scheduleUnits);
+    return Number.isFinite(units) && units > 0 ? units : 1;
+  }
+  function durationUnits(course, legacyFrom){
+    const n = sessions(course).length;
+    if(!n || legacyFrom != null && Number(legacyFrom) > n) return 0;
+    const first = lessonIndex(course, legacyFrom == null ? 1 : legacyFrom);
+    const lessons = lessonsOf(course);
+    return lessons ? lessons.slice(first).reduce((ticks, _, index) => ticks
+      + Math.round(lessonUnits(course, first + index) * UNIT_TICKS), 0) / UNIT_TICKS
+      : n - first;
   }
   function lessonIndex(course, oneBasedLegacySession){
     const n = sessions(course).length;
@@ -159,7 +187,8 @@
     const sourceIndices = explicitStart && Number(opts.k) !== 2
       ? lesson.sourceIndices.filter(sourceIndex => sourceIndex >= start - 1)
       : lesson.sourceIndices;
-    return sourceIndices.length ? makeLesson(course, lesson.index, sourceIndices, lesson.extraPractice) : null;
+    return sourceIndices.length ? {...makeLesson(course, lesson.index, sourceIndices, lesson.extraPractice),
+      ...(lesson.scheduleUnits != null ? {scheduleUnits:lesson.scheduleUnits} : {})} : null;
   }
   function weeks(course, cadence, legacyFrom){
     const n = sessions(course).length;
@@ -168,7 +197,7 @@
     if(from > n) return 0;
     const perWeek = cadence === 'w1' ? 1 : cadence === 'w2' ? 2
       : Number(cadence) > 0 && Number.isFinite(Number(cadence)) ? Number(cadence) : 2;
-    return Math.ceil((length(course) - lessonIndex(course, from)) / perWeek);
+    return Math.ceil(durationUnits(course, from) / perWeek - 1e-9);
   }
   const DAY_MS = 86400000;
   function mondayOfDate(date){
@@ -195,7 +224,7 @@
     if(startMonday == null || weekMonday < startMonday) return null;
     const ordered = Object.entries(courses || {}).filter(([key, course]) => {
       const number = /^C(\d+)$/.exec(key);
-      return number && +number[1] <= 69 && TIERS.includes(course && course.tier) && lessonsOf(course);
+      return number && +number[1] <= 73 && TIERS.includes(course && course.tier) && lessonsOf(course);
     }).sort(([a], [b]) => Number(a.slice(1)) - Number(b.slice(1)));
     const base = ordered.findIndex(([key]) => key === opts.courseKey);
     if(base < 0) return null;
@@ -209,6 +238,7 @@
         if(selected) flat.push({courseKey, lessonIndex:selected.index,
           startSession:selected.startSession, endSession:selected.endSession,
           sourceIndices:selected.sourceIndices, estimatedMinutes:selected.estimatedMinutes,
+          ...(selected.scheduleUnits != null ? {scheduleUnits:selected.scheduleUnits} : {}),
           ...(selected.extraPractice ? {
             extraPractice:selected.extraPractice.map(item => ({...item})),
             estimatedExtraMinutes:selected.estimatedExtraMinutes
@@ -221,9 +251,14 @@
     // The five speeds are exact percentages. Integer multiplication avoids an
     // artificial extra week when, for example, 180 * 0.7 becomes 125.999… .
     const percent = Math.round(speed * 100);
-    const begin = Math.floor(weekOffset * perWeek * percent / 100);
-    const end = Math.floor((weekOffset + 1) * perWeek * percent / 100);
-    const weekLessons = flat.slice(begin, end);
+    const begin = weekOffset * perWeek * percent * UNIT_TICKS;
+    const end = (weekOffset + 1) * perWeek * percent * UNIT_TICKS;
+    let cumulativeTicks = 0;
+    const weekLessons = flat.filter(lesson => {
+      cumulativeTicks += Math.round((lesson.scheduleUnits || 1) * UNIT_TICKS);
+      const boundary = cumulativeTicks * 100;
+      return boundary > begin && boundary <= end;
+    });
     if(!weekLessons.length) return null;
     const k = Number(opts.k) === 2 ? 2 : 1;
     if(perWeek === 1 && k === 2) return null;
@@ -235,7 +270,7 @@
       estimatedMinutes:lessons.reduce((n, lesson) => n + lesson.estimatedMinutes, 0),
       weeklyMinutes:weekLessons.reduce((n, lesson) => n + lesson.estimatedMinutes, 0)};
   }
-  const api = {version:VERSION, attach, length, lessonIndex, select, weeks, assignment};
+  const api = {version:VERSION, attach, length, lessonUnits, durationUnits, lessonIndex, select, weeks, assignment};
   W.NM_HIGH_PACING = api;
   if(W.NM_COURSES) attach(W.NM_COURSES);
   if(typeof module !== 'undefined' && module.exports) module.exports = api;

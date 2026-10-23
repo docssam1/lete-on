@@ -37,14 +37,15 @@ for (const st of STAGES) {
   for (const k of Object.keys(COURSES)) {
     const num = courseNum(COURSES[k]);
     if (num < st.courses.from || num > st.courses.to) continue;
-    const nSess = window.NM_HIGH_PACING.length(COURSES[k]);
-    sessions += nSess; weeksW2 += w2(nSess); n++; // 주 2회는 과정마다 올림한다(main.js courseWeeks 와 같게)
+    const nSess = window.NM_HIGH_PACING.durationUnits(COURSES[k]);
+    sessions += nSess; weeksW2 += COURSES[k].studyPlan?nSess/2:w2(nSess); n++;
     if (seenCourses.has(num)) fail.push(`과정 ${num} 이 두 단계에 들어 있다`);
     seenCourses.add(num);
   }
   if (!n) { fail.push(`${st.key}: 과정 ${st.courses.from}~${st.courses.to} 이 courses.js 에 없다`); continue; }
 
-  if (st.weeks !== sessions) fail.push(`${st.key}: weeks ${st.weeks} ≠ 실측 세션 ${sessions}`);
+  sessions=+sessions.toFixed(8);weeksW2=Math.ceil(weeksW2-1e-9);
+  if (st.weeks !== sessions) fail.push(`${st.key}: weeks ${st.weeks} ≠ 실측 주1회 일정 ${sessions}`);
   totalSessions += sessions; totalW1 += sessions;
   st._w2 = weeksW2;
   if (st.courses.to <= 25) { opW1 += sessions; opW2 += weeksW2; }

@@ -7359,10 +7359,30 @@ const NM_EXAM = {
         return d;
       }
       const EN_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      function calLabelFor(offset){ // offset = 현재 위치부터 몇 번째 세션인가(0-base)
+      const entryTicks = entry => Math.round(Number(entry.lesson && entry.lesson.scheduleUnits || 1) * 5);
+      let calendarCache=null;
+      function calendarPositions(){
+        if(calendarCache && calendarCache.cadence===roadCadence) return calendarCache.positions;
+        const perWeek=roadCadence==='w2'?2:1, positions=new Map(), counts=new Map();
+        let started=false, ticks=0;
+        for(const x of list){
+          if(x.key===opts.currentCourse) started=true;
+          if(!started) continue;
+          for(const entry of roadEntries(x.c)){
+            ticks+=entryTicks(entry);
+            const weekOff=Math.ceil(ticks/(perWeek*5))-1;
+            const kth=(counts.get(weekOff)||0)+1;
+            counts.set(weekOff,kth);positions.set(ticks,{weekOff,kth});
+          }
+        }
+        calendarCache={cadence:roadCadence,positions};return positions;
+      }
+      function calLabelFor(offset, units=1){ // offset/units are weighted schedule units, never source indices.
         const perWeek = roadCadence==='w2' ? 2 : 1;
-        const weekOff = Math.floor(offset/perWeek);
-        const kth = (offset%perWeek)+1;
+        const endTicks=Math.round((offset+units)*5);
+        const position=calendarPositions().get(endTicks);
+        const weekOff=position?position.weekOff:Math.ceil(endTicks/(perWeek*5))-1;
+        const kth=position?position.kth:1;
         const mon = mondayOfThisWeek();
         mon.setDate(mon.getDate()+weekOff*7);
         const m = mon.getMonth()+1;
@@ -7376,10 +7396,16 @@ const NM_EXAM = {
         let acc=0, curSeen=false;
         for(const x of list){
           if(x.key===opts.currentCourse) curSeen=true;
-          if(x.key===courseKey) return curSeen ? acc : null;
-          if(curSeen) acc += roadEntries(x.c).length;
+          if(x.key===courseKey) return curSeen ? acc/5 : null;
+          if(curSeen) acc += roadEntries(x.c).reduce((ticks,entry)=>ticks+entryTicks(entry),0);
         }
         return null;
+      }
+      function sessionStartOffset(courseKey,index){
+        const off=courseStartOffset(courseKey);
+        if(off==null) return null;
+        return off+roadEntries(NM_COURSES[courseKey]).slice(0,index)
+          .reduce((ticks,entry)=>ticks+entryTicks(entry),0)/5;
       }
 
       /* ── 개인 로드맵 한 장 인쇄 — 다음 12세션을 주차·과정·구성으로 표에 ──
@@ -7387,18 +7413,17 @@ const NM_EXAM = {
          추천 계획일 뿐 순서는 자유(잠금 없음)라는 문구를 함께 찍는다. */
       function printPersonalPlan(){
         const rows=[];
-        let started=false;
+        let started=false, offsetTicks=0;
         outer:
         for(const x of list){
           if(x.key===opts.currentCourse) started=true;
           if(!started) continue;
           const sess=roadEntries(x.c);
           for(let i=0;i<sess.length;i++){
-            const off=rows.length;
             const s=sess[i];
             const items=s.test?(s.pool||[]):(s.drills||[]);
             rows.push({
-              cal:calLabelFor(off),
+              cal:calLabelFor(offsetTicks/5,entryTicks(s)/5),
               /* 단계(2026-09-08) — 표가 과정 번호만 나열해 "지금 어느 단계인지"가 없었다.
                  단계가 바뀌는 행 앞에 구분 줄을 넣는다. stages.js 가 없으면 조용히 생략. */
               stage:(window.NM_STAGE_OF_COURSE&&window.NM_STAGE_OF_COURSE(x.c.order))||null,
@@ -7407,6 +7432,7 @@ const NM_EXAM = {
               magic:(!s.test&&s.magic&&s.magic.length)?s.magic.map(magicLabel).join(' · '):'',
               drills:items.map(d=>`${threadLabel(d.t)}×${d.n}`).join(' · ')
             });
+            offsetTicks+=entryTicks(s);
             if(rows.length>=12) break outer;
           }
         }
@@ -7483,9 +7509,9 @@ ${printWatermarkHtml()}
 
       function sessionRowHtml(s, i, courseKey){
         const isMagic = !s.test && s.magic && s.magic.length;
-        const startOff = courseStartOffset(courseKey);
+        const startOff = sessionStartOffset(courseKey,i);
         const calHtml = (startOff===null) ? ''
-          : `<span class="nm-ex-road-cal">🗓 ${esc(calLabelFor(startOff+i))}</span>`;
+          : `<span class="nm-ex-road-cal">🗓 ${esc(calLabelFor(startOff,entryTicks(s)/5))}</span>`;
         const nameHtml = (s.lesson?lk(`수업 ${i+1} · 학습 ${s.lesson.startSession}~${s.lesson.endSession}`,`Lesson ${i+1} · studies ${s.lesson.startSession}–${s.lesson.endSession}`,`第${i+1}课 · 学习${s.lesson.startSession}~${s.lesson.endSession}`):s.test
           ? `${esc(lk('세션','Session','课节'))} ${i+1} · ${esc(lk('과정 시험','Course Test','课程测验'))}`
           : `${esc(lk('세션','Session','课节'))} ${i+1}`) + calHtml;
@@ -7660,7 +7686,7 @@ ${printWatermarkHtml()}
           if(highLessons(course)){
             const wk=NM_EXAM.weeklyEnvelope(course,courseKey,'road',{compactHigh:true,lesson:sessionIdx,cad:roadCadence});
             if(!wk)return;
-            const off=courseStartOffset(courseKey),cal=off==null?'':calLabelFor(off+sessionIdx)+' · ';
+            const off=sessionStartOffset(courseKey,sessionIdx),cal=off==null?'':calLabelFor(off,entryTicks(roadEntries(course)[sessionIdx])/5)+' · ';
             NM_EXAM.openPrintEditor(wk.items,`${cal}${courseKey} · ${lk('수업','Lesson','课')} ${sessionIdx+1}`,{
               mixed:20,cover:wk.cover,units:wk.units,courseKey,compactHigh:true,
               onPrint:()=>{if(opts.onPrinted)wk.lesson.sourceIndices.forEach(i=>opts.onPrinted(printKey(courseKey,i)));rerenderKeepScroll();}});
@@ -7686,8 +7712,8 @@ ${printWatermarkHtml()}
             if(chk) items.push(chk);
           }
           if(!items.length) return;
-          const off = courseStartOffset(courseKey);
-          const cal = (off===null) ? '' : calLabelFor(off+sessionIdx)+' · ';
+          const off = sessionStartOffset(courseKey,sessionIdx);
+          const cal = (off===null) ? '' : calLabelFor(off)+' · ';
           /* "발송 말고 고를 때는 제너레이터로"(2026-09-05) — 여기서는 더 이상
              바로 인쇄하지 않는다. 편집기를 열고, 실제 인쇄 횟수 갱신은 편집기의
              🖨 인쇄 버튼을 눌렀을 때(opts.onPrint)만 센다. */

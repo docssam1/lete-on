@@ -55,10 +55,10 @@ const speedKey = speed => speed < 1 ? String(speed).slice(1) : String(speed);
 const gradeWeeks = {w1:{'.7':29, '.85':24, '1':20, '1.25':16, '1.5':14},
   w2:{'.7':15, '.85':12, '1':10, '1.25':8, '1.5':7}};
 for(const [courseKey, gradeEnd] of [['C29', 'C31'], ['C32', 'C34'], ['C35', 'C37']]){
-  const remainingBundles = Object.values(courses).filter(course => course.studyPlan && course.order >= +courseKey.slice(1)
-    && course.order <= 69).reduce((n, course) => n + H.length(course), 0);
+  const remainingUnits = Object.values(courses).filter(course => course.studyPlan && course.order >= +courseKey.slice(1)
+    && course.order <= 73).reduce((n, course) => n + H.durationUnits(course), 0);
   for(const cadence of ['w1', 'w2']) for(const speed of [.7, .85, 1, 1.25, 1.5]){
-    const perWeek = cadence === 'w1' ? 1 : 2, completionWeeks = Math.ceil(remainingBundles / (perWeek * speed));
+    const perWeek = cadence === 'w1' ? 1 : 2, completionWeeks = Math.ceil(remainingUnits / (perWeek * speed));
     const assignedCourseEnd = {}, seenSources = [];
     let bridges = 0;
     for(let week = 0; week < completionWeeks; week++) for(const k of [1, 2]){
@@ -73,7 +73,7 @@ for(const [courseKey, gradeEnd] of [['C29', 'C31'], ['C32', 'C34'], ['C35', 'C37
     }
     assert.equal(assignedCourseEnd[gradeEnd], gradeWeeks[cadence][speedKey(speed)], 'explicit five-speed grade duration');
     const expectedSources = Object.entries(courses).filter(([key, course]) => course.studyPlan && +key.slice(1) >= +courseKey.slice(1)
-      && +key.slice(1) <= 69).sort(([a], [b]) => +a.slice(1) - +b.slice(1))
+      && +key.slice(1) <= 73).sort(([a], [b]) => +a.slice(1) - +b.slice(1))
       .flatMap(([key, course]) => course.sessions.map((_, index) => key + '-S' + index));
     assert.deepEqual(seenSources, expectedSources, 'custom speed preserves the entire middle-to-high source sequence');
     assert.equal(bridges, 1, 'middle-three cube factoring occurs once throughout the complete sequence');

@@ -52,7 +52,7 @@
       // Carry fractional compact-course weeks across course boundaries. Rounding
       // each small course separately would erase the selected learning speed.
       const courseCadence=options.standard&&compact?2:cadence;
-      const weeks=compact?remaining/courseCadence/speed
+      const weeks=compact?HIGH.durationUnits(c,from)/courseCadence/speed
         :Math.max(1,Math.round(Math.ceil(remaining/cadence)*pace/speed));
       const end=cursor+weeks*7*DAY;
       segments.push({key:keys[i],title:langText(c.title,lang),start:cursor,end,from:firstLesson,n:count,compact});cursor=end;

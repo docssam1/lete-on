@@ -5,6 +5,7 @@ declare
   n text := 'nm-test-'||substr(a::text,1,8); n2 text := 'nm-test-'||substr(b::text,1,8);
   email_a text := a::text||'@example.test'; email_b text := b::text||'@example.test';
   r jsonb; first_status jsonb; token text; preview jsonb; share text; t timestamptz; amount integer;
+  c_key text; plan_version text; snapshot_state jsonb; legacy_share text; legacy_config jsonb;
 begin
   insert into auth.users(id,aud,role,email,email_confirmed_at,created_at,updated_at)
     values(a,'authenticated','authenticated',email_a,now(),now(),now()),
@@ -82,6 +83,44 @@ begin
   assert r ? 'replay','send replay not blocked';
   r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n,'phone','01000001234','k',2,'week','2026-W43'),null,null);
   assert r->>'canUse'='true' and r->>'link' is not null,'automatic personal context';
+  -- Simulate a pre-version C70 share. New settings and snapshots must not rewrite it.
+  legacy_share := pg_catalog.encode(extensions.gen_random_bytes(16),'hex');
+  legacy_config := jsonb_build_object('courseKey','C70','week','2026-W43','k',1,'amount',0.7,'cadence','w1','sessionIndex',3);
+  insert into nm_private.worksheet_previews
+    (token_hash,admin_user,admin_session,profile_name,owner_id,k,config,message,title,message_type,
+     phone_hash,phone_masked,settings_version,send_expires_at,share_expires_at)
+  select nm_private.sha256_hex(legacy_share),admin_user,admin_session,profile_name,owner_id,1,legacy_config,
+    message,title,message_type,phone_hash,phone_masked,settings_version,send_expires_at,share_expires_at
+  from nm_private.worksheet_previews where id=(preview->>'previewId')::uuid;
+  -- These create synthetic snapshots only. No HTTP dispatch or real learner record is used.
+  for c_key,plan_version in
+    select * from (values ('C29','20261023-middle25'),('C37','20261023-middle25'),
+      ('C38','20261023-high3m'),('C69','20261023-high3m'),
+      ('C70','20261024-calculus3m'),('C73','20261024-calculus3m')) as plans(course_key,version)
+  loop
+    r := public.nm_membership_rpc('admin_set_learning',jsonb_build_object('adminToken',token,'profileName',n,
+      'courseKey',c_key,'sessionIndex',3,'speed',1.25,'amount',1,'cadence','w2','entryYear',2028,'startDate','2026-10-26'),null,null);
+    assert r#>>'{settings,courseKey}'=c_key,'synthetic settings failed';
+    select state into snapshot_state from public.nm_profiles where name=n;
+    preview := public.nm_membership_rpc('admin_preview_worksheet',jsonb_build_object('adminToken',token,'profileName',n,'k',2),null,null);
+    assert preview->>'previewId' is not null,'planned preview missing';
+    share := split_part(preview->>'link','?m=',2);
+    r := public.nm_membership_rpc('resolve_worksheet',jsonb_build_object('token',share),null,null);
+    assert r#>>'{config,courseKey}'=c_key and r#>>'{config,highPlanVersion}'=plan_version,'preview plan version mismatch';
+    assert r#>>'{config,highStartDate}'='2026-10-26' and (r#>>'{config,highSpeed}')::numeric=1.25,'preview schedule context missing';
+    assert r#>>'{config,sessionIndex}'='3' and r#>>'{config,k}'='2','preview source anchor changed';
+    r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n,'phone','01000001234','k',2,'week','2026-W44'),null,null);
+    assert r->>'canUse'='true' and r->>'link' is not null,'planned automatic snapshot missing';
+    share := split_part(r->>'link','?m=',2);
+    r := public.nm_membership_rpc('resolve_worksheet',jsonb_build_object('token',share),null,null);
+    assert r#>>'{config,courseKey}'=c_key and r#>>'{config,highPlanVersion}'=plan_version,'automatic plan version mismatch';
+    assert r#>>'{config,highStartDate}'='2026-10-26' and (r#>>'{config,highSpeed}')::numeric=1.25,'automatic schedule context missing';
+    assert r#>>'{config,sessionIndex}'='3' and r#>>'{config,k}'='2','automatic source anchor changed';
+    assert (select state from public.nm_profiles where name=n)=snapshot_state,'snapshot action changed learner state';
+    assert snapshot_state#>>'{progress,keep}'='true' and snapshot_state#>>'{diagnostics,keep}'='true','synthetic progress lost';
+    r := public.nm_membership_rpc('resolve_worksheet',jsonb_build_object('token',legacy_share),null,null);
+    assert r->'config'=legacy_config,'legacy exact-session C70 snapshot rewritten';
+  end loop;
   r := public.nm_membership_rpc('admin_revoke',jsonb_build_object('adminToken',token,'userId',a),null,null);
   r := public.nm_membership_rpc('status','{}',a,null);
   assert r#>>'{membership,status}'='revoked' and r#>>'{membership,canUse}'='false','revocation';
