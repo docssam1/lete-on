@@ -1162,7 +1162,11 @@
   "runtimeCrosswalk": {
     "asOf": "2026-10-23",
     "scope": "Only the three explicit E3 mappings below were matched to runtime IDs and locally screened. The 50-item source census under integrity is a historical review baseline, not a current runtime availability count; no one-to-one mapping is claimed for the remaining entries.",
-    "releaseStatus": "local-release-candidate",
+    "releaseStatus": "deployed-and-live-verified",
+    "mainMergeSha": "b8eeebd31422501700aeaf33bd756badde7e9a7b",
+    "pullRequest": 380,
+    "pagesWorkflowRunId": 39947653288,
+    "liveVerification": {"httpAssetsShaMatched":4,"browserStatesPassed":18,"overflowChecksPassed":36,"answerSeparationChecksPassed":18,"a4ProblemPages":2,"a4SolutionPages":2},
     "items": [
       {"sourceItemId":"5-2-u1-e3-exploration-round-up","runtimeId":"5-2-u1-e3-exploration-round-up","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
       {"sourceItemId":"5-2-u1-e3-exploration-round-down","runtimeId":"5-2-u1-e3-exploration-round-down","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
