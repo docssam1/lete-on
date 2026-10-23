@@ -1,5 +1,10 @@
 # Numbers of Magic — 인수인계서 (통합본)
 
+> **최신 운영 상태 (2026-10-23): 승인 후 배포 완료.** 원장님 “진행” 지시로 main `e4164f19a9450791a593ba21ea9dae6ca453c94f`에 반영했다. Pages [39888225311](https://github.com/docssam1/lete-on/actions/runs/39888225311) 성공. DB migration `20261023020924_nm_privacy_consent_version.sql` → nm-membership Edge v2 → 웹 순서로 적용. 운영 파일 13개 HTTP 200/SHA-256 일치, Edge 소스 3개도 검수본과 일치한다. 배포 후 DB 검사는 합성 fixture/롤백으로 통과했으며 실제 메일·문자·학생 응답 제출은 없다. 아래의 미배포 문구는 과거 기록이다.
+> **영상 음성은 아직 미완료:** 선택 언어의 모든 cue가 녹음표에 있어야 영상 버튼이 열린다. 39개가 미녹음이어서 버튼은 숨기고 기존 개념/랩은 유지한다. 미녹음 차단·전부 녹음 시 허용·한 줄 누락 시 재차단 검사를 통과했다. 콘티와 영상 소스는 보존한다.
+> **Windows 작업의 실제 상태:** 기존 대화 `01a0c4fc-013d-7dd1-99bc-8dea18dee7f0`에 최신 main과 `data/voice-video-20261023.json`, 기존 음원 보존/후보만 회수 조건으로 전달했다. 이 대화에서 원장님이 재개/진행을 승인했으나 Windows 작업자는 자기 대화의 이전 승인 질문이 미응답이고 Mac 승인 원문을 조회하지 못했다고 답했다. **한국어 8문장·영상 39개 모두 생성하지 않았다고 보고했으므로 GPU 실행 중/완료로 표시하지 않는다.** 후보 생성·실청·실제 0.8배속 길이에 맞춘 영상 시간 조정, iPhone 실기기 확인이 남는다.
+> 보안 advisor는 전후 동일: 비공개 테이블의 의도된 RLS/no-policy INFO 43건, 기존 Auth leaked-password WARN 1건(https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection). 증거는 이 대화 시각화 폴더 `nm-consent-grade-music-20261023/deployment.json`에 있다.
+
 > 🔔 **최신(2026-10-09) GPT 인수인계 → `GPT-인수인계-2026-10-09.md` 를 먼저 읽으세요** (저장 위치·작업 지시 위치·원장 결정·검사 명령 한 장 정리).
 
 > 👪 **원장 결정(2026-10-17): 이 앱은 학부모가 아이를 공부시키는 앱이다.** "교사 검수"를 남은 일로 적지 않는다.
