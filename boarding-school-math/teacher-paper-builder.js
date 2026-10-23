@@ -7,7 +7,7 @@
   const $ = function (id) { return document.getElementById(id); };
   const levelName = { foundation: "기초", core: "기본", advanced: "심화" };
   const selected = [];
-  const maxItems = 2;
+  const maxItems = items.length;
   let strand = "all";
   let previewId = items[0].id;
 
@@ -43,7 +43,8 @@
     $("result-count").textContent = `${results.length}문항`;
     const outside = selected.filter(function (entry) { return !results.some(function (item) { return item.id === entry.id; }); }).length;
     $("selection-status").textContent = `시험지에 담은 문제 ${selected.length}개${outside ? ` · 현재 결과 밖 ${outside}개` : ""}`;
-    $("selected-count").textContent = `${selected.length} / ${maxItems}문항`;
+    $("selected-count").textContent = `${selected.length}문항`;
+    $("clear-selected").disabled = selected.length === 0;
     if (!results.length) { const empty = document.createElement("p"); empty.className = "list-empty"; empty.textContent = "찾는 문항이 없습니다. 검색어나 필터를 바꿔 보세요."; host.append(empty); return; }
     results.forEach(function (item) {
       const row = document.createElement("div"); row.className = "item-row"; row.dataset.itemId = item.id;
@@ -89,7 +90,7 @@
   }
   function addItem(id) {
     if (selected.some(function (entry) { return entry.id === id; })) return;
-    if (selected.length >= maxItems) { message("A4 1장에는 2문항까지 담을 수 있습니다."); renderList({ id: id, kind: "check" }); return; }
+    if (selected.length >= maxItems) { message("이 단원의 문항을 모두 담았습니다."); renderList({ id: id, kind: "check" }); return; }
     selected.push({ id: id, points: 5, lines: 3 }); message(""); renderAll({ id: id, kind: "check" });
   }
   function removeItem(id) {
@@ -101,7 +102,7 @@
     const index = selected.findIndex(function (entry) { return entry.id === id; });
     const next = index + offset; if (index < 0 || next < 0 || next >= selected.length) return;
     [selected[index], selected[next]] = [selected[next], selected[index]];
-    renderSelected(); renderSheet();
+    renderSelected(); renderPaper();
   }
   function numberInput(entry, field, min, max, label) {
     const wrapper = document.createElement("label"); wrapper.textContent = label;
@@ -111,13 +112,13 @@
     input.addEventListener("change", function () {
       const value = Number(input.value);
       if (!Number.isInteger(value) || value < min || value > max) { input.value = String(entry[field]); return; }
-      entry[field] = value; renderSheet();
+      entry[field] = value; renderPaper();
     });
     wrapper.append(input); return wrapper;
   }
   function renderSelected() {
     const host = $("selected-items"); host.replaceChildren();
-    if (!selected.length) { const empty = document.createElement("p"); empty.textContent = "목록에서 최대 2문항을 선택하세요."; host.append(empty); }
+    if (!selected.length) { const empty = document.createElement("p"); empty.textContent = "목록에서 문항을 선택하세요."; host.append(empty); }
     selected.forEach(function (entry, index) {
       const item = byId.get(entry.id), row = document.createElement("div"); row.className = "selected-row";
       const heading = document.createElement("div"), title = document.createElement("strong");
@@ -135,52 +136,98 @@
       row.append(heading, settings); host.append(row);
     });
   }
-  function validateSheet() {
-    const questions = $("sheet-questions"), footer = $("print-sheet").querySelector(".sheet-footer");
-    const contentBottom = questions.getBoundingClientRect().bottom;
-    const footerTop = footer.getBoundingClientRect().top;
-    const overflow = selected.length > 0 && contentBottom > footerTop - 12;
-    $("print-paper").disabled = selected.length === 0 || overflow;
-    $("print-status").textContent = overflow ? "한 장에 들어가지 않습니다. 풀이 줄을 줄이거나 문항을 빼세요." : "";
-    $("print-sheet").classList.toggle("is-overflow", overflow);
+  function paperInfo() {
+    return {
+      title: $("paper-title").value.trim() || "제목 없는 시험지",
+      course: $("paper-course").value.trim() || "Grade 7 · 비례관계",
+      round: $("paper-round").value || "—",
+      date: $("paper-date").value.trim() || "____________",
+      time: $("paper-time").value || "—",
+      points: selected.reduce(function (sum, entry) { return sum + entry.points; }, 0)
+    };
   }
-  function renderSheet() {
-    $("sheet-title").textContent = $("paper-title").value.trim() || "제목 없는 시험지";
-    $("sheet-date").textContent = $("paper-date").value.trim() || "____________";
-    $("sheet-time").textContent = `${$("paper-time").value || "—"}분`;
-    $("sheet-points").textContent = `${selected.reduce(function (sum, entry) { return sum + entry.points; }, 0)}점`;
-    const host = $("sheet-questions"); host.replaceChildren();
-    if (!selected.length) { const empty = document.createElement("p"); empty.className = "sheet-empty"; empty.textContent = "문제를 선택하면 인쇄할 시험지가 여기 나타납니다."; host.append(empty); validateSheet(); return; }
-    selected.forEach(function (entry, index) {
-      const item = byId.get(entry.id), article = document.createElement("article");
-      article.className = "sheet-question"; article.dataset.itemId = item.id;
-      const meta = document.createElement("div"); meta.className = "sheet-question-meta";
-      const source = document.createElement("span"); source.textContent = `원본 ${itemNumber(item)}번 · ${item.standardIds.join(", ")}`;
-      const points = document.createElement("strong"); points.textContent = `${entry.points}점`;
-      meta.append(source, points); article.append(meta, content(item, index + 1));
-      const answerSpace = document.createElement("div"); answerSpace.className = "answer-space";
-      for (let i = 0; i < entry.lines; i += 1) answerSpace.append(document.createElement("span"));
-      article.append(answerSpace); host.append(article);
-    });
-    validateSheet();
+  function createCover(style, info) {
+    const cover = document.createElement("div");
+    cover.className = `print-sheet cover-page cover-${style}`;
+    cover.innerHTML = '<div class="cover-header"><strong>GFIELD MATH</strong><span>GRADE 7 · 7.RP.A</span></div><div class="cover-graphic" aria-hidden="true"><i></i><i></i><i></i></div><div class="cover-body"><p class="cover-kicker">시험지</p><h2></h2><p class="cover-course"></p><p class="cover-round"></p></div><div class="cover-details"><div><span>이름</span><i></i></div><div><span>날짜</span><strong class="cover-date"></strong></div><div><span>시험 시간</span><strong class="cover-time"></strong></div><div><span>총점</span><strong class="cover-points"></strong></div></div><div class="cover-footer"><span>문제를 읽고 답과 풀이를 작성하세요.</span><strong>GFIELD</strong></div>';
+    cover.querySelector("h2").textContent = info.title;
+    cover.querySelector(".cover-course").textContent = info.course;
+    cover.querySelector(".cover-round").textContent = `${info.round}회차`;
+    cover.querySelector(".cover-date").textContent = info.date;
+    cover.querySelector(".cover-time").textContent = `${info.time}분`;
+    cover.querySelector(".cover-points").textContent = `${info.points}점`;
+    return cover;
   }
-  function renderAll(focus) { renderList(focus); renderSelected(); renderSheet(); }
-  function fitSheet() {
-    const sheet = $("print-sheet");
+  function createQuestionPage(info) {
+    const page = $("question-page-template").content.firstElementChild.cloneNode(true);
+    page.querySelector(".sheet-title").textContent = info.title;
+    page.querySelector(".sheet-date").textContent = info.date;
+    page.querySelector(".sheet-time").textContent = `${info.time}분`;
+    page.querySelector(".sheet-points").textContent = `${info.points}점`;
+    return page;
+  }
+  function questionArticle(entry, index) {
+    const item = byId.get(entry.id), article = document.createElement("article");
+    article.className = "sheet-question"; article.dataset.itemId = item.id;
+    const meta = document.createElement("div"); meta.className = "sheet-question-meta";
+    const source = document.createElement("span"); source.textContent = `원본 ${itemNumber(item)}번 · ${item.standardIds.join(", ")}`;
+    const points = document.createElement("strong"); points.textContent = `${entry.points}점`;
+    meta.append(source, points); article.append(meta, content(item, index + 1));
+    const answerSpace = document.createElement("div"); answerSpace.className = "answer-space";
+    for (let i = 0; i < entry.lines; i += 1) answerSpace.append(document.createElement("span"));
+    article.append(answerSpace); return article;
+  }
+  function fitsPage(article, page) {
+    return article.getBoundingClientRect().bottom <= page.querySelector(".sheet-footer").getBoundingClientRect().top - 12;
+  }
+  function fitPages() {
     const available = $("sheet-section").clientWidth;
-    sheet.style.zoom = String(Math.min(1, available / 794));
-    validateSheet();
+    const zoom = String(Math.min(1, available / 794));
+    $("paper-pages").querySelectorAll(".print-sheet").forEach(function (page) { page.style.zoom = zoom; });
   }
+  function renderPaper() {
+    const info = paperInfo(), host = $("paper-pages"); host.replaceChildren();
+    const style = document.querySelector('input[name="cover-style"]:checked').value;
+    if (style !== "none") host.append(createCover(style, info));
+    let page = createQuestionPage(info); host.append(page);
+    const oversized = [];
+    if (!selected.length) {
+      const empty = document.createElement("p"); empty.className = "sheet-empty";
+      empty.textContent = "문제를 선택하면 인쇄할 시험지가 여기 나타납니다.";
+      page.querySelector(".sheet-questions").append(empty);
+    }
+    selected.forEach(function (entry, index) {
+      const article = questionArticle(entry, index);
+      page.querySelector(".sheet-questions").append(article);
+      if (!fitsPage(article, page)) {
+        article.remove();
+        if (page.querySelector(".sheet-question")) {
+          page = createQuestionPage(info); host.append(page);
+        }
+        page.querySelector(".sheet-questions").append(article);
+        if (!fitsPage(article, page)) { oversized.push(itemNumber(byId.get(entry.id))); page.classList.add("is-overflow"); }
+      }
+    });
+    const questionPages = [...host.querySelectorAll(".question-page")];
+    questionPages.forEach(function (sheet, index) { sheet.querySelector(".sheet-page-number").textContent = `${index + 1} / ${questionPages.length}`; });
+    fitPages();
+    $("page-count").textContent = `${style === "none" ? "" : "표지 1쪽 · "}본문 ${questionPages.length}쪽`;
+    $("print-paper").disabled = !selected.length || oversized.length > 0;
+    $("print-status").textContent = oversized.length ? `${oversized.join(", ")}번 문항이 한 쪽에 들어가지 않습니다. 풀이 줄을 줄이세요.` : "";
+  }
+  function renderAll(focus) { renderList(focus); renderSelected(); renderPaper(); }
   $("item-search").addEventListener("input", renderList);
   $("level-filter").addEventListener("change", renderList);
   $("select-visible").addEventListener("click", function () {
     const available = visibleItems().filter(function (item) { return !selected.some(function (entry) { return entry.id === item.id; }); });
     available.slice(0, maxItems - selected.length).forEach(function (item) { selected.push({ id: item.id, points: 5, lines: 3 }); });
-    message(available.length && selected.length >= maxItems ? "A4 1장에는 2문항까지 담습니다." : ""); renderAll();
+    message(available.length ? `${available.length}문항을 추가했습니다.` : "이미 모두 선택했습니다."); renderAll();
   });
-  ["paper-title", "paper-date", "paper-time"].forEach(function (id) { $(id).addEventListener("input", renderSheet); });
+  $("clear-selected").addEventListener("click", function () { selected.length = 0; message(""); renderAll(); });
+  ["paper-title", "paper-course", "paper-round", "paper-date", "paper-time"].forEach(function (id) { $(id).addEventListener("input", renderPaper); });
+  document.querySelectorAll('input[name="cover-style"]').forEach(function (input) { input.addEventListener("change", renderPaper); });
   $("jump-to-sheet").addEventListener("click", function () { $("sheet-section").scrollIntoView({ behavior: "smooth" }); });
-  $("print-paper").addEventListener("click", function () { validateSheet(); if (selected.length && !$("print-paper").disabled) window.print(); });
-  window.addEventListener("resize", fitSheet);
-  renderStrands(); renderAll(); renderPreview(); fitSheet();
+  $("print-paper").addEventListener("click", function () { renderPaper(); if (selected.length && !$("print-paper").disabled) window.print(); });
+  window.addEventListener("resize", fitPages);
+  renderStrands(); renderAll(); renderPreview();
 })();
