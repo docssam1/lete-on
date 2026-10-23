@@ -7,6 +7,13 @@
 - Corrected the inventory conditions and answer to 30°. Keep the item locked pending implementation-figure verification. Counts: 23 public candidates, 30 locked, 45 calculation-checked, 9 non-unique. No student data, runtime mapping, release state, or deployment changed.
 - Drive evidence: https://drive.google.com/file/d/1zNtIYqtPweo41VVVcY4gp9UkqcXWCeKv/view. Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 25 render SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; OCR SHA-256 `9cc2f66e7ac99039cd5cd89fd8433bd529c188a96ec7db76b4bf63a5a92e7326`.
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 3: Rotation Angle Verified
+
+- Re-read logical PDF page 25 / printed page 29 and used Apple Vision OCR plus a high-resolution crop. The source gives isosceles △ㄹㅂㄷ as △ㄱㄴㄷ rotated clockwise 45° about ㄷ, ㄱㄴ=ㄱㄷ, ∠ㄴ=65°, ㅁ=ㄱㄷ∩ㄹㅂ, and asks for ∠ㄷㅁㅂ. Handwriting was excluded.
+- The equal sides make the original apex angle 50°. The rotation carries side ㄱㄴ to ㄹㅂ, so their angle with fixed line ㄱㄷ is 50°+45°=95° in the shown orientation. Independent coordinates place ㅁ inside both segments and compute the requested angle as 95°.
+- Corrected the answer and source status, while keeping public release locked for implementation-figure verification. Counts: 23 public candidates, 30 locked, 46 calculation-checked, 9 non-unique. No student data, runtime mapping, release state, or deployment changed.
+- Drive evidence: https://drive.google.com/file/d/12h10sOg4uZj0PugB1GNsebjJDtYW6BnD/view. Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 25 render SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; high-resolution crop SHA-256 `6ec11088b26a1a0cb2772934493c0180f39db74db6c60a849e6a740c58321a9b`.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 28 Example 3-4: Underdetermined Fold Angle
 
 - Re-read logical PDF page 24 / printed page 28 from the SHA-256-matched original and ran Apple Vision on the prompt crop. It says to fold the rectangle so ㄱ moves to ㅁ, then fold so ㅁ moves to ㅂ, and asks for ∠ㅂㅇㄷ. The diagram marks 24° between the top edge and diagonal ㄱㄷ; ㅇ is the intersection of ㄱㄷ and ㅁㅂ. The handwritten 72° and nearby angle notes were excluded.
