@@ -8,6 +8,14 @@
   let stage = 0;
   let route = "secure";
   let competition = null;
+  const publicPractice = {
+    6: [
+      ["6.NS.A", "분수 나눗셈"], ["6.RP.A", "비와 비율"], ["6.EE.A", "식 쓰기"],
+      ["6.NS.B", "소수와 계산"], ["6.NS.C", "음수와 좌표"], ["6.EE.B", "방정식·부등식"],
+      ["6.EE.C", "두 양의 관계"], ["6.G.A", "도형과 넓이"], ["6.SP.A", "자료 읽기"], ["6.SP.B", "자료 요약"]
+    ],
+    7: [["7.NS.A", "유리수 연산"], ["7.RP.A", "비례 관계"]]
+  };
 
   function setText(id, value) { $(id).textContent = value; }
   function updateUrl() {
@@ -82,6 +90,24 @@
     setText("level-secure", "배운 개념을 혼자 풀고 며칠 뒤 새 문제에서도 설명해요.");
     setText("level-extend", entry.steps[2][1]);
   }
+  function renderPracticeLinks() {
+    const items = publicPractice[grade] || [];
+    const section = $("grade-practice");
+    const primary = $("grade-practice-links");
+    const more = $("grade-practice-more");
+    const moreLinks = $("grade-practice-more-links");
+    section.hidden = items.length === 0;
+    primary.replaceChildren();
+    moreLinks.replaceChildren();
+    more.hidden = items.length <= 3;
+    more.open = false;
+    items.forEach(function (item, index) {
+      const link = document.createElement("a");
+      link.href = `./unit-workbook.html?cluster=${encodeURIComponent(item[0])}&mode=workbook&audience=student&locale=ko`;
+      link.textContent = `${item[1]} · 36문항 →`;
+      (index < 3 ? primary : moreLinks).append(link);
+    });
+  }
   function renderCompetitionOptions() {
     const select = $("competition-select");
     const previous = competition;
@@ -102,7 +128,7 @@
   }
   function resetCompetitionReport() {
     setText("competition-report-title", "아직 결과가 없어요");
-    setText("competition-report-summary", "영역마다 푼 문제와 맞힌 문제를 적으면 결과를 비교할 수 있어요.");
+    setText("competition-report-summary", "영역마다 푼 개수와 맞힌 개수를 적어 주세요.");
     $("competition-report-rows").replaceChildren();
     $("competition-error").hidden = true;
   }
@@ -147,7 +173,7 @@
     $("competition-error").hidden = true;
     const paperLabel = $("paper-label").value.trim();
     setText("competition-report-title", `${option.title} · ${result.correct}/${result.attempted}`);
-    setText("competition-report-summary", `${paperLabel ? `${paperLabel} · ` : ""}${result.complete ? "전체 문제" : "입력한 문제"}를 영역별로 나눠 봤어요. ${result.reviewFirst ? `${result.reviewFirst}의 풀이를 먼저 다시 보세요.` : "비교 가능한 영역 간 우선순위는 아직 정하지 않습니다."} 3문제보다 적게 푼 영역은 정답률만 보고 판단하지 마세요.`);
+    setText("competition-report-summary", `${paperLabel ? `${paperLabel} · ` : ""}${result.complete ? "전체 문제" : "입력한 문제"}를 영역별로 봤어요. ${result.reviewFirst ? `${result.reviewFirst}의 풀이를 먼저 다시 보세요.` : "어느 영역을 먼저 볼지는 더 풀어 본 뒤 정해요."} 3문제 미만인 영역은 정답률로 비교하기 어려워요.`);
     const host = $("competition-report-rows");
     host.replaceChildren();
     result.rows.forEach(function (entry) {
@@ -167,7 +193,7 @@
     setText("grade-bridge", entry.bridge);
     setText("source-chip", entry.source === "inferred" ? "Grade 9 · 추정안" : "참고 로드맵");
     setText("grade-note", grade === 7
-      ? "Grade 7 7.NS.A 진단은 아직 검수·공개 전이에요. 여기서 진단 결과를 읽거나 학습을 배정하지 않아요."
+      ? "7.NS.A 단원 연습은 공개됐어요. 진단은 아직 검수 중이에요."
       : entry.source === "inferred"
         ? "Grade 9는 제공된 7·8·10학년 자료로 추정했어요. 학교 과목 순서는 선생님과 확인해 주세요."
         : "아직 이 학생의 진단 결과가 없어요. 다음 진도는 풀이를 보고 선생님과 정해요.");
@@ -176,6 +202,7 @@
     renderGradeButtons();
     renderStages(entry);
     renderLevels(entry);
+    renderPracticeLinks();
     renderCompetitionOptions();
     renderCompetitionRows();
     updateUrl();

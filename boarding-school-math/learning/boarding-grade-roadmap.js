@@ -61,7 +61,7 @@
     const correct = parsed.reduce(function (sum, row) { return sum + row.correct; }, 0);
     if (attempted === 0) return { valid: false, reason: "푼 문항 수를 입력하세요." };
     if (attempted > itemCount) return { valid: false, reason: `입력한 문항 합계가 선택한 시험의 ${itemCount}문항을 넘습니다.` };
-    const analyzedRows = parsed.map(function (row) { return Object.assign({}, row, { rate: row.attempted ? Math.round(100 * row.correct / row.attempted) : null, evidence: row.attempted >= 3 ? "비교 가능" : "표본 부족" }); });
+    const analyzedRows = parsed.map(function (row) { return Object.assign({}, row, { rate: row.attempted ? Math.round(100 * row.correct / row.attempted) : null, evidence: row.attempted >= 3 ? "3문제 이상" : "3문제 미만" }); });
     const comparable = analyzedRows.filter(function (row) { return row.attempted >= 3; }).sort(function (a, b) { return a.rate - b.rate; });
     return {
       valid: true, attempted: attempted, correct: correct, itemCount: itemCount, complete: attempted === itemCount,

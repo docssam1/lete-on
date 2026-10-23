@@ -26,7 +26,7 @@ test("manual competition analysis validates counts and does not assign a level",
   assert.equal(valid.complete, false);
   assert.equal(valid.attempted, 10);
   assert.equal(valid.rows[0].rate, 75);
-  assert.equal(valid.rows[1].evidence, "표본 부족");
+  assert.equal(valid.rows[1].evidence, "3문제 미만");
   assert.equal("level" in valid, false);
   assert.equal(roadmap.analyzeCompetition([
     { attempted: 4, correct: 5 }, { attempted: 0, correct: 0 },

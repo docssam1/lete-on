@@ -61,6 +61,18 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .journey-side li strong { color: #2456c4; font-size: .83rem; }
 .journey-side li span { color: #354255; font-size: .88rem; line-height: 1.5; }
 .grade-note { margin: 20px 0 0; padding: 14px; border-left: 3px solid #566274; background: #fff; color: #354255; font-size: .83rem; line-height: 1.65; }
+.grade-practice { margin-top: 20px; padding-top: 18px; border-top: 1px solid #d8dee8; }
+.grade-practice[hidden], .grade-practice details[hidden] { display: none; }
+.grade-practice h4 { margin: 0; font-size: 1rem; }
+.grade-practice p { margin: 7px 0 12px; color: #566274; font-size: .82rem; line-height: 1.5; }
+.grade-practice-links { display: grid; gap: 7px; }
+.grade-practice-links a { min-height: 44px; padding: 10px 12px; display: flex; align-items: center; border: 1px solid #d8dee8; color: #1746a7; background: #fff; font-size: .84rem; font-weight: 750; text-decoration: none; }
+.grade-practice-links a:hover, .grade-practice-links a:focus-visible { border-color: #2456c4; background: #eaf0ff; }
+.grade-practice details { margin-top: 8px; }
+.grade-practice summary { min-height: 44px; display: flex; align-items: center; color: #2456c4; font-size: .84rem; font-weight: 750; cursor: pointer; }
+.grade-practice summary::after { content: "⌄"; margin-left: auto; font-size: 1.15rem; }
+.grade-practice details[open] summary::after { content: "⌃"; }
+.grade-practice details[open] summary { margin-bottom: 8px; }
 .journey-actions { margin-top: 20px; display: flex; gap: 8px; }
 .journey-actions button { flex: 1; min-height: 46px; padding: 8px; border: 1px solid #2456c4; color: #2456c4; background: #fff; font: inherit; font-size: .78rem; font-weight: 850; cursor: pointer; }
 .journey-actions button:disabled { border-color: #d8dee8; color: #687587; background: #f5f6f8; cursor: not-allowed; }

@@ -39,7 +39,9 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator(".grade-button").count(), 8);
   assert.equal(await page.locator(".stage-button").count(), 4);
   assert.match(await page.locator(".level-boundary").innerText(), /진단 전/);
-  assert.match(await page.locator("#grade-note").innerText(), /검수·공개 전/);
+  assert.match(await page.locator("#grade-note").innerText(), /진단은 아직 검수 중/);
+  assert.equal(await page.locator("#grade-practice-links a").count(), 2);
+  assert.match(await page.locator("#grade-practice-links a").first().getAttribute("href"), /cluster=7.NS.A/);
   assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=7&program=amc8/);
   assert.equal(await page.locator("#competition-practice-link").getAttribute("href"), "./competition-practice.html?program=amc8");
   await page.getByRole("button", { name: "Grade 9 지도 보기" }).click();
@@ -54,9 +56,26 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.locator('[data-strand="geometry"][data-field="correct"]').fill("1");
   await page.getByRole("button", { name: "영역별 결과 보기" }).click();
   assert.match(await page.locator("#competition-report-title").innerText(), /4\/6/);
-  assert.match(await page.locator("#competition-report-rows").innerText(), /표본 부족/);
-  assert.match(await page.locator("#competition-report-summary").innerText(), /비교 가능한 영역/);
+  assert.match(await page.locator("#competition-report-rows").innerText(), /3문제 미만/);
+  assert.match(await page.locator("#competition-report-summary").innerText(), /더 풀어 본 뒤/);
   assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("released unit practice is reachable without exposing the private Grade 7 diagnostic", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url}?grade=6`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#grade-practice-links a").count(), 3);
+  await page.locator("#grade-practice-more summary").click();
+  assert.equal(await page.locator("#grade-practice-more-links a").count(), 7);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await page.getByRole("button", { name: "Grade 7 지도 보기" }).click();
+  assert.equal(await page.locator("#grade-practice-links a").count(), 2);
+  assert.equal(await page.locator("#grade-practice-more").isHidden(), true);
+  await page.locator("#grade-practice-links a").first().click();
+  await page.waitForURL(/unit-workbook\.html\?cluster=7.NS.A/);
+  assert.match(await page.locator("body").innerText(), /단원 워크북/);
+  assert.doesNotMatch(page.url(), /diagnostic/);
   await page.close();
 });
 

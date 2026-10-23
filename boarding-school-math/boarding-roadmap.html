@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261023-1">
+  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261023-2">
 </head>
 <body class="academy-page page-boarding-roadmap">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -20,12 +20,12 @@
     <section class="boarding-intro" aria-labelledby="boarding-title"><div class="boarding-shell">
       <p class="boarding-kicker">보딩스쿨 수학 · 학년별 보기</p>
       <h1 id="boarding-title">Grade 3–10 수학 로드맵</h1>
-      <p>학년을 고르면 배울 내용과 다음에 확인할 내용을 볼 수 있어요. 경시와 SAT는 따로 살펴봐요.</p>
+      <p>학년을 고르고, 배울 내용과 지금 필요한 연습을 살펴보세요.</p>
       <div class="boarding-intro-actions"><a href="#grade-map">학년 선택</a><a href="./learning-plan.html">학습 계획</a></div>
     </div></section>
 
     <section class="grade-map boarding-shell" id="grade-map" aria-labelledby="grade-map-title">
-      <div class="map-head"><div><p class="boarding-kicker">01 · 학년</p><h2 id="grade-map-title">학년별 핵심 개념</h2></div><p>Grade 3–10 · 선택은 저장되지 않아요.</p></div>
+      <div class="map-head"><div><p class="boarding-kicker">01 · 학년</p><h2 id="grade-map-title">학년별 핵심 개념</h2></div><p>살펴볼 학년을 눌러 주세요.</p></div>
       <div class="grade-track" aria-label="학년 선택"><div id="grade-buttons" class="grade-buttons"></div></div>
       <div class="journey-layout">
         <article class="journey-main" aria-labelledby="grade-title">
@@ -39,17 +39,23 @@
           <p class="boarding-kicker">확인할 것</p><h3 id="check-title">다음 학습 전 점검</h3>
           <ul><li><strong>설명</strong><span>왜 그 방법이 맞는지 말할 수 있나요?</span></li><li><strong>새 문제</strong><span>숫자·표현이 바뀌어도 연결할 수 있나요?</span></li><li><strong>부담</strong><span>호기심과 학습량이 균형을 이루나요?</span></li></ul>
           <p id="grade-note" class="grade-note">아직 이 학생의 진단 결과가 없어요. 다음 진도는 풀이를 보고 선생님과 정해요.</p>
+          <div id="grade-practice" class="grade-practice" hidden>
+            <h4>지금 풀어 볼 수 있어요</h4>
+            <p>배운 개념을 문제로 확인해 보세요.</p>
+            <div id="grade-practice-links" class="grade-practice-links"></div>
+            <details id="grade-practice-more" hidden><summary>다른 단원도 보기</summary><div id="grade-practice-more-links" class="grade-practice-links"></div></details>
+          </div>
           <div class="journey-actions"><button id="previous-grade" type="button">← 이전 학년</button><button id="next-grade" type="button">다음 학년 →</button></div>
         </aside>
       </div>
     </section>
 
-    <section class="level-section boarding-shell" aria-labelledby="level-title"><div class="map-head"><div><p class="boarding-kicker">02 · 학습 단계</p><h2 id="level-title">학습 단계 비교</h2></div><p>세 단계의 차이를 볼 수 있어요. 이 학생의 단계는 아직 몰라요.</p></div>
+    <section class="level-section boarding-shell" aria-labelledby="level-title"><div class="map-head"><div><p class="boarding-kicker">02 · 학습 단계</p><h2 id="level-title">학습 단계 비교</h2></div><p>어디부터 시작할지 비교해 보세요.</p></div>
       <div class="level-grid"><article><span>01 · 기초 보완</span><h3>뜻을 다시 이해하기</h3><p id="level-repair"></p><small>확인할 것 · 어디서 막히는지 설명할 수 있나요?</small></article><article><span>02 · 학년 학습</span><h3>새 문제에 적용하기</h3><p id="level-secure"></p><small>확인할 것 · 혼자 풀고 며칠 뒤 다시 풀 수 있나요?</small></article><article><span>03 · 선택 심화</span><h3>다음 개념 살펴보기</h3><p id="level-extend"></p><small>확인할 것 · 앞 개념을 알고, 더 배우고 싶나요?</small></article></div>
       <p class="level-boundary">현재 단계: <strong>진단 전</strong> · 학년이나 경시 점수만으로 다음 과목을 정하지 않아요.</p>
     </section>
 
-    <section class="route-section boarding-shell" aria-labelledby="route-title"><div class="map-head"><div><p class="boarding-kicker">03 · 다음 학습</p><h2 id="route-title">다음에 무엇을 배울까요?</h2></div><p>예시를 눌러 비교해 보세요. 진도는 바뀌지 않아요.</p></div>
+    <section class="route-section boarding-shell" aria-labelledby="route-title"><div class="map-head"><div><p class="boarding-kicker">03 · 다음 학습</p><h2 id="route-title">다음에 무엇을 배울까요?</h2></div><p>상황에 맞는 길을 살펴보세요.</p></div>
       <div class="route-layout"><div id="route-buttons" class="route-buttons" aria-label="학습 예시 선택"></div><article class="route-explanation" aria-live="polite"><span>고른 예시</span><h3 id="route-name"></h3><p id="route-description"></p><div><strong>먼저 확인할 것</strong><p id="route-check"></p></div><small>실제 다음 진도는 최근 풀이, 학교 진도, 학생의 관심과 학습량을 보고 정해요.</small></article></div>
     </section>
 
@@ -58,14 +64,14 @@
         <p class="competition-guidance" id="competition-guidance"></p>
         <div class="domain-header"><strong>영역</strong><span>푼 문항</span><span>정답</span></div><div id="domain-rows" class="domain-rows"></div>
         <button class="competition-submit" type="submit">영역별 결과 보기</button><p id="competition-error" class="competition-error" role="alert" hidden></p>
-      </form><article class="competition-report" aria-live="polite"><span>입력한 결과</span><h3 id="competition-report-title">아직 결과가 없어요</h3><p id="competition-report-summary">영역마다 푼 문제와 맞힌 문제를 적으면 비교할 수 있어요.</p><div id="competition-report-rows" class="competition-report-rows"></div><p class="competition-report-boundary">입력한 결과로 공식 점수, 수상, AIME 진출이나 학교 과목을 예측할 수 없어요.</p></article></div>
+      </form><article class="competition-report" aria-live="polite"><span>입력한 결과</span><h3 id="competition-report-title">아직 결과가 없어요</h3><p id="competition-report-summary">영역마다 푼 개수와 맞힌 개수를 적어 주세요.</p><div id="competition-report-rows" class="competition-report-rows"></div><p class="competition-report-boundary">입력한 결과로 공식 점수, 수상, AIME 진출이나 학교 과목을 예측할 수 없어요.</p></article></div>
       <div class="competition-links"><a id="paper-review-link" href="./competition-paper-review.html?grade=7&amp;program=amc8">경시 문제별 복습 <span aria-hidden="true">→</span></a><a id="competition-practice-link" href="./competition-practice.html?program=amc8">Grade 6 AMC 8 기초 연습 <span aria-hidden="true">→</span></a><a href="./sasmo.html">SASMO 기출 안내 <span aria-hidden="true">→</span></a><a href="https://maa.org/student-programs/amc/" target="_blank" rel="noopener noreferrer">MAA AMC 공식 안내 <span aria-hidden="true">↗</span></a></div>
     </section>
 
     <section class="boarding-close"><div class="boarding-shell"><div><p class="boarding-kicker">학습 계획</p><h2>다음 학습을 정할 때</h2><p>학생의 실제 풀이와 학교 진도를 함께 확인합니다.</p></div><a href="./learning-plan.html">학습 계획 보기 →</a></div></section>
   </main>
   <footer class="site-footer"><span>G·MAP · 보딩스쿨 수학 성장 지도</span><span><a href="./index.html">홈</a> · <a href="./learning-plan.html">학습 계획</a></span></footer>
-  <script src="./learning/boarding-grade-roadmap.js?v=20261023-1"></script>
-  <script src="./boarding-roadmap.js?v=20261023-1"></script>
+  <script src="./learning/boarding-grade-roadmap.js?v=20261023-2"></script>
+  <script src="./boarding-roadmap.js?v=20261023-2"></script>
 </body>
 </html>
