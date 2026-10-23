@@ -1,5 +1,16 @@
 # Elementary Question Bank Handover
 
+## 2026-10-23 Grade 5-2 Unit 1 Exploration 3: Source-Checked Batch
+
+- Source: `5-2 심화.pdf`, PDF page 6 / printed page 8, exact advanced-edition Drive source verified by file ID, byte size, and SHA-256. Apple Vision OCR and direct page review confirm three structures: round up to thousands, truncate to tens, and round a decimal to tenths. No required figure appears in these blocks. Handwriting elsewhere on the page was excluded from answer verification.
+- Added three source-specific IDs with fixed finite pools (three values each) and three difficulty settings. The audit recalculates all 27 prompts from learner-visible conditions, checks central routing, and keeps publisher-key verification false. The original three example values were independently recomputed; synthetic variants use the same operation structure.
+- The Mac screen audit passed 18 isolated desktop/mobile states (1280px and 375px), 36 overflow checks, answer separation, and blocked external requests. Mixed A4 print is two portrait pages (problems 2, solutions 2). Initial solution pagination produced three pages; limiting this small batch to five solutions per sheet corrected it to two. All four final PDF pages and representative desktop/mobile screens were visually inspected.
+- The existing 124 generic 5-2 records remain unchanged and locked; the ambiguous E2 Example 2-4 remains locked. Whole bank now has 2,030 types / 1,242 generatable / 788 pending across 189 subunits. E3 adds three directly reviewed source records, all independently calculated; none claims official publisher-key verification. Existing student data and unrelated primary-checkout changes were preserved.
+- Known audit baseline outside this batch: `source-item-taxonomy-audit.js` reports two existing 4-2 quadrilateral failures; `source-inventory-grades-5-2-to-6-audit.js` reports 516 inventory expectation mismatches in its separate 5-2/6-1/6-2 census files. Those files were not changed here. The focused 5-2 release gate and all runtime regression audits pass.
+- The source inventory's original `integrity` counts remain a historical source-census snapshot (50 reviewed source structures, zero runtime candidates at the time); it is not a current runtime availability count. A dated `runtimeCrosswalk` below records the explicit three E3 mappings only and does not imply that all 50 source structures are mapped.
+- Private QA includes the selected source-page render and Apple Vision OCR, source identity/hash, focused math/browser audits, final screenshots, and both A4 PDFs. New Drive bundle `grade52-unit1-e3-qa-20261023.zip` (file ID `1ZT0FdS2C_-lWiQ02bLT7w5oIFyFVFSS6`, 1,546,420 bytes, SHA-256 `2a813ea7d5c27509609c147d2117edbc062785cbfad2a07f30b5faf67f184153`) is in the existing owner-only Drive source-memory folder. Metadata read-back confirmed the same byte count and parent folder; earlier evidence and IDs were preserved. GitHub remains the code/version record.
+- Official publisher answers and empirical learner-difficulty calibration remain open. Continue with the next small source block only after rechecking its original page, figures, and solution; retain all unrelated locks.
+
 ## 2026-10-23 Grade 5-2 Unit 1 Exploration 2 Mission 4–6: Mac/A4 Verified Batch
 
 - Continued from the verified Mission 1–3 batch in an isolated Mac worktree on `codex/grade52-e2-missions4-6-20261023`, based on current `origin/main` `ce89c955`. The user's primary checkout, existing student data, and unrelated local changes remain untouched. Mission 1–3 and all earlier Grade 5-2 entries are preserved.
@@ -57,16 +68,11 @@
 
 ## Current State
 
-- Primary authoring checkout on Mac: `main` at `94a69f4bdda95c1d4e47494d3852f13c409165dc`; includes PR #340 merge `ea271bec` and elementary source commit `6bd5ef98`. Older review-branch names below describe historical stages.
-- Entry point: `hselementary/question-bank/index.html`. The 2026-10-17 check used local-file browser routing, not a persistent HTTP server or the deployed site.
-- Total runtime types: 2,010 across 6 semesters, 36 major units, and 185 subunits (inventory recounted 2026-10-17)
-- Runtime-available types: 1,223 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked/non-generating records: 787, including aliases that link to a shared full source question and must not produce duplicate questions. This is not a count of 787 distinct unfinished generators.
-- Source-linked runtime entries: 1,630 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 5, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester runtime counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `5/129`, 6-1 `239/412`, and 6-2 `180/477` types are available. Grade 6 source-linked records: 633 total, 419 available and 214 locked. These are local runtime counts, not a fresh deployment check.
-- Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
-- Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
-- Next content step: the first five items have passed the independent solution and screen/print gates above. Mission 1–6 on the following page are the next classification batch. Preserve all 124 legacy locks; grouped Kyungsi records are not advanced-source approval.
+- Primary authoring checkout remains the user's `main` checkout with unrelated local work. This batch used managed worktree `codex/grade52-e2-missions4-6-20261023`; its reviewed source base was `ce89c955`, and earlier merged changes remain the responsibility of the PR/Pages records in the dated batch entries above. Do not reset or clean the primary checkout.
+- Entry point: `hselementary/question-bank/index.html`. Latest local whole-bank inventory after the E3 batch: 2,030 types across 6 semesters, 36 units, and 189 subunits; 1,242 have generators and 788 remain pending/locked (including aliases). This is a local count until the new release is merged and the deployed files are checked.
+- Semester available/total counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `24/149`, 6-1 `239/412`, 6-2 `180/477`. The 5-2 count includes 24 available source-specific types; one ambiguous Example 2-4 remains locked. Its previous 124 generic types are preserved and locked.
+- Source-linked runtime entries: 1,650 (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 25, 6-1: 268, 6-2: 365). A source ID alone does not certify answer, learner fit, notation, visibility, or rendering.
+- Next step: run the focused and whole-bank regression suite, then release this E3 batch and verify the Pages workflow and live assets. After deployment, continue with the next small original-source block; leave official publisher-key confirmation and empirical learner-difficulty calibration open. Keep all 124 generic locks and the ambiguous E2 Example 2-4 locked.
 
 ## 2026-10-17 Classification Deployment Authorization
 

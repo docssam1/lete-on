@@ -21,7 +21,8 @@ const expectedIds = expected.map(([suffix]) => `5-2-u1-e1-${suffix}`);
 const missionIds = [1, 2, 3, 4, 5, 6].map(number => `5-2-u1-e1-mission-${number}`);
 const roundingIds = ["exploration", "example-2-1", "example-2-2", "example-2-3", "example-2-4"].map(suffix => `5-2-u1-e2-${suffix}`);
 const roundingMissionIds = [1, 2, 3, 4, 5, 6].map(number => `5-2-u1-e2-mission-${number}`);
-const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds];
+const applicationExplorationIds = ["round-up", "round-down", "round-nearest"].map(suffix => `5-2-u1-e3-exploration-${suffix}`);
+const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds];
 const flatten = curriculum => curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)));
 const plain = value => JSON.parse(JSON.stringify(value));
 
@@ -36,21 +37,22 @@ function load(curriculumSource) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-range-missions.js"), "utf8"), context, { filename: "source-5-2-range-missions.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounding-e2.js"), "utf8"), context, { filename: "source-5-2-rounding-e2.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounding-missions.js"), "utf8"), context, { filename: "source-5-2-rounding-missions.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounding-application-e3.js"), "utf8"), context, { filename: "source-5-2-rounding-application-e3.js" });
   return { curriculum: plain(context.window.HSE_CURRICULUM), api: context.window.HSE_GENERATORS };
 }
 
 function validate(curriculum, api, baselineSemester) {
   const types = flatten(curriculum);
-  assert.equal(types.length, 2027, "Whole-bank classification count");
+  assert.equal(types.length, 2030, "Whole-bank classification count");
   assert.equal(new Set(types.map(type => type.id)).size, types.length, "Unique runtime IDs");
   const semester = curriculum.semesters.find(item => item.id === "5-2");
   const semesterTypes = semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types));
-  assert.equal(semesterTypes.length, 146, "Preserve 124 legacy records plus twenty-two source records");
+  assert.equal(semesterTypes.length, 149, "Preserve 124 legacy records plus twenty-five source records");
   const restored = plain(semester);
   restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => allNewSourceIds.includes(type.sourceItemId)));
   assert.deepEqual(restored, baselineSemester, "All 124 legacy records and their groups must stay identical to the Git baseline");
   const unit = semester.units.find(item => item.id === "5-2-u1");
-  assert.equal(unit.subunits.length, 8);
+  assert.equal(unit.subunits.length, 9);
   const legacy = unit.subunits.slice(0, 4).flatMap(group => group.types);
   assert.equal(legacy.length, 12);
   const legacyIds = [1, 2, 3, 4].flatMap(group => ["", "-2", "-3"].map(suffix => `5-2-u1-t${group}${suffix}`));
@@ -152,7 +154,32 @@ function validate(curriculum, api, baselineSemester) {
   });
   const remainingMissions = unit.subunits[7].types;
   assert.deepEqual(remainingMissions.map(type => type.id), missionIds, "Previously released E1 Mission IDs stay intact");
-  return { total: types.length, semesterTypes: semesterTypes.length, legacyPreserved: 124, classified: added.length, roundingSourceItems: 5, roundingNewlyAvailable: 4, e2MissionItems: roundingMissions.length };
+  const applicationExploration = unit.subunits[8].types;
+  const applicationKeys = ["source52ApplicationExplorationRoundUp", "source52ApplicationExplorationRoundDown", "source52ApplicationExplorationRoundNearest"];
+  assert.deepEqual(applicationExploration.map(type => type.id), applicationExplorationIds, "Exact E3 Exploration source IDs");
+  applicationExploration.forEach((type, index) => {
+    assert.equal(type.sourceItemId, applicationExplorationIds[index]);
+    assert.equal(type.sourcePdfPage, 6);
+    assert.equal(type.sourcePrintedPage, 8);
+    assert.equal(type.sourceTier, "advanced");
+    assert.equal(type.sourceVerified, true);
+    assert.equal(type.publisherKeyVerified, false);
+    assert.equal(type.answerVerification, "independent-calculation-user-authorized");
+    assert.equal(type.generatorKey, applicationKeys[index]);
+    assert.equal(type.reviewLocked, false);
+    assert.equal(type.generationMode, "fixed-verified-pool");
+    assert.equal(type.verifiedVariantCount, 3);
+    assert.equal(type.verifiedVariantTarget, 3);
+    assert.equal(type.answerVisualRequired, false);
+    assert.equal(api.generatorKey(type), applicationKeys[index]);
+    for (const difficulty of [-1, 0, 1]) for (let variant = 0; variant < 3; variant++) {
+      const question = api.generate(type, 1, difficulty, 1, variant);
+      assert(question && question.sourceItemId === type.sourceItemId);
+      assert.equal(question.verifiedPoolIndex, variant);
+      assert.equal(question.publisherKeyVerified, false);
+    }
+  });
+  return { total: types.length, semesterTypes: semesterTypes.length, legacyPreserved: 124, classified: added.length, roundingSourceItems: 5, roundingNewlyAvailable: 4, e2MissionItems: roundingMissions.length, e3ExplorationItems: applicationExploration.length };
 }
 
 const baselineRef = process.env.HSE_BASELINE_REF || "94a69f4bdda95c1d4e47494d3852f13c409165dc";
@@ -182,4 +209,4 @@ if (output) {
   fs.mkdirSync(output, { recursive: true });
   fs.writeFileSync(path.join(output, "classification-audit.json"), JSON.stringify(finalResult, null, 2) + "\n");
 }
-  console.log(`5-2 source classification passed: ${result.classified} original-range records, ${result.roundingNewlyAvailable} unambiguous page-6 rounding records available, ${result.roundingSourceItems - result.roundingNewlyAvailable} ambiguous page-6 record locked, ${result.e2MissionItems} page-7 Missions available, ${result.legacyPreserved} unchanged legacy records, ${negatives.length} rejected negative controls.`);
+  console.log(`5-2 source classification passed: ${result.classified} original-range records, ${result.roundingNewlyAvailable} unambiguous page-6 rounding records available, ${result.roundingSourceItems - result.roundingNewlyAvailable} ambiguous page-6 record locked, ${result.e2MissionItems} page-7 Missions available, ${result.e3ExplorationItems} page-8 Exploration 3 items available, ${result.legacyPreserved} unchanged legacy records, ${negatives.length} rejected negative controls.`);
