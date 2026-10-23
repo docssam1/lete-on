@@ -79,7 +79,7 @@
   }
   function renderLevels(entry) {
     setText("level-repair", `${entry.steps[0][0]}: ${entry.steps[0][1]}`);
-    setText("level-secure", `${entry.steps[1][0]}와 ${entry.steps[3][0]}을 새 문제에서도 설명`);
+    setText("level-secure", "배운 개념을 혼자 풀고 며칠 뒤 새 문제에서도 설명해요.");
     setText("level-extend", entry.steps[2][1]);
   }
   function renderCompetitionOptions() {
@@ -97,12 +97,12 @@
     select.value = competition;
     $("paper-review-link").href = `./competition-paper-review.html?grade=${grade}&program=${competition}`;
     $("competition-practice-link").hidden = grade < 6 || grade > 8;
-    setText("competition-guidance", `이 학년의 대회 선택은 탐색용입니다. 채점이 확인된 문제지만 입력하고, 각 문항을 아래 네 영역 중 하나에 한 번만 분류하세요. 합계는 ${options.find(function (entry) { return entry.id === competition; }).itemCount}문항 이하로 입력할 수 있습니다.`);
+    setText("competition-guidance", `채점된 문제지만 입력해 주세요. 문제 하나를 한 영역에만 넣고, 전체 합계는 ${options.find(function (entry) { return entry.id === competition; }).itemCount}문항을 넘기지 마세요.`);
     resetCompetitionReport();
   }
   function resetCompetitionReport() {
     setText("competition-report-title", "결과 입력 전");
-    setText("competition-report-summary", "영역별로 푼 문항과 정답 수를 입력하면 근거의 양과 비율을 나란히 비교합니다.");
+    setText("competition-report-summary", "영역마다 푼 문제와 맞힌 문제를 적으면 결과를 비교할 수 있어요.");
     $("competition-report-rows").replaceChildren();
     $("competition-error").hidden = true;
   }
@@ -147,7 +147,7 @@
     $("competition-error").hidden = true;
     const paperLabel = $("paper-label").value.trim();
     setText("competition-report-title", `${option.title} · ${result.correct}/${result.attempted}`);
-    setText("competition-report-summary", `${paperLabel ? `${paperLabel} · ` : ""}${result.complete ? "선택한 시험의 전체 문항" : "입력한 일부 문항"}에 대한 영역별 수행입니다. ${result.reviewFirst ? `${result.reviewFirst}의 풀이 과정을 먼저 다시 살펴보세요.` : "비교 가능한 영역 간 우선순위는 아직 정하지 않습니다."} 푼 문항이 3개 미만인 영역은 비율만으로 비교하지 않습니다.`);
+    setText("competition-report-summary", `${paperLabel ? `${paperLabel} · ` : ""}${result.complete ? "전체 문제" : "입력한 문제"}를 영역별로 나눠 봤어요. ${result.reviewFirst ? `${result.reviewFirst}의 풀이를 먼저 다시 보세요.` : "비교 가능한 영역 간 우선순위는 아직 정하지 않습니다."} 3문제보다 적게 푼 영역은 정답률만 보고 판단하지 마세요.`);
     const host = $("competition-report-rows");
     host.replaceChildren();
     result.rows.forEach(function (entry) {
@@ -165,12 +165,12 @@
     setText("grade-title", entry.title);
     setText("grade-core", entry.core);
     setText("grade-bridge", entry.bridge);
-    setText("source-chip", entry.source === "inferred" ? "Grade 9 · 연결 추정안" : "제공된 자료 기반 · 예시");
+    setText("source-chip", entry.source === "inferred" ? "Grade 9 · 추정안" : "참고 로드맵");
     setText("grade-note", grade === 7
-      ? "Grade 7 7.NS.A 진단은 아직 검수·공개 전입니다. 이 지도는 결과를 읽지 않으며 실제 배정도 하지 않습니다."
+      ? "Grade 7 7.NS.A 진단은 아직 검수·공개 전이에요. 여기서 진단 결과를 읽거나 학습을 배정하지 않아요."
       : entry.source === "inferred"
-        ? "Grade 9 경로는 제공된 7·8·10학년 자료를 연결해 추정한 안입니다. 실제 과목 순서는 학교·교사와 확인합니다."
-        : "이 지도에는 학생 진단 결과가 연결되지 않았습니다. 실제 진도와 경로는 교사 확인 후 결정합니다.");
+        ? "Grade 9는 제공된 7·8·10학년 자료로 추정했어요. 학교 과목 순서는 선생님과 확인해 주세요."
+        : "아직 이 학생의 진단 결과가 없어요. 다음 진도는 풀이를 보고 선생님과 정해요.");
     $("previous-grade").disabled = grade === data.grades[0].grade;
     $("next-grade").disabled = grade === data.grades[data.grades.length - 1].grade;
     renderGradeButtons();
@@ -186,7 +186,7 @@
     competition = event.target.value;
     $("paper-review-link").href = `./competition-paper-review.html?grade=${grade}&program=${competition}`;
     const option = data.competitionOptions(grade).find(function (entry) { return entry.id === competition; });
-    setText("competition-guidance", `채점이 확인된 문제지만 입력하세요. 각 문항은 한 영역에만 분류하고 합계는 ${option.itemCount}문항 이하로 입력할 수 있습니다.`);
+    setText("competition-guidance", `채점된 문제지만 입력해 주세요. 문제 하나를 한 영역에만 넣고, 전체 합계는 ${option.itemCount}문항을 넘기지 마세요.`);
     resetCompetitionReport();
     renderCompetitionRows();
   });

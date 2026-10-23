@@ -1,4 +1,5 @@
 :root { color-scheme: light; }
+.page-paper-builder { --ink:#182230; --primary:#2456c4; --primary-soft:#eaf0ff; --line:#d8dee8; --muted:#566274; --workbook-sans:Pretendard,"Apple SD Gothic Neo",sans-serif; --workbook-math:"Cambria Math","STIX Two Math",Cambria,Georgia,serif; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; color: #182230; background: #f5f6f8; font-family: Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif; }
@@ -24,6 +25,9 @@ button:disabled { cursor: not-allowed; }
 .filter-pane { padding: 22px 14px; border-right: 1px solid #d8dee8; background: #f8fafc; }
 .filter-pane h2, .list-pane h2, .editor-pane h2 { margin: 0; font-size: 1rem; letter-spacing: -.02em; }
 .filter-pane > p { margin: 8px 0 18px; color: #566274; font-size: .8rem; }
+.filter-pane > label { margin-bottom: 12px; display: grid; gap: 6px; color: #354255; font-size: .75rem; font-weight: 800; }
+.filter-pane select { min-width: 0; min-height: 44px; padding: 8px 9px; border: 1px solid #566274; border-radius: 4px; color: #182230; background: #fff; font-size: .8rem; }
+.filter-pane h3 { margin: 22px 0 7px; font-size: .78rem; }
 .strand-filters { display: grid; gap: 3px; }
 .strand-filters button { min-height: 44px; padding: 8px 10px; border: 1px solid transparent; border-radius: 4px; color: #354255; background: transparent; text-align: left; font-size: .82rem; font-weight: 650; }
 .strand-filters button[aria-pressed="true"] { border-color: #c4d5f8; color: #2456c4; background: #eaf0ff; font-weight: 800; }
@@ -60,8 +64,13 @@ button:disabled { cursor: not-allowed; }
 .item-preview > p { color: #566274; font-size: .82rem; }
 .question-prompt { margin: 0; font-size: .93rem; line-height: 1.6; }
 .question-visual { margin: 12px 0; }
+.question-visual > * { max-width: 100%; }
+.question-visual svg { max-width: 100%; }
 .question-choices { margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px 12px; list-style: none; font-size: .82rem; }
 .question-choices li { min-width: 0; }
+.question-choices.is-long { grid-template-columns: 1fr; }
+.written-answer { margin-top: 4mm; display: flex; align-items: end; gap: 4mm; font-size: 9pt; }
+.written-answer span { display: block; width: 55mm; height: 6mm; border-bottom: .2mm solid #566274; }
 .preview-note { margin: 14px 0 0; padding-top: 10px; border-top: 1px solid #d8dee8; color: #566274; font-size: .72rem; }
 .paper-settings > label { margin-bottom: 10px; }
 .setting-pair { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(0,.7fr); gap: 10px; }
@@ -129,7 +138,6 @@ button:disabled { cursor: not-allowed; }
 .cover-geometry .cover-graphic i:nth-child(3) { top: 25mm; left: 12mm; width: 23mm; height: 23mm; border-radius: 50%; }
 .cover-geometry .cover-kicker { color: #2456c4; }
 .sheet-watermark { position: absolute; z-index: 0; top: 144mm; left: 38mm; transform: rotate(-24deg); color: rgba(36,86,196,.07); font: 900 48pt Pretendard, sans-serif; pointer-events: none; }
-.print-sheet > :not(.sheet-watermark) { position: relative; z-index: 1; }
 .sheet-topline { padding-bottom: 4mm; display: flex; justify-content: space-between; border-bottom: .5mm solid #182230; font-family: Pretendard, "Apple SD Gothic Neo", sans-serif; font-size: 8pt; }
 .sheet-topline strong { letter-spacing: .04em; }
 .print-sheet h2 { margin: 9mm 0 7mm; font-size: 21pt; line-height: 1.2; letter-spacing: -.03em; }

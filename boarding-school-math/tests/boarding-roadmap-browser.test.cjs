@@ -38,7 +38,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#grade-title").innerText(), /유리수/);
   assert.equal(await page.locator(".grade-button").count(), 8);
   assert.equal(await page.locator(".stage-button").count(), 4);
-  assert.match(await page.locator(".level-boundary").innerText(), /미측정/);
+  assert.match(await page.locator(".level-boundary").innerText(), /진단 전/);
   assert.match(await page.locator("#grade-note").innerText(), /검수·공개 전/);
   assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=7&program=amc8/);
   assert.equal(await page.locator("#competition-practice-link").getAttribute("href"), "./competition-practice.html?program=amc8");

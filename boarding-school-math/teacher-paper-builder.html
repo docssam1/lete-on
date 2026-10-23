@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="공개된 Grade 7 비례관계 문항을 골라 교사용 A4 시험지를 만드는 화면">
+  <meta name="description" content="공개된 Grade 6–7 단원 워크북 문항을 골라 교사용 A4 시험지를 만드는 화면">
   <title>문제 선택·시험지 편집 | GFIELD Math</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
-  <link rel="stylesheet" href="./teacher-paper-builder.css?v=20261023-2">
+  <link rel="stylesheet" href="./unit-workbook.css?v=20261023-1">
+  <link rel="stylesheet" href="./teacher-paper-builder.css?v=20261023-3">
 </head>
 <body class="gfield-ui page-paper-builder">
   <a class="skip-link" href="#builder-main">본문으로 바로가기</a>
@@ -18,19 +19,22 @@
   </header>
   <main id="builder-main">
     <div class="builder-title">
-      <div><p>Grade 7 / 7.RP.A</p><h1>문제 선택·시험지 편집</h1><span>공개된 비례관계 문항 36개를 골라 A4 시험지를 만드세요.</span></div>
+      <div><p>6–7학년 · 공개 워크북</p><h1>시험지 만들기</h1><span>단원을 고르고 문제를 담으세요. A4로 인쇄할 수 있어요.</span></div>
       <button id="jump-to-sheet" type="button">출력 미리보기</button>
     </div>
     <div class="builder-layout">
       <aside class="filter-pane" aria-labelledby="filter-title">
-        <h2 id="filter-title">단원 필터</h2><p>7.RP.A · 비례관계</p>
+        <h2 id="filter-title">문제 찾기</h2><p>12개 단원 · 432문항</p>
+        <label for="grade-filter">학년<select id="grade-filter"><option value="6">Grade 6</option><option value="7" selected>Grade 7</option></select></label>
+        <label for="unit-filter">단원<select id="unit-filter"></select></label>
+        <h3>세부 주제</h3>
         <div id="strand-filters" class="strand-filters" role="group" aria-label="세부 단원"></div>
-        <div class="filter-note">다른 학년과 비공개 진단 문항은 이 화면에 없습니다.</div>
+        <div class="filter-note">공개 워크북 문제만 표시해요. 진단 문제와 경시 기출은 없어요.</div>
       </aside>
       <section class="list-pane" aria-labelledby="list-title">
-        <div class="list-toolbar"><div><h2 id="list-title">문제 목록</h2><span id="result-count" role="status" aria-live="polite"></span></div><button id="select-visible" type="button">검색 결과 모두 선택</button></div>
+        <div class="list-toolbar"><div><h2 id="list-title">문제 목록</h2><span id="result-count" role="status" aria-live="polite"></span></div><button id="select-visible" type="button">현재 목록 모두 담기</button></div>
         <div class="search-controls">
-          <label for="item-search">문제·단원 검색<input id="item-search" type="search" placeholder="예: 단위율, 그래프, 퍼센트" autocomplete="off"></label>
+          <label for="item-search">이 단원에서 검색<input id="item-search" type="search" placeholder="예: 단위율, 그래프, 퍼센트" autocomplete="off"></label>
           <label for="level-filter">수준<select id="level-filter"><option value="all">전체</option><option value="foundation">기초</option><option value="core">기본</option><option value="advanced">심화</option></select></label>
         </div>
         <p id="selection-status" class="selection-status" role="status" aria-live="polite">시험지에 담은 문제 0개</p>
@@ -39,11 +43,11 @@
       </section>
       <aside class="editor-pane" aria-labelledby="preview-title">
         <div class="preview-panel">
-          <div class="pane-heading"><h2 id="preview-title">문항 미리보기</h2><span id="preview-index">문항 선택</span></div>
+          <div class="pane-heading"><h2 id="preview-title">문제 미리보기</h2><span id="preview-index">문제 선택</span></div>
           <div id="item-preview" class="item-preview"><p>목록에서 문항을 누르면 여기에 표시됩니다.</p></div>
         </div>
         <div class="paper-settings">
-          <div class="pane-heading"><h2>시험지 편집</h2><div class="selected-summary"><span id="selected-count">0문항</span><button id="clear-selected" type="button" disabled>모두 빼기</button></div></div>
+          <div class="pane-heading"><h2>담은 문제</h2><div class="selected-summary"><span id="selected-count">0문항</span><button id="clear-selected" type="button" disabled>모두 빼기</button></div></div>
           <label for="paper-title">시험명<input id="paper-title" type="text" maxlength="60" value="Grade 7 비례관계 확인 평가"></label>
           <div class="setting-pair"><label for="paper-course">과정<input id="paper-course" type="text" maxlength="35" value="Grade 7 · 비례관계"></label><label for="paper-round">회차<input id="paper-round" type="number" min="1" max="99" value="1"></label></div>
           <div class="setting-pair"><label for="paper-date">날짜<input id="paper-date" type="text" maxlength="30" placeholder="예: 2026. 10. 23."></label><label for="paper-time">시험 시간<input id="paper-time" type="number" min="1" max="180" value="20"></label></div>
@@ -68,16 +72,35 @@
   <template id="question-page-template">
     <div class="print-sheet question-page">
       <div class="sheet-watermark" aria-hidden="true">GFIELD</div>
-      <div class="sheet-topline"><strong>GFIELD MATH</strong><span class="sheet-course-code">GRADE 7 · 7.RP.A</span></div>
+      <div class="sheet-topline"><strong>GFIELD MATH</strong><span class="sheet-course-code"></span></div>
       <h2 class="sheet-title"></h2>
       <div class="sheet-fields"><span>이름 <i></i></span><span>날짜 <b class="sheet-date"></b></span><span>시간 <b class="sheet-time"></b></span><span>총점 <b class="sheet-points"></b></span></div>
-      <p class="sheet-instruction">문제를 읽고 답을 고르세요. 풀이가 필요한 경우 아래 빈칸을 사용하세요.</p>
+      <p class="sheet-instruction">문제를 읽고 답을 쓰거나 고르세요. 풀이가 필요하면 아래 빈칸을 사용하세요.</p>
       <div class="sheet-questions"></div>
       <div class="sheet-footer"><span>GFIELD Math · 자체 제작 문항</span><span class="sheet-page-number"></span></div>
     </div>
   </template>
-  <script src="../geometry/worksheet/render.js"></script>
+  <script src="./learning/grade6-rp-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-rp-a-unit-workbook.js?v=20260909-2"></script>
+  <script src="./learning/grade6-ns-a-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ns-a-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ns-b-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ns-b-unit-workbook.js?v=20260909-1"></script>
+  <script src="../geometry/worksheet/render.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ns-c-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ns-c-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ee-a-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ee-a-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ee-b-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ee-b-unit-workbook.js?v=20260909-2"></script>
+  <script src="./learning/grade6-ee-c-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-ee-c-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-g-a-clinic-pack.js?v=20260909-1"></script>
+  <script src="./learning/grade6-g-a-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-sp-a-unit-workbook.js?v=20260909-1"></script>
+  <script src="./learning/grade6-sp-b-unit-workbook.js?v=20261003-1"></script>
   <script src="./learning/grade7-rp-a-unit-workbook.js?v=20260911-1"></script>
-  <script src="./teacher-paper-builder.js?v=20261023-2"></script>
+  <script src="./learning/grade7-ns-a-unit-workbook.js?v=20261014-1"></script>
+  <script src="./teacher-paper-builder.js?v=20261023-3"></script>
 </body>
 </html>
