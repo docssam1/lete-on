@@ -1,10 +1,11 @@
 # Elementary Question Bank Handover
 
-## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 4: Fold Figure Recheck, Still Locked
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 4: Angle-Mark Location Corrected, Still Locked
 
-- Re-read logical PDF page 25 / printed page 29 at 450dpi and checked Apple Vision OCR against the high-resolution figure. The source asks for ∠ㅅㅇㅈ after folding a rectangular sheet twice. The figure has a printed 32° mark at the left folded point, 46° at the lower-right corner against the rectangle's right side, a right-angle mark at ㅈ, and dashed fold guides from the top edge. Pencil writing was excluded.
-- Corrected the readiness record's stale “40° target” description and recorded the visible marks and target ∠SOJ. The fold/edge correspondences for the two folds still need an independent reconstruction, so no answer is entered. Calculation remains blocked-visual; implementation and public states stay locked. Source structure is now confirmed.
-- Drive QA note: https://drive.google.com/file/d/1hNhetDTelUU_AKvReI-k1H5d3sw3EZRb/view (uploaded to existing `.source-memory` folder and read back). Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page image SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; diagram crop SHA-256 `b467052b425fcbbbf8f00eacf94ea1e925fed2e6a1be59f957e322fcb7d3e6c8`.
+- Rechecked the 450dpi source crop and a close-up around the 32° mark. The arc is at ㅈ between ㅈㅂ and ㅈㅅ, so the printed angle is ∠ㅂㅈㅅ=32°; it is not at ㅂ. The 46° is ∠ㅇㄷㄴ at ㄷ, and the right-angle mark is ∠ㅅㅈㅇ. Pencil writing was excluded.
+- Since ㅂ, ㅈ, ㄷ are collinear, the printed marks establish ∠ㄷㅈㅇ=58°. That intermediate angle does not by itself determine target ∠ㅅㅇㅈ. A tempting 58° answer requires an unverified mapping between the original rectangle edge and the folded edge, so it was rejected pending a fold-by-fold reflection reconstruction. `independentAnswer` remains null, calculation remains blocked-visual, and the item remains locked.
+- Corrected the readiness entry's angle vertex and updated the visual requirement. No runtime mapping, student data, or release state changed.
+- Drive QA correction: https://drive.google.com/file/d/1osh1VOnzsLTye9PCydxk5P-z0FEPmRzx/view (read back). Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page image SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; close-up SHA-256 `cb25cc092afd912b13eee7ab44b644b61e56cb7af8b9219632cd0067eba10c8c`.
 
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 6: Equilateral 5cm Transversal Angle
 

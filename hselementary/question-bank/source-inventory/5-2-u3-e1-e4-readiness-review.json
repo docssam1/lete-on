@@ -1128,22 +1128,22 @@
       "commonTypeId": "folded-rectangle-angle",
       "typeLabel": "직사각형 두 번 접기와 각 추론",
       "childFriendlyTypeLabel": "접은 종이의 각 찾기",
-      "originalStructure": "직사각형 종이를 두 번 접은 그림에서 ∠SBJ=32°, ∠OCD=46°, ∠SJO=90° 표식을 확인하고 ∠SOJ를 구합니다. 그림에는 위쪽 변에서 시작하는 점선 접힘 가이드도 있습니다.",
-      "conditions": ["바깥 종이는 직사각형", "두 번 접음", "∠SBJ=32°", "∠OCD=46°", "∠SJO=90°", "목표각은 ∠SOJ", "점선 접힘 가이드와 접힌 모서리의 대응을 보존해야 함"],
-      "visualRequirement": "32°·46° 표식, ㅂ·ㅅ·ㅇ·ㅈ의 위치, ㅈ의 직각 표식은 원문에서 확인했습니다. 두 접힘의 점선 가이드가 어느 접힌 모서리를 만드는지 구현 그림과 대조해야 합니다.",
+      "originalStructure": "직사각형 종이를 두 번 접은 그림에서 ∠BJS=32°, ∠ㅇㄷㄴ=46°, ∠ㅅㅈㅇ=90° 표식을 확인하고 ∠ㅅㅇㅈ을 구합니다. 그림에는 위쪽 변에서 시작하는 점선 접힘 가이드도 있습니다.",
+      "conditions": ["바깥 종이는 직사각형", "두 번 접음", "∠ㅂㅈㅅ=32° (각 꼭짓점은 ㅈ)", "∠ㅇㄷㄴ=46° (각 꼭짓점은 ㄷ)", "∠ㅅㅈㅇ=90°", "목표각은 ∠ㅅㅇㅈ", "점선 접힘 가이드와 접힌 모서리의 대응을 보존해야 함"],
+      "visualRequirement": "확대 그림에서 32°는 ㅈ 꼭짓점의 ∠ㅂㅈㅅ이고, 46°는 ㄷ 꼭짓점의 ∠ㅇㄷㄴ이며, 직각은 ∠ㅅㅈㅇ입니다. ㅂ·ㅈ·ㄷ의 일직선 관계로 ∠ㄷㅈㅇ=58°까지는 따를 수 있습니다. 목표각을 확정하려면 두 접힘이 어느 원래 변을 어느 접힌 변으로 보내는지 추적해야 합니다.",
       "independentCalculation": null,
       "answerFormula": null,
       "independentAnswer": null,
       "resultContract": "single-value",
       "candidateAnswerCount": null,
       "singleAnswer": null,
-      "singleAnswerCheck": "접힘선의 대응 관계가 확정되지 않아 각도 합을 안전하게 구성할 수 없습니다.",
+      "singleAnswerCheck": "32°의 꼭짓점을 교정했습니다. ∠ㄷㅈㅇ=58°는 확정되지만 46°와 선분 ㄷㅈ의 접힘 대응이 확인되지 않아 ∠ㅅㅇㅈ을 유일하게 계산하지 않았습니다.",
       "sourceVerified": true,
       "calculationStatus": "blocked-visual",
       "visualCheckStatus": "confirmed-source-structure",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "원문 각도와 라벨은 확인했지만 두 접힘의 모서리 대응을 독립적으로 재구성하지 못했으므로 답을 공개 후보로 올리지 않습니다."
+      "lockReason": "원문 각도와 라벨은 확인했습니다. 두 접힘의 원래 변-접힌 변 대응과 ∠ㅅㅇㅈ 방향을 확정하기 전까지 답을 공개 후보로 올리지 않습니다."
     },
     {
       "sourceItemId": "5-2-u3-e3-mission-5",
@@ -1525,7 +1525,7 @@
       "2026-10-24 인쇄 29쪽 Mission 2의 왼쪽 위 기준 6cm 치수와 큰 정사각형 중심을 직접 확인해 기존 비유일 판정을 바로잡았습니다. C=(7,7), Q=(0,6), P=(6,14)에서 겹친 직각삼각형의 넓이는 25cm²입니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1nYo-dub1uoTgR5e6t40KtyKKpGvwFNcC.",
       "2026-10-24 인쇄 29쪽 Mission 5의 같은 거리 표식과 세 점의 120° 순환 대응을 좌표 검산으로 확인했습니다. 안쪽 삼각형은 정삼각형이며 ㉠=60°입니다. Drive QA: 1rNBPO8moU-Z7i4lsHFnba14Xb17Petql.",
       "2026-10-24 인쇄 29쪽 Mission 6의 5cm 끝점과 교차 라벨을 원문에서 확인했습니다. 임의의 변 길이에 대해 회전 벡터 증명으로 ∠ㄱㅂㅁ=60°이고, 교점은 두 선분 내부입니다. 구현 그림 대조 전 잠금은 유지합니다. Drive QA: 18goPVPFZgxmFATf-w_BWzNwEt3yF-Mja.",
-      "2026-10-24 인쇄 29쪽 Mission 4의 원문 표식을 재확인해 32°·46°·ㅈ의 직각과 목표각 ∠SOJ를 기록했습니다. 기존의 근거 없는 40° 설명을 지우고, 두 접힘의 대응을 재구성할 때까지 답과 공개를 잠갔습니다. Drive QA: 1hNhetDTelUU_AKvReI-k1H5d3sw3EZRb."
+      "2026-10-24 인쇄 29쪽 Mission 4를 고해상도 확대해 32°의 꼭짓점이 ㅈ임을 바로잡았습니다. ∠ㄷㅈㅇ=58°까지 확인했으나 접힘의 변 대응이 미확정이라 목표각은 비워 두고 잠금을 유지합니다. Drive QA: 1osh1VOnzsLTye9PCydxk5P-z0FEPmRzx."
     ]
   }
 }
