@@ -171,8 +171,66 @@ test("three covers use the entered paper details and the full public set paginat
   await page.close();
 });
 
+test("teacher answer key is separate from the question sheet and keeps the selected order", async () => {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const errors = []; page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(url, { waitUntil: "networkidle" });
+  await page.getByRole("checkbox", { name: "1번 시험지에 추가", exact: true }).check();
+  await page.getByRole("checkbox", { name: "2번 시험지에 추가", exact: true }).check();
+  assert.equal(await page.locator(".key-answer").count(), 0);
+  await page.locator('input[name="output-kind"][value="answers"]').check();
+  assert.equal(await page.locator(".answer-page").count(), 1);
+  assert.equal(await page.locator(".key-answer").count(), 2);
+  assert.equal(await page.locator("#paper-pages .question-choices").count(), 0);
+  assert.match(await page.locator("#sheet-heading").innerText(), /정답지/);
+  assert.match(await page.locator("#print-paper").innerText(), /정답지/);
+  assert.equal(await page.locator(".sheet-question").first().getAttribute("data-item-id"), "7.RP.A:g7rpa-w01");
+  const expected = await page.evaluate(() => {
+    const api = window.GFIELDGrade7RPAUnitWorkbook;
+    const item = api.pack.workbookItems[0];
+    return api.solutionFor(item, "ko");
+  });
+  assert.ok((await page.locator(".key-solution").first().innerText()).includes(expected.slice(0, 15)));
+  await page.getByRole("button", { name: "7.RP.A 2번 위로", exact: true }).click();
+  assert.equal(await page.locator(".sheet-question").first().getAttribute("data-item-id"), "7.RP.A:g7rpa-w02");
+  await page.locator('input[name="cover-style"][value="formal"]').check();
+  assert.match(await page.locator(".cover-kicker").innerText(), /정답지/);
+  await page.locator('input[name="output-kind"][value="questions"]').check();
+  assert.equal(await page.locator(".answer-page").count(), 0);
+  assert.equal(await page.locator(".key-answer").count(), 0);
+  assert.equal(await page.locator(".sheet-question").count(), 2);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("every public unit can paginate a full teacher key", async () => {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const errors = []; page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(url, { waitUntil: "networkidle" });
+  await page.locator('input[name="output-kind"][value="answers"]').check();
+  let checked = 0;
+  for (const grade of ["6", "7"]) {
+    await page.locator("#grade-filter").selectOption(grade);
+    const units = await page.locator("#unit-filter option").evaluateAll((options) => options.map((option) => option.value));
+    for (const unit of units) {
+      await page.locator("#unit-filter").selectOption(unit);
+      await page.locator("#select-visible").click();
+      assert.equal(await page.locator(".key-answer").count(), 36, unit);
+      assert.equal(await page.locator(".key-solution").count(), 36, unit);
+      assert.equal(await page.locator(".is-overflow").count(), 0, unit);
+      assert.equal(await page.locator("#print-paper").isEnabled(), true, unit);
+      await page.locator("#clear-selected").click();
+      checked += 1;
+    }
+  }
+  assert.equal(checked, 12);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("paper builder fits mobile and tablet widths without page overflow", async () => {
   const pageCounts = [];
+  const keyPageCounts = [];
   for (const width of [375, 390, 768, 1440]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     await page.goto(url, { waitUntil: "networkidle" });
@@ -182,7 +240,13 @@ test("paper builder fits mobile and tablet widths without page overflow", async 
     assert.ok(size.sheets.every((widthOfSheet) => widthOfSheet <= size.available + 1), `paper preview overflow at ${width}px`);
     await page.locator("#select-visible").click();
     pageCounts.push(await page.locator(".question-page").count());
+    await page.locator('input[name="output-kind"][value="answers"]').check();
+    keyPageCounts.push(await page.locator(".answer-page").count());
+    assert.equal(await page.locator(".key-answer").count(), 36);
+    assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [width, width]);
+    assert.equal(await page.locator(".is-overflow").count(), 0);
     await page.close();
   }
   assert.equal(new Set(pageCounts).size, 1, "A4 pagination must not depend on viewport width");
+  assert.equal(new Set(keyPageCounts).size, 1, "answer pagination must not depend on viewport width");
 });

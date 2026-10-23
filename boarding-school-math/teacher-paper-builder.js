@@ -14,7 +14,17 @@
     return !!(pack && pack.contentOrigin === "gfield-original-authored-public-unit-workbook" &&
       pack.rights && pack.rights.publication === "public" && pack.rights.assetRights === "original" &&
       pack.rights.containsThirdPartyAssets === false && Array.isArray(pack.workbookItems) &&
-      pack.workbookItems.length === 36 && typeof api.renderVisual === "function");
+      pack.workbookItems.length === 36 && typeof api.renderVisual === "function" &&
+      typeof api.solveItem === "function" && typeof api.solutionFor === "function" &&
+      pack.workbookItems.every(function (item) {
+        try {
+          const result = api.solveItem(item);
+          if (!String(api.solutionFor(item, "ko") || "").trim()) return false;
+          return Array.isArray(item.choices)
+            ? item.choices.some(function (choice) { return choice.id === result; })
+            : typeof api.formatResult === "function" && !!String(api.formatResult(item) || "").trim();
+        } catch (_error) { return false; }
+      }));
   };
   if (!apis.every(released)) { $("builder-message").textContent = "공개 문항을 확인할 수 없습니다. 자료를 다시 불러오세요."; return; }
   const sources = apis.map(function (api) {
@@ -36,6 +46,7 @@
   let previewId = activeSource.records[0].id;
   let defaultTitle = "Grade 7 비례관계 확인 평가";
   let defaultCourse = "Grade 7 · 비례관계";
+  function outputKind() { return document.querySelector('input[name="output-kind"]:checked').value; }
 
   function itemNumber(record) { return record.number; }
   function strandName(record) {
@@ -156,7 +167,7 @@
     $("preview-index").textContent = `${sourceLabel(record)} · ${levelName[record.item.level]}`;
     host.append(content(record, null));
     const note = document.createElement("p"); note.className = "preview-note";
-    note.textContent = "정답·해설은 시험지에 포함하지 않습니다."; host.append(note);
+    note.textContent = outputKind() === "answers" ? "정답지는 문제지와 따로 출력해요." : "정답·해설은 문제지에 포함하지 않습니다."; host.append(note);
   }
   function addItem(id) {
     if (selected.some(function (entry) { return entry.id === id; })) return;
@@ -219,7 +230,7 @@
       sourceText: sourceText
     };
   }
-  function createCover(style, info) {
+  function createCover(style, info, answers) {
     const cover = document.createElement("div");
     cover.className = `print-sheet cover-page cover-${style}`;
     cover.innerHTML = '<div class="cover-header"><strong>GFIELD MATH</strong><span class="cover-source"></span></div><div class="cover-graphic" aria-hidden="true"><i></i><i></i><i></i></div><div class="cover-body"><p class="cover-kicker">시험지</p><h2></h2><p class="cover-course"></p><p class="cover-round"></p></div><div class="cover-details"><div><span>이름</span><i></i></div><div><span>날짜</span><strong class="cover-date"></strong></div><div><span>시험 시간</span><strong class="cover-time"></strong></div><div><span>총점</span><strong class="cover-points"></strong></div></div><div class="cover-footer"><span>문제를 읽고 답과 풀이를 작성하세요.</span><strong>GFIELD</strong></div>';
@@ -230,15 +241,27 @@
     cover.querySelector(".cover-date").textContent = info.date;
     cover.querySelector(".cover-time").textContent = `${info.time}분`;
     cover.querySelector(".cover-points").textContent = `${info.points}점`;
+    if (answers) {
+      cover.querySelector(".cover-kicker").textContent = "교사용 정답지";
+      cover.querySelector(".cover-footer span").textContent = "정답과 풀이를 문제지와 함께 확인하세요.";
+      cover.querySelector(".cover-details div:first-child span").textContent = "담당";
+    }
     return cover;
   }
-  function createQuestionPage(info) {
+  function createQuestionPage(info, answers) {
     const page = $("question-page-template").content.firstElementChild.cloneNode(true);
     page.querySelector(".sheet-course-code").textContent = info.sourceText;
     page.querySelector(".sheet-title").textContent = info.title;
     page.querySelector(".sheet-date").textContent = info.date;
     page.querySelector(".sheet-time").textContent = `${info.time}분`;
     page.querySelector(".sheet-points").textContent = `${info.points}점`;
+    if (answers) {
+      page.classList.add("answer-page");
+      page.querySelector(".sheet-title").textContent = `${info.title} · 정답지`;
+      page.querySelector(".sheet-fields").remove();
+      page.querySelector(".sheet-instruction").textContent = "교사용 정답과 풀이입니다. 문제지는 따로 출력하세요.";
+      page.querySelector(".sheet-footer span").textContent = "GFIELD Math · 교사용 정답지";
+    }
     return page;
   }
   function questionArticle(entry, index) {
@@ -252,6 +275,32 @@
     for (let i = 0; i < entry.lines; i += 1) answerSpace.append(document.createElement("span"));
     article.append(answerSpace); return article;
   }
+  function answerArticle(entry, index) {
+    const record = byId.get(entry.id), item = record.item, api = record.source.api;
+    const article = document.createElement("article"); article.className = "sheet-question key-question"; article.dataset.itemId = record.id;
+    const meta = document.createElement("div"); meta.className = "sheet-question-meta";
+    const source = document.createElement("span"); source.textContent = `${sourceLabel(record)} · ${item.standardIds.join(", ")}`;
+    const points = document.createElement("strong"); points.textContent = `${entry.points}점`;
+    meta.append(source, points); article.append(meta);
+    const prompt = document.createElement("p"); prompt.className = "key-prompt"; prompt.textContent = `${index + 1}. ${item.prompt.ko}`;
+    article.append(prompt);
+    let answerText;
+    if (Array.isArray(item.choices)) {
+      const answerId = api.solveItem(item);
+      const choiceIndex = item.choices.findIndex(function (choice) { return choice.id === answerId; });
+      answerText = `${String.fromCharCode(65 + choiceIndex)}. ${item.choices[choiceIndex].label.ko}`;
+    } else {
+      const unit = item.unit && (item.unit.ko || item.unit);
+      answerText = `${api.formatResult(item)}${unit ? ` ${unit}` : ""}`;
+    }
+    const answer = document.createElement("p"); answer.className = "key-answer";
+    const answerLabel = document.createElement("strong"); answerLabel.textContent = "정답";
+    answer.append(answerLabel, document.createTextNode(answerText));
+    const solution = document.createElement("p"); solution.className = "key-solution";
+    const solutionLabel = document.createElement("strong"); solutionLabel.textContent = "풀이";
+    solution.append(solutionLabel, document.createTextNode(api.solutionFor(item, "ko")));
+    article.append(answer, solution); return article;
+  }
   function fitsPage(article, page) {
     return article.getBoundingClientRect().bottom <= page.querySelector(".sheet-footer").getBoundingClientRect().top - 12;
   }
@@ -263,21 +312,22 @@
   function renderPaper() {
     const info = paperInfo(), host = $("paper-pages"); host.replaceChildren();
     const style = document.querySelector('input[name="cover-style"]:checked').value;
-    if (style !== "none") host.append(createCover(style, info));
-    let page = createQuestionPage(info); host.append(page);
+    const answers = outputKind() === "answers";
+    if (style !== "none") host.append(createCover(style, info, answers));
+    let page = createQuestionPage(info, answers); host.append(page);
     const oversized = [];
     if (!selected.length) {
       const empty = document.createElement("p"); empty.className = "sheet-empty";
-      empty.textContent = "문제를 선택하면 인쇄할 시험지가 여기 나타납니다.";
+      empty.textContent = answers ? "문제를 담으면 정답지가 나타납니다." : "문제를 선택하면 인쇄할 시험지가 여기 나타납니다.";
       page.querySelector(".sheet-questions").append(empty);
     }
     selected.forEach(function (entry, index) {
-      const article = questionArticle(entry, index);
+      const article = answers ? answerArticle(entry, index) : questionArticle(entry, index);
       page.querySelector(".sheet-questions").append(article);
       if (!fitsPage(article, page)) {
         article.remove();
         if (page.querySelector(".sheet-question")) {
-          page = createQuestionPage(info); host.append(page);
+          page = createQuestionPage(info, answers); host.append(page);
         }
         page.querySelector(".sheet-questions").append(article);
         if (!fitsPage(article, page)) { oversized.push(sourceLabel(byId.get(entry.id))); page.classList.add("is-overflow"); }
@@ -286,7 +336,9 @@
     const questionPages = [...host.querySelectorAll(".question-page")];
     questionPages.forEach(function (sheet, index) { sheet.querySelector(".sheet-page-number").textContent = `${index + 1} / ${questionPages.length}`; });
     fitPages();
-    $("page-count").textContent = `${style === "none" ? "" : "표지 1쪽 · "}본문 ${questionPages.length}쪽`;
+    $("page-count").textContent = `${style === "none" ? "" : "표지 1쪽 · "}${answers ? "정답지" : "본문"} ${questionPages.length}쪽`;
+    $("sheet-heading").textContent = answers ? "A4 정답지" : "A4 시험지";
+    $("print-paper").textContent = answers ? "정답지 인쇄·PDF" : "A4 시험지 인쇄·PDF";
     $("print-paper").disabled = !selected.length || oversized.length > 0;
     $("print-status").textContent = oversized.length ? `${oversized.join(", ")}번 문항이 한 쪽에 들어가지 않습니다. 풀이 줄을 줄이세요.` : "";
   }
@@ -306,6 +358,7 @@
   $("clear-selected").addEventListener("click", function () { selected.length = 0; message(""); renderAll(); });
   ["paper-title", "paper-course", "paper-round", "paper-date", "paper-time"].forEach(function (id) { $(id).addEventListener("input", renderPaper); });
   document.querySelectorAll('input[name="cover-style"]').forEach(function (input) { input.addEventListener("change", renderPaper); });
+  document.querySelectorAll('input[name="output-kind"]').forEach(function (input) { input.addEventListener("change", function () { renderPaper(); renderPreview(); }); });
   $("jump-to-sheet").addEventListener("click", function () { $("sheet-section").scrollIntoView({ behavior: "smooth" }); });
   $("print-paper").addEventListener("click", async function () {
     renderPaper();

@@ -89,6 +89,11 @@ button:disabled { cursor: not-allowed; }
 .print-status { min-height: 18px; margin: 7px 0 0; color: #b42332; font-size: .75rem; line-height: 1.45; }
 .print-button { width: 100%; min-height: 46px; border: 1px solid #2456c4; border-radius: 4px; color: #fff; background: #2456c4; font-size: .88rem; font-weight: 800; }
 .print-button:disabled { border-color: #b8c3d2; background: #b8c3d2; }
+.output-control { margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; border: 0; }
+.output-control legend { margin-bottom: 8px; padding: 0; color: #354255; font-size: .75rem; font-weight: 800; }
+.output-control label { min-height: 44px; padding: 7px 9px; display: flex; align-items: center; gap: 7px; border: 1px solid #d8dee8; color: #354255; cursor: pointer; font-size: .77rem; font-weight: 750; }
+.output-control label:has(input:checked) { border-color: #2456c4; color: #2456c4; background: #f1f5ff; }
+.output-control input { width: 16px; min-width: 16px; height: 16px; margin: 0; padding: 0; accent-color: #2456c4; }
 .cover-control { margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; border: 0; }
 .cover-control legend { margin-bottom: 8px; padding: 0; color: #354255; font-size: .75rem; font-weight: 800; }
 .cover-control label { min-height: 52px; padding: 7px 8px; display: flex; align-items: center; gap: 7px; border: 1px solid #d8dee8; color: #354255; cursor: pointer; font-size: .75rem; font-weight: 700; }
@@ -152,6 +157,13 @@ button:disabled { cursor: not-allowed; }
 .sheet-question .question-prompt { font-size: 10pt; line-height: 1.55; }
 .sheet-question .question-visual { margin: 4mm 0; }
 .sheet-question .question-choices { gap: 2mm 6mm; font-size: 8.5pt; }
+.answer-page .sheet-title { margin-bottom: 6mm; font-size: 18pt; }
+.answer-page .sheet-instruction { margin: 0 0 7mm; padding-bottom: 4mm; border-bottom: .2mm solid #d8dee8; }
+.key-question { padding: 4mm 0; }
+.key-prompt { margin: 0 0 3mm; font-size: 9.5pt; line-height: 1.5; }
+.key-answer, .key-solution { margin: 2mm 0 0; display: grid; grid-template-columns: 12mm minmax(0,1fr); gap: 3mm; font-size: 9pt; line-height: 1.5; overflow-wrap: anywhere; }
+.key-answer strong, .key-solution strong { color: #2456c4; font-family: Pretendard, "Apple SD Gothic Neo", sans-serif; font-size: 8pt; }
+.key-solution { color: #354255; }
 .answer-space { margin-top: 5mm; display: grid; gap: 4mm; }
 .answer-space span { height: 3mm; border-bottom: .2mm solid #c8ced8; }
 .sheet-empty { padding: 30mm 0; color: #566274; text-align: center; }

@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./unit-workbook.css?v=20261023-1">
-  <link rel="stylesheet" href="./teacher-paper-builder.css?v=20261023-3">
+  <link rel="stylesheet" href="./teacher-paper-builder.css?v=20261024-1">
 </head>
 <body class="gfield-ui page-paper-builder">
   <a class="skip-link" href="#builder-main">본문으로 바로가기</a>
@@ -51,6 +51,7 @@
           <label for="paper-title">시험명<input id="paper-title" type="text" maxlength="60" value="Grade 7 비례관계 확인 평가"></label>
           <div class="setting-pair"><label for="paper-course">과정<input id="paper-course" type="text" maxlength="35" value="Grade 7 · 비례관계"></label><label for="paper-round">회차<input id="paper-round" type="number" min="1" max="99" value="1"></label></div>
           <div class="setting-pair"><label for="paper-date">날짜<input id="paper-date" type="text" maxlength="30" placeholder="예: 2026. 10. 23."></label><label for="paper-time">시험 시간<input id="paper-time" type="number" min="1" max="180" value="20"></label></div>
+          <fieldset class="output-control"><legend>출력할 문서</legend><label><input type="radio" name="output-kind" value="questions" checked><span>문제지</span></label><label><input type="radio" name="output-kind" value="answers"><span>교사용 정답지</span></label></fieldset>
           <fieldset class="cover-control"><legend>표지</legend>
             <label><input type="radio" name="cover-style" value="none" checked><span class="cover-swatch swatch-none" aria-hidden="true"></span><span>없음</span></label>
             <label><input type="radio" name="cover-style" value="formal"><span class="cover-swatch swatch-formal" aria-hidden="true"></span><span>정식 시험</span></label>
@@ -101,6 +102,6 @@
   <script src="./learning/grade6-sp-b-unit-workbook.js?v=20261003-1"></script>
   <script src="./learning/grade7-rp-a-unit-workbook.js?v=20260911-1"></script>
   <script src="./learning/grade7-ns-a-unit-workbook.js?v=20261014-1"></script>
-  <script src="./teacher-paper-builder.js?v=20261023-3"></script>
+  <script src="./teacher-paper-builder.js?v=20261024-1"></script>
 </body>
 </html>
