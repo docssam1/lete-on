@@ -1,5 +1,5 @@
 import { CURRICULUM } from "./source-data.js?v=20260918a";
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell } from "./study-map.js?v=20261024b";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, GEOMETRY_GAMES, geometryGameUrl } from "./study-map.js?v=20261024c";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
@@ -8,6 +8,9 @@ import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell }
 //  · 게임을 마치거나 골든벨 문항을 다 풀면 독쌤이 칭찬하고 저절로 다음 장으로 간다(「넘김 멈춤」으로 끈다).
 //  · 본책 번호를 누르면 같은 유형의 유사문제가 이 장 위에 뜬다(문제은행 학생 화면, embed). 닫으면 번호판으로 돌아온다.
 //  · 독쌤 말은 글이 원본이고, 음성은 기기 음성(ko-KR)으로 읽는다. 소리 없이 입을 움직이는 그림은 쓰지 않는다(표정 3장만 바꿔 끼움).
+//  · 화면은 밝은 그림 세계 위의 카드다(원장: 「밝아야 돼. 이런 배너 틀 안에 학습이 되도록」). 다섯 섬 = 개념 · 게임 · 골든벨 · 공부하기 · 완료.
+//    장이 바뀌면 지도가 그 섬으로 옮겨 가고 독쌤이 걸어가며, 카드는 섬의 반대쪽에 선다.
+//  · 게임하기에는 주제가 같은 기하 게임(geometry/games)을 먼저 넣는다(원장: 「지오메트리 쪽 봐 봐」, 짝은 study-map.js GEOMETRY_GAMES).
 // 주소: ?book=book-01&unit=0&part=1&s=장번호&student=…   차시 나누기 규칙은 study-map.js
 
 const $ = (id) => document.getElementById(id);
@@ -45,6 +48,14 @@ function buildSlides() {
   const lessons = bellData ? lessonsByPart(unit, lessonsByUnit(book, bellBook).units[unitIndex])[part - 1] : [];
   const list = [{ kind: "cover" }];
   for (const lesson of lessons) list.push({ kind: "concept", lesson });
+  const geoSeen = new Set();
+  for (const lesson of lessons) {
+    for (const [id, title, query] of GEOMETRY_GAMES[`${book.id}/${lesson.id}`] || []) {
+      if (geoSeen.has(id + query)) continue;
+      geoSeen.add(id + query);
+      list.push({ kind: "game", lesson, geo: geometryGameUrl(id, query), title });
+    }
+  }
   for (const lesson of lessons) {
     const flow = bellData.games.flows[`${book.id}/${lesson.id}`];
     if (flow?.game) list.push({ kind: "game", lesson, game: flow.game, title: bellData.games.flowTitles[flow.game] || "게임" });
@@ -69,9 +80,10 @@ let lastLine = null;
 function say(text, mood = "talk") {
   lastLine = [text, mood];
   $("guideSay").textContent = text;
-  $("guide").dataset.mood = mood;
-  $("guideImg").src = `./${PORTRAIT[mood] || PORTRAIT.talk}`;
-  const bubble = $("guide").querySelector(".sd-bubble");
+  $("guideSayBar").textContent = text;
+  $("talk").dataset.mood = mood;
+  $("walkerImg").src = `./${PORTRAIT[mood] || PORTRAIT.talk}`;
+  const bubble = $("talk");
   bubble.classList.remove("new"); void bubble.offsetWidth; bubble.classList.add("new");
   speak(text);
 }
@@ -87,9 +99,10 @@ function speak(text) {
   } catch {}
 }
 function paintGuideButtons() {
-  $("voiceBtn").textContent = pref.sound ? "🔊 음성" : "🔇 음성 끔";
+  $("voiceBtn").textContent = pref.sound ? "🔊" : "🔇";
   $("voiceBtn").setAttribute("aria-pressed", String(pref.sound));
-  $("pauseBtn").textContent = pref.paused ? "▶ 자동 넘김" : "⏸ 넘김 멈춤";
+  $("pauseBtn").textContent = pref.paused ? "▶" : "⏸";
+  $("pauseBtn").title = pref.paused ? "다음 장으로 저절로 넘어가기 켜기" : "저절로 넘어가기 멈추기";
   $("pauseBtn").setAttribute("aria-pressed", String(pref.paused));
 }
 $("voiceBtn").addEventListener("click", () => { pref.sound = !pref.sound; savePref(); paintGuideButtons(); if (pref.sound && lastLine) speak(lastLine[0]); else speak(""); });
@@ -167,6 +180,22 @@ function askFrame(cmd) {
   waitTimer = setTimeout(() => { if (waiting === cmd) { waiting = null; cmd === "next" ? go(index + 1) : go(index - 1, { atEnd: true }); } }, 2000);
 }
 
+// ── 기하 게임 창 ──────────────────────────────────────────
+// 기하 게임은 제 화면 그대로 띄우고, 제 허브(놀이터)로 돌아가는 단추만 감춘다 — 돌아가기는 덱이 맡는다.
+function openGeometry(slide) {
+  const frame = $("geoFrame");
+  const url = new URL(slide.geo, location.href).href;
+  if (frame.src !== url) frame.src = url;
+}
+$("geoFrame").addEventListener("load", () => {
+  try {
+    const doc = $("geoFrame").contentDocument;
+    const style = doc.createElement("style");
+    style.textContent = 'a[href^="../../"]{display:none!important}';
+    doc.head.append(style);
+  } catch {}
+});
+
 // ── 화면 ──────────────────────────────────────────────────
 function renderHead() {
   document.title = `${book.label} ${unitIndex + 1}단원 ${part}차시 · ${unit.label}`;
@@ -175,14 +204,63 @@ function renderHead() {
   $("studentName").textContent = student;
   $("backLink").href = link("start.html", { book: book.id });
 }
-function renderPhases() {
-  const current = slides[index].kind;
-  $("phases").innerHTML = PHASES.map(([kind, label], k) => {
-    const first = slides.findIndex((slide) => slide.kind === kind);
-    const state = current === kind ? " is-on" : first >= 0 && first < index ? " is-done" : "";
-    return `<button type="button" class="sd-phase${state}" data-jump="${first}" ${first < 0 ? "disabled" : ""} ${current === kind ? 'aria-current="step"' : ""}><b>${k + 1}</b><span>${label}${first < 0 && ready ? " · 준비 중" : ""}</span></button>`;
+// ── 그림 세계: 섬 다섯 개(그림 1672×941 안의 자리, %) ──
+// 그림의 다섯 터(아래 왼쪽 → 위 오른쪽). 그림을 바꾸면 이 자리를 다시 잰다.
+const ISLANDS = [[15, 78], [35.5, 55], [52, 38.5], [73.5, 33.5], [87.6, 15.5]];
+const STATIONS = [["concept", "개념 배우기"], ["game", "게임하기"], ["bell", "골든벨"], ["board", "공부하기"], ["end", "완료"]];
+const stationOf = (slide) => Math.max(0, STATIONS.findIndex(([kind]) => kind === slide.kind));
+function renderSigns() {
+  const slide = slides[index];
+  const here = slide.kind === "cover" ? -1 : stationOf(slide);
+  $("signs").innerHTML = STATIONS.map(([kind, label], k) => {
+    const first = slides.findIndex((entry) => entry.kind === kind);
+    const count = slides.filter((entry) => entry.kind === kind).length;
+    const state = here === k ? " is-on" : first >= 0 && first < index ? " is-done" : "";
+    const [x, y] = ISLANDS[k];
+    const note = !ready ? "" : first < 0 ? "준비 중" : kind === "end" ? "" : `${count}장`;
+    return `<button type="button" class="sd-sign${state}" style="--x:${x}%;--y:${y + 1.5}%" data-jump="${first}" ${first < 0 ? "disabled" : ""} ${here === k ? 'aria-current="step"' : ""}><b>${first >= 0 && first < index && here !== k ? "✓" : k + 1}</b>${label}${note ? ` <small>${note}</small>` : ""}</button>`;
   }).join("");
 }
+// 지도 옮기기: 지금 섬이 비어 있는 쪽(카드 반대쪽) 한가운데 오도록. 표지는 지도 전체를 보인다.
+function placeWorld() {
+  const slide = slides[index];
+  const cover = slide.kind === "cover";
+  const k = stationOf(slide);
+  document.body.dataset.side = cover || slide.kind === "end" ? "cover" : k <= 1 ? "right" : "left";
+  const phone = innerWidth <= 760;
+  const zoom = cover ? 1 : phone ? 1.35 : 1.5;
+  const H = Math.max(innerHeight, innerWidth * 941 / 1672) * zoom;
+  const W = H * 1672 / 941;
+  const win = $("window").getBoundingClientRect();
+  const [sx, sy] = ISLANDS[cover ? 0 : k];
+  let tx = win.left + win.width / 2 - (sx / 100) * W;
+  let ty = win.top + win.height * (phone ? 0.78 : 0.62) - (sy / 100) * H;
+  if (cover && !phone) { tx = (innerWidth - W) / 2; ty = innerHeight - H; }
+  // 그림이 빈 데 없이 덮어야 하는 곳: 넓은 화면은 화면 전체, 휴대폰은 위쪽 지도 띠만(띠 아래는 카드가 덮는다)
+  const box = phone ? { left: 0, top: 0, right: innerWidth, bottom: win.bottom } : { left: 0, top: 0, right: innerWidth, bottom: innerHeight };
+  tx = Math.min(box.left, Math.max(box.right - W, tx));
+  ty = Math.min(box.top, Math.max(box.bottom - H, ty));
+  const pan = $("pan");
+  pan.style.width = `${W}px`; pan.style.height = `${H}px`;
+  pan.style.transform = `translate(${Math.round(tx)}px, ${Math.round(ty)}px)`;
+  $("walker").style.setProperty("--x", `${sx}%`);
+  $("walker").style.setProperty("--y", `${sy}%`);
+  // 말풍선: 독쌤 오른쪽 위(화면 안으로)
+  const fx = tx + (sx / 100) * W, fy = ty + (sy / 100) * H;
+  const talk = $("talk");
+  const tw = talk.offsetWidth || 300, th = talk.offsetHeight || 90;
+  // 표지에서는 하늘 쪽(왼쪽 위)에 — 섬 표지판을 가리지 않게
+  let left = cover ? win.left + 8 : Math.min(Math.max(win.left + 8, fx + 56), win.right - tw - 8);
+  let top = cover ? win.top + 8 : fy - th - 190;
+  if (!cover && top < win.top + 8) {   // 위에 자리가 없으면(높은 섬) 독쌤 옆으로
+    top = fy - th - 60;
+    left = fx - tw - 70 >= 8 ? fx - tw - 70 : fx + 70;
+  }
+  top = Math.min(Math.max(win.top + 8, top), innerHeight - th - 90);
+  talk.style.left = `${Math.round(left)}px`; talk.style.top = `${Math.round(top)}px`;
+}
+addEventListener("resize", () => placeWorld());
+
 function slideHead(slide) {
   if (slide.kind === "cover" || slide.kind === "end") return "";
   const label = PHASES[phaseNo(slide.kind) - 1][1];
@@ -199,10 +277,10 @@ function coverMarkup() {
   const note = { concept: `${counts.concept}개 개념`, game: `${counts.game}개 게임`, bell: `${counts.bell}문제`, board: `본책 ${counts.board}문제` };
   return `<div class="sd-cover">
     <p class="sd-cover-kick">${esc(book.label)} ${unitIndex + 1}단원 · ${part}차시${partCount > 1 ? ` · 모두 ${partCount}차시` : ""}</p>
-    <h2>${esc(unit.label)}</h2>
-    <p class="sd-cover-lead">오늘은 이 순서로 공부해요. 한 장씩 넘기면 돼요.</p>
+    <h1>${esc(unit.label)}</h1>
+    <p class="sd-cover-lead">섬을 따라 한 곳씩 가 봐요.</p>
     <ol class="sd-plan">${PHASES.map(([kind, label], k) => `<li class="${ready && !counts[kind] ? "is-empty" : ""}"><b>${k + 1}</b><span>${label}</span><small>${ready ? counts[kind] ? note[kind] : "준비 중" : "불러오는 중…"}</small></li>`).join("")}</ol>
-    <button type="button" class="sd-btn primary sd-start" data-act="next" ${ready ? "" : "disabled"}>시작하기 ›</button>
+    <button type="button" class="sd-btn primary sd-start" data-act="next" ${ready ? "" : "disabled"}>출발하기 →</button>
   </div>`;
 }
 function boardMarkup(block) {
@@ -219,7 +297,7 @@ function endMarkup() {
   const next = part < partCount;
   return `<div class="sd-cover sd-end">
     <span class="sd-medal" aria-hidden="true">✓</span>
-    <h2>${part}차시 끝!</h2>
+    <h1>${part}차시 완료!</h1>
     <p class="sd-cover-lead">${esc(unit.label)} ${part}차시 공부를 마쳤어요.</p>
     <div class="sd-end-actions">
       ${next ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex), part: String(part + 1) }))}">${part + 1}차시 시작하기 ›</a>` : unitIndex + 1 < book.units.length ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex + 1), part: "1" }))}">${unitIndex + 2}단원 시작하기 ›</a>` : ""}
@@ -231,7 +309,7 @@ function endMarkup() {
 function lineFor(slide) {
   if (slide.kind === "cover") return ready ? `오늘은 ${unit.label} ${part}차시야. 개념을 배우고, 게임으로 익히고, 골든벨을 풀고, 본책을 풀 거야. 시작하기를 눌러 봐.` : "공부할 것을 준비하고 있어. 잠깐만 기다려 줘.";
   if (slide.kind === "concept") return `${slide.lesson.title} 개념이야. 한 장씩 천천히 보고 다음을 눌러.`;
-  if (slide.kind === "game") return `${slide.title} 게임이야. 개념에서 본 풀이 순서대로 손으로 직접 해 봐.`;
+  if (slide.kind === "game") return slide.geo ? `${slide.title}에 왔어. 배운 것을 직접 해 보자. 다 하면 다음을 눌러.` : `${slide.title} 게임이야. 개념에서 본 풀이 순서대로 손으로 직접 해 봐.`;
   if (slide.kind === "bell") return "골든벨 문제야. 개념에서 배운 대로 한 문제씩 풀어 봐.";
   if (slide.kind === "board") return `본책 ${slide.block.label}을 펴서 풀어 봐. 모르는 번호를 누르면 비슷한 문제가 나와.`;
   return `${part}차시 끝! 오늘 정말 잘했어.`;
@@ -243,17 +321,20 @@ function show({ atEnd = false } = {}) {
   $("stage").dataset.kind = slide.kind;
   $("slideHead").innerHTML = slideHead(slide);
   $("slideHead").hidden = !$("slideHead").innerHTML;
-  const framed = ["concept", "game", "bell"].includes(slide.kind);
+  const geo = Boolean(slide.geo);
+  const framed = !geo && ["concept", "game", "bell"].includes(slide.kind);
   $("frameWrap").hidden = !framed;
-  $("slideBody").hidden = framed;
+  $("geoWrap").hidden = !geo;
+  $("slideBody").hidden = framed || geo;
   $("slideBody").innerHTML = slide.kind === "cover" ? coverMarkup() : slide.kind === "board" ? boardMarkup(slide.block) : slide.kind === "end" ? endMarkup() : "";
   if (framed) openInFrame(slide, atEnd);
+  if (geo) openGeometry(slide); else if ($("geoFrame").getAttribute("src")) $("geoFrame").removeAttribute("src");
   $("prevBtn").disabled = index === 0;
   $("nextBtn").disabled = !ready || index === slides.length - 1;
-  $("nextBtn").querySelector(".sd-next-text").textContent = slide.kind === "cover" ? "시작 ›" : "다음 ›";
+  $("nextBtn").querySelector(".sd-next-text").textContent = slide.kind === "cover" ? "출발하기 →" : "다음 →";
   $("count").textContent = `${index + 1} / ${slides.length}`;
-  $("progressFill").style.width = `${slides.length > 1 ? (index / (slides.length - 1)) * 100 : 0}%`;
-  renderPhases();
+  renderSigns();
+  placeWorld();
   say(lineFor(slide), slide.kind === "end" ? "praise" : "talk");
   const url = new URL(location.href);
   url.searchParams.set("s", String(index + 1));
@@ -304,7 +385,7 @@ $("sheetClose").addEventListener("click", () => closeSheet());
 // ── 조작 ──────────────────────────────────────────────────
 $("nextBtn").addEventListener("click", next);
 $("prevBtn").addEventListener("click", prev);
-$("phases").addEventListener("click", (event) => {
+$("signs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-jump]");
   if (button && !button.disabled) { cancelAuto(); go(Number(button.dataset.jump)); }
 });

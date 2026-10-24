@@ -2031,8 +2031,9 @@ function renderContent() {
   const lesson = activeLesson();
   teardownLessonFlow();
   if (embed.on && embed.view === "game" && embed.handsOn) {
-    $("lessonContent").innerHTML = "";
-    mountEmbedHandsOn($("lessonContent"), embed.handsOn, () => embedPost({ event: "done", view: "game", lesson: lesson.id }));
+    // 체험 그림·단추의 모양(golden-bell-hands-on.css)은 .gold-hands-on .hand-content 안에서만 입혀진다
+    $("lessonContent").innerHTML = '<section class="gold-hands-on hand-embed"><div class="hand-content"></div></section>';
+    mountEmbedHandsOn($("lessonContent").querySelector(".hand-content"), embed.handsOn, () => embedPost({ event: "done", view: "game", lesson: lesson.id }));
     applyEmbed();
     return;
   }
