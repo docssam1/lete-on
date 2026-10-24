@@ -1,6 +1,6 @@
 import { createSound, confetti, esc, reduced } from "./golden-bell-game-fx.js?v=20261004a";
 import { createDial } from "./golden-bell-clock-dial.js?v=20261023w";
-import { buildLevel, levelSpec, levelResult, checkTurn, checkNumber, checkChoice, missionText, hintText, successText, turnAmountText, opText, landing, landingAfter, starsFor, josa, MAX_FREE_TURNS, MASTER_LEVEL, AMOUNT_NAMES } from "./golden-bell-clock-game-model.js?v=20261023t";
+import { buildLevel, levelSpec, levelResult, checkTurn, checkNumber, checkChoice, missionText, hintText, successText, turnAmountText, opText, landing, landingAfter, starsFor, josa, MAX_FREE_TURNS, MASTER_LEVEL, AMOUNT_NAMES } from "./golden-bell-clock-game-model.js?v=20261024t";
 
 // 1권 「시계 바늘 돌리기」 게임. 연습할수록 늘어난다:
 //   레벨 1~10은 정해진 길(직접 돌리기 → 예측 → 거꾸로 → 두 번 → 섞기 → 바늘 없이 → 세 번 → 마스터),
@@ -102,7 +102,7 @@ export function mountClockGame(host, { single = true, onQuestions = null, saved 
       </div>
       <p class="cg-readout" data-clock-readout><span>돌린 양</span><strong>${esc(turnAmountText(quarters))}</strong><em>${"◆".repeat(Math.min(Math.abs(quarters), 8)) || "&nbsp;"}</em></p>
       <p class="cg-drag-tip">바늘을 손가락으로 끌어도 돌아가요.</p>
-      <div class="cg-actions"><button type="button" class="cg-secondary" data-clock-reset ${busy || !quarters ? "disabled" : ""}>처음 자리로</button><button type="button" class="cg-primary" data-clock-check ${busy || !quarters ? "disabled" : ""}>확인!</button></div>`;
+      <div class="cg-actions"><button type="button" class="cg-secondary" data-clock-reset ${busy || !quarters ? "disabled" : ""}>처음 자리로</button><button type="button" class="cg-primary" data-clock-check ${busy || !quarters ? "disabled" : ""}>맞는지 보기</button></div>`;
     }
     if (problem.stage === "reverse") {
       return `<p class="cg-ask">맞는 명령 카드를 고르세요.</p><div class="cg-cards">${problem.choices.map((op) => `<button type="button" class="cg-card ${op > 0 ? "cw" : "ccw"}" data-clock-choice="${op}" ${busy || picked.includes(op) ? "disabled" : ""} ${picked.includes(op) ? 'data-state="bad"' : ""}>${turnIcon(Math.sign(op))}<span>${op > 0 ? "시계 방향" : "시계 반대 방향"}<strong>${AMOUNT_NAMES[Math.abs(op)]}</strong></span></button>`).join("")}</div>`;
@@ -128,10 +128,10 @@ export function mountClockGame(host, { single = true, onQuestions = null, saved 
     dial.setHidden(Boolean(problem.hidden));
     dial.setDraggable(problem.stage === "turn", (delta) => setQuarters(quarters + delta, false));
     dial.setPickable(["predict", "chain"].includes(problem.stage), pickNumber);
-    say(problem.hidden ? "바늘이 숨었어! 회색 출발 바늘에서 머릿속으로 돌려 봐." : ({
-      turn: "회색 바늘이 출발 자리야. 빨간 바늘을 돌려서 명령대로 맞춰 봐.",
-      predict: "머릿속으로 먼저 돌려 봐. 반의 반 바퀴마다 보석 하나야.",
-      reverse: "초록 바늘이 도착한 자리야. 어느 쪽으로 얼마나 돌렸을까?",
+    say(problem.hidden ? "바늘이 숨었어요! 회색 출발 바늘에서 머릿속으로 돌려 봐요." : ({
+      turn: "회색 바늘이 출발 자리예요. 빨간 바늘을 돌려서 명령대로 맞춰 봐요.",
+      predict: "머릿속으로 먼저 돌려 봐요. 반의 반 바퀴마다 보석 하나예요.",
+      reverse: "초록 바늘이 도착한 자리예요. 어느 쪽으로 얼마나 돌렸을까요?",
       chain: "첫 번째 명령으로 간 자리를 먼저 찾고, 거기서 다음 명령으로!"
     })[problem.stage]);
     renderChrome();
@@ -165,7 +165,7 @@ export function mountClockGame(host, { single = true, onQuestions = null, saved 
     if (animate) { busy = true; renderControls(); dial.turnTo(quarters, { done: () => { busy = false; renderControls(); } }); }
     else dial.turnTo(quarters);
     if (phase === "wrong") phase = "play";
-    say(quarters ? `지금 바늘은 ${josa(landing(problem.start, quarters), "을")} 가리켜. ${turnAmountText(quarters)} 돌렸어.` : "처음 자리로 돌아왔어.", "start");
+    say(quarters ? `지금 바늘은 ${josa(landing(problem.start, quarters), "을")} 가리켜요. ${turnAmountText(quarters)} 돌렸어요.` : "처음 자리로 돌아왔어요.", "start");
     renderControls();
   }
 
@@ -215,11 +215,11 @@ export function mountClockGame(host, { single = true, onQuestions = null, saved 
     dial.setPickable(false); dial.setDraggable(false); dial.setHidden(false);
     root.dataset.phase = phase;
     $("[data-clock-controls]").innerHTML = '<p class="cg-ask">바늘이 어떻게 도는지 같이 보자.</p>';
-    say("괜찮아. 바늘이 어떻게 도는지 같이 보자.", "bad");
+    say("괜찮아요. 바늘이 어떻게 도는지 같이 봐요.", "bad");
     showPath(() => {
       busy = false; phase = "revealed";
       dial.mark(problem.answer, "good");
-      say(`정답은 ${josa(problem.answer, "이")}야. ${problem.stage === "turn" ? `${opText(problem.ops[0])} 돌리면 돼.` : problem.stage === "reverse" ? `${opText(problem.ops[0])} 돌렸어.` : "보석을 세면서 다시 따라가 봐."}`, "bad");
+      say(`정답은 ${josa(problem.answer, "예요")}. ${problem.stage === "turn" ? `${opText(problem.ops[0])} 돌리면 돼요.` : problem.stage === "reverse" ? `${opText(problem.ops[0])} 돌렸어요.` : "보석을 세면서 다시 따라가 봐요."}`, "bad");
       renderChrome(); renderControls();
       $("[data-clock-next]")?.focus({ preventScroll: true });
     });
@@ -300,7 +300,7 @@ export function mountClockGame(host, { single = true, onQuestions = null, saved 
     finishHtml = overlay.innerHTML;
     overlay.hidden = false;
     $("[data-clock-controls]").innerHTML = "";
-    say(result.stars === 3 ? "완벽해! 다음 레벨도 해 볼까?" : result.passed ? "잘했어! 별을 더 모아 볼 수도 있어." : "괜찮아. 한 번 더 하면 더 잘할 거야.", result.passed ? "good" : "bad");
+    say(result.stars === 3 ? "완벽해요! 다음 레벨도 해 볼까요?" : result.passed ? "잘했어요! 별을 더 모아 볼 수도 있어요." : "괜찮아요. 한 번 더 하면 더 잘할 거예요.", result.passed ? "good" : "bad");
     if (result.passed) { sound.stage(); stopConfetti = confetti($(".cg-confetti"), dial.centerOnPage()); }
     overlay.querySelector("button").focus({ preventScroll: true });
   }

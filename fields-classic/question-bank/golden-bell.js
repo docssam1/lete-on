@@ -16,8 +16,8 @@ import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
-import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261024a";
-import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261024a";
+import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261024t";
+import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261024t";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
 import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261024r";
@@ -81,8 +81,8 @@ async function ensureProtectedBook(bookId) {
     protectedMessage = error.message === "login_required"
       ? "정답과 풀이를 보려면 학습 서재에서 승인번호로 접속해 주세요."
       : error.message === "protected_answers_incomplete"
-        ? "정답 자료를 모두 불러오지 못해 채점을 잠시 멈췄어요. 오답으로 기록하지 않습니다."
-        : "정답 보호 서버에 연결하지 못했습니다. 잠시 뒤 다시 열어 주세요.";
+        ? "정답 자료를 모두 불러오지 못해 채점을 잠시 멈췄어요. 오답으로 기록하지 않아요."
+        : "정답 보호 서버에 연결하지 못했어요. 잠시 뒤 다시 열어 주세요.";
     return false;
   }).finally(() => protectedLoads.delete(bookId));
   protectedLoads.set(bookId, task);
@@ -312,7 +312,7 @@ function triangularStairMarkup(beat, reveal) {
 
 function triangularExperienceSummaryMarkup(experience) {
   const finalBeat = experience.beats.at(-1);
-  return `<div class="gold-print-experience gold-print-triangular-experience"><p><strong>개념 순서</strong> 한 층씩 삼각형 바닥이 넓어집니다. 1층은 1개, 2층은 1 + 2 = 3개, 3층은 1 + 2 + 3 = 6개입니다. 각 층의 수를 차례로 더해 다음 단계를 구합니다.</p>${triangularStairMarkup(finalBeat, true)}</div>`;
+  return `<div class="gold-print-experience gold-print-triangular-experience"><p><strong>개념 순서</strong> 한 층씩 삼각형 바닥이 넓어져요. 1층은 1개, 2층은 1 + 2 = 3개, 3층은 1 + 2 + 3 = 6개예요. 각 층의 수를 차례로 더해 다음 단계를 구해요.</p>${triangularStairMarkup(finalBeat, true)}</div>`;
 }
 
 function experienceSummaryMarkup(experience) {
@@ -344,7 +344,7 @@ function conceptPracticeMarkup(experience) {
       : result.status === "revealed"
         ? `답: ${practice.answer}. ${practice.explanation}`
         : result.status === "wrong"
-          ? "그림의 줄을 다시 세어 보고, 필요하면 답 보기를 눌러 확인하세요."
+          ? "그림의 줄을 다시 세어 보고, 필요하면 답 보기를 눌러요."
           : "";
     return `<article class="concept-practice-card ${complete ? "complete" : ""}"><header><span>연습 ${index + 1}</span>${complete ? "<b>확인</b>" : ""}</header>${conceptPracticeVisual(practice)}<p>${practice.prompt}</p><div class="answer-choices">${practice.options.map((option) => `<button type="button" class="${result.selected === option ? "selected" : ""}" data-concept-practice-choice="${practice.id}" data-concept-practice-value="${option}">${option}</button>`).join("")}</div><div class="concept-practice-actions"><button type="button" class="secondary-action" data-concept-practice-answer="${practice.id}">답 보기</button></div>${feedback ? `<p class="feedback ${result.status === "correct" ? "success" : ""}">${feedback}</p>` : ""}</article>`;
   }).join("");
@@ -399,7 +399,7 @@ function typeTrackQuestionMarkup(track, stage, record) {
     : status === "revealed"
       ? `답: ${item.answer}. ${item.explanation}`
       : status === "wrong"
-        ? "그림의 줄과 칸을 다시 세어 보고, 필요하면 답 보기를 눌러 확인하세요."
+        ? "그림의 줄과 칸을 다시 세어 보고, 필요하면 답 보기를 눌러요."
         : "";
   const title = stage === "check" ? "바로 확인" : "유형 문제";
   return `<section class="type-track-question ${complete ? "complete" : ""}"><header><span>${title}</span>${complete ? "<b>확인</b>" : ""}</header><p>${item.prompt}</p><div class="answer-choices">${item.options.map((option) => `<button type="button" class="${selected === option ? "selected" : ""}" data-type-track-check="${track.id}" data-type-track-stage="${stage}" data-type-track-value="${option}" ${complete ? "disabled" : ""}>${option}</button>`).join("")}</div><div class="type-track-actions"><button type="button" class="secondary-action" data-type-track-answer="${track.id}" data-type-track-stage="${stage}" ${complete ? "disabled" : ""}>답 보기</button></div>${feedback ? `<p class="feedback ${status === "correct" ? "success" : ""}">${feedback}</p>` : ""}</section>`;
@@ -431,8 +431,8 @@ function renderTriangularStairExperience(experience) {
   const checksComplete = experience.beats.every((candidate) => state.experience.checks[candidate.id] === true);
   const feedback = state.experience.feedback;
   const progress = experience.beats.map((candidate, index) => `<i class="${index < currentStep ? "done" : index === currentStep ? "current" : ""}" aria-label="${candidate.stage}층 ${index < currentStep ? "설명 완료" : "설명 중"}">${candidate.stage}</i>`).join("");
-  const successBurst = feedback?.passed ? `<div class="experience-success-burst show" aria-hidden="true"><strong>정확해!</strong><span></span><span></span><span></span><span></span><span></span><span></span></div>` : "";
-  const nextCheck = checked && !checksComplete ? `<button type="button" class="secondary-action experience-check-next" data-experience-action="next-check">다음 확인</button>` : "";
+  const successBurst = feedback?.passed ? `<div class="experience-success-burst show" aria-hidden="true"><strong>정확해요!</strong><span></span><span></span><span></span><span></span><span></span><span></span></div>` : "";
+  const nextCheck = checked && !checksComplete ? `<button type="button" class="secondary-action experience-check-next" data-experience-action="next-check">다음 층 확인하기</button>` : "";
   const stageCheck = `<section class="experience-stage-check" aria-label="단계별 확인"><header><span>단계별 확인</span><strong>${state.experience.checkStep + 1}층을 확인해요</strong><b>${state.experience.checkStep + 1} / ${experience.beats.length}</b></header><div class="experience-check"><p>${checkBeat.check.prompt}</p><div class="answer-choices">${checkBeat.check.options.map((option) => `<button type="button" class="${state.experience.answer === option ? "selected" : ""}" data-experience-choice="${option}" ${checked ? "disabled" : ""}>${option}</button>`).join("")}</div>${feedback ? `<p class="feedback ${feedback.passed ? "success" : ""}">${feedback.message}</p>` : ""}${nextCheck}</div></section>`;
   return `${typeTracksMarkup(experience)}<section class="concept-experience concept-experience-stair" aria-label="삼각 계단 쌓기나무 설명과 확인"><header><div><span>개념 설명</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track" aria-label="쌓기나무가 자라는 순서">${progress}</div>${triangularStairMarkup(beat, true)}${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${stageCheck}${checksComplete ? conceptPracticeMarkup(experience) : ""}${successBurst}</section>`;
 }
@@ -1289,7 +1289,7 @@ function renderOriginal(lesson) {
     const progressLabel = sourceCount === items.length
       ? `${sourceCount}문제 중 ${state.originalIndex + 1}번째`
       : `${sourceCount}문항 · ${items.length}개 풀이 중 ${state.originalIndex + 1}번째`;
-    return `<div class="quiz-head daily-quiz-head"><div><span>${lesson.original.title} · ${item.typeLabel}</span><h2>${lesson.title}</h2></div><aside><strong>${progressLabel}</strong><small>${showSourceCodes ? `교재 ${escapeAttribute(questionNo(item, state.originalIndex))}번` : `${state.originalIndex + 1}번 문제`}</small></aside></div><div class="daily-question-progress source-question-progress" aria-label="교재 연습문제 진행">${dots}</div><section class="source-question-card"><header><span>문제 ${escapeAttribute(questionNo(item, state.originalIndex))}</span><strong>${item.typeLabel}</strong></header><p class="lesson-lead">${mathText(item.prompt)}</p>${visual}<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}">${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${solution}</section></section>${result && result.itemId === item.id ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${resolved ? "" : "disabled"}>${correct || assist ? nextLabel : "확인"}</button>`;
+    return `<div class="quiz-head daily-quiz-head"><div><span>${lesson.original.title} · ${item.typeLabel}</span><h2>${lesson.title}</h2></div><aside><strong>${progressLabel}</strong><small>${showSourceCodes ? `교재 ${escapeAttribute(questionNo(item, state.originalIndex))}번` : `${state.originalIndex + 1}번 문제`}</small></aside></div><div class="daily-question-progress source-question-progress" aria-label="교재 연습문제 진행">${dots}</div><section class="source-question-card"><header><span>문제 ${escapeAttribute(questionNo(item, state.originalIndex))}</span><strong>${item.typeLabel}</strong></header><p class="lesson-lead">${mathText(item.prompt)}</p>${visual}<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}">${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${solution}</section></section>${result && result.itemId === item.id ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${resolved ? "" : "disabled"}>${correct || assist ? nextLabel : "답 내기"}</button>`;
   }
   const allComplete = lesson.original.items.every(originalItemComplete);
   const itemVisuals = lesson.original.items.some((item) => item.visual);
@@ -1302,14 +1302,14 @@ function renderOriginal(lesson) {
     const assistNote = assist === "revealed"
       ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${mathText(item.solution, { bare: true })}</p><strong>답 ${mathText(approvedOriginalAnswer(item), { bare: true })}</strong></section>`
       : assist === "skipped"
-        ? '<p class="quiz-item-assist skipped">넘어간 문제입니다. 다음에 다시 풀어 보세요.</p>'
+        ? '<p class="quiz-item-assist skipped">넘어간 문제예요. 다음에 다시 풀어 봐요.</p>'
         : check?.passed
           ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${mathText(item.solution, { bare: true })}</p><strong>답 ${mathText(approvedOriginalAnswer(item), { bare: true })}</strong></section>`
           : check
             ? `<p class="quiz-item-feedback" aria-live="polite">${escapeAttribute(check.message)}</p>`
             : "";
     const itemVisual = item.visual ? `<div class="quiz-visual item-quiz-visual">${visualMarkup(item.visual)}</div>` : "";
-    return `<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}"><strong>${mathText(item.prompt)}</strong>${conditions}${itemVisual}${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="primary-action item-check-action" data-original-check="${escapeAttribute(item.id)}" ${originalItemResolved(item) ? "" : "disabled"}>${originalItemComplete(item) ? "확인 완료" : "확인"}</button><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${assistNote}</section>`;
+    return `<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}"><strong>${mathText(item.prompt)}</strong>${conditions}${itemVisual}${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="primary-action item-check-action" data-original-check="${escapeAttribute(item.id)}" ${originalItemResolved(item) ? "" : "disabled"}>${originalItemComplete(item) ? "답 냈어요" : "답 내기"}</button><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${assistNote}</section>`;
   }).join("")}</div><button type="button" class="primary-action grouped-next-action" data-complete-original ${allComplete ? "" : "disabled"}>추가 학습으로</button>`;
 }
 
@@ -1333,7 +1333,7 @@ function renderExtension(lesson) {
   const nextLabel = state.extensionIndex === items.length - 1 ? "학습 완료" : "다음 문제";
   const pilot = activeBook().status === "pilot";
   const minutes = pilot ? "" : ` · 약 ${activeBook().dailyPractice?.estimatedMinutes || 30}분`;
-  return `<div class="quiz-head daily-quiz-head"><div><span>오늘의 추가 학습 · ${item.title || item.typeLabel || lesson.title}</span><h2>${item.story || lesson.title}</h2></div><aside><strong>${items.length}문제 중 ${state.extensionIndex + 1}번째</strong><small>추가 학습 ${activeBook().dailyPractice?.problemCount || 8}문제${minutes}</small></aside></div><div class="daily-question-progress" aria-label="추가 학습 문제 진행">${dots}</div><p class="lesson-lead">${pilot ? escapeAttribute(item.prompt) : "배운 원리를 같은 유형의 새 문제에 적용해 보세요."}</p><div class="quiz-visual">${visualMarkup(item.visual)}</div><section class="quiz-item extension-study ${status}">${pilot ? "" : `<strong>${item.prompt}</strong>`}${answerControl(groupId, item, "extension")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-extension-answer>풀이 보기</button><button type="button" class="secondary-action" data-extension-skip>${skipped ? "넘어감" : "넘어가기"}</button></div></section>${solution}${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) || resolved ? "" : "disabled"}>${resolved ? nextLabel : "확인"}</button>`;
+  return `<div class="quiz-head daily-quiz-head"><div><span>오늘의 추가 학습 · ${item.title || item.typeLabel || lesson.title}</span><h2>${item.story || lesson.title}</h2></div><aside><strong>${items.length}문제 중 ${state.extensionIndex + 1}번째</strong><small>추가 학습 ${activeBook().dailyPractice?.problemCount || 8}문제${minutes}</small></aside></div><div class="daily-question-progress" aria-label="추가 학습 문제 진행">${dots}</div><p class="lesson-lead">${pilot ? escapeAttribute(item.prompt) : "배운 원리를 같은 유형의 새 문제에 적용해 보세요."}</p><div class="quiz-visual">${visualMarkup(item.visual)}</div><section class="quiz-item extension-study ${status}">${pilot ? "" : `<strong>${item.prompt}</strong>`}${answerControl(groupId, item, "extension")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-extension-answer>풀이 보기</button><button type="button" class="secondary-action" data-extension-skip>${skipped ? "넘어감" : "넘어가기"}</button></div></section>${solution}${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) || resolved ? "" : "disabled"}>${resolved ? nextLabel : "답 내기"}</button>`;
 }
 
 function renderComplete(lesson) {
@@ -1342,14 +1342,14 @@ function renderComplete(lesson) {
   const summary = summarizeGoldenBellLesson(lessonProgress(lesson));
   const completionMessage = summary.review
     ? "답을 보거나 넘어간 문제는 다시 연습해 보세요."
-    : "이 개념을 잘 익혔습니다.";
+    : "이 개념을 잘 익혔어요.";
   const record = summary.total ? `<section class="learning-record"><h3>이번 학습 기록</h3><dl><div><dt>혼자 해결</dt><dd>${summary.correct}</dd></div><div><dt>답 확인</dt><dd>${summary.revealed}</dd></div><div><dt>넘어감</dt><dd>${summary.skipped}</dd></div><div><dt>다시 볼 문항</dt><dd>${summary.review}</dd></div></dl>${summary.reviewTypeIds.length ? `<a href="../prescription/?student=${encodeURIComponent(student)}&types=${encodeURIComponent(summary.reviewTypeIds.join(","))}&view=type">이 유형 다시 연습</a>` : ""}</section>` : "";
   return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 학습 완료</h2><p>${completionMessage}</p>${record}${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음</button>` : `<button type="button" class="primary-action" data-book-complete>${book.label} 학습 완료</button>`}</section>`;
 }
 
 function renderPending(book) {
-  if (book.status === "unavailable") return '<section class="pending-panel" role="alert"><h2>요청한 교재를 찾을 수 없습니다.</h2><p>과정과 권을 다시 선택해 주세요.</p></section>';
-  return `<section class="pending-panel"><span>!</span><h2>${book.label} 골든벨 학습 준비 중</h2><p>학습 자료를 준비하고 있습니다.</p></section>`;
+  if (book.status === "unavailable") return '<section class="pending-panel" role="alert"><h2>요청한 교재를 찾지 못했어요.</h2><p>과정과 권을 다시 골라 주세요.</p></section>';
+  return `<section class="pending-panel"><span>!</span><h2>${book.label} 골든벨 학습 준비 중</h2><p>학습 자료를 준비하고 있어요.</p></section>`;
 }
 
 function printResponseMarkup(item) {
@@ -1525,7 +1525,7 @@ function updateCoverButton() {
   // 호출 순서와 무관해져 여섯 군데 호출부 전부가 함께 고쳐진다.
   $("printCoverButton").disabled = printPreparing || answerOnly || !activeBook().lessons.length;
   $("printCoverButton").textContent = `표지 · ${answerOnly ? "없음" : coverLabels[coverStyle]}`;
-  $("printCoverButton").title = answerOnly ? "답안만 인쇄에는 표지가 포함되지 않습니다." : "교재 표지 배경 선택";
+  $("printCoverButton").title = answerOnly ? "답안만 인쇄할 때는 표지가 들어가지 않아요." : "교재 표지 배경 선택";
 }
 
 function scaleCoverPreview() {
@@ -1553,11 +1553,11 @@ function renderCoverPreview() {
   $("printUnitsAll").disabled = printPreparing;
   $("printUnitsNone").disabled = printPreparing;
   $("printSelectionApply").disabled = printPreparing || !lessons.length || requiresAnswers || noSection;
-  $("printSelectionStatus").textContent = !lessons.length ? "선택한 단원이 없습니다." : noSection ? "인쇄할 부분을 하나 이상 고르세요." : requiresAnswers ? "답안과 풀이를 불러온 뒤 인쇄할 수 있습니다." : `${selectingUnits ? `${selectedPrintUnitCount()}개 범위 · ` : ""}${lessons.length}개 학습 · ${sectionLabel}${modeLabel}`;
+  $("printSelectionStatus").textContent = !lessons.length ? "고른 단원이 없어요." : noSection ? "인쇄할 부분을 하나 이상 골라 주세요." : requiresAnswers ? "답안과 풀이를 불러오면 인쇄할 수 있어요." : `${selectingUnits ? `${selectedPrintUnitCount()}개 범위 · ` : ""}${lessons.length}개 학습 · ${sectionLabel}${modeLabel}`;
   host.removeAttribute("style");
-  host.innerHTML = !lessons.length ? '<p class="cover-empty">선택한 단원이 없습니다.</p>' : answerOnly
+  host.innerHTML = !lessons.length ? '<p class="cover-empty">고른 단원이 없어요.</p>' : answerOnly
     ? `<p class="cover-empty">${modeLabel} · 표지 제외</p>` : draftCoverStyle === "none"
-      ? '<p class="cover-empty">표지 없이 첫 학습 페이지부터 인쇄합니다.</p>'
+      ? '<p class="cover-empty">표지 없이 첫 학습 쪽부터 인쇄해요.</p>'
       : isCoverDesign(draftCoverStyle)
         ? `<div class="gold-cover-design-preview">${coverDesignPage(draftCoverStyle, designCoverInfo(activeBook(), lessons))}<p>다음 쪽에 학습 범위·유형과 핵심 개념${$("printGameQR").checked ? "·게임 QR" : ""}이 이어집니다.</p></div>`
         : printBookCover(activeBook(), lessons, { style: draftCoverStyle, includeAnswers: draftPrintMode === "both" });
@@ -1643,7 +1643,7 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
   root.replaceChildren();
   root.setAttribute("aria-hidden", "true");
   if (mode !== "study" && !protectedBooks.has(book.id)) {
-    $("printStatus").textContent = "답안과 풀이를 불러온 뒤 인쇄할 수 있습니다.";
+    $("printStatus").textContent = "답안과 풀이를 불러오면 인쇄할 수 있어요.";
     return false;
   }
   const buttons = [$("printLessonButton"), $("printBookButton"), $("printCoverButton"), $("printSelectedButton"), $("printSelectionApply")];
@@ -1654,7 +1654,7 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
   $("bookTabs").querySelectorAll("button").forEach((button) => { button.disabled = true; });
   buttons.forEach((button) => { button.disabled = true; });
   if ($("coverDialog").open) renderCoverPreview();
-  $("printStatus").textContent = "인쇄 분량을 정리하고 있습니다.";
+  $("printStatus").textContent = "인쇄 분량을 정리하고 있어요.";
   try {
     const gameLinks = includeGames ? await preparePrintGameLinks(book, lessons, () => ensureFieldsSession(student)) : new Map();
     const cover = includeCover && coverStyle !== "none" && (mode === "study" || mode === "both") ? printBookCover(book, lessons, { includeAnswers: mode === "both", includeGames }) : "";
@@ -1665,7 +1665,7 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
     if (!root.querySelector('.gold-print-page:not([data-print-part="cover"])')) {
       root.replaceChildren();
       root.setAttribute("aria-hidden", "true");
-      $("printStatus").textContent = "고른 학습에는 고른 부분이 없습니다. 인쇄할 부분을 다시 골라 주세요.";
+      $("printStatus").textContent = "고른 학습에 고른 부분이 없어요. 인쇄할 부분을 다시 골라 주세요.";
       return false;
     }
     attachPrintGameLinks(root, gameLinks);
@@ -1685,8 +1685,8 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
     root.replaceChildren();
     root.setAttribute("aria-hidden", "true");
     $("printStatus").textContent = error.message === "login_required" || /^session_/u.test(error.message)
-      ? "게임 QR은 승인 계정으로 로그인한 뒤 인쇄할 수 있습니다. QR을 제외하면 학습지만 인쇄합니다."
-      : "인쇄 자료를 준비하지 못했습니다. 다시 인쇄를 눌러 주세요.";
+      ? "게임 QR은 승인 계정으로 로그인하면 인쇄할 수 있어요. QR을 빼면 학습지만 인쇄해요."
+      : "인쇄 자료를 준비하지 못했어요. 인쇄를 다시 눌러 주세요.";
     return false;
   } finally {
     printPreparing = false;
@@ -1781,7 +1781,7 @@ function bindLessonActions() {
     if (["guided-concept", "progressive-concept"].includes(experience.kind)) {
       const passed = state.experience.answer === experience.check.answer;
       state.experience.checks[`guided:${activeLesson().id}`] = passed ? "correct" : "wrong";
-      state.experience.feedback = { passed, message: passed ? `맞아요. ${experience.check.explanation}` : "조건과 마지막 장면을 다시 살펴보세요. 필요하면 답 보기를 눌러 확인할 수 있습니다." };
+      state.experience.feedback = { passed, message: passed ? `맞아요. ${experience.check.explanation}` : "조건과 마지막 장면을 다시 살펴보세요. 필요하면 답 보기를 눌러도 돼요." };
     } else if (experience.kind === "triangular-stair") {
       clearExperiencePlayback();
       const beat = experience.beats[state.experience.checkStep];
@@ -1789,7 +1789,7 @@ function bindLessonActions() {
       state.experience.checks[beat.id] = passed;
       state.experience.feedback = {
         passed,
-        message: passed ? beat.check.success : "쌓기나무를 줄마다 다시 세어 보세요. 새 층은 삼각형 바닥으로 놓입니다."
+        message: passed ? beat.check.success : "쌓기나무를 줄마다 다시 세어 보세요. 새 층은 삼각형 바닥으로 놓여요."
       };
     } else {
       state.experience.feedback = {
@@ -1952,7 +1952,7 @@ function bindLessonActions() {
         kind: "original",
         itemId: item.id,
         passed,
-        message: passed ? "맞았어요. 풀이 순서를 확인하고 다음 문제로 가요." : "조건을 식으로 다시 옮겨 보세요. 어려우면 풀이 보기 또는 넘어가기를 눌러도 됩니다."
+        message: passed ? "맞았어요. 풀이 순서를 확인하고 다음 문제로 가요." : "조건을 식으로 다시 옮겨 보세요. 어려우면 풀이 보기 또는 넘어가기를 눌러도 돼요."
       };
       return render();
     }
@@ -1995,7 +1995,7 @@ function bindLessonActions() {
     state.selections[groupId] = approvedAnswer(item);
     state.extensionAssist = "revealed";
     recordOutcome("extension", groupId, "revealed");
-    state.feedback = { kind: "extension", itemId: groupId, passed: false, message: "풀이를 확인했어요. 학습 기록에 다시 볼 문제로 표시합니다." };
+    state.feedback = { kind: "extension", itemId: groupId, passed: false, message: "풀이를 확인했어요. 학습 기록에 다시 볼 문제로 표시해요." };
     render();
   });
   $("lessonContent").querySelector("[data-extension-skip]")?.addEventListener("click", () => {

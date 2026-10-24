@@ -10,8 +10,8 @@ export const MAX_FREE_TURNS = 8;
 // 문제 종류. 레벨은 이 종류들을 섞어 만든다.
 export const STAGES = Object.freeze([
   { id: "turn", title: "직접 돌리기", short: "돌리기" },
-  { id: "predict", title: "어디를 가리킬까?", short: "예측" },
-  { id: "reverse", title: "어떻게 돌렸을까?", short: "거꾸로" },
+  { id: "predict", title: "어디를 가리킬까요?", short: "예측" },
+  { id: "reverse", title: "어떻게 돌렸을까요?", short: "거꾸로" },
   { id: "chain", title: "이어서 돌리기", short: "연속" }
 ]);
 
@@ -50,6 +50,7 @@ export function josa(n, kind) {
   const d = n % 10, vowel = n !== 10 && [2, 4, 5, 9].includes(d), rieul = n !== 10 && [1, 7, 8].includes(d);
   if (kind === "을") return `${n}${vowel ? "를" : "을"}`;
   if (kind === "이") return `${n}${vowel ? "" : "이"}`;
+  if (kind === "예요") return `${n}${vowel ? "예요" : "이에요"}`;
   return `${n}${vowel || rieul ? "로" : "으로"}`;
 }
 export const opText = (op) => `${directionName(op)}으로 ${AMOUNT_NAMES[Math.abs(op)]}`;
@@ -177,24 +178,24 @@ export function missionText(problem) {
 // 처음 틀렸을 때 독쌤이 주는 힌트. 답을 말하지 않고 생각할 길만 준다.
 export function hintText(problem, attempt) {
   if (problem.stage === "turn") {
-    if (attempt !== undefined && attempt !== 0 && landing(problem.start, attempt) === problem.answer) return "도착한 숫자는 같아. 그런데 돌린 양이나 방향이 달라. 한 칸씩 다시 세어 봐.";
-    if (attempt !== undefined && Math.sign(attempt) !== Math.sign(problem.ops[0]) && attempt !== 0) return "방향을 다시 봐. 시계 방향은 숫자가 커지는 쪽이야.";
-    return "반의 반 바퀴는 숫자 세 칸이야. 반 바퀴는 두 번, 한 바퀴는 네 번 돌려.";
+    if (attempt !== undefined && attempt !== 0 && landing(problem.start, attempt) === problem.answer) return "도착한 숫자는 같아요. 그런데 돌린 양이나 방향이 달라요. 한 칸씩 다시 세어 봐요.";
+    if (attempt !== undefined && Math.sign(attempt) !== Math.sign(problem.ops[0]) && attempt !== 0) return "방향을 다시 봐요. 시계 방향은 숫자가 커지는 쪽이에요.";
+    return "반의 반 바퀴는 숫자 세 칸이에요. 반 바퀴는 두 번, 한 바퀴는 네 번 돌려요.";
   }
-  if (problem.stage === "reverse") return "출발한 바늘에서 도착한 바늘까지 몇 번 꺾였는지, 어느 쪽으로 갔는지 봐.";
-  if (problem.stage === "chain") return "한 번에 하지 말고, 첫 번째로 돌린 자리를 먼저 찾아. 거기서 다음 명령으로 돌려.";
-  if (problem.hidden) return "바늘이 숨어 있어도 출발 숫자에서 세면 돼. 반의 반 바퀴는 숫자 세 칸이야.";
-  return Math.abs(problem.ops[0]) === 4 ? "한 바퀴를 돌면 처음 자리로 돌아와." : "반의 반 바퀴는 숫자 세 칸, 반 바퀴는 여섯 칸이야.";
+  if (problem.stage === "reverse") return "출발한 바늘에서 도착한 바늘까지 몇 번 꺾였는지, 어느 쪽으로 갔는지 봐요.";
+  if (problem.stage === "chain") return "한 번에 하지 말고, 첫 번째로 돌린 자리를 먼저 찾아요. 거기서 다음 명령으로 돌려요.";
+  if (problem.hidden) return "바늘이 숨어 있어도 출발 숫자에서 세면 돼요. 반의 반 바퀴는 숫자 세 칸이에요.";
+  return Math.abs(problem.ops[0]) === 4 ? "한 바퀴를 돌면 처음 자리로 돌아와요." : "반의 반 바퀴는 숫자 세 칸, 반 바퀴는 여섯 칸이에요.";
 }
 
 export function successText(problem, choiceOp) {
-  if (problem.stage === "reverse" && Math.abs(problem.ops[0]) === 2) return `맞았어! ${choiceOp < 0 ? "시계 방향" : "시계 반대 방향"}으로 반 바퀴 돌려도 똑같이 ${problem.answer}에 와.`;
+  if (problem.stage === "reverse" && Math.abs(problem.ops[0]) === 2) return `맞았어요! ${choiceOp < 0 ? "시계 방향" : "시계 반대 방향"}으로 반 바퀴 돌려도 똑같이 ${problem.answer}에 와요.`;
   if (problem.stage === "chain") {
     const stops = problem.ops.map((_, i) => landingAfter(problem.start, problem.ops.slice(0, i + 1)));
-    return `맞았어! ${problem.start} → ${stops.join(" → ")} 순서로 왔어.`;
+    return `맞았어요! ${problem.start} → ${stops.join(" → ")} 순서로 왔어요.`;
   }
-  if (Math.abs(problem.ops[0]) === 4) return `맞았어! 한 바퀴를 돌면 다시 ${josa(problem.answer, "으로")} 돌아와.`;
-  return `맞았어! ${problem.start}에서 ${opText(problem.ops[0])} 돌리면 ${josa(problem.answer, "이")}야.`;
+  if (Math.abs(problem.ops[0]) === 4) return `맞았어요! 한 바퀴를 돌면 다시 ${josa(problem.answer, "으로")} 돌아와요.`;
+  return `맞았어요! ${problem.start}에서 ${opText(problem.ops[0])} 돌리면 ${josa(problem.answer, "예요")}.`;
 }
 
 // 첫 시도에 맞히면 별 2개, 두 번째에 맞히면 1개, 정답을 보고 넘어가면 0개.

@@ -1,4 +1,4 @@
-import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261022a";
+import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261024t";
 import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261022a";
 
 // 개념 단계 안의 학습 순서: ① 개념 설명 → ② 유형별 예제 → ③ 게임 → (골든벨 문제).
@@ -84,16 +84,16 @@ function exampleView(view, groups) {
 
 async function mountGame(gameId, host, { saved, onQuestions, lesson }) {
   if (gameId === "turn-clock") {
-    const { mountClockGame } = await import("./golden-bell-clock-game.js?v=20261023t");
+    const { mountClockGame } = await import("./golden-bell-clock-game.js?v=20261024t");
     return mountClockGame(host, { single: false, saved, onQuestions });
   }
-  const { mountLevelGame } = await import("./golden-bell-level-game.js?v=20261004a");
+  const { mountLevelGame } = await import("./golden-bell-level-game.js?v=20261024t");
   if (gameId.startsWith("b2-")) {
-    const { BOOK02_LEVEL_GAMES } = await import("./golden-bell-book02-games.js?v=20261023x");
+    const { BOOK02_LEVEL_GAMES } = await import("./golden-bell-book02-games.js?v=20261024t");
     return mountLevelGame(host, BOOK02_LEVEL_GAMES[gameId], { single: false, saved, onQuestions });
   }
   if (gameId.startsWith("b9-")) {
-    const [{ BOOK09_LEVEL_GAMES }, models] = await Promise.all([import("./golden-bell-book09-games.js?v=20261023w"), import("./golden-bell-book09-game-models.js?v=20261022a")]);
+    const [{ BOOK09_LEVEL_GAMES }, models] = await Promise.all([import("./golden-bell-book09-games.js?v=20261024t"), import("./golden-bell-book09-game-models.js?v=20261024t")]);
     // 이 레슨의 원본 그림과 같은 판은 게임에 내지 않는다(그림은 공개 자료, 답은 게임이 스스로 구한다).
     for (const item of lesson.original?.items || []) {
       const v = item.visual;

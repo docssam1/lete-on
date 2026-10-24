@@ -3,9 +3,9 @@ import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
 import { foldPaper, unfoldCuts, paperCells } from "./golden-bell-hands-on-folding.js?v=20261023t";
 import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue, unfoldTargets, unfoldStageDone, orderedClues, currentClueIndex } from "./golden-bell-hands-on-models.js?v=20261023t";
 import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261023t";
-import { mountClockGame } from "./golden-bell-clock-game.js?v=20261023t";
-import { mountLevelGame } from "./golden-bell-level-game.js?v=20261004a";
-import { BOOK02_LEVEL_GAMES } from "./golden-bell-book02-games.js?v=20261023x";
+import { mountClockGame } from "./golden-bell-clock-game.js?v=20261024t";
+import { mountLevelGame } from "./golden-bell-level-game.js?v=20261024t";
+import { BOOK02_LEVEL_GAMES } from "./golden-bell-book02-games.js?v=20261024t";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const sessions = new Map();
@@ -17,7 +17,7 @@ function task(activity, round) {
   if (activity.kind === "fold") return `색종이를 ${round.model.folds.map((d) => direction[d]).join(", 다시 ")}으로 접어 표시한 칸을 자릅니다. 펼치면 잘릴 칸을 모두 고르세요.`;
   if (activity.kind === "cross") return `${round.cards.join(", ")}를 한 번씩 놓아 가로줄과 세로줄의 합을 같게 만드세요. 가운데 칸은 두 줄이 함께 씁니다.`;
   if (activity.kind === "order") return "네 친구를 조건에 맞게 앞에서부터 놓으세요.";
-  return `A는 ${round.left}개, B는 ${round.right}개를 가졌습니다. A가 B에게 주어 두 사람의 개수를 같게 만드세요.`;
+  return `A는 ${round.left}개, B는 ${round.right}개를 가졌어요. A가 B에게 주어 두 사람의 개수를 같게 만들어요.`;
 }
 
 function cellGrid(state, { given = [], axis, enabled = true, label, pair = null }) {
@@ -38,7 +38,7 @@ function mirrorScene(round, state) {
   const selected = state.cells.at(-1);
   const counterpart = selected === undefined ? null : reflectCell([selected % 4, Math.floor(selected / 4)], round.axis);
   const pair = counterpart ? [selected, counterpart[1] * 4 + counterpart[0]] : null;
-  return `<div class="hand-mirror"><p class="hand-diagram-label">주어진 모양 · 거울 · 비친 모양</p>${cellGrid(state, { given: round.given, axis: round.axis, label: "거울 모양 만들기", pair })}<p class="hand-diagram-label">${pair ? "점선으로 이은 두 칸은 거울선에서 같은 거리입니다." : `${round.axis.kind === "vertical" ? "가운데 세로선" : "가운데 가로선"}이 거울입니다.`}</p></div>`;
+  return `<div class="hand-mirror"><p class="hand-diagram-label">주어진 모양 · 거울 · 비친 모양</p>${cellGrid(state, { given: round.given, axis: round.axis, label: "거울 모양 만들기", pair })}<p class="hand-diagram-label">${pair ? "점선으로 이은 두 칸은 거울선에서 같은 거리예요." : `${round.axis.kind === "vertical" ? "가운데 세로선" : "가운데 가로선"}이 거울입니다.`}</p></div>`;
 }
 
 const points = (poly) => poly.map(({ x, y }) => `${20 + x * 200},${20 + y * 200}`).join(" ");

@@ -1,4 +1,4 @@
-import { seededRandom, shuffle, randInt, fillLevel, weightedPick } from "./golden-bell-level-game.js?v=20261004a";
+import { seededRandom, shuffle, randInt, fillLevel, weightedPick } from "./golden-bell-level-game.js?v=20261024t";
 
 // 9권 레벨 게임 2종의 문제 규칙. 화면과 검사기가 같은 함수를 쓴다.
 // 교재 원문 숫자를 복제하지 않는다: 문제는 모두 코드로 만들고, 답(개수·빈칸)은 코드가 전수로 다시 구한다.

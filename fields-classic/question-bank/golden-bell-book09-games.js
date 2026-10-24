@@ -1,12 +1,13 @@
 import { esc, reduced } from "./golden-bell-game-fx.js?v=20261004a";
 import { flatNotice } from "./golden-bell-3d-engine.js?v=20261023w";
-import { CUBES, MAGIC, cubeViews, cubeTotal, checkCubes, checkMagic, magicLineStates } from "./golden-bell-book09-game-models.js?v=20261022a";
+import { CUBES, MAGIC, cubeViews, cubeTotal, checkCubes, checkMagic, magicLineStates } from "./golden-bell-book09-game-models.js?v=20261024t";
 import { createCubeScene } from "./golden-bell-3d-cubes.js?v=20261023w";
-import { createMagicScene } from "./golden-bell-3d-magic.js?v=20261023w";
+import { createMagicScene } from "./golden-bell-3d-magic.js?v=20261024t";
 
 // 9권 레벨 게임 2종의 화면. 문제 규칙은 golden-bell-book09-game-models.js, 틀(레벨·별·저장)은 golden-bell-level-game.js.
 // 3D 판은 보고 만지는 교구이고, 같은 일을 하는 HTML 조작(칸 단추·카드)이 늘 함께 있다 — 키보드·화면 읽기·WebGL 없는 기기.
 
+const yeyo = (v) => { const s = String(v), c = s.charCodeAt(s.length - 1); const batchim = c >= 0xAC00 && c <= 0xD7A3 ? (c - 0xAC00) % 28 !== 0 : /[0-9]/.test(s.slice(-1)) && ![2, 4, 5, 9].includes(Number(s.slice(-1))); return `${s}${batchim ? "이에요" : "예요"}`; }; // 「…예요/이에요」 — 글자·숫자 받침에 맞춰
 const josaIGa = (n) => `${n}${[2, 4, 5, 9].includes(Math.abs(n) % 10) ? "가" : "이"}`;
 const josaUlLeul = (n) => `${n}${[2, 4, 5, 9].includes(Math.abs(n) % 10) ? "를" : "을"}`;
 
@@ -40,7 +41,7 @@ function cubeBoard({ stage, controls, sound, root }) {
   function apply(r, c) {
     if (locked || !p || !p.views.top[r]?.[c]) return;
     const h = heights[r][c];
-    if (mode === "add" && h >= cap()) { api.say(`이 칸은 ${cap()}층까지만 쌓을 수 있어.`, "start"); return; }
+    if (mode === "add" && h >= cap()) { api.say(`이 칸은 ${cap()}층까지만 쌓을 수 있어요.`, "start"); return; }
     if (mode === "remove" && h === 0) return;
     heights[r][c] = h + (mode === "add" ? 1 : -1);
     sound.tick();
@@ -65,7 +66,7 @@ function cubeBoard({ stage, controls, sound, root }) {
     controls.innerHTML = `<div class="b9g-modes" role="group" aria-label="쌓기 또는 빼기"><button type="button" class="b9g-mode" data-b9-mode="add" aria-pressed="${mode === "add"}" ${locked ? "disabled" : ""}>＋ 쌓기</button><button type="button" class="b9g-mode" data-b9-mode="remove" aria-pressed="${mode === "remove"}" ${locked ? "disabled" : ""}>－ 빼기</button></div>
       <div class="b9g-map-wrap"><small>뒤</small><div class="b9g-map" style="--cols:${p.cols}" role="group" aria-label="위에서 본 칸. 누르면 ${mode === "add" ? "쌓기나무를 하나 올려요" : "하나 빼요"}">${cellsHtml}</div><small>앞</small></div>
       <p class="b9g-count">쌓은 쌓기나무 <b data-b9-total>${total}</b>개</p>${looks}
-      <div class="cg-actions"><button type="button" class="cg-secondary" data-b9-clear ${locked || !total ? "disabled" : ""}>모두 빼기</button><button type="button" class="cg-primary" data-b9-check ${locked || !total ? "disabled" : ""}>확인!</button></div>`;
+      <div class="cg-actions"><button type="button" class="cg-secondary" data-b9-clear ${locked || !total ? "disabled" : ""}>모두 빼기</button><button type="button" class="cg-primary" data-b9-check ${locked || !total ? "disabled" : ""}>맞는지 보기</button></div>`;
   }
   const onClick = (event) => {
     const t = event.target.closest("button");
@@ -110,17 +111,17 @@ function cubeBoard({ stage, controls, sound, root }) {
 const viewName = { front: "앞", side: "오른쪽 옆" };
 const CUBES_GAME = {
   ...CUBES,
-  coach: (p) => (p.kind === "exact" ? "위에서 본 칸마다 하나씩 놓고, 앞과 옆 모양에 맞게 높여 봐." : p.kind === "min" ? "앞과 옆에서 본 높은 층을 한 칸에 겹치면 적게 쓸 수 있어." : "칸마다 앞 층수와 옆 층수 중 작은 수까지 쌓을 수 있어."),
+  coach: (p) => (p.kind === "exact" ? "위에서 본 칸마다 하나씩 놓고, 앞과 옆 모양에 맞게 높여 봐요." : p.kind === "min" ? "앞과 옆에서 본 높은 층을 한 칸에 겹치면 적게 쓸 수 있어요." : "칸마다 앞 층수와 옆 층수 중 작은 수까지 쌓을 수 있어요."),
   mission: (p) => (p.kind === "exact" ? "위·앞·오른쪽 옆에서 본 모양이 <b class=\"cw\">똑같아지게</b> 쌓으세요." : `모양은 그대로, 쌓기나무를 <b class="cw">${p.kind === "min" ? "가장 적게" : "가장 많이"}</b> 쌓으세요.`),
   hint(p, info) {
-    if (!info) return "목표 모양과 지금 모양을 하나씩 비교해 봐.";
-    if (!info.topOk) return "위에서 본 칸마다 쌓기나무가 적어도 하나 있어야 해. 빈 칸이 있는지 봐.";
-    if (info.frontBad.length) return `앞에서 본 모양이 달라. 왼쪽에서 ${info.frontBad[0] + 1}번째 줄을 봐. 목표는 ${p.views.front[info.frontBad[0]]}층이야.`;
-    if (info.sideBad.length) return `오른쪽 옆에서 본 모양이 달라. 앞에서 ${info.sideBad[0] + 1}번째 줄을 봐. 목표는 ${p.views.side[info.sideBad[0]]}층이야.`;
-    return p.kind === "min" ? `모양은 맞았어! 그런데 ${info.total}개보다 더 적게 쌓을 수 있어. 높은 층을 한 칸에 겹쳐 봐.` : `모양은 맞았어! 그런데 ${info.total}개보다 더 많이 쌓을 수 있어. 낮은 칸을 더 높일 수 있는지 봐.`;
+    if (!info) return "목표 모양과 지금 모양을 하나씩 비교해 봐요.";
+    if (!info.topOk) return "위에서 본 칸마다 쌓기나무가 적어도 하나 있어야 해요. 빈 칸이 있는지 봐요.";
+    if (info.frontBad.length) return `앞에서 본 모양이 달라요. 왼쪽에서 ${info.frontBad[0] + 1}번째 줄을 봐요. 목표는 ${p.views.front[info.frontBad[0]]}층이에요.`;
+    if (info.sideBad.length) return `오른쪽 옆에서 본 모양이 달라요. 앞에서 ${info.sideBad[0] + 1}번째 줄을 봐요. 목표는 ${p.views.side[info.sideBad[0]]}층이에요.`;
+    return p.kind === "min" ? `모양은 맞았어요! 그런데 ${info.total}개보다 더 적게 쌓을 수 있어요. 높은 층을 한 칸에 겹쳐 봐요.` : `모양은 맞았어요! 그런데 ${info.total}개보다 더 많이 쌓을 수 있어요. 낮은 칸을 더 높일 수 있는지 봐요.`;
   },
-  success: (p, info) => (p.kind === "exact" ? `맞았어! 쌓기나무는 ${info?.total ?? p.answer}개야.` : p.kind === "min" ? `맞았어! 가장 적을 때 ${p.answer}개야.` : `맞았어! 가장 많을 때 ${p.answer}개야.`),
-  reveal: (p) => (p.kind === "exact" ? `이렇게 쌓으면 돼. 모두 ${p.answer}개야.` : p.kind === "min" ? `가장 적게 쌓으면 ${p.answer}개야. 높은 층을 겹친 칸을 봐.` : `가장 많이 쌓으면 ${p.answer}개야. 칸마다 앞 층수와 옆 층수 중 작은 수만큼 쌓았어.`),
+  success: (p, info) => (p.kind === "exact" ? `맞았어요! 쌓기나무는 ${info?.total ?? p.answer}개예요.` : p.kind === "min" ? `맞았어요! 가장 적을 때 ${p.answer}개예요.` : `맞았어요! 가장 많을 때 ${p.answer}개예요.`),
+  reveal: (p) => (p.kind === "exact" ? `이렇게 쌓으면 돼요. 모두 ${p.answer}개예요.` : p.kind === "min" ? `가장 적게 쌓으면 ${p.answer}개예요. 높은 층을 겹친 칸을 봐요.` : `가장 많이 쌓으면 ${p.answer}개예요. 칸마다 앞 층수와 옆 층수 중 작은 수만큼 쌓았어요.`),
   createBoard: cubeBoard
 };
 
@@ -176,7 +177,7 @@ function magicBoard({ stage, controls, sound, root }) {
       <div class="b9m-grid" style="--size:${n}" role="group" aria-label="숫자 유리창. 빈칸을 누르고 카드를 고르세요">${grid}</div>
       <div class="b9m-cards" role="group" aria-label="숫자 카드">${cards}</div>
       <ul class="b9m-lines" aria-label="채운 줄의 합">${chips || "<li>빈칸이 있던 줄이 다 차면 여기에 합이 나와요</li>"}</ul>
-      <div class="cg-actions"><button type="button" class="cg-secondary" data-b9m-clear ${locked || active === null || values[active] === null ? "disabled" : ""}>이 칸 지우기</button><button type="button" class="cg-primary" data-b9m-check ${locked || !filled ? "disabled" : ""}>확인!</button></div>`;
+      <div class="cg-actions"><button type="button" class="cg-secondary" data-b9m-clear ${locked || active === null || values[active] === null ? "disabled" : ""}>이 칸 지우기</button><button type="button" class="cg-primary" data-b9m-check ${locked || !filled ? "disabled" : ""}>맞는지 보기</button></div>`;
   }
   const onClick = (event) => {
     const t = event.target.closest("button");
@@ -221,12 +222,12 @@ function magicBoard({ stage, controls, sound, root }) {
   };
 }
 const MAGIC_COACH = {
-  fill: "한 줄의 합에서 그 줄의 다른 수를 빼 봐.",
-  "center-given": "가운데 수를 세 번 더하면 한 줄의 합이야.",
-  "center-blank": "가운데를 사이에 둔 두 수를 더하면, 가운데 수를 두 번 더한 것과 같아.",
-  overlap: "두 줄이 같이 쓰는 칸을 빼면, 나머지 수끼리 합이 같아.",
-  find: "세 수가 다 보이는 줄이 있으면 한 줄의 합부터 구해.",
-  big: "네 칸 줄도 합이 모두 같아. 빈칸이 하나 남은 줄부터!"
+  fill: "한 줄의 합에서 그 줄의 다른 수를 빼 봐요.",
+  "center-given": "가운데 수를 세 번 더하면 한 줄의 합이에요.",
+  "center-blank": "가운데를 사이에 둔 두 수를 더하면, 가운데 수를 두 번 더한 것과 같아요.",
+  overlap: "두 줄이 같이 쓰는 칸을 빼면, 나머지 수끼리 합이 같아요.",
+  find: "세 수가 다 보이는 줄이 있으면 한 줄의 합부터 구해요.",
+  big: "네 칸 줄도 합이 모두 같아요. 빈칸이 하나 남은 줄부터!"
 };
 const MAGIC_GAME = {
   ...MAGIC,
@@ -235,11 +236,11 @@ const MAGIC_GAME = {
   hint(p, info) {
     const states = info?.values ? magicLineStates(p, info.values) : [];
     const bad = states.find((s) => s.open && s.full && !s.ok);
-    if (bad) return `${bad.name}의 합이 ${josaIGa(bad.sum)}야. 다른 줄과 합이 같아야 해.`;
-    return "빈칸이 하나만 남은 줄부터 채워 봐. 한 줄의 합에서 나머지 수를 빼면 돼.";
+    if (bad) return `${bad.name}의 합이 ${yeyo(bad.sum)}. 다른 줄과 합이 같아야 해요.`;
+    return "빈칸이 하나만 남은 줄부터 채워 봐요. 한 줄의 합에서 나머지 수를 빼면 돼요.";
   },
-  success: (p) => `맞았어! 모든 줄의 합이 ${josaIGa(p.sum)}야.`,
-  reveal: (p) => `한 줄의 합은 ${josaIGa(p.sum)}야. 빈칸이 하나 남은 줄부터 ${josaUlLeul(p.sum)} 맞추면 돼.`,
+  success: (p) => `맞았어요! 모든 줄의 합이 ${yeyo(p.sum)}.`,
+  reveal: (p) => `한 줄의 합은 ${yeyo(p.sum)}. 빈칸이 하나 남은 줄부터 ${josaUlLeul(p.sum)} 맞추면 돼요.`,
   createBoard: magicBoard
 };
 

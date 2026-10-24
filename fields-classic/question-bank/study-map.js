@@ -103,7 +103,7 @@ export function gameTitles(bookId, lesson, games) {
 export async function loadGoldenBell() {
   const [library, flow, handsOn] = await Promise.all([
     import("./golden-bell-library.js?v=20261023h"),
-    import("./golden-bell-lesson-flow.js?v=20261024a"),
+    import("./golden-bell-lesson-flow.js?v=20261024t"),
     import("./golden-bell-hands-on-models.js?v=20261023t")
   ]);
   const handsOnBooks = new Map();

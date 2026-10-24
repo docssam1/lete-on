@@ -18,7 +18,7 @@ async function openGame() {
     message.textContent = "학습지의 게임 QR을 다시 스캔해 주세요.";
     return;
   }
-  message.textContent = "게임을 불러오고 있습니다.";
+  message.textContent = "게임을 불러오고 있어요.";
   try {
     const grant = await resolveGameLink(token);
     if (request !== generation) return;
@@ -27,7 +27,7 @@ async function openGame() {
     if (request !== generation) return;
     const activity = Object.hasOwn(HANDS_ON_ACTIVITIES, grant.activityId) ? HANDS_ON_ACTIVITIES[grant.activityId] : null;
     if (!activity || activity.lesson !== grant.lessonId || !unitForLesson(grant.bookId, grant.lessonId)?.activities.includes(grant.activityId)) throw new Error("game_scope_invalid");
-    const { mountSingleHandsOn } = await import("./golden-bell-hands-on.js?v=20261024a");
+    const { mountSingleHandsOn } = await import("./golden-bell-hands-on.js?v=20261024t");
     if (request !== generation) return;
     mountSingleHandsOn(content, grant.activityId);
     document.getElementById("gameTitle").textContent = activity.title;
@@ -36,7 +36,7 @@ async function openGame() {
   } catch (error) {
     if (request !== generation) return;
     const denied = /invalid|expired|scope|revoked/u.test(error.message);
-    message.textContent = denied ? "사용할 수 없는 게임 링크입니다. 선생님에게 새 학습지를 요청해 주세요." : "게임을 불러오지 못했습니다. 다시 불러오세요.";
+    message.textContent = denied ? "사용할 수 없는 게임 링크예요. 선생님에게 새 학습지를 요청해 주세요." : "게임을 불러오지 못했습니다. 다시 불러오세요.";
     retry.hidden = denied;
   }
 }

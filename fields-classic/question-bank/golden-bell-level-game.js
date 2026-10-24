@@ -231,7 +231,7 @@ export function mountLevelGame(host, game, { single = true, onQuestions = null, 
     saved.streak = 0;
     setPhase("revealing");
     board.lock(true);
-    say("괜찮아. 어떻게 푸는지 같이 보자.", "bad");
+    say("괜찮아요. 어떻게 푸는지 같이 봐요.", "bad");
     board.reveal(problem, () => {
       if (disposed) return;
       setPhase("revealed");
@@ -269,7 +269,7 @@ export function mountLevelGame(host, game, { single = true, onQuestions = null, 
     </div>`;
     finishHtml = overlay.innerHTML;
     overlay.hidden = false;
-    say(result.stars === 3 ? "완벽해! 다음 레벨도 해 볼까?" : result.passed ? "잘했어! 별을 더 모아 볼 수도 있어." : "괜찮아. 한 번 더 하면 더 잘할 거야.", result.passed ? "good" : "bad");
+    say(result.stars === 3 ? "완벽해요! 다음 레벨도 해 볼까요?" : result.passed ? "잘했어요! 별을 더 모아 볼 수도 있어요." : "괜찮아요. 한 번 더 하면 더 잘할 거예요.", result.passed ? "good" : "bad");
     if (result.passed) { sound.stage(); celebrate(); }
     overlay.querySelector("button").focus({ preventScroll: true });
   }
