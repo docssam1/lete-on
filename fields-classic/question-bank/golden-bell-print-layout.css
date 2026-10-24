@@ -51,6 +51,8 @@
   .gold-print-cover.is-crowded .gold-print-cover-concepts small { font-size: 8pt; }
   .gold-print-cover.is-crowded .gold-print-cover-concepts strong { font-size: 9pt; line-height: 1.3; }
   .gold-print-cover.is-crowded .gold-print-cover-concepts p { margin-top: .6mm; font-size: 8pt; line-height: 1.3; }
+  /* 학습이 많은 권(6권 20학습 등)은 개념 설명이 세 줄을 넘기면 표지가 한 장을 넘어 바닥글만 다음 쪽으로 밀렸다. 두 줄로 줄인다. */
+  .gold-print-cover.is-crowded .gold-print-cover-concepts p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 @media print {
   .gold-print-duplex-blank { background: #fff; }
   .gold-print-duplex-blank::before { display: none; }

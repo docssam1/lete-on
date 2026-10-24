@@ -3,15 +3,13 @@
 // 문항 카드는 app.js 가 만든 그대로 쓰고, 여기서는 쪽 묶음과 쪽 바깥(표지·내지·바닥글)만 그린다.
 // 표지·내지에는 공개 정보(책 제목·단원 이름·유형 이름·문항 수)만 쓴다 — 정답은 여기 오지 않는다.
 
+import { COVER_DESIGNS, COVER_GROUNDS, coverDesignPage } from "./cover-designs.js?v=20261024a";
+
 const STORAGE_KEY = "fcPrintTemplate.v1";
 
 export const PRINT_TEMPLATE_OPTIONS = {
-  cover: [
-    { id: "none", label: "없음" },
-    { id: "a", label: "A 흰 바탕 · 광택 도형" },
-    { id: "b", label: "B 딥 그린 · 금 라인" },
-    { id: "c", label: "C 기하 포스터" }
-  ],
+  // 표지는 cover-designs.js 의 시안 전부(3차 A·B·C · 2차 · 1차)에서 고른다.
+  cover: [{ id: "none", label: "없음" }, ...COVER_DESIGNS.map(({ id, label, group }) => ({ id, label, group }))],
   unit: [
     { id: "none", label: "없음" },
     { id: "toc", label: "목차형" },
@@ -27,11 +25,7 @@ export const PRINT_TEMPLATE_OPTIONS = {
     { id: "1", label: "1단 · 쪽당 2문항" },
     { id: "2", label: "2단 · 쪽당 4문항" }
   ],
-  ground: [
-    { id: "green", label: "초록", color: "#16382a" },
-    { id: "wine", label: "와인", color: "#4a1f2a" },
-    { id: "ink", label: "먹", color: "#2a241c" }
-  ]
+  ground: COVER_GROUNDS
 };
 
 const DEFAULTS = { cover: "none", unit: "none", form: "basic", cols: "1", pageNo: true, ground: "green", title: "", subtitle: "", volume: "" };
@@ -63,12 +57,21 @@ function choiceGroup(name, legend, current) {
     `<label class="pt-chip${option.color ? " has-swatch" : ""}"><input type="radio" name="pt-${name}" value="${option.id}" ${option.id === current ? "checked" : ""} />${option.color ? `<i style="background:${option.color}"></i>` : ""}<span>${option.label}</span></label>`).join("")}</div></fieldset>`;
 }
 
+// 표지는 글자 단추 대신 실제 표지를 작게 그려 보여 준다(같은 그리기 함수라 인쇄와 똑같다).
+const THUMB_INFO = { title: "도형 움직이기와 마방진", subtitle: "1과정 · 사고력 수학의 첫걸음", volume: "1", eyebrow: "GFIELD CLASSIC · 1과정", pubRight: "QUESTION BANK", stats: "단원 4 · 유형 41" };
+function coverGroup(current, ground) {
+  const card = (id, label, group, thumb) => `<label class="pt-cover-card"><input type="radio" name="pt-cover" value="${id}" ${id === current ? "checked" : ""} /><span class="cv-thumb">${thumb}</span><span>${group ? `<small>${esc(group)}</small>` : ""}${esc(label)}</span></label>`;
+  return `<fieldset class="pt-group pt-cover-group" data-pt-group="cover"><legend>표지 <small>${COVER_DESIGNS.length}가지</small></legend>
+    <div class="pt-cover-cards">${card("none", "없음", "", '<span class="pt-cover-none"></span>')}${COVER_DESIGNS.map((design) => card(design.id, design.label, design.group, coverDesignPage(design.id, THUMB_INFO, { ground }))).join("")}</div>
+  </fieldset>`;
+}
+
 // 패널은 한 번만 그리고, 바뀔 때마다 onChange(settings) 를 부른다.
 export function mountPrintTemplatePanel(container, settings, defaults, onChange) {
   container.innerHTML = `<details class="pt-panel" open>
     <summary><strong>인쇄 양식</strong><span>표지 · 단원 내지 · 본문 꼴 · 단 수 · 쪽 번호</span></summary>
     <div class="pt-body">
-      ${choiceGroup("cover", "표지", settings.cover)}
+      ${coverGroup(settings.cover, settings.ground)}
       <div class="pt-cover-fields" ${settings.cover === "none" ? "hidden" : ""}>
         <label>표지 제목<input type="text" data-pt-field="title" value="${esc(settings.title || defaults.title)}" maxlength="40" /></label>
         <label>부제<input type="text" data-pt-field="subtitle" value="${esc(settings.subtitle || defaults.subtitle)}" maxlength="40" /></label>
@@ -92,6 +95,10 @@ export function mountPrintTemplatePanel(container, settings, defaults, onChange)
     });
     container.querySelector(".pt-cover-fields").hidden = next.cover === "none";
     container.querySelector(".pt-ground").hidden = next.cover !== "b";
+    if (next.ground !== settings.ground) {
+      const thumb = container.querySelector('.pt-cover-card input[value="b"] + .cv-thumb');
+      if (thumb) thumb.innerHTML = coverDesignPage("b", THUMB_INFO, { ground: next.ground });
+    }
     Object.assign(settings, next);
     saveSettings(settings);
     onChange(settings, { textOnly });
@@ -148,62 +155,15 @@ function numbersLabel(numbers) {
 }
 
 // ── 표지 ────────────────────────────────────────────────
-function coverArt(kind, volume, groundColor) {
-  if (kind === "a") {
-    return `<svg class="pt-art" viewBox="0 0 210 297" aria-hidden="true"><defs>
-      <linearGradient id="ptGreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5da97c"/><stop offset="1" stop-color="#1e5a3c"/></linearGradient>
-      <linearGradient id="ptCoral" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9d73"/><stop offset="1" stop-color="#d9542b"/></linearGradient>
-      <linearGradient id="ptGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd978"/><stop offset="1" stop-color="#d99a1f"/></linearGradient>
-      <radialGradient id="ptShine" cx=".32" cy=".25" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".35" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-      <filter id="ptDrop" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#211c15" flood-opacity=".22"/></filter></defs>
-      <text x="150" y="252" font-size="150" font-weight="200" fill="#f0e9db" text-anchor="middle">${esc(volume)}</text>
-      <g filter="url(#ptDrop)"><circle cx="76" cy="196" r="34" fill="url(#ptGreen)"/><ellipse cx="66" cy="182" rx="20" ry="14" fill="url(#ptShine)"/></g>
-      <g filter="url(#ptDrop)" transform="rotate(-10 142 216)"><path d="M118 206l24-14 24 14-24 14Z" fill="url(#ptGold)"/><path d="M118 206v26l24 14v-26Z" fill="#c98a12"/><path d="M166 206v26l-24 14v-26Z" fill="#a66f08"/><path d="M118 206l24-14 24 14" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1"/></g>
-      <g filter="url(#ptDrop)"><path d="M104 160 l18 46 a18 7 0 0 1 -36 0Z" fill="url(#ptCoral)"/><ellipse cx="104" cy="206" rx="18" ry="7" fill="#b43f1b"/><path d="M104 160 l-9 23" stroke="#fff" stroke-opacity=".5" stroke-width="1.4" stroke-linecap="round"/></g>
-      <circle cx="160" cy="150" r="4.5" fill="url(#ptCoral)"/><circle cx="52" cy="142" r="3" fill="url(#ptGold)"/></svg>`;
-  }
-  if (kind === "b") {
-    return `<svg class="pt-art" viewBox="0 0 210 297" aria-hidden="true"><rect width="210" height="297" fill="${groundColor}"/>
-      <g stroke="#d9a62e" stroke-width="1" fill="none" opacity=".9"><path d="M44 128H250M44 188H250M44 248H250"/><path d="M74 98V320M134 98V320M194 98V320"/></g>
-      <g fill="#d9a62e"><circle cx="74" cy="128" r="2.6"/><circle cx="134" cy="188" r="2.6"/><circle cx="194" cy="248" r="2.6"/></g>
-      <rect x="74" y="128" width="60" height="60" fill="#d9a62e" opacity=".14"/>
-      <text x="172" y="268" font-size="88" font-weight="200" fill="#d9a62e" fill-opacity=".9" text-anchor="middle">${esc(volume)}</text></svg>`;
-  }
-  return `<svg class="pt-art" viewBox="0 0 210 297" aria-hidden="true"><rect x="0" y="170" width="210" height="127" fill="#211c15"/>
-    <circle cx="52.5" cy="201" r="22" fill="#e8734a"/><path d="M83 223 h53 v-44Z" fill="#2f8f5b"/><rect x="146" y="181" width="40" height="40" fill="#d9a62e"/>
-    <path d="M30.5 240 a22 22 0 0 1 44 0Z" fill="#d9a62e"/><rect x="85" y="240" width="49" height="33" fill="#e8734a"/>
-    <circle cx="166" cy="256" r="22" fill="#f5efe2"/><circle cx="166" cy="256" r="9" fill="#2f8f5b"/>
-    <path d="M12 142h186" stroke="#d8ccb4" stroke-width=".5"/></svg>`;
-}
-
-// 제목은 공백 기준으로 두 줄에 나눠 쓴다(「도형 움직이기와 / 마방진」처럼 앞줄이 길게).
-function titleLines(title) {
-  const words = String(title || "").split(/\s+/).filter(Boolean);
-  if (words.length < 2 || title.length <= 8) return esc(title);
-  let best = 1;
-  let bestGap = Infinity;
-  for (let cut = 1; cut < words.length; cut += 1) {
-    const left = words.slice(0, cut).join(" ").length;
-    const right = words.slice(cut).join(" ").length;
-    const gap = Math.abs(left - right * 1.4);
-    if (gap < bestGap) { bestGap = gap; best = cut; }
-  }
-  return `${esc(words.slice(0, best).join(" "))}<br>${esc(words.slice(best).join(" "))}`;
-}
-
 function coverPage(settings, info) {
-  const ground = PRINT_TEMPLATE_OPTIONS.ground.find((option) => option.id === settings.ground)?.color || "#16382a";
-  const volume = settings.volume || info.volume;
-  const kind = settings.cover;
-  const badge = kind === "a" && volume ? `<span class="pt-cover-lv">${esc(volume)}</span>` : kind === "c" && volume ? `<span class="pt-cover-num">${esc(volume)}</span>` : "";
-  return `<section class="pt-paper pt-cover pt-cover-${kind}" aria-label="표지"><div class="pt-in">
-    ${coverArt(kind, volume, ground)}
-    <div class="pt-plate"><span class="pt-eyebrow">GFIELD CLASSIC${info.bookLabel ? ` · ${esc(info.bookLabel)}` : ""}</span>
-      <h1>${titleLines(settings.title || info.title)}</h1>
-      <span class="pt-sub">${esc(settings.subtitle || info.subtitle)}</span></div>
-    ${badge}
-    <span class="pt-pub"><span>지필드 영재교육</span><span>QUESTION BANK</span></span>
-  </div></section>`;
+  return coverDesignPage(settings.cover, {
+    title: settings.title || info.title,
+    subtitle: settings.subtitle || info.subtitle,
+    volume: settings.volume || info.volume,
+    eyebrow: `GFIELD CLASSIC${info.bookLabel ? ` · ${info.bookLabel}` : ""}`,
+    pubRight: "QUESTION BANK",
+    stats: info.stats
+  }, { ground: settings.ground });
 }
 
 // ── 단원 내지 ─────────────────────────────────────────────

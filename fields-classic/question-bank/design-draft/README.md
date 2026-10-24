@@ -7,7 +7,7 @@
 보는 곳: `…/fields-classic/question-bank/design-draft/` (Pages 배포 후)
 - `index.html` — 문제은행 화면: 왼쪽 단원 필터 · 가운데 문제 목록 · 오른쪽 미리보기+시험지 바구니
 - `exam.html` — A4 3장: 시험지(1단) · 연습지(2단) · 교재형(개념+예제+문제). **1단/2단, 시험지/교재는 같은 문항 부품에 틀만 바꾸는 선택지**
-- `covers.html` — 교재 표지 3안 (A 흰 바탕+광택 도형 · B 딥 그린+금 라인 · C 기하 포스터). 그림은 전부 이 파일 안 원본 SVG — 외부 템플릿을 베끼지 않음(어도비·캔바는 배치 관습만 참고). 처음 그린 그림책 장면 표지(언덕·열기구·무늬)는 「촌스럽다」로 거름
+- `covers.html` — 교재 표지 모음 11가지(3차 A·B·C · 2차 3 · 1차 3 · 골든벨 표지 2). 그림은 인쇄와 같은 `../cover-designs.js`로 그린다(원본 SVG만, 외부 템플릿 베끼지 않음). 2차의 그림책 장면 표지(언덕·열기구·무늬)는 「촌스럽다」는 말을 들었지만 원장 지시로 고를 수 있게 남겨 둠
 - `unit.html` — 단원 내지 3안 (목차형 · 배움 지도형 · 포스터형)
 - 같은 내용의 Claude Design 캔버스: https://claude.ai/artifact/AasWRPtH6kBfZUSP42K7Mq (원장 비공개)
 - **규칙 정리본 = 스킬 `.claude/skills/gfield-textbook-design/SKILL.md`** — 새 작업은 그 스킬부터 읽는다

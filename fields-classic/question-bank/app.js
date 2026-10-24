@@ -12,7 +12,7 @@ import { book08Markup } from "./book08-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
-import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261023a";
+import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261024a";
 
 const {
   ageStages: AGE_STAGES,
@@ -3779,7 +3779,8 @@ function printTemplateInfo(title) {
     volume: book ? String(book.label).replace(/[^0-9]/g, "") : "",
     bookLabel: book ? book.label : "",
     footLabel: book ? `지필드 클래식 · ${book.label}` : `지필드 문제은행 · ${title}`,
-    goal: `학습 내용 · ${middles.slice(0, 3).join(" · ")}${middles.length > 3 ? " 외" : ""}`
+    goal: `학습 내용 · ${middles.slice(0, 3).join(" · ")}${middles.length > 3 ? " 외" : ""}`,
+    stats: `${state.questions.length}문항\n${middles.length}가지 학습 내용`
   };
 }
 

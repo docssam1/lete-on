@@ -29,7 +29,8 @@ for (const candidate of GOLDEN_BELL_BOOKS.filter((item) => item.lessons.length))
 }
 const book4Units = goldenBellPrintUnits(GOLDEN_BELL_BOOKS.find((item) => item.id === "book-04"));
 assert.deepEqual(book4Units.filter((group) => group.number).map((group) => group.number), [1, 2, 3, 4]);
-assert.deepEqual(book4Units.find((group) => group.number === 2).lessons.map((lesson) => lesson.id), ["hidden-cube-count", "fold-hole-count", "cube-box-fill"]);
+// 4권 원본 대조(묶음 3·6, 2026-10)로 2단원 학습이 늘었다 — 교재 쪽 순서대로.
+assert.deepEqual(book4Units.find((group) => group.number === 2).lessons.map((lesson) => lesson.id), ["fold-position-source", "fold-cut-source", "fold-hole-count", "cube-min-count", "hidden-cube-count", "cube-box-fill", "multiplication-matrix"]);
 const browser = await chromium.launch({ headless: true });
 try {
   for (const width of [1440, 390]) {

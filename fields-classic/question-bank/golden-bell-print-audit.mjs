@@ -129,7 +129,9 @@ try {
     assert.equal(await cover.count(), 1, `${bookId}: book print needs exactly one cover`);
     assert.equal(await page.locator(".gold-print-page").first().getAttribute("data-print-part"), "cover", `${bookId}: cover is not the first page`);
     assert.equal(await cover.locator(".gold-print-cover-concepts li").count(), book.lessons.length, `${bookId}: cover concept index is incomplete`);
-    assert.equal(await cover.locator(".gold-print-cover-path li").count(), 4, `${bookId}: cover learning path is incomplete`);
+    // 2026-10-03(#282) 표지의 「학습 순서」 네 칸을 「학습 범위」(단원 목록)로 바꿨다.
+    assert.equal(await cover.locator(".gold-print-cover-range p").count(), 1, `${bookId}: cover learning range is missing`);
+    assert.ok((await cover.locator(".gold-print-cover-range p").innerText()).trim().length > 0, `${bookId}: cover learning range is empty`);
     assert.equal(await cover.locator(".gold-print-cover-meta dd").count(), 2, `${bookId}: cover name or date field is missing`);
     assert.deepEqual(await page.locator('.gold-print-page:not([data-print-part="cover"])').evaluateAll((nodes) => [...new Set(nodes.flatMap((node) => JSON.parse(node.dataset.printParts).map((part) => JSON.stringify([node.dataset.printLesson, part]))))].map((entry) => JSON.parse(entry))), book.lessons.flatMap((lesson) => lessonParts(lesson).map((part) => [lesson.id, part])), `${bookId}: book print order or contents mismatch`);
     for (const lesson of book.lessons) {
@@ -169,7 +171,8 @@ try {
       const footer = node.querySelector(":scope > .gold-print-footer");
       const footerTop = footer?.getBoundingClientRect().top ?? pageRect.bottom;
       const contentBottom = Array.from(node.children)
-        .filter((child) => !child.classList.contains("gold-print-footer"))
+        // 표지 배경 그림(.gold-cover-art)은 쪽 전체에 깔리는 배경이라 내용이 아니다(2026-10-03 #282에서 생김).
+        .filter((child) => !child.classList.contains("gold-print-footer") && !child.classList.contains("gold-cover-art"))
         .reduce((bottom, child) => Math.max(bottom, child.getBoundingClientRect().bottom), pageRect.top);
       return {
         lesson: node.dataset.printLesson,

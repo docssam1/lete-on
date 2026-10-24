@@ -20,6 +20,7 @@ import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261023x";
 import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep } from "./golden-bell-lesson-flow.js?v=20261023x";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
+import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261024a";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -33,7 +34,16 @@ const storageKey = `fields-classic-golden-bell:${student}`;
 const protectedBooks = new Set();
 const protectedLoads = new Map();
 const coverStorageKey = "fields-classic-golden-bell-print-cover";
-const coverLabels = { concept: "도형 배경", simple: "모눈 배경", none: "표지 없음" };
+// 표지: 골든벨 표지 둘(도형·모눈 배경, 그 위에 학습 범위·개념·게임 QR) + 교재 표지 시안 아홉(cover-designs.js).
+// 시안 표지를 고르면 시안 한 장을 맨 앞에 두고, 학습 범위·개념·게임 QR은 그다음 쪽(배경 없이)에 싣는다.
+const coverLabels = { concept: "도형 배경", simple: "모눈 배경", ...Object.fromEntries(COVER_DESIGNS.map((design) => [design.id, design.label])), none: "표지 없음" };
+{
+  const host = document.querySelector("#printCoverFieldset .cover-options");
+  const sample = { title: "도형 움직이기와 마방진", subtitle: "골든벨 개념 학습", volume: "1", eyebrow: "GFIELD CLASSIC · 1과정", stats: "단원 4 · 학습 12" };
+  host?.insertAdjacentHTML("beforeend", COVER_DESIGNS.map((design) => `<label class="cover-design-option"><input type="radio" name="coverStyle" value="${design.id}" /><span class="cover-swatch design cv-thumb" aria-hidden="true">${coverDesignPage(design.id, sample)}</span><strong><small>${design.group}</small>${design.label}</strong></label>`).join(""));
+  const none = host?.querySelector('input[value="none"]')?.closest("label");
+  if (none) host.append(none);
+}
 let coverStyle = "concept";
 try {
   const saved = localStorage.getItem(coverStorageKey);
@@ -1383,6 +1393,7 @@ function printLessonPage(lesson, lessonNumber, book) {
 }
 
 function printBookCover(book, lessons, { includeAnswers = false, style = coverStyle, includeGames = $("printGameQR").checked } = {}) {
+  if (isCoverDesign(style)) return printDesignCover(book, lessons, style) + printBookCover(book, lessons, { includeAnswers, style: "plain", includeGames });
   const courseNumber = /^course-(\d+)$/u.exec(book.courseId || "")?.[1];
   const courseLabel = courseNumber ? `${Number(courseNumber)}과정` : "골든벨";
   const units = printUnits(book).filter((unit) => unit.lessons.some((lesson) => lessons.includes(lesson)));
@@ -1391,13 +1402,31 @@ function printBookCover(book, lessons, { includeAnswers = false, style = coverSt
   const conceptRows = lessons.map((lesson) => `<li data-cover-lesson="${escapeAttribute(lesson.id)}"><span>${String(book.lessons.indexOf(lesson) + 1).padStart(2, "0")}</span><div><small>${escapeAttribute(lesson.unit)}</small><strong>${escapeAttribute(lesson.title)}</strong><p>${escapeAttribute(lesson.representativeConcept)}</p></div></li>`).join("");
   const densityClass = lessons.length > 12 ? " is-dense is-crowded" : lessons.length > 6 ? " is-dense" : "";
   return `<article class="gold-print-page gold-print-cover cover-${style}${densityClass}${games.length ? " has-cover-games" : ""}" data-cover-style="${style}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" data-watermark="${escapeAttribute(student)} · GFIELD">
-    <img class="gold-cover-art" src="./assets/fc-cover-${style === "simple" ? "grid" : "shapes"}.svg" alt="" aria-hidden="true" />
+    ${style === "plain" ? "" : `<img class="gold-cover-art" src="./assets/fc-cover-${style === "simple" ? "grid" : "shapes"}.svg" alt="" aria-hidden="true" />`}
     <header class="gold-print-cover-head"><span>GOLDEN BELL</span><strong>${escapeAttribute(courseLabel)} · 골든벨</strong></header>
     <section class="gold-print-cover-title"><small>${escapeAttribute(book.label)} · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}</small><h1>${escapeAttribute(book.title || "골든벨 개념 학습")}</h1><dl class="gold-print-cover-meta"><div><dt>이름</dt><dd>${student === "DEMO" ? "" : escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></section>
     <section class="gold-print-cover-range"><h2>학습 범위</h2><p>${escapeAttribute(range)}</p><span>${includeAnswers ? "답안과 풀이 포함" : "답안 제외"}</span></section>
     <section class="gold-print-cover-concepts"><h2>유형과 핵심 개념</h2><ol>${conceptRows}</ol>${printCoverGamesMarkup(games)}</section>
     <footer class="gold-print-footer">${escapeAttribute(courseLabel)} · ${escapeAttribute(book.label)} · 개념 학습 교재</footer>
   </article>`;
+}
+
+function designCoverInfo(book, lessons) {
+  const courseNumber = /^course-(\d+)$/u.exec(book.courseId || "")?.[1];
+  const units = printUnits(book).filter((unit) => unit.lessons.some((lesson) => lessons.includes(lesson)));
+  return {
+    title: book.title || "골든벨 개념 학습",
+    subtitle: `골든벨 개념 학습 · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}`,
+    volume: String(book.label || "").replace(/[^0-9]/gu, ""),
+    eyebrow: `GFIELD CLASSIC · ${courseNumber ? `${Number(courseNumber)}과정` : "골든벨"}`,
+    pubRight: "GOLDEN BELL SERIES",
+    stats: `단원 ${units.length} · 학습 ${lessons.length}`
+  };
+}
+
+function printDesignCover(book, lessons, style) {
+  return `<article class="gold-print-page gold-print-design-cover" data-cover-design="${escapeAttribute(style)}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" aria-label="교재 표지">
+    ${coverDesignPage(style, designCoverInfo(book, lessons))}<footer class="gold-print-footer" hidden></footer></article>`;
 }
 
 function printUnits(book = activeBook()) {
@@ -1468,7 +1497,7 @@ function openPrintSettings(selectUnits) {
   const activeUnit = units.find((unit) => unit.lessons.includes(activeLesson())) || units[0];
   draftLessonIds = new Set(lessonSelections.get(activeBook().id) || (activeUnit?.lessons || []).map((lesson) => lesson.id));
   draftSections = new Set(printSections);
-  $("coverDialogTitle").textContent = `${activeBook().label} · ${selectUnits ? "선택 학습 인쇄" : "표지 배경"}`;
+  $("coverDialogTitle").textContent = `${activeBook().label} · ${selectUnits ? "선택 학습 인쇄" : "표지 고르기"}`;
   $("printUnitFieldset").hidden = !selectUnits;
   $("printSectionFieldset").hidden = !selectUnits;
   $("printAnswerFieldset").hidden = !selectUnits || ["answers", "quick"].includes(draftPrintMode);
@@ -1525,7 +1554,9 @@ function renderCoverPreview() {
   host.innerHTML = !lessons.length ? '<p class="cover-empty">선택한 단원이 없습니다.</p>' : answerOnly
     ? `<p class="cover-empty">${modeLabel} · 표지 제외</p>` : draftCoverStyle === "none"
       ? '<p class="cover-empty">표지 없이 첫 학습 페이지부터 인쇄합니다.</p>'
-      : printBookCover(activeBook(), lessons, { style: draftCoverStyle, includeAnswers: draftPrintMode === "both" });
+      : isCoverDesign(draftCoverStyle)
+        ? `<div class="gold-cover-design-preview">${coverDesignPage(draftCoverStyle, designCoverInfo(activeBook(), lessons))}<p>다음 쪽에 학습 범위·유형과 핵심 개념${$("printGameQR").checked ? "·게임 QR" : ""}이 이어집니다.</p></div>`
+        : printBookCover(activeBook(), lessons, { style: draftCoverStyle, includeAnswers: draftPrintMode === "both" });
   requestAnimationFrame(scaleCoverPreview);
 }
 
