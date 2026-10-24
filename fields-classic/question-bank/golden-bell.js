@@ -83,7 +83,8 @@ function loadProgress() {
 
 const state = {
   bookId: requestedRoute?.bookId || UNAVAILABLE_BOOK.id,
-  lessonId: null,
+  // ?lesson=<id>: 시작 화면에서 단원의 학습을 바로 연다(없는 id면 render()가 첫 학습으로 돌린다).
+  lessonId: params.get("lesson") || null,
   phase: "concept",
   sourceTrackId: null,
   selections: {},
@@ -2111,7 +2112,7 @@ $("courseSelect").addEventListener("change", (event) => {
   next.searchParams.set("book", course.books[0].id);
   location.assign(next);
 });
-$("backLink").href = `./?student=${encodeURIComponent(student)}&mode=curriculum`;
+$("backLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.bookId}`;
 $("printLessonButton").addEventListener("click", () => printLessons([activeLesson()]));
 $("printBookButton").addEventListener("click", () => printLessons(activeBook().lessons, { includeCover: true }));
 $("coursePrintMode").addEventListener("change", updateCoverButton);
@@ -2212,4 +2213,7 @@ window.addEventListener("keydown", (event) => {
   }
 });
 render();
+// ?phase=original|extension: 그 단계로 바로 간다. 개념을 아직 안 봤으면 phaseAllowed가 막아 개념부터 보여 준다.
+const requestedPhase = params.get("phase");
+if (["original", "extension"].includes(requestedPhase)) setPhase(requestedPhase);
 ensureProtectedBook(state.bookId).then(() => render());

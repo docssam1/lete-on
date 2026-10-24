@@ -12,7 +12,7 @@ import { book08Markup } from "./book08-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
-import { layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261023a";
+import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261023a";
 
 const {
   ageStages: AGE_STAGES,
@@ -35,6 +35,8 @@ const {
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
+// 권별테스트를 「유사형」(같은 구조, 새 숫자)으로 만들 때. 기본은 늘 같은 문제가 나오는 원본형.
+const freshUnitTest = params.get("fresh") === "1";
 const domainIndex = Object.fromEntries(DOMAINS.map((domain, index) => [domain.id, index]));
 const EXAM_SOURCES = [...DIAGNOSTIC_EXAM_TYPES, ...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES];
 const OUR_MOCK_EXAM_GROUPS = [
@@ -82,6 +84,8 @@ const state = {
   printTemplate: loadPrintTemplate(),
   questions: []
 };
+// 시작 화면의 「수업형」은 교재형 본문(?form=lesson)으로 연다. 이번 한 번만이고 저장된 선택은 바꾸지 않는다.
+if (PRINT_TEMPLATE_OPTIONS.form.some((option) => option.id === params.get("form"))) state.printTemplate.form = params.get("form");
 let printTemplatePanel = null;
 
 function normalizeSearchText(value) {
@@ -926,7 +930,7 @@ function selectedReferences() {
           typeId: question.typeId,
           reference: `${book.label} 단원 테스트 ${number}번 · ${question.label}`,
           difficulty: question.difficulty || 2,
-          fixedSeed: `unit-test:${book.id}:${number}`,
+          fixedSeed: freshUnitTest ? null : `unit-test:${book.id}:${number}`,
           classification: question.classification,
           generationCase: generationCaseForSource("unit-test", book.id, number)
         });
@@ -3699,6 +3703,10 @@ function watermarkMarkup() {
 }
 
 function worksheetTitleText() {
+  if (state.mode === "curriculum" && state.selected.unitTest.size && !state.selected.curriculum.size) {
+    const book = CURRICULUM.find((entry) => entry.id === state.curriculumBookId);
+    if (book) return `${book.label} 권별테스트${freshUnitTest ? " · 유사형" : ""}`;
+  }
   return state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "FC 단원 학습지" : "유형별 맞춤 학습지";
 }
 
@@ -3804,6 +3812,7 @@ function openAnswers() {
 function initControls() {
   $("studentName").textContent = student;
   $("introLink").href = `./intro.html?student=${encodeURIComponent(student)}`;
+  $("startLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
   $("worksheetStudent").textContent = student;
   if ($("resultDiagnosisLink")) $("resultDiagnosisLink").href = `./result-diagnosis.html?student=${encodeURIComponent(student)}`;
   $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
@@ -3931,4 +3940,49 @@ setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") 
   }
   renderTypeTree();
   updateSummary();
+})();
+
+// 시작 화면(start.html)에서 넘어오는 주소. 고를 것을 미리 골라 두어 학생·선생님이 긴 목록을 헤매지 않게 한다.
+//   ?mode=curriculum&book=book-03                         그 권을 연다
+//   &set=unit-test                                         권별테스트 25문항(원본과 같은 순서·구조, 늘 같은 문제)
+//   &set=unit-test&fresh=1                                 같은 구조로 숫자를 바꾼 새 문제
+//   &units=0,2&stage=practice&count=20                     교재 단원·단계(개념·유형·연습·심화)·문항 수
+//   &build=1                                               고른 대로 바로 학습지를 만든다
+// 검증 게이트는 그대로다 — 준비되지 않은 유형·문항은 고르지 않는다.
+(function preselectCurriculum() {
+  if (params.get("mode") !== "curriculum") return;
+  const book = CURRICULUM.find((item) => item.id === params.get("book"));
+  if (!book) return;
+  state.curriculumBookId = book.id;
+  const stageId = params.get("stage");
+  if (TEXTBOOK_STAGES.some((stage) => stage.id === stageId)) setCurriculumStage(stageId);
+  const setCount = (count) => {
+    state.count = count;
+    $("questionCount").value = String(count);
+    $("countChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", Number(button.dataset.count) === count));
+  };
+  let picked = 0;
+  if (params.get("set") === "unit-test") {
+    for (const question of book.source.unitTestQuestions || []) {
+      if (!question.verified || !isSelectableType(typeById(question.typeId))) continue;
+      state.selected.unitTest.add(unitTestKey(book.id, question.number));
+      picked += 1;
+    }
+    if (picked) setCount(picked);
+  } else if (params.has("units")) {
+    const wanted = new Set(params.get("units").split(",").map(Number));
+    book.units.forEach((unit, unitIndex) => {
+      if (!wanted.has(unitIndex)) return;
+      for (const typeId of unit.typeIds) {
+        if (!isSelectableCurriculumType(typeById(typeId), book, unit)) continue;
+        state.selected.curriculum.add(curriculumKey(book.id, unitIndex, typeId));
+        picked += 1;
+      }
+    });
+    const requestedCount = Number(params.get("count"));
+    if (Number.isFinite(requestedCount) && requestedCount >= 1 && requestedCount <= 50) setCount(requestedCount);
+  }
+  renderCurriculum();
+  updateSummary();
+  if (picked && params.get("build") === "1") buildQuestions();
 })();
