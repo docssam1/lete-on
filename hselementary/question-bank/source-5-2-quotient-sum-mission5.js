@@ -10,8 +10,8 @@
   const generatorKey = "source52QuotientSumMission5";
   const pools = Object.freeze([
     Object.freeze({ roundedTarget: 50, truncatedTarget: 70 }),
-    Object.freeze({ roundedTarget: 60, truncatedTarget: 80 }),
-    Object.freeze({ roundedTarget: 80, truncatedTarget: 110 })
+    Object.freeze({ roundedTarget: 90, truncatedTarget: 130 }),
+    Object.freeze({ roundedTarget: 130, truncatedTarget: 190 })
   ]);
   const format = value => Number(value).toLocaleString("ko-KR");
 
