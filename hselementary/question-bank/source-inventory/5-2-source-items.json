@@ -794,7 +794,7 @@
       "sourceShape": "백의 자리 반올림과 십의 자리 올림 결과가 모두 1200인 자연수의 개수를 구하는 텍스트 문항.",
       "answerContract": "single-value",
       "visualRisk": [
-        "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
+        "none; the original item is text-only and requires no added figure."
       ],
       "sourceVerified": true,
       "implementationStatus": "reviewed",
