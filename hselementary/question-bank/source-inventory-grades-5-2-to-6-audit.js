@@ -32,7 +32,7 @@ const specs = [
 ];
 
 const failures = [];
-const reviewed5_2Releases = new Set(["5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
+const reviewed5_2Releases = new Set(["5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
 const allIds = new Set();
 const semesterCounts = {};
 
@@ -137,10 +137,10 @@ for (const spec of specs) {
     fail(`5-2: sourceVerified true 항목은 26개여야 합니다 (${verifiedCount}).`);
   }
   if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
-    fail("5-2: 검수 완료로 공개 후보가 된 항목이 페이지 31 Mission 4–6 외에 있습니다.");
+    fail("5-2: 검수 완료로 공개 후보가 된 항목이 인쇄 30쪽 예제 4-2 및 인쇄 31쪽 Mission 4–6 외에 있습니다.");
   }
   if (spec.semester === "5-2" && [...reviewed5_2Releases].some(id => items.filter(item => item.sourceItemId === id).length !== 1)) {
-    fail("5-2: 검수 완료한 인쇄 31쪽 Mission 4–6 원문 항목이 각각 하나여야 합니다.");
+    fail("5-2: 검수 완료한 인쇄 30쪽 예제 4-2와 인쇄 31쪽 Mission 4–6 원문 항목이 각각 하나여야 합니다.");
   }
   if (spec.semester === "5-2") {
     const unit3 = document.units?.find(unit => unit.unitId === "5-2-u3");

@@ -8,6 +8,7 @@
   "use strict";
 
   const definitions = Object.freeze([
+    Object.freeze({ sourceItemId: "5-2-u3-e4-example-2", generatorKey: "source52EquilateralAngleChaseExample2", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-1", generatorKey: "source52SquareAnglePage31Mission1", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-2", generatorKey: "source52SemicircleAnglePage31Mission2", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-3", generatorKey: "source52EquilateralRotationPage31Mission3", publicReady: true }),
@@ -24,6 +25,8 @@
   const trapezoidBottomBases = [8, 10, 14];
   const trapezoidBaseHeights = [6, 8, 10];
   const difficultyDeltas = [-2, 0, 2];
+  const equilateralExampleAlphas = [28, 34, 40];
+  const equilateralExampleBetas = [22, 24, 26];
   const esc = value => String(value).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
   const point = (x, y) => `${Number(x.toFixed(2))},${Number(y.toFixed(2))}`;
   const rad = degree => degree * Math.PI / 180;
@@ -114,6 +117,32 @@
     const givenMark = angleMark(m,n,d,18);
     const targetMark = angleMark(r,g,d,18);
     return `<svg class="source52-p31-diagram source52-p31-equilateral" data-source52-figure="equilateral-rotation" data-target-angle="${target}" viewBox="0 0 360 390" role="img" aria-label="공통 꼭짓점 ㄷ을 둔 두 정삼각형, 주어진 각과 회전 대응각 그림" xmlns="http://www.w3.org/2000/svg">${a(d,n)}${a(n,g)}${a(g,d)}${a(d,m)}${a(m,r)}${a(r,d)}${a(m,n)}${a(r,g)}<path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text class="source52-angle-label" x="${(givenMark.label.x-20).toFixed(2)}" y="${(givenMark.label.y+4).toFixed(2)}">${target}°</text>${text(g,"ㄱ",-20,0)}${text(n,"ㄴ",8,-10)}${text(d,"ㄷ",-18,18)}${text(r,"ㄹ",18,-2)}${text(m,"ㅁ",8,-9)}<text class="source52-target-label" x="${(targetMark.label.x-8).toFixed(2)}" y="${(targetMark.label.y+4).toFixed(2)}">㉠</text></svg>`;
+  }
+
+  function equilateralExampleDiagram(alpha, beta, showCorrespondingAngle = false) {
+    const n = { x: 88, y: 338 }, d = { x: 428, y: 338 };
+    const side = d.x - n.x;
+    const g = { x: (n.x + d.x) / 2, y: n.y - side * Math.sqrt(3) / 2 };
+    const innerSide = side * Math.sin(rad(beta)) / Math.sin(rad(alpha + beta));
+    const m = { x: n.x + innerSide * Math.cos(rad(alpha - 60)), y: n.y + innerSide * Math.sin(rad(alpha - 60)) };
+    const r = { x: n.x + innerSide * Math.cos(rad(alpha)), y: n.y + innerSide * Math.sin(rad(alpha)) };
+    const line = (a, b) => `<line x1="${a.x.toFixed(2)}" y1="${a.y.toFixed(2)}" x2="${b.x.toFixed(2)}" y2="${b.y.toFixed(2)}"/>`;
+    const label = (p, text, dx, dy) => `<text x="${(p.x + dx).toFixed(2)}" y="${(p.y + dy).toFixed(2)}">${text}</text>`;
+    const alphaMark = angleMark(n, g, m, 22), betaMark = angleMark(d, n, r, 22), targetMark = angleMark(m, n, g, 22);
+    const correspondingMark = showCorrespondingAngle ? angleMark(r, n, d, 22) : null;
+    const target = 180 - alpha - beta;
+    return `<svg class="source52-p31-diagram source52-p31-equilateral-example" data-source52-figure="equilateral-angle-chase-example2" data-alpha="${alpha}" data-beta="${beta}" data-target-angle="${target}" data-n="${point(n.x,n.y)}" data-d="${point(d.x,d.y)}" data-g="${point(g.x,g.y)}" data-m="${point(m.x,m.y)}" data-r="${point(r.x,r.y)}" viewBox="0 0 520 500" role="img" aria-label="정삼각형 ㄱㄴㄷ과 ㄴㄹㅁ, 주어진 두 각과 목표각 그림" xmlns="http://www.w3.org/2000/svg">${line(g,n)}${line(n,d)}${line(d,g)}${line(n,m)}${line(m,r)}${line(r,n)}${line(m,g)}${line(d,r)}<path class="source52-angle-mark" d="${alphaMark.d}"/><path class="source52-angle-mark" d="${betaMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/>${correspondingMark ? `<path class="source52-angle-mark source52-corresponding-angle-mark" d="${correspondingMark.d}"/>` : ""}<text class="source52-angle-label" x="${(alphaMark.label.x - 15).toFixed(2)}" y="${(alphaMark.label.y + 4).toFixed(2)}">${alpha}°</text><text class="source52-angle-label" x="${(betaMark.label.x - 15).toFixed(2)}" y="${(betaMark.label.y + 4).toFixed(2)}">${beta}°</text><text class="source52-target-label" x="${(targetMark.label.x - 8).toFixed(2)}" y="${(targetMark.label.y + 4).toFixed(2)}">㉠</text>${correspondingMark ? `<text class="source52-target-label" x="${(correspondingMark.label.x - 8).toFixed(2)}" y="${(correspondingMark.label.y + 4).toFixed(2)}">㉠</text>` : ""}${label(g,"ㄱ",-9,-10)}${label(n,"ㄴ",-20,24)}${label(d,"ㄷ",8,24)}${label(r,"ㄹ",8,20)}${label(m,"ㅁ",-19,-10)}</svg>`;
+  }
+
+  function buildEquilateralExample2(variant, offset) {
+    const alpha = equilateralExampleAlphas[variant];
+    const beta = equilateralExampleBetas[variant] + difficultyDeltas[offset + 1];
+    const firstAtN = 60 - alpha;
+    const secondAtN = 60 - firstAtN;
+    const target = 180 - alpha - beta;
+    const prompt = `<div class="source52-p31-question"><p>정삼각형 ㄱㄴㄷ과 정삼각형 ㄴㄹㅁ이 있습니다. ∠ㄱㄴㅁ=${alpha}°, ∠ㄴㄷㄹ=${beta}°일 때 ∠ㄴㅁㄱ의 크기를 구하세요.</p>${equilateralExampleDiagram(alpha,beta)}</div>`;
+    const solution = `<div class="source52-p31-solution"><ol><li>△ㄱㄴㄷ은 정삼각형이므로 ∠ㄱㄴㄷ=60°입니다. 따라서 ∠ㅁㄴㄷ=60°−${alpha}°=${firstAtN}°입니다.</li><li>△ㄴㄹㅁ도 정삼각형이므로 ∠ㄹㄴㅁ=60°입니다. 그러므로 △ㄴㄷㄹ의 ∠ㄴ은 60°−${firstAtN}°=${secondAtN}°입니다.</li><li>△ㄴㄷㄹ에서 세 각의 합은 180°입니다. 따라서 ∠ㄴㄹㄷ=180°−${secondAtN}°−${beta}°=${target}°입니다.</li><li>ㄴ을 중심으로 시계 방향 60° 회전하면 ㅁ은 ㄹ로, ㄱ은 ㄷ으로 옮겨집니다. 회전은 각의 크기를 보존하므로 ∠ㄴㅁㄱ=∠ㄴㄹㄷ=${target}°입니다.</li></ol>${equilateralExampleDiagram(alpha,beta,true)}</div>`;
+    return result("5-2-u3-e4-example-2",variant,offset,prompt,`${target}°`,solution,{alpha,beta,firstAtN,secondAtN,target,rotationDegrees:60},false,answerVisual("정삼각형 회전으로 구한 목표각",`${target}°`));
   }
 
   function congruentTriangleAreaDiagram(height, width) {
@@ -268,12 +297,13 @@
 
   function getQuestion(sourceItemId, variant = 0, difficultyOffset = 0) {
     if (!Number.isSafeInteger(variant) || variant < 0 || variant > 2 || ![-1,0,1].includes(difficultyOffset)) return null;
-    if (sourceItemId === definitions[0].sourceItemId) return buildMission1(variant,difficultyOffset);
-    if (sourceItemId === definitions[1].sourceItemId) return buildMission2(variant,difficultyOffset);
-    if (sourceItemId === definitions[2].sourceItemId) return buildMission3(variant,difficultyOffset);
-    if (sourceItemId === definitions[3].sourceItemId) return buildMission4(variant,difficultyOffset);
-    if (sourceItemId === definitions[4].sourceItemId) return buildMission5(variant,difficultyOffset);
-    if (sourceItemId === definitions[5].sourceItemId) return buildMission6(variant,difficultyOffset);
+    if (sourceItemId === definitions[0].sourceItemId) return buildEquilateralExample2(variant,difficultyOffset);
+    if (sourceItemId === definitions[1].sourceItemId) return buildMission1(variant,difficultyOffset);
+    if (sourceItemId === definitions[2].sourceItemId) return buildMission2(variant,difficultyOffset);
+    if (sourceItemId === definitions[3].sourceItemId) return buildMission3(variant,difficultyOffset);
+    if (sourceItemId === definitions[4].sourceItemId) return buildMission4(variant,difficultyOffset);
+    if (sourceItemId === definitions[5].sourceItemId) return buildMission5(variant,difficultyOffset);
+    if (sourceItemId === definitions[6].sourceItemId) return buildMission6(variant,difficultyOffset);
     return null;
   }
   const keyFor = sourceItemId => definitions.find(item => item.sourceItemId === sourceItemId)?.generatorKey || "";

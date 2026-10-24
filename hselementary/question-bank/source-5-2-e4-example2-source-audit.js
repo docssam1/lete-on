@@ -17,8 +17,8 @@ assert.equal(review.sourceVerified, true);
 assert.equal(review.calculationStatus, 'checked');
 assert.equal(review.independentAnswer, '125°');
 assert.equal(review.visualCheckStatus, 'confirmed-source-structure');
-assert.equal(review.implementationStatus, 'review-locked');
-assert.equal(review.publicDecision, 'locked');
+assert.equal(review.implementationStatus, 'reviewed');
+assert.equal(review.publicDecision, 'public-candidate');
 assert.match(review.sourceEvidence, /source-sha256:6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88/);
 assert.match(review.sourceEvidence, /clean-page-crop-sha256:527fa6ff8b5e058c58dd948c9a6493152f152e231f44084375018b1a08c59be7/);
 
@@ -37,4 +37,4 @@ const angleAt = (vertex, first, second) => {
   return Math.acos(Math.max(-1, Math.min(1, cosine))) * 180 / Math.PI;
 };
 assert.ok(Math.abs(angleAt(M, N, G) - 125) < 1e-9, 'source geometry independently gives 125°');
-console.log('Grade 5-2 E4 Example 4-2 source audit passed: canonical PDF p.26 / clean alternate p.25 / printed p.30, source angle marks, independent 125° calculation, and implementation lock preserved.');
+console.log('Grade 5-2 E4 Example 4-2 source audit passed: canonical PDF p.26 / clean alternate p.25 / printed p.30, source angle marks, independent 125° calculation, and reviewed public candidate status.');
