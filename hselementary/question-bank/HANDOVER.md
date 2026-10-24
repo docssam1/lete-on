@@ -1,3 +1,12 @@
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Deployment and Ledger Reconciled
+
+- The current `main` curriculum has `5-2-u1-e4-mission-1-rounded-count` unlocked with `sourceVerified: true` and generator `source52RoundedCountMission1`. Its original answer is independently enumerated as 10 values; publisher-key verification remains false.
+- PR [#398](https://github.com/docssam1/lete-on/pull/398) merged as `62e2d20e6d5b31fe73562646b41776b975917697`; Pages workflow [run 39976802614](https://github.com/docssam1/lete-on/actions/runs/39976802614) succeeded. The live runtime module returns HTTP 200 and its SHA-256 `4bc2a845a491d7e44ae3289d0670c32c7f2b1e3f8e5f05d4ee71c4a33ffe7219` matches `main`.
+- Focused source enumeration and all nine synthetic configurations pass. The prior browser review passed 12 states at 1440px/375px, 24 overflow checks, answer separation, and 12 blocked external requests; problem and solution PDFs each fit one A4 page and were visually inspected. Current-main release gate, runtime availability, and 5-2 classification audits also pass.
+- Reconciled the 286-row source ledger and the 50-type readiness record with the deployed state. Added audit assertions so these Mission 1 crosswalk statuses and inventory counters cannot silently drift again. Only this reviewed item changed; all other locked source items remain locked. Drive source/evidence record: [Grade 5-2 Unit 1 review](https://drive.google.com/file/d/1VKRYaNXzV2OSbSTjsvoYCIz2cxrZJxMO/view). No student data was accessed or changed.
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 3 Page 31: Mission Readiness Reconciled on Main
 
 - The audited code snapshot at `e8adc807144161e6b28facd9d3a1b120a07f79eb` (parent of this documentation update) registers Missions 1–6 in the page-31 source module and curriculum with generator mappings and `reviewLocked: false`. This supersedes the older “implementation locked” descriptions for Missions 2 and 3 and the earlier Mission 1 lock note below. Publisher answer-key verification remains unconfirmed.

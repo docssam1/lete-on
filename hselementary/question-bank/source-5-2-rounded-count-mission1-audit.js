@@ -1,6 +1,25 @@
 "use strict";
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const mission = require("./source-5-2-rounded-count-mission1.js");
+
+const inventoryDirectory = path.join(__dirname, "source-inventory");
+const sourceInventory = JSON.parse(fs.readFileSync(path.join(inventoryDirectory, "5-2-source-items.json"), "utf8"));
+const readiness = JSON.parse(fs.readFileSync(path.join(inventoryDirectory, "5-2-u1-readiness-review.json"), "utf8"));
+const sourceRow = sourceInventory.sourceItems.find(item => item.sourceItemId === "5-2-u1-e4-mission-1");
+const readinessRow = readiness.items.find(item => item.sourceItemId === mission.sourceItemId);
+assert.ok(sourceRow, "the source-item ledger contains the Mission 1 crosswalk");
+assert.ok(readinessRow, "the readiness review contains the detailed Mission 1 record");
+assert.equal(sourceRow.sourceVerified, true);
+assert.equal(sourceRow.implementationStatus, "reviewed");
+assert.equal(readinessRow.sourceVerified, true);
+assert.equal(readinessRow.implementationStatus, "deployed-and-live-verified");
+assert.equal(readinessRow.publicDecision, "published");
+assert.equal(sourceInventory.integrity.readyItems, sourceInventory.sourceItems.filter(item => item.implementationStatus === "reviewed").length);
+assert.equal(sourceInventory.integrity.reviewLockedItems, sourceInventory.sourceItems.filter(item => item.implementationStatus === "review-locked").length);
+assert.equal(readiness.integrity.publicCandidateCount, readiness.items.filter(item => item.publicDecision !== "locked").length);
+assert.equal(readiness.integrity.reviewLockedCount, readiness.items.filter(item => item.publicDecision === "locked").length);
 
 function enumerate(hundredTarget, tenCeilingTarget, limit = 10000) {
   const candidates = [];
