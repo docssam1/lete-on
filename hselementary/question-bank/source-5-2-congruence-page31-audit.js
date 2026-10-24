@@ -47,7 +47,20 @@ for (const def of source.definitions) {
       assert.doesNotMatch(item.prompt, /data-source-answer|정답은|답은/);
       assert.match(item.solution, /data-source-answer/);
 
-      if (def.sourceItemId.endsWith("mission-1")) {
+      if (def.sourceItemId.endsWith("example-2")) {
+        const { alpha, beta, firstAtN, secondAtN, target, rotationDegrees } = item.answerModel;
+        assert.equal(firstAtN, 60-alpha);
+        assert.equal(secondAtN, alpha);
+        assert.equal(target, 180-alpha-beta);
+        assert.equal(rotationDegrees, 60);
+        assert.equal(item.answer, `${target}°`);
+        assert.match(item.solution, /세 각의 합은 180°/);
+        assert.match(item.solution, /회전은 각의 크기를 보존/);
+        assert.equal(item.reviewLocked, false);
+        assert.equal(source.isPublicReady(def.sourceItemId), true);
+        assert.equal(alpha, [28,34,40][variant]);
+        assert.equal(beta, [22,24,26][variant] + [-2,0,2][difficultyOffset+1]);
+      } else if (def.sourceItemId.endsWith("mission-1")) {
         const { alpha, beta, answer } = item.answerModel;
         assert.equal(alpha + beta, 45);
         assert.ok(beta > alpha && alpha < 22.5, "The fixed pool keeps B between R and S");
@@ -252,4 +265,4 @@ for (const type of sourceTypes) {
   }
 }
 
-console.log(`인쇄 31쪽 합동·대칭 Mission 감사 통과: 6문항 · ${combinations}개 조합 · SAS·삼등분 넓이·넓이 분할·사다리꼴 중선 검산 · 공개 6`);
+console.log(`인쇄 30–31쪽 합동·대칭 감사 통과: 예제 1개 + Mission 6개 · ${combinations}개 조합 · 각 추론·SAS·삼등분 넓이·넓이 분할·사다리꼴 중선 검산 · 예제 공개 후보`);
