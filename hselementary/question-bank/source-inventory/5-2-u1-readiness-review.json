@@ -51,10 +51,10 @@
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
     "publicCandidateCount": 12,
-    "reviewLockedCount": 5,
+    "reviewLockedCount": 3,
     "uniqueAnswerPassCount": 56,
     "uniqueAnswerReviewNeededCount": 1,
-    "localCandidateCount": 33,
+    "localCandidateCount": 35,
     "readyForDeployCount": 0,
     "publishedCount": 12
   },
@@ -1632,9 +1632,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "두 방법을 모두 계산하면 같은 결과를 만드는 방법이 둘로 고정됩니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
+      "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "독립 검산 결과 56,000이 되는 방법은 백의 자리 버림, 천의 자리 버림, 천의 자리 반올림입니다. 기존 답에서 백의 자리 버림이 빠져 수정했으며, 이 예제의 생성기·화면·A4 연결은 없어 출제 잠금을 유지합니다.",
+      "lockReason": "전용 생성기에 세 개의 합성 변형을 연결했습니다. 각 자리의 올림·버림·반올림 결과 전수 대조, 문제·풀이 분리, PC·모바일, A4 검수를 완료했습니다. 원문 숫자는 생성 풀에서 제외했습니다. 공식 답안 대조와 출시 결정은 별도 대기 중.",
       "answerVerification": "independent-source-calculation"
     },
     {
@@ -1659,9 +1659,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "각 묶음 수를 올림해도 남는 리본이 없고, 총액은 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
+      "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "독립 계산 결과는 빨간 리본 19단위×560원과 노란 리본 16단위×480원으로 총 18,320원입니다. 이전 18,880원은 산술 오류라 바로잡았으며, 생성기·화면·A4 연결 전까지 잠금을 유지합니다.",
+      "lockReason": "전용 생성기에 세 개의 합성 변형을 연결했습니다. 길이 변환, 묶음 수 올림, 비용 합계를 독립 계산하고 문제·풀이 분리, PC·모바일, A4 검수를 완료했습니다. 원문 숫자는 생성 풀에서 제외했습니다. 공식 답안 대조와 출시 결정은 별도 대기 중.",
       "answerVerification": "independent-source-calculation"
     },
     {
@@ -1717,7 +1717,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "1km 뒤 7,475m는 100m 단위 75회로 올림되어 3,300+75×200=18,300원입니다. 생성기·화면·A4 연결 전까지 잠금을 유지합니다.",
+      "lockReason": "문항은 1km 뒤 추가 거리를 100m마다 과금한다고 하지만, 남은 100m 미만 거리를 다음 구간으로 올리는 규칙은 본문에 적혀 있지 않습니다. 출판사 해설과의 대조 전까지 계산 및 생성 연결을 잠급니다.",
       "answerVerification": "independent-source-calculation"
     },
     {
@@ -2184,7 +2184,7 @@
     "typeCount": 50,
     "directlyReviewedCount": 50,
     "publicCandidateCount": 12,
-    "lockedCount": 5,
+    "lockedCount": 3,
     "visualItemCount": 43,
     "uniqueAnswerPassCount": 56,
     "uniqueAnswerReviewNeededCount": 1,
@@ -2212,11 +2212,11 @@
       "PDF 3쪽(인쇄 5쪽) Mission 1–6은 손글씨를 배제하고 인쇄 조건만 직접 대조했습니다. 답은 22개·98·40~64, 70/71/72, 8쌍, 카드 배치 48개(정수 부분 3·5·7에서 15+20+13), 280<n≤315, 30<상자 수<44입니다. 수학 54개 설정·36개 음성 대조, 화면 54개 상태와 A4 54개 단일 페이지 PDF 검수를 마쳤습니다. 생성기와 reviewLocked:false 설정은 이미 main에 있어 이번 변경은 대장만 보정하며 런타임은 배포하지 않았습니다. 준비도 대장의 publicDecision=locked는 그대로 두고 공식 답안/Claude 교차 검수는 대기합니다.",
       "PDF 4쪽(인쇄 6쪽) 개념탐구 2와 예제 2-1~2-3은 손글씨·출판사 정답지를 답 근거로 쓰지 않고 독립 계산했습니다. 합성 36개 설정, 브라우저 36상태·가로 넘침 72회, A4 문제/풀이 각 1쪽을 검수했습니다. 예제 2-1 보기를 원문 기호 ㉡·㉣로 바로잡았습니다. 예제 2-4는 (5,2,1)과 (5,3,0) 두 해가 있어 잠금 유지합니다. 생성기와 reviewLocked:false 설정은 이미 main에 있어 런타임 변경·배포는 하지 않았고, 공개 결정 및 출판사 정답/Claude 교차 검수는 대기합니다.",
       "PDF 5쪽(인쇄 7쪽) Mission 1–6의 숫자·표·카드를 직접 확인하고 출판사 정답/손글씨와 분리해 계산했습니다. 수학 감사 54설정, 화면 36상태·넘침 72회, A4 문제 3쪽·풀이 6쪽을 확인했습니다. 기존 준비도 대장의 Mission 3 답 398,000은 40만에 가장 가까운 카드 수를 고르는 비교가 누락되어 있었습니다. 600개 여섯 자리 수 중 401,389가 40만에서 가장 가까워 천의 자리 반올림은 401,000으로 수정합니다. 나머지 답은 표 4730·4800·5000 / 7700·7700·8000, 차 500·200, Mission 4 숫자 0~4, Mission 5 90개, Mission 6 261개입니다. 생성기와 reviewLocked:false 설정은 이미 main에 있어 이번에는 대장만 수정하며 공식 정답 대조와 공개 잠금은 유지합니다.",
-      "PDF 6쪽(인쇄 8쪽) 개념탐구 3의 세 문장(23,400 올림→24,000; 569 버림→560; 12.46 반올림→12.5)은 기존 세 런타임과 연결해 수학 27설정·화면 18상태·A4 문제/풀이 각 2쪽을 확인했습니다. 예제 3-1은 56,000이 되는 방법을 세 가지(백의 자리 버림, 천의 자리 버림, 천의 자리 반올림)로 바로잡고, 예제 3-2의 리본값은 18,320원으로 산술 정정했습니다. 예제 3-4는 18,300원입니다. 이 세 예제는 기존 런타임이 없어 출제 잠금 유지합니다. 예제 3-3은 4,296개를 20개씩 담고 남은 16개를 5개씩 모두 판다는 조건이 성립하지 않아 잠금입니다."
+      "PDF 6쪽(인쇄 8쪽) 개념탐구 3의 세 문장은 기존 런타임에 연결해 로컬 검수를 마쳤습니다. 예제 3-1·3-2는 원문과 대조해 합성 생성기, 문제·풀이, PC·모바일·A4 검수를 완료했고 출시 잠금은 유지합니다. 예제 3-3은 남은 수량이 판매 묶음으로 나누어지지 않아 조건 충돌로 잠급니다. 예제 3-4는 100m 미만 추가 거리를 다음 요금 구간으로 올리는 규칙이 본문에 명시되지 않아 출판사 해설 대조 전까지 잠급니다."
     ],
-    "locallyVerifiedAwaitingReleaseCount": 33,
-    "readyForDeployCount": 1,
-    "publishedCount": 10
+    "locallyVerifiedAwaitingReleaseCount": 35,
+    "readyForDeployCount": 0,
+    "publishedCount": 12
   },
   "runtimeCrosswalk": {
     "asOf": "2026-10-24",
@@ -2244,11 +2244,13 @@
     "repairPullRequest": 390,
     "repairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
     "e4Page10Status": "Examples 4-2–4-4 are deployed and live-verified by PR #396 / Pages #39973818234. Exploration 4 and Example 4-1 have fresh local source, math, 24-state browser, 48-overflow and four A4 PDF checks; direct screen verification remains throttled because both GitHub Pages hostnames returned HTTP 429.",
+    "page8E3ExamplesStatus": "Examples 3-1 and 3-2 are locally connected with 18 passing math settings, 24 browser states, 48 overflow checks, and four one-page A4 PDFs; publisher-key verification, Claude API cross-review, merge, and deployment remain pending.",
+    "page8E3ExamplesDriveQa": {"driveId": "1-vMarmi3scy6EWGl1uc62vqoXPXfaf4U", "size": 1208685, "sha256": "c513efcd643968ee493152949318277f0414f0149a92fe3a4a14d5a789c84682"},
     "page11MissionStatus": "Mission 1 is deployed and live-verified by PR #398 / Pages #39976802614. Missions 2–6 are local candidates; Missions 2–3 are in draft PR #417 and Missions 4–6 are in draft PR #418. Claude API cross-review, merge, and deployment remain pending.",
-    "locallyVerifiedAwaitingReleaseCount": 33,
-    "readyForDeployCount": 1,
-    "publishedCount": 10,
-    "reviewLockedCount": 6,
+    "locallyVerifiedAwaitingReleaseCount": 35,
+    "readyForDeployCount": 0,
+    "publishedCount": 12,
+    "reviewLockedCount": 3,
     "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page11-missions4-6-20261024",
     "page4E1Evidence": {
       "driveId": "1U094VJCvwMRmZl1Qo0yGsxCMOPM3tyTZ",
@@ -3400,5 +3402,5 @@
       "liveVerification": "Both GitHub Pages hostnames returned HTTP 429; live screen status remains throttled."
     }
   },
-  "locallyVerifiedAwaitingReleaseCount": 33
+  "locallyVerifiedAwaitingReleaseCount": 35
 }

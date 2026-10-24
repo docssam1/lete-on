@@ -1439,6 +1439,52 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
           }))
         },
         {
+          name: "어림하기의 활용 · 예제 3-1, 3-2 검증 연결",
+          types: [{
+            id: "5-2-u1-e3-example-1",
+            name: "어림 결과가 같아지는 방법 모두 찾기",
+            sourceItemId: "5-2-u1-e3-example-1",
+            sourceItemLabel: "예제 3-1",
+            sourceSection: "example",
+            sourceTier: "advanced",
+            sourcePdfPage: 6,
+            sourcePrintedPage: 8,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e3-examples-source-20261024",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "원문 수와 목표값, 네 자리에서의 올림·버림·반올림 결과를 독립 계산해 모든 일치 방법을 확인했습니다. 세 개의 합성 수만 사용하며 원문 숫자는 생성 풀에 넣지 않았습니다. 화면·풀이·A4 검수는 PR에서 확인합니다.",
+            generatorKey: "source52ApplicationRoundingExample31",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
+          }, {
+            id: "5-2-u1-e3-example-2",
+            name: "리본 묶음 수로 포장 비용 구하기",
+            sourceItemId: "5-2-u1-e3-example-2",
+            sourceItemLabel: "예제 3-2",
+            sourceSection: "example",
+            sourceTier: "advanced",
+            sourcePdfPage: 6,
+            sourcePrintedPage: 8,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e3-examples-source-20261024",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "원문에서 각 리본 길이·판매 단위·묶음 가격을 확인하고 cm 변환, 묶음 수 올림, 비용 합산을 독립 검산했습니다. 세 개의 합성 자료만 사용하며 원문 숫자는 생성 풀에 넣지 않았습니다. 화면·풀이·A4 검수는 PR에서 확인합니다.",
+            generatorKey: "source52ApplicationRoundingExample32",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
+          }]
+        },
+        {
           name: "어림하기의 활용 · Mission 1 원문 연결",
           types: [{
             id: "5-2-u1-e3-mission-1-box-count",

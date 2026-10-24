@@ -8,6 +8,7 @@ require("./source-inventory-4-2-quadrilateral.js");
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-5-2-rounding-examples-e3.js");
 require("./source-5-2-rounded-range-e4.js");
 require("./source-5-2-rounded-range-e42.js");
 require("./source-5-2-rounded-range-e43.js");
@@ -26,9 +27,9 @@ assert(fs.existsSync(image), "Page 8 source render is needed");
 const ocr = fs.readFileSync(ocrPath, "utf8");
 for (const text of ["4-2", "6으로 나눈 몫", "50", "4로 나눈 몫", "70", "이상과 미만"]) assert(ocr.includes(text), `OCR must include ${text}`);
 
-const module = window.HSE_SOURCE_52_ROUNDED_RANGE_E42;
-assert(module && module.install(window));
-const type = window.HSE_CURRICULUM.semesters.find(s => s.id === "5-2").units[0].subunits[10].types[2];
+const e42Module = window.HSE_SOURCE_52_ROUNDED_RANGE_E42;
+assert(e42Module && e42Module.install(window));
+const type = window.HSE_CURRICULUM.semesters.find(s => s.id === "5-2").units[0].subunits[11].types[2];
 assert.equal(type.sourceItemId, id);
 assert.equal(type.reviewLocked, false);
 assert.equal(type.answerVisualRequired, false);
@@ -69,5 +70,5 @@ for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1
   assert(q.solution.includes(q.answer));
   observations.push({ variant, difficulty, answer: q.answer, count: intersection.length });
 }
-assert.equal(window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).length, 2054);
+assert.equal(window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).length, 2056);
 console.log(JSON.stringify({ status: "passed", id, sourcePdfPage: 8, sourcePrintedPage: 10, originalAnswer: "270 이상 300 미만", exhaustiveOriginalCandidates: allSolutions.length, syntheticConfigurations: observations.length, observations }, null, 2));

@@ -11,6 +11,7 @@ require("./source-5-2-range-missions.js");
 require("./source-5-2-rounding-e2.js");
 require("./source-5-2-rounding-missions.js");
 require("./source-5-2-rounding-application-e3.js");
+require("./source-5-2-rounding-examples-e3.js");
 require("./source-5-2-packing-mission1.js");
 require("./source-5-2-perimeter-mission2.js");
 require("./source-5-2-cube-box-mission3.js");
