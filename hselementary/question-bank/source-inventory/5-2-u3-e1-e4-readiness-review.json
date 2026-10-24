@@ -171,6 +171,11 @@
         "checkId": "e4-mission-2-semicircle-chord-angle",
         "expression": "Radii DR=DM and ∠DRM=60° ⇒ arc RM=60°; equal central angles ⇒ arcs MB=BN=x; equal chords GR=MB ⇒ arc GR=x; 3x+60°=180° ⇒ x=40°; ∠RMB=(360°−100°)/2=130°",
         "result": true
+      },
+      {
+        "checkId": "e1-mission-6-quadrilateral-extra-condition",
+        "expression": "AB=2.5, AD=3.5, CD=4, ∠C=80°; option ③ ∠B is strictly monotone in BC. Paired convex counterexamples disprove ②/⑥ and ④/⑤; ① repeats CD.",
+        "result": true
       }
     ]
   },
@@ -191,7 +196,7 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "calculationCheckedCount": 49,
+    "calculationCheckedCount": 50,
     "nonUniqueCount": 8,
     "noTriangleCount": 1,
     "visualCheckNeededCount": 18,
@@ -712,20 +717,20 @@
         "추가 후보는 변·각·대각선",
         "사각형을 두 삼각형으로 나누어 판단"
       ],
-      "visualRequirement": "6개 후보의 선분·각 이름과 사각형의 직각 표시가 필요합니다.",
-      "independentCalculation": null,
-      "answerFormula": null,
-      "independentAnswer": null,
+      "visualRequirement": "인쇄 도형과 보기의 점 이름을 정확히 표시합니다: ㄱㄴ=2.5cm, ㄱㄹ=3.5cm, ㄹㄷ=4cm, ∠ㄷ=80°. 보기 6개(ㄷㄹ 길이, ∠ㄱ, ∠ㄴ, ∠ㄹ, ㄱㄷ 대각선, ㄴㄹ 대각선)를 보존하고 필기 대각선·직각 표시는 추가하지 않습니다.",
+      "independentCalculation": "볼록 사각형에서 x=ㄴㄷ, t=ㄴㄹ이라 두면 t²=x²+16−8xcos80°. ① ㄷㄹ은 이미 주어졌다. ② ∠ㄱ과 ⑥ ㄴㄹ은 x=0.2, 8cos80°−0.2≈1.189185일 때 t≈3.970159로 같은 삼각형 ㄱㄴㄹ을 만들어도 x가 달라 불충분하다. ④ ∠ㄹ과 ⑤ ㄱㄷ은 ㄱㄷ=4일 때 △ㄱㄹㄷ를 고정해도, ∠ㄷ=80°인 반직선과 중심 ㄱ·반지름 2.5인 원이 x≈1.885645, 5.170643에서 만나 불충분하다. ③은 β=∠ㄱㄴㄹ, γ=∠ㄹㄴㄷ라 두면 ∠ㄴ=β+γ, cosβ=(t²−6)/(5t), cosγ=(x−4cos80°)/t다. x<4cos80°일 때 q=t²=(x−4cos80°)²+16sin²80°이므로 16sin²80°<q<16이다. 미지 각의 양의 미분항 계수는 88cos80°/√((16sin²80°−1)(36−16sin²80°))≈0.88617보다 작고, −4sin80°≈−3.93923인 항이 이를 이기므로 ∠ㄴ은 전체 허용 범위에서 엄격히 감소한다. 따라서 x가 유일하고, 이어 △ㄱㄴㄹ은 SSS로 정해진다.",
+      "answerFormula": "정답 집합은 ③. ①은 이미 제시된 ㄹㄷ 길이, ②·⑥은 같은 t=ㄴㄹ·∠ㄱ을 만드는 서로 다른 볼록 사각형, ④·⑤는 같은 ㄱㄷ·∠ㄹ을 만드는 서로 다른 볼록 사각형으로 반증한다. ③ ∠ㄴ은 미지 길이 x=ㄴㄷ에 대해 단조 감소한다.",
+      "independentAnswer": "③",
       "resultContract": "set-of-conditions",
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
-      "singleAnswerCheck": "후보 선분 이름과 도형 표식이 흐려 완전한 후보 집합을 확정하지 못했습니다.",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "singleAnswerCheck": "∠ㄴ은 허용되는 ㄴㄷ 길이에 대해 엄격히 감소하므로 ㄴㄷ가 유일하다. 이어 △ㄱㄴㄹ은 AB=2.5, AD=3.5, BD=t의 SSS로 하나로 정해진다. 나머지 보기는 기존 값의 중복 또는 두 볼록 사각형 반례가 있다.",
       "sourceVerified": true,
-      "calculationStatus": "blocked-visual",
+      "calculationStatus": "checked",
       "visualCheckStatus": "needs-implementation-check",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "도형·선분 표식이 완전히 판독되지 않아 조건을 추측하지 않습니다."
+      "lockReason": "원문 조건과 정답 집합은 확인했지만 구현 도형·풀이·화면/A4가 원문 표식을 정확히 보존하는지 확인 전입니다."
     },
     {
       "sourceItemId": "5-2-u3-e2-exploration-1",
@@ -1912,7 +1917,7 @@
     "directlyReviewedCount": 53,
     "publicCandidateCount": 27,
     "lockedCount": 26,
-    "calculationCheckedCount": 49,
+    "calculationCheckedCount": 50,
     "nonUniqueCount": 8,
     "noTriangleCount": 1,
     "visualCheckNeededCount": 18,
@@ -1923,7 +1928,7 @@
       "비유일·퇴화·회전각 미제시·접기 또는 복합 도형 표식 불명확 항목은 답을 추측하지 않고 잠갔습니다.",
       "정답 숫자가 보이는 필기 흔적은 근거로 사용하지 않았으며, 독립 계산이 되지 않는 항목은 independentAnswer를 비워 두었습니다.",
       "이 파일은 원본 대조 장부이며 중앙 생성기·공개 카탈로그·다른 파일은 수정하지 않았습니다.",
-      "2026-10-24 인쇄 25쪽 재검수에서 Mission 5의 SSA 답 분류를 바로잡았습니다. 정답 집합은 ①·②·④이며, 구현 그림 검수 전 잠금은 유지합니다. Drive QA: 11k5r1lrjdx7jVwPYtlFTDoevfX7k7SA3.",
+      "2026-10-24 인쇄 25쪽 Mission 5의 SSA 답 분류는 ①·②·④입니다. Mission 6의 원문 표식은 ㄱㄴ=2.5cm, ㄱㄹ=3.5cm, ㄹㄷ=4cm, ∠ㄷ=80°이며, 이전 메모의 변 이름 배정을 정정했습니다. 추가 조건 정답은 ③ ∠ㄴ이고, 다른 후보는 각각 중복 또는 서로 다른 볼록 사각형 반례로 제외됩니다. 구현 도형 검수 전 잠금은 유지합니다. Drive QA: 1wSIf1OPPM8JIG6oJq2RXPWJ6h6cea8b5.",
       "2026-10-24 인쇄 26쪽 예제 2-3 도형을 재검수해 △ㄱㄷㅁ≅△ㄴㄷㄹ을 확정했습니다. source calculation checked는 43개; 구현 그림 검수 전 공개 잠금은 유지합니다. Drive QA: 1OcVudw9mWBPR7Uu6lmG2lIAXqsaw7xL9.",
       "2026-10-24 인쇄 27쪽 Mission 6의 범위를 원문과 재대조해 합성 삼각형을 제외하고 정답을 3쌍으로 정정했습니다. 예제 2-4와는 서로 다른 삼각형 집합을 세므로 commonTypeId를 분리했습니다. Drive QA: 1UO3b2Ae_gjHhd7K-nDwkUz2I4VzSWGEj.",
       "2026-10-24 인쇄 28쪽 예제 3-2의 60° 표식과 선분 끝점을 재검수했습니다. 두 12cm 변의 끼인각으로 정삼각형이 되어 ㄱㄴ=12cm이며, 기존의 단순한 정사각형 변 대응 설명을 교정했습니다. Drive QA: 1IQrrZjrUEr4vGxZTNfBDgEu64sFWJBQj.",
