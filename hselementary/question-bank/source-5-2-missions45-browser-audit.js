@@ -7,7 +7,8 @@ const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8919";
 const evidenceDir = process.env.MAC_CHECK_OUTPUT || "";
 const missions = [
   { id: "5-2-u1-e4-mission-4-rounded-seven-million-range", api: "HSE_SOURCE_52_ROUNDED_TRIPLET_MISSION4" },
-  { id: "5-2-u1-e4-mission-5-quotient-range-sum", api: "HSE_SOURCE_52_QUOTIENT_SUM_MISSION5" }
+  { id: "5-2-u1-e4-mission-5-quotient-range-sum", api: "HSE_SOURCE_52_QUOTIENT_SUM_MISSION5" },
+  { id: "5-2-u1-e4-mission-6-rounding-place-count", api: "HSE_SOURCE_52_ROUNDING_PLACE_COUNT_MISSION6" }
 ];
 if (evidenceDir) fs.mkdirSync(evidenceDir, { recursive: true });
 
@@ -62,9 +63,19 @@ if (evidenceDir) fs.mkdirSync(evidenceDir, { recursive: true });
         assert(q.answer.includes(upperInclusive ? "이하" : "미만"), "Mission 4 answer must preserve its generated upper endpoint");
         assert(solution.includes(lower.toLocaleString("ko-KR")));
         assert(solution.includes(upper.toLocaleString("ko-KR")));
-      } else {
+      } else if (mission.id.endsWith("mission-5-quotient-range-sum")) {
         assert(solution.includes(String(q.questionModel.count)), "Mission 5 must show the complete candidate count");
         assert(solution.includes(q.answer));
+      } else {
+        assert.equal(q.answer, "10개, 100개");
+        assert(solution.includes(q.questionModel.tens.first.toLocaleString("ko-KR")));
+        assert(solution.includes(q.questionModel.tens.last.toLocaleString("ko-KR")));
+        assert(solution.includes(q.questionModel.hundreds.first.toLocaleString("ko-KR")));
+        assert(solution.includes(q.questionModel.hundreds.last.toLocaleString("ko-KR")));
+        assert(solution.includes("일의 자리까지 반올림하면 수가 바뀌지 않으므로"));
+        assert(solution.includes("천의 자리 이상"));
+        assert(solution.includes("10개"));
+        assert(solution.includes("100개"));
       }
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `Solution overflow ${width}`);
       if (evidenceDir && variant === 0 && difficulty === 0) await page.screenshot({ path: path.join(evidenceDir, `${mission.id}-solution-${width}.png`), fullPage: true });
@@ -83,5 +94,5 @@ if (evidenceDir) fs.mkdirSync(evidenceDir, { recursive: true });
   }
   await browser.close();
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ status: "passed", sourceItems: missions.map(x => x.id), states: observations.length, widths: [1440, 375], difficultyOffsets: [-1, 0, 1], allPoolsDesktop: true, blockedExternalRequests: blockedRequests, noAnswerLeak: true, overflowChecks: observations.length * 2, a4FilesCreated: evidenceDir ? 4 : 0, observations }, null, 2));
+  console.log(JSON.stringify({ status: "passed", sourceItems: missions.map(x => x.id), states: observations.length, widths: [1440, 375], difficultyOffsets: [-1, 0, 1], allPoolsDesktop: true, blockedExternalRequests: blockedRequests, noAnswerLeak: true, overflowChecks: observations.length * 2, a4FilesCreated: evidenceDir ? missions.length * 2 : 0, observations }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; });

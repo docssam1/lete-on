@@ -1779,6 +1779,27 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             verifiedVariantCount: 3,
             answerVisualRequired: false,
             answerVisualStatus: "not-required"
+          }, {
+            id: "5-2-u1-e4-mission-6-rounding-place-count",
+            name: "반올림 자리별 가능한 자연수 개수의 최솟값과 최댓값",
+            sourceItemId: "5-2-u1-e4-mission-6-rounding-place-count",
+            sourceItemLabel: "Mission 6",
+            sourceSection: "mission",
+            sourceTier: "advanced",
+            sourcePdfPage: 9,
+            sourcePrintedPage: 11,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e4-mission-6-vision-20261024",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-enumeration-user-authorized",
+            reviewLocked: false,
+            reviewReason: "450dpi 인쇄 원문과 Apple Vision OCR에서 ‘적어도 몇 개, 가장 많으면 몇 개’라고 요구함을 대조했습니다. 이 단원에서 다루는 십의 자리 이상 반올림을 비교하면 십의 자리 결과 7,200은 7,195~7,204의 10개, 백의 자리 결과 7,200은 7,150~7,249의 100개에서 나오며, 천의 자리 이상으로는 7,200이 결과가 될 수 없습니다. 따라서 최솟값 10개, 최댓값 100개입니다. 원문은 텍스트 문항이고 손글씨·출판사 정답지는 근거로 사용하지 않았습니다.",
+            generatorKey: "source52RoundingPlaceCountMission6",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
           }]
         }
       ],

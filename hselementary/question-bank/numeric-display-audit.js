@@ -26,6 +26,7 @@ require("./source-5-2-rounded-floor-mission2.js");
 require("./source-5-2-notebook-range-mission3.js");
 require("./source-5-2-rounded-triplet-mission4.js");
 require("./source-5-2-quotient-sum-mission5.js");
+require("./source-5-2-rounding-place-count-mission6.js");
 require("./source-5-2-congruence-page31.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
@@ -135,7 +136,7 @@ const types = allTypes.filter(type => api.generatorKey(type) && !type.reviewLock
 const floatingTail = /\b\d+\.\d{10,}\b/;
 const failures = [];
 let count = 0;
-if (types.length !== 1265) failures.push(`공개 검수 대상은 1265개여야 하나 ${types.length}개입니다.`);
+if (types.length !== 1266) failures.push(`공개 검수 대상은 1266개여야 하나 ${types.length}개입니다.`);
 
 for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 100; seed += 1) {
   try {

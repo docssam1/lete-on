@@ -32,7 +32,7 @@ const specs = [
 ];
 
 const failures = [];
-const reviewed5_2Releases = new Set(["5-2-u1-e4-mission-1", "5-2-u1-e4-mission-2", "5-2-u1-e4-mission-3", "5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
+const reviewed5_2Releases = new Set(["5-2-u1-e4-mission-1", "5-2-u1-e4-mission-2", "5-2-u1-e4-mission-3", "5-2-u1-e4-mission-4", "5-2-u1-e4-mission-5", "5-2-u1-e4-mission-6", "5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
 const allIds = new Set();
 const semesterCounts = {};
 
@@ -133,11 +133,11 @@ for (const spec of specs) {
   for (const [section, expected] of Object.entries(spec.sections)) {
     if (bySection[section] !== expected) fail(`${spec.semester} ${section}: ${expected}개가 아닙니다 (${bySection[section]}).`);
   }
-  if (spec.semester === "5-2" && verifiedCount !== 29) {
-    fail(`5-2: sourceVerified true 항목은 29개여야 합니다 (${verifiedCount}).`);
+  if (spec.semester === "5-2" && verifiedCount !== 32) {
+    fail(`5-2: sourceVerified true 항목은 32개여야 합니다 (${verifiedCount}).`);
   }
   if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
-    fail("5-2: 검수 완료 항목은 인쇄 11쪽 Mission 1–3, 인쇄 30쪽 예제 4-2, 인쇄 31쪽 Mission 4–6으로 제한합니다.");
+    fail("5-2: 검수 완료 항목은 인쇄 11쪽 Mission 1–6, 인쇄 30쪽 예제 4-2, 인쇄 31쪽 Mission 4–6으로 제한합니다.");
   }
   if (spec.semester === "5-2" && [...reviewed5_2Releases].some(id => items.filter(item => item.sourceItemId === id).length !== 1)) {
     fail("5-2: 승인된 5-2 원문 문항은 각각 하나씩만 장부에 있어야 합니다.");
