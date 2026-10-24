@@ -765,7 +765,8 @@
   .nm-cvw .nm-cvw-toc td.nm-cvw-chk { font-size:16px; text-align:center; color:#0E2C57; }
   .nm-cvw .nm-cvw-day { font-size:11px; font-weight:800; color:#245b60; }
   .nm-cvw .nm-cvw-day-tag { display:inline-block; padding:1mm 2mm; border:1px solid #b7d4cf; border-radius:999px; background:#f2f8f6; }
-  .nm-w2-study-day { display:inline-flex; align-items:center; flex:0 0 auto; margin-left:4px; padding:3px 8px; border:1px solid #9abbb7; border-radius:999px; color:#245b60; background:#f2f8f6; font:700 11px/1.4 Pretendard,'Noto Sans KR',sans-serif; letter-spacing:0; }
+  .nm-w2-study-day { display:inline-flex; align-items:center; flex:0 0 auto; margin-left:4px; padding:3px 8px; border:1px solid #9abbb7; border-radius:999px; color:#245b60; background:#f2f8f6; font:700 14px/1 Pretendard,'Noto Sans KR',sans-serif; letter-spacing:0; }
+  .nm-w2-day-heading,.nm-w2-head-mid .nm-w2-day-heading { display:inline-block; vertical-align:baseline; margin-right:.45em; padding:.08em .35em; border:1px solid #b59961; border-radius:.2em; background:#f7f2e7; color:#2f6b4a; font:700 .82em/1.05 "NM Series Sans",Pretendard,sans-serif; white-space:nowrap; letter-spacing:0; }
   /* 표지가 A4 한 장을 넘치지 않게(2026-09-30, 원장 "QR 칸이 넘친다") — 목차가 10줄이면 QR 칸이 28px,
      발치가 73px 종이 밖으로 나갔고 8줄이어도 코드 줄이 잘렸다(overflow:hidden 이라 조용히).
      ① 영웅부(제목) 여백을 줄이고 ② QR·발치·코드를 한 띠(.nm-cvw-foot)로 합쳐 25mm 를 벌고
@@ -6613,6 +6614,10 @@ function renderMixedSheetBody(items, envelopeCode, opts){
       if(!day) return;
       const label = esc(lk(`${day}일차`, `Day ${day}`, `第${day}天`));
       r.html = r.html.replace(/(<span class="nm-w2-head-code">[\s\S]*?<\/span>)/g, `$1<span class="nm-w2-study-day">${label}</span>`);
+      // Keep the small running-head label, and make the study day visible in the main title too.
+      const dayHeading=`<span class="nm-w2-day-heading">${label}</span>`;
+      r.html=r.html.replace(/(<(?:span|div) class="nm-w2-head-mid">\s*<b>)/g,`$1${dayHeading}`)
+        .replace(/(<h2 class="nm-mzs-title">)/g,`$1${dayHeading}`);
     });
   }
   const roundsHtml = stampPg(rounds.map(r => r.html).join(''));
