@@ -50,8 +50,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 6,
-    "reviewLockedCount": 44,
+    "publicCandidateCount": 11,
+    "reviewLockedCount": 39,
     "uniqueAnswerPassCount": 54,
     "uniqueAnswerReviewNeededCount": 1
   },
@@ -1257,9 +1257,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "450dpi 원문 이미지와 Apple Vision OCR을 대조하고, 1부터 3000까지 조건을 만족하는 수를 독립 열거해 1191~1200의 10개로 확인했습니다. 손글씨와 출판사 정답지는 사용하지 않았습니다.",
       "sourceVerified": true,
-      "implementationStatus": "local-review-passed-awaiting-release",
-      "publicDecision": "locked",
-      "lockReason": "원문·독립 계산·합성 9개 조합·전체 은행 감사·PC/모바일 12상태·A4 문제/풀이 검증을 통과했습니다. main 반영과 라이브 검증 전까지 잠금을 유지합니다."
+      "implementationStatus": "deployed-and-live-verified",
+      "publicDecision": "published",
+      "lockReason": "PR #398 is merged and the Pages workflow succeeded. The live runtime module hash matches main. The source answer, nine synthetic configurations, PC/mobile browser states, and one-page A4 problem/solution outputs passed review. Publisher answer-key verification remains unconfirmed."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-2-rounded-floor-range",
