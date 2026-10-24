@@ -254,8 +254,8 @@ def main():
         import torch
         dev = a.device
         if dev == "auto":
-            dev = "cuda:0" if torch.cuda.is_available() else "cpu"
-        print(("🎮 GPU: " + torch.cuda.get_device_name(0)) if dev.startswith("cuda") else "🖥  GPU 없음 — CPU 라 느립니다", flush=True)
+            dev = "cuda:0" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")  # 맥(애플 칩)은 MPS
+        print(("🎮 GPU: " + torch.cuda.get_device_name(0)) if dev.startswith("cuda") else "🍎 애플 칩 GPU(MPS)로 돕니다" if dev == "mps" else "🖥  GPU 없음 — CPU 라 느립니다", flush=True)
         from omnivoice import OmniVoice
         model = OmniVoice.from_pretrained(a.model, device_map=dev, dtype=torch.float16 if dev.startswith("cuda") else torch.float32)
         model.load_asr_model(model_name=a.asr_model, device=a.asr_device)

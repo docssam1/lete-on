@@ -793,6 +793,7 @@ HuggingFace 에서 받는다.
   **"우리 GPU 있잖아, 지금 실행 PC"** — GPU 가 있으면 글자당 요금이 **0**이 된다(전기값만).
   전용 가상환경 → torch(CUDA)+omnivoice 설치 → 생성 → 폴더 열기까지 한 번에.
   **키를 하나도 안 쓰고 아무것도 안 올린다.** 쓰는 법은 `scripts/local/README.md`.
+- **맥(애플 칩)에서도 돈다(2026-10-24)**: `scripts/local/omnivoice-*.command` + `_setup-omnivoice.sh`(uv·파이썬 3.12·MPS). 첫 실행 = 설치. 맥 실행은 아직 확인 전.
 - `scripts/omnivoice-audition.py` — 앱에 실제로 들어 있는 대사(누미 3줄 + 영·중 1줄씩)를
   캐릭터 설계안 4종으로 읽는다. `--device auto` 가 GPU 를 알아서 잡고(있으면 float16,
   없으면 CPU+float32) 무엇을 쓰는지·VRAM 이 얼마인지 찍는다. 참조 음성을 주면 복제 모드.
