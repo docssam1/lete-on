@@ -33,6 +33,7 @@
 // 발송 이력은 nm_notify_log(주 1회 상한, (phone,week_key,kind) unique)로 중복 방지.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { personalDeliveryState } from "./delivery-runtime.mjs";
 
 const SB_URL = Deno.env.get("SUPABASE_URL")!;
 const SB_SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -183,10 +184,10 @@ async function autoKind(profileName: string, k: number): Promise<string> {
 }
 
 // nm_membership_rpc system_delivery 응답 검증. 모양이 틀리면 null(= fail closed).
-function parseMembership(r: any): { managed: false } | { managed: true; canUse: boolean; cadence: "w1" | "w2"; link: string | null } | null {
+function parseMembership(r: any, inspectPlan?: (config: any) => string): { managed: false } | { managed: true; canUse: boolean; cadence: "w1" | "w2"; link: string | null; wholeWeek?: boolean; deliveryPlanVersion?: string; personalPlanLegacy?: boolean; config?: any; assignmentState?: string } | null {
   if (!r || r.error) return null;
   const d = r.data;
-  if (!d || typeof d !== "object" || Array.isArray(d)) return null;
+  if (!d || typeof d !== "object" || Array.isArray(d) || d.error) return null;
   if (d.managed === false) return { managed: false };
   if (d.managed !== true || typeof d.canUse !== "boolean") return null;
   if (d.cadence !== "w1" && d.cadence !== "w2") return null;
@@ -195,7 +196,24 @@ function parseMembership(r: any): { managed: false } | { managed: true; canUse: 
     if (typeof d.link !== "string" || !/^https:\/\/[^\s]{1,200}$/.test(d.link)) return null;
     link = d.link;
   }
-  return { managed: true, canUse: d.canUse, cadence: d.cadence, link };
+  if (d.wholeWeek !== undefined && typeof d.wholeWeek !== "boolean") return null;
+  if (d.personalPlanLegacy !== undefined && typeof d.personalPlanLegacy !== "boolean") return null;
+  if (d.deliveryPlanVersion !== undefined && d.deliveryPlanVersion !== "20261024-personal1") return null;
+  if (d.wholeWeek && d.deliveryPlanVersion !== "20261024-personal1") return null;
+  if (d.deliveryPlanVersion === "20261024-personal1" && (!d.wholeWeek || d.personalPlanLegacy || (d.canUse && !link))) return null;
+  let assignmentState: string | undefined;
+  if (d.deliveryPlanVersion === "20261024-personal1" && d.canUse) {
+    if (!d.config || typeof d.config !== "object" || Array.isArray(d.config) || typeof inspectPlan !== "function") return null;
+    if (d.config.cadence !== d.cadence || d.config.deliveryPlanVersion !== d.deliveryPlanVersion
+        || !/^https:\/\/lete-on\.gfieldacademy\.net\/w\/\?m=[0-9a-f]{32}$/.test(link || "")) return null;
+    try { assignmentState = inspectPlan(d.config); } catch (_) { return null; }
+    if (assignmentState !== "scheduled" && assignmentState !== "empty") return null;
+  }
+  return { managed: true, canUse: d.canUse, cadence: d.cadence, link,
+    ...(d.wholeWeek ? { wholeWeek: true } : {}),
+    ...(d.deliveryPlanVersion ? { deliveryPlanVersion: d.deliveryPlanVersion } : {}),
+    ...(d.personalPlanLegacy ? { personalPlanLegacy: true } : {}),
+    ...(assignmentState ? { config: d.config, assignmentState } : {}) };
 }
 
 // 연락처 1건 처리. 의존성은 모두 주입(테스트에서 모의). 반환: results 항목 배열.
@@ -205,16 +223,22 @@ async function processContact(d: any, c: any, ctx: any): Promise<any[]> {
   if (!/^01\d{8,9}$/.test(phone)) { out.push({ phone: c.phone, skip: "bad-phone" }); return out; }
 
   const ask = async (k: number) => {
-    try { return parseMembership(await d.membership({ profileName: c.profile_name, phone, k, week: ctx.wk })); } catch (_) { return null; }
+    try { return parseMembership(await d.membership({ profileName: c.profile_name, phone, k, week: ctx.wk }), d.personalDeliveryState); } catch (_) { return null; }
   };
   // 소유자 있는 계정은 주기 선택 전에 k=1 로 한 번 조회(k=1 결과는 재사용). RPC 오류·이상 응답은 fail closed.
   const first = await ask(1);
   if (!first) { out.push({ phone, skip: "membership-error" }); return out; }
   if (first.managed && !first.canUse) { out.push({ phone, skip: "membership-denied" }); return out; }
+  if (first.managed && first.deliveryPlanVersion && first.config?.week !== ctx.wk) {
+    out.push({ phone, k: 1, skip: "membership-mismatch" }); return out;
+  }
+  if (first.managed && first.assignmentState === "empty") {
+    out.push({ phone, k: 1, skip: "no-assigned-worksheet" }); return out;
+  }
 
   const st = (await d.loadState(c.profile_name)) || {};
   const cadence = first.managed ? first.cadence : (st.roadCadence === "w2" ? "w2" : "w1");
-  const ks = cadence === "w2" ? [1, 2] : [1];
+  const ks = first.managed && first.wholeWeek ? [1] : cadence === "w2" ? [1, 2] : [1];
 
   for (const k of ks) {
     const kind = await autoKind(c.profile_name, k);
@@ -234,6 +258,11 @@ async function processContact(d: any, c: any, ctx: any): Promise<any[]> {
 
     if (ctx.dry) {
       if (await d.alreadyLogged(phone, ctx.wk, kind)) { out.push({ phone, k, skip: "already-sent" }); continue; }
+    }
+    // A chosen personal plan must use its frozen member snapshot. Only a
+    // server-confirmed pre-plan history baseline may retain the old fallback.
+    if (st.learningPlan != null && !(m.managed && m.link) && !(m.managed && m.personalPlanLegacy)) {
+      out.push({ phone, k, skip: "personal-snapshot-missing" }); continue;
     }
     const link = (m.managed && m.link) ? { url: m.link, kind: "member" } : await d.worksheetLink(k, st);
     const { title, msg, msgType } = d.compose(c.profile_name, st.weeklyDigest, cadence, link, k);
@@ -374,6 +403,7 @@ Deno.serve(async (req: Request) => {
 
   const results: any[] = [];
   const deps = {
+    personalDeliveryState,
     // 내부 전용 RPC(service_role). HTTP 핸들러에는 노출되지 않고 이 함수가 서버에서만 부른다. 발송은 하지 않는다.
     membership: (payload: any) => sb.rpc("nm_membership_rpc", { p_action: "system_delivery", p_payload: payload, p_actor: null, p_ip_hash: null }),
     // 프로필 state에서 주간 요약(weeklyDigest, 앱이 저장)과 주기(roadCadence) 읽기

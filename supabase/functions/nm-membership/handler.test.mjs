@@ -685,3 +685,66 @@ test("schema.sql: one-student-per-email policy, no phone uniqueness, private con
   assert.match(sql, /'adminPlan', nm_private\.settings_json\(v_name\)/);
   assert.ok(!/'schoolAge',\s*pg_catalog\.extract/.test(sql));
 });
+
+// ---------- frozen personal worksheet plans (synthetic RPC responses only) ----------
+const PERSONAL_VERSION = "20261024-personal1";
+const EXT_VERSION = "20261024-middle-extension1";
+const personalSettings = (patch = {}) => ({ courseKey: "C31", sessionIndex: 11, startDate: "2026-10-19", speed: 1.25, amount: 0.85, cadence: "w2", pace: "p2", middleExtensions: { 1: EXT_VERSION }, extensionAnchor: { grade: 1, index: 4, resume: { courseKey: "C32", sessionIndex: 3 } }, ...patch });
+const personalConfig = (settings = personalSettings(), patch = {}) => ({ courseKey: settings.courseKey, sessionIndex: settings.sessionIndex, week: "2026-W43", k: 1, amount: settings.amount, cadence: settings.cadence, deliveryPlanVersion: PERSONAL_VERSION, learningPlan: settings, ...patch });
+
+test("personal resolve returns a canonical frozen plan only, including selected extension and resume", async () => {
+  const raw = personalSettings({ name: "fixture secret", phone: RAW_PHONE, ownerId: UID, legacy: false });
+  raw.extensionAnchor = { ...raw.extensionAnchor, note: "private", resume: { ...raw.extensionAnchor.resume, ownerId: UID } };
+  const t = setup({ rpc: async () => ({ data: { config: personalConfig(raw, { phone: RAW_PHONE, ownerId: UID, name: "private" }) } }) });
+  const r = await t.post({ action: "resolve_worksheet", token: "d".repeat(32) });
+  assert.equal(r.status, 200);
+  assert.deepEqual(await r.json(), { config: personalConfig() });
+  assert.equal(t.calls.getUser.length + t.calls.weekly.length, 0);
+});
+
+test("personal resolve fails closed on invalid known fields or conflicting snapshots; no silent old-plan fallback", async () => {
+  const badPlans = [
+    null, [], {}, personalSettings({ courseKey: "C74" }), personalSettings({ sessionIndex: 12 }),
+    personalSettings({ sessionIndex: "11" }), personalSettings({ sessionIndex: 1.1 }), personalSettings({ speed: 2 }),
+    personalSettings({ speed: "1" }), personalSettings({ amount: null }), personalSettings({ cadence: "w3" }),
+    personalSettings({ pace: "p5" }), personalSettings({ pace: undefined }), personalSettings({ startDate: "2026-02-29" }),
+    personalSettings({ startDate: "2019-12-30" }), personalSettings({ middleExtensions: null }),
+    personalSettings({ middleExtensions: { 1: "future" } }), personalSettings({ middleExtensions: { 4: EXT_VERSION } }),
+    personalSettings({ extensionAnchor: null }), personalSettings({ extensionAnchor: { grade: "1", index: 0 } }),
+    personalSettings({ extensionAnchor: { grade: 1, index: 12 } }), personalSettings({ middleExtensions: {} }),
+    personalSettings({ extensionAnchor: { grade: 2, index: 0 } }),
+    personalSettings({ extensionAnchor: { grade: 1, index: 0, resume: null } }),
+    personalSettings({ extensionAnchor: { grade: 1, index: 0, resume: { courseKey: "C35", sessionIndex: 1 } } }),
+    personalSettings({ extensionAnchor: { grade: 1, index: 0, resume: { courseKey: "C32", sessionIndex: 9 } } }),
+  ];
+  for (const plan of badPlans) {
+    const t = setup({ rpc: async () => ({ data: { config: personalConfig(personalSettings(), { learningPlan: plan }) } }) });
+    const r = await t.post({ action: "resolve_worksheet", token: "d".repeat(32) });
+    assert.equal(r.status, 404, JSON.stringify(plan));
+    assert.deepEqual(await r.json(), { error: "not_found" });
+  }
+  for (const patch of [{ deliveryPlanVersion: "future" }, { deliveryPlanVersion: undefined }, { highPlanVersion: "20261023-middle25" },
+    { k: 2 }, { courseKey: "C30" }, { sessionIndex: 1 }, { amount: 1 }, { cadence: "w1" }, { week: "2025-W53" }]) {
+    const t = setup({ rpc: async () => ({ data: { config: personalConfig(personalSettings(), patch) } }) });
+    assert.equal((await t.post({ action: "resolve_worksheet", token: "d".repeat(32) })).status, 404, JSON.stringify(patch));
+  }
+});
+
+test("personal plan source bounds and all five settings match the browser decoder", async () => {
+  const require = createRequire(import.meta.url), dp = require("../../../number_magic/app/delivery-plan.js");
+  const limits = JSON.parse(readFileSync(new URL("./course-limits.json", import.meta.url), "utf8"));
+  assert.deepEqual(dp.SOURCE_LIMITS, limits);
+  const sqlLimits = JSON.parse(sql.match(/limits constant jsonb := '([^']+)'::jsonb/)[1]);
+  assert.deepEqual(sqlLimits, limits);
+  for (const [key, max] of Object.entries(limits)) for (const mult of [0.7, 0.85, 1, 1.25, 1.5]) {
+    const plan = { courseKey: key, sessionIndex: max, startDate: "2024-02-29", speed: mult, amount: mult, cadence: "w1", pace: "p4" };
+    const cfg = personalConfig(plan, { week: "2020-W53" });
+    const t = setup({ rpc: async () => ({ data: { config: cfg } }) });
+    const r = await t.post({ action: "resolve_worksheet", token: "d".repeat(32) });
+    assert.equal(r.status, 200, key);
+    assert.deepEqual((await r.json()).config.learningPlan, dp.normalize(plan));
+    const wrong = { ...plan, sessionIndex: max + 1 };
+    const t2 = setup({ rpc: async () => ({ data: { config: personalConfig(wrong) } }) });
+    assert.equal((await t2.post({ action: "resolve_worksheet", token: "d".repeat(32) })).status, 404, key);
+  }
+});

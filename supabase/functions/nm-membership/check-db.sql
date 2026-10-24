@@ -6,6 +6,7 @@ declare
   email_a text := a::text||'@example.test'; email_b text := b::text||'@example.test';
   r jsonb; first_status jsonb; token text; preview jsonb; share text; t timestamptz; amount integer;
   c_key text; plan_version text; snapshot_state jsonb; legacy_share text; legacy_config jsonb;
+  personal_plan jsonb; baseline_plan jsonb; invalid_plan jsonb; personal_config jsonb; personal_share text;
 begin
   insert into auth.users(id,aud,role,email,email_confirmed_at,created_at,updated_at)
     values(a,'authenticated','authenticated',email_a,now(),now(),now()),
@@ -121,6 +122,82 @@ begin
     r := public.nm_membership_rpc('resolve_worksheet',jsonb_build_object('token',legacy_share),null,null);
     assert r->'config'=legacy_config,'legacy exact-session C70 snapshot rewritten';
   end loop;
+  -- Personal delivery fixtures: owned profile b has no authoritative admin settings.
+  -- No dispatch RPC is invoked. Keep this file inside the caller's BEGIN/ROLLBACK.
+  r := public.nm_membership_rpc('status','{}',b,null);
+  personal_plan := '{"courseKey":"C31","sessionIndex":11,"startDate":"2026-10-19","speed":1.25,"amount":0.85,"cadence":"w2","pace":"p2","middleExtensions":{"1":"20261024-middle-extension1"},"extensionAnchor":{"grade":1,"index":4,"resume":{"courseKey":"C32","sessionIndex":3}}}'::jsonb;
+  baseline_plan := '{"courseKey":"C4","sessionIndex":2,"startDate":"2026-10-05","speed":1,"amount":1,"cadence":"w1","pace":"p2","legacy":true}'::jsonb;
+  assert nm_private.canonical_delivery_plan(personal_plan)=personal_plan,'canonical extension changed';
+  for invalid_plan in select value from pg_catalog.jsonb_array_elements(pg_catalog.jsonb_build_array(
+    personal_plan||'{"sessionIndex":12}'::jsonb,personal_plan||'{"sessionIndex":"11"}'::jsonb,
+    personal_plan||'{"speed":2}'::jsonb,personal_plan||'{"amount":"1"}'::jsonb,
+    personal_plan||'{"pace":"p5"}'::jsonb,personal_plan||'{"startDate":"2026-02-29"}'::jsonb,
+    personal_plan||'{"middleExtensions":null}'::jsonb,personal_plan||'{"middleExtensions":{"1":"future"}}'::jsonb,
+    personal_plan||'{"extensionAnchor":{"grade":1,"index":12}}'::jsonb,
+    personal_plan||'{"extensionAnchor":{"grade":"1","index":0}}'::jsonb,
+    personal_plan||'{"extensionAnchor":{"grade":1,"index":0,"resume":{"courseKey":"C35","sessionIndex":1}}}'::jsonb,
+    personal_plan||'{"extensionAnchor":{"grade":1,"index":0,"resume":{"courseKey":"C32","sessionIndex":9}}}'::jsonb))
+  loop assert nm_private.canonical_delivery_plan(invalid_plan) is null,'invalid canonical plan accepted'; end loop;
+  assert nm_private.delivery_week('2020-W53') is not null and nm_private.delivery_week('2025-W53') is null,'ISO week53 validation';
+  update public.nm_profiles set state=state||pg_catalog.jsonb_build_object('learningPlan',personal_plan,'roadCadence','w1') where name=n2;
+  select state into snapshot_state from public.nm_profiles where name=n2;
+  r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n2,'phone','01000001234','k',1,'week','2026-W43'),null,null);
+  assert r->>'canUse'='true' and r->>'wholeWeek'='true' and r->>'cadence'='w2','personal whole-week policy';
+  assert r->>'deliveryPlanVersion'='20261024-personal1' and r#>'{config,learningPlan}'=personal_plan,'personal snapshot mismatch';
+  assert r#>>'{config,k}'='1' and not(r->'config' ? 'highPlanVersion'),'personal/managed snapshot mixed';
+  personal_config := r->'config'; personal_share := split_part(r->>'link','?m=',2);
+  assert personal_share ~ '^[0-9a-f]{32}$','personal share missing';
+  assert not(personal_config::text like '%'||n2||'%') and not(personal_config::text like '%01000001234%') and not(personal_config::text like '%'||b::text||'%'),'personal config identity leak';
+  select count(*) into amount from nm_private.worksheet_previews where profile_name=n2;
+  r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n2,'phone','01000001234','k',2,'week','2026-W43'),null,null);
+  assert r->>'canUse'='false' and (select count(*) from nm_private.worksheet_previews where profile_name=n2)=amount,'personal k2 duplicated';
+  assert (select state from public.nm_profiles where name=n2)=snapshot_state,'delivery wrote learner state';
+  -- Select the historical plan for the requested week, not today's newer plan.
+  update public.nm_profiles set state=state||pg_catalog.jsonb_build_object('learningPlanHistory',pg_catalog.jsonb_build_array(
+    pg_catalog.jsonb_build_object('effectiveWeek',null,'settings',baseline_plan),
+    pg_catalog.jsonb_build_object('effectiveWeek','2026-W43','settings',personal_plan),
+    pg_catalog.jsonb_build_object('effectiveWeek','2026-W45','settings',personal_plan||'{"speed":0.7}'::jsonb))) where name=n2;
+  r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n2,'phone','01000001234','k',1,'week','2026-W44'),null,null);
+  assert r#>>'{config,learningPlan,speed}'='1.25','historical speed ignored';
+  r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n2,'phone','01000001234','k',1,'week','2026-W46'),null,null);
+  assert r#>>'{config,learningPlan,speed}'='0.7','newer historical speed ignored';
+  r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n2,'phone','01000001234','k',1,'week','2026-W42'),null,null);
+  assert r->>'personalPlanLegacy'='true' and r->'link'='null'::jsonb and not(r ? 'deliveryPlanVersion'),'legacy history baseline changed';
+  -- Same-week edits use the last one; absent applicable history uses current plan.
+  assert nm_private.delivery_plan_from_state(jsonb_build_object('learningPlan',personal_plan,'learningPlanHistory',jsonb_build_array(
+    jsonb_build_object('effectiveWeek','2026-W43','settings',personal_plan),
+    jsonb_build_object('effectiveWeek','2026-W43','settings',personal_plan||'{"amount":1.5}'::jsonb))),'2026-W43')#>>'{learningPlan,amount}'='1.5','history tie must use last';
+  assert nm_private.delivery_plan_from_state(jsonb_build_object('learningPlan',personal_plan,'learningPlanHistory',jsonb_build_array(
+    jsonb_build_object('effectiveWeek','2026-W45','settings',personal_plan||'{"speed":0.7}'::jsonb))),'2026-W43')->'learningPlan'=personal_plan,'current-plan fallback differs';
+  assert nm_private.delivery_plan_from_state(jsonb_build_object('learningPlan',null),'2026-W43')->>'status'='invalid','null selected plan silently fell back';
+  assert nm_private.delivery_plan_from_state(jsonb_build_object('learningPlan',personal_plan,'learningPlanHistory',jsonb_build_array(
+    jsonb_build_object('effectiveWeek',null,'settings',baseline_plan||'{"legacy":"true"}'::jsonb))),'2026-W43')->>'status'='invalid','history legacy type ignored';
+  assert nm_private.delivery_plan_from_state(jsonb_build_object('learningPlan',personal_plan,'learningPlanHistory',jsonb_build_array(
+    jsonb_build_object('effectiveWeek','2026-W45','settings',personal_plan||'{"speed":99}'::jsonb))),'2026-W43')->>'status'='invalid','invalid future history ignored';
+  assert nm_private.delivery_plan_from_state(jsonb_build_object('learningPlan',personal_plan,'learningPlanHistory',
+    (select jsonb_agg(jsonb_build_object('effectiveWeek',null,'settings',personal_plan)) from generate_series(1,1001))),'2026-W43')->>'status'='invalid','unbounded history accepted';
+  -- New plans cannot rewrite an already shared snapshot or bypass membership/contact gates.
+  update public.nm_profiles set state=state-'learningPlanHistory'||jsonb_build_object('learningPlan',personal_plan||'{"sessionIndex":12}'::jsonb) where name=n2;
+  r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n2,'phone','01000001234','k',1,'week','2026-W43'),null,null);
+  assert r->>'error'='invalid_learning_plan' and r->>'canUse'='false' and not(r ? 'link'),'invalid personal plan silently fell back';
+  r := public.nm_membership_rpc('resolve_worksheet',jsonb_build_object('token',personal_share),null,null);
+  assert r->'config'=personal_config,'old personal snapshot rewritten';
+  update public.nm_profiles set state=state||jsonb_build_object('learningPlan',personal_plan) where name=n2;
+  r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n2,'phone','01000009999','k',1,'week','2026-W43'),null,null);
+  assert r->>'canUse'='false','personal contact gate bypassed';
+  update public.nm_contacts set consent=false where profile_name=n2;
+  r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n2,'phone','01000001234','k',1,'week','2026-W43'),null,null);
+  assert r->>'canUse'='false','personal consent gate bypassed';
+  update public.nm_contacts set consent=true where profile_name=n2;
+  r := public.nm_membership_rpc('admin_revoke',jsonb_build_object('adminToken',token,'userId',b),null,null);
+  r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n2,'phone','01000001234','k',1,'week','2026-W43'),null,null);
+  assert r->>'canUse'='false','personal revoked member gate bypassed';
+  -- Authoritative admin settings always win over invalid client-side plans/history.
+  update public.nm_profiles set state=state||'{"learningPlan":null,"learningPlanHistory":"invalid"}'::jsonb where name=n;
+  r := public.nm_membership_rpc('system_delivery',jsonb_build_object('profileName',n,'phone','01000001234','k',2,'week','2026-W43'),null,null);
+  assert r->>'canUse'='true' and r#>>'{config,highPlanVersion}'='20261024-calculus3m' and not(r->'config' ? 'deliveryPlanVersion'),'admin precedence changed';
+  assert not has_function_privilege('authenticated','nm_private.canonical_delivery_plan(jsonb)','EXECUTE'),'canonical helper exposed';
+  assert not has_function_privilege('anon','nm_private.delivery_plan_from_state(jsonb,text)','EXECUTE'),'history helper exposed';
   r := public.nm_membership_rpc('admin_revoke',jsonb_build_object('adminToken',token,'userId',a),null,null);
   r := public.nm_membership_rpc('status','{}',a,null);
   assert r#>>'{membership,status}'='revoked' and r#>>'{membership,canUse}'='false','revocation';

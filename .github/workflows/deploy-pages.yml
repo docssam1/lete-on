@@ -60,6 +60,7 @@ jobs:
           node number_magic/scripts/check-ladder.js
           node number_magic/scripts/check-stages.js
           node number_magic/scripts/check-about-stats.js
+          node scripts/build-nm-delivery-runtime.cjs --check
       - name: Stage sites and landing menu
         run: |
           mkdir -p _site/academy/assets
