@@ -67,10 +67,27 @@ async function prepare(page, width, id) {
     if (evidenceDir && variant === 0 && difficulty === 0) await page.screenshot({ path: path.join(evidenceDir, `${id.endsWith("example-1") ? "example41" : "exploration4"}-solution-${width}.png`), fullPage: true });
     if (variant === 0 && difficulty === 0 && width === 1440 && evidenceDir) {
       for (const mode of ["problem", "solution"]) {
+        await page.emulateMedia({ media: "screen" });
         await page.locator(mode === "problem" ? "#problemTab" : "#solutionTab").click();
         await page.locator("#printMenuButton").click();
         await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
         await page.waitForFunction(expected => document.body.dataset.printMode === expected, mode);
+        await page.emulateMedia({ media: "print" });
+        const printTypography = await page.evaluate(async () => {
+          await document.fonts.load('12pt "FC Serif"', "한글 ABC");
+          const fontFamily = getComputedStyle(document.body).fontFamily;
+          const prompt = document.querySelector(".question-prompt");
+          return {
+            fontFamily,
+            promptFontFamily: prompt ? getComputedStyle(prompt).fontFamily : "",
+            promptFontWeight: prompt ? getComputedStyle(prompt).fontWeight : "",
+            fontLoaded: document.fonts.check('12pt "FC Serif"', "한글 ABC")
+          };
+        });
+        assert(printTypography.fontFamily.includes("FC Serif"), `Print body must use FC Serif for ${id}/${mode}`);
+        assert(printTypography.promptFontFamily.includes("FC Serif"), `Print prompt must use FC Serif for ${id}/${mode}`);
+        assert.equal(printTypography.promptFontWeight, "400", `Print prompt must use 400 weight for ${id}/${mode}`);
+        assert.equal(printTypography.fontLoaded, true, `Self-hosted FC Serif must load for ${id}/${mode}`);
         await page.pdf({ path: path.join(evidenceDir, `${id.endsWith("example-1") ? "example41" : "exploration4"}-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
       }
     }
@@ -79,5 +96,5 @@ async function prepare(page, width, id) {
   }
   await browser.close();
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ status: "passed", sourceItemIds: ids, states, widths, difficultyOffsets: [-1, 0, 1], allSyntheticVariantsAtDesktop: true, selectedSyntheticVariantAtBothWidths: true, blockedExternalRequests: blockedRequests, noAnswerLeak: true, overflowChecks: states * 2, a4FilesCreated: evidenceDir ? 4 : 0, observations }, null, 2));
+  console.log(JSON.stringify({ status: "passed", sourceItemIds: ids, states, widths, difficultyOffsets: [-1, 0, 1], allSyntheticVariantsAtDesktop: true, selectedSyntheticVariantAtBothWidths: true, blockedExternalRequests: blockedRequests, noAnswerLeak: true, overflowChecks: states * 2, a4FilesCreated: evidenceDir ? 4 : 0, printFont: "self-hosted FC Serif", observations }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; });

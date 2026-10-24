@@ -69,5 +69,5 @@ for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1
   assert(q.solution.includes(q.answer));
   observations.push({ variant, difficulty, answer: q.answer, count: intersection.length });
 }
-assert.equal(window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).length, 2041);
+assert.equal(window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).length, 2054);
 console.log(JSON.stringify({ status: "passed", id, sourcePdfPage: 8, sourcePrintedPage: 10, originalAnswer: "270 이상 300 미만", exhaustiveOriginalCandidates: allSolutions.length, syntheticConfigurations: observations.length, observations }, null, 2));

@@ -1,2 +1,14 @@
+@font-face{font-family:"FC Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-400-normal.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"FC Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-400-normal.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap;unicode-range:U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A}
+@font-face{font-family:"FC Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-600-normal.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:"FC Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-600-normal.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap;unicode-range:U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A}
+@font-face{font-family:"FC Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-700-normal.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"FC Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-700-normal.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap;unicode-range:U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A}
 :root{--bank-font:Pretendard,"Malgun Gothic",Arial,sans-serif}
 .solution-viewer-prompt,.solution-viewer-solution{font-family:var(--bank-font)}
+@media print{
+  :root{--bank-font:"FC Serif","Noto Serif KR","AppleMyungjo","Batang",serif}
+  body,.print-page,.answer-page,.question-prompt,.solution-viewer-prompt,.solution-viewer-solution{font-family:var(--bank-font)!important}
+  .question-prompt{font-weight:400}
+  .question-item header,.question-item header *{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif}
+}

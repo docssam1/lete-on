@@ -1,3 +1,13 @@
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 10: Source and Local QA Reconciled
+
+- Reconciled all five printed-page-10 source census rows with the existing readiness ledger. The census now records 21 reviewed items, 22 local candidates, and 243 locked items; source numbers and answers were not added.
+- Exploration 4 and Example 4-1 source/math audits pass 18 synthetic configurations. Their local browser audit passes 24 desktop/mobile states, 48 overflow checks, answer separation, and no page errors. Four problem/solution PDFs each fit one A4 page and were visually inspected with self-hosted FC Serif print typography.
+- Both public GitHub Pages hostnames currently return HTTP 429, so the two previously throttled live-screen statuses remain throttled; local rendering is not represented as live verification. Examples 4-2–4-4 remain recorded as live-verified under PR #396 / Pages run #39973818234.
+- Private Drive evidence: [grade52-p10-e4-exploration-example41-local-qa-20261024.zip](https://drive.google.com/file/d/1pWkfDqeiCywQJFTI-4ea5AEBDaaYBxZP/view?usp=drivesdk), 965,135 bytes, SHA-256 `fad0abaebc47f02c3b909ac5a4d17ea91f5dfe7b2ef138809ec0727abeefc4a2`. Metadata readback confirms the existing private review folder and owner-only permission.
+- Updated the page-10 release crosswalk and corrected stale audit expectations: the current curriculum baseline is 2,054 types. Student data was not accessed or changed. No merge or deployment was performed.
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 1 Printed Page 9 Missions 1–6: Live Ledger Reconciled
 
 - Reconciled the p9/PDF p7 six-Mission source inventory with the detailed readiness ledger and deployed runtime crosswalk. All six source rows now contain source structures and reviewed status; the source census is 16 reviewed, 22 local candidates, and 248 still locked. The readiness ledger is 12 published, 33 local candidates, and 5 unresolved/locked items. Mission 1 and Mission 5 had stale local statuses despite their crosswalk and live release evidence; both now say deployed and live-verified.

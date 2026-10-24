@@ -1907,7 +1907,7 @@
       "sourceVerified": true,
       "implementationStatus": "deployed-live-check-throttled",
       "publicDecision": "published",
-      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 공개 호스트가 HTTP 429를 반환해 라이브 화면 확인은 대기 중입니다."
+      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 공개 호스트가 HTTP 429를 반환해 라이브 화면 확인은 대기 중입니다. 2026-10-24 fresh local browser rerun passed 24 states and 48 overflow checks; all four problem/solution A4 PDFs are one page and visually inspected. Both GitHub Pages hostnames currently return HTTP 429, so live screen verification remains pending and status stays throttled."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-1",
@@ -1934,7 +1934,7 @@
       "sourceVerified": true,
       "implementationStatus": "deployed-live-check-throttled",
       "publicDecision": "published",
-      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 공개 호스트가 HTTP 429를 반환해 라이브 화면 확인은 대기 중입니다."
+      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 공개 호스트가 HTTP 429를 반환해 라이브 화면 확인은 대기 중입니다. 2026-10-24 fresh local browser rerun passed 24 states and 48 overflow checks; all four problem/solution A4 PDFs are one page and visually inspected. Both GitHub Pages hostnames currently return HTTP 429, so live screen verification remains pending and status stays throttled."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-2",
@@ -2243,7 +2243,7 @@
     },
     "repairPullRequest": 390,
     "repairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
-    "e4Page10Status": "Examples 4-2–4-4 deployed and live-verified by PR #396 / Pages #39973818234; Exploration 4 and Example 4-1 remain published with live browser verification throttled.",
+    "e4Page10Status": "Examples 4-2–4-4 are deployed and live-verified by PR #396 / Pages #39973818234. Exploration 4 and Example 4-1 have fresh local source, math, 24-state browser, 48-overflow and four A4 PDF checks; direct screen verification remains throttled because both GitHub Pages hostnames returned HTTP 429.",
     "page11MissionStatus": "Mission 1 is deployed and live-verified by PR #398 / Pages #39976802614. Missions 2–6 are local candidates; Missions 2–3 are in draft PR #417 and Missions 4–6 are in draft PR #418. Claude API cross-review, merge, and deployment remain pending.",
     "locallyVerifiedAwaitingReleaseCount": 33,
     "readyForDeployCount": 1,
@@ -3381,7 +3381,24 @@
         "qaDriveSize": 686441,
         "qaDriveSha256": "1c4957886e218c4451baaa71f8fa40f364c76456b11af7f87f8aa8005fb02493"
       }
-    ]
+    ],
+    "page10E4LocalQa": {
+      "asOf": "2026-10-24",
+      "status": "local-source-math-browser-a4-passed-live-check-throttled",
+      "sourceItems": [
+        "5-2-u1-e4-exploration-rounded-range",
+        "5-2-u1-e4-example-1"
+      ],
+      "browserStates": 24,
+      "overflowChecks": 48,
+      "a4PdfCount": 4,
+      "a4OnePageEach": true,
+      "selfHostedPrintFont": "FC Serif",
+      "driveId": "1pWkfDqeiCywQJFTI-4ea5AEBDaaYBxZP",
+      "driveSizeBytes": 965135,
+      "driveSha256": "fad0abaebc47f02c3b909ac5a4d17ea91f5dfe7b2ef138809ec0727abeefc4a2",
+      "liveVerification": "Both GitHub Pages hostnames returned HTTP 429; live screen status remains throttled."
+    }
   },
   "locallyVerifiedAwaitingReleaseCount": 33
 }

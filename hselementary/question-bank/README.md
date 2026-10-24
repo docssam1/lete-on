@@ -93,7 +93,7 @@
 - `source-5-2-range-classification-audit.js`: 5-2 원문 연결 항목의 고유 ID·생성기·페이지·공식 답안 미확인 구분을 검사하고, 모호한 예제 잠금과 기존 124개 분류의 완전 보존을 확인합니다.
 - `source-5-2-citrus-sales-mission6-audit.js`: Mission 6의 인쇄 원문 정답(완성 상자 24개, 274개 미포장, 3,600,000원)과 원문 수치를 사용하지 않은 생성기 9개 조합의 몫·나머지·판매액 계산 및 정답 분리를 검사합니다.
 - `source-5-2-citrus-sales-mission6-browser-audit.js`: Mission 6의 데스크톱·모바일 12상태, 24개 넘침 검사, 답 분리, 외부 요청 차단과 A4 문제·풀이 내보내기를 확인합니다.
-- `source-5-2-rounded-range-e4-audit.js`: 인쇄 10쪽 개념탐구 4·예제 4-1의 원문 정답, 원문 숫자 제외, 그림 비요구, 18개 생성 조합과 기존 124개 분류 보존을 검사합니다.
+- `source-5-2-rounded-range-e4-audit.js`: 인쇄 10쪽 개념탐구 4·예제 4-1의 원문 대조, 합성 18개 생성 조합, 원문 값 분리, 그림 필요 여부와 현재 2,054개 유형 기준을 검사합니다.
 - `source-5-2-rounded-range-e42-audit.js`: 예제 4-2 원문의 몫 경계 및 30개 후보 전수 계산과 합성 9개 조합을 확인합니다.
 - `source-5-2-rounded-range-e43-audit.js`: 예제 4-3 합·차 범위로 구한 큰 수의 끝점과 9개 합성 조합을 전수 확인합니다.
 - `source-5-2-rounded-range-e43-browser-audit.js`: 예제 4-3 PC·모바일 상태, 정답 분리, 넘침 및 A4 문제·풀이 출력을 확인합니다.

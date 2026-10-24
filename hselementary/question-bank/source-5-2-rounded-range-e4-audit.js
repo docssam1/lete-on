@@ -71,5 +71,5 @@ for (let sourceIndex = 0; sourceIndex < ids.length; sourceIndex++) {
     observations.push({ sourceItemId: id, variant, difficulty, answer: q.answer });
   }
 }
-assert.equal(window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).length, 2041);
+assert.equal(window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).length, 2054);
 console.log(JSON.stringify({ status: "passed", sourceItemIds: ids, sourcePdfPage: 8, sourcePrintedPage: 10, sourceNumbersReused: false, sourceIllustrationRequired: false, checkedConfigurations: observations.length, answers: observations }, null, 2));
