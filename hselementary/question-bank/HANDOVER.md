@@ -1,3 +1,11 @@
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 8: Answer-Key Candidate Checked
+
+- Located a 5-2 answer-key candidate in Drive and compared its printed page 8 with the reviewed source page. The inspected file is a scan of the exercise page with handwritten annotations, not a clean publisher-authored solution; handwriting was excluded from evidence.
+- The candidate does not verify an official publisher answer for Examples 3-3 or 3-4. Keep both locked: one has incompatible bundle conditions, and the other does not specify how to bill a partial 100m distance. Source readiness, runtime, and publication status are unchanged.
+- Private Drive audit note: [grade52-page8-answer-candidate-check-20261024.md](https://drive.google.com/file/d/1RMIUpKMsELIGObp5RZYrDqngNeeG31RW/view).
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 1 Printed Page 8: Examples 3-1 and 3-2 Locally Verified
 
 - Re-read printed page 8 (source PDF page 6) from the preserved page render and Apple Vision OCR; handwriting was ignored. Source image SHA-256 `613b435405aa50f0e792e592309619eb00f7a886142d04666e270cf9a1ecd8a2`; OCR SHA-256 `5e6b924dcf12e6094cdba311ebaa0043f0a0c4e6a1dbea0f5ed613ec237d966e`.
