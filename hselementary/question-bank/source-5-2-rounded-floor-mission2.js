@@ -9,9 +9,9 @@
   const sourceItemId = "5-2-u1-e4-mission-2-rounded-floor-range";
   const generatorKey = "source52RoundedFloorMission2";
   const pools = Object.freeze([
-    Object.freeze({ hundredTarget: 7300, thousandFloorTarget: 7000 }),
-    Object.freeze({ hundredTarget: 5600, thousandFloorTarget: 5000 }),
-    Object.freeze({ hundredTarget: 8700, thousandFloorTarget: 8000 })
+    Object.freeze({ hundredTarget: 7900, thousandFloorTarget: 7000 }),
+    Object.freeze({ hundredTarget: 5900, thousandFloorTarget: 5000 }),
+    Object.freeze({ hundredTarget: 8900, thousandFloorTarget: 8000 })
   ]);
   const offsets = Object.freeze([-100, 0, 100]);
   const format = value => Number(value).toLocaleString("ko-KR");

@@ -23,7 +23,14 @@ for (let variant = 0; variant < mission.pools.length; variant += 1) {
     assert.equal(candidates.length, question.answerModel.count);
     assert.deepEqual(candidates, Array.from({ length: candidates.length }, (_, index) => commonRange[0] + index));
     assert.equal(question.answer, `${candidates.length}개`);
-    assert.notEqual(question.answer, "50개", "synthetic answer must differ from source answer");
+    const expectedCount = difficultyOffset === 1 ? 50 : 100;
+    assert.equal(question.answer, `${expectedCount}개`, `expected answer for ${variant}/${difficultyOffset}`);
+    if (difficultyOffset === 1) {
+      const { roundedRange, floorRange, commonRange } = question.questionModel;
+      assert.equal(commonRange[0], roundedRange[0], "hard overlap starts at the rounded interval boundary");
+      assert.equal(commonRange[1], floorRange[1], "hard overlap ends at the thousand-floor boundary");
+      assert.equal(question.answerModel.count, 50, "hard setting preserves the source partial-overlap count");
+    }
     assert.notEqual(hundredTarget, 4000);
     assert.notEqual(thousandFloorTarget, 3000);
     observations.push({ variant, difficultyOffset, hundredTarget, thousandFloorTarget, commonRange, answer: question.answer });

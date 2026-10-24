@@ -66,6 +66,17 @@
 
 ---
 
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 2: Synthetic Structure Revalidation
+
+- Rechecked printed page 11 Mission 2 (source PDF content page 9; source SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`). The source target pair 4,000 / 3,000 gives 3,950–3,999 inclusive, or 50 natural numbers. Handwriting was excluded.
+- A quality pass found that the previous nine generated settings all answered 100, making the thousand-floor condition redundant. Updated the synthetic pools to (7,900, 7,000), (5,900, 5,000), and (8,900, 8,000), retaining offsets −100 / 0 / +100. All three hard settings now require the partial intersections 7,950–7,999, 5,950–5,999, and 8,950–8,999 (50 each); the other six settings have 100 each. Source targets 4,000 and 3,000 are not reused. A generated answer can equal the source answer by design because the item structure is preserved.
+- The focused math audit exhaustively enumerates the source range and all nine generated ranges. The browser audit passes 12 desktop/mobile states at 1440px / 375px, 24 problem/solution overflow checks, no answer leakage, 12 blocked external requests, and zero page errors. The hard partial-overlap case was rendered and visually checked on desktop, mobile, and both A4 print pages; each PDF is one A4 portrait page with no clipping or overlap.
+- Grade 5-2 source classification regression passes with six page-11 Missions available, 124 legacy records unchanged, and seven rejected negative controls; the source-release gate passes at 2,056 total / 1,268 available / 380 source-unlinked locked types.
+- Private owner-only Drive note: [Mission 2 structure revalidation](https://drive.google.com/file/d/1d3uTfSRasVXMzvS9K6rRElCTDyXiFb2Y/view). Evidence bundle: [grade52-page11-mission2-structure-revalidation-20261024.zip](https://drive.google.com/file/d/1Khfu__yhNJbdQRaT8k7XxPQuL2ZnWqoG/view), 521,162 bytes; SHA-256 `28c334ad9f17ce0f52c9ce10ccee18109fd9f42ebeed1c4c68dcc4e01e1b2800`. Drive readback confirms both files are in the existing owner-only folder and are not shared. The bundle excludes the scanned source page, handwriting, publisher answer key, and student data.
+- The implementation remains locally reviewed and awaiting release; `publicDecision=locked` and publisher-key verification remains false. Keep PR #418 in draft on top of PR #417. Claude API cross-review remains pending. No merge or deployment occurred.
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Missions 2–3: Local Integration QA
 
 - This candidate is committed on branch `codex/grade52-page11-missions2-3-rebased` and open as draft PR #417 (`685d73aec93885edd8a589900dd39fd3750b1725`) against main base `7bafdd5b1a58435e021a4fdf069c0468e71d7d2d`. The existing main skill `.claude/skills/gfield-textbook-design/SKILL.md` is already present; no skill-file change was required. Main has since advanced to `c1aadc853891ea6dd4a46feec3ee3b3ec1e729a3` with two commits touching only Number Magic and Supabase delivery files; the 19 changed paths do not overlap PR #417, which GitHub currently reports mergeable/clean.

@@ -362,7 +362,15 @@ require("./source-5-2-rounded-count-mission1.js");
         assert(question && question.sourceItemId === type.sourceItemId);
         assert.equal(question.answerVisualRequired, false);
         assert.equal(question.publisherKeyVerified, false);
-        assert.notEqual(question.answer, "50개");
+        const expectedCount = difficulty === 1 ? 50 : 100;
+        assert.equal(question.answerModel.count, expectedCount);
+        assert.equal(question.answer, `${expectedCount}개`);
+        assert.notEqual(question.questionModel.hundredTarget, 4000);
+        assert.notEqual(question.questionModel.thousandFloorTarget, 3000);
+        if (difficulty === 1) {
+          assert.equal(question.questionModel.commonRange[0], question.questionModel.roundedRange[0]);
+          assert.equal(question.questionModel.commonRange[1], question.questionModel.floorRange[1]);
+        }
       }
       return;
     }
