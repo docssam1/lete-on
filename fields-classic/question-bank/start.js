@@ -1,7 +1,7 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20260918a";
 
 // 시작 화면: 권을 고르고 「공부하기」(① 개념 → ② 게임 → ③ 골든벨 → ④ 더클 본책) 또는
-// 「시험지 만들기」(권별테스트 원본형·유사형 · 교재에서 단원·난이도 골라 만들기)로 들어간다.
+// 「시험지 만들기」(권별테스트 원문 풀기 · 권별테스트 유사문제 · 교재에서 단원·난이도 골라 만들기)로 들어간다.
 // 이 화면은 길 안내만 한다. 문제를 만들고 채점하는 일은 문제은행(index.html)과 골든벨(golden-bell.html)이 그대로 맡고,
 // 여기서는 그 화면들이 받는 주소(book·lesson·phase·units·stage·count·set·build)만 만든다.
 // 설계: PROGRAM-STRUCTURE-20261024.md
@@ -146,12 +146,10 @@ function renderTest() {
   const book = activeBook();
   const questions = book.source.unitTestQuestions || [];
   const verified = questions.filter((question) => question.verified).length;
-  const meta = verified === questions.length
+  $("unitTestFreshMeta").textContent = verified === questions.length
     ? `${questions.length}문항`
     : `${questions.length}문항 중 ${verified}문항 준비됨 — 준비된 문항만 나옵니다`;
-  $("unitTestMeta").textContent = meta;
-  $("unitTestFreshMeta").textContent = meta;
-  $("unitTestSource").href = bankLink({ set: "unit-test", build: "1" });
+  $("unitTestSource").href = link("unit-test-viewer.html", { book: book.id });
   $("unitTestFresh").href = bankLink({ set: "unit-test", fresh: "1", build: "1" });
   $("bankMore").href = link("index.html", {});
   if (!view.pick.units || view.pick.units.bookId !== book.id) view.pick.units = { bookId: book.id, set: new Set(book.units.map((_, index) => index)) };

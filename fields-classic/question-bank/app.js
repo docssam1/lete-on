@@ -3705,7 +3705,7 @@ function watermarkMarkup() {
 function worksheetTitleText() {
   if (state.mode === "curriculum" && state.selected.unitTest.size && !state.selected.curriculum.size) {
     const book = CURRICULUM.find((entry) => entry.id === state.curriculumBookId);
-    if (book) return `${book.label} 권별테스트${freshUnitTest ? " · 유사형" : ""}`;
+    if (book) return `${book.label} 권별테스트 유사문제`;
   }
   return state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "FC 단원 학습지" : "유형별 맞춤 학습지";
 }
@@ -3963,7 +3963,10 @@ setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") 
   };
   let picked = 0;
   if (params.get("set") === "unit-test") {
+    // &numbers=3,7: 원문을 풀고 틀린 번호만(권별테스트 원문 풀기 화면에서 넘어온다).
+    const numbers = params.has("numbers") ? new Set(params.get("numbers").split(",").map(Number)) : null;
     for (const question of book.source.unitTestQuestions || []) {
+      if (numbers && !numbers.has(question.number)) continue;
       if (!question.verified || !isSelectableType(typeById(question.typeId))) continue;
       state.selected.unitTest.add(unitTestKey(book.id, question.number));
       picked += 1;

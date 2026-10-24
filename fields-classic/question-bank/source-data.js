@@ -2029,7 +2029,8 @@ const CURRICULUM_TEST_FILES = {
 };
 
 const CURRICULUM_TEST_PAGE_COUNTS = {
-  "book-01": 7, "book-02": 6, "book-03": 6, "book-04": 7, "book-05": 7,
+  // 원문 PPT의 문제 슬라이드(표지·빈 쪽·답안 슬라이드 제외) 수. 2026-10-24 원본 비율 그대로 다시 렌더(page-01~07).
+  "book-01": 7, "book-02": 7, "book-03": 7, "book-04": 7, "book-05": 7,
   "book-06": 7, "book-07": 7, "book-08": 7, "book-09": 7, "book-10": 7
 };
 
