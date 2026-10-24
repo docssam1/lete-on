@@ -37,6 +37,12 @@ const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 // 권별테스트를 「유사형」(같은 구조, 새 숫자)으로 만들 때. 기본은 늘 같은 문제가 나오는 원본형.
 const freshUnitTest = params.get("fresh") === "1";
+// 학생용(?as=student): 본책에서 모르는 문제를 누르고 들어온 화면. 편집·인쇄 도구를 숨기고 「답 확인 · 다른 문제」만 둔다.
+// &ref=활동 3 : 본책 문항 이름(제목에 씀) · &back=<주소> : 돌아갈 번호판(같은 사이트 안의 상대 주소만)
+const asStudent = params.get("as") === "student";
+const studentRef = params.get("ref") || "";
+const studentBack = /^\.\/[\w.-]+\.html(\?[^#]*)?$/u.test(params.get("back") || "") ? params.get("back") : "";
+if (asStudent) document.body.classList.add("as-student");
 const domainIndex = Object.fromEntries(DOMAINS.map((domain, index) => [domain.id, index]));
 const EXAM_SOURCES = [...DIAGNOSTIC_EXAM_TYPES, ...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES];
 const OUR_MOCK_EXAM_GROUPS = [
@@ -86,6 +92,8 @@ const state = {
 };
 // 시작 화면의 「수업형」은 교재형 본문(?form=lesson)으로 연다. 이번 한 번만이고 저장된 선택은 바꾸지 않는다.
 if (PRINT_TEMPLATE_OPTIONS.form.some((option) => option.id === params.get("form"))) state.printTemplate.form = params.get("form");
+// 학생 화면은 표지·내지 없이 문제만(저장된 인쇄 양식은 바꾸지 않는다 — 패널을 건드리지 않으면 저장되지 않는다).
+if (asStudent) state.printTemplate = { ...state.printTemplate, cover: "none", unit: "none", form: "basic", cols: "1" };
 let printTemplatePanel = null;
 
 function normalizeSearchText(value) {
@@ -1278,6 +1286,7 @@ function bindQuestionEditor() {
     if (button.dataset.questionAction === "replace") replaceQuestion(index);
     if (button.dataset.questionAction === "remove") removeQuestion(index);
   }));
+  bindStudentChecks(grid);
   grid.querySelectorAll(".answer-input").forEach((input) => input.addEventListener("input", () => {
     const index = Number(input.dataset.questionIndex);
     if (state.questions[index]) state.questions[index].responseValue = input.value;
@@ -3702,7 +3711,50 @@ function watermarkMarkup() {
   return Array.from({ length: 3 }, () => `<span>${student} · GFIELD · ${student} · GFIELD · ${student}</span>`).join("");
 }
 
+// 학생 화면: 답을 쓰고 「답 확인」. 처음 틀리면 다시 생각하게 하고, 두 번째에 정답과 풀이를 연다(먼저 생각하게).
+function studentCheckMarkup(question, index) {
+  const picture = answerVisualMarkup(question);
+  const typed = !["drawing", "visual-fill"].includes(question.responseKind);
+  return `<div class="student-check" data-student-index="${index}">
+    <div class="student-check-actions"><button type="button" class="student-check-button" data-student-check="${index}">${typed ? "답 확인" : "정답 보기"}</button>
+      <button type="button" data-question-action="replace" data-question-index="${index}">다른 문제</button></div>
+    <p class="student-check-message" role="status"></p>
+    <div class="student-answer" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${question.answer}</div>` : `<span>${question.answer}</span>`}${question.solution ? `<p><b>풀이</b> ${question.solution}</p>` : ""}</div>
+  </div>`;
+}
+
+function studentAnswerMatches(typed, answer) {
+  const plain = (value) => String(value || "").replace(/<[^>]+>/gu, "").replace(/[\s,.·]/gu, "");
+  const a = plain(answer);
+  const t = plain(typed);
+  if (!t) return null;
+  if (t === a) return true;
+  const numbers = a.match(/-?\d+(?:\/\d+)?/gu) || [];
+  return numbers.length === 1 && t.replace(/[^\d/-]/gu, "") === numbers[0];
+}
+
+function bindStudentChecks(grid) {
+  grid.querySelectorAll("[data-student-check]").forEach((button) => button.addEventListener("click", () => {
+    const index = Number(button.dataset.studentCheck);
+    const question = state.questions[index];
+    const box = button.closest(".student-check");
+    const message = box.querySelector(".student-check-message");
+    const reveal = () => { box.querySelector(".student-answer").hidden = false; button.hidden = true; };
+    if (["drawing", "visual-fill"].includes(question.responseKind)) return reveal();
+    const verdict = studentAnswerMatches(question.responseValue, question.answer);
+    if (verdict === null) { message.textContent = "답을 먼저 써 보세요."; return; }
+    if (verdict) { message.textContent = "맞았어요!"; box.dataset.result = "right"; return reveal(); }
+    if (box.dataset.tried) { message.textContent = "정답과 풀이를 보고 다시 풀어 보세요."; box.dataset.result = "wrong"; return reveal(); }
+    box.dataset.tried = "1";
+    message.textContent = "다시 생각해 보세요. 한 번 더 틀리면 정답과 풀이가 열려요.";
+  }));
+}
+
 function worksheetTitleText() {
+  if (asStudent && studentRef) {
+    const book = CURRICULUM.find((entry) => entry.id === state.curriculumBookId);
+    return `${book ? `${book.label} · ` : ""}${studentRef} 유사문제`;
+  }
   if (state.mode === "curriculum" && state.selected.unitTest.size && !state.selected.curriculum.size) {
     const book = CURRICULUM.find((entry) => entry.id === state.curriculumBookId);
     if (book) return `${book.label} 권별테스트 유사문제`;
@@ -3742,6 +3794,7 @@ function renderWorksheet() {
           ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
           : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
       ${textbookConceptSolutionMarkup(question)}
+      ${asStudent ? studentCheckMarkup(question, index) : ""}
     </article>`;
   });
   const info = printTemplateInfo(title);
@@ -3814,6 +3867,13 @@ function initControls() {
   $("studentName").textContent = student;
   $("introLink").href = `./intro.html?student=${encodeURIComponent(student)}`;
   $("startLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
+  if (asStudent) {
+    const back = document.createElement("a");
+    back.className = "back-link student-back";
+    back.href = studentBack || $("startLink").href;
+    back.textContent = studentBack ? "← 본책 번호판" : "← 처음 화면";
+    document.querySelector(".header-links").prepend(back);
+  }
   $("worksheetStudent").textContent = student;
   if ($("resultDiagnosisLink")) $("resultDiagnosisLink").href = `./result-diagnosis.html?student=${encodeURIComponent(student)}`;
   $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
@@ -3975,14 +4035,26 @@ setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") 
     if (picked) setCount(picked);
   } else if (params.has("units")) {
     const wanted = new Set(params.get("units").split(",").map(Number));
-    book.units.forEach((unit, unitIndex) => {
+    const pick = () => book.units.forEach((unit, unitIndex) => {
       if (!wanted.has(unitIndex)) return;
       for (const typeId of unit.typeIds) {
+        // &only=<유형 id>: 본책 번호판에서 고른 한 문항의 유형만
+        if (params.has("only") && typeId !== params.get("only")) continue;
         if (!isSelectableCurriculumType(typeById(typeId), book, unit)) continue;
         state.selected.curriculum.add(curriculumKey(book.id, unitIndex, typeId));
         picked += 1;
       }
     });
+    pick();
+    // 번호판에서 누른 문항의 유형이 그 단계에서는 아직 못 만들면(예: 3권 4단원 활동 2-2) 가까운 단계로 물러선다 — 학생이 빈 화면을 보지 않게.
+    if (!picked && params.has("only")) {
+      for (const fallback of ["type", "practice", "concept", "advanced"]) {
+        if (fallback === state.curriculumStage) continue;
+        setCurriculumStage(fallback);
+        pick();
+        if (picked) break;
+      }
+    }
     const requestedCount = Number(params.get("count"));
     if (Number.isFinite(requestedCount) && requestedCount >= 1 && requestedCount <= 50) setCount(requestedCount);
   }

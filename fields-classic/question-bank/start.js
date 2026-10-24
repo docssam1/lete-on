@@ -1,4 +1,5 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20260918a";
+import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261024a";
 
 // 시작 화면: 권을 고르고 「공부하기」(① 개념 → ② 게임 → ③ 골든벨 → ④ 더클 본책) 또는
 // 「시험지 만들기」(권별테스트 원문 풀기 · 권별테스트 유사문제 · 교재에서 단원·난이도 골라 만들기)로 들어간다.
@@ -36,39 +37,8 @@ function syncAddress() {
   history.replaceState(null, "", `?${next}`);
 }
 
-// ── 골든벨 학습을 본책 단원에 나눠 담는다 ──
-// 1순위: 학습이 다루는 세부 유형(sourceTypeIds)이 단원 유형과 겹치는 수. 2순위: 단원 이름이 같거나 한쪽에 들어 있음.
-// 어느 단원에도 안 붙는 학습(골든벨 자료에만 있는 주제)은 「그 밖의 골든벨」로 따로 보인다.
-const squash = (text) => String(text || "").replace(/\s+/g, "");
-const words = (text) => String(text || "").split(/[\s·,]+|와|과|및/).map(squash).filter((word) => word.length >= 2);
-function lessonsByUnit(book, bellBook) {
-  const units = book.units.map(() => []);
-  const rest = [];
-  for (const lesson of bellBook?.lessons || []) {
-    let best = -1;
-    let bestScore = 0;
-    book.units.forEach((unit, index) => {
-      const shared = (lesson.sourceTypeIds || []).filter((id) => unit.typeIds.includes(id)).length;
-      const a = squash(lesson.unit);
-      const b = squash(unit.label);
-      const nameScore = a === b ? 8 : a && (b.includes(a) || a.includes(b)) ? 5 : words(lesson.unit).filter((word) => b.includes(word)).length * 2;
-      const score = shared * 10 + nameScore;
-      if (score > bestScore) { bestScore = score; best = index; }
-    });
-    (best < 0 ? rest : units[best]).push(lesson);
-  }
-  return { units, rest };
-}
-
-function gamesFor(lesson) {
-  const titles = new Map();
-  const flow = goldenBell.flows[`${view.bookId}/${lesson.id}`];
-  if (flow?.game) titles.set(flow.game, goldenBell.flowTitles[flow.game] || "게임");
-  for (const [id, activity] of Object.entries(goldenBell.activities)) {
-    if (activity.lesson === lesson.id && goldenBell.handsOnBooks.get(id) === view.bookId) titles.set(id, activity.title);
-  }
-  return [...titles.values()];
-}
+// 골든벨 학습을 단원에 나눠 담는 규칙·게임 찾기는 study-map.js(학생 차시 화면과 같이 쓴다).
+const gamesFor = (lesson) => gameTitles(view.bookId, lesson, goldenBell.games);
 
 // ── 권 고르기 ──
 function renderBooks() {
@@ -99,7 +69,7 @@ function bookCell(unitIndex) {
 
 function lessonRow(lesson) {
   const self = view.mode === "self";
-  const tutorial = Boolean(goldenBell.flows[`${view.bookId}/${lesson.id}`]);
+  const tutorial = Boolean(goldenBell.games.flows[`${view.bookId}/${lesson.id}`]);
   const concept = tutorial ? "튜토리얼" : lesson.experience ? "개념 설명" : "개념 쪽";
   const games = gamesFor(lesson);
   const count = lesson.original?.items?.length || 0;
@@ -115,10 +85,28 @@ function lessonRow(lesson) {
   </li>`;
 }
 
+// 학습형(학생): 원장 지시(2026-10-24) 「학생용은 우선 권 단원 고르기. 1단원을 2번 정도로 나누어 공부」 —
+// 단원마다 차시(본책의 개념 1 · 개념 2) 단추만 두고, 차시 안에서 개념 배우기 → 게임하기 → 골든벨 → 공부하기(study.html).
+function renderSelfUnits(book) {
+  $("unitList").innerHTML = book.units.map((unit, index) => {
+    const { count } = unitParts(unit);
+    const parts = Array.from({ length: count }, (_, k) => {
+      const problems = partProblems(unit, k + 1).reduce((sum, block) => sum + block.numbers.length, 0);
+      return `<a class="st-part" href="${esc(link("study.html", { book: book.id, unit: String(index), part: String(k + 1) }))}"><b>${k + 1}차시 · 개념 ${k + 1}</b><span>본책 ${problems}문항</span></a>`;
+    }).join("");
+    return `<section class="st-unit st-unit-self"><h3><span>${String(index + 1).padStart(2, "0")}</span>${esc(unit.label)}</h3><div class="st-parts">${parts}</div></section>`;
+  }).join("");
+}
+
 function renderStudy() {
   const book = activeBook();
+  document.querySelector(".st-steps").hidden = view.mode === "self";
+  if (view.mode === "self") {
+    $("studyLead").innerHTML = "단원을 고르고 차시를 누르세요. 차시마다 <b>개념 배우기</b> → <b>게임하기</b> → <b>골든벨</b> → <b>공부하기</b>(본책에서 모르는 문제는 번호를 눌러 유사문제로) 순서예요.";
+    return renderSelfUnits(book);
+  }
   $("studyLead").innerHTML = view.mode === "self"
-    ? "단원마다 <b>① 개념</b> → <b>② 게임</b> → <b>③ 골든벨</b> → <b>④ 더클 본책</b> 순서로 혼자 공부합니다. 골든벨은 개념을 본 뒤에 열립니다."
+    ? ""
     : "선생님 화면에 띄워 같은 순서로 수업합니다. ④ 더클 본책은 교재형 학습지로 인쇄합니다.";
   if (!goldenBell) {
     $("unitList").innerHTML = book.units.map((unit, index) => `<section class="st-unit"><h3><span>${String(index + 1).padStart(2, "0")}</span>${esc(unit.label)}</h3>
@@ -213,20 +201,8 @@ $("bankLink").href = link("index.html", {});
 renderBooks();
 renderDoors();
 
-Promise.all([
-  import("./golden-bell-library.js?v=20261023h"),
-  import("./golden-bell-lesson-flow.js?v=20261023x"),
-  import("./golden-bell-hands-on-models.js?v=20261023t")
-]).then(([library, flow, handsOn]) => {
-  const handsOnBooks = new Map();
-  for (const unit of handsOn.HANDS_ON_UNITS) for (const id of unit.activities) if (!handsOnBooks.has(id)) handsOnBooks.set(id, unit.bookId);
-  goldenBell = {
-    books: library.GOLDEN_BELL_BOOKS,
-    flows: flow.LESSON_FLOWS,
-    flowTitles: flow.FLOW_GAME_TITLES,
-    activities: handsOn.HANDS_ON_ACTIVITIES,
-    handsOnBooks
-  };
+loadGoldenBell().then((data) => {
+  goldenBell = data;
   if (view.door === "study") renderStudy();
 }).catch(() => {
   $("unitList").querySelectorAll(".st-loading").forEach((node) => { node.textContent = "골든벨 학습을 불러오지 못했습니다. 새로고침해 주세요."; });

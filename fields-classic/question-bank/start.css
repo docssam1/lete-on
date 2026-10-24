@@ -151,3 +151,11 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
   .st-lesson-title { grid-column: 1 / -1; font-weight: 600; }
   .st-step { flex-direction: column; justify-content: center; gap: 0; padding: 4px 6px; font-size: 12px; text-align: center; }
 }
+
+/* 학습형: 단원마다 차시 단추(study.html) */
+.st-unit-self .st-parts { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 10px; }
+.st-part { display: grid; gap: 2px; min-height: 56px; padding: 10px 14px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; text-decoration: none; }
+.st-part b { font-size: 15px; color: var(--accent-ink); }
+.st-part span { font-size: 12.5px; color: var(--muted); }
+.st-part:hover { border-color: var(--accent); background: var(--accent-soft); }
+.st-steps[hidden] { display: none; }

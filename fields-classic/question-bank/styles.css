@@ -1360,3 +1360,19 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
   .book2-growth-work:has(.growth-colored-triangle)>b{font-size:11px}
   .growth-colored-triangle .growth-triangle-token{width:10px;height:10px}
 }
+
+/* 학생용(?as=student) — 본책 번호판에서 들어온 유사문제 풀기. 편집·인쇄 도구 없이 문제와 「답 확인 · 다른 문제」만. */
+.as-student .header-links>a:not(.student-back),.as-student .builder-panel,.as-student .pt-panel-host,.as-student .pt-lead,.as-student #backToBuilder,.as-student #printButton,.as-student #answerButton,.as-student .question-edit-tools,.as-student .question-style-tags,.as-student .question-reference,.as-student .pt-foot{display:none!important}
+.as-student .student-back{font-weight:700}
+.as-student .question-grid{display:grid;gap:16px}
+.as-student .question-page{display:grid;gap:16px;min-height:0}
+.student-check{display:grid;gap:8px;margin-top:14px;padding-top:12px;border-top:1px dashed #d8ccb4}
+.student-check-actions{display:flex;flex-wrap:wrap;gap:8px}
+.student-check-actions button{min-height:44px;padding:8px 18px;border:1px solid #c9bda2;border-radius:6px;background:#fff;color:#2a241c;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.student-check-actions .student-check-button{border-color:#2f6b4a;background:#2f6b4a;color:#fff}
+.student-check-message{margin:0;min-height:1.4em;color:#7a6f5c;font-size:14px;font-weight:600}
+.student-check[data-result="right"] .student-check-message{color:#2f6b4a}
+.student-check[data-result="wrong"] .student-check-message{color:#b4512e}
+.student-answer{display:grid;gap:6px;padding:12px 14px;border-left:3px solid #2f6b4a;border-radius:4px;background:#e9f0e7;color:#1e4631;font-size:15px}
+.student-answer p{margin:0;color:#2a241c;font-size:14px;line-height:1.6}
+@media print{.student-check{display:none}}

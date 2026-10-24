@@ -2144,6 +2144,16 @@ $("courseSelect").addEventListener("change", (event) => {
   location.assign(next);
 });
 $("backLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.bookId}`;
+// 학생 차시 화면(study.html)에서 들어오면(?as=student&back=…) 큰 제목·권 고르기·인쇄 단추·학습 목록을 접고 학습만 보인다.
+// 돌아가기는 그 차시로(같은 사이트 안의 상대 주소만 받는다).
+if (params.get("as") === "student") {
+  document.body.classList.add("as-student");
+  const back = params.get("back") || "";
+  if (/^\.\/[\w.-]+\.html(\?[^#]*)?$/u.test(back)) {
+    $("backLink").href = back;
+    $("backLink").innerHTML = '<span aria-hidden="true">←</span> 차시로';
+  }
+}
 $("printLessonButton").addEventListener("click", () => printLessons([activeLesson()]));
 $("printBookButton").addEventListener("click", () => printLessons(activeBook().lessons, { includeCover: true }));
 $("coursePrintMode").addEventListener("change", updateCoverButton);
