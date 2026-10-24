@@ -77,6 +77,16 @@
 
 ---
 
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 3: Generator Structure Revalidation
+
+- Rechecked printed page 11 Mission 3 (source PDF content page 9; source SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`). The printed conditions give 41–50 students, with 3 notebooks per student from 160; the possible remainders are 37, 34, 31, 28, 25, 22, 19, 16, 13, 10, so the inclusive answer range is 10–37. Pencil marks were excluded. No generator correction was needed.
+- Exhaustive math revalidation passes all nine synthetic settings. Each has ten possible remainders spaced by three; neither source target (50 students) nor source total (160 notebooks) is reused. All nine answer ranges are distinct.
+- Browser review passes 12 states at 1440px / 375px, all three pools at desktop, all difficulty levels, 24 overflow checks, answer separation, 12 blocked external requests, and zero page errors. Problem and solution each render as one A4 portrait page; desktop/mobile and A4 rasters were visually inspected without clipping or overlap.
+- Private owner-only Drive note: [Mission 3 revalidation](https://drive.google.com/file/d/1DqPsSI6tODeAMCKZPCt4Y5AjdLOKNZoq/view). Evidence bundle: [grade52-page11-mission3-revalidation-20261024.zip](https://drive.google.com/file/d/17RYZ13WYKv2RT3fxN9hc7HTj054efaOq/view), 556,655 bytes; SHA-256 `37aa6b601a3687bffe1b6a2dfd1ed4748a58865f79a5053ac23858010305e592`. It excludes the source scan, handwriting, publisher answer key, and student data.
+- Mission 3 remains locally reviewed and awaiting release; public decision remains locked and publisher-key verification remains false. No student data, merge, or deployment was involved.
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Missions 2–3: Local Integration QA
 
 - This candidate is committed on branch `codex/grade52-page11-missions2-3-rebased` and open as draft PR #417 (`685d73aec93885edd8a589900dd39fd3750b1725`) against main base `7bafdd5b1a58435e021a4fdf069c0468e71d7d2d`. The existing main skill `.claude/skills/gfield-textbook-design/SKILL.md` is already present; no skill-file change was required. Main has since advanced to `c1aadc853891ea6dd4a46feec3ee3b3ec1e729a3` with two commits touching only Number Magic and Supabase delivery files; the 19 changed paths do not overlap PR #417, which GitHub currently reports mergeable/clean.
