@@ -528,7 +528,11 @@
       else for (let a = T - 1; a >= Math.ceil(T / 2); a--) list.push(`${a}+${T - a}`);
       return lt(K, `합이 ${T} (${list.join(', ')})`, `sum ${T} (${list.join(', ')})`, `和是${T}（${list.join('，')}）`);
     },
-    ask: askP
+    ask(p,K){
+      let text=askP(p,K)||'';
+      if(p.rows===1&&!(p.preset||[]).length)text=text.replace('서로 다른 방법으로!','양쪽에 한 개 이상씩 나누어 그려요.').replace('Find different ways!','Draw at least one on each side.').replace('想想不同的分法！','两边都至少画一个。');
+      return text;
+    }
   };
 
   /* ============================================================

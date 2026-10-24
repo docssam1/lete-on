@@ -191,15 +191,20 @@
 
   P.pathSum = {
     visual: function (p, K) {
-      var grid = G.pathHtml(p, { pre: PRE, print: true, startTxt: '▶', goalTxt: '⚑' });
+      // Draw every legal move, so a diagonal shortcut is not implied by floating circles.
+      var w=p.cols*52+8,h=p.rows*52+8,dy=p.moves==='ru'?-1:1,svg='';
+      function edge(r,c,nr,nc){var x=30+c*52,y=30+r*52,xx=30+nc*52,yy=30+nr*52,ux=(xx-x)/52,uy=(yy-y)/52,mx=(x+xx)/2,my=(y+yy)/2;return `<line x1="${x+ux*15}" y1="${y+uy*15}" x2="${xx-ux*15}" y2="${yy-uy*15}" stroke="#a8783f" stroke-width="1.8"/><polygon points="${mx+ux*4},${my+uy*4} ${mx-ux*3-uy*3},${my-uy*3+ux*3} ${mx-ux*3+uy*3},${my-uy*3-ux*3}" fill="#a8783f"/>`;}
+      for(var r=0;r<p.rows;r++)for(var c=0;c<p.cols;c++){if(c+1<p.cols)svg+=edge(r,c,r,c+1);if(r+dy>=0&&r+dy<p.rows)svg+=edge(r,c,r+dy,c);}
+      for(var r=0;r<p.rows;r++)for(var c=0;c<p.cols;c++){var x=30+c*52,y=30+r*52,isS=r===p.start[0]&&c===p.start[1],isG=r===p.goal[0]&&c===p.goal[1];svg+=`<circle cx="${x}" cy="${y}" r="15" fill="#fff" stroke="${isS?'#2f6b4a':isG?'#b4512e':'#a8783f'}" stroke-width="${isS||isG?2.2:1.2}"/><text x="${x}" y="${y+5}" text-anchor="middle" style="font-size:16px;fill:#2a241c">${p.cells[r][c]}</text>${isS?`<path d="M${x-6} ${y+19}l12 0l-12 8z" fill="#2f6b4a"/>`:''}${isG?`<path d="M${x-3} ${y-18}v-13l10 3l-10 3" fill="#b4512e" stroke="#b4512e"/>`:''}`;}
+      var grid=`<svg class="nm-obj-svg" data-path-moves="${p.moves}" viewBox="0 -8 ${w} ${h+16}" style="width:${Math.min(58,p.cols*20)}mm;max-height:52mm" role="img" aria-label="${K.esc(K.lk('화살표를 따라 가는 길','Follow the arrows','沿箭头走'))}">${svg}</svg>`;
       var leg = '<div class="' + PRE + '-row" style="font-size:11px;gap:4mm;margin-top:1mm"><span>▶ ' + K.lk('출발', 'start', '起点') + '</span><span>⚑ ' + K.lk('도착', 'end', '终点') + '</span></div>';
       return K.nlCard(K.nlStage('<div style="padding-top:4mm">' + grid + '</div>' + leg), K.nlAnsBox(K.lk('합', '', '和')));
     },
     label: function (p, K) { return p.answer + ' (' + p.minPath.map(function (c) { return p.cells[c[0]][c[1]]; }).join('→') + ')'; },
     ask: function (p, K) {
-      return K.lk('출발에서 도착까지 지나는 수를 더해요. 칸을 선으로 이어 합이 가장 작은 길을 찾고, 합을 써요',
-        'Add the numbers on your way from start to finish. Draw the path with the smallest total, then write the total',
-        '从起点走到终点，把经过的数加起来。画出和最小的路，再写下和');
+      return K.lk((p.moves==='ru'?'오른쪽이나 위쪽':'오른쪽이나 아래쪽')+' 화살표로만 가요. 대각선으로 가지 않아요. 출발에서 도착까지 지나는 수를 더해요. 칸을 선으로 이어 합이 가장 작은 길을 찾고, 합을 써요',
+        (p.moves==='ru'?'Move right or up':'Move right or down')+' along the arrows, never diagonally. Add the numbers from start to finish. Draw the path with the smallest total, then write the total',
+        (p.moves==='ru'?'只能向右或向上':'只能向右或向下')+'沿箭头走，不能斜着走。把经过的数加起来，画出和最小的路，再写下和');
     }
   };
 
@@ -321,13 +326,13 @@
   P.splitList = {
     visual: function (p, K) {
       var rows = '<div class="' + PRE + '-row ' + PRE + '-ex">' + nb(p.example[0], K) + '<i>·</i>' + nb(p.example[1], K) + '</div>';
-      for (var i = 0; i < p.k; i++) rows += '<div class="' + PRE + '-row">' + nb(null, K) + '<i>·</i>' + nb(null, K) + '</div>';
+      for (var i = 0; i < Math.max(0,p.k-1); i++) rows += '<div class="' + PRE + '-row">' + nb(null, K) + '<i>·</i>' + nb(null, K) + '</div>';
       var objs = p.emoji ? '<span class="' + PRE + '-grp" style="max-width:30mm">' + Array(p.whole + 1).join('<span>' + K.nlObjHtml(p.emoji) + '</span>') + '</span>' : '';
       return K.nlCard(K.nlStage('<div class="' + PRE + '-row" style="gap:3mm"><span class="' + PRE + '-slw">' + p.whole + '</span>' + objs + '</div><div class="' + PRE + '-lines" style="margin-top:1mm">' + rows + '</div>'),
         K.nlAnsBox(K.lk('가지', 'ways', '种')));
     },
     label: function (p, K) { return p.pairs.map(function (q) { return q[0] + '·' + q[1]; }).join(', ') + ' → ' + p.k + K.lk('가지', ' ways', '种'); },
-    ask: function (p, K) { return K.pickL(p.prompt) + K.lk(' 빈 줄에 방법을 쓰고, 모두 몇 가지인지 써요', ' Write each way on a line, then how many ways in all', ' 把每种分法写在横线上，再写下一共几种'); }
+    ask: function (p, K) { return K.pickL(p.prompt) + K.lk((p.minPart===0?' 빈 접시도 가능해요.':' 각 접시에 한 개 이상씩 나눠요.')+' 예시를 포함해 방법을 쓰고, 모두 몇 가지인지 써요', (p.minPart===0?' An empty plate is allowed.':' Put at least one on each plate.')+' Include the example and write the other ways, then the total number of ways', (p.minPart===0?' 盘子可以是空的。':' 每个盘子至少一个。')+'算上例子，写出其他分法，再写一共几种'); }
   };
 
   P.seqGap = {
