@@ -237,7 +237,7 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
-      "reviewReason": "PDF 3쪽(교재 인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 정답 근거에서 제외했습니다. 원문 조건으로 독립 계산/전수 열거를 했고, 서로 다른 수치의 생성 문항 54개와 음성 대조 36개를 검수했습니다. 화면 54개 상태와 A4 54개 문항/풀이/정답 출력(각 1쪽)을 확인했습니다. 공식 출판사 정답지는 대조하지 않았으며, 공개 결정은 잠금 유지합니다."
+      "reviewReason": "PDF 3쪽(인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 답 근거에서 제외했습니다. 독립 계산·전수 열거와 54개 생성 설정, 36개 음성 대조, 화면/A4 검수를 마쳤습니다. 이 유형의 생성기는 reviewLocked:false로 이미 main에 있으며, 이 대장 갱신은 런타임을 바꾸지 않습니다. 출판사 답안 및 Claude 교차 검수는 별도 확인이 필요합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-2",
@@ -254,7 +254,7 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
-      "reviewReason": "PDF 3쪽(교재 인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 정답 근거에서 제외했습니다. 원문 조건으로 독립 계산/전수 열거를 했고, 서로 다른 수치의 생성 문항 54개와 음성 대조 36개를 검수했습니다. 화면 54개 상태와 A4 54개 문항/풀이/정답 출력(각 1쪽)을 확인했습니다. 공식 출판사 정답지는 대조하지 않았으며, 공개 결정은 잠금 유지합니다."
+      "reviewReason": "PDF 3쪽(인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 답 근거에서 제외했습니다. 독립 계산·전수 열거와 54개 생성 설정, 36개 음성 대조, 화면/A4 검수를 마쳤습니다. 이 유형의 생성기는 reviewLocked:false로 이미 main에 있으며, 이 대장 갱신은 런타임을 바꾸지 않습니다. 출판사 답안 및 Claude 교차 검수는 별도 확인이 필요합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-3",
@@ -271,7 +271,7 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
-      "reviewReason": "PDF 3쪽(교재 인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 정답 근거에서 제외했습니다. 원문 조건으로 독립 계산/전수 열거를 했고, 서로 다른 수치의 생성 문항 54개와 음성 대조 36개를 검수했습니다. 화면 54개 상태와 A4 54개 문항/풀이/정답 출력(각 1쪽)을 확인했습니다. 공식 출판사 정답지는 대조하지 않았으며, 공개 결정은 잠금 유지합니다."
+      "reviewReason": "PDF 3쪽(인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 답 근거에서 제외했습니다. 독립 계산·전수 열거와 54개 생성 설정, 36개 음성 대조, 화면/A4 검수를 마쳤습니다. 이 유형의 생성기는 reviewLocked:false로 이미 main에 있으며, 이 대장 갱신은 런타임을 바꾸지 않습니다. 출판사 답안 및 Claude 교차 검수는 별도 확인이 필요합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-4",
@@ -288,7 +288,7 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
-      "reviewReason": "PDF 3쪽(교재 인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 정답 근거에서 제외했습니다. 원문 조건으로 독립 계산/전수 열거를 했고, 서로 다른 수치의 생성 문항 54개와 음성 대조 36개를 검수했습니다. 화면 54개 상태와 A4 54개 문항/풀이/정답 출력(각 1쪽)을 확인했습니다. 공식 출판사 정답지는 대조하지 않았으며, 공개 결정은 잠금 유지합니다."
+      "reviewReason": "PDF 3쪽(인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 답 근거에서 제외했습니다. 독립 계산·전수 열거와 54개 생성 설정, 36개 음성 대조, 화면/A4 검수를 마쳤습니다. 이 유형의 생성기는 reviewLocked:false로 이미 main에 있으며, 이 대장 갱신은 런타임을 바꾸지 않습니다. 출판사 답안 및 Claude 교차 검수는 별도 확인이 필요합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-5",
@@ -305,7 +305,7 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
-      "reviewReason": "PDF 3쪽(교재 인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 정답 근거에서 제외했습니다. 원문 조건으로 독립 계산/전수 열거를 했고, 서로 다른 수치의 생성 문항 54개와 음성 대조 36개를 검수했습니다. 화면 54개 상태와 A4 54개 문항/풀이/정답 출력(각 1쪽)을 확인했습니다. 공식 출판사 정답지는 대조하지 않았으며, 공개 결정은 잠금 유지합니다."
+      "reviewReason": "PDF 3쪽(인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 답 근거에서 제외했습니다. 독립 계산·전수 열거와 54개 생성 설정, 36개 음성 대조, 화면/A4 검수를 마쳤습니다. 이 유형의 생성기는 reviewLocked:false로 이미 main에 있으며, 이 대장 갱신은 런타임을 바꾸지 않습니다. 출판사 답안 및 Claude 교차 검수는 별도 확인이 필요합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-6",
@@ -322,7 +322,7 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
-      "reviewReason": "PDF 3쪽(교재 인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 정답 근거에서 제외했습니다. 원문 조건으로 독립 계산/전수 열거를 했고, 서로 다른 수치의 생성 문항 54개와 음성 대조 36개를 검수했습니다. 화면 54개 상태와 A4 54개 문항/풀이/정답 출력(각 1쪽)을 확인했습니다. 공식 출판사 정답지는 대조하지 않았으며, 공개 결정은 잠금 유지합니다."
+      "reviewReason": "PDF 3쪽(인쇄 5쪽)의 인쇄 원문을 직접 대조하고 손글씨는 답 근거에서 제외했습니다. 독립 계산·전수 열거와 54개 생성 설정, 36개 음성 대조, 화면/A4 검수를 마쳤습니다. 이 유형의 생성기는 reviewLocked:false로 이미 main에 있으며, 이 대장 갱신은 런타임을 바꾸지 않습니다. 출판사 답안 및 Claude 교차 검수는 별도 확인이 필요합니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-exploration",

@@ -255,7 +255,7 @@
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문 직접 대조, 독립 답 검산, 생성·화면·A4 검수는 완료했습니다. 공식 출판사 정답지 대조와 Claude API 교차 검수 및 릴리스는 별도 확인을 기다리므로 공개 잠금을 유지합니다.",
+      "lockReason": "검수 대장의 기존 publicDecision 값은 locked로 보존합니다. 다만 이 여섯 생성기와 curriculum의 reviewLocked:false 설정은 이미 GitHub main에 있으므로 이 기록 변경은 런타임 공개 상태를 바꾸지 않습니다. 공식 답안/Claude 교차 검수는 별도 확인이 필요합니다.",
       "reviewEvidence": {
         "runtimeId": "5-2-u1-e1-mission-1",
         "sourcePdfPage": 3,
@@ -282,9 +282,13 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "가 17~26, 나 23~38. 합집합은 17~38로 22개, 교집합 23~26의 합은 (23+26)×4÷2=98, 두 수의 합 범위는 17+23=40부터 26+38=64까지이며 사이 값도 모두 가능.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       }
     },
     {
@@ -311,7 +315,7 @@
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문 직접 대조, 독립 답 검산, 생성·화면·A4 검수는 완료했습니다. 공식 출판사 정답지 대조와 Claude API 교차 검수 및 릴리스는 별도 확인을 기다리므로 공개 잠금을 유지합니다.",
+      "lockReason": "검수 대장의 기존 publicDecision 값은 locked로 보존합니다. 다만 이 여섯 생성기와 curriculum의 reviewLocked:false 설정은 이미 GitHub main에 있으므로 이 기록 변경은 런타임 공개 상태를 바꾸지 않습니다. 공식 답안/Claude 교차 검수는 별도 확인이 필요합니다.",
       "reviewEvidence": {
         "runtimeId": "5-2-u1-e1-mission-1",
         "sourcePdfPage": 3,
@@ -338,9 +342,13 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "가 17~26, 나 23~38. 합집합은 17~38로 22개, 교집합 23~26의 합은 (23+26)×4÷2=98, 두 수의 합 범위는 17+23=40부터 26+38=64까지이며 사이 값도 모두 가능.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       }
     },
     {
@@ -367,7 +375,7 @@
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문 직접 대조, 독립 답 검산, 생성·화면·A4 검수는 완료했습니다. 공식 출판사 정답지 대조와 Claude API 교차 검수 및 릴리스는 별도 확인을 기다리므로 공개 잠금을 유지합니다.",
+      "lockReason": "검수 대장의 기존 publicDecision 값은 locked로 보존합니다. 다만 이 여섯 생성기와 curriculum의 reviewLocked:false 설정은 이미 GitHub main에 있으므로 이 기록 변경은 런타임 공개 상태를 바꾸지 않습니다. 공식 답안/Claude 교차 검수는 별도 확인이 필요합니다.",
       "reviewEvidence": {
         "runtimeId": "5-2-u1-e1-mission-1",
         "sourcePdfPage": 3,
@@ -394,9 +402,13 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "가 17~26, 나 23~38. 합집합은 17~38로 22개, 교집합 23~26의 합은 (23+26)×4÷2=98, 두 수의 합 범위는 17+23=40부터 26+38=64까지이며 사이 값도 모두 가능.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       }
     },
     {
@@ -423,7 +435,7 @@
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문 직접 대조, 독립 답 검산, 생성·화면·A4 검수는 완료했습니다. 공식 출판사 정답지 대조와 Claude API 교차 검수 및 릴리스는 별도 확인을 기다리므로 공개 잠금을 유지합니다.",
+      "lockReason": "검수 대장의 기존 publicDecision 값은 locked로 보존합니다. 다만 이 여섯 생성기와 curriculum의 reviewLocked:false 설정은 이미 GitHub main에 있으므로 이 기록 변경은 런타임 공개 상태를 바꾸지 않습니다. 공식 답안/Claude 교차 검수는 별도 확인이 필요합니다.",
       "reviewEvidence": {
         "runtimeId": "5-2-u1-e1-mission-2",
         "sourcePdfPage": 3,
@@ -450,9 +462,13 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "25 이상에서 처음 3의 배수는 27. 15번째는 27+3×14=69이고 다음 배수는 72이므로 □가 70, 71, 72이면 정확히 15개.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       }
     },
     {
@@ -479,7 +495,7 @@
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문 직접 대조, 독립 답 검산, 생성·화면·A4 검수는 완료했습니다. 공식 출판사 정답지 대조와 Claude API 교차 검수 및 릴리스는 별도 확인을 기다리므로 공개 잠금을 유지합니다.",
+      "lockReason": "검수 대장의 기존 publicDecision 값은 locked로 보존합니다. 다만 이 여섯 생성기와 curriculum의 reviewLocked:false 설정은 이미 GitHub main에 있으므로 이 기록 변경은 런타임 공개 상태를 바꾸지 않습니다. 공식 답안/Claude 교차 검수는 별도 확인이 필요합니다.",
       "reviewEvidence": {
         "runtimeId": "5-2-u1-e1-mission-3",
         "sourcePdfPage": 3,
@@ -506,9 +522,13 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "100 이상 180 이하의 수는 81개. ㄴ-ㄱ-1=81이므로 ㄴ=ㄱ+82. 두 끝수가 두 자리이면 ㄱ=10~17이며 가능한 순서쌍은 8개.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       }
     },
     {
@@ -536,7 +556,7 @@
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문 직접 대조, 독립 답 검산, 생성·화면·A4 검수는 완료했습니다. 공식 출판사 정답지 대조와 Claude API 교차 검수 및 릴리스는 별도 확인을 기다리므로 공개 잠금을 유지합니다.",
+      "lockReason": "검수 대장의 기존 publicDecision 값은 locked로 보존합니다. 다만 이 여섯 생성기와 curriculum의 reviewLocked:false 설정은 이미 GitHub main에 있으므로 이 기록 변경은 런타임 공개 상태를 바꾸지 않습니다. 공식 답안/Claude 교차 검수는 별도 확인이 필요합니다.",
       "reviewEvidence": {
         "runtimeId": "5-2-u1-e1-mission-4",
         "sourcePdfPage": 3,
@@ -563,9 +583,13 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "정수 부분별 전수 열거: 3인 경우 15개, 5인 경우 20개, 7인 경우 13개. 15+20+13=48개. 세 자리마다 서로 다른 카드를 한 장씩 사용하고 3.2는 제외, 7.5는 포함.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       }
     },
     {
@@ -592,7 +616,7 @@
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문 직접 대조, 독립 답 검산, 생성·화면·A4 검수는 완료했습니다. 공식 출판사 정답지 대조와 Claude API 교차 검수 및 릴리스는 별도 확인을 기다리므로 공개 잠금을 유지합니다.",
+      "lockReason": "검수 대장의 기존 publicDecision 값은 locked로 보존합니다. 다만 이 여섯 생성기와 curriculum의 reviewLocked:false 설정은 이미 GitHub main에 있으므로 이 기록 변경은 런타임 공개 상태를 바꾸지 않습니다. 공식 답안/Claude 교차 검수는 별도 확인이 필요합니다.",
       "reviewEvidence": {
         "runtimeId": "5-2-u1-e1-mission-5",
         "sourcePdfPage": 3,
@@ -619,9 +643,13 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "40인승 8대의 최소 조건은 280<n≤320. 45인승 7대는 270<n≤315. 교집합은 280<n≤315, 곧 280 초과 316 미만.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       }
     },
     {
@@ -649,7 +677,7 @@
       "sourceVerified": true,
       "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문 직접 대조, 독립 답 검산, 생성·화면·A4 검수는 완료했습니다. 공식 출판사 정답지 대조와 Claude API 교차 검수 및 릴리스는 별도 확인을 기다리므로 공개 잠금을 유지합니다.",
+      "lockReason": "검수 대장의 기존 publicDecision 값은 locked로 보존합니다. 다만 이 여섯 생성기와 curriculum의 reviewLocked:false 설정은 이미 GitHub main에 있으므로 이 기록 변경은 런타임 공개 상태를 바꾸지 않습니다. 공식 답안/Claude 교차 검수는 별도 확인이 필요합니다.",
       "reviewEvidence": {
         "runtimeId": "5-2-u1-e1-mission-6",
         "sourcePdfPage": 3,
@@ -676,9 +704,13 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "상자 수 k는 1000÷33 이상이므로 k≥31, 1000÷23 이하이므로 k≤43. 가능한 수는 31~43, 곧 30 초과 44 미만.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       }
     },
     {
@@ -1669,7 +1701,7 @@
       "Mission 1 is deployed and live-verified via PR #398 and Pages #39976802614; the exact public JS SHA-256 matches the reviewed local asset. Its live browser audit passed 12 states, 24 overflow checks, answer separation, and A4. Missions 2–3 passed a fresh local rerun on 2026-10-24: each had 12 desktop/mobile states, 24 overflow checks, no answer leak or page errors, and one-page A4 problem and solution output; release and live checks remain pending.",
       "Missions 4–6 (printed page 11) are locally verified text-only items with nine passing synthetic settings each; their source values and source answers are excluded from generated prompts. Mission 6 uses the source request for the minimum and maximum candidate counts across the unit's meaningful rounding places (tens and above), independently verified as 10 and 100. Publisher-key verification remains false.",
       "인쇄 4쪽 개념탐구 1과 예제 1-1~1-4를 450dpi 원문과 대조했습니다. 개념탐구는 26<□≤33 및 26 열린 점·33 닫힌 점, 예제 답은 433, 415 이상 417 미만, 14~21명, 상자 9~11개입니다. 예제 1-4의 원문 물건은 귤이며 이전 “사탕” 표기를 수정했습니다. 다섯 원문 유형에 45개 합성 변형, PC·모바일·A4 화면/풀이 검수를 마쳤습니다. 공식 답안 검증은 별도로 잠겨 있습니다.",
-      "PDF 3쪽(인쇄 5쪽) Mission 1–6은 손글씨를 배제하고 인쇄 조건만 직접 대조했습니다. 답은 22개·98·40~64, 70/71/72, 8쌍, 카드 배치 48개(정수 부분 3·5·7에서 15+20+13), 280<n≤315, 30<상자 수<44입니다. 수학 54개 설정·36개 음성 대조, 화면 54개 상태와 A4 54개 단일 페이지 PDF 검수를 마쳤습니다. 여섯 유형은 로컬 검수 완료, 공개 잠금은 유지합니다."
+      "PDF 3쪽(인쇄 5쪽) Mission 1–6은 손글씨를 배제하고 인쇄 조건만 직접 대조했습니다. 답은 22개·98·40~64, 70/71/72, 8쌍, 카드 배치 48개(정수 부분 3·5·7에서 15+20+13), 280<n≤315, 30<상자 수<44입니다. 수학 54개 설정·36개 음성 대조, 화면 54개 상태와 A4 54개 단일 페이지 PDF 검수를 마쳤습니다. 생성기와 reviewLocked:false 설정은 이미 main에 있어 이번 변경은 대장만 보정하며 런타임은 배포하지 않았습니다. 준비도 대장의 publicDecision=locked는 그대로 두고 공식 답안/Claude 교차 검수는 대기합니다."
     ],
     "locallyVerifiedAwaitingReleaseCount": 19,
     "readyForDeployCount": 1,
@@ -2077,7 +2109,7 @@
         "publisherKeyVerified": false,
         "runtimeAvailableLocally": true,
         "releaseStatus": "local-review-passed-awaiting-release",
-        "publicDecision": "locked",
+        "publicDecision": "locked-in-readiness-ledger",
         "mathAuditPath": "hselementary/question-bank/source-5-2-range-missions-audit.js",
         "browserAuditPath": "hselementary/question-bank/source-5-2-range-missions-browser-audit.js",
         "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page5-missions1-6-20261024",
@@ -2085,9 +2117,14 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "가 17~26, 나 23~38. 합집합은 17~38로 22개, 교집합 23~26의 합은 (23+26)×4÷2=98, 두 수의 합 범위는 17+23=40부터 26+38=64까지이며 사이 값도 모두 가능.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "publicAvailabilityStatus": "existing-main-runtime-generatable",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       },
       {
         "sourceItemId": "5-2-u1-e1-mission-2",
@@ -2105,7 +2142,7 @@
         "publisherKeyVerified": false,
         "runtimeAvailableLocally": true,
         "releaseStatus": "local-review-passed-awaiting-release",
-        "publicDecision": "locked",
+        "publicDecision": "locked-in-readiness-ledger",
         "mathAuditPath": "hselementary/question-bank/source-5-2-range-missions-audit.js",
         "browserAuditPath": "hselementary/question-bank/source-5-2-range-missions-browser-audit.js",
         "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page5-missions1-6-20261024",
@@ -2113,9 +2150,14 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "25 이상에서 처음 3의 배수는 27. 15번째는 27+3×14=69이고 다음 배수는 72이므로 □가 70, 71, 72이면 정확히 15개.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "publicAvailabilityStatus": "existing-main-runtime-generatable",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       },
       {
         "sourceItemId": "5-2-u1-e1-mission-3",
@@ -2133,7 +2175,7 @@
         "publisherKeyVerified": false,
         "runtimeAvailableLocally": true,
         "releaseStatus": "local-review-passed-awaiting-release",
-        "publicDecision": "locked",
+        "publicDecision": "locked-in-readiness-ledger",
         "mathAuditPath": "hselementary/question-bank/source-5-2-range-missions-audit.js",
         "browserAuditPath": "hselementary/question-bank/source-5-2-range-missions-browser-audit.js",
         "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page5-missions1-6-20261024",
@@ -2141,9 +2183,14 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "100 이상 180 이하의 수는 81개. ㄴ-ㄱ-1=81이므로 ㄴ=ㄱ+82. 두 끝수가 두 자리이면 ㄱ=10~17이며 가능한 순서쌍은 8개.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "publicAvailabilityStatus": "existing-main-runtime-generatable",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       },
       {
         "sourceItemId": "5-2-u1-e1-mission-4",
@@ -2161,7 +2208,7 @@
         "publisherKeyVerified": false,
         "runtimeAvailableLocally": true,
         "releaseStatus": "local-review-passed-awaiting-release",
-        "publicDecision": "locked",
+        "publicDecision": "locked-in-readiness-ledger",
         "mathAuditPath": "hselementary/question-bank/source-5-2-range-missions-audit.js",
         "browserAuditPath": "hselementary/question-bank/source-5-2-range-missions-browser-audit.js",
         "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page5-missions1-6-20261024",
@@ -2169,9 +2216,14 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "정수 부분별 전수 열거: 3인 경우 15개, 5인 경우 20개, 7인 경우 13개. 15+20+13=48개. 세 자리마다 서로 다른 카드를 한 장씩 사용하고 3.2는 제외, 7.5는 포함.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "publicAvailabilityStatus": "existing-main-runtime-generatable",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       },
       {
         "sourceItemId": "5-2-u1-e1-mission-5",
@@ -2189,7 +2241,7 @@
         "publisherKeyVerified": false,
         "runtimeAvailableLocally": true,
         "releaseStatus": "local-review-passed-awaiting-release",
-        "publicDecision": "locked",
+        "publicDecision": "locked-in-readiness-ledger",
         "mathAuditPath": "hselementary/question-bank/source-5-2-range-missions-audit.js",
         "browserAuditPath": "hselementary/question-bank/source-5-2-range-missions-browser-audit.js",
         "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page5-missions1-6-20261024",
@@ -2197,9 +2249,14 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "40인승 8대의 최소 조건은 280<n≤320. 45인승 7대는 270<n≤315. 교집합은 280<n≤315, 곧 280 초과 316 미만.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "publicAvailabilityStatus": "existing-main-runtime-generatable",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       },
       {
         "sourceItemId": "5-2-u1-e1-mission-6",
@@ -2217,7 +2274,7 @@
         "publisherKeyVerified": false,
         "runtimeAvailableLocally": true,
         "releaseStatus": "local-review-passed-awaiting-release",
-        "publicDecision": "locked",
+        "publicDecision": "locked-in-readiness-ledger",
         "mathAuditPath": "hselementary/question-bank/source-5-2-range-missions-audit.js",
         "browserAuditPath": "hselementary/question-bank/source-5-2-range-missions-browser-audit.js",
         "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page5-missions1-6-20261024",
@@ -2225,9 +2282,14 @@
         "reviewedAt": "2026-10-24",
         "sourceHandwritingUsed": false,
         "independentCalculation": "상자 수 k는 1000÷33 이상이므로 k≥31, 1000÷23 이하이므로 k≤43. 가능한 수는 31~43, 곧 30 초과 44 미만.",
-        "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+        "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
         "qaDriveSize": 4555067,
-        "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c"
+        "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+        "publicAvailabilityStatus": "existing-main-runtime-generatable",
+        "runtimeGenerationEnabled": true,
+        "mainBranchRuntimeConfirmed": true,
+        "runtimeChangeInThisReview": false,
+        "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
       }
     ],
     "repairPullRequest": 390,
@@ -2253,15 +2315,16 @@
       ],
       "readinessTypeCount": 6
     },
-    "page5MissionStatus": "PDF page 3 / printed page 5 Missions 1–6 independently verified; six runtime types are available locally. All six remain public-locked pending publisher-key/Claude cross-review and release.",
+    "page5MissionStatus": "PDF p. 3 / printed p. 5 Missions 1–6 passed local source, math, browser, and A4 review. Their generators and reviewLocked:false curriculum entries already exist on GitHub main. This review reconciles only the readiness ledgers; it does not change or deploy runtime code. Readiness publicDecision remains locked pending publisher-key/Claude cross-review.",
     "page5MissionEvidence": {
-      "qaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k",
+      "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
       "qaDriveSize": 4555067,
-      "qaDriveSha256": "9757798f6ed4f9092a5854baca485288392acebf045fac5464d23d01e123cb7c",
+      "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
       "sourcePdfPage": 3,
       "sourcePrintedPage": 5,
       "sourcePdfSha256": "d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463",
-      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page5-missions1-6-20261024"
+      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page5-missions1-6-20261024",
+      "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
     }
   }
 }
