@@ -196,7 +196,7 @@ $("pickForm").addEventListener("submit", (event) => {
 });
 
 $("studentName").textContent = student;
-$("introLink").href = link("intro.html", {});
+$("introLink").href = link("home.html", {});
 $("bankLink").href = link("index.html", {});
 renderBooks();
 renderDoors();
