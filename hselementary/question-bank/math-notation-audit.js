@@ -14,6 +14,7 @@ require("./source-5-2-range-missions.js");
 require("./source-5-2-rounding-e2.js");
 require("./source-5-2-rounding-missions.js");
 require("./source-5-2-rounding-application-e3.js");
+require("./source-5-2-rounding-examples-e3.js");
 require("./source-5-2-packing-mission1.js");
 require("./source-5-2-perimeter-mission2.js");
 require("./source-5-2-cube-box-mission3.js");
@@ -27,6 +28,9 @@ require("./source-5-2-rounded-range-e44.js");
 require("./source-5-2-rounded-count-mission1.js");
 require("./source-5-2-rounded-floor-mission2.js");
 require("./source-5-2-notebook-range-mission3.js");
+require("./source-5-2-rounded-triplet-mission4.js");
+require("./source-5-2-quotient-sum-mission5.js");
+require("./source-5-2-rounding-place-count-mission6.js");
 require("./source-5-2-congruence-page31.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
@@ -132,7 +136,7 @@ require("./math-notation.js");
 
 const api = window.HSE_GENERATORS;
 const notation = window.HSE_MATH_NOTATION;
-const EXPECTED_PUBLIC_TYPE_COUNT = 1263;
+const EXPECTED_PUBLIC_TYPE_COUNT = 1268;
 const allTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
   ...type,
   semesterId: semester.id,

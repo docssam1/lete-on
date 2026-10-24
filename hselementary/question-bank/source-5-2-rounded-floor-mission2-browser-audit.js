@@ -24,6 +24,7 @@ if (evidenceDir) fs.mkdirSync(evidenceDir, { recursive: true });
     await page.goto(`${origin}/hselementary/question-bank/`, { waitUntil: "domcontentloaded", timeout: 10000 });
     await page.locator("#gradeFilter [data-grade='5']").click();
     await page.locator("#termFilter [data-term='2']").click();
+    await page.waitForFunction(() => [...document.querySelector("#unitFilter").options].some(option => option.value === "5-2-u1"));
     await page.locator("#unitFilter").selectOption("5-2-u1");
     const checkbox = page.locator(`#typeList input[data-type-id='${id}']`);
     assert.equal(await checkbox.isDisabled(), false, "Source-verified Mission 2 is available");
@@ -38,6 +39,7 @@ if (evidenceDir) fs.mkdirSync(evidenceDir, { recursive: true });
     await page.locator("#generateButton").click();
     await page.waitForFunction(() => !document.querySelector("#worksheet").hidden);
     const question = await page.evaluate(({ variant, difficulty }) => window.HSE_SOURCE_52_ROUNDED_FLOOR_MISSION2.getQuestion(variant, difficulty), { variant, difficulty });
+    if (difficulty === 1) assert.equal(question.answer, "50개", "hard difficulty must preserve the source's partial-overlap answer");
     const problem = page.locator("#problemView");
     const prompt = await problem.innerText();
     assert.equal(await problem.locator(`[data-source-item-id='${id}']`).count(), 1);
@@ -45,7 +47,7 @@ if (evidenceDir) fs.mkdirSync(evidenceDir, { recursive: true });
     assert.equal(await problem.locator(`[data-source-answer='${id}']`).count(), 0);
     assert.equal(await problem.locator("svg, img, canvas").count(), 0, "Text-only source must not gain an invented figure");
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `Problem overflow ${width}`);
-    if (evidenceDir && variant === 0 && difficulty === 0) await page.screenshot({ path: path.join(evidenceDir, `mission2-problem-${width}.png`), fullPage: true });
+    if (evidenceDir && variant === 0 && difficulty === 1) await page.screenshot({ path: path.join(evidenceDir, `mission2-problem-${width}.png`), fullPage: true });
     await page.locator("#solutionTab").click();
     const solution = await page.locator("#solutionView").innerText();
     assert(solution.includes(question.answer));
@@ -53,8 +55,8 @@ if (evidenceDir) fs.mkdirSync(evidenceDir, { recursive: true });
     assert(normalizedSolution.includes(String(question.questionModel.commonRange[0])));
     assert(normalizedSolution.includes(String(question.questionModel.commonRange[1])));
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `Solution overflow ${width}`);
-    if (evidenceDir && variant === 0 && difficulty === 0) await page.screenshot({ path: path.join(evidenceDir, `mission2-solution-${width}.png`), fullPage: true });
-    if (evidenceDir && variant === 0 && difficulty === 0 && width === 1440) {
+    if (evidenceDir && variant === 0 && difficulty === 1) await page.screenshot({ path: path.join(evidenceDir, `mission2-solution-${width}.png`), fullPage: true });
+    if (evidenceDir && variant === 0 && difficulty === 1 && width === 1440) {
       for (const mode of ["problem", "solution"]) {
         await page.locator(mode === "problem" ? "#problemTab" : "#solutionTab").click();
         await page.locator("#printMenuButton").click();

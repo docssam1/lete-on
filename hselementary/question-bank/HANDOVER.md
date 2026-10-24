@@ -1,6 +1,126 @@
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 6: Minimum/Maximum Interpretation Rechecked
+
+- Re-read the full printed page and Apple Vision OCR, not only the cropped Mission 6 text. Mission 1 uses hundreds and tens, Mission 2 uses hundreds/thousands, Mission 3 and Mission 5 use tens, and Mission 4 uses hundred-thousands. Mission 6 omits the rounding place; this page context supports comparing the standard rounding places used in the unit, but the intended set is still an interpretation rather than an answer-key confirmation.
+- Under that contextual reading, independent half-up enumeration gives 7,195–7,204 (10 naturals) at tens, 7,150–7,249 (100) at hundreds, and no candidates at thousands or higher because 7,200 is not a multiple of 1,000. The resulting local answer is minimum 10 and maximum 100. Pencil marks and publisher answers were not used.
+- The focused source audit checks the full-page place context, the minimum/maximum reading, and nine generated target/difficulty configurations. The generator remains available locally; the readiness ledger's `publicDecision` stays `locked` until external cross-review and release.
+- Re-ran Missions 4–5 at 1440px and 375px across all difficulty levels: 24 states, 48 overflow checks, no answer leakage, no page errors, and 25 blocked external requests. The complete Missions 4–6 rerun passes 36 browser states and 72 overflow checks. All six problem/solution A4 PDFs are one page; rendered reviews are included in the private evidence bundle.
+- Current whole-bank counts remain 2,056 total / 1,268 generatable / 788 pending. The broad 5-2-to-6 source-inventory audit still reports 135 Grade 6 findings and zero Grade 5-2 findings; it is not an overall pass.
+- Private Drive addendum: [review note](https://drive.google.com/file/d/1trjHW_d-cGRle17-kwd18W62j1V7AKZh/view) and [QA bundle](https://drive.google.com/file/d/1t4HKd6jdkuIv19lmqX2uWAw-Tq5m0LTp/view), 1,584,719 bytes, SHA-256 `8c0b15cbbdeb2b872eb487bfcf3f47c6d6450e215899648ee6831e7f522678d0`. Metadata confirms owner-only access; readback checksum matches. The source scan and OCR are not in the bundle.
+- Claude API cross-review remains pending because no API key was found in the process environment or checked Keychain service names. PR #418 remains a draft; no merge or deployment occurred.
+---
+
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 6: Example 2-4 Rechecked
+
+- Rechecked canonical source PDF page 4 / printed page 6 (PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`); handwriting was excluded. Exhaustive enumeration of all ordered digit triples in 0–9 found two combinations satisfying the printed rounding, sum, and descending-order conditions; their middle digits differ. The prompt does not exclude 0, so this is not a unique-answer item.
+- Corrected the readiness JSON's `independentCalculation`, which had described only one solution despite its other fields recording two. Keep the item review-locked; no runtime or release state changed.
+- Private Drive audit note: [grade52-page6-example24-exhaustive-audit-20261024.md](https://drive.google.com/file/d/19SlCxVRdlYGo4QJWCNPWtdUgOzp-m5Ly/view).
+
+---
+
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 8: Answer-Key Candidate Checked
+
+- Located a 5-2 answer-key candidate in Drive and compared its printed page 8 with the reviewed source page. The inspected file is a scan of the exercise page with handwritten annotations, not a clean publisher-authored solution; handwriting was excluded from evidence.
+- The candidate does not verify an official publisher answer for Examples 3-3 or 3-4. Keep both locked: one has incompatible bundle conditions, and the other does not specify how to bill a partial 100m distance. Source readiness, runtime, and publication status are unchanged.
+- Private Drive audit note: [grade52-page8-answer-candidate-check-20261024.md](https://drive.google.com/file/d/1RMIUpKMsELIGObp5RZYrDqngNeeG31RW/view).
+
+---
+
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 8: Examples 3-1 and 3-2 Locally Verified
+
+- Re-read printed page 8 (source PDF page 6) from the preserved page render and Apple Vision OCR; handwriting was ignored. Source image SHA-256 `613b435405aa50f0e792e592309619eb00f7a886142d04666e270cf9a1ecd8a2`; OCR SHA-256 `5e6b924dcf12e6094cdba311ebaa0043f0a0c4e6a1dbea0f5ed613ec237d966e`.
+- Connected only Example 3-1 and Example 3-2 as local candidates, each with three fixed synthetic variants. Example 3-1 compares every listed rounding place/method against the requested result; Example 3-2 converts lengths to centimeters, rounds each bundle count up, and independently recomputes both prices and their sum. Original source values are excluded from generated items.
+- The focused math audit passed 18 settings. The local browser audit passed 24 desktop/mobile states, 48 overflow checks, no answer leakage, and self-hosted FC Serif 400. Four problem/solution PDFs were each verified as one A4 portrait page and visually inspected with PC/mobile captures.
+- Do not connect Example 3-3: its printed remainder cannot be divided into the stated bundle size. Keep Example 3-4 locked until the publisher clarifies whether a partial 100m interval is rounded up for billing. The official answer key and Claude API cross-review remain pending; no public release or live-site claim is made.
+- At the time of this page-8 update, bank counts were 2,056 total, 1,268 generatable, 788 pending; the later Mission 6 source ambiguity correction above supersedes those runtime counts. The classification audit confirms all 124 pre-existing 5-2 records are unchanged.
+- Private Drive QA bundle: [grade52-unit1-page8-e3-examples-local-qa-20261024.zip](https://drive.google.com/file/d/1-vMarmi3scy6EWGl1uc62vqoXPXfaf4U/view), 1,208,685 bytes, SHA-256 `c513efcd643968ee493152949318277f0414f0149a92fe3a4a14d5a789c84682`. Drive readback size and SHA-256 match; its folder and file permissions are owner-only. It excludes the workbook PDF, answer key, handwriting, and student data.
+- The 5-2-to-6 ledger audit has no 5-2 findings; it still reports 135 pre-existing Grade 6 inventory issues. The four changed global count gates, source classification, focused page-8 math, and page-10 regressions pass. The verified runtime and audit batch is recorded on draft PR #418. No merge or deployment occurred.
+
+---
+
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 10: Source and Local QA Reconciled
+
+- Reconciled all five printed-page-10 source census rows with the existing readiness ledger. The census now records 21 reviewed items, 22 local candidates, and 243 locked items; source numbers and answers were not added.
+- Exploration 4 and Example 4-1 source/math audits pass 18 synthetic configurations. Their local browser audit passes 24 desktop/mobile states, 48 overflow checks, answer separation, and no page errors. Four problem/solution PDFs each fit one A4 page and were visually inspected with self-hosted FC Serif print typography.
+- Both public GitHub Pages hostnames currently return HTTP 429, so the two previously throttled live-screen statuses remain throttled; local rendering is not represented as live verification. Examples 4-2–4-4 remain recorded as live-verified under PR #396 / Pages run #39973818234.
+- Private Drive evidence: [grade52-p10-e4-exploration-example41-local-qa-20261024.zip](https://drive.google.com/file/d/1pWkfDqeiCywQJFTI-4ea5AEBDaaYBxZP/view?usp=drivesdk), 965,135 bytes, SHA-256 `fad0abaebc47f02c3b909ac5a4d17ea91f5dfe7b2ef138809ec0727abeefc4a2`. Metadata readback confirms the existing private review folder and owner-only permission.
+- Updated the page-10 release crosswalk and corrected stale audit expectations. At that point the curriculum baseline was 2,056 types / 1,268 generatable / 788 pending; the later Mission 6 source ambiguity correction above records the current counts. Student data was not accessed or changed. No merge or deployment was performed.
+
+---
+
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 9 Missions 1–6: Live Ledger Reconciled
+
+- Reconciled the p9/PDF p7 six-Mission source inventory with the detailed readiness ledger and deployed runtime crosswalk. All six source rows now contain source structures and reviewed status; the source census is 16 reviewed, 22 local candidates, and 248 still locked. The readiness ledger is 12 published, 33 local candidates, and 5 unresolved/locked items. Mission 1 and Mission 5 had stale local statuses despite their crosswalk and live release evidence; both now say deployed and live-verified.
+- Existing merged releases are PRs #382 (Mission 1), #384–385 (Missions 2–3), #387 (Mission 4), #389 plus curriculum repair PR #390 (Mission 5), and #393 (Mission 6). Independent answer contracts and calculations remain recorded in the private source and QA materials; publisher answer keys remain unverified. The public GitHub ledger contains no newly copied source numbers or answers.
+- Current public `index.html`, `curriculum.js`, `app.js`, and the Mission 1 and Mission 5 generators returned HTTP 200 and matched `origin/main` byte-for-byte (SHA-256 values are recorded in the readiness crosswalk). A fresh live rerun passed Mission 1 at 6 PC/mobile states (12 overflow checks) and Mission 5 at 12 states (24 checks); external requests were blocked, no page errors or answer leakage occurred, and the Mission 5 problem/solution each fit one visually inspected A4 page. Combined evidence is in the private Drive QA bundle [grade52-p9-mission1-5-live-qa-20261024.zip](https://drive.google.com/file/d/1l1RvUZuSNeRXkOCu-feHnJ_eRN2kR4iq/view?usp=drivesdk), 857,437 bytes, SHA-256 `6636cd38e1bb6ce2f1abb53eed7b22a5193371ca3210ae8115b4fc5f63f68251`. No runtime code or student data changed in this ledger correction.
+- The Grade 5-2 source classification, all six focused math audits, the page-11 Mission 1 regression, and the public source-release gate pass. The broad cross-grade ledger audit has no 5-2 findings; it still reports existing Grade 6 inventory count, ID-format, and review-reason gaps, which this 5-2 update does not alter.
+
+---
+
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 4: Exploration 1 and Examples 1–4 Reconciled
+
+- Re-read the source PDF image (PDF page 2, printed page 4), ignoring handwritten marks. Exploration 1 asks for the continuous interval `26 < □ ≤ 33`; its number line uses an open point at 26 and a filled point at 33. Example 1-1 is 433; Example 1-2 is 415 through 416 (415 이상 417 미만); Example 1-3 is 14 through 21; Example 1-4 is 9 through 11 boxes. No source diagram appears in Examples 1-1–1-4. The existing vector line is retained for the exploration.
+- The existing five generator families pass 45 synthetic configurations and 28 negative controls. Browser checks cover five generated problems and solutions at desktop and 375px mobile, without horizontal overflow or page errors. Ten PDFs fit one A4 portrait page each; all five pairs were visually inspected.
+- Corrected the source description of Example 1-4 from “사탕 365개” to the printed “귤 365개”. The source inventory and readiness ledger now agree with the existing local runtime mapping. The six readiness types (including the two-part exploration) are locally verified but remain publicly locked pending Claude API review and release; publisher answer-key verification remains false.
+- Private QA evidence: [grade52-page4-e1-20261024.zip](https://drive.google.com/file/d/1U094VJCvwMRmZl1Qo0yGsxCMOPM3tyTZ/view) (1,830,985 bytes; SHA-256 `1063d4924fdaf60720dd5b7c4a2054d8b83f06ab423a6b1982122fffc6f700f5`).
+
+---
+
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Missions 4–6: Integrated Local QA Reconfirmed
+
+- Missions 4–6 are integrated in draft PR [#418](https://github.com/docssam1/lete-on/pull/418), branch `codex/grade52-page11-missions4-5-review`, stacked on PR #417's `codex/grade52-page11-missions2-3-rebased` branch. Mission 1 is already deployed; PR #417 holds Missions 2–3; PR #418 holds Missions 4–6. Neither draft PR is merged or deployed. M6 implementation commit: `5bb57254c086b04555b0c413283c87711ba1a3f1`.
+- Mission 4 preserves the source's unrestricted “어떤 수” domain and exact endpoint inclusion. Mission 5 uses independently checked quotient ranges and a sum. The same-page rounding examples support reading Mission 6's minimum/maximum wording as a comparison across standard rounding places: tens gives 10 candidates, hundreds gives 100, and thousands or higher cannot give 7,200. Because the source omits the place, this remains a contextual interpretation; the local answer under that reading is 10 and 100. The readiness ledger remains locked pending cross-review. Ones-place identity, handwriting, and publisher answer keys are excluded.
+- The focused Mission 6 audit independently checks the source target and all nine generated target/difficulty combinations. The integrated Missions 4–6 browser audit passes 36 states (1440px desktop pools and 375px mobile, all three difficulty levels), 72 overflow checks, answer separation, 36 blocked external requests, and no page errors. Six problem/solution PDFs each fit one A4 portrait page; desktop, mobile, and A4 output were visually reviewed.
+- Whole-bank audits pass at 2,056 total / 1,268 generatable / 788 pending; all 124 pre-existing Grade 5-2 records remain unchanged. The broad 5-2–6 source-ledger audit reports no 5-2 findings; its Grade 6 inventory findings are pre-existing.
+- The supplemental private Drive QA bundle for Missions 4–6 is uploaded at [grade52-page11-missions4-6-20261024.zip](https://drive.google.com/file/d/1Y6el8nYcdVtEIE4g6rbp3LfplX4Eyr10/view). Drive metadata confirms 1,439,390 bytes; SHA-256 is `e4d20336336d1b5d41abb6ec500bad039673fa29aa67f29c176142a2e37c6c91`. It contains generated math/browser/A4 evidence and excludes the original source PDF, publisher answer key, handwriting, and student data. The earlier Missions 1–5 evidence bundle is preserved.
+- Claude API cross-review remains pending because `ANTHROPIC_API_KEY` is absent in the current Mac environment. Keep both PRs in draft; no merge, deployment, or student-data access occurred.
+
+---
+
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 4: Endpoint Boundary Revalidation
+
+- Re-read the printed source crop and Apple Vision OCR against the canonical PDF hash. The three hundred-thousands-place conditions and unrestricted printed “어떤 수” wording agree; handwriting and publisher answer material were excluded. Independent direct evaluation confirms both endpoints of the source intersection are excluded.
+- Re-derived the nine synthetic intervals independently from half-up rounding, floor, and ceiling. Boundary probes immediately before, exactly at, and immediately after both endpoints passed for the source and all nine generated intervals (60 checks); student-facing “이상/초과” and “이하/미만” wording matches the endpoint flags.
+- Reran the integrated Missions 4–6 browser audit on the current PR tree: 36 states at 1440px / 375px, 72 overflow checks, answer separation, 36 blocked external requests, and zero page errors. Mission 4 problem and solution each fit one A4 page; desktop, mobile, and A4 output were visually inspected without clipping or overlap.
+- Private owner-only Drive record: [Mission 4 endpoint review](https://drive.google.com/file/d/1OWfP1hXvv5joXdoe_YQo2Rn1VKQQfXS7/view) and [QA bundle](https://drive.google.com/file/d/1NMUP8OTGOKFck6uo4lFw2y6MQeuglTWN/view), 397,252 bytes; SHA-256 `2bcf4b72a03c9496001bd9e584eb1b65b23a5f9571ca8bed8ea33f5d75f21435`. The bundle excludes the original source, crop, OCR, handwriting, publisher key, and student data.
+- This is review-only; publisher-key verification remains false and the public decision remains locked. PR #418 stays draft; no merge or deployment occurred.
+
+---
+
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 5: Duplicate Pool Conditions Corrected
+
+- Re-read the printed source crop and Apple Vision OCR; the natural-number wording, two quotient-rounding conditions, and requested sum agree. Independent exhaustive enumeration confirms the original source candidate range and arithmetic-series sum; handwriting and publisher-key material were excluded.
+- A focused uniqueness assertion found the previous nine pool/difficulty slots contained only seven distinct target pairs. Changed the three synthetic base pools while retaining ±10 offsets; all nine target pairs and candidate ranges are now distinct, none reuse the source target pair, and exhaustive enumeration verifies every candidate set and sum.
+- The integrated browser rerun passes 36 states at 1440px / 375px across Missions 4–6 and all three difficulty levels, 72 overflow checks, answer separation, 36 blocked external requests, and zero page errors. Mission 5 problem and solution each fit one A4 portrait page; desktop/mobile and A4 output were visually reviewed without clipping or overlap.
+- The Mission 5 math/classification checks, source-release gate, elementary-language, math-notation, numeric-display, and runtime-availability audits pass. The 5-2 portion of the combined source-inventory audit has no findings and all 124 pre-existing 5-2 records remain unchanged; its 135 reported Grade 6 findings are pre-existing and outside this review.
+- Private owner-only Drive record: [Mission 5 pool review](https://drive.google.com/file/d/1iuAHDwK1XmXQJ4i3Pu8CHr5ssyWxobFH/view) and [QA bundle](https://drive.google.com/file/d/1j7ABOFgpgfAUy8R4aWw8oTmvKp_MqK5o/view), 411,977 bytes; SHA-256 `712e15d867f5fd1e60f3b5d6bb4ceda90755fe463a4a079748b6df91ec697120`. The bundle excludes the original source, crop, OCR, handwriting, publisher key, and student data.
+- This is review-only; publisher-key verification remains false and the public decision remains locked. PR #418 stays draft; no merge or deployment occurred.
+
+---
+
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 2: Synthetic Structure Revalidation
+
+- Rechecked printed page 11 Mission 2 (source PDF content page 9; source SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`). The source target pair 4,000 / 3,000 gives 3,950–3,999 inclusive, or 50 natural numbers. Handwriting was excluded.
+- A quality pass found that the previous nine generated settings all answered 100, making the thousand-floor condition redundant. Updated the synthetic pools to (7,900, 7,000), (5,900, 5,000), and (8,900, 8,000), retaining offsets −100 / 0 / +100. All three hard settings now require the partial intersections 7,950–7,999, 5,950–5,999, and 8,950–8,999 (50 each); the other six settings have 100 each. Source targets 4,000 and 3,000 are not reused. A generated answer can equal the source answer by design because the item structure is preserved.
+- The focused math audit exhaustively enumerates the source range and all nine generated ranges. The browser audit passes 12 desktop/mobile states at 1440px / 375px, 24 problem/solution overflow checks, no answer leakage, 12 blocked external requests, and zero page errors. The hard partial-overlap case was rendered and visually checked on desktop, mobile, and both A4 print pages; each PDF is one A4 portrait page with no clipping or overlap.
+- At the time of this Mission 2 review, six page-11 Missions were marked available. The later source ambiguity review supersedes Mission 6's unlock; the current classification has five page-11 Missions available, 124 legacy records unchanged, and seven rejected negative controls. Current source-release counts are 2,056 total / 1,267 available / 380 source-unlinked locked types.
+- Private owner-only Drive note: [Mission 2 structure revalidation](https://drive.google.com/file/d/1d3uTfSRasVXMzvS9K6rRElCTDyXiFb2Y/view). Evidence bundle: [grade52-page11-mission2-structure-revalidation-20261024.zip](https://drive.google.com/file/d/1Khfu__yhNJbdQRaT8k7XxPQuL2ZnWqoG/view), 521,162 bytes; SHA-256 `28c334ad9f17ce0f52c9ce10ccee18109fd9f42ebeed1c4c68dcc4e01e1b2800`. Drive readback confirms both files are in the existing owner-only folder and are not shared. The bundle excludes the scanned source page, handwriting, publisher answer key, and student data.
+- The implementation remains locally reviewed and awaiting release; `publicDecision=locked` and publisher-key verification remains false. Keep PR #418 in draft on top of PR #417. Claude API cross-review remains pending. No merge or deployment occurred.
+
+---
+
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 3: Generator Structure Revalidation
+
+- Rechecked printed page 11 Mission 3 (source PDF content page 9; source SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`). The printed conditions give 41–50 students, with 3 notebooks per student from 160; the possible remainders are 37, 34, 31, 28, 25, 22, 19, 16, 13, 10, so the inclusive answer range is 10–37. Pencil marks were excluded. No generator correction was needed.
+- Exhaustive math revalidation passes all nine synthetic settings. Each has ten possible remainders spaced by three; neither source target (50 students) nor source total (160 notebooks) is reused. All nine answer ranges are distinct.
+- Browser review passes 12 states at 1440px / 375px, all three pools at desktop, all difficulty levels, 24 overflow checks, answer separation, 12 blocked external requests, and zero page errors. Problem and solution each render as one A4 portrait page; desktop/mobile and A4 rasters were visually inspected without clipping or overlap.
+- Private owner-only Drive note: [Mission 3 revalidation](https://drive.google.com/file/d/1DqPsSI6tODeAMCKZPCt4Y5AjdLOKNZoq/view). Evidence bundle: [grade52-page11-mission3-revalidation-20261024.zip](https://drive.google.com/file/d/17RYZ13WYKv2RT3fxN9hc7HTj054efaOq/view), 556,655 bytes; SHA-256 `37aa6b601a3687bffe1b6a2dfd1ed4748a58865f79a5053ac23858010305e592`. It excludes the source scan, handwriting, publisher answer key, and student data.
+- Mission 3 remains locally reviewed and awaiting release; public decision remains locked and publisher-key verification remains false. No student data, merge, or deployment was involved.
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Missions 2–3: Local Integration QA
 
-- This candidate is committed on branch `codex/grade52-page11-missions2-3-rebased` and open as draft PR #417 (`685d73aec93885edd8a589900dd39fd3750b1725`) against current main `7bafdd5b1a58435e021a4fdf069c0468e71d7d2d`. The existing main skill `.claude/skills/gfield-textbook-design/SKILL.md` is already present; no skill-file change was required.
+- This candidate is committed on branch `codex/grade52-page11-missions2-3-rebased` and open as draft PR #417 (`685d73aec93885edd8a589900dd39fd3750b1725`) against main base `7bafdd5b1a58435e021a4fdf069c0468e71d7d2d`. The existing main skill `.claude/skills/gfield-textbook-design/SKILL.md` is already present; no skill-file change was required. Main has since advanced to `c1aadc853891ea6dd4a46feec3ee3b3ec1e729a3` with two commits touching only Number Magic and Supabase delivery files; the 19 changed paths do not overlap PR #417, which GitHub currently reports mergeable/clean.
 - Missions 2 and 3 are linked to source rows with independent answers 50 and 10–37 inclusive. Mission 3's possible remainders are 37, 34, 31, 28, 25, 22, 19, 16, 13, 10, so the 3-book step is explained explicitly. Publisher answer-key verification remains false.
 - Both focused math audits pass all nine synthetic configurations. Browser audits pass 12 states each (1440px/375px, three difficulty levels, all pools on desktop), 24 overflow checks each, answer separation, blocked external requests, and no page errors. Four A4 problem/solution PDFs are each one page (595×842 pt); Mission 3 solution screenshot was visually inspected. Runtime, release-gate, elementary-language, math-notation, numeric-display, and Grade 5-2 classification audits pass at 2,051 types / 1,263 generatable / 788 pending; the 124 legacy Grade 5-2 records remain unchanged.
 - The `source-inventory-grades-5-2-to-6-audit.js` now recognizes reviewed 5-2 Missions 1–3; the 5-2 portion passes with no findings. The combined legacy audit still reports 516 pre-existing Grade 6 status/count findings, outside this PR.
@@ -667,3 +787,17 @@ Plane-transformation group 1 publishes 10 of 11 source items after 15,000 indepe
 - Browser review passed 54 configurations across 1440px and 375px, three value pools and three difficulty settings. It produced 12 screen captures, blocked 54 external requests, and reported zero page errors. Six A4 PDFs (problem and solution for each item) each contain one page; all six were rasterized and visually inspected. Answer views stay separate from problem views. M1 was temporarily unlocked only inside the isolated test browser to inspect rendering; the live curriculum gate remains locked.
 - `source-5-2-range-classification-audit.js` now filters newly added source IDs across the semester before comparing against the Git baseline; it passes and confirms all 124 legacy records and their groups are unchanged. Whole-bank checks pass at 2,045 types / 1,256 available / 789 pending. `source-item-taxonomy-audit.js` reports two 4-2 quadrilateral failures; I ran it from a clean archive of the branch baseline and reproduced the same two failures, confirming they predate this batch.
 - Updated the existing source-readiness record: Mission 2–3 are public candidates; Mission 1 stays locked; source-level counts remain 53 reviewed / 49 calculations checked / 8 non-unique / 18 source visuals needing review. README and this handover now record the runtime review. Student data was not accessed or changed. The branch is still uncommitted; PR #401 remains the review destination. No deployment has been performed.
+
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 8: Examples 3-3 and 3-4 Lock Audit
+
+- Re-read canonical source page 8 (PDF content page 6; source SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`); excluded handwriting from answer evidence.
+- Example 3-3 remains inconsistent: 4,296 apples leave 16 after packing groups of 20, and selling remainder in groups of 5 leaves one unsold apple.
+- Example 3-4 does not specify a charge for the remaining 75m after 74 complete 100m intervals: complete intervals yield 18,100 won; rounding the partial interval up yields 18,300 won. Readiness ledger now records both interpretations, `candidateAnswerCount=2`, `singleAnswer=false`; public lock remains.
+- Private owner-only Drive audit: [grade52-page8-e3-locked-items-calculation-audit-20261024.md](https://drive.google.com/file/d/1fprfkqNJUgvAtnxIRsdRK2W1k7MOagP1/view).
+- No student data or publication state changed. PR #418 remains draft; no merge or deployment.
+
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 10: Live Recheck
+
+- Cleared the prior HTTP 429 live-check hold for Exploration 4 and Example 4-1. Production page returned HTTP 200; `index.html`, `source-5-2-rounded-range-e4.js`, and `source-5-2-rounded-range-e44.css` hashes match `origin/main`.
+- Generated and reviewed three live synthetic questions and separated solutions for each source-linked type. Answers and interval explanations matched independent calculations; browser console had no errors. Existing local 24-state/48-overflow and four one-page A4 checks remain the mobile/print evidence; this live rerun only confirms desktop production behavior.
+- Updated both readiness records to `deployed-and-live-verified` without changing code, public decision, or student data. Private owner-only Drive note: [grade52-page10-live-recheck-20261024.md](https://drive.google.com/file/d/1gS3sfpbvcHDjwdLhYPf4H3CvLUvnOexq/view).
