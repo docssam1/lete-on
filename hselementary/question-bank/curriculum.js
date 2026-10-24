@@ -1717,6 +1717,28 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
           name: "합동의 활용 ②",
           types: [
             {
+              id: "5-2-u3-e4-example-2",
+              name: "정삼각형의 회전으로 각도 구하기",
+              sourceItemId: "5-2-u3-e4-example-2",
+              sourceItemLabel: "예제 4-2",
+              sourceSection: "example",
+              sourceTier: "advanced",
+              sourcePdfPage: 26,
+              sourcePrintedPage: 30,
+              sourceEvidence: "source-drive:1xxuHRMlch7RGsqBdnlFdOGdvxw0aUPfQ; source-sha256:6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88; clean-page-crop-sha256:527fa6ff8b5e058c58dd948c9a6493152f152e231f44084375018b1a08c59be7; canonical PDF p.26; clean alternate p.25; printed p.30; Apple Vision OCR + visual comparison; sourceItemId:5-2-u3-e4-example-2",
+              sourceVerified: true,
+              publisherKeyVerified: false,
+              answerVerification: "independent-geometry-proof-user-authorized",
+              reviewLocked: false,
+              reviewReason: "원문 PDF p.26/인쇄 p.30의 두 정삼각형·35°·20°·목표각을 대조하고 독립 풀이 125°를 확인했습니다. 9개 변형의 도형 좌표와 각을 검산하고 PC 1280px·모바일 375px 화면 및 문제·풀이 A4 단일 페이지 출력을 시각 확인했습니다. 출판사 답안표 대조는 하지 않았으며 공개 후보로 연결합니다.",
+              generatorKey: "source52EquilateralAngleChaseExample2",
+              generationMode: "fixed-verified-pool",
+              verifiedVariantTarget: 3,
+              verifiedVariantCount: 3,
+              answerVisualRequired: true,
+              answerVisualStatus: "verified-reconstruction"
+            },
+            {
               id: "5-2-u3-e4-mission-1",
               name: "정사각형 속 각도 구하기",
               sourceItemId: "5-2-u3-e4-mission-1",
