@@ -905,6 +905,26 @@
   .nm-n01-remember p { margin:1mm 0; }
   .nm-print-fs-l .nm-n01-body,.nm-print-fs-xl .nm-n01-body { gap:2mm; }
   .nm-print-fs-xl .nm-n01-cell img { width:16mm; height:16mm; }
+  /* N-04: explain every tally instruction with the marks themselves. */
+  .nm-n04-note { font-family:"NM Series Sans",Pretendard,sans-serif; }
+  .nm-n04-body { flex:1; min-height:0; display:flex; flex-direction:column; justify-content:space-evenly; gap:3mm; }
+  .nm-n04-section { border-top:1px solid #c9bda2; padding-top:3mm; }
+  .nm-n04-section h3 { font:700 calc(17px * var(--ws-fs,1))/1.35 "NM Series Sans",Pretendard,sans-serif; margin:0 0 2mm; color:#2a241c; }
+  .nm-n04-section p,.nm-n04-remember { font-size:calc(13px * var(--ws-fs,1)); line-height:1.5; margin:1mm 0; word-break:keep-all; }
+  .nm-n04-row { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4mm; margin-top:3mm; }
+  .nm-n04-cell { display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:0; gap:2mm; }
+  .nm-n04-digit { font-size:calc(24px * var(--ws-fs,1)); font-weight:600; line-height:1.2; color:#2f6b4a; }
+  .nm-n04-note .nm-nl-tally { height:13mm; width:auto; max-width:100%; }
+  .nm-n04-note .nm-nl-tally line { stroke:#2f6b4a; }
+  .nm-n04-note .nm-nl-tally line:nth-of-type(5n) { stroke:#b4512e; }
+  .nm-n04-making { display:flex; justify-content:center; align-items:center; gap:5mm; margin:3mm 0; }
+  .nm-n04-making b { font-size:calc(22px * var(--ws-fs,1)); color:#2f6b4a; font-weight:600; }
+  .nm-n04-slash { width:10mm; height:13mm; color:#b4512e; }
+  .nm-n04-equation { font-size:calc(17px * var(--ws-fs,1)); font-weight:600; line-height:1.4; color:#2f6b4a; white-space:nowrap; }
+  .nm-n04-remember { padding:2mm 4mm; background:#e9f0e7; border-left:1mm solid #2f6b4a; }
+  .nm-print-fs-xl .nm-n04-body { gap:2mm; }
+  .nm-print-fs-xl .nm-n04-section { padding-top:2mm; }
+  .nm-print-fs-xl .nm-n04-note .nm-nl-tally { height:11mm; }
   /* NL29 first encounter: a full picture key before symbol-matching practice. */
   .nm-ancient-intro { font-family:"NM Series Sans",Pretendard,sans-serif; }
   .nm-ancient-lesson { flex:1; min-height:0; display:flex; flex-direction:column; justify-content:space-evenly; gap:3mm; }
@@ -5743,6 +5763,17 @@ function renderMagicNotePage(item, opts){
         <section class="nm-n01-section"><h3>${esc(lk('② 세어 보고 따라 써요','2. Count and trace','② 数一数，描一描'))}</h3><p>${esc(lk('그림 아래의 수 이름을 따라 써 보세요.','Count, then trace the number words.','数一数，再描一描下面的数名。'))}</p>${row(4,true)}<p>${esc(lk('넷! 병아리는 모두 4마리예요.','Four! There are 4 chicks in all.','四！一共有4只小鸡。'))}</p></section>
         <aside class="nm-n01-remember"><b>${esc(lk('기억해요','Remember','记住'))}</b><p>${esc(lk('한 마리씩 한 번만 짚어요.','Touch each chick once.','每只只点一次。'))}</p><p>${esc(lk('마지막에 말한 수가 모두 몇 마리인지 알려 줘요.','The last number tells how many chicks there are in all.','最后说的数，告诉我们一共有几只小鸡。'))}</p></aside>
       </div>${foot}</div>`;
+    return {html,problems:[],thName:lk('마법 노트 · ','Magic Note · ','魔法笔记 · ')+title,code,thread:null,level:null,magic:true,akHtml:'',guidedProblems:[],pageSizes:[]};
+  }
+  if(item.magicUnit === 'N-04'){
+    const row=(ns,eq)=>`<div class="nm-n04-row">${ns.map(n=>`<div class="nm-n04-cell"><span class="nm-n04-digit">${n}</span>${nlTallySvg(n)}${eq?`<span class="nm-n04-equation">5 + ${n-5} = ${n}</span>`:''}</div>`).join('')}</div>`;
+    const slash=`<svg class="nm-n04-slash" viewBox="0 0 14 18" role="img" aria-label="${esc(lk('다섯 번째 막대','The fifth stroke','第五笔'))}"><line x1="1" y1="16" x2="13" y2="2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+    const html=`<div id="nm-tally-note" class="nm-w2-page nm-w2-page-magic nm-n04-note">${wm}${w2HeadHtml(headItem,code,'1/1',null,{roundNo:opts.roundNo,name:opts.name,first:true})}${boardHtml}<div class="nm-n04-body">
+      <section class="nm-n04-section"><h3>${esc(lk('① 하나씩 늘려 그려요','1. Draw one more each time','① 每次数多一笔'))}</h3><p>${esc(lk('1은 막대 한 개, 2는 두 개예요. 4까지는 하나씩 더 그려요.','One stroke means 1. Draw one more for each number, up to 4.','一笔表示1。到4为止，每次多画一笔。'))}</p>${row([1,2,3,4],false)}</section>
+      <section class="nm-n04-section"><h3>${esc(lk('② 다섯 번째 막대로 묶어요','2. The fifth stroke makes a group','② 第五笔把它们捆起来'))}</h3><p>${esc(lk('네 막대 위에 막대를 비스듬히 하나 더 그어요. 모두 다섯 개예요.','Draw one slanting stroke across the four. Now there are five strokes.','在四根竖线上斜着加一笔。一共有五笔。'))}</p><div class="nm-n04-making">${nlTallySvg(4)}<b>+</b>${slash}<b>→</b>${nlTallySvg(5)}<span class="nm-n04-equation">4 + 1 = 5</span></div><p>${esc(lk('비스듬한 막대도 하나로 세어요.','The slanting stroke counts as one, too.','斜着的一笔也算一笔。'))}</p></section>
+      <section class="nm-n04-section"><h3>${esc(lk('③ 다섯 개 옆에 더 그려요','3. Add strokes beside the group of five','③ 在五笔一组的旁边接着画'))}</h3><p>${esc(lk('다섯 개를 묶은 그림 옆에, 막대를 하나씩 더 그려요.','Keep the group of five, then draw extra strokes beside it.','保留五笔的一组，在旁边一笔一笔地加。'))}</p>${row([6,7,8,9],true)}</section>
+      <aside class="nm-n04-remember">${esc(lk('막대를 하나씩 짚으며 세어 보세요. 숫자와 막대 그림은 같은 수를 나타내요.','Point to each stroke and count. The numeral and the marks show the same number.','一笔一笔点着数。数字和记号表示相同的数量。'))}</aside>
+    </div>${foot}</div>`;
     return {html,problems:[],thName:lk('마법 노트 · ','Magic Note · ','魔法笔记 · ')+title,code,thread:null,level:null,magic:true,akHtml:'',guidedProblems:[],pageSizes:[]};
   }
   /* 단계가 셋이면 두 장(①②는 판과 함께, ③은 규칙·체크와 함께) — 한 장에 다 넣으면 ②가 잘렸다(측정). */
