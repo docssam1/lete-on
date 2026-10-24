@@ -3,10 +3,11 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
-const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8918";
+const origin = new URL(process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8918").origin;
 const ids = ["5-2-u1-e4-exploration-rounded-range", "5-2-u1-e4-example-1"];
 const widths = [1440, 375];
 const evidenceDir = process.env.MAC_CHECK_OUTPUT || "";
+const requireSelfHostedPrintFont = process.env.HSE_REQUIRE_PRINT_FONT !== "0";
 if (evidenceDir) fs.mkdirSync(evidenceDir, { recursive: true });
 const errors = [];
 let blockedRequests = 0;
@@ -14,9 +15,12 @@ let blockedRequests = 0;
 async function prepare(page, width, id) {
   await page.setViewportSize({ width, height: 1000 });
   await page.addInitScript(() => { localStorage.clear(); sessionStorage.clear(); window.print = () => {}; });
-  await page.goto(`${origin}/hselementary/question-bank/`);
+  const response = await page.goto(`${origin}/hselementary/question-bank/`);
+  assert.equal(response?.status(), 200, `Question bank HTTP status at ${origin}`);
   await page.locator("#gradeFilter [data-grade='5']").click();
+  await page.waitForFunction(() => [...document.querySelectorAll("#termFilter [data-term]")].some(node => node.dataset.term === "2"));
   await page.locator("#termFilter [data-term='2']").click();
+  await page.waitForFunction(() => [...document.querySelector("#unitFilter").options].some(option => option.value === "5-2-u1"));
   await page.locator("#unitFilter").selectOption("5-2-u1");
   const checkbox = page.locator(`#typeList input[data-type-id='${id}']`);
   assert.equal(await checkbox.isDisabled(), false, `${id} enabled at ${width}px`);
@@ -28,18 +32,24 @@ async function prepare(page, width, id) {
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
   let states = 0;
   const observations = [];
-  for (const id of ids) for (const width of widths) for (const difficulty of [-1, 0, 1]) for (const variant of (width === 1440 ? [0, 1, 2] : [0])) {
-    const context = await browser.newContext({ viewport: { width, height: 1000 }, serviceWorkers: "block" });
+  for (const id of ids) {
+    const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, serviceWorkers: "block" });
     await context.route("**/*", route => new URL(route.request().url()).origin === origin
       ? route.continue() : (blockedRequests++, route.fulfill({ status: 200, contentType: "text/plain", body: "" })));
     const page = await context.newPage();
     page.on("pageerror", error => errors.push(error.message));
-    await prepare(page, width, id);
-    await page.evaluate(({ id, variant }) => {
+    await prepare(page, 1440, id);
+    await page.evaluate(id => {
       const original = window.HSE_GENERATORS.generate.bind(window.HSE_GENERATORS);
+      window.__grade52AuditGenerate = original;
+      window.__grade52AuditVariant = 0;
       window.HSE_GENERATORS.generate = (type, rank, difficulty, seed, requested) => type?.sourceItemId === id
-        ? original(type, rank, difficulty, seed, variant) : original(type, rank, difficulty, seed, requested);
-    }, { id, variant });
+        ? window.__grade52AuditGenerate(type, rank, difficulty, seed, window.__grade52AuditVariant)
+        : window.__grade52AuditGenerate(type, rank, difficulty, seed, requested);
+    }, id);
+    for (const width of widths) for (const difficulty of [-1, 0, 1]) for (const variant of (width === 1440 ? [0, 1, 2] : [0])) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.evaluate(variant => { window.__grade52AuditVariant = variant; }, variant);
     await page.locator(`#difficultyFilter [data-difficulty='${difficulty}']`).click();
     await page.locator("#generateButton").click();
     await page.waitForFunction(() => !document.querySelector("#worksheet").hidden);
@@ -84,17 +94,23 @@ async function prepare(page, width, id) {
             fontLoaded: document.fonts.check('12pt "FC Serif"', "한글 ABC")
           };
         });
-        assert(printTypography.fontFamily.includes("FC Serif"), `Print body must use FC Serif for ${id}/${mode}`);
-        assert(printTypography.promptFontFamily.includes("FC Serif"), `Print prompt must use FC Serif for ${id}/${mode}`);
-        assert.equal(printTypography.promptFontWeight, "400", `Print prompt must use 400 weight for ${id}/${mode}`);
-        assert.equal(printTypography.fontLoaded, true, `Self-hosted FC Serif must load for ${id}/${mode}`);
+        if (requireSelfHostedPrintFont) {
+          assert(printTypography.fontFamily.includes("FC Serif"), `Print body must use FC Serif for ${id}/${mode}`);
+          assert(printTypography.promptFontFamily.includes("FC Serif"), `Print prompt must use FC Serif for ${id}/${mode}`);
+          assert.equal(printTypography.promptFontWeight, "400", `Print prompt must use 400 weight for ${id}/${mode}`);
+          assert.equal(printTypography.fontLoaded, true, `Self-hosted FC Serif must load for ${id}/${mode}`);
+        }
         await page.pdf({ path: path.join(evidenceDir, `${id.endsWith("example-1") ? "example41" : "exploration4"}-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
       }
     }
     states++;
+    await page.emulateMedia({ media: "screen" });
+    await page.locator("#backButton").click();
+    await page.waitForFunction(() => document.querySelector("#worksheet").hidden);
+    }
     await context.close();
   }
   await browser.close();
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ status: "passed", sourceItemIds: ids, states, widths, difficultyOffsets: [-1, 0, 1], allSyntheticVariantsAtDesktop: true, selectedSyntheticVariantAtBothWidths: true, blockedExternalRequests: blockedRequests, noAnswerLeak: true, overflowChecks: states * 2, a4FilesCreated: evidenceDir ? 4 : 0, printFont: "self-hosted FC Serif", observations }, null, 2));
+  console.log(JSON.stringify({ status: "passed", sourceItemIds: ids, states, widths, difficultyOffsets: [-1, 0, 1], allSyntheticVariantsAtDesktop: true, selectedSyntheticVariantAtBothWidths: true, blockedExternalRequests: blockedRequests, noAnswerLeak: true, overflowChecks: states * 2, a4FilesCreated: evidenceDir ? 4 : 0, printFont: requireSelfHostedPrintFont ? "self-hosted FC Serif" : "current deployed stylesheet inspected without enforcing the pending print-font patch", observations }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; });
