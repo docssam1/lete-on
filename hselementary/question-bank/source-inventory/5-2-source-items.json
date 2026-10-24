@@ -151,8 +151,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "2026-10-24 원문 PDF 2쪽/인쇄 4쪽을 직접 대조했습니다. 26<□≤33의 말 표현과 수직선(26 열린 점, 33 닫힌 점)을 확인했고, 생성형 독립 검사 45개 합성 설정이 통과했습니다. 데스크톱·375px 모바일·A4 문제/풀이 화면도 확인했습니다. 손글씨는 근거에서 제외했으며 공개 결정은 Claude API 교차 검수까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-1",
@@ -168,8 +168,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "2026-10-24 원문 PDF 2쪽/인쇄 4쪽에서 세 자리 자연수 양 끝 포함, 개수 567, 시작 수의 최댓값을 확인했습니다. 독립 계산은 999-567+1=433입니다. 이 유형의 9개 합성 설정이 포함된 E1 45개 설정 감사와 데스크톱·375px 모바일·A4 검사를 통과했습니다. 손글씨·출판사 답안은 근거에서 제외했고 공개는 API 교차 검수까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-2",
@@ -185,8 +185,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "2026-10-24 원문 PDF 2쪽/인쇄 4쪽의 긴 의자 조건을 확인했습니다. 최소 의자 70개에 6명씩이면 학생 415~420명, 52개에 8명씩이면 409~416명이므로 공통 범위는 415~416명(415 이상 417 미만)입니다. E1 45개 설정 감사와 데스크톱·375px 모바일·A4 검사를 통과했습니다. 손글씨·출판사 답안은 근거에서 제외했고 공개는 API 교차 검수까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-3",
@@ -202,8 +202,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "2026-10-24 원문 PDF 2쪽/인쇄 4쪽에서 전체 40명, 등산모 33명, 선글라스 21명을 확인했습니다. 교집합은 33+21-40=14명 이상, 작은 집합의 크기인 21명 이하입니다. 원문에는 도형이 없고 손글씨 낙서는 그림 근거가 아닙니다. E1 45개 설정 감사와 데스크톱·375px 모바일·A4 검사를 통과했으며 공개는 API 교차 검수까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-4",
@@ -219,8 +219,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "2026-10-24 원문 PDF 2쪽/인쇄 4쪽에서 귤 365개, 상자마다 33개 이상 43개 미만을 확인했습니다(기존 분류의 “사탕” 표기는 “귤”로 바로잡음). 상자 수 k는 33k≤365<43k를 만족하여 9,10,11개입니다. 원문에는 도형이 없습니다. E1 45개 설정 감사와 데스크톱·375px 모바일·A4 검사를 통과했으며 공개는 API 교차 검수까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-1",

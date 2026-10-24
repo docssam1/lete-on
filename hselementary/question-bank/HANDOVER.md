@@ -1,3 +1,12 @@
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 4: Exploration 1 and Examples 1–4 Reconciled
+
+- Re-read the source PDF image (PDF page 2, printed page 4), ignoring handwritten marks. Exploration 1 asks for the continuous interval `26 < □ ≤ 33`; its number line uses an open point at 26 and a filled point at 33. Example 1-1 is 433; Example 1-2 is 415 through 416 (415 이상 417 미만); Example 1-3 is 14 through 21; Example 1-4 is 9 through 11 boxes. No source diagram appears in Examples 1-1–1-4. The existing vector line is retained for the exploration.
+- The existing five generator families pass 45 synthetic configurations and 28 negative controls. Browser checks cover five generated problems and solutions at desktop and 375px mobile, without horizontal overflow or page errors. Ten PDFs fit one A4 portrait page each; all five pairs were visually inspected.
+- Corrected the source description of Example 1-4 from “사탕 365개” to the printed “귤 365개”. The source inventory and readiness ledger now agree with the existing local runtime mapping. The six readiness types (including the two-part exploration) are locally verified but remain publicly locked pending Claude API review and release; publisher answer-key verification remains false.
+- Private QA evidence: [grade52-page4-e1-20261024.zip](https://drive.google.com/file/d/1U094VJCvwMRmZl1Qo0yGsxCMOPM3tyTZ/view) (1,830,985 bytes; SHA-256 `1063d4924fdaf60720dd5b7c4a2054d8b83f06ab423a6b1982122fffc6f700f5`).
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Missions 4–6: Integrated Local QA
 
 - Missions 4–6 are integrated in draft PR [#418](https://github.com/docssam1/lete-on/pull/418), branch `codex/grade52-page11-missions4-5-review`, stacked on PR #417's `codex/grade52-page11-missions2-3-rebased` branch. Mission 1 is already deployed; PR #417 holds Missions 2–3; PR #418 holds Missions 4–6. Neither draft PR is merged or deployed. M6 implementation commit: `5bb57254c086b04555b0c413283c87711ba1a3f1`.

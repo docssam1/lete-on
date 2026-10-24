@@ -96,9 +96,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "끝점 포함 여부를 고정하면 같은 범위를 나타내는 표현만 가능합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
+      "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문 구조와 답은 확인했지만 중앙 생성기 연결 전입니다."
+      "lockReason": "원문 PDF 인쇄 4쪽, 독립 풀이, 합성 변형, 문제·풀이 화면과 A4 검수를 마쳤습니다. 공개 결정은 Claude API 교차 검수와 릴리스 검토까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-exploration-range-number-line",
@@ -122,9 +122,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "양 끝점의 포함 여부가 정해져 표시 위치와 점 모양이 하나로 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
+      "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "수직선 자산을 원본 눈금과 같은 구조로 연결하기 전입니다."
+      "lockReason": "원문 PDF 인쇄 4쪽, 독립 풀이, 합성 변형, 문제·풀이 화면과 A4 검수를 마쳤습니다. 공개 결정은 Claude API 교차 검수와 릴리스 검토까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-1",
@@ -148,9 +148,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "큰 끝값이 가장 클 때 작은 끝값도 가장 커지고, 개수식으로 하나가 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
+      "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문 구조와 독립 계산은 확인했지만 중앙 생성기 연결 전입니다."
+      "lockReason": "원문 PDF 인쇄 4쪽, 독립 풀이, 합성 변형, 문제·풀이 화면과 A4 검수를 마쳤습니다. 공개 결정은 Claude API 교차 검수와 릴리스 검토까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-2",
@@ -174,9 +174,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "두 의자 조건의 공통 자연수는 415와 416뿐입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
+      "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "자리 수 조건을 전용 범위 생성기로 연결하기 전입니다."
+      "lockReason": "원문 PDF 인쇄 4쪽, 독립 풀이, 합성 변형, 문제·풀이 화면과 A4 검수를 마쳤습니다. 공개 결정은 Claude API 교차 검수와 릴리스 검토까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-3",
@@ -201,9 +201,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "전체 수와 두 부분의 수로 겹침의 양 끝이 각각 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
+      "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "두 부분의 겹침 범위를 별도 생성기로 연결하기 전입니다."
+      "lockReason": "원문 PDF 인쇄 4쪽, 독립 풀이, 합성 변형, 문제·풀이 화면과 A4 검수를 마쳤습니다. 공개 결정은 Claude API 교차 검수와 릴리스 검토까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-4",
@@ -212,7 +212,7 @@
       "sourcePdfPage": 2,
       "sourcePrintedPage": 4,
       "typeLabel": "한 상자에 담는 수 조건으로 상자 수 범위 찾기",
-      "originalStructure": "사탕 365개를 한 상자에 33개 이상 43개 미만씩 나누어 담을 때 상자 수의 범위를 구합니다.",
+      "originalStructure": "귤 365개를 한 상자에 33개 이상 43개 미만씩 나누어 담을 때 상자 수의 범위를 구합니다.",
       "conditions": [
         "한 상자당 33개 이상",
         "한 상자당 43개 미만",
@@ -227,9 +227,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "상자 수 9, 10, 11만 두 담는 양 조건을 함께 만족합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
+      "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "나누어 담는 수의 범위와 출력 형식을 전용 생성기로 연결하기 전입니다."
+      "lockReason": "원문 PDF 인쇄 4쪽, 독립 풀이, 합성 변형, 문제·풀이 화면과 A4 검수를 마쳤습니다. 공개 결정은 Claude API 교차 검수와 릴리스 검토까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-1-union-count",
@@ -1404,7 +1404,7 @@
     "typeCount": 50,
     "directlyReviewedCount": 50,
     "publicCandidateCount": 11,
-    "lockedCount": 34,
+    "lockedCount": 28,
     "visualItemCount": 43,
     "uniqueAnswerPassCount": 56,
     "uniqueAnswerReviewNeededCount": 1,
@@ -1427,15 +1427,16 @@
       "Mission 1 and Mission 2 (PDF 9 / printed 11) have separate runtime types and independent answers (10 and 50); both are text-only and publisher-key verification remains false. Each has nine passing synthetic configurations. Mission 1 is deployed and live-verified by PR #398 / Pages run #39976802614. Mission 2 browser/A4 verification and its Drive QA ZIP are complete; Mission 2 remains locally verified pending release.",
       "Mission 3 (PDF 9 / printed 11) asks for the remainder interval after giving three notebooks to a class whose student count rounds up to 50 at the tens place. The student count is 41–50, and possible remainders are 37,34,31,28,25,22,19,16,13,10; the requested bound is 10–37 inclusive, with a 3-book step rather than every integer. The source is text-only. It is locally verified; publisher-key verification remains false.",
       "Mission 1 is deployed and live-verified via PR #398 and Pages #39976802614; the exact public JS SHA-256 matches the reviewed local asset. Its live browser audit passed 12 states, 24 overflow checks, answer separation, and A4. Missions 2–3 passed a fresh local rerun on 2026-10-24: each had 12 desktop/mobile states, 24 overflow checks, no answer leak or page errors, and one-page A4 problem and solution output; release and live checks remain pending.",
-      "Missions 4–6 (printed page 11) are locally verified text-only items with nine passing synthetic settings each; their source values and source answers are excluded from generated prompts. Mission 6 uses the source request for the minimum and maximum candidate counts across the unit's meaningful rounding places (tens and above), independently verified as 10 and 100. Publisher-key verification remains false."
+      "Missions 4–6 (printed page 11) are locally verified text-only items with nine passing synthetic settings each; their source values and source answers are excluded from generated prompts. Mission 6 uses the source request for the minimum and maximum candidate counts across the unit's meaningful rounding places (tens and above), independently verified as 10 and 100. Publisher-key verification remains false.",
+      "인쇄 4쪽 개념탐구 1과 예제 1-1~1-4를 450dpi 원문과 대조했습니다. 개념탐구는 26<□≤33 및 26 열린 점·33 닫힌 점, 예제 답은 433, 415 이상 417 미만, 14~21명, 상자 9~11개입니다. 예제 1-4의 원문 물건은 귤이며 이전 “사탕” 표기를 수정했습니다. 다섯 원문 유형에 45개 합성 변형, PC·모바일·A4 화면/풀이 검수를 마쳤습니다. 공식 답안 검증은 별도로 잠겨 있습니다."
     ],
-    "locallyVerifiedAwaitingReleaseCount": 5,
+    "locallyVerifiedAwaitingReleaseCount": 11,
     "readyForDeployCount": 1,
     "publishedCount": 10
   },
   "runtimeCrosswalk": {
     "asOf": "2026-10-24",
-    "scope": "Grade 5-2 Unit 1 source inventory through PDF page 9 / printed page 11. Mission 1 is deployed and live-verified. Missions 2–6 are locally implemented and verified, pending the requested Claude API review and release. Mission 4 preserves the printed real-number wording; Mission 6 compares possible candidate counts across this unit's rounding places (tens and above), yielding 10 and 100. The 50-item source census remains unchanged.",
+    "scope": "Grade 5-2 Unit 1 source inventory through PDF page 9 / printed page 11. Mission 1 is deployed and live-verified. Missions 2–6 are locally implemented and verified, pending the requested Claude API review and release. Mission 4 preserves the printed real-number wording; Mission 6 compares possible candidate counts across this unit's rounding places (tens and above), yielding 10 and 100. The 50-item source census remains unchanged. Page-4 Exploration 1 and Examples 1–4 are locally reviewed and await release; their 5 type families passed 45 synthetic cases, desktop/mobile, and A4 checks.",
     "releaseStatus": "mission1-deployed-live-verified-missions2-5-local-candidates-mission6-ambiguous",
     "mainMergeSha": "62e2d20e6d5b31fe73562646b41776b975917697",
     "pullRequest": 398,
@@ -1824,10 +1825,24 @@
     "repairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
     "e4Page10Status": "Examples 4-2–4-4 deployed and live-verified by PR #396 / Pages #39973818234; Exploration 4 and Example 4-1 remain published with live browser verification throttled.",
     "page11MissionStatus": "Mission 1 is deployed and live-verified by PR #398 / Pages #39976802614. Missions 2–6 are local candidates; Missions 2–3 are in draft PR #417 and Missions 4–6 are in draft PR #418. Claude API cross-review, merge, and deployment remain pending.",
-    "locallyVerifiedAwaitingReleaseCount": 5,
+    "locallyVerifiedAwaitingReleaseCount": 11,
     "readyForDeployCount": 1,
     "publishedCount": 10,
-    "reviewLockedCount": 34,
-    "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page11-missions4-6-20261024"
+    "reviewLockedCount": 28,
+    "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page11-missions4-6-20261024",
+    "page4E1Evidence": {
+      "driveId": "1U094VJCvwMRmZl1Qo0yGsxCMOPM3tyTZ",
+      "size": 1830985,
+      "sha256": "1063d4924fdaf60720dd5b7c4a2054d8b83f06ab423a6b1982122fffc6f700f5",
+      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page4-e1-20261024",
+      "sourceItems": [
+        "5-2-u1-e1-exploration",
+        "5-2-u1-e1-example-1",
+        "5-2-u1-e1-example-2",
+        "5-2-u1-e1-example-3",
+        "5-2-u1-e1-example-4"
+      ],
+      "readinessTypeCount": 6
+    }
   }
 }
