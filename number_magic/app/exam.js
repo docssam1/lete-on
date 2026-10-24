@@ -1423,6 +1423,17 @@
 .nm-w2-ex-line { display:flex; align-items:center; gap:8px; font-size:calc(14px * var(--ws-fs, 1)); flex-wrap:wrap; }
 /* 답이 분수면 KaTeX 줄이 위아래로 커져 아랫줄(풀이 사슬)과 겹친다(2026-09-19, 중등 유리수
    예시에서 8/7 의 분모가 아랫줄 분자에 닿았다) — 줄 사이를 열고 행간을 준다. */
+  .nm-path-worked{font-family:"NM Series Sans",Pretendard,sans-serif}
+  .nm-path-steps{padding-left:7mm;margin:2mm 0;font-size:calc(13px * var(--ws-fs,1));line-height:1.5}
+  .nm-path-options{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin:3mm 0}
+  .nm-path-option{text-align:center;border:1px solid #c9bda2;padding:2mm;background:#f7f2e7}
+  .nm-path-option h4{margin:0 0 2mm;font-size:calc(15px * var(--ws-fs,1));color:#2f6b4a}
+  .nm-path-option .nm-path-grid{display:block;margin:0 auto;max-height:60mm!important;width:48mm!important;max-width:100%}
+  .nm-path-worked p.nm-path-equation{font-size:calc(20px * var(--ws-fs,1));font-weight:600;margin:2mm 0}
+  .nm-path-choice{border-top:1px solid #c9bda2;padding-top:2mm;font-size:calc(13px * var(--ws-fs,1));line-height:1.4}
+  .nm-path-choice>p:first-of-type{font-size:calc(20px * var(--ws-fs,1));font-weight:600;color:#2f6b4a}
+  .nm-path-filled-answer{display:flex;align-items:center;justify-content:center;gap:3mm;margin-top:2mm}
+  .nm-path-filled-answer span{display:inline-grid;place-items:center;border:1.5px solid #2f6b4a;min-width:12mm;height:10mm;font-size:calc(20px * var(--ws-fs,1));color:#2f6b4a}
   .nm-neighbor-example { flex:0 0 auto; padding:3mm; }
   .nm-neighbor-example p { margin:1mm 0; font-size:calc(12px * var(--ws-fs,1)); line-height:1.4; }
   .nm-neighbor-example-pair { display:flex; justify-content:center; align-items:center; gap:5mm; margin:2mm 0; }
@@ -2138,6 +2149,8 @@ const W2_KID_COPY = {
   "숨은 규칙 추리": "숨어 있는 약속 찾기",
   "두 수를 견주어 큰 쪽으로 입을 벌려요. 입이 벌어진 쪽이 더 큰 수예요!": "두 수 중 어느 수가 더 큰지 살펴봐요. 입이 크게 벌어진 쪽이 더 큰 수예요!",
   "조건에 맞는 수를 빠짐없이 모두 눌러요. 눌렀다가 다시 누르면 취소돼요.": "조건에 맞는 수를 빠짐없이 찾아 동그라미 해요.",
+  "길을 따라 지나는 칸의 수를 모두 더해요. 눈에 띄는 작은 수만 따라가면 끝에서 큰 수를 만날 수 있어요. 갈 수 있는 길을 모두 더해 보고 가장 작은 합을 골라요.": "화살표 방향으로 길을 이어요. 지나간 동그라미의 수를 모두 더해요. 출발과 도착의 수도 더해요. 길마다 더한 수를 비교해 가장 작은 합을 찾아요.",
+  "출발에서 도착까지 지나는 수의 합이 가장 작은 길을 찾으시오.": "출발부터 도착까지 길을 잇고, 가장 작은 합을 써요.",
   "도형수": "칸의 수 더하기",
   "산가지와 규칙": "묶어 세기와 규칙",
   "빈칸을 거꾸로 계산!": "같은 합이 되도록 빈칸을 찾아요.",
@@ -5455,6 +5468,7 @@ function drawUnique(threadId, level, rng, exclude, maxTries, exactSkip){
 }
 /* exclude(선택, Set of problemKey) — 회차의 채점 문항과 같은 문제가 예시로 나오지 않게(2026-09-06). */
 function w2NeighborExampleHtml(p){
+  if(p.widget==='pathSum')return window.NM_NL_PRINT.pathSum.worked(p,nlPrintKit());
   if(p.widget==='pyramid'&&Array.isArray(p.rows)){
     const rows=p.rows.map(r=>r.slice()),missing=[];
     rows.forEach((r,ri)=>r.forEach((v,ci)=>{if(v===null)missing.push([ri,ci]);}));
@@ -5499,7 +5513,7 @@ function w2ExampleHtml(threadId, level, code, exclude, young, exactSkip, meta){
    먼저, 나눗셈 뜻 그림(divPictureHtml)이 있으면 사슬 앞에 붙인다(2026-09-17). 문장제만인
    회차(w2WordExampleHtml)도 생성기 자체 이야기가 있으면 이 본체를 그대로 쓴다. */
 function w2ExampleBodyHtml(p, threadId, young, condition){
-  if(['NL5','NL11','NL12'].includes(threadId)&&p.widget&&!p.tex&&!p.word)return w2NeighborExampleHtml(p);
+  if(['NL5','NL11','NL12','NL59'].includes(threadId)&&p.widget&&!p.tex&&!p.word)return w2NeighborExampleHtml(p);
   /* 보기 고르기 문항(WP1처럼 식이 없는 것) — 이야기·보기·답 번호와 그 문장.
      식 자리에 " = 2"가 찍히는 것을 막는다(2026-09-17). */
   if(p.word && p.choices && !p.tex){
@@ -6268,6 +6282,8 @@ function renderRoundPagesBody(item, opts){
   const band = opts.band || printAgeBand(item, problems);
   const young = band === 'young';
   const layout = classifyRoundLayout(problems, item.thread, young, !!item.creative);
+  // Each path needs room for explicit endpoint words, arrows and a written total.
+  if(item.thread==='NL59')Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
   const middleSix = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] && ['visual','word'].includes(layout.type);
   if(middleSix || (item.pacing && ['visual','word'].includes(layout.type))){
     // 원문/정답/모눈 비율은 유지하고, 그래프·문장제의 연습 지면은 2열×3행으로.
@@ -6367,13 +6383,13 @@ function renderRoundPagesBody(item, opts){
   const middleLesson = examLang() === 'ko' && !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread];
   const strategyHtml = !noTeach && !middleLesson && getSolveMode() ? w2StrategyBandHtml(item.thread, item.level) : '';
   const conceptHtml = (wordOnly || noTeach || item.skipConcept || ancientLesson) ? ''
-    : w2ConceptPanelHtml(item.thread, item.level, {rampN, skipSentence: !!strategyHtml,levelOnly:item.levelOnly,levelConcept:item.levelConcept,levelTitle:item.levelTitle});
+    : w2ConceptPanelHtml(item.thread, item.level, {rampN:item.thread==='NL59'?0:rampN, skipSentence: !!strategyHtml,levelOnly:item.levelOnly,levelConcept:item.levelConcept,levelTitle:item.levelTitle});
   const exampleMeta={};
-  const pictureWorked = pictureOnly && !opts.suppressPictureWorked && ['NL5','NL11','NL12'].includes(item.thread);
+  const pictureWorked = pictureOnly && !opts.suppressPictureWorked && ['NL5','NL11','NL12','NL59'].includes(item.thread);
   const exampleExclude=pictureWorked?new Set([...(opts.pictureTeachingKeys||[]),...exclude]):exclude;
   const exampleHtml = (noTeach || (pictureOnly&&!pictureWorked)) ? ''
     : wordOnly ? w2WordExampleHtml(item.thread, item.level, baseCode, exclude, young, item.exampleSkip, exampleMeta)
-    : w2ExampleHtml(item.thread, exLevel, baseCode, exampleExclude, young, item.exampleSkip, exampleMeta);
+    : w2ExampleHtml(item.thread, item.thread==='NL59'?1:exLevel, baseCode, exampleExclude, young, item.exampleSkip, exampleMeta);
   if(pictureWorked&&exampleMeta.key&&opts.pictureTeachingKeys)opts.pictureTeachingKeys.add(exampleMeta.key);
   const guided = (wordOnly || noTeach || pictureOnly || item.pacing) ? {html:'', problems:[]}
     : w2GuidedHtml(item.thread, item.level, baseCode, item.guideSeed, exclude,
@@ -6453,7 +6469,7 @@ function renderRoundPagesBody(item, opts){
     const cap1 = firstRows * layout.cols;
     if(midPage && cap1 > 0 && cap1 < Math.min(6, problems.length)) firstRows = 0;
   }
-  if(pictureWorked&&exampleHtml)firstRows=Math.min(firstRows,getFontSize()==='xl'?0:1);
+  if(pictureWorked&&exampleHtml)firstRows=Math.min(firstRows,item.thread==='NL59'||getFontSize()==='xl'?0:1);
   const firstCap = firstRows * layout.cols;
   const pages = [];
   /* 중등 개념 쪽에 연습 6문항을 실은 경우(midFirstSix), 따라 풀기 한 장은 **다음 연습 6문항과 같은 장**에 —
@@ -6730,7 +6746,7 @@ function renderMixedSheet(items, envelopeCode, opts){
 function renderMixedSheetBody(items, envelopeCode, opts){
   // Freeze the old practice/teaching pool first. New pictured examples may not
   // replace a later practice question or an existing arithmetic example.
-  if(!opts.collectPictureBase&&!opts.pictureTeachingKeys&&items.some(it=>!it.noTeach&&['NL5','NL11','NL12'].includes(it.thread))){
+  if(!opts.collectPictureBase&&!opts.pictureTeachingKeys&&items.some(it=>!it.noTeach&&['NL5','NL11','NL12','NL59'].includes(it.thread))){
     const original=renderMixedSheetBody(JSON.parse(JSON.stringify(items)),envelopeCode,{...opts,collectPictureBase:true,suppressPictureWorked:true});
     opts={...opts,pictureTeachingKeys:original};
   }
