@@ -1,4 +1,4 @@
-import { CURRICULUM } from "./source-data.js?v=20260918a";
+import { CURRICULUM } from "./source-data.js?v=20261024r";
 import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES } from "./study-map.js?v=20261024m";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).

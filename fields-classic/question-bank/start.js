@@ -1,7 +1,7 @@
-import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20260918a";
+import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261024r";
 import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261024m";
 
-// 시작 화면: 권을 고르고 「공부하기」(① 개념 → ② 게임 → ③ 골든벨 → ④ 더클 본책) 또는
+// 시작 화면: 권을 고르고 「공부하기」(① 개념 → ② 게임 → ③ 골든벨 → ④ 본책) 또는
 // 「시험지 만들기」(권별테스트 원문 풀기 · 권별테스트 유사문제 · 교재에서 단원·난이도 골라 만들기)로 들어간다.
 // 이 화면은 길 안내만 한다. 문제를 만들고 채점하는 일은 문제은행(index.html)과 골든벨(golden-bell.html)이 그대로 맡고,
 // 여기서는 그 화면들이 받는 주소(book·lesson·phase·units·stage·count·set·build)만 만든다.
@@ -63,7 +63,7 @@ function bookCell(unitIndex) {
   const self = view.mode === "self";
   const entries = { units: String(unitIndex), count: self ? "10" : "20", build: "1", ...(self ? {} : { form: "lesson" }) };
   const stages = TEXTBOOK_STAGES.map((stage) => `<a href="${esc(bankLink({ ...entries, stage: stage.id }))}">${esc(stage.label)}</a>`).join("");
-  return `<div class="st-cell st-book-cell"><b>④ 더클 본책</b><div class="st-stage-links">${stages}</div>
+  return `<div class="st-cell st-book-cell"><b>④ 본책</b><div class="st-stage-links">${stages}</div>
     <small>${self ? "10문제 학습지 · 화면에서 풀고 바로 채점" : "교재형 학습지 20문제 · 인쇄"}</small></div>`;
 }
 
@@ -107,7 +107,7 @@ function renderStudy() {
   }
   $("studyLead").innerHTML = view.mode === "self"
     ? ""
-    : "선생님 화면에 띄워 같은 순서로 수업해요. ④ 더클 본책은 교재형 학습지로 인쇄해요.";
+    : "선생님 화면에 띄워 같은 순서로 수업해요. ④ 본책은 교재형 학습지로 인쇄해요.";
   if (!goldenBell) {
     $("unitList").innerHTML = book.units.map((unit, index) => `<section class="st-unit"><h3><span>${String(index + 1).padStart(2, "0")}</span>${esc(unit.label)}</h3>
       <div class="st-unit-body"><p class="st-loading">골든벨 학습을 불러오는 중…</p>${bookCell(index)}</div></section>`).join("");

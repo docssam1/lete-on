@@ -124,7 +124,7 @@ export function coverDesignPage(id, info, { ground = "green" } = {}) {
   const u = `cv${(serial += 1)}`;
   const groundColor = COVER_GROUNDS.find((option) => option.id === ground)?.color || COVER_GROUNDS[0].color;
   const volume = info.volume || "";
-  const eyebrow = esc(info.eyebrow || "GFIELD CLASSIC");
+  const eyebrow = esc(info.eyebrow || "GIFTED MATH BANK");
   const title = titleLines(info.title);
   const sub = esc(info.subtitle || "");
   const pub = `<span class="pt-pub"><span>지필드 영재교육</span><span>${esc(info.pubRight || "GOLDEN BELL SERIES")}</span></span>`;

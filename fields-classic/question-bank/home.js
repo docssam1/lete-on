@@ -1,4 +1,4 @@
-import { CURRICULUM } from "./source-data.js?v=20260918a";
+import { CURRICULUM } from "./source-data.js?v=20261024r";
 
 // 첫 화면(home.html): 한 차시 둘러보기 탭 · 교재 카드 · 나타나기 · 학생 이름 이어 붙이기.
 const params = new URLSearchParams(location.search);

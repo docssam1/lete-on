@@ -20,7 +20,7 @@ import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=202
 import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261024a";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
-import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261024a";
+import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261024r";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -42,7 +42,7 @@ const coverStorageKey = "fields-classic-golden-bell-print-cover";
 const coverLabels = { concept: "도형 배경", simple: "모눈 배경", ...Object.fromEntries(COVER_DESIGNS.map((design) => [design.id, design.label])), none: "표지 없음" };
 {
   const host = document.querySelector("#printCoverFieldset .cover-options");
-  const sample = { title: "도형 움직이기와 마방진", subtitle: "골든벨 개념 학습", volume: "1", eyebrow: "GFIELD CLASSIC · 1과정", stats: "단원 4 · 학습 12" };
+  const sample = { title: "도형 움직이기와 마방진", subtitle: "골든벨 개념 학습", volume: "1", eyebrow: "GIFTED MATH BANK · 1과정", stats: "단원 4 · 학습 12" };
   host?.insertAdjacentHTML("beforeend", COVER_DESIGNS.map((design) => `<label class="cover-design-option"><input type="radio" name="coverStyle" value="${design.id}" /><span class="cover-swatch design cv-thumb" aria-hidden="true">${coverDesignPage(design.id, sample)}</span><strong><small>${design.group}</small>${design.label}</strong></label>`).join(""));
   const none = host?.querySelector('input[value="none"]')?.closest("label");
   if (none) host.append(none);
@@ -1422,7 +1422,7 @@ function designCoverInfo(book, lessons) {
     title: book.title || "골든벨 개념 학습",
     subtitle: `골든벨 개념 학습 · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}`,
     volume: String(book.label || "").replace(/[^0-9]/gu, ""),
-    eyebrow: `GFIELD CLASSIC · ${courseNumber ? `${Number(courseNumber)}과정` : "골든벨"}`,
+    eyebrow: `GIFTED MATH BANK · ${courseNumber ? `${Number(courseNumber)}과정` : "골든벨"}`,
     pubRight: "GOLDEN BELL SERIES",
     stats: `단원 ${units.length} · 학습 ${lessons.length}`
   };

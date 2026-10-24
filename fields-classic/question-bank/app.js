@@ -1,4 +1,4 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261003d";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261024r";
 import { GENERATORS } from "./generators.js?v=20260918b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
@@ -12,7 +12,7 @@ import { book08Markup } from "./book08-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
-import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261024a";
+import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261024r";
 
 const {
   ageStages: AGE_STAGES,
@@ -506,7 +506,7 @@ function renderExamList() {
   $("examStageMeta").textContent = hasQuery ? `${resultCount}개 문항 검색 결과` : `${exams.length}개 시험지 · 원본 문항 번호 기준`;
   updateSearchStatus(resultCount, "시험 문항");
   $("examNotice").textContent = state.stage === "diagnostic"
-    ? "FC 대비 선발 진단 모의고사의 문항을 고릅니다. 문항 구조를 유지한 유사문제를 만들 수 있습니다."
+    ? "선발 진단 모의고사의 문항을 고릅니다. 문항 구조를 유지한 유사문제를 만들 수 있습니다."
     : mockStage
       ? `${mockStage.label}의 문항을 고릅니다. 실제 출제 구조를 기준으로 유사문제를 만듭니다.`
       : "원본 선발시험의 문항 번호를 고른 뒤 유사문제를 만듭니다. 원본 시험 진단은 정답 대조가 끝난 시험지부터 별도로 제공합니다.";
@@ -603,8 +603,8 @@ function studyReferenceLabel(references = []) {
       : `${twoDigits(reference.from)}~${twoDigits(reference.to)}`;
     if (reference.section === "activity") return `활동 ${twoDigits(reference.group)} 본문 ${range}`;
     if (reference.section === "check") return `활동 ${twoDigits(reference.group)} 확인 ${range}`;
-    if (reference.section === "practice") return `더클 연습 ${range}`;
-    return `더클 도전 ${range}`;
+    if (reference.section === "practice") return `본책 연습 ${range}`;
+    return `본책 도전 ${range}`;
   }).join(" · ");
 }
 
@@ -3761,7 +3761,7 @@ function worksheetTitleText() {
     const book = CURRICULUM.find((entry) => entry.id === state.curriculumBookId);
     if (book) return `${book.label} 권별테스트 유사문제`;
   }
-  return state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "FC 단원 학습지" : "유형별 맞춤 학습지";
+  return state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "단원 학습지" : "유형별 맞춤 학습지";
 }
 
 function renderWorksheet() {
@@ -3805,7 +3805,7 @@ function renderWorksheet() {
   const section = $("worksheetSection");
   section.className = ["worksheet-section", ...printTemplateClasses(state.printTemplate)].join(" ");
   $("printTemplateLead").innerHTML = lead;
-  $("worksheetBand").textContent = state.printTemplate.form === "exam" ? `GFIELD CLASSIC${info.bookLabel ? ` · ${info.bookLabel}` : ""}` : "GFIELD QUESTION BANK";
+  $("worksheetBand").textContent = state.printTemplate.form === "exam" ? `GIFTED MATH BANK${info.bookLabel ? ` · ${info.bookLabel}` : ""}` : "GIFTED MATH BANK";
   $("worksheetLessonNo").textContent = info.volume || "1";
   $("worksheetGoal").textContent = info.goal;
   $("questionGrid").innerHTML = grid;

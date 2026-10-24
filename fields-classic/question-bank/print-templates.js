@@ -3,7 +3,7 @@
 // 문항 카드는 app.js 가 만든 그대로 쓰고, 여기서는 쪽 묶음과 쪽 바깥(표지·내지·바닥글)만 그린다.
 // 표지·내지에는 공개 정보(책 제목·단원 이름·유형 이름·문항 수)만 쓴다 — 정답은 여기 오지 않는다.
 
-import { COVER_DESIGNS, COVER_GROUNDS, coverDesignPage } from "./cover-designs.js?v=20261024a";
+import { COVER_DESIGNS, COVER_GROUNDS, coverDesignPage } from "./cover-designs.js?v=20261024r";
 
 const STORAGE_KEY = "fcPrintTemplate.v1";
 
@@ -58,7 +58,7 @@ function choiceGroup(name, legend, current) {
 }
 
 // 표지는 글자 단추 대신 실제 표지를 작게 그려 보여 준다(같은 그리기 함수라 인쇄와 똑같다).
-const THUMB_INFO = { title: "도형 움직이기와 마방진", subtitle: "1과정 · 사고력 수학의 첫걸음", volume: "1", eyebrow: "GFIELD CLASSIC · 1과정", pubRight: "QUESTION BANK", stats: "단원 4 · 유형 41" };
+const THUMB_INFO = { title: "도형 움직이기와 마방진", subtitle: "1과정 · 사고력 수학의 첫걸음", volume: "1", eyebrow: "GIFTED MATH BANK · 1과정", pubRight: "QUESTION BANK", stats: "단원 4 · 유형 41" };
 function coverGroup(current, ground) {
   const card = (id, label, group, thumb) => `<label class="pt-cover-card"><input type="radio" name="pt-cover" value="${id}" ${id === current ? "checked" : ""} /><span class="cv-thumb">${thumb}</span><span>${group ? `<small>${esc(group)}</small>` : ""}${esc(label)}</span></label>`;
   return `<fieldset class="pt-group pt-cover-group" data-pt-group="cover"><legend>표지 <small>${COVER_DESIGNS.length}가지</small></legend>
@@ -160,7 +160,7 @@ function coverPage(settings, info) {
     title: settings.title || info.title,
     subtitle: settings.subtitle || info.subtitle,
     volume: settings.volume || info.volume,
-    eyebrow: `GFIELD CLASSIC${info.bookLabel ? ` · ${info.bookLabel}` : ""}`,
+    eyebrow: `GIFTED MATH BANK${info.bookLabel ? ` · ${info.bookLabel}` : ""}`,
     pubRight: "QUESTION BANK",
     stats: info.stats
   }, { ground: settings.ground });

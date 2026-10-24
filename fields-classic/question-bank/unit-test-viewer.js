@@ -1,4 +1,4 @@
-import { CURRICULUM } from "./source-data.js?v=20261024a";
+import { CURRICULUM } from "./source-data.js?v=20261024r";
 
 // 권별테스트 원문 풀기 (원장 지시 2026-10-24): 「교재 권별테스트는 원본 문제 그대로 1세트가 있고, 유사문제로 공부하는 거야.」
 // 원문 쪽 그림을 그대로 보여 주고(답은 없다), 학생이 답안지에 적고 ○✕로 채점한 뒤
@@ -32,7 +32,7 @@ function similarLink(numbers) {
 
 document.title = `${book.label} 권별테스트 원문 풀기`;
 $("title").textContent = `${book.label} 권별테스트 · 원문`;
-$("eyebrow").textContent = `GFIELD CLASSIC · 1과정 · ${book.title}`;
+$("eyebrow").textContent = `GIFTED MATH BANK · 1과정 · ${book.title}`;
 $("backLink").href = `./start.html?${new URLSearchParams({ student, book: book.id, door: "test" })}`;
 $("pages").innerHTML = Array.from({ length: book.source.unitTestPageCount }, (_, index) => {
   const page = String(index + 1).padStart(2, "0");
