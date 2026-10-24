@@ -743,3 +743,9 @@ Plane-transformation group 1 publishes 10 of 11 source items after 15,000 indepe
 - Example 3-4 does not specify a charge for the remaining 75m after 74 complete 100m intervals: complete intervals yield 18,100 won; rounding the partial interval up yields 18,300 won. Readiness ledger now records both interpretations, `candidateAnswerCount=2`, `singleAnswer=false`; public lock remains.
 - Private owner-only Drive audit: [grade52-page8-e3-locked-items-calculation-audit-20261024.md](https://drive.google.com/file/d/1fprfkqNJUgvAtnxIRsdRK2W1k7MOagP1/view).
 - No student data or publication state changed. PR #418 remains draft; no merge or deployment.
+
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 10: Live Recheck
+
+- Cleared the prior HTTP 429 live-check hold for Exploration 4 and Example 4-1. Production page returned HTTP 200; `index.html`, `source-5-2-rounded-range-e4.js`, and `source-5-2-rounded-range-e44.css` hashes match `origin/main`.
+- Generated and reviewed three live synthetic questions and separated solutions for each source-linked type. Answers and interval explanations matched independent calculations; browser console had no errors. Existing local 24-state/48-overflow and four one-page A4 checks remain the mobile/print evidence; this live rerun only confirms desktop production behavior.
+- Updated both readiness records to `deployed-and-live-verified` without changing code, public decision, or student data. Private owner-only Drive note: [grade52-page10-live-recheck-20261024.md](https://drive.google.com/file/d/1gS3sfpbvcHDjwdLhYPf4H3CvLUvnOexq/view).
