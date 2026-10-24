@@ -226,6 +226,13 @@
   .nm-nl { display:flex; flex-direction:column; align-items:center; gap:1.8mm; margin:1.2mm auto 0; width:100%; max-width:80mm; }
   .nm-nl-stage { border:1.3px solid #2f4a6e; border-radius:3.5mm; padding:2.5mm 3.5mm; background:#fffaf0; min-width:40mm; max-width:100%;
     display:flex; flex-direction:column; align-items:center; gap:1.5mm; box-sizing:border-box; }
+  .nm-story-change{display:flex;align-items:center;justify-content:center;gap:3mm;max-width:100%}
+  .nm-story-change section{min-width:0;text-align:center;flex:1}
+  .nm-story-change small{font-size:11px;line-height:1.3;display:block;margin-bottom:1mm}
+  .nm-story-group{display:flex;flex-wrap:wrap;justify-content:center;gap:1mm}
+  .nm-story-group>span{position:relative;display:inline-flex;font-size:24px;line-height:1}
+  .nm-story-given{opacity:.65}
+  .nm-story-given:after{content:'';position:absolute;left:0;right:0;top:50%;border-top:2px solid #b4512e;transform:rotate(-40deg)}
   .nm-nl-person { display:inline-block; width:1em; height:1.7em; object-fit:contain; vertical-align:bottom; }
   .nm-nl-stage-bond { border:0; padding:0; }
   /* 2026-10-05 원장 "너무 흑백이야" — 유아 그림은 화면과 같은 색으로 인쇄(흑백 프린터는 회색 농도로 구분). */
@@ -905,6 +912,29 @@
   .nm-n01-remember p { margin:1mm 0; }
   .nm-print-fs-l .nm-n01-body,.nm-print-fs-xl .nm-n01-body { gap:2mm; }
   .nm-print-fs-xl .nm-n01-cell img { width:16mm; height:16mm; }
+  .nm-preschool-figure{margin:3mm 0;padding:3mm;background:#f7f2e7;text-align:center;break-inside:avoid}
+  .nm-preschool-note .nm-mn-plain{font-family:"NM Series Sans",Pretendard,sans-serif}
+  .nm-preschool-note .nm-note-balance{display:block;width:95mm;max-width:100%;height:auto;margin:3mm auto 0}
+  .nm-note-fig-row{display:flex;align-items:center;justify-content:center;gap:3mm;flex-wrap:wrap;margin:2mm 0}
+  .nm-note-fig-row section{display:flex;flex-direction:column;align-items:center;gap:2mm}
+  .nm-preschool-figure p,.nm-preschool-figure small{font-size:calc(12px * var(--ws-fs,1));line-height:1.35;margin:1mm 0;color:#2a241c}
+  .nm-note-fig-number,.nm-note-fig-sign{font-size:calc(23px * var(--ws-fs,1));line-height:1.25;color:#2f6b4a;font-weight:600}
+  .nm-note-fig-cell{display:inline-flex;align-items:center;justify-content:center;min-width:11mm;min-height:11mm;padding:1mm;border:1px solid #2f6b4a;background:#fff;font-size:calc(20px * var(--ws-fs,1));font-weight:600;color:#2f6b4a}
+  .nm-note-fig-group{display:inline-flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:1.5mm;font-size:34px;max-width:90mm}
+  .nm-note-fig-group>span{position:relative;display:inline-flex}
+  .nm-note-fig-group>svg,.nm-note-fig-group>img,.nm-note-fig-group>span>svg{width:1em;height:1em;object-fit:contain}
+  .nm-note-fig-person{display:flex;flex-direction:column;align-items:center;gap:2mm;font-size:20px;color:#2f6b4a}
+  .nm-note-fig-person .nm-nl-person{height:26mm;width:16mm}
+  .nm-note-fig-duo{display:grid;grid-template-columns:1fr 1fr;gap:4mm;align-items:center}
+  .nm-note-fig-duo .nm-nl-stage{border:0;background:transparent;min-width:0;padding:0}
+  .nm-note-fig-duo .nm-nl-stairs{width:38mm;height:34mm}
+  .nm-note-fig-basket{border:1px solid #a87c22;border-radius:0 0 4mm 4mm;padding:3mm}
+  .nm-preschool-figure .nm-note-line{display:block;width:125mm;max-width:100%;height:auto;margin:0 auto}
+  .nm-preschool-figure .nm-note-tree{width:46mm;height:32mm}
+  .nm-preschool-figure .nm-note-star{width:22mm;height:22mm}
+  .nm-preschool-figure .nm-note-cross{display:block;width:42mm;height:40mm;margin:0 auto}
+  .nm-preschool-figure .nm-nl-tally{height:17mm;max-width:100%;margin:0 auto}
+  .nm-preschool-figure .nm-nl-tally line{stroke:#2f6b4a}
   /* N-04: explain every tally instruction with the marks themselves. */
   .nm-n04-note { font-family:"NM Series Sans",Pretendard,sans-serif; }
   .nm-n04-body { flex:1; min-height:0; display:flex; flex-direction:column; justify-content:space-evenly; gap:3mm; }
@@ -2107,6 +2137,14 @@ const W2_KID_COPY = {
   "이번엔 규칙이 숨어 있어요. 앞의 예시에서 들어간 수와 나온 수를 견주어 규칙을 먼저 찾아요.": "이번에는 수를 바꾸는 약속이 숨어 있어요. 예시의 수가 어떻게 바뀌었는지 살펴보고, 같은 방법으로 빈칸을 채워요.",
   "숨은 규칙 추리": "숨어 있는 약속 찾기",
   "두 수를 견주어 큰 쪽으로 입을 벌려요. 입이 벌어진 쪽이 더 큰 수예요!": "두 수 중 어느 수가 더 큰지 살펴봐요. 입이 크게 벌어진 쪽이 더 큰 수예요!",
+  "조건에 맞는 수를 빠짐없이 모두 눌러요. 눌렀다가 다시 누르면 취소돼요.": "조건에 맞는 수를 빠짐없이 찾아 동그라미 해요.",
+  "도형수": "칸의 수 더하기",
+  "산가지와 규칙": "묶어 세기와 규칙",
+  "빈칸을 거꾸로 계산!": "같은 합이 되도록 빈칸을 찾아요.",
+  "별의 수 = 전체": "별에 적힌 수는 모두 있는 수예요.",
+  "더하기: 부분 + 부분 = 전체": "두 수를 더해 모두 있는 수를 만들어요.",
+  "빼기: 전체 − 한 부분 = 다른 부분": "모두 있는 수에서 한쪽 수를 빼면 다른 쪽 수예요.",
+  "별의 수는 전체, 식은 부분을 맞춰 줘요": "별에 적힌 수를 보고 빈칸을 찾아요",
   "기수법 놀이": "여러 방법으로 수 나타내기",
   "생활 서수 문장제": "생활 속 몇째 찾기",
   "생활 속 어디서나 서수를 써요!": "줄서기와 계단에서도 첫째, 둘째, 셋째를 써요!",
@@ -3201,13 +3239,15 @@ function scatterAnswerKeyHtml(problems){
 }
 
 /* 전체(whole)와 아는 부분(known)으로 수 묶음 그림. 빈 동그라미가 답 자리. */
-function bondSvg(whole, known){
+function bondSvg(whole, known, knownSide, labels){
+  const right=knownSide==='right';
   const t = (x, y, v) => `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${esc(String(v))}</text>`;
-  return `<svg class="nm-bond" viewBox="0 0 160 112" role="img" aria-label="${esc(lk('수 가르기','Number bond (split)','数的分解'))} ${esc(String(whole))}">
+  return `<svg class="nm-bond" viewBox="0 0 160 ${labels?132:112}" data-known-side="${right?'right':'left'}" role="img" aria-label="${esc(lk('수 가르기','Number bond (split)','数的分解'))} ${esc(String(whole))}">
   <circle cx="80" cy="24" r="21"/>${t(80,24,whole)}
   <line x1="66" y1="40" x2="48" y2="66"/><line x1="94" y1="40" x2="112" y2="66"/>
-  <circle cx="34" cy="88" r="21"/>${t(34,88,known)}
-  <circle cx="126" cy="88" r="21" class="nm-bond-blank"/>
+  <circle cx="34" cy="88" r="21"${right?' class="nm-bond-blank"':''}/>${right?'':t(34,88,known)}
+  <circle cx="126" cy="88" r="21"${right?'':' class="nm-bond-blank"'}/>${right?t(126,88,known):''}
+  ${labels?`<text x="34" y="124" style="font-size:11px" text-anchor="middle">${esc(lk('왼쪽','left','左'))}</text><text x="126" y="124" style="font-size:11px" text-anchor="middle">${esc(lk('오른쪽','right','右'))}</text>`:''}
 </svg>`;
 }
 
@@ -3451,23 +3491,23 @@ function nlStairsHtml(total, mark, tok){
   return nlStage(`<svg class="nm-nl-stairs" viewBox="0 0 ${W} ${H}" role="img">${s}</svg>`);
 }
 /* 양팔저울 — 접시 위에 이모지를 쌓고 접시 아래(받침대 바깥)에 왼쪽·오른쪽을 적는다.
-   기울기는 그리지 않는다 — 기울여 그리면 세어 보지 않아도 답이 보인다. */
+   같은 물건의 수가 다르면 무거운 접시가 아래로 내려간 모습을 정확히 그린다. */
 function nlScaleHtml(left, right, emoji){
-  const g = nlGlyph(emoji);
-  const pan = (n, cx) => {
+  const g=nlGlyph(emoji),tilt=left===right?0:left>right?8:-8;
+  const pan = (n, cx,dy) => {
     let t = '';
     /* 한 줄 3개까지 — 4개를 넣으면 접시 밖으로 흘러나왔다(2026-09-19 실측). */
     nlChunk(new Array(Math.max(0, n|0)).fill(g), 3).forEach((r, ri) => {
       const y = 56 - ri*8.5;
       r.forEach((e, ci) => { const x = cx + (ci - (r.length-1)/2)*8; t += `<text x="${x}" y="${y}" text-anchor="middle" font-size="7.5">${esc(e)}</text>`; });
     });
-    return `<line x1="${cx}" y1="20" x2="${cx-19}" y2="59"/><line x1="${cx}" y1="20" x2="${cx+19}" y2="59"/>`
-      + `<path d="M${cx-21} 59 L${cx+21} 59 L${cx+15} 68 L${cx-15} 68 Z"/>${t}`;
+    return `<g data-count="${n}" data-pan-y="${59+dy}" transform="translate(0 ${dy})"><line x1="${cx}" y1="20" x2="${cx-19}" y2="59"/><line x1="${cx}" y1="20" x2="${cx+19}" y2="59"/>`
+      + `<path d="M${cx-21} 59 L${cx+21} 59 L${cx+15} 68 L${cx-15} 68 Z"/>${t}</g>`;
   };
   return nlStage(`<svg class="nm-nl-scale" viewBox="0 0 176 98" role="img" aria-label="${esc(lk('양팔저울','Balance scale','天平'))}">`
-    + `<line x1="22" y1="20" x2="154" y2="20" stroke-width="2.6"/><line x1="88" y1="20" x2="88" y2="80"/>`
+    + `<line x1="46" y1="${20+tilt}" x2="130" y2="${20-tilt}" stroke-width="2.6"/><line x1="88" y1="20" x2="88" y2="80"/>`
     + `<line x1="62" y1="80" x2="114" y2="80" stroke-width="2.6"/><circle cx="88" cy="20" r="2.6"/>`
-    + pan(left, 46) + pan(right, 130)
+    + pan(left,46,tilt)+pan(right,130,-tilt)
     + `<text x="46" y="93" text-anchor="middle" font-size="9" font-weight="700">${esc(lk('왼쪽','left','左'))}</text>`
     + `<text x="130" y="93" text-anchor="middle" font-size="9" font-weight="700">${esc(lk('오른쪽','right','右'))}</text></svg>`);
 }
@@ -3552,7 +3592,7 @@ function nlVisualHtml(p){
   const EA = nlUnitEa();
   if(w==='numberBond'){
     const svg = (p.dir==='join' && typeof p.a==='number' && typeof p.b==='number') ? bondSvgTop(p.a, p.b)
-      : (typeof p.whole==='number' && typeof p.a==='number') ? bondSvg(p.whole, p.a) : '';
+      : (typeof p.whole==='number' && typeof p.a==='number') ? bondSvg(p.whole,p.a,/오른쪽/.test(p.prompt?.ko||'')?'right':'left',/무당벌레/.test(p.prompt?.ko||'')) : '';
     return svg ? nlCard(nlStage(svg, 'nm-nl-stage-bond')) : '';
   }
   if(w==='tapCount') return Array.isArray(p.items) ? nlCard(nlSceneHtml(p.items), nlAnsBox(p.step === 10 ? lk('원','','元') : EA)) : '';
@@ -3571,6 +3611,15 @@ function nlVisualHtml(p){
   if(w==='storyCard'){
     if(p.layout==='stairs') return nlCard(nlStairsHtml(p.total, p.mark, p.emoji), nlAnsBox(lk('째 계단','th step','级')));
     if(p.interaction==='tap') return nlCard(nlOrderStripHtml(p.total, p.chars));
+    if(p.layout==='row'&&Number.isFinite(p.total)&&Number.isFinite(p.answer)&&Array.isArray(p.chars)&&p.chars.length&&p.answer!==p.total){
+      const change=Math.abs(p.answer-p.total),adding=p.answer>p.total,tok=p.chars[0];
+      const canonical=p.prompt?.ko||'',given=canonical.match(/(\d+)개를 (?:더 받았|친구에게 줬)/);
+      if(given&&Number(given[1])===change){
+        const group=(n,gone)=>`<div class="nm-story-group">${Array.from({length:n},()=>`<span${gone?' class="nm-story-given"':''}>${nlObjHtml(tok)}</span>`).join('')}</div>`;
+        const h=adding?`<div class="nm-story-change" data-before="${p.total}" data-change="${change}" data-op="+"><section><small>${esc(lk('처음에','At first','原来'))}</small>${group(p.total,false)}</section><b>+</b><section><small>${esc(lk('더 받았어요','Received','又得到'))}</small>${group(change,false)}</section></div>`:`<div class="nm-story-change" data-before="${p.total}" data-change="${change}" data-op="−"><section><small>${esc(lk('친구에게 준 것에 빗금을 그었어요','Given away: crossed out','送出的画了斜线'))}</small><div class="nm-story-group">${Array.from({length:p.total},(_,i)=>`<span${i>=p.total-change?' class="nm-story-given"':''}>${nlObjHtml(tok)}</span>`).join('')}</div></section></div>`;
+        return nlCard(nlStage(h),nlAnsBox(EA));
+      }
+    }
     return nlCard(nlStage(nlGlyphRows(Array.isArray(p.chars) ? p.chars : [])), nlAnsBox(EA));
   }
   if(w==='balanceScale') return nlCard(nlScaleHtml(p.left, p.right, p.emoji));
@@ -5687,6 +5736,39 @@ function noteTextHtml(raw){
     .replace(/<\/?(?:u|span|br|i|em|strong|small|sup|sub|p|div)\b[^>]*>/gi, '')
     .replace(/<(?!\/?b>)/g, '&lt;');
 }
+/* Concrete pictures for preschool notes, drawn from the note's existing examples.
+   These are teaching illustrations, never new scored questions or audio sources. */
+function preschoolNoteFigure(id,stage){
+  const row=h=>`<div class="nm-note-fig-row">${h}</div>`,num=n=>`<b class="nm-note-fig-number">${n}</b>`;
+  const group=(n,tok)=>`<span class="nm-note-fig-group" data-count="${n}">${Array.from({length:n},()=>nlObjHtml(tok||'🍎')).join('')}${n===0?'<b>0</b>':''}</span>`;
+  const strip=ns=>row(ns.map(n=>`<b class="nm-note-fig-cell">${n}</b>`).join('<span>→</span>'));
+  const children=()=>`<div class="nm-note-fig-row">${['🧒','👧','👦'].map((c,i)=>`<span class="nm-note-fig-person">${nlObjHtml(c)}<b>${i+1}</b></span>`).join('')}</div>`;
+  const tree=(whole,a,b)=>`<svg class="nm-obj-svg nm-note-tree" viewBox="0 0 180 115" role="img" aria-label="${a}+${b}=${whole}"><path d="M90 25L40 85M90 25L140 85" fill="none" stroke="#2f6b4a" stroke-width="2"/>${[[90,25,whole],[40,85,a],[140,85,b]].map(([x,y,n])=>`<circle cx="${x}" cy="${y}" r="22" fill="#fff" stroke="#2f6b4a" stroke-width="2"/><text x="${x}" y="${y+7}" text-anchor="middle" style="font-size:22px;fill:#2f6b4a">${n}</text>`).join('')}</svg>`;
+  const line=(from,to,step)=>{
+    const x=n=>20+n*36;let h=`<line x1="12" y1="75" x2="390" y2="75" stroke="#2a241c" stroke-width="2"/>`;
+    for(let n=0;n<=10;n++)h+=`<line x1="${x(n)}" y1="70" x2="${x(n)}" y2="80" stroke="#2a241c"/><text x="${x(n)}" y="99" text-anchor="middle" style="font-size:17px;fill:#2a241c">${n}</text>`;
+    const dir=to>from?1:-1,color=dir>0?'#2f6b4a':'#b4512e';
+    for(let n=from;dir>0?n<to:n>to;n+=dir*step){const a=x(n),b=x(n+dir*step),mid=(a+b)/2;h+=`<path d="M${a} 70Q${mid} 10 ${b} 70" fill="none" stroke="${color}" stroke-width="2.5"/><path d="M${b-dir*7} 57L${b} 70L${b+dir*1} 54" fill="none" stroke="${color}" stroke-width="2"/><text x="${mid}" y="30" text-anchor="middle" style="font-size:17px;fill:${color}">${dir>0?'+':'−'}${step}</text>`;}
+    return `<svg class="nm-obj-svg nm-note-line" viewBox="0 0 405 108" role="img" aria-label="${from} → ${to}">${h}</svg>`;
+  };
+  let h='';
+  switch(id){
+    case 'N-02':h=strip([1,2,3,4,5])+strip([5,4,3,2,1])+line(2,10,2);break;
+    case 'N-03':h=stage===0?`<p>${esc(lk('왼쪽에서부터 세어요.','Count from the left.','从左边开始数。'))} →</p>${children()}`:row(group(8)+'<b class="nm-note-fig-sign">&gt;</b>'+group(3))+row(num(8)+'<b>&gt;</b>'+num(3));break;
+    case 'N-05':h=`<div class="nm-note-fig-duo"><section><p>${esc(lk('왼쪽에서 둘째는 2','Second from the left: 2','从左数第二个：2'))}</p>${children()}</section><section><p>${esc(lk('아래에서 셋째 계단은 3','Third step from the bottom: 3','从下面数第三级：3'))}</p>${nlStairsHtml(3,2,'🐰')}</section></div>`;break;
+    case 'N-06':h=row(group(5,'🍬'))+row(num(5)+' = '+num(1)+' + '+num(4))+row(group(1,'🍬')+'<b>+</b>'+group(4,'🍬'))+row(num(5)+' = '+num(2)+' + '+num(3))+row(group(2,'🍬')+'<b>+</b>'+group(3,'🍬'));break;
+    case 'N-07':h=line(4,7,1)+row(num(4)+' + '+num(3)+' = '+num(7))+line(7,4,1)+row(num(7)+' − '+num(3)+' = '+num(4));break;
+    case 'N-08':h=row(`<section><small>${esc(lk('넣은 수','Input','放入的数'))}</small><b class="nm-note-fig-cell">5</b></section><b>→</b><section><small>${esc(lk('약속','Rule','约定'))}</small><b class="nm-note-fig-cell">+2</b></section><b>→</b><section><small>${esc(lk('나온 수','Output','出来的数'))}</small><b class="nm-note-fig-cell">7</b></section>`);break;
+    case 'N-09':h=row(tree(5,2,3)+tree(6,5,1));break;
+    case 'N-10':h=row(group(1,'🐶')+group(1,'🐱')+group(1,'🐶')+group(1,'🐱'))+'<p>↓</p>'+row(`<section class="nm-note-fig-basket">${group(2,'🐶')}<small>${esc(lk('같은 것끼리','Same kind','同一类'))}</small></section><section class="nm-note-fig-basket">${group(2,'🐱')}<small>${esc(lk('같은 것끼리','Same kind','同一类'))}</small></section>`);break;
+    case 'N-11':h=row(`<svg class="nm-obj-svg nm-note-star" viewBox="0 0 100 100" aria-label="5"><polygon points="50,3 62,35 97,35 70,57 81,92 50,71 19,92 30,57 3,35 38,35" fill="#f5d77e" stroke="#a87c22" stroke-width="2"/><text x="50" y="60" text-anchor="middle" style="font-size:30px;fill:#2a241c">5</text></svg>`)+row(group(2)+'<b>+</b>'+group(3))+row(num(2)+' + '+num(3)+' = '+num(5))+row(num(5)+' − '+num(2)+' = '+num(3));break;
+    case 'N-12':h=row(num(6)+' = '+group(1,'⚫')+' + '+group(2,'⚫')+' + '+group(3,'⚫'))+`<p>${esc(lk('양쪽을 더한 수가 같으면 저울이 나란해요.','Equal totals keep the balance level.','两边的和相等，天平就平衡。'))}</p><svg class="nm-obj-svg nm-note-balance" viewBox="0 0 360 125" role="img" aria-label="3+2=4+1"><path d="M180 30V112M140 112H220M48 30H312M66 30L30 85H132L96 30M264 30L228 85H330L294 30" fill="none" stroke="#2f6b4a" stroke-width="3"/><text x="81" y="75" text-anchor="middle" style="font-size:24px;fill:#2f6b4a">3 + 2</text><text x="279" y="75" text-anchor="middle" style="font-size:24px;fill:#2f6b4a">4 + 1</text></svg>`+row(num(3)+' + '+num(2)+' = '+num(4)+' + '+num(1));break;
+    case 'N-13':h=`<svg class="nm-obj-svg nm-note-cross" viewBox="0 0 180 170" role="img" aria-label="2+3=1+4">${[[90,25,2],[90,145,3],[30,85,1],[150,85,4]].map(([x,y,n])=>`<circle cx="${x}" cy="${y}" r="22" fill="#fff" stroke="#2f6b4a" stroke-width="2"/><text x="${x}" y="${y+7}" text-anchor="middle" style="font-size:23px;fill:#2f6b4a">${n}</text>`).join('')}<text x="90" y="93" text-anchor="middle" style="font-size:30px;fill:#2f6b4a">+</text></svg>`+row(num(2)+' + '+num(3)+' = '+num(1)+' + '+num(4));break;
+    case 'N-14':h=nlTallySvg(8)+row(num(5)+' + '+num(3)+' = '+num(8))+strip([1,2,3,4,5]);break;
+    case 'N-15':h=`<p>${esc(lk('더 받았어요','Received more','又得到了'))}</p>`+row(group(3)+'<b>+</b>'+group(2)+'<b>= 5</b>')+`<p>${esc(lk('두 개를 나누어 줬어요','Gave away two','送出了两个'))}</p>`+row(`<span class="nm-note-fig-group">${Array.from({length:5},(_,i)=>`<span${i>=3?' class="nm-story-given"':''}>${nlObjHtml('🍎')}</span>`).join('')}</span><b>→ 3</b>`);break;
+  }
+  return h?`<figure class="nm-preschool-figure" data-note-figure="${id}">${h}</figure>`:'';
+}
 function renderMagicNotePage(item, opts){
   opts = opts || {};
   const u = (window.NM_UNITS || {})[item.magicUnit];
@@ -5702,7 +5784,8 @@ function renderMagicNotePage(item, opts){
     const headHtml = /\\/.test(headRaw) ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(headRaw))}"></span>` : esc(headRaw);
     /* <b>만 남기고 다른 태그는 뗀다. SVG 는 stripInlineSvg 가 먼저 통째로 걷어낸다. */
     const descHtml = noteTextHtml(pickL(st.desc) || '');
-    const steps = Array.isArray(st.mathSteps) ? st.mathSteps.map(magicStepHtml).join('') : '';
+    const figure=preschoolNoteFigure(item.magicUnit,i);
+    const steps = figure&&['N-05','N-06','N-07','N-09','N-12','N-14'].includes(item.magicUnit)?'':Array.isArray(st.mathSteps) ? st.mathSteps.map(magicStepHtml).join('') : '';
     const result = pickL(st.result) || '';
     /* 교과서 말(유닛 stage.book) — 앱의 개념 노트에는 있었는데 종이에는 빠져 있었다(2026-09-25 매거진형) */
     const book = noteTextHtml(pickL(st.book) || '');
@@ -5711,6 +5794,7 @@ function renderMagicNotePage(item, opts){
   <div class="nm-mn-body">
     ${headRaw ? `<div class="nm-mn-head">${headHtml}</div>` : ''}
     ${descHtml ? `<p class="nm-mn-desc">${descHtml}</p>` : ''}
+    ${figure}
     ${steps ? `<div class="nm-mn-steps">${steps}</div>` : ''}
     ${result ? `<div class="nm-mn-result">✓ ${esc(result)}</div>` : ''}
     ${book ? `<div class="nm-mn-book"><b>${esc(lk('교과서 말','In the textbook','课本里的说法'))}</b>${book}</div>` : ''}
@@ -5783,7 +5867,7 @@ function renderMagicNotePage(item, opts){
      매거진형(교과서 말 상자·큰 제목)은 저학년 큰 글씨에서 두 단계도 첫 장에 들지 않았다(C20 C-22 ①② 226mm,
      주간 학습지 +102px). 잰 값: 밴드별 [판 높이, [단계 높이…], 규칙·체크 높이, 첫 장 쓸 높이, 다음 장 쓸 높이] mm.
      없으면 예전 규칙: 두 단계 이상이면 두 장(셋이면 ①②|③, 둘이면 ①|②) — 226개 중 49개가 한 장에 넘쳤다. */
-  const measured = ((window.NM_PRINT_MAGIC || {})[item.magicUnit] || [])[{ young:0, mid:1, senior:2 }[opts.band || 'mid']];
+  const measured = /^N-(?:0[2-9]|1[0-5])$/.test(item.magicUnit)?null:((window.NM_PRINT_MAGIC || {})[item.magicUnit] || [])[{ young:0, mid:1, senior:2 }[opts.band || 'mid']];
   let groups;
   if(measured && measured[1] && measured[1].length === stageParts.length){
     const fsR = ({ s:0.88, m:1, l:1.16, xl:1.34 })[getFontSize()] || 1;
@@ -5805,7 +5889,7 @@ function renderMagicNotePage(item, opts){
     groups = n >= 2 ? [[...Array(split).keys()], [...Array(n - split).keys()].map(i => i + split)] : [[...Array(n).keys()]];
     groups.tail = groups.length - 1;
   }
-  const html = groups.map((g, pi) => `<div class="nm-w2-page nm-w2-page-magic">
+  const html = groups.map((g, pi) => `<div class="nm-w2-page nm-w2-page-magic${/^N-(?:0[2-9]|1[0-5])$/.test(item.magicUnit)?' nm-preschool-note':''}">
   ${wm}
   ${w2HeadHtml(headItem, code, (pi + 1) + '/' + groups.length, null, {roundNo: opts.roundNo, name: opts.name, first: pi === 0})}
   ${pi === 0 ? boardHtml : ''}
