@@ -2553,7 +2553,7 @@ function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle, band){
 function w2PagesOf(r){ return (r.html.match(/class="nm-w2-page/g) || []).length; }
 function weeklyPageCount(rounds, extra){
   extra = extra || {};
-  let page = 1;
+  let page = extra.series ? 2 : 1;
   rounds.forEach(r => { page += w2PagesOf(r); });
   /* history 는 참/거짓 또는 **지면 수**(수학사 + 종이 교구, 2026-09-08). */
   page += Number(extra.history) || 0;
@@ -2585,7 +2585,7 @@ function assignStudyDays(rounds, requestedDays){
    renderMixedSheet 의 console.warn + 시트의 data-nm-dropped-word 로 간다. */
 function weeklyCoverHtml(cv, rounds, totalCount, extra){
   extra = extra || {};
-  let page = 2; // 표지가 1쪽
+  let page = extra.series ? 3 : 2; // 시리즈 표지 + 주간 학습 안내
   const dayLabel = day => day ? lk(`${day}일차`, `Day ${day}`, `第${day}天`) : '';
   const pTxt = (from, to) => `${from === to ? from : from + '–' + to}${esc(lk('쪽','p.','页'))}`;
   const contents=[];
@@ -2602,7 +2602,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     const ds = (r.studyDays || []).filter((d, j, a) => a.indexOf(d) === j);
     const days = ds.length ? (ds.length === 1 ? dayLabel(ds[0]) : `${dayLabel(ds[0])}–${dayLabel(ds[ds.length-1])}`) : '';
     return `<tr><td class="nm-cvw-day">${days ? `<span class="nm-cvw-day-tag">${esc(days)}</span>` : ''}</td><td class="nm-cvw-no">${i+1}</td><td class="nm-cvw-name">${esc(r.thName)}</td>
-      <td>${n}${esc(lk('문항','','题'))}</td><td>${pTxt(from, to)}</td><td class="nm-cvw-chk">☐</td></tr>`;
+      <td>${n ? n+esc(lk('문항','','题')) : r.magic ? esc(lk('활동','Activity','活动')) : ''}</td><td>${pTxt(from, to)}</td><td class="nm-cvw-chk">☐</td></tr>`;
   });
   /* 수학사·정답지는 번호·완료 칸 없이 — 푸는 지면이 아니라서 */
   if(extra.history){
@@ -6560,14 +6560,15 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   const magazineHtml = opts.cover && !opts.pacing && !highCompact
     ? w2MagazinePageHtml(items, envelopeCode, readingAgeBand(opts, items, allProblems)) : '';
   const extraPages = (historyHtml ? 1 : 0) + (langHtml ? 1 : 0) + (magazineHtml ? 1 : 0) + (paperHtml ? 1 : 0);
-  const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true });
+  const series=opts.cover&&window.NM_WORKSHEET_SERIES;
+  const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true,series:!!series });
   const studyDays = opts.cover ? assignStudyDays(rounds, opts.cover.studyDays) : 0;
   if(opts.cover && studyDays) opts.cover.studyDays = studyDays;
-  const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!(historyHtml || langHtml), historyLabel: langHtml ? lk('언어사고력','Language & Thinking','语言思考力') : '', magazine: !!magazineHtml, paper: !!paperHtml, answerKey: true })
+  const coverHtml = opts.cover ? (series?series.front(opts.cover,series.model(opts.cover,examLang())):'')+weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!(historyHtml || langHtml), historyLabel: langHtml ? lk('언어사고력','Language & Thinking','语言思考力') : '', magazine: !!magazineHtml, paper: !!paperHtml, answerKey: true,series:!!series })
     : (getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '');
   /* 통산 쪽 번호(2026-09-06) — 회차 발치 왼쪽에 "n / 총". 회차 안 "1/2"는 머리띠에 그대로(편지함 편집기가
      회차 단위로 쓰는 표시). 문자열 후처리라 renderRoundPages 는 모른다. */
-  let pg = coverHtml ? 2 : 1;
+  let pg = coverHtml ? series?3:2 : 1;
   const stampPg = html => html.replace(/<div class="nm-w2-foot">/g, () => `<div class="nm-w2-foot"><span class="nm-w2-pg">${opts.pacing?'학습 '+pg+++'쪽':pg+++' / '+totalPages}</span>`);
   if(studyDays){
     rounds.forEach(r => {
@@ -6604,6 +6605,7 @@ ${paperStamped}
 </div>
 ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-answer-key">${drawingAnswerKeyHtml(r)}</div>`).join('')}`;
 
+  if(series)series.decorate(sheet,opts.cover);
   document.body.appendChild(sheet);
   sheet.querySelectorAll('.nm-w2-tex, .nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex || '', el));
   // 정답지를 A4 높이로 나눈다. 흐름 조판은 발치만 다음 장으로 밀려날 수 있다.
@@ -6670,7 +6672,9 @@ ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-an
     }
   }
   paginateAnswers();
-  const ready=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();
+  const fontsReady=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();
+  const ready=Promise.all([fontsReady,...[...sheet.querySelectorAll('img')].map(img=>img.decode?img.decode().catch(()=>{}):Promise.resolve())]);
+  window.NM_LAST_PRINT_READY=ready;
   ready.then(()=>{
     paginateAnswers();
     if(!window.NM_NO_AUTOPRINT)setTimeout(()=>window.print(),350);

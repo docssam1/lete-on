@@ -35,6 +35,7 @@ jobs:
         run: |
           node number_magic/scripts/check-roadmap-sync.js
           node scripts/build-nm-delivery-runtime.cjs --check
+          node number_magic/scripts/check-worksheet-series.js --model-only
       - name: Install Playwright Chromium and Korean fonts
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk fonts-noto-cjk-extra
