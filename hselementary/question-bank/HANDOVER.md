@@ -1,10 +1,10 @@
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Missions 2–3: Local Integration QA
 
-- This is an uncommitted local candidate based on current main `919e0f0fd7223e4a87f2dd70b5dc5457bc9712eb`. The existing main skill `.claude/skills/gfield-textbook-design/SKILL.md` is already present; no skill-file change was required.
+- This candidate is committed on branch `codex/grade52-page11-missions2-3-rebased` and open as draft PR #417 (`685d73aec93885edd8a589900dd39fd3750b1725`) against current main `7bafdd5b1a58435e021a4fdf069c0468e71d7d2d`. The existing main skill `.claude/skills/gfield-textbook-design/SKILL.md` is already present; no skill-file change was required.
 - Missions 2 and 3 are linked to source rows with independent answers 50 and 10–37 inclusive. Mission 3's possible remainders are 37, 34, 31, 28, 25, 22, 19, 16, 13, 10, so the 3-book step is explained explicitly. Publisher answer-key verification remains false.
 - Both focused math audits pass all nine synthetic configurations. Browser audits pass 12 states each (1440px/375px, three difficulty levels, all pools on desktop), 24 overflow checks each, answer separation, blocked external requests, and no page errors. Four A4 problem/solution PDFs are each one page (595×842 pt); Mission 3 solution screenshot was visually inspected. Runtime, release-gate, elementary-language, math-notation, numeric-display, and Grade 5-2 classification audits pass at 2,051 types / 1,263 generatable / 788 pending; the 124 legacy Grade 5-2 records remain unchanged.
 - The broad legacy `source-inventory-grades-5-2-to-6-audit.js` is still stale on current main: it reports 519 existing findings, including old 5-2 Mission 1 allowlist drift and hundreds of unrelated Grade 6 row/status/count mismatches. Do not treat this as a Mission 2–3 regression.
-- Claude API cross-review is still pending because no `ANTHROPIC_API_KEY` or matching Keychain entry was available in the prior check. No commit, push, deployment, or student-data access occurred for this candidate. Next step: complete the requested independent API review, then decide release and live verification.
+- Claude API cross-review is still pending because no `ANTHROPIC_API_KEY` or matching Keychain entry was available in the prior check. The candidate has been committed and pushed to its review branch; it has not been merged or deployed, and no student data was accessed. Next step: complete the requested independent API review, then decide release and live verification.
 
 ---
 
