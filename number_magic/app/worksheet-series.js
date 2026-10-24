@@ -16,7 +16,7 @@ function model(cv,lang='ko'){
    :courses.length?courses.map(c=>L(c.title,lang)).join(' / '):cv.courseTitle||'Numbers of Magic';
  const number=keys.map(k=>k.slice(1)).join('·'),tier=courses[0]?.tier||'level1';
  const nth=(month||1)-1,levelIndex={level0:0,level1:0,level2:1,level3:2,challenge:2,middle1:0,middle2:1,middle3:2,highmath1:0,highmath2:1,algebra:2,calculus1:1}[tier]||0,themeIndex=(nth+levelIndex)%3;
- const heroes=tier==='level0'?['numi-0','poco-3-think','momo-8-happy']:['kid-boy','kid-girl','numi-wizard'];
+ const heroes=tier==='level0'?['numi-0-happy','poco-3-think','momo-8-happy']:['kid-boy','kid-girl','numi-wizard'];
  const hero=heroes[themeIndex],topicText=title+' '+courses.map(c=>c.title.ko).join(' ');
  let motif=/제곱근|무리수|Square Root/.test(topicText)?'C35':/곱셈구구|구구단|Times Tables/.test(topicText)?'C4':/분수|Fraction/.test(topicText)?'fraction':/나눗셈|Division/.test(topicText)?'C13':/소인수|정수의/.test(topicText)?'C29':/함수|극한|미분|적분/.test(topicText)?'C70':/다항식|인수|방정식|항등식/.test(topicText)||cv.middleExtension?'C38':academic?'C54':'C0';
  const buddy=/곱셈|구구/.test(topicText)?'sym-times':/나눗셈/.test(topicText)?'sym-divide':/뺄셈/.test(topicText)?'sym-minus':'sym-plus';
@@ -83,6 +83,6 @@ function decorate(sheet,cv){
  }
  if(!m.academic)sheet.querySelectorAll('.nm-w2-head-tier').forEach(el=>{el.textContent='';el.innerHTML='<img src="assets/characters/'+m.buddy+'.png" alt="">';});
 }
-root.NM_WORKSHEET_SERIES={version:'20261024-monthly-series1',model,front,decorate};
+root.NM_WORKSHEET_SERIES={version:'20261024-monthly-series2',model,front,decorate};
 })(typeof window!=='undefined'?window:globalThis);
 
