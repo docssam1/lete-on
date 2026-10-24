@@ -1904,9 +1904,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "세 어림 조건을 각각 구해 겹치는 50개의 자연수만 남습니다.",
       "sourceVerified": true,
-      "implementationStatus": "deployed-live-check-throttled",
+      "implementationStatus": "deployed-and-live-verified",
       "publicDecision": "published",
-      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 공개 호스트가 HTTP 429를 반환해 라이브 화면 확인은 대기 중입니다. 2026-10-24 fresh local browser rerun passed 24 states and 48 overflow checks; all four problem/solution A4 PDFs are one page and visually inspected. Both GitHub Pages hostnames currently return HTTP 429, so live screen verification remains pending and status stays throttled."
+      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 공개 호스트가 HTTP 429를 반환해 라이브 화면 확인은 대기 중입니다. 2026-10-24 fresh local browser rerun passed 24 states and 48 overflow checks; all four problem/solution A4 PDFs are one page and visually inspected. Both GitHub Pages hostnames currently return HTTP 429, so live screen verification remains pending and status stays throttled. 2026-10-24 live recheck: production URL returned HTTP 200; main and live hashes match for index.html, source-5-2-rounded-range-e4.js and source-5-2-rounded-range-e44.css. Generated three live problems each for Exploration 4 and Example 4-1, reviewed problem/solution tabs and worked answers, and found no browser console errors. Previous local browser/A4 evidence remains. This confirms a desktop live run only; no new mobile live or live-print run."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-1",
@@ -1931,9 +1931,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "6500에서 백의 자리 버림과 반올림은 6500, 십의 자리 올림과 반올림도 6500이며, 천의 자리 반올림은 7000입니다.",
       "sourceVerified": true,
-      "implementationStatus": "deployed-live-check-throttled",
+      "implementationStatus": "deployed-and-live-verified",
       "publicDecision": "published",
-      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 공개 호스트가 HTTP 429를 반환해 라이브 화면 확인은 대기 중입니다. 2026-10-24 fresh local browser rerun passed 24 states and 48 overflow checks; all four problem/solution A4 PDFs are one page and visually inspected. Both GitHub Pages hostnames currently return HTTP 429, so live screen verification remains pending and status stays throttled."
+      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 공개 호스트가 HTTP 429를 반환해 라이브 화면 확인은 대기 중입니다. 2026-10-24 fresh local browser rerun passed 24 states and 48 overflow checks; all four problem/solution A4 PDFs are one page and visually inspected. Both GitHub Pages hostnames currently return HTTP 429, so live screen verification remains pending and status stays throttled. 2026-10-24 live recheck: production URL returned HTTP 200; main and live hashes match for index.html, source-5-2-rounded-range-e4.js and source-5-2-rounded-range-e44.css. Generated three live problems each for Exploration 4 and Example 4-1, reviewed problem/solution tabs and worked answers, and found no browser console errors. Previous local browser/A4 evidence remains. This confirms a desktop live run only; no new mobile live or live-print run."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-2",
@@ -2242,7 +2242,7 @@
     },
     "repairPullRequest": 390,
     "repairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
-    "e4Page10Status": "Examples 4-2–4-4 are deployed and live-verified by PR #396 / Pages #39973818234. Exploration 4 and Example 4-1 have fresh local source, math, 24-state browser, 48-overflow and four A4 PDF checks; direct screen verification remains throttled because both GitHub Pages hostnames returned HTTP 429.",
+    "e4Page10Status": "Exploration 4 and Example 4-1 are deployed and live-verified: public URL 200, relevant production asset hashes match main, and three generated live problems plus separated worked solutions were checked for each. Existing local 24-state/48-overflow and four A4 checks remain. No new mobile live or live-print run is claimed.",
     "page8E3ExamplesStatus": "Examples 3-1 and 3-2 are locally connected with 18 passing math settings, 24 browser states, 48 overflow checks, and four one-page A4 PDFs; publisher-key verification, Claude API cross-review, merge, and deployment remain pending.",
     "page8E3ExamplesDriveQa": {
       "driveId": "1-vMarmi3scy6EWGl1uc62vqoXPXfaf4U",
@@ -3389,7 +3389,7 @@
     ],
     "page10E4LocalQa": {
       "asOf": "2026-10-24",
-      "status": "local-source-math-browser-a4-passed-live-check-throttled",
+      "status": "local-source-math-browser-a4-passed-live-desktop-and-assets-verified",
       "sourceItems": [
         "5-2-u1-e4-exploration-rounded-range",
         "5-2-u1-e4-example-1"
@@ -3402,7 +3402,12 @@
       "driveId": "1pWkfDqeiCywQJFTI-4ea5AEBDaaYBxZP",
       "driveSizeBytes": 965135,
       "driveSha256": "fad0abaebc47f02c3b909ac5a4d17ea91f5dfe7b2ef138809ec0727abeefc4a2",
-      "liveVerification": "Both GitHub Pages hostnames returned HTTP 429; live screen status remains throttled."
+      "liveVerification": "2026-10-24 live recheck: production URL returned HTTP 200; main and live hashes match for index.html, source-5-2-rounded-range-e4.js and source-5-2-rounded-range-e44.css. Generated three live problems each for Exploration 4 and Example 4-1, reviewed problem/solution tabs and worked answers, and found no browser console errors. Previous local browser/A4 evidence remains. This confirms a desktop live run only; no new mobile live or live-print run.",
+      "liveRecheckDriveId": "1gS3sfpbvcHDjwdLhYPf4H3CvLUvnOexq",
+      "liveRecheckDriveSha256": "a81c22c033dc4d4d2f87f904f02b1644487bb0a6be42dfd3271fe4e2ef670dc8",
+      "liveIndexSha256": "0cc9b687cab37439afabd8f9d79daa883083c9cf67537e1b7a7641ed8c712164",
+      "liveGeneratorSha256": "455b3846aaecdb74ade7df27d94e4a23a96e814c9a4b86ca0f5299a8d070a90a",
+      "liveStylesheetSha256": "edcd518895498a0c4cbbb510938913de43c451446d05ee1f842895f6c8f336e6"
     }
   },
   "locallyVerifiedAwaitingReleaseCount": 35
