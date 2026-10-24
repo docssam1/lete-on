@@ -76,6 +76,17 @@
 
 ---
 
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 5: Duplicate Pool Conditions Corrected
+
+- Re-read the printed source crop and Apple Vision OCR; the natural-number wording, two quotient-rounding conditions, and requested sum agree. Independent exhaustive enumeration confirms the original source candidate range and arithmetic-series sum; handwriting and publisher-key material were excluded.
+- A focused uniqueness assertion found the previous nine pool/difficulty slots contained only seven distinct target pairs. Changed the three synthetic base pools while retaining ±10 offsets; all nine target pairs and candidate ranges are now distinct, none reuse the source target pair, and exhaustive enumeration verifies every candidate set and sum.
+- The integrated browser rerun passes 36 states at 1440px / 375px across Missions 4–6 and all three difficulty levels, 72 overflow checks, answer separation, 36 blocked external requests, and zero page errors. Mission 5 problem and solution each fit one A4 portrait page; desktop/mobile and A4 output were visually reviewed without clipping or overlap.
+- The Mission 5 math/classification checks, source-release gate, elementary-language, math-notation, numeric-display, and runtime-availability audits pass. The 5-2 portion of the combined source-inventory audit has no findings and all 124 pre-existing 5-2 records remain unchanged; its 135 reported Grade 6 findings are pre-existing and outside this review.
+- Private owner-only Drive record: [Mission 5 pool review](https://drive.google.com/file/d/1iuAHDwK1XmXQJ4i3Pu8CHr5ssyWxobFH/view) and [QA bundle](https://drive.google.com/file/d/1j7ABOFgpgfAUy8R4aWw8oTmvKp_MqK5o/view), 411,977 bytes; SHA-256 `712e15d867f5fd1e60f3b5d6bb4ceda90755fe463a4a079748b6df91ec697120`. The bundle excludes the original source, crop, OCR, handwriting, publisher key, and student data.
+- This is review-only; publisher-key verification remains false and the public decision remains locked. PR #418 stays draft; no merge or deployment occurred.
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 2: Synthetic Structure Revalidation
 
 - Rechecked printed page 11 Mission 2 (source PDF content page 9; source SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`). The source target pair 4,000 / 3,000 gives 3,950–3,999 inclusive, or 50 natural numbers. Handwriting was excluded.
