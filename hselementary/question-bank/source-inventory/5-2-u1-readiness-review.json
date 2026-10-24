@@ -50,13 +50,13 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 11,
-    "reviewLockedCount": 6,
+    "publicCandidateCount": 12,
+    "reviewLockedCount": 5,
     "uniqueAnswerPassCount": 56,
     "uniqueAnswerReviewNeededCount": 1,
     "localCandidateCount": 33,
-    "readyForDeployCount": 1,
-    "publishedCount": 10
+    "readyForDeployCount": 0,
+    "publishedCount": 12
   },
   "units": [
     {
@@ -1743,9 +1743,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "전체 책 수와 상자 단위가 정해져 필요한 상자 수는 16개 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "분수 관계와 묶음 올림을 한 문항으로 연결하기 전입니다."
+      "implementationStatus": "deployed-and-live-verified",
+      "publicDecision": "published",
+      "lockReason": "원문·독립 계산·9개 변형, PC·모바일 및 A4 문제·풀이 검수 기록을 확인했습니다. PR #382가 main에 병합됐고 현재 공개 index.html, curriculum.js, app.js 및 Mission 1 생성기 SHA-256이 main 파일과 일치합니다. 출판사 정답 검증은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-2-perimeter",
@@ -1851,9 +1851,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "세 인구를 같은 단위로 바꾼 뒤 비례 계산하면 길이가 하나씩 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "verified-local",
-      "publicDecision": "ready-for-deploy",
-      "lockReason": "원문에 없는 그래프 그림은 추가하지 않았습니다. 원문과 독립 계산한 9개 조합, PC·모바일 12개 상태, 24개 넘침 검사, A4 문제·풀이 검수까지 통과했습니다. 실배포 검증은 대기 중입니다."
+      "implementationStatus": "deployed-and-live-verified",
+      "publicDecision": "published",
+      "lockReason": "원문·독립 계산·9개 변형, PC·모바일 및 A4 문제·풀이 검수 기록을 확인했습니다. PR #389와 전체 curriculum 복구 PR #390의 병합 및 라이브 검수 기록을 대조했고, 현재 공개 index.html, curriculum.js, app.js 및 Mission 5 생성기 SHA-256이 main 파일과 일치합니다. 출판사 정답 검증은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-6-citrus-sales",
@@ -2183,8 +2183,8 @@
     "sourceProblemCount": 44,
     "typeCount": 50,
     "directlyReviewedCount": 50,
-    "publicCandidateCount": 11,
-    "lockedCount": 6,
+    "publicCandidateCount": 12,
+    "lockedCount": 5,
     "visualItemCount": 43,
     "uniqueAnswerPassCount": 56,
     "uniqueAnswerReviewNeededCount": 1,
@@ -2221,7 +2221,7 @@
   "runtimeCrosswalk": {
     "asOf": "2026-10-24",
     "scope": "Grade 5-2 Unit 1 source inventory. Printed pages 5–8, page 4 Exploration 1 and Examples 1–4, and pages 9–11 entries are tracked by the direct source-to-runtime crosswalk.",
-    "releaseStatus": "mission1-deployed-live-verified-missions2-5-local-candidates-mission6-ambiguous",
+    "releaseStatus": "printed-page-11-mission-1-deployed-live-verified-missions-2-6-local-review-pending-release",
     "mainMergeSha": "62e2d20e6d5b31fe73562646b41776b975917697",
     "pullRequest": 398,
     "pagesWorkflowRunId": 39976802614,
@@ -2241,6 +2241,145 @@
       "a4ProblemPages": 1,
       "a4SolutionPages": 1
     },
+    "repairPullRequest": 390,
+    "repairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
+    "e4Page10Status": "Examples 4-2–4-4 deployed and live-verified by PR #396 / Pages #39973818234; Exploration 4 and Example 4-1 remain published with live browser verification throttled.",
+    "page11MissionStatus": "Mission 1 is deployed and live-verified by PR #398 / Pages #39976802614. Missions 2–6 are local candidates; Missions 2–3 are in draft PR #417 and Missions 4–6 are in draft PR #418. Claude API cross-review, merge, and deployment remain pending.",
+    "locallyVerifiedAwaitingReleaseCount": 33,
+    "readyForDeployCount": 1,
+    "publishedCount": 10,
+    "reviewLockedCount": 6,
+    "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page11-missions4-6-20261024",
+    "page4E1Evidence": {
+      "driveId": "1U094VJCvwMRmZl1Qo0yGsxCMOPM3tyTZ",
+      "size": 1830985,
+      "sha256": "1063d4924fdaf60720dd5b7c4a2054d8b83f06ab423a6b1982122fffc6f700f5",
+      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page4-e1-20261024",
+      "sourceItems": [
+        "5-2-u1-e1-exploration",
+        "5-2-u1-e1-example-1",
+        "5-2-u1-e1-example-2",
+        "5-2-u1-e1-example-3",
+        "5-2-u1-e1-example-4"
+      ],
+      "readinessTypeCount": 6
+    },
+    "page5MissionStatus": "PDF p. 3 / printed p. 5 Missions 1–6 passed local source, math, browser, and A4 review. Their generators and reviewLocked:false curriculum entries already exist on GitHub main. This review reconciles only the readiness ledgers; it does not change or deploy runtime code. Readiness publicDecision remains locked pending publisher-key/Claude cross-review.",
+    "page5MissionEvidence": {
+      "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
+      "qaDriveSize": 4555067,
+      "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
+      "sourcePdfPage": 3,
+      "sourcePrintedPage": 5,
+      "sourcePdfSha256": "d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463",
+      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page5-missions1-6-20261024",
+      "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
+    },
+    "page6E2Status": "Four connected runtime types for Exploration 2 and Examples 2-1–2-3 passed local source, independent-answer, synthetic math, browser, and A4 review. Example 2-4 remains locked because the printed conditions admit two answers.",
+    "page6E2Evidence": {
+      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page6-e2-exploration-examples123-20261024",
+      "sourcePdfPage": 4,
+      "sourcePrintedPage": 6,
+      "sourcePdfSha256": "d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463",
+      "sourceItems": [
+        "5-2-u1-e2-exploration",
+        "5-2-u1-e2-example-1",
+        "5-2-u1-e2-example-2",
+        "5-2-u1-e2-example-3"
+      ],
+      "readinessRows": [
+        "5-2-u1-e2-exploration-rounding-three-ways",
+        "5-2-u1-e2-example-1",
+        "5-2-u1-e2-example-2-1",
+        "5-2-u1-e2-example-2-2",
+        "5-2-u1-e2-example-3"
+      ],
+      "unresolvedSourceItem": "5-2-u1-e2-example-4",
+      "mathConfigurations": 36,
+      "browserStates": 36,
+      "a4Pdfs": 2,
+      "a4Pages": 2,
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
+      "qaDriveId": "1DcTjSe4J6yEHe94BDk5xYBXs5t7Xp4U8",
+      "qaDriveSize": 1216203,
+      "qaDriveSha256": "e80e5cfdcbe799c35dfed470927e0b47670d594086a757abc516c80e5d2a4a60",
+      "qaDriveUrl": "https://drive.google.com/file/d/1DcTjSe4J6yEHe94BDk5xYBXs5t7Xp4U8/view?usp=drivesdk"
+    },
+    "page7MissionStatus": "All six existing page-7 Mission generators passed local source, answer, math, browser, and A4 review. Mission 3 ledger answer corrected from 398,000 to 401,000 after comparing the closest permutations.",
+    "page7MissionEvidence": {
+      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page7-missions1-6-20261024",
+      "sourcePdfPage": 5,
+      "sourcePrintedPage": 7,
+      "sourcePdfSha256": "d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463",
+      "sourceItems": [
+        "5-2-u1-e2-mission-1",
+        "5-2-u1-e2-mission-2",
+        "5-2-u1-e2-mission-3",
+        "5-2-u1-e2-mission-4",
+        "5-2-u1-e2-mission-5",
+        "5-2-u1-e2-mission-6"
+      ],
+      "mathConfigurations": 54,
+      "browserStates": 36,
+      "a4ProblemPdfPages": 3,
+      "a4SolutionPdfPages": 6,
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
+      "correctedAnswer": {
+        "sourceItemId": "5-2-u1-e2-mission-3-card-nearest-400k",
+        "previous": "398000",
+        "current": "401000"
+      },
+      "qaDriveId": "19RQh_kqPOFJbd3-H06S7FKSBsiWAWkYg",
+      "qaDriveSize": 1808464,
+      "qaDriveSha256": "8bdcc0e293477dd7f90bb369e9a0774eafd78ddfe3e08f9f91e6a5f3b5ddd534",
+      "qaDriveUrl": "https://drive.google.com/file/d/19RQh_kqPOFJbd3-H06S7FKSBsiWAWkYg/view?usp=drivesdk"
+    },
+    "page8E3ExplorationStatus": "The three printed concept statements passed independent calculation, math, browser, and A4 review; each has an existing main runtime. Examples 3-1, 3-2, and 3-4 have corrected independent answers but no runtime UI/A4 link and remain locked. Example 3-3 remains locked for an impossible remainder condition.",
+    "page8E3Evidence": {
+      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page8-e3-exploration-20261024",
+      "sourcePdfPage": 6,
+      "sourcePrintedPage": 8,
+      "sourcePdfSha256": "d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463",
+      "runtimeSourceItems": [
+        "5-2-u1-e3-exploration-round-up",
+        "5-2-u1-e3-exploration-round-down",
+        "5-2-u1-e3-exploration-round-nearest"
+      ],
+      "mathConfigurations": 27,
+      "browserStates": 18,
+      "a4ProblemPdfPages": 2,
+      "a4SolutionPdfPages": 2,
+      "otherExamples": {
+        "5-2-u1-e3-example-1": [
+          "백의 자리까지 버림; 천의 자리까지 버림; 천의 자리까지 반올림",
+          "56074→56000 by floor(100), floor(1000), round(1000)",
+          "56,074를 각 자리까지 올림·버림·반올림하면 56,000이 되는 방법은 백의 자리 버림, 천의 자리 버림, 천의 자리 반올림 세 가지입니다."
+        ],
+        "5-2-u1-e3-example-2": [
+          "18320원",
+          "ceil(946/50)×560+ceil(638/40)×480=18320",
+          "빨간 리본은 946÷50을 올려 19묶음, 노란 리본은 638÷40을 올려 16묶음입니다. 금액은 19×560+16×480=18,320원입니다."
+        ],
+        "5-2-u1-e3-example-3": [
+          "조건 충돌: 16개를 5개씩 묶어 전부 팔 수 없음",
+          "4296=214×20+16; 16 mod 5=1",
+          "상자에 20개씩 담으면 214상자와 16개가 남습니다. 16개는 5개 단위로 전부 나눌 수 없어 인쇄된 판매 조건이 모순됩니다."
+        ],
+        "5-2-u1-e3-example-4": [
+          "18300원",
+          "3300+ceil((8475−1000)/100)×200=18300",
+          "기본 1km 뒤 7,475m는 100m 단위로 75회분 요금이 붙습니다. 3,300+75×200=18,300원입니다."
+        ]
+      },
+      "qaDriveId": "1KvGlX9VLvHCIbB4XZ5P6wF7_REXUJW0G",
+      "qaDriveSize": 686441,
+      "qaDriveSha256": "1c4957886e218c4451baaa71f8fa40f364c76456b11af7f87f8aa8005fb02493",
+      "qaDriveUrl": "https://drive.google.com/file/d/1KvGlX9VLvHCIbB4XZ5P6wF7_REXUJW0G/view?usp=drivesdk",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
+    },
     "items": [
       {
         "sourceItemId": "5-2-u1-e3-mission-1-box-count",
@@ -2252,7 +2391,11 @@
         "browserAndA4Check": true,
         "publisherKeyVerified": false,
         "runtimeAvailableLocally": true,
-        "releaseStatus": "deployed-and-live-verified"
+        "releaseStatus": "deployed-and-live-verified",
+        "pullRequest": 382,
+        "mergeSha": "a81899148f85eb16e3d013aeb7077b7e22520e1a",
+        "pagesWorkflowRunId": 39949819499,
+        "liveQaDriveId": "1EjAepGqF9BoopO5C9wnky_9rBcd5vrYx"
       },
       {
         "sourceItemId": "5-2-u1-e3-mission-2-perimeter",
@@ -2347,12 +2490,15 @@
         "mergeSha": "cf3ff2d66e6e3462f412a755e44481bb5fb22763",
         "repairPullRequest": 390,
         "repairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
-        "pagesWorkflowRunId": 39961934608,
         "pagesRunConclusion": "success",
         "liveQaDriveId": "1YOinrRon7rhfteayL5gJIDemGYlRAUnK",
         "liveQaSize": 716913,
         "liveQaSha256": "93e961ddef8c72080965ff81de27c95eda288c873dd72eb94bc1dcbfb17c7d2c",
-        "liveQaZipSha256": "93e961ddef8c72080965ff81de27c95eda288c873dd72eb94bc1dcbfb17c7d2c"
+        "liveQaZipSha256": "93e961ddef8c72080965ff81de27c95eda288c873dd72eb94bc1dcbfb17c7d2c",
+        "liveVerificationRepairPullRequest": 390,
+        "liveVerificationRepairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
+        "initialPagesWorkflowRunId": 39961934608,
+        "initialPagesWorkflowRunConclusion": "failed; truncated curriculum blob, repaired in PR #390"
       },
       {
         "sourceItemId": "5-2-u1-e3-mission-6-citrus-sales",
@@ -2481,7 +2627,11 @@
         "lastLocalRevalidation": "2026-10-24: math, browser, and A4 rerun passed from a current-main-based worktree.",
         "revalidationQaDriveId": "1CjM1nbVI-Bzh_93BKwsxQCqyKKvb_kWv",
         "revalidationQaSize": 1306014,
-        "revalidationQaSha256": "d1ec184ef80c6f51dfcbb1856430a175be4aaf5229bd7f3c3262951563da4944"
+        "revalidationQaSha256": "d1ec184ef80c6f51dfcbb1856430a175be4aaf5229bd7f3c3262951563da4944",
+        "readinessPublicDecision": "published",
+        "pullRequest": 398,
+        "mergeSha": "62e2d20e6d5b31fe73562646b41776b975917697",
+        "pagesWorkflowRunId": 39976802614
       },
       {
         "sourceItemId": "5-2-u1-e4-mission-2-rounded-floor-range",
@@ -2500,7 +2650,11 @@
         "qaSha256": "5410b10c96fa7de42a301e5f07a8203cb1a40f7e5a2b463f0d65f7d4dbe01631",
         "revalidationQaDriveId": "1CjM1nbVI-Bzh_93BKwsxQCqyKKvb_kWv",
         "revalidationQaSize": 1306014,
-        "revalidationQaSha256": "d1ec184ef80c6f51dfcbb1856430a175be4aaf5229bd7f3c3262951563da4944"
+        "revalidationQaSha256": "d1ec184ef80c6f51dfcbb1856430a175be4aaf5229bd7f3c3262951563da4944",
+        "readinessPublicDecision": "locked",
+        "pullRequest": 417,
+        "draftPullRequest": true,
+        "prUrl": "https://github.com/docssam1/lete-on/pull/417"
       },
       {
         "sourceItemId": "5-2-u1-e4-mission-3-notebook-range",
@@ -2519,7 +2673,11 @@
         "qaSha256": "70977169a6f4f181598b736bdd3a8b801d505be6400d30f49c482ddf0cdd5347",
         "revalidationQaDriveId": "1CjM1nbVI-Bzh_93BKwsxQCqyKKvb_kWv",
         "revalidationQaSize": 1306014,
-        "revalidationQaSha256": "d1ec184ef80c6f51dfcbb1856430a175be4aaf5229bd7f3c3262951563da4944"
+        "revalidationQaSha256": "d1ec184ef80c6f51dfcbb1856430a175be4aaf5229bd7f3c3262951563da4944",
+        "readinessPublicDecision": "locked",
+        "pullRequest": 417,
+        "draftPullRequest": true,
+        "prUrl": "https://github.com/docssam1/lete-on/pull/417"
       },
       {
         "sourceItemId": "5-2-u1-e4-mission-4-rounded-seven-million-range",
@@ -2535,7 +2693,12 @@
         "qaDriveId": "1Y6el8nYcdVtEIE4g6rbp3LfplX4Eyr10",
         "qaDriveSize": 1439390,
         "qaDriveSha256": "e4d20336336d1b5d41abb6ec500bad039673fa29aa67f29c176142a2e37c6c91",
-        "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page11-missions4-6-20261024"
+        "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page11-missions4-6-20261024",
+        "releaseStatus": "local-review-passed-awaiting-release",
+        "readinessPublicDecision": "locked",
+        "pullRequest": 418,
+        "draftPullRequest": true,
+        "prUrl": "https://github.com/docssam1/lete-on/pull/418"
       },
       {
         "sourceItemId": "5-2-u1-e4-mission-5-quotient-range-sum",
@@ -2551,7 +2714,12 @@
         "qaDriveId": "1Y6el8nYcdVtEIE4g6rbp3LfplX4Eyr10",
         "qaDriveSize": 1439390,
         "qaDriveSha256": "e4d20336336d1b5d41abb6ec500bad039673fa29aa67f29c176142a2e37c6c91",
-        "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page11-missions4-6-20261024"
+        "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page11-missions4-6-20261024",
+        "releaseStatus": "local-review-passed-awaiting-release",
+        "readinessPublicDecision": "locked",
+        "pullRequest": 418,
+        "draftPullRequest": true,
+        "prUrl": "https://github.com/docssam1/lete-on/pull/418"
       },
       {
         "sourceItemId": "5-2-u1-e4-mission-6-rounding-place-count",
@@ -2569,7 +2737,12 @@
         "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page11-missions4-6-20261024",
         "qaDriveId": "1Y6el8nYcdVtEIE4g6rbp3LfplX4Eyr10",
         "qaDriveSize": 1439390,
-        "qaDriveSha256": "e4d20336336d1b5d41abb6ec500bad039673fa29aa67f29c176142a2e37c6c91"
+        "qaDriveSha256": "e4d20336336d1b5d41abb6ec500bad039673fa29aa67f29c176142a2e37c6c91",
+        "releaseStatus": "local-review-passed-awaiting-release",
+        "readinessPublicDecision": "locked",
+        "pullRequest": 418,
+        "draftPullRequest": true,
+        "prUrl": "https://github.com/docssam1/lete-on/pull/418"
       },
       {
         "sourceItemId": "5-2-u1-e1-mission-1",
@@ -3208,146 +3381,7 @@
         "qaDriveSize": 686441,
         "qaDriveSha256": "1c4957886e218c4451baaa71f8fa40f364c76456b11af7f87f8aa8005fb02493"
       }
-    ],
-    "repairPullRequest": 390,
-    "repairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
-    "e4Page10Status": "Examples 4-2–4-4 deployed and live-verified by PR #396 / Pages #39973818234; Exploration 4 and Example 4-1 remain published with live browser verification throttled.",
-    "page11MissionStatus": "Mission 1 is deployed and live-verified by PR #398 / Pages #39976802614. Missions 2–6 are local candidates; Missions 2–3 are in draft PR #417 and Missions 4–6 are in draft PR #418. Claude API cross-review, merge, and deployment remain pending.",
-    "locallyVerifiedAwaitingReleaseCount": 33,
-    "readyForDeployCount": 1,
-    "publishedCount": 10,
-    "reviewLockedCount": 6,
-    "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page11-missions4-6-20261024",
-    "page4E1Evidence": {
-      "driveId": "1U094VJCvwMRmZl1Qo0yGsxCMOPM3tyTZ",
-      "size": 1830985,
-      "sha256": "1063d4924fdaf60720dd5b7c4a2054d8b83f06ab423a6b1982122fffc6f700f5",
-      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page4-e1-20261024",
-      "sourceItems": [
-        "5-2-u1-e1-exploration",
-        "5-2-u1-e1-example-1",
-        "5-2-u1-e1-example-2",
-        "5-2-u1-e1-example-3",
-        "5-2-u1-e1-example-4"
-      ],
-      "readinessTypeCount": 6
-    },
-    "page5MissionStatus": "PDF p. 3 / printed p. 5 Missions 1–6 passed local source, math, browser, and A4 review. Their generators and reviewLocked:false curriculum entries already exist on GitHub main. This review reconciles only the readiness ledgers; it does not change or deploy runtime code. Readiness publicDecision remains locked pending publisher-key/Claude cross-review.",
-    "page5MissionEvidence": {
-      "qaDriveId": "1UtLT6_CLQLJ0GfYxLQWOZiQK6u3zAfKY",
-      "qaDriveSize": 4555067,
-      "qaDriveSha256": "9e4197e30fb7ec4a1df2cc62e55e6e077d73087a58b6a9ed7fb1eab50245afa7",
-      "sourcePdfPage": 3,
-      "sourcePrintedPage": 5,
-      "sourcePdfSha256": "d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463",
-      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page5-missions1-6-20261024",
-      "supersedesQaDriveId": "1lsBJxPbmAPkAYFXr9he0xFD95DFGS50k"
-    },
-    "page6E2Status": "Four connected runtime types for Exploration 2 and Examples 2-1–2-3 passed local source, independent-answer, synthetic math, browser, and A4 review. Example 2-4 remains locked because the printed conditions admit two answers.",
-    "page6E2Evidence": {
-      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page6-e2-exploration-examples123-20261024",
-      "sourcePdfPage": 4,
-      "sourcePrintedPage": 6,
-      "sourcePdfSha256": "d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463",
-      "sourceItems": [
-        "5-2-u1-e2-exploration",
-        "5-2-u1-e2-example-1",
-        "5-2-u1-e2-example-2",
-        "5-2-u1-e2-example-3"
-      ],
-      "readinessRows": [
-        "5-2-u1-e2-exploration-rounding-three-ways",
-        "5-2-u1-e2-example-1",
-        "5-2-u1-e2-example-2-1",
-        "5-2-u1-e2-example-2-2",
-        "5-2-u1-e2-example-3"
-      ],
-      "unresolvedSourceItem": "5-2-u1-e2-example-4",
-      "mathConfigurations": 36,
-      "browserStates": 36,
-      "a4Pdfs": 2,
-      "a4Pages": 2,
-      "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "qaDriveId": "1DcTjSe4J6yEHe94BDk5xYBXs5t7Xp4U8",
-      "qaDriveSize": 1216203,
-      "qaDriveSha256": "e80e5cfdcbe799c35dfed470927e0b47670d594086a757abc516c80e5d2a4a60",
-      "qaDriveUrl": "https://drive.google.com/file/d/1DcTjSe4J6yEHe94BDk5xYBXs5t7Xp4U8/view?usp=drivesdk"
-    },
-    "page7MissionStatus": "All six existing page-7 Mission generators passed local source, answer, math, browser, and A4 review. Mission 3 ledger answer corrected from 398,000 to 401,000 after comparing the closest permutations.",
-    "page7MissionEvidence": {
-      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page7-missions1-6-20261024",
-      "sourcePdfPage": 5,
-      "sourcePrintedPage": 7,
-      "sourcePdfSha256": "d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463",
-      "sourceItems": [
-        "5-2-u1-e2-mission-1",
-        "5-2-u1-e2-mission-2",
-        "5-2-u1-e2-mission-3",
-        "5-2-u1-e2-mission-4",
-        "5-2-u1-e2-mission-5",
-        "5-2-u1-e2-mission-6"
-      ],
-      "mathConfigurations": 54,
-      "browserStates": 36,
-      "a4ProblemPdfPages": 3,
-      "a4SolutionPdfPages": 6,
-      "publisherKeyVerified": false,
-      "publicDecision": "locked",
-      "correctedAnswer": {
-        "sourceItemId": "5-2-u1-e2-mission-3-card-nearest-400k",
-        "previous": "398000",
-        "current": "401000"
-      },
-      "qaDriveId": "19RQh_kqPOFJbd3-H06S7FKSBsiWAWkYg",
-      "qaDriveSize": 1808464,
-      "qaDriveSha256": "8bdcc0e293477dd7f90bb369e9a0774eafd78ddfe3e08f9f91e6a5f3b5ddd534",
-      "qaDriveUrl": "https://drive.google.com/file/d/19RQh_kqPOFJbd3-H06S7FKSBsiWAWkYg/view?usp=drivesdk"
-    },
-    "page8E3ExplorationStatus": "The three printed concept statements passed independent calculation, math, browser, and A4 review; each has an existing main runtime. Examples 3-1, 3-2, and 3-4 have corrected independent answers but no runtime UI/A4 link and remain locked. Example 3-3 remains locked for an impossible remainder condition.",
-    "page8E3Evidence": {
-      "localEvidenceDir": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-page8-e3-exploration-20261024",
-      "sourcePdfPage": 6,
-      "sourcePrintedPage": 8,
-      "sourcePdfSha256": "d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463",
-      "runtimeSourceItems": [
-        "5-2-u1-e3-exploration-round-up",
-        "5-2-u1-e3-exploration-round-down",
-        "5-2-u1-e3-exploration-round-nearest"
-      ],
-      "mathConfigurations": 27,
-      "browserStates": 18,
-      "a4ProblemPdfPages": 2,
-      "a4SolutionPdfPages": 2,
-      "otherExamples": {
-        "5-2-u1-e3-example-1": [
-          "백의 자리까지 버림; 천의 자리까지 버림; 천의 자리까지 반올림",
-          "56074→56000 by floor(100), floor(1000), round(1000)",
-          "56,074를 각 자리까지 올림·버림·반올림하면 56,000이 되는 방법은 백의 자리 버림, 천의 자리 버림, 천의 자리 반올림 세 가지입니다."
-        ],
-        "5-2-u1-e3-example-2": [
-          "18320원",
-          "ceil(946/50)×560+ceil(638/40)×480=18320",
-          "빨간 리본은 946÷50을 올려 19묶음, 노란 리본은 638÷40을 올려 16묶음입니다. 금액은 19×560+16×480=18,320원입니다."
-        ],
-        "5-2-u1-e3-example-3": [
-          "조건 충돌: 16개를 5개씩 묶어 전부 팔 수 없음",
-          "4296=214×20+16; 16 mod 5=1",
-          "상자에 20개씩 담으면 214상자와 16개가 남습니다. 16개는 5개 단위로 전부 나눌 수 없어 인쇄된 판매 조건이 모순됩니다."
-        ],
-        "5-2-u1-e3-example-4": [
-          "18300원",
-          "3300+ceil((8475−1000)/100)×200=18300",
-          "기본 1km 뒤 7,475m는 100m 단위로 75회분 요금이 붙습니다. 3,300+75×200=18,300원입니다."
-        ]
-      },
-      "qaDriveId": "1KvGlX9VLvHCIbB4XZ5P6wF7_REXUJW0G",
-      "qaDriveSize": 686441,
-      "qaDriveSha256": "1c4957886e218c4451baaa71f8fa40f364c76456b11af7f87f8aa8005fb02493",
-      "qaDriveUrl": "https://drive.google.com/file/d/1KvGlX9VLvHCIbB4XZ5P6wF7_REXUJW0G/view?usp=drivesdk",
-      "publisherKeyVerified": false,
-      "publicDecision": "locked"
-    }
+    ]
   },
   "locallyVerifiedAwaitingReleaseCount": 33
 }

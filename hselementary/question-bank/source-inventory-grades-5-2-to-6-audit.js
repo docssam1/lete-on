@@ -32,7 +32,7 @@ const specs = [
 ];
 
 const failures = [];
-const reviewed5_2Releases = new Set(["5-2-u1-e4-mission-1", "5-2-u1-e4-mission-2", "5-2-u1-e4-mission-3", "5-2-u1-e4-mission-4", "5-2-u1-e4-mission-5", "5-2-u1-e4-mission-6", "5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
+const reviewed5_2Releases = new Set(["5-2-u1-e3-mission-1", "5-2-u1-e3-mission-2", "5-2-u1-e3-mission-3", "5-2-u1-e3-mission-4", "5-2-u1-e3-mission-5", "5-2-u1-e3-mission-6", "5-2-u1-e4-mission-1", "5-2-u1-e4-mission-2", "5-2-u1-e4-mission-3", "5-2-u1-e4-mission-4", "5-2-u1-e4-mission-5", "5-2-u1-e4-mission-6", "5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
 const allIds = new Set();
 const semesterCounts = {};
 
@@ -109,12 +109,23 @@ for (const spec of specs) {
     for (const field of ["sourceShape", "reviewReason", "visualRisk"]) {
       if (!isNonEmpty(item[field])) fail(`${label}: ${field}가 비어 있습니다.`);
     }
-    const expectedImplementationStatus = reviewed5_2Releases.has(item.sourceItemId) ? "reviewed" : "review-locked";
-    if (item.implementationStatus !== expectedImplementationStatus) {
-      fail(`${label}: implementationStatus가 ${expectedImplementationStatus}가 아닙니다.`);
+    const statusBySemester = {
+      "5-2": new Set(["reviewed", "local-review-passed-awaiting-release", "review-locked"]),
+      "6-1": new Set(["fixed-verified-pool", "implemented", "review-locked"]),
+      "6-2": new Set(["fixed-verified-pool", "verified-fixed-pool", "review-locked", "handwriting-conflict-locked", "source-rebuilt-answer-reading-locked", "source-condition-ambiguity-locked", "source-decimal-place-ambiguity-locked"])
+    };
+    if (typeof item.implementationStatus !== "string" || !statusBySemester[spec.semester].has(item.implementationStatus)) {
+      fail(`${label}: ${spec.semester} 장부에서 허용하지 않는 implementationStatus입니다 (${item.implementationStatus}).`);
     }
-    if (item.sourceVerified === false && item.implementationStatus !== "review-locked") {
-      fail(`${label}: sourceVerified false인데 잠금이 아닙니다.`);
+    const lockedStatus = item.implementationStatus === "review-locked" || item.implementationStatus.endsWith("-locked");
+    if (item.sourceVerified === false && !lockedStatus) {
+      fail(`${label}: sourceVerified false인데 잠금 상태가 아닙니다.`);
+    }
+    if (spec.semester === "5-2" && item.implementationStatus === "reviewed" && !reviewed5_2Releases.has(item.sourceItemId)) {
+      fail(`${label}: 근거 없이 reviewed 상태로 승격됐습니다.`);
+    }
+    if (spec.semester === "5-2" && item.implementationStatus === "local-review-passed-awaiting-release" && item.sourceVerified !== true) {
+      fail(`${label}: 원문 확인이 끝나지 않은 local 후보입니다.`);
     }
     if (item.sourceVerified === true) verifiedCount += 1;
     if (allIds.has(item.sourceItemId)) fail(`${label}: sourceItemId 중복 ${item.sourceItemId}`);
@@ -133,11 +144,11 @@ for (const spec of specs) {
   for (const [section, expected] of Object.entries(spec.sections)) {
     if (bySection[section] !== expected) fail(`${spec.semester} ${section}: ${expected}개가 아닙니다 (${bySection[section]}).`);
   }
-  if (spec.semester === "5-2" && verifiedCount !== 32) {
-    fail(`5-2: sourceVerified true 항목은 32개여야 합니다 (${verifiedCount}).`);
+  if (spec.semester === "5-2" && verifiedCount !== 43) {
+    fail(`5-2: sourceVerified true 항목은 43개여야 합니다 (${verifiedCount}).`);
   }
   if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
-    fail("5-2: 검수 완료 항목은 인쇄 11쪽 Mission 1–6, 인쇄 30쪽 예제 4-2, 인쇄 31쪽 Mission 4–6으로 제한합니다.");
+    fail("5-2: 검수 완료 항목은 인쇄 9쪽 Mission 1–6, 인쇄 11쪽 Mission 1–6, 인쇄 30쪽 예제 4-2, 인쇄 31쪽 Mission 4–6으로 제한합니다.");
   }
   if (spec.semester === "5-2" && [...reviewed5_2Releases].some(id => items.filter(item => item.sourceItemId === id).length !== 1)) {
     fail("5-2: 승인된 5-2 원문 문항은 각각 하나씩만 장부에 있어야 합니다.");
