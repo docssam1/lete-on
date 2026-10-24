@@ -1,0 +1,96 @@
+/* 디지털 숫자 공방(game-digital.js) — 판·유리·거울선은 뒤집고 돌리기 공방(game-shape-moves.css)과 같은 거울 저택 생김새.
+   켜진 막대는 법랑 청록, 옮겨 놓은 막대는 산호, 고른 막대는 금빛 테두리. 모두 .dg 안에서만. */
+.dg { --enamel: #237a88; --coral: #e8673f; --dg-ink: #22303f; --digit: clamp(46px, 9vh, 78px); display: flex; flex-direction: column; gap: 12px; min-height: 100%; color: var(--dg-ink); }
+.dg * { box-sizing: border-box; }
+.dg-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.dg-levels { display: flex; flex-wrap: wrap; gap: 6px; }
+.dg-levels button { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 4px 14px 4px 5px; border: 1px solid #d7dfe2; border-radius: 999px; background: #fff; color: #5c6b74; font-size: 14px; font-weight: 600; }
+.dg-levels button b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #eef3f4; color: var(--enamel); font-size: 13px; }
+.dg-levels button small { color: #c58a12; font-weight: 700; }
+.dg-levels button.on { border-color: var(--enamel); background: #eaf6f7; color: #164e57; }
+.dg-levels button.on b { background: var(--enamel); color: #fff; }
+.dg-dots { display: flex; gap: 6px; }
+.dg-dots i { width: 12px; height: 12px; border-radius: 50%; background: #dfe6e8; }
+.dg-dots i.on { background: var(--enamel); box-shadow: 0 0 0 3px rgba(127, 211, 230, .45); }
+.dg-dots i.done { background: #7fc79a; }
+.dg-mission { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.5; word-break: keep-all; }
+.dg-mission b { color: var(--v, #5b3d99); }
+
+.dg-work { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 18px; padding: 18px; border: 1px solid #86a6a8; border-radius: 18px;
+  background: radial-gradient(circle at 18% 12%, rgba(255, 255, 255, .95), transparent 34%), linear-gradient(145deg, rgba(225, 242, 241, .95), rgba(194, 216, 216, .9));
+  box-shadow: 0 12px 26px rgba(25, 67, 72, .14), inset 0 2px rgba(255, 255, 255, .92); }
+.dg-panel { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 0; }
+.dg-panel figcaption { color: #4c6168; font-size: 12.5px; font-weight: 600; }
+.dg-digits { display: flex; gap: 10px; padding: 12px 14px; border: 6px solid transparent; border-radius: 12px;
+  background: linear-gradient(160deg, #fbfefe, #dcecec) padding-box, linear-gradient(180deg, #4b7a82, #173f47 72%, #0d3036) border-box;
+  box-shadow: 0 12px 20px rgba(18, 58, 64, .22), 0 5px 0 #0d343b, inset 0 0 0 2px rgba(255, 255, 255, .65); }
+.dg-digit { display: block; width: var(--digit); height: calc(var(--digit) * 100 / 60); overflow: visible; }
+.dg-digit.small { width: 30px; height: 50px; }
+.dg-digit .seg { fill: rgba(35, 122, 136, .08); stroke: rgba(35, 122, 136, .18); stroke-width: .6; transition: fill .15s; }
+.dg-digit .seg.on { fill: var(--enamel); stroke: #e8ffff; filter: drop-shadow(0 0 2px rgba(79, 180, 192, .6)); }
+.dg-digit .seg.on.moved { fill: rgba(35, 122, 136, .32); }
+.dg-digit .seg.placed { fill: var(--coral); stroke: #fff4ea; }
+.dg-digit .seg.picked { stroke: #f4c84e; stroke-width: 3; fill: #f8d878; }
+.dg-digit .seg.wrong { stroke: #b3261e; stroke-width: 2.5; stroke-dasharray: 3 2; }
+.dg-digit [data-seg] { cursor: pointer; }
+.dg-digit.target .seg:not(.placed):hover { fill: rgba(255, 214, 120, .55); }
+.dg-digit [data-seg]:focus-visible { outline: none; stroke: #5b3d99; stroke-width: 3; }
+.dg-op { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; min-width: 110px; padding: 10px 12px; border-radius: 14px; background: #fff; box-shadow: 0 4px 12px rgba(18, 58, 64, .14); color: #164e57; text-align: center; }
+.dg-op b { font-size: 14px; word-break: keep-all; }
+.dg-op small { color: #6b7d84; font-size: 12px; }
+.dg-glass { display: block; border-radius: 99px; background: linear-gradient(90deg, #55737c, #d9fdff, #fff, #9eeaf1, #3f6570); box-shadow: 0 0 8px rgba(100, 222, 232, .8); }
+.dg-glass.v { width: 7px; height: 34px; }
+.dg-glass.h { width: 34px; height: 7px; margin: 13px 0; }
+.dg-turn { width: 36px; height: 36px; color: var(--enamel); }
+.dg-plus { font-size: 34px; font-weight: 700; color: #164e57; }
+.dg-q { display: grid; place-items: center; min-width: 90px; min-height: 90px; padding: 0 12px; border: 2px dashed #8fb1b5; border-radius: 14px; background: rgba(255, 255, 255, .6); color: #164e57; font-size: 34px; font-weight: 800; }
+
+/* 숫자판 돌리기 */
+.dg-board { display: grid; grid-template-columns: repeat(3, 76px); grid-template-rows: repeat(3, 76px); gap: 6px; padding: 10px; border: 6px solid transparent; border-radius: 14px;
+  background: linear-gradient(160deg, #fbfefe, #dcecec) padding-box, linear-gradient(180deg, #4b7a82, #173f47 72%, #0d3036) border-box;
+  box-shadow: 0 12px 20px rgba(18, 58, 64, .22), 0 5px 0 #0d343b; transition: transform 1.1s cubic-bezier(.4, .1, .2, 1); }
+.dg-board.turned { transform: rotate(var(--turn)); }
+.dg-cell { display: grid; place-items: center; padding: 0; border: 1px solid rgba(70, 117, 120, .25); border-radius: 10px; background: #fff; }
+.dg-cell span { display: block; transform: rotate(var(--o)); }
+.dg-cell.picked { border: 3px solid #f4c84e; background: #fff7dc; }
+.dg-cell.upright { box-shadow: 0 0 0 3px #4caf73; }
+.dg-cell.wrong { border: 3px dashed #b3261e; }
+.dg-cell:disabled { cursor: default; }
+
+.dg-rule, .dg-hint, .dg-note { margin: 0; padding: 10px 14px; border-radius: 12px; font-size: 14.5px; line-height: 1.5; word-break: keep-all; }
+.dg-rule { background: #f3f8f8; color: #2c4b52; }
+.dg-rule b { margin-right: 6px; color: var(--enamel); }
+.dg-hint { background: #fff8e4; color: #6b5317; border-left: 4px solid #f4c84e; }
+.dg-note { background: #fff1ef; color: #8d3a30; border-left: 4px solid #e8673f; }
+.dg-note.good { background: #ecf7ef; color: #2b6a43; border-left-color: #4caf73; }
+.dg-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; margin-top: auto; }
+.dg-count { margin-right: auto; color: #5c6b74; font-size: 14px; }
+.dg-count b { color: var(--coral); font-size: 18px; }
+.dg-btn { min-height: 46px; padding: 8px 18px; border: 1.5px solid #cfc1ec; border-radius: 999px; background: #fff; color: var(--dg-ink); font-size: 15px; font-weight: 700; }
+.dg-btn.primary { border: 0; background: linear-gradient(180deg, #6a4bb0, #46307a); color: #fff; box-shadow: 0 8px 18px rgba(70, 48, 122, .3); }
+.dg-btn.ghost { color: #6f6787; }
+.dg-btn:disabled { opacity: .45; box-shadow: none; }
+.dg-pad { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.dg-typed { display: grid; place-items: center; min-width: 110px; min-height: 48px; padding: 0 14px; border: 2px solid var(--enamel); border-radius: 12px; background: #fff; font-size: 26px; font-weight: 800; letter-spacing: .06em; }
+.dg-key { min-width: 46px; min-height: 46px; border: 1px solid #cfd9dc; border-radius: 12px; background: linear-gradient(180deg, #fff, #eef4f3); box-shadow: 0 3px 0 #c5d3d3; font-size: 18px; font-weight: 700; }
+.dg-key:disabled { opacity: .45; }
+
+.dg-finale { align-items: center; justify-content: center; text-align: center; }
+.dg-kick { margin: 0; color: var(--enamel); font-size: 14px; font-weight: 700; }
+.dg-finale h3 { margin: 0; font-size: 28px; }
+.dg-score { margin: 0; font-size: 17px; }
+.dg-score b { color: var(--coral); font-size: 24px; }
+.dg-rules { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; text-align: left; }
+.dg-rules li { padding: 10px 14px; border-radius: 12px; background: #f3f8f8; font-size: 15px; }
+.dg-rules b { margin-right: 8px; color: var(--enamel); }
+
+@media (max-width: 760px) {
+  .dg { --digit: 40px; gap: 10px; }
+  .dg-levels button { padding: 4px 9px 4px 4px; font-size: 12px; }
+  .dg-mission { font-size: 15px; }
+  .dg-work { gap: 10px; padding: 10px; }
+  .dg-board { grid-template-columns: repeat(3, 62px); grid-template-rows: repeat(3, 62px); }
+  .dg-op { min-width: 0; }
+  .dg-key { min-width: 40px; }
+}
+@media (prefers-reduced-motion: reduce) { .dg-board { transition: none; } }

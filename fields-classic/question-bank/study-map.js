@@ -118,5 +118,6 @@ export async function loadGoldenBell() {
 // 원장(2026-10-24): 「링크를 가져오는 거 아냐. 우리 걸 써야 돼. 그걸 발전시켜 우리 학습에 맞는 게임으로.」
 // 지오메트리 게임의 계산·생김새를 가져와 골든벨 풀이 순서대로 다시 만든 게임. replaces = 덱에서 이 게임이 대신하는 옛 체험(골든벨 화면·학습지 QR에는 그대로 남는다).
 export const STUDY_GAMES = Object.freeze({
+  "book-01/digital-turn-flip": [{ id: "digital", title: "디지털 숫자 공방", module: "./game-digital.js?v=20261024c", css: "./game-digital.css?v=20261024a", mount: "mountDigitalWorkshop", replaces: [] }],
   "book-01/mirror-reflection": [{ id: "shape-moves", title: "뒤집고 돌리기 공방", module: "./game-shape-moves.js?v=20261024c", css: "./game-shape-moves.css?v=20261024c", mount: "mountShapeMoves", replaces: ["mirror-tiles"] }]
 });
