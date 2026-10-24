@@ -1,5 +1,5 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20260918a";
-import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261024l";
+import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261024m";
 
 // 시작 화면: 권을 고르고 「공부하기」(① 개념 → ② 게임 → ③ 골든벨 → ④ 더클 본책) 또는
 // 「시험지 만들기」(권별테스트 원문 풀기 · 권별테스트 유사문제 · 교재에서 단원·난이도 골라 만들기)로 들어간다.
@@ -64,7 +64,7 @@ function bookCell(unitIndex) {
   const entries = { units: String(unitIndex), count: self ? "10" : "20", build: "1", ...(self ? {} : { form: "lesson" }) };
   const stages = TEXTBOOK_STAGES.map((stage) => `<a href="${esc(bankLink({ ...entries, stage: stage.id }))}">${esc(stage.label)}</a>`).join("");
   return `<div class="st-cell st-book-cell"><b>④ 더클 본책</b><div class="st-stage-links">${stages}</div>
-    <small>${self ? "10문제 학습지 · 화면에서 풀고 답 확인" : "교재형 학습지 20문제 · 인쇄"}</small></div>`;
+    <small>${self ? "10문제 학습지 · 화면에서 풀고 바로 채점" : "교재형 학습지 20문제 · 인쇄"}</small></div>`;
 }
 
 function lessonRow(lesson) {
@@ -102,12 +102,12 @@ function renderStudy() {
   const book = activeBook();
   document.querySelector(".st-steps").hidden = view.mode === "self";
   if (view.mode === "self") {
-    $("studyLead").innerHTML = "단원을 고르고 차시를 누르세요. 차시마다 <b>개념 배우기</b> → <b>게임하기</b> → <b>골든벨</b> → <b>공부하기</b>(본책에서 모르는 문제는 번호를 눌러 유사문제로) 순서예요.";
+    $("studyLead").innerHTML = "단원을 고르고 차시를 눌러요. 차시마다 <b>개념 배우기</b> → <b>게임하기</b> → <b>골든벨</b> → <b>공부하기</b>(본책에서 모르는 문제는 번호를 눌러 유사문제로) 순서예요.";
     return renderSelfUnits(book);
   }
   $("studyLead").innerHTML = view.mode === "self"
     ? ""
-    : "선생님 화면에 띄워 같은 순서로 수업합니다. ④ 더클 본책은 교재형 학습지로 인쇄합니다.";
+    : "선생님 화면에 띄워 같은 순서로 수업해요. ④ 더클 본책은 교재형 학습지로 인쇄해요.";
   if (!goldenBell) {
     $("unitList").innerHTML = book.units.map((unit, index) => `<section class="st-unit"><h3><span>${String(index + 1).padStart(2, "0")}</span>${esc(unit.label)}</h3>
       <div class="st-unit-body"><p class="st-loading">골든벨 학습을 불러오는 중…</p>${bookCell(index)}</div></section>`).join("");
@@ -118,7 +118,7 @@ function renderStudy() {
   const unitBlocks = book.units.map((unit, index) => `<section class="st-unit">
     <h3><span>${String(index + 1).padStart(2, "0")}</span>${esc(unit.label)}<small>본책 ${unit.typeIds.length}개 유형 · 골든벨 학습 ${units[index].length}개</small></h3>
     <div class="st-unit-body">
-      ${units[index].length ? `<ol class="st-lessons">${units[index].map(lessonRow).join("")}</ol>` : `<p class="st-empty">이 단원의 골든벨 학습은 아직 없습니다. 본책 문제로 공부하세요.</p>`}
+      ${units[index].length ? `<ol class="st-lessons">${units[index].map(lessonRow).join("")}</ol>` : `<p class="st-empty">이 단원은 본책 문제로 공부해요. 골든벨 학습은 준비하고 있어요.</p>`}
       ${bookCell(index)}
     </div>
   </section>`).join("");
@@ -136,7 +136,7 @@ function renderTest() {
   const verified = questions.filter((question) => question.verified).length;
   $("unitTestFreshMeta").textContent = verified === questions.length
     ? `${questions.length}문항`
-    : `${questions.length}문항 중 ${verified}문항 준비됨 — 준비된 문항만 나옵니다`;
+    : `${questions.length}문항 중 ${verified}문항을 준비했어요 — 준비한 문항만 나와요`;
   $("unitTestSource").href = link("unit-test-viewer.html", { book: book.id });
   $("unitTestFresh").href = bankLink({ set: "unit-test", fresh: "1", build: "1" });
   $("bankMore").href = link("index.html", {});
@@ -153,7 +153,7 @@ function renderPickSummary() {
   const stage = TEXTBOOK_STAGES.find((entry) => entry.id === view.pick.stage);
   $("pickSummary").textContent = units.length
     ? `${book.label} ${units.length === book.units.length ? "전체 단원" : units.map((index) => book.units[index].label).join(" · ")} · ${stage.label} · ${view.pick.count}문제`
-    : "단원을 하나 이상 고르세요";
+    : "단원을 하나 이상 골라 주세요";
   $("pickForm").querySelector("button[type=submit]").disabled = !units.length;
 }
 
@@ -205,5 +205,5 @@ loadGoldenBell().then((data) => {
   goldenBell = data;
   if (view.door === "study") renderStudy();
 }).catch(() => {
-  $("unitList").querySelectorAll(".st-loading").forEach((node) => { node.textContent = "골든벨 학습을 불러오지 못했습니다. 새로고침해 주세요."; });
+  $("unitList").querySelectorAll(".st-loading").forEach((node) => { node.textContent = "골든벨 학습을 불러오지 못했어요. 새로고침해 주세요."; });
 });

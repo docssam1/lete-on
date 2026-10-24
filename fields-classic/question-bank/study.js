@@ -1,15 +1,15 @@
 import { CURRICULUM } from "./source-data.js?v=20260918a";
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES } from "./study-map.js?v=20261024l";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES } from "./study-map.js?v=20261024m";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
 //  · 골든벨 화면은 덱 안의 창 하나(golden-bell.html?embed=1)를 계속 쓰고, 장이 바뀌면 postMessage로 그 장의 학습만 연다.
 //    「다음」은 그 창 안의 장(개념 덩어리)을 먼저 넘기고, 끝이면 덱의 다음 장으로 간다.
-//  · 게임을 마치거나 골든벨 문항을 다 풀면 독쌤이 칭찬하고 저절로 다음 장으로 간다(「넘김 멈춤」으로 끈다).
+//  · 게임을 마치거나 골든벨 문항을 다 풀면 독쌤이 칭찬하고 저절로 다음 장으로 간다(⏸ 단추로 멈춘다).
 //  · 본책 번호를 누르면 같은 유형의 유사문제가 이 장 위에 뜬다(문제은행 학생 화면, embed). 닫으면 번호판으로 돌아온다.
 //  · 독쌤 말은 글이 원본이고, 음성은 기기 음성(ko-KR)으로 읽는다. 소리 없이 입을 움직이는 그림은 쓰지 않는다(표정 3장만 바꿔 끼움).
 //  · 화면은 그림 액자 틀이다(원장: 「밝아야 돼」 → 「배너 말고 틀」). 섬 그림이 가장자리를 두르고 가운데 넓은 칸에서 공부한다.
-//    위 액자에 공부 순서(개념 · 게임 · 골든벨 · 공부하기 · 완료), 아래 액자에 독쌤과 이전/다음. 장이 바뀌면 그림이 그 섬 쪽으로 조금 옮겨 간다.
+//    위 액자에 공부 순서(개념 · 게임 · 골든벨 · 공부하기 · 도착), 아래 액자에 독쌤과 이전/다음. 장이 바뀌면 그림이 그 섬 쪽으로 조금 옮겨 간다.
 //  · 게임하기에는 덱 안에 바로 뜨는 우리 게임(study-map.js STUDY_GAMES)을 먼저 둔다 — 지오메트리 게임의 계산·생김새를 가져와
 //    골든벨 풀이 순서대로 다시 만든 것(원장: 「링크를 가져오는 거 아냐. 우리 걸 써야 돼」).
 // 주소: ?book=book-01&unit=0&part=1&s=장번호&student=…   차시 나누기 규칙은 study-map.js
@@ -166,7 +166,7 @@ window.addEventListener("message", (event) => {
     return;
   }
   if (data.event === "done" && slide?.lesson?.id === data.lesson && slide.kind === data.view) {
-    say(slide.kind === "bell" ? "골든벨 문제를 다 풀었어! 정말 잘했어. 다음으로 넘어가자." : "게임을 끝까지 해냈어! 이제 다음으로 가자.", "praise");
+    say(slide.kind === "bell" ? "골든벨 문제를 다 풀었어요! 정말 잘했어요. 다음으로 넘어가요." : "게임을 끝까지 해냈어요! 이제 다음으로 가요.", "praise");
     auto(2600);
   }
 });
@@ -197,7 +197,7 @@ async function mountNative(slide) {
   $("slideBody").replaceChildren(host);
   nativeGame = mod[game.mount](host, {
     say: (text, mood) => say(text, mood),
-    onDone: () => { say("게임을 끝까지 해냈어! 이제 골든벨 문제로 가자.", "praise"); auto(2200); }
+    onDone: () => { say("게임을 끝까지 해냈어요! 이제 골든벨 문제로 가요.", "praise"); auto(2200); }
   });
 }
 function disposeNative() { try { nativeGame?.dispose(); } catch {} nativeGame = null; }
@@ -213,7 +213,7 @@ function renderHead() {
 // ── 그림 세계: 섬 다섯 개(그림 1672×941 안의 자리, %) ──
 // 그림의 다섯 터(아래 왼쪽 → 위 오른쪽). 그림을 바꾸면 이 자리를 다시 잰다.
 const ISLANDS = [[15, 78], [35.5, 55], [52, 38.5], [73.5, 33.5], [87.6, 15.5]];
-const STATIONS = [["concept", "개념 배우기"], ["game", "게임하기"], ["bell", "골든벨"], ["board", "공부하기"], ["end", "완료"]];
+const STATIONS = [["concept", "개념 배우기"], ["game", "게임하기"], ["bell", "골든벨"], ["board", "공부하기"], ["end", "도착"]];
 const stationOf = (slide) => Math.max(0, STATIONS.findIndex(([kind]) => kind === slide.kind));
 function renderSigns() {
   const slide = slides[index];
@@ -278,22 +278,22 @@ function endMarkup() {
   const next = part < partCount;
   return `<div class="sd-cover sd-end">
     <span class="sd-medal" aria-hidden="true">✓</span>
-    <h1>${part}차시 완료!</h1>
-    <p class="sd-cover-lead">${esc(unit.label)} ${part}차시 공부를 마쳤어요.</p>
+    <h1>${part}차시를 마쳤어요!</h1>
+    <p class="sd-cover-lead">${esc(unit.label)} · 오늘 건널 섬을 모두 건넜어요.</p>
     <div class="sd-end-actions">
       ${next ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex), part: String(part + 1) }))}">${part + 1}차시 시작하기 ›</a>` : unitIndex + 1 < book.units.length ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex + 1), part: "1" }))}">${unitIndex + 2}단원 시작하기 ›</a>` : ""}
       <a class="sd-btn" href="${esc(link("start.html", { book: book.id }))}">단원 고르기</a>
-      <button type="button" class="sd-btn" data-act="restart">이 차시 처음부터</button>
+      <button type="button" class="sd-btn" data-act="restart">처음부터 다시 하기</button>
     </div>
   </div>`;
 }
 function lineFor(slide) {
-  if (slide.kind === "cover") return ready ? `오늘은 ${unit.label} ${part}차시야. 개념을 배우고, 게임으로 익히고, 골든벨을 풀고, 본책을 풀 거야. 시작하기를 눌러 봐.` : "공부할 것을 준비하고 있어. 잠깐만 기다려 줘.";
-  if (slide.kind === "concept") return `${slide.lesson.title} 개념이야. 한 장씩 천천히 보고 다음을 눌러.`;
-  if (slide.kind === "game") return `${slide.title} 게임이야. 개념에서 본 풀이 순서대로 손으로 직접 해 봐.`;
-  if (slide.kind === "bell") return "골든벨 문제야. 개념에서 배운 대로 한 문제씩 풀어 봐.";
-  if (slide.kind === "board") return `본책 ${slide.block.label}을 펴서 풀어 봐. 모르는 번호를 누르면 비슷한 문제가 나와.`;
-  return `${part}차시 끝! 오늘 정말 잘했어.`;
+  if (slide.kind === "cover") return ready ? `오늘은 ${unit.label} ${part}차시예요. 개념을 배우고, 게임으로 익히고, 골든벨을 풀고, 본책을 풀어요. 출발하기를 눌러 봐요.` : "공부할 것을 준비하고 있어요. 잠깐만 기다려 줘요.";
+  if (slide.kind === "concept") return `${slide.lesson.title} 개념이에요. 한 장씩 천천히 보고 다음을 눌러요.`;
+  if (slide.kind === "game") return `${slide.title} 게임이에요. 개념에서 본 풀이 순서대로 손으로 직접 해 봐요.`;
+  if (slide.kind === "bell") return "골든벨 문제예요. 개념에서 배운 대로 한 문제씩 풀어 봐요.";
+  if (slide.kind === "board") return `본책 ${slide.block.label}을 펴서 풀어 봐요. 모르는 번호를 누르면 비슷한 문제가 나와요.`;
+  return `${part}차시를 다 마쳤어요! 오늘 정말 잘했어요.`;
 }
 
 function show({ atEnd = false } = {}) {
@@ -353,13 +353,13 @@ function openSheet(button) {
   $("sheetFrame").src = link("index.html", { mode: "curriculum", book: book.id, units: String(unitIndex), only: button.dataset.type, stage: button.dataset.stage, count: "1", build: "1", as: "student", embed: "1", ref: `${unitIndex + 1}단원 ${ref}` });
   $("sheet").hidden = false;
   $("sheetClose").focus({ preventScroll: true });
-  say(`${ref}과 같은 유형의 문제야. 이걸 먼저 풀고 나서 본책 문제를 다시 풀어 봐.`, "think");
+  say(`${ref}과 같은 유형의 문제예요. 이 문제를 먼저 풀고 본책 문제를 다시 풀어 봐요.`, "think");
 }
 function closeSheet(talk = true) {
   if ($("sheet").hidden) return;
   $("sheet").hidden = true;
   $("sheetFrame").removeAttribute("src");
-  if (talk) say("좋아. 이제 본책으로 돌아가서 그 문제를 다시 풀어 봐.", "talk");
+  if (talk) say("좋아요. 이제 본책으로 돌아가서 그 문제를 다시 풀어 봐요.", "talk");
 }
 $("sheetClose").addEventListener("click", () => closeSheet());
 
@@ -404,5 +404,5 @@ loadGoldenBell().then((data) => {
   ready = true;
   index = Math.min(Math.max((Number(params.get("s")) || 1) - 1, 0), slides.length - 1);
   show();
-  say("골든벨 학습을 불러오지 못했어. 본책 번호판은 쓸 수 있어. 새로고침하면 다시 불러와.", "think");
+  say("골든벨 학습을 불러오지 못했어요. 새로고침하면 다시 불러와요. 본책 번호판은 지금도 쓸 수 있어요.", "think");
 });

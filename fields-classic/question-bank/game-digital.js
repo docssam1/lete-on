@@ -110,7 +110,7 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
     st.moves = []; st.pick = null; st.tries = 0; st.note = ""; st.hint = ""; st.typed = ""; st.first = true; st.picked = new Set(); st.turned = false; st.check = null;
     render();
     const p = st.p;
-    say(p.kind === "build" ? `켜진 막대를 하나 골라서 ${OP_LABEL[p.op]} 하면 어디로 가는지 옮겨 놓아 봐.` : p.kind === "board" ? `숫자판을 ${TURN[p.op].label} 돌리면 똑바로 서는 숫자를 모두 골라 봐.` : `${p.value}을 ${OP_LABEL[p.op].replace(" 돌리기", " 돌려")} 읽은 수부터 써 봐.`, "talk");
+    say(p.kind === "build" ? `켜진 막대를 하나 골라서 ${OP_LABEL[p.op]} 하면 어디로 가는지 옮겨 놓아 봐요.` : p.kind === "board" ? `숫자판을 ${TURN[p.op].label} 돌리면 똑바로 서는 숫자를 모두 골라 봐요.` : `${p.value}을 ${OP_LABEL[p.op].replace(" 돌리기", " 돌려")} 읽은 수부터 써 봐요.`, "talk");
   }
   const lit = (i) => DIGIT_SEGMENTS[st.p.digits[i]];
 
@@ -129,11 +129,11 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
       body = `<p class="dg-mission">${count === 1 ? `디지털 숫자 <b>${p.digits[0]}</b>의 숫자판을 <b>${OP_LABEL[p.op]}</b> 했어요.` : `두 자리 수 <b>${p.digits.join("")}</b>의 숫자판을 <b>${OP_LABEL[p.op]}</b> 했어요.`} ${reading ? "만든 숫자를 읽어 써요." : "켜진 막대를 옮겨 결과를 만들어요."}</p>
         <div class="dg-work">
           <figure class="dg-panel"><figcaption>처음 · 막대를 골라요</figcaption><div class="dg-digits">${p.digits.map((d, i) => digitSvg({ lit: lit(i), role: reading ? "show" : "source", place: i, picked: st.pick, moved: moved(i) })).join("")}</div></figure>
-          <span class="dg-op">${opIcon(p.op)}<b>${OP_LABEL[p.op]}</b><small>${p.op === "mirror-top-bottom" ? "자리는 그대로" : count === 2 ? "자리도 바뀜" : ""}</small></span>
+          <span class="dg-op">${opIcon(p.op)}<b>${OP_LABEL[p.op]}</b><small>${p.op === "mirror-top-bottom" ? "자리는 그대로" : count === 2 ? "자리도 바뀌어요" : ""}</small></span>
           <figure class="dg-panel target"><figcaption>결과 · 놓을 자리를 눌러요</figcaption><div class="dg-digits">${p.digits.map((_, j) => digitSvg({ lit: placed(j).join(""), role: reading ? "show" : "target", place: j, placed: placed(j), wrong: wrongTo(j) })).join("")}</div></figure>
         </div>
         <p class="dg-rule"><b>규칙</b> ${p.op === "mirror-left-right" ? "왼쪽 막대 ↔ 오른쪽 막대(위·가운데·아래 막대는 그대로)" : p.op === "mirror-top-bottom" ? "위 막대 ↔ 아래 막대, 위쪽 세로 막대 ↔ 아래쪽 세로 막대(가운데는 그대로)" : "위 ↔ 아래, 왼쪽 위 ↔ 오른쪽 아래, 오른쪽 위 ↔ 왼쪽 아래(가운데는 그대로)"}${count === 2 && p.op !== "mirror-top-bottom" ? " · 자리도 바뀌어요." : ""}</p>
-        ${reading ? keypad(count, "만든 숫자") : `<div class="dg-actions"><span class="dg-count">옮긴 막대 <b>${st.moves.length}</b> / ${total}</span><button type="button" class="dg-btn ghost" data-dg="undo" ${st.moves.length ? "" : "disabled"}>한 막대 되돌리기</button>${st.tries >= 2 ? '<button type="button" class="dg-btn" data-dg="show">풀이 보기</button>' : ""}<button type="button" class="dg-btn primary" data-dg="check" ${st.moves.length === total ? "" : "disabled"}>확인</button></div>`}`;
+        ${reading ? keypad(count, "만든 숫자") : `<div class="dg-actions"><span class="dg-count">옮긴 막대 <b>${st.moves.length}</b> / ${total}</span><button type="button" class="dg-btn ghost" data-dg="undo" ${st.moves.length ? "" : "disabled"}>한 막대 되돌리기</button>${st.tries >= 2 ? '<button type="button" class="dg-btn" data-dg="show">풀이 보기</button>' : ""}<button type="button" class="dg-btn primary" data-dg="check" ${st.moves.length === total ? "" : "disabled"}>맞는지 보기</button></div>`}`;
     } else if (p.kind === "board") {
       const turn = TURN[p.op];
       body = `<p class="dg-mission">숫자판을 <b>${turn.label}</b> 돌렸을 때 ${st.phase === "sum" ? "똑바로 선 수들의 합을 써요." : "똑바로 서는 숫자를 모두 골라요."}</p>
@@ -142,7 +142,7 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
           <span class="dg-op">${opIcon(p.op)}<b>${turn.label}</b><small>판 전체를</small></span>
         </div>
         <p class="dg-rule"><b>규칙</b> ${turn.label} 돌리면 똑바로 서는 숫자는 지금 <b>${turn.lie === "거꾸로" ? "거꾸로 선" : `머리가 ${turn.lie}을 향해 누운`}</b> 숫자예요.</p>
-        ${st.phase === "sum" ? keypad(2, "합") : `<div class="dg-actions"><span class="dg-count">고른 숫자 <b>${st.picked.size}</b>개</span>${st.tries >= 2 ? '<button type="button" class="dg-btn" data-dg="show">풀이 보기</button>' : ""}<button type="button" class="dg-btn primary" data-dg="check" ${st.picked.size ? "" : "disabled"}>확인</button></div>`}`;
+        ${st.phase === "sum" ? keypad(2, "합") : `<div class="dg-actions"><span class="dg-count">고른 숫자 <b>${st.picked.size}</b>개</span>${st.tries >= 2 ? '<button type="button" class="dg-btn" data-dg="show">풀이 보기</button>' : ""}<button type="button" class="dg-btn primary" data-dg="check" ${st.picked.size ? "" : "disabled"}>판 돌려 보기</button></div>`}`;
     } else {
       const label = OP_READ[p.op];
       body = `<p class="dg-mission">두 자리 수와 <b>${label}</b>를 더해요. ${st.phase === "read" ? `먼저 ${label}를 써요.` : "이제 덧셈 결과를 써요."}</p>
@@ -165,7 +165,7 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
   }
   function keypad(maxLen, label) {
     if (st.phase === "done") return "";
-    return `<div class="dg-pad"><span class="dg-typed" aria-label="${esc(label)}">${esc(st.typed) || "&nbsp;"}</span>${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<button type="button" class="dg-key" data-key="${n}" ${st.typed.length >= maxLen ? "disabled" : ""}>${n}</button>`).join("")}<button type="button" class="dg-key" data-key="del">지우기</button><button type="button" class="dg-btn primary" data-dg="answer" ${st.typed ? "" : "disabled"}>확인</button></div>`;
+    return `<div class="dg-pad"><span class="dg-typed" aria-label="${esc(label)}">${esc(st.typed) || "&nbsp;"}</span>${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<button type="button" class="dg-key" data-key="${n}" ${st.typed.length >= maxLen ? "disabled" : ""}>${n}</button>`).join("")}<button type="button" class="dg-key" data-key="del">지우기</button><button type="button" class="dg-btn primary" data-dg="answer" ${st.typed ? "" : "disabled"}>답 내기</button></div>`;
   }
   function opIcon(op) {
     if (op === "mirror-left-right") return '<i class="dg-glass v"></i>';
@@ -188,16 +188,16 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
     if (st.first) st.stars[st.level] += 1;
     st.note = st.first ? `정답! ${msg}` : `맞았어요. ${msg}`;
     st.hint = ""; render();
-    say(st.first ? "정답이야! 한 번에 맞혔어." : "맞았어! 이제 알겠지?", "praise");
+    say(st.first ? "정답이에요! 한 번에 맞혔어요." : "맞았어요! 이제 알겠죠?", "praise");
   }
   function miss(text) {
     st.tries += 1; st.first = false;
-    st.note = `${text}${st.tries >= 2 && st.phase !== "read" && st.phase !== "sum" ? " 「풀이 보기」로 확인할 수 있어요." : ""}`;
+    st.note = `${text}${st.tries >= 2 && st.phase !== "read" && st.phase !== "sum" ? " 「풀이 보기」를 누르면 풀이를 볼 수 있어요." : ""}`;
     render(); say(text, "think");
   }
   function checkBuild() {
     const v = diagnoseBuild(st.p, st.moves.map((m) => m.to));
-    if (v.ok) { st.phase = "read"; st.typed = ""; st.note = "막대를 바르게 옮겼어요! 이제 만든 숫자를 읽어 써요."; st.check = null; st.hint = ""; render(); say("막대를 바르게 옮겼어. 무슨 숫자가 됐는지 읽어 봐.", "praise"); return; }
+    if (v.ok) { st.phase = "read"; st.typed = ""; st.note = "막대를 바르게 옮겼어요! 이제 만든 숫자를 읽어 써요."; st.check = null; st.hint = ""; render(); say("막대를 바르게 옮겼어요. 무슨 숫자가 됐는지 읽어 봐요.", "praise"); return; }
     st.check = { wrongTo: st.moves.filter((m) => { const [j, t] = segTarget(st.p.op, m.from[0], m.from[1], st.p.digits.length); return j !== m.to[0] || t !== m.to[1]; }).map((m) => m.to) };
     st.hint = "이제 막대를 고르면 어디로 가는지 알려 줄게요.";
     miss(v.say);
@@ -214,7 +214,7 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
       st.typed = ""; return miss("똑바로 선 숫자들만 다시 더해 봐요.");
     }
     if (st.phase === "read") {
-      if (n === p.read) { st.phase = "sum"; st.typed = ""; st.note = `${p.value}의 ${OP_READ[p.op]}는 ${p.read}이에요. 이제 더해요.`; render(); say("맞아. 이제 두 수를 더해 봐.", "praise"); return; }
+      if (n === p.read) { st.phase = "sum"; st.typed = ""; st.note = `${p.value}의 ${OP_READ[p.op]}는 ${p.read}이에요. 이제 더해요.`; render(); say("맞아요. 이제 두 수를 더해 봐요.", "praise"); return; }
       st.typed = "";
       return miss(n === Number(p.result.slice().reverse().join("")) ? "숫자 하나하나는 맞았는데 자리 순서가 그대로예요. 판 전체를 움직이면 자리도 바뀌어요." : "막대를 하나씩 옮겨 본다고 생각하고 다시 읽어 봐요.");
     }
@@ -226,7 +226,7 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
     const missing = p.targets.filter((i) => !st.picked.has(i)), extra = chosen.filter((i) => !p.targets.includes(i));
     if (!missing.length && !extra.length) {
       st.turned = true; st.phase = "sum"; st.typed = ""; st.check = null; st.note = "맞아요! 판을 돌려 보니 고른 숫자가 똑바로 섰어요. 이제 합을 써요.";
-      render(); say("판을 돌려 보니 고른 숫자가 똑바로 섰어. 이제 더해 봐.", "praise"); return;
+      render(); say("판을 돌려 보니 고른 숫자가 똑바로 섰어요. 이제 더해 봐요.", "praise"); return;
     }
     st.check = { wrong: extra };
     miss(extra.length ? `${extra.length}개는 돌리면 똑바로 서지 않아요(표시한 숫자). ${missing.length ? `빠진 숫자도 ${missing.length}개 있어요.` : ""}` : `똑바로 서는 숫자가 ${missing.length}개 더 있어요.`);
@@ -245,12 +245,12 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
       st.moves.push({ from: [i, s], to: segTarget(p.op, i, s, p.digits.length) });
       render(); timer = setTimeout(step, 380);
     };
-    say("막대가 하나씩 어디로 가는지 잘 봐.", "talk"); step();
+    say("막대가 하나씩 어디로 가는지 잘 봐요.", "talk"); step();
   }
   function next() {
     if (st.index < LEVELS[st.level].problems.length - 1) { st.index += 1; newProblem(); return; }
     if (st.level < LEVELS.length - 1) { st.level += 1; st.index = 0; newProblem(); return; }
-    st.finale = true; render(); say("네 단계를 모두 마쳤어! 이제 골든벨 문제로 가자.", "praise");
+    st.finale = true; render(); say("네 단계를 모두 마쳤어요! 이제 골든벨 문제로 가요.", "praise");
   }
 
   host.addEventListener("click", (event) => {

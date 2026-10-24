@@ -22,11 +22,11 @@ export const OPS = Object.freeze({
   "rotate-half": { op: "rotate-half", label: "반 바퀴", kind: "turn", note: "거꾸로" }
 });
 const RULE = {
-  "mirror-left-right": "왼쪽과 오른쪽만 바뀌어요. 줄(높이)은 그대로, 오른쪽 끝에서 ○칸이던 칸은 왼쪽 끝에서 ○칸으로.",
-  "mirror-top-bottom": "위와 아래만 바뀌어요. 칸(좌우)은 그대로, 맨 위에서 ○줄이던 칸은 맨 아래에서 ○줄로.",
-  "rotate-right": "맨 윗줄이 맨 오른쪽 줄이 돼요. 윗줄을 왼쪽부터 읽던 순서가 오른쪽 줄을 위에서부터 읽는 순서.",
-  "rotate-left": "맨 윗줄이 맨 왼쪽 줄이 돼요. 윗줄을 왼쪽부터 읽던 순서가 왼쪽 줄을 아래에서부터 읽는 순서.",
-  "rotate-half": "위아래도 좌우도 모두 바뀌어요. 맨 위 왼쪽 칸은 맨 아래 오른쪽 칸으로."
+  "mirror-left-right": "왼쪽과 오른쪽만 바뀌어요. 줄(높이)은 그대로예요. 오른쪽 끝에서 둘째 칸은 왼쪽 끝에서 둘째 칸으로 가요.",
+  "mirror-top-bottom": "위와 아래만 바뀌어요. 칸(좌우)은 그대로예요. 맨 위에서 둘째 줄은 맨 아래에서 둘째 줄로 가요.",
+  "rotate-right": "맨 윗줄이 맨 오른쪽 줄이 돼요. 윗줄을 왼쪽부터 읽은 순서대로 오른쪽 줄을 위에서부터 읽어요.",
+  "rotate-left": "맨 윗줄이 맨 왼쪽 줄이 돼요. 윗줄을 왼쪽부터 읽은 순서대로 왼쪽 줄을 아래에서부터 읽어요.",
+  "rotate-half": "위아래도 좌우도 모두 바뀌어요. 맨 위 왼쪽 칸은 맨 아래 오른쪽 칸으로 가요."
 };
 export const LEVELS = Object.freeze([
   { id: 1, title: "뒤집기", problems: [["flip-right"], ["flip-down"], ["flip-left"], ["flip-up"]], cells: 5 },
@@ -71,12 +71,12 @@ export function diagnose(from, built, name) {
   const other = (op) => k === key(transformPattern(from, op, N));
   if (o.op === "mirror-left-right" && other("mirror-top-bottom")) return { ok: false, say: "위아래를 바꿨어요. 이 거울은 옆에 있어서 왼쪽과 오른쪽만 바꿔요." };
   if (o.op === "mirror-top-bottom" && other("mirror-left-right")) return { ok: false, say: "좌우를 바꿨어요. 이 거울은 위아래에 있어서 위와 아래만 바꿔요." };
-  if (o.kind === "flip" && (other("rotate-right") || other("rotate-left") || other("rotate-half"))) return { ok: false, say: "돌린 모양이 되었어요. 뒤집기는 거울에 비친 모양이에요 — 돌리지 않아요." };
+  if (o.kind === "flip" && (other("rotate-right") || other("rotate-left") || other("rotate-half"))) return { ok: false, say: "돌린 모양을 만들었어요. 뒤집기는 거울에 비친 모양이에요 — 돌리지 않아요." };
   if (o.op === "rotate-right" && other("rotate-left")) return { ok: false, say: "반대 방향으로 돌렸어요. 오른쪽으로 반의 반 바퀴는 시계 방향이에요." };
   if (o.op === "rotate-left" && other("rotate-right")) return { ok: false, say: "반대 방향으로 돌렸어요. 왼쪽으로 반의 반 바퀴는 시계 반대 방향이에요." };
   if (o.op !== "rotate-half" && o.kind === "turn" && other("rotate-half")) return { ok: false, say: "반 바퀴만큼 돌렸어요. 반의 반 바퀴는 그 절반이에요." };
   if (o.op === "rotate-half" && (other("rotate-left") || other("rotate-right"))) return { ok: false, say: "반의 반 바퀴만 돌렸어요. 반 바퀴는 반의 반 바퀴를 두 번 돌린 거예요." };
-  if (o.kind === "turn" && (other("mirror-left-right") || other("mirror-top-bottom"))) return { ok: false, say: "뒤집은 모양이 되었어요. 돌리기는 판을 통째로 돌려요 — 거울처럼 뒤집지 않아요." };
+  if (o.kind === "turn" && (other("mirror-left-right") || other("mirror-top-bottom"))) return { ok: false, say: "뒤집은 모양을 만들었어요. 돌리기는 판을 통째로 돌려요 — 거울처럼 뒤집지 않아요." };
   const wrong = built.filter((cell) => !has(want, cell)).length;
   return { ok: false, wrong, say: `옮긴 칸 중 ${wrong}칸의 자리가 달라요. 규칙을 다시 읽고 한 칸씩 확인해 봐요.` };
 }
@@ -95,7 +95,7 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     st.step = 0; st.tries = 0; st.firsts = true; st.solved = false;
     resetStep();
     const n = st.problem.names.map((x) => OPS[x].label);
-    say(n.length > 1 ? `처음 모양을 ${n.join(", 그다음 ")} 해 보자. 중간 모양부터 차례로 만들어.` : `처음 모양을 ${n[0]} 한 모양을 만들어 보자. 칸을 하나 골라 옮겨 갈 자리에 놓아.`, "talk");
+    say(n.length > 1 ? `처음 모양을 ${n.join(", 그다음 ")} 해 봐요. 중간 모양부터 차례로 만들어요.` : `처음 모양을 ${n[0]} 한 모양을 만들어 봐요. 칸을 하나 골라 옮겨 갈 자리에 놓아요.`, "talk");
   }
   function resetStep() { st.moves = []; st.pick = null; st.note = ""; st.hinted = st.tries > 0; st.showing = false; render(); }
 
@@ -156,7 +156,7 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
           ? `<button type="button" class="smv-btn primary" data-smv="next">${nextLabel()} →</button>`
           : `<button type="button" class="smv-btn ghost" data-smv="undo" ${st.moves.length && !st.showing ? "" : "disabled"}>한 칸 되돌리기</button>
              ${st.tries >= 2 ? `<button type="button" class="smv-btn" data-smv="show" ${st.showing ? "disabled" : ""}>풀이 보기</button>` : ""}
-             <button type="button" class="smv-btn primary" data-smv="check" ${ready && !st.showing ? "" : "disabled"}>확인</button>`}
+             <button type="button" class="smv-btn primary" data-smv="check" ${ready && !st.showing ? "" : "disabled"}>맞는지 보기</button>`}
       </footer>
     </div>`;
   }
@@ -183,7 +183,7 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
       if (last && st.firsts && !st.showedSolution) st.stars[st.level] += 1;
       st.note = last ? (st.firsts ? "정답! 처음에 바로 맞혔어요." : "정답! 이제 이 움직임을 알았어요.") : "중간 모양 완성! 이제 이 모양에 다음 움직임을 해요.";
       render();
-      say(last ? (st.firsts ? "정답이야! 한 번에 맞혔어." : "맞았어! 이제 잘 알겠지?") : "중간 모양을 잘 만들었어. 이제 이 모양을 움직여 보자.", "praise");
+      say(last ? (st.firsts ? "정답이에요! 한 번에 맞혔어요." : "맞았어요! 이제 잘 알겠죠?") : "중간 모양을 잘 만들었어요. 이제 이 모양을 움직여 봐요.", "praise");
       return;
     }
     st.tries += 1; st.firsts = false; st.hinted = true;
@@ -207,18 +207,18 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
       render();
       timer = setTimeout(stepOne, 520);
     };
-    say("한 칸씩 어디로 가는지 잘 봐.", "talk");
+    say("한 칸씩 어디로 가는지 잘 봐요.", "talk");
     stepOne();
   }
   function next() {
     const p = st.problem;
     st.check = null;
-    if (st.step < p.names.length - 1) { st.step += 1; st.solved = false; st.tries = 0; resetStep(); say(`이번에는 방금 만든 모양을 ${OPS[name()].label} 해 보자.`, "talk"); return; }
+    if (st.step < p.names.length - 1) { st.step += 1; st.solved = false; st.tries = 0; resetStep(); say(`이번에는 방금 만든 모양을 ${OPS[name()].label} 해 봐요.`, "talk"); return; }
     st.showedSolution = false;
     if (st.index < LEVELS[st.level].problems.length - 1) { st.index += 1; newProblem(); return; }
     if (st.level < LEVELS.length - 1) { st.level += 1; st.index = 0; newProblem(); return; }
     st.finale = true; render();
-    say("세 단계를 모두 마쳤어! 이제 골든벨 문제로 가자.", "praise");
+    say("세 단계를 모두 마쳤어요! 이제 골든벨 문제로 가요.", "praise");
   }
 
   host.addEventListener("click", (event) => {
