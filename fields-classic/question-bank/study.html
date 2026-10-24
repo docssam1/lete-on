@@ -7,37 +7,21 @@
   <title>공부 길</title>
   <link rel="icon" href="data:," />
   <link rel="preload" as="image" href="./assets/study/world-map.webp" />
-  <link rel="stylesheet" href="./study.css?v=20261024c" />
+  <link rel="stylesheet" href="./study.css?v=20261024e" />
 </head>
-<body class="sd" data-side="cover">
-  <!-- 그림 세계: 다섯 섬이 보라색 길로 이어진다. 장이 바뀌면 지도가 그 섬으로 옮겨 가고 독쌤이 걸어간다. 그림에는 글자가 없고, 표지판은 HTML이다. -->
-  <div class="sd-world" id="world">
-    <div class="sd-pan" id="pan">
-      <img class="sd-map" src="./assets/study/world-map.webp" width="1672" height="941" alt="" decoding="async" />
-      <nav class="sd-signs" id="signs" aria-label="공부 길"></nav>
-      <div class="sd-walker" id="walker" aria-hidden="true">
-        <span class="sd-pin">현재</span>
-        <img id="walkerImg" src="./docssam-guide.webp" alt="" width="683" height="1024" />
-      </div>
-    </div>
-    <div class="sd-talk" id="talk" data-mood="talk">
-      <p id="guideSay" role="status" aria-live="polite"></p>
-      <div class="sd-talk-ctl">
-        <button type="button" id="voiceBtn" aria-pressed="true" title="독쌤 음성 켜기/끄기">🔊</button>
-        <button type="button" id="againBtn" title="다시 듣기" aria-label="다시 듣기">↺</button>
-        <button type="button" id="pauseBtn" aria-pressed="false" title="다음 장으로 저절로 넘어가기 켜기/끄기">⏸</button>
-      </div>
-    </div>
+<body class="sd">
+  <!-- 그림 액자: 섬 그림이 화면 가장자리를 두르고, 가운데 넓은 칸에서 공부한다. 장이 바뀌면 그림이 그 섬 쪽으로 조금 옮겨 간다. -->
+  <div class="sd-world" aria-hidden="true">
+    <div class="sd-pan" id="pan"><img class="sd-map" src="./assets/study/world-map.webp" width="1672" height="941" alt="" decoding="async" /></div>
   </div>
 
   <header class="sd-top">
-    <a class="sd-brand" id="backLink" href="./start.html" aria-label="단원 고르기로"><b>GFIELD</b><span>나의 공부 길</span></a>
-    <div class="sd-title"><span id="eyebrow">1권 1단원 · 1차시</span><strong id="unitTitle">단원 공부</strong></div>
-    <div class="sd-student" id="studentName">DEMO</div>
+    <a class="sd-pill sd-brand" id="backLink" href="./start.html" aria-label="단원 고르기로"><b>GFIELD</b><span id="eyebrow">1권 1단원 · 1차시</span><strong id="unitTitle">단원 공부</strong></a>
+    <nav class="sd-pill sd-steps" id="signs" aria-label="공부 순서"></nav>
+    <div class="sd-pill sd-student" id="studentName">DEMO</div>
   </header>
 
   <main class="sd-main">
-    <div class="sd-window" id="window" aria-hidden="true"></div>
     <section class="sd-card" id="stage">
       <header class="sd-slide-head" id="slideHead"></header>
       <div class="sd-slide-body" id="slideBody"></div>
@@ -51,11 +35,21 @@
   </main>
 
   <footer class="sd-bar">
+    <div class="sd-guide">
+      <img class="sd-guide-img" id="walkerImg" src="./docssam-guide.webp" alt="" width="683" height="1024" />
+      <div class="sd-talk" id="talk" data-mood="talk">
+        <p id="guideSay" role="status" aria-live="polite"></p>
+        <div class="sd-talk-ctl">
+          <button type="button" id="voiceBtn" aria-pressed="true" title="독쌤 음성 켜기/끄기">🔊</button>
+          <button type="button" id="againBtn" title="다시 듣기" aria-label="다시 듣기">↺</button>
+          <button type="button" id="pauseBtn" aria-pressed="false" title="저절로 넘어가기 멈추기">⏸</button>
+        </div>
+      </div>
+    </div>
+    <span class="sd-pill sd-count" id="count"></span>
     <button type="button" class="sd-btn sd-prev" id="prevBtn">‹ 이전</button>
-    <p class="sd-bar-say" id="guideSayBar" aria-hidden="true"></p>
-    <span class="sd-count" id="count"></span>
     <button type="button" class="sd-btn primary sd-next" id="nextBtn"><span class="sd-fill" aria-hidden="true"></span><span class="sd-next-text">다음 →</span></button>
   </footer>
-  <script type="module" src="./study.js?v=20261024e"></script>
+  <script type="module" src="./study.js?v=20261024f"></script>
 </body>
 </html>

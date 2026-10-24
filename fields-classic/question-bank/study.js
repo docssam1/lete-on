@@ -8,8 +8,8 @@ import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, 
 //  · 게임을 마치거나 골든벨 문항을 다 풀면 독쌤이 칭찬하고 저절로 다음 장으로 간다(「넘김 멈춤」으로 끈다).
 //  · 본책 번호를 누르면 같은 유형의 유사문제가 이 장 위에 뜬다(문제은행 학생 화면, embed). 닫으면 번호판으로 돌아온다.
 //  · 독쌤 말은 글이 원본이고, 음성은 기기 음성(ko-KR)으로 읽는다. 소리 없이 입을 움직이는 그림은 쓰지 않는다(표정 3장만 바꿔 끼움).
-//  · 화면은 밝은 그림 세계 위의 카드다(원장: 「밝아야 돼. 이런 배너 틀 안에 학습이 되도록」). 다섯 섬 = 개념 · 게임 · 골든벨 · 공부하기 · 완료.
-//    장이 바뀌면 지도가 그 섬으로 옮겨 가고 독쌤이 걸어가며, 카드는 섬의 반대쪽에 선다.
+//  · 화면은 그림 액자 틀이다(원장: 「밝아야 돼」 → 「배너 말고 틀」). 섬 그림이 가장자리를 두르고 가운데 넓은 칸에서 공부한다.
+//    위 액자에 공부 순서(개념 · 게임 · 골든벨 · 공부하기 · 완료), 아래 액자에 독쌤과 이전/다음. 장이 바뀌면 그림이 그 섬 쪽으로 조금 옮겨 간다.
 //  · 게임하기에는 주제가 같은 기하 게임(geometry/games)을 먼저 넣는다(원장: 「지오메트리 쪽 봐 봐」, 짝은 study-map.js GEOMETRY_GAMES).
 // 주소: ?book=book-01&unit=0&part=1&s=장번호&student=…   차시 나누기 규칙은 study-map.js
 
@@ -80,7 +80,6 @@ let lastLine = null;
 function say(text, mood = "talk") {
   lastLine = [text, mood];
   $("guideSay").textContent = text;
-  $("guideSayBar").textContent = text;
   $("talk").dataset.mood = mood;
   $("walkerImg").src = `./${PORTRAIT[mood] || PORTRAIT.talk}`;
   const bubble = $("talk");
@@ -215,49 +214,24 @@ function renderSigns() {
   $("signs").innerHTML = STATIONS.map(([kind, label], k) => {
     const first = slides.findIndex((entry) => entry.kind === kind);
     const count = slides.filter((entry) => entry.kind === kind).length;
-    const state = here === k ? " is-on" : first >= 0 && first < index ? " is-done" : "";
-    const [x, y] = ISLANDS[k];
-    const note = !ready ? "" : first < 0 ? "준비 중" : kind === "end" ? "" : `${count}장`;
-    return `<button type="button" class="sd-sign${state}" style="--x:${x}%;--y:${y + 1.5}%" data-jump="${first}" ${first < 0 ? "disabled" : ""} ${here === k ? 'aria-current="step"' : ""}><b>${first >= 0 && first < index && here !== k ? "✓" : k + 1}</b>${label}${note ? ` <small>${note}</small>` : ""}</button>`;
+    const done = first >= 0 && first < index && here !== k;
+    const state = here === k ? " is-on" : done ? " is-done" : "";
+    const note = !ready || kind === "end" ? "" : first < 0 ? "준비 중" : `${count}장`;
+    return `<button type="button" class="sd-step${state}" data-jump="${first}" ${first < 0 ? "disabled" : ""} ${here === k ? 'aria-current="step"' : ""}><b>${done ? "✓" : k + 1}</b><span>${label}${note ? ` <small>${note}</small>` : ""}</span></button>`;
   }).join("");
 }
-// 지도 옮기기: 지금 섬이 비어 있는 쪽(카드 반대쪽) 한가운데 오도록. 표지는 지도 전체를 보인다.
+// 액자 그림 옮기기: 지금 섬이 화면 가운데 쪽으로 오게 조금씩(칸이 가운데를 덮으므로 가장자리 풍경이 바뀐다).
 function placeWorld() {
   const slide = slides[index];
-  const cover = slide.kind === "cover";
-  const k = stationOf(slide);
-  document.body.dataset.side = cover || slide.kind === "end" ? "cover" : k <= 1 ? "right" : "left";
-  const phone = innerWidth <= 760;
-  const zoom = cover ? 1 : phone ? 1.35 : 1.5;
-  const H = Math.max(innerHeight, innerWidth * 941 / 1672) * zoom;
+  const k = slide.kind === "cover" ? 0 : stationOf(slide);
+  const H = Math.max(innerHeight, innerWidth * 941 / 1672) * 1.18;
   const W = H * 1672 / 941;
-  const win = $("window").getBoundingClientRect();
-  const [sx, sy] = ISLANDS[cover ? 0 : k];
-  let tx = win.left + win.width / 2 - (sx / 100) * W;
-  let ty = win.top + win.height * (phone ? 0.78 : 0.62) - (sy / 100) * H;
-  if (cover && !phone) { tx = (innerWidth - W) / 2; ty = innerHeight - H; }
-  // 그림이 빈 데 없이 덮어야 하는 곳: 넓은 화면은 화면 전체, 휴대폰은 위쪽 지도 띠만(띠 아래는 카드가 덮는다)
-  const box = phone ? { left: 0, top: 0, right: innerWidth, bottom: win.bottom } : { left: 0, top: 0, right: innerWidth, bottom: innerHeight };
-  tx = Math.min(box.left, Math.max(box.right - W, tx));
-  ty = Math.min(box.top, Math.max(box.bottom - H, ty));
+  const [sx, sy] = ISLANDS[k];
+  const tx = Math.min(0, Math.max(innerWidth - W, innerWidth / 2 - (sx / 100) * W));
+  const ty = Math.min(0, Math.max(innerHeight - H, innerHeight / 2 - (sy / 100) * H));
   const pan = $("pan");
   pan.style.width = `${W}px`; pan.style.height = `${H}px`;
   pan.style.transform = `translate(${Math.round(tx)}px, ${Math.round(ty)}px)`;
-  $("walker").style.setProperty("--x", `${sx}%`);
-  $("walker").style.setProperty("--y", `${sy}%`);
-  // 말풍선: 독쌤 오른쪽 위(화면 안으로)
-  const fx = tx + (sx / 100) * W, fy = ty + (sy / 100) * H;
-  const talk = $("talk");
-  const tw = talk.offsetWidth || 300, th = talk.offsetHeight || 90;
-  // 표지에서는 하늘 쪽(왼쪽 위)에 — 섬 표지판을 가리지 않게
-  let left = cover ? win.left + 8 : Math.min(Math.max(win.left + 8, fx + 56), win.right - tw - 8);
-  let top = cover ? win.top + 8 : fy - th - 190;
-  if (!cover && top < win.top + 8) {   // 위에 자리가 없으면(높은 섬) 독쌤 옆으로
-    top = fy - th - 60;
-    left = fx - tw - 70 >= 8 ? fx - tw - 70 : fx + 70;
-  }
-  top = Math.min(Math.max(win.top + 8, top), innerHeight - th - 90);
-  talk.style.left = `${Math.round(left)}px`; talk.style.top = `${Math.round(top)}px`;
 }
 addEventListener("resize", () => placeWorld());
 
