@@ -1,3 +1,13 @@
+## 2026-10-24 Grade 5-2 Unit 3 Page 31: Mission Readiness Reconciled on Main
+
+- Current main `e8adc807144161e6b28facd9d3a1b120a07f79eb` registers Missions 1–6 in the page-31 source module and curriculum with generator mappings and `reviewLocked: false`. This supersedes the older “implementation locked” descriptions for Missions 2 and 3 and the earlier Mission 1 lock note below. Publisher answer-key verification remains unconfirmed.
+- On a clean checkout of current main, the page-31 source/API regression passes 63 combinations (Example 4-2 plus all six Missions). The Example 4-2 source and implementation audits pass, and the Grade 5-2 classification regression preserves all 124 legacy records.
+- The current-main browser audit for Missions 1–3 passes 54 states (1440px and 375px, three pools and three difficulty levels), with 54 blocked external requests and zero page errors. Six question/solution A4 PDFs each render as one page. Existing sections below record the corresponding Mission 4–6 print checks.
+- Whole-bank runtime, source-release, math-notation, and numeric-display audits pass at 2,049 types / 1,261 generatable / 788 pending; 75,660 runtime generations; 380 source-unmapped locks; 189,150 notation generations; and 378,300 numeric-display generations.
+- The production index, page-31 runtime JS, and stylesheet already match current main byte-for-byte; the recent PR #413 handover-only deployment completed successfully. No student data was accessed or changed.
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 3 Exploration 4 Example 4-2: 125° Source-Verified and Implementation Reviewed
 
 - The Drive source `황소5-2-1심화.pdf` matches the clean alternate SHA-256 `6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88`. The canonical PDF uses p.26 for printed p.30; the verified clean alternate is one page shorter, so the inspected page is p.25. Apple Vision OCR and visual review confirm △ㄱㄴㄷ and △ㄴㄹㅁ are equilateral, ∠ㄱㄴㅁ=35°, ∠ㄴㄷㄹ=20°, and the target is ∠ㄴㅁㄱ. The enlarged figure crop SHA-256 is `527fa6ff8b5e058c58dd948c9a6493152f152e231f44084375018b1a08c59be7`.
