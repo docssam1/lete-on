@@ -66,6 +66,16 @@
 
 ---
 
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 4: Endpoint Boundary Revalidation
+
+- Re-read the printed source crop and Apple Vision OCR against the canonical PDF hash. The three hundred-thousands-place conditions and unrestricted printed “어떤 수” wording agree; handwriting and publisher answer material were excluded. Independent direct evaluation confirms both endpoints of the source intersection are excluded.
+- Re-derived the nine synthetic intervals independently from half-up rounding, floor, and ceiling. Boundary probes immediately before, exactly at, and immediately after both endpoints passed for the source and all nine generated intervals (60 checks); student-facing “이상/초과” and “이하/미만” wording matches the endpoint flags.
+- Reran the integrated Missions 4–6 browser audit on the current PR tree: 36 states at 1440px / 375px, 72 overflow checks, answer separation, 36 blocked external requests, and zero page errors. Mission 4 problem and solution each fit one A4 page; desktop, mobile, and A4 output were visually inspected without clipping or overlap.
+- Private owner-only Drive record: [Mission 4 endpoint review](https://drive.google.com/file/d/1OWfP1hXvv5joXdoe_YQo2Rn1VKQQfXS7/view) and [QA bundle](https://drive.google.com/file/d/1NMUP8OTGOKFck6uo4lFw2y6MQeuglTWN/view), 397,252 bytes; SHA-256 `2bcf4b72a03c9496001bd9e584eb1b65b23a5f9571ca8bed8ea33f5d75f21435`. The bundle excludes the original source, crop, OCR, handwriting, publisher key, and student data.
+- This is review-only; publisher-key verification remains false and the public decision remains locked. PR #418 stays draft; no merge or deployment occurred.
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 2: Synthetic Structure Revalidation
 
 - Rechecked printed page 11 Mission 2 (source PDF content page 9; source SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`). The source target pair 4,000 / 3,000 gives 3,950–3,999 inclusive, or 50 natural numbers. Handwriting was excluded.
