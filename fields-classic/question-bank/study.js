@@ -1,5 +1,5 @@
 import { CURRICULUM } from "./source-data.js?v=20260918a";
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, GEOMETRY_GAMES, geometryGameUrl } from "./study-map.js?v=20261024c";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES } from "./study-map.js?v=20261024e";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
@@ -10,7 +10,8 @@ import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, 
 //  · 독쌤 말은 글이 원본이고, 음성은 기기 음성(ko-KR)으로 읽는다. 소리 없이 입을 움직이는 그림은 쓰지 않는다(표정 3장만 바꿔 끼움).
 //  · 화면은 그림 액자 틀이다(원장: 「밝아야 돼」 → 「배너 말고 틀」). 섬 그림이 가장자리를 두르고 가운데 넓은 칸에서 공부한다.
 //    위 액자에 공부 순서(개념 · 게임 · 골든벨 · 공부하기 · 완료), 아래 액자에 독쌤과 이전/다음. 장이 바뀌면 그림이 그 섬 쪽으로 조금 옮겨 간다.
-//  · 게임하기에는 주제가 같은 기하 게임(geometry/games)을 먼저 넣는다(원장: 「지오메트리 쪽 봐 봐」, 짝은 study-map.js GEOMETRY_GAMES).
+//  · 게임하기에는 덱 안에 바로 뜨는 우리 게임(study-map.js STUDY_GAMES)을 먼저 둔다 — 지오메트리 게임의 계산·생김새를 가져와
+//    골든벨 풀이 순서대로 다시 만든 것(원장: 「링크를 가져오는 거 아냐. 우리 걸 써야 돼」).
 // 주소: ?book=book-01&unit=0&part=1&s=장번호&student=…   차시 나누기 규칙은 study-map.js
 
 const $ = (id) => document.getElementById(id);
@@ -48,19 +49,18 @@ function buildSlides() {
   const lessons = bellData ? lessonsByPart(unit, lessonsByUnit(book, bellBook).units[unitIndex])[part - 1] : [];
   const list = [{ kind: "cover" }];
   for (const lesson of lessons) list.push({ kind: "concept", lesson });
-  const geoSeen = new Set();
+  const replaced = new Set();
   for (const lesson of lessons) {
-    for (const [id, title, query] of GEOMETRY_GAMES[`${book.id}/${lesson.id}`] || []) {
-      if (geoSeen.has(id + query)) continue;
-      geoSeen.add(id + query);
-      list.push({ kind: "game", lesson, geo: geometryGameUrl(id, query), title });
+    for (const game of STUDY_GAMES[`${book.id}/${lesson.id}`] || []) {
+      list.push({ kind: "game", lesson, native: game, title: game.title });
+      for (const old of game.replaces || []) replaced.add(old);
     }
   }
   for (const lesson of lessons) {
     const flow = bellData.games.flows[`${book.id}/${lesson.id}`];
     if (flow?.game) list.push({ kind: "game", lesson, game: flow.game, title: bellData.games.flowTitles[flow.game] || "게임" });
     for (const [id, activity] of Object.entries(bellData.games.activities)) {
-      if (activity.lesson === lesson.id && bellData.games.handsOnBooks.get(id) === book.id && id !== flow?.game) list.push({ kind: "game", lesson, game: id, title: activity.title });
+      if (activity.lesson === lesson.id && bellData.games.handsOnBooks.get(id) === book.id && id !== flow?.game && !replaced.has(id)) list.push({ kind: "game", lesson, game: id, title: activity.title });
     }
   }
   for (const lesson of lessons) if (lesson.original?.items?.length) list.push({ kind: "bell", lesson });
@@ -179,21 +179,28 @@ function askFrame(cmd) {
   waitTimer = setTimeout(() => { if (waiting === cmd) { waiting = null; cmd === "next" ? go(index + 1) : go(index - 1, { atEnd: true }); } }, 2000);
 }
 
-// ── 기하 게임 창 ──────────────────────────────────────────
-// 기하 게임은 제 화면 그대로 띄우고, 제 허브(놀이터)로 돌아가는 단추만 감춘다 — 돌아가기는 덱이 맡는다.
-function openGeometry(slide) {
-  const frame = $("geoFrame");
-  const url = new URL(slide.geo, location.href).href;
-  if (frame.src !== url) frame.src = url;
+// ── 덱 안의 우리 게임 ──────────────────────────────────────
+let nativeGame = null;
+const loadedCss = new Set();
+async function mountNative(slide) {
+  const game = slide.native;
+  if (!loadedCss.has(game.css)) {
+    loadedCss.add(game.css);
+    const linkEl = document.createElement("link");
+    linkEl.rel = "stylesheet"; linkEl.href = game.css;
+    document.head.append(linkEl);
+  }
+  const mod = await import(game.module);
+  if (slides[index] !== slide) return;   // 불러오는 사이에 장을 넘겼다
+  const host = document.createElement("div");
+  host.className = "sd-native";
+  $("slideBody").replaceChildren(host);
+  nativeGame = mod[game.mount](host, {
+    say: (text, mood) => say(text, mood),
+    onDone: () => { say("게임을 끝까지 해냈어! 이제 골든벨 문제로 가자.", "praise"); auto(2200); }
+  });
 }
-$("geoFrame").addEventListener("load", () => {
-  try {
-    const doc = $("geoFrame").contentDocument;
-    const style = doc.createElement("style");
-    style.textContent = 'a[href^="../../"]{display:none!important}';
-    doc.head.append(style);
-  } catch {}
-});
+function disposeNative() { try { nativeGame?.dispose(); } catch {} nativeGame = null; }
 
 // ── 화면 ──────────────────────────────────────────────────
 function renderHead() {
@@ -283,7 +290,7 @@ function endMarkup() {
 function lineFor(slide) {
   if (slide.kind === "cover") return ready ? `오늘은 ${unit.label} ${part}차시야. 개념을 배우고, 게임으로 익히고, 골든벨을 풀고, 본책을 풀 거야. 시작하기를 눌러 봐.` : "공부할 것을 준비하고 있어. 잠깐만 기다려 줘.";
   if (slide.kind === "concept") return `${slide.lesson.title} 개념이야. 한 장씩 천천히 보고 다음을 눌러.`;
-  if (slide.kind === "game") return slide.geo ? `${slide.title}에 왔어. 배운 것을 직접 해 보자. 다 하면 다음을 눌러.` : `${slide.title} 게임이야. 개념에서 본 풀이 순서대로 손으로 직접 해 봐.`;
+  if (slide.kind === "game") return `${slide.title} 게임이야. 개념에서 본 풀이 순서대로 손으로 직접 해 봐.`;
   if (slide.kind === "bell") return "골든벨 문제야. 개념에서 배운 대로 한 문제씩 풀어 봐.";
   if (slide.kind === "board") return `본책 ${slide.block.label}을 펴서 풀어 봐. 모르는 번호를 누르면 비슷한 문제가 나와.`;
   return `${part}차시 끝! 오늘 정말 잘했어.`;
@@ -295,14 +302,14 @@ function show({ atEnd = false } = {}) {
   $("stage").dataset.kind = slide.kind;
   $("slideHead").innerHTML = slideHead(slide);
   $("slideHead").hidden = !$("slideHead").innerHTML;
-  const geo = Boolean(slide.geo);
-  const framed = !geo && ["concept", "game", "bell"].includes(slide.kind);
+  disposeNative();
+  const native = Boolean(slide.native);
+  const framed = !native && ["concept", "game", "bell"].includes(slide.kind);
   $("frameWrap").hidden = !framed;
-  $("geoWrap").hidden = !geo;
-  $("slideBody").hidden = framed || geo;
-  $("slideBody").innerHTML = slide.kind === "cover" ? coverMarkup() : slide.kind === "board" ? boardMarkup(slide.block) : slide.kind === "end" ? endMarkup() : "";
+  $("slideBody").hidden = framed;
+  $("slideBody").innerHTML = slide.kind === "cover" ? coverMarkup() : slide.kind === "board" ? boardMarkup(slide.block) : slide.kind === "end" ? endMarkup() : native ? '<p class="sd-wait">게임을 준비하고 있어요…</p>' : "";
   if (framed) openInFrame(slide, atEnd);
-  if (geo) openGeometry(slide); else if ($("geoFrame").getAttribute("src")) $("geoFrame").removeAttribute("src");
+  if (native) mountNative(slide).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">게임을 불러오지 못했어요. 새로고침해 주세요.</p>'; });
   $("prevBtn").disabled = index === 0;
   $("nextBtn").disabled = !ready || index === slides.length - 1;
   $("nextBtn").querySelector(".sd-next-text").textContent = slide.kind === "cover" ? "출발하기 →" : "다음 →";
@@ -366,6 +373,7 @@ $("signs").addEventListener("click", (event) => {
 $("slideBody").addEventListener("click", (event) => {
   const number = event.target.closest(".sd-number");
   if (number) { openSheet(number); return; }
+  if (event.target.closest(".sd-native")) return;   // 게임 안의 단추는 게임이 맡는다
   const act = event.target.closest("[data-act]")?.dataset.act;
   if (act === "next") next();
   if (act === "restart") go(0);

@@ -165,3 +165,4 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
   .sd-pan { transition: none; }
   .sd-talk.new p { animation: none; }
 }
+.sd-native { min-height: 100%; }

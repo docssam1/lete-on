@@ -114,33 +114,9 @@ export async function loadGoldenBell() {
   };
 }
 
-// ── 기하 게임(geometry/games) ──
-// 원장(2026-10-24): 「게임은 이 정도 그래픽이면 안 돼. 지오메트리 쪽 봐 봐.」 → 골든벨 학습과 주제가 같은 기하 게임을 게임하기 장에 먼저 넣는다.
-// 짝은 주제가 분명히 같은 것만(거울·접기·쌓기나무·폴리오미노·넓이·나누기·둘레·뒤집고 돌리기). 애매한 것(시계·최단거리·페인트칠)은 넣지 않았다.
-// [게임 폴더, 이름, 주소 뒤 조건]
-export const GEOMETRY_GAMES = Object.freeze({
-  "book-01/mirror-reflection": [["mirror-manor", "거울 저택", "level=1"]],
-  "book-01/digital-turn-flip": [["shape-transform", "도형 변환 공방", ""]],
-  "book-01/fold-one-cut": [["paper-fold", "색종이 접어 자르기", "level=1"]],
-  "book-01/fold-two-cut": [["paper-fold", "색종이 접어 자르기", "level=1"]],
-  "book-03/unit-area-shapes": [["unit-area", "단위넓이 탐구", ""]],
-  "book-03/equal-partition-fractions": [["equal-partition", "똑같이 나누기", "level=1"]],
-  "book-04/polyomino-family-count": [["polyomino", "폴리오미노 퍼즐", "level=1"]],
-  "book-04/digital-flip-source": [["shape-transform", "도형 변환 공방", ""]],
-  "book-04/flip-rotate-source": [["shape-transform", "도형 변환 공방", ""]],
-  "book-04/fold-cut-source": [["paper-fold", "색종이 접어 자르기", "level=1"]],
-  "book-04/fold-hole-count": [["paper-fold", "색종이 접어 구멍 뚫기", "level=2"]],
-  "book-04/cube-min-count": [["count-heights", "쌓기나무 개수 세기", ""]],
-  "book-04/hidden-cube-count": [["hidden-count", "숨은 쌓기나무 찾기", ""]],
-  "book-04/cube-box-fill": [["fill-box", "큐브 박스 채우기", ""]],
-  "book-05/perimeter-source": [["perimeter", "둘레 탐구", ""]],
-  "book-06/perimeter-source": [["perimeter", "둘레 탐구", ""]],
-  "book-06/joined-perimeter-source": [["perimeter", "둘레 탐구", ""]],
-  "book-06/cut-grid-perimeter-source": [["perimeter", "둘레 탐구", ""]],
-  "book-06/bent-perimeter-source": [["perimeter", "둘레 탐구", ""]],
-  "book-09/unit-area-and-half": [["unit-area", "단위넓이 탐구", ""], ["equal-partition", "똑같이 나누기", "level=1"]],
-  "book-09/cube-map-total": [["count-heights", "쌓기나무 개수 세기", ""]],
-  "book-09/cube-views-source": [["three-views", "세 방향 관찰소", ""], ["crystal-cubes", "크리스털 큐브", ""]],
-  "book-09/cube-min-max-source": [["minmax", "최대·최소 큐브 챌린지", ""]]
+// ── 덱 안에 바로 뜨는 우리 게임 ──
+// 원장(2026-10-24): 「링크를 가져오는 거 아냐. 우리 걸 써야 돼. 그걸 발전시켜 우리 학습에 맞는 게임으로.」
+// 지오메트리 게임의 계산·생김새를 가져와 골든벨 풀이 순서대로 다시 만든 게임. replaces = 덱에서 이 게임이 대신하는 옛 체험(골든벨 화면·학습지 QR에는 그대로 남는다).
+export const STUDY_GAMES = Object.freeze({
+  "book-01/mirror-reflection": [{ id: "mirror-room", title: "네 방향 거울 방", module: "./game-mirror-room.js?v=20261024b", css: "./game-mirror-room.css?v=20261024b", mount: "mountMirrorRoom", replaces: ["mirror-tiles"] }]
 });
-export const geometryGameUrl = (id, query = "") => `../../geometry/games/${id}/${query ? `?${query}` : ""}`;
