@@ -24,7 +24,7 @@ for(const [courseKey,subjectEnd]of [['C38','C48'],['C49','C57'],['C58','C69']]){
     // Compare actual week-by-week assigned envelopes with every high-school
     // milestone, including fractional carry across all course boundaries.
     const assignedCourseEnd={};
-    for(let week=0;week<110;week++)for(const k of [1,2]){
+    for(let week=0;week<150;week++)for(const k of [1,2]){
       const assignment=H.assignment(c,{courseKey,startSession:1,startDate,weekKey:weekKey(week),cadence,speed,k});
       if(!assignment)continue;
       assignedEnvelopes++;

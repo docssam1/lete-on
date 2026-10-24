@@ -14,6 +14,14 @@ require("./source-5-2-packing-mission1.js");
 require("./source-5-2-perimeter-mission2.js");
 require("./source-5-2-cube-box-mission3.js");
 require("./source-5-2-supply-cost-mission4.js");
+require("./source-5-2-population-bar-length.js");
+require("./source-5-2-citrus-sales-mission6.js");
+require("./source-5-2-rounded-range-e4.js");
+require("./source-5-2-rounded-range-e42.js");
+require("./source-5-2-rounded-range-e43.js");
+require("./source-5-2-rounded-range-e44.js");
+require("./source-5-2-rounded-count-mission1.js");
+require("./source-5-2-congruence-page31.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
@@ -141,8 +149,8 @@ for (const semester of window.HSE_CURRICULUM.semesters) {
   }
 }
 
-if (total !== 2034) failures.push(`전체 유형 수가 2034가 아니라 ${total}입니다.`);
-if (ready !== 1246) failures.push(`원문 연결 공개 유형 수가 1246가 아니라 ${ready}입니다.`);
+if (total !== 2049) failures.push(`전체 유형 수가 2049가 아니라 ${total}입니다.`);
+if (ready !== 1261) failures.push(`원문 연결 공개 유형 수가 1261가 아니라 ${ready}입니다.`);
 if (lockedWithoutSource !== 380) failures.push(`원문 미연결 잠금 유형 수가 380이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {

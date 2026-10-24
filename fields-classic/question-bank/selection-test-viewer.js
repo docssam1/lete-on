@@ -1,4 +1,4 @@
-import { EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES } from "./source-data.js?v=20260818a";
+import { EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES } from "./source-data.js?v=20261024r";
 
 // 원문 보기 잠금. 문제은행의 "원문 보기" 링크는 그대로 두고, 들어오면 권한 없음만 보여준다.
 // 다시 열 때는 이 값을 true로 되돌린다(단원 테스트 뷰어에도 같은 이름 상수가 있다).

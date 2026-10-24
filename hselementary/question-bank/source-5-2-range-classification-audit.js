@@ -26,7 +26,12 @@ const applicationMissionOneId = "5-2-u1-e3-mission-1-box-count";
 const applicationMissionTwoId = "5-2-u1-e3-mission-2-perimeter";
 const applicationMissionThreeId = "5-2-u1-e3-mission-3-cube-box-count";
 const applicationMissionFourId = "5-2-u1-e3-mission-4-mat-cost";
-const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId];
+const applicationMissionFiveId = "5-2-u1-e3-mission-5-bar-graph-length";
+const applicationMissionSixId = "5-2-u1-e3-mission-6-citrus-sales";
+const roundedRangeIds = ["5-2-u1-e4-exploration-rounded-range", "5-2-u1-e4-example-1"];
+const roundedMissionOneId = "5-2-u1-e4-mission-1-rounded-count";
+const congruencePage31Ids = [1, 2, 3, 4, 5, 6].map(number => `5-2-u3-e4-mission-${number}`);
+const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId, applicationMissionSixId, ...roundedRangeIds, "5-2-u1-e4-example-2", "5-2-u1-e4-example-3", "5-2-u1-e4-example-4", roundedMissionOneId, "5-2-u3-e4-example-2", ...congruencePage31Ids];
 const flatten = curriculum => curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)));
 const plain = value => JSON.parse(JSON.stringify(value));
 
@@ -46,21 +51,33 @@ function load(curriculumSource) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-perimeter-mission2.js"), "utf8"), context, { filename: "source-5-2-perimeter-mission2.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-cube-box-mission3.js"), "utf8"), context, { filename: "source-5-2-cube-box-mission3.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-supply-cost-mission4.js"), "utf8"), context, { filename: "source-5-2-supply-cost-mission4.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-population-bar-length.js"), "utf8"), context, { filename: "source-5-2-population-bar-length.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-citrus-sales-mission6.js"), "utf8"), context, { filename: "source-5-2-citrus-sales-mission6.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-range-e4.js"), "utf8"), context, { filename: "source-5-2-rounded-range-e4.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-range-e42.js"), "utf8"), context, { filename: "source-5-2-rounded-range-e42.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-range-e43.js"), "utf8"), context, { filename: "source-5-2-rounded-range-e43.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-range-e44.js"), "utf8"), context, { filename: "source-5-2-rounded-range-e44.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-count-mission1.js"), "utf8"), context, { filename: "source-5-2-rounded-count-mission1.js" });
   return { curriculum: plain(context.window.HSE_CURRICULUM), api: context.window.HSE_GENERATORS };
 }
 
 function validate(curriculum, api, baselineSemester) {
   const types = flatten(curriculum);
-  assert.equal(types.length, 2034, "Whole-bank classification count");
+  assert.equal(types.length, 2049, "Whole-bank classification count");
   assert.equal(new Set(types.map(type => type.id)).size, types.length, "Unique runtime IDs");
   const semester = curriculum.semesters.find(item => item.id === "5-2");
   const semesterTypes = semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types));
-  assert.equal(semesterTypes.length, 153, "Preserve 124 legacy records plus twenty-nine source records");
+  assert.equal(semesterTypes.length, 168, "Preserve 124 legacy records plus forty-four source records");
   const restored = plain(semester);
-  restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => allNewSourceIds.includes(type.sourceItemId)));
+  restored.units = restored.units.map(unit => ({
+    ...unit,
+    subunits: unit.subunits
+      .map(group => ({ ...group, types: group.types.filter(type => !allNewSourceIds.includes(type.sourceItemId)) }))
+      .filter(group => group.types.length > 0)
+  }));
   assert.deepEqual(restored, baselineSemester, "All 124 legacy records and their groups must stay identical to the Git baseline");
   const unit = semester.units.find(item => item.id === "5-2-u1");
-  assert.equal(unit.subunits.length, 10);
+  assert.equal(unit.subunits.length, 11);
   const legacy = unit.subunits.slice(0, 4).flatMap(group => group.types);
   assert.equal(legacy.length, 12);
   const legacyIds = [1, 2, 3, 4].flatMap(group => ["", "-2", "-3"].map(suffix => `5-2-u1-t${group}${suffix}`));
@@ -188,7 +205,7 @@ function validate(curriculum, api, baselineSemester) {
     }
   });
   const applicationMissionOne = unit.subunits[9].types;
-  assert.deepEqual(applicationMissionOne.map(type => type.sourceItemId), [applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId], "Only directly verified next-source Missions 1–4 are connected");
+  assert.deepEqual(applicationMissionOne.map(type => type.sourceItemId), [applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId, applicationMissionSixId], "Only directly verified next-source Missions 1–6 are connected");
   const packingType = applicationMissionOne[0];
   assert.equal(packingType.id, applicationMissionOneId);
   assert.equal(packingType.sourcePdfPage, 7);
@@ -217,6 +234,154 @@ function validate(curriculum, api, baselineSemester) {
     assert.equal(question.answerModel.boxes, a * b * c);
     assert(question.prompt.includes("source52-cube-box-diagram"));
   }
+  const citrusType = applicationMissionOne[5];
+  assert.equal(citrusType.id, applicationMissionSixId);
+  assert.equal(citrusType.sourcePdfPage, 7);
+  assert.equal(citrusType.sourcePrintedPage, 9);
+  assert.equal(citrusType.sourceVerified, true);
+  assert.equal(citrusType.publisherKeyVerified, false);
+  assert.equal(citrusType.reviewLocked, false);
+  assert.equal(citrusType.generatorKey, "source52ApplicationMissionSixCitrusSales");
+  const citrusGenerator = require("./source-5-2-citrus-sales-mission6.js");
+require("./source-5-2-rounded-range-e4.js");
+require("./source-5-2-rounded-range-e42.js");
+require("./source-5-2-rounded-range-e43.js");
+require("./source-5-2-rounded-range-e44.js");
+require("./source-5-2-rounded-count-mission1.js");
+  assert.equal(citrusGenerator.getQuestion(0, 0).answerModel.total, 9964);
+  assert.equal(citrusGenerator.getQuestion(0, 0).answerModel.fullBoxes, 24);
+  assert.equal(citrusGenerator.getQuestion(0, 0).answerModel.unpacked, 364);
+  assert.equal(citrusGenerator.getQuestion(0, 0).answer, "2,880,000원");
+  for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+    const question = citrusGenerator.getQuestion(variant, difficulty);
+    assert(question && question.sourceItemId === applicationMissionSixId);
+    assert.equal(question.answerModel.revenue, question.answerModel.fullBoxes * question.answerModel.boxPrice);
+    assert.equal(question.answerModel.unpacked, question.answerModel.total % question.answerModel.boxSize);
+    assert(question.solution.includes(`${question.answerModel.unpacked.toLocaleString("en-US")}개가 남습니다`));
+    assert.equal(question.publisherKeyVerified, false);
+  }
+  const roundedRange = unit.subunits[10].types;
+  assert.deepEqual(roundedRange.map(type => type.sourceItemId), [...roundedRangeIds, "5-2-u1-e4-example-2", "5-2-u1-e4-example-3", "5-2-u1-e4-example-4", roundedMissionOneId], "Exact page-10 examples and page-11 Mission 1 source IDs");
+  const roundedRangeModule = require("./source-5-2-rounded-range-e4.js");
+  roundedRange.forEach((type, index) => {
+    if (index === 2) {
+      const example42 = require("./source-5-2-rounded-range-e42.js");
+      assert.equal(type.id, example42.sourceItemId);
+      assert.equal(type.sourcePdfPage, 8);
+      assert.equal(type.sourcePrintedPage, 10);
+      assert.equal(type.sourceSection, "example");
+      assert.equal(type.reviewLocked, false);
+      assert.equal(type.sourceVerified, true);
+      assert.equal(type.publisherKeyVerified, false);
+      assert.equal(type.answerVisualRequired, false);
+      assert.equal(api.generatorKey(type), example42.generatorKey);
+      for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+        assert.equal(question.answerVisualRequired, false);
+        assert.equal(question.publisherKeyVerified, false);
+        assert(question.answerModel.minimum < question.answerModel.upperExclusive);
+      }
+      return;
+    }
+    if (index === 5) {
+      const mission1 = require("./source-5-2-rounded-count-mission1.js");
+      assert.equal(type.id, mission1.sourceItemId);
+      assert.equal(type.sourcePdfPage, 9);
+      assert.equal(type.sourcePrintedPage, 11);
+      assert.equal(type.sourceSection, "mission");
+      assert.equal(type.sourceVerified, true);
+      assert.equal(type.publisherKeyVerified, false);
+      assert.equal(type.reviewLocked, false);
+      assert.equal(type.answerVisualRequired, false);
+      assert.equal(type.answerVisualStatus, "not-required");
+      assert.equal(type.verifiedVariantCount, 3);
+      assert.equal(type.verifiedVariantTarget, 3);
+      assert.equal(api.generatorKey(type), mission1.generatorKey);
+      for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+        assert.equal(question.answerVisualRequired, false);
+        assert.equal(question.publisherKeyVerified, false);
+        assert.notEqual(question.answer, "10개");
+      }
+      return;
+    }
+    if (index === 3) {
+      const example43 = require("./source-5-2-rounded-range-e43.js");
+      assert.equal(type.id, example43.sourceItemId);
+      assert.equal(type.sourcePdfPage, 8);
+      assert.equal(type.sourcePrintedPage, 10);
+      assert.equal(type.sourceSection, "example");
+      assert.equal(type.reviewLocked, false);
+      assert.equal(type.sourceVerified, true);
+      assert.equal(type.publisherKeyVerified, false);
+      assert.equal(type.answerVisualRequired, false);
+      assert.equal(api.generatorKey(type), example43.generatorKey);
+      for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+        assert.equal(question.answerVisualRequired, false);
+        assert.equal(question.publisherKeyVerified, false);
+        assert(question.answerModel.minimum < question.answerModel.upperExclusive);
+      }
+      return;
+    }
+    if (index === 4) {
+      const example44 = require("./source-5-2-rounded-range-e44.js");
+      assert.equal(type.id, example44.sourceItemId);
+      assert.equal(type.sourcePdfPage, 8);
+      assert.equal(type.sourcePrintedPage, 10);
+      assert.equal(type.sourceSection, "example");
+      assert.equal(type.reviewLocked, false);
+      assert.equal(type.sourceVerified, true);
+      assert.equal(type.publisherKeyVerified, false);
+      assert.equal(type.answerVisualRequired, true);
+      assert.equal(type.answerVisualStatus, "verified-reconstruction");
+      assert.equal(api.generatorKey(type), example44.generatorKey);
+      for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+        assert.equal(question.answerVisualRequired, true);
+        assert.equal(question.publisherKeyVerified, false);
+        assert.equal(question.questionModel.gaps.length, 6);
+      }
+      return;
+    }
+    const definition = roundedRangeModule.definitions[index];
+    assert.equal(type.id, roundedRangeIds[index]);
+    assert.equal(type.sourcePdfPage, 8);
+    assert.equal(type.sourcePrintedPage, 10);
+    assert.equal(type.sourceSection, index === 0 ? "exploration" : "example");
+    assert.equal(type.sourceVerified, true);
+    assert.equal(type.publisherKeyVerified, false);
+    assert.equal(type.reviewLocked, false);
+    assert.equal(type.answerVisualRequired, false, "The printed source page is text-only");
+    assert.equal(type.answerVisualStatus, "not-required");
+    assert.equal(type.generationMode, "fixed-verified-pool");
+    assert.equal(type.verifiedVariantCount, 3);
+    assert.equal(type.verifiedVariantTarget, 3);
+    assert.equal(type.generatorKey, definition.generatorKey);
+    assert.equal(api.generatorKey(type), definition.generatorKey);
+    for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+      const question = api.generate(type, 1, difficulty, 1, variant);
+      assert(question && question.sourceItemId === type.sourceItemId);
+      assert.equal(question.verifiedPoolIndex, variant);
+      assert.equal(question.publisherKeyVerified, false);
+      assert.equal(question.handwrittenAnswerVerified, false);
+      if (index === 0) {
+        assert.equal(question.answerModel.count, 50, "Exploration intersection has exactly 50 natural numbers");
+        assert.equal(question.answer, "50개");
+        assert.equal(question.answerModel.intersectionEnd - question.answerModel.intersectionStart + 1, 50);
+      } else {
+        assert.equal(question.answer.replace(/,/g, ""), String(question.answerModel.minimum));
+        assert.equal(question.answerModel.minimum, question.answerModel.target - 500);
+        assert.equal(question.answerModel.hundredFloor, question.answerModel.hundredRound);
+        assert.equal(question.answerModel.tenCeil, question.answerModel.tenRound);
+      }
+      assert(!/\b4,500\b|\b7,000\b/.test(question.prompt), "Synthetic prompts must exclude the source's exact numbers");
+    }
+  });
   const supplyCostType = applicationMissionOne[3];
   assert.equal(supplyCostType.id, applicationMissionFourId);
   assert.equal(supplyCostType.sourcePdfPage, 7);
@@ -235,6 +400,21 @@ function validate(curriculum, api, baselineSemester) {
     assert.equal(question.verifiedPoolIndex, variant);
     assert.equal(question.publisherKeyVerified, false);
   }
+  const populationType = applicationMissionOne[4];
+  assert.equal(populationType.id, applicationMissionFiveId);
+  assert.equal(populationType.sourcePdfPage, 7);
+  assert.equal(populationType.sourcePrintedPage, 9);
+  assert.equal(populationType.sourceSection, "mission");
+  assert.equal(populationType.reviewLocked, false);
+  assert.equal(populationType.publisherKeyVerified, false);
+  assert.equal(populationType.generatorKey, "source52ApplicationMissionFivePopulationBarLength");
+  const populationGenerator = require("./source-5-2-population-bar-length.js");
+  for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+    const question = populationGenerator.getQuestion(variant, difficulty);
+    assert(question && question.sourceItemId === applicationMissionFiveId);
+    assert.equal(question.answerModel.cities.length, 3);
+    assert.equal(question.publisherKeyVerified, false);
+  }
   assert.equal(perimeterType.reviewLocked, false);
   assert.equal(perimeterType.sourceVerified, true);
   assert.equal(perimeterType.answerVisualRequired, false);
@@ -250,7 +430,7 @@ function validate(curriculum, api, baselineSemester) {
     assert.equal(question.verifiedPoolIndex, variant);
     assert.equal(question.publisherKeyVerified, false);
   }
-  return { total: types.length, semesterTypes: semesterTypes.length, legacyPreserved: 124, classified: added.length, roundingSourceItems: 5, roundingNewlyAvailable: 4, e2MissionItems: roundingMissions.length, e3ExplorationItems: applicationExploration.length, e3MissionItems: applicationMissionOne.length };
+  return { total: types.length, semesterTypes: semesterTypes.length, legacyPreserved: 124, classified: added.length, roundingSourceItems: 5, roundingNewlyAvailable: 4, e2MissionItems: roundingMissions.length, e3ExplorationItems: applicationExploration.length, e3MissionItems: applicationMissionOne.length, e4RoundRangeItems: roundedRange.length };
 }
 
 const baselineRef = process.env.HSE_BASELINE_REF || "94a69f4bdda95c1d4e47494d3852f13c409165dc";

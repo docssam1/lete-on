@@ -11,6 +11,18 @@
 | **`book-photos.command`** | **맥(애플 칩)용** 교재 실사 사진 — mflux 로 FLUX.1-schnell 8비트(메모리 약 13 GB). 원장 맥(M5 Pro·24 GB)은 이것 | **아니오** |
 | **`book-photos.cmd`** | **교재 실사 사진**(2026-10-19 "실사 수준으로")을 장면마다 후보 3장씩 만들고 GitHub 수신 브랜치 `inbox/book-photos` 로 올린다. 끝나면 Claude 에게 "사진 올렸어" | **아니오** |
 | `_setup-omnivoice.cmd` | 위 둘이 같이 쓰는 준비 단계(가상환경·설치·GPU 확인) | — |
+| **`omnivoice-clone.command`** · `omnivoice-nm.command` · `omnivoice-docssam.command` · `omnivoice-audition.command` | **맥(애플 칩)판** — 하는 일은 같은 이름의 `.cmd` 와 같다. 준비 단계는 `_setup-omnivoice.sh` | **아니오** |
+
+## 맥에서 OmniVoice (2026-10-24, 원장: "이제 옴니보이스 맥에도 설치하자")
+
+**`omnivoice-clone.command` 를 더블클릭하면 그게 곧 설치입니다.** 처음 한 번:
+1. uv(파이썬 관리 도구)를 설치하고, 파이썬 3.12 로 저장소 안 `.venv-omnivoice` 를 만듭니다 — 파이썬을 따로 깔 필요 없음.
+2. torch(맥 빌드, 애플 칩 GPU = MPS 포함)와 OmniVoice 를 설치합니다(몇 분).
+3. 모델을 받아(수 GB, 처음만) 우리 목소리를 복제하고 `clone/듣기.html` 을 엽니다. 같은 사람 목소리로 들리면 설치 성공.
+
+- 처음 열 때 「확인되지 않은 개발자」라고 막히면: 파일을 **오른쪽 클릭 → 열기** 한 번. 또는 터미널에서 `bash scripts/local/omnivoice-clone.command`.
+- 장치는 알아서 고릅니다(엔비디아 GPU → 애플 칩 MPS → CPU). MPS 에 없는 연산은 CPU 로 물러서게 해 두었습니다(`PYTORCH_ENABLE_MPS_FALLBACK=1`). 그래도 MPS 에서 오류가 나면 `bash scripts/local/omnivoice-clone.command --device cpu` 로 돌리고, 오류 메시지를 Claude 에게 주세요.
+- 이 맥의 첫 실행 결과(로그 끝 RTF = 음성 1초에 걸린 초)로 맥이 운영용 음성 생성에 쓸 만한지 정합니다. 클라우드 세션에서는 이 스크립트를 돌려 볼 수 없어서(맥·GPU 없음) **맥에서 처음 도는 것을 아직 확인하지 못했습니다.**
 
 ## omnivoice-clone.cmd ← 원장 지시(2026-09-21): "그냥 우리 나온 목소리 복제해"
 

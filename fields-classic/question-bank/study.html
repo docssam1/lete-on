@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f6f1fb" />
+  <title>공부 길</title>
+  <link rel="icon" href="data:," />
+  <link rel="preload" as="image" href="./assets/study/world-map.webp" />
+  <link rel="stylesheet" href="./study.css?v=20261024f" />
+</head>
+<body class="sd">
+  <!-- 그림 액자: 섬 그림이 화면 가장자리를 두르고, 가운데 넓은 칸에서 공부한다. 장이 바뀌면 그림이 그 섬 쪽으로 조금 옮겨 간다. -->
+  <div class="sd-world" aria-hidden="true">
+    <div class="sd-pan" id="pan"><img class="sd-map" src="./assets/study/world-map.webp" width="1672" height="941" alt="" decoding="async" /></div>
+  </div>
+
+  <header class="sd-top">
+    <a class="sd-pill sd-brand" id="backLink" href="./start.html" aria-label="단원 고르기로"><b>GM</b><span id="eyebrow">1권 1단원 · 1차시</span><strong id="unitTitle">단원 공부</strong></a>
+    <nav class="sd-pill sd-steps" id="signs" aria-label="공부 순서"></nav>
+    <div class="sd-pill sd-student" id="studentName">DEMO</div>
+  </header>
+
+  <main class="sd-main">
+    <section class="sd-card" id="stage">
+      <header class="sd-slide-head" id="slideHead"></header>
+      <div class="sd-slide-body" id="slideBody"></div>
+      <div class="sd-frame" id="frameWrap" hidden><iframe id="bellFrame" title="골든벨 학습"></iframe></div>
+      <div class="sd-sheet" id="sheet" hidden>
+        <header class="sd-sheet-head"><button type="button" class="sd-btn" id="sheetClose">‹ 본책 번호판</button><strong id="sheetTitle">비슷한 문제</strong></header>
+        <iframe id="sheetFrame" title="비슷한 문제"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer class="sd-bar">
+    <div class="sd-guide">
+      <img class="sd-guide-img" id="walkerImg" src="./docssam-guide.webp" alt="" width="683" height="1024" />
+      <div class="sd-talk" id="talk" data-mood="talk">
+        <p id="guideSay" role="status" aria-live="polite"></p>
+        <div class="sd-talk-ctl">
+          <button type="button" id="voiceBtn" aria-pressed="true" title="독쌤 음성 켜기/끄기">🔊</button>
+          <button type="button" id="againBtn" title="다시 듣기" aria-label="다시 듣기">↺</button>
+          <button type="button" id="pauseBtn" aria-pressed="false" title="저절로 넘어가기 멈추기">⏸</button>
+        </div>
+      </div>
+    </div>
+    <span class="sd-pill sd-count" id="count"></span>
+    <button type="button" class="sd-btn sd-prev" id="prevBtn">‹ 이전</button>
+    <button type="button" class="sd-btn primary sd-next" id="nextBtn"><span class="sd-fill" aria-hidden="true"></span><span class="sd-next-text">다음 →</span></button>
+  </footer>
+  <script type="module" src="./study.js?v=20261024t"></script>
+</body>
+</html>

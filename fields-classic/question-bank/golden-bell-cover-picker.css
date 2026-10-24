@@ -60,3 +60,18 @@
   .cover-swatch { padding: 6px; gap: 4px; }
 }
 @media print { .gold-cover-dialog { display: none !important; } }
+
+/* 교재 표지 시안(cover-designs.js) — 고르는 칸에는 실제 표지를 작게, 인쇄에는 여백 없는 A4 한 장 */
+.cover-swatch.design { padding: 0; border: 0; background: none; aspect-ratio: auto; }
+.cover-swatch.design .pt-paper { box-shadow: 0 1px 2px rgb(24 34 48 / 18%); }
+.cover-options strong small { display: block; color: #8a6a1f; font-size: 11px; font-weight: 600; }
+.gold-cover-design-preview { display: grid; justify-items: center; gap: 10px; padding: 12px; }
+.gold-cover-design-preview .pt-paper { width: min(100%, 420px); }
+.gold-cover-design-preview p { margin: 0; color: #566274; font-size: 13px; text-align: center; }
+.gold-print-design-cover { display: none; }
+@page gbcover { size: A4 portrait; margin: 0; }
+@media print {
+  .gold-print-root .gold-print-design-cover { display: block; page: gbcover; width: 210mm; height: 297mm; min-height: 0; padding: 0; margin: 0; overflow: hidden; }
+  .gold-print-design-cover .pt-paper { width: 210mm; height: 297mm; }
+  .gold-print-design-cover > .gold-print-footer { display: none !important; }
+}

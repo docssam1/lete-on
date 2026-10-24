@@ -189,17 +189,33 @@
     ask: function (p, K) { return K.lk('저울이 평평해요! 빈 분동은 몇 g일까요?', 'The scale is level! How many g is the blank weight?', '天平是平的！空白的砝码是几克？'); }
   };
 
+  // Use the same map for practice and the worked example. Only the example receives a route.
+  function pathGrid(p,K,route){
+    var w=p.cols*52+8,h=p.rows*52+8,dy=p.moves==='ru'?-1:1,svg='';
+    function edge(r,c,nr,nc){var x=30+c*52,y=30+r*52,xx=30+nc*52,yy=30+nr*52,ux=(xx-x)/52,uy=(yy-y)/52,mx=(x+xx)/2,my=(y+yy)/2;return `<line x1="${x+ux*15}" y1="${y+uy*15}" x2="${xx-ux*15}" y2="${yy-uy*15}" stroke="#a8783f" stroke-width="1.8"/><polygon points="${mx+ux*4},${my+uy*4} ${mx-ux*3-uy*3},${my-uy*3+ux*3} ${mx-ux*3+uy*3},${my-uy*3-ux*3}" fill="#a8783f"/>`;}
+    for(var r=0;r<p.rows;r++)for(var c=0;c<p.cols;c++){if(c+1<p.cols)svg+=edge(r,c,r,c+1);if(r+dy>=0&&r+dy<p.rows)svg+=edge(r,c,r+dy,c);}
+    if(route)svg+=`<polyline data-worked-route="${route.map(q=>q.join(',')).join(';')}" points="${route.map(q=>(30+q[1]*52)+','+(30+q[0]*52)).join(' ')}" fill="none" stroke="#2f6b4a" stroke-width="5" stroke-linejoin="round"/>`;
+    if(route)for(var j=1;j<route.length;j++){var a=route[j-1],b=route[j],ux=b[1]-a[1],uy=b[0]-a[0],mx=30+(a[1]+b[1])*26,my=30+(a[0]+b[0])*26;svg+=`<polygon points="${mx+ux*7},${my+uy*7} ${mx-ux*5-uy*6},${my-uy*5+ux*6} ${mx-ux*5+uy*6},${my-uy*5-ux*6}" fill="#2f6b4a"/>`;}
+    for(var r=0;r<p.rows;r++)for(var c=0;c<p.cols;c++){
+      var x=30+c*52,y=30+r*52,isS=r===p.start[0]&&c===p.start[1],isG=r===p.goal[0]&&c===p.goal[1],on=route&&route.some(q=>q[0]===r&&q[1]===c);
+      svg+=`<circle cx="${x}" cy="${y}" r="15" fill="${on?'#e9f0e7':'#fff'}" stroke="${isS?'#2f6b4a':isG?'#b4512e':'#a8783f'}" stroke-width="${isS||isG?2.2:1.2}"/><text x="${x}" y="${y+5}" text-anchor="middle" style="font-size:16px;fill:#2a241c">${p.cells[r][c]}</text>`;
+      if(isS||isG){var above=(isS&&p.moves!=='ru')||(isG&&p.moves==='ru'),yy=y+(above?-40:20),ink=isS?'#2f6b4a':'#b4512e',word=isS?K.lk('출발','Start','起点'):K.lk('도착','Finish','终点');svg+=`<g data-path-endpoint="${isS?'start':'goal'}"><rect x="${x-24}" y="${yy}" width="48" height="18" rx="4" fill="${ink}"/><text x="${x}" y="${yy+13}" text-anchor="middle" style="font-size:12px;fill:#fff">${K.esc(word)}</text></g>`;}
+    }
+    return `<svg class="nm-obj-svg nm-path-grid" data-path-moves="${p.moves}" viewBox="0 -18 ${w} ${h+42}" style="width:${Math.min(58,p.cols*22)}mm;max-height:55mm" role="img" aria-label="${K.esc(K.lk('출발에서 도착까지 화살표로 잇는 길','Follow the arrows from Start to Finish','从起点沿箭头走到终点'))}">${svg}</svg>`;
+  }
   P.pathSum = {
-    visual: function (p, K) {
-      var grid = G.pathHtml(p, { pre: PRE, print: true, startTxt: '▶', goalTxt: '⚑' });
-      var leg = '<div class="' + PRE + '-row" style="font-size:11px;gap:4mm;margin-top:1mm"><span>▶ ' + K.lk('출발', 'start', '起点') + '</span><span>⚑ ' + K.lk('도착', 'end', '终点') + '</span></div>';
-      return K.nlCard(K.nlStage('<div style="padding-top:4mm">' + grid + '</div>' + leg), K.nlAnsBox(K.lk('합', '', '和')));
-    },
-    label: function (p, K) { return p.answer + ' (' + p.minPath.map(function (c) { return p.cells[c[0]][c[1]]; }).join('→') + ')'; },
-    ask: function (p, K) {
-      return K.lk('출발에서 도착까지 지나는 수를 더해요. 칸을 선으로 이어 합이 가장 작은 길을 찾고, 합을 써요',
-        'Add the numbers on your way from start to finish. Draw the path with the smallest total, then write the total',
-        '从起点走到终点，把经过的数加起来。画出和最小的路，再写下和');
+    visual: function(p,K){return K.nlCard(K.nlStage(pathGrid(p,K)),K.nlAnsBox(K.lk('합','total','和')));},
+    label: function(p,K){return p.answer+' ('+p.minPath.map(c=>p.cells[c[0]][c[1]]).join('→')+')';},
+    ask: function(p,K){return K.lk('화살표를 따라 출발부터 도착까지 길을 이어요. 지나는 수를 모두 더해 가장 작은 합을 써요. 출발과 도착의 수도 더해요.',
+      'Follow the arrows from Start to Finish. Draw the path with the smallest total and write that total. Count the start and finish numbers too.',
+      '从起点沿箭头走到终点。画出和最小的路，写下和。起点和终点的数也要加。');},
+    worked: function(p,K){
+      if(p.rows!==2||p.cols!==2)throw new Error('The introductory path example must have two routes.');
+      var paths=[];function walk(r,c,path){if(r<0||c<0||r>=p.rows||c>=p.cols)return;path=path.concat([[r,c]]);if(r===p.goal[0]&&c===p.goal[1]){paths.push(path);return;}walk(r+(p.moves==='ru'?-1:1),c,path);walk(r,c+1,path);}walk(p.start[0],p.start[1],[]);
+      var sums=paths.map(a=>a.reduce((n,q)=>n+p.cells[q[0]][q[1]],0)),winner=sums.indexOf(Math.min.apply(null,sums));
+      if(paths.length!==2||sums[0]===sums[1]||sums[winner]!==p.answer)throw new Error('Path example total mismatch.');
+      var cards=paths.map((route,i)=>`<section class="nm-path-option" data-route-total="${sums[i]}"><h4>${K.esc(K.lk('길 '+(i+1),'Route '+(i+1),'路线'+(i+1)))}</h4>${pathGrid(p,K,route)}<p class="nm-path-equation">${route.map(q=>p.cells[q[0]][q[1]]).join(' + ')} = <b>${sums[i]}</b></p></section>`).join('');
+      return `<div class="nm-w2-example nm-neighbor-example nm-path-worked" data-worked-widget="pathSum"><span class="nm-w2-ex-badge">${K.esc(K.lk('예시 · 먼저 함께 풀어요','Example · Let’s solve one','示例·一起做一题'))}</span><ol class="nm-path-steps"><li>${K.esc(K.lk('출발에서 도착까지 화살표를 따라가요.','Follow the arrows from Start to Finish.','从起点沿箭头走到终点。'))}</li><li>${K.esc(K.lk('지나간 수를 모두 더해요. 출발과 도착의 수도 더해요.','Add every number on the route, including Start and Finish.','把经过的数全加起来，起点和终点的数也要加。'))}</li></ol><div class="nm-path-options">${cards}</div><div class="nm-path-choice"><b>${K.esc(K.lk('③ 두 합을 비교해요','3. Compare the totals','③ 比较两个和'))}</b><p>${Math.min.apply(null,sums)} &lt; ${Math.max.apply(null,sums)}</p><p>${K.esc(K.lk('길 '+(winner+1)+'의 합이 더 작아요. 이 길에 선을 긋고, 답칸에 '+p.answer+(HB(p.answer)?'을':'를')+' 써요.','Route '+(winner+1)+' has the smaller total, '+p.answer+'. Draw this route and write '+p.answer+' in the answer box.','路线'+(winner+1)+'的和'+p.answer+'更小。画出这条路，在答题框里写'+p.answer+'。'))}</p><div class="nm-path-filled-answer">${K.esc(K.lk('답','Answer','答'))} <span>${p.answer}</span></div></div></div>`;
     }
   };
 
@@ -321,13 +337,13 @@
   P.splitList = {
     visual: function (p, K) {
       var rows = '<div class="' + PRE + '-row ' + PRE + '-ex">' + nb(p.example[0], K) + '<i>·</i>' + nb(p.example[1], K) + '</div>';
-      for (var i = 0; i < p.k; i++) rows += '<div class="' + PRE + '-row">' + nb(null, K) + '<i>·</i>' + nb(null, K) + '</div>';
+      for (var i = 0; i < Math.max(0,p.k-1); i++) rows += '<div class="' + PRE + '-row">' + nb(null, K) + '<i>·</i>' + nb(null, K) + '</div>';
       var objs = p.emoji ? '<span class="' + PRE + '-grp" style="max-width:30mm">' + Array(p.whole + 1).join('<span>' + K.nlObjHtml(p.emoji) + '</span>') + '</span>' : '';
       return K.nlCard(K.nlStage('<div class="' + PRE + '-row" style="gap:3mm"><span class="' + PRE + '-slw">' + p.whole + '</span>' + objs + '</div><div class="' + PRE + '-lines" style="margin-top:1mm">' + rows + '</div>'),
         K.nlAnsBox(K.lk('가지', 'ways', '种')));
     },
     label: function (p, K) { return p.pairs.map(function (q) { return q[0] + '·' + q[1]; }).join(', ') + ' → ' + p.k + K.lk('가지', ' ways', '种'); },
-    ask: function (p, K) { return K.pickL(p.prompt) + K.lk(' 빈 줄에 방법을 쓰고, 모두 몇 가지인지 써요', ' Write each way on a line, then how many ways in all', ' 把每种分法写在横线上，再写下一共几种'); }
+    ask: function (p, K) { return K.pickL(p.prompt) + K.lk((p.minPart===0?' 빈 접시도 가능해요.':' 각 접시에 한 개 이상씩 나눠요.')+' 예시를 포함해 방법을 쓰고, 모두 몇 가지인지 써요', (p.minPart===0?' An empty plate is allowed.':' Put at least one on each plate.')+' Include the example and write the other ways, then the total number of ways', (p.minPart===0?' 盘子可以是空的。':' 每个盘子至少一个。')+'算上例子，写出其他分法，再写一共几种'); }
   };
 
   P.seqGap = {

@@ -244,10 +244,12 @@ def main():
     import torch
     dev = a.device
     if dev == "auto":
-        dev = "cuda:0" if torch.cuda.is_available() else "cpu"
+        dev = "cuda:0" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")  # 맥(애플 칩)은 MPS
     if dev.startswith("cuda"):
         p = torch.cuda.get_device_properties(0)
         print(f"\n🎮 GPU: {p.name} · VRAM {p.total_memory/1024**3:.1f} GB", flush=True)
+    elif dev == "mps":
+        print("\n🍎 애플 칩 GPU(MPS)로 돕니다", flush=True)
     else:
         print("\n🖥  GPU 를 못 찾았습니다 — CPU 로 돌면 많이 느립니다", flush=True)
 

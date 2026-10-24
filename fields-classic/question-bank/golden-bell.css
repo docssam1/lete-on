@@ -695,3 +695,16 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 .book10-visual .b10-masked-addition{display:grid;justify-content:center;gap:6px}.book10-visual .b10-masked-addition div{display:flex;justify-content:flex-end;gap:6px}.book10-visual .b10-masked-addition span{display:block;width:38px;height:38px;border:2px solid #8e5bd8;background:#fff}.book10-visual .b10-masked-addition .plus b{margin-right:8px;color:#222;font-size:22px;line-height:38px}.book10-visual .b10-masked-addition>i{height:2px;background:#333}.book10-visual .b10-masked-addition .total b{display:grid;place-items:center;width:38px;height:38px;color:#222;font-size:24px}
 @media screen and (max-width:560px){.book10-visual .b10-sum-table th,.book10-visual .b10-sum-table td{padding:5px 3px;font-size:11px;white-space:normal;overflow-wrap:anywhere}.book10-visual .b10-sum-table th:last-child,.book10-visual .b10-sum-table td:last-child{display:none}.book10-visual .b10-sum-table i.box{width:20px;height:16px}.book10-visual .b10-consecutive-blanks span{width:26px;height:26px}.book10-visual .b10-consecutive-blanks{gap:3px}.book10-visual .b10-product-cells .row{grid-auto-columns:32px}.book10-visual .b10-product-cells .row span{height:32px;font-size:17px}}
 @media print{.book10-visual .b10-sum-table td,.book10-visual .b10-sum-table th{padding:2mm 1.5mm;font-size:10px}.book10-visual .b10-consecutive-blanks span{width:7mm;height:7mm}}
+
+/* 학생 차시 화면에서 들어온 학습(?as=student) — 학습만 보이게 */
+.as-student .gold-intro,.as-student .book-index,.as-student .lesson-pane{display:none!important}
+.as-student .gold-layout{grid-template-columns:minmax(0,1fr);margin-top:12px}
+/* 학생 차시 덱(study.html) 안(?embed=1): 제목·순서·넘김 단추는 덱이 맡고, 이 화면은 지금 장 하나만 보인다 */
+.as-embed .gold-header,.as-embed .stage-steps,.as-embed .gb-flow,.as-embed .gb-flow-actions,.as-embed [data-next-phase],.as-embed[data-embed-view="concept"] .gold-hands-on:not(.gb-flow-game),.as-embed .embed-off{display:none!important}
+.as-embed,.as-embed body{background:#fff}
+.as-embed .gold-shell{width:100%;margin:0}
+.as-embed .gold-layout{margin:0;border:0;min-height:0;box-shadow:none}
+.as-embed .lesson-content{padding:18px 22px 24px}
+.as-embed #lessonContent>.lesson-kicker,.as-embed #lessonContent>h2,.as-embed .quiz-head h2{display:none}
+.as-embed .protected-answer-notice{margin:0 0 12px;padding:6px 10px;font-size:12.5px;font-weight:700}
+@media (max-width:760px){.as-embed .lesson-content{padding:12px 12px 18px}}

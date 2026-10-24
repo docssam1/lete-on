@@ -90,7 +90,7 @@
       const viewKey = phase === 'question' ? `${phase}:${d.index}` : phase;
       const previousView = $('.nm-placement');
       const changedView = !previousView || previousView.dataset.pdView !== viewKey;
-      root.innerHTML = `<div class="nm-unit-bar"><button class="nm-back" id="pdBack">${t('돌아가기','Back','返回')}</button><div class="nm-unit-title">${escape(title)}</div></div>
+      root.innerHTML = `<div class="nm-unit-bar"><button class="nm-back" id="pdBack">${t('마을로 돌아가기','Back to village','返回村庄')}</button><div class="nm-unit-title">${escape(title)}</div></div>
         <main data-pd-view="${viewKey}" class="nm-placement ${d.selection.age && Number(String(d.selection.age).replace(/^pre/,'')) < 8 ? 'nm-placement-young' : ''}">
         <nav class="pd-flow" aria-label="${t('진단 순서','Assessment steps','测评步骤')}"><span${phase === 'setup' ? ' aria-current="step"' : ''}>01 ${t('기준 고르기','Starting point','选择起点')}</span><span${['question','paper'].includes(phase) ? ' aria-current="step"' : ''}>02 ${t('20문항 확인','20 questions','20道题')}</span><span${phase === 'result' ? ' aria-current="step"' : ''}>03 ${t('학습 제안','Learning suggestion','学习建议')}</span></nav>${body}</main>`;
       $('#pdBack').onclick = ctx.close;

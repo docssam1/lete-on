@@ -1,4 +1,4 @@
-import { DOMAINS } from "./source-data.js?v=20260829a";
+import { DOMAINS } from "./source-data.js?v=20261024r";
 import {
   RESULT_EXAM_BY_ID,
   RESULT_EXAM_GROUPS,
@@ -6,7 +6,7 @@ import {
   remediationUrl,
   resultStorageKey,
   stageLabelForExam
-} from "./result-diagnosis-data.js?v=20260829a";
+} from "./result-diagnosis-data.js?v=20261024r";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);

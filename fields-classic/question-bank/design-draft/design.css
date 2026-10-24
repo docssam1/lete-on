@@ -5,12 +5,12 @@
    ─ 색은 토큰으로만 쓴다. 파랑·하늘색 토큰은 만들지 않는다. */
 
 @font-face { font-family: 'FC Sans'; src: url('../assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 700; font-style: normal; font-display: swap; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-korean-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-korean-600-normal.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-latin-600-normal.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-korean-700-normal.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-korean-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-korean-600-normal.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-latin-600-normal.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-korean-700-normal.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
 
 :root {
   /* 바탕 — 따뜻한 종이색 */
@@ -54,7 +54,7 @@ button { cursor: pointer; }
 .bank-brand strong { font-size: 16px; font-weight: 700; }
 .bank-brand span { color: var(--muted); font-size: 11px; }
 .bank-search { flex: 1; max-width: 460px; display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--paper-dim); color: var(--muted); }
-.bank-search input { flex: 1; border: 0; background: transparent; outline: 0; color: var(--ink); }
+.bank-search input { flex: 1; min-width: 0; border: 0; background: transparent; outline: 0; color: var(--ink); }
 .bank-header .spacer { flex: 1; }
 .btn { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 5px 14px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--paper); font-weight: 600; }
 .btn:hover { border-color: var(--ink); }
@@ -273,4 +273,15 @@ button { cursor: pointer; }
 }
 
 @media (max-width: 1100px) { .bank-body { grid-template-columns: 200px minmax(0, 1fr); } .bank-side { display: none; } }
-@media (max-width: 760px) { .bank-body { grid-template-columns: 1fr; } .bank-filter { display: none; } }
+@media (max-width: 760px) { .bank-body { grid-template-columns: 1fr; } .bank-filter { display: none; } .bank-header { flex-wrap: wrap; gap: 10px; padding: 10px 16px; } .bank-header .spacer { display: none; } .bank-header > * { min-width: 0; } .bank-search { flex: 1 1 100%; max-width: none; order: 3; } }
+/* 문제은행 미리보기의 그림은 고른 문항의 그림과 같아야 한다(거울 문항 = 거울선 칸판). */
+.preview-mirror { justify-content: center; margin: 14px 0 4px; }
+.preview-mirror .mgrid { grid-template-columns: repeat(4, 22px); }
+.preview-mirror .axis { width: 3px; height: 92px; background: repeating-linear-gradient(#191511 0 7px, transparent 7px 12px); }
+.book-title { margin: 6px 2px 0; font-size: 12px; color: var(--muted); }
+/* 시안 이동 줄: 폰에서는 줄을 바꾸고 설명 문구는 숨긴다. */
+@media (max-width: 760px) {
+  .draft-nav { flex-wrap: wrap; gap: 6px 10px; padding: 8px 16px; }
+  .draft-nav > * { white-space: nowrap; }
+  .draft-nav > span:last-child { display: none; }
+}

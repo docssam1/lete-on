@@ -43,10 +43,13 @@
   .nm-nl-g46-gl svg { height:8mm; width:auto; display:block; }
   .nm-nl-g46-ref { display:inline-flex; flex-direction:column; align-items:center; gap:.4mm; font-size:12px; font-weight:800; color:#0E2C57; }
   .nm-nl-g46-line { display:flex; align-items:flex-end; justify-content:center; gap:.4mm; }
-  .nm-nl-g46-ppl { display:inline-flex; flex-direction:column; align-items:center; font-size:17px; line-height:1; }
-  .nm-nl-g46-ppl .nm-nl-g46-t { font-size:17px; }
+  .nm-nl-g46-ppl { position:relative; display:inline-flex; flex-direction:column; align-items:center; padding-top:3.5mm; font-size:25px; line-height:1; }
+  .nm-nl-g46-ppl .nm-nl-g46-t { font-size:25px; }
+  .nm-nl-g46-hat { position:absolute; top:1.5mm; left:50%; transform:translateX(-50%); width:7.5mm; height:4.5mm; overflow:visible; }
+  .nm-nl-g46-coins .nm-nl-g46-t { font-size:26px; }
+  .nm-nl-g46-coins .nm-nl-g46-t.sm { font-size:15px; }
   .nm-nl-g46-ppl.mark { border:1.6px solid #C9A063; border-radius:1.4mm; background:#ffe28c; }
-  .nm-nl-g46-ppl.sil { width:5mm; height:5.5mm; border:1.3px dashed #C9A063; border-radius:50% 50% 1mm 1mm; background:#fffaf0; }
+  .nm-nl-g46-ppl.sil { padding-top:0; width:5mm; height:5.5mm; border:1.3px dashed #C9A063; border-radius:50% 50% 1mm 1mm; background:#fffaf0; }
   .nm-nl-g46-cap { font-size:9.5px; font-weight:700; color:#8a6a2f; }
   .nm-nl-g46-cc { display:grid; border:1.4px solid #8a6a2f; border-radius:1mm; overflow:hidden; background:#fffaf0; }
   .nm-nl-g46-cc span { position:relative; box-sizing:border-box; border:.7px solid #C9A063; display:flex; align-items:center; justify-content:center; }
@@ -161,7 +164,7 @@
     let s = '';
     for (let i = 0; i < total; i++) {
       if (sil) { s += `<span class="nm-nl-g46-ppl sil"></span>`; continue; }
-      s += `<span class="nm-nl-g46-ppl${i === mark ? ' mark' : ''}">${T1(K, (chars && chars[i]) || FRIENDS[i % FRIENDS.length])}</span>`;
+      s += `<span class="nm-nl-g46-ppl${i === mark ? ' mark' : ''}">${T1(K, (chars && chars[i]) || FRIENDS[i % FRIENDS.length])}${i===mark?`<svg class="nm-nl-g46-hat" viewBox="0 0 28 20" role="img" aria-label="${K.esc(lt(K,'모자','hat','帽子'))}"><path d="M7 2H21L23 16H5Z" fill="#2a241c"/><path d="M6 11H22L23 15H5Z" fill="#b4512e"/><ellipse cx="14" cy="16" rx="13" ry="3" fill="#2a241c"/></svg>`:''}</span>`;
     }
     return s;
   }
@@ -355,7 +358,7 @@
       const sc = p.scene;
       let scene = '';
       if (sc.kind === 'line') scene = `<div class="nm-nl-g46-line">${personsP(K, sc.total, sc.rank - 1, sc.chars)}</div><div class="nm-nl-g46-cap" style="display:flex;justify-content:space-between;width:100%"><span>${K.esc(lt(K, '◀ 앞', '◀ front', '◀ 前'))}</span><span>${K.esc(lt(K, '뒤 ▶', 'back ▶', '后 ▶'))}</span></div>`;
-      else if (sc.kind === 'coins') scene = `<div class="nm-nl-g46-row" style="gap:.4mm">${range(1, sc.total).map(i => T1(K, '🪙', i === sc.rank ? '' : 'sm')).join('')}</div>`;
+      else if (sc.kind === 'coins') scene = `<div class="nm-nl-g46-row nm-nl-g46-coins" style="gap:.4mm">${range(1, sc.total).map(i => T1(K, '🪙', i === sc.rank ? '' : 'sm')).join('')}</div>`;
       else scene = `<div class="nm-nl-g46-row" style="gap:2mm"><span class="nm-nl-g46-t" style="font-size:42px;position:relative">${K.nlObjHtml('podium')}${(window.NM_OBJECTS && NM_OBJECTS.real('podium')) ? [[2, 19, 60], [1, 51, 54], [3, 83, 64]].map(([n, x, y]) => `<b style="position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);font-size:9px;font-weight:900;color:#5a4300;line-height:1">${n}</b>`).join('') : ''}</span><span class="nm-nl-g46-col" style="gap:0">${T1(K, '🧒')}<span class="nm-nl-g46-cap">${K.esc(lt(K, `${sc.rank}번째 자리`, `place ${sc.rank}`, `第${sc.rank}个位置`))}</span></span></div>`
         + `<div class="nm-nl-g46-row" style="gap:0">${Ts(K, sc.e, sc.q, 'sm')}</div>`;
       const cards = `<div class="nm-nl-g46-row" style="gap:8mm">${p.cards.map(c => `<span class="nm-nl-g46-box" style="min-width:14mm;height:10mm;font-size:22px">${c.n}</span>`).join('')}</div>`;
@@ -525,7 +528,11 @@
       else for (let a = T - 1; a >= Math.ceil(T / 2); a--) list.push(`${a}+${T - a}`);
       return lt(K, `합이 ${T} (${list.join(', ')})`, `sum ${T} (${list.join(', ')})`, `和是${T}（${list.join('，')}）`);
     },
-    ask: askP
+    ask(p,K){
+      let text=askP(p,K)||'';
+      if(p.rows===1&&!(p.preset||[]).length)text=text.replace('서로 다른 방법으로!','양쪽에 한 개 이상씩 나누어 그려요.').replace('Find different ways!','Draw at least one on each side.').replace('想想不同的分法！','两边都至少画一个。');
+      return text;
+    }
   };
 
   /* ============================================================

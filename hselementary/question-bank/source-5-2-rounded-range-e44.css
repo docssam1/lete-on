@@ -1,0 +1,17 @@
+.source52-e44-graph { display: block; width: min(100%, 680px); height: auto; margin: 14px auto; overflow: visible; font-family: inherit; }
+.source52-e44-graph .axis, .source52-e44-graph .break { fill: none; stroke: #30343b; stroke-width: 1.5; }
+.source52-e44-graph .major { stroke: #60656e; stroke-width: 1.2; }
+.source52-e44-graph .minor { stroke: #aeb3bc; stroke-width: .65; stroke-dasharray: 2 2; }
+.source52-e44-graph .vgrid { stroke: #858a93; stroke-width: .9; }
+.source52-e44-graph .female-line { fill: none; stroke: #27374b; stroke-width: 3; }
+.source52-e44-graph .male-line { fill: none; stroke: #27374b; stroke-width: 2.5; stroke-dasharray: 7 5; }
+.source52-e44-graph .female-point, .source52-e44-graph .male-point { fill: #27374b; stroke: white; stroke-width: 1; }
+.source52-e44-graph .highlight-band { fill: #fff2b3; fill-opacity: .5; stroke: #c28700; stroke-width: 1.4; stroke-dasharray: 4 3; }
+.source52-e44-graph .highlight-point { fill: none; stroke: #c28700; stroke-width: 2.2; }
+.source52-e44-graph .chart-title { font-size: 17px; font-weight: 700; fill: #20242b; }
+.source52-e44-graph .tick, .source52-e44-graph .year { font-size: 13px; fill: #20242b; }
+.source52-e44-graph .axis-unit, .source52-e44-graph .series-label { font-size: 12px; fill: #20242b; }
+.source52-e44-graph .series-label { font-weight: 700; }
+.solution-answer-visual .source52-e44-graph, .solution-viewer-answer-visual .source52-e44-graph { width: min(560px, 100%); max-height: none; }
+@media print { .source52-e44-graph { max-width: 150mm; margin: 4mm auto; } }
+@media print { .solution-answer-visual .source52-e44-graph { width: min(150mm, 100%); max-height: none; } }

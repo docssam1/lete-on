@@ -34,6 +34,7 @@ GitHub Pages 배포: `docssam1/lete-on` 저장소 → `/reading-world/` 경로.
 - **골든벨 원본 대조 작업(2~4권 완료분·4권 남은 묶음 3~6·5~10권)을 이어받을 때는 `fields-classic/question-bank/HANDOVER-GOLDEN-BELL-SOURCE-REVIEW.md`부터 읽는다.** 저장 위치·answerRef 번호·DB 절차·검사 명령·했던 실수가 다 거기 있다. 작업 도구는 `fields-classic/question-bank/tools/golden-bell-book04/`.
 - **골든벨 원본 = 골든벨 자료(골든벨 PPT·판서)뿐.** 본교재(수업용 교재·교사용 지도서) 문항은 골든벨에 넣지 않는다 — 문제은행 권별(`index.html`, `source-data.js` `CURRICULUM`)의 자리다(2026-10-23, 10권에서 잘못 넣었던 지도서 단원을 뺌).
 - **골든벨 그림을 그리거나 색·문구를 고칠 때는 스킬 `.claude/skills/golden-bell-figure-style/SKILL.md`부터 읽는다.** 풀컬러 색표, 각도·분수 말 대신 아이 말(「반 바퀴」), 회사 이름(FC·필즈) 금지. 끝나면 `node fields-classic/question-bank/golden-bell-style-audit.mjs`.
+- **교재 표지·단원 내지·시험지/학습지·문제은행 화면을 만들거나 고칠 때는 스킬 `.claude/skills/gfield-textbook-design/SKILL.md`부터 읽는다.** 파랑 배색·두꺼운 글씨·그림책 장면 표지는 원장이 거른 것(2026-10-23). 시안은 `fields-classic/question-bank/design-draft/`.
 
 ---
 
@@ -792,6 +793,8 @@ HuggingFace 에서 받는다.
   **"우리 GPU 있잖아, 지금 실행 PC"** — GPU 가 있으면 글자당 요금이 **0**이 된다(전기값만).
   전용 가상환경 → torch(CUDA)+omnivoice 설치 → 생성 → 폴더 열기까지 한 번에.
   **키를 하나도 안 쓰고 아무것도 안 올린다.** 쓰는 법은 `scripts/local/README.md`.
+- **Kitten TTS(KittenML/KittenTTS) 검토 → 안 씀(원장 2026-10-24: "그냥 omni보이스 하자")**: 한국어 목소리가 학습 언어 목록에 없고(영어 외 9개 언어), 모델 라이선스가 따로(Stellon Labs Community License — 매출·투자 100만 달러 기준·등록·표시 요구로 알려짐). 음성은 OmniVoice 하나로 간다.
+- **맥(애플 칩)에서도 돈다(2026-10-24)**: `scripts/local/omnivoice-*.command` + `_setup-omnivoice.sh`(uv·파이썬 3.12·MPS). 첫 실행 = 설치. 맥 실행은 아직 확인 전.
 - `scripts/omnivoice-audition.py` — 앱에 실제로 들어 있는 대사(누미 3줄 + 영·중 1줄씩)를
   캐릭터 설계안 4종으로 읽는다. `--device auto` 가 GPU 를 알아서 잡고(있으면 float16,
   없으면 CPU+float32) 무엇을 쓰는지·VRAM 이 얼마인지 찍는다. 참조 음성을 주면 복제 모드.

@@ -1,4 +1,4 @@
-import { seededRandom, shuffle, randInt, fillLevel, weightedPick } from "./golden-bell-level-game.js?v=20261004a";
+import { seededRandom, shuffle, randInt, fillLevel, weightedPick } from "./golden-bell-level-game.js?v=20261024t";
 
 // 2권 레벨 게임 4종의 문제 규칙. 화면과 검사가 같은 함수를 쓴다.
 // 모든 문제는 답이 하나뿐인지 전수 검사한 뒤에만 낸다. 교재 원문 숫자를 복제하지 않고 같은 사고 조건으로 새로 만든다.
@@ -52,6 +52,28 @@ export function matrixHolds(problem, values) {
   }
   return problem.equations.every((e) => (e.op === "-" ? val(e.a) - val(e.b) : val(e.a) + val(e.b)) === e.result);
 }
+// 골든벨 풀이 순서: 모르는 도형이 한 가지뿐인 줄(같은 모양 둘의 합, 또는 아는 값이 들어간 식)부터 그 도형 값을 정하고,
+// 알게 된 값을 다른 줄에 넣어 다음 도형으로. 그렇게 하나씩 정해지는 순서를 [{ shape, line }]으로 돌려준다(안 되면 null).
+export function matrixLines(problem) {
+  if (problem.kind !== "grid") return problem.equations.map((e, i) => ({ id: `eq${i}`, shapes: [e.a, e.b] }));
+  const n = problem.grid.length;
+  return [
+    ...problem.grid.map((row, r) => ({ id: `row${r}`, shapes: row })),
+    ...problem.grid[0].map((_, c) => ({ id: `col${c}`, shapes: problem.grid.map((row) => row[c]) }))
+  ];
+}
+export function matrixSolveOrder(problem) {
+  const lines = matrixLines(problem), known = new Set(), order = [];
+  while (known.size < problem.shapes.length) {
+    const line = lines.find((l) => new Set(l.shapes.filter((s) => !known.has(s))).size === 1);
+    if (!line) return null;
+    const shape = line.shapes.find((s) => !known.has(s));
+    known.add(shape);
+    order.push({ shape, line: line.id });
+  }
+  return order;
+}
+
 function makeMatrix(spec, kind, rand) {
   const shapes = shuffle(SHAPES.map((s) => s.id), rand).slice(0, spec.shapes);
   const values = shapes.map(() => randInt(spec.lo, spec.hi, rand));
@@ -80,6 +102,8 @@ function makeMatrix(spec, kind, rand) {
   Object.assign(p, { lo: spec.lo, hi: spec.hi, answer: values });
   const sols = matrixSolutions(p);
   if (sols.length !== 1) return null;
+  // 레슨 풀이처럼 「모르는 도형이 하나뿐인 줄」을 따라 하나씩 풀리는 문제만 낸다(두 줄을 빼야 풀리는 표는 거른다).
+  if (!matrixSolveOrder(p)) return null;
   p.key = `${p.kind}:${JSON.stringify(p.grid || p.equations)}:${p.rowSums || ""}:${p.colSums || ""}`;
   return p;
 }

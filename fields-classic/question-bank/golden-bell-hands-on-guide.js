@@ -1,4 +1,6 @@
-import { clockValueAfterQuarterTurns } from "./golden-bell-hands-on-models.js?v=20261004a";
+import { clockValueAfterQuarterTurns, unfoldTargets, orderedClues, currentClueIndex, clueText, eulReul } from "./golden-bell-hands-on-models.js?v=20261023t";
+
+const unfoldTargetCount = (round, state) => unfoldTargets(round, state.unfold).filter((cell) => !state.cells.includes(cell)).length;
 
 const directions = { right: "오른쪽", left: "왼쪽", up: "위쪽", down: "아래쪽" };
 
@@ -15,7 +17,7 @@ export function handsOnGuide(activity, round, state) {
     clock: "끝 숫자만 보지 말고, 방향과 반의 반 바퀴씩 돌린 횟수도 확인해 봐.",
     mirror: "거울선에서 몇 칸 떨어져 있는지 하나씩 짝지어 봐.",
     fold: "마지막에 접은 선부터 펼친다고 생각해 봐. 자국은 어디로 옮겨질까?",
-    cross: "카드를 중복해 놓지 않았는지, 두 줄의 합이 같은지 확인해 봐.",
+    cross: "두 줄의 합이 다르면, 가운데를 뺀 두 쌍의 합부터 비교해 봐. 어떻게 나눠도 안 되면 가운데 카드를 바꿔 봐.",
     order: "맨 앞·맨 뒤를 확인하고, '바로 앞'인지도 살펴봐.",
     transfer: "옮긴 뒤의 두 수를 비교해 봐. 전체 개수는 바뀌지 않아."
   })[activity.kind] };
@@ -27,18 +29,52 @@ export function handsOnGuide(activity, round, state) {
     ? { phase: "progress", text: `지금 ${state.cells.length}칸을 골랐어. 주어진 칸과 거울선 사이의 거리를 비교해 봐.` }
     : { phase: "start", text: "거울선에서 같은 거리의 빈칸을 찾아 직접 눌러 봐." };
   if (activity.kind === "fold") {
-    if (state.cut) return { phase: "progress", text: "이제 접은 순서의 반대로 펼쳐 보자. 잘린 칸을 빈 격자에 표시해 봐." };
+    // 골든벨 풀이: 마지막에 접은 선부터 펼친다 → 새 자국을 접은 선 반대쪽 같은 거리에 표시 → 첫 접기까지 되돌린 뒤 센다.
+    const n = round.model.folds.length;
+    if (state.note) return { phase: "retry", text: state.note };
+    if (state.cut) {
+      if (state.unfold === 0) return { phase: "progress", text: `① 접은 순서의 반대로 펼쳐. 마지막에 접은 ${directions[round.model.folds[n - 1]]} 접기부터 펼쳐 보자.` };
+      const fold = round.model.folds[n - state.unfold];
+      const left = unfoldTargetCount(round, state);
+      if (left) return { phase: "progress", text: `② 방금 펼친 ${fold === "left" || fold === "right" ? "세로" : "가로"} 접은 선(점선)이 거울이야. 있던 자국과 같은 거리의 반대쪽에 새 자국이 ${left}개 더 있어. 눌러서 표시해 봐.` };
+      if (state.unfold < n) return { phase: "progress", text: `좋아. 이제 그 전에 접은 ${directions[round.model.folds[n - state.unfold - 1]]} 접기를 펼쳐 보자.` };
+      return { phase: "progress", text: `③ 다 펼쳤어. 자국은 모두 ${state.cells.length}개야. 「결과 확인」으로 세어 보자.` };
+    }
     if (state.foldStep === round.model.folds.length) return { phase: "progress", text: "종이가 포개졌어. 표시된 자리를 잘라 보자." };
     const next = round.model.folds[state.foldStep];
     return { phase: state.foldStep ? "progress" : "start", text: `${state.foldStep ? "다음은" : "먼저"} ${directions[next]}으로 접어 보자. 종이가 어디에 포개질까?` };
   }
-  if (activity.kind === "cross") return state.slots.some((slot) => slot !== null)
-    ? { phase: "progress", text: "놓은 카드로 가로와 세로의 합을 비교해 봐. 빈 자리에는 어떤 카드가 필요할까?" }
-    : { phase: "start", text: "가운데 카드는 그대로 두고, 나머지 카드를 한 번씩 놓아 봐." };
-  if (activity.kind === "order") return state.slots.some((slot) => slot !== null)
-    ? { phase: "progress", text: "놓은 자리와 세 조건을 하나씩 비교해 봐. 카드를 다시 옮길 수 있어." }
-    : { phase: "start", text: "맨 앞과 맨 뒤 조건부터 확인한 다음 친구 카드를 놓아 봐." };
-  return state.moves
-    ? { phase: "progress", text: `지금 두 사람의 차이는 ${Math.abs(state.left - state.right)}개야. 한 개 더 옮기면 차이가 어떻게 될까?` }
-    : { phase: "start", text: "A에서 B로 한 개 옮기면 두 사람의 차이는 2개 줄어들어." };
+  if (activity.kind === "cross") {
+    // 골든벨 풀이: ① 교차점 후보 정하기 ② 남은 카드를 두 줄에 나누기 ③ 카드를 한 번씩 썼는지·두 줄 합이 같은지 확인.
+    if (state.note) return { phase: "retry", text: state.note };
+    const c = state.slots[4];
+    if (c === null) return { phase: "start", text: "① 가운데 칸은 가로줄과 세로줄이 함께 써. 가운데에 놓을 카드 후보를 하나 골라 놓아 봐." };
+    const rest = round.cards.filter((n) => n !== c);
+    const total = rest.reduce((a, b) => a + b, 0);
+    if (state.slots.slice(0, 4).every((slot) => slot === null)) return { phase: "progress", text: `② 가운데가 ${c}이면 남은 ${rest.slice(0, -1).join(", ")}, ${eulReul(rest.at(-1))} 두 쌍으로 나눠 두 줄에 하나씩 넣어. 두 쌍의 합이 같아야 해 — 남은 수의 합 ${total}의 반이 될까?` };
+    return { phase: "progress", text: "놓은 카드로 가로와 세로의 합을 비교해 봐. 두 쌍의 합이 같게 나뉘지 않으면 가운데 카드를 바꿔 봐." };
+  }
+  if (activity.kind === "order") {
+    // 골든벨 풀이: 왼쪽이 앞 → 자리가 바로 정해지는 조건부터 → 사이 조건 → 앞에서부터 세어 확인.
+    const clues = orderedClues(round), now = currentClueIndex(round, state.slots);
+    if (now < 0) return state.slots.every((slot) => slot !== null)
+      ? { phase: "progress", text: "세 조건이 모두 맞았어. 앞에서부터 한 명씩 세어 보고 「결과 확인」을 눌러." }
+      : { phase: "progress", text: "조건은 다 맞았어. 남은 친구를 빈 자리에 놓아 봐." };
+    const clue = clues[now];
+    const lead = state.slots.some((slot) => slot !== null) ? "" : "왼쪽이 앞, 오른쪽이 뒤야. ";
+    const how = clue.kind === "first" || clue.kind === "last" ? "자리가 바로 정해지는 조건이야. 그 친구부터 놓아 봐."
+      : clue.kind === "adjacent" ? "두 친구가 붙어 있어야 해. 앞에서 정한 자리를 피해서 붙여 놓아 봐."
+      : "사이 조건은 마지막에 봐. 남은 자리 중 앞쪽에 누가 와야 할까?";
+    return { phase: state.slots.some((slot) => slot !== null) ? "progress" : "start", text: `${lead}${now + 1}번 조건 「${clueText(clue)}」 — ${how}` };
+  }
+  // 골든벨 풀이 순서: ① 차이 구하기 ② 한 개 옮길 때 차이가 2 줄므로 차이를 둘로 나누기 ③ 옮긴 뒤 같은지 확인.
+  const difference = round.left - round.right;
+  if (state.note) return { phase: "retry", text: state.note };
+  if (state.phase === "diff") return state.marked.length
+    ? { phase: "progress", text: `짝이 없는 구슬을 ${state.marked.length}개 찾았어. 남은 것도 찾아 봐.` }
+    : { phase: "start", text: "① 위 A의 구슬을 아래 B의 구슬과 하나씩 짝지었어. 짝이 없는 A의 구슬을 모두 눌러 봐. 그만큼이 두 사람의 차이야." };
+  if (state.phase === "half") return state.give.length
+    ? { phase: "progress", text: `${state.give.length}개를 골랐어. 주면 A는 ${round.left - state.give.length}개, B는 ${round.right + state.give.length}개가 돼. 맞다면 「골라서 주기」를 눌러.` }
+    : { phase: "progress", text: `② 차이는 ${difference}개야. A가 한 개를 주면 A는 1 줄고 B는 1 늘어서 차이가 2 줄어. 차이 ${difference}개 가운데 몇 개를 주면 될까? 줄 구슬을 골라 봐.` };
+  return { phase: "progress", text: `③ ${round.left} − ${state.moved} = ${state.left}, ${round.right} + ${state.moved} = ${state.right}. 두 사람의 수가 같은지 「결과 확인」으로 확인해 봐.` };
 }

@@ -226,6 +226,14 @@
   .nm-nl { display:flex; flex-direction:column; align-items:center; gap:1.8mm; margin:1.2mm auto 0; width:100%; max-width:80mm; }
   .nm-nl-stage { border:1.3px solid #2f4a6e; border-radius:3.5mm; padding:2.5mm 3.5mm; background:#fffaf0; min-width:40mm; max-width:100%;
     display:flex; flex-direction:column; align-items:center; gap:1.5mm; box-sizing:border-box; }
+  .nm-story-change{display:flex;align-items:center;justify-content:center;gap:3mm;max-width:100%}
+  .nm-story-change section{min-width:0;text-align:center;flex:1}
+  .nm-story-change small{font-size:11px;line-height:1.3;display:block;margin-bottom:1mm}
+  .nm-story-group{display:flex;flex-wrap:wrap;justify-content:center;gap:1mm}
+  .nm-story-group>span{position:relative;display:inline-flex;font-size:24px;line-height:1}
+  .nm-story-given{opacity:.65}
+  .nm-story-given:after{content:'';position:absolute;left:0;right:0;top:50%;border-top:2px solid #b4512e;transform:rotate(-40deg)}
+  .nm-nl-person { display:inline-block; width:1em; height:1.7em; object-fit:contain; vertical-align:bottom; }
   .nm-nl-stage-bond { border:0; padding:0; }
   /* 2026-10-05 원장 "너무 흑백이야" — 유아 그림은 화면과 같은 색으로 인쇄(흑백 프린터는 회색 농도로 구분). */
   .nm-nl, .nm-nl *, .nm-bond, .nm-bond * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -765,7 +773,8 @@
   .nm-cvw .nm-cvw-toc td.nm-cvw-chk { font-size:16px; text-align:center; color:#0E2C57; }
   .nm-cvw .nm-cvw-day { font-size:11px; font-weight:800; color:#245b60; }
   .nm-cvw .nm-cvw-day-tag { display:inline-block; padding:1mm 2mm; border:1px solid #b7d4cf; border-radius:999px; background:#f2f8f6; }
-  .nm-w2-study-day { display:inline-flex; align-items:center; flex:0 0 auto; margin-left:4px; padding:3px 8px; border:1px solid #9abbb7; border-radius:999px; color:#245b60; background:#f2f8f6; font:700 11px/1.4 Pretendard,'Noto Sans KR',sans-serif; letter-spacing:0; }
+  .nm-w2-study-day { display:inline-flex; align-items:center; flex:0 0 auto; margin-left:4px; padding:3px 8px; border:1px solid #9abbb7; border-radius:999px; color:#245b60; background:#f2f8f6; font:700 14px/1 Pretendard,'Noto Sans KR',sans-serif; letter-spacing:0; }
+  .nm-w2-day-heading,.nm-w2-head-mid .nm-w2-day-heading { display:inline-block; vertical-align:baseline; margin-right:.45em; padding:.08em .35em; border:1px solid #b59961; border-radius:.2em; background:#f7f2e7; color:#2f6b4a; font:700 .82em/1.05 "NM Series Sans",Pretendard,sans-serif; white-space:nowrap; letter-spacing:0; }
   /* 표지가 A4 한 장을 넘치지 않게(2026-09-30, 원장 "QR 칸이 넘친다") — 목차가 10줄이면 QR 칸이 28px,
      발치가 73px 종이 밖으로 나갔고 8줄이어도 코드 줄이 잘렸다(overflow:hidden 이라 조용히).
      ① 영웅부(제목) 여백을 줄이고 ② QR·발치·코드를 한 띠(.nm-cvw-foot)로 합쳐 25mm 를 벌고
@@ -881,6 +890,89 @@
   .nm-dv-gap { display:inline-flex; align-items:flex-end; justify-content:center; width:.44em; height:1.3em; font-weight:800; font-size:1.15em; line-height:1; vertical-align:top; }
   .nm-dv-gap-q { color:#1f5fbf; }
   .nm-dv-add { border-color:#9aa3b5; }
+  /* N-01: 큰 그림 → 수 이름·숫자 → 따라 쓰기를 한 장에서 연결한다. */
+  .nm-n01-note { font-family:"NM Series Sans",Pretendard,sans-serif; }
+  .nm-n01-body { flex:1 1 auto; min-height:0; display:flex; flex-direction:column; justify-content:space-evenly; gap:4mm; }
+  .nm-n01-section { flex:0 0 auto; border-top:1px solid #c9bda2; padding-top:3mm; }
+  .nm-n01-section h3 { font:700 calc(18px * var(--ws-fs,1))/1.4 "NM Series Sans",Pretendard,sans-serif; margin:0 0 2mm; color:#2a241c; }
+  .nm-n01-section p,.nm-n01-remember p { font-size:calc(12.5px * var(--ws-fs,1)); line-height:1.6; margin:1mm 0 3mm; word-break:keep-all; }
+  .nm-n01-row { display:grid; grid-template-columns:repeat(var(--count-cols),minmax(0,1fr)); gap:4mm; margin:3mm 0; }
+  .nm-n01-cell { text-align:center; min-width:0; }
+  .nm-n01-cell img { display:block; width:20mm; height:20mm; object-fit:contain; margin:0 auto 1mm; }
+  .nm-n01-word { display:block; font:700 calc(24px * var(--ws-fs,1))/1.4 "NM Series Sans",Pretendard,sans-serif; color:var(--count-ink); }
+  .nm-n01-row-trace .nm-n01-word { display:none; }
+  .nm-n01-digit { display:block; font:600 calc(23px * var(--ws-fs,1))/1.3 "NM Series Sans",Pretendard,sans-serif; color:var(--count-ink); }
+  .nm-n01-total { text-align:center; padding:2mm; background:#f7f2e7; border-radius:2mm; }
+  .nm-n01-total b { color:#2f6b4a; font-weight:700; }
+  .nm-n01-trace { position:relative; height:16mm; border-bottom:1px solid #7a6f5c; margin:1mm 1mm 0; display:flex; align-items:center; justify-content:center; }
+  .nm-n01-trace::before { content:''; position:absolute; top:50%; left:0; right:0; border-top:1px dashed #c9bda2; }
+  .nm-n01-trace span { position:relative; color:#9b9b9b; font:400 calc(26px * var(--ws-fs,1))/1.2 "NM Series Sans",Pretendard,sans-serif; }
+  .nm-n01-remember { border-left:1.2mm solid #2f6b4a; padding:2mm 4mm; background:#e9f0e7; flex:0 0 auto; }
+  .nm-n01-remember b { color:#2f6b4a; font-size:calc(16px * var(--ws-fs,1)); font-weight:700; }
+  .nm-n01-remember p { margin:1mm 0; }
+  .nm-print-fs-l .nm-n01-body,.nm-print-fs-xl .nm-n01-body { gap:2mm; }
+  .nm-print-fs-xl .nm-n01-cell img { width:16mm; height:16mm; }
+  .nm-preschool-figure{margin:3mm 0;padding:3mm;background:#f7f2e7;text-align:center;break-inside:avoid}
+  .nm-preschool-note .nm-mn-plain{font-family:"NM Series Sans",Pretendard,sans-serif}
+  .nm-preschool-note .nm-note-balance{display:block;width:95mm;max-width:100%;height:auto;margin:3mm auto 0}
+  .nm-note-fig-row{display:flex;align-items:center;justify-content:center;gap:3mm;flex-wrap:wrap;margin:2mm 0}
+  .nm-note-fig-row section{display:flex;flex-direction:column;align-items:center;gap:2mm}
+  .nm-preschool-figure p,.nm-preschool-figure small{font-size:calc(12px * var(--ws-fs,1));line-height:1.35;margin:1mm 0;color:#2a241c}
+  .nm-note-fig-number,.nm-note-fig-sign{font-size:calc(23px * var(--ws-fs,1));line-height:1.25;color:#2f6b4a;font-weight:600}
+  .nm-note-fig-cell{display:inline-flex;align-items:center;justify-content:center;min-width:11mm;min-height:11mm;padding:1mm;border:1px solid #2f6b4a;background:#fff;font-size:calc(20px * var(--ws-fs,1));font-weight:600;color:#2f6b4a}
+  .nm-note-fig-group{display:inline-flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:1.5mm;font-size:34px;max-width:90mm}
+  .nm-note-fig-group>span{position:relative;display:inline-flex}
+  .nm-note-fig-group>svg,.nm-note-fig-group>img,.nm-note-fig-group>span>svg{width:1em;height:1em;object-fit:contain}
+  .nm-note-fig-person{display:flex;flex-direction:column;align-items:center;gap:2mm;font-size:20px;color:#2f6b4a}
+  .nm-note-fig-person .nm-nl-person{height:26mm;width:16mm}
+  .nm-note-fig-duo{display:grid;grid-template-columns:1fr 1fr;gap:4mm;align-items:center}
+  .nm-note-fig-duo .nm-nl-stage{border:0;background:transparent;min-width:0;padding:0}
+  .nm-note-fig-duo .nm-nl-stairs{width:38mm;height:34mm}
+  .nm-note-fig-basket{border:1px solid #a87c22;border-radius:0 0 4mm 4mm;padding:3mm}
+  .nm-preschool-figure .nm-note-line{display:block;width:125mm;max-width:100%;height:auto;margin:0 auto}
+  .nm-preschool-figure .nm-note-tree{width:46mm;height:32mm}
+  .nm-preschool-figure .nm-note-star{width:22mm;height:22mm}
+  .nm-preschool-figure .nm-note-cross{display:block;width:42mm;height:40mm;margin:0 auto}
+  .nm-preschool-figure .nm-nl-tally{height:17mm;max-width:100%;margin:0 auto}
+  .nm-preschool-figure .nm-nl-tally line{stroke:#2f6b4a}
+  /* N-04: explain every tally instruction with the marks themselves. */
+  .nm-n04-note { font-family:"NM Series Sans",Pretendard,sans-serif; }
+  .nm-n04-body { flex:1; min-height:0; display:flex; flex-direction:column; justify-content:space-evenly; gap:3mm; }
+  .nm-n04-section { border-top:1px solid #c9bda2; padding-top:3mm; }
+  .nm-n04-section h3 { font:700 calc(17px * var(--ws-fs,1))/1.35 "NM Series Sans",Pretendard,sans-serif; margin:0 0 2mm; color:#2a241c; }
+  .nm-n04-section p,.nm-n04-remember { font-size:calc(13px * var(--ws-fs,1)); line-height:1.5; margin:1mm 0; word-break:keep-all; }
+  .nm-n04-row { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4mm; margin-top:3mm; }
+  .nm-n04-cell { display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:0; gap:2mm; }
+  .nm-n04-digit { font-size:calc(24px * var(--ws-fs,1)); font-weight:600; line-height:1.2; color:#2f6b4a; }
+  .nm-n04-note .nm-nl-tally { height:13mm; width:auto; max-width:100%; }
+  .nm-n04-note .nm-nl-tally line { stroke:#2f6b4a; }
+  .nm-n04-note .nm-nl-tally line:nth-of-type(5n) { stroke:#b4512e; }
+  .nm-n04-making { display:flex; justify-content:center; align-items:center; gap:5mm; margin:3mm 0; }
+  .nm-n04-making b { font-size:calc(22px * var(--ws-fs,1)); color:#2f6b4a; font-weight:600; }
+  .nm-n04-slash { width:10mm; height:13mm; color:#b4512e; }
+  .nm-n04-equation { font-size:calc(17px * var(--ws-fs,1)); font-weight:600; line-height:1.4; color:#2f6b4a; white-space:nowrap; }
+  .nm-n04-remember { padding:2mm 4mm; background:#e9f0e7; border-left:1mm solid #2f6b4a; }
+  .nm-print-fs-xl .nm-n04-body { gap:2mm; }
+  .nm-print-fs-xl .nm-n04-section { padding-top:2mm; }
+  .nm-print-fs-xl .nm-n04-note .nm-nl-tally { height:11mm; }
+  /* NL29 first encounter: a full picture key before symbol-matching practice. */
+  .nm-ancient-intro { font-family:"NM Series Sans",Pretendard,sans-serif; }
+  .nm-ancient-lesson { flex:1; min-height:0; display:flex; flex-direction:column; justify-content:space-evenly; gap:3mm; }
+  .nm-ancient-lesson h2 { font-size:calc(26px * var(--ws-fs,1)); line-height:1.3; margin:0 0 2mm; color:#2f6b4a; font-weight:700; }
+  .nm-ancient-lesson p { font-size:calc(14px * var(--ws-fs,1)); line-height:1.5; margin:1mm 0; word-break:keep-all; }
+  .nm-ancient-key { width:100%; border-collapse:collapse; table-layout:fixed; text-align:center; color:#2a241c; }
+  .nm-ancient-key th,.nm-ancient-key td { border-bottom:1px solid #c9bda2; padding:2mm 1mm; vertical-align:middle; }
+  .nm-ancient-key thead th { font-size:calc(19px * var(--ws-fs,1)); font-weight:600; background:#f7f2e7; }
+  .nm-ancient-key th:first-child { width:29mm; font-size:calc(13px * var(--ws-fs,1)); font-weight:600; }
+  .nm-ancient-key tbody th small { display:block; font-size:calc(11px * var(--ws-fs,1)); font-weight:400; margin-top:1mm; }
+  .nm-ancient-key .nm-anc { display:block; height:14mm; width:100%; color:#2f6b4a; }
+  .nm-ancient-demo { border-top:1px solid #a87c22; padding-top:3mm; }
+  .nm-ancient-demo h3 { font-size:calc(17px * var(--ws-fs,1)); font-weight:700; margin:0 0 2mm; }
+  .nm-ancient-same { display:flex; align-items:center; justify-content:center; gap:5mm; font-size:calc(27px * var(--ws-fs,1)); font-weight:600; margin:2mm 0; color:#2f6b4a; }
+  .nm-ancient-same .nm-anc { width:23mm; height:16mm; }
+  .nm-ancient-roman { border-left:1mm solid #2f6b4a; padding:2mm 4mm; background:#e9f0e7; }
+  .nm-print-fs-xl .nm-ancient-lesson { gap:2mm; }
+  .nm-print-fs-xl .nm-ancient-key th,.nm-print-fs-xl .nm-ancient-key td { padding:1.2mm 1mm; }
   /* 마법 노트 지면 */
   .nm-w2-page-magic { gap:0; }
   /* 매거진형 개념 노트(2026-09-25) */
@@ -1331,6 +1423,30 @@
 .nm-w2-ex-line { display:flex; align-items:center; gap:8px; font-size:calc(14px * var(--ws-fs, 1)); flex-wrap:wrap; }
 /* 답이 분수면 KaTeX 줄이 위아래로 커져 아랫줄(풀이 사슬)과 겹친다(2026-09-19, 중등 유리수
    예시에서 8/7 의 분모가 아랫줄 분자에 닿았다) — 줄 사이를 열고 행간을 준다. */
+  .nm-path-worked{font-family:"NM Series Sans",Pretendard,sans-serif}
+  .nm-path-steps{padding-left:7mm;margin:2mm 0;font-size:calc(13px * var(--ws-fs,1));line-height:1.5}
+  .nm-path-options{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin:3mm 0}
+  .nm-path-option{text-align:center;border:1px solid #c9bda2;padding:2mm;background:#f7f2e7}
+  .nm-path-option h4{margin:0 0 2mm;font-size:calc(15px * var(--ws-fs,1));color:#2f6b4a}
+  .nm-path-option .nm-path-grid{display:block;margin:0 auto;max-height:60mm!important;width:48mm!important;max-width:100%}
+  .nm-path-worked p.nm-path-equation{font-size:calc(20px * var(--ws-fs,1));font-weight:600;margin:2mm 0}
+  .nm-path-choice{border-top:1px solid #c9bda2;padding-top:2mm;font-size:calc(13px * var(--ws-fs,1));line-height:1.4}
+  .nm-path-choice>p:first-of-type{font-size:calc(20px * var(--ws-fs,1));font-weight:600;color:#2f6b4a}
+  .nm-path-filled-answer{display:flex;align-items:center;justify-content:center;gap:3mm;margin-top:2mm}
+  .nm-path-filled-answer span{display:inline-grid;place-items:center;border:1.5px solid #2f6b4a;min-width:12mm;height:10mm;font-size:calc(20px * var(--ws-fs,1));color:#2f6b4a}
+  .nm-neighbor-example { flex:0 0 auto; padding:3mm; }
+  .nm-neighbor-example p { margin:1mm 0; font-size:calc(12px * var(--ws-fs,1)); line-height:1.4; }
+  .nm-neighbor-example-pair { display:flex; justify-content:center; align-items:center; gap:5mm; margin:2mm 0; }
+  .nm-neighbor-pyramid { display:flex; flex-direction:column; align-items:center; gap:1mm; }
+  .nm-neighbor-row { display:flex; gap:2mm; }
+  .nm-neighbor-stone { display:inline-flex; justify-content:center; align-items:center; min-width:9mm; height:8mm; border:1px solid #a67827; border-radius:2mm; background:#f7f2e7; font:600 calc(17px * var(--ws-fs,1))/1 "NM Series Sans",Pretendard,sans-serif; }
+  .nm-neighbor-target { border-style:dashed; }
+  .nm-neighbor-solved { border-style:solid; color:#2f6b4a; background:#e9f0e7; border-color:#2f6b4a; }
+  .nm-neighbor-arrow { font-size:22px; color:#2f6b4a; }
+  .nm-neighbor-sum { text-align:center; font:600 calc(20px * var(--ws-fs,1))/1.3 "NM Series Sans",Pretendard,sans-serif; }
+  .nm-neighbor-path { text-align:center; }
+  .nm-neighbor-path .nm-nl-dots { width:45mm; height:35mm; }
+  .nm-neighbor-sum b { color:#2f6b4a; }
 .nm-w2-example > * + * { margin-top:4px; }
 .nm-w2-example .nm-w2-ex-line, .nm-w2-example .nm-w2-ex-steps { line-height:1.45; }
 .nm-w2-ex-ans, .nm-w2-ex-ans-tex { color:#c33; font-weight:700; }
@@ -1719,7 +1835,7 @@ function runSessionTabs(container, items, meta){
   function buildTab(it){
     const cfg = { ...it,thread: it.thread, level: it.level, count: it.count||perType, seed: it.seed, wordType: it.wordType };
     const numericSeed = NM_RNG.hashSeed(cfg.seed);
-    const problems = cfg.magicUnit?[]:buildProblems(cfg.thread, cfg.level, cfg.count, numericSeed,null,cfg.threadMix);
+    const problems = cfg.magicUnit?[]:cfg.kind==='drawing'?NM_GRAPH_DRAWING.makeSet({mode:cfg.mode,variant:cfg.variant,count:cfg.count,seed:cfg.seed}):buildProblems(cfg.thread, cfg.level, cfg.count, numericSeed,null,cfg.threadMix);
     applyWordProblems(problems, cfg.wordType, numericSeed);
     return {
       cfg, problems, userAnswers: new Array(cfg.count).fill(''), graded: false, gradeScore: 0,
@@ -1737,8 +1853,8 @@ function runSessionTabs(container, items, meta){
 
   function render(){
     const t = tabs[activeTab];
-    if(t.cfg.magicUnit){
-      const note=renderMagicNotePage(t.cfg,{name:printStudentName()});
+    if(t.cfg.magicUnit||t.cfg.kind==='drawing'){
+      const note=t.cfg.magicUnit?renderMagicNotePage(t.cfg,{name:printStudentName()}):renderDrawingRound(t.cfg,{count:t.cfg.count});
       container.innerHTML=`<div class="nm-ws-wrap nm-ws-session"><div class="nm-ws-hd">${esc(meta.title||'')}</div><div class="nm-ws-tabs">${tabs.map((x,i)=>`<button class="nm-ws-tab${i===activeTab?' active':''}" data-tabidx="${i}">${esc(x.cfg.topicName||x.cfg.magicUnit||pickL(((window.NM_THREADS||{})[x.cfg.thread]||{}).name)||x.cfg.thread)}</button>`).join('')}</div>${note?note.html:''}<button id="nm-ws-back" class="nm-ex-btn-ghost">← ${esc(lk('수업 목록으로','Back to lessons','返回课程列表'))}</button></div>`;
       container.querySelectorAll('[data-tabidx]').forEach(b=>b.onclick=()=>{activeTab=+b.dataset.tabidx;render();});
       container.querySelector('#nm-ws-back').onclick=()=>{if(run)run.stop();if(meta.onBack)meta.onBack();};
@@ -1757,7 +1873,7 @@ function runSessionTabs(container, items, meta){
     const bestHtml = best!=null
       ? `<span class="nm-grid-best">${esc(lk('최고','Best','最高'))} ${Math.round(best*100)}%</span>` : '';
     const round0Code = NM_EXAM.worksheetCode({thread:t.cfg.thread, level:t.cfg.level, count:t.cfg.count, seed:t.cfg.seed});
-    const conceptHtml = t.cfg.noTeach||t.cfg.skipConcept?'':w2ConceptPanelHtml(t.cfg.thread, t.cfg.level);
+    const conceptHtml = t.cfg.noTeach||t.cfg.skipConcept?'':w2ConceptPanelHtml(t.cfg.thread, t.cfg.level,{levelOnly:t.cfg.levelOnly,levelConcept:t.cfg.levelConcept,levelTitle:t.cfg.levelTitle});
     const exampleHtml = t.cfg.noTeach?'':w2ExampleHtml(t.cfg.thread, t.cfg.level, round0Code);
     /* 따라 풀기(§4/§build 7) — 인쇄와 같은 마크업을 화면에도 그대로(읽기 전용,
        탭을 오갈 때마다 같은 시드로 다시 만들므로 매번 같은 3문제). */
@@ -1959,17 +2075,17 @@ function resolveConceptUnit(threadId, level){
 
    exam.js는 drill.html에서도 로드되는데 그쪽엔 main.js가 아예 없어 앱 상태도 없다.
    그래서 두 단으로 떨어진다:
-     ① nm_state_v1의 lang — 앱이 저장해 둔 언어(메인 앱·인쇄 검사기)
+     ① 현재 계정의 NM_STATE_KEY lang — 앱 언어; 독립 문제은행은 체험 저장만 읽음
      ② 문서의 lang 속성  — 앱 상태가 없는 페이지(drill.html은 <html lang="ko">)
    둘 다 없으면 한국어. */
-const NM_LANG_KEY = 'nm_state_v1';
+const NM_LANG_KEY = window.NM_STATE_KEY || 'nm_preview_state_v1';
 function normLang(l){ const v = String(l || '').slice(0, 2); return (v === 'en' || v === 'zh') ? v : 'ko'; }
 /* 저장본 문자열이 그대로면 다시 파싱하지 않는다 — 한 장 찍는 동안 수백 번 불린다.
    (S에는 진도까지 들어 있어 매번 JSON.parse하면 인쇄 한 번에 그 비용을 다 문다.) */
 let _langMemo = { raw: null, val: null };
 function examLang(){
   try{
-    const raw = localStorage.getItem(NM_LANG_KEY);
+    const raw = localStorage.getItem(window.NM_STATE_KEY||NM_LANG_KEY);
     if(raw){
       if(raw !== _langMemo.raw){
         const st = JSON.parse(raw);
@@ -1992,7 +2108,7 @@ function lk(ko, en, zh){ const l = examLang(); return l === 'en' ? en : l === 'z
 function printStudentName(){
   if(typeof window.NM_PRINT_NAME==='string') return window.NM_PRINT_NAME.trim(); // ws.html(링크 학습지)이 URL의 이름을 넘긴다
   try{
-    const st=JSON.parse(localStorage.getItem(NM_LANG_KEY)||'null');
+    const st=JSON.parse(localStorage.getItem(window.NM_STATE_KEY||NM_LANG_KEY)||'null');
     return (st&&typeof st.name==='string')?st.name.trim():'';
   }catch(e){return '';}
 }
@@ -2009,11 +2125,75 @@ function printWatermarkHtml(){
    concept 에 koMid 가 있으면 그 문장을 쓴다. 급은 renderRoundPagesBody 가 회차 항목에서 정한다. */
 let W2_TIER = 'elem';
 function pickConcept(c){ if(c && c.koMid && W2_TIER !== 'elem' && examLang() === 'ko') return c.koMid; return pickL(c); }
+// Korean print-only explanations for the preschool vocabulary audit; IDs, audio and generators stay unchanged.
+const W2_KID_COPY = {
+  "이웃한 두 수를 더하면 그 위의 수가 돼요. 2와 3을 더하면 위에 놓일 수는 5예요.": "여기서 이웃은 바로 옆에 있는 친구라는 뜻이에요. 바로 옆 두 돌의 수를 더해서 위 돌에 써요. 2와 3을 더하면 위 돌의 수는 5예요.",
+  "10원짜리는 10, 20, 30…처럼 10씩 뛰어세요. 여덟 닢이면 80원이에요.": "동전 한 개가 10원이면 10, 20, 30처럼 10씩 세어요. 동전이 8개면 모두 80원이에요.",
+  "이웃한 두 수를 더해 쓰시오.": "바로 옆 두 돌의 수를 더해 빈 돌에 써 보세요.",
+  "이어 세기와 점 매칭": "이어 세기와 점 그림 짝짓기",
+  "수-점 매칭": "수와 점 그림 짝짓기",
+  "수열 빈칸(쉬움)": "차례로 놓인 수 채우기(쉬움)",
+  "수열 빈칸(어려움)": "차례로 놓인 수 채우기(어려움)",
+  "수는 정해진 순서대로 나열돼요. 1, 2, 3, 4 다음에는 5가 와요.": "수는 차례대로 놓을 수 있어요. 1, 2, 3, 4 다음에는 5가 와요.",
+  "양의 수와 순서수": "몇 개와 몇째",
+  "“모두 5명”처럼 몇 개인지 나타내는 수는 양의 수이고, “앞에서 셋째”처럼 몇째인지 나타내는 수는 순서수예요. 같은 줄에서도 두 가지 수가 함께 나와요.": "몇 개는 모두 얼마나 있는지 묻는 말이에요. 몇째는 줄에서 어디에 있는지 묻는 말이에요. 친구가 모두 5명이어도, 맨 앞 친구는 첫째예요.",
+  "이야기 셈과 분류": "이야기 셈과 같은 것끼리 나누기",
+  "분류하고 세기": "같은 것끼리 나누어 세기",
+  "분류하고 세기(쉬움)": "같은 것끼리 나누어 세기(쉬움)",
+  "분류하고 세기(어려움)": "같은 것끼리 나누어 세기(어려움)",
+  "분류하기": "같은 것끼리 나누기",
+  "조사하기와 분류하기": "찾아보고 같은 것끼리 나누기",
+  "섞여 있는 것을 종류별로 나눠 담으면 각각 몇 개인지 세거나 어느 쪽이 더 많은지 비교할 수 있어요. 사과 5개와 바나나 3개로 나누면 사과 바구니가 더 많아요.": "사과는 사과끼리, 바나나는 바나나끼리 모아요. 이렇게 같은 것끼리 나누는 것을 분류라고 해요. 따로 세어 보면 어느 쪽이 더 많은지 알 수 있어요.",
+  "섞여 있는 것을 종류별로 나눠 담은 뒤, 물어본 종류만 세어요.": "같은 것끼리 따로 모아요. 그런 다음 문제에서 물어본 것만 세어 보세요.",
+  "이번엔 규칙이 숨어 있어요. 앞의 예시에서 들어간 수와 나온 수를 견주어 규칙을 먼저 찾아요.": "이번에는 수를 바꾸는 약속이 숨어 있어요. 예시의 수가 어떻게 바뀌었는지 살펴보고, 같은 방법으로 빈칸을 채워요.",
+  "숨은 규칙 추리": "숨어 있는 약속 찾기",
+  "두 수를 견주어 큰 쪽으로 입을 벌려요. 입이 벌어진 쪽이 더 큰 수예요!": "두 수 중 어느 수가 더 큰지 살펴봐요. 입이 크게 벌어진 쪽이 더 큰 수예요!",
+  "조건에 맞는 수를 빠짐없이 모두 눌러요. 눌렀다가 다시 누르면 취소돼요.": "조건에 맞는 수를 빠짐없이 찾아 동그라미 해요.",
+  "길을 따라 지나는 칸의 수를 모두 더해요. 눈에 띄는 작은 수만 따라가면 끝에서 큰 수를 만날 수 있어요. 갈 수 있는 길을 모두 더해 보고 가장 작은 합을 골라요.": "화살표 방향으로 길을 이어요. 지나간 동그라미의 수를 모두 더해요. 출발과 도착의 수도 더해요. 길마다 더한 수를 비교해 가장 작은 합을 찾아요.",
+  "출발에서 도착까지 지나는 수의 합이 가장 작은 길을 찾으시오.": "출발부터 도착까지 길을 잇고, 가장 작은 합을 써요.",
+  "도형수": "칸의 수 더하기",
+  "산가지와 규칙": "묶어 세기와 규칙",
+  "빈칸을 거꾸로 계산!": "같은 합이 되도록 빈칸을 찾아요.",
+  "별의 수 = 전체": "별에 적힌 수는 모두 있는 수예요.",
+  "더하기: 부분 + 부분 = 전체": "두 수를 더해 모두 있는 수를 만들어요.",
+  "빼기: 전체 − 한 부분 = 다른 부분": "모두 있는 수에서 한쪽 수를 빼면 다른 쪽 수예요.",
+  "별의 수는 전체, 식은 부분을 맞춰 줘요": "별에 적힌 수를 보고 빈칸을 찾아요",
+  "기수법 놀이": "여러 방법으로 수 나타내기",
+  "생활 서수 문장제": "생활 속 몇째 찾기",
+  "생활 속 어디서나 서수를 써요!": "줄서기와 계단에서도 첫째, 둘째, 셋째를 써요!",
+  "탤리로 수 만들기": "막대 표시로 수 만들기",
+  "탤리 읽기와 규칙": "막대 표시 읽기와 약속 찾기",
+  "수-탤리 매칭": "수와 막대 표시 짝짓기",
+  "탤리 막대로 수를 만들고, 수와 탤리를 이어요!": "막대를 하나씩 그려 수를 나타내요. 이런 막대 표시를 탤리라고 해요.",
+  "숫자 \"5\"와 탤리 막대는 같은 수예요": "숫자 5와 막대 표시 다섯 개는 같은 수예요",
+  "막대 4개는 그대로, 5번째는 사선으로 묶어요!": "막대 네 개를 그린 뒤, 다섯 번째 막대는 비스듬히 그어 묶어요.",
+  "5번째는 사선으로 묶어요": "다섯 번째 막대는 비스듬히 그어요",
+  "4개는 그대로, 5번째는 사선으로 묶어요!": "네 개까지는 하나씩 그려요. 다섯 번째 막대는 비스듬히 그어 묶어요.",
+  "탤리를 세어 읽고, 화살표 규칙도 찾아요!": "막대 표시를 세어 읽고, 화살표를 따라 수가 어떻게 바뀌는지 찾아요!",
+  "같은 수를 나타내는 숫자와 탤리 그림을 짝지어요. 막대를 세어 보면 어느 숫자와 짝인지 알 수 있어요.": "막대 하나는 1을 나타내요. 막대를 세어 보고 같은 수를 나타내는 숫자와 짝지어요.",
+  "화살표를 따라가며 1씩 줄어들어요. 앞 칸의 탤리를 세고 하나를 덜어 내면 다음 칸이 돼요.": "화살표를 따라가며 막대가 하나씩 줄어요. 앞 칸의 막대를 세고 하나를 빼면 다음 칸의 수를 알 수 있어요.",
+  "전체 개수를 알면 한쪽을 보고 다른 쪽이 몇 개인지 구할 수 있어요. 점이 7개인데 왼쪽 날개에 3개면 오른쪽 날개는 4개예요.": "점이 모두 몇 개인지 알면 안 보이는 쪽의 점도 찾을 수 있어요. 점이 모두 7개인데 왼쪽 날개에 3개가 있으면, 오른쪽 날개에는 4개가 있어요.",
+  "□가 어디에 있어도 전체와 부분의 관계로 찾을 수 있어요.": "모두 몇 개인지와 나누어 놓은 수를 살펴보면, 빈칸에 들어갈 수를 찾을 수 있어요.",
+  "전체와 부분으로 □를 찾아요!": "모두 있는 수와 나눈 수를 보고 빈칸을 찾아요!",
+  "더하면 전체! 빼면 나머지 부분! □는 전체와 부분으로 찾아요!": "모으면 모두 몇 개인지 알 수 있어요. 몇 개를 덜어 내면 남은 수를 알 수 있어요. 빈칸도 이렇게 찾아요!",
+  "격자 길을 잇고, 십자 퍼즐의 빈칸도 추리해요!": "칸을 따라 길을 잇고, 더한 수가 같아지도록 십자 모양의 빈칸도 채워요!",
+  "수를 순서대로 이어 세면 다음에 올 수를 알 수 있고, 같은 개수를 나타내는 숫자와 점 그림은 서로 짝이 돼요. 5 다음은 6이고, 숫자 5는 점 5개와 짝이에요.": "하나씩 이어 세어 다음 수를 찾아요. 5 다음은 6이에요. 숫자 5와 점 다섯 개처럼, 같은 수를 나타내는 것끼리 짝지을 수도 있어요.",
+  "종류별로 나누어 세어 쓰시오.": "같은 것끼리 모은 뒤 몇 개인지 세어 써 보세요.",
+  "무당벌레 점을 좌우로 갈라 쓰시오.": "무당벌레의 왼쪽과 오른쪽 점을 보고 빈칸에 수를 써 보세요.",
+  "그림 속 도형과 쌓기나무, 선의 길이도 하나씩 짚어 가며 셀 수 있어요. 눈에 안 보이는 곳은 쌓인 모양을 생각해서 세요.": "동그라미·세모·네모 같은 모양을 도형이라고 해요. 도형과 쌓기나무, 선의 길이도 하나씩 짚어 가며 셀 수 있어요. 가려진 곳은 쌓인 모양을 생각해서 세요.",
+  "정해진 규칙대로 수를 넣으면 규칙에 따라 바뀐 수가 나와요. 규칙이 '+2'면 3을 넣었을 때 5가 나와요.": "수 기계에는 수를 바꾸는 약속이 있어요. 약속이 +2이면 넣은 수에 2를 더해요. 3을 넣으면 5가 나와요.",
+  "그림 속 칸들은 더하기로 이어져 있어요. 수나무는 부모 = 두 자식의 합, 꼭지점 도형은 변 위의 수 = 양쪽 꼭지점의 합이에요.": "수나무에서는 아래 두 칸의 수를 더해 위 칸에 써요. 도형의 뾰족한 곳을 꼭지점이라고 해요. 선 위의 수는 양 끝 꼭지점의 수를 더한 것이에요.",
+  "기차 칸 사이의 동그라미는 이웃한 두 칸의 차예요. 1과 3 사이의 동그라미는 2예요. 동그라미를 보면 빈 칸을, 칸을 보면 빈 동그라미를 찾을 수 있어요.": "바로 옆 두 칸의 수를 살펴봐요. 큰 수에서 작은 수를 뺀 값을 두 수의 차라고 해요. 1과 3이면 3에서 1을 뺀 2를 사이 동그라미에 써요.",
+  "길 잇기와 십자 퍼즐": "길 잇기와 더하기 모양 퍼즐",
+  "십자 퍼즐(쉬움)": "더하기 모양 퍼즐(쉬움)",
+  "십자 퍼즐(어려움)": "더하기 모양 퍼즐(어려움)",
+  "독셈 · 이웃 수 더하기": "생각하며 풀어요 · 이웃 수 더하기",
+  "적용 · 줄서기와 계단": "이야기로 풀어요 · 줄서기와 계단"
+};
 function pickL(field){
   if(!field) return '';
-  if(typeof field === 'string') return field;
-  const l = examLang();
-  return field[l] || field.ko || field.en || '';
+  const l=examLang(),value=typeof field==='string'?field:field[l]||field.ko||field.en||'';
+  return l==='ko'&&typeof value==='string'?(W2_KID_COPY[value]||value):value;
 }
 /* 보기(선택지) 한 벌 고르기 — WP 스레드는 {ko:[],en:[],zh:[]}로 주고, 옛 형태(배열)도
    그대로 받는다. 비었으면 null(호출부가 "보기 없음"으로 다룬다). */
@@ -2553,7 +2733,7 @@ function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle, band){
 function w2PagesOf(r){ return (r.html.match(/class="nm-w2-page/g) || []).length; }
 function weeklyPageCount(rounds, extra){
   extra = extra || {};
-  let page = 1;
+  let page = extra.series ? 2 : 1;
   rounds.forEach(r => { page += w2PagesOf(r); });
   /* history 는 참/거짓 또는 **지면 수**(수학사 + 종이 교구, 2026-09-08). */
   page += Number(extra.history) || 0;
@@ -2585,7 +2765,7 @@ function assignStudyDays(rounds, requestedDays){
    renderMixedSheet 의 console.warn + 시트의 data-nm-dropped-word 로 간다. */
 function weeklyCoverHtml(cv, rounds, totalCount, extra){
   extra = extra || {};
-  let page = 2; // 표지가 1쪽
+  let page = extra.series ? 3 : 2; // 시리즈 표지 + 주간 학습 안내
   const dayLabel = day => day ? lk(`${day}일차`, `Day ${day}`, `第${day}天`) : '';
   const pTxt = (from, to) => `${from === to ? from : from + '–' + to}${esc(lk('쪽','p.','页'))}`;
   const contents=[];
@@ -2602,7 +2782,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     const ds = (r.studyDays || []).filter((d, j, a) => a.indexOf(d) === j);
     const days = ds.length ? (ds.length === 1 ? dayLabel(ds[0]) : `${dayLabel(ds[0])}–${dayLabel(ds[ds.length-1])}`) : '';
     return `<tr><td class="nm-cvw-day">${days ? `<span class="nm-cvw-day-tag">${esc(days)}</span>` : ''}</td><td class="nm-cvw-no">${i+1}</td><td class="nm-cvw-name">${esc(r.thName)}</td>
-      <td>${n}${esc(lk('문항','','题'))}</td><td>${pTxt(from, to)}</td><td class="nm-cvw-chk">☐</td></tr>`;
+      <td>${n ? n+esc(lk('문항','','题')) : r.magic ? esc(lk('활동','Activity','活动')) : ''}</td><td>${pTxt(from, to)}</td><td class="nm-cvw-chk">☐</td></tr>`;
   });
   /* 수학사·정답지는 번호·완료 칸 없이 — 푸는 지면이 아니라서 */
   if(extra.history){
@@ -2631,7 +2811,11 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     ${magazineC4 ? '<div class="nm-cvw-cover-teaser"><b>이번 호의 질문</b>같은 수가 두 묶음이면 어떻게 셀까요?</div><img class="nm-cvw-cover-character" src="assets/characters/docssam.png" alt="">' : ''}
     <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}${cv.amount != null && cv.amount !== 1 ? ' · ' + esc(cv.amountLabel || `${cv.amount}×`) : ''}</p>
     <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
-    <p class="nm-cvw-tagline">${esc(cv.compactHigh?lk('주 2회, 12주에 이어 가는 고등 연산','High school arithmetic over 12 weeks at two lessons a week','每周两课，12周高中运算'):lk('하루 10분으로 연산 공부','Arithmetic practice in 10 minutes a day','每天10分钟，练习计算'))}</p>
+    <p class="nm-cvw-tagline">${esc(cv.middleExtension?lk(
+      (cv.extensionGrades||[]).map(g=>'중'+g).join('·')+' 선택 심화 12묶음 · 표준 6주 · 기본 포함 총 16주',
+      (cv.extensionGrades||[]).map(g=>'Grade '+(+g+6)).join(' / ')+' optional extension · 12 bundles · 6 standard weeks · 16 weeks including core',
+      (cv.extensionGrades||[]).map(g=>'初'+g).join('·')+'选学进阶12组 · 标准6周 · 含基础共16周')
+      :cv.compactMiddle?lk('중등 연산 · 같은 20묶음, 주 1회 20주 · 주 2회 10주','Middle school arithmetic · the same 20 bundles, 20 weeks at once a week or 10 at twice','初中运算 · 相同20组，每周一次20周，每周两次10周'):cv.compactHigh?lk('주 2회, 12주에 이어 가는 고등 연산','High school arithmetic over 12 weeks at two lessons a week','每周两课，12周高中运算'):lk('하루 10분으로 연산 공부','Arithmetic practice in 10 minutes a day','每天10分钟，练习计算'))}</p>
     <div class="nm-cv-rule"></div>
     <p class="nm-cvw-course">${cv.name ? `<b>${esc(cv.name)}</b> · ` : ''}${cv.courseNum ? esc(lk(`과정 ${cv.courseNum}`, `Course ${cv.courseNum}`, `课程 ${cv.courseNum}`)) + ' · ' : ''}${esc(cv.courseTitle||'')}</p>
   </div>
@@ -2791,13 +2975,13 @@ let pvOnPage = false;     /* 이 쪽에 색을 쓴 문항이 있나(범례를 �
    printAgeBand는 문항에서 난이도를 되짚는 값이라 여기 쓰면 두 가지가 어긋난다:
    ① 초1이 쉬운 학습지를 풀면 young이지만 초5가 같은 걸 풀어도 young이 된다
    ② printAgeBand는 회차를 다 만든 뒤에야 나오는데 색은 만들면서 넣어야 한다.
-   앱이 저장한 학령(nm_state_v1.schoolAge.entryYear)을 그대로 읽는다 — 기준은
+   앱이 저장한 현재 계정의 학령(NM_STATE_KEY.schoolAge.entryYear)을 그대로 읽는다 — 기준은
    앱과 같은 24개월(초3 3월) 미만. 학년을 모르면 켜지 않는다(모르면서 칠하면
    중고등 학습지에 색이 들어간다). ws.html은 window.NM_PV_HINT로 덮어쓸 수 있다. */
 function pvGradeWantsHint(){
   if(typeof window.NM_PV_HINT === 'boolean') return window.NM_PV_HINT;
   try{
-    const st = JSON.parse(localStorage.getItem(NM_LANG_KEY) || 'null');
+    const st = JSON.parse(localStorage.getItem(window.NM_STATE_KEY||NM_LANG_KEY) || 'null');
     const ey = st && st.schoolAge && st.schoolAge.entryYear;
     if(!ey) return false;
     const d = new Date();
@@ -3068,13 +3252,15 @@ function scatterAnswerKeyHtml(problems){
 }
 
 /* 전체(whole)와 아는 부분(known)으로 수 묶음 그림. 빈 동그라미가 답 자리. */
-function bondSvg(whole, known){
+function bondSvg(whole, known, knownSide, labels){
+  const right=knownSide==='right';
   const t = (x, y, v) => `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${esc(String(v))}</text>`;
-  return `<svg class="nm-bond" viewBox="0 0 160 112" role="img" aria-label="${esc(lk('수 가르기','Number bond (split)','数的分解'))} ${esc(String(whole))}">
+  return `<svg class="nm-bond" viewBox="0 0 160 ${labels?132:112}" data-known-side="${right?'right':'left'}" role="img" aria-label="${esc(lk('수 가르기','Number bond (split)','数的分解'))} ${esc(String(whole))}">
   <circle cx="80" cy="24" r="21"/>${t(80,24,whole)}
   <line x1="66" y1="40" x2="48" y2="66"/><line x1="94" y1="40" x2="112" y2="66"/>
-  <circle cx="34" cy="88" r="21"/>${t(34,88,known)}
-  <circle cx="126" cy="88" r="21" class="nm-bond-blank"/>
+  <circle cx="34" cy="88" r="21"${right?' class="nm-bond-blank"':''}/>${right?'':t(34,88,known)}
+  <circle cx="126" cy="88" r="21"${right?'':' class="nm-bond-blank"'}/>${right?t(126,88,known):''}
+  ${labels?`<text x="34" y="124" style="font-size:11px" text-anchor="middle">${esc(lk('왼쪽','left','左'))}</text><text x="126" y="124" style="font-size:11px" text-anchor="middle">${esc(lk('오른쪽','right','右'))}</text>`:''}
 </svg>`;
 }
 
@@ -3227,7 +3413,9 @@ function nlAnsBox(unit){
 }
 /* 이모지 줄 — 한 줄 perRow(기본 5)개씩 끊어 두 줄이면 5+n 으로 읽히게(다섯 묶음 세기). */
 /* 한 칸에 그릴 물건 — 젤리 SVG(app/object-art.js)가 있으면 그것, 'num:7' 은 숫자, 없으면 글자 그대로. */
+const NL_PEOPLE_ART={'🧒':'ginger-boy-original','👧':'blonde-girl-original','👦':'night-boy-original','🧑':'forest-boy-original','👩':'mint-girl-original','👨':'sunset-girl-original','🧓':'boy-snow','👴':'girl-snow','👵':'forest-boy-snow'};
 function nlObjHtml(tok, f){
+  if(NL_PEOPLE_ART[tok])return `<img class="nm-nl-person" src="assets/characters/portraits/${NL_PEOPLE_ART[tok]}.png" alt="${esc(lk('친구','friend','朋友'))}">`;
   if(window.NM_OBJECTS && window.NM_OBJECTS.has(tok)) return window.NM_OBJECTS.svg(tok, {f});
   if(typeof tok === 'string' && tok.indexOf('num:') === 0) return esc(tok.slice(4));
   return esc(nlGlyph(tok));
@@ -3316,23 +3504,23 @@ function nlStairsHtml(total, mark, tok){
   return nlStage(`<svg class="nm-nl-stairs" viewBox="0 0 ${W} ${H}" role="img">${s}</svg>`);
 }
 /* 양팔저울 — 접시 위에 이모지를 쌓고 접시 아래(받침대 바깥)에 왼쪽·오른쪽을 적는다.
-   기울기는 그리지 않는다 — 기울여 그리면 세어 보지 않아도 답이 보인다. */
+   같은 물건의 수가 다르면 무거운 접시가 아래로 내려간 모습을 정확히 그린다. */
 function nlScaleHtml(left, right, emoji){
-  const g = nlGlyph(emoji);
-  const pan = (n, cx) => {
+  const g=nlGlyph(emoji),tilt=left===right?0:left>right?8:-8;
+  const pan = (n, cx,dy) => {
     let t = '';
     /* 한 줄 3개까지 — 4개를 넣으면 접시 밖으로 흘러나왔다(2026-09-19 실측). */
     nlChunk(new Array(Math.max(0, n|0)).fill(g), 3).forEach((r, ri) => {
       const y = 56 - ri*8.5;
       r.forEach((e, ci) => { const x = cx + (ci - (r.length-1)/2)*8; t += `<text x="${x}" y="${y}" text-anchor="middle" font-size="7.5">${esc(e)}</text>`; });
     });
-    return `<line x1="${cx}" y1="20" x2="${cx-19}" y2="59"/><line x1="${cx}" y1="20" x2="${cx+19}" y2="59"/>`
-      + `<path d="M${cx-21} 59 L${cx+21} 59 L${cx+15} 68 L${cx-15} 68 Z"/>${t}`;
+    return `<g data-count="${n}" data-pan-y="${59+dy}" transform="translate(0 ${dy})"><line x1="${cx}" y1="20" x2="${cx-19}" y2="59"/><line x1="${cx}" y1="20" x2="${cx+19}" y2="59"/>`
+      + `<path d="M${cx-21} 59 L${cx+21} 59 L${cx+15} 68 L${cx-15} 68 Z"/>${t}</g>`;
   };
   return nlStage(`<svg class="nm-nl-scale" viewBox="0 0 176 98" role="img" aria-label="${esc(lk('양팔저울','Balance scale','天平'))}">`
-    + `<line x1="22" y1="20" x2="154" y2="20" stroke-width="2.6"/><line x1="88" y1="20" x2="88" y2="80"/>`
+    + `<line x1="46" y1="${20+tilt}" x2="130" y2="${20-tilt}" stroke-width="2.6"/><line x1="88" y1="20" x2="88" y2="80"/>`
     + `<line x1="62" y1="80" x2="114" y2="80" stroke-width="2.6"/><circle cx="88" cy="20" r="2.6"/>`
-    + pan(left, 46) + pan(right, 130)
+    + pan(left,46,tilt)+pan(right,130,-tilt)
     + `<text x="46" y="93" text-anchor="middle" font-size="9" font-weight="700">${esc(lk('왼쪽','left','左'))}</text>`
     + `<text x="130" y="93" text-anchor="middle" font-size="9" font-weight="700">${esc(lk('오른쪽','right','右'))}</text></svg>`);
 }
@@ -3417,7 +3605,7 @@ function nlVisualHtml(p){
   const EA = nlUnitEa();
   if(w==='numberBond'){
     const svg = (p.dir==='join' && typeof p.a==='number' && typeof p.b==='number') ? bondSvgTop(p.a, p.b)
-      : (typeof p.whole==='number' && typeof p.a==='number') ? bondSvg(p.whole, p.a) : '';
+      : (typeof p.whole==='number' && typeof p.a==='number') ? bondSvg(p.whole,p.a,/오른쪽/.test(p.prompt?.ko||'')?'right':'left',/무당벌레/.test(p.prompt?.ko||'')) : '';
     return svg ? nlCard(nlStage(svg, 'nm-nl-stage-bond')) : '';
   }
   if(w==='tapCount') return Array.isArray(p.items) ? nlCard(nlSceneHtml(p.items), nlAnsBox(p.step === 10 ? lk('원','','元') : EA)) : '';
@@ -3436,6 +3624,15 @@ function nlVisualHtml(p){
   if(w==='storyCard'){
     if(p.layout==='stairs') return nlCard(nlStairsHtml(p.total, p.mark, p.emoji), nlAnsBox(lk('째 계단','th step','级')));
     if(p.interaction==='tap') return nlCard(nlOrderStripHtml(p.total, p.chars));
+    if(p.layout==='row'&&Number.isFinite(p.total)&&Number.isFinite(p.answer)&&Array.isArray(p.chars)&&p.chars.length&&p.answer!==p.total){
+      const change=Math.abs(p.answer-p.total),adding=p.answer>p.total,tok=p.chars[0];
+      const canonical=p.prompt?.ko||'',given=canonical.match(/(\d+)개를 (?:더 받았|친구에게 줬)/);
+      if(given&&Number(given[1])===change){
+        const group=(n,gone)=>`<div class="nm-story-group">${Array.from({length:n},()=>`<span${gone?' class="nm-story-given"':''}>${nlObjHtml(tok)}</span>`).join('')}</div>`;
+        const h=adding?`<div class="nm-story-change" data-before="${p.total}" data-change="${change}" data-op="+"><section><small>${esc(lk('처음에','At first','原来'))}</small>${group(p.total,false)}</section><b>+</b><section><small>${esc(lk('더 받았어요','Received','又得到'))}</small>${group(change,false)}</section></div>`:`<div class="nm-story-change" data-before="${p.total}" data-change="${change}" data-op="−"><section><small>${esc(lk('친구에게 준 것에 빗금을 그었어요','Given away: crossed out','送出的画了斜线'))}</small><div class="nm-story-group">${Array.from({length:p.total},(_,i)=>`<span${i>=p.total-change?' class="nm-story-given"':''}>${nlObjHtml(tok)}</span>`).join('')}</div></section></div>`;
+        return nlCard(nlStage(h),nlAnsBox(EA));
+      }
+    }
     return nlCard(nlStage(nlGlyphRows(Array.isArray(p.chars) ? p.chars : [])), nlAnsBox(EA));
   }
   if(w==='balanceScale') return nlCard(nlScaleHtml(p.left, p.right, p.emoji));
@@ -3510,6 +3707,7 @@ const NL_PRINT_WORDS = [
   ['点一点放进篮子，再', ''], ['跳着数，选出', '跳着数，写出'], ['选出', '写出'], ['点一点，', '']
 ];
 function nlPrintAsk(p){
+  if(p.widget==='pyramid'&&examLang()==='ko')return '바로 옆 두 돌의 수를 더해 빈 돌에 써 보세요.';
   { const ext = window.NM_NL_PRINT && p.widget && window.NM_NL_PRINT[p.widget];
     if(ext && typeof ext.ask === 'function'){ const r = ext.ask(p, nlPrintKit()); if(r != null) return r; } }
   let s = String(pickL(p.prompt) || '');
@@ -3545,6 +3743,19 @@ function printSteps(p){
   const st = Array.isArray(p.steps) ? p.steps.filter(s => s && s.tex) : [];
   return st.length ? st : null;
 }
+
+// These exact levels keep an essential condition in prompt, outside tex.
+// Print only that condition (not the generator's solution hint), in every
+// question and teaching example so later practice pages stand on their own.
+const W2_LEVEL_PRINT_CONDITIONS = {
+  'MD26@3':{ko:'다음 이차방정식이 중근을 갖도록 하는 k의 값을 구하시오.',en:'Find k so that the quadratic equation has a repeated root.',zh:'求使下列一元二次方程有重根的k值。'},
+  'MD20@5':{ko:'공통인수를 묶고, 두 괄호의 상수는 작은 수부터 쓰시오.',en:'Factor out the common factor; write the constants in the two brackets in ascending order.',zh:'提取公因数，两个括号中的常数按从小到大填写。'},
+  'MD25@3':{ko:'두 빈칸에는 작은 수부터 차례로 쓰시오.',en:'Fill the two blanks in ascending order.',zh:'两个空格按从小到大填写。'},
+  'MD93@2':{ko:'P(a)=0을 만족하는 정수 a를 구하시오.',en:'Find the integer a such that P(a)=0.',zh:'求满足P(a)=0的整数a。'},
+  'MD93@3':{ko:'α는 주어진 다항식의 정수 근입니다. 빈칸에 알맞은 계수를 쓰시오.',en:'α is the integer root of the given polynomial. Fill in the missing coefficient.',zh:'α是所给多项式的整数根。填写所缺的系数。'}
+};
+function levelPrintCondition(threadId,level){return pickL(W2_LEVEL_PRINT_CONDITIONS[threadId+'@'+level])||'';}
+function printConditionHtml(condition){return condition?`<div class="nm-print-ask nm-print-condition">${esc(condition)}</div>`:'';}
 
 function printAskText(p){
   /* 문장제(p.word)는 아래 word 분기가 본문·물음·보기를 통째로 그린다. 여기서
@@ -4490,7 +4701,7 @@ function keyStepTint(stepTex, exprTex){
     done = true; return pre + '{\\color{' + (PV.COLORS ? PV.COLORS[0] : '#C62828') + '}{' + n + '}}';
   }) + rest;
 }
-function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, cellIdx, cellTotal, inlineTrainBlank){
+function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, cellIdx, cellTotal, inlineTrainBlank, condition){
   let cls = 'nm-w2-item nm-print-item';
   let inner;
   /* Training Course(창의 회차, 2026-09-18) — 식 · 주황 밑줄 · "= …" 단계 줄(빈칸은 상자) · 점선 풀이 줄.
@@ -4550,14 +4761,14 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
        (전엔 \square 를 texDisplay 없이 넘겨 상자 없는 작은 "= □" 글자가 찍혔다) */
     const ansLine = !plan.ans ? '' : `<div class="nm-w2-train-step nm-w2-train-ans">${TRAIN_EQUAL}<span class="nm-w2-tex" data-tex="${esc(trainDisplay(box))}"></span></div>`;
     const dots = bare ? '<i></i><i></i><i></i>' : '<i></i>';
-    const askHtmlT = printAskText(p) ? `<div class="nm-print-ask">${esc(printAskText(p))}</div>` : '';
+    const askHtmlT = condition ? printConditionHtml(condition) : printAskText(p) ? `<div class="nm-print-ask">${esc(printAskText(p))}</div>` : '';
     const slotAttrT = slotAttrP + (T && PVt ? ` data-cptint="${T.kind}"` : '');
     return `<div class="${cls} nm-w2-item-train"${slotAttrT}><span class="nm-w2-numrow"><span class="nm-w2-num">(${num})</span></span>${askHtmlT}
   <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(trainDisplay(raw))}"></span></div>
   ${stepLines}${ansLine}<div class="nm-w2-train-dots">${dots}</div></div>`;
   }
   const ask = printAskText(p);
-  const askHtml = ask ? `<div class="nm-print-ask">${esc(ask)}</div>` : '';
+  const askHtml = condition ? printConditionHtml(condition) : ask ? `<div class="nm-print-ask">${esc(ask)}</div>` : '';
   if(p.divBox){
     cls += ' nm-w2-item-vis';
     inner = divBoxHtml(p.divBox);
@@ -5006,6 +5217,10 @@ function w2ConceptPanelHtml(threadId, level, extra){
   if(!info) return '';
   const nm = pickL(info.thread.name) || threadId;
   const lvObj = (info.thread.levels || []).find(l => l.id === level);
+  if(extra.levelOnly){
+    const sentence=pickConcept(extra.levelConcept||(lvObj&&lvObj.concept))||'';
+    return `<section class="nm-w2-concept nm-level-only-concept" data-level-only="${esc(threadId+'@'+level)}"><h3>${esc(pickL(extra.levelTitle)||pickL(lvObj&&lvObj.label)||nm)}</h3><p>${escEmph(sentence)}</p></section>`;
+  }
   const visual = window.NM_CONCEPT_VISUALS ? NM_CONCEPT_VISUALS.html(threadId, level, examLang()) : '';
   const middle = examLang() === 'ko' && (window.NM_MIDDLE_CONCEPTS || {})[threadId];
   if(middle){
@@ -5252,17 +5467,53 @@ function drawUnique(threadId, level, rng, exclude, maxTries, exactSkip){
   throw uniquePoolError(threadId,level);
 }
 /* exclude(선택, Set of problemKey) — 회차의 채점 문항과 같은 문제가 예시로 나오지 않게(2026-09-06). */
+function w2NeighborExampleHtml(p){
+  if(p.widget==='pathSum')return window.NM_NL_PRINT.pathSum.worked(p,nlPrintKit());
+  if(p.widget==='pyramid'&&Array.isArray(p.rows)){
+    const rows=p.rows.map(r=>r.slice()),missing=[];
+    rows.forEach((r,ri)=>r.forEach((v,ci)=>{if(v===null)missing.push([ri,ci]);}));
+    if(missing.length!==1||rows.length!==3)throw new Error('Invalid neighboring-sum example');
+    const [r,c]=missing[0],children=rows[r+1];
+    if(!children||!Number.isFinite(children[c])||!Number.isFinite(children[c+1])||children[c]+children[c+1]!==p.answer)throw new Error('Neighboring-sum example answer mismatch');
+    const solved=rows.map(v=>v.slice());solved[r][c]=p.answer;
+    const tree=(data,answer)=>`<div class="nm-neighbor-pyramid">${data.map((row,ri)=>`<div class="nm-neighbor-row">${row.map((v,ci)=>`<span class="nm-neighbor-stone${ri===r&&ci===c?' nm-neighbor-target':''}${answer&&ri===r&&ci===c?' nm-neighbor-solved':''}">${v===null?'□':esc(v)}</span>`).join('')}</div>`).join('')}</div>`;
+    return `<div class="nm-w2-example nm-neighbor-example" data-worked-widget="pyramid"><span class="nm-w2-ex-badge">${esc(lk('예시 · 먼저 함께 풀어요','Example · Let’s solve one','示例·一起做一题'))}</span><p>${esc(lk('바로 옆 두 돌을 먼저 찾아요. 두 수를 더한 뒤 위의 빈 돌에 써요.','Find the two stones side by side. Add them and write the sum in the empty stone above.','先找并排的两块石头，相加后写在上面的空石头里。'))}</p><div class="nm-neighbor-example-pair">${tree(rows,false)}<span class="nm-neighbor-arrow" aria-hidden="true">→</span>${tree(solved,true)}</div><div class="nm-neighbor-sum"><span>${children[c]}</span> + <span>${children[c+1]}</span> = <b>${p.answer}</b></div><p>${esc(lk(`빈 돌에 쓰는 수는 ${p.answer}!`,`Write ${p.answer} in the empty stone.`,`在空石头里写${p.answer}。`))}</p></div>`;
+  }
+  if(p.widget==='numberMachine'){
+    const delta=p.mmode==='guess'?p.examples[0][1]-p.examples[0][0]:Number(p.rule),input=p.mmode==='guess'?p.target:p.input;
+    if(!Number.isFinite(delta)||input+delta!==p.answer||(p.examples||[]).some(([a,b])=>b-a!==delta))throw new Error('Number-machine example mismatch');
+    const tex=`${input} ${delta<0?'-':'+'} ${Math.abs(delta)} = ${p.answer}`;
+    return `<div class="nm-w2-example nm-neighbor-example" data-worked-widget="numberMachine"><span class="nm-w2-ex-badge">${esc(lk('예시 · 먼저 함께 풀어요','Example · Let’s solve one','示例·一起做一题'))}</span>${nlVisualHtml(p)}<p>${esc(lk(delta>0?'더하는 약속을 따라 수를 바꿔요.':'빼는 약속을 따라 수를 바꿔요.',delta>0?'Add by the rule.':'Subtract by the rule.',delta>0?'按规则加一加。':'按规则减一减。'))}</p><div class="nm-neighbor-sum">${esc(tex)}</div></div>`;
+  }
+  if(p.widget==='crossSum'){
+    const cells={...p.cells,[p.askKey]:p.answer};
+    if(cells.top+cells.bottom!==cells.left+cells.right)throw new Error('Cross-sum example mismatch');
+    return `<div class="nm-w2-example nm-neighbor-example" data-worked-widget="crossSum"><span class="nm-w2-ex-badge">${esc(lk('예시 · 먼저 함께 풀어요','Example · Let’s solve one','示例·一起做一题'))}</span><p>${esc(lk('위와 아래를 더한 수, 왼쪽과 오른쪽을 더한 수가 같아야 해요.','The top and bottom must add to the same total as the left and right.','上和下相加，要与左和右相加的结果一样。'))}</p><div class="nm-neighbor-example-pair">${nlCrossHtml(p.cells)}<span class="nm-neighbor-arrow">→</span>${nlCrossHtml(cells)}</div><div class="nm-neighbor-sum">${cells.top} + ${cells.bottom} = ${cells.left} + ${cells.right}</div><p>${esc(lk(`빈칸에 쓰는 수는 ${p.answer}!`,`Write ${p.answer} in the blank.`,`空格里写${p.answer}。`))}</p></div>`;
+  }
+  if(p.widget==='dotToDot'){
+    if(p.answer!==p.pts.length)throw new Error('Path-count example mismatch');
+    const svg=nlDotsSvg(p.pts).replace('</svg>',`<polyline points="${p.pts.map(pt=>pt.join(',')).join(' ')}" fill="none" stroke="#2f6b4a" stroke-width="1.1"/></svg>`);
+    return `<div class="nm-w2-example nm-neighbor-example" data-worked-widget="dotToDot"><span class="nm-w2-ex-badge">${esc(lk('예시 · 먼저 함께 풀어요','Example · Let’s solve one','示例·一起做一题'))}</span><p>${esc(lk('1부터 차례대로 점을 이은 다음, 점이 모두 몇 개인지 세어요.','Join the dots in order from 1, then count them all.','从1开始按顺序连点，再数一数点一共有几个。'))}</p><div class="nm-neighbor-path">${svg}</div><div class="nm-neighbor-sum">${esc(lk(`점은 모두 ${p.answer}개예요.`,`${p.answer} dots in all.`,`一共有${p.answer}个点。`))}</div></div>`;
+  }
+  if(p.widget==='tapCount'&&p.step===10){
+    const n=p.answer/10;if(!Number.isInteger(n)||![0,1].includes(n-p.items.length))throw new Error('Coin-count example mismatch');
+    const items=Array.from({length:n},()=>({e:'🪙',t:true}));
+    return `<div class="nm-w2-example nm-neighbor-example" data-worked-widget="coins"><span class="nm-w2-ex-badge">${esc(lk('예시 · 먼저 함께 풀어요','Example · Let’s solve one','示例·一起做一题'))}</span><p>${esc(n>p.items.length?lk('동전을 한 개 더 놓은 뒤, 10원씩 세어요.','Add one coin, then count by 10.','再放一枚硬币，按10数。'):lk('동전 한 개는 10원이에요. 10원씩 세어요.','Each coin is 10. Count by 10.','一枚硬币是10，按10数。'))}</p>${nlSceneHtml(items)}<div class="nm-neighbor-sum">${Array.from({length:n},(_,i)=>(i+1)*10).join(' → ')}</div><p>${esc(lk(`모두 ${p.answer}원이에요.`,`${p.answer} won in all.`,`一共${p.answer}元。`))}</p></div>`;
+  }
+  return '';
+}
 function w2ExampleHtml(threadId, level, code, exclude, young, exactSkip, meta){
   const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
   const p = drawUnique(threadId, level, rng, exclude, 12, exactSkip);
-  if(meta) meta.skip=p.__uniqueSkip||0;
+  if(meta){meta.skip=p.__uniqueSkip||0;meta.key=problemKey(p);}
   if(exclude) exclude.add(problemKey(p));
-  return w2ExampleBodyHtml(p, threadId, young);
+  return w2ExampleBodyHtml(p, threadId, young, levelPrintCondition(threadId,level));
 }
 /* 예시 본체 — 문항 하나를 "완성된 식 + 풀이 사슬"로. 이야기(p.word)가 있으면 이야기를
    먼저, 나눗셈 뜻 그림(divPictureHtml)이 있으면 사슬 앞에 붙인다(2026-09-17). 문장제만인
    회차(w2WordExampleHtml)도 생성기 자체 이야기가 있으면 이 본체를 그대로 쓴다. */
-function w2ExampleBodyHtml(p, threadId, young){
+function w2ExampleBodyHtml(p, threadId, young, condition){
+  if(['NL5','NL11','NL12','NL59'].includes(threadId)&&p.widget&&!p.tex&&!p.word)return w2NeighborExampleHtml(p);
   /* 보기 고르기 문항(WP1처럼 식이 없는 것) — 이야기·보기·답 번호와 그 문장.
      식 자리에 " = 2"가 찍히는 것을 막는다(2026-09-17). */
   if(p.word && p.choices && !p.tex){
@@ -5331,7 +5582,7 @@ function w2ExampleBodyHtml(p, threadId, young){
     : '';
   return `<div class="nm-w2-example">
   <span class="nm-w2-ex-badge">${esc(lk('예시','Example','示例'))}</span>
-  ${storyHtml}${p.scatterPlot ? `<div class="nm-teach-graph">${scatterPlotHtml(p,true)}</div>` : p.graph ? `<div class="nm-teach-graph">${graphSvg(p.graph.kind==='boxPlot'&&p.solutionGraph?p.solutionGraph:p.graph)}</div>` : ''}${divPictureHtml(p, {young: !!young})}${bodyHtml}
+  ${printConditionHtml(condition)}${storyHtml}${p.scatterPlot ? `<div class="nm-teach-graph">${scatterPlotHtml(p,true)}</div>` : p.graph ? `<div class="nm-teach-graph">${graphSvg(p.graph.kind==='boxPlot'&&p.solutionGraph?p.solutionGraph:p.graph)}</div>` : ''}${divPictureHtml(p, {young: !!young})}${bodyHtml}
 </div>`;
 }
 
@@ -5372,7 +5623,7 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
       ? `<div class="nm-w2-guide-story">${esc(pickL(p.word))}${p.wordAsk ? ' <b>' + esc(pickL(p.wordAsk)) + '</b>' : ''}</div>${wpSceneHtml(p)}`
       : '';
     return `<div class="nm-w2-guide-item">
-  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span><span>${storyHtml}${qHtml}</span></div>
+  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span><span>${printConditionHtml(levelPrintCondition(threadId,lv))}${storyHtml}${qHtml}</span></div>
   ${p.scatterPlot ? `<div class="nm-teach-graph">${scatterPlotHtml(p,false)}</div>` : p.graph ? `<div class="nm-teach-graph">${graphSvg(p.graph)}</div>` : ''}${(i === 0 && !young) ? divPictureHtml(p, {compact:true}) : ''}<div class="nm-w2-guide-chain">${chainHtml}</div>
 </div>`;
   });
@@ -5499,6 +5750,39 @@ function noteTextHtml(raw){
     .replace(/<\/?(?:u|span|br|i|em|strong|small|sup|sub|p|div)\b[^>]*>/gi, '')
     .replace(/<(?!\/?b>)/g, '&lt;');
 }
+/* Concrete pictures for preschool notes, drawn from the note's existing examples.
+   These are teaching illustrations, never new scored questions or audio sources. */
+function preschoolNoteFigure(id,stage){
+  const row=h=>`<div class="nm-note-fig-row">${h}</div>`,num=n=>`<b class="nm-note-fig-number">${n}</b>`;
+  const group=(n,tok)=>`<span class="nm-note-fig-group" data-count="${n}">${Array.from({length:n},()=>nlObjHtml(tok||'🍎')).join('')}${n===0?'<b>0</b>':''}</span>`;
+  const strip=ns=>row(ns.map(n=>`<b class="nm-note-fig-cell">${n}</b>`).join('<span>→</span>'));
+  const children=()=>`<div class="nm-note-fig-row">${['🧒','👧','👦'].map((c,i)=>`<span class="nm-note-fig-person">${nlObjHtml(c)}<b>${i+1}</b></span>`).join('')}</div>`;
+  const tree=(whole,a,b)=>`<svg class="nm-obj-svg nm-note-tree" viewBox="0 0 180 115" role="img" aria-label="${a}+${b}=${whole}"><path d="M90 25L40 85M90 25L140 85" fill="none" stroke="#2f6b4a" stroke-width="2"/>${[[90,25,whole],[40,85,a],[140,85,b]].map(([x,y,n])=>`<circle cx="${x}" cy="${y}" r="22" fill="#fff" stroke="#2f6b4a" stroke-width="2"/><text x="${x}" y="${y+7}" text-anchor="middle" style="font-size:22px;fill:#2f6b4a">${n}</text>`).join('')}</svg>`;
+  const line=(from,to,step)=>{
+    const x=n=>20+n*36;let h=`<line x1="12" y1="75" x2="390" y2="75" stroke="#2a241c" stroke-width="2"/>`;
+    for(let n=0;n<=10;n++)h+=`<line x1="${x(n)}" y1="70" x2="${x(n)}" y2="80" stroke="#2a241c"/><text x="${x(n)}" y="99" text-anchor="middle" style="font-size:17px;fill:#2a241c">${n}</text>`;
+    const dir=to>from?1:-1,color=dir>0?'#2f6b4a':'#b4512e';
+    for(let n=from;dir>0?n<to:n>to;n+=dir*step){const a=x(n),b=x(n+dir*step),mid=(a+b)/2;h+=`<path d="M${a} 70Q${mid} 10 ${b} 70" fill="none" stroke="${color}" stroke-width="2.5"/><path d="M${b-dir*7} 57L${b} 70L${b+dir*1} 54" fill="none" stroke="${color}" stroke-width="2"/><text x="${mid}" y="30" text-anchor="middle" style="font-size:17px;fill:${color}">${dir>0?'+':'−'}${step}</text>`;}
+    return `<svg class="nm-obj-svg nm-note-line" viewBox="0 0 405 108" role="img" aria-label="${from} → ${to}">${h}</svg>`;
+  };
+  let h='';
+  switch(id){
+    case 'N-02':h=strip([1,2,3,4,5])+strip([5,4,3,2,1])+line(2,10,2);break;
+    case 'N-03':h=stage===0?`<p>${esc(lk('왼쪽에서부터 세어요.','Count from the left.','从左边开始数。'))} →</p>${children()}`:row(group(8)+'<b class="nm-note-fig-sign">&gt;</b>'+group(3))+row(num(8)+'<b>&gt;</b>'+num(3));break;
+    case 'N-05':h=`<div class="nm-note-fig-duo"><section><p>${esc(lk('왼쪽에서 둘째는 2','Second from the left: 2','从左数第二个：2'))}</p>${children()}</section><section><p>${esc(lk('아래에서 셋째 계단은 3','Third step from the bottom: 3','从下面数第三级：3'))}</p>${nlStairsHtml(3,2,'🐰')}</section></div>`;break;
+    case 'N-06':h=row(group(5,'🍬'))+row(num(5)+' = '+num(1)+' + '+num(4))+row(group(1,'🍬')+'<b>+</b>'+group(4,'🍬'))+row(num(5)+' = '+num(2)+' + '+num(3))+row(group(2,'🍬')+'<b>+</b>'+group(3,'🍬'));break;
+    case 'N-07':h=line(4,7,1)+row(num(4)+' + '+num(3)+' = '+num(7))+line(7,4,1)+row(num(7)+' − '+num(3)+' = '+num(4));break;
+    case 'N-08':h=row(`<section><small>${esc(lk('넣은 수','Input','放入的数'))}</small><b class="nm-note-fig-cell">5</b></section><b>→</b><section><small>${esc(lk('약속','Rule','约定'))}</small><b class="nm-note-fig-cell">+2</b></section><b>→</b><section><small>${esc(lk('나온 수','Output','出来的数'))}</small><b class="nm-note-fig-cell">7</b></section>`);break;
+    case 'N-09':h=row(tree(5,2,3)+tree(6,5,1));break;
+    case 'N-10':h=row(group(1,'🐶')+group(1,'🐱')+group(1,'🐶')+group(1,'🐱'))+'<p>↓</p>'+row(`<section class="nm-note-fig-basket">${group(2,'🐶')}<small>${esc(lk('같은 것끼리','Same kind','同一类'))}</small></section><section class="nm-note-fig-basket">${group(2,'🐱')}<small>${esc(lk('같은 것끼리','Same kind','同一类'))}</small></section>`);break;
+    case 'N-11':h=row(`<svg class="nm-obj-svg nm-note-star" viewBox="0 0 100 100" aria-label="5"><polygon points="50,3 62,35 97,35 70,57 81,92 50,71 19,92 30,57 3,35 38,35" fill="#f5d77e" stroke="#a87c22" stroke-width="2"/><text x="50" y="60" text-anchor="middle" style="font-size:30px;fill:#2a241c">5</text></svg>`)+row(group(2)+'<b>+</b>'+group(3))+row(num(2)+' + '+num(3)+' = '+num(5))+row(num(5)+' − '+num(2)+' = '+num(3));break;
+    case 'N-12':h=row(num(6)+' = '+group(1,'⚫')+' + '+group(2,'⚫')+' + '+group(3,'⚫'))+`<p>${esc(lk('양쪽을 더한 수가 같으면 저울이 나란해요.','Equal totals keep the balance level.','两边的和相等，天平就平衡。'))}</p><svg class="nm-obj-svg nm-note-balance" viewBox="0 0 360 125" role="img" aria-label="3+2=4+1"><path d="M180 30V112M140 112H220M48 30H312M66 30L30 85H132L96 30M264 30L228 85H330L294 30" fill="none" stroke="#2f6b4a" stroke-width="3"/><text x="81" y="75" text-anchor="middle" style="font-size:24px;fill:#2f6b4a">3 + 2</text><text x="279" y="75" text-anchor="middle" style="font-size:24px;fill:#2f6b4a">4 + 1</text></svg>`+row(num(3)+' + '+num(2)+' = '+num(4)+' + '+num(1));break;
+    case 'N-13':h=`<svg class="nm-obj-svg nm-note-cross" viewBox="0 0 180 170" role="img" aria-label="2+3=1+4">${[[90,25,2],[90,145,3],[30,85,1],[150,85,4]].map(([x,y,n])=>`<circle cx="${x}" cy="${y}" r="22" fill="#fff" stroke="#2f6b4a" stroke-width="2"/><text x="${x}" y="${y+7}" text-anchor="middle" style="font-size:23px;fill:#2f6b4a">${n}</text>`).join('')}<text x="90" y="93" text-anchor="middle" style="font-size:30px;fill:#2f6b4a">+</text></svg>`+row(num(2)+' + '+num(3)+' = '+num(1)+' + '+num(4));break;
+    case 'N-14':h=nlTallySvg(8)+row(num(5)+' + '+num(3)+' = '+num(8))+strip([1,2,3,4,5]);break;
+    case 'N-15':h=`<p>${esc(lk('더 받았어요','Received more','又得到了'))}</p>`+row(group(3)+'<b>+</b>'+group(2)+'<b>= 5</b>')+`<p>${esc(lk('두 개를 나누어 줬어요','Gave away two','送出了两个'))}</p>`+row(`<span class="nm-note-fig-group">${Array.from({length:5},(_,i)=>`<span${i>=3?' class="nm-story-given"':''}>${nlObjHtml('🍎')}</span>`).join('')}</span><b>→ 3</b>`);break;
+  }
+  return h?`<figure class="nm-preschool-figure" data-note-figure="${id}">${h}</figure>`:'';
+}
 function renderMagicNotePage(item, opts){
   opts = opts || {};
   const u = (window.NM_UNITS || {})[item.magicUnit];
@@ -5514,7 +5798,8 @@ function renderMagicNotePage(item, opts){
     const headHtml = /\\/.test(headRaw) ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(headRaw))}"></span>` : esc(headRaw);
     /* <b>만 남기고 다른 태그는 뗀다. SVG 는 stripInlineSvg 가 먼저 통째로 걷어낸다. */
     const descHtml = noteTextHtml(pickL(st.desc) || '');
-    const steps = Array.isArray(st.mathSteps) ? st.mathSteps.map(magicStepHtml).join('') : '';
+    const figure=preschoolNoteFigure(item.magicUnit,i);
+    const steps = figure&&['N-05','N-06','N-07','N-09','N-12','N-14'].includes(item.magicUnit)?'':Array.isArray(st.mathSteps) ? st.mathSteps.map(magicStepHtml).join('') : '';
     const result = pickL(st.result) || '';
     /* 교과서 말(유닛 stage.book) — 앱의 개념 노트에는 있었는데 종이에는 빠져 있었다(2026-09-25 매거진형) */
     const book = noteTextHtml(pickL(st.book) || '');
@@ -5523,6 +5808,7 @@ function renderMagicNotePage(item, opts){
   <div class="nm-mn-body">
     ${headRaw ? `<div class="nm-mn-head">${headHtml}</div>` : ''}
     ${descHtml ? `<p class="nm-mn-desc">${descHtml}</p>` : ''}
+    ${figure}
     ${steps ? `<div class="nm-mn-steps">${steps}</div>` : ''}
     ${result ? `<div class="nm-mn-result">✓ ${esc(result)}</div>` : ''}
     ${book ? `<div class="nm-mn-book"><b>${esc(lk('교과서 말','In the textbook','课本里的说法'))}</b>${book}</div>` : ''}
@@ -5562,6 +5848,32 @@ function renderMagicNotePage(item, opts){
     </div>
   </div>`;
   const foot = `<div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code)}</span></div>`;
+  // N-01 is an introductory guided activity, not a short rule on an otherwise empty sheet.
+  // Keep one dedicated page; generic NM_PRINT_MAGIC measurements do not apply to this layout.
+  if(item.magicUnit === 'N-01'){
+    const words=lk(['하나','둘','셋','넷'],['one','two','three','four'],['一','二','三','四']);
+    const inks=['#b4512e','#a66c20','#2f6b4a','#65508a'];
+    const row=(n,trace)=>`<div class="nm-n01-row${trace?' nm-n01-row-trace':''}" style="--count-cols:${n}">${words.slice(0,n).map((word,i)=>`<div class="nm-n01-cell" style="--count-ink:${inks[i]}"><img src="assets/images/real/chick.png" alt="${esc(lk('병아리','chick','小鸡'))}"><span class="nm-n01-word">${esc(word)}</span>${trace?`<div class="nm-n01-trace"><span>${esc(word)}</span></div>`:`<span class="nm-n01-digit">${i+1}</span>`}</div>`).join('')}</div>`;
+    const html=`<div id="nm-counting-note" class="nm-w2-page nm-w2-page-magic nm-n01-note">${wm}
+      ${w2HeadHtml(headItem,code,'1/1',null,{roundNo:opts.roundNo,name:opts.name,first:true})}${boardHtml}
+      <div class="nm-n01-body">
+        <section class="nm-n01-section"><h3>${esc(lk('① 하나씩 짚으며 읽어요','1. Point and count','① 点一点，数一数'))}</h3><p>${esc(lk('한 마리씩 짚으며 수 이름을 말해 보세요.','Touch each chick and count aloud.','点一只小鸡，说一个数。'))}</p>${row(3,false)}<p class="nm-n01-total">${lk('마지막에 말한 <b>셋</b>! 병아리는 모두 <b>3마리</b>예요.','The last word is <b>three</b>. There are <b>3 chicks</b> in all.','最后说的是<b>三</b>！一共有<b>3只</b>小鸡。')}</p></section>
+        <section class="nm-n01-section"><h3>${esc(lk('② 세어 보고 따라 써요','2. Count and trace','② 数一数，描一描'))}</h3><p>${esc(lk('그림 아래의 수 이름을 따라 써 보세요.','Count, then trace the number words.','数一数，再描一描下面的数名。'))}</p>${row(4,true)}<p>${esc(lk('넷! 병아리는 모두 4마리예요.','Four! There are 4 chicks in all.','四！一共有4只小鸡。'))}</p></section>
+        <aside class="nm-n01-remember"><b>${esc(lk('기억해요','Remember','记住'))}</b><p>${esc(lk('한 마리씩 한 번만 짚어요.','Touch each chick once.','每只只点一次。'))}</p><p>${esc(lk('마지막에 말한 수가 모두 몇 마리인지 알려 줘요.','The last number tells how many chicks there are in all.','最后说的数，告诉我们一共有几只小鸡。'))}</p></aside>
+      </div>${foot}</div>`;
+    return {html,problems:[],thName:lk('마법 노트 · ','Magic Note · ','魔法笔记 · ')+title,code,thread:null,level:null,magic:true,akHtml:'',guidedProblems:[],pageSizes:[]};
+  }
+  if(item.magicUnit === 'N-04'){
+    const row=(ns,eq)=>`<div class="nm-n04-row">${ns.map(n=>`<div class="nm-n04-cell"><span class="nm-n04-digit">${n}</span>${nlTallySvg(n)}${eq?`<span class="nm-n04-equation">5 + ${n-5} = ${n}</span>`:''}</div>`).join('')}</div>`;
+    const slash=`<svg class="nm-n04-slash" viewBox="0 0 14 18" role="img" aria-label="${esc(lk('다섯 번째 막대','The fifth stroke','第五笔'))}"><line x1="1" y1="16" x2="13" y2="2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+    const html=`<div id="nm-tally-note" class="nm-w2-page nm-w2-page-magic nm-n04-note">${wm}${w2HeadHtml(headItem,code,'1/1',null,{roundNo:opts.roundNo,name:opts.name,first:true})}${boardHtml}<div class="nm-n04-body">
+      <section class="nm-n04-section"><h3>${esc(lk('① 하나씩 늘려 그려요','1. Draw one more each time','① 每次数多一笔'))}</h3><p>${esc(lk('1은 막대 한 개, 2는 두 개예요. 4까지는 하나씩 더 그려요.','One stroke means 1. Draw one more for each number, up to 4.','一笔表示1。到4为止，每次多画一笔。'))}</p>${row([1,2,3,4],false)}</section>
+      <section class="nm-n04-section"><h3>${esc(lk('② 다섯 번째 막대로 묶어요','2. The fifth stroke makes a group','② 第五笔把它们捆起来'))}</h3><p>${esc(lk('네 막대 위에 막대를 비스듬히 하나 더 그어요. 모두 다섯 개예요.','Draw one slanting stroke across the four. Now there are five strokes.','在四根竖线上斜着加一笔。一共有五笔。'))}</p><div class="nm-n04-making">${nlTallySvg(4)}<b>+</b>${slash}<b>→</b>${nlTallySvg(5)}<span class="nm-n04-equation">4 + 1 = 5</span></div><p>${esc(lk('비스듬한 막대도 하나로 세어요.','The slanting stroke counts as one, too.','斜着的一笔也算一笔。'))}</p></section>
+      <section class="nm-n04-section"><h3>${esc(lk('③ 다섯 개 옆에 더 그려요','3. Add strokes beside the group of five','③ 在五笔一组的旁边接着画'))}</h3><p>${esc(lk('다섯 개를 묶은 그림 옆에, 막대를 하나씩 더 그려요.','Keep the group of five, then draw extra strokes beside it.','保留五笔的一组，在旁边一笔一笔地加。'))}</p>${row([6,7,8,9],true)}</section>
+      <aside class="nm-n04-remember">${esc(lk('막대를 하나씩 짚으며 세어 보세요. 숫자와 막대 그림은 같은 수를 나타내요.','Point to each stroke and count. The numeral and the marks show the same number.','一笔一笔点着数。数字和记号表示相同的数量。'))}</aside>
+    </div>${foot}</div>`;
+    return {html,problems:[],thName:lk('마법 노트 · ','Magic Note · ','魔法笔记 · ')+title,code,thread:null,level:null,magic:true,akHtml:'',guidedProblems:[],pageSizes:[]};
+  }
   /* 단계가 셋이면 두 장(①②는 판과 함께, ③은 규칙·체크와 함께) — 한 장에 다 넣으면 ②가 잘렸다(측정). */
   const stageParts = stageHtml.length ? stageHtml : [];
   const tailHtml = ruleHtml + fillsHtml + openHtml;
@@ -5569,7 +5881,7 @@ function renderMagicNotePage(item, opts){
      매거진형(교과서 말 상자·큰 제목)은 저학년 큰 글씨에서 두 단계도 첫 장에 들지 않았다(C20 C-22 ①② 226mm,
      주간 학습지 +102px). 잰 값: 밴드별 [판 높이, [단계 높이…], 규칙·체크 높이, 첫 장 쓸 높이, 다음 장 쓸 높이] mm.
      없으면 예전 규칙: 두 단계 이상이면 두 장(셋이면 ①②|③, 둘이면 ①|②) — 226개 중 49개가 한 장에 넘쳤다. */
-  const measured = ((window.NM_PRINT_MAGIC || {})[item.magicUnit] || [])[{ young:0, mid:1, senior:2 }[opts.band || 'mid']];
+  const measured = /^N-(?:0[2-9]|1[0-5])$/.test(item.magicUnit)?null:((window.NM_PRINT_MAGIC || {})[item.magicUnit] || [])[{ young:0, mid:1, senior:2 }[opts.band || 'mid']];
   let groups;
   if(measured && measured[1] && measured[1].length === stageParts.length){
     const fsR = ({ s:0.88, m:1, l:1.16, xl:1.34 })[getFontSize()] || 1;
@@ -5591,7 +5903,7 @@ function renderMagicNotePage(item, opts){
     groups = n >= 2 ? [[...Array(split).keys()], [...Array(n - split).keys()].map(i => i + split)] : [[...Array(n).keys()]];
     groups.tail = groups.length - 1;
   }
-  const html = groups.map((g, pi) => `<div class="nm-w2-page nm-w2-page-magic">
+  const html = groups.map((g, pi) => `<div class="nm-w2-page nm-w2-page-magic${/^N-(?:0[2-9]|1[0-5])$/.test(item.magicUnit)?' nm-preschool-note':''}">
   ${wm}
   ${w2HeadHtml(headItem, code, (pi + 1) + '/' + groups.length, null, {roundNo: opts.roundNo, name: opts.name, first: pi === 0})}
   ${pi === 0 ? boardHtml : ''}
@@ -5926,6 +6238,14 @@ function renderDrawingRound(item, opts){
   }
   return {html:pages.join(''),problems,code,thName:headItem.topicName,thread:item.thread,level:item.level,drawing:true,guidedProblems:[],pageSizes:[...(showLesson?[0]:[]),...Array.from({length:Math.ceil(count/6)},(_,i)=>Math.min(6,count-i*6))]};
 }
+/* Use the same SVG source as the questions: no platform-dependent numeral glyphs. */
+function ancientNumberIntroHtml(item,code,opts){
+  const art=window.NM_ANCIENT;
+  const systems=[['maya',lk('마야','Maya','玛雅'),lk('점과 막대','Dots and bars','点和横线')],['egypt',lk('이집트','Egypt','埃及'),lk('막대','Strokes','竖线')],['mesopotamia',lk('메소포타미아','Mesopotamia','美索不达米亚'),lk('못 모양','Wedge shapes','楔形')],['roman',lk('로마','Rome','罗马'),lk('I와 V','I and V','I和V')]];
+  const table=`<table class="nm-ancient-key"><thead><tr><th scope="col">${esc(lk('지금 쓰는 숫자','Our numerals','现在的数字'))}</th>${[1,2,3,4,5].map(n=>`<th scope="col">${n}</th>`).join('')}</tr></thead><tbody>${systems.map(([sys,name,kind])=>`<tr><th scope="row">${esc(name)}<small>${esc(kind)}</small></th>${[1,2,3,4,5].map(n=>`<td>${art.glyph(sys,n)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  const head={...item,topicName:lk('고대의 숫자 · 읽는 방법','Ancient numbers · How to read','古代数字·读法')};
+  return `<div id="nm-ancient-intro-${opts.roundNo||1}" class="nm-w2-page nm-ancient-intro">${w2HeadHtml(head,code,lk('먼저 읽어요','Read first','先读一读'),null,{roundNo:opts.roundNo,name:opts.name,first:true})}<div class="nm-ancient-lesson"><header><h2>${esc(lk('옛날 숫자를 읽어 봐요','Let’s read ancient numbers','读一读古代数字'))}</h2><p>${esc(lk('우리가 3이라고 쓰는 수를, 옛날에는 이런 모양으로도 나타냈어요.','People also used shapes like these for the numbers we write today.','我们现在写的数字，古人也用这些形状来表示。'))}</p></header>${table}<section class="nm-ancient-demo"><h3>${esc(lk('① 모양이 달라도 같은 수예요','1. Different shapes, the same number','① 样子不同，数量一样'))}</h3><div class="nm-ancient-same">${art.glyph('maya',3)}<span>=</span><b>3</b><span>=</span>${art.glyph('egypt',3)}</div><p>${esc(lk('점 세 개도, 막대 세 개도 3이에요. 표에서 같은 수를 찾아 선으로 이어요.','Three dots and three strokes both mean 3. Use the table to match equal numbers.','三个点、三根竖线都表示3。看表，把相同的数连起来。'))}</p></section><aside class="nm-ancient-roman"><p>${lk('로마 숫자 <b>I는 1</b>, <b>V는 5</b>예요. <b>IV는 4</b>예요.','In Roman numerals, <b>I is 1</b>, <b>V is 5</b>, and <b>IV is 4</b>.','罗马数字中，<b>I是1</b>，<b>V是5</b>，<b>IV是4</b>。')}</p><p>${esc(lk('I가 V 앞에 오면, 5보다 1 작은 수를 나타내요.','I before V means one less than five.','I在V前面，表示比5少1。'))}</p></aside><p>${esc(lk('처음에는 1부터 5까지 살펴봐요. 표를 보면서 풀어도 좋아요.','Start with 1 to 5. You may look at this table while you work.','先认识1到5。做题时也可以看这张表。'))}</p></div><div class="nm-w2-foot"><span class="nm-w2-foot-code">NOTE-NL29</span></div></div>`;
+}
 function renderRoundPages(item, opts){
   opts=opts||{};
   const local=Object.assign({},opts,{exclude:new Set(opts.exclude||[])});
@@ -5962,6 +6282,8 @@ function renderRoundPagesBody(item, opts){
   const band = opts.band || printAgeBand(item, problems);
   const young = band === 'young';
   const layout = classifyRoundLayout(problems, item.thread, young, !!item.creative);
+  // Each path needs room for explicit endpoint words, arrows and a written total.
+  if(item.thread==='NL59')Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
   const middleSix = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] && ['visual','word'].includes(layout.type);
   if(middleSix || (item.pacing && ['visual','word'].includes(layout.type))){
     // 원문/정답/모눈 비율은 유지하고, 그래프·문장제의 연습 지면은 2열×3행으로.
@@ -6046,6 +6368,7 @@ function renderRoundPagesBody(item, opts){
   /* 점검 회차는 가르치지 않는다(2026-09-16) — 개념 설명·★예시·따라풀기를 얹으면
      푸는 법을 옆에 펴 놓고 실력을 재는 꼴이 된다. 문항만 낸다. */
   const noTeach = !!item.noTeach;
+  const ancientLesson = !noTeach && !item.skipConcept && item.thread==='NL29' && item.level<=2 && !!window.NM_ANCIENT;
   /* 그림·조작 문항만인 회차(수의 나라 NL — tex도 이야기도 없다)는 예시·따라풀기를 뺀다(2026-09-19).
      두 틀은 "완성된 식 + 풀이 사슬"을 전제해서, 식이 없으면 예시가 " = 4", 따라풀기가
      "(가) = ____"로 빈 채 찍혔다(과정 0 첫 학습지에서 발견). 개념 패널은 그대로 둔다. */
@@ -6059,12 +6382,15 @@ function renderRoundPagesBody(item, opts){
      그 띠가 개념 문장을 쓰면 개념 패널에서는 그 문장을 뺀다(중복 방지). */
   const middleLesson = examLang() === 'ko' && !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread];
   const strategyHtml = !noTeach && !middleLesson && getSolveMode() ? w2StrategyBandHtml(item.thread, item.level) : '';
-  const conceptHtml = (wordOnly || noTeach || item.skipConcept) ? ''
-    : w2ConceptPanelHtml(item.thread, item.level, {rampN, skipSentence: !!strategyHtml});
+  const conceptHtml = (wordOnly || noTeach || item.skipConcept || ancientLesson) ? ''
+    : w2ConceptPanelHtml(item.thread, item.level, {rampN:item.thread==='NL59'?0:rampN, skipSentence: !!strategyHtml,levelOnly:item.levelOnly,levelConcept:item.levelConcept,levelTitle:item.levelTitle});
   const exampleMeta={};
-  const exampleHtml = (noTeach || pictureOnly) ? ''
+  const pictureWorked = pictureOnly && !opts.suppressPictureWorked && ['NL5','NL11','NL12','NL59'].includes(item.thread);
+  const exampleExclude=pictureWorked?new Set([...(opts.pictureTeachingKeys||[]),...exclude]):exclude;
+  const exampleHtml = (noTeach || (pictureOnly&&!pictureWorked)) ? ''
     : wordOnly ? w2WordExampleHtml(item.thread, item.level, baseCode, exclude, young, item.exampleSkip, exampleMeta)
-    : w2ExampleHtml(item.thread, exLevel, baseCode, exclude, young, item.exampleSkip, exampleMeta);
+    : w2ExampleHtml(item.thread, item.thread==='NL59'?1:exLevel, baseCode, exampleExclude, young, item.exampleSkip, exampleMeta);
+  if(pictureWorked&&exampleMeta.key&&opts.pictureTeachingKeys)opts.pictureTeachingKeys.add(exampleMeta.key);
   const guided = (wordOnly || noTeach || pictureOnly || item.pacing) ? {html:'', problems:[]}
     : w2GuidedHtml(item.thread, item.level, baseCode, item.guideSeed, exclude,
         rampN ? [item.level, item.level, exLevel] : null, young, item.guideSkips);
@@ -6143,6 +6469,7 @@ function renderRoundPagesBody(item, opts){
     const cap1 = firstRows * layout.cols;
     if(midPage && cap1 > 0 && cap1 < Math.min(6, problems.length)) firstRows = 0;
   }
+  if(pictureWorked&&exampleHtml)firstRows=Math.min(firstRows,item.thread==='NL59'||getFontSize()==='xl'?0:1);
   const firstCap = firstRows * layout.cols;
   const pages = [];
   /* 중등 개념 쪽에 연습 6문항을 실은 경우(midFirstSix), 따라 풀기 한 장은 **다음 연습 6문항과 같은 장**에 —
@@ -6283,7 +6610,7 @@ function renderRoundPagesBody(item, opts){
       const isFirstRamp = !!p.__ramp && !rampTagged;
       if(isFirstRamp) rampTagged = true;
       let h = w2CellHtml(p, num, item.thread, layout.type === 'vertical', isFirstRamp, layout.type, num - 1, problems.length,
-        !!(opts.editorialC4 && examLang() === 'ko')); num++;
+        !!(opts.editorialC4 && examLang() === 'ko'),levelPrintCondition(item.thread,item.level)); num++;
       if(partialCol){
         const r = (i % rowsPerCol) + 1, c = Math.floor(i / rowsPerCol) + 1;
         h = h.replace(/^(\s*<div\b)/, `$1 style="grid-row:${r};grid-column:${c}"`);
@@ -6323,9 +6650,9 @@ function renderRoundPagesBody(item, opts){
   /* thread: 정답지가 그 회차의 수학 팁을 찾는 데 쓴다(w2AnswerKeySectionHtml, 2026-09-08). */
   /* level — 정답지의 해설이 그 회차의 공부 전략 한 줄을 다시 찾을 때 쓴다(2026-09-16).
      전에는 round에 레벨이 없어 해설의 "핵심" 줄이 늘 레벨 미상으로 나갔다. */
-  return { html, problems, code, thName, thread: item.thread, level: item.level, band,
+  return { html:(ancientLesson?ancientNumberIntroHtml(item,code,opts):'')+html, problems, code, thName, thread: item.thread, level: item.level, band,
     threadMix: item.threadMix || null,
-    guidedProblems: guided.problems, pageSizes: pages.map(pg => pg.length) };
+    guidedProblems: guided.problems, pageSizes: pages.map(pg => pg.length),pictureExampleKey:pictureWorked?exampleMeta.key:null };
 }
 
 /* ── 로드맵 세션 학습지: 20문항/페이지 혼합 인쇄 (원장 지시 2026-09-04) ──
@@ -6417,6 +6744,12 @@ function renderMixedSheet(items, envelopeCode, opts){
   return withCompactHighPrint(opts.compactHigh || items.some(it=>it.compactHigh),()=>withPacingPrint(opts.pacing,()=>renderMixedSheetBody(items,envelopeCode,opts)));
 }
 function renderMixedSheetBody(items, envelopeCode, opts){
+  // Freeze the old practice/teaching pool first. New pictured examples may not
+  // replace a later practice question or an existing arithmetic example.
+  if(!opts.collectPictureBase&&!opts.pictureTeachingKeys&&items.some(it=>!it.noTeach&&['NL5','NL11','NL12','NL59'].includes(it.thread))){
+    const original=renderMixedSheetBody(JSON.parse(JSON.stringify(items)),envelopeCode,{...opts,collectPictureBase:true,suppressPictureWorked:true});
+    opts={...opts,pictureTeachingKeys:original};
+  }
   const perTypeCount = opts.mixed || 20;
 
   /* 항목별 count 가 있으면 그것(문장제 회차 6문항 등). optionalWord 회차는 문장제로 못 바꾼
@@ -6441,7 +6774,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
     const seenBefore=new Set(seen);
     let r = null, initialExhausted = null, usedItem = it;
     try {
-      r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen, mixed:true, editorialC4 });
+      r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen, mixed:true, editorialC4,suppressPictureWorked:opts.suppressPictureWorked,pictureTeachingKeys:opts.pictureTeachingKeys });
     } catch(e) {
       /* 선택 문장제의 첫 유형이 앞 교과 회차와 풀을 나눠 쓰다 모자라면
          아래의 명시된 대체 유형을 계속 시도한다. 일반 회차의 고갈은 그대로 실패한다. */
@@ -6464,7 +6797,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
         const altSeen=new Set(seen);
         let rr;
         try {
-          rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen, mixed:true, editorialC4 });
+          rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen, mixed:true, editorialC4,suppressPictureWorked:opts.suppressPictureWorked,pictureTeachingKeys:opts.pictureTeachingKeys });
         } catch(e) {
           if(e && e.code === 'NM_UNIQUE_POOL_EXHAUSTED'){ exhausted = exhausted || e; continue; }
           throw e;
@@ -6494,12 +6827,13 @@ function renderMixedSheetBody(items, envelopeCode, opts){
     if(!r.__redo || !r.band || r.band === sheetBand) return;
     try {
       const rr = renderRoundPages(r.__redo.item, { count:r.__redo.count, name:studentName, roundNo:r.__redo.roundNo,
-        exclude:new Set(r.__redo.seenBefore), mixed:true, band:sheetBand, editorialC4 });
+        exclude:new Set(r.__redo.seenBefore), mixed:true, band:sheetBand, editorialC4,suppressPictureWorked:opts.suppressPictureWorked,pictureTeachingKeys:opts.pictureTeachingKeys?new Set([...opts.pictureTeachingKeys].filter(k=>k!==r.pictureExampleKey)):null });
       const same = rr.problems.length === r.problems.length && rr.problems.every((p, k) => problemKey(p) === problemKey(r.problems[k]));
       if(same) rounds[i] = Object.assign(rr,{sourceSession:r.sourceSession,sessionLabel:r.sessionLabel});
     } catch(e){ /* 다시 짜지 못하면 처음 것을 둔다 */ }
   });
 
+  if(opts.collectPictureBase)return new Set(rounds.flatMap(r=>[...(r.uniqueKeys||[]),...r.problems.map(problemKey)]));
   const sheet = document.createElement('div');
   sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems) + sheetOptClass() + schoolTierClass(items[0]) + (editorialC4 ? ' nm-w2-course-c4' : '');
   sheet.setAttribute('aria-hidden', 'true');
@@ -6539,14 +6873,15 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   const magazineHtml = opts.cover && !opts.pacing && !highCompact
     ? w2MagazinePageHtml(items, envelopeCode, readingAgeBand(opts, items, allProblems)) : '';
   const extraPages = (historyHtml ? 1 : 0) + (langHtml ? 1 : 0) + (magazineHtml ? 1 : 0) + (paperHtml ? 1 : 0);
-  const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true });
+  const series=opts.cover&&window.NM_WORKSHEET_SERIES;
+  const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true,series:!!series });
   const studyDays = opts.cover ? assignStudyDays(rounds, opts.cover.studyDays) : 0;
   if(opts.cover && studyDays) opts.cover.studyDays = studyDays;
-  const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!(historyHtml || langHtml), historyLabel: langHtml ? lk('언어사고력','Language & Thinking','语言思考力') : '', magazine: !!magazineHtml, paper: !!paperHtml, answerKey: true })
+  const coverHtml = opts.cover ? (series?series.front(opts.cover,series.model(opts.cover,examLang())):'')+weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!(historyHtml || langHtml), historyLabel: langHtml ? lk('언어사고력','Language & Thinking','语言思考力') : '', magazine: !!magazineHtml, paper: !!paperHtml, answerKey: true,series:!!series })
     : (getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '');
   /* 통산 쪽 번호(2026-09-06) — 회차 발치 왼쪽에 "n / 총". 회차 안 "1/2"는 머리띠에 그대로(편지함 편집기가
      회차 단위로 쓰는 표시). 문자열 후처리라 renderRoundPages 는 모른다. */
-  let pg = coverHtml ? 2 : 1;
+  let pg = coverHtml ? series?3:2 : 1;
   const stampPg = html => html.replace(/<div class="nm-w2-foot">/g, () => `<div class="nm-w2-foot"><span class="nm-w2-pg">${opts.pacing?'학습 '+pg+++'쪽':pg+++' / '+totalPages}</span>`);
   if(studyDays){
     rounds.forEach(r => {
@@ -6554,6 +6889,10 @@ function renderMixedSheetBody(items, envelopeCode, opts){
       if(!day) return;
       const label = esc(lk(`${day}일차`, `Day ${day}`, `第${day}天`));
       r.html = r.html.replace(/(<span class="nm-w2-head-code">[\s\S]*?<\/span>)/g, `$1<span class="nm-w2-study-day">${label}</span>`);
+      // Keep the small running-head label, and make the study day visible in the main title too.
+      const dayHeading=`<span class="nm-w2-day-heading">${label}</span>`;
+      r.html=r.html.replace(/(<(?:span|div) class="nm-w2-head-mid">\s*<b>)/g,`$1${dayHeading}`)
+        .replace(/(<h2 class="nm-mzs-title">)/g,`$1${dayHeading}`);
     });
   }
   const roundsHtml = stampPg(rounds.map(r => r.html).join(''));
@@ -6583,13 +6922,31 @@ ${paperStamped}
 </div>
 ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-answer-key">${drawingAnswerKeyHtml(r)}</div>`).join('')}`;
 
+  if(series)series.decorate(sheet,opts.cover);
   document.body.appendChild(sheet);
   sheet.querySelectorAll('.nm-w2-tex, .nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex || '', el));
   // 정답지를 A4 높이로 나눈다. 흐름 조판은 발치만 다음 장으로 밀려날 수 있다.
   const answerRoot=sheet.querySelector('.nm-print-answer-key:not(.nm-draw-answer-key)');
   const answerHead=answerRoot.querySelector('.nm-w2-head');
   const answerFoot=answerRoot.querySelector('.nm-w2-foot');
-  const answerSections=[...answerRoot.children].filter(el=>el!==answerHead&&el!==answerFoot);
+  const rawAnswerSections=[...answerRoot.children].filter(el=>el!==answerHead&&el!==answerFoot);
+  // 중등 묶음의 상자그림·산점도 해답은 회차 하나만으로도 A4를 넘을 수 있다.
+  // 번호 답 격자와 그림의 행을 독립된 조각으로 나누고 같은 유형 머리말을 붙인다.
+  const answerSections=opts.cover&&opts.cover.compactMiddle?rawAnswerSections.flatMap(section=>{
+    if(!section.classList.contains('nm-ak-section'))return [section];
+    const head=section.querySelector('.nm-ak-subhead'),parts=[];
+    [...section.children].filter(el=>el!==head).forEach(part=>{
+      if(part.classList.contains('nm-ak-boxplot-grid')){
+        const cells=[...part.children];
+        for(let i=0;i<cells.length;i+=2){const grid=part.cloneNode(false);cells.slice(i,i+2).forEach(cell=>grid.append(cell));parts.push(grid);}
+      }else if(part.classList.contains('nm-scatter-ak')){
+        const grid=part.querySelector('.nm-scatter-ak-grid'),cells=grid?[...grid.children]:[];
+        if(!cells.length){parts.push(part);return;}
+        for(let i=0;i<cells.length;i+=2){const copy=part.cloneNode(false),title=part.querySelector('h4'),row=grid.cloneNode(false);if(title)copy.append(title.cloneNode(true));cells.slice(i,i+2).forEach(cell=>row.append(cell));copy.append(row);parts.push(copy);}
+      }else parts.push(part);
+    });
+    return parts.map(part=>{const copy=section.cloneNode(false);if(head)copy.append(head.cloneNode(true));copy.append(part);return copy;});
+  }):rawAnswerSections;
   function paginateAnswers(){
     sheet.querySelectorAll('.nm-answer-continuation').forEach(el=>el.remove());
     answerRoot.classList.add('nm-w2-page','nm-answer-page');
@@ -6632,7 +6989,9 @@ ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-an
     }
   }
   paginateAnswers();
-  const ready=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();
+  const fontsReady=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();
+  const ready=Promise.all([fontsReady,...[...sheet.querySelectorAll('img')].map(img=>img.decode?img.decode().catch(()=>{}):Promise.resolve())]);
+  window.NM_LAST_PRINT_READY=ready;
   ready.then(()=>{
     paginateAnswers();
     if(!window.NM_NO_AUTOPRINT)setTimeout(()=>window.print(),350);
@@ -6844,7 +7203,7 @@ function stageCheckItem(course, courseKey, seedBase){
   };
 }
 
-/* 고등의 수업 묶음은 정규 회차의 참조다. 원본 회차·진도 번호는 바꾸지 않는다. */
+/* 중·고등 수업 묶음은 정규 회차의 참조다. 원본 회차·진도 번호는 바꾸지 않는다. */
 function highLessons(course){ return course && course.studyPlan && course.studyPlan.lessons || null; }
 function compactHighEnvelope(course, courseKey, weekKey, opts){
   const pacing=window.NM_HIGH_PACING, lessons=highLessons(course);
@@ -6853,6 +7212,8 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
   if(!lesson)return null;
   const sourceIndices=lesson.sourceIndices, items=[], units=[];
   const k=opts.k===2?2:1;
+  const middle=/^middle[123]$/.test(course.tier),cadence=opts.cad==='w2'||k===2?'w2':'w1';
+  const amount=opts.amount==null?getAmount():normAmount(opts.amount);
   let first=null;
   sourceIndices.forEach(index=>{
     const source=course.sessions[index];
@@ -6869,6 +7230,25 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
     child.units.forEach(id=>{if(!units.includes(id))units.push(id);});
   });
   if(!first || !items.length)return null;
+  (lesson.extraPractice||[]).forEach((d,i)=>{
+    const th=(window.NM_THREADS||{})[d.t],level=(th&&th.levels||[]).find(l=>l.id===d.lv);
+    const levelConcept=d.t==='MD25'&&d.lv===1?{
+      ko:'세제곱의 합은 x³+a³=(x+a)(x²−ax+a²)입니다. 첫 괄호는 더하기, 두 번째 괄호의 가운데 항은 빼기입니다.',
+      en:'A sum of cubes factors as x³+a³=(x+a)(x²−ax+a²). The first bracket has a plus; the middle term of the second has a minus.',
+      zh:'立方和分解为x³+a³=(x+a)(x²−ax+a²)，前括号是加号，后括号中间项是减号。'
+    }:d.t==='MD25'&&d.lv===2?{
+      ko:'세제곱의 차는 x³−a³=(x−a)(x²+ax+a²)입니다. 첫 괄호는 빼기, 두 번째 괄호의 항은 모두 더하기입니다.',
+      en:'A difference of cubes factors as x³−a³=(x−a)(x²+ax+a²). The first bracket has a minus; the second has plus signs.',
+      zh:'立方差分解为x³−a³=(x−a)(x²+ax+a²)，前括号是减号，后括号都是加号。'
+    }:level&&level.concept;
+    const levelTitle=d.t==='MD25'?d.lv===1?{ko:'세제곱의 합 인수분해',en:'Factoring a sum of cubes',zh:'立方和的因式分解'}
+      :{ko:'세제곱의 차 인수분해',en:'Factoring a difference of cubes',zh:'立方差的因式分解'}:level&&level.label;
+    const count=withAmount(amount,()=>scaleCount(d,d.n));
+    items.push({thread:d.t,level:d.lv,n:d.n,count,levelOnly:true,levelConcept,levelTitle,
+      seed:(weekKey+courseKey+'b'+lesson.index+'extra'+i).toLowerCase().replace(/[^a-z0-9]/g,''),
+      topicName:pickL(levelTitle)||d.t,sourceSession:courseKey+'-extra',courseKey,compactHigh:true,
+      sessionLabel:lk('인수분해 연결 연습','Factoring practice','因式分解练习')});
+  });
   const concepts=new Set();
   items.forEach(it=>{
     if(!it.thread||it.noTeach)return;
@@ -6880,17 +7260,16 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
     const check=stageCheckItem(course,courseKey,(weekKey+courseKey+'h'+lesson.index).toLowerCase().replace(/[^a-z0-9]/g,''));
     if(check)items.push({...check,sourceSession:courseKey+'-checkpoint',courseKey,compactHigh:true});
   }
-  const amount=opts.amount==null?getAmount():normAmount(opts.amount);
   const pair=Math.floor(lesson.index/2)*2;
-  const weeklyMinutes=lessons.slice(pair,pair+2).reduce((n,l)=>n+(l.estimatedMinutes??l.minutes),0);
-  const wsId='W'+weekKey+'-'+courseKey+'-H'+(lesson.index+1);
-  const cover={...first.cover,k,cadence:opts.cad==='w2'||k===2?'w2':'w1',code:wsId,compactHigh:true,
+  const weeklyMinutes=middle&&cadence==='w1'?(lesson.estimatedMinutes??lesson.minutes):lessons.slice(pair,pair+2).reduce((n,l)=>n+(l.estimatedMinutes??l.minutes),0);
+  const wsId='W'+weekKey+'-'+courseKey+'-'+(middle?'M':'H')+(lesson.index+1);
+  const cover={...first.cover,k,cadence,code:wsId,compactHigh:true,compactMiddle:middle,
     weekLabel:first.cover.weekLabel.replace(/-1주차$/,'-'+k+'주차'),
-    studyDays:lesson.index%2===1?2:3,lessonMinutes:Math.round(lesson.estimatedMinutes??lesson.minutes),weeklyMinutes,amount,
+    studyDays:middle&&cadence==='w1'?5:lesson.index%2===1?2:3,lessonMinutes:Math.round(lesson.estimatedMinutes??lesson.minutes),weeklyMinutes,amount,
     lessonIndex:lesson.index,sourceSessions:sourceIndices.map(i=>i+1),
     sessionIdx:sourceIndices[0],courseTitle:first.title+' · '+lk('수업 '+(lesson.index+1),'Lesson '+(lesson.index+1),'第'+(lesson.index+1)+'课')};
   const grade=opts.grade!=null?opts.grade:(window.NM_PRINT_GRADE?window.NM_PRINT_GRADE():undefined);
-  items.forEach(it=>{it.schoolTier='high';if(grade!=null)it.grade=grade;});
+  items.forEach(it=>{it.schoolTier=SCHOOL_TIER_OF_COURSE[course.tier]||'elem';if(grade!=null)it.grade=grade;});
   return {...first,wsId,items,units,cover,k,cad:cover.cadence,lesson,sourceSessions:sourceIndices.map(i=>i+1),
     compactHigh:true,courseSessions:course.sessions.filter(s=>!s.test).length};
 }
@@ -6936,8 +7315,87 @@ function scheduledHighEnvelope(course, courseKey, weekKey, opts){
     courseSessions:courseKeys.reduce((n,key)=>n+courses[key].sessions.filter(s=>!s.test).length,0)};
 }
 
+/* A manual plan already owns its canonical weekly references. Print those exact
+   lessons together without re-running a calendar assignment or changing sources.
+   startSession/sessionIndex are 1-based; lessonIndex/sourceIndices are 0-based. */
+function plannedEnvelope(refs, weekKey, opts){
+  opts=opts||{};
+  const courses=window.NM_COURSES||{};
+  if(!Array.isArray(refs)||!refs.length)return null;
+  const amount=opts.amount==null?getAmount():normAmount(opts.amount),cadence=opts.cad==='w2'?'w2':'w1';
+  const children=[],selectedRefs=[];
+  for(let i=0;i<refs.length;i++){
+    const ref=refs[i],extension=ref?.kind==='middle-extension'?window.NM_MIDDLE_EXTENSION:null;
+    const canonical=extension?.reference(ref.grade,ref.extensionIndex);
+    if(ref?.kind==='middle-extension'&&(!canonical||ref.extensionId!==canonical.extensionId||ref.courseKey!==canonical.courseKey
+      ||ref.lessonIndex!==canonical.lessonIndex||!Array.isArray(ref.sourceIndices)||ref.sourceIndices.length))return null;
+    const course=canonical?extension.course(canonical.grade):ref&&courses[ref.courseKey];
+    if(!course||!Array.isArray(course.sessions))return null;
+    const high=!!highLessons(course);
+    let start=canonical?canonical.extensionIndex+1:ref.startSession!=null?Number(ref.startSession):ref.sessionIndex!=null?Number(ref.sessionIndex):null;
+    const lesson=ref.lessonIndex!=null?Number(ref.lessonIndex):null;
+    if(lesson!==null&&(!Number.isInteger(lesson)||lesson<0))return null;
+    if(start===null){
+      if(lesson===null)return null;
+      start=high?course.studyPlan.lessons[lesson]?.startSession:lesson+1;
+    }
+    if(!Number.isInteger(start)||start<1||start>course.sessions.length)return null;
+    const child=NM_EXAM.weeklyEnvelope(course,ref.courseKey,weekKey,{...opts,
+      amount,cad:cadence,k:1,compactHigh:high,legacySession:!!canonical,highStartDate:null,
+      highWholeWeek:false,startSession:start,sessionIdx:start-1,lesson:high?lesson:undefined,
+      seedScope:canonical?'extension'+canonical.grade+'e'+canonical.extensionIndex+'p'+i:'plan'+i+'s'+(start-1)});
+    if(!child)return null;
+    if(canonical)child.compactHigh=true;
+    const indices=canonical?[]:high?child.sourceSessions.map(n=>n-1):[start-1];
+    // Canonical refs may include these fields as evidence. Never expand a
+    // trimmed/invalid ref into an entire neighbouring lesson silently.
+    if(ref.sourceIndices!=null&&(!Array.isArray(ref.sourceIndices)||JSON.stringify(ref.sourceIndices)!==JSON.stringify(indices)))return null;
+    const extra=high?child.lesson.extraPractice||[]:[];
+    if(ref.extraPractice!=null&&JSON.stringify(ref.extraPractice)!==JSON.stringify(extra))return null;
+    child.items=child.items.map(it=>({...it,
+      courseKey:ref.courseKey,sourceSession:canonical?canonical.extensionId:it.sourceSession||ref.courseKey+'-S'+start,
+      ...(canonical?{compactHigh:true,middleExtension:true,extensionId:canonical.extensionId,extensionGrade:canonical.grade,extensionIndex:canonical.extensionIndex}:{legacySession:it.legacySession||start}),
+      sessionLabel:canonical?lk('중'+canonical.grade+' 심화 '+start,'Grade '+(canonical.grade+6)+' extension '+start,'初'+canonical.grade+'进阶'+start)+' · '+pickL(course.sessions[start-1].title)
+        :ref.courseKey+' · '+(it.sessionLabel||lk('학습 '+start,'Study '+start,'学习 '+start))}));
+    children.push(child);
+    selectedRefs.push({...ref,...(canonical||{}),...(canonical?{}:{startSession:start}),lessonIndex:high?child.lesson.index:start-1,
+      sourceIndices:indices.slice(),...(extra.length?{extraPractice:extra.map(d=>({...d}))}:{})});
+  }
+  const items=children.flatMap(child=>child.items),units=[...new Set(children.flatMap(child=>child.units))];
+  const courseKeys=[...new Set(selectedRefs.map(ref=>ref.courseKey))],concepts=new Set();
+  items.forEach(it=>{
+    if(!it.thread||it.noTeach)return;
+    const key=it.thread+'@'+it.level;
+    if(concepts.has(key))it.skipConcept=true;
+    else concepts.add(key);
+  });
+  const first=children[0],compactHigh=children.every(child=>child.compactHigh);
+  const estimatedMinutes=children.reduce((sum,child,i)=>{
+    const minutes=Number(selectedRefs[i].estimatedMinutes??child.cover.lessonMinutes??child.session?.minutes);
+    return sum+(Number.isFinite(minutes)&&minutes>0?minutes:0);
+  },0);
+  const extensionIds=selectedRefs.filter(ref=>ref.kind==='middle-extension').map(ref=>ref.extensionId);
+  const title=extensionIds.length?[...new Set(selectedRefs.map(ref=>ref.kind==='middle-extension'?pickL(window.NM_MIDDLE_EXTENSION.course(ref.grade).title)
+    :ref.courseKey+' · '+pickL(courses[ref.courseKey].title)))].join(' / '):courseKeys.map(key=>key+' · '+pickL(courses[key].title)).join(' / ');
+  const identity=JSON.stringify(selectedRefs.map(ref=>extensionIds.length?[ref.kind||'core',ref.extensionId,ref.courseKey,ref.lessonIndex,ref.startSession,ref.sourceIndices]
+    :[ref.courseKey,ref.lessonIndex,ref.startSession,ref.sourceIndices]));
+  const wsId='W'+weekKey+'-P'+NM_RNG.hashSeed(identity+'@'+amount).toString(36);
+  const cover={...first.cover,code:wsId,k:1,cadence,name:opts.name||first.cover.name||'',amount,
+    weekLabel:first.cover.weekLabel.replace(/-[12]주차$/,'주차'),
+    courseTitle:title+' · '+lk('이번 주 학습','This week’s learning','本周学习'),
+    compactHigh,compactMiddle:compactHigh&&courseKeys.every(key=>/^middle[123]$/.test(courses[key].tier)),
+    lessonMinutes:Math.round(estimatedMinutes),weeklyMinutes:estimatedMinutes,studyDays:5,
+    assignedCourseKeys:courseKeys,...(extensionIds.length?{assignedExtensionIds:extensionIds,middleExtension:true,extensionGrades:[...new Set(selectedRefs.filter(ref=>ref.kind==='middle-extension').map(ref=>ref.grade))],extensionVersion:window.NM_MIDDLE_EXTENSION.version}:{}),highWholeWeek:compactHigh,planned:true};
+  const groups=[...new Set(selectedRefs.map(ref=>ref.kind==='middle-extension'?'E'+ref.grade:ref.courseKey))];
+  return {...first,wsId,items,units,cover,k:1,cad:cadence,title,compactHigh,planned:true,
+    lessons:selectedRefs,assignedCourseKeys:courseKeys,...(extensionIds.length?{assignedExtensionIds:extensionIds}:{}),
+    sourceSessions:selectedRefs.flatMap(ref=>ref.sourceIndices.map(i=>i+1)),
+    courseSessions:groups.reduce((sum,key)=>sum+(key[0]==='E'?window.NM_MIDDLE_EXTENSION.course(+key.slice(1)):courses[key]).sessions.filter(s=>!s.test).length,0)};
+}
+
 const NM_EXAM = {
   getAmount, setAmount, amounts:AMOUNTS.slice(),
+  plannedEnvelope,
 
   /* LaTeX→평문 치환(KaTeX 미로딩 폴백). drill.html 등 다른 스코프도 이걸 재사용한다. */
   texToPlain,
@@ -7318,10 +7776,30 @@ const NM_EXAM = {
         return d;
       }
       const EN_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      function calLabelFor(offset){ // offset = 현재 위치부터 몇 번째 세션인가(0-base)
+      const entryTicks = entry => Math.round(Number(entry.lesson && entry.lesson.scheduleUnits || 1) * 5);
+      let calendarCache=null;
+      function calendarPositions(){
+        if(calendarCache && calendarCache.cadence===roadCadence) return calendarCache.positions;
+        const perWeek=roadCadence==='w2'?2:1, positions=new Map(), counts=new Map();
+        let started=false, ticks=0;
+        for(const x of list){
+          if(x.key===opts.currentCourse) started=true;
+          if(!started) continue;
+          for(const entry of roadEntries(x.c)){
+            ticks+=entryTicks(entry);
+            const weekOff=Math.ceil(ticks/(perWeek*5))-1;
+            const kth=(counts.get(weekOff)||0)+1;
+            counts.set(weekOff,kth);positions.set(ticks,{weekOff,kth});
+          }
+        }
+        calendarCache={cadence:roadCadence,positions};return positions;
+      }
+      function calLabelFor(offset, units=1){ // offset/units are weighted schedule units, never source indices.
         const perWeek = roadCadence==='w2' ? 2 : 1;
-        const weekOff = Math.floor(offset/perWeek);
-        const kth = (offset%perWeek)+1;
+        const endTicks=Math.round((offset+units)*5);
+        const position=calendarPositions().get(endTicks);
+        const weekOff=position?position.weekOff:Math.ceil(endTicks/(perWeek*5))-1;
+        const kth=position?position.kth:1;
         const mon = mondayOfThisWeek();
         mon.setDate(mon.getDate()+weekOff*7);
         const m = mon.getMonth()+1;
@@ -7335,10 +7813,16 @@ const NM_EXAM = {
         let acc=0, curSeen=false;
         for(const x of list){
           if(x.key===opts.currentCourse) curSeen=true;
-          if(x.key===courseKey) return curSeen ? acc : null;
-          if(curSeen) acc += roadEntries(x.c).length;
+          if(x.key===courseKey) return curSeen ? acc/5 : null;
+          if(curSeen) acc += roadEntries(x.c).reduce((ticks,entry)=>ticks+entryTicks(entry),0);
         }
         return null;
+      }
+      function sessionStartOffset(courseKey,index){
+        const off=courseStartOffset(courseKey);
+        if(off==null) return null;
+        return off+roadEntries(NM_COURSES[courseKey]).slice(0,index)
+          .reduce((ticks,entry)=>ticks+entryTicks(entry),0)/5;
       }
 
       /* ── 개인 로드맵 한 장 인쇄 — 다음 12세션을 주차·과정·구성으로 표에 ──
@@ -7346,18 +7830,17 @@ const NM_EXAM = {
          추천 계획일 뿐 순서는 자유(잠금 없음)라는 문구를 함께 찍는다. */
       function printPersonalPlan(){
         const rows=[];
-        let started=false;
+        let started=false, offsetTicks=0;
         outer:
         for(const x of list){
           if(x.key===opts.currentCourse) started=true;
           if(!started) continue;
           const sess=roadEntries(x.c);
           for(let i=0;i<sess.length;i++){
-            const off=rows.length;
             const s=sess[i];
             const items=s.test?(s.pool||[]):(s.drills||[]);
             rows.push({
-              cal:calLabelFor(off),
+              cal:calLabelFor(offsetTicks/5,entryTicks(s)/5),
               /* 단계(2026-09-08) — 표가 과정 번호만 나열해 "지금 어느 단계인지"가 없었다.
                  단계가 바뀌는 행 앞에 구분 줄을 넣는다. stages.js 가 없으면 조용히 생략. */
               stage:(window.NM_STAGE_OF_COURSE&&window.NM_STAGE_OF_COURSE(x.c.order))||null,
@@ -7366,6 +7849,7 @@ const NM_EXAM = {
               magic:(!s.test&&s.magic&&s.magic.length)?s.magic.map(magicLabel).join(' · '):'',
               drills:items.map(d=>`${threadLabel(d.t)}×${d.n}`).join(' · ')
             });
+            offsetTicks+=entryTicks(s);
             if(rows.length>=12) break outer;
           }
         }
@@ -7442,9 +7926,9 @@ ${printWatermarkHtml()}
 
       function sessionRowHtml(s, i, courseKey){
         const isMagic = !s.test && s.magic && s.magic.length;
-        const startOff = courseStartOffset(courseKey);
+        const startOff = sessionStartOffset(courseKey,i);
         const calHtml = (startOff===null) ? ''
-          : `<span class="nm-ex-road-cal">🗓 ${esc(calLabelFor(startOff+i))}</span>`;
+          : `<span class="nm-ex-road-cal">🗓 ${esc(calLabelFor(startOff,entryTicks(s)/5))}</span>`;
         const nameHtml = (s.lesson?lk(`수업 ${i+1} · 학습 ${s.lesson.startSession}~${s.lesson.endSession}`,`Lesson ${i+1} · studies ${s.lesson.startSession}–${s.lesson.endSession}`,`第${i+1}课 · 学习${s.lesson.startSession}~${s.lesson.endSession}`):s.test
           ? `${esc(lk('세션','Session','课节'))} ${i+1} · ${esc(lk('과정 시험','Course Test','课程测验'))}`
           : `${esc(lk('세션','Session','课节'))} ${i+1}`) + calHtml;
@@ -7602,8 +8086,9 @@ ${printWatermarkHtml()}
         });
         container.querySelectorAll('#nm-road-cad button').forEach(b => {
           b.addEventListener('click', () => {
-            roadCadence = b.dataset.cad;
-            if(opts.onCadence) opts.onCadence(roadCadence);
+            const nextCadence=b.dataset.cad;
+            if(opts.onCadence&&opts.onCadence(nextCadence)===false)return;
+            roadCadence=nextCadence;
             rerenderKeepScroll();
           });
         });
@@ -7619,7 +8104,7 @@ ${printWatermarkHtml()}
           if(highLessons(course)){
             const wk=NM_EXAM.weeklyEnvelope(course,courseKey,'road',{compactHigh:true,lesson:sessionIdx,cad:roadCadence});
             if(!wk)return;
-            const off=courseStartOffset(courseKey),cal=off==null?'':calLabelFor(off+sessionIdx)+' · ';
+            const off=sessionStartOffset(courseKey,sessionIdx),cal=off==null?'':calLabelFor(off,entryTicks(roadEntries(course)[sessionIdx])/5)+' · ';
             NM_EXAM.openPrintEditor(wk.items,`${cal}${courseKey} · ${lk('수업','Lesson','课')} ${sessionIdx+1}`,{
               mixed:20,cover:wk.cover,units:wk.units,courseKey,compactHigh:true,
               onPrint:()=>{if(opts.onPrinted)wk.lesson.sourceIndices.forEach(i=>opts.onPrinted(printKey(courseKey,i)));rerenderKeepScroll();}});
@@ -7645,8 +8130,8 @@ ${printWatermarkHtml()}
             if(chk) items.push(chk);
           }
           if(!items.length) return;
-          const off = courseStartOffset(courseKey);
-          const cal = (off===null) ? '' : calLabelFor(off+sessionIdx)+' · ';
+          const off = sessionStartOffset(courseKey,sessionIdx);
+          const cal = (off===null) ? '' : calLabelFor(off)+' · ';
           /* "발송 말고 고를 때는 제너레이터로"(2026-09-05) — 여기서는 더 이상
              바로 인쇄하지 않는다. 편집기를 열고, 실제 인쇄 횟수 갱신은 편집기의
              🖨 인쇄 버튼을 눌렀을 때(opts.onPrint)만 센다. */
@@ -8318,8 +8803,10 @@ ${round.html}
     (session.magic || []).forEach((uid, mi) => {
       const u = (window.NM_UNITS || {})[uid];
       if(!u || !u.discover || !Array.isArray(u.discover.stages) || !u.discover.stages.length) return;
-      items.push({ magicUnit:uid, thread:null, level:null, n:0, count:0,
-        topicName:(u.title && (u.title.ko || u.title)) || uid, seed:seedOf(seedWeek + 'mg', mi) });
+      const note={ magicUnit:uid, thread:null, level:null, n:0, count:0,
+        topicName:(u.title && (u.title.ko || u.title)) || uid, seed:seedOf(seedWeek + 'mg', mi) };
+      // Counting starts with the concrete example before the practice; source seeds stay unchanged.
+      if(c==='C0'&&uid==='N-01')items.unshift(note);else items.push(note);
     });
     items.push(...R.strategy, ...R.application);
     /* 문장제 회차는 초등 구간(레벨 1~3·경시의 탑)에만(2026-09-08, 원장 "중등·고등은 문장제보다는
@@ -8460,10 +8947,20 @@ ${answerSectionsHtml}`;
      opts: {mixed?:10|20|40(유형당 문항 수) · count?:같은 뜻(단일 유형 흐름) ·
             courseKey?:그룹 드롭다운 ①에 쓸 과정 키 · onPrint?:🖨 인쇄를 실제로
             눌렀을 때 호출(인쇄 횟수 갱신 등, 인자 없음)}. */
+  middlePacingEnvelope(grade,sessionId,seed){
+    const session=window.NM_MIDDLE_PACING&&NM_MIDDLE_PACING.getSession(grade,sessionId);
+    if(!session||!session.bundle)return null;
+    let cad='w1';try{cad=JSON.parse(localStorage.getItem(window.NM_STATE_KEY||'nm_preview_state_v1')||'{}').roadCadence==='w2'?'w2':'w1';}catch(e){}
+    const e=this.weeklyEnvelope((window.NM_COURSES||{})[session.course],session.course,seed||NM_RNG.newCode(),{
+      compactHigh:true,lesson:session.lessonIndex,cad,grade:String(Number(grade)+6)});
+    if(e)e.cover.weekLabel=cad==='w2'?`${session.week}주 ${session.day}회`:`${session.standardWeek}주`;
+    return e;
+  },
   middlePacingItems(grade, sessionId, seed){
     const plan=window.NM_MIDDLE_PACING;
     const session=plan && plan.getSession(grade,sessionId);
     if(!session) throw new Error('중등 권장 진도를 찾을 수 없습니다.');
+    if(session.bundle)return this.middlePacingEnvelope(grade,sessionId,seed).items;
     const seedBase=seed||NM_RNG.newCode();
     return session.blocks.map((b,i)=>({
       thread:b.t || ({direct:'MD51',inverse:'MD69',linear:'MD74',quadratic:'MD78'})[b.mode],
@@ -8477,6 +8974,12 @@ ${answerSectionsHtml}`;
   openMiddlePacing(grade, sessionId){
     const session=window.NM_MIDDLE_PACING && window.NM_MIDDLE_PACING.getSession(grade,sessionId);
     if(!session) return;
+    if(session.bundle){
+      const e=this.middlePacingEnvelope(grade,sessionId);
+      this.openPrintEditor(e.items,`중${grade} · ${e.cover.weekLabel} · ${session.title}`,{
+        mixed:20,compactHigh:true,cover:e.cover,units:e.units,courseKey:session.course});
+      return;
+    }
     const items=this.middlePacingItems(grade,sessionId);
     this.openPrintEditor(items,`중${grade} ${session.week}주 ${session.day}회 · ${session.title}`,{pacing:true,count:12});
   },
@@ -8492,7 +8995,7 @@ ${answerSectionsHtml}`;
       topicName: it.topicName, grade: it.grade, schoolTier:it.schoolTier,
       kind:it.kind,mode:it.mode,variant:it.variant,pacing:it.pacing,noTeach:it.noTeach,
       magicUnit:it.magicUnit,sourceSession:it.sourceSession,courseKey:it.courseKey,legacySession:it.legacySession,
-      compactHigh:it.compactHigh,skipConcept:it.skipConcept,
+      compactHigh:it.compactHigh,skipConcept:it.skipConcept,levelOnly:it.levelOnly,levelConcept:it.levelConcept,levelTitle:it.levelTitle,
       creative:it.creative,role:it.role,threadMix:it.threadMix,subLabel:it.subLabel,sessionLabel:it.sessionLabel,
       overrides: Object.assign({}, it.overrides || {}),
       guideSeed: it.guideSeed || null,

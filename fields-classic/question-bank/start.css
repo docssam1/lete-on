@@ -1,0 +1,161 @@
+/* 시작 화면 — gfield-textbook-design: 따뜻한 종이 + 깊은 초록 하나, Pretendard 100~700, 얇은 선·정렬·여백 */
+@font-face { font-family: 'FC Sans'; src: url('./assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 700; font-style: normal; font-display: swap; }
+
+:root {
+  --bg: #f1ece1;
+  --paper: #fdfbf5;
+  --paper-dim: #f7f2e7;
+  --ink: #2a241c;
+  --muted: #7a6f5c;
+  --line: #e2d9c6;
+  --line-strong: #c9bda2;
+  --accent: #2f6b4a;
+  --accent-ink: #1e4631;
+  --accent-soft: #e9f0e7;
+  --terra: #b4512e;
+  --gold: #a87c22;
+  --sans: 'FC Sans', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.55; letter-spacing: -0.01em; }
+button, input { font: inherit; color: inherit; letter-spacing: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+:is(button, a, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+h2, h3 { margin: 0; font-weight: 700; letter-spacing: -0.02em; }
+
+/* 머리줄 */
+.st-header { display: flex; align-items: center; gap: 20px; padding: 12px 28px; background: var(--paper); border-bottom: 1px solid var(--line-strong); }
+.st-brand { display: grid; line-height: 1.25; }
+.st-brand span { font-size: 11px; color: var(--muted); letter-spacing: 0.18em; font-weight: 500; }
+.st-brand strong { font-size: 19px; font-weight: 700; }
+.st-links { display: flex; gap: 4px; margin-left: auto; }
+.st-links a { padding: 8px 12px; border-radius: 6px; color: var(--muted); text-decoration: none; font-size: 14px; }
+.st-links a:hover { color: var(--ink); background: var(--paper-dim); }
+.st-student { padding: 6px 12px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 13px; font-weight: 600; }
+
+.st-main { max-width: 1180px; margin: 0 auto; padding: 28px 28px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+.st-no { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-right: 10px; border-radius: 50%; background: var(--ink); color: var(--paper); font-size: 13px; font-weight: 600; vertical-align: 2px; }
+.st-books h2, .st-book-head h2 { font-size: 20px; }
+
+/* 1 · 권 고르기 */
+.st-book-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.st-book-list button { display: grid; gap: 2px; min-height: 64px; padding: 10px 14px; text-align: left; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--paper); }
+.st-book-list button b { font-size: 15px; font-weight: 700; }
+.st-book-list button span { font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+.st-book-list button:hover { border-color: var(--ink); }
+.st-book-list button[aria-checked="true"] { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.st-book-list button[aria-checked="true"] b { color: var(--accent-ink); }
+
+/* 2 · 두 문 */
+.st-doors { background: var(--paper); border: 1px solid var(--line-strong); border-radius: 10px; }
+.st-book-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 22px; border-bottom: 1px solid var(--line); }
+.st-door-switch { display: inline-flex; padding: 3px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--paper-dim); }
+.st-door-switch button { min-height: 44px; padding: 8px 22px; border: 0; border-radius: 6px; background: transparent; font-weight: 600; color: var(--muted); }
+.st-door-switch button[aria-selected="true"] { background: var(--accent); color: #fff; }
+.st-panel { padding: 20px 22px 24px; }
+
+.st-panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.st-lead { margin: 0; color: var(--muted); max-width: 640px; }
+.st-lead b { color: var(--ink); font-weight: 600; }
+.st-mode { display: inline-flex; gap: 6px; }
+.st-mode button { min-height: 44px; padding: 6px 14px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--paper); font-weight: 600; }
+.st-mode button small { display: block; font-size: 11px; font-weight: 400; color: var(--muted); }
+.st-mode button[aria-checked="true"] { border-color: var(--accent); color: var(--accent-ink); background: var(--accent-soft); }
+
+.st-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 18px 0 8px; padding: 0; list-style: none; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.st-steps li { display: grid; gap: 2px; padding: 10px 14px; }
+.st-steps li + li { border-left: 1px solid var(--line); }
+.st-steps b { font-size: 14px; color: var(--accent-ink); }
+.st-steps span { font-size: 12.5px; color: var(--muted); }
+
+/* 단원 */
+.st-units { display: grid; }
+.st-unit { padding: 16px 0; border-bottom: 1px solid var(--line); }
+.st-unit:last-child { border-bottom: 0; }
+.st-unit h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; font-size: 17px; }
+.st-unit h3 > span { font-size: 13px; color: var(--gold); font-weight: 600; letter-spacing: 0.04em; }
+.st-unit h3 small { font-size: 12.5px; font-weight: 400; color: var(--muted); }
+.st-unit-body { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 18px; margin-top: 10px; align-items: start; }
+.st-rest .st-unit-body { grid-template-columns: minmax(0, 1fr); }
+.st-lessons { margin: 0; padding: 0; list-style: none; display: grid; }
+.st-lesson { display: grid; grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr)); gap: 6px; align-items: center; padding: 6px 0; border-top: 1px dashed var(--line); }
+.st-lesson:first-child { border-top: 0; }
+.st-lesson-title { font-size: 14.5px; }
+.st-step { display: flex; align-items: center; gap: 6px; min-height: 40px; word-break: keep-all; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; text-decoration: none; line-height: 1.3; }
+a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
+.st-step i { font-style: normal; color: var(--accent); font-weight: 600; }
+.st-step.has-tutorial { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+.st-step.is-empty { color: var(--muted); background: var(--paper-dim); border-style: dashed; }
+.st-step.is-empty i { color: var(--muted); }
+.st-empty, .st-loading { margin: 6px 0; color: var(--muted); font-size: 13.5px; }
+
+.st-cell { display: grid; gap: 8px; padding: 12px 14px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--paper-dim); }
+.st-cell b { font-size: 13.5px; color: var(--accent-ink); }
+.st-cell small { font-size: 12px; color: var(--muted); }
+.st-stage-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.st-stage-links a { display: grid; place-items: center; min-height: 40px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--paper); text-decoration: none; font-size: 13.5px; font-weight: 600; }
+.st-stage-links a:hover { border-color: var(--accent); color: var(--accent-ink); }
+
+/* 시험지 만들기 */
+.st-test-grid { display: grid; grid-template-columns: 1fr 1fr 1.6fr; gap: 14px; align-items: stretch; }
+.st-test { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border: 1px solid var(--line-strong); border-radius: 8px; }
+.st-test h3 { font-size: 16px; }
+.st-test p { margin: 0; color: var(--muted); font-size: 13.5px; }
+.st-test .st-meta { color: var(--gold); font-weight: 600; font-size: 13px; }
+.st-test > .st-btn { margin-top: auto; }
+.st-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 18px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--paper); font-weight: 600; text-decoration: none; }
+.st-btn:hover { border-color: var(--ink); }
+.st-btn.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+.st-btn.primary:hover { background: var(--accent-ink); }
+.st-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.st-pick form { display: grid; gap: 10px; }
+.st-pick fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: 6px; }
+.st-pick legend { padding: 0; margin-bottom: 4px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.st-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.st-chips label { position: relative; }
+.st-chips input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.st-chips span { display: inline-grid; align-content: center; min-height: 40px; padding: 4px 12px; border: 1px solid var(--line-strong); border-radius: 6px; font-size: 13.5px; line-height: 1.25; }
+.st-chips span small { font-size: 11px; color: var(--muted); }
+.st-chips input:checked + span { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+.st-chips input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.st-pick-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.st-pick-foot span { font-size: 13px; color: var(--muted); }
+.st-more { margin: 16px 0 0; font-size: 13.5px; color: var(--muted); }
+.st-more a { color: var(--accent-ink); font-weight: 600; }
+
+@media (max-width: 980px) {
+  .st-book-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .st-unit-body { grid-template-columns: minmax(0, 1fr); }
+  .st-test-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .st-header { flex-wrap: wrap; gap: 8px 12px; padding: 10px 16px; }
+  .st-links { order: 3; width: 100%; margin-left: 0; }
+  .st-links a { padding: 6px 8px; }
+  .st-student { margin-left: auto; }
+  .st-main { padding: 18px 16px 48px; gap: 20px; }
+  .st-book-list { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
+  .st-book-list button { flex: 0 0 148px; scroll-snap-align: start; }
+  .st-book-head, .st-panel { padding-left: 14px; padding-right: 14px; }
+  .st-door-switch { width: 100%; }
+  .st-door-switch button { flex: 1; padding: 8px 10px; }
+  .st-mode { width: 100%; }
+  .st-mode button { flex: 1; }
+  .st-steps { grid-template-columns: 1fr 1fr; }
+  .st-steps li:nth-child(3) { border-left: 0; }
+  .st-steps li:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .st-lesson { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 10px 0; }
+  .st-lesson-title { grid-column: 1 / -1; font-weight: 600; }
+  .st-step { flex-direction: column; justify-content: center; gap: 0; padding: 4px 6px; font-size: 12px; text-align: center; }
+}
+
+/* 학습형: 단원마다 차시 단추(study.html) */
+.st-unit-self .st-parts { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 10px; }
+.st-part { display: grid; gap: 2px; min-height: 56px; padding: 10px 14px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; text-decoration: none; }
+.st-part b { font-size: 15px; color: var(--accent-ink); }
+.st-part span { font-size: 12.5px; color: var(--muted); }
+.st-part:hover { border-color: var(--accent); background: var(--accent-soft); }
+.st-steps[hidden] { display: none; }

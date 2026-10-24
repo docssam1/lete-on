@@ -4,7 +4,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
 import { execFileSync } from "node:child_process";
-import { HANDS_ON_ACTIVITIES as ALL_ACTIVITIES, expectedCells, matchesClue } from "./golden-bell-hands-on-models.js";
+import { HANDS_ON_ACTIVITIES as ALL_ACTIVITIES, expectedCells, matchesClue, unfoldTargets } from "./golden-bell-hands-on-models.js";
 // 게임 QR 서버에 등록된 게임만(qr: false인 2권 레벨 게임은 아직 QR이 없다).
 const activities = Object.fromEntries(Object.entries(ALL_ACTIVITIES).filter(([, activity]) => activity.qr !== false));
 import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
@@ -62,13 +62,21 @@ async function solveRound(page, activity, round) {
     for (const _ of round.model.folds) await click("fold");
     await click("cut");
   }
-  if (["mirror", "fold"].includes(activity.kind)) for (const cell of expectedCells(activity, round)) await click("cell", cell);
+  if (activity.kind === "mirror") for (const cell of expectedCells(activity, round)) await click("cell", cell);
+  // 접기: 마지막 접기부터 한 번씩 펼치며 새 자국을 표시한다.
+  if (activity.kind === "fold") for (let step = 1; step <= round.model.folds.length; step++) { await click("unfold"); for (const cell of unfoldTargets(round, step)) await click("cell", cell); }
   if (["cross", "order"].includes(activity.kind)) {
-    const pool = activity.kind === "cross" ? [1, 2, 3, 4, 5].filter((n) => n !== round.center) : ["A", "B", "C", "D"];
+    const pool = activity.kind === "cross" ? round.cards : ["A", "B", "C", "D"];
     const slots = permutations(pool).find((p) => activity.kind === "cross" ? p[0] + p[3] === p[1] + p[2] : round.clues.every((clue) => matchesClue(p, clue)));
-    for (const [i, n] of slots.entries()) { await click("choose", n); await click("slot", i); }
+    // 십자 합은 가운데(자리 4)부터 놓는다.
+    const order = activity.kind === "cross" ? [4, 0, 1, 2, 3] : [0, 1, 2, 3];
+    for (const i of order) { await click("choose", slots[i]); await click("slot", i); }
   }
-  if (activity.kind === "transfer") for (let i = 0; i < (round.left - round.right) / 2; i++) await click("move", 1);
+  if (activity.kind === "transfer") {
+    for (let i = round.right; i < round.left; i++) await click("mark", i);
+    for (let i = round.right; i < round.right + (round.left - round.right) / 2; i++) await click("give", i);
+    await click("hand");
+  }
   await click("check");
   await page.locator(".hand-feedback.correct").waitFor();
 }

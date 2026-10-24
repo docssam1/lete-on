@@ -16,13 +16,17 @@ import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
-import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261023w";
-import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep } from "./golden-bell-lesson-flow.js?v=20261023w";
-import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261004a";
+import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261024t";
+import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261024t";
+import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
+import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261024r";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
+// 학생 차시 덱(study.html) 안에 끼워 쓰는지 — 자세한 것은 아래 embedOpen 앞 주석
+const embed = { on: params.get("embed") === "1" && parent !== window, view: "concept", game: "", handsOn: null, page: 0, pages: 1, key: "" };
+function embedPost(message) { if (embed.on) parent.postMessage({ type: "fc-embed", ...message }, location.origin); }
 // 원본 분류 코드(GB5-S25-01 등)는 원장·선생님만 본다. 학생·학부모 화면과 학습지에는 1, 2, 3… 순번만 나온다.
 // 주소에 &codes=1을 붙이면 코드가 보인다(대조 작업용).
 const showSourceCodes = params.get("codes") === "1";
@@ -33,7 +37,16 @@ const storageKey = `fields-classic-golden-bell:${student}`;
 const protectedBooks = new Set();
 const protectedLoads = new Map();
 const coverStorageKey = "fields-classic-golden-bell-print-cover";
-const coverLabels = { concept: "도형 배경", simple: "모눈 배경", none: "표지 없음" };
+// 표지: 골든벨 표지 둘(도형·모눈 배경, 그 위에 학습 범위·개념·게임 QR) + 교재 표지 시안 아홉(cover-designs.js).
+// 시안 표지를 고르면 시안 한 장을 맨 앞에 두고, 학습 범위·개념·게임 QR은 그다음 쪽(배경 없이)에 싣는다.
+const coverLabels = { concept: "도형 배경", simple: "모눈 배경", ...Object.fromEntries(COVER_DESIGNS.map((design) => [design.id, design.label])), none: "표지 없음" };
+{
+  const host = document.querySelector("#printCoverFieldset .cover-options");
+  const sample = { title: "도형 움직이기와 마방진", subtitle: "골든벨 개념 학습", volume: "1", eyebrow: "GIFTED MATH BANK · 1과정", stats: "단원 4 · 학습 12" };
+  host?.insertAdjacentHTML("beforeend", COVER_DESIGNS.map((design) => `<label class="cover-design-option"><input type="radio" name="coverStyle" value="${design.id}" /><span class="cover-swatch design cv-thumb" aria-hidden="true">${coverDesignPage(design.id, sample)}</span><strong><small>${design.group}</small>${design.label}</strong></label>`).join(""));
+  const none = host?.querySelector('input[value="none"]')?.closest("label");
+  if (none) host.append(none);
+}
 let coverStyle = "concept";
 try {
   const saved = localStorage.getItem(coverStorageKey);
@@ -68,8 +81,8 @@ async function ensureProtectedBook(bookId) {
     protectedMessage = error.message === "login_required"
       ? "정답과 풀이를 보려면 학습 서재에서 승인번호로 접속해 주세요."
       : error.message === "protected_answers_incomplete"
-        ? "정답 자료를 모두 불러오지 못해 채점을 잠시 멈췄어요. 오답으로 기록하지 않습니다."
-        : "정답 보호 서버에 연결하지 못했습니다. 잠시 뒤 다시 열어 주세요.";
+        ? "정답 자료를 모두 불러오지 못해 채점을 잠시 멈췄어요. 오답으로 기록하지 않아요."
+        : "정답 보호 서버에 연결하지 못했어요. 잠시 뒤 다시 열어 주세요.";
     return false;
   }).finally(() => protectedLoads.delete(bookId));
   protectedLoads.set(bookId, task);
@@ -83,7 +96,8 @@ function loadProgress() {
 
 const state = {
   bookId: requestedRoute?.bookId || UNAVAILABLE_BOOK.id,
-  lessonId: null,
+  // ?lesson=<id>: 시작 화면에서 단원의 학습을 바로 연다(없는 id면 render()가 첫 학습으로 돌린다).
+  lessonId: params.get("lesson") || null,
   phase: "concept",
   sourceTrackId: null,
   selections: {},
@@ -168,6 +182,7 @@ function completeOriginal() {
   state.progress[state.bookId][lesson.id] ||= {};
   state.progress[state.bookId][lesson.id].original = true;
   saveProgress();
+  if (embed.on && embed.view === "bell") embedPost({ event: "done", view: "bell", lesson: lesson.id });
 }
 
 function completeExtension() {
@@ -297,7 +312,7 @@ function triangularStairMarkup(beat, reveal) {
 
 function triangularExperienceSummaryMarkup(experience) {
   const finalBeat = experience.beats.at(-1);
-  return `<div class="gold-print-experience gold-print-triangular-experience"><p><strong>개념 순서</strong> 한 층씩 삼각형 바닥이 넓어집니다. 1층은 1개, 2층은 1 + 2 = 3개, 3층은 1 + 2 + 3 = 6개입니다. 각 층의 수를 차례로 더해 다음 단계를 구합니다.</p>${triangularStairMarkup(finalBeat, true)}</div>`;
+  return `<div class="gold-print-experience gold-print-triangular-experience"><p><strong>개념 순서</strong> 한 층씩 삼각형 바닥이 넓어져요. 1층은 1개, 2층은 1 + 2 = 3개, 3층은 1 + 2 + 3 = 6개예요. 각 층의 수를 차례로 더해 다음 단계를 구해요.</p>${triangularStairMarkup(finalBeat, true)}</div>`;
 }
 
 function experienceSummaryMarkup(experience) {
@@ -329,7 +344,7 @@ function conceptPracticeMarkup(experience) {
       : result.status === "revealed"
         ? `답: ${practice.answer}. ${practice.explanation}`
         : result.status === "wrong"
-          ? "그림의 줄을 다시 세어 보고, 필요하면 답 보기를 눌러 확인하세요."
+          ? "그림의 줄을 다시 세어 보고, 필요하면 답 보기를 눌러요."
           : "";
     return `<article class="concept-practice-card ${complete ? "complete" : ""}"><header><span>연습 ${index + 1}</span>${complete ? "<b>확인</b>" : ""}</header>${conceptPracticeVisual(practice)}<p>${practice.prompt}</p><div class="answer-choices">${practice.options.map((option) => `<button type="button" class="${result.selected === option ? "selected" : ""}" data-concept-practice-choice="${practice.id}" data-concept-practice-value="${option}">${option}</button>`).join("")}</div><div class="concept-practice-actions"><button type="button" class="secondary-action" data-concept-practice-answer="${practice.id}">답 보기</button></div>${feedback ? `<p class="feedback ${result.status === "correct" ? "success" : ""}">${feedback}</p>` : ""}</article>`;
   }).join("");
@@ -384,7 +399,7 @@ function typeTrackQuestionMarkup(track, stage, record) {
     : status === "revealed"
       ? `답: ${item.answer}. ${item.explanation}`
       : status === "wrong"
-        ? "그림의 줄과 칸을 다시 세어 보고, 필요하면 답 보기를 눌러 확인하세요."
+        ? "그림의 줄과 칸을 다시 세어 보고, 필요하면 답 보기를 눌러요."
         : "";
   const title = stage === "check" ? "바로 확인" : "유형 문제";
   return `<section class="type-track-question ${complete ? "complete" : ""}"><header><span>${title}</span>${complete ? "<b>확인</b>" : ""}</header><p>${item.prompt}</p><div class="answer-choices">${item.options.map((option) => `<button type="button" class="${selected === option ? "selected" : ""}" data-type-track-check="${track.id}" data-type-track-stage="${stage}" data-type-track-value="${option}" ${complete ? "disabled" : ""}>${option}</button>`).join("")}</div><div class="type-track-actions"><button type="button" class="secondary-action" data-type-track-answer="${track.id}" data-type-track-stage="${stage}" ${complete ? "disabled" : ""}>답 보기</button></div>${feedback ? `<p class="feedback ${status === "correct" ? "success" : ""}">${feedback}</p>` : ""}</section>`;
@@ -416,8 +431,8 @@ function renderTriangularStairExperience(experience) {
   const checksComplete = experience.beats.every((candidate) => state.experience.checks[candidate.id] === true);
   const feedback = state.experience.feedback;
   const progress = experience.beats.map((candidate, index) => `<i class="${index < currentStep ? "done" : index === currentStep ? "current" : ""}" aria-label="${candidate.stage}층 ${index < currentStep ? "설명 완료" : "설명 중"}">${candidate.stage}</i>`).join("");
-  const successBurst = feedback?.passed ? `<div class="experience-success-burst show" aria-hidden="true"><strong>정확해!</strong><span></span><span></span><span></span><span></span><span></span><span></span></div>` : "";
-  const nextCheck = checked && !checksComplete ? `<button type="button" class="secondary-action experience-check-next" data-experience-action="next-check">다음 확인</button>` : "";
+  const successBurst = feedback?.passed ? `<div class="experience-success-burst show" aria-hidden="true"><strong>정확해요!</strong><span></span><span></span><span></span><span></span><span></span><span></span></div>` : "";
+  const nextCheck = checked && !checksComplete ? `<button type="button" class="secondary-action experience-check-next" data-experience-action="next-check">다음 층 확인하기</button>` : "";
   const stageCheck = `<section class="experience-stage-check" aria-label="단계별 확인"><header><span>단계별 확인</span><strong>${state.experience.checkStep + 1}층을 확인해요</strong><b>${state.experience.checkStep + 1} / ${experience.beats.length}</b></header><div class="experience-check"><p>${checkBeat.check.prompt}</p><div class="answer-choices">${checkBeat.check.options.map((option) => `<button type="button" class="${state.experience.answer === option ? "selected" : ""}" data-experience-choice="${option}" ${checked ? "disabled" : ""}>${option}</button>`).join("")}</div>${feedback ? `<p class="feedback ${feedback.passed ? "success" : ""}">${feedback.message}</p>` : ""}${nextCheck}</div></section>`;
   return `${typeTracksMarkup(experience)}<section class="concept-experience concept-experience-stair" aria-label="삼각 계단 쌓기나무 설명과 확인"><header><div><span>개념 설명</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track" aria-label="쌓기나무가 자라는 순서">${progress}</div>${triangularStairMarkup(beat, true)}${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${stageCheck}${checksComplete ? conceptPracticeMarkup(experience) : ""}${successBurst}</section>`;
 }
@@ -1274,7 +1289,7 @@ function renderOriginal(lesson) {
     const progressLabel = sourceCount === items.length
       ? `${sourceCount}문제 중 ${state.originalIndex + 1}번째`
       : `${sourceCount}문항 · ${items.length}개 풀이 중 ${state.originalIndex + 1}번째`;
-    return `<div class="quiz-head daily-quiz-head"><div><span>${lesson.original.title} · ${item.typeLabel}</span><h2>${lesson.title}</h2></div><aside><strong>${progressLabel}</strong><small>${showSourceCodes ? `교재 ${escapeAttribute(questionNo(item, state.originalIndex))}번` : `${state.originalIndex + 1}번 문제`}</small></aside></div><div class="daily-question-progress source-question-progress" aria-label="교재 연습문제 진행">${dots}</div><section class="source-question-card"><header><span>문제 ${escapeAttribute(questionNo(item, state.originalIndex))}</span><strong>${item.typeLabel}</strong></header><p class="lesson-lead">${mathText(item.prompt)}</p>${visual}<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}">${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${solution}</section></section>${result && result.itemId === item.id ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${resolved ? "" : "disabled"}>${correct || assist ? nextLabel : "확인"}</button>`;
+    return `<div class="quiz-head daily-quiz-head"><div><span>${lesson.original.title} · ${item.typeLabel}</span><h2>${lesson.title}</h2></div><aside><strong>${progressLabel}</strong><small>${showSourceCodes ? `교재 ${escapeAttribute(questionNo(item, state.originalIndex))}번` : `${state.originalIndex + 1}번 문제`}</small></aside></div><div class="daily-question-progress source-question-progress" aria-label="교재 연습문제 진행">${dots}</div><section class="source-question-card"><header><span>문제 ${escapeAttribute(questionNo(item, state.originalIndex))}</span><strong>${item.typeLabel}</strong></header><p class="lesson-lead">${mathText(item.prompt)}</p>${visual}<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}">${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${solution}</section></section>${result && result.itemId === item.id ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${resolved ? "" : "disabled"}>${correct || assist ? nextLabel : "답 내기"}</button>`;
   }
   const allComplete = lesson.original.items.every(originalItemComplete);
   const itemVisuals = lesson.original.items.some((item) => item.visual);
@@ -1287,14 +1302,14 @@ function renderOriginal(lesson) {
     const assistNote = assist === "revealed"
       ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${mathText(item.solution, { bare: true })}</p><strong>답 ${mathText(approvedOriginalAnswer(item), { bare: true })}</strong></section>`
       : assist === "skipped"
-        ? '<p class="quiz-item-assist skipped">넘어간 문제입니다. 다음에 다시 풀어 보세요.</p>'
+        ? '<p class="quiz-item-assist skipped">넘어간 문제예요. 다음에 다시 풀어 봐요.</p>'
         : check?.passed
           ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${mathText(item.solution, { bare: true })}</p><strong>답 ${mathText(approvedOriginalAnswer(item), { bare: true })}</strong></section>`
           : check
             ? `<p class="quiz-item-feedback" aria-live="polite">${escapeAttribute(check.message)}</p>`
             : "";
     const itemVisual = item.visual ? `<div class="quiz-visual item-quiz-visual">${visualMarkup(item.visual)}</div>` : "";
-    return `<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}"><strong>${mathText(item.prompt)}</strong>${conditions}${itemVisual}${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="primary-action item-check-action" data-original-check="${escapeAttribute(item.id)}" ${originalItemResolved(item) ? "" : "disabled"}>${originalItemComplete(item) ? "확인 완료" : "확인"}</button><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${assistNote}</section>`;
+    return `<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}"><strong>${mathText(item.prompt)}</strong>${conditions}${itemVisual}${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="primary-action item-check-action" data-original-check="${escapeAttribute(item.id)}" ${originalItemResolved(item) ? "" : "disabled"}>${originalItemComplete(item) ? "답 냈어요" : "답 내기"}</button><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${assistNote}</section>`;
   }).join("")}</div><button type="button" class="primary-action grouped-next-action" data-complete-original ${allComplete ? "" : "disabled"}>추가 학습으로</button>`;
 }
 
@@ -1318,7 +1333,7 @@ function renderExtension(lesson) {
   const nextLabel = state.extensionIndex === items.length - 1 ? "학습 완료" : "다음 문제";
   const pilot = activeBook().status === "pilot";
   const minutes = pilot ? "" : ` · 약 ${activeBook().dailyPractice?.estimatedMinutes || 30}분`;
-  return `<div class="quiz-head daily-quiz-head"><div><span>오늘의 추가 학습 · ${item.title || item.typeLabel || lesson.title}</span><h2>${item.story || lesson.title}</h2></div><aside><strong>${items.length}문제 중 ${state.extensionIndex + 1}번째</strong><small>추가 학습 ${activeBook().dailyPractice?.problemCount || 8}문제${minutes}</small></aside></div><div class="daily-question-progress" aria-label="추가 학습 문제 진행">${dots}</div><p class="lesson-lead">${pilot ? escapeAttribute(item.prompt) : "배운 원리를 같은 유형의 새 문제에 적용해 보세요."}</p><div class="quiz-visual">${visualMarkup(item.visual)}</div><section class="quiz-item extension-study ${status}">${pilot ? "" : `<strong>${item.prompt}</strong>`}${answerControl(groupId, item, "extension")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-extension-answer>풀이 보기</button><button type="button" class="secondary-action" data-extension-skip>${skipped ? "넘어감" : "넘어가기"}</button></div></section>${solution}${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) || resolved ? "" : "disabled"}>${resolved ? nextLabel : "확인"}</button>`;
+  return `<div class="quiz-head daily-quiz-head"><div><span>오늘의 추가 학습 · ${item.title || item.typeLabel || lesson.title}</span><h2>${item.story || lesson.title}</h2></div><aside><strong>${items.length}문제 중 ${state.extensionIndex + 1}번째</strong><small>추가 학습 ${activeBook().dailyPractice?.problemCount || 8}문제${minutes}</small></aside></div><div class="daily-question-progress" aria-label="추가 학습 문제 진행">${dots}</div><p class="lesson-lead">${pilot ? escapeAttribute(item.prompt) : "배운 원리를 같은 유형의 새 문제에 적용해 보세요."}</p><div class="quiz-visual">${visualMarkup(item.visual)}</div><section class="quiz-item extension-study ${status}">${pilot ? "" : `<strong>${item.prompt}</strong>`}${answerControl(groupId, item, "extension")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-extension-answer>풀이 보기</button><button type="button" class="secondary-action" data-extension-skip>${skipped ? "넘어감" : "넘어가기"}</button></div></section>${solution}${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) || resolved ? "" : "disabled"}>${resolved ? nextLabel : "답 내기"}</button>`;
 }
 
 function renderComplete(lesson) {
@@ -1327,14 +1342,14 @@ function renderComplete(lesson) {
   const summary = summarizeGoldenBellLesson(lessonProgress(lesson));
   const completionMessage = summary.review
     ? "답을 보거나 넘어간 문제는 다시 연습해 보세요."
-    : "이 개념을 잘 익혔습니다.";
+    : "이 개념을 잘 익혔어요.";
   const record = summary.total ? `<section class="learning-record"><h3>이번 학습 기록</h3><dl><div><dt>혼자 해결</dt><dd>${summary.correct}</dd></div><div><dt>답 확인</dt><dd>${summary.revealed}</dd></div><div><dt>넘어감</dt><dd>${summary.skipped}</dd></div><div><dt>다시 볼 문항</dt><dd>${summary.review}</dd></div></dl>${summary.reviewTypeIds.length ? `<a href="../prescription/?student=${encodeURIComponent(student)}&types=${encodeURIComponent(summary.reviewTypeIds.join(","))}&view=type">이 유형 다시 연습</a>` : ""}</section>` : "";
   return `<section class="complete-panel"><span class="medal">✓</span><h2>${lesson.title} 학습 완료</h2><p>${completionMessage}</p>${record}${nextLesson ? `<button type="button" class="primary-action" data-next-lesson="${nextLesson.id}">다음</button>` : `<button type="button" class="primary-action" data-book-complete>${book.label} 학습 완료</button>`}</section>`;
 }
 
 function renderPending(book) {
-  if (book.status === "unavailable") return '<section class="pending-panel" role="alert"><h2>요청한 교재를 찾을 수 없습니다.</h2><p>과정과 권을 다시 선택해 주세요.</p></section>';
-  return `<section class="pending-panel"><span>!</span><h2>${book.label} 골든벨 학습 준비 중</h2><p>학습 자료를 준비하고 있습니다.</p></section>`;
+  if (book.status === "unavailable") return '<section class="pending-panel" role="alert"><h2>요청한 교재를 찾지 못했어요.</h2><p>과정과 권을 다시 골라 주세요.</p></section>';
+  return `<section class="pending-panel"><span>!</span><h2>${book.label} 골든벨 학습 준비 중</h2><p>학습 자료를 준비하고 있어요.</p></section>`;
 }
 
 function printResponseMarkup(item) {
@@ -1382,6 +1397,7 @@ function printLessonPage(lesson, lessonNumber, book) {
 }
 
 function printBookCover(book, lessons, { includeAnswers = false, style = coverStyle, includeGames = $("printGameQR").checked } = {}) {
+  if (isCoverDesign(style)) return printDesignCover(book, lessons, style) + printBookCover(book, lessons, { includeAnswers, style: "plain", includeGames });
   const courseNumber = /^course-(\d+)$/u.exec(book.courseId || "")?.[1];
   const courseLabel = courseNumber ? `${Number(courseNumber)}과정` : "골든벨";
   const units = printUnits(book).filter((unit) => unit.lessons.some((lesson) => lessons.includes(lesson)));
@@ -1390,13 +1406,31 @@ function printBookCover(book, lessons, { includeAnswers = false, style = coverSt
   const conceptRows = lessons.map((lesson) => `<li data-cover-lesson="${escapeAttribute(lesson.id)}"><span>${String(book.lessons.indexOf(lesson) + 1).padStart(2, "0")}</span><div><small>${escapeAttribute(lesson.unit)}</small><strong>${escapeAttribute(lesson.title)}</strong><p>${escapeAttribute(lesson.representativeConcept)}</p></div></li>`).join("");
   const densityClass = lessons.length > 12 ? " is-dense is-crowded" : lessons.length > 6 ? " is-dense" : "";
   return `<article class="gold-print-page gold-print-cover cover-${style}${densityClass}${games.length ? " has-cover-games" : ""}" data-cover-style="${style}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" data-watermark="${escapeAttribute(student)} · GFIELD">
-    <img class="gold-cover-art" src="./assets/fc-cover-${style === "simple" ? "grid" : "shapes"}.svg" alt="" aria-hidden="true" />
+    ${style === "plain" ? "" : `<img class="gold-cover-art" src="./assets/fc-cover-${style === "simple" ? "grid" : "shapes"}.svg" alt="" aria-hidden="true" />`}
     <header class="gold-print-cover-head"><span>GOLDEN BELL</span><strong>${escapeAttribute(courseLabel)} · 골든벨</strong></header>
     <section class="gold-print-cover-title"><small>${escapeAttribute(book.label)} · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}</small><h1>${escapeAttribute(book.title || "골든벨 개념 학습")}</h1><dl class="gold-print-cover-meta"><div><dt>이름</dt><dd>${student === "DEMO" ? "" : escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></section>
     <section class="gold-print-cover-range"><h2>학습 범위</h2><p>${escapeAttribute(range)}</p><span>${includeAnswers ? "답안과 풀이 포함" : "답안 제외"}</span></section>
     <section class="gold-print-cover-concepts"><h2>유형과 핵심 개념</h2><ol>${conceptRows}</ol>${printCoverGamesMarkup(games)}</section>
     <footer class="gold-print-footer">${escapeAttribute(courseLabel)} · ${escapeAttribute(book.label)} · 개념 학습 교재</footer>
   </article>`;
+}
+
+function designCoverInfo(book, lessons) {
+  const courseNumber = /^course-(\d+)$/u.exec(book.courseId || "")?.[1];
+  const units = printUnits(book).filter((unit) => unit.lessons.some((lesson) => lessons.includes(lesson)));
+  return {
+    title: book.title || "골든벨 개념 학습",
+    subtitle: `골든벨 개념 학습 · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}`,
+    volume: String(book.label || "").replace(/[^0-9]/gu, ""),
+    eyebrow: `GIFTED MATH BANK · ${courseNumber ? `${Number(courseNumber)}과정` : "골든벨"}`,
+    pubRight: "GOLDEN BELL SERIES",
+    stats: `단원 ${units.length} · 학습 ${lessons.length}`
+  };
+}
+
+function printDesignCover(book, lessons, style) {
+  return `<article class="gold-print-page gold-print-design-cover" data-cover-design="${escapeAttribute(style)}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" aria-label="교재 표지">
+    ${coverDesignPage(style, designCoverInfo(book, lessons))}<footer class="gold-print-footer" hidden></footer></article>`;
 }
 
 function printUnits(book = activeBook()) {
@@ -1467,7 +1501,7 @@ function openPrintSettings(selectUnits) {
   const activeUnit = units.find((unit) => unit.lessons.includes(activeLesson())) || units[0];
   draftLessonIds = new Set(lessonSelections.get(activeBook().id) || (activeUnit?.lessons || []).map((lesson) => lesson.id));
   draftSections = new Set(printSections);
-  $("coverDialogTitle").textContent = `${activeBook().label} · ${selectUnits ? "선택 학습 인쇄" : "표지 배경"}`;
+  $("coverDialogTitle").textContent = `${activeBook().label} · ${selectUnits ? "선택 학습 인쇄" : "표지 고르기"}`;
   $("printUnitFieldset").hidden = !selectUnits;
   $("printSectionFieldset").hidden = !selectUnits;
   $("printAnswerFieldset").hidden = !selectUnits || ["answers", "quick"].includes(draftPrintMode);
@@ -1491,7 +1525,7 @@ function updateCoverButton() {
   // 호출 순서와 무관해져 여섯 군데 호출부 전부가 함께 고쳐진다.
   $("printCoverButton").disabled = printPreparing || answerOnly || !activeBook().lessons.length;
   $("printCoverButton").textContent = `표지 · ${answerOnly ? "없음" : coverLabels[coverStyle]}`;
-  $("printCoverButton").title = answerOnly ? "답안만 인쇄에는 표지가 포함되지 않습니다." : "교재 표지 배경 선택";
+  $("printCoverButton").title = answerOnly ? "답안만 인쇄할 때는 표지가 들어가지 않아요." : "교재 표지 배경 선택";
 }
 
 function scaleCoverPreview() {
@@ -1519,12 +1553,14 @@ function renderCoverPreview() {
   $("printUnitsAll").disabled = printPreparing;
   $("printUnitsNone").disabled = printPreparing;
   $("printSelectionApply").disabled = printPreparing || !lessons.length || requiresAnswers || noSection;
-  $("printSelectionStatus").textContent = !lessons.length ? "선택한 단원이 없습니다." : noSection ? "인쇄할 부분을 하나 이상 고르세요." : requiresAnswers ? "답안과 풀이를 불러온 뒤 인쇄할 수 있습니다." : `${selectingUnits ? `${selectedPrintUnitCount()}개 범위 · ` : ""}${lessons.length}개 학습 · ${sectionLabel}${modeLabel}`;
+  $("printSelectionStatus").textContent = !lessons.length ? "고른 단원이 없어요." : noSection ? "인쇄할 부분을 하나 이상 골라 주세요." : requiresAnswers ? "답안과 풀이를 불러오면 인쇄할 수 있어요." : `${selectingUnits ? `${selectedPrintUnitCount()}개 범위 · ` : ""}${lessons.length}개 학습 · ${sectionLabel}${modeLabel}`;
   host.removeAttribute("style");
-  host.innerHTML = !lessons.length ? '<p class="cover-empty">선택한 단원이 없습니다.</p>' : answerOnly
+  host.innerHTML = !lessons.length ? '<p class="cover-empty">고른 단원이 없어요.</p>' : answerOnly
     ? `<p class="cover-empty">${modeLabel} · 표지 제외</p>` : draftCoverStyle === "none"
-      ? '<p class="cover-empty">표지 없이 첫 학습 페이지부터 인쇄합니다.</p>'
-      : printBookCover(activeBook(), lessons, { style: draftCoverStyle, includeAnswers: draftPrintMode === "both" });
+      ? '<p class="cover-empty">표지 없이 첫 학습 쪽부터 인쇄해요.</p>'
+      : isCoverDesign(draftCoverStyle)
+        ? `<div class="gold-cover-design-preview">${coverDesignPage(draftCoverStyle, designCoverInfo(activeBook(), lessons))}<p>다음 쪽에 학습 범위·유형과 핵심 개념${$("printGameQR").checked ? "·게임 QR" : ""}이 이어집니다.</p></div>`
+        : printBookCover(activeBook(), lessons, { style: draftCoverStyle, includeAnswers: draftPrintMode === "both" });
   requestAnimationFrame(scaleCoverPreview);
 }
 
@@ -1607,7 +1643,7 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
   root.replaceChildren();
   root.setAttribute("aria-hidden", "true");
   if (mode !== "study" && !protectedBooks.has(book.id)) {
-    $("printStatus").textContent = "답안과 풀이를 불러온 뒤 인쇄할 수 있습니다.";
+    $("printStatus").textContent = "답안과 풀이를 불러오면 인쇄할 수 있어요.";
     return false;
   }
   const buttons = [$("printLessonButton"), $("printBookButton"), $("printCoverButton"), $("printSelectedButton"), $("printSelectionApply")];
@@ -1618,7 +1654,7 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
   $("bookTabs").querySelectorAll("button").forEach((button) => { button.disabled = true; });
   buttons.forEach((button) => { button.disabled = true; });
   if ($("coverDialog").open) renderCoverPreview();
-  $("printStatus").textContent = "인쇄 분량을 정리하고 있습니다.";
+  $("printStatus").textContent = "인쇄 분량을 정리하고 있어요.";
   try {
     const gameLinks = includeGames ? await preparePrintGameLinks(book, lessons, () => ensureFieldsSession(student)) : new Map();
     const cover = includeCover && coverStyle !== "none" && (mode === "study" || mode === "both") ? printBookCover(book, lessons, { includeAnswers: mode === "both", includeGames }) : "";
@@ -1629,7 +1665,7 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
     if (!root.querySelector('.gold-print-page:not([data-print-part="cover"])')) {
       root.replaceChildren();
       root.setAttribute("aria-hidden", "true");
-      $("printStatus").textContent = "고른 학습에는 고른 부분이 없습니다. 인쇄할 부분을 다시 골라 주세요.";
+      $("printStatus").textContent = "고른 학습에 고른 부분이 없어요. 인쇄할 부분을 다시 골라 주세요.";
       return false;
     }
     attachPrintGameLinks(root, gameLinks);
@@ -1649,8 +1685,8 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
     root.replaceChildren();
     root.setAttribute("aria-hidden", "true");
     $("printStatus").textContent = error.message === "login_required" || /^session_/u.test(error.message)
-      ? "게임 QR은 승인 계정으로 로그인한 뒤 인쇄할 수 있습니다. QR을 제외하면 학습지만 인쇄합니다."
-      : "인쇄 자료를 준비하지 못했습니다. 다시 인쇄를 눌러 주세요.";
+      ? "게임 QR은 승인 계정으로 로그인하면 인쇄할 수 있어요. QR을 빼면 학습지만 인쇄해요."
+      : "인쇄 자료를 준비하지 못했어요. 인쇄를 다시 눌러 주세요.";
     return false;
   } finally {
     printPreparing = false;
@@ -1745,7 +1781,7 @@ function bindLessonActions() {
     if (["guided-concept", "progressive-concept"].includes(experience.kind)) {
       const passed = state.experience.answer === experience.check.answer;
       state.experience.checks[`guided:${activeLesson().id}`] = passed ? "correct" : "wrong";
-      state.experience.feedback = { passed, message: passed ? `맞아요. ${experience.check.explanation}` : "조건과 마지막 장면을 다시 살펴보세요. 필요하면 답 보기를 눌러 확인할 수 있습니다." };
+      state.experience.feedback = { passed, message: passed ? `맞아요. ${experience.check.explanation}` : "조건과 마지막 장면을 다시 살펴보세요. 필요하면 답 보기를 눌러도 돼요." };
     } else if (experience.kind === "triangular-stair") {
       clearExperiencePlayback();
       const beat = experience.beats[state.experience.checkStep];
@@ -1753,7 +1789,7 @@ function bindLessonActions() {
       state.experience.checks[beat.id] = passed;
       state.experience.feedback = {
         passed,
-        message: passed ? beat.check.success : "쌓기나무를 줄마다 다시 세어 보세요. 새 층은 삼각형 바닥으로 놓입니다."
+        message: passed ? beat.check.success : "쌓기나무를 줄마다 다시 세어 보세요. 새 층은 삼각형 바닥으로 놓여요."
       };
     } else {
       state.experience.feedback = {
@@ -1916,7 +1952,7 @@ function bindLessonActions() {
         kind: "original",
         itemId: item.id,
         passed,
-        message: passed ? "맞았어요. 풀이 순서를 확인하고 다음 문제로 가요." : "조건을 식으로 다시 옮겨 보세요. 어려우면 풀이 보기 또는 넘어가기를 눌러도 됩니다."
+        message: passed ? "맞았어요. 풀이 순서를 확인하고 다음 문제로 가요." : "조건을 식으로 다시 옮겨 보세요. 어려우면 풀이 보기 또는 넘어가기를 눌러도 돼요."
       };
       return render();
     }
@@ -1959,7 +1995,7 @@ function bindLessonActions() {
     state.selections[groupId] = approvedAnswer(item);
     state.extensionAssist = "revealed";
     recordOutcome("extension", groupId, "revealed");
-    state.feedback = { kind: "extension", itemId: groupId, passed: false, message: "풀이를 확인했어요. 학습 기록에 다시 볼 문제로 표시합니다." };
+    state.feedback = { kind: "extension", itemId: groupId, passed: false, message: "풀이를 확인했어요. 학습 기록에 다시 볼 문제로 표시해요." };
     render();
   });
   $("lessonContent").querySelector("[data-extension-skip]")?.addEventListener("click", () => {
@@ -1994,6 +2030,13 @@ function renderContent() {
   }
   const lesson = activeLesson();
   teardownLessonFlow();
+  if (embed.on && embed.view === "game" && embed.handsOn) {
+    // 체험 그림·단추의 모양(golden-bell-hands-on.css)은 .gold-hands-on .hand-content 안에서만 입혀진다
+    $("lessonContent").innerHTML = '<section class="gold-hands-on hand-embed"><div class="hand-content"></div></section>';
+    mountEmbedHandsOn($("lessonContent").querySelector(".hand-content"), embed.handsOn, () => embedPost({ event: "done", view: "game", lesson: lesson.id }));
+    applyEmbed();
+    return;
+  }
   const markup = state.phase === "concept" ? renderConcept(lesson)
     : state.phase === "original" ? renderOriginal(lesson)
       : state.phase === "extension" ? renderExtension(lesson)
@@ -2009,6 +2052,7 @@ function renderContent() {
       if (playButton) playButton.textContent = "재생";
     },
     onQuestions: (lessonId) => {
+      if (embed.on) { embedPost({ event: "done", view: embed.view, lesson: lessonId }); return; }
       state.lessonId = lessonId;
       resetExperience();
       setPhase("original");
@@ -2035,7 +2079,7 @@ function renderContent() {
     bookId: book.id,
     lesson,
     rerender: () => { clearExperiencePlayback(); renderContent(); },
-    onQuestions: () => setPhase("original")
+    onQuestions: () => embed.on ? embedPost({ event: "done", view: embed.view, lesson: lesson.id }) : setPhase("original")
   });
   if (!protectedBooks.has(state.bookId)) {
     const notice = document.createElement("div");
@@ -2046,6 +2090,7 @@ function renderContent() {
     $("lessonContent").querySelectorAll('.source-animation [data-experience-action="play"]').forEach((control) => { control.disabled = true; });
   }
   scheduleTriangularAutoplay(lesson);
+  if (embed.on) applyEmbed();
 }
 
 function renderSummary() {
@@ -2069,6 +2114,71 @@ function renderSummary() {
   $("printBookButton").disabled = printPreparing || !book.lessons.length;
   $("printSelectedButton").disabled = printPreparing || !book.lessons.length;
   if ($("coverDialog").open) renderCoverPreview();
+}
+
+// ── 학생 차시 덱(study.html) 안에 끼워 쓰기: ?embed=1&lesson=&view=concept|game|bell&game= ──
+// 덱이 장을 넘기고, 이 화면은 그 장 하나만 보인다. 개념은 덩어리(제목·생각할 문제·상황·체험·정리…)를 한 장씩 보여 주고,
+// 덱의 「다음」(postMessage next)이 이 안의 장을 먼저 넘긴다. 끝까지 가면 end를 알려 덱이 다음 장으로 간다.
+// 게임을 마치거나(연결 문제 풀기) 골든벨 문항을 다 풀면 done을 알린다. 같은 사이트(origin)의 부모 창하고만 말한다.
+// 장으로 나누지 않는 것: 덱이 대신하는 단추·순서 표시(CSS가 숨긴다)와, 어느 장에서나 보여야 하는 정답 보호 안내
+const EMBED_SKIP = ".gb-flow,.gb-flow-actions,.gold-hands-on:not(.gb-flow-game),[data-next-phase],.protected-answer-notice";
+const EMBED_HEAD = "p,h1,h2,h3,h4,small";
+function embedChunks() {
+  const pages = [];
+  for (const node of $("lessonContent").children) {
+    if (node.matches(EMBED_SKIP)) continue;
+    const last = pages.at(-1);
+    const headOnly = last && last.every((el) => el.matches(EMBED_HEAD));
+    if (!last || (!node.matches(EMBED_HEAD) && !headOnly)) pages.push([node]);
+    else last.push(node);
+  }
+  return pages;
+}
+function applyEmbed() {
+  document.body.dataset.embedView = embed.view;
+  const key = `${state.lessonId}:${state.phase}:${flowStep(state.bookId, activeLesson()) || ""}`;
+  if (key !== embed.key) { embed.key = key; embed.page = embed.startAtEnd ? Infinity : 0; embed.startAtEnd = false; }
+  const pages = embed.view === "concept" && state.phase === "concept" ? embedChunks() : [];
+  embed.pages = Math.max(1, pages.length);
+  embed.page = Math.min(Math.max(0, embed.page), embed.pages - 1);
+  pages.forEach((page, index) => page.forEach((node) => node.classList.toggle("embed-off", index !== embed.page)));
+  const forward = $("lessonContent").querySelector('.gb-flow-forward[data-flow-go="examples"]');
+  embedPost({ event: "state", view: embed.view, lesson: state.lessonId, page: embed.page, pages: embed.pages, more: Boolean(forward && embed.page === embed.pages - 1), back: flowStep(state.bookId, activeLesson()) === "examples" });
+}
+function embedStep(delta) {
+  if (embed.view !== "concept" || state.phase !== "concept") { embedPost({ event: delta > 0 ? "end" : "start" }); return; }
+  const next = embed.page + delta;
+  if (next >= 0 && next < embed.pages) { embed.page = next; applyEmbed(); scrollTo(0, 0); return; }
+  const flow = flowStep(state.bookId, activeLesson());
+  if (delta > 0 && flow === "tutorial" && $("lessonContent").querySelector('.gb-flow-forward[data-flow-go="examples"]')) {
+    $("lessonContent").querySelector('.gb-flow-forward[data-flow-go="examples"]').click(); scrollTo(0, 0); return;
+  }
+  if (delta < 0 && flow === "examples") { embed.startAtEnd = true; $("lessonContent").querySelector('.gb-flow [data-flow-go="tutorial"]')?.click(); return; }
+  embedPost({ event: delta > 0 ? "end" : "start" });
+}
+function embedOpen({ lesson, view, game, atEnd = false }) {
+  const book = activeBook();
+  if (!book.lessons.some((entry) => entry.id === lesson)) return;
+  embed.view = ["concept", "game", "bell"].includes(view) ? view : "concept";
+  embed.game = String(game || "");
+  const flowGame = embed.view === "game" && lessonFlowFor(book.id, book.lessons.find((entry) => entry.id === lesson))?.game === embed.game;
+  embed.handsOn = embed.view === "game" && !flowGame ? { active: embed.game, states: embed.handsOn?.active === embed.game ? embed.handsOn.states : {} } : null;
+  embed.key = ""; embed.startAtEnd = Boolean(atEnd);
+  clearExperiencePlayback();
+  state.lessonId = lesson;
+  state.phase = "concept";
+  state.selections = {};
+  state.originalAssists = {};
+  state.originalChecks = {};
+  state.originalIndex = 0;
+  state.extensionAssist = null;
+  state.extensionIndex = 0;
+  state.feedback = null;
+  resetExperience();
+  if (flowGame) setLessonFlowStep(book.id, lesson, "game");
+  render();
+  if (embed.view === "bell") setPhase("original");
+  scrollTo(0, 0);
 }
 
 function render() {
@@ -2111,7 +2221,18 @@ $("courseSelect").addEventListener("change", (event) => {
   next.searchParams.set("book", course.books[0].id);
   location.assign(next);
 });
-$("backLink").href = `./?student=${encodeURIComponent(student)}&mode=curriculum`;
+$("backLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.bookId}`;
+// 학생 차시 화면(study.html)에서 들어오면(?as=student&back=…) 큰 제목·권 고르기·인쇄 단추·학습 목록을 접고 학습만 보인다.
+// 돌아가기는 그 차시로(같은 사이트 안의 상대 주소만 받는다).
+if (params.get("as") === "student" || embed.on) {
+  document.body.classList.add("as-student");
+  if (embed.on) document.body.classList.add("as-embed");
+  const back = params.get("back") || "";
+  if (/^\.\/[\w.-]+\.html(\?[^#]*)?$/u.test(back)) {
+    $("backLink").href = back;
+    $("backLink").innerHTML = '<span aria-hidden="true">←</span> 차시로';
+  }
+}
 $("printLessonButton").addEventListener("click", () => printLessons([activeLesson()]));
 $("printBookButton").addEventListener("click", () => printLessons(activeBook().lessons, { includeCover: true }));
 $("coursePrintMode").addEventListener("change", updateCoverButton);
@@ -2212,4 +2333,17 @@ window.addEventListener("keydown", (event) => {
   }
 });
 render();
+// ?phase=original|extension: 그 단계로 바로 간다. 개념을 아직 안 봤으면 phaseAllowed가 막아 개념부터 보여 준다.
+const requestedPhase = params.get("phase");
+if (["original", "extension"].includes(requestedPhase)) setPhase(requestedPhase);
 ensureProtectedBook(state.bookId).then(() => render());
+if (embed.on) {
+  embedOpen({ lesson: params.get("lesson") || state.lessonId, view: params.get("view") || "concept", game: params.get("game") || "" });
+  window.addEventListener("message", (event) => {
+    if (event.origin !== location.origin || event.source !== parent || event.data?.type !== "fc-study") return;
+    if (event.data.cmd === "open") embedOpen(event.data);
+    else if (event.data.cmd === "next") embedStep(1);
+    else if (event.data.cmd === "prev") embedStep(-1);
+  });
+  embedPost({ event: "ready" });
+}

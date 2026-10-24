@@ -4,6 +4,24 @@
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
 const {chromium}=require('./lib/playwright');
 const root=path.resolve(__dirname,'..'),out=process.env.NM_CONCEPT_ARTIFACTS;
+const OWNER='22222222-2222-4222-8222-222222222222';
+async function signInFixture(page,base){
+ const session={access_token:'middle-fixture-token',refresh_token:'middle-fixture-refresh',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:OWNER,email:'guardian@example.test'},password_setup_pending:false};
+ const cors={'access-control-allow-origin':'*','access-control-allow-headers':'*','access-control-allow-methods':'POST, OPTIONS'};
+ await page.route('**/functions/v1/nm-membership',r=>{
+  if(r.request().method()==='OPTIONS')return r.fulfill({status:204,headers:cors});
+  const now=Date.now();return r.fulfill({headers:cors,json:{membership:{userId:OWNER,serverNow:new Date(now).toISOString(),trialStartedAt:new Date(now-86400000).toISOString(),trialEndsAt:new Date(now+6*86400000).toISOString(),status:'trial',canUse:true},settings:null,contact:{registered:true,privacyVersion:'2026-10-22-v1',phoneMasked:'010-****-5678',smsConsent:false}}});
+ });
+ await page.route('**/auth/v1/**',r=>r.fulfill({headers:cors,json:r.request().url().includes('/token?grant_type=password')?session:session.user}));
+ await page.route('**/rest/v1/nm_profiles**',r=>r.fulfill({headers:cors,json:[]}));
+ await page.goto(base+'/access.html?lang=ko');
+ await page.click('#open-book');await page.fill('#login-user','guardian@example.test');await page.fill('#login-password','fixture-only');await page.click('#login-submit');
+ await page.waitForFunction(()=>window.NM_MEMBERSHIP?.contactReady());
+ await page.waitForSelector('#nmGuardBack');await page.click('#nmGuardBack');
+ await page.addLocatorHandler(page.locator('#nmUnlockOverlayClose'),el=>el.click(),{noWaitAfter:true});
+ await page.locator('#ttRoad:visible,.nm-title3d [data-id=road]:visible').first().waitFor();
+ await page.locator('#ttRoad:visible,.nm-title3d [data-id=road]:visible').first().click();
+}
 const server=http.createServer((req,res)=>{
   const f=path.resolve(root,'.'+decodeURIComponent(req.url.split('?')[0]));
   if(!f.startsWith(root+path.sep)||!fs.existsSync(f)||!fs.statSync(f).isFile()){res.writeHead(404);return res.end();}
@@ -19,13 +37,11 @@ const server=http.createServer((req,res)=>{
     page.on('pageerror',e=>errors.push(e.message));
     await page.addInitScript(()=>{
       window.NM_NO_AUTOPRINT=true;window.print=()=>{};
-      localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'진도 검수',view:'courseroad',avatar:{kind:'boy'},cloudLinked:false,progress:{},account:{status:'active'},placement:{course:'C29',self:true},roadCadence:'w2'}));
+      localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'진도 검수',view:'courseroad',avatar:{kind:'boy'},cloudLinked:true,cloudOwnerId:'22222222-2222-4222-8222-222222222222',progress:{},account:{status:'active'},placement:{course:'C29',self:true},roadCadence:'w1'}));
     });
     for(const width of [1440,390]){
       await page.setViewportSize({width,height:1100});
-      await page.goto('http://127.0.0.1:'+server.address().port+'/index.html?enter=1',{waitUntil:'networkidle'});
-      if(await page.locator('#ttRoad').isVisible())await page.locator('#ttRoad').click();
-      if(await page.locator('#townCourseRoad').isVisible())await page.locator('#townCourseRoad').click();
+      await signInFixture(page,'http://127.0.0.1:'+server.address().port);
       await page.waitForSelector('#middlePacing1');
       assert.equal(await page.locator('.nm-middle-pacing').count(),3);
       /* 2026-09-25: 보기는 정규 과정에서 계산된다 — 기대값도 데이터에서 읽는다(옛 판은 42·14 고정) */
@@ -35,6 +51,7 @@ const server=http.createServer((req,res)=>{
       for(const grade of [1,2,3]){
         const plan=page.locator('#middlePacing'+grade);
         await plan.locator('summary').click();
+        assert.match(await plan.locator('.nm-mp-summeta').innerText(),/기본\s*10주.*속진\s*8주/);
         assert.equal(await plan.locator('.nm-mp-session').count(),expect[grade-1].n);
         const buttons=plan.locator('[data-middle-session]');
         await buttons.first().focus();await page.keyboard.press('Enter');

@@ -34,10 +34,14 @@ const allBefore=JSON.stringify(state);
 assert.equal(W.humans(state,{...one,outfit:'starry'},[{...one,outfit:'starry'},two],H),false,'cannot equip unpaid outfit');
 assert.equal(W.humans(state,one,[one,one],H),false,'duplicate character IDs rejected');assert.equal(JSON.stringify(state),allBefore);
 assert.equal(W.reward(state,-5,'attendance'),false);assert.equal(W.reward(state,NaN,'attendance'),false);
-assert.equal(W.reward(state,3,'attendance'),true);assert.equal(state.coins,58);
+assert.equal(W.reward(state,3,'attendance'),true);assert.equal(state.coins,56);
 assert.equal(state.coinLedger.at(-1).reason,'attendance');assert.equal(state.coinLedger.length,3);
 assert.equal(state.character_unlocked.number_42,true,'existing course unlock retained');
-for(let i=0;i<110;i++)W.reward(state,1,'training');assert.equal(state.coinLedger.length,100,'bounded history');
+for(let i=0;i<110;i++){
+  const day=new Date(Date.UTC(2026,9,24+i)).toISOString();
+  assert.equal(W.reward(state,1,'training','history-'+i,day),true);
+}
+assert.equal(state.coinLedger.length,100,'bounded history across multiple capped days');
 assert.equal(invariant,JSON.stringify({name:state.name,owner_id:state.owner_id,progress:state.progress,account:state.account}),'cosmetics never change student, guardian, progress or membership');
 const restored={avatar:{kind:'girl'},avatarCollection:[{id:'partial',name:'보존한 이름',look:'night-boy',outfit:'royal'}],character_unlocked:{}};
 W.normalizeAvatars(restored,H);assert.equal(restored.avatar.kind,'girl');assert.equal(restored.avatarCollection.length,2);

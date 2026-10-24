@@ -1,0 +1,192 @@
+/* 인쇄 양식(print-templates.js) — 표지·단원 내지·본문 꼴·단 수·쪽 번호.
+   색·글꼴 규칙: .claude/skills/gfield-textbook-design/SKILL.md (따뜻한 종이 + 깊은 초록, 파랑 금지). */
+@font-face{font-family:'FC Sans';src:url('./assets/fonts/pretendard-var.woff2') format('woff2');font-weight:100 700;font-style:normal;font-display:swap}
+@font-face{font-family:'FC Serif';src:url('./assets/fonts/noto-serif-kr-korean-400-normal.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'FC Serif';src:url('./assets/fonts/noto-serif-kr-korean-600-normal.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'FC Serif';src:url('./assets/fonts/noto-serif-kr-korean-700-normal.woff2') format('woff2');font-weight:700;font-display:swap}
+
+/* ── 고르는 패널(화면 전용) ───────────────────────────── */
+.pt-panel{margin:0 0 10px;border:1px solid #e2d9c6;border-radius:6px;background:#fdfbf5;color:#2a241c;font-family:'FC Sans',system-ui,sans-serif}
+.pt-panel>summary{display:flex;align-items:baseline;gap:10px;min-height:44px;padding:12px 14px;cursor:pointer;list-style:none}
+.pt-panel>summary::-webkit-details-marker{display:none}
+.pt-panel>summary strong{font-size:13px;font-weight:700}
+.pt-panel>summary span{color:#7a6f5c;font-size:11px}
+.pt-panel>summary::after{content:'접기';margin-left:auto;color:#2f6b4a;font-size:11px;font-weight:600}
+.pt-panel:not([open])>summary::after{content:'열기'}
+.pt-body{display:grid;gap:10px;padding:2px 14px 14px;border-top:1px solid #e2d9c6}
+.pt-group{margin:0;padding:10px 0 0;border:0}
+.pt-group legend{padding:0;margin-bottom:6px;color:#7a6f5c;font-size:11px;font-weight:600}
+.pt-group>div{display:flex;flex-wrap:wrap;gap:6px}
+.pt-chip{position:relative;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border:1px solid #d8ccb4;border-radius:4px;background:#fff;color:#40392e;font-size:12px;font-weight:500;cursor:pointer}
+.pt-chip input{position:absolute;opacity:0;pointer-events:none}
+.pt-chip:has(input:checked){border-color:#2f6b4a;background:#e9f0e7;color:#1e4631;font-weight:700;box-shadow:inset 3px 0 0 #2f6b4a}
+.pt-chip:has(input:focus-visible){outline:2px solid #2f6b4a;outline-offset:2px}
+.pt-chip i{display:block;width:14px;height:14px;border-radius:3px}
+.pt-cover-fields{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,2fr) minmax(0,1fr);gap:8px;padding:8px 10px 10px;border-left:3px solid #e9f0e7}
+.pt-cover-fields[hidden],.pt-ground[hidden]{display:none}
+.pt-cover-fields label{display:grid;gap:4px;color:#7a6f5c;font-size:11px;font-weight:600}
+.pt-cover-fields input{width:100%;min-width:0;box-sizing:border-box;min-height:40px;padding:0 10px;border:1px solid #d8ccb4;border-radius:4px;background:#fff;color:#2a241c;font:inherit;font-size:13px}
+.pt-ground{grid-column:1/-1}
+.pt-ground .pt-group{padding-top:0}
+/* 표지 고르기 — 실제 표지를 작게 그린 카드(cover-designs.js) */
+.pt-cover-group legend small{margin-left:4px;color:#a89c87;font-weight:500}
+.pt-cover-group>.pt-cover-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.pt-cover-card small{display:block;color:#a87c22;font-size:10px;font-weight:600}
+.pt-cover-card{position:relative;display:grid;gap:5px;padding:6px;border:1px solid #d8ccb4;border-radius:5px;background:#fff;color:#40392e;font-size:11.5px;line-height:1.3;cursor:pointer}
+.pt-cover-card input{position:absolute;z-index:2;opacity:0;inset:0;margin:0;cursor:pointer}
+.pt-cover-card .cv-thumb{pointer-events:none}
+.pt-cover-card:has(:checked){border-color:#2f6b4a;background:#e9f0e7;box-shadow:inset 0 0 0 1px #2f6b4a;color:#1e4631;font-weight:600}
+.pt-cover-card:has(:focus-visible){outline:2px solid #2f6b4a;outline-offset:2px}
+.pt-cover-none{display:block;aspect-ratio:210/297;border:1px dashed #c9bda2;border-radius:2px;background:#fdfbf5}
+.pt-switch{display:flex;align-items:center;gap:8px;min-height:44px;font-size:12px;font-weight:600;cursor:pointer}
+.pt-switch input{width:18px;height:18px;accent-color:#2f6b4a}
+.pt-switch small{color:#7a6f5c;font-weight:400}
+@media(max-width:560px){.pt-cover-fields{grid-template-columns:1fr}.pt-chip{flex:1 1 calc(50% - 6px)}}
+@media print{.pt-panel-host{display:none!important}}
+.pt-panel-host{position:relative;z-index:3}
+
+/* ── 종이(표지·단원 내지) — 화면에서는 폭에 맞춰 줄고, 인쇄에서는 A4 한 장 ── */
+.pt-lead{display:grid;gap:12px;justify-items:center;margin-bottom:12px}
+.pt-lead:empty{display:none}
+.pt-paper{container-type:inline-size;width:min(210mm,100%);aspect-ratio:210/297;margin:0 auto;background:#fff;box-shadow:0 2px 4px rgba(70,55,25,.12),0 14px 34px rgba(70,55,25,.16);overflow:hidden}
+.question-grid>.pt-paper{margin:12px auto}
+.pt-in{--mm:calc(100cqw / 210);position:relative;display:flex;flex-direction:column;height:100%;padding:calc(var(--mm)*16) calc(var(--mm)*15) calc(var(--mm)*10);color:#191511;font-family:'FC Sans',system-ui,sans-serif;font-size:calc(var(--mm)*3.6);line-height:1.6;box-sizing:border-box}
+.pt-foot{display:flex;justify-content:space-between;gap:10px;margin-top:auto;padding-top:calc(var(--mm)*2);border-top:1px solid #c8bfae;color:#6c6353;font-family:'FC Sans',system-ui,sans-serif;font-size:calc(var(--mm)*3)}
+.pt-pg-off .pt-pg{visibility:hidden}
+
+/* 표지 — 쪽 번호 없음 */
+.pt-cover .pt-in{padding:0}
+.pt-cover .pt-art{position:absolute;inset:0;width:100%;height:100%;font-family:'FC Sans',sans-serif}
+.pt-plate{position:absolute;z-index:2;top:calc(var(--mm)*17);left:calc(var(--mm)*12);right:calc(var(--mm)*12)}
+.pt-eyebrow{display:inline-flex;align-items:center;gap:calc(var(--mm)*2);margin-bottom:calc(var(--mm)*4);font-size:calc(var(--mm)*2.7);font-weight:600;letter-spacing:.2em}
+.pt-eyebrow::before{content:"";width:calc(var(--mm)*7);height:calc(var(--mm)*.6);background:currentColor}
+.pt-cover h1{margin:0;font-size:calc(var(--mm)*9.2);font-weight:700;letter-spacing:-.03em;line-height:1.22;word-break:keep-all}
+.pt-sub{display:block;margin-top:calc(var(--mm)*3.5);color:#8a7e6b;font-size:calc(var(--mm)*3.2);font-weight:500}
+.pt-pub{position:absolute;z-index:3;bottom:calc(var(--mm)*8);left:calc(var(--mm)*12);right:calc(var(--mm)*12);display:flex;justify-content:space-between;color:#a89c87;font-size:calc(var(--mm)*2.5);font-weight:600;letter-spacing:.14em}
+.pt-cover-a .pt-in{background:#fff}
+.pt-cover-a .pt-eyebrow{color:#2f6b4a}
+.pt-cover-a h1{color:#211c15}
+.pt-cover-lv{position:absolute;z-index:2;top:calc(var(--mm)*15);right:calc(var(--mm)*12);display:grid;place-items:center;min-width:calc(var(--mm)*12);height:calc(var(--mm)*12);padding:0 calc(var(--mm)*3);border-radius:999px;background:#211c15;color:#fff;font-size:calc(var(--mm)*3.7);font-weight:700;box-sizing:border-box}
+.pt-cover-b .pt-plate{top:calc(var(--mm)*19)}
+.pt-cover-b .pt-eyebrow{color:#d9a62e}
+.pt-cover-b h1{color:#f7f2e7;font-size:calc(var(--mm)*8.5)}
+.pt-cover-b .pt-sub{color:#c9bfa8}
+.pt-cover-b .pt-pub{color:#b9ad93}
+.pt-cover-c .pt-in{background:#faf7f0}
+.pt-cover-c .pt-eyebrow{color:#b4512e}
+.pt-cover-c h1{color:#211c15;font-size:calc(var(--mm)*8.8)}
+.pt-cover-num{position:absolute;z-index:2;top:calc(var(--mm)*13);right:calc(var(--mm)*12);color:#b4512e;font-size:calc(var(--mm)*10.6);font-weight:250;line-height:1}
+
+/* 단원 내지 A — 목차형 */
+.pt-unit h1{font-family:'FC Serif',serif;font-weight:700;word-break:keep-all}
+.pt-u1-band{position:relative;margin:calc(var(--mm)*-16) calc(var(--mm)*-15) 0;padding:calc(var(--mm)*14) calc(var(--mm)*15) calc(var(--mm)*10);border-radius:0 0 calc(var(--mm)*14) calc(var(--mm)*14);background:#e9f0e7}
+.pt-u1-no{position:absolute;top:calc(var(--mm)*12);left:calc(var(--mm)*15);color:#2f6b4a;font-size:calc(var(--mm)*16);font-weight:200;line-height:1}
+.pt-u1-grade{position:absolute;top:calc(var(--mm)*12);right:calc(var(--mm)*15);display:grid;place-items:center;width:calc(var(--mm)*17);height:calc(var(--mm)*17);border-radius:50%;background:#2f6b4a;color:#fff;font-size:calc(var(--mm)*4.4);font-weight:700}
+.pt-u1-band h1{margin:calc(var(--mm)*17) 0 0;font-size:calc(var(--mm)*7.8)}
+.pt-u1-band p{margin:calc(var(--mm)*2) 0 0;color:#4a5f4c;font-size:calc(var(--mm)*3.4)}
+.pt-u1-list{margin-top:calc(var(--mm)*9);border-top:1.2px solid #191511}
+.pt-u1-list .hd,.pt-u1-row{display:grid;grid-template-columns:calc(var(--mm)*10) 1fr calc(var(--mm)*18) calc(var(--mm)*22) calc(var(--mm)*12);align-items:center}
+.pt-u1-list .hd{padding:calc(var(--mm)*1.6) 0;border-bottom:1px solid #c8bfae;color:#938a77;font-size:calc(var(--mm)*2.7);font-weight:700}
+.pt-u1-row{min-height:calc(var(--mm)*11);border-bottom:1px solid #e6e0d2;font-size:calc(var(--mm)*3.5)}
+.pt-u1-row .n{color:#2f6b4a;font-weight:700}
+.pt-u1-row .d{color:#938a77;font-size:calc(var(--mm)*3)}
+.pt-u1-row .c{justify-self:center;width:calc(var(--mm)*6);height:calc(var(--mm)*6);border:1px solid #c8bfae;border-radius:50%}
+.pt-u1-foot{display:flex;align-items:center;gap:calc(var(--mm)*5);margin-top:calc(var(--mm)*10);padding:calc(var(--mm)*5) calc(var(--mm)*6);border-radius:calc(var(--mm)*4);background:#faf4e4}
+.pt-u1-foot svg{flex:0 0 auto}
+.pt-u1-foot p{margin:0;color:#6b5d3f;font-size:calc(var(--mm)*3.2);line-height:1.6}
+.pt-u1-foot b{color:#191511}
+
+/* 단원 내지 B — 배움 지도형 */
+.pt-u2-head{display:grid;grid-template-columns:auto 1fr;gap:calc(var(--mm)*6);align-items:center;padding-bottom:calc(var(--mm)*5);border-bottom:2.6px double #191511}
+.pt-u2-no{display:grid;place-items:center;width:calc(var(--mm)*20);height:calc(var(--mm)*20);border-radius:calc(var(--mm)*6);background:#2f6b4a;color:#fff;font-size:calc(var(--mm)*7.8);font-weight:700}
+.pt-u2-head h1{margin:0;font-size:calc(var(--mm)*7.4)}
+.pt-u2-head small{display:block;margin-top:calc(var(--mm)*1);color:#938a77;font-size:calc(var(--mm)*3.2);font-weight:600}
+.pt-u2-label{margin:calc(var(--mm)*8) 0 calc(var(--mm)*3);color:#1e4631;font-size:calc(var(--mm)*3.2);font-weight:700}
+.pt-u2-map{display:grid;gap:calc(var(--mm)*3)}
+.pt-u2-step{position:relative;display:grid;grid-template-columns:calc(var(--mm)*26) 1fr;align-items:center;gap:calc(var(--mm)*4);padding:calc(var(--mm)*4) calc(var(--mm)*5);border:1px solid #d8ccb4;border-radius:calc(var(--mm)*3);background:#fff}
+.pt-u2-step+.pt-u2-step::before{content:"";position:absolute;top:calc(var(--mm)*-3.2);left:calc(var(--mm)*12.5);width:1.5px;height:calc(var(--mm)*3.2);background:#c8bfae}
+.pt-u2-step b{font-size:calc(var(--mm)*3.7)}
+.pt-u2-step .tag{justify-self:start;padding:calc(var(--mm)*1) calc(var(--mm)*3);border-radius:999px;background:#e9f0e7;color:#1e4631;font-size:calc(var(--mm)*2.8);font-weight:700}
+.pt-u2-step.now{border-color:#2f6b4a;box-shadow:inset 0 0 0 1.5px #2f6b4a}
+.pt-u2-step.now .tag{background:#2f6b4a;color:#fff}
+.pt-u2-step p{margin:calc(var(--mm)*.6) 0 0;color:#6c6353;font-size:calc(var(--mm)*3.1)}
+.pt-u2-ready{padding:calc(var(--mm)*5) calc(var(--mm)*6);border-left:calc(var(--mm)*1.2) solid #b4512e;background:#fbf3ee}
+.pt-u2-ready ol{margin:0;padding-left:0;list-style:none;font-family:'FC Serif',serif;font-size:calc(var(--mm)*3.6)}
+.pt-u2-ready li+li{margin-top:calc(var(--mm)*1.6)}
+.pt-u2-ready li b{display:inline-block;min-width:calc(var(--mm)*16);font-family:'FC Sans',sans-serif;color:#8f3c1c;font-size:calc(var(--mm)*3.1)}
+
+/* 단원 내지 C — 포스터형 */
+.pt-u3-art{position:absolute;top:0;right:0;width:calc(var(--mm)*80);height:calc(var(--mm)*100)}
+.pt-u3-no{position:relative;color:#b4512e;font-size:calc(var(--mm)*5.3);font-weight:250;letter-spacing:.3em}
+.pt-u3-title{position:relative;max-width:calc(var(--mm)*100);margin:calc(var(--mm)*3) 0 0;font-size:calc(var(--mm)*8.5);line-height:1.3}
+.pt-u3-lead{position:relative;max-width:calc(var(--mm)*98);margin:calc(var(--mm)*5) 0 0;color:#40392e;font-family:'FC Serif',serif;font-size:calc(var(--mm)*3.7);line-height:1.8;word-break:keep-all}
+.pt-u3-goals{display:grid;gap:calc(var(--mm)*3);max-width:calc(var(--mm)*150);margin-top:calc(var(--mm)*30)}
+.pt-u3-goal{display:grid;grid-template-columns:calc(var(--mm)*8) 1fr;gap:calc(var(--mm)*3);align-items:baseline;font-size:calc(var(--mm)*3.6)}
+.pt-u3-goal i{display:grid;place-items:center;width:calc(var(--mm)*7);height:calc(var(--mm)*7);border-radius:50%;background:#191511;color:#fff;font-size:calc(var(--mm)*2.8);font-style:normal;font-weight:700}
+.pt-u3-goal small{color:#938a77;font-size:calc(var(--mm)*3)}
+.pt-u3-start{align-self:flex-start;margin-top:calc(var(--mm)*11);padding:calc(var(--mm)*2.6) calc(var(--mm)*7);border-radius:999px;background:#2f6b4a;color:#fff;font-size:calc(var(--mm)*3.4);font-weight:700}
+
+/* ── 문항 쪽 바닥글 ───────────────────────────────── */
+.question-page>.pt-foot{grid-column:1/-1;align-self:end;font-size:10px}
+
+/* ── 머리말: 꼴에 따라 보이는 칸 ─────────────────────── */
+.worksheet-head .pt-only-exam,.worksheet-head .pt-only-lesson{display:none}
+.pt-form-exam .worksheet-head .pt-only-exam{display:flex}
+.pt-form-lesson .worksheet-head .pt-only-lesson{display:grid}
+
+/* ── 본문 꼴: 시험지형(흑백·명조 본문) ─────────────────── */
+.pt-form-exam .worksheet-head{align-items:flex-end;border:0;border-bottom:4px double #191511;background:#fff;font-family:'FC Sans',system-ui,sans-serif}
+.pt-form-exam .worksheet-head span{color:#6c6353;letter-spacing:.2em}
+.pt-form-exam .worksheet-head h1{font-family:'FC Serif',serif;font-size:26px;font-weight:700}
+.pt-form-exam .worksheet-head dt{color:#6c6353}
+.pt-form-exam .worksheet-head dd{min-width:64px;border-bottom-color:#191511}
+.pt-form-exam .question-grid{border:0;background:#fff}
+.pt-form-exam .question-card{border:0;border-top:1px solid #d8d0bf;border-radius:0;background:#fff;font-family:'FC Sans',system-ui,sans-serif}
+.pt-form-exam .question-type,.pt-form-exam .question-style-tags,.pt-form-exam .question-reference,.pt-form-exam .question-concept,.pt-form-exam .study-stage-banner,.pt-form-exam .concept-guide,.pt-form-exam .textbook-concept-tutorial{display:none!important}
+.pt-form-exam .question-number{color:#191511;font-size:16px;font-weight:700}
+.pt-form-exam .question-number::after{content:'.'}
+.pt-form-exam .question-prompt{margin-top:6px;color:#191511;font-family:'FC Serif',serif;font-size:14.5px;font-weight:400;line-height:1.75}
+.pt-form-exam .answer-line{justify-content:flex-end;color:#40392e}
+.pt-form-exam .answer-input{width:110px;border-bottom:1px solid #40392e;background:#fff}
+
+/* ── 본문 꼴: 교재형(초록 하나 옅게) ─────────────────── */
+.worksheet-head .pt-lesson-no{place-items:center;letter-spacing:0;width:42px;height:42px;border:2px solid #2f6b4a;border-radius:50%;color:#2f6b4a;font-size:18px;font-weight:700}
+.pt-form-lesson .worksheet-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;border:0;border-bottom:4px double #191511;background:#fff;font-family:'FC Sans',system-ui,sans-serif}
+.pt-form-lesson .worksheet-head>div:first-of-type span{color:#2f6b4a;letter-spacing:.14em}
+.pt-form-lesson .worksheet-head h1{font-family:'FC Serif',serif;font-size:24px;font-weight:700}
+.pt-lesson-goal{margin:4px 0 0;color:#5c5346;font-size:12px;font-weight:500}
+.pt-form-lesson .question-grid{border:0;background:#fff}
+.pt-form-lesson .question-card{border:0;border-top:1px solid #e6e0d2;border-radius:0;background:#fff;font-family:'FC Sans',system-ui,sans-serif}
+.pt-form-lesson .question-number{color:#1e4631;font-size:15px;font-weight:700}
+.pt-form-lesson .question-number::before{content:'문제 '}
+.pt-form-lesson .question-number::after{content:'.'}
+.pt-form-lesson .question-type{color:#7a6f5c}
+.pt-form-lesson .question-style-tags span{border-color:#bccbbd;background:#e9f0e7;color:#1e4631}
+.pt-form-lesson .concept-guide,.pt-form-lesson .question-concept{border:1px solid #bccbbd;border-radius:4px;background:#f3f6f1;box-shadow:inset 4px 0 0 #2f6b4a;color:#1e4631}
+.pt-form-lesson .question-prompt{color:#191511;font-family:'FC Serif',serif;font-size:14.5px;font-weight:400;line-height:1.7}
+.pt-form-lesson .answer-line{justify-content:flex-end}
+.pt-form-lesson .answer-input{width:110px;border-bottom:1px solid #40392e;background:#fff}
+.pt-form-lesson .question-reference{color:#a87c22}
+.pt-form-lesson .study-stage-banner{border-left-color:#2f6b4a;background:#f3f6f1;color:#3f5a44}
+.pt-form-lesson .study-stage-banner strong{color:#1e4631}
+
+@media print{
+  .pt-lead{display:block;margin:0}
+  .pt-paper,.question-grid>.pt-paper{width:210mm;height:296mm;aspect-ratio:auto;margin:0;box-shadow:none;break-after:page;page-break-after:always;break-inside:avoid}
+  .pt-paper .pt-in{--mm:1mm}
+  .pt-cover .pt-in,.pt-paper{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  /* 머리말이 있는 첫 문항 쪽만 245mm, 그 뒤 쪽은 종이 아래까지 채운다. */
+  .question-grid>.question-page~.question-page,.question-grid>.pt-paper~.question-page{min-height:280mm}
+  /* 바닥글이 쪽 높이를 늘리지 않게 쪽의 아래 여백(11px) 안에 한 줄로 띄운다 — 첫 쪽은 머리말과 함께 A4 한 장에 들어가야 하고 여유가 몇 px뿐이다. */
+  .question-page{position:relative}
+  .question-page>.pt-foot{position:absolute;left:13px;right:13px;bottom:1px;margin:0;padding:0;border-top:0;font-size:9px;line-height:10px}
+  .pt-form-exam .question-card,.pt-form-lesson .question-card{border-top-color:#c8bfae}
+  .pt-form-exam .question-page>.question-card:first-child,.pt-form-lesson .question-page>.question-card:first-child{border-top:0}
+  /* 2단: 쪽당 4문항(2×2). 그림이 큰 문항은 1단을 권한다. */
+  .pt-cols-2 .question-page{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr)) auto;column-gap:5mm}
+  .pt-cols-2 .question-card{min-height:0;padding:10px 11px}
+  .pt-cols-2 .question-prompt{font-size:12px;line-height:1.6}
+  .pt-cols-2 .question-card svg{max-width:100%;height:auto}
+  .pt-cols-2.pt-form-exam .question-page>.question-card:nth-child(2){border-top:0}
+  .pt-cols-2.pt-form-lesson .question-page>.question-card:nth-child(2){border-top:0}
+}

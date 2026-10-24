@@ -1241,8 +1241,8 @@ export const DIAGNOSTIC_EXAM_TYPES = [
   {
     id: "diagnostic-mock",
     stage: "diagnostic",
-    label: "FC 대비 선발 진단 모의고사",
-    file: "FC 대비 선발 진단 모의고사 · 25문항",
+    label: "선발 진단 모의고사",
+    file: "선발 진단 모의고사 · 25문항",
     sourceViewer: false,
     questions: [
       question(1, "diagnostic-part-whole-bar", "부분 막대의 길이로 전체와 남은 부분 구하기"),
@@ -1375,9 +1375,9 @@ const stageReferences = ({ concept = [], type: typeRefs = [], practice = [], adv
 // 유형에서는 그 발판 없이 직접 적용하게 한다. 연습과 심화는 구조 난이도를 높인다.
 export const TEXTBOOK_STAGES = Object.freeze([
   { id: "concept", label: "개념", sourceLabel: "활동·예시", difficulty: 1, description: "핵심 원리와 풀이 발판을 보고 시작합니다." },
-  { id: "type", label: "유형", sourceLabel: "더클 확인", difficulty: 1, description: "같은 원리를 발판 없이 직접 적용합니다." },
-  { id: "practice", label: "연습", sourceLabel: "더클 연습", difficulty: 2, description: "수와 표현이 달라진 누적 문제를 풉니다." },
-  { id: "advanced", label: "심화", sourceLabel: "더클 도전", difficulty: 3, description: "조건과 풀이 단계를 결합한 문제를 풉니다." }
+  { id: "type", label: "유형", sourceLabel: "본책 확인", difficulty: 1, description: "같은 원리를 발판 없이 직접 적용합니다." },
+  { id: "practice", label: "연습", sourceLabel: "본책 연습", difficulty: 2, description: "수와 표현이 달라진 누적 문제를 풉니다." },
+  { id: "advanced", label: "심화", sourceLabel: "본책 도전", difficulty: 3, description: "조건과 풀이 단계를 결합한 문제를 풉니다." }
 ]);
 
 const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
@@ -2029,7 +2029,8 @@ const CURRICULUM_TEST_FILES = {
 };
 
 const CURRICULUM_TEST_PAGE_COUNTS = {
-  "book-01": 7, "book-02": 6, "book-03": 6, "book-04": 7, "book-05": 7,
+  // 원문 PPT의 문제 슬라이드(표지·빈 쪽·답안 슬라이드 제외) 수. 2026-10-24 원본 비율 그대로 다시 렌더(page-01~07).
+  "book-01": 7, "book-02": 7, "book-03": 7, "book-04": 7, "book-05": 7,
   "book-06": 7, "book-07": 7, "book-08": 7, "book-09": 7, "book-10": 7
 };
 
@@ -4365,7 +4366,7 @@ export const CURRICULUM = [
   return {
     ...book,
     source: {
-      textbook: `더클래식 1과정 ${index + 1}권 수업용 교재`,
+      textbook: `1과정 ${index + 1}권 수업용 교재`,
       unitTest: CURRICULUM_TEST_FILES[book.id],
       unitTestQuestionCount: 25,
       unitTestPageCount: CURRICULUM_TEST_PAGE_COUNTS[book.id],

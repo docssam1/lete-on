@@ -1,4 +1,4 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261003d";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261024r";
 import { GENERATORS } from "./generators.js?v=20260918b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
@@ -12,6 +12,7 @@ import { book08Markup } from "./book08-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
+import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261024r";
 
 const {
   ageStages: AGE_STAGES,
@@ -34,6 +35,16 @@ const {
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
+// 권별테스트를 「유사형」(같은 구조, 새 숫자)으로 만들 때. 기본은 늘 같은 문제가 나오는 원본형.
+const freshUnitTest = params.get("fresh") === "1";
+// 학생용(?as=student): 본책에서 모르는 문제를 누르고 들어온 화면. 편집·인쇄 도구를 숨기고 「답 확인 · 다른 문제」만 둔다.
+// &ref=활동 3 : 본책 문항 이름(제목에 씀) · &back=<주소> : 돌아갈 번호판(같은 사이트 안의 상대 주소만)
+const asStudent = params.get("as") === "student";
+const studentRef = params.get("ref") || "";
+const studentBack = /^\.\/[\w.-]+\.html(\?[^#]*)?$/u.test(params.get("back") || "") ? params.get("back") : "";
+if (asStudent) document.body.classList.add("as-student");
+// 학생 차시 덱(study.html)의 유사문제 창 안(?embed=1): 머리줄은 덱이 맡는다
+if (asStudent && params.get("embed") === "1" && parent !== window) document.body.classList.add("as-embed");
 const domainIndex = Object.fromEntries(DOMAINS.map((domain, index) => [domain.id, index]));
 const EXAM_SOURCES = [...DIAGNOSTIC_EXAM_TYPES, ...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES];
 const OUR_MOCK_EXAM_GROUPS = [
@@ -78,8 +89,14 @@ const state = {
   order: "exam",
   includeSolution: true,
   watermark: true,
+  printTemplate: loadPrintTemplate(),
   questions: []
 };
+// 시작 화면의 「수업형」은 교재형 본문(?form=lesson)으로 연다. 이번 한 번만이고 저장된 선택은 바꾸지 않는다.
+if (PRINT_TEMPLATE_OPTIONS.form.some((option) => option.id === params.get("form"))) state.printTemplate.form = params.get("form");
+// 학생 화면은 표지·내지 없이 문제만(저장된 인쇄 양식은 바꾸지 않는다 — 패널을 건드리지 않으면 저장되지 않는다).
+if (asStudent) state.printTemplate = { ...state.printTemplate, cover: "none", unit: "none", form: "basic", cols: "1" };
+let printTemplatePanel = null;
 
 function normalizeSearchText(value) {
   return String(value || "").normalize("NFKC").toLocaleLowerCase("ko-KR").replace(/\s+/g, " ").trim();
@@ -286,12 +303,25 @@ function positionTypePreview(anchor) {
   const margin = 12;
   const width = Math.min(390, window.innerWidth - margin * 2);
   panel.style.width = `${width}px`;
-  const left = rect.right + margin + width <= window.innerWidth
-    ? rect.right + margin
-    : Math.max(margin, rect.left - width - margin);
-  const top = Math.max(margin, Math.min(rect.top, window.innerHeight - panel.offsetHeight - margin));
-  panel.style.left = `${left}px`;
-  panel.style.top = `${top}px`;
+  panel.style.maxHeight = "";
+  const fitsRight = rect.right + margin + width <= window.innerWidth;
+  const fitsLeft = rect.left - width - margin >= 0;
+  if (fitsRight || fitsLeft) {
+    const left = fitsRight ? rect.right + margin : rect.left - width - margin;
+    const top = Math.max(margin, Math.min(rect.top, window.innerHeight - panel.offsetHeight - margin));
+    panel.style.left = `${left}px`;
+    panel.style.top = `${top}px`;
+    return;
+  }
+  // 좁은 창에서는 옆자리가 없다. 그때 미리보기가 가리키는 줄을 덮으면 그 줄의 체크칸을 누를 수 없으므로,
+  // 줄의 아래나 위(넓은 쪽)에 두고 그 공간 안으로 높이를 줄인다.
+  const below = window.innerHeight - rect.bottom - margin * 2;
+  const above = rect.top - margin * 2;
+  const room = Math.max(below, above, 120);
+  panel.style.maxHeight = `${room}px`;
+  const height = Math.min(panel.offsetHeight, room);
+  panel.style.left = `${margin}px`;
+  panel.style.top = `${below >= above ? rect.bottom + margin : Math.max(margin, rect.top - margin - height)}px`;
 }
 
 function textbookConceptTutorialMarkup(problem, compact = false) {
@@ -476,7 +506,7 @@ function renderExamList() {
   $("examStageMeta").textContent = hasQuery ? `${resultCount}개 문항 검색 결과` : `${exams.length}개 시험지 · 원본 문항 번호 기준`;
   updateSearchStatus(resultCount, "시험 문항");
   $("examNotice").textContent = state.stage === "diagnostic"
-    ? "FC 대비 선발 진단 모의고사의 문항을 고릅니다. 문항 구조를 유지한 유사문제를 만들 수 있습니다."
+    ? "선발 진단 모의고사의 문항을 고릅니다. 문항 구조를 유지한 유사문제를 만들 수 있습니다."
     : mockStage
       ? `${mockStage.label}의 문항을 고릅니다. 실제 출제 구조를 기준으로 유사문제를 만듭니다.`
       : "원본 선발시험의 문항 번호를 고른 뒤 유사문제를 만듭니다. 원본 시험 진단은 정답 대조가 끝난 시험지부터 별도로 제공합니다.";
@@ -573,8 +603,8 @@ function studyReferenceLabel(references = []) {
       : `${twoDigits(reference.from)}~${twoDigits(reference.to)}`;
     if (reference.section === "activity") return `활동 ${twoDigits(reference.group)} 본문 ${range}`;
     if (reference.section === "check") return `활동 ${twoDigits(reference.group)} 확인 ${range}`;
-    if (reference.section === "practice") return `더클 연습 ${range}`;
-    return `더클 도전 ${range}`;
+    if (reference.section === "practice") return `본책 연습 ${range}`;
+    return `본책 도전 ${range}`;
   }).join(" · ");
 }
 
@@ -910,7 +940,7 @@ function selectedReferences() {
           typeId: question.typeId,
           reference: `${book.label} 단원 테스트 ${number}번 · ${question.label}`,
           difficulty: question.difficulty || 2,
-          fixedSeed: `unit-test:${book.id}:${number}`,
+          fixedSeed: freshUnitTest ? null : `unit-test:${book.id}:${number}`,
           classification: question.classification,
           generationCase: generationCaseForSource("unit-test", book.id, number)
         });
@@ -1162,6 +1192,8 @@ function buildQuestions() {
     return;
   }
   state.questions = questions;
+  mountPrintTemplate();
+  printTemplatePanel.resetCoverText(printTemplateInfo(worksheetTitleText()));
   renderWorksheet();
   $("builderPanel").hidden = true;
   $("worksheetSection").hidden = false;
@@ -1256,6 +1288,7 @@ function bindQuestionEditor() {
     if (button.dataset.questionAction === "replace") replaceQuestion(index);
     if (button.dataset.questionAction === "remove") removeQuestion(index);
   }));
+  bindStudentChecks(grid);
   grid.querySelectorAll(".answer-input").forEach((input) => input.addEventListener("input", () => {
     const index = Number(input.dataset.questionIndex);
     if (state.questions[index]) state.questions[index].responseValue = input.value;
@@ -1974,7 +2007,9 @@ function balanceScaleFourObjectsMarkup(visual) {
 
 function symbolRelationsMarkup(visual) {
   const repeat = (symbol, count) => Array.from({ length: count }, () => symbol).join(" + ");
-  return `<div class="symbol-relations">${visual.hint ? `<small>${visual.hint}</small>` : ""}<p>${repeat("☆", visual.firstStar)} = ${repeat("○", visual.firstCircle)}</p><p>☆ + ○ = ▽ + ▽</p><p>${visual.final.join(" + ")} = □</p></div>`;
+  // 양쪽 식을 따로 묶어 두면 폰 폭에서 = 앞뒤로만 줄이 바뀐다(한쪽 식은 끊기지 않음).
+  const relation = (left, right) => `<p><span class="relation-side">${left}</span><span class="relation-equals">=</span><span class="relation-side">${right}</span></p>`;
+  return `<div class="symbol-relations">${visual.hint ? `<small>${visual.hint}</small>` : ""}${relation(repeat("☆", visual.firstStar), repeat("○", visual.firstCircle))}${relation("☆ + ○", "▽ + ▽")}${relation(visual.final.join(" + "), "□")}</div>`;
 }
 
 function numberLineSixPointsMarkup(visual) {
@@ -3678,9 +3713,60 @@ function watermarkMarkup() {
   return Array.from({ length: 3 }, () => `<span>${student} · GFIELD · ${student} · GFIELD · ${student}</span>`).join("");
 }
 
+// 학생 화면: 답을 쓰고 「답 확인」. 처음 틀리면 다시 생각하게 하고, 두 번째에 정답과 풀이를 연다(먼저 생각하게).
+function studentCheckMarkup(question, index) {
+  const picture = answerVisualMarkup(question);
+  const typed = !["drawing", "visual-fill"].includes(question.responseKind);
+  return `<div class="student-check" data-student-index="${index}">
+    <div class="student-check-actions"><button type="button" class="student-check-button" data-student-check="${index}">${typed ? "답 확인" : "정답 보기"}</button>
+      <button type="button" data-question-action="replace" data-question-index="${index}">다른 문제</button></div>
+    <p class="student-check-message" role="status"></p>
+    <div class="student-answer" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${question.answer}</div>` : `<span>${question.answer}</span>`}${question.solution ? `<p><b>풀이</b> ${question.solution}</p>` : ""}</div>
+  </div>`;
+}
+
+function studentAnswerMatches(typed, answer) {
+  const plain = (value) => String(value || "").replace(/<[^>]+>/gu, "").replace(/[\s,.·]/gu, "");
+  const a = plain(answer);
+  const t = plain(typed);
+  if (!t) return null;
+  if (t === a) return true;
+  const numbers = a.match(/-?\d+(?:\/\d+)?/gu) || [];
+  return numbers.length === 1 && t.replace(/[^\d/-]/gu, "") === numbers[0];
+}
+
+function bindStudentChecks(grid) {
+  grid.querySelectorAll("[data-student-check]").forEach((button) => button.addEventListener("click", () => {
+    const index = Number(button.dataset.studentCheck);
+    const question = state.questions[index];
+    const box = button.closest(".student-check");
+    const message = box.querySelector(".student-check-message");
+    const reveal = () => { box.querySelector(".student-answer").hidden = false; button.hidden = true; };
+    if (["drawing", "visual-fill"].includes(question.responseKind)) return reveal();
+    const verdict = studentAnswerMatches(question.responseValue, question.answer);
+    if (verdict === null) { message.textContent = "답을 먼저 써 보세요."; return; }
+    if (verdict) { message.textContent = "맞았어요!"; box.dataset.result = "right"; return reveal(); }
+    if (box.dataset.tried) { message.textContent = "정답과 풀이를 보고 다시 풀어 보세요."; box.dataset.result = "wrong"; return reveal(); }
+    box.dataset.tried = "1";
+    message.textContent = "다시 생각해 보세요. 한 번 더 틀리면 정답과 풀이가 열려요.";
+  }));
+}
+
+function worksheetTitleText() {
+  if (asStudent && studentRef) {
+    const book = CURRICULUM.find((entry) => entry.id === state.curriculumBookId);
+    return `${book ? `${book.label} · ` : ""}${studentRef} 유사문제`;
+  }
+  if (state.mode === "curriculum" && state.selected.unitTest.size && !state.selected.curriculum.size) {
+    const book = CURRICULUM.find((entry) => entry.id === state.curriculumBookId);
+    if (book) return `${book.label} 권별테스트 유사문제`;
+  }
+  return state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "단원 학습지" : "유형별 맞춤 학습지";
+}
+
 function renderWorksheet() {
   hideTypePreview();
-  const title = state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "FC 단원 학습지" : "유형별 맞춤 학습지";
+  const title = worksheetTitleText();
   $("worksheetTitle").textContent = title;
   const questionCards = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
@@ -3710,13 +3796,19 @@ function renderWorksheet() {
           ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
           : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
       ${textbookConceptSolutionMarkup(question)}
+      ${asStudent ? studentCheckMarkup(question, index) : ""}
     </article>`;
   });
-  const pages = [];
-  for (let index = 0; index < questionCards.length; index += 2) {
-    pages.push(`<section class="question-page" aria-label="${Math.floor(index / 2) + 1}쪽">${questionCards.slice(index, index + 2).join("")}</section>`);
-  }
-  $("questionGrid").innerHTML = pages.join("");
+  const info = printTemplateInfo(title);
+  const book = state.mode === "curriculum" ? CURRICULUM.find((entry) => entry.id === state.curriculumBookId) : null;
+  const { lead, grid } = layoutWorksheetPages({ cards: questionCards, questions: state.questions, settings: state.printTemplate, info, book });
+  const section = $("worksheetSection");
+  section.className = ["worksheet-section", ...printTemplateClasses(state.printTemplate)].join(" ");
+  $("printTemplateLead").innerHTML = lead;
+  $("worksheetBand").textContent = state.printTemplate.form === "exam" ? `GIFTED MATH BANK${info.bookLabel ? ` · ${info.bookLabel}` : ""}` : "GIFTED MATH BANK";
+  $("worksheetLessonNo").textContent = info.volume || "1";
+  $("worksheetGoal").textContent = info.goal;
+  $("questionGrid").innerHTML = grid;
   $("watermark").innerHTML = state.watermark ? watermarkMarkup() : "";
   $("answerWatermark").innerHTML = state.watermark ? watermarkMarkup() : "";
   document.querySelectorAll(".b4-paper-toggle").forEach((button) => {
@@ -3730,6 +3822,33 @@ function renderWorksheet() {
     });
   });
   bindQuestionEditor();
+}
+
+// 표지·내지·바닥글에 쓸 공개 정보. 교재 단원 학습지면 그 권의 제목과 번호를 쓴다.
+function printTemplateInfo(title) {
+  const book = state.mode === "curriculum" ? CURRICULUM.find((entry) => entry.id === state.curriculumBookId) : null;
+  const middles = [...new Set(state.questions.map((question) => question.type.middle))];
+  return {
+    title: book ? book.title : title,
+    subtitle: book ? `사고력 수학 · ${activeTextbookStage().label}` : `${state.questions.length}문항 맞춤 학습지`,
+    volume: book ? String(book.label).replace(/[^0-9]/g, "") : "",
+    bookLabel: book ? book.label : "",
+    footLabel: book ? `지필드 클래식 · ${book.label}` : `지필드 문제은행 · ${title}`,
+    goal: `학습 내용 · ${middles.slice(0, 3).join(" · ")}${middles.length > 3 ? " 외" : ""}`,
+    stats: `${state.questions.length}문항\n${middles.length}가지 학습 내용`
+  };
+}
+
+function mountPrintTemplate() {
+  const info = printTemplateInfo(worksheetTitleText());
+  if (!printTemplatePanel) {
+    printTemplatePanel = mountPrintTemplatePanel($("printTemplatePanel"), state.printTemplate, info, (settings, { textOnly }) => {
+      // 표지 글자만 바뀌면 문항 쪽은 그대로 두고 표지만 다시 그린다.
+      if (!textOnly) return renderWorksheet();
+      const book = state.mode === "curriculum" ? CURRICULUM.find((entry) => entry.id === state.curriculumBookId) : null;
+      $("printTemplateLead").innerHTML = layoutWorksheetPages({ cards: [], questions: state.questions, settings, info: printTemplateInfo(worksheetTitleText()), book }).lead;
+    });
+  }
 }
 
 function openAnswers() {
@@ -3749,6 +3868,14 @@ function openAnswers() {
 function initControls() {
   $("studentName").textContent = student;
   $("introLink").href = `./intro.html?student=${encodeURIComponent(student)}`;
+  $("startLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
+  if (asStudent) {
+    const back = document.createElement("a");
+    back.className = "back-link student-back";
+    back.href = studentBack || $("startLink").href;
+    back.textContent = studentBack ? "← 본책 번호판" : "← 처음 화면";
+    document.querySelector(".header-links").prepend(back);
+  }
   $("worksheetStudent").textContent = student;
   if ($("resultDiagnosisLink")) $("resultDiagnosisLink").href = `./result-diagnosis.html?student=${encodeURIComponent(student)}`;
   $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
@@ -3876,4 +4003,64 @@ setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") 
   }
   renderTypeTree();
   updateSummary();
+})();
+
+// 시작 화면(start.html)에서 넘어오는 주소. 고를 것을 미리 골라 두어 학생·선생님이 긴 목록을 헤매지 않게 한다.
+//   ?mode=curriculum&book=book-03                         그 권을 연다
+//   &set=unit-test                                         권별테스트 25문항(원본과 같은 순서·구조, 늘 같은 문제)
+//   &set=unit-test&fresh=1                                 같은 구조로 숫자를 바꾼 새 문제
+//   &units=0,2&stage=practice&count=20                     교재 단원·단계(개념·유형·연습·심화)·문항 수
+//   &build=1                                               고른 대로 바로 학습지를 만든다
+// 검증 게이트는 그대로다 — 준비되지 않은 유형·문항은 고르지 않는다.
+(function preselectCurriculum() {
+  if (params.get("mode") !== "curriculum") return;
+  const book = CURRICULUM.find((item) => item.id === params.get("book"));
+  if (!book) return;
+  state.curriculumBookId = book.id;
+  const stageId = params.get("stage");
+  if (TEXTBOOK_STAGES.some((stage) => stage.id === stageId)) setCurriculumStage(stageId);
+  const setCount = (count) => {
+    state.count = count;
+    $("questionCount").value = String(count);
+    $("countChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", Number(button.dataset.count) === count));
+  };
+  let picked = 0;
+  if (params.get("set") === "unit-test") {
+    // &numbers=3,7: 원문을 풀고 틀린 번호만(권별테스트 원문 풀기 화면에서 넘어온다).
+    const numbers = params.has("numbers") ? new Set(params.get("numbers").split(",").map(Number)) : null;
+    for (const question of book.source.unitTestQuestions || []) {
+      if (numbers && !numbers.has(question.number)) continue;
+      if (!question.verified || !isSelectableType(typeById(question.typeId))) continue;
+      state.selected.unitTest.add(unitTestKey(book.id, question.number));
+      picked += 1;
+    }
+    if (picked) setCount(picked);
+  } else if (params.has("units")) {
+    const wanted = new Set(params.get("units").split(",").map(Number));
+    const pick = () => book.units.forEach((unit, unitIndex) => {
+      if (!wanted.has(unitIndex)) return;
+      for (const typeId of unit.typeIds) {
+        // &only=<유형 id>: 본책 번호판에서 고른 한 문항의 유형만
+        if (params.has("only") && typeId !== params.get("only")) continue;
+        if (!isSelectableCurriculumType(typeById(typeId), book, unit)) continue;
+        state.selected.curriculum.add(curriculumKey(book.id, unitIndex, typeId));
+        picked += 1;
+      }
+    });
+    pick();
+    // 번호판에서 누른 문항의 유형이 그 단계에서는 아직 못 만들면(예: 3권 4단원 활동 2-2) 가까운 단계로 물러선다 — 학생이 빈 화면을 보지 않게.
+    if (!picked && params.has("only")) {
+      for (const fallback of ["type", "practice", "concept", "advanced"]) {
+        if (fallback === state.curriculumStage) continue;
+        setCurriculumStage(fallback);
+        pick();
+        if (picked) break;
+      }
+    }
+    const requestedCount = Number(params.get("count"));
+    if (Number.isFinite(requestedCount) && requestedCount >= 1 && requestedCount <= 50) setCount(requestedCount);
+  }
+  renderCurriculum();
+  updateSummary();
+  if (picked && params.get("build") === "1") buildQuestions();
 })();

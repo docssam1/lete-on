@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fdfbf5" />
+  <title>GM 스스로 공부</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="./start.css?v=20261024c" />
+</head>
+<body>
+  <header class="st-header">
+    <div class="st-brand"><span>GIFTED MATH BANK · 1과정</span><strong>스스로 공부</strong></div>
+    <nav class="st-links" aria-label="다른 화면"><a id="introLink" href="./home.html">소개</a><a id="bankLink" href="./index.html">문제은행 자세히 고르기</a></nav>
+    <div class="st-student" id="studentName">DEMO</div>
+  </header>
+
+  <main class="st-main">
+    <section class="st-books" aria-labelledby="bookHeading">
+      <h2 id="bookHeading"><span class="st-no">1</span>교재를 골라요</h2>
+      <div class="st-book-list" id="bookList" role="radiogroup" aria-label="교재 권"></div>
+    </section>
+
+    <section class="st-doors" aria-labelledby="doorHeading">
+      <div class="st-book-head">
+        <h2 id="doorHeading"><span class="st-no">2</span><span id="bookTitle">1권</span></h2>
+        <div class="st-door-switch" role="tablist" aria-label="무엇을 할까요">
+          <button type="button" role="tab" id="doorStudy" data-door="study" aria-selected="true" aria-controls="studyPanel">공부하기</button>
+          <button type="button" role="tab" id="doorTest" data-door="test" aria-selected="false" aria-controls="testPanel">시험지 만들기</button>
+        </div>
+      </div>
+
+      <section id="studyPanel" class="st-panel" role="tabpanel" aria-labelledby="doorStudy">
+        <div class="st-panel-head">
+          <p class="st-lead" id="studyLead">단원마다 <b>① 개념</b> → <b>② 게임</b> → <b>③ 골든벨</b> → <b>④ 본책</b> 순서로 공부해요.</p>
+          <div class="st-mode" role="radiogroup" aria-label="공부 방식">
+            <button type="button" role="radio" data-mode="self" aria-checked="true">학습형 <small>혼자</small></button>
+            <button type="button" role="radio" data-mode="class" aria-checked="false">수업형 <small>선생님 화면·교재 인쇄</small></button>
+          </div>
+        </div>
+        <ol class="st-steps" aria-label="공부 순서">
+          <li><b>① 개념</b><span>골든벨 대표 문제로 개념 설명 · 튜토리얼</span></li>
+          <li><b>② 게임</b><span>풀이 과정을 손으로 해 보기</span></li>
+          <li><b>③ 골든벨</b><span>골든벨 문항 풀기 · 채점</span></li>
+          <li><b>④ 본책</b><span>본책 유형 · 연습 · 심화 문제</span></li>
+        </ol>
+        <div id="unitList" class="st-units" aria-live="polite"></div>
+      </section>
+
+      <section id="testPanel" class="st-panel" role="tabpanel" aria-labelledby="doorTest" hidden>
+        <div class="st-test-grid">
+          <article class="st-test">
+            <h3>권별테스트 원문 풀기</h3>
+            <p>교재 권별테스트 원문 시험지를 그대로 1세트 풀어요. 답안지에 답을 적은 뒤 ○✕로 채점해요.</p>
+            <p class="st-meta">원문 25문항 · 인쇄 가능</p>
+            <a class="st-btn primary" id="unitTestSource" href="./unit-test-viewer.html">원문 풀기</a>
+          </article>
+          <article class="st-test">
+            <h3>권별테스트 유사문제</h3>
+            <p>번호마다 원문과 같은 유형·구조로 숫자만 바꾼 새 문제예요. 만들 때마다 다른 시험지가 나와요. 틀린 번호만 다시 풀려면 원문 풀기의 답안지에서 그 번호를 눌러요.</p>
+            <p class="st-meta" id="unitTestFreshMeta"></p>
+            <a class="st-btn" id="unitTestFresh" href="./index.html">유사문제 만들기</a>
+          </article>
+          <article class="st-test st-pick">
+            <h3>교재에서 골라 만들기</h3>
+            <form id="pickForm">
+              <fieldset><legend>단원</legend><div id="pickUnits" class="st-chips"></div></fieldset>
+              <fieldset><legend>난이도</legend><div id="pickStages" class="st-chips"></div></fieldset>
+              <fieldset><legend>문항 수</legend><div id="pickCounts" class="st-chips"></div></fieldset>
+              <div class="st-pick-foot"><span id="pickSummary"></span><button type="submit" class="st-btn primary">시험지 만들기</button></div>
+            </form>
+          </article>
+        </div>
+        <p class="st-more">선발시험 기출·모의고사로 만들거나 유형을 하나하나 고르려면 <a id="bankMore" href="./index.html">문제은행 자세히 고르기</a>.</p>
+      </section>
+    </section>
+  </main>
+  <script type="module" src="./start.js?v=20261024t"></script>
+</body>
+</html>

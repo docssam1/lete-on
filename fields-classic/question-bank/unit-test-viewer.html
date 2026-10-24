@@ -2,20 +2,38 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FC 단원 테스트</title>
-  <link rel="stylesheet" href="./unit-test-viewer.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fdfbf5" />
+  <title>권별테스트 원문 풀기</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="./unit-test-solve.css?v=20261024b" />
 </head>
 <body>
-  <header>
-    <a href="./index.html">문제은행으로</a>
-    <div><strong id="title">FC 단원 테스트</strong><span id="subtitle"></span></div>
-    <button type="button" id="printButton">인쇄</button>
+  <header class="ut-header">
+    <a id="backLink" class="ut-back" href="./start.html"><span aria-hidden="true">←</span> 처음 화면</a>
+    <div class="ut-title"><span id="eyebrow">GIFTED MATH BANK · 1과정</span><strong id="title">권별테스트 원문</strong></div>
+    <button type="button" id="printButton" class="ut-btn">원문 인쇄</button>
   </header>
-  <main>
-    <div id="watermark" class="watermark" aria-hidden="true"></div>
-    <section id="pages" class="pages" aria-label="단원 테스트 원문"></section>
+  <main class="ut-main">
+    <section class="ut-paper" aria-label="권별테스트 원문">
+      <p class="ut-guide">원문 시험지 그대로입니다. 공책이나 인쇄한 시험지에 풀고, 오른쪽 답안지에 답을 적으세요. 채점한 뒤 틀린 번호는 <b>유사문제</b>로 다시 공부합니다.</p>
+      <div id="watermark" class="ut-watermark" aria-hidden="true"></div>
+      <div id="pages" class="ut-pages"></div>
+    </section>
+    <aside class="ut-sheet" aria-labelledby="sheetHeading">
+      <div class="ut-sheet-head">
+        <h2 id="sheetHeading">답안지</h2>
+        <span id="sheetScore" role="status"></span>
+      </div>
+      <p class="ut-sheet-help">답을 적고, 채점할 때 <b>○</b> 맞음 · <b>✕</b> 틀림을 누르세요. 적은 답은 이 기기에 저장됩니다.</p>
+      <ol id="sheet" class="ut-rows"></ol>
+      <div class="ut-sheet-foot">
+        <a id="wrongLink" class="ut-btn primary" href="./index.html" aria-disabled="true">틀린 번호 유사문제 공부하기</a>
+        <a id="allLink" class="ut-btn" href="./index.html">25문항 전체 유사문제</a>
+        <button type="button" id="clearButton" class="ut-text-btn">답안지 지우기</button>
+      </div>
+    </aside>
   </main>
-  <script type="module" src="./unit-test-viewer.js"></script>
+  <script type="module" src="./unit-test-viewer.js?v=20261024r"></script>
 </body>
 </html>

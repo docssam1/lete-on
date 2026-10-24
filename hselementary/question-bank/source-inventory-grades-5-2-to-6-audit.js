@@ -32,6 +32,7 @@ const specs = [
 ];
 
 const failures = [];
+const reviewed5_2Releases = new Set(["5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
 const allIds = new Set();
 const semesterCounts = {};
 
@@ -108,7 +109,10 @@ for (const spec of specs) {
     for (const field of ["sourceShape", "reviewReason", "visualRisk"]) {
       if (!isNonEmpty(item[field])) fail(`${label}: ${field}가 비어 있습니다.`);
     }
-    if (item.implementationStatus !== "review-locked") fail(`${label}: implementationStatus가 review-locked가 아닙니다.`);
+    const expectedImplementationStatus = reviewed5_2Releases.has(item.sourceItemId) ? "reviewed" : "review-locked";
+    if (item.implementationStatus !== expectedImplementationStatus) {
+      fail(`${label}: implementationStatus가 ${expectedImplementationStatus}가 아닙니다.`);
+    }
     if (item.sourceVerified === false && item.implementationStatus !== "review-locked") {
       fail(`${label}: sourceVerified false인데 잠금이 아닙니다.`);
     }
@@ -129,11 +133,30 @@ for (const spec of specs) {
   for (const [section, expected] of Object.entries(spec.sections)) {
     if (bySection[section] !== expected) fail(`${spec.semester} ${section}: ${expected}개가 아닙니다 (${bySection[section]}).`);
   }
-  if (spec.semester === "5-2" && verifiedCount !== 22) {
-    fail(`5-2: sourceVerified true 항목은 22개여야 합니다 (${verifiedCount}).`);
+  if (spec.semester === "5-2" && verifiedCount !== 26) {
+    fail(`5-2: sourceVerified true 항목은 26개여야 합니다 (${verifiedCount}).`);
   }
-  if (spec.semester === "5-2" && items.some(item => item.sourceVerified === true && item.implementationStatus !== "review-locked")) {
-    fail("5-2: sourceVerified true 항목 중 잠금이 아닌 항목이 있습니다.");
+  if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
+    fail("5-2: 검수 완료로 공개 후보가 된 항목이 인쇄 30쪽 예제 4-2 및 인쇄 31쪽 Mission 4–6 외에 있습니다.");
+  }
+  if (spec.semester === "5-2" && [...reviewed5_2Releases].some(id => items.filter(item => item.sourceItemId === id).length !== 1)) {
+    fail("5-2: 검수 완료한 인쇄 30쪽 예제 4-2와 인쇄 31쪽 Mission 4–6 원문 항목이 각각 하나여야 합니다.");
+  }
+  if (spec.semester === "5-2") {
+    const unit3 = document.units?.find(unit => unit.unitId === "5-2-u3");
+    if (unit3?.sourcePdfContentPages?.join(",") !== "20,35" || unit3?.sourcePrintedContentPages?.join(",") !== "24,39") {
+      fail("5-2 u3: SHA-256 기준본의 PDF/인쇄 페이지 범위가 20–35 / 24–39가 아닙니다.");
+    }
+    const unit3Items = items.filter(item => item.unitId === "5-2-u3");
+    if (unit3Items.length !== 88 || unit3Items.some(item => item.printedPage !== item.pdfPage + 4)) {
+      fail("5-2 u3: 88개 항목의 인쇄 쪽이 기준 PDF의 실제 페이지 번호와 일치하지 않습니다.");
+    }
+    for (const [exploration, expectedLabel] of [[4, "합동의 활용 ②"], [5, "선대칭도형"]]) {
+      const explorationItems = unit3Items.filter(item => item.exploration === exploration);
+      if (explorationItems.length !== 11 || explorationItems.some(item => !item.sourceShape.includes(expectedLabel))) {
+        fail(`5-2 u3 e${exploration}: 원문 단원명이 ${expectedLabel}로 일치하지 않습니다.`);
+      }
+    }
   }
 }
 

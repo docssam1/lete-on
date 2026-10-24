@@ -19,6 +19,15 @@ const NO_CTRL = /^[^\u0000-\u001f\u007f]+$/;
 const SPEEDS = [0.7, 0.85, 1, 1.25, 1.5];
 const HIGH_PLAN_VERSION = "20261023-high3m";
 const HIGH_PLAN_COURSE = /^C(3[89]|[4-6][0-9])$/;
+const MIDDLE_PLAN_VERSION = "20261023-middle25";
+const MIDDLE_PLAN_COURSE = /^C(29|3[0-7])$/;
+const CALCULUS_PLAN_VERSION = "20261024-calculus3m";
+const CALCULUS_PLAN_COURSE = /^C7[0-3]$/;
+const DELIVERY_PLAN_VERSION = "20261024-personal1";
+const MIDDLE_EXTENSION_VERSION = "20261024-middle-extension1";
+// Canonical source sessions, not the compact bundle count. Keep in sync with
+// course-limits.json and NM_DELIVERY_PLAN.SOURCE_LIMITS (verified offline).
+const DELIVERY_SOURCE_COUNTS = [19,6,6,8,9,8,8,4,9,11,6,8,6,4,4,4,5,9,5,4,7,6,4,7,7,4,8,12,12,11,9,11,8,7,9,8,10,13,8,9,7,8,8,6,6,7,8,5,4,7,7,8,5,8,7,9,8,8,8,10,10,9,8,8,4,7,8,8,7,5,5,4,6,5];
 const INVALID = Symbol("invalid");
 const DENY_KEYS = new Set(["phone", "tokenhash", "token_hash", "code_hash", "trigger_key", "service_role", "password", "secret", "authorization", "hash"]);
 const OK_STATUS = new Set([400, 401, 403, 404, 409, 410, 429, 503]);
@@ -46,6 +55,37 @@ const startDate = (v) => {
   return y >= 2020 && y <= 2100 ? v : INVALID;
 };
 const query = (v) => (typeof v === "string" && v.length <= 254 && (v === "" || NO_CTRL.test(v)) ? v.trim() : INVALID);
+const object = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+const exactSession = (key, n) => courseKey(key) !== INVALID && Number.isInteger(n) && n >= 1 && n <= DELIVERY_SOURCE_COUNTS[Number(key.slice(1))];
+function personalPlan(v) {
+  if (!object(v) || !exactSession(v.courseKey, v.sessionIndex) || startDate(v.startDate) === INVALID
+      || !SPEEDS.includes(v.speed) || !SPEEDS.includes(v.amount) || !["w1", "w2"].includes(v.cadence)
+      || !["p0", "p1", "p2", "p3", "p4"].includes(v.pace)) return null;
+  const p = pick(v, ["courseKey", "sessionIndex", "startDate", "speed", "amount", "cadence", "pace"]);
+  if (Object.hasOwn(v, "middleExtensions")) {
+    if (!object(v.middleExtensions) || Object.entries(v.middleExtensions).some(([g, version]) => !["1", "2", "3"].includes(g) || version !== MIDDLE_EXTENSION_VERSION)) return null;
+    p.middleExtensions = { ...v.middleExtensions };
+  }
+  if (Object.hasOwn(v, "extensionAnchor")) {
+    const a = v.extensionAnchor, ends = { 1: "C31", 2: "C34", 3: "C37" }, next = { 1: "C32", 2: "C35", 3: "C38" };
+    if (!object(a) || ![1, 2, 3].includes(a.grade) || !Number.isInteger(a.index) || a.index < 0 || a.index >= 12
+        || p.courseKey !== ends[a.grade] || p.middleExtensions?.[a.grade] !== MIDDLE_EXTENSION_VERSION) return null;
+    p.extensionAnchor = { grade: a.grade, index: a.index };
+    if (Object.hasOwn(a, "resume")) {
+      if (!object(a.resume) || a.resume.courseKey !== next[a.grade] || !exactSession(a.resume.courseKey, a.resume.sessionIndex)) return null;
+      p.extensionAnchor.resume = pick(a.resume, ["courseKey", "sessionIndex"]);
+    }
+  }
+  return p;
+}
+function isoWeek(v) {
+  if (typeof v !== "string" || !/^\d{4}-W(0[1-9]|[1-4]\d|5[0-3])$/.test(v)) return false;
+  const y = +v.slice(0, 4), w = +v.slice(6), jan4 = new Date(Date.UTC(y, 0, 4));
+  if (y < 2020 || y > 2100) return false;
+  const mon = new Date(+jan4 - ((jan4.getUTCDay() + 6) % 7) * 86400000 + (w - 1) * 604800000);
+  const thursday = new Date(+mon + 3 * 86400000);
+  return thursday.getUTCFullYear() === y;
+}
 
 // action -> { auth, fields: { name: [validator, required] } }. Unknown fields are rejected (blocks owner/actor spoofing).
 const phone = (v) => (typeof v === "string" && /^01\d{8,9}$/.test(v) ? v : INVALID);
@@ -201,10 +241,21 @@ export function createHandler(deps) {
       if (action === "resolve_worksheet") {
         const r = await call(action, payload, null);
         if (r.fail || !r.data.config) return fail("not_found", 404);
+        if (Object.hasOwn(r.data.config, "deliveryPlanVersion") || Object.hasOwn(r.data.config, "learningPlan")) {
+          const raw = r.data.config, plan = personalPlan(raw.learningPlan);
+          if (raw.deliveryPlanVersion !== DELIVERY_PLAN_VERSION || !plan || !isoWeek(raw.week) || raw.k !== 1
+              || raw.courseKey !== plan.courseKey || raw.sessionIndex !== plan.sessionIndex || raw.amount !== plan.amount
+              || raw.cadence !== plan.cadence || Object.hasOwn(raw, "highPlanVersion")) return fail("not_found", 404);
+          return out({ config: { ...pick(raw, ["courseKey", "week", "k", "amount", "cadence", "sessionIndex"]),
+            deliveryPlanVersion: DELIVERY_PLAN_VERSION, learningPlan: plan } });
+        }
         const config = pick(r.data.config, ["courseKey", "week", "k", "amount", "cadence", "sessionIndex"]);
         // A stored snapshot opts in once; old links keep their original single-session seed.
-        if (HIGH_PLAN_COURSE.test(config.courseKey) && r.data.config.highPlanVersion === HIGH_PLAN_VERSION) {
-          config.highPlanVersion = HIGH_PLAN_VERSION;
+        const planVersion = HIGH_PLAN_COURSE.test(config.courseKey) ? HIGH_PLAN_VERSION
+          : MIDDLE_PLAN_COURSE.test(config.courseKey) ? MIDDLE_PLAN_VERSION
+          : CALCULUS_PLAN_COURSE.test(config.courseKey) ? CALCULUS_PLAN_VERSION : null;
+        if (planVersion && r.data.config.highPlanVersion === planVersion) {
+          config.highPlanVersion = planVersion;
           if (startDate(r.data.config.highStartDate) !== INVALID) config.highStartDate = r.data.config.highStartDate;
           if (SPEEDS.includes(r.data.config.highSpeed)) config.highSpeed = r.data.config.highSpeed;
         }

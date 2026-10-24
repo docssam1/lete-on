@@ -1,7 +1,7 @@
 import { esc, reduced } from "./golden-bell-game-fx.js?v=20261004a";
 import { createBalanceScene } from "./golden-bell-3d-balance.js?v=20261023w";
 import { flatNotice } from "./golden-bell-3d-engine.js?v=20261023w";
-import { MATRIX, BALANCE, PATTERN, SUDOKU, SHAPES, COLORS, BALANCE_ITEMS, beadAt, beadName, matrixHolds, sudokuValid } from "./golden-bell-book02-game-models.js?v=20261004a";
+import { MATRIX, BALANCE, PATTERN, SUDOKU, SHAPES, COLORS, BALANCE_ITEMS, beadAt, beadName, matrixHolds, sudokuValid, matrixSolveOrder } from "./golden-bell-book02-game-models.js?v=20261024t";
 
 // 2권 레벨 게임 4종의 화면. 문제 규칙은 golden-bell-book02-game-models.js, 틀(레벨·별·저장)은 golden-bell-level-game.js.
 
@@ -19,28 +19,39 @@ const PATHS = {
 export const shapeSvg = (shape, color = SHAPE_COLOR[shape], label = SHAPE_NAME[shape]) => `<svg class="lg-shape" viewBox="0 0 100 100" role="img" aria-label="${esc(label)}"><g fill="${color}" stroke="rgba(0,0,0,.22)" stroke-width="4" stroke-linejoin="round">${PATHS[shape]}</g><ellipse cx="38" cy="32" rx="14" ry="8" fill="#fff" opacity=".35"/></svg>`;
 const beadSvg = (b) => shapeSvg(b.shape, HEX[b.color], beadName(b));
 const pad = (values, attr, { disabled = false } = {}) => `<div class="lg-pad" role="group" aria-label="수 고르기">${values.map((v) => `<button type="button" class="lg-key" ${attr}="${v}" ${disabled ? "disabled" : ""}>${v}</button>`).join("")}</div>`;
+const yeyo = (v) => { const s = String(v), c = s.charCodeAt(s.length - 1); const batchim = c >= 0xAC00 && c <= 0xD7A3 ? (c - 0xAC00) % 28 !== 0 : /[0-9]/.test(s.slice(-1)) && ![2, 4, 5, 9].includes(Number(s.slice(-1))); return `${s}${batchim ? "이에요" : "예요"}`; }; // 「…예요/이에요」 — 글자·숫자 받침에 맞춰
 const josaI = (n) => `${n}${[2, 4, 5, 9].includes(n % 10) && n !== 10 ? "" : "이"}`;
 
 // ───────────────────────── 도형 값 찾기 ─────────────────────────
+// 골든벨 풀이 순서: 모르는 도형이 하나뿐인 줄(같은 모양 둘의 합)부터 값을 정하고, 알게 된 값을 다른 줄에 넣는다.
+// 도형 칸은 그 순서로 하나씩 열리고, 지금 도형을 정하는 줄을 금색으로 짚어 준다.
 function matrixBoard({ stage, controls, sound }) {
-  let p, api, values, active = 0, checking = false, locked = false;
+  let p, api, values, active = 0, checking = false, locked = false, order = null;
+  const openUpTo = () => (order ? Math.max(0, order.findIndex(({ shape }) => values[p.shapes.indexOf(shape)] === null)) : -1);
   const draw = () => {
     const val = (s) => values[p.shapes.indexOf(s)];
+    const step = order ? openUpTo() : -1;
+    const allSet = values.every((v) => v !== null);
+    const useLine = order && !allSet && !locked ? order[step].line : null;
+    const use = (id) => (useLine === id ? " use" : "");
     const known = (list) => list.every((s) => val(s) !== null);
     const mark = (ok, has) => (checking && has ? (ok ? " ok" : " no") : "");
     if (p.kind === "grid") {
       const n = p.grid.length;
-      const cells = p.grid.map((row, r) => `${row.map((s) => `<div class="lg-cell">${shapeSvg(s)}${val(s) !== null ? `<b class="lg-cell-val">${val(s)}</b>` : ""}</div>`).join("")}<div class="lg-sum row${mark(row.reduce((a, s) => a + (val(s) ?? 0), 0) === p.rowSums[r], known(row))}">${p.rowSums[r]}</div>`).join("");
-      const cols = p.colSums.map((sum, c) => `<div class="lg-sum col${mark(p.grid.reduce((a, row) => a + (val(row[c]) ?? 0), 0) === sum, known(p.grid.map((row) => row[c])))}">${sum}</div>`).join("");
+      const cells = p.grid.map((row, r) => `${row.map((s, c) => `<div class="lg-cell${useLine === `row${r}` || useLine === `col${c}` ? " use" : ""}">${shapeSvg(s)}${val(s) !== null ? `<b class="lg-cell-val">${val(s)}</b>` : ""}</div>`).join("")}<div class="lg-sum row${use(`row${r}`)}${mark(row.reduce((a, s) => a + (val(s) ?? 0), 0) === p.rowSums[r], known(row))}">${p.rowSums[r]}</div>`).join("");
+      const cols = p.colSums.map((sum, c) => `<div class="lg-sum col${use(`col${c}`)}${mark(p.grid.reduce((a, row) => a + (val(row[c]) ?? 0), 0) === sum, known(p.grid.map((row) => row[c])))}">${sum}</div>`).join("");
       stage.innerHTML = `<div class="lg-matrix" style="--n:${n}" role="img" aria-label="${n}×${n} 표, 가로 합 ${p.rowSums.join(", ")}, 세로 합 ${p.colSums.join(", ")}">${cells}${cols}<div class="lg-sum corner" aria-hidden="true">합</div></div>`;
     } else {
-      stage.innerHTML = `<div class="lg-eqs">${p.equations.map((e) => {
+      stage.innerHTML = `<div class="lg-eqs">${p.equations.map((e, i) => {
         const has = known([e.a, e.b]); const got = (val(e.a) ?? 0) + (e.op === "-" ? -(val(e.b) ?? 0) : (val(e.b) ?? 0));
-        return `<div class="lg-eq${mark(got === e.result, has)}"><span class="lg-tok">${shapeSvg(e.a)}${val(e.a) !== null ? `<b>${val(e.a)}</b>` : ""}</span><span class="lg-op">${e.op === "-" ? "−" : "+"}</span><span class="lg-tok">${shapeSvg(e.b)}${val(e.b) !== null ? `<b>${val(e.b)}</b>` : ""}</span><span class="lg-op">=</span><span class="lg-res">${e.result}</span></div>`;
+        return `<div class="lg-eq${use(`eq${i}`)}${mark(got === e.result, has)}"><span class="lg-tok">${shapeSvg(e.a)}${val(e.a) !== null ? `<b>${val(e.a)}</b>` : ""}</span><span class="lg-op">${e.op === "-" ? "−" : "+"}</span><span class="lg-tok">${shapeSvg(e.b)}${val(e.b) !== null ? `<b>${val(e.b)}</b>` : ""}</span><span class="lg-op">=</span><span class="lg-res">${e.result}</span></div>`;
       }).join("")}</div>`;
     }
     const range = Array.from({ length: p.hi - p.lo + 1 }, (_, i) => p.lo + i);
-    controls.innerHTML = `<p class="cg-ask">도형을 누르고 값을 고르세요.</p><div class="lg-slots" role="group" aria-label="도형 값">${p.shapes.map((s, i) => `<button type="button" class="lg-slot${i === active ? " active" : ""}" data-b2-slot="${i}" aria-pressed="${i === active}" aria-label="${SHAPE_NAME[s]} 값 ${values[i] ?? "빈칸"}" ${locked ? "disabled" : ""}>${shapeSvg(s)}<b>${values[i] ?? "?"}</b></button>`).join("")}</div>${pad(range, "data-b2-num", { disabled: locked })}<div class="cg-actions"><button type="button" class="cg-secondary" data-b2-clear ${locked ? "disabled" : ""}>지우기</button><button type="button" class="cg-primary" data-b2-check ${locked || values.some((v) => v === null) ? "disabled" : ""}>확인!</button></div>`;
+    // 정하는 순서대로 칸을 놓고, 아직 차례가 아닌 칸은 잠근다.
+    const slotOrder = order ? order.map(({ shape }) => p.shapes.indexOf(shape)) : p.shapes.map((_, i) => i);
+    const ask = order && !allSet && !locked ? `금색 ${p.kind === "grid" ? "줄" : "식"}에는 모르는 도형이 <b>${SHAPE_NAME[order[step].shape]}</b> 하나뿐이에요. ${step ? `이제 ${SHAPE_NAME[order[step].shape]}의 값을 정하세요.` : `${SHAPE_NAME[order[step].shape]}의 값부터 정하세요.`}` : "도형을 누르고 값을 고르세요.";
+    controls.innerHTML = `<p class="cg-ask">${ask}</p><div class="lg-slots" role="group" aria-label="도형 값">${slotOrder.map((i, k) => { const s = p.shapes[i]; const waiting = order && k > step && values[i] === null && !allSet; return `<button type="button" class="lg-slot${i === active ? " active" : ""}" data-b2-slot="${i}" aria-pressed="${i === active}" aria-label="${SHAPE_NAME[s]} 값 ${values[i] ?? "빈칸"}${waiting ? ", 앞 도형을 먼저" : ""}" ${locked || waiting ? "disabled" : ""}>${shapeSvg(s)}<b>${values[i] ?? "?"}</b></button>`; }).join("")}</div>${pad(range, "data-b2-num", { disabled: locked })}<div class="cg-actions"><button type="button" class="cg-secondary" data-b2-clear ${locked ? "disabled" : ""}>지우기</button><button type="button" class="cg-primary" data-b2-check ${locked || values.some((v) => v === null) ? "disabled" : ""}>답 내기</button></div>`;
   };
   const onClick = (event) => {
     const t = event.target.closest("button");
@@ -49,7 +60,7 @@ function matrixBoard({ stage, controls, sound }) {
     else if (t.dataset.b2Num !== undefined) {
       sound.tick();
       values[active] = Number(t.dataset.b2Num);
-      const nextEmpty = values.findIndex((v) => v === null);
+      const nextEmpty = order ? (order.find(({ shape }) => values[p.shapes.indexOf(shape)] === null) ? p.shapes.indexOf(order.find(({ shape }) => values[p.shapes.indexOf(shape)] === null).shape) : -1) : values.findIndex((v) => v === null);
       if (nextEmpty >= 0) active = nextEmpty;
       draw();
     } else if (t.dataset.b2Clear !== undefined) { values[active] = null; draw(); }
@@ -61,7 +72,7 @@ function matrixBoard({ stage, controls, sound }) {
   };
   controls.addEventListener("click", onClick);
   return {
-    show(problem, a) { p = problem; api = a; values = p.shapes.map(() => null); active = 0; checking = false; locked = false; draw(); },
+    show(problem, a) { p = problem; api = a; values = p.shapes.map(() => null); order = matrixSolveOrder(p); active = order ? p.shapes.indexOf(order[0].shape) : 0; checking = false; locked = false; draw(); },
     reveal(problem, done) { values = [...problem.answer]; checking = true; locked = true; draw(); setTimeout(done, reduced() ? 0 : 500); },
     lock(on) { locked = on; checking = checking || on; draw(); },
     dispose() { controls.removeEventListener("click", onClick); }
@@ -70,11 +81,11 @@ function matrixBoard({ stage, controls, sound }) {
 const shapesText = (p) => p.shapes.map((s) => SHAPE_NAME[s]).join(", ");
 const MATRIX_GAME = {
   ...MATRIX,
-  coach: (p) => (p.kind === "grid" ? "같은 도형이 많이 있는 줄부터 봐. 그 줄로 한 도형의 값을 먼저 찾아." : "같은 도형 두 개가 더해진 식부터! 그 도형의 값을 먼저 알 수 있어."),
+  coach: (p) => (p.kind === "grid" ? "같은 도형이 많이 있는 줄부터 봐요. 그 줄로 한 도형의 값을 먼저 찾아요." : "같은 도형 두 개가 더해진 식부터! 그 도형의 값을 먼저 알 수 있어요."),
   mission: (p) => (p.kind === "grid" ? `가로 합과 세로 합을 보고 <b class="cw">${esc(shapesText(p))}</b>의 값을 찾으세요.` : `같은 도형은 같은 수예요. <b class="cw">${esc(shapesText(p))}</b>의 값을 찾으세요.`),
-  hint: (p) => (p.kind === "grid" ? "초록은 맞는 합, 빨강은 안 맞는 합이야. 빨간 줄의 도형 값을 다시 생각해 봐." : "초록 식은 맞고 빨간 식이 안 맞아. 빨간 식에 들어간 도형을 다시 봐."),
-  success: (p) => `맞았어! ${p.shapes.map((s, i) => `${SHAPE_NAME[s]} ${p.answer[i]}`).join(", ")}.`,
-  reveal: (p) => `정답은 ${p.shapes.map((s, i) => `${SHAPE_NAME[s]} ${p.answer[i]}`).join(", ")}이야. 초록 줄이 모두 맞는지 봐.`,
+  hint: (p) => (p.kind === "grid" ? "초록은 맞는 합, 빨강은 안 맞는 합이에요. 빨간 줄의 도형 값을 다시 생각해 봐요." : "초록 식은 맞고 빨간 식이 안 맞아요. 빨간 식에 들어간 도형을 다시 봐요."),
+  success: (p) => `맞았어요! ${p.shapes.map((s, i) => `${SHAPE_NAME[s]} ${p.answer[i]}`).join(", ")}.`,
+  reveal: (p) => `정답은 ${p.shapes.map((s, i) => `${SHAPE_NAME[s]} ${p.answer[i]}`).join(", ")}이에요. 초록 줄이 모두 맞는지 봐요.`,
   createBoard: matrixBoard
 };
 
@@ -89,9 +100,15 @@ function scaleSvg(s, k) {
   return `<figure class="lg-scale" style="--tilt:${tilt}deg;--delay:${k * 120}ms" role="img" aria-label="${BALANCE_ITEMS[s.left]}와 ${BALANCE_ITEMS[s.right]}를 단 저울, ${BALANCE_ITEMS[s.heavy === "left" ? s.left : s.right]} 쪽이 아래로"><svg viewBox="0 0 200 130"><path d="M100 44 L82 118 H118 Z" fill="#8a6a3d"/><rect x="70" y="114" width="60" height="10" rx="4" fill="#6b5130"/><g class="lg-beam"><rect x="22" y="38" width="156" height="9" rx="4" fill="#b88a4a"/><g class="lg-pan l"><path d="M34 46 L22 82 M34 46 L46 82" stroke="#6b5130" stroke-width="2"/><path d="M14 82 H54 Q50 96 34 96 Q18 96 14 82 Z" fill="#d9b679"/>${panBall(s.left, 34, 68)}</g><g class="lg-pan r"><path d="M166 46 L154 82 M166 46 L178 82" stroke="#6b5130" stroke-width="2"/><path d="M146 82 H186 Q182 96 166 96 Q150 96 146 82 Z" fill="#d9b679"/>${panBall(s.right, 166, 68)}</g></g><circle cx="100" cy="42" r="7" fill="#6b5130"/></svg></figure>`;
 }
 // 저울 판: WebGL이 되면 3D 진열대(golden-bell-3d-balance.js), 안 되면 예전 평면 저울. 조작(단추·단상)은 둘 다 HTML이다.
+// 골든벨 풀이 순서: 저울을 하나씩 읽어(첫 저울 A·B, 둘째 A·C …) 「무거운 > 가벼운」을 모은 뒤 줄을 세운다.
+// 줄 세우기·가장 가벼운 것 찾기는 ① 저울 읽기를 아이가 직접 한다: 저울마다 내려간 쪽의 공을 누른다.
 function balanceBoard({ stage, controls, sound, root }) {
-  let p, api, slots = [], locked = false, wrongPick = new Set(), scene = null, tried3d = false;
-  const pickFromScene = (i) => controls.querySelector(`[data-b2-item="${i}"]:not(:disabled)`)?.click();
+  let p, api, slots = [], locked = false, wrongPick = new Set(), scene = null, tried3d = false, read = 0, readNote = "";
+  const heavyOf = (s) => (s.heavy === "left" ? s.left : s.right);
+  const lightOf = (s) => (s.heavy === "left" ? s.right : s.left);
+  const reading = () => p.kind !== "pick" && read < p.scales.length && !locked;
+  const factsHtml = () => read ? `<ul class="lg-facts" aria-label="읽은 저울">${p.scales.slice(0, read).map((s, k) => `<li><span>저울 ${k + 1}</span><b>${BALANCE_ITEMS[heavyOf(s)]} &gt; ${BALANCE_ITEMS[lightOf(s)]}</b></li>`).join("")}</ul>` : "";
+  const pickFromScene = (i) => (controls.querySelector(`[data-b2-read="${i}"]`) || controls.querySelector(`[data-b2-item="${i}"]:not(:disabled)`))?.click();
   const ensureScene = () => {
     if (tried3d) return scene;
     tried3d = true;
@@ -112,15 +129,29 @@ function balanceBoard({ stage, controls, sound, root }) {
     }
     const items = p.items;
     const tip = scene ? '<p class="lg-3d-tip">저울 위 공을 눌러도 돼요.</p>' : "";
-    if (p.kind !== "order") {
-      controls.innerHTML = `<p class="cg-ask">${p.kind === "pick" ? "더 무거운 것을 누르세요." : "가장 가벼운 것을 누르세요."}</p><div class="lg-items">${items.map((i) => `<button type="button" class="lg-item" data-b2-item="${i}" aria-label="${BALANCE_ITEMS[i]}" ${locked || wrongPick.has(i) ? "disabled" : ""} ${wrongPick.has(i) ? 'data-state="bad"' : ""}>${ballSvg(i)}</button>`).join("")}</div>${tip}`;
+    if (reading()) {
+      const sc = p.scales[read];
+      controls.innerHTML = `${factsHtml()}<p class="cg-ask">① 저울 ${read + 1} / ${p.scales.length}: ${BALANCE_ITEMS[sc.left]}와 ${BALANCE_ITEMS[sc.right]} 중 <b>아래로 내려간 쪽</b>을 누르세요.</p><div class="lg-items">${[sc.left, sc.right].map((i) => `<button type="button" class="lg-item" data-b2-read="${i}" aria-label="${BALANCE_ITEMS[i]}">${ballSvg(i)}</button>`).join("")}</div>${readNote ? `<p class="lg-unit-note retry" role="status">${esc(readNote)}</p>` : ""}`;
       return;
     }
-    controls.innerHTML = `<p class="cg-ask">무거운 것부터 차례로 누르세요.</p><ol class="lg-podium" aria-label="무거운 순서">${items.map((_, k) => `<li><span class="lg-rank">${k === 0 ? "가장 무거움" : k === p.n - 1 ? "가장 가벼움" : `${k + 1}번째`}</span><button type="button" class="lg-podium-slot" data-b2-slot="${k}" aria-label="${k + 1}번째 자리 ${slots[k] === undefined ? "빈칸" : BALANCE_ITEMS[slots[k]]}" ${locked || slots[k] === undefined ? "disabled" : ""}>${slots[k] === undefined ? "" : ballSvg(slots[k])}</button></li>`).join("")}</ol><div class="lg-items">${items.map((i) => `<button type="button" class="lg-item" data-b2-item="${i}" aria-label="${BALANCE_ITEMS[i]}" ${locked || slots.includes(i) ? "disabled" : ""}>${ballSvg(i)}</button>`).join("")}</div>${tip}<div class="cg-actions"><button type="button" class="cg-secondary" data-b2-clear ${locked || !slots.length ? "disabled" : ""}>다시 놓기</button><button type="button" class="cg-primary" data-b2-check ${locked || slots.length < p.n ? "disabled" : ""}>확인!</button></div>`;
+    if (p.kind !== "order") {
+      controls.innerHTML = `${p.kind === "pick" ? "" : factsHtml()}<p class="cg-ask">${p.kind === "pick" ? "더 무거운 것을 누르세요." : "② 읽은 저울에서 한 번도 「&gt;」 왼쪽에 오지 않은 것이 가장 가벼워요. 가장 가벼운 것을 누르세요."}</p><div class="lg-items">${items.map((i) => `<button type="button" class="lg-item" data-b2-item="${i}" aria-label="${BALANCE_ITEMS[i]}" ${locked || wrongPick.has(i) ? "disabled" : ""} ${wrongPick.has(i) ? 'data-state="bad"' : ""}>${ballSvg(i)}</button>`).join("")}</div>${tip}`;
+      return;
+    }
+    controls.innerHTML = `${factsHtml()}<p class="cg-ask">② 읽은 저울을 이어 무거운 것부터 차례로 누르세요.</p><ol class="lg-podium" aria-label="무거운 순서">${items.map((_, k) => `<li><span class="lg-rank">${k === 0 ? "가장 무거움" : k === p.n - 1 ? "가장 가벼움" : `${k + 1}번째`}</span><button type="button" class="lg-podium-slot" data-b2-slot="${k}" aria-label="${k + 1}번째 자리 ${slots[k] === undefined ? "빈칸" : BALANCE_ITEMS[slots[k]]}" ${locked || slots[k] === undefined ? "disabled" : ""}>${slots[k] === undefined ? "" : ballSvg(slots[k])}</button></li>`).join("")}</ol><div class="lg-items">${items.map((i) => `<button type="button" class="lg-item" data-b2-item="${i}" aria-label="${BALANCE_ITEMS[i]}" ${locked || slots.includes(i) ? "disabled" : ""}>${ballSvg(i)}</button>`).join("")}</div>${tip}<div class="cg-actions"><button type="button" class="cg-secondary" data-b2-clear ${locked || !slots.length ? "disabled" : ""}>다시 놓기</button><button type="button" class="cg-primary" data-b2-check ${locked || slots.length < p.n ? "disabled" : ""}>답 내기</button></div>`;
   };
   const onClick = (event) => {
     const t = event.target.closest("button");
     if (!t || t.disabled || locked) return;
+    if (t.dataset.b2Read !== undefined) {
+      const i = Number(t.dataset.b2Read), sc = p.scales[read];
+      sound.tick();
+      if (i === heavyOf(sc)) { read++; readNote = ""; }
+      else readNote = `저울은 무거운 쪽이 아래로 내려가요. 저울 ${read + 1}에서 ${BALANCE_ITEMS[i]} 쪽은 올라가 있어요.`;
+      draw();
+      controls.querySelector("[data-b2-read], [data-b2-item]:not(:disabled)")?.focus();
+      return;
+    }
     if (t.dataset.b2Item !== undefined) {
       const i = Number(t.dataset.b2Item);
       sound.tick();
@@ -139,7 +170,7 @@ function balanceBoard({ stage, controls, sound, root }) {
   };
   controls.addEventListener("click", onClick);
   return {
-    show(problem, a) { p = problem; api = a; slots = []; locked = false; wrongPick = new Set(); draw(true); },
+    show(problem, a) { p = problem; api = a; slots = []; locked = false; wrongPick = new Set(); read = 0; readNote = ""; draw(true); },
     reveal(problem, done) { slots = Array.isArray(problem.answer) ? [...problem.answer] : slots; locked = true; draw(); if (!Array.isArray(problem.answer)) controls.querySelector(`[data-b2-item="${problem.answer}"]`)?.setAttribute("data-state", "good"); setTimeout(done, reduced() ? 0 : 500); },
     lock(on) { locked = on; draw(); if (on && !Array.isArray(p.answer)) controls.querySelector(`[data-b2-item="${p.answer}"]`)?.setAttribute("data-state", "good"); },
     dispose() { controls.removeEventListener("click", onClick); scene?.dispose(); scene = null; }
@@ -147,34 +178,62 @@ function balanceBoard({ stage, controls, sound, root }) {
 }
 const BALANCE_GAME = {
   ...BALANCE,
-  coach: (p) => (p.kind === "pick" ? "저울은 무거운 쪽이 아래로 내려가." : p.kind === "lightest" ? "한 번도 아래로 내려가지 않은 것이 가장 가벼울 수 있어. 저울을 하나씩 봐." : "한 번도 위로 올라가지 않은 것이 가장 무거워. 거기서부터 이어 봐."),
+  coach: (p) => (p.kind === "pick" ? "저울은 무거운 쪽이 아래로 내려가요." : p.kind === "lightest" ? "한 번도 아래로 내려가지 않은 것이 가장 가벼울 수 있어요. 저울을 하나씩 봐요." : "한 번도 위로 올라가지 않은 것이 가장 무거워요. 거기서부터 이어 봐요."),
   mission: (p) => (p.kind === "pick" ? "어느 쪽이 더 무거울까요?" : p.kind === "lightest" ? `저울 ${p.scales.length}개를 보고 <b class="cw">가장 가벼운 것</b>을 찾으세요.` : `저울 ${p.scales.length}개를 보고 <b class="cw">무거운 순서</b>로 세우세요.`),
-  hint: (p) => (p.kind === "order" ? "저울마다 아래로 내려간 쪽이 더 무거워. 첫 자리는 어떤 저울에서도 올라가지 않은 것이야." : "아래로 내려간 쪽을 다시 봐. 내려간 쪽이 더 무거워."),
-  success: (p) => (p.kind === "order" ? `맞았어! ${p.answer.map((i) => BALANCE_ITEMS[i]).join(" > ")} 순서야.` : `맞았어! ${BALANCE_ITEMS[p.answer]}${p.kind === "pick" ? "가 더 무거워." : "가 가장 가벼워."}`),
-  reveal: (p) => (p.kind === "order" ? `무거운 순서는 ${p.order.map((i) => BALANCE_ITEMS[i]).join(" > ")}이야. 저울을 하나씩 대어 봐.` : `정답은 ${BALANCE_ITEMS[p.answer]}야.`),
+  hint: (p) => (p.kind === "order" ? "저울마다 아래로 내려간 쪽이 더 무거워요. 첫 자리는 어떤 저울에서도 올라가지 않은 것이에요." : "아래로 내려간 쪽을 다시 봐요. 내려간 쪽이 더 무거워요."),
+  success: (p) => (p.kind === "order" ? `맞았어요! ${p.answer.map((i) => BALANCE_ITEMS[i]).join(" > ")} 순서예요.` : `맞았어요! ${BALANCE_ITEMS[p.answer]}${p.kind === "pick" ? "가 더 무거워요." : "가 가장 가벼워요."}`),
+  reveal: (p) => (p.kind === "order" ? `무거운 순서는 ${p.order.map((i) => BALANCE_ITEMS[i]).join(" > ")}예요. 저울을 하나씩 대어 봐요.` : `정답은 ${yeyo(BALANCE_ITEMS[p.answer])}.`),
   createBoard: balanceBoard
 };
 
 // ───────────────────────── 무늬 기차 ─────────────────────────
+// 골든벨 풀이 순서: ① 처음부터 되풀이되는 가장 짧은 묶음(한 마디) 찾기 → ② 물은 번째를 마디 칸 수로 나누기
+// → ③ 나머지로 고르기. 한 마디 무늬(dual이 아닌 것)는 ①을 아이가 기차 칸을 눌러 직접 한다.
 function patternBoard({ stage, controls, sound }) {
-  let p, api, locked = false, pickShape = null, pickColor = null, wrong = new Set(), revealUnits = false;
+  let p, api, locked = false, pickShape = null, pickColor = null, wrong = new Set(), revealUnits = false, unitFound = false, unitNote = "";
+  const unitDivision = (len) => {
+    const q = Math.floor(p.n / len), r = p.n % len;
+    if (p.kind === "next") return `${len}개씩 한 마디. 다음 구슬은 새 마디의 ${(p.shown % len) + 1}번째 구슬이에요.`;
+    if (p.kind === "count") return `${len}개씩 한 마디. ${p.n} ÷ ${len} = ${q}${r ? ` … ${r}` : ""} — 마디 ${q}개${r ? `와 남는 ${r}칸` : ""}에서 세어요.`;
+    return `${len}개씩 한 마디. ${p.n} ÷ ${len} = ${q}${r ? ` … ${r}` : ""} — ${r ? `나머지 ${r}, 마디의 ${r}번째 구슬` : "나머지 0, 마디의 마지막 구슬"}이에요.`;
+  };
   const draw = () => {
     const show = Array.from({ length: p.shown }, (_, i) => beadAt(p, i + 1));
     const unitLen = p.dual ? null : p.unit.length;
-    const cars = show.map((b, i) => `<li class="lg-car${revealUnits && unitLen && i % unitLen === 0 ? " unit-start" : ""}"><span class="lg-car-no">${i + 1}</span>${beadSvg(b)}</li>`).join("");
+    const marking = !p.dual && !unitFound && !locked;
+    const marks = (revealUnits || unitFound) && unitLen;
+    const cars = show.map((b, i) => marking
+      ? `<li class="lg-car pick"><button type="button" class="lg-car-btn" data-b2-unit="${i + 1}" aria-label="${i + 1}번째 구슬 ${beadName(b)}까지가 한 마디"><span class="lg-car-no">${i + 1}</span>${beadSvg(b)}</button></li>`
+      : `<li class="lg-car${marks && i % unitLen === 0 ? " unit-start" : ""}"><span class="lg-car-no">${i + 1}</span>${beadSvg(b)}</li>`).join("");
     const gap = p.n > p.shown + 1 ? '<li class="lg-car gap" aria-hidden="true">…</li>' : "";
     const answerShown = locked && p.kind !== "count";
     const mystery = p.kind === "count" ? "" : `<li class="lg-car mystery${answerShown ? " solved" : ""}"><span class="lg-car-no">${p.n}</span>${answerShown ? beadSvg(p.answer) : '<span class="lg-q">?</span>'}</li>`;
-    stage.innerHTML = `${p.kind === "count" ? `<p class="lg-target">${beadSvg(p.target)}<span>이 구슬이 <b>1번부터 ${p.n}번까지</b> 몇 개?</span></p>` : ""}<ol class="lg-train" aria-label="구슬 기차">${cars}${gap}${mystery}</ol>${revealUnits && unitLen ? `<p class="lg-unit-note">${unitLen}개씩 한 마디. ${p.n}번째는 ${Math.ceil(p.n / unitLen)}번째 마디의 ${(p.n - 1) % unitLen + 1}번째 구슬.</p>` : ""}${revealUnits && p.dual ? `<p class="lg-unit-note">모양은 ${p.shapeCycle.length}개마다, 색은 ${p.colorCycle.length}개마다 되풀이. ${p.n}번째: 모양 ${(p.n - 1) % p.shapeCycle.length + 1}번째, 색 ${(p.n - 1) % p.colorCycle.length + 1}번째.</p>` : ""}`;
+    const stepNote = marking ? `<p class="lg-unit-note step">① 처음부터 똑같이 되풀이되는 가장 짧은 묶음을 찾아요. <b>한 마디가 끝나는 구슬</b>을 누르세요.</p>${unitNote ? `<p class="lg-unit-note retry" role="status">${esc(unitNote)}</p>` : ""}`
+      : unitFound && !locked && unitLen ? `<p class="lg-unit-note step">② ${esc(unitDivision(unitLen))}</p>` : "";
+    stage.innerHTML = `${p.kind === "count" ? `<p class="lg-target">${beadSvg(p.target)}<span>이 구슬이 <b>1번부터 ${p.n}번까지</b> 몇 개?</span></p>` : ""}<ol class="lg-train" aria-label="구슬 기차">${cars}${gap}${mystery}</ol>${stepNote}${revealUnits && unitLen ? `<p class="lg-unit-note">${unitLen}개씩 한 마디. ${p.n}번째는 ${Math.ceil(p.n / unitLen)}번째 마디의 ${(p.n - 1) % unitLen + 1}번째 구슬.</p>` : ""}${revealUnits && p.dual ? `<p class="lg-unit-note">모양은 ${p.shapeCycle.length}개마다, 색은 ${p.colorCycle.length}개마다 되풀이. ${p.n}번째: 모양 ${(p.n - 1) % p.shapeCycle.length + 1}번째, 색 ${(p.n - 1) % p.colorCycle.length + 1}번째.</p>` : ""}`;
+    if (marking) { controls.innerHTML = '<p class="cg-ask">먼저 위 기차에서 한 마디를 찾으세요.</p>'; return; }
     if (p.kind === "count") {
       controls.innerHTML = `<p class="cg-ask">개수를 고르세요.</p>${pad(p.choices, "data-b2-count", { disabled: locked })}`;
       wrong.forEach((v) => controls.querySelector(`[data-b2-count="${v}"]`)?.setAttribute("disabled", ""));
     } else if (p.kind === "dual") {
-      controls.innerHTML = `<p class="cg-ask">${p.n}번째 구슬의 모양과 색을 골라요.</p><div class="lg-pick-row" role="group" aria-label="모양">${p.shapeCycle.map((s) => `<button type="button" class="lg-choice${pickShape === s ? " on" : ""}" data-b2-shape="${s}" aria-pressed="${pickShape === s}" ${locked ? "disabled" : ""}>${shapeSvg(s, "#8a99a6")}<span>${SHAPE_NAME[s]}</span></button>`).join("")}</div><div class="lg-pick-row" role="group" aria-label="색">${p.colorCycle.map((c) => `<button type="button" class="lg-choice swatch${pickColor === c ? " on" : ""}" data-b2-color="${c}" aria-pressed="${pickColor === c}" ${locked ? "disabled" : ""}><i style="background:${HEX[c]}"></i><span>${COLOR_NAME[c]}</span></button>`).join("")}</div><div class="cg-actions"><button type="button" class="cg-primary" data-b2-check ${locked || !pickShape || !pickColor ? "disabled" : ""}>확인!</button></div>`;
+      controls.innerHTML = `<p class="cg-ask">${p.n}번째 구슬의 모양과 색을 골라요.</p><div class="lg-pick-row" role="group" aria-label="모양">${p.shapeCycle.map((s) => `<button type="button" class="lg-choice${pickShape === s ? " on" : ""}" data-b2-shape="${s}" aria-pressed="${pickShape === s}" ${locked ? "disabled" : ""}>${shapeSvg(s, "#8a99a6")}<span>${SHAPE_NAME[s]}</span></button>`).join("")}</div><div class="lg-pick-row" role="group" aria-label="색">${p.colorCycle.map((c) => `<button type="button" class="lg-choice swatch${pickColor === c ? " on" : ""}" data-b2-color="${c}" aria-pressed="${pickColor === c}" ${locked ? "disabled" : ""}><i style="background:${HEX[c]}"></i><span>${COLOR_NAME[c]}</span></button>`).join("")}</div><div class="cg-actions"><button type="button" class="cg-primary" data-b2-check ${locked || !pickShape || !pickColor ? "disabled" : ""}>답 내기</button></div>`;
     } else {
       controls.innerHTML = `<p class="cg-ask">${p.n}번째 구슬을 고르세요.</p><div class="lg-pick-row">${p.choices.map((b, i) => `<button type="button" class="lg-choice bead" data-b2-choice="${i}" aria-label="${beadName(b)}" ${locked || wrong.has(i) ? "disabled" : ""} ${wrong.has(i) ? 'data-state="bad"' : ""}>${beadSvg(b)}</button>`).join("")}</div>`;
     }
   };
+  const onUnit = (event) => {
+    const t = event.target.closest("[data-b2-unit]");
+    if (!t || locked || unitFound) return;
+    const k = Number(t.dataset.b2Unit), len = p.unit.length;
+    sound.tick();
+    if (k === len) { unitFound = true; unitNote = ""; }
+    else unitNote = k < len
+      ? `${k + 1}번째 구슬부터 다시 보면 처음과 같은 순서로 되풀이되지 않아요. 조금 더 길게 봐요.`
+      : `${k}개보다 더 짧은 묶음이 처음부터 되풀이돼요. 가장 짧은 묶음을 찾아요.`;
+    draw();
+    stage.querySelector(unitFound ? ".lg-unit-note.step" : `[data-b2-unit="${k}"]`)?.focus?.();
+  };
+  stage.addEventListener("click", onUnit);
   const onClick = (event) => {
     const t = event.target.closest("button");
     if (!t || t.disabled || locked) return;
@@ -187,19 +246,19 @@ function patternBoard({ stage, controls, sound }) {
   };
   controls.addEventListener("click", onClick);
   return {
-    show(problem, a) { p = problem; api = a; locked = false; pickShape = null; pickColor = null; wrong = new Set(); revealUnits = false; draw(); },
+    show(problem, a) { p = problem; api = a; locked = false; pickShape = null; pickColor = null; wrong = new Set(); revealUnits = false; unitFound = false; unitNote = ""; draw(); },
     reveal(problem, done) { locked = true; revealUnits = true; draw(); setTimeout(done, reduced() ? 0 : 600); },
     lock(on) { locked = on; if (on) revealUnits = true; draw(); },
-    dispose() { controls.removeEventListener("click", onClick); }
+    dispose() { controls.removeEventListener("click", onClick); stage.removeEventListener("click", onUnit); }
   };
 }
 const PATTERN_GAME = {
   ...PATTERN,
-  coach: (p) => (p.dual ? "모양만 따로 보고, 색만 따로 봐. 둘은 되풀이되는 길이가 달라." : p.kind === "next" ? "처음부터 같은 모양이 다시 나오는 곳을 찾아 봐. 거기까지가 한 마디야." : "한 마디가 몇 개인지 세고, 그 수로 묶어서 세어 봐."),
+  coach: (p) => (p.dual ? "모양만 따로 보고, 색만 따로 봐요. 둘은 되풀이되는 길이가 달라요." : p.kind === "next" ? "처음부터 같은 모양이 다시 나오는 곳을 찾아 봐요. 거기까지가 한 마디예요." : "① 한 마디를 찾고 ② 물은 번째를 마디 칸 수로 나눠. ③ 나머지가 마디의 몇 번째인지 알려 줘."),
   mission: (p) => (p.kind === "count" ? `구슬이 되풀이되며 이어져요. <b class="cw">${p.n}번째까지</b> 이 구슬은 몇 개일까요?` : p.kind === "next" ? "다음에 올 구슬은 무엇일까요?" : `<b class="cw">${p.n}번째</b> 구슬은 무엇일까요?`),
-  hint: (p, info) => (p.dual ? (info?.shapeOk ? "모양은 맞았어! 색만 따로 세어 봐." : info?.colorOk ? "색은 맞았어! 모양만 따로 세어 봐." : "모양이 몇 개마다, 색이 몇 개마다 되풀이되는지 따로 세어 봐.") : p.kind === "count" ? "한 마디 안에 그 구슬이 몇 개인지 세고, 마디가 몇 번 들어가는지 곱해 봐. 남는 칸도 잊지 말고!" : "한 마디의 길이를 다시 세어 봐. 마디 수로 나누고 남는 자리를 봐."),
-  success: (p) => (p.kind === "count" ? `맞았어! ${p.n}번째까지 ${p.answer}개야.` : `맞았어! ${p.n}번째는 ${beadName(p.answer)}야.`),
-  reveal: (p) => (p.kind === "count" ? `정답은 ${p.answer}개야. 마디마다 몇 개씩 있는지 세어 봐.` : `${p.n}번째는 ${beadName(p.answer)}야. 마디로 묶은 선을 봐.`),
+  hint: (p, info) => (p.dual ? (info?.shapeOk ? "모양은 맞았어요! 색만 따로 세어 봐요." : info?.colorOk ? "색은 맞았어요! 모양만 따로 세어 봐요." : "모양이 몇 개마다, 색이 몇 개마다 되풀이되는지 따로 세어 봐요.") : p.kind === "count" ? "한 마디 안에 그 구슬이 몇 개인지 세고, 마디가 몇 번 들어가는지 곱해 봐요. 남는 칸도 잊지 마요!" : "한 마디의 길이를 다시 세어 봐요. 마디 수로 나누고 남는 자리를 봐요."),
+  success: (p) => (p.kind === "count" ? `맞았어요! ${p.n}번째까지 ${p.answer}개예요.` : `맞았어요! ${p.n}번째는 ${yeyo(beadName(p.answer))}.`),
+  reveal: (p) => (p.kind === "count" ? `정답은 ${p.answer}개예요. 마디마다 몇 개씩 있는지 세어 봐요.` : `${p.n}번째는 ${yeyo(beadName(p.answer))}. 마디로 묶은 선을 봐요.`),
   createBoard: patternBoard
 };
 
@@ -217,7 +276,9 @@ function sudokuBoard({ stage, controls, sound }) {
     const bad = conflicts(), n = p.size;
     const cell = (r, c) => {
       const v = grid[r][c], given = p.puzzle[r][c] !== 0, key = `${r},${c}`;
-      const cls = `lg-sq${given ? " given" : ""}${sel === key ? " sel" : ""}${bad.has(key) ? " bad" : ""}${showWrong && !given && v && v !== p.solution[r][c] ? " wrong" : ""}`;
+      const [sr, sc] = sel ? sel.split(",").map(Number) : [-1, -1];
+      const inLine = sel && sel !== key && (r === sr || c === sc || (p.boxes && Math.floor(r / 2) === Math.floor(sr / 2) && Math.floor(c / 2) === Math.floor(sc / 2)));
+      const cls = `lg-sq${given ? " given" : ""}${sel === key ? " sel" : ""}${inLine ? " line" : ""}${bad.has(key) ? " bad" : ""}${showWrong && !given && v && v !== p.solution[r][c] ? " wrong" : ""}`;
       return given ? `<div class="${cls}" role="gridcell" aria-label="${r + 1}행 ${c + 1}열 ${v}">${v}</div>` : `<button type="button" role="gridcell" class="${cls}" data-b2-cell="${key}" aria-label="${r + 1}행 ${c + 1}열 ${v || "빈칸"}" ${locked ? "disabled" : ""}>${v || ""}</button>`;
     };
     // 상자 규칙 판은 상자(2×2)별로 묶어 그린다. 상자 순서: 왼쪽 위 → 오른쪽 위 → 왼쪽 아래 → 오른쪽 아래.
@@ -226,9 +287,21 @@ function sudokuBoard({ stage, controls, sound }) {
       : grid.map((row, r) => row.map((_, c) => cell(r, c)).join("")).join("");
     stage.innerHTML = `<div class="lg-sudoku${p.boxes ? " boxes" : ""}" style="--n:${n}" role="grid" aria-label="${n}×${n} 빈칸 채우기${p.boxes ? ", 굵은 상자 넷" : ""}">${body}</div>`;
     const full = grid.every((row) => row.every((v) => v));
-    controls.innerHTML = `<p class="cg-ask">${sel ? "넣을 수를 고르세요." : "빈칸을 먼저 누르세요."}</p>${pad([...Array(n).keys()].map((v) => v + 1), "data-b2-num", { disabled: locked || !sel })}<div class="cg-actions"><button type="button" class="cg-secondary" data-b2-erase ${locked || !sel ? "disabled" : ""}>지우기</button><button type="button" class="cg-primary" data-b2-check ${locked || !full ? "disabled" : ""}>확인!</button></div>`;
+    // 골든벨 풀이: ① 가로줄에서 빠진 수 ② 같은 칸의 세로줄(과 굵은 상자)에서도 되는지 ③ 채운 뒤 달라진 줄 다시 보기.
+    const ask = !sel ? "빈칸을 먼저 누르세요." : `① 이 칸의 가로줄에 빠진 수는? ② 그 수가 세로줄${p.boxes ? "과 굵은 상자" : ""}에도 없나요? 금색 칸들을 보고 넣을 수를 고르세요.`;
+    controls.innerHTML = `<p class="cg-ask">${ask}</p>${pad([...Array(n).keys()].map((v) => v + 1), "data-b2-num", { disabled: locked || !sel })}<div class="cg-actions"><button type="button" class="cg-secondary" data-b2-erase ${locked || !sel ? "disabled" : ""}>지우기</button><button type="button" class="cg-primary" data-b2-check ${locked || !full ? "disabled" : ""}>답 내기</button></div>`;
   };
-  const firstBlank = () => { for (let r = 0; r < p.size; r++) for (let c = 0; c < p.size; c++) if (!grid[r][c]) return `${r},${c}`; return null; };
+  // 다음으로 고를 칸: 줄·상자의 수를 보고 넣을 수 있는 수가 가장 적은 빈칸(「가장 먼저 알 수 있는 칸」).
+  const candidates = (r, c) => {
+    const used = new Set([...grid[r], ...grid.map((row) => row[c])]);
+    if (p.boxes) { const br = r - (r % 2), bc = c - (c % 2); [grid[br][bc], grid[br][bc + 1], grid[br + 1][bc], grid[br + 1][bc + 1]].forEach((v) => used.add(v)); }
+    return [...Array(p.size).keys()].map((v) => v + 1).filter((v) => !used.has(v)).length;
+  };
+  const firstBlank = () => {
+    let best = null, bestCount = Infinity;
+    for (let r = 0; r < p.size; r++) for (let c = 0; c < p.size; c++) if (!grid[r][c]) { const k = candidates(r, c); if (k < bestCount) { best = `${r},${c}`; bestCount = k; } }
+    return best;
+  };
   const onClick = (event) => {
     const t = event.target.closest("button");
     if (!t || t.disabled || locked) return;
@@ -249,11 +322,11 @@ function sudokuBoard({ stage, controls, sound }) {
 }
 const SUDOKU_GAME = {
   ...SUDOKU,
-  coach: (p) => (p.boxes ? "가로줄, 세로줄, 굵은 상자 안에 1부터 4가 한 번씩이야. 빈칸이 하나뿐인 곳부터!" : `가로줄과 세로줄에 1부터 ${p.size}까지 한 번씩이야. 빈칸이 하나뿐인 줄부터 채워 봐.`),
+  coach: (p) => (p.boxes ? "가로줄, 세로줄, 굵은 상자 안에 1부터 4가 한 번씩이에요. 하나를 채우면 그 줄과 상자를 다시 봐요 — 다음 칸이 열려요." : `가로줄과 세로줄에 1부터 ${p.size}까지 한 번씩이에요. 하나를 채우면 달라진 줄을 다시 봐요 — 다음 칸이 열려요.`),
   mission: (p) => `빈칸 ${p.blanks}개를 채우세요. ${p.boxes ? "가로·세로·굵은 상자" : "가로·세로"}에 1부터 ${p.size}까지 <b class="cw">한 번씩</b>!`,
-  hint: (p, info) => (info?.conflicts ? "빨간 칸은 같은 줄이나 상자에 같은 수가 겹친 곳이야. 그 칸부터 고쳐 봐." : "한 줄에 빠진 수가 무엇인지 하나씩 확인해 봐."),
-  success: (p) => `맞았어! 빈칸 ${p.blanks}개를 모두 채웠어.`,
-  reveal: () => "정답 판이야. 줄마다 1부터 끝까지 한 번씩 있는지 확인해 봐.",
+  hint: (p, info) => (info?.conflicts ? "빨간 칸은 같은 줄이나 상자에 같은 수가 겹친 곳이에요. 그 칸부터 고쳐 봐요." : "한 줄에 빠진 수가 무엇인지 하나씩 확인해 봐요."),
+  success: (p) => `맞았어요! 빈칸 ${p.blanks}개를 모두 채웠어요.`,
+  reveal: () => "정답 판이에요. 줄마다 1부터 끝까지 한 번씩 있는지 확인해 봐요.",
   createBoard: sudokuBoard
 };
 

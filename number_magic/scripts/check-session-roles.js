@@ -29,7 +29,7 @@ const sb = vm.createContext(w);
 const appHtml = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/<!--[\s\S]*?-->/g, '');
 const appScripts = [...appHtml.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/g)]
   .map(m => m[1].split('?')[0])
-  .filter(f => /^data\/(?:threads|middle-pacing|wordable|courses)\.js$|^data\/g1\/[^/]+-threads\.js$/.test(f));
+  .filter(f => /^data\/(?:threads|middle-pacing|high-pacing|wordable|courses)\.js$|^data\/g1\/[^/]+-threads\.js$/.test(f));
 for(const f of appScripts) vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), sb, { filename:f });
 const C = w.NM_COURSES, SPEC = w.NM_COURSE_SPEC, T = w.NM_THREADS;
 const BAND = { level0:'pre', level1:'elem', level2:'elem', level3:'elem', challenge:'elem', middle1:'middle', middle2:'middle', middle3:'middle' };
@@ -95,25 +95,28 @@ for(let n = 0; n <= 37; n++){
   if(s3 === ns) full++;
   rows.push(`C${String(n).padEnd(3)}${c.tier.padEnd(10)}회차 ${String(ns).padStart(2)} · 세 층 ${String(s3).padStart(2)} · 교과→문장제 ${String(words).padStart(2)} · 그리기 ${draws} · ${Math.min(...mins)}~${Math.max(...mins)}분`);
 }
-/* G. 중등 진도 보기 = 정규 과정 */
+/* G. 중등의 20묶음은 정규 원본 회차를 순서대로 빠짐없이 참조한다. */
 const P = w.NM_MIDDLE_PACING;
 let mpSessions = 0;
 if(!P || P.derivedFrom !== 'NM_COURSES') fail.push('G · NM_MIDDLE_PACING 이 정규 과정에서 파생된 보기가 아니다');
 else {
-  [1, 2, 3].forEach(g => {
-    const G = P.grades[g];
-    const reg = G.courseKeys.flatMap(k => C[k].sessions.filter(s => !s.test).map(s => ({ k, s })));
-    if(G.sessions.length !== reg.length) fail.push(`G · 중${g}: 보기 ${G.sessions.length}회 ≠ 정규 ${reg.length}회`);
-    G.sessions.forEach((v, i) => {
+  const sourceKeys=[];
+  [1,2,3].forEach(g=>{
+    const G=P.grades[g];
+    if(G.sessions.length!==20)fail.push(`G · 중${g}: 20묶음이어야 한다`);
+    const wantKeys=G.courseKeys.flatMap(k=>C[k].sessions.map((s,i)=>k+'-'+i));
+    const gotKeys=[];
+    G.sessions.forEach(v=>{
       mpSessions++;
-      const r = reg[i]; if(!r) return;
-      const want = [...r.s.school, ...r.s.strategy.practice, ...r.s.application.filter(a => a.from !== 'school')]
-        .map(d => d.kind === 'drawing' ? 'draw:' + d.mode + '×' + d.count : key(d) + '×' + d.count).join(' ');
-      const got = v.blocks.map(b => b.kind === 'drawing' ? 'draw:' + b.mode + '×' + b.n : b.t + '@' + b.lv + '×' + b.n).join(' ');
-      if(want !== got) fail.push(`G · ${v.id}: 보기 블록이 정규 회차와 다르다\n      보기 ${got}\n      정규 ${want}`);
+      const source=v.sourceIndices.map(i=>{gotKeys.push(v.course+'-'+i);return C[v.course].sessions[i];});
+      const raw=source.flatMap(s=>s.test?s.pool:[...s.school,...s.strategy.practice,...s.application.filter(a=>a.from!=='school'),...(s.stretch||[])]).concat(v.extraPractice||[]);
+      const want=raw.map(d=>d.kind==='drawing'?'draw:'+d.mode+'×'+d.count:key(d)+'×'+(d.count||d.n)).join(' ');
+      const got=v.blocks.map(b=>b.kind==='drawing'?'draw:'+b.mode+'×'+b.n:b.t+'@'+b.lv+'×'+b.n).join(' ');
+      if(want!==got)fail.push(`G · ${v.id}: 묶음 블록이 원본 참조와 다르다`);
     });
+    if(wantKeys.join('|')!==gotKeys.join('|'))fail.push(`G · 중${g}: 원본 회차 누락·중복·순서 변경`);
   });
-  (P.legacyIds || []).forEach(id => { if(!P.getSession(+id[1], id)) fail.push(`G · 옛 번호 ${id} 가 정규 회차로 이어지지 않는다`); });
+  (P.legacyIds||[]).forEach(id=>{if(!P.getSession(+id[1],id))fail.push(`G · 옛 번호 ${id} 연결 실패`);});
 }
 console.log(rows.join('\n'));
 console.log(`\n과정 0~37 회차 ${sessions} · 세 층이 모두 있는 과정 ${full}/38 · 중등 보기 ${mpSessions}회(정규에서 계산)`);

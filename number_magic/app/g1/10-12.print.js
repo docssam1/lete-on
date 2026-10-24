@@ -165,9 +165,19 @@
   };
 
   /* 사실 카드 — 2열 카드 + 답 칸 */
+  // The category picture must agree with the colour/flavour named on its card.
+  function factPicture(f,K){
+    const text=f.text?.ko||'',kind=f.icon;let color='',body='';
+    if(kind==='🎈'){color=/파란/.test(text)?'#4274a5':'#d94338';body=`<ellipse cx="32" cy="24" rx="19" ry="23" fill="${color}"/><path d="M28 46L36 46L32 52Z" fill="${color}"/><path d="M32 51C24 55 40 58 30 63" fill="none" stroke="#645943" stroke-width="2"/>`;}
+    if(kind==='🍎'){color=/초록/.test(text)?'#4a8c49':'#d94338';body=`<path d="M32 19C10 5 4 31 14 50C20 62 27 57 32 57C38 57 45 62 52 49C62 29 53 5 32 19Z" fill="${color}"/><path d="M32 20L35 6" stroke="#645943" stroke-width="4"/><ellipse cx="42" cy="10" rx="10" ry="4" fill="#4a8c49" transform="rotate(-25 42 10)"/>`;}
+    if(kind==='⭐'){color=/하얀/.test(text)?'#fff':'#d9a62e';body=`<polygon points="32,3 40,23 62,24 45,38 51,60 32,47 13,60 19,38 2,24 24,23" fill="${color}" stroke="#938157" stroke-width="2"/>`;}
+    if(kind==='🍬'){color=/포도/.test(text)?'#80549b':'#d94362';body=`<path d="M18 23L3 13L3 51L18 41M46 23L61 13L61 51L46 41" fill="${color}" stroke="#645943"/><ellipse cx="32" cy="32" rx="18" ry="15" fill="${color}" stroke="#645943"/><path d="M25 20L38 44" stroke="#fff" stroke-width="5" opacity=".55"/>`;}
+    if(kind==='🍪'){color=/초코/.test(text)?'#79513c':'#d4aa6f';body=`<circle cx="32" cy="32" r="27" fill="${color}" stroke="#645943" stroke-width="2"/>${[[22,17],[40,18],[15,34],[34,32],[45,43],[26,47]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="4" ry="3" fill="${/초코/.test(text)?'#412a21':'#f5d894'}"/>`).join('')}`;}
+    return body?`<svg class="nm-obj-svg" data-fact-kind="${K.esc(kind)}" data-fact-color="${color}" viewBox="0 0 64 64" role="img" aria-label="${K.esc(K.pickL(f.text))}">${body}</svg>`:tok(K,kind);
+  }
   P.g10_factsCard = {
     visual(p, K) {
-      const cards = p.facts.map(f => `<div class="${X}-fact"><span class="${X}-pi">${tok(K, f.icon)}</span><span>${plain(K, f.text)}</span></div>`).join('');
+      const cards = p.facts.map(f => `<div class="${X}-fact"><span class="${X}-pi">${factPicture(f,K)}</span><span>${plain(K, f.text)}</span></div>`).join('');
       return K.nlCard(K.nlStage(`<div class="${X}-facts">${cards}</div>`), K.nlAnsBox(K.EA));
     },
     label() { return null; },

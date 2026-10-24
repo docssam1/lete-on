@@ -50,7 +50,7 @@ const server=http.createServer((req,res)=>{
   await p.evaluate(()=>{__PROFILE_CHECK.finish();__PROFILE_CHECK.start();});assert.equal(await p.inputValue('#pdGrade'),'m1');assert.equal(await p.inputValue('#pdStudyBand'),'middle');
   await p.selectOption('#pdStudyBand','high');await p.selectOption('#pdBaseline','c41');await p.selectOption('#pdAge','11');assert.equal(await p.inputValue('#pdBaseline'),'c41','birth correction keeps manual scope');await p.selectOption('#pdGrade','e4');assert.equal(await p.inputValue('#pdBaseline'),'c41');
   await p.click('#pdStart');next=await p.evaluate(()=>__PROFILE_CHECK.snapshot());assert.equal(next.run.selection.scopeSource,'manual');assert.equal(next.schoolAge.birthYear,year-10);
-  for(let i=0;i<20;i++)await p.click('#pdSkip');await p.waitForSelector('.pd-calendar-table');assert.equal(await p.locator('.pd-calendar-table').first().locator('tbody tr').count(),12);
+  for(let i=0;i<20;i++)await p.click('#pdSkip');await p.waitForSelector('.pd-calendar-table');assert.equal(await p.locator('#pdMonthlyPlan').locator('tbody tr').count(),12);
   await p.evaluate(()=>{__PROFILE_CHECK.grade(5);__PROFILE_CHECK.start();});assert.equal(await p.inputValue('#pdGrade'),'e5');assert.equal(await p.inputValue('#pdBaseline'),'c41','retest keeps manual advanced study');
   await p.evaluate(()=>__PROFILE_CHECK.adminGrade(new Date().getFullYear()-4));assert.equal((await p.evaluate(()=>__PROFILE_CHECK.snapshot())).schoolAge.birthYear,year-10,'admin plan keeps birth year');
   await p.evaluate(()=>__PROFILE_CHECK.clear());await p.click('#ageClear');next=await p.evaluate(()=>__PROFILE_CHECK.snapshot());assert.equal(next.schoolAge.birthYear,year-10);assert.equal(next.schoolAge.entryYear,undefined,'clear grade does not clear age');

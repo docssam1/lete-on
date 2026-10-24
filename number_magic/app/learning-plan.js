@@ -2,6 +2,11 @@
   'use strict';
   const DAY=86400000, MULTS=[0.7,0.85,1,1.25,1.5];
   const HIGH=root.NM_HIGH_PACING || (typeof module!=='undefined'&&module.exports?require('../data/high-pacing.js'):null);
+  function extensionData(){
+    if(root.NM_MIDDLE_EXTENSION)return root.NM_MIDDLE_EXTENSION;
+    if(typeof module!=='undefined'&&module.exports){try{return require('../data/middle-extension.js');}catch(_){return null;}}
+    return null;
+  }
   const langText=(v,l)=>typeof v==='string'?v:(v&&(v[l]||v.ko))||'';
   function paceMultiplier(courses,pace){
     const offsets={p0:0,p1:3,p2:7,p3:12,p4:17};
@@ -49,9 +54,32 @@
       const compact=!!c.studyPlan, count=compact?HIGH.length(c):n;
       const firstLesson=compact?HIGH.lessonIndex(c,from)+1:from;
       const remaining=count-firstLesson+1;
-      // Carry fractional high-school weeks across course boundaries. Rounding
+      if(compact&&(settings.extensionAnchor||Object.values(settings.middleExtensions||{}).some(Boolean))){
+        const refs=HIGH.timeline(courses,{...settings,courseKey:keys[i],startSession:from});
+        if(!refs)throw new Error('invalid_extension');
+        const groups=[];
+        refs.forEach(ref=>{
+          const extension=ref.kind==='middle-extension',key=extension?'M'+ref.grade+'E':ref.courseKey;
+          let group=groups[groups.length-1];
+          if(!group||group.key!==key){
+            const source=extension?extensionData()?.course(ref.grade):courses[key];
+            if(!source)throw new Error('invalid_extension');
+            group={key,title:langText(source.title,lang),from:ref.lessonIndex+1,n:extension?extensionData().length(ref.grade):HIGH.length(source),compact:true,units:0,
+              ...(extension?{kind:'middle-extension',grade:ref.grade}:{})};
+            groups.push(group);
+          }
+          group.units+=Number(ref.scheduleUnits)||1;
+        });
+        for(const group of groups){
+          const weeks=group.units/(options.standard?2:cadence)/speed,end=cursor+weeks*7*DAY;
+          segments.push({...group,start:cursor,end});cursor=end;
+        }
+        break;
+      }
+      // Carry fractional compact-course weeks across course boundaries. Rounding
       // each small course separately would erase the selected learning speed.
-      const weeks=compact?remaining/cadence/speed
+      const courseCadence=options.standard&&compact?2:cadence;
+      const weeks=compact?HIGH.durationUnits(c,from)/courseCadence/speed
         :Math.max(1,Math.round(Math.ceil(remaining/cadence)*pace/speed));
       const end=cursor+weeks*7*DAY;
       segments.push({key:keys[i],title:langText(c.title,lang),start:cursor,end,from:firstLesson,n:count,compact});cursor=end;
@@ -62,7 +90,7 @@
     for(let i=0;i<months;i++){
       const next=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1));
       const spans=segments.filter(s=>s.start<+next&&s.end>+month);
-      rows.push({month:month.toISOString().slice(0,7),schoolLabel:schoolLabel(settings.entryYear,month,lang,settings.birthYear),courseKeys:spans.map(s=>s.key),courseLabels:spans.map(s=>s.key+' · '+s.title),sessionLabels:spans.map(s=>{
+      rows.push({month:month.toISOString().slice(0,7),schoolLabel:schoolLabel(settings.entryYear,month,lang,settings.birthYear),courseKeys:spans.map(s=>s.key),courseLabels:spans.map(s=>s.kind==='middle-extension'?s.title:s.key+' · '+s.title),sessionLabels:spans.map(s=>{
         const count=s.n-s.from+1;
         const a=Math.min(s.n,s.from+Math.floor(Math.max(0,+month-s.start)/(s.end-s.start)*count));
         const b=Math.min(s.n,s.from-1+Math.ceil(Math.min(s.end,+next)-s.start>0?(Math.min(s.end,+next)-s.start)/(s.end-s.start)*count:1));
@@ -74,6 +102,7 @@
       // cumulative display boundary is rounded; segment durations stay exact.
       const end=s.compact?+start+Math.ceil((s.end-+start)/(7*DAY)-1e-9)*7*DAY:s.end;
       return {key:s.key,title:s.title,date:new Date(end).toISOString().slice(0,10),
+        ...(s.kind?{kind:s.kind,grade:s.grade}:{}),
         schoolLabel:schoolLabel(settings.entryYear,new Date(end),lang,settings.birthYear)};
     }),estimated:true};
   }
@@ -85,7 +114,11 @@
       reference:t('원장 기준: 빠른 유아는 6세 3월 과정 1에서 시작해 한 달에 한 과정을 참고해요. 필즈·소마 공식 진도나 입학 기준으로 표시하지 않아요.','Director reference: a fast preschool plan starts Course 1 in March of Korean age 6, at about one course a month. This is not an official Fields or SOMA entry requirement.','园长参考：进度较快的幼儿可从韩国年龄6岁3月开始课程1，参考每月一课程。这不是Fields或SOMA的官方进度或入学标准。'),
       sources:[{label:t('소마 공식 과정 안내','SOMA official programs','SOMA官方课程'),url:'https://new.somai.co.kr/menu/150/page/'},{label:t('필즈 대치 공식 유아 안내','Fields Daechi official preschool information','Fields大峙官方学前信息'),url:'https://www2.fieldsgood.co.kr/fet/index.php?fc_ccode=F001'}]};
   }
-  const api={project,recommend,academicGrade,schoolLabel,paceMultiplier};
+  function standard(courses,settings,options){
+    const {middleExtensions,extensionAnchor,...core}=settings||{};
+    return project(courses,{...core,speed:1,cadence:'w1',pace:'p2'},{...options,standard:true});
+  }
+  const api={project,standard,recommend,academicGrade,schoolLabel,paceMultiplier};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   root.NM_LEARNING_PLAN=api;
 })(typeof window!=='undefined'?window:globalThis);
