@@ -881,6 +881,28 @@
   .nm-dv-gap { display:inline-flex; align-items:flex-end; justify-content:center; width:.44em; height:1.3em; font-weight:800; font-size:1.15em; line-height:1; vertical-align:top; }
   .nm-dv-gap-q { color:#1f5fbf; }
   .nm-dv-add { border-color:#9aa3b5; }
+  /* N-01: 큰 그림 → 수 이름·숫자 → 따라 쓰기를 한 장에서 연결한다. */
+  .nm-n01-note { font-family:"NM Series Sans",Pretendard,sans-serif; }
+  .nm-n01-body { flex:1 1 auto; min-height:0; display:flex; flex-direction:column; justify-content:space-evenly; gap:4mm; }
+  .nm-n01-section { flex:0 0 auto; border-top:1px solid #c9bda2; padding-top:3mm; }
+  .nm-n01-section h3 { font:700 calc(18px * var(--ws-fs,1))/1.4 "NM Series Sans",Pretendard,sans-serif; margin:0 0 2mm; color:#2a241c; }
+  .nm-n01-section p,.nm-n01-remember p { font-size:calc(12.5px * var(--ws-fs,1)); line-height:1.6; margin:1mm 0 3mm; word-break:keep-all; }
+  .nm-n01-row { display:grid; grid-template-columns:repeat(var(--count-cols),minmax(0,1fr)); gap:4mm; margin:3mm 0; }
+  .nm-n01-cell { text-align:center; min-width:0; }
+  .nm-n01-cell img { display:block; width:20mm; height:20mm; object-fit:contain; margin:0 auto 1mm; }
+  .nm-n01-word { display:block; font:700 calc(24px * var(--ws-fs,1))/1.4 "NM Series Sans",Pretendard,sans-serif; color:var(--count-ink); }
+  .nm-n01-row-trace .nm-n01-word { display:none; }
+  .nm-n01-digit { display:block; font:600 calc(23px * var(--ws-fs,1))/1.3 "NM Series Sans",Pretendard,sans-serif; color:var(--count-ink); }
+  .nm-n01-total { text-align:center; padding:2mm; background:#f7f2e7; border-radius:2mm; }
+  .nm-n01-total b { color:#2f6b4a; font-weight:700; }
+  .nm-n01-trace { position:relative; height:16mm; border-bottom:1px solid #7a6f5c; margin:1mm 1mm 0; display:flex; align-items:center; justify-content:center; }
+  .nm-n01-trace::before { content:''; position:absolute; top:50%; left:0; right:0; border-top:1px dashed #c9bda2; }
+  .nm-n01-trace span { position:relative; color:#9b9b9b; font:400 calc(26px * var(--ws-fs,1))/1.2 "NM Series Sans",Pretendard,sans-serif; }
+  .nm-n01-remember { border-left:1.2mm solid #2f6b4a; padding:2mm 4mm; background:#e9f0e7; flex:0 0 auto; }
+  .nm-n01-remember b { color:#2f6b4a; font-size:calc(16px * var(--ws-fs,1)); font-weight:700; }
+  .nm-n01-remember p { margin:1mm 0; }
+  .nm-print-fs-l .nm-n01-body,.nm-print-fs-xl .nm-n01-body { gap:2mm; }
+  .nm-print-fs-xl .nm-n01-cell img { width:16mm; height:16mm; }
   /* 마법 노트 지면 */
   .nm-w2-page-magic { gap:0; }
   /* 매거진형 개념 노트(2026-09-25) */
@@ -5583,6 +5605,21 @@ function renderMagicNotePage(item, opts){
     </div>
   </div>`;
   const foot = `<div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code)}</span></div>`;
+  // N-01 is an introductory guided activity, not a short rule on an otherwise empty sheet.
+  // Keep one dedicated page; generic NM_PRINT_MAGIC measurements do not apply to this layout.
+  if(item.magicUnit === 'N-01'){
+    const words=lk(['하나','둘','셋','넷'],['one','two','three','four'],['一','二','三','四']);
+    const inks=['#b4512e','#a66c20','#2f6b4a','#65508a'];
+    const row=(n,trace)=>`<div class="nm-n01-row${trace?' nm-n01-row-trace':''}" style="--count-cols:${n}">${words.slice(0,n).map((word,i)=>`<div class="nm-n01-cell" style="--count-ink:${inks[i]}"><img src="assets/images/real/chick.png" alt="${esc(lk('병아리','chick','小鸡'))}"><span class="nm-n01-word">${esc(word)}</span>${trace?`<div class="nm-n01-trace"><span>${esc(word)}</span></div>`:`<span class="nm-n01-digit">${i+1}</span>`}</div>`).join('')}</div>`;
+    const html=`<div id="nm-counting-note" class="nm-w2-page nm-w2-page-magic nm-n01-note">${wm}
+      ${w2HeadHtml(headItem,code,'1/1',null,{roundNo:opts.roundNo,name:opts.name,first:true})}${boardHtml}
+      <div class="nm-n01-body">
+        <section class="nm-n01-section"><h3>${esc(lk('① 하나씩 짚으며 읽어요','1. Point and count','① 点一点，数一数'))}</h3><p>${esc(lk('한 마리씩 짚으며 수 이름을 말해 보세요.','Touch each chick and count aloud.','点一只小鸡，说一个数。'))}</p>${row(3,false)}<p class="nm-n01-total">${lk('마지막에 말한 <b>셋</b>! 병아리는 모두 <b>3마리</b>예요.','The last word is <b>three</b>. There are <b>3 chicks</b> in all.','最后说的是<b>三</b>！一共有<b>3只</b>小鸡。')}</p></section>
+        <section class="nm-n01-section"><h3>${esc(lk('② 세어 보고 따라 써요','2. Count and trace','② 数一数，描一描'))}</h3><p>${esc(lk('그림 아래의 수 이름을 따라 써 보세요.','Count, then trace the number words.','数一数，再描一描下面的数名。'))}</p>${row(4,true)}<p>${esc(lk('넷! 병아리는 모두 4마리예요.','Four! There are 4 chicks in all.','四！一共有4只小鸡。'))}</p></section>
+        <aside class="nm-n01-remember"><b>${esc(lk('기억해요','Remember','记住'))}</b><p>${esc(lk('한 마리씩 한 번만 짚어요.','Touch each chick once.','每只只点一次。'))}</p><p>${esc(lk('마지막에 말한 수가 모두 몇 마리인지 알려 줘요.','The last number tells how many chicks there are in all.','最后说的数，告诉我们一共有几只小鸡。'))}</p></aside>
+      </div>${foot}</div>`;
+    return {html,problems:[],thName:lk('마법 노트 · ','Magic Note · ','魔法笔记 · ')+title,code,thread:null,level:null,magic:true,akHtml:'',guidedProblems:[],pageSizes:[]};
+  }
   /* 단계가 셋이면 두 장(①②는 판과 함께, ③은 규칙·체크와 함께) — 한 장에 다 넣으면 ②가 잘렸다(측정). */
   const stageParts = stageHtml.length ? stageHtml : [];
   const tailHtml = ruleHtml + fillsHtml + openHtml;
@@ -8486,8 +8523,10 @@ ${round.html}
     (session.magic || []).forEach((uid, mi) => {
       const u = (window.NM_UNITS || {})[uid];
       if(!u || !u.discover || !Array.isArray(u.discover.stages) || !u.discover.stages.length) return;
-      items.push({ magicUnit:uid, thread:null, level:null, n:0, count:0,
-        topicName:(u.title && (u.title.ko || u.title)) || uid, seed:seedOf(seedWeek + 'mg', mi) });
+      const note={ magicUnit:uid, thread:null, level:null, n:0, count:0,
+        topicName:(u.title && (u.title.ko || u.title)) || uid, seed:seedOf(seedWeek + 'mg', mi) };
+      // Counting starts with the concrete example before the practice; source seeds stay unchanged.
+      if(c==='C0'&&uid==='N-01')items.unshift(note);else items.push(note);
     });
     items.push(...R.strategy, ...R.application);
     /* 문장제 회차는 초등 구간(레벨 1~3·경시의 탑)에만(2026-09-08, 원장 "중등·고등은 문장제보다는
