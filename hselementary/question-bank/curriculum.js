@@ -1839,7 +1839,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             publisherKeyVerified: false,
             answerVerification: "independent-enumeration-user-authorized",
             reviewLocked: false,
-            reviewReason: "450dpi 인쇄 원문과 Apple Vision OCR에서 ‘적어도 몇 개, 가장 많으면 몇 개’라고 요구함을 대조했습니다. 이 단원에서 다루는 십의 자리 이상 반올림을 비교하면 십의 자리 결과 7,200은 7,195~7,204의 10개, 백의 자리 결과 7,200은 7,150~7,249의 100개에서 나오며, 천의 자리 이상으로는 7,200이 결과가 될 수 없습니다. 따라서 최솟값 10개, 최댓값 100개입니다. 원문은 텍스트 문항이고 손글씨·출판사 정답지는 근거로 사용하지 않았습니다.",
+            reviewReason: "450dpi 인쇄 원문과 Apple Vision OCR에서 ‘적어도 몇 개, 가장 많으면 몇 개’라고 요구함을 대조했습니다. 같은 쪽의 앞 문항과 Mission 5는 백·천·십의 자리까지를 표준 반올림 자리로 사용하므로 ㄱ·ㄴ은 가능한 반올림 자리별 후보 수의 최솟값·최댓값입니다. 십의 자리 결과 7,200은 7,195~7,204의 10개, 백의 자리 결과 7,200은 7,150~7,249의 100개이며 천의 자리 이상으로는 7,200이 결과가 될 수 없습니다. 따라서 최솟값 10개, 최댓값 100개입니다. 원문은 텍스트 문항이고 손글씨·출판사 정답지는 근거로 사용하지 않았습니다.",
             generatorKey: "source52RoundingPlaceCountMission6",
             generationMode: "fixed-verified-pool",
             verifiedVariantTarget: 3,
