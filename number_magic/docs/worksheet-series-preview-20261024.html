@@ -28,7 +28,7 @@ grip.addEventListener('pointermove',e=>{if(drag&&e.pointerId===drag.id)setMenuHe
 function stopResize(e){if(drag&&e.pointerId===drag.id){drag=null;document.body.classList.remove('resizing');}}
 grip.addEventListener('pointerup',stopResize);grip.addEventListener('pointercancel',stopResize);grip.addEventListener('lostpointercapture',stopResize);addEventListener('resize',()=>setMenuHeight(menuHeight));setMenuHeight(menuHeight);
 const params=new URLSearchParams(location.search),week='2026-W43',start='2026-10-19';
-let catalog=null,courses=[],generation=0;
+let catalog=null,courses=[],generation=0,releaseScroll=()=>{},focusNext=false;
 const label=v=>typeof v==='string'?v:v?.ko||'';
 function rows(course){return course.studyPlan?.lessons||course.sessions;}
 function updateNavigation(){const ci=courses.findIndex(c=>c.id===$('course').value),ri=Number($('round').value);$('prev').disabled=ci<=0&&ri===0;$('next').disabled=ci===courses.length-1&&ri===rows(courses[ci]).length-1;}
@@ -39,7 +39,7 @@ function show(){
  if(c?.extensionGrade){const g=c.extensionGrade,p={courseKey:c.anchor,sessionIndex:catalog[c.anchor].sessions.length,startDate:start,speed:1,amount:1,cadence:'w1',pace:'p2',middleExtensions:{[g]:'20261024-middle-extension1'},extensionAnchor:{grade:g,index:ri}};for(const [k,v]of Object.entries({dv:NM_DELIVERY_PLAN.VERSION,dp:NM_DELIVERY_PLAN.encode(p),k:1,cad:'w1',amt:1}))url.searchParams.set(k,v);}
  else if(c?.studyPlan)url.searchParams.set('hp','1');
  $('status').textContent=c?label(c.title)+' · '+(ri+1)+'회차를 불러오고 있습니다.':'전체 과정 목록을 불러오고 있습니다.';
- generation++;$('book').src=url.href;$('open').href=url.href;
+ releaseScroll();releaseScroll=()=>{};generation++;$('book').src=url.href;$('open').href=url.href;
  if(c){updateNavigation();history.replaceState(null,'','?'+new URLSearchParams({c:c.id,r:ri+1}));}
 }
 function initialize(w){
@@ -53,8 +53,25 @@ function initialize(w){
  // The bootstrap book is already C0 / first session; retain it unless a deep link selects another book.
  if($('course').value!=='C0'||Number($('round').value)!==0)show();
 }
-$('book').addEventListener('load',()=>{const current=generation,w=$('book').contentWindow;let tries=0;const wait=()=>{if(current!==generation)return;if(w.NM_WS_READY===true){if(!catalog)initialize(w);if(current===generation){const c=courses.find(c=>c.id===$('course').value);$('status').textContent='정규 74과정 · 선택 심화 3과정 · 총 '+courses.reduce((n,c)=>n+rows(c).length,0)+'회차 / '+label(c.title)+' · '+(Number($('round').value)+1)+'회차';}return;}if(w.NM_WS_READY==='error'||++tries>120){$('status').textContent='학습지를 불러오지 못했습니다. 과정을 다시 선택하거나 새로고침해 주세요.';return;}setTimeout(wait,250);};wait();});
+$('book').addEventListener('load',()=>{const current=generation,w=$('book').contentWindow;let tries=0;const wait=()=>{if(current!==generation)return;if(w.NM_WS_READY===true){if(!catalog)initialize(w);if(current===generation){wireScroll(w,current);if(focusNext){w.scrollTo(0,0);w.focus();focusNext=false;}const c=courses.find(c=>c.id===$('course').value);$('status').textContent='정규 74과정 · 선택 심화 3과정 · 총 '+courses.reduce((n,c)=>n+rows(c).length,0)+'회차 / '+label(c.title)+' · '+(Number($('round').value)+1)+'회차';}return;}if(w.NM_WS_READY==='error'||++tries>120){$('status').textContent='학습지를 불러오지 못했습니다. 과정을 다시 선택하거나 새로고침해 주세요.';return;}setTimeout(wait,250);};wait();});
 $('course').addEventListener('change',()=>{fillRounds();show();});$('round').addEventListener('change',show);$('name').addEventListener('change',show);
-function move(delta){let ci=courses.findIndex(c=>c.id===$('course').value),ri=Number($('round').value)+delta;if(ri<0){ci--;ri=rows(courses[ci]).length-1;}else if(ri>=rows(courses[ci]).length){ci++;ri=0;}$('course').value=courses[ci].id;fillRounds(ri);show();}
+function nextTarget(){if(!catalog)return null;const ci=courses.findIndex(c=>c.id===$('course').value),ri=Number($('round').value);if(ri+1<rows(courses[ci]).length)return {course:courses[ci],round:ri+1};if(ci+1<courses.length)return {course:courses[ci+1],round:0};return null;}
+function move(delta){let ci=courses.findIndex(c=>c.id===$('course').value),ri=Number($('round').value)+delta;if(ri<0){if(ci===0)return false;ci--;ri=rows(courses[ci]).length-1;}else if(ri>=rows(courses[ci]).length){if(ci===courses.length-1)return false;ci++;ri=0;}$('course').value=courses[ci].id;fillRounds(ri);show();return true;}
+function wireScroll(w,current){
+ const d=w.document,next=nextTarget(),footer=d.createElement('footer'),style=d.createElement('style');let locked=false,wheel=0,touch=null;const wheelUntil=focusNext?Date.now()+250:0;
+ footer.id='nm-series-scroll-next';style.textContent='#nm-series-scroll-next{max-width:1000px;margin:0 auto;padding:24px 16px 32px;text-align:center;border-top:1px solid #c9bda2;background:#fdfbf5;color:#2a241c;font:14px/1.6 Pretendard,sans-serif}#nm-series-scroll-next p{margin:8px 0 0;color:#7a6f5c;font-size:12px}#nm-series-scroll-next button{font:inherit;min-height:44px;padding:10px 20px;border:1px solid #2f6b4a;border-radius:4px;background:#fff;color:#2f6b4a;cursor:pointer}#nm-series-scroll-next button:focus-visible{outline:3px solid #2f6b4a;outline-offset:3px}@media print{#nm-series-scroll-next{display:none!important}}';d.head.append(style);
+ const go=()=>{if(locked||current!==generation||!next)return;locked=true;focusNext=true;move(1);};
+ if(next){const button=d.createElement('button');button.type='button';button.textContent='다음 학습지 · '+(next.course.extensionGrade?'중'+next.course.extensionGrade+' 선택 심화':'과정 '+next.course.order)+' · '+(next.round+1)+'회차';button.addEventListener('click',go);footer.append(button);const hint=d.createElement('p');hint.textContent='계속 아래로 스크롤하면 다음 학습지가 열립니다.';footer.append(hint);}
+ else footer.textContent='마지막 학습지입니다.';d.body.append(footer);
+ const atEnd=()=>{const e=d.scrollingElement;return e&&e.scrollTop+e.clientHeight>=e.scrollHeight-3;};
+ const editable=e=>e.target?.closest?.('input,textarea,select,button,a,[contenteditable="true"]');
+ const onWheel=e=>{if(e.ctrlKey||e.metaKey||!next)return;if(Date.now()<wheelUntil){e.preventDefault();return;}if(e.deltaY<=0||Math.abs(e.deltaX)>Math.abs(e.deltaY)||!atEnd()){wheel=0;return;}wheel+=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?w.innerHeight:1);if(wheel>=48){e.preventDefault();go();}};
+ const onKey=e=>{if(!next||e.repeat||e.ctrlKey||e.metaKey||e.altKey||e.shiftKey||editable(e)||!atEnd())return;if(['ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go();}};
+ const onStart=e=>{touch=e.touches.length===1?{x:e.touches[0].clientX,y:e.touches[0].clientY,dx:0,dy:0,end:atEnd()}:null;};
+ const onTouch=e=>{if(!touch)return;if(e.touches.length!==1){touch=null;return;}touch.dx=e.touches[0].clientX-touch.x;touch.dy=touch.y-e.touches[0].clientY;};
+ const onEnd=()=>{const t=touch;touch=null;if(t?.end&&t.dy>=48&&t.dy>Math.abs(t.dx)*1.3)go();};const cancel=()=>{touch=null;};
+ d.addEventListener('wheel',onWheel,{passive:false});d.addEventListener('keydown',onKey);d.addEventListener('touchstart',onStart,{passive:true});d.addEventListener('touchmove',onTouch,{passive:true});d.addEventListener('touchend',onEnd,{passive:true});d.addEventListener('touchcancel',cancel,{passive:true});
+ releaseScroll=()=>{d.removeEventListener('wheel',onWheel);d.removeEventListener('keydown',onKey);d.removeEventListener('touchstart',onStart);d.removeEventListener('touchmove',onTouch);d.removeEventListener('touchend',onEnd);d.removeEventListener('touchcancel',cancel);footer.remove();style.remove();};
+}
 $('prev').addEventListener('click',()=>move(-1));$('next').addEventListener('click',()=>move(1));show();
 </script></body></html>
