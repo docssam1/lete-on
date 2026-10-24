@@ -34,6 +34,9 @@ tabs.forEach((t, i) => {
   });
 });
 
+// 기울어진 카드에서 둘러보기 탭으로
+document.querySelectorAll("[data-tab-jump]").forEach((a) => a.addEventListener("click", () => select(Number(a.dataset.tabJump))));
+
 // 머리줄: 첫 화면을 지나면 흰 바탕
 const nav = document.getElementById("nav");
 const onScroll = () => nav.classList.toggle("solid", scrollY > 40);

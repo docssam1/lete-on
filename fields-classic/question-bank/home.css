@@ -1,6 +1,6 @@
 /* 첫 화면(home.html) — 학생 차시 화면(study.css)과 같은 세계: 다섯 섬 그림(글자 없음) · 보라 하나(그림의 길 색) · Pretendard.
    게임 소개는 게임의 청록 법랑·산호를 조금 쓴다. 상업 사이트처럼 큰 첫 화면 → 한 차시 둘러보기 → 게임 → 휴대폰 → 교재 → 선생님 → 마무리. */
-@font-face { font-family: 'FC Sans'; src: url('./assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FC Sans'; src: url('./assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
 .hm {
   --ink: #2b2540; --muted: #6f6787; --line: #e6def5; --line-strong: #cfc1ec;
   --v: #5b3d99; --v-deep: #46307a; --v-soft: #f1ebfc; --paper: #fbf8ff;
@@ -11,6 +11,8 @@
 }
 .hm * { box-sizing: border-box; }
 .hm a { color: inherit; }
+.hm .hm-tcard { color: #15172e; }
+.hm .hm-enter, .hm .hm-ribbon a, .hm .hm-tcard.blue { color: #fff; }
 .hm h1, .hm h2, .hm h3 { margin: 0; letter-spacing: -0.03em; }
 .hm :is(a, button):focus-visible { outline: 3px solid var(--v); outline-offset: 3px; border-radius: 8px; }
 .hm img { max-width: 100%; }
@@ -31,30 +33,69 @@
 .hm-nav nav a { padding: 8px 14px; border-radius: 999px; color: var(--muted); font-size: 15px; font-weight: 600; text-decoration: none; }
 .hm-nav nav a:hover { background: var(--v-soft); color: var(--v-deep); }
 
-/* 첫 화면 */
-.hm-hero { --h: clamp(640px, 100svh, 940px); position: relative; height: var(--h); overflow: hidden; }
-.hm-hero::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(251, 248, 255, .95) 0%, rgba(251, 248, 255, .82) 30%, rgba(251, 248, 255, 0) 58%), linear-gradient(0deg, rgba(251, 248, 255, .9), rgba(251, 248, 255, 0) 18%); pointer-events: none; }
-.hm-hero-art { position: absolute; right: 0; bottom: 0; width: max(100%, calc(var(--h) * 1.7768)); aspect-ratio: 1672 / 941; }
-.hm-hero-art > img:first-child { display: block; width: 100%; height: 100%; }
-.hm-sign { position: absolute; z-index: 2; left: var(--x); top: var(--y); display: inline-flex; align-items: center; gap: 7px; padding: 7px 15px 7px 7px; transform: translate(-50%, 0); border-radius: 999px; background: rgba(255, 255, 255, .92); box-shadow: 0 8px 22px rgba(70, 48, 122, .2); font-size: 15px; font-weight: 700; white-space: nowrap; animation: hm-float 4s ease-in-out infinite; }
-.hm-sign:nth-of-type(2) { animation-delay: -1s; } .hm-sign:nth-of-type(3) { animation-delay: -2s; } .hm-sign:nth-of-type(4) { animation-delay: -3s; }
-.hm-sign b { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--v); color: #fff; font-size: 13px; }
-.hm-sign.done b { background: #4caf73; }
-@keyframes hm-float { 50% { transform: translate(-50%, -6px); } }
-/* 넓은 화면: 왼쪽 두 섬은 글 뒤에 깔리므로 표지판·독쌤은 세 섬만(휴대폰은 그림이 글 아래로 내려가 다섯 개 다) */
-@media (min-width: 761px) { .hm-sign.near-copy, .hm-guide { display: none; } }
-.hm-guide { position: absolute; z-index: 2; left: 15%; top: 78%; width: 6.2%; height: auto; transform: translate(-50%, -96%); filter: drop-shadow(0 10px 10px rgba(40, 30, 70, .3)); }
-.hm-hero-copy { position: relative; z-index: 3; display: grid; align-content: center; gap: 20px; width: var(--wrap); height: 100%; margin: 0 auto; padding-top: 40px; }
-.hm-hero-copy > * { max-width: 560px; }
-.hm-eyebrow { margin: 0; color: var(--v); font-size: 15px; font-weight: 700; letter-spacing: .02em; }
-.hm-hero h1 { color: var(--v-deep); font-size: clamp(42px, 5.6vw, 76px); line-height: 1.08; }
-.hm-lead { margin: 0; color: #4f4766; font-size: clamp(17px, 1.5vw, 20px); line-height: 1.65; word-break: keep-all; }
-.hm-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-.hm-stats { display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 6px 30px; margin: 8px 0 0; }
-.hm-stats div { display: grid; gap: 2px; }
+/* 첫 화면 — 밀크T초등 수상작 참고: 구름 하늘 · 무지개 문 · 3D 친구들 · 큰 환영 인사 · 둥근 입장하기 */
+.hm-ribbon { position: absolute; z-index: 6; top: 78px; left: 50%; display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 18px; transform: translateX(-50%); border-radius: 999px; background: rgba(255, 255, 255, .9); box-shadow: 0 8px 24px rgba(60, 70, 160, .16); font-size: 15px; white-space: nowrap; }
+.hm-ribbon b { color: #3d5bd9; }
+.hm-ribbon em { font-style: normal; font-weight: 700; }
+.hm-ribbon a { padding: 6px 14px; border-radius: 999px; background: linear-gradient(90deg, #4f7cff, #9b5cf6); color: #fff; font-size: 13.5px; font-weight: 700; text-decoration: none; }
+.hm-hero { position: relative; height: clamp(700px, 100svh, 960px); overflow: hidden; background: linear-gradient(180deg, #7fb4ff 0%, #a9ccff 34%, #dfe9ff 64%, #f4f1ff 100%); }
+.hm-sky { position: absolute; inset: 0; pointer-events: none; }
+.hm-sky i { position: absolute; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff, rgba(255, 255, 255, .86) 45%, rgba(255, 255, 255, 0) 70%); filter: blur(2px); animation: hm-drift 16s ease-in-out infinite alternate; }
+.hm-sky .c1 { left: -8%; bottom: -10%; width: 58vw; height: 34vw; }
+.hm-sky .c2 { right: -10%; bottom: -12%; width: 60vw; height: 36vw; animation-delay: -5s; }
+.hm-sky .c3 { left: 24%; bottom: -18%; width: 52vw; height: 30vw; animation-delay: -9s; }
+.hm-sky .c4 { left: -6%; top: 12%; width: 30vw; height: 14vw; opacity: .7; animation-delay: -3s; }
+.hm-sky .c5 { right: -4%; top: 22%; width: 28vw; height: 13vw; opacity: .65; animation-delay: -11s; }
+@keyframes hm-drift { to { transform: translateX(3vw); } }
+/* 무지개 문: 두꺼운 흰 고리 + 안쪽 무지개 빛 */
+.hm-arch { position: absolute; left: 50%; bottom: 9%; width: min(62vw, 760px); aspect-ratio: 1 / 1.04; transform: translateX(-50%); border-radius: 50% 50% 0 0 / 50% 50% 0 0; border: clamp(26px, 3.2vw, 44px) solid rgba(255, 255, 255, .8); border-bottom: 0;
+  box-shadow: inset 0 0 0 10px rgba(255, 214, 240, .55), inset 0 0 0 22px rgba(196, 228, 255, .45), inset 0 0 0 34px rgba(255, 245, 190, .4), 0 30px 70px rgba(80, 90, 190, .18);
+  background: radial-gradient(ellipse at 50% 70%, rgba(255, 255, 255, .85), rgba(255, 255, 255, 0) 60%); }
+.hm-spark { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px 4px rgba(255, 255, 255, .9); animation: hm-twinkle 3s ease-in-out infinite; }
+.hm-spark.s1 { left: 18%; top: 30%; } .hm-spark.s2 { right: 21%; top: 26%; animation-delay: -1s; } .hm-spark.s3 { left: 62%; top: 16%; animation-delay: -2s; }
+@keyframes hm-twinkle { 50% { opacity: .2; transform: scale(.6); } }
+.hm-hero-copy { position: relative; z-index: 4; display: grid; justify-items: center; gap: 14px; width: var(--wrap); margin: 0 auto; padding-top: clamp(150px, 20vh, 210px); text-align: center; }
+.hm-hello { margin: 0; color: #2b2f55; font-size: clamp(17px, 1.6vw, 22px); font-weight: 600; }
+.hm-hero h1 { color: #15172e; font-size: clamp(40px, 5.4vw, 78px); font-weight: 900; line-height: 1.12; letter-spacing: -0.045em; word-break: keep-all; }
+.hm-hero h1 em { font-style: normal; background: linear-gradient(90deg, #4f6bff, #9b4dff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hm-lead { margin: 0; color: #4a4f72; font-size: clamp(15.5px, 1.25vw, 18px); line-height: 1.7; word-break: keep-all; }
+.hm-kid, .hm-float { position: absolute; z-index: 3; height: auto; filter: drop-shadow(0 18px 22px rgba(40, 50, 120, .22)); pointer-events: none; }
+.hm-kid.girl { left: max(2%, calc(50% - 640px)); bottom: 4%; width: clamp(220px, 24vw, 360px); animation: hm-wave 5s ease-in-out infinite; }
+.hm-kid.boy { right: max(2%, calc(50% - 640px)); bottom: 3%; width: clamp(220px, 25vw, 370px); animation: hm-wave 5s ease-in-out infinite -2.5s; }
+.hm-kid.ssam { left: 50%; bottom: 11%; width: clamp(110px, 10vw, 150px); transform: translateX(-215%); z-index: 2; }
+.hm-float.cubi { right: calc(50% - min(39vw, 460px)); top: 36%; width: clamp(80px, 8vw, 120px); animation: hm-bob 4s ease-in-out infinite; }
+.hm-float.poco { left: calc(50% - min(40vw, 470px)); top: 33%; width: clamp(70px, 7vw, 104px); animation: hm-bob 4.6s ease-in-out infinite -1.5s; }
+@keyframes hm-wave { 50% { transform: translateY(-10px) rotate(-1.5deg); } }
+@keyframes hm-bob { 50% { transform: translateY(-14px) rotate(4deg); } }
+.hm-enter { position: absolute; z-index: 5; left: 50%; bottom: 13%; display: grid; place-items: center; align-content: center; gap: 2px; width: clamp(150px, 14vw, 200px); aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%, #b9a8ff, #7a5cff 45%, #c04dff 100%); box-shadow: 0 0 0 10px rgba(255, 255, 255, .45), 0 24px 50px rgba(110, 70, 230, .45), inset 0 -10px 24px rgba(80, 20, 160, .35);
+  color: #fff; font-size: clamp(20px, 1.9vw, 27px); font-weight: 900; letter-spacing: -0.03em; text-decoration: none; transition: transform .2s; }
+.hm-enter span { color: rgba(255, 255, 255, .9); font-size: 22px; line-height: .55; font-weight: 700; animation: hm-up 1.6s ease-in-out infinite; }
+.hm-enter:hover { transform: translateX(-50%) scale(1.05); }
+@keyframes hm-up { 50% { transform: translateY(-5px); } }
+.hm-stats { position: absolute; z-index: 5; left: 50%; bottom: 3%; display: flex; gap: 26px; margin: 0; padding: 10px 24px; transform: translateX(-50%); border-radius: 999px; background: rgba(255, 255, 255, .78); box-shadow: 0 8px 24px rgba(60, 70, 160, .12); backdrop-filter: blur(6px); white-space: nowrap; }
+.hm-stats div { display: flex; align-items: baseline; gap: 6px; }
 .hm-stats dt { color: var(--muted); font-size: 13px; }
-.hm-stats dd { margin: 0; color: var(--v-deep); font-size: 30px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.hm-stats small { margin-left: 2px; color: var(--muted); font-size: 14px; font-weight: 500; }
+.hm-stats dd { margin: 0; color: #2b2f55; font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.hm-stats small { margin-left: 1px; color: var(--muted); font-size: 12.5px; font-weight: 500; }
+.hm-nav:not(.solid) .hm-brand b { color: #1d2150; }
+
+/* 두 번째 — 지학사 수상작 참고: 검은 바탕 · 아주 큰 글자 · 기울어진 색 카드 */
+.hm-welcome { position: relative; display: grid; justify-items: center; gap: 0; padding: 90px 0 110px; overflow: hidden; background: #0b0b0d; color: #fff; }
+.hm-welcome-tag { margin: 0 0 18px; padding: 6px 16px; border: 1px solid rgba(255, 255, 255, .25); border-radius: 8px; color: #e9e9ef; font-size: 14px; letter-spacing: .12em; }
+.hm-giant { position: absolute; left: 50%; top: 52%; display: grid; margin: 0; transform: translate(-50%, -50%); color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, .9); font-size: clamp(90px, 15vw, 230px); font-weight: 200; line-height: .92; letter-spacing: .02em; text-align: center; white-space: nowrap; pointer-events: none; }
+.hm-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.hm-cards { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(4, minmax(0, 260px)); gap: 22px; justify-content: center; width: var(--wrap); margin-top: 40px; }
+.hm-tcard { position: relative; display: grid; align-content: start; gap: 4px; min-height: 330px; padding: 26px 24px; overflow: hidden; border-radius: 30px; color: #15172e; text-decoration: none; box-shadow: 0 30px 60px rgba(0, 0, 0, .45); transition: transform .35s cubic-bezier(.2, .9, .3, 1.2); }
+.hm-tcard small { font-size: 14px; font-weight: 700; opacity: .85; }
+.hm-tcard b { font-size: clamp(24px, 2.2vw, 31px); font-weight: 900; letter-spacing: -0.04em; line-height: 1.15; word-break: keep-all; }
+.hm-tcard img { position: absolute; right: -6%; bottom: -6%; width: 76%; height: auto; filter: drop-shadow(0 16px 18px rgba(0, 0, 0, .25)); transition: transform .35s; }
+.hm-tcard.yellow { background: #f7d046; transform: rotate(-7deg) translateY(10px); }
+.hm-tcard.green { background: #65d39a; transform: rotate(2.5deg); }
+.hm-tcard.blue { background: #5f8ff7; color: #fff; transform: rotate(-2deg) translateY(6px); }
+.hm-tcard.coral { background: #ff8a6b; transform: rotate(6deg) translateY(14px); }
+.hm-tcard:hover { transform: rotate(0) translateY(-10px) scale(1.03); z-index: 3; }
+.hm-tcard:hover img { transform: scale(1.06) rotate(-3deg); }
 
 /* 공통 구획 */
 .hm-section { width: var(--wrap); margin: 0 auto; padding: 120px 0 0; }
@@ -146,17 +187,27 @@
   .hm-nav nav { display: none; }
   .hm-brand span { display: none; }
   .hm-nav .hm-btn { margin-left: auto; }
-  /* 첫 화면: 글 → 그림 띠(섬 1~3이 보이게) */
-  .hm-hero { height: auto; overflow: visible; }
-  .hm-hero::before { display: none; }
-  .hm-hero-copy { height: auto; padding: 96px 0 24px; gap: 16px; }
-  .hm-hero h1 { font-size: 42px; }
-  .hm-stats { grid-template-columns: repeat(2, auto); gap: 10px 28px; }
-  .hm-hero-art { position: relative; width: 190%; margin-left: -6%; }
-  .hm-hero { overflow: hidden; }
-  .hm-sign { padding: 4px 10px 4px 4px; font-size: 12px; }
-  .hm-sign b { width: 20px; height: 20px; font-size: 11px; }
-  .hm-guide { width: 9%; }
+  /* 첫 화면: 인사 → 입장하기 → 친구들 */
+  .hm-ribbon { top: 64px; max-width: calc(100% - 24px); font-size: 12.5px; padding: 6px 6px 6px 12px; gap: 6px; }
+  .hm-ribbon em { display: none; }
+  .hm-hero { height: auto; min-height: 760px; }
+  .hm-hero-copy { padding-top: 120px; }
+  .hm-hero h1 { font-size: 36px; }
+  .hm-lead br { display: none; }
+  .hm-arch { width: 118vw; bottom: 22%; border-width: 30px; }
+  .hm-kid.girl { left: -6%; bottom: 13%; width: 190px; }
+  .hm-kid.boy { right: -8%; bottom: 12%; width: 196px; }
+  .hm-kid.ssam { display: none; }
+  .hm-float.cubi { right: 4%; top: auto; bottom: 46%; width: 70px; }
+  .hm-float.poco { left: 4%; top: auto; bottom: 48%; width: 60px; }
+  .hm-enter { bottom: 19%; width: 136px; font-size: 20px; }
+  .hm-stats { bottom: 3%; gap: 12px; padding: 8px 14px; flex-wrap: wrap; justify-content: center; width: calc(100% - 32px); white-space: normal; border-radius: 22px; }
+  .hm-stats dd { font-size: 17px; }
+  .hm-welcome { padding: 64px 0 80px; }
+  .hm-giant { font-size: 25vw; top: 36%; }
+  .hm-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+  .hm-tcard { min-height: 220px; padding: 18px 16px; border-radius: 22px; }
+  .hm-tcard b { font-size: 21px; }
   .hm-section { padding-top: 80px; }
   .hm-head { margin-bottom: 26px; }
   .hm-head p:not(.hm-kick), .hm-phone-copy > p:not(.hm-kick) { font-size: 16px; }
@@ -174,6 +225,6 @@
   .hm-shot { border-radius: 14px; box-shadow: 0 18px 40px rgba(46, 30, 90, .16), 0 0 0 5px rgba(255, 255, 255, .7); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hm-sign { animation: none; }
+  .hm-sky i, .hm-spark, .hm-kid, .hm-float, .hm-enter span { animation: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
 }
