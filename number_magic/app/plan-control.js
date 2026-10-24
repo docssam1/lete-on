@@ -6,6 +6,14 @@
   const PLAN=root.NM_LEARNING_PLAN||(typeof module!=='undefined'&&module.exports?require('./learning-plan.js'):null);
   const DAY=86400000,WEEK=7*DAY,MULTS=[0.7,0.85,1,1.25,1.5],PACES=['p0','p1','p2','p3','p4'];
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+  const extensionEnd={1:'C31',2:'C34',3:'C37'};
+  const extensionNext={1:'C32',2:'C35',3:'C38'};
+  const copyAnchor=anchor=>({...anchor,...(anchor.resume?{resume:{...anchor.resume}}:{})});
+  function extensionData(){
+    if(root.NM_MIDDLE_EXTENSION)return root.NM_MIDDLE_EXTENSION;
+    if(typeof module!=='undefined'&&module.exports){try{return require('../data/middle-extension.js');}catch(_){return null;}}
+    return null;
+  }
   function fail(){throw new Error('invalid_learning_plan');}
   function monday(value){
     if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return fail();
@@ -58,7 +66,25 @@
     const cadence=settings.cadence==null?'w1':settings.cadence,pace=settings.pace==null?'p2':settings.pace;
     if(!MULTS.includes(speed)||!MULTS.includes(amount)||!['w1','w2'].includes(cadence)||!PACES.includes(pace))return fail();
     if(settings.startDate!=null)monday(settings.startDate);
-    return {...settings,sessionIndex,speed,amount,cadence,pace};
+    const result={...settings,sessionIndex,speed,amount,cadence,pace};
+    if(own(settings,'middleExtensions')){
+      const selected=settings.middleExtensions;
+      if(!selected||typeof selected!=='object'||Array.isArray(selected))return fail();
+      const ext=extensionData(),keys=Object.keys(selected);
+      if(keys.some(key=>!['1','2','3'].includes(key)||!ext||selected[key]!==ext.version))return fail();
+      result.middleExtensions={...selected};
+    }
+    if(settings.extensionAnchor!=null){
+      const anchor=settings.extensionAnchor,grade=Number(anchor.grade),index=Number(anchor.index),ext=extensionData();
+      if(!anchor||typeof anchor!=='object'||Array.isArray(anchor)||!ext||!own(extensionEnd,grade)||!Number.isSafeInteger(index)||index<0||index>=ext.length(grade)||settings.courseKey!==extensionEnd[grade]||result.middleExtensions?.[grade]!==ext.version)return fail();
+      result.extensionAnchor={grade,index};
+      if(anchor.resume!=null){
+        const resume=anchor.resume,key=extensionNext[grade],session=Number(resume.sessionIndex);
+        if(!resume||typeof resume!=='object'||Array.isArray(resume)||resume.courseKey!==key||!Number.isSafeInteger(session)||session<1||session>courses[key]?.sessions.length)return fail();
+        result.extensionAnchor.resume={courseKey:key,sessionIndex:session};
+      }
+    }else delete result.extensionAnchor;
+    return result;
   }
   function sourceRef(courseKey,course,i){
     const n=Number(course.sessions[i]?.minutes);
@@ -69,21 +95,27 @@
     const assigned=HIGH.assignment(courses,opts);
     if(assigned?.weekLessons?.length){
       const first=assigned.weekLessons[0];
-      return {courseKey:first.courseKey,sessionIndex:first.startSession,weekLessons:assigned.weekLessons};
+      return {...refPosition(courses,first,settings),weekLessons:assigned.weekLessons};
     }
     // A slow schedule may contain an empty week. Keep the next real lesson as
     // the editable position while returning no assignments for that week.
     const week=weekMonday(weekKey),start=monday(settings.startDate);
-    const keys=Object.keys(courses).filter(k=>/^C\d+$/.test(k)&&+k.slice(1)>=+settings.courseKey.slice(1)&&+k.slice(1)<=73&&courses[k]?.studyPlan).sort((a,b)=>+a.slice(1)-+b.slice(1));
-    const units=keys.reduce((n,k)=>n+HIGH.durationUnits(courses[k],k===settings.courseKey?settings.sessionIndex:1),0);
+    const refs=HIGH.timeline(courses,opts);
+    if(!refs?.length)return fail();
+    const units=refs.reduce((n,ref)=>n+(Number(ref.scheduleUnits)||1),0);
     const duration=Math.ceil(units/(settings.cadence==='w2'?2:1)/settings.speed-1e-9);
     const elapsed=Math.max(0,(week-start)/WEEK);
     for(let offset=Math.max(0,elapsed+1);offset<duration;offset++){
       const next=HIGH.assignment(courses,{...opts,weekKey:weekOf(start+offset*WEEK)});
-      if(next?.weekLessons?.length){const first=next.weekLessons[0];return {courseKey:first.courseKey,sessionIndex:first.startSession,weekLessons:[]};}
+      if(next?.weekLessons?.length){const first=next.weekLessons[0];return {...refPosition(courses,first,settings),weekLessons:[]};}
     }
-    const lastKey=keys[keys.length-1]||settings.courseKey,last=choices(courses[lastKey]).slice(-1)[0];
-    return {courseKey:lastKey,sessionIndex:last.sessionIndex,weekLessons:[],complete:true};
+    return {...refPosition(courses,refs[refs.length-1],settings),weekLessons:[],complete:true};
+  }
+  function refPosition(courses,ref,settings){
+    return ref.kind==='middle-extension'
+      ?{courseKey:ref.courseKey,sessionIndex:courses[ref.courseKey].sessions.length,extensionAnchor:{grade:ref.grade,index:ref.extensionIndex,
+        ...(settings?.extensionAnchor?.grade===ref.grade&&settings.extensionAnchor.resume?{resume:{...settings.extensionAnchor.resume}}:{})}}
+      :{courseKey:ref.courseKey,sessionIndex:ref.startSession};
   }
   function position(courses,settings,weekKey){
     const current=normalize(courses,settings),week=weekMonday(weekKey);
@@ -91,7 +123,7 @@
     const start=monday(current.startDate),keys=Object.keys(courses).filter(k=>/^C\d+$/.test(k)&&Array.isArray(courses[k]?.sessions)&&courses[k].sessions.length).sort((a,b)=>+a.slice(1)-+b.slice(1));
     let offset=Math.max(0,(week-start)/WEEK),cursor=start;
     const first=keys.indexOf(current.courseKey);
-    if(week<start)return {courseKey:current.courseKey,sessionIndex:current.sessionIndex,weekLessons:[]};
+    if(week<start)return {courseKey:current.courseKey,sessionIndex:current.sessionIndex,...(current.extensionAnchor?{extensionAnchor:copyAnchor(current.extensionAnchor)}:{}),weekLessons:[]};
     for(let i=first;i<keys.length;i++){
       const key=keys[i],course=courses[key],from=i===first?current.sessionIndex:1;
       if(course.studyPlan)return compactPosition(courses,{...current,courseKey:key,sessionIndex:from,startDate:new Date(cursor).toISOString().slice(0,10)},weekKey);
@@ -111,19 +143,27 @@
   function change(courses,currentSettings,patch,options){
     options=options||{};
     if(!patch||typeof patch!=='object'||Array.isArray(patch))return fail();
-    const allowed=['courseKey','sessionIndex','speed','amount','cadence','pace'];
+    const allowed=['courseKey','sessionIndex','speed','amount','cadence','pace','middleExtensions','extensionAnchor'];
     if(Object.keys(patch).some(k=>!allowed.includes(k)))return fail();
     const start=options.weekKey==null?currentMonday(options.now):weekMonday(options.weekKey),weekKey=weekOf(start);
     if(options.now!==undefined)currentMonday(options.now);
     const old=normalize(courses,currentSettings);
     const at=position(courses,old,weekKey);
-    const courseKey=own(patch,'courseKey')?patch.courseKey:at.courseKey;
-    const sessionIndex=own(patch,'sessionIndex')?patch.sessionIndex:own(patch,'courseKey')?1:at.sessionIndex;
-    return normalize(courses,{...old,...patch,courseKey,sessionIndex,startDate:new Date(start).toISOString().slice(0,10)});
+    const explicitAnchor=own(patch,'extensionAnchor')&&patch.extensionAnchor!=null;
+    const courseKey=own(patch,'courseKey')?patch.courseKey:explicitAnchor?extensionEnd[patch.extensionAnchor.grade]:at.courseKey;
+    const sessionIndex=own(patch,'sessionIndex')?patch.sessionIndex:explicitAnchor?courses[courseKey]?.sessions.length:own(patch,'courseKey')?1:at.sessionIndex;
+    const next={...old,...patch,courseKey,sessionIndex,startDate:new Date(start).toISOString().slice(0,10)};
+    if(own(patch,'extensionAnchor'))next.extensionAnchor=patch.extensionAnchor;
+    else if(own(patch,'courseKey')||own(patch,'sessionIndex'))delete next.extensionAnchor;
+    else if(at.extensionAnchor)next.extensionAnchor=copyAnchor(at.extensionAnchor);
+    else delete next.extensionAnchor;
+    return normalize(courses,next);
   }
   function copySettings(settings){
     if(!settings||typeof settings!=='object'||Array.isArray(settings))return fail();
-    return {...settings};
+    return {...settings,
+      ...(settings.middleExtensions?{middleExtensions:{...settings.middleExtensions}}:{}),
+      ...(settings.extensionAnchor?{extensionAnchor:copyAnchor(settings.extensionAnchor)}:{})};
   }
   function checkedHistory(history){
     if(history==null)return [];

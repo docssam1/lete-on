@@ -4048,3 +4048,9 @@ body.nm-review-mode .nm-title3d{top:48px}
 .nm-plan-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
 .nm-plan-actions .nm-btn{min-width:0;flex:1 1 120px;min-height:48px;font-size:16px}
 @media(max-width:600px){.nm-cr-desk .nm-cr-titlerow{flex-wrap:wrap}.nm-cr-desk .nm-cr-title{flex-basis:calc(100% - 154px)}.nm-cr-desk .nm-cr-pickbtn{margin-left:auto}.nm-plan-speeds{grid-template-columns:repeat(3,minmax(0,1fr))}.nm-plan-speeds button{min-height:92px}}
+
+.nm-extension-topics{padding-left:26px;line-height:1.65;font-size:15px}
+.nm-extension-topics li{padding:7px 0 7px 3px;border-bottom:1px solid rgba(81,66,119,.12)}
+.nm-middle-study-guidance [data-guidance=apply]{margin-top:12px;min-height:48px}
+.nm-middle-study-guidance details>summary{min-height:44px;box-sizing:border-box;padding:12px 0;line-height:1.5;cursor:pointer}
+#middleExtensionRemove{margin-top:12px;min-height:48px}

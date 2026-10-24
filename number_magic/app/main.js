@@ -787,10 +787,10 @@ function effectiveLearningSettings(weekKey){
   return {...(high||{courseKey:key,sessionIndex:1,startDate:new Date(Date.now()+9*3600000).toISOString().slice(0,10)}),
     speed:S.roadSpeed||1,amount:S.roadAmount||1,cadence:S.roadCadence||'w1',pace:S.roadPace||'p2'};
 }
-function applyLearningSettings(patch){
+function applyLearningSettings(patch,guidanceChoice){
   applyAdminSettings();
   if(S.adminPlan||!window.NM_PLAN_CONTROL||!stateStorageCurrent())return false;
-  const keys=['learningPlan','learningPlanHistory','roadSpeed','roadAmount','roadCadence','roadPace','roadManual','_roadFocus','highSchedule','middleCadenceDefaultVersion','calculusCadenceDefaultVersion'];
+  const keys=['learningPlan','learningPlanHistory','roadSpeed','roadAmount','roadCadence','roadPace','roadManual','_roadFocus','highSchedule','middleCadenceDefaultVersion','calculusCadenceDefaultVersion','middleStudyGuidanceChoices'];
   const before=Object.fromEntries(keys.map(k=>[k,{present:Object.prototype.hasOwnProperty.call(S,k),value:S[k]}]));
   try{
     const weekKey=weekKeyFor(new Date()),current=effectiveLearningSettings();
@@ -798,6 +798,7 @@ function applyLearningSettings(patch){
     S.learningPlanHistory=NM_PLAN_CONTROL.record(S.learningPlanHistory,{...current,legacy:!S.learningPlan},next,weekKey);
     S.learningPlan=next;S.roadSpeed=next.speed;S.roadAmount=next.amount;
     S.roadCadence=next.cadence;S.roadPace=next.pace;S.roadManual=true;S._roadFocus=next.courseKey;
+    if(guidanceChoice)S.middleStudyGuidanceChoices={...S.middleStudyGuidanceChoices,[guidanceChoice.key]:guidanceChoice.value};
     if(!save())throw new Error('plan_save_failed');
     syncAmount();return true;
   }catch(e){
@@ -2704,6 +2705,8 @@ function mostRecentBadge(){
    과정에 안 속한 유닛(예: 유아 레거시 유닛)은 유닛 제목만. */
 function progressSummaryLine(){
   if(S.learningPlan&&!S.adminPlan){
+    const at=window.NM_PLAN_CONTROL?.position(NM_COURSES,S.learningPlan,weekKeyFor(new Date()));
+    if(at?.extensionAnchor)return S.lang==='en'?`Grade ${at.extensionAnchor.grade+6} optional deeper study · ${at.extensionAnchor.index+1}/12`:S.lang==='zh'?`初${at.extensionAnchor.grade}可选进阶 · ${at.extensionAnchor.index+1}/12`:`중${at.extensionAnchor.grade} 선택 심화 · ${at.extensionAnchor.index+1}/12묶음`;
     const key=currentCourseKey(),course=(window.NM_COURSES||{})[key];
     if(course)return `${t('titleCourse')} ${key.slice(1)} · ${L(course.title)}`;
   }
@@ -2973,6 +2976,7 @@ function enterCourseNode(key){
   if(!c) return;
   const position=S.learningPlan&&!S.adminPlan&&window.NM_PLAN_CONTROL
     ? NM_PLAN_CONTROL.position(NM_COURSES,effectiveLearningSettings(),weekKeyFor(new Date())) : null;
+  if(position?.extensionAnchor&&position.courseKey===key){S._mbWeek=weekKeyFor(new Date());S.view='mailbox';save();render();return;}
   const selected=position?.courseKey===key?c.sessions[position.sessionIndex-1]:null;
   const ids=selected?(selected.magic||[]).filter(id=>UNITS[id]):courseUnitIds(c);
   if(ids.length){
@@ -3604,13 +3608,76 @@ function screenCheckup(){
   },{decimal:isMulti?true:!Number.isInteger(cur.answer), negative:isMulti?true:!!cur.negative, comma:isMulti});
 }
 
+function middleExtensionProposal(grade,phase,enabled){
+  const base=effectiveLearningSettings(),weekKey=weekKeyFor(new Date());
+  const at=NM_PLAN_CONTROL.position(NM_COURSES,base,weekKey),map={...base.middleExtensions};
+  const endKey='C'+({1:31,2:34,3:37}[grade]),nextKey='C'+({1:32,2:35,3:38}[grade]);
+  const selected=!!map[grade];
+  if(enabled)map[grade]=NM_MIDDLE_EXTENSION.version;else delete map[grade];
+  const patch={middleExtensions:map};
+  if(enabled&&phase==='end'&&!selected){
+    patch.courseKey=endKey;patch.sessionIndex=NM_COURSES[endKey].sessions.length;
+    patch.extensionAnchor={grade,index:0};
+    if(at.courseKey===nextKey&&at.sessionIndex>1)patch.extensionAnchor.resume={courseKey:nextKey,sessionIndex:at.sessionIndex};
+  }else if(!enabled&&at.extensionAnchor?.grade===grade){
+    patch.courseKey=nextKey;patch.sessionIndex=at.extensionAnchor.resume?.sessionIndex||1;patch.extensionAnchor=null;
+  }
+  return {patch,next:NM_PLAN_CONTROL.change(NM_COURSES,base,patch,{now:new Date(),weekKey})};
+}
+function openMiddleExtensionSheet(guidance){
+  if(document.getElementById('nmMiddleExtensionSheet')||!window.NM_MIDDLE_EXTENSION)return;
+  const {grade,phase}=guidance,lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
+  const current=effectiveLearningSettings(),selected=!!current.middleExtensions?.[grade],managed=!!S.adminPlan;
+  const previousFocus=document.activeElement,course=NM_MIDDLE_EXTENSION.course(grade);
+  document.body.insertAdjacentHTML('beforeend',`<div class="nm-gate-overlay nm-cs-overlay" id="nmMiddleExtensionSheet"><div class="nm-gate-card nm-cs-card nm-plan-sheet" role="dialog" aria-modal="true" aria-labelledby="middleExtensionTitle" aria-describedby="middleExtensionNote">
+    <button class="nm-gate-x" id="middleExtensionX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
+    <span class="nm-cr-eyebrow">${lk('선택 심화','Optional deeper study','可选进阶')}</span>
+    <h3 class="nm-cs-title" id="middleExtensionTitle">${lk('중'+grade+' 심화 포함 계획','Grade '+(grade+6)+' plan with deeper study','初'+grade+'含进阶计划')}</h3>
+    <p id="middleExtensionNote">${lk('기본 과정 뒤에 심화·적용 12묶음을 이어 공부해요. 완료 기록과 진단 결과는 유지해요.','Twelve deeper-study and application bundles follow the core course. Completed work and assessment results are kept.','基础课程后继续学习12组进阶与应用，保留完成记录及测评结果。')}</p>
+    ${managed?`<p class="nm-plan-managed" id="middleExtensionManaged">${lk('학원에서 정한 계획이에요. 심화 선택은 학원에 요청해 주세요.','Your academy manages this plan. Ask your academy to add deeper study.','此计划由学院设置，请联系学院添加进阶学习。')}</p>`:''}
+    <div class="nm-plan-preview" id="middleExtensionPreview" aria-live="polite"></div>
+    <details class="nm-plan-extra"><summary>${lk('심화 12묶음 살펴보기','Explore the 12 deeper-study bundles','查看12组进阶内容')}</summary><ol class="nm-extension-topics">${(course?.sessions||[]).map(s=>`<li>${esc(L(s.title))}</li>`).join('')}</ol><p class="nm-plan-help">${lk('고급 계산 유형을 골라 종합·적용 연습과 다음 과정 연결 학습으로 편성했어요.','Advanced calculation types are combined into application practice and connections to the next course.','选取高阶运算类型，组合为综合应用练习及下一课程衔接。')}</p></details>
+    <p id="middleExtensionError" class="nm-plan-error" role="alert" hidden></p>
+    <div class="nm-plan-actions"><button class="nm-btn ghost" id="middleExtensionCancel">${lk('취소','Cancel','取消')}</button><button class="nm-btn" id="middleExtensionConfirm"${managed?' disabled':''}>${lk(selected?'선택한 계획 유지':'심화 포함 계획 적용',selected?'Keep selected plan':'Apply plan with deeper study',selected?'保留已选计划':'应用含进阶计划')}</button></div>
+    ${selected?`<button class="nm-btn full ghost" id="middleExtensionRemove"${managed?' disabled':''}>${lk('선택 심화 빼고 기본 경로로','Remove optional deeper study','移除可选进阶')}</button>`:''}
+  </div></div>`);
+  const modal=document.getElementById('nmMiddleExtensionSheet'),find=id=>modal.querySelector('#'+id);
+  const close=()=>{modal.remove();if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});};
+  try{
+    const {next}=middleExtensionProposal(grade,phase,true);
+    const p=NM_LEARNING_PLAN.project(NM_COURSES,{...next,entryYear:S.schoolAge?.entryYear,birthYear:S.schoolAge?.birthYear},{lang:S.lang,now:new Date()});
+    const goal=p.milestones.find(m=>m.key==='M'+grade+'E');
+    find('middleExtensionPreview').innerHTML=`<span>${lk('표준 속도 기준','At standard pace','标准速度基准')}</span><b>${lk('기본 10주 + 선택 심화 6주 = 총 16주','10 core weeks + 6 optional weeks = 16 weeks total','基础10周 + 可选进阶6周 = 合计16周')}</b><p>${lk('심화 선택 시에만 기본 포함 약 4개월이에요.','About 4 months total only when deeper study is selected.','仅在选择进阶时含基础合计约4个月。')}</p>${goal?`<p>${lk('현재 진도·속도에서 심화 완료 예상','Deeper-study finish at your current progress and pace','按当前进度和速度预计完成进阶')}<time datetime="${esc(goal.date)}">${esc(goal.date)}</time><small>${esc(goal.schoolLabel)}</small></p>`:''}<small>${lk('주 2묶음·1배 속도 기준이에요. 이미 공부한 기간과 개인 속도에 따라 남은 기간은 달라져요.','The reference is two bundles per week at 1×. Time remaining depends on prior study and your selected pace.','基准为每周2组、1倍速度，剩余时间随已学进度及个人速度改变。')}</small>`;
+    if(!goal)throw new Error('missing_extension_milestone');
+  }catch(e){find('middleExtensionError').textContent=lk('계획을 확인하지 못했어요. 진도·속도 조절에서 시작점을 확인해 주세요.','Could not preview this plan. Check your starting position in Progress & pace.','未能预览计划，请在进度与速度中确认起点。');find('middleExtensionError').hidden=false;find('middleExtensionConfirm').disabled=true;}
+  function apply(enabled){
+    if(managed)return;
+    try{
+      const {patch}=middleExtensionProposal(grade,phase,enabled);
+      if(!applyLearningSettings(patch,{key:guidance.key,value:enabled?'enrolled':'continue'}))throw new Error('extension_save_failed');
+      close();render();toast(lk(enabled?'선택 심화 계획을 적용했어요.':'기본 경로로 바꿨어요.',enabled?'Optional deeper study added.':'Returned to the core route.',enabled?'已添加可选进阶计划。':'已切换为基础路线。'));
+    }catch(e){find('middleExtensionError').textContent=lk('저장하지 못했어요. 다시 시도해 주세요.','Could not save. Please try again.','未能保存，请重试。');find('middleExtensionError').hidden=false;}
+  }
+  find('middleExtensionConfirm').onclick=()=>apply(true);const remove=find('middleExtensionRemove');if(remove)remove.onclick=()=>apply(false);
+  find('middleExtensionX').onclick=close;find('middleExtensionCancel').onclick=close;
+  modal.onclick=e=>{if(e.target===modal)close();};
+  modal.onkeydown=e=>{
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();return;}
+    if(e.key!=='Tab')return;
+    const items=[...modal.querySelectorAll('button,summary')].filter(x=>!x.disabled&&x.getClientRects().length),first=items[0],last=items.at(-1);
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  };
+  find('middleExtensionX').focus({preventScroll:true});
+}
+
 function openLearningPlanSheet(initial){
   if(document.getElementById('nmPlanSheet')||!window.NM_PLAN_CONTROL)return;
   const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
   const courses=window.NM_COURSES||{},base=effectiveLearningSettings(),weekKey=weekKeyFor(new Date());
   const at=NM_PLAN_CONTROL.position(courses,base,weekKey)||base;
   const draft={courseKey:initial?.courseKey||at.courseKey,sessionIndex:initial?.sessionIndex||at.sessionIndex,
-    speed:base.speed||1,amount:base.amount||1,cadence:base.cadence||'w1',pace:base.pace||'p2'};
+    speed:base.speed||1,amount:base.amount||1,cadence:base.cadence||'w1',pace:base.pace||'p2',
+    ...(!initial?.courseKey&&at.extensionAnchor?{extensionAnchor:{...at.extensionAnchor,...(at.extensionAnchor.resume?{resume:{...at.extensionAnchor.resume}}:{})}}:{})};
   const list=roadCourseList().filter(x=>courseBuilt(x.c)&&NM_PLAN_CONTROL.choices(x.c).length);
   const managed=!!S.adminPlan,previousFocus=document.activeElement;
   const speedNames=[lk('천천히','Slow','慢速'),lk('여유 있게','Steady','从容'),lk('표준','Standard','标准'),lk('빠르게','Fast','快速'),lk('더 빠르게','Faster','更快')];
@@ -3646,6 +3713,13 @@ function openLearningPlanSheet(initial){
   const close=()=>{modal.remove();if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});};
   function fillSessions(){
     const course=courses[draft.courseKey],choices=NM_PLAN_CONTROL.choices(course);
+    if(draft.extensionAnchor){
+      const grade=draft.extensionAnchor.grade;
+      find('planSession').innerHTML=Array.from({length:NM_MIDDLE_EXTENSION.length(grade)},(_,i)=>`<option value="e${i}" data-display="${i+1}">${lk('중'+grade+' 선택 심화','Grade '+(grade+6)+' optional deeper study','初'+grade+'可选进阶')} ${i+1}</option>`).join('');
+      find('planSession').value='e'+draft.extensionAnchor.index;find('planCourse').value=draft.courseKey;
+      const i=list.findIndex(x=>x.key===draft.courseKey);find('planPrev').disabled=managed||i<=0;find('planNext').disabled=managed||i>=list.length-1;
+      return;
+    }
     if(course.studyPlan&&!choices.some(x=>x.sessionIndex===draft.sessionIndex)){
       const group=NM_HIGH_PACING.lessonIndex(course,draft.sessionIndex);
       choices.splice(group+1,0,{index:group+1,sessionIndex:draft.sessionIndex,partial:true});
@@ -3663,15 +3737,16 @@ function openLearningPlanSheet(initial){
       const next=NM_PLAN_CONTROL.change(courses,base,draft,{now:new Date(),weekKey});
       const result=NM_LEARNING_PLAN.project(courses,{...next,entryYear:S.schoolAge?.entryYear,birthYear:S.schoolAge?.birthYear},{lang:S.lang,now:new Date()});
       const tier=courses[draft.courseKey].tier,last=list.filter(x=>x.c.tier===tier).at(-1);
-      const goal=result.milestones.find(m=>m.key===last?.key)||result.milestones[0];
+      const grade=/^middle([123])$/.exec(tier)?.[1];
+      const goal=(grade&&next.middleExtensions?.[grade]?result.milestones.find(m=>m.key==='M'+grade+'E'):null)||result.milestones.find(m=>m.key===last?.key)||result.milestones[0];
       find('planPreview').innerHTML=`<span>${lk('적용 후 예상','After applying','应用后预计')}</span><b>${lk('과정','Course','课程')} ${draft.courseKey.slice(1)} · ${esc(find('planSession').selectedOptions[0]?.textContent||'')} · ${draft.speed}${lk('배 속도','× pace','倍速度')}</b>${goal?`<p>${esc(goal.title)} ${lk('완료','finish','完成')} <time datetime="${esc(goal.date)}">${esc(goal.date)}</time><small>${esc(goal.schoolLabel)}</small></p>`:''}<small>${lk('이번 주부터 새 계획을 적용해요. 완료 날짜는 실제 학습에 따라 달라질 수 있어요.','The new plan starts this week. Finish dates may change with actual study.','从本周开始应用新计划，完成日期可能随实际学习调整。')}</small>`;
       find('planError').hidden=true;
     }catch(e){find('planError').textContent=lk('계획을 확인하지 못했어요. 과정과 회차를 다시 골라 주세요.','Could not preview this plan. Choose a course and lesson again.','未能预览计划，请重新选择课程与课次。');find('planError').hidden=false;}
   }
   fillSessions();find('planCadence').value=draft.cadence;find('planAmount').value=String(draft.amount);preview();
-  find('planCourse').onchange=e=>{draft.courseKey=e.target.value;draft.sessionIndex=1;fillSessions();preview();};
-  find('planSession').onchange=e=>{draft.sessionIndex=+e.target.value;preview();};
-  ['Prev','Next'].forEach((name,i)=>{find('plan'+name).onclick=()=>{const at=list.findIndex(x=>x.key===draft.courseKey),item=list[at+(i?1:-1)];if(!item)return;draft.courseKey=item.key;draft.sessionIndex=1;fillSessions();preview();};});
+  find('planCourse').onchange=e=>{delete draft.extensionAnchor;draft.courseKey=e.target.value;draft.sessionIndex=1;fillSessions();preview();};
+  find('planSession').onchange=e=>{if(draft.extensionAnchor)draft.extensionAnchor.index=+e.target.value.slice(1);else draft.sessionIndex=+e.target.value;preview();};
+  ['Prev','Next'].forEach((name,i)=>{find('plan'+name).onclick=()=>{const at=list.findIndex(x=>x.key===draft.courseKey),item=list[at+(i?1:-1)];if(!item)return;delete draft.extensionAnchor;draft.courseKey=item.key;draft.sessionIndex=1;fillSessions();preview();};});
   modal.querySelectorAll('[data-plan-speed]').forEach(b=>{b.onclick=()=>{draft.speed=+b.dataset.planSpeed;modal.querySelectorAll('[data-plan-speed]').forEach(x=>x.setAttribute('aria-pressed',String(+x.dataset.planSpeed===draft.speed)));preview();};});
   find('planCadence').onchange=e=>{draft.cadence=e.target.value;preview();};
   find('planAmount').onchange=e=>{draft.amount=+e.target.value;preview();};
@@ -3788,7 +3863,10 @@ function selectedPlanWeeksTo(cad,pace,speed){
     const monday=Date.parse(rebased.startDate+'T00:00:00Z'),cur=+currentCourseKey().slice(1);
     return target=>{
       if(target<=cur)return 0;
-      const goal=result.milestones.filter(m=>+m.key.slice(1)<target).at(-1);
+      const goal=result.milestones.filter(m=>{
+        const extension=/^M([123])E$/.exec(m.key);
+        return (extension?({1:31,2:34,3:37}[extension[1]])+.5:+m.key.slice(1))<target;
+      }).at(-1);
       return goal?Math.max(0,(Date.parse(goal.date+'T00:00:00Z')-monday)/(7*86400000)):0;
     };
   }catch(e){return null;}
@@ -4090,8 +4168,10 @@ function middleStudyGuidanceState(){
     const phase=done===ids.length?'end':'mid';
     if(grade===previous&&phase!=='end')continue;
     const key=grade+':'+phase,choice=S.middleStudyGuidanceChoices?.[key]||null;
-    if(choice==='continue')continue;
-    return {grade,phase,key,choice};
+    const selected=!!(S.adminPlan?.middleExtensions||S.learningPlan?.middleExtensions)?.[grade];
+    if(choice==='continue'&&!selected)continue;
+    if(selected&&current.order>({1:31,2:34,3:37}[grade]))continue;
+    return {grade,phase,key,choice,selected};
   }
   return null;
 }
@@ -4125,7 +4205,8 @@ function renderPersonalPlan(){
     const host=document.createElement('div');host.id='nmMiddleStudyGuidance';standardBox.querySelector('.nm-personal-plan-body h3').insertAdjacentElement('afterend',host);
     NM_MIDDLE_STUDY_GUIDANCE.mount(host,{...guidance,lang:S.lang,onChoice:choice=>{
       S.middleStudyGuidanceChoices=S.middleStudyGuidanceChoices||{};S.middleStudyGuidanceChoices[guidance.key]=choice;save();
-    },onContinue:()=>{if(guidance.phase==='end')openCourseSheet('C'+({1:32,2:35,3:38}[guidance.grade]));}});
+    },onContinue:()=>{if(guidance.phase==='end')openCourseSheet('C'+({1:32,2:35,3:38}[guidance.grade]));},
+    onApply:()=>openMiddleExtensionSheet(guidance)});
   }
   box.innerHTML=`<summary>${lk('나의 월별 로드맵 · 12개월','My monthly roadmap · 12 months','我的月度路线图 · 12个月')}</summary><div class="nm-personal-plan-body"><p>${p?lk('학원에서 정한 개인별 시작점과 속도를 적용했어요.','Your academy’s individual starting point and pace are applied.','已应用学院设置的个人起点和速度。'):lk('현재 선택한 시작점과 속도로 예상했어요.','Estimated from your selected starting point and pace.','根据所选起点和速度估算。')} ${lk('실제 학습에 따라 달라질 수 있어요. 학년은 매년 3월에 바뀌어요.','Actual progress may vary. Grades change each March.','实际进度可能不同，年级每年3月变更。')}</p><p>${lk('시작','Start','开始')}: ${esc(settings.startDate)} · ${settings.speed}${lk('배 속도','× pace','倍速度')} · ${lk('주','Per week','每周')} ${settings.cadence==='w2'?2:1}${lk('회',' sessions','次')}</p><div class="nm-personal-plan-grid" role="list">${result.rows.map(row=>`<article role="listitem"><h4>${esc(row.month)} <small>${esc(row.schoolLabel)}</small></h4>${row.courseLabels.length?row.courseLabels.map((label,i)=>`<p><b>${esc(label)}</b><span>${esc(row.sessionLabels[i])}</span></p>`).join(''):`<p>${lk('예상 과정 없음','No course projected','暂无预计课程')}</p>`}</article>`).join('')}</div>${+settings.courseKey.slice(1)<29?`<aside><h4>${esc(reference.title)}</h4><p>${esc(reference.advice)}</p><p>${esc(reference.reference)}</p>${reference.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a>`).join(' · ')}</aside>`:""}</div>`;
 }
@@ -4401,8 +4482,13 @@ function screenCourseRoad(){
     const goalKey=nextGoalKey(curKey);
     const goalC=goalKey?(window.NM_COURSES||{})[goalKey]:null;
     const curC=(window.NM_COURSES||{})[curKey];
+    const middleGrade=/^middle([123])$/.exec(curC?.tier||'')?.[1];
+    const extensionGuide=middleStudyGuidanceState()||(middleGrade?{grade:+middleGrade,phase:'mid',key:middleGrade+':mid'}:null);
     const fresh=!mostRecentTouchedUnit()&&!S.learningPlan&&!S.placement?.course;
-    const courseLine=(key,c)=>`${lk('과정','Course','课程')} ${String(key).replace(/^C/,'')} · ${esc(L(c.title))}`;
+    const extensionAt=S.learningPlan&&!S.adminPlan?NM_PLAN_CONTROL.position(NM_COURSES,S.learningPlan,weekKeyFor(new Date()))?.extensionAnchor:null;
+    const courseLine=(key,c)=>extensionAt&&key===curKey
+      ?`${esc(L(NM_MIDDLE_EXTENSION.course(extensionAt.grade).title))} · ${extensionAt.index+1}/12${lk('묶음',' bundles','组')}`
+      :`${lk('과정','Course','课程')} ${String(key).replace(/^C/,'')} · ${esc(L(c.title))}`;
 
     let html=`<div class="nm-cr-conq">
       <div class="nm-cr-conq-top">
@@ -4428,6 +4514,7 @@ function screenCourseRoad(){
       <div class="nm-plan-current"><b>${speedName}</b><span>${speed}${lk('배','×','倍')} · ${lk('주','Weekly','每周')} ${cad==='w2'?2:1}${lk('묶음',' bundles','组')}</span></div>
       <p class="nm-plan-help">${S.adminPlan?lk('학원에서 정한 개인별 계획을 적용하고 있어요.','Your academy’s individual plan is applied.','已应用学院设置的个人计划。'):lk('이전·다음 과정이나 시작할 회차를 고르고, 속도를 5단계로 조절해요.','Choose an earlier or later course and starting lesson, then set one of five pace levels.','选择之前或之后的课程及起始课次，再调整五档速度。')}</p>
       <button type="button" class="nm-btn full" id="crAdjust">${lk('진도·속도 조절','Progress & pace','进度与速度')}</button>
+      ${extensionGuide?`<button type="button" class="nm-btn full ghost" id="crExtension">${lk('중'+extensionGuide.grade+' 선택 심화 계획','Grade '+(extensionGuide.grade+6)+' optional deeper-study plan','初'+extensionGuide.grade+'可选进阶计划')}</button>`:''}
       <details class="nm-plan-extra nm-plan-references"><summary>${lk('기준과 전체 기간 보기','Reference & whole-path estimates','参考标准与全程时间')}</summary>
       <div class="nm-cr-step nm-cr-pace">
         <div class="nm-cr-cad-h">${lk('유아·초등 계획 기준','Preschool & elementary reference','学前与小学参考标准')}</div>
@@ -4706,6 +4793,7 @@ function screenCourseRoad(){
     listEl.innerHTML=html;
     if(curC?.studyPlan){const preschoolPaces=listEl.querySelector('.nm-cr-step.nm-cr-pace');if(preschoolPaces)preschoolPaces.hidden=true;}
     body.querySelector('#crAdjust').onclick=()=>openLearningPlanSheet();
+    const extensionButton=body.querySelector('#crExtension');if(extensionButton)extensionButton.onclick=()=>openMiddleExtensionSheet(extensionGuide);
     if(S.adminPlan)body.querySelectorAll('[data-pace],[data-pc-apply]').forEach(b=>b.disabled=true);
     if(window.NM_STUDY_ROUTE){
       const gp=S.placement&&S.placement.pathRecommendation;
@@ -5998,7 +6086,9 @@ function envelopeForWeek(weekKey){
   const courseKey = at?at.courseKey:highPlan?highPlan.courseKey:current;
   const course = NM_COURSES[courseKey];
   if(!course) return null;
-  const source=at?.weekLessons.flatMap(ref=>ref.sourceIndices.map(i=>NM_COURSES[ref.courseKey].sessions[i]));
+  const source=at?.weekLessons.flatMap(ref=>ref.kind==='middle-extension'
+    ?[NM_MIDDLE_EXTENSION.course(ref.grade).sessions[ref.extensionIndex]]
+    :ref.sourceIndices.map(i=>NM_COURSES[ref.courseKey].sessions[i]));
   const session=source?{magic:[...new Set(source.flatMap(s=>s.magic||[]))],drills:source.flatMap(s=>s.test?s.pool||[]:s.drills||[]).concat(at.weekLessons.flatMap(ref=>ref.extraPractice||[])),assignedLessons:at.weekLessons}
     :primarySessionOf(course,courseKey,weekKey,settings?highPlan:undefined);
   if(!session) return null;
@@ -6006,7 +6096,9 @@ function envelopeForWeek(weekKey){
     order: i+1, thread: d.t, level: d.lv, count: d.n,
     seed: envItemSeed(weekKey, courseKey, i)
   }));
-  return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, session, highPlan, planSettings:settings,
+  const extensionGrades=[...new Set((at?.weekLessons||[]).filter(ref=>ref.kind==='middle-extension').map(ref=>ref.grade))];
+  const learningTitle=extensionGrades.length?[...new Set(at.weekLessons.map(ref=>L(ref.kind==='middle-extension'?NM_MIDDLE_EXTENSION.course(ref.grade).title:NM_COURSES[ref.courseKey].title)))].join(' · '):L(course.title);
+  return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, learningTitle, session, highPlan, planSettings:settings,
     plannedRefs:at?.weekLessons, magic: session.magic||null, placements };
 }
 function mailboxEnvelopeCode(env){ return env.wsId; }
@@ -6225,7 +6317,9 @@ function screenMailbox(){
       }
       const th=(window.NM_THREADS||{})[id];
       return `<div class="nm-wsh-unit-title">✨ ${esc(th?L(th.name):id)}</div>`;
-    }).join('') || `<p class="nm-wsh-sentence">${lk('이번 세션은 드릴 복습 위주예요.','This session is mostly review drills.','这次以复习为主。')}</p>`;
+    }).join('') || `<p class="nm-wsh-sentence">${(env.plannedRefs||[]).some(ref=>ref.kind==='middle-extension')
+      ?lk('이번 주는 선택 심화·적용 문제를 풀어요.','This week focuses on optional deeper-study and application problems.','本周学习可选进阶与应用题。')
+      :lk('이번 세션은 드릴 복습 위주예요.','This session is mostly review drills.','这次以复习为主。')}</p>`;
     const goUnit = (env.magic||[]).find(id=>UNITS[id]);
     /* 정체 감지→보강 루프(§2-4) — 이 주의 봉투를 여는 순간이 "다음 과정 세션 시작".
        보강 대상이 있고 이번 주에 아직 안 했다면 맨 위에 부드러운 카드를 얹는다. */
@@ -6256,7 +6350,7 @@ function screenMailbox(){
         <div class="nm-card-h">${lk('이번 주 학습지 봉투','This Week’s Worksheet Envelope','本周学习单信封')}</div>
         ${/* 이번 주 첫 드릴의 스레드로 호스트를 고른다 — 그 주에 실제로 하는 연산의 캐릭터가 건네준다 */''}
         ${hostStripHtml('unit',(env.placements&&env.placements[0]&&env.placements[0].thread)||env.courseKey||'')}
-        <p class="nm-wsh-sentence">${esc(L(env.course.title))}</p>
+        <p class="nm-wsh-sentence">${esc(env.learningTitle||L(env.course.title))}</p>
         <div class="nm-mb-section-h">${lk('✨ 이번 주 마법','✨ Magic This Week','✨ 本周魔法')}</div>
         ${magicHtml}
         ${goUnit ? `<button class="nm-btn full" id="mbGoUnit">${lk('✨ 이 마법 배우러 가기','✨ Go learn this magic','✨ 去学这个魔法')}</button>` : ''}

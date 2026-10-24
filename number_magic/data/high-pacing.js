@@ -217,11 +217,17 @@
     // The Thursday belongs to the ISO week-year; this rejects a spurious W53.
     return new Date(monday + 3 * DAY_MS).getUTCFullYear() === year ? monday : null;
   }
-  function assignment(courses, options){
-    const opts = options || {}, weekMonday = mondayOfWeek(opts.weekKey);
-    if(weekMonday == null) return null;
-    const startMonday = opts.startDate ? mondayOfDate(opts.startDate) : weekMonday;
-    if(startMonday == null || weekMonday < startMonday) return null;
+  function extensionData(){
+    if(W.NM_MIDDLE_EXTENSION) return W.NM_MIDDLE_EXTENSION;
+    if(typeof module !== 'undefined' && module.exports){
+      try{return require('./middle-extension.js');}catch(_){return null;}
+    }
+    return null;
+  }
+  /* Optional phases are references beside canonical courses. They are never
+     inserted into source sessions or the legacy studyPlan bundle arrays. */
+  function timeline(courses, options){
+    const opts=options||{};
     const ordered = Object.entries(courses || {}).filter(([key, course]) => {
       const number = /^C(\d+)$/.exec(key);
       return number && +number[1] <= 73 && TIERS.includes(course && course.tier) && lessonsOf(course);
@@ -229,12 +235,24 @@
     const base = ordered.findIndex(([key]) => key === opts.courseKey);
     if(base < 0) return null;
     const baseCourse = ordered[base][1], legacyStart = clamp(integer(opts.startSession, 1), 1, sessions(baseCourse).length);
-    const firstLesson = lessonIndex(baseCourse, legacyStart), flat = [];
+    const firstLesson = lessonIndex(baseCourse, legacyStart), flat = [],extension=extensionData();
+    const anchor=opts.extensionAnchor;
+    if(anchor){
+      const grade=Number(anchor.grade),index=Number(anchor.index),key={1:'C31',2:'C34',3:'C37'}[grade];
+      if(!extension||opts.courseKey!==key||opts.middleExtensions?.[grade]!==extension.version||!Number.isInteger(index)||index<0||index>=extension.length(grade))return null;
+      if(anchor.resume){
+        const resume=anchor.resume,next={1:'C32',2:'C35',3:'C38'}[grade],session=Number(resume.sessionIndex);
+        if(resume.courseKey!==next||!Number.isSafeInteger(session)||session<1||session>sessions(courses[next]).length)return null;
+      }
+    }
     ordered.slice(base).forEach(([courseKey, course], courseIndex) => {
       const lessons = lessonsOf(course);
-      for(let i = courseIndex === 0 ? firstLesson : 0; i < lessons.length; i++){
+      const resume=anchor?.resume?.courseKey===courseKey?anchor.resume:null;
+      const first=resume?lessonIndex(course,resume.sessionIndex):courseIndex===0?firstLesson:0;
+      for(let i = first; !(courseIndex===0&&anchor)&&i < lessons.length; i++){
         const selected = select(course, {lesson:i, k:1,
-          ...(courseIndex === 0 && i === firstLesson ? {startSession:legacyStart} : {})});
+          ...(courseIndex === 0 && i === firstLesson ? {startSession:legacyStart}
+            :resume&&i===first?{startSession:resume.sessionIndex}:{})});
         if(selected) flat.push({courseKey, lessonIndex:selected.index,
           startSession:selected.startSession, endSession:selected.endSession,
           sourceIndices:selected.sourceIndices, estimatedMinutes:selected.estimatedMinutes,
@@ -244,7 +262,21 @@
             estimatedExtraMinutes:selected.estimatedExtraMinutes
           } : {})});
       }
+      const grade={C31:1,C34:2,C37:3}[courseKey];
+      if(extension&&grade&&opts.middleExtensions?.[grade]===extension.version){
+        const from=courseIndex===0&&anchor?Number(anchor.index):0;
+        for(let index=from;index<extension.length(grade);index++)flat.push(extension.reference(grade,index));
+      }
     });
+    return flat;
+  }
+  function assignment(courses, options){
+    const opts = options || {}, weekMonday = mondayOfWeek(opts.weekKey);
+    if(weekMonday == null) return null;
+    const startMonday = opts.startDate ? mondayOfDate(opts.startDate) : weekMonday;
+    if(startMonday == null || weekMonday < startMonday) return null;
+    const flat=timeline(courses,opts);
+    if(!flat)return null;
     const weekOffset = (weekMonday - startMonday) / (7 * DAY_MS);
     const perWeek = opts.cadence === 'w1' ? 1 : 2;
     const speed = [0.7, 0.85, 1, 1.25, 1.5].includes(Number(opts.speed)) ? Number(opts.speed) : 1;
@@ -270,7 +302,7 @@
       estimatedMinutes:lessons.reduce((n, lesson) => n + lesson.estimatedMinutes, 0),
       weeklyMinutes:weekLessons.reduce((n, lesson) => n + lesson.estimatedMinutes, 0)};
   }
-  const api = {version:VERSION, attach, length, lessonUnits, durationUnits, lessonIndex, select, weeks, assignment};
+  const api = {version:VERSION, attach, length, lessonUnits, durationUnits, lessonIndex, select, weeks, timeline, assignment};
   W.NM_HIGH_PACING = api;
   if(W.NM_COURSES) attach(W.NM_COURSES);
   if(typeof module !== 'undefined' && module.exports) module.exports = api;
