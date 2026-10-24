@@ -19,7 +19,12 @@ assert.equal(readinessRow.publicDecision, "published");
 assert.equal(sourceInventory.integrity.readyItems, sourceInventory.sourceItems.filter(item => item.implementationStatus === "reviewed").length);
 assert.equal(sourceInventory.integrity.reviewLockedItems, sourceInventory.sourceItems.filter(item => item.implementationStatus === "review-locked").length);
 assert.equal(readiness.integrity.publicCandidateCount, readiness.items.filter(item => item.publicDecision !== "locked").length);
-assert.equal(readiness.integrity.reviewLockedCount, readiness.items.filter(item => item.publicDecision === "locked").length);
+assert.equal(readiness.integrity.reviewLockedCount, readiness.items.filter(item => item.implementationStatus === "review-locked").length);
+assert.equal(readiness.integrity.publishedCount, readiness.items.filter(item => item.publicDecision === "published").length);
+assert.equal(readiness.integrity.localCandidateCount, readiness.items.filter(item => item.implementationStatus === "local-review-passed-awaiting-release").length);
+assert.equal(readiness.integrity.readyForDeployCount, readiness.items.filter(item => item.publicDecision === "ready-for-deploy").length);
+assert.equal(readiness.summary.publicCandidateCount, readiness.integrity.publicCandidateCount);
+assert.equal(readiness.summary.lockedCount, readiness.integrity.reviewLockedCount);
 
 function enumerate(hundredTarget, tenCeilingTarget, limit = 10000) {
   const candidates = [];
