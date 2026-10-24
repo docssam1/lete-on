@@ -1,3 +1,11 @@
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 25 Mission 6 Condition Review
+
+- Re-read PDF p.21 / printed p.25 from the source-hash-matched page image. Corrected a previous draft's side-label assignment: ㄱㄴ=2.5cm, ㄱㄹ=3.5cm, ㄹㄷ=4cm, and ∠ㄷ=80°. There is no printed right-angle mark or diagonal; handwriting was excluded.
+- Independently established that only choice ③ (∠ㄴ) determines one convex quadrilateral. Choice ① repeats a given length; paired counterexamples disprove ②/⑥ and ④/⑤. The calculation is now checked in the U3 source ledger.
+- Rechecked the monotonicity bound algebraically: with `q=t²`, `16sin²80°<q<16`; the positive derivative term is bounded by `0.886166493/t²`, while the negative term is `3.939231012/t²`. Numerical coordinate checks also confirm all four counterexample quadrilaterals are convex.
+- Kept the record locked pending implementation-drawing, solution, screen, and A4 verification. No runtime or student data changed.
+- Drive source proof: [grade52-unit3-page25-mission6-condition-proof-20261024.md](https://drive.google.com/file/d/1wSIf1OPPM8JIG6oJq2RXPWJ6h6cea8b5/view).
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Deployment and Ledger Reconciled
 
 - The current `main` curriculum has `5-2-u1-e4-mission-1-rounded-count` unlocked with `sourceVerified: true` and generator `source52RoundedCountMission1`. Its original answer is independently enumerated as 10 values; publisher-key verification remains false.
