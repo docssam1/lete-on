@@ -24,6 +24,8 @@ require("./source-5-2-rounded-range-e44.js");
 require("./source-5-2-rounded-count-mission1.js");
 require("./source-5-2-rounded-floor-mission2.js");
 require("./source-5-2-notebook-range-mission3.js");
+require("./source-5-2-rounded-triplet-mission4.js");
+require("./source-5-2-quotient-sum-mission5.js");
 require("./source-5-2-congruence-page31.js");
 require("./source-6-2-decimal-e6-text.js");
 require("./source-6-2-decimal-e6-geometry.js");

@@ -27,6 +27,8 @@ require("./source-5-2-rounded-range-e44.js");
 require("./source-5-2-rounded-count-mission1.js");
 require("./source-5-2-rounded-floor-mission2.js");
 require("./source-5-2-notebook-range-mission3.js");
+require("./source-5-2-rounded-triplet-mission4.js");
+require("./source-5-2-quotient-sum-mission5.js");
 require("./source-5-2-congruence-page31.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
@@ -132,7 +134,7 @@ require("./math-notation.js");
 
 const api = window.HSE_GENERATORS;
 const notation = window.HSE_MATH_NOTATION;
-const EXPECTED_PUBLIC_TYPE_COUNT = 1263;
+const EXPECTED_PUBLIC_TYPE_COUNT = 1265;
 const allTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
   ...type,
   semesterId: semester.id,

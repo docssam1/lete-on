@@ -23,6 +23,8 @@ require("./source-5-2-rounded-range-e44.js");
 require("./source-5-2-rounded-count-mission1.js");
 require("./source-5-2-rounded-floor-mission2.js");
 require("./source-5-2-notebook-range-mission3.js");
+require("./source-5-2-rounded-triplet-mission4.js");
+require("./source-5-2-quotient-sum-mission5.js");
 require("./source-5-2-congruence-page31.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
@@ -151,8 +153,8 @@ for (const semester of window.HSE_CURRICULUM.semesters) {
   }
 }
 
-if (total !== 2051) failures.push(`전체 유형 수가 2051가 아니라 ${total}입니다.`);
-if (ready !== 1263) failures.push(`원문 연결 공개 유형 수가 1263가 아니라 ${ready}입니다.`);
+if (total !== 2053) failures.push(`전체 유형 수가 2053가 아니라 ${total}입니다.`);
+if (ready !== 1265) failures.push(`원문 연결 공개 유형 수가 1265가 아니라 ${ready}입니다.`);
 if (lockedWithoutSource !== 380) failures.push(`원문 미연결 잠금 유형 수가 380이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {
