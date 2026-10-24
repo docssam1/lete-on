@@ -1,5 +1,44 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>수의 마법 · 과정별 시리즈</title><style>
 @font-face{font-family:Series;src:url('../assets/fonts/pretendard-var.woff2');font-weight:100 700}*{box-sizing:border-box}body{margin:0;background:#f1ece1;color:#2a241c;font-family:Series,sans-serif}header{padding:24px 28px;border-bottom:1px solid #c9bda2;background:#fdfbf5}h1{font-size:25px;font-weight:600;margin:0 0 10px;letter-spacing:-.03em}p{margin:0;font-size:14px;line-height:1.7;color:#7a6f5c}.controls{display:flex;gap:14px;flex-wrap:wrap;align-items:end;margin-top:18px}label{font-size:12px;display:flex;flex-direction:column;gap:6px}select,input,a{font:inherit}select,input{padding:10px;border:1px solid #c9bda2;border-radius:3px;min-height:44px;background:white;color:inherit}a{color:#2f6b4a;padding:12px 0;font-size:14px}iframe{display:block;border:0;width:min(100%,1000px);height:calc(100vh - 212px);min-height:600px;margin:auto;background:#fff}small{display:block;margin-top:12px;color:#8c452c;font-size:12px}@media(max-width:600px){header{padding:18px}h1{font-size:22px}.controls{gap:10px}label:first-child{width:100%}iframe{height:75vh}input{max-width:150px}}
-</style></head><body><header><h1>수의 마법 · 과정별 학습지 시리즈</h1><p>유아·초등은 캐릭터와 함께, 중·고등은 차분한 수학 노트로.<br>표지와 목차부터 실제 개념·연습·정답까지 확인할 수 있습니다.</p><div class="controls"><label>레벨·과정<select id="course"><option value="C0" selected>수의 나라 · 수와 친해지기</option><option value="C4">계산의 새싹 · 곱셈구구</option><option value="C13">연산의 도약 · 나눗셈</option><option value="C35">중3 · 제곱근</option><option value="M3E">중3 · 선택 심화</option><option value="C38">공통수학1 · 다항식</option><option value="C54">공통수학2 · 명제와 부등식</option><option value="C70">미적분 · 극한과 연속</option></select></label><label>표지 이름<input id="name" maxlength="24" value="예시 학습자"></label><a id="open" target="_blank" rel="noopener">학습지 크게 보기</a></div><small>디자인 확인용 예시입니다. 실제 학생 기록을 저장하거나 문자를 발송하지 않습니다.</small></header><iframe id="book" title="실제 주간 학습지"></iframe><script src="../app/delivery-plan.js?v=20261024-personal1"></script><script>
-const $=id=>document.getElementById(id);function show(){const course=$('course').value,week='2026-W43',start=week==='2026-W43'?'2026-10-19':'2026-11-02',url=new URL('../ws.html',location.href);url.search=new URLSearchParams({c:course==='M3E'?'C37':course,w:week,n:$('name').value,auto:'0'});if(course==='M3E'){const p={courseKey:'C37',sessionIndex:13,startDate:start,speed:1,amount:1,cadence:'w2',pace:'p2',middleExtensions:{3:'20261024-middle-extension1'},extensionAnchor:{grade:3,index:0}};for(const [k,v]of Object.entries({dv:NM_DELIVERY_PLAN.VERSION,dp:NM_DELIVERY_PLAN.encode(p),k:1,cad:'w2',amt:1}))url.searchParams.set(k,v);}else if(+course.slice(1)>=29)for(const [k,v]of Object.entries({hp:1,p:1,s:1,cad:'w2',hs:start,hv:1}))url.searchParams.set(k,v);$('book').src=url.href;$('open').href=url.href;}document.querySelector('.controls').addEventListener('change',show);show();
+button{font:inherit;min-height:44px;padding:10px 14px;border:1px solid #c9bda2;border-radius:3px;background:#fdfbf5;color:#2a241c;cursor:pointer}button:disabled{opacity:.45;cursor:default}.browse{display:flex;gap:8px}#status{margin-top:12px;font-size:12px}select{max-width:min(100%,460px)}label{min-width:0}iframe{height:calc(100vh - 260px)}@media(max-width:600px){select{max-width:100%}label:first-child{width:100%}#round{max-width:calc(100vw - 36px)}}
+</style></head><body><header><h1>수의 마법 · 과정별 학습지 시리즈</h1><p>유아·초등은 캐릭터와 함께, 중·고등은 차분한 수학 노트로.<br>표지와 목차부터 실제 개념·연습·정답까지 확인할 수 있습니다.</p><div class="controls">
+<label>과정<select id="course" disabled><option value="C0">과정 목록 불러오는 중…</option></select></label>
+<label>학습 회차<select id="round" disabled><option value="0">1회차</option></select></label>
+<label>표지 이름<input id="name" maxlength="24" value="예시 학습자"></label>
+<div class="browse"><button id="prev" type="button" disabled>이전 회차</button><button id="next" type="button" disabled>다음 회차</button></div>
+<a id="open" target="_blank" rel="noopener">학습지 크게 보기</a></div>
+<p id="status" role="status" aria-live="polite">전체 과정 목록을 불러오고 있습니다.</p>
+<small>전체 공통 학습지를 회차별로 확인하는 화면입니다. 개인별 속도·학습량·선택 심화는 실제 배정 시 적용됩니다. 학생 기록 저장·문자 발송은 하지 않습니다.</small>
+</header><iframe id="book" title="공통 학습지"></iframe><script src="../app/delivery-plan.js?v=20261024-personal1"></script><script>
+const $=id=>document.getElementById(id);
+const params=new URLSearchParams(location.search),week='2026-W43',start='2026-10-19';
+let catalog=null,courses=[],generation=0;
+const label=v=>typeof v==='string'?v:v?.ko||'';
+function rows(course){return course.studyPlan?.lessons||course.sessions;}
+function updateNavigation(){const ci=courses.findIndex(c=>c.id===$('course').value),ri=Number($('round').value);$('prev').disabled=ci<=0&&ri===0;$('next').disabled=ci===courses.length-1&&ri===rows(courses[ci]).length-1;}
+function fillRounds(index=0){const c=courses.find(c=>c.id===$('course').value);$('round').replaceChildren(...rows(c).map((row,i)=>new Option((i+1)+'회차'+(row.test?' · 과정 점검':c.studyPlan?'':label(row.title)?' · '+label(row.title):''),String(i))));$('round').value=String(Math.min(Math.max(0,index),rows(c).length-1));updateNavigation();}
+function show(){
+ const c=catalog?courses.find(c=>c.id===$('course').value):null,ri=c?Number($('round').value):0,url=new URL('../ws.html',location.href);
+ url.search=new URLSearchParams({c:c?.extensionGrade?c.anchor:c?.id||'C0',w:week,n:$('name').value,auto:'0',p:'1',s:String(c?.studyPlan?rows(c)[ri].startSession:ri+1)});
+ if(c?.extensionGrade){const g=c.extensionGrade,p={courseKey:c.anchor,sessionIndex:catalog[c.anchor].sessions.length,startDate:start,speed:1,amount:1,cadence:'w1',pace:'p2',middleExtensions:{[g]:'20261024-middle-extension1'},extensionAnchor:{grade:g,index:ri}};for(const [k,v]of Object.entries({dv:NM_DELIVERY_PLAN.VERSION,dp:NM_DELIVERY_PLAN.encode(p),k:1,cad:'w1',amt:1}))url.searchParams.set(k,v);}
+ else if(c?.studyPlan)url.searchParams.set('hp','1');
+ $('status').textContent=c?label(c.title)+' · '+(ri+1)+'회차를 불러오고 있습니다.':'전체 과정 목록을 불러오고 있습니다.';
+ generation++;$('book').src=url.href;$('open').href=url.href;
+ if(c){updateNavigation();history.replaceState(null,'','?'+new URLSearchParams({c:c.id,r:ri+1}));}
+}
+function initialize(w){
+ catalog=w.NM_COURSES;const stage=w.NM_STAGES||[],groups=new Map();
+ courses=Object.values(catalog).sort((a,b)=>a.order-b.order);
+ for(const c of courses){c.id='C'+c.order;const name=label(stage.find(s=>c.order>=s.courses.from&&c.order<=s.courses.to)?.name)||'기타 과정';if(!groups.has(name))groups.set(name,[]);groups.get(name).push(c);}
+ const extensions=[1,2,3].map(g=>({...w.NM_MIDDLE_EXTENSION.course(g),anchor:{1:'C31',2:'C34',3:'C37'}[g]}));groups.set('중등 선택 심화',extensions);courses.push(...extensions);
+ $('course').replaceChildren(...[...groups].map(([name,list])=>{const group=document.createElement('optgroup');group.label=name;for(const c of list)group.append(new Option(c.extensionGrade?label(c.title):'과정 '+c.order+' · '+label(c.title),c.id));return group;}));
+ $('course').disabled=false;$('round').disabled=false;
+ $('course').value=courses.some(c=>c.id===params.get('c'))?params.get('c'):'C0';fillRounds(Math.max(0,(Number(params.get('r'))||1)-1));
+ // The bootstrap book is already C0 / first session; retain it unless a deep link selects another book.
+ if($('course').value!=='C0'||Number($('round').value)!==0)show();
+}
+$('book').addEventListener('load',()=>{const current=generation,w=$('book').contentWindow;let tries=0;const wait=()=>{if(current!==generation)return;if(w.NM_WS_READY===true){if(!catalog)initialize(w);if(current===generation){const c=courses.find(c=>c.id===$('course').value);$('status').textContent='정규 74과정 · 선택 심화 3과정 · 총 '+courses.reduce((n,c)=>n+rows(c).length,0)+'회차 / '+label(c.title)+' · '+(Number($('round').value)+1)+'회차';}return;}if(w.NM_WS_READY==='error'||++tries>120){$('status').textContent='학습지를 불러오지 못했습니다. 과정을 다시 선택하거나 새로고침해 주세요.';return;}setTimeout(wait,250);};wait();});
+$('course').addEventListener('change',()=>{fillRounds();show();});$('round').addEventListener('change',show);$('name').addEventListener('change',show);
+function move(delta){let ci=courses.findIndex(c=>c.id===$('course').value),ri=Number($('round').value)+delta;if(ri<0){ci--;ri=rows(courses[ci]).length-1;}else if(ri>=rows(courses[ci]).length){ci++;ri=0;}$('course').value=courses[ci].id;fillRounds(ri);show();}
+$('prev').addEventListener('click',()=>move(-1));$('next').addEventListener('click',()=>move(1));show();
 </script></body></html>
