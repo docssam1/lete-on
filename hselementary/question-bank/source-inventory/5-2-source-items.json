@@ -48,7 +48,7 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 10,
-    "reviewLockedItems": 265
+    "reviewLockedItems": 261
   },
   "units": [
     {
@@ -338,8 +338,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "PDF 4쪽(인쇄 6쪽) 원문과 독립 풀이를 대조했고, 기존 main 런타임의 수학·브라우저·A4 검수를 마쳤습니다. 공식 출판사 답안 및 Claude 교차 검수와 공개 결정은 별도 대기입니다. 735809를 백의 자리 올림 735900, 천의 자리 버림 735000, 만의 자리 반올림 740000으로 각각 독립 계산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-example-1",
@@ -355,8 +355,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "PDF 4쪽(인쇄 6쪽) 원문과 독립 풀이를 대조했고, 기존 main 런타임의 수학·브라우저·A4 검수를 마쳤습니다. 공식 출판사 답안 및 Claude 교차 검수와 공개 결정은 별도 대기입니다. 15,209·37,064·61,325·78,472를 각각 검사했습니다. 백의 자리 올림과 반올림이 같은 수는 37,064와 78,472입니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-example-2",
@@ -372,8 +372,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "PDF 4쪽(인쇄 6쪽) 원문과 독립 풀이를 대조했고, 기존 main 런타임의 수학·브라우저·A4 검수를 마쳤습니다. 공식 출판사 답안 및 Claude 교차 검수와 공개 결정은 별도 대기입니다. 4,772,134와 4,993,082를 따로 만의 자리까지 처리했습니다. 각 수를 버린 합 9,760,000과 올린 합 9,780,000의 차는 20,000입니다. 각각 버린 합 9,760,000과 실제 합을 반올림한 9,770,000의 차는 10,000입니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-example-3",
@@ -389,8 +389,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "PDF 4쪽(인쇄 6쪽) 원문과 독립 풀이를 대조했고, 기존 main 런타임의 수학·브라우저·A4 검수를 마쳤습니다. 공식 출판사 답안 및 Claude 교차 검수와 공개 결정은 별도 대기입니다. 다섯 보기를 십의 자리 올림·반올림 및 백의 자리 버림·반올림 조건으로 대조해 3,664 하나만 남았습니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-example-4",
