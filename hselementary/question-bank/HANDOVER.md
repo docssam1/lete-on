@@ -1,3 +1,14 @@
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Missions 4–5: Integrated Local QA
+
+- Missions 4 and 5 are integrated in draft PR [#418](https://github.com/docssam1/lete-on/pull/418), stacked on PR #417's `codex/grade52-page11-missions2-3-rebased` branch. PR #418 is open and mergeable against that base branch; neither PR is merged or deployed.
+- Mission 4 preserves the source's unrestricted “어떤 수” domain and exact endpoint inclusion. The student-facing solution uses “이상·초과·이하·미만” instead of interval brackets. Mission 5 uses independently checked quotient ranges and a sum; synthetic targets and answers remain separate from the source.
+- Both focused calculation audits pass nine synthetic settings. The integrated whole-bank classification, source-release, runtime, elementary-language, math-notation, and numeric-display audits pass at 2,053 total / 1,265 generatable / 788 pending; the existing 124 legacy Grade 5-2 records remain unchanged.
+- The combined Mission 4–5 browser audit passes 24 states at 1440px and 375px, 48 overflow checks, answer separation, 24 blocked external requests, and no page errors. Four problem/solution A4 PDFs each fit one portrait page and were visually inspected.
+- The 5-2 portion of the combined source-ledger audit has zero findings; 516 pre-existing Grade 6 findings remain. Private Drive evidence ZIP `grade52-page11-mission45-integrated-local-qa-20261024.zip` is file ID `1rV-MccFiQcfULid5uLGWead5olAUtcu4`, 982,045 bytes, SHA-256 `852c45199a145de46b1aa59f0d5e92f7c0d1ef9a2902730e8e6b1dbdcad85edf`. It contains local screenshots, A4 pages and audit logs, but not the original source PDF or student data.
+- Claude API cross-review remains pending because `ANTHROPIC_API_KEY` is absent in the current Mac environment. Keep both PRs in draft; no merge, deployment, or student-data access occurred.
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Missions 2–3: Local Integration QA
 
 - This candidate is committed on branch `codex/grade52-page11-missions2-3-rebased` and open as draft PR #417 (`685d73aec93885edd8a589900dd39fd3750b1725`) against current main `7bafdd5b1a58435e021a4fdf069c0468e71d7d2d`. The existing main skill `.claude/skills/gfield-textbook-design/SKILL.md` is already present; no skill-file change was required.
