@@ -2631,7 +2631,11 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     ${magazineC4 ? '<div class="nm-cvw-cover-teaser"><b>이번 호의 질문</b>같은 수가 두 묶음이면 어떻게 셀까요?</div><img class="nm-cvw-cover-character" src="assets/characters/docssam.png" alt="">' : ''}
     <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}${cv.amount != null && cv.amount !== 1 ? ' · ' + esc(cv.amountLabel || `${cv.amount}×`) : ''}</p>
     <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
-    <p class="nm-cvw-tagline">${esc(cv.compactMiddle?lk('중등 연산 · 같은 20묶음, 주 1회 20주 · 주 2회 10주','Middle school arithmetic · the same 20 bundles, 20 weeks at once a week or 10 at twice','初中运算 · 相同20组，每周一次20周，每周两次10周'):cv.compactHigh?lk('주 2회, 12주에 이어 가는 고등 연산','High school arithmetic over 12 weeks at two lessons a week','每周两课，12周高中运算'):lk('하루 10분으로 연산 공부','Arithmetic practice in 10 minutes a day','每天10分钟，练习计算'))}</p>
+    <p class="nm-cvw-tagline">${esc(cv.middleExtension?lk(
+      (cv.extensionGrades||[]).map(g=>'중'+g).join('·')+' 선택 심화 12묶음 · 표준 6주 · 기본 포함 총 16주',
+      (cv.extensionGrades||[]).map(g=>'Grade '+(+g+6)).join(' / ')+' optional extension · 12 bundles · 6 standard weeks · 16 weeks including core',
+      (cv.extensionGrades||[]).map(g=>'初'+g).join('·')+'选学进阶12组 · 标准6周 · 含基础共16周')
+      :cv.compactMiddle?lk('중등 연산 · 같은 20묶음, 주 1회 20주 · 주 2회 10주','Middle school arithmetic · the same 20 bundles, 20 weeks at once a week or 10 at twice','初中运算 · 相同20组，每周一次20周，每周两次10周'):cv.compactHigh?lk('주 2회, 12주에 이어 가는 고등 연산','High school arithmetic over 12 weeks at two lessons a week','每周两课，12周高中运算'):lk('하루 10분으로 연산 공부','Arithmetic practice in 10 minutes a day','每天10分钟，练习计算'))}</p>
     <div class="nm-cv-rule"></div>
     <p class="nm-cvw-course">${cv.name ? `<b>${esc(cv.name)}</b> · ` : ''}${cv.courseNum ? esc(lk(`과정 ${cv.courseNum}`, `Course ${cv.courseNum}`, `课程 ${cv.courseNum}`)) + ' · ' : ''}${esc(cv.courseTitle||'')}</p>
   </div>
@@ -3545,6 +3549,19 @@ function printSteps(p){
   const st = Array.isArray(p.steps) ? p.steps.filter(s => s && s.tex) : [];
   return st.length ? st : null;
 }
+
+// These exact levels keep an essential condition in prompt, outside tex.
+// Print only that condition (not the generator's solution hint), in every
+// question and teaching example so later practice pages stand on their own.
+const W2_LEVEL_PRINT_CONDITIONS = {
+  'MD26@3':{ko:'다음 이차방정식이 중근을 갖도록 하는 k의 값을 구하시오.',en:'Find k so that the quadratic equation has a repeated root.',zh:'求使下列一元二次方程有重根的k值。'},
+  'MD20@5':{ko:'공통인수를 묶고, 두 괄호의 상수는 작은 수부터 쓰시오.',en:'Factor out the common factor; write the constants in the two brackets in ascending order.',zh:'提取公因数，两个括号中的常数按从小到大填写。'},
+  'MD25@3':{ko:'두 빈칸에는 작은 수부터 차례로 쓰시오.',en:'Fill the two blanks in ascending order.',zh:'两个空格按从小到大填写。'},
+  'MD93@2':{ko:'P(a)=0을 만족하는 정수 a를 구하시오.',en:'Find the integer a such that P(a)=0.',zh:'求满足P(a)=0的整数a。'},
+  'MD93@3':{ko:'α는 주어진 다항식의 정수 근입니다. 빈칸에 알맞은 계수를 쓰시오.',en:'α is the integer root of the given polynomial. Fill in the missing coefficient.',zh:'α是所给多项式的整数根。填写所缺的系数。'}
+};
+function levelPrintCondition(threadId,level){return pickL(W2_LEVEL_PRINT_CONDITIONS[threadId+'@'+level])||'';}
+function printConditionHtml(condition){return condition?`<div class="nm-print-ask nm-print-condition">${esc(condition)}</div>`:'';}
 
 function printAskText(p){
   /* 문장제(p.word)는 아래 word 분기가 본문·물음·보기를 통째로 그린다. 여기서
@@ -4490,7 +4507,7 @@ function keyStepTint(stepTex, exprTex){
     done = true; return pre + '{\\color{' + (PV.COLORS ? PV.COLORS[0] : '#C62828') + '}{' + n + '}}';
   }) + rest;
 }
-function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, cellIdx, cellTotal, inlineTrainBlank){
+function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, cellIdx, cellTotal, inlineTrainBlank, condition){
   let cls = 'nm-w2-item nm-print-item';
   let inner;
   /* Training Course(창의 회차, 2026-09-18) — 식 · 주황 밑줄 · "= …" 단계 줄(빈칸은 상자) · 점선 풀이 줄.
@@ -4550,14 +4567,14 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
        (전엔 \square 를 texDisplay 없이 넘겨 상자 없는 작은 "= □" 글자가 찍혔다) */
     const ansLine = !plan.ans ? '' : `<div class="nm-w2-train-step nm-w2-train-ans">${TRAIN_EQUAL}<span class="nm-w2-tex" data-tex="${esc(trainDisplay(box))}"></span></div>`;
     const dots = bare ? '<i></i><i></i><i></i>' : '<i></i>';
-    const askHtmlT = printAskText(p) ? `<div class="nm-print-ask">${esc(printAskText(p))}</div>` : '';
+    const askHtmlT = condition ? printConditionHtml(condition) : printAskText(p) ? `<div class="nm-print-ask">${esc(printAskText(p))}</div>` : '';
     const slotAttrT = slotAttrP + (T && PVt ? ` data-cptint="${T.kind}"` : '');
     return `<div class="${cls} nm-w2-item-train"${slotAttrT}><span class="nm-w2-numrow"><span class="nm-w2-num">(${num})</span></span>${askHtmlT}
   <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(trainDisplay(raw))}"></span></div>
   ${stepLines}${ansLine}<div class="nm-w2-train-dots">${dots}</div></div>`;
   }
   const ask = printAskText(p);
-  const askHtml = ask ? `<div class="nm-print-ask">${esc(ask)}</div>` : '';
+  const askHtml = condition ? printConditionHtml(condition) : ask ? `<div class="nm-print-ask">${esc(ask)}</div>` : '';
   if(p.divBox){
     cls += ' nm-w2-item-vis';
     inner = divBoxHtml(p.divBox);
@@ -5261,12 +5278,12 @@ function w2ExampleHtml(threadId, level, code, exclude, young, exactSkip, meta){
   const p = drawUnique(threadId, level, rng, exclude, 12, exactSkip);
   if(meta) meta.skip=p.__uniqueSkip||0;
   if(exclude) exclude.add(problemKey(p));
-  return w2ExampleBodyHtml(p, threadId, young);
+  return w2ExampleBodyHtml(p, threadId, young, levelPrintCondition(threadId,level));
 }
 /* 예시 본체 — 문항 하나를 "완성된 식 + 풀이 사슬"로. 이야기(p.word)가 있으면 이야기를
    먼저, 나눗셈 뜻 그림(divPictureHtml)이 있으면 사슬 앞에 붙인다(2026-09-17). 문장제만인
    회차(w2WordExampleHtml)도 생성기 자체 이야기가 있으면 이 본체를 그대로 쓴다. */
-function w2ExampleBodyHtml(p, threadId, young){
+function w2ExampleBodyHtml(p, threadId, young, condition){
   /* 보기 고르기 문항(WP1처럼 식이 없는 것) — 이야기·보기·답 번호와 그 문장.
      식 자리에 " = 2"가 찍히는 것을 막는다(2026-09-17). */
   if(p.word && p.choices && !p.tex){
@@ -5335,7 +5352,7 @@ function w2ExampleBodyHtml(p, threadId, young){
     : '';
   return `<div class="nm-w2-example">
   <span class="nm-w2-ex-badge">${esc(lk('예시','Example','示例'))}</span>
-  ${storyHtml}${p.scatterPlot ? `<div class="nm-teach-graph">${scatterPlotHtml(p,true)}</div>` : p.graph ? `<div class="nm-teach-graph">${graphSvg(p.graph.kind==='boxPlot'&&p.solutionGraph?p.solutionGraph:p.graph)}</div>` : ''}${divPictureHtml(p, {young: !!young})}${bodyHtml}
+  ${printConditionHtml(condition)}${storyHtml}${p.scatterPlot ? `<div class="nm-teach-graph">${scatterPlotHtml(p,true)}</div>` : p.graph ? `<div class="nm-teach-graph">${graphSvg(p.graph.kind==='boxPlot'&&p.solutionGraph?p.solutionGraph:p.graph)}</div>` : ''}${divPictureHtml(p, {young: !!young})}${bodyHtml}
 </div>`;
 }
 
@@ -5376,7 +5393,7 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
       ? `<div class="nm-w2-guide-story">${esc(pickL(p.word))}${p.wordAsk ? ' <b>' + esc(pickL(p.wordAsk)) + '</b>' : ''}</div>${wpSceneHtml(p)}`
       : '';
     return `<div class="nm-w2-guide-item">
-  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span><span>${storyHtml}${qHtml}</span></div>
+  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span><span>${printConditionHtml(levelPrintCondition(threadId,lv))}${storyHtml}${qHtml}</span></div>
   ${p.scatterPlot ? `<div class="nm-teach-graph">${scatterPlotHtml(p,false)}</div>` : p.graph ? `<div class="nm-teach-graph">${graphSvg(p.graph)}</div>` : ''}${(i === 0 && !young) ? divPictureHtml(p, {compact:true}) : ''}<div class="nm-w2-guide-chain">${chainHtml}</div>
 </div>`;
   });
@@ -6287,7 +6304,7 @@ function renderRoundPagesBody(item, opts){
       const isFirstRamp = !!p.__ramp && !rampTagged;
       if(isFirstRamp) rampTagged = true;
       let h = w2CellHtml(p, num, item.thread, layout.type === 'vertical', isFirstRamp, layout.type, num - 1, problems.length,
-        !!(opts.editorialC4 && examLang() === 'ko')); num++;
+        !!(opts.editorialC4 && examLang() === 'ko'),levelPrintCondition(item.thread,item.level)); num++;
       if(partialCol){
         const r = (i % rowsPerCol) + 1, c = Math.floor(i / rowsPerCol) + 1;
         h = h.replace(/^(\s*<div\b)/, `$1 style="grid-row:${r};grid-column:${c}"`);
@@ -6987,10 +7004,14 @@ function plannedEnvelope(refs, weekKey, opts){
   const amount=opts.amount==null?getAmount():normAmount(opts.amount),cadence=opts.cad==='w2'?'w2':'w1';
   const children=[],selectedRefs=[];
   for(let i=0;i<refs.length;i++){
-    const ref=refs[i],course=ref&&courses[ref.courseKey];
+    const ref=refs[i],extension=ref?.kind==='middle-extension'?window.NM_MIDDLE_EXTENSION:null;
+    const canonical=extension?.reference(ref.grade,ref.extensionIndex);
+    if(ref?.kind==='middle-extension'&&(!canonical||ref.extensionId!==canonical.extensionId||ref.courseKey!==canonical.courseKey
+      ||ref.lessonIndex!==canonical.lessonIndex||!Array.isArray(ref.sourceIndices)||ref.sourceIndices.length))return null;
+    const course=canonical?extension.course(canonical.grade):ref&&courses[ref.courseKey];
     if(!course||!Array.isArray(course.sessions))return null;
     const high=!!highLessons(course);
-    let start=ref.startSession!=null?Number(ref.startSession):ref.sessionIndex!=null?Number(ref.sessionIndex):null;
+    let start=canonical?canonical.extensionIndex+1:ref.startSession!=null?Number(ref.startSession):ref.sessionIndex!=null?Number(ref.sessionIndex):null;
     const lesson=ref.lessonIndex!=null?Number(ref.lessonIndex):null;
     if(lesson!==null&&(!Number.isInteger(lesson)||lesson<0))return null;
     if(start===null){
@@ -6999,22 +7020,24 @@ function plannedEnvelope(refs, weekKey, opts){
     }
     if(!Number.isInteger(start)||start<1||start>course.sessions.length)return null;
     const child=NM_EXAM.weeklyEnvelope(course,ref.courseKey,weekKey,{...opts,
-      amount,cad:cadence,k:1,compactHigh:high,legacySession:false,highStartDate:null,
+      amount,cad:cadence,k:1,compactHigh:high,legacySession:!!canonical,highStartDate:null,
       highWholeWeek:false,startSession:start,sessionIdx:start-1,lesson:high?lesson:undefined,
-      seedScope:'plan'+i+'s'+(start-1)});
+      seedScope:canonical?'extension'+canonical.grade+'e'+canonical.extensionIndex+'p'+i:'plan'+i+'s'+(start-1)});
     if(!child)return null;
-    const indices=high?child.sourceSessions.map(n=>n-1):[start-1];
+    if(canonical)child.compactHigh=true;
+    const indices=canonical?[]:high?child.sourceSessions.map(n=>n-1):[start-1];
     // Canonical refs may include these fields as evidence. Never expand a
     // trimmed/invalid ref into an entire neighbouring lesson silently.
     if(ref.sourceIndices!=null&&(!Array.isArray(ref.sourceIndices)||JSON.stringify(ref.sourceIndices)!==JSON.stringify(indices)))return null;
     const extra=high?child.lesson.extraPractice||[]:[];
     if(ref.extraPractice!=null&&JSON.stringify(ref.extraPractice)!==JSON.stringify(extra))return null;
     child.items=child.items.map(it=>({...it,
-      courseKey:ref.courseKey,sourceSession:it.sourceSession||ref.courseKey+'-S'+start,
-      legacySession:it.legacySession||start,
-      sessionLabel:ref.courseKey+' · '+(it.sessionLabel||lk('학습 '+start,'Study '+start,'学习 '+start))}));
+      courseKey:ref.courseKey,sourceSession:canonical?canonical.extensionId:it.sourceSession||ref.courseKey+'-S'+start,
+      ...(canonical?{compactHigh:true,middleExtension:true,extensionId:canonical.extensionId,extensionGrade:canonical.grade,extensionIndex:canonical.extensionIndex}:{legacySession:it.legacySession||start}),
+      sessionLabel:canonical?lk('중'+canonical.grade+' 심화 '+start,'Grade '+(canonical.grade+6)+' extension '+start,'初'+canonical.grade+'进阶'+start)+' · '+pickL(course.sessions[start-1].title)
+        :ref.courseKey+' · '+(it.sessionLabel||lk('학습 '+start,'Study '+start,'学习 '+start))}));
     children.push(child);
-    selectedRefs.push({...ref,startSession:start,lessonIndex:high?child.lesson.index:start-1,
+    selectedRefs.push({...ref,...(canonical||{}),...(canonical?{}:{startSession:start}),lessonIndex:high?child.lesson.index:start-1,
       sourceIndices:indices.slice(),...(extra.length?{extraPractice:extra.map(d=>({...d}))}:{})});
   }
   const items=children.flatMap(child=>child.items),units=[...new Set(children.flatMap(child=>child.units))];
@@ -7030,19 +7053,23 @@ function plannedEnvelope(refs, weekKey, opts){
     const minutes=Number(selectedRefs[i].estimatedMinutes??child.cover.lessonMinutes??child.session?.minutes);
     return sum+(Number.isFinite(minutes)&&minutes>0?minutes:0);
   },0);
-  const title=courseKeys.map(key=>key+' · '+pickL(courses[key].title)).join(' / ');
-  const identity=JSON.stringify(selectedRefs.map(ref=>[ref.courseKey,ref.lessonIndex,ref.startSession,ref.sourceIndices]));
+  const extensionIds=selectedRefs.filter(ref=>ref.kind==='middle-extension').map(ref=>ref.extensionId);
+  const title=extensionIds.length?[...new Set(selectedRefs.map(ref=>ref.kind==='middle-extension'?pickL(window.NM_MIDDLE_EXTENSION.course(ref.grade).title)
+    :ref.courseKey+' · '+pickL(courses[ref.courseKey].title)))].join(' / '):courseKeys.map(key=>key+' · '+pickL(courses[key].title)).join(' / ');
+  const identity=JSON.stringify(selectedRefs.map(ref=>extensionIds.length?[ref.kind||'core',ref.extensionId,ref.courseKey,ref.lessonIndex,ref.startSession,ref.sourceIndices]
+    :[ref.courseKey,ref.lessonIndex,ref.startSession,ref.sourceIndices]));
   const wsId='W'+weekKey+'-P'+NM_RNG.hashSeed(identity+'@'+amount).toString(36);
   const cover={...first.cover,code:wsId,k:1,cadence,name:opts.name||first.cover.name||'',amount,
     weekLabel:first.cover.weekLabel.replace(/-[12]주차$/,'주차'),
     courseTitle:title+' · '+lk('이번 주 학습','This week’s learning','本周学习'),
     compactHigh,compactMiddle:compactHigh&&courseKeys.every(key=>/^middle[123]$/.test(courses[key].tier)),
     lessonMinutes:Math.round(estimatedMinutes),weeklyMinutes:estimatedMinutes,studyDays:5,
-    assignedCourseKeys:courseKeys,highWholeWeek:compactHigh,planned:true};
+    assignedCourseKeys:courseKeys,...(extensionIds.length?{assignedExtensionIds:extensionIds,middleExtension:true,extensionGrades:[...new Set(selectedRefs.filter(ref=>ref.kind==='middle-extension').map(ref=>ref.grade))],extensionVersion:window.NM_MIDDLE_EXTENSION.version}:{}),highWholeWeek:compactHigh,planned:true};
+  const groups=[...new Set(selectedRefs.map(ref=>ref.kind==='middle-extension'?'E'+ref.grade:ref.courseKey))];
   return {...first,wsId,items,units,cover,k:1,cad:cadence,title,compactHigh,planned:true,
-    lessons:selectedRefs,assignedCourseKeys:courseKeys,
+    lessons:selectedRefs,assignedCourseKeys:courseKeys,...(extensionIds.length?{assignedExtensionIds:extensionIds}:{}),
     sourceSessions:selectedRefs.flatMap(ref=>ref.sourceIndices.map(i=>i+1)),
-    courseSessions:courseKeys.reduce((sum,key)=>sum+courses[key].sessions.filter(s=>!s.test).length,0)};
+    courseSessions:groups.reduce((sum,key)=>sum+(key[0]==='E'?window.NM_MIDDLE_EXTENSION.course(+key.slice(1)):courses[key]).sessions.filter(s=>!s.test).length,0)};
 }
 
 const NM_EXAM = {
