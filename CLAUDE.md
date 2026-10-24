@@ -915,6 +915,9 @@ Drive 다운로드가 base64로 대화 문맥에 실려 오는 구조라 100MB�
 3. **개념·실험 근거 = 지필드 영재교육 과학 교재(실험편·이론편) + 『2009 초등학교 과학탐구토론 지도자료』 본문**을 열어 대조한다(차례만 보고 쓰지 않는다). 원본에 없는 숫자는 「모형 값」으로 밝히고, 원본에 있다고 쓰기 전에 그 쪽을 확인한다.
 4. **자바실험실(javalab.org) 참고**: `science-lab/JAVALAB-REFERENCE-20261003.md`의 기준(시뮬레이션 복제 금지, 출처 표시). 이 환경에선 javalab.org 접속이 막혀 있다.
 
+### 과학 탐구 실험실(v1, `/science-lab/` 검은 화면) 탐구보고서·자연관찰 연습 (2026-10-23~24, main 반영)
+**`science-lab/HANDOFF-CLAUDE-TO-GPT-20261020.md` 10절부터 읽을 것.** 15실험을 초등/중등·대회(과학탐구·자연관찰·발명)로 나눴고, 보고서 양식 6개(`report-model.js FORMS`)·손글씨 첨삭(`report.js`)·그리기판(`sketch.js`)·자연관찰 연습 3세트(`#/observe`, `data/observe-sets.js`, 3D 표본 `scenes/specimens-*.js`)·발명 수상작 갤러리(`data/invent-gallery.js`)가 있다. 실사 사진은 `assets/observe/<표본 id>-1.jpg`에 넣으면 바로 뜬다. 3D 코드 한 줄 뒤에 `//` 주석을 붙이지 말 것(줄 나머지가 주석이 되어 화면이 비는 사고 2회).
+
 ### 과학 탐구 랩 v2 현재 상태 (2026-09-26, 브랜치 `claude/jolly-allen-w57yqh`, main 미병합)
 **다음 세션은 `science-lab/HANDOFF.md` 22~25차부터 읽을 것.** 요약:
 - **3D(실험실·장면)를 만들거나 고치면 `science-lab/3D-RULES.md`를 먼저 읽고 `node scripts/check-science-3d.mjs` 실패 0 확인 후 올릴 것.** 카메라 거리는 손으로 정하지 않는다(엔진 자동 맞춤).

@@ -5,6 +5,7 @@ import { TEMPLATES, FORMS, formTemplate, prefill, chartData, withMean, locate, s
 import { reportCfg, REPORTS, primaryContest } from './data/reports.js';
 import { UNITS, LEVEL_OF, LEVELS, CONTESTS, CONTEST_OF, contestsOf } from './data/curriculum.js';
 import { TECHNIQUES, SCENES, WORKS } from './data/invent-gallery.js';
+import { OBSERVE_SETS } from './data/observe-sets.js';
 
 test('양식: 과학탐구 초등 9칸·중등 11칸, 대회 양식 6개 모두 결과 표 칸(result) 하나와 점검 4개 이상', () => {
   assert.equal(TEMPLATES.elem.cells.length, 9); assert.equal(TEMPLATES.mid.cells.length, 11);
@@ -67,7 +68,8 @@ test('가이드·질문: 공통 문구에 실험 문구가 더해지고, 모든 
     const cfg = reportCfg('bubble', lv, ct);
     for (const cell of t.cells.filter((x) => x.ask && x.kind !== 'table')) { assert.ok(cfg.guide[cell.key]?.length, `${ct}.${lv}.${cell.key} 가이드`); assert.ok(cfg.asks[cell.key]?.length, `${ct}.${lv}.${cell.key} 질문`); }
   }
-  const n = reportCfg('seed', 'elem', 'nature'); assert.equal(n.contest, 'nature'); assert.deepEqual(n.table.columns.slice(0, 2), ['번호', '이름(모르면 생김새)'], '기본 대회가 아니면 그 대회 기본 표');
+  const n = reportCfg('bubble', 'elem', 'nature'); assert.equal(n.contest, 'nature'); assert.deepEqual(n.table.columns.slice(0, 2), ['번호', '이름(모르면 생김새)'], '기본 대회가 아니고 by 설정도 없으면 그 대회 기본 표');
+  assert.equal(reportCfg('seed', 'elem', 'nature').table.columns[1], '3일', 'by.nature가 있으면 그 표');
   assert.equal(reportCfg('seed', 'elem', 'inquiry').table.rows[0], '4℃');
 });
 test('미리 채우기: 자연관찰 연습은 대상 4개 이름표, 발명은 불편함 칸', () => {
@@ -100,4 +102,25 @@ test('빈 보고서는 형식 검사를 통과하고, 깨진 것은 거른다', 
   assert.ok(validReport(r)); assert.equal(r.table.rows.length, 4); assert.equal(r.table.rows[0][0], '4℃');
   assert.ok(!validReport({ ...r, level: 'high' })); assert.ok(!validReport({ ...r, marks: 'x' }));
   assert.equal(r.contest, 'inquiry'); assert.ok(!validReport({ ...r, contest: 'sports' })); const old = { ...r }; delete old.contest; assert.ok(validReport(old), '대회 구분 전 보고서도 읽는다');
+});
+
+test('15실험 전부 보고서 설정(탐구 문제 또는 불편함·결과 표)이 있고, 두 번째 대회 설정(by)도 양식이 맞는다', () => {
+  for (const u of UNITS) {
+    const r = REPORTS[u.id]; assert.ok(r, u.id); assert.ok(r.table?.columns?.length >= 2 && r.table.rows.length >= 2, `${u.id} 표`);
+    const ct = primaryContest(u.id); assert.ok(ct === 'nature' ? r.target && r.obs?.length : ct === 'invent' ? r.problem : r.question, `${u.id} 미리 채울 글(${ct})`);
+    for (const [c2, b] of Object.entries(r.by || {})) { assert.ok(CONTEST_OF[u.id].includes(c2), `${u.id}.by.${c2}는 그 실험의 대회가 아니다`); assert.ok(c2 === 'inquiry' ? b.question : c2 === 'nature' ? b.target : b.problem, `${u.id}.by.${c2}`); }
+  }
+  const t = reportCfg('top', 'elem', 'inquiry'); assert.match(t.question, /지름/); assert.equal(t.table.rows[0], '4 cm'); assert.equal(reportCfg('top', 'elem', 'invent').table.rows[0], '기존 팽이');
+  const s = reportCfg('seed', 'elem', 'nature'); assert.equal(s.obs.length, 4); assert.ok(!s.question, '자연관찰 양식에는 탐구 문제가 안 간다');
+});
+test('자연관찰 연습 세트: 보고서 설정·대회·표본 모듈이 갖춰져 있고, 빼는 칸은 양식에 있는 칸이다', () => {
+  assert.equal(OBSERVE_SETS.length, 3);
+  for (const S of OBSERVE_SETS) {
+    assert.equal(S.unit.id, S.id); assert.ok(REPORTS[S.id]?.obs?.length, `${S.id} 설정`); assert.deepEqual(CONTEST_OF[S.id], ['nature'], S.id);
+    assert.ok(['elem', 'mid'].includes(S.level) && REPORTS[S.id].level === S.level, `${S.id} 수준`);
+    assert.ok(S.mod.SPECIMENS.length >= 3 && S.mod.VIEWS.angle && typeof S.mod.mountSpecimen === 'function' && S.mod.TOOLS.length, `${S.id} 표본 모듈`);
+    assert.equal(REPORTS[S.id].obs.length, S.mod.SPECIMENS.length, `${S.id}: 이름표 수 = 표본 수`);
+    const keys = FORMS.nature[S.level].cells.map((c) => c.key); for (const k of S.unit.reportSkip) assert.ok(keys.includes(k), `${S.id} skip ${k}`);
+    assert.ok(S.steps.length >= 5 && S.lead.length > 30);
+  }
 });

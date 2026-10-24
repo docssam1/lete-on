@@ -28,6 +28,7 @@ export function renderReport(u, $app, { topbar, footer, embedded = false, refere
   let cfg, T;
   const setForm = () => {
     cfg = reportCfg(u.id, R.level, R.contest); T = formTemplate(R.contest, R.level);
+    if (u.reportSkip?.length) T = { ...T, cells: T.cells.filter((c) => !u.reportSkip.includes(c.key)) };   // 연습 세트에 맞지 않는 칸(예: 잎차례엔 두 장소 비교) 빼기
     if (T.cells.some((c) => c.kind === 'obs') && !R.cells.__obs) Object.assign(R.cells, Object.fromEntries(Object.entries(prefill(u, cfg, R.level, R.contest)).filter(([k]) => k === '__obs' || k.endsWith('.label'))));
   };
   setForm();
@@ -256,7 +257,7 @@ export function renderReport(u, $app, { topbar, footer, embedded = false, refere
     if (teach) { const onUp = () => setTimeout(() => { const sel = selectionIn(); if (sel) showTools(sel); else if (!$tools?.contains(document.activeElement)) killTools(); }, 10); $sheet.addEventListener('mouseup', onUp); $sheet.addEventListener('touchend', onUp); $sheet.addEventListener('keyup', (e) => { if (e.shiftKey) onUp(); }); }
   }
   const switchForm = (ct, lv) => {
-    const T2 = formTemplate(ct, lv); if (T2 === T) return;
+    const T2 = formTemplate(ct, lv); if (ct === R.contest && lv === R.level) return;
     if (!confirm(`${contestOf(ct).title} · ${T2.title}으로 바꿀까요? 쓴 글은 같은 이름의 칸에 남고, 새 칸은 자료로 미리 채워져요.`)) return;
     R.contest = ct; R.level = lv; setForm();
     for (const [k, v] of Object.entries(prefill(u, cfg, lv, ct))) if (!String(R.cells[k] ?? '').trim()) R.cells[k] = v;

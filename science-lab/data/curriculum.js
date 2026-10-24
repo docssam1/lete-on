@@ -1,9 +1,6 @@
-// 과학 탐구 실험실 15실험. 2026-10-23 원장: 외부 자료 출처를 표기하지 않고 우리 것으로 고급화, 초등·중등 수준으로 나눔(LEVEL_OF).
-//   A. 1부 1~3: 탐구 과정 요소·보고서 쓰기·발표와 반론  → 한 실험으로 묶어 1개 유닛
-//   B. 1부 4~7: 탐구 활동 실험 4개
-//   C. 3부 1~10: 탐구 주제 10개
-// 개념·활동 글은 모두 직접 썼다. 출처 문장을 그대로 옮기지 않는다.
-// 실험2·이론편(USB) 자료는 Drive에 올라오면 같은 형식으로 D부를 추가한다.
+// 과학 탐구 실험실 15실험. 2026-10-23 원장: 외부 자료 출처를 표기하지 않고 우리 것으로 고급화, 초등·중등 수준으로 나눔(LEVEL_OF), 대회별로도 나눔(CONTEST_OF).
+//   A. 탐구의 눈(1) · B. 탐구 활동 실험(4) · C. 탐구 주제(10)
+// 개념·활동 글은 모두 직접 썼다. 다른 자료의 문장을 옮기지 않는다. 자연관찰 연습(#/observe)은 data/observe-sets.js.
 
 export const PARTS = [
   { id: 'A', title: '탐구의 눈', sub: '탐구 과정 요소 · 보고서 · 발표와 반론', color: '#2f7d6d' },
@@ -406,7 +403,7 @@ export const UNITS = [
     discuss: [
       { q: '같은 승강장에서도 열차마다 바람 세기가 다릅니다. 무엇 때문일까요?', hint: '열차 속도, 터널 단면과 열차 단면의 비, 열차 앞뒤 환기구.' },
       { q: '풍속계를 사람 키 높이로 잰 것과 바닥 가까이 잰 것이 다르다면 어느 값을 써야 할까요?', hint: '측정 조건을 통일하고 보고서에 명시합니다.' },
-      { q: '건물 모양이나 열어 둔 창문 개수에 따라 바람이 어떻게 달라질지 실험을 설계해 보세요.', hint: '2부 입상작 주제입니다. 모형 건물과 선풍기로 축소 실험.' },
+      { q: '건물 모양이나 열어 둔 창문 개수에 따라 바람이 어떻게 달라질지 실험을 설계해 보세요.', hint: '모형 건물과 선풍기로 축소 실험을 설계합니다. 바꿀 것은 하나(창문 수 또는 건물 모양)만.' },
     ],
     quiz: [
       { q: '열차가 승강장에 들어올 때 강한 바람이 부는 원인은?', c: ['열차의 열이 공기를 데워서', '역 안의 에어컨 때문에', '승객이 많이 움직여서', '열차가 좁은 터널의 공기를 앞으로 밀어내서'], a: 3, why: '피스톤 효과입니다.' },
@@ -517,8 +514,8 @@ export const CONTESTS = [
 export const CONTEST_OF = {
   inquiry: ['inquiry'], bubble: ['inquiry'], powders: ['inquiry'], hotwater: ['inquiry'], osmosis: ['inquiry'], charcoal: ['inquiry'], onggi: ['inquiry'], subway: ['inquiry'],
   seed: ['inquiry', 'nature'], muscle: ['nature'], spider: ['nature'],
-  top: ['invent'], wing: ['invent'], tunnel: ['invent'], ttukbaegi: ['invent', 'inquiry'],
-  'observe-water': ['nature'],   // 자연관찰 연습(#/observe) — 실험 카드가 아니라 연습 화면
+  top: ['invent', 'inquiry'], wing: ['invent', 'inquiry'], tunnel: ['invent'], ttukbaegi: ['invent', 'inquiry'],
+  'observe-water': ['nature'], 'observe-insects': ['nature'], 'observe-leaves': ['nature'],   // 자연관찰 연습(#/observe) — 실험 카드가 아니라 연습 화면
 };
 export const contestsOf = (u) => (CONTEST_OF[u.id] || ['inquiry']).map((id) => CONTESTS.find((c) => c.id === id));
 export const contestOf = (u) => contestsOf(u)[0];

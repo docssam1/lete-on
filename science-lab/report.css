@@ -283,3 +283,16 @@ body.sk-open { overflow: hidden; }
 .rp-obs-fig img, .rp-obs-blank { max-width: 100%; box-sizing: border-box; }
 .rp-venn-name { box-sizing: border-box; min-width: 0; }
 .rp-tree .q input { min-width: 0; width: 100%; box-sizing: border-box; }
+/* 자연관찰 연습 — 세트 선택·장소·환경 확인 */
+.ob-sets { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 6px; }
+.ob-sets a { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-size: 13.5px; font-weight: 700; color: #d9f0d6; border: 1px solid rgba(143, 209, 138, .4); border-radius: 999px; padding: 5px 12px; }
+.ob-sets a small { font-weight: 400; font-size: 11px; opacity: .8; }
+.ob-sets a[aria-current="true"] { background: #8fd18a; color: #13261a; border-color: #8fd18a; }
+.ob-place { display: inline-flex; gap: 4px; }
+.ob-place button { font-weight: 700; }
+.ob-place button[aria-pressed="true"] { background: #6d4c9f; border-color: #6d4c9f; color: #fff; }
+.ob-acts-wrap { display: grid; gap: 6px; }
+.ob-acts.env { padding-top: 6px; border-top: 1px dashed #d9d2c2; }
+.ob-acts.env:empty { display: none; }
+.ob-acts .ob-grp { font-size: 12px; font-weight: 800; color: #5b6573; margin-right: 4px; }
+.ob-acts.env button { background: #fff7e6; border-color: #e7cf6a; }

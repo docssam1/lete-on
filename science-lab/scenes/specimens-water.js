@@ -163,6 +163,7 @@ function hydrilla() {
 }
 
 export const SPECIMENS = [lily, duckweed, hyacinth, hydrilla];
+export const TOOLS = [{ id: 'section', name: '✂ 단면 보기' }, { id: 'ruler', name: '📏 자 대기' }];
 export const VIEWS = { side: { theta: 0, phi: 1.5, name: '옆에서 본 모습' }, top: { theta: 0, phi: 0.36, name: '위에서 본 모습' }, angle: { theta: 0.55, phi: 1.12, name: '비스듬히' } };
 // 무대에 표본 하나를 올린다. 돌려주는 것: { spec, run(동작 id), setView(id), toggle(이름, 켬) }
 export function mountSpecimen(stage, make) {
@@ -188,8 +189,8 @@ export function mountSpecimen(stage, make) {
     if (running.t >= 1) { running.a.step(1); running = null; }
   };
   const api = {
-    spec,
-    run(id) { const a = spec.actions[id]; if (!a) return; if (running) running.a.step(1); running = { a, t: 0 }; },
+    spec, actions: () => Object.entries(spec.actions).map(([id, a]) => ({ id, name: a.name })),
+    run(id) { const a = spec.actions[id]; if (!a) return null; if (running) running.a.step(1); running = { a, t: 0 }; return a.note; },
     setView(id) { const v = VIEWS[id] || VIEWS.angle; stage.setView({ theta: v.theta, phi: v.phi, dist: 10, target: [0, 1.3, 0] }); },
     toggle(what, on) { if (what === 'section') { sec.visible = on; lead.visible = on; } if (what === 'ruler') rl.visible = on; stage._needFit = true; },
   };
