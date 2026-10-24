@@ -1,3 +1,11 @@
+## 2026-10-24 Grade 5-2 Unit 1 Printed Page 6: Example 2-4 Rechecked
+
+- Rechecked canonical source PDF page 4 / printed page 6 (PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`); handwriting was excluded. Exhaustive enumeration of all ordered digit triples in 0–9 found two combinations satisfying the printed rounding, sum, and descending-order conditions; their middle digits differ. The prompt does not exclude 0, so this is not a unique-answer item.
+- Corrected the readiness JSON's `independentCalculation`, which had described only one solution despite its other fields recording two. Keep the item review-locked; no runtime or release state changed.
+- Private Drive audit note: [grade52-page6-example24-exhaustive-audit-20261024.md](https://drive.google.com/file/d/19SlCxVRdlYGo4QJWCNPWtdUgOzp-m5Ly/view).
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 1 Printed Page 8: Answer-Key Candidate Checked
 
 - Located a 5-2 answer-key candidate in Drive and compared its printed page 8 with the reviewed source page. The inspected file is a scan of the exercise page with handwritten annotations, not a clean publisher-authored solution; handwriting was excluded from evidence.
