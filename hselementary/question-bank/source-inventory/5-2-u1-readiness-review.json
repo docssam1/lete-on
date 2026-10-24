@@ -1024,7 +1024,7 @@
         "네 자리 소수"
       ],
       "visualRequirement": "소수점과 세 빈칸의 자릿수를 고정해서 표시해야 합니다.",
-      "independentCalculation": "소수 둘째 자리 숫자는 5 이상이어야 하고 세 숫자의 합이 8이며 내림차순이므로 5,2,1입니다.",
+      "independentCalculation": "전수 대입에서 ㉠=5여야 하며, 반올림 결과가 2.5이려면 ㉡<5입니다. ㉡+㉢=3, ㉡>㉢≥0을 만족하는 조합은 (2,1)과 (3,0) 둘입니다.",
       "answerFormula": "(㉠,㉡,㉢)=(5,2,1) 또는 (5,3,0)",
       "independentAnswer": "㉡은 2 또는 3으로 갈려 유일 답을 확정할 수 없음",
       "resultContract": "single-value",
@@ -2245,7 +2245,11 @@
     "repairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
     "e4Page10Status": "Examples 4-2–4-4 are deployed and live-verified by PR #396 / Pages #39973818234. Exploration 4 and Example 4-1 have fresh local source, math, 24-state browser, 48-overflow and four A4 PDF checks; direct screen verification remains throttled because both GitHub Pages hostnames returned HTTP 429.",
     "page8E3ExamplesStatus": "Examples 3-1 and 3-2 are locally connected with 18 passing math settings, 24 browser states, 48 overflow checks, and four one-page A4 PDFs; publisher-key verification, Claude API cross-review, merge, and deployment remain pending.",
-    "page8E3ExamplesDriveQa": {"driveId": "1-vMarmi3scy6EWGl1uc62vqoXPXfaf4U", "size": 1208685, "sha256": "c513efcd643968ee493152949318277f0414f0149a92fe3a4a14d5a789c84682"},
+    "page8E3ExamplesDriveQa": {
+      "driveId": "1-vMarmi3scy6EWGl1uc62vqoXPXfaf4U",
+      "size": 1208685,
+      "sha256": "c513efcd643968ee493152949318277f0414f0149a92fe3a4a14d5a789c84682"
+    },
     "page11MissionStatus": "Mission 1 is deployed and live-verified by PR #398 / Pages #39976802614. Missions 2–6 are local candidates; Missions 2–3 are in draft PR #417 and Missions 4–6 are in draft PR #418. Claude API cross-review, merge, and deployment remain pending.",
     "locallyVerifiedAwaitingReleaseCount": 35,
     "readyForDeployCount": 0,
