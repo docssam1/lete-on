@@ -1,3 +1,5 @@
+> **2026-10-24 과정별 공통 표지 정정 — Mac Codex, 웹 반영 준비.** 원장 최종 지시 “과정만 쓰면 되지”를 반영해 표지의 월호·달력 월·주차를 삭제했다. 과정 번호·제목·이름을 유지하며 캐릭터와 색도 달력과 무관하게 과정별로 고정한다. 미리보기의 월 선택을 없애고 유아 C0부터 연다. 학습 안내의 월호도 삭제했다. 기존 개인 계획/문항/정답/주1·2회 발송 설정은 변경하지 않았다. 모델444·실제 브라우저12조건·C0/C4/C38 문제/정답 완전일치(60/54/114문항), A4 넘침0·외부쓰기0 통과. 근거 `/tmp/nm-course-series3/series-browser.json`. 모듈 `20261024-course-series3`. 아래 월별 표지 기록은 이전안이며 이 지시로 대체한다.
+
 # Numbers of Magic — 인수인계서 (통합본)
 
 > **2026-10-24 레벨·월별 교재 시리즈 운영 반영 완료.** runtime `c9f8bb85a6b7f269629c80c9c302fdc97b20eedc`(시리즈 v2), 최신 main `89fd8c87f8afa3b90db143dff97024736b7699b6`에 포함되어 Pages [40063539869](https://github.com/docssam1/lete-on/actions/runs/40063539869) 성공. 중간 두 run은 후속 커밋으로 superseded/cancelled됐고 최종 성공본의 수의 마법 파일은 검수본과 동일하다. index/drill/ws/exam/series JS·CSS/실제 교재 preview 7파일 HTTP200·SHA-256 일치, 운영 미리보기→실제 C4 iframe ready=true/캐릭터1/10월호/v2도 읽기 검증했다. 유아 저해상도 기본 이미지는 기존 고해상도 happy 이미지로 바꾸고 그림/캐릭터 분리도 확인했다. 실제 PDF3권(16/25/46쪽)을 수정본으로 보관하고 Poppler로 재렌더했다. 근거 `nm-monthly-series-20261024/deployment.json`·`verification.json`·`output/pdf/`. 실제 학생/문자/Storage·DB/Edge 변경0. 아래 ‘반영 준비’는 직전 검증 기록이다.

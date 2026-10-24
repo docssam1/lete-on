@@ -1,4 +1,4 @@
-/* Level/month series design only. It never changes problems, seeds or schedules. */
+/* Course series design only. It never changes problems, seeds or schedules. */
 (function(root){
 'use strict';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -8,19 +8,15 @@ function model(cv,lang='ko'){
  if(!keys.length&&Number.isInteger(+cv.courseNum)&&C['C'+cv.courseNum])keys.push('C'+cv.courseNum);
  const courses=keys.map(k=>C[k]),academic=courses.some(c=>/^(middle|highmath|algebra|calculus)/.test(c.tier))||!!cv.compactHigh;
  const stages=[...new Set(keys.map(k=>(root.NM_STAGES||[]).find(s=>+k.slice(1)>=s.courses.from&&+k.slice(1)<=s.courses.to)).filter(Boolean).map(s=>L(s.name,lang)))];
- const m=String(cv.code||'').match(/(\d{4})-W(\d{2})/);
- let year=null,month=null;
- if(m&&+m[2]>=1&&+m[2]<=53){const jan4=new Date(Date.UTC(+m[1],0,4)),mon=new Date(+jan4-(jan4.getUTCDay()+6)%7*86400000+(+m[2]-1)*604800000);if(new Date(+mon+3*86400000).getUTCFullYear()===+m[1]){year=mon.getUTCFullYear();month=mon.getUTCMonth()+1;}}
- const monthLabel=month?(lang==='ko'?year+'년 '+month+'월호':lang==='zh'?year+'年'+month+'月刊':year+' · '+String(month).padStart(2,'0')):(lang==='ko'?'주간 학습 노트':lang==='zh'?'每周学习笔记':'Weekly learning notes');
  const title=cv.middleExtension?String(cv.courseTitle||'').replace(/ · (이번 주 학습|This week’s learning|本周学习)$/,'')
    :courses.length?courses.map(c=>L(c.title,lang)).join(' / '):cv.courseTitle||'Numbers of Magic';
  const number=keys.map(k=>k.slice(1)).join('·'),tier=courses[0]?.tier||'level1';
- const nth=(month||1)-1,levelIndex={level0:0,level1:0,level2:1,level3:2,challenge:2,middle1:0,middle2:1,middle3:2,highmath1:0,highmath2:1,algebra:2,calculus1:1}[tier]||0,themeIndex=(nth+levelIndex)%3;
+ const nth=Number(courses[0]?.order)||0,levelIndex={level0:0,level1:0,level2:1,level3:2,challenge:2,middle1:0,middle2:1,middle3:2,highmath1:0,highmath2:1,algebra:2,calculus1:1}[tier]||0,themeIndex=(nth+levelIndex)%3;
  const heroes=tier==='level0'?['numi-0-happy','poco-3-think','momo-8-happy']:['kid-boy','kid-girl','numi-wizard'];
  const hero=heroes[themeIndex],topicText=title+' '+courses.map(c=>c.title.ko).join(' ');
  let motif=/제곱근|무리수|Square Root/.test(topicText)?'C35':/곱셈구구|구구단|Times Tables/.test(topicText)?'C4':/분수|Fraction/.test(topicText)?'fraction':/나눗셈|Division/.test(topicText)?'C13':/소인수|정수의/.test(topicText)?'C29':/함수|극한|미분|적분/.test(topicText)?'C70':/다항식|인수|방정식|항등식/.test(topicText)||cv.middleExtension?'C38':academic?'C54':'C0';
  const buddy=/곱셈|구구/.test(topicText)?'sym-times':/나눗셈/.test(topicText)?'sym-divide':/뺄셈/.test(topicText)?'sym-minus':'sym-plus';
- return {academic,keys,level:stages.join(' → ')||(academic?'MATHEMATICS':'NUMBERS'),monthLabel,month,year,title,number,hero,buddy,motif,ground:['#16382a','#4a1f2a','#2a241c'][themeIndex],accent:['#2f6b4a','#a66c20','#8b4d3b'][themeIndex],lang};
+ return {academic,keys,level:stages.join(' → ')||(academic?'MATHEMATICS':'NUMBERS'),title,number,hero,buddy,motif,ground:['#16382a','#4a1f2a','#2a241c'][themeIndex],accent:['#2f6b4a','#a66c20','#8b4d3b'][themeIndex],lang};
 }
 function art(kind,key){
   const dark=kind!=='a',ink=kind==='b'?'#d9a62e':kind==='c'?'#f7f2e7':'#2f6b4a',palette=kind==='b'?['none','none','none']:kind==='c'?['#e8734a','#d9a62e','#2f8f5b']:['url(#'+kind+'Green)','url(#'+kind+'Gold)','url(#'+kind+'Coral)'];
@@ -58,9 +54,9 @@ function illustration(m){
 }
 function front(cv,m){
  const ko=m.lang==='ko',zh=m.lang==='zh',course=ko?'과정':zh?'课程':'Course',nameLabel=ko?'이름':zh?'姓名':'Name';
- return '<section class="nm-print-cover nm-series-front '+(m.academic?'nm-series-academic':'nm-series-children')+'" style="--series-ground:'+m.ground+';--series-accent:'+m.accent+'" data-series-month="'+(m.month||'')+'" data-series-level="'+esc(m.level)+'">'
+ return '<section class="nm-print-cover nm-series-front '+(m.academic?'nm-series-academic':'nm-series-children')+'" style="--series-ground:'+m.ground+';--series-accent:'+m.accent+'" data-series-level="'+esc(m.level)+'">'
  +'<div class="nm-series-brand"><img src="assets/gfield-logo.svg" alt="GFIELD"><span>NUMBERS OF MAGIC</span></div>'
- +'<div class="nm-series-front-copy"><p class="nm-series-level">'+esc(m.level)+(m.number?' · '+course+' '+esc(m.number):'')+'</p><h1>'+esc(m.title)+'</h1><p class="nm-series-issue">'+esc(m.monthLabel)+'</p><p class="nm-series-week">'+esc(cv.weekLabel||'')+'</p></div>'
+ +'<div class="nm-series-front-copy"><p class="nm-series-level">'+esc(m.level)+(m.number?' · '+course+' '+esc(m.number):'')+'</p><h1>'+esc(m.title)+'</h1></div>'
  +'<div class="nm-series-front-art">'+illustration(m)+(!m.academic?'<img class="nm-series-hero" src="assets/characters/'+m.hero+'.png" alt="">':'')+'</div>'
  +'<div class="nm-series-front-bottom"><div><span>'+nameLabel+'</span><b>'+esc(cv.name||'________________')+'</b></div><div><span>'+esc(ko?'나의 수학 노트':zh?'我的数学笔记':'My mathematics notebook')+'</span><b>'+esc(ko?'수의 마법':'Numbers of Magic')+'</b></div></div></section>';
 }
@@ -68,13 +64,13 @@ function decorate(sheet,cv){
  const m=model(cv,sheet.lang||'ko');
  sheet.classList.add('nm-series-sheet',m.academic?'nm-series-academic':'nm-series-children');
  sheet.style.setProperty('--series-accent',m.academic?'#2f6b4a':m.accent);
- sheet.dataset.seriesMonth=m.monthLabel;sheet.dataset.seriesLevel=m.level;
+ sheet.dataset.seriesLevel=m.level;
  const toc=sheet.querySelector('.nm-cvw');
  if(toc){
    toc.classList.add('nm-series-contents');
    const hero=toc.querySelector('.nm-cvw-hero');
    if(hero){hero.querySelector('.nm-cvw-title').textContent=m.lang==='ko'?'이번 주 학습 안내':m.lang==='zh'?'本周学习指南':'This week’s learning guide';
-     hero.querySelector('.nm-cv-kicker').textContent=m.monthLabel+' · '+m.level;
+     hero.querySelector('.nm-cv-kicker').textContent=m.level;
      hero.querySelector('.nm-cvw-cover-teaser')?.remove();hero.querySelector('.nm-cvw-cover-character')?.remove();
      const banner=document.createElement('div');banner.className='nm-series-mentor';
      banner.innerHTML=(!m.academic?'<img src="assets/characters/'+m.hero+'.png" alt="">':'<span class="nm-series-mentor-mark" aria-hidden="true">∑</span>')+'<div><b>'+esc(m.lang==='ko'?'나의 학습 순서':m.lang==='zh'?'我的学习顺序':'My learning sequence')+'</b><p>'+esc(m.lang==='ko'?'개념을 살펴보고, 예시를 따라 풀고, 스스로 풀어 보세요.':m.lang==='zh'?'先看概念，再跟着例题练习，最后独立解答。':'Explore the concept, follow an example, then try it yourself.')+'</p></div>';
@@ -83,6 +79,6 @@ function decorate(sheet,cv){
  }
  if(!m.academic)sheet.querySelectorAll('.nm-w2-head-tier').forEach(el=>{el.textContent='';el.innerHTML='<img src="assets/characters/'+m.buddy+'.png" alt="">';});
 }
-root.NM_WORKSHEET_SERIES={version:'20261024-monthly-series2',model,front,decorate};
+root.NM_WORKSHEET_SERIES={version:'20261024-course-series3',model,front,decorate};
 })(typeof window!=='undefined'?window:globalThis);
 
