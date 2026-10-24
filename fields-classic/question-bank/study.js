@@ -1,5 +1,5 @@
 import { CURRICULUM } from "./source-data.js?v=20260918a";
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES } from "./study-map.js?v=20261024e";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES } from "./study-map.js?v=20261024i";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
@@ -373,7 +373,8 @@ $("signs").addEventListener("click", (event) => {
 $("slideBody").addEventListener("click", (event) => {
   const number = event.target.closest(".sd-number");
   if (number) { openSheet(number); return; }
-  if (event.target.closest(".sd-native")) return;   // 게임 안의 단추는 게임이 맡는다
+  // 게임 장의 단추는 게임이 맡는다(게임이 누른 단추를 다시 그려 문서에서 떼어 낸 뒤라 closest로는 못 가린다)
+  if (slides[index]?.native || !event.target.isConnected || event.target.closest(".sd-native")) return;
   const act = event.target.closest("[data-act]")?.dataset.act;
   if (act === "next") next();
   if (act === "restart") go(0);
