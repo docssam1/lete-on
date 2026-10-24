@@ -16,14 +16,17 @@ import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
-import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261023x";
-import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep } from "./golden-bell-lesson-flow.js?v=20261023x";
+import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261024a";
+import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261024a";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
 import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261024a";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
+// 학생 차시 덱(study.html) 안에 끼워 쓰는지 — 자세한 것은 아래 embedOpen 앞 주석
+const embed = { on: params.get("embed") === "1" && parent !== window, view: "concept", game: "", handsOn: null, page: 0, pages: 1, key: "" };
+function embedPost(message) { if (embed.on) parent.postMessage({ type: "fc-embed", ...message }, location.origin); }
 // 원본 분류 코드(GB5-S25-01 등)는 원장·선생님만 본다. 학생·학부모 화면과 학습지에는 1, 2, 3… 순번만 나온다.
 // 주소에 &codes=1을 붙이면 코드가 보인다(대조 작업용).
 const showSourceCodes = params.get("codes") === "1";
@@ -179,6 +182,7 @@ function completeOriginal() {
   state.progress[state.bookId][lesson.id] ||= {};
   state.progress[state.bookId][lesson.id].original = true;
   saveProgress();
+  if (embed.on && embed.view === "bell") embedPost({ event: "done", view: "bell", lesson: lesson.id });
 }
 
 function completeExtension() {
@@ -2026,6 +2030,12 @@ function renderContent() {
   }
   const lesson = activeLesson();
   teardownLessonFlow();
+  if (embed.on && embed.view === "game" && embed.handsOn) {
+    $("lessonContent").innerHTML = "";
+    mountEmbedHandsOn($("lessonContent"), embed.handsOn, () => embedPost({ event: "done", view: "game", lesson: lesson.id }));
+    applyEmbed();
+    return;
+  }
   const markup = state.phase === "concept" ? renderConcept(lesson)
     : state.phase === "original" ? renderOriginal(lesson)
       : state.phase === "extension" ? renderExtension(lesson)
@@ -2041,6 +2051,7 @@ function renderContent() {
       if (playButton) playButton.textContent = "재생";
     },
     onQuestions: (lessonId) => {
+      if (embed.on) { embedPost({ event: "done", view: embed.view, lesson: lessonId }); return; }
       state.lessonId = lessonId;
       resetExperience();
       setPhase("original");
@@ -2067,7 +2078,7 @@ function renderContent() {
     bookId: book.id,
     lesson,
     rerender: () => { clearExperiencePlayback(); renderContent(); },
-    onQuestions: () => setPhase("original")
+    onQuestions: () => embed.on ? embedPost({ event: "done", view: embed.view, lesson: lesson.id }) : setPhase("original")
   });
   if (!protectedBooks.has(state.bookId)) {
     const notice = document.createElement("div");
@@ -2078,6 +2089,7 @@ function renderContent() {
     $("lessonContent").querySelectorAll('.source-animation [data-experience-action="play"]').forEach((control) => { control.disabled = true; });
   }
   scheduleTriangularAutoplay(lesson);
+  if (embed.on) applyEmbed();
 }
 
 function renderSummary() {
@@ -2101,6 +2113,71 @@ function renderSummary() {
   $("printBookButton").disabled = printPreparing || !book.lessons.length;
   $("printSelectedButton").disabled = printPreparing || !book.lessons.length;
   if ($("coverDialog").open) renderCoverPreview();
+}
+
+// ── 학생 차시 덱(study.html) 안에 끼워 쓰기: ?embed=1&lesson=&view=concept|game|bell&game= ──
+// 덱이 장을 넘기고, 이 화면은 그 장 하나만 보인다. 개념은 덩어리(제목·생각할 문제·상황·체험·정리…)를 한 장씩 보여 주고,
+// 덱의 「다음」(postMessage next)이 이 안의 장을 먼저 넘긴다. 끝까지 가면 end를 알려 덱이 다음 장으로 간다.
+// 게임을 마치거나(연결 문제 풀기) 골든벨 문항을 다 풀면 done을 알린다. 같은 사이트(origin)의 부모 창하고만 말한다.
+// 장으로 나누지 않는 것: 덱이 대신하는 단추·순서 표시(CSS가 숨긴다)와, 어느 장에서나 보여야 하는 정답 보호 안내
+const EMBED_SKIP = ".gb-flow,.gb-flow-actions,.gold-hands-on:not(.gb-flow-game),[data-next-phase],.protected-answer-notice";
+const EMBED_HEAD = "p,h1,h2,h3,h4,small";
+function embedChunks() {
+  const pages = [];
+  for (const node of $("lessonContent").children) {
+    if (node.matches(EMBED_SKIP)) continue;
+    const last = pages.at(-1);
+    const headOnly = last && last.every((el) => el.matches(EMBED_HEAD));
+    if (!last || (!node.matches(EMBED_HEAD) && !headOnly)) pages.push([node]);
+    else last.push(node);
+  }
+  return pages;
+}
+function applyEmbed() {
+  document.body.dataset.embedView = embed.view;
+  const key = `${state.lessonId}:${state.phase}:${flowStep(state.bookId, activeLesson()) || ""}`;
+  if (key !== embed.key) { embed.key = key; embed.page = embed.startAtEnd ? Infinity : 0; embed.startAtEnd = false; }
+  const pages = embed.view === "concept" && state.phase === "concept" ? embedChunks() : [];
+  embed.pages = Math.max(1, pages.length);
+  embed.page = Math.min(Math.max(0, embed.page), embed.pages - 1);
+  pages.forEach((page, index) => page.forEach((node) => node.classList.toggle("embed-off", index !== embed.page)));
+  const forward = $("lessonContent").querySelector('.gb-flow-forward[data-flow-go="examples"]');
+  embedPost({ event: "state", view: embed.view, lesson: state.lessonId, page: embed.page, pages: embed.pages, more: Boolean(forward && embed.page === embed.pages - 1), back: flowStep(state.bookId, activeLesson()) === "examples" });
+}
+function embedStep(delta) {
+  if (embed.view !== "concept" || state.phase !== "concept") { embedPost({ event: delta > 0 ? "end" : "start" }); return; }
+  const next = embed.page + delta;
+  if (next >= 0 && next < embed.pages) { embed.page = next; applyEmbed(); scrollTo(0, 0); return; }
+  const flow = flowStep(state.bookId, activeLesson());
+  if (delta > 0 && flow === "tutorial" && $("lessonContent").querySelector('.gb-flow-forward[data-flow-go="examples"]')) {
+    $("lessonContent").querySelector('.gb-flow-forward[data-flow-go="examples"]').click(); scrollTo(0, 0); return;
+  }
+  if (delta < 0 && flow === "examples") { embed.startAtEnd = true; $("lessonContent").querySelector('.gb-flow [data-flow-go="tutorial"]')?.click(); return; }
+  embedPost({ event: delta > 0 ? "end" : "start" });
+}
+function embedOpen({ lesson, view, game, atEnd = false }) {
+  const book = activeBook();
+  if (!book.lessons.some((entry) => entry.id === lesson)) return;
+  embed.view = ["concept", "game", "bell"].includes(view) ? view : "concept";
+  embed.game = String(game || "");
+  const flowGame = embed.view === "game" && lessonFlowFor(book.id, book.lessons.find((entry) => entry.id === lesson))?.game === embed.game;
+  embed.handsOn = embed.view === "game" && !flowGame ? { active: embed.game, states: embed.handsOn?.active === embed.game ? embed.handsOn.states : {} } : null;
+  embed.key = ""; embed.startAtEnd = Boolean(atEnd);
+  clearExperiencePlayback();
+  state.lessonId = lesson;
+  state.phase = "concept";
+  state.selections = {};
+  state.originalAssists = {};
+  state.originalChecks = {};
+  state.originalIndex = 0;
+  state.extensionAssist = null;
+  state.extensionIndex = 0;
+  state.feedback = null;
+  resetExperience();
+  if (flowGame) setLessonFlowStep(book.id, lesson, "game");
+  render();
+  if (embed.view === "bell") setPhase("original");
+  scrollTo(0, 0);
 }
 
 function render() {
@@ -2146,8 +2223,9 @@ $("courseSelect").addEventListener("change", (event) => {
 $("backLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.bookId}`;
 // 학생 차시 화면(study.html)에서 들어오면(?as=student&back=…) 큰 제목·권 고르기·인쇄 단추·학습 목록을 접고 학습만 보인다.
 // 돌아가기는 그 차시로(같은 사이트 안의 상대 주소만 받는다).
-if (params.get("as") === "student") {
+if (params.get("as") === "student" || embed.on) {
   document.body.classList.add("as-student");
+  if (embed.on) document.body.classList.add("as-embed");
   const back = params.get("back") || "";
   if (/^\.\/[\w.-]+\.html(\?[^#]*)?$/u.test(back)) {
     $("backLink").href = back;
@@ -2258,3 +2336,13 @@ render();
 const requestedPhase = params.get("phase");
 if (["original", "extension"].includes(requestedPhase)) setPhase(requestedPhase);
 ensureProtectedBook(state.bookId).then(() => render());
+if (embed.on) {
+  embedOpen({ lesson: params.get("lesson") || state.lessonId, view: params.get("view") || "concept", game: params.get("game") || "" });
+  window.addEventListener("message", (event) => {
+    if (event.origin !== location.origin || event.source !== parent || event.data?.type !== "fc-study") return;
+    if (event.data.cmd === "open") embedOpen(event.data);
+    else if (event.data.cmd === "next") embedStep(1);
+    else if (event.data.cmd === "prev") embedStep(-1);
+  });
+  embedPost({ event: "ready" });
+}

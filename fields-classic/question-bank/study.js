@@ -1,9 +1,14 @@
 import { CURRICULUM } from "./source-data.js?v=20260918a";
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, gameTitles, loadGoldenBell } from "./study-map.js?v=20261024a";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell } from "./study-map.js?v=20261024b";
 
-// 학생용 단원 공부: 권 → 단원 → 차시(개념 1 · 개념 2)마다 ① 개념 배우기 → ② 게임하기 → ③ 골든벨 → ④ 공부하기.
-// ④는 학생이 종이 본책을 펴 놓고 푼다는 전제다. 모르는 번호를 누르면 그 문제와 같은 유형의 유사문제가 나온다(문제은행 학생 화면).
-// 주소: ?book=book-01&unit=0&part=1&student=…   차시 나누기 규칙은 study-map.js
+// 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
+//  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
+//  · 골든벨 화면은 덱 안의 창 하나(golden-bell.html?embed=1)를 계속 쓰고, 장이 바뀌면 postMessage로 그 장의 학습만 연다.
+//    「다음」은 그 창 안의 장(개념 덩어리)을 먼저 넘기고, 끝이면 덱의 다음 장으로 간다.
+//  · 게임을 마치거나 골든벨 문항을 다 풀면 독쌤이 칭찬하고 저절로 다음 장으로 간다(「넘김 멈춤」으로 끈다).
+//  · 본책 번호를 누르면 같은 유형의 유사문제가 이 장 위에 뜬다(문제은행 학생 화면, embed). 닫으면 번호판으로 돌아온다.
+//  · 독쌤 말은 글이 원본이고, 음성은 기기 음성(ko-KR)으로 읽는다. 소리 없이 입을 움직이는 그림은 쓰지 않는다(표정 3장만 바꿔 끼움).
+// 주소: ?book=book-01&unit=0&part=1&s=장번호&student=…   차시 나누기 규칙은 study-map.js
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -12,84 +17,328 @@ const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&
 const book = CURRICULUM.find((entry) => entry.id === params.get("book")) || CURRICULUM[0];
 const unitIndex = Math.min(Math.max(Number(params.get("unit")) || 0, 0), book.units.length - 1);
 const unit = book.units[unitIndex];
-const { count } = unitParts(unit);
-let part = Math.min(Math.max(Number(params.get("part")) || 1, 1), count);
-let bell = null;
+const { count: partCount } = unitParts(unit);
+const part = Math.min(Math.max(Number(params.get("part")) || 1, 1), partCount);
 const seenKey = `fields-classic-study-seen:${student}:${book.id}:${unitIndex}`;
 const seen = (() => { try { return new Set(JSON.parse(localStorage.getItem(seenKey) || "[]")); } catch { return new Set(); } })();
+const prefKey = "fields-classic-study-pref";
+const pref = (() => { try { return { sound: true, paused: false, ...JSON.parse(localStorage.getItem(prefKey) || "{}") }; } catch { return { sound: true, paused: false }; } })();
+const savePref = () => { try { localStorage.setItem(prefKey, JSON.stringify(pref)); } catch {} };
 
 const link = (page, entries) => `./${page}?${new URLSearchParams({ student, ...entries })}`;
-const here = () => link("study.html", { book: book.id, unit: String(unitIndex), part: String(part) });
-const bellLink = (entries) => link("golden-bell.html", { book: book.id, as: "student", back: here(), ...entries });
+const PHASES = [
+  ["concept", "개념 배우기"],
+  ["game", "게임하기"],
+  ["bell", "골든벨"],
+  ["board", "공부하기"]
+];
+const phaseNo = (kind) => PHASES.findIndex(([id]) => id === kind) + 1;
 
+let slides = [{ kind: "cover" }];
+let index = 0;
+let ready = false;
+let bellData = null;
+
+// ── 장 만들기 ─────────────────────────────────────────────
+function buildSlides() {
+  const bellBook = bellData?.books.find((entry) => entry.id === book.id);
+  const lessons = bellData ? lessonsByPart(unit, lessonsByUnit(book, bellBook).units[unitIndex])[part - 1] : [];
+  const list = [{ kind: "cover" }];
+  for (const lesson of lessons) list.push({ kind: "concept", lesson });
+  for (const lesson of lessons) {
+    const flow = bellData.games.flows[`${book.id}/${lesson.id}`];
+    if (flow?.game) list.push({ kind: "game", lesson, game: flow.game, title: bellData.games.flowTitles[flow.game] || "게임" });
+    for (const [id, activity] of Object.entries(bellData.games.activities)) {
+      if (activity.lesson === lesson.id && bellData.games.handsOnBooks.get(id) === book.id && id !== flow?.game) list.push({ kind: "game", lesson, game: id, title: activity.title });
+    }
+  }
+  for (const lesson of lessons) if (lesson.original?.items?.length) list.push({ kind: "bell", lesson });
+  for (const block of partProblems(unit, part)) list.push({ kind: "board", block });
+  list.push({ kind: "end" });
+  // 같은 종류가 여러 장이면 「2 / 3」을 붙인다
+  for (const [kind] of PHASES) {
+    const same = list.filter((slide) => slide.kind === kind);
+    same.forEach((slide, k) => { slide.of = same.length > 1 ? `${k + 1} / ${same.length}` : ""; });
+  }
+  return list;
+}
+
+// ── 독쌤 ─────────────────────────────────────────────────
+const PORTRAIT = { talk: "docssam-guide.webp", think: "docssam-thinking.webp", praise: "docssam-praise.webp" };
+let lastLine = null;
+function say(text, mood = "talk") {
+  lastLine = [text, mood];
+  $("guideSay").textContent = text;
+  $("guide").dataset.mood = mood;
+  $("guideImg").src = `./${PORTRAIT[mood] || PORTRAIT.talk}`;
+  const bubble = $("guide").querySelector(".sd-bubble");
+  bubble.classList.remove("new"); void bubble.offsetWidth; bubble.classList.add("new");
+  speak(text);
+}
+function speak(text) {
+  if (typeof speechSynthesis === "undefined") return;
+  try {
+    speechSynthesis.cancel();
+    if (!pref.sound) return;
+    const utterance = new SpeechSynthesisUtterance(text);
+    const ko = (speechSynthesis.getVoices() || []).find((voice) => /^ko/i.test(voice.lang));
+    utterance.lang = "ko-KR"; utterance.rate = 0.95; if (ko) utterance.voice = ko;
+    speechSynthesis.speak(utterance);
+  } catch {}
+}
+function paintGuideButtons() {
+  $("voiceBtn").textContent = pref.sound ? "🔊 음성" : "🔇 음성 끔";
+  $("voiceBtn").setAttribute("aria-pressed", String(pref.sound));
+  $("pauseBtn").textContent = pref.paused ? "▶ 자동 넘김" : "⏸ 넘김 멈춤";
+  $("pauseBtn").setAttribute("aria-pressed", String(pref.paused));
+}
+$("voiceBtn").addEventListener("click", () => { pref.sound = !pref.sound; savePref(); paintGuideButtons(); if (pref.sound && lastLine) speak(lastLine[0]); else speak(""); });
+$("againBtn").addEventListener("click", () => { if (lastLine) { pref.sound = true; savePref(); paintGuideButtons(); speak(lastLine[0]); } });
+$("pauseBtn").addEventListener("click", () => { pref.paused = !pref.paused; savePref(); paintGuideButtons(); if (pref.paused) cancelAuto(); });
+
+// ── 저절로 다음 장 ───────────────────────────────────────
+let autoTimer = 0;
+function auto(ms) {
+  cancelAuto();
+  if (pref.paused) return;
+  const fill = $("nextBtn").querySelector(".sd-fill");
+  fill.style.transition = "none"; fill.style.width = "0";
+  void fill.offsetWidth;
+  fill.style.transition = `width ${ms}ms linear`; fill.style.width = "100%";
+  autoTimer = setTimeout(() => go(index + 1), ms);
+}
+function cancelAuto() {
+  clearTimeout(autoTimer); autoTimer = 0;
+  const fill = $("nextBtn").querySelector(".sd-fill");
+  fill.style.transition = "none"; fill.style.width = "0";
+}
+
+// ── 골든벨 창 ─────────────────────────────────────────────
+const frame = $("bellFrame");
+let frameReady = false;
+let pendingOpen = null;
+let waiting = null; // 창에 next/prev를 보내고 답(end/start)을 기다리는 중
+function frameSend(message) { frame.contentWindow?.postMessage({ type: "fc-study", ...message }, location.origin); }
+function openInFrame(slide, atEnd = false) {
+  const message = { cmd: "open", lesson: slide.lesson.id, view: slide.kind, game: slide.game || "", atEnd };
+  if (!frame.src) {
+    frame.src = link("golden-bell.html", { book: book.id, as: "student", embed: "1", lesson: slide.lesson.id, view: slide.kind, game: slide.game || "" });
+    pendingOpen = atEnd ? message : null;
+    return;
+  }
+  if (frameReady) frameSend(message); else pendingOpen = message;
+}
+window.addEventListener("message", (event) => {
+  if (event.origin !== location.origin || event.data?.type !== "fc-embed") return;
+  if (event.source === $("sheetFrame").contentWindow) return;
+  if (event.source !== frame.contentWindow) return;
+  const data = event.data;
+  const slide = slides[index];
+  if (data.event === "ready") {
+    frameReady = true;
+    if (pendingOpen) { frameSend(pendingOpen); pendingOpen = null; }
+    return;
+  }
+  if (data.event === "state") {
+    // 창이 그 안에서 장을 넘겼다(덱은 그대로) — 기다리던 답은 끝
+    if (waiting) { waiting = null; clearTimeout(waitTimer); }
+    if (slide?.lesson?.id === data.lesson && slide.kind === "concept") {
+      $("slidePage").textContent = data.pages > 1 ? `${data.page + 1} / ${data.pages}장` : "";
+    }
+    return;
+  }
+  if (data.event === "end" || data.event === "start") {
+    const want = waiting; waiting = null; clearTimeout(waitTimer);
+    if (want === "next" && data.event === "end") go(index + 1);
+    if (want === "prev" && data.event === "start") go(index - 1, { atEnd: true });
+    return;
+  }
+  if (data.event === "done" && slide?.lesson?.id === data.lesson && slide.kind === data.view) {
+    say(slide.kind === "bell" ? "골든벨 문제를 다 풀었어! 정말 잘했어. 다음으로 넘어가자." : "게임을 끝까지 해냈어! 이제 다음으로 가자.", "praise");
+    auto(2600);
+  }
+});
+let waitTimer = 0;
+function askFrame(cmd) {
+  waiting = cmd;
+  frameSend({ cmd });
+  clearTimeout(waitTimer);
+  // 창이 아직 준비 안 됐으면(답이 없으면) 덱이 바로 넘긴다
+  waitTimer = setTimeout(() => { if (waiting === cmd) { waiting = null; cmd === "next" ? go(index + 1) : go(index - 1, { atEnd: true }); } }, 2000);
+}
+
+// ── 화면 ──────────────────────────────────────────────────
 function renderHead() {
-  document.title = `${book.label} ${unitIndex + 1}단원 · ${unit.label}`;
-  $("eyebrow").textContent = `GFIELD CLASSIC · ${book.label} ${book.title}`;
-  $("unitTitle").textContent = `${unitIndex + 1}단원 · ${unit.label}`;
+  document.title = `${book.label} ${unitIndex + 1}단원 ${part}차시 · ${unit.label}`;
+  $("eyebrow").textContent = `${book.label} ${unitIndex + 1}단원 · ${part}차시`;
+  $("unitTitle").textContent = unit.label;
   $("studentName").textContent = student;
   $("backLink").href = link("start.html", { book: book.id });
-  $("partTabs").innerHTML = Array.from({ length: count }, (_, index) => `<button type="button" role="tab" data-part="${index + 1}" aria-selected="${index + 1 === part}">
-    <b>${index + 1}차시</b><span>개념 ${index + 1}</span></button>`).join("");
 }
-
-function lessonLinks(lessons, kind) {
-  if (!bell) return `<p class="sd-wait">불러오는 중…</p>`;
-  const rows = lessons.map((lesson) => {
-    if (kind === "concept") {
-      const tutorial = Boolean(bell.games.flows[`${book.id}/${lesson.id}`]);
-      return `<a class="sd-item${tutorial ? " is-tutorial" : ""}" href="${esc(bellLink({ lesson: lesson.id }))}"><b>${esc(lesson.title)}</b><span>${tutorial ? "튜토리얼 · 개념 설명 → 예제 → 게임" : "개념 설명"}</span></a>`;
-    }
-    if (kind === "game") {
-      const games = gameTitles(book.id, lesson, bell.games);
-      return games.length ? `<a class="sd-item" href="${esc(bellLink({ lesson: lesson.id }))}"><b>${esc(games.join(" · "))}</b><span>${esc(lesson.title)}</span></a>` : "";
-    }
-    const items = lesson.original?.items?.length || 0;
-    return items ? `<a class="sd-item" href="${esc(bellLink({ lesson: lesson.id, phase: "original" }))}"><b>${esc(lesson.title)}</b><span>골든벨 ${items}문항 · 개념을 본 뒤 열려요</span></a>` : "";
-  }).filter(Boolean);
-  if (rows.length) return `<div class="sd-items">${rows.join("")}</div>`;
-  return `<p class="sd-empty">${kind === "concept" ? "이 차시의 개념 설명은 준비 중입니다." : kind === "game" ? "이 차시의 게임은 준비 중입니다." : "이 차시의 골든벨 문항은 준비 중입니다."}</p>`;
+function renderPhases() {
+  const current = slides[index].kind;
+  $("phases").innerHTML = PHASES.map(([kind, label], k) => {
+    const first = slides.findIndex((slide) => slide.kind === kind);
+    const state = current === kind ? " is-on" : first >= 0 && first < index ? " is-done" : "";
+    return `<button type="button" class="sd-phase${state}" data-jump="${first}" ${first < 0 ? "disabled" : ""} ${current === kind ? 'aria-current="step"' : ""}><b>${k + 1}</b><span>${label}${first < 0 && ready ? " · 준비 중" : ""}</span></button>`;
+  }).join("");
 }
-
-function boardMarkup() {
-  const blocks = partProblems(unit, part);
-  return `<p class="sd-board-help">본책을 펴 놓고 풀어요. <b>모르는 문제 번호를 누르면</b> 같은 유형의 유사문제가 나와요.</p>
-    ${blocks.map((block) => `<div class="sd-block"><h4>${esc(block.label)}</h4><div class="sd-numbers">${block.numbers.map(({ n, typeId, stage }) => {
-      const ref = block.label.includes(" ") ? `${block.label}-${n}번` : `${block.label} ${n}번`; // 활동 1-3번 · 연습 7번
+function slideHead(slide) {
+  if (slide.kind === "cover" || slide.kind === "end") return "";
+  const label = PHASES[phaseNo(slide.kind) - 1][1];
+  const title = slide.kind === "board" ? `본책 ${slide.block.label}` : slide.kind === "game" ? slide.title : slide.lesson.title;
+  return `<p class="sd-kick"><span class="sd-kick-no">${phaseNo(slide.kind)}</span>${label}${slide.of ? ` <em>${slide.of}</em>` : ""}<span id="slidePage" class="sd-page"></span></p><h2>${esc(title)}</h2>`;
+}
+function coverMarkup() {
+  const counts = {
+    concept: slides.filter((s) => s.kind === "concept").length,
+    game: slides.filter((s) => s.kind === "game").length,
+    bell: slides.filter((s) => s.kind === "bell").reduce((sum, s) => sum + s.lesson.original.items.length, 0),
+    board: slides.filter((s) => s.kind === "board").reduce((sum, s) => sum + s.block.numbers.length, 0)
+  };
+  const note = { concept: `${counts.concept}개 개념`, game: `${counts.game}개 게임`, bell: `${counts.bell}문제`, board: `본책 ${counts.board}문제` };
+  return `<div class="sd-cover">
+    <p class="sd-cover-kick">${esc(book.label)} ${unitIndex + 1}단원 · ${part}차시${partCount > 1 ? ` · 모두 ${partCount}차시` : ""}</p>
+    <h2>${esc(unit.label)}</h2>
+    <p class="sd-cover-lead">오늘은 이 순서로 공부해요. 한 장씩 넘기면 돼요.</p>
+    <ol class="sd-plan">${PHASES.map(([kind, label], k) => `<li class="${ready && !counts[kind] ? "is-empty" : ""}"><b>${k + 1}</b><span>${label}</span><small>${ready ? counts[kind] ? note[kind] : "준비 중" : "불러오는 중…"}</small></li>`).join("")}</ol>
+    <button type="button" class="sd-btn primary sd-start" data-act="next" ${ready ? "" : "disabled"}>시작하기 ›</button>
+  </div>`;
+}
+function boardMarkup(block) {
+  return `<p class="sd-board-help">본책을 펴서 <b>${esc(block.label)}</b> 문제를 풀어요. 모르는 번호를 누르면 같은 유형의 비슷한 문제가 나와요.</p>
+    <div class="sd-numbers">${block.numbers.map(({ n, typeId, stage }) => {
+      const ref = refOf(block, n);
       const key = `${block.section}${block.group}-${n}`;
-      const href = link("index.html", { mode: "curriculum", book: book.id, units: String(unitIndex), only: typeId, stage, count: "1", build: "1", as: "student", ref: `${unitIndex + 1}단원 ${ref}`, back: here() });
-      return `<a class="sd-number${seen.has(key) ? " is-seen" : ""}" data-key="${key}" href="${esc(href)}" aria-label="${esc(ref)} 유사문제">${n}</a>`;
-    }).join("")}</div></div>`).join("")}
-    <p class="sd-board-note">○ 표시는 한 번 눌러 본 번호예요.</p>`;
+      return `<button type="button" class="sd-number${seen.has(key) ? " is-seen" : ""}" data-key="${key}" data-type="${esc(typeId)}" data-stage="${stage}" data-ref="${esc(ref)}" aria-label="${esc(ref)} 비슷한 문제">${n}</button>`;
+    }).join("")}</div>
+    <p class="sd-board-note">○ 표시는 한 번 눌러 본 번호예요. 다 풀었으면 다음으로 가요.</p>`;
+}
+const refOf = (block, n) => block.label.includes(" ") ? `${block.label}-${n}번` : `${block.label} ${n}번`; // 활동 1-3번 · 연습 7번
+function endMarkup() {
+  const next = part < partCount;
+  return `<div class="sd-cover sd-end">
+    <span class="sd-medal" aria-hidden="true">✓</span>
+    <h2>${part}차시 끝!</h2>
+    <p class="sd-cover-lead">${esc(unit.label)} ${part}차시 공부를 마쳤어요.</p>
+    <div class="sd-end-actions">
+      ${next ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex), part: String(part + 1) }))}">${part + 1}차시 시작하기 ›</a>` : unitIndex + 1 < book.units.length ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex + 1), part: "1" }))}">${unitIndex + 2}단원 시작하기 ›</a>` : ""}
+      <a class="sd-btn" href="${esc(link("start.html", { book: book.id }))}">단원 고르기</a>
+      <button type="button" class="sd-btn" data-act="restart">이 차시 처음부터</button>
+    </div>
+  </div>`;
+}
+function lineFor(slide) {
+  if (slide.kind === "cover") return ready ? `오늘은 ${unit.label} ${part}차시야. 개념을 배우고, 게임으로 익히고, 골든벨을 풀고, 본책을 풀 거야. 시작하기를 눌러 봐.` : "공부할 것을 준비하고 있어. 잠깐만 기다려 줘.";
+  if (slide.kind === "concept") return `${slide.lesson.title} 개념이야. 한 장씩 천천히 보고 다음을 눌러.`;
+  if (slide.kind === "game") return `${slide.title} 게임이야. 개념에서 본 풀이 순서대로 손으로 직접 해 봐.`;
+  if (slide.kind === "bell") return "골든벨 문제야. 개념에서 배운 대로 한 문제씩 풀어 봐.";
+  if (slide.kind === "board") return `본책 ${slide.block.label}을 펴서 풀어 봐. 모르는 번호를 누르면 비슷한 문제가 나와.`;
+  return `${part}차시 끝! 오늘 정말 잘했어.`;
 }
 
-function render() {
-  const lessons = bell ? lessonsByPart(unit, lessonsByUnit(book, bell.books.find((entry) => entry.id === book.id)).units[unitIndex])[part - 1] : [];
-  const steps = [
-    ["개념 배우기", "골든벨 대표 문제로 이 차시의 개념을 배워요.", lessonLinks(lessons, "concept")],
-    ["게임하기", "풀이 과정을 손으로 해 보며 개념을 익혀요.", lessonLinks(lessons, "game")],
-    ["골든벨", "골든벨 문항을 풀고 채점해요.", lessonLinks(lessons, "bell")],
-    ["공부하기", "본책 문제를 풀어요.", boardMarkup()]
-  ];
-  $("steps").innerHTML = steps.map(([title, lead, body], index) => `<li class="sd-step"><div class="sd-step-head"><span class="sd-no">${index + 1}</span><div><h3>${title}</h3><p>${lead}</p></div></div>${body}</li>`).join("");
-  document.querySelectorAll("[data-part]").forEach((button) => button.setAttribute("aria-selected", String(Number(button.dataset.part) === part)));
+function show({ atEnd = false } = {}) {
+  cancelAuto(); closeSheet(false);
+  const slide = slides[index];
+  $("stage").dataset.kind = slide.kind;
+  $("slideHead").innerHTML = slideHead(slide);
+  $("slideHead").hidden = !$("slideHead").innerHTML;
+  const framed = ["concept", "game", "bell"].includes(slide.kind);
+  $("frameWrap").hidden = !framed;
+  $("slideBody").hidden = framed;
+  $("slideBody").innerHTML = slide.kind === "cover" ? coverMarkup() : slide.kind === "board" ? boardMarkup(slide.block) : slide.kind === "end" ? endMarkup() : "";
+  if (framed) openInFrame(slide, atEnd);
+  $("prevBtn").disabled = index === 0;
+  $("nextBtn").disabled = !ready || index === slides.length - 1;
+  $("nextBtn").querySelector(".sd-next-text").textContent = slide.kind === "cover" ? "시작 ›" : "다음 ›";
+  $("count").textContent = `${index + 1} / ${slides.length}`;
+  $("progressFill").style.width = `${slides.length > 1 ? (index / (slides.length - 1)) * 100 : 0}%`;
+  renderPhases();
+  say(lineFor(slide), slide.kind === "end" ? "praise" : "talk");
+  const url = new URL(location.href);
+  url.searchParams.set("s", String(index + 1));
+  history.replaceState(null, "", url);
+}
+function go(target, options) {
+  if (!ready) return;
+  const next = Math.min(Math.max(target, 0), slides.length - 1);
+  if (next === index) return;
+  index = next;
+  show(options);
+  $("stage").scrollTop = 0;
+}
+function next() {
+  cancelAuto();
+  if (!$("sheet").hidden) { closeSheet(); return; }
+  if (["concept"].includes(slides[index].kind) && frameReady) { askFrame("next"); return; }
+  go(index + 1);
+}
+function prev() {
+  cancelAuto();
+  if (!$("sheet").hidden) { closeSheet(); return; }
+  if (["concept"].includes(slides[index].kind) && frameReady) { askFrame("prev"); return; }
+  const target = index - 1;
+  go(target, { atEnd: slides[target]?.kind === "concept" });
 }
 
-$("partTabs").addEventListener("click", (event) => {
-  const button = event.target.closest("[data-part]");
-  if (!button) return;
-  part = Number(button.dataset.part);
-  history.replaceState(null, "", here());
-  render();
-});
-$("steps").addEventListener("click", (event) => {
-  const number = event.target.closest(".sd-number");
-  if (!number) return;
-  seen.add(number.dataset.key);
+// ── 유사문제 창(본책 번호를 눌렀을 때) ────────────────────
+function openSheet(button) {
+  const ref = button.dataset.ref;
+  seen.add(button.dataset.key);
+  button.classList.add("is-seen");
   try { localStorage.setItem(seenKey, JSON.stringify([...seen])); } catch {}
+  $("sheetTitle").textContent = `${ref} · 비슷한 문제`;
+  $("sheetFrame").src = link("index.html", { mode: "curriculum", book: book.id, units: String(unitIndex), only: button.dataset.type, stage: button.dataset.stage, count: "1", build: "1", as: "student", embed: "1", ref: `${unitIndex + 1}단원 ${ref}` });
+  $("sheet").hidden = false;
+  $("sheetClose").focus({ preventScroll: true });
+  say(`${ref}과 같은 유형의 문제야. 이걸 먼저 풀고 나서 본책 문제를 다시 풀어 봐.`, "think");
+}
+function closeSheet(talk = true) {
+  if ($("sheet").hidden) return;
+  $("sheet").hidden = true;
+  $("sheetFrame").removeAttribute("src");
+  if (talk) say("좋아. 이제 본책으로 돌아가서 그 문제를 다시 풀어 봐.", "talk");
+}
+$("sheetClose").addEventListener("click", () => closeSheet());
+
+// ── 조작 ──────────────────────────────────────────────────
+$("nextBtn").addEventListener("click", next);
+$("prevBtn").addEventListener("click", prev);
+$("phases").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-jump]");
+  if (button && !button.disabled) { cancelAuto(); go(Number(button.dataset.jump)); }
 });
+$("slideBody").addEventListener("click", (event) => {
+  const number = event.target.closest(".sd-number");
+  if (number) { openSheet(number); return; }
+  const act = event.target.closest("[data-act]")?.dataset.act;
+  if (act === "next") next();
+  if (act === "restart") go(0);
+});
+window.addEventListener("keydown", (event) => {
+  if (event.target.closest?.("input,textarea,select")) return;
+  if (["ArrowRight", "PageDown"].includes(event.key)) { event.preventDefault(); next(); }
+  else if (["ArrowLeft", "PageUp"].includes(event.key)) { event.preventDefault(); prev(); }
+  else if (event.key === "Escape" && !$("sheet").hidden) closeSheet();
+});
+// 손으로 무언가를 하면 저절로 넘기기를 멈춘다(읽는 중에 넘어가지 않게)
+$("stage").addEventListener("pointerdown", () => { if (autoTimer) cancelAuto(); });
 
 renderHead();
-render();
-loadGoldenBell().then((data) => { bell = data; render(); }).catch(() => {
-  document.querySelectorAll(".sd-wait").forEach((node) => { node.textContent = "골든벨 학습을 불러오지 못했습니다. 새로고침해 주세요."; });
+paintGuideButtons();
+show();
+loadGoldenBell().then((data) => {
+  bellData = data;
+  slides = buildSlides();
+  ready = true;
+  index = Math.min(Math.max((Number(params.get("s")) || 1) - 1, 0), slides.length - 1);
+  show();
+}).catch(() => {
+  // 골든벨을 못 불러와도 본책 번호판은 쓸 수 있다
+  bellData = null;
+  slides = buildSlides();
+  ready = true;
+  index = Math.min(Math.max((Number(params.get("s")) || 1) - 1, 0), slides.length - 1);
+  show();
+  say("골든벨 학습을 불러오지 못했어. 본책 번호판은 쓸 수 있어. 새로고침하면 다시 불러와.", "think");
 });

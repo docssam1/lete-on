@@ -43,6 +43,8 @@ const asStudent = params.get("as") === "student";
 const studentRef = params.get("ref") || "";
 const studentBack = /^\.\/[\w.-]+\.html(\?[^#]*)?$/u.test(params.get("back") || "") ? params.get("back") : "";
 if (asStudent) document.body.classList.add("as-student");
+// 학생 차시 덱(study.html)의 유사문제 창 안(?embed=1): 머리줄은 덱이 맡는다
+if (asStudent && params.get("embed") === "1" && parent !== window) document.body.classList.add("as-embed");
 const domainIndex = Object.fromEntries(DOMAINS.map((domain, index) => [domain.id, index]));
 const EXAM_SOURCES = [...DIAGNOSTIC_EXAM_TYPES, ...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES];
 const OUR_MOCK_EXAM_GROUPS = [

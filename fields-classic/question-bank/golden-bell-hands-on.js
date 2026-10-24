@@ -216,6 +216,13 @@ export function mountSingleHandsOn(container, activityId) {
   renderActivity(container, { activities: [activityId], single: true }, session, null);
 }
 
+// 학생 차시 덱(study.html)의 「게임하기」 장: 체험 하나를 창 없이 그 자리에 띄운다. 마지막 도전을 마치고 「연결 문제 풀기」를 누르면 onDone.
+// session = { active: 체험 id, states: {} } — 부르는 쪽이 들고 있어 화면을 다시 그려도 진행이 이어진다.
+export function mountEmbedHandsOn(container, session, onDone) {
+  if (!Object.hasOwn(HANDS_ON_ACTIVITIES, session.active)) throw new Error("game_scope_invalid");
+  renderActivity(container, { activities: [session.active] }, session, () => onDone());
+}
+
 export function mountHandsOn(container, { bookId, lessonId, onQuestions, onOpen }) {
   const unit = unitForLesson(bookId, lessonId);
   if (!unit) return;

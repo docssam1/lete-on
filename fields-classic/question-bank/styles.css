@@ -1364,6 +1364,9 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
 /* 학생용(?as=student) — 본책 번호판에서 들어온 유사문제 풀기. 편집·인쇄 도구 없이 문제와 「답 확인 · 다른 문제」만. */
 .as-student .header-links>a:not(.student-back),.as-student .builder-panel,.as-student .pt-panel-host,.as-student .pt-lead,.as-student #backToBuilder,.as-student #printButton,.as-student #answerButton,.as-student .question-edit-tools,.as-student .question-style-tags,.as-student .question-reference,.as-student .pt-foot{display:none!important}
 .as-student .student-back{font-weight:700}
+.as-embed .app-header,.as-embed .worksheet-head{display:none!important}
+.as-student .question-grid,.as-student .question-page{grid-template-columns:minmax(0,1fr)!important}
+.as-student .question-card{width:100%;max-width:760px;margin:0 auto}
 .as-student .question-grid{display:grid;gap:16px}
 .as-student .question-page{display:grid;gap:16px;min-height:0}
 .student-check{display:grid;gap:8px;margin-top:14px;padding-top:12px;border-top:1px dashed #d8ccb4}

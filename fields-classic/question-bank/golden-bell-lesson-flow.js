@@ -44,6 +44,8 @@ function viewOf(bookId, lessonId) {
 export function flowStep(bookId, lesson) { return lessonFlowFor(bookId, lesson) ? viewOf(bookId, lesson.id).step : null; }
 // 다른 레슨으로 갔다가 오면 개념 설명부터(게임 진행은 남는다).
 export function resetLessonFlow(bookId, lessonId) { const v = views.get(keyOf(bookId, lessonId)); if (v) v.step = "tutorial"; }
+// 학생 차시 덱(study.html)의 「게임하기」 장: 그 레슨의 게임 칸을 바로 연다.
+export function setLessonFlowStep(bookId, lessonId, step) { if (STEPS.some(([id]) => id === step)) viewOf(bookId, lessonId).step = step; }
 
 function navMarkup(view) {
   const steps = STEPS.map(([id, label], i) => `<button type="button" class="gb-flow-step${view.step === id ? " active" : ""}" data-flow-go="${id}" aria-current="${view.step === id ? "step" : "false"}"><b>${i + 1}</b><span>${label}</span></button>`).join('<i aria-hidden="true">›</i>');

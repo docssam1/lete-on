@@ -7,18 +7,47 @@
   <title>단원 공부</title>
   <link rel="icon" href="data:," />
   <link rel="stylesheet" href="./start.css?v=20261024c" />
-  <link rel="stylesheet" href="./study.css?v=20261024a" />
+  <link rel="stylesheet" href="./study.css?v=20261024b" />
 </head>
-<body>
-  <header class="st-header">
-    <a class="sd-back" id="backLink" href="./start.html">← 단원 고르기</a>
-    <div class="st-brand"><span id="eyebrow">GFIELD CLASSIC · 1과정</span><strong id="unitTitle">단원 공부</strong></div>
+<body class="sd">
+  <header class="sd-top">
+    <a class="sd-back" id="backLink" href="./start.html" aria-label="단원 고르기로">‹ <span>단원 고르기</span></a>
+    <div class="sd-title"><span id="eyebrow">GFIELD CLASSIC · 1과정</span><strong id="unitTitle">단원 공부</strong></div>
+    <nav class="sd-phases" id="phases" aria-label="공부 순서"></nav>
     <div class="st-student" id="studentName">DEMO</div>
   </header>
-  <main class="st-main sd-main">
-    <nav class="sd-parts" id="partTabs" role="tablist" aria-label="차시"></nav>
-    <ol class="sd-steps" id="steps"></ol>
+  <div class="sd-progress" aria-hidden="true"><i id="progressFill"></i></div>
+
+  <main class="sd-stage-wrap">
+    <section class="sd-stage" id="stage">
+      <header class="sd-slide-head" id="slideHead"></header>
+      <div class="sd-slide-body" id="slideBody" aria-live="polite"></div>
+      <div class="sd-frame" id="frameWrap" hidden><iframe id="bellFrame" title="골든벨 학습"></iframe></div>
+      <div class="sd-sheet" id="sheet" hidden>
+        <header class="sd-sheet-head"><button type="button" class="sd-btn" id="sheetClose">‹ 본책 번호판</button><strong id="sheetTitle">비슷한 문제</strong></header>
+        <iframe id="sheetFrame" title="비슷한 문제"></iframe>
+      </div>
+    </section>
   </main>
-  <script type="module" src="./study.js?v=20261024b"></script>
+
+  <footer class="sd-bar">
+    <div class="sd-guide" id="guide" data-mood="talk">
+      <img id="guideImg" src="./docssam-guide.webp" alt="" width="72" height="72" />
+      <div class="sd-bubble">
+        <p id="guideSay" role="status" aria-live="polite"></p>
+        <div class="sd-guide-ctl">
+          <button type="button" id="voiceBtn" aria-pressed="true" title="독쌤 음성 켜기/끄기">🔊 음성</button>
+          <button type="button" id="againBtn" title="다시 듣기" aria-label="다시 듣기">↺</button>
+          <button type="button" id="pauseBtn" aria-pressed="false" title="다음 장으로 저절로 넘어가기 켜기/끄기">⏸ 넘김 멈춤</button>
+        </div>
+      </div>
+    </div>
+    <div class="sd-nav">
+      <button type="button" class="sd-btn" id="prevBtn">‹ 이전</button>
+      <span class="sd-count" id="count"></span>
+      <button type="button" class="sd-btn primary" id="nextBtn"><span class="sd-fill" aria-hidden="true"></span><span class="sd-next-text">다음 ›</span></button>
+    </div>
+  </footer>
+  <script type="module" src="./study.js?v=20261024d"></script>
 </body>
 </html>

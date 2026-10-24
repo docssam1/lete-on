@@ -699,3 +699,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 /* 학생 차시 화면에서 들어온 학습(?as=student) — 학습만 보이게 */
 .as-student .gold-intro,.as-student .book-index,.as-student .lesson-pane{display:none!important}
 .as-student .gold-layout{grid-template-columns:minmax(0,1fr);margin-top:12px}
+/* 학생 차시 덱(study.html) 안(?embed=1): 제목·순서·넘김 단추는 덱이 맡고, 이 화면은 지금 장 하나만 보인다 */
+.as-embed .gold-header,.as-embed .stage-steps,.as-embed .gb-flow,.as-embed .gb-flow-actions,.as-embed [data-next-phase],.as-embed[data-embed-view="concept"] .gold-hands-on:not(.gb-flow-game),.as-embed .embed-off{display:none!important}
+.as-embed,.as-embed body{background:#fff}
+.as-embed .gold-shell{width:100%;margin:0}
+.as-embed .gold-layout{margin:0;border:0;min-height:0;box-shadow:none}
+.as-embed .lesson-content{padding:18px 22px 24px}
+.as-embed #lessonContent>.lesson-kicker,.as-embed #lessonContent>h2,.as-embed .quiz-head h2{display:none}
+.as-embed .protected-answer-notice{margin:0 0 12px;padding:6px 10px;font-size:12.5px;font-weight:700}
+@media (max-width:760px){.as-embed .lesson-content{padding:12px 12px 18px}}
