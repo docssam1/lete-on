@@ -905,6 +905,24 @@
   .nm-n01-remember p { margin:1mm 0; }
   .nm-print-fs-l .nm-n01-body,.nm-print-fs-xl .nm-n01-body { gap:2mm; }
   .nm-print-fs-xl .nm-n01-cell img { width:16mm; height:16mm; }
+  /* NL29 first encounter: a full picture key before symbol-matching practice. */
+  .nm-ancient-intro { font-family:"NM Series Sans",Pretendard,sans-serif; }
+  .nm-ancient-lesson { flex:1; min-height:0; display:flex; flex-direction:column; justify-content:space-evenly; gap:3mm; }
+  .nm-ancient-lesson h2 { font-size:calc(26px * var(--ws-fs,1)); line-height:1.3; margin:0 0 2mm; color:#2f6b4a; font-weight:700; }
+  .nm-ancient-lesson p { font-size:calc(14px * var(--ws-fs,1)); line-height:1.5; margin:1mm 0; word-break:keep-all; }
+  .nm-ancient-key { width:100%; border-collapse:collapse; table-layout:fixed; text-align:center; color:#2a241c; }
+  .nm-ancient-key th,.nm-ancient-key td { border-bottom:1px solid #c9bda2; padding:2mm 1mm; vertical-align:middle; }
+  .nm-ancient-key thead th { font-size:calc(19px * var(--ws-fs,1)); font-weight:600; background:#f7f2e7; }
+  .nm-ancient-key th:first-child { width:29mm; font-size:calc(13px * var(--ws-fs,1)); font-weight:600; }
+  .nm-ancient-key tbody th small { display:block; font-size:calc(11px * var(--ws-fs,1)); font-weight:400; margin-top:1mm; }
+  .nm-ancient-key .nm-anc { display:block; height:14mm; width:100%; color:#2f6b4a; }
+  .nm-ancient-demo { border-top:1px solid #a87c22; padding-top:3mm; }
+  .nm-ancient-demo h3 { font-size:calc(17px * var(--ws-fs,1)); font-weight:700; margin:0 0 2mm; }
+  .nm-ancient-same { display:flex; align-items:center; justify-content:center; gap:5mm; font-size:calc(27px * var(--ws-fs,1)); font-weight:600; margin:2mm 0; color:#2f6b4a; }
+  .nm-ancient-same .nm-anc { width:23mm; height:16mm; }
+  .nm-ancient-roman { border-left:1mm solid #2f6b4a; padding:2mm 4mm; background:#e9f0e7; }
+  .nm-print-fs-xl .nm-ancient-lesson { gap:2mm; }
+  .nm-print-fs-xl .nm-ancient-key th,.nm-print-fs-xl .nm-ancient-key td { padding:1.2mm 1mm; }
   /* 마법 노트 지면 */
   .nm-w2-page-magic { gap:0; }
   /* 매거진형 개념 노트(2026-09-25) */
@@ -6091,6 +6109,14 @@ function renderDrawingRound(item, opts){
   }
   return {html:pages.join(''),problems,code,thName:headItem.topicName,thread:item.thread,level:item.level,drawing:true,guidedProblems:[],pageSizes:[...(showLesson?[0]:[]),...Array.from({length:Math.ceil(count/6)},(_,i)=>Math.min(6,count-i*6))]};
 }
+/* Use the same SVG source as the questions: no platform-dependent numeral glyphs. */
+function ancientNumberIntroHtml(item,code,opts){
+  const art=window.NM_ANCIENT;
+  const systems=[['maya',lk('마야','Maya','玛雅'),lk('점과 막대','Dots and bars','点和横线')],['egypt',lk('이집트','Egypt','埃及'),lk('막대','Strokes','竖线')],['mesopotamia',lk('메소포타미아','Mesopotamia','美索不达米亚'),lk('못 모양','Wedge shapes','楔形')],['roman',lk('로마','Rome','罗马'),lk('I와 V','I and V','I和V')]];
+  const table=`<table class="nm-ancient-key"><thead><tr><th scope="col">${esc(lk('지금 쓰는 숫자','Our numerals','现在的数字'))}</th>${[1,2,3,4,5].map(n=>`<th scope="col">${n}</th>`).join('')}</tr></thead><tbody>${systems.map(([sys,name,kind])=>`<tr><th scope="row">${esc(name)}<small>${esc(kind)}</small></th>${[1,2,3,4,5].map(n=>`<td>${art.glyph(sys,n)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  const head={...item,topicName:lk('고대의 숫자 · 읽는 방법','Ancient numbers · How to read','古代数字·读法')};
+  return `<div id="nm-ancient-intro-${opts.roundNo||1}" class="nm-w2-page nm-ancient-intro">${w2HeadHtml(head,code,lk('먼저 읽어요','Read first','先读一读'),null,{roundNo:opts.roundNo,name:opts.name,first:true})}<div class="nm-ancient-lesson"><header><h2>${esc(lk('옛날 숫자를 읽어 봐요','Let’s read ancient numbers','读一读古代数字'))}</h2><p>${esc(lk('우리가 3이라고 쓰는 수를, 옛날에는 이런 모양으로도 나타냈어요.','People also used shapes like these for the numbers we write today.','我们现在写的数字，古人也用这些形状来表示。'))}</p></header>${table}<section class="nm-ancient-demo"><h3>${esc(lk('① 모양이 달라도 같은 수예요','1. Different shapes, the same number','① 样子不同，数量一样'))}</h3><div class="nm-ancient-same">${art.glyph('maya',3)}<span>=</span><b>3</b><span>=</span>${art.glyph('egypt',3)}</div><p>${esc(lk('점 세 개도, 막대 세 개도 3이에요. 표에서 같은 수를 찾아 선으로 이어요.','Three dots and three strokes both mean 3. Use the table to match equal numbers.','三个点、三根竖线都表示3。看表，把相同的数连起来。'))}</p></section><aside class="nm-ancient-roman"><p>${lk('로마 숫자 <b>I는 1</b>, <b>V는 5</b>예요. <b>IV는 4</b>예요.','In Roman numerals, <b>I is 1</b>, <b>V is 5</b>, and <b>IV is 4</b>.','罗马数字中，<b>I是1</b>，<b>V是5</b>，<b>IV是4</b>。')}</p><p>${esc(lk('I가 V 앞에 오면, 5보다 1 작은 수를 나타내요.','I before V means one less than five.','I在V前面，表示比5少1。'))}</p></aside><p>${esc(lk('처음에는 1부터 5까지 살펴봐요. 표를 보면서 풀어도 좋아요.','Start with 1 to 5. You may look at this table while you work.','先认识1到5。做题时也可以看这张表。'))}</p></div><div class="nm-w2-foot"><span class="nm-w2-foot-code">NOTE-NL29</span></div></div>`;
+}
 function renderRoundPages(item, opts){
   opts=opts||{};
   const local=Object.assign({},opts,{exclude:new Set(opts.exclude||[])});
@@ -6211,6 +6237,7 @@ function renderRoundPagesBody(item, opts){
   /* 점검 회차는 가르치지 않는다(2026-09-16) — 개념 설명·★예시·따라풀기를 얹으면
      푸는 법을 옆에 펴 놓고 실력을 재는 꼴이 된다. 문항만 낸다. */
   const noTeach = !!item.noTeach;
+  const ancientLesson = !noTeach && !item.skipConcept && item.thread==='NL29' && item.level<=2 && !!window.NM_ANCIENT;
   /* 그림·조작 문항만인 회차(수의 나라 NL — tex도 이야기도 없다)는 예시·따라풀기를 뺀다(2026-09-19).
      두 틀은 "완성된 식 + 풀이 사슬"을 전제해서, 식이 없으면 예시가 " = 4", 따라풀기가
      "(가) = ____"로 빈 채 찍혔다(과정 0 첫 학습지에서 발견). 개념 패널은 그대로 둔다. */
@@ -6224,7 +6251,7 @@ function renderRoundPagesBody(item, opts){
      그 띠가 개념 문장을 쓰면 개념 패널에서는 그 문장을 뺀다(중복 방지). */
   const middleLesson = examLang() === 'ko' && !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread];
   const strategyHtml = !noTeach && !middleLesson && getSolveMode() ? w2StrategyBandHtml(item.thread, item.level) : '';
-  const conceptHtml = (wordOnly || noTeach || item.skipConcept) ? ''
+  const conceptHtml = (wordOnly || noTeach || item.skipConcept || ancientLesson) ? ''
     : w2ConceptPanelHtml(item.thread, item.level, {rampN, skipSentence: !!strategyHtml,levelOnly:item.levelOnly,levelConcept:item.levelConcept,levelTitle:item.levelTitle});
   const exampleMeta={};
   const pictureWorked = pictureOnly && !opts.suppressPictureWorked && ['NL5','NL11','NL12'].includes(item.thread);
@@ -6492,7 +6519,7 @@ function renderRoundPagesBody(item, opts){
   /* thread: 정답지가 그 회차의 수학 팁을 찾는 데 쓴다(w2AnswerKeySectionHtml, 2026-09-08). */
   /* level — 정답지의 해설이 그 회차의 공부 전략 한 줄을 다시 찾을 때 쓴다(2026-09-16).
      전에는 round에 레벨이 없어 해설의 "핵심" 줄이 늘 레벨 미상으로 나갔다. */
-  return { html, problems, code, thName, thread: item.thread, level: item.level, band,
+  return { html:(ancientLesson?ancientNumberIntroHtml(item,code,opts):'')+html, problems, code, thName, thread: item.thread, level: item.level, band,
     threadMix: item.threadMix || null,
     guidedProblems: guided.problems, pageSizes: pages.map(pg => pg.length),pictureExampleKey:pictureWorked?exampleMeta.key:null };
 }
