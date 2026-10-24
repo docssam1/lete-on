@@ -22,7 +22,7 @@ function route() {
   const h = location.hash.replace(/^#\/?/, '');
   const m = h.match(/^u\/([\w-]+)(\/report)?/);
   teardown3D(); homeOff?.(); homeOff = null; reportOff?.(); reportOff = null;
-  if (/^observe\b/.test(h)) reportOff = renderObserve($app, { topbar, footer }).destroy;
+  if (/^observe\b/.test(h)) reportOff = renderObserve($app, { topbar, footer }, h.split('/')[1] || '').destroy;
   else if (m && unitById(m[1]) && m[2]) reportOff = renderReport(unitById(m[1]), $app, { topbar, footer }).destroy;
   else if (m && unitById(m[1])) renderUnit(unitById(m[1])); else renderHome();
   window.scrollTo({ top: 0, behavior: 'instant' });
