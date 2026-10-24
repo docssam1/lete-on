@@ -48,7 +48,7 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 10,
-    "reviewLockedItems": 261
+    "reviewLockedItems": 255
   },
   "units": [
     {
@@ -423,8 +423,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "PDF 5쪽(인쇄 7쪽) 원문을 직접 대조하고 독립 계산·합성 생성기·브라우저·A4 검수를 마쳤습니다. 출판사 답안 확인 및 공개 결정은 별도 대기입니다. 4721: 4730, 4800, 5000; 7698: 7700, 7700, 8000"
     },
     {
       "sourceItemId": "5-2-u1-e2-mission-2",
@@ -440,8 +440,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "PDF 5쪽(인쇄 7쪽) 원문을 직접 대조하고 독립 계산·합성 생성기·브라우저·A4 검수를 마쳤습니다. 출판사 답안 확인 및 공개 결정은 별도 대기입니다. 500, 200"
     },
     {
       "sourceItemId": "5-2-u1-e2-mission-3",
@@ -457,8 +457,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "PDF 5쪽(인쇄 7쪽) 원문을 직접 대조하고 독립 계산·합성 생성기·브라우저·A4 검수를 마쳤습니다. 출판사 답안 확인 및 공개 결정은 별도 대기입니다. 가장 가까운 수 401,389; 천의 자리 반올림 401,000"
     },
     {
       "sourceItemId": "5-2-u1-e2-mission-4",
@@ -474,8 +474,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "PDF 5쪽(인쇄 7쪽) 원문을 직접 대조하고 독립 계산·합성 생성기·브라우저·A4 검수를 마쳤습니다. 출판사 답안 확인 및 공개 결정은 별도 대기입니다. 0, 1, 2, 3, 4"
     },
     {
       "sourceItemId": "5-2-u1-e2-mission-5",
@@ -491,8 +491,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "PDF 5쪽(인쇄 7쪽) 원문을 직접 대조하고 독립 계산·합성 생성기·브라우저·A4 검수를 마쳤습니다. 출판사 답안 확인 및 공개 결정은 별도 대기입니다. 90개"
     },
     {
       "sourceItemId": "5-2-u1-e2-mission-6",
@@ -508,8 +508,8 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "local-review-passed-awaiting-release",
+      "reviewReason": "PDF 5쪽(인쇄 7쪽) 원문을 직접 대조하고 독립 계산·합성 생성기·브라우저·A4 검수를 마쳤습니다. 출판사 답안 확인 및 공개 결정은 별도 대기입니다. 261개"
     },
     {
       "sourceItemId": "5-2-u1-e3-exploration",
