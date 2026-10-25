@@ -2,6 +2,26 @@
 // 유형은 그 단원 문제은행(source-data.js CURRICULUM의 typeIds)에서, 차시 개념과 같은 풀이를 쓰는 것만 골랐다.
 // 답 꼴(수 하나 · 수 + 단위 · 쉼표로 쓴 수)과 그림 종류(bookN)는 검사기 drill-audit.mjs가 난이도마다 확인한다.
 export const DRILL_RECIPES = Object.freeze({
+  // 6권 — 수직선의 분할과 비 · 도형의 둘레 · 연속수의 합 · 수와 숫자의 개수 (똑같이 가르기는 그림이 문제은행 화면 전용이라 아직 없음)
+  "book-06/number-line-unit-distance": ["number-line-unit-distance-book6", "number-line-midpoint-book6"],
+  "book-06/number-line-ratio-source": ["number-line-two-part-distance", "number-line-unit-distance-book6"],
+  "book-06/number-line-ratio-compare-source": ["equivalent-ratio-chain", "number-line-two-part-distance"],
+  "book-06/pencil-measure-source": ["rod-difference-measure-count", "stride-ratio-total"],
+  "book-06/fraction-balance-source": ["equivalent-fraction-chain", "equivalent-ratio-chain"],
+  "book-06/bar-balance-ratio-source": ["bar-ratio-total-length", "balance-weight-ratio"],
+  "book-06/rectangle-missing-side": ["quadrilateral-perimeter", "equal-sided-quadrilateral-perimeter"],
+  "book-06/perimeter-source": ["equal-sided-quadrilateral-perimeter", "quadrilateral-perimeter", "diagonal-triangle-perimeter"],
+  "book-06/joined-perimeter-source": ["joined-quadrilateral-side", "joined-quadrilateral-dimensions", "attached-regular-shape-perimeter"],
+  "book-06/cut-grid-perimeter-source": ["square-composition-side", "grid-cutout-perimeter", "cutout-perimeter-change"],
+  "book-06/bent-perimeter-source": ["rectilinear-perimeter-book6", "concave-perimeter"],
+  "book-06/inclusive-range-count": ["inclusive-range-count"],
+  "book-06/multiplication-source": ["area-model-multiplication", "round-pair-addition"],
+  "book-06/same-factor-source": ["common-factor-sum", "near-round-addition", "near-round-multiplication"],
+  "book-06/consecutive-source": ["inclusive-range-count", "consecutive-sum-even-count", "consecutive-sum-odd-count"],
+  "book-06/even-odd-order-source": ["nth-even-odd", "even-odd-position"],
+  "book-06/number-and-digit-count": ["range-number-digit-count", "total-written-digits"],
+  "book-06/digit-sign-source": ["total-written-digits", "digit-occurrence-count", "digit-exclusion-count"],
+  "book-06/make-number-source": ["plus-concatenation-evaluate", "repeated-digit-concatenation"],
   // 7권 — 달력과 시계 · 가로수 심기 · 팔린드롬과 벤 다이어그램 (같은 날 요일 합은 5권 유형을 빌려 쓴다)
   "book-07/calendar-within-month-source": ["calendar-month-position", "calendar-same-weekday-sum"],
   "book-07/calendar-next-month-source": ["calendar-month-shift-weekday-b7", "calendar-cross-month-weekday-b7"],
