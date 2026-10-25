@@ -444,8 +444,36 @@ function splitBoxFigure(f) {
   return `<div class="tx-split" style="--tone:${color}"><p class="tx-split-q">${esc(f.first)} × ${esc(f.second)}</p><table role="img" aria-label="${esc(`${f.first} × ${f.second}를 칸으로 나눈 표`)}">${head}${body}</table>${total}</div>`;
 }
 
+// ───── 주고받아 같게: 한 칸 = 하나(세는 점 노랑). diff면 많은 쪽의 남는 칸을 칠하고, move면 그 반을 적은 쪽 끝에 점선으로 ─────
+function equalBarsFigure(f) {
+  const color = TONE[f.tone || "given"], n = Math.max(f.big, f.small + (f.move || 0)), cell = Math.max(6, Math.min(14, Math.floor(300 / n))), x0 = 96;
+  const W = x0 + n * cell + 56, rowY = [24, 72];
+  let body = "";
+  [[f.names[0], f.big], [f.names[1], f.small]].forEach(([name, count], r) => {
+    const y = rowY[r];
+    body += `<text x="${x0 - 10}" y="${y + 10}" font-size="14" font-weight="900" fill="#222" text-anchor="end" dominant-baseline="central">${esc(name)}</text>`;
+    for (let i = 0; i < count; i++) {
+      const extra = f.diff && r === 0 && i >= f.small, moving = f.move && r === 0 && i >= f.big - f.move;
+      body += `<rect x="${x0 + i * cell}" y="${y}" width="${cell - 1}" height="20" fill="${moving ? "#fff" : extra ? "#ffe9cc" : STONE.fill}" stroke="${extra ? color : STONE.line}" stroke-width="${extra ? 2 : 1}"${moving ? ' stroke-dasharray="3 2"' : ""}/>`;
+    }
+    if (f.move && r === 1) for (let i = 0; i < f.move; i++) body += `<rect x="${x0 + (count + i) * cell}" y="${y}" width="${cell - 1}" height="20" fill="#e3f5ea" stroke="${TONE.check}" stroke-width="2"/>`;
+    const shown = f.move ? (r === 0 ? count - f.move : count + f.move) : count;
+    body += text(x0 + Math.max(count, r === 1 ? count + (f.move || 0) : count) * cell + 26, y + 10, `${shown}${f.unit}`, { size: 14, weight: 900, fill: f.move ? TONE.check : "#222" });
+  });
+  if (f.diff) body += text(x0 + ((f.small + f.big) / 2) * cell, 10, f.move ? `${f.move}${f.unit} 옮겨요` : `차 ${f.big - f.small}${f.unit}`, { size: 13, weight: 900, fill: color });
+  return `<div class="tx-equal">${svg(W, 104, body, `${f.names[0]} ${f.big}${f.unit}, ${f.names[1]} ${f.small}${f.unit}${f.move ? `, ${f.move}${f.unit} 옮김` : ""}`)}</div>`;
+}
+// 나이 표: 행 = 지금 · N년 뒤, 열 = 형 · 동생 · 차
+function ageRowsFigure(f) {
+  const color = TONE[f.tone || "given"];
+  const row = ([label, a, b]) => `<tr><th>${esc(label)}</th><td>${a === null ? "?" : `${esc(a)}살`}</td><td>${b === null ? "?" : `${esc(b)}살`}</td><td class="gap">${a !== null && b !== null && (label === "지금" || f.gap !== null) ? `${a - b}살` : ""}</td></tr>`;
+  return `<div class="tx-age" style="--tone:${color}"><table><thead><tr><th></th><th>형</th><th>동생</th><th>차</th></tr></thead><tbody>${f.rows.map(row).join("")}</tbody></table></div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "equal-bars") return equalBarsFigure(figure);
+  if (figure.kind === "age-rows") return ageRowsFigure(figure);
   if (figure.kind === "split-box") return splitBoxFigure(figure);
   if (figure.kind === "op-chain") return opChainFigure(figure);
   if (figure.kind === "give-table") return giveTableFigure(figure);

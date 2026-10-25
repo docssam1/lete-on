@@ -1063,7 +1063,67 @@ const SPLIT_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET });
+// ───────────────────────── 1·2·8권 주고받아 같게 만들기 ─────────────────────────
+// 많은 쪽이 차의 반만큼 주면 같아진다(한 번 주면 차가 그 두 배만큼 줄어든다). 그림 kind "equal-bars".
+// 세 사람의 차는 기준 사람에게서 얼마나 더 많은지를 수직선 꺾쇠로(kind "dist-line" 재사용), 나이 차는 표(kind "age-rows").
+function equalizeExample({ id, title, big, small, names = ["A", "B"], unit = "개", style = "story" }) {
+  const d = big - small;
+  if (d <= 0 || d % 2) throw new Error(`${id}: 차가 짝수가 아님`);
+  const g = d / 2, [P, Q] = names;
+  const fig = (tone, extra = {}) => ({ kind: "equal-bars", names, big, small, unit, tone, ...extra });
+  const steps = [
+    { text: `${josa(P, "이")} ${Q}보다 ${big} − ${small} = ${d}${unit} 더 많아요.`, figure: fig("doing", { diff: true }) },
+    { text: `차를 반으로 나눠요. ${d} ÷ 2 = ${g}${unit}. 이만큼을 ${style === "plates" ? `${Q}로 옮기면` : `${Q}에게 주면`} 둘 다 ${josa(`${small + g}${unit}`, "이")} 돼요.`, figure: fig("check", { diff: true, move: g }) }
+  ];
+  const problem = style === "plates" ? `두 접시에 ${big}${unit}, ${small}${unit}가 있어요. 몇 ${unit}를 옮겨야 두 접시가 같아질까요?`.replace(`${small}${unit}가`, josa(`${small}${unit}`, "이")).replace(`몇 ${unit}를`, `몇 ${josa(unit, "을")}`)
+    : `${josa(P, "은")} ${big}${unit}, ${josa(Q, "은")} ${small}${unit}를 가지고 있어요. ${josa(P, "이")} ${Q}에게 몇 ${unit}를 주어야 같아질까요?`.replace(`${small}${unit}를`, josa(`${small}${unit}`, "을")).replace(`몇 ${unit}를`, `몇 ${josa(unit, "을")}`);
+  return { id, title, problem, figure: fig("given"), steps, answer: style === "plates" ? `${g}${josa(unit, "을")} 옮기면 같아져요.` : `${g}${josa(unit, "을")} 주면 같아져요.`, value: { give: g, big, small } };
+}
+// 지금 나이와 N년 뒤 나이: 둘 다 해마다 1살씩 먹으니 나이 차는 그대로
+function ageGapExample({ id, title, older, younger, years }) {
+  const gap = older - younger;
+  const fig = (tone, show) => ({ kind: "age-rows", rows: [["지금", older, younger], [`${years}년 뒤`, show ? older + years : null, show ? younger + years : null]], gap: show === "gap" ? gap : null, tone });
+  const steps = [
+    { text: `지금 나이 차는 ${older} − ${younger} = ${gap}살이에요.`, figure: fig("doing", false) },
+    { text: `${years}년이 지나면 형은 ${older} + ${years} = ${older + years}살, 동생은 ${younger} + ${years} = ${younger + years}살이에요.`, figure: fig("doing", true) },
+    { text: `둘 다 ${years}살씩 똑같이 먹어서 차는 ${older + years} − ${younger + years} = ${gap}살, 그대로예요.`, figure: fig("check", "gap") }
+  ];
+  return { id, title, problem: `형은 ${older}살, 동생은 ${younger}살이에요. ${years}년 뒤 형은 동생보다 몇 살 더 많을까요?`, figure: fig("given", false), steps, answer: `${gap}살 더 많아요.`, value: { gap, older, younger, years } };
+}
+// 세 사람: 기준(base)보다 각각 몇 개 더 많은지 주고, 둘 사이의 차(또는 같게 하려면 줄 개수)를 묻는다
+function threePeopleExample({ id, title, base, more, ask, give = false }) {
+  // more: { A: 2, C: 10 } — base보다 더 가진 개수. ask: ["A", "C"] — 둘 중 많은 쪽이 뒤
+  const pos = { [base]: 0, ...more };
+  const [lo, hi] = ask[0] === base ? ask : [...ask].sort((x, y) => pos[x] - pos[y]);
+  const d = pos[hi] - pos[lo];
+  if (give && d % 2) throw new Error(`${id}: 차가 홀수`);
+  const pts = Object.fromEntries(Object.entries(pos).sort((a, b) => a[1] - b[1]));
+  const arcs = (showAsk, tone) => ({ kind: "dist-line", points: Object.entries(pts).map(([label, at]) => ({ label, at })), arcs: [...Object.entries(more).map(([k, n]) => ({ from: base, to: k, label: `${n}개`, side: "under" })), ...(showAsk ? [{ from: lo, to: hi, label: showAsk === true ? "?" : showAsk, side: "over", ask: true }] : [])], tone });
+  const steps = [
+    { text: `${josa(base, "을")} 기준으로 줄 세워요. ${Object.entries(more).map(([k, n]) => `${josa(k, "은")} ${base}보다 ${n}개`).join(", ")} 많아요.`, figure: arcs(true, "doing") },
+    { text: `${josa(hi, "은")} ${lo}보다 ${pos[hi]} − ${pos[lo]} = ${d}개 많아요.`, figure: arcs(`${d}개`, give ? "doing" : "check") }
+  ];
+  if (give) steps.push({ text: `같아지려면 차의 반을 줘요. ${d} ÷ 2 = ${d / 2}개.`, figure: arcs(`${d}개`, "check") });
+  const rel = Object.entries(more).map(([k, n]) => `${josa(k, "은")} ${base}보다 ${n}개 더`).join(", ");
+  const problem = give
+    ? `구슬을 ${rel} 가지고 있어요. ${josa(hi, "이")} ${lo}에게 몇 개를 주어야 둘이 같아질까요?`
+    : `구슬을 ${rel} 가지고 있어요. ${josa(hi, "은")} ${lo}보다 몇 개 더 많을까요?`;
+  return { id, title, problem, figure: arcs(true, "given"), steps, answer: give ? `${d / 2}개를 주면 같아져요.` : `${d}개 더 많아요.`, value: { pos, lo, hi, d, give } };
+}
+const EQUALIZE_SET = {
+  id: "equalize",
+  types: {
+    "같아지도록 주기": () => [equalizeExample({ id: "eq1-1", title: "예제 1", big: 11, small: 3 }), equalizeExample({ id: "eq1-2", title: "예제 2", big: 38, small: 14 })],
+    "주고받아 같게 만들기": () => [equalizeExample({ id: "eq2-1", title: "예제 1", big: 18, small: 8 }), equalizeExample({ id: "eq2-2", title: "예제 2", big: 33, small: 9 })],
+    "두 접시를 같게": () => [equalizeExample({ id: "eq8-1", title: "예제 1", big: 26, small: 12, names: ["왼쪽 접시", "오른쪽 접시"], style: "plates" })],
+    "합과 차로 두 수 찾기": () => [circleExample({ id: "eq-sd-1", title: "예제 1", a: 1, b: 1, extra: 4, unit: 8, given: "sum", names: ["B", "A"], ask: 1, story: ({ sum }) => `구슬이 모두 ${sum}개이고 A가 B보다 4개 더 많아요. A의 구슬은 몇 개일까요?` })],
+    "시간이 지나도 같은 나이 차": () => [ageGapExample({ id: "age-1", title: "예제 1", older: 12, younger: 7, years: 15 })],
+    "세 사람의 차": () => [threePeopleExample({ id: "three-1", title: "예제 1", base: "B", more: { A: 3, C: 11 }, ask: ["A", "C"] })],
+    "세 사람 중 두 사람을 같게": () => [threePeopleExample({ id: "three-give-1", title: "예제 1", base: "A", more: { C: 6, B: 14 }, ask: ["C", "B"], give: true })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

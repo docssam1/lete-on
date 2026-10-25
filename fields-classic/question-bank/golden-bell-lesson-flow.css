@@ -156,6 +156,15 @@
 .tx-split td { min-width: 70px; height: 40px; padding: 6px 8px; border: 2px dashed #d6d6d6; border-radius: 8px; color: #222; font-size: 18px; font-weight: 900; text-align: center; }
 .tx-split td.on { border: 2px solid #f0a500; background: #fff3c4; }
 .tx-split-total { margin: 0; padding: 3px 14px; border: 2px solid var(--tone); border-radius: 999px; color: var(--tone); font-size: 17px; font-weight: 900; }
+/* 주고받아 같게 · 나이 표 */
+.tx-equal { display: grid; justify-items: center; max-width: 100%; }
+.tx-equal svg { max-width: 100%; height: auto; }
+.tx-age { display: grid; justify-items: center; }
+.tx-age table { border-collapse: separate; border-spacing: 6px; }
+.tx-age th { color: #222; font-size: 15px; font-weight: 900; }
+.tx-age td { min-width: 62px; padding: 8px 10px; border: 2px solid #f0a500; border-radius: 9px; background: #fff3c4; color: #222; font-size: 18px; font-weight: 900; text-align: center; }
+.tx-age td.gap { border-color: var(--tone); background: #fff; color: var(--tone); }
+.tx-age td.gap:empty { border: 0; background: transparent; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

@@ -506,6 +506,28 @@ function verifyExample(setId, typeLabel, ex, lesson) {
     if (/한 자리/u.test(typeLabel)) assert.ok(v.second < 10, `${ex.id}: 한 자리`);
     if (/곱하는 수도/u.test(typeLabel)) assert.ok(f.rows.length > 1, `${ex.id}: 곱하는 수도 나눔`);
     for (const item of lesson.original.items) assert.ok(!(item.visual?.first === v.first && item.visual?.second === v.second), `${ex.id}: 원본과 같은 곱셈`);
+  } else if (setId === "equalize") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    if (v.give !== undefined && v.big !== undefined) {
+      // 하나씩 옮겨 보며 같아지는 개수를 찾는다
+      let moved = 0, P = v.big, Q = v.small; while (P > Q) { P--; Q++; moved++; }
+      assert.ok(P === Q && moved === v.give, `${ex.id}: 옮길 개수`);
+      assert.ok(nums(ex.problem).includes(v.big) && nums(ex.problem).includes(v.small), `${ex.id}: 문제 글의 수`);
+      for (const item of lesson.original.items) { const o = item.visual || {}; const pair = o.plates || (o.left !== undefined ? [o.left, o.right] : null); if (pair) assert.notEqual(JSON.stringify(pair), JSON.stringify([v.big, v.small]), `${ex.id}: 원본과 같은 두 수`); }
+    } else if (v.gap !== undefined) {
+      assert.equal(v.gap, (v.older + v.years) - (v.younger + v.years), `${ex.id}: 나이 차`);
+      for (const item of lesson.original.items) assert.notEqual(nums(ex.problem).join(), nums(item.prompt).join(), `${ex.id}: 원본과 같은 수`);
+    } else if (v.pos) {
+      assert.equal(v.d, v.pos[v.hi] - v.pos[v.lo], `${ex.id}: 두 사람의 차`);
+      if (v.give) { assert.equal(v.d % 2, 0); assert.ok(ex.answer.includes(`${v.d / 2}개`), `${ex.id}: 차의 반을 줌`); }
+      for (const item of lesson.original.items) assert.notEqual(nums(ex.problem).join(), nums(item.prompt).join(), `${ex.id}: 원본과 같은 수`);
+    } else {
+      // 합과 차(동그라미): 동그라미 하나의 값을 모두 대입
+      const fits = []; for (let u = 1; u <= 300; u++) if (u + u + v.extra === v.sum) fits.push(u);
+      assert.deepEqual(fits, [v.A], `${ex.id}: 작은 수가 하나로 정해짐`);
+      assert.ok(nums(ex.problem).includes(v.sum) && nums(ex.problem).includes(v.extra), `${ex.id}: 문제 글의 합·차`);
+      for (const item of lesson.original.items) { const o = item.visual || {}; assert.ok(!(o.total === v.sum && o.difference === v.extra), `${ex.id}: 원본과 같은 합·차`); }
+    }
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);
