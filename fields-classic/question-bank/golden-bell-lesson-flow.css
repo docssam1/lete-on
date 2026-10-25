@@ -294,6 +294,8 @@
 .tx-diamonds .dm.ask .t { color: #5b2fa8; }
 .tx-route { display: grid; justify-items: center; max-width: 100%; }
 .tx-route svg { max-width: 100%; height: auto; }
+.tx-analog, .tx-venn, .tx-bars, .tx-tape { display: grid; justify-items: center; max-width: 100%; }
+.tx-analog svg, .tx-venn svg, .tx-bars svg, .tx-tape svg { max-width: 100%; height: auto; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

@@ -919,6 +919,29 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       assert.equal(v.v, g[v.ask[0]][v.ask[1]]); assert.ok(has(v.v));
       for (const item of lesson.original.items) assert.notEqual(JSON.stringify(item.visual?.cells?.[0]), JSON.stringify(g[0].map(String)), `${ex.id}: 원본 표와 같은 첫 줄`);
     } else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "misc") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number), has = (n) => nums(ex.answer).includes(n);
+    // 테이프 문제의 수는 「모눈 한 칸 1cm」뿐이라 수 비교에서 뺀다(모양은 새로 그린 꺾은선)
+    if (nums(ex.problem).length && v.kind !== "tape") for (const item of lesson.original.items) assert.notEqual(nums(ex.problem).join(), nums(item.prompt).join(), `${ex.id}: 원본과 같은 수`);
+    if (v.kind === "clock") { assert.ok(v.h >= 1 && v.h <= 12 && v.m % 5 === 0 && v.m < 60); const hourDeg = (v.h % 12) * 30 + v.m / 2; assert.equal(Math.floor(hourDeg / 30) % 12, v.h % 12, `${ex.id}: 짧은 바늘이 ${v.h}과 다음 숫자 사이`); assert.ok(ex.answer.startsWith(`${v.h}시 ${v.m}분`)); for (const item of lesson.original.items) for (const c of item.visual?.clocks || []) assert.notEqual(c.total, v.h * 60 + v.m, `${ex.id}: 원본과 같은 시각`); }
+    else if (v.kind === "venn") {
+      // 네 칸(왼쪽만·둘 다·오른쪽만·바깥)에 수를 모두 넣어 보아 주어진 수와 맞는 것을 찾는다
+      const fits = [];
+      for (let x = 0; x <= 60; x++) for (let y = 0; y <= 60; y++) for (let z = 0; z <= 60; z++) for (let w = 0; w <= (v.ask === "both" || v.ask === "total" ? 0 : 60); w++) {
+        const g = { a: x + y, b: y + z, both: y, out: w, total: x + y + z + w };
+        const given = v.ask === "both" ? ["a", "b", "total"] : v.ask === "total" ? ["a", "b", "both"] : v.ask === "out" ? ["a", "b", "both", "total"] : ["a", "b", "out", "total"];
+        if (given.every((k) => g[k] === v[k])) fits.push(v.ask === "only" ? x + z : g[v.ask]);
+      }
+      assert.ok(fits.length && new Set(fits).size === 1, `${ex.id}: 답이 하나로 정해짐`); assert.ok(has(fits[0]), `${ex.id}: 답`);
+    } else if (v.kind === "bundle2") { const fits = []; for (let x = 1; x <= 60; x++) for (let y = 1; y <= 60; y++) if (x + y === v.s1 && 2 * x + y === v.s2) fits.push([x, y]); assert.deepEqual(fits, [[v.x, v.y]]); assert.ok(has(v.y)); }
+    else if (v.kind === "part") { assert.equal(v.rest, v.whole - v.part); assert.ok(v.part < v.whole && has(v.rest)); }
+    else if (v.kind === "chain4") { const [A, , , D] = v.pos, AD = D - A, AC = v.pos[2] - A, BD = D - v.pos[1]; const fits = []; for (let b = 1; b < AD; b++) for (let c = b + 1; c < AD; c++) if (c === AC && AD - b === BD) fits.push([b, c - b, AD - c]); assert.deepEqual(fits, [[v.AB, v.BC, v.CD]]); for (const x of [v.AB, v.BC, v.CD]) assert.ok(has(x)); }
+    else if (v.kind === "tape") { let t = 0; for (let i = 1; i < v.pts.length; i++) { const [p, q] = [v.pts[i - 1], v.pts[i]]; assert.ok(p[0] === q[0] || p[1] === q[1], `${ex.id}: 꺾인 곳은 직각`); t += Math.abs(p[0] - q[0]) + Math.abs(p[1] - q[1]); } assert.equal(v.total, t); assert.ok(has(t)); }
+    else if (v.kind === "mid") { assert.equal(v.ans - v.lo, v.hi - v.ans, `${ex.id}: 한가운데`); assert.ok(has(v.ans)); }
+    else if (v.kind === "interval") { assert.equal(v.ans * v.parts, v.hi - v.lo); assert.ok(has(v.ans)); }
+    else if (v.kind === "times") { let n = 0, s = 0; while (s < v.b) { s += v.a; n++; } assert.ok(s === v.b && n === v.k); assert.ok(has(n)); }
+    else if (v.kind === "len") { assert.equal(v.lenB * v.a, v.lenA * v.b); assert.ok(has(v.lenB)); }
+    else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

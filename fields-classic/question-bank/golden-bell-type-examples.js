@@ -15,9 +15,10 @@ const plus = (xs) => xs.join(" + ");
 const DIGIT_BATCHIM = { 0: true, 1: true, 2: false, 3: true, 4: false, 5: false, 6: true, 7: true, 8: true, 9: false };
 const PAIRS = { 은: ["은", "는"], 이: ["이", "가"], 을: ["을", "를"], 과: ["과", "와"], 이에요: ["이에요", "예요"] };
 export function josa(word, pair) {
-  const last = String(word).replace(/[^가-힣0-9A-Za-z□]+$/u, "").at(-1) || "";
+  const last = String(word).replace(/[^가-힣ㄱ-ㅎ0-9A-Za-z□]+$/u, "").at(-1) || "";
   const code = last.charCodeAt(0) - 0xac00;
-  const has = /\d/.test(last) ? DIGIT_BATCHIM[last] : code >= 0 && code <= 11171 ? code % 28 !== 0 : false;
+  // 자음 글자(ㄱ·ㄴ…)는 「기역·니은」처럼 읽어 모두 받침이 있다
+  const has = /\d/.test(last) ? DIGIT_BATCHIM[last] : /[ㄱ-ㅎ]/u.test(last) ? true : code >= 0 && code <= 11171 ? code % 28 !== 0 : false;
   return `${word}${PAIRS[pair][has ? 0 : 1]}`;
 }
 
@@ -2471,7 +2472,144 @@ const COUNT5_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET });
+// ───────────────────────── 7권 시계 읽기 · 벤 다이어그램, 8권 묶음수, 3권 겹친 거리 · 테이프와 한가운데 수 · 몇 배 ─────────────────────────
+// 시계: 짧은 바늘이 지나온 숫자가 「시」, 긴 바늘이 가리킨 숫자 × 5가 「분」. 벤: 두 모둠을 더하면 겹친 부분을 두 번 센다.
+// 묶음수: 둘째 식(저울)에 더 있는 것 = 두 합의 차. 몇 배: 기준이 몇 번 들어가는지. 값은 모두 코드가 계산한다.
+const ina = (w) => (josa(w, "이").endsWith("이") ? `${w}이나` : `${w}나`);
+function clockReadExample({ id, title, h, m }) {
+  if (m % 5) throw new Error(`${id}: 5분 단위만`);
+  const steps = [
+    { text: `짧은 바늘이 ${josa(h, "과")} ${h % 12 + 1} 사이에 있어요. 아직 ${h % 12 + 1}에 닿지 않았으니 ${h}시.`, figure: { kind: "analog", h, m, hi: "hour", tone: "doing" } },
+    { text: `긴 바늘이 숫자 ${josa(m / 5, "을")} 가리켜요. 숫자 한 칸은 5분이라 ${m / 5} × 5 = ${m}분.`, figure: { kind: "analog", h, m, hi: "minute", tone: "check" } }
+  ];
+  return { id, title, problem: "시계가 가리키는 시각은 몇 시 몇 분일까요?", figure: { kind: "analog", h, m, tone: "given" }, steps, answer: `${h}시 ${m}분이에요.`, value: { kind: "clock", h, m } };
+}
+// 벤: a·b = 두 모둠, both = 둘 다, out = 둘 다 아님, total = 전체. ask: both | total | out | only
+function vennExample({ id, title, labels, a, b, both, out = 0, ask, universe = false }) {
+  const [L, R] = labels, union = a + b - both, total = union + out, only = union - both;
+  const fig = (tone, show) => ({ kind: "venn", labels, a: show ? a - both : undefined, both: show ? both : ask === "both" ? null : undefined, b: show ? b - both : undefined, out: universe ? (show || ask !== "out" ? out : null) : undefined, universe, tone });
+  const likeA = `${josa(L, "을")} 좋아하는`, likeB = `${josa(R, "을")} 좋아하는`;
+  const cases = {
+    both: { problem: `친구 ${total}명은 모두 ${josa(L, "과")} ${R} 중 적어도 하나를 좋아해요. ${likeA} 친구는 ${a}명, ${likeB} 친구는 ${b}명이에요. 둘 다 좋아하는 친구는 몇 명일까요?`, steps: [
+      [`${L} ${a}명과 ${R} ${b}명을 더하면 ${a + b}명. 그런데 친구는 ${total}명뿐이에요.`, false],
+      [`더 센 ${a + b} − ${total} = ${both}명은 두 번 센 친구, 둘 다 좋아하는 친구예요.`, true]], answer: `${both}명이에요.` },
+    total: { problem: `친구들은 모두 ${ina(L)} ${R} 중 적어도 하나를 좋아해요. ${likeA} 친구는 ${a}명, ${likeB} 친구는 ${b}명, 둘 다 좋아하는 친구는 ${both}명이에요. 친구는 모두 몇 명일까요?`, steps: [
+      [`${a} + ${b} = ${a + b}명인데, 둘 다 좋아하는 ${both}명을 두 번 셌어요.`, true],
+      [`두 번 센 만큼 한 번 빼요. ${a + b} − ${both} = ${total}명.`, true]], answer: `모두 ${total}명이에요.` },
+    out: { problem: `학생 ${total}명 중 ${likeA} 학생은 ${a}명, ${likeB} 학생은 ${b}명, 둘 다 좋아하는 학생은 ${both}명이에요. 둘 다 좋아하지 않는 학생은 몇 명일까요?`, steps: [
+      [`둘 중 하나라도 좋아하는 학생은 ${a} + ${b} − ${both} = ${union}명(두 번 센 학생을 한 번 빼요).`, true],
+      [`전체 ${total}명에서 빼면 ${total} − ${union} = ${out}명.`, true]], answer: `${out}명이에요.` },
+    only: { problem: `학생 ${total}명 중 ${likeA} 학생은 ${a}명, ${likeB} 학생은 ${b}명, 둘 다 좋아하지 않는 학생은 ${out}명이에요. 둘 중 한 가지만 좋아하는 학생은 몇 명일까요?`, steps: [
+      [`둘 다 좋아하지 않는 ${out}명을 빼면 하나라도 좋아하는 학생은 ${total} − ${out} = ${union}명.`, false],
+      [`${a} + ${b} = ${a + b}에서 ${josa(union, "을")} 빼면 두 번 센 ${both}명이 둘 다 좋아하는 학생이에요.`, true],
+      [`한 가지만 좋아하는 학생은 ${union} − ${both} = ${only}명.`, true]], answer: `${only}명이에요.` }
+  };
+  const c = cases[ask];
+  return { id, title, problem: c.problem, figure: fig("given", false), steps: c.steps.map(([t, show], i) => ({ text: t, figure: fig(i === c.steps.length - 1 ? "check" : "doing", show) })), answer: c.answer, value: { kind: "venn", a, b, both, out, total, ask } };
+}
+// 묶음수: ○ + □ = s1, ○ + ○ + □ = s2
+function bundleTwoExample({ id, title, x, y, scale = false }) {
+  const s1 = x + y, s2 = 2 * x + y, u = scale ? "g" : "", word = scale ? "저울" : "식";
+  const lines = [`○ + □ = ${s1}${u}`, `○ + ○ + □ = ${s2}${u}`];
+  const steps = [
+    { text: `둘째 ${word}에는 첫째 ${word}보다 ○가 하나 더 있어요. 그 ○ 하나가 ${s2} − ${s1} = ${s2 - s1}${u}.`, figure: { kind: "eqs", lines, on: [1], tone: "doing" } },
+    { text: `첫째 ${word}에서 □ = ${s1} − ${x} = ${y}${u}.`, figure: { kind: "eqs", lines: [...lines, `○ = ${x}${u}, □ = ${y}${u}`], tone: "check" } }
+  ];
+  const problem = scale ? `저울 두 개에 공(○)과 상자(□)를 올렸어요. 같은 모양은 무게가 같아요. ${lines.join(", ")}이에요. □ 한 개는 몇 g일까요?` : `같은 모양은 같은 수예요. ${lines.join(", ")}일 때 □가 나타내는 수를 구해요.`;
+  return { id, title, problem, figure: { kind: "eqs", lines, tone: "given" }, steps, answer: scale ? `□ 한 개는 ${y}g이에요.` : `□는 ${josa(y, "이에요")}.`, value: { kind: "bundle2", s1, s2, x, y } };
+}
+// 겹친 거리: 처음 → 끝 거리(whole) 안에 처음 → 가운데(part)
+function partDistExample({ id, title, names, whole, part }) {
+  const [P, Q, R] = names, rest = whole - part, pts = [{ label: P, at: 0 }, { label: Q, at: part }, { label: R, at: whole }];
+  const fig = (tone, show) => ({ kind: "dist-line", points: pts, arcs: [{ from: P, to: R, label: `${whole}m`, side: "over" }, { from: P, to: Q, label: `${part}m`, side: "under" }, { from: Q, to: R, label: show ? `${rest}m` : "?", side: "under", ask: true }], tone });
+  const steps = [
+    { text: `${P}에서 ${R}까지 ${whole}m 안에 ${P}에서 ${Q}까지 ${part}m가 들어 있어요.`, figure: fig("doing", false) },
+    { text: `남은 부분이 ${Q}에서 ${R}까지예요. ${whole} − ${part} = ${rest}m.`, figure: fig("check", true) }
+  ];
+  return { id, title, problem: `${P}에서 ${R}까지는 ${whole}m, ${P}에서 ${Q}까지는 ${part}m예요. ${Q}에서 ${R}까지는 몇 m일까요? (${P}, ${Q}, ${R}는 한 줄에 있어요.)`.replace(`${R}는`, josa(R, "은")), figure: fig("given", false), steps, answer: `${rest}m예요.`, value: { kind: "part", whole, part, rest } };
+}
+// A-B-C-D 한 줄: AD, AC, BD를 주고 AB, BC, CD
+function chainSegExample({ id, title, pos }) {
+  const [A, B, C, D] = pos, AD = D - A, AC = C - A, BD = D - B, CD = AD - AC, AB = AD - BD, BC = AD - AB - CD;
+  const pts = [["A", A], ["B", B], ["C", C], ["D", D]].map(([label, at]) => ({ label, at }));
+  const arc = (from, to, label, side, ask) => ({ from, to, label, side, ask });
+  const fig = (tone, found) => ({ kind: "dist-line", points: pts, arcs: [arc("A", "D", `${AD}`, "over"), arc("A", "C", `${AC}`, "over"), arc("B", "D", `${BD}`, "under"), ...found.map(([f, t, l]) => arc(f, t, l, "under", true))], tone });
+  const steps = [
+    { text: `AD 안에 AC가 들어 있어요. 남은 CD = ${AD} − ${AC} = ${CD}.`, figure: fig("doing", [["C", "D", `${CD}`]]) },
+    { text: `AD 안에 BD가 들어 있어요. 남은 AB = ${AD} − ${BD} = ${AB}.`, figure: fig("doing", [["A", "B", `${AB}`]]) },
+    { text: `BC는 AD에서 AB와 CD를 빼요. ${AD} − ${AB} − ${CD} = ${BC}.`, figure: fig("check", [["B", "C", `${BC}`]]) }
+  ];
+  return { id, title, problem: `A, B, C, D가 차례로 한 줄에 있어요. AD = ${AD}, AC = ${AC}, BD = ${BD}일 때 AB, BC, CD의 길이를 구해요.`, figure: fig("given", []), steps, answer: `AB = ${AB}, BC = ${BC}, CD = ${josa(CD, "이에요")}.`, value: { kind: "chain4", pos, AB, BC, CD } };
+}
+// 접힌 테이프: 꺾은선의 부분 길이를 모두 더한다(접어도 길이는 그대로)
+function tapeExample({ id, title, pts }) {
+  const segs = pts.slice(1).map((p, i) => Math.abs(p[0] - pts[i][0]) + Math.abs(p[1] - pts[i][1])), total = sum(segs);
+  const steps = [
+    { text: "접힌 곳에서 꺾여도 테이프의 길이는 그대로예요. 꺾인 부분마다 모눈 칸을 세요.", figure: { kind: "tape", pts, labels: true, tone: "doing" } },
+    { text: `${plus(segs)} = ${total}cm.`, figure: { kind: "tape", pts, labels: true, tone: "check" } }
+  ];
+  return { id, title, problem: "모눈 한 칸이 1cm예요. 접혀 있는 색테이프를 곧게 펴면 몇 cm일까요?", figure: { kind: "tape", pts, tone: "given" }, steps, answer: `${total}cm예요.`, value: { kind: "tape", pts, total } };
+}
+// 두 수 사이: parts = 2면 한가운데 수, 그 밖이면 같은 간격 한 칸
+function betweenExample({ id, title, lo, hi, parts }) {
+  const gap = hi - lo, one = gap / parts, mid = lo + one;
+  const ticks = Array.from({ length: parts + 1 }, (_, i) => ({ label: String(lo + one * i), at: lo + one * i }));
+  const fig = (tone, show) => ({ kind: "dist-line", min: lo - one / 4, points: show ? ticks : [ticks[0], ticks.at(-1)], arcs: show ? ticks.slice(1).map((t, i) => ({ from: ticks[i].label, to: t.label, label: `${one}`, side: "over" })) : [{ from: ticks[0].label, to: ticks.at(-1).label, label: `${gap}`, side: "over" }], tone });
+  if (parts === 2) {
+    const steps = [
+      { text: `두 수 사이의 거리는 ${hi} − ${lo} = ${josa(gap, "이에요")}.`, figure: fig("doing", false) },
+      { text: `한가운데는 반만큼 간 곳이에요. ${gap} ÷ 2 = ${one}, ${lo} + ${one} = ${mid}.`, figure: fig("check", true) }
+    ];
+    return { id, title, problem: `${josa(lo, "과")} ${hi}의 한가운데에 있는 수를 구해요.`, figure: fig("given", false), steps, answer: `${josa(mid, "이에요")}.`, value: { kind: "mid", lo, hi, ans: mid } };
+  }
+  const steps = [
+    { text: `${lo}부터 ${hi}까지의 거리는 ${hi} − ${lo} = ${josa(gap, "이에요")}.`, figure: fig("doing", false) },
+    { text: `같은 간격 ${parts}개로 나누면 한 칸은 ${gap} ÷ ${parts} = ${one}.`, figure: fig("check", true) }
+  ];
+  return { id, title, problem: `${lo}부터 ${hi}까지를 같은 간격 ${parts}개로 나누었어요. 한 칸의 크기는 얼마일까요?`, figure: fig("given", false), steps, answer: `한 칸은 ${josa(one, "이에요")}.`, value: { kind: "interval", lo, hi, parts, ans: one } };
+}
+// 몇 배: 막대 칸 수(units). lenA가 있으면 길이로 다른 막대 구하기
+function timesBarExample({ id, title, a, b, names = ["A", "B"], lenA = null }) {
+  const [P, Q] = names;
+  if (lenA === null) {
+    if (b % a) throw new Error(`${id}: 나누어떨어지지 않음`);
+    const k = b / a;
+    const steps = [
+      { text: `${josa(P, "을")} 한 묶음으로 보고 ${Q}에 몇 번 들어가는지 세요. ${josa(P, "은")} ${a}칸, ${josa(Q, "은")} ${b}칸이에요.`, figure: { kind: "unit-bars", rows: [{ label: P, units: a }, { label: Q, units: b }], tone: "doing" } },
+      { text: `${b} ÷ ${a} = ${k}. ${josa(Q, "은")} ${P}의 ${k}배예요.`, figure: { kind: "unit-bars", rows: [{ label: P, units: a }, { label: Q, units: b }], tone: "check" } }
+    ];
+    return { id, title, problem: `${josa(Q, "은")} ${P}의 몇 배일까요?`, figure: { kind: "unit-bars", rows: [{ label: P, units: a }, { label: Q, units: b }], tone: "given" }, steps, answer: `${k}배예요.`, value: { kind: "times", a, b, k } };
+  }
+  const unit = lenA / a, lenB = unit * b;
+  const rows = (show) => [{ label: P, units: a, len: `${lenA}cm` }, { label: Q, units: b, len: show ? `${lenB}cm` : null }];
+  const steps = [
+    { text: `${josa(P, "은")} ${a}칸이고 ${lenA}cm라 한 칸은 ${lenA} ÷ ${a} = ${unit}cm.`, figure: { kind: "unit-bars", rows: rows(false), tone: "doing" } },
+    { text: `${josa(Q, "은")} ${b}칸이라 ${unit} × ${b} = ${lenB}cm.`, figure: { kind: "unit-bars", rows: rows(true), tone: "check" } }
+  ];
+  return { id, title, problem: `${josa(P, "이")} ${lenA}cm일 때 ${Q}의 길이를 구해요.`, figure: { kind: "unit-bars", rows: rows(false), tone: "given" }, steps, answer: `${lenB}cm예요.`, value: { kind: "len", a, b, lenA, lenB } };
+}
+const MISC_SET = {
+  id: "misc",
+  types: {
+    "시계 읽기": () => [clockReadExample({ id: "clk-1", title: "예제 1", h: 4, m: 35 }), clockReadExample({ id: "clk-2", title: "예제 2", h: 10, m: 50 })],
+    "모두 좋아하는 수": () => [vennExample({ id: "venn-both-1", title: "예제 1", labels: ["딸기", "수박"], a: 12, b: 14, both: 6, ask: "both" })],
+    "전체 수": () => [vennExample({ id: "venn-total-1", title: "예제 1", labels: ["농구", "수영"], a: 11, b: 8, both: 3, ask: "total" })],
+    "둘 다 싫은 수": () => [vennExample({ id: "venn-out-1", title: "예제 1", labels: ["사과", "배"], a: 22, b: 18, both: 9, out: 9, ask: "out", universe: true })],
+    "하나만 좋아하는 수": () => [vennExample({ id: "venn-only-1", title: "예제 1", labels: ["강아지", "고양이"], a: 27, b: 20, both: 14, out: 5, ask: "only", universe: true })],
+    "두 식의 묶음수": () => [bundleTwoExample({ id: "b2eq-1", title: "예제 1", x: 7, y: 8 })],
+    "두 저울의 묶음수": () => [bundleTwoExample({ id: "b2sc-1", title: "예제 1", x: 6, y: 13, scale: true })],
+    "겹친 전체 거리에서 부분 거리 찾기": () => [partDistExample({ id: "part-1", title: "예제 1", names: ["집", "학교", "공원"], whole: 64, part: 27 })],
+    "겹친 선분의 합과 차": () => [chainSegExample({ id: "chain4-1", title: "예제 1", pos: [0, 5, 12, 20] })],
+    "접힌 색테이프의 전체 길이": () => [tapeExample({ id: "tape-1", title: "예제 1", pts: [[0, 0], [4, 0], [4, 2], [1, 2], [1, 3]] })],
+    "두 수의 한가운데 수": () => [betweenExample({ id: "mid-1", title: "예제 1", lo: 6, hi: 30, parts: 2 })],
+    "기준량의 몇 배": () => [timesBarExample({ id: "times-1", title: "예제 1", a: 3, b: 12 })],
+    "똑같은 간격의 한 칸": () => [betweenExample({ id: "intv-1", title: "예제 1", lo: 2, hi: 14, parts: 3 })],
+    "두 막대의 배수 비교": () => [timesBarExample({ id: "times-2", title: "예제 1", a: 2, b: 6, names: ["ㄴ", "ㄱ"] })],
+    "한 막대의 길이로 다른 막대 찾기": () => [timesBarExample({ id: "len-1", title: "예제 1", a: 3, b: 5, names: ["ㄱ", "ㄴ"], lenA: 12 })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

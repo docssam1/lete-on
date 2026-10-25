@@ -762,8 +762,58 @@ function roadsFigure(f) {
   return `<div class="tx-route">${svg(W, H, body, "갈림길 지도")}</div>`;
 }
 
+// ───── 시계 읽기: 시침·분침(hi = "hour" | "minute"이면 그 바늘을 안내 색) ─────
+function analogFigure(f) {
+  const color = TONE[f.tone || "given"], C = 90, R = 74;
+  let body = `<circle cx="${C}" cy="${C}" r="${R}" fill="#fff" stroke="#566274" stroke-width="3"/>`;
+  for (let k = 0; k < 60; k++) { const a = (k * 6 - 90) * Math.PI / 180, r1 = k % 5 ? R - 5 : R - 9; body += `<line x1="${C + r1 * Math.cos(a)}" y1="${C + r1 * Math.sin(a)}" x2="${C + R * Math.cos(a)}" y2="${C + R * Math.sin(a)}" stroke="#566274" stroke-width="${k % 5 ? 1 : 2}"/>`; }
+  for (let n = 1; n <= 12; n++) { const a = (n * 30 - 90) * Math.PI / 180; body += text(C + (R - 20) * Math.cos(a), C + (R - 20) * Math.sin(a), n, { size: 14, weight: 900 }); }
+  const hand = (deg, len, w, on) => { const a = (deg - 90) * Math.PI / 180; return `<line x1="${C}" y1="${C}" x2="${C + len * Math.cos(a)}" y2="${C + len * Math.sin(a)}" stroke="${on ? color : "#222"}" stroke-width="${w}" stroke-linecap="round"/>`; };
+  body += hand((f.h % 12) * 30 + f.m * 0.5, 40, 6, f.hi === "hour") + hand(f.m * 6, 60, 3.5, f.hi === "minute") + `<circle cx="${C}" cy="${C}" r="5" fill="#222"/>`;
+  return `<div class="tx-analog">${svg(C * 2, C * 2, body, "시계")}</div>`;
+}
+// ───── 벤 다이어그램: 두 원(labels), 칸 수 a(왼쪽만) · both · b(오른쪽만) · out(바깥), null은 「?」, undefined는 비움 ─────
+function vennFigure(f) {
+  const color = TONE[f.tone || "given"], W = 300, H = 170;
+  const v = (x) => (x === null ? "?" : x === undefined ? "" : `${x}명`);
+  let body = f.universe ? `<rect x="4" y="4" width="${W - 8}" height="${H - 8}" rx="10" fill="#fffdf7" stroke="#c9c2b4" stroke-width="2"/>` : "";
+  body += `<circle cx="115" cy="88" r="62" fill="${SHAPE.circle.fill}" fill-opacity="0.75" stroke="${SHAPE.circle.line}" stroke-width="2.5"/><circle cx="185" cy="88" r="62" fill="${SHAPE.square.fill}" fill-opacity="0.75" stroke="${SHAPE.square.line}" stroke-width="2.5"/>`;
+  body += text(95, 20, f.labels[0], { size: 13, weight: 900, fill: SHAPE.circle.line }) + text(205, 20, f.labels[1], { size: 13, weight: 900, fill: SHAPE.square.line });
+  body += text(85, 92, v(f.a), { size: 14, weight: 900, fill: f.a === null ? "#5b2fa8" : "#222" }) + text(150, 92, v(f.both), { size: 14, weight: 900, fill: f.both === null ? "#5b2fa8" : f.hi === "both" ? color : "#222" }) + text(215, 92, v(f.b), { size: 14, weight: 900, fill: f.b === null ? "#5b2fa8" : "#222" });
+  if (f.universe) body += text(W - 40, H - 18, v(f.out), { size: 13, weight: 900, fill: f.out === null ? "#5b2fa8" : "#566274" });
+  if (f.note) body += text(W / 2, H - 6, f.note, { size: 11, weight: 800, fill: color });
+  return `<div class="tx-venn">${svg(W, H, body, `${f.labels.join("과 ")} 벤 다이어그램`)}</div>`;
+}
+// ───── 막대: rows = [{ label, units, len? }], 한 칸 = 기준(unit). 칸마다 눈금, len이 있으면 오른쪽에 길이 ─────
+function unitBarsFigure(f) {
+  const color = TONE[f.tone || "given"], max = Math.max(...f.rows.map((r) => r.units)), cell = Math.min(34, 220 / max), x0 = 44, W = x0 + max * cell + 60, H = f.rows.length * 40 + 10;
+  let body = "";
+  f.rows.forEach((r, i) => {
+    const y = 10 + i * 40;
+    body += text(x0 - 10, y + 12, r.label, { size: 14, weight: 900, anchor: "end" });
+    for (let k = 0; k < r.units; k++) body += `<rect x="${x0 + k * cell}" y="${y}" width="${cell}" height="24" fill="${i === 0 ? "#ffd45c" : "#dcf5e5"}" stroke="${i === 0 ? "#a8741a" : SHAPE.triangle.line}" stroke-width="1.5"${f.ticks === false ? "" : ""}/>`;
+    if (r.len !== undefined) body += text(x0 + r.units * cell + 26, y + 12, r.len === null ? "?" : r.len, { size: 13, weight: 900, fill: r.len === null ? "#5b2fa8" : color });
+  });
+  return `<div class="tx-bars">${svg(W, H, body, f.rows.map((r) => `${r.label} ${r.units}칸`).join(", "))}</div>`;
+}
+// ───── 접힌 테이프: 모눈 위의 꺾은선(pts, 칸 단위). 부분마다 길이를 쓴다 ─────
+function tapeFigure(f) {
+  const color = TONE[f.tone || "given"], xs = f.pts.map((p) => p[0]), ys = f.pts.map((p) => p[1]), cell = 30, pad = 24;
+  const W = (Math.max(...xs) + 1) * cell + pad * 2, H = (Math.max(...ys) + 1) * cell + pad * 2, X = (x) => pad + x * cell, Y = (y) => pad + y * cell;
+  let body = "";
+  for (let x = 0; x <= Math.max(...xs) + 1; x++) body += `<line x1="${X(x)}" y1="${pad}" x2="${X(x)}" y2="${H - pad}" stroke="#ece4d6"/>`;
+  for (let y = 0; y <= Math.max(...ys) + 1; y++) body += `<line x1="${pad}" y1="${Y(y)}" x2="${W - pad}" y2="${Y(y)}" stroke="#ece4d6"/>`;
+  body += `<polyline points="${f.pts.map((p) => `${X(p[0])},${Y(p[1])}`).join(" ")}" fill="none" stroke="#f39a1e" stroke-width="10" stroke-linejoin="round" stroke-linecap="butt" opacity="0.85"/>`;
+  if (f.labels) f.pts.slice(1).forEach((p, i) => { const q = f.pts[i], mx = (X(p[0]) + X(q[0])) / 2, my = (Y(p[1]) + Y(q[1])) / 2, len = Math.abs(p[0] - q[0]) + Math.abs(p[1] - q[1]); body += text(mx + (p[1] === q[1] ? 0 : 14), my + (p[1] === q[1] ? -12 : 0), `${len}`, { size: 12, weight: 900, fill: color }); });
+  return `<div class="tx-tape">${svg(W, H, body, "접힌 색테이프")}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "analog") return analogFigure(figure);
+  if (figure.kind === "venn") return vennFigure(figure);
+  if (figure.kind === "unit-bars") return unitBarsFigure(figure);
+  if (figure.kind === "tape") return tapeFigure(figure);
   if (figure.kind === "route") return routeFigure(figure);
   if (figure.kind === "roads") return roadsFigure(figure);
   if (figure.kind === "tree") return treeFigure(figure);

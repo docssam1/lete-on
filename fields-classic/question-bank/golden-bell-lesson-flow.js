@@ -1,5 +1,5 @@
-import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028l";
-import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261028l";
+import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028m";
+import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261028m";
 
 // 개념 단계 안의 학습 순서: ① 개념 설명 → ② 유형별 예제 → ③ 게임 → (골든벨 문제).
 // 원장 지시: "개념마다 설명하는 튜토리얼, 문제 유형마다 예제 1~2개, 그다음 게임."
@@ -101,7 +101,13 @@ export const LESSON_FLOWS = Object.freeze({
   "book-05/path-number-grid": { examples: "count5", game: "drill" },
   "book-05/shortest-route-source": { examples: "count5", game: "drill" },
   "book-05/digit-card-ranked-number": { examples: "count5", game: "drill" },
-  "book-05/two-digit-condition-source": { examples: "count5", game: "drill" }
+  "book-05/two-digit-condition-source": { examples: "count5", game: "drill" },
+  "book-07/clock-reading": { examples: "misc", game: "drill" },
+  "book-07/venn-overlap-all": { examples: "misc", game: "drill" },
+  "book-08/bundle-number-source": { examples: "misc", game: "drill" },
+  "book-03/overlapping-distance": { examples: "misc", game: "drill" },
+  "book-03/tape-length-midpoints": { examples: "misc", game: "drill" },
+  "book-03/multiple-comparison": { examples: "misc", game: "drill" }
 });
 export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방", "share-equally": "같아지도록 옮기기" });
 const STEPS = [["tutorial", "개념 설명"], ["examples", "유형별 예제"], ["game", "게임"]];
