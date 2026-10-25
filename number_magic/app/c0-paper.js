@@ -32,11 +32,45 @@ function style(){
   .nm-print-c0 .nm-c0-verbal{white-space:normal;line-height:1.6;font-size:1em;font-family:inherit}
   .nm-print-c0 .nm-print-ask{font-size:16px!important;line-height:1.5!important}
   .nm-print-c0 .nm-c0-draw .nm-nl-stage{font-size:1.35em}
-  .nm-print-c0 .nm-c0-draw .nm-nl-cell{width:12.5mm;height:12.5mm}
-  .nm-print-c0 .nm-c0-draw .nm-nl-g46-plate{width:16mm;height:16mm}
-  .nm-print-c0 .nm-c0-draw .nm-nl-g46-circle{width:18mm;height:18mm}
-  .nm-print-c0 .nm-c0-draw .nm-nl-g46-bars i{width:7mm;height:10mm}
-  .nm-print-c0 .nm-c0-draw .nm-nl-ansbox{min-width:14mm;min-height:11mm}
+  /* Real writing areas: enlarge the scored task, keeping compact worked examples intact. */
+  .nm-print-c0 .nm-w2-item .nm-nl-ansbox,
+  .nm-print-c0 .nm-w2-item .nm-w2-abox{width:22mm;height:18mm;min-width:22mm;min-height:18mm;box-sizing:border-box}
+  .nm-print-c0 .nm-w2-item .nm-nl-seq{gap:.35mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-seq .nm-nl-arrow{font-size:14px;padding:0}
+  .nm-print-c0 .nm-w2-item .nm-nl-cell-blank{width:16mm;height:16mm;min-width:16mm;min-height:16mm;flex-shrink:0}
+  .nm-print-c0 .nm-c0-draw .nm-nl-cell:not(.nm-nl-cell-blank){width:12.5mm;height:12.5mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-g1315-nb.nm-nl-g1315-blank,
+  .nm-print-c0 .nm-w2-item .nm-nl-g1315-wt.nm-nl-g1315-blank,
+  .nm-print-c0 .nm-w2-item .nm-nl-g1315-qbox,
+  .nm-print-c0 .nm-w2-item .nm-nl-g13-bx,
+  .nm-print-c0 .nm-w2-item .nm-nl-g13-slot{min-width:16mm!important;min-height:16mm!important;width:16mm!important;height:16mm!important;font-size:22px;box-sizing:border-box}
+  .nm-print-c0 .nm-w2-item .nm-bond{width:64mm!important;max-width:100%}
+  .nm-print-c0 .nm-w2-item .nm-nl-stage-bond-objects{width:76mm;gap:.5mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-stage-bond-objects .nm-bond{width:64mm;margin-top:0}
+  .nm-print-c0 .nm-w2-item .nm-bond-whole{margin-bottom:0}
+  .nm-print-c0 .nm-w2-item .nm-bond-ladybug{margin-top:-1.5mm}
+  .nm-print-c0 .nm-w2-item .nm-bond-objects{gap:4mm}
+  .nm-print-c0 .nm-w2-item .nm-bond-objects-part{min-height:24mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-g46-plate{width:24mm;height:24mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-g46-circle{width:23mm;height:23mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-g46-bars i{width:7mm;height:12mm}
+  .nm-print-c0 .nm-c0-wide .nm-nl{max-width:148mm}
+  .nm-print-c0 .nm-c0-wide .nm-nl-stage{max-width:148mm}
+  .nm-print-c0 .nm-c0-wide .nm-nl-stage-bond-objects:has(.nm-bond-ladybug){width:148mm;display:grid;grid-template-columns:76mm 54mm;column-gap:8mm;align-items:center;justify-content:center}
+  .nm-print-c0 .nm-c0-wide .nm-bond-whole-ladybug{grid-column:1/-1}
+  .nm-print-c0 .nm-c0-wide .nm-bond-ladybug{width:52mm;margin:0}
+  .nm-print-c0 .nm-c0-wide .nm-nl-g1315-eng{width:21mm;height:21mm}
+  .nm-print-c0 .nm-c0-wide .nm-nl-g1315-carw{width:19mm;height:21mm}
+  .nm-print-c0 .nm-c0-wide .nm-nl-g1315-trlinks{margin-left:30.5mm}
+  .nm-print-c0 .nm-c0-wide .nm-nl-g1315-linkw{width:19mm}
+  .nm-print-c0 .nm-c0-wide .nm-nl-g1315-tc-car{min-width:16mm;height:16mm;font-size:20px;box-sizing:border-box}
+  .nm-print-c0 .nm-c0-wide .nm-nl-g1315-tc-link{width:16mm;height:16mm;font-size:20px;box-sizing:border-box}
+  .nm-print-c0 .nm-w2-item .nm-nl-g1315-table td.nm-nl-g1315-blank{min-width:16mm;height:16mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-g1315-gtab td{min-width:16mm;height:16mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-g46-bond svg{width:64mm;max-width:100%}
+  .nm-print-c0 .nm-w2-item .nm-nl-g46-bond.mini svg{width:42mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-tallyboard{min-height:28mm;min-width:58mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-g13-wbox{height:22mm}
   .nm-print-c0 .nm-c0-guardian{font-size:13px;line-height:1.5;color:#655c50;font-weight:500;margin:3mm 0 0}
   .nm-print-c0 .nm-w2-instr,.nm-print-c0 .nm-nl-prompt,.nm-print-c0 .nm-nl-ask{font-family:'NM Series Sans',Pretendard,sans-serif}
   `;document.head.appendChild(el);
@@ -52,7 +86,7 @@ function decorate(sheet,profile,lang){
     el.textContent=verbal(tex.replace(/\\(?:square|Box)/g,'□').replace(/\\(?:text|mathrm|mathbf)\{([^}]+)\}/g,'$1').replace(/[{}]/g,''),lang);
     el.removeAttribute('data-tex');el.classList.remove('nm-w2-tex','nm-cp-tex');el.classList.add('nm-c0-verbal');
   }
-  const recurring=['순서가 달라도 같은 방법이에요.','빈 원을 채워요! 빈 접시에 그림도 그려 보세요.','각 접시에 한 개 이상씩 나눠요.','예시를 포함해 방법을 쓰고, 모두 몇 가지인지 써요.'];
+  const recurring=['순서가 달라도 같은 방법이에요.','빈 원을 채워요! 빈 접시에 그림도 그려 보세요.','빈 원을 채워요! 빈 날개에 점도 그려 보세요.','각 접시에 한 개 이상씩 나눠요.','예시를 포함해 방법을 쓰고, 모두 몇 가지인지 써요.'];
   for(const page of sheet.querySelectorAll('.nm-w2-page')){
     const boxes=[...page.querySelectorAll('.nm-w2-item')];
     for(const sentence of recurring){

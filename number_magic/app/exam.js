@@ -6570,9 +6570,13 @@ function renderRoundPagesBody(item, opts){
   // Joining concrete groups needs room for both the pictures and the number model.
   if(problems.some(p=>p.widget==='numberBond'&&p.dir==='join'))Object.assign(layout,{cols:2,rows:3,perPage:6,firstRows:0,pitch:74});
   if(problems.some(p=>p.widget==='numberBond'&&p.dir==='split'))Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
-  if(item.c0&&problems.some(p=>/overlapSum|gridSum|crossPlace|pyramid|treeFill|vertexSum|shapeEq|ruleTable|numberBond|tapMake|Paint|paint|split|Split|Group|group|match|Match|Rep|dotToDot/.test(p.widget||''))){
+  if(item.c0&&problems.some(p=>/g13Count|mysteryBox|pairUp|bondNum|overlapSum|gridSum|crossPlace|pyramid|treeFill|vertexSum|shapeEq|ruleTable|numberBond|tapMake|Paint|paint|split|Split|Group|group|match|Match|Rep|dotToDot/.test(p.widget||''))){
     Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
   }
+  if(item.c0&&item.thread==='NS2')Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
+  // Six large answer slots and multi-row candle plates need the full writing width.
+  if(item.c0&&problems.some(p=>(p.widget==='g13Order'||p.widget==='numberTrain')))Object.assign(layout,{cols:1,rows:3,perPage:3,firstRows:0,pitch:74});
+  if(item.c0&&problems.some(p=>p.widget==='gridSum'||p.widget==='splitDraw'&&p.skin==='cake'||p.widget==='numberBond'&&/무당벌레/.test(p.prompt?.ko||'')))Object.assign(layout,{cols:1,rows:2,perPage:2,firstRows:0,pitch:110});
   const middleSix = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] && ['visual','word'].includes(layout.type);
   if(middleSix || (item.pacing && ['visual','word'].includes(layout.type))){
     // 원문/정답/모눈 비율은 유지하고, 그래프·문장제의 연습 지면은 2열×3행으로.
@@ -6904,7 +6908,8 @@ function renderRoundPagesBody(item, opts){
       if(isFirstRamp) rampTagged = true;
       let h = w2CellHtml(p, num, item.thread, layout.type === 'vertical', isFirstRamp, layout.type, num - 1, problems.length,
         !!(opts.editorialC4 && examLang() === 'ko'),levelPrintCondition(item.thread,item.level)); num++;
-      if(item.c0&&/overlapSum|gridSum|crossPlace|pyramid|treeFill|vertexSum|shapeEq|ruleTable|numberBond|tapMake|Paint|paint|split|Split|Group|group|match|Match|Rep|dotToDot/.test(p.widget||''))h=h.replace('class="nm-w2-item','class="nm-w2-item nm-c0-draw');
+      if(item.c0&&/g13Count|mysteryBox|pairUp|bondNum|overlapSum|gridSum|crossPlace|pyramid|treeFill|vertexSum|shapeEq|ruleTable|numberBond|tapMake|Paint|paint|split|Split|Group|group|match|Match|Rep|dotToDot/.test(p.widget||''))h=h.replace('class="nm-w2-item','class="nm-w2-item nm-c0-draw');
+      if(item.c0&&(p.widget==='numberTrain'||p.widget==='g13Order'||p.widget==='gridSum'||p.widget==='splitDraw'&&p.skin==='cake'||p.widget==='numberBond'&&/무당벌레/.test(p.prompt?.ko||'')))h=h.replace('class="nm-w2-item','class="nm-w2-item nm-c0-wide');
       if(partialCol){
         const r = (i % rowsPerCol) + 1, c = Math.floor(i / rowsPerCol) + 1;
         h = h.replace(/^(\s*<div\b)/, `$1 style="grid-row:${r};grid-column:${c}"`);
