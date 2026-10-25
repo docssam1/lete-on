@@ -5557,7 +5557,8 @@ function w2NeighborExampleHtml(p){
     const items=Array.from({length:n},()=>({e:'🪙',t:true}));
     return `<div class="nm-w2-example nm-neighbor-example" data-worked-widget="coins"><span class="nm-w2-ex-badge">${esc(lk('예시 · 먼저 함께 풀어요','Example · Let’s solve one','示例·一起做一题'))}</span><p>${esc(n>p.items.length?lk('동전을 한 개 더 놓은 뒤, 10원씩 세어요.','Add one coin, then count by 10.','再放一枚硬币，按10数。'):lk('동전 한 개는 10원이에요. 10원씩 세어요.','Each coin is 10. Count by 10.','一枚硬币是10，按10数。'))}</p>${nlSceneHtml(items)}<div class="nm-neighbor-sum">${Array.from({length:n},(_,i)=>(i+1)*10).join(' → ')}</div><p>${esc(lk(`모두 ${p.answer}원이에요.`,`${p.answer} won in all.`,`一共${p.answer}元。`))}</p></div>`;
   }
-  return window.NM_PAPER_EXAMPLES.html(p,w2PaperExampleKit());
+  // Extra, manually selected NL levels keep their existing paper path until their widget has a reviewed example.
+  return window.NM_PAPER_EXAMPLES.supports(p)?window.NM_PAPER_EXAMPLES.html(p,w2PaperExampleKit()):'';
 }
 function w2ExampleHtml(threadId, level, code, exclude, young, exactSkip, meta){
   const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));

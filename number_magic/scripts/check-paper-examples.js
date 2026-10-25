@@ -9,7 +9,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg'
 const server=http.createServer((req,res)=>{const f=path.resolve(repo,'.'+decodeURIComponent(req.url.split('?')[0]));if(!f.startsWith(repo+path.sep)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){res.writeHead(404);return res.end();}res.writeHead(200,{'Content-Type':mime[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(res);});
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));let browser;try{
  browser=await chromium.launch();const page=await browser.newPage();
- let src=fs.readFileSync(path.join(repo,'number_magic/app/exam.js'),'utf8').replace("if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_EXAM;",'window.__paperKit=w2PaperExampleKit();\n'+"if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_EXAM;");
+ let src=fs.readFileSync(path.join(repo,'number_magic/app/exam.js'),'utf8').replace("if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_EXAM;",'window.__paperKit=w2PaperExampleKit();window.__paperBody=w2NeighborExampleHtml;\n'+"if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_EXAM;");
  src=src.replace("  const sheet = document.createElement('div');\n  sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems)","  window.__paperRounds=rounds;\n  const sheet = document.createElement('div');\n  sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems)");
  await page.route('**/app/exam.js?*',r=>r.fulfill({status:200,contentType:'text/javascript',body:src}));
  const origin='http://127.0.0.1:'+server.address().port;
@@ -18,6 +18,7 @@ const server=http.createServer((req,res)=>{const f=path.resolve(repo,'.'+decodeU
   const refs=new Map(),widgets=new Set();let checked=0,semantic=0;
   function collect(o){if(!o||typeof o!=='object')return;if(/^NL\d+$/.test(o.t)&&o.lv)refs.set(o.t+'@'+o.lv,[o.t,o.lv]);for(const v of Object.values(o))if(typeof v==='object')collect(v);}
   collect(NM_COURSES.C0.sessions);
+  if(__paperBody({widget:'g46LineDraw'})!=='')throw Error('Unsupported manual widget must keep its existing paper behavior');
   const eq=(a,b,msg)=>{if(JSON.stringify(a)!==JSON.stringify(b))throw Error(msg+': '+JSON.stringify(a)+' != '+JSON.stringify(b));semantic++;};
   for(const [ref,[t,lv]]of refs)for(let seed=1;seed<=12;seed++){
    const p=NM_EXAM.buildProblems(t,lv,1,seed*1907)[0];
