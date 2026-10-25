@@ -6,11 +6,9 @@
      (topbar / mission / play area / dock) with the same row heights and the same
      topbar column template, so exit, brand, LEVEL n + k / 5, mute and the level
      button land exactly where a child already expects them.
-   - Nothing may scroll. `body{overflow:hidden}` plus `minmax(0,1fr)` on the play
-     row means the board is the only flexible thing, and its WIDTH is derived from a
-     viewport-height budget (--board-h) so its height can never exceed the row it
-     lives in. 844x390 and 740x360 landscape and 1440x900 desktop are the sizes the
-     breakpoints are tuned for.
+   - Landscape and desktop stay in one viewport. In portrait copy mode, the model
+     sits above a full-size build board and a short phone can scroll vertically.
+     The board width is constrained so no horizontal scrolling is needed.
    - Finger targets: the peg circle drawn on screen is small, but an invisible
      .peg-hit circle of radius 9.5 viewBox units sits over it. The compact landscape
      rows leave the board about 240-270px wide on a phone, keeping each hit target
@@ -174,29 +172,7 @@ button { cursor: pointer }
 .dialog header { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid #d6dbe3; background: #fdfcf8 }
 .dialog h2 { margin: 0; color: var(--navy) }
 .dialog header button { width: 36px; height: 36px; border: 1px solid #c3ccd9; border-radius: 6px; background: #fff }
-.tutorial-card { display: grid; grid-template-columns: 120px minmax(190px, 230px) minmax(220px, 1fr); align-items: center; gap: 16px; padding: 18px }
-.tutorial-card .cubi-sprite { width: 120px; height: 120px }
-.tutorial-copy { min-width: 0 }
-.tutorial-card p { min-height: 82px; margin: 0; font-size: 18px; font-weight: 800; line-height: 1.45 }
-.tutorial-card button, .complete-actions > * { min-height: 46px; border: 0; border-radius: 7px; background: #2f4f74; color: #fff; font-weight: 900; text-decoration: none }
-.tutorial-card button { width: 100% }
-.tutorial-demo { aspect-ratio: 1; min-width: 0; padding: 8px; border: 5px solid #9c6a37; border-radius: 8px; background: linear-gradient(145deg, #d2a262, #98602e); box-shadow: inset 0 0 0 2px #f1cc8b, 0 8px 18px #3b2a1d35 }
-.tutorial-demo svg { display: block; width: 100%; height: 100%; overflow: visible }
-.tutorial-board-face { fill: #e9c88d; stroke: #6d4526; stroke-width: 1.5 }
-.tutorial-demo-peg { fill: #f8ecd0; stroke: #6f4c2c; stroke-width: 1.4; transform-box: fill-box; transform-origin: center }
-.tutorial-demo-peg.active { animation: tutorial-peg-pulse 1.8s ease-in-out infinite; animation-delay: var(--delay, 0s) }
-.tutorial-demo-band { fill: none; stroke: #247b8c; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; animation: tutorial-band-draw .55s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--delay, 0s) }
-.tutorial-demo-band.bad { stroke: #cf3f38; animation: tutorial-band-draw .45s ease-out forwards, tutorial-band-warn .8s .45s ease-in-out infinite }
-.tutorial-demo-fill { fill: #51a8b34a; opacity: 0; animation: tutorial-fill-in .35s ease-out forwards; animation-delay: var(--delay, 0s) }
-.tutorial-demo-tap { fill: none; stroke: #fff7c9; stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; animation: tutorial-tap 1.8s ease-out infinite; animation-delay: var(--delay, 0s) }
-@keyframes tutorial-peg-pulse { 0%, 52%, 100% { transform: scale(1) } 10%, 22% { transform: scale(1.65); fill: #fff4a9; stroke: #c88716 } }
-@keyframes tutorial-band-draw { to { stroke-dashoffset: 0 } }
-@keyframes tutorial-band-warn { 50% { opacity: .25 } }
-@keyframes tutorial-fill-in { to { opacity: 1 } }
-@keyframes tutorial-tap { 0%, 7% { opacity: 0; transform: scale(.45) } 12% { opacity: 1 } 28%, 100% { opacity: 0; transform: scale(2.3) } }
-.tutorial-dots { display: flex; gap: 6px; margin: 12px 0 }
-.tutorial-dots i { width: 9px; height: 9px; border-radius: 50%; background: #d5d8dd }
-.tutorial-dots i.active { background: var(--brass) }
+.complete-actions > * { min-height: 46px; border: 0; border-radius: 7px; background: #2f4f74; color: #fff; font-weight: 900; text-decoration: none }
 .level-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; padding: 12px }
 .level-card { min-width: 0; min-height: 155px; display: grid; align-content: start; gap: 7px; padding: 11px; border: 1px solid #d0d6df; border-radius: 7px; background: #fff; text-align: left }
 .level-card span { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--brass); color: #4a3200; font-weight: 900 }
@@ -268,11 +244,6 @@ button { cursor: pointer }
   .level-list { grid-template-columns: repeat(5, minmax(0, 1fr)) }
   .level-card { min-height: 96px }
   .dialog { padding: 7px }
-  .tutorial-card { grid-template-columns: 78px minmax(150px, 185px) minmax(190px, 1fr); gap: 10px; padding: 10px }
-  .tutorial-card .cubi-sprite { width: 78px; height: 78px }
-  .tutorial-card p { min-height: 58px; font-size: 13px; line-height: 1.35 }
-  .tutorial-card button { min-height: 38px }
-  .tutorial-dots { margin: 7px 0 }
 }
 
 @media (orientation: portrait) and (max-width: 600px) {
@@ -289,16 +260,10 @@ button { cursor: pointer }
   .answer-dock { grid-template-columns: 1fr; gap: 6px; padding: 7px 76px 7px 7px }
   .cubi-guide { position: fixed }
   .level-list { grid-template-columns: repeat(2, minmax(0, 1fr)) }
-  .tutorial-card { grid-template-columns: 72px minmax(0, 1fr); gap: 10px }
-  .tutorial-card .cubi-sprite { width: 72px; height: 72px }
-  .tutorial-demo { grid-column: 1 / -1; width: min(210px, 58vw); justify-self: center }
-  .tutorial-card p { min-height: 0; font-size: 14px }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important }
-  .tutorial-demo-band { stroke-dashoffset: 0 }
-  .tutorial-demo-fill { opacity: 1 }
 }
 
 /* ------------------------------------------------------- material refresh 2026 */
@@ -353,6 +318,16 @@ body { background: #d7e4df }
 }
 .peg.partition-peg { fill: #1c6f77; stroke: #fff4c5; stroke-width: 1.15 }
 .peg.required-peg, .partition-required-model { fill: #e55f4f; stroke: #fff3bd; stroke-width: 1.4; filter: drop-shadow(0 0 2px rgba(150,42,31,.65)) }
+.peg.tutorial-target {
+  fill: #fff4ac;
+  stroke: #116d75;
+  stroke-width: 2.3;
+  filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 5px #087e85);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tutorial-target-pulse 1.5s ease-in-out infinite;
+}
+@keyframes tutorial-target-pulse { 50% { transform: scale(1.45) } }
 .band { stroke: url(#rubberBand); stroke-width: 3.2; filter: drop-shadow(0 1.2px .6px rgba(8,63,66,.42)) }
 .band.solved { stroke: #248b62 }
 .band-fill { fill: rgba(27,145,148,.2) }
@@ -360,7 +335,7 @@ body { background: #d7e4df }
 .model-band .band { stroke: #226fa0; stroke-width: 3.2 }
 .partition-outline { fill: rgba(255,238,175,.16); stroke: #1a6870 }
 .partition-line { stroke: #da684e; filter: drop-shadow(0 1px .5px rgba(112,43,31,.36)) }
-.tool-panel button, .tool-panel a, .count-choice, .next-button, .tutorial-card button, .complete-actions > * {
+.tool-panel button, .tool-panel a, .count-choice, .next-button, .complete-actions > * {
   border: 1px solid transparent;
   background:
     linear-gradient(180deg, #fff 0%, #e7efea 58%, #cbd9d1 100%) padding-box,
@@ -379,6 +354,9 @@ body { background: #d7e4df }
 .board.hinted .peg { stroke: #fff0a2; stroke-width: 1.3 }
 .guide-bubble { border-color: #8fa99c; background: #fffef8; box-shadow: 0 6px 16px rgba(35,71,61,.2) }
 .answer-dock { border-top-color: #8da99b; background: rgba(249,252,247,.97); box-shadow: 0 -5px 16px rgba(28,72,58,.12), inset 0 1px #fff }
+.answer-dock.tutorial-active { border-top: 3px solid #158c91; background: #f2fbf8 }
+.tutorial-skip { grid-column: 3; min-height: 42px; border: 1px solid #789d95; border-radius: 7px; background: #fff; color: #17534f; font-weight: 800 }
+.tutorial-skip[hidden] { display: none }
 .shape-stats b { border-color: #a6b9ad; border-radius: 7px; background: #fffef9 }
 .level-card.current { outline: 3px solid #288d83; outline-offset: -3px }
 .complete-actions [hidden] { display: none !important }
@@ -415,8 +393,21 @@ body { background: #d7e4df }
   .board { border-width: 4px }
   .answer-dock { align-content: center; min-height: 0; padding: 6px 72px 6px 7px }
   .guide-bubble { right: 66px; bottom: 120px; width: min(240px, calc(100vw - 94px)); max-height: none; overflow: visible }
-  .tutorial-card { grid-template-areas: "cubi copy" "demo demo" }
-  .tutorial-card .cubi-sprite { grid-area: cubi }
-  .tutorial-copy { grid-area: copy }
-  .tutorial-demo { grid-area: demo }
+}
+
+@media (orientation: portrait) and (max-width: 600px) {
+  body.copy-mode { overflow-x: hidden; overflow-y: auto }
+  .copy-mode .yard-shell { position: relative; height: auto; min-height: var(--app-dvh); grid-template-rows: 52px 68px auto 122px; overflow: visible }
+  .copy-mode .play-area { grid-template-columns: minmax(0, 1fr); grid-template-rows: 150px auto 44px; align-content: center; gap: 6px; padding: 6px 12px }
+  .copy-mode .model-panel { grid-column: 1; grid-row: 1; grid-template-columns: minmax(0, 1fr) 148px; grid-template-rows: minmax(0, 1fr) }
+  .copy-mode .model-panel .board-heading { flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px; padding: 12px; border-right: 1px solid #b8c8bf; border-bottom: 0; font-size: 13px }
+  .copy-mode .model-panel .board-heading b { font-size: 11px }
+  .copy-mode .model-panel .board-stage { height: 100%; place-items: center; padding: 4px }
+  .copy-mode .model-panel .board { width: min(100%, 132px) }
+  .copy-mode .build-panel { grid-column: 1; grid-row: 2; grid-template-rows: 30px auto }
+  .copy-mode .build-panel .board-stage { place-items: center }
+  .copy-mode .build-panel .board { width: min(100%, calc(100vw - 50px), 340px) }
+  .copy-mode .tool-panel { grid-column: 1; grid-row: 3 }
+  .copy-mode .cubi-guide { position: absolute; bottom: 4px }
+  .tutorial-skip { grid-column: 1; justify-self: start; min-height: 34px; padding: 5px 12px }
 }

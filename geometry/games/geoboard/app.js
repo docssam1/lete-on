@@ -26,7 +26,7 @@ import {
   isClosed, vertexCount, edgeCount,
   pointOnSegment, segmentsIntersect
 } from "./levels.js?v=geoboard-8";
-import { messages, text } from "./i18n.js?v=geoboard-8";
+import { messages, text } from "./i18n.js?v=geoboard-10";
 import {
   squareBoardPoints, triangularBoardPoints,
   squareDistanceSquared, triangularDistanceSquared,
@@ -71,6 +71,7 @@ const state = {
   solved: false,
   wrong: 0,
   hints: 0,
+  tutorialActive: false,
   audio: localStorage.getItem("gfield-audio-muted") !== "true",
   lang: language
 };
@@ -80,8 +81,7 @@ const ui = {
   model: $("#modelBoard"), modelShape: $("#modelShape"),
   prompt: $("#prompt"), answerPrompt: $("#answerPrompt"), stats: $("#shapeStats"), next: $("#nextButton"),
   guide: $("#cubiGuide"), bubble: $("#guideBubble"), toast: $("#toast"), success: $("#success"),
-  tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialNext: $("#tutorialNext"),
-  tutorialDemo: $("#tutorialDemoLayer"), tutorialPegs: $("#tutorialPegLayer"),
+  tutorialSkip: $("#tutorialSkip"),
   levelDialog: $("#levelDialog"), levelList: $("#levelList"), complete: $("#completeDialog")
 };
 
@@ -132,8 +132,8 @@ function speak(line) {
   speechSynthesis.speak(utterance);
 }
 
-// The ONLY entry point that makes Cubi talk. Called from the tutorial, the hint
-// button and level completion — nowhere else.
+// Cubi's speech bubble is reserved for hints and level completion. The first-visit
+// board guidance uses the dock text and speaks it without covering the pegs.
 function cubiSays(line) {
   ui.bubble.textContent = line;
   ui.guide.classList.add("show");
@@ -234,7 +234,8 @@ function renderBoard() {
     const [cx, cy] = projectPoint(point, p);
     const outlinePoint = isPartitionProblem(p) && p.outline.some((candidate) => samePoint(candidate, point));
     const requiredPoint = isPartitionProblem(p) && p.requiredVertex != null && samePoint(p.outline[p.requiredVertex], point);
-    ui.pegs.append(svgNode("circle", { class: `peg${outlinePoint ? " partition-peg" : ""}${requiredPoint ? " required-peg" : ""}`, cx, cy, r: requiredPoint ? PEG_RADIUS * 1.85 : outlinePoint ? PEG_RADIUS * 1.35 : PEG_RADIUS }));
+    const guided = tutorialTargets().some((target) => samePoint(target, point));
+    ui.pegs.append(svgNode("circle", { class: `peg${outlinePoint ? " partition-peg" : ""}${requiredPoint ? " required-peg" : ""}${guided ? " tutorial-target" : ""}`, cx, cy, r: requiredPoint ? PEG_RADIUS * 1.85 : outlinePoint ? PEG_RADIUS * 1.35 : PEG_RADIUS }));
   });
 
   ui.bands.replaceChildren();
@@ -310,24 +311,26 @@ function renderHits() {
   ui.hits.replaceChildren();
   if (isPlacementQuestion(p)) return;
   const interactivePoints = isPartitionProblem(p) ? p.outline : boardPoints(p);
+  const guidedTargets = tutorialTargets();
+  const preferred = state.tutorialActive && state.path.length ? guidedTargets[0] : null;
+  const roving = preferred || (focused ? focused.map(Number) : guidedTargets[0] || interactivePoints[0]);
   interactivePoints.forEach(([x, y]) => {
       const used = state.path.some((point) => samePoint(point, [x, y]));
       const isStart = state.path.length > 0 && samePoint(state.path[0], [x, y]);
       const isRequired = isPartitionProblem(p) && p.requiredVertex != null && samePoint(p.outline[p.requiredVertex], [x, y]);
       const [cx, cy] = projectPoint([x, y], p);
-      const isRovingPeg = !focused
-        ? interactivePoints[0][0] === x && interactivePoints[0][1] === y
-        : Number(focused[0]) === x && Number(focused[1]) === y;
+      const isGuided = guidedTargets.some((point) => samePoint(point, [x, y]));
+      const isRovingPeg = samePoint(roving, [x, y]);
       const node = svgNode("circle", {
         class: "peg-hit",
         cx, cy, r: p.boardType === "triangular" ? 10.2 : 10.5,
         "data-x": x, "data-y": y,
         role: "button", tabindex: state.solved || !isRovingPeg ? -1 : 0,
-        "aria-label": `${t("pegAria", { row: y + 1, col: x + 1 })} ${isRequired ? t("pegRequired") : isStart ? t("pegStart") : used ? t("pegUsed") : t("pegFree")}`
+        "aria-label": `${t("pegAria", { row: y + 1, col: x + 1 })} ${isGuided ? t("tutorialPegTarget") : isRequired ? t("pegRequired") : isStart ? t("pegStart") : used ? t("pegUsed") : t("pegFree")}`
       });
       ui.hits.append(node);
   });
-  if (focused) ui.hits.querySelector(`.peg-hit[data-x="${focused[0]}"][data-y="${focused[1]}"]`)?.focus?.();
+  if (focused) ui.hits.querySelector(`.peg-hit[data-x="${roving[0]}"][data-y="${roving[1]}"]`)?.focus?.();
 }
 
 function renderModel() {
@@ -555,6 +558,10 @@ function onPegTap(x, y) {
   if (isPlacementQuestion(p)) return;
   if (isPartitionProblem(p)) return onPartitionPegTap(x, y);
   const target = [x, y];
+  if (state.tutorialActive && !tutorialTargets().some((point) => samePoint(point, target))) {
+    toast(t("tutorialOtherPeg"));
+    return;
+  }
   const path = state.path;
   const wanted = isCountProblem(p) ? (p.kind === "square-count" ? 4 : 3) : p.vertices.length;
 
@@ -562,6 +569,7 @@ function onPegTap(x, y) {
     path.push(target);
     playTone("tap");
     refresh();
+    if (state.tutorialActive) speak(t("tutorialSecondPeg"));
     return;
   }
 
@@ -610,6 +618,7 @@ function onPegTap(x, y) {
 
   path.push(target);
   playTone("tap");
+  if (state.tutorialActive && path.length === 2) finishTutorial();
   refresh();
 
   // An open path is finished the moment it has as many pegs as the model.
@@ -780,6 +789,7 @@ function renderStatus() {
   const p = problem();
   const level = levelData();
   const points = currentPoints();
+  document.body.classList.toggle("copy-mode", p.kind === "open" || p.kind === "closed");
   $("#levelLabel").textContent = t("levelLabel", { level: level.id });
   $("#problemLabel").textContent = `${state.problem + 1} / ${state.queue.length}`;
   $("#missionTitle").textContent = t(level.titleKey);
@@ -839,6 +849,9 @@ function renderStatus() {
   });
 
   ui.next.hidden = !state.solved;
+  ui.tutorialSkip.hidden = !state.tutorialActive;
+  document.querySelector(".answer-dock").classList.toggle("tutorial-active", state.tutorialActive);
+  if (state.tutorialActive) ui.answerPrompt.textContent = t(state.path.length ? "tutorialSecondPeg" : "tutorialFirstPeg");
 }
 
 /** One redraw path for every state change, so the SVG can never fall out of sync. */
@@ -865,7 +878,7 @@ function resetProblem() {
 }
 
 function focusFirstAction() {
-  const target = ui.hits.querySelector(".peg-hit") || ui.stats.querySelector(".count-choice");
+  const target = ui.hits.querySelector('.peg-hit[tabindex="0"]') || ui.stats.querySelector(".count-choice");
   target?.focus?.();
 }
 
@@ -916,90 +929,23 @@ function renderLevelList() {
 
 /* ---------------------------------------------------------------- tutorial */
 
-const tutorialSteps = ["tutorial1", "tutorial2", "tutorial3", "tutorial4"];
-let tutorialStep = 0;
-let tutorialReturnFocus = null;
-
-const tutorialPeg = (x, y, active, delay) => {
-  const peg = svgNode("circle", { class: `tutorial-demo-peg${active ? " active" : ""}`, cx: x, cy: y, r: 4 });
-  if (delay) peg.style.setProperty("--delay", delay);
-  return peg;
-};
-
-function tutorialLine(a, b, delay, bad) {
-  const line = svgNode("line", {
-    class: `tutorial-demo-band${bad ? " bad" : ""}`,
-    x1: a[0], y1: a[1], x2: b[0], y2: b[1], pathLength: 100
-  });
-  line.style.setProperty("--delay", delay);
-  return line;
+function tutorialTargets() {
+  if (!state.tutorialActive) return [];
+  const vertices = problem().vertices;
+  if (state.path.length === 0) return [vertices[0], vertices[vertices.length - 1]];
+  return [samePoint(state.path[0], vertices[0]) ? vertices[1] : vertices[vertices.length - 2]];
 }
 
-function tutorialTap(x, y, delay) {
-  const tap = svgNode("circle", { class: "tutorial-demo-tap", cx: x, cy: y, r: 7 });
-  tap.style.setProperty("--delay", delay);
-  return tap;
+function finishTutorial() {
+  state.tutorialActive = false;
+  localStorage.setItem(TUTORIAL_KEY, "done");
 }
 
-function renderTutorialDemo() {
-  ui.tutorialDemo.replaceChildren();
-  ui.tutorialPegs.replaceChildren();
-  const coords = [18, 39, 61, 82];
-  coords.forEach((y, row) => coords.forEach((x, col) => {
-    const sequence = tutorialStep === 0 && (row === 1 || row === 2) && (col === 1 || col === 2);
-    ui.tutorialPegs.append(tutorialPeg(x, y, sequence, `${(row + col) * .16}s`));
-  }));
-
-  if (tutorialStep === 0) return;
-  if (tutorialStep === 1) {
-    ui.tutorialDemo.append(tutorialLine([39, 61], [82, 39], ".65s"));
-    ui.tutorialDemo.append(tutorialTap(39, 61, "0s"), tutorialTap(82, 39, "1.05s"));
-    return;
-  }
-  if (tutorialStep === 2) {
-    ui.tutorialDemo.append(tutorialLine([18, 18], [82, 82], ".1s"));
-    ui.tutorialDemo.append(tutorialLine([82, 18], [18, 82], ".8s", true));
-    ui.tutorialDemo.append(tutorialTap(82, 18, ".35s"), tutorialTap(18, 82, "1.05s"));
-    return;
-  }
-
-  const triangle = [[39, 82], [61, 39], [82, 82]];
-  const fill = svgNode("polygon", {
-    class: "tutorial-demo-fill",
-    points: triangle.map((point) => point.join(",")).join(" ")
-  });
-  fill.style.setProperty("--delay", "1.85s");
-  ui.tutorialDemo.append(fill);
-  ui.tutorialDemo.append(tutorialLine(triangle[0], triangle[1], ".1s"));
-  ui.tutorialDemo.append(tutorialLine(triangle[1], triangle[2], ".7s"));
-  ui.tutorialDemo.append(tutorialLine(triangle[2], triangle[0], "1.3s"));
-  ui.tutorialDemo.append(tutorialTap(triangle[0][0], triangle[0][1], "0s"));
-  ui.tutorialDemo.append(tutorialTap(triangle[1][0], triangle[1][1], ".6s"));
-  ui.tutorialDemo.append(tutorialTap(triangle[2][0], triangle[2][1], "1.2s"));
-  ui.tutorialDemo.append(tutorialTap(triangle[0][0], triangle[0][1], "1.8s"));
-}
-
-// Only on the very first problem of a first visit — never again on this device.
+// Guide one real connection on the first visit, then leave the problem in place.
 function openTutorial() {
-  if (state.problem !== 0 || state.level !== readyLevels[0].id) return;
+  if (state.problem !== 0 || state.level !== readyLevels[0].id || state.path.length) return;
   if (!forceTutorial && localStorage.getItem(TUTORIAL_KEY) === "done") return;
-  tutorialReturnFocus = document.activeElement;
-  ui.tutorial.hidden = false;
-  renderTutorial();
-  queueMicrotask(() => ui.tutorialNext.focus());
-}
-
-function renderTutorial() {
-  const line = t(tutorialSteps[tutorialStep]);
-  ui.tutorialText.textContent = line;
-  renderTutorialDemo();
-  ui.tutorialDots.replaceChildren(...tutorialSteps.map((_, index) => {
-    const dot = document.createElement("i");
-    if (index === tutorialStep) dot.className = "active";
-    return dot;
-  }));
-  ui.tutorialNext.textContent = t(tutorialStep === tutorialSteps.length - 1 ? "tutorialStart" : "tutorialNext");
-  speak(line);
+  state.tutorialActive = true;
 }
 
 /* ---------------------------------------------------------------- language */
@@ -1016,6 +962,7 @@ function applyLanguage() {
   $("#modelLabel").textContent = t("modelLabel");
   $("#buildLabel").textContent = t("buildLabel");
   ui.next.textContent = t("next");
+  ui.tutorialSkip.textContent = t("tutorialSkip");
   $("#dialogTitle").textContent = t("chooseLevel");
   $("#closeLevels").setAttribute("aria-label", t("close"));
   $("#practiceButton").textContent = t("practice");
@@ -1035,7 +982,7 @@ function closeLevelDialog() {
 }
 
 document.addEventListener("keydown", (event) => {
-  const dialog = [ui.tutorial, ui.levelDialog, ui.complete].find((candidate) => !candidate.hidden);
+  const dialog = [ui.levelDialog, ui.complete].find((candidate) => !candidate.hidden);
   if (!dialog) return;
   if (event.key === "Escape" && dialog === ui.levelDialog) {
     event.preventDefault();
@@ -1127,15 +1074,10 @@ $("#levelButton").addEventListener("click", () => {
 });
 $("#closeLevels").addEventListener("click", closeLevelDialog);
 ui.levelDialog.addEventListener("click", (event) => { if (event.target === ui.levelDialog) closeLevelDialog(); });
-ui.tutorialNext.addEventListener("click", () => {
-  if (tutorialStep < tutorialSteps.length - 1) { tutorialStep += 1; renderTutorial(); return; }
-  localStorage.setItem(TUTORIAL_KEY, "done");
-  ui.tutorial.hidden = true;
-  cubiSays(t("guideStart"));
-  const target = tutorialReturnFocus instanceof HTMLElement && tutorialReturnFocus !== document.body
-    ? tutorialReturnFocus
-    : ui.hits.querySelector(".peg-hit");
-  target?.focus();
+ui.tutorialSkip.addEventListener("click", () => {
+  finishTutorial();
+  refresh();
+  focusFirstAction();
 });
 $("#nextLevelButton").addEventListener("click", () => {
   const next = levels.find((level) => level.id === state.level + 1);
@@ -1156,5 +1098,6 @@ loadSession();
 applyLanguage();
 renderLevelList();
 renderModel();
+openTutorial();
 refresh();
-setTimeout(openTutorial, 200);
+if (state.tutorialActive) speak(t("tutorialFirstPeg"));
