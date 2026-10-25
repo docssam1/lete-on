@@ -15,6 +15,25 @@ const triLattice = (x0, y0, s) => {
   return { tri, shape: (list, extra) => [...list.map((t) => tri(t)), ...(extra ? [tri(extra, "#f6dcd3", "red")] : [])] };
 };
 
+// 쌓기나무 그림(등각): map[y][x] = 그 자리의 층수. 뒤에서 앞으로, 아래에서 위로 그려 앞의 것이 덮게 한다.
+const iso = (ox, oy, w = 30, h = 17, H = 34) => {
+  const P = (x, y, z) => [ox + (x - y) * w, oy + (x + y) * h - z * H];
+  const face = (pts, fill) => ({ kind: "path", d: `M ${pts.map(([a, b, c]) => P(a, b, c).map((v) => v.toFixed(1)).join(" ")).join(" L ")} Z`, stroke: "ink", width: 1.8, fill, quick: true });
+  const cube = (x, y, z, tone = ["#f3ead2", "#d8c9a3", "#bfae86"]) => [
+    face([[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]], tone[0]),
+    face([[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]], tone[2]),
+    face([[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]], tone[1])];
+  const stack = (map, tone) => { const out = [], cells = [];
+    map.forEach((row, y) => row.forEach((n, x) => { for (let z = 0; z < n; z++) cells.push([x, y, z]); }));
+    cells.sort((a, b) => (a[0] + a[1]) - (b[0] + b[1]) || a[2] - b[2]);
+    for (const [x, y, z] of cells) out.push(...cube(x, y, z, tone)); return out; };
+  const topLabel = (x, y, z, v, color = "red") => { const [cx, cy] = P(x + 0.5, y + 0.5, z); return T(cx, cy + 10, String(v), color, Math.round(w * 0.8), "center"); };
+  return { P, cube, stack, topLabel };
+};
+const topGrid = (x0, y0, map, cell = 46, color = "blue") => [{ kind: "grid", x: x0, y: y0, cols: map[0].length, rows: map.length, cell, color: "ink" },
+  ...map.flatMap((row, r) => row.map((n, c) => T(x0 + (c + 0.5) * cell, y0 + (r + 0.5) * cell + 10, String(n), n ? color : "gray", 28, "center")))];
+const sum2 = (map) => map.flat().reduce((a, b) => a + b, 0);
+
 export const BOARDS_B04 = {
   "book-04/polyomino-family-count": (() => {
     const TRAP = [["up", 0, 0], ["down", 0, 0], ["up", 1, 0]];
@@ -142,6 +161,227 @@ export const BOARDS_B04 = {
       ]
     };
   })()
+  ,"book-04/fold-position-source": (() => {
+    const L = [["ㄱ", "ㄴ"], ["ㄷ", "ㄹ"]], X0 = 100, Y0 = 150, S = 90;
+    const sq = (x, y, s, labels, color = "ink") => [{ kind: "box", x, y, w: 2 * s, h: 2 * s, color }, { kind: "line", x1: x + s, y1: y, x2: x + s, y2: y + 2 * s, color: "gray", width: 2, dash: true }, { kind: "line", x1: x, y1: y + s, x2: x + 2 * s, y2: y + s, color: "gray", width: 2, dash: true }, ...labels.flatMap((row, r) => row.map((t, c) => T(x + (c + 0.5) * s, y + (r + 0.5) * s + 12, t, "blue", 34, "center")))];
+    return {
+      title: "접은 색종이는 어디일까요",
+      kicker: "4권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "색종이를 여러 번 접은 뒤 마지막에 맨 아래에 남은 칸이, 처음 색종이의 어느 칸이었는지 찾아요. 넘어가는 쪽과 남는 쪽을 구별하는 게 핵심이에요.",
+          items: [title("접은 색종이는 어디?")] },
+        { say: "정사각형 색종이를 네 칸으로 나눠 이름을 붙여요. 위 왼쪽 ㄱ, 위 오른쪽 ㄴ, 아래 왼쪽 ㄷ, 아래 오른쪽 ㄹ.",
+          items: sq(X0, Y0, S, L) },
+        { say: "첫 번째 접기예요. 화살표가 오른쪽을 가리켜요. 화살표 쪽으로 넘어가는 것은 왼쪽 반이에요. 왼쪽 반이 들려서 오른쪽 반 위에 덮여요.",
+          items: [{ kind: "arrow", x1: X0 + 30, y1: Y0 - 18, x2: X0 + 2 * S - 30, y2: Y0 - 18, bend: 24, color: "red", width: 3.5 }] },
+        { say: "그러면 그 자리에 그대로 남는 쪽은 오른쪽 반이에요. 맨 아래에 깔린 것은 ㄴ과 ㄹ이에요.",
+          items: [...sq(X0 + 2 * S + 80, Y0, S / 2 * 2, [["", "ㄴ"], ["", "ㄹ"]], "gray").slice(0, 1), { kind: "box", x: X0 + 2 * S + 80 + S, y: Y0, w: S, h: 2 * S, color: "green" }, T(X0 + 2 * S + 80 + 1.5 * S, Y0 + 0.5 * S + 12, "ㄴ", "green", 34, "center"), T(X0 + 2 * S + 80 + 1.5 * S, Y0 + 1.5 * S + 12, "ㄹ", "green", 34, "center"), T(X0 + 2 * S + 80, Y0 + 2 * S + 36, "남는 쪽: ㄴ, ㄹ", "green", 24)] },
+        { say: "두 번째 접기예요. 화살표가 위를 가리켜요. 아래 반이 들려서 위로 넘어가요. 그대로 남는 쪽은 위 반이에요.",
+          items: [{ kind: "arrow", x1: X0 + 2 * S + 80 + 2 * S + 26, y1: Y0 + 2 * S - 20, x2: X0 + 2 * S + 80 + 2 * S + 26, y2: Y0 + 20, bend: 0, color: "red", width: 3.5 }] },
+        { say: "남아 있던 ㄴ과 ㄹ 가운데 위에 있는 것은 ㄴ이에요. 그래서 마지막까지 그 자리에 남은 칸은 ㄴ이에요.",
+          items: [{ kind: "box", x: X0 + 2 * S + 80 + S + 6, y: Y0 + 6, w: S - 12, h: S - 12, color: "red" }, T(560, 450, "첫째: 오른쪽 반 남음 → ㄴ, ㄹ", "blue", 26), T(560, 495, "둘째: 위 반 남음 → ㄴ", "green", 28)] },
+        { say: "처음 색종이에 동그라미를 쳐서 확인해요. ㄴ, 위 오른쪽이에요.",
+          items: [{ kind: "ring", cx: X0 + 1.5 * S, cy: Y0 + 0.5 * S, r: 36, color: "red" }] },
+        { say: "헷갈리지 않게 하는 방법이 있어요. 넘어가는 쪽은 잊고, 접을 때마다 남는 쪽만 남겨 겹쳐 보는 거예요. 두 번 남는 곳이 겹치는 칸이 답이에요.",
+          items: [T(70, 450, "남는 쪽 ∩ 남는 쪽", "gold", 30)] },
+        { say: "정리해요. 화살표 쪽으로 넘어가는 반은 위로 덮이고, 반대쪽 반은 그 자리에 남아요. 접을 때마다 남는 쪽을 찾고, 남는 쪽끼리 겹친 칸이 마지막 칸이에요.", mood: "praise",
+          items: [T(70, 520, "화살표 반대쪽이 남아요!", "gold", 30)] },
+        { say: "한 문제 풀어 봐요. 같은 색종이를 먼저 아래쪽 화살표로 접고, 그다음 왼쪽 화살표로 접었어요. 마지막에 남은 칸은 어디일까요?", mood: "think",
+          items: [],
+          check: { question: "ㄱㄴ/ㄷㄹ 색종이를 ↓ 방향으로 접고, 다시 ← 방향으로 접었어요. 마지막에 남은 칸은?",
+            options: ["ㄱ", "ㄷ", "ㄹ"], answer: 2,
+            hint: "화살표 반대쪽이 남아요. 아래 화살표면 아래 반, 왼쪽 화살표면 왼쪽…?", sayHint: "아래 화살표는 위 반이 아래로 넘어가요. 남는 쪽은 아래 반, ㄷ과 ㄹ이에요. 왼쪽 화살표는 오른쪽 반이 왼쪽으로 넘어가요. 그럼 남는 쪽은요?",
+            right: "맞았어요! 아래 반(ㄷ, ㄹ) 중 오른쪽 반 — ㄹ이에요.", sayRight: "맞았어요! 처음에 아래 반이 남고, 다음엔 오른쪽 반이 남아서 ㄹ이에요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
+
+  ,"book-04/fold-cut-source": (() => {
+    const N = 4, NUM = (r, c) => r * N + c + 1, X0 = 90, Y0 = 140, S = 58;
+    const cut = [3, 2], afterH = [N - 1 - cut[0], cut[1]], holes = [cut, afterH, [cut[0], N - 1 - cut[1]], [afterH[0], N - 1 - afterH[1]]];
+    const total = holes.reduce((a, [r, c]) => a + NUM(r, c), 0);
+    const paper = [{ kind: "grid", x: X0, y: Y0, cols: N, rows: N, cell: S, color: "gray" }, ...Array.from({ length: N * N }, (_, i) => T(X0 + (i % N + 0.5) * S, Y0 + (Math.floor(i / N) + 0.5) * S + 9, String(i + 1), "ink", 24, "center"))];
+    const hole = ([r, c], color = "#f6dcd3") => ({ kind: "fill", x: X0 + c * S + 4, y: Y0 + r * S + 4, w: S - 8, h: S - 8, fill: color });
+    const relabel = ([r, c], color = "red") => T(X0 + (c + 0.5) * S, Y0 + (r + 0.5) * S + 9, String(NUM(r, c)), color, 26, "center");
+    const CHK = { cut: [1, 2] }, chk = NUM(CHK.cut[0], N - 1 - CHK.cut[1]);
+    return {
+      title: "접어 자르고 펼쳐요",
+      kicker: "4권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "수가 적힌 색종이를 접어서 자른 뒤 펼치면, 어느 칸들이 잘려 나갈까요? 잘린 칸의 수를 모두 더해 봐요.",
+          items: [title("접어 자르고 펼쳐요")] },
+        { say: "네 칸씩 네 줄, 1부터 16까지 수가 적힌 색종이예요.",
+          items: paper },
+        { say: "먼저 왼쪽 반을 오른쪽 위로 접어요. 다음에 위 반을 아래로 접어요. 네 겹이 된 오른쪽 아래 네 칸만 보여요.",
+          items: [{ kind: "line", x1: X0 + 2 * S, y1: Y0 - 12, x2: X0 + 2 * S, y2: Y0 + N * S + 12, color: "gold", width: 3, dash: true }, { kind: "line", x1: X0 - 12, y1: Y0 + 2 * S, x2: X0 + N * S + 12, y2: Y0 + 2 * S, color: "gold", width: 3, dash: true }, T(560, 170, "① 왼쪽 → 오른쪽  ② 위 → 아래", "gold", 26)] },
+        { say: `접힌 종이에서 아래 줄 왼쪽 자리를 잘라요. 네 겹이 한꺼번에 잘려요. 맨 아래 겹, 움직이지 않은 종이로 치면 ${NUM(...cut)}번 칸이에요.`,
+          items: [hole(cut), relabel(cut), T(560, 225, `자른 칸: ${NUM(...cut)}`, "red", 28)] },
+        { say: "펼치는 것은 접은 순서의 거꾸로예요. 마지막에 접은 위아래 접기부터 펴요. 잘린 자리가 가로 접은 선 건너편, 같은 거리에 하나 더 생겨요.",
+          items: [hole(afterH), relabel(afterH), T(560, 280, `위아래 펴기 → ${NUM(...afterH)}`, "red", 26)] },
+        { say: "그다음 좌우 접기를 펴요. 지금까지 생긴 두 구멍이 각각 세로 접은 선 건너편에 하나씩 더 생겨요.",
+          items: [hole(holes[2]), relabel(holes[2]), hole(holes[3]), relabel(holes[3]), T(560, 330, `좌우 펴기 → ${NUM(...holes[2])}, ${NUM(...holes[3])}`, "red", 26)] },
+        { say: `잘린 칸은 모두 네 개예요. ${holes.map(([r, c]) => NUM(r, c)).join(", ")}. 네 겹을 한 번에 잘랐으니 네 칸이 맞아요.`,
+          items: [T(560, 385, `${holes.length}겹 → ${holes.length}칸`, "blue", 26)] },
+        { say: `수를 더해요. ${jo(holes.map(([r, c]) => NUM(r, c)).join(" 더하기 "), "는")} ${jo(total, "예요")}.`,
+          items: [T(560, 440, `${holes.map(([r, c]) => NUM(r, c)).join(" + ")} = ${total}`, "green", 30)] },
+        { say: "정리해요. 마지막에 접은 것부터 거꾸로 펴요. 펼 때마다 잘린 자리를 접은 선 건너편 같은 거리에 그려요. 겹 수만큼 칸이 잘렸는지 확인해요.", mood: "praise",
+          items: [T(560, 510, "거꾸로 펴기, 선 건너편 같은 거리", "gold", 26)] },
+        { say: `한 문제 풀어 봐요. 같은 색종이를 왼쪽 반이 오른쪽 위로 오게 한 번만 접고, ${jo(NUM(...CHK.cut), "이")} 적힌 칸을 잘랐어요. 펼치면 반대쪽에 잘리는 칸의 수는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `왼쪽 반을 오른쪽으로 한 번 접고 ${NUM(...CHK.cut)} 칸을 잘랐어요. 펼치면 반대쪽에 잘리는 칸은?`,
+            options: [String(chk), String(NUM(...CHK.cut) + 1), String(NUM(...CHK.cut) - N)], answer: 0,
+            hint: "세로 접은 선 건너편, 같은 거리의 칸이에요.", sayHint: `${NUM(...CHK.cut)} 칸은 접은 선에서 오른쪽으로 첫째 칸이에요. 선 건너편 왼쪽 첫째 칸에는 어떤 수가 있을까요?`,
+            right: `맞았어요! ${NUM(...CHK.cut)}의 반대쪽은 ${chk}.`, sayRight: `맞았어요! 접은 선 건너편 같은 거리에 있는 ${chk}번 칸이 함께 잘려요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-04/fold-hole-count": (() => {
+    const X0 = 90, Y0 = 150, S = 260, F = [X0 + S / 2, Y0 + S / 2];
+    const hole = (x, y, color = "red") => ({ kind: "shape", type: "circle", cx: x, cy: y, r: 11, color, fill: color, quick: true });
+    const inner = [[F[0] + 60, F[1] + 60]], onLine = [[F[0], F[1] + 80]], center = [F];
+    const mirror4 = ([x, y]) => [[x, y], [2 * F[0] - x, y], [x, 2 * F[1] - y], [2 * F[0] - x, 2 * F[1] - y]];
+    const uniq = (pts) => [...new Map(pts.map((p) => [p.map((v) => Math.round(v)).join(","), p])).values()];
+    const A = uniq(mirror4(inner[0])), B = uniq(mirror4(onLine[0])), C = uniq(mirror4(center[0]));
+    return {
+      title: "접은 종이의 구멍 수를 세어요",
+      kicker: "4권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "색종이를 접어서 구멍을 뚫고 펼치면 구멍이 여러 개 생겨요. 그런데 구멍이 접은 선 위에 있으면 개수가 달라져요. 그 차이를 배워요.",
+          items: [title("펼친 뒤 구멍 수")] },
+        { say: "정사각형 색종이를 반으로 접고, 다시 반으로 접어 네 겹을 만들어요. 펼치면 가로와 세로로 접은 선이 보여요.",
+          items: [{ kind: "box", x: X0, y: Y0, w: S, h: S, color: "ink" }, { kind: "line", x1: F[0], y1: Y0, x2: F[0], y2: Y0 + S, color: "gold", width: 2.5, dash: true }, { kind: "line", x1: X0, y1: F[1], x2: X0 + S, y2: F[1], color: "gold", width: 2.5, dash: true }] },
+        { say: "접은 선에서 떨어진 안쪽에 구멍 하나를 뚫었어요. 네 겹을 한 번에 뚫었으니, 펼치면 네 군데에 구멍이 생겨요. 접은 선마다 건너편 같은 거리에 하나씩.",
+          items: [...A.map(([x, y]) => hole(x, y)), T(560, 180, `안쪽 구멍 → ${A.length}개`, "red", 30)] },
+        { say: "이번엔 구멍이 세로 접은 선 위에 있어요. 세로 선으로 펼치면 구멍이 선 위에 있어서, 건너편 자리가 바로 그 자리예요. 겹쳐서 하나로 남아요. 가로 선으로 펼칠 때만 하나 더 생겨요.",
+          items: [...B.map(([x, y]) => hole(x, y, "blue")), T(560, 250, `선 위 구멍 → ${B.length}개`, "blue", 30)] },
+        { say: "두 접은 선이 만나는 가운데 점에 구멍을 뚫으면 어떨까요? 어느 쪽으로 펼쳐도 같은 자리예요. 펼쳐도 하나뿐이에요.",
+          items: [...C.map(([x, y]) => hole(x, y, "green")), T(560, 320, `가운데 구멍 → ${C.length}개`, "green", 30)] },
+        { say: "왜 그럴까요? 펼칠 때 구멍은 접은 선 건너편 같은 거리로 옮겨 그려요. 선 위에 있으면 거리가 0이라 제자리예요. 같은 자리에 겹친 구멍은 한 번만 세요.",
+          items: [T(560, 390, "선 위 = 거리 0 → 제자리", "gold", 28)] },
+        { say: "정리해요. 마지막 접기부터 거꾸로 펴면서 구멍을 접은 선 건너편 같은 거리에 그려요. 선 위나 선이 만나는 점의 구멍은 겹치니 한 번만 세요.", mood: "praise",
+          items: [T(560, 450, "겹친 구멍은 한 번만!", "gold", 30)] },
+        { say: "한 문제 풀어 봐요. 색종이를 두 번 접어 네 겹으로 만든 뒤, 접은 선 하나 위에 구멍 하나를 뚫었어요. 펼치면 구멍은 몇 개일까요?", mood: "think",
+          items: [],
+          check: { question: "두 번 접어 네 겹으로 만든 색종이의 접은 선 하나 위에 구멍 1개를 뚫었어요. 펼치면 구멍은 몇 개?",
+            options: ["1", String(B.length), "4"], answer: 1,
+            hint: "선 위의 구멍은 그 선으로 펼칠 때 제자리에 겹쳐요.", sayHint: "구멍이 있는 선으로 펼칠 때는 늘지 않고, 다른 선으로 펼칠 때만 하나 더 생겨요.",
+            right: `맞았어요! ${B.length}개예요.`, sayRight: `맞았어요! 한 번은 제자리에 겹치고 한 번만 늘어서 ${KO3(B.length)} 개예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-04/cube-min-count": (() => {
+    const MAP = [[3, 1, 2], [2, 1, 0]], total = sum2(MAP);
+    const I = iso(300, 270, 44, 25, 50);
+    const tops = MAP.flatMap((row, y) => row.map((n, x) => (n ? [x, y, n] : null)).filter(Boolean));
+    const CHK = [[3, 2], [1, 1]], chk = sum2(CHK);
+    return {
+      title: "쌓기나무의 개수를 세어요",
+      kicker: "4권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "쌓기나무를 셀 때는 뒤에 가려진 것까지 세어야 해요. 위에서 내려다본 칸마다 몇 층인지 세면, 가려진 것도 빠뜨리지 않아요.",
+          items: [title("쌓기나무 세기")] },
+        { say: "쌓기나무를 쌓았어요. 앞에 있는 것에 가려서 안 보이는 것도 있어요.",
+          items: I.stack(MAP) },
+        { say: "하나씩 세면 가려진 것을 빠뜨리기 쉬워요. 그래서 기둥마다 맨 위 쌓기나무에, 그 기둥이 몇 층인지 써요.",
+          items: tops.map(([x, y, n]) => I.topLabel(x, y, n, n)) },
+        { say: "위에서 내려다본 모양을 옆에 그리고, 칸마다 층수를 옮겨 써요. 빈 자리는 0이에요.",
+          items: topGrid(600, 150, MAP) },
+        { say: `칸의 수를 모두 더해요. ${jo(MAP.flat().filter(Boolean).join(" 더하기 "), "는")} ${jo(total, "예요")}.`,
+          items: [T(600, 300, `${MAP.flat().filter(Boolean).join(" + ")} = ${total}`, "green", 32)] },
+        { say: `쌓기나무는 모두 ${total}개예요. 그림에서 보이는 것만 세면 이보다 적게 나와요. 가려진 것까지 센 거예요.`,
+          items: [T(600, 350, `모두 ${total}개`, "green", 30)] },
+        { say: "이 방법으로 구한 수가 이 그림을 만드는 데 필요한 가장 적은 개수예요. 아래가 비어 있으면 위에 쌓을 수 없으니, 층수만큼은 꼭 있어야 하니까요.",
+          items: [T(600, 410, "층수의 합 = 최소 개수", "gold", 28)] },
+        { say: "정리해요. 기둥마다 맨 위에 층수를 써요. 위에서 본 칸에 층수를 옮기고, 모두 더해요.", mood: "praise",
+          items: [T(600, 470, "맨 위에 층수 → 모두 더하기", "gold", 26)] },
+        { say: `한 문제 풀어 봐요. 위에서 본 네 칸의 층수가 ${jo(CHK.flat().join(", "), "이에요")}. 쌓기나무는 모두 몇 개일까요?`, mood: "think",
+          items: [],
+          check: { question: `위에서 본 칸의 층수가 ${CHK.flat().join(", ")}일 때 쌓기나무는 모두 몇 개?`,
+            options: [String(CHK.flat().length), String(chk), String(chk + 2)], answer: 1,
+            hint: "칸마다 적힌 층수를 모두 더해요.", sayHint: `${jo(CHK.flat().join(" 더하기 "), "를")} 계산해 봐요.`,
+            right: `맞았어요! ${CHK.flat().join(" + ")} = ${chk}.`, sayRight: `맞았어요! 층수를 모두 더하면 ${jo(chk, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-04/hidden-cube-count": (() => {
+    const MAP = [[3, 2], [2, 1]], total = sum2(MAP);
+    const has = (x, y, z) => z >= 0 && y >= 0 && x >= 0 && (MAP[y]?.[x] ?? 0) > z;
+    const all = MAP.flatMap((row, y) => row.flatMap((n, x) => Array.from({ length: n }, (_, z) => [x, y, z])));
+    const hidden = all.filter(([x, y, z]) => has(x + 1, y, z) && has(x, y + 1, z) && has(x, y, z + 1));
+    const seen = total - hidden.length;
+    const I = iso(290, 290, 50, 29, 58);
+    const CHK = { total: 12, seen: 9 };
+    return {
+      title: "보이지 않는 쌓기나무를 찾아요",
+      kicker: "4권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "그림에서 보이지 않는 쌓기나무는 몇 개일까요? 전체 개수를 먼저 구하고, 보이는 개수를 빼면 돼요.",
+          items: [title("숨은 쌓기나무 찾기")] },
+        { say: "쌓기나무를 그려요. 기둥마다 맨 위에 층수를 써요.",
+          items: [...I.stack(MAP), ...MAP.flatMap((row, y) => row.map((n, x) => I.topLabel(x, y, n, n)))] },
+        { say: `전체 개수는 층수를 모두 더해요. ${jo(MAP.flat().join(" 더하기 "), "는")} ${jo(total, "이에요")}.`,
+          items: [T(560, 170, `전체: ${MAP.flat().join(" + ")} = ${total}`, "blue", 30)] },
+        { say: "이번엔 그림에서 보이는 쌓기나무를 하나씩 세어요. 면이 조금이라도 보이면 보이는 거예요. 맨 뒤 기둥은 맨 위 하나만 보여요.",
+          items: [T(560, 225, "면이 조금이라도 보이면 셈", "gray", 24)] },
+        { say: `오른쪽 기둥 둘, 왼쪽 기둥 둘, 맨 앞 하나, 맨 뒤 꼭대기 하나. 보이는 것은 ${KO3(seen)} 개예요.`,
+          items: [T(560, 280, `보이는 것: ${seen}개`, "green", 30)] },
+        { say: `보이지 않는 것은 전체에서 보이는 것을 빼요. ${total} 빼기 ${jo(seen, "은")} ${jo(hidden.length, "예요")}.`,
+          items: [T(560, 340, `숨은 것: ${total} − ${seen} = ${hidden.length}`, "red", 32)] },
+        { say: "어디에 숨어 있을까요? 맨 뒤 기둥의 아래 두 층이에요. 위에도, 앞에도, 옆에도 쌓기나무가 있어서 세 면이 모두 가려졌어요.",
+          items: [{ kind: "ring", cx: I.P(0.5, 0.5, 1)[0], cy: I.P(0.5, 0.5, 1)[1] + 20, r: 40, color: "red" }, T(560, 400, "위·앞·옆이 다 막히면 숨어요", "gold", 26)] },
+        { say: "정리해요. 층수를 모두 더해 전체를 구해요. 그림에서 보이는 것을 세요. 전체에서 보이는 것을 빼면 숨은 쌓기나무예요.", mood: "praise",
+          items: [T(560, 460, "숨은 것 = 전체 − 보이는 것", "gold", 28)] },
+        { say: `한 문제 풀어 봐요. 층수를 모두 더하니 ${KO3(CHK.total)} 개, 그림에서 보이는 것은 ${KO3(CHK.seen)} 개예요. 보이지 않는 것은 몇 개일까요?`, mood: "think",
+          items: [],
+          check: { question: `전체 ${CHK.total}개 중 그림에서 보이는 것이 ${CHK.seen}개예요. 보이지 않는 것은?`,
+            options: [`${CHK.total - CHK.seen - 1}개`, `${CHK.total - CHK.seen}개`, `${CHK.seen}개`], answer: 1,
+            hint: "전체에서 보이는 것을 빼요.", sayHint: `${CHK.total} 빼기 ${jo(CHK.seen, "를")} 계산해요.`,
+            right: `맞았어요! ${CHK.total} − ${CHK.seen} = ${CHK.total - CHK.seen}.`, sayRight: `맞았어요! 보이지 않는 쌓기나무는 ${KO3(CHK.total - CHK.seen)} 개예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-04/cube-box-fill": (() => {
+    const B = { w: 4, d: 2, h: 3 }, layer = B.w * B.d, all = layer * B.h;
+    const placed = [8, 2, 0], put = placed.reduce((a, b) => a + b, 0), need = all - put;
+    const C = 34, LX = (i) => 80 + i * 200, LY = 330;
+    const floor = (i, n) => [{ kind: "grid", x: LX(i), y: LY, cols: B.w, rows: B.d, cell: C, color: "ink" }, { kind: "cells", x: LX(i), y: LY, cell: C, cells: Array.from({ length: n }, (_, k) => [Math.floor(k / B.w), k % B.w]), fill: "#d8c9a3" }, T(LX(i), LY - 12, `${i + 1}층`, "gray", 22)];
+    const I = iso(740, 150, 26, 15, 30), PLACED = [[2, 2, 1, 1], [1, 1, 1, 1]];
+    const CHK = { w: 3, d: 3, h: 2, put: 7 }, chkAll = CHK.w * CHK.d * CHK.h;
+    return {
+      title: "상자의 빈칸을 채워요",
+      kicker: "4권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "상자에 쌓기나무가 몇 개 들어 있어요. 상자를 꽉 채우려면 몇 개가 더 필요할까요? 상자 전체 칸 수부터 구해요.",
+          items: [title("상자 채우기")] },
+        { say: `상자는 가로 ${KO3(B.w)} 칸, 세로 ${KO3(B.d)} 칸, 높이 ${KO3(B.h)} 층이에요.`,
+          items: [...I.stack(PLACED), { kind: "path", d: `M ${I.P(0, 0, 0).join(" ")} L ${I.P(B.w, 0, 0).join(" ")} L ${I.P(B.w, B.d, 0).join(" ")} L ${I.P(0, B.d, 0).join(" ")} Z M ${I.P(0, 0, B.h).join(" ")} L ${I.P(B.w, 0, B.h).join(" ")} L ${I.P(B.w, B.d, B.h).join(" ")} L ${I.P(0, B.d, B.h).join(" ")} Z M ${I.P(B.w, 0, 0).join(" ")} L ${I.P(B.w, 0, B.h).join(" ")} M ${I.P(B.w, B.d, 0).join(" ")} L ${I.P(B.w, B.d, B.h).join(" ")} M ${I.P(0, B.d, 0).join(" ")} L ${I.P(0, B.d, B.h).join(" ")}`, stroke: "gray", width: 2 }, T(80, 160, `가로 ${B.w} · 세로 ${B.d} · 높이 ${B.h}`, "blue", 30)] },
+        { say: `한 층에는 몇 칸이 들어갈까요? 가로 ${KO3(B.w)} 칸이 ${KO3(B.d)} 줄, ${B.w} 곱하기 ${jo(B.d, "는")} ${jo(layer, "이에요")}.`,
+          items: [T(80, 215, `한 층: ${B.w} × ${B.d} = ${layer}칸`, "blue", 28)] },
+        { say: `그런 층이 ${KO3(B.h)} 개예요. ${layer} 곱하기 ${jo(B.h, "은")} ${all}. 상자 전체는 ${all}칸이에요.`,
+          items: [T(80, 265, `전체: ${layer} × ${B.h} = ${all}칸`, "blue", 30)] },
+        { say: `층마다 이미 놓인 쌓기나무를 표에 그려요. 1층은 꽉 차서 ${KO3(placed[0])} 개, 2층은 ${KO3(placed[1])} 개, 3층은 비어 있어요.`,
+          items: placed.flatMap((n, i) => floor(i, n)) },
+        { say: `놓인 것은 모두 ${placed.join(" 더하기 ")}, ${put}개예요.`,
+          items: [T(80, 460, `놓인 것: ${placed.join(" + ")} = ${put}`, "green", 28)] },
+        { say: `더 필요한 것은 전체에서 놓인 것을 빼요. ${all} 빼기 ${jo(put, "은")} ${jo(need, "예요")}.`,
+          items: [T(80, 510, `더 필요: ${all} − ${put} = ${need}`, "red", 32)] },
+        { say: `층마다 확인해도 돼요. 1층은 0개, 2층은 ${layer - placed[1]}개, 3층은 ${layer}개. 더하면 ${need}. 같아요.`,
+          items: [T(600, 510, `0 + ${layer - placed[1]} + ${layer} = ${need} ✓`, "green", 26)] },
+        { say: "정리해요. 가로와 세로를 곱해 한 층의 칸 수를, 거기에 높이를 곱해 전체 칸 수를 구해요. 전체에서 이미 놓인 수를 빼면 더 필요한 수예요.", mood: "praise",
+          items: [T(80, 565, "가로 × 세로 × 높이 − 놓인 것", "gold", 28)] },
+        { say: `한 문제 풀어 봐요. 가로 ${KO3(CHK.w)} 칸, 세로 ${KO3(CHK.d)} 칸, 높이 ${KO3(CHK.h)} 층인 상자에 쌓기나무 ${KO3(CHK.put)} 개가 들어 있어요. 몇 개를 더 넣어야 꽉 찰까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK.w} × ${CHK.d} × ${CHK.h} 상자에 쌓기나무 ${CHK.put}개가 있어요. 몇 개 더 넣어야 꽉 찰까요?`,
+            options: [String(CHK.put), String(chkAll - CHK.put), String(chkAll)], answer: 1,
+            hint: "전체 칸 수를 먼저 구하고, 놓인 수를 빼요.", sayHint: `한 층은 ${CHK.w} 곱하기 ${jo(CHK.d, "은")} ${CHK.w * CHK.d}, 두 층이면 ${jo(chkAll, "이에요")}. 거기서 ${jo(CHK.put, "을")} 빼요.`,
+            right: `맞았어요! ${chkAll} − ${CHK.put} = ${chkAll - CHK.put}.`, sayRight: `맞았어요! 전체 ${chkAll}칸에서 ${KO3(CHK.put)} 개를 빼면 ${jo(chkAll - CHK.put, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
 };
 
-function KO3(n) { return { 1: "한", 2: "두", 3: "세", 4: "네", 5: "다섯" }[n] || String(n); }
+function KO3(n) { return { 1: "한", 2: "두", 3: "세", 4: "네", 5: "다섯", 6: "여섯", 7: "일곱", 8: "여덟", 9: "아홉", 10: "열", 11: "열한", 12: "열두" }[n] || String(n); }
