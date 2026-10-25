@@ -2,7 +2,7 @@
 // 판서의 수는 골든벨 5권 문항(달력 합 9·11·13·15·17·19·20·21·22·23·25·27·35·36·37·38·39·41·42·47·50·51·55,
 // 4×4 뱀 길·소용돌이 표 등)과 겹치지 않게 골랐다.
 
-import { jo } from "./concept-board-kit.js?v=20261026a";
+import { jo } from "./concept-board-kit.js?v=20261026b";
 
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
 const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });

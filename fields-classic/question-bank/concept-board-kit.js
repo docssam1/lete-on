@@ -66,3 +66,25 @@ export function crypt(right, top, rows, sum, cell = 84) {
     col: (k) => ({ kind: "box", x: x(k) - cell / 2 + 4, y: top - 4, w: cell - 8, h: (rows.length + 1.15) * cell + 6, color: "gold", dash: true })
   };
 }
+
+// 신발끈 공식(3권·9권): 꼭짓점 목록(모눈 칸 단위)의 넓이 — 판서의 답을 그림에서 직접 계산해 맞춘다
+export const polyArea = (pts) => Math.abs(pts.reduce((a, [x1, y1], i) => { const [x2, y2] = pts[(i + 1) % pts.length]; return a + x1 * y2 - x2 * y1; }, 0)) / 2;
+
+// 쌓기나무 그림(등각, 4권·9권): map[y][x] = 그 자리의 층수. 뒤에서 앞으로, 아래에서 위로 그려 앞의 것이 덮게 한다.
+export const iso = (ox, oy, w = 30, h = 17, H = 34) => {
+  const P = (x, y, z) => [ox + (x - y) * w, oy + (x + y) * h - z * H];
+  const face = (pts, fill) => ({ kind: "path", d: `M ${pts.map(([a, b, c]) => P(a, b, c).map((v) => v.toFixed(1)).join(" ")).join(" L ")} Z`, stroke: "ink", width: 1.8, fill, quick: true });
+  const cube = (x, y, z, tone = ["#f3ead2", "#d8c9a3", "#bfae86"]) => [
+    face([[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]], tone[0]),
+    face([[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]], tone[2]),
+    face([[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]], tone[1])];
+  const stack = (map, tone) => { const out = [], cells = [];
+    map.forEach((row, y) => row.forEach((n, x) => { for (let z = 0; z < n; z++) cells.push([x, y, z]); }));
+    cells.sort((a, b) => (a[0] + a[1]) - (b[0] + b[1]) || a[2] - b[2]);
+    for (const [x, y, z] of cells) out.push(...cube(x, y, z, tone)); return out; };
+  const topLabel = (x, y, z, v, color = "red") => { const [cx, cy] = P(x + 0.5, y + 0.5, z); return kitText(cx, cy + 10, String(v), color, Math.round(w * 0.8), "center"); };
+  return { P, cube, stack, topLabel };
+};
+export const topGrid = (x0, y0, map, cell = 46, color = "blue") => [{ kind: "grid", x: x0, y: y0, cols: map[0].length, rows: map.length, cell, color: "ink" },
+  ...map.flatMap((row, r) => row.map((n, c) => kitText(x0 + (c + 0.5) * cell, y0 + (r + 0.5) * cell + 10, String(n), n ? color : "gray", 28, "center")))];
+export const sum2 = (map) => map.flat().reduce((a, b) => a + b, 0);

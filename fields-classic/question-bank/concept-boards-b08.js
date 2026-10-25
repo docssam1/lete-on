@@ -2,7 +2,7 @@
 // 판서의 도형 값·합·곱은 골든벨 8권 문항(매트릭스 합 24·17·10 …, ○ + □ = 17, 곱 63·48·24 …)과
 // 같은 판이 되지 않게 새로 짰다.
 
-import { jo, crypt } from "./concept-board-kit.js?v=20261026a";
+import { jo, crypt } from "./concept-board-kit.js?v=20261026b";
 
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
 const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });

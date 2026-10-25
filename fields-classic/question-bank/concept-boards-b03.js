@@ -2,13 +2,11 @@
 // 판서의 수와 그림은 골든벨 3권 문항(온칸·반칸 도형들, 6×20+6·6×28+6+6…, 원 3·4·6·8·9·12조각, 모눈 2×2~5×5 등)과
 // 겹치지 않게 골랐다. 겹치면 공개 판서가 비공개 정답을 보여 주게 된다.
 
-import { jo, crypt } from "./concept-board-kit.js?v=20261026a";
+import { jo, crypt, polyArea } from "./concept-board-kit.js?v=20261026b";
 
 const KO = { 1: "한", 2: "두", 3: "세", 4: "네", 5: "다섯", 6: "여섯", 7: "일곱", 8: "여덟", 9: "아홉", 10: "열", 11: "열한", 12: "열두" };
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
 const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });
-// 신발끈 공식: 꼭짓점 목록(모눈 칸 단위)의 넓이 — 판서의 답을 그림에서 직접 계산해 맞춘다
-const polyArea = (pts) => Math.abs(pts.reduce((a, [x1, y1], i) => { const [x2, y2] = pts[(i + 1) % pts.length]; return a + x1 * y2 - x2 * y1; }, 0)) / 2;
 const sectorPath = (cx, cy, r, a0, a1) => { const p = (a) => [cx + r * Math.sin(a * Math.PI / 180), cy - r * Math.cos(a * Math.PI / 180)];
   const [x0, y0] = p(a0), [x1, y1] = p(a1); return `M ${cx} ${cy} L ${x0.toFixed(1)} ${y0.toFixed(1)} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z`; };
 
