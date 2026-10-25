@@ -10,7 +10,7 @@ import { answerShape } from "./drill.js";
 
 const TRIES = 20, fails = [];
 // 답 꼴 읽기 자체부터(한 줄 뒤 주석이 return을 삼켜 목록 답이 다 빠졌던 적이 있다)
-const SHAPES = [["7", "int", [7], ""], ["15개", "int", [15], "개"], ["12㎠", "int", [12], "㎠"], ["1, 4, 5", "list", [1, 4, 5], ""], ["3번 딸기", null], ["가=3, 나=4", null], ["11시 30분", "pair", [11, 30], undefined], ["2시간 5분", "pair", [2, 5], undefined], ["토요일", "weekday", [6], undefined], ["8월 1일 금요일", null]];
+const SHAPES = [["7", "int", [7], ""], ["15개", "int", [15], "개"], ["12㎠", "int", [12], "㎠"], ["1, 4, 5", "list", [1, 4, 5], ""], ["3번 딸기", null], ["가=3, 나=4", null], ["11시 30분", "pair", [11, 30], undefined], ["2시간 5분", "pair", [2, 5], undefined], ["토요일", "weekday", [6], undefined], ["8월 1일 금요일", null], ["3/6", "frac", [3, 6], undefined]];
 for (const [text, kind, values, unit] of SHAPES) {
   const got = answerShape(text);
   if (kind === null ? got !== null : !got || got.kind !== kind || got.values.join() !== values.join() || got.unit !== unit) fails.push(`답 꼴 읽기: ${text} → ${JSON.stringify(got)}`);
@@ -31,11 +31,15 @@ for (const [key, types] of Object.entries(DRILL_RECIPES)) {
       let ok = 0, made = 0;
       for (let i = 0; i < TRIES; i++) {
         const p = gen({ max: 30, difficulty }); if (!p) continue; made++;
-        if (!answerShape(p.answer)) continue;
+        const shape = answerShape(p.answer);
+        if (!shape) continue;
+        // 수 카드를 모두 늘어놓는 배치 답(1, 4, 5, 2, 3, 6)은 순서 없이 채점하면 아무 순서나 맞으므로 쓰지 않는다
+        if (shape.kind === "list" && shape.values.length >= 5) { fails.push(`${key}: ${id} 배치 답(${shape.values.length}개) — 숫자판으로 채점할 수 없음`); break; }
         if (p.visual && !/^book([1-9]|10)$/.test(p.visual.kind)) { fails.push(`${key}: ${id} 그림 종류 ${p.visual.kind}`); break; }
         ok++;
       }
-      if (ok < TRIES / 2) fails.push(`${key}: ${id} 난이도 ${difficulty} 답 꼴 맞음 ${ok}/${made}`);
+      // 공방은 답 꼴이 맞을 때까지 200번까지 다시 뽑는다 — 5번에 1번 이상이면 충분하다
+      if (ok < TRIES / 5) fails.push(`${key}: ${id} 난이도 ${difficulty} 답 꼴 맞음 ${ok}/${made}`);
     }
     checked++;
   }

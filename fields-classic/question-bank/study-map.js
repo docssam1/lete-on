@@ -6,7 +6,7 @@
 //  · 본책 문항 1,613개는 모두 유형 하나에 연결돼 있다(source-data.js typeStudyRefs) — 번호판의 번호마다 유사문제를 만들 수 있다.
 // 이 파일은 데이터만 다룬다. 화면은 study.js(학생 차시) · start.js(시작 화면).
 
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027f";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027g";
 export const SECTION_LABELS = Object.freeze({ activity: "활동", check: "확인", practice: "연습", advanced: "도전" });
 const SECTION_STAGE = Object.freeze({ activity: "concept", check: "type", practice: "practice", advanced: "advanced" });
 

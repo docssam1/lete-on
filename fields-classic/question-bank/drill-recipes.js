@@ -2,6 +2,23 @@
 // 유형은 그 단원 문제은행(source-data.js CURRICULUM의 typeIds)에서, 차시 개념과 같은 풀이를 쓰는 것만 골랐다.
 // 답 꼴(수 하나 · 수 + 단위 · 쉼표로 쓴 수)과 그림 종류(bookN)는 검사기 drill-audit.mjs가 난이도마다 확인한다.
 export const DRILL_RECIPES = Object.freeze({
+  // 1권 — 마방진과 가쿠로 · 수 추리 (가쿠로·좋아하는 것 표는 그림·표로 답해 아직 없음)
+  "book-01/equal-line-sums": ["circle-line-ring-equal-sum"],
+  "book-01/number-inference": ["place-value-condition-three", "place-value-condition-four"],
+  // 3권 — 단위넓이와 분수 · 단위길이와 배수 · 복면산 · 마법카드와 마방진
+  //   복면산은 3권 유형의 그림이 문제은행 화면 전용이라 같은 풀이의 8권 유형(난이도 1부터)을 쓴다. 6의 배수 식 바꾸기는 맞는 유형이 없어 아직 없음
+  "book-03/unit-area-shapes": ["unit-grid-area", "tangram-piece-area"],
+  "book-03/fraction-shading": ["equal-part-shaded-fraction", "incomplete-partition-fraction"],
+  "book-03/equal-partition-fractions": ["incomplete-partition-fraction", "equal-part-shaded-fraction"],
+  "book-03/tape-length-midpoints": ["folded-strip-length", "midpoint-number-line"],
+  "book-03/overlapping-distance": ["mixed-interval-distance", "equal-interval-length"],
+  "book-03/multiple-comparison": ["walking-step-ratio", "route-distance-multiple", "equivalent-object-length"],
+  "book-03/basic-vertical-cryptarithm": ["repeated-symbol-cryptarithm-b8", "blank-digit-vertical-addition-b8"],
+  "book-03/cryptarithm-repeated": ["repeated-symbol-cryptarithm-b8", "doubled-symbol-result-b8"],
+  "book-03/cryptarithm-mixed": ["multi-symbol-cryptarithm-b8", "ordered-symbol-cryptarithm-b8"],
+  "book-03/cryptarithm-linked": ["linked-cryptarithm-b8"],
+  "book-03/magic-card-binary": ["colored-cell-number-code", "symbol-value-code"],
+  "book-03/magic-square-targets": ["magic-square-three-target", "magic-square-four-target"],
   // 4권 — 도형 움직이기 · 색종이 접기 · 양팔저울과 비교 · 논리추리 (쌓기나무·자리 배치·표 추리는 숫자로 답하는 유형이 없어 아직 없음)
   "book-04/polyomino-family-count": ["tetromino-family-choice", "tetromino-square-composition"],
   "book-04/digital-flip-source": ["digital-transform-arithmetic", "digital-grid-transform"],
