@@ -3,6 +3,7 @@
 //   node fields-classic/question-bank/drill-audit.mjs
 import { typeById, CURRICULUM } from "./source-data.js";
 import { GENERATORS } from "./generators.js";
+import { DRILL_TYPES } from "./drill-generators.js";
 import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 import { lessonsByUnit } from "./study-map.js";
 import { DRILL_RECIPES } from "./drill-recipes.js";
@@ -25,7 +26,7 @@ for (const [key, types] of Object.entries(DRILL_RECIPES)) {
   if (!lessonKeys.has(key)) fails.push(`${key}: 학생 덱에 없는 차시`);
   if (!types.length) fails.push(`${key}: 유형이 없음`);
   for (const id of types) {
-    const type = typeById(id), gen = GENERATORS[type?.generator];
+    const type = DRILL_TYPES[id] || typeById(id), gen = type?.make || GENERATORS[type?.generator];
     if (!gen) { fails.push(`${key}: ${id} 생성기 없음`); continue; }
     for (const difficulty of [1, 2, 3]) {
       let ok = 0, made = 0;
@@ -42,6 +43,17 @@ for (const [key, types] of Object.entries(DRILL_RECIPES)) {
       if (ok < TRIES / 5) fails.push(`${key}: ${id} 난이도 ${difficulty} 답 꼴 맞음 ${ok}/${made}`);
     }
     checked++;
+  }
+}
+// 공방 전용 유형: 이름이 문제은행과 겹치지 않고, □에 답을 넣으면 식의 양쪽이 같아야 한다
+for (const [id, type] of Object.entries(DRILL_TYPES)) {
+  if (!id.startsWith("drill-") || typeById(id)) fails.push(`${id}: 공방 전용 유형 이름은 drill-로 시작하고 문제은행과 겹치지 않아야 함`);
+  for (const difficulty of [1, 2, 3]) for (let i = 0; i < 300; i++) {
+    const p = type.make({ difficulty }); if (!p) continue;
+    const expr = p.visual?.expression;
+    if (!expr) continue;
+    const [left, right] = expr.replace("□", p.answer).replaceAll("×", "*").replaceAll("−", "-").split("=").map((x) => Function(`return (${x})`)());
+    if (left !== right || !(Number(p.answer) > 0)) { fails.push(`${id} 난이도 ${difficulty}: ${expr} 답 ${p.answer} — 식이 맞지 않음`); break; }
   }
 }
 console.log(fails.length ? fails.join("\n") : `DRILL_OK lessons=${Object.keys(DRILL_RECIPES).length} types=${checked}`);

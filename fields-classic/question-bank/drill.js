@@ -6,7 +6,8 @@
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
 import { typeById } from "./source-data.js?v=20261024r";
 import { GENERATORS } from "./generators.js?v=20261027a";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027h";
+import { DRILL_TYPES } from "./drill-generators.js?v=20261027a";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027i";
 import { jo } from "./concept-board-kit.js?v=20261026b";
 import * as B2 from "./book02-visuals.js?v=20261027a";
 
@@ -82,9 +83,9 @@ async function main() {
   };
 
   const make = (level, index) => {
-    const typeId = types[(level * PER_LEVEL + index) % types.length], type = typeById(typeId);
+    const typeId = types[(level * PER_LEVEL + index) % types.length], type = DRILL_TYPES[typeId] || typeById(typeId), gen = type.make || gens[type.generator];
     for (let t = 0; t < 200; t++) {
-      const p = gens[type.generator]({ max: 30, difficulty: LEVELS[level].difficulty });   // 문제은행과 같은 부르기(조건이 안 맞으면 null — 다시 뽑는다)
+      const p = gen({ max: 30, difficulty: LEVELS[level].difficulty });   // 문제은행과 같은 부르기(조건이 안 맞으면 null — 다시 뽑는다)
       if (!p) continue;
       const shape = answerShape(p.answer);
       if (shape) return { ...p, shape, type };

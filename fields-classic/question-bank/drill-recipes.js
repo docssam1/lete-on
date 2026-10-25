@@ -1,11 +1,13 @@
 // 연습 공방(drill.js) 차시별 유형 — 「책/차시」 → 문제은행 유형 id 목록. 단계마다 이 순서대로 번갈아 낸다.
 // 유형은 그 단원 문제은행(source-data.js CURRICULUM의 typeIds)에서, 차시 개념과 같은 풀이를 쓰는 것만 골랐다.
+// drill-로 시작하는 id는 문제은행에 맞는 유형이 없는 차시의 공방 전용 유형이다(drill-generators.js).
 // 답 꼴(수 하나 · 수 + 단위 · 쉼표로 쓴 수)과 그림 종류(bookN)는 검사기 drill-audit.mjs가 난이도마다 확인한다.
 export const DRILL_RECIPES = Object.freeze({
   // 1권 — 마방진과 가쿠로 · 수 추리 (가쿠로·좋아하는 것 표는 그림·표로 답해 아직 없음)
   "book-01/equal-line-sums": ["circle-line-ring-equal-sum"],
   "book-01/number-inference": ["place-value-condition-three", "place-value-condition-four"],
-  // 2권 — 매트릭스와 주고받기 · 양팔저울 · 규칙찾기와 수열 · 약속 (그림은 book02-visuals.js). 2·3·4·5의 배수로 식 바꾸기와 모양·색 규칙은 숫자로 답하는 유형이 없어 아직 없음
+  // 2권 — 매트릭스와 주고받기 · 양팔저울 · 규칙찾기와 수열 · 약속 (그림은 book02-visuals.js). 모양·색 규칙은 숫자로 답하는 유형이 없어 아직 없음
+  //   2·3·4·5의 배수로 식 바꾸기는 문제은행에 맞는 유형이 없어 공방 전용 유형(drill-generators.js)을 쓴다
   "book-02/number-splitting": ["equal-partition-two", "equal-partition-three", "equal-partition-four"],
   "book-02/give-take-sum-difference": ["equalize-transfer", "total-difference"],
   "book-02/two-term-arithmetic": ["distinct-shape-value-equation", "balance-given-unit-weight"],
@@ -14,9 +16,14 @@ export const DRILL_RECIPES = Object.freeze({
   "book-02/sequence-rules": ["previous-two-sum-sequence", "repeating-number-sequence", "interleaved-number-sequence"],
   "book-02/growth-patterns": ["matchstick-shared-polygon-growth", "staircase-tile-growth", "triangular-stone-growth"],
   "book-02/diamond-number-promise": ["four-number-center-rule", "number-grid-row-rule"],
+  "book-02/multiples-2": ["drill-bundle-2"],
+  "book-02/multiples-3": ["drill-bundle-3"],
+  "book-02/multiples-4": ["drill-bundle-4"],
+  "book-02/multiples-5": ["drill-bundle-5"],
   "book-02/fractions-and-folds": ["equal-part-shaded-fraction", "repeated-fold-cut-count", "fold-punch-doubling"],
   // 3권 — 단위넓이와 분수 · 단위길이와 배수 · 복면산 · 마법카드와 마방진
-  //   복면산은 3권 유형의 그림이 문제은행 화면 전용이라 같은 풀이의 8권 유형(난이도 1부터)을 쓴다. 6의 배수 식 바꾸기는 맞는 유형이 없어 아직 없음
+  //   복면산은 3권 유형의 그림이 문제은행 화면 전용이라 같은 풀이의 8권 유형(난이도 1부터)을 쓴다. 6의 배수 식 바꾸기는 공방 전용 유형(drill-generators.js)
+  "book-03/six-multiple-equations": ["drill-bundle-6"],
   "book-03/unit-area-shapes": ["unit-grid-area", "tangram-piece-area"],
   "book-03/fraction-shading": ["equal-part-shaded-fraction", "incomplete-partition-fraction"],
   "book-03/equal-partition-fractions": ["incomplete-partition-fraction", "equal-part-shaded-fraction"],
