@@ -4,6 +4,10 @@
 .nm-access :focus-visible{outline:3px solid #E9CA83;outline-offset:4px}
 .open-hint{min-height:44px;padding:4px 12px}
 .open-hint>span:first-child{font:inherit;margin:0;color:inherit}
+.access-music{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:8px 13px;border:1px solid #D9C695;border-radius:24px;background:#FFFCF5E8;color:#245343;font:500 13px/1.3 var(--sans);cursor:pointer;touch-action:manipulation}
+.access-music[aria-pressed=true]{background:#E9F0E7;border-color:#9CB49F}.access-music [data-access-music-icon]{font-size:19px;line-height:1}
+.cover-music{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));z-index:8}
+.compact-music{margin-left:auto;width:44px;padding:8px;flex:none}
 .scene-cover{perspective:1600px}
 /* Preserve the original cover proportions while leaving room for its controls. */
 .closed-book{max-width:calc(100vw - 54px);height:min(76dvh,730px,calc((100vw - 54px)/.74));max-height:calc(100dvh - 138px);aspect-ratio:.74}

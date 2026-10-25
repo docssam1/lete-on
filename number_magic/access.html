@@ -13,12 +13,13 @@
 <link rel="stylesheet" href="promo/book.css?v=20260930-7">
 <link rel="stylesheet" href="promo/front-page.css?v=20260930-10">
 <link rel="stylesheet" href="promo/i18n.css?v=20260930-10">
-<link rel="stylesheet" href="app/access.css?v=20261021-original1">
+<link rel="stylesheet" href="app/access.css?v=20261026-book-music1">
 </head>
 <body class="nm-access">
 <main class="magic-book-app" id="main" data-view="cover">
 <section class="scene scene-cover is-active" data-scene="cover" aria-labelledby="coverTitle">
 <select class="promo-language cover-language" id="access-language" aria-label="언어 / Language / 语言"><option value="ko">한국어</option><option value="en">English</option><option value="zh">中文</option></select>
+<button class="access-music cover-music" type="button" data-access-music aria-pressed="false" aria-label="배경음 켜기"><span data-access-music-icon aria-hidden="true">♪</span><span data-access-music-text>배경음 켜기</span></button>
 <p class="cover-kicker" data-i18n="coverKicker">숫자가 마법이 되는 곳</p>
 <button class="closed-book" id="cover-open" type="button" aria-label="수의 마법 책 펼치기" aria-haspopup="dialog" aria-controls="login-book"><span class="book-pages" aria-hidden="true"></span>
 <span class="book-cover-face">
@@ -51,7 +52,7 @@
           <p id="login-status" class="status" role="status" aria-live="polite"></p>
         </form>
         <a id="guardian-link" class="page-link" href="index.html?enter=1&amp;auth=1" data-i18n="signup">처음이거나 비밀번호를 잊었어요</a>
-        <div class="trial-entry"><a id="preview-link" class="page-link" href="index.html?enter=1" data-i18n="preview">가입 전에 체험하기</a></div>
+        <div class="trial-entry"><a id="preview-link" class="page-link" href="index.html?enter=1" data-i18n="preview">가입 전에 체험하기</a><button class="access-music compact-music" type="button" data-access-music aria-pressed="false" aria-label="배경음 켜기"><span data-access-music-icon aria-hidden="true">♪</span></button></div>
 
 </div><span class="page-number" aria-hidden="true">02</span>
 </section>
@@ -61,4 +62,6 @@
 <script src="app/review-session.js?v=20261021-review1"></script>
 <script src="app/profile-auth.js?v=20261021-login4"></script>
 <script src="app/access.js?v=20261022-copy1"></script>
+<audio id="access-ambience" src="assets/audio/desk/promo-ambience.m4a?v=20261022" loop preload="none" aria-hidden="true"></audio>
+<script src="app/access-music.js?v=20261026-book-music1"></script>
 </body></html>
