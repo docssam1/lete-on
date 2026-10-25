@@ -73,7 +73,7 @@ export function renderFlowConcept({ bookId, lesson, tutorialHtml }) {
     const total = groups.reduce((s, g) => s + g.count, 0);
     return `${head}${nav}<p class="gb-flow-lead">골든벨 문제 ${total}개는 ${groups.length}가지 유형이에요. 유형마다 예제를 한 단계씩 풀어 봐요. 예제의 수는 골든벨 문제와 달라요.</p><div class="gb-flow-examples" data-flow-examples>${typeExamplesMarkup(groups, exampleView(view, groups))}</div><div class="gb-flow-actions">${forward("game", "게임하러 가기")}${skip}</div>`;
   }
-  return `${head}${nav}<p class="gb-flow-lead">${esc(FLOW_GAME_TITLES[flow.game] || "게임")} — 예제에서 본 방법으로 직접 해 봐요. 레벨을 깨고 나면 골든벨 문제로 가요.</p><section class="gold-hands-on gb-flow-game" data-flow-game="${esc(flow.game)}"><div class="gb-flow-game-host" data-flow-game-host><p class="gb-flow-loading" role="status">게임을 불러오고 있어요.</p></div></section><div class="gb-flow-actions"><button type="button" class="primary-action" data-next-phase="original">골든벨 문제 풀기</button></div>`;
+  return `${head}${nav}<p class="gb-flow-lead">${esc(FLOW_GAME_TITLES[flow.game] || "게임")} — 예제에서 본 방법으로 직접 해 봐요. 게임을 다 하면 골든벨 문제로 가요.</p><section class="gold-hands-on gb-flow-game" data-flow-game="${esc(flow.game)}"><div class="gb-flow-game-host" data-flow-game-host><p class="gb-flow-loading" role="status">게임을 불러오고 있어요.</p></div></section><div class="gb-flow-actions"><button type="button" class="primary-action" data-next-phase="original">골든벨 문제 풀기</button></div>`;
 }
 function exampleView(view, groups) {
   view.type = Math.min(view.type, Math.max(0, groups.length - 1));
@@ -82,15 +82,15 @@ function exampleView(view, groups) {
   return { type: view.type, example: view.example, step: view.exStep, seen: view.seen };
 }
 
-async function mountGame(gameId, host, { saved, onQuestions, lesson }) {
+async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson }) {
   if (gameId === "turn-clock") {
     const { mountClockGame } = await import("./golden-bell-clock-game.js?v=20261024t");
-    return mountClockGame(host, { single: false, saved, onQuestions });
+    return mountClockGame(host, { single: false, saved, onQuestions, onComplete });
   }
   const { mountLevelGame } = await import("./golden-bell-level-game.js?v=20261024t");
   if (gameId.startsWith("b2-")) {
     const { BOOK02_LEVEL_GAMES } = await import("./golden-bell-book02-games.js?v=20261024t");
-    return mountLevelGame(host, BOOK02_LEVEL_GAMES[gameId], { single: false, saved, onQuestions });
+    return mountLevelGame(host, BOOK02_LEVEL_GAMES[gameId], { single: false, saved, onQuestions, onComplete });
   }
   if (gameId.startsWith("b9-")) {
     const [{ BOOK09_LEVEL_GAMES }, models] = await Promise.all([import("./golden-bell-book09-games.js?v=20261024t"), import("./golden-bell-book09-game-models.js?v=20261024t")]);
@@ -100,7 +100,7 @@ async function mountGame(gameId, host, { saved, onQuestions, lesson }) {
       if (v?.subtype === "cube-three-views") models.CUBES.avoid.add(models.cubeSignature(v));
       if (v?.subtype === "magic-grid") models.MAGIC.avoid.add(models.magicSignature(v.size, v.shown));
     }
-    return mountLevelGame(host, BOOK09_LEVEL_GAMES[gameId], { single: false, saved, onQuestions });
+    return mountLevelGame(host, BOOK09_LEVEL_GAMES[gameId], { single: false, saved, onQuestions, onComplete });
   }
   throw new Error("game_unknown");
 }
@@ -112,7 +112,7 @@ export function teardownLessonFlow() {
 }
 
 // renderContent 뒤에 부른다: 단계 단추·예제 단추를 묶고, 게임 칸이면 게임을 띄운다.
-export function mountLessonFlow(container, { bookId, lesson, rerender, onQuestions }) {
+export function mountLessonFlow(container, { bookId, lesson, rerender, onQuestions, onComplete = null }) {
   const flow = lessonFlowFor(bookId, lesson);
   if (!flow) return;
   const view = viewOf(bookId, lesson.id);
@@ -148,7 +148,7 @@ export function mountLessonFlow(container, { bookId, lesson, rerender, onQuestio
   if (host) {
     const token = ++generation;
     view.gameSaved[flow.game] ||= {};
-    mountGame(flow.game, host, { saved: view.gameSaved[flow.game], onQuestions, lesson }).then((handle) => {
+    mountGame(flow.game, host, { saved: view.gameSaved[flow.game], onQuestions, onComplete, lesson }).then((handle) => {
       if (token !== generation || !host.isConnected) { handle?.dispose?.(); return; }
       mounted = handle;
     }).catch(() => {

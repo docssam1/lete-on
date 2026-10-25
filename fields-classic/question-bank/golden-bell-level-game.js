@@ -72,7 +72,7 @@ function writeProgress(key, progress) {
   try { localStorage.setItem(key, JSON.stringify(progress)); } catch { /* 저장이 막혀도 이번 판은 계속 */ }
 }
 
-export function mountLevelGame(host, game, { single = true, onQuestions = null, saved = {} } = {}) {
+export function mountLevelGame(host, game, { single = true, onQuestions = null, onComplete = null, saved = {} } = {}) {
   const PROGRESS_KEY = `fc-game-${game.id}-progress`;
   const progress = readProgress(PROGRESS_KEY);
   const sound = createSound();
@@ -269,6 +269,7 @@ export function mountLevelGame(host, game, { single = true, onQuestions = null, 
     </div>`;
     finishHtml = overlay.innerHTML;
     overlay.hidden = false;
+    onComplete?.(result);   // 레벨을 깼든 못 깼든 게임을 끝까지 했으면 알린다(덱이 다음 장으로 넘긴다)
     say(result.stars === 3 ? "완벽해요! 다음 레벨도 해 볼까요?" : result.passed ? "잘했어요! 별을 더 모아 볼 수도 있어요." : "괜찮아요. 한 번 더 하면 더 잘할 거예요.", result.passed ? "good" : "bad");
     if (result.passed) { sound.stage(); celebrate(); }
     overlay.querySelector("button").focus({ preventScroll: true });

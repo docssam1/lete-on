@@ -1379,3 +1379,6 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
 .student-answer{display:grid;gap:6px;padding:12px 14px;border-left:3px solid #2f6b4a;border-radius:4px;background:#e9f0e7;color:#1e4631;font-size:15px}
 .student-answer p{margin:0;color:#2a241c;font-size:14px;line-height:1.6}
 @media print{.student-check{display:none}}
+
+/* 선생님 화면: 고르는 칸과 설정 칸이 각각 안에서 스크롤해 페이지가 길어지지 않게(원장 2026-10-24 「스크롤 최대한 안 하도록」). 인쇄·학생 화면은 그대로. */
+@media screen and (min-width:981px){body:not(.as-student) .builder-body{min-height:0;max-height:calc(100vh - 420px)}body:not(.as-student) .selection-pane,body:not(.as-student) .settings-pane{overflow:auto;min-height:300px;max-height:calc(100vh - 420px);overscroll-behavior:contain}}
