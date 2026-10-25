@@ -1,0 +1,15 @@
+<!doctype html>
+<meta charset="utf-8">
+<!-- 임시 공원 그림 만들기(GPT 그림이 오기 전) — 3D 공원을 큰 그림 한 장으로 렌더하고 지점 좌표(%)를 낸다. tools/park/render.mjs가 연다. -->
+<style>html, body { margin: 0; } #c { width: 2560px; height: 1440px; display: block; } .tall #c { width: 1440px; height: 2560px; }</style>
+<canvas id="c"></canvas>
+<script type="module">
+import { Stage } from '../../engine.js';
+import { buildPark, SPOTS, SCALE } from '../../scenes/park-map.js';
+import { THREE } from '../../scenes/_kit.js';
+const tall = location.hash === '#tall'; if (tall) document.documentElement.classList.add('tall');
+const st = new Stage(document.getElementById('c')), park = buildPark(st.root); park.walk(1);
+st.setView({ theta: 0.12, phi: tall ? 0.62 : 0.92, dist: 12, target: [0, 0, 0], frame: [[-11 * SCALE, 0, -9.5 * SCALE], [11 * SCALE, 2.5 * SCALE, 10.5 * SCALE]] });
+st.update = (dt, t) => park.update(dt, t);
+window.spots = () => { const v = new THREE.Vector3(); return Object.fromEntries(SPOTS.map((p) => { v.set(...p.at).multiplyScalar(SCALE).project(st.camera); return [p.id, [+(((v.x + 1) / 2) * 100).toFixed(1), +(((1 - v.y) / 2) * 100).toFixed(1)]]; })); };
+</script>

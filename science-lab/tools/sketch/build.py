@@ -7,7 +7,7 @@ import cv2, numpy as np, json, sys, os
 from PIL import Image
 from skimage.morphology import skeletonize
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from pencil import pencil
+from pencil import pencil, photo_mask, pencil_photo
 
 HERE = os.path.dirname(os.path.abspath(__file__)); LAB = os.path.dirname(os.path.dirname(HERE))
 OUT_IMG = os.path.join(LAB, 'assets', 'observe', 'sketch'); OUT_JS = os.path.join(LAB, 'data', 'sketch-strokes.js')
@@ -35,8 +35,16 @@ def shading(tone_a, step=34, bands=3):
     return out
 
 def build(job, src_dir):
-    img = cv2.imread(os.path.join(src_dir, job['name'] + '.png'))
-    opt = job.get('pencil', {}); line, tone, mask = pencil(img, sigma=opt.pop('sigma', 1.7), **opt)
+    opt = dict(job.get('pencil', {}))
+    if job.get('photo'):   # 실사 사진(assets/observe/)에서 주인공만 잘라 그린다
+        img = cv2.imread(os.path.join(LAB, 'assets', 'observe', job['photo']))
+        mf = os.path.join(HERE, 'masks', job['name'] + '.png')   # 눈으로 확인해 저장해 둔 오려 내기(있으면 그대로 쓴다)
+        if not os.path.exists(mf): os.makedirs(os.path.dirname(mf), exist_ok=True); cv2.imwrite(mf, photo_mask(img, job.get('rect'), job.get('poly')) * 255)
+        m = (cv2.imread(mf, cv2.IMREAD_GRAYSCALE) > 127).astype(np.uint8)
+        line, tone, mask = pencil_photo(img, m)
+    else:
+        img = cv2.imread(os.path.join(src_dir, job['name'] + '.png'))
+        line, tone, mask = pencil(img, sigma=opt.pop('sigma', 1.7), **opt)
     ys, xs = np.nonzero(mask); pad = 40
     x0, y0, x1, y1 = max(0, xs.min() - pad), max(0, ys.min() - pad), min(img.shape[1], xs.max() + pad), min(img.shape[0], ys.max() + pad)
     line, tone = line[y0:y1, x0:x1], tone[y0:y1, x0:x1]
@@ -57,11 +65,12 @@ if __name__ == '__main__':
     if os.path.exists(OUT_JS):
         t = open(OUT_JS).read(); data = json.loads(t[t.index('{'):t.rindex('}') + 1] or '{}')
     crops = {}
+    def save():   # 한 장 만들 때마다 적는다(중간에 멈춰도 만든 것은 남게). 두 build를 동시에 돌리지 말 것 — 서로 덮어쓴다.
+        with open(OUT_JS, 'w') as f:
+            f.write('// 예시 보고서 연필 스케치의 「손이 그려 가는 길」 — tools/sketch/build.py가 만든다(손으로 고치지 말 것).\n')
+            f.write('// main = 선 뼈대를 따라 도는 큰 고리(하나씩 그림), more = 작은 고리 묶음, shade = 명암을 칠하는 지그재그. 좌표는 webp 픽셀.\n')
+            f.write('export const STROKES = ' + json.dumps(dict(sorted(data.items())), separators=(',', ':')) + ';\n')
     for j in jobs:
         if j.get('ref') or (only and j['name'] not in only): continue
-        data[j['name']], crops[j['name']] = build(j, src); print('ok', j['name'], data[j['name']]['w'], data[j['name']]['h'])
-    with open(OUT_JS, 'w') as f:
-        f.write('// 예시 보고서 연필 스케치의 「손이 그려 가는 길」 — tools/sketch/build.py가 만든다(손으로 고치지 말 것).\n')
-        f.write('// main = 선 뼈대를 따라 도는 큰 고리(하나씩 그림), more = 작은 고리 묶음, shade = 명암을 칠하는 지그재그. 좌표는 webp 픽셀.\n')
-        f.write('export const STROKES = ' + json.dumps(data, separators=(',', ':')) + ';\n')
+        data[j['name']], crops[j['name']] = build(j, src); save(); print('ok', j['name'], data[j['name']]['w'], data[j['name']]['h'], flush=True)
     json.dump(crops, open(os.path.join(src, 'crops.json'), 'w'))
