@@ -236,6 +236,16 @@
   .nm-story-given:after{content:'';position:absolute;left:0;right:0;top:50%;border-top:2px solid #b4512e;transform:rotate(-40deg)}
   .nm-nl-person { display:inline-block; width:1em; height:1.7em; object-fit:contain; vertical-align:bottom; }
   .nm-nl-stage-bond { border:0; padding:0; }
+  .nm-nl-stage-bond-objects{width:60mm;max-width:100%}
+  .nm-nl .nm-nl-stage-bond-objects .nm-bond{width:50mm;max-width:100%}
+  .nm-bond-objects{display:grid;grid-template-columns:1fr 1fr;gap:3mm;width:100%;align-items:stretch}
+  .nm-bond-objects-part{display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:1mm;padding:1.5mm;min-height:10mm;min-width:0;border:1px solid #2f6b4a;border-radius:2mm;background:#fdfbf5}
+  .nm-bond-objects-part[data-bond-part="b"]{border-color:#a87c22}
+  .nm-bond-objects [data-bond-object]{display:inline-flex;width:22px;height:22px;flex:0 0 22px}
+  .nm-bond-objects [data-bond-object]>svg,.nm-bond-objects [data-bond-object]>img{display:block;width:100%;height:100%;object-fit:contain}
+  .nm-bond-zero{font-family:"NM Series Sans",Pretendard,sans-serif;font-size:13px;line-height:1.4;color:#2a241c;text-align:center}
+  .nm-bond text[data-bond-part="a"]{fill:#2f6b4a}
+  .nm-bond text[data-bond-part="b"]{fill:#a87c22}
   /* 2026-10-05 원장 "너무 흑백이야" — 유아 그림은 화면과 같은 색으로 인쇄(흑백 프린터는 회색 농도로 구분). */
   .nm-nl, .nm-nl *, .nm-bond, .nm-bond * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-nl-stage .nm-bond { width:38mm; }
@@ -3494,13 +3504,19 @@ function nlBoardHtml(n, perRow){
    아래 오른쪽=빈칸)이라 가르기(split)에만 맞는다. 모으기는 반대로 아래 두 원이
    보이고 위 원(전체)이 빈칸이라 별도 모양이 필요하다. */
 function bondSvgTop(a, b){
-  const t = (x, y, v) => `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${esc(String(v))}</text>`;
+  const t = (x, y, v,part) => `<text x="${x}" y="${y}" data-bond-part="${part}" text-anchor="middle" dominant-baseline="central">${esc(String(v))}</text>`;
   return `<svg class="nm-bond" viewBox="0 0 160 112" role="img" aria-label="${esc(lk('수 모으기','Number bond (join)','数的合成'))}">
   <circle cx="80" cy="24" r="21" class="nm-bond-blank"/>
   <line x1="66" y1="40" x2="48" y2="66"/><line x1="94" y1="40" x2="112" y2="66"/>
-  <circle cx="34" cy="88" r="21"/>${t(34,88,a)}
-  <circle cx="126" cy="88" r="21"/>${t(126,88,b)}
+  <circle cx="34" cy="88" r="21"/>${t(34,88,a,'a')}
+  <circle cx="126" cy="88" r="21"/>${t(126,88,b,'b')}
 </svg>`;
+}
+/* Concrete parts stay visible below the matching branch numbers. Only givens
+   are pictured; the unknown total stays blank on scored questions. */
+function bondJoinObjectsHtml(p){
+  const part=(key,n)=>`<div class="nm-bond-objects-part" data-bond-part="${key}" data-bond-count="${n}">${n===0?`<span class="nm-bond-zero">${esc(lk('없어요 · 0개','None · 0','没有 · 0个'))}</span>`:Array.from({length:n},()=>`<span data-bond-object>${nlObjHtml(nlGlyph(p.emoji))}</span>`).join('')}</div>`;
+  return `<div class="nm-bond-objects">${part('a',p.a)}${part('b',p.b)}</div>`;
 }
 /* 섞인 장면(세기·분류) — items는 {e,t} 또는 {e,type} 어느 쪽이든 .e만 읽는다. */
 function nlSceneHtml(items){
@@ -3661,7 +3677,8 @@ function nlVisualHtml(p){
   if(w==='numberBond'){
     const svg = (p.dir==='join' && typeof p.a==='number' && typeof p.b==='number') ? bondSvgTop(p.a, p.b)
       : (typeof p.whole==='number' && typeof p.a==='number') ? bondSvg(p.whole,p.a,/오른쪽/.test(p.prompt?.ko||'')?'right':'left',/무당벌레/.test(p.prompt?.ko||'')) : '';
-    return svg ? nlCard(nlStage(svg, 'nm-nl-stage-bond')) : '';
+    const pictured=p.dir==='join'&&typeof p.a==='number'&&typeof p.b==='number';
+    return svg ? nlCard(nlStage(svg+(pictured?bondJoinObjectsHtml(p):''), 'nm-nl-stage-bond'+(pictured?' nm-nl-stage-bond-objects':''))) : '';
   }
   if(w==='tapCount') return Array.isArray(p.items) ? nlCard(nlSceneHtml(p.items), nlAnsBox(p.step === 10 ? lk('원','','元') : EA)) : '';
   if(w==='tapMake') return nlCard(nlStage(nlBoardHtml(10)));
@@ -6343,6 +6360,8 @@ function renderRoundPagesBody(item, opts){
   // Each path needs room for explicit endpoint words, arrows and a written total.
   if(item.thread==='NL59'||item.thread==='DC3')Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
   if(item.thread==='DC3'&&['l','xl'].includes(getFontSize()))Object.assign(layout,{cols:1,rows:3,perPage:3,firstRows:0,pitch:74});
+  // Joining concrete groups needs room for both the pictures and the number model.
+  if(problems.some(p=>p.widget==='numberBond'&&p.dir==='join'))Object.assign(layout,{cols:2,rows:3,perPage:6,firstRows:0,pitch:74});
   const middleSix = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] && ['visual','word'].includes(layout.type);
   if(middleSix || (item.pacing && ['visual','word'].includes(layout.type))){
     // 원문/정답/모눈 비율은 유지하고, 그래프·문장제의 연습 지면은 2열×3행으로.
