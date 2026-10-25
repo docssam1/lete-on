@@ -8,6 +8,20 @@
 export const lineId = (boardKey, kind, n = 0) => `fcb-${boardKey.replace(/[^a-z0-9]+/gi, "-")}-${kind === "b" ? `b${String(n).padStart(2, "0")}` : kind}`;
 
 // 시계: 숫자 start에서 quarters(반의 반 바퀴 단위, 시계 방향 +)만큼 돌린 자리
+// 숫자 뒤 조사: 우리말로 읽은 마지막 소리에 받침이 있으면 앞 것, 없으면 뒤 것. ㄹ 받침(1·7·8)은 「로」.
+// jo(5, "을") → "5를", jo(9, "이에요") → "9예요", jo(10, "과") → "10과"
+const BATCHIM = { 0: "ㅇ", 1: "ㄹ", 2: "", 3: "ㅁ", 4: "", 5: "", 6: "ㄱ", 7: "ㄹ", 8: "ㄹ", 9: "" };
+const PAIRS = { "이": ["이", "가"], "가": ["이", "가"], "을": ["을", "를"], "를": ["을", "를"], "은": ["은", "는"], "는": ["은", "는"], "과": ["과", "와"], "와": ["과", "와"], "이에요": ["이에요", "예요"], "예요": ["이에요", "예요"], "으로": ["으로", "로"], "로": ["으로", "로"] };
+export function jo(value, particle) {
+  const t = String(value), last = t.match(/(\d+)\s*$/);
+  let fin;
+  if (last) { const n = Number(last[1]); fin = n % 10 ? BATCHIM[n % 10] : n % 100 ? "ㅂ" : n % 1000 ? "ㄱ" : "ㄴ"; }   // 십·백·천
+  else { const c = t.charCodeAt(t.length - 1); fin = c >= 0xAC00 && c <= 0xD7A3 ? ((c - 0xAC00) % 28 ? "x" : "") : ""; }
+  const [withB, without] = PAIRS[particle];
+  if (withB === "으로") return t + (fin && fin !== "ㄹ" ? "으로" : "로");
+  return t + (fin ? withB : without);
+}
+
 export const landing = (start, quarters) => ((start - 1 + quarters * 3) % 12 + 12) % 12 + 1;
 // 모눈: 칸 [줄, 칸]을 거울·돌리기로 옮긴 자리(rows×cols)
 export const mirrorLR = (cells, cols) => cells.map(([r, c]) => [r, cols - 1 - c]);
@@ -158,9 +172,9 @@ export const BOARDS = {
           items: [ar(D2, "b", D5, "f", H, "red", 40), ar(D2, "e", D5, "c", H, "red", 0)] },
         { say: "켜진 막대를 하나씩 옮겨요. 위는 위 그대로. 오른쪽 위는 왼쪽 위로. 가운데는 그대로. 왼쪽 아래는 오른쪽 아래로. 아래는 아래 그대로.",
           items: [{ kind: "digit", ...D5, h: H, on: moveSegs(DIGIT_SEGMENTS[2], "mirror-left-right"), color: "red", dim: false }] },
-        { say: `새 모양을 읽어요. ${flipped}이에요. 2를 오른쪽으로 뒤집으면 ${flipped}가 돼요.`,
+        { say: `새 모양을 읽어요. ${jo(flipped, "이에요")}. 2를 오른쪽으로 뒤집으면 ${jo(flipped, "가")} 돼요.`,
           items: [{ kind: "text", x: D5.x + 20, y: 310, text: String(flipped), size: 34, color: "red" }, { kind: "text", x: 660, y: 150, text: `오른쪽으로 뒤집기: 2 → ${flipped}`, size: 36, color: "red" }] },
-        { say: `아래쪽으로 뒤집으면 이번에는 위 막대와 아래 막대가 바뀌어요. 왼쪽 오른쪽은 그대로예요. 3은 위아래가 똑같이 생겨서 아래로 뒤집어도 ${sym}이에요.`,
+        { say: `아래쪽으로 뒤집으면 이번에는 위 막대와 아래 막대가 바뀌어요. 왼쪽 오른쪽은 그대로예요. 3은 위아래가 똑같이 생겨서 아래로 뒤집어도 ${jo(sym, "이에요")}.`,
           items: [{ kind: "text", x: 660, y: 210, text: `아래로 뒤집기: 위 ↔ 아래, 3 → ${sym}`, size: 27, color: "gray" }] },
         { say: "이번에는 6이에요. 위, 왼쪽 위, 가운데, 왼쪽 아래, 아래, 오른쪽 아래. 여섯 막대가 켜져요.",
           items: [{ kind: "digit", ...D6, h: H, on: DIGIT_SEGMENTS[6], color: "blue" }, { kind: "text", x: D6.x + 20, y: 520, text: "6", size: 34, color: "blue" }] },
@@ -168,22 +182,22 @@ export const BOARDS = {
           items: [{ kind: "arc", cx: (D6.x + H * 0.55 + D9.x) / 2, cy: D6.y + H / 2, r: 30, from: 8, to: 4, color: "green" }, { kind: "digit", ...D9, h: H, on: "", color: "green" }] },
         { say: "위 막대는 아래로. 왼쪽 아래 막대는 오른쪽 위로. 왼쪽 위 막대는 오른쪽 아래로. 가운데만 그대로예요.",
           items: [ar(D6, "a", D9, "d", H, "green", 0), ar(D6, "f", D9, "c", H, "green", 0)] },
-        { say: `켜진 막대 여섯 개를 하나씩 옮기면 새 모양이 돼요. 읽어 보면 ${turned}이에요.`,
+        { say: `켜진 막대 여섯 개를 하나씩 옮기면 새 모양이 돼요. 읽어 보면 ${jo(turned, "이에요")}.`,
           items: [{ kind: "digit", ...D9, h: H, on: moveSegs(DIGIT_SEGMENTS[6], "rotate-half"), color: "green", dim: false }, { kind: "text", x: D9.x + 20, y: 520, text: String(turned), size: 34, color: "green" }] },
         { say: `6을 반 바퀴 돌리면 ${turned}. 뒤집기와 돌리기는 결과가 달라요. 꼭 막대를 따라가며 확인해요.`,
           items: [{ kind: "text", x: 660, y: 300, text: `반 바퀴 돌리기: 6 → ${turned}`, size: 36, color: "green" }] },
         { say: "두 자리 수는 조금 더 생각해요. 16을 써 봐요. 왼쪽에 1, 오른쪽에 6이에요.",
           items: [{ kind: "digit", ...T1, h: S, on: DIGIT_SEGMENTS[1], color: "blue" }, { kind: "digit", ...T6, h: S, on: DIGIT_SEGMENTS[6], color: "blue" }, { kind: "text", x: 700, y: 490, text: "16", size: 30, color: "blue" }] },
-        { say: `판 전체를 반 바퀴 돌리면 숫자 모양만 바뀌는 게 아니라, 왼쪽에 있던 숫자가 오른쪽 자리로 가요. 6은 ${turned}가 되어 왼쪽으로, 1은 1 그대로 오른쪽으로. 그래서 16은 ${turned}1이 돼요.`,
+        { say: `판 전체를 반 바퀴 돌리면 숫자 모양만 바뀌는 게 아니라, 왼쪽에 있던 숫자가 오른쪽 자리로 가요. 6은 ${jo(turned, "가")} 되어 왼쪽으로, 1은 1 그대로 오른쪽으로. 그래서 16은 ${turned}1이 돼요.`,
           items: [{ kind: "arrow", x1: 830, y1: 414, x2: 860, y2: 414, color: "green", width: 3 }, { kind: "digit", ...R9, h: S, on: moveSegs(DIGIT_SEGMENTS[6], "rotate-half"), color: "green" }, { kind: "digit", ...R1, h: S, on: moveSegs(DIGIT_SEGMENTS[1], "rotate-half"), color: "green" }, { kind: "text", x: 870, y: 490, text: `${turned}1`, size: 30, color: "green" }] },
         { say: "정리해요. 옆으로 뒤집기는 왼쪽과 오른쪽 막대가 바뀌고, 아래로 뒤집기는 위와 아래 막대가 바뀌고, 반 바퀴 돌리기는 둘 다 바뀌어요. 두 자리 수는 자리 순서도 함께 바뀌어요.", mood: "praise",
           items: [{ kind: "box", x: 640, y: 100, w: 340, h: 420, color: "gold" }, { kind: "text", x: 660, y: 560, text: "막대를 하나씩 따라가요!", size: 32, color: "gold" }] },
-        { say: `한 문제 풀어 봐요. ${turned}를 반 바퀴 돌리면 어떤 숫자가 될까요? 막대를 하나씩 대각선 맞은편으로 옮겨 봐요.`, mood: "think",
+        { say: `한 문제 풀어 봐요. ${jo(turned, "를")} 반 바퀴 돌리면 어떤 숫자가 될까요? 막대를 하나씩 대각선 맞은편으로 옮겨 봐요.`, mood: "think",
           items: [],
-          check: { question: `${turned}를 반 바퀴 돌리면 어떤 숫자가 될까요?`,
+          check: { question: `${jo(turned, "를")} 반 바퀴 돌리면 어떤 숫자가 될까요?`,
             options: [String(turned), String(transformDigit(turned, "rotate-half")), "8"], answer: 1,
             hint: "반 바퀴는 위아래도 좌우도 바뀌어요. 위 막대가 어디로 가는지 봐요.", sayHint: "반 바퀴 돌리기는 위아래도 좌우도 바뀌어요. 위 막대가 아래로 가면 어떤 모양이 되는지 봐요.",
-            right: `맞았어요! ${turned}를 반 바퀴 돌리면 ${transformDigit(turned, "rotate-half")}이에요.`, sayRight: `맞았어요! ${turned}를 반 바퀴 돌리면 ${transformDigit(turned, "rotate-half")}. 6과 ${turned}는 서로 반 바퀴 짝이에요. 이제 게임으로 손에 익혀 봐요.` } }
+            right: `맞았어요! ${jo(turned, "를")} 반 바퀴 돌리면 ${jo(transformDigit(turned, "rotate-half"), "이에요")}.`, sayRight: `맞았어요! ${jo(turned, "를")} 반 바퀴 돌리면 ${transformDigit(turned, "rotate-half")}. 6과 ${jo(turned, "는")} 서로 반 바퀴 짝이에요. 이제 게임으로 손에 익혀 봐요.` } }
       ]
     };
   })()
@@ -295,6 +309,170 @@ export const BOARDS = {
             options: [{ cols: N, rows: N, cell: 20, cells: open2(checkCut), fill: "red" }, { cols: N, rows: N, cell: 20, cells: [...checkCut, [1, 2], [0, 1], [1, 1]], fill: "red" }, { cols: N, rows: N, cell: 20, cells: checkHoles, fill: "red" }], answer: 2,
             hint: "네 겹을 잘랐으니 구멍은 네 개예요. 위아래 접기부터 풀고, 그다음 좌우 접기를 풀어요.", sayHint: "네 겹을 잘랐으니 구멍은 네 개예요. 마지막에 접은 위아래 접기를 먼저 풀고, 그다음 좌우 접기를 풀며 하나씩 그려 봐요.",
             right: "맞았어요! 구멍 네 개가 두 접는 선에 대해 마주 봐요.", sayRight: "맞았어요! 위아래 접기를 풀어 두 개, 좌우 접기를 풀어 네 개. 펼칠 때는 마지막 접기부터예요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
+
+  ,"book-01/equal-line-sums": (() => {
+    // 십자 모양: 가로줄(왼·가운데·오른) + 세로줄(위·가운데·아래). 가운데는 두 줄이 함께 쓴다.
+    const C = { cx: 300, cy: 330 }, D = 120, R = 36;
+    const at = { L: [C.cx - D, C.cy], M: [C.cx, C.cy], Rt: [C.cx + D, C.cy], T: [C.cx, C.cy - D], B: [C.cx, C.cy + D] };
+    const v = { L: 7, M: 5, Rt: 2, B: 3 };
+    const row = v.L + v.M + v.Rt, outer = v.L + v.Rt, top = outer - v.B;
+    const node = (k, value, color) => ({ kind: "node", cx: at[k][0], cy: at[k][1], r: R, value, color });
+    const num = (k, value, color) => ({ kind: "num", cx: at[k][0], cy: at[k][1], value, color });
+    const seg = (a, b, color = "gray") => { const [x1, y1] = at[a], [x2, y2] = at[b], dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy); return { kind: "line", x1: x1 + dx / L * R, y1: y1 + dy / L * R, x2: x2 - dx / L * R, y2: y2 - dy / L * R, color, width: 3 }; };
+    const CHK = { L: 8, M: 6, Rt: 4, B: 3 }, chkTop = CHK.L + CHK.Rt - CHK.B;
+    const T = (y, text, color = "ink", size = 32) => ({ kind: "text", x: 560, y, text, size, color });
+    return {
+      title: "모든 줄의 합을 같게",
+      kicker: "1권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "줄마다 수를 더한 합이 모두 같아지게 빈칸을 채워 볼 거예요. 계산을 짧게 하는 방법이 있어요. 하나씩 천천히 봐요.",
+          items: [{ kind: "text", x: 60, y: 86, text: "모든 줄의 합을 같게", size: 56 }] },
+        { say: "동그라미 다섯 개를 십자 모양으로 그려요. 가로줄에 세 개, 세로줄에 세 개예요. 가운데 동그라미는 두 줄이 함께 써요.",
+          items: [node("L"), node("M"), node("Rt"), node("T"), node("B"), seg("L", "M"), seg("M", "Rt"), seg("T", "M"), seg("M", "B")] },
+        { say: `가로줄에 ${v.L}, ${v.M}, ${jo(v.Rt, "를")} 써요.`,
+          items: [num("L", v.L, "blue"), num("M", v.M, "blue"), num("Rt", v.Rt, "blue")] },
+        { say: `세로줄에는 가운데 ${jo(v.M, "와")} 아래 ${jo(v.B, "가")} 있고, 위는 비어 있어요. 가로줄의 합과 세로줄의 합이 같아지도록 위 빈칸을 채울 거예요.`,
+          items: [num("B", v.B, "blue"), num("T", "?", "red")] },
+        { say: `먼저 가로줄을 더해요. ${v.L} 더하기 ${jo(v.M, "는")} ${v.L + v.M}, 거기에 ${jo(v.Rt, "를")} 더하면 ${row}. 가로줄의 합은 ${jo(row, "이에요")}.`,
+          items: [T(150, `가로: ${v.L} + ${v.M} + ${v.Rt} = ${row}`, "blue")] },
+        { say: `세로줄도 ${jo(row, "이")} 되어야 해요. 그런데 잘 보세요. 가운데 ${jo(v.M, "는")} 가로줄에도 세로줄에도 들어 있어요.`,
+          items: [{ kind: "ring", cx: at.M[0], cy: at.M[1], r: R + 10, color: "gold" }] },
+        { say: `두 줄에 똑같이 들어 있는 수는, 양쪽에서 똑같이 빼도 괜찮아요. 같았던 두 합에서 똑같은 수를 빼면, 남은 것끼리도 여전히 같아요.`,
+          items: [T(210, `가운데 ${jo(v.M, "는")} 두 줄에 똑같이 → 빼고 비교`, "gold", 28)] },
+        { say: `가운데를 빼면 가로줄에는 바깥 수 ${jo(v.L, "과")} ${jo(v.Rt, "가")} 남아요. ${v.L} 더하기 ${jo(v.Rt, "는")} ${outer}.`,
+          items: [T(270, `가로 바깥: ${v.L} + ${v.Rt} = ${outer}`, "blue")] },
+        { say: `세로줄에서 가운데를 빼면 위의 빈칸과 아래 ${jo(v.B, "가")} 남아요. 이 둘을 더해도 ${jo(outer, "이")} 되어야 해요.`,
+          items: [T(330, `세로 바깥: ? + ${v.B} = ${outer}`, "red")] },
+        { say: `${v.B}에 얼마를 더하면 ${jo(outer, "이")} 될까요? ${outer}에서 ${jo(v.B, "를")} 빼면 돼요. ${outer} 빼기 ${jo(v.B, "는")} ${top}.`,
+          items: [T(390, `? = ${outer} − ${v.B} = ${top}`, "red")] },
+        { say: `위 빈칸에 ${jo(top, "을")} 써요.`,
+          items: [{ kind: "fill", x: at.T[0] - R + 6, y: at.T[1] - R + 6, w: 2 * R - 12, h: 2 * R - 12, fill: "#fffdf7" }, { kind: "node", cx: at.T[0], cy: at.T[1], r: R, color: "green", value: top, textColor: "green" }] },
+        { say: `꼭 확인해요. 세로줄 ${top} 더하기 ${v.M} 더하기 ${jo(v.B, "는")} ${top + v.M + v.B}. 가로줄과 똑같이 ${jo(row, "이에요")}.`,
+          items: [T(450, `세로: ${top} + ${v.M} + ${v.B} = ${top + v.M + v.B} ✓`, "green")] },
+        { say: "왜 가운데를 빼면 편할까요? 줄 전체를 다 더하지 않고, 바깥 수 두 개끼리만 비교하면 되니까 계산이 짧아져요.",
+          items: [] },
+        { say: "정리해요. 두 줄이 함께 쓰는 수는 빼고 생각해요. 바깥 수의 합을 같게 만들고, 마지막에 줄 전체 합을 다시 더해 확인해요.", mood: "praise",
+          items: [{ kind: "box", x: 540, y: 110, w: 430, h: 370, color: "gold" }, { kind: "text", x: 560, y: 540, text: "함께 쓰는 수는 빼고 비교!", size: 34, color: "gold" }] },
+        { say: `한 문제 풀어 봐요. 가로줄 바깥 수가 ${jo(CHK.L, "과")} ${CHK.Rt}, 가운데는 ${CHK.M}, 세로줄 아래가 ${jo(CHK.B, "예요")}. 위 빈칸은 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `가로줄이 ${CHK.L}, ${CHK.M}, ${CHK.Rt}이고 세로줄 아래가 ${jo(CHK.B, "예요")}. 두 줄의 합이 같으려면 위 빈칸은 얼마일까요?`,
+            options: [String(CHK.L + CHK.Rt), String(chkTop), String(CHK.L + CHK.M + CHK.Rt - CHK.B)], answer: 1,
+            hint: "가운데는 두 줄에 함께 있으니 빼고, 바깥 수끼리 같게 해요.", sayHint: `가운데 ${jo(CHK.M, "는")} 빼고 생각해요. 가로 바깥 수 ${CHK.L} 더하기 ${CHK.Rt}와, 위 빈칸 더하기 ${jo(CHK.B, "가")} 같아야 해요.`,
+            right: `맞았어요! ${CHK.L} + ${CHK.Rt} = ${CHK.L + CHK.Rt}, 그래서 빈칸은 ${CHK.L + CHK.Rt} − ${CHK.B} = ${chkTop}.`, sayRight: `맞았어요! 바깥 수 ${jo(CHK.L, "과")} ${CHK.Rt}의 합은 ${CHK.L + CHK.Rt}. 거기서 ${jo(CHK.B, "를")} 빼면 ${jo(chkTop, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-01/equal-line-placement": (() => {
+    const cards = [4, 5, 6, 7, 8];
+    const C = { cx: 270, cy: 375 }, D = 100, R = 34;
+    const at = { L: [C.cx - D, C.cy], M: [C.cx, C.cy], Rt: [C.cx + D, C.cy], T: [C.cx, C.cy - D], B: [C.cx, C.cy + D] };
+    const node = (k) => ({ kind: "node", cx: at[k][0], cy: at[k][1], r: R });
+    const num = (k, value, color = "blue") => ({ kind: "num", cx: at[k][0], cy: at[k][1], value, color });
+    const seg = (a, b) => { const [x1, y1] = at[a], [x2, y2] = at[b], dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy); return { kind: "line", x1: x1 + dx / L * R, y1: y1 + dy / L * R, x2: x2 - dx / L * R, y2: y2 - dy / L * R, color: "gray", width: 3 }; };
+    const cardAt = (i) => ({ x: 70 + i * 82, y: 112 });
+    const card = (i, color) => ({ kind: "card", ...cardAt(i), value: cards[i], color });
+    const cross = (i) => ({ kind: "cross", ...cardAt(i) });
+    const total = cards.reduce((a, b) => a + b, 0);
+    // 가운데 c를 놓으면 남은 넷의 합이 둘로 똑같이 나뉘어야 하고, 실제로 같은 합의 두 짝이 있어야 한다
+    const tryCenter = (c) => { const rest = cards.filter((x) => x !== c), s = rest.reduce((a, b) => a + b, 0); if (s % 2) return { c, rest, s, ok: false };
+      const half = s / 2, a = rest[0], b = rest.find((x) => x !== a && a + x === half); if (b == null) return { c, rest, s, ok: false };
+      const other = rest.filter((x) => x !== a && x !== b); return { c, rest, s, half, pairs: [[a, b], other], ok: true, line: half + c }; };
+    const t6 = tryCenter(6), t5 = tryCenter(5), t4 = tryCenter(4), t8 = tryCenter(8), t7 = tryCenter(7);
+    const good = cards.filter((c) => tryCenter(c).ok);
+    const T = (y, text, color = "ink", size = 28) => ({ kind: "text", x: 560, y, text, size, color });
+    const CHK = [6, 7, 8, 9, 10], chk = (() => { const rest = CHK.filter((x) => x !== 6); return [[rest[0], rest[3]], [rest[1], rest[2]]]; })();
+    const pairText = (p) => `${p[0][0]}+${jo(p[0][1], "와")} ${p[1][0]}+${p[1][1]}`;
+    return {
+      title: "숫자 카드로 모든 줄의 합을 같게 해요",
+      kicker: "1권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "숫자 카드를 한 번씩만 써서, 두 줄의 합이 같아지게 놓아 볼 거예요. 가운데 자리를 먼저 정하는 게 비밀이에요.",
+          items: [{ kind: "text", x: 60, y: 80, text: "숫자 카드로 모든 줄의 합을 같게", size: 48 }] },
+        { say: `쓸 카드는 ${cards.join(", ")}. 다섯 장이에요. 한 장도 빼지 않고, 한 번씩만 써요.`,
+          items: cards.map((_, i) => card(i)) },
+        { say: "동그라미 다섯 개를 십자 모양으로 그려요. 가로줄 세 개, 세로줄 세 개. 가운데 자리는 두 줄이 함께 써요.",
+          items: [node("L"), node("M"), node("Rt"), node("T"), node("B"), seg("L", "M"), seg("M", "Rt"), seg("T", "M"), seg("M", "B")] },
+        { say: "가운데 카드는 가로줄에도 세로줄에도 들어가요. 그러니까 가운데를 빼고 남은 카드 네 장을, 합이 똑같은 두 짝으로 나눌 수 있으면 돼요.",
+          items: [T(150, "가운데를 빼고 남은 네 장 → 합이 같은 두 짝", "gold", 26)] },
+        { say: `가운데에 ${jo(t6.c, "을")} 놓아 볼게요. 남은 카드는 ${t6.rest.join(", ")}. 다 더하면 ${t6.s}. 반으로 나누면 ${t6.half}씩이에요.`,
+          items: [num("M", 6, "green"), cross(2), T(205, `가운데 6: 남은 ${t6.rest.join("+")} = ${t6.s}, 반은 ${t6.half}`, "green")] },
+        { say: `합이 ${jo(t6.half, "이")} 되는 짝을 찾아요. ${t6.pairs[0][0]} 더하기 ${jo(t6.pairs[0][1], "는")} ${t6.half}, ${t6.pairs[1][0]} 더하기 ${t6.pairs[1][1]}도 ${t6.half}. 두 짝이 생겼어요.`,
+          items: [T(250, `짝: ${t6.pairs[0][0]}+${t6.pairs[0][1]} = ${t6.half},  ${t6.pairs[1][0]}+${t6.pairs[1][1]} = ${t6.half}`, "green")] },
+        { say: `한 짝은 가로줄 양쪽에, 다른 짝은 세로줄 위아래에 놓아요.`,
+          items: [num("L", t6.pairs[0][0]), num("Rt", t6.pairs[0][1]), num("T", t6.pairs[1][0]), num("B", t6.pairs[1][1]), cross(0), cross(4), cross(1), cross(3)] },
+        { say: `확인해요. 가로줄 ${t6.pairs[0][0]} 더하기 6 더하기 ${jo(t6.pairs[0][1], "는")} ${t6.line}. 세로줄 ${t6.pairs[1][0]} 더하기 6 더하기 ${t6.pairs[1][1]}도 ${t6.line}. 두 줄이 같아요.`,
+          items: [T(300, `가로 = 세로 = ${t6.line} ✓`, "green", 32)] },
+        { say: `가운데에 다른 카드도 놓을 수 있을까요? ${jo(t5.c, "을")} 놓으면 남은 카드의 합은 ${t5.s}. ${jo(t5.s, "는")} 똑같은 두 수로 나눌 수 없어요. 그래서 ${jo(t5.c, "는")} 안 돼요.`,
+          items: [T(355, `가운데 5: 남은 합 ${t5.s} → 반으로 못 나눠요 ✗`, "red")] },
+        { say: `${t7.c}도 마찬가지예요. 남은 합이 ${t7.s}라서 반으로 나눌 수 없어요.`,
+          items: [T(395, `가운데 7: 남은 합 ${t7.s} → ✗`, "red")] },
+        { say: `${jo(t4.c, "을")} 놓으면 남은 합은 ${t4.s}, 반은 ${t4.half}. ${t4.pairs[0][0]} 더하기 ${t4.pairs[0][1]}, ${t4.pairs[1][0]} 더하기 ${t4.pairs[1][1]}로 짝이 돼요. ${t8.c}도 남은 합 ${t8.s}, 반은 ${t8.half}라서 짝이 돼요.`,
+          items: [T(435, `가운데 4: ${t4.pairs[0].join("+")} = ${t4.pairs[1].join("+")} ✓`, "green"), T(475, `가운데 8: ${t8.pairs[0].join("+")} = ${t8.pairs[1].join("+")} ✓`, "green")] },
+        { say: `그래서 가운데에 놓을 수 있는 카드는 ${good.join(", ")}. 하나씩 놓아 보고, 남은 합이 반으로 나뉘는지, 같은 합의 짝이 있는지 확인하면 돼요.`,
+          items: [T(530, `가운데에 놓을 수 있는 수: ${good.join(", ")}`, "gold", 30)] },
+        { say: "정리해요. 가운데를 하나 정해요. 남은 카드를 다 더해 반으로 나눠요. 같은 합의 두 짝이 있으면 성공. 카드는 한 번씩만 써요.", mood: "praise",
+          items: [{ kind: "box", x: 540, y: 110, w: 440, h: 450, color: "gold" }] },
+        { say: `한 문제 풀어 봐요. 카드 ${CHK.join(", ")}에서 가운데에 6을 놓았어요. 남은 카드로 합이 같은 두 짝을 만들면 무엇일까요?`, mood: "think",
+          items: [],
+          check: { question: `카드 ${CHK.join(", ")}에서 가운데에 6을 놓으면, 남은 카드로 만드는 합이 같은 두 짝은?`,
+            options: [`${jo("7+8", "과")} 9+10`, pairText(chk), `${jo("7+9", "과")} 8+10`], answer: 1,
+            hint: "남은 네 장을 다 더해 반으로 나눠요. 그 수가 되는 짝을 찾아요.", sayHint: "남은 카드 7, 8, 9, 10을 다 더하면 34예요. 반은 17. 더해서 17이 되는 짝을 찾아요.",
+            right: `맞았어요! ${pairText(chk)}, 둘 다 17이에요.`, sayRight: `맞았어요! 7 더하기 10도 17, 8 더하기 9도 17. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-01/gakuro-sum-grid": (() => {
+    const X = 160, Y = 170, S = 90;                    // 2×2 칸, 왼쪽 위 (X, Y), 한 칸 S
+    const given = 2, rowSums = [9, 11], colSums = [8, 12], cards = [5, 6, 7];
+    const tr = rowSums[0] - given, bl = colSums[0] - given, br = cards.find((c) => c !== tr && c !== bl);
+    const cell = (r, c) => ({ cx: X + (c + 0.5) * S, cy: Y + (r + 0.5) * S });
+    const num = (r, c, value, color = "ink") => ({ kind: "num", ...cell(r, c), value, size: 44, color });
+    const cardAt = (i) => ({ x: 130 + i * 84, y: 460 });
+    const T = (y, text, color = "ink", size = 30) => ({ kind: "text", x: 560, y, text, size, color });
+    const ci = (v) => cards.indexOf(v);
+    return {
+      title: "가로와 세로의 합을 맞춰요",
+      kicker: "1권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "네 칸짜리 판에 숫자를 채워서, 가로줄의 합과 세로줄의 합을 모두 맞출 거예요. 확실하게 알 수 있는 칸부터 하나씩 채워요.",
+          items: [{ kind: "text", x: 60, y: 86, text: "가로와 세로의 합을 맞춰요", size: 54 }] },
+        { say: "가로 두 칸, 세로 두 줄인 네모 판을 그려요.",
+          items: [{ kind: "grid", x: X, y: Y, cols: 2, rows: 2, cell: S, color: "ink" }] },
+        { say: `줄마다 합을 적어요. 오른쪽에 쓴 수는 가로줄의 합이에요. 윗줄은 ${rowSums[0]}, 아랫줄은 ${rowSums[1]}.`,
+          items: [{ kind: "text", x: X + 2 * S + 22, y: Y + 0.5 * S + 14, text: `→ ${rowSums[0]}`, size: 36, color: "blue" }, { kind: "text", x: X + 2 * S + 22, y: Y + 1.5 * S + 14, text: `→ ${rowSums[1]}`, size: 36, color: "blue" }] },
+        { say: `아래에 쓴 수는 세로줄의 합이에요. 왼쪽 줄은 ${colSums[0]}, 오른쪽 줄은 ${colSums[1]}.`,
+          items: [{ kind: "text", x: X + 0.5 * S, y: Y + 2 * S + 44, text: `↓ ${colSums[0]}`, size: 36, color: "green", align: "center" }, { kind: "text", x: X + 1.5 * S, y: Y + 2 * S + 44, text: `↓ ${colSums[1]}`, size: 36, color: "green", align: "center" }] },
+        { say: `왼쪽 위 칸에는 ${jo(given, "가")} 이미 들어 있어요.`,
+          items: [num(0, 0, given)] },
+        { say: `남은 세 칸에 넣을 카드는 ${jo(cards.join(", "), "이에요")}. 한 번씩만 써요.`,
+          items: cards.map((v, i) => ({ kind: "card", ...cardAt(i), value: v })) },
+        { say: `어느 칸부터 할까요? 빈칸이 하나뿐인 줄을 찾아요. 윗줄은 ${jo(given, "가")} 있고 빈칸이 하나예요.`,
+          items: [{ kind: "box", x: X - 6, y: Y - 6, w: 2 * S + 12, h: S + 12, color: "blue", dash: true }] },
+        { say: `윗줄의 합은 ${rowSums[0]}. ${given}에 얼마를 더하면 ${rowSums[0]}일까요? ${rowSums[0]} 빼기 ${jo(given, "는")} ${tr}. 오른쪽 위 칸은 ${jo(tr, "이에요")}.`,
+          items: [T(180, `윗줄: ${rowSums[0]} − ${given} = ${tr}`, "blue"), num(0, 1, tr, "blue"), { kind: "cross", ...cardAt(ci(tr)) }] },
+        { say: `${tr} 카드는 썼으니 지워요. 이번엔 왼쪽 세로줄이에요. 위에 ${jo(given, "가")} 있고 빈칸이 하나예요.`,
+          items: [{ kind: "box", x: X - 6, y: Y - 6, w: S + 12, h: 2 * S + 12, color: "green", dash: true }] },
+        { say: `왼쪽 세로줄의 합은 ${colSums[0]}. ${colSums[0]} 빼기 ${jo(given, "는")} ${bl}. 왼쪽 아래 칸은 ${jo(bl, "이에요")}.`,
+          items: [T(240, `왼쪽 세로줄: ${colSums[0]} − ${given} = ${bl}`, "green"), num(1, 0, bl, "green"), { kind: "cross", ...cardAt(ci(bl)) }] },
+        { say: `남은 카드는 ${br} 하나. 마지막 칸, 오른쪽 아래에 ${jo(br, "을")} 놓아요.`,
+          items: [num(1, 1, br, "red"), { kind: "cross", ...cardAt(ci(br)) }] },
+        { say: `이제 확인해요. 아랫줄 ${bl} 더하기 ${jo(br, "는")} ${bl + br}. 적혀 있는 ${jo(rowSums[1], "과")} 같아요.`,
+          items: [T(300, `아랫줄: ${bl} + ${br} = ${bl + br} ✓`, "red")] },
+        { say: `오른쪽 세로줄 ${tr} 더하기 ${jo(br, "는")} ${tr + br}. 이것도 ${jo(colSums[1], "과")} 같아요. 네 줄이 모두 맞았어요.`,
+          items: [T(350, `오른쪽 세로줄: ${tr} + ${br} = ${tr + br} ✓`, "red")] },
+        { say: "정리해요. 빈칸이 하나뿐인 줄부터 찾아요. 줄의 합에서 아는 수를 빼서 빈칸을 구해요. 쓴 카드는 지우고, 마지막에 모든 줄을 다시 더해 확인해요.", mood: "praise",
+          items: [{ kind: "box", x: 540, y: 130, w: 430, h: 260, color: "gold" }, { kind: "text", x: 560, y: 450, text: "빈칸이 하나뿐인 줄부터!", size: 34, color: "gold" }] },
+        { say: "한 문제 풀어 봐요. 윗줄의 합이 11이고, 왼쪽 칸에 4가 있어요. 오른쪽 칸은 얼마일까요?", mood: "think",
+          items: [],
+          check: { question: "윗줄의 합이 11이고 왼쪽 칸이 4예요. 오른쪽 칸은 얼마일까요?",
+            options: [String(11 + 4), String(11 - 4 - 1), String(11 - 4)], answer: 2,
+            hint: "줄의 합에서 아는 수를 빼요.", sayHint: "윗줄의 합 11에서 이미 있는 4를 빼 봐요.",
+            right: "맞았어요! 11 − 4 = 7이에요.", sayRight: "맞았어요! 11에서 4를 빼면 7. 4 더하기 7은 11이에요. 이제 게임으로 가요." } }
       ]
     };
   })()

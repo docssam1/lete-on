@@ -188,7 +188,7 @@
   },
   {
    "id": "fcb-book-01-digital-turn-flip-b08",
-   "text": "새 모양을 읽어요. 5이에요. 2를 오른쪽으로 뒤집으면 5가 돼요."
+   "text": "새 모양을 읽어요. 5예요. 2를 오른쪽으로 뒤집으면 5가 돼요."
   },
   {
    "id": "fcb-book-01-digital-turn-flip-b09",
@@ -208,7 +208,7 @@
   },
   {
    "id": "fcb-book-01-digital-turn-flip-b13",
-   "text": "켜진 막대 여섯 개를 하나씩 옮기면 새 모양이 돼요. 읽어 보면 9이에요."
+   "text": "켜진 막대 여섯 개를 하나씩 옮기면 새 모양이 돼요. 읽어 보면 9예요."
   },
   {
    "id": "fcb-book-01-digital-turn-flip-b14",
@@ -388,6 +388,218 @@
   },
   {
    "id": "fcb-book-01-fold-two-cut-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b01",
+   "text": "줄마다 수를 더한 합이 모두 같아지게 빈칸을 채워 볼 거예요. 계산을 짧게 하는 방법이 있어요. 하나씩 천천히 봐요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b02",
+   "text": "동그라미 다섯 개를 십자 모양으로 그려요. 가로줄에 세 개, 세로줄에 세 개예요. 가운데 동그라미는 두 줄이 함께 써요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b03",
+   "text": "가로줄에 7, 5, 2를 써요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b04",
+   "text": "세로줄에는 가운데 5와 아래 3이 있고, 위는 비어 있어요. 가로줄의 합과 세로줄의 합이 같아지도록 위 빈칸을 채울 거예요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b05",
+   "text": "먼저 가로줄을 더해요. 7 더하기 5는 12, 거기에 2를 더하면 14. 가로줄의 합은 14예요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b06",
+   "text": "세로줄도 14가 되어야 해요. 그런데 잘 보세요. 가운데 5는 가로줄에도 세로줄에도 들어 있어요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b07",
+   "text": "두 줄에 똑같이 들어 있는 수는, 양쪽에서 똑같이 빼도 괜찮아요. 같았던 두 합에서 똑같은 수를 빼면, 남은 것끼리도 여전히 같아요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b08",
+   "text": "가운데를 빼면 가로줄에는 바깥 수 7과 2가 남아요. 7 더하기 2는 9."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b09",
+   "text": "세로줄에서 가운데를 빼면 위의 빈칸과 아래 3이 남아요. 이 둘을 더해도 9가 되어야 해요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b10",
+   "text": "3에 얼마를 더하면 9가 될까요? 9에서 3을 빼면 돼요. 9 빼기 3은 6."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b11",
+   "text": "위 빈칸에 6을 써요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b12",
+   "text": "꼭 확인해요. 세로줄 6 더하기 5 더하기 3은 14. 가로줄과 똑같이 14예요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b13",
+   "text": "왜 가운데를 빼면 편할까요? 줄 전체를 다 더하지 않고, 바깥 수 두 개끼리만 비교하면 되니까 계산이 짧아져요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b14",
+   "text": "정리해요. 두 줄이 함께 쓰는 수는 빼고 생각해요. 바깥 수의 합을 같게 만들고, 마지막에 줄 전체 합을 다시 더해 확인해요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-b15",
+   "text": "한 문제 풀어 봐요. 가로줄 바깥 수가 8과 4, 가운데는 6, 세로줄 아래가 3이에요. 위 빈칸은 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-hint",
+   "text": "가운데 6은 빼고 생각해요. 가로 바깥 수 8 더하기 4와, 위 빈칸 더하기 3이 같아야 해요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-right",
+   "text": "맞았어요! 바깥 수 8과 4의 합은 12. 거기서 3을 빼면 9예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-sums-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b01",
+   "text": "숫자 카드를 한 번씩만 써서, 두 줄의 합이 같아지게 놓아 볼 거예요. 가운데 자리를 먼저 정하는 게 비밀이에요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b02",
+   "text": "쓸 카드는 4, 5, 6, 7, 8. 다섯 장이에요. 한 장도 빼지 않고, 한 번씩만 써요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b03",
+   "text": "동그라미 다섯 개를 십자 모양으로 그려요. 가로줄 세 개, 세로줄 세 개. 가운데 자리는 두 줄이 함께 써요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b04",
+   "text": "가운데 카드는 가로줄에도 세로줄에도 들어가요. 그러니까 가운데를 빼고 남은 카드 네 장을, 합이 똑같은 두 짝으로 나눌 수 있으면 돼요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b05",
+   "text": "가운데에 6을 놓아 볼게요. 남은 카드는 4, 5, 7, 8. 다 더하면 24. 반으로 나누면 12씩이에요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b06",
+   "text": "합이 12가 되는 짝을 찾아요. 4 더하기 8은 12, 5 더하기 7도 12. 두 짝이 생겼어요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b07",
+   "text": "한 짝은 가로줄 양쪽에, 다른 짝은 세로줄 위아래에 놓아요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b08",
+   "text": "확인해요. 가로줄 4 더하기 6 더하기 8은 18. 세로줄 5 더하기 6 더하기 7도 18. 두 줄이 같아요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b09",
+   "text": "가운데에 다른 카드도 놓을 수 있을까요? 5를 놓으면 남은 카드의 합은 25. 25는 똑같은 두 수로 나눌 수 없어요. 그래서 5는 안 돼요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b10",
+   "text": "7도 마찬가지예요. 남은 합이 23라서 반으로 나눌 수 없어요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b11",
+   "text": "4를 놓으면 남은 합은 26, 반은 13. 5 더하기 8, 6 더하기 7로 짝이 돼요. 8도 남은 합 22, 반은 11라서 짝이 돼요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b12",
+   "text": "그래서 가운데에 놓을 수 있는 카드는 4, 6, 8. 하나씩 놓아 보고, 남은 합이 반으로 나뉘는지, 같은 합의 짝이 있는지 확인하면 돼요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b13",
+   "text": "정리해요. 가운데를 하나 정해요. 남은 카드를 다 더해 반으로 나눠요. 같은 합의 두 짝이 있으면 성공. 카드는 한 번씩만 써요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-b14",
+   "text": "한 문제 풀어 봐요. 카드 6, 7, 8, 9, 10에서 가운데에 6을 놓았어요. 남은 카드로 합이 같은 두 짝을 만들면 무엇일까요?"
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-hint",
+   "text": "남은 카드 7, 8, 9, 10을 다 더하면 34예요. 반은 17. 더해서 17이 되는 짝을 찾아요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-right",
+   "text": "맞았어요! 7 더하기 10도 17, 8 더하기 9도 17. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-01-equal-line-placement-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b01",
+   "text": "네 칸짜리 판에 숫자를 채워서, 가로줄의 합과 세로줄의 합을 모두 맞출 거예요. 확실하게 알 수 있는 칸부터 하나씩 채워요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b02",
+   "text": "가로 두 칸, 세로 두 줄인 네모 판을 그려요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b03",
+   "text": "줄마다 합을 적어요. 오른쪽에 쓴 수는 가로줄의 합이에요. 윗줄은 9, 아랫줄은 11."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b04",
+   "text": "아래에 쓴 수는 세로줄의 합이에요. 왼쪽 줄은 8, 오른쪽 줄은 12."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b05",
+   "text": "왼쪽 위 칸에는 2가 이미 들어 있어요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b06",
+   "text": "남은 세 칸에 넣을 카드는 5, 6, 7이에요. 한 번씩만 써요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b07",
+   "text": "어느 칸부터 할까요? 빈칸이 하나뿐인 줄을 찾아요. 윗줄은 2가 있고 빈칸이 하나예요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b08",
+   "text": "윗줄의 합은 9. 2에 얼마를 더하면 9일까요? 9 빼기 2는 7. 오른쪽 위 칸은 7이에요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b09",
+   "text": "7 카드는 썼으니 지워요. 이번엔 왼쪽 세로줄이에요. 위에 2가 있고 빈칸이 하나예요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b10",
+   "text": "왼쪽 세로줄의 합은 8. 8 빼기 2는 6. 왼쪽 아래 칸은 6이에요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b11",
+   "text": "남은 카드는 5 하나. 마지막 칸, 오른쪽 아래에 5를 놓아요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b12",
+   "text": "이제 확인해요. 아랫줄 6 더하기 5는 11. 적혀 있는 11과 같아요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b13",
+   "text": "오른쪽 세로줄 7 더하기 5는 12. 이것도 12와 같아요. 네 줄이 모두 맞았어요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b14",
+   "text": "정리해요. 빈칸이 하나뿐인 줄부터 찾아요. 줄의 합에서 아는 수를 빼서 빈칸을 구해요. 쓴 카드는 지우고, 마지막에 모든 줄을 다시 더해 확인해요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-b15",
+   "text": "한 문제 풀어 봐요. 윗줄의 합이 11이고, 왼쪽 칸에 4가 있어요. 오른쪽 칸은 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-hint",
+   "text": "윗줄의 합 11에서 이미 있는 4를 빼 봐요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-right",
+   "text": "맞았어요! 11에서 4를 빼면 7. 4 더하기 7은 11이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-01-gakuro-sum-grid-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
