@@ -3,6 +3,9 @@ import { UNITS, unitById, DOMAINS, ORDERED, domainOf, LEVELS, levelOf, CONTESTS,
 import { Stage, Player } from './engine.js';
 import { renderReport } from './report.js';
 import { renderObserve } from './observe.js';
+import { OBSERVE_SETS } from './data/observe-sets.js';
+import { CONTEST_GUIDE } from './data/contests.js';
+import { renderContest } from './contest.js';
 
 const $app = document.getElementById('app');
 const STORE_KEY = 'sciLab.v1';
@@ -22,8 +25,9 @@ function route() {
   const h = location.hash.replace(/^#\/?/, '');
   const m = h.match(/^u\/([\w-]+)(\/report)?/);
   teardown3D(); homeOff?.(); homeOff = null; reportOff?.(); reportOff = null;
-  if (/^observe\b/.test(h)) reportOff = renderObserve($app, { topbar, footer }, h.split('/')[1] || '').destroy;
-  else if (m && unitById(m[1]) && m[2]) reportOff = renderReport(unitById(m[1]), $app, { topbar, footer }).destroy;
+  if (/^contest\//.test(h)) renderContest($app, { topbar, footer }, h.split('/')[1] || '');
+  else if (/^observe\b/.test(h)) reportOff = renderObserve($app, { topbar, footer }, h.split('/')[1] || '').destroy;
+  else if (m && unitById(m[1]) && m[2]) reportOff = renderReport(unitById(m[1]), $app, { topbar, footer, contest: (h.match(/[?&]ct=(\w+)/) || [])[1] || '' }).destroy;
   else if (m && unitById(m[1])) renderUnit(unitById(m[1])); else renderHome();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
@@ -105,34 +109,62 @@ function stampsHtml(s) {
   const quiz = s.quizBest != null ? `확인 ${s.quizBest}/3` : '확인 전';
   return `<span class="stamps"><span class="stamp ${s.videoDone ? 'on' : ''}">${s.videoDone ? '3D 실험 봄' : '3D 실험 전'}</span><span class="stamp ${s.quizBest >= 2 ? 'gold' : s.quizBest != null ? 'on' : ''}">${quiz}</span></span>`;
 }
+// 첫 화면 카드 묶음의 항목: 실험(unit) · 자연관찰 연습 세트(observe) · 대회 안내(guide, 대회 폴더를 열었을 때 맨 앞 장)
+const ITEMS = [...ORDERED.map((u) => ({ kind: 'unit', id: u.id, u })), ...OBSERVE_SETS.map((s) => ({ kind: 'observe', id: s.id, s }))];
+const itemContests = (it) => it.kind === 'unit' ? contestsOf(it.u) : it.kind === 'observe' ? CONTESTS.filter((c) => c.id === 'nature') : [it.c];
+const itemLevel = (it) => it.kind === 'unit' ? levelOf(it.u).id : it.kind === 'observe' ? it.s.level : '';
+const itemDomain = (it) => it.kind === 'unit' ? domainOf(it.u).id : it.kind === 'observe' ? 'life' : '';
+const itemHref = (it) => it.kind === 'unit' ? `#/u/${it.id}` : it.kind === 'observe' ? `#/observe/${it.id}` : `#/contest/${it.c.id}`;
+const itemText = (it) => it.kind === 'unit' ? `${it.u.title} ${it.u.sub} ${it.u.activity.title} ${domainOf(it.u).title}` : it.kind === 'observe' ? `${it.s.title} ${it.s.short} 자연관찰 연습 ${it.s.lead}` : '';
+// 폴더 순서: 자연관찰 폴더는 연습 세트가 먼저(대회 과제 그대로 연습), 나머지는 실험이 먼저
+const folderOrder = (ct) => ct === 'nature' ? [...ITEMS.filter((it) => it.kind === 'observe'), ...ITEMS.filter((it) => it.kind === 'unit')] : ITEMS;
+const contestTabs = (cs) => `<div class="ac-tabs" aria-hidden="true">${cs.map((c, i) => `<span class="ac-tab ${c.id}${i ? ' sub' : ''}">${CONTEST_GUIDE[c.id].icon} ${esc(i ? c.short : c.title)}</span>`).join('')}</div>`;
 function renderHome() {
   const done = UNITS.filter((u) => store.unit(u.id).quizBest >= 2).length;
   const last = UNITS.map((u) => [u, store.unit(u.id).updatedAt || 0]).filter(([, t]) => t).sort((a, b) => b[1] - a[1])[0]?.[0];
   $app.innerHTML = `<header class="arch-top"><a class="arch-brand" href="#/"><b>GFIELD</b><span>/SCIENCE-INQUIRY-LAB</span></a>
-      <label class="arch-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="실험 찾기… (Ctrl+/)" aria-label="실험 찾기" autocomplete="off"></label>
+      <label class="arch-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="실험·연습 찾기… (Ctrl+/)" aria-label="실험·연습 찾기" autocomplete="off"></label>
       <span class="arch-progress">확인 ${done}/${UNITS.length}</span></header>
   <main class="archive">
     <div class="arch-track"><section class="arch-stage" aria-label="과학 탐구 실험실 — 실험 카드">
       <div class="arch-bg">${corridorSvg()}<img class="arch-photo" alt="" hidden></div>
       <div class="arch-wall" aria-hidden="true"><small>GFIELD · SCIENCE INQUIRY LAB</small><b>THE INQUIRY LAB</b><span>과학 탐구 실험실</span></div>
       <div class="arch-stack" tabindex="0" aria-roledescription="카드 넘기기" aria-label="실험 카드 묶음. 왼쪽·오른쪽 화살표로 넘기고 Enter로 열어요."></div>
-      <nav class="arch-pills arch-contests" aria-label="대회 거르기">${CONTESTS.map((c) => `<button type="button" data-ct="${c.id}" title="${esc(c.sub)}">${esc(c.title)} <b>${ORDERED.filter((u) => contestsOf(u).includes(c)).length}</b></button>`).join('')}<button type="button" data-ct="" class="all on">전체</button><a class="arch-observe" href="#/observe">🔍 자연관찰 연습</a></nav>
-      <nav class="arch-pills arch-levels" aria-label="수준 거르기">${LEVELS.map((l) => `<button type="button" data-lvl="${l.id}" title="${esc(l.sub)}">${esc(l.title)} <b>${ORDERED.filter((u) => levelOf(u) === l).length}</b></button>`).join('')}<button type="button" data-lvl="" class="all on">전체</button></nav>
-      <nav class="arch-pills arch-doms" aria-label="영역 거르기">${DOMAINS.map((d) => { const n = ORDERED.filter((u) => domainOf(u) === d).length; return `<button type="button" data-dom="${d.id}" style="--tab:${d.color}"${n ? '' : ' disabled title="준비 중"'}>${esc(d.title)} <b>${n || '준비 중'}</b></button>`; }).join('')}<button type="button" data-dom="" class="all on">ALL <b>${UNITS.length}</b></button></nav>
+      <nav class="arch-pills arch-contests" aria-label="대회 폴더 열기">${CONTESTS.map((c) => `<button type="button" data-ct="${c.id}" title="${esc(c.title)} 폴더 — ${esc(c.sub)}">${CONTEST_GUIDE[c.id].icon} ${esc(c.title)} <b>${ITEMS.filter((it) => itemContests(it).includes(c)).length}</b></button>`).join('')}<button type="button" data-ct="" class="all on">전체</button></nav>
+      <nav class="arch-pills arch-levels" aria-label="수준 거르기">${LEVELS.map((l) => `<button type="button" data-lvl="${l.id}" title="${esc(l.sub)}">${esc(l.title)} <b>${ITEMS.filter((it) => itemLevel(it) === l.id).length}</b></button>`).join('')}<button type="button" data-lvl="" class="all on">전체</button></nav>
+      <nav class="arch-pills arch-doms" aria-label="영역 거르기">${DOMAINS.map((d) => { const n = ITEMS.filter((it) => itemDomain(it) === d.id).length; return `<button type="button" data-dom="${d.id}" style="--tab:${d.color}"${n ? '' : ' disabled title="준비 중"'}>${esc(d.title)} <b>${n || '준비 중'}</b></button>`; }).join('')}<button type="button" data-dom="" class="all on">ALL <b>${ITEMS.length}</b></button></nav>
       <div class="arch-ctrl"><button type="button" data-step="-1" aria-label="앞 카드">‹</button><span class="arch-count" aria-live="polite"></span><button type="button" data-step="1" aria-label="뒤 카드">›</button><small>스크롤 · 클릭 · ← →로 넘겨요</small></div>
       ${last ? `<a class="arch-resume" href="#/u/${last.id}">이어서 보기 <b>${esc(last.title)}</b></a>` : ''}
     </section></div>
     <section class="wrap arch-index" aria-label="전체 실험 목록">
+      <h2>대회 폴더 <small>대회마다 하는 일·심사에서 보는 것·연습할 곳을 한 폴더에 모았어요</small></h2>
+      <div class="arch-folders">${CONTESTS.map((c) => { const G = CONTEST_GUIDE[c.id], n = ITEMS.filter((it) => itemContests(it).includes(c)); return `<a class="arch-folder ${c.id}" href="#/contest/${c.id}"><span class="af-tab">${G.icon} ${esc(c.title)}</span><b>${esc(c.sub)}</b><span class="af-lead">${esc(G.lead.split(/(?<=요\.)\s/)[0])}</span><span class="af-n">${n.filter((it) => it.kind === 'observe').length ? `연습 ${n.filter((it) => it.kind === 'observe').length} · ` : ''}실험 ${n.filter((it) => it.kind === 'unit').length} · 대회 안내 →</span></a>`; }).join('')}</div>
+      <div class="arch-shelf nature-shelf" style="--tab:#8fd18a"><h3><span>NATURE OBSERVATION</span>자연관찰 연습 <small>세트 ${OBSERVE_SETS.length}개 · 3D 표본과 실사 사진으로 관찰하고 보고서 쓰기</small></h3><ol>${OBSERVE_SETS.map((x) => `<li><a href="#/observe/${x.id}"><span class="no">${x.level === 'mid' ? '중등' : '초등'}</span><b>${esc(x.title)}</b><span class="exp">${esc(x.steps.slice(0, 3).join(' → '))} …</span><span class="stamps"><span class="stamp">${x.mod.SPECIMENS.length}종</span></span></a></li>`).join('')}</ol></div>
       <h2>실험 목록 <small>실험 ${UNITS.length}건 · 출처 『2009 초등학교 과학탐구토론 지도자료』(서울특별시과학전시관)</small></h2>
       ${DOMAINS.map((d) => { const us = ORDERED.filter((u) => domainOf(u) === d); return `<div class="arch-shelf" style="--tab:${d.color}"><h3><span>${d.en}</span>${esc(d.title)} <small>실험 ${us.length}건</small></h3>${us.length ? `<ol>${us.map((u) => `<li><a href="#/u/${u.id}"><span class="no">${esc(levelOf(u).title)}</span><b>${esc(u.title)}</b><span class="exp">${esc(u.activity.title)}</span>${stampsHtml(store.unit(u.id))}</a></li>`).join('')}</ol>` : '<p class="arch-empty">준비 중 — 지구와 우주 영역의 탐구 실험을 채울 자리예요.</p>'}</div>`; }).join('')}
     </section>
   </main>${footer()}`;
 
   const $stack = $app.querySelector('.arch-stack'), $count = $app.querySelector('.arch-count'), $q = $app.querySelector('.arch-search input');
-  let list = ORDERED.slice(), cur = 0, dom = '', lvl = '', ct = '', query = '';
-  const cardHtml = (u) => { const d = domainOf(u), s = store.unit(u.id);
-    return `<article class="arch-card" data-id="${u.id}" style="--tab:${d.color}">
-      <div class="ac-meta"><span><i></i>${esc(d.title)} · ${d.en}</span><span class="ac-src">${contestsOf(u).map((c) => `<em class="ac-contest ${c.id}">${esc(c.short)}</em>`).join('')}<em class="ac-level ${levelOf(u).id}">${esc(levelOf(u).title)}</em>EXP-${String(ORDERED.indexOf(u) + 1).padStart(2, '0')}</span></div>
+  let list = ITEMS.slice(), cur = 0, dom = '', lvl = '', ct = '', query = '';
+  const $wall = $app.querySelector('.arch-wall'), $stageEl = $app.querySelector('.arch-stage'), WALL = $wall.innerHTML;
+  const guideHtml = (c) => { const G = CONTEST_GUIDE[c.id], inFolder = ITEMS.filter((it) => itemContests(it).includes(c)), pct = G.judge.rows.every((r) => /%$/.test(r[1]));
+    return `<article class="arch-card guide ${c.id}" data-id="guide-${c.id}" style="--tab:${G.color}">${contestTabs([c])}
+      <div class="ac-meta"><span><i></i>대회 안내 · ${c.en}</span><span class="ac-src">폴더 첫 장</span></div>
+      <h3>${esc(c.title)}</h3><p class="ac-sub">${esc(c.sub)}</p><p class="ac-lead">${esc(G.lead.split(/(?<=요\.)\s/)[0])}</p>
+      <dl class="ac-facts">${G.facts.slice(0, 3).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v.split(/(?<=[요다]\.)\s/)[0])}</dd>`).join('')}</dl>
+      ${pct ? `<div class="ac-judge" aria-label="심사 비율(${esc(G.judge.src)})">${G.judge.rows.map(([k, v]) => `<span style="flex:${parseFloat(v)}"><b>${esc(v)}</b>${esc(k)}</span>`).join('')}</div>` : `<p class="ac-judge-line"><b>심사</b>${esc(G.judge.rows.map((r) => r[0]).join(' · '))}</p>`}
+      <div class="ac-foot"><span class="ac-exp"><b>이 폴더</b>${inFolder.filter((it) => it.kind === 'observe').length ? `연습 세트 ${inFolder.filter((it) => it.kind === 'observe').length} · ` : ''}실험 ${inFolder.filter((it) => it.kind === 'unit').length}</span><a class="ac-open" href="#/contest/${c.id}">대회 안내 전부 보기 →</a></div>
+    </article>`; };
+  const obsHtml = (x) => `<article class="arch-card obs" data-id="${x.id}" style="--tab:#5fae7e">${contestTabs(CONTESTS.filter((c) => c.id === 'nature'))}
+      <div class="ac-meta"><span><i></i>자연관찰 연습 · PRACTICE</span><span class="ac-src"><em class="ac-level ${x.level}">${x.level === 'mid' ? '중등' : '초등'}</em>OBS-${String(OBSERVE_SETS.indexOf(x) + 1).padStart(2, '0')}</span></div>
+      <h3>${esc(x.title)}</h3><p class="ac-sub">${esc(x.steps.slice(0, 4).join(' → '))}</p><p class="ac-lead">${esc(x.lead)}</p>
+      <div class="ac-foot"><span class="ac-exp"><b>표본</b>${x.mod.SPECIMENS.length}종 · 3D 모형 · 실사 사진 · 예시 보고서</span><a class="ac-open" href="#/observe/${x.id}">연습 열기 →</a></div>
+    </article>`;
+  const cardHtml = (it) => { if (it.kind === 'guide') return guideHtml(it.c); if (it.kind === 'observe') return obsHtml(it.s);
+    const u = it.u, d = domainOf(u), s = store.unit(u.id);
+    return `<article class="arch-card" data-id="${u.id}" style="--tab:${d.color}">${contestTabs(contestsOf(u))}
+      <div class="ac-meta"><span><i></i>${esc(d.title)} · ${d.en}</span><span class="ac-src"><em class="ac-level ${levelOf(u).id}">${esc(levelOf(u).title)}</em>EXP-${String(ORDERED.indexOf(u) + 1).padStart(2, '0')}</span></div>
       <h3>${esc(u.title)}</h3><p class="ac-sub">${esc(u.sub)}</p><p class="ac-lead">${esc(u.concept.lead)}</p>
       <div class="ac-foot"><span class="ac-exp"><b>실험</b>${esc(u.activity.title)}</span>${stampsHtml(s)}<a class="ac-open" href="#/u/${u.id}">실험 열기 →</a></div>
     </article>`; };
@@ -162,7 +194,7 @@ function renderHome() {
       el.classList.toggle('front', k === cur); el.setAttribute('aria-hidden', String(k !== cur));
       el.querySelectorAll('a').forEach((a) => (a.tabIndex = k === cur ? 0 : -1));
     });
-    $count.textContent = list.length ? `${String(cur + 1).padStart(2, '0')} / ${String(list.length).padStart(2, '0')}` : '찾는 실험이 없어요';
+    $count.textContent = list.length ? `${String(cur + 1).padStart(2, '0')} / ${String(list.length).padStart(2, '0')}` : '찾는 실험·연습이 없어요';
   };
   const sizeTrack = () => { $track.style.height = `calc(100dvh - 52px + ${Math.max(0, list.length - 1) * STEP()}px)`; };
   let raf = 0;
@@ -181,7 +213,12 @@ function renderHome() {
   const jump = (k) => { if (!list.length) return; k = Math.max(0, Math.min(list.length - 1, k)); scrollTo({ top: base() + k * STEP(), behavior: reduced ? 'auto' : 'smooth' }); };
   const go = (n) => jump(cur + n);
   const build = (rise = false) => {
-    list = ORDERED.filter((u) => (!dom || domainOf(u).id === dom) && (!lvl || levelOf(u).id === lvl) && (!ct || contestsOf(u).some((c) => c.id === ct)) && (!query || `${u.title} ${u.sub} ${u.activity.title} ${domainOf(u).title}`.includes(query)));
+    list = folderOrder(ct).filter((it) => (!dom || itemDomain(it) === dom) && (!lvl || itemLevel(it) === lvl) && (!ct || itemContests(it).some((c) => c.id === ct)) && (!query || itemText(it).includes(query)));
+    const C = CONTESTS.find((c) => c.id === ct);
+    // 대회 폴더를 열면: 맨 앞 장 = 대회 안내, 벽 글씨 = 대회 이름, 무대 색 = 대회 색
+    if (C && !query) list.unshift({ kind: 'guide', id: `guide-${C.id}`, c: C });
+    $wall.innerHTML = C ? `<small>CONTEST FOLDER · ${C.en}</small><b>${CONTEST_GUIDE[C.id].icon} ${esc(C.title)}</b><span>${esc(C.sub)}</span>` : WALL;
+    $stageEl.dataset.ct = ct; $stageEl.style.setProperty('--ct', C ? CONTEST_GUIDE[C.id].color : '');
     $stack.innerHTML = list.map(cardHtml).join(''); sizeTrack();
     if (scrollY > base()) scrollTo({ top: Math.max(0, base()), behavior: 'auto' });   // 거르기·검색을 바꾸면 첫 카드부터
     if (rise && !reduced) { shown = 0; lift = 1; layout(); }   // 영역을 누르면 그 영역의 첫 카드가 아래에서 쑥 올라와 맨 앞에 선다(원장 2026-10-20)
@@ -198,13 +235,13 @@ function renderHome() {
   $app.querySelectorAll('.arch-doms button').forEach((b) => b.addEventListener('click', () => { dom = b.dataset.dom; $app.querySelectorAll('.arch-doms button').forEach((x) => x.classList.toggle('on', x === b)); build(true); }));
   // 검색은 전체 실험에서 찾는다(영역 거르기를 ALL로 되돌림)
   $q.addEventListener('input', () => { query = $q.value.trim(); if (query && dom) { dom = ''; $app.querySelectorAll('.arch-doms button').forEach((x) => x.classList.toggle('on', !x.dataset.dom)); } build(); });
-  $q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && list[cur]) location.hash = `#/u/${list[cur].id}`; });
+  $q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && list[cur]) location.hash = itemHref(list[cur]); });
   const onKey = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === '/') { e.preventDefault(); $q.focus(); return; }
     if (e.target.matches('input,select,textarea')) return;
     if (['ArrowRight', 'ArrowDown'].includes(e.key) && document.activeElement?.closest('.arch-stage')) { e.preventDefault(); go(1); }
     if (['ArrowLeft', 'ArrowUp'].includes(e.key) && document.activeElement?.closest('.arch-stage')) { e.preventDefault(); go(-1); }
-    if (e.key === 'Enter' && document.activeElement === $stack && list[cur]) location.hash = `#/u/${list[cur].id}`;
+    if (e.key === 'Enter' && document.activeElement === $stack && list[cur]) location.hash = itemHref(list[cur]);
   };
   const onResize = () => { sizeTrack(); fromScroll(); };
   document.addEventListener('keydown', onKey); addEventListener('resize', onResize); addEventListener('scroll', onScroll, { passive: true });
