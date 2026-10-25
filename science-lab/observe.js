@@ -54,7 +54,8 @@ export function renderObserve($app, { topbar, footer }, setId) {
     const acts = cur?.actions ? cur.actions() : [];
     for (const grp of ['hand', 'env']) $app.querySelector(`.ob-acts[data-group="${grp}"]`).innerHTML = (grp === 'env' && acts.some((a) => a.env) ? '<span class="ob-grp">환경 확인</span>' : '') + acts.filter((a) => !!a.env === (grp === 'env')).map((a) => `<button type="button" data-act="${a.id}" ${mode !== '3d' ? 'disabled' : ''}>${esc(a.name)}</button>`).join('');
     const $pl = $app.querySelector('.ob-place'); $pl.innerHTML = cur?.places ? cur.places.map((p) => `<button type="button" data-place="${p.id}" aria-pressed="${cur.place() === p.id}">${esc(p.name)}</button>`).join('') : '';
-    $pl.querySelectorAll('[data-place]').forEach((b) => { b.onclick = () => { cur.setPlace(b.dataset.place); $note.textContent = `${b.textContent}로 바꿨어요. 같은 방법으로 환경을 확인해 비교해요.`; draw(); }; });
+    $pl.setAttribute('aria-label', cur?.placeTitle || '장소'); $pl.dataset.title = cur?.placeTitle || '';
+    $pl.querySelectorAll('[data-place]').forEach((b) => { b.onclick = () => { cur.setPlace(b.dataset.place); $note.textContent = cur.placeNote ? cur.placeNote(b.textContent) : `${b.textContent}로 바꿨어요. 같은 방법으로 환경을 확인해 비교해요.`; draw(); }; });
     $app.querySelector('.ob-think ul').innerHTML = (s?.think || []).map((t) => `<li>${esc(t)}</li>`).join('');
     $app.querySelector('.ob-name').textContent = reveal && s ? `${s.no} ${s.name} — ${s.hint}` : s ? `${s.no} ${s.hint}` : '';
     $app.querySelector('[data-reveal]').textContent = reveal ? '이름 숨기기' : '이름 확인하기';
@@ -72,7 +73,7 @@ export function renderObserve($app, { topbar, footer }, setId) {
   $app.querySelectorAll('[data-spec]').forEach((b) => { b.onclick = () => load(+b.dataset.spec); });
   $app.querySelectorAll('[data-mode]').forEach((b) => { b.onclick = () => { if (b.dataset.mode === '3d' && !stage) return; mode = b.dataset.mode; draw(); }; });
   $app.querySelectorAll('[data-view]').forEach((b) => { b.onclick = () => { view = b.dataset.view; cur.setView(view); draw(); }; });
-  $app.querySelectorAll('[data-tg]').forEach((b) => { b.onclick = () => { const k = b.dataset.tg; on[k] = !on[k]; cur.toggle(k, on[k]); draw(); }; });
+  $app.querySelectorAll('[data-tg]').forEach((b) => { b.onclick = () => { const k = b.dataset.tg; on[k] = !on[k]; cur.toggle(k, on[k]); const t = on[k] && cur.toolNote ? cur.toolNote(k) : ''; if (t) $note.textContent = t; draw(); }; });
   $app.querySelector('[data-reveal]').onclick = () => { reveal = !reveal; draw(); };
   let sample = null; $app.querySelector('[data-sample]')?.addEventListener('click', () => { sample?.close?.(); sample = openSample(S); });
   load(0);

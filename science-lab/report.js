@@ -29,6 +29,8 @@ export function renderReport(u, $app, { topbar, footer, embedded = false, refere
   const setForm = () => {
     cfg = reportCfg(u.id, R.level, R.contest); T = formTemplate(R.contest, R.level);
     if (u.reportSkip?.length) T = { ...T, cells: T.cells.filter((c) => !u.reportSkip.includes(c.key)) };   // 연습 세트에 맞지 않는 칸(예: 잎차례엔 두 장소 비교) 빼기
+    if (u.reportPatch) T = { ...T, cells: T.cells.map((c) => (u.reportPatch[c.key] ? { ...c, ...u.reportPatch[c.key] } : c)) };
+    if (u.reportOrder) { const at = (c) => { const i = u.reportOrder.indexOf(c.key); return i < 0 ? 99 : i; }; T = { ...T, cells: T.cells.slice().sort((x, y) => at(x) - at(y)) }; }
     if (T.cells.some((c) => c.kind === 'obs') && !R.cells.__obs) Object.assign(R.cells, Object.fromEntries(Object.entries(prefill(u, cfg, R.level, R.contest)).filter(([k]) => k === '__obs' || k.endsWith('.label'))));
   };
   setForm();
@@ -336,7 +338,7 @@ export function renderReport(u, $app, { topbar, footer, embedded = false, refere
 }
 
 // 표 → SVG 그래프(꺾은선·막대). 축 이름은 열 머리글, 단위는 아이가 머리글에 적는다.
-function chartSvg(c) {
+export function chartSvg(c) {
   const W = 560, H = 240, L = 46, R = 16, Tp = 18, B = 40, w = W - L - R, h = H - Tp - B;
   const max = Math.max(1, c.max), min = Math.min(0, c.min), span = max - min || 1, y = (v) => Tp + h - ((v - min) / span) * h;
   const colors = ['#2f7d6d', '#d9a441', '#5a7fb5', '#c94f4f', '#8e6bbf', '#6c7a89'];

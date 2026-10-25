@@ -239,7 +239,7 @@ def('g13Dots', {
     var s = '<svg class="nm-nl-dots nm-nl-g13-dots nm-obj-svg" viewBox="-6 -8 112 112" style="width:25mm;height:25mm;display:block">';
     for(var k = 0; k < (p.pre || 0) && k < n - 1; k++) s += '<line x1="' + p.pts[seq[k]][0] + '" y1="' + p.pts[seq[k]][1] + '" x2="' + p.pts[seq[k + 1]][0] + '" y2="' + p.pts[seq[k + 1]][1] + '" stroke="#2E9E6B" stroke-width="1.8" stroke-linecap="round"/>';
     p.pts.forEach(function(q, i){ s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="2.4" style="fill:#0E2C57"/><text x="' + q[0] + '" y="' + (q[1] - 4.5) + '" text-anchor="middle" font-size="7.5" font-weight="700" style="fill:#0E2C57" stroke="none">' + p.labels[i] + '</text>'; });
-    return stage(K, s + '</svg>', K.nlAnsBox(K.EA));
+    return stage(K, s + K.nlDotDetailsSvg(p.pts) + '</svg>', K.nlAnsBox(K.EA));
   },
   label: function(){ return null; }
 });
@@ -326,12 +326,18 @@ def('g13Pinball', {
 });
 
 /* ── 개수 줄과 순서 줄 ── */
+function ordPaintCaption(r,K){
+  const side=r.from==='right'?K.lk('오른쪽','right','右边'):K.lk('왼쪽','left','左边');
+  const ord=['','첫째','둘째','셋째','넷째','다섯째','여섯째','일곱째','여덟째','아홉째','열째'][r.n]||r.n+'째';
+  return r.kind==='ordinal'?K.lk(side+'에서 '+ord+' 칸 하나만 칠해요.','Color only box '+r.n+' from the '+side+'.','只涂从'+side+'数第'+r.n+'格。'):K.lk(side+'부터 '+r.n+'칸을 칠해요.','Color '+r.n+' boxes starting from the '+side+'.','从'+side+'开始涂'+r.n+'格。');
+}
 def('g13OrdPaint', {
+  rowCaption:ordPaintCaption,
   visual: function(p, K){
     var out = p.rows.map(function(r){
       var cells = ''; for(var i = 0; i < p.total; i++) cells += '<span class="nm-nl-g13-oc"></span>';
       var flag = r.from === 'right' ? '◀ ' + K.lk('오른쪽 시작', 'start right', '从右边开始') : K.lk('왼쪽 시작', 'start left', '从左边开始') + ' ▶';
-      return '<div style="display:flex;flex-direction:column;align-items:center;gap:.8mm"><div class="nm-nl-g13-cap">' + K.esc(K.pickL(r.cap)) + ' <span style="font-weight:600;font-size:9.5px">' + K.esc(flag) + '</span></div><div class="nm-nl-g13-cells">' + cells + '</div></div>';
+      return '<div style="display:flex;flex-direction:column;align-items:center;gap:.8mm"><div class="nm-nl-g13-cap">' + K.esc(ordPaintCaption(r,K)) + ' <span style="font-weight:600;font-size:9.5px">' + K.esc(flag) + '</span></div><div class="nm-nl-g13-cells">' + cells + '</div></div>';
     }).join('');
     return K.nlCard(K.nlStage(out));
   },

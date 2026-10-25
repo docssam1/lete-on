@@ -29,6 +29,24 @@ const OUTLINES = {
   round: (n = 48) => Array.from({ length: n + 1 }, (_, i) => { const t = i / n; return [Math.sin(Math.PI * t) * 0.98, t]; }),
   petal: (n = 30) => Array.from({ length: n + 1 }, (_, i) => { const t = i / n; return [Math.sin(Math.PI * t ** 1.3) ** 0.8 * 0.95, t]; }),
 };
+// 정해진 모양의 윤곽 — m: 가장 넓은 자리(잎끝 0 ~ 잎밑 1), p: 통통함(작을수록 둥글다), teeth: 한쪽 톱니 수(0이면 밋밋), depth: 톱니 깊이, double: 겹톱니.
+// 잴 수 있는 잎(자연관찰 「비슷한 잎 재서 구분하기」)에 쓴다: 가장 넓은 자리와 톱니 수가 그림과 측정값에서 똑같다.
+export function shapedOutline({ m = 0.5, p = 0.8, teeth = 0, depth = 0.06, double = false, n = 60, from = 0.06, to = 0.9 } = {}) {
+  const k = Math.log(0.5) / Math.log(m), r = (t) => Math.sin(Math.PI * Math.min(1, Math.max(0, t)) ** k) ** p * 0.98;
+  if (!teeth) { const out = Array.from({ length: n + 1 }, (_, i) => [r(i / n), i / n]); out.teeth = 0; return out; }
+  const out = [], d = (to - from) / teeth;
+  for (let i = 0; i <= Math.round(from * n); i++) out.push([r(i / n), i / n]);
+  for (let i = 0; i < teeth; i++) {
+    const t = from + i * d;
+    out.push([r(t), t]);
+    if (double) out.push([r(t + 0.35 * d) * (1 - depth * 0.45), t + 0.35 * d], [r(t + 0.5 * d) * (1 - depth * 0.12), t + 0.5 * d]);
+    out.push([r(t + 0.85 * d) * (1 - depth), t + 0.85 * d]);
+  }
+  for (let i = Math.round(to * n); i <= n; i++) out.push([r(i / n), i / n]);
+  out.teeth = teeth; return out;
+}
+// 윤곽에서 가장 넓은 점(반폭 x·위치 t) — 잴 때 「최대 폭」과 「잎밑~최대 폭」
+export const widest = (pts) => pts.reduce((b, q) => (q[0] > b[0] ? q : b), [0, 0]);
 function tracePath(c, pts, w, h) {
   c.beginPath(); const cx = w / 2;
   if (pts.full) { pts.forEach(([x, t], i) => { const X = cx + x * cx * 0.98, Y = t * h; if (!i) c.moveTo(X, Y); else if (pts.straight) c.lineTo(X, Y); else { const [px, pt] = pts[i - 1]; c.quadraticCurveTo((cx + px * cx * 0.98 + X) / 2, (pt * h + Y) / 2, X, Y); } }); c.closePath(); return; }
@@ -53,7 +71,7 @@ function drawVeins(c, w, h, { type = 'pinnate', color = 'rgba(40,70,30,0.55)', f
 }
 // 잎 질감 한 벌: 앞면·뒷면 색 지도 + 알파. 앞면은 가운데가 진하고 가장자리로 밝아지며, 뒷면은 연하고 잎맥이 도드라진다.
 export function leafTextures(key, { outline = 'elliptic', veins = 'pinnate', top = '#3f8f3a', topEdge = '#79b56a', under = '#9cc08a', veinN = 9, seed = 3, w = 512, h = 768, glossSpots = true } = {}) {
-  const pts = OUTLINES[outline] ? OUTLINES[outline]() : OUTLINES.elliptic();
+  const pts = Array.isArray(outline) ? outline : OUTLINES[outline] ? OUTLINES[outline]() : OUTLINES.elliptic();
   const alpha = canvasTex(key + ':a', w, h, (c) => { c.fillStyle = '#000'; c.fillRect(0, 0, w, h); c.fillStyle = '#fff'; tracePath(c, pts, w, h); c.fill(); }, { linear: true });
   const face = (name, base, edge, veinCol, fineCol, spots) => canvasTex(key + ':' + name, w, h, (c) => {
     const g = c.createRadialGradient(w / 2, h * 0.55, w * 0.05, w / 2, h * 0.55, w * 0.75); g.addColorStop(0, base); g.addColorStop(1, edge); c.fillStyle = g; c.fillRect(0, 0, w, h);

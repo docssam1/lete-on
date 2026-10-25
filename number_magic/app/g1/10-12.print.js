@@ -404,7 +404,7 @@
       const ex = (p.solutionGroups || []).map(g => g.map(c => `(${c[0]},${c[1]})`).join('')).join(' · ');
       return `${K.lk('예', 'e.g.', '例')} ${ex}`;
     },
-    ask(p, K) { return K.pickL(p.prompt) + K.lk(' 묶을 때는 ○로 둘러싸요.', ' Draw a circle around each group.', ' 用圈把每一组圈起来。'); }
+    ask(p, K) { return K.pickL(p.prompt) + K.lk(' 서로 닿은 칸끼리 묶어요. 비스듬히 닿아도 돼요. 한 칸은 한 번만 써요. ○로 둘러싸요.', ' Group touching cells; diagonal touching is allowed. Use each cell only once. Circle each group.', ' 把相邻的格子圈成一组，斜着相邻也可以。每格只能用一次。'); }
   };
 
   P.g12_eqScale = {

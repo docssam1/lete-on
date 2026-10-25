@@ -188,9 +188,9 @@ export function chartData(table) {
   const max = Math.max(...vals, 0), min = Math.min(...vals, 0);
   return { type: kept.length >= 2 ? 'line' : 'bar', x: kept.map(({ c }) => c), series: series.map((s) => ({ name: s.name, values: kept.map(({ j }) => s.values[j]) })), max, min };
 }
-// 중등: 회차 열(1회·2회·3회…)이 있으면 평균 열을 계산한다
+// 중등: 회차 열(1회·2회·3회… 또는 잎1·잎2…)이 있으면 평균 열을 계산한다
 export function withMean(table) {
-  const idx = table.columns.map((c, j) => (j && /^\d+회$/.test(String(c).trim()) ? j : -1)).filter((j) => j > 0);
+  const idx = table.columns.map((c, j) => (j && /^(\d+회|잎\s?\d+)$/.test(String(c).trim()) ? j : -1)).filter((j) => j > 0);
   if (idx.length < 2) return table;
   const columns = table.columns.filter((c) => c !== '평균').concat('평균');
   const rows = table.rows.map((r) => { const vals = idx.map((j) => num(r[j])).filter((x) => x != null); const m = vals.length ? Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10 : ''; const base = r.filter((_, j) => table.columns[j] !== '평균'); return [...base, m === '' ? '' : String(m)]; });
