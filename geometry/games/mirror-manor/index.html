@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>GFIELD Mirror Manor</title>
-  <link rel="stylesheet" href="./styles.css?v=mirror-manor-11" />
+  <link rel="stylesheet" href="./styles.css?v=mirror-manor-12" />
   <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
   <script src="../../shared/viewport-fit.js?v=1"></script>
   <link rel="manifest" href="/geometry/manifest.webmanifest" />
@@ -39,7 +39,7 @@
     <section class="play-area">
       <article class="room-panel">
         <div class="room-stage">
-          <div id="board" class="board" role="region" aria-label="Mirror Manor room">
+          <div id="board" class="board" role="region" aria-label="Mirror Manor room" aria-describedby="answerPrompt">
             <div id="cells" class="board-cells"></div>
             <div id="pieceLayer" class="piece-layer"></div>
             <div id="guideLayer" class="guide-layer" aria-hidden="true"></div>
@@ -66,13 +66,6 @@
       <span class="cubi-sprite" aria-hidden="true"></span>
     </aside>
 
-    <div id="tutorial" class="dialog" hidden>
-      <section class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialText">
-        <span class="cubi-sprite" aria-hidden="true"></span>
-        <div><p id="tutorialText"></p><div id="tutorialDots" class="tutorial-dots"></div><button id="tutorialNext" type="button">Next</button></div>
-      </section>
-    </div>
-
     <div id="levelDialog" class="dialog" hidden>
       <section role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
         <header><h2 id="dialogTitle">Choose a level</h2><button id="closeLevels" type="button" aria-label="Close">X</button></header>
@@ -91,7 +84,7 @@
     <div id="success" class="success" aria-hidden="true"><span></span><strong>GREAT JOB!</strong></div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
-  <script type="module" src="./app.js?v=mirror-manor-11"></script>
+  <script type="module" src="./app.js?v=mirror-manor-12"></script>
   <script src="../../shared/pwa.js?v=3" defer></script>
 </body>
 </html>

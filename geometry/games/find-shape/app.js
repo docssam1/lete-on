@@ -436,7 +436,9 @@ function renderLevelList() {
 }
 
 function shouldShowTutorial() {
-  return state.levelIndex === 0 && state.problemIndex === 0 && (params.get("tutorial") === "1" || localStorage.getItem(tutorialKey) !== "done");
+  const forced = params.get("tutorial") === "1";
+  if (!forced && Number(params.get("level")) > 1) return false;
+  return state.levelIndex === 0 && state.problemIndex === 0 && (forced || localStorage.getItem(tutorialKey) !== "done");
 }
 
 function renderTutorial() {

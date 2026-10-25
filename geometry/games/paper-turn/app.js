@@ -56,7 +56,7 @@ const state = {
 };
 
 const ui = {
-  levelLabel: $("#levelLabel"), problemLabel: $("#problemLabel"), missionTitle: $("#missionTitle"), prompt: $("#prompt"), sourceTitle: $("#sourceTitle"), choiceTitle: $("#choiceTitle"), operationTitle: $("#operationTitle"), source: $("#sourceBoard"), operations: $("#operationSteps"), choices: $("#choiceGrid"), play: $("#playButton"), hint: $("#hintButton"), retry: $("#retryButton"), next: $("#nextButton"), sound: $("#soundButton"), levels: $("#levelButton"), levelDialog: $("#levelDialog"), levelList: $("#levelList"), closeLevels: $("#closeLevels"), guide: $("#foldyGuide"), bubble: $("#guideBubble"), tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialNext: $("#tutorialNext"), complete: $("#completeDialog"), completeTitle: $("#completeTitle"), completeText: $("#completeText"), nextLevel: $("#nextLevelButton"), practice: $("#practiceButton"), success: $("#success"), toast: $("#toast")
+  levelLabel: $("#levelLabel"), problemLabel: $("#problemLabel"), missionTitle: $("#missionTitle"), prompt: $("#prompt"), sourceTitle: $("#sourceTitle"), choiceTitle: $("#choiceTitle"), operationTitle: $("#operationTitle"), source: $("#sourceBoard"), operations: $("#operationSteps"), choices: $("#choiceGrid"), play: $("#playButton"), hint: $("#hintButton"), retry: $("#retryButton"), next: $("#nextButton"), sound: $("#soundButton"), levels: $("#levelButton"), levelDialog: $("#levelDialog"), levelList: $("#levelList"), closeLevels: $("#closeLevels"), guide: $("#foldyGuide"), bubble: $("#guideBubble"), tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialSkip: $("#tutorialSkip"), tutorialNext: $("#tutorialNext"), complete: $("#completeDialog"), completeTitle: $("#completeTitle"), completeText: $("#completeText"), nextLevel: $("#nextLevelButton"), practice: $("#practiceButton"), success: $("#success"), toast: $("#toast")
 };
 
 function problem() { return state.queue[state.index]; }
@@ -284,6 +284,7 @@ function tutorial() {
   ui.tutorialText.textContent = steps[state.tutorialStep];
   ui.tutorialDots.innerHTML = steps.map((_, index) => `<i class="${index === state.tutorialStep ? "active" : ""}"></i>`).join("");
   ui.tutorialNext.textContent = state.tutorialStep === steps.length - 1 ? t("start") : t("tutorialNext");
+  ui.tutorialSkip.textContent = t("start");
 }
 
 ui.play.addEventListener("click", () => previewOperations());
@@ -300,11 +301,15 @@ ui.levels.addEventListener("click", () => { ui.levelDialog.hidden = false; });
 ui.closeLevels.addEventListener("click", () => { ui.levelDialog.hidden = true; });
 ui.nextLevel.addEventListener("click", () => startLevel(Math.min(levels.length - 1, state.level + 1)));
 ui.practice.addEventListener("click", () => startLevel(state.level));
-ui.tutorialNext.addEventListener("click", () => {
-  if (state.tutorialStep < 2) { state.tutorialStep += 1; tutorial(); return; }
+function closeTutorial() {
   localStorage.setItem(tutorialKey, "done");
   ui.tutorial.hidden = true;
   showGuide(t("choose"));
+}
+ui.tutorialSkip.addEventListener("click", closeTutorial);
+ui.tutorialNext.addEventListener("click", () => {
+  if (state.tutorialStep < 2) { state.tutorialStep += 1; tutorial(); return; }
+  closeTutorial();
 });
 
 renderLevelDialog();

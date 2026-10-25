@@ -64,6 +64,7 @@ assert.deepEqual(bankSelection.levels, { 1: 4, 2: 4, 3: 4, 4: 4, 5: 4 });
 assert.equal(await page.locator("#coverCount").textContent(), "20 QUESTIONS");
 
 await page.emulateMedia({ media: "print" });
+await page.waitForFunction(() => [...document.querySelectorAll(".sheet")].every((sheet) => sheet.getBoundingClientRect().width > 790));
 const printSheets = [];
 for (const [pageIndex, locator] of (await page.locator(".sheet").all()).entries()) {
   const sheet = await locator.evaluate((node) => {

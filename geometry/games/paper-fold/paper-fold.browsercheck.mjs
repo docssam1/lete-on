@@ -120,6 +120,17 @@ async function solve(page, p) {
 }
 async function layout(page, name) {
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), name + " horizontal overflow");
+  if (name.startsWith("compact-portrait")) {
+    const clippedFigures = await page.evaluate(() => {
+      const panel = document.querySelector(".paper-panel").getBoundingClientRect();
+      return [...document.querySelectorAll("#paper .fold-sequence-view figure")].filter((figure) => {
+        const box = figure.getBoundingClientRect();
+        return box.left < panel.left - 1 || box.right > panel.right + 1 || box.top < panel.top - 1 || box.bottom > panel.bottom + 1;
+      }).map((figure) => ({ className: figure.className, bottomExcess: Math.round(figure.getBoundingClientRect().bottom - panel.bottom) }));
+    });
+    if (clippedFigures.length) await page.screenshot({ path: output + "/" + name + "-clipped.png", fullPage: true });
+    assert.deepEqual(clippedFigures, [], name + " clipped paper figures");
+  }
   const clipped = await page.locator("#interaction button, .tool-panel button:not([hidden]), .tool-panel a, .paper-action-step svg").evaluateAll((nodes) => nodes.filter((node) => {
     const box = node.getBoundingClientRect();
     return box.width > 0 && box.height > 0 && (box.x < -1 || box.y < -1 || box.right > innerWidth + 1 || box.bottom > innerHeight + 1);
@@ -132,6 +143,7 @@ try {
   const single = levels[0].problems.find((p) => p.id === "paper-one-fold-pattern-1-1");
   for (const [name, viewport] of [
     ["desktop", { width: 1440, height: 900 }],
+    ["compact-portrait", { width: 320, height: 568 }],
     ["portrait", { width: 390, height: 844 }],
     ["landscape", { width: 844, height: 390 }]
   ]) {
