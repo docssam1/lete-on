@@ -5,6 +5,7 @@
 
 import { jo } from "./concept-board-kit.js?v=20261025c";
 import { BOARDS_B02 } from "./concept-boards-b02.js?v=20261025d";
+import { BOARDS_B03 } from "./concept-boards-b03.js?v=20261025a";
 export { jo };
 
 // 독쌤 음성 파일의 줄 id. 내보내기(tools/export-board-voice.mjs)와 재생(concept-board.js → study.js)이 같은 규칙을 쓴다.
@@ -644,4 +645,5 @@ export const BOARDS = {
     };
   })()
   ,...BOARDS_B02
+  ,...BOARDS_B03
 };
