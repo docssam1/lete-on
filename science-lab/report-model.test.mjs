@@ -6,6 +6,10 @@ import { reportCfg, REPORTS, primaryContest } from './data/reports.js';
 import { UNITS, LEVEL_OF, LEVELS, CONTESTS, CONTEST_OF, contestsOf } from './data/curriculum.js';
 import { TECHNIQUES, SCENES, WORKS } from './data/invent-gallery.js';
 import { OBSERVE_SETS } from './data/observe-sets.js';
+import { SAMPLES } from './data/observe-samples.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 test('양식: 과학탐구 초등 9칸·중등 11칸, 대회 양식 6개 모두 결과 표 칸(result) 하나와 점검 4개 이상', () => {
   assert.equal(TEMPLATES.elem.cells.length, 9); assert.equal(TEMPLATES.mid.cells.length, 11);
@@ -123,4 +127,24 @@ test('자연관찰 연습 세트: 보고서 설정·대회·표본 모듈이 갖
     const keys = FORMS.nature[S.level].cells.map((c) => c.key); for (const k of S.unit.reportSkip) assert.ok(keys.includes(k), `${S.id} skip ${k}`);
     assert.ok(S.steps.length >= 5 && S.lead.length > 30);
   }
+});
+
+test('예시 보고서: 세트마다 있고, 관찰그림 수 = 표본 수, 그림은 그릴 수 있는 선 조각이 충분하며 NaN이 없다, 분류 나무가 끝까지 나뉜다', () => {
+  const leaves = (n) => (n.yes ? [...leaves(n.yes), ...leaves(n.no)] : [n.items]);
+  for (const S of OBSERVE_SETS) {
+    const X = SAMPLES[S.id]; assert.ok(X, S.id); assert.equal(X.obs.length, S.mod.SPECIMENS.length, `${S.id} 관찰그림 수`);
+    for (const o of X.obs) { const svg = o.draw(); assert.ok(svg.startsWith('<svg') && svg.includes('</svg>'), o.label); assert.ok(!/NaN|undefined/.test(svg), `${S.id} ${o.label} 좌표`); assert.ok((svg.match(/class="dz"/g) || []).length >= 8, `${S.id} ${o.label} 선 조각`); assert.ok((svg.match(/class="dz-t"/g) || []).length >= 3, `${S.id} ${o.label} 이름표`); assert.ok(/\[본 것\]|\[관찰한 사실\]/.test(o.text) && /추정/.test(o.text), `${S.id} ${o.label} 글: 사실과 추정`); }
+    const lv = leaves(X.tree); assert.ok(lv.every((l) => l.length === 1), `${S.id} 분류 나무 끝까지`); assert.deepEqual(lv.flat().sort(), X.tree.items.slice().sort(), `${S.id} 분류 나무 대상`);
+    for (const k of ['a', 'both', 'b', 'la', 'lb']) assert.ok(X.venn[k], `${S.id} 벤 ${k}`);
+    assert.ok(X.target && X.classify && X.adapt && X.next && X.table.length >= 3 && X.who.name, S.id);
+    if (S.id === 'observe-insects') { assert.ok(X.env.includes('방법'), '두 장소 비교에 확인 방법'); assert.ok(X.adaptDraw().includes('<svg')); }
+  }
+});
+
+test('한 줄 코드 뒤에 // 주석을 붙여 줄 나머지가 주석이 된 곳이 없다(세 번 겪은 사고)', () => {
+  const dir = path.dirname(fileURLToPath(import.meta.url));
+  const files = ['observe.js', 'observe-sample.js', 'report.js', 'sketch.js', 'app.js', ...fs.readdirSync(path.join(dir, 'scenes')).filter((f) => /^(_|specimens-)/.test(f)).map((f) => 'scenes/' + f), ...fs.readdirSync(path.join(dir, 'data')).filter((f) => /^(observe|pencil|reports|invent|curriculum)/.test(f)).map((f) => 'data/' + f)];
+  const bad = [];
+  for (const f of files) fs.readFileSync(path.join(dir, f), 'utf8').split('\n').forEach((line, i) => { const k = line.indexOf('// '); if (k < 0 || /https?:\/\//.test(line)) return; const tail = line.slice(k + 3); if (/[;{}]\s*(const|let|var|if|else|for|return|[A-Za-z_$][\w$]*\s*[(.=])/.test(tail) && !/^\s*\/\//.test(line)) bad.push(`${f}:${i + 1}`); });
+  assert.deepEqual(bad, []);
 });

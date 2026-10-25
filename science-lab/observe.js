@@ -6,6 +6,8 @@
 import { Stage } from './engine.js';
 import { OBSERVE_SETS, observeSet } from './data/observe-sets.js';
 import { renderReport } from './report.js';
+import { openSample } from './observe-sample.js';
+import { sampleFor } from './data/observe-samples.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const CIRCLED = '①②③④⑤⑥⑦⑧⑨⑩';
@@ -33,6 +35,7 @@ export function renderObserve($app, { topbar, footer }, setId) {
         <p class="ob-note" aria-live="polite"></p>
         <details class="ob-think"><summary>생각할 거리</summary><ul></ul></details>
         <div class="ob-row"><button type="button" class="ob-reveal" data-reveal>이름 확인하기</button><span class="ob-name"></span></div>
+        ${sampleFor(S.id) ? '<div class="ob-row ob-sample-row"><button type="button" class="ob-sample" data-sample>📄 예시 보고서 보기 — 연필이 그려 가는 관찰그림</button><small>다 그린 뒤에 내 것과 비교해 봐요.</small></div>' : ''}
       </section>
       <section class="ob-report" id="ob-report" aria-label="관찰 보고서"></section>
     </div>
@@ -71,6 +74,7 @@ export function renderObserve($app, { topbar, footer }, setId) {
   $app.querySelectorAll('[data-view]').forEach((b) => { b.onclick = () => { view = b.dataset.view; cur.setView(view); draw(); }; });
   $app.querySelectorAll('[data-tg]').forEach((b) => { b.onclick = () => { const k = b.dataset.tg; on[k] = !on[k]; cur.toggle(k, on[k]); draw(); }; });
   $app.querySelector('[data-reveal]').onclick = () => { reveal = !reveal; draw(); };
+  let sample = null; $app.querySelector('[data-sample]')?.addEventListener('click', () => { sample?.close?.(); sample = openSample(S); });
   load(0);
 
   // 그리기판 참고 그림 = 지금 보이는 3D 화면(또는 실사 사진). 렌더 직후 같은 작업 안에서 읽어야 빈 그림이 아니다.
@@ -79,5 +83,5 @@ export function renderObserve($app, { topbar, footer }, setId) {
     if (!stage) return null; stage.renderer.render(stage.scene, stage.camera); return $c.toDataURL('image/jpeg', 0.82);
   };
   const rep = renderReport(S.unit, $app.querySelector('#ob-report'), { embedded: true, reference });
-  return { destroy() { cur?.dispose?.(); rep.destroy(); stage?.dispose(); stage = null; } };
+  return { destroy() { sample?.close?.(); cur?.dispose?.(); rep.destroy(); stage?.dispose(); stage = null; } };
 }
