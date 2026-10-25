@@ -209,4 +209,102 @@ export const BOARDS_B09 = {
       ]
     };
   })()
+
+  ,"book-09/magic-square-missing": (() => {
+    const BASE = [[2, 7, 6], [9, 5, 1], [4, 3, 8]];
+    const A = BASE.map((r) => r.map((v) => v + 6)), cA = A[1][1], sA = cA * 3;            // 가운데 11, 한 줄 33
+    const B = BASE.map((r) => r.map((v) => v + 7)), cB = B[1][1], sB = cB * 3;            // 가운데 12, 한 줄 36
+    const SHOWN = [[1, 0, 1], [1, 0, 0], [1, 0, 0]];
+    const AX = 70, BX = 610, Y0 = 140, S = 78, NX = 330;
+    const at = (x0, r, c) => [x0 + (c + 0.5) * S, Y0 + (r + 0.5) * S];
+    const num = (x0, r, c, v, color = "ink") => { const [cx, cy] = at(x0, r, c); return { kind: "num", cx, cy, value: v, color, size: 34 }; };
+    const pairs = [[[0, 0], [2, 2]], [[0, 1], [2, 1]], [[0, 2], [2, 0]], [[1, 0], [1, 2]]];
+    const top = sB - B[0][0] - B[0][2], left = B[1][0] + B[2][0];
+    const CHK = { c: 13 }, chkV = CHK.c * 3;
+    return {
+      title: "마방진 — 가운데 수와 겹치는 칸",
+      kicker: "9권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "가로, 세로, 대각선 세 수의 합이 모두 같은 수 배열을 마방진이라고 해요. 세 칸 마방진에는 두 가지 비밀이 있어요. 가운데 수로 한 줄의 합을 알 수 있고, 두 줄이 겹치는 칸으로 빈칸을 찾을 수 있어요.",
+          items: [title("마방진의 두 비밀")] },
+        { say: `다 채워진 마방진을 먼저 봐요. 가로도 세로도 대각선도 세 수를 더하면 모두 ${jo(sA, "이에요")}.`,
+          items: [{ kind: "grid", x: AX, y: Y0, cols: 3, rows: 3, cell: S, color: "ink" }, ...A.flatMap((row, r) => row.map((v, c) => num(AX, r, c, v))), T(NX, 165, `한 줄의 합 = ${sA}`, "blue", 28)] },
+        { say: `가운데 ${jo(cA, "은")} 가로, 세로, 대각선 두 개, 네 줄에 모두 들어가요. 가운데를 사이에 두고 마주 보는 두 수를 더해 봐요.`,
+          items: [{ kind: "ring", cx: at(AX, 1, 1)[0], cy: at(AX, 1, 1)[1], r: 30, color: "red" }, ...pairs.flatMap(([[r1, c1], [r2, c2]]) => { const [x1, y1] = at(AX, r1, c1), [x2, y2] = at(AX, r2, c2), seg = (a, b) => ({ kind: "line", x1: x1 + (x2 - x1) * a, y1: y1 + (y2 - y1) * a, x2: x1 + (x2 - x1) * b, y2: y1 + (y2 - y1) * b, color: "gold", width: 2, dash: true }); return [seg(0.2, 0.36), seg(0.64, 0.8)]; })] },
+        { say: `${pairs.map(([[r1, c1], [r2, c2]]) => `${A[r1][c1]} 더하기 ${A[r2][c2]}`).join(", ")}. 모두 ${jo(cA * 2, "예요")}. 가운데 ${cA}의 두 배예요.`,
+          items: [T(NX, 210, pairs.map(([[r1, c1], [r2, c2]]) => `${A[r1][c1]}+${A[r2][c2]}`).join(", "), "gold", 22), T(NX, 248, `= ${cA * 2} = ${cA} × 2`, "gold", 26)] },
+        { say: `그러니 한 줄의 합은 마주 보는 두 수 ${cA * 2}에 가운데 ${jo(cA, "을")} 더한 ${sA}, 가운데 수의 세 배예요.`,
+          items: [T(NX, 295, `한 줄 = ${cA * 2} + ${cA} = ${cA} × 3`, "red", 26)] },
+        { say: "이번엔 빈칸이 있는 마방진이에요. 가운데 수를 몰라요. 세 수가 다 보이는 줄도 없어요.",
+          items: [{ kind: "grid", x: BX, y: Y0, cols: 3, rows: 3, cell: S, color: "ink" }, ...B.flatMap((row, r) => row.map((v, c) => (SHOWN[r][c] ? num(BX, r, c, v) : null)).filter(Boolean)), { kind: "shape", type: "square", cx: at(BX, 0, 1)[0], cy: at(BX, 0, 1)[1], r: 26, color: "red", width: 2.5 }] },
+        { say: `윗줄과 왼쪽 세로줄은 왼쪽 위 칸 ${jo(B[0][0], "를")} 함께 써요. 두 줄의 합이 같으니까, ${jo(B[0][0], "를")} 뺀 나머지 두 수끼리도 합이 같아요. 윗줄은 네모와 ${B[0][2]}, 왼쪽 세로줄은 ${jo(B[1][0], "과")} ${jo(B[2][0], "이에요")}.`,
+          items: [{ kind: "box", x: BX + 4, y: Y0 + 4, w: 3 * S - 8, h: S - 8, color: "blue", dash: true }, { kind: "box", x: BX + 8, y: Y0 + 8, w: S - 16, h: 3 * S - 16, color: "green", dash: true }, T(BX - 40, 410, `□ + ${B[0][2]} = ${B[1][0]} + ${B[2][0]} = ${left}`, "blue", 26)] },
+        { say: `${B[1][0]} 더하기 ${jo(B[2][0], "은")} ${jo(left, "이니까")} 네모 더하기 ${jo(B[0][2], "이")} ${jo(left, "이에요")}. 네모는 ${left} 빼기 ${B[0][2]}, ${jo(top, "예요")}.`,
+          items: [{ kind: "num", cx: at(BX, 0, 1)[0], cy: at(BX, 0, 1)[1], value: top, color: "red", size: 28 }, T(BX - 40, 450, `□ = ${left} − ${B[0][2]} = ${top}`, "red", 26)] },
+        { say: `이제 윗줄이 다 보여요. ${B[0][0]} 더하기 ${top} 더하기 ${jo(B[0][2], "은")} ${jo(sB, "이에요")}. 한 줄의 합이 ${jo(sB, "이니까")} 가운데는 ${sB} 나누기 3, ${jo(cB, "예요")}. 마주 보는 두 수의 합은 ${jo(cB * 2, "이에요")}.`,
+          items: [num(BX, 1, 1, cB, "green"), T(BX - 40, 490, `한 줄 ${sB} → 가운데 ${cB}, 마주 보는 두 수 = ${cB * 2}`, "green", 22)] },
+        { say: `나머지는 마주 보는 수로 채워요. ${B[0][0]}의 맞은편은 ${cB * 2} 빼기 ${B[0][0]}, ${B[2][2]}. ${top}의 맞은편은 ${B[2][1]}, ${B[1][0]}의 맞은편은 ${jo(B[1][2], "이에요")}.`,
+          items: [num(BX, 2, 2, B[2][2], "green"), num(BX, 2, 1, B[2][1], "green"), num(BX, 1, 2, B[1][2], "green"), T(BX - 40, 530, `${B[2].join(" + ")} = ${sB} ✓`, "green", 22)] },
+        { say: "정리해요. 세 칸 마방진에서 한 줄의 합은 가운데 수의 세 배, 마주 보는 두 수의 합은 가운데 수의 두 배예요. 아는 수가 모자라면 두 줄이 겹치는 칸을 찾아, 나머지 수끼리 비교해요.", mood: "praise",
+          items: [T(60, 575, "한 줄 = 가운데 × 3 · 마주 보는 두 수 = 가운데 × 2 · 겹치는 칸 빼고 비교", "gold", 22)] },
+        { say: `한 문제 풀어 봐요. 가운데 수가 ${jo(CHK.c, "인")} 세 칸 마방진이 있어요. 한 줄의 합은 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `가운데 수가 ${jo(CHK.c, "인")} 세 칸 마방진에서 한 줄의 합은?`,
+            options: [String(CHK.c * 2), String(chkV), String(CHK.c)], answer: 1,
+            hint: "한 줄의 합은 가운데 수의 세 배예요.", sayHint: `${CHK.c} 곱하기 3을 계산해 봐요.`,
+            right: `맞았어요! ${CHK.c} × 3 = ${chkV}.`, sayRight: `맞았어요! 가운데 수의 세 배, ${jo(chkV, "예요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-09/magic-arrangement-source": (() => {
+    const CARDS = [3, 4, 5, 6, 7], totC = CARDS.reduce((a, b) => a + b, 0), mids = CARDS.filter((c) => (totC + c) % 2 === 0);
+    const CX = 190, CY = 300, D = 86, R = 32;
+    const cross = [[CX, CY], [CX - D, CY], [CX + D, CY], [CX, CY - D], [CX, CY + D]];           // 가운데, 왼, 오, 위, 아래
+    const CROSS = [5, 3, 7, 4, 6];
+    const TRI = [2, 3, 4, 5, 6, 7], totT = TRI.reduce((a, b) => a + b, 0);
+    const V = [[770, 175], [930, 445], [610, 445]];                                              // 위, 오른쪽 아래, 왼쪽 아래
+    const M = [0, 1, 2].map((i) => [(V[i][0] + V[(i + 1) % 3][0]) / 2, (V[i][1] + V[(i + 1) % 3][1]) / 2]);
+    const minC = [2, 3, 4], minS = (totT + 9) / 3, minE = [0, 1, 2].map((i) => minS - minC[i] - minC[(i + 1) % 3]);
+    const maxC = [5, 6, 7], maxS = (totT + 18) / 3, maxE = [0, 1, 2].map((i) => maxS - maxC[i] - maxC[(i + 1) % 3]);
+    const node = ([x, y], v = "", color = "ink") => ({ kind: "node", cx: x, cy: y, r: R, value: v, color, size: 30, bg: "#fffdf7" });
+    const NX = 320;
+    const CHK = { corners: [4, 5, 6] }, chkV = (21 + 15) / 3;
+    return {
+      title: "원형진과 삼각진 — 여러 번 더해지는 칸",
+      kicker: "9권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "수를 십자나 삼각형 모양으로 놓고 줄마다 합을 같게 만들어요. 여러 줄이 함께 쓰는 칸이 있어요. 그 칸의 수는 여러 번 더해져요. 그 칸부터 생각하는 것이 핵심이에요.",
+          items: [title("원형진과 삼각진")] },
+        { say: `${CARDS[0]}부터 ${CARDS[CARDS.length - 1]}까지 다섯 수를 한 번씩 넣어서, 가로 세 수의 합과 세로 세 수의 합을 같게 해요.`,
+          items: [{ kind: "line", x1: CX - D, y1: CY, x2: CX + D, y2: CY, color: "gray", width: 2 }, { kind: "line", x1: CX, y1: CY - D, x2: CX, y2: CY + D, color: "gray", width: 2 }, ...cross.map((p) => node(p)), T(NX, 165, `${jo(CARDS.join(", "), "을")} 한 번씩`, "ink", 24)] },
+        { say: "가운데 칸은 가로줄에도 세로줄에도 들어가요. 그래서 두 번 더해져요.",
+          items: [{ kind: "ring", cx: CX, cy: CY, r: R + 10, color: "red" }, T(NX, 205, "가운데 = 두 번 더해져요", "red", 24)] },
+        { say: `가로줄의 합과 세로줄의 합을 합치면, 다섯 수를 모두 더한 ${totC}에 가운데 수를 한 번 더 더한 값이에요.`,
+          items: [T(NX, 245, `두 줄의 합 = ${totC} + 가운데`, "blue", 24)] },
+        { say: `두 줄의 합이 같아야 하니 그 값이 둘로 똑같이 나뉘어야 해요. ${totC}에 더해서 짝수가 되는 수는 홀수예요. 가운데에는 ${jo(mids.join(", "), "을")} 넣을 수 있어요.`,
+          items: [T(NX, 285, `${totC} + 가운데 = 짝수 → 가운데 ${mids.join(", ")}`, "blue", 24)] },
+        { say: `가운데에 ${jo(CROSS[0], "를")} 넣어 봐요. 한 줄의 합은 ${totC} 더하기 ${jo(CROSS[0], "를")} 둘로 나눈 ${jo((totC + CROSS[0]) / 2, "예요")}. 남은 ${CROSS[1]}, ${CROSS[2]}, ${CROSS[3]}, ${jo(CROSS[4], "을")} 두 수씩 짝지어 ${(totC + CROSS[0]) / 2 - CROSS[0]}이 되게 놓아요. ${CROSS[1]}과 ${CROSS[2]}, ${CROSS[3]}와 ${CROSS[4]}.`,
+          items: [...cross.map((p, i) => T(p[0], p[1] + 11, String(CROSS[i]), i ? "green" : "red", 30, "center")), T(NX, 325, `가운데 ${CROSS[0]} → 한 줄 ${(totC + CROSS[0]) / 2}`, "green", 24)] },
+        { say: `가운데가 ${mids[0]}이면 한 줄은 ${(totC + mids[0]) / 2}, ${mids[2]}이면 ${jo((totC + mids[2]) / 2, "이에요")}. 여러 번 더해지는 칸에 작은 수를 넣으면 한 줄의 합이 작아지고, 큰 수를 넣으면 커져요.`,
+          items: [T(NX, 365, `가운데 ${mids[0]} → ${(totC + mids[0]) / 2},  ${mids[2]} → ${(totC + mids[2]) / 2}`, "gray", 22)] },
+        { say: `이번엔 삼각진이에요. ${TRI[0]}부터 ${TRI[TRI.length - 1]}까지 여섯 수를 꼭짓점 세 개와 변의 가운데 세 개에 넣어서 세 변의 합을 같게 해요. 꼭짓점은 두 변에 함께 들어가서 두 번 더해져요.`,
+          items: [{ kind: "path", d: `M ${V.map((p) => p.join(" ")).join(" L ")} Z`, stroke: "gray", width: 2 }, ...V.map((p) => node(p)), ...M.map((p) => node(p)), ...V.map(([x, y]) => ({ kind: "ring", cx: x, cy: y, r: R + 9, color: "red" }))] },
+        { say: `세 변의 합을 모두 더하면, 여섯 수의 합 ${totT}에 꼭짓점 세 수를 한 번 더 더한 값이에요. 이것이 셋으로 똑같이 나뉘어야 해요.`,
+          items: [T(560, 500, `세 변의 합 = ${totT} + 꼭짓점 합 → 3으로 나뉘어요`, "blue", 22)] },
+        { say: `한 변의 합을 가장 작게 하려면 꼭짓점에 가장 작은 ${jo(minC.join(", "), "를")} 넣어요. 꼭짓점 합 ${minC.reduce((a, b) => a + b, 0)}, 한 변은 ${totT} 더하기 9를 셋으로 나눈 ${jo(minS, "예요")}. 변의 가운데에는 ${jo(minE.join(", "), "이")} 들어가요.`,
+          items: [...V.map(([x, y], i) => T(x, y + 11, String(minC[i]), "red", 30, "center")), ...M.map(([x, y], i) => T(x, y + 11, String(minE[i]), "green", 30, "center")), T(560, 538, `가장 작게: 꼭짓점 ${minC.join("·")} → 한 변 ${minS}`, "green", 22)] },
+        { say: `가장 크게 하려면 꼭짓점에 가장 큰 ${jo(maxC.join(", "), "을")} 넣어요. 꼭짓점 합 ${maxC.reduce((a, b) => a + b, 0)}, 한 변은 ${totT} 더하기 18을 셋으로 나눈 ${jo(maxS, "예요")}. 변의 가운데에는 ${jo(maxE.join(", "), "이")} 들어가요.`,
+          items: [T(560, 576, `가장 크게: 꼭짓점 ${maxC.join("·")} → 한 변 ${maxS} (가운데 ${maxE.join("·")})`, "gold", 22)] },
+        { say: "정리해요. 여러 줄이 함께 쓰는 칸을 먼저 찾아요. 모든 수의 합에 그 칸의 수를 더한 값이 줄 수로 똑같이 나뉘어야 해요. 그 칸에 작은 수를 넣으면 한 줄의 합이 작아지고, 큰 수를 넣으면 커져요.", mood: "praise",
+          items: [T(60, 576, "여러 번 더해지는 칸부터", "gold", 24)] },
+        { say: `한 문제 풀어 봐요. 1부터 6까지의 수로 삼각진을 만들어요. 꼭짓점에 ${jo(CHK.corners.join(", "), "을")} 넣었어요. 한 변의 합은 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `1~6 삼각진에서 꼭짓점이 ${CHK.corners.join(", ")}일 때 한 변의 합은?`,
+            options: [String(chkV - 1), String(chkV), String(15)], answer: 1,
+            hint: "1부터 6까지의 합에 꼭짓점 합을 더해 셋으로 나눠요.", sayHint: "1부터 6까지 더하면 21, 꼭짓점 합은 15예요. 더해서 셋으로 나눠 봐요.",
+            right: `맞았어요! (21 + 15) ÷ 3 = ${chkV}.`, sayRight: `맞았어요! 21 더하기 15는 36, 셋으로 나누면 ${jo(chkV, "예요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
 };
