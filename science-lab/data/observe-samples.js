@@ -115,51 +115,40 @@ const waterHyd = () => fig('④ 옆에서 본 모습 (4배로 키움)', 'water-h
 // ── 예시 보고서 글 ──
 
 // ── 비슷한 잎 재서 구분하기(중등) ──
-// 잎 윤곽(연필 좌표): 잎밑 (cx, by), 잎끝 (cx, by - h), 가장 넓은 자리 m(잎끝 0 ~ 잎밑 1), 톱니 n개(한쪽)
-const leafOutline = (cx, by, w, h, m, n = 0, depth = 0.08, dbl = false) => {
-  const k = Math.log(0.5) / Math.log(m), r = (t) => Math.sin(Math.PI * Math.min(1, Math.max(0, t)) ** k) ** 0.8 * (w / 2), y = (t) => by - h + t * h, pts = [];
-  if (!n) for (let i = 0; i <= 40; i++) pts.push([r(i / 40), y(i / 40)]);
-  else { const d = 0.84 / n; pts.push([0, y(0)], [r(0.04), y(0.04)]); for (let i = 0; i < n; i++) { const t = 0.06 + i * d; pts.push([r(t), y(t)]); if (dbl) pts.push([r(t + 0.4 * d) * (1 - depth * 0.4), y(t + 0.4 * d)], [r(t + 0.52 * d) * (1 - depth * 0.1), y(t + 0.52 * d)]); pts.push([r(t + 0.85 * d) * (1 - depth), y(t + 0.85 * d)]); } pts.push([r(0.95), y(0.95)], [0, by]); }
-  const R = pts.map(([x, yy]) => `${(cx + x).toFixed(1)} ${yy.toFixed(1)}`), L = pts.slice().reverse().map(([x, yy]) => `${(cx - x).toFixed(1)} ${yy.toFixed(1)}`);
-  return `M${R.join(' L')} L${L.join(' L')} Z`;
-};
 const oval = (cx, cy, rx, ry, deg) => { const a = (deg * Math.PI) / 180, x1 = cx + rx * Math.cos(a), y1 = cy + rx * Math.sin(a), x2 = cx - rx * Math.cos(a), y2 = cy - rx * Math.sin(a); return `M${x1.toFixed(1)} ${y1.toFixed(1)} A${rx} ${ry} ${deg} 1 0 ${x2.toFixed(1)} ${y2.toFixed(1)} A${rx} ${ry} ${deg} 1 0 ${x1.toFixed(1)} ${y1.toFixed(1)} Z`; };
 // 재기 선: 양 끝에 짧은 가로 눈금
 const dim = (d, x1, y1, x2, y2) => { const a = Math.atan2(y2 - y1, x2 - x1) + Math.PI / 2, tx = Math.cos(a) * 5, ty = Math.sin(a) * 5; return d.line(`M${x1} ${y1} L${x2} ${y2} M${x1 - tx} ${y1 - ty} L${x1 + tx} ${y1 + ty} M${x2 - tx} ${y2 - ty} L${x2 + tx} ${y2 + ty}`, { w: 0.9, dark: 0.7 }); };
-const pinnate = (title, rx, ry, pairs, vals, extra) => pencilSvg(400, 300, (d) => {
-  const gap = Math.min(34, 196 / pairs), mid = Math.floor(pairs / 2), top = 262 - (pairs - 1) * gap - gap * 0.7, out = [d.text(14, 22, title, { size: 14 }), d.line(`M200 292 C201 230, 199 160, 200 ${top.toFixed(1)}`, { w: 1.4 })];
-  let M = null;
-  for (let j = 0; j < pairs; j++) { const y = 262 - j * gap, s = j === mid ? 1 : 0.8 + 0.12 * Math.sin(Math.PI * (j + 1) / (pairs + 1)); for (const side of [-1, 1]) { const cx = 200 + side * (rx * s + 3), cy = y - 5, p = oval(cx, cy, rx * s, ry * s, side * -14); out.push(d.line(p, { w: 1 }), d.sketch(`M${200 + side * 3} ${y - 2} L${(cx + side * rx * s * 0.8).toFixed(1)} ${y - 8}`, 0.6)); if (j === mid && side === 1) M = { cx, cy }; } }
-  out.push(d.line(oval(200, top - rx * 0.9, rx * 0.92, ry * 0.92, 90), { w: 1 }));
-  // 가운데 작은잎 재기: 그 작은잎을 오른쪽에 크게 옮겨 그리고 거기에 재기 선을 긋는다(작은잎 위에 바로 그으면 옆 작은잎과 겹쳐 어지러웠다)
-  const k = rx > 34 ? 1.2 : 1.45, ix = 330, iy = 168, Rx = rx * k, Ry = ry * k;
-  out.push(d.line(`M${(M.cx + rx * 0.6).toFixed(1)} ${M.cy.toFixed(1)} L${ix - Rx} ${iy}`, { w: 0.7, dark: 0.5, dash: '3 3' }), d.line(oval(ix, iy, Rx, Ry, 0), { w: 1.1 }), d.hatch(oval(ix, iy, Rx * 0.95, Ry * 0.9, 0), 1), d.sketch(`M${ix - Rx} ${iy} L${ix + Rx} ${iy}`, 0.7));
-  out.push(dim(d, ix - Rx, iy + Ry + 10, ix + Rx, iy + Ry + 10), dim(d, ix, iy - Ry, ix, iy + Ry));
-  out.push(d.text(ix, iy - Ry - 10, '가운데 작은잎(확대)', { size: 11, anchor: 'middle', dim: true }), d.text(ix, iy + Ry + 26, `길이 ${vals[0]} cm · 폭 ${vals[1]} cm`, { size: 11, anchor: 'middle' }));
-  return out.concat(extra(d, top));
-}, { seed: 11 });
-const lkRobinia = () => pinnate('① 겹잎 한 장(잎2)', 30, 17, 7, ['3.6', '2.1'], (d) => [
-  d.label(200, 230, 120, 272, '잎줄기 — 이 전체가 잎 한 장', { anchor: 'end', size: 12 }), d.label(165, 110, 70, 80, '작은잎 15장(끝 1장 포함)', { anchor: 'end', size: 12 }),
-  d.label(234, 236, 300, 250, '가장자리 밋밋함', { size: 12 }), d.ruler(250, 276, 95, 5),
-]);
-const lkWisteria = () => pinnate('② 겹잎 한 장(잎2)', 38, 14, 8, ['5.4', '2.0'], (d, top) => [
-  d.label(200, 240, 120, 275, '잎줄기 — 잎 한 장', { anchor: 'end', size: 12 }), d.label(165, 90, 70, 62, '작은잎 17장', { anchor: 'end', size: 12 }),
-  d.label(208, top - 30, 300, 40, '작은잎 끝이 뾰족', { size: 12 }), d.ruler(250, 276, 100, 5),
-]);
-const simpleKey = (title, w, h, m, n, depth, dbl, veins, vals, mag) => pencilSvg(400, 300, (d) => {
-  const by = 270, tipY = by - h, wy = tipY + m * h, half = (Math.sin(Math.PI * 0.5) ** 0.8) * w / 2;
+// 겹잎 두 장: 잎 전체 스케치 + 가운데 작은잎을 확대 원으로 보고 그 아래에 잰 값. leaflet = [중심 x, y, 길이](스케치 픽셀)
+const pinnate = (title, key, leaflet, vals, rulerCm, labels, seed) => fig(title, key, [150, 28, 100, 264], (d, P, dr) => {
+  const [lx, ly, len] = leaflet, z = 2.5, Lw = len * dr.s * z, Ww = (Lw * +vals[1]) / +vals[0], cx = 330, cy = 140;
   return [
-    d.text(14, 22, title, { size: 14 }),
-    d.line(leafOutline(190, by, w, h, m, n, depth, dbl), { w: 1.3 }), d.hatch(leafOutline(190, by, w * 0.98, h * 0.98, m), 1),
-    d.line(S.veins(190, by, h * 0.94, w * 0.42, veins), { w: 0.7, dark: 0.6 }), d.line(`M190 ${by} L190 ${by + 22}`, { w: 1.3 }),
-    dim(d, 190 - half - 26, by, 190 - half - 26, tipY), dim(d, 190 - half, wy, 190 + half, wy), dim(d, 190 + half + 24, by, 190 + half + 24, wy),
-    d.text(190 - half - 32, tipY + h * 0.45, `길이 ${vals[0]} cm`, { size: 11, anchor: 'end' }), d.text(190, wy - 8, `최대 폭 ${vals[1]} cm`, { size: 11, anchor: 'middle' }), d.text(190 + half + 30, wy + (by - wy) * 0.55, `잎밑→최대 폭 ${vals[2]} cm`, { size: 11 }),
-    d.magnifier(342, 66, 36, d.line(mag, { w: 1.1 }), [190 + half * 0.95, tipY + h * 0.5, 7]), d.text(342, 116, n > 20 ? '겹톱니 확대' : '굵은 톱니 확대', { size: 11, anchor: 'middle', dim: true }),
-    d.text(14, 292, vals[3], { size: 10, dim: true }),
+    d.loupe(dr, key, cx, cy, 50, ...P(lx, ly), z), d.text(cx, cy - 58, '가운데 작은잎(확대)', { size: 11, anchor: 'middle', dim: true }),
+    dim(d, +(cx - Lw / 2).toFixed(1), cy + 62, +(cx + Lw / 2).toFixed(1), cy + 62), dim(d, cx + 58, +(cy - Ww / 2).toFixed(1), cx + 58, +(cy + Ww / 2).toFixed(1)),
+    d.text(cx, cy + 82, `길이 ${vals[0]} cm · 폭 ${vals[1]} cm`, { size: 11, anchor: 'middle' }),
+    d.ruler(262, 270, +((len * dr.s * rulerCm) / +vals[0]).toFixed(1), rulerCm), ...labels(d, P),
   ];
-}, { seed: 13 });
-const lkCherry = () => simpleKey('③ 잎3 — 잎끝 쪽이 넓다', 132, 230, 0.38, 30, 0.07, true, 8, ['8.8', '5.0', '5.5', '실제의 약 1.0배'], 'M310 96 L322 76 L326 84 L331 80 L336 64 L348 84 L352 78 L357 74 L362 56 L374 76');
-const lkZelkova = () => simpleKey('④ 잎3 — 잎밑 쪽이 넓다', 98, 230, 0.6, 14, 0.13, false, 12, ['6.4', '2.7', '2.6', '실제의 약 1.4배'], 'M310 96 L328 62 L334 84 L352 50 L358 74 L376 42');
+}, seed);
+const lkRobinia = () => pinnate('① 겹잎 한 장(잎2)', 'lk-robinia', [425, 847, 250], ['3.6', '2.1'], 5, (d, P) => [
+  d.label(...P(70, 700), 14, 60, '작은잎 15장(끝 1장 포함)', { size: 11 }), d.label(...P(290, 1600), 14, 262, '잎줄기 — 전체가 잎 한 장', { size: 11 }),
+  d.label(...P(150, 1190), 14, 200, '가장자리 밋밋함', { size: 11 }),
+], 11);
+const lkWisteria = () => pinnate('② 겹잎 한 장(잎2)', 'lk-wisteria', [447, 829, 210], ['5.4', '2.0'], 5, (d, P) => [
+  d.label(...P(330, 60), 14, 60, '작은잎 끝이 뾰족', { size: 11 }), d.label(...P(330, 1600), 14, 262, '잎줄기 — 잎 한 장', { size: 11 }),
+  d.label(...P(150, 1000), 14, 170, '작은잎 17장', { size: 11 }),
+], 12);
+// 홑잎 두 장: rows = [잎끝 y, 가장 넓은 y, 잎밑 y, 그 줄의 왼 x, 오른 x](스케치 픽셀). 재기 선은 스케치에서 잰 자리에 긋는다
+const simpleKey = (title, key, [tipY, wideY, baseY, wx1, wx2], vals, magAt, magTitle, seed) => fig(title, key, [130, 32, 140, 252], (d, P, dr) => {
+  const [lx, wy] = P(wx1, wideY), [rx] = P(wx2, wideY), [, ty] = P(0, tipY), [, by] = P(0, baseY), cx = (lx + rx) / 2;
+  return [
+    dim(d, +(lx - 12).toFixed(1), by, +(lx - 12).toFixed(1), ty), d.text(+(lx - 18).toFixed(1), +(ty + (by - ty) * 0.45).toFixed(1), `길이 ${vals[0]} cm`, { size: 11, anchor: 'end' }),
+    dim(d, lx, wy, rx, wy), d.text(+cx.toFixed(1), +(wy - 8).toFixed(1), `최대 폭 ${vals[1]} cm`, { size: 11, anchor: 'middle' }),
+    dim(d, +(rx + 12).toFixed(1), by, +(rx + 12).toFixed(1), wy), d.text(+(rx + 18).toFixed(1), +(wy + (by - wy) * 0.55).toFixed(1), `잎밑→최대 폭 ${vals[2]} cm`, { size: 11 }),
+    d.loupe(dr, key, 342, 66, 36, ...P(...magAt), 3.2), d.text(342, 116, magTitle, { size: 11, anchor: 'middle', dim: true }),
+    d.ruler(14, 270, +((((baseY - tipY) * dr.s) / +vals[0]) * 5).toFixed(1), 5),
+  ];
+}, seed);
+const lkCherry = () => simpleKey('③ 잎3 — 잎끝 쪽이 넓다', 'lk-cherry', [39, 570, 1440, 41, 832], ['8.8', '5.0', '5.5'], [775, 860], '겹톱니 확대', 13);
+const lkZelkova = () => simpleKey('④ 잎3 — 잎밑 쪽이 넓다', 'lk-zelkova', [39, 859, 1360, 42, 608], ['6.4', '2.7', '2.6'], [540, 570], '굵은 톱니 확대', 14);
 // 점 그래프: 가로 = 잎 길이, 세로 = 길이÷폭. 길이는 겹치지만 비율은 둘로 갈린다
 const lkPlot = () => pencilSvg(400, 300, (d) => {
   const X = (cm) => 60 + (cm - 3) * 31, Y = (r) => 250 - (r - 1.5) * 200;
@@ -177,21 +166,24 @@ const lkPlot = () => pencilSvg(400, 300, (d) => {
 }, { seed: 14 });
 
 // ── 강낭콩 자람(초등) ──
-const vruler = (d, x, y0, cm, px) => [d.line(`M${x} ${y0} L${x} ${y0 - cm * px}` + Array.from({ length: cm + 1 }, (_, i) => ` M${x} ${y0 - i * px} L${x + (i % 5 ? 4 : 8)} ${y0 - i * px}`).join(''), { w: 0.9 }), ...Array.from({ length: Math.floor(cm / 5) + 1 }, (_, i) => d.text(x + 11, y0 - i * 5 * px + 4, String(i * 5), { size: 9 }))];
-const bean = (title, H, leaves, opt) => pencilSvg(400, 300, (d) => {
-  const px = 6.4, sy = 236, tx = 196 + (opt.lean || 0), ty = sy - H * px, out = [d.text(14, 22, title, { size: 14 })];
-  out.push(d.line(`M130 ${sy} L262 ${sy} L250 292 L142 292 Z`, { w: 1.3 }), d.hatch(`M134 ${sy + 2} L258 ${sy + 2} L248 290 L144 290 Z`, 2), d.line(`M196 ${sy} C196 ${sy - H * px * 0.4}, ${tx - (opt.lean || 0) * 0.3} ${sy - H * px * 0.75}, ${tx} ${ty}`, { w: opt.thin ? 0.9 : 1.6 }));
-  out.push(d.line(oval(186, sy - 32, 9, 4, 20), { w: 0.9 }), d.line(oval(206, sy - 32, 9, 4, -20), { w: 0.9 }));
-  const n = Math.max(0, leaves - 1);
-  for (let k = 0; k < n; k++) { const t = (k + 1) / (n + 0.6), yy = sy - 40 - t * (H * px - 40), xx = 196 + (opt.lean || 0) * t * t, side = k % 2 ? -1 : 1, s = (opt.small ? 0.7 : 1) * (0.75 + 0.25 * Math.min(1, (n - k) / 2)), dr = opt.droop ? 28 : -12;
-    const lx = xx + side * 30 * s, ly = yy + (opt.droop ? 10 : -4); out.push(d.line(`M${xx} ${yy} L${lx} ${ly}`, { w: 0.8 }));
-    for (const a of [-1, 0, 1]) { const cx = lx + side * (a === 0 ? 18 : 10) * s, cy = ly + a * 13 * s + (opt.droop ? 6 : 0); out.push(d.line(oval(cx, cy, 15 * s, 8 * s, side * (a * 30) + (side > 0 ? dr : 180 - dr)), { w: 0.9 })); if (!opt.pale) out.push(d.hatch(oval(cx, cy, 13 * s, 6 * s, side * (a * 30) + (side > 0 ? dr : 180 - dr)), 1)); } }
-  out.push(...vruler(d, 92, sy, 30, px), d.line(`M92 ${ty} L${tx - 6} ${ty}`, { w: 0.7, dash: '3 3' }), d.text(86, ty + 4, `키 ${H} cm`, { size: 11, anchor: 'end' }));
-  return out.concat(opt.labels(d, tx, ty, sy));
-}, { seed: 21 });
-const beanSun = () => bean('① 21일 · 창가 · 물 매일', 21, 5, { lean: 18, labels: (d, tx, ty) => [d.label(tx, ty + 4, 300, 40, '줄기 끝이 창문 쪽으로', { size: 12 }), d.label(206, 204, 300, 230, '떡잎: 작고 누레짐', { size: 12 }), d.label(230, 150, 320, 150, '세겹잎', { size: 12 })] });
-const beanShade = () => bean('② 21일 · 그늘 · 물 매일', 27, 3, { thin: true, small: true, pale: true, labels: (d, tx, ty) => [d.label(tx, ty + 30, 300, 40, '줄기가 가늘고 길다', { size: 12 }), d.label(222, 160, 320, 170, '잎이 작고 연함(빗금 없음)', { size: 12 }), d.label(206, 204, 300, 230, '떡잎 쭈글쭈글', { size: 12 })] });
-const beanDry = () => bean('③ 21일 · 창가 · 물 사흘에 한 번', 14, 3, { lean: 10, droop: true, small: true, labels: (d, tx, ty) => [d.label(tx, ty + 2, 300, 50, '키가 작다', { size: 12 }), d.label(226, 186, 320, 150, '잎이 아래로 처짐', { size: 12 }), d.label(206, 204, 300, 230, '떡잎 누레짐', { size: 12 })] });
+// 강낭콩 세 화분: 스케치 + 왼쪽에 세운 자(흙 표면 = 0). soil·top = 스케치에서 줄기가 흙에 들어가는 y와 줄기 끝 [x, y]
+const vruler = (d, x, y0, cm, px) => [d.line(`M${x} ${y0} L${x} ${(y0 - cm * px).toFixed(1)}` + Array.from({ length: cm + 1 }, (_, i) => ` M${x} ${(y0 - i * px).toFixed(1)} L${x + (i % 5 ? 4 : 8)} ${(y0 - i * px).toFixed(1)}`).join(''), { w: 0.9 }), ...Array.from({ length: Math.floor(cm / 5) + 1 }, (_, i) => d.text(x + 11, +(y0 - i * 5 * px + 4).toFixed(1), String(i * 5), { size: 9 }))];
+const bean = (title, key, H, soil, [tx0, ty0], box, labels, seed) => fig(title, key, box, (d, P, dr) => {
+  const [, y0] = P(0, soil), [tx, ty] = P(tx0, ty0), rx = +(dr.x - 26).toFixed(1);
+  return [...vruler(d, rx, y0, H, (y0 - ty) / H), d.line(`M${rx} ${ty} L${tx - 4} ${ty}`, { w: 0.7, dash: '3 3' }), d.text(rx - 6, ty + 4, `키 ${H} cm`, { size: 11, anchor: 'end' }), ...labels(d, P)];
+}, seed);
+const beanSun = () => bean('① 21일 · 창가 · 물 매일', 'bean-sun', 21, 1275, [570, 30], [110, 30, 200, 262], (d, P) => [
+  d.label(...P(560, 70), 300, 44, '줄기 끝이 창문 쪽으로', { size: 12 }), d.label(...P(700, 330), 320, 100, '세겹잎', { size: 12 }),
+  d.label(...P(740, 690), 320, 160, '첫 마디 홑잎 2장', { size: 12 }), d.label(...P(520, 990), 300, 222, '떡잎: 작고 누레짐', { size: 12 }),
+], 21);
+const beanShade = () => bean('② 21일 · 그늘 · 물 매일', 'bean-shade', 27, 1630, [720, 40], [110, 30, 200, 262], (d, P) => [
+  d.label(...P(610, 520), 300, 70, '줄기가 가늘고 길다', { size: 12 }), d.label(...P(700, 800), 300, 150, '잎이 작고 연함', { size: 12 }),
+  d.label(...P(450, 1370), 300, 236, '떡잎 쭈글쭈글', { size: 12 }),
+], 22);
+const beanDry = () => bean('③ 21일 · 창가 · 물 사흘에 한 번', 'bean-dry', 14, 945, [520, 25], [110, 40, 200, 250], (d, P) => [
+  d.label(...P(525, 40), 300, 40, '키가 작다', { size: 12 }), d.label(...P(880, 330), 320, 112, '본잎 3장뿐', { size: 12 }),
+  d.label(...P(440, 615), 300, 210, '떡잎 누레짐', { size: 12 }),
+], 23);
 
 // ── 곰팡이 관찰일기(초등) ──
 const fuzz = (d, cx, cy, r, seed = 1) => { let s = seed; const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; let p = ''; for (let i = 0; i <= 28; i++) { const a = (i / 28) * Math.PI * 2, rr = r * (0.88 + rnd() * 0.2); p += `${i ? ' L' : 'M'}${(cx + Math.cos(a) * rr).toFixed(1)} ${(cy + Math.sin(a) * rr * 0.9).toFixed(1)}`; } return d.line(p + ' Z', { w: 0.8, dark: 0.7 }); };
