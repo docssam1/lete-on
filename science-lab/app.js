@@ -3,7 +3,7 @@ import { UNITS, unitById, DOMAINS, ORDERED, domainOf, LEVELS, levelOf, CONTESTS,
 import { Stage, Player } from './engine.js';
 import { renderReport } from './report.js';
 import { renderObserve } from './observe.js';
-import { OBSERVE_SETS } from './data/observe-sets.js';
+import { OBSERVE_SETS, STAGES } from './data/observe-sets.js';
 import { CONTEST_GUIDE } from './data/contests.js';
 import { renderContest } from './contest.js';
 
@@ -139,7 +139,7 @@ function renderHome() {
     <section class="wrap arch-index" aria-label="전체 실험 목록">
       <h2>대회 폴더 <small>대회마다 하는 일·심사에서 보는 것·연습할 곳을 한 폴더에 모았어요</small></h2>
       <div class="arch-folders">${CONTESTS.map((c) => { const G = CONTEST_GUIDE[c.id], n = ITEMS.filter((it) => itemContests(it).includes(c)); return `<a class="arch-folder ${c.id}" href="#/contest/${c.id}"><span class="af-tab">${G.icon} ${esc(c.title)}</span><b>${esc(c.sub)}</b><span class="af-lead">${esc(G.lead.split(/(?<=요\.)\s/)[0])}</span><span class="af-n">${n.filter((it) => it.kind === 'observe').length ? `연습 ${n.filter((it) => it.kind === 'observe').length} · ` : ''}실험 ${n.filter((it) => it.kind === 'unit').length} · 대회 안내 →</span></a>`; }).join('')}</div>
-      <div class="arch-shelf nature-shelf" style="--tab:#8fd18a"><h3><span>NATURE OBSERVATION</span>자연관찰 연습 <small>세트 ${OBSERVE_SETS.length}개 · 3D 표본과 실사 사진으로 관찰하고 보고서 쓰기</small></h3><ol>${OBSERVE_SETS.map((x) => `<li><a href="#/observe/${x.id}"><span class="no">${x.level === 'mid' ? '중등' : '초등'}</span><b>${esc(x.title)}</b><span class="exp">${esc(x.steps.slice(0, 3).join(' → '))} …</span><span class="stamps"><span class="stamp">${x.mod.SPECIMENS.length}종</span></span></a></li>`).join('')}</ol></div>
+      <div class="arch-shelf nature-shelf" style="--tab:#8fd18a"><h3><span>NATURE OBSERVATION</span>자연관찰 연습 <small>세트 ${OBSERVE_SETS.length}개 · 3D 표본과 실사 사진으로 관찰하고 보고서 쓰기</small></h3><ol>${OBSERVE_SETS.map((x) => `<li><a href="#/observe/${x.id}"><span class="no">${x.level === 'mid' ? '중등' : '초등'}</span><b>${esc(x.title)}</b><span class="exp">${esc(x.steps.slice(0, 3).join(' → '))} …</span><span class="stamps"><span class="stamp">${STAGES[x.stage].icon} ${esc(STAGES[x.stage].short)}</span><span class="stamp">${x.mod.SPECIMENS.length}종</span></span></a></li>`).join('')}</ol></div>
       <h2>실험 목록 <small>실험 ${UNITS.length}건 · 출처 『2009 초등학교 과학탐구토론 지도자료』(서울특별시과학전시관)</small></h2>
       ${DOMAINS.map((d) => { const us = ORDERED.filter((u) => domainOf(u) === d); return `<div class="arch-shelf" style="--tab:${d.color}"><h3><span>${d.en}</span>${esc(d.title)} <small>실험 ${us.length}건</small></h3>${us.length ? `<ol>${us.map((u) => `<li><a href="#/u/${u.id}"><span class="no">${esc(levelOf(u).title)}</span><b>${esc(u.title)}</b><span class="exp">${esc(u.activity.title)}</span>${stampsHtml(store.unit(u.id))}</a></li>`).join('')}</ol>` : '<p class="arch-empty">준비 중 — 지구와 우주 영역의 탐구 실험을 채울 자리예요.</p>'}</div>`; }).join('')}
     </section>
@@ -157,7 +157,7 @@ function renderHome() {
       <div class="ac-foot"><span class="ac-exp"><b>이 폴더</b>${inFolder.filter((it) => it.kind === 'observe').length ? `연습 세트 ${inFolder.filter((it) => it.kind === 'observe').length} · ` : ''}실험 ${inFolder.filter((it) => it.kind === 'unit').length}</span><a class="ac-open" href="#/contest/${c.id}">대회 안내 전부 보기 →</a></div>
     </article>`; };
   const obsHtml = (x) => `<article class="arch-card obs" data-id="${x.id}" style="--tab:#5fae7e">${contestTabs(CONTESTS.filter((c) => c.id === 'nature'))}
-      <div class="ac-meta"><span><i></i>자연관찰 연습 · PRACTICE</span><span class="ac-src"><em class="ac-level ${x.level}">${x.level === 'mid' ? '중등' : '초등'}</em>OBS-${String(OBSERVE_SETS.indexOf(x) + 1).padStart(2, '0')}</span></div>
+      <div class="ac-meta"><span><i></i>${x.stage === 'report' ? '자연관찰 사전 탐구보고서 · LONG-TERM' : '자연관찰 현장 관찰 · FIELD'}</span><span class="ac-src"><em class="ac-level ${x.level}">${x.level === 'mid' ? '중등' : '초등'}</em>OBS-${String(OBSERVE_SETS.indexOf(x) + 1).padStart(2, '0')}</span></div>
       <h3>${esc(x.title)}</h3><p class="ac-sub">${esc(x.steps.slice(0, 4).join(' → '))}</p><p class="ac-lead">${esc(x.lead)}</p>
       <div class="ac-foot"><span class="ac-exp"><b>표본</b>${x.mod.SPECIMENS.length}종 · 3D 모형 · 실사 사진 · 예시 보고서</span><a class="ac-open" href="#/observe/${x.id}">연습 열기 →</a></div>
     </article>`;
