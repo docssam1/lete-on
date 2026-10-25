@@ -6,6 +6,7 @@
 //  · 본책 문항 1,613개는 모두 유형 하나에 연결돼 있다(source-data.js typeStudyRefs) — 번호판의 번호마다 유사문제를 만들 수 있다.
 // 이 파일은 데이터만 다룬다. 화면은 study.js(학생 차시) · start.js(시작 화면).
 
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027a";
 export const SECTION_LABELS = Object.freeze({ activity: "활동", check: "확인", practice: "연습", advanced: "도전" });
 const SECTION_STAGE = Object.freeze({ activity: "concept", check: "type", practice: "practice", advanced: "advanced" });
 
@@ -230,7 +231,10 @@ export const STUDY_BOARDS = Object.freeze({
   "book-10/napier-split-source": BOARD, "book-10/number-count-source": BOARD, "book-10/consecutive-even-source": BOARD, "book-10/consecutive-odd-source": BOARD
 });
 
-export const STUDY_GAMES = Object.freeze({
+const OWN_GAMES = {
   "book-01/digital-turn-flip": [{ id: "digital", title: "디지털 숫자 공방", module: "./game-digital.js?v=20261024d", css: "./game-digital.css?v=20261024a", mount: "mountDigitalWorkshop", replaces: [] }],
   "book-01/mirror-reflection": [{ id: "shape-moves", title: "뒤집고 돌리기 공방", module: "./game-shape-moves.js?v=20261024d", css: "./game-shape-moves.css?v=20261024c", mount: "mountShapeMoves", replaces: ["mirror-tiles"] }]
-});
+};
+// 연습 공방(drill.js): 우리 게임이 아직 없는 차시에 문제은행 실제 유형으로 세 단계 연습 — 차시별 유형은 drill-recipes.js
+const DRILL = { id: "drill", title: "연습 공방", module: "./game-drill.js?v=20261027a", css: "./game-drill.css?v=20261027a", mount: "mountDrill", replaces: [] };
+export const STUDY_GAMES = Object.freeze({ ...Object.fromEntries(Object.keys(DRILL_RECIPES).map((key) => [key, [DRILL]])), ...OWN_GAMES });

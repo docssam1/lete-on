@@ -70,7 +70,7 @@ function cards(visual) {
 
 function bars(visual) {
   const maxUnits = Math.max(...visual.bars.map((item) => Number(item.units || 1)));
-  return `<div class="b8-bars">${visual.bars.map((item) => `<div><b>${escapeHtml(item.label)}</b><span style="--units:${item.units || 1};--max-units:${maxUnits}">${Array.from({ length: Number(item.units || 1) }, () => "<i></i>").join("")}${item.offset ? `<em>${item.offset > 0 ? "+" : "−"}${Math.abs(item.offset)}</em>` : ""}</span></div>`).join("")}${visual.facts ? `<p>${visual.facts.map(box).join("")}</p>` : ""}${visual.action ? `<strong>${escapeHtml(visual.action)}</strong>` : ""}</div>`;
+  return `<div class="b8-bars">${visual.bars.map((item) => `<div><b>${escapeHtml(item.label)}${item.value !== undefined ? ` ${escapeHtml(item.value)}` : ""}</b><span style="--units:${item.units || 1};--max-units:${maxUnits}">${Array.from({ length: Number(item.units || 1) }, () => "<i></i>").join("")}${item.offset ? `<em>${item.offset > 0 ? "+" : "−"}${Math.abs(item.offset)}</em>` : ""}</span></div>`).join("")}${visual.facts ? `<p>${visual.facts.map(box).join("")}</p>` : ""}${visual.action ? `<strong>${escapeHtml(visual.action)}</strong>` : ""}</div>`;
 }
 
 function transfer(visual) {

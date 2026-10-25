@@ -1,5 +1,6 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261024r";
-import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261027c";
+import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261027f";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027a";
 
 // 시작 화면: 권을 고르고 「공부하기」(① 개념 → ② 게임 → ③ 골든벨 → ④ 본책) 또는
 // 「시험지 만들기」(권별테스트 원문 풀기 · 권별테스트 유사문제 · 교재에서 단원·난이도 골라 만들기)로 들어간다.
@@ -78,7 +79,9 @@ function lessonRow(lesson) {
     <a class="st-step${tutorial ? " has-tutorial" : ""}" href="${esc(bellLink({ lesson: lesson.id }))}"><i>①</i>${concept}</a>
     ${games.length
       ? `<a class="st-step" href="${esc(bellLink({ lesson: lesson.id }))}"><i>②</i>${esc(games.join(" · "))}</a>`
-      : `<span class="st-step is-empty"><i>②</i>게임 준비 중</span>`}
+      : DRILL_RECIPES[`${view.bookId}/${lesson.id}`]   // 골든벨 게임이 없는 차시는 연습 공방(drill.html)으로
+        ? `<a class="st-step" href="./drill.html?book=${esc(view.bookId)}&amp;lesson=${esc(lesson.id)}"><i>②</i>연습 공방</a>`
+        : `<span class="st-step is-empty"><i>②</i>게임 준비 중</span>`}
     ${count
       ? `<a class="st-step" href="${esc(bellLink({ lesson: lesson.id, phase: "original" }))}"><i>③</i>골든벨 ${count}문항${self ? "" : " · 수업 화면"}</a>`
       : `<span class="st-step is-empty"><i>③</i>골든벨 준비 중</span>`}
