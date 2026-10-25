@@ -226,20 +226,20 @@ const pinnate = (title, rx, ry, pairs, vals, extra) => pencilSvg(400, 300, (d) =
   let M = null;
   for (let j = 0; j < pairs; j++) { const y = 262 - j * gap, s = j === mid ? 1 : 0.8 + 0.12 * Math.sin(Math.PI * (j + 1) / (pairs + 1)); for (const side of [-1, 1]) { const cx = 200 + side * (rx * s + 3), cy = y - 5, p = oval(cx, cy, rx * s, ry * s, side * -14); out.push(d.line(p, { w: 1 }), d.sketch(`M${200 + side * 3} ${y - 2} L${(cx + side * rx * s * 0.8).toFixed(1)} ${y - 8}`, 0.6)); if (j === mid && side === 1) M = { cx, cy }; } }
   out.push(d.line(oval(200, top - rx * 0.9, rx * 0.92, ry * 0.92, 90), { w: 1 }));
-  // 가운데 작은잎 재기: 길이(잎 축 방향, 위로 비켜서) · 폭(축에 수직)
-  const a = (-14 * Math.PI) / 180, ux = Math.cos(a), uy = Math.sin(a), nx = -uy, ny = ux, off = ry + 9;
-  out.push(dim(d, +(M.cx - ux * rx - nx * off).toFixed(1), +(M.cy - uy * rx - ny * off).toFixed(1), +(M.cx + ux * rx - nx * off).toFixed(1), +(M.cy + uy * rx - ny * off).toFixed(1)));
-  out.push(dim(d, +(M.cx + nx * ry).toFixed(1), +(M.cy + ny * ry).toFixed(1), +(M.cx - nx * ry).toFixed(1), +(M.cy - ny * ry).toFixed(1)));
-  out.push(d.text(+(M.cx + ux * rx + 8).toFixed(1), +(M.cy + uy * rx - off).toFixed(1), `${vals[0]} cm`, { size: 11 }), d.text(+(M.cx + 6).toFixed(1), +(M.cy + ry + 16).toFixed(1), `${vals[1]} cm`, { size: 11 }));
+  // 가운데 작은잎 재기: 그 작은잎을 오른쪽에 크게 옮겨 그리고 거기에 재기 선을 긋는다(작은잎 위에 바로 그으면 옆 작은잎과 겹쳐 어지러웠다)
+  const k = rx > 34 ? 1.2 : 1.45, ix = 330, iy = 168, Rx = rx * k, Ry = ry * k;
+  out.push(d.line(`M${(M.cx + rx * 0.6).toFixed(1)} ${M.cy.toFixed(1)} L${ix - Rx} ${iy}`, { w: 0.7, dark: 0.5, dash: '3 3' }), d.line(oval(ix, iy, Rx, Ry, 0), { w: 1.1 }), d.hatch(oval(ix, iy, Rx * 0.95, Ry * 0.9, 0), 1), d.sketch(`M${ix - Rx} ${iy} L${ix + Rx} ${iy}`, 0.7));
+  out.push(dim(d, ix - Rx, iy + Ry + 10, ix + Rx, iy + Ry + 10), dim(d, ix, iy - Ry, ix, iy + Ry));
+  out.push(d.text(ix, iy - Ry - 10, '가운데 작은잎(확대)', { size: 11, anchor: 'middle', dim: true }), d.text(ix, iy + Ry + 26, `길이 ${vals[0]} cm · 폭 ${vals[1]} cm`, { size: 11, anchor: 'middle' }));
   return out.concat(extra(d, top));
 }, { seed: 11 });
 const lkRobinia = () => pinnate('① 겹잎 한 장(잎2)', 30, 17, 7, ['3.6', '2.1'], (d) => [
   d.label(200, 230, 120, 272, '잎줄기 — 이 전체가 잎 한 장', { anchor: 'end', size: 12 }), d.label(165, 110, 70, 80, '작은잎 15장(끝 1장 포함)', { anchor: 'end', size: 12 }),
-  d.label(234, 236, 330, 252, '가장자리 밋밋함', { size: 12 }), d.ruler(250, 272, 95, 5),
+  d.label(234, 236, 300, 250, '가장자리 밋밋함', { size: 12 }), d.ruler(250, 276, 95, 5),
 ]);
 const lkWisteria = () => pinnate('② 겹잎 한 장(잎2)', 38, 14, 8, ['5.4', '2.0'], (d, top) => [
   d.label(200, 240, 120, 275, '잎줄기 — 잎 한 장', { anchor: 'end', size: 12 }), d.label(165, 90, 70, 62, '작은잎 17장', { anchor: 'end', size: 12 }),
-  d.label(208, top - 30, 300, 40, '작은잎 끝이 뾰족', { size: 12 }), d.ruler(250, 272, 100, 5),
+  d.label(208, top - 30, 300, 40, '작은잎 끝이 뾰족', { size: 12 }), d.ruler(250, 276, 100, 5),
 ]);
 const simpleKey = (title, w, h, m, n, depth, dbl, veins, vals, mag) => pencilSvg(400, 300, (d) => {
   const by = 270, tipY = by - h, wy = tipY + m * h, half = (Math.sin(Math.PI * 0.5) ** 0.8) * w / 2;
@@ -281,7 +281,7 @@ const bean = (title, H, leaves, opt) => pencilSvg(400, 300, (d) => {
   for (let k = 0; k < n; k++) { const t = (k + 1) / (n + 0.6), yy = sy - 40 - t * (H * px - 40), xx = 196 + (opt.lean || 0) * t * t, side = k % 2 ? -1 : 1, s = (opt.small ? 0.7 : 1) * (0.75 + 0.25 * Math.min(1, (n - k) / 2)), dr = opt.droop ? 28 : -12;
     const lx = xx + side * 30 * s, ly = yy + (opt.droop ? 10 : -4); out.push(d.line(`M${xx} ${yy} L${lx} ${ly}`, { w: 0.8 }));
     for (const a of [-1, 0, 1]) { const cx = lx + side * (a === 0 ? 18 : 10) * s, cy = ly + a * 13 * s + (opt.droop ? 6 : 0); out.push(d.line(oval(cx, cy, 15 * s, 8 * s, side * (a * 30) + (side > 0 ? dr : 180 - dr)), { w: 0.9 })); if (!opt.pale) out.push(d.hatch(oval(cx, cy, 13 * s, 6 * s, side * (a * 30) + (side > 0 ? dr : 180 - dr)), 1)); } }
-  out.push(...vruler(d, 92, sy, 30, px), d.line(`M92 ${ty} L${tx - 6} ${ty}`, { w: 0.7, dash: '3 3' }), d.text(98, ty - 6, `${H} cm`, { size: 11 }));
+  out.push(...vruler(d, 92, sy, 30, px), d.line(`M92 ${ty} L${tx - 6} ${ty}`, { w: 0.7, dash: '3 3' }), d.text(86, ty + 4, `키 ${H} cm`, { size: 11, anchor: 'end' }));
   return out.concat(opt.labels(d, tx, ty, sy));
 }, { seed: 21 });
 const beanSun = () => bean('① 21일 · 창가 · 물 매일', 21, 5, { lean: 18, labels: (d, tx, ty) => [d.label(tx, ty + 4, 300, 40, '줄기 끝이 창문 쪽으로', { size: 12 }), d.label(206, 204, 300, 230, '떡잎: 작고 누레짐', { size: 12 }), d.label(230, 150, 320, 150, '세겹잎', { size: 12 })] });

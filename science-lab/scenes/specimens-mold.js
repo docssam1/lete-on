@@ -55,7 +55,7 @@ function colonyMesh(spec, rCm, onSphere, R, clip = null) {
   for (let i = 0; i < pos.count; i++) {
     const v = new THREE.Vector3().fromBufferAttribute(pos, i), t = onSphere ? Math.acos(Math.max(-1, Math.min(1, v.y / v.length()))) / Math.max(1e-3, rCm / R) : v.length() / Math.max(1e-3, r);
     if (spec.mold === 'rhizo') tmp.copy(cCore).lerp(cEdge, Math.min(1, t * 1.1)); else if (t < 0.55) tmp.copy(cCore).lerp(cMid, t / 0.55); else tmp.copy(cMid).lerp(cEdge, (t - 0.55) / 0.45);
-    const j = 0.92 + rnd() * 0.12; col[i * 3] = tmp.r * j; col[i * 3 + 1] = tmp.g * j; col[i * 3 + 2] = tmp.b * j;
+    const j = onSphere ? 0.95 + 0.05 * Math.sin(v.x * 31 + v.z * 17) * Math.sin(v.y * 29 + v.x * 11) : 0.92 + rnd() * 0.12; col[i * 3] = tmp.r * j; col[i * 3 + 1] = tmp.g * j; col[i * 3 + 2] = tmp.b * j;   // 공 겉면은 매끄러운 얼룩(점마다 흔들면 경도선을 따라 줄무늬가 생겼다)
     if (!onSphere) pos.setZ(i, (spec.mold === 'rhizo' ? 0.16 : 0.03) * r * (1 - t * t) + rnd() * 0.012);   // 솜은 볼록하게
     if (clip) { const h = clip.half, x = Math.max(-h, Math.min(h, clip.cx + v.x)) - clip.cx, y = clip.cz - Math.max(-h, Math.min(h, clip.cz - v.y)); pos.setX(i, x); pos.setY(i, y); }   // 빵 테두리 밖은 테두리에 붙인다
   }

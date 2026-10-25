@@ -33,12 +33,14 @@ const tube = (pts, r0, r1, color, seg = 16) => {
 const leafTex = (green, kind) => leafTextures(`bean:${kind}:${green}`, { outline: 'ovate', veins: 'pinnate', top: green, topEdge: '#9cc77a', under: '#b5d39f', veinN: kind === 'uni' ? 6 : 5, seed: kind === 'uni' ? 31 : 32 });
 // 잎 한 장을 잎자루 끝에 단다: 잎자루 끝 위치 p, 방향 a(y축), 위로 든 각 lift, 처짐 droop
 function blade(tex, w, h, droop) { return leafMesh(tex, { w, h, curl: 0.22, droop: 0.2 + droop, gloss: 0.3, segs: [8, 12] }); }
-// 세겹잎: 잎자루 + 끝 작은잎 + 양옆 작은잎
+// 세겹잎: 잎자루 + 끝 작은잎 + 양옆 작은잎. 세 장을 한 평면(거의 수평)에 펼친다 — 옆 작은잎을 비스듬히 세우면 위·옆에서 납작하게 보여 홑잎처럼 읽혔다.
 function trifoliate(tex, s, droop) {
   const g = new THREE.Group(), pl = 0.55 * s;
   g.add(tube([[0, 0, 0], [pl * 0.5, pl * 0.18, 0], [pl, pl * 0.1, 0]], 0.025, 0.018, 0x5e8a34, 8));
-  const tip = blade(tex, 0.75 * s, 1.15 * s, droop); tip.position.set(pl, pl * 0.1, 0); tip.rotation.set(0, 0, -Math.PI / 2 + 0.35 - droop * 0.6); g.add(tip);
-  for (const side of [-1, 1]) { const l = blade(tex, 0.6 * s, 0.95 * s, droop); l.position.set(pl * 0.88, pl * 0.1, 0); l.rotation.set(side * 0.9, side * 0.6, -Math.PI / 2 + 0.25 - droop * 0.6); g.add(l); }
+  const head = new THREE.Group(); head.position.set(pl, pl * 0.1, 0); head.rotation.z = -0.12 - droop * 0.9; g.add(head);
+  const flat = new THREE.Group(); flat.rotation.x = -Math.PI / 2 + 0.55; head.add(flat);   // 이 안의 XY 평면 = 잎이 펼쳐지는 면(수평에서 30도쯤 들어 옆에서도 세 장이 보이게)
+  const tip = blade(tex, 0.62 * s, 1.0 * s, droop); tip.position.set(0.12 * s, 0, 0); tip.rotation.z = -Math.PI / 2; flat.add(tip);
+  for (const side of [-1, 1]) { const l = blade(tex, 0.52 * s, 0.82 * s, droop); l.position.set(0.04 * s, side * 0.05 * s, 0); l.rotation.z = -Math.PI / 2 + side * 1.15; flat.add(l); }
   return g;
 }
 function plant(spec, di) {

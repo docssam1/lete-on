@@ -167,6 +167,7 @@ test('한 줄 코드 뒤에 // 주석을 붙여 줄 나머지가 주석이 된 �
   const dir = path.dirname(fileURLToPath(import.meta.url));
   const files = ['observe.js', 'observe-sample.js', 'report.js', 'sketch.js', 'app.js', ...fs.readdirSync(path.join(dir, 'scenes')).filter((f) => /^(_|specimens-)/.test(f)).map((f) => 'scenes/' + f), ...fs.readdirSync(path.join(dir, 'data')).filter((f) => /^(observe|pencil|reports|invent|curriculum)/.test(f)).map((f) => 'data/' + f)];
   const bad = [];
-  for (const f of files) fs.readFileSync(path.join(dir, f), 'utf8').split('\n').forEach((line, i) => { const k = line.indexOf('// '); if (k < 0 || /https?:\/\//.test(line)) return; const tail = line.slice(k + 3); if (/[;{}]\s*(const|let|var|if|else|for|return|[A-Za-z_$][\w$]*\s*[(.=])/.test(tail) && !/^\s*\/\//.test(line)) bad.push(`${f}:${i + 1}`); });
+  // 네 번째 사고(곰팡이 색이 검게): 주석 뒤에 `col[i * 3] = …`가 있었는데 옛 꼴은 이걸 못 잡았다
+  for (const f of files) fs.readFileSync(path.join(dir, f), 'utf8').split('\n').forEach((line, i) => { const k = line.indexOf('// '); if (k < 0 || /https?:\/\//.test(line)) return; const tail = line.slice(k + 3); if ((/[;{}]\s*(const|let|var|if|else|for|return|[A-Za-z_$][\w$]*\s*[(.=])/.test(tail) || /[)\s][A-Za-z_$][\w$]*(\[[^\]]*\])+\s*=[^=]/.test(tail) || /;\s*[A-Za-z_$]/.test(tail)) && !/^\s*\/\//.test(line)) bad.push(`${f}:${i + 1}`); });
   assert.deepEqual(bad, []);
 });
