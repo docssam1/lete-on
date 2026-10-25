@@ -1040,7 +1040,7 @@ const REVERSE_SET = {
 // 칸마다 곱하고 모두 더한다(그림 kind "split-box").
 const placeParts = (n) => String(n).split("").map((d, i, a) => Number(d) * 10 ** (a.length - 1 - i)).filter(Boolean);
 // 수 뒤 「으로/로」: 받침 없음(2·4·5·9)과 ㄹ 받침(1·7·8)은 「로」, 삼·육·십·백은 「으로」
-const numEuro = (n) => `${n}${/[0369]$/u.test(String(n)) ? "으로" : "로"}`;
+const numEuro = (n) => `${n}${/[036]$/u.test(String(n)) ? "으로" : "로"}`;
 const partsText = (ps) => `${ps.slice(0, -1).map((p) => josa(p, "과")).join(" ")} ${numEuro(ps.at(-1))}`.trim();
 function splitBoxExample({ id, title, first, second, splitSecond = false }) {
   const cols = placeParts(first), rows = splitSecond ? placeParts(second) : [second];
@@ -1824,10 +1824,10 @@ function roundExample({ id, title, seats, fixed, names, clues, plan, ask, ans })
   return { id, title, problem: `${all.join(", ")} ${all.length}명이 둥근 식탁에 앉아 있어요. ${Object.entries(fixed).map(([n]) => `${josa(n, "은")} 그림의 자리에 앉아 있고,`).join(" ")} ${clues.map(roundClueText).join(" ")} ${josa(ask, "은")} 어느 자리에 앉아 있을까요?`, figure: { kind: "round", seats: show(fixed), tone: "given" }, steps, answer: `${josa(ask, "은")} ${ans} 자리예요.`, value: { kind: "round", seats, fixed, names, clues, ask, ans } };
 }
 // O/X 표: clues = [{ t: "is" | "not" | "oneOf", p, c | cs }]. verbs = { is: "좋아해요", not: "좋아하지 않아요", adn: "좋아하는" }
-const oxClueText = (c, v) => (c.t === "is" ? `${josa(c.p, "은")} ${josa(c.c, "을")} ${v.is}.` : c.t === "not" ? `${josa(c.p, "은")} ${josa(c.c, "을")} ${v.not}.` : `${josa(c.p, "은")} ${c.cs.join(", ")} 중 하나를 ${v.is}.`);
+const oxClueText = (c, v) => ("text" in c ? c.text : c.t === "is" ? `${josa(c.p, "은")} ${josa(c.c, "을")} ${v.is}.` : c.t === "not" ? `${josa(c.p, "은")} ${josa(c.c, "을")} ${v.not}.` : `${josa(c.p, "은")} ${c.cs.join(", ")} 중 하나를 ${v.is}.`);
 function oxExample({ id, title, people, choices, clues, verbs, what, plan, ask, ans }) {
   const steps = plan.map((p, i) => ({ text: p.text, figure: { kind: "ox", people, choices, marks: p.marks, hi: p.hi, tone: i === plan.length - 1 ? "check" : "doing" } }));
-  return { id, title, problem: `${josa(people.join(", "), "이")} ${choices.join(", ")} 중에서 서로 다른 ${josa(what, "을")} 하나씩 ${verbs.is}. ${clues.map((c) => oxClueText(c, verbs)).join(" ")} ${josa(ask, "이")} ${verbs.adn} ${josa(what, "은")} 무엇일까요?`, figure: { kind: "ox", people, choices, marks: {}, tone: "given" }, steps, answer: `${josa(ask, "은")} ${josa(ans, "이에요")}.`, value: { kind: "ox", people, choices, clues, ask, ans } };
+  return { id, title, problem: `${josa(people.join(", "), "이")} ${choices.join(", ")} 중에서 서로 다른 ${josa(what, "을")} 하나씩 ${verbs.is}. ${clues.map((c) => oxClueText(c, verbs)).filter(Boolean).join(" ")} ${josa(ask, "이")} ${verbs.adn} ${josa(what, "은")} 무엇일까요?`, figure: { kind: "ox", people, choices, marks: {}, tone: "given" }, steps, answer: `${josa(ask, "은")} ${josa(ans, "이에요")}.`, value: { kind: "ox", people, choices, clues, ask, ans } };
 }
 // 지금까지 정한 짝(assigns)은 O, 그 사람의 다른 칸과 그 물건의 다른 사람 칸은 X, xs는 조건으로 지운 칸
 function oxMarks(people, choices, assigns, xs = []) {
@@ -1836,6 +1836,7 @@ function oxMarks(people, choices, assigns, xs = []) {
   for (const [p, c] of assigns) { for (const cc of choices) m[`${p}|${cc}`] = "X"; for (const pp of people) m[`${pp}|${c}`] = "X"; m[`${p}|${c}`] = "O"; }
   return m;
 }
+const LIKE = { is: "좋아해요", not: "좋아하지 않아요", adn: "좋아하는" };
 const LOGIC_SET = {
   id: "logic",
   types: {
@@ -1882,6 +1883,42 @@ const LOGIC_SET = {
           { text: "조건으로 안 되는 칸부터 X로 지워요. 하나는 연필이나 공책, 두리는 공책이나 자, 세나는 자가 아니에요.", marks: M([], xs), hi: [] },
           { text: "네오는 연필을 골랐어요. 하나에게 연필이 없어지니 하나는 공책이에요.", marks: M([["네오", "연필"], ["하나", "공책"]], xs), hi: ["네오|연필", "하나|공책"] },
           { text: "두리는 공책이나 자인데 공책은 하나 것이라 자. 남은 세나는 지우개예요.", marks: M([["네오", "연필"], ["하나", "공책"], ["두리", "자"], ["세나", "지우개"]], xs), hi: ["두리|자"] }
+        ] })];
+    },
+    // 1권 「좋아하는 것을 찾아요」: 조건 문장은 text로 쓰고, 검사기는 t·p·c(cs)만 본다
+    "두 사람의 과일 추리": () => {
+      const people = ["지민", "현우"], choices = ["배", "귤"], M = (a, x) => oxMarks(people, choices, a, x);
+      return [oxExample({ id: "ox-two", title: "예제 1", people, choices, what: "과일", verbs: LIKE, ask: "지민", ans: "배",
+        clues: [{ t: "is", p: "현우", c: "귤", text: "지민의 친구 현우는 귤을 좋아해요." }], plan: [
+          { text: "현우는 귤을 좋아해요. 현우-귤에 O, 현우의 배 칸과 지민의 귤 칸에 X.", marks: M([["현우", "귤"]]), hi: ["현우|귤"] },
+          { text: "지민에게 남은 칸은 배뿐이에요.", marks: M([["현우", "귤"], ["지민", "배"]]), hi: ["지민|배"] }
+        ] })];
+    },
+    "세 사람의 운동 추리": () => {
+      const people = ["가온", "나래", "다솜"], choices = ["스케이트", "야구", "수영"], M = (a, x) => oxMarks(people, choices, a, x);
+      return [oxExample({ id: "ox-sport", title: "예제 1", people, choices, what: "운동", verbs: LIKE, ask: "다솜", ans: "수영",
+        clues: [{ t: "is", p: "가온", c: "스케이트", text: "가온은 얼음 위에서 하는 운동을 좋아해요." }, { t: "not", p: "나래", c: "수영", text: "나래는 물에 들어가는 운동을 좋아하지 않아요." }], plan: [
+          { text: "얼음 위에서 하는 운동은 스케이트예요. 가온-스케이트에 O, 가온의 다른 칸과 스케이트의 다른 칸에 X.", marks: M([["가온", "스케이트"]]), hi: ["가온|스케이트"] },
+          { text: "물에 들어가는 운동은 수영이라 나래-수영에 X. 나래에게 남은 칸은 야구예요.", marks: M([["가온", "스케이트"], ["나래", "야구"]], [["나래", "수영"]]), hi: ["나래|야구"] },
+          { text: "다솜에게 남은 칸은 수영뿐이에요.", marks: M([["가온", "스케이트"], ["나래", "야구"], ["다솜", "수영"]], [["나래", "수영"]]), hi: ["다솜|수영"] }
+        ] })];
+    },
+    "세 사람의 과일 추리": () => {
+      const people = ["루아", "보미", "찬"], choices = ["감", "자두", "망고"], M = (a, x) => oxMarks(people, choices, a, x), xs = [["루아", "감"], ["루아", "망고"]];
+      return [oxExample({ id: "ox-fruit3", title: "예제 1", people, choices, what: "과일", verbs: LIKE, ask: "보미", ans: "망고",
+        clues: [{ t: "not", p: "루아", c: "감", text: "루아는 감과 망고를 좋아하지 않아요." }, { t: "not", p: "루아", c: "망고", text: "" }, { t: "is", p: "찬", c: "감", text: "찬은 감을 좋아해요." }], plan: [
+          { text: "싫어하는 것부터 X로 지워요. 루아-감, 루아-망고에 X라 루아는 자두예요.", marks: M([["루아", "자두"]], xs), hi: ["루아|자두"] },
+          { text: "찬은 감을 좋아해요. 찬-감에 O.", marks: M([["루아", "자두"], ["찬", "감"]], xs), hi: ["찬|감"] },
+          { text: "보미에게 남은 칸은 망고뿐이에요.", marks: M([["루아", "자두"], ["찬", "감"], ["보미", "망고"]], xs), hi: ["보미|망고"] }
+        ] })];
+    },
+    "직업과 동물 추리": () => {
+      const people = ["한별", "유나", "시우"], choices = ["코끼리", "상어", "독수리"], M = (a, x) => oxMarks(people, choices, a, x);
+      return [oxExample({ id: "ox-job", title: "예제 1", people, choices, what: "동물", verbs: LIKE, ask: "유나", ans: "상어",
+        clues: [{ t: "is", p: "시우", c: "독수리", text: "한별은 경찰관이고 시우는 요리사예요. 요리사는 하늘을 나는 동물을 좋아해요." }, { t: "not", p: "한별", c: "상어", text: "경찰관은 바다에 사는 동물을 좋아하지 않아요." }], plan: [
+          { text: "요리사는 시우예요. 하늘을 나는 동물은 독수리라 시우-독수리에 O.", marks: M([["시우", "독수리"]]), hi: ["시우|독수리"] },
+          { text: "경찰관은 한별이에요. 바다에 사는 상어는 한별이 아니니 X, 한별에게 남은 칸은 코끼리예요.", marks: M([["시우", "독수리"], ["한별", "코끼리"]], [["한별", "상어"]]), hi: ["한별|코끼리"] },
+          { text: "유나에게 남은 칸은 상어뿐이에요.", marks: M([["시우", "독수리"], ["한별", "코끼리"], ["유나", "상어"]], [["한별", "상어"]]), hi: ["유나|상어"] }
         ] })];
     }
   }
@@ -2609,7 +2646,110 @@ const MISC_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET });
+// ───────────────────────── 1권 가쿠로 · 조건에 맞는 수 · 줄의 합을 같게 ─────────────────────────
+// 가쿠로: 빈칸이 하나만 남은 줄부터 「줄의 합 − 아는 수」로 채운다(카드는 한 번씩). 조건에 맞는 수: 조건 하나씩 좁힌다.
+// 줄의 합을 같게: 두 줄이 함께 쓰는 가운데 수는 양쪽에서 빼도 되니, 바깥 수끼리 합이 같아야 한다.
+function gakuroExample({ id, title, grid, shown, cards }) {
+  const R = grid.length, C = grid[0].length, rows = grid.map((r) => sum(r)), cols = grid[0].map((_, c) => sum(grid.map((r) => r[c])));
+  const known = grid.map((r, i) => r.map((v, j) => (shown.some(([a, b]) => a === i && b === j) ? v : null)));
+  const blanks = known.flat().filter((v) => v === null).length;
+  if (blanks !== cards.length || [...cards].sort().join() !== grid.flat().filter((_, k) => known.flat()[k] === null).sort().join()) throw new Error(`${id}: 카드와 빈칸이 맞지 않음`);
+  const cells = (g) => g.map((r) => r.map((v) => (v === null ? "" : String(v))));
+  const steps = [], cur = known.map((r) => [...r]);
+  for (let guard = 0; guard < 20 && cur.flat().includes(null); guard++) {
+    let moved = false;
+    for (let i = 0; i < R && !moved; i++) { const miss = cur[i].map((v, j) => (v === null ? j : -1)).filter((j) => j >= 0); if (miss.length === 1) { const j = miss[0], v = rows[i] - sum(cur[i].filter((x) => x !== null)); cur[i][j] = v; steps.push({ text: `${["첫째", "둘째", "셋째"][i]} 가로줄은 빈칸이 하나예요. ${rows[i]} − ${cur[i].filter((x, k) => k !== j).join(" − ")} = ${v}.`, figure: { kind: "mgrid", cells: cells(cur), rowVals: rows, colVals: cols, focus: { row: i }, op: "+", tone: "doing" } }); moved = true; } }
+    for (let j = 0; j < C && !moved; j++) { const col = cur.map((r) => r[j]), miss = col.map((v, i) => (v === null ? i : -1)).filter((i) => i >= 0); if (miss.length === 1) { const i = miss[0], v = cols[j] - sum(col.filter((x) => x !== null)); cur[i][j] = v; steps.push({ text: `${["첫째", "둘째", "셋째"][j]} 세로줄은 빈칸이 하나예요. ${cols[j]} − ${col.filter((x, k) => k !== i).join(" − ")} = ${v}.`, figure: { kind: "mgrid", cells: cells(cur), rowVals: rows, colVals: cols, focus: { col: j }, op: "+", tone: "doing" } }); moved = true; } }
+    if (!moved) throw new Error(`${id}: 빈칸 하나 남은 줄로 풀리지 않음`);
+  }
+  steps.push({ text: `카드 ${josa(cards.join(", "), "을")} 한 번씩 다 썼고, 가로줄 ${rows.join(", ")}, 세로줄 ${cols.join(", ")}도 맞아요.`, figure: { kind: "mgrid", cells: cells(cur), rowVals: rows, colVals: cols, op: "+", tone: "check" } });
+  return { id, title, problem: `빈칸에 ${josa(cards.join(", "), "을")} 한 번씩 넣어 가로줄·세로줄의 합이 오른쪽과 아래의 수가 되게 해요.`, figure: { kind: "mgrid", cells: cells(known), rowVals: rows, colVals: cols, op: "+", tone: "given" }, steps, answer: `${josa(grid.map((r, i) => `${["첫째", "둘째", "셋째"][i]} 줄 ${r.join(", ")}`).join(" · "), "이에요")}.`, value: { kind: "gakuro", grid, known, cards, rows, cols } };
+}
+function equalPartsExample({ id, title, values, parts }) {
+  const outs = values.map((v) => v / parts);
+  if (outs.some((x) => !Number.isInteger(x))) throw new Error(`${id}: 나누어떨어지지 않음`);
+  const steps = [
+    { text: `같은 ${HOW_MANY[parts]} 수로 나누면 한 수는 ${numEuro(parts)} 나눈 수예요. ${values[0]} ÷ ${parts} = ${outs[0]}, ${Array(parts).fill(outs[0]).join(" + ")} = ${values[0]}.`, figure: { kind: "tree", levels: [[values[0]], Array(parts).fill(outs[0])], tone: "doing" } },
+    { text: `나머지도 같아요. ${values.slice(1).map((v, i) => `${v} ÷ ${parts} = ${outs[i + 1]}`).join(", ")}.`, figure: { kind: "eqs", lines: values.map((v, i) => `${v} = ${Array(parts).fill(outs[i]).join(" + ")}`), tone: "check" } }
+  ];
+  return { id, title, problem: `${josa(values.join(", "), "을")} 각각 같은 ${HOW_MANY[parts]} 수로 나누어요. 한 수는 각각 얼마일까요?`, figure: { kind: "eqs", lines: values.map((v) => `${v} = ${Array(parts).fill("□").join(" + ")}`), tone: "given" }, steps, answer: `차례로 ${josa(outs.join(", "), "이에요")}.`, value: { kind: "parts", values, parts, outs } };
+}
+// 조건에 맞는 수: digits 자리 수, conds = [{ text, test }] — 검사기는 test를 다시 쓰지 않고 cond.kind로 따로 판단한다
+const COND = {
+  sum: (k) => ({ kind: "sum", k, text: `십의 자리 숫자 + 일의 자리 숫자 = ${k}`, test: (n) => [...String(n)].reduce((a, d) => a + Number(d), 0) === k }),
+  even: () => ({ kind: "even", text: "짝수", test: (n) => n % 2 === 0 }),
+  over: (k) => ({ kind: "over", k, text: `${k}보다 큰 수`, test: (n) => n > k }),
+  onesLess: (k) => ({ kind: "onesLess", k, text: `일의 자리 숫자가 십의 자리 숫자보다 ${k} 작음`, test: (n) => Math.floor(n / 10) % 10 - (n % 10) === k }),
+  down: (k) => ({ kind: "down", k, text: `높은 자리부터 숫자가 ${k}씩 작아짐`, test: (n) => { const d = [...String(n)].map(Number); return d.every((x, i) => !i || d[i - 1] - x === k); } }),
+  ones: (k) => ({ kind: "ones", k, text: `일의 자리 숫자가 ${k}`, test: (n) => n % 10 === k }),
+  allEven: () => ({ kind: "allEven", text: "세 숫자가 모두 짝수", test: (n) => [...String(n)].every((d) => Number(d) % 2 === 0) }),
+  digitSum: (k) => ({ kind: "digitSum", k, text: `각 자리 숫자의 합이 ${k}`, test: (n) => [...String(n)].reduce((a, d) => a + Number(d), 0) === k }),
+  incr: () => ({ kind: "incr", text: "백의 자리 숫자가 가장 작고 일의 자리 숫자가 가장 큼", test: (n) => { const [a, b, c] = [...String(n)].map(Number); return a < b && a < c && c > a && c > b; } })
+};
+function conditionExample({ id, title, digits, conds, all = true }) {
+  const lo = 10 ** (digits - 1), hi = 10 ** digits - 1, list = [];
+  for (let n = lo; n <= hi; n++) if (conds.every((c) => c.test(n))) list.push(n);
+  if (!list.length || (!all && list.length !== 1)) throw new Error(`${id}: 답이 ${list.length}개`);
+  const steps = conds.map((c, i) => { const keep = []; for (let n = lo; n <= hi; n++) if (conds.slice(0, i + 1).every((x) => x.test(n))) keep.push(n); return { text: `${i === 0 ? "먼저 " : ""}「${c.text}」${i === 0 ? "인 수를 찾아요" : "에도 맞는 수만 남겨요"}. ${keep.length > 12 ? `${keep.slice(0, 6).join(", ")}, …` : keep.join(", ")}.`, figure: { kind: "seq", values: keep.slice(0, 10), tone: i === conds.length - 1 ? "check" : "doing" } }; });
+  if (steps.length === 1) steps.unshift({ text: digits === 2 ? "십의 자리 숫자를 1부터 9까지 바꿔 가며 일의 자리 숫자를 맞춰 봐요." : "백의 자리 숫자를 1부터 9까지 바꿔 가며 나머지 두 자리를 맞춰 봐요.", figure: { kind: "eqs", lines: conds.map((c) => c.text), tone: "doing" } });
+  const condText = conds.map((c) => `「${c.text}」`).join(", ");
+  return { id, title, problem: `${condText}${conds.length > 1 ? "에 다 맞는" : "인"} ${digits === 2 ? "두" : "세"} 자리 수를 ${all ? "모두 " : ""}구해요.`, figure: { kind: "eqs", lines: conds.map((c) => c.text), tone: "given" }, steps, answer: `${josa(list.join(", "), "이에요")}.`, value: { kind: "cond", digits, conds: conds.map(({ kind, k }) => ({ kind, k })), list } };
+}
+function placeValueExample({ id, title, counts, ask }) {
+  const units = [1000, 100, 10, 1].slice(4 - counts.length), n = sum(counts.map((c, i) => c * units[i]));
+  const names = { 1000: "천", 100: "백", 10: "십", 1: "일" };
+  const lines = counts.map((c, i) => `${units[i]}이 ${c}개`);
+  const steps = [
+    { text: `${counts.map((c, i) => `${units[i]}이 ${c}개면 ${units[i] * c}`).join(", ")}.`, figure: { kind: "eqs", lines, tone: "doing" } },
+    { text: `모두 더하면 ${counts.map((c, i) => units[i] * c).join(" + ")} = ${n}. ${names[units[ask]]}의 자리 숫자는 ${counts[ask]}.`, figure: { kind: "eqs", lines: [...lines, `= ${n}`], tone: "check" } }
+  ];
+  return { id, title, problem: `${lines.join(", ")}인 수와 ${names[units[ask]]}의 자리 숫자를 구해요.`, figure: { kind: "eqs", lines, tone: "given" }, steps, answer: `${n}, ${names[units[ask]]}의 자리 숫자는 ${josa(counts[ask], "이에요")}.`, value: { kind: "place", counts, ask, n } };
+}
+function digitCountExample({ id, title, nums, digits }) {
+  const pick = nums.filter((n) => String(n).length === digits);
+  const steps = [
+    { text: `수마다 자리가 몇 개인지 세요. ${nums.map((n) => `${n}: ${String(n).length}자리`).join(", ")}.`, figure: { kind: "seq", values: nums, notes: nums.map((n) => `${String(n).length}자리`), tone: "doing" } },
+    { text: `${digits === 2 ? "두" : "세"} 자리 수는 ${pick.join(", ")} — 모두 ${pick.length}개.`, figure: { kind: "seq", values: pick, tone: "check" } }
+  ];
+  return { id, title, problem: `${nums.join(", ")} 중 ${digits === 2 ? "두" : "세"} 자리 수는 몇 개일까요?`, figure: { kind: "seq", values: nums, tone: "given" }, steps, answer: `${pick.length}개예요.`, value: { kind: "dcount", nums, digits, count: pick.length } };
+}
+// 줄의 합을 같게(십자): 가로 [l, c, r], 세로 [t, c, ?] — ? = l + r − t
+function crossSumExample({ id, title, l, c, r, t }) {
+  const b = l + r - t;
+  if (b <= 0) throw new Error(`${id}: 음수`);
+  const steps = [
+    { text: `가로줄의 합은 ${l} + ${c} + ${r} = ${l + c + r}. 세로줄도 ${josa(l + c + r, "이")} 되어야 해요.`, figure: { kind: "eqs", lines: [`${l} + ${c} + ${r} = ${l + c + r}`, `${t} + ${c} + ? = ${l + c + r}`], tone: "doing" } },
+    { text: `가운데 ${josa(c, "은")} 두 줄이 함께 써요. 양쪽에서 빼면 바깥 수끼리 합이 같아요. ${l} + ${r} = ${l + r}, 그래서 ${t} + ? = ${l + r}.`, figure: { kind: "eqs", lines: [`${l} + ${r} = ${l + r}`, `${t} + ? = ${l + r}`], tone: "doing" } },
+    { text: `? = ${l + r} − ${t} = ${b}.`, figure: { kind: "eqs", lines: [`${t} + ${c} + ${b} = ${l + c + r}`], tone: "check" } }
+  ];
+  return { id, title, problem: `십자 모양으로 놓인 수에서 가로줄은 ${l}, ${c}, ${ira(r, "고")}, 세로줄은 위 ${t}, 가운데 ${c}, 아래 ?예요. 두 줄의 합이 같도록 ?에 알맞은 수를 구해요.`, figure: { kind: "eqs", lines: [`가로: ${l}, ${c}, ${r}`, `세로: ${t}, ${c}, ?`], tone: "given" }, steps, answer: `?는 ${josa(b, "이에요")}.`, value: { kind: "cross", l, c, r, t, b } };
+}
+const BOOK1_SET = {
+  id: "book1",
+  // 1권 「모든 줄의 합을 같게」 원본은 유형 이름이 비어 있다
+  typeOf: (item) => item.typeLabel || "줄의 합을 같게",
+  types: {
+    "줄의 합을 같게": () => [crossSumExample({ id: "cross-1", title: "예제 1", l: 9, c: 6, r: 2, t: 4 }), crossSumExample({ id: "cross-2", title: "예제 2", l: 3, c: 8, r: 12, t: 10 })],
+    "2×2 카드 가쿠로": () => [gakuroExample({ id: "gk22-1", title: "예제 1", grid: [[7, 4], [5, 2]], shown: [[0, 0]], cards: [2, 4, 5] })],
+    "3×2 카드 가쿠로": () => [gakuroExample({ id: "gk32-1", title: "예제 1", grid: [[6, 3], [2, 8], [5, 4]], shown: [[0, 0], [1, 1]], cards: [2, 3, 4, 5] })],
+    "2×3 카드 가쿠로": () => [gakuroExample({ id: "gk23-1", title: "예제 1", grid: [[3, 6, 9], [7, 2, 4]], shown: [[0, 2], [1, 0]], cards: [2, 3, 4, 6] })],
+    "3×3 카드 가쿠로": () => [gakuroExample({ id: "gk33-1", title: "예제 1", grid: [[3, 8, 1], [6, 2, 9], [4, 7, 5]], shown: [[0, 0], [0, 1], [1, 0], [2, 2]], cards: [1, 2, 4, 7, 9] })],
+    "같은 두 수로 나누기": () => [equalPartsExample({ id: "half2-1", title: "예제 1", values: [36, 52, 74, 90], parts: 2 })],
+    "같은 네 수로 나누기": () => [equalPartsExample({ id: "quarter4-1", title: "예제 1", values: [44, 52, 68, 80], parts: 4 })],
+    "같은 세 수로 나누기": () => [equalPartsExample({ id: "third3-1", title: "예제 1", values: [9, 21, 27, 36, 45], parts: 3 })],
+    "자리 수 세기": () => [digitCountExample({ id: "dcount-1", title: "예제 1", nums: [9, 53, 718, 26, 4402, 81], digits: 2 })],
+    "자릿값으로 수 만들기": () => [placeValueExample({ id: "pv-1", title: "예제 1", counts: [4, 7, 2], ask: 1 })],
+    "수 모형 읽기": () => [placeValueExample({ id: "pv-2", title: "예제 1", counts: [3, 2, 7, 4], ask: 0 })],
+    "두 자리 수 모두 찾기": () => [conditionExample({ id: "cond-1", title: "예제 1", digits: 2, conds: [COND.sum(5)] })],
+    "두 조건의 두 자리 수": () => [conditionExample({ id: "cond-2", title: "예제 1", digits: 2, conds: [COND.sum(9), COND.even()] })],
+    "세 조건의 두 자리 수": () => [conditionExample({ id: "cond-3", title: "예제 1", digits: 2, conds: [COND.over(70), COND.even(), COND.onesLess(2)], all: false })],
+    "세 자리 수 모두 찾기": () => [conditionExample({ id: "cond-4", title: "예제 1", digits: 3, conds: [COND.down(1)] })],
+    "조건을 더해 하나 찾기": () => [conditionExample({ id: "cond-5", title: "예제 1", digits: 3, conds: [COND.down(3), COND.ones(2)], all: false })],
+    "세 조건의 세 자리 수": () => [conditionExample({ id: "cond-6", title: "예제 1", digits: 3, conds: [COND.allEven(), COND.digitSum(14), COND.incr()], all: false })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

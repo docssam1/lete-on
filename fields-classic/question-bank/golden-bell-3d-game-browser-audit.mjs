@@ -295,6 +295,7 @@ try {
           const sh = await page.locator(".gb-flow-game iframe.drill-frame").evaluate((el) => el.contentWindow.__drill.p.shape);
           if (sh.kind === "choice") await frame.locator(`[data-pick="${sh.values[0]}"]`).click();
           else if (sh.kind === "weekday") await frame.locator(`.dr-key[data-day="${sh.values[0]}"]`).click();
+          else if (sh.kind === "grid") for (const [k, val] of sh.values.entries()) { await frame.locator(`[data-cell="${k}"]`).click(); await frame.locator(`[data-card="${val}"]`).first().click(); }   // 가쿠로: 칸을 고르고 카드를 놓는다
           else for (const ch of sh.values.join(sh.kind === "frac" ? "/" : ",")) await frame.locator(`.dr-key[data-key="${ch}"]`).click();
           await frame.locator('[data-dr="answer"]').click();
           assert.match(await frame.locator(".dr-note").innerText(), /정답|맞았어요/u, `${name}: 공방 ${k + 1}번 정답`);
