@@ -576,6 +576,47 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       assert.deepEqual(fits, [v.A], `${ex.id}: 작은 수가 하나로 정해짐`);
       for (const item of lesson.original.items) { const o = item.visual || {}; if (o.subtype === "source-sum-pair") assert.ok(!(o.sum === v.sum && (o.rows || []).some((r) => r.offset === `+${v.extra}`)), `${ex.id}: 원본과 같은 합·차`); }
     }
+  } else if (setId === "figure-numbers") {
+    // 점·돌·사람·선을 하나하나 세어 다시 구한다(공식을 쓰지 않는다).
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    const has = (n) => nums(ex.answer).includes(n);
+    if (nums(ex.problem).length) for (const item of lesson.original.items) assert.notEqual(nums(ex.problem).join(), nums(item.prompt).join(), `${ex.id}: 원본과 같은 수`);
+    const squareDots = (n) => { let c = 0; for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) c++; return c; };
+    const triDots = (n) => { let c = 0; for (let y = 0; y < n; y++) for (let x = 0; x <= y; x++) c++; return c; };
+    const pairsOf = (n) => { let c = 0; for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) c++; return c; };
+    if (typeof v === "number") {
+      // 1부터의 합(연속수 예제 재사용): 그림의 from~to를 하나씩 더한다
+      let s = 0; for (let x = ex.figure.from; x <= ex.figure.to; x++) s += x;
+      assert.equal(ex.figure.from, 1, `${ex.id}: 1부터`); assert.equal(v, s, `${ex.id}: 합`); assert.ok(has(s), `${ex.id}: 답`);
+      if (/짝수 개/u.test(typeLabel)) assert.equal(ex.figure.to % 2, 0, `${ex.id}: 짝수 개`);
+      if (/홀수 개/u.test(typeLabel)) assert.equal(ex.figure.to % 2, 1, `${ex.id}: 홀수 개`);
+      for (const item of lesson.original.items) { const o = item.visual || {}; if (o.subtype === "source-sum-line") assert.notEqual(o.n, ex.figure.to, `${ex.id}: 원본과 같은 △`); }
+    } else if (v.kind === "square") { let s = 0; for (let k = 1, c = 0; c < v.n; k += 2, c++) s += k; assert.equal(s, squareDots(v.n)); assert.equal(v.total, s, `${ex.id}: 사각수`); assert.ok(has(s), `${ex.id}: 답`); }
+    else if (v.kind === "grow-square") { assert.equal(v.add, squareDots(v.n) - squareDots(v.n - 1), `${ex.id}: 늘어난 점`); assert.ok(has(v.add)); }
+    else if (v.kind === "grow-tri") { assert.equal(v.add, triDots(v.n) - triDots(v.n - 1), `${ex.id}: 늘어난 점`); assert.ok(has(v.add)); }
+    else if (v.kind === "odd-sum") { let s = 0; for (let k = 1; k <= v.last; k += 2) s += k; assert.equal(v.total, s, `${ex.id}: 홀수의 합`); assert.ok(has(s)); }
+    else if (v.kind === "last-odd") { let s = 0, k = -1; while (s < v.total) { k += 2; s += k; } assert.ok(s === v.total && k === v.last, `${ex.id}: 마지막 홀수`); assert.ok(has(k)); }
+    else if (v.kind === "seq") {
+      // 차가 다음 홀수씩 커지는지 확인하고, 그대로 늘려 nth번째를 얻는다
+      const seq = [...v.values]; for (let i = 2; i < seq.length; i++) assert.equal(seq[i] - seq[i - 1], seq[i - 1] - seq[i - 2] + 2, `${ex.id}: 사각수 수열`);
+      while (seq.length < v.nth) seq.push(2 * seq.at(-1) - seq.at(-2) + 2);
+      assert.equal(v.at, seq[v.nth - 1], `${ex.id}: ${v.nth}번째`); assert.ok(has(v.at));
+    } else if (v.kind === "sum-squares") { let s = 0; for (let k = 1; k <= v.nth; k++) s += squareDots(k); assert.equal(v.at, s, `${ex.id}: 사각수의 합`); assert.ok(has(s)); }
+    else if (v.kind === "stones") {
+      let row = 1, total = 0, b = 0, w = 0, black = true; while (total < v.total) { total += row; if (black) b += row; else w += row; row += 2; black = !black; }
+      assert.ok(total === v.total && b === v.black && w === v.white, `${ex.id}: 검은 돌·흰 돌`); assert.ok(has(Math.abs(b - w)));
+    } else if (v.kind === "hand-new") { let c = 0; for (let i = 0; i < v.n - 1; i++) c++; assert.equal(v.count, c); assert.ok(has(c)); }
+    else if (v.kind === "hand-total" || v.kind === "pairs") { assert.equal(v.total, pairsOf(v.n), `${ex.id}: 두 사람(점·카드) 짝의 수`); assert.ok(has(v.total)); if (v.last !== undefined) assert.ok(has(v.n - 1)); }
+    else if (v.kind === "hand-reverse") { const fits = []; for (let n = 2; n < 60; n++) if (pairsOf(n) === v.total) fits.push(n); assert.deepEqual(fits, [v.count], `${ex.id}: 사람 수가 하나로 정해짐`); assert.ok(has(v.count)); }
+    else if (v.kind === "fan") {
+      // 선 고르기: 꼭짓점을 지나는 선 k + 1개 중 둘 + 가로선 하나면 삼각형(세 선이 한 점에서 만나거나 둘이 나란하면 아님)
+      const lines = [...Array.from({ length: v.k + 1 }, () => "ray"), "base", ...(v.cross ? ["cross"] : [])];
+      let c = 0; for (let a = 0; a < lines.length; a++) for (let b = a + 1; b < lines.length; b++) for (let d = b + 1; d < lines.length; d++) { const rays = [a, b, d].filter((i) => lines[i] === "ray").length; if (rays === 2) c++; }
+      assert.equal(v.total, c, `${ex.id}: 삼각형 수`); assert.ok(has(c));
+      for (const item of lesson.original.items) { const o = item.visual || {}; if (o.subtype === "source-fan-triangle") assert.ok(!(o.cells === v.k && Boolean(o.cross) === v.cross), `${ex.id}: 원본 그림과 같음`); }
+    } else if (v.kind === "odd-rows") { let s = 0; for (let r = 0; r < v.n; r++) s += 2 * r + 1; assert.equal(v.total, s); assert.ok(has(s)); }
+    else if (v.kind === "tri-layers") { let s = 0; for (let l = 1; l <= v.n; l++) s += triDots(l); assert.equal(v.total, s, `${ex.id}: 쌓기나무 수`); assert.ok(has(s)); for (const item of lesson.original.items) { const o = item.visual || {}; if (o.subtype === "source-cube-stair") assert.notEqual(o.stage, v.n, `${ex.id}: 원본과 같은 층`); } }
+    else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

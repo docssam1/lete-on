@@ -495,8 +495,100 @@ function dayLadderFigure(f) {
   return `<div class="tx-ladder" style="--tone:${color}">${rows}</div>`;
 }
 
+// ───── 사각수·삼각수: 점 네모/세모(겹마다 번갈아 칠함, hi 겹은 안내 색) ─────
+const LAYER = ["#ffd45c", "#ffeaa6"];
+function dotsFigure(f) {
+  const color = TONE[f.tone || "given"], gap = f.n > 9 ? 12 : 18, r = f.n > 9 ? 4.5 : 6.5, pad = 12;
+  let body = "", W, H;
+  if (f.shape === "square") {
+    W = H = pad * 2 + (f.n - 1) * gap;
+    for (let y = 0; y < f.n; y++) for (let x = 0; x < f.n; x++) {
+      const layer = Math.max(x, y) + 1, on = f.hi === layer;
+      body += `<circle cx="${pad + x * gap}" cy="${pad + y * gap}" r="${r}" fill="${on ? color : LAYER[layer % 2]}" stroke="${on ? color : STONE.line}" stroke-width="1.2"/>`;
+    }
+  } else {
+    W = pad * 2 + (f.n - 1) * gap; H = pad * 2 + (f.n - 1) * gap * 0.87;
+    for (let y = 0; y < f.n; y++) for (let x = 0; x <= y; x++) {
+      const on = f.hi === y + 1;
+      body += `<circle cx="${W / 2 + (x - y / 2) * gap}" cy="${pad + y * gap * 0.87}" r="${r}" fill="${on ? color : LAYER[(y + 1) % 2]}" stroke="${on ? color : STONE.line}" stroke-width="1.2"/>`;
+    }
+  }
+  const cap = f.caption ? `<p class="tx-dots-cap">${esc(f.caption)}</p>` : "";
+  return `<div class="tx-dots" style="--tone:${color}">${svg(W, H, body, `${f.shape === "square" ? "점 네모" : "점 세모"} ${f.n}줄`)}${cap}</div>`;
+}
+// seq: 늘어놓은 수. notes[i] = 수 밑에 쓰는 말(「3 × 3」), diffs = 수 사이에 늘어난 수, ask = 마지막에 「?」 칸
+function seqFigure(f) {
+  const color = TONE[f.tone || "given"];
+  const cells = f.values.map((v, i) => `${i && f.diffs ? `<em>+${esc(f.diffs[i - 1])}</em>` : ""}<span><b>${esc(v)}</b>${f.notes?.[i] ? `<small>${esc(f.notes[i])}</small>` : ""}</span>`).join("");
+  return `<div class="tx-seq" style="--tone:${color}">${cells}<i>…</i>${f.ask ? `<span class="ask"><b>${esc(f.ask)}</b></span>` : ""}</div>`;
+}
+// stone-rows: 줄마다 홀수 개, 검은 줄·흰 줄 번갈아. sums면 줄 옆에 개수
+function stoneRowsFigure(f) {
+  const color = TONE[f.tone || "given"], gap = f.rows.length > 6 ? 12 : 16, r = gap / 2 - 1.5, wide = Math.max(...f.rows);
+  const W = wide * gap + 70, H = f.rows.length * gap + 16;
+  let body = "";
+  f.rows.forEach((n, i) => {
+    const black = i % 2 === 0, y = 8 + i * gap + gap / 2, x0 = (wide - n) / 2 * gap + 6;
+    for (let k = 0; k < n; k++) body += `<circle cx="${x0 + k * gap + gap / 2}" cy="${y}" r="${r}" fill="${black ? "#2b2b2b" : "#fff"}" stroke="#2b2b2b" stroke-width="1.2"/>`;
+    if (f.counts) body += text(wide * gap + 40, y, `${n}개`, { size: 11, weight: 800, fill: black ? "#222" : "#566274" });
+  });
+  return `<div class="tx-stone-rows" style="--tone:${color}">${svg(W, H, body, `검은 돌과 흰 돌 ${f.rows.length}줄`)}</div>`;
+}
+// hand: 사람(점)을 둥글게 놓고 두 사람마다 선. hi = 새로 온 사람(그 사람의 선만 안내 색), all이면 모든 선
+function handFigure(f) {
+  const color = TONE[f.tone || "given"], n = f.names.length, R = n > 8 ? 92 : 74, C = R + 26;
+  const pts = f.names.map((_, i) => [C + R * Math.sin((2 * Math.PI * i) / n), C - R * Math.cos((2 * Math.PI * i) / n)]);
+  let body = "";
+  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+    const on = f.hi !== undefined ? i === f.hi || j === f.hi : f.all;
+    if (!on && !f.faint) continue;
+    body += `<line x1="${pts[i][0]}" y1="${pts[i][1]}" x2="${pts[j][0]}" y2="${pts[j][1]}" stroke="${on ? color : "#d8d2c4"}" stroke-width="${on ? 2.2 : 1.2}"/>`;
+  }
+  pts.forEach(([x, y], i) => { body += `<circle cx="${x}" cy="${y}" r="13" fill="${i === f.hi ? "#fff3c4" : SHAPE.square.fill}" stroke="${i === f.hi ? "#d39b20" : SHAPE.square.line}" stroke-width="2"/>${text(x, y, f.names[i], { size: 13, weight: 900 })}`; });
+  return `<div class="tx-hand">${svg(C * 2, C * 2, body, `${n}명이 악수하는 그림`)}</div>`;
+}
+// fan: 꼭짓점에서 아래로 선을 그어 작은 삼각형 k개. cross면 가운데 가로선이 하나 더. hi = 칠할 삼각형 [왼쪽 선, 오른쪽 선, "base"|"cross"]
+function fanFigure(f) {
+  const color = TONE[f.tone || "given"], W = 260, H = 170, top = [W / 2, 12], y1 = H - 12, yc = 12 + (y1 - 12) * 0.55;
+  const foot = (i, y) => [top[0] + ((24 + (i * (W - 48)) / f.k) - top[0]) * ((y - 12) / (y1 - 12)), y];
+  let body = "";
+  if (f.hi) { const [a, b, at] = f.hi, y = at === "cross" ? yc : y1; const pa = foot(a, y), pb = foot(b, y); body += `<polygon points="${top.join(",")} ${pa.join(",")} ${pb.join(",")}" fill="${color}" fill-opacity="0.28" stroke="${color}" stroke-width="2.5"/>`; }
+  for (let i = 0; i <= f.k; i++) body += `<line x1="${top[0]}" y1="${top[1]}" x2="${foot(i, y1)[0]}" y2="${y1}" stroke="#2b2b2b" stroke-width="1.8"/>`;
+  body += `<line x1="${foot(0, y1)[0]}" y1="${y1}" x2="${foot(f.k, y1)[0]}" y2="${y1}" stroke="#2b2b2b" stroke-width="1.8"/>`;
+  if (f.cross) body += `<line x1="${foot(0, yc)[0]}" y1="${yc}" x2="${foot(f.k, yc)[0]}" y2="${yc}" stroke="#2b2b2b" stroke-width="1.8"/>`;
+  return `<div class="tx-fan">${svg(W, H, body, `꼭짓점에서 선을 그은 삼각형, 작은 칸 ${f.k}개${f.cross ? ", 가로선 하나" : ""}`)}</div>`;
+}
+// odd-rows: 맨 위 1개, 그 아래 3개, 5개… n줄. square = 작은 정사각형 탑, triangle = 큰 삼각형 안 작은 삼각형
+function oddRowsFigure(f) {
+  const color = TONE[f.tone || "given"], s = f.n > 6 ? 14 : 20, W = (2 * f.n - 1) * (f.shape === "square" ? s : s / 2) + s + 8, H = f.n * s + 8;
+  let body = "";
+  for (let r = 0; r < f.n; r++) {
+    const on = f.hi === r + 1, fill = on ? color : LAYER[(r + 1) % 2];
+    if (f.shape === "square") for (let k = 0; k < 2 * r + 1; k++) body += `<rect x="${W / 2 + (k - r - 0.5) * s}" y="${4 + r * s}" width="${s}" height="${s}" fill="${fill}" fill-opacity="${on ? 0.5 : 1}" stroke="${STONE.line}" stroke-width="1.2"/>`;
+    else for (let k = 0; k < 2 * r + 1; k++) {
+      const up = k % 2 === 0, cx = W / 2 + (k - r) * (s / 2), y = 4 + r * s;
+      const pts = up ? `${cx},${y} ${cx - s / 2},${y + s} ${cx + s / 2},${y + s}` : `${cx - s / 2},${y} ${cx + s / 2},${y} ${cx},${y + s}`;
+      body += `<polygon points="${pts}" fill="${fill}" fill-opacity="${on ? 0.5 : 1}" stroke="${SHAPE.triangle.line}" stroke-width="1.2"/>`;
+    }
+    if (f.counts) body += text(W - 2, 4 + r * s + s / 2, `${2 * r + 1}`, { size: 11, weight: 900, fill: "#566274", anchor: "end" });
+  }
+  return `<div class="tx-odd-rows">${svg(W + (f.counts ? 18 : 0), H, body, `${f.n}줄 탑`)}</div>`;
+}
+// tri-layers: 층마다 삼각수만큼 놓은 쌓기나무를 층별 점 세모로 나란히(1층 = 맨 위)
+function triLayersFigure(f) {
+  const color = TONE[f.tone || "given"];
+  return `<div class="tx-tri-layers" style="--tone:${color}">${Array.from({ length: f.n }, (_, i) => `<span>${dotsFigure({ shape: "triangle", n: i + 1, tone: f.tone })}<b>${i + 1}층</b>${f.counts ? `<small>${((i + 1) * (i + 2)) / 2}개</small>` : ""}</span>`).join("")}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "dots") return dotsFigure(figure);
+  if (figure.kind === "seq") return seqFigure(figure);
+  if (figure.kind === "stone-rows") return stoneRowsFigure(figure);
+  if (figure.kind === "hand") return handFigure(figure);
+  if (figure.kind === "fan") return fanFigure(figure);
+  if (figure.kind === "odd-rows") return oddRowsFigure(figure);
+  if (figure.kind === "tri-layers") return triLayersFigure(figure);
   if (figure.kind === "cal-grid") return calGridFigure(figure);
   if (figure.kind === "month-days") return monthDaysFigure(figure);
   if (figure.kind === "day-ladder") return dayLadderFigure(figure);

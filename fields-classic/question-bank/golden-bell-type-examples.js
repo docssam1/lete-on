@@ -1282,7 +1282,194 @@ const CALENDAR_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET });
+// ───────────────────────── 5권 사각수 · 삼각수 · 삼각 계단 쌓기나무 ─────────────────────────
+// 사각수 = 1부터 홀수 n개의 합 = n × n(점 네모가 한 겹 커질 때 홀수만큼 는다). 삼각수 = 1부터 n까지의 합(점 세모가 한 줄씩 는다).
+// 악수·가위바위보·선분·두 장 뽑기는 한 사람(점·카드)씩 들어오며 1, 2, 3…번씩 늘어나 삼각수가 된다.
+// 그림: kind "dots"(점 네모/세모) · "seq" · "stone-rows" · "hand" · "fan" · "odd-rows" · "tri-layers". 1부터의 합은 연속수 그림("consec")을 그대로 쓴다.
+const tri = (n) => (n * (n + 1)) / 2;
+// 「7 × 7이라」·「2 × 2니까」: 받침이 있으면 이라/이니까
+const ira = (w, tail = "라") => (josa(w, "이").endsWith("이") ? `${w}이${tail}` : `${w}${tail}`);
+const oddList = (k) => Array.from({ length: k }, (_, i) => 2 * i + 1);
+const oddSumText = (k) => (k <= 5 ? oddList(k).join(" + ") : `1 + 3 + 5 + … + ${2 * k - 1}`);
+function squareNumberExample({ id, title, n, ask = "value" }) {
+  const steps = [
+    { text: "점을 네모로 놓으면 1개, 1 + 3개, 1 + 3 + 5개예요. 한 겹 키울 때마다 홀수만큼 늘어요.", figure: { kind: "dots", shape: "square", n: 3, hi: 3, tone: "doing", caption: "1 + 3 + 5 = 3 × 3" } },
+    { text: `홀수 ${n}개를 더하면 점이 가로 ${n}줄, 세로 ${n}줄인 네모가 돼요.`, figure: { kind: "dots", shape: "square", n, tone: "doing" } },
+    { text: `그래서 □${n} = ${n} × ${n} = ${n * n}.`, figure: { kind: "dots", shape: "square", n, tone: "check", caption: `${n} × ${n} = ${n * n}` } }
+  ];
+  const problem = ask === "same" ? `1부터 홀수를 ${n}개 더한 합을 □${josa(n, "이")}라고 해요. □${josa(n, "은")} 어떤 수를 두 번 곱한 것과 같을까요?` : `1부터 연속한 홀수의 합 □1 = 1, □2 = 1 + 3, □3 = 1 + 3 + 5…를 사각수라고 해요. □${josa(n, "은")} 얼마일까요?`;
+  return { id, title, problem, figure: { kind: "dots", shape: "square", n: 3, tone: "given", caption: "1 + 3 + 5" }, steps, answer: ask === "same" ? `□${josa(n, "은")} ${n} × ${josa(n, "과")} 같아요. ${josa(n * n, "이에요")}.` : `□${josa(n, "은")} ${josa(n * n, "이에요")}.`, value: { kind: "square", n, total: n * n } };
+}
+function squareGrowExample({ id, title, n }) {
+  const add = 2 * n - 1;
+  const steps = [
+    { text: `${n}번째 모양은 ${n - 1}번째 네모에 오른쪽 세로줄과 아래 가로줄을 한 겹 더 둘러요.`, figure: { kind: "dots", shape: "square", n, hi: n, tone: "doing" } },
+    { text: `세로줄 ${n}개와 가로줄 ${n}개인데 모서리 점은 두 줄이 함께 써요. ${n} + ${n} − 1 = ${add}개.`, figure: { kind: "dots", shape: "square", n, hi: n, tone: "doing", caption: `${n} + ${n} − 1` } },
+    { text: `점 수로 확인해요. ${n} × ${n} − ${n - 1} × ${n - 1} = ${n * n} − ${(n - 1) ** 2} = ${add}, ${n}번째 홀수예요.`, figure: { kind: "dots", shape: "square", n, hi: n, tone: "check", caption: `${n * n} − ${(n - 1) ** 2}` } }
+  ];
+  return { id, title, problem: `점 네모가 한 겹씩 커져요. ${n - 1}번째 모양에서 ${n}번째 모양으로 갈 때 점은 몇 개 늘어날까요?`, figure: { kind: "dots", shape: "square", n: n - 1, tone: "given" }, steps, answer: `${add}개 늘어나요.`, value: { kind: "grow-square", n, add } };
+}
+function oddSumExample({ id, title, last }) {
+  const k = (last + 1) / 2;
+  const steps = [
+    { text: `홀수가 몇 개인지 세요. ${last}에 1을 더해 반으로 나누면 (${last} + 1) ÷ 2 = ${k}개예요.`, figure: { kind: "dots", shape: "square", n: k, tone: "doing" } },
+    { text: `1부터 홀수 ${k}개의 합은 점이 ${k}줄씩인 네모라 ${k} × ${k} = ${k * k}.`, figure: { kind: "dots", shape: "square", n: k, tone: "check", caption: `${k} × ${k}` } }
+  ];
+  return { id, title, problem: `1 + 3 + 5 + … + ${josa(last, "을")} 계산해요.`, figure: { kind: "seq", values: [1, 3, 5, 7], tone: "given", ask: last }, steps, answer: `합은 ${josa(k * k, "이에요")}.`, value: { kind: "odd-sum", last, total: k * k } };
+}
+function lastOddExample({ id, title, total }) {
+  const k = Math.round(Math.sqrt(total)), last = 2 * k - 1;
+  if (k * k !== total) throw new Error(`${id}: 사각수가 아님`);
+  const steps = [
+    { text: `1부터 홀수의 합은 사각수예요. ${total} = ${k} × ${ira(k)} 홀수를 ${k}개 더했어요.`, figure: { kind: "dots", shape: "square", n: k, tone: "doing", caption: `${k} × ${k} = ${total}` } },
+    { text: `${k}번째 홀수는 ${k} × 2 − 1 = ${last}.`, figure: { kind: "dots", shape: "square", n: k, hi: k, tone: "check", caption: `맨 바깥 겹 ${last}개` } }
+  ];
+  return { id, title, problem: `1 + 3 + 5 + … + □ = ${total}에서 □에 알맞은 홀수를 구해요.`, figure: { kind: "seq", values: [1, 3, 5], tone: "given", ask: "□" }, steps, answer: `□는 ${josa(last, "이에요")}.`, value: { kind: "last-odd", total, last } };
+}
+// 사각수 수열(처음 수가 from × from)과 사각수를 더한 수열(1, 5, 14, 30…)
+function squareSeqExample({ id, title, from, nth }) {
+  const vals = Array.from({ length: 5 }, (_, i) => (from + i) ** 2), b = from + nth - 1;
+  const steps = [
+    { text: `수마다 같은 수를 두 번 곱한 수예요. ${vals.slice(0, 3).map((v, i) => `${v} = ${from + i} × ${from + i}`).join(", ")}.`, figure: { kind: "seq", values: vals, notes: vals.map((_, i) => `${from + i} × ${from + i}`), tone: "doing" } },
+    { text: `1번째가 ${from} × ${ira(from, "니까")} ${nth}번째는 ${from} + ${nth} − 1 = ${josa(b, "을")} 두 번 곱해요. ${b} × ${b} = ${b * b}.`, figure: { kind: "seq", values: vals, notes: vals.map((_, i) => `${from + i} × ${from + i}`), tone: "check", ask: b * b } }
+  ];
+  return { id, title, problem: `${vals.join(", ")}, …처럼 수를 늘어놓을 때 ${nth}번째 수는 무엇일까요?`, figure: { kind: "seq", values: vals, tone: "given", ask: "?" }, steps, answer: `${nth}번째 수는 ${josa(b * b, "이에요")}.`, value: { kind: "seq", values: vals, nth, at: b * b } };
+}
+function squareSumSeqExample({ id, title, nth }) {
+  const vals = [1, 5, 14, 30], all = Array.from({ length: nth }, (_, i) => sum(Array.from({ length: i + 1 }, (_, j) => (j + 1) ** 2)));
+  const more = all.slice(vals.length);
+  const steps = [
+    { text: "늘어난 수를 봐요. 5 − 1 = 4, 14 − 5 = 9, 30 − 14 = 16. 늘어나는 수가 사각수예요.", figure: { kind: "seq", values: vals, diffs: [4, 9, 16], tone: "doing" } },
+    { text: `다음은 ${more.map((_, i) => `${(vals.length + i + 1) ** 2}`).join(", ")}을 차례로 더해요. ${more.map((v, i) => `${i ? more[i - 1] : 30} + ${(vals.length + i + 1) ** 2} = ${v}`).join(", ")}.`, figure: { kind: "seq", values: all, diffs: all.slice(1).map((_, i) => (i + 2) ** 2), tone: "check" } }
+  ];
+  return { id, title, problem: `${vals.join(", ")}, …처럼 수를 늘어놓을 때 ${nth}번째 수는 무엇일까요?`, figure: { kind: "seq", values: vals, tone: "given", ask: "?" }, steps, answer: `${nth}번째 수는 ${josa(all.at(-1), "이에요")}.`, value: { kind: "sum-squares", nth, at: all.at(-1) } };
+}
+// 줄마다 홀수 개(1, 3, 5…)를 검은 줄·흰 줄로 번갈아 놓았다. 모두 total개일 때 검은 돌과 흰 돌의 차
+function stoneRowsExample({ id, title, total }) {
+  const n = Math.round(Math.sqrt(total)), rows = oddList(n);
+  if (n * n !== total) throw new Error(`${id}: 사각수가 아님`);
+  const black = rows.filter((_, i) => i % 2 === 0), white = rows.filter((_, i) => i % 2 === 1), B = sum(black), Wt = sum(white);
+  const steps = [
+    { text: `줄마다 홀수만큼 놓았으니 모두 합한 수는 사각수예요. ${total} = ${n} × ${n}이라 ${n}줄이에요.`, figure: { kind: "stone-rows", rows, tone: "doing" } },
+    { text: `검은 줄은 ${plus(black)} = ${B}개, 흰 줄은 ${plus(white)} = ${Wt}개.`, figure: { kind: "stone-rows", rows, counts: true, tone: "doing" } },
+    { text: `${B > Wt ? `${B} − ${Wt}` : `${Wt} − ${B}`} = ${Math.abs(B - Wt)}. ${B > Wt ? "검은" : "흰"} 돌이 더 많아요.`, figure: { kind: "stone-rows", rows, counts: true, tone: "check" } }
+  ];
+  return { id, title, problem: `맨 위 줄에 검은 돌 1개, 그 아래 줄에 흰 돌 3개, 그 아래 줄에 검은 돌 5개…로 번갈아 놓았어요. 모두 ${total}개일 때 검은 돌과 흰 돌은 몇 개 차이 날까요?`, figure: { kind: "stone-rows", rows: oddList(4), tone: "given" }, steps, answer: `${Math.abs(B - Wt)}개 차이 나요.`, value: { kind: "stones", total, black: B, white: Wt } };
+}
+function triangleGrowExample({ id, title, n }) {
+  const steps = [
+    { text: `점 세모는 한 번 커질 때 맨 아래에 한 줄이 생겨요. ${n}번째 모양의 맨 아래 줄은 점 ${n}개예요.`, figure: { kind: "dots", shape: "triangle", n, hi: n, tone: "doing" } },
+    { text: `점 수로 확인해요. △${n} − △${n - 1} = ${tri(n)} − ${tri(n - 1)} = ${n}.`, figure: { kind: "dots", shape: "triangle", n, hi: n, tone: "check", caption: `${tri(n)} − ${tri(n - 1)}` } }
+  ];
+  return { id, title, problem: `점 세모가 한 줄씩 커져요. ${n - 1}번째 모양에서 ${n}번째 모양으로 갈 때 점은 몇 개 늘어날까요?`, figure: { kind: "dots", shape: "triangle", n: n - 1, tone: "given" }, steps, answer: `${n}개 늘어나요.`, value: { kind: "grow-tri", n, add: n } };
+}
+// 악수: who = 사람 이름들. mode "new" = 새로 온 사람의 악수 수, "total" = 모두 몇 번, "last" = 1 + 2 + … + □의 □
+const PEOPLE = "ABCDEFGHIJKL".split("");
+function handshakeExample({ id, title, n, mode, game = "악수" }) {
+  const names = PEOPLE.slice(0, n), T = tri(n - 1), act = game === "악수" ? "악수를" : "가위바위보를";
+  const chain = Array.from({ length: n - 1 }, (_, i) => i + 1);
+  if (mode === "new") {
+    const steps = [
+      { text: `새로 온 ${josa(names.at(-1), "은")} 먼저 와 있던 사람마다 한 번씩 ${game}해요.`, figure: { kind: "hand", names, hi: n - 1, faint: true, tone: "doing" } },
+      { text: `먼저 와 있던 사람은 ${names.slice(0, -1).join(", ")} ${n - 1}명이라 ${n - 1}번.`, figure: { kind: "hand", names, hi: n - 1, faint: true, tone: "check" } }
+    ];
+    return { id, title, problem: `${josa(names.slice(0, -1).join(", "), "이")} 서로 한 번씩 ${act} 했어요. ${josa(names.at(-1), "이")} 오면 ${josa(names.at(-1), "은")} 몇 번 ${act} 할까요?`, figure: { kind: "hand", names: names.slice(0, -1), all: true, tone: "given" }, steps, answer: `${n - 1}번 해요.`, value: { kind: "hand-new", n, count: n - 1 } };
+  }
+  const steps = [
+    { text: `한 사람씩 들어온다고 생각해요. 2번째 사람은 1번, 3번째 사람은 2번, … ${n}번째 사람은 ${n - 1}번 ${game}해요.`, figure: { kind: "hand", names, hi: n - 1, faint: true, tone: "doing" } },
+    { text: `모두 더하면 ${n - 1 <= 6 ? chain.join(" + ") : `1 + 2 + … + ${n - 1}`} = ${T}번이에요.`, figure: { kind: "hand", names, all: true, tone: "check" } }
+  ];
+  const problem = mode === "last" ? `${n}명이 서로 한 번씩 ${game}하면 횟수는 1 + 2 + 3 + … + □예요. □에 알맞은 수와 모두 몇 번인지 구해요.` : `${n}명이 서로 한 번씩 빠짐없이 ${act} 하면 모두 몇 번 할까요?`;
+  return { id, title, problem, figure: { kind: "hand", names, tone: "given" }, steps, answer: mode === "last" ? `□는 ${n - 1}, 모두 ${T}번이에요.` : `모두 ${T}번이에요.`, value: { kind: "hand-total", n, last: mode === "last" ? n - 1 : undefined, total: T } };
+}
+// 모두 total번 → 1부터 더해 total이 되는 곳의 수 + 1
+function handshakeReverseExample({ id, title, total, what = "people" }) {
+  let k = 0; while (tri(k) < total) k++;
+  if (tri(k) !== total) throw new Error(`${id}: 삼각수가 아님`);
+  const run = Array.from({ length: k }, (_, i) => tri(i + 1));
+  const unit = what === "people" ? "명" : "장";
+  const steps = [
+    { text: `${what === "people" ? "악수" : "두 장 뽑기"} 횟수는 1부터 차례로 더한 수예요. 더해 가며 ${josa(total, "이")} 되는 곳을 찾아요. ${run.join(", ")}.`, figure: { kind: "seq", values: run, diffs: run.slice(1).map((_, i) => i + 2), tone: "doing" } },
+    { text: `1부터 ${k}까지 더하면 ${josa(total, "이에요")}. 마지막 ${what === "people" ? "사람은" : "카드는"} 앞의 ${k}${what === "people" ? "명과 악수했으니" : "장과 짝이 되었으니"} ${k} + 1 = ${k + 1}${unit}.`, figure: { kind: "seq", values: run, diffs: run.slice(1).map((_, i) => i + 2), tone: "check" } }
+  ];
+  const problem = what === "people" ? `몇 명의 학생이 서로 한 번씩 악수를 했더니 모두 ${total}번이었어요. 학생은 몇 명일까요?` : `서로 다른 숫자 카드 중에서 2장을 뽑는 방법이 ${total}가지예요. 숫자 카드는 모두 몇 장일까요?`;
+  return { id, title, problem, figure: { kind: "seq", values: [1, 3, 6], tone: "given", ask: total }, steps, answer: `${k + 1}${unit}이에요.`, value: { kind: "hand-reverse", total, count: k + 1 } };
+}
+// 두 점을 잇는 선분 · 카드 두 장 뽑기 — 악수와 같은 셈
+function pairCountExample({ id, title, n, what }) {
+  const T = tri(n - 1), names = what === "cards" ? Array.from({ length: n }, (_, i) => String(i + 1)) : PEOPLE.slice(0, n);
+  const one = what === "cards" ? "카드" : "점", cnt = what === "cards" ? "장" : "개";
+  const steps = [
+    { text: `${josa(names[0], "과")} 짝이 되는 ${josa(one, "은")} 나머지 ${n - 1}${cnt}예요. ${josa(names[1], "은")} ${josa(names[0], "과")}는 벌써 셌으니 ${n - 2}${cnt}, 그다음은 ${n - 3}${cnt}….`, figure: { kind: "hand", names, hi: 0, faint: true, tone: "doing" } },
+    { text: `모두 ${n - 1} + ${n - 2} + … + 1 = ${T}. 악수 횟수와 같은 셈이에요.`, figure: { kind: "hand", names, all: true, tone: "check" } }
+  ];
+  const problem = what === "cards" ? `숫자 카드 ${n}장(1부터 ${n}까지) 중에서 서로 다른 2장을 뽑는 방법은 몇 가지일까요?` : `어느 세 점도 한 줄 위에 있지 않은 점 ${n}개가 있어요. 두 점을 이은 선분은 모두 몇 개일까요?`;
+  return { id, title, problem, figure: { kind: "hand", names, tone: "given" }, steps, answer: what === "cards" ? `${T}가지예요.` : `${T}개예요.`, value: { kind: "pairs", n, total: T } };
+}
+// 부채꼴 삼각형: 꼭짓점에서 선을 그어 작은 삼각형 k칸. cross면 가로선이 하나 더 있어 띠가 둘
+function fanExample({ id, title, k, cross = false }) {
+  const T = tri(k), fig = (tone, hi) => ({ kind: "fan", k, cross, hi, tone });
+  const sizes = Array.from({ length: k }, (_, i) => `${i + 1}칸짜리 ${k - i}개`);
+  const steps = [
+    { text: `작은 칸 하나짜리 삼각형이 ${k}개예요.`, figure: fig("doing", [0, 1, "base"]) },
+    { text: `이웃한 칸을 붙여도 삼각형이에요. ${sizes.join(", ")}.`, figure: fig("doing", [0, 2, "base"]) },
+    { text: `${Array.from({ length: k }, (_, i) => k - i).join(" + ")} = ${T}. 1부터 ${k}까지의 합, 삼각수예요.`, figure: fig(cross ? "doing" : "check", [0, k, "base"]) }
+  ];
+  if (cross) steps.push({ text: `가로선 위쪽에도 꼭짓점에서 같은 삼각형이 ${T}개 있어요. 모두 ${T} × 2 = ${T * 2}.`, figure: fig("check", [0, k, "cross"]) });
+  return { id, title, problem: `꼭짓점에서 아래 변으로 선을 ${k - 1}개 그어 작은 칸 ${k}개로 나눈 삼각형${cross ? "에 가로선을 하나 그었어요" : "이에요"}. 크고 작은 삼각형은 모두 몇 개일까요?`, figure: fig("given", null), steps, answer: `모두 ${cross ? T * 2 : T}개예요.`, value: { kind: "fan", k, cross, total: cross ? T * 2 : T } };
+}
+// 줄마다 1, 3, 5…개 → n줄이면 n × n
+function oddRowsExample({ id, title, n, shape }) {
+  const steps = [
+    { text: `줄마다 ${oddList(Math.min(n, 4)).join(", ")}${n > 4 ? ", …" : ""}개 — 홀수가 차례로 놓였어요.`, figure: { kind: "odd-rows", shape, n, counts: true, tone: "doing" } },
+    { text: `1부터 홀수 ${n}개의 합이라 사각수예요. ${n} × ${n} = ${n * n}.`, figure: { kind: "odd-rows", shape, n, counts: true, tone: "check" } }
+  ];
+  const problem = shape === "square" ? `작은 정사각형을 맨 위에 1개, 그 아래에 3개, 5개…로 ${n}줄 쌓았어요. 작은 정사각형은 모두 몇 개일까요?` : `큰 삼각형을 ${n}줄로 나누었더니 줄마다 작은 삼각형이 1개, 3개, 5개…예요. 작은 삼각형은 모두 몇 개일까요?`;
+  return { id, title, problem, figure: { kind: "odd-rows", shape, n: 3, tone: "given" }, steps, answer: `모두 ${n * n}개예요.`, value: { kind: "odd-rows", n, total: n * n } };
+}
+function triLayersExample({ id, title, n }) {
+  const layers = Array.from({ length: n }, (_, i) => tri(i + 1)), total = sum(layers);
+  const steps = [
+    { text: `층마다 바닥이 한 줄 더 많은 삼각형이에요. 1층 1개, 2층 1 + 2 = 3개, 3층 1 + 2 + 3 = 6개….`, figure: { kind: "tri-layers", n: Math.min(n, 3), counts: true, tone: "doing" } },
+    { text: `${n}층까지 층마다 ${layers.join(", ")}개예요.`, figure: { kind: "tri-layers", n, counts: true, tone: "doing" } },
+    { text: `모두 더하면 ${plus(layers)} = ${total}.`, figure: { kind: "tri-layers", n, counts: true, tone: "check" } }
+  ];
+  return { id, title, problem: `쌓기나무를 맨 위 1층에 1개, 2층에 3개, 3층에 6개처럼 층마다 삼각형으로 넓혀 쌓아요. ${n}층까지 쌓으면 쌓기나무는 모두 몇 개일까요?`, figure: { kind: "tri-layers", n: 3, tone: "given" }, steps, answer: `모두 ${total}개예요.`, value: { kind: "tri-layers", n, total } };
+}
+const FIGNUM_SET = {
+  id: "figure-numbers",
+  types: {
+    // 사각수
+    "사각수 표": () => [squareNumberExample({ id: "sq-same-1", title: "예제 1", n: 7, ask: "same" })],
+    "사각수 규칙": () => [squareGrowExample({ id: "sq-grow-1", title: "예제 1", n: 6 })],
+    "사각수 구하기": () => [squareNumberExample({ id: "sq-val-1", title: "예제 1", n: 9 })],
+    "연속한 홀수의 합": () => [oddSumExample({ id: "odd-sum-1", title: "예제 1", last: 19 }), oddSumExample({ id: "odd-sum-2", title: "예제 2", last: 23 })],
+    "합이 되는 마지막 홀수": () => [lastOddExample({ id: "last-odd-1", title: "예제 1", total: 64 }), lastOddExample({ id: "last-odd-2", title: "예제 2", total: 81 })],
+    "사각수 수열": () => [squareSeqExample({ id: "sq-seq-1", title: "예제 1", from: 2, nth: 10 })],
+    "사각수를 더한 수열": () => [squareSumSeqExample({ id: "sq-sum-seq-1", title: "예제 1", nth: 6 })],
+    "검은 돌과 흰 돌": () => [stoneRowsExample({ id: "bw-1", title: "예제 1", total: 64 })],
+    // 삼각수
+    "삼각수 표": () => [pairSumExample({ id: "tri-tab-1", title: "예제 1", from: 1, to: 6 }), middleSumExample({ id: "tri-tab-2", title: "예제 2", from: 1, to: 11 })],
+    "삼각수 규칙": () => [triangleGrowExample({ id: "tri-grow-1", title: "예제 1", n: 6 })],
+    "삼각수 구하기": () => [pairSumExample({ id: "tri-val-1", title: "예제 1", from: 1, to: 12 })],
+    "짝수 개 계산": () => [pairSumExample({ id: "tri-even-1", title: "예제 1", from: 1, to: 14 })],
+    "홀수 개 계산": () => [middleSumExample({ id: "tri-odd-1", title: "예제 1", from: 1, to: 9 }), middleSumExample({ id: "tri-odd-2", title: "예제 2", from: 1, to: 13 })],
+    "악수 횟수": () => [handshakeExample({ id: "hand-new-1", title: "예제 1", n: 6, mode: "new" })],
+    "악수 횟수와 삼각수": () => [handshakeExample({ id: "hand-last-1", title: "예제 1", n: 9, mode: "last" })],
+    "가위바위보 횟수": () => [handshakeExample({ id: "rps-1", title: "예제 1", n: 9, mode: "total", game: "가위바위보" })],
+    "악수 횟수로 사람 수": () => [handshakeReverseExample({ id: "hand-rev-1", title: "예제 1", total: 36 })],
+    "두 점을 잇는 선분": () => [pairCountExample({ id: "seg-1", title: "예제 1", n: 12, what: "points" })],
+    "두 장 뽑는 경우의 수": () => [pairCountExample({ id: "card-1", title: "예제 1", n: 11, what: "cards" })],
+    "경우의 수로 카드 장수": () => [handshakeReverseExample({ id: "card-rev-1", title: "예제 1", total: 45, what: "cards" })],
+    "크고 작은 삼각형": () => [fanExample({ id: "fan-1", title: "예제 1", k: 5 }), fanExample({ id: "fan-2", title: "예제 2", k: 5, cross: true })],
+    // 삼각 계단 쌓기나무
+    "홀수 줄 사각수": () => [oddRowsExample({ id: "odd-sq-1", title: "예제 1", n: 7, shape: "square" })],
+    "홀수 줄 삼각 배열": () => [oddRowsExample({ id: "odd-tri-1", title: "예제 1", n: 6, shape: "triangle" })],
+    "층마다 삼각수만큼 쌓은 쌓기나무": () => [triLayersExample({ id: "tri-layer-1", title: "예제 1", n: 5 }), triLayersExample({ id: "tri-layer-2", title: "예제 2", n: 6 })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {
