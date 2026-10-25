@@ -36,7 +36,8 @@ export const DRILL_RECIPES = Object.freeze({
   "book-03/cryptarithm-linked": ["linked-cryptarithm-b8"],
   "book-03/magic-card-binary": ["colored-cell-number-code", "symbol-value-code"],
   "book-03/magic-square-targets": ["magic-square-three-target", "magic-square-four-target"],
-  // 4권 — 도형 움직이기 · 색종이 접기 · 양팔저울과 비교 · 논리추리 (쌓기나무·자리 배치·표 추리는 숫자로 답하는 유형이 없어 아직 없음)
+  // 4권 — 도형 움직이기 · 색종이 접기 · 쌓기나무 · 양팔저울과 비교 · 논리추리 (자리 배치·표 추리는 숫자로 답하는 유형이 없어 아직 없음)
+  //   쌓기나무는 문제은행과 같은 geometry/worksheet 엔진 유형(geometry-worksheet-problem.js)
   //   접기 그림은 fold-visuals.js(문제은행 화면과 같은 그리기)
   "book-04/polyomino-family-count": ["tetromino-family-choice", "tetromino-square-composition"],
   "book-04/digital-flip-source": ["digital-transform-arithmetic", "digital-grid-transform"],
@@ -44,13 +45,16 @@ export const DRILL_RECIPES = Object.freeze({
   "book-04/fold-position-source": ["fold-number-grid-two-orthogonal"],
   "book-04/fold-cut-source": ["fold-number-grid-one", "fold-number-grid-two-diagonal"],
   "book-04/fold-hole-count": ["fold-hole-count", "practice-three-fold-hole-count"],
+  "book-04/cube-min-count": ["cube-count-solid", "cube-minimum-from-solid"],
+  "book-04/hidden-cube-count": ["cube-hidden-count-walled", "cube-hidden-count"],
+  "book-04/cube-box-fill": ["cube-fill-rectangular-box"],
   "book-04/compare-order-source": ["measurement-order-chain", "shape-difference-chain"],
   "book-04/compare-difference-source": ["shape-difference-chain", "measurement-order-chain"],
   "book-04/balance-equality-source": ["pair-sum-card-completion", "balance-unit-ratio"],
   "book-04/balance-substitution": ["balance-unit-ratio"],
   "book-04/order-logic-source": ["ordinal-line-placement", "measurement-order-chain"],
   "book-04/row-logic-source": ["ordinal-line-placement"],
-  // 5권 — 수 배열표와 달력 · 최단거리와 숫자 카드 · 곱셈 매트릭스 · 삼각수와 사각수 (삼각 계단 쌓기나무는 맞는 유형이 없어 아직 없음)
+  // 5권 — 수 배열표와 달력 · 최단거리와 숫자 카드 · 곱셈 매트릭스 · 삼각수와 사각수 (삼각 계단 쌓기나무는 쌓기나무 엔진 유형)
   "book-05/path-number-grid": ["sequential-path-number-grid", "diagonal-fill-number-grid", "line-cycle-number-table"],
   "book-05/calendar-arithmetic-source": ["calendar-same-weekday-sum", "calendar-month-position"],
   "book-05/calendar-weekday-source": ["calendar-month-position", "weekday-after-days-b7"],
@@ -61,6 +65,7 @@ export const DRILL_RECIPES = Object.freeze({
   "book-05/checkerboard-product-matrix": ["multiplication-matrix-placement", "multiplication-matrix-products"],
   "book-05/square-number-source": ["square-number-odd-sum", "square-row-boundary-number"],
   "book-05/triangle-number-source": ["handshake-pair-count", "complete-graph-segment-count", "pair-selection-count"],
+  "book-05/cube-tetrahedral-growth": ["cube-tetrahedral-growth"],
   // 6권 — 수직선의 분할과 비 · 도형의 둘레 · 연속수의 합 · 수와 숫자의 개수 (똑같이 가르기는 2권 갈라 나누기 유형을 빌려 쓴다)
   "book-06/equal-share-source": ["equal-partition-two", "equal-partition-three", "equal-partition-four"],
   "book-06/number-line-unit-distance": ["number-line-unit-distance-book6", "number-line-midpoint-book6"],
@@ -107,7 +112,11 @@ export const DRILL_RECIPES = Object.freeze({
   "book-08/give-same-source": ["give-as-much-once-b8", "give-as-much-return-b8"],
   "book-08/fraction-picture-source": ["shaded-fraction-count-b8", "fraction-subgroup-count-b8"],
   "book-08/fraction-reverse-source": ["fraction-given-away-original-b8", "sequential-fraction-remains-b8", "sequential-fraction-consumption-b8"],
-  // 9권 — 도형의 분할과 넓이 · 마방진 (쌓기나무 차시는 숫자로 답하는 문제은행 유형이 없어 아직 없음)
+  // 9권 — 도형의 분할과 넓이 · 쌓기나무 · 마방진. 쌓기나무는 쌓기나무 엔진 유형이고, 색칠한 쌓기나무 개수(cube-painted-cube-count)는
+  //   문제은행 단원에 아직 안 들어간 유형이라 답을 낱개마다 칠해진 면을 세어 3,000번 다시 확인한 뒤 썼다(2026-10-27)
+  "book-09/cube-map-total": ["cube-count-solid", "cube-fill-box"],
+  "book-09/cube-views-source": ["cube-three-views"],
+  "book-09/cube-paint-source": ["cube-painted-cube-count"],
   "book-09/unit-area-and-half": ["unit-grid-area", "parallelogram-grid-area-b9", "shaded-composite-grid-area-b9"],
   "book-09/magic-arrangement-source": ["triangle-edge-extreme-six-b9", "circle-chain-equal-sum-b9", "triangle-edge-extreme-nine-b9"],
   // 10권 — 연속수의 합 (수의 개수는 6권의 같은 유형을 빌려 쓴다)

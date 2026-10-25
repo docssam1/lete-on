@@ -7,12 +7,17 @@
 import { typeById } from "./source-data.js?v=20261024r";
 import { GENERATORS } from "./generators.js?v=20261027a";
 import { DRILL_TYPES } from "./drill-generators.js?v=20261027a";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027j";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027k";
 import { jo } from "./concept-board-kit.js?v=20261026b";
 import * as B2 from "./book02-visuals.js?v=20261027a";
 import * as FOLD from "./fold-visuals.js?v=20261027a";
+import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261027a";
 
 // 2권 그림: 문제은행 화면(app.js visualMarkup)과 같은 감싸는 class로 그린다
+// 유형 → 문제 만들기: 공방 전용(make) · 문제은행 생성기(generator) · 쌓기나무 엔진(worksheetCode, 문제은행 화면과 같은 부르기)
+export const drillGenerator = (type) => type.make
+  || GENERATORS[type.generator]
+  || (type.worksheetCode ? ({ difficulty }, attempt = 0) => makeGeometryWorksheetProblem(type, difficulty, 0, null, attempt) : null);
 export const EXTRA_VISUALS = Object.freeze({
   "equal-partition-tree": ["equal-partition-visual", B2.equalPartitionTreeMarkup], "shape-sum-table": ["shape-sum-visual", B2.shapeSumTableMarkup],
   "equalize-bags": ["equalize-visual", B2.equalizeBagsMarkup], "total-difference-bars": ["total-difference-bars-visual", B2.totalDifferenceBarsMarkup],
@@ -22,7 +27,8 @@ export const EXTRA_VISUALS = Object.freeze({
   "number-rule-grid": ["number-rule-grid-visual", B2.numberRuleGridMarkup], "two-digit-compose-rule": ["two-digit-compose-visual", B2.twoDigitComposeRuleMarkup],
   "sudoku-grid": ["sudoku-grid-visual", B2.sudokuGridMarkup],
   "paper-fold": ["paper-fold-visual", FOLD.paperFoldMarkup], "fold-cut-pieces": ["fold-pieces-visual", FOLD.foldCutPiecesMarkup],
-  "fold-diagonal-grid": ["fold-diagonal-visual", FOLD.foldDiagonalGridMarkup], "fold-two-diagonal-grid": ["fold-diagonal-visual", FOLD.foldTwoDiagonalGridMarkup]
+  "fold-diagonal-grid": ["fold-diagonal-visual", FOLD.foldDiagonalGridMarkup], "fold-two-diagonal-grid": ["fold-diagonal-visual", FOLD.foldTwoDiagonalGridMarkup],
+  "geometry-worksheet": ["geometry-worksheet-visual", geometryWorksheetMarkup]
 });
 
 // 그림 그리기는 문제은행 화면(app.js)과 같은 파일·같은 꼬리표로 불러온다
@@ -78,7 +84,6 @@ async function main() {
   // 그림은 문제의 visual.kind(book5 등)로 그린다 — 다른 권의 그림을 빌려 쓰는 유형이 있다
   const renderers = {};
   await Promise.all(Object.entries(RENDERER_TAG).map(async ([nn, tag]) => { renderers[`book${Number(nn)}`] = { nn, markup: (await import(`./book${nn}-renderers.js?v=${tag}`))[`book${nn}Markup`] }; }));
-  const gens = GENERATORS;
   const visualOf = (visual) => {
     if (!visual) return "";
     const extra = EXTRA_VISUALS[visual.kind]; if (extra) return `<div class="visual ${extra[0]}">${extra[1](visual)}</div>`;
@@ -86,9 +91,9 @@ async function main() {
   };
 
   const make = (level, index) => {
-    const typeId = types[(level * PER_LEVEL + index) % types.length], type = DRILL_TYPES[typeId] || typeById(typeId), gen = type.make || gens[type.generator];
+    const typeId = types[(level * PER_LEVEL + index) % types.length], type = DRILL_TYPES[typeId] || typeById(typeId), gen = drillGenerator(type);
     for (let t = 0; t < 200; t++) {
-      const p = gen({ max: 30, difficulty: LEVELS[level].difficulty });   // 문제은행과 같은 부르기(조건이 안 맞으면 null — 다시 뽑는다)
+      const p = gen({ max: 30, difficulty: LEVELS[level].difficulty }, t);   // 문제은행과 같은 부르기(조건이 안 맞으면 null — 다시 뽑는다)
       if (!p) continue;
       const shape = answerShape(p.answer);
       if (shape) return { ...p, shape, type };

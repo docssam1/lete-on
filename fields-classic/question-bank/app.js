@@ -14,6 +14,7 @@ import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
 import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261024r";
 import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, totalDifferenceBarsMarkup, balanceUnitEquationsMarkup, distinctShapeEquationsMarkup, numberSequencesMarkup, progressiveNumberTableMarkup, book2GrowthMarkup, centerNumberRuleMarkup, numberRuleGridMarkup, twoDigitComposeRuleMarkup, sudokuGridMarkup } from "./book02-visuals.js?v=20261027a";
+import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261027a";
 import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup } from "./fold-visuals.js?v=20261027a";
 
 const {
@@ -1054,93 +1055,11 @@ function withSeed(seedText, callback) {
   }
 }
 
-function geometryWorksheetSolution(problem) {
-  const answer = problem.answer || {};
-  switch (problem.type) {
-    case "TC":
-      return answer.askTotal === false
-        ? "앞과 오른쪽 옆에서는 각 줄에서 가장 높이 쌓인 층까지 칸을 그립니다."
-        : `바탕그림의 각 칸에 적힌 수를 모두 더하면 ${answer.total}개입니다.${answer.drawViews ? " 앞과 옆에서는 각 줄에서 가장 높이 쌓인 층까지 칸을 그립니다." : ""}${answer.askHeight ? ` 가장 높은 곳은 ${answer.height}층입니다.` : ""}`;
-    case "VC": {
-      const values = (answer.numbers || []).flat().filter((value) => value > 0);
-      return `위에서 본 모양의 각 자리에 앞·옆에서 본 가장 높은 층수를 맞춰 쓰고 더합니다. ${values.join(" + ")} = ${answer.count}이므로 ${answer.count}개입니다.`;
-    }
-    case "VM":
-      return `세 방향의 모양을 모두 지키면서 각 자리에 놓을 수를 정합니다. 가장 많이 놓으면 ${answer.max}개, 가장 적게 놓으면 ${answer.min}개입니다.`;
-    case "VP":
-      return `위에서 본 모양으로 쌓은 자리를 찾고, 주어진 방향에서 보이는 가장 높은 층을 맞추면 ${answer.hiddenLabel}에서 본 모양이 정해집니다.`;
-    case "IC":
-      return `아래에서부터 층별로 보이는 칸과 가려진 칸을 빠짐없이 세면 모두 ${answer.total}개입니다.${answer.askFloor ? ` 그중 1층에는 ${answer.floor}개가 놓여 있습니다.` : ""}${answer.askUpper ? ` 2층 이상에는 ${answer.upper}개가 있습니다.` : ""}`;
-    case "IH":
-    case "IN":
-      return `전체 ${answer.total}개에서 겉에서 보이는 ${answer.visible}개를 빼면 ${answer.total} - ${answer.visible} = ${answer.hidden}개입니다.`;
-    case "FB":
-    case "CU":
-      return `상자를 가득 채우면 ${answer.total}개입니다. 지금 놓인 ${answer.placed}개를 빼면 ${answer.total} - ${answer.placed} = ${answer.need}개가 더 필요합니다.`;
-    case "PN":
-      return answer.variant === "faces"
-        ? `겉에서 보이는 면을 방향별로 빠짐없이 세면 모두 ${answer.faces}면입니다.`
-        : `쌓기나무를 하나씩 떼어 색칠된 면의 수대로 나누어 세면, ${answer.askFaces}면이 색칠된 쌓기나무는 ${answer.count}개입니다.`;
-    case "BW":
-      return `한 쌓기나무의 색을 정하면 맞닿은 쌓기나무는 반대색입니다. 차례로 세면 흰색 ${answer.white}개, 검은색 ${answer.black}개입니다.`;
-    case "HL":
-      return `가득 채운 ${answer.total}개에서 구멍으로 빠진 ${answer.removed}개를 빼면 ${answer.total} - ${answer.removed} = ${answer.remaining}개입니다.`;
-    case "SQ": {
-      const steps = (answer.stageTotals || []).map((value, index) => `${index + 1}번째 ${value}개`).join(" → ");
-      return `${steps}${steps ? ". " : ""}규칙을 이어 보면 답은 ${problem.answerText}입니다.`;
-    }
-    default:
-      return `그림의 조건을 차례로 확인하면 답은 ${problem.answerText}입니다.`;
-  }
-}
 
 function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed, attempt, difficultyOverride = null, sourceClassification = null) {
-  const worksheet = globalThis.GW_GEN;
-  const info = worksheet?.typeInfo(item.worksheetCode);
-  if (!worksheet || !info) return null;
   const intensity = difficultyOverride || activeDifficulty();
-  const requestedLevel = item.worksheetLevel || info.levels[0];
-  const baseLevel = worksheet.typeSupportsLevel(item.worksheetCode, requestedLevel) ? requestedLevel : info.levels[0];
-  const baseIndex = Math.max(0, info.levels.indexOf(baseLevel));
-  const levelIndex = intensity === 3
-    ? Math.min(info.levels.length - 1, baseIndex + 1)
-    : intensity === 1
-      ? Math.max(0, baseIndex - 1)
-      : baseIndex;
-  const level = info.levels[levelIndex];
-  const randomPart = fixedSeed || `${Date.now()}:${Math.random()}`;
-  const rng = worksheet.createRng(`FIELDS-QB:${item.id}:${level}:${intensity}:${randomPart}:${sequence}:${attempt}`);
-  let made;
-  try {
-    made = worksheet.make(item.worksheetCode, rng, level, intensity, item.worksheetOptions || null);
-  } catch (_error) {
-    return null;
-  }
-  const answerVisualTypes = new Set(["VC", "VM", "VP", "HL"]);
-  const hasAnswerVisual = answerVisualTypes.has(made.type) || (made.type === "TC" && made.answer.drawViews);
-  const icPromptMode = made.type === "IC" ? item.worksheetOptions?.promptMode : null;
-  if (icPromptMode === "total" || icPromptMode === "minimum") {
-    made.answer.askFloor = false;
-    made.answer.askUpper = false;
-    made.answerText = `${made.answer.total}개`;
-  }
-  const prompt = icPromptMode === "total"
-    ? "다음은 쌓기나무를 쌓아 만든 입체 모양입니다. 사용된 쌓기나무는 모두 몇 개입니까?"
-    : icPromptMode === "minimum"
-      ? "쌓기나무로 쌓은 모양입니다. 사용된 쌓기나무는 최소 몇 개입니까?"
-      : made.prompt;
-  return {
-    ...withProblemContext({
-    prompt,
-    visual: { kind: "geometry-worksheet", problem: made, figures: made.figures },
-    answer: made.answerText,
-    answerVisual: hasAnswerVisual ? { kind: "geometry-worksheet-answer", problem: made } : null,
-    solution: geometryWorksheetSolution(made),
-    responseKind: made.type === "VP" || (made.type === "TC" && made.answer.askTotal === false) ? "drawing" : "text",
-    meta: { worksheetType: made.type, worksheetLevel: made.level, intensity, ...made.answer },
-    }, item, reference, sourceClassification),
-    generationDifficulty: intensity
-  };
+  const made = makeGeometryWorksheetProblem(item, intensity, sequence, fixedSeed, attempt);
+  return made ? { ...withProblemContext(made, item, reference, sourceClassification), generationDifficulty: intensity } : null;
 }
 
 function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null, sourceClassification = null, generationCase = null) {
@@ -2851,32 +2770,6 @@ function overlapBondsMarkup(visual) {
   return `<svg class="overlap-bonds" viewBox="0 0 ${width} 124" role="img" aria-label="서로 이어진 가르기 모으기">${bonds}${parts}</svg>`;
 }
 
-function geometryWorksheetMarkup(visual) {
-  const renderer = globalThis.GW_RENDER;
-  const card = globalThis.GW_CARD;
-  const problem = visual.problem || { figures: visual.figures };
-  const figures = problem.figures;
-  if (!renderer || !figures) return "";
-  if (card?.renderFigures) {
-    const method = problem.methodHint ? `<p class="geometry-method">${problem.methodHint}</p>` : "";
-    const solveArea = problem.type === "HL"
-      ? `<div class="geometry-hole-solve">${renderer.renderHoleLayers(problem, { blank: true })}</div>`
-      : "";
-    return `${method}<div class="ws-figures">${card.renderFigures(problem)}</div>${solveArea}`;
-  }
-  if (figures.kind === "sequence") {
-    return `<div class="geometry-sequence">${figures.shapes.map((shape) => `
-      <figure><div>${renderer.renderIso(shape.map, shape.width, shape.depth)}</div><figcaption>${shape.n}단계</figcaption></figure>
-    `).join("")}<strong aria-hidden="true">…</strong></div>`;
-  }
-  if (figures.kind === "iso-box") {
-    return `<figure class="geometry-box"><div>${renderer.renderIsoBox(figures.map, figures.width, figures.depth, figures.boxH)}</div><figcaption>점선은 상자 테두리입니다.</figcaption></figure>`;
-  }
-  if (figures.kind === "iso-walled") {
-    return `<figure class="geometry-hidden"><div>${renderer.renderIsoWalled(figures.map, figures.width, figures.depth)}</div><figcaption>뒤와 왼쪽의 회색 면은 벽입니다.</figcaption></figure>`;
-  }
-  return "";
-}
 
 function geometryWorksheetAnswerMarkup(visual) {
   const renderer = globalThis.GW_RENDER;

@@ -1,13 +1,21 @@
 // 연습 공방 검사: drill-recipes.js의 차시·유형이 실제로 있고, 난이도 1·2·3마다 답 꼴(수 · 수 + 단위 · 쉼표로 쓴 수)이 맞는 문제가
 // 나오며, 그림이 bookN 그리기나 2권 그리기(book02-visuals.js)로 그려지는지 본다. 실패가 하나라도 있으면 exit 1.
 //   node fields-classic/question-bank/drill-audit.mjs
+import { readFileSync } from "node:fs";
+import { runInThisContext } from "node:vm";
 import { typeById, CURRICULUM } from "./source-data.js";
 import { GENERATORS } from "./generators.js";
 import { DRILL_TYPES } from "./drill-generators.js";
 import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 import { lessonsByUnit } from "./study-map.js";
 import { DRILL_RECIPES } from "./drill-recipes.js";
-import { answerShape, EXTRA_VISUALS } from "./drill.js";
+import { answerShape, EXTRA_VISUALS, drillGenerator } from "./drill.js";
+
+// 쌓기나무 엔진(GW_GEN)은 브라우저 스크립트다 — 공방 페이지(drill.html)가 싣는 것과 같은 파일을 그대로 읽어 들인다
+for (const f of ["../../geometry/shared/question-bank.js", "../../geometry/worksheet/generators.js"]) {
+  const path = new URL(f, import.meta.url);
+  runInThisContext(readFileSync(path, "utf8"), { filename: path.pathname });
+}
 
 const TRIES = 20, fails = [];
 // 답 꼴 읽기 자체부터(한 줄 뒤 주석이 return을 삼켜 목록 답이 다 빠졌던 적이 있다)
@@ -26,12 +34,12 @@ for (const [key, types] of Object.entries(DRILL_RECIPES)) {
   if (!lessonKeys.has(key)) fails.push(`${key}: 학생 덱에 없는 차시`);
   if (!types.length) fails.push(`${key}: 유형이 없음`);
   for (const id of types) {
-    const type = DRILL_TYPES[id] || typeById(id), gen = type?.make || GENERATORS[type?.generator];
+    const type = DRILL_TYPES[id] || typeById(id), gen = type && drillGenerator(type);
     if (!gen) { fails.push(`${key}: ${id} 생성기 없음`); continue; }
     for (const difficulty of [1, 2, 3]) {
       let ok = 0, made = 0;
       for (let i = 0; i < TRIES; i++) {
-        const p = gen({ max: 30, difficulty }); if (!p) continue; made++;
+        const p = gen({ max: 30, difficulty }, i); if (!p) continue; made++;
         const shape = answerShape(p.answer);
         if (!shape) continue;
         // 수 카드를 모두 늘어놓는 배치 답(1, 4, 5, 2, 3, 6)은 순서 없이 채점하면 아무 순서나 맞으므로 쓰지 않는다
