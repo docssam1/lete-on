@@ -4,7 +4,7 @@
 // 좌표는 1000×600 칠판 기준. 시계 숫자 n의 자리는 concept-board.js의 clockPoint가 계산한다.
 
 import { jo } from "./concept-board-kit.js?v=20261025a";
-import { BOARDS_B02 } from "./concept-boards-b02.js?v=20261025a";
+import { BOARDS_B02 } from "./concept-boards-b02.js?v=20261025b";
 export { jo };
 
 // 독쌤 음성 파일의 줄 id. 내보내기(tools/export-board-voice.mjs)와 재생(concept-board.js → study.js)이 같은 규칙을 쓴다.

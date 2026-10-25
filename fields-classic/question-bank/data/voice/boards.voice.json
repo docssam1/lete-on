@@ -1161,6 +1161,178 @@
   {
    "id": "fcb-book-02-two-term-arithmetic-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b01",
+   "text": "양팔저울은 무거운 쪽이 아래로 내려가요. 저울 몇 개를 이어 보면 무게의 순서를 알 수 있어요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b02",
+   "text": "첫 번째 저울이에요. 왼쪽에 참외, 오른쪽에 자두. 왼쪽이 내려갔어요. 내려간 쪽이 더 무거워요. 참외가 자두보다 무거워요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b03",
+   "text": "두 번째 저울이에요. 왼쪽에 수박, 오른쪽에 참외. 이번에도 왼쪽이 내려갔어요. 수박이 참외보다 무거워요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b04",
+   "text": "두 저울에 모두 나온 것이 있어요. 참외예요. 참외를 가운데에 두고 이어 봐요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b05",
+   "text": "수박은 참외보다 무겁고, 참외는 자두보다 무거워요. 그러니까 무거운 것부터 수박, 참외, 자두."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b06",
+   "text": "수박과 자두는 한 번도 저울에 같이 올리지 않았지만, 참외를 거쳐서 수박이 더 무겁다는 걸 알 수 있어요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b07",
+   "text": "이번엔 저울이 수평인 경우예요. 수평이면 양쪽의 무게가 똑같아요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b08",
+   "text": "왼쪽에 동그라미 하나, 오른쪽에 네모 세 개를 올렸더니 수평이에요. 동그라미 하나의 무게는 네모 세 개의 무게와 같아요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b09",
+   "text": "네모 하나가 4그램이면 동그라미는 몇 그램일까요? 네모 세 개를 더하면 4 더하기 4 더하기 4, 12그램. 동그라미도 12그램이에요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b10",
+   "text": "같은 무게는 바꿔 넣을 수 있어요. 별 하나가 동그라미 하나와 네모 하나를 합한 무게라면, 동그라미 자리에 12를 넣어 12 더하기 4, 16그램."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b11",
+   "text": "정리해요. 내려간 쪽이 무거워요. 두 저울에 함께 나온 것을 가운데에 두고 이어요. 수평이면 무게가 같으니, 같은 무게끼리 바꿔 넣어 계산해요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-b12",
+   "text": "한 문제 풀어 봐요. 포도가 귤보다 무겁고, 사과가 포도보다 무거워요. 가장 가벼운 것은 무엇일까요?"
+  },
+  {
+   "id": "fcb-book-02-balance-order-hint",
+   "text": "포도가 두 번 나와요. 포도를 가운데에 두면 무거운 쪽과 가벼운 쪽이 보여요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-right",
+   "text": "맞았어요! 사과, 포도, 귤 순서로 무거우니 가장 가벼운 것은 귤이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-02-balance-order-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-b01",
+   "text": "식이 여러 개 이어져 있을 때, 하나를 풀면 그 값을 다음 식에 넣어 차례로 풀 수 있어요. 같은 도형은 어느 식에서나 같은 수예요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-b02",
+   "text": "식 세 개를 써요. 첫 번째 식은 숫자와 동그라미, 두 번째 식은 동그라미와 세모, 세 번째 식은 세모, 동그라미, 별이에요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-b03",
+   "text": "어느 식부터 풀까요? 한쪽이 숫자로만 되어 있는 식부터예요. 첫 번째 식이에요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-b04",
+   "text": "4를 네 번 더하면 4, 8, 12, 16. 동그라미 두 개가 16이에요. 16을 똑같이 둘로 가르면 8. 동그라미는 8이에요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-b05",
+   "text": "이제 두 번째 식의 동그라미 자리에 8을 넣어요. 8 더하기 8 더하기 8은 24예요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-b06",
+   "text": "세모 여섯 개가 24예요. 24를 여섯 개로 똑같이 가르면 4. 세어 봐요. 4, 8, 12, 16, 20, 24. 세모는 4예요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-b07",
+   "text": "세 번째 식에는 세모와 동그라미가 다 나와요. 둘 다 알았으니 넣어 봐요. 4 더하기 8 더하기 8은 20이에요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-b08",
+   "text": "별 네 개가 20이에요. 20을 네 개로 똑같이 가르면 5. 별은 5예요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-b09",
+   "text": "마지막 식에 모든 값을 넣어 확인해요. 왼쪽 4 더하기 8 더하기 8은 20, 오른쪽 5 더하기 5 더하기 5 더하기 5는 20. 양쪽이 같아요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-b10",
+   "text": "정리해요. 숫자만 있거나 한 가지 도형만 있는 식부터 풀어요. 찾은 값은 다음 식의 같은 도형 자리에 넣어요. 마지막 식에 모든 값을 넣어 양쪽이 같은지 확인해요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-b11",
+   "text": "한 문제 풀어 봐요. 세모 세 개를 더하면 9 더하기 6과 같아요. 세모 하나는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-hint",
+   "text": "9 더하기 6은 15예요. 그 수를 세 개로 똑같이 가르면 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-right",
+   "text": "맞았어요! 15를 세 개로 가르면 5예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-02-shape-number-equations-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-b01",
+   "text": "수가 늘어선 것을 수열이라고 해요. 오늘은 늘 같은 만큼씩 커지는 수열에서, 멀리 있는 수를 찾는 법을 배워요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-b02",
+   "text": "수를 차례로 써요. 3, 8, 13, 18. 그 뒤로도 계속 이어져요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-b03",
+   "text": "수 아래에 몇 번째인지 써 둬요. 첫 번째, 두 번째, 세 번째, 네 번째."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-b04",
+   "text": "이웃한 두 수의 차이를 봐요. 8 빼기 3은 5예요. 첫 번째에서 두 번째로 갈 때 5만큼 커졌어요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-b05",
+   "text": "13 빼기 8은 5, 18 빼기 13은 5. 차이가 계속 5예요. 이런 수열은 늘 5씩 커져요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-b06",
+   "text": "그럼 다섯 번째는 18에 5를 더해 23. 여섯 번째는 28, 일곱 번째는 33이에요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-b07",
+   "text": "일곱 번째까지 가면서 화살표가 몇 개였나 세어 봐요. 하나, 둘, 셋, 넷, 다섯, 여섯. 일곱 번째는 첫 수에서 5를 여섯 번 더한 수예요. 화살표는 언제나 번째 수보다 하나 적어요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-b08",
+   "text": "그래서 일일이 쓰지 않아도 돼요. 5를 여섯 번 더해요. 5, 10, 15, 20, 25, 30. 30이 돼요. 첫 수 3에 더하면 3 더하기 30, 33이에요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-b09",
+   "text": "줄에 쓴 일곱 번째 수와 같아요. 33이 맞아요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-b10",
+   "text": "정리해요. 이웃한 두 수의 차이를 구하고, 다음 차이도 같은지 확인해요. 몇 번째 수를 구할 때는, 첫 수에 차이를 번째 수보다 하나 적게 더해요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-b11",
+   "text": "한 문제 풀어 봐요. 2, 6, 10, 14, 이렇게 이어지는 수열의 여덟 번째 수는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-hint",
+   "text": "차이는 4예요. 여덟 번째는 첫 수 2에서 4를 일곱 번 더한 수예요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-right",
+   "text": "맞았어요! 4 일곱 번은 28, 거기에 2를 더하면 30이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-02-arithmetic-sequences-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }

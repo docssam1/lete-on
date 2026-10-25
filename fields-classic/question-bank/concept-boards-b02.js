@@ -206,4 +206,136 @@ export const BOARDS_B02 = {
       ]
     };
   })()
+  ,"book-02/balance-order": (() => {
+    // 양팔저울: tilt 1 = 왼쪽이 내려감, -1 = 오른쪽이 내려감, 0 = 수평. 접시 위에는 글(이름) 또는 작은 도형
+    const scale = (cx, cy, tilt, left, right, color = "ink") => {
+      const dy = 24 * tilt, L = [cx - 110, cy + dy], R = [cx + 110, cy - dy], out = [];
+      out.push({ kind: "path", d: `M ${cx} ${cy} L ${cx - 26} ${cy + 70} L ${cx + 26} ${cy + 70} Z`, stroke: "gray", width: 3, quick: true });
+      out.push({ kind: "line", x1: L[0], y1: L[1], x2: R[0], y2: R[1], color, width: 4 });
+      for (const [[x, y], stuff] of [[L, left], [R, right]]) {
+        out.push({ kind: "line", x1: x, y1: y, x2: x, y2: y + 22, color: "gray", width: 2 });
+        out.push({ kind: "path", d: `M ${x - 58} ${y + 22} Q ${x} ${y + 66} ${x + 58} ${y + 22}`, stroke: color, width: 3 });
+        if (typeof stuff === "string") out.push(T(x, y + 38, stuff, "blue", 28, "center"));
+        else stuff.forEach((type, i) => out.push({ kind: "shape", type, cx: x + (i - (stuff.length - 1) / 2) * 26, cy: y + 30, r: 10, color: "blue", width: 2.5, quick: true }));
+      }
+      return out;
+    };
+    const F = ["수박", "참외", "자두"];
+    const SQ = 4, cir = SQ * 3, star = cir + SQ;
+    const CHK = ["사과", "포도", "귤"];   // 포도 > 귤, 사과 > 포도
+    return {
+      title: "무게의 순서를 찾아요",
+      kicker: "2권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "양팔저울은 무거운 쪽이 아래로 내려가요. 저울 몇 개를 이어 보면 무게의 순서를 알 수 있어요.",
+          items: [title("무게의 순서를 찾아요")] },
+        { say: `첫 번째 저울이에요. 왼쪽에 ${F[1]}, 오른쪽에 ${F[2]}. 왼쪽이 내려갔어요. 내려간 쪽이 더 무거워요. ${F[1]}가 ${F[2]}보다 무거워요.`,
+          items: [...scale(190, 175, 1, F[1], F[2]), T(110, 300, `${F[1]} > ${F[2]}`, "green", 30)] },
+        { say: `두 번째 저울이에요. 왼쪽에 ${F[0]}, 오른쪽에 ${F[1]}. 이번에도 왼쪽이 내려갔어요. ${F[0]}이 ${F[1]}보다 무거워요.`,
+          items: [...scale(520, 175, 1, F[0], F[1]), T(400, 300, `${F[0]} > ${F[1]}`, "green", 30)] },
+        { say: `두 저울에 모두 나온 것이 있어요. ${F[1]}예요. ${F[1]}를 가운데에 두고 이어 봐요.`,
+          items: [{ kind: "ring", cx: 134, cy: 290, r: 34, color: "gold" }, { kind: "ring", cx: 487, cy: 290, r: 34, color: "gold" }] },
+        { say: `${F[0]}은 ${F[1]}보다 무겁고, ${F[1]}는 ${F[2]}보다 무거워요. 그러니까 무거운 것부터 ${F[0]}, ${F[1]}, ${F[2]}.`,
+          items: [T(110, 370, `${F[0]} > ${F[1]} > ${F[2]}`, "blue", 36)] },
+        { say: `${F[0]}과 ${F[2]}는 한 번도 저울에 같이 올리지 않았지만, ${F[1]}를 거쳐서 ${F[0]}이 더 무겁다는 걸 알 수 있어요.`,
+          items: [T(110, 415, `가운데 ${F[1]}를 거쳐서 이어요`, "gray", 24)] },
+        { say: "이번엔 저울이 수평인 경우예요. 수평이면 양쪽의 무게가 똑같아요.",
+          items: [{ kind: "line", x1: 60, y1: 440, x2: 940, y2: 440, color: "gray", width: 2, dash: true }] },
+        { say: "왼쪽에 동그라미 하나, 오른쪽에 네모 세 개를 올렸더니 수평이에요. 동그라미 하나의 무게는 네모 세 개의 무게와 같아요.",
+          items: [...scale(190, 470, 0, ["circle"], ["square", "square", "square"])] },
+        { say: `네모 하나가 ${SQ}그램이면 동그라미는 몇 그램일까요? 네모 세 개를 더하면 ${SQ} 더하기 ${SQ} 더하기 ${SQ}, ${cir}그램. 동그라미도 ${cir}그램이에요.`,
+          items: [T(560, 480, `○ = □ + □ + □ = ${SQ} + ${SQ} + ${SQ} = ${cir}`, "blue", 28)] },
+        { say: `같은 무게는 바꿔 넣을 수 있어요. 별 하나가 동그라미 하나와 네모 하나를 합한 무게라면, 동그라미 자리에 ${jo(cir, "를")} 넣어 ${cir} 더하기 ${SQ}, ${star}그램.`,
+          items: [T(560, 530, `☆ = ○ + □ = ${cir} + ${SQ} = ${star}`, "green", 28)] },
+        { say: "정리해요. 내려간 쪽이 무거워요. 두 저울에 함께 나온 것을 가운데에 두고 이어요. 수평이면 무게가 같으니, 같은 무게끼리 바꿔 넣어 계산해요.", mood: "praise",
+          items: [{ kind: "box", x: 90, y: 335, w: 470, h: 95, color: "gold" }] },
+        { say: `한 문제 풀어 봐요. ${CHK[1]}가 ${CHK[2]}보다 무겁고, ${CHK[0]}가 ${CHK[1]}보다 무거워요. 가장 가벼운 것은 무엇일까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK[1]}가 ${CHK[2]}보다 무겁고, ${CHK[0]}가 ${CHK[1]}보다 무거워요. 가장 가벼운 것은?`,
+            options: [CHK[0], CHK[1], CHK[2]], answer: 2,
+            hint: "두 문장에 함께 나온 것을 가운데에 두고 이어요.", sayHint: `${CHK[1]}가 두 번 나와요. ${CHK[1]}를 가운데에 두면 무거운 쪽과 가벼운 쪽이 보여요.`,
+            right: `맞았어요! ${CHK[0]} > ${CHK[1]} > ${CHK[2]}, 가장 가벼운 것은 ${CHK[2]}이에요.`, sayRight: `맞았어요! ${CHK[0]}, ${CHK[1]}, ${CHK[2]} 순서로 무거우니 가장 가벼운 것은 ${CHK[2]}이에요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-02/shape-number-equations": (() => {
+    const A = 4, nA = 4, tot1 = A * nA, cir = tot1 / 2;           // 4+4+4+4 = ○+○
+    const tri = (cir * 3) / 6;                                      // ○+○+○ = △×6
+    const star = (tri + cir * 2) / 4;                               // △+○+○ = ☆×4
+    const Y = [150, 250, 350];
+    const CHK = { a: 9, b: 6, n: 3 }, chkV = (CHK.a + CHK.b) / CHK.n;
+    return {
+      title: "도형이 나타내는 수를 식으로 찾아요",
+      kicker: "2권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "식이 여러 개 이어져 있을 때, 하나를 풀면 그 값을 다음 식에 넣어 차례로 풀 수 있어요. 같은 도형은 어느 식에서나 같은 수예요.",
+          items: [title("도형의 수를 차례로 찾아요")] },
+        { say: "식 세 개를 써요. 첫 번째 식은 숫자와 동그라미, 두 번째 식은 동그라미와 세모, 세 번째 식은 세모, 동그라미, 별이에요.",
+          items: [T(70, Y[0], `① ${Array(nA).fill(A).join(" + ")} = ○ + ○`, "ink", 32), T(70, Y[1], "② ○ + ○ + ○ = △ + △ + △ + △ + △ + △", "ink", 28), T(70, Y[2], "③ △ + ○ + ○ = ☆ + ☆ + ☆ + ☆", "ink", 30)] },
+        { say: "어느 식부터 풀까요? 한쪽이 숫자로만 되어 있는 식부터예요. 첫 번째 식이에요.",
+          items: [{ kind: "box", x: 58, y: Y[0] - 40, w: 470, h: 56, color: "gold", dash: true }] },
+        { say: `${jo(A, "를")} ${KO[nA]} 번 더하면 ${A}, ${A * 2}, ${A * 3}, ${tot1}. 동그라미 두 개가 ${jo(tot1, "이에요")}. ${jo(tot1, "을")} 똑같이 둘로 가르면 ${cir}. 동그라미는 ${jo(cir, "이에요")}.`,
+          items: [T(600, Y[0], `${tot1} ÷ 2 → ○ = ${cir}`, "green", 30)] },
+        { say: `이제 두 번째 식의 동그라미 자리에 ${jo(cir, "을")} 넣어요. ${cir} 더하기 ${cir} 더하기 ${jo(cir, "은")} ${jo(cir * 3, "이에요")}.`,
+          items: [T(70, Y[1] + 42, `${cir} + ${cir} + ${cir} = ${cir * 3}`, "blue", 28)] },
+        { say: `세모 ${KO[6]} 개가 ${jo(cir * 3, "이에요")}. ${jo(cir * 3, "를")} ${KO[6]} 개로 똑같이 가르면 ${tri}. 세어 봐요. ${Array.from({ length: 6 }, (_, i) => tri * (i + 1)).join(", ")}. 세모는 ${jo(tri, "예요")}.`,
+          items: [T(600, Y[1] + 42, `${cir * 3} → △ = ${tri}`, "green", 30)] },
+        { say: `세 번째 식에는 세모와 동그라미가 다 나와요. 둘 다 알았으니 넣어 봐요. ${tri} 더하기 ${cir} 더하기 ${jo(cir, "은")} ${jo(tri + cir * 2, "이에요")}.`,
+          items: [T(70, Y[2] + 42, `${tri} + ${cir} + ${cir} = ${tri + cir * 2}`, "blue", 28)] },
+        { say: `별 ${KO[4]} 개가 ${jo(tri + cir * 2, "이에요")}. ${jo(tri + cir * 2, "을")} ${KO[4]} 개로 똑같이 가르면 ${star}. 별은 ${jo(star, "예요")}.`,
+          items: [T(600, Y[2] + 42, `${tri + cir * 2} → ☆ = ${star}`, "green", 30)] },
+        { say: `마지막 식에 모든 값을 넣어 확인해요. 왼쪽 ${tri} 더하기 ${cir} 더하기 ${jo(cir, "은")} ${tri + cir * 2}, 오른쪽 ${star} 더하기 ${star} 더하기 ${star} 더하기 ${jo(star, "는")} ${star * 4}. 양쪽이 같아요.`,
+          items: [T(70, 470, `③ 왼쪽 ${tri + cir * 2} = 오른쪽 ${star * 4} ✓`, "green", 30)] },
+        { say: "정리해요. 숫자만 있거나 한 가지 도형만 있는 식부터 풀어요. 찾은 값은 다음 식의 같은 도형 자리에 넣어요. 마지막 식에 모든 값을 넣어 양쪽이 같은지 확인해요.", mood: "praise",
+          items: [T(70, 540, "푼 값은 다음 식으로 넘겨요!", "gold", 32)] },
+        { say: `한 문제 풀어 봐요. 세모 세 개를 더하면 ${CHK.a} 더하기 ${jo(CHK.b, "과")} 같아요. 세모 하나는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `△ + △ + △ = ${CHK.a} + ${CHK.b}일 때 △는 얼마일까요?`,
+            options: [String(CHK.n), String(chkV), String(CHK.a + CHK.b)], answer: 1,
+            hint: "숫자 쪽을 먼저 더하고, 세모 세 개로 똑같이 갈라요.", sayHint: `${CHK.a} 더하기 ${jo(CHK.b, "은")} ${jo(CHK.a + CHK.b, "예요")}. 그 수를 세 개로 똑같이 가르면 얼마일까요?`,
+            right: `맞았어요! ${CHK.a} + ${CHK.b} = ${CHK.a + CHK.b}, 셋으로 가르면 ${chkV}.`, sayRight: `맞았어요! ${jo(CHK.a + CHK.b, "를")} 세 개로 가르면 ${jo(chkV, "예요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-02/arithmetic-sequences": (() => {
+    const first = 3, d = 5, shown = 4, target = 7, nth = (n) => first + d * (n - 1);
+    const X = (i) => 100 + i * 128, Y0 = 210, R = 32;
+    const node = (i, value, color = "ink") => ({ kind: "node", cx: X(i), cy: Y0, r: R, value, color, size: 34 });
+    const hop = (i, color = "red") => [{ kind: "arrow", x1: X(i) + 20, y1: Y0 - R - 2, x2: X(i + 1) - 20, y2: Y0 - R - 2, bend: 34, color, width: 3 }, T((X(i) + X(i + 1)) / 2, Y0 - R - 46, `+${d}`, color, 24, "center")];
+    const CHK = { first: 2, d: 4, n: 8 }, chkV = CHK.first + CHK.d * (CHK.n - 1);
+    return {
+      title: "일정하게 커지는 수열을 찾아요",
+      kicker: "2권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "수가 늘어선 것을 수열이라고 해요. 오늘은 늘 같은 만큼씩 커지는 수열에서, 멀리 있는 수를 찾는 법을 배워요.",
+          items: [title("일정하게 커지는 수열")] },
+        { say: `수를 차례로 써요. ${Array.from({ length: shown }, (_, i) => nth(i + 1)).join(", ")}. 그 뒤로도 계속 이어져요.`,
+          items: [...Array.from({ length: shown }, (_, i) => node(i, nth(i + 1), "blue")), T(X(target - 1) + 50, Y0 + 12, "…", "gray", 40)] },
+        { say: "수 아래에 몇 번째인지 써 둬요. 첫 번째, 두 번째, 세 번째, 네 번째.",
+          items: Array.from({ length: target }, (_, i) => T(X(i), Y0 + 70, `${i + 1}번째`, "gray", 22, "center")) },
+        { say: `이웃한 두 수의 차이를 봐요. ${nth(2)} 빼기 ${jo(nth(1), "은")} ${jo(d, "예요")}. 첫 번째에서 두 번째로 갈 때 ${d}만큼 커졌어요.`,
+          items: hop(0) },
+        { say: `${nth(3)} 빼기 ${jo(nth(2), "은")} ${d}, ${nth(4)} 빼기 ${jo(nth(3), "은")} ${d}. 차이가 계속 ${jo(d, "예요")}. 이런 수열은 늘 ${d}씩 커져요.`,
+          items: [...hop(1), ...hop(2)] },
+        { say: `그럼 다섯 번째는 ${nth(4)}에 ${jo(d, "를")} 더해 ${nth(5)}. 여섯 번째는 ${nth(6)}, 일곱 번째는 ${jo(nth(7), "이에요")}.`,
+          items: [...hop(3, "green"), node(4, nth(5), "green"), ...hop(4, "green"), node(5, nth(6), "green"), ...hop(5, "green"), node(6, nth(7), "green")] },
+        { say: `일곱 번째까지 가면서 화살표가 몇 개였나 세어 봐요. 하나, 둘, 셋, 넷, 다섯, 여섯. 일곱 번째는 첫 수에서 ${jo(d, "를")} 여섯 번 더한 수예요. 화살표는 언제나 번째 수보다 하나 적어요.`,
+          items: [T(70, 370, `${target}번째 = 첫 수에서 +${d}를 ${target - 1}번`, "gold", 30)] },
+        { say: `그래서 일일이 쓰지 않아도 돼요. ${d}를 여섯 번 더해요. ${Array.from({ length: target - 1 }, (_, i) => d * (i + 1)).join(", ")}. ${jo(d * (target - 1), "이")} 돼요. 첫 수 ${first}에 더하면 ${first} 더하기 ${d * (target - 1)}, ${jo(nth(target), "이에요")}.`,
+          items: [T(70, 430, `${first} + (${d}를 ${target - 1}번) = ${first} + ${d * (target - 1)} = ${nth(target)}`, "blue", 32)] },
+        { say: `줄에 쓴 일곱 번째 수와 같아요. ${jo(nth(target), "이")} 맞아요.`,
+          items: [{ kind: "ring", cx: X(6), cy: Y0, r: R + 10, color: "green" }, T(70, 490, `줄에 쓴 수와 같아요 ✓`, "green", 28)] },
+        { say: "정리해요. 이웃한 두 수의 차이를 구하고, 다음 차이도 같은지 확인해요. 몇 번째 수를 구할 때는, 첫 수에 차이를 번째 수보다 하나 적게 더해요.", mood: "praise",
+          items: [T(70, 555, "첫 수 + 차이를 (번째 − 1)번", "gold", 32)] },
+        { say: `한 문제 풀어 봐요. ${Array.from({ length: 4 }, (_, i) => CHK.first + CHK.d * i).join(", ")}, 이렇게 이어지는 수열의 여덟 번째 수는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `${Array.from({ length: 4 }, (_, i) => CHK.first + CHK.d * i).join(", ")}, … 의 ${CHK.n}번째 수는 얼마일까요?`,
+            options: [String(chkV + CHK.d), String(chkV), String(chkV - CHK.d)], answer: 1,
+            hint: "차이를 구하고, 첫 수에 그 차이를 일곱 번 더해요.", sayHint: `차이는 ${jo(CHK.d, "예요")}. 여덟 번째는 첫 수 ${CHK.first}에서 ${jo(CHK.d, "를")} 일곱 번 더한 수예요.`,
+            right: `맞았어요! ${CHK.first} + (${CHK.d}를 ${CHK.n - 1}번) = ${CHK.first} + ${CHK.d * (CHK.n - 1)} = ${chkV}.`, sayRight: `맞았어요! ${CHK.d} 일곱 번은 ${CHK.d * (CHK.n - 1)}, 거기에 ${jo(CHK.first, "를")} 더하면 ${jo(chkV, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
 };
