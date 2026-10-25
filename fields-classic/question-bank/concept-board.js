@@ -4,7 +4,7 @@
 // 움직임 줄이기 설정이면 바로 완성 장면.
 // 글자는 손글씨 글꼴(나눔펜, OFL · assets/fonts/nm-lesson-hand.woff2)을 펜이 지나가며 드러내고, 그림은 실제 선(stroke)을 펜이 그린다.
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
-import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261025n";
+import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261025o";
 
 const NS = "http://www.w3.org/2000/svg";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -199,7 +199,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
       else if (t === "diamond") d = poly([[cx, cy - r * 1.1], [cx + r, cy], [cx, cy + r * 1.1], [cx - r, cy]]);
       else if (t === "star") d = poly(Array.from({ length: 10 }, (_, i) => { const a = (i * 36 - 90) * Math.PI / 180, rr = i % 2 ? r * 0.45 : r * 1.1; return [cx + rr * Math.cos(a), cy + rr * Math.sin(a)]; }));
       const size = item.size || Math.round(r * 1.1), dy = t === "triangle" ? r * 0.2 : 0;
-      return [{ kind: "path", d, stroke: c, width: w, quick: item.quick },
+      return [{ kind: "path", d, stroke: c, width: w, quick: item.quick, fill: item.fill },   // fill: 색칠한 도형·점
         ...(item.value != null ? [{ kind: "text", x: cx, y: cy + dy + size * 0.36, text: String(item.value), size, align: "center", color: item.textColor || c }] : [])];
     }
     if (k === "cross") { const w = item.w || 66, h = item.h || 78; return [{ kind: "path", d: `M ${item.x + 6} ${item.y + h - 6} L ${item.x + w - 6} ${item.y + 6}`, stroke: item.color || "red", width: 2.5 }]; }   // 숫자가 읽히도록 가늘게
@@ -216,7 +216,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
       let ok = true;
       if (prim.kind === "text") ok = await drawText(prim, instant);
       else if (prim.kind === "fill") ok = await drawRectFill(prim, instant);
-      else if (prim.kind === "path") ok = await drawPath(prim.d, { stroke: color(prim.stroke), "stroke-width": prim.width || 3, "stroke-dasharray": prim.dash ? "10 9" : undefined }, instant, prim.quick ? 0.6 : 1.6);
+      else if (prim.kind === "path") ok = await drawPath(prim.d, { stroke: color(prim.stroke), "stroke-width": prim.width || 3, "stroke-dasharray": prim.dash ? "10 9" : undefined, ...(prim.fill ? { fill: color(prim.fill) } : {}) }, instant, prim.quick ? 0.6 : 1.6);
       if (!ok) return false;
     }
     return true;
