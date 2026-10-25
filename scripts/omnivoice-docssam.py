@@ -114,15 +114,25 @@ def fname(lid, text, voice=None):
 # 읽기용 글 — 로마자·숫자를 한글 발음으로(앞의 것이 먼저 적용된다)
 SPOKEN = [
     (r"3D", "쓰리디"), (r"QR", "큐알"), (r"N과 S", "엔과 에스"), (r"(?<![A-Za-z])O(?![A-Za-z])", "오"), (r"(?<![A-Za-z])X(?![A-Za-z])", "엑스"),
-    (r"3분의 1", "삼분의 일"), (r"3학년", "삼학년"), (r"6학년", "육학년"), (r"5분", "오분"), (r"(?<![0-9])0에", "영에"),
 ]
 DIG = dict(zip("0123456789", ["영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"]))
+
+
+def korean_integer(number):
+    """Read one whole integer, so 12 is 십이 rather than the digits 일이."""
+    n = int(number)
+    for unit, label in [(10**12, "조"), (10**8, "억"), (10000, "만"), (1000, "천"), (100, "백"), (10, "십")]:
+        if n >= unit:
+            head, tail = divmod(n, unit)
+            prefix = "" if head == 1 and unit <= 10000 else korean_integer(head)
+            return prefix + label + (korean_integer(tail) if tail else "")
+    return DIG[str(n)]
 
 
 def spoken(text):
     for a, b in SPOKEN:
         text = re.sub(a, b, text)
-    return re.sub(r"[0-9]", lambda m: DIG[m.group(0)], text)
+    return re.sub(r"[0-9]+", lambda m: korean_integer(m.group(0)), text)
 
 
 def hangul(s):
@@ -264,7 +274,16 @@ def main():
         print(("🎮 GPU: " + torch.cuda.get_device_name(0)) if dev.startswith("cuda") else "🍎 애플 칩 GPU(MPS)로 돕니다" if dev == "mps" else "🖥  GPU 없음 — CPU 라 느립니다", flush=True)
         from omnivoice import OmniVoice
         model = OmniVoice.from_pretrained(a.model, device_map=dev, dtype=torch.float16 if dev.startswith("cuda") else torch.float32)
-        model.load_asr_model(model_name=a.asr_model, device=a.asr_device)
+        need_asr = not a.no_check or not a.ref_text_file
+        if dev.startswith("cuda") and need_asr:
+            # The audio tokenizer can exceed the remaining VRAM on 6 GB cards
+            # while encoding the reference clip. Keep synthesis on CUDA and
+            # offload only reference/audio tokenization and decoding to CPU.
+            model.audio_tokenizer.to("cpu")
+            torch.cuda.empty_cache()
+            print("오디오 토크나이저: CPU (VRAM 절약)", flush=True)
+        if need_asr:
+            model.load_asr_model(model_name=a.asr_model, device=a.asr_device)
         ko = lambda audio: model._asr_pipe(audio, generate_kwargs={"language": "korean"})["text"].strip()
         # 참조 전사는 한국어로 못 박는다 — 자동 언어 감지가 틀리면 문장 끝에 참조의 남은 말이 붙는다
         # (수의 마법 쇼릴에서 문장 끝에 참조의 남은 말이 반복되던 문제)

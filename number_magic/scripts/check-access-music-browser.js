@@ -1,0 +1,37 @@
+'use strict';
+// Real local audio playback and lifecycle checks. No login, email, SMS or student writes.
+const fs=require('fs'),path=require('path'),http=require('http'),assert=require('node:assert/strict');
+const {chromium}=require('./lib/playwright');
+const root=path.resolve(__dirname,'../..'),out=process.env.NM_ACCESS_MUSIC_ARTIFACTS;
+const server=http.createServer((q,r)=>{const f=path.resolve(root,'.'+decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root+'/')||!fs.existsSync(f)||!fs.statSync(f).isFile()){r.writeHead(404);return r.end();}r.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.css':'text/css','.m4a':'audio/mp4','.png':'image/png','.webp':'image/webp','.svg':'image/svg+xml','.woff2':'font/woff2','.ttf':'font/ttf'})[path.extname(f)]||'application/octet-stream');fs.createReadStream(f).pipe(r);});
+(async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port,b=await chromium.launch({args:['--autoplay-policy=user-gesture-required']}),report=[];
+try{if(out)fs.mkdirSync(out,{recursive:true});for(const [width,height,lang]of [[390,844,'ko'],[1280,800,'ko'],[390,844,'en'],[390,844,'zh']]){
+ const c=await b.newContext({viewport:{width,height},reducedMotion:'reduce'}),p=await c.newPage(),errors=[],outside=[];p.on('pageerror',e=>errors.push(e.message));
+ await c.route('**/*',r=>{if(r.request().url().startsWith(base+'/')&&r.request().method()==='GET')return r.continue();if(!/fonts\.(googleapis|gstatic)\.com/.test(r.request().url()))outside.push(r.request().url());return r.abort();});
+ await c.addInitScript(()=>{window.__hidden=false;window.__speaking=false;Object.defineProperty(document,'hidden',{configurable:true,get:()=>window.__hidden});window.NM_VOICE={isSpeaking:()=>window.__speaking};window.__playCount=0;window.__realPlay=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){window.__playCount++;return window.__realPlay.call(this);};});
+ await p.goto(base+'/number_magic/access.html?lang='+lang);await p.waitForSelector('[data-access-music]');
+ assert(await p.locator('#access-ambience').evaluate(e=>e.paused),'no sound before a gesture');assert.equal(await p.evaluate(()=>__playCount),0,'no autoplay polling');
+ const cover=p.locator('.cover-music'),compact=p.locator('.compact-music');
+ for(const control of [cover]){const q=await control.boundingBox();assert(q.height>=44&&q.width>=44&&q.x>=0&&q.x+q.width<=width);}
+ await p.click('#open-book');await p.waitForFunction(()=>!document.getElementById('access-ambience').paused&&document.getElementById('access-ambience').currentTime>.05);
+ await p.waitForTimeout(700);const playing=await p.locator('#access-ambience').evaluate(e=>({loop:e.loop,volume:e.volume,duration:e.duration,src:e.currentSrc}));assert(playing.loop&&playing.duration>5&&playing.volume>=.21&&playing.volume<=.23);assert(playing.src.includes('/assets/audio/desk/promo-ambience.m4a'));
+ assert.equal(await compact.getAttribute('aria-pressed'),'true');const q=await compact.boundingBox();assert(q.height>=44&&q.width>=44&&q.x>=0&&q.x+q.width<=width);
+ await compact.click();assert(await p.locator('#access-ambience').evaluate(e=>e.paused));assert.equal(await p.evaluate(()=>localStorage.getItem('nm_desk_music_v1')),'off');assert.equal(await cover.getAttribute('aria-pressed'),'false');
+ await p.keyboard.press('Escape');await p.click('#open-book');await p.waitForTimeout(300);assert(await p.locator('#access-ambience').evaluate(e=>e.paused),'opening a book respects mute');
+ await compact.click();await p.waitForFunction(()=>!document.getElementById('access-ambience').paused);assert.equal(await p.locator('audio').count(),1,'one player across book opens');
+ await p.evaluate(()=>{__speaking=true;});await p.waitForFunction(()=>document.getElementById('access-ambience').paused);await p.evaluate(()=>{__speaking=false;});await p.waitForFunction(()=>!document.getElementById('access-ambience').paused);
+ await p.evaluate(()=>{__hidden=true;document.dispatchEvent(new Event('visibilitychange'));});assert(await p.locator('#access-ambience').evaluate(e=>e.paused));await p.waitForTimeout(300);assert(await p.locator('#access-ambience').evaluate(e=>e.paused));await p.evaluate(()=>{__hidden=false;document.dispatchEvent(new Event('visibilitychange'));});await p.waitForFunction(()=>!document.getElementById('access-ambience').paused);
+ await p.evaluate(()=>window.dispatchEvent(new Event('pagehide')));assert(await p.locator('#access-ambience').evaluate(e=>e.paused));await p.waitForTimeout(250);assert(await p.locator('#access-ambience').evaluate(e=>e.paused),'leaving cannot restart music');await p.evaluate(()=>window.dispatchEvent(new Event('pageshow')));await p.waitForFunction(()=>!document.getElementById('access-ambience').paused);
+ if(out)await p.screenshot({path:path.join(out,`${width}-${lang}-open.png`)});
+ await compact.click();await p.reload();await p.click('#cover-open');await p.waitForTimeout(200);assert(await p.locator('#access-ambience').evaluate(e=>e.paused),'mute survives reload');
+ await p.evaluate(()=>{localStorage.setItem('nm_desk_music_v1','on');window.dispatchEvent(new StorageEvent('storage',{key:'nm_desk_music_v1',newValue:'on'}));});await p.waitForFunction(()=>!document.getElementById('access-ambience').paused);
+ await p.evaluate(()=>{localStorage.setItem('nm_desk_music_v1','off');window.dispatchEvent(new StorageEvent('storage',{key:'nm_desk_music_v1',newValue:'off'}));});assert(await p.locator('#access-ambience').evaluate(e=>e.paused));
+ // A rejected play must wait for another gesture instead of retrying on every timer tick.
+ await p.evaluate(()=>{window.__rejects=0;HTMLMediaElement.prototype.play=function(){__rejects++;return Promise.reject(new DOMException('fixture','NotAllowedError'));};});await compact.click();await p.waitForFunction(()=>window.__rejects===1);await p.waitForTimeout(600);assert.equal(await p.evaluate(()=>__rejects),1);assert.equal(await compact.getAttribute('aria-pressed'),'false');
+ await p.evaluate(()=>{HTMLMediaElement.prototype.play=window.__realPlay;});await compact.click();await p.waitForFunction(()=>!document.getElementById('access-ambience').paused);assert.equal(await compact.getAttribute('aria-pressed'),'true');
+ // Late play settlement after navigation is paused again, never resurrected.
+ await compact.click();await p.evaluate(()=>{HTMLMediaElement.prototype.play=function(){const e=this;return new Promise((resolve,reject)=>{window.__release=()=>window.__realPlay.call(e).then(resolve,reject);});};});await compact.click();await p.waitForFunction(()=>typeof window.__release==='function');await p.evaluate(()=>window.dispatchEvent(new Event('pagehide')));await p.evaluate(()=>window.__release());await p.waitForFunction(()=>document.getElementById('access-ambience').paused);
+ assert.equal(await p.locator('form').count(),1);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);assert.deepEqual(outside,[]);
+ report.push({width,height,lang,actualPlayback:true,volume:playing.volume,loop:true,coverAndBookControls:true,muteRemembered:true,voicePause:true,hiddenPause:true,pageHidePause:true,blockedRetry:true,latePlayGuard:true,externalWrites:0});await c.close();
+ }if(out)fs.writeFileSync(path.join(out,'music.json'),JSON.stringify(report,null,2));console.log('ACCESS_MUSIC_OK '+JSON.stringify(report));
+}finally{await b.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});
