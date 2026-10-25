@@ -324,9 +324,91 @@ function quadGalleryFigure(f) {
   }).join("")}</div>`;
 }
 
+// ───── 가로수 심기: 바둑돌 다각형 · 땅 둘레의 나무 · 호수 둘레의 가로등 ─────
+const STONE = { fill: "#ffd45c", line: "#a8741a" };   // 세는 점·바둑돌 노랑
+const SIDE_TINT = ["#e8503a", "#2f9e5f", "#2f6fe0", "#8e5bd8"];   // 변마다 다른 묶음 테두리(무지개 보기 색)
+function polyCorners(shape, cx, cy, r) {
+  const k = shape === "triangle" ? 3 : 4, start = shape === "triangle" ? -Math.PI / 2 : -Math.PI / 4;
+  return Array.from({ length: k }, (_, i) => [cx + r * Math.cos(start + (i * 2 * Math.PI) / k), cy + r * Math.sin(start + (i * 2 * Math.PI) / k)]);
+}
+function stonesFigure(f) {
+  const color = TONE[f.tone || "given"], W = 260, H = 230, cs = polyCorners(f.shape, 130, f.shape === "triangle" ? 128 : 115, 96);
+  const n = Math.min(f.n, 13), R = n > 9 ? 6 : 8;
+  let body = `<polygon points="${cs.map((p) => p.join(",")).join(" ")}" fill="none" stroke="#d6d6d6" stroke-width="2"/>`;
+  cs.forEach((a, s) => {
+    const b = cs[(s + 1) % cs.length];
+    for (let i = 0; i < n - 1; i++) {   // 변마다 앞 꼭짓점부터 n−1개(끝 꼭짓점은 다음 변이 센다)
+      const t = i / (n - 1), x = a[0] + (b[0] - a[0]) * t, y = a[1] + (b[1] - a[1]) * t, corner = i === 0;
+      const stroke = f.perSide ? SIDE_TINT[s] : f.corners && corner ? color : STONE.line;
+      body += `<circle cx="${x}" cy="${y}" r="${R}" fill="${STONE.fill}" stroke="${stroke}" stroke-width="${(f.perSide || (f.corners && corner)) ? 3 : 1.5}"/>`;
+    }
+  });
+  if (f.n > 13) body += text(130, H - 10, `한 변에 ${f.n}개`, { size: 13, weight: 900 });
+  const label = `${{ triangle: "정삼각형", square: "정사각형" }[f.shape]} 모양 바둑돌, 한 변에 ${f.n}개`;
+  return `<div class="tx-stones">${svg(W, H, body, label)}${f.perSide && !f.hideCount ? `<p class="tx-consec-note" style="--tone:${color}">변마다 ${f.n - 1}개씩 ${cs.length}묶음</p>` : f.perSide ? `<p class="tx-consec-note" style="--tone:${color}">${cs.length}묶음</p>` : ""}</div>`;
+}
+function plotFigure(f) {
+  const color = TONE[f.tone || "given"], W = 300, H = 210;
+  const cs = f.shape === "rect" ? [[40, 40], [260, 40], [260, 170], [40, 170]] : polyCorners(f.shape, 150, f.shape === "triangle" ? 120 : 105, 86);
+  let body = `<polygon points="${cs.map((p) => p.join(",")).join(" ")}" fill="#e3f5ea" stroke="#8a6a3a" stroke-width="3"/>`;
+  const lens = f.shape === "rect" ? [f.w, f.h, f.w, f.h] : cs.map(() => f.w);
+  if (f.trees) cs.forEach((a, s) => {
+    const b = cs[(s + 1) % cs.length], m = lens[s] / f.gap;
+    for (let i = 0; i < m; i++) { const t = i / m, x = a[0] + (b[0] - a[0]) * t, y = a[1] + (b[1] - a[1]) * t; body += `<circle cx="${x}" cy="${y}" r="7" fill="#2f9e5f" stroke="#16734b" stroke-width="2"/>`; }
+  });
+  const mid = (i) => { const a = cs[i], b = cs[(i + 1) % cs.length]; return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; };
+  const [tx, ty] = mid(0);
+  body += `<text x="${tx}" y="${ty - 16}" font-size="14" font-weight="900" fill="#222" text-anchor="middle" stroke="#fff" stroke-width="4" paint-order="stroke">${f.w}m</text>`;
+  if (f.shape === "rect") { const [rx, ry] = mid(1); body += `<text x="${rx + 26}" y="${ry}" font-size="14" font-weight="900" fill="#222" text-anchor="middle" dominant-baseline="central">${f.h}m</text>`; }
+  body += text(150, H - 12, `간격 ${f.gap}m · 꼭짓점에도 심어요`, { size: 13, weight: 800, fill: f.trees ? color : "#566274" });
+  return `<div class="tx-plot">${svg(W, H, body, `땅 둘레 ${lens.reduce((a, b) => a + b, 0)}m, ${f.gap}m 간격`)}</div>`;
+}
+function lakeFigure(f) {
+  const color = TONE[f.tone || "given"], W = 250, H = 230, cx = 125, cy = 112, r = 82, k = f.count;
+  let body = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#dff3ff" stroke="#1aa3c9" stroke-width="3"/>`;
+  if (f.lamps && k <= 30) for (let i = 0; i < k; i++) {
+    const a = -Math.PI / 2 + (i * 2 * Math.PI) / k, x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+    if (f.per) for (let j = 1; j <= Math.min(f.per, 3); j++) { const b = a + (j * 2 * Math.PI) / k / (Math.min(f.per, 3) + 1); body += `<rect x="${cx + r * Math.cos(b) - 4}" y="${cy + r * Math.sin(b) - 4}" width="8" height="8" rx="2" fill="#bf8a42"/>`; }
+    body += `<circle cx="${x}" cy="${y}" r="7" fill="#ffd84d" stroke="#d79a00" stroke-width="2"/>`;
+  }
+  body += text(cx, cy - 8, f.C ? `둘레 ${f.C}m` : "둘레 ?", { size: 15, weight: 900, fill: f.C ? "#222" : "#5b2fa8" });
+  body += text(cx, cy + 14, `간격 ${f.gap}m`, { size: 13, weight: 800, fill: "#566274" });
+  if (f.lamps) body += text(cx, H - 10, `가로등 ${k}개${f.per ? ` · 사이마다 ${f.per}개` : ""}`, { size: 13, weight: 900, fill: color });
+  return `<div class="tx-lake">${svg(W, H, body, `원 모양 호수, 간격 ${f.gap}m`)}</div>`;
+}
+// ───── 수직선 위의 거리: 점 위치 비율대로, 위(over)·아래(under)에 거리 호 ─────
+function distLineFigure(f) {
+  // 거리는 꺾쇠 괄호로: 위쪽 거리는 줄 위로, 아래쪽 거리는 점 이름 밑으로, 하나마다 한 층씩 쌓는다.
+  const color = TONE[f.tone || "given"], W = 340, x0 = 30, x1 = W - 30, L = 26;
+  const overs = f.arcs.filter((a) => a.side === "over"), unders = f.arcs.filter((a) => a.side !== "over");
+  const axis = 16 + overs.length * L + 8, nameY = axis + 16, H = nameY + 14 + unders.length * L + 8;
+  const max = Math.max(...f.points.map((p) => p.at)), X = (at) => x0 + ((x1 - x0) * at) / max;
+  const pos = Object.fromEntries(f.points.map((p) => [p.label, X(p.at)]));
+  const mark = new Set(f.mark || []);
+  let body = `<line x1="${x0 - 12}" y1="${axis}" x2="${x1 + 12}" y2="${axis}" stroke="#566274" stroke-width="2.5"/>`;
+  const bracket = (a, lvl, up) => {
+    const xa = pos[a.from], xb = pos[a.to], on = a.ask || mark.has(`${a.from}~${a.to}`);
+    const stroke = a.ask ? (f.tone === "check" ? TONE.check : "#8e5bd8") : on ? color : "#f39a1e";
+    const base = up ? axis - 6 : nameY + 12, y = up ? base - (lvl + 1) * L + 8 : base + (lvl + 1) * L - 8;
+    body += `<path d="M${xa} ${base} V${y} H${xb} V${base}" fill="none" stroke="${stroke}" stroke-width="${on ? 3 : 2}"${a.ask ? ' stroke-dasharray="6 4"' : ""}/>`;
+    body += `<text x="${(xa + xb) / 2}" y="${up ? y - 8 : y + 9}" font-size="13" font-weight="900" fill="${a.ask ? "#5b2fa8" : "#222"}" text-anchor="middle" dominant-baseline="central" stroke="#fff" stroke-width="4" paint-order="stroke">${esc(a.label)}</text>`;
+  };
+  // 짧은 거리가 안쪽(줄 가까이)에 오도록
+  const byLen = (a, b) => Math.abs(pos[a.to] - pos[a.from]) - Math.abs(pos[b.to] - pos[b.from]);
+  [...overs].sort(byLen).forEach((a, i) => bracket(a, i, true));
+  [...unders].sort(byLen).forEach((a, i) => bracket(a, i, false));
+  for (const p of f.points) body += `<circle cx="${pos[p.label]}" cy="${axis}" r="5" fill="#222"/>${text(pos[p.label], nameY, p.label, { size: 13, weight: 900 })}`;
+  return `<div class="tx-dist">${svg(W, H, body, f.arcs.map((a) => `${a.from}~${a.to} ${a.label}`).join(", "))}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
   if (figure.kind === "bundle") return bundleFigure(figure);
+  if (figure.kind === "stones") return stonesFigure(figure);
+  if (figure.kind === "stones-blank") return `<p class="tx-think">바둑돌 ${esc(figure.total)}개로 ${figure.shape === "triangle" ? "정삼각형" : "정사각형"}을 만들었어요. 한 변에 몇 개씩일지 그려 보며 생각해요.</p>`;
+  if (figure.kind === "plot") return plotFigure(figure);
+  if (figure.kind === "lake") return lakeFigure(figure);
+  if (figure.kind === "dist-line") return distLineFigure(figure);
   if (figure.kind === "quad") return quadFigure(figure);
   if (figure.kind === "quad-gallery") return quadGalleryFigure(figure);
   if (figure.kind === "time-col") return timeColFigure(figure);

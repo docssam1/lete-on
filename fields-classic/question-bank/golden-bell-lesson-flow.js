@@ -44,7 +44,9 @@ export const LESSON_FLOWS = Object.freeze({
   "book-07/time-unit-source": { examples: "time", game: "drill" },
   "book-07/elapsed-time": { examples: "time", game: "drill" },
   "book-06/rectangle-missing-side": { examples: "perimeter", game: "drill" },
-  "book-06/perimeter-source": { examples: "perimeter", game: "drill" }
+  "book-06/perimeter-source": { examples: "perimeter", game: "drill" },
+  "book-07/closed-loop-planting": { examples: "planting", game: "drill" },
+  "book-07/distance-line-source": { examples: "distance", game: "drill" }
 });
 export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방" });
 const STEPS = [["tutorial", "개념 설명"], ["examples", "유형별 예제"], ["game", "게임"]];

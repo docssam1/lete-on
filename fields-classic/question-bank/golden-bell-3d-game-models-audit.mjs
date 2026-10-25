@@ -412,6 +412,48 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       const sig = (o) => JSON.stringify([o.shape, String(o.top ?? ""), String(o.right ?? o.side ?? ""), String(o.inner ?? "")]);
       for (const item of lesson.original.items) if (item.visual?.subtype === "source-quad") assert.notEqual(sig(f0), sig(item.visual), `${ex.id}: 원본 그림과 같음`);
     }
+  } else if (setId === "planting") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    const k = { triangle: 3, square: 4 };
+    // 다각형 둘레의 바둑돌: 변마다 n개를 놓고 꼭짓점이 겹치는 것을 지운 개수(점 자리로 센다)
+    const stoneCount = (shape, n) => { const seen = new Set(); for (let s = 0; s < k[shape]; s++) for (let i = 0; i < n; i++) seen.add(i === n - 1 ? `c${(s + 1) % k[shape]}` : i === 0 ? `c${s}` : `${s}:${i}`); return seen.size; };
+    const origNums = lesson.original.items.flatMap((item) => nums(item.prompt));
+    if (/바둑돌/u.test(typeLabel)) {
+      assert.equal(v.total, stoneCount(v.shape, v.n), `${ex.id}: 바둑돌 수`);
+      if (/거꾸로/u.test(typeLabel)) { const ns = []; for (let n = 2; n < 100; n++) if (stoneCount(v.shape, n) === v.total) ns.push(n); assert.deepEqual(ns, [v.n], `${ex.id}: 한 변이 하나로 정해짐`); }
+      else assert.equal(v.shape, /정삼각형/u.test(typeLabel) ? "triangle" : "square", `${ex.id}: 유형과 같은 모양`);
+      const asked = /거꾸로/u.test(typeLabel) ? v.total : v.n;
+      assert.ok(nums(ex.problem).includes(asked), `${ex.id}: 문제 글의 수`);
+      for (const item of lesson.original.items) if (/바둑돌/u.test(item.prompt) && item.visual?.shape === v.shape) assert.ok(!nums(item.prompt).includes(asked), `${ex.id}: 원본과 같은 수`);
+    } else if (/닫힌 도형/u.test(typeLabel)) {
+      const f = ex.figure, P = f.shape === "rect" ? 2 * (f.w + f.h) : f.shape === "square" ? 4 * f.w : 3 * f.w;
+      const spots = new Set(); for (let x = 0; x < P; x += f.gap) spots.add(x % P);   // 닫힌 둘레를 한 바퀴 돌며 나무 자리
+      assert.equal(v.trees, spots.size, `${ex.id}: 나무 수`);
+      const mine = JSON.stringify([f.shape, ...(f.shape === "rect" ? [f.w, f.h] : [f.w]), f.gap]);
+      for (const item of lesson.original.items) if (item.visual?.subtype === "source-plot") assert.notEqual(mine, JSON.stringify([item.visual.shape, ...item.visual.lengths.map((l) => Number(l.replace("m", ""))), Number(item.visual.gap.replace("m", ""))]), `${ex.id}: 원본 땅과 같음`);
+    } else {
+      const lamps = v.C / v.gap;
+      assert.ok(Number.isInteger(lamps) && lamps === v.lamps, `${ex.id}: 가로등 수 = 둘레 ÷ 간격`);
+      if (v.between !== undefined && v.between) assert.ok(ex.problem.includes(`${v.between / v.lamps}개씩`), `${ex.id}: 사이마다 놓는 수`);
+      // 호수 둘레는 둘레와 간격이 글에 있고, 둘레 거꾸로는 간격만 있다(둘레가 답)
+      for (const n of /둘레 거꾸로/u.test(typeLabel) ? [v.gap] : [v.C, v.gap]) assert.ok(nums(ex.problem).includes(n), `${ex.id}: 문제 글의 수 ${n}`);
+      if (/둘레 거꾸로/u.test(typeLabel)) assert.ok(!nums(ex.problem).includes(v.C), `${ex.id}: 답이 글에 없음`);
+      assert.ok(!(origNums.includes(v.C) && origNums.includes(v.gap) && /호수 둘레/u.test(typeLabel)), `${ex.id}: 원본과 같은 둘레·간격`);
+      for (const item of lesson.original.items) assert.ok(!item.prompt.includes(ex.problem), `${ex.id}: 원본 문장과 같음`);
+    }
+  } else if (setId === "distance") {
+    const { pts, ask, given, kind } = v, d = ([a, b]) => Math.abs(pts[b] - pts[a]);
+    assert.equal(v.v, d(ask), `${ex.id}: 묻는 거리`);
+    // 주어진 거리만으로 답이 나와야 한다: 공식으로 다시 계산
+    const g = given.map(d);
+    const viaGiven = kind === "part" ? g[0] - g[1] : kind === "inner" ? g[1] + g[2] - g[0] : g[0] + g[1] - g[2];
+    assert.equal(viaGiven, v.v, `${ex.id}: 주어진 거리로 다시 계산`);
+    const order = Object.entries(pts).sort((a, b) => a[1] - b[1]).map(([l]) => l);
+    assert.deepEqual(order, Object.keys(pts), `${ex.id}: 점이 왼쪽부터 차례로`);
+    for (const item of lesson.original.items) {
+      const arcs = (item.visual?.arcs || []).map((a) => a.label).filter(Boolean).map((l) => Number(String(l).replace("cm", ""))).sort((x, y) => x - y).join();
+      assert.notEqual(g.slice().sort((x, y) => x - y).join(), arcs, `${ex.id}: 원본과 같은 거리들`);
+    }
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

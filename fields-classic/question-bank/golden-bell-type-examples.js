@@ -755,7 +755,121 @@ const PERIMETER_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET });
+// ───────────────────────── 7권 가로수 심기(닫힌 도형) · 수직선 위의 거리 ─────────────────────────
+// 닫힌 둘레는 처음과 끝이 만나 심는 수 = 간격 수. 꼭짓점의 돌은 두 변이 함께 쓴다.
+// 그림: kind "stones"(한 변 n개 바둑돌 다각형) · "plot"(땅 둘레에 나무) · "lake"(원 둘레에 가로등).
+const POLY_SIDES = { triangle: 3, square: 4 }, POLY_NAME = { triangle: "정삼각형", square: "정사각형" };
+function stoneExample({ id, title, shape, n }) {
+  const k = POLY_SIDES[shape], total = (n - 1) * k, name = POLY_NAME[shape];
+  const fig = (tone, extra = {}) => ({ kind: "stones", shape, n, tone, ...extra });
+  const steps = [
+    { text: `한 변에 ${n}개씩이에요. 그런데 꼭짓점의 돌은 두 변이 함께 써요.`, figure: fig("doing", { corners: true }) },
+    { text: `변마다 끝의 꼭짓점 하나를 빼고 세면 ${n} − 1 = ${n - 1}개씩, 겹치지 않아요.`, figure: fig("doing", { perSide: true }) },
+    { text: `변이 ${k}개니까 ${n - 1} × ${k} = ${josa(total, "이에요")}.`, figure: fig("check", { perSide: true }) }
+  ];
+  return { id, title, problem: `${name} 모양으로 바둑돌을 늘어놓았어요. 한 변에 ${n}개씩일 때 바둑돌은 모두 몇 개일까요?`, figure: fig("given"), steps, answer: `바둑돌은 모두 ${total}개예요.`, value: { total, n, k, shape } };
+}
+function stoneReverseExample({ id, title, shape, total }) {
+  const k = POLY_SIDES[shape], name = POLY_NAME[shape];
+  if (total % k) throw new Error(`${id}: 변마다 똑같이 나눌 수 없음`);
+  const n = total / k + 1;
+  const fig = (tone, extra = {}) => ({ kind: "stones", shape, n, tone, ...extra });
+  const steps = [
+    { text: `변마다 꼭짓점 하나를 빼고 세면 겹치지 않게 ${k}묶음으로 나뉘어요.`, figure: fig("doing", { perSide: true, hideCount: true }) },
+    { text: `한 묶음은 ${total} ÷ ${k} = ${total / k}개예요.`, figure: fig("doing", { perSide: true }) },
+    { text: `한 변에는 뺐던 꼭짓점 하나를 더해 ${total / k} + 1 = ${n}개예요.`, figure: fig("check", { perSide: true }) }
+  ];
+  return { id, title, problem: `${name} 모양으로 바둑돌 ${total}개를 늘어놓았어요. 한 변에 바둑돌이 몇 개씩일까요?`, figure: { kind: "stones-blank", shape, total }, steps, answer: `한 변에 ${n}개씩이에요.`, value: { total, n, k, shape } };
+}
+// 땅 둘레: shape "rect"(가로·세로) | "square" | "triangle"(정삼각형), gap 간격. 꼭짓점에도 심는다.
+function plotExample({ id, title, shape, w, h = w, gap }) {
+  const P = shape === "rect" ? (w + h) * 2 : shape === "square" ? w * 4 : w * 3;
+  if (P % gap || w % gap || h % gap) throw new Error(`${id}: 간격으로 나누어떨어지지 않음`);
+  const name = { rect: "직사각형", square: "정사각형", triangle: "정삼각형" }[shape], trees = P / gap;
+  const fig = (tone, extra = {}) => ({ kind: "plot", shape, w, h, gap, tone, ...extra });
+  const sum = shape === "rect" ? `(${w} + ${h}) × 2 = ${P}` : `${w} × ${shape === "square" ? 4 : 3} = ${P}`;
+  const steps = [
+    { text: `둘레는 ${sum}m예요.`, figure: fig("doing") },
+    { text: `닫힌 둘레는 처음 나무와 끝 나무가 만나서, 나무 수가 간격 수와 같아요.`, figure: fig("doing", { trees: true }) },
+    { text: `간격은 ${P} ÷ ${gap} = ${trees}개라 나무도 ${trees}그루예요.`, figure: fig("check", { trees: true }) }
+  ];
+  return { id, title, problem: `${shape === "rect" ? `가로 ${w}m, 세로 ${h}m인` : `한 변이 ${w}m인`} ${name} 땅 둘레에 ${gap}m 간격으로 나무를 심어요. 꼭짓점에도 심을 때 나무는 몇 그루일까요?`, figure: fig("given"), steps, answer: `나무는 ${trees}그루예요.`, value: { trees, P, gap } };
+}
+// 호수 둘레: 둘레 C, 간격 gap. per가 있으면 가로등 사이마다 per개씩 놓은 것(의자)도 센다.
+function lakeExample({ id, title, C, gap, per = 0, between = "의자" }) {
+  if (C % gap) throw new Error(`${id}: 간격으로 나누어떨어지지 않음`);
+  const lamps = C / gap;
+  const fig = (tone, extra = {}) => ({ kind: "lake", count: lamps, gap, C, tone, ...extra });
+  const steps = [
+    { text: `호수 둘레는 닫혀 있어서 가로등 수와 간격 수가 같아요.`, figure: fig("doing", { lamps: true }) },
+    { text: `가로등은 ${C} ÷ ${gap} = ${lamps}개예요.`, figure: fig(per ? "doing" : "check", { lamps: true }) }
+  ];
+  if (per) steps.push({ text: `가로등 사이도 ${lamps}곳이에요. 한 곳에 ${per}개씩이니 ${between}는 ${lamps} × ${per} = ${lamps * per}개예요.`, figure: fig("check", { lamps: true, per }) });
+  const problem = `둘레가 ${C}m인 원 모양 호수 둘레에 ${gap}m 간격으로 가로등을 세워요.${per ? ` 가로등 사이마다 ${between}를 ${per}개씩 놓으면 가로등과 ${between}는 각각 몇 개일까요?` : " 가로등은 몇 개일까요?"}`;
+  return { id, title, problem, figure: fig("given"), steps, answer: per ? `가로등은 ${lamps}개, ${between}는 ${lamps * per}개예요.` : `가로등은 ${lamps}개예요.`, value: { lamps, between: lamps * per, C, gap } };
+}
+// 둘레 거꾸로: 나무 count그루가 gap 간격이면 둘레 = count × gap. treesBetween이면 가로등 사이 나무 수로 먼저 가로등 수를 구한다.
+function lakeReverseExample({ id, title, count, gap, treesBetween = 0, treesTotal = 0 }) {
+  const lamps = treesBetween ? treesTotal / treesBetween : count;
+  if (!Number.isInteger(lamps)) throw new Error(`${id}: 가로등 수가 자연수가 아님`);
+  const C = lamps * gap;
+  const fig = (tone, extra = {}) => ({ kind: "lake", count: lamps, gap, tone, ...extra });
+  const steps = [];
+  if (treesBetween) steps.push({ text: `가로등 사이마다 나무가 ${treesBetween}그루씩이에요. 나무 ${treesTotal}그루 ÷ ${treesBetween} = ${lamps}곳이라 가로등도 ${lamps}개예요.`, figure: fig("doing", { lamps: true, per: treesBetween }) });
+  steps.push({ text: `닫힌 둘레라 간격도 ${lamps}개예요.`, figure: fig("doing", { lamps: true }) });
+  steps.push({ text: `둘레는 간격 ${lamps}개 × ${gap}m = ${C}m예요.`, figure: fig("check", { lamps: true, C }) });
+  const problem = treesBetween
+    ? `원 모양 호수 둘레에 가로등이 같은 간격으로 서 있고, 가로등 사이마다 나무가 ${treesBetween}그루씩 모두 ${treesTotal}그루 있어요. 가로등 사이 간격이 ${gap}m일 때 호수의 둘레는 몇 m일까요?`
+    : `원 모양 호수 둘레에 나무 ${count}그루가 ${gap}m 간격으로 심어져 있어요. 호수의 둘레는 몇 m일까요?`;
+  return { id, title, problem, figure: fig("given", { count: lamps }), steps, answer: `호수의 둘레는 ${C}m예요.`, value: { C, lamps, gap } };
+}
+const PLANTING_SET = {
+  id: "planting",
+  types: {
+    "바둑돌 정삼각형": () => [stoneExample({ id: "stone-tri-1", title: "예제 1", shape: "triangle", n: 7 }), stoneExample({ id: "stone-tri-2", title: "예제 2", shape: "triangle", n: 12 })],
+    "바둑돌 정사각형": () => [stoneExample({ id: "stone-sq-1", title: "예제 1", shape: "square", n: 6 }), stoneExample({ id: "stone-sq-2", title: "예제 2", shape: "square", n: 11 })],
+    "한 변의 바둑돌 거꾸로": () => [stoneReverseExample({ id: "stone-rev-1", title: "예제 1", shape: "triangle", total: 24 }), stoneReverseExample({ id: "stone-rev-2", title: "예제 2", shape: "square", total: 44 })],
+    "닫힌 도형의 둘레": () => [plotExample({ id: "plot-1", title: "예제 1", shape: "rect", w: 30, h: 18, gap: 6 }), plotExample({ id: "plot-2", title: "예제 2", shape: "triangle", w: 45, gap: 9 })],
+    "호수 둘레": () => [lakeExample({ id: "lake-1", title: "예제 1", C: 120, gap: 8 }), lakeExample({ id: "lake-2", title: "예제 2", C: 90, gap: 15, per: 2 })],
+    "둘레 거꾸로": () => [lakeReverseExample({ id: "lake-rev-1", title: "예제 1", count: 18, gap: 7 }), lakeReverseExample({ id: "lake-rev-2", title: "예제 2", gap: 9, treesBetween: 3, treesTotal: 24 })]
+  }
+};
+// 수직선 위의 거리: 점 위치(cm)로 거리를 정하고, 주어진 호(arcs)로 묻는 거리를 구한다.
+// kind: part(전체 − 부분) · inner(두 거리를 더하면 겹친 부분이 두 번 → 전체를 빼면 겹친 부분) · outer(두 거리를 더하고 겹친 부분을 한 번 뺌)
+function distExample({ id, title, pts, kind, ask, given, blank = false }) {
+  const d = ([a, b]) => Math.abs(pts[b] - pts[a]);
+  const nm = ([a, b]) => `${a}~${b}`;
+  const arcs = (show, extra = {}) => ({ kind: "dist-line", points: Object.entries(pts).map(([label, at]) => ({ label, at })), arcs: [...given.map(([a, b], i) => ({ from: a, to: b, label: `${d([a, b])}cm`, side: i === 0 && kind !== "outer" ? "over" : "under" })), ...(show ? [{ from: ask[0], to: ask[1], label: show === true ? (blank ? "□" : "?") : show, side: "over", ask: true }] : [])], ...extra });
+  const steps = [];
+  const v = d(ask);
+  if (kind === "part") {
+    const [whole, part] = given;
+    steps.push({ text: `전체 ${josa(nm(whole), "은")} ${d(whole)}cm, 그중 ${josa(nm(part), "이")} ${d(part)}cm예요.`, figure: arcs(true, { tone: "doing", mark: [nm(whole), nm(part)] }) });
+    steps.push({ text: `나머지 ${josa(nm(ask), "은")} ${d(whole)} − ${d(part)} = ${v}cm예요.`, figure: arcs(`${v}cm`, { tone: "check" }) });
+  } else if (kind === "inner") {
+    const [whole, p, q] = given;
+    steps.push({ text: `${josa(nm(p), "과")} ${josa(nm(q), "을")} 더하면 ${d(p)} + ${d(q)} = ${d(p) + d(q)}cm. 겹친 ${josa(nm(ask), "이")} 두 번 들어가 있어요.`, figure: arcs(true, { tone: "doing", mark: [nm(p), nm(q)], overlap: true }) });
+    steps.push({ text: `전체 ${nm(whole)} ${d(whole)}cm에는 한 번만 들어가니, 빼면 겹친 부분이 남아요. ${d(p) + d(q)} − ${d(whole)} = ${v}cm.`, figure: arcs(`${v}cm`, { tone: "check", overlap: true }) });
+  } else {
+    const [p, q, o] = given;
+    steps.push({ text: `${josa(nm(p), "과")} ${josa(nm(q), "을")} 더하면 ${d(p)} + ${d(q)} = ${d(p) + d(q)}cm. 겹친 ${josa(nm(o), "이")} 두 번 들어가 있어요.`, figure: arcs(true, { tone: "doing", mark: [nm(p), nm(q)], overlap: true }) });
+    steps.push({ text: `겹친 ${nm(o)} ${d(o)}cm를 한 번 빼면 ${d(p) + d(q)} − ${d(o)} = ${v}cm예요.`, figure: arcs(`${v}cm`, { tone: "check", overlap: true }) });
+  }
+  return { id, title, problem: blank ? `수직선 위의 거리를 보고 빈칸에 알맞은 수를 구해요.` : `수직선 위에 점이 있어요. ${josa(nm(ask), "은")} 몇 cm일까요?`, figure: arcs(true, { tone: "given" }), steps, answer: `${josa(nm(ask), "은")} ${v}cm예요.`, value: { v, pts, ask, given, kind } };
+}
+const DIST_SET = {
+  id: "distance",
+  types: {
+    "장소 사이의 거리": () => [distExample({ id: "dist-part-1", title: "예제 1", pts: { 학교: 0, 공원: 23, 도서관: 61 }, kind: "part", ask: ["공원", "도서관"], given: [["학교", "도서관"], ["학교", "공원"]] })],
+    "겹친 거리": () => [
+      distExample({ id: "dist-inner-1", title: "예제 1", pts: { A: 0, B: 9, C: 22, D: 35 }, kind: "inner", ask: ["B", "C"], given: [["A", "D"], ["A", "C"], ["B", "D"]] }),
+      distExample({ id: "dist-outer-1", title: "예제 2", pts: { A: 0, B: 14, C: 33, D: 52 }, kind: "outer", ask: ["A", "D"], given: [["A", "C"], ["B", "D"], ["B", "C"]] })
+    ],
+    "빈칸의 거리": () => [distExample({ id: "dist-blank-1", title: "예제 1", pts: { A: 0, B: 18, C: 26, D: 41 }, kind: "outer", ask: ["A", "D"], given: [["A", "C"], ["B", "D"], ["B", "C"]], blank: true })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

@@ -113,6 +113,9 @@
 .tx-quad-gallery figure { display: grid; justify-items: center; gap: 2px; margin: 0; padding: 4px; border: 2px solid transparent; border-radius: 10px; }
 .tx-quad-gallery figure.on { border-color: var(--tone); background: #e3f5ea; }
 .tx-quad-gallery figcaption { color: #222; font-size: 15px; font-weight: 900; }
+/* 가로수 심기 · 수직선 거리 */
+.tx-stones, .tx-plot, .tx-lake, .tx-dist { display: grid; justify-items: center; gap: 6px; max-width: 100%; }
+.tx-stones svg, .tx-plot svg, .tx-lake svg, .tx-dist svg { max-width: 100%; height: auto; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }
