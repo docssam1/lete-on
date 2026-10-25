@@ -4313,6 +4313,358 @@
   {
    "id": "fcb-book-05-cube-tetrahedral-growth-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-b01",
+   "text": "수직선의 두 끝 수 사이를 똑같은 칸으로 나눴을 때, 한 칸이 얼마인지 찾아요. 눈금이 아니라 칸을 세는 게 핵심이에요."
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-b02",
+   "text": "수직선에 12와 40을 써요."
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-b03",
+   "text": "두 수 사이를 똑같이 나누는 눈금을 그어요."
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-b04",
+   "text": "먼저 전체 거리를 구해요. 큰 수에서 작은 수를 빼요. 40 빼기 12는 28이에요."
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-b05",
+   "text": "이제 칸을 세요. 눈금이 아니라 눈금 사이의 칸이에요. 칸마다 호를 그리며 세요. 1, 2, 3, 4, 5, 6, 7. 일곱 칸이에요."
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-b06",
+   "text": "눈금은 몇 개일까요? 양쪽 끝까지 여덟 개예요. 눈금은 칸보다 하나 많아요. 눈금을 세면 틀려요."
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-b07",
+   "text": "전체 거리 28을 칸 수 7로 나눠요. 28 나누기 7은 4예요. 한 칸의 거리는 4예요."
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-b08",
+   "text": "확인해요. 12에서 4씩 더해 가요. 12, 16, 20, 24, 28, 32, 36, 40. 40에 딱 닿아요."
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-b09",
+   "text": "정리해요. 큰 끝 수에서 작은 끝 수를 빼 전체 거리를 구해요. 눈금이 아니라 칸을 세요. 전체 거리를 칸 수로 나누면 한 칸이에요."
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-b10",
+   "text": "한 문제 풀어 봐요. 21부터 45까지 똑같이 여덟 칸으로 나누면 한 칸은 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-hint",
+   "text": "45 빼기 21은 24예요. 여덟 칸으로 나누면요?"
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-right",
+   "text": "맞았어요! 24를 여덟 칸으로 나누면 3이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-number-line-unit-distance-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-b01",
+   "text": "큰 수를 둘, 셋, 넷으로 똑같이 갈라요. 십의 자리와 일의 자리를 따로 가르면 쉬워요. 그리고 같은 수가 몇 번 있는지 곱셈식으로 써요."
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-b02",
+   "text": "64를 똑같이 둘로 갈라요. 가지를 두 개 그려요."
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-b03",
+   "text": "64는 60과 4예요. 60을 둘로 가르면 30, 4를 둘로 가르면 2. 30과 2를 모아 32. 두 칸 모두 32예요."
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-b04",
+   "text": "확인해요. 32 더하기 32는 64예요. 그리고 32가 두 번이니 곱셈식으로 64 = 2 × 32."
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-b05",
+   "text": "이번엔 96을 똑같이 셋으로 갈라요."
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-b06",
+   "text": "96은 90과 6. 90을 셋으로 가르면 30, 6을 셋으로 가르면 2. 모으면 32. 세 칸 모두 32예요."
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-b07",
+   "text": "32가 세 번이에요. 32 더하기 32 더하기 32는 96. 곱셈식으로 96 = 3 × 32."
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-b08",
+   "text": "넷으로 가를 때는 반으로 두 번 가르면 돼요. 반의 반이 넷으로 가른 거예요."
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-b09",
+   "text": "정리해요. 몇 개로 가를지 정하고, 십의 자리와 일의 자리를 따로 갈라 모아요. 다시 더해 처음 수가 되는지 확인하고, 곱셈식으로 써요."
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-b10",
+   "text": "한 문제 풀어 봐요. 84를 똑같이 넷으로 가르면 한 칸은 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-hint",
+   "text": "80을 넷으로 가르면 20, 4를 넷으로 가르면 1이에요. 모으면요?"
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-right",
+   "text": "맞았어요! 20과 1을 모아 21이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-equal-share-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-b01",
+   "text": "수직선의 한 칸 거리를 구하고, 칸을 여러 개 묶은 거리도 구해요. 한 칸만 알면 몇 칸이든 셀 수 있어요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-b02",
+   "text": "14부터 50까지 그려요. 사이를 똑같이 네 칸으로 나눴어요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-b03",
+   "text": "전체 거리는 50 빼기 14, 36이에요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-b04",
+   "text": "칸은 네 개. 36 나누기 4는 9. 한 칸의 거리는 9예요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-b05",
+   "text": "눈금마다 수를 써요. 14에서 9씩, 14, 23, 32, 41, 50."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-b06",
+   "text": "세 칸을 묶은 거리는 얼마일까요? 한 칸이 9이니까 9 곱하기 3, 27이에요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-b07",
+   "text": "14에서 세 칸을 가면 14 더하기 27, 41이에요. 눈금의 수와 같아요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-b08",
+   "text": "정리해요. 끝 수끼리 빼서 전체 거리를, 칸 수로 나눠 한 칸을 구해요. 여러 칸을 묶으면 한 칸 곱하기 칸 수예요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-b09",
+   "text": "한 문제 풀어 봐요. 16부터 52까지를 똑같이 아홉 칸으로 나누면 한 칸의 거리는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-hint",
+   "text": "52 빼기 16은 36. 아홉 칸으로 나누면요?"
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-right",
+   "text": "맞았어요! 36을 아홉 칸으로 나누면 4예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-b01",
+   "text": "같은 길이를 위에서는 적게, 아래에서는 많이 나누면 한 칸의 길이가 달라져요. 두 칸을 비로 비교해 봐요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-b02",
+   "text": "6부터 36까지의 길이를 위에 그려요. 총 길이는 36 빼기 6, 30이에요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-b03",
+   "text": "위는 두 칸으로 똑같이 나눴어요. 한 칸 A는 30 나누기 2, 15예요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-b04",
+   "text": "같은 길이를 아래에 그리고 다섯 칸으로 나눠요. 한 칸 B는 30 나누기 5, 6이에요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-b05",
+   "text": "같은 길이를 적게 나눌수록 한 칸이 길어요. 위는 두 칸이라 길고, 아래는 다섯 칸이라 짧아요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-b06",
+   "text": "A와 B를 비로 써요. A 대 B는 15 대 6이에요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-b07",
+   "text": "비의 앞 수와 뒤 수를 같은 수로 나눠도 같은 비예요. 둘 다 3으로 나누면 5 대 2예요. 칸 수 2와 5가 뒤바뀐 모양이에요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-b08",
+   "text": "정리해요. 총 길이를 위 칸 수로 나누면 A, 아래 칸 수로 나누면 B예요. A : B로 쓰고, 같은 수로 나눠 간단히 해요. 칸이 많은 쪽이 한 칸은 짧아요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-b09",
+   "text": "한 문제 풀어 봐요. 길이 20을 위는 네 칸, 아래는 다섯 칸으로 똑같이 나눴어요. A 대 B를 간단히 하면 무엇일까요?"
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-hint",
+   "text": "A는 20 나누기 4, B는 20 나누기 5예요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-right",
+   "text": "맞았어요! A는 5, B는 4. 5 대 4예요. 칸 수를 뒤집은 비예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-number-line-ratio-compare-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-b01",
+   "text": "같은 길이를 서로 다른 막대로 재면 재는 횟수가 달라요. 하지만 막대 길이와 횟수를 곱하면 언제나 같은 전체 길이예요."
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-b02",
+   "text": "연필의 길이는 막대 A 두 개를 이은 길이와 같고, 막대 B 다섯 개를 이은 길이와도 같아요."
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-b03",
+   "text": "연필이 20센티미터라면, A 하나는 20 나누기 2, 10센티미터. B 하나는 20 나누기 5, 4센티미터예요."
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-b04",
+   "text": "막대 C는 A와 B의 길이 차이예요. 10 빼기 4는 6센티미터예요."
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-b05",
+   "text": "연필이 될 수 있는 가장 짧은 길이는 얼마일까요? A 두 개로도, B 다섯 개로도 딱 맞아야 하니, 2단에도 5단에도 나오는 수예요. 가장 작은 것은 10이에요."
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-b06",
+   "text": "이번엔 재는 횟수예요. 같은 길이를 긴 막대로 재면 적게, 짧은 막대로 재면 많이 재요. 막대 길이 곱하기 횟수는 늘 전체 길이예요."
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-b07",
+   "text": "책상을 6센티미터 막대로 재니 다섯 번이었어요. 책상은 6 곱하기 5, 30센티미터. 10센티미터 막대로 재면 30 나누기 10, 세 번이에요."
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-b08",
+   "text": "정리해요. 먼저 막대 길이 곱하기 횟수로 전체 길이를 구해요. 다른 막대의 길이로 나누면 몇 번 재는지 나와요. 두 막대로 딱 맞는 길이는 두 단에 모두 나오는 수예요."
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-b09",
+   "text": "한 문제 풀어 봐요. 탁자는 12센티미터 자로 네 번 잰 길이예요. 같은 탁자를 8센티미터 막대로 재면 몇 번일까요?"
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-hint",
+   "text": "12 곱하기 4는 48센티미터. 8센티미터로 나눠요."
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-right",
+   "text": "맞았어요! 탁자는 48센티미터, 8센티미터로 재면 여섯 번이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-pencil-measure-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-b01",
+   "text": "모양은 달라도 크기가 같은 분수가 있어요. 분모와 분자에 같은 수를 곱하면 크기가 같아요. 비도 똑같아요."
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-b02",
+   "text": "막대를 셋으로 똑같이 나누고 한 칸을 칠해요. 3분의 1이에요."
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-b03",
+   "text": "같은 막대를 여섯으로 나누고 두 칸을 칠하면, 칠한 길이가 똑같아요. 6분의 2."
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-b04",
+   "text": "열둘로 나누고 네 칸을 칠해도 같아요. 12분의 4."
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-b05",
+   "text": "3분의 1에서 6분의 2로 갈 때, 분모가 두 배가 됐어요. 분자도 두 배. 분모와 분자에 같은 수를 곱했어요. 12분의 4는 둘 다 네 배예요."
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-b06",
+   "text": "비도 같아요. 앞 수와 뒤 수에 같은 수를 곱하면 같은 비예요. 2 대 3은 4 대 6, 6 대 9와 같아요."
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-b07",
+   "text": "사탕 40개를 언니와 동생이 2 대 3으로 나눠요. 비의 두 수를 더하면 5. 40을 5로 나누면 한 몫은 8이에요."
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-b08",
+   "text": "언니는 두 몫, 8 곱하기 2, 16개. 동생은 세 몫, 8 곱하기 3, 24개. 더하면 40이에요."
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-b09",
+   "text": "정리해요. 분모가 몇 배가 되었는지 보고, 분자에도 같은 수를 곱해요. 비도 앞뒤에 같은 수를 곱해요. 합이 정해지면 비의 두 수의 합으로 나눠 한 몫을 구해요."
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-b10",
+   "text": "한 문제 풀어 봐요. 5분의 2와 크기가 같은 분수는 어느 것일까요?"
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-hint",
+   "text": "2분의 5가 아니라 5분의 2예요. 분모 5에 2를 곱하면 10, 분자 2에도 2를 곱하면요?"
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-right",
+   "text": "맞았어요! 분모와 분자에 모두 2를 곱하면 10분의 4예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-fraction-balance-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-b01",
+   "text": "같은 무게가 되는 개수를 보면, 하나의 무게를 비로 나타낼 수 있어요. 개수가 많은 쪽이 하나는 가벼워요."
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-b02",
+   "text": "저울 왼쪽에 공 한 개, 오른쪽에 상자 네 개. 수평이에요."
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-b03",
+   "text": "공 하나가 상자 네 개와 무게가 같으니, 공 하나는 상자 하나의 4배 무게예요."
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-b04",
+   "text": "하나의 무게를 비로 쓰면, 공 대 상자는 4 대 1이에요. 개수의 비 1 대 4를 뒤집은 거예요. 개수가 많은 쪽이 하나는 가벼우니까요."
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-b05",
+   "text": "공 하나와 상자 하나를 합한 무게가 35그램이에요. 비의 두 수를 더하면 4 더하기 1, 5. 35 나누기 5는 7, 한 몫이 7그램이에요."
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-b06",
+   "text": "공은 네 몫, 7 곱하기 4, 28그램. 상자는 한 몫, 7그램."
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-b07",
+   "text": "확인해요. 28 더하기 7은 35예요. 공 하나는 상자 네 개, 7 곱하기 4와 같아요."
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-b08",
+   "text": "막대도 같아요. 막대 A 세 개가 막대 B 두 개와 길이가 같으면, A 하나 대 B 하나는 개수를 뒤집어 2 대 3이에요."
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-b09",
+   "text": "정리해요. 같은 무게나 길이가 되는 개수를 세요. 개수의 비를 뒤집으면 하나의 비예요. 합을 알면 비의 두 수의 합으로 나눠 한 몫을 구해요."
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-b10",
+   "text": "한 문제 풀어 봐요. 공 두 개와 구슬 일곱 개가 수평이에요. 공 하나 대 구슬 하나의 무게의 비는 무엇일까요?"
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-hint",
+   "text": "개수는 공 2, 구슬 7. 개수가 많은 구슬이 하나는 가벼워요. 뒤집으면요?"
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-right",
+   "text": "맞았어요! 개수의 비를 뒤집어 7 대 2예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-bar-balance-ratio-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }
