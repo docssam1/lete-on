@@ -40,13 +40,13 @@ function l3(o,where,errs){
 function art(a,where,vb,errs,warnsArr){
   if(typeof a!=='string'||!a.trim()){errs.push(where+' 그림 없음 — 매거진은 글만으로 싣지 않는다');return;}
   if(!a.startsWith('<svg viewBox="'+vb+'"')) errs.push(where+' viewBox 가 '+vb+' 가 아님');
-  // One approved self-hosted character is allowed; arbitrary image/script references are not.
+  // Only the named project characters and credited museum photo are allowed; arbitrary image/script references are not.
   const localArt=a.replace(/<image\b[^>]*\/>/g,tag=>{
     const href=tag.match(/href="([^"]+)"/);
-    if(!href||href[1]!=='/number_magic/assets/characters/kid-boy.png'||!fs.existsSync(path.join(ROOT,'assets/characters/kid-boy.png')))errs.push(where+' 승인되지 않은 캐릭터 참조');
+    if(!href||!['/number_magic/assets/characters/kid-boy.png','/number_magic/assets/characters/zeno-tortoise.png','/number_magic/assets/magazine/silla-smile.jpg'].includes(href[1])||!fs.existsSync(path.join(ROOT,href[1].replace('/number_magic/',''))))errs.push(where+' 승인되지 않은 캐릭터 참조');
     return '';
   });
-  if(/<script|javascript:|href\s*=/i.test(localArt)) errs.push(where+' 외부 참조·스크립트 금지');
+  if(/<script|javascript:|\bon[a-z]+\s*=/i.test(a)||/href\s*=/i.test(localArt)) errs.push(where+' 외부 참조·스크립트 금지');
   const stack=[];let bad=false;
   for(const m of a.matchAll(/<(\/?)([a-zA-Z]+)([^>]*?)(\/?)>/g)){
     const[,close,tag,,self]=m;
