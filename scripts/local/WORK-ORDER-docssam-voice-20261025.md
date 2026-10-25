@@ -1,17 +1,17 @@
-# 작업 지시서 — 독쌤 목소리(OmniVoice 복제) 285줄 만들기 (2026-10-25)
+# 작업 지시서 — 독쌤 목소리(OmniVoice 복제) 만들기 (2026-10-25)
 
 윈도우 PC(엔비디아 GTX 1660 SUPER 6GB)에서 한다. 클라우드 쪽에는 GPU와 녹음이 없어서 이 일은 PC에서만 된다.
 
 ## 목표
-빠진 독쌤 음성 **285줄**을 만들어 `science-lab/audio/docssam/`에 넣고 main에 push 한다.
-- 손글씨 판서 **97줄** — 줄 id가 `fcb-`로 시작(`fields-classic/question-bank/data/voice/boards.voice.json`)
+빠진 독쌤 음성을 만들어 `science-lab/audio/docssam/`에 넣고 main에 push 한다.
+- 손글씨 판서 **220줄**(2026-10-25 저녁 기준, 판서가 늘면 더 는다) — 줄 id가 `fcb-`로 시작(`fields-classic/question-bank/data/voice/boards.voice.json`)
 - 사이언스 랩 **188줄** — `science-lab/data/voice/*.voice.json`
 push 되면 학생 화면이 그 줄을 독쌤 목소리로 틀고, 없는 줄은 지금처럼 기기 음성으로 읽는다. 사이트 코드는 손댈 필요 없다.
 
 ## 작업 폴더
 `E:\Codex\worktrees\lete-on-science-bank-review-20261010` (독립 클론, main)
 - sparse-checkout이다. `science-lab`, `scripts`, `.source-memory`에 더해 `fields-classic/question-bank/data/voice`를 목록에 넣어 두었다(없으면 fcb- 줄이 0으로 보인다).
-- 시작 전에 `git pull` — main이 `7c42d220` 이후여야 판서 97줄이 다 있다.
+- 시작 전에 `git pull` — 판서 줄은 계속 늘어난다. 받은 main의 `boards.voice.json` 줄 수만큼이 대상이다.
 - **다른 작업본(`lete-on-nm-omnivoice-20261018`, `lete-on-nm-voice-candidates-20261023` 등)은 다른 사람이 진행 중이다. 파일을 고치지 말 것.** 그쪽 가상환경을 *읽어서 실행*하는 것은 괜찮다.
 
 ## 지금 상태(인계 시점)
@@ -26,7 +26,7 @@ push 되면 학생 화면이 그 줄을 독쌤 목소리로 틀고, 없는 줄�
    - torch는 되고 omnivoice만 없으면: `pip install --timeout 30 --retries 5 omnivoice soundfile librosa imageio-ffmpeg`
    - torch부터 깨졌으면: 이 폴더의 `.venv-omnivoice`를 지우고 `scripts\local\_setup-omnivoice.cmd`(CUDA 12.8 torch)로 새로 만든다. pip에 `--timeout 30 --retries 5`를 붙여 멈춤을 막는다.
    - `torch.cuda.is_available()`가 `True`여야 한다. False면 진행하지 말고 보고한다.
-2. **빠진 줄 확인**: `python scripts\check-docssam-voice.py` → 285줄(fcb- 97 포함)이 나와야 한다.
+2. **빠진 줄 확인**: `python scripts\check-docssam-voice.py` → 판서(fcb-) 220줄 + 사이언스 랩 188줄 안팎이 나와야 한다.
 3. **생성**:
    `python scripts\omnivoice-docssam.py --ref "<녹음 경로>" --device auto --speed 0.8`
    - `--speed 0.8` = 공부용 느린 목소리(`docssam-clone-v2-slow`). 판서·사이언스 랩 둘 다 공부 대사라 이 값으로 한다.
@@ -39,8 +39,8 @@ push 되면 학생 화면이 그 줄을 독쌤 목소리로 틀고, 없는 줄�
    - `python scripts\check-docssam-voice.py`를 다시 돌려 남은 줄이 CER 실패분뿐인지 본다.
    - `science-lab\audio\docssam\manifest.json`의 `files`에 `fcb-`로 시작하는 파일이 몇 개인지 센다.
 5. **올리기** — `science-lab\audio\docssam`만 커밋한다. 커밋 두 개로 나눈다.
-   - `독쌤 음성: 손글씨 판서 97줄`  (fcb- 파일 + manifest.json)
-   - `독쌤 음성: 사이언스 랩 188줄`
+   - `독쌤 음성: 손글씨 판서 N줄`(N = 실제로 만든 수)  (fcb- 파일 + manifest.json)
+   - `독쌤 음성: 사이언스 랩 N줄`
    - push 전에 `git pull --rebase`. main에 바로 push.
 
 ## 하지 말 것
