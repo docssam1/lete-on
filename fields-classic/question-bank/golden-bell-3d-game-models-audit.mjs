@@ -708,6 +708,45 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       const mine = sig(v.rels.map(([x, y, d]) => [SYM[x] || x, "=", SYM[y] || y, d > 0 ? "+" : "-", Math.abs(d)]));
       for (const item of lesson.original.items) { const o = item.visual || {}; if (o.rows) assert.notEqual(sig(o.rows), mine, `${ex.id}: 원본 식과 같음`); if (o.clues) assert.notEqual(nums(o.clues.join(" ")).join(), v.rels.map((r) => Math.abs(r[2])).join(), `${ex.id}: 원본 조건과 같은 수`); }
     }
+  } else if (setId === "logic") {
+    // 모든 배치를 다 넣어 보아(순열) 조건에 맞는 것이 하나뿐인지, 그 하나가 답과 같은지
+    const perms = (xs) => (xs.length <= 1 ? [xs] : xs.flatMap((x, i) => perms([...xs.slice(0, i), ...xs.slice(i + 1)]).map((r) => [x, ...r])));
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    for (const item of lesson.original.items) for (const c of item.visual?.clues || []) assert.ok(!ex.problem.includes(c.replace(/[.。]$/u, "")), `${ex.id}: 원본 조건 문장과 같음`);
+    if (v.kind === "order") {
+      const ok = (seq) => v.clues.every((c) => { const at = (p) => seq.indexOf(p); return c.t === "first" ? at(c.p) === 0 : c.t === "last" ? at(c.p) === seq.length - 1 : c.t === "notLast" ? at(c.p) !== seq.length - 1 : c.t === "before" ? at(c.a) < at(c.b) : Math.min(at(c.a), at(c.b)) < at(c.p) && at(c.p) < Math.max(at(c.a), at(c.b)); });
+      const fits = perms(v.people).filter(ok);
+      assert.deepEqual(fits, [v.seq], `${ex.id}: 순서가 하나로 정해짐`); assert.ok(ex.answer.startsWith(v.seq.join(", ")));
+    } else if (v.kind === "row") {
+      const fits = [];
+      for (let n = 1; n <= 80; n++) {
+        const pos = (c) => (c.from === "front" ? c.k : n - c.k + 1);
+        if (v.cons.some((c) => pos(c) < 1 || pos(c) > n)) continue;
+        const byWho = {}; let good = true; for (const c of v.cons) { if (byWho[c.who] !== undefined && byWho[c.who] !== pos(c)) good = false; byWho[c.who] = pos(c); }
+        if (v.between) good &&= Math.abs(byWho[v.between.a] - byWho[v.between.b]) - 1 === v.between.count;
+        if (good) fits.push(n);
+      }
+      assert.deepEqual(fits, [v.n], `${ex.id}: 사람 수가 하나로 정해짐`); assert.ok(nums(ex.answer).includes(v.n));
+    } else if (v.kind === "compass") {
+      const D = { 북: [-1, 0], 남: [1, 0], 서: [0, -1], 동: [0, 1] };
+      v.asks.forEach(([of, dir], i) => { const r = v.rows.findIndex((row) => row.includes(of)), c = v.rows[r].indexOf(of); assert.equal(v.answers[i], v.rows[r + D[dir][0]][c + D[dir][1]], `${ex.id}: ${of}의 ${dir}쪽`); assert.ok(ex.answer.includes(`(${i + 1}) ${v.answers[i]}`)); });
+    } else if (v.kind === "place") {
+      const D = { 북: [-1, 0], 남: [1, 0], 서: [0, -1], 동: [0, 1] }, cells = [[0, 0], [0, 1], [1, 0], [1, 1]];
+      const fits = perms(v.places).filter((arr) => { const at = (p) => cells[arr.indexOf(p)]; return v.clues.every(([a, dir, b]) => at(a)[0] === at(b)[0] + D[dir][0] && at(a)[1] === at(b)[1] + D[dir][1]); });
+      assert.equal(fits.length, 1, `${ex.id}: 자리가 하나로 정해짐`);
+      assert.equal(fits[0][cells.findIndex(([r, c]) => r === v.ask[0] && c === v.ask[1])], v.ans, `${ex.id}: 물은 칸`); assert.ok(ex.answer.includes(v.ans));
+    } else if (v.kind === "round") {
+      // 자리 번호는 맨 위부터 시계 바늘이 도는 쪽. 가운데를 보고 앉으면 왼쪽 = 번호 + 1
+      const n = v.seats.length, freeSeats = [...Array(n).keys()].filter((i) => !Object.values(v.fixed).includes(i));
+      const fits = perms(freeSeats).map((arr) => ({ ...v.fixed, ...Object.fromEntries(v.names.map((nm, i) => [nm, arr[i]])) })).filter((at) => v.clues.every((c) => (c.t === "opp" ? at[c.a] === (at[c.b] + n / 2) % n : c.t === "left" ? at[c.a] === (at[c.b] + 1) % n : at[c.a] === (at[c.b] - 1 + n) % n)));
+      assert.equal(fits.length, 1, `${ex.id}: 자리가 하나로 정해짐`); assert.equal(v.seats[fits[0][v.ask]], v.ans, `${ex.id}: 물은 사람의 자리`);
+      const last = ex.steps.at(-1).figure.seats; assert.ok(last.every((s, i) => !s.name || fits[0][s.name] === i), `${ex.id}: 마지막 그림의 자리`);
+    } else if (v.kind === "ox") {
+      const fits = perms(v.choices).filter((arr) => v.clues.every((c) => { const got = arr[v.people.indexOf(c.p)]; return c.t === "is" ? got === c.c : c.t === "not" ? got !== c.c : c.cs.includes(got); }));
+      assert.equal(fits.length, 1, `${ex.id}: 고른 것이 하나로 정해짐`); assert.equal(fits[0][v.people.indexOf(v.ask)], v.ans, `${ex.id}: 답`);
+      const marks = ex.steps.at(-1).figure.marks;
+      for (const [k, m] of Object.entries(marks)) { const [p, c] = k.split("|"); assert.equal(m === "O", fits[0][v.people.indexOf(p)] === c, `${ex.id}: 마지막 표 ${k}`); }
+    } else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

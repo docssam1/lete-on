@@ -218,6 +218,30 @@
 .tx-cards span.on { border-color: var(--tone); background: var(--tone); color: #fff; }
 .tx-cards span.left { border: 2px dashed #8e5bd8; background: #fff; color: #5b2fa8; }
 .tx-cards p { margin: 0; color: #222; font-size: 15px; font-weight: 900; }
+.tx-slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.tx-slots span { display: grid; justify-items: center; gap: 2px; min-width: 58px; padding: 6px 8px; border: 2px solid #f0a500; border-radius: 9px; background: #fff3c4; }
+.tx-slots span.empty { border: 2px dashed #8e5bd8; background: #fff; }
+.tx-slots span.on { box-shadow: 0 0 0 3px var(--tone); }
+.tx-slots small { color: #566274; font-size: 11px; font-weight: 800; }
+.tx-slots b { color: #222; font-size: 17px; font-weight: 900; }
+.tx-slots span.empty b { color: #5b2fa8; }
+.tx-row-line, .tx-round { display: grid; justify-items: center; max-width: 100%; }
+.tx-row-line svg, .tx-round svg { max-width: 100%; height: auto; }
+.tx-compass { display: grid; grid-template-columns: auto auto auto; grid-template-areas: ". n ." "w g e" ". s ."; align-items: center; justify-items: center; gap: 4px; }
+.tx-compass > b { color: var(--tone); font-size: 13px; font-weight: 900; }
+.tx-compass .n { grid-area: n; } .tx-compass .s { grid-area: s; } .tx-compass .w { grid-area: w; } .tx-compass .e { grid-area: e; }
+.tx-compass > div { grid-area: g; display: grid; grid-template-columns: repeat(var(--cols), 48px); gap: 3px; }
+.tx-compass span { display: flex; align-items: center; justify-content: center; height: 40px; border: 2px solid #f0a500; border-radius: 7px; background: #fff3c4; color: #222; font-size: 14px; font-weight: 900; }
+.tx-compass span.empty { border: 2px dashed #c9c2b4; background: #fff; }
+.tx-compass span.ask { border: 2px dashed #8e5bd8; background: #fff; color: #5b2fa8; }
+.tx-compass span.on { border-color: var(--tone); background: var(--tone); color: #fff; }
+.tx-ox { display: grid; justify-items: center; max-width: 100%; overflow-x: auto; }
+.tx-ox table { border-collapse: separate; border-spacing: 4px; }
+.tx-ox th { color: #222; font-size: 13px; font-weight: 900; }
+.tx-ox td { width: 44px; height: 34px; border: 1px solid #e3dccb; border-radius: 6px; background: #fffdf7; font-size: 17px; font-weight: 900; text-align: center; }
+.tx-ox td.o { border-color: var(--tone); color: var(--tone); }
+.tx-ox td.x { color: #b4ad9e; }
+.tx-ox td.on { box-shadow: 0 0 0 3px var(--tone) inset; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

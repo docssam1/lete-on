@@ -1763,7 +1763,130 @@ const RELATION_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET });
+// ───────────────────────── 4권 논리: 순서 · 줄 세기 · 동서남북 · 원탁 · O/X 표 ─────────────────────────
+// 조건(clue)은 자료로 두고 문제 글도 그 자료로 만든다 — 검사기가 같은 자료로 모든 배치를 다 넣어 보아 답이 하나뿐인지 본다.
+// 원탁: 식탁 가운데를 보고 앉으면 내 왼쪽은 시계 바늘이 도는 쪽 옆자리(그림에서 자리 번호 + 1).
+const orderClueText = (c) => (c.t === "first" ? `${c.p} 앞에 달리는 사람은 없어요.` : c.t === "last" ? `${josa(c.p, "은")} 맨 뒤에서 달려요.` : c.t === "before" ? `${josa(c.a, "은")} ${c.b}보다 앞에서 달려요.` : c.t === "notLast" ? `${josa(c.p, "은")} 맨 뒤가 아니에요.` : `${josa(c.p, "은")} ${josa(c.a, "과")} ${c.b} 사이에서 달려요.`);
+function runOrderExample({ id, title, people, clues, plan, seq }) {
+  const labels = people.map((_, i) => `${i + 1}등`);
+  const steps = plan.map((p, i) => ({ text: p.text, figure: { kind: "slots", labels, names: p.names, hi: p.hi, tone: i === plan.length - 1 ? "check" : "doing" } }));
+  return { id, title, problem: `${people.join(", ")} ${people.length}명이 달리기를 해요. ${clues.map(orderClueText).join(" ")} 빠른 순서대로 써요.`, figure: { kind: "slots", labels, names: people.map(() => null), tone: "given" }, steps, answer: `${seq.join(", ")} 순서예요.`, value: { kind: "order", people, clues, seq } };
+}
+// 줄 세기: cons = [{ who, from: "front" | "back", k }], between = { a, b, count }(두 사람 사이 인원)
+function rowCountExample({ id, title, cons, between = null }) {
+  let n, steps;
+  const pos = (c, N) => (c.from === "front" ? c.k : N - c.k + 1);
+  if (!between) {
+    const [f, b] = cons; n = f.k + b.k - 1;
+    const fig = (tone, spans) => ({ kind: "row-line", n, marks: { [f.k]: f.who }, spans, tone });
+    steps = [
+      { text: `${josa(f.who, "은")} 앞에서 ${f.k}번째라 앞쪽에 ${f.k}명(${f.who} 포함), 뒤에서 ${b.k}번째라 뒤쪽에 ${b.k}명(${f.who} 포함)이에요.`, figure: fig("doing", [{ from: 1, to: f.k, label: `${f.k}명` }]) },
+      { text: `${josa(f.who, "을")} 두 번 셌으니 한 번 빼요. ${f.k} + ${b.k} − 1 = ${n}명.`, figure: fig("check", [{ from: 1, to: n, label: `${n}명` }]) }
+    ];
+  } else {
+    const [fa, bb] = cons; n = fa.k + between.count + bb.k;
+    const fig = (tone, spans) => ({ kind: "row-line", n, marks: { [fa.k]: fa.who, [n - bb.k + 1]: bb.who }, spans, tone });
+    steps = [
+      { text: `${josa(fa.who, "은")} 앞에서 ${fa.k}번째라 앞쪽은 ${fa.who}까지 ${fa.k}명이에요.`, figure: fig("doing", [{ from: 1, to: fa.k, label: `${fa.k}명` }]) },
+      { text: `두 사람 사이에 ${between.count}명, ${josa(bb.who, "은")} 뒤에서 ${bb.k}번째라 ${bb.who}부터 뒤쪽은 ${bb.k}명이에요.`, figure: fig("doing", [{ from: n - bb.k + 1, to: n, label: `${bb.k}명` }]) },
+      { text: `겹치는 사람이 없으니 모두 ${fa.k} + ${between.count} + ${bb.k} = ${n}명.`, figure: fig("check", [{ from: 1, to: n, label: `${n}명` }]) }
+    ];
+  }
+  if (cons.some((c) => pos(c, n) < 1 || pos(c, n) > n)) throw new Error(`${id}: 줄 밖`);
+  const text0 = between ? `${josa(cons[0].who, "은")} 앞에서 ${cons[0].k}번째, ${josa(cons[1].who, "은")} 뒤에서 ${cons[1].k}번째에 서 있고, 두 사람 사이에 ${between.count}명이 있어요.` : `${josa(cons[0].who, "은")} 앞에서 ${cons[0].k}번째, 뒤에서 ${cons[1].k}번째에 서 있어요.`;
+  return { id, title, problem: `${text0} 줄을 선 사람은 모두 몇 명일까요?`, figure: { kind: "row-line", n: Math.min(n, 6), marks: {}, tone: "given" }, steps, answer: `모두 ${n}명이에요.`, value: { kind: "row", cons, between, n } };
+}
+const DIR = { 북: [-1, 0], 남: [1, 0], 서: [0, -1], 동: [0, 1] };
+function compassGridExample({ id, title, rows, asks }) {
+  const at = (name) => { for (const [r, row] of rows.entries()) { const c = row.indexOf(name); if (c >= 0) return [r, c]; } return null; };
+  const answers = asks.map(([of, dir]) => { const [r, c] = at(of), [dr, dc] = DIR[dir]; return rows[r + dr]?.[c + dc]; });
+  if (answers.some((a) => !a)) throw new Error(`${id}: 칸 밖`);
+  const steps = [
+    { text: "위가 북쪽, 아래가 남쪽, 오른쪽이 동쪽, 왼쪽이 서쪽이에요.", figure: { kind: "compass", rows, tone: "doing" } },
+    ...asks.map(([of, dir], i) => ({ text: `${of}에서 ${dir}쪽으로 한 칸 가면 ${josa(answers[i], "이에요")}.`, figure: { kind: "compass", rows, hi: [at(answers[i])], ask: [at(of)], tone: i === asks.length - 1 ? "check" : "doing" } }))
+  ];
+  return { id, title, problem: `그림을 보고 ${asks.map(([of, dir], i) => `(${i + 1}) ${of}의 ${dir}쪽`).join(", ")}에 있는 글자를 써요.`, figure: { kind: "compass", rows, tone: "given" }, steps, answer: `${asks.map((_, i) => `(${i + 1}) ${answers[i]}`).join(", ")}예요.`, value: { kind: "compass", rows, asks, answers } };
+}
+// 2 × 2 자리: clues = [[A, 방향, B]] — A는 B의 (방향)쪽 바로 옆. ask = 물을 칸 [행, 열]
+const placeClueText = ([a, dir, b]) => `${josa(a, "은")} ${b}의 ${dir}쪽에 있어요.`;
+function placeExample({ id, title, places, clues, plan, ask, ans, mark }) {
+  const empty = [[null, null], [null, null]];
+  const steps = plan.map((p, i) => ({ text: p.text, figure: { kind: "compass", rows: p.rows, hi: p.hi, ask: [ask], askLabel: mark, tone: i === plan.length - 1 ? "check" : "doing" } }));
+  return { id, title, problem: `${places.join(", ")}의 자리를 찾아요. ${clues.map(placeClueText).join(" ")} ${mark} 자리에는 무엇이 있을까요?`, figure: { kind: "compass", rows: empty, ask: [ask], askLabel: mark, tone: "given" }, steps, answer: `${mark} 자리에는 ${josa(ans, "이")} 있어요.`, value: { kind: "place", places, clues, ask, ans } };
+}
+// 원탁: seats = 자리 이름(맨 위부터 시계 바늘이 도는 쪽), fixed = { 이름: 자리 번호 }, clues = [{ t: "opp" | "left" | "right", a, b }]
+const roundClueText = (c) => (c.t === "opp" ? `${josa(c.a, "은")} ${c.b}의 맞은편에 앉아 있어요.` : `${josa(c.a, "은")} ${c.b}의 ${c.t === "left" ? "왼쪽" : "오른쪽"}에 앉아 있어요.`);
+function roundExample({ id, title, seats, fixed, names, clues, plan, ask, ans }) {
+  const show = (placed, hi) => seats.map((seat, i) => ({ seat, name: Object.entries(placed).find(([, s]) => s === i)?.[0] }));
+  const steps = plan.map((p, i) => ({ text: p.text, figure: { kind: "round", seats: show(p.placed), hi: p.hi, arrow: p.arrow, tone: i === plan.length - 1 ? "check" : "doing" } }));
+  const all = [...Object.keys(fixed), ...names];
+  return { id, title, problem: `${all.join(", ")} ${all.length}명이 둥근 식탁에 앉아 있어요. ${Object.entries(fixed).map(([n]) => `${josa(n, "은")} 그림의 자리에 앉아 있고,`).join(" ")} ${clues.map(roundClueText).join(" ")} ${josa(ask, "은")} 어느 자리에 앉아 있을까요?`, figure: { kind: "round", seats: show(fixed), tone: "given" }, steps, answer: `${josa(ask, "은")} ${ans} 자리예요.`, value: { kind: "round", seats, fixed, names, clues, ask, ans } };
+}
+// O/X 표: clues = [{ t: "is" | "not" | "oneOf", p, c | cs }]. verbs = { is: "좋아해요", not: "좋아하지 않아요", adn: "좋아하는" }
+const oxClueText = (c, v) => (c.t === "is" ? `${josa(c.p, "은")} ${josa(c.c, "을")} ${v.is}.` : c.t === "not" ? `${josa(c.p, "은")} ${josa(c.c, "을")} ${v.not}.` : `${josa(c.p, "은")} ${c.cs.join(", ")} 중 하나를 ${v.is}.`);
+function oxExample({ id, title, people, choices, clues, verbs, what, plan, ask, ans }) {
+  const steps = plan.map((p, i) => ({ text: p.text, figure: { kind: "ox", people, choices, marks: p.marks, hi: p.hi, tone: i === plan.length - 1 ? "check" : "doing" } }));
+  return { id, title, problem: `${josa(people.join(", "), "이")} ${choices.join(", ")} 중에서 서로 다른 ${josa(what, "을")} 하나씩 ${verbs.is}. ${clues.map((c) => oxClueText(c, verbs)).join(" ")} ${josa(ask, "이")} ${verbs.adn} ${josa(what, "은")} 무엇일까요?`, figure: { kind: "ox", people, choices, marks: {}, tone: "given" }, steps, answer: `${josa(ask, "은")} ${josa(ans, "이에요")}.`, value: { kind: "ox", people, choices, clues, ask, ans } };
+}
+// 지금까지 정한 짝(assigns)은 O, 그 사람의 다른 칸과 그 물건의 다른 사람 칸은 X, xs는 조건으로 지운 칸
+function oxMarks(people, choices, assigns, xs = []) {
+  const m = {};
+  for (const [p, c] of xs) m[`${p}|${c}`] = "X";
+  for (const [p, c] of assigns) { for (const cc of choices) m[`${p}|${cc}`] = "X"; for (const pp of people) m[`${pp}|${c}`] = "X"; m[`${p}|${c}`] = "O"; }
+  return m;
+}
+const LOGIC_SET = {
+  id: "logic",
+  types: {
+    "조건으로 순서 정하기": () => [
+      runOrderExample({ id: "ord-1", title: "예제 1", people: ["A", "B", "C", "D"], clues: [{ t: "first", p: "B" }, { t: "last", p: "D" }, { t: "before", a: "A", b: "C" }], seq: ["B", "A", "C", "D"], plan: [
+        { text: "B 앞에 달리는 사람이 없으니 B가 1등이에요.", names: ["B", null, null, null], hi: [0] },
+        { text: "D는 맨 뒤라 4등이에요.", names: ["B", null, null, "D"], hi: [3] },
+        { text: "남은 2등, 3등에 A와 C가 들어가요. A가 C보다 앞이라 A가 2등, C가 3등.", names: ["B", "A", "C", "D"], hi: [1, 2] }
+      ] }),
+      runOrderExample({ id: "ord-2", title: "예제 2", people: ["준", "민", "솔"], clues: [{ t: "notLast", p: "솔" }, { t: "between", p: "민", a: "준", b: "솔" }], seq: ["솔", "민", "준"], plan: [
+        { text: "민은 두 사람 사이에서 달리니 가운데, 2등이에요.", names: [null, "민", null], hi: [1] },
+        { text: "솔은 맨 뒤가 아니라 1등, 남은 준이 3등이에요.", names: ["솔", "민", "준"], hi: [0, 2] }
+      ] })
+    ],
+    "줄에서 앞뒤 순서 세기": () => [
+      rowCountExample({ id: "row-1", title: "예제 1", cons: [{ who: "준서", from: "front", k: 8 }, { who: "준서", from: "back", k: 4 }] }),
+      rowCountExample({ id: "row-2", title: "예제 2", cons: [{ who: "민서", from: "front", k: 5 }, { who: "하준", from: "back", k: 3 }], between: { a: "민서", b: "하준", count: 4 } })
+    ],
+    "동서남북 익히기": () => [compassGridExample({ id: "comp-1", title: "예제 1", rows: [["사", "자", "가"], ["바", "마", "나"], ["아", "라", "다"]], asks: [["마", "북"], ["라", "서"], ["나", "남"], ["바", "동"]] })],
+    "동서남북 자리배치": () => [placeExample({ id: "place-1", title: "예제 1", places: ["우체국", "공원", "병원", "도서관"], clues: [["공원", "북", "병원"], ["도서관", "서", "공원"]], ask: [1, 0], ans: "우체국", mark: "㉮", plan: [
+      { text: "공원은 병원의 북쪽이라 둘은 위아래로 붙어 있어요. 공원의 서쪽에 도서관이 있으려면 공원은 오른쪽 줄이에요.", rows: [[null, "공원"], [null, "병원"]], hi: [[0, 1], [1, 1]] },
+      { text: "도서관은 공원의 서쪽, 왼쪽 위 칸이에요.", rows: [["도서관", "공원"], [null, "병원"]], hi: [[0, 0]] },
+      { text: "남은 왼쪽 아래 칸 ㉮에는 우체국이 있어요.", rows: [["도서관", "공원"], ["우체국", "병원"]], hi: [[1, 0]] }
+    ] })],
+    "원탁 이웃 자리 논리": () => [roundExample({ id: "round-1", title: "예제 1", seats: ["", "㉮", "㉯", "㉰"], fixed: { 지호: 0 }, names: ["서윤", "하린", "도윤"], clues: [{ t: "opp", a: "서윤", b: "지호" }, { t: "left", a: "하린", b: "서윤" }], ask: "도윤", ans: "㉮", plan: [
+      { text: "서윤은 지호의 맞은편, 아래 자리 ㉯에 앉아요.", placed: { 지호: 0, 서윤: 2 }, hi: [2] },
+      { text: "식탁 가운데를 보고 앉으면 내 왼쪽은 시계 바늘이 도는 쪽 옆자리예요. 서윤의 왼쪽은 ㉰라 하린이 앉아요.", placed: { 지호: 0, 서윤: 2, 하린: 3 }, hi: [3], arrow: true },
+      { text: "남은 ㉮ 자리에 도윤이 앉아요.", placed: { 지호: 0, 서윤: 2, 하린: 3, 도윤: 1 }, hi: [1] }
+    ] })],
+    "표로 정리하는 서로 다른 선택": () => {
+      const people = ["지우", "태오", "소은"], choices = ["사과", "딸기", "수박"], M = (a, x) => oxMarks(people, choices, a, x);
+      return [oxExample({ id: "ox-1", title: "예제 1", people, choices, what: "과일", verbs: { is: "좋아해요", not: "좋아하지 않아요", adn: "좋아하는" }, ask: "소은", ans: "사과",
+        clues: [{ t: "not", p: "지우", c: "사과" }, { t: "is", p: "태오", c: "수박" }], plan: [
+          { text: "태오는 수박을 좋아해요. 태오-수박에 O, 태오의 다른 칸과 수박의 다른 칸에 X.", marks: M([["태오", "수박"]]), hi: ["태오|수박"] },
+          { text: "지우는 사과를 좋아하지 않아요. 지우에게 남은 칸은 딸기뿐이라 O.", marks: M([["태오", "수박"], ["지우", "딸기"]], [["지우", "사과"]]), hi: ["지우|딸기"] },
+          { text: "소은에게 남은 칸은 사과뿐이에요.", marks: M([["태오", "수박"], ["지우", "딸기"], ["소은", "사과"]], [["지우", "사과"]]), hi: ["소은|사과"] }
+        ] })];
+    },
+    "가능한 선택을 지우는 표 논리": () => {
+      const people = ["하나", "두리", "세나", "네오"], choices = ["연필", "지우개", "공책", "자"], M = (a, x) => oxMarks(people, choices, a, x);
+      const xs = [["하나", "지우개"], ["하나", "자"], ["두리", "연필"], ["두리", "지우개"], ["세나", "자"]];
+      return [oxExample({ id: "ox-2", title: "예제 1", people, choices, what: "학용품", verbs: { is: "골랐어요", not: "고르지 않았어요", adn: "고른" }, ask: "두리", ans: "자",
+        clues: [{ t: "oneOf", p: "하나", cs: ["연필", "공책"] }, { t: "oneOf", p: "두리", cs: ["공책", "자"] }, { t: "not", p: "세나", c: "자" }, { t: "is", p: "네오", c: "연필" }], plan: [
+          { text: "조건으로 안 되는 칸부터 X로 지워요. 하나는 연필이나 공책, 두리는 공책이나 자, 세나는 자가 아니에요.", marks: M([], xs), hi: [] },
+          { text: "네오는 연필을 골랐어요. 하나에게 연필이 없어지니 하나는 공책이에요.", marks: M([["네오", "연필"], ["하나", "공책"]], xs), hi: ["네오|연필", "하나|공책"] },
+          { text: "두리는 공책이나 자인데 공책은 하나 것이라 자. 남은 세나는 지우개예요.", marks: M([["네오", "연필"], ["하나", "공책"], ["두리", "자"], ["세나", "지우개"]], xs), hi: ["두리|자"] }
+        ] })];
+    }
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

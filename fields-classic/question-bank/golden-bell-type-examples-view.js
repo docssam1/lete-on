@@ -631,8 +631,48 @@ function numCardsFigure(f) {
   return `<div class="tx-cards" style="--tone:${color}"><div>${Array.from({ length: f.n }, (_, i) => i + 1).map((v) => `<span class="${used.has(v) ? "used" : pick.has(v) ? "on" : left.has(v) ? "left" : ""}">${v}</span>`).join("")}</div>${(f.eqs || []).map((e) => `<p>${esc(e)}</p>`).join("")}</div>`;
 }
 
+// ───── 논리(4권): 순서 칸 · 한 줄 · 동서남북 칸 · 원탁 · O/X 표 ─────
+function slotsFigure(f) {
+  const color = TONE[f.tone || "given"], hi = new Set(f.hi || []);
+  return `<div class="tx-slots" style="--tone:${color}">${f.labels.map((l, i) => `<span class="${f.names[i] ? "" : "empty"}${hi.has(i) ? " on" : ""}"><small>${esc(l)}</small><b>${esc(f.names[i] || "?")}</b></span>`).join("")}</div>`;
+}
+// row-line: 한 줄로 선 n명(왼쪽이 앞). marks = { 번째(1부터): 이름 }, spans = [{ from, to, label }] — 줄 밑 꺾쇠
+function rowLineFigure(f) {
+  const color = TONE[f.tone || "given"], gap = f.n > 12 ? 22 : 26, W = f.n * gap + 40, H = 92 + (f.spans || []).length * 0;
+  const X = (k) => 20 + (k - 0.5) * gap;
+  let body = text(10, 18, "앞", { size: 12, weight: 900, fill: "#566274", anchor: "start" }) + text(W - 10, 18, "뒤", { size: 12, weight: 900, fill: "#566274", anchor: "end" });
+  for (let k = 1; k <= f.n; k++) { const who = f.marks?.[k]; body += `<circle cx="${X(k)}" cy="40" r="${who ? 10 : 8}" fill="${who ? color : "#ffd45c"}" stroke="${who ? color : "#a8741a"}" stroke-width="1.5"/>`; if (who) body += text(X(k), 20, who, { size: 12, weight: 900, fill: color }); }
+  (f.spans || []).forEach((s, i) => { const y = 62 + i * 0; body += `<path d="M${X(s.from) - 8} ${y - 6} V${y} H${X(s.to) + 8} V${y - 6}" fill="none" stroke="#f39a1e" stroke-width="2"/>${text((X(s.from) + X(s.to)) / 2, y + 14, s.label, { size: 12, weight: 900 })}`; });
+  return `<div class="tx-row-line">${svg(W, H, body, `한 줄로 선 ${f.n}명`)}</div>`;
+}
+// compass: 칸 이름 표(위가 북). hi = 찾은 칸 [[행, 열]], ask = 물음표 칸
+function compassFigure(f) {
+  const color = TONE[f.tone || "given"], key = (r, c) => `${r},${c}`, hi = new Set((f.hi || []).map(([r, c]) => key(r, c))), ask = new Set((f.ask || []).map(([r, c]) => key(r, c)));
+  const cells = f.rows.map((row, r) => row.map((v, c) => `<span class="${hi.has(key(r, c)) ? "on" : ask.has(key(r, c)) ? "ask" : v ? "" : "empty"}">${esc(ask.has(key(r, c)) && !v ? f.askLabel || "?" : v || "")}</span>`).join("")).join("");
+  return `<div class="tx-compass" style="--tone:${color};--cols:${f.rows[0].length}"><b class="n">북</b><b class="w">서</b><div>${cells}</div><b class="e">동</b><b class="s">남</b></div>`;
+}
+// round: 원탁 자리(0 = 맨 위, 시계 바늘이 도는 쪽으로 1, 2, …). seats = 이름(없으면 자리 이름), hi = 칠할 자리
+function roundFigure(f) {
+  const color = TONE[f.tone || "given"], n = f.seats.length, R = 70, C = 106, hi = new Set(f.hi || []);
+  let body = `<circle cx="${C}" cy="${C}" r="${R - 26}" fill="#f5e3c3" stroke="#c99b5a" stroke-width="2"/>${text(C, C, "식탁", { size: 13, weight: 900, fill: "#8a6a3a" })}`;
+  if (f.arrow) body += `<path d="M${C + 18} ${C - 34} A 38 38 0 0 1 ${C + 34} ${C - 14}" fill="none" stroke="${color}" stroke-width="2.5" marker-end="url(#rtip)"/>`;
+  f.seats.forEach((s, i) => { const a = (-90 + (360 * i) / n) * Math.PI / 180, x = C + R * Math.cos(a), y = C + R * Math.sin(a), known = s.name; body += `<circle cx="${x}" cy="${y}" r="20" fill="${hi.has(i) ? color : known ? SHAPE.square.fill : "#fff"}" stroke="${hi.has(i) ? color : known ? SHAPE.square.line : "#8e5bd8"}" stroke-width="2"${known || hi.has(i) ? "" : ' stroke-dasharray="4 3"'}/>${text(x, y, s.name || s.seat, { size: 12, weight: 900, fill: hi.has(i) ? "#fff" : known ? "#222" : "#5b2fa8" })}`; });
+  const defs = `<defs><marker id="rtip" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="${color}"/></marker></defs>`;
+  return `<div class="tx-round">${svg(C * 2, C * 2, defs + body, `원탁 ${n}자리`)}</div>`;
+}
+// ox: 사람 × 고를 것 표. marks = { "사람|것": "O" | "X" }
+function oxFigure(f) {
+  const color = TONE[f.tone || "given"], on = new Set(f.hi || []);
+  return `<div class="tx-ox" style="--tone:${color}"><table><thead><tr><th></th>${f.choices.map((c) => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${f.people.map((p) => `<tr><th>${esc(p)}</th>${f.choices.map((c) => { const m = f.marks[`${p}|${c}`]; return `<td class="${m === "O" ? "o" : m === "X" ? "x" : ""}${on.has(`${p}|${c}`) ? " on" : ""}">${m || ""}</td>`; }).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "slots") return slotsFigure(figure);
+  if (figure.kind === "row-line") return rowLineFigure(figure);
+  if (figure.kind === "compass") return compassFigure(figure);
+  if (figure.kind === "round") return roundFigure(figure);
+  if (figure.kind === "ox") return oxFigure(figure);
   if (figure.kind === "eqs") return eqsFigure(figure);
   if (figure.kind === "num-cards") return numCardsFigure(figure);
   if (figure.kind === "poly") return polyFigure(figure);
