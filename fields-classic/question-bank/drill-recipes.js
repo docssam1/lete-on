@@ -2,6 +2,17 @@
 // 유형은 그 단원 문제은행(source-data.js CURRICULUM의 typeIds)에서, 차시 개념과 같은 풀이를 쓰는 것만 골랐다.
 // 답 꼴(수 하나 · 수 + 단위 · 쉼표로 쓴 수)과 그림 종류(bookN)는 검사기 drill-audit.mjs가 난이도마다 확인한다.
 export const DRILL_RECIPES = Object.freeze({
+  // 5권 — 수 배열표와 달력 · 최단거리와 숫자 카드 · 곱셈 매트릭스 · 삼각수와 사각수 (삼각 계단 쌓기나무는 맞는 유형이 없어 아직 없음)
+  "book-05/path-number-grid": ["sequential-path-number-grid", "diagonal-fill-number-grid", "line-cycle-number-table"],
+  "book-05/calendar-arithmetic-source": ["calendar-same-weekday-sum", "calendar-month-position"],
+  "book-05/calendar-weekday-source": ["calendar-month-position", "weekday-after-days-b7"],
+  "book-05/shortest-route-source": ["shortest-path-rectangle", "shortest-path-irregular-grid", "shortest-path-via-waypoint"],
+  "book-05/digit-card-ranked-number": ["digit-card-ranked-number", "digit-card-number-enumeration"],
+  "book-05/two-digit-condition-source": ["two-digit-digit-sum-rank", "two-digit-digit-difference-rank"],
+  "book-05/multiplication-table-source": ["multiplication-table-pattern", "product-cycle-completion"],
+  "book-05/checkerboard-product-matrix": ["multiplication-matrix-placement", "multiplication-matrix-products"],
+  "book-05/square-number-source": ["square-number-odd-sum", "square-row-boundary-number"],
+  "book-05/triangle-number-source": ["handshake-pair-count", "complete-graph-segment-count", "pair-selection-count"],
   // 6권 — 수직선의 분할과 비 · 도형의 둘레 · 연속수의 합 · 수와 숫자의 개수 (똑같이 가르기는 그림이 문제은행 화면 전용이라 아직 없음)
   "book-06/number-line-unit-distance": ["number-line-unit-distance-book6", "number-line-midpoint-book6"],
   "book-06/number-line-ratio-source": ["number-line-two-part-distance", "number-line-unit-distance-book6"],

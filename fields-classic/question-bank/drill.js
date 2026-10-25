@@ -6,7 +6,7 @@
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
 import { typeById } from "./source-data.js?v=20261024r";
 import { GENERATORS } from "./generators.js?v=20261027a";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027d";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027e";
 import { jo } from "./concept-board-kit.js?v=20261026b";
 
 // 그림 그리기는 문제은행 화면(app.js)과 같은 파일·같은 꼬리표로 불러온다
