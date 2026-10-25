@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261024-7">
+  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261025-4">
 </head>
 <body class="academy-page page-boarding-roadmap">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -26,14 +26,14 @@
 
     <section class="grade-map boarding-shell" id="grade-map" aria-labelledby="grade-map-title">
       <div class="map-head"><div><p class="boarding-kicker">01 · 학년</p><h2 id="grade-map-title">7학년 수학 한눈에</h2></div><p>다른 학년도 눌러 보세요.</p></div>
-      <div class="grade-track" aria-label="학년 선택"><div id="grade-buttons" class="grade-buttons"></div></div>
+      <details class="grade-track" aria-label="학년 선택" open><summary>다른 학년 보기</summary><div id="grade-buttons" class="grade-buttons"></div></details>
       <div class="journey-layout">
         <article class="journey-main" aria-labelledby="grade-title">
           <div class="journey-heading"><div><span id="grade-label" class="grade-chip">7학년</span><h3 id="grade-title">유리수에서 Algebra 1로</h3></div><span id="source-chip" class="source-chip">학습 예시</span></div>
           <p id="grade-core" class="grade-core"></p>
           <div class="grade-focus" aria-label="학교 수학과 선택 학습"><p>이 학년에서 볼 것</p><div id="grade-focus-list" class="grade-focus-list"></div></div>
           <div class="concept-bridge"><span>개념 연결</span><strong id="grade-bridge"></strong></div>
-          <div id="grade7-road-intro" class="grade7-road-intro" hidden><div><span>7학년 · 개념 연결 예시</span><h4>살펴볼 지점을 골라 보세요</h4></div><p id="grade7-position">현재 위치 확인 전 · 진단으로 확인한 학습 구간이 아직 없어요.</p></div>
+          <div id="grade7-road-intro" class="grade7-road-intro" hidden><div><span>7학년 · 개념 연결 예시</span><h4>살펴볼 개념을 골라 보세요</h4></div><p id="grade7-position">현재 위치 미확인 · 진단 후 표시합니다.</p></div>
           <ol id="stage-list" class="stage-list" aria-label="선택한 학년의 학습 단계"></ol>
           <div class="stage-detail" aria-live="polite"><span id="stage-number">단계 1</span><h4 id="stage-title"></h4><p id="stage-copy"></p><div id="grade7-stage-check" class="grade7-stage-check" hidden><strong>넘어가기 전에</strong><p id="grade7-stage-question"></p></div><a id="grade7-stage-resource" class="grade7-stage-resource" href="#grade-practice" hidden></a><p id="grade7-no-resource" class="grade7-no-resource" hidden>이 구간의 공개 워크북은 아직 없어요.</p></div>
           <section id="grade7-branches" class="grade7-branches" aria-labelledby="grade7-branches-title" hidden><div class="grade7-branches-heading"><h4 id="grade7-branches-title">원할 때 더 살펴보기</h4><p>학교 수학과 별개로 고르는 연습이에요.</p></div><div class="grade7-branch-list"><a href="#competition-diagnostic"><span>경시 · 선택</span><strong>AMC 8/10 결과 점검</strong><small>직접 채점한 결과를 정리해요. 학년 경로는 바뀌지 않아요.</small></a><details><summary><span>SAT · 맛보기</span><strong>문장제·자료 해석</strong><small>학교에서 배운 개념을 다른 표현으로 읽어 봐요.</small></summary><p>문제의 조건을 표·그래프·식으로 바꾸고 이유를 설명해 보세요. 정식 SAT 진단이나 응시 계획을 뜻하지 않아요.</p></details></div></section>
@@ -76,6 +76,6 @@
   </main>
   <footer class="site-footer"><span>G·MAP · 보딩스쿨 수학 성장 지도</span><span><a href="./index.html">홈</a> · <a href="./learning-plan.html">학습 계획</a></span></footer>
   <script src="./learning/boarding-grade-roadmap.js?v=20261024-4"></script>
-  <script src="./boarding-roadmap.js?v=20261024-11"></script>
+  <script src="./boarding-roadmap.js?v=20261025-2"></script>
 </body>
 </html>

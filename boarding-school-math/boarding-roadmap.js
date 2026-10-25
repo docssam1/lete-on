@@ -5,6 +5,10 @@
   const $ = function (id) { return document.getElementById(id); };
   const initial = Number(new URLSearchParams(location.search).get("grade"));
   let grade = data.getGrade(initial) ? initial : 7;
+  if (data.getGrade(initial)) {
+    document.body.classList.add("boarding-deep-link");
+    document.querySelector(".grade-track").open = false;
+  }
   let stage = grade === 7 ? null : 0;
   let route = null;
   let competition = null;
@@ -39,6 +43,13 @@
     competition = null;
     $("grade7-branches").querySelector("details").open = false;
     render("push");
+  }
+  function revealGrade7Detail() {
+    if (grade !== 7 || window.innerWidth > 600) return;
+    const detail = document.querySelector(".stage-detail");
+    const bounds = detail.getBoundingClientRect();
+    if (bounds.top >= 0 && bounds.bottom <= window.innerHeight - 12) return;
+    window.scrollTo({ top: Math.max(0, window.scrollY + bounds.top - window.innerHeight * .55), behavior: "instant" });
   }
   function renderGradeButtons() {
     const container = $("grade-buttons");
@@ -76,7 +87,7 @@
       const label = document.createElement("strong");
       label.textContent = step[0];
       button.append(number, label);
-      button.addEventListener("click", function () { stage = index; renderStages(entry); list.querySelectorAll("button")[index].focus(); });
+      button.addEventListener("click", function () { stage = index; renderStages(entry); list.querySelectorAll("button")[index].focus(); revealGrade7Detail(); });
       li.append(button);
       list.append(li);
     });

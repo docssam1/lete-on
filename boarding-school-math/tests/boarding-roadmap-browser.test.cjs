@@ -73,6 +73,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.locator("#competition-select").selectOption("kangaroo");
   assert.match(await page.locator("#competition-source-link").getAttribute("href"), /mathkangaroo\.org/);
   await page.locator("#competition-select").selectOption("amc8");
+  await page.locator(".grade-track > summary").click();
   await page.getByRole("button", { name: "Grade 9 지도 보기" }).click();
   assert.deepEqual(await page.locator(".route-button[aria-pressed='true']").allInnerTexts(), []);
   assert.equal(await page.locator(".route-explanation").isHidden(), true);
@@ -119,6 +120,7 @@ test("released unit practice is reachable without exposing the private Grade 7 d
   await page.locator("#grade-practice-more summary").click();
   assert.equal(await page.locator("#grade-practice-more-links a").count(), 7);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await page.locator(".grade-track > summary").click();
   await page.getByRole("button", { name: "Grade 7 지도 보기" }).click();
   assert.equal(await page.locator("#grade-practice-links a").count(), 2);
   assert.equal(await page.locator("#grade-practice-more").isHidden(), true);
@@ -132,12 +134,17 @@ test("released unit practice is reachable without exposing the private Grade 7 d
 test("Grade 7 path previews checkpoints without claiming a measured position", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".boarding-intro").isHidden(), true);
+  assert.equal(await page.locator(".grade-track").evaluate(function (node) { return node.open; }), false);
+  assert.ok(await page.locator(".grade7-path").evaluate(function (node) { return node.getBoundingClientRect().top < window.innerHeight; }), "Grade 7 path should start in the first phone screen");
   assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
-  assert.match(await page.locator("#grade7-position").innerText(), /현재 위치 확인 전/);
+  assert.match(await page.locator("#grade7-position").innerText(), /현재 위치 미확인/);
   assert.equal(await page.locator(".stage-detail").isHidden(), true);
   assert.deepEqual(await page.locator(".grade7-path .stage-button strong").allInnerTexts(), ["유리수", "비례 관계", "식·방정식", "기하·혼합 문제"]);
   assert.deepEqual(await page.locator(".grade7-path .stage-button[aria-pressed='true']").allInnerTexts(), []);
   await page.getByRole("button", { name: /살펴볼 지점 2, 비례 관계/ }).click();
+  assert.ok(await page.locator(".stage-detail").evaluate(function (node) { const bounds = node.getBoundingClientRect(); return bounds.top >= 0 && bounds.bottom <= window.innerHeight; }), "selected stop and its detail should be visible on a phone");
+  assert.equal(await page.getByRole("button", { name: /살펴볼 지점 2, 비례 관계/ }).evaluate(function (node) { return node === document.activeElement; }), true);
   assert.match(await page.locator("#stage-number").innerText(), /살펴보는 구간 2/);
   assert.match(await page.locator("#grade7-stage-question").innerText(), /비례/);
   assert.match(await page.locator("#grade7-stage-resource").getAttribute("href"), /cluster=7.RP.A/);
@@ -147,12 +154,15 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   await page.locator("#grade7-branches a[href='#competition-diagnostic']").click();
   assert.match(page.url(), /#competition-diagnostic$/);
   assert.equal(await page.locator("#competition-select").inputValue(), "");
+  await page.locator(".grade-track > summary").focus();
+  await page.keyboard.press("Enter");
+  assert.equal(await page.locator(".grade-track").evaluate(function (node) { return node.open; }), true);
   await page.getByRole("button", { name: "Grade 8 지도 보기" }).click();
   assert.equal(await page.locator("#grade7-road-intro").isHidden(), true);
   await page.goBack();
   assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
   assert.equal(await page.locator(".stage-detail").isHidden(), true);
-  assert.match(await page.locator("#grade7-position").innerText(), /현재 위치 확인 전/);
+  assert.match(await page.locator("#grade7-position").innerText(), /현재 위치 미확인/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   await page.close();
 });
@@ -160,6 +170,7 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
 test("map has no horizontal overflow at 390px and supports keyboard selection", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await page.goto(url, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".boarding-intro").isVisible(), true);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   const gradeButton = page.getByRole("button", { name: "Grade 8 지도 보기" });
   await gradeButton.focus();
@@ -180,4 +191,14 @@ test("map reflows at small phone, tablet, and landscape widths", async function 
     assert.deepEqual(dimensions, [size.width, size.width], `overflow at ${size.width}`);
     await page.close();
   }
+});
+
+test("Grade 7 deep link keeps the concept path reachable at 320px", async function () {
+  const page = await browser.newPage({ viewport: { width: 320, height: 844 } });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  assert.ok(await page.locator(".grade7-path").evaluate(function (node) { return node.getBoundingClientRect().top < window.innerHeight; }));
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [320, 320]);
+  await page.getByRole("button", { name: /살펴볼 지점 1, 유리수/ }).click();
+  assert.ok(await page.locator(".stage-detail").evaluate(function (node) { const bounds = node.getBoundingClientRect(); return bounds.top >= 0 && bounds.bottom <= window.innerHeight; }));
+  await page.close();
 });

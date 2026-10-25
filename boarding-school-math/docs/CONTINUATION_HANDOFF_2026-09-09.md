@@ -1,6 +1,6 @@
 # Boarding School Math continuation handoff
 
-Updated: 2026-10-24 KST (Mac continuation; older release evidence retained below)
+Updated: 2026-10-25 KST (Mac continuation; older release evidence retained below)
 
 This file is the short restart contract for the Boarding School Math product only. Do not mix it with `hsmiddle`, high-school selection, Geometry World, Number Magic, Fields Classic, or other repositories.
 
@@ -39,6 +39,8 @@ The private `apply` prototype now checks all 18 records before touching current 
 A read-only Chromium accessibility-tree pass on that private preview found 48 named form controls in each KO/EN/zh-Hans mobile variant at 320/390px; at 320px it found ten named choice groups and three named images per locale. MathML structure is present, but spoken math and actual screen-reader use remain unverified. This is harness-only evidence in the external private QA note, not a release or student-renderer accessibility approval.
 
 ## Grade 3–10 visual roadmap milestone — 2026-10-23
+
+2026-10-25 Grade 7 phone-view pass: a direct `boarding-roadmap.html?grade=7` visit now puts the selected-grade map ahead of the general introduction and initially folds the grade switcher, so the concept path appears sooner on 320px and 390px phones. The switcher opens on request; the general introduction and expanded chooser still appear on the unqualified roadmap URL. The Grade 7 prompt and unmeasured-position copy are shorter. Selecting a stop on a phone reveals its explanation without losing focus; selected stop and detail were visually inspected together at 320px and 390px. Focused roadmap data/browser checks cover the 320px path, chooser keyboard opening, history, and unmeasured status. Screenshots are in the external Mac QA folder under `grade7-roadmap-20261025/`. This is local navigation and copy work only; the review-preview workbook, locked screener, learner placement, release, and deployment states are unchanged.
 
 2026-10-24 Grade 7 two-dimensional path follow-up: the public roadmap's Grade 7 view now has four selectable concept stops (rational numbers, proportional relationships, expressions/equations, geometry/mixed problems) and separate optional AMC 8/10 and SAT-style branches. It defaults to “current position unconfirmed”; choosing a stop only previews its explanation, checkpoint question, and available workbook link. `7.NS.A` remains labeled a review preview, while its private 18-slot screener is not linked, scored, or used for placement. AMC still jumps to the existing unsaved manual review and never changes the school path. Grades 3–6 and 8–10 keep their prior stage UI. Grade switches use browser history and reset the preview. No learner record, level assignment, persistence, private assessment release, API, push, deployment, or Drive synchronization was added.
 

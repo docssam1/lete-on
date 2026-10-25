@@ -162,6 +162,12 @@ body.academy-page.page-boarding-roadmap { color: #182230; background: #f5f6f8; b
 .boarding-intro-actions { margin-top: 20px; }
 .boarding-intro-actions a { min-height: 44px; padding: 9px 15px; border-color: #2456c4; color: #fff; background: #2456c4; font-size: .84rem; }
 .boarding-intro-actions a + a { color: #2456c4; background: #fff; }
+.boarding-deep-link .boarding-intro { display: none; }
+.boarding-deep-link .grade-map { padding-top: 24px; }
+.boarding-deep-link .grade-map > .map-head > p { display: none; }
+.grade-track > summary { display: none; }
+.boarding-deep-link .grade-track > summary { display: list-item; cursor: pointer; color: #2456c4; font-size: .86rem; font-weight: 800; }
+.boarding-deep-link .grade-track[open] > summary { margin-bottom: 14px; }
 .grade-map, .route-section, .competition-section { padding-block: 38px; }
 .level-section { padding-bottom: 38px; }
 .map-head h2 { margin-top: 5px; font-size: clamp(1.35rem, 2.4vw, 1.9rem); }
@@ -190,6 +196,7 @@ body.academy-page.page-boarding-roadmap { color: #182230; background: #f5f6f8; b
   .stage-button[aria-pressed="true"] { border-radius: 8px; border-bottom-color: #2456c4; }
 }
 .grade7-active .grade-focus, .grade7-active .concept-bridge { display: none; }
+.grade7-active .source-chip { display: none; }
 .grade7-road-intro { margin-top: 28px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border: 1px solid #c4d5f8; background: #f8faff; }
 .grade7-road-intro[hidden], .grade7-branches[hidden], .stage-detail[hidden], .grade7-stage-check[hidden], .grade7-stage-resource[hidden], .grade7-no-resource[hidden] { display: none; }
 .grade7-road-intro span { color: #2456c4; font-size: .78rem; font-weight: 800; }
@@ -222,7 +229,7 @@ body.academy-page.page-boarding-roadmap { color: #182230; background: #f5f6f8; b
 .grade7-branch-list small, .grade7-branch-list details p { color: #566274; font-size: .8rem; line-height: 1.5; }
 .grade7-branch-list details p { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid #d8dee8; }
 @media (max-width: 600px) {
-  .grade7-road-intro { align-items: start; flex-direction: column; gap: 9px; }
+  .grade7-road-intro { padding: 13px 15px; align-items: start; flex-direction: column; gap: 6px; }
   .grade7-road-intro p { max-width: none; }
   .stage-list.grade7-path { grid-template-columns: 1fr; gap: 0; }
   .stage-list.grade7-path::before { top: 18px; bottom: 18px; left: 26px; right: auto; width: 4px; height: auto; background: repeating-linear-gradient(180deg,#9ebae9 0 16px,#e4ecfa 16px 23px); }
