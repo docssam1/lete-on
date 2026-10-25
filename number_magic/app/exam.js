@@ -243,7 +243,22 @@
   .nm-bond-objects-part[data-bond-part="b"]{border-color:#a87c22}
   .nm-bond-objects [data-bond-object]{display:inline-flex;width:22px;height:22px;flex:0 0 22px}
   .nm-bond-objects [data-bond-object]>svg,.nm-bond-objects [data-bond-object]>img{display:block;width:100%;height:100%;object-fit:contain}
-  .nm-bond-zero{font-family:"NM Series Sans",Pretendard,sans-serif;font-size:13px;line-height:1.4;color:#2a241c;text-align:center}
+  .nm-bond-whole{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:1mm;width:100%;margin-bottom:1mm}
+  .nm-bond-whole>small{font-size:13px;color:#2a241c}
+  .nm-bond-whole [data-bond-object]{display:inline-flex;width:22px;height:22px}
+  .nm-bond-whole [data-bond-object]>svg{width:100%;height:100%}
+  .nm-bond-objects-part.nm-bond-plate{border-radius:45%;min-height:13mm}
+  .nm-bond-objects-part[data-bond-unknown]{border-style:dashed;background:#fff}
+  .nm-bond-whole-ladybug [data-bond-object]{width:18px;height:18px}
+  .nm-nl-stage-bond-objects .nm-bond-ladybug{display:block;width:30mm;height:auto;max-width:100%}
+  .nm-coin-row{display:flex;flex-wrap:wrap;gap:2mm;align-items:center;justify-content:center}
+  .nm-coin-given{display:inline-flex;flex-direction:column;align-items:center;font-size:24px}
+  .nm-coin-given small{font-size:11px;color:#2a241c}
+  .nm-coin-add{display:flex;align-items:center;gap:2mm;font-size:20px}
+  .nm-coin-empty{display:inline-block;width:8mm;height:8mm;border:1.5px dashed #a87c22;border-radius:50%}
+  .nm-draw-key{display:flex;align-items:center;justify-content:center;gap:2mm;font-size:13px;margin-bottom:2mm;color:#2a241c}
+  .nm-draw-key>span{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center}
+  .nm-draw-key svg{width:100%;height:100%}
   .nm-bond text[data-bond-part="a"]{fill:#2f6b4a}
   .nm-bond text[data-bond-part="b"]{fill:#a87c22}
   /* 2026-10-05 원장 "너무 흑백이야" — 유아 그림은 화면과 같은 색으로 인쇄(흑백 프린터는 회색 농도로 구분). */
@@ -1488,6 +1503,14 @@
   .nm-pe-table td[data-pe-group] small{display:block;font-size:12px;color:#2f6b4a}
   .nm-pe-table td{border:1px solid #a87c22;min-width:5mm;padding:1.3mm;text-align:center}
   .nm-pe-groups{display:flex;justify-content:center;align-items:center;gap:3mm}
+  /* Keep the chosen type size; reclaim repeated padding around tall picture examples. */
+  .nm-paper-worked:is([data-worked-widget="numberBond"],[data-worked-widget="g12_gridGroup"]){padding:1mm 2mm;margin:1mm 0}
+  .nm-paper-worked:is([data-worked-widget="numberBond"],[data-worked-widget="g12_gridGroup"]) .nm-pe-panels{margin:1mm 0}
+  .nm-paper-worked:is([data-worked-widget="numberBond"],[data-worked-widget="g12_gridGroup"]) .nm-pe-panels>section{padding:1.5mm}
+  .nm-paper-worked:is([data-worked-widget="numberBond"],[data-worked-widget="g12_gridGroup"]) .nm-pe-panels h4{margin-bottom:1mm}
+  .nm-paper-worked:is([data-worked-widget="numberBond"],[data-worked-widget="g12_gridGroup"]) .nm-nl-stage{padding:1mm}
+  .nm-paper-worked:is([data-worked-widget="numberBond"],[data-worked-widget="g12_gridGroup"])>ol{margin:1mm 0}
+  .nm-paper-worked[data-worked-widget="numberBond"]>.nm-pe-answer{padding:1mm 0}
   .nm-pe-groups>section,.nm-pe-groups>.nm-pe-objects{border:1px solid #c9bda2;padding:2mm}
   .nm-pe-crossed:after{content:'';position:absolute;left:0;right:0;top:50%;border-top:2px solid #b4512e;transform:rotate(-35deg)}
   .nm-pe-match{display:grid;grid-template-columns:minmax(0,1fr) 16mm minmax(0,1fr);align-items:stretch}
@@ -3515,9 +3538,21 @@ function bondSvgTop(a, b){
 /* Concrete parts stay visible below the matching branch numbers. Only givens
    are pictured; the unknown total stays blank on scored questions. */
 function bondJoinObjectsHtml(p){
-  const part=(key,n)=>`<div class="nm-bond-objects-part" data-bond-part="${key}" data-bond-count="${n}">${n===0?`<span class="nm-bond-zero">${esc(lk('없어요 · 0개','None · 0','没有 · 0个'))}</span>`:Array.from({length:n},()=>`<span data-bond-object>${nlObjHtml(nlGlyph(p.emoji))}</span>`).join('')}</div>`;
+  const part=(key,n)=>`<div class="nm-bond-objects-part" data-bond-part="${key}" data-bond-count="${n}">${Array.from({length:n},()=>`<span data-bond-object>${nlObjHtml(nlGlyph(p.emoji))}</span>`).join('')}</div>`;
   return `<div class="nm-bond-objects">${part('a',p.a)}${part('b',p.b)}</div>`;
 }
+function bondSplitObjectsHtml(p,right,ladybug){
+  const objects=n=>Array.from({length:n},()=>`<span data-bond-object>${nlObjHtml(nlGlyph(p.emoji))}</span>`).join('');
+  const whole=`<div class="nm-bond-whole${ladybug?' nm-bond-whole-ladybug':''}" data-bond-whole="${p.whole}"><small>${esc(lk('모두','In all','一共'))}</small>${objects(p.whole)}</div>`;
+  if(ladybug){
+    const positions=[[40,42],[29,54],[51,54],[36,67],[48,76],[27,79],[41,89],[54,88],[25,65]];
+    const spots=(n,isRight,kind)=>positions.slice(0,n).map(([x,y])=>`<circle data-bond-spot="${kind}" cx="${isRight?120-x:x}" cy="${y}" r="4" fill="#191511"/>`).join('');
+    return {whole,parts:`<svg class="nm-bond-ladybug nm-obj-svg" viewBox="0 0 120 120" data-known-side="${right?'right':'left'}" role="img" aria-label="${esc(lk('빈 날개에 점을 그려요','Draw spots on the empty wing','在空翅膀上画点'))}"><path d="M50 22Q40 7 31 17M70 22Q80 7 89 17" fill="none" stroke="#2a241c" stroke-width="2"/><ellipse cx="60" cy="26" rx="17" ry="15" fill="#2a241c"/><path d="M60 30C3 23 4 106 60 106Z" fill="${right?'#fffaf0':'#f4b8a8'}" stroke="#2a241c" stroke-width="2"/><path d="M60 30C117 23 116 106 60 106Z" fill="${right?'#f4b8a8':'#fffaf0'}" stroke="#2a241c" stroke-width="2"/>${spots(p.a,right,'known')}${p.__paperSolvedPart?spots(p.answer,!right,'answer'):''}<text x="32" y="118" text-anchor="middle" font-size="10">${esc(lk('왼쪽','Left','左'))}</text><text x="88" y="118" text-anchor="middle" font-size="10">${esc(lk('오른쪽','Right','右'))}</text></svg>`};
+  }
+  const plate=key=>{const known=key===(right?'b':'a');return `<div class="nm-bond-objects-part nm-bond-plate" data-bond-part="${key}" ${known?`data-bond-count="${p.a}">${objects(p.a)}`:`data-bond-unknown>${p.__paperSolvedPart?objects(p.answer):''}`}</div>`;};
+  return {whole,parts:`<div class="nm-bond-objects">${plate('a')}${plate('b')}</div>`};
+}
+function nlDrawKeyHtml(tok){return `<div class="nm-draw-key"><span>${nlObjHtml(tok)}</span><b>→</b>○ ${esc(lk('동그라미로 그려도 좋아요.','You may draw circles.','也可以画圆圈。'))}</div>`;}
 /* 섞인 장면(세기·분류) — items는 {e,t} 또는 {e,type} 어느 쪽이든 .e만 읽는다. */
 function nlSceneHtml(items){
   if(!Array.isArray(items) || !items.length) return '';
@@ -3538,7 +3573,12 @@ function nlDotsSvg(pts){
   const dots = pts.map(([x,y],i) =>
     `<circle cx="${x}" cy="${y}" r="2.4"/><text x="${x}" y="${y-4.5}" text-anchor="middle" font-size="7.5" font-weight="700">${i+1}</text>`
   ).join('');
-  return `<svg class="nm-nl-dots" viewBox="-6 -8 112 112" role="img" aria-label="${esc(lk('점 잇기','Connect the dots','连点成图'))}">${dots}</svg>`;
+  return `<svg class="nm-nl-dots" viewBox="-6 -8 112 112" role="img" aria-label="${esc(lk('점 잇기','Connect the dots','连点成图'))}">${nlDotDetailsSvg(pts)}${dots}</svg>`;
+}
+/* Unnumbered detail lines clarify the wood and graphite without changing the dot count. */
+function nlDotDetailsSvg(pts){
+  if(JSON.stringify(pts)!=='[[12,88],[20,60],[68,12],[80,12],[88,20],[88,32],[40,80]]')return '';
+  return '<path data-dot-detail="wood" d="M20 60L40 80" fill="none" stroke="#7a6f5c" stroke-width="1.1"/><path data-dot-detail="graphite" d="M12 88L15 77.5L22.5 85Z" fill="#2a241c" stroke="none"/>';
 }
 function nlPyramidHtml(rows){
   if(!Array.isArray(rows)) return '';
@@ -3675,13 +3715,26 @@ function nlVisualHtml(p){
   if(!w) return '';
   const EA = nlUnitEa();
   if(w==='numberBond'){
+    const ladybug=/무당벌레/.test(p.prompt?.ko||''),right=/오른쪽 날개에/.test(p.prompt?.ko||'');
     const svg = (p.dir==='join' && typeof p.a==='number' && typeof p.b==='number') ? bondSvgTop(p.a, p.b)
-      : (typeof p.whole==='number' && typeof p.a==='number') ? bondSvg(p.whole,p.a,/오른쪽/.test(p.prompt?.ko||'')?'right':'left',/무당벌레/.test(p.prompt?.ko||'')) : '';
+      : (typeof p.whole==='number' && typeof p.a==='number') ? bondSvg(p.whole,p.a,ladybug&&right?'right':'left',ladybug) : '';
     const pictured=p.dir==='join'&&typeof p.a==='number'&&typeof p.b==='number';
+    if(p.dir==='split'&&typeof p.whole==='number'&&typeof p.a==='number'){
+      const split=bondSplitObjectsHtml(p,ladybug&&right,ladybug);
+      return nlCard(nlStage(split.whole+svg+split.parts,'nm-nl-stage-bond nm-nl-stage-bond-objects'));
+    }
     return svg ? nlCard(nlStage(svg+(pictured?bondJoinObjectsHtml(p):''), 'nm-nl-stage-bond'+(pictured?' nm-nl-stage-bond-objects':''))) : '';
   }
-  if(w==='tapCount') return Array.isArray(p.items) ? nlCard(nlSceneHtml(p.items), nlAnsBox(p.step === 10 ? lk('원','','元') : EA)) : '';
-  if(w==='tapMake') return nlCard(nlStage(nlBoardHtml(10)));
+  if(w==='tapCount'){
+    if(!Array.isArray(p.items))return '';
+    if(p.step===10){
+      const coins=p.items.map(()=>`<span class="nm-coin-given" data-coin-given>${nlObjHtml('🪙')}<small>10${esc(lk('원','','元'))}</small></span>`).join('');
+      const extra=p.answer/10===p.items.length+1?`<span class="nm-coin-add" data-coin-add>＋<span class="nm-coin-empty"></span></span>`:'';
+      return nlCard(nlStage(`<div class="nm-coin-row">${coins}${extra}</div>`),nlAnsBox(lk('원','','元')));
+    }
+    return nlCard(nlSceneHtml(p.items),nlAnsBox(EA));
+  }
+  if(w==='tapMake') return nlCard(nlStage(nlDrawKeyHtml(p.emoji)+nlBoardHtml(10)));
   if(w==='frameRead') return typeof p.n==='number' ? nlCard(nlFrameObjHtml(p.n, p.emoji), nlAnsBox(EA)) : '';
   if(w==='framePaint') return nlCard(nlFrameObjHtml(0, p.emoji));
   if(w==='seqFill') return Array.isArray(p.seq) ? nlCard(nlSeqStripHtml(p.seq, p.blank)) : '';
@@ -3721,7 +3774,7 @@ function nlVisualHtml(p){
 }
 /* 확장 인쇄 도구 — 확장 파일이 exam.js 내부 헬퍼를 직접 못 보므로 여기서 건네 준다 */
 function nlPrintKit(){
-  return { nlCard, nlStage, nlAnsBox, nlObjHtml, nlGlyphRows, nlTenframeHtml, nlFrameObjHtml, nlBoardHtml, nlChunk,
+  return { nlCard, nlStage, nlAnsBox, nlObjHtml, nlGlyphRows, nlTenframeHtml, nlFrameObjHtml, nlBoardHtml, nlChunk, nlDrawKeyHtml,nlDotDetailsSvg,
     esc, lk, pickL, EA: nlUnitEa(), NL_CIRC: typeof NL_CIRC !== 'undefined' ? NL_CIRC : [] };
 }
 /* 정답지 표기 — 고르는 문항은 인덱스(0/1) 대신 말로. 없으면 null(숫자 그대로). */
@@ -3780,10 +3833,16 @@ const NL_PRINT_WORDS = [
 ];
 function nlPrintAsk(p){
   if(p.widget==='pyramid'&&examLang()==='ko')return '바로 옆 두 돌의 수를 더해 빈 돌에 써 보세요.';
+  if(p.widget==='dotToDot'||p.widget==='g13Dots'){
+    const order=p.order==='down'?lk('가장 큰 수부터 작은 수 순서대로 점을 이어요.','Join the dots from the largest number down.','从最大的数开始，按从大到小的顺序连点。'):lk('1부터 차례대로 점을 이어요.','Join the dots in order from 1.','从1开始按顺序连点。');
+    return order+' '+lk('어떤 그림이 나타날지 상상해 보세요! 점은 모두 몇 개일까요?','Imagine what picture will appear! How many dots are there?','想象会出现什么图画！一共有几个点？');
+  }
   { const ext = window.NM_NL_PRINT && p.widget && window.NM_NL_PRINT[p.widget];
     if(ext && typeof ext.ask === 'function'){ const r = ext.ask(p, nlPrintKit()); if(r != null) return r; } }
   let s = String(pickL(p.prompt) || '');
   NL_PRINT_WORDS.forEach(([a, b]) => { if(a && s.indexOf(a) >= 0) s = s.split(a).join(b); });
+  if(p.widget==='numberBond'&&p.dir==='split')s+=' '+(/무당벌레/.test(p.prompt?.ko||'')?lk('빈 날개에 점도 그려 보세요.','Draw the spots on the empty wing too.','也在空翅膀上画出点。'):lk('빈 접시에 그림도 그려 보세요.','Draw the objects on the empty plate too.','也在空盘子里画出物品。'));
+  if(p.widget==='tapCount'&&p.step===10)s=s.replace('한 닢','한 개');
   /* 점 잇기·길 잇기의 답은 "점이 모두 몇 개"다(생성기 계약) — 화면에선 다 이으면 끝이라 물음이
      프롬프트에 없다. 인쇄물엔 답 칸이 있으니 무엇을 쓰는지 한 줄 덧붙인다(2026-09-19). */
   if(p.widget === 'dotToDot') s += ' ' + lk('점은 모두 몇 개일까요?', 'How many dots are there?', '一共有几个点？');
@@ -5566,7 +5625,8 @@ function w2NeighborExampleHtml(p){
   }
   if(p.widget==='dotToDot'){
     if(p.answer!==p.pts.length)throw new Error('Path-count example mismatch');
-    const svg=nlDotsSvg(p.pts).replace('</svg>',`<polyline points="${p.pts.map(pt=>pt.join(',')).join(' ')}" fill="none" stroke="#2f6b4a" stroke-width="1.1"/></svg>`);
+    const route=p.close?p.pts.concat([p.pts[0]]):p.pts;
+    const svg=nlDotsSvg(p.pts).replace('</svg>',`<polyline data-pe-route="dots" points="${route.map(pt=>pt.join(',')).join(' ')}" fill="none" stroke="#2f6b4a" stroke-width="1.1"/></svg>`);
     return `<div class="nm-w2-example nm-neighbor-example" data-worked-widget="dotToDot"><span class="nm-w2-ex-badge">${esc(lk('예시 · 먼저 함께 풀어요','Example · Let’s solve one','示例·一起做一题'))}</span><p>${esc(lk('1부터 차례대로 점을 이은 다음, 점이 모두 몇 개인지 세어요.','Join the dots in order from 1, then count them all.','从1开始按顺序连点，再数一数点一共有几个。'))}</p><div class="nm-neighbor-path">${svg}</div><div class="nm-neighbor-sum">${esc(lk(`점은 모두 ${p.answer}개예요.`,`${p.answer} dots in all.`,`一共有${p.answer}个点。`))}</div></div>`;
   }
   if(p.widget==='tapCount'&&p.step===10){
@@ -6362,6 +6422,7 @@ function renderRoundPagesBody(item, opts){
   if(item.thread==='DC3'&&['l','xl'].includes(getFontSize()))Object.assign(layout,{cols:1,rows:3,perPage:3,firstRows:0,pitch:74});
   // Joining concrete groups needs room for both the pictures and the number model.
   if(problems.some(p=>p.widget==='numberBond'&&p.dir==='join'))Object.assign(layout,{cols:2,rows:3,perPage:6,firstRows:0,pitch:74});
+  if(problems.some(p=>p.widget==='numberBond'&&p.dir==='split'))Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
   const middleSix = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] && ['visual','word'].includes(layout.type);
   if(middleSix || (item.pacing && ['visual','word'].includes(layout.type))){
     // 원문/정답/모눈 비율은 유지하고, 그래프·문장제의 연습 지면은 2열×3행으로.

@@ -520,7 +520,8 @@
       const wrapCls = p.skin === 'circle' ? 'nm-nl-g46-row' : 'nm-nl-g46-col';
       const two = (p.skin === 'plate' || p.skin === 'cake') && rows.length > 2;
       const note = p.skin === 'paint' ? `<div class="nm-nl-g46-cap">${K.esc(lt(K, '색칠한 곳 / 안 칠한 곳으로 나눠요', 'shade some, leave some', '涂一部分，留一部分'))}</div>` : '';
-      return card(K, two ? `<div style="display:grid;grid-template-columns:auto auto;gap:1mm 5mm">${rows.join('')}</div>` : `<div class="${wrapCls}" style="gap:1.2mm">${rows.join('')}</div>${note}`);
+      const key=['plate','cake','circle'].includes(p.skin)?K.nlDrawKeyHtml(p.skin==='cake'?'🕯️':p.e):'';
+      return card(K, key+(two ? `<div style="display:grid;grid-template-columns:auto auto;gap:1mm 5mm">${rows.join('')}</div>` : `<div class="${wrapCls}" style="gap:1.2mm">${rows.join('')}</div>${note}`));
     },
     label(p, K) {
       const T = p.total, list = [];
