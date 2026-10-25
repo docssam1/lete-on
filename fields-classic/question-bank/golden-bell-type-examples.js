@@ -1469,7 +1469,147 @@ const FIGNUM_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET });
+// ───────────────────────── 6권 붙인 도형 · 잘라 만든 도형 · 꺾인 도형의 둘레 ─────────────────────────
+// 좌표는 cm(오른쪽 +x, 아래 +y). 맞닿은 변은 바깥 둘레에 들어가지 않는다(두 도형의 둘레를 더하면 두 번 빠진다).
+// 꺾인 변은 바깥으로 옮기면 큰 직사각형이 되고, 안으로 들어간 부분은 그 깊이를 두 번 더한다.
+// value.geo = 검사기용: shapes(좌표)와 given(문제에 쓴 길이) · ask(답) — 각각 { what: edge|perimeter|outline, ... , value }.
+// 그림 kind "poly"(golden-bell-type-examples-view.js).
+const rectPts = (x, y, w, h) => [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
+const cellsOf = (rows) => rows.flatMap((row, y) => [...row].map((ch, x) => (ch === "#" ? rectPts(x, y, 1, 1) : null)).filter(Boolean));
+// 모눈 도형: 칸마다 위·아래·옆이 비어 있으면 바깥 변
+function gridEdges(rows) {
+  const on = (x, y) => rows[y]?.[x] === "#";
+  let flat = 0, side = 0;
+  rows.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== "#") return; if (!on(x, y - 1)) flat++; if (!on(x, y + 1)) flat++; if (!on(x - 1, y)) side++; if (!on(x + 1, y)) side++; }));
+  return { flat, side, total: flat + side };
+}
+const cm = (n) => `${n}cm`;
+function joinedSidesExample({ id, title, w, h }) {
+  const P = 2 * (w + h), rect = { pts: rectPts(0, 0, w, h), color: "rect", name: "직사각형" };
+  const rh = { pts: [[0, 0], [w, 0], [w + 0.6 * w, -0.8 * w], [0.6 * w, -0.8 * w]], color: "rhombus", name: "마름모" };
+  const fig = (tone, show) => ({ kind: "poly", shapes: [rect, rh], labels: [{ a: [w, 0], b: [w, h], text: cm(h) }, { a: [0, h], b: [w, h], text: show >= 1 ? cm(w) : "가", hi: show === 1 }, { a: [w, 0], b: [w * 1.6, -0.8 * w], text: show >= 2 ? cm(w) : "?" }], shared: show >= 2 ? [{ a: [0, 0], b: [w, 0] }] : [], tone });
+  const steps = [
+    { text: `직사각형의 가로와 세로를 더하면 둘레의 반, ${P} ÷ 2 = ${(P / 2)}. 가 = ${P / 2} − ${h} = ${w}cm.`, figure: fig("doing", 1) },
+    { text: `직사각형의 위 변과 마름모의 변이 맞닿아 있어요. 맞닿은 변은 길이가 같으니 마름모의 한 변도 ${w}cm.`, figure: fig("doing", 2) },
+    { text: `마름모는 네 변이 같아요. 나 = ${w} × 4 = ${w * 4}cm.`, figure: fig("check", 2) }
+  ];
+  return { id, title, problem: `둘레가 ${P}cm이고 세로가 ${h}cm인 직사각형 위에 마름모를 붙였어요. 직사각형의 가로 가와 마름모의 둘레 나를 구해요.`, figure: fig("given", 0), steps, answer: `가는 ${w}cm, 나는 ${josa(cm(w * 4), "이에요")}.`, value: { geo: { shapes: [rect.pts, rh.pts], given: [{ what: "perimeter", shape: 0, value: P }, { what: "edge", a: [w, 0], b: [w, h], value: h }], ask: [{ what: "edge", a: [0, h], b: [w, h], value: w }, { what: "perimeter", shape: 1, value: w * 4 }] } } };
+}
+function joinedFindExample({ id, title, s, A }) {
+  const sq = { pts: rectPts(0, 0, s, s), color: "square", name: "정사각형" }, rc = { pts: rectPts(s, 0, A, s), color: "rect", name: "직사각형" }, P = 2 * (s + A + s);
+  const fig = (tone, showA, box) => ({ kind: "poly", shapes: [sq, rc], labels: [{ a: [0, 0], b: [s, 0], text: cm(s) }, { a: [s, 0], b: [s + A, 0], text: showA ? cm(A) : "A", hi: showA }], shared: [{ a: [s, 0], b: [s, s] }], box: box ? [0, 0, s + A, s] : null, tone });
+  const steps = [
+    { text: `맞닿은 변(빨간 점선)은 둘레에 들어가지 않아요. 바깥 둘레는 가로 ${s} + A, 세로 ${s}인 직사각형과 같아요.`, figure: fig("doing", false, true) },
+    { text: `가로 + 세로는 둘레의 반, ${P} ÷ 2 = ${P / 2}. 가로는 ${P / 2} − ${s} = ${s + A}cm.`, figure: fig("doing", false, true) },
+    { text: `가로 ${s + A}cm에서 정사각형의 ${s}cm를 빼면 A = ${s + A} − ${s} = ${A}cm.`, figure: fig("check", true, true) }
+  ];
+  return { id, title, problem: `한 변이 ${s}cm인 정사각형과 직사각형을 붙였더니 둘레가 ${P}cm예요. A는 몇 cm일까요?`, figure: fig("given", false, false), steps, answer: `A는 ${josa(cm(A), "이에요")}.`, value: { geo: { shapes: [sq.pts, rc.pts], given: [{ what: "edge", a: [0, 0], b: [s, 0], value: s }, { what: "outline", value: P }], ask: [{ what: "edge", a: [s, 0], b: [s + A, 0], value: A }] } } };
+}
+// 붙인 도형의 둘레: parts = [{ shape, pts, name }], 맞닿은 변 shared(각각 길이 len)
+function joinedPerimeterExample({ id, title, parts, shared, labels, problem }) {
+  // sides: 직사각형·평행사변형은 [가로, 세로], 정다각형·마름모는 모든 변
+  const perim = (p) => (p.sides.length === 2 ? 2 * (p.sides[0] + p.sides[1]) : sum(p.sides));
+  const how = (p) => (p.sides.length === 2 ? `(${p.sides[0]} + ${p.sides[1]}) × 2` : `${p.sides[0]} × ${p.sides.length}`);
+  const groups = []; for (const p of parts) { const g = groups.find((x) => x.name === p.name && x.sides.join() === p.sides.join()); if (g) g.n++; else groups.push({ ...p, n: 1 }); }
+  const total = sum(parts.map(perim)), cut = sum(shared.map((e) => e.len)) * 2, out = total - cut;
+  const fig = (tone, sh) => ({ kind: "poly", shapes: parts.map((p) => ({ pts: p.pts, color: p.color, name: p.tag ?? p.name })), labels, shared: sh ? shared : [], tone });
+  const groupText = (g) => (g.n > 1 ? `${g.name} 하나는 ${how(g)} = ${perim(g)}, ${g.n}개라 ${perim(g)} × ${g.n} = ${perim(g) * g.n}` : `${g.name} ${how(g)} = ${perim(g)}`);
+  const steps = [
+    { text: `도형마다 둘레를 구해요. ${groups.map(groupText).join(", ")}.${groups.length > 1 ? ` 모두 ${groups.map((g) => perim(g) * g.n).join(" + ")} = ${total}.` : ""}`, figure: fig("doing", false) },
+    { text: `맞닿은 변(빨간 점선)은 바깥 둘레가 아니에요. 두 도형에서 한 번씩 셌으니 두 번 빼요. ${shared.map((e) => `${e.len} × 2`).join(" + ")} = ${cut}.`, figure: fig("doing", true) },
+    { text: `${total} − ${cut} = ${out}cm.`, figure: fig("check", true) }
+  ];
+  return { id, title, problem, figure: fig("given", false), steps, answer: `둘레는 ${josa(cm(out), "이에요")}.`, value: { geo: { shapes: parts.map((p) => p.pts), given: labels.filter((l) => /^\d/u.test(l.text)).map((l) => ({ what: "edge", a: l.a, b: l.b, value: Number(l.text.replace("cm", "")) })), ask: [{ what: "outline", value: out }] } } };
+}
+// 정사각형으로 나눈 직사각형: squares = [x, y, 한 변, 이름]. 가장 작은 정사각형의 한 변이 1
+function squareSplitExample({ id, title, squares, order }) {
+  const shapes = squares.map(([x, y, s, name]) => ({ pts: rectPts(x, y, s, s), color: "square", name: name || "" }));
+  const named = Object.fromEntries(squares.filter((q) => q[3] && q[3] !== "1").map((q) => [q[3], q[2]]).sort((a, b) => a[0].localeCompare(b[0])));
+  const fig = (tone, shown) => ({ kind: "poly", shapes: shapes.map((s, i) => ({ ...s, name: squares[i][3] && shown.includes(squares[i][3]) ? `${squares[i][3]} ${squares[i][2]}` : s.name })), tone });
+  const steps = order.map((o, i) => ({ text: o.text, figure: fig(i === order.length - 1 ? "check" : "doing", order.slice(0, i + 1).map((x) => x.name)) }));
+  return { id, title, problem: `그림의 칸은 모두 정사각형이고, 가장 작은 정사각형의 한 변은 1이에요. ${Object.keys(named).join(", ")}의 한 변의 길이를 구해요.`, figure: fig("given", []), steps, answer: `${Object.entries(named).map(([n, s], i, arr) => (i === arr.length - 1 ? `${josa(n, "은")} ${josa(s, "이에요")}` : `${josa(n, "은")} ${s}`)).join(", ")}.`, value: { split: { squares, named } } };
+}
+// 직사각형에서 가장 큰 정사각형을 차례로 잘라 낸다
+function cutSquaresExample({ id, title, w, h, count }) {
+  // 자를 때마다 남은 조각 [x, y, 가로, 세로]를 적어 둔다
+  const cuts = [], rests = []; let x = 0, y = 0, W = w, H = h;
+  for (let i = 0; i < count; i++) { const s = Math.min(W, H); cuts.push([x, y, s]); if (W >= H) { x += s; W -= s; } else { y += s; H -= s; } rests.push([x, y, W, H]); }
+  const names = ["㉠", "㉡", "㉢", "㉣"].slice(0, count);
+  const labels = [{ a: [0, 0], b: [w, 0], text: cm(w) }, { a: [0, 0], b: [0, h], text: cm(h) }];
+  const fig = (i, tone) => ({ kind: "poly", shapes: [...cuts.slice(0, i + 1).map(([cx, cy, s], j) => ({ pts: rectPts(cx, cy, s, s), color: "square", name: names[j], hi: j === i })), ...(rests[i][2] && rests[i][3] ? [{ pts: rectPts(...rests[i]), color: "para" }] : [])], labels, tone });
+  const steps = cuts.map(([, , s], i) => ({
+    text: i === 0 ? `가장 큰 정사각형의 한 변은 짧은 변 ${s}cm예요. ${names[0]}의 둘레는 ${s} × 4 = ${s * 4}cm.` : `남은 조각에서 또 가장 큰 정사각형을 잘라요. 남은 조각의 짧은 변이 ${s}cm라 ${names[i]}의 둘레는 ${s} × 4 = ${s * 4}cm.`,
+    figure: fig(i, i === count - 1 ? "check" : "doing")
+  }));
+  return { id, title, problem: `가로 ${w}cm, 세로 ${h}cm인 직사각형에서 가장 큰 정사각형을 차례로 잘라 ${names.join(", ")}을 만들었어요. ${names.join(", ")}의 둘레를 각각 구해요.`, figure: { kind: "poly", shapes: [{ pts: rectPts(0, 0, w, h), color: "rect" }], labels, tone: "given" }, steps, answer: `${cuts.map(([, , s], i) => `${names[i]} ${s * 4}cm`).join(", ")}예요.`, value: { cut: { w, h, sides: cuts.map((c) => c[2]), perims: cuts.map((c) => c[2] * 4) } } };
+}
+function cutDiffExample({ id, title, w, h }) {
+  const P = 2 * (w + h), Q = 4 * h;
+  const fig = (tone, cut) => ({ kind: "poly", shapes: cut ? [{ pts: rectPts(0, 0, h, h), color: "square", name: "정사각형", hi: true }, { pts: rectPts(h, 0, w - h, h), color: "para" }] : [{ pts: rectPts(0, 0, w, h), color: "rect" }], labels: [{ a: [0, 0], b: [w, 0], text: cm(w) }, { a: [0, 0], b: [0, h], text: cm(h) }], tone });
+  const steps = [
+    { text: `처음 직사각형의 둘레는 (${w} + ${h}) × 2 = ${P}cm.`, figure: fig("doing", false) },
+    { text: `가장 큰 정사각형의 한 변은 짧은 변 ${h}cm. 둘레는 ${h} × 4 = ${Q}cm.`, figure: fig("doing", true) },
+    { text: `${P} − ${Q} = ${P - Q}cm. 긴 변이 ${w - h}cm 더 긴 만큼이 두 번 빠진 것과 같아요.`, figure: fig("check", true) }
+  ];
+  return { id, title, problem: `가로 ${w}cm, 세로 ${h}cm인 직사각형을 잘라 가장 큰 정사각형을 만들었어요. 처음 직사각형과 정사각형의 둘레의 차는 몇 cm일까요?`, figure: fig("given", false), steps, answer: `둘레의 차는 ${josa(cm(P - Q), "이에요")}.`, value: { cut: { w, h, sides: [h], diff: P - Q } } };
+}
+function gridPerimeterExample({ id, title, rows, pressed = false }) {
+  const g = gridEdges(rows), W = rows[0].length, H = rows.length;
+  const shapes = cellsOf(rows).map((pts) => ({ pts, color: "cell" }));
+  const fig = (tone, box) => ({ kind: "poly", shapes, box: box ? [0, 0, W, H] : null, tone });
+  const steps = pressed
+    ? [
+      { text: `안으로 들어간 변을 바깥으로 밀어 봐요. 밀면 가로 ${W}칸, 세로 ${H}칸인 직사각형이 돼요.`, figure: fig("doing", true) },
+      { text: `둘레는 그대로라 (${W} + ${H}) × 2 = ${(W + H) * 2}cm.`, figure: fig("doing", true) },
+      { text: `변을 하나하나 세어 확인해요. 가로로 놓인 변 ${g.flat}개, 세로로 놓인 변 ${g.side}개, 모두 ${g.total}개.`, figure: fig("check", true) }
+    ]
+    : [
+      { text: `바깥 변을 한 칸에 1cm씩 세요. 가로로 놓인 변이 ${g.flat}개예요.`, figure: fig("doing", false) },
+      { text: `세로로 놓인 변이 ${g.side}개예요. 모두 ${g.flat} + ${g.side} = ${g.total}cm.`, figure: fig("check", false) }
+    ];
+  return { id, title, problem: `모눈 한 칸의 한 변은 1cm예요. 이 도형의 둘레는 몇 cm일까요?`, figure: fig("given", false), steps, answer: `둘레는 ${josa(cm(g.total), "이에요")}.`, value: { grid: { rows, total: g.total } } };
+}
+// 직각으로 꺾인 도형: pts(시계 방향), labels(문제에 쓴 길이), notch = 들어간 깊이(없으면 0)
+function bentExample({ id, title, pts, labels, notch = 0 }) {
+  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]), W = Math.max(...xs) - Math.min(...xs), H = Math.max(...ys) - Math.min(...ys);
+  const base = (W + H) * 2, total = base + notch * 2, shape = { pts, color: "rect" };
+  const fig = (tone, box) => ({ kind: "poly", shapes: [shape], labels, box: box ? [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)] : null, tone });
+  const steps = [
+    { text: `가로로 놓인 변은 위로, 세로로 놓인 변은 옆으로 옮겨요. 가로 ${W}cm, 세로 ${H}cm인 직사각형이 돼요.`, figure: fig("doing", true) },
+    { text: `(${W} + ${H}) × 2 = ${base}cm.`, figure: fig(notch ? "doing" : "check", true) }
+  ];
+  if (notch) steps.push({ text: `안으로 들어간 부분의 가로 변 ${notch}cm 두 개는 옮겨도 채워지지 않아요. ${notch} × 2 = ${josa(notch * 2, "을")} 더해 ${base} + ${notch * 2} = ${total}cm.`, figure: fig("check", true) });
+  return { id, title, problem: `직각으로 꺾인 도형의 둘레는 몇 cm일까요?`, figure: fig("given", false), steps, answer: `둘레는 ${josa(cm(total), "이에요")}.`, value: { geo: { shapes: [pts], given: labels.map((l) => ({ what: "edge", a: l.a, b: l.b, value: Number(l.text.replace("cm", "")) })), ask: [{ what: "outline", value: total }] } } };
+}
+const S5 = 5, TRI_H = 4.33;
+const OUTLINE_SET = {
+  id: "outline",
+  types: {
+    "붙인 도형의 변": () => [joinedSidesExample({ id: "join-side-1", title: "예제 1", w: 10, h: 8 })],
+    "붙인 도형의 둘레로 변 찾기": () => [joinedFindExample({ id: "join-find-1", title: "예제 1", s: 4, A: 7 })],
+    "붙인 도형의 둘레": () => [
+      joinedPerimeterExample({ id: "join-per-1", title: "예제 1", parts: [{ name: "직사각형", color: "rect", pts: rectPts(0, 0, 9, 6), sides: [9, 6] }, { name: "마름모", color: "rhombus", pts: [[0, 0], [6, 0], [9.6, -4.8], [3.6, -4.8]], sides: [6, 6, 6, 6] }], shared: [{ a: [0, 0], b: [6, 0], len: 6 }], labels: [{ a: [0, 6], b: [9, 6], text: "9cm" }, { a: [9, 0], b: [9, 6], text: "6cm" }, { a: [6, 0], b: [9.6, -4.8], text: "6cm" }], problem: "가로 9cm, 세로 6cm인 직사각형 위에 한 변이 6cm인 마름모를 붙였어요. 이 도형의 둘레는 몇 cm일까요?" }),
+      joinedPerimeterExample({ id: "join-per-2", title: "예제 2", parts: [{ name: "정사각형", color: "square", pts: rectPts(0, 0, S5, S5), sides: [S5, S5, S5, S5] }, { name: "정사각형", color: "square", pts: rectPts(S5, 0, S5, S5), sides: [S5, S5, S5, S5] }, { name: "정삼각형", color: "triangle", pts: [[0, 0], [S5, 0], [S5 / 2, -TRI_H]], sides: [S5, S5, S5] }], shared: [{ a: [S5, 0], b: [S5, S5], len: S5 }, { a: [0, 0], b: [S5, 0], len: S5 }], labels: [{ a: [0, S5], b: [S5, S5], text: "5cm" }], problem: "한 변이 5cm인 정사각형 2개와 정삼각형 1개를 그림처럼 붙였어요. 이 도형의 둘레는 몇 cm일까요?" })
+    ],
+    "정사각형으로 나누기": () => [squareSplitExample({ id: "sq-split-1", title: "예제 1", squares: [[0, 0, 5, "C"], [5, 0, 3, "B"], [5, 3, 2, "A"], [7, 3, 1, "1"], [7, 4, 1, ""]], order: [
+      { name: "A", text: "A 옆에 한 변이 1인 정사각형 두 개가 세로로 쌓여 있어요. A의 한 변 = 1 + 1 = 2." },
+      { name: "B", text: "B의 아래 변은 A와 1짜리를 나란히 놓은 길이예요. B의 한 변 = 2 + 1 = 3." },
+      { name: "C", text: "C의 오른쪽 변은 B와 A를 위아래로 놓은 길이예요. C의 한 변 = 3 + 2 = 5." }
+    ] })],
+    "잘라 만든 정사각형의 둘레": () => [cutSquaresExample({ id: "cut-sq-1", title: "예제 1", w: 11, h: 7, count: 3 })],
+    "둘레의 차이": () => [cutDiffExample({ id: "cut-diff-1", title: "예제 1", w: 12, h: 7 })],
+    "모눈 도형의 둘레": () => [gridPerimeterExample({ id: "grid-per-1", title: "예제 1", rows: ["##", "#.", "##"] }), gridPerimeterExample({ id: "grid-per-2", title: "예제 2", rows: ["####", "#..#"] })],
+    "꼭짓점에서 누른 모양의 둘레": () => [gridPerimeterExample({ id: "press-1", title: "예제 1", rows: ["..##", ".###", "####"], pressed: true })],
+    "꺾인 도형의 둘레": () => [
+      bentExample({ id: "bent-1", title: "예제 1", pts: [[0, 0], [4, 0], [4, 2], [7, 2], [7, 6], [0, 6]], labels: [{ a: [0, 6], b: [7, 6], text: "7cm" }, { a: [0, 0], b: [0, 6], text: "6cm" }, { a: [0, 0], b: [4, 0], text: "4cm" }, { a: [7, 2], b: [7, 6], text: "4cm" }] }),
+      bentExample({ id: "bent-2", title: "예제 2", pts: [[0, 0], [2, 0], [2, 2], [5, 2], [5, 4], [8, 4], [8, 7], [0, 7]], labels: [{ a: [0, 7], b: [8, 7], text: "8cm" }, { a: [0, 0], b: [0, 7], text: "7cm" }] })
+    ],
+    "들어간 도형의 둘레": () => [bentExample({ id: "notch-1", title: "예제 1", pts: [[0, 0], [10, 0], [10, 2], [6, 2], [6, 4], [10, 4], [10, 6], [0, 6]], labels: [{ a: [0, 0], b: [10, 0], text: "10cm" }, { a: [0, 0], b: [0, 6], text: "6cm" }, { a: [6, 2], b: [10, 2], text: "4cm", inside: true }], notch: 4 })],
+    "붙인 정사각형의 둘레": () => [joinedPerimeterExample({ id: "join-sq-1", title: "예제 1", parts: [{ name: "정사각형", tag: "", color: "square", pts: rectPts(0, 0, 4, 4), sides: [4, 4, 4, 4] }, { name: "정사각형", tag: "", color: "square", pts: rectPts(0, 4, 4, 4), sides: [4, 4, 4, 4] }, { name: "정사각형", tag: "", color: "square", pts: rectPts(4, 4, 4, 4), sides: [4, 4, 4, 4] }], shared: [{ a: [0, 4], b: [4, 4], len: 4 }, { a: [4, 4], b: [4, 8], len: 4 }], labels: [{ a: [0, 0], b: [4, 0], text: "4cm" }], problem: "한 변이 4cm인 정사각형 3개를 그림처럼 붙였어요. 이 도형의 둘레는 몇 cm일까요?" })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

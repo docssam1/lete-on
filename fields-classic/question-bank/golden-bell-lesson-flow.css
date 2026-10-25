@@ -205,6 +205,8 @@
 .tx-tri-layers span { display: grid; justify-items: center; }
 .tx-tri-layers b { color: #222; font-size: 13px; font-weight: 900; }
 .tx-tri-layers small { color: var(--tone); font-size: 12px; font-weight: 900; }
+.tx-poly { display: grid; justify-items: center; max-width: 100%; }
+.tx-poly svg { max-width: 100%; height: auto; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

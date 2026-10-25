@@ -617,6 +617,53 @@ function verifyExample(setId, typeLabel, ex, lesson) {
     } else if (v.kind === "odd-rows") { let s = 0; for (let r = 0; r < v.n; r++) s += 2 * r + 1; assert.equal(v.total, s); assert.ok(has(s)); }
     else if (v.kind === "tri-layers") { let s = 0; for (let l = 1; l <= v.n; l++) s += triDots(l); assert.equal(v.total, s, `${ex.id}: 쌓기나무 수`); assert.ok(has(s)); for (const item of lesson.original.items) { const o = item.visual || {}; if (o.subtype === "source-cube-stair") assert.notEqual(o.stage, v.n, `${ex.id}: 원본과 같은 층`); } }
     else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "outline") {
+    // 길이는 좌표로 다시 잰다. 바깥 둘레 = 도형마다 둘레 − 다른 도형의 변과 겹친(맞닿은) 부분. 모눈은 칸을 하나하나 놓아 같은 방법으로.
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    const close = (a, b, msg) => assert.ok(Math.abs(a - b) < 0.02, `${ex.id}: ${msg} (${a} ≠ ${b})`);
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const edgesOf = (pts) => pts.map((p, i) => [p, pts[(i + 1) % pts.length]]);
+    const perim = (pts) => edgesOf(pts).reduce((s, [a, b]) => s + dist(a, b), 0);
+    const overlap = ([a, b], [c, d]) => {
+      const L = dist(a, b), ux = (b[0] - a[0]) / L, uy = (b[1] - a[1]) / L, cross = (p) => (p[0] - a[0]) * uy - (p[1] - a[1]) * ux;
+      if (Math.abs(cross(c)) > 1e-6 || Math.abs(cross(d)) > 1e-6) return 0;
+      const t = (p) => (p[0] - a[0]) * ux + (p[1] - a[1]) * uy, [lo, hi] = [Math.min(t(c), t(d)), Math.max(t(c), t(d))];
+      return Math.max(0, Math.min(L, hi) - Math.max(0, lo));
+    };
+    const outline = (polys) => polys.reduce((s, pts, i) => s + edgesOf(pts).reduce((t, e) => t + dist(...e) - polys.reduce((o, other, j) => (j === i ? o : o + edgesOf(other).reduce((q, f) => q + overlap(e, f), 0)), 0), 0), 0);
+    const onBoundary = (polys, a, b) => polys.some((pts) => edgesOf(pts).some((e) => Math.abs(overlap(e, [a, b]) - dist(a, b)) < 1e-6));
+    const labelTexts = (ex.figure.labels || []).map((l) => l.text);
+    // 정사각형 나누기·모눈은 문제 글이 늘 「한 변은 1」이라 수 대신 나눈 모양·모눈을 원본과 비교한다(아래)
+    if (nums(ex.problem).length && !v.split && !v.grid) for (const item of lesson.original.items) assert.notEqual(nums(ex.problem).join(), nums(item.prompt).join(), `${ex.id}: 원본과 같은 수`);
+    if (v.geo) {
+      const polys = v.geo.shapes;
+      const measure = (q) => (q.what === "edge" ? (assert.ok(onBoundary(polys, q.a, q.b), `${ex.id}: 그 변이 도형에 있음`), dist(q.a, q.b)) : q.what === "perimeter" ? perim(polys[q.shape]) : outline(polys));
+      for (const q of v.geo.given) { close(measure(q), q.value, "문제에 쓴 길이"); assert.ok(nums(ex.problem).includes(q.value) || labelTexts.includes(`${q.value}cm`), `${ex.id}: 주어진 ${q.value}이 문제나 그림에 있음`); }
+      for (const q of v.geo.ask) { close(measure(q), q.value, "답"); assert.ok(nums(ex.answer).includes(q.value), `${ex.id}: 답 ${q.value}`); }
+      for (const pts of polys) if (pts.length === 4 && /마름모|정사각형/u.test(ex.problem) && new Set(edgesOf(pts).map((e) => dist(...e).toFixed(2))).size === 1) close(perim(pts) / 4, dist(pts[0], pts[1]), "네 변이 같음");
+      for (const item of lesson.original.items) { const o = item.visual || {}; if (o.subtype === "source-ortho") for (const sh of o.shapes || []) assert.notEqual(JSON.stringify(sh.points), JSON.stringify(polys[0]), `${ex.id}: 원본 도형과 같음`); }
+    } else if (v.split) {
+      const sq = v.split.squares, area = sq.reduce((s, [, , k]) => s + k * k, 0);
+      const W = Math.max(...sq.map(([x, , k]) => x + k)), H = Math.max(...sq.map(([, y, k]) => y + k));
+      assert.equal(area, W * H, `${ex.id}: 정사각형이 직사각형을 꼭 채움`);
+      for (let i = 0; i < sq.length; i++) for (let j = i + 1; j < sq.length; j++) { const [a, b] = [sq[i], sq[j]]; const ox = Math.min(a[0] + a[2], b[0] + b[2]) - Math.max(a[0], b[0]), oy = Math.min(a[1] + a[2], b[1] + b[2]) - Math.max(a[1], b[1]); assert.ok(ox <= 0 || oy <= 0, `${ex.id}: 겹치는 칸 없음`); }
+      assert.equal(Math.min(...sq.map((q) => q[2])), 1, `${ex.id}: 가장 작은 정사각형 1`);
+      for (const [name, side] of Object.entries(v.split.named)) { assert.equal(sq.find((q) => q[3] === name)[2], side); assert.match(ex.answer, new RegExp(`${name}[은는] ${side}\\b`, "u"), `${ex.id}: ${name}`); }
+      for (const item of lesson.original.items) { const o = item.visual || {}; if (o.subtype === "source-square-split" && o.squares) assert.notEqual(JSON.stringify(o.squares.map((q) => q.slice(0, 3))), JSON.stringify(sq.map((q) => q.slice(0, 3))), `${ex.id}: 원본 나누기와 같음`); }
+    } else if (v.cut) {
+      // 남은 직사각형에서 짧은 변만큼의 정사각형을 차례로 떼어 본다
+      let W = v.cut.w, H = v.cut.h; const sides = [];
+      while (sides.length < v.cut.sides.length) { const s = Math.min(W, H); sides.push(s); if (W >= H) W -= s; else H -= s; }
+      assert.deepEqual(v.cut.sides, sides, `${ex.id}: 잘라 낸 정사각형`);
+      if (v.cut.perims) for (const p of v.cut.perims) assert.ok(nums(ex.answer).includes(p), `${ex.id}: 둘레 ${p}`);
+      if (v.cut.diff !== undefined) { assert.equal(v.cut.diff, 2 * (v.cut.w + v.cut.h) - 4 * sides[0], `${ex.id}: 둘레의 차`); assert.ok(nums(ex.answer).includes(v.cut.diff)); }
+      for (const item of lesson.original.items) { const o = item.visual || {}; assert.ok(!(o.w === v.cut.w && o.h === v.cut.h), `${ex.id}: 원본과 같은 직사각형`); }
+    } else if (v.grid) {
+      const cells = v.grid.rows.flatMap((row, y) => [...row].map((ch, x) => (ch === "#" ? [[x, y], [x + 1, y], [x + 1, y + 1], [x, y + 1]] : null)).filter(Boolean));
+      close(outline(cells), v.grid.total, "모눈 둘레"); assert.ok(nums(ex.answer).includes(v.grid.total));
+      const mirror = v.grid.rows.map((r) => [...r].reverse().join(""));
+      for (const item of lesson.original.items) { const o = item.visual || {}; if (o.rows) { assert.notEqual(o.rows.join("/"), v.grid.rows.join("/"), `${ex.id}: 원본 모눈과 같음`); assert.notEqual(o.rows.join("/"), mirror.join("/"), `${ex.id}: 원본 모눈을 뒤집은 것`); } }
+    } else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

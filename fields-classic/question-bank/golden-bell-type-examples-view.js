@@ -580,8 +580,38 @@ function triLayersFigure(f) {
   return `<div class="tx-tri-layers" style="--tone:${color}">${Array.from({ length: f.n }, (_, i) => `<span>${dotsFigure({ shape: "triangle", n: i + 1, tone: f.tone })}<b>${i + 1}층</b>${f.counts ? `<small>${((i + 1) * (i + 2)) / 2}개</small>` : ""}</span>`).join("")}</div>`;
 }
 
+// ───── 둘레(붙인·자른·꺾인 도형): 좌표(cm, 아래로 +y)를 그림 칸에 맞춰 줄인다 ─────
+// shapes = [{ pts, color: rect|square|para|rhombus|triangle|cell, name? }], labels = [{ a, b, text, hi? , out? }](변 바깥쪽에 글),
+// shared = 맞닿은 변(빨간 점선), moved = 옮긴 변(안내 색 점선), box = 옮겨 만든 직사각형 [x0, y0, x1, y1]
+const POLY_COLOR = { rect: SHAPE.square, square: SHAPE.square, para: { fill: "#fff3c4", line: "#d9a400" }, rhombus: SHAPE.diamond, triangle: SHAPE.triangle, cell: { fill: "#ffeaa6", line: "#a8741a" } };
+function polyFigure(f) {
+  const color = TONE[f.tone || "given"], all = f.shapes.flatMap((s) => s.pts).concat(f.box ? [[f.box[0], f.box[1]], [f.box[2], f.box[3]]] : []);
+  const xs = all.map((p) => p[0]), ys = all.map((p) => p[1]), x0 = Math.min(...xs), y0 = Math.min(...ys), w = Math.max(...xs) - x0 || 1, h = Math.max(...ys) - y0 || 1;
+  const k = Math.min(250 / w, 170 / h, 34), pad = 30, W = w * k + pad * 2, H = h * k + pad * 2;
+  const P = ([x, y]) => [pad + (x - x0) * k, pad + (y - y0) * k], cx = pad + (w * k) / 2, cy = pad + (h * k) / 2;
+  let body = "";
+  if (f.box) { const [a, b] = [P([f.box[0], f.box[1]]), P([f.box[2], f.box[3]])]; body += `<rect x="${a[0]}" y="${a[1]}" width="${b[0] - a[0]}" height="${b[1] - a[1]}" fill="none" stroke="${color}" stroke-width="2" stroke-dasharray="6 4"/>`; }
+  for (const s of f.shapes) {
+    const c = POLY_COLOR[s.color] || POLY_COLOR.rect;
+    body += `<polygon points="${s.pts.map((p) => P(p).join(",")).join(" ")}" fill="${s.hi ? color : c.fill}" fill-opacity="${s.hi ? 0.3 : 1}" stroke="${c.line}" stroke-width="${s.color === "cell" ? 1.2 : 2.2}" stroke-linejoin="round"/>`;
+    if (s.name) { const m = s.pts.reduce((acc, p) => [acc[0] + p[0] / s.pts.length, acc[1] + p[1] / s.pts.length], [0, 0]); const [mx, my] = P(m); body += text(mx, my, s.name, { size: 13, weight: 900, fill: "#222" }); }
+  }
+  const seg = (e, stroke, dash, width = 3) => { const [a, b] = [P(e.a), P(e.b)]; return `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${stroke}" stroke-width="${width}" stroke-dasharray="${dash}" stroke-linecap="round"/>`; };
+  for (const e of f.shared || []) body += seg(e, "#e8503a", "5 4");
+  for (const e of f.moved || []) body += seg(e, color, "2 4", 3.5);
+  for (const l of f.labels || []) {
+    const [a, b] = [P(l.a), P(l.b)], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+    let nx = -(b[1] - a[1]), ny = b[0] - a[0]; const len = Math.hypot(nx, ny) || 1; nx /= len; ny /= len;
+    if ((mx - cx) * nx + (my - cy) * ny < 0 !== Boolean(l.inside)) { nx = -nx; ny = -ny; }
+    if (l.hi) body += seg(l, color, "0", 4);
+    body += text(mx + nx * 14, my + ny * 12, l.text, { size: 12, weight: 900, fill: l.hi ? color : /^[가-힣A-Z?]+$/u.test(l.text) ? "#5b2fa8" : "#222" });
+  }
+  return `<div class="tx-poly">${svg(W, H, body, f.label || "도형의 둘레 그림")}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "poly") return polyFigure(figure);
   if (figure.kind === "dots") return dotsFigure(figure);
   if (figure.kind === "seq") return seqFigure(figure);
   if (figure.kind === "stone-rows") return stoneRowsFigure(figure);
