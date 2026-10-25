@@ -187,4 +187,115 @@ export const BOARDS = {
       ]
     };
   })()
+
+  ,"book-01/fold-one-cut": (() => {
+    const C = 50, N = 4;
+    const P0 = { x: 60, y: 130 }, PF = { x: 330, y: 130 }, PU = { x: 600, y: 130 }, PH = { x: 60, y: 385 };
+    const PAPER = "#f6d77a", TWO = "#e3b744", HOLE = "red";
+    const sheet = (at, cols, rows, fill, cell = C) => [{ kind: "fill", x: at.x, y: at.y, w: cols * cell, h: rows * cell, fill }, { kind: "grid", x: at.x, y: at.y, cols, rows, cell, color: "#b9ab86" }];
+    const mid = (at, r, c, cell = C) => [at.x + (c + 0.5) * cell, at.y + (r + 0.5) * cell];
+    const cutFolded = [[0, 1]];                                   // 접힌 종이(오른쪽 두 줄) 안에서 자른 칸
+    const cutOpen = cutFolded.map(([r, c]) => [r, c + 2]);         // 펼친 종이에서는 오른쪽 반의 같은 칸
+    const mirror = mirrorLR(cutOpen, N);                           // 접는 선 건너편
+    const checkCut = [[3, 2]], checkHoles = [...checkCut, ...mirrorLR(checkCut, N)];
+    return {
+      title: "한 번 접어 자르고 펼쳐요",
+      kicker: "1권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "색종이를 접어서 자르고 펼치면, 구멍이 어디에 몇 개 생길까요? 접고, 자르고, 펼치는 것을 하나씩 천천히 해 봐요.",
+          items: [{ kind: "text", x: 60, y: 80, text: "한 번 접어 자르고 펼쳐요", size: 54 }] },
+        { say: "모눈이 있는 색종이를 그려요. 가로 네 칸, 세로 네 줄이에요.",
+          items: sheet(P0, N, N, PAPER) },
+        { say: "가운데 세로선이 접는 선이에요. 왼쪽 두 줄과 오른쪽 두 줄, 똑같이 반씩 나뉘어요.",
+          items: [{ kind: "line", x1: P0.x + 2 * C, y1: P0.y - 12, x2: P0.x + 2 * C, y2: P0.y + N * C + 12, color: "gold", width: 5, dash: true }, { kind: "text", x: P0.x + 2 * C, y: P0.y + N * C + 40, text: "접는 선", size: 26, color: "gold", align: "center" }] },
+        { say: "왼쪽 반을 접는 선을 따라 오른쪽으로 넘겨요. 책장을 넘기듯이 접어요.",
+          items: [{ kind: "arrow", x1: P0.x + 0.5 * C, y1: P0.y - 8, x2: P0.x + 3.5 * C, y2: P0.y - 8, bend: 34, color: "red" }] },
+        { say: "접으니까 종이가 반으로 줄었어요. 오른쪽 두 줄 위에 왼쪽 두 줄이 포개졌어요. 이제 종이가 두 겹이에요.",
+          items: [...sheet(PF, 2, N, TWO), { kind: "text", x: PF.x + C, y: PF.y + N * C + 40, text: "두 겹", size: 30, color: "gold", align: "center" }] },
+        { say: "접힌 종이에서 맨 윗줄, 오른쪽 칸을 잘라요. 가위로 자르면 포개진 두 겹이 한꺼번에 잘려요.",
+          items: [{ kind: "cells", x: PF.x, y: PF.y, cell: C, cells: cutFolded, fill: HOLE }, { kind: "text", x: PF.x + 2 * C + 16, y: PF.y + 34, text: "← 자른 칸", size: 26, color: "red" }] },
+        { say: "두 겹을 한 번에 잘랐으니까, 구멍은 한 겹에 하나씩, 모두 두 개가 생겨요. 어디에 생기는지 펼쳐서 확인해요.",
+          items: [{ kind: "text", x: 560, y: 390, text: "두 겹 × 한 번 자르기 = 구멍 두 개", size: 30 }] },
+        { say: "종이를 다시 펼쳐요. 펼친 색종이를 그려요. 접는 선도 같은 자리에 그대로 있어요.",
+          items: [...sheet(PU, N, N, PAPER), { kind: "line", x1: PU.x + 2 * C, y1: PU.y - 12, x2: PU.x + 2 * C, y2: PU.y + N * C + 12, color: "gold", width: 5, dash: true }] },
+        { say: "먼저 위에 놓여 있지 않던 오른쪽 반을 봐요. 잘린 칸은 그대로, 맨 윗줄 오른쪽 끝 칸이에요.",
+          items: [{ kind: "cells", x: PU.x, y: PU.y, cell: C, cells: cutOpen, fill: HOLE }] },
+        { say: "접혀서 위에 있던 왼쪽 반은, 거울처럼 접는 선을 넘어가 있었어요. 접는 선에서 오른쪽으로 두 칸이니까, 왼쪽으로도 두 칸 가요.",
+          items: [{ kind: "arrow", x1: mid(PU, 0, 3)[0], y1: PU.y - 10, x2: mid(PU, 0, 0)[0], y2: PU.y - 10, bend: 34, color: "red" }] },
+        { say: "그래서 맨 윗줄 왼쪽 끝 칸에도 구멍이 생겨요. 구멍이 두 개예요.",
+          items: [{ kind: "cells", x: PU.x, y: PU.y, cell: C, cells: mirror, fill: HOLE }] },
+        { say: "두 구멍은 접는 선을 사이에 두고 서로 마주 봐요. 접는 선에서 똑같이 두 칸 떨어져 있어요. 접는 선이 거울이에요.",
+          items: [{ kind: "text", x: 830, y: 190, text: "접는 선 = 거울", size: 32, color: "red" }, { kind: "text", x: 830, y: 240, text: "같은 거리에", size: 28, color: "red" }, { kind: "text", x: 830, y: 280, text: "마주 봐요", size: 28, color: "red" }] },
+        { say: "가로로 접어도 똑같이 생각해요. 위쪽 반을 아래로 접고 자르면, 구멍은 가로 접는 선을 사이에 두고 위아래로 마주 봐요.",
+          items: [...sheet(PH, N, N, PAPER, 45), { kind: "line", x1: PH.x - 10, y1: PH.y + 2 * 45, x2: PH.x + N * 45 + 10, y2: PH.y + 2 * 45, color: "gold", width: 4, dash: true }, { kind: "cells", x: PH.x, y: PH.y, cell: 45, cells: [[0, 1], ...mirrorTB([[0, 1]], N)], fill: HOLE }] },
+        { say: "정리해요. 접으면 두 겹. 한 번 자르면 구멍이 두 개. 펼치면 두 구멍은 접는 선에서 같은 거리에 마주 봐요.", mood: "praise",
+          items: [{ kind: "box", x: 300, y: 430, w: 660, h: 130, color: "gold" }, { kind: "text", x: 325, y: 480, text: "접는 선 = 거울, 같은 거리에 마주 봐요", size: 34 }, { kind: "text", x: 325, y: 535, text: "두 겹이면 구멍 두 개", size: 34 }] },
+        { say: "한 문제 풀어 봐요. 왼쪽 반을 오른쪽으로 접고, 맨 아랫줄에서 접는 선에 붙은 칸을 잘랐어요. 펼치면 어떤 모양일까요? 빨간 칸이 구멍이에요.", mood: "think",
+          items: [],
+          check: { question: "왼쪽 반을 오른쪽으로 접고, 맨 아랫줄에서 접는 선에 붙은 칸을 잘랐어요. 펼치면 어떤 모양일까요? (빨간 칸 = 구멍)",
+            options: [{ cols: N, rows: N, cell: 20, cells: [[3, 2], [3, 3]], fill: "red" }, { cols: N, rows: N, cell: 20, cells: [[3, 2]], fill: "red" }, { cols: N, rows: N, cell: 20, cells: checkHoles, fill: "red" }], answer: 2,
+            hint: "두 겹이라 구멍은 두 개예요. 접는 선에서 같은 거리, 건너편을 찾아요.", sayHint: "두 겹을 잘랐으니 구멍은 두 개예요. 잘린 칸이 접는 선에 붙어 있었으니, 건너편에서도 접는 선에 붙은 칸이에요.",
+            right: "맞았어요! 두 구멍이 접는 선에 붙어 마주 봐요.", sayRight: "맞았어요! 접는 선에 붙은 칸을 잘랐으니, 펼치면 접는 선 양쪽에 붙은 두 칸이 구멍이 돼요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
+
+  ,"book-01/fold-two-cut": (() => {
+    const C = 40, N = 4;
+    const P0 = { x: 50, y: 150 }, P1 = { x: 270, y: 150 }, P2 = { x: 420, y: 150 }, Q1 = { x: 560, y: 150 }, Q2 = { x: 760, y: 150 };
+    const PAPER = "#f6d77a", TWO = "#e3b744", FOUR = "#c99a2b", HOLE = "red";
+    const sheet = (at, cols, rows, fill) => [{ kind: "fill", x: at.x, y: at.y, w: cols * C, h: rows * C, fill }, { kind: "grid", x: at.x, y: at.y, cols, rows, cell: C, color: "#b9ab86" }];
+    const vline = (at, rows, color = "gold") => ({ kind: "line", x1: at.x + 2 * C, y1: at.y - 10, x2: at.x + 2 * C, y2: at.y + rows * C + 10, color, width: 4, dash: true });
+    const hline = (at, cols, color = "gold") => ({ kind: "line", x1: at.x - 10, y1: at.y + 2 * C, x2: at.x + cols * C + 10, y2: at.y + 2 * C, color, width: 4, dash: true });
+    // 접기: ① 왼쪽 반 → 오른쪽(남는 곳: 2·3번째 줄) ② 아래쪽 반 → 위(남는 곳: 0·1번째 줄). 네 겹 종이 = 원래 종이의 오른쪽 위 2×2.
+    const toOpen = ([r, c]) => [r, c + 2];
+    const open2 = (cells) => [...cells, ...mirrorTB(cells, N)];       // 마지막(위아래) 접기를 먼저 편다
+    const open1 = (cells) => [...cells, ...mirrorLR(cells, N)];       // 그다음 첫(좌우) 접기
+    const cut = [[1, 1]].map(toOpen);                                 // 네 겹 종이의 오른쪽 아래 칸
+    const afterOne = open2(cut), afterTwo = open1(afterOne);
+    const checkCut = [[0, 0]].map(toOpen), checkHoles = open1(open2(checkCut));
+    const local = (cells, dc = 0) => cells.map(([r, c]) => [r, c - dc]);
+    return {
+      title: "두 번 접고 차례로 펼쳐요",
+      kicker: "1권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "이번에는 색종이를 두 번 접어요. 두 번 접고 자르면 구멍이 몇 개 생길까요? 접는 순서와 펼치는 순서를 꼭 기억하면서 천천히 해 봐요.",
+          items: [{ kind: "text", x: 50, y: 80, text: "두 번 접고 차례로 펼쳐요", size: 54 }] },
+        { say: "모눈 색종이를 그려요. 가운데 세로선과 가로선, 접는 선이 두 개예요.",
+          items: [...sheet(P0, N, N, PAPER), vline(P0, N), hline(P0, N)] },
+        { say: "첫 번째 접기예요. 왼쪽 반을 오른쪽으로 접어요.",
+          items: [{ kind: "arrow", x1: P0.x + 0.5 * C, y1: P0.y - 8, x2: P0.x + 3.5 * C, y2: P0.y - 8, bend: 30, color: "red" }, { kind: "text", x: P0.x, y: P0.y + N * C + 44, text: "① 왼쪽 → 오른쪽", size: 24, color: "red" }] },
+        { say: "반으로 접혀서 두 겹이 됐어요. 세로로 긴 종이예요.",
+          items: [...sheet(P1, 2, N, TWO), hline(P1, 2), { kind: "text", x: P1.x + C, y: P1.y + N * C + 44, text: "두 겹", size: 26, color: "gold", align: "center" }] },
+        { say: "두 번째 접기예요. 아래쪽 반을 위로 접어요.",
+          items: [{ kind: "arrow", x1: P1.x + 2 * C + 12, y1: P1.y + 3.5 * C, x2: P1.x + 2 * C + 12, y2: P1.y + 0.5 * C, color: "green" }, { kind: "text", x: P1.x - 10, y: P1.y + N * C + 80, text: "② 아래 → 위", size: 24, color: "green" }] },
+        { say: "두 겹을 또 반으로 접었으니 네 겹이에요. 두 겹의 두 배, 네 겹. 작은 네모가 됐어요.",
+          items: [...sheet(P2, 2, 2, FOUR), { kind: "text", x: P2.x + C, y: P2.y + 2 * C + 40, text: "네 겹", size: 26, color: "gold", align: "center" }] },
+        { say: "이 네 겹 종이에서 오른쪽 아래 칸을 잘라요. 가위로 한 번 자르면 네 겹이 한꺼번에 잘려요.",
+          items: [{ kind: "cells", x: P2.x, y: P2.y, cell: C, cells: local(cut, 2), fill: HOLE }] },
+        { say: "이제 펼쳐요. 펼칠 때는 거꾸로예요. 마지막에 접은 것부터 먼저 펼쳐요. 두 번째로 접은 위아래 접기를 먼저 풀어요.",
+          items: [{ kind: "text", x: 50, y: 470, text: "펼치기는 거꾸로: 마지막 접기부터", size: 34, color: "green" }] },
+        { say: "위아래 접기를 풀면 두 겹짜리 긴 종이로 돌아와요. 가운데 가로선이 방금 푼 접는 선이에요.",
+          items: [...sheet(Q1, 2, N, TWO), hline(Q1, 2, "green")] },
+        { say: "잘린 칸은 가로 접는 선 바로 위 칸이었어요. 거울처럼 아래로 넘기면 가로 접는 선 바로 아래 칸이에요. 구멍이 두 개가 돼요.",
+          items: [{ kind: "cells", x: Q1.x, y: Q1.y, cell: C, cells: local(afterOne, 2), fill: HOLE }] },
+        { say: "다음은 첫 번째로 접은 좌우 접기를 풀어요. 처음 색종이 크기로 돌아와요. 가운데 세로선이 방금 푼 접는 선이에요.",
+          items: [...sheet(Q2, N, N, PAPER), vline(Q2, N, "red"), { kind: "cells", x: Q2.x, y: Q2.y, cell: C, cells: afterOne, fill: HOLE }] },
+        { say: "오른쪽 끝 줄의 구멍 두 개가, 세로 접는 선 건너편 왼쪽 끝 줄로 똑같이 넘어가요. 같은 거리, 같은 높이예요.",
+          items: [{ kind: "arrow", x1: Q2.x + 3.5 * C, y1: Q2.y - 10, x2: Q2.x + 0.5 * C, y2: Q2.y - 10, bend: 30, color: "red" }, { kind: "cells", x: Q2.x, y: Q2.y, cell: C, cells: mirrorLR(afterOne, N), fill: HOLE }] },
+        { say: `구멍을 세어 봐요. 하나, 둘, 셋, 넷. 모두 ${afterTwo.length}개예요.`,
+          items: [{ kind: "text", x: Q2.x, y: Q2.y + N * C + 44, text: `구멍 ${afterTwo.length}개`, size: 30, color: "red" }] },
+        { say: "왜 네 개일까요? 한 번 접으면 두 겹, 두 번 접으면 네 겹이에요. 네 겹을 한 번 자르니 구멍이 네 개 생긴 거예요.",
+          items: [{ kind: "text", x: 50, y: 525, text: "한 번 접기 → 두 겹,  두 번 접기 → 네 겹 → 구멍 네 개", size: 32 }] },
+        { say: "정리해요. 접은 순서와 펼치는 순서는 반대예요. 마지막 접기부터 하나씩 풀고, 풀 때마다 구멍을 접는 선 건너편 같은 거리에 하나씩 더 그려요.", mood: "praise",
+          items: [{ kind: "box", x: 40, y: 430, w: 920, h: 135, color: "gold" }] },
+        { say: "한 문제 풀어 봐요. 똑같이 왼쪽 반을 오른쪽으로, 아래쪽 반을 위로 접었어요. 이번에는 네 겹 종이의 왼쪽 위 칸을 잘랐어요. 펼치면 어떤 모양일까요?", mood: "think",
+          items: [],
+          check: { question: "왼쪽 반을 오른쪽으로, 아래쪽 반을 위로 접은 뒤 네 겹 종이의 왼쪽 위 칸을 잘랐어요. 펼치면? (빨간 칸 = 구멍)",
+            options: [{ cols: N, rows: N, cell: 20, cells: open2(checkCut), fill: "red" }, { cols: N, rows: N, cell: 20, cells: [...checkCut, [1, 2], [0, 1], [1, 1]], fill: "red" }, { cols: N, rows: N, cell: 20, cells: checkHoles, fill: "red" }], answer: 2,
+            hint: "네 겹을 잘랐으니 구멍은 네 개예요. 위아래 접기부터 풀고, 그다음 좌우 접기를 풀어요.", sayHint: "네 겹을 잘랐으니 구멍은 네 개예요. 마지막에 접은 위아래 접기를 먼저 풀고, 그다음 좌우 접기를 풀며 하나씩 그려 봐요.",
+            right: "맞았어요! 구멍 네 개가 두 접는 선에 대해 마주 봐요.", sayRight: "맞았어요! 위아래 접기를 풀어 두 개, 좌우 접기를 풀어 네 개. 펼칠 때는 마지막 접기부터예요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
 };
