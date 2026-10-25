@@ -4,7 +4,7 @@
 // 움직임 줄이기 설정이면 바로 완성 장면.
 // 글자는 손글씨 글꼴(나눔펜, OFL · assets/fonts/nm-lesson-hand.woff2)을 펜이 지나가며 드러내고, 그림은 실제 선(stroke)을 펜이 그린다.
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
-import { BOARDS } from "./concept-boards.js?v=20261025b";
+import { BOARDS, lineId } from "./concept-boards.js?v=20261025c";
 
 const NS = "http://www.w3.org/2000/svg";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -214,7 +214,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
       checkState.solved = true;
       buttons.forEach((b, k) => { b.disabled = true; b.classList.toggle("right", k === i); });
       verdict.textContent = check.right || "맞았어요!";
-      await say(check.sayRight || "맞았어요! 개념을 잘 익혔어요.", "praise");
+      await say(check.sayRight || "맞았어요! 개념을 잘 익혔어요.", "praise", lineId(boardId, "right"));
       finish();
       return;
     }
@@ -223,13 +223,13 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     if (checkState.tries >= 2) {
       buttons.forEach((b, k) => { b.disabled = true; b.classList.toggle("right", k === check.answer); });
       verdict.textContent = check.reveal || "정답을 표시했어요. 왜 그런지 판서를 다시 봐요.";
-      await say(check.sayReveal || "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요.", "think");
+      await say(check.sayReveal || "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요.", "think", lineId(boardId, "reveal"));
       checkState.solved = true;
       finish();
       return;
     }
     verdict.textContent = check.hint || "다시 생각해 봐요.";
-    say(check.sayHint || check.hint || "다시 생각해 봐요.", "think");
+    say(check.sayHint || check.hint || "다시 생각해 봐요.", "think", lineId(boardId, "hint"));
   }
   function finish() { if (finished) return; finished = true; stepEl.textContent = `${beats.length} / ${beats.length}`; root.classList.add("is-done"); onDone(); }
 
@@ -238,7 +238,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
   async function playBeat(k) {
     const beat = beats[k], my = runId;
     setCaption(beat, k);
-    const sayP = beat.say ? say(beat.say, beat.mood || "talk") : Promise.resolve();
+    const sayP = beat.say ? say(beat.say, beat.mood || "talk", lineId(boardId, "b", k + 1)) : Promise.resolve();
     for (const item of beat.items || []) { const ok = await drawItem(item, false); if (!ok || my !== runId) return false; }
     penOff();
     if (beat.check) { renderCheck(beat.check); await sayP; return my === runId; }

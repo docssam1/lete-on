@@ -7,7 +7,7 @@
 하는 일
   1) 녹음을 참조 음성으로 다듬는다: 24kHz 모노 · 소리 크기 맞추기 · 8.5~11초 사이 **가장 조용한 틈에서** 자른다
      (10초에서 그냥 자르면 낱말 중간이 잘려 자동 전사가 어긋난다).
-  2) 독쌤 대사를 모은다: science-lab/data/voice/*.voice.json + science-lab/intro/narration.json 의 lines.
+  2) 독쌤 대사를 모은다: science-lab/data/voice/*.voice.json + fields-classic/question-bank/data/voice/*.voice.json(손글씨 판서) + science-lab/intro/narration.json 의 lines.
   3) 참조로 복제 프롬프트를 **한 번만** 만든다(참조 전사는 모델의 Whisper 가 한 번 — 지어내지 않는다).
   4) 한 줄씩 복제 음성을 만들고(기대 길이의 1.25배를 넘으면 꼬리 반복으로 보고 길이를 고정해 다시), 같은 Whisper 로 **다시 받아 적어** 원문과 비교한다(글자 오류율 CER).
      어긋나면 최대 3번까지 다시 만들고 가장 나은 것을 쓴다. 끝까지 CER > 0.35 이면 **올리지 않는다** —
@@ -31,6 +31,8 @@ import argparse, base64, glob, hashlib, json, os, re, subprocess, sys, time, wav
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SL = os.path.join(ROOT, "science-lab")
 OUT = os.path.join(SL, "audio", "docssam")
+# 독쌤 공부 대사 폴더들 — 사이언스 랩 + 사고력 문제은행 손글씨 판서(2026-10-25). 결과는 한 폴더(OUT)에 모은다.
+VOICE_DIRS = [os.path.join(SL, "data", "voice"), os.path.join(ROOT, "fields-classic", "question-bank", "data", "voice")]
 WORK = os.path.join(ROOT, ".docssam-work")
 V1 = "docssam-clone-v1"             # 녹음 그대로의 말 빠르기(초당 약 6.5음절)
 SLOW = "docssam-clone-v2-slow"       # --speed 0.8 로 느리게 만든 것 — 공부 대사(data/voice)만
@@ -77,9 +79,13 @@ def prep_ref(src, dst):
     return dst
 
 
+def voice_files():
+    return [f for d in VOICE_DIRS for f in sorted(glob.glob(os.path.join(d, "*.voice.json")))]
+
+
 def study_lines():
     out = []
-    for f in sorted(glob.glob(os.path.join(SL, "data", "voice", "*.voice.json"))):
+    for f in voice_files():
         for l in json.load(open(f, encoding="utf-8")).get("lines", []):
             out.append((l["id"], l["text"]))
     return out
@@ -87,7 +93,7 @@ def study_lines():
 
 def lines():
     out = []
-    for f in sorted(glob.glob(os.path.join(SL, "data", "voice", "*.voice.json"))):
+    for f in voice_files():
         for l in json.load(open(f, encoding="utf-8")).get("lines", []):
             out.append((l["id"], l["text"]))
     nar = os.path.join(SL, "intro", "narration.json")

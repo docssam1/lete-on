@@ -1,0 +1,162 @@
+{
+ "voice": "docssam-omnivoice",
+ "note": "손글씨 판서(concept-boards.js) 독쌤 말. 손으로 고치지 말고 tools/export-board-voice.mjs 로 다시 만든다. 음성 파일은 science-lab/audio/docssam/ (scripts/omnivoice-docssam.py).",
+ "lines": [
+  {
+   "id": "fcb-book-01-clock-turning-b01",
+   "text": "오늘은 시계 바늘을 돌려 볼 거예요. 바늘을 돌리면 어디를 가리키게 되는지, 천천히 하나씩 알아봐요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b02",
+   "text": "먼저 시계판을 그려요. 시계판에는 1부터 12까지 숫자가 빙 둘러 있어요. 12가 맨 위, 6이 맨 아래예요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b03",
+   "text": "회색 바늘을 2에 놓아요. 여기가 출발이에요. 바늘은 가운데에 꽂혀 있어서, 끝만 빙 돌아요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b04",
+   "text": "돌리는 방향부터 정해요. 1, 2, 3, 이렇게 숫자가 커지는 쪽으로 도는 것을 시계 방향이라고 해요. 시계 바늘이 평소에 도는 방향이에요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b05",
+   "text": "이제 한 바퀴를 돌려 봐요. 2에서 출발해서 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1을 지나 다시 2까지. 시계판을 한 바퀴 빙 돌아요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b06",
+   "text": "한 바퀴를 다 돌면 어디일까요? 출발했던 자리, 바로 2예요. 한 바퀴를 돌면 언제나 처음 자리로 돌아와요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b07",
+   "text": "이번에는 반 바퀴예요. 한 바퀴의 절반이에요. 2에서 가운데를 지나 똑바로 건너편으로 가면 8이 있어요. 이렇게 마주 보는 자리를 맞은편이라고 해요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b08",
+   "text": "2에서 시계 방향으로 반 바퀴 돌려요. 3, 4, 5, 6, 7을 지나서 8에 도착해요. 시계판의 절반을 돌았어요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b09",
+   "text": "반 바퀴를 돌면 맞은편이에요. 2의 맞은편은 8. 숫자로는 여섯 칸을 간 거예요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b10",
+   "text": "다음은 반의 반 바퀴예요. 반 바퀴의 또 절반이에요. 2에서 시계 방향으로 숫자를 하나씩 세어 봐요. 3, 4, 5. 세 칸이에요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b11",
+   "text": "반의 반 바퀴를 돌리면 세 칸을 가요. 2에서 세 칸 가면 5예요. 시계판을 네 조각으로 나눈 것 중 한 조각만큼 돌았어요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b12",
+   "text": "이번에는 반대 방향이에요. 숫자가 작아지는 쪽으로 돌아요. 시계 반대 방향이라고 해요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b13",
+   "text": "2에서 시계 반대 방향으로 반의 반 바퀴, 세 칸을 가요. 1, 12, 11. 11에 도착해요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b14",
+   "text": "비교해 봐요. 똑같이 세 칸인데, 시계 방향이면 5, 반대 방향이면 11이에요. 그래서 돌리기 전에 꼭 방향부터 확인해요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b15",
+   "text": "정리해요. 한 바퀴는 처음 자리. 반 바퀴는 맞은편, 여섯 칸. 반의 반 바퀴는 세 칸. 그리고 돌리기 전에 방향을 먼저 봐요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b16",
+   "text": "한 번만 더 해 볼게요. 9에서 시계 방향으로 반의 반 바퀴면 어디일까요? 세 칸을 세어요. 10, 11, 12. 12예요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-b17",
+   "text": "이제 한 문제 풀어 봐요. 3을 가리키는 바늘을 시계 방향으로 반 바퀴 돌리면 어디일까요? 반 바퀴는 맞은편이었죠. 시계판을 보고 골라요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-hint",
+   "text": "반 바퀴는 맞은편이에요. 3에서 가운데를 지나 똑바로 건너편에 있는 숫자가 무엇인지 시계판에서 찾아요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-right",
+   "text": "맞았어요! 3에서 4, 5, 6, 7, 8을 지나 9. 3의 맞은편은 9예요. 이제 게임으로 손에 익혀 봐요."
+  },
+  {
+   "id": "fcb-book-01-clock-turning-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b01",
+   "text": "거울에 비친 모양은 어떻게 생겼을까요? 칸 하나하나 천천히 따라가며 알아봐요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b02",
+   "text": "먼저 모눈을 그려요. 가로로 세 칸, 세로로 세 줄이에요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b03",
+   "text": "파란 칸을 칠해요. 왼쪽 줄에 위에서부터 한 칸, 두 칸, 세 칸. 그리고 맨 아랫줄 가운데에 한 칸 더. 이게 처음 모양이에요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b04",
+   "text": "모양의 오른쪽에 거울을 세워요. 노란 점선이 거울이에요. 거울은 자기 앞에 있는 것을 건너편에 똑같은 거리로 비춰요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b05",
+   "text": "거울 건너편에 똑같은 모눈을 그려요. 여기에 거울에 비친 모양을 그릴 거예요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b06",
+   "text": "거울에 가장 가까운 칸부터 봐요. 맨 아랫줄 가운데 칸이에요. 거울을 건너면 거울에서 똑같은 거리, 그러니까 건너편에서도 가운데 칸에 비쳐요. 줄은 그대로 맨 아랫줄이에요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b07",
+   "text": "거울에서 멀리 있던 왼쪽 줄 세 칸은, 건너편에서도 거울에서 멀리, 오른쪽 끝 줄에 비쳐요. 위에서부터 한 칸, 두 칸, 세 칸. 줄은 그대로예요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b08",
+   "text": "완성이에요. 옆에 세운 거울은 왼쪽과 오른쪽만 바꿔요. 위아래 높이는 그대로예요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b09",
+   "text": "이번에는 처음 모양의 아래에 거울을 놓아요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b10",
+   "text": "거울 아래에 모눈을 그려요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b11",
+   "text": "거울에 가장 가까운 맨 아랫줄의 두 칸이, 거울 바로 아래 첫째 줄에 비쳐요. 왼쪽 오른쪽 자리는 그대로예요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b12",
+   "text": "멀리 있던 맨 윗칸은 멀리, 맨 아랫줄로 가요. 가운데 칸은 가운데 그대로예요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b13",
+   "text": "아래 거울은 위와 아래만 바꿔요. 왼쪽 오른쪽은 그대로예요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b14",
+   "text": "정리해요. 옆 거울은 좌우만, 위아래 거울은 위아래만 바꿔요. 그리고 거울에 가까운 칸은 건너편에서도 거울 가까이에, 멀리 있던 칸은 멀리 가요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b15",
+   "text": "하나만 더요. 왼쪽에 세운 거울도 옆 거울이에요. 오른쪽 거울과 똑같이 좌우만 바뀌니까, 비친 모양도 똑같아요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-b16",
+   "text": "한 문제 풀어 봐요. 처음 모양을 왼쪽 거울에 비추면 어떤 모양일까요? 좌우만 바뀌고 높이는 그대로인 것을 골라요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-hint",
+   "text": "왼쪽 거울도 옆 거울이에요. 세 칸짜리 긴 줄이 위에서부터 그대로 있고, 왼쪽 오른쪽만 바뀐 모양을 찾아요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-right",
+   "text": "맞았어요! 왼쪽 거울이든 오른쪽 거울이든 좌우만 바뀌어서 같은 모양이 돼요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-01-mirror-reflection-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  }
+ ]
+}

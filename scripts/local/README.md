@@ -24,6 +24,14 @@
 - 장치는 알아서 고릅니다(엔비디아 GPU → 애플 칩 MPS → CPU). MPS 에 없는 연산은 CPU 로 물러서게 해 두었습니다(`PYTORCH_ENABLE_MPS_FALLBACK=1`). 그래도 MPS 에서 오류가 나면 `bash scripts/local/omnivoice-clone.command --device cpu` 로 돌리고, 오류 메시지를 Claude 에게 주세요.
 - 이 맥의 첫 실행 결과(로그 끝 RTF = 음성 1초에 걸린 초)로 맥이 운영용 음성 생성에 쓸 만한지 정합니다. 클라우드 세션에서는 이 스크립트를 돌려 볼 수 없어서(맥·GPU 없음) **맥에서 처음 도는 것을 아직 확인하지 못했습니다.**
 
+## omnivoice-docssam.cmd 에 손글씨 판서 대사가 들어갔다 (2026-10-25)
+
+사고력 문제은행 「손글씨 개념」(`fields-classic/question-bank/concept-boards.js`)의 독쌤 말 39줄이
+`fields-classic/question-bank/data/voice/boards.voice.json` 에 있고, `omnivoice-docssam.cmd` 가 사이언스 랩 대사와 **함께** 만든다.
+결과 폴더는 같다(`science-lab\audio\docssam\`). 할 일은 전과 같다: `git pull` → `omnivoice-docssam.cmd` 더블클릭(녹음 파일은 전처럼) →
+`science-lab\audio\docssam\` 를 GitHub 에 올리기. 그러면 학생 화면이 그 줄은 독쌤 목소리로, 아직 없는 줄은 기기 음성으로 읽는다.
+대본을 고쳤으면 먼저 `node fields-classic/question-bank/tools/export-board-voice.mjs` 로 JSON 을 다시 만든다(`--check` 로 어긋남 확인).
+
 ## omnivoice-clone.cmd ← 원장 지시(2026-09-21): "그냥 우리 나온 목소리 복제해"
 
 **이게 먼저입니다.** 아이들이 이미 아는 누미 목소리가 바뀌면 안 되니까요. 목소리를 새로
