@@ -1,15 +1,14 @@
 /* =========================================================================
-   Shared entry + level-completion flow for the eight Cube Town template games
+   Shared entry + level-completion flow for eleven Cube Town games
    (count-heights, hidden-count, fill-box, cube-tunnel, cube-piece-lab,
-   cube-memory, three-views, crystal-cubes).
+   cube-memory, three-views, crystal-cubes, cube-blueprint, minmax,
+   find-shape).
 
-   Two gaps this closes, both reported from real play:
+   Three gaps this closes, reported from real play:
 
-   1. Only 똑같이 쌓기 showed a level list when you walked in. The other games
-      hid #openLevels inside a panel header that the focused game shell sets to
-      display:none, so a child could never see which level they were on. Here
-      the game's own level dialog is opened on entry (after the concept
-      tutorial finishes), and ?level=N jumps straight to that level.
+   1. The focused game shell hides #openLevels in its panel header. A rail
+      button keeps level selection available during play, while entry lands
+      directly on the current problem. ?level=N still jumps to that level.
 
    2. Every one of these games advanced problems with a modulo, so finishing
       the last problem of a level silently wrapped back to problem 1 forever —
@@ -102,7 +101,7 @@
   }
 
   /* ---------------------------------------------------------------------
-     Entry: land on the level list, or jump to ?level=N.
+     Entry: show the current problem immediately, or jump to ?level=N.
      --------------------------------------------------------------------- */
   function levelButtons() {
     return levelList.querySelectorAll("button");
@@ -119,26 +118,6 @@
     return 0;
   }
 
-  function tutorialOpen() {
-    var tut = document.getElementById("conceptTutorial");
-    return !!(tut && !tut.hidden);
-  }
-
-  function afterTutorial(fn) {
-    if (!tutorialOpen()) {
-      fn();
-      return;
-    }
-    var tut = document.getElementById("conceptTutorial");
-    var observer = new MutationObserver(function () {
-      if (!tutorialOpen()) {
-        observer.disconnect();
-        setTimeout(fn, 250);
-      }
-    });
-    observer.observe(tut, { attributes: true, attributeFilter: ["hidden"] });
-  }
-
   function whenLevelsReady(fn, tries) {
     if (levelButtons().length) {
       fn();
@@ -150,17 +129,12 @@
     }, 100);
   }
 
-  whenLevelsReady(function () {
-    var wanted = requestedLevel();
+  var wanted = requestedLevel();
+  if (wanted) whenLevelsReady(function () {
     var buttons = levelButtons();
-    if (wanted && wanted <= buttons.length) {
-      buttons[wanted - 1].click();
-      if (levelDialog) levelDialog.hidden = true;
-      return;
-    }
-    afterTutorial(function () {
-      openLevels.click();
-    });
+    if (wanted > buttons.length) return;
+    buttons[wanted - 1].click();
+    if (levelDialog) levelDialog.hidden = true;
   });
 
   /* ---------------------------------------------------------------------

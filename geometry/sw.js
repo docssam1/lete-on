@@ -6,7 +6,7 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v53";
+const CACHE = "gfield-geo-v54";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/lab/",
@@ -42,6 +42,7 @@ const CORE = [
   "/geometry/shared/evolution.js?v=evolve4-20260720a",
   "/geometry/shared/profile-storage.js?v=evolve2-20260719a",
   "/geometry/shared/concept-tutorial.js?v=2",
+  "/geometry/shared/game-flow.js?v=2",
   "/geometry/shared/pwa.js?v=2",
   "/geometry/assets/ui/cube-blue.webp",
   "/geometry/assets/ui/cube-green.webp",
@@ -208,10 +209,10 @@ const CORE = [
   "/geometry/worksheet/path-walk/styles.css?v=path-sheet-2",
   "/geometry/worksheet/path-walk/app.js?v=path-sheet-2",
   "/geometry/games/mirror-manor/",
-  "/geometry/games/mirror-manor/styles.css?v=mirror-manor-11",
-  "/geometry/games/mirror-manor/app.js?v=mirror-manor-11",
+  "/geometry/games/mirror-manor/styles.css?v=mirror-manor-12",
+  "/geometry/games/mirror-manor/app.js?v=mirror-manor-12",
   "/geometry/games/mirror-manor/levels.js?v=mirror-manor-11",
-  "/geometry/games/mirror-manor/i18n.js?v=mirror-manor-11",
+  "/geometry/games/mirror-manor/i18n.js?v=mirror-manor-12",
   "/geometry/worksheet/mirror-manor/",
   "/geometry/worksheet/mirror-manor/styles.css?v=mirror-sheet-3",
   "/geometry/worksheet/mirror-manor/app.js?v=mirror-sheet-4",
