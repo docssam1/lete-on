@@ -6277,6 +6277,222 @@
   {
    "id": "fcb-book-08-sum-multiple-applied-source-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-b01",
+   "text": "처음 수를 모르고 마지막 수만 알 때는, 마지막 수에서 출발해 거꾸로 돌아가요. 마지막 계산부터 되돌리고, 계산은 반대로 바꿔요. 더하기는 빼기, 곱하기는 나누기로요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-b02",
+   "text": "네모에 4를 곱하고, 6을 빼고, 2로 나누었더니 9가 되었어요. 화살표로 차례를 그려요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-b03",
+   "text": "마지막 수 9에서 출발해요. 가장 마지막 계산은 2로 나누기예요. 되돌리려면 2를 곱해요. 9 곱하기 2는 18이에요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-b04",
+   "text": "그 앞은 6 빼기였어요. 되돌리려면 6을 더해요. 18 더하기 6은 24예요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-b05",
+   "text": "맨 처음은 4 곱하기였어요. 되돌리려면 4로 나눠요. 24 나누기 4는 6이에요. 네모는 6이에요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-b06",
+   "text": "처음 수를 넣어 앞으로 계산해 확인해요. 6 곱하기 4는 24, 빼기 6은 18, 나누기 2는 9예요. 맞아요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-b07",
+   "text": "더하기와 빼기가 여러 번 나와도 같아요. 네모 빼기 8 더하기 3 더하기 6이 12예요. 맨 뒤의 6부터 되돌려요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-b08",
+   "text": "12 빼기 6은 6, 빼기 3은 3, 더하기 8은 11이에요. 네모는 11이에요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-b09",
+   "text": "정리해요. 마지막 수에서 출발해 가장 마지막 계산부터 되돌려요. 더하기는 빼기로, 빼기는 더하기로, 곱하기는 나누기로, 나누기는 곱하기로 바꿔요. 찾은 수를 넣어 앞으로 계산해 확인해요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-b10",
+   "text": "한 문제 풀어 봐요. 네모에 3을 곱하고 5를 더했더니 26이 되었어요. 네모는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-hint",
+   "text": "마지막에 5를 더했으니 먼저 5를 빼요. 그다음 3으로 나눠요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-right",
+   "text": "맞았어요! 26 빼기 5는 21, 3으로 나누면 7이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-08-reverse-operation-chain-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-b01",
+   "text": "상대가 가진 만큼 주면, 받은 사람의 수는 두 배가 돼요. 그래서 거꾸로 갈 때는 받은 사람의 수를 반으로 나누고, 그만큼을 준 사람에게 돌려줘요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-b02",
+   "text": "다온이는 구슬 13개, 루아는 5개예요. 다온이가 루아에게, 루아가 가진 만큼 줘요. 루아가 가진 것은 5개니까 5개를 줘요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-b03",
+   "text": "다온이는 13 빼기 5, 8개. 루아는 5 더하기 5, 10개. 받은 루아는 두 배가 되었어요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-b04",
+   "text": "이번엔 거꾸로 풀어요. 가온이가 나리에게 나리가 가진 만큼 주고, 다시 나리가 가온이에게 가온이가 가진 만큼 주었더니 둘 다 20개가 되었어요. 처음에는 몇 개씩이었을까요? 표의 맨 아래 「나중」 줄부터 채워요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-b05",
+   "text": "마지막에 받은 사람은 가온이예요. 가온이는 두 배가 되어 20이 되었으니, 받기 전에는 20의 반, 10이에요. 받은 10개는 나리가 준 것이니 나리에게 돌려줘요. 나리는 20 더하기 10, 30이에요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-b06",
+   "text": "그 전에 받은 사람은 나리예요. 나리 30의 반은 15예요. 받은 15개를 가온이에게 돌려주면 가온이는 10 더하기 15, 25예요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-b07",
+   "text": "줄마다 두 사람의 합을 봐요. 25 더하기 15, 10 더하기 30, 20 더하기 20. 모두 40이에요. 주고받아도 합은 그대로예요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-b08",
+   "text": "앞으로 다시 해 봐요. 가온 25, 나리 15. 가온이가 15개를 주면 10과 30. 나리가 10개를 주면 20과 20이에요. 맞아요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-b09",
+   "text": "정리해요. 가진 만큼 받으면 두 배가 돼요. 거꾸로 갈 때는 나중 줄부터, 받은 사람을 반으로 나누고 그만큼을 준 사람에게 돌려줘요. 두 사람의 합은 줄마다 같아야 해요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-b10",
+   "text": "한 문제 풀어 봐요. 가온이가 나리에게 나리가 가진 만큼 주었더니 둘 다 16개가 되었어요. 가온이는 처음에 몇 개였을까요?"
+  },
+  {
+   "id": "fcb-book-08-give-same-source-hint",
+   "text": "받은 사람은 나리예요. 16의 반이 나리의 처음 수예요. 그만큼을 가온이에게 돌려줘요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-right",
+   "text": "맞았어요! 나리는 처음에 8개, 가온이는 24개였어요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-08-give-same-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-b01",
+   "text": "전체의 몇 분의 몇이 몇 개인지 구할 때는, 전체를 분모만큼 똑같이 나눠 한 칸이 몇 개인지부터 구해요. 그다음 분자만큼 칸을 세요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-b02",
+   "text": "구슬 15개가 있어요. 5분의 3은 몇 개일까요? 띠를 똑같이 다섯 칸으로 나눠요. 분모가 5이니까요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-b03",
+   "text": "15개를 다섯 칸에 똑같이 나눠 담으면, 한 칸에 15 나누기 5, 3개씩이에요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-b04",
+   "text": "5분의 3은 다섯 칸 가운데 세 칸이에요. 세 칸에 표시해요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-b05",
+   "text": "세 칸이면 3개씩 세 번, 9예요. 15개의 5분의 3은 9개예요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-b06",
+   "text": "이번엔 귤 28개 가운데 7분의 3을 먹었어요. 남은 귤은 몇 개일까요? 띠를 일곱 칸으로 나눠요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-b07",
+   "text": "한 칸은 28 나누기 7, 4개예요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-b08",
+   "text": "먹은 세 칸을 지워요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-b09",
+   "text": "남은 칸은 7 빼기 3, 네 칸이에요. 4개씩 네 칸, 16개가 남았어요. 28에서 먹은 12를 빼도 16이에요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-b10",
+   "text": "정리해요. 전체를 분모만큼 똑같이 나눠 한 칸이 몇 개인지 구해요. 분자만큼 칸을 세면 그 분수만큼이에요. 먹고 남은 것은 지우지 않은 칸을 세요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-b11",
+   "text": "한 문제 풀어 봐요. 구슬 20개의 5분의 2는 몇 개일까요?"
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-hint",
+   "text": "20을 다섯 칸으로 나누면 한 칸에 몇 개일까요? 그런 칸이 두 개예요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-right",
+   "text": "맞았어요! 한 칸에 4개, 두 칸이면 8개예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-08-fraction-picture-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-b01",
+   "text": "전체의 얼마를 주고 남은 수만 알 때는, 띠를 그려서 거꾸로 풀어요. 남은 칸이 몇 칸인지 세서 한 칸의 크기를 구하고, 전체 칸 수만큼 곱해요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-b02",
+   "text": "구슬의 7분의 3을 동생에게 주었더니 20개가 남았어요. 처음에는 몇 개였을까요? 띠를 똑같이 일곱 칸으로 나눠요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-b03",
+   "text": "준 세 칸을 지워요. 남은 칸은 7 빼기 3, 네 칸이에요. 이 네 칸이 20개예요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-b04",
+   "text": "네 칸이 20이니까 한 칸은 20 나누기 4, 5개예요. 전체 일곱 칸은 5개씩 일곱 번, 35개예요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-b05",
+   "text": "이번엔 두 번 덜어 내요. 귤의 3분의 1을 먹고, 남은 것의 4분의 1을 친구에게 주었더니 9개가 남았어요. 띠를 세 칸으로 나누고 첫 칸을 지워요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-b06",
+   "text": "남은 두 칸을 「나머지」라고 해요. 나머지를 아래에 다시 그리고, 똑같이 네 칸으로 나눠요. 그중 한 칸을 친구에게 줬어요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-b07",
+   "text": "작은 칸 세 개가 남은 9개예요. 작은 칸 하나는 9 나누기 3, 3이에요. 나머지는 작은 칸 네 개라 3개씩 네 번, 12예요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-b08",
+   "text": "나머지 12는 위 띠의 두 칸이에요. 위 띠 한 칸은 12 나누기 2, 6. 전체 세 칸은 6개씩 세 번, 18개예요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-b09",
+   "text": "앞으로 확인해요. 18개의 3분의 1, 6개를 먹으면 12가 남아요. 12의 4분의 1, 3개를 주면 9가 남아요. 맞아요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-b10",
+   "text": "정리해요. 띠를 분모만큼 나누고, 덜어 낸 칸을 지워요. 남은 칸 수로 남은 수를 나눠 한 칸을 구하고, 전체 칸 수를 곱해요. 「나머지의 몇 분의 몇」은 나머지를 다시 그려서 나눠요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-b11",
+   "text": "한 문제 풀어 봐요. 구슬의 5분의 1을 주었더니 16개가 남았어요. 처음에는 몇 개였을까요?"
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-hint",
+   "text": "다섯 칸 중 한 칸을 줬으니 남은 칸은 네 칸이에요. 네 칸이 16개면 한 칸은 몇 개일까요?"
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-right",
+   "text": "맞았어요! 한 칸은 4개, 다섯 칸이면 20개예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-08-fraction-reverse-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }

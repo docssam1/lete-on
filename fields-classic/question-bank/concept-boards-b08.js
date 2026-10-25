@@ -440,4 +440,176 @@ export const BOARDS_B08 = {
       ]
     };
   })()
+
+  ,"book-08/reverse-operation-chain": (() => {
+    const OPS = [["×", 4], ["−", 6], ["÷", 2]], END = 9;
+    const INV = { "×": "÷", "÷": "×", "+": "−", "−": "+" }, apply = (v, [o, n]) => o === "×" ? v * n : o === "÷" ? v / n : o === "+" ? v + n : v - n;
+    const back = [END]; for (let i = OPS.length - 1; i >= 0; i--) back.unshift(apply(back[0], [INV[OPS[i][0]], OPS[i][1]]));   // back[i] = i번째 칸의 수
+    const NX0 = 130, NG = 230, NY = 210, R = 38, at = (i) => NX0 + i * NG;
+    const node = (i, v, color = "ink") => ({ kind: "node", cx: at(i), cy: NY, r: R, value: v, color, size: 32 });
+    const fwd = (i) => [{ kind: "arrow", x1: at(i) + R + 8, y1: NY, x2: at(i + 1) - R - 8, y2: NY, color: "blue", width: 3 }, T((at(i) + at(i + 1)) / 2, NY - 22, `${OPS[i][0]}${OPS[i][1]}`, "blue", 28, "center")];
+    const rev = (i) => [{ kind: "arrow", x1: at(i + 1) - 10, y1: NY + R + 14, x2: at(i) + 10, y2: NY + R + 14, bend: 34, color: "red", width: 3 }, T((at(i) + at(i + 1)) / 2, NY + R + 58, `${INV[OPS[i][0]]}${OPS[i][1]}`, "red", 28, "center")];
+    const word = { "×": "곱하기", "÷": "나누기", "+": "더하기", "−": "빼기" };
+    const E2 = { start: 11, ops: [["−", 8], ["+", 3], ["+", 6]] }, e2end = E2.ops.reduce(apply, E2.start);
+    const e2back = [e2end]; for (let i = E2.ops.length - 1; i >= 0; i--) e2back.unshift(apply(e2back[0], [INV[E2.ops[i][0]], E2.ops[i][1]]));
+    const CHK = { m: 3, a: 5, end: 26 }, chkV = (CHK.end - CHK.a) / CHK.m;
+    return {
+      title: "거꾸로 풀기 — 마지막 계산부터 반대로",
+      kicker: "8권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "처음 수를 모르고 마지막 수만 알 때는, 마지막 수에서 출발해 거꾸로 돌아가요. 마지막 계산부터 되돌리고, 계산은 반대로 바꿔요. 더하기는 빼기, 곱하기는 나누기로요.",
+          items: [title("거꾸로 풀기")] },
+        { say: `네모에 4를 곱하고, 6을 빼고, 2로 나누었더니 ${jo(END, "가")} 되었어요. 화살표로 차례를 그려요.`,
+          items: [node(0, "□", "green"), node(1, "", "gray"), node(2, "", "gray"), node(3, END, "blue"), ...OPS.flatMap((_, i) => fwd(i))] },
+        { say: `마지막 수 ${END}에서 출발해요. 가장 마지막 계산은 2로 나누기예요. 되돌리려면 2를 곱해요. ${END} 곱하기 2는 ${jo(back[2], "이에요")}.`,
+          items: [...rev(2), T(at(2), NY + 12, String(back[2]), "red", 32, "center")] },
+        { say: `그 앞은 6 빼기였어요. 되돌리려면 6을 더해요. ${back[2]} 더하기 6은 ${jo(back[1], "이에요")}.`,
+          items: [...rev(1), T(at(1), NY + 12, String(back[1]), "red", 32, "center")] },
+        { say: `맨 처음은 4 곱하기였어요. 되돌리려면 4로 나눠요. ${back[1]} 나누기 4는 ${jo(back[0], "이에요")}. 네모는 ${jo(back[0], "이에요")}.`,
+          items: [...rev(0), T(at(0), NY + R + 58, `□ = ${back[0]}`, "green", 30, "center")] },
+        { say: `처음 수를 넣어 앞으로 계산해 확인해요. ${back[0]} 곱하기 4는 ${back[1]}, 빼기 6은 ${back[2]}, 나누기 2는 ${jo(END, "예요")}. 맞아요.`,
+          items: [T(70, 395, `${back[0]} × 4 = ${back[1]}  →  ${back[1]} − 6 = ${back[2]}  →  ${back[2]} ÷ 2 = ${END} ✓`, "green", 28)] },
+        { say: `더하기와 빼기가 여러 번 나와도 같아요. 네모 빼기 8 더하기 3 더하기 6이 ${jo(e2end, "예요")}. 맨 뒤의 6부터 되돌려요.`,
+          items: [{ kind: "line", x1: 60, y1: 425, x2: 940, y2: 425, color: "gray", width: 2, dash: true }, T(70, 470, `□ ${E2.ops.map(([o, n]) => `${o} ${n}`).join(" ")} = ${e2end}`, "ink", 30)] },
+        { say: `${e2end} 빼기 6은 ${e2back[2]}, 빼기 3은 ${e2back[1]}, 더하기 8은 ${jo(e2back[0], "이에요")}. 네모는 ${jo(e2back[0], "이에요")}.`,
+          items: [T(470, 470, `${e2end} − 6 = ${e2back[2]}  →  − 3 = ${e2back[1]}  →  + 8 = ${e2back[0]}`, "red", 26), T(470, 515, `${e2back[0]} − 8 + 3 + 6 = ${e2end} ✓`, "green", 24)] },
+        { say: "정리해요. 마지막 수에서 출발해 가장 마지막 계산부터 되돌려요. 더하기는 빼기로, 빼기는 더하기로, 곱하기는 나누기로, 나누기는 곱하기로 바꿔요. 찾은 수를 넣어 앞으로 계산해 확인해요.", mood: "praise",
+          items: [T(60, 570, "마지막 계산부터 · 반대로 · 넣어서 확인", "gold", 28)] },
+        { say: `한 문제 풀어 봐요. 네모에 ${jo(CHK.m, "을")} 곱하고 ${jo(CHK.a, "를")} 더했더니 ${jo(CHK.end, "이")} 되었어요. 네모는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `□ × ${CHK.m} + ${CHK.a} = ${CHK.end}일 때 □는?`,
+            options: [String(chkV + 2), String(chkV), String((CHK.end + CHK.a) / CHK.m | 0)], answer: 1,
+            hint: `마지막 계산 + ${CHK.a}부터 되돌려요.`, sayHint: `마지막에 ${jo(CHK.a, "를")} 더했으니 먼저 ${jo(CHK.a, "를")} 빼요. 그다음 ${CHK.m}으로 나눠요.`,
+            right: `맞았어요! ${CHK.end} − ${CHK.a} = ${CHK.end - CHK.a}, ÷ ${CHK.m} = ${chkV}.`, sayRight: `맞았어요! ${CHK.end} 빼기 ${jo(CHK.a, "는")} ${CHK.end - CHK.a}, ${CHK.m}으로 나누면 ${jo(chkV, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-08/give-same-source": (() => {
+    const P1 = { a: 13, b: 5 };
+    const END = 20, mid = { a: END / 2, b: END + END / 2 }, start = { b: mid.b / 2, a: mid.a + mid.b / 2 };
+    const GX = 250, GY = 330, CW = 110, CH = 70, LXc = 80, NX = 520;
+    const table = [0, 1, 2, 3].map((r) => ({ kind: "line", x1: GX, y1: GY + r * CH, x2: GX + 2 * CW, y2: GY + r * CH, color: "ink", width: 2.5 })).concat([0, 1, 2].map((c) => ({ kind: "line", x1: GX + c * CW, y1: GY, x2: GX + c * CW, y2: GY + 3 * CH, color: "ink", width: 2.5 })));
+    const cellT = (r, c, v, color) => T(GX + (c + 0.5) * CW, GY + (r + 0.5) * CH + 12, String(v), color, 32, "center");
+    const CHK = { end: 16 }, chkA = CHK.end + CHK.end / 2;
+    return {
+      title: "가진 만큼 주기 — 받은 사람은 두 배",
+      kicker: "8권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "상대가 가진 만큼 주면, 받은 사람의 수는 두 배가 돼요. 그래서 거꾸로 갈 때는 받은 사람의 수를 반으로 나누고, 그만큼을 준 사람에게 돌려줘요.",
+          items: [title("가진 만큼 주기")] },
+        { say: `다온이는 구슬 ${P1.a}개, 루아는 ${P1.b}개예요. 다온이가 루아에게, 루아가 가진 만큼 줘요. 루아가 가진 것은 ${P1.b}개니까 ${P1.b}개를 줘요.`,
+          items: [T(70, 150, `다온 ${P1.a}, 루아 ${P1.b}  →  다온이 ${P1.b}개를 줘요`, "ink", 28)] },
+        { say: `다온이는 ${P1.a} 빼기 ${P1.b}, ${P1.a - P1.b}개. 루아는 ${P1.b} 더하기 ${P1.b}, ${P1.b * 2}개. 받은 루아는 두 배가 되었어요.`,
+          items: [T(70, 195, `다온 ${P1.a} − ${P1.b} = ${P1.a - P1.b},  루아 ${P1.b} + ${P1.b} = ${P1.b * 2}`, "blue", 28), T(70, 240, "받은 사람 → 두 배", "gold", 28)] },
+        { say: `이번엔 거꾸로 풀어요. 가온이가 나리에게 나리가 가진 만큼 주고, 다시 나리가 가온이에게 가온이가 가진 만큼 주었더니 둘 다 ${END}개가 되었어요. 처음에는 몇 개씩이었을까요? 표의 맨 아래 「나중」 줄부터 채워요.`,
+          items: [{ kind: "line", x1: 60, y1: 270, x2: 940, y2: 270, color: "gray", width: 2, dash: true },
+            ...table, T(GX + CW / 2, GY - 14, "가온", "blue", 26, "center"), T(GX + CW * 1.5, GY - 14, "나리", "green", 26, "center"),
+            T(LXc, GY + CH / 2 + 10, "처음", "gray", 24), T(LXc, GY + CH * 1.5 + 10, "한 번 뒤", "gray", 24), T(LXc, GY + CH * 2.5 + 10, "나중", "gray", 24),
+            cellT(2, 0, END, "ink"), cellT(2, 1, END, "ink")] },
+        { say: `마지막에 받은 사람은 가온이예요. 가온이는 두 배가 되어 ${jo(END, "이")} 되었으니, 받기 전에는 ${END}의 반, ${jo(mid.a, "이에요")}. 받은 ${mid.a}개는 나리가 준 것이니 나리에게 돌려줘요. 나리는 ${END} 더하기 ${mid.a}, ${jo(mid.b, "이에요")}.`,
+          items: [cellT(1, 0, mid.a, "red"), cellT(1, 1, mid.b, "red"), T(NX, 360, `가온 ${END} ÷ 2 = ${mid.a},  나리 ${END} + ${mid.a} = ${mid.b}`, "red", 24)] },
+        { say: `그 전에 받은 사람은 나리예요. 나리 ${mid.b}의 반은 ${jo(start.b, "이에요")}. 받은 ${start.b}개를 가온이에게 돌려주면 가온이는 ${mid.a} 더하기 ${start.b}, ${jo(start.a, "예요")}.`,
+          items: [cellT(0, 0, start.a, "green"), cellT(0, 1, start.b, "green"), T(NX, 405, `나리 ${mid.b} ÷ 2 = ${start.b},  가온 ${mid.a} + ${start.b} = ${start.a}`, "green", 24)] },
+        { say: `줄마다 두 사람의 합을 봐요. ${start.a} 더하기 ${start.b}, ${mid.a} 더하기 ${mid.b}, ${END} 더하기 ${END}. 모두 ${jo(END * 2, "이에요")}. 주고받아도 합은 그대로예요.`,
+          items: [T(NX, 450, `합: ${start.a}+${start.b} = ${mid.a}+${mid.b} = ${END}+${END} = ${END * 2} ✓`, "gold", 24)] },
+        { say: `앞으로 다시 해 봐요. 가온 ${start.a}, 나리 ${start.b}. 가온이가 ${start.b}개를 주면 ${mid.a}과 ${mid.b}. 나리가 ${mid.a}개를 주면 ${END}과 ${jo(END, "이에요")}. 맞아요.`,
+          items: [T(NX, 495, `${start.a}, ${start.b} → ${mid.a}, ${mid.b} → ${END}, ${END} ✓`, "green", 26)] },
+        { say: "정리해요. 가진 만큼 받으면 두 배가 돼요. 거꾸로 갈 때는 나중 줄부터, 받은 사람을 반으로 나누고 그만큼을 준 사람에게 돌려줘요. 두 사람의 합은 줄마다 같아야 해요.", mood: "praise",
+          items: [T(NX, 550, "나중부터 · 받은 쪽 ÷ 2 · 준 쪽에 돌려주기", "gold", 24)] },
+        { say: `한 문제 풀어 봐요. 가온이가 나리에게 나리가 가진 만큼 주었더니 둘 다 ${CHK.end}개가 되었어요. 가온이는 처음에 몇 개였을까요?`, mood: "think",
+          items: [],
+          check: { question: `가온이가 나리에게 나리가 가진 만큼 주었더니 둘 다 ${CHK.end}개. 가온이는 처음에 몇 개?`,
+            options: [String(chkA), String(CHK.end), String(CHK.end / 2)], answer: 0,
+            hint: "받은 나리를 먼저 반으로 나눠요.", sayHint: `받은 사람은 나리예요. ${CHK.end}의 반이 나리의 처음 수예요. 그만큼을 가온이에게 돌려줘요.`,
+            right: `맞았어요! 나리 ${CHK.end} ÷ 2 = ${CHK.end / 2}, 가온 ${CHK.end} + ${CHK.end / 2} = ${chkA}.`, sayRight: `맞았어요! 나리는 처음에 ${CHK.end / 2}개, 가온이는 ${chkA}개였어요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-08/fraction-picture-source": (() => {
+    const A = { tot: 15, den: 5, num: 3 }, aOne = A.tot / A.den;
+    const B = { tot: 28, den: 7, num: 3 }, bOne = B.tot / B.den;
+    const strip = (x, y, n, w, h) => [{ kind: "box", x, y, w: n * w, h, color: "ink" }, ...Array.from({ length: n - 1 }, (_, i) => ({ kind: "line", x1: x + (i + 1) * w, y1: y, x2: x + (i + 1) * w, y2: y + h, color: "ink", width: 2.5 }))];
+    const dotsIn = (x, y, w, h, k, color) => Array.from({ length: k }, (_, j) => { const cols = k > 3 ? 2 : k, r = Math.floor(j / cols), c = j % cols, rows = Math.ceil(k / cols);
+      return { kind: "shape", type: "circle", cx: x + w / 2 + (c - (cols - 1) / 2) * 22, cy: y + h / 2 + (r - (rows - 1) / 2) * 22, r: 7, color, fill: color, quick: true }; });
+    const frac = (x, y, n, d, color = "ink", size = 30) => [T(x, y, String(n), color, size, "center"), { kind: "line", x1: x - size * 0.45, y1: y + size * 0.22, x2: x + size * 0.45, y2: y + size * 0.22, color, width: 2.5 }, T(x, y + size * 1.1, String(d), color, size, "center")];
+    const AX = 100, AY = 160, AW = 110, AH = 66, BX = 100, BY = 380, BW = 76, BH = 66, NX = 700;
+    const CHK = { tot: 20, den: 5, num: 2 }, chkV = CHK.tot / CHK.den * CHK.num;
+    return {
+      title: "전체의 몇 분의 몇은 몇 개일까요",
+      kicker: "8권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "전체의 몇 분의 몇이 몇 개인지 구할 때는, 전체를 분모만큼 똑같이 나눠 한 칸이 몇 개인지부터 구해요. 그다음 분자만큼 칸을 세요.",
+          items: [title("분수만큼은 몇 개?")] },
+        { say: `구슬 ${A.tot}개가 있어요. ${A.den}분의 ${jo(A.num, "은")} 몇 개일까요? 띠를 똑같이 ${KO[A.den]} 칸으로 나눠요. 분모가 ${jo(A.den, "이니까")}요.`,
+          items: [...strip(AX, AY, A.den, AW, AH), T(NX, AY + 10, `${A.tot}개의`, "ink", 28), ...frac(NX + 130, AY - 4, A.num, A.den)] },
+        { say: `${A.tot}개를 ${KO[A.den]} 칸에 똑같이 나눠 담으면, 한 칸에 ${A.tot} 나누기 ${A.den}, ${aOne}개씩이에요.`,
+          items: [...Array.from({ length: A.den }, (_, i) => dotsIn(AX + i * AW, AY, AW, AH, aOne, "blue")).flat(), T(AX, AY + AH + 44, `한 칸 = ${A.tot} ÷ ${A.den} = ${aOne}개`, "blue", 28)] },
+        { say: `${A.den}분의 ${jo(A.num, "은")} ${KO[A.den]} 칸 가운데 ${KO[A.num]} 칸이에요. ${KO[A.num]} 칸에 표시해요.`,
+          items: [{ kind: "box", x: AX - 6, y: AY - 6, w: A.num * AW + 12, h: AH + 12, color: "gold", dash: true }] },
+        { say: `${KO[A.num]} 칸이면 ${aOne}개씩 ${KO[A.num]} 번, ${jo(aOne * A.num, "이에요")}. ${A.tot}개의 ${A.den}분의 ${jo(A.num, "은")} ${aOne * A.num}개예요.`,
+          items: [T(AX + 360, AY + AH + 44, `${aOne} × ${A.num} = ${aOne * A.num}개`, "gold", 30)] },
+        { say: `이번엔 귤 ${B.tot}개 가운데 ${B.den}분의 ${jo(B.num, "을")} 먹었어요. 남은 귤은 몇 개일까요? 띠를 ${KO[B.den]} 칸으로 나눠요.`,
+          items: [{ kind: "line", x1: 60, y1: 315, x2: 940, y2: 315, color: "gray", width: 2, dash: true }, ...strip(BX, BY, B.den, BW, BH), T(NX, BY - 12, `${B.tot}개의`, "ink", 26), ...frac(NX + 120, BY - 26, B.num, B.den, "ink", 26), T(NX + 160, BY - 12, "먹음", "ink", 26)] },
+        { say: `한 칸은 ${B.tot} 나누기 ${B.den}, ${bOne}개예요.`,
+          items: [...Array.from({ length: B.den }, (_, i) => dotsIn(BX + i * BW, BY, BW, BH, bOne, "gold")).flat(), T(NX, BY + 40, `한 칸 = ${B.tot} ÷ ${B.den} = ${bOne}개`, "gold", 24)] },
+        { say: `먹은 ${KO[B.num]} 칸을 지워요.`,
+          items: Array.from({ length: B.num }, (_, i) => ({ kind: "x", cx: BX + (i + 0.5) * BW, cy: BY + BH / 2, r: 24, color: "red" })) },
+        { say: `남은 칸은 ${B.den} 빼기 ${B.num}, ${KO[B.den - B.num]} 칸이에요. ${bOne}개씩 ${KO[B.den - B.num]} 칸, ${bOne * (B.den - B.num)}개가 남았어요. ${B.tot}에서 먹은 ${jo(bOne * B.num, "을")} 빼도 ${jo(bOne * (B.den - B.num), "이에요")}.`,
+          items: [{ kind: "box", x: BX + B.num * BW - 5, y: BY - 6, w: (B.den - B.num) * BW + 10, h: BH + 12, color: "green", dash: true },
+            T(NX, BY + 85, `남은 ${B.den - B.num}칸 = ${bOne} × ${B.den - B.num} = ${bOne * (B.den - B.num)}개`, "green", 24), T(NX, BY + 125, `(${B.tot} − ${bOne * B.num} = ${bOne * (B.den - B.num)} ✓)`, "green", 22)] },
+        { say: "정리해요. 전체를 분모만큼 똑같이 나눠 한 칸이 몇 개인지 구해요. 분자만큼 칸을 세면 그 분수만큼이에요. 먹고 남은 것은 지우지 않은 칸을 세요.", mood: "praise",
+          items: [T(60, 572, "분모로 나눠 한 칸 → 분자만큼 세기 · 남은 것은 남은 칸", "gold", 26)] },
+        { say: `한 문제 풀어 봐요. 구슬 ${CHK.tot}개의 ${CHK.den}분의 ${jo(CHK.num, "는")} 몇 개일까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK.tot}개의 ${jo(`${CHK.num}/${CHK.den}`, "은")} 몇 개일까요?`,
+            options: [String(CHK.tot / CHK.den), String(chkV), String(CHK.tot / CHK.num)], answer: 1,
+            hint: `한 칸 = ${CHK.tot} ÷ ${CHK.den}. 그다음 ${CHK.num}칸을 세요.`, sayHint: `${jo(CHK.tot, "을")} ${KO[CHK.den]} 칸으로 나누면 한 칸에 몇 개일까요? 그런 칸이 ${KO[CHK.num]} 개예요.`,
+            right: `맞았어요! 한 칸 ${CHK.tot / CHK.den}개, 두 칸 ${chkV}개.`, sayRight: `맞았어요! 한 칸에 ${CHK.tot / CHK.den}개, 두 칸이면 ${chkV}개예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-08/fraction-reverse-source": (() => {
+    const A = { den: 7, gave: 3, left: 20 }, aOne = A.left / (A.den - A.gave), aTot = aOne * A.den;
+    const B = { den: 3, sub: 4, left: 9 }, bPart = B.left / (B.sub - 1), bRest = bPart * B.sub, bOne = bRest / (B.den - 1), bTot = bOne * B.den;
+    const strip = (x, y, n, w, h, color = "ink") => [{ kind: "box", x, y, w: n * w, h, color }, ...Array.from({ length: n - 1 }, (_, i) => ({ kind: "line", x1: x + (i + 1) * w, y1: y, x2: x + (i + 1) * w, y2: y + h, color, width: 2.5 }))];
+    const AX = 100, AY = 165, AW = 76, AH = 60, BX = 100, BY = 375, BW = 180, BH = 56, SY = 465, SW = (BW * (B.den - 1)) / B.sub, NX = 690;
+    const CHK = { den: 5, left: 16 }, chkV = CHK.left / (CHK.den - 1) * CHK.den;
+    return {
+      title: "남은 칸으로 처음 수를 찾아요",
+      kicker: "8권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "전체의 얼마를 주고 남은 수만 알 때는, 띠를 그려서 거꾸로 풀어요. 남은 칸이 몇 칸인지 세서 한 칸의 크기를 구하고, 전체 칸 수만큼 곱해요.",
+          items: [title("그림으로 거꾸로")] },
+        { say: `구슬의 ${A.den}분의 ${jo(A.gave, "을")} 동생에게 주었더니 ${A.left}개가 남았어요. 처음에는 몇 개였을까요? 띠를 똑같이 ${KO[A.den]} 칸으로 나눠요.`,
+          items: [...strip(AX, AY, A.den, AW, AH), T(AX, AY - 18, `${jo(`${A.gave}/${A.den}`, "을")} 주고 ${A.left}개 남음`, "ink", 26)] },
+        { say: `준 ${KO[A.gave]} 칸을 지워요. 남은 칸은 ${A.den} 빼기 ${A.gave}, ${KO[A.den - A.gave]} 칸이에요. 이 ${KO[A.den - A.gave]} 칸이 ${A.left}개예요.`,
+          items: [...Array.from({ length: A.gave }, (_, i) => ({ kind: "x", cx: AX + (i + 0.5) * AW, cy: AY + AH / 2, r: 20, color: "red" })), { kind: "box", x: AX + A.gave * AW - 4, y: AY - 5, w: (A.den - A.gave) * AW + 8, h: AH + 10, color: "green", dash: true },
+            T(AX + (A.gave + (A.den - A.gave) / 2) * AW, AY + AH + 36, `${A.left}개`, "green", 28, "center")] },
+        { say: `${KO[A.den - A.gave]} 칸이 ${jo(A.left, "이니까")} 한 칸은 ${A.left} 나누기 ${A.den - A.gave}, ${aOne}개예요. 전체 ${KO[A.den]} 칸은 ${aOne}개씩 ${KO[A.den]} 번, ${aTot}개예요.`,
+          items: [T(NX, AY + 10, `한 칸 = ${A.left} ÷ ${A.den - A.gave} = ${aOne}`, "blue", 26), T(NX, AY + 52, `전체 = ${aOne} × ${A.den} = ${aTot}`, "blue", 26), T(NX, AY + 94, `${aTot} − ${aOne * A.gave} = ${A.left} ✓`, "green", 24)] },
+        { say: `이번엔 두 번 덜어 내요. 귤의 3분의 1을 먹고, 남은 것의 4분의 1을 친구에게 주었더니 ${B.left}개가 남았어요. 띠를 세 칸으로 나누고 첫 칸을 지워요.`,
+          items: [{ kind: "line", x1: 60, y1: 305, x2: 940, y2: 305, color: "gray", width: 2, dash: true }, ...strip(BX, BY, B.den, BW, BH), { kind: "x", cx: BX + BW / 2, cy: BY + BH / 2, r: 22, color: "red" }, T(BX + BW / 2, BY - 12, "먹음", "red", 22, "center"), T(BX, 335, `1/3 먹고, 나머지의 1/4 주고, ${B.left}개 남음`, "ink", 24)] },
+        { say: "남은 두 칸을 「나머지」라고 해요. 나머지를 아래에 다시 그리고, 똑같이 네 칸으로 나눠요. 그중 한 칸을 친구에게 줬어요.",
+          items: [{ kind: "line", x1: BX + BW, y1: BY + BH + 4, x2: BX + BW, y2: SY - 4, color: "gray", width: 2, dash: true }, { kind: "line", x1: BX + BW * B.den, y1: BY + BH + 4, x2: BX + BW * B.den, y2: SY - 4, color: "gray", width: 2, dash: true },
+            ...strip(BX + BW, SY, B.sub, SW, BH, "blue"), { kind: "x", cx: BX + BW + SW / 2, cy: SY + BH / 2, r: 20, color: "red" }, T(BX + BW + SW / 2, SY + BH + 30, "줌", "red", 22, "center")] },
+        { say: `작은 칸 ${KO[B.sub - 1]} 개가 남은 ${B.left}개예요. 작은 칸 하나는 ${B.left} 나누기 ${B.sub - 1}, ${jo(bPart, "이에요")}. 나머지는 작은 칸 ${KO[B.sub]} 개라 ${bPart}개씩 ${KO[B.sub]} 번, ${jo(bRest, "이에요")}.`,
+          items: [T(BX + BW + SW * 2.5, SY + BH + 30, `${B.left}개`, "green", 24, "center"), T(NX, BY + 8, `작은 칸 = ${B.left} ÷ ${B.sub - 1} = ${bPart}`, "blue", 24), T(NX, BY + 48, `나머지 = ${bPart} × ${B.sub} = ${bRest}`, "blue", 24)] },
+        { say: `나머지 ${jo(bRest, "는")} 위 띠의 두 칸이에요. 위 띠 한 칸은 ${bRest} 나누기 2, ${bOne}. 전체 세 칸은 ${bOne}개씩 세 번, ${bTot}개예요.`,
+          items: [T(NX, BY + 88, `위 한 칸 = ${bRest} ÷ 2 = ${bOne}`, "gold", 24), T(NX, BY + 128, `전체 = ${bOne} × 3 = ${bTot}`, "gold", 26)] },
+        { say: `앞으로 확인해요. ${bTot}개의 3분의 1, ${bOne}개를 먹으면 ${jo(bRest, "가")} 남아요. ${bRest}의 4분의 1, ${bPart}개를 주면 ${jo(B.left, "가")} 남아요. 맞아요.`,
+          items: [T(NX, BY + 168, `${bTot} − ${bOne} = ${bRest},  ${bRest} − ${bPart} = ${B.left} ✓`, "green", 22)] },
+        { say: "정리해요. 띠를 분모만큼 나누고, 덜어 낸 칸을 지워요. 남은 칸 수로 남은 수를 나눠 한 칸을 구하고, 전체 칸 수를 곱해요. 「나머지의 몇 분의 몇」은 나머지를 다시 그려서 나눠요.", mood: "praise",
+          items: [T(60, 585, "남은 칸 ÷ → 한 칸 × 전체 칸 · 나머지는 다시 그려 나누기", "gold", 24)] },
+        { say: `한 문제 풀어 봐요. 구슬의 5분의 1을 주었더니 ${CHK.left}개가 남았어요. 처음에는 몇 개였을까요?`, mood: "think",
+          items: [],
+          check: { question: `구슬의 ${jo(`1/${CHK.den}`, "을")} 주었더니 ${CHK.left}개가 남았어요. 처음 구슬은?`,
+            options: [String(CHK.left), String(chkV), String(CHK.left / (CHK.den - 1))], answer: 1,
+            hint: `남은 칸은 ${CHK.den - 1}칸이에요.`, sayHint: `다섯 칸 중 한 칸을 줬으니 남은 칸은 네 칸이에요. 네 칸이 ${CHK.left}개면 한 칸은 몇 개일까요?`,
+            right: `맞았어요! 한 칸 ${CHK.left / (CHK.den - 1)}, 전체 ${chkV}.`, sayRight: `맞았어요! 한 칸은 ${CHK.left / (CHK.den - 1)}개, 다섯 칸이면 ${chkV}개예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
 };
