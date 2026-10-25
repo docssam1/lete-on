@@ -499,6 +499,7 @@ $("#levelButton").addEventListener("click", () => { ui.levelDialog.hidden = fals
 $("#closeLevels").addEventListener("click", () => { ui.levelDialog.hidden = true; });
 ui.levelDialog.addEventListener("click", (event) => { if (event.target === ui.levelDialog) ui.levelDialog.hidden = true; });
 function closeTutorial() {
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
   localStorage.setItem(ui.tutorial.dataset.storageKey, "done");
   ui.tutorial.hidden = true;
 }

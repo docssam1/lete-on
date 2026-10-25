@@ -32,8 +32,22 @@ try {
         assert.ok(button.text && button.left >= 0 && button.right <= 844 && button.top >= 0 && button.bottom <= 390,
           `${game.name}/${language} tutorial button clipped: ${JSON.stringify(button)}`);
       });
+      if (game.name === "polyomino") {
+        await page.evaluate(() => {
+          const speech = window.speechSynthesis;
+          const cancel = speech.cancel.bind(speech);
+          window.__speechCancelCalls = 0;
+          Object.defineProperty(speech, "cancel", { configurable: true, value: () => {
+            window.__speechCancelCalls += 1;
+            cancel();
+          } });
+        });
+      }
       await page.locator("#tutorialSkip").click();
       assert.equal(await page.locator("#tutorial").isVisible(), false, `${game.name}/${language} skip did not close`);
+      if (game.name === "polyomino") {
+        assert.ok(await page.evaluate(() => window.__speechCancelCalls > 0), `${game.name}/${language} narration did not stop`);
+      }
       assert.ok(await page.locator(game.board).first().isVisible(), `${game.name}/${language} board did not open`);
       if (game.name === "equal-partition") {
         const boardFits = await page.locator(".partition-svg").evaluate((svg) => {
