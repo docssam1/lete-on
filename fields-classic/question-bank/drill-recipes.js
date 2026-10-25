@@ -2,6 +2,17 @@
 // 유형은 그 단원 문제은행(source-data.js CURRICULUM의 typeIds)에서, 차시 개념과 같은 풀이를 쓰는 것만 골랐다.
 // 답 꼴(수 하나 · 수 + 단위 · 쉼표로 쓴 수)과 그림 종류(bookN)는 검사기 drill-audit.mjs가 난이도마다 확인한다.
 export const DRILL_RECIPES = Object.freeze({
+  // 4권 — 도형 움직이기 · 색종이 접기 · 양팔저울과 비교 · 논리추리 (쌓기나무·자리 배치·표 추리는 숫자로 답하는 유형이 없어 아직 없음)
+  "book-04/polyomino-family-count": ["tetromino-family-choice", "tetromino-square-composition"],
+  "book-04/digital-flip-source": ["digital-transform-arithmetic", "digital-grid-transform"],
+  "book-04/flip-rotate-source": ["shape-quarter-half-turn", "shape-mirror-direction"],
+  "book-04/fold-position-source": ["fold-number-grid-two-orthogonal"],
+  "book-04/compare-order-source": ["measurement-order-chain", "shape-difference-chain"],
+  "book-04/compare-difference-source": ["shape-difference-chain", "measurement-order-chain"],
+  "book-04/balance-equality-source": ["pair-sum-card-completion", "balance-unit-ratio"],
+  "book-04/balance-substitution": ["balance-unit-ratio"],
+  "book-04/order-logic-source": ["ordinal-line-placement", "measurement-order-chain"],
+  "book-04/row-logic-source": ["ordinal-line-placement"],
   // 5권 — 수 배열표와 달력 · 최단거리와 숫자 카드 · 곱셈 매트릭스 · 삼각수와 사각수 (삼각 계단 쌓기나무는 맞는 유형이 없어 아직 없음)
   "book-05/path-number-grid": ["sequential-path-number-grid", "diagonal-fill-number-grid", "line-cycle-number-table"],
   "book-05/calendar-arithmetic-source": ["calendar-same-weekday-sum", "calendar-month-position"],
