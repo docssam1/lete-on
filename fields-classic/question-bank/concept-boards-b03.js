@@ -2,7 +2,7 @@
 // 판서의 수와 그림은 골든벨 3권 문항(온칸·반칸 도형들, 6×20+6·6×28+6+6…, 원 3·4·6·8·9·12조각, 모눈 2×2~5×5 등)과
 // 겹치지 않게 골랐다. 겹치면 공개 판서가 비공개 정답을 보여 주게 된다.
 
-import { jo } from "./concept-board-kit.js?v=20261025f";
+import { jo, crypt } from "./concept-board-kit.js?v=20261026a";
 
 const KO = { 1: "한", 2: "두", 3: "세", 4: "네", 5: "다섯", 6: "여섯", 7: "일곱", 8: "여덟", 9: "아홉", 10: "열", 11: "열한", 12: "열두" };
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
@@ -11,28 +11,6 @@ const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });
 const polyArea = (pts) => Math.abs(pts.reduce((a, [x1, y1], i) => { const [x2, y2] = pts[(i + 1) % pts.length]; return a + x1 * y2 - x2 * y1; }, 0)) / 2;
 const sectorPath = (cx, cy, r, a0, a1) => { const p = (a) => [cx + r * Math.sin(a * Math.PI / 180), cy - r * Math.cos(a * Math.PI / 180)];
   const [x0, y0] = p(a0), [x1, y1] = p(a1); return `M ${cx} ${cy} L ${x0.toFixed(1)} ${y0.toFixed(1)} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z`; };
-
-// 세로셈 복면산 그림: rows는 더하는 수들(왼쪽→오른쪽 글자 배열), sum은 결과. 오른쪽 끝을 맞춘다.
-const SHAPE_OF = { "□": "square", "△": "triangle", "◇": "diamond", "○": "circle", "☆": "star" };
-function crypt(right, top, rows, sum, cell = 84) {
-  const y = (i) => top + i * cell, x = (k) => right - (k + 0.5) * cell;        // k = 오른쪽에서 몇째 자리(0 = 일의 자리)
-  const glyph = (ch, k, i, color = "ink") => SHAPE_OF[ch] ? { kind: "shape", type: SHAPE_OF[ch], cx: x(k), cy: y(i) + cell / 2, r: Math.round(cell * 0.4), color, width: 3 }
-    : T(x(k), y(i) + cell / 2 + cell * 0.22, ch, color, Math.round(cell * 0.62), "center");
-  const width = Math.max(...rows.map((r) => r.length), sum.length);
-  const items = [];
-  rows.forEach((r, i) => [...r].reverse().forEach((ch, k) => items.push(glyph(ch, k, i))));
-  items.push(T(right - (width + 0.7) * cell, y(rows.length - 1) + cell / 2 + cell * 0.22, "+", "ink", Math.round(cell * 0.62), "center"));
-  const lineY = y(rows.length) + 4;
-  items.push({ kind: "line", x1: right - (width + 1.1) * cell, y1: lineY, x2: right + 6, y2: lineY, color: "ink", width: 3 });
-  [...sum].reverse().forEach((ch, k) => items.push(glyph(ch, k, rows.length + 0.15)));
-  return {
-    items,
-    // 도형 칸 안에 수 쓰기(row = 더하는 수 번호, rows.length = 결과 줄)
-    val: (row, k, v, color = "green") => T(x(k), y(row === rows.length ? row + 0.15 : row) + cell / 2 + cell * 0.16, String(v), color, Math.round(cell * 0.42), "center"),
-    carry: (k, v = 1) => T(x(k), top - 8, String(v), "red", 32, "center"),
-    col: (k) => ({ kind: "box", x: x(k) - cell / 2 + 4, y: top - 4, w: cell - 8, h: (rows.length + 1.15) * cell + 6, color: "gold", dash: true })
-  };
-}
 
 export const BOARDS_B03 = {
   "book-03/unit-area-shapes": (() => {

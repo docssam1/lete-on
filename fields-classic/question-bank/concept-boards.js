@@ -3,14 +3,14 @@
 // 글은 우리가 쓴 것(골든벨 원문을 베끼지 않는다). 확인 문제의 정답은 아래 규칙 함수로 계산하고, 골든벨 정답 DB는 쓰지 않는다.
 // 좌표는 1000×600 칠판 기준. 시계 숫자 n의 자리는 concept-board.js의 clockPoint가 계산한다.
 
-import { jo, landing, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, SEGMENT_MAPS, moveSegs, readDigit, transformDigit, segGeom, segMid } from "./concept-board-kit.js?v=20261025f";
-import { BOARDS_B02 } from "./concept-boards-b02.js?v=20261025g";
-import { BOARDS_B03 } from "./concept-boards-b03.js?v=20261025e";
-import { BOARDS_B04 } from "./concept-boards-b04.js?v=20261025e";
-import { BOARDS_B05 } from "./concept-boards-b05.js?v=20261026b";
-import { BOARDS_B06 } from "./concept-boards-b06.js?v=20261026e";
-import { BOARDS_B07 } from "./concept-boards-b07.js?v=20261026f";
-import { BOARDS_B08 } from "./concept-boards-b08.js?v=20261026b";
+import { jo, landing, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, SEGMENT_MAPS, moveSegs, readDigit, transformDigit, segGeom, segMid } from "./concept-board-kit.js?v=20261026a";
+import { BOARDS_B02 } from "./concept-boards-b02.js?v=20261026q";
+import { BOARDS_B03 } from "./concept-boards-b03.js?v=20261026q";
+import { BOARDS_B04 } from "./concept-boards-b04.js?v=20261026q";
+import { BOARDS_B05 } from "./concept-boards-b05.js?v=20261026q";
+import { BOARDS_B06 } from "./concept-boards-b06.js?v=20261026q";
+import { BOARDS_B07 } from "./concept-boards-b07.js?v=20261026q";
+import { BOARDS_B08 } from "./concept-boards-b08.js?v=20261026q";
 export { jo, landing, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, SEGMENT_MAPS, moveSegs, readDigit, transformDigit, segGeom, segMid };
 
 // 독쌤 음성 파일의 줄 id. 내보내기(tools/export-board-voice.mjs)와 재생(concept-board.js → study.js)이 같은 규칙을 쓴다.

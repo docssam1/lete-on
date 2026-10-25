@@ -2,7 +2,7 @@
 // 판서의 수와 그림은 골든벨 4권 문항과 겹치지 않게 골랐다(정사각형 3·4개 모양 수 → 판서는 삼각형으로,
 // 디지털 수 2·5·6·8·12·15·16·18·21·25·51·58·59·61·65·81·82·98·952 → 판서는 85·56·52).
 
-import { jo, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, moveSegs, transformDigit } from "./concept-board-kit.js?v=20261025f";
+import { jo, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, moveSegs, transformDigit } from "./concept-board-kit.js?v=20261026a";
 
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
 const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });

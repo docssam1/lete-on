@@ -43,3 +43,26 @@ export function segGeom(x, y, h, seg) {
   }[seg];
 }
 export const segMid = (x, y, h, seg) => { const [x1, y1, x2, y2] = segGeom(x, y, h, seg); return [(x1 + x2) / 2, (y1 + y2) / 2]; };
+
+// 세로셈 복면산 그림(3권·8권): rows는 더하는 수들(왼쪽→오른쪽 글자 배열), sum은 결과. 오른쪽 끝을 맞춘다.
+const kitText = (x, y, text, color, size, align) => ({ kind: "text", x, y, text, size, color, align });
+export const SHAPE_OF = { "□": "square", "△": "triangle", "◇": "diamond", "○": "circle", "☆": "star" };
+export function crypt(right, top, rows, sum, cell = 84) {
+  const y = (i) => top + i * cell, x = (k) => right - (k + 0.5) * cell;        // k = 오른쪽에서 몇째 자리(0 = 일의 자리)
+  const glyph = (ch, k, i, color = "ink") => SHAPE_OF[ch] ? { kind: "shape", type: SHAPE_OF[ch], cx: x(k), cy: y(i) + cell / 2, r: Math.round(cell * 0.4), color, width: 3 }
+    : kitText(x(k), y(i) + cell / 2 + cell * 0.22, ch, color, Math.round(cell * 0.62), "center");
+  const width = Math.max(...rows.map((r) => r.length), sum.length);
+  const items = [];
+  rows.forEach((r, i) => [...r].reverse().forEach((ch, k) => items.push(glyph(ch, k, i))));
+  items.push(kitText(right - (width + 0.7) * cell, y(rows.length - 1) + cell / 2 + cell * 0.22, "+", "ink", Math.round(cell * 0.62), "center"));
+  const lineY = y(rows.length) + 4;
+  items.push({ kind: "line", x1: right - (width + 1.1) * cell, y1: lineY, x2: right + 6, y2: lineY, color: "ink", width: 3 });
+  [...sum].reverse().forEach((ch, k) => items.push(glyph(ch, k, rows.length + 0.15)));
+  return {
+    items,
+    // 도형 칸 안에 수 쓰기(row = 더하는 수 번호, rows.length = 결과 줄)
+    val: (row, k, v, color = "green") => kitText(x(k), y(row === rows.length ? row + 0.15 : row) + cell / 2 + cell * 0.16, String(v), color, Math.round(cell * 0.42), "center"),
+    carry: (k, v = 1) => kitText(x(k), top - 8, String(v), "red", 32, "center"),
+    col: (k) => ({ kind: "box", x: x(k) - cell / 2 + 4, y: top - 4, w: cell - 8, h: (rows.length + 1.15) * cell + 6, color: "gold", dash: true })
+  };
+}

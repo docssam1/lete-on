@@ -2,7 +2,7 @@
 // 판서의 날짜·시각은 골든벨 7권 문항(9/1 일, 3/1 월, 1/1 수, 5/11 금, 1/29 수, 4/17 목 …, 11시 10분·9시 20분·5시 45분 등)과
 // 겹치지 않게 골랐다.
 
-import { jo } from "./concept-board-kit.js?v=20261025f";
+import { jo } from "./concept-board-kit.js?v=20261026a";
 
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
 const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });

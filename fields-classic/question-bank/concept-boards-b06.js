@@ -2,7 +2,7 @@
 // 판서의 수는 골든벨 6권 문항(수직선 15~47·39~95·17~35·18~30·10~30·20~44·4~28, 가르기 24·34·…·92,
 // 연필 2·3/3·4/3·5개, 공과 상자 5·6개 등)과 겹치지 않게 골랐다.
 
-import { jo } from "./concept-board-kit.js?v=20261025f";
+import { jo } from "./concept-board-kit.js?v=20261026a";
 
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
 const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });
