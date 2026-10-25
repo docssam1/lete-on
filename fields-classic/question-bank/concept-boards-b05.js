@@ -270,4 +270,203 @@ export const BOARDS_B05 = {
       ]
     };
   })()
+  ,"book-05/multiplication-table-source": (() => {
+    const AB = 28, AC = 35, cands = [2, 3, 4, 5, 6, 7, 8, 9].filter((a) => AB % a === 0 && AC % a === 0 && AB / a <= 9 && AC / a <= 9 && AB / a >= 2 && AC / a >= 2);
+    const A = cands[0], B = AB / A, Cv = AC / A;
+    const P = { A: [300, 170], B: [170, 420], C: [430, 420] };
+    const circ = (k, value, color = "ink") => ({ kind: "node", cx: P[k][0], cy: P[k][1], r: 38, value, color, size: 34, bg: "#fffdf7" });
+    const mid = (a, b) => [(P[a][0] + P[b][0]) / 2, (P[a][1] + P[b][1]) / 2];
+    const prod = (a, b, v, color = "blue") => { const [x, y] = mid(a, b); return [{ kind: "box", x: x - 34, y: y - 26, w: 68, h: 52, color }, T(x, y + 11, String(v), color, 30, "center")]; };
+    const pairs = (n) => [2, 3, 4, 5, 6, 7, 8, 9].filter((a) => n % a === 0 && n / a >= a && n / a <= 9).map((a) => `${a}×${n / a}`);
+    const CHK = 48, chk = pairs(CHK)[0].split("×").map(Number);
+    const RX = 560;
+    return {
+      title: "곱셈구구로 빈칸 찾기",
+      kicker: "5권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "동그라미 안에는 2부터 9까지의 수가 들어가고, 네모 안의 수는 양쪽 동그라미의 곱이에요. 곱셈구구로 동그라미의 수를 찾아요.",
+          items: [title("곱셈구구로 빈칸 찾기")] },
+        { say: "동그라미 세 개 A, B, C를 세모 모양으로 놓고, 사이사이에 네모를 그려요.",
+          items: [{ kind: "line", x1: P.A[0], y1: P.A[1], x2: P.B[0], y2: P.B[1], color: "gray", width: 2 }, { kind: "line", x1: P.A[0], y1: P.A[1], x2: P.C[0], y2: P.C[1], color: "gray", width: 2 }, { kind: "line", x1: P.B[0], y1: P.B[1], x2: P.C[0], y2: P.C[1], color: "gray", width: 2 }, circ("A", "A"), circ("B", "B"), circ("C", "C")] },
+        { say: `A와 B 사이 네모는 ${AB}, A와 C 사이 네모는 ${jo(AC, "예요")}. A 곱하기 B가 ${AB}, A 곱하기 C가 ${jo(AC, "예요")}.`,
+          items: [...prod("A", "B", AB), ...prod("A", "C", AC)] },
+        { say: `곱셈구구에서 ${jo(AB, "이")} 되는 짝을 찾아요. ${pairs(AB).map((p) => p.replace("×", " 곱하기 ")).join(", ")}. ${jo(AC, "가")} 되는 짝은 ${jo(pairs(AC).map((p) => p.replace("×", " 곱하기 ")).join(", "), "이에요")}.`,
+          items: [T(RX, 170, `${AB}: ${pairs(AB).join(", ")}`, "blue", 28), T(RX, 215, `${AC}: ${pairs(AC).join(", ")}`, "blue", 28)] },
+        { say: `A는 두 곱에 함께 쓰였어요. 그러니까 A는 ${jo(AB, "와")} ${jo(AC, "를")} 모두 나누는 수예요. 두 짝 목록에 함께 있는 수는 ${A}뿐이에요.`,
+          items: [T(RX, 270, `둘 다 나누는 수 → A = ${A}`, "red", 30), circ("A", A, "red")] },
+        { say: `A가 ${jo(A, "이면")} B는 ${AB} 나누기 ${A}, ${jo(B, "예요")}. C는 ${AC} 나누기 ${A}, ${jo(Cv, "예요")}.`,
+          items: [circ("B", B, "green"), circ("C", Cv, "green"), T(RX, 320, `B = ${AB} ÷ ${A} = ${B},  C = ${AC} ÷ ${A} = ${Cv}`, "green", 26)] },
+        { say: `남은 네모는 B 곱하기 C, ${B} 곱하기 ${jo(Cv, "는")} ${jo(B * Cv, "이에요")}.`,
+          items: [...prod("B", "C", B * Cv, "green")] },
+        { say: `확인해요. ${A} 곱하기 ${jo(B, "는")} ${AB}, ${A} 곱하기 ${jo(Cv, "는")} ${AC}. 모두 맞아요.`,
+          items: [T(RX, 380, `${A}×${B} = ${AB}, ${A}×${Cv} = ${AC} ✓`, "green", 28)] },
+        { say: "정리해요. 곱이 되는 두 한 자리 수의 짝을 곱셈구구에서 모두 찾아요. 두 곱에 함께 쓰인 수는 두 곱을 모두 나누는 수예요. 그 수를 정하면 나머지는 나눗셈으로 차례로 찾아요.", mood: "praise",
+          items: [T(RX, 450, "함께 쓰인 수 = 둘 다 나누는 수", "gold", 26)] },
+        { say: `한 문제 풀어 봐요. A 곱하기 B가 ${jo(CHK, "이고")}, A와 B는 한 자리 수예요. A가 B보다 작아요. A는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `A × B = ${CHK}, A와 B는 한 자리 수이고 A < B예요. A는?`,
+            options: [String(chk[1]), String(chk[0]), "4"], answer: 1,
+            hint: `곱셈구구에서 ${jo(CHK, "이")} 되는 한 자리 수의 짝을 찾아요.`, sayHint: `${jo(CHK, "는")} 6단에도, 8단에도 있어요. 둘 다 한 자리 수인 짝은요?`,
+            right: `맞았어요! ${chk[0]} × ${chk[1]} = ${CHK}, A = ${chk[0]}.`, sayRight: `맞았어요! ${chk[0]} 곱하기 ${jo(chk[1], "은")} ${CHK}, 작은 쪽 A는 ${jo(chk[0], "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-05/checkerboard-product-matrix": (() => {
+    const CARDS = [2, 3, 7, 8], G = [[3, 8], [7, 2]];
+    const rowP = G.map((r) => r[0] * r[1]), colP = [G[0][0] * G[1][0], G[0][1] * G[1][1]];
+    const X0 = 140, Y0 = 220, S = 100;
+    const cell = (r, c, v, color = "green") => T(X0 + (c + 0.5) * S, Y0 + (r + 0.5) * S + 14, String(v), color, 42, "center");
+    const card = (i, v, color = "gold") => [{ kind: "box", x: 80 + i * 70, y: 112, w: 56, h: 66, color }, T(108 + i * 70, 158, String(v), color, 36, "center")];
+    const RX = 560;
+    return {
+      title: "가로와 세로의 곱으로 카드를 놓아요",
+      kicker: "5권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "수 카드를 칸에 한 번씩 놓아, 가로줄의 곱과 세로줄의 곱을 모두 맞춰요. 두 줄이 만나는 칸에는 두 곱에 모두 들어가는 수가 와요.",
+          items: [title("가로·세로의 곱 맞추기")] },
+        { say: `카드는 ${CARDS.join(", ")}, 네 장이에요. 두 칸씩 두 줄의 판에 한 장씩 놓아요.`,
+          items: [...CARDS.flatMap((v, i) => card(i, v)), { kind: "grid", x: X0, y: Y0, cols: 2, rows: 2, cell: S, color: "ink" }] },
+        { say: `줄 끝에 곱이 적혀 있어요. 윗줄의 곱은 ${rowP[0]}, 아랫줄은 ${jo(rowP[1], "이에요")}. 왼쪽 세로줄의 곱은 ${colP[0]}, 오른쪽은 ${jo(colP[1], "이에요")}.`,
+          items: [T(X0 + 2 * S + 18, Y0 + 0.5 * S + 12, `${rowP[0]}`, "blue", 32), T(X0 + 2 * S + 18, Y0 + 1.5 * S + 12, `${rowP[1]}`, "blue", 32), T(X0 + 0.5 * S, Y0 + 2 * S + 40, `${colP[0]}`, "blue", 32, "center"), T(X0 + 1.5 * S, Y0 + 2 * S + 40, `${colP[1]}`, "blue", 32, "center")] },
+        { say: `먼저 곱을 카드 두 장으로 갈라요. 카드 중에서 ${jo(rowP[0], "이")} 되는 짝은 3과 8. ${jo(rowP[1], "가")} 되는 짝은 2와 7.`,
+          items: [T(RX, 170, `${rowP[0]} = 3 × 8,  ${rowP[1]} = 2 × 7`, "blue", 28)] },
+        { say: `세로줄도 갈라요. ${jo(colP[0], "은")} 3과 7, ${jo(colP[1], "은")} 8과 2.`,
+          items: [T(RX, 215, `${colP[0]} = 3 × 7,  ${colP[1]} = 8 × 2`, "blue", 28)] },
+        { say: `왼쪽 위 칸은 윗줄과 왼쪽 세로줄이 만나요. 두 짝에 모두 있는 수를 찾아요. 윗줄은 3과 8, 왼쪽 세로줄은 3과 7. 함께 있는 수는 3이에요.`,
+          items: [{ kind: "box", x: X0 + 4, y: Y0 + 4, w: S - 8, h: S - 8, color: "red", dash: true }, cell(0, 0, 3, "red"), T(RX, 270, "만나는 칸 = 두 짝에 함께 있는 수", "red", 24)] },
+        { say: "3을 놓으면 나머지는 저절로 정해져요. 윗줄의 남은 칸은 8, 왼쪽 세로줄의 남은 칸은 7, 마지막 칸은 2.",
+          items: [cell(0, 1, 8), cell(1, 0, 7), cell(1, 1, 2)] },
+        { say: `확인해요. 3 곱하기 8은 ${rowP[0]}, 7 곱하기 2는 ${rowP[1]}, 3 곱하기 7은 ${colP[0]}, 8 곱하기 2는 ${jo(colP[1], "이에요")}. 카드도 한 번씩만 썼어요.`,
+          items: [T(RX, 330, `${rowP[0]}, ${rowP[1]}, ${colP[0]}, ${colP[1]} ✓`, "green", 28)] },
+        { say: "정리해요. 줄 끝의 곱을 카드 두 장으로 갈라요. 가로줄과 세로줄이 만나는 칸에는 두 짝에 함께 있는 수를 놓아요. 마지막에 모든 카드를 한 번씩 썼는지 봐요.", mood: "praise",
+          items: [T(RX, 400, "만나는 칸부터!", "gold", 30)] },
+        { say: "한 문제 풀어 봐요. 가로줄의 곱이 15, 세로줄의 곱이 18이고, 두 줄은 한 칸에서 만나요. 수는 2부터 9까지예요. 만나는 칸의 수는 무엇일까요?", mood: "think",
+          items: [],
+          check: { question: "가로줄의 곱 15, 세로줄의 곱 18인 두 줄이 만나는 칸의 수는? (2~9)",
+            options: ["5", "3", "6"], answer: 1,
+            hint: "15와 18을 각각 2~9의 두 수로 갈라 봐요.", sayHint: "15는 3 곱하기 5. 18은 2 곱하기 9, 3 곱하기 6. 두 짝에 함께 있는 수는요?",
+            right: "맞았어요! 15 = 3×5, 18 = 3×6, 함께 있는 3이에요.", sayRight: "맞았어요! 두 곱에 모두 들어가는 수는 3이에요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
+
+  ,"book-05/square-number-source": (() => {
+    const N = 4, SP = 34, X0 = 100, Y0 = 150;
+    const dot = (r, c, color) => ({ kind: "shape", type: "circle", cx: X0 + c * SP, cy: Y0 + r * SP, r: 9, color, fill: color, quick: true });
+    const COLORS = ["blue", "red", "green", "gold"];
+    const layer = (k) => { const out = []; for (let r = 0; r <= k; r++) for (let c = 0; c <= k; c++) if (r === k || c === k) out.push(dot(r, c, COLORS[k])); return out; };
+    const M = 8, odds = Array.from({ length: M }, (_, i) => 2 * i + 1), sumM = M * M;
+    const INV = 81, invN = Math.sqrt(INV), invLast = 2 * invN - 1;
+    const CHK = { last: 19 }, chkN = (CHK.last + 1) / 2;
+    const RX = 470;
+    return {
+      title: "사각수와 제곱수",
+      kicker: "5권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "점을 정사각형 모양으로 놓으면 1, 4, 9, 16개처럼 늘어나요. 이런 수를 사각수라고 해요. 홀수를 차례로 더한 것과 같다는 걸 그림으로 봐요.",
+          items: [title("사각수")] },
+        { say: "점 하나를 놓아요. 1개.",
+          items: [dot(0, 0, "blue")] },
+        { say: "오른쪽과 아래를 ㄱ자 모양으로 감싸 한 겹 키워요. 새로 놓은 점은 3개. 모두 1 더하기 3, 4개. 가로 두 줄, 세로 두 줄이에요.",
+          items: layer(1) },
+        { say: "한 겹 더 키워요. 새 점은 5개. 모두 1 더하기 3 더하기 5, 9개. 가로 세 줄, 세로 세 줄.",
+          items: layer(2) },
+        { say: "또 한 겹, 새 점은 7개. 모두 16개, 네 줄씩 네 줄이에요. 새로 늘어나는 점은 3, 5, 7, 늘 다음 홀수예요.",
+          items: [...layer(3), T(RX, 170, "1, 1+3, 1+3+5, 1+3+5+7", "blue", 26), T(RX, 215, "= 1, 4, 9, 16", "blue", 26)] },
+        { say: "규칙이 보여요. 1부터 홀수를 몇 개 더했는지 세어, 그 개수를 두 번 곱하면 합이에요. 홀수 네 개를 더하면 4 곱하기 4, 16.",
+          items: [T(RX, 275, "홀수 □개의 합 = □ × □", "gold", 30)] },
+        { say: `1부터 15까지 홀수를 더하면 얼마일까요? 홀수를 세어요. ${odds.join(", ")}. ${KO[M]} 개예요. 8 곱하기 8, ${jo(sumM, "예요")}.`,
+          items: [T(RX, 335, `${odds.join("+")}`, "blue", 22), T(RX, 375, `${M}개 → ${M} × ${M} = ${sumM}`, "green", 30)] },
+        { say: "마지막 홀수만 보고 개수를 세는 방법도 있어요. 마지막 홀수에 1을 더하고 반으로 나누면 개수예요. 15 더하기 1은 16, 반은 8.",
+          items: [T(RX, 425, "개수 = (마지막 홀수 + 1) ÷ 2", "gold", 26)] },
+        { say: `거꾸로도 할 수 있어요. 합이 ${jo(INV, "이면")} 같은 수를 두 번 곱해 ${jo(INV, "이")} 되는 수는 ${invN}. 홀수 ${KO[invN]} 개를 더한 거예요. 아홉째 홀수는 ${jo(invLast, "이에요")}.`,
+          items: [T(RX, 480, `합 ${INV} = ${invN} × ${invN} → 마지막 홀수 ${invLast}`, "green", 26)] },
+        { say: "정리해요. 사각수는 1부터 홀수를 차례로 더한 수예요. 홀수를 몇 개 더했는지 세어 그 수를 두 번 곱해요. 마지막 홀수로 개수를 셀 때는 1을 더하고 반으로 나눠요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. 1 더하기 3 더하기 5, 이렇게 ${CHK.last}까지 홀수를 모두 더하면 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `1 + 3 + 5 + … + ${CHK.last}는 얼마일까요?`,
+            options: [String(chkN * chkN - 10), String(chkN * chkN), String((chkN - 1) * (chkN - 1))], answer: 1,
+            hint: "마지막 홀수에 1을 더하고 반으로 나눠 개수를 세요.", sayHint: `${CHK.last} 더하기 1은 20, 반은 10. 홀수 열 개예요. 10을 두 번 곱하면요?`,
+            right: `맞았어요! 홀수 ${chkN}개, ${chkN} × ${chkN} = ${chkN * chkN}.`, sayRight: `맞았어요! 홀수가 열 개라서 10 곱하기 10, ${chkN * chkN}이에요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-05/triangle-number-source": (() => {
+    const dotsTri = (x0, y0, n, color = "blue", sp = 30) => { const out = []; for (let r = 0; r < n; r++) for (let c = 0; c <= r; c++) out.push({ kind: "shape", type: "circle", cx: x0 + (c - r / 2) * sp, cy: y0 + r * sp * 0.87, r: 8, color, fill: color, quick: true }); return out; };
+    const E = 12, ePair = (1 + E), eCnt = E / 2, eSum = ePair * eCnt;
+    const O = 9, oMid = (O + 1) / 2, oSum = oMid * O;
+    const P = 13, hs = (P - 1) * P / 2;
+    const CHK = 12, chk = (CHK - 1) * CHK / 2;
+    const RX = 600;
+    return {
+      title: "삼각수와 악수하기",
+      kicker: "5권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "1부터 차례로 더한 수를 삼각수라고 해요. 점을 세모로 쌓으면 보여요. 길게 더하는 계산을 짝짓기로 빠르게 하는 법과, 악수 횟수가 삼각수가 되는 까닭을 배워요.",
+          items: [title("삼각수")] },
+        { say: "점을 한 줄에 하나, 둘, 셋, 넷씩 세모로 쌓아요. 1, 3, 6, 10개. 1부터 차례로 더한 수예요.",
+          items: [...dotsTri(110, 150, 1), ...dotsTri(200, 150, 2), ...dotsTri(310, 150, 3), ...dotsTri(440, 150, 4), T(80, 290, "1, 1+2, 1+2+3, 1+2+3+4 = 1, 3, 6, 10", "blue", 24)] },
+        { say: `1부터 ${E}까지 더해 봐요. 더하는 수가 ${E}개, 짝수 개예요. 앞과 뒤에서 하나씩 짝지어요. 1과 ${E}, 2와 ${E - 1}, 3과 ${E - 2}. 짝마다 합이 ${jo(ePair, "이에요")}.`,
+          items: [T(80, 350, `1+${E}, 2+${E - 1}, 3+${E - 2}, … → 모두 ${ePair}`, "blue", 26)] },
+        { say: `짝은 ${E}개의 반, ${KO[eCnt]} 개예요. ${jo(ePair, "이")} ${KO[eCnt]} 개니까 ${ePair} 곱하기 ${eCnt}, ${jo(eSum, "이에요")}.`,
+          items: [T(80, 395, `${ePair} × ${eCnt} = ${eSum}`, "green", 30)] },
+        { say: `홀수 개를 더할 때는 가운데 수를 써요. 1부터 9까지는 아홉 개, 가운데 수는 ${jo(oMid, "예요")}. 가운데에서 같은 거리의 두 수를 더하면 늘 가운데 수의 두 배라서, 모두 가운데 수로 고르게 만들 수 있어요. ${oMid} 곱하기 ${jo(O, "는")} ${jo(oSum, "예요")}.`,
+          items: [T(80, 450, `1~9: 가운데 ${oMid} × 개수 ${O} = ${oSum}`, "green", 28)] },
+        { say: `이번엔 악수예요. 둘이면 1번. 셋째가 오면 앞의 두 사람과 2번 더. 넷째가 오면 3번 더. 그래서 악수 횟수는 1 더하기 2 더하기 3, 삼각수예요.`,
+          items: [T(RX, 170, "2명 1번, 3명 1+2, 4명 1+2+3", "blue", 24)] },
+        { say: `사람이 ${P}명이면, 마지막 사람은 앞의 ${P - 1}명과 악수해요. 그래서 1부터 ${P - 1}까지 더한 수, ${jo(hs, "이에요")}. 앞에서 계산한 그 수예요.`,
+          items: [T(RX, 230, `${P}명 → 1+2+…+${P - 1} = ${hs}`, "green", 26)] },
+        { say: "선분 긋기도 같아요. 점 여러 개에서 두 점을 골라 잇는 선분의 수, 카드 여러 장에서 두 장을 뽑는 방법의 수도 모두 이 방법으로 세요.",
+          items: [T(RX, 290, "선분 · 두 장 뽑기 = 악수와 같아요", "gold", 24)] },
+        { say: "정리해요. 짝수 개는 앞뒤로 짝지어 짝의 합 곱하기 짝의 개수, 홀수 개는 가운데 수 곱하기 개수. 사람이 몇 명이면, 악수는 1부터 사람 수보다 하나 작은 수까지의 합이에요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. ${CHK}명이 서로 한 번씩 악수하면 모두 몇 번일까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK}명이 서로 한 번씩 빠짐없이 악수하면 모두 몇 번일까요?`,
+            options: [String(chk), String(hs), String(CHK * (CHK - 1))], answer: 0,
+            hint: `1부터 ${CHK - 1}까지 더해요.`, sayHint: `1부터 11까지 열한 개, 홀수 개예요. 가운데 수는 6. 6 곱하기 11은요?`,
+            right: `맞았어요! 6 × 11 = ${chk}번.`, sayRight: `맞았어요! 가운데 수 6 곱하기 11, ${chk}번이에요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-05/cube-tetrahedral-growth": (() => {
+    const L = 5, tri = (n) => n * (n + 1) / 2, layers = Array.from({ length: L }, (_, i) => tri(i + 1));
+    const total = layers.reduce((a, b) => a + b, 0);
+    const dotsTri = (x0, y0, n, color, sp = 22) => { const out = []; for (let r = 0; r < n; r++) for (let c = 0; c <= r; c++) out.push({ kind: "shape", type: "square", cx: x0 + (c - r / 2) * sp, cy: y0 + r * sp * 0.9, r: 8, color, fill: color, quick: true }); return out; };
+    const COL = ["blue", "red", "green", "gold", "blue"];
+    const CHK = 6, chk = total + tri(CHK);
+    const RX = 560;
+    return {
+      title: "삼각 계단의 쌓기나무를 세어요",
+      kicker: "5권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "쌓기나무를 층마다 세모 모양으로 넓혀 쌓았어요. 층마다 개수는 삼각수예요. 층의 개수를 차례로 구해 모두 더해요.",
+          items: [title("삼각 계단 쌓기나무")] },
+        { say: "맨 위 1층은 1개예요.",
+          items: [...dotsTri(110, 160, 1, COL[0]), T(90, 230, "1층: 1", "blue", 24)] },
+        { say: "2층은 세모 바닥이 한 줄 늘어서 1 더하기 2, 3개.",
+          items: [...dotsTri(200, 160, 2, COL[1]), T(170, 230, "2층: 3", "red", 24)] },
+        { say: "3층은 1 더하기 2 더하기 3, 6개. 4층은 10개. 5층은 15개. 층마다 삼각수만큼 늘어나요.",
+          items: [...dotsTri(310, 160, 3, COL[2]), ...dotsTri(450, 160, 4, COL[3]), T(270, 260, "3층: 6", "green", 24), T(410, 270, "4층: 10", "gold", 24), T(RX + 40, 170, `층: ${layers.join(", ")}`, "blue", 28)] },
+        { say: "다음 층의 개수는 앞 층에 줄 하나를 더한 거예요. 4층 10개에 다섯 개짜리 줄이 붙어 5층은 15개.",
+          items: [T(RX + 40, 220, "앞 층 + 새 줄", "gray", 24)] },
+        { say: `5층까지 모두 더해요. 큰 수끼리, 작은 수끼리 묶으면 편해요. 15 더하기 10은 25. 6 더하기 3 더하기 1은 10. 25 더하기 10은 ${jo(total, "예요")}.`,
+          items: [T(80, 380, `(15 + 10) + (6 + 3 + 1) = 25 + 10 = ${total}`, "green", 32)] },
+        { say: "층의 개수를 표로 써 두면, 한 층 더 쌓을 때 마지막 층만 구해 더하면 돼요.",
+          items: [T(80, 450, `5층까지 ${total} → 6층은 ${total} + (6층의 개수)`, "gold", 26)] },
+        { say: "정리해요. 층마다 1부터 차례로 더한 삼각수만큼 쌓여요. 층의 개수를 차례로 구하고, 묶어서 더해요. 한 층 늘 때는 새 층의 개수만 더해요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. 같은 규칙으로 ${CHK}층까지 쌓으면 쌓기나무는 모두 몇 개일까요?`, mood: "think",
+          items: [],
+          check: { question: `같은 규칙으로 ${CHK}층까지 쌓으면 쌓기나무는 모두 몇 개?`,
+            options: [String(chk - 6), String(chk), String(total + 15)], answer: 1,
+            hint: "6층의 개수는 1부터 6까지의 합이에요. 5층까지의 개수에 더해요.", sayHint: `6층은 1 더하기 2 더하기 … 더하기 6, ${jo(tri(CHK), "이에요")}. ${total}에 더해요.`,
+            right: `맞았어요! ${total} + ${tri(CHK)} = ${chk}.`, sayRight: `맞았어요! ${total} 더하기 ${jo(tri(CHK), "은")} ${jo(chk, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
 };
