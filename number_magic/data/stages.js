@@ -33,18 +33,18 @@ window.NM_STAGES = [
     chapters:['N0','N1','N2','N3','N4'],
     tiers:['level0'], courses:{from:0,to:0}, weeks:19,
     learn:{
-      ko:'수 세기와 개수, 순서와 뛰어세기, 몇째와 크기 비교, 수의 여러 표현. 손으로 모으고 가릅니다.',
+      ko:'수 세기·수량과 순서 → 여러 가지 수 표현 → 모으기·가르기 → 그림 이야기·규칙 → 추론 퍼즐 순서로 배웁니다.',
       en:'Counting and quantity, order and skip-counting, ordinals and comparing, many ways to show a number. Gathering and splitting by hand.',
       zh:'数数与数量、顺序与跳数、第几个与大小比较、数的多种表示。用手来合与分。'},
     how:{
       ko:'수와 친해지는 것이 목표라 시간을 재지 않습니다. 구슬을 두 접시로 직접 옮기며 5가 2와 3으로 갈라졌다가 다시 모이는 것을 손으로 봅니다. 이 단계의 가르기가 다음 단계의 보수이고, 훗날 분배법칙입니다.',
       en:'The goal is to befriend numbers, so nothing is timed. The child moves beads onto two plates and sees 5 split into 2 and 3, then come back together. This splitting becomes complements next, and the distributive law later.',
       zh:'目标是与数字亲近，所以不计时。孩子把珠子分到两个盘子里，亲眼看到5分成2和3，再合回来。这里的“分”就是下一阶段的补数，也是日后的分配律。'},
-    example:'5 = 2 + 3',
+    example:'구슬 5개 → 2개와 3개',
     symbols:[{sym:'5', tr:{ko:'숫자와 탤리 막대 — 수는 그릴 수 있다',en:'Numerals and tally marks — a number can be drawn',zh:'数字与计数符号——数是可以画出来的'}}],
-    symbolNote:{ko:'연산 기호는 아직 없습니다. + 는 다음 단계 과정 1에서 처음 만납니다.',
-      en:'No operation symbols yet. The + sign is first met in Course 1 of the next stage.',
-      zh:'还没有运算符号。＋在下一阶段的第1课程首次出现。'},
+    symbolNote:{ko:'1~18회는 그림과 말로 배우고, 19회 다리 학습에서 +·−·= 기호를 처음 만납니다. 과정 1에서 연산을 이어 갑니다.',
+      en:'Sessions 1–18 use pictures and words. Session 19 introduces +, − and = as a bridge to Course 1.',
+      zh:'第1～18次用图和语言学习，第19次初识＋、－、＝，为课程1搭桥。'},
     meta:{ko:'과정 0 · 주 2회 기준 10주(주 1회 19주) · 유닛 15',en:'Course 0 · 10 weeks at two sheets a week (19 at one) · 15 units',zh:'课程0 · 每周2次约10周(每周1次19周) · 15个单元'}
   },
   {

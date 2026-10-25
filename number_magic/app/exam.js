@@ -2270,6 +2270,8 @@ function printWatermarkHtml(){
 /* 중·고등 과정 학습지에 초등 단계의 창의 스레드가 실릴 때(C30·C31·C33·C34) 해요체 대신 합니다체.
    concept 에 koMid 가 있으면 그 문장을 쓴다. 급은 renderRoundPagesBody 가 회차 항목에서 정한다. */
 let W2_TIER = 'elem';
+let W2_C0 = null;
+function withC0(profile,render){const old=W2_C0;W2_C0=profile||null;try{return render();}finally{W2_C0=old;}}
 function pickConcept(c){ if(c && c.koMid && W2_TIER !== 'elem' && examLang() === 'ko') return c.koMid; return pickL(c); }
 // Korean print-only explanations for the preschool vocabulary audit; IDs, audio and generators stay unchanged.
 const W2_KID_COPY = {
@@ -2919,6 +2921,21 @@ function assignStudyDays(rounds, requestedDays){
   if(!practice.length || !(requestedDays > 0)) return 0;
   const dayCount = Math.min(practice.length, Math.max(1, Math.floor(requestedDays)));
   const total = practice.reduce((n, r) => n + r.problems.length, 0);
+  if(W2_C0){
+    const prefix=[0];practice.forEach(r=>prefix.push(prefix.at(-1)+r.problems.length));
+    let best=null;
+    const visit=(cuts,start)=>{
+      if(cuts.length===dayCount-1){
+        const ends=[0,...cuts,practice.length],loads=ends.slice(1).map((end,i)=>prefix[end]-prefix[ends[i]]);
+        const score=[Math.max(...loads),Math.max(...loads)-Math.min(...loads),loads.reduce((a,n)=>a+(n-total/dayCount)**2,0)];
+        if(!best||score.some((x,i)=>x<best.score[i]&&score.slice(0,i).every((y,j)=>y===best.score[j])))best={cuts:ends,score};return;
+      }
+      for(let i=start;i<=practice.length-(dayCount-1-cuts.length);i++)visit(cuts.concat(i),i+1);
+    };visit([],1);
+    let index=0,day=1;
+    for(const r of rounds){if(r.problems?.length){while(index>=best.cuts[day])day++;r.studyDays=[day];index++;}else r.studyDays=[Math.min(day,dayCount)];}
+    return dayCount;
+  }
   const target = total / dayCount;
   let day = 1, done = 0, remaining = practice.length;
   rounds.forEach(r => {
@@ -3603,6 +3620,10 @@ function nlAnsBox(unit){
 /* 한 칸에 그릴 물건 — 젤리 SVG(app/object-art.js)가 있으면 그것, 'num:7' 은 숫자, 없으면 글자 그대로. */
 const NL_PEOPLE_ART={'🧒':'ginger-boy-original','👧':'blonde-girl-original','👦':'night-boy-original','🧑':'forest-boy-original','👩':'mint-girl-original','👨':'sunset-girl-original','🧓':'boy-snow','👴':'girl-snow','👵':'forest-boy-snow'};
 function nlObjHtml(tok, f){
+  if(W2_C0&&/^shape:(circle|square|triangle)$/.test(tok)){
+    const body=tok==='shape:circle'?'<circle cx="32" cy="32" r="23" fill="#f8d36a"/>':tok==='shape:square'?'<rect x="9" y="9" width="46" height="46" fill="#f1b39a"/>':'<path d="M32 7L58 55H6Z" fill="#a7cc9e"/>';
+    return '<svg class="nm-obj-svg nm-c0-flat-shape" viewBox="0 0 64 64" aria-label="'+esc(tok==='shape:circle'?lk('동그라미','circle','圆形'):tok==='shape:square'?lk('네모','square','正方形'):lk('세모','triangle','三角形'))+'" role="img" xmlns="http://www.w3.org/2000/svg"><g stroke="#3f4638" stroke-width="2">'+body+'</g></svg>';
+  }
   if(NL_PEOPLE_ART[tok])return `<img class="nm-nl-person" src="assets/characters/portraits/${NL_PEOPLE_ART[tok]}.png" alt="${esc(lk('친구','friend','朋友'))}">`;
   if(window.NM_OBJECTS && window.NM_OBJECTS.has(tok)) return window.NM_OBJECTS.svg(tok, {f});
   if(typeof tok === 'string' && tok.indexOf('num:') === 0) return esc(tok.slice(4));
@@ -4594,22 +4615,24 @@ const ELEM_TIERS = { level0:1, level1:1, level2:1, level3:1, challenge:1 };
    그게 없으면 예전 drills·creative 그대로(창의 칸 = creTag)로 돌아간다.
    seed(prefix, i): 교과는 ('', drills 자리), 창의 칸 출신은 ('cr', creative 자리). */
 function sessionRoleItems(course, session, seed){
+  if(session.c0?.incomplete)throw Error('C0 activity metadata is incomplete; load all numberland thread files.');
   /* 2026-09-25 정본: 각 칸의 문항 수는 courses.js planCounts 가 정한 count(30분 분량·난이도별)를 그대로 쓴다.
      적용 칸의 그래프 직접 그리기(kind 'drawing')는 renderDrawingRound 로 간다. */
   const thNm = t => { const th = (window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
   const drills = session.drills || [], cre = session.creative || [];
+  const finish=R=>{if(session.c0)Object.values(R).flat().forEach(it=>{it.c0=session.c0;const copy=window.NM_C0?.copy(it.thread,it.level);if(copy){it.topicName=pickL(copy.title);it.levelOnly=true;it.levelTitle=copy.title;it.levelConcept=copy.concept;}});return R;};
   const at = (arr, d) => arr.indexOf(d) >= 0 ? arr.indexOf(d) : arr.findIndex(x => x.t === d.t && x.lv === d.lv);
   const drillItem = (d, tag) => ({ thread:d.t, level:d.lv, n:d.n, count:d.count || undefined, seed:seed('', at(drills, d)),
     topicName:tag ? tag + thNm(d.t) : undefined });
   const creItem = (d, tag) => ({ thread:d.t, level:d.lv, n:d.n || 4, count:d.count || d.n || 4, creative:true,
     topicName:tag + thNm(d.t), seed:seed('cr', Math.max(0, at(cre, d))) });
   if(!session.school){
-    return { school:drills.map(d => drillItem(d)), strategy:cre.filter(d => (window.NM_THREADS||{})[d.t]).map(d => creItem(d, creTag(course.tier))),
-      application:[], stretch:[] };
+    return finish({ school:drills.map(d => drillItem(d)), strategy:cre.filter(d => (window.NM_THREADS||{})[d.t]).map(d => creItem(d, creTag(course.tier))),
+      application:[], stretch:[] });
   }
   const appTag = lk('적용 · ', 'Applying · ', '应用 · ');
   const reviewTag = lk('복습 · ', 'Review · ', '复习 · ');
-  return {
+  return finish({
     school: session.school.map(d => { const it = drillItem(d, d.review ? reviewTag : null);
       if(!d.review && it.count) it.count = scaleCount(d, it.count); return it; }),
     strategy: ((session.strategy && session.strategy.practice) || []).map(d => Object.assign(creItem(d, lk('독셈 · ', 'Doc-T Math · ', '巧算 · ')), { role:'strategy' })),
@@ -4620,7 +4643,7 @@ function sessionRoleItems(course, session, seed){
       return a.from === 'creative' ? Object.assign(creItem(a, appTag), { role:'application' }) : drillItem(a, appTag);
     }),
     stretch: (session.stretch || []).map(d => creItem(d, lk('심화 · ', 'Stretch · ', '拓展 · ')))
-  };
+  });
 }
 function creTag(tier){
   return ELEM_TIERS[tier]
@@ -5930,7 +5953,7 @@ function w2MetaFieldsHtml(count, o){
 function w2HeadHtml(item, code, pageLabel, count, opts){
   opts = opts || {};
   const th = (window.NM_THREADS||{})[item.thread] || {};
-  const thName = pickL(item.topicName) || pickL(th.name) || item.thread;
+  const thName = pickL(item.topicName) || (item.c0&&window.NM_C0?pickL(NM_C0.copy(item.thread,item.level).title):pickL(th.name)) || item.thread;
   const shortCode = item.codeLabel || `${item.thread}-L${item.level}`;
   const tier = schoolTierOf(item);
   const tierMark = tier === 'elem' ? lk('초','E','小') : tier === 'mid' ? lk('중','M','初') : lk('고','H','高');
@@ -6506,7 +6529,7 @@ function ancientNumberIntroHtml(item,code,opts){
 function renderRoundPages(item, opts){
   opts=opts||{};
   const local=Object.assign({},opts,{exclude:new Set(opts.exclude||[])});
-  const result=withCompactHighPrint(item.compactHigh,()=>withPacingPrint(item.pacing,()=>renderRoundPagesBody(item,local)));
+  const result=withC0(item.c0,()=>withCompactHighPrint(item.compactHigh,()=>withPacingPrint(item.pacing,()=>renderRoundPagesBody(item,local))));
   result.uniqueKeys=Array.from(local.exclude);
   if(opts.exclude) result.uniqueKeys.forEach(key=>opts.exclude.add(key));
   return result;
@@ -6547,6 +6570,9 @@ function renderRoundPagesBody(item, opts){
   // Joining concrete groups needs room for both the pictures and the number model.
   if(problems.some(p=>p.widget==='numberBond'&&p.dir==='join'))Object.assign(layout,{cols:2,rows:3,perPage:6,firstRows:0,pitch:74});
   if(problems.some(p=>p.widget==='numberBond'&&p.dir==='split'))Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
+  if(item.c0&&problems.some(p=>/overlapSum|gridSum|crossPlace|pyramid|treeFill|vertexSum|shapeEq|ruleTable|numberBond|tapMake|Paint|paint|split|Split|Group|group|match|Match|Rep|dotToDot/.test(p.widget||''))){
+    Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
+  }
   const middleSix = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] && ['visual','word'].includes(layout.type);
   if(middleSix || (item.pacing && ['visual','word'].includes(layout.type))){
     // 원문/정답/모눈 비율은 유지하고, 그래프·문장제의 연습 지면은 2열×3행으로.
@@ -6850,7 +6876,7 @@ function renderRoundPagesBody(item, opts){
   let rampTagged = false; // 도전 알약은 회차 전체에서 첫 램프 문항 하나에만(§build 6)
   pvSeen = 0;             // 자릿값 색 힌트는 회차마다 다시 센다(세 문항에 하나)
   const th = (window.NM_THREADS||{})[item.thread] || {};
-  const instrText = item.instr ? pickL(item.instr)
+  const instrText = item.c0&&window.NM_C0 ? pickL(NM_C0.copy(item.thread,item.level).instr) : item.instr ? pickL(item.instr)
     : layout.type === 'word'
     ? lk('다음 물음에 답하시오.','Answer each question.','请回答下列各题。')
     : pickL(((th.levels || []).find(l => l.id === item.level) || {}).instr || th.instr || W2_INSTR[item.thread]) || lk('계산을 하시오.','Solve each problem.','请计算下列各题。');
@@ -6878,6 +6904,7 @@ function renderRoundPagesBody(item, opts){
       if(isFirstRamp) rampTagged = true;
       let h = w2CellHtml(p, num, item.thread, layout.type === 'vertical', isFirstRamp, layout.type, num - 1, problems.length,
         !!(opts.editorialC4 && examLang() === 'ko'),levelPrintCondition(item.thread,item.level)); num++;
+      if(item.c0&&/overlapSum|gridSum|crossPlace|pyramid|treeFill|vertexSum|shapeEq|ruleTable|numberBond|tapMake|Paint|paint|split|Split|Group|group|match|Match|Rep|dotToDot/.test(p.widget||''))h=h.replace('class="nm-w2-item','class="nm-w2-item nm-c0-draw');
       if(partialCol){
         const r = (i % rowsPerCol) + 1, c = Math.floor(i / rowsPerCol) + 1;
         h = h.replace(/^(\s*<div\b)/, `$1 style="grid-row:${r};grid-column:${c}"`);
@@ -7008,7 +7035,7 @@ function pageCapacityFor(items){
    buildMixedProblemSet)은 이 경로에서 더는 쓰지 않는다 — 함수 자체는 다른
    호출부(있다면)를 위해 그대로 둔다. */
 function renderMixedSheet(items, envelopeCode, opts){
-  return withCompactHighPrint(opts.compactHigh || items.some(it=>it.compactHigh),()=>withPacingPrint(opts.pacing,()=>renderMixedSheetBody(items,envelopeCode,opts)));
+  return withC0(items.find(it=>it.c0)?.c0,()=>withCompactHighPrint(opts.compactHigh || items.some(it=>it.compactHigh),()=>withPacingPrint(opts.pacing,()=>renderMixedSheetBody(items,envelopeCode,opts))));
 }
 function renderMixedSheetBody(items, envelopeCode, opts){
   // Freeze the old practice/teaching pool first. New pictured examples may not
@@ -7190,6 +7217,7 @@ ${paperStamped}
 ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-answer-key">${drawingAnswerKeyHtml(r)}</div>`).join('')}`;
 
   if(series)series.decorate(sheet,opts.cover);
+  if(W2_C0&&window.NM_C0_PAPER)NM_C0_PAPER.decorate(sheet,W2_C0,examLang());
   document.body.appendChild(sheet);
   sheet.querySelectorAll('.nm-w2-tex, .nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex || '', el));
   // 정답지를 A4 높이로 나눈다. 흐름 조판은 발치만 다음 장으로 밀려날 수 있다.
@@ -7270,7 +7298,8 @@ function getLevelParams(threadId, lv){
   const th = (window.NM_THREADS || {})[threadId];
   if(!th) return {};
   const lvObj = (th.levels || []).find(l => l.id === lv);
-  return lvObj ? lvObj.params : {};
+  const params=lvObj ? lvObj.params : {};
+  return W2_C0?{...params,c0:W2_C0}:params;
 }
 
 /* 생성기 호출: NM_TGEN[genKey](params, rng) → problem */
@@ -7290,7 +7319,7 @@ function generateProblem(threadId, lv, rng){
   const genKey = th.gen;
   const params = getLevelParams(threadId, lv);
   const gen = (window.NM_TGEN || {})[genKey];
-  if(gen){ return applyOrient(gen(params, rng), params); }
+  if(gen){ return applyOrient(window.NM_C0?NM_C0.generate(threadId,lv,params,rng,gen):gen(params,rng),params); }
   /* 생성기가 없을 때 — 눈에 보이게 실패한다(2026-09-23).
      전에는 여기서 "두 자리 + 한 자리 덧셈"을 대신 만들어 돌려줬다. 그래서 ws.html 이
      mid9·mid10 을 안 싣고 있던 동안 중2·중3 주간 학습지가 개념 문장은 「함수와 함숫값」인데
@@ -7324,6 +7353,7 @@ function rampLevelFor(threadId, lv){
   return next.id;
 }
 function rampCount(threadId, lv, count){
+  if(W2_C0)return 0;
   return (count >= 8 && rampLevelFor(threadId, lv)) ? Math.round(count * 0.3) : 0;
 }
 /* overrides(§인쇄 미리보기 편집기, 2026-09-05) — {slotIndex: seedString}. slotIndex는
@@ -9078,10 +9108,10 @@ ${round.html}
     (session.magic || []).forEach((uid, mi) => {
       const u = (window.NM_UNITS || {})[uid];
       if(!u || !u.discover || !Array.isArray(u.discover.stages) || !u.discover.stages.length) return;
-      const note={ magicUnit:uid, thread:null, level:null, n:0, count:0,
+      const note={ c0:session.c0, magicUnit:uid, thread:null, level:null, n:0, count:0,
         topicName:(u.title && (u.title.ko || u.title)) || uid, seed:seedOf(seedWeek + 'mg', mi) };
       // Counting starts with the concrete example before the practice; source seeds stay unchanged.
-      if(c==='C0'&&uid==='N-01')items.unshift(note);else items.push(note);
+      if(c==='C0')items.unshift(note);else items.push(note);
     });
     items.push(...R.strategy, ...R.application);
     /* 문장제 회차는 초등 구간(레벨 1~3·경시의 탑)에만(2026-09-08, 원장 "중등·고등은 문장제보다는
@@ -9120,7 +9150,7 @@ ${round.html}
       : amount > 1 ? lk(`많은 연습량 ${amount}배`, `More practice · ${amount}×`, `加量练习 ${amount}倍`) : '';
     const cover = { name, weekLabel, courseNum: course.order, courseTitle: title, k, cadence: cad, code: wsId, amount, amountLabel,
       stage: stage ? (stage.name.ko || '') : '',
-      studyDays: Math.max(1, Math.ceil((session.minutes || 30) / 10)),
+      studyDays: c==='C0'?3:Math.max(1, Math.ceil((session.minutes || 30) / 10)),
       sessionIdx: (opts.sessionIdx != null && isFinite(+opts.sessionIdx)) ? Math.max(0, Math.floor(+opts.sessionIdx)) : null };
     const units = [].concat.apply([], (session.magic || []))
       .concat([].concat.apply([], course.sessions.filter(s => !s.test).map(s => [].concat.apply([], s.magic || []))))
