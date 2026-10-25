@@ -5,8 +5,8 @@
 //  · 숫자판으로 답을 쓴다. 한 번 틀리면 풀이의 첫 걸음을 귀띔하고, 두 번 틀리면 풀이와 답을 보여 주고 넘어간다.
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
 import { typeById } from "./source-data.js?v=20261024r";
-import { GENERATORS } from "./generators.js?v=20260918b";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027a";
+import { GENERATORS } from "./generators.js?v=20261027a";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027b";
 import { jo } from "./concept-board-kit.js?v=20261026b";
 
 // 그림 그리기는 문제은행 화면(app.js)과 같은 파일·같은 꼬리표로 불러온다
@@ -27,7 +27,8 @@ export function answerShape(answer) {
   const a = plain(answer);
   let m;
   if (/^-?\d+$/.test(a)) return { kind: "int", values: [Number(a)], unit: "" };
-  if ((m = a.match(/^(-?\d+)\s*([^\d\s,][^\d,]{0,3})$/u))) return { kind: "int", values: [Number(m[1])], unit: m[2] };
+  // 단위는 띄어 쓰지 않은 짧은 말 하나(「3번 딸기」처럼 낱말이 붙은 답은 받지 않는다)
+  if ((m = a.match(/^(-?\d+)\s*([^\d\s,][^\d\s,]{0,3})$/u))) return { kind: "int", values: [Number(m[1])], unit: m[2] };
   if (/^-?\d+(\s*,\s*-?\d+)+$/.test(a)) return { kind: "list", values: a.split(",").map((x) => Number(x.trim())), unit: "" };
   return null;
 }

@@ -9,6 +9,12 @@ import { DRILL_RECIPES } from "./drill-recipes.js";
 import { answerShape } from "./drill.js";
 
 const TRIES = 20, fails = [];
+// 답 꼴 읽기 자체부터(한 줄 뒤 주석이 return을 삼켜 목록 답이 다 빠졌던 적이 있다)
+const SHAPES = [["7", "int", [7], ""], ["15개", "int", [15], "개"], ["12㎠", "int", [12], "㎠"], ["1, 4, 5", "list", [1, 4, 5], ""], ["3번 딸기", null], ["가=3, 나=4", null]];
+for (const [text, kind, values, unit] of SHAPES) {
+  const got = answerShape(text);
+  if (kind === null ? got !== null : !got || got.kind !== kind || got.values.join() !== values.join() || got.unit !== unit) fails.push(`답 꼴 읽기: ${text} → ${JSON.stringify(got)}`);
+}
 const lessonKeys = new Set();
 for (const cur of CURRICULUM.filter((b) => /^book-\d\d$/.test(b.id))) {
   const bell = GOLDEN_BELL_BOOKS.find((b) => b.id === cur.id);

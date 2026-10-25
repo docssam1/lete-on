@@ -850,7 +850,8 @@ function rangeNumberDigitCount({ difficulty = 2 }) {
   const digits = difficulty === 1 ? 1 : difficulty === 2 ? 2 : sample([2, 3]);
   const lower = digits === 1 ? 1 : Math.pow(10, digits - 1);
   const upper = Math.pow(10, digits) - 1;
-  const start = randomInt(lower, upper - 12);
+  // 한 자리 수는 1~9뿐이라 upper - 12가 0보다 작아진다 — 시작이 0 아래로 내려가 「-1부터」가 나오던 것을 막는다
+  const start = randomInt(lower, Math.max(lower, upper - (digits === 1 ? 4 : 12)));
   const end = Math.min(upper, start + randomInt(5, difficulty === 3 ? 45 : 22));
   const numberCount = end - start + 1;
   const answer = countWrittenDigits(start, end);

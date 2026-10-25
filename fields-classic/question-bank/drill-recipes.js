@@ -16,5 +16,13 @@ export const DRILL_RECIPES = Object.freeze({
   "book-08/reverse-operation-chain": ["reverse-arithmetic-chain-b8", "reverse-multiply-divide-b8"],
   "book-08/give-same-source": ["give-as-much-once-b8", "give-as-much-return-b8"],
   "book-08/fraction-picture-source": ["shaded-fraction-count-b8", "fraction-subgroup-count-b8"],
-  "book-08/fraction-reverse-source": ["fraction-given-away-original-b8", "sequential-fraction-remains-b8", "sequential-fraction-consumption-b8"]
+  "book-08/fraction-reverse-source": ["fraction-given-away-original-b8", "sequential-fraction-remains-b8", "sequential-fraction-consumption-b8"],
+  // 9권 — 도형의 분할과 넓이 · 마방진 (쌓기나무 차시는 숫자로 답하는 문제은행 유형이 없어 아직 없음)
+  "book-09/unit-area-and-half": ["unit-grid-area", "parallelogram-grid-area-b9", "shaded-composite-grid-area-b9"],
+  "book-09/magic-arrangement-source": ["triangle-edge-extreme-six-b9", "circle-chain-equal-sum-b9", "triangle-edge-extreme-nine-b9"],
+  // 10권 — 연속수의 합 (수의 개수는 6권의 같은 유형을 빌려 쓴다)
+  "book-10/napier-split-source": ["area-model-multiplication", "napier-multiplication"],
+  "book-10/number-count-source": ["inclusive-range-count", "range-number-digit-count"],
+  "book-10/consecutive-even-source": ["consecutive-sum-even-count", "same-parity-consecutive-sum-b10"],
+  "book-10/consecutive-odd-source": ["consecutive-sum-odd-count", "calendar-block-sum-b10"]
 });
