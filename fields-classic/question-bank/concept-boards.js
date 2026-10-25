@@ -10,6 +10,7 @@ import { BOARDS_B04 } from "./concept-boards-b04.js?v=20261025e";
 import { BOARDS_B05 } from "./concept-boards-b05.js?v=20261026b";
 import { BOARDS_B06 } from "./concept-boards-b06.js?v=20261026e";
 import { BOARDS_B07 } from "./concept-boards-b07.js?v=20261026f";
+import { BOARDS_B08 } from "./concept-boards-b08.js?v=20261026b";
 export { jo, landing, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, SEGMENT_MAPS, moveSegs, readDigit, transformDigit, segGeom, segMid };
 
 // 독쌤 음성 파일의 줄 id. 내보내기(tools/export-board-voice.mjs)와 재생(concept-board.js → study.js)이 같은 규칙을 쓴다.
@@ -625,4 +626,5 @@ export const BOARDS = {
   ,...BOARDS_B05
   ,...BOARDS_B06
   ,...BOARDS_B07
+  ,...BOARDS_B08
 };
