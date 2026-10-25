@@ -2,7 +2,7 @@
 // 판서의 수와 그림은 골든벨 3권 문항(온칸·반칸 도형들, 6×20+6·6×28+6+6…, 원 3·4·6·8·9·12조각, 모눈 2×2~5×5 등)과
 // 겹치지 않게 골랐다. 겹치면 공개 판서가 비공개 정답을 보여 주게 된다.
 
-import { jo } from "./concept-board-kit.js?v=20261025e";
+import { jo } from "./concept-board-kit.js?v=20261025f";
 
 const KO = { 1: "한", 2: "두", 3: "세", 4: "네", 5: "다섯", 6: "여섯", 7: "일곱", 8: "여덟", 9: "아홉", 10: "열", 11: "열한", 12: "열두" };
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });

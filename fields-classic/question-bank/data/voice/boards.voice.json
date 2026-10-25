@@ -2777,6 +2777,186 @@
   {
    "id": "fcb-book-03-magic-square-targets-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b01",
+   "text": "같은 조각을 변끼리 붙여 만들 수 있는 모양이 몇 가지인지 세는 법을 배워요. 오늘은 삼각형 조각으로 연습하고, 정사각형은 게임과 골든벨에서 직접 세어 봐요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b02",
+   "text": "약속이 두 가지예요. 조각은 변과 변이 꼭 맞게 붙여요. 그리고 돌리거나 뒤집어서 꼭 포개지는 모양은 같은 모양으로 세요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b03",
+   "text": "삼각형 한 장으로는 한 가지 모양이에요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b04",
+   "text": "두 장은 변끼리 붙이면 마름모 하나예요. 어느 변에 붙여도 돌리면 같은 마름모가 돼요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b05",
+   "text": "세 장은 마름모에 한 장을 더 붙여요. 어디에 붙여도 돌리면 같은 사다리꼴 모양이 돼요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b06",
+   "text": "네 장은 사다리꼴에 한 장을 더 붙여요. 빠뜨리지 않으려면 사다리꼴의 비어 있는 변마다 하나씩 붙여 봐요. 붙일 곳이 다섯 군데예요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b07",
+   "text": "가는 위에 붙여서 큰 세모가 됐어요. 나와 다는 양쪽 끝에 붙여서 길쭉한 모양이 됐어요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b08",
+   "text": "나를 뒤집어 보면 다와 꼭 포개져요. 그러니까 나와 다는 같은 모양이에요. 하나로 세요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b09",
+   "text": "라와 마는 아래에 붙였어요. 라를 뒤집으면 마와 꼭 포개져요. 이것도 같은 모양이에요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b10",
+   "text": "그래서 서로 다른 모양은 가, 나, 라. 네 장으로는 세 가지예요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b11",
+   "text": "정리해요. 한 장 적은 모양의 빈 변마다 한 장씩 붙여 빠짐없이 만들어요. 그다음 돌리거나 뒤집어 포개지는 것끼리 묶어, 묶음의 수를 세요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-b12",
+   "text": "한 문제 풀어 봐요. 삼각형 네 장을 변끼리 붙여 만들 수 있는 서로 다른 모양은 몇 가지일까요?"
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-hint",
+   "text": "붙일 곳은 다섯 군데지만, 뒤집으면 같은 모양이 두 쌍 있었어요. 묶으면 몇 가지일까요?"
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-right",
+   "text": "맞았어요! 다섯 개 가운데 두 쌍이 같은 모양이라 세 가지예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-04-polyomino-family-count-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b01",
+   "text": "디지털 숫자는 막대 일곱 개로 만들어요. 두 자리 수를 뒤집거나 돌리면, 숫자 모양만이 아니라 자리의 순서도 바뀌어요. 천천히 봐요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b02",
+   "text": "85를 디지털 숫자로 써요. 왼쪽에 8, 오른쪽에 5."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b03",
+   "text": "오른쪽에 거울을 세우고 비춰요. 거울에서는 왼쪽과 오른쪽이 바뀌어요. 먼저 자리부터 봐요. 왼쪽에 있던 8이 오른쪽으로, 오른쪽에 있던 5가 왼쪽으로 가요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b04",
+   "text": "그다음 숫자마다 좌우를 바꿔요. 8은 바꿔도 8. 5는 왼쪽 위 막대가 오른쪽 위로, 오른쪽 아래 막대가 왼쪽 아래로 가서 2가 돼요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b05",
+   "text": "그래서 85를 오른쪽으로 뒤집으면 28이에요. 순서를 바꾸는 것과 숫자를 바꾸는 것, 두 가지를 다 해야 해요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b06",
+   "text": "원래 수와 뒤집은 수를 더해 봐요. 85 더하기 28은 113이에요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b07",
+   "text": "이번엔 56을 반 바퀴 돌려요. 반 바퀴는 위아래도, 왼쪽 오른쪽도 모두 바뀌어요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b08",
+   "text": "자리가 바뀌어요. 왼쪽의 5는 오른쪽으로, 오른쪽의 6은 왼쪽으로 가요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b09",
+   "text": "숫자마다 반 바퀴 돌려요. 6을 반 바퀴 돌리면 9. 5를 반 바퀴 돌리면 그대로 5예요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b10",
+   "text": "그래서 56을 반 바퀴 돌리면 95예요. 원래 수와 더하면 56 더하기 95는 151이에요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b11",
+   "text": "뒤집기와 반 바퀴는 결과가 달라요. 오른쪽으로 뒤집으면 좌우만, 반 바퀴는 위아래와 좌우가 다 바뀌어요. 막대를 하나씩 옮겨 보면 헷갈리지 않아요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b12",
+   "text": "정리해요. 두 자리 수는 먼저 자리의 순서를 바꾸고, 그다음 숫자마다 막대를 옮겨요. 숫자가 되지 않는 모양이 나오면 그 수는 만들 수 없어요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-b13",
+   "text": "한 문제 풀어 봐요. 디지털 숫자 52를 반 바퀴 돌리면 어떤 수가 될까요?"
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-hint",
+   "text": "자리가 바뀌니 2가 왼쪽, 5가 오른쪽으로 가요. 2와 5는 반 바퀴 돌려도 그대로예요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-right",
+   "text": "맞았어요! 순서가 바뀌고 2와 5는 그대로라서 25가 돼요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-04-digital-flip-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-b01",
+   "text": "모양을 뒤집는 것과 돌리는 것은 달라요. 거울로 뒤집기, 반의 반 바퀴, 반 바퀴를 하나씩 비교해 봐요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-b02",
+   "text": "모눈에 처음 모양을 그려요. 윗줄에 세 칸, 그리고 왼쪽 끝 아래에 한 칸이 붙어 있어요. 이 붙은 한 칸을 잘 따라가 봐요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-b03",
+   "text": "오른쪽 거울에 비춰요. 왼쪽과 오른쪽만 바뀌고, 위아래는 그대로예요. 붙은 칸이 오른쪽 끝 아래로 가요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-b04",
+   "text": "왼쪽 거울에 비춰도 결과는 똑같아요. 거울이 오른쪽에 있든 왼쪽에 있든, 바뀌는 것은 왼쪽과 오른쪽이에요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-b05",
+   "text": "이번엔 아래 거울이에요. 위와 아래만 바뀌어요. 세 칸이 아랫줄로 내려가고, 붙은 칸은 왼쪽 끝 위에 있어요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-b06",
+   "text": "오른쪽으로 뒤집은 모양을 다시 아래로 뒤집어 봐요. 좌우가 바뀐 다음 위아래도 바뀌어서, 세 칸은 아랫줄, 붙은 칸은 오른쪽 끝 위에 있어요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-b07",
+   "text": "처음 모양을 반 바퀴 돌린 것과 똑같아요. 두 번 뒤집으면 반 바퀴 돌린 것과 같아요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-b08",
+   "text": "시계 방향으로 반의 반 바퀴 돌리면 또 달라요. 윗줄 세 칸이 오른쪽 세로줄로 서고, 붙은 칸은 맨 위 칸의 왼쪽으로 가요. 뒤집은 모양들과 비교해 보세요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-b09",
+   "text": "헷갈리면 붙은 칸 하나만 따라가 보세요. 뒤집으면 거울 건너편으로, 돌리면 가운데를 중심으로 빙 돌아가요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-b10",
+   "text": "정리해요. 옆 거울은 좌우만, 위아래 거울은 위아래만 바뀌어요. 오른쪽으로 뒤집고 아래로 뒤집으면 반 바퀴 돌린 것과 같아요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-b11",
+   "text": "한 문제 풀어 봐요. 처음 모양을 오른쪽으로 뒤집은 뒤, 아래로 뒤집으면 어떤 모양이 될까요?"
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-hint",
+   "text": "붙은 칸이 오른쪽 끝으로 갔다가, 아래로 뒤집으면 위아래가 바뀌어요. 어디에 있을까요?"
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-right",
+   "text": "맞았어요! 두 번 뒤집으면 반 바퀴 돌린 것과 같아서, 세 칸이 아랫줄로, 붙은 칸이 오른쪽 끝 위로 가요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-04-flip-rotate-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }

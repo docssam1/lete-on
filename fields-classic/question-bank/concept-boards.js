@@ -3,43 +3,15 @@
 // 글은 우리가 쓴 것(골든벨 원문을 베끼지 않는다). 확인 문제의 정답은 아래 규칙 함수로 계산하고, 골든벨 정답 DB는 쓰지 않는다.
 // 좌표는 1000×600 칠판 기준. 시계 숫자 n의 자리는 concept-board.js의 clockPoint가 계산한다.
 
-import { jo } from "./concept-board-kit.js?v=20261025e";
-import { BOARDS_B02 } from "./concept-boards-b02.js?v=20261025f";
-import { BOARDS_B03 } from "./concept-boards-b03.js?v=20261025d";
-export { jo };
+import { jo, landing, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, SEGMENT_MAPS, moveSegs, readDigit, transformDigit, segGeom, segMid } from "./concept-board-kit.js?v=20261025f";
+import { BOARDS_B02 } from "./concept-boards-b02.js?v=20261025g";
+import { BOARDS_B03 } from "./concept-boards-b03.js?v=20261025e";
+import { BOARDS_B04 } from "./concept-boards-b04.js?v=20261025a";
+export { jo, landing, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, SEGMENT_MAPS, moveSegs, readDigit, transformDigit, segGeom, segMid };
 
 // 독쌤 음성 파일의 줄 id. 내보내기(tools/export-board-voice.mjs)와 재생(concept-board.js → study.js)이 같은 규칙을 쓴다.
 //   비트 n번째 말 → fcb-<판서>-bNN · 확인 문제의 힌트/정답/공개 말 → fcb-<판서>-hint|right|reveal
 export const lineId = (boardKey, kind, n = 0) => `fcb-${boardKey.replace(/[^a-z0-9]+/gi, "-")}-${kind === "b" ? `b${String(n).padStart(2, "0")}` : kind}`;
-
-// 시계: 숫자 start에서 quarters(반의 반 바퀴 단위, 시계 방향 +)만큼 돌린 자리
-
-export const landing = (start, quarters) => ((start - 1 + quarters * 3) % 12 + 12) % 12 + 1;
-// 모눈: 칸 [줄, 칸]을 거울·돌리기로 옮긴 자리(rows×cols)
-export const mirrorLR = (cells, cols) => cells.map(([r, c]) => [r, cols - 1 - c]);
-export const mirrorTB = (cells, rows) => cells.map(([r, c]) => [rows - 1 - r, c]);
-export const turnHalf = (cells, rows, cols) => cells.map(([r, c]) => [rows - 1 - r, cols - 1 - c]);
-
-// 디지털 숫자(막대 일곱 개). 이름은 game-digital.js와 같다: a 위 · b 오른쪽 위 · c 오른쪽 아래 · d 아래 · e 왼쪽 아래 · f 왼쪽 위 · g 가운데
-export const DIGIT_SEGMENTS = Object.freeze({ 0: "abcdef", 1: "bc", 2: "abdeg", 3: "abcdg", 4: "bcfg", 5: "acdfg", 6: "acdefg", 7: "abc", 8: "abcdefg", 9: "abcdfg" });
-export const SEGMENT_MAPS = Object.freeze({
-  "mirror-left-right": { a: "a", b: "f", c: "e", d: "d", e: "c", f: "b", g: "g" },
-  "mirror-top-bottom": { a: "d", b: "c", c: "b", d: "a", e: "f", f: "e", g: "g" },
-  "rotate-half": { a: "d", b: "e", c: "f", d: "a", e: "b", f: "c", g: "g" }
-});
-export const moveSegs = (on, op) => [...on].map((s) => SEGMENT_MAPS[op][s]).sort().join("");
-// 옮긴 막대가 어떤 숫자인지(숫자가 아니면 null) — 확인 문제의 정답은 이걸로 계산한다
-export const readDigit = (on) => { const key = [...on].sort().join(""); const hit = Object.entries(DIGIT_SEGMENTS).find(([, v]) => v === key); return hit ? Number(hit[0]) : null; };
-export const transformDigit = (d, op) => readDigit(moveSegs(DIGIT_SEGMENTS[d], op));
-// 막대 하나의 양 끝 좌표. 숫자 상자 (x, y) 왼쪽 위, 높이 h, 폭 h×0.55. 끝을 조금 띄워 막대가 서로 닿지 않게 한다.
-export function segGeom(x, y, h, seg) {
-  const w = h * 0.55, t = h * 0.07, mid = y + h / 2;
-  return {
-    a: [x + t, y, x + w - t, y], d: [x + t, y + h, x + w - t, y + h], g: [x + t, mid, x + w - t, mid],
-    b: [x + w, y + t, x + w, mid - t], c: [x + w, mid + t, x + w, y + h - t], e: [x, mid + t, x, y + h - t], f: [x, y + t, x, mid - t]
-  }[seg];
-}
-export const segMid = (x, y, h, seg) => { const [x1, y1, x2, y2] = segGeom(x, y, h, seg); return [(x1 + x2) / 2, (y1 + y2) / 2]; };
 
 const CLOCK = { cx: 300, cy: 345, r: 170 };
 const numAt = (n, rr = CLOCK.r - 38) => ({ cx: CLOCK.cx + rr * Math.sin((n * 30 * Math.PI) / 180), cy: CLOCK.cy - rr * Math.cos((n * 30 * Math.PI) / 180) });
@@ -646,4 +618,5 @@ export const BOARDS = {
   })()
   ,...BOARDS_B02
   ,...BOARDS_B03
+  ,...BOARDS_B04
 };
