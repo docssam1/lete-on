@@ -4,7 +4,7 @@
 // 움직임 줄이기 설정이면 바로 완성 장면.
 // 글자는 손글씨 글꼴(나눔펜, OFL · assets/fonts/nm-lesson-hand.woff2)을 펜이 지나가며 드러내고, 그림은 실제 선(stroke)을 펜이 그린다.
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
-import { BOARDS } from "./concept-boards.js?v=20261025a";
+import { BOARDS } from "./concept-boards.js?v=20261025b";
 
 const NS = "http://www.w3.org/2000/svg";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -244,7 +244,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     if (beat.check) { renderCheck(beat.check); await sayP; return my === runId; }
     await sayP;
     if (my !== runId) return false;
-    await sleep(dur(500));
+    await sleep(dur(900));   // 비트 사이 숨 고르기(천천히)
     return my === runId;
   }
   function renderUpTo(k) {   // 0..k-1 비트를 즉시 완성 상태로

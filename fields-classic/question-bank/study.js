@@ -1,5 +1,5 @@
 import { CURRICULUM } from "./source-data.js?v=20261024r";
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261025a";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261025b";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
@@ -101,7 +101,7 @@ function speak(text) {
       if (!pref.sound || !text) { setTimeout(finish, text ? reading : 0); return; }
       const utterance = new SpeechSynthesisUtterance(text);
       const ko = (speechSynthesis.getVoices() || []).find((voice) => /^ko/i.test(voice.lang));
-      utterance.lang = "ko-KR"; utterance.rate = 0.95; if (ko) utterance.voice = ko;
+      utterance.lang = "ko-KR"; utterance.rate = 0.9;   // 천천히(원장 2026-10-25) if (ko) utterance.voice = ko;
       utterance.onend = finish; utterance.onerror = finish;
       speechSynthesis.speak(utterance);
       setTimeout(finish, reading * 2.5 + 2000);
