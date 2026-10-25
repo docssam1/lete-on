@@ -698,6 +698,7 @@ function mgridFigure(f) {
     return `<span class="letter${reveal[v] !== undefined ? " got" : ""}${sh ? " shade" : ""}${on}">${esc(reveal[v] ?? v)}</span>`;
   };
   const tot = (v, on) => `<b class="${v === null ? "ask" : v === "" ? "none" : ""}${on ? " on" : ""}">${v === null ? "?" : esc(v)}</b>`;
+  if (f.noTotals) return `<div class="tx-mgrid" style="--tone:${color};--cols:${C}" role="img" aria-label="수 배열표">${f.cells.map((row, r) => row.map((v, c) => cell(v, r, c)).join("")).join("")}</div>`;
   const rows = f.cells.map((row, r) => `${row.map((v, c) => cell(v, r, c)).join("")}${tot(f.rowVals[r], f.focus?.row === r)}`).join("");
   const bottom = `${f.colVals.map((v, c) => tot(v, f.focus?.col === c)).join("")}<i>${esc(f.op === "×" ? "곱" : "합")}</i>`;
   return `<div class="tx-mgrid" style="--tone:${color};--cols:${C + 1}" role="img" aria-label="${R}×${C} 매트릭스">${rows}${bottom}</div>`;
@@ -737,8 +738,34 @@ function diamondsFigure(f) {
   return `<div class="tx-diamonds" style="--tone:${color}">${f.items.map((d) => one(d, d.top === null)).join("")}</div>`;
 }
 
+// ───── 최단거리: 점(행, 열) 격자. edges = 갈 수 있는 길 [[r1, c1, r2, c2]](없으면 모든 길), diags = 대각선이 있는 칸 [r, c](왼쪽 위 → 오른쪽 아래),
+// counts = { "r,c": 그 점까지 오는 가짓수 }, points = { 이름: [r, c] } ─────
+function routeFigure(f) {
+  const color = TONE[f.tone || "given"], gap = Math.min(52, 240 / Math.max(f.rows, f.cols)), pad = 22, W = f.cols * gap + pad * 2, H = f.rows * gap + pad * 2;
+  const X = (c) => pad + c * gap, Y = (r) => pad + r * gap;
+  const all = []; for (let r = 0; r <= f.rows; r++) for (let c = 0; c <= f.cols; c++) { if (c < f.cols) all.push([r, c, r, c + 1]); if (r < f.rows) all.push([r, c, r + 1, c]); }
+  const ok = new Set((f.edges || all).map((e) => e.join()));
+  let body = "";
+  for (const e of all) body += `<line x1="${X(e[1])}" y1="${Y(e[0])}" x2="${X(e[3])}" y2="${Y(e[2])}" stroke="${ok.has(e.join()) ? "#566274" : "#e3dccb"}" stroke-width="${ok.has(e.join()) ? (f.edges ? 4 : 2.5) : 1.5}" stroke-linecap="round"/>`;
+  for (const [r, c] of f.diags || []) body += `<line x1="${X(c)}" y1="${Y(r)}" x2="${X(c + 1)}" y2="${Y(r + 1)}" stroke="${f.hiDiag ? color : "#566274"}" stroke-width="3.5" stroke-linecap="round"/>`;
+  // 이름 점 위에 가짓수를 그린다(가짓수가 있는 점은 검은 점을 그리지 않는다)
+  for (const [name, [r, c]] of Object.entries(f.points || {})) body += `${f.counts?.[`${r},${c}`] === undefined ? `<circle cx="${X(c)}" cy="${Y(r)}" r="4" fill="#222"/>` : ""}${text(X(c) + (c === 0 ? -14 : 14), Y(r) + (r === 0 ? -13 : 13), name, { size: 14, weight: 900, fill: "#e8503a" })}`;
+  for (const [k, n] of Object.entries(f.counts || {})) { const [r, c] = k.split(",").map(Number); body += `<circle cx="${X(c)}" cy="${Y(r)}" r="10" fill="#fff" stroke="${color}" stroke-width="1.5"/>${text(X(c), Y(r), n, { size: n > 99 ? 9 : 11, weight: 900, fill: color })}`; }
+  return `<div class="tx-route">${svg(W, H, body, `${f.rows}×${f.cols} 길`)}</div>`;
+}
+// roads: 출발 → 갈림 점들 → 도착, 구간마다 길 수(ways). 길은 곡선 여러 개
+function roadsFigure(f) {
+  const color = TONE[f.tone || "given"], seg = 110, W = f.ways.length * seg + 60, H = 120, names = ["출발", ...f.stops, "도착"];
+  let body = "";
+  f.ways.forEach((n, i) => { const x1 = 30 + i * seg, x2 = x1 + seg; for (let k = 0; k < n; k++) { const bend = (k - (n - 1) / 2) * 26; body += `<path d="M${x1} 60 Q${(x1 + x2) / 2} ${60 + bend * 1.6} ${x2} 60" fill="none" stroke="${f.hi === i ? color : "#566274"}" stroke-width="3"/>`; } body += text((x1 + x2) / 2, 14, `${n}가지`, { size: 12, weight: 900, fill: f.hi === i ? color : "#566274" }); });
+  names.forEach((nm, i) => { const x = 30 + i * seg; body += `<circle cx="${x}" cy="60" r="7" fill="#222"/>${text(x, 104, nm, { size: 12, weight: 900 })}`; });
+  return `<div class="tx-route">${svg(W, H, body, "갈림길 지도")}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "route") return routeFigure(figure);
+  if (figure.kind === "roads") return roadsFigure(figure);
   if (figure.kind === "tree") return treeFigure(figure);
   if (figure.kind === "stages") return stagesFigure(figure);
   if (figure.kind === "match-row") return matchRowFigure(figure);

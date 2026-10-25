@@ -292,6 +292,8 @@
 .tx-diamonds b { display: flex; align-items: center; justify-content: center; color: #222; font-size: 15px; font-weight: 900; }
 .tx-diamonds .t { grid-area: t; color: var(--tone); } .tx-diamonds .l { grid-area: l; } .tx-diamonds .r { grid-area: r; } .tx-diamonds .b { grid-area: b; }
 .tx-diamonds .dm.ask .t { color: #5b2fa8; }
+.tx-route { display: grid; justify-items: center; max-width: 100%; }
+.tx-route svg { max-width: 100%; height: auto; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

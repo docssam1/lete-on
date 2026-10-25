@@ -2139,13 +2139,14 @@ const PMATRIX_SET = {
 // ───────────────────────── 2권 가르기 · 같은 수의 묶음 · 도형식 · 수열 · 자라는 모양 · 숫자 약속 ─────────────────────────
 // 수열은 「늘어난 수」를 먼저 본다: 늘 같으면 등차, 몇 배면 등비, 늘어난 수가 1씩 커지면 계차, 앞의 두 수를 더하면 피보나치 꼴.
 // 값은 모두 코드가 계산하고, 검사기는 규칙마다 따로 다음 수를 만들어 본다.
+const HOW_MANY = { 2: "두", 3: "세", 4: "네" };
 function splitExample({ id, title, value, parts }) {
   const levels = [[value]]; let cur = value;
   for (const p of parts) { cur /= p; if (!Number.isInteger(cur)) throw new Error(`${id}: 나누어떨어지지 않음`); levels.push(Array(levels.at(-1).length * p).fill(cur)); }
   const hide = (k) => levels.map((lv, i) => (i <= k ? lv : lv.map(() => null)));
-  const steps = parts.map((p, i) => ({ text: `${josa(levels[i][0], "을")} ${p === 2 ? "두" : "세"} 수로 똑같이 가르면 ${levels[i][0]} ÷ ${p} = ${levels[i + 1][0]}.${p === 2 ? ` ${levels[i + 1][0]} + ${levels[i + 1][0]} = ${levels[i][0]}, 맞아요.` : ""}`, figure: { kind: "tree", levels: hide(i + 1), tone: i === parts.length - 1 ? "check" : "doing" } }));
-  if (steps.length === 1) steps.unshift({ text: `똑같이 가르면 나뉜 수가 모두 같아요. ${parts[0] === 2 ? "같은 수 두 개를 더해" : "같은 수 세 개를 더해"} ${josa(value, "이")} 되는 수를 찾아요.`, figure: { kind: "tree", levels: hide(0), tone: "doing" } });
-  const what = parts.length > 1 ? `${josa(value, "을")} 먼저 두 수로, 다시 ${levels.at(-1).length}개의 수로 똑같이 가를 때 마지막 한 수는 얼마일까요?` : `${josa(value, "을")} ${parts[0] === 2 ? "두" : "세"} 수로 똑같이 가르면 한 수는 얼마일까요?`;
+  const steps = parts.map((p, i) => ({ text: `${josa(levels[i][0], "을")} ${HOW_MANY[p]} 수로 똑같이 가르면 ${levels[i][0]} ÷ ${p} = ${levels[i + 1][0]}.${p === 2 ? ` ${levels[i + 1][0]} + ${levels[i + 1][0]} = ${levels[i][0]}, 맞아요.` : ""}`, figure: { kind: "tree", levels: hide(i + 1), tone: i === parts.length - 1 ? "check" : "doing" } }));
+  if (steps.length === 1) steps.unshift({ text: `똑같이 가르면 나뉜 수가 모두 같아요. 같은 수 ${HOW_MANY[parts[0]]} 개를 더해 ${josa(value, "이")} 되는 수를 찾아요.`, figure: { kind: "tree", levels: hide(0), tone: "doing" } });
+  const what = parts.length > 1 ? `${josa(value, "을")} 먼저 두 수로, 다시 ${levels.at(-1).length}개의 수로 똑같이 가를 때 마지막 한 수는 얼마일까요?` : `${josa(value, "을")} ${HOW_MANY[parts[0]]} 수로 똑같이 가르면 한 수는 얼마일까요?`;
   return { id, title, problem: what, figure: { kind: "tree", levels: hide(0), tone: "given" }, steps, answer: `한 수는 ${josa(cur, "이에요")}.`, value: { kind: "split", value, parts, one: cur } };
 }
 function repeatAddExample({ id, title, n, times }) {
@@ -2241,7 +2242,236 @@ const SEQ2_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET });
+// ───────────────────────── 6권 타일 곱셈 · 간편 계산 · 9에 가까운 수 · 수 만들기 · 똑같이 가르기 ─────────────────────────
+// 더해서 10·100이 되는 수끼리 먼저 묶고, 9·99·999는 10·100·1000보다 1 작은 수로 생각한다.
+// 수 만들기(+ − 넣기, 숫자 붙이기)는 검사기가 모든 경우를 다 만들어 보아 답이 하나뿐인지 본다.
+function groupSumExample({ id, title, nums, blank = null, target = null, unit = 10 }) {
+  // 합이 unit이 되는 짝을 앞에서부터 묶는다(남는 수는 따로)
+  const left = [...nums], groups = [];
+  for (let i = 0; i < left.length; i++) { const j = left.findIndex((x, k) => k > i && x + left[i] === unit); if (j > 0) { groups.push([left[i], left[j]]); left.splice(j, 1); left.splice(i, 1); i--; } }
+  const rest = left, made = groups.length * unit, total = made + sum(rest);
+  const expr = nums.join(" + ");
+  if (blank === null) {
+    const steps = [
+      { text: `더해서 ${unit}이 되는 수끼리 묶어요. ${groups.map(([a, b]) => `${a} + ${b}`).join(", ")}.`, figure: { kind: "eqs", lines: [`${expr} = ?`, ...groups.map(([a, b]) => `${a} + ${b} = ${unit}`)], tone: "doing" } },
+      { text: `${unit}이 ${groups.length}개라 ${made}${rest.length ? `, 남은 ${rest.join(" + ")}${rest.length > 1 ? ` = ${sum(rest)}` : ""}을 더하면 ${made} + ${sum(rest)} = ${total}` : ""}.`, figure: { kind: "eqs", lines: [`${expr} = ${total}`], tone: "check" } }
+    ];
+    return { id, title, problem: `더해서 ${unit}이 되는 수끼리 먼저 묶어 간편하게 계산해요. ${expr} = ?`, figure: { kind: "eqs", lines: [`${expr} = ?`], tone: "given" }, steps, answer: `${josa(total, "이에요")}.`, value: { kind: "sum", nums, total } };
+  }
+  const need = target - total;
+  const steps = [
+    { text: `더해서 ${unit}이 되는 수끼리 묶어요. ${groups.map(([a, b]) => `${a} + ${b} = ${unit}`).join(", ")}.`, figure: { kind: "eqs", lines: [`${expr} + 가 = ${target}`], tone: "doing" } },
+    { text: `묶은 것이 ${made}, 남은 ${josa(rest.join(" + "), "을")} 더하면 ${total}. 가 = ${target} − ${total} = ${need}.`, figure: { kind: "eqs", lines: [`${total} + 가 = ${target}`], tone: "check" } }
+  ];
+  return { id, title, problem: `식이 맞도록 가에 알맞은 수를 구해요. ${expr} + 가 = ${target}`, figure: { kind: "eqs", lines: [`${expr} + 가 = ${target}`], tone: "given" }, steps, answer: `가는 ${josa(need, "이에요")}.`, value: { kind: "blank", nums, target, need } };
+}
+// a × b + a × c = a × (b + c): 같은 수 a로 묶는다(cOne이면 a × b + a)
+function sameFactorExample({ id, title, a, b, c }) {
+  const expr = c === 1 ? `${a} × ${b} + ${a}` : `${a} × ${b} + ${a} × ${c}`, total = a * (b + c);
+  const steps = [
+    { text: `${a} × ${josa(b, "은")} ${josa(a, "이")} ${b}개, ${c === 1 ? `${josa(a, "은")} ${a}가 1개` : `${a} × ${josa(c, "은")} ${josa(a, "이")} ${c}개`}예요.`.replace(`${a}가 1개`, `${josa(a, "이")} 1개`), figure: { kind: "eqs", lines: [`${expr} = ?`], tone: "doing" } },
+    { text: `모두 ${josa(a, "이")} ${b} + ${c} = ${b + c}개라 ${a} × ${b + c} = ${total}.`, figure: { kind: "eqs", lines: [`${expr} = ${a} × ${b + c}`, `= ${total}`], tone: "check" } }
+  ];
+  return { id, title, problem: `같은 수로 묶어 간편하게 계산해요. ${expr} = ?`, figure: { kind: "eqs", lines: [`${expr} = ?`], tone: "given" }, steps, answer: `${josa(total, "이에요")}.`, value: { kind: "factor", a, b, c, total } };
+}
+// n × (10·100·1000 − 1) 또는 99 + m: 딱 떨어지는 수로 바꾸고 1(또는 그만큼)을 빼거나 더한다
+function nearNineExample({ id, title, op, a, b }) {
+  if (op === "×") {
+    const round = b + 1, total = a * b;
+    const steps = [
+      { text: `${josa(b, "은")} ${round}보다 1 작아요. ${a} × ${b}는 ${josa(a, "을")} ${round}번 더한 것보다 ${a} 하나만큼 적어요.`, figure: { kind: "eqs", lines: [`${a} × ${b} = ${a} × ${round} − ${a}`], tone: "doing" } },
+      { text: `${a} × ${round} = ${a * round}, ${a * round} − ${a} = ${total}.`, figure: { kind: "eqs", lines: [`${a} × ${b} = ${a * round} − ${a}`, `= ${total}`], tone: "check" } }
+    ];
+    return { id, title, problem: `${b}는 ${round}보다 1 작은 수예요. 간편하게 계산해요. ${a} × ${b} = ?`.replace(`${b}는`, josa(b, "은")), figure: { kind: "eqs", lines: [`${a} × ${b} = ?`], tone: "given" }, steps, answer: `${josa(total, "이에요")}.`, value: { kind: "near", op, a, b, total } };
+  }
+  const round = a + 1, total = a + b;
+  const steps = [
+    { text: `${a}에 1을 더하면 딱 떨어지는 ${josa(round, "이에요")}. ${a} = ${round} − 1.`, figure: { kind: "eqs", lines: [`${a} + ${b} = ${round} + ${b} − 1`], tone: "doing" } },
+    { text: `${round} + ${b} = ${round + b}, 1을 빼면 ${total}.`, figure: { kind: "eqs", lines: [`${a} + ${b} = ${round + b} − 1`, `= ${total}`], tone: "check" } }
+  ];
+  return { id, title, problem: `딱 떨어지는 수로 바꾸어 간편하게 계산해요. ${a} + ${b} = ?`, figure: { kind: "eqs", lines: [`${a} + ${b} = ?`], tone: "given" }, steps, answer: `${josa(total, "이에요")}.`, value: { kind: "near", op, a, b, total } };
+}
+// 수 만들기. signs: ○ 자리에 + 또는 −. joins: 숫자 사이에 + (allowMinus면 −도) 넣거나 붙여 한 수로
+const evalPM = (str) => str.match(/[+−]?\d+/gu).reduce((acc, t) => acc + (t[0] === "−" ? -Number(t.slice(1)) : Number(t.replace("+", ""))), 0);
+function allJoins(digits, ops) { const out = []; const go = (i, s) => { if (i === digits.length) { out.push(s); return; } for (const o of ["", ...ops]) go(i + 1, `${s}${o}${digits[i]}`); }; go(1, String(digits[0])); return out; }
+function makeNumberExample({ id, title, digits, target, ops, signsOnly = false }) {
+  const all = signsOnly ? allJoins(digits, ops).filter((e) => e.replace(/\d/gu, "").length === digits.length - 1) : allJoins(digits, ops);
+  const fits = all.filter((e) => evalPM(e) === target);
+  if (fits.length !== 1) throw new Error(`${id}: 식이 하나가 아님 (${fits.join(", ")})`);
+  const ans = fits[0], spaced = ans.replace(/([+−])/gu, " $1 ");
+  const tried = all.filter((e) => e !== ans && /[+−]/u.test(e)).slice(0, 3).map((e) => `${e.replace(/([+−])/gu, " $1 ")} = ${evalPM(e)}`);
+  const steps = [
+    { text: signsOnly ? `${target}보다 큰지 작은지부터 봐요. 모두 더하면 ${sum(digits)}${sum(digits) > target ? "이라 빼는 곳이 있어야 해요" : ""}.`.replace(`${sum(digits)}이라`, `${ira(sum(digits))}`) : `${target}에 가까워지려면 숫자를 붙여 큰 수를 만들어야 할 수도 있어요. 하나씩 넣어 봐요.`, figure: { kind: "eqs", lines: [`${digits.join(signsOnly ? " ○ " : " ")} = ${target}`], tone: "doing" } },
+    { text: `해 보면: ${tried.join(", ")} — 아니에요.`, figure: { kind: "eqs", lines: tried, tone: "doing" } },
+    { text: `${spaced} = ${target}, 맞아요.`, figure: { kind: "eqs", lines: [`${spaced} = ${target}`], tone: "check" } }
+  ];
+  const problem = signsOnly ? `○ 안에 + 또는 −를 넣어 식이 맞게 해요. ${digits.join(" ○ ")} = ${target}` : `숫자 사이에 ${ops.join(" 또는 ")}를 넣어(붙어 있는 숫자는 한 수) 식이 맞게 해요. ${digits.join(" ")} = ${target}`;
+  return { id, title, problem, figure: { kind: "eqs", lines: [`${digits.join(signsOnly ? " ○ " : " ")} = ${target}`], tone: "given" }, steps, answer: `${spaced} = ${josa(target, "이에요")}.`, value: { kind: "make", digits, target, ops, signsOnly, ans } };
+}
+function factorBlankExample({ id, title, n, a, b }) {
+  const steps = [
+    { text: `${n} = ${a} × □: ${josa(n, "을")} ${a}씩 묶으면 ${n} ÷ ${a} = ${n / a}묶음이에요.`, figure: { kind: "eqs", lines: [`${n} = ${a} × ${n / a}`], tone: "doing" } },
+    { text: `${n} = ${b} × □: ${n} ÷ ${b} = ${n / b}.`, figure: { kind: "eqs", lines: [`${n} = ${a} × ${n / a} = ${b} × ${n / b}`], tone: "check" } }
+  ];
+  return { id, title, problem: `빈칸에 알맞은 수를 구해요. ${n} = ${a} × □ = ${b} × □`, figure: { kind: "eqs", lines: [`${n} = ${a} × □ = ${b} × □`], tone: "given" }, steps, answer: `차례로 ${n / a}, ${josa(n / b, "이에요")}.`, value: { kind: "fblank", n, a, b } };
+}
+const CALC6_SET = {
+  id: "calc6",
+  types: {
+    "타일 그림 곱셈": () => [splitBoxExample({ id: "tile-1", title: "예제 1", first: 17, second: 4 }), splitBoxExample({ id: "tile-2", title: "예제 2", first: 23, second: 6 })],
+    "간편하게 더하기": () => [groupSumExample({ id: "gsum-1", title: "예제 1", nums: [8, 5, 2, 6, 5, 4] }), groupSumExample({ id: "gsum-2", title: "예제 2", nums: [7, 9, 3, 1, 8] })],
+    "빈칸 채우기": () => [groupSumExample({ id: "gblank-1", title: "예제 1", nums: [15, 85, 27, 73, 46], target: 300, blank: "가", unit: 100 })],
+    "같은 수 더하기를 곱셈으로": () => [repeatAddExample({ id: "rep15-1", title: "예제 1", n: 15, times: 4 })],
+    "같은 수로 묶어 곱하기": () => [sameFactorExample({ id: "sf-1", title: "예제 1", a: 7, b: 8, c: 2 }), sameFactorExample({ id: "sf-2", title: "예제 2", a: 6, b: 9, c: 1 })],
+    "9를 곱하기": () => [nearNineExample({ id: "n9-1", title: "예제 1", op: "×", a: 7, b: 9 })],
+    "99를 곱하기": () => [nearNineExample({ id: "n99-1", title: "예제 1", op: "×", a: 8, b: 99 })],
+    "9에 가까운 수 곱하기": () => [nearNineExample({ id: "n999-1", title: "예제 1", op: "×", a: 7, b: 999 })],
+    "9에 가까운 수 더하기": () => [nearNineExample({ id: "nadd-1", title: "예제 1", op: "+", a: 99, b: 47 }), nearNineExample({ id: "nadd-2", title: "예제 2", op: "+", a: 999, b: 26 })],
+    "+ − 넣기": () => [makeNumberExample({ id: "pm-1", title: "예제 1", digits: [5, 3, 2], target: 4, ops: ["+", "−"], signsOnly: true })],
+    "+ 넣어 식 만들기": () => [makeNumberExample({ id: "plus-1", title: "예제 1", digits: [2, 3, 4, 5], target: 50, ops: ["+"] })],
+    "+ − 넣어 식 만들기": () => [makeNumberExample({ id: "pmj-1", title: "예제 1", digits: [4, 3, 2], target: 41, ops: ["+", "−"] })],
+    "똑같이 둘로 가르기": () => [splitExample({ id: "half-1", title: "예제 1", value: 36, parts: [2] })],
+    "똑같이 넷으로 가르기": () => [splitExample({ id: "quarter-1", title: "예제 1", value: 52, parts: [4] })],
+    "똑같이 셋으로 가르기": () => [splitExample({ id: "third-1", title: "예제 1", value: 45, parts: [3] })],
+    "곱셈식의 빈칸": () => [factorBlankExample({ id: "fb-1", title: "예제 1", n: 18, a: 2, b: 3 })]
+  }
+};
+
+// ───────────────────────── 5권 최단거리 · 숫자 카드 · 조건에 맞는 두 자리 수 · 수 배열표 ─────────────────────────
+// 최단거리: 오른쪽·아래로만 간다. 점마다 「위에서 오는 가짓수 + 왼쪽에서 오는 가짓수」를 쓴다. 대각선은 두 변보다 짧아 꼭 지난다.
+// 거쳐 가면 (A → B 가짓수) × (B → C 가짓수). 카드로 만든 수는 맨 앞자리부터 차례로 센다(0은 맨 앞에 못 온다).
+function routeEdges(rows, cols, cells = null) {
+  const out = new Set();
+  const add = (e) => out.add(e.join());
+  if (!cells) { for (let r = 0; r <= rows; r++) for (let c = 0; c <= cols; c++) { if (c < cols) add([r, c, r, c + 1]); if (r < rows) add([r, c, r + 1, c]); } }
+  else for (const [r, c] of cells) { add([r, c, r, c + 1]); add([r + 1, c, r + 1, c + 1]); add([r, c, r + 1, c]); add([r, c + 1, r + 1, c + 1]); }
+  return [...out].map((s) => s.split(",").map(Number));
+}
+// 가장 짧은 길의 가짓수(점마다): 길이가 같으면 더하고, 더 짧은 길이 오면 그것만 센다
+function routeCounts(rows, cols, edges, diags, from) {
+  const ok = new Set(edges.map((e) => e.join())), dg = new Set((diags || []).map((d) => d.join()));
+  const best = {}, key = (r, c) => `${r},${c}`;
+  best[key(...from)] = { d: 0, n: 1 };
+  for (let r = from[0]; r <= rows; r++) for (let c = from[1]; c <= cols; c++) {
+    if (r === from[0] && c === from[1]) continue;
+    const cands = [];
+    if (c > from[1] && ok.has([r, c - 1, r, c].join()) && best[key(r, c - 1)]) cands.push({ d: best[key(r, c - 1)].d + 1, n: best[key(r, c - 1)].n });
+    if (r > from[0] && ok.has([r - 1, c, r, c].join()) && best[key(r - 1, c)]) cands.push({ d: best[key(r - 1, c)].d + 1, n: best[key(r - 1, c)].n });
+    if (r > from[0] && c > from[1] && dg.has([r - 1, c - 1].join()) && best[key(r - 1, c - 1)]) cands.push({ d: best[key(r - 1, c - 1)].d + Math.SQRT2, n: best[key(r - 1, c - 1)].n });
+    if (!cands.length) continue;
+    const m = Math.min(...cands.map((x) => x.d));
+    best[key(r, c)] = { d: m, n: cands.filter((x) => Math.abs(x.d - m) < 1e-9).reduce((a, x) => a + x.n, 0) };
+  }
+  return Object.fromEntries(Object.entries(best).map(([k, v]) => [k, v.n]));
+}
+function routeExample({ id, title, rows, cols, cells = null, cut = [], diags = [], via = null, problem }) {
+  const edges = routeEdges(rows, cols, cells).filter((e) => !cut.some((x) => x.join() === e.join())), limited = Boolean(cells || cut.length);
+  const A = [0, 0], B = [rows, cols], points = via ? { A, B: via, C: B } : { A, B };
+  const fig = (tone, counts, extra = {}) => ({ kind: "route", rows, cols, edges: limited ? edges : null, diags, counts, points, tone, ...extra });
+  const steps = [];
+  let total;
+  if (diags.length) {
+    const [dr, dc] = diags[0], P = [dr, dc], Q = [dr + 1, dc + 1];
+    const toP = routeCounts(rows, cols, edges, [], A)[P.join()], fromQ = routeCounts(rows, cols, edges, [], Q)[B.join()];
+    total = toP * fromQ;
+    steps.push({ text: "대각선은 칸의 두 변을 돌아가는 길보다 짧아요. 가장 짧은 길은 대각선을 꼭 지나요.", figure: fig("doing", {}, { hiDiag: true }) });
+    steps.push({ text: `A에서 대각선이 시작하는 점까지 ${toP}가지예요(위와 왼쪽의 수를 더해요).`, figure: fig("doing", Object.fromEntries(Object.entries(routeCounts(rows, cols, edges, [], A)).filter(([k]) => { const [r, c] = k.split(",").map(Number); return r <= dr && c <= dc; })), { hiDiag: true }) });
+    steps.push({ text: `대각선이 끝나는 점에서 B까지 ${fromQ}가지예요. 모두 ${toP} × ${fromQ} = ${total}가지.`, figure: fig("check", Object.fromEntries(Object.entries(routeCounts(rows, cols, edges, [], Q))), { hiDiag: true }) });
+  } else if (via) {
+    const x = routeCounts(rows, cols, edges, [], A)[via.join()], y = routeCounts(rows, cols, edges, [], via)[B.join()];
+    total = x * y;
+    steps.push({ text: `A에서 B까지 먼저 세요. 위와 왼쪽의 수를 더하면 ${x}가지.`, figure: fig("doing", Object.fromEntries(Object.entries(routeCounts(rows, cols, edges, [], A)).filter(([k]) => { const [r, c] = k.split(",").map(Number); return r <= via[0] && c <= via[1]; }))) });
+    steps.push({ text: `B에서 C까지는 ${y}가지.`, figure: fig("doing", routeCounts(rows, cols, edges, [], via)) });
+    steps.push({ text: `A에서 B까지 한 길마다 B에서 C까지 ${y}가지씩 이어져요. ${x} × ${y} = ${total}가지.`, figure: fig("check", routeCounts(rows, cols, edges, [], via)) });
+  } else {
+    const all = routeCounts(rows, cols, edges, [], A);
+    total = all[B.join()];
+    const firstLine = Object.fromEntries(Object.entries(all).filter(([k]) => k.split(",").includes("0")));
+    steps.push({ text: `가장 짧게 가려면 오른쪽이나 아래로만 가요. 맨 윗줄과 맨 왼쪽 줄의 점은 ${limited ? "길이 이어진 만큼 " : ""}한 가지씩이에요.`, figure: fig("doing", firstLine) });
+    steps.push({ text: `나머지 점은 위에서 오는 수와 왼쪽에서 오는 수를 더해요.${limited ? " 길이 없는 쪽에서는 오지 못해요." : ""}`, figure: fig("doing", all) });
+    steps.push({ text: `B에 쓰인 수가 ${total}이라 ${total}가지예요.`.replace(`${total}이라`, ira(total)), figure: fig("check", all) });
+  }
+  return { id, title, problem, figure: fig("given", {}), steps, answer: `${total}가지예요.`, value: { kind: "route", rows, cols, edges, diags, via, total } };
+}
+function roadsExample({ id, title, ways, stops }) {
+  const total = ways.reduce((a, b) => a * b, 1);
+  const steps = [
+    { text: `구간마다 길이 몇 가지인지 봐요. ${ways.map((w, i) => `${i === 0 ? "출발" : stops[i - 1]} → ${i === ways.length - 1 ? "도착" : stops[i]} ${w}가지`).join(", ")}.`, figure: { kind: "roads", ways, stops, tone: "doing" } },
+    { text: `앞 구간의 길마다 다음 구간의 길이 모두 이어지니 곱해요. ${ways.join(" × ")} = ${total}가지.`, figure: { kind: "roads", ways, stops, tone: "check" } }
+  ];
+  return { id, title, problem: "출발에서 도착까지 되돌아가지 않고 갈 수 있는 방법은 몇 가지일까요?", figure: { kind: "roads", ways, stops, tone: "given" }, steps, answer: `${total}가지예요.`, value: { kind: "roads", ways, total } };
+}
+const permsOf = (xs, k) => (k === 0 ? [[]] : xs.flatMap((x, i) => permsOf([...xs.slice(0, i), ...xs.slice(i + 1)], k - 1).map((r) => [x, ...r])));
+function cardCountExample({ id, title, cards, digits }) {
+  const firstOk = cards.filter((c) => c !== 0).length, rest = Array.from({ length: digits - 1 }, (_, i) => cards.length - 1 - i);
+  const total = firstOk * rest.reduce((a, b) => a * b, 1), place = ["백의 자리", "십의 자리", "일의 자리"].slice(3 - digits);
+  const steps = [
+    { text: `${place[0]}에 올 수 있는 카드는 ${firstOk}장이에요${cards.includes(0) ? "(0은 맨 앞에 못 와요)" : ""}.`, figure: { kind: "num-cards", n: 0, eqs: [cards.join("  ")], tone: "doing" } },
+    { text: `${place.slice(1).map((p, i) => `${p}에는 남은 ${rest[i]}장`).join(", ")}. 모두 ${[firstOk, ...rest].join(" × ")} = ${total}개.`, figure: { kind: "num-cards", n: 0, eqs: [cards.join("  ")], tone: "check" } }
+  ];
+  return { id, title, problem: `숫자 카드 ${josa(cards.join(", "), "이")} 한 장씩 있어요. ${digits === 2 ? "두" : "세"} 장을 골라 만들 수 있는 ${digits === 2 ? "두" : "세"} 자리 수는 모두 몇 개일까요?`, figure: { kind: "num-cards", n: 0, eqs: [cards.join("  ")], tone: "given" }, steps, answer: `${total}개예요.`, value: { kind: "cards-count", cards, digits, total } };
+}
+function cardRankExample({ id, title, cards, digits, k }) {
+  const list = permsOf(cards, digits).filter((p) => p[0] !== 0).map((p) => Number(p.join(""))).sort((a, b) => a - b), at = list[k - 1];
+  const lead = at === undefined ? null : String(at)[0], per = list.filter((x) => String(x)[0] === String(list[0])[0]).length;
+  const before = list.filter((x) => Number(String(x)[0]) < Number(lead)).length;
+  const steps = [
+    { text: `맨 앞자리가 같은 수끼리 묶어 세요. 맨 앞자리 하나마다 ${per}개씩 있어요.`, figure: { kind: "seq", values: list.slice(0, per), tone: "doing" } },
+    { text: before ? `맨 앞자리가 ${lead}보다 작은 수가 ${before}개라, ${k}번째는 맨 앞자리가 ${lead}인 수 중 ${k - before}번째예요.` : `0은 맨 앞에 못 와요. 가장 작은 수들은 맨 앞자리가 ${lead}인 수이고, ${k}번째도 그 안에 있어요.`, figure: { kind: "seq", values: list.filter((x) => String(x)[0] === lead), tone: "doing" } },
+    { text: `${numEuro(lead)} 시작하는 수를 작은 차례로 쓰면 ${list.filter((x) => String(x)[0] === lead).join(", ")}. ${k - before}번째는 ${at}.`, figure: { kind: "seq", values: list.filter((x) => String(x)[0] === lead), ask: at, tone: "check" } }
+  ];
+  return { id, title, problem: `숫자 카드 ${cards.join(", ")} 중 ${digits === 3 ? "세" : "두"} 장으로 ${digits === 3 ? "세" : "두"} 자리 수를 만들 때, ${k}번째로 작은 수는 무엇일까요?`, figure: { kind: "num-cards", n: 0, eqs: [cards.join("  ")], tone: "given" }, steps, answer: `${josa(at, "이에요")}.`, value: { kind: "cards-rank", cards, digits, k, at } };
+}
+// 두 자리 수 조건: rel = 십의 자리 − 일의 자리(모두), 또는 times·sum(하나)
+function twoDigitExample({ id, title, rel = null, times = null, total = null }) {
+  if (rel !== null) {
+    const list = []; for (let t = 1; t <= 9; t++) { const o = t - rel; if (o >= 0 && o <= 9) list.push(10 * t + o); }
+    const steps = [
+      { text: `십의 자리 = 일의 자리 ${rel < 0 ? "−" : "+"} ${Math.abs(rel)}이에요. 일의 자리에 0부터 9까지 차례로 넣어 봐요.`, figure: { kind: "seq", values: list.slice(0, 3), tone: "doing" } },
+      { text: `십의 자리는 1~9여야 해요. 그래서 ${list.join(", ")}.`, figure: { kind: "seq", values: list, tone: "check" } }
+    ];
+    const relText = rel < 0 ? `${-rel} 작은` : `${rel} 큰`;
+    return { id, title, problem: `십의 자리 숫자가 일의 자리 숫자보다 ${relText} 두 자리 수를 모두 써요.`, figure: { kind: "seq", values: [], tone: "given", ask: "?" }, steps, answer: `${josa(list.join(", "), "이에요")}.`, value: { kind: "two-rel", rel, list } };
+  }
+  const o = total / (times + 1), t = times * o, n = 10 * t + o;
+  const steps = [
+    { text: `십의 자리 숫자는 일의 자리 숫자의 ${times}배예요. 일의 자리를 한 묶음이라 하면 두 숫자의 합은 ${times + 1}묶음.`, figure: { kind: "eqs", lines: [`일의 자리 × ${times + 1} = ${total}`], tone: "doing" } },
+    { text: `${total} ÷ ${times + 1} = ${o}라 일의 자리 ${o}, 십의 자리 ${o} × ${times} = ${t}.`.replace(`${o}라`, ira(o)), figure: { kind: "eqs", lines: [`${t} + ${o} = ${total}`], tone: "check" } }
+  ];
+  return { id, title, problem: `십의 자리 숫자는 일의 자리 숫자의 ${times}배이고, 두 숫자를 더하면 ${josa(total, "이에요")}. 이 두 자리 수는 무엇일까요?`, figure: { kind: "eqs", lines: ["십의 자리 = 일의 자리 × " + times, `십의 자리 + 일의 자리 = ${total}`], tone: "given" }, steps, answer: `${josa(n, "이에요")}.`, value: { kind: "two-fix", times, total, n } };
+}
+// 수 배열표: 줄마다 방향을 바꾸어(ㄹ자) 1부터 채운다
+function snakeTableExample({ id, title, cols, rows, ask }) {
+  const cell = (r, c) => r * cols + (r % 2 === 0 ? c + 1 : cols - c);
+  const cells = (show) => Array.from({ length: rows }, (_, r) => Array.from({ length: cols }, (_, c) => (r < 2 || show === "all" ? String(cell(r, c)) : r === ask[0] && c === ask[1] ? "가" : "")));
+  const v = cell(...ask);
+  const steps = [
+    { text: `첫째 줄은 왼쪽에서 오른쪽으로, 둘째 줄은 오른쪽에서 왼쪽으로 커져요. 줄이 바뀔 때마다 방향이 바뀌어요.`, figure: { kind: "mgrid", cells: cells(), noTotals: true, tone: "doing", focus: { row: 1 } } },
+    { text: `${["첫째", "둘째", "셋째", "넷째", "다섯째"][ask[0]]} 줄은 ${ask[0] * cols + 1}부터 ${(ask[0] + 1) * cols}까지${ask[0] % 2 ? "인데 오른쪽에서 왼쪽으로" : " 왼쪽에서 오른쪽으로"} 놓여요. 가는 ${josa(v, "이에요")}.`, figure: { kind: "mgrid", cells: cells("all"), noTotals: true, tone: "check", focus: { row: ask[0] } } }
+  ];
+  return { id, title, problem: "수 배열표의 규칙을 찾아 가에 들어갈 수를 구해요.", figure: { kind: "mgrid", cells: cells(), noTotals: true, tone: "given" }, steps, answer: `가는 ${josa(v, "이에요")}.`, value: { kind: "snake", cols, rows, ask, v } };
+}
+const COUNT5_SET = {
+  id: "count5",
+  types: {
+    "격자 최단거리": () => [routeExample({ id: "rt-1", title: "예제 1", rows: 3, cols: 3, problem: "A에서 B까지 가장 짧은 길로 가는 방법은 몇 가지일까요?" }), routeExample({ id: "rt-2", title: "예제 2", rows: 3, cols: 5, problem: "A에서 B까지 가장 짧은 길로 가는 방법은 몇 가지일까요?" })],
+    "이어 붙인 모양의 최단거리": () => [routeExample({ id: "rt-join-1", title: "예제 1", rows: 3, cols: 3, cells: [[0, 0], [0, 1], [1, 1], [1, 2], [2, 2]], problem: "정사각형을 이어 붙인 모양의 선을 따라 A에서 B까지 가장 짧은 길로 가는 방법은 몇 가지일까요?" })],
+    "굵은 선 최단거리": () => [routeExample({ id: "rt-bold-1", title: "예제 1", rows: 3, cols: 3, cut: [[1, 1, 1, 2], [1, 1, 2, 1], [0, 2, 1, 2]], problem: "굵은 선을 따라 A에서 B까지 가장 짧은 길로 가는 방법은 몇 가지일까요?" })],
+    "굵은 선과 대각선 최단거리": () => [routeExample({ id: "rt-bold-diag-1", title: "예제 1", rows: 3, cols: 3, cut: [[0, 1, 0, 2], [2, 0, 3, 0]], diags: [[1, 1]], problem: "굵은 선과 대각선을 따라 A에서 B까지 가장 짧은 길로 가는 방법은 몇 가지일까요?" })],
+    "갈림길 가짓수": () => [roadsExample({ id: "roads-1", title: "예제 1", ways: [3, 2, 2], stops: ["가", "나"] })],
+    "거쳐 가는 최단거리": () => [routeExample({ id: "rt-via-1", title: "예제 1", rows: 4, cols: 4, via: [2, 1], problem: "A에서 B를 거쳐 C까지 가장 짧은 길로 가는 방법은 몇 가지일까요?" })],
+    "대각선이 있는 최단거리": () => [routeExample({ id: "rt-diag-1", title: "예제 1", rows: 4, cols: 4, diags: [[1, 2]], problem: "A에서 B까지 가장 짧은 길로 가는 방법은 몇 가지일까요? 대각선으로도 갈 수 있어요." })],
+    "카드로 만든 수의 개수": () => [cardCountExample({ id: "cc-1", title: "예제 1", cards: [3, 5, 7], digits: 2 })],
+    "숫자 카드로 만든 수의 개수": () => [cardCountExample({ id: "cc-2", title: "예제 1", cards: [2, 4, 6, 8], digits: 3 })],
+    "숫자 카드로 만든 수의 차례": () => [cardRankExample({ id: "cr-rank-1", title: "예제 1", cards: [2, 5, 7, 9], digits: 3, k: 10 })],
+    "세 자리 카드 순위": () => [cardRankExample({ id: "cr-rank-0", title: "예제 1", cards: [0, 3, 5, 9], digits: 3, k: 4 })],
+    "자리 숫자 조건": () => [twoDigitExample({ id: "two-fix-1", title: "예제 1", times: 2, total: 9 })],
+    "조건에 맞는 수 모두": () => [twoDigitExample({ id: "two-rel-1", title: "예제 1", rel: -3 })],
+    "수 배열표의 규칙": () => [snakeTableExample({ id: "snake-1", title: "예제 1", cols: 5, rows: 4, ask: [3, 1] })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

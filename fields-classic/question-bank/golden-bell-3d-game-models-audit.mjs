@@ -873,6 +873,52 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       assert.equal(v.top, rule(v.ask)); assert.ok(has(v.top));
       for (const item of lesson.original.items) for (const e of item.visual?.examples || []) assert.ok(!v.items.some((d) => d.left === e.left && d.right === e.right && d.bottom === e.bottom), `${ex.id}: 원본 그림과 같은 수`);
     } else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "calc6") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number), has = (n) => nums(ex.answer).includes(n);
+    const tokSig = (t) => JSON.stringify(t.filter((x) => x !== null && /^\*?\d+$/u.test(String(x))).map((x) => String(x).replace("*", "")));
+    const mineNums = JSON.stringify(nums(ex.problem).map(String));
+    for (const item of lesson.original.items) { const t = item.visual?.tokens; if (t) assert.notEqual(tokSig(t), mineNums, `${ex.id}: 원본 식과 같은 수`); }
+    if (typeof v === "object" && v.cols) { let t = 0; for (let i = 0; i < v.second; i++) t += v.first; assert.equal(v.total, t); assert.ok(has(t)); for (const item of lesson.original.items) { const o = item.visual || {}; if (o.tens !== undefined) assert.ok(!(o.tens + o.ones === v.first && o.m === v.second), `${ex.id}: 원본 타일과 같음`); } }
+    else if (v.kind === "sum") { let t = 0; for (const n of v.nums) t += n; assert.equal(v.total, t); assert.ok(has(t)); }
+    else if (v.kind === "blank") { let t = 0; for (const n of v.nums) t += n; assert.equal(v.need, v.target - t); assert.ok(has(v.need)); }
+    else if (v.kind === "repeat") { assert.equal(v.total, v.n * v.times); assert.ok(has(v.total)); }
+    else if (v.kind === "factor") { const t = v.a * v.b + v.a * v.c; assert.equal(v.total, t); assert.ok(has(t)); }
+    else if (v.kind === "near") { const t = v.op === "×" ? v.a * v.b : v.a + v.b; assert.equal(v.total, t); assert.ok(has(t)); assert.ok(/^9+$/u.test(String(v.op === "×" ? v.b : v.a)), `${ex.id}: 9에 가까운 수`); }
+    else if (v.kind === "fblank") { assert.ok(has(v.n / v.a) && has(v.n / v.b) && v.n % v.a === 0 && v.n % v.b === 0); }
+    else if (v.kind === "split") { let x = v.value; for (const p of v.parts) { assert.equal(x % p, 0); x /= p; } assert.equal(v.one, x); assert.ok(has(x)); for (const item of lesson.original.items) assert.notEqual(item.visual?.top, v.value, `${ex.id}: 원본과 같은 수`); }
+    else if (v.kind === "make") {
+      // 숫자 사이 칸마다 (붙이기 · + · −)를 모두 넣어 계산해 본다
+      const outs = [];
+      const go = (i, expr) => { if (i === v.digits.length) { const val = expr.match(/[+−]?\d+/gu).reduce((a, t) => a + (t[0] === "−" ? -Number(t.slice(1)) : Number(t.replace("+", ""))), 0); if (val === v.target && (!v.signsOnly || expr.replace(/\d/gu, "").length === v.digits.length - 1)) outs.push(expr); return; } for (const o of ["", ...v.ops]) go(i + 1, expr + o + v.digits[i]); };
+      go(1, String(v.digits[0]));
+      assert.deepEqual(outs, [v.ans], `${ex.id}: 식이 하나뿐`); assert.ok(ex.answer.replace(/ /gu, "").startsWith(v.ans), `${ex.id}: 답 식`);
+    } else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "count5") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number), has = (n) => nums(ex.answer).includes(n);
+    if (v.kind === "route") {
+      // 오른쪽·아래·대각선으로 가는 길을 모두 나열하고 길이가 가장 짧은 것만 센다
+      const ok = new Set(v.edges.map((e) => e.join())), dg = new Set((v.diags || []).map((d) => d.join())), paths = [];
+      const walk = (r, c, len, seen, end) => { if (r === end[0] && c === end[1]) { paths.push({ len, seen }); return; } if (c < v.cols && ok.has([r, c, r, c + 1].join())) walk(r, c + 1, len + 1, seen || (v.via && r === v.via[0] && c + 1 === v.via[1]), end); if (r < v.rows && ok.has([r, c, r + 1, c].join())) walk(r + 1, c, len + 1, seen || (v.via && r + 1 === v.via[0] && c === v.via[1]), end); if (dg.has([r, c].join())) walk(r + 1, c + 1, len + Math.SQRT2, seen || (v.via && r + 1 === v.via[0] && c + 1 === v.via[1]), end); };
+      walk(0, 0, 0, false, [v.rows, v.cols]);
+      const pool = v.via ? paths.filter((p) => p.seen) : paths, m = Math.min(...pool.map((p) => p.len));
+      const count = pool.filter((p) => Math.abs(p.len - m) < 1e-9).length;
+      assert.equal(v.total, count, `${ex.id}: 가장 짧은 길의 가짓수`); assert.ok(has(count));
+      const full = v.edges.length === 2 * v.rows * v.cols + v.rows + v.cols;
+      for (const item of lesson.original.items) { const o = item.visual || {}; if (o.subtype === "source-route") assert.ok(!(o.rows === v.rows && o.cols === v.cols && full && !o.cells && !o.bold && !o.diagonals && !(v.diags || []).length && !v.via), `${ex.id}: 원본과 같은 격자`); }
+    } else if (v.kind === "roads") { let n = 0; const go = (i) => { if (i === v.ways.length) { n++; return; } for (let k = 0; k < v.ways[i]; k++) go(i + 1); }; go(0); assert.equal(v.total, n); assert.ok(has(n)); }
+    else if (v.kind === "cards-count" || v.kind === "cards-rank") {
+      const list = []; const go = (pre, rest) => { if (pre.length === v.digits) { if (pre[0] !== 0) list.push(Number(pre.join(""))); return; } rest.forEach((x, i) => go([...pre, x], rest.filter((_, j) => j !== i))); }; go([], v.cards);
+      list.sort((a, b) => a - b);
+      if (v.kind === "cards-count") { assert.equal(v.total, list.length); assert.ok(has(list.length)); } else { assert.equal(v.at, list[v.k - 1]); assert.ok(has(v.at)); }
+      for (const item of lesson.original.items) assert.notEqual(JSON.stringify(item.visual?.digits), JSON.stringify(v.cards), `${ex.id}: 원본과 같은 카드`);
+    } else if (v.kind === "two-rel") { const list = []; for (let n = 10; n <= 99; n++) if (Math.floor(n / 10) - (n % 10) === v.rel) list.push(n); assert.deepEqual(v.list, list); assert.deepEqual(nums(ex.answer), list); }
+    else if (v.kind === "two-fix") { const list = []; for (let n = 10; n <= 99; n++) { const t = Math.floor(n / 10), o = n % 10; if (t === v.times * o && t + o === v.total) list.push(n); } assert.deepEqual(list, [v.n]); assert.ok(has(v.n)); }
+    else if (v.kind === "snake") {
+      // 1부터 차례로 걸어가며 칸을 채운다(줄 끝에서 방향을 바꾼다)
+      const g = Array.from({ length: v.rows }, () => []); let n = 1; for (let r = 0; r < v.rows; r++) for (let k = 0; k < v.cols; k++) g[r][r % 2 ? v.cols - 1 - k : k] = n++;
+      assert.equal(v.v, g[v.ask[0]][v.ask[1]]); assert.ok(has(v.v));
+      for (const item of lesson.original.items) assert.notEqual(JSON.stringify(item.visual?.cells?.[0]), JSON.stringify(g[0].map(String)), `${ex.id}: 원본 표와 같은 첫 줄`);
+    } else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);
