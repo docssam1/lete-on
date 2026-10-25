@@ -2091,7 +2091,52 @@ const MATRIX_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET });
+// ───────────────────────── 5·8권 곱셈 매트릭스(2~9를 한 번씩, 줄마다 두 수) ─────────────────────────
+// 줄의 곱을 2~9의 두 수로 나누어 짝 후보를 쓰고, 같은 수를 두 번 쓰지 않게 고른 뒤, 가로 짝과 세로 짝에 함께 있는 수를 그 칸에 넣는다.
+// mode: "known" = 수가 들어갈 칸을 색칠해 줌 · "holes" = 색칠한 칸은 비워 둠 · "free" = 자리도 찾는다. grid = { "행,열": 수 }(코드가 곱을 계산)
+const PM_N = [2, 3, 4, 5, 6, 7, 8, 9];
+const pmPairs = (p) => PM_N.flatMap((a) => PM_N.filter((b) => b > a && a * b === p).map((b) => [a, b]));
+const ORD = ["첫째", "둘째", "셋째", "넷째"];
+function productMatrixExample({ id, title, grid, mode, letters = {}, ask }) {
+  const keys = Object.keys(grid), at = (r, c) => grid[`${r},${c}`];
+  const rowP = [0, 1, 2, 3].map((r) => [0, 1, 2, 3].reduce((a, c) => a * (at(r, c) ?? 1), 1)), colP = [0, 1, 2, 3].map((c) => [0, 1, 2, 3].reduce((a, r) => a * (at(r, c) ?? 1), 1));
+  const rowPair = [0, 1, 2, 3].map((r) => [0, 1, 2, 3].map((c) => at(r, c)).filter(Boolean).sort((a, b) => a - b)), colPair = [0, 1, 2, 3].map((c) => [0, 1, 2, 3].map((r) => at(r, c)).filter(Boolean).sort((a, b) => a - b));
+  const all = [0, 1, 2, 3].flatMap((r) => [0, 1, 2, 3].map((c) => `${r},${c}`));
+  const shaded = mode === "known" ? keys : mode === "holes" ? all.filter((k) => !keys.includes(k)) : [];
+  const cells = (show) => [0, 1, 2, 3].map((r) => [0, 1, 2, 3].map((c) => { const k = `${r},${c}`; return show && grid[k] ? String(grid[k]) : letters[k] || ""; }));
+  const fig = (tone, show, focus) => ({ kind: "mgrid", cells: cells(show), rowVals: rowP, colVals: colP, shaded, focus, op: "×", tone });
+  const options = (ps) => ps.map((p) => `${p} = ${pmPairs(p).map(([a, b]) => `${a} × ${b}`).join(" 또는 ")}`).join(", ");
+  const pairText = (pairs) => pairs.map(([a, b]) => `(${a}, ${b})`).join(", ");
+  // 후보가 둘 이상인 줄: 버린 짝의 수가 다른 줄의 짝에 이미 있다
+  const why = (ps, chosen) => ps.map((p, i) => { const other = chosen.filter((_, j) => j !== i).flat(), bad = pmPairs(p).filter(([a, b]) => !(a === chosen[i][0] && b === chosen[i][1])); return bad.length ? `${josa(p, "은")} ${josa(bad.map(([a, b]) => `${a} × ${b}`).join(", "), "이")} 아니에요(${josa([...new Set(bad.flat().filter((x) => other.includes(x)))].join(", "), "을")} 다른 줄에서 써요)` : null; }).filter(Boolean);
+  const whyText = (ps, chosen) => { const w = why(ps, chosen); return w.length ? ` ${w.join(". ")}.` : ""; };
+  const steps = [
+    { text: `가로줄의 곱을 2~9의 두 수로 나눠요. ${options(rowP)}.`, figure: fig("doing", false, { col: 4 }) },
+    { text: `같은 수는 한 번만 써요.${whyText(rowP, rowPair)} 가로줄은 차례로 ${pairText(rowPair)}.`, figure: fig("doing", false) },
+    { text: `세로줄도 같아요. ${options(colP)}.${whyText(colP, colPair)} 세로줄은 차례로 ${pairText(colPair)}.`, figure: fig("doing", false) },
+    { text: `가로줄 짝과 세로줄 짝에 함께 들어 있는 수가 그 칸의 수예요.${mode === "free" ? " 그래서 수가 들어갈 자리도 정해져요." : ""}`, figure: fig("check", true) }
+  ];
+  let answer;
+  if (ask === "letters") { const ls = Object.entries(letters); answer = `${ls.map(([k, l], i) => (i === ls.length - 1 ? `${josa(l, "은")} ${josa(grid[k], "이에요")}` : `${josa(l, "은")} ${grid[k]}`)).join(", ")}.`; }
+  else if (ask === "pairs") answer = `가로줄은 ${pairText(rowPair)}, 세로줄은 ${josa(pairText(colPair), "이에요")}.`;
+  else answer = `${[0, 1, 2, 3].map((r) => `${ORD[r]} 줄 ${[0, 1, 2, 3].map((c) => at(r, c) ?? "빈칸").join(", ")}`).join(" · ")}이에요.`;
+  const what = ask === "letters" ? `${Object.values(letters).join(", ")}에 알맞은 수를 구해요.` : ask === "pairs" ? "가로줄마다, 세로줄마다 들어가는 두 수를 구해요." : "매트릭스를 완성해요.";
+  const where = mode === "known" ? "색칠한 칸에" : mode === "holes" ? "색칠하지 않은 칸에(색칠한 칸은 비워요)" : "줄마다 두 칸에";
+  return { id, title, problem: `2부터 9까지의 수를 한 번씩 ${where} 넣어, 가로줄 두 수의 곱은 오른쪽에, 세로줄 두 수의 곱은 아래에 오게 했어요. ${what}`, figure: fig("given", false), steps, answer, value: { kind: "pmatrix", mode, grid, rowP, colP, letters, ask, rowPair, colPair } };
+}
+const g = (o) => o;
+const PMATRIX_SET = {
+  id: "pmatrix",
+  types: {
+    "카드 곱 매트릭스": () => [productMatrixExample({ id: "pm-card-1", title: "예제 1", mode: "known", ask: "letters", letters: { "3,2": "A" }, grid: g({ "0,0": 6, "1,3": 5, "2,1": 9, "3,2": 3, "0,2": 7, "1,1": 2, "2,0": 4, "3,3": 8 }) })],
+    "곱셈 매트릭스": () => [productMatrixExample({ id: "pm-ab-1", title: "예제 1", mode: "known", ask: "letters", letters: { "0,1": "A", "2,3": "B" }, grid: g({ "0,1": 8, "1,0": 4, "2,3": 2, "3,2": 3, "0,2": 6, "1,3": 7, "2,0": 5, "3,1": 9 }) })],
+    "곱셈 매트릭스 도전": () => [productMatrixExample({ id: "pm-full-1", title: "예제 1", mode: "free", ask: "full", grid: g({ "0,0": 6, "1,3": 9, "2,1": 7, "3,2": 3, "0,2": 5, "1,0": 2, "2,3": 4, "3,1": 8 }) })],
+    "색칠 칸이 있는 곱셈 매트릭스": () => [productMatrixExample({ id: "pm-holes-1", title: "예제 1", mode: "holes", ask: "pairs", grid: g({ "0,2": 4, "1,3": 8, "2,0": 5, "3,1": 3, "0,1": 2, "1,0": 6, "2,2": 7, "3,3": 9 }) })],
+    "두 칸씩 넣는 곱셈 매트릭스": () => [productMatrixExample({ id: "pm-pairs-1", title: "예제 1", mode: "free", ask: "pairs", grid: g({ "0,1": 8, "1,3": 7, "2,2": 3, "3,0": 4, "0,3": 5, "1,2": 9, "2,0": 2, "3,1": 6 }) })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

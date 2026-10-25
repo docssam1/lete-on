@@ -1,5 +1,5 @@
-import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028i";
-import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261028i";
+import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028j";
+import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261028j";
 
 // 개념 단계 안의 학습 순서: ① 개념 설명 → ② 유형별 예제 → ③ 게임 → (골든벨 문제).
 // 원장 지시: "개념마다 설명하는 튜토리얼, 문제 유형마다 예제 1~2개, 그다음 게임."
@@ -84,7 +84,9 @@ export const LESSON_FLOWS = Object.freeze({
   "book-08/vertical-shape-cryptarithm": { examples: "crypt", game: "drill" },
   "book-08/crypt-source": { examples: "crypt", game: "drill" },
   "book-08/addition-sum-matrix": { examples: "matrix", game: "drill" },
-  "book-05/multiplication-table-source": { examples: "matrix", game: "drill" }
+  "book-05/multiplication-table-source": { examples: "matrix", game: "drill" },
+  "book-05/checkerboard-product-matrix": { examples: "pmatrix", game: "drill" },
+  "book-08/product-matrix-source": { examples: "pmatrix", game: "drill" }
 });
 export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방", "share-equally": "같아지도록 옮기기" });
 const STEPS = [["tutorial", "개념 설명"], ["examples", "유형별 예제"], ["game", "게임"]];

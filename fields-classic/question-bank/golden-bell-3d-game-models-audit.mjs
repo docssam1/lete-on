@@ -816,6 +816,32 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       for (const l of letters) assert.match(ex.answer, new RegExp(`${l}[은는] ${v.values[l]}\\D`, "u"), `${ex.id}: 답 ${l}`);
       for (const item of lesson.original.items) if (item.visual?.letters) assert.notEqual(JSON.stringify(item.visual.letters), JSON.stringify(v.cells), `${ex.id}: 원본 표와 같음`);
     } else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "pmatrix") {
+    // 자리(줄마다 두 칸)와 수(2~9 한 번씩)를 줄의 곱에 맞게 하나씩 채워 보며 모든 판을 찾는다
+    const N = [2, 3, 4, 5, 6, 7, 8, 9], all = [];
+    const colsChoice = [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]];
+    const fill = (r, used, board, colCount) => {
+      if (r === 4) { if ([0, 1, 2, 3].every((c) => colCount[c] === 2 && [0, 1, 2, 3].reduce((a, rr) => a * (board[`${rr},${c}`] ?? 1), 1) === v.colP[c])) all.push({ ...board }); return; }
+      for (const [c1, c2] of colsChoice) {
+        if (colCount[c1] >= 2 || colCount[c2] >= 2) continue;
+        if (v.mode === "known" && !(Object.hasOwn(v.grid, `${r},${c1}`) && Object.hasOwn(v.grid, `${r},${c2}`))) continue;
+        if (v.mode === "holes" && !(Object.hasOwn(v.grid, `${r},${c1}`) && Object.hasOwn(v.grid, `${r},${c2}`))) continue;
+        for (const a of N) for (const b of N) {
+          if (a === b || used.has(a) || used.has(b) || a * b !== v.rowP[r]) continue;
+          const cc = [...colCount]; cc[c1]++; cc[c2]++;
+          fill(r + 1, new Set([...used, a, b]), { ...board, [`${r},${c1}`]: a, [`${r},${c2}`]: b }, cc);
+        }
+      }
+    };
+    fill(0, new Set(), {}, [0, 0, 0, 0]);
+    const sortObj = (o) => JSON.stringify(Object.fromEntries(Object.entries(o).sort()));
+    const pairsOf = (b) => JSON.stringify([[0, 1, 2, 3].map((r) => [0, 1, 2, 3].map((c) => b[`${r},${c}`]).filter(Boolean).sort((x, y) => x - y)), [0, 1, 2, 3].map((c) => [0, 1, 2, 3].map((r) => b[`${r},${c}`]).filter(Boolean).sort((x, y) => x - y))]);
+    assert.ok(all.some((b) => sortObj(b) === sortObj(v.grid)), `${ex.id}: 예제 판이 조건에 맞음`);
+    if (v.ask === "pairs") { assert.deepEqual([...new Set(all.map(pairsOf))], [pairsOf(v.grid)], `${ex.id}: 줄마다 두 수가 하나로 정해짐`); for (const [a, b] of [...v.rowPair, ...v.colPair]) assert.ok(ex.answer.includes(`(${a}, ${b})`)); }
+    else { assert.equal(all.length, 1, `${ex.id}: 판이 하나로 정해짐`); }
+    if (v.ask === "letters") for (const [k, l] of Object.entries(v.letters)) assert.match(ex.answer, new RegExp(`${l}[은는] ${v.grid[k]}\\D`, "u"), `${ex.id}: ${l}`);
+    if (v.ask === "full") for (const r of [0, 1, 2, 3]) assert.ok(ex.answer.includes([0, 1, 2, 3].map((c) => v.grid[`${r},${c}`] ?? "빈칸").join(", ")), `${ex.id}: ${r + 1}째 줄`);
+    for (const item of lesson.original.items) { const o = item.visual || {}; if (o.rowProducts) assert.ok(!(o.rowProducts.join() === v.rowP.join() && o.columnProducts.join() === v.colP.join()), `${ex.id}: 원본과 같은 곱`); }
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);
