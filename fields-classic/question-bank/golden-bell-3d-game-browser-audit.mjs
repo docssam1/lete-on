@@ -17,6 +17,7 @@
 import assert from "node:assert/strict";
 import { mkdirSync } from "node:fs";
 import { LESSON_FLOWS } from "./golden-bell-lesson-flow.js";
+import { HANDS_ON_ACTIVITIES } from "./golden-bell-hands-on-models.js";
 
 const { chromium } = await import(process.env.FIELDS_PLAYWRIGHT || "playwright-core");
 const base = `${process.env.FIELDS_BASE_URL || "http://127.0.0.1:8797"}/fields-classic/question-bank`;
@@ -242,6 +243,8 @@ async function playLevelOne(page, vp, gameId) {
 try {
   for (const vp of VIEWPORTS) {
     for (const [key, flow] of Object.entries(LESSON_FLOWS)) {
+      // FLOWS=calendar,equalize — 이름에 그 말이 들어간 흐름만(빠른 확인용, 없으면 전부)
+      if (process.env.FLOWS && !process.env.FLOWS.split(",").some((w) => key.includes(w) || flow.examples === w)) continue;
       const [bookId, lessonId] = key.split("/");
       const name = `${lessonId}-${vp.name}`;
       const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height }, hasTouch: vp.touch, isMobile: vp.touch, reducedMotion: "reduce" });
@@ -291,6 +294,7 @@ try {
         for (let k = 0; k < 9; k++) {
           const sh = await page.locator(".gb-flow-game iframe.drill-frame").evaluate((el) => el.contentWindow.__drill.p.shape);
           if (sh.kind === "choice") await frame.locator(`[data-pick="${sh.values[0]}"]`).click();
+          else if (sh.kind === "weekday") await frame.locator(`.dr-key[data-day="${sh.values[0]}"]`).click();
           else for (const ch of sh.values.join(sh.kind === "frac" ? "/" : ",")) await frame.locator(`.dr-key[data-key="${ch}"]`).click();
           await frame.locator('[data-dr="answer"]').click();
           assert.match(await frame.locator(".dr-note").innerText(), /정답|맞았어요/u, `${name}: 공방 ${k + 1}번 정답`);
@@ -303,6 +307,29 @@ try {
         assert.equal(await page.evaluate(() => localStorage.getItem("fields-classic-golden-bell:3D-QA")), before, `${name}: 게임·예제는 학습 기록을 바꾸지 않는다`);
         assert.deepEqual(errors, [], `${name}: 오류`);
         results.push(`${name} examples=${exampleCount} drill=9`);
+        console.log(`GOLDEN_BELL_3D_FLOW_OK ${results.at(-1)}`);
+        await page.close();
+        continue;
+      }
+      if (HANDS_ON_ACTIVITIES[flow.game]?.kind === "transfer") {
+        // 「직접 해보기」 옮기기 체험: 도전마다 짝 없는 구슬을 표시하고, 그 반을 골라 주고, 결과를 확인한다. 마지막은 「연결 문제 풀기」.
+        const game = page.locator(".gb-flow-game"), rounds = HANDS_ON_ACTIVITIES[flow.game].rounds;
+        for (let r = 0; r < rounds.length; r++) {
+          const { left, right } = rounds[r];
+          await game.locator(`.hand-scene[data-hand-round="${r}"]`).waitFor();
+          if (r === 0) await shot(page, `${name}-3-game`);
+          for (let i = right; i < left; i++) await game.locator(`[data-hand-action="mark"][data-value="${i}"]`).click();
+          for (let i = right; i < right + (left - right) / 2; i++) await game.locator(`[data-hand-action="give"][data-value="${i}"]`).click();
+          await game.locator('[data-hand-action="hand"]').click();
+          await game.locator('[data-hand-action="check"]').click();
+          await noOverflow(page, `${name} 체험 ${r + 1}`);
+          await game.locator(`[data-hand-action="${r === rounds.length - 1 ? "questions" : "next"}"]`).click();
+        }
+        await page.waitForFunction(() => document.querySelector('#stageSteps [data-phase="original"]')?.classList.contains("active"));
+        assert.equal(await page.locator(".gb-flow-game").count(), 0, `${name}: 게임 화면이 정리됨`);
+        assert.equal(await page.evaluate(() => localStorage.getItem("fields-classic-golden-bell:3D-QA")), before, `${name}: 게임·예제는 학습 기록을 바꾸지 않는다`);
+        assert.deepEqual(errors, [], `${name}: 오류`);
+        results.push(`${name} examples=${exampleCount} handsOn=${rounds.length}`);
         console.log(`GOLDEN_BELL_3D_FLOW_OK ${results.at(-1)}`);
         await page.close();
         continue;

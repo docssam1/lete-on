@@ -165,6 +165,30 @@
 .tx-age td { min-width: 62px; padding: 8px 10px; border: 2px solid #f0a500; border-radius: 9px; background: #fff3c4; color: #222; font-size: 18px; font-weight: 900; text-align: center; }
 .tx-age td.gap { border-color: var(--tone); background: #fff; color: var(--tone); }
 .tx-age td.gap:empty { border: 0; background: transparent; }
+.tx-cal { display: grid; justify-items: center; gap: 4px; }
+.tx-cal > p { margin: 0; color: #222; font-size: 16px; font-weight: 900; }
+.tx-cal-grid { display: grid; grid-template-columns: repeat(7, 36px); gap: 3px; }
+.tx-cal-grid b { color: #566274; font-size: 13px; font-weight: 900; text-align: center; }
+.tx-cal-grid b.sun, .tx-cal-grid span.sun { color: #e8503a; }
+.tx-cal-grid b.sat, .tx-cal-grid span.sat { color: #2f6fe0; }
+.tx-cal-grid span { display: flex; align-items: center; justify-content: center; height: 30px; border: 1px solid #e3dccb; border-radius: 5px; background: #fffdf7; color: #222; font-size: 14px; font-weight: 800; }
+.tx-cal-grid span.pad { border: 0; background: transparent; }
+.tx-cal-grid span.on { border: 2px solid var(--tone); background: var(--tone); color: #fff; }
+.tx-cal-grid span.ask { border: 2px dashed var(--tone); background: #fff3c4; color: var(--tone); font-weight: 900; }
+.tx-months { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; width: min(100%, 380px); }
+.tx-months span { display: grid; justify-items: center; padding: 6px 2px; border: 1px solid #e3dccb; border-radius: 8px; background: #fffdf7; }
+.tx-months span.d31 { background: #fff3c4; }
+.tx-months span.d30 { background: #dcf5e5; }
+.tx-months span.d28 { background: #ffe1dc; }
+.tx-months span.on { border: 2px solid var(--tone); box-shadow: 0 0 0 2px var(--tone) inset; }
+.tx-months b { color: #222; font-size: 14px; font-weight: 900; }
+.tx-months small { color: #566274; font-size: 12px; font-weight: 800; }
+.tx-ladder { display: grid; justify-items: center; gap: 2px; }
+.tx-ladder .row { display: flex; align-items: center; gap: 8px; }
+.tx-ladder .row b { min-width: 86px; padding: 7px 10px; border: 2px solid #f0a500; border-radius: 9px; background: #fff3c4; color: #222; font-size: 16px; font-weight: 900; text-align: center; }
+.tx-ladder .row span { min-width: 66px; padding: 7px 10px; border: 2px solid var(--tone); border-radius: 9px; background: #fff; color: var(--tone); font-size: 16px; font-weight: 900; text-align: center; }
+.tx-ladder .row span.ask { border-style: dashed; border-color: #8e5bd8; color: #5b2fa8; }
+.tx-ladder .gap { margin: 0; color: #566274; font-size: 13px; font-weight: 800; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

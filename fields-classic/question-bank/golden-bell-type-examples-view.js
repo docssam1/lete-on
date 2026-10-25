@@ -470,8 +470,36 @@ function ageRowsFigure(f) {
   return `<div class="tx-age" style="--tone:${color}"><table><thead><tr><th></th><th>형</th><th>동생</th><th>차</th></tr></thead><tbody>${f.rows.map(row).join("")}</tbody></table></div>`;
 }
 
+// ───── 달력: 한 달 달력 · 열두 달 날짜 수 · 날짜 → 요일 사다리 ─────
+const WEEK = ["일", "월", "화", "수", "목", "금", "토"];
+// cal-grid: start = 1일의 요일(0 = 일요일). show = "all" 또는 숫자를 보일 날짜 목록, marks = { 날짜: "on" | "?" }
+function calGridFigure(f) {
+  const color = TONE[f.tone || "given"], shown = f.show === "all" ? null : new Set(f.show || []), marks = f.marks || {};
+  const cells = Array.from({ length: f.start }, () => '<span class="pad"></span>');
+  for (let d = 1; d <= f.days; d++) {
+    const m = marks[d], col = (f.start + d - 1) % 7;
+    const cls = [m === "on" ? "on" : m === "?" ? "ask" : "", col === 0 ? "sun" : col === 6 ? "sat" : ""].filter(Boolean).join(" ");
+    cells.push(`<span class="${cls}">${m === "?" ? "?" : m === "on" || !shown || shown.has(d) ? d : ""}</span>`);
+  }
+  return `<div class="tx-cal" style="--tone:${color}" role="img" aria-label="${esc(`${f.title} 달력`)}"><p>${esc(f.title)}</p><div class="tx-cal-grid">${WEEK.map((w, i) => `<b class="${i === 0 ? "sun" : i === 6 ? "sat" : ""}">${w}</b>`).join("")}${cells.join("")}</div></div>`;
+}
+const MONTH_LEN = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+function monthDaysFigure(f) {
+  const color = TONE[f.tone || "given"], on = new Set(f.on || []);
+  return `<div class="tx-months" style="--tone:${color}">${MONTH_LEN.map((n, i) => `<span class="${f.show === "none" ? "" : `d${n}`}${on.has(i + 1) ? " on" : ""}"><b>${i + 1}월</b>${f.show === "none" ? "" : `<small>${n}일</small>`}</span>`).join("")}</div>`;
+}
+// day-ladder: rows = [{ label, day | null }], gaps[i] = rows[i]과 rows[i + 1] 사이에 쓰는 말
+function dayLadderFigure(f) {
+  const color = TONE[f.tone || "given"];
+  const rows = f.rows.map((r, i) => `<div class="row"><b>${esc(r.label)}</b><span class="${r.day ? "" : "ask"}">${r.day ? `${esc(r.day)}요일` : "?"}</span></div>${i < f.rows.length - 1 ? `<p class="gap">${f.gaps[i] ? `↓ ${esc(f.gaps[i])}` : "↓"}</p>` : ""}`).join("");
+  return `<div class="tx-ladder" style="--tone:${color}">${rows}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "cal-grid") return calGridFigure(figure);
+  if (figure.kind === "month-days") return monthDaysFigure(figure);
+  if (figure.kind === "day-ladder") return dayLadderFigure(figure);
   if (figure.kind === "equal-bars") return equalBarsFigure(figure);
   if (figure.kind === "age-rows") return ageRowsFigure(figure);
   if (figure.kind === "split-box") return splitBoxFigure(figure);

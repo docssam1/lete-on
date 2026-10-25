@@ -528,6 +528,54 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       assert.ok(nums(ex.problem).includes(v.sum) && nums(ex.problem).includes(v.extra), `${ex.id}: 문제 글의 합·차`);
       for (const item of lesson.original.items) { const o = item.visual || {}; assert.ok(!(o.total === v.sum && o.difference === v.extra), `${ex.id}: 원본과 같은 합·차`); }
     }
+  } else if (setId === "calendar") {
+    // 달력은 실제 날짜(윤년이 아닌 2023년)로 다시 센다. 달의 시작 요일을 0~6 모두 넣어 보아 답이 하나로 정해지는지도 본다.
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    const WD = ["일", "월", "화", "수", "목", "금", "토"];
+    const dayNo = (m, d) => Date.UTC(2023, m - 1, d) / 864e5;
+    const monthLen = (m) => new Date(Date.UTC(2023, m, 0)).getUTCDate();
+    const wdOf = (start, d) => (start + d - 1) % 7;
+    if (nums(ex.problem).length) for (const item of lesson.original.items) assert.notEqual(nums(ex.problem).join(), nums(item.prompt).join(), `${ex.id}: 원본과 같은 수`);
+    if (v.kind === "cells") {
+      const pos = (d) => ({ r: Math.floor((v.start + d - 1) / 7), c: wdOf(v.start, d) });
+      const fits = (x, y) => { const a = pos(x), b = pos(y); return v.gap === 8 ? b.c === a.c + 1 && b.r === a.r + 1 : b.c === a.c && b.r === a.r + v.gap / 7; };
+      const found = []; for (let x = 1; x <= monthLen(v.month); x++) for (let y = x + 1; y <= monthLen(v.month); y++) if (x + y === v.sum && fits(x, y)) found.push([x, y]);
+      assert.deepEqual(found, [[v.small, v.big]], `${ex.id}: 색칠한 두 칸이 하나로 정해짐`);
+      assert.ok(ex.answer.includes(String(v.small)) && ex.answer.includes(String(v.big)), `${ex.id}: 답`);
+      const shape = v.gap === 8 ? "diagonal" : "vertical", rows = v.gap === 14 ? 3 : 2;
+      for (const item of lesson.original.items) { const o = item.visual || {}; if (o.subtype === "source-calendar-cells") assert.ok(!(o.shape === shape && o.rows === rows && o.sum === v.sum), `${ex.id}: 원본과 같은 합`); }
+    } else if (v.kind === "months") {
+      const lens = Array.from({ length: 12 }, (_, i) => monthLen(i + 1));
+      const total = v.ask.count ? lens.filter((n) => n === v.ask.count).length : lens.slice(v.ask.from - 1, v.ask.to).reduce((a, b) => a + b, 0);
+      assert.equal(v.total, total, `${ex.id}: 날짜 수`); assert.ok(nums(ex.answer).includes(total), `${ex.id}: 답`);
+    } else if (v.kind === "list") {
+      const list = []; for (let d = 1; d <= monthLen(v.month); d++) if (wdOf(v.start, d) === v.wd) list.push(d);
+      assert.deepEqual(v.list, list, `${ex.id}: 같은 요일 날짜`); assert.deepEqual(nums(ex.answer), list, `${ex.id}: 답`);
+    } else if (v.kind === "weekday") {
+      const real = ((v.from.wd + dayNo(v.to.m, v.to.d) - dayNo(v.from.m, v.from.d)) % 7 + 7) % 7;
+      assert.equal(v.wd, real, `${ex.id}: 요일`); assert.ok(ex.answer.startsWith(`${WD[real]}요일`), `${ex.id}: 답`);
+      if (/한 달 안/u.test(typeLabel)) assert.equal(v.from.m, v.to.m, `${ex.id}: 한 달 안`);
+      if (/한 달 뒤/u.test(typeLabel)) assert.ok(v.to.m === v.from.m % 12 + 1 && v.to.d === v.from.d, `${ex.id}: 한 달 뒤 같은 날`);
+      if (/한 달 이상/u.test(typeLabel)) assert.ok(dayNo(v.to.m, v.to.d) - dayNo(v.from.m, v.from.d) > 31, `${ex.id}: 한 달 넘게`);
+      for (const item of lesson.original.items) { const r = item.visual?.subtype === "source-date-ladder" && item.visual.rows; if (r) assert.notEqual(JSON.stringify([r[0].date, r[0].day, r.at(-1).date]), JSON.stringify([`${v.from.m}월 ${v.from.d}일`, WD[v.from.wd], `${v.to.m}월 ${v.to.d}일`]), `${ex.id}: 원본 사다리와 같음`); }
+    } else if (v.kind === "sum-date" || v.kind === "sum-day") {
+      const answers = new Set();
+      for (let start = 0; start < 7; start++) {
+        const same = []; for (let d = 1; d <= monthLen(v.month); d++) if (wdOf(start, d) === v.wd) same.push(d);
+        if (same[v.nth - 1] + same[v.nth] !== v.sum) continue;
+        if (v.kind === "sum-date") { const t = []; for (let d = 1; d <= monthLen(v.month); d++) if (wdOf(start, d) === v.ask.wd) t.push(d); answers.add(t[v.ask.nth - 1]); }
+        else answers.add(wdOf(start, v.ask.day));
+      }
+      assert.equal(answers.size, 1, `${ex.id}: 달력이 하나로 정해짐`);
+      const [only] = answers;
+      if (v.kind === "sum-date") { assert.equal(v.target, only, `${ex.id}: 날짜`); assert.ok(nums(ex.answer).includes(only), `${ex.id}: 답`); }
+      else { assert.equal(v.res, only, `${ex.id}: 요일`); assert.ok(ex.answer.includes(`${WD[only]}요일`), `${ex.id}: 답`); }
+    } else {
+      // 합과 차(동그라미)
+      const fits = []; for (let u = 1; u <= 300; u++) if (u + u + v.extra === v.sum) fits.push(u);
+      assert.deepEqual(fits, [v.A], `${ex.id}: 작은 수가 하나로 정해짐`);
+      for (const item of lesson.original.items) { const o = item.visual || {}; if (o.subtype === "source-sum-pair") assert.ok(!(o.sum === v.sum && (o.rows || []).some((r) => r.offset === `+${v.extra}`)), `${ex.id}: 원본과 같은 합·차`); }
+    }
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

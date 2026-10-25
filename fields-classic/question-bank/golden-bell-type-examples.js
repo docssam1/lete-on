@@ -1123,7 +1123,166 @@ const EQUALIZE_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET });
+// ───────────────────────── 5·7권 달력 ─────────────────────────
+// 같은 요일은 7일마다 돌아온다. 달력에서 바로 아래 칸은 7, 두 칸 아래는 14, 오른쪽 아래 칸은 8 큰 수.
+// 날짜 차를 7일씩 묶고 남는 날만큼 요일을 옮긴다. 윤년이 아닌 해(2월 28일)만 쓴다.
+// 그림: kind "cal-grid"(한 달 달력, start = 1일의 요일 0~6), "month-days"(열두 달 날짜 수), "day-ladder"(날짜 → 요일 사다리).
+const WD = ["일", "월", "화", "수", "목", "금", "토"];
+const wdName = (i) => `${WD[((i % 7) + 7) % 7]}요일`;
+const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const md = (m) => MONTH_DAYS[m - 1];
+const dateName = (m, d) => `${m}월 ${d}일`;
+const restText = (n) => (n < 7 ? `${n}일` : `${n}일 = 7일 × ${Math.floor(n / 7)}${n % 7 ? ` + ${n % 7}일` : ""}`);
+// 7일씩 묶고 남은 r일만큼 옮긴다. r = 0이면 같은 요일
+const dayMoveText = (n, from, to) => (n % 7 ? `7일씩은 같은 요일로 돌아오니 ${n % 7}일만 옮겨요. ${wdName(from)}에서 ${n % 7}일 뒤는 ${wdName(to)}.` : `7일씩 꼭 맞게 묶여 남는 날이 없어요. 그래서 ${wdName(from)} 그대로예요.`);
+const calCell = (start, d) => ({ r: Math.floor((start + d - 1) / 7), c: (start + d - 1) % 7 });
+const CAL_GAP = {
+  7: ["위 칸", "아래 칸", "바로 아래 칸은 일주일 뒤라 7 큰 수예요."],
+  14: ["위 칸", "아래 칸", "두 칸 아래는 2주일 뒤라 14 큰 수예요."],
+  8: ["왼쪽 위 칸", "오른쪽 아래 칸", "오른쪽 아래 칸은 일주일 하고 하루 뒤라 8 큰 수예요."]
+};
+function calCellsExample({ id, title, month, start, small, gap }) {
+  const big = small + gap, S = small + big, days = md(month);
+  if (big > days || (gap === 8 && calCell(start, small).c === 6)) throw new Error(`${id}: 달력 밖`);
+  const [nTop, nBottom, why] = CAL_GAP[gap];
+  const fig = (tone, show) => ({ kind: "cal-grid", title: `${month}월`, start, days, show: show ? "all" : [], marks: { [small]: show ? "on" : "?", [big]: show ? "on" : "?" }, tone });
+  const steps = [
+    { text: why, figure: fig("doing", false) },
+    { text: `합에서 그 차를 빼면 두 수가 같아져요. ${S} − ${gap} = ${S - gap}.`, figure: fig("doing", false) },
+    { text: `반으로 나누면 ${nTop}이 나와요. ${S - gap} ÷ 2 = ${small}, ${nBottom}은 ${small} + ${gap} = ${big}. 더하면 ${small} + ${big} = ${S}, 맞아요.`, figure: fig("check", true) }
+  ];
+  return { id, title, problem: `${month}월 달력에서 색칠한 두 칸의 수를 더하면 ${josa(S, "이에요")}. 두 수를 구해요.`, figure: fig("given", false), steps, answer: `${josa(small, "과")} ${josa(big, "이에요")}.`, value: { kind: "cells", month, start, small, big, gap, sum: S } };
+}
+// 열두 달의 날짜 수. ask: { from, to } = 그 달들의 날짜 합, { count: 30 } = 30일까지 있는 달의 수
+function monthDaysExample({ id, title, ask }) {
+  const months = ask.count ? MONTH_DAYS.map((n, i) => (n === ask.count ? i + 1 : 0)).filter(Boolean) : Array.from({ length: ask.to - ask.from + 1 }, (_, i) => ask.from + i);
+  const fig = (tone, show) => ({ kind: "month-days", show, on: show === "on" ? months : [], tone });
+  const steps = [
+    { text: "주먹을 쥐고 손등의 뼈와 골을 차례로 짚어요. 튀어나온 뼈는 31일, 들어간 골은 30일, 2월만 28일이에요.", figure: fig("doing", "all") },
+    ask.count
+      ? { text: `${ask.count}일까지 있는 달을 찾아요. ${months.map((m) => `${m}월`).join(", ")}.`, figure: fig("check", "on") }
+      : { text: `${months.map((m) => `${m}월 ${md(m)}일`).join(", ")}. 더하면 ${months.map(md).join(" + ")} = ${sum(months.map(md))}일.`, figure: fig("check", "on") }
+  ];
+  const problem = ask.count ? `1년 열두 달 중에서 ${ask.count}일까지 있는 달은 몇 개일까요?` : `어느 해 ${ask.from}월 1일부터 ${ask.to}월 마지막 날까지는 모두 며칠일까요?`;
+  return { id, title, problem, figure: fig("given", "none"), steps, answer: ask.count ? `${months.length}개예요.` : `모두 ${sum(months.map(md))}일이에요.`, value: { kind: "months", ask, months, total: ask.count ? months.length : sum(months.map(md)) } };
+}
+// 1일의 요일을 알 때: 같은 요일 날짜 모두(wd) 또는 어느 날짜(day)의 요일
+function sameWeekdayExample({ id, title, month, start, wd }) {
+  const days = md(month), first = 1 + ((wd - start + 7) % 7);
+  const list = []; for (let d = first; d <= days; d += 7) list.push(d);
+  const fig = (tone, show, marks = {}) => ({ kind: "cal-grid", title: `${month}월`, start, days, show, marks, tone });
+  const steps = [
+    { text: first === 1 ? `1일이 바로 ${josa(wdName(wd), "이에요")}.` : `1일이 ${wdName(start)}이라 ${wdName(wd)}까지 ${first - 1}일 더 가요. 첫째 ${wdName(wd)}은 1 + ${first - 1} = ${first}일.`, figure: fig("doing", [1], { [first]: "on" }) },
+    { text: `같은 요일은 7일마다 와요. ${list.join(" → ")}.`, figure: fig("doing", [1, ...list], Object.fromEntries(list.map((d) => [d, "on"]))) },
+    { text: `${month}월은 ${days}일까지라 ${list.at(-1)} + 7 = ${list.at(-1) + 7}일은 없어요.`, figure: fig("check", "all", Object.fromEntries(list.map((d) => [d, "on"]))) }
+  ];
+  return { id, title, problem: `어느 해 ${month}월 1일은 ${josa(wdName(start), "이에요")}. 이 달의 ${wdName(wd)} 날짜를 모두 써요.`, figure: fig("given", [1]), steps, answer: `${list.map((d) => `${d}일`).join(", ")}이에요.`, value: { kind: "list", month, start, wd, list } };
+}
+function dayOfMonthExample({ id, title, month, start, day }) {
+  const diff = day - 1, q = Math.floor(diff / 7), r = diff % 7, wd = (start + r) % 7;
+  const sames = Array.from({ length: q + 1 }, (_, i) => 1 + 7 * i);
+  const fig = (tone, show, marks = {}) => ({ kind: "cal-grid", title: `${month}월`, start, days: md(month), show, marks, tone });
+  const steps = [
+    { text: `7일마다 같은 요일이에요. ${sames.map((d) => `${d}일`).join(", ")}은 모두 ${wdName(start)}.`, figure: fig("doing", sames, { [day]: "?" }) },
+    { text: `${sames.at(-1)}일에서 ${day}일까지 ${r}일 더 가요. ${wdName(start)}에서 ${r}일 옮기면 ${wdName(wd)}.`, figure: fig("check", "all", { [day]: "on" }) }
+  ];
+  if (r === 0) steps[1].text = `${day}일은 바로 ${sames.at(-1)}일이라 같은 요일이에요.`;
+  return { id, title, problem: `어느 해 ${month}월 1일은 ${josa(wdName(start), "이에요")}. ${month}월 ${josa(`${day}일`, "은")} 무슨 요일일까요?`, figure: fig("given", [1], { [day]: "?" }), steps, answer: `${josa(wdName(wd), "이에요")}.`, value: { kind: "weekday", from: { m: month, d: 1, wd: start }, to: { m: month, d: day }, wd } };
+}
+// 같은 요일 두 날짜(nth째와 nth+1째)의 합으로 달력을 찾는다. ask: { nth, wd } = 날짜, { day } = 그 날의 요일(day가 달의 날 수보다 크면 다음 달)
+const NTH = ["", "첫째", "둘째", "셋째", "넷째", "다섯째"];
+function sumWeekExample({ id, title, month, wd, nth, sum: S, ask }) {
+  const x = (S - 7) / 2, first = x - 7 * (nth - 1), start = ((wd - (first - 1)) % 7 + 7) % 7, days = md(month);
+  if (!Number.isInteger(x) || first < 1 || first > 7) throw new Error(`${id}: 합이 맞지 않음`);
+  const fig = (tone, show, marks) => ({ kind: "cal-grid", title: `${month}월`, start, days, show, marks, tone });
+  const pairMarks = { [x]: "on", [x + 7]: "on" };
+  const steps = [
+    { text: `두 ${wdName(wd)}은 7일 차이예요. ${S} − 7 = ${S - 7}, 반으로 나누면 ${S - 7} ÷ 2 = ${x}. ${NTH[nth]} ${wdName(wd)}은 ${x}일, ${NTH[nth + 1]}는 ${x + 7}일.`, figure: fig("doing", [x, x + 7], pairMarks) }
+  ];
+  let answer, value;
+  if (ask.wd !== undefined) {
+    if (nth > 1) steps.push({ text: `7일씩 거슬러 가면 첫째 ${wdName(wd)}은 ${first}일.`, figure: fig("doing", [first, x, x + 7], { ...pairMarks, [first]: "on" }) });
+    const ahead = (ask.wd - wd + 7) % 7;
+    let f = first + ahead; const before = f > 7;
+    if (before) f -= 7;
+    const target = f + 7 * (ask.nth - 1);
+    steps.push({ text: before ? `${first}일 ${wdName(wd)}에서 ${7 - ahead}일 앞으로 가면 ${f}일이 ${wdName(ask.wd)}이라 그날이 첫째예요.` : `${first}일 ${wdName(wd)}에서 ${ahead}일 뒤 ${f}일이 ${wdName(ask.wd)}이에요. 그보다 7일 앞은 ${f - 7}일이라 없으니 ${f}일이 첫째예요.`, figure: fig("doing", [f, x, x + 7], { ...pairMarks, [f]: "?" }) });
+    if (ask.nth > 1) steps.push({ text: `7일씩 더하면 ${NTH[ask.nth]} ${wdName(ask.wd)}은 ${f} + ${7 * (ask.nth - 1)} = ${target}일.`, figure: fig("check", "all", { [target]: "on" }) });
+    else steps.at(-1).figure = fig("check", "all", { [target]: "on" });
+    answer = `${NTH[ask.nth]} ${josa(wdName(ask.wd), "은")} ${target}일이에요.`;
+    value = { kind: "sum-date", month, wd, nth, sum: S, ask, target };
+  } else {
+    const next = ask.day > days, dayLabel = next ? dateName(month === 12 ? 1 : month + 1, ask.day - days) : dateName(month, ask.day);
+    const diff = ask.day - x, r = diff % 7, res = (wd + r) % 7;
+    steps.push(next
+      ? { text: `${month}월은 ${days}일까지라 ${josa(dayLabel, "은")} ${month}월 ${ask.day}일로 이어 세요. ${x}일부터 ${diff}일 뒤예요.`, figure: fig("doing", "all", pairMarks) }
+      : { text: `${x}일부터 ${ask.day}일까지 ${diff}일이에요.`, figure: fig("doing", "all", { ...pairMarks, [ask.day]: "?" }) });
+    steps.push({ text: `${restText(diff)}. ${dayMoveText(diff, wd, res)}`, figure: fig("check", "all", next ? pairMarks : { ...pairMarks, [ask.day]: "on" }) });
+    answer = `${josa(dayLabel, "은")} ${josa(wdName(res), "이에요")}.`;
+    value = { kind: "sum-day", month, wd, nth, sum: S, ask, res };
+  }
+  const askText = ask.wd !== undefined ? `이 달의 ${NTH[ask.nth]} ${josa(wdName(ask.wd), "은")} 며칠일까요?` : `${josa(ask.day > days ? dateName(month === 12 ? 1 : month + 1, ask.day - days) : dateName(month, ask.day), "은")} 무슨 요일일까요?`;
+  return { id, title, problem: `어느 해 ${month}월의 ${NTH[nth]} ${wdName(wd)}과 ${NTH[nth + 1]} ${wdName(wd)} 날짜를 더하면 ${josa(S, "이에요")}. ${askText}`, figure: fig("given", [], {}), steps, answer, value };
+}
+// 날짜를 옮겨 요일 찾기. via: "count" = 날짜 차를 한 번에, "month" = 한 달씩 차례로 옮긴 뒤 남은 날
+function weekdayShiftExample({ id, title, from, to, wd, via = "count" }) {
+  const days = (a, b) => { let n = 0, m = a.m, d = a.d; while (m !== b.m) { n += md(m) - d + 1; d = 1; m = m % 12 + 1; } return n + b.d - d; };
+  const rows = [{ label: dateName(from.m, from.d), day: WD[wd] }], gaps = [], steps = [];
+  const fig = (tone, filled) => ({ kind: "day-ladder", rows: rows.slice(0, filled + 1).concat(filled + 1 < rows.length ? rows.slice(filled + 1).map((r) => ({ ...r, day: null })) : []), gaps: gaps.slice(0, filled), tone });
+  let cur = wd;
+  if (via === "month") {
+    steps.push({ text: "한 달 뒤 같은 날은 그 달의 날 수만큼 뒤예요. 28일은 7일 × 4라 같은 요일로 돌아오니, 28일보다 많은 날만 옮겨요.", idx: 0 });
+    let m = from.m;
+    while (m !== to.m) {
+      const n = md(m), r = n % 7, prev = cur; cur = (cur + r) % 7; const nm = m % 12 + 1;
+      rows.push({ label: dateName(nm, from.d), day: WD[cur] }); gaps.push(`${n}일 = 28일 + ${r}일 → ${r}일 옮겨요`);
+      steps.push({ text: `${m}월은 ${n}일까지예요. ${n}일 = 28일 + ${r}일이라 ${wdName(prev)}에서 ${r}일 옮기면 ${dateName(nm, from.d)}은 ${wdName(cur)}.`, idx: rows.length - 1 });
+      m = nm;
+    }
+    if (to.d !== from.d) {
+      const n = to.d - from.d, prev = cur; cur = (cur + n % 7) % 7;
+      rows.push({ label: dateName(to.m, to.d), day: WD[cur] }); gaps.push(`${n}일 → ${n % 7}일 옮겨요`);
+      steps.push({ text: `${dateName(to.m, from.d)}에서 ${dateName(to.m, to.d)}까지 ${restText(n)}. ${dayMoveText(n, prev, cur)}`, idx: rows.length - 1 });
+    }
+  } else {
+    const n = days(from, to), r = n % 7; cur = (wd + r) % 7;
+    rows.push({ label: dateName(to.m, to.d), day: WD[cur] }); gaps.push(`${restText(n)} → ${r}일 옮겨요`);
+    if (from.m !== to.m) {
+      const left = md(from.m) - from.d;
+      steps.push({ text: `${from.m}월은 ${md(from.m)}일까지예요. ${dateName(from.m, from.d)}에서 ${from.m}월 ${md(from.m)}일까지 ${left}일, 거기서 ${dateName(to.m, to.d)}까지 ${to.d}일 더 가요. 모두 ${left} + ${to.d} = ${n}일.`, idx: 0 });
+    } else steps.push({ text: `${dateName(from.m, from.d)}부터 ${dateName(to.m, to.d)}까지 ${to.d} − ${from.d} = ${n}일이에요.`, idx: 0 });
+    steps.push({ text: `${restText(n)}. ${dayMoveText(n, wd, cur)}`, idx: 1 });
+  }
+  const last = steps.length - 1;
+  const outSteps = steps.map((s, i) => ({ text: s.text, figure: fig(i === last ? "check" : "doing", s.idx) }));
+  return { id, title, problem: `어느 해 ${dateName(from.m, from.d)}은 ${josa(wdName(wd), "이에요")}. 같은 해 ${josa(dateName(to.m, to.d), "은")} 무슨 요일일까요?`, figure: fig("given", 0), steps: outSteps, answer: `${josa(wdName(cur), "이에요")}.`, value: { kind: "weekday", from: { ...from, wd }, to, wd: cur } };
+}
+const CALENDAR_SET = {
+  id: "calendar",
+  types: {
+    "합과 차로 두 수 찾기": () => [
+      circleExample({ id: "cal-sd-1", title: "예제 1", a: 1, b: 1, extra: 7, unit: 9, given: "sum" }),
+      circleExample({ id: "cal-sd-2", title: "예제 2", a: 1, b: 1, extra: 10, unit: 12, given: "sum" })
+    ],
+    "달력 위아래 두 칸": () => [calCellsExample({ id: "cal-v-1", title: "예제 1", month: 5, start: 3, small: 9, gap: 7 }), calCellsExample({ id: "cal-v-2", title: "예제 2", month: 10, start: 0, small: 13, gap: 7 })],
+    "달력 두 주 차이 두 칸": () => [calCellsExample({ id: "cal-2w-1", title: "예제 1", month: 3, start: 2, small: 8, gap: 14 })],
+    "달력 대각선 두 칸": () => [calCellsExample({ id: "cal-dg-1", title: "예제 1", month: 8, start: 4, small: 13, gap: 8 })],
+    "각 월의 날짜 수": () => [monthDaysExample({ id: "cal-md-1", title: "예제 1", ask: { from: 4, to: 6 } }), monthDaysExample({ id: "cal-md-2", title: "예제 2", ask: { count: 30 } })],
+    "같은 요일 날짜": () => [sameWeekdayExample({ id: "cal-same-1", title: "예제 1", month: 9, start: 4, wd: 2 })],
+    "날짜의 요일": () => [dayOfMonthExample({ id: "cal-dom-1", title: "예제 1", month: 6, start: 4, day: 25 })],
+    "합으로 날짜 찾기": () => [sumWeekExample({ id: "cal-sum-d-1", title: "예제 1", month: 3, wd: 6, nth: 2, sum: 29, ask: { nth: 1, wd: 2 } })],
+    "합으로 요일 찾기": () => [
+      sumWeekExample({ id: "cal-sum-w-1", title: "예제 1", month: 6, wd: 5, nth: 1, sum: 15, ask: { day: 20 } }),
+      sumWeekExample({ id: "cal-sum-w-2", title: "예제 2", month: 3, wd: 0, nth: 3, sum: 43, ask: { day: 32 } })
+    ],
+    "한 달 안에서 요일": () => [weekdayShiftExample({ id: "cal-in-1", title: "예제 1", from: { m: 5, d: 3 }, to: { m: 5, d: 27 }, wd: 2 }), weekdayShiftExample({ id: "cal-in-2", title: "예제 2", from: { m: 10, d: 2 }, to: { m: 10, d: 30 }, wd: 0 })],
+    "한 달 뒤 같은 날": () => [weekdayShiftExample({ id: "cal-next-1", title: "예제 1", from: { m: 4, d: 10 }, to: { m: 5, d: 10 }, wd: 3, via: "month" }), weekdayShiftExample({ id: "cal-next-2", title: "예제 2", from: { m: 8, d: 5 }, to: { m: 9, d: 5 }, wd: 1, via: "month" })],
+    "한 달 이상 지난 요일": () => [weekdayShiftExample({ id: "cal-multi-1", title: "예제 1", from: { m: 3, d: 1 }, to: { m: 6, d: 1 }, wd: 5, via: "month" }), weekdayShiftExample({ id: "cal-multi-2", title: "예제 2", from: { m: 6, d: 5 }, to: { m: 8, d: 20 }, wd: 2, via: "month" })],
+    "날짜와 요일 확인": () => [weekdayShiftExample({ id: "cal-cross-1", title: "예제 1", from: { m: 1, d: 27 }, to: { m: 2, d: 9 }, wd: 5 }), weekdayShiftExample({ id: "cal-cross-2", title: "예제 2", from: { m: 9, d: 24 }, to: { m: 10, d: 12 }, wd: 0 })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {
