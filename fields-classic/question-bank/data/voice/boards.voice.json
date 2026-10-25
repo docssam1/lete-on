@@ -3881,6 +3881,178 @@
   {
    "id": "fcb-book-05-calendar-weekday-source-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b01",
+   "text": "바둑판 같은 길에서 오른쪽과 아래로만 가면 가장 짧은 길이에요. 그런 길이 몇 가지인지, 하나씩 그리지 않고 세는 법을 배워요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b02",
+   "text": "가로 네 칸, 세로 세 칸의 길을 그려요. 왼쪽 위가 출발, 오른쪽 아래가 도착이에요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b03",
+   "text": "가장 짧게 가려면 오른쪽이나 아래로만 가요. 왼쪽이나 위로 되돌아가면 길어져요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b04",
+   "text": "맨 윗줄의 점들은 출발에서 오른쪽으로 곧게만 가야 닿아요. 길이 하나뿐이니 모두 1을 써요. 맨 왼쪽 줄도 아래로만 가니 모두 1이에요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b05",
+   "text": "안쪽 점에는 두 길로 올 수 있어요. 왼쪽 점에서 오거나, 위쪽 점에서 오거나. 그래서 왼쪽 수와 위쪽 수를 더해요. 첫 안쪽 점은 1 더하기 1, 2예요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b06",
+   "text": "둘째 줄을 이어 채워요. 2 더하기 1은 3, 3 더하기 1은 4, 4 더하기 1은 5."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b07",
+   "text": "셋째 줄이에요. 1 더하기 2는 3, 3 더하기 3은 6, 6 더하기 4는 10, 10 더하기 5는 15."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b08",
+   "text": "넷째 줄이에요. 1 더하기 3은 4, 4 더하기 6은 10, 10 더하기 10은 20, 20 더하기 15는 35예요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b09",
+   "text": "도착점의 수가 답이에요. 최단거리는 모두 35가지예요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b10",
+   "text": "길이 막혀 있거나 굵은 선으로만 다닐 수 있으면, 다닐 수 있는 선으로 이어진 점의 수만 더해요. 막힌 쪽에서는 아무것도 오지 않아요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b11",
+   "text": "정리해요. 가장자리 점은 모두 1. 안쪽 점은 왼쪽 수와 위쪽 수를 더해요. 줄마다 차례로 채우면 도착점의 수가 최단거리 가짓수예요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-b12",
+   "text": "한 문제 풀어 봐요. 가로 다섯 칸, 세로 세 칸인 길에서 최단거리는 몇 가지일까요? 표를 오른쪽으로 한 칸 더 늘려 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-hint",
+   "text": "맨 윗줄은 1, 둘째 줄은 5 다음 6, 셋째 줄은 15 다음 21이에요. 넷째 줄은 35 다음에 몇일까요?"
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-right",
+   "text": "맞았어요! 35 더하기 21, 56가지예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-05-shortest-route-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-b01",
+   "text": "숫자 카드를 한 번씩만 써서 만든 수를 크기 순서로 늘어놓고, 몇 번째 수를 찾는 법을 배워요. 빠짐없이 늘어놓는 차례가 중요해요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-b02",
+   "text": "카드 세 장, 2, 4, 7이 있어요. 세 장을 한 번씩만 써서 세 자리 수를 만들어요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-b03",
+   "text": "작은 수부터 늘어놓을 거예요. 가장 높은 자리, 백의 자리부터 정해요. 백의 자리에 가장 작은 2를 놓아요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-b04",
+   "text": "백의 자리가 2이면, 남은 카드 4와 7로 십의 자리와 일의 자리를 만들어요. 작은 것부터 247, 274예요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-b05",
+   "text": "백의 자리가 4이면 남은 카드는 2와 7. 427, 472."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-b06",
+   "text": "백의 자리가 7이면 724, 742. 모두 여섯 개예요. 백의 자리마다 두 개씩, 세 번이에요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-b07",
+   "text": "작은 수부터 넷째는 무엇일까요? 하나, 둘, 셋, 넷. 472예요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-b08",
+   "text": "큰 수부터 셀 때는 목록을 거꾸로 읽어요. 큰 수부터 둘째는 724예요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-b09",
+   "text": "0이 있으면 조심해요. 카드 0, 3, 5로 세 자리 수를 만들 때, 0은 백의 자리에 놓을 수 없어요. 그래서 305, 350, 503, 530, 네 개뿐이에요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-b10",
+   "text": "정리해요. 가장 높은 자리부터 작은 카드를 차례로 놓고, 남은 카드로 다음 자리를 채워요. 0은 맨 앞에 놓지 않아요. 큰 수부터면 목록을 거꾸로 세요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-b11",
+   "text": "한 문제 풀어 봐요. 카드 1, 5, 8로 세 자리 수를 만들 때, 큰 수부터 셋째는 무엇일까요?"
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-hint",
+   "text": "백의 자리가 8이면 851, 815. 그다음은 백의 자리가 5예요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-right",
+   "text": "맞았어요! 큰 수부터 851, 815, 그다음 581이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-05-digit-card-ranked-number-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-b01",
+   "text": "십의 자리 숫자와 일의 자리 숫자에 조건이 있을 때, 맞는 수를 빠짐없이 적고 몇 번째 수를 찾아요."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-b02",
+   "text": "두 자리 수의 십의 자리에는 1부터 9까지, 일의 자리에는 0부터 9까지 올 수 있어요. 십의 자리에 0은 안 돼요."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-b03",
+   "text": "조건이에요. 십의 자리 숫자와 일의 자리 숫자를 더하면 7이에요."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-b04",
+   "text": "빠뜨리지 않게 십의 자리에 1부터 차례로 놓아요. 1이면 일의 자리는 6, 16. 2면 5, 25. 3이면 4, 34."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-b05",
+   "text": "계속해요. 43, 52, 61, 70. 십의 자리가 8이면 일의 자리가 −1이 되어야 해서 안 돼요. 모두 일곱 개예요."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-b06",
+   "text": "십의 자리를 1부터 적었으니 이미 작은 수부터예요. 작은 수부터 넷째는 하나, 둘, 셋, 넷, 43이에요."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-b07",
+   "text": "큰 수부터 셋째는 목록을 거꾸로 세요. 70, 61, 52. 52예요."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-b08",
+   "text": "조건이 차이일 때도 같아요. 두 숫자의 차가 3이면, 일의 자리가 십의 자리보다 3 클 수도 있고 3 작을 수도 있어요. 두 경우를 다 적어요."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-b09",
+   "text": "십의 자리를 1부터 차례로 놓고 두 경우를 다 찾아 적어요. 14, 25, 30, 36, 41, 47, 이렇게 차례로 적으면 모두 13개예요."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-b10",
+   "text": "정리해요. 십의 자리에 1부터 차례로 놓고, 조건에 맞는 일의 자리를 찾아요. 차이 조건은 두 경우를 다 봐요. 작은 수부터 적은 목록에서 세고, 큰 수부터면 거꾸로 세요."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-b11",
+   "text": "한 문제 풀어 봐요. 십의 자리 숫자와 일의 자리 숫자의 합이 12인 두 자리 수 중, 작은 수부터 셋째는 무엇일까요?"
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-hint",
+   "text": "십의 자리가 1이나 2면 일의 자리가 11이나 10이 되어 안 돼요. 3부터 39, 48… 그다음은요?"
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-right",
+   "text": "맞았어요! 39, 48, 그다음 57이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-05-two-digit-condition-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }

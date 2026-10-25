@@ -4,7 +4,7 @@
 // 움직임 줄이기 설정이면 바로 완성 장면.
 // 글자는 손글씨 글꼴(나눔펜, OFL · assets/fonts/nm-lesson-hand.woff2)을 펜이 지나가며 드러내고, 그림은 실제 선(stroke)을 펜이 그린다.
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
-import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261025y";
+import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261026a";
 
 const NS = "http://www.w3.org/2000/svg";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -178,7 +178,8 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     }
     if (k === "ring") return [{ kind: "path", d: arcPath(item.cx, item.cy, item.r, -20, 340), stroke: item.color || "red", width: 4 }];
     // 수 동그라미: 원을 펜으로 그리고, 값이 있으면 그 안에 손글씨로 쓴다(value 없이 그리면 빈칸)
-    if (k === "node") return [{ kind: "path", d: arcPath(item.cx, item.cy, item.r || 34, 0, 360), stroke: item.color || "ink", width: item.width || 3.5 },
+    if (k === "node") return [...(item.bg ? [{ kind: "path", d: arcPath(item.cx, item.cy, (item.r || 34) - 1, 0, 360), stroke: item.bg, fill: item.bg, width: 1, quick: true }] : []),   // bg: 선이 지나가는 자리에서도 수가 보이게 안을 칠함
+      { kind: "path", d: arcPath(item.cx, item.cy, item.r || 34, 0, 360), stroke: item.color || "ink", width: item.width || 3.5 },
       ...(item.value != null ? [{ kind: "text", x: item.cx, y: item.cy + (item.size || 40) * 0.36, text: String(item.value), size: item.size || 40, align: "center", color: item.textColor || item.color || "ink" }] : [])];
     // 숫자만 쓰기(이미 그린 동그라미·칸 안에)
     if (k === "num") return [{ kind: "text", x: item.cx, y: item.cy + (item.size || 40) * 0.36, text: String(item.value), size: item.size || 40, align: "center", color: item.color || "ink" }];
