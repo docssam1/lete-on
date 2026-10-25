@@ -2,7 +2,7 @@
 // 판서의 수와 그림은 골든벨 3권 문항(온칸·반칸 도형들, 6×20+6·6×28+6+6…, 원 3·4·6·8·9·12조각, 모눈 2×2~5×5 등)과
 // 겹치지 않게 골랐다. 겹치면 공개 판서가 비공개 정답을 보여 주게 된다.
 
-import { jo } from "./concept-board-kit.js?v=20261025d";
+import { jo } from "./concept-board-kit.js?v=20261025e";
 
 const KO = { 1: "한", 2: "두", 3: "세", 4: "네", 5: "다섯", 6: "여섯", 7: "일곱", 8: "여덟", 9: "아홉", 10: "열", 11: "열한", 12: "열두" };
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
@@ -480,6 +480,91 @@ export const BOARDS_B03 = {
             options: [String(chk.sq), String(chk.t), String(CHK.tens)], answer: 1,
             hint: "십의 자리: □에 1이 올라와 3이 됐어요. □는 얼마일까요?", sayHint: `십의 자리에서 네모에 올라온 1을 더해 ${jo(CHK.tens, "이")} 됐어요. 그럼 네모는 ${jo(CHK.tens - 1, "예요")}. 세모 더하기 세모의 끝자리가 네모가 되는 세모를 찾아요.`,
             right: `맞았어요! ${chk.sq}${chk.t} + ${chk.t} = ${CHK.tens}${chk.sq}.`, sayRight: `맞았어요! 네모는 ${jo(chk.sq, "이고")} 세모는 ${jo(chk.t, "이에요")}. ${chk.sq}${chk.t} 더하기 ${jo(chk.t, "은")} ${CHK.tens}${chk.sq}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+  ,"book-03/magic-card-binary": (() => {
+    const W = [8, 4, 2, 1], X = (i) => 140 + i * 110, Y0 = 170, CW = 90, CH = 110;     // 카드는 큰 값이 왼쪽
+    const card = (i, color = "ink") => [{ kind: "box", x: X(i), y: Y0, w: CW, h: CH, color }, T(X(i) + CW / 2, Y0 + CH / 2 + 18, String(W[i]), color, 50, "center")];
+    const pick = (i) => [{ kind: "fill", x: X(i) + 5, y: Y0 + 5, w: CW - 10, h: CH - 10, fill: "#cfe0f5" }, T(X(i) + CW / 2, Y0 + CH / 2 + 18, String(W[i]), "blue", 50, "center")];
+    const TARGET = 13, chosen = []; let rest = TARGET; for (const w of W) if (w <= rest) { chosen.push(w); rest -= w; }
+    const MAX = W.reduce((a, b) => a + b, 0);
+    const CHK = 11, chk = []; let r2 = CHK; for (const w of W) if (w <= r2) { chk.push(w); r2 -= w; }
+    return {
+      title: "마법카드로 모든 수를 나타내요",
+      kicker: "3권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "수가 적힌 카드 몇 장 중에서 골라 더해, 0부터 하나도 빠짐없이 모든 수를 나타내고 싶어요. 카드에 어떤 수를 적어야 할까요?",
+          items: [title("마법카드")] },
+        { say: "첫 카드에는 1을 적어요. 고르지 않으면 0, 고르면 1. 0과 1을 나타낼 수 있어요.",
+          items: [...card(3), T(560, 340, "1 → 0, 1", "blue", 28)] },
+        { say: "둘째 카드에 3을 적으면 어떨까요? 2를 만들 수가 없어요. 빠지는 수가 생기면 안 돼요. 그래서 2를 적어요. 그러면 0, 1, 2, 3까지 돼요.",
+          items: [...card(2), T(560, 385, "2 → 0 ~ 3  (3을 적으면 2가 빠져요)", "blue", 26)] },
+        { say: "셋째 카드는? 지금까지 3까지 만들 수 있으니, 바로 다음 수 4를 적어요. 그러면 4 더하기 3, 7까지 빠짐없이 돼요.",
+          items: [...card(1), T(560, 430, "4 → 0 ~ 7", "blue", 26)] },
+        { say: "넷째 카드는 7 다음인 8. 그러면 15까지 돼요.",
+          items: [...card(0), T(560, 475, `8 → 0 ~ ${MAX}`, "blue", 26)] },
+        { say: "규칙이 보여요. 다음 카드의 수는, 앞 카드들을 모두 더한 수보다 1 커요. 1, 2, 4, 8. 늘 두 배가 돼요.",
+          items: [T(70, 360, "다음 카드 = 앞 카드를 모두 더한 수 + 1", "gold", 28)] },
+        { say: `카드로 ${jo(TARGET, "을")} 만들어 봐요. 큰 카드부터 봐요. ${jo(TARGET, "을")} 넘지 않는 가장 큰 카드는 8. 8을 골라요. 남은 수는 ${TARGET} 빼기 8, 5.`,
+          items: [...pick(0), T(70, 420, `${TARGET} → 8 고르기, 남은 ${TARGET - 8}`, "green", 28)] },
+        { say: "남은 5를 넘지 않는 가장 큰 카드는 4. 4를 골라요. 남은 수는 1.",
+          items: [...pick(1), T(70, 465, "5 → 4 고르기, 남은 1", "green", 28)] },
+        { say: "2는 1보다 크니까 고르지 않아요. 마지막으로 1을 골라요. 남은 수는 0. 다 만들었어요.",
+          items: [...pick(3), { kind: "x", cx: X(2) + CW / 2, cy: Y0 + CH + 26, r: 12, color: "red" }, T(70, 510, "2는 건너뛰고 1 고르기, 남은 0", "green", 28)] },
+        { say: `고른 카드를 다 더해 확인해요. ${jo(chosen.join(" 더하기 "), "는")} ${jo(TARGET, "이에요")}.`,
+          items: [T(70, 555, `${chosen.join(" + ")} = ${TARGET} ✓`, "green", 30)] },
+        { say: `네 장으로 만들 수 있는 가장 큰 수는 모두 고른 수, 8 더하기 4 더하기 2 더하기 1, ${jo(MAX, "이에요")}. 카드를 한 장 더 쓰면 16을 적어서 31까지 만들 수 있어요.`,
+          items: [T(560, 540, `가장 큰 수 = ${MAX},  다음 카드 16 → 31`, "gold", 24)] },
+        { say: "정리해요. 마법카드의 수는 앞의 카드를 모두 더한 수보다 1 커요. 수를 만들 때는 큰 카드부터, 남은 수를 넘지 않는 카드를 골라요. 마지막에 다 더해 확인해요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. 8, 4, 2, 1 카드로 ${jo(CHK, "을")} 만들려면 어떤 카드를 골라야 할까요?`, mood: "think",
+          items: [],
+          check: { question: `8, 4, 2, 1 카드로 ${jo(CHK, "을")} 만들 때 고를 카드는?`,
+            options: ["8, 4, 1", chk.join(", "), "4, 4, 2, 1"], answer: 1,
+            hint: "큰 카드부터, 남은 수를 넘지 않는 카드를 골라요.", sayHint: `${jo(CHK, "을")} 넘지 않는 가장 큰 카드는 8. 남은 수는 3이에요. 3을 넘지 않는 카드는요?`,
+            right: `맞았어요! ${chk.join(" + ")} = ${CHK}.`, sayRight: `맞았어요! 8을 고르면 3이 남고, 2와 1로 3을 만들어요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-03/magic-square-targets": (() => {
+    const M = [[3, 8, 7], [10, 6, 2], [5, 4, 9]], SUM = M[0].reduce((a, b) => a + b, 0);
+    const SHOWN = [[1, 1, 1], [1, 1, 0], [0, 1, 0]];
+    const X0 = 110, Y0 = 150, S = 96;
+    const cell = (r, c, v, color = "ink") => ({ kind: "num", cx: X0 + (c + 0.5) * S, cy: Y0 + (r + 0.5) * S, value: v, color, size: 46 });
+    const RX = 470;
+    const CHK = { a: 4, b: 9, sum: 21 }, chk = CHK.sum - CHK.a - CHK.b;
+    return {
+      title: "같은 줄의 합으로 빈칸을 찾아요",
+      kicker: "3권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "마방진은 가로줄, 세로줄, 대각선 줄의 합이 모두 같은 수 배치예요. 빈칸이 있을 때 어디서부터 채우는지 배워요.",
+          items: [title("마방진 빈칸 채우기")] },
+        { say: "세 칸씩 세 줄의 판에 수가 몇 개 적혀 있어요.",
+          items: [{ kind: "grid", x: X0, y: Y0, cols: 3, rows: 3, cell: S, color: "ink" }, ...M.flatMap((row, r) => row.map((v, c) => (SHOWN[r][c] ? cell(r, c, v) : null)).filter(Boolean))] },
+        { say: "먼저 수 세 개가 다 보이는 줄을 찾아요. 윗줄이에요. 이 줄의 합이 모든 줄의 목표 합이 돼요.",
+          items: [{ kind: "box", x: X0 - 6, y: Y0 - 6, w: 3 * S + 12, h: S + 12, color: "gold", dash: true }] },
+        { say: `${M[0][0]} 더하기 ${M[0][1]} 더하기 ${jo(M[0][2], "은")} ${jo(SUM, "이에요")}. 모든 줄의 합은 ${jo(SUM, "이에요")}.`,
+          items: [T(RX, 170, `${M[0].join(" + ")} = ${SUM}  → 목표 합 ${SUM}`, "blue", 30)] },
+        { say: `다른 줄로 확인할 수 있으면 해 봐요. 가운데 세로줄은 ${M[0][1]}, ${M[1][1]}, ${jo(M[2][1], "가")} 다 보여요. 더하면 ${jo(M[0][1] + M[1][1] + M[2][1], "이에요")}. 목표 합과 같아요.`,
+          items: [T(RX, 220, `가운데 세로: ${M[0][1]} + ${M[1][1]} + ${M[2][1]} = ${SUM} ✓`, "green", 26)] },
+        { say: `이제 빈칸이 하나뿐인 줄을 찾아요. 가운데 가로줄은 ${M[1][0]}, ${M[1][1]}, 빈칸. ${SUM}에서 ${jo(M[1][0], "과")} ${jo(M[1][1], "을")} 빼면 ${jo(M[1][2], "예요")}.`,
+          items: [T(RX, 275, `${SUM} − ${M[1][0]} − ${M[1][1]} = ${M[1][2]}`, "blue", 28), cell(1, 2, M[1][2], "green")] },
+        { say: `대각선도 줄이에요. 오른쪽 위 ${M[0][2]}, 가운데 ${M[1][1]}, 왼쪽 아래 빈칸. ${SUM} 빼기 ${M[0][2]} 빼기 ${jo(M[1][1], "은")} ${jo(M[2][0], "예요")}.`,
+          items: [{ kind: "line", x1: X0 + 3 * S - 14, y1: Y0 + 14, x2: X0 + 14, y2: Y0 + 3 * S - 14, color: "gold", width: 2.5, dash: true }, T(RX, 325, `${SUM} − ${M[0][2]} − ${M[1][1]} = ${M[2][0]}`, "blue", 28), cell(2, 0, M[2][0], "green")] },
+        { say: `아랫줄은 ${M[2][0]}, ${M[2][1]}, 빈칸. ${SUM} 빼기 ${M[2][0]} 빼기 ${jo(M[2][1], "는")} ${jo(M[2][2], "예요")}.`,
+          items: [T(RX, 375, `${SUM} − ${M[2][0]} − ${M[2][1]} = ${M[2][2]}`, "blue", 28), cell(2, 2, M[2][2], "green")] },
+        { say: `다 채웠으면 모든 줄을 확인해요. 왼쪽 세로 ${M[0][0]} 더하기 ${M[1][0]} 더하기 ${jo(M[2][0], "는")} ${SUM}, 오른쪽 세로 ${M[0][2]} 더하기 ${M[1][2]} 더하기 ${jo(M[2][2], "는")} ${SUM}, 대각선 ${M[0][0]} 더하기 ${M[1][1]} 더하기 ${jo(M[2][2], "는")} ${SUM}. 모두 ${jo(SUM, "이에요")}.`,
+          items: [T(RX, 435, `세로 ${M[0][0]}+${M[1][0]}+${M[2][0]}, ${M[0][2]}+${M[1][2]}+${M[2][2]}, 대각선 ${M[0][0]}+${M[1][1]}+${M[2][2]} = ${SUM} ✓`, "green", 22)] },
+        { say: "정리해요. 수 세 개가 다 보이는 줄에서 목표 합을 구해요. 빈칸이 하나뿐인 줄을 찾아 목표 합에서 보이는 수를 빼요. 대각선도 줄이에요. 마지막에 모든 줄을 확인해요.", mood: "praise",
+          items: [T(RX, 510, "다 보이는 줄 → 목표 합 → 빈칸 하나인 줄", "gold", 24)] },
+        { say: `한 문제 풀어 봐요. 한 줄의 합이 ${jo(CHK.sum, "인")} 마방진에서, 어떤 줄이 ${CHK.a}, 빈칸, ${jo(CHK.b, "예요")}. 빈칸은 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `한 줄의 합이 ${jo(CHK.sum, "인")} 마방진에서 한 줄이 ${CHK.a}, □, ${jo(CHK.b, "예요")}. □는?`,
+            options: [String(chk - 1), String(chk), String(CHK.a + CHK.b)], answer: 1,
+            hint: "목표 합에서 보이는 두 수를 빼요.", sayHint: `${CHK.sum}에서 ${jo(CHK.a, "와")} ${jo(CHK.b, "를")} 빼 봐요.`,
+            right: `맞았어요! ${CHK.sum} − ${CHK.a} − ${CHK.b} = ${chk}.`, sayRight: `맞았어요! ${CHK.sum} 빼기 ${CHK.a} 빼기 ${jo(CHK.b, "는")} ${jo(chk, "이에요")}. 이제 게임으로 가요.` } }
       ]
     };
   })()

@@ -2657,6 +2657,126 @@
   {
    "id": "fcb-book-03-cryptarithm-linked-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b01",
+   "text": "수가 적힌 카드 몇 장 중에서 골라 더해, 0부터 하나도 빠짐없이 모든 수를 나타내고 싶어요. 카드에 어떤 수를 적어야 할까요?"
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b02",
+   "text": "첫 카드에는 1을 적어요. 고르지 않으면 0, 고르면 1. 0과 1을 나타낼 수 있어요."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b03",
+   "text": "둘째 카드에 3을 적으면 어떨까요? 2를 만들 수가 없어요. 빠지는 수가 생기면 안 돼요. 그래서 2를 적어요. 그러면 0, 1, 2, 3까지 돼요."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b04",
+   "text": "셋째 카드는? 지금까지 3까지 만들 수 있으니, 바로 다음 수 4를 적어요. 그러면 4 더하기 3, 7까지 빠짐없이 돼요."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b05",
+   "text": "넷째 카드는 7 다음인 8. 그러면 15까지 돼요."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b06",
+   "text": "규칙이 보여요. 다음 카드의 수는, 앞 카드들을 모두 더한 수보다 1 커요. 1, 2, 4, 8. 늘 두 배가 돼요."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b07",
+   "text": "카드로 13을 만들어 봐요. 큰 카드부터 봐요. 13을 넘지 않는 가장 큰 카드는 8. 8을 골라요. 남은 수는 13 빼기 8, 5."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b08",
+   "text": "남은 5를 넘지 않는 가장 큰 카드는 4. 4를 골라요. 남은 수는 1."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b09",
+   "text": "2는 1보다 크니까 고르지 않아요. 마지막으로 1을 골라요. 남은 수는 0. 다 만들었어요."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b10",
+   "text": "고른 카드를 다 더해 확인해요. 8 더하기 4 더하기 1은 13이에요."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b11",
+   "text": "네 장으로 만들 수 있는 가장 큰 수는 모두 고른 수, 8 더하기 4 더하기 2 더하기 1, 15예요. 카드를 한 장 더 쓰면 16을 적어서 31까지 만들 수 있어요."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b12",
+   "text": "정리해요. 마법카드의 수는 앞의 카드를 모두 더한 수보다 1 커요. 수를 만들 때는 큰 카드부터, 남은 수를 넘지 않는 카드를 골라요. 마지막에 다 더해 확인해요."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-b13",
+   "text": "한 문제 풀어 봐요. 8, 4, 2, 1 카드로 11을 만들려면 어떤 카드를 골라야 할까요?"
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-hint",
+   "text": "11을 넘지 않는 가장 큰 카드는 8. 남은 수는 3이에요. 3을 넘지 않는 카드는요?"
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-right",
+   "text": "맞았어요! 8을 고르면 3이 남고, 2와 1로 3을 만들어요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-03-magic-card-binary-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-b01",
+   "text": "마방진은 가로줄, 세로줄, 대각선 줄의 합이 모두 같은 수 배치예요. 빈칸이 있을 때 어디서부터 채우는지 배워요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-b02",
+   "text": "세 칸씩 세 줄의 판에 수가 몇 개 적혀 있어요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-b03",
+   "text": "먼저 수 세 개가 다 보이는 줄을 찾아요. 윗줄이에요. 이 줄의 합이 모든 줄의 목표 합이 돼요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-b04",
+   "text": "3 더하기 8 더하기 7은 18이에요. 모든 줄의 합은 18이에요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-b05",
+   "text": "다른 줄로 확인할 수 있으면 해 봐요. 가운데 세로줄은 8, 6, 4가 다 보여요. 더하면 18이에요. 목표 합과 같아요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-b06",
+   "text": "이제 빈칸이 하나뿐인 줄을 찾아요. 가운데 가로줄은 10, 6, 빈칸. 18에서 10과 6을 빼면 2예요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-b07",
+   "text": "대각선도 줄이에요. 오른쪽 위 7, 가운데 6, 왼쪽 아래 빈칸. 18 빼기 7 빼기 6은 5예요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-b08",
+   "text": "아랫줄은 5, 4, 빈칸. 18 빼기 5 빼기 4는 9예요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-b09",
+   "text": "다 채웠으면 모든 줄을 확인해요. 왼쪽 세로 3 더하기 10 더하기 5는 18, 오른쪽 세로 7 더하기 2 더하기 9는 18, 대각선 3 더하기 6 더하기 9는 18. 모두 18이에요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-b10",
+   "text": "정리해요. 수 세 개가 다 보이는 줄에서 목표 합을 구해요. 빈칸이 하나뿐인 줄을 찾아 목표 합에서 보이는 수를 빼요. 대각선도 줄이에요. 마지막에 모든 줄을 확인해요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-b11",
+   "text": "한 문제 풀어 봐요. 한 줄의 합이 21인 마방진에서, 어떤 줄이 4, 빈칸, 9예요. 빈칸은 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-hint",
+   "text": "21에서 4와 9를 빼 봐요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-right",
+   "text": "맞았어요! 21 빼기 4 빼기 9는 8이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-03-magic-square-targets-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }
