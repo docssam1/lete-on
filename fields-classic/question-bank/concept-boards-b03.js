@@ -181,4 +181,129 @@ export const BOARDS_B03 = {
       ]
     };
   })()
+  ,"book-03/tape-length-midpoints": (() => {
+    const G = { x: 90, y: 140, cell: 56, cols: 5, rows: 3 };
+    const PATH = [[0, 0], [1, 0], [2, 0], [2, 1], [2, 2], [3, 2], [4, 2]];          // [칸, 줄] 테이프가 지나간 칸
+    const L = PATH.length;
+    const NL = { x0: 520, x1: 940, y: 300, a: 6, b: 22 }, mid = (NL.a + NL.b) / 2, X = (v) => NL.x0 + (v - NL.a) / (NL.b - NL.a) * (NL.x1 - NL.x0);
+    const CHK = [11, 27], chkM = (CHK[0] + CHK[1]) / 2;
+    return {
+      title: "테이프 길이와 한가운데 수를 찾아요",
+      kicker: "3권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "꺾여 있는 테이프의 길이를 재는 법과, 두 수의 한가운데 수를 찾는 법을 배워요.",
+          items: [title("테이프 길이와 한가운데 수")] },
+        { say: "모눈 한 칸의 길이는 1센티미터예요. 모눈을 그려요.",
+          items: [{ kind: "grid", x: G.x, y: G.y, cols: G.cols, rows: G.rows, cell: G.cell, color: "gray" }, T(G.x, G.y + G.rows * G.cell + 34, "한 칸 = 1cm", "gray", 24)] },
+        { say: "색테이프가 모눈을 따라 두 번 꺾여 있어요. 테이프가 지나간 칸을 색칠해요.",
+          items: PATH.map(([c, r]) => ({ kind: "fill", x: G.x + c * G.cell + 4, y: G.y + r * G.cell + 4, w: G.cell - 8, h: G.cell - 8, fill: "#cfe0f5" })) },
+        { say: `꺾인 곳에서 헷갈리지 않게, 한쪽 끝부터 한 칸씩 세요. ${Array.from({ length: L }, (_, i) => i + 1).join(", ")}. ${KO[L]} 칸이에요.`,
+          items: PATH.map(([c, r], i) => T(G.x + (c + 0.5) * G.cell, G.y + (r + 0.5) * G.cell + 10, String(i + 1), "blue", 28, "center")) },
+        { say: `테이프를 곧게 펴도 칸 수는 그대로예요. 꺾여 있어도 지나간 칸은 ${KO[L]} 칸. 한 칸이 1센티미터니까 ${L}센티미터예요.`,
+          items: [{ kind: "cells", x: G.x, y: G.y + G.rows * G.cell + 60, cell: 34, cells: Array.from({ length: L }, (_, i) => [0, i]), fill: "blue" }, T(G.x + L * 34 + 16, G.y + G.rows * G.cell + 86, `= ${L}cm`, "blue", 30)] },
+        { say: `이번엔 한가운데 수예요. 수직선에 ${jo(NL.a, "과")} ${jo(NL.b, "를")} 써요. 두 수에서 똑같이 떨어진 수가 한가운데 수예요.`,
+          items: [{ kind: "line", x1: NL.x0 - 20, y1: NL.y, x2: NL.x1 + 20, y2: NL.y, color: "ink", width: 3 }, ...[NL.a, NL.b].flatMap((v) => [{ kind: "line", x1: X(v), y1: NL.y - 12, x2: X(v), y2: NL.y + 12, color: "ink", width: 3 }, T(X(v), NL.y + 46, String(v), "blue", 30, "center")])] },
+        { say: `먼저 두 수 사이의 거리를 구해요. ${NL.b} 빼기 ${jo(NL.a, "은")} ${jo(NL.b - NL.a, "이에요")}.`,
+          items: [{ kind: "arrow", x1: X(NL.a), y1: NL.y - 40, x2: X(NL.b), y2: NL.y - 40, color: "gray", width: 2.5 }, T((X(NL.a) + X(NL.b)) / 2, NL.y - 54, `거리 ${NL.b - NL.a}`, "gray", 24, "center")] },
+        { say: `한가운데는 거리의 반만큼 간 곳이에요. ${NL.b - NL.a}의 반은 ${(NL.b - NL.a) / 2}. ${NL.a}에서 ${(NL.b - NL.a) / 2}만큼 가면 ${jo(mid, "예요")}.`,
+          items: [{ kind: "line", x1: X(mid), y1: NL.y - 16, x2: X(mid), y2: NL.y + 16, color: "green", width: 4 }, T(X(mid), NL.y + 46, String(mid), "green", 32, "center")] },
+        { say: `더 빠른 방법도 있어요. 두 수를 더해서 반으로 나눠요. ${NL.a} 더하기 ${jo(NL.b, "는")} ${NL.a + NL.b}, 그 반은 ${jo(mid, "예요")}.`,
+          items: [T(NL.x0, 420, `(${NL.a} + ${NL.b}) ÷ 2 = ${NL.a + NL.b} ÷ 2 = ${mid}`, "blue", 30)] },
+        { say: `확인해요. ${mid} 빼기 ${jo(NL.a, "은")} ${mid - NL.a}, ${NL.b} 빼기 ${jo(mid, "는")} ${NL.b - mid}. 양쪽으로 똑같이 ${(NL.b - NL.a) / 2}씩 떨어져 있어요.`,
+          items: [T(NL.x0, 470, `${mid} − ${NL.a} = ${mid - NL.a},  ${NL.b} − ${mid} = ${NL.b - mid} ✓`, "green", 28)] },
+        { say: "정리해요. 꺾인 테이프는 한쪽 끝부터 칸을 빠짐없이 세어요. 한가운데 수는 두 수를 더해 반으로 나누고, 양쪽 거리가 같은지 확인해요.", mood: "praise",
+          items: [T(NL.x0, 540, "한가운데 = (두 수의 합) ÷ 2", "gold", 30)] },
+        { say: `한 문제 풀어 봐요. ${jo(CHK[0], "과")} ${CHK[1]}의 한가운데 수는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `${jo(CHK[0], "과")} ${CHK[1]}의 한가운데 수는?`,
+            options: [String(chkM - 3), String(chkM), String(CHK[0] + CHK[1])], answer: 1,
+            hint: "두 수를 더해서 반으로 나눠요.", sayHint: `${CHK[0]} 더하기 ${jo(CHK[1], "은")} ${jo(CHK[0] + CHK[1], "이에요")}. 그 반은 얼마일까요?`,
+            right: `맞았어요! (${CHK[0]} + ${CHK[1]}) ÷ 2 = ${chkM}.`, sayRight: `맞았어요! ${CHK[0] + CHK[1]}의 반, ${jo(chkM, "예요")}. 양쪽으로 ${chkM - CHK[0]}씩 떨어져 있어요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-03/overlapping-distance": (() => {
+    const AB = 8, BC = 7, CD = 11, AD = AB + BC + CD, AC = AB + BC, BD = BC + CD;
+    const U = 18, X0 = 130, Y = 330, pos = { A: X0, B: X0 + AB * U, C: X0 + (AB + BC) * U, D: X0 + AD * U };
+    const span = (a, b, y, label, color) => [{ kind: "line", x1: pos[a], y1: y, x2: pos[b], y2: y, color, width: 3 }, { kind: "line", x1: pos[a], y1: y - 8, x2: pos[a], y2: y + 8, color, width: 3 }, { kind: "line", x1: pos[b], y1: y - 8, x2: pos[b], y2: y + 8, color, width: 3 }, T((pos[a] + pos[b]) / 2, y - 12, label, color, 24, "center")];
+    const RX = 640;
+    const CHK = { AC: 14, BD: 16, BC: 5 }, chkAD = CHK.AC + CHK.BD - CHK.BC;
+    return {
+      title: "겹친 거리의 합과 차를 찾아요",
+      kicker: "3권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "한 줄 위에 점 네 개가 있고, 긴 거리 두 개가 가운데에서 겹쳐 있을 때, 겹친 부분의 길이를 찾는 법을 배워요.",
+          items: [title("겹친 거리 찾기")] },
+        { say: "한 줄 위에 A, B, C, D를 차례로 찍어요.",
+          items: [{ kind: "line", x1: pos.A - 30, y1: Y, x2: pos.D + 30, y2: Y, color: "ink", width: 3 }, ...["A", "B", "C", "D"].flatMap((k) => [{ kind: "shape", type: "circle", cx: pos[k], cy: Y, r: 7, color: "ink", fill: "ink", quick: true }, T(pos[k], Y + 40, k, "ink", 30, "center")])] },
+        { say: `A부터 D까지 전체 거리는 ${AD}센티미터예요.`,
+          items: span("A", "D", Y - 150, `AD = ${AD}`, "gray") },
+        { say: `A부터 C까지는 ${AC}센티미터.`,
+          items: span("A", "C", Y - 100, `AC = ${AC}`, "blue") },
+        { say: `B부터 D까지는 ${BD}센티미터. 이 거리는 줄 아래에 표시해요.`,
+          items: span("B", "D", Y + 90, `BD = ${BD}`, "green") },
+        { say: "AC와 BD를 같이 보면, 둘 다 B와 C 사이를 지나요. 겹친 부분이 BC예요.",
+          items: [{ kind: "fill", x: pos.B, y: Y - 6, w: pos.C - pos.B, h: 12, fill: "#f6dcd3" }, T((pos.B + pos.C) / 2, Y - 18, "겹친 BC", "red", 24, "center")] },
+        { say: `AC와 BD를 더하면, 겹친 BC를 두 번 센 셈이에요. ${AC} 더하기 ${jo(BD, "은")} ${AC + BD}. 전체 AD ${AD}보다 BC만큼 더 커요.`,
+          items: [T(RX, 160, `AC + BD = ${AC} + ${BD} = ${AC + BD}`, "blue", 28)] },
+        { say: `그래서 BC는 ${AC + BD} 빼기 ${AD}, ${jo(BC, "이에요")}.`,
+          items: [T(RX, 210, `BC = ${AC + BD} − ${AD} = ${BC}`, "red", 30)] },
+        { say: `나머지도 구해요. AB는 AC에서 BC를 빼서 ${AC} 빼기 ${jo(BC, "은")} ${AB}. CD는 BD에서 BC를 빼서 ${BD} 빼기 ${jo(BC, "은")} ${CD}.`,
+          items: [T(RX, 260, `AB = ${AC} − ${BC} = ${AB}`, "blue", 28), T(RX, 300, `CD = ${BD} − ${BC} = ${CD}`, "green", 28)] },
+        { say: `세 조각을 다 더해 확인해요. ${AB} 더하기 ${BC} 더하기 ${jo(CD, "은")} ${AB + BC + CD}. 전체 AD와 같아요.`,
+          items: [T(RX, 450, `${AB} + ${BC} + ${CD} = ${AD} ✓`, "green", 30)] },
+        { say: `거꾸로 BC를 알 때는 전체를 구할 수 있어요. AC 더하기 BD에서 두 번 센 BC를 한 번 빼면 AD예요.`,
+          items: [T(RX, 500, "AD = AC + BD − BC", "gold", 28)] },
+        { say: "정리해요. 점의 순서대로 줄을 그리고, 두 긴 거리가 함께 가진 구간을 찾아요. 두 거리를 더하면 겹친 구간을 두 번 센 거예요. 마지막에 조각을 다 더해 전체와 같은지 확인해요.", mood: "praise",
+          items: [T(RX, 555, "겹친 곳은 두 번 세어져요!", "gold", 28)] },
+        { say: `한 문제 풀어 봐요. AC는 ${CHK.AC}, BD는 ${CHK.BD}, 겹친 BC는 ${jo(CHK.BC, "예요")}. 전체 AD는 몇 센티미터일까요?`, mood: "think",
+          items: [],
+          check: { question: `A-B-C-D가 한 줄에 있어요. AC = ${CHK.AC}cm, BD = ${CHK.BD}cm, BC = ${CHK.BC}cm일 때 AD는?`,
+            options: [`${CHK.AC + CHK.BD}cm`, `${chkAD}cm`, `${chkAD + 2 * CHK.BC}cm`], answer: 1,
+            hint: "AC와 BD를 더하면 BC를 두 번 센 거예요.", sayHint: `${CHK.AC} 더하기 ${jo(CHK.BD, "은")} ${jo(CHK.AC + CHK.BD, "이에요")}. 두 번 센 BC를 한 번 빼면요?`,
+            right: `맞았어요! ${CHK.AC} + ${CHK.BD} − ${CHK.BC} = ${chkAD}cm.`, sayRight: `맞았어요! ${CHK.AC + CHK.BD} 빼기 ${jo(CHK.BC, "는")} ${chkAD}센티미터예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-03/multiple-comparison": (() => {
+    const A = 3, B = 18, times = B / A, C = 24, X0 = 160;
+    const NL = { a: 10, b: 34, n: 4 }, gap = (NL.b - NL.a) / NL.n, NX = (v) => 140 + (v - NL.a) / (NL.b - NL.a) * 520, NY = 470;
+    const CHK = [24, 4], chk = CHK[0] / CHK[1];
+    return {
+      title: "몇 배와 같은 간격을 찾아요",
+      kicker: "3권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "한 양이 다른 양의 몇 배인지 찾는 법과, 두 수 사이를 같은 간격으로 나누는 법을 배워요. 둘 다 기준이 몇 번 들어가는지 세는 거예요.",
+          items: [title("몇 배와 같은 간격")] },
+        { say: `막대 A는 ${KO[A]} 칸이에요. A를 기준으로 정해요.`,
+          items: [T(80, 170, "A", "blue", 30), { kind: "cells", x: X0, y: 148, cell: C, cells: Array.from({ length: A }, (_, i) => [0, i]), fill: "blue" }] },
+        { say: `막대 B는 ${B}칸이에요. B는 A의 몇 배일까요?`,
+          items: [T(80, 240, "B", "green", 30), { kind: "cells", x: X0, y: 218, cell: C, cells: Array.from({ length: B }, (_, i) => [0, i]), fill: "green" }] },
+        { say: `B 안에 A가 몇 번 들어가는지 세요. A의 길이만큼씩 테두리를 쳐요. 하나, 둘, 셋, 넷, 다섯, 여섯.`,
+          items: Array.from({ length: times }, (_, i) => [{ kind: "box", x: X0 + i * A * C, y: 214, w: A * C, h: C + 8, color: "red" }, T(X0 + (i + 0.5) * A * C, 280, String(i + 1), "red", 22, "center")]).flat() },
+        { say: `A가 ${KO[times]} 번 들어가요. 그래서 B는 A의 ${times}배예요.`,
+          items: [T(620, 170, `B는 A의 ${times}배`, "green", 32)] },
+        { say: `수로 확인해요. ${B} 안에 ${jo(A, "이")} 몇 번 들어갈까요? ${Array.from({ length: times }, (_, i) => A * (i + 1)).join(", ")}. 나눗셈으로 쓰면 ${B} 나누기 ${jo(A, "은")} ${jo(times, "이에요")}.`,
+          items: [T(620, 220, `${B} ÷ ${A} = ${times}`, "blue", 32)] },
+        { say: "기준이 무엇인지가 중요해요. B는 A의 몇 배냐고 물으면, 뒤에 나온 A가 기준이에요. 기준으로 나눠요.",
+          items: [T(620, 270, "「~의 몇 배」 → 의 앞이 기준", "gold", 24)] },
+        { say: `이번엔 같은 간격이에요. 수직선에 ${jo(NL.a, "과")} ${jo(NL.b, "를")} 쓰고, 그 사이를 같은 간격 ${KO[NL.n]} 개로 나눠 볼 거예요.`,
+          items: [{ kind: "line", x1: NX(NL.a) - 20, y1: NY, x2: NX(NL.b) + 20, y2: NY, color: "ink", width: 3 }, ...[NL.a, NL.b].flatMap((v) => [{ kind: "line", x1: NX(v), y1: NY - 12, x2: NX(v), y2: NY + 12, color: "ink", width: 3 }, T(NX(v), NY + 44, String(v), "blue", 28, "center")])] },
+        { say: `두 수 사이의 거리는 ${NL.b} 빼기 ${jo(NL.a, "은")} ${NL.b - NL.a}. 이 거리를 똑같이 ${KO[NL.n]} 칸으로 나누면 한 칸은 ${NL.b - NL.a} 나누기 ${NL.n}, ${jo(gap, "이에요")}.`,
+          items: [T(620, 340, `(${NL.b} − ${NL.a}) ÷ ${NL.n} = ${gap}`, "blue", 30)] },
+        { say: `${NL.a}에서 ${gap}씩 가요. ${Array.from({ length: NL.n }, (_, i) => NL.a + gap * (i + 1)).join(", ")}. 마지막이 ${jo(NL.b, "이")} 되니까 맞아요.`,
+          items: Array.from({ length: NL.n - 1 }, (_, i) => NL.a + gap * (i + 1)).flatMap((v) => [{ kind: "line", x1: NX(v), y1: NY - 12, x2: NX(v), y2: NY + 12, color: "green", width: 3 }, T(NX(v), NY + 44, String(v), "green", 28, "center")]) },
+        { say: "정리해요. 몇 배는 기준이 몇 번 들어가는지 세는 거예요. 같은 간격은 거리를 칸 수로 나눈 뒤, 그만큼씩 가서 끝 수에 닿는지 확인해요.", mood: "praise",
+          items: [T(620, 400, "기준이 몇 번 들어가나?", "gold", 30)] },
+        { say: `한 문제 풀어 봐요. ${jo(CHK[0], "는")} ${CHK[1]}의 몇 배일까요?`, mood: "think",
+          items: [],
+          check: { question: `${jo(CHK[0], "는")} ${CHK[1]}의 몇 배일까요?`,
+            options: [String(CHK[1]), String(chk), String(CHK[0] - CHK[1])], answer: 1,
+            hint: `${jo(CHK[1], "가")} 기준이에요. ${CHK[0]} 안에 ${jo(CHK[1], "가")} 몇 번 들어가는지 세요.`, sayHint: `${CHK[1]}, ${CHK[1] * 2}, ${CHK[1] * 3}… 이렇게 ${CHK[1]}씩 세어 ${CHK[0]}까지 몇 번인지 봐요.`,
+            right: `맞았어요! ${CHK[0]} ÷ ${CHK[1]} = ${chk}.`, sayRight: `맞았어요! ${jo(CHK[1], "가")} ${KO[chk]} 번 들어가요. ${jo(CHK[0], "는")} ${CHK[1]}의 ${chk}배예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
 };
