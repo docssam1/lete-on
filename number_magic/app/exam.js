@@ -553,6 +553,27 @@
   .nm-mz-feature .nm-mz-close { font-size:13px; background:#f3f6f6; border-color:#ccd7d9; color:#20343b; font-weight:500; }
   .nm-mz-feature .nm-mz-src { margin-bottom:0; font-size:9px; }
   .nm-mz-src a { color:#245b60; text-decoration:underline; overflow-wrap:anywhere; }
+  .nm-story-spark{display:flex;align-items:center;gap:3mm;border-left:2px solid #245b60;padding:2mm 3mm;margin:0 0 2mm;background:#f3f6f6;flex:0 0 auto;color:#20343b}
+  .nm-story-spark img{width:11mm;height:14mm;object-fit:contain;flex:none}
+  .nm-story-spark b{font-size:11px;font-weight:700;color:#245b60}
+  .nm-story-spark p{font-size:12.5px;line-height:1.6;margin:1mm 0 0;word-break:keep-all}
+  .nm-mz-feature:has(.nm-story-spark) .nm-mz-hero svg{max-height:31mm}
+  .nm-story-challenge>b{font-size:12px;color:#245b60;font-weight:700}
+  .nm-story-challenge p{margin:1mm 0 0;line-height:1.6}
+  .nm-story-work{display:grid;gap:3mm;margin-top:2mm}
+  .nm-story-work i{display:block;height:2mm;border-bottom:1px solid #c9bda2}
+  .nm-story-feedback{max-width:720px;margin:18px auto;padding:14px 16px;background:#fff;border:1px solid #ccd7d9;color:#20343b;font-size:15px;line-height:1.7}
+  .nm-story-feedback h4{font-size:16px;font-weight:700;margin:0 0 8px}
+  .nm-story-feedback summary{cursor:pointer;min-height:44px;display:list-item;padding:10px 4px;font-size:15px;line-height:1.6;overflow-wrap:anywhere}
+  .nm-story-feedback summary:focus-visible{outline:3px solid #245b60;outline-offset:2px}
+  .nm-story-feedback details+details{border-top:1px solid #ccd7d9}
+  .nm-story-feedback p{margin:4px 0 12px}
+  .nm-story-feedback,.nm-story-spark>div{min-width:0;overflow-wrap:anywhere}
+  .nm-story-feedback p{word-break:normal}
+  .nm-inline-math{display:inline-block;white-space:nowrap;padding:0 .08em;line-height:1.3}
+  .nm-inline-math .katex{font-size:1em}
+  .nm-native-fraction{font-size:1em;math-style:normal;vertical-align:middle}
+  @media print{.nm-story-feedback{display:none!important}}
   /* 매거진형 수학 이야기(2026-09-25) — 참고: 원장이 보낸 과학 이야기 지면. 색은 학습지 청록·금색만. */
   .nm-mzs-page { gap:0; }
   /* 머리띠 글자 다듬기(2026-09-28, 원장 "왜 자꾸 텍스트가 마음에 안들지 — 초록색 배너의").
@@ -2722,10 +2743,25 @@ function w2MagazinePick(items, band, code){
 }
 /* 매거진 글에는 강조용 <b> 가 들어 있다 — 그대로 esc 하면 태그가 글자로 찍혔다(2026-09-28).
    이스케이프한 뒤 <b>·</b> 만 되살린다(다른 태그는 여전히 글자). */
-function escMz(t){ return esc(String(t == null ? '' : t)).replace(/&lt;(\/?)b&gt;/g, '<$1b>'); }
+function escMz(t){ return window.NM_MAGAZINE && typeof NM_MAGAZINE.rich === 'function' ? NM_MAGAZINE.rich(t) : esc(String(t == null ? '' : t)).replace(/&lt;(\/?)b&gt;/g, '<$1b>'); }
 function magazineReferences(art){
   return (art.references || []).filter(r => /^https:\/\//.test(r.url || ''))
     .map(r => `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.label)}</a>`).join(' · ');
+}
+function magazineSparkHtml(art){
+  if(!art.spark) return '';
+  const script=document.querySelector('script[src*="data/magazine.js"]');
+  const portrait=script && (art.age || []).includes('mid')
+    ? `<img src="${esc(new URL('../assets/characters/docssam.png',script.src).href)}" alt="" loading="lazy">` : '';
+  return `<aside class="nm-story-spark">${portrait}<div><b>${lk('먼저 생각해 봐요','Pause and think','先想一想')}</b><p>${escMz(pickL(art.spark))}</p></div></aside>`;
+}
+function magazineChallengeHtml(art){
+  if(!art.challenge) return `<div class="nm-mz-close">${escMz(pickL(art.close) || '')}</div>`;
+  return `<section class="nm-mz-close nm-story-challenge"><b>${lk('내 말로 설명해요','Explain it in your own words','用自己的话说明')}</b><p>${escMz(pickL(art.challenge.prompt))}</p><div class="nm-story-work" aria-hidden="true"><i></i><i></i></div></section>`;
+}
+function magazineFeedbackHtml(art){
+  if(!art || !art.challenge) return '';
+  return `<section class="nm-story-feedback" id="story-feedback"><h4>${lk('스스로 확인하기','Check your reasoning','自己检查')}</h4><details><summary>${lk('힌트 보기','Show a hint','查看提示')}</summary><p>${escMz(pickL(art.challenge.hint))}</p></details><details data-story-reason><summary>${lk('이유와 함께 확인하기','Check with an explanation','查看推理过程')}</summary><p>${escMz(pickL(art.challenge.reason))}</p></details></section>`;
 }
 function w2MagazinePageHtml(items, code, band){
   const art = w2MagazinePick(items, band, code);
@@ -2745,8 +2781,9 @@ function w2MagazineArticleHtml(art, code){
   </div>
   <p class="nm-mz-lede">${escMz(pickL(art.lede) || '')}</p>
   <div class="nm-mz-hero">${art.art || ''}</div>
+  ${magazineSparkHtml(art)}
   <div class="nm-mz-body">${secs}</div>
-  <div class="nm-mz-close">${escMz(pickL(art.close) || '')}</div>
+  ${magazineChallengeHtml(art)}
   <p class="nm-mz-src">${escMz(pickL(art.source) || '')}${art.references ? '<br>'+magazineReferences(art) : ''}</p>
   <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : '지필드 · Numbers of Magic')}</div>
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
@@ -7630,6 +7667,9 @@ const NM_EXAM = {
   magazineArticle(id){
     return w2MagazineArticleHtml(((window.NM_MAGAZINE || {}).articles || []).find(a => a.id === id), '');
   },
+  magazineSpark(id){ return magazineSparkHtml(((window.NM_MAGAZINE || {}).articles || []).find(a => a.id === id) || {}); },
+  magazineChallenge(id){ return magazineChallengeHtml(((window.NM_MAGAZINE || {}).articles || []).find(a => a.id === id) || {}); },
+  magazineFeedback(id){ return magazineFeedbackHtml(((window.NM_MAGAZINE || {}).articles || []).find(a => a.id === id)); },
 
   /* LaTeX→평문 치환(KaTeX 미로딩 폴백). drill.html 등 다른 스코프도 이걸 재사용한다. */
   texToPlain,

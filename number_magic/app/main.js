@@ -7620,7 +7620,7 @@ function screenSymbolDex(){
    상태: S._mzOpen(지금 펼친 기사 id, 저장 안 함) · S.magazine.read(영구)
    ============================================================ */
 function mzArticles(){ return (window.NM_MAGAZINE && window.NM_MAGAZINE.articles) || []; }
-function mzRich(text){ return esc(String(text || '')).replace(/&lt;(\/?)b&gt;/g, '<$1b>'); }
+function mzRich(text){ return window.NM_MAGAZINE && typeof NM_MAGAZINE.rich === 'function' ? NM_MAGAZINE.rich(text) : esc(String(text || '')).replace(/&lt;(\/?)b&gt;/g, '<$1b>'); }
 function mzReferences(article){
   return (article.references || []).filter(r => /^https:\/\//.test(r.url || ''))
     .map(r => `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.label)}</a>`).join(' · ');
@@ -7678,13 +7678,14 @@ function screenMagazine(){
   scr.innerHTML=`<div class="nm-gc-wrap">
     ${head(L(M.name)||(ko?'매거진':en?'Magazine':'杂志'),'mzBack')}
     <div class="nm-gc-body">
-      <article class="nm-mza">
+      <article class="nm-mza${open.challenge ? ' nm-mza-inquiry' : ''}" lang="${esc(S.lang)}">
         <div class="nm-mza-kicker">${esc(L(open.kicker))}</div>
         <h3 class="nm-mza-title">${esc(L(open.title))}</h3>
         <p class="nm-mza-lede">${mzRich(L(open.lede))}</p>
         <div class="nm-mza-hero">${open.art||''}</div>
+        ${window.NM_EXAM ? NM_EXAM.magazineSpark(open.id) : ''}
         ${secs}
-        <div class="nm-mza-close">${mzRich(L(open.close))}</div>
+        ${open.challenge && window.NM_EXAM ? NM_EXAM.magazineChallenge(open.id)+NM_EXAM.magazineFeedback(open.id) : `<div class="nm-mza-close">${mzRich(L(open.close))}</div>`}
         <p class="nm-mza-src">${esc(L(open.source))}</p>
         ${open.references ? `<div class="nm-mza-refs">${mzReferences(open)}</div>` : ''}
         <div class="nm-mza-nav">
