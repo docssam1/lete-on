@@ -2079,7 +2079,9 @@ function renderContent() {
     bookId: book.id,
     lesson,
     rerender: () => { clearExperiencePlayback(); renderContent(); },
-    onQuestions: () => embed.on ? embedPost({ event: "done", view: embed.view, lesson: lesson.id }) : setPhase("original")
+    onQuestions: () => embed.on ? embedPost({ event: "done", view: embed.view, lesson: lesson.id }) : setPhase("original"),
+    // 게임을 끝까지 하면(레벨을 깼든 아니든) 덱에 알린다 — 원장 2026-10-24 「레벨을 깨고 나면 말고 게임을 완료하면」
+    onComplete: () => { if (embed.on) embedPost({ event: "done", view: embed.view, lesson: lesson.id }); }
   });
   if (!protectedBooks.has(state.bookId)) {
     const notice = document.createElement("div");

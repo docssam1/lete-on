@@ -1,5 +1,5 @@
 import { CURRICULUM } from "./source-data.js?v=20261024r";
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES } from "./study-map.js?v=20261024t";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261025c";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
@@ -48,7 +48,11 @@ function buildSlides() {
   const bellBook = bellData?.books.find((entry) => entry.id === book.id);
   const lessons = bellData ? lessonsByPart(unit, lessonsByUnit(book, bellBook).units[unitIndex])[part - 1] : [];
   const list = [{ kind: "cover" }];
-  for (const lesson of lessons) list.push({ kind: "concept", lesson });
+  for (const lesson of lessons) {
+    const key = `${book.id}/${lesson.id}`;
+    // 손글씨 판서가 있으면 그 판서(덱 안에서 직접 그림), 없으면 골든벨 개념 화면(창)
+    list.push(STUDY_BOARDS[key] ? { kind: "concept", lesson, native: { ...STUDY_BOARDS[key], board: key } } : { kind: "concept", lesson });
+  }
   const replaced = new Set();
   for (const lesson of lessons) {
     for (const game of STUDY_GAMES[`${book.id}/${lesson.id}`] || []) {
@@ -84,18 +88,25 @@ function say(text, mood = "talk") {
   $("walkerImg").src = `./${PORTRAIT[mood] || PORTRAIT.talk}`;
   const bubble = $("talk");
   bubble.classList.remove("new"); void bubble.offsetWidth; bubble.classList.add("new");
-  speak(text);
+  return speak(text);
 }
+// 말이 끝나면(소리가 꺼져 있으면 읽을 만한 시간이 지나면) 풀리는 Promise. 기기 음성이 끝을 알리지 않는 경우를 대비해 최대 시간도 둔다.
 function speak(text) {
-  if (typeof speechSynthesis === "undefined") return;
-  try {
-    speechSynthesis.cancel();
-    if (!pref.sound) return;
-    const utterance = new SpeechSynthesisUtterance(text);
-    const ko = (speechSynthesis.getVoices() || []).find((voice) => /^ko/i.test(voice.lang));
-    utterance.lang = "ko-KR"; utterance.rate = 0.95; if (ko) utterance.voice = ko;
-    speechSynthesis.speak(utterance);
-  } catch {}
+  const reading = Math.min(7000, Math.max(900, String(text || "").length * 75));
+  return new Promise((resolve) => {
+    let done = false; const finish = () => { if (!done) { done = true; resolve(); } };
+    if (typeof speechSynthesis === "undefined") { setTimeout(finish, reading); return; }
+    try {
+      speechSynthesis.cancel();
+      if (!pref.sound || !text) { setTimeout(finish, text ? reading : 0); return; }
+      const utterance = new SpeechSynthesisUtterance(text);
+      const ko = (speechSynthesis.getVoices() || []).find((voice) => /^ko/i.test(voice.lang));
+      utterance.lang = "ko-KR"; utterance.rate = 0.9;   // 천천히(원장 2026-10-25) if (ko) utterance.voice = ko;
+      utterance.onend = finish; utterance.onerror = finish;
+      speechSynthesis.speak(utterance);
+      setTimeout(finish, reading * 2.5 + 2000);
+    } catch { setTimeout(finish, reading); }
+  });
 }
 function paintGuideButtons() {
   $("voiceBtn").textContent = pref.sound ? "🔊" : "🔇";
@@ -166,8 +177,8 @@ window.addEventListener("message", (event) => {
     return;
   }
   if (data.event === "done" && slide?.lesson?.id === data.lesson && slide.kind === data.view) {
-    say(slide.kind === "bell" ? "골든벨 문제를 다 풀었어요! 정말 잘했어요. 다음으로 넘어가요." : "게임을 끝까지 해냈어요! 이제 다음으로 가요.", "praise");
-    auto(2600);
+    say(slide.kind === "bell" ? "골든벨 문제를 다 풀었어요! 정말 잘했어요. 다음으로 넘어가요." : "게임을 끝까지 해냈어요! 결과를 보고 다음으로 가요.", "praise");
+    auto(slide.kind === "game" ? 6000 : 2600);   // 게임은 별·결과를 볼 시간을 준다
   }
 });
 let waitTimer = 0;
@@ -196,8 +207,9 @@ async function mountNative(slide) {
   host.className = "sd-native";
   $("slideBody").replaceChildren(host);
   nativeGame = mod[game.mount](host, {
-    say: (text, mood) => say(text, mood),
-    onDone: () => { say("게임을 끝까지 해냈어요! 이제 골든벨 문제로 가요.", "praise"); auto(2200); }
+    say: (text, mood) => say(text, mood),   // 말 끝을 기다릴 수 있게 Promise를 돌려준다(판서가 비트마다 기다린다)
+    board: game.board, lesson: slide.lesson,
+    onDone: () => { if (game.doneSay !== null) say(game.doneSay || "게임을 끝까지 해냈어요! 이제 골든벨 문제로 가요.", "praise"); auto(game.board ? 4000 : 2200); }
   });
 }
 function disposeNative() { try { nativeGame?.dispose(); } catch {} nativeGame = null; }
@@ -289,7 +301,7 @@ function endMarkup() {
 }
 function lineFor(slide) {
   if (slide.kind === "cover") return ready ? `오늘은 ${unit.label} ${part}차시예요. 개념을 배우고, 게임으로 익히고, 골든벨을 풀고, 본책을 풀어요. 출발하기를 눌러 봐요.` : "공부할 것을 준비하고 있어요. 잠깐만 기다려 줘요.";
-  if (slide.kind === "concept") return `${slide.lesson.title} 개념이에요. 한 장씩 천천히 보고 다음을 눌러요.`;
+  if (slide.kind === "concept") return slide.native ? `${slide.lesson.title} 개념이에요. 칠판을 봐요.` : `${slide.lesson.title} 개념이에요. 한 장씩 천천히 보고 다음을 눌러요.`;
   if (slide.kind === "game") return `${slide.title} 게임이에요. 개념에서 본 풀이 순서대로 손으로 직접 해 봐요.`;
   if (slide.kind === "bell") return "골든벨 문제예요. 개념에서 배운 대로 한 문제씩 풀어 봐요.";
   if (slide.kind === "board") return `본책 ${slide.block.label}을 펴서 풀어 봐요. 모르는 번호를 누르면 비슷한 문제가 나와요.`;
@@ -307,9 +319,9 @@ function show({ atEnd = false } = {}) {
   const framed = !native && ["concept", "game", "bell"].includes(slide.kind);
   $("frameWrap").hidden = !framed;
   $("slideBody").hidden = framed;
-  $("slideBody").innerHTML = slide.kind === "cover" ? coverMarkup() : slide.kind === "board" ? boardMarkup(slide.block) : slide.kind === "end" ? endMarkup() : native ? '<p class="sd-wait">게임을 준비하고 있어요…</p>' : "";
+  $("slideBody").innerHTML = slide.kind === "cover" ? coverMarkup() : slide.kind === "board" ? boardMarkup(slide.block) : slide.kind === "end" ? endMarkup() : native ? '<p class="sd-wait">준비하고 있어요…</p>' : "";
   if (framed) openInFrame(slide, atEnd);
-  if (native) mountNative(slide).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">게임을 불러오지 못했어요. 새로고침해 주세요.</p>'; });
+  if (native) mountNative(slide).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">불러오지 못했어요. 새로고침해 주세요.</p>'; });
   $("prevBtn").disabled = index === 0;
   $("nextBtn").disabled = !ready || index === slides.length - 1;
   $("nextBtn").querySelector(".sd-next-text").textContent = slide.kind === "cover" ? "출발하기 →" : "다음 →";
@@ -332,13 +344,13 @@ function go(target, options) {
 function next() {
   cancelAuto();
   if (!$("sheet").hidden) { closeSheet(); return; }
-  if (["concept"].includes(slides[index].kind) && frameReady) { askFrame("next"); return; }
+  if (slides[index].kind === "concept" && !slides[index].native && frameReady) { askFrame("next"); return; }
   go(index + 1);
 }
 function prev() {
   cancelAuto();
   if (!$("sheet").hidden) { closeSheet(); return; }
-  if (["concept"].includes(slides[index].kind) && frameReady) { askFrame("prev"); return; }
+  if (slides[index].kind === "concept" && !slides[index].native && frameReady) { askFrame("prev"); return; }
   const target = index - 1;
   go(target, { atEnd: slides[target]?.kind === "concept" });
 }

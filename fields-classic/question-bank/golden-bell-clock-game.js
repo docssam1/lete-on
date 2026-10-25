@@ -27,7 +27,7 @@ const turnIcon = (dir) => dir > 0
   ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 1-7.4 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M12 1v6l4-3z" fill="currentColor"/></svg>'
   : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 7.4 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M12 1v6L8 4z" fill="currentColor"/></svg>';
 
-export function mountClockGame(host, { single = true, onQuestions = null, saved = {} } = {}) {
+export function mountClockGame(host, { single = true, onQuestions = null, onComplete = null, saved = {} } = {}) {
   const progress = readProgress();
   const sound = createSound();
   let problem = null, quarters = 0, wrong = 0, phase = "play", picked = [], advanceTimer = 0, stopConfetti = () => {}, busy = false, disposed = false, finishHtml = "";
@@ -298,6 +298,7 @@ export function mountClockGame(host, { single = true, onQuestions = null, saved 
       <div class="cg-actions">${result.passed ? '<button type="button" class="cg-primary" data-clock-next-level>다음 레벨</button>' : ""}<button type="button" class="${result.passed ? "cg-secondary" : "cg-primary"}" data-clock-restart>${result.passed ? "같은 레벨 한 번 더" : "다시 도전"}</button><button type="button" class="cg-secondary" data-clock-levels>레벨 고르기</button>${single || !onQuestions ? "" : '<button type="button" class="cg-secondary" data-clock-questions>연결 문제 풀기</button>'}</div>
     </div>`;
     finishHtml = overlay.innerHTML;
+    onComplete?.(result);   // 레벨을 깼든 못 깼든 게임을 끝까지 했으면 알린다
     overlay.hidden = false;
     $("[data-clock-controls]").innerHTML = "";
     say(result.stars === 3 ? "완벽해요! 다음 레벨도 해 볼까요?" : result.passed ? "잘했어요! 별을 더 모아 볼 수도 있어요." : "괜찮아요. 한 번 더 하면 더 잘할 거예요.", result.passed ? "good" : "bad");
