@@ -2,6 +2,16 @@
 // 유형은 그 단원 문제은행(source-data.js CURRICULUM의 typeIds)에서, 차시 개념과 같은 풀이를 쓰는 것만 골랐다.
 // 답 꼴(수 하나 · 수 + 단위 · 쉼표로 쓴 수)과 그림 종류(bookN)는 검사기 drill-audit.mjs가 난이도마다 확인한다.
 export const DRILL_RECIPES = Object.freeze({
+  // 7권 — 달력과 시계 · 가로수 심기 · 팔린드롬과 벤 다이어그램 (같은 날 요일 합은 5권 유형을 빌려 쓴다)
+  "book-07/calendar-within-month-source": ["calendar-month-position", "calendar-same-weekday-sum"],
+  "book-07/calendar-next-month-source": ["calendar-month-shift-weekday-b7", "calendar-cross-month-weekday-b7"],
+  "book-07/calendar-weekday": ["weekday-after-days-b7", "leap-year-cross-month-weekday-b7"],
+  "book-07/clock-reading": ["analog-clock-reading-b7", "mirror-clock-reading-b7"],
+  "book-07/time-unit-source": ["time-unit-conversion-b7", "time-add-subtract-base60-b7"],
+  "book-07/elapsed-time": ["elapsed-time-analog-b7", "find-end-time-b7", "find-start-time-b7"],
+  "book-07/closed-loop-planting": ["closed-perimeter-object-count-b7", "polygon-stakes-from-side-b7", "closed-perimeter-from-spacing-count-b7"],
+  "book-07/distance-line-source": ["four-point-distance-chain-b7"],
+  "book-07/venn-overlap-all": ["venn-overlap-all-b7", "venn-union-total-b7", "venn-neither-b7"],
   // 8권 — 묶음수와 매트릭스 · 복면산 · 합차와 배수 · 거꾸로 생각하기
   "book-08/addition-sum-matrix": ["addition-matrix-complete-b8", "addition-matrix-target-b8"],
   "book-08/bundle-number-source": ["balance-difference-deduction-b8", "symbol-additive-chain-b8", "cyclic-pair-sums-b8"],

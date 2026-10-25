@@ -10,7 +10,7 @@ import { answerShape } from "./drill.js";
 
 const TRIES = 20, fails = [];
 // 답 꼴 읽기 자체부터(한 줄 뒤 주석이 return을 삼켜 목록 답이 다 빠졌던 적이 있다)
-const SHAPES = [["7", "int", [7], ""], ["15개", "int", [15], "개"], ["12㎠", "int", [12], "㎠"], ["1, 4, 5", "list", [1, 4, 5], ""], ["3번 딸기", null], ["가=3, 나=4", null]];
+const SHAPES = [["7", "int", [7], ""], ["15개", "int", [15], "개"], ["12㎠", "int", [12], "㎠"], ["1, 4, 5", "list", [1, 4, 5], ""], ["3번 딸기", null], ["가=3, 나=4", null], ["11시 30분", "pair", [11, 30], undefined], ["2시간 5분", "pair", [2, 5], undefined], ["토요일", "weekday", [6], undefined], ["8월 1일 금요일", null]];
 for (const [text, kind, values, unit] of SHAPES) {
   const got = answerShape(text);
   if (kind === null ? got !== null : !got || got.kind !== kind || got.values.join() !== values.join() || got.unit !== unit) fails.push(`답 꼴 읽기: ${text} → ${JSON.stringify(got)}`);

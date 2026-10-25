@@ -42,3 +42,6 @@ html, body.drill-page { min-height: 100%; margin: 0; background: #fbfaf6; }
 .dr-rules b { margin-right: 8px; color: var(--enamel); }
 .dr-missing { padding: 30px; color: #5c6b74; text-align: center; }
 @media (max-width: 760px) { .dr-prompt { font-size: 16px; } .dr-key { min-width: 40px; } }
+.dr-days { gap: 8px; }
+.dr-key.day { min-width: 74px; font-size: 16px; }
+.dr-key.day.on { border-color: var(--enamel); background: #eaf6f7; box-shadow: 0 0 0 3px rgba(127, 211, 230, .5); color: #164e57; }

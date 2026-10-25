@@ -6,7 +6,7 @@
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
 import { typeById } from "./source-data.js?v=20261024r";
 import { GENERATORS } from "./generators.js?v=20261027a";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027b";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027c";
 import { jo } from "./concept-board-kit.js?v=20261026b";
 
 // 그림 그리기는 문제은행 화면(app.js)과 같은 파일·같은 꼬리표로 불러온다
@@ -22,19 +22,24 @@ const plain = (v) => String(v ?? "").replace(/<[^>]+>/g, "").trim();
 const post = (message) => { if (parent !== window) parent.postMessage({ type: "fc-drill", lesson: lessonId, ...message }, location.origin); };
 const say = (text, mood = "talk") => post({ event: "say", text, mood });
 
-// 답의 꼴: 수 하나 · 수 + 단위(12㎠, 15개) · 쉼표로 쓴 수 여러 개
+// 답의 꼴: 수 하나 · 수 + 단위(12㎠, 15개) · 쉼표로 쓴 수 여러 개 · 시각/걸린 시간(11시 30분, 2시간 25분) · 요일(토요일)
+export const DAYS = ["일", "월", "화", "수", "목", "금", "토"];
 export function answerShape(answer) {
   const a = plain(answer);
   let m;
   if (/^-?\d+$/.test(a)) return { kind: "int", values: [Number(a)], unit: "" };
+  if ((m = a.match(/^(\d+)(시간?) (\d+)분$/u))) return { kind: "pair", values: [Number(m[1]), Number(m[3])], units: [m[2], "분"] };
+  if ((m = a.match(/^([일월화수목금토])요일$/u))) return { kind: "weekday", values: [DAYS.indexOf(m[1])] };
   // 단위는 띄어 쓰지 않은 짧은 말 하나(「3번 딸기」처럼 낱말이 붙은 답은 받지 않는다)
   if ((m = a.match(/^(-?\d+)\s*([^\d\s,][^\d\s,]{0,3})$/u))) return { kind: "int", values: [Number(m[1])], unit: m[2] };
   if (/^-?\d+(\s*,\s*-?\d+)+$/.test(a)) return { kind: "list", values: a.split(",").map((x) => Number(x.trim())), unit: "" };
   return null;
 }
+// 쉼표로 쓴 수는 순서와 상관없이(답이 여러 개), 시각은 순서대로(시 · 분) 맞춘다
 export const sameAnswer = (shape, typed) => {
   const got = typed.split(",").map((x) => x.trim()).filter(Boolean).map(Number);
   if (got.some(Number.isNaN) || got.length !== shape.values.length) return false;
+  if (shape.kind !== "list") return got.join(",") === shape.values.join(",");
   const sort = (xs) => [...xs].sort((p, q) => p - q).join(",");
   return sort(got) === sort(shape.values);
 };
@@ -66,7 +71,7 @@ async function main() {
 
   function render() {
     if (st.finale) return renderFinale();
-    const p = st.p, lv = LEVELS[st.level], list = p.shape.kind === "list";
+    const p = st.p;
     root.innerHTML = `<div class="dr">
       <div class="dr-top"><div class="dr-levels">${LEVELS.map((l, k) => `<button type="button" data-level="${k}" class="${k === st.level ? "on" : ""}"><b>${k + 1}</b>${l.title}${st.stars[k] ? ` <small>★${st.stars[k]}</small>` : ""}</button>`).join("")}</div>
         <div class="dr-dots">${Array.from({ length: PER_LEVEL }, (_, i) => `<i class="${i < st.index ? "done" : i === st.index ? "on" : ""}"></i>`).join("")}</div></div>
@@ -75,12 +80,25 @@ async function main() {
       ${st.note ? `<p class="dr-note${st.phase === "done" ? " good" : ""}" role="status">${st.note}</p>` : ""}
       ${st.phase === "done"
         ? `<div class="dr-actions"><button type="button" class="dr-btn primary" data-dr="next">${nextLabel()} →</button></div>`
-        : `<div class="dr-pad"><span class="dr-typed">${esc(st.typed) || "&nbsp;"}${p.shape.unit ? `<small>${esc(p.shape.unit)}</small>` : ""}</span>
-          ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<button type="button" class="dr-key" data-key="${n}">${n}</button>`).join("")}
-          ${list ? '<button type="button" class="dr-key" data-key=",">,</button>' : ""}<button type="button" class="dr-key wide" data-key="del">지우기</button>
-          <button type="button" class="dr-btn primary" data-dr="answer" ${st.typed ? "" : "disabled"}>답 내기</button></div>
-          ${list ? `<p class="dr-tip">답이 ${p.shape.values.length}개예요. 쉼표(,)로 나누어 써요.</p>` : ""}`}
+        : pad(p.shape)}
     </div>`;
+  }
+  // 답 쓰는 곳: 요일은 일~토 단추, 시각은 「시(시간)」 단추로 시와 분을 나누고, 나머지는 숫자판
+  function pad(shape) {
+    const submit = `<button type="button" class="dr-btn primary" data-dr="answer" ${st.typed ? "" : "disabled"}>답 내기</button>`;
+    if (shape.kind === "weekday") return `<div class="dr-pad dr-days">${DAYS.map((d, i) => `<button type="button" class="dr-key day${st.typed === String(i) ? " on" : ""}" data-day="${i}">${d}요일</button>`).join("")}${submit}</div>`;
+    const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<button type="button" class="dr-key" data-key="${n}">${n}</button>`).join("");
+    if (shape.kind === "pair") {
+      const [h, m] = st.typed.split(","), [u1, u2] = shape.units;
+      const shown = `${esc(h || "")}<small>${u1}</small> ${m !== undefined ? `${esc(m)}<small>${u2}</small>` : ""}`;
+      return `<div class="dr-pad"><span class="dr-typed">${st.typed ? shown : "&nbsp;"}</span>${keys}
+        <button type="button" class="dr-key wide" data-key="," ${!h || m !== undefined ? "disabled" : ""}>${u1} →</button><button type="button" class="dr-key wide" data-key="del">지우기</button>${submit}</div>
+        <p class="dr-tip">${u1 === "시간" ? "몇 시간을" : "몇 시를"} 쓰고 「${u1} →」를 누른 뒤 몇 분을 써요.</p>`;
+    }
+    const list = shape.kind === "list";
+    return `<div class="dr-pad"><span class="dr-typed">${esc(st.typed) || "&nbsp;"}${shape.unit ? `<small>${esc(shape.unit)}</small>` : ""}</span>${keys}
+      ${list ? '<button type="button" class="dr-key" data-key=",">,</button>' : ""}<button type="button" class="dr-key wide" data-key="del">지우기</button>${submit}</div>
+      ${list ? `<p class="dr-tip">답이 ${shape.values.length}개예요. 쉼표(,)로 나누어 써요.</p>` : ""}`;
   }
   function nextLabel() {
     if (st.index < PER_LEVEL - 1) return "다음 문제";
@@ -118,6 +136,7 @@ async function main() {
   root.addEventListener("click", (event) => {
     const b = event.target.closest("button"); if (!b || b.disabled) return;
     if (b.dataset.level) { st.level = Number(b.dataset.level); st.index = 0; st.finale = false; return fresh(); }
+    if (b.dataset.day) { st.typed = b.dataset.day; return render(); }
     if (b.dataset.key) { const k = b.dataset.key; st.typed = k === "del" ? st.typed.slice(0, -1) : st.typed.length < 12 ? st.typed + k : st.typed; return render(); }
     const act = b.dataset.dr;
     if (act === "answer") answer(); else if (act === "next") next();
