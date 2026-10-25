@@ -17,6 +17,14 @@ try{if(out)fs.mkdirSync(out,{recursive:true});for(const [width,height,lang]of [[
  const before=await p.evaluate(()=>{const s=JSON.parse(localStorage.getItem(window.NM_STATE_KEY));return{coins:s.coins,progress:s.progress};});
  const view=await p.evaluate(()=>{const a=document.querySelector('#townVp').getBoundingClientRect(),m=document.querySelector('#townWorld').getBoundingClientRect();return{within:m.x<=a.x+1&&m.y<=a.y+1&&m.right>=a.right-1&&m.bottom>=a.bottom-1,overflow:document.documentElement.scrollWidth>innerWidth};});assert(view.within,'painted map fills the viewport without blue margins');assert.equal(view.overflow,false);
  assert.equal(await p.locator('[data-travel],.nm-town-destinations').count(),0,'no duplicate building toolbar');
+ const tierNames=lang==='ko'?['베이직','프라임','어드밴스','챌린지']:lang==='en'?['Basic','Prime','Advance','Challenge']:['BASIC','PRIME','ADVANCE','CHALLENGE'];
+ const tierIds=['numberland','beginner','intermediate','advanced'];
+ for(const [i,id]of tierIds.entries()){
+  const label=p.locator('.nm-zone[data-spot="'+id+'"]');
+  assert.equal((await label.locator('.nm-zlabel').evaluate(e=>e.firstChild.textContent)).trim(),tierNames[i],'map uses the catalog brand, not a difficulty alias');
+  assert.equal(await p.locator('[data-place="'+id+'"]').textContent(),tierNames[i],'menu uses the same name');
+  assert((await label.getAttribute('aria-label')).startsWith(tierNames[i]+' · '),'destination is announced before the entry action');
+ }
 
  const foot=()=>p.evaluate(()=>{const e=document.querySelector('#nbNumi'),m=document.querySelector('#townWorld').getBoundingClientRect();return{x:m.x+parseFloat(e.style.left)/100*m.width,y:m.y+parseFloat(e.style.top)/100*m.height,wx:parseFloat(e.style.left),wy:parseFloat(e.style.top),buddy:[document.querySelector('#nbBuddy').style.left,document.querySelector('#nbBuddy').style.top],scrollLeft:document.querySelector('#townVp').scrollLeft,scrollTop:document.querySelector('#townVp').scrollTop,transform:document.querySelector('#townWorld').style.transform};});
  const choose=()=>p.evaluate(()=>{const e=document.querySelector('#nbNumi'),m=document.querySelector('#townWorld').getBoundingClientRect(),v=document.querySelector('#townVp').getBoundingClientRect(),x=m.x+parseFloat(e.style.left)/100*m.width,y=m.y+parseFloat(e.style.top)/100*m.height;for(const [dx,dy] of [[85,35],[-85,35],[75,-55],[-75,-55],[0,100],[100,0],[-100,0]]){const px=x+dx,py=y+dy,hit=document.elementFromPoint(px,py);if(px>v.x+16&&px<v.right-16&&py>v.y+55&&py<v.bottom-16&&hit?.closest('#townVp')&&!hit.closest('button,a,.nb'))return{x:px,y:py,wx:(px-m.x)/m.width*100,wy:(py-m.y)/m.height*100};}throw Error('No visible walkable test spot');});
@@ -41,7 +49,9 @@ try{if(out)fs.mkdirSync(out,{recursive:true});for(const [width,height,lang]of [[
   const onMap=await mapButton.evaluate(e=>{const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return r.x>=0&&r.y>=72&&r.right<=innerWidth&&r.bottom<=innerHeight&&!!hit&&(hit===e||e.contains(hit));});
   if(!onMap){if(await p.locator('.nm-town-toolbox').getAttribute('open')===null)await p.locator('.nm-town-toolbox > summary').click();if(await p.locator('.nm-town-more').getAttribute('open')===null)await p.locator('.nm-town-more > summary').click();}
   const button=onMap?mapButton:p.locator('[data-place="'+id+'"]');if(id==='beginner'){await button.focus();await p.keyboard.press('Enter');}else await button.click();
-  const back=id==='_closet'?'#backCloset':id==='_theater'?'#backExam':'#backTown';await p.waitForSelector(back);assert.equal(await p.locator('#tmodal.on').count(),0);await p.click(back);await p.waitForSelector('#townVp.is-illustrated');
+  const back=id==='_closet'?'#backCloset':id==='_theater'?'#backExam':'#backTown';await p.waitForSelector(back);assert.equal(await p.locator('#tmodal.on').count(),0);
+  if(tierIds.includes(id))assert.equal(await p.locator('.nm-unit-title').evaluate(e=>e.firstChild.textContent),tierNames[tierIds.indexOf(id)],'arrival heading matches the selected map sign');
+  await p.click(back);await p.waitForSelector('#townVp.is-illustrated');
  }
  await p.locator('.nm-zone[data-spot="beginner"]').click();await p.waitForSelector('#backTown');await p.click('#backTown');await p.waitForSelector('#townVp.is-illustrated');
  if(width===390&&height===667&&lang==='ko'){

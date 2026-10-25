@@ -1543,10 +1543,10 @@ function screenWelcome(){
    sparkle·walker 스폰만 다시 재면 된다(styles.css #townWorld 크기도 함께). */
 const TOWN_WORLD_W=2000, TOWN_WORLD_H=1342;
 const TOWN_SPOTS=[
-  { tier:'numberland',   pos:'left:4.5%;top:65%;width:31%;height:15%',   tag:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
-  { tier:'beginner',     pos:'left:42%;top:37%;width:14%;height:21%',    tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
-  { tier:'advanced',     pos:'left:29.5%;top:4%;width:7%;height:16%',    tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
-  { tier:'intermediate', pos:'left:46%;top:60%;width:19%;height:16%',    tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
+  { tier:'numberland',   pos:'left:4.5%;top:65%;width:31%;height:15%',   tag:'📖 BASIC',     sub:{ko:'베이직',en:'Basic',zh:'BASIC'} },
+  { tier:'beginner',     pos:'left:42%;top:37%;width:14%;height:21%',    tag:'🏛️ PRIME',     sub:{ko:'프라임',en:'Prime',zh:'PRIME'} },
+  { tier:'advanced',     pos:'left:29.5%;top:4%;width:7%;height:16%',    tag:'⛰️ CHALLENGE', sub:{ko:'챌린지',en:'Challenge',zh:'CHALLENGE'} },
+  { tier:'intermediate', pos:'left:46%;top:60%;width:19%;height:16%',    tag:'🏠 ADVANCE',   sub:{ko:'어드밴스',en:'Advance',zh:'ADVANCE'} },
   { tier:'_theater',     pos:'left:56.5%;top:31.5%;width:13.5%;height:19%', tag:{ko:'🎬 극장',en:'🎬 Theater',zh:'🎬 剧场'},    sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
   { tier:'_closet',      pos:'left:5%;top:35%;width:21%;height:15%',     tag:{ko:'🪄 꾸미기',en:'🪄 Dress Up',zh:'🪄 装扮'},      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} }
 ];
@@ -1657,9 +1657,9 @@ function screenTown(){
   TOWN_SPOTS.forEach(sp=>{
     const tier=tierById(sp.tier);
     const open=TOWN_ALWAYS_OPEN.indexOf(sp.tier)>=0?true:tierOpen(tier);
-    zones+=`<button class="nm-zone ${open?'':'locked'}" style="${sp.pos}" data-spot="${sp.tier}">
+    zones+=`<button class="nm-zone ${open?'':'locked'}" style="${sp.pos}" data-spot="${sp.tier}" aria-label="${esc(townDestinationLabel(sp.tier))} · ${esc(S.lang==='ko'?'들어가기':S.lang==='en'?'Enter':'进入')}">
       ${open?'<div class="nm-halo"></div>':`<div class="nm-lockico">${sp.lockIcon||'🔒'}</div>`}
-      <span class="nm-zlabel">${esc(townDestinationLabel(sp.tier))}<small>${sp.tier.startsWith('_')?'':esc(typeof sp.tag==='string'?sp.tag.replace(/^\S+\s*/, ''):L(sp.tag))}</small></span>
+      <span class="nm-zlabel">${esc(townDestinationLabel(sp.tier))}${tier?`<small>${esc(L(tier.subtitle).split(' · ')[0])}</small>`:''}</span>
     </button>`;
   });
   let gates='';
@@ -6917,7 +6917,7 @@ function screenTier(){
   let html=`<div class="nm-map">
     <div class="nm-unit-bar">
       <button class="nm-back" id="backTown">← ${navigationLabel('town')}</button>
-      <div class="nm-unit-title">${tier.title}<small>${L(tier.subtitle)} · ${tier.ageLabel}</small></div>
+      <div class="nm-unit-title">${esc(townDestinationLabel(tier.id))}<small>${L(tier.subtitle)} · ${tier.ageLabel}</small></div>
     </div>
     <div class="nm-tier-progress-wrap">
       <div class="nm-tier-progress"><div class="nm-tier-progress-bar" style="width:${pct}%;background:${esc(accent)}"></div></div>
@@ -6980,6 +6980,10 @@ function unitReturnTarget(){
 function unitReturnLabel(){
   const target=unitReturnTarget();
   if(target.view==='mailbox'&&target.weekKey)return L({ko:'선택한 학습지로',en:'Back to selected worksheet',zh:'返回所选学习单'});
+  if(target.view==='tier'&&tierById(target.tierId||S.tierId)){
+    const name=townDestinationLabel(target.tierId||S.tierId);
+    return L({ko:`${name} 단원 목록으로`,en:`Back to ${name} unit list`,zh:`返回${name}单元列表`});
+  }
   return navigationLabel(target.view);
 }
 function enterUnit(uid){
