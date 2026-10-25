@@ -666,8 +666,28 @@ function oxFigure(f) {
   return `<div class="tx-ox" style="--tone:${color}"><table><thead><tr><th></th>${f.choices.map((c) => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${f.people.map((p) => `<tr><th>${esc(p)}</th>${f.choices.map((c) => { const m = f.marks[`${p}|${c}`]; return `<td class="${m === "O" ? "o" : m === "X" ? "x" : ""}${on.has(`${p}|${c}`) ? " on" : ""}">${m || ""}</td>`; }).join("")}</tr>`).join("")}</tbody></table></div>`;
 }
 
+// ───── 복면산: 세로 덧셈판. 모양은 모양 색, reveal = { 모양: 숫자 }, blanks = 빈칸(_)에 차례로 넣을 숫자, focus = 오른쪽부터 몇째 자리(0 = 일의 자리), carry = { 자리: 1 } ─────
+const CRYPT_COLOR = { "□": SHAPE.square.line, "△": SHAPE.triangle.line, "○": SHAPE.circle.line, "◇": SHAPE.diamond.line };
+function cryptFigure(f) {
+  const color = TONE[f.tone || "given"], rows = [...f.addends, f.sum], cols = Math.max(...rows.map((r) => [...r].length)) + 1, reveal = f.reveal || {};
+  let blank = 0;
+  const cell = (ch, col) => {
+    const on = f.focus === col ? " on" : "";
+    if (/\d/u.test(ch)) return `<span class="d${on}">${ch}</span>`;
+    if (ch === "_") { const v = f.blanks?.[blank++]; return `<span class="blank${v !== undefined ? " got" : ""}${on}">${v ?? ""}</span>`; }
+    if (ch === "㉠") { const v = f.blanks?.[blank++]; return `<span class="blank mark${v !== undefined ? " got" : ""}${on}">${v ?? "㉠"}</span>`; }
+    const v = reveal[ch];
+    return `<span class="sym${v !== undefined ? " got" : ""}${on}" style="--sym:${CRYPT_COLOR[ch] || "#222"}">${v !== undefined ? `${v}<small>${esc(ch)}</small>` : esc(ch)}</span>`;
+  };
+  const line = (r, i, op) => { const chars = [...r], pad = cols - chars.length; return `<div class="row">${Array.from({ length: pad }, (_, k) => `<span class="op">${op && k === pad - 1 ? "+" : ""}</span>`).join("")}${chars.map((ch, j) => cell(ch, chars.length - 1 - j)).join("")}</div>`; };
+  const carry = `<div class="row carry">${Array.from({ length: cols }, (_, k) => `<span>${f.carry?.[cols - 1 - k] ? "1" : ""}</span>`).join("")}</div>`;
+  const body = f.addends.map((r, i) => line(r, i, i === f.addends.length - 1)).join("") + `<hr>` + line(f.sum, rows.length - 1, false);
+  return `<div class="tx-crypt" style="--tone:${color};--cols:${cols}" role="img" aria-label="${esc(`${f.addends.join(" + ")} = ${f.sum}`)}">${carry}${body}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "crypt") return cryptFigure(figure);
   if (figure.kind === "slots") return slotsFigure(figure);
   if (figure.kind === "row-line") return rowLineFigure(figure);
   if (figure.kind === "compass") return compassFigure(figure);

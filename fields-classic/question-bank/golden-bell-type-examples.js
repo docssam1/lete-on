@@ -1886,7 +1886,104 @@ const LOGIC_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET });
+// ───────────────────────── 3·8권 복면산(벌레 먹은 셈) ─────────────────────────
+// 같은 모양 = 같은 숫자, 다른 모양 = 다른 숫자, 맨 앞자리는 0이 아니다. 일의 자리부터 받아올림을 따져 하나씩 정한다.
+// 그림 kind "crypt"(세로 덧셈판). value.puzzle = 검사기가 0~9를 다 넣어 풀어 보는 식, value.ask = 무엇을 묻는지.
+const symAnswer = (sol) => `${Object.entries(sol).map(([s, d], i, a) => (i === a.length - 1 ? `${josa(s, "은")} ${josa(d, "이에요")}` : `${josa(s, "은")} ${d}`)).join(", ")}.`;
+function cryptExample({ id, title, addends, sum, problem, plan, ask = { kind: "all" }, sol = {}, answer, distinct = true, pool = null }) {
+  const fig = (tone, p = {}) => ({ kind: "crypt", addends, sum, reveal: p.reveal, blanks: p.blanks, focus: p.focus, carry: p.carry, tone });
+  const steps = plan.map((p, i) => ({ text: p.text, figure: fig(i === plan.length - 1 ? "check" : "doing", p) }));
+  return { id, title, problem, figure: fig("given"), steps, answer: answer || symAnswer(sol), value: { puzzle: { addends, sum, distinct, pool }, ask, sol } };
+}
+const POOL8 = ["1", "2", "3", "4", "5", "6", "7", "8"];
+const CRYPT_SET = {
+  id: "crypt",
+  types: {
+    // 3권 같은 도형을 세로로 더해요
+    "반복 덧셈 복면산의 가장 큰 앞자리": () => [cryptExample({ id: "cr-max-1", title: "예제 1", addends: ["□", "□", "□", "□"], sum: "△◇", problem: "□ + □ + □ + □ = △◇예요. △에 들어갈 수 있는 가장 큰 수는 무엇일까요?", ask: { kind: "max", sym: "△" }, answer: "△에 들어갈 수 있는 가장 큰 수는 3이에요.", plan: [
+      { text: "□가 클수록 합도 커요. 한 자리 수 중 가장 큰 9를 넣어 봐요." },
+      { text: "9 + 9 + 9 + 9 = 36이라 합은 36보다 클 수 없어요. 앞자리 △도 3보다 클 수 없어요.", reveal: { "□": 9, "△": 3, "◇": 6 }, focus: 1 },
+      { text: "9를 넣으면 △가 정말 3이 돼요. 가장 큰 △는 3.", reveal: { "□": 9, "△": 3, "◇": 6 }, focus: 1 }
+    ] })],
+    "같은 도형 두 번 더하기": () => [cryptExample({ id: "cr-two-1", title: "예제 1", addends: ["□", "□"], sum: "8", problem: "□ + □ = 8이에요. □가 나타내는 수를 구해요.", sol: { "□": 4 }, plan: [
+      { text: "같은 수를 두 번 더해 8이 되는 수를 찾아요. 8을 똑같이 둘로 나누면 돼요.", focus: 0 },
+      { text: "8 ÷ 2 = 4. 4 + 4 = 8, 맞아요.", reveal: { "□": 4 }, focus: 0 }
+    ] })],
+    "같은 도형 두 번 더하기와 받아올림": () => [cryptExample({ id: "cr-two-carry-1", title: "예제 1", addends: ["□", "□"], sum: "△4", problem: "□ + □ = △4예요. 각 모양이 나타내는 수를 구해요.", sol: { "□": 7, "△": 1 }, plan: [
+      { text: "한 자리 수 두 개를 더하면 18보다 클 수 없어요. 그래서 앞자리 △는 1이에요.", reveal: { "△": 1 }, focus: 1 },
+      { text: "□ + □ = 14. 14 ÷ 2 = 7, 7 + 7 = 14.", reveal: { "□": 7, "△": 1 }, focus: 0, carry: { 1: 1 } }
+    ] })],
+    "같은 도형 세 번 더하기": () => [cryptExample({ id: "cr-three-1", title: "예제 1", addends: ["□", "□", "□"], sum: "9", problem: "□ + □ + □ = 9예요. □가 나타내는 수를 구해요.", sol: { "□": 3 }, plan: [
+      { text: "같은 수를 세 번 더해 9가 되려면 9를 똑같이 셋으로 나눠요.", focus: 0 },
+      { text: "9 ÷ 3 = 3. 3 + 3 + 3 = 9, 맞아요.", reveal: { "□": 3 }, focus: 0 }
+    ] })],
+    "같은 도형 세 번 더하기와 받아올림": () => [cryptExample({ id: "cr-three-carry-1", title: "예제 1", addends: ["□", "□", "□"], sum: "△4", problem: "□ + □ + □ = △4예요. 각 모양이 나타내는 수를 구해요.", sol: { "□": 8, "△": 2 }, plan: [
+      { text: "□를 세 번 더한 수의 끝자리가 4예요. 3단 곱셈에서 끝자리가 4인 것을 찾아요.", focus: 0 },
+      { text: "3 × 8 = 24, 끝자리가 4인 건 이것뿐이에요. □ = 8.", reveal: { "□": 8 }, focus: 0, carry: { 1: 1 } },
+      { text: "8 + 8 + 8 = 24라 △ = 2.", reveal: { "□": 8, "△": 2 }, focus: 1 }
+    ] })],
+    // 3권 반복되는 숫자
+    "반복 숫자 복면산": () => [cryptExample({ id: "cr-rep-1", title: "예제 1", addends: ["□□", "□□"], sum: "66", problem: "□□ + □□ = 66이에요. □가 나타내는 수를 구해요.", sol: { "□": 3 }, plan: [
+      { text: "일의 자리부터 봐요. □ + □의 끝자리가 6이에요. □는 3이거나 8이에요.", focus: 0 },
+      { text: "8이면 8 + 8 = 16이라 받아올림이 생겨 십의 자리가 8 + 8 + 1 = 17이 돼요. 66이 안 돼요.", reveal: { "□": 8 }, focus: 1 },
+      { text: "□ = 3이면 33 + 33 = 66, 맞아요.", reveal: { "□": 3 }, focus: 1 }
+    ] })],
+    // 3권 여러 도형과 고정 숫자
+    "여러 도형과 고정 숫자 복면산": () => [cryptExample({ id: "cr-mix-1", title: "예제 1", addends: ["△□", "□"], sum: "50", problem: "△□ + □ = 50이에요. 다른 모양은 다른 수예요. 각 모양이 나타내는 수를 구해요.", sol: { "△": 4, "□": 5 }, plan: [
+      { text: "일의 자리: □ + □의 끝자리가 0이에요. □는 0이나 5인데, 맨 앞자리라 0은 안 돼요. □ = 5.", reveal: { "□": 5 }, focus: 0, carry: { 1: 1 } },
+      { text: "5 + 5 = 10이라 십의 자리로 1을 받아올려요. △ + 1 = 5, △ = 4.", reveal: { "□": 5, "△": 4 }, focus: 1, carry: { 1: 1 } },
+      { text: "45 + 5 = 50, 맞아요.", reveal: { "□": 5, "△": 4 } }
+    ] })],
+    // 3권 연결 조건
+    "자리 사이가 연결된 복면산": () => [cryptExample({ id: "cr-link-1", title: "예제 1", addends: ["□△", "□"], sum: "△3", problem: "□△ + □ = △3이에요. 다른 모양은 다른 수예요. 각 모양이 나타내는 수를 구해요.", sol: { "□": 6, "△": 7 }, plan: [
+      { text: "십의 자리: □에 받아올림이 더해져 △가 돼요. △는 □와 같거나 1 커요. 다른 모양이라 △ = □ + 1, 일의 자리에서 받아올림이 있어요.", focus: 1, carry: { 1: 1 } },
+      { text: "일의 자리: △ + □ = 13(받아올림 1). △ = □ + 1이니 □ + 1 + □ = 13, □ + □ = 12, □ = 6.", reveal: { "□": 6 }, focus: 0, carry: { 1: 1 } },
+      { text: "△ = 6 + 1 = 7. 67 + 6 = 73, 맞아요.", reveal: { "□": 6, "△": 7 }, carry: { 1: 1 } }
+    ] })],
+    // 8권 피라미드
+    "같은 모양만 있는 피라미드": () => [cryptExample({ id: "cr-pyr-1", title: "예제 1", addends: ["□", "□□", "□□□"], sum: "369", problem: "□ + □□ + □□□ = 369예요. □에 알맞은 숫자를 구해요.", sol: { "□": 3 }, plan: [
+      { text: "일의 자리에 □가 세 개예요. □ + □ + □의 끝자리가 9라 □는 3이에요(3 × 3 = 9).", reveal: { "□": 3 }, focus: 0 },
+      { text: "3 + 33 + 333 = 369, 맞아요.", reveal: { "□": 3 } }
+    ] })],
+    "모양이 다양한 피라미드": () => [cryptExample({ id: "cr-pyr-2", title: "예제 1", addends: ["○", "○△"], sum: "83", problem: "○ + ○△ = 83이에요. 다른 모양은 다른 숫자예요. 각 모양에 알맞은 숫자를 구해요.", sol: { "○": 7, "△": 6 }, plan: [
+      { text: "○△는 80쯤이라 ○는 7이나 8이에요. 8이면 80 + 8 = 88보다 커서 83이 안 돼요.", focus: 1 },
+      { text: "○ = 7이면 7 + 7△ = 83, 7△ = 76이라 △ = 6.", reveal: { "○": 7, "△": 6 }, focus: 0 },
+      { text: "7 + 76 = 83, 맞아요.", reveal: { "○": 7, "△": 6 } }
+    ] })],
+    "빈칸의 합": () => [cryptExample({ id: "cr-blank-1", title: "예제 1", addends: ["__", "_"], sum: "105", distinct: false, problem: "빈칸에 숫자를 넣어 두 자리 수 + 한 자리 수 = 105를 만들어요. 빈칸 세 개에 들어갈 숫자의 합을 구해요.", ask: { kind: "blankSum" }, answer: "빈칸의 합은 24예요.", plan: [
+      { text: "두 자리 수 + 한 자리 수가 105가 되려면 두 자리 수가 96보다 커야 해요. 십의 자리는 9.", blanks: [9], focus: 1 },
+      { text: "남은 두 빈칸(일의 자리끼리)을 더하면 105 − 90 = 15예요. 96 + 9, 97 + 8, 98 + 7, 99 + 6 모두 그래요.", blanks: [9, 6, 9], focus: 0 },
+      { text: "어느 경우든 9 + 15 = 24.", blanks: [9, 6, 9] }
+    ] })],
+    "빈칸의 합 · 답이 여러 가지": () => [cryptExample({ id: "cr-blank-2", title: "예제 1", addends: ["__", "__"], sum: "100", distinct: false, problem: "빈칸에 숫자를 넣어 두 자리 수 + 두 자리 수 = 100을 만들어요. 빈칸 네 개에 들어갈 숫자의 합은 얼마일까요? 답이 여러 개면 모두 써요.", ask: { kind: "blankSum" }, answer: "10과 19, 두 가지예요.", plan: [
+      { text: "일의 자리 두 수의 합은 0이거나 10이에요(끝자리가 0).", focus: 0 },
+      { text: "일의 자리 합이 10이면 1을 받아올려 십의 자리 합은 9. 빈칸의 합 10 + 9 = 19. 예: 45 + 55.", blanks: [4, 5, 5, 5], focus: 1, carry: { 1: 1 } },
+      { text: "일의 자리 합이 0이면(둘 다 0) 십의 자리 합은 10. 빈칸의 합 0 + 10 = 10. 예: 30 + 70.", blanks: [3, 0, 7, 0], focus: 1 }
+    ] })],
+    // 8권 복면산 연습
+    "모양 복면산": () => [cryptExample({ id: "cr-shape-1", title: "예제 1", addends: ["□3", "6□"], sum: "○○8", problem: "□3 + 6□ = ○○8이에요. 다른 모양은 다른 숫자예요. 각 모양에 알맞은 숫자를 구해요.", sol: { "□": 5, "○": 1 }, plan: [
+      { text: "두 자리 수 두 개의 합은 200보다 작아요. 백의 자리 ○는 1이에요.", reveal: { "○": 1 }, focus: 2 },
+      { text: "일의 자리: 3 + □의 끝자리가 8이라 □ = 5(받아올림 없음).", reveal: { "○": 1, "□": 5 }, focus: 0 },
+      { text: "십의 자리: 5 + 6 = 11, 끝자리 1이 ○와 같아요. 53 + 65 = 118, 맞아요.", reveal: { "○": 1, "□": 5 }, focus: 1, carry: { 2: 1 } }
+    ] })],
+    "1~8을 한 번씩 쓰는 복면산": () => [cryptExample({ id: "cr-pool-1", title: "예제 1", addends: ["_3_", "_8"], sum: "_㉠_", distinct: false, pool: POOL8, problem: "1부터 8까지의 숫자를 한 번씩만 써서 □3□ + □8 = □㉠□를 만들어요. ㉠에 알맞은 숫자를 구해요.", ask: { kind: "mark" }, answer: "㉠은 1이에요.", plan: [
+      { text: "3과 8은 이미 썼어요. 남은 숫자는 1, 2, 4, 5, 6, 7, 여섯 칸에 하나씩 들어가요." },
+      { text: "일의 자리: □ + 8의 끝자리도 1~8이어야 해서 받아올림이 생겨요. 끝자리는 더한 수보다 2 작아요(4 + 8 = 12처럼).", focus: 0, carry: { 1: 1 } },
+      { text: "남은 숫자로 맞춰 보면 534 + 78 = 612 하나뿐이에요. 일의 자리 4 + 8 = 12, 십의 자리 3 + 7 + 1 = 11, 백의 자리 5 + 1 = 6.", blanks: [5, 4, 7, 6, 1, 2], carry: { 1: 1, 2: 1 } }
+    ] })],
+    "같은 수를 여러 번 더하는 복면산": () => [cryptExample({ id: "cr-many-1", title: "예제 1", addends: ["□", "□", "□", "□", "□"], sum: "2□", problem: "□ + □ + □ + □ + □ = 2□예요. □에 알맞은 숫자를 구해요.", sol: { "□": 5 }, plan: [
+      { text: "□를 다섯 번 더한 수의 끝자리가 다시 □예요. 5단에서 끝자리가 처음 수와 같은 건 0이나 5예요.", focus: 0 },
+      { text: "0은 앞자리라 안 되고, 5 × 5 = 25. 앞자리도 2로 맞아요.", reveal: { "□": 5 }, focus: 1 }
+    ] })],
+    "받아올림이 있는 모양 복면산": () => [cryptExample({ id: "cr-carry-1", title: "예제 1", addends: ["○□", "□"], sum: "□2", problem: "○□ + □ = □2예요. 다른 모양은 다른 숫자예요. 각 모양에 알맞은 숫자를 구해요.", sol: { "○": 5, "□": 6 }, plan: [
+      { text: "십의 자리: ○에 받아올림이 더해져 □가 돼요. 다른 모양이라 □ = ○ + 1, 일의 자리에서 받아올림이 있어요.", focus: 1, carry: { 1: 1 } },
+      { text: "일의 자리: □ + □ = 12(받아올림 1). □ = 6.", reveal: { "□": 6 }, focus: 0, carry: { 1: 1 } },
+      { text: "○ = 6 − 1 = 5. 56 + 6 = 62, 맞아요.", reveal: { "□": 6, "○": 5 }, carry: { 1: 1 } }
+    ] })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

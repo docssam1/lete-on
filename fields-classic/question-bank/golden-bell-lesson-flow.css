@@ -242,6 +242,21 @@
 .tx-ox td.o { border-color: var(--tone); color: var(--tone); }
 .tx-ox td.x { color: #b4ad9e; }
 .tx-ox td.on { box-shadow: 0 0 0 3px var(--tone) inset; }
+.tx-crypt { display: grid; justify-items: end; gap: 3px; padding: 6px 10px; }
+.tx-crypt .row { display: grid; grid-template-columns: repeat(var(--cols), 40px); gap: 4px; }
+.tx-crypt .row span { display: flex; align-items: center; justify-content: center; position: relative; height: 42px; font-size: 22px; font-weight: 900; }
+.tx-crypt .row.carry span { height: 16px; color: var(--tone); font-size: 13px; }
+.tx-crypt .op { color: #222; }
+.tx-crypt .d { border: 2px solid #f0a500; border-radius: 8px; background: #fff3c4; color: #222; }
+.tx-crypt .sym { border: 2px solid var(--sym); border-radius: 8px; background: #fff; color: var(--sym); }
+.tx-crypt .sym.got { background: var(--sym); color: #fff; }
+.tx-crypt .sym small { position: absolute; top: 1px; right: 3px; font-size: 10px; }
+.tx-crypt .blank { border: 2px dashed #8e5bd8; border-radius: 8px; background: #fff; color: #5b2fa8; }
+.tx-crypt .blank.mark { font-size: 16px; }
+.tx-crypt .blank.got { border-style: solid; background: #ece0fb; }
+.tx-crypt .blank.mark.got { font-size: 22px; }
+.tx-crypt span.on { box-shadow: 0 0 0 3px var(--tone); }
+.tx-crypt hr { width: 100%; margin: 2px 0; border: 0; border-top: 3px solid #222; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

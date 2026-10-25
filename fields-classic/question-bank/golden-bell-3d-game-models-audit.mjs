@@ -747,6 +747,40 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       const marks = ex.steps.at(-1).figure.marks;
       for (const [k, m] of Object.entries(marks)) { const [p, c] = k.split("|"); assert.equal(m === "O", fits[0][v.people.indexOf(p)] === c, `${ex.id}: 마지막 표 ${k}`); }
     } else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "crypt") {
+    // 모양마다·빈칸마다 0~9를 모두 넣어 덧셈이 맞는 경우를 다 찾는다(맨 앞자리 0 금지, 다른 모양은 다른 수, pool이면 그 숫자를 한 번씩)
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    const { addends, sum, distinct, pool } = v.puzzle, rows = [...addends, sum];
+    const syms = [...new Set(rows.join("").split("").filter((ch) => !/\d|_|㉠/u.test(ch)))];
+    const holes = rows.flatMap((r, i) => [...r].map((ch, j) => (ch === "_" || ch === "㉠" ? `${i},${j}` : null)).filter(Boolean));
+    const sols = [], pick = [];
+    const run = (k) => {
+      if (k === syms.length + holes.length) {
+        const val = Object.fromEntries(syms.map((sy, i) => [sy, pick[i]])), hv = Object.fromEntries(holes.map((h, i) => [h, pick[syms.length + i]]));
+        const ds = rows.map((r, i) => [...r].map((ch, j) => (/\d/u.test(ch) ? Number(ch) : hv[`${i},${j}`] ?? val[ch])));
+        if (ds.some((d) => d[0] === 0)) return;
+        const n = (d) => d.reduce((x, y) => x * 10 + y, 0);
+        if (ds.slice(0, -1).reduce((x, d) => x + n(d), 0) !== n(ds.at(-1))) return;
+        if (pool && ds.flat().sort().join() !== pool.map(Number).sort().join()) return;
+        sols.push({ val, holes: holes.map((h) => hv[h]), mark: holes.findIndex((h) => { const [i, j] = h.split(",").map(Number); return [...rows[i]][j] === "㉠"; }) });
+        return;
+      }
+      for (let d = 0; d <= 9; d++) { if (distinct && k < syms.length && pick.slice(0, k).includes(d)) continue; pick[k] = d; run(k + 1); }
+    };
+    run(0);
+    assert.ok(sols.length > 0, `${ex.id}: 풀이가 있음`);
+    if (v.ask.kind === "all") {
+      assert.equal(sols.length, 1, `${ex.id}: 답이 하나로 정해짐`);
+      assert.deepEqual(sols[0].val, Object.fromEntries(syms.map((sy) => [sy, v.sol[sy]])), `${ex.id}: 답`);
+      for (const [sy, d] of Object.entries(v.sol)) assert.match(ex.answer, new RegExp(`${sy}[은는] ${d}\\D`, "u"), `${ex.id}: 답 글 ${sy}`);
+      const last = ex.steps.findLast((st) => st.figure.reveal)?.figure.reveal; if (last) assert.deepEqual(Object.fromEntries(Object.entries(last).sort()), Object.fromEntries(Object.entries(v.sol).sort()), `${ex.id}: 마지막 그림`);
+    } else if (v.ask.kind === "max") assert.equal(nums(ex.answer).at(-1), Math.max(...sols.map((x) => x.val[v.ask.sym])), `${ex.id}: 가장 큰 ${v.ask.sym}`);
+    else if (v.ask.kind === "blankSum") { const totals = [...new Set(sols.map((x) => x.holes.reduce((a, b) => a + b, 0)))].sort((a, b) => a - b); assert.deepEqual(nums(ex.answer).filter((x) => totals.includes(x) || x > 2).sort((a, b) => a - b), totals, `${ex.id}: 빈칸의 합`); }
+    else if (v.ask.kind === "mark") { const ms = [...new Set(sols.map((x) => x.holes[x.mark]))]; assert.equal(ms.length, 1, `${ex.id}: ㉠이 하나로 정해짐`); assert.ok(nums(ex.answer).includes(ms[0]), `${ex.id}: ㉠`); }
+    // 단계 그림의 빈칸은 실제 풀이여야 한다(빈칸을 다 채운 그림만)
+    for (const st of ex.steps) { const b = st.figure.blanks; if (b && b.length === holes.length) assert.ok(sols.some((x) => x.holes.join() === b.join()), `${ex.id}: 그림의 빈칸이 맞는 식`); }
+    const sig = (adds, sm) => `${adds.join("+")}=${sm}`, mine = sig(addends, sum);
+    for (const item of lesson.original.items) { const o = item.visual || {}; if (o.addends) assert.notEqual(sig(o.addends.map((a) => a.join("")), o.sum.join("")), mine, `${ex.id}: 원본 식과 같음`); if (o.rows) assert.notEqual(sig(o.rows, o.result), mine, `${ex.id}: 원본 식과 같음`); }
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);
