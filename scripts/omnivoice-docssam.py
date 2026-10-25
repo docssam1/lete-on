@@ -264,7 +264,16 @@ def main():
         print(("🎮 GPU: " + torch.cuda.get_device_name(0)) if dev.startswith("cuda") else "🍎 애플 칩 GPU(MPS)로 돕니다" if dev == "mps" else "🖥  GPU 없음 — CPU 라 느립니다", flush=True)
         from omnivoice import OmniVoice
         model = OmniVoice.from_pretrained(a.model, device_map=dev, dtype=torch.float16 if dev.startswith("cuda") else torch.float32)
-        model.load_asr_model(model_name=a.asr_model, device=a.asr_device)
+        need_asr = not a.no_check or not a.ref_text_file
+        if dev.startswith("cuda") and need_asr:
+            # The audio tokenizer can exceed the remaining VRAM on 6 GB cards
+            # while encoding the reference clip. Keep synthesis on CUDA and
+            # offload only reference/audio tokenization and decoding to CPU.
+            model.audio_tokenizer.to("cpu")
+            torch.cuda.empty_cache()
+            print("오디오 토크나이저: CPU (VRAM 절약)", flush=True)
+        if need_asr:
+            model.load_asr_model(model_name=a.asr_model, device=a.asr_device)
         ko = lambda audio: model._asr_pipe(audio, generate_kwargs={"language": "korean"})["text"].strip()
         # 참조 전사는 한국어로 못 박는다 — 자동 언어 감지가 틀리면 문장 끝에 참조의 남은 말이 붙는다
         # (수의 마법 쇼릴에서 문장 끝에 참조의 남은 말이 반복되던 문제)
