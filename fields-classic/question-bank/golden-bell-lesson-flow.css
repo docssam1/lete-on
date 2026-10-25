@@ -61,7 +61,7 @@
 .tx-map { display: grid; justify-items: center; gap: 2px; }
 .tx-map-key { margin: 0 0 4px; color: #566274; font-size: 12px; }
 .tx-scales { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-.tx-scales svg { width: 200px; }
+.tx-scales svg { width: min(100%, 230px); height: auto; }
 .tx-chain { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin: 10px 0 0; font-size: 15px; font-weight: 900; }
 .tx-chain span { padding: 4px 12px; border: 2px solid #f0a500; border-radius: 10px; background: #fff3c4; }
 .tx-chain span.on { border-color: #16734b; background: #e3f5ea; color: #16734b; }
@@ -211,7 +211,7 @@
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }
   .tx-card { padding: 12px; }
-  .tx-scales svg { width: min(200px, 44vw); }
+  .tx-scales svg { width: min(230px, 44vw); height: auto; }
 }
 @media (max-width: 420px) {
   .gb-flow-step { padding: 5px 9px; font-size: 13px; }

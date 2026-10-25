@@ -664,6 +664,21 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       const mirror = v.grid.rows.map((r) => [...r].reverse().join(""));
       for (const item of lesson.original.items) { const o = item.visual || {}; if (o.rows) { assert.notEqual(o.rows.join("/"), v.grid.rows.join("/"), `${ex.id}: 원본 모눈과 같음`); assert.notEqual(o.rows.join("/"), mirror.join("/"), `${ex.id}: 원본 모눈을 뒤집은 것`); } }
     } else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "b4-balance") {
+    // 모양마다 무게 1~24g을 모두 넣어 보아 저울이 다 평평한 경우만 남기고, 그때마다 물은 것이 단위 모양 n개와 같은지 본다
+    const shapes = [...new Set(v.eqs.flatMap((e) => [...Object.keys(e.left), ...Object.keys(e.right)]).concat(Object.keys(v.ask.of), v.ask.unit))];
+    const wsum = (m, w) => Object.entries(m).reduce((s, [t, n]) => s + w[t] * n, 0);
+    let fits = 0;
+    const tryAll = (i, w) => {
+      if (i === shapes.length) { if (v.eqs.every((e) => wsum(e.left, w) === wsum(e.right, w))) { fits++; assert.equal(wsum(v.ask.of, w), v.ask.n * w[v.ask.unit], `${ex.id}: 무게 ${JSON.stringify(w)}`); } return; }
+      for (let g = 1; g <= 24; g++) tryAll(i + 1, { ...w, [shapes[i]]: g });
+    };
+    tryAll(0, {});
+    assert.ok(fits > 0, `${ex.id}: 평평해지는 무게가 있음`);
+    assert.ok(ex.answer.includes(`${v.ask.n}개`), `${ex.id}: 답`);
+    const KO = { circle: "동그라미", triangle: "세모", square: "네모", diamond: "마름모", star: "별" };
+    const ko = (m) => JSON.stringify(Object.fromEntries(Object.entries(m).map(([k, n]) => [KO[k] || k, n])));
+    for (const item of lesson.original.items) for (const e of item.visual?.equations || []) for (const mine of v.eqs) assert.ok(!(JSON.stringify(e.left) === ko(mine.left) && JSON.stringify(e.right) === ko(mine.right)), `${ex.id}: 원본 저울과 같음`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

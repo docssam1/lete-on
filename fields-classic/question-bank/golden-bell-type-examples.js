@@ -1609,7 +1609,77 @@ const OUTLINE_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET });
+// ───────────────────────── 4권 평형 저울: 양쪽에서 같은 것 덜기 · 바꾸어 넣기 ─────────────────────────
+// 평평한 저울은 양쪽에 똑같이 더하거나 덜어도, 양쪽을 똑같이 나누어도 평평하다. 한 모양을 다른 모양 몇 개로 바꾸어 넣을 수 있다.
+// 그림은 2권 저울(kind "balance")을 그대로 쓰고, 덜어 낸 것은 「x:모양」으로 흐리게 × 표시.
+// value.eqs = [{ left: {모양: 개수}, right: {...} }], value.ask = { of: {모양: 개수}, unit: 모양, n } — 검사기가 무게를 하나하나 넣어 보아 확인한다.
+const pans = (m) => Object.entries(m).flatMap(([t, n]) => Array(n).fill(t));
+const eqScale = (l, r) => ({ left: pans(l), right: pans(r), heavy: "equal" });
+const countText = (m) => Object.entries(m).map(([t, n]) => `${tokenName(t)} ${n}개`).join("와 ");
+// 양쪽에서 같은 것(common)을 덜고, 남은 것을 groups로 똑같이 나눈다
+function balanceRemoveExample({ id, title, left, right, common = null, groups, x, unit }) {
+  const L = { ...left }, R = { ...right };
+  const steps = [];
+  if (common) {
+    const [t, n] = Object.entries(common)[0];
+    const struck = (m) => Object.entries(m).flatMap(([s, k]) => Array.from({ length: k }, (_, i) => (s === t && i < n ? `x:${s}` : s)));
+    steps.push({ text: `저울이 평평하면 양쪽 무게가 같아요. 양쪽에 똑같이 있는 ${tokenName(t)} ${n}개를 함께 덜어 내도 평평해요.`, figure: { kind: "balance", scales: [{ left: struck(L), right: struck(R), heavy: "equal" }], focus: [0] } });
+    L[t] -= n; R[t] -= n; for (const m of [L, R]) for (const k of Object.keys(m)) if (!m[k]) delete m[k];
+    steps.push({ text: `남은 것끼리 같아요. ${countText(L)} = ${countText(R)}.`, figure: { kind: "balance", scales: [eqScale(L, R)] } });
+  } else steps.push({ text: `저울이 평평하면 양쪽 무게가 같아요. 왼쪽은 ${countText(L)}, 오른쪽은 ${countText(R)}.`, figure: { kind: "balance", scales: [eqScale(L, R)], focus: [0] } });
+  const div = (m) => Object.fromEntries(Object.entries(m).map(([k, v]) => [k, v / groups]));
+  const oneL = div(L), oneR = div(R);
+  if (Object.values({ ...oneL, ...oneR }).some((v) => !Number.isInteger(v))) throw new Error(`${id}: 똑같이 나누어지지 않음`);
+  steps.push({ text: `양쪽을 똑같이 ${groups}묶음으로 나누어도 평평해요. ${countText(oneL)} = ${countText(oneR)}.`, figure: { kind: "balance", scales: [eqScale(oneL, oneR)] } });
+  const n = oneR[unit];
+  const askText = Object.entries(x).map(([t, k]) => `${tokenName(t)} ${k}개`).join("와 ");
+  return { id, title, problem: `저울이 평평해요. 왼쪽에 ${countText(left)}, 오른쪽에 ${countText(right)}가 있어요. ${josa(askText, "은")} ${tokenName(unit)} 몇 개의 무게와 같을까요?`, figure: { kind: "balance", scales: [eqScale(left, right)] }, steps, answer: `${josa(askText, "은")} ${tokenName(unit)} ${n}개와 같아요.`, value: { eqs: [{ left, right }], ask: { of: x, unit, n } } };
+}
+// 바꾸어 넣기: first = [한 모양 = 다른 모양 여러 개], then 다음 저울의 그 모양을 바꾼다. target이면 빈 접시에 몇 개
+function balanceSwapExample({ id, title, first, second = null, target = null, unit }) {
+  const [one, many] = [Object.keys(first.left)[0], first.right];
+  const per = many[unit];
+  const scales = [eqScale(first.left, first.right), ...(second ? [eqScale(second.left, second.right)] : [])];
+  const steps = [{ text: `1번 저울: ${tokenName(one)} 1개는 ${tokenName(unit)} ${per}개와 같아요.`, figure: { kind: "balance", scales, focus: [0] } }];
+  let n, problem, answer, ask, eqs = [{ left: first.left, right: first.right }];
+  if (second) {
+    const big = Object.keys(second.left)[0], k = second.right[one], rest = second.right[unit] || 0;
+    n = k * per + rest;
+    const swapped = eqScale(second.left, { [unit]: n });
+    steps.push({ text: `2번 저울의 ${tokenName(one)} ${k}개를 ${tokenName(unit)} ${k * per}개로 바꾸어 넣어요. ${k} × ${per} = ${k * per}.`, figure: { kind: "balance", scales: [scales[0], swapped], focus: [1] } });
+    steps.push({ text: `${tokenName(big)} 1개 = ${tokenName(unit)} ${k * per}${rest ? ` + ${rest}` : ""} = ${n}개.`, figure: { kind: "balance", scales: [scales[0], swapped] } });
+    eqs.push({ left: second.left, right: second.right });
+    ask = { of: { [big]: 1 }, unit, n };
+    problem = `두 저울이 모두 평평해요. ${tokenName(big)} 1개는 ${tokenName(unit)} 몇 개의 무게와 같을까요?`;
+    answer = `${tokenName(big)} 1개는 ${tokenName(unit)} ${n}개와 같아요.`;
+  } else {
+    const k = target[one], rest = target[unit] || 0;
+    n = k * per + rest;
+    const tScale = { left: pans(target), right: ["?"], heavy: "equal" };
+    scales.push(tScale);
+    steps.push({ text: `빈 접시 저울의 ${tokenName(one)} ${k}개를 ${tokenName(unit)} ${k * per}개로 바꾸면 왼쪽은 ${tokenName(unit)} ${k * per}${rest ? ` + ${rest}` : ""} = ${n}개예요.`, figure: { kind: "balance", scales: [scales[0], { left: pans({ [unit]: n }), right: ["?"], heavy: "equal" }], focus: [1] } });
+    steps.push({ text: `평평하려면 빈 접시에도 ${tokenName(unit)} ${n}개를 놓아요.`, figure: { kind: "balance", scales: [scales[0], eqScale(target, { [unit]: n })] } });
+    ask = { of: target, unit, n };
+    problem = `두 저울이 모두 평평해요. 두 번째 저울의 빈 접시에 ${tokenName(unit)}을 몇 개 놓아야 할까요?`.replace(`${tokenName(unit)}을`, josa(tokenName(unit), "을"));
+    answer = `${tokenName(unit)} ${n}개를 놓아야 해요.`;
+  }
+  return { id, title, problem, figure: { kind: "balance", scales }, steps, answer, value: { eqs, ask } };
+}
+const BALANCE4_SET = {
+  id: "b4-balance",
+  types: {
+    "등식의 성질로 무게 비교": () => [
+      balanceRemoveExample({ id: "b4-rm-1", title: "예제 1", left: { circle: 2, triangle: 1 }, right: { triangle: 7 }, common: { triangle: 1 }, groups: 2, x: { circle: 1 }, unit: "triangle" }),
+      balanceRemoveExample({ id: "b4-rm-2", title: "예제 2", left: { circle: 3, triangle: 3 }, right: { square: 9 }, groups: 3, x: { circle: 1, triangle: 1 }, unit: "square" })
+    ],
+    "양팔저울 바꾸어 넣기": () => [
+      balanceSwapExample({ id: "b4-sw-1", title: "예제 1", first: { left: { triangle: 1 }, right: { square: 2 } }, second: { left: { circle: 1 }, right: { triangle: 2, square: 1 } }, unit: "square" }),
+      balanceSwapExample({ id: "b4-sw-2", title: "예제 2", first: { left: { circle: 1 }, right: { star: 3 } }, target: { circle: 2, star: 1 }, unit: "star" })
+    ]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

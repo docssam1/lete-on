@@ -129,22 +129,31 @@ function token(t, x, y, s = 22) {
   return `<polygon points="${pts}" fill="${c.fill}" stroke="${c.line}" stroke-width="2" stroke-linejoin="round"/>`;
 }
 function scaleSvg(s, k, f) {
-  const W = 220, tilt = s.heavy === "left" ? -9 : s.heavy === "right" ? 9 : 0, focus = (f.focus || []).includes(k);
+  // 접시마다 셋까지는 한 줄 큰 모양, 넷부터는 작게, 여섯부터는 두 줄. 셋부터는 저울 폭을 접시에 맞춰 넓힌다(접시 밖으로 나가지 않게).
+  const layout = (n) => { const perRow = n > 5 ? Math.ceil(n / 2) : n, gap = n > 3 ? 20 : 24, sz = n > 3 ? 18 : 22; return { perRow, gap, sz, half: ((perRow - 1) * gap) / 2 + sz / 2 + 4 }; };
+  const maxN = Math.max(s.left.length, s.right.length), big = layout(maxN);
+  const arm = maxN <= 2 ? 78 : Math.max(78, big.half + 40), C = maxN <= 2 ? 110 : arm + Math.max(30, big.half) + 8, W = C * 2;
+  const tilt = s.heavy === "left" ? -9 : s.heavy === "right" ? 9 : 0, focus = (f.focus || []).includes(k);
   const pan = (list, cx, cy) => {
-    const n = list.length, gap = n > 3 ? 18 : 24;
-    return list.map((t, i) => token(t, cx + (i - (n - 1) / 2) * gap, cy - (SHAPE[t] ? 12 : 15), n > 3 ? 18 : 22)).join("");
+    const n = list.length, { perRow, gap, sz } = layout(n);
+    // 「x:모양」은 양쪽에서 함께 덜어 낸 것: 흐리게 그리고 빨간 ×
+    return list.map((t, i) => {
+      const row = Math.floor(i / perRow), inRow = Math.min(perRow, n - row * perRow), col = i - row * perRow;
+      const off = t.startsWith("x:"), tt = off ? t.slice(2) : t, x = cx + (col - (inRow - 1) / 2) * gap, y = cy - (SHAPE[tt] ? 12 : 15) - row * (sz + 2), h = sz / 2 + 2;
+      return off ? `<g opacity="0.3">${token(tt, x, y, sz)}</g><path d="M${x - h} ${y - h} L${x + h} ${y + h} M${x + h} ${y - h} L${x - h} ${y + h}" stroke="#e8503a" stroke-width="2.5" stroke-linecap="round"/>` : token(tt, x, y, sz);
+    }).join("");
   };
-  const rad = tilt * Math.PI / 180, arm = 78;
-  const lx = 110 - arm * Math.cos(rad), ly = 46 - arm * Math.sin(rad), rx = 110 + arm * Math.cos(rad), ry = 46 + arm * Math.sin(rad);
+  const rad = tilt * Math.PI / 180, plate = Math.max(30, big.half);
+  const lx = C - arm * Math.cos(rad), ly = 46 - arm * Math.sin(rad), rx = C + arm * Math.cos(rad), ry = 46 + arm * Math.sin(rad);
   const weights = f.weights || {};
   const tag = (list, cx, cy) => { const known = [...new Set(list)].filter((t) => weights[t] !== undefined); return known.length ? text(cx, cy, known.map((t) => `${SHAPE_NAME[t] || t} ${weights[t]}g`).join(" · "), { size: 11, weight: 800, fill: "#16734b" }) : ""; };
   let body = `<rect x="2" y="2" width="${W - 4}" height="146" rx="14" fill="#fff" stroke="${focus ? TONE.doing : "#ece4d6"}" stroke-width="${focus ? 4 : 2}"/>`;
   body += text(18, 18, `${k + 1}`, { size: 12, weight: 900, fill: "#566274" });
-  body += '<path d="M110 52 L96 120 H124 Z" fill="#f39a1e"/><rect x="82" y="118" width="56" height="10" rx="4" fill="#ffd45c" stroke="#d9a400"/>';
+  body += `<path d="M${C} 52 L${C - 14} 120 H${C + 14} Z" fill="#f39a1e"/><rect x="${C - 28}" y="118" width="56" height="10" rx="4" fill="#ffd45c" stroke="#d9a400"/>`;
   body += `<line x1="${lx}" y1="${ly}" x2="${rx}" y2="${ry}" stroke="#f39a1e" stroke-width="7" stroke-linecap="round"/>`;
-  for (const [x, y] of [[lx, ly], [rx, ry]]) body += `<path d="M${x} ${y} L${x - 22} ${y + 34} M${x} ${y} L${x + 22} ${y + 34}" stroke="#b38a52" stroke-width="1.5"/><path d="M${x - 30} ${y + 34} H${x + 30} Q${x + 26} ${y + 44} ${x} ${y + 44} Q${x - 26} ${y + 44} ${x - 30} ${y + 34} Z" fill="#ffeaa6" stroke="#d9a400" stroke-width="1.5"/>`;
+  for (const [x, y] of [[lx, ly], [rx, ry]]) body += `<path d="M${x} ${y} L${x - 22} ${y + 34} M${x} ${y} L${x + 22} ${y + 34}" stroke="#b38a52" stroke-width="1.5"/><path d="M${x - plate} ${y + 34} H${x + plate} Q${x + plate - 4} ${y + 44} ${x} ${y + 44} Q${x - plate + 4} ${y + 44} ${x - plate} ${y + 34} Z" fill="#ffeaa6" stroke="#d9a400" stroke-width="1.5"/>`;
   body += pan(s.left, lx, ly + 34) + pan(s.right, rx, ry + 34);
-  body += '<circle cx="110" cy="46" r="6" fill="#f2c14e" stroke="#a8741a"/>';
+  body += `<circle cx="${C}" cy="46" r="6" fill="#f2c14e" stroke="#a8741a"/>`;
   body += tag(s.left, lx, 140) + tag(s.right, rx, 140);
   return svg(W, 150, body, `${k + 1}번 저울`);
 }
