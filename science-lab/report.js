@@ -2,7 +2,7 @@
 // 양식 = 대회(과학탐구·자연관찰·발명) × 수준(초등·중등). 자연관찰은 대상마다 「관찰그림 | 설명」 한 줄 · 분류 나무 · 벤 다이어그램(대회 과제 유형).
 // 첨삭(원장 2026-10-23): 글을 드래그해 형광펜 · 고치기(글 위에 바른 말, 손글씨) · 말풍선. 칸마다 [가이드 넣기]·[질문 넣기] 버튼(미리 준비한 문구 + 직접 쓰기).
 // 표시는 글자 위치가 아니라 덮은 글(t)을 닻으로 잡아, 아이가 위를 고쳐도 같은 낱말에 남는다(report-model.js segments). 저장은 이 기기(localStorage)에만.
-import { levelOf, domainOf, LEVELS, CONTESTS } from './data/curriculum.js';
+import { levelOf, domainOf, LEVELS, CONTESTS, CONTEST_OF } from './data/curriculum.js';
 import { reportCfg, primaryContest, REPORTS } from './data/reports.js';
 import {
   formTemplate, prefill, emptyTable, tableTouched, chartData, withMean, segments, newId, STORE, emptyReport, validReport, obsKey, textKeys, VENN,
@@ -17,9 +17,9 @@ const save = (r) => { r.updatedAt = Date.now(); try { localStorage.setItem(STORE
 const VENN_ASK = { a: '이것만의 특징', both: '둘 다 그런 점', b: '이것만의 특징' };
 const CIRCLED = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫';
 
-export function renderReport(u, $app, { topbar, footer, embedded = false, reference = null } = {}) {
+export function renderReport(u, $app, { topbar, footer, embedded = false, reference = null, contest = '' } = {}) {
   const d = domainOf(u) || { color: '#2f7d6d', title: '자연관찰' };
-  const lv0 = levelOf(u)?.id || REPORTS[u.id]?.level || 'elem', ct0 = primaryContest(u.id);
+  const lv0 = levelOf(u)?.id || REPORTS[u.id]?.level || 'elem', ct0 = contest && (CONTEST_OF[u.id] || []).includes(contest) ? contest : primaryContest(u.id);   // 대회 폴더에서 열면 그 대회 양식(새 보고서일 때만)
   let R = null;
   try { const r = JSON.parse(localStorage.getItem(STORE(u.id)) || 'null'); if (validReport(r) && r.unit === u.id) R = r; } catch { /* */ }
   if (!R) R = emptyReport(u, reportCfg(u.id, lv0, ct0), lv0, ct0);
@@ -54,7 +54,8 @@ export function renderReport(u, $app, { topbar, footer, embedded = false, refere
     const body = `
       <div class="${embedded ? '' : 'wrap'}">
         <div class="rp-bar no-print">
-          <span class="seg contest" role="group" aria-label="대회">${CONTESTS.map((c) => `<button type="button" data-contest="${c.id}" aria-pressed="${R.contest === c.id}" title="${esc(c.sub)}">${esc(c.short)}</button>`).join('')}</span>
+          ${(() => { const cs = CONTESTS.filter((c) => (CONTEST_OF[u.id] || ['inquiry']).includes(c.id) || c.id === R.contest);   // 이 실험이 든 대회 폴더의 양식만(대회 폴더 2026-10-25)
+            return cs.length > 1 ? `<span class="seg contest" role="group" aria-label="대회">${cs.map((c) => `<button type="button" data-contest="${c.id}" aria-pressed="${R.contest === c.id}" title="${esc(c.sub)}">${esc(c.short)}</button>`).join('')}</span>` : `<a class="rp-contest-one ${cs[0].id}" href="#/contest/${cs[0].id}" title="${esc(cs[0].title)} 폴더 — 대회 안내 보기">${esc(cs[0].title)} 양식</a>`; })()}
           <span class="seg" role="group" aria-label="수준">${LEVELS.map((l) => `<button type="button" data-level="${l.id}" aria-pressed="${R.level === l.id}">${esc(l.title)}</button>`).join('')}</span>
           <span class="seg teach" role="group" aria-label="모드"><button type="button" data-mode="study" aria-pressed="${!teach}">✏️ 학생 쓰기</button><button type="button" data-mode="teach" aria-pressed="${teach}">🖍 선생님 첨삭</button></span>
           <span class="sp"></span>

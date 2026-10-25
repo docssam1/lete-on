@@ -19,7 +19,7 @@ export function renderObserve($app, { topbar, footer }, setId) {
   $app.innerHTML = `${topbar('#/')}
   <main class="opened observe-page" style="--tab:#3f8f3a">
     <div class="wrap unit-head folder-label"><span class="label-tab">OBSERVE</span>
-      <div class="crumb"><span class="tag" style="background:#3f8f3a;color:#fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700">자연관찰대회</span><span class="lv">${S.level === 'mid' ? '중등' : '초등'}</span><span>연습</span></div>
+      <div class="crumb"><a class="tag" href="#/contest/nature" title="자연관찰대회 폴더 — 대회 안내" style="background:#3f8f3a;color:#fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;text-decoration:none">🔍 자연관찰대회 폴더 →</a><span class="lv">${S.level === 'mid' ? '중등' : '초등'}</span><span>연습</span></div>
       <nav class="ob-sets" aria-label="연습 세트">${OBSERVE_SETS.map((x) => `<a href="#/observe/${x.id}" aria-current="${x.id === S.id}">${esc(x.short)}<small>${x.level === 'mid' ? '중등' : '초등'}</small></a>`).join('')}</nav>
       <h1>${esc(S.title)}</h1>
       <p class="sub">${esc(S.lead)}</p>

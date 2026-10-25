@@ -171,3 +171,17 @@ test('한 줄 코드 뒤에 // 주석을 붙여 줄 나머지가 주석이 된 �
   for (const f of files) fs.readFileSync(path.join(dir, f), 'utf8').split('\n').forEach((line, i) => { const k = line.indexOf('// '); if (k < 0 || /https?:\/\//.test(line)) return; const tail = line.slice(k + 3); if ((/[;{}]\s*(const|let|var|if|else|for|return|[A-Za-z_$][\w$]*\s*[(.=])/.test(tail) || /[)\s][A-Za-z_$][\w$]*(\[[^\]]*\])+\s*=[^=]/.test(tail) || /;\s*[A-Za-z_$]/.test(tail)) && !/^\s*\/\//.test(line)) bad.push(`${f}:${i + 1}`); });
   assert.deepEqual(bad, []);
 });
+
+test('대회 폴더: 대회마다 안내가 있고, 연습 세트 고리가 실제 세트를 가리키며, 「확인 못 함」을 지어내지 않게 근거가 붙어 있다', async () => {
+  const { CONTESTS } = await import('./data/curriculum.js');
+  const { CONTEST_GUIDE: G } = await import('./data/contests.js');
+  const ids = new Set(OBSERVE_SETS.map((s) => s.id));
+  for (const c of CONTESTS) {
+    const g = G[c.id]; assert.ok(g, c.id);
+    for (const k of ['icon', 'color', 'lead']) assert.ok(g[k], `${c.id} ${k}`);
+    for (const k of ['names', 'facts', 'day', 'cautions', 'train', 'src']) assert.ok(Array.isArray(g[k]) && g[k].length, `${c.id} ${k}`);
+    assert.ok(g.judge.src && g.judge.rows.length >= 3 && g.judge.rows.every((r) => r.length === 3), `${c.id} 심사`);
+    for (const [, set] of g.tasks?.rows || []) if (set) assert.ok(ids.has(set), `${c.id} 과제 → ${set}`);
+    assert.ok(g.cautions.some((t) => /요강/.test(t)), `${c.id} 그해 요강 확인 안내`);
+  }
+});

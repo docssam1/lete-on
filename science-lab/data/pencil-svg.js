@@ -1,13 +1,31 @@
 // 연필 그림 SVG 도구 — 예시 보고서의 「관찰그림」을 아이가 연필로 그린 것처럼 만든다(원장 2026-10-25: 보고서 예시에 그림이 있어야 한다).
 // 흑연 선(두세 번 겹쳐 긋기 + 손 떨림 필터) · 빗금 명암 · 확대 원 · 지시선과 손글씨 이름표(Gaegu) · 수면선. 모두 원본 도형이라 저작권 문제 없다.
 // 사용: pencilSvg(w, h, (d) => [...조각 문자열], { seed }) → <svg> 문자열. d에 그리기 도우미가 들어 있다.
+import { STROKES } from './sketch-strokes.js';
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 let uid = 0;
 // 글자 폭 어림(한글 ≈ 0.95em, 그 밖 ≈ 0.55em) — 이름표가 그림 밖으로 나가지 않게 자리 잡는 데 쓴다
 const textW = (t, size) => [...String(t)].reduce((a, ch) => a + (/[\u3131-\uD79D]/.test(ch) ? 0.95 : /[A-Z0-9①-⑩]/.test(ch) ? 0.7 : 0.5) * size, 0);
+const SKETCH = (key, layer) => `./assets/observe/sketch/${key}-${layer}.webp`;
 export function pencilSvg(w, h, draw, { seed = 3, grain = true, cls = 'pz' } = {}) {
-  const id = `pz${++uid}`;
+  const id = `pz${++uid}`, under = [];
   const d = {
+    // 연필 스케치(3D 표본을 흰 종이에 렌더해 선·명암 두 겹으로 만든 그림, tools/sketch/). 손이 선의 뼈대를 따라 그어 가며 선이 드러나고,
+    // 이어서 연필을 눕혀 칠하듯 명암이 드러난다. 드러내는 획은 마스크 안의 .dz 선이라 손이 그 길을 그대로 따라간다(SVG 좌표로 바꿔 둠).
+    // 돌려주는 값: { x, y, s, h, at(px, py) } — at은 원본 그림 픽셀 → SVG 좌표(이름표 자리 잡기용).
+    drawing: (key, x, y, dw) => {
+      const k = STROKES[key], s = dw / k.w, P = (a) => { let t = ''; for (let i = 0; i < a.length; i += 2) t += `${i ? ' L' : 'M'}${(x + a[i] * s).toFixed(1)} ${(y + a[i + 1] * s).toFixed(1)}`; return t; };
+      const g = (paths, sw, close) => `<g class="dz" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="${(sw * s).toFixed(1)}"><path d="${paths.map((a) => P(a) + (close ? ' Z' : '')).join(' ')}"/></g>`;
+      const u = ++uid, mk = (n, body) => `<mask id="${id}-${n}${u}" maskUnits="userSpaceOnUse" x="0" y="0" width="${w}" height="${h}">${body}</mask>`;
+      const img = (layer, m) => `<image href="${SKETCH(key, layer)}" x="${x}" y="${y}" width="${dw}" height="${(k.h * s).toFixed(1)}" mask="url(#${id}-${m}${u})" preserveAspectRatio="none"/>`;
+      under.push(`<defs>${mk('l', k.main.map((a) => g([a], k.lw, true)).join('') + k.more.map((c) => g(c, k.lw, true)).join(''))}${mk('t', k.shade.map((a) => g([a], k.sw, false)).join(''))}</defs>${img('tone', 't')}${img('line', 'l')}`);
+      return { x, y, s, h: k.h * s, at: (px, py) => [+(x + px * s).toFixed(1), +(y + py * s).toFixed(1)] };
+    },
+    // 확대 원 안에 같은 스케치를 크게(zoom배) — (fx, fy)는 확대할 자리(SVG 좌표)
+    loupe: (dr, key, cx, cy, r, fx, fy, zoom) => {
+      const k = STROKES[key], s = dr.s * zoom, ix = cx - (fx - dr.x) * zoom, iy = cy - (fy - dr.y) * zoom, W = k.w * s, H = k.h * s;
+      return d.magnifier(cx, cy, r, `<g class="dz-f"><image href="${SKETCH(key, 'tone')}" x="${ix.toFixed(1)}" y="${iy.toFixed(1)}" width="${W.toFixed(1)}" height="${H.toFixed(1)}" preserveAspectRatio="none"/><image href="${SKETCH(key, 'line')}" x="${ix.toFixed(1)}" y="${iy.toFixed(1)}" width="${W.toFixed(1)}" height="${H.toFixed(1)}" preserveAspectRatio="none"/></g>`, [fx, fy, Math.max(5, r / zoom)]);
+    },
     // 흑연 선: 진한 선 + 살짝 어긋난 연한 선 두 번 → 연필 결
     line: (path, { w: sw = 1.3, dark = 0.85, dash = '' } = {}) => `<g class="dz" fill="none" stroke-linecap="round" stroke-linejoin="round"${dash ? ` stroke-dasharray="${dash}"` : ''}><path d="${path}" stroke="#2f2f2f" stroke-width="${sw}" opacity="${dark}"/><path d="${path}" stroke="#555" stroke-width="${sw * 0.7}" opacity="0.32" transform="translate(0.7,-0.5)"/><path d="${path}" stroke="#777" stroke-width="${sw * 0.5}" opacity="0.18" transform="translate(-0.5,0.6)"/></g>`,
     // 연한 밑선(스케치선)
@@ -39,7 +57,7 @@ export function pencilSvg(w, h, draw, { seed = 3, grain = true, cls = 'pz' } = {
     <marker id="${id}-ar" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 L6 3.5 L0 7 Z" fill="#2f2f2f"/></marker>
   </defs>
   <rect width="${w}" height="${h}" fill="#fffdf8"/>${grain ? `<rect width="${w}" height="${h}" filter="url(#${id}-paper)"/>` : ''}
-  <g filter="url(#${id}-wob)">${body}</g>
+  ${under.join('')}<g filter="url(#${id}-wob)">${body}</g>
 </svg>`;
 }
 // 자주 쓰는 도형 경로
