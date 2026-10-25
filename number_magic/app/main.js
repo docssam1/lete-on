@@ -7648,7 +7648,7 @@ function screenMagazine(){
         <div class="nm-mzl-txt">
           <span class="nm-mzl-kicker">${esc(L(a.kicker))}</span>
           <div class="nm-mzl-title">${esc(L(a.title))}</div>
-          <div class="nm-mzl-lede">${esc(L(a.lede))}</div>
+          <div class="nm-mzl-lede">${mzRich(L(a.lede))}</div>
           ${mzRead(a.id)?`<span class="nm-mzl-read">${ko?'✓ 읽었어요':en?'✓ Read':'✓ 已读'}</span>`:''}
         </div>
       </button>`).join('');
@@ -7686,7 +7686,7 @@ function screenMagazine(){
         ${window.NM_EXAM ? NM_EXAM.magazineSpark(open.id) : ''}
         ${secs}
         ${open.challenge && window.NM_EXAM ? NM_EXAM.magazineChallenge(open.id)+NM_EXAM.magazineFeedback(open.id) : `<div class="nm-mza-close">${mzRich(L(open.close))}</div>`}
-        <p class="nm-mza-src">${esc(L(open.source))}</p>
+        <p class="nm-mza-src">${mzRich(L(open.source))}</p>
         ${open.references ? `<div class="nm-mza-refs">${mzReferences(open)}</div>` : ''}
         <div class="nm-mza-nav">
           <button class="nm-btn ghost" id="mzList">${ko?'매거진 목록으로':en?'Back to magazine list':'返回杂志目录'}</button>

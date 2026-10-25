@@ -952,7 +952,15 @@ const strip=(x,y,w,h,n,k,colors)=>Array.from({length:n},(_,i)=>box(x+i*w/n,y,w/n
 const cup=(x,y,amount)=>'<path d="M '+x+' '+y+' l 8 38 h 26 l 8 -38 Z" fill="'+C.cream+'" stroke="'+C.sub+'" stroke-width="2"/>'+'<path d="M '+(x+4)+' '+(y+15)+' l 5 21 h 24 l 5 -21 Z" fill="'+C.ok+'"/>'+T(x+21,y+61,16,C.ink,amount);
 const bun=(x,y)=>'<path d="M '+x+' '+(y+30)+' V '+(y+10)+' C '+(x-5)+' '+(y-3)+' '+(x+27)+' '+(y-3)+' '+(x+22)+' '+(y+10)+' V '+(y+30)+' Z" fill="'+C.goldbright+'" stroke="'+C.brown+'" stroke-width="2"/>'+line(x+6,y+8,x+10,y+4,C.brown,1.5)+line(x+12,y+10,x+16,y+6,C.brown,1.5);
 const turtle=(x,y)=>'<ellipse cx="'+x+'" cy="'+y+'" rx="18" ry="12" fill="'+C.ok+'" stroke="'+C.ink+'" stroke-width="2"/>'+dot(x+22,y-2,7,C.ok)+line(x-10,y+10,x-13,y+16,C.ink,3)+line(x+10,y+10,x+13,y+16,C.ink,3);
-const runner=(x,y)=>dot(x,y-23,7,C.gold)+line(x,y-14,x-3,y+5,C.ink,3)+line(x-3,y+5,x-14,y+17,C.ink,3)+line(x-3,y+5,x+12,y+14,C.ink,3)+line(x-1,y-9,x+13,y-15,C.ink,3);
+/* Reuse the approved character asset in SVG diagrams, including subpath deployments. */
+const characterImage=(x,y,w,h)=>{
+  let base='/number_magic/assets/characters/';
+  if(typeof document!=='undefined'){
+    const script=document.querySelector('script[src*="data/magazine.js"]');
+    if(script)base=new URL('../assets/characters/',script.src).href;
+  }
+  return '<image data-nm-character="kid-boy" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" href="'+safeText(base+'kid-boy.png')+'" preserveAspectRatio="xMidYMax meet"/>';
+};
 
 /* Teaching models: each mark carries a quantity, a unit, or a position. */
 const tickBar=(x,y,w,h,n,k,colors,labels)=>strip(x,y,w,h,n,k,colors)+(labels||[]).map((v,i)=>T(x+(i+.5)*w/n,y+h*.7,15,C.ink,v)).join('');
@@ -1037,7 +1045,7 @@ const articles=[
  kicker:l3('제논의 역설','Zeno’s paradox','芝诺悖论'),
  title:l3('거북이를 정말 따라잡을 수 없을까?','Can Achilles ever catch the tortoise?','阿基里斯能追上乌龟吗？'),
  lede:l3('빠른 아킬레우스와 느린 거북이가 달려요. 거북이에게 먼저 출발할 자리를 주면, 빠른 쪽도 영원히 못 따라잡을까요?','Fast Achilles races a slow tortoise. If the tortoise starts ahead, could even the faster runner fail to catch it forever?','跑得快的阿基里斯追赶慢乌龟。让乌龟先站在前面，快的一方就永远追不上了吗？'),
- art:head(line(24,125,296,125,C.ink,3)+runner(35,103)+turtle(155,107)+arrow(67,96,127,96,C.gold)+arrow(184,96,214,96,C.ok)+T(43,35,18,C.ink,'2 m/s')+T(157,67,18,C.ink,'1 m/s')+T(35,156,17,C.sub,'0')+T(155,156,17,C.sub,'1 m')+T(275,156,17,C.sub,'2 m')),
+ art:head(line(24,125,296,125,C.ink,3)+characterImage(4,43,62,82)+turtle(155,107)+arrow(67,96,127,96,C.gold)+arrow(184,96,214,96,C.ok)+T(43,35,18,C.ink,'2 m/s')+T(157,67,18,C.ink,'1 m/s')+T(35,156,17,C.sub,'0')+T(155,156,17,C.sub,'1 m')+T(275,156,17,C.sub,'2 m')),
  spark:l3('“앞선 자리까지 가도 거북이는 또 앞으로 가니, 영원히 못 잡아.” 이 말에서 ‘앞선 순간들’과 ‘만나는 순간’이 뒤섞이지 않았을까요?','“Each time I reach its old position, it has moved again, so I never catch it.” Does this confuse earlier moments with the meeting itself?','“每次到达乌龟原来的位置，它又前进了，所以永远追不上。”这是否把早先的时刻与相遇时刻混在了一起？'),
  body:[
  section(l3('아직 만나기 전의 순간들','A sequence of earlier moments','一系列相遇之前的时刻'),l3('거북이는 1m 앞에서 초당 1m, 아킬레우스는 초당 2m로 가는 모형이에요. A는 아킬레우스, T는 거북이입니다. <b>같은 시각의 두 위치</b>를 표에서 비교해 보세요. ‘거북이의 옛 위치에 도착했다’와 ‘지금 거북이를 만났다’는 다른 말이에요.','Our model gives a 1 m head start and speeds of 2 m/s for Achilles (A) and 1 m/s for the tortoise (T). Compare <b>both positions at the same time</b> in the table. Reaching a past position is different from meeting the tortoise now.','模型中乌龟领先1米，A（阿基里斯）每秒跑2米，T（乌龟）每秒走1米。在表中比较<b>同一时刻的两个位置</b>。到达乌龟过去的位置，与此刻追上它，并不是一回事。'),fig(chaseTable())),
