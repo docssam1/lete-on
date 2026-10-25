@@ -6061,6 +6061,222 @@
   {
    "id": "fcb-book-08-crypt-source-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b01",
+   "text": "많은 쪽이 적은 쪽에게 주어서 둘을 같게 만들어요. 몇 개를 주면 될까요? 한 개를 줄 때 차이가 얼마나 줄어드는지가 핵심이에요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b02",
+   "text": "다온이는 구슬 19개, 루아는 11개예요. 줄을 맞춰 늘어놓아요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b03",
+   "text": "줄을 맞추니 다온이가 8개 더 많아요. 19 빼기 11은 8이에요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b04",
+   "text": "다온이가 한 개만 줘 볼까요? 다온이는 18개, 루아는 12개. 차이는 6이에요. 한 개를 줬는데 차이는 2가 줄었어요. 주는 쪽은 하나 줄고, 받는 쪽은 하나 늘기 때문이에요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b05",
+   "text": "그러니 차이 8의 반만 주면 돼요. 8 나누기 2는 4. 다온이 줄 끝의 4개를 루아 줄 끝으로 옮겨요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b06",
+   "text": "확인해요. 다온이는 19 빼기 4, 15개. 루아는 11 더하기 4, 15개. 똑같아요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b07",
+   "text": "이번엔 세 사람이에요. 하린이를 기준으로 봐요. 지호는 하린이보다 3개 더, 서준이는 하린이보다 13개 더 가지고 있어요. 서준이가 지호에게 몇 개 주면 둘이 같아질까요?"
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b08",
+   "text": "하린이를 0으로 놓고 수직선을 그려요. 한 칸이 구슬 한 개예요. 지호는 3칸 오른쪽, 서준이는 13칸 오른쪽이에요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b09",
+   "text": "지호와 서준이의 차는 13 빼기 3, 10이에요. 하린이의 구슬 수는 몰라도 차는 알 수 있어요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b10",
+   "text": "차 10의 반, 5개를 서준이가 지호에게 주면 돼요. 둘 다 하린이보다 8개 더 가진 자리에서 만나요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b11",
+   "text": "정리해요. 한 개를 주면 차이는 2 줄어요. 그래서 같게 하려면 차이의 반만 옮겨요. 세 사람이면 한 사람을 기준으로 수직선에 놓고 차를 구해요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-b12",
+   "text": "한 문제 풀어 봐요. 27개와 15개를 같게 하려면 많은 쪽에서 몇 개를 옮기면 될까요?"
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-hint",
+   "text": "27 빼기 15는 12예요. 한 개 줄 때 차가 2 줄어요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-right",
+   "text": "맞았어요! 6개를 주면 둘 다 21이 돼요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-08-equalize-transfer-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-b01",
+   "text": "두 수의 합과 차를 알면 두 수를 찾을 수 있어요. 막대 두 개를 그려서, 긴 막대의 남는 부분을 떼어 내는 것이 핵심이에요. 「주면 같아진다」는 말이 나오면 차를 먼저 찾아요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-b02",
+   "text": "동그라미 더하기 세모가 25이고, 동그라미 빼기 세모가 7이에요. 동그라미가 세모보다 7 더 커요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-b03",
+   "text": "막대로 그려요. 세모 막대를 먼저 그리고, 동그라미 막대는 세모 막대보다 7만큼 더 길게 그려요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-b04",
+   "text": "동그라미 막대에서 남는 7을 떼어 내면 두 막대가 똑같아져요. 합도 7만큼 줄어서 25 빼기 7, 18이에요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-b05",
+   "text": "똑같은 막대 두 개가 18이니까 하나는 9. 세모는 9예요. 동그라미는 세모보다 7 크니까 9 더하기 7, 16이에요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-b06",
+   "text": "이번엔 문장 문제예요. 가온이와 나리의 구슬을 합하면 34개예요. 가온이가 나리에게 4개를 주면 둘이 같아져요. 가온이는 몇 개일까요?"
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-b07",
+   "text": "4개를 주면 같아진다는 건, 차가 4의 두 배라는 뜻이에요. 주는 쪽은 4 줄고 받는 쪽은 4 늘어서 차가 8 줄었으니까요. 차는 8이에요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-b08",
+   "text": "이제 합과 차를 알아요. 합 34에서 차 8을 빼면 26, 반으로 나누면 13. 나리는 13개, 가온이는 13 더하기 8, 21개예요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-b09",
+   "text": "확인해요. 가온이가 4개를 주면 21 빼기 4, 17이고, 나리는 13 더하기 4, 17이에요. 같아졌어요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-b10",
+   "text": "정리해요. 합에서 차를 빼고 반으로 나누면 작은 수, 거기에 차를 더하면 큰 수예요. 몇 개를 주면 같아진다면, 차는 준 수의 두 배예요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-b11",
+   "text": "한 문제 풀어 봐요. 두 사람의 구슬을 합하면 20개예요. 많은 사람이 3개를 주면 둘이 같아져요. 많은 사람은 몇 개일까요?"
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-hint",
+   "text": "주면 같아진다는 건 차가 준 수의 두 배라는 뜻이에요. 차는 6이에요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-right",
+   "text": "맞았어요! 많은 사람은 13개, 적은 사람은 7개예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-08-sum-difference-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-b01",
+   "text": "한 수가 다른 수의 몇 배일 때는, 작은 수를 동그라미 하나로 그려요. 그러면 몇 배인 수는 동그라미 여러 개가 돼요. 동그라미 하나의 값을 찾는 것이 핵심이에요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-b02",
+   "text": "하나는 작은 수, 바다는 하나의 6배예요. 둘을 더하면 42예요. 하나는 동그라미 한 개, 바다는 동그라미 여섯 개로 그려요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-b03",
+   "text": "동그라미를 모두 세어요. 하나의 한 개와 바다의 여섯 개, 모두 일곱 개가 42예요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-b04",
+   "text": "42를 일곱 개로 똑같이 나누면 6. 동그라미 하나는 6이에요. 동그라미마다 6을 써요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-b05",
+   "text": "하나는 동그라미 한 개라 6이고, 바다는 6의 6배, 36이에요. 6 더하기 36은 42예요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-b06",
+   "text": "이번엔 차를 알 때예요. 큰 수는 작은 수의 5배이고, 큰 수가 작은 수보다 28 커요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-b07",
+   "text": "두 줄을 맞춰 보면, 큰 수의 첫 동그라미는 작은 수와 같아요. 더 많은 동그라미는 네 개. 그 네 개가 차 28이에요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-b08",
+   "text": "28을 네 개로 나누면 7. 동그라미 하나는 7이에요. 작은 수는 7이고, 큰 수는 7의 5배, 35예요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-b09",
+   "text": "정리해요. 작은 수를 동그라미 하나로 그려요. 합을 알면 전체 동그라미 수로, 차를 알면 더 많은 동그라미 수로 나눠요. 동그라미 하나를 찾으면 두 수가 다 나와요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-b10",
+   "text": "한 문제 풀어 봐요. 두 수의 합은 45이고, 큰 수는 작은 수의 4배예요. 작은 수는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-hint",
+   "text": "작은 수는 동그라미 하나, 큰 수는 동그라미 네 개. 모두 다섯 개로 나눠요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-right",
+   "text": "맞았어요! 동그라미 다섯 개가 45이니까 하나는 9예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-b01",
+   "text": "몇 배보다 조금 많거나 조금 적은 수가 나오면, 덧붙은 수를 먼저 정리해요. 많으면 합에서 빼고, 적으면 합에 더해요. 그러면 동그라미만 남아요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-b02",
+   "text": "형과 동생의 구슬을 합하면 32예요. 형은 동생의 3배보다 4개 더 많아요. 동생은 동그라미 한 개, 형은 동그라미 세 개와 덧붙은 4로 그려요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-b03",
+   "text": "덧붙은 4를 합에서 먼저 빼요. 32 빼기 4는 28이에요. 이제 동그라미만 네 개가 남았어요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-b04",
+   "text": "28을 네 개로 나누면 7. 동생은 7이고, 형은 7의 3배에 4를 더해 25예요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-b05",
+   "text": "이번엔 적은 경우예요. 두 수를 합하면 43이에요. 큰 수는 작은 수의 4배보다 2 적어요. 큰 수의 동그라미 네 개 중 마지막 하나가 2만큼 모자란 거예요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-b06",
+   "text": "모자란 2를 채워 넣어요. 그러면 합도 2만큼 커져서 43 더하기 2, 45예요. 이제 동그라미 다섯 개가 꼭 맞아요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-b07",
+   "text": "45를 다섯 개로 나누면 9. 작은 수는 9이고, 큰 수는 9의 4배에서 2를 빼 34예요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-b08",
+   "text": "정리해요. 몇 배보다 많으면 그만큼 합에서 빼고, 적으면 그만큼 합에 더해요. 그다음 전체 동그라미 수로 나눠 하나를 찾아요. 묻는 수를 다시 계산하고 합이 맞는지 확인해요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-b09",
+   "text": "한 문제 풀어 봐요. 합이 26이고, 큰 수는 작은 수의 2배보다 5 많아요. 작은 수는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-hint",
+   "text": "26에서 5를 빼면 동그라미 세 개가 남아요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-right",
+   "text": "맞았어요! 21을 셋으로 나누면 7이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-08-sum-multiple-applied-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }

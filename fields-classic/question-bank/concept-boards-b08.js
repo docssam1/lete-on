@@ -271,4 +271,173 @@ export const BOARDS_B08 = {
       ]
     };
   })()
+
+  ,"book-08/equalize-transfer": (() => {
+    const A = 19, B = 11, diff = A - B, give = diff / 2, each = A - give;
+    const C = 22, X = 160, YA = 140, YB = 186, NX = 640;
+    const cells = (n, from = 0) => Array.from({ length: n }, (_, i) => [0, from + i]);
+    const J = 3, S = 13, gap = S - J, mv = gap / 2, meet = J + mv;          // 하린 기준: 지호 +3, 서준 +13
+    const LX = 120, LU = 52, LY = 475, at = (v) => LX + v * LU;
+    const CHK = { a: 27, b: 15 }, chkV = (CHK.a - CHK.b) / 2;
+    return {
+      title: "주고받아 같게 — 차의 반만 옮겨요",
+      kicker: "8권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "많은 쪽이 적은 쪽에게 주어서 둘을 같게 만들어요. 몇 개를 주면 될까요? 한 개를 줄 때 차이가 얼마나 줄어드는지가 핵심이에요.",
+          items: [title("주고받아 같게")] },
+        { say: `다온이는 구슬 ${A}개, 루아는 ${B}개예요. 줄을 맞춰 늘어놓아요.`,
+          items: [T(70, YA + 18, "다온", "blue", 26), { kind: "cells", x: X, y: YA, cell: C, cells: cells(A), fill: "blue" }, T(70, YB + 18, "루아", "green", 26), { kind: "cells", x: X, y: YB, cell: C, cells: cells(B), fill: "green" }] },
+        { say: `줄을 맞추니 다온이가 ${diff}개 더 많아요. ${A} 빼기 ${jo(B, "은")} ${jo(diff, "이에요")}.`,
+          items: [{ kind: "box", x: X + B * C - 2, y: YA - 4, w: diff * C + 4, h: C + 8, color: "red", dash: true }, T(X + B * C + diff * C / 2, YA - 12, `차 ${diff}`, "red", 24, "center")] },
+        { say: `다온이가 한 개만 줘 볼까요? 다온이는 ${A - 1}개, 루아는 ${B + 1}개. 차이는 ${jo(A - B - 2, "이에요")}. 한 개를 줬는데 차이는 2가 줄었어요. 주는 쪽은 하나 줄고, 받는 쪽은 하나 늘기 때문이에요.`,
+          items: [T(NX, 160, `1개 주면 ${A - 1}, ${B + 1}`, "gold", 26), T(NX, 200, `차 ${diff} → ${diff - 2}  (2 줄어요)`, "gold", 26)] },
+        { say: `그러니 차이 ${diff}의 반만 주면 돼요. ${diff} 나누기 2는 ${give}. 다온이 줄 끝의 ${give}개를 루아 줄 끝으로 옮겨요.`,
+          items: [{ kind: "box", x: X + each * C - 2, y: YA - 2, w: give * C + 4, h: C + 4, color: "gold", dash: true }, { kind: "cells", x: X, y: YB, cell: C, cells: cells(give, B), fill: "gold" },
+            { kind: "arrow", x1: X + (each + give / 2) * C, y1: YA + C + 4, x2: X + (B + give / 2) * C + 6, y2: YB - 2, color: "gold", width: 3 }, T(NX, 250, `${diff} ÷ 2 = ${give}개`, "gold", 30)] },
+        { say: `확인해요. 다온이는 ${A} 빼기 ${give}, ${each}개. 루아는 ${B} 더하기 ${give}, ${each}개. 똑같아요.`,
+          items: [T(NX, 295, `${A} − ${give} = ${each},  ${B} + ${give} = ${each} ✓`, "green", 24)] },
+        { say: `이번엔 세 사람이에요. 하린이를 기준으로 봐요. 지호는 하린이보다 ${J}개 더, 서준이는 하린이보다 ${S}개 더 가지고 있어요. 서준이가 지호에게 몇 개 주면 둘이 같아질까요?`,
+          items: [{ kind: "line", x1: 60, y1: 335, x2: 940, y2: 335, color: "gray", width: 2, dash: true }, T(70, 380, `지호 = 하린 + ${J},  서준 = 하린 + ${S}`, "blue", 28)] },
+        { say: "하린이를 0으로 놓고 수직선을 그려요. 한 칸이 구슬 한 개예요. 지호는 3칸 오른쪽, 서준이는 13칸 오른쪽이에요.",
+          items: [{ kind: "line", x1: at(0) - 20, y1: LY, x2: at(S) + 30, y2: LY, color: "ink", width: 3 }, ...Array.from({ length: S + 1 }, (_, v) => ({ kind: "line", x1: at(v), y1: LY - 8, x2: at(v), y2: LY + 8, color: "gray", width: 2 })),
+            T(at(0), LY + 40, "하린", "ink", 22, "center"), T(at(J), LY + 40, "지호", "green", 22, "center"), T(at(S), LY + 40, "서준", "blue", 22, "center"),
+            { kind: "shape", type: "circle", cx: at(J), cy: LY, r: 9, color: "green", fill: "green" }, { kind: "shape", type: "circle", cx: at(S), cy: LY, r: 9, color: "blue", fill: "blue" }] },
+        { say: `지호와 서준이의 차는 ${S} 빼기 ${J}, ${jo(gap, "이에요")}. 하린이의 구슬 수는 몰라도 차는 알 수 있어요.`,
+          items: [{ kind: "arrow", x1: at(J) + 6, y1: LY - 26, x2: at(S) - 6, y2: LY - 26, bend: -30, color: "red", width: 3 }, T((at(J) + at(S)) / 2, LY - 62, `차 ${gap}`, "red", 24, "center")] },
+        { say: `차 ${gap}의 반, ${mv}개를 서준이가 지호에게 주면 돼요. 둘 다 하린이보다 ${meet}개 더 가진 자리에서 만나요.`,
+          items: [{ kind: "shape", type: "circle", cx: at(meet), cy: LY, r: 11, color: "gold", fill: "gold" }, T(at(meet), LY + 40, "만나는 곳", "gold", 20, "center"), T(NX, 380, `${gap} ÷ 2 = ${mv}개`, "gold", 28)] },
+        { say: "정리해요. 한 개를 주면 차이는 2 줄어요. 그래서 같게 하려면 차이의 반만 옮겨요. 세 사람이면 한 사람을 기준으로 수직선에 놓고 차를 구해요.", mood: "praise",
+          items: [T(60, 572, "한 개 주면 차는 2 줄어요 → 차의 반만 옮겨요", "gold", 26)] },
+        { say: `한 문제 풀어 봐요. ${CHK.a}개와 ${CHK.b}개를 같게 하려면 많은 쪽에서 몇 개를 옮기면 될까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK.a}개와 ${CHK.b}개를 같게 하려면 많은 쪽에서 몇 개를 옮길까요?`,
+            options: [`${CHK.a - CHK.b}개`, `${chkV}개`, `${CHK.a - chkV}개`], answer: 1,
+            hint: "차를 먼저 구하고, 그 반만 옮겨요.", sayHint: `${CHK.a} 빼기 ${jo(CHK.b, "는")} ${jo(CHK.a - CHK.b, "예요")}. 한 개 줄 때 차가 2 줄어요.`,
+            right: `맞았어요! 차 ${CHK.a - CHK.b}의 반, ${chkV}개.`, sayRight: `맞았어요! ${chkV}개를 주면 둘 다 ${jo(CHK.a - chkV, "가")} 돼요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-08/sum-difference-source": (() => {
+    const SUM = 25, DIF = 7, tri = (SUM - DIF) / 2, cir = tri + DIF;
+    const TOT = 34, GV = 4, D2 = GV * 2, small = (TOT - D2) / 2, big = small + D2;
+    const U = 16, BX = 130, BH = 34, NX = 520;
+    const bar = (x, y, n, fill, u = U) => ({ kind: "fill", x, y, w: n * u, h: BH, fill });
+    const U2 = 13;
+    const CHK = { tot: 20, gv: 3 }, chkBig = (CHK.tot + CHK.gv * 2) / 2;
+    return {
+      title: "합과 차로 두 수 찾기",
+      kicker: "8권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "두 수의 합과 차를 알면 두 수를 찾을 수 있어요. 막대 두 개를 그려서, 긴 막대의 남는 부분을 떼어 내는 것이 핵심이에요. 「주면 같아진다」는 말이 나오면 차를 먼저 찾아요.",
+          items: [title("합과 차")] },
+        { say: `동그라미 더하기 세모가 ${jo(SUM, "이고")}, 동그라미 빼기 세모가 ${jo(DIF, "이에요")}. 동그라미가 세모보다 ${DIF} 더 커요.`,
+          items: [T(70, 150, `○ + △ = ${SUM}`, "ink", 32), T(70, 195, `○ − △ = ${DIF}`, "ink", 32)] },
+        { say: `막대로 그려요. 세모 막대를 먼저 그리고, 동그라미 막대는 세모 막대보다 ${DIF}만큼 더 길게 그려요.`,
+          items: [T(70, 252, "○", "blue", 28), bar(BX, 228, tri, "blue"), { kind: "box", x: BX + tri * U, y: 228, w: DIF * U, h: BH, color: "red", dash: true }, T(BX + (tri + DIF / 2) * U, 220, `${DIF}`, "red", 22, "center"),
+            T(70, 300, "△", "red", 28), bar(BX, 276, tri, "red")] },
+        { say: `동그라미 막대에서 남는 ${jo(DIF, "을")} 떼어 내면 두 막대가 똑같아져요. 합도 ${DIF}만큼 줄어서 ${SUM} 빼기 ${DIF}, ${jo(SUM - DIF, "이에요")}.`,
+          items: [{ kind: "x", cx: BX + (tri + DIF / 2) * U, cy: 245, r: 14, color: "red" }, T(NX, 150, `${SUM} − ${DIF} = ${SUM - DIF}`, "red", 30)] },
+        { say: `똑같은 막대 두 개가 ${jo(SUM - DIF, "이니까")} 하나는 ${tri}. 세모는 ${jo(tri, "이에요")}. 동그라미는 세모보다 ${DIF} 크니까 ${tri} 더하기 ${DIF}, ${jo(cir, "이에요")}.`,
+          items: [T(NX, 195, `${SUM - DIF} ÷ 2 = ${tri}  →  △ = ${tri}`, "red", 28), T(NX, 240, `○ = ${tri} + ${DIF} = ${cir}`, "blue", 28), T(NX, 285, `${cir} + ${tri} = ${SUM},  ${cir} − ${tri} = ${DIF} ✓`, "green", 22)] },
+        { say: `이번엔 문장 문제예요. 가온이와 나리의 구슬을 합하면 ${TOT}개예요. 가온이가 나리에게 ${GV}개를 주면 둘이 같아져요. 가온이는 몇 개일까요?`,
+          items: [{ kind: "line", x1: 60, y1: 335, x2: 940, y2: 335, color: "gray", width: 2, dash: true }, T(70, 375, `가온 + 나리 = ${TOT},  가온이 ${GV}개 주면 같아요`, "blue", 26)] },
+        { say: `${GV}개를 주면 같아진다는 건, 차가 ${GV}의 두 배라는 뜻이에요. 주는 쪽은 ${GV} 줄고 받는 쪽은 ${GV} 늘어서 차가 ${D2} 줄었으니까요. 차는 ${jo(D2, "이에요")}.`,
+          items: [T(70, 428, "가온", "blue", 24), bar(BX, 405, small, "blue", U2), { kind: "box", x: BX + small * U2, y: 405, w: GV * U2, h: BH, color: "gold", dash: true }, { kind: "box", x: BX + (small + GV) * U2, y: 405, w: GV * U2, h: BH, color: "red", dash: true },
+            T(70, 476, "나리", "green", 24), bar(BX, 453, small, "green", U2), T(BX + (small + GV) * U2, 398, `차 ${GV} × 2 = ${D2}`, "red", 22, "center")] },
+        { say: `이제 합과 차를 알아요. 합 ${TOT}에서 차 ${jo(D2, "을")} 빼면 ${TOT - D2}, 반으로 나누면 ${small}. 나리는 ${small}개, 가온이는 ${small} 더하기 ${D2}, ${big}개예요.`,
+          items: [T(NX, 420, `(${TOT} − ${D2}) ÷ 2 = ${small}  →  나리 ${small}`, "green", 26), T(NX, 465, `가온 = ${small} + ${D2} = ${big}`, "blue", 26)] },
+        { say: `확인해요. 가온이가 ${GV}개를 주면 ${big} 빼기 ${GV}, ${jo(big - GV, "이고")}, 나리는 ${small} 더하기 ${GV}, ${jo(small + GV, "이에요")}. 같아졌어요.`,
+          items: [T(NX, 510, `${big} − ${GV} = ${big - GV},  ${small} + ${GV} = ${small + GV} ✓`, "green", 24)] },
+        { say: "정리해요. 합에서 차를 빼고 반으로 나누면 작은 수, 거기에 차를 더하면 큰 수예요. 몇 개를 주면 같아진다면, 차는 준 수의 두 배예요.", mood: "praise",
+          items: [T(60, 565, "(합 − 차) ÷ 2 = 작은 수 · 주면 같아짐 → 차 = 준 수 × 2", "gold", 24)] },
+        { say: `한 문제 풀어 봐요. 두 사람의 구슬을 합하면 ${CHK.tot}개예요. 많은 사람이 ${CHK.gv}개를 주면 둘이 같아져요. 많은 사람은 몇 개일까요?`, mood: "think",
+          items: [],
+          check: { question: `합 ${CHK.tot}개, 많은 사람이 ${CHK.gv}개를 주면 같아져요. 많은 사람은 몇 개?`,
+            options: [String(CHK.tot / 2), String(chkBig), String(CHK.tot / 2 + CHK.gv * 2)], answer: 1,
+            hint: `${CHK.gv}개를 주면 같아지니까 차는 ${jo(CHK.gv * 2, "이에요")}.`, sayHint: `주면 같아진다는 건 차가 준 수의 두 배라는 뜻이에요. 차는 ${jo(CHK.gv * 2, "이에요")}.`,
+            right: `맞았어요! 차 ${CHK.gv * 2}, 큰 수 (${CHK.tot} + ${CHK.gv * 2}) ÷ 2 = ${chkBig}.`, sayRight: `맞았어요! 많은 사람은 ${chkBig}개, 적은 사람은 ${CHK.tot - chkBig}개예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-08/sum-multiple-source": (() => {
+    const M1 = 6, SUM = 42, one1 = SUM / (M1 + 1);
+    const M2 = 5, DIF = 28, one2 = DIF / (M2 - 1);
+    const DX = 150, DG = 44, R = 17, NX = 520;
+    const dots = (y, n, color, from = 0) => Array.from({ length: n }, (_, i) => ({ kind: "shape", type: "circle", cx: DX + (from + i) * DG, cy: y, r: R, color, width: 3 }));
+    const vals = (y, n, v, color) => Array.from({ length: n }, (_, i) => T(DX + i * DG, y + 8, String(v), color, 20, "center"));
+    const Y = [165, 225, 410, 470];
+    const CHK = { sum: 45, m: 4 }, chkV = CHK.sum / (CHK.m + 1);
+    return {
+      title: "합과 배수 · 차와 배수 — 동그라미 하나를 구해요",
+      kicker: "8권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "한 수가 다른 수의 몇 배일 때는, 작은 수를 동그라미 하나로 그려요. 그러면 몇 배인 수는 동그라미 여러 개가 돼요. 동그라미 하나의 값을 찾는 것이 핵심이에요.",
+          items: [title("합과 배수 · 차와 배수")] },
+        { say: `하나는 작은 수, 바다는 하나의 ${M1}배예요. 둘을 더하면 ${jo(SUM, "이에요")}. 하나는 동그라미 한 개, 바다는 동그라미 ${KO[M1]} 개로 그려요.`,
+          items: [T(60, Y[0] + 9, "하나", "green", 24), ...dots(Y[0], 1, "green"), T(60, Y[1] + 9, "바다", "blue", 24), ...dots(Y[1], M1, "blue"), T(NX, 160, `하나 + 바다 = ${SUM},  바다 = 하나 × ${M1}`, "ink", 24)] },
+        { say: `동그라미를 모두 세어요. 하나의 한 개와 바다의 ${KO[M1]} 개, 모두 ${KO[M1 + 1]} 개가 ${jo(SUM, "이에요")}.`,
+          items: [{ kind: "box", x: DX - R - 10, y: Y[0] - R - 10, w: M1 * DG + 2, h: Y[1] - Y[0] + 2 * R + 20, color: "gold", dash: true }, T(NX, 210, `동그라미 ${M1 + 1}개 = ${SUM}`, "gold", 28)] },
+        { say: `${jo(SUM, "을")} ${KO[M1 + 1]} 개로 똑같이 나누면 ${one1}. 동그라미 하나는 ${jo(one1, "이에요")}. 동그라미마다 ${jo(one1, "을")} 써요.`,
+          items: [...vals(Y[0], 1, one1, "green"), ...vals(Y[1], M1, one1, "blue"), T(NX, 255, `${SUM} ÷ ${M1 + 1} = ${one1}`, "gold", 28)] },
+        { say: `하나는 동그라미 한 개라 ${jo(one1, "이고")}, 바다는 ${one1}의 ${M1}배, ${jo(one1 * M1, "이에요")}. ${one1} 더하기 ${jo(one1 * M1, "은")} ${jo(SUM, "이에요")}.`,
+          items: [T(NX, 300, `하나 ${one1},  바다 ${one1} × ${M1} = ${one1 * M1} ✓`, "green", 26)] },
+        { say: `이번엔 차를 알 때예요. 큰 수는 작은 수의 ${M2}배이고, 큰 수가 작은 수보다 ${DIF} 커요.`,
+          items: [{ kind: "line", x1: 60, y1: 340, x2: 940, y2: 340, color: "gray", width: 2, dash: true }, T(60, Y[2] + 9, "작은 수", "green", 20), ...dots(Y[2], 1, "green"), T(60, Y[3] + 9, "큰 수", "blue", 20), ...dots(Y[3], M2, "blue"), T(NX, 400, `큰 수 = 작은 수 × ${M2},  차 ${DIF}`, "ink", 24)] },
+        { say: `두 줄을 맞춰 보면, 큰 수의 첫 동그라미는 작은 수와 같아요. 더 많은 동그라미는 ${KO[M2 - 1]} 개. 그 ${KO[M2 - 1]} 개가 차 ${jo(DIF, "이에요")}.`,
+          items: [{ kind: "box", x: DX + DG - R - 8, y: Y[3] - R - 8, w: (M2 - 1) * DG - 10, h: 2 * R + 16, color: "red", dash: true }, T(DX + DG + (M2 - 2) * DG / 2, Y[3] + R + 32, `차 ${DIF}`, "red", 22, "center"), T(NX, 445, `더 많은 동그라미 ${M2 - 1}개 = ${DIF}`, "red", 26)] },
+        { say: `${DIF}을 ${KO[M2 - 1]} 개로 나누면 ${one2}. 동그라미 하나는 ${jo(one2, "이에요")}. 작은 수는 ${jo(one2, "이고")}, 큰 수는 ${one2}의 ${M2}배, ${jo(one2 * M2, "이에요")}.`,
+          items: [...vals(Y[2], 1, one2, "green"), ...vals(Y[3], M2, one2, "blue"), T(NX, 490, `${DIF} ÷ ${M2 - 1} = ${one2}  →  ${one2}, ${one2 * M2}`, "red", 26), T(NX, 532, `${one2 * M2} − ${one2} = ${DIF} ✓`, "green", 24)] },
+        { say: "정리해요. 작은 수를 동그라미 하나로 그려요. 합을 알면 전체 동그라미 수로, 차를 알면 더 많은 동그라미 수로 나눠요. 동그라미 하나를 찾으면 두 수가 다 나와요.", mood: "praise",
+          items: [T(60, 575, "합 ÷ 전체 동그라미 · 차 ÷ 더 많은 동그라미", "gold", 26)] },
+        { say: `한 문제 풀어 봐요. 두 수의 합은 ${jo(CHK.sum, "이고")}, 큰 수는 작은 수의 ${CHK.m}배예요. 작은 수는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `합 ${CHK.sum}, 큰 수 = 작은 수 × ${CHK.m}일 때 작은 수는?`,
+            options: [String(chkV), String(CHK.sum / CHK.m | 0), String(chkV * CHK.m)], answer: 0,
+            hint: `동그라미는 모두 ${CHK.m + 1}개예요.`, sayHint: `작은 수는 동그라미 하나, 큰 수는 동그라미 ${KO[CHK.m]} 개. 모두 ${KO[CHK.m + 1]} 개로 나눠요.`,
+            right: `맞았어요! ${CHK.sum} ÷ ${CHK.m + 1} = ${chkV}.`, sayRight: `맞았어요! 동그라미 ${KO[CHK.m + 1]} 개가 ${jo(CHK.sum, "이니까")} 하나는 ${jo(chkV, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-08/sum-multiple-applied-source": (() => {
+    const M1 = 3, EX = 4, SUM1 = 32, one1 = (SUM1 - EX) / (M1 + 1), big1 = one1 * M1 + EX;
+    const M2 = 4, LACK = 2, SUM2 = 43, one2 = (SUM2 + LACK) / (M2 + 1), big2 = one2 * M2 - LACK;
+    const DX = 150, DG = 44, R = 17, NX = 540;
+    const dots = (y, n, color) => Array.from({ length: n }, (_, i) => ({ kind: "shape", type: "circle", cx: DX + i * DG, cy: y, r: R, color, width: 3 }));
+    const vals = (y, n, v, color) => Array.from({ length: n }, (_, i) => T(DX + i * DG, y + 8, String(v), color, 20, "center"));
+    const Y = [165, 225, 410, 470];
+    const CHK = { sum: 26, m: 2, ex: 5 }, chkV = (CHK.sum - CHK.ex) / (CHK.m + 1);
+    return {
+      title: "몇 배보다 많거나 적을 때",
+      kicker: "8권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "몇 배보다 조금 많거나 조금 적은 수가 나오면, 덧붙은 수를 먼저 정리해요. 많으면 합에서 빼고, 적으면 합에 더해요. 그러면 동그라미만 남아요.",
+          items: [title("몇 배보다 많거나 적을 때")] },
+        { say: `형과 동생의 구슬을 합하면 ${jo(SUM1, "이에요")}. 형은 동생의 ${M1}배보다 ${EX}개 더 많아요. 동생은 동그라미 한 개, 형은 동그라미 ${KO[M1]} 개와 덧붙은 ${jo(EX, "로")} 그려요.`,
+          items: [T(60, Y[0] + 9, "동생", "green", 22), ...dots(Y[0], 1, "green"), T(60, Y[1] + 9, "형", "blue", 22), ...dots(Y[1], M1, "blue"),
+            { kind: "fill", x: DX + M1 * DG - R + 4, y: Y[1] - 14, w: EX * 12, h: 28, fill: "gold" }, T(DX + M1 * DG - R + 4 + EX * 6, Y[1] + 9, `+${EX}`, "ink", 20, "center"), T(NX, 160, `합 ${SUM1},  형 = 동생 × ${M1} + ${EX}`, "ink", 24)] },
+        { say: `덧붙은 ${jo(EX, "를")} 합에서 먼저 빼요. ${SUM1} 빼기 ${jo(EX, "는")} ${jo(SUM1 - EX, "이에요")}. 이제 동그라미만 ${KO[M1 + 1]} 개가 남았어요.`,
+          items: [{ kind: "x", cx: DX + M1 * DG - R + 4 + EX * 6, cy: Y[1], r: 13, color: "red" }, T(NX, 205, `${SUM1} − ${EX} = ${SUM1 - EX}  →  동그라미 ${M1 + 1}개`, "red", 26)] },
+        { say: `${SUM1 - EX}을 ${KO[M1 + 1]} 개로 나누면 ${one1}. 동생은 ${jo(one1, "이고")}, 형은 ${one1}의 ${M1}배에 ${jo(EX, "를")} 더해 ${jo(big1, "이에요")}.`,
+          items: [...vals(Y[0], 1, one1, "green"), ...vals(Y[1], M1, one1, "blue"), T(NX, 250, `${SUM1 - EX} ÷ ${M1 + 1} = ${one1}  →  동생 ${one1}`, "green", 26), T(NX, 295, `형 ${one1} × ${M1} + ${EX} = ${big1}  (${one1} + ${big1} = ${SUM1} ✓)`, "blue", 22)] },
+        { say: `이번엔 적은 경우예요. 두 수를 합하면 ${jo(SUM2, "이에요")}. 큰 수는 작은 수의 ${M2}배보다 ${LACK} 적어요. 큰 수의 동그라미 ${KO[M2]} 개 중 마지막 하나가 ${LACK}만큼 모자란 거예요.`,
+          items: [{ kind: "line", x1: 60, y1: 340, x2: 940, y2: 340, color: "gray", width: 2, dash: true }, T(60, Y[2] + 9, "작은 수", "green", 20), ...dots(Y[2], 1, "green"), T(60, Y[3] + 9, "큰 수", "blue", 20), ...dots(Y[3], M2, "blue"),
+            T(DX + M2 * DG - 6, Y[3] + 9, `−${LACK}`, "red", 22), T(NX, 400, `합 ${SUM2},  큰 수 = 작은 수 × ${M2} − ${LACK}`, "ink", 24)] },
+        { say: `모자란 ${jo(LACK, "를")} 채워 넣어요. 그러면 합도 ${LACK}만큼 커져서 ${SUM2} 더하기 ${LACK}, ${jo(SUM2 + LACK, "예요")}. 이제 동그라미 ${KO[M2 + 1]} 개가 꼭 맞아요.`,
+          items: [{ kind: "box", x: DX + M2 * DG - 12, y: Y[3] - 18, w: 46, h: 36, color: "gold", dash: true }, T(NX, 445, `${SUM2} + ${LACK} = ${SUM2 + LACK}  →  동그라미 ${M2 + 1}개`, "gold", 26)] },
+        { say: `${SUM2 + LACK}를 ${KO[M2 + 1]} 개로 나누면 ${one2}. 작은 수는 ${jo(one2, "이고")}, 큰 수는 ${one2}의 ${M2}배에서 ${LACK}를 빼 ${jo(big2, "예요")}.`,
+          items: [...vals(Y[2], 1, one2, "green"), ...vals(Y[3], M2, one2, "blue"), T(NX, 490, `${SUM2 + LACK} ÷ ${M2 + 1} = ${one2}  →  작은 수 ${one2}`, "green", 26), T(NX, 532, `큰 수 ${one2} × ${M2} − ${LACK} = ${big2}  (${one2} + ${big2} = ${SUM2} ✓)`, "blue", 20)] },
+        { say: "정리해요. 몇 배보다 많으면 그만큼 합에서 빼고, 적으면 그만큼 합에 더해요. 그다음 전체 동그라미 수로 나눠 하나를 찾아요. 묻는 수를 다시 계산하고 합이 맞는지 확인해요.", mood: "praise",
+          items: [T(60, 575, "많으면 빼고 · 적으면 더하고 → 동그라미 수로 나누기", "gold", 26)] },
+        { say: `한 문제 풀어 봐요. 합이 ${jo(CHK.sum, "이고")}, 큰 수는 작은 수의 ${CHK.m}배보다 ${CHK.ex} 많아요. 작은 수는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `합 ${CHK.sum}, 큰 수 = 작은 수 × ${CHK.m} + ${CHK.ex}일 때 작은 수는?`,
+            options: [String(chkV - 2), String(chkV + 2), String(chkV)], answer: 2,
+            hint: `덧붙은 ${CHK.ex}를 합에서 먼저 빼요.`, sayHint: `${CHK.sum}에서 ${jo(CHK.ex, "를")} 빼면 동그라미 ${KO[CHK.m + 1]} 개가 남아요.`,
+            right: `맞았어요! (${CHK.sum} − ${CHK.ex}) ÷ ${CHK.m + 1} = ${chkV}.`, sayRight: `맞았어요! ${CHK.sum - CHK.ex}을 셋으로 나누면 ${jo(chkV, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
 };
