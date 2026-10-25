@@ -75,6 +75,14 @@ M.articles.forEach((a,i)=>{
   if(!Array.isArray(a.age)||!a.age.length) errs.push('age 없음 — 어느 나이대에 실을지 정해야 한다');
   else a.age.forEach(g=>{ if(AGES.indexOf(g)<0) errs.push('age "'+g+'" 는 young·mid·senior 가 아님'); });
   if(!a.fit||typeof a.fit!=='object') errs.push('fit 없음(빈 배열이라도 둘 것)');
+  if(a.references !== undefined){
+    if(!Array.isArray(a.references)||!a.references.length) errs.push('references 는 근거 링크 목록이어야 함');
+    else a.references.forEach((r,j)=>{
+      if(typeof r.label!=='string'||!r.label.trim()) errs.push('근거 '+j+' 이름 없음');
+      try{ if(new URL(r.url).protocol!=='https:') throw new Error(); }
+      catch(e){ errs.push('근거 '+j+' HTTPS 주소 아님'); }
+    });
+  }
   if(errs.length){fails++;console.log('✗ '+id);errs.forEach(e=>console.log('   FAIL '+e));}
   wa.forEach(x=>{warns++;console.log('   warn '+id+': '+x);});
 });

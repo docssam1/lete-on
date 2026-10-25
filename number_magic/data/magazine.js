@@ -22,7 +22,7 @@
    나이대(age)로만 고르고 봉투 코드로 돌린다 — **과정 번호(주차)로는 고르지 않는다.**
 
    나이 표시(age) 기준 — 2026-09-30 원장 "과정과 난이도에 맞게":
-     young = 유아·초1~2 → 아직 맞는 기사가 없다(지면 없음). mid = 초3~4(축구공·삼각 탁자·뫼비우스·당구처럼
+     young = 유아·초1~2 → 주간 지면은 기존 언어사고력 구성을 유지(매거진 추가 없음). mid = 초3~4(축구공·삼각 탁자·뫼비우스·당구처럼
      그림으로 이해되는 것). senior = 초5 이상·중·고(평균·외심·생일 문제·지어낸 숫자처럼 개념어가 필요한 것).
 
    그림 규칙: viewBox 는 표제 320×170 · 본문 320×130 고정, 색은 아래 C 만,
@@ -43,7 +43,7 @@ const C = {
 const head = inner => '<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">'+inner+'</svg>';
 const fig  = inner => '<svg viewBox="0 0 320 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">'+inner+'</svg>';
 const T = (x,y,s,c,str,extra) => '<text x="'+x+'" y="'+y+'" text-anchor="middle" font-size="'+s
-  +'" font-weight="800" fill="'+c+'"'+(extra?' '+extra:'')+'>'+str+'</text>';
+  +'" font-weight="700" fill="'+c+'"'+(extra?' '+extra:'')+'>'+str+'</text>';
 const line = (x1,y1,x2,y2,c,w,dash) => '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2
   +'" stroke="'+c+'" stroke-width="'+(w||2)+'" stroke-linecap="round"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/>';
 const box = (x,y,w,h,f,s) => '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="6" fill="'+(f||C.paper)
@@ -175,9 +175,9 @@ function mobiusArt(cx, cy, R, w, n){
 
 window.NM_MAGAZINE = {
   name:{ ko:'수의 마법 매거진', en:'Numbers of Magic Magazine', zh:'数的魔法杂志' },
-  tagline:{ ko:'유닛에 안 들어가는, 그래도 꼭 읽어야 할 수학',
-            en:'The mathematics that does not fit a unit — and still has to be read',
-            zh:'放不进单元、却一定要读的数学' },
+  tagline:{ ko:'수학자와 함께 묻고, 그림으로 발견하는 수학',
+            en:'Ask, picture and discover mathematics',
+            zh:'提问、画图，发现数学' },
   articles:[
 
 /* ── 1. 평균 ───────────────────────────────────────────── */
@@ -646,4 +646,90 @@ window.NM_MAGAZINE = {
 
 
 ]};
+/* Original illustrated articles: see docs/math-story-sources-20261025.md. */
+const l3=(ko,en,zh)=>({ko,en,zh});
+const ref=(label,url)=>({label,url});
+const section=(h,p,art)=>({h,p,art});
+const strip=(x,y,w,h,n,k,colors)=>Array.from({length:n},(_,i)=>box(x+i*w/n,y,w/n,h,i<k?(colors?.[i]||C.ok):C.mist,C.sub)).join('');
+const cup=(x,y,amount)=>'<path d="M '+x+' '+y+' l 8 38 h 26 l 8 -38 Z" fill="'+C.cream+'" stroke="'+C.sub+'" stroke-width="2"/>'+'<path d="M '+(x+4)+' '+(y+15)+' l 5 21 h 24 l 5 -21 Z" fill="'+C.ok+'"/>'+T(x+21,y+61,16,C.ink,amount);
+const bun=(x,y)=>'<path d="M '+x+' '+(y+30)+' V '+(y+10)+' C '+(x-5)+' '+(y-3)+' '+(x+27)+' '+(y-3)+' '+(x+22)+' '+(y+10)+' V '+(y+30)+' Z" fill="'+C.goldbright+'" stroke="'+C.brown+'" stroke-width="2"/>'+line(x+6,y+8,x+10,y+4,C.brown,1.5)+line(x+12,y+10,x+16,y+6,C.brown,1.5);
+const turtle=(x,y)=>'<ellipse cx="'+x+'" cy="'+y+'" rx="18" ry="12" fill="'+C.ok+'" stroke="'+C.ink+'" stroke-width="2"/>'+dot(x+22,y-2,7,C.ok)+line(x-10,y+10,x-13,y+16,C.ink,3)+line(x+10,y+10,x+13,y+16,C.ink,3);
+const runner=(x,y)=>dot(x,y-23,7,C.gold)+line(x,y-14,x-3,y+5,C.ink,3)+line(x-3,y+5,x-14,y+17,C.ink,3)+line(x-3,y+5,x+12,y+14,C.ink,3)+line(x-1,y-9,x+13,y-15,C.ink,3);
+const articles=[
+{ id:'mz-sharing-fractions',no:9,age:['mid','senior'],fit:{units:[],threads:['FR1','FR2','FR3','FR9','FR8']},
+ kicker:l3('분수의 시작','Discovering fractions','认识分数'),
+ title:l3('분수가 먼저일까, 나눗셈이 먼저일까?','Fractions or division: which comes first?','先有分数，还是先有除法？'),
+ lede:l3('똑같이 나누다 보니 한 개보다 작은 양이 생겼어요. 그 양에도 이름을 붙일 수 있을까요?','Sharing equally can give us less than one whole. How can we give that amount a number?','平均分以后，每份可能不到一个。怎样给这个量起一个数字名字呢？'),
+ art:head(strip(32,35,112,42,3,3,[C.ok,C.gold,C.purple])+strip(32,93,112,42,3,3,[C.ok,C.gold,C.purple])+arrow(160,85,198,85,C.sub)+T(254,82,29,C.ink,'2 ÷ 3')+T(254,121,28,C.ok,'= 2/3')),
+ body:[
+ section(l3('여섯 개를 세 명에게','Six wholes, three people','六个分给三个人'),l3('빵 6개를 3명에게 하나씩 돌려 주세요. 한 명에게 2개씩 돌아갑니다. <b>전체 양 6 ÷ 사람 수 3 = 한 명의 양 2</b>예요. 답이 꼭 한 개보다 작아지는 것은 아니에요.','Deal six equal-sized buns to three people, one at a time. Each gets two. <b>Total amount 6 ÷ number of people 3 = amount per person 2.</b> Sharing need not give a result smaller than one.','把六个同样大的面包轮流分给三个人，每人分到两个。<b>总量6 ÷ 人数3 = 每人2个。</b>平均分的结果不一定比一个小。'),fig([0,1,2].map(i=>box(20+i*100,15,80,72,C.cream,C.sub)+bun(32+i*100,30)+bun(66+i*100,30)+T(60+i*100,114,20,C.ink,'2')).join(''))),
+ section(l3('한 개를 세 명에게','One whole, three people','一个分给三个人'),l3('이번에는 같은 크기의 빵이 1개뿐이에요. 똑같은 크기로 세 조각을 내어 한 조각씩 나눕니다. <b>한 개를 똑같이 셋으로 나눈 것 중 하나</b>를 ⅓이라고 해요. 그림에서 세 조각의 크기를 비교해 보세요.','Now there is only one bun. Cut it into three equal pieces and give each person one. <b>One of three equal parts of one whole</b> is one third, written 1/3. Compare the sizes of the three pieces in the picture.','现在只有一个面包。把它平均切成三份，每人一份。<b>把一个整体平均分成三份，其中的一份</b>就是三分之一，写作1/3。比较图中三份的大小。'),fig(strip(25,28,270,45,3,3,[C.ok,C.gold,C.purple])+[0,1,2].map(i=>T(70+i*90,110,21,C.ink,'1/3')).join(''))),
+ section(l3('두 개를 세 명에게','Two wholes, three people','两个分给三个人'),l3('빵 2개를 각각 똑같이 세 조각으로 나눠요. 한 명은 첫째 빵에서 ⅓개, 둘째 빵에서 ⅓개를 받습니다. 합치면 <b>⅔개</b>예요. 그래서 2 ÷ 3 = ⅔입니다. 그림에서는 같은 색 두 조각이 한 명의 몫이에요.','Cut each of two equal buns into thirds. Each person gets 1/3 of the first and 1/3 of the second: <b>2/3 of a bun</b> altogether. Thus 2 ÷ 3 = 2/3. The two pieces of the same colour belong to one person.','把两个同样大的面包各平均分成三份。每人从第一个得到1/3个，从第二个也得到1/3个，合起来是<b>2/3个</b>。所以2 ÷ 3 = 2/3。图中同色的两块是一人的份额。'),fig(strip(25,14,270,32,3,3,[C.ok,C.gold,C.purple])+strip(25,56,270,32,3,3,[C.ok,C.gold,C.purple])+T(160,119,21,C.ink,'1/3 + 1/3 = 2/3')))
+ ],close:l3('해 보기 · 같은 크기의 종이 빵 3개를 4명에게 나눠 보세요. 한 명의 몫은 빵 한 개의 얼마일까요?','Try it · Share three equal paper buns among four people. What fraction of one bun does each person get?','动手试试 · 把三个同样大的纸面包平均分给四个人，每人的份额是一个面包的几分之几？'),
+ source:l3('창작 나눠 먹기 활동입니다. 학습을 이해하는 순서이며, 분수와 나눗셈의 역사적 선후를 단정하지 않습니다.','An original sharing activity. This is a learning sequence, not a claim about which idea appeared first in history.','这是原创分享活动，说明学习上的联系，不断言分数和除法在历史上的先后。'),
+ references:[ref('EBS · 분수와 소수','https://livedown2.ebs.co.kr/ebsvod/elmt/live/%EC%B4%88%EB%93%B1%EB%A7%8C%EC%A0%90%EC%99%95_%EC%88%98%ED%95%993-1_4%EC%A3%BC%EC%B0%A8.pdf')]
+},
+{ id:'mz-two-divisions',no:10,age:['senior'],fit:{units:[],threads:['FR7','FR11','FR12']},
+ kicker:l3('나눗셈의 두 뜻','Two meanings of division','除法的两种含义'),
+ title:l3('얼마씩 나눌까, 몇 컵이 될까?','How much each, or how many cups?','每份多少，还是能装几杯？'),
+ lede:l3('같은 주스 ¾L로 다른 질문을 해 볼까요? 나눗셈식의 답이 무엇을 뜻하는지 그림에서 찾아보세요.','Ask two different questions about the same 3/4 litre of juice. Use the pictures to explain what each quotient means.','同样是3/4升果汁，可以提出两种问题。看看图，解释每个除法算式的商表示什么。'),
+ art:head(strip(25,32,270,36,4,3)+T(160,103,25,C.ink,'3/4 L')+T(92,148,22,C.ink,'÷ 3')+T(230,148,22,C.ink,'÷ 1/4')),
+ body:[
+ section(l3('등분제: 한 명에게 얼마씩?','Equal sharing: how much per person?','平均分：每人多少？'),l3('주스 ¾L를 3명에게 똑같이 나눠요. <b>나눌 사람 수</b>를 알고, 한 명의 양을 구합니다. ¾ ÷ 3 = ¼이므로 한 명당 ¼L예요. 그림의 세 컵은 같은 양이고, 합치면 처음 주스의 양이 됩니다.','Share 3/4 L equally among three people. We know <b>how many people share it</b> and seek the amount per person. Since 3/4 ÷ 3 = 1/4, each gets 1/4 L. The three equal portions together make the original amount.','把3/4升果汁平均分给三个人。已知<b>人数</b>，求每人分到多少。3/4 ÷ 3 = 1/4，所以每人得到1/4升。三杯一样多，合起来就是原有的果汁。'),fig([0,1,2].map(i=>cup(38+i*100,14,'1/4 L')).join('')+T(160,117,19,C.ink,'3/4 ÷ 3 = 1/4'))),
+ section(l3('포함제: 같은 컵이 몇 개?','Measuring: how many portions?','按份分：能装几杯？'),l3('이번에는 한 컵에 ¼L씩 담아요. <b>한 컵에 담을 양</b>을 알고, 컵 수를 구합니다. ¾L 안에 ¼L가 세 번 들어가므로 ¾ ÷ ¼ = 3이에요. 답 3은 주스의 양이 아니라 컵의 개수입니다.','Now fill each cup with 1/4 L. We know <b>the amount in each cup</b> and seek the number of cups. Three 1/4-L portions fit into 3/4 L, so 3/4 ÷ 1/4 = 3. Here 3 counts cups; it is not a volume.','这次每杯装1/4升。已知<b>每杯的量</b>，求杯数。3/4升中有三份1/4升，所以3/4 ÷ 1/4 = 3。答案3表示杯数，不表示果汁的升数。'),fig(strip(25,15,270,32,4,3)+[0,1,2].map(i=>line(59+i*68,50,59+i*68,70,C.ok,2)+T(59+i*68,95,17,C.ink,'1/4')).join('')+T(160,124,20,C.ink,'3/4 ÷ 1/4 = 3'))),
+ section(l3('먼저 답의 뜻을 말해요','Say what the answer will mean','先说商表示什么'),l3('“3명에게 똑같이”는 한 명의 양을, “¼L씩”은 몇 컵인지를 묻고 있어요. 계산 전에 <b>답에 붙일 말</b>을 골라 보세요. ‘한 명당 몇 L’인지 ‘몇 컵’인지 알면 식의 뜻도 또렷해집니다.','“Share among three people” asks for the amount each person receives. “Use 1/4 L per cup” asks how many cups. Before calculating, choose <b>the words that will describe the answer</b>: litres per person, or cups.','“平均分给三个人”求每人的量；“每杯装1/4升”求杯数。计算前先选好<b>描述答案的词</b>：每人多少升，还是多少杯。这样就能说清算式的意思。'),fig(T(160,37,23,C.ink,'3/4 L ÷ 3 = 1/4 L')+line(25,59,295,59,C.grey,2)+T(160,96,23,C.ink,'3/4 L ÷ (1/4 L) = 3')))
+ ],close:l3('해 보기 · 주스 ½L를 한 컵에 ¼L씩 담으면 몇 컵일까요? 종이띠에 1L를 정하고 ¼L 눈금을 그려 설명해 보세요.','Try it · How many 1/4-L cups can you fill with 1/2 L? Draw a strip for 1 L and mark the quarters to explain.','动手试试 · 半升果汁，每杯装1/4升，能装几杯？用一条纸带表示1升，画出每1/4升的刻度来说明。'),
+ source:l3('등분제는 분할 모델, 포함제는 측정 모델로 설명할 수 있습니다. 주스 그림과 수치는 이해를 위한 창작 예입니다.','Equal sharing is a partition model; counting equal portions is a measurement model. The juice examples and illustrations are original teaching models.','平均分可用分割模型解释，按每份量求份数可用测量模型解释。果汁的图和数值为原创教学示例。'),references:[ref('KERIS · 초등 수학 내용 전문성 향상','https://contents2.kocw.or.kr/KOCW/data/keris/2020/keris1/keris2/7.pdf')]
+},
+{ id:'mz-gauss-pairs',no:11,age:['mid','senior'],fit:{units:[],threads:['AD7','MD40','MD42','MD149','MD150']},
+ kicker:l3('가우스와 수열','Gauss and sums','高斯与求和'),
+ title:l3('앞과 뒤를 짝지으면 왜 빨라질까?','Why pair the first and last?','首尾配对，为什么算得快？'),
+ lede:l3('1부터 10까지 더해 보세요. 순서대로 더하는 대신, 양쪽 끝의 수를 만나게 하면 어떤 일이 생길까요?','Add the numbers from 1 to 10. What happens if you pair numbers from opposite ends instead of adding in order?','把1到10的数加起来。不按顺序加，而把两端的数配对，会发现什么？'),
+ art:head([0,1,2,3,4].map(i=>T(48+i*56,44,23,C.ink,String(i+1))+T(48+i*56,130,23,C.ink,String(10-i))+line(48+i*56,59,48+i*56,104,C.ok,2)).join('')+T(160,86,22,C.ok,'11')),
+ body:[
+ section(l3('합이 같은 짝 다섯 개','Five pairs with the same sum','五对的和都相同'),l3('1과 10, 2와 9, 3과 8을 짝지어 보세요. 앞의 수가 1 커질 때 뒤의 수는 1 작아져요. <b>짝의 합은 언제나 11</b>입니다. 4와 7, 5와 6도 같은지 확인해 보세요.','Pair 1 with 10, 2 with 9, and 3 with 8. As the first number grows by one, the second falls by one. <b>Each pair sums to 11.</b> Check the pairs 4 and 7, then 5 and 6 as well.','把1与10、2与9、3与8配成对。前面的数增加1，后面的数减少1，<b>每对的和总是11</b>。再检查4与7、5与6是不是也这样。'),fig(T(160,32,22,C.ink,'1 + 10 = 11')+T(160,73,22,C.ink,'2 + 9 = 11')+T(160,114,22,C.ink,'5 + 6 = 11'))),
+ section(l3('수 열 개, 짝은 다섯 개','Ten numbers make five pairs','十个数，五对'),l3('수는 10개지만 두 개씩 짝을 지었으니 짝은 5개예요. 11을 다섯 번 더하면 됩니다. <b>1 + 2 + … + 10 = 11 × 5 = 55</b>예요. 수의 개수와 짝의 개수를 헷갈리지 마세요.','There are ten numbers, but pairing two at a time gives five pairs. Add 11 five times: <b>1 + 2 + … + 10 = 11 × 5 = 55.</b> Distinguish the number of numbers from the number of pairs.','一共有十个数，每两个配一对，就得到五对。把11加五次：<b>1 + 2 + … + 10 = 11 × 5 = 55。</b>注意分清数的个数和配成的对数。'),fig([0,1,2,3,4].map(i=>box(15+i*60,20,50,44,C.cream,C.ok)+T(40+i*60,50,21,C.ink,'11')).join('')+T(160,110,26,C.ink,'11 × 5 = 55'))),
+ section(l3('가운데 수가 하나 남는다면?','What if one number is left?','中间剩一个数怎么办？'),l3('1부터 9까지라면 1과 9부터 짝을 지어 보세요. 합이 10인 짝이 네 개 생기고, 가운데 5가 남아요. <b>10 × 4 + 5 = 45</b>입니다. 수가 홀수 개일 때도 짝짓기를 쓸 수 있어요.','For 1 to 9, start with the pair 1 and 9. Four pairs each sum to 10, leaving the middle number 5. Thus <b>10 × 4 + 5 = 45.</b> Pairing still works when there is an odd number of terms.','把1到9相加时，先将1与9配对。得到四对，每对的和是10，中间还剩5。所以<b>10 × 4 + 5 = 45</b>。项数是奇数，也能用配对法。'),fig([0,1,2,3].map(i=>box(20+i*60,18,48,40,C.cream,C.ok)+T(44+i*60,46,20,C.ink,'10')).join('')+dot(282,38,20,C.gold)+T(282,45,21,C.ink,'5')+T(160,110,24,C.ink,'4 × 10 + 5 = 45')))
+ ],close:l3('해 보기 · 1부터 20까지의 합을 짝짓기로 구해 보세요. 한 짝의 합과 짝의 개수를 먼저 말해 보세요.','Try it · Pair the numbers from 1 to 20. First explain the sum of each pair and how many pairs there are.','动手试试 · 用首尾配对求1到20的和。先说每对的和是多少，一共有几对。'),
+ source:l3('가우스와 관련해 널리 소개되는 수열의 합 주제를 창작 예로 풀었습니다. 어린 시절 일화의 대사나 세부 상황을 역사적 사실로 재현하지 않았습니다.','An original pairing activity on sums associated with Gauss. It does not reconstruct dialogue or details of the childhood anecdote as historical fact.','本篇以常与高斯联系的求和主题设计原创配对活动，不把童年轶事的对白或细节当作史实重现。'),references:[ref('자음과모음 · 가우스와 수열의 합','https://www.jamomall.com/goods/goods_view.php?goodsNo=4002')]
+},
+{ id:'mz-leibniz-binary',no:12,age:['mid','senior'],fit:{units:[],threads:['NS1','NS5','MD10','MD36']},
+ kicker:l3('라이프니츠와 수 표현','Leibniz and numerals','莱布尼茨与记数'),
+ title:l3('0과 1만으로 13을 쓸 수 있을까?','Can just 0 and 1 write thirteen?','只用0和1，能写出十三吗？'),
+ lede:l3('우리는 0부터 9까지 열 가지 숫자를 써요. 숫자 두 가지만 쓰는 세계에서는 13을 어떻게 나타낼까요?','We use ten digits, 0 to 9. How could a number system with only two digits represent thirteen?','我们用0到9这十个数字。如果一种记数方法只用两个数字，会怎样表示十三呢？'),
+ art:head([8,4,2,1].map((v,i)=>box(20+i*75,25,60,62,[0,1,3].includes(i)?C.felt:C.mist,C.sub)+T(50+i*75,63,28,C.ink,String(v))+T(50+i*75,128,29,C.ink,[1,1,0,1][i])).join('')),
+ body:[
+ section(l3('왼쪽으로 가면 두 배','Each place doubles to the left','向左一位，就乘二'),l3('십진법의 자리는 오른쪽부터 1, 10, 100으로 커져요. <b>이진법</b>은 1, 2, 4, 8처럼 두 배씩 커집니다. 같은 1이라도 놓인 자리에 따라 나타내는 양이 달라져요.','Decimal places grow from right to left as 1, 10, 100. In <b>binary</b>, they grow as 1, 2, 4, 8, doubling each time. The digit 1 represents different amounts in different places.','十进制各位从右向左是1、10、100。<b>二进制</b>则是1、2、4、8，每次乘二。同样的数字1，放在不同位置就表示不同的量。'),fig([8,4,2,1].map((v,i)=>T(50+i*75,45,26,C.ink,String(v))+(i<3?arrow(96+i*75,84,75+i*75,84,C.ok,2):'')).join('')+T(160,118,21,C.ok,'× 2'))),
+ section(l3('13은 8과 4와 1','Thirteen is eight plus four plus one','十三等于八加四加一'),l3('8짜리, 4짜리, 2짜리, 1짜리 카드를 한 장씩 놓아요. 13을 만들려면 8, 4, 1을 고릅니다. <b>고르면 1, 고르지 않으면 0</b>을 써요. 그래서 십진법의 13은 이진법으로 1101입니다.','Lay out cards worth 8, 4, 2 and 1. Choose 8, 4 and 1 to make thirteen. Write <b>1 for a chosen card and 0 for an unused card</b>. Decimal thirteen is therefore 1101 in binary.','摆出面值为8、4、2、1的四张卡。选8、4、1，合起来是十三。<b>选中的写1，没选的写0</b>。所以十进制的十三写成二进制就是1101。'),fig(T(160,40,25,C.ink,'8 + 4 + 1 = 13')+T(160,86,28,C.ink,'1101')+line(160,97,160,114,C.sub,2))),
+ section(l3('라이프니츠가 설명한 방법','A method explained by Leibniz','莱布尼茨讲述的方法'),l3('라이프니츠는 1703년에 0과 1을 사용하는 이진 산술에 관한 글을 발표했어요. 오늘은 그 생각을 카드로 만나 보았습니다. <b>1101을 ‘천백일’로 읽으면 십진법의 뜻</b>이 되므로, 어느 진법인지 함께 말해야 해요.','In 1703 Leibniz published an account of arithmetic using 0 and 1. Our cards give one way to explore the idea. <b>1101 means thirteen only when read as binary</b>; always say which number system you are using.','1703年，莱布尼茨发表文章，介绍只用0和1的二进制运算。这里用卡片体验这个想法。<b>1101只有按二进制解释才表示十三</b>，因此要说清使用的是哪种进制。'),fig(box(25,20,270,85,C.cream,C.sub)+T(160,55,23,C.ink,'1101₂ = 13₁₀')+T(160,90,18,C.sub,'8 + 4 + 0 + 1')))
+ ],close:l3('해 보기 · 같은 네 장의 카드로 10과 15를 만들어 보세요. 고른 카드 아래에 1, 나머지에는 0을 써 보세요.','Try it · Use the same four cards to make ten and fifteen. Write 1 below chosen cards and 0 below the others.','动手试试 · 用同样四张卡表示十和十五。选中的卡下写1，其余写0。'),
+ source:l3('1703년 글의 존재는 MIT Press의 라이프니츠 원문 번역 목록으로 대조했습니다. 카드와 예시는 자체 제작했습니다.','The 1703 publication is documented in MIT Press’s collection of translated Leibniz texts. The cards and examples are original.','1703年的文章见于MIT Press收录的莱布尼茨原文译作目录。卡片和例子为原创。'),references:[ref('MIT Press · Leibniz on Binary','https://direct.mit.edu/books/monograph/5492/Leibniz-on-BinaryThe-Invention-of-Computer')]
+},
+{ id:'mz-napier-log',no:13,age:['senior'],fit:{units:[],threads:['MD37','MD38','MD135','MD138','MD139']},
+ kicker:l3('네이피어와 로그','Napier and logarithms','纳皮尔与对数'),
+ title:l3('곱셈을 덧셈으로 바꾸는 비밀','The secret of turning products into sums','把乘法变成加法的秘密'),
+ lede:l3('큰 수의 곱셈을 매번 손으로 해야 한다면 어떨까요? 수학자들은 계산을 줄이는 방법을 찾았어요.','Imagine doing every large multiplication by hand. Mathematicians looked for ways to make those calculations shorter.','如果每一道大数乘法都要手算，会怎样呢？数学家一直在寻找简化计算的方法。'),
+ art:head(T(160,40,27,C.ink,'100 × 1000 = 100000')+arrow(160,58,160,93,C.ok)+T(160,136,29,C.ink,'2 + 3 = 5')),
+ body:[
+ section(l3('거듭제곱의 지수를 살펴요','Look at the exponents','先观察指数'),l3('100은 10², 1000은 10³이에요. 곱하면 10을 다섯 번 곱한 10⁵이 됩니다. <b>10² × 10³ = 10²⁺³</b>이므로 지수끼리는 더해져요. 곱셈을 다른 층에서 바라본 셈입니다.','Write 100 as 10² and 1000 as 10³. Their product has five factors of ten: 10⁵. Since <b>10² × 10³ = 10²⁺³</b>, the exponents add. We have described multiplication on another level.','100是10²，1000是10³。相乘后有五个10相乘，得到10⁵。因为<b>10² × 10³ = 10²⁺³</b>，所以指数相加。这是从另一个层次看乘法。'),fig(T(160,37,24,C.ink,'10² × 10³ = 10⁵')+T(160,87,24,C.ok,'2 + 3 = 5'))),
+ section(l3('로그는 지수를 묻는 말','A logarithm asks for an exponent','对数是在问指数'),l3('log₁₀100 = 2는 “10을 몇 제곱하면 100일까?”의 답이 2라는 뜻이에요. 양수 A, B에 대해 <b>log₁₀(AB) = log₁₀A + log₁₀B</b>입니다. A, B가 양수라는 조건도 함께 기억해요.','The statement log₁₀100 = 2 answers “To what power must ten be raised to make 100?” For positive A and B, <b>log₁₀(AB) = log₁₀A + log₁₀B</b>. The condition that A and B are positive matters.','log₁₀100 = 2的意思是：“10的几次方等于100？”答案是2。对正数A和B，有<b>log₁₀(AB) = log₁₀A + log₁₀B</b>。不要忘记A、B为正数这一条件。'),fig(T(160,36,23,C.ink,'10² = 100')+arrow(160,49,160,75,C.ok)+T(160,108,23,C.ink,'log₁₀ 100 = 2'))),
+ section(l3('옛 로그와 오늘의 로그','Early and modern logarithms','早期对数和今天的对数'),l3('네이피어는 1614년에 로그표를 발표했어요. 그의 정의는 오늘 배우는 밑이 10인 로그와 같지 않았습니다. <b>여기 그림의 식은 현대의 상용로그</b>예요. 역사 속 시작과 오늘의 계산법을 구분해서 읽어요.','Napier published logarithmic tables in 1614. His definition was not the modern base-ten logarithm. <b>The equations here use modern common logarithms</b>. Distinguish the historical beginning from the notation we learn today.','纳皮尔于1614年发表对数表，他的定义与今天以10为底的对数并不相同。<b>本页算式使用现代常用对数</b>。要分清历史起点和今天学习的计算方法。'),fig(box(35,16,250,90,C.cream,C.sub)+T(160,53,26,C.ink,'1614')+T(160,88,22,C.ink,'log₁₀ 1000 = 3')))
+ ],close:l3('해 보기 · 1000 × 1000을 10의 거듭제곱과 지수의 덧셈으로 각각 설명해 보세요.','Try it · Explain 1000 × 1000 using powers of ten and then the addition of their exponents.','动手试试 · 用10的幂以及指数相加，分别解释1000 × 1000。'),
+ source:l3('Open University의 네이피어 해설로 연도와 정의의 차이를 확인했습니다. 수치·그림은 현대 로그를 설명하는 창작 예입니다.','The Open University account documents the date and the difference in definitions. The numerical illustrations are original examples of modern logarithms.','年份及定义差异参照英国开放大学的纳皮尔专题。数值和图是用于解释现代对数的原创例子。'),references:[ref('Open University · John Napier','https://www.open.edu/openlearn/science-maths-technology/mathematics-statistics/john-napier/content-section-5/?printable=1')]
+},
+{ id:'mz-zeno',no:14,age:['senior'],fit:{units:[],threads:['MD41','MD43','MD149','MD151','MD152']},
+ kicker:l3('제논의 역설','Zeno’s paradox','芝诺悖论'),
+ title:l3('거북이를 정말 따라잡을 수 없을까?','Can Achilles ever catch the tortoise?','阿基里斯能追上乌龟吗？'),
+ lede:l3('빠른 아킬레우스와 느린 거북이가 달려요. 거북이에게 먼저 출발할 자리를 주면, 빠른 쪽도 영원히 못 따라잡을까요?','Fast Achilles races a slow tortoise. If the tortoise starts ahead, could even the faster runner fail to catch it forever?','跑得快的阿基里斯追赶慢乌龟。让乌龟先站在前面，快的一方就永远追不上了吗？'),
+ art:head(line(24,125,296,125,C.ink,3)+runner(35,103)+turtle(155,107)+arrow(67,96,120,96,C.gold)+arrow(184,96,216,96,C.ok)+T(43,35,18,C.ink,'2 m/s')+T(157,67,18,C.ink,'1 m/s')+T(35,156,17,C.sub,'0')+T(155,156,17,C.sub,'1 m')+T(275,156,17,C.sub,'2 m')),
+ body:[
+ section(l3('앞선 자리까지 가는 동안','While reaching its old position','跑到乌龟原来的位置'),l3('설명을 위한 모형으로 거북이가 1m 앞, 두 속도는 초당 2m와 1m라고 해요. 아킬레우스가 처음 거북이 자리에 가는 데 ½초가 걸립니다. 그동안 거북이는 ½m 더 가요. <b>다음 목표가 또 생기는 것</b>이 역설의 출발이에요.','In our teaching model, the lead is 1 m and the speeds are 2 m/s and 1 m/s. Achilles needs 1/2 s to reach the tortoise’s starting point. Meanwhile it moves another 1/2 m. <b>There is always another earlier position to reach</b>: this starts the puzzle.','用一个教学模型：乌龟领先1米，两者速度为每秒2米和1米。阿基里斯用1/2秒跑到乌龟起点，乌龟又前进1/2米。<b>前面总又出现一个目标位置</b>，悖论就从这里开始。'),fig(line(25,92,295,92,C.ink,2)+[30,150,210,270].map(x=>line(x,88,x,98,C.ink,2)).join('')+runner(150,65)+turtle(210,67)+T(150,122,17,C.ink,'1 m')+T(210,122,17,C.ink,'1.5 m')+T(60,35,20,C.sub,'1/2 s'))),
+ section(l3('단계 수와 걸리는 시간은 달라요','Many stages need not mean unlimited time','步骤无限，时间一定无限吗？'),l3('다음 추격에는 ¼초, 그다음에는 ⅛초가 걸려요. 단계마다 시간이 줄어듭니다. ½ + ¼ + ⅛ + …의 <b>부분합은 1에 가까워져요</b>. 항이 끝없이 많다고 해서 합이 반드시 끝없이 커지는 것은 아닙니다.','The next stages take 1/4 s, then 1/8 s, and keep shrinking. The <b>partial sums of 1/2 + 1/4 + 1/8 + … approach 1</b>. Infinitely many terms do not necessarily make an unbounded total.','下一段追赶用1/4秒，再下一段用1/8秒，每段时间都在缩短。1/2 + 1/4 + 1/8 + …的<b>部分和越来越接近1</b>。项数无限多，并不意味着总和必然无限大。'),fig(strip(20,24,280,35,16,15,Array(8).fill(C.ok).concat(Array(4).fill(C.gold),Array(2).fill(C.purple),C.red))+T(160,99,21,C.ink,'1/2 + 1/4 + 1/8 + 1/16 = 15/16'))),
+ section(l3('같은 순간의 두 위치를 비교해요','Compare positions at the same time','比较同一时刻的位置'),l3('출발 1초 뒤 아킬레우스는 2m 지점, 거북이도 1 + 1 = 2m 지점에 있어요. 이 모형에서는 <b>1초 뒤에 만나고, 그 뒤에는 앞서갑니다</b>. 극한은 끝없이 나눈 단계를 유한한 시간과 연결해 주는 수학 도구예요.','After 1 s, Achilles is at 2 m. The tortoise is also at 1 + 1 = 2 m. In this model <b>they meet after one second, and Achilles then passes it</b>. Limits connect infinitely subdivided stages with a finite elapsed time.','出发1秒后，阿基里斯在2米处，乌龟也在1 + 1 = 2米处。在这个模型中，<b>1秒后相遇，随后阿基里斯超过乌龟</b>。极限把无限细分的步骤与有限时间联系起来。'),fig(line(25,52,295,52,C.ink,2)+line(25,99,295,99,C.ink,2)+line(250,8,250,99,C.sub,2,'4 4')+runner(250,34)+turtle(250,81)+T(82,40,22,C.sub,'t = 1 s')+T(160,122,20,C.ink,'2 × 1 = 1 + 1 × 1')))
+ ],close:l3('해 보기 · 종이띠를 반씩 네 번 나누어 색칠해 보세요. 칠한 부분은 15/16, 남은 부분은 1/16이에요. 유한한 네 단계의 합과 극한 1은 어떻게 다른가요?','Try it · Shade half the remaining paper strip four times. The shaded amount is 15/16 and the remainder 1/16. How does that finite sum differ from its limit, 1?','动手试试 · 每次把剩余纸带的一半涂色，共涂四次。涂色部分为15/16，剩1/16。这有限四步的和与极限1有什么不同？'),
+ source:l3('제논의 아킬레우스 역설을 바탕으로 만든 수치 모형입니다. 극한에 의한 수학적 설명을 다루며, 운동과 무한에 관한 철학적 논의 전체가 끝났다는 뜻은 아닙니다.','An original numerical model of Zeno’s Achilles paradox. It illustrates a mathematical account using limits, not a resolution of every philosophical issue about motion and infinity.','这是根据芝诺追龟悖论设计的数值模型，说明极限的数学解释，不意味着运动与无限的所有哲学问题都已解决。'),references:[ref('Stanford · Zeno’s Paradoxes','https://plato.stanford.edu/entries/paradox-zeno/'),ref('Open University · Achilles and the Tortoise','https://www.open.edu/openlearn/mod/oucontent/view.php?id=135657&section=5.1')]
+}
+];
+window.NM_MAGAZINE.articles.push(...articles);
+
 })();

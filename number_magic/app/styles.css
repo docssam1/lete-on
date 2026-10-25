@@ -2994,6 +2994,8 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
   border:1px solid #E4D9BC;font-size:14px;font-weight:800;color:var(--blue-deep,#0E2C57);
   line-height:1.7;word-break:keep-all}
 .nm-mza-src{margin-top:12px;font-size:11.5px;line-height:1.7;color:var(--sub);word-break:keep-all}
+.nm-mza-refs{display:flex;flex-wrap:wrap;gap:8px;line-height:1.6;font-size:13px}
+.nm-mza-refs a{display:inline-flex;align-items:center;min-height:44px;color:var(--ink,#1A2233);text-decoration:underline;overflow-wrap:anywhere}
 .nm-mza-nav{display:flex;gap:10px;margin-top:22px}
 .nm-mza-nav button{flex:1}
 @media (max-width:520px){

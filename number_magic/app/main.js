@@ -7620,6 +7620,11 @@ function screenSymbolDex(){
    상태: S._mzOpen(지금 펼친 기사 id, 저장 안 함) · S.magazine.read(영구)
    ============================================================ */
 function mzArticles(){ return (window.NM_MAGAZINE && window.NM_MAGAZINE.articles) || []; }
+function mzRich(text){ return esc(String(text || '')).replace(/&lt;(\/?)b&gt;/g, '<$1b>'); }
+function mzReferences(article){
+  return (article.references || []).filter(r => /^https:\/\//.test(r.url || ''))
+    .map(r => `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.label)}</a>`).join(' · ');
+}
 function mzRead(id){ return !!((S.magazine||{}).read||{})[id]; }
 function mzMarkRead(id){
   if(!S.magazine) S.magazine={read:{}};
@@ -7667,7 +7672,7 @@ function screenMagazine(){
   const secs=(open.body||[]).map(b=>`
     <div class="nm-mza-sec">
       <h4>${esc(L(b.h))}</h4>
-      <p>${esc(L(b.p))}</p>
+      <p>${mzRich(L(b.p))}</p>
       <div class="nm-mza-fig">${b.art||''}</div>
     </div>`).join('');
   scr.innerHTML=`<div class="nm-gc-wrap">
@@ -7676,11 +7681,12 @@ function screenMagazine(){
       <article class="nm-mza">
         <div class="nm-mza-kicker">${esc(L(open.kicker))}</div>
         <h3 class="nm-mza-title">${esc(L(open.title))}</h3>
-        <p class="nm-mza-lede">${esc(L(open.lede))}</p>
+        <p class="nm-mza-lede">${mzRich(L(open.lede))}</p>
         <div class="nm-mza-hero">${open.art||''}</div>
         ${secs}
-        <div class="nm-mza-close">${esc(L(open.close))}</div>
+        <div class="nm-mza-close">${mzRich(L(open.close))}</div>
         <p class="nm-mza-src">${esc(L(open.source))}</p>
+        ${open.references ? `<div class="nm-mza-refs">${mzReferences(open)}</div>` : ''}
         <div class="nm-mza-nav">
           <button class="nm-btn ghost" id="mzList">${ko?'매거진 목록으로':en?'Back to magazine list':'返回杂志目录'}</button>
           ${list.length>1?`<button class="nm-btn" id="mzNext">${ko?'다음 기사':en?'Next article':'下一篇'} →</button>`:''}
