@@ -273,6 +273,25 @@
 .tx-mgrid i { color: #566274; font-size: 12px; font-style: normal; font-weight: 800; text-align: center; }
 .tx-ring { display: grid; justify-items: center; max-width: 100%; }
 .tx-ring svg { max-width: 100%; height: auto; }
+.tx-tree { display: grid; justify-items: center; gap: 2px; }
+.tx-tree div { display: flex; gap: 10px; }
+.tx-tree i { color: #566274; font-style: normal; font-size: 14px; }
+.tx-tree span { display: flex; align-items: center; justify-content: center; min-width: 42px; height: 38px; border: 2px solid #f0a500; border-radius: 9px; background: #fff3c4; color: #222; font-size: 18px; font-weight: 900; }
+.tx-tree span.ask { border: 2px dashed #8e5bd8; background: #fff; color: #5b2fa8; }
+.tx-stages { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.tx-stages div { display: grid; justify-items: center; gap: 3px; }
+.tx-stages small { color: #566274; font-size: 12px; font-weight: 800; }
+.tx-stages table { border-collapse: separate; border-spacing: 3px; }
+.tx-stages td { width: 30px; height: 30px; border: 2px solid #f0a500; border-radius: 6px; background: #fff3c4; text-align: center; font-size: 15px; font-weight: 900; }
+.tx-stages td.ask { border: 2px dashed #8e5bd8; background: #fff; color: #5b2fa8; }
+.tx-match { display: grid; justify-items: center; max-width: 100%; }
+.tx-match svg { max-width: 100%; height: auto; }
+.tx-diamonds { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.tx-diamonds .dm { display: grid; grid-template-columns: repeat(3, 28px); grid-template-rows: repeat(3, 26px); grid-template-areas: ". t ." "l . r" ". b ."; padding: 4px; border: 2px solid #e3dccb; border-radius: 10px; background: #fffdf7; }
+.tx-diamonds .dm.ask { border-color: #8e5bd8; }
+.tx-diamonds b { display: flex; align-items: center; justify-content: center; color: #222; font-size: 15px; font-weight: 900; }
+.tx-diamonds .t { grid-area: t; color: var(--tone); } .tx-diamonds .l { grid-area: l; } .tx-diamonds .r { grid-area: r; } .tx-diamonds .b { grid-area: b; }
+.tx-diamonds .dm.ask .t { color: #5b2fa8; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

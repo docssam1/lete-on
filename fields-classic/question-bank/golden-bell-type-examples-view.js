@@ -712,8 +712,37 @@ function ringFigure(f) {
   return `<div class="tx-ring">${svg(C * 2, C * 2, body, `${n}각형 곱셈 고리`)}</div>`;
 }
 
+// ───── 2권 수: 가르기 나무 · 단계 표 · 성냥개비 · 숫자 마름모 ─────
+function treeFigure(f) {
+  const color = TONE[f.tone || "given"];
+  return `<div class="tx-tree" style="--tone:${color}">${f.levels.map((lv, i) => `${i ? `<i>${lv.map(() => "↙↘").slice(0, 1)}</i>` : ""}<div>${lv.map((v) => `<span class="${v === null ? "ask" : ""}">${v === null ? "?" : v}</span>`).join("")}</div>`).join("")}</div>`;
+}
+function stagesFigure(f) {
+  const color = TONE[f.tone || "given"];
+  return `<div class="tx-stages" style="--tone:${color}">${f.stages.map((g, k) => `<div><small>${k + 1}단계</small><table>${g.map((row) => `<tr>${row.map((v) => `<td class="${v === null ? "ask" : ""}">${v === null ? "?" : v}</td>`).join("")}</tr>`).join("")}</table></div>`).join("")}</div>`;
+}
+// match-row: 성냥개비 정사각형 n개를 한 줄로(겹치는 변은 함께 씀)
+function matchRowFigure(f) {
+  const color = TONE[f.tone || "given"], s = 26, W = f.n * s + 20, H = s + 30;
+  let body = "";
+  const stick = (x1, y1, x2, y2, on) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${on ? color : "#c97a2b"}" stroke-width="4" stroke-linecap="round"/>`;
+  for (let i = 0; i < f.n; i++) { const x = 10 + i * s, on = f.hi === i; body += stick(x, 8, x + s, 8, on) + stick(x, 8 + s, x + s, 8 + s, on) + stick(x + s, 8, x + s, 8 + s, on); if (i === 0) body += stick(x, 8, x, 8 + s, false); }
+  if (f.caption) body += text(W / 2, H - 6, f.caption, { size: 12, weight: 900, fill: color });
+  return `<div class="tx-match">${svg(W, H, body, `성냥개비 정사각형 ${f.n}개`)}</div>`;
+}
+// diamonds: 숫자 마름모 여러 개 { top, left, right, bottom }(null = 「?」)
+function diamondsFigure(f) {
+  const color = TONE[f.tone || "given"];
+  const one = (d, ask) => `<div class="dm${ask ? " ask" : ""}"><b class="t">${d.top ?? "?"}</b><b class="l">${d.left}</b><b class="r">${d.right}</b><b class="b">${d.bottom}</b></div>`;
+  return `<div class="tx-diamonds" style="--tone:${color}">${f.items.map((d) => one(d, d.top === null)).join("")}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "tree") return treeFigure(figure);
+  if (figure.kind === "stages") return stagesFigure(figure);
+  if (figure.kind === "match-row") return matchRowFigure(figure);
+  if (figure.kind === "diamonds") return diamondsFigure(figure);
   if (figure.kind === "mgrid") return mgridFigure(figure);
   if (figure.kind === "ring") return ringFigure(figure);
   if (figure.kind === "crypt") return cryptFigure(figure);

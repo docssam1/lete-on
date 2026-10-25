@@ -2136,7 +2136,112 @@ const PMATRIX_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET });
+// ───────────────────────── 2권 가르기 · 같은 수의 묶음 · 도형식 · 수열 · 자라는 모양 · 숫자 약속 ─────────────────────────
+// 수열은 「늘어난 수」를 먼저 본다: 늘 같으면 등차, 몇 배면 등비, 늘어난 수가 1씩 커지면 계차, 앞의 두 수를 더하면 피보나치 꼴.
+// 값은 모두 코드가 계산하고, 검사기는 규칙마다 따로 다음 수를 만들어 본다.
+function splitExample({ id, title, value, parts }) {
+  const levels = [[value]]; let cur = value;
+  for (const p of parts) { cur /= p; if (!Number.isInteger(cur)) throw new Error(`${id}: 나누어떨어지지 않음`); levels.push(Array(levels.at(-1).length * p).fill(cur)); }
+  const hide = (k) => levels.map((lv, i) => (i <= k ? lv : lv.map(() => null)));
+  const steps = parts.map((p, i) => ({ text: `${josa(levels[i][0], "을")} ${p === 2 ? "두" : "세"} 수로 똑같이 가르면 ${levels[i][0]} ÷ ${p} = ${levels[i + 1][0]}.${p === 2 ? ` ${levels[i + 1][0]} + ${levels[i + 1][0]} = ${levels[i][0]}, 맞아요.` : ""}`, figure: { kind: "tree", levels: hide(i + 1), tone: i === parts.length - 1 ? "check" : "doing" } }));
+  if (steps.length === 1) steps.unshift({ text: `똑같이 가르면 나뉜 수가 모두 같아요. ${parts[0] === 2 ? "같은 수 두 개를 더해" : "같은 수 세 개를 더해"} ${josa(value, "이")} 되는 수를 찾아요.`, figure: { kind: "tree", levels: hide(0), tone: "doing" } });
+  const what = parts.length > 1 ? `${josa(value, "을")} 먼저 두 수로, 다시 ${levels.at(-1).length}개의 수로 똑같이 가를 때 마지막 한 수는 얼마일까요?` : `${josa(value, "을")} ${parts[0] === 2 ? "두" : "세"} 수로 똑같이 가르면 한 수는 얼마일까요?`;
+  return { id, title, problem: what, figure: { kind: "tree", levels: hide(0), tone: "given" }, steps, answer: `한 수는 ${josa(cur, "이에요")}.`, value: { kind: "split", value, parts, one: cur } };
+}
+function repeatAddExample({ id, title, n, times }) {
+  const expr = Array(times).fill(n).join(" + "), total = n * times;
+  const steps = [
+    { text: `${josa(n, "이")} ${times}번 더해져 있어요. 같은 수를 여러 번 더하면 곱셈으로 바꿀 수 있어요. ${expr} = ${n} × ${times}.`, figure: { kind: "eqs", lines: [`${expr} = ?`, `${n} × ${times} = ?`], tone: "doing" } },
+    { text: `${n} × ${times} = ${total}.`, figure: { kind: "eqs", lines: [`${expr} = ${total}`], tone: "check" } }
+  ];
+  return { id, title, problem: `${expr} = ?에서 ?에 알맞은 수를 구해요.`, figure: { kind: "eqs", lines: [`${expr} = ?`], tone: "given" }, steps, answer: `?는 ${josa(total, "이에요")}.`, value: { kind: "repeat", n, times, total } };
+}
+// ○ + ○ = □처럼 같은 ○를 times번 더한 식에 맞는 카드 두 장
+function cardEqExample({ id, title, cards, times }) {
+  const fits = cards.flatMap((a) => cards.filter((b) => b !== a && a * times === b).map((b) => [a, b]));
+  if (fits.length !== 1) throw new Error(`${id}: 답이 하나가 아님`);
+  const [a, b] = fits[0], form = `${Array(times).fill("○").join(" + ")} = □`;
+  const steps = [
+    { text: `○를 ${times}번 더하면 ○ × ${times}예요. 카드마다 ${times}배를 해 봐요. ${cards.map((c) => `${c} × ${times} = ${c * times}`).join(", ")}.`, figure: { kind: "eqs", lines: [form], tone: "doing" } },
+    { text: `${times}배 한 수가 카드에 있는 건 ${a} × ${times} = ${b}뿐이에요. ○ = ${a}, □ = ${b}.`, figure: { kind: "eqs", lines: [`${Array(times).fill(a).join(" + ")} = ${b}`], tone: "check" } }
+  ];
+  return { id, title, problem: `숫자 카드 ${cards.join(", ")} 중에서 두 장을 골라 ${form}를 만들어요. ○와 □는 각각 얼마일까요?`, figure: { kind: "eqs", lines: [form], note: `카드: ${cards.join(", ")}`, tone: "given" }, steps, answer: `○는 ${a}, □는 ${josa(b, "이에요")}.`, value: { kind: "cards2", cards, times, a, b } };
+}
+// 도형식: lines = [[모양, 식]] — 앞에서 구한 모양을 다음 식에 바꾸어 넣는다(식은 +, −만)
+function shapeChainExample({ id, title, lines }) {
+  const val = {};
+  const evalExpr = (e) => e.split(" ").reduce((acc, tok, i, arr) => (i === 0 ? Number(val[tok] ?? tok) : tok === "+" || tok === "−" ? acc : arr[i - 1] === "+" ? acc + Number(val[tok] ?? tok) : acc - Number(val[tok] ?? tok)), 0);
+  const steps = lines.map(([sym, e], i) => { const v = evalExpr(e); val[sym] = v; const shown = e.split(" ").map((t) => (i > 0 && val[t] !== undefined && t !== sym ? val[t] : t)).join(" "); return { text: i === 0 ? `${e} = ${ira(v)} ${sym} = ${v}.` : `${josa(Object.keys(val).filter((k) => e.includes(k) && k !== sym).join(", "), "을")} 바꾸어 넣으면 ${shown} = ${v}. ${sym} = ${v}.`, figure: { kind: "eqs", lines: lines.map(([s2, e2]) => `${e2} = ${s2}`), on: [i], tone: i === lines.length - 1 ? "check" : "doing" } }; });
+  return { id, title, problem: `${lines.map(([s, e]) => `${e} = ${s}`).join(", ")}이에요. 도형이 나타내는 수를 구해요.`, figure: { kind: "eqs", lines: lines.map(([s, e]) => `${e} = ${s}`), tone: "given" }, steps, answer: `${Object.entries(val).map(([s, v], i, a) => (i === a.length - 1 ? `${josa(s, "은")} ${josa(v, "이에요")}` : `${josa(s, "은")} ${v}`)).join(", ")}.`, value: { kind: "chain", lines, val } };
+}
+function nthArithExample({ id, title, first, d, nth }) {
+  const vals = Array.from({ length: 4 }, (_, i) => first + d * i), at = first + d * (nth - 1);
+  const steps = [
+    { text: `늘어난 수를 봐요. ${vals.slice(1).map((v, i) => `${v} − ${vals[i]} = ${d}`).join(", ")}. 늘 ${josa(d, "이에요")}.`, figure: { kind: "seq", values: vals, diffs: Array(3).fill(d), tone: "doing" } },
+    { text: `1번째에서 ${nth}번째까지는 ${d}씩 ${nth - 1}번 늘어나요. ${d} × ${nth - 1} = ${d * (nth - 1)}.`, figure: { kind: "seq", values: vals, diffs: Array(3).fill(d), tone: "doing" } },
+    { text: `${first} + ${d * (nth - 1)} = ${at}.`, figure: { kind: "seq", values: vals, diffs: Array(3).fill(d), ask: at, tone: "check" } }
+  ];
+  return { id, title, problem: `${vals.join(", ")}, …의 규칙에서 ${nth}번째 수를 구해요.`, figure: { kind: "seq", values: vals, tone: "given", ask: "?" }, steps, answer: `${nth}번째 수는 ${josa(at, "이에요")}.`, value: { kind: "arith", values: vals, nth, at } };
+}
+// 여러 수열: rule = period | arith | geom | diff | fib | skip | group. explain = 단계 글 둘(코드가 계산한 next를 끝에 쓴다)
+function seqRuleExample({ id, title, values, rule, next, explain, diffs = null }) {
+  const steps = [
+    { text: explain[0], figure: { kind: "seq", values, diffs, tone: "doing" } },
+    { text: `${explain[1]} 다음 수는 ${josa(next, "이에요")}.`, figure: { kind: "seq", values, diffs, ask: next, tone: "check" } }
+  ];
+  return { id, title, problem: `${values.join(", ")}, ? — 규칙에 따라 바로 다음 수를 구해요.`, figure: { kind: "seq", values, tone: "given", ask: "?" }, steps, answer: `다음 수는 ${josa(next, "이에요")}.`, value: { kind: "rule", values, rule, next } };
+}
+function stagesExample({ id, title, first, d }) {
+  const stage = (k) => first.map((row) => row.map((v) => v + d * k));
+  const all = [0, 1, 2, 3].map(stage), blank = first.map((row) => row.map(() => null));
+  const steps = [
+    { text: `같은 자리끼리 비교해요. 1단계에서 2단계로, 2단계에서 3단계로 모든 칸이 ${d}씩 커져요.`, figure: { kind: "stages", stages: [...all.slice(0, 3), blank], tone: "doing" } },
+    { text: `4단계는 3단계의 칸마다 ${josa(d, "을")} 더해요.`, figure: { kind: "stages", stages: all, tone: "check" } }
+  ];
+  return { id, title, problem: "1~3단계 표의 변화 규칙으로 4단계 표를 채워요. 윗줄 왼쪽부터 차례로 써요.", figure: { kind: "stages", stages: [...all.slice(0, 3), blank], tone: "given" }, steps, answer: `${josa(all[3].flat().join(", "), "이에요")}.`, value: { kind: "stages", first, d, last: all[3].flat() } };
+}
+function matchRowExample({ id, title, nth }) {
+  const counts = [1, 2, 3, 4].map((n) => 3 * n + 1), at = 3 * nth + 1;
+  const steps = [
+    { text: `정사각형이 하나 늘 때마다 성냥개비가 몇 개 느는지 봐요. ${counts.join(", ")} — 3개씩 늘어요(변 하나는 앞 정사각형과 함께 써요).`, figure: { kind: "match-row", n: 4, hi: 3, caption: counts.join(" → "), tone: "doing" } },
+    { text: `1번째가 4개, 그 뒤로 3개씩 ${nth - 1}번 늘어요. 4 + 3 × ${nth - 1} = ${at}.`, figure: { kind: "match-row", n: 4, caption: `4 + 3 × ${nth - 1}`, tone: "check" } }
+  ];
+  return { id, title, problem: `성냥개비로 정사각형을 한 줄로 이어 붙여요. 1번째 모양은 정사각형 1개, 2번째는 2개…예요. ${nth}번째 모양의 성냥개비는 몇 개일까요?`, figure: { kind: "match-row", n: 3, tone: "given" }, steps, answer: `${at}개예요.`, value: { kind: "match", counts, nth, at } };
+}
+// 숫자 약속: 세 개의 완성된 마름모에서 규칙(rule)을 찾아 마지막 마름모의 위 칸을 구한다
+function promiseExample({ id, title, items, ask, rule, ruleText, tryText }) {
+  const done = items.map((d) => ({ ...d, top: rule(d) })), q = { ...ask, top: null }, top = rule(ask);
+  const steps = [
+    { text: tryText(done[0]), figure: { kind: "diamonds", items: [...done, q], tone: "doing" } },
+    { text: `${ruleText}. ${done.map((d) => `${d.left} × ${d.right} + ${d.bottom} = ${d.top}`).join(", ")}, 모두 맞아요.`, figure: { kind: "diamonds", items: [...done, q], tone: "doing" } },
+    { text: `마지막 마름모: ${ask.left} × ${ask.right} + ${ask.bottom} = ${top}.`, figure: { kind: "diamonds", items: [...done, { ...ask, top }], tone: "check" } }
+  ];
+  return { id, title, problem: "완성된 마름모 세 개에서 네 수의 약속을 찾아, 마지막 마름모의 위 칸에 알맞은 수를 구해요.", figure: { kind: "diamonds", items: [...done, q], tone: "given" }, steps, answer: `위 칸은 ${josa(top, "이에요")}.`, value: { kind: "promise", items: done, ask, top } };
+}
+const SEQ2_SET = {
+  id: "seq2",
+  types: {
+    "두 수로 똑같이 가르기": () => [splitExample({ id: "split2-1", title: "예제 1", value: 14, parts: [2] }), splitExample({ id: "split2-2", title: "예제 2", value: 30, parts: [2] })],
+    "두 번 가르기": () => [splitExample({ id: "split22-1", title: "예제 1", value: 32, parts: [2, 2] })],
+    "세 수로 똑같이 가르기": () => [splitExample({ id: "split3-1", title: "예제 1", value: 39, parts: [3] })],
+    "같은 수의 반복 덧셈": () => [repeatAddExample({ id: "rep-add-1", title: "예제 1", n: 3, times: 4 }), repeatAddExample({ id: "rep-add-2", title: "예제 2", n: 6, times: 3 })],
+    "숫자 카드로 같은 식 만들기": () => [cardEqExample({ id: "card-eq-1", title: "예제 1", cards: [1, 3, 5, 6], times: 2 })],
+    "도형식의 같은 합을 바꾸어 넣기": () => [shapeChainExample({ id: "chain-1", title: "예제 1", lines: [["□", "5 + 5 + 5"], ["△", "□ + 5"]] }), shapeChainExample({ id: "chain-2", title: "예제 2", lines: [["○", "6 + 6"], ["□", "○ + ○ + ○"], ["△", "□ − ○"]] })],
+    "등차수열의 특정 번째 수": () => [nthArithExample({ id: "arith-1", title: "예제 1", first: 6, d: 5, nth: 12 })],
+    "마디수열": () => [seqRuleExample({ id: "period-1", title: "예제 1", values: [2, 4, 6, 2, 4, 6, 2], rule: "period", next: 4, explain: ["2, 4, 6이 한 마디로 되풀이돼요.", "마디의 처음 2 다음은 4."] })],
+    "등차수열": () => [seqRuleExample({ id: "arith-next-1", title: "예제 1", values: [3, 7, 11, 15, 19], rule: "arith", next: 23, diffs: [4, 4, 4, 4], explain: ["늘어난 수가 4로 늘 같아요.", "19 + 4 = 23."] })],
+    "등비수열": () => [seqRuleExample({ id: "geom-1", title: "예제 1", values: [3, 6, 12, 24], rule: "geom", next: 48, explain: ["앞의 수에 2를 곱하면 다음 수예요. 3 × 2 = 6, 6 × 2 = 12.", "24 × 2 = 48."] })],
+    "계차수열": () => [seqRuleExample({ id: "diff-1", title: "예제 1", values: [1, 2, 4, 7, 11, 16], rule: "diff", next: 22, diffs: [1, 2, 3, 4, 5], explain: ["늘어난 수가 1, 2, 3, 4, 5로 1씩 커져요.", "다음은 6이 늘어 16 + 6 = 22."] })],
+    "피보나치 수열": () => [seqRuleExample({ id: "fib-1", title: "예제 1", values: [1, 3, 4, 7, 11, 18], rule: "fib", next: 29, explain: ["앞의 두 수를 더하면 다음 수예요. 1 + 3 = 4, 3 + 4 = 7, 4 + 7 = 11.", "11 + 18 = 29."] })],
+    "징검다리 수열": () => [seqRuleExample({ id: "skip-1", title: "예제 1", values: [2, 10, 4, 20, 6, 30, 8], rule: "skip", next: 40, explain: ["한 칸씩 건너뛰어 봐요. 홀수 번째는 2, 4, 6, 8로 2씩, 짝수 번째는 10, 20, 30으로 10씩 커져요.", "다음은 짝수 번째라 30 + 10 = 40."] })],
+    "묶음수열": () => [seqRuleExample({ id: "group-1", title: "예제 1", values: [1, 3, 2, 4, 3, 5, 4], rule: "group", next: 6, explain: ["두 개씩 묶어요. (1, 3), (2, 4), (3, 5) — 묶음마다 1씩 커지고, 묶음 안에서는 뒤가 2 커요.", "다음 묶음은 (4, ?), 4 + 2 = 6."] })],
+    "단계별 수 표의 변화": () => [stagesExample({ id: "stage-1", title: "예제 1", first: [[1, 0], [2, 3]], d: 2 })],
+    "단계별 개수 변화": () => [matchRowExample({ id: "match-1", title: "예제 1", nth: 15 })],
+    "숫자 약속 찾기": () => [promiseExample({ id: "promise-1", title: "예제 1", items: [{ left: 2, right: 3, bottom: 1 }, { left: 4, right: 2, bottom: 5 }, { left: 3, right: 5, bottom: 2 }], ask: { left: 6, right: 2, bottom: 4 }, rule: (d) => d.left * d.right + d.bottom, ruleText: "왼쪽 × 오른쪽에 아래를 더하면 위 칸이에요", tryText: (d) => `먼저 세 수를 더해 봐요. ${d.left} + ${d.right} + ${d.bottom} = ${d.left + d.right + d.bottom}인데 위 칸은 ${josa(d.top, "이에요")}. 더하기만으로는 안 돼요.` })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

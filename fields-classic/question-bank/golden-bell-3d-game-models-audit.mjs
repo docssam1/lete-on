@@ -842,6 +842,37 @@ function verifyExample(setId, typeLabel, ex, lesson) {
     if (v.ask === "letters") for (const [k, l] of Object.entries(v.letters)) assert.match(ex.answer, new RegExp(`${l}[은는] ${v.grid[k]}\\D`, "u"), `${ex.id}: ${l}`);
     if (v.ask === "full") for (const r of [0, 1, 2, 3]) assert.ok(ex.answer.includes([0, 1, 2, 3].map((c) => v.grid[`${r},${c}`] ?? "빈칸").join(", ")), `${ex.id}: ${r + 1}째 줄`);
     for (const item of lesson.original.items) { const o = item.visual || {}; if (o.rowProducts) assert.ok(!(o.rowProducts.join() === v.rowP.join() && o.columnProducts.join() === v.colP.join()), `${ex.id}: 원본과 같은 곱`); }
+  } else if (setId === "seq2") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number), has = (n) => nums(ex.answer).includes(n);
+    const origVals = lesson.original.items.map((it) => JSON.stringify(it.visual?.values ?? it.visual?.stages ?? it.visual?.value ?? it.visual?.lines ?? null));
+    if (v.kind === "split") { let x = v.value; for (const p of v.parts) { assert.equal(x % p, 0); x /= p; } assert.equal(v.one, x); assert.ok(has(x)); assert.ok(!origVals.includes(String(v.value)), `${ex.id}: 원본과 같은 수`); }
+    else if (v.kind === "repeat") { let t = 0; for (let i = 0; i < v.times; i++) t += v.n; assert.equal(v.total, t); assert.ok(has(t)); }
+    else if (v.kind === "cards2") { const fits = []; for (const a of v.cards) for (const b of v.cards) if (a !== b && Array(v.times).fill(a).reduce((x, y) => x + y, 0) === b) fits.push([a, b]); assert.deepEqual(fits, [[v.a, v.b]], `${ex.id}: 카드가 하나로 정해짐`); assert.ok(ex.answer.includes(`○는 ${v.a}`) && has(v.b)); }
+    else if (v.kind === "chain") {
+      const val = {};
+      for (const [sym, e] of v.lines) { const t = e.split(" "); let acc = Number(val[t[0]] ?? t[0]); for (let i = 1; i < t.length; i += 2) { const n = Number(val[t[i + 1]] ?? t[i + 1]); acc = t[i] === "+" ? acc + n : acc - n; } val[sym] = acc; }
+      assert.deepEqual(val, v.val, `${ex.id}: 도형 값`); for (const [sy, n] of Object.entries(val)) assert.match(ex.answer, new RegExp(`${sy}[은는] ${n}\\D`, "u"));
+      for (const item of lesson.original.items) assert.notEqual(JSON.stringify(item.visual?.lines), JSON.stringify(v.lines.map(([sy, e]) => `${e.replace(/ /gu, "")}=${sy}`)), `${ex.id}: 원본 식과 같음`);
+    } else if (v.kind === "arith") { const d = v.values[1] - v.values[0]; assert.ok(v.values.every((x, i) => !i || x - v.values[i - 1] === d)); let x = v.values[0]; for (let i = 1; i < v.nth; i++) x += d; assert.equal(v.at, x); assert.ok(has(x)); assert.ok(!origVals.includes(JSON.stringify(v.values))); }
+    else if (v.kind === "rule") {
+      const a = v.values, L = a.length; let next;
+      if (v.rule === "period") { let p = 1; while (!a.every((x, i) => i < p || x === a[i - p])) p++; assert.ok(p < L, "마디가 보임"); next = a[L - p]; }
+      else if (v.rule === "arith") { const d = a[1] - a[0]; assert.ok(a.every((x, i) => !i || x - a[i - 1] === d)); next = a[L - 1] + d; }
+      else if (v.rule === "geom") { const r = a[1] / a[0]; assert.ok(a.every((x, i) => !i || x === a[i - 1] * r)); next = a[L - 1] * r; }
+      else if (v.rule === "diff") { const ds = a.slice(1).map((x, i) => x - a[i]); assert.ok(ds.every((x, i) => !i || x - ds[i - 1] === ds[1] - ds[0])); next = a[L - 1] + ds.at(-1) + (ds[1] - ds[0]); }
+      else if (v.rule === "fib") { assert.ok(a.every((x, i) => i < 2 || x === a[i - 1] + a[i - 2])); next = a[L - 1] + a[L - 2]; }
+      else if (v.rule === "skip") { const sub = (k) => a.filter((_, i) => i % 2 === k); for (const k of [0, 1]) { const q = sub(k); assert.ok(q.every((x, i) => !i || x - q[i - 1] === q[1] - q[0])); } const q = sub(L % 2); next = q.at(-1) + (q[1] - q[0]); }
+      else if (v.rule === "group") { const g = []; for (let i = 0; i < L; i += 2) g.push(a.slice(i, i + 2)); const full = g.filter((x) => x.length === 2); assert.ok(full.every((x, i) => x[1] - x[0] === full[0][1] - full[0][0] && (!i || x[0] - full[i - 1][0] === full[1][0] - full[0][0]))); next = L % 2 ? a[L - 1] + (full[0][1] - full[0][0]) : full.at(-1)[0] + (full[1][0] - full[0][0]); }
+      assert.equal(v.next, next, `${ex.id}: 다음 수`); assert.ok(has(next));
+      for (const item of lesson.original.items) { const o = item.visual?.values; if (Array.isArray(o)) assert.notEqual(JSON.stringify(o.filter((x) => x !== null)), JSON.stringify(a), `${ex.id}: 원본 수열과 같음`); }
+    } else if (v.kind === "stages") { const last = v.first.flat().map((x) => x + 3 * v.d); assert.deepEqual(v.last, last); assert.ok(last.every((x) => has(x))); }
+    else if (v.kind === "match") { const sticks = (n) => { const set = new Set(); for (let i = 0; i < n; i++) for (const e of [`h${i},0`, `h${i},1`, `v${i}`, `v${i + 1}`]) set.add(e); return set.size; }; assert.deepEqual(v.counts, [1, 2, 3, 4].map(sticks)); assert.equal(v.at, sticks(v.nth)); assert.ok(has(v.at)); }
+    else if (v.kind === "promise") {
+      const rule = (d) => d.left * d.right + d.bottom;
+      assert.ok(v.items.every((d) => d.top === rule(d)), `${ex.id}: 약속이 세 그림에 맞음`); assert.ok(v.items.some((d) => d.top !== d.left + d.right + d.bottom), `${ex.id}: 더하기로는 안 맞음`);
+      assert.equal(v.top, rule(v.ask)); assert.ok(has(v.top));
+      for (const item of lesson.original.items) for (const e of item.visual?.examples || []) assert.ok(!v.items.some((d) => d.left === e.left && d.right === e.right && d.bottom === e.bottom), `${ex.id}: 원본 그림과 같은 수`);
+    } else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);
