@@ -5,6 +5,16 @@ export const DRILL_RECIPES = Object.freeze({
   // 1권 — 마방진과 가쿠로 · 수 추리 (가쿠로·좋아하는 것 표는 그림·표로 답해 아직 없음)
   "book-01/equal-line-sums": ["circle-line-ring-equal-sum"],
   "book-01/number-inference": ["place-value-condition-three", "place-value-condition-four"],
+  // 2권 — 매트릭스와 주고받기 · 양팔저울 · 규칙찾기와 수열 · 약속 (그림은 book02-visuals.js). 2·3·4·5의 배수로 식 바꾸기와 모양·색 규칙은 숫자로 답하는 유형이 없어 아직 없음
+  "book-02/number-splitting": ["equal-partition-two", "equal-partition-three", "equal-partition-four"],
+  "book-02/give-take-sum-difference": ["equalize-transfer", "total-difference"],
+  "book-02/two-term-arithmetic": ["distinct-shape-value-equation", "balance-given-unit-weight"],
+  "book-02/shape-number-equations": ["shape-sum-table", "distinct-shape-value-equation"],
+  "book-02/arithmetic-sequences": ["constant-step-number-sequence", "progressive-number-table"],
+  "book-02/sequence-rules": ["previous-two-sum-sequence", "repeating-number-sequence", "interleaved-number-sequence"],
+  "book-02/growth-patterns": ["matchstick-shared-polygon-growth", "staircase-tile-growth", "triangular-stone-growth"],
+  "book-02/diamond-number-promise": ["four-number-center-rule", "number-grid-row-rule"],
+  "book-02/fractions-and-folds": ["equal-part-shaded-fraction", "repeated-fold-cut-count", "fold-punch-doubling"],
   // 3권 — 단위넓이와 분수 · 단위길이와 배수 · 복면산 · 마법카드와 마방진
   //   복면산은 3권 유형의 그림이 문제은행 화면 전용이라 같은 풀이의 8권 유형(난이도 1부터)을 쓴다. 6의 배수 식 바꾸기는 맞는 유형이 없어 아직 없음
   "book-03/unit-area-shapes": ["unit-grid-area", "tangram-piece-area"],
@@ -41,7 +51,8 @@ export const DRILL_RECIPES = Object.freeze({
   "book-05/checkerboard-product-matrix": ["multiplication-matrix-placement", "multiplication-matrix-products"],
   "book-05/square-number-source": ["square-number-odd-sum", "square-row-boundary-number"],
   "book-05/triangle-number-source": ["handshake-pair-count", "complete-graph-segment-count", "pair-selection-count"],
-  // 6권 — 수직선의 분할과 비 · 도형의 둘레 · 연속수의 합 · 수와 숫자의 개수 (똑같이 가르기는 그림이 문제은행 화면 전용이라 아직 없음)
+  // 6권 — 수직선의 분할과 비 · 도형의 둘레 · 연속수의 합 · 수와 숫자의 개수 (똑같이 가르기는 2권 갈라 나누기 유형을 빌려 쓴다)
+  "book-06/equal-share-source": ["equal-partition-two", "equal-partition-three", "equal-partition-four"],
   "book-06/number-line-unit-distance": ["number-line-unit-distance-book6", "number-line-midpoint-book6"],
   "book-06/number-line-ratio-source": ["number-line-two-part-distance", "number-line-unit-distance-book6"],
   "book-06/number-line-ratio-compare-source": ["equivalent-ratio-chain", "number-line-two-part-distance"],

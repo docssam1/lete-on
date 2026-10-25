@@ -6,8 +6,20 @@
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
 import { typeById } from "./source-data.js?v=20261024r";
 import { GENERATORS } from "./generators.js?v=20261027a";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027g";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027h";
 import { jo } from "./concept-board-kit.js?v=20261026b";
+import * as B2 from "./book02-visuals.js?v=20261027a";
+
+// 2권 그림: 문제은행 화면(app.js visualMarkup)과 같은 감싸는 class로 그린다
+export const EXTRA_VISUALS = Object.freeze({
+  "equal-partition-tree": ["equal-partition-visual", B2.equalPartitionTreeMarkup], "shape-sum-table": ["shape-sum-visual", B2.shapeSumTableMarkup],
+  "equalize-bags": ["equalize-visual", B2.equalizeBagsMarkup], "total-difference-bars": ["total-difference-bars-visual", B2.totalDifferenceBarsMarkup],
+  "balance-unit-equations": ["balance-unit-visual", B2.balanceUnitEquationsMarkup], "distinct-shape-equations": ["distinct-shape-visual", B2.distinctShapeEquationsMarkup],
+  "number-sequences": ["number-sequences-visual", B2.numberSequencesMarkup], "progressive-number-table": ["progressive-table-visual", B2.progressiveNumberTableMarkup],
+  "book2-growth": ["book2-growth-visual", B2.book2GrowthMarkup], "center-number-rule": ["center-number-rule-visual", B2.centerNumberRuleMarkup],
+  "number-rule-grid": ["number-rule-grid-visual", B2.numberRuleGridMarkup], "two-digit-compose-rule": ["two-digit-compose-visual", B2.twoDigitComposeRuleMarkup],
+  "sudoku-grid": ["sudoku-grid-visual", B2.sudokuGridMarkup]
+});
 
 // 그림 그리기는 문제은행 화면(app.js)과 같은 파일·같은 꼬리표로 불러온다
 const RENDERER_TAG = { "01": "20261022a", "02": "20261023h", "03": "20261023h", "04": "20261023h", "05": "20261023h", "06": "20260905d", "07": "20261023h", "08": "20261027a", "09": "20261021d", "10": "20261023a" };
@@ -22,7 +34,7 @@ const plain = (v) => String(v ?? "").replace(/<[^>]+>/g, "").trim();
 const post = (message) => { if (parent !== window) parent.postMessage({ type: "fc-drill", lesson: lessonId, ...message }, location.origin); };
 const say = (text, mood = "talk") => post({ event: "say", text, mood });
 
-// 답의 꼴: 수 하나 · 수 + 단위(12㎠, 15개) · 쉼표로 쓴 수 여러 개 · 시각/걸린 시간(11시 30분, 2시간 25분) · 요일(토요일) · 분수(3/6)
+// 답의 꼴: 수 하나 · 수 + 단위(12㎠, 15개) · 쉼표로 쓴 수 여러 개 · 시각/걸린 시간(11시 30분, 2시간 25분) · 요일(토요일) · 분수(3/6) · 여러 칸((1) 29, (2) 36 / ㄱ=14, ㄴ=9)
 export const DAYS = ["일", "월", "화", "수", "목", "금", "토"];
 export function answerShape(answer) {
   const a = plain(answer);
@@ -31,6 +43,11 @@ export function answerShape(answer) {
   if ((m = a.match(/^(\d+)(시간?) (\d+)분$/u))) return { kind: "pair", values: [Number(m[1]), Number(m[3])], units: [m[2], "분"] };
   if ((m = a.match(/^([일월화수목금토])요일$/u))) return { kind: "weekday", values: [DAYS.indexOf(m[1])] };
   if ((m = a.match(/^(\d+)\/(\d+)$/u))) return { kind: "frac", values: [Number(m[1]), Number(m[2])] };
+  // 여러 칸 답: 「(1) 29, (2) 36」 · 「ㄱ=14, ㄴ=9」 — 이름 차례대로 쉼표로 쓴다
+  const parts = a.split(/\s*,\s*/);
+  const numbered = parts.map((x) => x.match(/^\((\d+)\)\s*(-?\d+)$/u)), named = parts.map((x) => x.match(/^([가-힣ㄱ-ㅎA-Za-z]{1,2})\s*=\s*(-?\d+)$/u));
+  if (numbered.every(Boolean)) return { kind: "parts", labels: numbered.map((x) => `(${x[1]})`), values: numbered.map((x) => Number(x[2])) };
+  if (named.every(Boolean)) return { kind: "parts", labels: named.map((x) => x[1]), values: named.map((x) => Number(x[2])) };
   // 단위는 띄어 쓰지 않은 짧은 말 하나(「3번 딸기」처럼 낱말이 붙은 답은 받지 않는다)
   if ((m = a.match(/^(-?\d+)\s*([^\d\s,][^\d\s,]{0,3})$/u))) return { kind: "int", values: [Number(m[1])], unit: m[2] };
   if (/^-?\d+(\s*,\s*-?\d+)+$/.test(a)) return { kind: "list", values: a.split(",").map((x) => Number(x.trim())), unit: "" };
@@ -58,7 +75,11 @@ async function main() {
   const renderers = {};
   await Promise.all(Object.entries(RENDERER_TAG).map(async ([nn, tag]) => { renderers[`book${Number(nn)}`] = { nn, markup: (await import(`./book${nn}-renderers.js?v=${tag}`))[`book${nn}Markup`] }; }));
   const gens = GENERATORS;
-  const visualOf = (visual) => { const r = visual && renderers[visual.kind]; return r ? `<div class="visual book${r.nn}-visual">${r.markup(visual)}</div>` : ""; };
+  const visualOf = (visual) => {
+    if (!visual) return "";
+    const extra = EXTRA_VISUALS[visual.kind]; if (extra) return `<div class="visual ${extra[0]}">${extra[1](visual)}</div>`;
+    const r = renderers[visual.kind]; return r ? `<div class="visual book${r.nn}-visual">${r.markup(visual)}</div>` : "";
+  };
 
   const make = (level, index) => {
     const typeId = types[(level * PER_LEVEL + index) % types.length], type = typeById(typeId);
@@ -105,6 +126,13 @@ async function main() {
       return `<div class="dr-pad"><span class="dr-typed">${esc(st.typed) || "&nbsp;"}</span>${keys}
         <button type="button" class="dr-key" data-key="/" ${!st.typed || slash ? "disabled" : ""}>/</button><button type="button" class="dr-key wide" data-key="del">지우기</button>${submit}</div>
         <p class="dr-tip">분자를 쓰고 「/」를 누른 뒤 분모를 써요. 예: 3/5</p>`;
+    }
+    if (shape.kind === "parts") {
+      const got = st.typed ? st.typed.split(",") : [];
+      const shown = got.map((v, i) => `<small>${esc(shape.labels[i] || "")}</small>${esc(v)}`).join(" ");
+      return `<div class="dr-pad"><span class="dr-typed">${st.typed ? shown : "&nbsp;"}</span>${keys}
+        <button type="button" class="dr-key" data-key="," ${!st.typed || st.typed.endsWith(",") || got.length >= shape.values.length ? "disabled" : ""}>,</button><button type="button" class="dr-key wide" data-key="del">지우기</button>${submit}</div>
+        <p class="dr-tip">${shape.labels.join(", ")} 차례로 쉼표(,)로 나누어 써요.</p>`;
     }
     const list = shape.kind === "list";
     return `<div class="dr-pad"><span class="dr-typed">${esc(st.typed) || "&nbsp;"}${shape.unit ? `<small>${esc(shape.unit)}</small>` : ""}</span>${keys}

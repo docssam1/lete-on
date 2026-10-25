@@ -1,16 +1,16 @@
 // 연습 공방 검사: drill-recipes.js의 차시·유형이 실제로 있고, 난이도 1·2·3마다 답 꼴(수 · 수 + 단위 · 쉼표로 쓴 수)이 맞는 문제가
-// 나오며, 그림이 bookN 그리기로 그려지는지 본다. 실패가 하나라도 있으면 exit 1.
+// 나오며, 그림이 bookN 그리기나 2권 그리기(book02-visuals.js)로 그려지는지 본다. 실패가 하나라도 있으면 exit 1.
 //   node fields-classic/question-bank/drill-audit.mjs
 import { typeById, CURRICULUM } from "./source-data.js";
 import { GENERATORS } from "./generators.js";
 import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 import { lessonsByUnit } from "./study-map.js";
 import { DRILL_RECIPES } from "./drill-recipes.js";
-import { answerShape } from "./drill.js";
+import { answerShape, EXTRA_VISUALS } from "./drill.js";
 
 const TRIES = 20, fails = [];
 // 답 꼴 읽기 자체부터(한 줄 뒤 주석이 return을 삼켜 목록 답이 다 빠졌던 적이 있다)
-const SHAPES = [["7", "int", [7], ""], ["15개", "int", [15], "개"], ["12㎠", "int", [12], "㎠"], ["1, 4, 5", "list", [1, 4, 5], ""], ["3번 딸기", null], ["가=3, 나=4", null], ["11시 30분", "pair", [11, 30], undefined], ["2시간 5분", "pair", [2, 5], undefined], ["토요일", "weekday", [6], undefined], ["8월 1일 금요일", null], ["3/6", "frac", [3, 6], undefined]];
+const SHAPES = [["7", "int", [7], ""], ["15개", "int", [15], "개"], ["12㎠", "int", [12], "㎠"], ["1, 4, 5", "list", [1, 4, 5], ""], ["3번 딸기", null], ["가=3, 나=4", "parts", [3, 4], undefined], ["(1) 29, (2) 36", "parts", [29, 36], undefined], ["11시 30분", "pair", [11, 30], undefined], ["2시간 5분", "pair", [2, 5], undefined], ["토요일", "weekday", [6], undefined], ["8월 1일 금요일", null], ["3/6", "frac", [3, 6], undefined]];
 for (const [text, kind, values, unit] of SHAPES) {
   const got = answerShape(text);
   if (kind === null ? got !== null : !got || got.kind !== kind || got.values.join() !== values.join() || got.unit !== unit) fails.push(`답 꼴 읽기: ${text} → ${JSON.stringify(got)}`);
@@ -35,7 +35,7 @@ for (const [key, types] of Object.entries(DRILL_RECIPES)) {
         if (!shape) continue;
         // 수 카드를 모두 늘어놓는 배치 답(1, 4, 5, 2, 3, 6)은 순서 없이 채점하면 아무 순서나 맞으므로 쓰지 않는다
         if (shape.kind === "list" && shape.values.length >= 5) { fails.push(`${key}: ${id} 배치 답(${shape.values.length}개) — 숫자판으로 채점할 수 없음`); break; }
-        if (p.visual && !/^book([1-9]|10)$/.test(p.visual.kind)) { fails.push(`${key}: ${id} 그림 종류 ${p.visual.kind}`); break; }
+        if (p.visual && !/^book([1-9]|10)$/.test(p.visual.kind) && !EXTRA_VISUALS[p.visual.kind]) { fails.push(`${key}: ${id} 그림 종류 ${p.visual.kind}`); break; }
         ok++;
       }
       // 공방은 답 꼴이 맞을 때까지 200번까지 다시 뽑는다 — 5번에 1번 이상이면 충분하다
