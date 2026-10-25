@@ -229,6 +229,7 @@
   .nm-story-change{display:flex;align-items:center;justify-content:center;gap:3mm;max-width:100%}
   .nm-story-change section{min-width:0;text-align:center;flex:1}
   .nm-story-change small{font-size:11px;line-height:1.3;display:block;margin-bottom:1mm}
+  .nm-story-group svg,.nm-story-group img{width:1em;height:1em;flex:none}
   .nm-story-group{display:flex;flex-wrap:wrap;justify-content:center;gap:1mm}
   .nm-story-group>span{position:relative;display:inline-flex;font-size:24px;line-height:1}
   .nm-story-given{opacity:.65}
@@ -521,6 +522,10 @@
     background:#f7faf9; border-radius:4mm; padding:3.5mm 5mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mzs-story-art { display:grid; grid-template-columns:1fr 1fr; gap:1.5mm; }
   .nm-mzs-story-art svg { width:100%; height:auto; display:block; }
+  .nm-mzs-sub,.nm-mzs-strip figcaption{overflow-wrap:anywhere}
+  .nm-mzs-strip figure{min-width:0}
+  .nm-mzs-story{grid-template-columns:84mm minmax(0,1fr)}
+  .nm-mzs-story>div{min-width:0;overflow-wrap:anywhere}
   .nm-mzs-story-art.nm-mzs-hero { display:block; border-radius:2.5mm; overflow:hidden; background:#2a1f18; }
   .nm-mzs-story-art.nm-mzs-hero img { display:block; width:100%; height:auto; aspect-ratio:16/10; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mzs-story-txt h3 { margin:.5mm 0 1.5mm; font-size:14.5px; line-height:1.4; color:#245b60; word-break:keep-all; }
@@ -1434,6 +1439,54 @@
   .nm-path-choice>p:first-of-type{font-size:calc(20px * var(--ws-fs,1));font-weight:600;color:#2f6b4a}
   .nm-path-filled-answer{display:flex;align-items:center;justify-content:center;gap:3mm;margin-top:2mm}
   .nm-path-filled-answer span{display:inline-grid;place-items:center;border:1.5px solid #2f6b4a;min-width:12mm;height:10mm;font-size:calc(20px * var(--ws-fs,1));color:#2f6b4a}
+  .nm-paper-worked{font-family:"NM Series Sans",Pretendard,sans-serif;flex:0 0 auto;padding:3mm}
+  .nm-pe-ask{font-size:calc(13px * var(--ws-fs,1));line-height:1.5;margin:2mm 0;word-break:keep-all}
+  .nm-pe-panels{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin:3mm 0}
+  .nm-pe-panels>section{min-width:0;border:1px solid #c9bda2;padding:2.5mm;background:#f7f2e7;overflow:visible}
+  .nm-paper-worked[data-worked-widget="splitDraw"] .nm-pe-objects{gap:.6mm;margin:1mm 0;flex-wrap:nowrap}
+  .nm-paper-worked[data-worked-widget="splitDraw"] .nm-pe-objects>span{font-size:20px;padding:.3mm}
+  .nm-paper-worked[data-worked-widget="splitDraw"] .nm-pe-groups{gap:1.5mm}
+  .nm-paper-worked[data-worked-widget="splitDraw"] .nm-pe-groups>.nm-pe-objects{padding:1mm}
+  .nm-paper-worked[data-worked-widget="splitDraw"] .nm-pe-objects small{display:none}
+  .nm-paper-worked[data-worked-widget="g12_gridGroup"] .nm-pe-panels{margin:1.5mm 0}
+  .nm-paper-worked[data-worked-widget="g12_gridGroup"] .nm-pe-math p{margin:1mm 0}
+  .nm-paper-worked[data-worked-widget="g12_gridGroup"]>ol{margin:1.5mm 0}
+  .nm-pe-line{flex-wrap:nowrap;gap:.6mm}
+  .nm-pe-line>span{min-width:0;font-size:18px;padding:.6mm}
+  .nm-pe-line .nm-nl-person{height:1.7em}
+  .nm-pe-sequence{flex-wrap:nowrap}
+  .nm-pe-sequence>b{min-width:0;flex:1}
+  .nm-pe-panels h4{font-size:calc(15px * var(--ws-fs,1));font-weight:600;color:#2f6b4a;margin:0 0 2mm}
+  .nm-pe-panels .nm-nl{max-width:100%;width:100%;font-size:24px}
+  .nm-pe-panels .nm-nl-stage{min-width:0;max-width:100%;width:100%;padding:2mm;box-sizing:border-box}
+  .nm-pe-panels svg{max-width:100%;max-height:55mm}
+  .nm-pe-panels img{max-width:100%;object-fit:contain}
+  .nm-paper-worked>ol{font-size:calc(13px * var(--ws-fs,1));line-height:1.5;margin:3mm 0;padding-left:6mm;word-break:keep-all}
+  .nm-pe-answer{border-top:1px solid #c9bda2;padding:2mm 0;font-size:calc(15px * var(--ws-fs,1));line-height:1.5;word-break:keep-all}
+  .nm-pe-answer>b{color:#2f6b4a;display:block;font-weight:600}
+  .nm-pe-objects,.nm-pe-cards{display:flex;justify-content:center;align-items:center;gap:1.5mm;flex-wrap:wrap;margin:2mm 0}
+  .nm-pe-objects>span{position:relative;display:inline-flex;flex-direction:column;align-items:center;padding:1mm;font-size:25px;line-height:1.1}
+  .nm-pe-objects>span>svg,.nm-pe-objects>span>img{width:1em;height:1em;object-fit:contain}
+  .nm-pe-objects small{font-size:12px;color:#2f6b4a;line-height:1.2;min-height:1em}
+  .nm-pe-cards>b{border:1px solid #c9bda2;padding:1mm 2mm;min-width:5mm;text-align:center;font-size:calc(16px * var(--ws-fs,1));font-weight:600}
+  .nm-pe-ring{outline:2px solid #2f6b4a!important;outline-offset:1px;border-radius:50%;background:#e9f0e7!important}
+  .nm-paper-worked .nm-nl .nm-nl-g79-bl.nm-pe-filled{align-items:center;justify-content:center;font-size:inherit;padding:0}
+  .nm-pe-filled{color:#2f6b4a!important;font-weight:600;background:#e9f0e7!important}
+  .nm-pe-math p{font:600 calc(16px * var(--ws-fs,1))/1.45 "NM Series Sans",Pretendard,sans-serif;text-align:center;margin:2mm 0;word-break:keep-all}
+  .nm-pe-table{border-collapse:collapse;margin:2mm auto;font-size:calc(14px * var(--ws-fs,1));line-height:1.3}
+  .nm-pe-table td[data-pe-group]{position:relative;padding:2mm}
+  .nm-pe-table td[data-pe-group] small{display:block;font-size:12px;color:#2f6b4a}
+  .nm-pe-table td{border:1px solid #a87c22;min-width:5mm;padding:1.3mm;text-align:center}
+  .nm-pe-groups{display:flex;justify-content:center;align-items:center;gap:3mm}
+  .nm-pe-groups>section,.nm-pe-groups>.nm-pe-objects{border:1px solid #c9bda2;padding:2mm}
+  .nm-pe-crossed:after{content:'';position:absolute;left:0;right:0;top:50%;border-top:2px solid #b4512e;transform:rotate(-35deg)}
+  .nm-pe-match{display:grid;grid-template-columns:minmax(0,1fr) 16mm minmax(0,1fr);align-items:stretch}
+  .nm-pe-match>div{display:flex;flex-direction:column;justify-content:space-around}
+  .nm-pe-match>div>div{height:12mm!important;min-height:12mm!important;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
+  .nm-pe-match .tag,.nm-pe-match .nm-nl-tag{display:none}
+  .nm-pe-match svg{height:100%;width:100%;max-height:none}
+  .nm-pe-match>svg{min-height:36mm}
+  .nm-pe-match>div svg{width:10mm;max-height:10mm}
   .nm-neighbor-example { flex:0 0 auto; padding:3mm; }
   .nm-neighbor-example p { margin:1mm 0; font-size:calc(12px * var(--ws-fs,1)); line-height:1.4; }
   .nm-neighbor-example-pair { display:flex; justify-content:center; align-items:center; gap:5mm; margin:2mm 0; }
@@ -2151,6 +2204,7 @@ const W2_KID_COPY = {
   "조건에 맞는 수를 빠짐없이 모두 눌러요. 눌렀다가 다시 누르면 취소돼요.": "조건에 맞는 수를 빠짐없이 찾아 동그라미 해요.",
   "길을 따라 지나는 칸의 수를 모두 더해요. 눈에 띄는 작은 수만 따라가면 끝에서 큰 수를 만날 수 있어요. 갈 수 있는 길을 모두 더해 보고 가장 작은 합을 골라요.": "화살표 방향으로 길을 이어요. 지나간 동그라미의 수를 모두 더해요. 출발과 도착의 수도 더해요. 길마다 더한 수를 비교해 가장 작은 합을 찾아요.",
   "출발에서 도착까지 지나는 수의 합이 가장 작은 길을 찾으시오.": "출발부터 도착까지 길을 잇고, 가장 작은 합을 써요.",
+  "공이든 동물이든, 같은 종류 안에서도 하나만 골라 세어요. 축구공, 야구공, 럭비공이 섞여 있어도 야구공만 짚어 가며 세면 돼요.": "문제에서 묻는 그림만 찾아요. 그 그림을 하나씩 짚으며 세어요. 다른 그림은 세지 않아요.",
   "도형수": "칸의 수 더하기",
   "산가지와 규칙": "묶어 세기와 규칙",
   "빈칸을 거꾸로 계산!": "같은 합이 되도록 빈칸을 찾아요.",
@@ -3400,7 +3454,8 @@ function divPictureHtml(p, opts){
    전부 생성기가 이미 돌려주는 필드만 읽는다. 이모지는 창작 콘텐츠(라이선스 없음). */
 const ANIMAL_GLYPH = {
   'animal:turtle':'🐢', 'animal:squirrel':'🐿️', 'animal:rabbit':'🐰',
-  'animal:bear':'🐻', 'animal:fox':'🦊', 'animal:deer':'🦌', 'animal:duck':'🦆'
+  'animal:bear':'🐻', 'animal:fox':'🦊', 'animal:deer':'🦌', 'animal:duck':'🦆',
+  'animal:raccoon':'🦝', 'animal:tiger':'🐯'
 };
 function nlGlyph(tok){ if(typeof tok==='string' && tok.indexOf('num:')===0) return tok.slice(4); return ANIMAL_GLYPH[tok] || tok || '●'; }
 function nlChunk(arr, n){ const out = []; for(let i=0;i<arr.length;i+=n) out.push(arr.slice(i, i+n)); return out; }
@@ -5467,6 +5522,8 @@ function drawUnique(threadId, level, rng, exclude, maxTries, exactSkip){
   throw uniquePoolError(threadId,level);
 }
 /* exclude(선택, Set of problemKey) — 회차의 채점 문항과 같은 문제가 예시로 나오지 않게(2026-09-06). */
+function w2PaperExampleKit(){return {...nlPrintKit(),nlGlyph,visual:nlVisualHtml,ask:nlPrintAsk,answer:p=>nlAnswerLabel(p)??String(p.answer)};}
+function hasPaperPictureExample(thread){return /^NL\d+$/.test(thread);}
 function w2NeighborExampleHtml(p){
   if(p.widget==='pathSum')return window.NM_NL_PRINT.pathSum.worked(p,nlPrintKit());
   if(p.widget==='pyramid'&&Array.isArray(p.rows)){
@@ -5500,7 +5557,7 @@ function w2NeighborExampleHtml(p){
     const items=Array.from({length:n},()=>({e:'🪙',t:true}));
     return `<div class="nm-w2-example nm-neighbor-example" data-worked-widget="coins"><span class="nm-w2-ex-badge">${esc(lk('예시 · 먼저 함께 풀어요','Example · Let’s solve one','示例·一起做一题'))}</span><p>${esc(n>p.items.length?lk('동전을 한 개 더 놓은 뒤, 10원씩 세어요.','Add one coin, then count by 10.','再放一枚硬币，按10数。'):lk('동전 한 개는 10원이에요. 10원씩 세어요.','Each coin is 10. Count by 10.','一枚硬币是10，按10数。'))}</p>${nlSceneHtml(items)}<div class="nm-neighbor-sum">${Array.from({length:n},(_,i)=>(i+1)*10).join(' → ')}</div><p>${esc(lk(`모두 ${p.answer}원이에요.`,`${p.answer} won in all.`,`一共${p.answer}元。`))}</p></div>`;
   }
-  return '';
+  return window.NM_PAPER_EXAMPLES.html(p,w2PaperExampleKit());
 }
 function w2ExampleHtml(threadId, level, code, exclude, young, exactSkip, meta){
   const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
@@ -5513,7 +5570,7 @@ function w2ExampleHtml(threadId, level, code, exclude, young, exactSkip, meta){
    먼저, 나눗셈 뜻 그림(divPictureHtml)이 있으면 사슬 앞에 붙인다(2026-09-17). 문장제만인
    회차(w2WordExampleHtml)도 생성기 자체 이야기가 있으면 이 본체를 그대로 쓴다. */
 function w2ExampleBodyHtml(p, threadId, young, condition){
-  if(['NL5','NL11','NL12','NL59'].includes(threadId)&&p.widget&&!p.tex&&!p.word)return w2NeighborExampleHtml(p);
+  if(hasPaperPictureExample(threadId)&&p.widget&&!p.tex&&!p.word)return w2NeighborExampleHtml(p);
   /* 보기 고르기 문항(WP1처럼 식이 없는 것) — 이야기·보기·답 번호와 그 문장.
      식 자리에 " = 2"가 찍히는 것을 막는다(2026-09-17). */
   if(p.word && p.choices && !p.tex){
@@ -5635,8 +5692,8 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
     // 모눈과 중간식을 축소하지 않는다. 그래프형 세 문제는 두 쪽에 나누어 쓴다.
     /* MD30@3(행렬 곱셈) — 문제 행렬 + 성분 네 줄 + 답 행렬이라 세 문제가 한 쪽을 471px 넘쳤다(2026-09-29, C48 둘째 장). */
     /* 2026-10-05 — 2+1 로 나눠도 첫 쪽(두 문제 987px)이 52px 넘쳤다(C49·C51 둘째 장 복습). 행렬 곱셈은 한 쪽에 하나. */
-    pages: (threadId==='MD30' && level===3) ? itemHtmls.map(h => wrap([h]))
-      : (problems.some(p=>p.graph) || (threadId==='MD66' && level===4)) ? [wrap(itemHtmls.slice(0,2)),wrap(itemHtmls.slice(2))] : [wrap(itemHtmls)],
+    pages: ((threadId==='MD30' && level===3)||(['MD83','MD65'].includes(threadId)&&level===5&&getFontSize()==='xl')) ? itemHtmls.map(h => wrap([h]))
+      : (problems.some(p=>p.graph) || (threadId==='MD66' && level===4) || (threadId==='MD83' && level===5) || (['CH6','MD21'].includes(threadId)&&['l','xl'].includes(getFontSize()))) ? [wrap(itemHtmls.slice(0,2)),wrap(itemHtmls.slice(2))] : [wrap(itemHtmls)],
     problems,
     skips:problems.map(p=>p.__uniqueSkip||0)
   };
@@ -5799,7 +5856,7 @@ function renderMagicNotePage(item, opts){
     /* <b>만 남기고 다른 태그는 뗀다. SVG 는 stripInlineSvg 가 먼저 통째로 걷어낸다. */
     const descHtml = noteTextHtml(pickL(st.desc) || '');
     const figure=preschoolNoteFigure(item.magicUnit,i);
-    const steps = figure&&['N-05','N-06','N-07','N-09','N-12','N-14'].includes(item.magicUnit)?'':Array.isArray(st.mathSteps) ? st.mathSteps.map(magicStepHtml).join('') : '';
+    const steps = figure&&['N-05','N-06','N-07','N-09','N-11','N-12','N-14'].includes(item.magicUnit)?'':Array.isArray(st.mathSteps) ? st.mathSteps.map(magicStepHtml).join('') : '';
     const result = pickL(st.result) || '';
     /* 교과서 말(유닛 stage.book) — 앱의 개념 노트에는 있었는데 종이에는 빠져 있었다(2026-09-25 매거진형) */
     const book = noteTextHtml(pickL(st.book) || '');
@@ -6214,7 +6271,7 @@ function drawingAnswerKeyHtml(round){
   const pages=[];
   for(let start=0;start<round.problems.length;start+=6){
     const group=round.problems.slice(start,start+6);
-    pages.push(`<div class="nm-w2-page nm-draw-answer-page">${w2AnswerKeyHeadHtml(round.code)}<h4>${esc(round.thName)} · 교사 확인</h4><div class="nm-draw-rubric">${group[0].rubric.map(x=>esc(x)).join('<br>')}</div><div class="nm-draw-key-grid">${group.map((p,i)=>`<div class="nm-draw-key-item"><div><b>${start+i+1}.</b> <span class="nm-w2-tex" data-tex="${esc(p.tex)}"></span></div>${drawingTableHtml(p,true)}${graphSvg(p.solutionGraph)}</div>`).join('')}</div><div class="nm-w2-foot"><span>직접 그리기 · 숫자 자동 채점 대상이 아닙니다.</span></div></div>`);
+    pages.push(`<div class="nm-w2-page nm-draw-answer-page">${w2AnswerKeyHeadHtml(round.code)}<h4>${esc(round.thName)} · 완성 그림과 비교</h4><div class="nm-draw-rubric">${group[0].rubric.map(x=>esc(x)).join('<br>')}</div><div class="nm-draw-key-grid">${group.map((p,i)=>`<div class="nm-draw-key-item"><div><b>${start+i+1}.</b> <span class="nm-w2-tex" data-tex="${esc(p.tex)}"></span></div>${drawingTableHtml(p,true)}${graphSvg(p.solutionGraph)}</div>`).join('')}</div><div class="nm-w2-foot"><span>직접 그리기 · 표의 수와 점의 위치, 그래프 모양을 비교해요.</span></div></div>`);
   }
   return pages.join('');
 }
@@ -6228,13 +6285,13 @@ function renderDrawingRound(item, opts){
   const showLesson=!item.noTeach&&(!opts.exclude||!opts.exclude.has(exampleKey));
   if(showLesson&&opts.exclude) opts.exclude.add(exampleKey);
   const code=`DRAW-${item.mode}-${item.variant||'basic'}-${count}-${item.seed}`;
-  const headItem=Object.assign({},item,{topicName:item.topicName||lesson.title,codeLabel:'직접 그리기',subLabel:'연필·자 준비 · 표 → 점 → 그래프 · 교사 확인'});
+  const headItem=Object.assign({},item,{topicName:item.topicName||lesson.title,codeLabel:'직접 그리기',subLabel:'연필·자 준비 · 표 → 점 → 그래프 · 완성 그림과 비교'});
   const pages=[];
   if(showLesson){
     pages.push(`<div class="nm-w2-page nm-draw-teaching">${w2HeadHtml(headItem,code,'개념',null,opts)}<div class="nm-draw-lesson"><h3>왜 이렇게 그릴까요?</h3><p>${esc(lesson.why)}</p><ol>${lesson.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p><b>기억할 팁</b> ${esc(lesson.tip)}</p><p><b>주의</b> ${esc(lesson.caution)}</p><div class="nm-draw-example"><b>방법을 보는 예시</b><div class="nm-w2-tex" data-tex="${esc(lesson.example.tex)}"></div>${drawingTableHtml(lesson.example,true)}${graphSvg(lesson.example.solutionGraph)}</div></div><div class="nm-w2-foot"><span>${esc(code)} · 예시를 본 뒤 다음 장은 스스로 그립니다.</span></div></div>`);
   }
   for(let start=0;start<problems.length;start+=6){
-    pages.push(`<div class="nm-w2-page nm-draw-practice">${w2HeadHtml(headItem,code,`${start/6+1}/${Math.ceil(count/6)}`,null,opts)}<div class="nm-w2-instr">y값을 표에 쓰고 점을 찍은 뒤 그래프를 그리세요. 모눈 한 칸은 1입니다.</div><div class="nm-draw-grid">${problems.slice(start,start+6).map((p,i)=>`<div class="nm-w2-item nm-draw-item"><div class="nm-draw-title"><b>${start+i+1}.</b> <span class="nm-w2-tex" data-tex="${esc(p.tex)}"></span></div>${drawingTableHtml(p,false)}${graphSvg(p.graph)}</div>`).join('')}</div><div class="nm-w2-foot"><span>${esc(code)} · 직접 그리기 / 교사 확인</span></div></div>`);
+    pages.push(`<div class="nm-w2-page nm-draw-practice">${w2HeadHtml(headItem,code,`${start/6+1}/${Math.ceil(count/6)}`,null,opts)}<div class="nm-w2-instr">y값을 표에 쓰고 점을 찍은 뒤 그래프를 그리세요. 모눈 한 칸은 1입니다.</div><div class="nm-draw-grid">${problems.slice(start,start+6).map((p,i)=>`<div class="nm-w2-item nm-draw-item"><div class="nm-draw-title"><b>${start+i+1}.</b> <span class="nm-w2-tex" data-tex="${esc(p.tex)}"></span></div>${drawingTableHtml(p,false)}${graphSvg(p.graph)}</div>`).join('')}</div><div class="nm-w2-foot"><span>${esc(code)} · 직접 그리기 / 완성 그림과 비교</span></div></div>`);
   }
   return {html:pages.join(''),problems,code,thName:headItem.topicName,thread:item.thread,level:item.level,drawing:true,guidedProblems:[],pageSizes:[...(showLesson?[0]:[]),...Array.from({length:Math.ceil(count/6)},(_,i)=>Math.min(6,count-i*6))]};
 }
@@ -6283,7 +6340,8 @@ function renderRoundPagesBody(item, opts){
   const young = band === 'young';
   const layout = classifyRoundLayout(problems, item.thread, young, !!item.creative);
   // Each path needs room for explicit endpoint words, arrows and a written total.
-  if(item.thread==='NL59')Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
+  if(item.thread==='NL59'||item.thread==='DC3')Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
+  if(item.thread==='DC3'&&['l','xl'].includes(getFontSize()))Object.assign(layout,{cols:1,rows:3,perPage:3,firstRows:0,pitch:74});
   const middleSix = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] && ['visual','word'].includes(layout.type);
   if(middleSix || (item.pacing && ['visual','word'].includes(layout.type))){
     // 원문/정답/모눈 비율은 유지하고, 그래프·문장제의 연습 지면은 2열×3행으로.
@@ -6304,7 +6362,7 @@ function renderRoundPagesBody(item, opts){
   }
   // 유리화는 분자/분모 쓰기 상자가 두 층이다. 짧은 문자열 길이만으로 높이를 판정하지 않는다.
   if(item.thread==='MD83'&&item.level===5&&!['solve','train','word'].includes(layout.type)){
-    Object.assign(layout,{cols:2,rows:5,perPage:10,pitch:40});
+    Object.assign(layout,getFontSize()==='xl'?{cols:2,rows:2,perPage:4,pitch:100}:{cols:2,rows:5,perPage:10,pitch:40});
   }
   // MD58 L3은 분자·분모 쓰기 상자가 두 층인 유리화 극한이다. 문자열 길이 판정으로
   // 7행을 잡으면 일부 시드가 칸보다 5px 높다. 최대 6행으로 두되 2열을 유지해
@@ -6383,9 +6441,9 @@ function renderRoundPagesBody(item, opts){
   const middleLesson = examLang() === 'ko' && !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread];
   const strategyHtml = !noTeach && !middleLesson && getSolveMode() ? w2StrategyBandHtml(item.thread, item.level) : '';
   const conceptHtml = (wordOnly || noTeach || item.skipConcept || ancientLesson) ? ''
-    : w2ConceptPanelHtml(item.thread, item.level, {rampN:item.thread==='NL59'?0:rampN, skipSentence: !!strategyHtml,levelOnly:item.levelOnly,levelConcept:item.levelConcept,levelTitle:item.levelTitle});
+    : w2ConceptPanelHtml(item.thread, item.level, {rampN:/^NL\d+$/.test(item.thread)?0:rampN, skipSentence: !!strategyHtml,levelOnly:item.levelOnly,levelConcept:item.levelConcept,levelTitle:item.levelTitle});
   const exampleMeta={};
-  const pictureWorked = pictureOnly && !opts.suppressPictureWorked && ['NL5','NL11','NL12','NL59'].includes(item.thread);
+  const pictureWorked = pictureOnly && !opts.suppressPictureWorked && hasPaperPictureExample(item.thread);
   const exampleExclude=pictureWorked?new Set([...(opts.pictureTeachingKeys||[]),...exclude]):exclude;
   const exampleHtml = (noTeach || (pictureOnly&&!pictureWorked)) ? ''
     : wordOnly ? w2WordExampleHtml(item.thread, item.level, baseCode, exclude, young, item.exampleSkip, exampleMeta)
@@ -6401,8 +6459,10 @@ function renderRoundPagesBody(item, opts){
   /* 잰 머리(개념·예시·따라 풀기) 높이가 한 장을 넘으면 따라 풀기를 제 장으로 뗀다(2026-09-25) — 저학년 큰 글씨·
      고등 긴 개념에서 문항 없는 첫 장이 종이보다 길었다(MD19 L6 473mm, 주간 학습지 36쪽). */
   const headTooTall = !!(headBand && headBand[1] != null && headBand[1] * fsR > 250);
-  const separateGuide = (middleLesson || graphRound || headTooTall || (item.thread==='MD83' && item.level===5)) && !!guided.html;
-  const guidePages = separateGuide ? (guided.pages || [guided.html]) : [];
+  const separateGuide = (middleLesson || (!!(window.NM_MIDDLE_CONCEPTS||{})[item.thread]&&getFontSize()==='xl') || graphRound || headTooTall || (item.thread==='MD83' && item.level===5)) && !!guided.html;
+  const separateExample=['MD15','MD65'].includes(item.thread)&&item.level===5&&getFontSize()==='xl'&&separateGuide;
+  const guidePages = separateGuide ? (guided.pages || [guided.html]).slice() : [];
+  if(separateExample)guidePages[0]=exampleHtml+guidePages[0];
 
   /* 첫 장 용량(2026-09-06) — 판정별 고정표 layout.firstRows(classifyRoundLayout 주석). 개념 패널이
      유난히 길면(글자 수로만 본다 — 문자열 렌더러라 실측이 없다) 예전 규칙 ceil(rows/2)로 물러선다.
@@ -6469,7 +6529,7 @@ function renderRoundPagesBody(item, opts){
     const cap1 = firstRows * layout.cols;
     if(midPage && cap1 > 0 && cap1 < Math.min(6, problems.length)) firstRows = 0;
   }
-  if(pictureWorked&&exampleHtml)firstRows=Math.min(firstRows,item.thread==='NL59'||getFontSize()==='xl'?0:1);
+  if((pictureWorked&&exampleHtml)||(item.thread==='DC3'&&!noTeach))firstRows=0;
   const firstCap = firstRows * layout.cols;
   const pages = [];
   /* 중등 개념 쪽에 연습 6문항을 실은 경우(midFirstSix), 따라 풀기 한 장은 **다음 연습 6문항과 같은 장**에 —
@@ -6500,7 +6560,7 @@ function renderRoundPagesBody(item, opts){
     /* 잰 값이 있으면(scripts/build-print-head.js 가 독셈 모양으로 따로 잰 [5]=가장 큰 칸, [6]=첫 장 문항 칸 높이) 그것을.
        없으면 추정: 첫 장에 "Training Course" 띠(약 24mm)가 붙고, 따라 풀기가 드릴보다 약 60mm 길다(C36 CH7 L1: 86mm). */
     const trainMax = headBand && headBand[5] ? headBand[5] * fsR : 0;
-    const firstH = headBand && headBand[6] != null ? headBand[6] - (headBand[1] || 0) * (fsR - 1)
+    const firstH = item.thread==='CH3'&&!noTeach ? 0 : headBand && headBand[6] != null ? headBand[6] - (headBand[1] || 0) * (fsR - 1)
       : headBand && headBand[0] != null ? headBand[0] - headBand[1] * (fsR - 1) - 24 - (guided.html ? 60 : 0) : null;
     let at = 0;
     /* 창의 회차 색 힌트가 있으면 그 쪽에 범례 한 줄(약 9mm)이 붙는다(2026-09-26) */
@@ -6637,7 +6697,7 @@ function renderRoundPagesBody(item, opts){
   <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>
   ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count, {roundNo: opts.roundNo, name: opts.name, first})}
   ${editorialC4 ? `<div class="nm-w2-lesson-body">${strategyHtml}${conceptHtml}${editorialFeature ? w2C4EditorialFeatureHtml() : editorialStudy}${exampleHtml}${separateGuide ? '' : guided.html}</div>`
-    : `${first ? strategyHtml : ''}${first ? conceptHtml : ''}${first ? exampleHtml : ''}${separateGuide ? (guidePages[pi-1] || '') : (first ? guided.html : '')}`}${instrHtml}${pvLegend}
+    : `${first ? strategyHtml : ''}${first ? conceptHtml : ''}${first&&!separateExample ? exampleHtml : ''}${separateGuide ? (guidePages[pi-1] || '') : (first ? guided.html : '')}`}${instrHtml}${pvLegend}
   ${headOnly ? '' : `<div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyleFor(rowsCount, partial, first, balancedPracticePages.has(pi), ((pi === totalPages - 1 && !item.pacing) ? (window.NM_PRINT_HEAD_QR || 0) : 0) + (instrPage && !first ? 8 : 0))}">${cellsHtml}</div>`}
   ${(pi === totalPages - 1 && !item.pacing) ? retryQrHtml(code) : ''}
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code)}</span></div>
@@ -6746,7 +6806,7 @@ function renderMixedSheet(items, envelopeCode, opts){
 function renderMixedSheetBody(items, envelopeCode, opts){
   // Freeze the old practice/teaching pool first. New pictured examples may not
   // replace a later practice question or an existing arithmetic example.
-  if(!opts.collectPictureBase&&!opts.pictureTeachingKeys&&items.some(it=>!it.noTeach&&['NL5','NL11','NL12','NL59'].includes(it.thread))){
+  if(!opts.collectPictureBase&&!opts.pictureTeachingKeys&&items.some(it=>!it.noTeach&&hasPaperPictureExample(it.thread))){
     const original=renderMixedSheetBody(JSON.parse(JSON.stringify(items)),envelopeCode,{...opts,collectPictureBase:true,suppressPictureWorked:true});
     opts={...opts,pictureTeachingKeys:original};
   }
@@ -7221,7 +7281,7 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
       startSession:index+1,sessionIdx:index,seedScope:'h'+lesson.index+'k'+k+'s'+index});
     if(!child)return;
     if(!first)first=child;
-    const sourceItems=source.test?(source.pool||[]).map((d,i)=>({thread:d.t,level:d.lv,n:d.n,count:d.n,noTeach:true,
+    const sourceItems=source.test?(source.pool||[]).map((d,i)=>({thread:d.t,level:d.lv,n:d.n,count:d.n,threadMix:[{t:d.t,lv:d.lv}],noTeach:true,
       seed:(weekKey+courseKey+'h'+lesson.index+'k'+k+'s'+index+'test'+i).toLowerCase().replace(/[^a-z0-9]/g,''),
       topicName:lk('과정 점검 · ','Course check · ','课程检查 · ')+(((window.NM_THREADS||{})[d.t]||{}).name?.ko||d.t)}))
       :child.items.filter(it=>!String(it.seed||'').endsWith('stagechk'));
@@ -8794,7 +8854,8 @@ ${round.html}
     /* 세 층 순서(2026-09-25): 교과 → 마법 노트 → 창의 전략 → 적용·문장제 → 심화.
        시드는 예전처럼 drills·creative 배열의 원래 자리 번호로 만든다 — 층을 나눠도 같은 주의
        같은 칸은 같은 문항이 나온다(이미 받은 학습지 링크와 PDF 가 달라지지 않게). */
-    const R = withAmount(amount, () => sessionRoleItems(course, session, (p, i) => seedOf(seedWeek + p, i)));
+    const R = session.test ? {school:(session.pool||[]).map((d,i)=>({thread:d.t,level:d.lv,n:d.n,count:d.n,threadMix:[{t:d.t,lv:d.lv}],noTeach:true,seed:seedOf(seedWeek,i),topicName:lk('과정 점검 · ','Course check · ','课程检查 · ')+thName(d.t)})),strategy:[],application:[],stretch:[]}
+      : withAmount(amount, () => sessionRoleItems(course, session, (p, i) => seedOf(seedWeek + p, i)));
     const items = R.school.slice();
     /* 마법 노트(2026-09-18, 원장 "교과 연산 사이에 매직 오브 넘버스 개념 넣었어?") — 그 세션의 마법 유닛
        (누미의 마법 노트 단계·규칙·핵심 체크)을 교과 회차 다음, 창의 회차(Training Course) 앞에 한 장씩.
