@@ -39,6 +39,7 @@ export function renderObserve($app, { topbar, footer }, setId) {
   </main>${footer()}`;
   const $c = $app.querySelector('.ob-stage canvas'), $photo = $app.querySelector('.ob-photo'), $note = $app.querySelector('.ob-note');
   if (Stage.canWebGL()) stage = new Stage($c); else { mode = 'photo'; $c.hidden = true; }
+  if (typeof window !== 'undefined') window.__obStage = stage;   // 검사 스크립트용
 
   const draw = () => {
     const s = cur?.spec;
@@ -61,7 +62,7 @@ export function renderObserve($app, { topbar, footer }, setId) {
     }
   };
   const load = (i) => {
-    idx = i; view = 'angle'; for (const k in on) on[k] = false;
+    cur?.dispose?.(); idx = i; view = 'angle'; for (const k in on) on[k] = false;
     if (stage) cur = M.mountSpecimen(stage, M.SPECIMENS[i]); else cur = { spec: M.SPECIMENS[i](), run() { return null; }, setView() {}, toggle() {}, actions: () => [] };
     $note.textContent = ''; draw();
   };
@@ -78,5 +79,5 @@ export function renderObserve($app, { topbar, footer }, setId) {
     if (!stage) return null; stage.renderer.render(stage.scene, stage.camera); return $c.toDataURL('image/jpeg', 0.82);
   };
   const rep = renderReport(S.unit, $app.querySelector('#ob-report'), { embedded: true, reference });
-  return { destroy() { rep.destroy(); stage?.dispose(); stage = null; } };
+  return { destroy() { cur?.dispose?.(); rep.destroy(); stage?.dispose(); stage = null; } };
 }
