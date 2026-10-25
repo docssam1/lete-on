@@ -66,7 +66,7 @@
 <script src="../geometry/worksheet/render.js"></script>
 <script>if(!window.GW_RENDER)document.write('<scr'+'ipt src="geometry/worksheet/render.js"></scr'+'ipt>');</script>
 <script src="engine/scene-model.js"></script>
-<script src="engine/threads/ns_ad.js"></script>
+<script src="engine/threads/ns_ad.js?v=20261025-elementary-review1"></script>
 <script src="engine/threads/sb.js"></script>
 <script src="engine/threads/ml.js"></script>
 <script src="engine/threads/dv.js"></script>
@@ -74,8 +74,8 @@
 <script src="engine/threads/dc_mx.js"></script>
 <script src="engine/threads/el.js"></script>
 <script src="engine/threads/cre.js"></script>
-<script src="engine/threads/nl.js?v=20261025-picture-audit1"></script>
-<script src="engine/threads/g1-1-3.js?v=20261025-picture-audit1"></script>
+<script src="engine/threads/nl.js?v=20261025-elementary-review1"></script>
+<script src="engine/threads/g1-1-3.js?v=20261025-elementary-review1"></script>
 <script src="engine/threads/g1-4-6.js"></script>
 <script src="engine/threads/g1-7-9.js"></script>
 <script src="engine/threads/g1-10-12.js"></script>
@@ -140,7 +140,7 @@
 <script src="app/place-color.js"></script>
 <!-- 독셈 과정 빈칸·색 힌트 표(2026-09-26) — exam.js applyProcessBlank 보다 먼저 -->
 <script src="data/creative-process.js"></script>
-<script src="data/print-head.js?v=20261025-picture-audit1"></script>
+<script src="data/print-head.js?v=20261025-elementary-review1"></script>
 <script src="data/real-art.js?v=20261009-real4"></script>
 <script src="app/object-art.js?v=20261004-obj4"></script>
 <script src="app/g1/1-3.art.js"></script>
@@ -148,15 +148,15 @@
 <script src="app/g1/7-9.art.js"></script>
 <script src="app/g1/10-12.art.js"></script>
 <script src="app/g1/13-15.art.js"></script>
-<script src="app/g1/1-3.print.js?v=20261025-picture-audit1"></script>
-<script src="app/g1/4-6.print.js?v=20261025-picture-audit1"></script>
-<script src="app/g1/7-9.print.js?v=20261025-picture-audit1"></script>
-<script src="app/g1/10-12.print.js?v=20261025-picture-audit1"></script>
-<script src="app/g1/13-15.print.js?v=20261025-picture-audit1"></script>
+<script src="app/g1/1-3.print.js?v=20261025-elementary-review1"></script>
+<script src="app/g1/4-6.print.js?v=20261025-elementary-review1"></script>
+<script src="app/g1/7-9.print.js?v=20261025-elementary-review1"></script>
+<script src="app/g1/10-12.print.js?v=20261025-elementary-review1"></script>
+<script src="app/g1/13-15.print.js?v=20261025-elementary-review1"></script>
 <link rel="stylesheet" href="app/worksheet-series.css?v=20261024-monthly-series2">
 <script src="app/worksheet-series.js?v=20261024-course-series3"></script>
-<script src="app/paper-examples.js?v=20261025-picture-audit1"></script>
-<script src="app/exam.js?v=20261025-picture-audit1"></script>
+<script src="app/paper-examples.js?v=20261025-elementary-review1"></script>
+<script src="app/exam.js?v=20261025-elementary-review1"></script>
 <script>
 (function(){
   var q = new URLSearchParams(location.search);
@@ -232,7 +232,7 @@
     (s.drills || []).concat(s.creative || []).forEach(function(d){ var th = d && NM_THREADS[d.t]; if(th && th.unit) unitIds[th.unit] = 1; });
   });});
   var loads = Object.keys(unitIds).filter(function(id){ return /^[A-Za-z0-9-]+$/.test(id) && !(window.NM_UNITS && NM_UNITS[id]); }).map(function(id){
-    return new Promise(function(res){ var sc = document.createElement('script'); sc.src = 'data/units/' + id + '.js?v=20261025-picture-audit1';
+    return new Promise(function(res){ var sc = document.createElement('script'); sc.src = 'data/units/' + id + '.js?v=20261025-elementary-review1';
       sc.onload = sc.onerror = function(){ res(); }; document.head.appendChild(sc); });
   });
   Promise.all(loads).then(build);

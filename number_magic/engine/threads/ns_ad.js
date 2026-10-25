@@ -618,7 +618,7 @@ NM_TGEN['ad4_addTens'] = function(params, rng){
   if(missingAddend && op === '+'){
     return {
       prompt: {
-        ko: `${bigA}에 얼마를 더하면 ${result + bigB}이 될까요?`,
+        ko: `${bigA}에 얼마를 더하면 ${result}이 될까요?`,
         en: `${bigA} + \\square = ${bigA + bigB}. What's missing?`,
         zh: `${bigA}加多少等于${bigA + bigB}？`
       },
