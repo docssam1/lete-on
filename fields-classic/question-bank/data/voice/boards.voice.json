@@ -601,6 +601,286 @@
   {
    "id": "fcb-book-01-gakuro-sum-grid-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b01",
+   "text": "조건을 하나씩 따라가며 맞는 수를 빠짐없이 찾아볼 거예요. 하나도 빠뜨리지 않는 방법을 천천히 배워요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b02",
+   "text": "두 자리 수는 칸이 두 개예요. 왼쪽이 십의 자리, 오른쪽이 일의 자리. 32라면 십의 자리 숫자는 3, 일의 자리 숫자는 2예요. 한 칸에는 0부터 9까지, 숫자 하나만 들어가요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b03",
+   "text": "첫 번째 조건이에요. 십의 자리 숫자와 일의 자리 숫자를 더하면 14가 돼요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b04",
+   "text": "빠짐없이 찾으려면 순서를 정해서 하나씩 해요. 십의 자리에 1부터 차례로 넣어 봐요. 0은 넣지 않아요. 십의 자리가 0이면 두 자리 수가 아니니까요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b05",
+   "text": "십의 자리가 1이면 일의 자리는 13이어야 해요. 그런데 한 칸에는 9까지만 들어가요. 그래서 안 돼요. 십의 자리가 2, 3, 4일 때도 일의 자리가 12, 11, 10, 모두 9보다 커서 안 돼요. 그래서 십의 자리는 5부터 시작해요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b06",
+   "text": "십의 자리가 5이면, 5에 얼마를 더해 14가 될까요? 9예요. 그래서 59."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b07",
+   "text": "십의 자리가 6이면, 6에 얼마를 더해 14가 될까요? 8이에요. 그래서 68."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b08",
+   "text": "십의 자리가 7이면, 7에 얼마를 더해 14가 될까요? 7이에요. 그래서 77."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b09",
+   "text": "십의 자리가 8이면, 8에 얼마를 더해 14가 될까요? 6이에요. 그래서 86."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b10",
+   "text": "십의 자리가 9이면, 9에 얼마를 더해 14가 될까요? 5예요. 그래서 95."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b11",
+   "text": "십의 자리는 9까지예요. 그래서 첫 번째 조건에 맞는 수는 59, 68, 77, 86, 95, 모두 5개예요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b12",
+   "text": "두 번째 조건이에요. 짝수예요. 짝수는 일의 자리 숫자가 0, 2, 4, 6, 8인 수예요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b13",
+   "text": "59의 일의 자리는 9. 홀수예요. 지워요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b14",
+   "text": "68의 일의 자리는 8. 짝수예요. 남겨요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b15",
+   "text": "77의 일의 자리는 7. 홀수예요. 지워요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b16",
+   "text": "86의 일의 자리는 6. 짝수예요. 남겨요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b17",
+   "text": "95의 일의 자리는 5. 홀수예요. 지워요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b18",
+   "text": "두 조건에 모두 맞는 수는 68, 86, 2개예요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b19",
+   "text": "마지막으로 꼭 확인해요. 6 더하기 8은 14, 8 더하기 6은 14. 그리고 둘 다 짝수예요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b20",
+   "text": "정리해요. 첫 번째 조건에 맞는 수를 순서대로 빠짐없이 적어요. 그다음 두 번째 조건으로 하나씩 지워요. 남은 수를 두 조건에 다시 넣어 확인해요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-b21",
+   "text": "한 문제 풀어 봐요. 십의 자리 숫자와 일의 자리 숫자를 더하면 15이고, 80보다 작은 두 자리 수를 모두 찾으면 무엇일까요?"
+  },
+  {
+   "id": "fcb-book-01-number-inference-hint",
+   "text": "일의 자리에는 9까지만 들어가니까 십의 자리는 6부터예요. 6 더하기 9, 7 더하기 8. 그리고 80보다 작은지 확인해요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-right",
+   "text": "맞았어요! 69, 78. 87도 15가 되지만 80보다 커서 빠져요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-01-number-inference-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b01",
+   "text": "세 친구가 좋아하는 간식을 단서로 찾아볼 거예요. 표를 그려서 확실한 것부터 하나씩 표시하면 헷갈리지 않아요."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b02",
+   "text": "서아, 하람, 태오 세 친구가 국수, 볶음밥, 만두 중에서 서로 다른 간식을 하나씩 좋아해요. 두 친구가 같은 걸 좋아하는 일은 없어요."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b03",
+   "text": "표를 그려요. 왼쪽에 친구 이름, 위에 간식 이름을 써요."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b04",
+   "text": "표를 읽는 법이에요. 맞으면 동그라미, 아니면 가위표. 서로 다른 것을 하나씩 고르니까, 가로 한 줄에도 동그라미는 하나, 세로 한 줄에도 동그라미는 하나뿐이에요."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b05",
+   "text": "첫 번째 단서예요. 서아는 국수를 좋아해요. 확실한 단서라서 바로 표시해요. 서아와 국수가 만나는 칸에 동그라미."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b06",
+   "text": "서아는 국수를 골랐으니, 서아의 다른 칸, 볶음밥과 만두에는 가위표."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b07",
+   "text": "국수는 서아가 골랐으니, 다른 친구는 국수를 고를 수 없어요. 하람이와 태오의 국수 칸에도 가위표."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b08",
+   "text": "두 번째 단서예요. 하람이는 만두를 좋아하지 않아요. 하람이와 만두가 만나는 칸에 가위표."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b09",
+   "text": "하람이 줄을 봐요. 국수도 가위표, 만두도 가위표. 남은 칸은 볶음밥 하나뿐이에요. 그러니까 하람이는 볶음밥을 좋아해요."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b10",
+   "text": "볶음밥은 하람이가 골랐으니, 태오의 볶음밥 칸은 가위표."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b11",
+   "text": "태오 줄에 남은 칸은 만두 하나. 태오는 만두를 좋아해요."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b12",
+   "text": "확인해요. 가로 줄마다 동그라미가 하나씩, 세로 줄마다도 하나씩 있어요. 두 단서도 모두 맞아요. 서아는 국수, 하람이는 볶음밥, 태오는 만두."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b13",
+   "text": "정리해요. 표를 그려요. 확실한 단서부터 동그라미를 치고, 같은 가로줄과 세로줄을 가위표로 지워요. 한 칸만 남으면 그게 답이에요."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-b14",
+   "text": "한 문제 풀어 봐요. 수아, 이안, 하린이가 초록, 보라, 주황 연필을 하나씩 가졌어요. 이안이는 보라예요. 수아는 초록이 아니에요. 하린이가 가진 색은 무엇일까요?"
+  },
+  {
+   "id": "fcb-book-01-preference-logic-hint",
+   "text": "표를 떠올려 봐요. 이안이가 보라니까 수아는 보라가 아니에요. 수아는 초록도 아니니까 주황. 그럼 하린이는요?"
+  },
+  {
+   "id": "fcb-book-01-preference-logic-right",
+   "text": "맞았어요! 이안이는 보라, 수아는 초록이 아니니 주황, 남은 초록이 하린이 거예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-01-preference-logic-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b01",
+   "text": "친구 네 명이 한 줄로 서 있어요. 단서를 보고 누가 어디에 서 있는지 찾을 거예요. 줄을 먼저 그리고, 확실한 자리부터 채워요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b02",
+   "text": "자리 네 개를 그려요. 왼쪽이 앞, 오른쪽이 뒤예요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b03",
+   "text": "단서는 세 개예요. 구름이는 맨 앞이에요. 별이는 구름이 바로 뒤예요. 하늘이는 바다보다 뒤에 있어요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b04",
+   "text": "확실한 단서부터 써요. 구름이는 맨 앞이니까 첫 번째 자리에 써요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b05",
+   "text": "별이는 구름이 바로 뒤예요. 「바로 뒤」는 딱 붙어서 한 칸 뒤라는 뜻이에요. 그래서 두 번째 자리."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b06",
+   "text": "남은 자리는 세 번째와 네 번째, 남은 친구는 바다와 하늘이에요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b07",
+   "text": "하늘이는 바다보다 뒤에 있어요. 「뒤에 있다」는 붙어 있지 않아도 뒤쪽이면 된다는 뜻이에요. 두 자리 중 뒤쪽은 네 번째. 그래서 하늘이가 네 번째, 바다는 세 번째예요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b08",
+   "text": "확인해요. 구름, 별, 바다, 하늘. 구름이가 맨 앞, 별이가 바로 뒤, 하늘이가 바다보다 뒤. 세 단서가 모두 맞아요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b09",
+   "text": "이번엔 뒤에서부터 세어 봐요. 맨 뒤 하늘이가 뒤에서 첫 번째, 바다가 뒤에서 두 번째, 별이가 뒤에서 세 번째, 구름이가 뒤에서 네 번째예요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b10",
+   "text": "앞에서 세는 것과 뒤에서 세는 것은 반대예요. 네 명이면, 앞에서 첫 번째가 뒤에서 네 번째, 앞에서 두 번째가 뒤에서 세 번째예요. 두 수를 더하면 늘 다섯이에요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b11",
+   "text": "정리해요. 줄을 먼저 그려요. 맨 앞이나 맨 뒤처럼 확실한 자리부터 채워요. 바로 뒤는 붙어서 한 칸, 뒤에 있다는 뒤쪽 어디든. 마지막에 단서를 하나씩 다시 확인해요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-b12",
+   "text": "한 문제 풀어 봐요. 이 줄에서 뒤에서 세 번째에 서 있는 친구는 누구일까요?"
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-hint",
+   "text": "맨 뒤 하늘이부터 세어요. 하늘이가 하나, 바다가 둘. 그다음은요?"
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-right",
+   "text": "맞았어요! 하늘, 바다, 그리고 별. 뒤에서 세 번째는 별이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-01-relative-order-running-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-b01",
+   "text": "많이 가진 사람이 적게 가진 사람에게 몇 개를 주면 둘이 똑같아질까요? 그림으로 하나씩 옮겨 보며 알아봐요."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-b02",
+   "text": "A는 구슬 12개를 가지고 있어요. 한 줄로 늘어놓아요."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-b03",
+   "text": "B는 4개예요. A 바로 아래에 줄을 맞춰 늘어놓아요."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-b04",
+   "text": "줄을 맞추니 차이가 보여요. A가 B보다 8개 더 많아요. 12 빼기 4는 8."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-b05",
+   "text": "그러면 차이 8개를 다 주면 될까요? 아니에요. 8개를 다 주면 A는 4개, B는 12개가 돼서 이번엔 B가 더 많아져요."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-b06",
+   "text": "차이를 반으로 나눠요. 반은 A가 덜 갖고, 반은 B가 더 가지면 둘이 만나요. 8의 반은 4."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-b07",
+   "text": "A의 끝에서 4개를 B에게 옮겨요. 하나, 둘, 셋, 넷."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-b08",
+   "text": "세어 봐요. A는 12개에서 4개를 줬으니 8개. B는 4개에 4개를 받았으니 8개. 둘 다 8개, 똑같아요."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-b09",
+   "text": "왜 반만 줄까요? 하나를 주면 A는 하나 줄고, B는 하나 늘어요. 한 번 줄 때마다 차이가 둘씩 줄어들어요. 그래서 차이의 반만큼만 주면 차이가 0이 돼요."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-b10",
+   "text": "정리해요. 먼저 두 수의 차이를 구해요. 차이를 반으로 나눠요. 그 반만큼 많은 쪽에서 적은 쪽으로 옮기면 둘이 같아져요."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-b11",
+   "text": "한 문제 풀어 봐요. A가 15개, B가 9개를 가지고 있어요. A가 B에게 몇 개를 주면 같아질까요?"
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-hint",
+   "text": "차이는 15 빼기 9, 6이에요. 그 반은 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-right",
+   "text": "맞았어요! 3개를 주면 A는 12개, B도 12개로 같아져요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-01-book1-equalize-transfer-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }

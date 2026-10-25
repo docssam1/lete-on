@@ -4,7 +4,7 @@
 // 움직임 줄이기 설정이면 바로 완성 장면.
 // 글자는 손글씨 글꼴(나눔펜, OFL · assets/fonts/nm-lesson-hand.woff2)을 펜이 지나가며 드러내고, 그림은 실제 선(stroke)을 펜이 그린다.
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
-import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261025j";
+import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261025l";
 
 const NS = "http://www.w3.org/2000/svg";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -26,11 +26,11 @@ const color = (c) => COLORS[c] || c || COLORS.ink;
 function arcPath(cx, cy, r, a0, a1, ccw = false) {
   // a0→a1 각도(도, 12시=0, 시계 방향 +). ccw면 반대로 돈다.
   let sweep = ccw ? ((a0 - a1) % 360 + 360) % 360 : ((a1 - a0) % 360 + 360) % 360;
-  if (sweep === 0) sweep = 359.9;
+  if (sweep === 0) sweep = 359.5;   // 꽉 찬 원: 시작·끝이 반올림으로 같아지면 호가 사라져 점만 남는다
   const [x0, y0] = [cx + r * Math.sin(deg(a0)), cy - r * Math.cos(deg(a0))];
   const end = ccw ? a0 - sweep : a0 + sweep;
   const [x1, y1] = [cx + r * Math.sin(deg(end)), cy - r * Math.cos(deg(end))];
-  return `M ${x0.toFixed(1)} ${y0.toFixed(1)} A ${r} ${r} 0 ${sweep > 180 ? 1 : 0} ${ccw ? 0 : 1} ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+  return `M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${sweep > 180 ? 1 : 0} ${ccw ? 0 : 1} ${x1.toFixed(2)} ${y1.toFixed(2)}`;
 }
 function arrowHead(x, y, angleDeg, size, stroke) {
   // 진행 방향 angleDeg(도, 수학 각: 0=오른쪽, 반시계 +)으로 향한 화살촉
@@ -185,6 +185,9 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     // 숫자 카드: 둥근 네모 + 숫자. 지우기(cross)는 카드 위에 사선 하나
     if (k === "card") { const w = item.w || 66, h = item.h || 78; return [{ kind: "path", d: `M ${item.x + 8} ${item.y} h ${w - 16} q 8 0 8 8 v ${h - 16} q 0 8 -8 8 h ${-(w - 16)} q -8 0 -8 -8 v ${-(h - 16)} q 0 -8 8 -8 Z`, stroke: item.color || "gold", width: 3, quick: true },
       { kind: "text", x: item.x + w / 2, y: item.y + h / 2 + 17, text: String(item.value), size: 48, align: "center", color: item.color || "gold", quick: true }]; }
+    // 표에 쓰는 표시: o(맞아요) · x(아니에요)
+    if (k === "o") return [{ kind: "path", d: arcPath(item.cx, item.cy, item.r || 26, 0, 360), stroke: item.color || "green", width: 4.5 }];
+    if (k === "x") { const r = item.r || 20; return [{ kind: "path", d: `M ${item.cx - r} ${item.cy - r} L ${item.cx + r} ${item.cy + r}`, stroke: item.color || "red", width: 4 }, { kind: "path", d: `M ${item.cx + r} ${item.cy - r} L ${item.cx - r} ${item.cy + r}`, stroke: item.color || "red", width: 4, quick: true }]; }
     if (k === "cross") { const w = item.w || 66, h = item.h || 78; return [{ kind: "path", d: `M ${item.x + 6} ${item.y + h - 6} L ${item.x + w - 6} ${item.y + 6}`, stroke: item.color || "red", width: 2.5 }]; }   // 숫자가 읽히도록 가늘게
     if (k === "digit") {   // 디지털 숫자: 꺼진 막대(옅게, 즉시)를 먼저, 켜진 막대를 펜으로 하나씩
       const out = [], w = Math.max(10, item.h * 0.09);

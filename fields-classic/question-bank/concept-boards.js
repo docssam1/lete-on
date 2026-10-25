@@ -476,4 +476,180 @@ export const BOARDS = {
       ]
     };
   })()
+
+  ,"book-01/number-inference": (() => {
+    const SUM = 14, cands = [];
+    for (let t = 1; t <= 9; t++) { const o = SUM - t; if (o >= 0 && o <= 9) cands.push({ t, o, n: t * 10 + o }); }
+    const even = (n) => n % 2 === 0, keep = cands.filter((c) => even(c.n));
+    const rowY = (i) => 350 + i * 46;
+    const T = (x, y, text, color = "ink", size = 32, align) => ({ kind: "text", x, y, text, size, color, align });
+    const CHK_SUM = 15, CHK_LT = 80, chkAll = []; for (let t = 1; t <= 9; t++) { const o = CHK_SUM - t; if (o >= 0 && o <= 9) chkAll.push({ t, o, n: t * 10 + o }); }
+    const chk = chkAll.filter((c) => c.n < CHK_LT).map((c) => c.n), chkOut = chkAll.find((c) => c.n > CHK_LT).n;
+    const first = cands[0].t, both = keep.length === 2 ? "둘 다" : keep.length === 3 ? "셋 다" : "모두";
+    return {
+      title: "조건에 맞는 수를 찾아요",
+      kicker: "1권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "조건을 하나씩 따라가며 맞는 수를 빠짐없이 찾아볼 거예요. 하나도 빠뜨리지 않는 방법을 천천히 배워요.",
+          items: [{ kind: "text", x: 60, y: 80, text: "조건에 맞는 수를 찾아요", size: 54 }] },
+        { say: "두 자리 수는 칸이 두 개예요. 왼쪽이 십의 자리, 오른쪽이 일의 자리. 32라면 십의 자리 숫자는 3, 일의 자리 숫자는 2예요. 한 칸에는 0부터 9까지, 숫자 하나만 들어가요.",
+          items: [{ kind: "box", x: 70, y: 120, w: 90, h: 80, color: "blue" }, { kind: "box", x: 160, y: 120, w: 90, h: 80, color: "green" }, T(115, 178, "3", "blue", 52, "center"), T(205, 178, "2", "green", 52, "center"), T(115, 228, "십의 자리", "blue", 22, "center"), T(205, 228, "일의 자리", "green", 22, "center")] },
+        { say: `첫 번째 조건이에요. 십의 자리 숫자와 일의 자리 숫자를 더하면 ${jo(SUM, "이")} 돼요.`,
+          items: [{ kind: "box", x: 560, y: 110, w: 410, h: 120, color: "gold" }, T(580, 160, `① 십의 자리 + 일의 자리 = ${SUM}`, "gold", 30)] },
+        { say: "빠짐없이 찾으려면 순서를 정해서 하나씩 해요. 십의 자리에 1부터 차례로 넣어 봐요. 0은 넣지 않아요. 십의 자리가 0이면 두 자리 수가 아니니까요.",
+          items: [T(80, 262, "십의 자리를 1부터 차례로", "gray", 24)] },
+        { say: `십의 자리가 1이면 일의 자리는 ${SUM - 1}이어야 해요. 그런데 한 칸에는 9까지만 들어가요. 그래서 안 돼요. 십의 자리가 ${Array.from({ length: first - 2 }, (_, i) => i + 2).join(", ")}일 때도 일의 자리가 ${Array.from({ length: first - 2 }, (_, i) => SUM - i - 2).join(", ")}, 모두 9보다 커서 안 돼요. 그래서 십의 자리는 ${first}부터 시작해요.`,
+          items: [T(80, 298, Array.from({ length: first - 1 }, (_, i) => `${i + 1}+${SUM - i - 1}`).join(", ") + "  ✗ (한 칸에 9까지)", "gray", 22)] },
+        ...cands.map((c, i) => ({ say: `십의 자리가 ${c.t}이면, ${c.t}에 얼마를 더해 ${jo(SUM, "이")} 될까요? ${c.o}예요. 그래서 ${c.n}.`.replace(`${c.o}예요`, jo(c.o, "이에요")),
+          items: [T(80, rowY(i), `${c.t} + ${c.o} = ${SUM}  →  ${c.n}`, "blue", 32)] })),
+        { say: `십의 자리는 9까지예요. 그래서 첫 번째 조건에 맞는 수는 ${cands.map((c) => c.n).join(", ")}, 모두 ${cands.length}개예요.`,
+          items: [T(560, 280, `①에 맞는 수: ${cands.map((c) => c.n).join(", ")}`, "blue", 28)] },
+        { say: "두 번째 조건이에요. 짝수예요. 짝수는 일의 자리 숫자가 0, 2, 4, 6, 8인 수예요.",
+          items: [T(580, 210, "② 짝수 (일의 자리가 0, 2, 4, 6, 8)", "gold", 26)] },
+        ...cands.map((c, i) => ({ say: even(c.n) ? `${c.n}의 일의 자리는 ${c.o}. 짝수예요. 남겨요.` : `${c.n}의 일의 자리는 ${c.o}. 홀수예요. 지워요.`,
+          items: even(c.n) ? [{ kind: "o", cx: 380, cy: rowY(i) - 11, r: 20, color: "green" }] : [{ kind: "line", x1: 70, y1: rowY(i) - 11, x2: 340, y2: rowY(i) - 11, color: "red", width: 3 }, { kind: "x", cx: 380, cy: rowY(i) - 11, r: 14, color: "red" }] })),
+        { say: `두 조건에 모두 맞는 수는 ${keep.map((c) => c.n).join(", ")}, ${keep.length}개예요.`,
+          items: [T(560, 340, `①과 ② 모두: ${keep.map((c) => c.n).join(", ")}`, "green", 32)] },
+        { say: `마지막으로 꼭 확인해요. ${keep.map((c) => `${c.t} 더하기 ${jo(c.o, "는")} ${SUM}`).join(", ")}. 그리고 ${both} 짝수예요.`,
+          items: [T(560, 395, keep.map((c) => `${c.t}+${c.o}`).join(", ") + ` 모두 ${SUM}, 모두 짝수 ✓`, "green", 24)] },
+        { say: "정리해요. 첫 번째 조건에 맞는 수를 순서대로 빠짐없이 적어요. 그다음 두 번째 조건으로 하나씩 지워요. 남은 수를 두 조건에 다시 넣어 확인해요.", mood: "praise",
+          items: [{ kind: "box", x: 540, y: 250, w: 440, h: 170, color: "gold" }, T(560, 480, "순서대로 적고, 하나씩 지우기!", "gold", 32)] },
+        { say: `한 문제 풀어 봐요. 십의 자리 숫자와 일의 자리 숫자를 더하면 ${CHK_SUM}이고, ${CHK_LT}보다 작은 두 자리 수를 모두 찾으면 무엇일까요?`, mood: "think",
+          items: [],
+          check: { question: `십의 자리 + 일의 자리 = ${CHK_SUM}이고 ${CHK_LT}보다 작은 두 자리 수를 모두 고르면?`,
+            options: [chk.join(", "), [...chk, chkOut].join(", "), String(chk.at(-1))], answer: 0,
+            hint: `일의 자리는 9까지예요. 십의 자리를 작은 수부터 넣어 차례로 적고, ${CHK_LT}보다 작은 것만 남겨요.`, sayHint: `일의 자리에는 9까지만 들어가니까 십의 자리는 ${chkAll[0].t}부터예요. ${chkAll.slice(0, 2).map((c) => `${c.t} 더하기 ${c.o}`).join(", ")}. 그리고 ${CHK_LT}보다 작은지 확인해요.`,
+            right: `맞았어요! ${chk.map((n, i) => (i < chk.length - 1 ? jo(n, "과") : n)).join(" ")}이에요.`.replace(/(\d+)이에요/, (m, n) => jo(n, "이에요")), sayRight: `맞았어요! ${chk.join(", ")}. ${chkOut}도 ${jo(CHK_SUM, "이")} 되지만 ${CHK_LT}보다 커서 빠져요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-01/preference-logic": (() => {
+    const people = ["서아", "하람", "태오"], foods = ["국수", "볶음밥", "만두"];
+    const X0 = 230, Y0 = 210, S = 88;
+    const c = (r, k) => ({ cx: X0 + (k + 0.5) * S, cy: Y0 + (r + 0.5) * S });
+    const O = (r, k) => ({ kind: "o", ...c(r, k), r: 26, color: "green" }), Xm = (r, k) => ({ kind: "x", ...c(r, k), r: 18, color: "red" });
+    const T = (y, text, color = "ink", size = 28) => ({ kind: "text", x: 560, y, text, size, color });
+    return {
+      title: "좋아하는 것을 찾아요",
+      kicker: "1권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "세 친구가 좋아하는 간식을 단서로 찾아볼 거예요. 표를 그려서 확실한 것부터 하나씩 표시하면 헷갈리지 않아요.",
+          items: [{ kind: "text", x: 60, y: 80, text: "좋아하는 것을 찾아요", size: 54 }] },
+        { say: `${people.join(", ")} 세 친구가 ${foods.join(", ")} 중에서 서로 다른 간식을 하나씩 좋아해요. 두 친구가 같은 걸 좋아하는 일은 없어요.`,
+          items: [T(140, `${people.join(" · ")}  ↔  ${foods.join(" · ")}`, "blue", 28), T(185, "한 사람에 하나씩, 서로 다르게", "gray", 24)] },
+        { say: "표를 그려요. 왼쪽에 친구 이름, 위에 간식 이름을 써요.",
+          items: [{ kind: "grid", x: X0, y: Y0, cols: 3, rows: 3, cell: S, color: "ink" }, ...foods.map((f, k) => ({ kind: "text", x: X0 + (k + 0.5) * S, y: Y0 - 16, text: f, size: 28, align: "center", color: "blue" })), ...people.map((p, r) => ({ kind: "text", x: X0 - 14, y: Y0 + (r + 0.5) * S + 10, text: p, size: 30, align: "right", color: "blue" }))] },
+        { say: "표를 읽는 법이에요. 맞으면 동그라미, 아니면 가위표. 서로 다른 것을 하나씩 고르니까, 가로 한 줄에도 동그라미는 하나, 세로 한 줄에도 동그라미는 하나뿐이에요.",
+          items: [T(250, "맞으면 ○, 아니면 ×", "gray"), T(290, "가로 한 줄에 ○ 하나, 세로 한 줄에 ○ 하나", "gray", 24)] },
+        { say: "첫 번째 단서예요. 서아는 국수를 좋아해요. 확실한 단서라서 바로 표시해요. 서아와 국수가 만나는 칸에 동그라미.",
+          items: [T(350, "단서 1: 서아는 국수를 좋아해요.", "green"), O(0, 0)] },
+        { say: "서아는 국수를 골랐으니, 서아의 다른 칸, 볶음밥과 만두에는 가위표.",
+          items: [Xm(0, 1), Xm(0, 2)] },
+        { say: "국수는 서아가 골랐으니, 다른 친구는 국수를 고를 수 없어요. 하람이와 태오의 국수 칸에도 가위표.",
+          items: [Xm(1, 0), Xm(2, 0)] },
+        { say: "두 번째 단서예요. 하람이는 만두를 좋아하지 않아요. 하람이와 만두가 만나는 칸에 가위표.",
+          items: [T(395, "단서 2: 하람이는 만두를 좋아하지 않아요.", "red", 26), Xm(1, 2)] },
+        { say: "하람이 줄을 봐요. 국수도 가위표, 만두도 가위표. 남은 칸은 볶음밥 하나뿐이에요. 그러니까 하람이는 볶음밥을 좋아해요.",
+          items: [O(1, 1)] },
+        { say: "볶음밥은 하람이가 골랐으니, 태오의 볶음밥 칸은 가위표.",
+          items: [Xm(2, 1)] },
+        { say: "태오 줄에 남은 칸은 만두 하나. 태오는 만두를 좋아해요.",
+          items: [O(2, 2)] },
+        { say: "확인해요. 가로 줄마다 동그라미가 하나씩, 세로 줄마다도 하나씩 있어요. 두 단서도 모두 맞아요. 서아는 국수, 하람이는 볶음밥, 태오는 만두.",
+          items: [T(450, "서아-국수, 하람-볶음밥, 태오-만두 ✓", "green", 28)] },
+        { say: "정리해요. 표를 그려요. 확실한 단서부터 동그라미를 치고, 같은 가로줄과 세로줄을 가위표로 지워요. 한 칸만 남으면 그게 답이에요.", mood: "praise",
+          items: [{ kind: "box", x: 540, y: 320, w: 440, h: 160, color: "gold" }, T(540, "확실한 것부터 ○, 나머지는 ×", "gold", 30)] },
+        { say: "한 문제 풀어 봐요. 수아, 이안, 하린이가 초록, 보라, 주황 연필을 하나씩 가졌어요. 이안이는 보라예요. 수아는 초록이 아니에요. 하린이가 가진 색은 무엇일까요?", mood: "think",
+          items: [],
+          check: { question: "수아·이안·하린이가 초록·보라·주황 연필을 하나씩 가졌어요. 이안이는 보라, 수아는 초록이 아니에요. 하린이의 색은?",
+            options: ["초록", "보라", "주황"], answer: 0,
+            hint: "이안이의 보라부터 표시하고, 수아에게 남은 색을 찾아요.", sayHint: "표를 떠올려 봐요. 이안이가 보라니까 수아는 보라가 아니에요. 수아는 초록도 아니니까 주황. 그럼 하린이는요?",
+            right: "맞았어요! 수아가 주황이니 하린이는 초록이에요.", sayRight: "맞았어요! 이안이는 보라, 수아는 초록이 아니니 주황, 남은 초록이 하린이 거예요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
+
+  ,"book-01/relative-order-running": (() => {
+    const order = ["구름", "별", "바다", "하늘"];
+    const slot = (i) => ({ x: 130 + i * 175, y: 300, w: 130, h: 76 });
+    const box = (i, color = "gray") => ({ kind: "box", ...slot(i), color });
+    const name = (i, n, color) => ({ kind: "text", x: slot(i).x + 65, y: slot(i).y + 50, text: n, size: 34, align: "center", color });
+    const T = (x, y, text, color = "ink", size = 28) => ({ kind: "text", x, y, text, size, color });
+    const fromBack = (k) => order.length - k + 1;   // 앞에서 k번째 = 뒤에서 (4 - k + 1)번째
+    return {
+      title: "앞뒤 순서를 찾아요",
+      kicker: "1권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "친구 네 명이 한 줄로 서 있어요. 단서를 보고 누가 어디에 서 있는지 찾을 거예요. 줄을 먼저 그리고, 확실한 자리부터 채워요.",
+          items: [{ kind: "text", x: 60, y: 80, text: "앞뒤 순서를 찾아요", size: 54 }] },
+        { say: "자리 네 개를 그려요. 왼쪽이 앞, 오른쪽이 뒤예요.",
+          items: [0, 1, 2, 3].map((i) => box(i)).concat([T(60, 350, "앞", "blue", 32), T(870, 350, "뒤", "blue", 32), { kind: "arrow", x1: 140, y1: 420, x2: 830, y2: 420, color: "gray", width: 3 }]) },
+        { say: "단서는 세 개예요. 구름이는 맨 앞이에요. 별이는 구름이 바로 뒤예요. 하늘이는 바다보다 뒤에 있어요.",
+          items: [T(80, 150, "① 구름이는 맨 앞", "ink", 28), T(80, 195, "② 별이는 구름이 바로 뒤", "ink", 28), T(80, 240, "③ 하늘이는 바다보다 뒤", "ink", 28)] },
+        { say: "확실한 단서부터 써요. 구름이는 맨 앞이니까 첫 번째 자리에 써요.",
+          items: [name(0, order[0], "green"), { kind: "o", cx: 62, cy: 140, r: 14, color: "green" }] },
+        { say: "별이는 구름이 바로 뒤예요. 「바로 뒤」는 딱 붙어서 한 칸 뒤라는 뜻이에요. 그래서 두 번째 자리.",
+          items: [name(1, order[1], "green"), { kind: "o", cx: 62, cy: 185, r: 14, color: "green" }] },
+        { say: "남은 자리는 세 번째와 네 번째, 남은 친구는 바다와 하늘이에요.",
+          items: [box(2, "gold"), box(3, "gold")] },
+        { say: "하늘이는 바다보다 뒤에 있어요. 「뒤에 있다」는 붙어 있지 않아도 뒤쪽이면 된다는 뜻이에요. 두 자리 중 뒤쪽은 네 번째. 그래서 하늘이가 네 번째, 바다는 세 번째예요.",
+          items: [name(3, order[3], "green"), name(2, order[2], "green"), { kind: "o", cx: 62, cy: 230, r: 14, color: "green" }] },
+        { say: `확인해요. ${order.join(", ")}. 구름이가 맨 앞, 별이가 바로 뒤, 하늘이가 바다보다 뒤. 세 단서가 모두 맞아요.`,
+          items: [T(130, 480, `앞 ${order.join(" - ")} 뒤 ✓`, "green", 32)] },
+        { say: "이번엔 뒤에서부터 세어 봐요. 맨 뒤 하늘이가 뒤에서 첫 번째, 바다가 뒤에서 두 번째, 별이가 뒤에서 세 번째, 구름이가 뒤에서 네 번째예요.",
+          items: [0, 1, 2, 3].map((i) => T(slot(i).x + 65, 280, `뒤에서 ${fromBack(i + 1)}`, "red", 22)).map((x) => ({ ...x, align: "center" })) },
+        { say: "앞에서 세는 것과 뒤에서 세는 것은 반대예요. 네 명이면, 앞에서 첫 번째가 뒤에서 네 번째, 앞에서 두 번째가 뒤에서 세 번째예요. 두 수를 더하면 늘 다섯이에요.",
+          items: [T(560, 540, "앞에서 몇 번째 + 뒤에서 몇 번째 = 5", "gold", 26)] },
+        { say: "정리해요. 줄을 먼저 그려요. 맨 앞이나 맨 뒤처럼 확실한 자리부터 채워요. 바로 뒤는 붙어서 한 칸, 뒤에 있다는 뒤쪽 어디든. 마지막에 단서를 하나씩 다시 확인해요.", mood: "praise",
+          items: [{ kind: "box", x: 110, y: 450, w: 420, h: 50, color: "gold" }] },
+        { say: "한 문제 풀어 봐요. 이 줄에서 뒤에서 세 번째에 서 있는 친구는 누구일까요?", mood: "think",
+          items: [],
+          check: { question: `앞에서부터 ${order.join(", ")} 순서로 서 있어요. 뒤에서 세 번째는 누구일까요?`,
+            options: [order[2], order[1], order[0]], answer: 1,
+            hint: "맨 뒤부터 하나, 둘, 셋 세어 봐요.", sayHint: "맨 뒤 하늘이부터 세어요. 하늘이가 하나, 바다가 둘. 그다음은요?",
+            right: `맞았어요! 뒤에서 세 번째는 ${jo(order[1], "이에요")}.`, sayRight: `맞았어요! 하늘, 바다, 그리고 별. 뒤에서 세 번째는 ${jo(order[1], "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-01/book1-equalize-transfer": (() => {
+    const A = 12, Bn = 4, diff = A - Bn, give = diff / 2, each = A - give;
+    const C = 44, X = 140, YA = 150, YB = 250;
+    const cells = (n, from = 0) => Array.from({ length: n }, (_, i) => [0, from + i]);
+    const T = (x, y, text, color = "ink", size = 30) => ({ kind: "text", x, y, text, size, color });
+    const CA = 15, CB = 9, cgive = (CA - CB) / 2;
+    return {
+      title: "같아지도록 몇 개를 줄까요",
+      kicker: "1권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "많이 가진 사람이 적게 가진 사람에게 몇 개를 주면 둘이 똑같아질까요? 그림으로 하나씩 옮겨 보며 알아봐요.",
+          items: [{ kind: "text", x: 60, y: 80, text: "같아지도록 몇 개를 줄까요", size: 54 }] },
+        { say: `A는 구슬 ${A}개를 가지고 있어요. 한 줄로 늘어놓아요.`,
+          items: [T(80, YA + 32, "A", "blue", 36), { kind: "cells", x: X, y: YA, cell: C, cells: cells(A), fill: "blue" }, T(X + A * C + 14, YA + 32, `${A}개`, "blue", 30)] },
+        { say: `B는 ${Bn}개예요. A 바로 아래에 줄을 맞춰 늘어놓아요.`,
+          items: [T(80, YB + 32, "B", "green", 36), { kind: "cells", x: X, y: YB, cell: C, cells: cells(Bn), fill: "green" }, T(X + A * C + 14, YB + 32, `${Bn}개`, "green", 30)] },
+        { say: `줄을 맞추니 차이가 보여요. A가 B보다 ${diff}개 더 많아요. ${A} 빼기 ${Bn}는 ${diff}.`,
+          items: [{ kind: "box", x: X + Bn * C - 2, y: YA - 4, w: diff * C + 4, h: C + 8, color: "red", dash: true }, T(X + Bn * C, YA + C + 34, `차이 ${A} − ${Bn} = ${diff}`, "red", 28)] },
+        { say: `그러면 차이 ${diff}개를 다 주면 될까요? 아니에요. ${diff}개를 다 주면 A는 ${Bn}개, B는 ${A}개가 돼서 이번엔 B가 더 많아져요.`,
+          items: [T(560, 420, `${diff}개를 다 주면 → A ${Bn}, B ${A} ✗`, "red", 26)] },
+        { say: `차이를 반으로 나눠요. 반은 A가 덜 갖고, 반은 B가 더 가지면 둘이 만나요. ${diff}의 반은 ${give}.`,
+          items: [{ kind: "line", x1: X + (Bn + give) * C, y1: YA - 14, x2: X + (Bn + give) * C, y2: YA + C + 14, color: "gold", width: 4, dash: true }, T(560, 470, `차이의 반: ${diff} ÷ 2 = ${give}`, "gold", 28)] },
+        { say: `A의 끝에서 ${give}개를 B에게 옮겨요. 하나, 둘, 셋, 넷.`,
+          items: [...cells(give, A - give).map(([, k]) => ({ kind: "x", cx: X + (k + 0.5) * C, cy: YA + C / 2, r: 14, color: "red" })), { kind: "arrow", x1: X + (A - give / 2) * C, y1: YA + C + 6, x2: X + (Bn + give / 2) * C, y2: YB - 6, color: "red" }, { kind: "cells", x: X, y: YB, cell: C, cells: cells(give, Bn), fill: "red" }] },
+        { say: `세어 봐요. A는 ${A}개에서 ${give}개를 줬으니 ${each}개. B는 ${Bn}개에 ${give}개를 받았으니 ${Bn + give}개. 둘 다 ${each}개, 똑같아요.`,
+          items: [T(560, 520, `A ${A} − ${give} = ${each},  B ${Bn} + ${give} = ${Bn + give} ✓`, "green", 28)] },
+        { say: "왜 반만 줄까요? 하나를 주면 A는 하나 줄고, B는 하나 늘어요. 한 번 줄 때마다 차이가 둘씩 줄어들어요. 그래서 차이의 반만큼만 주면 차이가 0이 돼요.",
+          items: [T(560, 570, "하나 줄 때마다 차이가 2씩 줄어요", "gray", 24)] },
+        { say: "정리해요. 먼저 두 수의 차이를 구해요. 차이를 반으로 나눠요. 그 반만큼 많은 쪽에서 적은 쪽으로 옮기면 둘이 같아져요.", mood: "praise",
+          items: [{ kind: "box", x: 540, y: 390, w: 440, h: 200, color: "gold" }] },
+        { say: `한 문제 풀어 봐요. A가 ${CA}개, B가 ${CB}개를 가지고 있어요. A가 B에게 몇 개를 주면 같아질까요?`, mood: "think",
+          items: [],
+          check: { question: `A가 ${CA}개, B가 ${CB}개예요. A가 B에게 몇 개를 주어야 같아질까요?`,
+            options: [String(CA - CB), String(cgive), String(CA + CB)], answer: 1,
+            hint: "차이를 먼저 구하고, 그 반만큼 줘요.", sayHint: `차이는 ${CA} 빼기 ${CB}, ${jo(CA - CB, "이에요")}. 그 반은 얼마일까요?`,
+            right: `맞았어요! 차이 ${CA - CB}의 반, ${jo(cgive, "이에요")}.`, sayRight: `맞았어요! ${cgive}개를 주면 A는 ${CA - cgive}개, B도 ${CB + cgive}개로 같아져요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
 };
