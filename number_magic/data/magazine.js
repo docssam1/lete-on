@@ -192,6 +192,26 @@ function mobiusArt(cx, cy, R, w, n){
     poly(q.pts, q.i % 2 ? C.paper : C.goldbright, C.brown, 1.2)).join('');
 }
 
+/* Reviewed quantitative scenes. Coordinates and units share the same model. */
+function meanBars(){
+  const groups=[[40,40,40,40],[10,10,10,130]],base=100,scale=.5;
+  return groups.map((values,g)=>'<g data-mean-values="'+values+'">'+values.map((v,i)=>{const x=28+g*160+i*26;return '<rect x="'+x+'" y="'+(base-v*scale)+'" width="18" height="'+v*scale+'" fill="'+(g?C.gold:C.ok)+'"/>'+T(x+9,base-v*scale-7,11,C.ink,v);}).join('')+T(76+g*160,123,14,C.ink,g?'B':'A')+'</g>').join('')+line(18,80,302,80,C.red,1.6,'4 3')+T(160,16,14,C.red,'(160 ÷ 4) = 40');
+}
+function riverScene(){
+  const top=24,scale=.36,depths=[60,140,220];
+  return '<g data-depths="60,140,220" data-depth-scale="'+scale+'">'+depths.map((d,i)=>{const x=32+i*86;return '<rect x="'+x+'" y="'+top+'" width="86" height="'+d*scale+'" fill="'+C.water+'" opacity=".5"/>'+line(x,top+d*scale,x+86,top+d*scale,C.brown,2)+T(x+43,top+d*scale+15,13,C.ink,d);}).join('')+line(24,top,300,top,C.blue,2)+T(160,13,12,C.sub,'cm')+'</g>';
+}
+function probabilityChart(){return line(30,106,300,106,C.grey,2)+[[23,50.7,C.blue],[25,56.9,C.red],[30,70.6,C.ok]].map(([n,p,c],i)=>{const x=68+i*90,h=p*.9;return '<rect data-probability="'+p+'" x="'+(x-20)+'" y="'+(106-h)+'" width="40" height="'+h+'" fill="'+c+'"/>'+T(x,99-h,13,c,p+'%')+T(x,124,13,C.sub,n);}).join('')+line(30,61,300,61,C.red,1.5,'4 3')+T(300,56,11,C.red,'50%');}
+function birthdayPeople(){let g='';for(let i=0;i<25;i++){const x=32+(i%9)*32,y=35+Math.floor(i/9)*32;g+='<circle data-person="'+i+'" cx="'+x+'" cy="'+y+'" r="'+([4,17].includes(i)?8:5)+'" fill="'+([4,17].includes(i)?C.red:C.grey)+'"/>';}return g+line(160,35,288,67,C.red,2,'4 3')+T(160,147,23,C.red,'≈ 56.9%');}
+function pairCount(){const pts=Array.from({length:5},(_,i)=>[160+46*Math.cos(i*2*Math.PI/5-Math.PI/2),58+35*Math.sin(i*2*Math.PI/5-Math.PI/2)]);let g='<g data-pair-people="5">';for(let i=0;i<5;i++)for(let j=i+1;j<5;j++)g+=line(...pts[i],...pts[j],C.grey,1.4);return g+pts.map(p=>dot(...p,5,C.ok)).join('')+T(160,111,15,C.ink,'5 × 4 ÷ 2 = 10')+'</g>';}
+function benfordBars(){return line(25,105,304,105,C.grey,1.5)+Array.from({length:9},(_,i)=>{const d=i+1,p=100*Math.log10(1+1/d),h=p*2.2,x=32+i*30;return '<rect data-first-digit="'+d+'" data-probability="'+p+'" x="'+x+'" y="'+(105-h)+'" width="18" height="'+h+'" fill="'+(i?C.gold:C.ok)+'"/>'+T(x+9,124,12,C.sub,d)+(i===0?T(x+9,105-h-7,12,C.ok,'30.1%'):'');}).join('');}
+function tileScene(kind){const O=[160,74],r=46,points=[[114,74],[160,28],[206,74]],circle='<circle cx="160" cy="74" r="46" fill="none" stroke="'+C.grey+'" stroke-width="1.5" stroke-dasharray="4 3"/>';let s=kind===2?circle:'<path d="M 114 74 A 46 46 0 0 1 206 74" fill="none" stroke="'+C.brown+'" stroke-width="3"/>';
+ if(kind===1){s+='<polygon points="114,74 160,28 206,74" fill="none" stroke="'+C.blue+'" stroke-width="2"/>'+line(108,22,206,120,C.ok,1.6,'4 3')+line(212,22,114,120,C.ok,1.6,'4 3');[[137,51],[183,51]].forEach(([x,y])=>{s+=dot(x,y,3,C.ok);});s+=dot(...O,5,C.gold)+T(176,88,13,C.gold,'O');}
+ if(kind===2)s+=dot(...O,5,C.gold)+line(160,74,206,74,C.gold,2)+T(183,68,13,C.gold,'r');
+ return '<g data-circle-model="'+kind+'">'+s+points.map(([x,y],i)=>'<circle data-rim-point="'+i+'" cx="'+x+'" cy="'+y+'" r="4" fill="'+C.red+'"/>').join('')+'</g>';
+}
+function mobiusTrace(edge){const R=46,w=14,cx=160,cy=60;let d='';const steps=edge?120:60;for(let i=0;i<=steps;i++){const u=i*(edge?4:2)*Math.PI/steps,v=edge?w:0,r=R+v*Math.cos(u/2),x=cx+r*Math.cos(u),y=cy-(r*Math.sin(u)*.4+v*Math.sin(u/2)*.92);d+=(i?' L ':'M ')+x.toFixed(2)+' '+y.toFixed(2);}return mobiusArt(cx,cy,R,w,40)+'<path data-mobius-trace="'+(edge?'edge':'centre')+'" d="'+d+'" fill="none" stroke="'+C.red+'" stroke-width="2"/>'+T(160,119,14,C.red,'1');}
+
 window.NM_MAGAZINE = {
   name:{ ko:'수의 마법 매거진', en:'Numbers of Magic Magazine', zh:'数的魔法杂志' },
   tagline:{ ko:'수학자와 함께 묻고, 그림으로 발견하는 수학',
@@ -199,470 +219,729 @@ window.NM_MAGAZINE = {
             zh:'提问、画图，发现数学' },
   articles:[
 
-/* ── 1. 평균 ───────────────────────────────────────────── */
-{ id:'mz-average', no:1,
-  kicker:{ ko:'통계', en:'Statistics', zh:'统计' },
-  title:{ ko:'평균만 믿고 강을 건너면', en:'Crossing a River on an Average', zh:'只信平均数就过河' },
-  lede:{ ko:'강의 평균 수심은 140 cm, 병사들의 평균 키는 165 cm였습니다. 건널 수 있을까요?',
-         en:'The river was 140 cm deep on average; the soldiers were 165 cm tall on average. Can they wade across?',
-         zh:'河的平均水深140厘米，士兵的平均身高165厘米。能蹚过去吗？' },
-  art: head(
-    line(10,44,310,44,C.grey,2,'6 6')
-    +riverBed([0.05,0.3,0.62,0.86,0.95,0.86,0.62,0.3,0.05],44,150)
-    +line(10,86,310,86,C.red,3)
-    +T(96,80,15,C.red,'140')
-    +line(160,86,160,146,C.ink,3)
-    +T(196,124,15,C.ink,'220')
-    +line(40,30,40,86,C.bluedeep,4)
-    +line(32,30,48,30,C.bluedeep,3)
-    +T(40,22,15,C.bluedeep,'165')),
-  body:[
-    { h:{ ko:'평균은 가운데만 말해 준다', en:'An average speaks only for the middle', zh:'平均数只说中间' },
-      p:{ ko:'두 마을의 평균 소득이 똑같아도 속은 전혀 다를 수 있어요. 한쪽은 모두 비슷하게 살고, 다른 한쪽은 아주 부자와 아주 가난한 사람이 섞여 있을 수 있거든요. 평균은 그 차이를 하나도 보여 주지 못합니다.',
-         en:'Two villages can share the same average income and be nothing alike. In one, everybody earns about the same; in the other, the very rich and the very poor live side by side. The average shows none of that.',
-         zh:'两个村子的平均收入可以完全一样，内情却天差地别。一个村人人相近，另一个村里既有巨富也有赤贫。平均数把这些差别全抹平了。' },
-      art: fig(
-        line(20,100,300,100,C.grey,2)
-        +[0,1,2,3,4,5,6].map(i=>dot(70+i*8,60,5,C.blue)).join('')
-        +T(94,120,13,C.sub,'A')
-        +[0,1,2].map(i=>dot(190+i*7,92,5,C.blue)).join('')
-        +[0,1,2].map(i=>dot(250+i*7,24,5,C.blue)).join('')
-        +T(240,120,13,C.sub,'B')
-        +line(20,58,300,58,C.red,2.5,'7 5')
-        +T(160,32,15,C.red,'A = B')) },
-    { h:{ ko:'강은 평균으로 건너지 않는다', en:'You do not wade an average', zh:'过河靠的不是平均' },
-      p:{ ko:'강을 건널 때 중요한 것은 평균 수심이 아니라 가장 깊은 곳의 수심이에요. 평균이 140 cm라도 한가운데가 220 cm라면, 키 165 cm인 사람은 거기서 발이 닿지 않습니다. 평균은 가장 깊은 곳을 숨깁니다.',
-         en:'What matters at a river is not the average depth but the depth at the deepest point. Even if the average is 140 cm, a middle that drops to 220 cm is over the head of someone 165 cm tall. The average hides the deep part.',
-         zh:'过河要紧的不是平均水深，而是最深处有多深。就算平均是140厘米，河心若有220厘米，165厘米高的人到那儿就踩不到底。平均数把最深的地方藏了起来。' },
-      art: fig(
-        riverBed([0.05,0.34,0.7,0.92,1,0.92,0.7,0.34,0.05],26,118)
-        +line(10,62,310,62,C.red,3)
-        +T(36,56,13,C.red,'140')
-        +line(160,62,160,116,C.ink,3)
-        +T(196,98,13,C.ink,'220')
-        +T(66,22,13,C.ok,'165')) },
-    { h:{ ko:'평균 옆에 두 수를 더 적는다', en:'Write two more numbers beside the average', zh:'在平均数旁再写两个数' },
-      p:{ ko:'그래서 어른들은 평균을 말할 때 가장 큰 값과 가장 작은 값, 또는 얼마나 흩어져 있는지를 함께 말해요. 숫자 하나로 전체를 말하려고 할 때마다, 그 하나가 무엇을 숨기고 있는지 물어보세요.',
-         en:'That is why grown-ups quote the highest and the lowest value — or how widely the numbers are spread — right next to the average. Whenever one number is asked to speak for everything, ask what that one number is hiding.',
-         zh:'所以大人们说平均数时，会把最大值和最小值、或者数据有多分散一起说出来。每当有人用一个数代表全部，就该问：这个数藏起了什么？' },
-      art: fig(
-        box(20,30,280,66,C.paper,C.gold)
-        +T(84,62,15,C.sub,'?')+T(160,62,20,C.red,'140')+T(236,62,15,C.sub,'?')
-        +line(112,62,132,62,C.gold,2.5)+line(188,62,208,62,C.gold,2.5)
-        +T(84,88,15,C.ok,'↓')+T(236,88,15,C.ok,'↑')) }
+{
+  "id": "mz-average",
+  "no": 1,
+  "kicker": {
+    "ko": "통계",
+    "en": "Statistics",
+    "zh": "统计"
+  },
+  "title": {
+    "ko": "평균만 믿고 강을 건너면",
+    "en": "Crossing a River on an Average",
+    "zh": "只信平均数就过河"
+  },
+  "lede": {
+    "ko": "같은 간격으로 잰 세 곳의 수심은 60, 140, 220 cm예요. 평균이 140 cm면 어디나 그만큼 얕을까요?",
+    "en": "At three equally spaced sampling points the depths are 60, 140 and 220 cm. Does an average of 140 cm mean every point is that shallow?",
+    "zh": "等间距取样的三处水深是60、140、220厘米。平均140厘米，是否每处都这么浅？"
+  },
+  "art": head(riverScene()+T(160,157,16,C.ink,"(60 + 140 + 220) ÷ 3 = 140")),
+  "body": [
+    {
+      "h": {
+        "ko": "같은 평균, 다른 모습",
+        "en": "Same mean, different distributions",
+        "zh": "平均相同，分布不同"
+      },
+      "p": {
+        "ko": "A는 40, 40, 40, 40이고 B는 10, 10, 10, 130이에요. 합은 둘 다 160이고 자료는 네 개라 평균은 40입니다. 하지만 B에만 아주 큰 값이 있어요. <b>평균이 같아도 값들이 퍼진 모습은 다릅니다.</b>",
+        "en": "A has 40, 40, 40, 40; B has 10, 10, 10, 130. Both totals are 160 across four values, so both means are 40. Only B has a very large value. <b>Equal means do not imply equal distributions.</b>",
+        "zh": "A是40、40、40、40，B是10、10、10、130。两组合计160，各有四个值，平均都是40。但B中有一个很大的值。<b>平均相同，不代表分布相同。</b>"
+      },
+      "art": fig(meanBars())
+    },
+    {
+      "h": {
+        "ko": "평균은 가장 깊은 곳이 아니에요",
+        "en": "The mean is not the maximum",
+        "zh": "平均不是最深处"
+      },
+      "p": {
+        "ko": "위 그림은 실제 강이 아닌 수심 표본 모형이에요. 세 값의 평균은 140 cm지만 가장 깊은 표본은 220 cm입니다. 키가 165 cm라면 220 cm 깊이에서 서도 머리가 물 아래에 있어요. <b>평균만으로 건너도 된다고 판단할 수 없습니다.</b>",
+        "en": "This is a depth-sampling model, not a measured river. The three readings average 140 cm, yet the deepest is 220 cm. A person 165 cm tall would be under water even while standing there. <b>The mean alone cannot justify wading across.</b>",
+        "zh": "图中是水深取样模型，并非实测河流。三个读数平均140厘米，最深却有220厘米。身高165厘米的人站在那里，头也会没入水下。<b>不能只凭平均判断能否涉水。</b>"
+      },
+      "art": fig(riverScene())
+    },
+    {
+      "h": {
+        "ko": "평균과 함께 범위도 살펴요",
+        "en": "Look at the range as well",
+        "zh": "也看看范围"
+      },
+      "p": {
+        "ko": "A의 가장 작은 값과 큰 값은 모두 40이에요. B는 가장 작은 값이 10, 가장 큰 값이 130입니다. 평균 옆에 이 두 값도 적으면 차이가 드러나요. 흩어진 모습을 더 보려면 그래프나 다른 통계량도 함께 확인합니다.",
+        "en": "A has minimum and maximum both 40. B ranges from 10 to 130. Listing the minimum and maximum beside the mean reveals that difference. A graph or other statistics can show more about the spread.",
+        "zh": "A的最小值、最大值都是40，B却从10到130。在平均旁写上最小值和最大值，差别就清楚了。图表和其他统计量还能说明分散的情况。"
+      },
+      "art": fig(T(160,30,17,C.ink,"A: 40, 40, 40")+T(160,70,17,C.ink,"B: 10, 40, 130")+T(160,111,14,C.sub,"min  /  mean  /  max"))
+    }
   ],
-  close:{ ko:'평균은 거짓말을 하지 않아요. 다만 혼자서는 이야기의 절반만 합니다.',
-          en:'An average never lies. It simply tells only half the story on its own.',
-          zh:'平均数不说谎，它只是单独出场时只讲了一半的故事。' },
-  source:{ ko:'강을 건너다 빠졌다는 장수 이야기는 옛날부터 전해 오는 이야기예요. 진짜 있었던 일인지는 알 수 없지만, 평균이 무엇을 숨기는지는 분명합니다.',
-           en:'The tale of the general who marched his soldiers into the river has been passed down for a long time. Whether it truly happened we cannot say — but what an average hides is certain.',
-           zh:'将军带兵蹚河的故事流传已久，是否真有其事无从确认，但平均数藏起了什么，却是确定的。' },
-  fit:{ units:[], threads:[] }, age:['senior'] },
+  "close": {
+    "ko": "평균을 구한 다음에는, 그 평균이 어떤 자료에서 나왔는지도 살펴보세요.",
+    "en": "After finding the mean, look at the data behind it.",
+    "zh": "求出平均之后，也看看它来自什么数据。"
+  },
+  "source": {
+    "ko": "자료와 수심은 창작한 교육 모형입니다. 140 cm는 세 표본의 산술평균이며 강 전체의 평균을 뜻하지 않습니다.",
+    "en": "Original teaching data and depth samples. The 140 cm mean describes three readings, not the whole river.",
+    "zh": "数据和水深图均为自制教学模型。140厘米是三个取样值的算术平均，不是整条河的平均。"
+  },
+  "fit": {
+    "units": [
 
-/* ── 2. 축구공 ─────────────────────────────────────────── */
-{ id:'mz-soccer', no:2,
-  kicker:{ ko:'도형', en:'Shapes', zh:'图形' },
-  title:{ ko:'축구공은 정이십면체에서 태어났다', en:'A Football Is a Cut-Down Icosahedron', zh:'足球是被削角的正二十面体' },
-  lede:{ ko:'둥글어 보이지만 축구공은 구가 아니에요. 정오각형과 정육각형을 이어 붙인 다면체랍니다.',
-         en:'It looks round, but a football is not a sphere. It is a polyhedron stitched from pentagons and hexagons.',
-         zh:'看着是圆的，足球却不是球。它是用正五边形和正六边形缝起来的多面体。' },
-  art: head(
-    ballArt(160,84,68)
-    +T(44,150,16,C.ink,'12')+T(276,150,16,C.gold,'20')),
-  body:[
-    { h:{ ko:'출발은 삼각형 스무 개', en:'It starts with twenty triangles', zh:'起点是二十个三角形' },
-      p:{ ko:'정이십면체는 정삼각형 20개로 이루어진 입체예요. 꼭짓점은 12개, 모서리는 30개. 정다면체 중에서 면이 가장 많은 도형이랍니다.',
-         en:'An icosahedron is built from twenty equilateral triangles. It has twelve vertices and thirty edges — the regular solid with the most faces.',
-         zh:'正二十面体由二十个正三角形组成，有十二个顶点、三十条棱——是面数最多的正多面体。' },
-      art: fig(
-        icoArt(160,57,56)
-        +T(160,124,17,C.blue,'20')) },
-    { h:{ ko:'꼭짓점 열두 개를 잘라 낸다', en:'Slice off the twelve corners', zh:'把十二个角削掉' },
-      p:{ ko:'뾰족한 꼭짓점 12개를 하나씩 싹둑 자르면, 잘린 자리마다 정오각형이 생겨요. 오각형 12개! 그리고 원래 삼각형 20개는 모서리가 깎여 정육각형 20개가 됩니다.',
-         en:'Cut each of the twelve sharp corners straight off and a regular pentagon appears at every cut — twelve of them. Meanwhile the twenty triangles lose their tips and become twenty hexagons.',
-         zh:'把十二个尖角一个个削平，每削一处就露出一个正五边形——一共十二个。原来的二十个三角形被削去尖端，正好变成二十个正六边形。' },
-      art: fig(
-        /* 같은 각도로 놓은 두 입체 — 왼쪽 꼭짓점 하나가 오른쪽에서 오각형이 된다 */
-        icoArt(74,58,42,0)
-        +'<path d="M 142 58 L 176 58" stroke="'+C.gold+'" stroke-width="3.5" stroke-linecap="round"/>'
-        +'<polygon points="184,58 172,51 172,65" fill="'+C.gold+'"/>'
-        +ballArt(246,58,44,0)
-        +T(74,120,15,C.red,'1')+T(246,120,15,C.red,'5')) },
-    { h:{ ko:'세어 보면 딱 맞는다', en:'Count them and it works out', zh:'数一数正好对上' },
-      p:{ ko:'면은 12 + 20 = 32개, 꼭짓점은 60개, 모서리는 90개예요. 입체도형에는 늘 성립하는 규칙이 하나 있어요. (꼭짓점) − (모서리) + (면) = 2. 60 − 90 + 32 = 2, 정확히 맞습니다!',
-         en:'That makes 12 + 20 = 32 faces, 60 vertices and 90 edges. Solids obey one unbreakable rule: vertices minus edges plus faces equals two. 60 − 90 + 32 = 2. It fits exactly.',
-         zh:'于是面是12 + 20 = 32个，顶点60个，棱90条。立体图形有一条永远成立的规律：顶点数减棱数加面数等于2。60 − 90 + 32 = 2，分毫不差。' },
-      art: fig(
-        box(24,26,272,54,C.paper,C.gold)
-        +T(160,60,19,C.ink,'60 - 90 + 32 = 2')
-        +T(74,106,13,C.red,'60')+T(160,106,13,C.blue,'90')+T(246,106,13,C.gold,'32')) }
-  ],
-  close:{ ko:'바람을 넣어 빵빵해졌을 뿐, 축구공의 속마음은 여전히 다면체예요.',
-          en:'Pump it full of air and it bulges — but a football is a polyhedron at heart.',
-          zh:'充足气它鼓起来，可足球的骨子里还是个多面体。' },
-  source:{ ko:'두 가지 이상의 정다각형으로 이루어지고 구에 내접하는 다면체를 준정다면체라고 불러요. 축구공 모양은 그중 하나랍니다.',
-           en:'A solid made of two or more kinds of regular polygon and fitting inside a sphere is called a semi-regular solid. The football shape is one of them.',
-           zh:'由两种以上正多边形组成、又能内接于球的多面体叫半正多面体。足球的形状就是其中之一。' },
-  fit:{ units:[], threads:[] }, age:['mid','senior'] },
+    ],
+    "threads": [
 
-/* ── 3. 삼각 탁자 ──────────────────────────────────────── */
-{ id:'mz-tripod', no:3,
-  kicker:{ ko:'도형', en:'Shapes', zh:'图形' },
-  title:{ ko:'다리가 셋이면 흔들리지 않는다', en:'Three Legs Never Wobble', zh:'三条腿从不晃' },
-  lede:{ ko:'다리가 넷인 식탁은 덜거덕거리는데, 다리가 셋인 삼각대는 왜 한 번도 흔들리지 않을까요?',
-         en:'A four-legged table rocks, yet a three-legged tripod never does. Why?',
-         zh:'四条腿的餐桌会晃，三条腿的三脚架却从不晃。为什么？' },
-  art: head(
-    line(16,132,304,132,C.brown,3)
-    +'<rect x="44" y="40" width="100" height="9" rx="3" fill="'+C.gold+'"/>'
-    +line(56,49,64,132,C.brown,3)+line(132,49,124,132,C.brown,3)+line(98,49,96,132,C.brown,3)
-    +T(94,28,15,C.ok,'3')
-    +'<rect x="176" y="40" width="100" height="9" rx="3" fill="'+C.gold+'" transform="rotate(-4 226 44)"/>'
-    +line(186,52,194,132,C.brown,3)+line(266,46,258,132,C.brown,3)
-    +line(212,50,216,132,C.brown,3)+line(240,47,236,124,C.brown,3)
-    +T(226,28,15,C.red,'4')
-    +T(252,120,17,C.red,'!')),
-  body:[
-    { h:{ ko:'점 세 개는 언제나 한 평면 위에 있다', en:'Three points always share one plane', zh:'三个点总在同一个平面上' },
-      p:{ ko:'점을 세 개 찍어 보세요. 아무리 삐뚤빼뚤 찍어도, 그 셋을 모두 지나는 평평한 면은 반드시 하나 있어요. 그래서 다리가 셋이면 바닥이 아무리 울퉁불퉁해도 세 발끝이 만드는 면 위에 그냥 서 있게 됩니다.',
-         en:'Mark three points anywhere you like. However crooked they are, there is always exactly one flat surface through all three. So a three-legged stand simply settles onto the plane its three feet make, however bumpy the floor.',
-         zh:'随便点三个点，无论多歪，一定有且只有一个平面同时穿过它们。所以三条腿的架子，不管地面多不平，都会稳稳落在三只脚决定的那个平面上。' },
-      art: fig(
-        '<path d="M 40 96 L 150 62 L 280 84 L 170 118 Z" fill="'+C.mist+'" stroke="'+C.blue+'" stroke-width="2.5"/>'
-        +dot(40,96,6,C.red)+dot(150,62,6,C.red)+dot(280,84,6,C.red)
-        +T(160,30,15,C.blue,'3')) },
-    { h:{ ko:'네 번째 다리가 문제를 만든다', en:'The fourth leg is the troublemaker', zh:'第四条腿才是麻烦' },
-      p:{ ko:'다리가 넷이면 세 다리가 이미 면 하나를 정해 버려요. 네 번째 다리는 그 면 위에 있을 수도, 조금 떠 있을 수도 있죠. 조금이라도 뜨면 탁자는 그 다리를 축으로 덜거덕거립니다.',
-         en:'With four legs, three of them already fix a plane. The fourth may sit on that plane — or hover just above it. A hair of a gap is enough to set the table rocking about that leg.',
-         zh:'有四条腿时，其中三条已经定死了一个平面。第四条腿可能正好落在上面，也可能悬空一点点。哪怕只差一丝，桌子就会绕着那条腿摇晃。' },
-      art: fig(
-        '<path d="M 36 92 L 150 60 L 284 80 L 168 114 Z" fill="'+C.mist+'" stroke="'+C.blue+'" stroke-width="2.5"/>'
-        +dot(36,92,6,C.ok)+dot(150,60,6,C.ok)+dot(284,80,6,C.ok)
-        +dot(168,92,6,C.red)+line(168,92,168,114,C.red,2.5,'4 3')
-        +T(206,110,13,C.red,'?')) },
-    { h:{ ko:'흔들리면 돌려 보세요', en:'If it rocks, turn it', zh:'晃了就转一转' },
-      p:{ ko:'식당에서 탁자가 덜거덕거리면 종이를 접어 괴는 대신 탁자를 조금 돌려 보세요. 돌리는 동안 네 다리가 닿는 높이가 조금씩 바뀌다가, 네 다리가 동시에 바닥에 닿는 자리를 지나가게 되거든요. 측량 기구와 사진기 받침대가 하나같이 삼각대인 것도 같은 이유랍니다.',
-         en:'When a restaurant table wobbles, try turning it instead of folding paper under a leg. As it turns, the heights the four feet meet keep shifting, and it passes through a position where all four touch at once. It is the same reason surveying instruments and camera stands are tripods.',
-         zh:'餐厅里桌子晃时，别急着折纸垫脚，试试把桌子转一转。转动时四只脚接触的高度不断变化，总会经过四脚同时着地的位置。测量仪器和相机支架一律用三脚架，也是同一个道理。' },
-      art: fig(
-        '<path d="M 96 40 A 56 56 0 1 1 90 44" fill="none" stroke="'+C.gold+'" stroke-width="3"/>'
-        +'<polygon points="90,44 104,36 104,52" fill="'+C.gold+'"/>'
-        +'<rect x="128" y="62" width="64" height="8" rx="3" fill="'+C.gold+'"/>'
-        +line(136,70,132,108,C.brown,3)+line(184,70,188,108,C.brown,3)
-        +line(160,70,160,108,C.brown,3)
-        +line(100,108,220,108,C.brown,3)
-        +T(160,36,15,C.ok,'360')) }
+    ]
+  },
+  "age": [
+    "senior"
   ],
-  close:{ ko:'다리 하나를 더 다는 것이 늘 더 튼튼한 건 아니에요. 셋은 흔들릴 수가 없습니다.',
-          en:'One more leg is not always sturdier. Three simply cannot wobble.',
-          zh:'多加一条腿未必更稳。三条腿根本晃不起来。' },
-  source:{ ko:'세 점을 지나는 평면이 반드시 하나 있다는 것은 기하학의 기본 성질이에요. 흔들리는 탁자를 돌리면 멈추는 자리가 있다는 것도 수학으로 설명할 수 있답니다.',
-           en:'That exactly one plane passes through three points is a basic fact of geometry. That a rocking table can always be turned to a resting position can be proved mathematically too.',
-           zh:'过三点必有且只有一个平面，这是几何学的基本性质。晃动的桌子转一转总能找到不晃的位置，同样可以用数学证明。' },
-  fit:{ units:[], threads:[] }, age:['mid','senior'] },
+  "references": [
+    {
+      "label": "OpenStax · Mean",
+      "url": "https://openstax.org/books/introductory-statistics-2e/pages/2-5-measures-of-the-center-of-the-data"
+    }
+  ]
+},
 
-/* ── 4. 지어낸 숫자 ────────────────────────────────────── */
-{ id:'mz-faked', no:4,
-  kicker:{ ko:'확률', en:'Chance', zh:'概率' },
-  title:{ ko:'지어낸 숫자는 티가 난다', en:'Made-Up Numbers Give Themselves Away', zh:'编出来的数字藏不住' },
-  lede:{ ko:'"동전을 200번 던져 기록하거나, 던진 척하고 지어내서 내세요." 선생님은 어떻게 한눈에 가려냈을까요?',
-         en:'"Toss a coin 200 times and record it — or just make the record up." How did the teacher spot the fakes at a glance?',
-         zh:'"把硬币抛200次记下来，或者干脆编一份交上来。"老师怎么一眼就看出谁是编的？' },
-  art: head(
-    box(18,26,136,116,C.paper,C.ok)+T(86,48,13,C.ok,'O')
-    +[0,1,2,3,4,5].map(i=>T(38+i*20,78,15,C.ink,i%2?'H':'T')).join('')
-    +[0,1,2,3,4,5].map(i=>T(38+i*20,106,15,i<4?C.red:C.ink,i<4?'H':'T')).join('')
-    +box(166,26,136,116,C.paper,C.red)+T(234,48,13,C.red,'X')
-    +[0,1,2,3,4,5].map(i=>T(186+i*20,78,15,C.ink,i%2?'H':'T')).join('')
-    +[0,1,2,3,4,5].map(i=>T(186+i*20,106,15,C.ink,i%2?'T':'H')).join('')),
-  body:[
-    { h:{ ko:'사람은 긴 줄을 무서워한다', en:'People are afraid of long runs', zh:'人害怕长串' },
-      p:{ ko:'숫자를 지어내는 사람은 같은 면이 여러 번 이어지는 걸 못 견뎌요. 앞면이 네 번쯤 이어지면 "이건 너무 이상해 보여" 하고 슬쩍 뒷면을 끼워 넣습니다. 그래서 지어낸 기록은 앞뒤가 지나치게 사이좋게 번갈아 나와요.',
-         en:'Anyone inventing a record cannot bear the same side repeating. After about four heads they think "this looks wrong" and quietly slip in a tail. So a faked record alternates far too politely.',
-         zh:'编数据的人受不了同一面连着出现。连出四次正面，他就想"这也太怪了"，悄悄插进一个反面。于是编出来的记录，正反面交替得过分整齐。' },
-      art: fig(
-        [0,1,2,3,4,5,6,7].map(i=>T(40+i*34,50,17,C.ink,i%2?'H':'T')).join('')
-        +line(24,50,296,50,C.red,3)
-        +T(160,98,17,C.red,'X')) },
-    { h:{ ko:'진짜 동전은 겁이 없다', en:'A real coin has no such fear', zh:'真硬币可不怕' },
-      p:{ ko:'진짜로 200번을 던지면 같은 면이 6번 이상 이어지는 일이 거의 반드시 생겨요. 계산해 보면 100번 중 96번은 그런 줄이 나타납니다. 한 번도 안 나올 확률은 4%도 되지 않아요.',
-         en:'Toss a real coin 200 times and a run of six or more of the same side is nearly certain: work it out and it happens in 96 of every 100 attempts. The chance of no such run at all is under four percent.',
-         zh:'真的抛200次，同一面连出六次以上几乎一定会发生：算下来一百次里有九十六次会出现这样的长串。一次都不出现的概率还不到百分之四。' },
-      art: fig(
-        box(24,26,272,46,C.paper,C.ok)
-        +[0,1,2,3,4,5].map(i=>T(104+i*22,58,17,C.red,'H')).join('')
-        +T(60,58,15,C.ink,'T')+T(268,58,15,C.ink,'T')
-        +T(160,104,19,C.ok,'96 / 100')) },
-    { h:{ ko:'첫 자리 숫자에도 버릇이 있다', en:'First digits have habits too', zh:'首位数字也有脾气' },
-      p:{ ko:'회계 장부처럼 큰 자료에서는 맨 앞자리 숫자가 어떤 숫자인지에도 뚜렷한 버릇이 있어요. 지어낸 숫자는 그 버릇을 못 흉내 내기 때문에, 세무 감사에서 이 성질로 손댄 장부를 골라내기도 한답니다.',
-         en:'In large records such as accounting ledgers, even the leading digit follows a clear pattern. Invented figures cannot imitate it, and auditors use exactly this to flag books that have been tampered with.',
-         zh:'在账簿这类大量数据里，就连最前面那位数字也有明显的规律。编造的数字模仿不来，税务稽查正是靠这一点挑出被动过手脚的账本。' },
-      art: fig(
-        line(28,104,296,104,C.grey,2)
-        +[38,30,22,17,14,12,10,8,7].map((h,i)=>
-          '<rect x="'+(36+i*29)+'" y="'+(104-h*2)+'" width="20" height="'+(h*2)+'" rx="3" fill="'+(i?C.blue:C.red)+'"/>').join('')
-        +[1,2,3,4,5,6,7,8,9].map((n,i)=>T(46+i*29,122,12,C.sub,String(n))).join('')) }
+{
+  "id": "mz-soccer",
+  "no": 2,
+  "kicker": {
+    "ko": "도형",
+    "en": "Shapes",
+    "zh": "图形"
+  },
+  "title": {
+    "ko": "축구공은 정이십면체에서 태어났다",
+    "en": "A Football Is a Cut-Down Icosahedron",
+    "zh": "足球是被削角的正二十面体"
+  },
+  "lede": {
+    "ko": "정오각형 12개와 정육각형 20개로 된 전통적인 축구공 무늬를 보았나요? 그 바탕이 되는 다면체를 만들어요.",
+    "en": "Have you seen the traditional pattern of 12 pentagons and 20 hexagons on a football? Let us build its polyhedral model.",
+    "zh": "你见过由12个五边形和20个六边形组成的传统足球图案吗？来做它的多面体模型。"
+  },
+  "art": head(ballArt(160,76,61)+poly(Array.from({length:5},(_,i)=>[58+9*Math.cos(i*2*Math.PI/5-Math.PI/2),153+9*Math.sin(i*2*Math.PI/5-Math.PI/2)]),C.ink,C.ink,1)+T(95,158,15,C.ink,"×12")+poly(Array.from({length:6},(_,i)=>[228+9*Math.cos(i*2*Math.PI/6),153+9*Math.sin(i*2*Math.PI/6)]),C.paper,C.ink,1)+T(270,158,15,C.gold,"×20")),
+  "body": [
+    {
+      "h": {
+        "ko": "출발은 삼각형 스무 개",
+        "en": "It starts with twenty triangles",
+        "zh": "起点是二十个三角形"
+      },
+      "p": {
+        "ko": "정이십면체는 정삼각형 20개로 이루어진 입체예요. 꼭짓점은 12개, 모서리는 30개. 정다면체 중에서 면이 가장 많은 도형이랍니다.",
+        "en": "An icosahedron is built from twenty equilateral triangles. It has twelve vertices and thirty edges — the regular solid with the most faces.",
+        "zh": "正二十面体由二十个正三角形组成，有十二个顶点、三十条棱——是面数最多的正多面体。"
+      },
+      "art": fig(icoArt(160,57,56)+T(160,124,17,C.blue,"20"))
+    },
+    {
+      "h": {
+        "ko": "꼭짓점 열두 개를 잘라 낸다",
+        "en": "Slice off the twelve corners",
+        "zh": "把十二个角削掉"
+      },
+      "p": {
+        "ko": "각 모서리를 같은 길이로 셋으로 나누는 지점까지 꼭짓점을 잘라요. 잘린 12곳에 정오각형이 생기고, 삼각형 20개는 정육각형이 됩니다. <b>아무 위치나 자르는 것이 아니라 이 비율로 잘라야</b> 두 종류 면의 변 길이가 같아요.",
+        "en": "Cut each corner at points one third of the way along its edges. The 12 corners become regular pentagons and the 20 triangles become regular hexagons. <b>This particular cut</b> makes the edge lengths of both face types equal.",
+        "zh": "在每条棱的三等分点处切去顶角。12个角变成正五边形，20个三角形变成正六边形。<b>要按这个比例切</b>，两种面的边长才相同。"
+      },
+      "art": fig(icoArt(74,58,42,0)+arrow(140,58,184,58,C.gold,3)+ballArt(246,58,44,0)+T(74,120,14,C.red,"1")+T(246,120,14,C.red,"5"))
+    },
+    {
+      "h": {
+        "ko": "세어 보면 딱 맞는다",
+        "en": "Count them and it works out",
+        "zh": "数一数正好对上"
+      },
+      "p": {
+        "ko": "면은 12 + 20 = 32개, 꼭짓점은 60개, 모서리는 90개예요. 이 모형처럼 <b>볼록한 다면체</b>에는 꼭짓점 수 − 모서리 수 + 면 수 = 2가 성립해요. 60 − 90 + 32 = 2로 확인할 수 있습니다. 모든 입체에 적용되는 식은 아니에요.",
+        "en": "It has 32 faces, 60 vertices and 90 edges. For a <b>convex polyhedron</b> such as this one, vertices − edges + faces = 2. Check: 60 − 90 + 32 = 2. This is not a rule for every possible solid.",
+        "zh": "它有32个面、60个顶点、90条棱。像这样的<b>凸多面体</b>满足顶点数−棱数+面数=2。检验：60−90+32=2。这不是所有立体都适用的规律。"
+      },
+      "art": fig(T(160,42,19,C.ink,"60 − 90 + 32 = 2")+T(160,93,17,C.sub,"V − E + F = 2"))
+    }
   ],
-  close:{ ko:'우연은 우리 생각보다 훨씬 고집이 세요. 그 고집을 아는 사람만 진짜와 가짜를 가려낼 수 있답니다.',
-          en:'Chance is far more stubborn than we imagine — and only those who know its stubbornness can tell the real from the invented.',
-          zh:'偶然比我们想的固执得多。只有懂得这份固执的人，才分得出真假。' },
-  source:{ ko:'200번 가운데 6연속이 나올 확률 96%는 앞면·뒷면이 똑같이 나오는 공정한 동전으로 직접 계산한 값이에요.',
-           en:'The 96% figure for a run of six in 200 tosses was computed directly, assuming a fair coin with equal chances of heads and tails.',
-           zh:'200次中出现六连的96%，是按正反面机会均等的公平硬币直接算出来的。' },
-  fit:{ units:[], threads:[] }, age:['senior'] }
-,
-/* ── 5. 생일 ───────────────────────────────────────────── */
-{ id:'mz-birthday', no:5,
-  kicker:{ ko:'확률', en:'Chance', zh:'概率' },
-  title:{ ko:'축구장에 생일이 같은 사람이 있다', en:'Two People on a Football Pitch Share a Birthday', zh:'球场上有人生日相同' },
-  lede:{ ko:'선수 22명에 심판 3명, 모두 25명. 이 중에 생일이 같은 사람이 있을 확률은 얼마일까요?',
-         en:'Twenty-two players and three officials — twenty-five people. What are the chances two of them share a birthday?',
-         zh:'22名球员加3名裁判，一共25人。其中有两人生日相同的概率是多少？' },
-  art: head(
-    (function(){
-      let g = '';
-      for(let i = 0; i < 25; i++){
-        const x = 34 + (i % 9) * 32, y = 40 + Math.floor(i / 9) * 30;
-        const hit = (i === 4 || i === 17);
-        g += dot(x, y, hit ? 8 : 6, hit ? C.red : C.grey);
-      }
-      return g;
-    })()
-    + line(162, 40, 98, 100, C.red, 2.5, '5 4')
-    + T(160, 148, 26, C.red, '56.9%')),
-  body:[
-    { h:{ ko:'거꾸로 세는 것이 쉽다', en:'Counting backwards is easier', zh:'反着数更容易' },
-      p:{ ko:'"같은 사람이 있을 확률"은 세기 어려워요. 대신 "모두 다를 확률"을 셉니다. 첫 사람은 365일 아무 날이나 되고, 두 번째는 그 날을 뺀 364일, 세 번째는 363일… 이렇게 곱해 나간 뒤 1에서 빼면 됩니다.',
-         en:'The chance that two people match is hard to count. Count the chance that everyone differs instead: the first can have any of 365 days, the second 364, the third 363 — multiply them, then subtract from one.',
-         zh:'"有两人相同"的概率不好数。那就数"所有人都不同"的概率：第一个人365天随便哪天，第二个人剩364天，第三个人363天——连乘之后，再用1减掉。' },
-      art: fig(
-        T(160, 44, 17, C.ink, '365/365')
-        + T(160, 44, 17, C.ink, '')
-        + T(62, 78, 15, C.blue, '364') + T(62, 96, 15, C.blue, '365')
-        + line(46, 84, 78, 84, C.blue, 2)
-        + T(104, 87, 15, C.sub, '×')
-        + T(146, 78, 15, C.blue, '363') + T(146, 96, 15, C.blue, '365')
-        + line(130, 84, 162, 84, C.blue, 2)
-        + T(188, 87, 15, C.sub, '×')
-        + T(214, 87, 15, C.grey, '⋯')
-        + T(268, 87, 17, C.red, '1 -')) },
-    { h:{ ko:'스물세 명이 넘으면 반반보다 높다', en:'Past twenty-three it is better than even', zh:'超过二十三人就过半了' },
-      p:{ ko:'놀랍게도 23명만 모여도 같은 생일이 있을 확률이 50.7%로 절반을 넘어요. 축구장 25명은 56.9%, 한 반 30명이면 70.6%입니다. 우리 반을 한번 세어 보세요.',
-         en:'Astonishingly, just twenty-three people give a 50.7% chance — better than even. The twenty-five on a pitch reach 56.9%, and a class of thirty is at 70.6%. Try counting your own classroom.',
-         zh:'令人吃惊的是，只要23个人，概率就有50.7%，已经过半。球场上的25人是56.9%，一个班30人则是70.6%。数数自己班上试试看。' },
-      art: fig(
-        line(30, 106, 300, 106, C.grey, 2)
-        + [[23, 50.7, C.blue], [25, 56.9, C.red], [30, 70.6, C.ok]].map(function(r, i){
-            const x = 70 + i * 90, h = r[1] * 0.9;
-            return '<rect x="' + (x - 22) + '" y="' + (106 - h) + '" width="44" height="' + h
-              + '" rx="4" fill="' + r[2] + '"/>'
-              + T(x, 100 - h, 14, r[2], r[1] + '%') + T(x, 124, 13, C.sub, r[0]);
-          }).join('')
-        + line(30, 61, 300, 61, C.red, 2, '6 5')
-        + T(300, 55, 12, C.red, '50')) },
-    { h:{ ko:'왜 그렇게 높을까', en:'Why so high?', zh:'为什么这么高？' },
-      p:{ ko:'"나와 같은 생일"을 찾는 게 아니라 "아무 두 사람"을 찾기 때문이에요. 25명이면 짝을 지을 수 있는 방법이 300가지나 됩니다. 사람이 25명이어도 비교는 300번 일어나는 거예요.',
-         en:'Because you are not looking for someone who matches *you* — you are looking for any two people at all. Among twenty-five there are three hundred possible pairs. Twenty-five people, but three hundred comparisons.',
-         zh:'因为要找的不是"和我同一天"，而是"任意两个人"。25个人可以配成300对。人只有25个，比较却发生了300次。' },
-      art: fig(
-        (function(){
-          let g = '';
-          const cx = 160, cy = 62, R = 44;
-          const pts = [];
-          for(let i = 0; i < 9; i++){
-            const a = i * 2 * Math.PI / 9 - Math.PI / 2;
-            pts.push([cx + Math.cos(a) * R, cy + Math.sin(a) * R]);
-          }
-          for(let i = 0; i < 9; i++) for(let j = i + 1; j < 9; j++)
-            g += line(pts[i][0], pts[i][1], pts[j][0], pts[j][1], C.mist, 1);
-          pts.forEach(q => { g += dot(q[0], q[1], 5, C.blue); });
-          return g;
-        })()
-        + T(160, 124, 15, C.red, '25 → 300')) }
-  ],
-  close:{ ko:'우연은 우리가 생각하는 것보다 훨씬 자주 일어나요. 세는 방법을 알면 그 놀라움이 계산이 됩니다.',
-          en:'Coincidence happens far more often than we expect. Learn how to count it and the surprise becomes arithmetic.',
-          zh:'巧合发生的频率远超我们的想象。学会怎么数，惊讶就变成了算术。' },
-  source:{ ko:'23명 50.7%, 25명 56.9%, 30명 70.6%는 1년을 365일로 보고 직접 계산한 값이에요.',
-           en:'The figures 50.7%, 56.9% and 70.6% were computed directly, taking a year as 365 days.',
-           zh:'50.7%、56.9%、70.6%都是按一年365天直接计算出来的。' },
-  fit:{ units:[], threads:[] }, age:['senior'] },
+  "close": {
+    "ko": "실제 축구공은 바람을 넣으면 면이 휘어요. 여기서는 전통 무늬의 구조를 평평한 면의 다면체로 살펴봤습니다.",
+    "en": "Inflation curves the panels of a real ball. Here we studied the traditional pattern using a flat-faced polyhedron.",
+    "zh": "充气后真实足球的面会弯曲。这里用平面的多面体研究传统图案的结构。"
+  },
+  "source": {
+    "ko": "이 모형은 깎은 정이십면체로, 준정다면체의 하나입니다. 꼭짓점마다 정오각형 하나와 정육각형 두 개가 같은 방식으로 만납니다.",
+    "en": "The model is a truncated icosahedron, an Archimedean solid with one regular pentagon and two regular hexagons meeting alike at every vertex.",
+    "zh": "这个模型叫截角二十面体，属于阿基米德多面体。每个顶点都以相同方式连接一个正五边形和两个正六边形。"
+  },
+  "fit": {
+    "units": [
 
-/* ── 6. 뫼비우스의 띠 ──────────────────────────────────── */
-{ id:'mz-mobius', no:6,
-  kicker:{ ko:'도형', en:'Shapes', zh:'图形' },
-  title:{ ko:'안과 밖이 없는 종이', en:'The Paper With No Inside or Outside', zh:'没有正反面的纸' },
-  lede:{ ko:'종이띠를 한 번만 꼬아서 붙이면, 앞면과 뒷면이 사라집니다. 정말로요.',
-         en:'Give a paper strip a single twist before joining the ends, and the front and back vanish. Really.',
-         zh:'把纸条扭一下再粘起来，正面和反面就消失了。真的。' },
-  art: head(mobiusArt(160, 86, 62, 20, 44)),
-  body:[
-    { h:{ ko:'만드는 법은 아주 쉽다', en:'Making one is easy', zh:'做起来非常简单' },
-      p:{ ko:'긴 종이띠를 하나 자르세요. 한쪽 끝을 반 바퀴만 비틀고, 그대로 양 끝을 붙입니다. 비틀지 않고 붙이면 그냥 고리지만, 한 번 비틀면 전혀 다른 것이 됩니다.',
-         en:'Cut a long strip of paper. Give one end a half turn, then join the two ends. Join it without the twist and you get an ordinary ring; add the twist and you get something else entirely.',
-         zh:'剪一条长纸带。把一端扭转半圈，再把两端粘起来。不扭就是普通的圆环，扭了一下就完全不同了。' },
-      art: fig(
-        '<rect x="20" y="52" width="72" height="18" rx="3" fill="' + C.goldbright + '" stroke="' + C.brown + '" stroke-width="2"/>'
-        + arrow(100, 61, 122, 61, C.gold, 3)
-        + '<path d="M 132 52 L 186 52 L 186 70 L 132 70 Z" fill="' + C.goldbright + '" stroke="' + C.brown + '" stroke-width="2"/>'
-        + '<path d="M 186 52 L 204 70 L 204 52 L 186 70 Z" fill="' + C.paper + '" stroke="' + C.brown + '" stroke-width="2"/>'
-        + arrow(214, 61, 236, 61, C.gold, 3)
-        + mobiusArt(276, 61, 28, 9, 30)
-        + T(56, 96, 13, C.sub, '1') + T(168, 96, 13, C.sub, '2') + T(276, 104, 13, C.sub, '3')) },
-    { h:{ ko:'가운데를 따라 선을 그어 보세요', en:'Draw a line down the middle', zh:'沿着中间画一条线' },
-      p:{ ko:'띠 가운데에 연필을 대고 쭉 따라가 보세요. 종이를 뒤집지 않았는데도 어느새 처음 그리던 자리의 <b>반대쪽</b>을 지나고, 계속 가면 출발점으로 돌아옵니다. 면이 하나라는 뜻이에요.',
-         en:'Put a pencil on the middle of the band and follow it without lifting. You never flip the paper, yet you pass along what was the <b>other side</b>, and keep going until you arrive back where you began. That means there is only one surface.',
-         zh:'把铅笔放在带子中间一路画下去。纸没有翻面，笔却经过了原来的<b>另一侧</b>，一直走还会回到起点。这说明它只有一个面。' },
-      art: fig(
-        mobiusArt(160, 58, 46, 15, 40)
-        + dot(206, 58, 5, C.red)
-        + T(160, 118, 14, C.red, '1')) },
-    { h:{ ko:'방앗간 벨트가 오래 가는 이유', en:'Why a mill belt lasts longer', zh:'磨坊皮带更耐用的道理' },
-      p:{ ko:'기계 축을 돌리는 벨트를 한 번 꼬아서 걸면, 면이 하나뿐이라 벨트 전체가 골고루 닿습니다. 한쪽만 닳지 않으니 그만큼 오래 쓰죠. 놀이공원의 어떤 롤러코스터 레일도 같은 원리로 만들어졌어요.',
-         en:'Put a single twist in a belt that drives a machine and, because there is only one surface, the whole belt wears evenly. No single face takes all the punishment, so it lasts far longer. Some roller-coaster tracks are built on the same idea.',
-         zh:'给驱动机器的皮带加上一个扭转，因为只有一个面，整条皮带就会均匀受力。不会只磨一侧，寿命自然长得多。游乐园里有些过山车轨道也用了同样的道理。' },
-      art: fig(
-        '<circle cx="80" cy="64" r="26" fill="none" stroke="' + C.sub + '" stroke-width="4"/>'
-        + '<circle cx="240" cy="64" r="26" fill="none" stroke="' + C.sub + '" stroke-width="4"/>'
-        + dot(80, 64, 5, C.sub) + dot(240, 64, 5, C.sub)
-        + '<path d="M 80 38 L 152 38 L 168 90 L 240 90" fill="none" stroke="' + C.gold + '" stroke-width="4"/>'
-        + '<path d="M 80 90 L 152 90 L 168 38 L 240 38" fill="none" stroke="' + C.brown + '" stroke-width="4"/>'
-        + T(160, 120, 13, C.sub, '1')) }
-  ],
-  close:{ ko:'당연해 보이는 것을 한 번 비틀어 보는 것 — 수학은 거기서 자랍니다.',
-          en:'Taking the obvious and giving it one twist — that is where mathematics grows.',
-          zh:'把理所当然的东西扭一下看看——数学就是从这里长出来的。' },
-  source:{ ko:'독일의 수학자이자 천문학자 뫼비우스(1790~1868)가 생각해 냈어요. 처음에는 사람들이 그런 종이가 정말 있겠냐며 의아해했다고 합니다.',
-           en:'It was conceived by Möbius (1790-1868), a German mathematician and astronomer. People at the time doubted such a paper could exist at all.',
-           zh:'这是德国数学家兼天文学家莫比乌斯（1790-1868）想出来的。当时人们还怀疑真有这样的纸吗。' },
-  fit:{ units:[], threads:[] }, age:['mid','senior'] },
+    ],
+    "threads": [
 
-/* ── 7. 당구대 ─────────────────────────────────────────── */
-{ id:'mz-billiard', no:7,
-  kicker:{ ko:'도형', en:'Shapes', zh:'图形' },
-  title:{ ko:'벽을 맞히고 싶으면 벽 너머를 겨눠라', en:'To Hit Off the Cushion, Aim Through It', zh:'想打库边，就瞄准库边的那一侧' },
-  lede:{ ko:'흰 공으로 벽을 한 번 맞힌 뒤 빨간 공을 맞히려면, 벽의 어디를 겨눠야 할까요?',
-         en:'You want the white ball to bounce off the cushion and then hit the red one. Where on the cushion do you aim?',
-         zh:'想让白球先撞库边再击中红球，该瞄准库边的哪一点？' },
-  art: head(
-    '<rect x="24" y="24" width="272" height="122" rx="8" fill="' + C.felt + '" stroke="' + C.brown + '" stroke-width="5"/>'
-    + dot(84, 62, 9, '#fff') + '<circle cx="84" cy="62" r="9" fill="none" stroke="' + C.ink + '" stroke-width="2"/>'
-    + dot(232, 74, 9, C.red)
-    + line(84, 62, 168, 142, C.blue, 2.5) + line(168, 142, 232, 74, C.blue, 2.5)
-    + dot(168, 142, 5, C.gold)
-    + T(168, 130, 15, C.gold, 'P')),
-  body:[
-    { h:{ ko:'공은 거울처럼 튕긴다', en:'A ball bounces like a mirror', zh:'球像镜子一样反弹' },
-      p:{ ko:'공의 한가운데를 쳐서 벽에 부딪히면, <b>들어가는 각과 나오는 각이 똑같습니다.</b> 빛이 거울에 반사될 때와 정확히 같아요. 이 성질 하나만 알면 나머지는 작도로 풀립니다.',
-         en:'Strike a ball through its centre and, when it meets the cushion, <b>the angle going in equals the angle coming out</b> — exactly as light reflects in a mirror. Know that one fact and the rest is a drawing problem.',
-         zh:'击打球心，球碰到库边时，<b>入射角和反射角相等</b>——和光线在镜子上反射完全一样。只要知道这一点，剩下的用作图就能解决。' },
-      art: fig(
-        line(24, 96, 296, 96, C.brown, 4)
-        + line(96, 30, 160, 96, C.blue, 2.5) + line(160, 96, 224, 30, C.blue, 2.5)
-        + line(160, 96, 160, 44, C.grey, 1.6, '4 3')
-        + '<path d="M 160 74 A 22 22 0 0 0 145 82" fill="none" stroke="' + C.red + '" stroke-width="2"/>'
-        + '<path d="M 175 82 A 22 22 0 0 0 160 74" fill="none" stroke="' + C.red + '" stroke-width="2"/>'
-        + T(132, 66, 14, C.red, '=') + T(190, 66, 14, C.red, '=')) },
-    { h:{ ko:'벽 너머에 가짜 공을 놓는다', en:'Put a phantom ball beyond the cushion', zh:'在库边的另一侧放一个假球' },
-      p:{ ko:'흰 공을 벽에 대고 접었을 때 겹치는 자리에 점을 하나 찍습니다. 벽을 거울이라고 보면 거기 비치는 <b>거울 속 공</b>이에요. 벽에서 같은 거리, 반대쪽입니다.',
-         en:'Fold the white ball across the cushion and mark where it lands. Treat the cushion as a mirror and that dot is the <b>ball in the mirror</b> — the same distance from the cushion, on the other side.',
-         zh:'把白球以库边为轴翻折过去，在落点画一个点。把库边看成镜子，那就是<b>镜中的球</b>——离库边同样远，在另一侧。' },
-      art: fig(
-        line(24, 70, 296, 70, C.brown, 4)
-        + dot(96, 38, 9, '#fff') + '<circle cx="96" cy="38" r="9" fill="none" stroke="' + C.ink + '" stroke-width="2"/>'
-        + line(96, 38, 96, 102, C.grey, 1.6, '4 3')
-        + '<circle cx="96" cy="102" r="9" fill="none" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="4 3"/>'
-        + T(126, 44, 14, C.sub, 'A') + T(126, 108, 14, C.red, "A'")
-        + T(210, 44, 13, C.sub, 'd') + T(210, 108, 13, C.sub, 'd')
-        + line(198, 38, 198, 70, C.sub, 1.6) + line(198, 70, 198, 102, C.sub, 1.6)) },
-    { h:{ ko:'가짜 공과 목표를 직선으로 잇는다', en:'Join the phantom to the target', zh:'把假球和目标连成直线' },
-      p:{ ko:'거울 속 공과 빨간 공을 자로 곧게 잇습니다. 그 직선이 벽과 만나는 자리가 바로 <b>겨눌 점</b>이에요. 거기를 맞히면 튕긴 공이 빨간 공으로 정확히 갑니다.',
-         en:'Draw a straight line from the mirrored ball to the red ball. Where that line crosses the cushion is <b>the point to aim at</b>. Hit it and the rebound runs straight to the red ball.',
-         zh:'用尺把镜中的球和红球连成一条直线。这条线与库边的交点，就是<b>要瞄准的点</b>。打中那里，反弹的球正好撞上红球。' },
-      art: fig(
-        line(24, 70, 296, 70, C.brown, 4)
-        + dot(78, 38, 9, '#fff') + '<circle cx="78" cy="38" r="9" fill="none" stroke="' + C.ink + '" stroke-width="2"/>'
-        + '<circle cx="78" cy="102" r="9" fill="none" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="4 3"/>'
-        + dot(248, 38, 9, C.red)
-        + line(78, 102, 248, 38, C.grey, 1.8, '5 4')
-        + line(78, 38, 163, 70, C.blue, 2.5) + line(163, 70, 248, 38, C.blue, 2.5)
-        + dot(163, 70, 5, C.gold) + T(163, 92, 15, C.gold, 'P')) }
+    ]
+  },
+  "age": [
+    "mid",
+    "senior"
   ],
-  close:{ ko:'어려운 길을 한 번 접으면 곧은 길이 됩니다. 수학이 자주 쓰는 꾀예요.',
-          en:'Fold the awkward path once and it becomes a straight one. Mathematics uses that trick again and again.',
-          zh:'把绕远的路折一次，就变成了直路。这是数学常用的巧劲。' },
-  source:{ ko:'벽을 두 번 맞히는 문제도 같은 방법을 두 번 쓰면 풀려요. 타원 당구대에서는 한쪽 초점에서 아무 방향으로나 쳐도 다른 초점으로 모입니다.',
-           en:'A two-cushion shot is solved by using the same trick twice. On an elliptical table, a ball struck from one focus in any direction gathers at the other focus.',
-           zh:'两次撞库的问题，把同样的办法用两次就能解决。在椭圆形球台上，从一个焦点朝任意方向击球，都会汇到另一个焦点。' },
-  fit:{ units:[], threads:[] }, age:['mid','senior'] },
+  "references": [
+    {
+      "label": "Wolfram · Archimedean solids",
+      "url": "https://mathworld.wolfram.com/ArchimedeanSolid.html"
+    }
+  ]
+},
 
-/* ── 8. 수막새 ─────────────────────────────────────────── */
-{ id:'mz-tile', no:8,
-  kicker:{ ko:'도형', en:'Shapes', zh:'图形' },
-  title:{ ko:'깨진 기와에서 원을 되찾는 법', en:'Finding the Circle in a Broken Roof Tile', zh:'从破瓦片里找回圆' },
-  lede:{ ko:'신라의 얼굴무늬수막새는 발굴될 때 온전한 모습이 아니었어요. 조각만 있는데 원래 크기를 어떻게 알까요?',
-         en:'The smiling roof-end tile from Silla was not whole when it was dug up. With only a fragment, how do you recover its original size?',
-         zh:'新罗的人面纹瓦当出土时并不完整。只剩碎片，怎么知道它原来的大小？' },
-  art: head(
-    /* 깨진 조각 — 얇은 활꼴로 그렸더니 조각이 아니라 실선처럼 보였다(눈으로 확인).
-       바깥 호와 안쪽 호로 둘러싼 **두께 있는 고리 조각**으로 다시 그린다. */
-    (function(){
-      const cx = 160, cy = 86, R = 62, r = 34;
-      const A = [-118, 52];                       /* 남아 있는 각 범위(도) */
-      const P = (deg, rad) => [cx + Math.cos(deg * Math.PI / 180) * rad,
-                               cy + Math.sin(deg * Math.PI / 180) * rad];
-      const o0 = P(A[0], R), o1 = P(A[1], R), i1 = P(A[1], r), i0 = P(A[0], r);
-      const d = 'M ' + o0[0].toFixed(1) + ' ' + o0[1].toFixed(1)
-        + ' A ' + R + ' ' + R + ' 0 0 1 ' + o1[0].toFixed(1) + ' ' + o1[1].toFixed(1)
-        + ' L ' + i1[0].toFixed(1) + ' ' + i1[1].toFixed(1)
-        + ' A ' + r + ' ' + r + ' 0 0 0 ' + i0[0].toFixed(1) + ' ' + i0[1].toFixed(1) + ' Z';
-      return '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="'
-        + C.grey + '" stroke-width="2.5" stroke-dasharray="7 6"/>'
-        + '<path d="' + d + '" fill="' + C.goldbright + '" stroke="' + C.brown + '" stroke-width="3"/>'
-        + [A[0], -33, A[1]].map(function(a){ const q = P(a, R); return dot(q[0], q[1], 6, C.red); }).join('')
-        + dot(cx, cy, 5, C.blue) + T(cx, cy + 26, 15, C.blue, '3');
-    })()),
-  body:[
-    { h:{ ko:'테두리에 점 세 개를 찍는다', en:'Mark three points on the rim', zh:'在边缘上点三个点' },
-      p:{ ko:'남아 있는 조각의 둥근 테두리 위에 아무 데나 점 세 개를 찍습니다. 딱 세 개면 충분해요 — 세 점을 지나는 원은 <b>세상에 하나뿐</b>이기 때문입니다.',
-         en:'Mark any three points along the curved rim of the surviving fragment. Three is enough, because <b>only one circle in the world</b> passes through three given points.',
-         zh:'在残片的弧形边缘上随便点三个点。三个就够了——因为经过三个点的圆<b>全世界只有一个</b>。' },
-      art: fig(
-        '<path d="M 96 108 A 66 66 0 0 1 224 108" fill="none" stroke="' + C.brown + '" stroke-width="4"/>'
-        + dot(100, 92, 6, C.red) + dot(160, 42, 6, C.red) + dot(220, 92, 6, C.red)
-        + T(160, 126, 15, C.red, '3')) },
-    { h:{ ko:'두 현의 수직이등분선을 긋는다', en:'Bisect two chords at right angles', zh:'作两条弦的垂直平分线' },
-      p:{ ko:'점 세 개를 이어 삼각형을 만들고, 두 변의 한가운데에서 <b>직각으로</b> 선을 올립니다. 두 선이 만나는 한 점 — 그곳이 원의 중심이에요. 삼각형의 <b>외심</b>이라고 부릅니다.',
-         en:'Join the three points into a triangle, then raise a line <b>at right angles</b> from the midpoint of two sides. Where those lines cross is the centre of the circle — the triangle’s <b>circumcentre</b>.',
-         zh:'把三个点连成三角形，再从两条边的中点<b>作垂线</b>。两条垂线的交点就是圆心——叫作三角形的<b>外心</b>。' },
-      art: fig(
-        '<polygon points="100,92 160,42 220,92" fill="none" stroke="' + C.blue + '" stroke-width="2"/>'
-        + dot(100, 92, 5, C.red) + dot(160, 42, 5, C.red) + dot(220, 92, 5, C.red)
-        + line(130, 67, 168, 98, C.ok, 2, '5 4')
-        + line(190, 67, 152, 98, C.ok, 2, '5 4')
-        + dot(130, 67, 4, C.ok) + dot(190, 67, 4, C.ok)
-        + dot(160, 88, 6, C.gold)
-        + T(160, 124, 14, C.gold, '1')) },
-    { h:{ ko:'그 중심에서 원을 그린다', en:'Draw the circle from that centre', zh:'以那个圆心画圆' },
-      p:{ ko:'찾은 중심에 컴퍼스 바늘을 꽂고 점 하나까지 벌려 한 바퀴 돌리면, 사라진 부분까지 포함한 <b>원래 기와의 크기</b>가 그대로 나옵니다. 조각 하나로 천 년 전의 지름을 아는 거예요.',
-         en:'Put the compass point on that centre, open it to one of the marks, and sweep a full turn: out comes <b>the tile’s original size</b>, missing parts included. One fragment gives you a diameter from a thousand years ago.',
-         zh:'把圆规针尖扎在圆心，张开到其中一个点，转一整圈——<b>瓦片原本的大小</b>就出来了，连缺失的部分也在内。一块碎片，就能知道一千年前的直径。' },
-      art: fig(
-        '<circle cx="160" cy="66" r="52" fill="none" stroke="' + C.grey + '" stroke-width="2" stroke-dasharray="6 5"/>'
-        + '<path d="M 108 66 A 52 52 0 0 1 212 66" fill="none" stroke="' + C.brown + '" stroke-width="4"/>'
-        + dot(160, 66, 6, C.gold)
-        + line(160, 66, 212, 66, C.gold, 2.5)
-        + T(186, 58, 13, C.gold, 'r')
-        + dot(108, 66, 5, C.red) + dot(160, 14, 5, C.red) + dot(212, 66, 5, C.red)) }
+{
+  "id": "mz-tripod",
+  "no": 3,
+  "kicker": {
+    "ko": "도형",
+    "en": "Shapes",
+    "zh": "图形"
+  },
+  "title": {
+    "ko": "세 다리 받침대는 왜 덜 흔들릴까?",
+    "en": "Why does a three-legged stand rock less?",
+    "zh": "三脚架为什么不容易晃？"
+  },
+  "lede": {
+    "ko": "세 발끝이 삼각형을 이루고 몸체가 단단한 받침대를 생각해요. 다리가 넷인 탁자와 무엇이 다를까요?",
+    "en": "Imagine a rigid stand whose three feet form a triangle. How is it different from a four-legged table?",
+    "zh": "想象一个结构坚固、三只脚围成三角形的架子。它与四脚桌有什么不同？"
+  },
+  "art": "<svg viewBox=\"0 0 320 170\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-hidden=\"true\"><line x1=\"16\" y1=\"132\" x2=\"304\" y2=\"132\" stroke=\"#8a6d46\" stroke-width=\"3\" stroke-linecap=\"round\"/><rect x=\"44\" y=\"40\" width=\"100\" height=\"9\" rx=\"3\" fill=\"#C9A063\"/><line x1=\"56\" y1=\"49\" x2=\"64\" y2=\"132\" stroke=\"#8a6d46\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"132\" y1=\"49\" x2=\"124\" y2=\"132\" stroke=\"#8a6d46\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"98\" y1=\"49\" x2=\"96\" y2=\"132\" stroke=\"#8a6d46\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"94\" y=\"28\" text-anchor=\"middle\" font-size=\"15\" font-weight=\"700\" fill=\"#2E9E6B\">3</text><rect x=\"176\" y=\"40\" width=\"100\" height=\"9\" rx=\"3\" fill=\"#C9A063\" transform=\"rotate(-4 226 44)\"/><line x1=\"186\" y1=\"52\" x2=\"194\" y2=\"132\" stroke=\"#8a6d46\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"266\" y1=\"46\" x2=\"258\" y2=\"132\" stroke=\"#8a6d46\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"212\" y1=\"50\" x2=\"216\" y2=\"132\" stroke=\"#8a6d46\" stroke-width=\"3\" stroke-linecap=\"round\"/><line x1=\"240\" y1=\"47\" x2=\"236\" y2=\"124\" stroke=\"#8a6d46\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"226\" y=\"28\" text-anchor=\"middle\" font-size=\"15\" font-weight=\"700\" fill=\"#D9534F\">4</text><text x=\"252\" y=\"120\" text-anchor=\"middle\" font-size=\"17\" font-weight=\"700\" fill=\"#D9534F\">!</text></svg>",
+  "body": [
+    {
+      "h": {
+        "ko": "일직선이 아닌 세 점이 평면을 정해요",
+        "en": "Three non-collinear points determine a plane",
+        "zh": "不共线的三点确定一个平面"
+      },
+      "p": {
+        "ko": "세 점이 <b>한 직선 위에 있지 않으면</b> 그 점들을 지나는 평면은 하나예요. 삼각형 모양으로 벌어진 세 발끝이 바닥에 닿으면 네 번째 발의 높이를 맞출 필요가 없어요. 다만 바닥이 무너지거나 무게가 한쪽으로 쏠리면 넘어질 수 있습니다.",
+        "en": "Three points <b>not on one straight line</b> determine one plane. With three spread-out feet touching the ground, there is no fourth foot to level. A stand can still tip if the ground gives way or its weight shifts too far to one side.",
+        "zh": "<b>不在同一直线上的三点</b>确定一个平面。三只分开的脚着地后，就不用再调整第四只脚的高度。但地面塌陷或重心偏到一边，架子仍会倒。"
+      },
+      "art": "<svg viewBox=\"0 0 320 130\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-hidden=\"true\"><path d=\"M 40 96 L 150 62 L 280 84 L 170 118 Z\" fill=\"#f1f0ec\" stroke=\"#16417C\" stroke-width=\"2.5\"/><circle cx=\"40\" cy=\"96\" r=\"6\" fill=\"#D9534F\"/><circle cx=\"150\" cy=\"62\" r=\"6\" fill=\"#D9534F\"/><circle cx=\"280\" cy=\"84\" r=\"6\" fill=\"#D9534F\"/><text x=\"160\" y=\"30\" text-anchor=\"middle\" font-size=\"15\" font-weight=\"700\" fill=\"#16417C\">3</text></svg>"
+    },
+    {
+      "h": {
+        "ko": "네 번째 다리가 문제를 만든다",
+        "en": "The fourth leg is the troublemaker",
+        "zh": "第四条腿才是麻烦"
+      },
+      "p": {
+        "ko": "네 발끝이 같은 평면에 있지 않으면 한 발이 바닥에서 뜰 수 있어요. 탁자를 누르면 바닥에 닿는 발의 조합이 바뀌며 덜거덕거립니다. <b>네 발끝의 높이를 함께 맞추기 어려운 것</b>이 세 다리 받침대와 다른 점이에요.",
+        "en": "If four foot tips do not lie in one plane, one may hover above the floor. Pressing the table changes which feet support it, causing rocking. <b>Getting all four foot tips to match the ground</b> is the extra challenge compared with three legs.",
+        "zh": "四只脚的末端若不共面，一只就可能悬空。按压桌面时，支撑的脚组合发生变化，桌子就晃动。比起三脚架，额外的困难是<b>让四只脚末端都适应地面</b>。"
+      },
+      "art": "<svg viewBox=\"0 0 320 130\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-hidden=\"true\"><path d=\"M 36 92 L 150 60 L 284 80 L 168 114 Z\" fill=\"#f1f0ec\" stroke=\"#16417C\" stroke-width=\"2.5\"/><circle cx=\"36\" cy=\"92\" r=\"6\" fill=\"#2E9E6B\"/><circle cx=\"150\" cy=\"60\" r=\"6\" fill=\"#2E9E6B\"/><circle cx=\"284\" cy=\"80\" r=\"6\" fill=\"#2E9E6B\"/><circle cx=\"168\" cy=\"92\" r=\"6\" fill=\"#D9534F\"/><line x1=\"168\" y1=\"92\" x2=\"168\" y2=\"114\" stroke=\"#D9534F\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-dasharray=\"4 3\"/><text x=\"206\" y=\"110\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"700\" fill=\"#D9534F\">?</text></svg>"
+    },
+    {
+      "h": {
+        "ko": "종이 받침대로 확인해요",
+        "en": "Try a small model",
+        "zh": "用小模型验证"
+      },
+      "p": {
+        "ko": "단단한 종이에 세 다리를 삼각형으로 붙인 모형을 만들어요. 같은 바닥에서 네 다리 모형과 비교해 보세요. 탁자를 돌리는 방법도 있지만, <b>같은 길이의 다리·바닥의 모양 등 조건</b>이 필요해요. 모든 탁자에서 반드시 되는 것은 아닙니다.",
+        "en": "Compare rigid card models with three feet in a triangle and with four feet. Rotation can help a suitable four-legged table, but <b>leg lengths and ground shape matter</b>. It is not guaranteed for every table.",
+        "zh": "用硬纸做三角形三脚模型，与同一地面上的四脚模型比较。转桌子有时有用，但<b>腿长、地面形状等条件</b>很重要，并非每张桌子都能靠转动变稳。"
+      },
+      "art": fig(T(160,26,15,C.sub,"3 ≠ 4")+poly([[70,95],[160,40],[250,95]],C.mist,C.sub,2)+dot(70,95,6,C.ok)+dot(160,40,6,C.ok)+dot(250,95,6,C.ok))
+    }
   ],
-  close:{ ko:'사라진 부분을 지어내지 않고, 남은 부분이 말해 주는 것만으로 되찾는 것 — 그게 수학의 복원입니다.',
-          en:'Recovering what is gone without inventing it, using only what the surviving part can tell you — that is restoration by mathematics.',
-          zh:'不去臆造缺失的部分，只凭残存部分给出的信息把它找回来——这就是数学的修复。' },
-  source:{ ko:'7세기경 신라 유물로 알려진 얼굴무늬수막새는 경주 영묘사 터에서 발굴됐어요. 삼각형의 외심은 실제로 유물을 복원할 때 쓰입니다.',
-           en:'The face-patterned roof tile, known as a Silla relic from around the seventh century, was excavated at the Yeongmyosa temple site in Gyeongju. The circumcentre really is used to restore artefacts.',
-           zh:'这件被认为是七世纪新罗遗物的人面纹瓦当，出土于庆州灵庙寺遗址。三角形的外心确实用于文物修复。' },
-  fit:{ units:[], threads:[] }, age:['senior'] }
+  "close": {
+    "ko": "「덜거덕거리지 않음」과 「절대 넘어지지 않음」은 달라요. 설명에 필요한 조건도 함께 보세요.",
+    "en": "Not rocking is different from never tipping. Check the conditions behind a claim.",
+    "zh": "不晃动与绝不翻倒不是一回事。也要检查结论的条件。"
+  },
+  "source": {
+    "ko": "한 직선 위에 있지 않은 세 점의 평면 성질을 설명한 모형입니다. 실제 받침대의 안전성을 보장하는 실험은 아닙니다.",
+    "en": "A model of the plane through three non-collinear points; not a test certifying a real stand as safe.",
+    "zh": "这是不共线三点确定平面的模型，不是实际支架安全认证实验。"
+  },
+  "fit": {
+    "units": [
 
+    ],
+    "threads": [
+
+    ]
+  },
+  "age": [
+    "mid",
+    "senior"
+  ],
+  "references": [
+    {
+      "label": "Oxford · Three non-collinear points",
+      "url": "https://people.maths.ox.ac.uk/earl/vam/0903.pdf"
+    },
+    {
+      "label": "Martin · Square table conditions",
+      "url": "https://doi.org/10.1016/j.physleta.2006.08.053"
+    }
+  ]
+},
+
+{
+  "id": "mz-faked",
+  "no": 4,
+  "kicker": {
+    "ko": "확률",
+    "en": "Chance",
+    "zh": "概率"
+  },
+  "title": {
+    "ko": "지어낸 기록에는 어떤 단서가 있을까?",
+    "en": "What clues can a made-up record leave?",
+    "zh": "编造的记录会留下什么线索？"
+  },
+  "lede": {
+    "ko": "동전을 200번 던진 기록과 상상으로 만든 기록을 비교해요. 같은 면이 길게 이어진 것만으로 가짜라고 할 수 있을까요?",
+    "en": "Compare a record of 200 coin tosses with an invented one. Does a long run of the same side prove a record is fake?",
+    "zh": "比较抛硬币200次的记录与编造的记录。连续多次同一面，能证明记录是假的吗？"
+  },
+  "art": head(T(160,22,13,C.sub,"H: heads · T: tails")+T(160,66,17,C.ink,"H H H H H H T H T T")+T(160,105,17,C.ink,"H T H T H T H T H T")+T(160,149,14,C.sub,"?")),
+  "body": [
+    {
+      "h": {
+        "ko": "사람은 긴 줄을 무서워한다",
+        "en": "People are afraid of long runs",
+        "zh": "人害怕长串"
+      },
+      "p": {
+        "ko": "그림에서 H는 앞면, T는 뒷면이에요. 사람이 기록을 만들 때는 「너무 규칙적이면 이상해 보이겠지」 하고 같은 면의 긴 줄을 피하기도 해요. 진짜 무작위 기록에는 뜻밖의 긴 줄도 나타납니다. <b>하지만 짧은 기록의 모양만으로 진짜와 가짜를 확정할 수는 없어요.</b>",
+        "en": "H means heads and T means tails. When inventing a record, people sometimes avoid long runs because they look suspicious. Real randomness can produce surprising runs. <b>A short pattern alone cannot establish whether a record is genuine.</b>",
+        "zh": "图中H为正面，T为反面。人编记录时，有时会因觉得可疑而避开长连串。真正随机的记录也会出现意外的长串。<b>只看一小段形状，不能确定记录真假。</b>"
+      },
+      "art": fig(T(160,34,14,C.sub,"H: heads · T: tails")+T(160,73,19,C.ink,"H T H T H T H T")+T(160,112,16,C.sub,"?"))
+    },
+    {
+      "h": {
+        "ko": "200번 묶음에서 긴 줄이 생길 확률",
+        "en": "A run somewhere in 200 tosses",
+        "zh": "200次中某处出现长串的概率"
+      },
+      "p": {
+        "ko": "공정한 동전을 서로 독립적으로 200번 던지면, 앞면 또는 뒷면이 <b>어딘가에서 6번 이상 연속</b> 나올 확률은 약 96.5%예요. 특정한 여섯 번이 모두 앞면일 확률과는 달라요. 「6번 이상이 없었다」도 드물지만 가능한 결과입니다.",
+        "en": "For 200 independent fair tosses, the chance of <b>at least six heads or six tails in a row somewhere</b> is about 96.5%. That differs from six specified tosses all being heads. No such run is unusual, but possible.",
+        "zh": "独立抛公平硬币200次，<b>某处连续至少六次正面或反面</b>的概率约96.5%。这与指定六次全为正面不同。没有这样的连串较少见，但仍可能发生。"
+      },
+      "art": fig(T(160,31,14,C.sub,"H H H H H H")+T(160,67,23,C.ok,"≈ 96.5%")+T(160,110,14,C.sub,"200"))
+    },
+    {
+      "h": {
+        "ko": "첫 자리 숫자의 규칙에도 조건이 있어요",
+        "en": "First-digit patterns have conditions",
+        "zh": "首位数字规律也有条件"
+      },
+      "p": {
+        "ko": "여러 자릿수 규모에 걸쳐 생긴 일부 자료는 첫 숫자가 1일 때가 약 30.1%인 벤퍼드 법칙을 따릅니다. 전화번호나 일정한 범위의 점수에는 그대로 적용할 수 없어요. 그래프는 <b>법칙의 이론값</b>이며, 어긋났다고 조작의 증거가 되는 것은 아닙니다.",
+        "en": "Some data spanning several orders of magnitude follow Benford’s law: about 30.1% begin with 1. It does not directly apply to phone numbers or tightly bounded scores. The chart shows <b>theoretical values</b>; a mismatch does not prove fabrication.",
+        "zh": "一些跨越多个数量级的数据符合本福特定律，首位为1的比例约30.1%。不能直接用于电话号码或范围很窄的分数。图示<b>理论值</b>；不符合并不能证明造假。"
+      },
+      "art": fig(benfordBars())
+    }
+  ],
+  "close": {
+    "ko": "숫자의 규칙은 더 살펴볼 단서예요. 판정하기 전에 자료의 성격과 다른 근거를 확인합니다.",
+    "en": "A pattern is a clue for further checking. Examine the data and other evidence before judging.",
+    "zh": "数字规律是进一步核查的线索。判断前要检查数据性质与其他证据。"
+  },
+  "source": {
+    "ko": "약96.5%는 연속 길이1~5를 추적해 직접 계산했습니다. 독립·공정한 동전 모형이며 벤퍼드 그래프는 이론 분포입니다.",
+    "en": "The 96.5% was computed by tracking run lengths 1–5 for independent fair tosses. Benford bars show the theoretical distribution.",
+    "zh": "96.5%通过跟踪独立公平抛掷的连续长度1～5计算。本福特柱形图表示理论分布。"
+  },
+  "fit": {
+    "units": [
+
+    ],
+    "threads": [
+
+    ]
+  },
+  "age": [
+    "senior"
+  ],
+  "references": [
+    {
+      "label": "NIST · Benford distribution",
+      "url": "https://xlinux.nist.gov/dads/HTML/benfordslaw.html"
+    },
+    {
+      "label": "BLS · Benford analysis",
+      "url": "https://www.bls.gov/osmr/research-papers/2003/pdf/st030020.pdf"
+    }
+  ]
+},
+
+{
+  "id": "mz-birthday",
+  "no": 5,
+  "kicker": {
+    "ko": "확률",
+    "en": "Chance",
+    "zh": "概率"
+  },
+  "title": {
+    "ko": "25명이면 생일이 같을 확률은?",
+    "en": "Could two of 25 people share a birthday?",
+    "zh": "25人中有人生日相同的概率？"
+  },
+  "lede": {
+    "ko": "선수 22명에 심판 3명, 모두 25명. 이 중에 생일이 같은 사람이 있을 확률은 얼마일까요?",
+    "en": "Twenty-two players and three officials — twenty-five people. What are the chances two of them share a birthday?",
+    "zh": "22名球员加3名裁判，一共25人。其中有两人生日相同的概率是多少？"
+  },
+  "art": head(birthdayPeople()),
+  "body": [
+    {
+      "h": {
+        "ko": "거꾸로 세는 것이 쉽다",
+        "en": "Counting backwards is easier",
+        "zh": "反着数更容易"
+      },
+      "p": {
+        "ko": "윤일을 빼고 365일이 똑같이 가능하며, 사람들의 생일이 서로 독립이라고 가정해요. 모두 다르려면 첫 사람은 아무 날, 둘째는 364/365, 셋째는 363/365의 비율로 앞사람들과 달라야 해요. 모두 다른 확률을 D라고 할 때, <b>곱한 전체 D를 1에서 빼면</b> 적어도 한 쌍이 같은 확률입니다.",
+        "en": "Assume 365 equally likely dates, no leap day, and independent birthdays. For everyone to differ, the first date is unrestricted, the second has probability 364/365 and the third 363/365 of avoiding earlier dates. Call the probability of all different birthdays D. <b>Subtract the whole product D from 1.</b>",
+        "zh": "假设不计闰日，365天等可能，各人生日日期独立。全不相同时，首人日期不限，第二人避开前人的概率为364/365，第三人为363/365。把全不相同的概率记作D，<b>用1减去整个乘积D</b>，才是至少有一对相同的概率。"
+      },
+      "art": fig(T(160,22,15,C.sub,"D")+T(160,66,21,C.ink,"364/365 × 363/365 × ⋯ × 341/365")+T(160,119,20,C.ok,"1 − D ≈ 0.5687"))
+    },
+    {
+      "h": {
+        "ko": "23명부터 절반을 넘어요",
+        "en": "It exceeds half from 23 people",
+        "zh": "从23人起超过一半"
+      },
+      "p": {
+        "ko": "이 가정에서 23명이면 약50.7%, 25명이면 약56.9%, 30명이면 약70.6%예요. 그래프의 높이도 같은 비율을 나타냅니다. <b>반을 넘는다는 것이 반드시 생일이 같다는 뜻은 아니에요.</b> 실제 생일 분포는 이 모형과 조금 다를 수 있습니다.",
+        "en": "In this model the chances are about 50.7% for 23 people, 56.9% for 25 and 70.6% for 30. Bar heights use the same scale. <b>More than half is not a guarantee of a match.</b> Real birthday distributions can differ from this model.",
+        "zh": "该模型中，23人约50.7%，25人约56.9%，30人约70.6%。柱形高度使用相同比例尺。<b>超过一半并不保证一定有同生日的人。</b>真实生日分布可能与模型稍有不同。"
+      },
+      "art": fig(probabilityChart())
+    },
+    {
+      "h": {
+        "ko": "왜 그렇게 높을까",
+        "en": "Why so high?",
+        "zh": "为什么这么高？"
+      },
+      "p": {
+        "ko": "그림의 다섯 사람은 서로 10쌍을 만들어요. 25명이라면 각자 24명과 짝지어 25 × 24를 센 뒤, 같은 두 사람을 두 번 세었으므로 2로 나눕니다. <b>25 × 24 ÷ 2 = 300쌍</b>이에요. 이 비교들이 모두 독립이라는 뜻은 아닙니다.",
+        "en": "The five people in the diagram make 10 pairs. With 25 people, each has 24 partners; divide 25 × 24 by 2 because every pair was counted twice. That gives <b>300 pairs</b>. These comparisons are not all mutually independent.",
+        "zh": "图中五人可以组成10对。25人各有24个搭档，25 × 24把每对数了两次，所以除以2，得到<b>300对</b>。这些比较并不是全部相互独立的。"
+      },
+      "art": fig(pairCount())
+    }
+  ],
+  "close": {
+    "ko": "우연은 우리가 생각하는 것보다 훨씬 자주 일어나요. 세는 방법을 알면 그 놀라움이 계산이 됩니다.",
+    "en": "Coincidence happens far more often than we expect. Learn how to count it and the surprise becomes arithmetic.",
+    "zh": "巧合发生的频率远超我们的想象。学会怎么数，惊讶就变成了算术。"
+  },
+  "source": {
+    "ko": "365일 등가능·생일 독립·윤일 제외 모형에서 직접 계산했습니다. 「같은 생일」은 출생연도를 빼고 월·일만 비교합니다.",
+    "en": "Computed under the independent, uniform 365-day model, excluding leap day. A matching birthday means month and day, not year.",
+    "zh": "按独立、等可能365天且不计闰日的模型计算。「同生日」只比较月日，不比较年份。"
+  },
+  "fit": {
+    "units": [
+
+    ],
+    "threads": [
+
+    ]
+  },
+  "age": [
+    "senior"
+  ],
+  "references": [
+    {
+      "label": "UNCG · Birthday model",
+      "url": "https://home.uncg.edu/cmp/faculty/srtate/481.s24/rand_randomness.html"
+    }
+  ]
+},
+
+{
+  "id": "mz-mobius",
+  "no": 6,
+  "kicker": {
+    "ko": "도형",
+    "en": "Shapes",
+    "zh": "图形"
+  },
+  "title": {
+    "ko": "안과 밖이 없는 종이",
+    "en": "The Paper With No Inside or Outside",
+    "zh": "没有正反面的纸"
+  },
+  "lede": {
+    "ko": "종이띠 한쪽 끝을 반 바퀴 비틀어 붙여요. 종이의 두께를 무시한 수학 모형에서는 면이 하나로 이어집니다.",
+    "en": "Give one end of a strip a half-turn before joining it. In the mathematical model, ignoring paper thickness, the surface has one side.",
+    "zh": "把纸带的一端扭转半圈后接好。在忽略纸厚的数学模型里，它的面连成一侧。"
+  },
+  "art": head(mobiusArt(160,80,62,20,44)+T(160,160,13,C.ink,"180°")),
+  "body": [
+    {
+      "h": {
+        "ko": "만드는 법은 아주 쉽다",
+        "en": "Making one is easy",
+        "zh": "做起来非常简单"
+      },
+      "p": {
+        "ko": "긴 종이띠를 하나 자르세요. 한쪽 끝을 반 바퀴만 비틀고, 그대로 양 끝을 붙입니다. 비틀지 않고 붙이면 그냥 고리지만, 한 번 비틀면 전혀 다른 것이 됩니다.",
+        "en": "Cut a long strip of paper. Give one end a half turn, then join the two ends. Join it without the twist and you get an ordinary ring; add the twist and you get something else entirely.",
+        "zh": "剪一条长纸带。把一端扭转半圈，再把两端粘起来。不扭就是普通的圆环，扭了一下就完全不同了。"
+      },
+      "art": fig(box(30,43,74,20,C.goldbright,C.brown)+arrow(112,53,150,53,C.gold,2)+mobiusArt(230,56,42,13,30)+T(70,105,14,C.sub,"180°"))
+    },
+    {
+      "h": {
+        "ko": "가운데를 따라 선을 그어 보세요",
+        "en": "Draw a line down the middle",
+        "zh": "沿着中间画一条线"
+      },
+      "p": {
+        "ko": "띠 가운데를 따라 펜을 떼지 않고 그어 보세요. 처음 종이에서 반대쪽이던 곳까지 길이 이어집니다. <b>면이 사라진 게 아니라 앞·뒤가 하나로 연결된 것</b>이에요. 종이를 찢거나 건너뛰지 않고 길을 계속 따라가는 것이 중요합니다.",
+        "en": "Trace the middle without lifting your pen. The path continues onto what was the reverse of the original strip. <b>The surface has not vanished: the two former sides are connected.</b> Follow the surface without tearing or jumping across it.",
+        "zh": "沿带子中间不抬笔地画，路径会通到原纸带的另一侧。<b>面没有消失，而是原来的正反面连在一起了。</b>要沿面前进，不能撕开或跳过去。"
+      },
+      "art": fig(mobiusTrace(false))
+    },
+    {
+      "h": {
+        "ko": "가장자리도 하나로 이어져요",
+        "en": "The boundary is connected too",
+        "zh": "边界也连成一条"
+      },
+      "p": {
+        "ko": "이번에는 종이의 가장자리를 손가락으로 따라가요. 뫼비우스 띠는 가장자리를 따라가면 <b>하나의 닫힌 길</b>로 모두 이어집니다. 비틀지 않고 붙인 고리는 가장자리 길이 두 개예요. 면의 수와 가장자리의 수를 따로 확인해 보세요.",
+        "en": "Now trace an edge with your finger. A Möbius strip has <b>one connected closed boundary</b>. An untwisted band has two separate boundary loops. Check the number of sides and the number of boundary components separately.",
+        "zh": "这次用手指沿边走。莫比乌斯带的边界是<b>一条相连的闭合路径</b>，不扭转的环带却有两条分开的边界。分别检查面的数量与边界的数量。"
+      },
+      "art": fig(mobiusTrace(true))
+    }
+  ],
+  "close": {
+    "ko": "당연해 보이는 것을 한 번 비틀어 보는 것 — 수학은 거기서 자랍니다.",
+    "en": "Taking the obvious and giving it one twist — that is where mathematics grows.",
+    "zh": "把理所当然的东西扭一下看看——数学就是从这里长出来的。"
+  },
+  "source": {
+    "ko": "뫼비우스와 리스팅이 1858년 각각 연구한 한쪽 면의 곡면입니다. 그림의 빨간 길은 경로 설명을 위해 겹쳐 보이게 그렸습니다.",
+    "en": "Möbius and Listing studied the one-sided surface independently in 1858. Red traces are overlaid to show the path.",
+    "zh": "莫比乌斯与利斯廷在1858年分别研究了这种单侧曲面。红线叠画于图上，用于说明路径。"
+  },
+  "fit": {
+    "units": [
+
+    ],
+    "threads": [
+
+    ]
+  },
+  "age": [
+    "mid",
+    "senior"
+  ],
+  "references": [
+    {
+      "label": "MacTutor · Möbius and Listing",
+      "url": "https://mathshistory.st-andrews.ac.uk/Biographies/Mobius/"
+    }
+  ]
+},
+
+{
+  "id": "mz-billiard",
+  "no": 7,
+  "kicker": {
+    "ko": "도형",
+    "en": "Shapes",
+    "zh": "图形"
+  },
+  "title": {
+    "ko": "벽을 맞히고 싶으면 벽 너머를 겨눠라",
+    "en": "To Hit Off the Cushion, Aim Through It",
+    "zh": "想打库边，就瞄准库边的那一侧"
+  },
+  "lede": {
+    "ko": "회전·마찰을 무시하고 공을 점으로 보는 수학 모형이에요. 벽에 한 번 반사된 뒤 목표에 닿는 길을 그려 봐요.",
+    "en": "Use an ideal point-ball model, ignoring spin and friction. Draw a path that reflects once from a cushion and reaches the target.",
+    "zh": "把球看成点，并忽略旋转与摩擦。画出经过一次反射后到达目标的路线。"
+  },
+  "art": head("<rect x=\"24\" y=\"24\" width=\"272\" height=\"122\" rx=\"8\" fill=\""+C.felt+"\" stroke=\""+C.brown+"\" stroke-width=\"4\"/>"+dot(84,62,8,C.paper)+dot(232,74,8,C.red)+line(84,62,164.1666666667,140,C.blue,2.5)+line(164.1666666667,140,232,74,C.blue,2.5)+T(164,128,14,C.gold,"P")),
+  "body": [
+    {
+      "h": {
+        "ko": "공은 거울처럼 튕긴다",
+        "en": "A ball bounces like a mirror",
+        "zh": "球像镜子一样反弹"
+      },
+      "p": {
+        "ko": "이 수학 모형에서는 벽에 수직인 선을 기준으로 잰 <b>들어가는 각과 나오는 각이 같습니다.</b> 실제 당구공은 회전이나 벽의 탄성 때문에 달라질 수 있어요. 여기서는 같은 각으로 반사되는 이상적인 경로를 작도합니다.",
+        "en": "In this model the <b>incoming and outgoing angles, measured from the normal to the wall, are equal</b>. Spin and cushion elasticity can change a real shot. Here we construct the ideal equal-angle path.",
+        "zh": "在此模型中，以墙面法线为基准量出的<b>入射角与反射角相等</b>。真实击球会受旋转和库边弹性影响，这里只作理想的等角反射路径。"
+      },
+      "art": "<svg viewBox=\"0 0 320 130\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-hidden=\"true\"><line x1=\"24\" y1=\"96\" x2=\"296\" y2=\"96\" stroke=\"#8a6d46\" stroke-width=\"4\" stroke-linecap=\"round\"/><line x1=\"96\" y1=\"30\" x2=\"160\" y2=\"96\" stroke=\"#16417C\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><line x1=\"160\" y1=\"96\" x2=\"224\" y2=\"30\" stroke=\"#16417C\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><line x1=\"160\" y1=\"96\" x2=\"160\" y2=\"44\" stroke=\"#b0b7c3\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-dasharray=\"4 3\"/><path d=\"M 160 74 A 22 22 0 0 0 145 82\" fill=\"none\" stroke=\"#D9534F\" stroke-width=\"2\"/><path d=\"M 175 82 A 22 22 0 0 0 160 74\" fill=\"none\" stroke=\"#D9534F\" stroke-width=\"2\"/><text x=\"132\" y=\"66\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\" fill=\"#D9534F\">=</text><text x=\"190\" y=\"66\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\" fill=\"#D9534F\">=</text></svg>"
+    },
+    {
+      "h": {
+        "ko": "벽 너머에 가짜 공을 놓는다",
+        "en": "Put a phantom ball beyond the cushion",
+        "zh": "在库边的另一侧放一个假球"
+      },
+      "p": {
+        "ko": "흰 공을 벽에 대고 접었을 때 겹치는 자리에 점을 하나 찍습니다. 벽을 거울이라고 보면 거기 비치는 <b>거울 속 공</b>이에요. 벽에서 같은 거리, 반대쪽입니다.",
+        "en": "Fold the white ball across the cushion and mark where it lands. Treat the cushion as a mirror and that dot is the <b>ball in the mirror</b> — the same distance from the cushion, on the other side.",
+        "zh": "把白球以库边为轴翻折过去，在落点画一个点。把库边看成镜子，那就是<b>镜中的球</b>——离库边同样远，在另一侧。"
+      },
+      "art": fig(line(24,70,296,70,C.brown,3)+dot(78,38,7,C.paper)+"<circle cx=\"78\" cy=\"38\" r=\"7\" fill=\"none\" stroke=\""+C.ink+"\"/>"+line(78,38,78,102,C.grey,1.5,"4 3")+"<circle cx=\"78\" cy=\"102\" r=\"7\" fill=\"none\" stroke=\""+C.red+"\" stroke-dasharray=\"4 3\"/>"+T(99,40,13,C.ink,"A")+T(101,108,13,C.red,"A′")+T(145,52,13,C.sub,"d")+T(145,96,13,C.sub,"d"))
+    },
+    {
+      "h": {
+        "ko": "가짜 공과 목표를 직선으로 잇는다",
+        "en": "Join the phantom to the target",
+        "zh": "把假球和目标连成直线"
+      },
+      "p": {
+        "ko": "거울 속 공과 빨간 공을 자로 곧게 잇습니다. 그 직선이 벽과 만나는 자리가 바로 <b>겨눌 점</b>이에요. 거기를 맞히면 튕긴 공이 빨간 공으로 정확히 갑니다.",
+        "en": "Draw a straight line from the mirrored ball to the red ball. Where that line crosses the cushion is <b>the point to aim at</b>. Hit it and the rebound runs straight to the red ball.",
+        "zh": "用尺把镜中的球和红球连成一条直线。这条线与库边的交点，就是<b>要瞄准的点</b>。打中那里，反弹的球正好撞上红球。"
+      },
+      "art": "<svg viewBox=\"0 0 320 130\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-hidden=\"true\"><line x1=\"24\" y1=\"70\" x2=\"296\" y2=\"70\" stroke=\"#8a6d46\" stroke-width=\"4\" stroke-linecap=\"round\"/><circle cx=\"78\" cy=\"38\" r=\"9\" fill=\"#fff\"/><circle cx=\"78\" cy=\"38\" r=\"9\" fill=\"none\" stroke=\"#1A2233\" stroke-width=\"2\"/><circle cx=\"78\" cy=\"102\" r=\"9\" fill=\"none\" stroke=\"#D9534F\" stroke-width=\"2\" stroke-dasharray=\"4 3\"/><circle cx=\"248\" cy=\"38\" r=\"9\" fill=\"#D9534F\"/><line x1=\"78\" y1=\"102\" x2=\"248\" y2=\"38\" stroke=\"#b0b7c3\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-dasharray=\"5 4\"/><line x1=\"78\" y1=\"38\" x2=\"163\" y2=\"70\" stroke=\"#16417C\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><line x1=\"163\" y1=\"70\" x2=\"248\" y2=\"38\" stroke=\"#16417C\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><circle cx=\"163\" cy=\"70\" r=\"5\" fill=\"#C9A063\"/><text x=\"163\" y=\"92\" text-anchor=\"middle\" font-size=\"15\" font-weight=\"700\" fill=\"#C9A063\">P</text></svg>"
+    }
+  ],
+  "close": {
+    "ko": "어려운 길을 한 번 접으면 곧은 길이 됩니다. 수학이 자주 쓰는 꾀예요.",
+    "en": "Fold the awkward path once and it becomes a straight one. Mathematics uses that trick again and again.",
+    "zh": "把绕远的路折一次，就变成了直路。这是数学常用的巧劲。"
+  },
+  "source": {
+    "ko": "수학적 당구의 이상적 반사 모형입니다. 실제 공의 회전·마찰·크기를 반영한 조준 안내가 아닙니다.",
+    "en": "An ideal mathematical billiard reflection, not aiming advice accounting for real spin, friction or ball size.",
+    "zh": "这是数学台球的理想反射模型，不是考虑真实旋转、摩擦、球体大小的瞄准指导。"
+  },
+  "fit": {
+    "units": [
+
+    ],
+    "threads": [
+
+    ]
+  },
+  "age": [
+    "mid",
+    "senior"
+  ],
+  "references": [
+    {
+      "label": "Wolfram · Ideal billiards",
+      "url": "https://mathworld.wolfram.com/Billiards.html"
+    }
+  ]
+},
+
+{
+  "id": "mz-tile",
+  "no": 8,
+  "kicker": {
+    "ko": "도형",
+    "en": "Shapes",
+    "zh": "图形"
+  },
+  "title": {
+    "ko": "깨진 기와에서 원을 되찾는 법",
+    "en": "Finding the Circle in a Broken Roof Tile",
+    "zh": "从破瓦片里找回圆"
+  },
+  "lede": {
+    "ko": "둥근 기와의 일부만 남았다면 원래 원을 어떻게 찾을까요? 남은 테두리가 정확한 원의 일부라고 가정해요.",
+    "en": "If only part of a round tile remains, how can we recover its circle? Assume the surviving rim is part of an exact circle.",
+    "zh": "如果圆瓦只剩一块，怎样找回原来的圆？假设剩余边缘是一个精确圆的一部分。"
+  },
+  "art": head("<circle cx=\"160\" cy=\"80\" r=\"60\" fill=\"none\" stroke=\""+C.grey+"\" stroke-dasharray=\"5 4\"/>"+"<path d=\"M 100 80 A 60 60 0 0 1 220 80 L 192 80 A 32 32 0 0 0 128 80 Z\" fill=\""+C.goldbright+"\" stroke=\""+C.brown+"\" stroke-width=\"2\"/>"+dot(100,80,5,C.red)+dot(160,20,5,C.red)+dot(220,80,5,C.red)+T(160,160,14,C.ink,"3")),
+  "body": [
+    {
+      "h": {
+        "ko": "테두리에 점 세 개를 찍는다",
+        "en": "Mark three points on the rim",
+        "zh": "在边缘上点三个点"
+      },
+      "p": {
+        "ko": "남은 둥근 테두리에서 <b>서로 다른 세 점</b>을 골라요. 세 점이 한 직선 위에 있지 않으면 세 점을 지나는 원은 하나뿐입니다. 원의 일부라는 가정 덕분에 이 성질을 쓸 수 있어요.",
+        "en": "Choose <b>three distinct points</b> on the remaining curved rim. If they are not collinear, exactly one circle passes through them. The assumption that this rim is circular makes that fact useful.",
+        "zh": "在剩余弧边上取<b>互不相同的三点</b>。只要三点不共线，经过它们的圆就唯一。圆弧假设使我们能使用这条性质。"
+      },
+      "art": fig(tileScene(0))
+    },
+    {
+      "h": {
+        "ko": "두 현의 수직이등분선을 긋는다",
+        "en": "Bisect two chords at right angles",
+        "zh": "作两条弦的垂直平分线"
+      },
+      "p": {
+        "ko": "세 점을 이어 삼각형을 만들어요. 두 변의 한가운데를 지나며 각 변에 <b>수직인 직선</b>을 그어요. 두 선의 교점 O는 세 꼭짓점에서 같은 거리에 있어 원의 중심이 됩니다. 이 점이 삼각형의 <b>외심</b>이에요.",
+        "en": "Join the three points into a triangle. Draw a line through the midpoint of each of two sides, <b>perpendicular to that side</b>. Their intersection O is equally distant from all three vertices: the circle’s centre, or <b>circumcentre</b>.",
+        "zh": "连接三点成三角形，过两边中点分别作<b>垂直于该边的直线</b>。交点O到三个顶点等距，所以是圆心，即三角形的<b>外心</b>。"
+      },
+      "art": fig(tileScene(1))
+    },
+    {
+      "h": {
+        "ko": "그 중심에서 원을 그린다",
+        "en": "Draw the circle from that centre",
+        "zh": "以那个圆心画圆"
+      },
+      "p": {
+        "ko": "O에서 표시한 점까지의 거리를 반지름으로 원을 그리면 세 점을 모두 지납니다. 이 모형에서는 점들이 정확한 원 위에 있어서 원을 되찾을 수 있어요. 실제 유물은 닳거나 변형되므로 여러 점을 재어 오차도 확인해야 합니다.",
+        "en": "Draw a circle centred at O with radius reaching a marked point: it passes through all three. The model works exactly because the points lie on a true circle. Worn or distorted artefacts need more measurements and error checks.",
+        "zh": "以O为圆心，到一个标记点的距离为半径作圆，就会经过三点。模型中三点都在精确的圆上，因此可以准确还原。真实文物会磨损变形，需要更多测量与误差检查。"
+      },
+      "art": fig(tileScene(2))
+    }
+  ],
+  "close": {
+    "ko": "사라진 부분을 지어내지 않고, 남은 부분이 말해 주는 것만으로 되찾는 것 — 그게 수학의 복원입니다.",
+    "en": "Recovering what is gone without inventing it, using only what the surviving part can tell you — that is restoration by mathematics.",
+    "zh": "不去臆造缺失的部分，只凭残存部分给出的信息把它找回来——这就是数学的修复。"
+  },
+  "source": {
+    "ko": "원의 일부를 복원하는 창작 기하 모형입니다. 특정 수막새의 실제 복원 기록이나 실측값을 재현한 것은 아닙니다.",
+    "en": "Original geometric model of a circular fragment, not a reconstruction record or measured drawing of a specific artefact.",
+    "zh": "这是还原圆形残片的原创几何模型，不是某件文物的实际修复记录或测量图。"
+  },
+  "fit": {
+    "units": [
+
+    ],
+    "threads": [
+
+    ]
+  },
+  "age": [
+    "senior"
+  ],
+  "references": [
+    {
+      "label": "Wolfram · Circumcircle",
+      "url": "https://mathworld.wolfram.com/Circumcircle.html"
+    }
+  ]
+}
 
 ]};
 /* Original illustrated articles: see docs/math-story-sources-20261025.md. */
@@ -758,7 +1037,7 @@ const articles=[
  kicker:l3('제논의 역설','Zeno’s paradox','芝诺悖论'),
  title:l3('거북이를 정말 따라잡을 수 없을까?','Can Achilles ever catch the tortoise?','阿基里斯能追上乌龟吗？'),
  lede:l3('빠른 아킬레우스와 느린 거북이가 달려요. 거북이에게 먼저 출발할 자리를 주면, 빠른 쪽도 영원히 못 따라잡을까요?','Fast Achilles races a slow tortoise. If the tortoise starts ahead, could even the faster runner fail to catch it forever?','跑得快的阿基里斯追赶慢乌龟。让乌龟先站在前面，快的一方就永远追不上了吗？'),
- art:head(line(24,125,296,125,C.ink,3)+runner(35,103)+turtle(155,107)+arrow(67,96,120,96,C.gold)+arrow(184,96,216,96,C.ok)+T(43,35,18,C.ink,'2 m/s')+T(157,67,18,C.ink,'1 m/s')+T(35,156,17,C.sub,'0')+T(155,156,17,C.sub,'1 m')+T(275,156,17,C.sub,'2 m')),
+ art:head(line(24,125,296,125,C.ink,3)+runner(35,103)+turtle(155,107)+arrow(67,96,127,96,C.gold)+arrow(184,96,214,96,C.ok)+T(43,35,18,C.ink,'2 m/s')+T(157,67,18,C.ink,'1 m/s')+T(35,156,17,C.sub,'0')+T(155,156,17,C.sub,'1 m')+T(275,156,17,C.sub,'2 m')),
  spark:l3('“앞선 자리까지 가도 거북이는 또 앞으로 가니, 영원히 못 잡아.” 이 말에서 ‘앞선 순간들’과 ‘만나는 순간’이 뒤섞이지 않았을까요?','“Each time I reach its old position, it has moved again, so I never catch it.” Does this confuse earlier moments with the meeting itself?','“每次到达乌龟原来的位置，它又前进了，所以永远追不上。”这是否把早先的时刻与相遇时刻混在了一起？'),
  body:[
  section(l3('아직 만나기 전의 순간들','A sequence of earlier moments','一系列相遇之前的时刻'),l3('거북이는 1m 앞에서 초당 1m, 아킬레우스는 초당 2m로 가는 모형이에요. A는 아킬레우스, T는 거북이입니다. <b>같은 시각의 두 위치</b>를 표에서 비교해 보세요. ‘거북이의 옛 위치에 도착했다’와 ‘지금 거북이를 만났다’는 다른 말이에요.','Our model gives a 1 m head start and speeds of 2 m/s for Achilles (A) and 1 m/s for the tortoise (T). Compare <b>both positions at the same time</b> in the table. Reaching a past position is different from meeting the tortoise now.','模型中乌龟领先1米，A（阿基里斯）每秒跑2米，T（乌龟）每秒走1米。在表中比较<b>同一时刻的两个位置</b>。到达乌龟过去的位置，与此刻追上它，并不是一回事。'),fig(chaseTable())),

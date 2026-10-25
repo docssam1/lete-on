@@ -3004,7 +3004,7 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 .nm-mza-inquiry .nm-story-challenge>b{font-size:15px}
 .nm-mza-inquiry .nm-story-work{display:none}
 .nm-mza-inquiry .nm-story-feedback{padding:8px 12px}
-.nm-mza-inquiry:lang(zh) p,.nm-mza-inquiry:lang(zh) h4{word-break:normal;overflow-wrap:anywhere}
+.nm-mza:lang(zh) p,.nm-mza:lang(zh) h4{word-break:normal;overflow-wrap:anywhere}
 .nm-mza-nav{display:flex;gap:10px;margin-top:22px}
 .nm-mza-nav button{flex:1}
 @media (max-width:520px){
