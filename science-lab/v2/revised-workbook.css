@@ -1,0 +1,300 @@
+/* A4 210mm: 본문 139mm + 간격 7mm + 오른쪽 날개 36mm. 짝수 쪽도 오른쪽 유지. */
+.bk-editorial.revised-workbook{--ed-ink:#182230;--ed-blue:#2456c4;--ed-muted:#4c596c;--ed-line:#a1adbf;color:var(--ed-ink)}
+.bk-editorial.revised-workbook .bk-page{width:210mm;height:297mm;aspect-ratio:auto;border-radius:0;box-sizing:border-box;font-size:10.5pt}
+.bk-editorial.revised-workbook .bk-band,.bk-editorial.revised-workbook .even .bk-band{flex-direction:row;height:14mm;padding:0 14mm;background:#2456c4}
+.bk-editorial.revised-workbook .bk-band-t{font-family:inherit}.bk-editorial.revised-workbook .bk-band-u{font-size:9pt}
+.bk-editorial.revised-workbook .ed-layout{display:grid;grid-template-columns:minmax(0,1fr) 36mm;gap:7mm;padding:7mm 14mm 0;flex:1;min-height:0;position:relative;z-index:1;align-items:start}
+.bk-editorial.revised-workbook .ed-main{font-size:10.5pt;line-height:1.65;min-width:0}
+.bk-editorial.revised-workbook .ed-kicker{font-size:9pt;color:var(--ed-blue);font-weight:700;letter-spacing:.04em;margin:0 0 2mm}
+.bk-editorial.revised-workbook .ed-main h2{font-family:inherit;font-size:21pt;line-height:1.28;letter-spacing:-.04em;margin:0 0 4mm;color:var(--ed-ink)}
+.bk-editorial.revised-workbook .ed-main h3{font-size:11.5pt;margin:4mm 0 1.5mm;line-height:1.4}
+.bk-editorial.revised-workbook .ed-main p{margin:1.5mm 0 3mm}.bk-editorial.revised-workbook .ed-lead{padding-left:3mm;border-left:1mm solid var(--ed-blue);font-weight:600}
+.bk-editorial.revised-workbook .ed-rail{font-size:9pt;line-height:1.65;border-left:.3mm solid #b1c2de;padding-left:3mm;min-width:0}
+.bk-editorial.revised-workbook .ed-note{margin:0 0 6mm;break-inside:avoid}.bk-editorial.revised-workbook .ed-note h3{font-family:inherit;color:#1c489d;font-size:10pt;line-height:1.4;padding-bottom:1.5mm;border-bottom:.5mm solid #2456c4;margin:0 0 2mm}
+.bk-editorial.revised-workbook .ed-note p{margin:0 0 2mm}.bk-editorial.revised-workbook .ed-note ul{margin:0;padding-left:4mm}.bk-editorial.revised-workbook .ed-note li{margin-bottom:2mm}.bk-editorial.revised-workbook .ed-teacher-note{color:#8b2036}
+.bk-editorial.revised-workbook .ed-list{padding-left:5mm;margin:3mm 0}.bk-editorial.revised-workbook .ed-list li{margin:1.5mm 0}
+.bk-editorial.revised-workbook .ed-example{border-top:1mm solid #2456c4;border-bottom:.3mm solid #9db0ce;padding:2mm 3mm 1mm;background:#f4f7fc;margin:4mm 0}
+.bk-editorial.revised-workbook .ed-example h3{margin:0 0 2mm;color:#1c489d}.bk-editorial.revised-workbook .ed-example-q{font-weight:600}.bk-editorial.revised-workbook .ed-example ol{padding-left:5mm;margin:2mm 0}.bk-editorial.revised-workbook .ed-example li{padding-left:1mm;margin:1mm 0}.bk-editorial.revised-workbook .ed-example li p{margin:0 0 1mm}.bk-editorial.revised-workbook .ed-example-answer{border-top:1px solid #b1c2de;padding-top:2mm}
+.bk-editorial.revised-workbook .ed-diagram{margin:3mm 0}.bk-editorial.revised-workbook .ed-diagram svg{width:100%;height:auto;display:block}.bk-editorial.revised-workbook .ed-diagram figcaption{font-size:9pt;color:var(--ed-muted);margin-top:1mm}
+.bk-editorial.revised-workbook .ed-questions{list-style:none;margin:0;padding:0}.bk-editorial.revised-workbook .ed-question{margin:0 0 4mm;break-inside:avoid;border-bottom:.25mm solid #d7dee9;padding:0 0 3mm}
+.bk-editorial.revised-workbook .ed-qhead{display:flex;align-items:baseline;gap:3mm}.bk-editorial.revised-workbook .ed-qhead b{font-size:14pt;line-height:1;color:#2456c4}.bk-editorial.revised-workbook .ed-qhead span{font-size:8.5pt;font-weight:700;color:var(--ed-muted)}
+.bk-editorial.revised-workbook .ed-question p{margin:1.5mm 0 2mm}.bk-editorial.revised-workbook .ed-choices{list-style:none;padding:0;margin:1mm 0;display:grid;grid-template-columns:1fr 1fr;gap:1mm 4mm}.bk-editorial.revised-workbook .ed-choices li{display:flex;gap:2mm;align-items:baseline;line-height:1.5}.bk-editorial.revised-workbook .ed-choices span{flex:none}
+.bk-editorial.revised-workbook .ed-given{border:.25mm solid #8a9bb5;padding:2mm 3mm;margin:2mm 0;background:#fff;font-size:10pt;line-height:1.6;white-space:normal}
+.bk-editorial.revised-workbook .ed-blank{display:inline-block;min-width:20mm;border-bottom:.3mm solid #52637c;height:4.5mm;vertical-align:baseline;margin:0 1mm}
+.bk-editorial.revised-workbook .ed-lines i{display:block;height:7mm;border-bottom:.25mm solid #a1adbf}.bk-editorial.revised-workbook .ed-response{display:flex;gap:3mm;align-items:baseline}.bk-editorial.revised-workbook .ed-response span{display:block;border-bottom:.25mm solid #8a9bb5;flex:1;height:5mm}
+.bk-editorial.revised-workbook .ed-drawing{height:36mm;border:.25mm solid #8a9bb5;margin:2mm 0;background:#fff}.bk-editorial.revised-workbook .ed-drawing.large{height:58mm}
+.bk-editorial.revised-workbook .ed-table{border-collapse:collapse;width:100%;table-layout:fixed;margin:3mm 0;font-size:10pt;line-height:1.55}.bk-editorial.revised-workbook .ed-table td,.bk-editorial.revised-workbook .ed-table th{border:.25mm solid #8a9bb5;padding:2mm;overflow-wrap:anywhere;white-space:normal}.bk-editorial.revised-workbook .ed-table th{background:#f1f5fb;text-align:left}.bk-editorial.revised-workbook .ed-table td:empty{height:13mm}
+.bk-editorial.revised-workbook .ed-hint{color:var(--ed-muted);font-size:9pt}.bk-editorial.revised-workbook .ed-field{margin:4mm 0}.bk-editorial.revised-workbook .ed-solution{margin:0 0 6mm;padding-bottom:3mm;border-bottom:.3mm solid #a1adbf}.bk-editorial.revised-workbook .ed-solution h3{color:#1c489d;margin-top:0}.bk-editorial.revised-workbook .ed-solution h3 span{font-size:9pt;color:var(--ed-muted)}.bk-editorial.revised-workbook .ed-solution p{font-size:10pt;line-height:1.65}.bk-editorial.revised-workbook .ed-solution p:first-of-type{color:#8b2036}
+.bk-editorial.revised-workbook .bk-foot,.bk-editorial.revised-workbook .odd .bk-foot{flex-direction:row;justify-content:space-between;padding:4mm 14mm 5mm}.bk-editorial.revised-workbook .bk-life-watermark{left:19%;font-size:31pt;opacity:.045}
+@page{size:A4;margin:0}
+@media(max-width:700px){.bk-editorial.revised-workbook:not(.a4) .bk-page{height:auto;min-height:0;width:100%;overflow:visible}.bk-editorial.revised-workbook:not(.a4) .ed-layout{display:flex;flex-direction:column;padding:24px 16px;gap:24px}.bk-editorial.revised-workbook:not(.a4) .ed-main{font-size:17px;line-height:1.7;width:100%}.bk-editorial.revised-workbook:not(.a4) .ed-main h2{font-size:27px}.bk-editorial.revised-workbook:not(.a4) .ed-main h3{font-size:20px}.bk-editorial.revised-workbook:not(.a4) .ed-kicker,.bk-editorial.revised-workbook:not(.a4) .ed-qhead span,.bk-editorial.revised-workbook:not(.a4) .ed-hint,.bk-editorial.revised-workbook:not(.a4) figcaption{font-size:15px}.bk-editorial.revised-workbook:not(.a4) .ed-rail{font-size:16px;width:100%;border-left:0;border-top:2px solid #b1c2de;padding:16px 0 0}.bk-editorial.revised-workbook:not(.a4) .ed-note h3{font-size:18px}.bk-editorial.revised-workbook:not(.a4) .ed-choices{grid-template-columns:1fr;gap:8px}.bk-editorial.revised-workbook:not(.a4) .ed-table,.bk-editorial.revised-workbook:not(.a4) .ed-given,.bk-editorial.revised-workbook:not(.a4) .ed-solution p{font-size:16px}.bk-editorial.revised-workbook:not(.a4) .bk-band{padding:0 16px;height:52px}.bk-editorial.revised-workbook:not(.a4) .bk-band-t{font-size:17px}.bk-editorial.revised-workbook:not(.a4) .bk-foot{padding:16px;font-size:14px}}
+@media print{.bk-editorial.revised-workbook .bk-page{margin:0!important;box-shadow:none;break-after:page;page-break-after:always}.bk-editorial.revised-workbook .bk-page:last-child{break-after:auto;page-break-after:auto}.bk-editorial.revised-workbook .ed-layout{display:grid;grid-template-columns:minmax(0,1fr) 36mm;gap:7mm;padding:7mm 14mm 0}.bk-editorial.revised-workbook .ed-main{font-size:10.5pt}.bk-editorial.revised-workbook .ed-rail{font-size:9pt}.bk-editorial.revised-workbook .ed-main h2{font-size:21pt}.bk-editorial.revised-workbook .bk-life-watermark{display:block}}
+/* 짧은 문항을 한 쪽에 묶되 글자 크기·답안 줄 높이는 유지한다. */
+.bk-editorial.revised-workbook .ed-question{margin-bottom:2mm;padding-bottom:2mm}
+.bk-editorial.revised-workbook .ed-qhead b{font-size:13pt}
+.bk-editorial.revised-workbook .ed-question p{margin:1mm 0 1.5mm}
+.bk-editorial.revised-workbook .ed-solution{margin-bottom:4mm;padding-bottom:2mm}
+.bk-editorial.revised-workbook .bk-band-t,.bk-editorial.revised-workbook .bk-band-u{color:#fff;font-family:inherit;font-weight:600}
+/* 사진 전체를 보존하고 정확한 이름과 수치는 바깥에 조판한다. */
+.bk-editorial.revised-workbook .ed-photo img{display:block;width:100%;height:auto;max-height:68mm;object-fit:contain;background:#f6f7f9;border-radius:2mm}
+.bk-editorial.revised-workbook .ed-photo-floating img{max-height:63mm}
+.bk-editorial.revised-workbook .ed-photo-labels{display:grid;grid-template-columns:repeat(var(--photo-cols),minmax(0,1fr));gap:2mm;text-align:center;font-size:9pt;line-height:1.5;margin-top:2mm}
+.bk-editorial.revised-workbook .ed-photo-labels>div{padding:1mm 0;border-bottom:.25mm solid #b1c2de}
+.bk-editorial.revised-workbook .ed-photo .ed-photo-note{font-size:9pt;line-height:1.5;margin:2mm 0 1mm}
+.bk-editorial.revised-workbook .ed-photo-credit{display:block;font-size:8pt;line-height:1.5;color:#4c596c;margin-top:1mm}
+@media(max-width:700px){.bk-editorial.revised-workbook:not(.a4) .ed-photo img{max-height:none}.bk-editorial.revised-workbook:not(.a4) .ed-photo-labels,.bk-editorial.revised-workbook:not(.a4) .ed-photo .ed-photo-note{font-size:15px}.bk-editorial.revised-workbook:not(.a4) .ed-photo-credit{font-size:13px}}
+
+/* 좁은 교재 화면에서도 두 자리 쪽 번호를 한 줄에 유지한다. */
+@media(max-width:700px){.bk-editorial.revised-workbook:not(.a4) .bk-pn{flex-shrink:0;white-space:nowrap}}
+
+/* 선택 적용: 메모/활동 제목은 손글씨, 본문·문항·수치는 기존 정자체를 유지한다. */
+@font-face{font-family:Gaegu;src:url('../assets/fonts/gaegu-700.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]){
+ --ed-hand:Gaegu,Pretendard,sans-serif;
+ print-color-adjust:exact;-webkit-print-color-adjust:exact;
+}
+/* .ed-full-height는 지면마다 내용의 고유 높이를 보존하고 남은 높이만 나눈다. */
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]).ed-full-height .ed-layout{align-items:stretch}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]).ed-full-height .ed-main{display:flex;flex-direction:column;height:100%;min-height:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) :is(.ed-note h3,.ed-field h3){font-family:var(--ed-hand);font-size:13pt;font-weight:700;line-height:1.3}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-main>:is(.ed-kicker,h2,.ed-lead){flex:none}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-flow{display:flex;flex-direction:column;justify-content:space-between;gap:3mm;flex:1;min-height:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-block{display:flex;flex-direction:column;flex:none;min-height:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) :is(.ed-block-questions,.ed-block-field){flex:1 0 auto}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-block>:first-child{margin-top:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-block>:last-child{margin-bottom:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-questions{display:flex;flex-direction:column;gap:3mm;flex:1}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-question{display:flex;flex-direction:column;flex:1 0 auto;margin-bottom:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-question>*{flex-shrink:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-question::after{content:"";display:block;flex:1;min-height:0;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(8mm - .3mm),#d7dee9 calc(8mm - .3mm),#d7dee9 8mm)}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-field{display:flex;flex-direction:column;flex:1;margin:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-field>:is(h3,.ed-hint){flex-shrink:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-field>.ed-lines{flex:1;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(8mm - .3mm),#aebdd2 calc(8mm - .3mm),#aebdd2 8mm)}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-field>.ed-lines i{visibility:hidden;height:8mm}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-rail{display:flex;flex-direction:column;justify-content:space-between;gap:5mm}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-note{margin:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-note:has(.ed-lines){display:flex;flex-direction:column;flex:1}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-note .ed-lines{flex:1;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(8mm - .3mm),#c4d0e2 calc(8mm - .3mm),#c4d0e2 8mm)}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-note .ed-lines i{visibility:hidden;height:8mm}
+@media(min-width:701px),print{
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-practice .ed-questions{display:flex;flex-direction:column;column-count:auto;gap:4mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-practice .ed-question{display:flex}
+}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) :is(.ed-note h3,.ed-field h3){font-size:23px}
+ .bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]).ed-full-height .ed-main{height:auto}
+ .bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-flow{gap:22px}
+ .bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-question{flex:none}
+ .bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-question::after{display:none}
+ .bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-rail{gap:24px}
+}
+/* 문단과 블록의 간격을 중복해서 더하지 않는다. */
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-flow{gap:2mm}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-questions{gap:2mm}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-field>h3{margin-top:0;margin-bottom:1.5mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-flow{gap:22px}}
+/* 내용이 긴 쪽은 필기 줄/본문을 줄이지 않고 블록 사이 중복 간격만 조정한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s51-u02"] .ed-questions:has([data-question="light-book-29"]),
+.bk-editorial.revised-workbook[data-unit="c22-s51-u02"] .ed-questions:has([data-question="light-book-62"]){gap:1mm}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-inquiry .ed-flow,
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-flow:has(>.ed-block-field:nth-child(6)),
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-report-process .ed-flow{gap:1mm}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-questions:has([data-question="mixture-book-85"]) .ed-question{padding-bottom:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-field>.ed-drawing{flex:1 0 auto}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-inquiry .ed-flow,.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-flow:has(>.ed-block-field:nth-child(6)),.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-report-process .ed-flow{gap:22px}
+}
+
+/* 교과 연결 사고력 편집 교재(c22-s42-u04 기후변화 · c22-s32-u04 감염병) — v2/think-workbook-paper.js */
+.think-workbook-tools{padding:16px;display:flex;flex-wrap:wrap;gap:10px;max-width:1100px;margin:auto;align-items:center}
+.think-workbook-tools p{width:100%;margin:0;color:#4c596c}
+.think-workbook-tools .btn.on{background:#182230;color:#fff;border-color:#182230}
+@media print{.think-workbook-tools{display:none!important}}
+@media screen and (max-width:700px){.think-workbook-print.revised-workbook-print .bk-page{height:auto;overflow:visible}}
+.bk-editorial.revised-workbook:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-photo img{max-height:62mm}
+.bk-editorial.revised-workbook:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-opener .ed-photo img{max-height:108mm}
+.bk-editorial.revised-workbook:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-choices{grid-template-columns:1fr}
+.bk-editorial.revised-workbook:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"],[data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-diagram svg{max-height:62mm}
+/* 교사용: 문항 바로 아래 정답(빨간 글씨). 학생용에는 이 줄이 아예 없다. */
+.bk-editorial.revised-workbook .ed-key{margin:1mm 0 0!important;color:#b3261e;font-size:9.5pt;line-height:1.45;border-left:.8mm solid #b3261e;padding-left:2mm;flex-shrink:0}
+.bk-editorial.revised-workbook .ed-key b{margin-right:1.5mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook:not(.a4) .ed-key{font-size:15px}}
+
+/* 지면 배치 다듬기(2026-10-19 원장: 실사 수준·배치) — 사진 줄 · 핵심 낱말 · 짧은 문항 2단 */
+.bk-editorial.revised-workbook .ed-gallery{display:grid;grid-template-columns:repeat(var(--gallery-cols),minmax(0,1fr));gap:3mm 4mm;margin:2mm 0}
+.bk-editorial.revised-workbook .ed-gallery-item img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:1.5mm;background:#eef1f5}
+.bk-editorial.revised-workbook .ed-gallery-item p{margin:1.2mm 0 0!important;font-size:9pt;line-height:1.45;color:#2a3442}
+.bk-editorial.revised-workbook .ed-gallery.numbered .ed-gallery-item p b{color:var(--bk-theme,#2456c4);font-size:10.5pt}
+.bk-editorial.revised-workbook .ed-gallery .ed-photo-credit{grid-column:1/-1;margin-top:-1mm}
+/* 3D 렌더는 가로 2.13:1 이라 16:9 로 자르면 양옆 이름표가 잘린다 → 두 단원 사진 칸을 렌더 비율에 맞춘다 */
+.bk-editorial.revised-workbook:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-gallery-item img{aspect-ratio:32/15}
+.bk-editorial.revised-workbook:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-gallery:not(.numbered)[style*="--gallery-cols:1"] img{aspect-ratio:3/1}
+.bk-editorial.revised-workbook .ed-term{color:var(--bk-theme,#1c489d);font-weight:700;background:linear-gradient(transparent 62%,color-mix(in srgb,var(--bk-theme,#2456c4) 18%,transparent) 62%)}
+/* 단원평가·준비 점검: 짧은 문항(객관식·모두 고르기·빈칸·단답)은 2단, 서술·그림·연결·순서는 한 줄 전체 */
+@media(min-width:701px),print{
+ .bk-editorial.revised-workbook:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-layout-two .ed-questions{display:grid;grid-template-columns:1fr 1fr;column-gap:6mm;row-gap:3mm;grid-auto-rows:1fr}
+ .bk-editorial.revised-workbook:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-layout-two .ed-question:is([data-form="written"],[data-form="draw"],[data-form="match"],[data-form="order"]){grid-column:1/-1}
+ .bk-editorial.revised-workbook:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-layout-two .ed-question{border-bottom:none;border-top:.35mm solid #c9d3e2;padding-top:2mm}
+ .bk-editorial.revised-workbook:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-layout-two .ed-choices li{font-size:9.6pt;line-height:1.45}
+}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook:not(.a4) .ed-gallery{grid-template-columns:1fr 1fr}.bk-editorial.revised-workbook:not(.a4) .ed-gallery-item p{font-size:14px}}
+
+/* 기체·지층 교재: 설계 그림은 남은 본문 높이를 실제 작업 공간으로 쓴다. */
+@media(min-width:701px),print{
+ .bk-editorial.revised-workbook:is([data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-question[data-form="draw"]>.ed-drawing{flex:1;min-height:120mm;height:auto}
+ .bk-editorial.revised-workbook:is([data-unit="c22-s42-u03"],[data-unit="c22-s51-u01"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"]) .ed-question[data-form="draw"]::after{display:none}
+}
+
+/* 빛·물체와 물질 교재: PDF에서도 8mm 간격의 줄이 빠지지 않도록 한 줄 무늬를 반복한다. */
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"],[data-unit="c22-s51-u01"]) :is(.ed-field>.ed-lines,.ed-note .ed-lines){
+ background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#aebdd2 calc(100% - .3mm));
+ background-size:100% 8mm;background-repeat:repeat-y;
+}
+.bk-editorial.revised-workbook:is([data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"],[data-unit="c22-s51-u01"]) .ed-question::after{
+ background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#d7dee9 calc(100% - .3mm));
+ background-size:100% 8mm;background-repeat:repeat-y;
+}
+.bk-editorial.revised-workbook:is([data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"],[data-unit="c22-s51-u01"]) .ed-question>.ed-lines i{height:8mm}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"],[data-unit="c22-s51-u01"]) .mt-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;align-items:start}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"],[data-unit="c22-s51-u01"]) .mt-quick-grid .ed-table{margin:0}
+.bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"],[data-unit="c22-s51-u01"]) .mt-quick-grid :is(td,th){padding:1.2mm 1mm}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s32-u01"],[data-unit="c22-s32-u02"],[data-unit="c22-s32-u03"],[data-unit="s31-u01"],[data-unit="s31-u02"],[data-unit="s31-u03"],[data-unit="s31-u04"],[data-unit="s41-u01"],[data-unit="s41-u02"],[data-unit="s41-u03"],[data-unit="s41-u04"],[data-unit="c22-s42-u01"],[data-unit="c22-s42-u02"],[data-unit="c22-s51-u01"]):not(.a4) .mt-quick-grid{grid-template-columns:1fr;gap:24px}
+}
+
+/* 지구 원본 사진의 구면을 자르지 않고 작은 원본의 배율을 제한한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-earth-original{margin:0;text-align:center}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-earth-original img{display:block;width:50mm;max-width:100%;height:auto;object-fit:contain;margin:0 auto 2mm}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-earth-original figcaption{font-size:9pt;line-height:1.5;color:#526175}
+
+/* 힘 웹 교재의 모형 열기: 본문과 같은 글꼴, 단색 단추와 터치 높이. */
+.bk-editorial.revised-workbook[data-unit="s31-u01"].live .force-book-lab-link{min-height:44px;background:#2456c4;color:#fff;box-shadow:none;border-radius:12px;font-family:Pretendard,sans-serif;line-height:1.4}
+
+.bk-editorial.revised-workbook[data-unit="s31-u02"].live .animal-book-lab-link{min-height:44px;background:#2456c4;color:#fff;box-shadow:none;border-radius:12px;font-family:Pretendard,sans-serif;line-height:1.4}
+
+.bk-editorial.revised-workbook[data-unit="s31-u03"].live .plant-book-lab-link{min-height:44px;background:#2456c4;color:#fff;box-shadow:none;border-radius:12px;font-family:Pretendard,sans-serif;line-height:1.4}
+
+.bk-editorial.revised-workbook[data-unit="s31-u04"].live .life-book-lab-link{min-height:44px;background:#2456c4;color:#fff;box-shadow:none;border-radius:12px;font-family:Pretendard,sans-serif;line-height:1.4}
+
+.bk-editorial.revised-workbook[data-unit="s41-u01"].live .magnet-book-lab-link{min-height:44px;background:#2456c4;color:#fff;box-shadow:none;border-radius:12px;font-family:Pretendard,sans-serif;line-height:1.4}
+
+.bk-editorial.revised-workbook[data-unit="s41-u02"].live .water-book-lab-link{min-height:44px;background:#2456c4;color:#fff;box-shadow:none;border-radius:12px;font-family:Pretendard,sans-serif;line-height:1.4}
+
+/* 빛80문항 새 연습 지면: 예전32쪽/기록 교재의 배치는 유지하고 답안 공간을 늘린다. */
+.bk-editorial.revised-workbook[data-unit="c22-s51-u02"] .ed-practice .ed-question>.ed-lines i{height:8mm}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u02"] .ed-practice .ed-question::after{background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#d7dee9 calc(100% - .3mm));background-size:100% 8mm;background-repeat:repeat-y}
+@media(min-width:701px),print{
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u02"] .ed-practice .ed-question[data-form="draw"]>.ed-drawing{flex:1;min-height:120mm;height:auto}
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u02"] .ed-practice .ed-question[data-form="draw"]::after{display:none}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-practice .ed-question>.ed-lines i{height:8mm}
+
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-practice .ed-question::after{background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#d7dee9 calc(100% - .3mm));background-size:100% 8mm;background-repeat:repeat-y}
+
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-practice .ed-question[data-form="draw"]>.ed-drawing{flex:1;min-height:120mm;height:auto}
+
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-practice .ed-question[data-form="draw"]::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-practice .ed-question>.ed-lines i{height:8mm}
+
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-practice .ed-question::after{background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#d7dee9 calc(100% - .3mm));background-size:100% 8mm;background-repeat:repeat-y}
+
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-practice .ed-question[data-form="draw"]>.ed-drawing{flex:1;min-height:120mm;height:auto}
+
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-practice .ed-question[data-form="draw"]::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-practice .ed-choices{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+/* 혼합물의 새 연습 지면: 한 열의 넓은 서술·그림 공간. 기존 기록 지면은 유지한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-practice .ed-questions{display:flex;flex-direction:column;column-count:auto;gap:4mm}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-practice .ed-question{display:flex}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-practice .ed-question>.ed-lines i{height:8mm}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-practice .ed-question::after{background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#d7dee9 calc(100% - .3mm));background-size:100% 8mm;background-repeat:repeat-y}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] :is(.ed-field>.ed-lines,.ed-note .ed-lines){background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#aebdd2 calc(100% - .3mm));background-size:100% 8mm;background-repeat:repeat-y}
+@media(min-width:701px),print{
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-practice .ed-question[data-form="draw"]>.ed-drawing{flex:1;min-height:120mm;height:auto}
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-practice .ed-question[data-form="draw"]::after{display:none}
+}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-practice .ed-choices{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-quick .mt-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;align-items:start}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-quick .mt-quick-grid .ed-table{margin:0}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-quick .mt-quick-grid :is(td,th){padding:1.2mm 1mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s52-u01"]:not(.a4) .ed-quick .mt-quick-grid{grid-template-columns:1fr}}
+
+/* 그림을 그리는 빈 공간에서도 지필드 워터마크를 유지한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-practice .ed-drawing{background:transparent}
+
+/* 열의 새 연습 지면: 한 열의 넓은 서술·그림 공간. 기존 기록 지면은 유지한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook.ed-practice .ed-questions{display:flex;flex-direction:column;column-count:auto;gap:4mm}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook.ed-practice .ed-question{display:flex}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook.ed-practice .ed-question>.ed-lines i{height:8mm}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook.ed-practice .ed-question::after{background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#d7dee9 calc(100% - .3mm));background-size:100% 8mm;background-repeat:repeat-y}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook :is(.ed-field>.ed-lines,.ed-note .ed-lines){background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#aebdd2 calc(100% - .3mm));background-size:100% 8mm;background-repeat:repeat-y}
+@media(min-width:701px),print{
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook.ed-practice .ed-question[data-form="draw"]>.ed-drawing{flex:1;min-height:120mm;height:auto}
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook.ed-practice .ed-question[data-form="draw"]::after{display:none}
+}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook.ed-practice .ed-choices{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook.ed-quick .mt-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;align-items:start}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook.ed-quick .mt-quick-grid .ed-table{margin:0}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook.ed-quick .mt-quick-grid :is(td,th){padding:1.2mm 1mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s52-u02"]:not(.a4) .ed-layout-heat-workbook.ed-quick .mt-quick-grid{grid-template-columns:1fr}}
+
+/* 그림을 그리는 빈 공간에서도 지필드 워터마크를 유지한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-layout-heat-workbook.ed-practice .ed-drawing{background:transparent}
+
+/* 날씨의 새 연습 지면: 한 열의 넓은 서술·그림 공간. 기존 기록 지면은 유지한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook.ed-practice .ed-questions{display:flex;flex-direction:column;column-count:auto;gap:4mm}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook.ed-practice .ed-question{display:flex}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook.ed-practice .ed-question>.ed-lines i{height:8mm}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook.ed-practice .ed-question::after{background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#d7dee9 calc(100% - .3mm));background-size:100% 8mm;background-repeat:repeat-y}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook :is(.ed-field>.ed-lines,.ed-note .ed-lines){background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#aebdd2 calc(100% - .3mm));background-size:100% 8mm;background-repeat:repeat-y}
+@media(min-width:701px),print{
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook.ed-practice .ed-question[data-form="draw"]>.ed-drawing{flex:1;min-height:120mm;height:auto}
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook.ed-practice .ed-question[data-form="draw"]::after{display:none}
+}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook.ed-practice .ed-choices{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook.ed-quick .mt-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;align-items:start}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook.ed-quick .mt-quick-grid .ed-table{margin:0}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook.ed-quick .mt-quick-grid :is(td,th){padding:1.2mm 1mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s52-u03"]:not(.a4) .ed-layout-weather-workbook.ed-quick .mt-quick-grid{grid-template-columns:1fr}}
+
+/* 그림을 그리는 빈 공간에서도 지필드 워터마크를 유지한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-layout-weather-workbook.ed-practice .ed-drawing{background:transparent}
+
+/* 자원의 새 연습 지면: 한 열의 넓은 서술·그림 공간. 기존 기록 지면은 유지한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook.ed-practice .ed-questions{display:flex;flex-direction:column;column-count:auto;gap:4mm}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook.ed-practice .ed-question{display:flex}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook.ed-practice .ed-question>.ed-lines i{height:8mm}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook.ed-practice .ed-question::after{background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#d7dee9 calc(100% - .3mm));background-size:100% 8mm;background-repeat:repeat-y}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook :is(.ed-field>.ed-lines,.ed-note .ed-lines){background-image:linear-gradient(to bottom,transparent calc(100% - .3mm),#aebdd2 calc(100% - .3mm));background-size:100% 8mm;background-repeat:repeat-y}
+@media(min-width:701px),print{
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook.ed-practice .ed-question[data-form="draw"]>.ed-drawing{flex:1;min-height:120mm;height:auto}
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook.ed-practice .ed-question[data-form="draw"]::after{display:none}
+}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook.ed-practice .ed-choices{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook.ed-quick .mt-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;align-items:start}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook.ed-quick .mt-quick-grid .ed-table{margin:0}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook.ed-quick .mt-quick-grid :is(td,th){padding:1.2mm 1mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s52-u04"]:not(.a4) .ed-layout-energy-workbook.ed-quick .mt-quick-grid{grid-template-columns:1fr}}
+
+/* 그림을 그리는 빈 공간에서도 지필드 워터마크를 유지한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-layout-energy-workbook.ed-practice .ed-drawing{background:transparent}
+
+/* 잎 가장자리·조각 수를 관찰하는 사진은 틀에 맞춰 자르지 않는다. */
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-gallery-item img{object-fit:contain}
+
+/* 물체와 물질 정식 교재: 설계 그림과 근거 설명을 각각 쓸 공간. */
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-drawing.large{min-height:120mm;height:auto}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-drawing+.ed-lines{margin-top:3mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-drawing.large{min-height:280px}}
+
+/* 지구와 바다: 그림과 근거 설명에 각각 충분한 세로 공간을 둔다. */
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-drawing.large{min-height:120mm;height:auto}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-drawing+.ed-lines{margin-top:3mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-drawing.large{min-height:280px}}
+
+.bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing.large{min-height:120mm;height:auto}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing+.ed-lines{margin-top:3mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing.large{min-height:280px}}
