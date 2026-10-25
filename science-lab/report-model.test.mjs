@@ -118,15 +118,33 @@ test('15실험 전부 보고서 설정(탐구 문제 또는 불편함·결과 �
   const s = reportCfg('seed', 'elem', 'nature'); assert.equal(s.obs.length, 4); assert.ok(!s.question, '자연관찰 양식에는 탐구 문제가 안 간다');
 });
 test('자연관찰 연습 세트: 보고서 설정·대회·표본 모듈이 갖춰져 있고, 빼는 칸은 양식에 있는 칸이다', () => {
-  assert.equal(OBSERVE_SETS.length, 3);
+  assert.equal(OBSERVE_SETS.length, 6);
   for (const S of OBSERVE_SETS) {
     assert.equal(S.unit.id, S.id); assert.ok(REPORTS[S.id]?.obs?.length, `${S.id} 설정`); assert.deepEqual(CONTEST_OF[S.id], ['nature'], S.id);
     assert.ok(['elem', 'mid'].includes(S.level) && REPORTS[S.id].level === S.level, `${S.id} 수준`);
     assert.ok(S.mod.SPECIMENS.length >= 3 && S.mod.VIEWS.angle && typeof S.mod.mountSpecimen === 'function' && S.mod.TOOLS.length, `${S.id} 표본 모듈`);
     assert.equal(REPORTS[S.id].obs.length, S.mod.SPECIMENS.length, `${S.id}: 이름표 수 = 표본 수`);
     const keys = FORMS.nature[S.level].cells.map((c) => c.key); for (const k of S.unit.reportSkip) assert.ok(keys.includes(k), `${S.id} skip ${k}`);
+    for (const k of Object.keys(S.unit.reportPatch || {})) assert.ok(keys.includes(k) && !S.unit.reportSkip.includes(k), `${S.id} patch ${k}`);
+    if (S.unit.reportOrder) assert.deepEqual(S.unit.reportOrder.slice().sort(), keys.filter((k) => !S.unit.reportSkip.includes(k)).sort(), `${S.id} 칸 순서는 양식의 칸을 모두 한 번씩`);
+    const tb = reportCfg(S.id, S.level, 'nature').table; assert.ok(tb.columns.length >= 2 && tb.rows.length >= 3, `${S.id} 표`);
     assert.ok(S.steps.length >= 5 && S.lead.length > 30);
   }
+});
+
+test('새 세트(잎 재기·강낭콩·곰팡이): 잰 값이 그림과 맞고, 비율로만 갈리며, 날이 갈수록 줄지 않는다', async () => {
+  const lk = await import('./scenes/specimens-leafkey.js'), gr = await import('./scenes/specimens-grow.js'), md = await import('./scenes/specimens-mold.js');
+  const specs = lk.SPECIMENS.map((f) => f()), range = (sp, k) => { const v = sp.leaves.map((l) => l[k]); return [Math.min(...v), Math.max(...v)]; };
+  const [c, z] = [specs[2], specs[3]];
+  assert.ok(range(c, 'L')[0] < range(z, 'L')[1], '③·④ 길이는 겹친다(길이 하나로는 못 나눈다)');
+  assert.ok(range(c, 'r')[1] < 2.0 && range(z, 'r')[0] > 2.0, '③·④ 길이÷폭은 2.0을 사이에 두고 갈린다');
+  assert.ok(range(specs[0], 'r')[1] < 2.2 && range(specs[1], 'r')[0] > 2.2, '①·② 작은잎 길이÷폭은 2.2를 사이에 두고 갈린다');
+  assert.ok(range(specs[0], 'count')[1] >= range(specs[1], 'count')[0], '①·② 작은잎 수는 겹친다');
+  for (const s of gr._specs) for (const k of ['H', 'leaves', 'stem']) assert.ok(s[k].every((v, i) => !i || v >= s[k][i - 1]), `${s.id} ${k}는 줄지 않는다`);
+  const H = (id) => gr._specs.find((s) => s.id === id).H.at(-1); assert.ok(H('bean-shade') > H('bean-sun') && H('bean-sun') > H('bean-dry'), '그늘이 가장 크게 웃자라고 물 적은 화분이 가장 작다');
+  for (const f of md.SPECIMENS) { const s = f(), v = md.DAYS.map((d) => md.coverage(s, d).pct); assert.ok(v.every((x, i) => !i || x >= v[i - 1]) && v[0] === 0 && v.at(-1) > 50 && v.at(-1) <= 100, `${s.id} 덮은 넓이 ${v}`); }
+  const { SAMPLES: X } = await import('./data/observe-samples.js'); assert.deepEqual(X['observe-mold'].table.map((r) => r.slice(1).map(Number)), md.SPECIMENS.map((f) => md.DAYS.map((d) => md.coverage(f(), d).pct)), '곰팡이 예시 표 = 그림에서 센 값');
+  assert.deepEqual(X['observe-grow'].table.map((r) => r.slice(1).map(Number)), gr._specs.map((s) => s.H.slice(1)), '강낭콩 예시 표 = 표본의 키');
 });
 
 test('예시 보고서: 세트마다 있고, 관찰그림 수 = 표본 수, 그림은 그릴 수 있는 선 조각이 충분하며 NaN이 없다, 분류 나무가 끝까지 나뉜다', () => {
@@ -134,9 +152,13 @@ test('예시 보고서: 세트마다 있고, 관찰그림 수 = 표본 수, 그�
   for (const S of OBSERVE_SETS) {
     const X = SAMPLES[S.id]; assert.ok(X, S.id); assert.equal(X.obs.length, S.mod.SPECIMENS.length, `${S.id} 관찰그림 수`);
     for (const o of X.obs) { const svg = o.draw(); assert.ok(svg.startsWith('<svg') && svg.includes('</svg>'), o.label); assert.ok(!/NaN|undefined/.test(svg), `${S.id} ${o.label} 좌표`); assert.ok((svg.match(/class="dz"/g) || []).length >= 8, `${S.id} ${o.label} 선 조각`); assert.ok((svg.match(/class="dz-t"/g) || []).length >= 3, `${S.id} ${o.label} 이름표`); assert.ok(/\[본 것\]|\[관찰한 사실\]/.test(o.text) && /추정/.test(o.text), `${S.id} ${o.label} 글: 사실과 추정`); }
-    const lv = leaves(X.tree); assert.ok(lv.every((l) => l.length === 1), `${S.id} 분류 나무 끝까지`); assert.deepEqual(lv.flat().sort(), X.tree.items.slice().sort(), `${S.id} 분류 나무 대상`);
+    const skip = S.unit.reportSkip;
+    if (!skip.includes('classify')) { assert.ok(X.tree && X.classify, `${S.id} 분류 나무`); const lv = leaves(X.tree); assert.ok(lv.every((l) => l.length === 1), `${S.id} 분류 나무 끝까지`); assert.deepEqual(lv.flat().sort(), X.tree.items.slice().sort(), `${S.id} 분류 나무 대상`); }
+    if (!skip.includes('adapt')) assert.ok(X.adapt, `${S.id} 유리한 점`); if (!skip.includes('env') && S.level === 'elem') assert.ok(X.env, `${S.id} 비교 칸`);
+    for (const e of X.extra || []) { assert.ok(e.title && e.text, `${S.id} 추가 칸`); if (e.draw) assert.ok(!/NaN|undefined/.test(e.draw()), `${S.id} ${e.title} 그림`); }
+    for (const r of X.table) assert.equal(r.length, reportCfg(S.id, S.level, 'nature').table.columns.length, `${S.id} 예시 표 칸 수`);
     for (const k of ['a', 'both', 'b', 'la', 'lb']) assert.ok(X.venn[k], `${S.id} 벤 ${k}`);
-    assert.ok(X.target && X.classify && X.adapt && X.next && X.table.length >= 3 && X.who.name, S.id);
+    assert.ok(X.target && X.next && X.table.length >= 3 && X.who.name, S.id);
     if (S.id === 'observe-insects') { assert.ok(X.env.includes('방법'), '두 장소 비교에 확인 방법'); assert.ok(X.adaptDraw().includes('<svg')); }
   }
 });

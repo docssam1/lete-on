@@ -3,7 +3,8 @@
 // 그리는 순서 = 그림 조각의 문서 순서(윤곽 → 빗금 → 이름표). .dz = 선(그린다) · .dz-f = 명암(스르륵) · .dz-t = 글씨(나타남). 연필 소리는 Web Audio 잡음(끌 수 있음).
 import { sampleFor } from './data/observe-samples.js';
 import { reportCfg } from './data/reports.js';
-import { withMean } from './report-model.js';
+import { withMean, chartData } from './report-model.js';
+import { chartSvg } from './report.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const para = (t) => esc(t).replace(/\[([^\]]+)\]/g, '<b>[$1]</b>').replace(/\n/g, '<br>');
@@ -29,10 +30,11 @@ export function openSample(set) {
   const X = sampleFor(set.id); if (!X) return null;
   const cfg = reportCfg(set.id, set.level, 'nature'), mid = set.level === 'mid';
   let table = { columns: cfg.table.columns.slice(), rows: X.table.map((r) => r.slice()) }; if (mid) table = withMean(table);
-  const isInsect = set.id === 'observe-insects';
+  const isInsect = set.id === 'observe-insects', Tt = X.titles || {}, chart = X.chart ? chartData(table) : null;
   const $m = document.createElement('div'); $m.className = 'sk-modal rp-sample'; $m.setAttribute('role', 'dialog'); $m.setAttribute('aria-label', '예시 보고서');
   let n = 0; const sec = (title, ask, body) => `<section class="rp-cell kind-text"><h3>${++n}. ${esc(title)}${ask ? `<small>${esc(ask)}</small>` : ''}</h3><div class="rp-body">${body}</div></section>`;
   const view = (t) => `<div class="rp-view sv">${para(t)}</div>`;
+  const tableSec = () => sec(Tt.table || (mid ? '측정 기록' : '채집·관찰 기록표'), Tt.tableAsk || '', `<div class="rp-table-wrap"><table class="rp-table"><thead><tr>${table.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${table.rows.map((r) => `<tr>${r.map((v, j) => `<td class="${table.columns[j] === '평균' ? 'mean' : ''}">${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${chart ? `<div class="rp-chart">${chartSvg(chart)}</div>` : ''}`);
   $m.innerHTML = `<div class="sk-box rp-sample-box">
     <header class="sk-head"><b>📄 예시 보고서 — ${esc(set.title)}</b><span class="sk-sp"></span>
       <button type="button" class="sk-btn" data-act="replay">▶ 처음부터 그리기</button><button type="button" class="sk-btn" data-act="skip">⏭ 바로 다 보기</button>
@@ -42,13 +44,14 @@ export function openSample(set) {
       <header class="rp-head"><div><div class="kind">자연관찰대회 · ${mid ? '중등 자연관찰 탐구 보고서' : '초등 자연관찰 보고서'} · 예시</div><h1>${esc(set.unit.title)}</h1></div>
         <div class="rp-who"><span>이름</span><i>${esc(X.who.name)}</i><span>학년·반</span><i>${esc(X.who.grade)}</i><span>날짜</span><i>${esc(X.who.date)}</i></div></header>
       ${sec('관찰 장소와 대상', '', view(X.target))}
-      ${sec(isInsect ? '채집·관찰 기록표' : mid ? '측정 기록' : '채집·관찰 기록표', '', `<div class="rp-table-wrap"><table class="rp-table"><thead><tr>${table.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${table.rows.map((r) => `<tr>${r.map((v, j) => `<td class="${table.columns[j] === '평균' ? 'mean' : ''}">${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`)}
-      ${sec('관찰그림과 설명', '왼쪽 그림: 전체 모습·확대·이름표·자. 오른쪽 글: 본 것 → 확인한 것 → 추정.', `<div class="rp-obs"><div class="rp-obs-head"><span>관찰그림</span><span>설명</span></div>${X.obs.map((o, i) => `<div class="rp-obs-row" data-obs="${i}"><div class="rp-obs-fig"><b class="rp-obs-label">${esc(o.label)}</b><div class="pz-wrap" data-draw="${i}">${o.draw()}</div></div><div class="rp-obs-text">${view(o.text)}</div></div>`).join('')}</div>`)}
-      ${isInsect ? sec('두 장소 비교', '확인한 방법 → 결과 → 아마 ~때문', view(X.env)) : ''}
-      ${sec('분류 나무', '그렇다 / 그렇지 않다로 끝까지 나누고, 기준을 고른 까닭을 썼어요.', `<ul class="rp-tree">${treeHtml(X.tree)}</ul>${view(X.classify)}`)}
-      ${sec('같은 점과 다른 점', '', `<div class="rp-venn static"><div class="ring a"></div><div class="ring b"></div><b class="rp-venn-name a">${esc(X.venn.la)}</b><b class="rp-venn-name b">${esc(X.venn.lb)}</b>
+      ${X.tableAfter == null ? tableSec() : ''}
+      ${sec('관찰그림과 설명', Tt.obsAsk || '왼쪽 그림: 전체 모습·확대·이름표·자. 오른쪽 글: 본 것 → 확인한 것 → 추정.', `<div class="rp-obs"><div class="rp-obs-head"><span>관찰그림</span><span>설명</span></div>${X.obs.map((o, i) => `<div class="rp-obs-row" data-obs="${i}"><div class="rp-obs-fig"><b class="rp-obs-label">${esc(o.label)}</b><div class="pz-wrap" data-draw="${i}">${o.draw()}</div></div><div class="rp-obs-text">${view(o.text)}</div></div>`).join('')}</div>`)}
+      ${(X.extra || []).map((e, i) => sec(e.title, e.ask || '', `${e.draw ? `<div class="pz-wrap wide" data-draw="x${i}">${e.draw()}</div>` : ''}${view(e.text)}`) + (X.tableAfter === i ? tableSec() : '')).join('')}
+      ${X.env ? sec(Tt.env || '두 장소 비교', Tt.envAsk || '확인한 방법 → 결과 → 아마 ~때문', view(X.env)) : ''}
+      ${X.tree ? sec(Tt.classify || '분류 나무', Tt.classifyAsk || '그렇다 / 그렇지 않다로 끝까지 나누고, 기준을 고른 까닭을 썼어요.', `<ul class="rp-tree">${treeHtml(X.tree)}</ul>${view(X.classify)}`) : ''}
+      ${sec(Tt.venn || '같은 점과 다른 점', '', `<div class="rp-venn static"><div class="ring a"></div><div class="ring b"></div><b class="rp-venn-name a">${esc(X.venn.la)}</b><b class="rp-venn-name b">${esc(X.venn.lb)}</b>
         <div class="rp-venn-zone a"><b>ㄱ만</b>${view(X.venn.a)}</div><div class="rp-venn-zone both"><b>같은 점</b>${view(X.venn.both)}</div><div class="rp-venn-zone b"><b>ㄴ만</b>${view(X.venn.b)}</div></div>`)}
-      ${sec(isInsect ? '생김새와 하는 일' : mid ? '구조와 기능 → 유리한 점' : '잎 모양·잎차례의 유리한 점', '', `${X.adaptDraw ? `<div class="pz-wrap wide" data-draw="fn">${X.adaptDraw()}</div>` : ''}${view(X.adapt)}`)}
+      ${X.adapt ? sec(Tt.adapt || (isInsect ? '생김새와 하는 일' : mid ? '구조와 기능 → 유리한 점' : '잎 모양·잎차례의 유리한 점'), '', `${X.adaptDraw ? `<div class="pz-wrap wide" data-draw="fn">${X.adaptDraw()}</div>` : ''}${view(X.adapt)}`) : ''}
       ${sec('더 알아보고 싶은 것', '의문 → 바꿀 것·잴 것·같게 할 것', view(X.next))}
       <div class="rp-foot"><span>GFIELD · 자연관찰대회 연습 · 예시 보고서</span><span>그림·글 모두 지필드가 새로 쓴 예시입니다</span></div>
     </article></div>`;
