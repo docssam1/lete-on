@@ -271,4 +271,184 @@ export const BOARDS_B06 = {
       ]
     };
   })()
+  ,"book-06/rectangle-missing-side": (() => {
+    const P = 30, W = 9, H = P / 2 - W, U = 34, X0 = 110, Y0 = 170;
+    const rect = (color = "ink") => ({ kind: "box", x: X0, y: Y0, w: W * U, h: H * U, color });
+    const CHK = { P: 26, w: 8 }, chk = CHK.P / 2 - CHK.w;
+    const RX = 520;
+    return {
+      title: "둘레로 빠진 변을 찾아요",
+      kicker: "6권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "직사각형의 둘레와 한 변을 알면, 다른 한 변을 찾을 수 있어요. 둘레의 반을 쓰는 게 열쇠예요.",
+          items: [title("둘레로 빠진 변 찾기")] },
+        { say: `직사각형을 그려요. 가로는 ${W}센티미터, 세로는 몰라요. 둘레는 ${P}센티미터예요.`,
+          items: [rect(), T(X0 + W * U / 2, Y0 - 14, `${W}cm`, "blue", 28, "center"), T(X0 + W * U + 16, Y0 + H * U / 2 + 10, "?", "red", 34), T(RX, 170, `둘레 = ${P}cm`, "blue", 30)] },
+        { say: "직사각형은 마주 보는 변의 길이가 같아요. 둘레를 한 바퀴 돌면 가로 두 번, 세로 두 번을 지나요.",
+          items: [T(X0 + W * U / 2, Y0 + H * U + 34, `${W}cm`, "gray", 24, "center"), T(X0 - 30, Y0 + H * U / 2 + 10, "?", "gray", 28, "center"), T(RX, 220, "둘레 = 가로 + 세로 + 가로 + 세로", "gray", 24)] },
+        { say: `그러니까 둘레의 반은 가로 하나와 세로 하나를 더한 길이예요. ${P}의 반은 ${jo(P / 2, "예요")}.`,
+          items: [{ kind: "path", d: `M ${X0} ${Y0 + H * U} L ${X0} ${Y0} L ${X0 + W * U} ${Y0}`, stroke: "red", width: 6 }, T(RX, 275, `둘레의 반: ${P} ÷ 2 = ${P / 2} = 가로 + 세로`, "red", 26)] },
+        { say: `가로 하나와 세로 하나가 ${jo(P / 2, "예요")}. 가로가 ${jo(W, "니까")} 세로는 ${P / 2} 빼기 ${W}, ${H}센티미터예요.`,
+          items: [T(RX, 325, `세로 = ${P / 2} − ${W} = ${H}cm`, "green", 30), T(X0 + W * U + 16, Y0 + H * U / 2 + 10, `${H}cm`, "green", 28)] },
+        { say: `확인해요. 가로 더하기 세로는 ${W} 더하기 ${H}, ${P / 2}. 두 번이면 ${jo(P, "이에요")}. 처음 둘레와 같아요.`,
+          items: [T(RX, 380, `(${W} + ${H}) × 2 = ${P} ✓`, "green", 28)] },
+        { say: "많이 하는 실수가 있어요. 둘레에서 가로를 바로 빼면 안 돼요. 가로는 두 번 들어 있으니까요. 꼭 반으로 나눈 다음에 빼요.",
+          items: [T(RX, 440, `${P} − ${W} = ${P - W} ✗ (가로가 두 번)`, "red", 24)] },
+        { say: "정리해요. 둘레를 2로 나눠 가로와 세로의 합을 구해요. 그 합에서 아는 변을 빼면 다른 변이에요. 두 변을 더해 두 번 하면 처음 둘레가 되는지 확인해요.", mood: "praise",
+          items: [T(RX, 500, "둘레 ÷ 2 − 아는 변", "gold", 30)] },
+        { say: `한 문제 풀어 봐요. 둘레가 ${CHK.P}센티미터인 직사각형의 가로가 ${CHK.w}센티미터예요. 세로는 몇 센티미터일까요?`, mood: "think",
+          items: [],
+          check: { question: `둘레 ${CHK.P}cm, 가로 ${CHK.w}cm인 직사각형의 세로는?`,
+            options: [`${CHK.P - CHK.w}cm`, `${chk}cm`, `${CHK.P / 2}cm`], answer: 1,
+            hint: "둘레를 반으로 나눈 다음 가로를 빼요.", sayHint: `${CHK.P}의 반은 ${jo(CHK.P / 2, "이에요")}. 거기서 ${jo(CHK.w, "을")} 빼요.`,
+            right: `맞았어요! ${CHK.P} ÷ 2 − ${CHK.w} = ${chk}cm.`, sayRight: `맞았어요! ${CHK.P / 2} 빼기 ${jo(CHK.w, "은")} ${chk}센티미터예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-06/perimeter-source": (() => {
+    const R = { w: 8, h: 5 }, SQ = 9, RH = 11, U = 22;
+    const para = (x, y, w, h, sk, color) => ({ kind: "path", d: `M ${x + sk} ${y} L ${x + sk + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`, stroke: color, width: 3.5 });
+    const CHK = { P: 60 };
+    return {
+      title: "사각형의 둘레",
+      kicker: "6권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "둘레는 도형의 바깥을 한 바퀴 돈 길이예요. 사각형마다 길이가 같은 변이 있어서, 그걸 알면 둘레를 쉽게 구해요.",
+          items: [title("사각형의 둘레")] },
+        { say: `직사각형이에요. 가로 ${R.w}센티미터, 세로 ${R.h}센티미터. 마주 보는 변의 길이가 같아요.`,
+          items: [{ kind: "box", x: 90, y: 160, w: R.w * U, h: R.h * U, color: "blue" }, T(90 + R.w * U / 2, 148, `${R.w}`, "blue", 26, "center"), T(80, 160 + R.h * U / 2 + 8, `${R.h}`, "blue", 26, "right")] },
+        { say: `가로 하나와 세로 하나를 더하면 ${R.w} 더하기 ${R.h}, ${R.w + R.h}. 그게 두 번 있으니 ${R.w + R.h} 곱하기 2, ${2 * (R.w + R.h)}센티미터예요.`,
+          items: [T(90, 320, `(${R.w} + ${R.h}) × 2 = ${2 * (R.w + R.h)}cm`, "green", 28)] },
+        { say: "평행사변형도 마주 보는 변의 길이가 같아요. 기울어져 있어도 둘레는 직사각형과 같은 방법으로 구해요.",
+          items: [para(420, 160, R.w * U, R.h * U, 40, "green"), T(470 + R.w * U / 2, 148, `${R.w}`, "green", 26, "center"), T(430, 160 + R.h * U / 2 + 8, `${R.h}`, "green", 26, "right"), T(420, 320, `(${R.w} + ${R.h}) × 2 = ${2 * (R.w + R.h)}cm`, "green", 26)] },
+        { say: `정사각형은 네 변이 모두 같아요. 한 변이 ${SQ}센티미터면 ${SQ} 곱하기 4, ${SQ * 4}센티미터.`,
+          items: [{ kind: "box", x: 90, y: 380, w: 130, h: 130, color: "red" }, T(155, 370, `${SQ}`, "red", 26, "center"), T(240, 450, `${SQ} × 4 = ${SQ * 4}cm`, "red", 26)] },
+        { say: `마름모도 네 변이 모두 같아요. 한 변이 ${RH}센티미터면 ${RH} 곱하기 4, ${RH * 4}센티미터.`,
+          items: [{ kind: "path", d: "M 560 380 L 640 445 L 560 510 L 480 445 Z", stroke: "gold", width: 3.5 }, T(610, 405, `${RH}`, "gold", 26), T(660, 450, `${RH} × 4 = ${RH * 4}cm`, "gold", 26)] },
+        { say: `거꾸로도 해요. 둘레가 ${jo(CHK.P, "인")} 정사각형의 한 변은 ${CHK.P} 나누기 4, ${CHK.P / 4}센티미터예요.`,
+          items: [T(480, 545, `둘레 ${CHK.P} → 한 변 ${CHK.P} ÷ 4 = ${CHK.P / 4}`, "blue", 24)] },
+        { say: "정리해요. 먼저 길이가 같은 변을 찾아요. 직사각형과 평행사변형은 가로 더하기 세로를 두 번, 정사각형과 마름모는 한 변을 네 번. 거꾸로는 2나 4로 나눠요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. 둘레가 ${CHK.P}센티미터인 마름모의 한 변은 몇 센티미터일까요?`, mood: "think",
+          items: [],
+          check: { question: `둘레가 ${CHK.P}cm인 마름모의 한 변은?`,
+            options: [`${CHK.P / 2}cm`, `${CHK.P / 4}cm`, `${CHK.P - 4}cm`], answer: 1,
+            hint: "마름모는 네 변의 길이가 같아요.", sayHint: `네 변이 같으니 ${jo(CHK.P, "을")} 4로 나눠요.`,
+            right: `맞았어요! ${CHK.P} ÷ 4 = ${CHK.P / 4}cm.`, sayRight: `맞았어요! 네 변이 같으니 ${CHK.P} 나누기 4, ${CHK.P / 4}센티미터예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-06/joined-perimeter-source": (() => {
+    const s1 = 6, rw = 10, U = 26, X0 = 100, Y0 = 170;
+    const perim = (s1 + rw) * 2 + s1 * 2;
+    const CHK = { s: 7 }, chk = CHK.s * 6;
+    const RX = 560;
+    return {
+      title: "붙인 도형의 둘레",
+      kicker: "6권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "도형 두 개를 붙이면, 맞닿은 변은 안쪽으로 숨어서 바깥 둘레에 들어가지 않아요. 이걸 조심하며 둘레를 구해요.",
+          items: [title("붙인 도형의 둘레")] },
+        { say: `한 변이 ${s1}센티미터인 정사각형과, 가로 ${rw}센티미터의 직사각형을 붙였어요. 직사각형의 세로는 정사각형과 맞닿아 있어요.`,
+          items: [{ kind: "box", x: X0, y: Y0, w: s1 * U, h: s1 * U, color: "blue" }, { kind: "box", x: X0 + s1 * U, y: Y0, w: rw * U, h: s1 * U, color: "green" }, T(X0 + s1 * U / 2, Y0 - 12, `${s1}`, "blue", 26, "center"), T(X0 + s1 * U + rw * U / 2, Y0 - 12, `${rw}`, "green", 26, "center")] },
+        { say: `맞닿은 변을 찾아요. 정사각형의 오른쪽 변과 직사각형의 왼쪽 변이에요. 두 도형에서 그 변의 길이는 같아요. 그래서 직사각형의 세로도 ${s1}센티미터예요.`,
+          items: [{ kind: "line", x1: X0 + s1 * U, y1: Y0, x2: X0 + s1 * U, y2: Y0 + s1 * U, color: "red", width: 6 }, T(RX, 180, `맞닿은 변 = ${s1}cm`, "red", 28)] },
+        { say: "맞닿은 변은 바깥에서 보이지 않아요. 둘레를 셀 때 빼요.",
+          items: [{ kind: "x", cx: X0 + s1 * U, cy: Y0 + s1 * U / 2, r: 16, color: "red" }] },
+        { say: `바깥만 따라 돌아요. 위는 ${s1} 더하기 ${rw}, 아래도 ${s1} 더하기 ${rw}. 왼쪽 ${s1}, 오른쪽 ${s1}.`,
+          items: [{ kind: "path", d: `M ${X0} ${Y0} L ${X0 + (s1 + rw) * U} ${Y0} L ${X0 + (s1 + rw) * U} ${Y0 + s1 * U} L ${X0} ${Y0 + s1 * U} Z`, stroke: "gold", width: 5 }, T(RX, 240, `위·아래: (${s1} + ${rw}) × 2`, "blue", 26), T(RX, 285, `왼쪽·오른쪽: ${s1} × 2`, "blue", 26)] },
+        { say: `모두 더해요. ${s1 + rw} 곱하기 2는 ${2 * (s1 + rw)}, ${s1} 곱하기 2는 ${2 * s1}. 둘레는 ${jo(perim, "이에요")}.`,
+          items: [T(RX, 345, `${2 * (s1 + rw)} + ${2 * s1} = ${perim}cm`, "green", 30)] },
+        { say: `두 도형의 둘레를 그냥 더하면 ${s1 * 4} 더하기 ${2 * (rw + s1)}, ${s1 * 4 + 2 * (rw + s1)}. 맞닿은 변 두 개만큼 더 커요. 숨은 변 ${jo(s1, "이")} 두 번 들어갔어요.`,
+          items: [T(RX, 405, `${s1 * 4} + ${2 * (rw + s1)} − ${s1} × 2 = ${perim}`, "gold", 24)] },
+        { say: "정리해요. 맞닿은 변을 찾고, 두 도형에서 그 변의 길이가 같다는 걸 써요. 바깥만 따라 돌며 더해요. 두 둘레를 더했다면 맞닿은 변을 두 번 빼요.", mood: "praise",
+          items: [T(RX, 470, "맞닿은 변은 둘레에서 빼기", "gold", 26)] },
+        { say: `한 문제 풀어 봐요. 한 변이 ${CHK.s}센티미터인 정사각형 두 개를 옆으로 붙였어요. 둘레는 몇 센티미터일까요?`, mood: "think",
+          items: [],
+          check: { question: `한 변이 ${CHK.s}cm인 정사각형 2개를 옆으로 붙인 도형의 둘레는?`,
+            options: [`${CHK.s * 8}cm`, `${chk}cm`, `${CHK.s * 4}cm`], answer: 1,
+            hint: "바깥에 보이는 변이 몇 개인지 세요.", sayHint: `정사각형 둘의 변은 여덟 개인데, 맞닿은 두 변은 숨어요. 바깥에는 ${CHK.s}센티미터짜리 변이 몇 개일까요?`,
+            right: `맞았어요! 바깥 변 6개, ${CHK.s} × 6 = ${chk}cm.`, sayRight: `맞았어요! 바깥에 여섯 개, ${CHK.s} 곱하기 6은 ${chk}센티미터예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-06/cut-grid-perimeter-source": (() => {
+    const C = 5, R = 3, S = 50, X0 = 100, Y0 = 170;
+    const cut = [[0, 4], [0, 3], [1, 4]];
+    const full = (C + R) * 2;
+    const L = { w: 11, h: 4 };
+    const cells = (list, fill) => list.map(([r, c]) => ({ kind: "fill", x: X0 + c * S + 3, y: Y0 + r * S + 3, w: S - 6, h: S - 6, fill }));
+    const RX = 560;
+    return {
+      title: "잘라 만든 도형과 모눈 도형의 둘레",
+      kicker: "6권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "모눈 직사각형의 모서리에서 칸을 떼어 계단처럼 만들면, 둘레가 줄어들까요? 들어간 변을 밖으로 밀어 보면 알 수 있어요.",
+          items: [title("떼어 낸 모양의 둘레")] },
+        { say: `가로 ${KO[C]} 칸, 세로 ${KO[R]} 칸의 직사각형이에요. 한 칸의 변은 1센티미터. 둘레는 ${C} 더하기 ${R}, 두 번 해서 ${jo(full, "이에요")}.`,
+          items: [{ kind: "grid", x: X0, y: Y0, cols: C, rows: R, cell: S, color: "gray" }, { kind: "box", x: X0, y: Y0, w: C * S, h: R * S, color: "blue" }, T(RX, 180, `(${C} + ${R}) × 2 = ${full}cm`, "blue", 28)] },
+        { say: "오른쪽 위 모서리에서 칸 세 개를 계단 모양으로 떼어 내요.",
+          items: [...cells(cut, "#fffdf7"), { kind: "path", d: `M ${X0 + 3 * S} ${Y0} L ${X0 + 3 * S} ${Y0 + S} L ${X0 + 4 * S} ${Y0 + S} L ${X0 + 4 * S} ${Y0 + 2 * S} L ${X0 + 5 * S} ${Y0 + 2 * S}`, stroke: "red", width: 4 }] },
+        { say: "칸이 줄었으니 둘레도 줄었을까요? 계단의 변을 하나씩 밖으로 밀어 봐요. 가로로 놓인 변은 위로, 세로로 놓인 변은 오른쪽으로.",
+          items: [{ kind: "arrow", x1: X0 + 3.5 * S, y1: Y0 + S - 6, x2: X0 + 3.5 * S, y2: Y0 + 8, color: "gold", width: 3 }, { kind: "arrow", x1: X0 + 4.5 * S, y1: Y0 + 2 * S - 6, x2: X0 + 4.5 * S, y2: Y0 + 8, color: "gold", width: 3 }, { kind: "arrow", x1: X0 + 3 * S + 6, y1: Y0 + 0.5 * S, x2: X0 + 5 * S - 8, y2: Y0 + 0.5 * S, color: "gold", width: 3 }, { kind: "arrow", x1: X0 + 4 * S + 6, y1: Y0 + 1.5 * S, x2: X0 + 5 * S - 8, y2: Y0 + 1.5 * S, color: "gold", width: 3 }] },
+        { say: `밀고 나면 처음 직사각형의 테두리와 꼭 같아져요. 계단의 가로 변을 모으면 위쪽 빈 부분을, 세로 변을 모으면 오른쪽 빈 부분을 채워요. 그래서 둘레는 그대로 ${full}센티미터예요.`,
+          items: [T(RX, 240, `떼어 내도 둘레 = ${full}cm`, "green", 30)] },
+        { say: "하나씩 세어 확인해요. 바깥 테두리를 따라 한 칸씩 세면 열여섯 칸이에요.",
+          items: [T(RX, 295, "한 칸씩 세면 16 ✓", "green", 26)] },
+        { say: "단, 모서리가 아니라 변의 한가운데를 파 들어가면 달라요. 안으로 들어간 깊이만큼 양쪽 벽이 생겨서, 깊이의 두 배가 늘어요.",
+          items: [T(RX, 360, "가운데를 파면 → 깊이 × 2 늘어요", "red", 24)] },
+        { say: `직사각형을 잘라 가장 큰 정사각형을 만들 때는, 짧은 변이 정사각형의 한 변이에요. 가로 ${L.w}, 세로 ${jo(L.h, "인")} 직사각형에서 가장 큰 정사각형의 한 변은 ${jo(L.h, "예요")}.`,
+          items: [T(RX, 420, `가로 ${L.w}, 세로 ${L.h} → 가장 큰 정사각형 한 변 ${L.h}`, "blue", 22)] },
+        { say: "정리해요. 모서리를 계단처럼 떼어 낸 모양은 들어간 변을 밖으로 밀면 처음 직사각형과 둘레가 같아요. 변의 가운데를 파 들어가면 깊이의 두 배가 늘어요.", mood: "praise",
+          items: [T(RX, 480, "모서리는 그대로, 가운데는 늘어요", "gold", 24)] },
+        { say: "한 문제 풀어 봐요. 가로 여섯 칸, 세로 두 칸인 직사각형에서 왼쪽 아래 모서리 칸 하나를 떼어 냈어요. 둘레는 몇 센티미터일까요? 한 칸은 1센티미터예요.", mood: "think",
+          items: [],
+          check: { question: "가로 6칸, 세로 2칸 직사각형에서 모서리 칸 1개를 떼면 둘레는? (한 칸 1cm)",
+            options: ["14cm", "16cm", "18cm"], answer: 1,
+            hint: "모서리를 떼어도 들어간 두 변을 밖으로 밀면 처음 모양이에요.", sayHint: "처음 직사각형의 둘레는 6 더하기 2를 두 번, 16이에요. 모서리를 떼면요?",
+            right: "맞았어요! 처음과 같은 (6 + 2) × 2 = 16cm.", sayRight: "맞았어요! 모서리를 떼어도 둘레는 그대로 16센티미터예요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
+
+  ,"book-06/bent-perimeter-source": (() => {
+    const W = 9, H = 6, U = 34, X0 = 100, Y0 = 160;
+    const steps = [[0, 0], [3, 0], [3, 2], [6, 2], [6, 4], [9, 4], [9, 6], [0, 6]];
+    const pt = ([x, y]) => `${X0 + x * U} ${Y0 + y * U}`;
+    const perim = (W + H) * 2;
+    const notch = { d: 2 };
+    const CHK = { w: 10, h: 7 }, chk = (CHK.w + CHK.h) * 2;
+    const RX = 520;
+    return {
+      title: "직각으로 꺾인 도형의 둘레",
+      kicker: "6권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "계단처럼 직각으로 여러 번 꺾인 도형의 둘레를, 변을 하나하나 몰라도 구하는 법을 배워요.",
+          items: [title("꺾인 도형의 둘레")] },
+        { say: `계단 모양 도형이에요. 전체 가로는 ${W}센티미터, 전체 세로는 ${H}센티미터. 계단의 변 하나하나의 길이는 모른다고 생각해요.`,
+          items: [{ kind: "path", d: `M ${steps.map(pt).join(" L ")} Z`, stroke: "blue", width: 4 }, T(X0 + W * U / 2, Y0 + H * U + 36, `${W}cm`, "blue", 26, "center"), T(X0 - 14, Y0 + H * U / 2, `${H}cm`, "blue", 26, "right")] },
+        { say: "계단의 가로 변을 모두 위로 올려 보세요. 맨 위 한 줄에 나란히 서면 전체 가로와 같아져요.",
+          items: [{ kind: "arrow", x1: X0 + 4.5 * U, y1: Y0 + 2 * U - 4, x2: X0 + 4.5 * U, y2: Y0 + 6, color: "gold", width: 3 }, { kind: "arrow", x1: X0 + 7.5 * U, y1: Y0 + 4 * U - 4, x2: X0 + 7.5 * U, y2: Y0 + 6, color: "gold", width: 3 }, { kind: "line", x1: X0, y1: Y0 - 3, x2: X0 + W * U, y2: Y0 - 3, color: "gold", width: 2, dash: true }] },
+        { say: "계단의 세로 변을 모두 오른쪽으로 밀어 보세요. 오른쪽 한 줄에 서면 전체 세로와 같아져요.",
+          items: [{ kind: "arrow", x1: X0 + 3 * U + 4, y1: Y0 + 1 * U, x2: X0 + W * U - 6, y2: Y0 + 1 * U, color: "gold", width: 3 }, { kind: "arrow", x1: X0 + 6 * U + 4, y1: Y0 + 3 * U, x2: X0 + W * U - 6, y2: Y0 + 3 * U, color: "gold", width: 3 }, { kind: "line", x1: X0 + W * U + 3, y1: Y0, x2: X0 + W * U + 3, y2: Y0 + H * U, color: "gold", width: 2, dash: true }] },
+        { say: `그러면 가로 ${W}, 세로 ${jo(H, "인")} 직사각형과 둘레가 같아요. ${W} 더하기 ${H}, 두 번 해서 ${perim}센티미터예요.`,
+          items: [T(RX, 200, `(${W} + ${H}) × 2 = ${perim}cm`, "green", 30)] },
+        { say: "계단이 몇 개든 상관없어요. 바깥으로 꺾여 나가는 계단은 언제나 큰 직사각형의 둘레와 같아요.",
+          items: [T(RX, 255, "계단 수와 상관없이 같아요", "gold", 26)] },
+        { say: `조심할 곳이 있어요. 한 변의 가운데가 안으로 쏙 들어간 홈이 있으면, 홈의 양쪽 벽은 밀어도 채워지지 않아요. 깊이가 ${notch.d}센티미터면 ${notch.d} 곱하기 2만큼 더 더해요.`,
+          items: [{ kind: "path", d: `M ${RX} 340 L ${RX + 80} 340 L ${RX + 80} 380 L ${RX + 130} 380 L ${RX + 130} 340 L ${RX + 210} 340`, stroke: "red", width: 4 }, T(RX, 420, `안으로 들어간 홈 → 깊이 × 2 더하기`, "red", 24)] },
+        { say: "정리해요. 꺾인 가로 변은 위로, 세로 변은 옆으로 밀어 큰 직사각형을 만들어요. 가로 더하기 세로를 두 번 해요. 안으로 파인 홈이 있으면 깊이의 두 배를 더해요.", mood: "praise",
+          items: [T(RX, 480, "밀어서 큰 직사각형!", "gold", 30)] },
+        { say: `한 문제 풀어 봐요. 전체 가로 ${CHK.w}센티미터, 전체 세로 ${CHK.h}센티미터 안에 계단처럼 꺾인 도형이 있어요. 둘레는 몇 센티미터일까요?`, mood: "think",
+          items: [],
+          check: { question: `전체 가로 ${CHK.w}cm, 세로 ${CHK.h}cm인 계단 모양 도형의 둘레는?`,
+            options: [`${CHK.w + CHK.h}cm`, `${chk}cm`, `${CHK.w * CHK.h}cm`], answer: 1,
+            hint: "꺾인 변을 밀면 큰 직사각형이 돼요.", sayHint: `가로 ${CHK.w}, 세로 ${jo(CHK.h, "인")} 직사각형의 둘레와 같아요. 더해서 두 번 해요.`,
+            right: `맞았어요! (${CHK.w} + ${CHK.h}) × 2 = ${chk}cm.`, sayRight: `맞았어요! ${CHK.w + CHK.h}의 두 배, ${chk}센티미터예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
 };

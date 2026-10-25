@@ -4665,6 +4665,250 @@
   {
    "id": "fcb-book-06-bar-balance-ratio-source-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-b01",
+   "text": "직사각형의 둘레와 한 변을 알면, 다른 한 변을 찾을 수 있어요. 둘레의 반을 쓰는 게 열쇠예요."
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-b02",
+   "text": "직사각형을 그려요. 가로는 9센티미터, 세로는 몰라요. 둘레는 30센티미터예요."
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-b03",
+   "text": "직사각형은 마주 보는 변의 길이가 같아요. 둘레를 한 바퀴 돌면 가로 두 번, 세로 두 번을 지나요."
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-b04",
+   "text": "그러니까 둘레의 반은 가로 하나와 세로 하나를 더한 길이예요. 30의 반은 15예요."
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-b05",
+   "text": "가로 하나와 세로 하나가 15예요. 가로가 9니까 세로는 15 빼기 9, 6센티미터예요."
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-b06",
+   "text": "확인해요. 가로 더하기 세로는 9 더하기 6, 15. 두 번이면 30이에요. 처음 둘레와 같아요."
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-b07",
+   "text": "많이 하는 실수가 있어요. 둘레에서 가로를 바로 빼면 안 돼요. 가로는 두 번 들어 있으니까요. 꼭 반으로 나눈 다음에 빼요."
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-b08",
+   "text": "정리해요. 둘레를 2로 나눠 가로와 세로의 합을 구해요. 그 합에서 아는 변을 빼면 다른 변이에요. 두 변을 더해 두 번 하면 처음 둘레가 되는지 확인해요."
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-b09",
+   "text": "한 문제 풀어 봐요. 둘레가 26센티미터인 직사각형의 가로가 8센티미터예요. 세로는 몇 센티미터일까요?"
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-hint",
+   "text": "26의 반은 13이에요. 거기서 8을 빼요."
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-right",
+   "text": "맞았어요! 13 빼기 8은 5센티미터예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-rectangle-missing-side-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-b01",
+   "text": "둘레는 도형의 바깥을 한 바퀴 돈 길이예요. 사각형마다 길이가 같은 변이 있어서, 그걸 알면 둘레를 쉽게 구해요."
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-b02",
+   "text": "직사각형이에요. 가로 8센티미터, 세로 5센티미터. 마주 보는 변의 길이가 같아요."
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-b03",
+   "text": "가로 하나와 세로 하나를 더하면 8 더하기 5, 13. 그게 두 번 있으니 13 곱하기 2, 26센티미터예요."
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-b04",
+   "text": "평행사변형도 마주 보는 변의 길이가 같아요. 기울어져 있어도 둘레는 직사각형과 같은 방법으로 구해요."
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-b05",
+   "text": "정사각형은 네 변이 모두 같아요. 한 변이 9센티미터면 9 곱하기 4, 36센티미터."
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-b06",
+   "text": "마름모도 네 변이 모두 같아요. 한 변이 11센티미터면 11 곱하기 4, 44센티미터."
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-b07",
+   "text": "거꾸로도 해요. 둘레가 60인 정사각형의 한 변은 60 나누기 4, 15센티미터예요."
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-b08",
+   "text": "정리해요. 먼저 길이가 같은 변을 찾아요. 직사각형과 평행사변형은 가로 더하기 세로를 두 번, 정사각형과 마름모는 한 변을 네 번. 거꾸로는 2나 4로 나눠요."
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-b09",
+   "text": "한 문제 풀어 봐요. 둘레가 60센티미터인 마름모의 한 변은 몇 센티미터일까요?"
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-hint",
+   "text": "네 변이 같으니 60을 4로 나눠요."
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-right",
+   "text": "맞았어요! 네 변이 같으니 60 나누기 4, 15센티미터예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-perimeter-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-b01",
+   "text": "도형 두 개를 붙이면, 맞닿은 변은 안쪽으로 숨어서 바깥 둘레에 들어가지 않아요. 이걸 조심하며 둘레를 구해요."
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-b02",
+   "text": "한 변이 6센티미터인 정사각형과, 가로 10센티미터의 직사각형을 붙였어요. 직사각형의 세로는 정사각형과 맞닿아 있어요."
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-b03",
+   "text": "맞닿은 변을 찾아요. 정사각형의 오른쪽 변과 직사각형의 왼쪽 변이에요. 두 도형에서 그 변의 길이는 같아요. 그래서 직사각형의 세로도 6센티미터예요."
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-b04",
+   "text": "맞닿은 변은 바깥에서 보이지 않아요. 둘레를 셀 때 빼요."
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-b05",
+   "text": "바깥만 따라 돌아요. 위는 6 더하기 10, 아래도 6 더하기 10. 왼쪽 6, 오른쪽 6."
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-b06",
+   "text": "모두 더해요. 16 곱하기 2는 32, 6 곱하기 2는 12. 둘레는 44예요."
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-b07",
+   "text": "두 도형의 둘레를 그냥 더하면 24 더하기 32, 56. 맞닿은 변 두 개만큼 더 커요. 숨은 변 6이 두 번 들어갔어요."
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-b08",
+   "text": "정리해요. 맞닿은 변을 찾고, 두 도형에서 그 변의 길이가 같다는 걸 써요. 바깥만 따라 돌며 더해요. 두 둘레를 더했다면 맞닿은 변을 두 번 빼요."
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-b09",
+   "text": "한 문제 풀어 봐요. 한 변이 7센티미터인 정사각형 두 개를 옆으로 붙였어요. 둘레는 몇 센티미터일까요?"
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-hint",
+   "text": "정사각형 둘의 변은 여덟 개인데, 맞닿은 두 변은 숨어요. 바깥에는 7센티미터짜리 변이 몇 개일까요?"
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-right",
+   "text": "맞았어요! 바깥에 여섯 개, 7 곱하기 6은 42센티미터예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-joined-perimeter-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-b01",
+   "text": "모눈 직사각형의 모서리에서 칸을 떼어 계단처럼 만들면, 둘레가 줄어들까요? 들어간 변을 밖으로 밀어 보면 알 수 있어요."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-b02",
+   "text": "가로 다섯 칸, 세로 세 칸의 직사각형이에요. 한 칸의 변은 1센티미터. 둘레는 5 더하기 3, 두 번 해서 16이에요."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-b03",
+   "text": "오른쪽 위 모서리에서 칸 세 개를 계단 모양으로 떼어 내요."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-b04",
+   "text": "칸이 줄었으니 둘레도 줄었을까요? 계단의 변을 하나씩 밖으로 밀어 봐요. 가로로 놓인 변은 위로, 세로로 놓인 변은 오른쪽으로."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-b05",
+   "text": "밀고 나면 처음 직사각형의 테두리와 꼭 같아져요. 계단의 가로 변을 모으면 위쪽 빈 부분을, 세로 변을 모으면 오른쪽 빈 부분을 채워요. 그래서 둘레는 그대로 16센티미터예요."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-b06",
+   "text": "하나씩 세어 확인해요. 바깥 테두리를 따라 한 칸씩 세면 열여섯 칸이에요."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-b07",
+   "text": "단, 모서리가 아니라 변의 한가운데를 파 들어가면 달라요. 안으로 들어간 깊이만큼 양쪽 벽이 생겨서, 깊이의 두 배가 늘어요."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-b08",
+   "text": "직사각형을 잘라 가장 큰 정사각형을 만들 때는, 짧은 변이 정사각형의 한 변이에요. 가로 11, 세로 4인 직사각형에서 가장 큰 정사각형의 한 변은 4예요."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-b09",
+   "text": "정리해요. 모서리를 계단처럼 떼어 낸 모양은 들어간 변을 밖으로 밀면 처음 직사각형과 둘레가 같아요. 변의 가운데를 파 들어가면 깊이의 두 배가 늘어요."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-b10",
+   "text": "한 문제 풀어 봐요. 가로 여섯 칸, 세로 두 칸인 직사각형에서 왼쪽 아래 모서리 칸 하나를 떼어 냈어요. 둘레는 몇 센티미터일까요? 한 칸은 1센티미터예요."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-hint",
+   "text": "처음 직사각형의 둘레는 6 더하기 2를 두 번, 16이에요. 모서리를 떼면요?"
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-right",
+   "text": "맞았어요! 모서리를 떼어도 둘레는 그대로 16센티미터예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-cut-grid-perimeter-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-b01",
+   "text": "계단처럼 직각으로 여러 번 꺾인 도형의 둘레를, 변을 하나하나 몰라도 구하는 법을 배워요."
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-b02",
+   "text": "계단 모양 도형이에요. 전체 가로는 9센티미터, 전체 세로는 6센티미터. 계단의 변 하나하나의 길이는 모른다고 생각해요."
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-b03",
+   "text": "계단의 가로 변을 모두 위로 올려 보세요. 맨 위 한 줄에 나란히 서면 전체 가로와 같아져요."
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-b04",
+   "text": "계단의 세로 변을 모두 오른쪽으로 밀어 보세요. 오른쪽 한 줄에 서면 전체 세로와 같아져요."
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-b05",
+   "text": "그러면 가로 9, 세로 6인 직사각형과 둘레가 같아요. 9 더하기 6, 두 번 해서 30센티미터예요."
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-b06",
+   "text": "계단이 몇 개든 상관없어요. 바깥으로 꺾여 나가는 계단은 언제나 큰 직사각형의 둘레와 같아요."
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-b07",
+   "text": "조심할 곳이 있어요. 한 변의 가운데가 안으로 쏙 들어간 홈이 있으면, 홈의 양쪽 벽은 밀어도 채워지지 않아요. 깊이가 2센티미터면 2 곱하기 2만큼 더 더해요."
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-b08",
+   "text": "정리해요. 꺾인 가로 변은 위로, 세로 변은 옆으로 밀어 큰 직사각형을 만들어요. 가로 더하기 세로를 두 번 해요. 안으로 파인 홈이 있으면 깊이의 두 배를 더해요."
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-b09",
+   "text": "한 문제 풀어 봐요. 전체 가로 10센티미터, 전체 세로 7센티미터 안에 계단처럼 꺾인 도형이 있어요. 둘레는 몇 센티미터일까요?"
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-hint",
+   "text": "가로 10, 세로 7인 직사각형의 둘레와 같아요. 더해서 두 번 해요."
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-right",
+   "text": "맞았어요! 17의 두 배, 34센티미터예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-bent-perimeter-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }
