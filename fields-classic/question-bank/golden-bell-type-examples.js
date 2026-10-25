@@ -1983,7 +1983,115 @@ const CRYPT_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET });
+// ───────────────────────── 8권 덧셈 매트릭스 · 5권 곱셈구구로 빈칸 찾기 ─────────────────────────
+// 같은 모양은 같은 수. 한 가지 모양만 있는 줄부터 풀고, 안 되면 같은 모양 묶음(○ + □)을 한 덩어리로 본다.
+// 합·곱은 values에서 코드가 계산한다. 그림 kind "mgrid"(칸 표 + 줄의 합·곱) · "ring"(곱셈 삼각형·고리).
+const gridSums = (cells, values) => ({ rows: cells.map((r) => sum(r.map((s) => values[s]))), cols: cells[0].map((_, c) => sum(cells.map((r) => values[r[c]]))) });
+function sumGridExample({ id, title, cells, values, ask, hideOthers = false, plan }) {
+  const { rows, cols } = gridSums(cells, values), total = ask.row !== undefined ? rows[ask.row] : cols[ask.col];
+  const rowVals = rows.map((v, i) => (ask.row === i ? null : hideOthers && ask.col !== undefined ? v : v)), colVals = cols.map((v, j) => (ask.col === j ? null : hideOthers ? "" : v));
+  const fig = (tone, p = {}) => ({ kind: "mgrid", cells, rowVals: p.done ? rows : rowVals, colVals: p.done ? cols.map((v, j) => (hideOthers && ask.col !== j ? "" : v)) : colVals, reveal: p.reveal, focus: p.focus, op: "+", tone });
+  const steps = plan.map((p, i) => ({ text: p.text, figure: fig(i === plan.length - 1 ? "check" : "doing", p) }));
+  return { id, title, problem: "같은 모양은 같은 수를 나타내요. 줄마다 더한 수가 오른쪽과 아래에 있어요. ?에 알맞은 수를 구해요.", figure: fig("given"), steps, answer: `?는 ${josa(total, "이에요")}.`, value: { kind: "sum-grid", cells, rowVals, colVals, values, ask, total } };
+}
+function timesTableExample({ id, title, n, ask }) {
+  const prods = Array.from({ length: 9 }, (_, i) => n * (i + 1));
+  if (ask === "digitSum") {
+    const s = prods.map((p) => String(p).split("").map(Number).reduce((a, b) => a + b, 0));
+    const steps = [
+      { text: `${n}단을 써요. ${prods.join(", ")}.`, figure: { kind: "seq", values: prods, tone: "doing" } },
+      { text: `두 자리 곱은 십의 자리와 일의 자리를 더해요. ${prods.slice(1, 4).map((p) => `${String(p)[0]} + ${String(p)[1]} = ${s[prods.indexOf(p)]}`).join(", ")}…`, figure: { kind: "seq", values: prods, notes: prods.map((p, i) => (p > 9 ? `${String(p)[0]} + ${String(p)[1]}` : "")), tone: "doing" } },
+      { text: `모두 ${josa(s[0], "이")} 나와요. 십의 자리가 1 커질 때 일의 자리가 1 작아지기 때문이에요.`, figure: { kind: "seq", values: prods, notes: s.map(String), tone: "check" } }
+    ];
+    return { id, title, problem: `${n}단 곱셈구구의 곱에서 각 자리의 숫자를 더하면 얼마가 될까요?`, figure: { kind: "seq", values: prods.slice(0, 4), tone: "given", ask: "?" }, steps, answer: `늘 ${josa(s[0], "이에요")}.`, value: { kind: "times", n, ask, result: [...new Set(s)] } };
+  }
+  const ones = prods.map((p) => p % 10), cycle = ones.slice(0, ones.indexOf(ones[0], 1) > 0 ? ones.indexOf(ones[0], 1) : 5);
+  const steps = [
+    { text: `${n}단을 써요. ${prods.join(", ")}.`, figure: { kind: "seq", values: prods, tone: "doing" } },
+    { text: `일의 자리 숫자만 보면 ${ones.join(", ")}.`, figure: { kind: "seq", values: prods, notes: ones.map(String), tone: "doing" } },
+    { text: `${josa(cycle.join(", "), "이")} 차례로 되풀이돼요.`, figure: { kind: "seq", values: prods, notes: ones.map(String), tone: "check" } }
+  ];
+  return { id, title, problem: `${n}단 곱셈구구의 곱에서 일의 자리 숫자는 어떤 차례로 되풀이될까요?`, figure: { kind: "seq", values: prods.slice(0, 4), tone: "given", ask: "?" }, steps, answer: `${josa(cycle.join(", "), "이")} 되풀이돼요.`, value: { kind: "times", n, ask, result: cycle } };
+}
+function pairProductExample({ id, title, product }) {
+  const pairs = []; for (let a = 1; a <= 9; a++) for (let b = a + 1; b <= 9; b++) if (a * b === product) pairs.push([a, b]);
+  const steps = [
+    { text: `${product}을 두 한 자리 수의 곱으로 나타내요. 1부터 차례로 나누어 봐요.`.replace(`${product}을`, josa(product, "을")), figure: { kind: "eqs", lines: Array.from({ length: 9 }, (_, i) => i + 1).filter((a) => product % a === 0 && product / a <= 9).map((a) => `${a} × ${product / a} = ${product}`), tone: "doing" } },
+    { text: `뒤의 수가 더 큰 것만 골라요. ${pairs.map(([a, b]) => `${a} × ${b}`).join(", ")}.`, figure: { kind: "eqs", lines: pairs.map(([a, b]) => `${a} × ${b} = ${product}`), tone: "check" } }
+  ];
+  return { id, title, problem: `A × B = ${product}이에요. A와 B는 한 자리 수이고 B가 A보다 커요. A, B를 모두 구해요.`.replace(`${product}이에요`, josa(product, "이에요")), figure: { kind: "eqs", lines: [`A × B = ${product}`], tone: "given" }, steps, answer: `${pairs.map(([a, b]) => `A = ${a}, B = ${b}`).join(" 또는 ")}이에요.`, value: { kind: "pairs", product, pairs } };
+}
+// 곱셈 삼각형·고리: full = 동그라미 수(꼭짓점, 맨 위부터 시계 바늘 쪽), given = 처음에 보이는 동그라미(나머지는 이름)
+function ringExample({ id, title, full, given, names, plan }) {
+  const n = full.length, squares = full.map((v, i) => v * full[(i + 1) % n]);
+  const show = (known) => full.map((v, i) => (known.includes(i) ? v : names[i]));
+  const steps = plan.map((p, i) => ({ text: p.text, figure: { kind: "ring", circles: show(p.known), squares, hi: p.hi, tone: i === plan.length - 1 ? "check" : "doing" } }));
+  const asked = full.map((v, i) => (given.includes(i) ? null : `${names[i]} = ${v}`)).filter(Boolean);
+  return { id, title, problem: `${n === 3 ? "삼각형" : "사각형"}의 동그라미에는 2부터 9까지의 수가 들어가고, 네모 안의 수는 양쪽 동그라미의 곱이에요. ${full.map((_, i) => names[i]).filter((_, i) => !given.includes(i)).join(", ")}에 알맞은 수를 구해요.`, figure: { kind: "ring", circles: show(given), squares, tone: "given" }, steps, answer: `${asked.join(", ")}이에요.`.replace(/(\d)이에요\.$/u, (m, d) => `${d}${josa(d, "이에요").slice(1)}.`), value: { kind: "ring", full, given, squares, names } };
+}
+function productGridExample({ id, title, cells, values, plan }) {
+  const val = (v) => (/^\d+$/u.test(v) ? Number(v) : values[v]);
+  const rows = cells.map((r) => r.reduce((a, v) => a * val(v), 1)), cols = cells[0].map((_, c) => cells.reduce((a, r) => a * val(r[c]), 1));
+  const fig = (tone, p = {}) => ({ kind: "mgrid", cells, rowVals: rows, colVals: cols, reveal: p.reveal, focus: p.focus, op: "×", tone });
+  const steps = plan.map((p, i) => ({ text: p.text, figure: fig(i === plan.length - 1 ? "check" : "doing", p) }));
+  const letters = Object.keys(values);
+  return { id, title, problem: `가로줄 두 수의 곱은 오른쪽에, 세로줄 두 수의 곱은 아래에 썼어요. ${letters.join(", ")}에 알맞은 수를 구해요.`, figure: fig("given"), steps, answer: `${letters.map((l, i) => (i === letters.length - 1 ? `${josa(l, "은")} ${josa(values[l], "이에요")}` : `${josa(l, "은")} ${values[l]}`)).join(", ")}.`, value: { kind: "pgrid", cells, rows, cols, values } };
+}
+const MATRIX_SET = {
+  id: "matrix",
+  types: {
+    // 8권 덧셈 매트릭스
+    "3×3 매트릭스 · 빈 칸의 합": () => [sumGridExample({ id: "sg3-1", title: "예제 1", cells: [["△", "△", "△"], ["△", "○", "☆"], ["○", "○", "☆"]], values: { "△": 5, "○": 3, "☆": 7 }, ask: { col: 2 }, plan: [
+      { text: "첫째 가로줄은 △만 세 개예요. △ + △ + △ = 15라 △ = 15 ÷ 3 = 5.", reveal: { "△": 5 }, focus: { row: 0 } },
+      { text: "둘째 세로줄은 △ 하나와 ○ 두 개예요. 5 + ○ + ○ = 11이라 ○ + ○ = 6, ○ = 3.", reveal: { "△": 5, "○": 3 }, focus: { col: 1 } },
+      { text: "둘째 가로줄: 5 + 3 + ☆ = 15라 ☆ = 7.", reveal: { "△": 5, "○": 3, "☆": 7 }, focus: { row: 1 } },
+      { text: "?가 있는 셋째 세로줄은 △ + ☆ + ☆ = 5 + 7 + 7 = 19.", reveal: { "△": 5, "○": 3, "☆": 7 }, focus: { col: 2 }, done: true }
+    ] })],
+    "4×4 매트릭스 · 빈 칸의 합": () => [sumGridExample({ id: "sg4-1", title: "예제 1", cells: [["□", "□", "□", "□"], ["○", "□", "○", "○"], ["△", "☆", "☆", "○"], ["☆", "△", "□", "△"]], values: { "□": 4, "○": 2, "☆": 3, "△": 6 }, ask: { row: 3 }, plan: [
+      { text: "첫째 가로줄은 □만 네 개, □ = 16 ÷ 4 = 4.", reveal: { "□": 4 }, focus: { row: 0 } },
+      { text: "둘째 가로줄: ○ 세 개와 4를 더해 10이라 ○ 세 개는 6, ○ = 2.", reveal: { "□": 4, "○": 2 }, focus: { row: 1 } },
+      { text: "셋째 세로줄: 4 + 2 + ☆ + 4 = 13이라 ☆ = 3. 넷째 세로줄: 4 + 2 + 2 + △ = 14라 △ = 6.", reveal: { "□": 4, "○": 2, "☆": 3, "△": 6 }, focus: { col: 2 } },
+      { text: "?가 있는 넷째 가로줄은 ☆ + △ + □ + △ = 3 + 6 + 4 + 6 = 19.", reveal: { "□": 4, "○": 2, "☆": 3, "△": 6 }, focus: { row: 3 }, done: true }
+    ] })],
+    "2×4 매트릭스 · 묶음으로 도형값 찾기": () => [sumGridExample({ id: "sgb2-1", title: "예제 1", cells: [["○", "□", "○", "□"], ["○", "○", "○", "□"]], values: { "○": 3, "□": 4 }, ask: { col: 3 }, hideOthers: true, plan: [
+      { text: "첫째 줄은 ○ + □ 묶음이 두 개예요. 14 ÷ 2 = 7이라 ○ + □ = 7.", focus: { row: 0 } },
+      { text: "둘째 줄은 ○ + □ 묶음 하나와 ○ 두 개예요. 13 − 7 = 6이 ○ 두 개라 ○ = 3, □ = 7 − 3 = 4.", reveal: { "○": 3, "□": 4 }, focus: { row: 1 } },
+      { text: "?가 있는 넷째 세로줄은 □ + □ = 4 + 4 = 8.", reveal: { "○": 3, "□": 4 }, focus: { col: 3 }, done: true }
+    ] })],
+    "3×4 매트릭스 · 묶음으로 도형값 찾기": () => [sumGridExample({ id: "sgb3-1", title: "예제 1", cells: [["○", "□", "□", "○"], ["☆", "◇", "○", "☆"], ["□", "□", "□", "○"]], values: { "○": 2, "□": 5, "☆": 4, "◇": 1 }, ask: { row: 1 }, plan: [
+      { text: "첫째 가로줄은 ○ + □ 묶음이 두 개예요. 14 ÷ 2 = 7이라 ○ + □ = 7.", focus: { row: 0 } },
+      { text: "셋째 가로줄은 ○ + □ 묶음 하나와 □ 두 개예요. 17 − 7 = 10이 □ 두 개라 □ = 5, ○ = 2.", reveal: { "○": 2, "□": 5 }, focus: { row: 2 } },
+      { text: "첫째 세로줄: 2 + ☆ + 5 = 11이라 ☆ = 4. 둘째 세로줄: 5 + ◇ + 5 = 11이라 ◇ = 1.", reveal: { "○": 2, "□": 5, "☆": 4, "◇": 1 }, focus: { col: 0 } },
+      { text: "?가 있는 둘째 가로줄은 ☆ + ◇ + ○ + ☆ = 4 + 1 + 2 + 4 = 11.", reveal: { "○": 2, "□": 5, "☆": 4, "◇": 1 }, focus: { row: 1 }, done: true }
+    ] })],
+    "4×4 매트릭스 · 묶음으로 도형값 찾기": () => [sumGridExample({ id: "sgb4-1", title: "예제 1", cells: [["☆", "○", "☆", "○"], ["○", "○", "○", "☆"], ["□", "△", "○", "□"], ["△", "□", "△", "☆"]], values: { "○": 3, "☆": 2, "□": 5, "△": 4 }, ask: { row: 3 }, plan: [
+      { text: "첫째 가로줄은 ○ + ☆ 묶음이 두 개예요. 10 ÷ 2 = 5라 ○ + ☆ = 5.", focus: { row: 0 } },
+      { text: "둘째 가로줄은 ○ + ☆ 묶음 하나와 ○ 두 개예요. 11 − 5 = 6이 ○ 두 개라 ○ = 3, ☆ = 2.", reveal: { "○": 3, "☆": 2 }, focus: { row: 1 } },
+      { text: "셋째 세로줄: 2 + 3 + 3 + △ = 12라 △ = 4. 넷째 세로줄: 3 + 2 + □ + 2 = 12라 □ = 5.", reveal: { "○": 3, "☆": 2, "△": 4, "□": 5 }, focus: { col: 2 } },
+      { text: "?가 있는 넷째 가로줄은 △ + □ + △ + ☆ = 4 + 5 + 4 + 2 = 15.", reveal: { "○": 3, "☆": 2, "△": 4, "□": 5 }, focus: { row: 3 }, done: true }
+    ] })],
+    // 5권 곱셈구구로 빈칸 찾기
+    "곱셈구구의 특징": () => [timesTableExample({ id: "tt-9", title: "예제 1", n: 9, ask: "digitSum" }), timesTableExample({ id: "tt-4", title: "예제 2", n: 4, ask: "ones" })],
+    "곱해서 가운데 수": () => [pairProductExample({ id: "pp-1", title: "예제 1", product: 24 })],
+    "곱셈 삼각형": () => [ringExample({ id: "ring3-1", title: "예제 1", full: [4, 3, 6], given: [], names: ["A", "B", "C"], plan: [
+      { text: "세 네모를 모두 곱하면 동그라미 세 개를 두 번씩 곱한 것이에요. 12 × 18 × 24 = 5184 = 72 × 72라 A × B × C = 72.", known: [], hi: [] },
+      { text: "A × B = 12라 C = 72 ÷ 12 = 6. B × C = 18이라 A = 72 ÷ 18 = 4.", known: [0, 2], hi: [0, 2] },
+      { text: "B = 12 ÷ 4 = 3. 확인: 3 × 6 = 18, 4 × 6 = 24, 맞아요.", known: [0, 1, 2], hi: [1] }
+    ] })],
+    "곱셈 고리": () => [ringExample({ id: "ring4-1", title: "예제 1", full: [3, 4, 5, 7], given: [0], names: ["", "가", "나", "다"], plan: [
+      { text: "아는 동그라미 3에서 시작해요. 3 × 가 = 12라 가 = 4.", known: [0, 1], hi: [1] },
+      { text: "4 × 나 = 20이라 나 = 5. 5 × 다 = 35라 다 = 7.", known: [0, 1, 2, 3], hi: [2, 3] },
+      { text: "마지막 네모로 확인해요. 7 × 3 = 21, 맞아요.", known: [0, 1, 2, 3], hi: [0, 3] }
+    ] })],
+    "곱셈표 빈칸": () => [productGridExample({ id: "pg-1", title: "예제 1", cells: [["7", "가"], ["나", "4"]], values: { 가: 2, 나: 3 }, plan: [
+      { text: "첫째 가로줄: 7 × 가 = 14라 가 = 14 ÷ 7 = 2.", reveal: { 가: 2 }, focus: { row: 0 } },
+      { text: "첫째 세로줄: 7 × 나 = 21이라 나 = 3.", reveal: { 가: 2, 나: 3 }, focus: { col: 0 } },
+      { text: "다른 줄로 확인해요. 3 × 4 = 12, 2 × 4 = 8, 맞아요.", reveal: { 가: 2, 나: 3 }, focus: { row: 1 } }
+    ] })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

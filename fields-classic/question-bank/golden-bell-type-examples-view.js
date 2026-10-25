@@ -685,8 +685,37 @@ function cryptFigure(f) {
   return `<div class="tx-crypt" style="--tone:${color};--cols:${cols}" role="img" aria-label="${esc(`${f.addends.join(" + ")} = ${f.sum}`)}">${carry}${body}</div>`;
 }
 
+// ───── 매트릭스: 칸 표 + 오른쪽(가로줄)·아래(세로줄)의 합이나 곱. reveal = { 모양: 수 }, focus = { row } | { col }, 값이 null이면 「?」 ─────
+const MAT_COLOR = { "□": SHAPE.square.line, "△": SHAPE.triangle.line, "○": SHAPE.circle.line, "◇": SHAPE.diamond.line, "☆": "#c98a12" };
+function mgridFigure(f) {
+  const color = TONE[f.tone || "given"], reveal = f.reveal || {}, shaded = new Set(f.shaded || []), R = f.cells.length, C = f.cells[0].length;
+  const inFocus = (r, c) => (f.focus?.row === r) || (f.focus?.col === c);
+  const cell = (v, r, c) => {
+    const sh = shaded.has(`${r},${c}`), on = inFocus(r, c) ? " on" : "";
+    if (v === "" || v === null) return `<span class="${sh ? "shade" : "empty"}${on}"></span>`;
+    if (/^\d+$/u.test(v)) return `<span class="d${sh ? " shade" : ""}${on}">${v}</span>`;
+    if (MAT_COLOR[v]) return `<span class="sym${reveal[v] !== undefined ? " got" : ""}${on}" style="--sym:${MAT_COLOR[v]}">${reveal[v] !== undefined ? `${reveal[v]}<small>${esc(v)}</small>` : esc(v)}</span>`;
+    return `<span class="letter${reveal[v] !== undefined ? " got" : ""}${sh ? " shade" : ""}${on}">${esc(reveal[v] ?? v)}</span>`;
+  };
+  const tot = (v, on) => `<b class="${v === null ? "ask" : v === "" ? "none" : ""}${on ? " on" : ""}">${v === null ? "?" : esc(v)}</b>`;
+  const rows = f.cells.map((row, r) => `${row.map((v, c) => cell(v, r, c)).join("")}${tot(f.rowVals[r], f.focus?.row === r)}`).join("");
+  const bottom = `${f.colVals.map((v, c) => tot(v, f.focus?.col === c)).join("")}<i>${esc(f.op === "×" ? "곱" : "합")}</i>`;
+  return `<div class="tx-mgrid" style="--tone:${color};--cols:${C + 1}" role="img" aria-label="${R}×${C} 매트릭스">${rows}${bottom}</div>`;
+}
+// ring: 꼭짓점 동그라미(2~9)와 변의 네모(양쪽 동그라미의 곱). n = 3(삼각형) · 4(사각형)
+function ringFigure(f) {
+  const color = TONE[f.tone || "given"], n = f.circles.length, R = 78, C = 110, hi = new Set(f.hi || []);
+  const P = (i) => { const a = (-90 + (360 * i) / n) * Math.PI / 180; return [C + R * Math.cos(a), C + 6 + R * Math.sin(a)]; };
+  let body = `<polygon points="${f.circles.map((_, i) => P(i).join(",")).join(" ")}" fill="none" stroke="#c9c2b4" stroke-width="2"/>`;
+  f.squares.forEach((v, i) => { const [a, b] = [P(i), P((i + 1) % n)], x = (a[0] + b[0]) / 2, y = (a[1] + b[1]) / 2; body += `<rect x="${x - 17}" y="${y - 15}" width="34" height="30" rx="5" fill="${v === null ? "#fff" : "#fff3c4"}" stroke="${v === null ? "#8e5bd8" : "#f0a500"}" stroke-width="2"${v === null ? ' stroke-dasharray="4 3"' : ""}/>${text(x, y, v === null ? "?" : v, { size: 14, weight: 900, fill: v === null ? "#5b2fa8" : "#222" })}`; });
+  f.circles.forEach((v, i) => { const [x, y] = P(i), known = typeof v === "number"; body += `<circle cx="${x}" cy="${y}" r="18" fill="${hi.has(i) ? color : known ? SHAPE.circle.fill : "#fff"}" stroke="${hi.has(i) ? color : SHAPE.circle.line}" stroke-width="2"${known || hi.has(i) ? "" : ' stroke-dasharray="4 3"'}/>${text(x, y, v ?? "?", { size: 14, weight: 900, fill: hi.has(i) ? "#fff" : known ? "#222" : "#5b2fa8" })}`; });
+  return `<div class="tx-ring">${svg(C * 2, C * 2, body, `${n}각형 곱셈 고리`)}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "mgrid") return mgridFigure(figure);
+  if (figure.kind === "ring") return ringFigure(figure);
   if (figure.kind === "crypt") return cryptFigure(figure);
   if (figure.kind === "slots") return slotsFigure(figure);
   if (figure.kind === "row-line") return rowLineFigure(figure);

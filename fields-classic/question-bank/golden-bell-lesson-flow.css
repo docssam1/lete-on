@@ -257,6 +257,22 @@
 .tx-crypt .blank.mark.got { font-size: 22px; }
 .tx-crypt span.on { box-shadow: 0 0 0 3px var(--tone); }
 .tx-crypt hr { width: 100%; margin: 2px 0; border: 0; border-top: 3px solid #222; }
+.tx-mgrid { display: grid; grid-template-columns: repeat(var(--cols), 40px); gap: 4px; justify-content: center; align-items: center; }
+.tx-mgrid span { display: flex; align-items: center; justify-content: center; position: relative; height: 40px; border: 2px solid #e3dccb; border-radius: 7px; background: #fffdf7; font-size: 19px; font-weight: 900; }
+.tx-mgrid span.d { border-color: #f0a500; background: #fff3c4; color: #222; }
+.tx-mgrid span.sym { border-color: var(--sym); color: var(--sym); background: #fff; }
+.tx-mgrid span.sym.got { background: var(--sym); color: #fff; }
+.tx-mgrid span.sym small { position: absolute; top: 1px; right: 3px; font-size: 10px; }
+.tx-mgrid span.letter { border: 2px dashed #8e5bd8; color: #5b2fa8; background: #fff; }
+.tx-mgrid span.letter.got { border-style: solid; background: #ece0fb; }
+.tx-mgrid span.shade { background: #e9e3d6; border-color: #c9c2b4; }
+.tx-mgrid span.on { box-shadow: 0 0 0 3px var(--tone); }
+.tx-mgrid b { display: flex; align-items: center; justify-content: center; height: 40px; color: #222; font-size: 16px; font-weight: 900; }
+.tx-mgrid b.ask { color: #5b2fa8; border: 2px dashed #8e5bd8; border-radius: 7px; }
+.tx-mgrid b.on { color: var(--tone); }
+.tx-mgrid i { color: #566274; font-size: 12px; font-style: normal; font-weight: 800; text-align: center; }
+.tx-ring { display: grid; justify-items: center; max-width: 100%; }
+.tx-ring svg { max-width: 100%; height: auto; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

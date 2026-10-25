@@ -781,6 +781,41 @@ function verifyExample(setId, typeLabel, ex, lesson) {
     for (const st of ex.steps) { const b = st.figure.blanks; if (b && b.length === holes.length) assert.ok(sols.some((x) => x.holes.join() === b.join()), `${ex.id}: 그림의 빈칸이 맞는 식`); }
     const sig = (adds, sm) => `${adds.join("+")}=${sm}`, mine = sig(addends, sum);
     for (const item of lesson.original.items) { const o = item.visual || {}; if (o.addends) assert.notEqual(sig(o.addends.map((a) => a.join("")), o.sum.join("")), mine, `${ex.id}: 원본 식과 같음`); if (o.rows) assert.notEqual(sig(o.rows, o.result), mine, `${ex.id}: 원본 식과 같음`); }
+  } else if (setId === "matrix") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    // 모르는 것마다 수를 모두 넣어 보는 탐색(lo~hi)
+    const search = (keys, lo, hi, ok) => { const out = [], cur = {}; const go = (k) => { if (k === keys.length) { if (ok(cur)) out.push({ ...cur }); return; } for (let d = lo; d <= hi; d++) { cur[keys[k]] = d; go(k + 1); } }; go(0); return out; };
+    if (v.kind === "sum-grid") {
+      const shapes = [...new Set(v.cells.flat())];
+      const ok = (w) => v.rowVals.every((t, r) => t === null || t === "" || v.cells[r].reduce((a, sy) => a + w[sy], 0) === t) && v.colVals.every((t, c) => t === null || t === "" || v.cells.reduce((a, row) => a + w[row[c]], 0) === t);
+      const fits = search(shapes, 1, 20, ok);
+      assert.equal(fits.length, 1, `${ex.id}: 모양 값이 하나로 정해짐`);
+      const w = fits[0], total = v.ask.row !== undefined ? v.cells[v.ask.row].reduce((a, sy) => a + w[sy], 0) : v.cells.reduce((a, row) => a + w[row[v.ask.col]], 0);
+      assert.equal(v.total, total, `${ex.id}: ?의 합`); assert.ok(nums(ex.answer).includes(total));
+      assert.deepEqual(ex.steps.at(-1).figure.reveal, w, `${ex.id}: 마지막 그림의 값`);
+      for (const item of lesson.original.items) if (item.visual?.cells) assert.notEqual(JSON.stringify(item.visual.cells), JSON.stringify(v.cells), `${ex.id}: 원본 매트릭스와 같음`);
+    } else if (v.kind === "times") {
+      const prods = Array.from({ length: 9 }, (_, i) => v.n * (i + 1));
+      if (v.ask === "digitSum") assert.deepEqual(v.result, [...new Set(prods.map((p) => [...String(p)].reduce((a, ch) => a + Number(ch), 0)))], `${ex.id}: 자리 숫자의 합`);
+      else { const ones = prods.map((p) => p % 10); const k = v.result.length; assert.ok(ones.every((d, i) => d === v.result[i % k]) && new Set(v.result).size === k, `${ex.id}: 일의 자리 되풀이`); }
+      assert.ok(v.result.every((d) => nums(ex.answer).includes(d)), `${ex.id}: 답`);
+    } else if (v.kind === "pairs") {
+      const fits = search(["a", "b"], 1, 9, (w) => w.a < w.b && w.a * w.b === v.product).map((w) => [w.a, w.b]);
+      assert.deepEqual(fits, v.pairs, `${ex.id}: 짝`); for (const [a, b] of fits) assert.ok(ex.answer.includes(`A = ${a}, B = ${b}`));
+      for (const item of lesson.original.items) assert.notEqual(item.visual?.product, v.product, `${ex.id}: 원본과 같은 곱`);
+    } else if (v.kind === "ring") {
+      const n = v.full.length, unknown = [...Array(n).keys()].filter((i) => !v.given.includes(i));
+      const fits = search(unknown.map(String), 2, 9, (w) => { const c = v.full.map((x, i) => (v.given.includes(i) ? x : w[i])); return v.squares.every((sq, i) => c[i] * c[(i + 1) % n] === sq); });
+      assert.equal(fits.length, 1, `${ex.id}: 동그라미가 하나로 정해짐`);
+      for (const i of unknown) { assert.equal(fits[0][i], v.full[i]); assert.ok(ex.answer.includes(`${v.names[i]} = ${v.full[i]}`), `${ex.id}: 답 ${v.names[i]}`); }
+      for (const item of lesson.original.items) { const o = item.visual || {}; if (o.products) assert.notEqual([...o.products].sort().join(), [...v.squares].sort().join(), `${ex.id}: 원본 곱과 같음`); if (o.squares) assert.notEqual(o.squares.join(), v.squares.join(), `${ex.id}: 원본 고리와 같음`); }
+    } else if (v.kind === "pgrid") {
+      const letters = Object.keys(v.values);
+      const fits = search(letters, 1, 9, (w) => { const val = (x) => (/^\d+$/u.test(x) ? Number(x) : w[x]); return v.cells.every((r, i) => r.reduce((a, x) => a * val(x), 1) === v.rows[i]) && v.cells[0].every((_, c) => v.cells.reduce((a, r) => a * val(r[c]), 1) === v.cols[c]); });
+      assert.equal(fits.length, 1, `${ex.id}: 빈칸이 하나로 정해짐`); assert.deepEqual(fits[0], v.values);
+      for (const l of letters) assert.match(ex.answer, new RegExp(`${l}[은는] ${v.values[l]}\\D`, "u"), `${ex.id}: 답 ${l}`);
+      for (const item of lesson.original.items) if (item.visual?.letters) assert.notEqual(JSON.stringify(item.visual.letters), JSON.stringify(v.cells), `${ex.id}: 원본 표와 같음`);
+    } else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);
