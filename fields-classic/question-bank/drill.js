@@ -7,9 +7,10 @@
 import { typeById } from "./source-data.js?v=20261024r";
 import { GENERATORS } from "./generators.js?v=20261027a";
 import { DRILL_TYPES } from "./drill-generators.js?v=20261027a";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027i";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027j";
 import { jo } from "./concept-board-kit.js?v=20261026b";
 import * as B2 from "./book02-visuals.js?v=20261027a";
+import * as FOLD from "./fold-visuals.js?v=20261027a";
 
 // 2권 그림: 문제은행 화면(app.js visualMarkup)과 같은 감싸는 class로 그린다
 export const EXTRA_VISUALS = Object.freeze({
@@ -19,7 +20,9 @@ export const EXTRA_VISUALS = Object.freeze({
   "number-sequences": ["number-sequences-visual", B2.numberSequencesMarkup], "progressive-number-table": ["progressive-table-visual", B2.progressiveNumberTableMarkup],
   "book2-growth": ["book2-growth-visual", B2.book2GrowthMarkup], "center-number-rule": ["center-number-rule-visual", B2.centerNumberRuleMarkup],
   "number-rule-grid": ["number-rule-grid-visual", B2.numberRuleGridMarkup], "two-digit-compose-rule": ["two-digit-compose-visual", B2.twoDigitComposeRuleMarkup],
-  "sudoku-grid": ["sudoku-grid-visual", B2.sudokuGridMarkup]
+  "sudoku-grid": ["sudoku-grid-visual", B2.sudokuGridMarkup],
+  "paper-fold": ["paper-fold-visual", FOLD.paperFoldMarkup], "fold-cut-pieces": ["fold-pieces-visual", FOLD.foldCutPiecesMarkup],
+  "fold-diagonal-grid": ["fold-diagonal-visual", FOLD.foldDiagonalGridMarkup], "fold-two-diagonal-grid": ["fold-diagonal-visual", FOLD.foldTwoDiagonalGridMarkup]
 });
 
 // 그림 그리기는 문제은행 화면(app.js)과 같은 파일·같은 꼬리표로 불러온다

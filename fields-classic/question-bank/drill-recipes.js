@@ -37,10 +37,13 @@ export const DRILL_RECIPES = Object.freeze({
   "book-03/magic-card-binary": ["colored-cell-number-code", "symbol-value-code"],
   "book-03/magic-square-targets": ["magic-square-three-target", "magic-square-four-target"],
   // 4권 — 도형 움직이기 · 색종이 접기 · 양팔저울과 비교 · 논리추리 (쌓기나무·자리 배치·표 추리는 숫자로 답하는 유형이 없어 아직 없음)
+  //   접기 그림은 fold-visuals.js(문제은행 화면과 같은 그리기)
   "book-04/polyomino-family-count": ["tetromino-family-choice", "tetromino-square-composition"],
   "book-04/digital-flip-source": ["digital-transform-arithmetic", "digital-grid-transform"],
   "book-04/flip-rotate-source": ["shape-quarter-half-turn", "shape-mirror-direction"],
   "book-04/fold-position-source": ["fold-number-grid-two-orthogonal"],
+  "book-04/fold-cut-source": ["fold-number-grid-one", "fold-number-grid-two-diagonal"],
+  "book-04/fold-hole-count": ["fold-hole-count", "practice-three-fold-hole-count"],
   "book-04/compare-order-source": ["measurement-order-chain", "shape-difference-chain"],
   "book-04/compare-difference-source": ["shape-difference-chain", "measurement-order-chain"],
   "book-04/balance-equality-source": ["pair-sum-card-completion", "balance-unit-ratio"],
