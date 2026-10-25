@@ -475,3 +475,8 @@ body.sk-open { overflow: hidden; }
 .pk-say::after { content: ""; position: absolute; left: var(--tail, 50%); bottom: -8px; transform: translateX(-50%); border: 8px solid transparent; border-bottom: 0; border-top-color: #fffdf6; }
 .pk-say b { color: #2f6b3a; margin-right: 6px; }
 @media (prefers-reduced-motion: reduce) { .pk-kids .bd, .pk-kids .lg, .pk-kids .ar { animation: none !important; } }
+/* 자연관찰 세트 단계: 현장(하루) / 사전 탐구보고서(오래 관찰) */
+.ob-stage-tag { align-self: center; font-size: 11.5px; font-weight: 800; color: #8fd18a; letter-spacing: .02em; margin: 0 2px 0 6px; }
+.ob-stage-tag:first-child { margin-left: 0; }
+.ob-stage-note { margin: 6px 0 10px; padding: 9px 12px; border-radius: 10px; background: rgba(143, 209, 138, .12); border: 1px dashed rgba(143, 209, 138, .5); color: #d9f0d6; font-size: 13.5px; line-height: 1.55; }
+.ob-stage-note a { color: #8fd18a; font-weight: 700; }

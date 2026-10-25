@@ -8,9 +8,15 @@ import * as leafkey from '../scenes/specimens-leafkey.js';
 import * as grow from '../scenes/specimens-grow.js';
 import * as mold from '../scenes/specimens-mold.js';
 
+// 원장 2026-10-25: 「자연관찰은 하루 만에 진행하는 거잖아 — 장기 관찰이 가능한 건 자연관찰 쪽 탐구보고서 항목으로」.
+// stage: 'field' = 대회 날 현장에서 그날 받은 주제로 하는 관찰(하루 · 120~180분) / 'report' = 대회 전에 내는 사전 탐구보고서(자유 주제, 며칠~몇 주 이어 보는 관찰).
+export const STAGES = {
+  field: { title: '대회 날 현장 관찰', short: '현장', sub: '하루 · 그날 받은 주제 · 120~180분', icon: '🔍' },
+  report: { title: '사전 탐구보고서', short: '탐구보고서', sub: '대회 전에 내는 보고서 · 오래 이어 보는 관찰', icon: '📓' },
+};
 export const OBSERVE_SETS = [
   {
-    id: 'observe-insects', title: '풀밭의 곤충 — 두 장소 비교', short: '곤충 · 두 장소', level: 'elem', mod: insects,
+    id: 'observe-insects', stage: 'field', title: '풀밭의 곤충 — 두 장소 비교', short: '곤충 · 두 장소', level: 'elem', mod: insects,
     lead: '그늘진 곳(장소 A)과 햇빛 드는 곳(장소 B)에서 메뚜기 무리 곤충을 찾아요. 번호를 붙여 그리고, 두 장소의 햇빛·바람·흙을 같은 방법으로 확인해 비교하고, 날개와 다리가 하는 일을 알아봐요.',
     steps: ['장소마다 채집 기록', '그리고 설명하기', '두 장소 환경 비교', '분류 나무 · 벤', '날개·다리의 기능 → 유리한 점', '더 알아보고 싶은 것'],
     unit: {
@@ -20,7 +26,7 @@ export const OBSERVE_SETS = [
     },
   },
   {
-    id: 'observe-leaves', title: '잎과 잎차례', short: '잎차례', level: 'elem', mod: leaves,
+    id: 'observe-leaves', stage: 'field', title: '잎과 잎차례', short: '잎차례', level: 'elem', mod: leaves,
     lead: '여섯 가지 식물의 잎을 보고 잎이 줄기에 붙은 차례(잎차례)와 잎 모양을 그려요. 기준을 세워 분류 나무로 나누고, 가장 전형적인 잎을 골라 비교하고, 잎 모양이 살아가는 데 어떤 점에서 유리한지 생각해요.',
     steps: ['잎·잎차례 그리고 설명', '잰 값 기록', '분류 나무', '전형적인 잎 고르기 · 벤', '잎 모양·잎차례의 유리한 점', '더 탐구하고 싶은 것'],
     unit: {
@@ -30,7 +36,7 @@ export const OBSERVE_SETS = [
     },
   },
   {
-    id: 'observe-water', title: '물에 사는 식물', short: '물에 사는 식물', level: 'mid', mod: water,
+    id: 'observe-water', stage: 'field', title: '물에 사는 식물', short: '물에 사는 식물', level: 'mid', mod: water,
     lead: '대회처럼 이름 대신 번호로 부르고, 생김새를 그림과 글로 남겨요. 돌려 보고 · 위와 옆에서 보고 · 단면을 보고 · 자를 대고 · 손으로 확인한 것을 보고서에 써요.',
     steps: ['돌려 보며 관찰', '그리고 설명하기', '분류 나무', '두 종 비교(벤)', '구조와 기능 → 유리한 점', '더 탐구하고 싶은 것'],
     unit: {
@@ -40,7 +46,7 @@ export const OBSERVE_SETS = [
     },
   },
   {
-    id: 'observe-leafkey', title: '비슷한 잎, 재서 구분하기 — 검색표 만들기', short: '잎 재기 · 검색표', level: 'mid', mod: leafkey,
+    id: 'observe-leafkey', stage: 'field', title: '비슷한 잎, 재서 구분하기 — 검색표 만들기', short: '잎 재기 · 검색표', level: 'mid', mod: leafkey,
     lead: '비슷해 보이는 잎 4종을 숫자로 구분해요. 눈으로 본 차이를 숫자로 나타낼 형질로 바꾸고(가설), 종마다 여러 장을 재고, 같은 종도 크기가 제각각이라 길이 하나로는 안 된다는 것을 확인한 뒤, 비율·평균으로 바꿔 검색표를 만들어요.',
     steps: ['눈으로 본 차이 적기', '숫자로 나타낼 형질 고르기(가설)', '종마다 여러 장 재기', '길이 하나로 안 되는 까닭 — 비율·평균으로', '검색표(분류 나무)', '닮은 두 종 비교 · 더 탐구'],
     unit: {
@@ -59,7 +65,7 @@ export const OBSERVE_SETS = [
     },
   },
   {
-    id: 'observe-grow', title: '강낭콩 자람 오래 관찰하기', short: '강낭콩 · 자람 기록', level: 'elem', mod: grow,
+    id: 'observe-grow', stage: 'report', title: '강낭콩 자람 오래 관찰하기', short: '강낭콩 · 자람 기록', level: 'elem', mod: grow,
     lead: '같은 날 심은 강낭콩 세 화분을 4주 동안 관찰해요. 무엇을 어떻게 잴지 정하고(키·잎 수·줄기 굵기·떡잎), 날짜별로 표에 적어 꺾은선 그래프로 그리고, 빛이나 물 하나만 다르게 한 화분과 비교해요.',
     steps: ['무엇을·어떻게 잴지 정하기', '날짜별로 재고 그리기', '표 → 꺾은선 그래프', '세 화분 비교(바꾼 것 하나)', '떡잎·본잎·뿌리가 하는 일', '더 알아보고 싶은 것'],
     unit: {
@@ -77,7 +83,7 @@ export const OBSERVE_SETS = [
     },
   },
   {
-    id: 'observe-mold', title: '곰팡이 관찰일기', short: '곰팡이 일기', level: 'elem', mod: mold,
+    id: 'observe-mold', stage: 'report', title: '곰팡이 관찰일기', short: '곰팡이 일기', level: 'elem', mod: mold,
     lead: '식빵·귤·밥에 핀 곰팡이를 뚜껑 닫은 통 밖에서 관찰해요. 날마다 색·모양·퍼진 넓이를 기록하고, 돋보기로 솜털과 점을, 현미경으로 곰팡이마다 다른 포자 모양을 봐요. 뚜껑은 절대 열지 않아요.',
     steps: ['안전 수칙 확인', '날마다 색·모양·넓이 기록', '돋보기 · 현미경으로 보기', '곰팡이 무리 나누기', '두 곰팡이 비교 · 균사와 포자가 하는 일', '더 알아보고 싶은 것'],
     unit: {
@@ -94,4 +100,5 @@ export const OBSERVE_SETS = [
     },
   },
 ];
+export const setsOf = (stage) => OBSERVE_SETS.filter((x) => x.stage === stage);
 export const observeSet = (id) => OBSERVE_SETS.find((s) => s.id === id) || OBSERVE_SETS[0];

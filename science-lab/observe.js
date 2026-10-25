@@ -4,7 +4,7 @@
 // 오른쪽: 대회 과제 순서의 보고서. 그리기판에는 지금 보는 화면이 참고로 뜬다(옆에만 — 본뜨기 금지).
 // 정답(이름·기능)은 바로 주지 않는다 — 이름은 「이름 확인」을 눌러야 보이고, 손 확인은 현상만 보여 주고 무엇을 봤는지는 아이가 쓴다.
 import { Stage } from './engine.js';
-import { OBSERVE_SETS, observeSet } from './data/observe-sets.js';
+import { OBSERVE_SETS, STAGES, observeSet } from './data/observe-sets.js';
 import { renderReport } from './report.js';
 import { openSample } from './observe-sample.js';
 import { sampleFor } from './data/observe-samples.js';
@@ -19,10 +19,11 @@ export function renderObserve($app, { topbar, footer }, setId) {
   $app.innerHTML = `${topbar('#/')}
   <main class="opened observe-page" style="--tab:#3f8f3a">
     <div class="wrap unit-head folder-label"><span class="label-tab">OBSERVE</span>
-      <div class="crumb"><a class="tag" href="#/contest/nature" title="자연관찰대회 폴더 — 대회 안내" style="background:#3f8f3a;color:#fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;text-decoration:none">🔍 자연관찰대회 폴더 →</a><span class="lv">${S.level === 'mid' ? '중등' : '초등'}</span><span>연습</span></div>
-      <nav class="ob-sets" aria-label="연습 세트">${OBSERVE_SETS.map((x) => `<a href="#/observe/${x.id}" aria-current="${x.id === S.id}">${esc(x.short)}<small>${x.level === 'mid' ? '중등' : '초등'}</small></a>`).join('')}</nav>
+      <div class="crumb"><a class="tag" href="#/contest/nature" title="자연관찰대회 폴더 — 대회 안내" style="background:#3f8f3a;color:#fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;text-decoration:none">🔍 자연관찰대회 폴더 →</a><span class="lv">${S.level === 'mid' ? '중등' : '초등'}</span><span>${STAGES[S.stage].icon} ${esc(STAGES[S.stage].title)}</span></div>
+      <nav class="ob-sets" aria-label="연습 세트">${Object.entries(STAGES).map(([k, st]) => `<span class="ob-stage-tag">${st.icon} ${esc(st.short)}</span>${OBSERVE_SETS.filter((x) => x.stage === k).map((x) => `<a href="#/observe/${x.id}" aria-current="${x.id === S.id}">${esc(x.short)}<small>${x.level === 'mid' ? '중등' : '초등'}</small></a>`).join('')}`).join('')}</nav>
       <h1>${esc(S.title)}</h1>
       <p class="sub">${esc(S.lead)}</p>
+      ${S.stage === 'report' ? '<p class="ob-stage-note">📓 대회 날 하는 관찰이 아니에요. 대회 전에 내는 <b>사전 탐구보고서</b>(자유 주제, 5~10쪽, 팀이 나온 탐구 사진 5장 이상, 직접 그린 스케치)를 연습하는 세트예요 — 며칠~몇 주를 이어 봐요. <a href="#/contest/nature">요강 보기 →</a></p>' : ''}
       <ol class="ob-steps">${S.steps.map((t, i) => `<li><b>${i + 1}</b>${esc(t)}</li>`).join('')}</ol>
     </div>
     <div class="wrap ob-grid">

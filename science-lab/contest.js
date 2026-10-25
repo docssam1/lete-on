@@ -3,7 +3,7 @@
 // 내용은 data/contests.js(근거와 「확인 못 함」까지 그 파일에 적는다).
 import { CONTESTS, ORDERED, contestsOf, levelOf, domainOf } from './data/curriculum.js';
 import { CONTEST_GUIDE } from './data/contests.js';
-import { OBSERVE_SETS } from './data/observe-sets.js';
+import { OBSERVE_SETS, STAGES, setsOf } from './data/observe-sets.js';
 import { mountPark } from './park.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -23,12 +23,14 @@ export function renderContest($app, { topbar, footer }, id) {
       <h1>${esc(C.title)}</h1>
       <p class="ct-sub">${esc(C.sub)}</p>
       <p class="sub">${esc(G.lead)}</p>
-      <div class="ct-jump">${sets.length ? `<a href="#/observe/${sets[0].id}">${G.icon} 연습 세트 ${sets.length}개 바로 가기</a>` : ''}${units.length ? `<a href="#/contest/${C.id}" data-scroll="ct-practice">이 대회로 연습할 실험 ${units.length}개</a>` : ''}</div>
+      <div class="ct-jump">${sets.length ? Object.entries(STAGES).map(([k, st]) => { const xs = sets.filter((x) => x.stage === k); return `<a href="#/observe/${xs[0].id}">${st.icon} ${esc(st.title)} ${xs.length}개</a>`; }).join('') : ''}${units.length ? `<a href="#/contest/${C.id}" data-scroll="ct-practice">이 대회로 연습할 실험 ${units.length}개</a>` : ''}</div>
     </div>
     ${C.id === 'nature' ? '<section class="wrap ct-park" aria-label="자연관찰 공원 지도"></section>' : ''}
     <div class="wrap ct-grid" id="ct-guide">
       <div class="ct-main">
         ${sheet('이 대회는', `${dl(G.names, 'names')}${dl(G.facts)}`)}
+        ${G.pre ? sheet('사전 탐구보고서(대회 전)', `<p class="ct-p">${esc(G.pre.lead)}</p>${dl(G.pre.rows)}<p class="ct-src">기준: ${esc(G.pre.src)}</p>
+          <ul class="ct-list">${setsOf('report').map((x) => `<li>${esc(x.title)} <a class="ct-go" href="#/observe/${x.id}">연습 세트 →</a></li>`).join('')}</ul>`, 'pre') : ''}
         ${sheet('대회 날 하는 일', `<ol class="ct-steps">${G.day.map((t) => `<li>${esc(t)}</li>`).join('')}</ol>`)}
         ${sheet('심사에서 보는 것', `${pct ? `<div class="ct-bar">${G.judge.rows.map(([k, v]) => `<span style="flex:${parseFloat(v)}"><b>${esc(v)}</b>${esc(k)}</span>`).join('')}</div>` : ''}
           <table class="ct-table"><thead><tr><th>영역</th>${G.judge.rows.some((r) => r[1]) ? '<th>비중</th>' : ''}<th>보는 것</th></tr></thead><tbody>${G.judge.rows.map(([k, v, w]) => `<tr><th>${esc(k)}</th>${G.judge.rows.some((r) => r[1]) ? `<td class="num">${esc(v)}</td>` : ''}<td>${esc(w)}</td></tr>`).join('')}</tbody></table>
@@ -39,8 +41,8 @@ export function renderContest($app, { topbar, footer }, id) {
         ${sheet('근거 자료', `<ul class="ct-list src">${G.src.map((t) => `<li>${esc(t)}</li>`).join('')}</ul><p class="ct-note">요강은 해마다, 시·도마다 바뀌어요. 이 안내는 연습을 위한 정리이고, 대회에 나갈 때는 그해 요강이 기준이에요.</p>`)}
       </div>
       <aside class="ct-side" id="ct-practice" aria-label="이 대회로 연습할 곳">
-        ${sets.length ? `<div class="ct-box"><h3>${G.icon} 자연관찰 연습 <small>대회 과제 꼴 그대로 · 3D 표본과 실사 사진</small></h3><ol class="ct-links">${sets.map(setLi).join('')}</ol></div>` : ''}
-        <div class="ct-box"><h3>🧪 이 대회로 연습할 실험 <small>「보고서 →」는 ${esc(C.title)} 양식으로 열려요(처음 쓸 때)</small></h3><ol class="ct-links">${units.map(unitLi).join('')}</ol></div>
+        ${sets.length ? Object.entries(STAGES).map(([k, st]) => `<div class="ct-box"><h3>${st.icon} ${esc(st.title)} <small>${esc(st.sub)}</small></h3><ol class="ct-links">${sets.filter((x) => x.stage === k).map(setLi).join('')}</ol></div>`).join('') : ''}
+        <div class="ct-box"><h3>🧪 ${C.id === 'nature' ? '사전 탐구보고서 주제로 해 볼 실험' : '이 대회로 연습할 실험'} <small>「보고서 →」는 ${esc(C.title)} 양식으로 열려요(처음 쓸 때)</small></h3><ol class="ct-links">${units.map(unitLi).join('')}</ol></div>
       </aside>
     </div>
   </main>${footer()}`;
