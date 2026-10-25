@@ -3,12 +3,37 @@
 // 글은 우리가 쓴 것(골든벨 원문을 베끼지 않는다). 확인 문제의 정답은 아래 규칙 함수로 계산하고, 골든벨 정답 DB는 쓰지 않는다.
 // 좌표는 1000×600 칠판 기준. 시계 숫자 n의 자리는 concept-board.js의 clockPoint가 계산한다.
 
+// 독쌤 음성 파일의 줄 id. 내보내기(tools/export-board-voice.mjs)와 재생(concept-board.js → study.js)이 같은 규칙을 쓴다.
+//   비트 n번째 말 → fcb-<판서>-bNN · 확인 문제의 힌트/정답/공개 말 → fcb-<판서>-hint|right|reveal
+export const lineId = (boardKey, kind, n = 0) => `fcb-${boardKey.replace(/[^a-z0-9]+/gi, "-")}-${kind === "b" ? `b${String(n).padStart(2, "0")}` : kind}`;
+
 // 시계: 숫자 start에서 quarters(반의 반 바퀴 단위, 시계 방향 +)만큼 돌린 자리
 export const landing = (start, quarters) => ((start - 1 + quarters * 3) % 12 + 12) % 12 + 1;
 // 모눈: 칸 [줄, 칸]을 거울·돌리기로 옮긴 자리(rows×cols)
 export const mirrorLR = (cells, cols) => cells.map(([r, c]) => [r, cols - 1 - c]);
 export const mirrorTB = (cells, rows) => cells.map(([r, c]) => [rows - 1 - r, c]);
 export const turnHalf = (cells, rows, cols) => cells.map(([r, c]) => [rows - 1 - r, cols - 1 - c]);
+
+// 디지털 숫자(막대 일곱 개). 이름은 game-digital.js와 같다: a 위 · b 오른쪽 위 · c 오른쪽 아래 · d 아래 · e 왼쪽 아래 · f 왼쪽 위 · g 가운데
+export const DIGIT_SEGMENTS = Object.freeze({ 0: "abcdef", 1: "bc", 2: "abdeg", 3: "abcdg", 4: "bcfg", 5: "acdfg", 6: "acdefg", 7: "abc", 8: "abcdefg", 9: "abcdfg" });
+export const SEGMENT_MAPS = Object.freeze({
+  "mirror-left-right": { a: "a", b: "f", c: "e", d: "d", e: "c", f: "b", g: "g" },
+  "mirror-top-bottom": { a: "d", b: "c", c: "b", d: "a", e: "f", f: "e", g: "g" },
+  "rotate-half": { a: "d", b: "e", c: "f", d: "a", e: "b", f: "c", g: "g" }
+});
+export const moveSegs = (on, op) => [...on].map((s) => SEGMENT_MAPS[op][s]).sort().join("");
+// 옮긴 막대가 어떤 숫자인지(숫자가 아니면 null) — 확인 문제의 정답은 이걸로 계산한다
+export const readDigit = (on) => { const key = [...on].sort().join(""); const hit = Object.entries(DIGIT_SEGMENTS).find(([, v]) => v === key); return hit ? Number(hit[0]) : null; };
+export const transformDigit = (d, op) => readDigit(moveSegs(DIGIT_SEGMENTS[d], op));
+// 막대 하나의 양 끝 좌표. 숫자 상자 (x, y) 왼쪽 위, 높이 h, 폭 h×0.55. 끝을 조금 띄워 막대가 서로 닿지 않게 한다.
+export function segGeom(x, y, h, seg) {
+  const w = h * 0.55, t = h * 0.07, mid = y + h / 2;
+  return {
+    a: [x + t, y, x + w - t, y], d: [x + t, y + h, x + w - t, y + h], g: [x + t, mid, x + w - t, mid],
+    b: [x + w, y + t, x + w, mid - t], c: [x + w, mid + t, x + w, y + h - t], e: [x, mid + t, x, y + h - t], f: [x, y + t, x, mid - t]
+  }[seg];
+}
+export const segMid = (x, y, h, seg) => { const [x1, y1, x2, y2] = segGeom(x, y, h, seg); return [(x1 + x2) / 2, (y1 + y2) / 2]; };
 
 const CLOCK = { cx: 300, cy: 345, r: 170 };
 const numAt = (n, rr = CLOCK.r - 38) => ({ cx: CLOCK.cx + rr * Math.sin((n * 30 * Math.PI) / 180), cy: CLOCK.cy - rr * Math.cos((n * 30 * Math.PI) / 180) });
@@ -107,4 +132,170 @@ export const BOARDS = {
           right: "맞았어요! 왼쪽 거울도 오른쪽 거울과 같은 모양이 돼요.", sayRight: "맞았어요! 왼쪽 거울이든 오른쪽 거울이든 좌우만 바뀌어서 같은 모양이 돼요. 이제 게임으로 가요." } }
     ]
   }
+
+  ,"book-01/digital-turn-flip": (() => {
+    const H = 150;                                   // 큰 숫자 높이
+    const D8 = { x: 70, y: 120 }, D2 = { x: 330, y: 120 }, D5 = { x: 520, y: 120 }, D6 = { x: 330, y: 330 }, D9 = { x: 520, y: 330 };
+    const S = 84, T1 = { x: 700, y: 372 }, T6 = { x: 760, y: 372 }, R9 = { x: 870, y: 372 }, R1 = { x: 930, y: 372 };   // 두 자리 수 16 → 91(작은 숫자)
+    const flipped = transformDigit(2, "mirror-left-right"), turned = transformDigit(6, "rotate-half"), sym = transformDigit(3, "mirror-top-bottom");
+    const ar = (from, fs, to, ts, h, color, bend) => { const [x1, y1] = segMid(from.x, from.y, h, fs), [x2, y2] = segMid(to.x, to.y, h, ts); return { kind: "arrow", x1, y1, x2, y2, color, bend, width: 3 }; };
+    const label = (seg, text, dx, dy) => { const [mx, my] = segMid(D8.x, D8.y, H, seg); return { kind: "text", x: mx + dx, y: my + dy, text, size: 20, color: "gray", align: dx < 0 ? "right" : dx > 0 ? "start" : "center" }; };
+    return {
+      title: "디지털 숫자를 뒤집고 돌려요",
+      kicker: "1권 1단원 · 손글씨 개념",
+      beats: [
+        { say: "디지털 숫자는 뒤집거나 돌리면 다른 숫자가 되기도 해요. 막대 하나하나를 따라가며 천천히 알아봐요.",
+          items: [{ kind: "text", x: 60, y: 76, text: "디지털 숫자를 뒤집고 돌려요", size: 54 }] },
+        { say: "디지털 숫자는 막대 일곱 개로 만들어요. 일곱 개가 다 켜지면 8이에요. 켜진 막대만 보이고, 꺼진 막대는 안 보여요.",
+          items: [{ kind: "digit", ...D8, h: H, on: "abcdefg", color: "ink" }] },
+        { say: "막대마다 이름이 있어요. 위, 가운데, 아래. 그리고 왼쪽 위, 왼쪽 아래, 오른쪽 위, 오른쪽 아래예요.",
+          items: [label("a", "위", 0, -14), label("g", "가운데", 0, -12), label("d", "아래", 0, 28), label("f", "왼쪽 위", -14, 7), label("e", "왼쪽 아래", -14, 7), label("b", "오른쪽 위", 14, 7), label("c", "오른쪽 아래", 14, 7)] },
+        { say: "숫자 2를 만들어 봐요. 위, 오른쪽 위, 가운데, 왼쪽 아래, 아래. 다섯 막대가 켜져요.",
+          items: [{ kind: "digit", ...D2, h: H, on: DIGIT_SEGMENTS[2], color: "blue" }, { kind: "text", x: D2.x + 20, y: 310, text: "2", size: 34, color: "blue" }] },
+        { say: "2의 오른쪽에 거울을 세워요. 오른쪽으로 뒤집기예요. 거울 건너편에 꺼진 막대 일곱 개를 먼저 그려 둬요.",
+          items: [{ kind: "line", x1: 470, y1: 100, x2: 470, y2: 300, color: "gold", width: 5, dash: true }, { kind: "digit", ...D5, h: H, on: "", color: "red" }] },
+        { say: "오른쪽으로 뒤집으면 왼쪽 막대와 오른쪽 막대가 자리를 바꿔요. 오른쪽 위는 왼쪽 위로, 왼쪽 아래는 오른쪽 아래로. 위, 가운데, 아래 막대는 그대로예요.",
+          items: [ar(D2, "b", D5, "f", H, "red", 40), ar(D2, "e", D5, "c", H, "red", 0)] },
+        { say: "켜진 막대를 하나씩 옮겨요. 위는 위 그대로. 오른쪽 위는 왼쪽 위로. 가운데는 그대로. 왼쪽 아래는 오른쪽 아래로. 아래는 아래 그대로.",
+          items: [{ kind: "digit", ...D5, h: H, on: moveSegs(DIGIT_SEGMENTS[2], "mirror-left-right"), color: "red", dim: false }] },
+        { say: `새 모양을 읽어요. ${flipped}이에요. 2를 오른쪽으로 뒤집으면 ${flipped}가 돼요.`,
+          items: [{ kind: "text", x: D5.x + 20, y: 310, text: String(flipped), size: 34, color: "red" }, { kind: "text", x: 660, y: 150, text: `오른쪽으로 뒤집기: 2 → ${flipped}`, size: 36, color: "red" }] },
+        { say: `아래쪽으로 뒤집으면 이번에는 위 막대와 아래 막대가 바뀌어요. 왼쪽 오른쪽은 그대로예요. 3은 위아래가 똑같이 생겨서 아래로 뒤집어도 ${sym}이에요.`,
+          items: [{ kind: "text", x: 660, y: 210, text: `아래로 뒤집기: 위 ↔ 아래, 3 → ${sym}`, size: 27, color: "gray" }] },
+        { say: "이번에는 6이에요. 위, 왼쪽 위, 가운데, 왼쪽 아래, 아래, 오른쪽 아래. 여섯 막대가 켜져요.",
+          items: [{ kind: "digit", ...D6, h: H, on: DIGIT_SEGMENTS[6], color: "blue" }, { kind: "text", x: D6.x + 20, y: 520, text: "6", size: 34, color: "blue" }] },
+        { say: "반 바퀴 돌리기는 판을 거꾸로 세우는 거예요. 위아래도 바뀌고 좌우도 바뀌어요. 막대는 대각선 맞은편으로 가요.",
+          items: [{ kind: "arc", cx: (D6.x + H * 0.55 + D9.x) / 2, cy: D6.y + H / 2, r: 30, from: 8, to: 4, color: "green" }, { kind: "digit", ...D9, h: H, on: "", color: "green" }] },
+        { say: "위 막대는 아래로. 왼쪽 아래 막대는 오른쪽 위로. 왼쪽 위 막대는 오른쪽 아래로. 가운데만 그대로예요.",
+          items: [ar(D6, "a", D9, "d", H, "green", 0), ar(D6, "f", D9, "c", H, "green", 0)] },
+        { say: `켜진 막대 여섯 개를 하나씩 옮기면 새 모양이 돼요. 읽어 보면 ${turned}이에요.`,
+          items: [{ kind: "digit", ...D9, h: H, on: moveSegs(DIGIT_SEGMENTS[6], "rotate-half"), color: "green", dim: false }, { kind: "text", x: D9.x + 20, y: 520, text: String(turned), size: 34, color: "green" }] },
+        { say: `6을 반 바퀴 돌리면 ${turned}. 뒤집기와 돌리기는 결과가 달라요. 꼭 막대를 따라가며 확인해요.`,
+          items: [{ kind: "text", x: 660, y: 300, text: `반 바퀴 돌리기: 6 → ${turned}`, size: 36, color: "green" }] },
+        { say: "두 자리 수는 조금 더 생각해요. 16을 써 봐요. 왼쪽에 1, 오른쪽에 6이에요.",
+          items: [{ kind: "digit", ...T1, h: S, on: DIGIT_SEGMENTS[1], color: "blue" }, { kind: "digit", ...T6, h: S, on: DIGIT_SEGMENTS[6], color: "blue" }, { kind: "text", x: 700, y: 490, text: "16", size: 30, color: "blue" }] },
+        { say: `판 전체를 반 바퀴 돌리면 숫자 모양만 바뀌는 게 아니라, 왼쪽에 있던 숫자가 오른쪽 자리로 가요. 6은 ${turned}가 되어 왼쪽으로, 1은 1 그대로 오른쪽으로. 그래서 16은 ${turned}1이 돼요.`,
+          items: [{ kind: "arrow", x1: 830, y1: 414, x2: 860, y2: 414, color: "green", width: 3 }, { kind: "digit", ...R9, h: S, on: moveSegs(DIGIT_SEGMENTS[6], "rotate-half"), color: "green" }, { kind: "digit", ...R1, h: S, on: moveSegs(DIGIT_SEGMENTS[1], "rotate-half"), color: "green" }, { kind: "text", x: 870, y: 490, text: `${turned}1`, size: 30, color: "green" }] },
+        { say: "정리해요. 옆으로 뒤집기는 왼쪽과 오른쪽 막대가 바뀌고, 아래로 뒤집기는 위와 아래 막대가 바뀌고, 반 바퀴 돌리기는 둘 다 바뀌어요. 두 자리 수는 자리 순서도 함께 바뀌어요.", mood: "praise",
+          items: [{ kind: "box", x: 640, y: 100, w: 340, h: 420, color: "gold" }, { kind: "text", x: 660, y: 560, text: "막대를 하나씩 따라가요!", size: 32, color: "gold" }] },
+        { say: `한 문제 풀어 봐요. ${turned}를 반 바퀴 돌리면 어떤 숫자가 될까요? 막대를 하나씩 대각선 맞은편으로 옮겨 봐요.`, mood: "think",
+          items: [],
+          check: { question: `${turned}를 반 바퀴 돌리면 어떤 숫자가 될까요?`,
+            options: [String(turned), String(transformDigit(turned, "rotate-half")), "8"], answer: 1,
+            hint: "반 바퀴는 위아래도 좌우도 바뀌어요. 위 막대가 어디로 가는지 봐요.", sayHint: "반 바퀴 돌리기는 위아래도 좌우도 바뀌어요. 위 막대가 아래로 가면 어떤 모양이 되는지 봐요.",
+            right: `맞았어요! ${turned}를 반 바퀴 돌리면 ${transformDigit(turned, "rotate-half")}이에요.`, sayRight: `맞았어요! ${turned}를 반 바퀴 돌리면 ${transformDigit(turned, "rotate-half")}. 6과 ${turned}는 서로 반 바퀴 짝이에요. 이제 게임으로 손에 익혀 봐요.` } }
+      ]
+    };
+  })()
+
+  ,"book-01/fold-one-cut": (() => {
+    const C = 50, N = 4;
+    const P0 = { x: 60, y: 130 }, PF = { x: 330, y: 130 }, PU = { x: 600, y: 130 }, PH = { x: 60, y: 385 };
+    const PAPER = "#f6d77a", TWO = "#e3b744", HOLE = "red";
+    const sheet = (at, cols, rows, fill, cell = C) => [{ kind: "fill", x: at.x, y: at.y, w: cols * cell, h: rows * cell, fill }, { kind: "grid", x: at.x, y: at.y, cols, rows, cell, color: "#b9ab86" }];
+    const mid = (at, r, c, cell = C) => [at.x + (c + 0.5) * cell, at.y + (r + 0.5) * cell];
+    const cutFolded = [[0, 1]];                                   // 접힌 종이(오른쪽 두 줄) 안에서 자른 칸
+    const cutOpen = cutFolded.map(([r, c]) => [r, c + 2]);         // 펼친 종이에서는 오른쪽 반의 같은 칸
+    const mirror = mirrorLR(cutOpen, N);                           // 접는 선 건너편
+    const checkCut = [[3, 2]], checkHoles = [...checkCut, ...mirrorLR(checkCut, N)];
+    return {
+      title: "한 번 접어 자르고 펼쳐요",
+      kicker: "1권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "색종이를 접어서 자르고 펼치면, 구멍이 어디에 몇 개 생길까요? 접고, 자르고, 펼치는 것을 하나씩 천천히 해 봐요.",
+          items: [{ kind: "text", x: 60, y: 80, text: "한 번 접어 자르고 펼쳐요", size: 54 }] },
+        { say: "모눈이 있는 색종이를 그려요. 가로 네 칸, 세로 네 줄이에요.",
+          items: sheet(P0, N, N, PAPER) },
+        { say: "가운데 세로선이 접는 선이에요. 왼쪽 두 줄과 오른쪽 두 줄, 똑같이 반씩 나뉘어요.",
+          items: [{ kind: "line", x1: P0.x + 2 * C, y1: P0.y - 12, x2: P0.x + 2 * C, y2: P0.y + N * C + 12, color: "gold", width: 5, dash: true }, { kind: "text", x: P0.x + 2 * C, y: P0.y + N * C + 40, text: "접는 선", size: 26, color: "gold", align: "center" }] },
+        { say: "왼쪽 반을 접는 선을 따라 오른쪽으로 넘겨요. 책장을 넘기듯이 접어요.",
+          items: [{ kind: "arrow", x1: P0.x + 0.5 * C, y1: P0.y - 8, x2: P0.x + 3.5 * C, y2: P0.y - 8, bend: 34, color: "red" }] },
+        { say: "접으니까 종이가 반으로 줄었어요. 오른쪽 두 줄 위에 왼쪽 두 줄이 포개졌어요. 이제 종이가 두 겹이에요.",
+          items: [...sheet(PF, 2, N, TWO), { kind: "text", x: PF.x + C, y: PF.y + N * C + 40, text: "두 겹", size: 30, color: "gold", align: "center" }] },
+        { say: "접힌 종이에서 맨 윗줄, 오른쪽 칸을 잘라요. 가위로 자르면 포개진 두 겹이 한꺼번에 잘려요.",
+          items: [{ kind: "cells", x: PF.x, y: PF.y, cell: C, cells: cutFolded, fill: HOLE }, { kind: "text", x: PF.x + 2 * C + 16, y: PF.y + 34, text: "← 자른 칸", size: 26, color: "red" }] },
+        { say: "두 겹을 한 번에 잘랐으니까, 구멍은 한 겹에 하나씩, 모두 두 개가 생겨요. 어디에 생기는지 펼쳐서 확인해요.",
+          items: [{ kind: "text", x: 560, y: 390, text: "두 겹 × 한 번 자르기 = 구멍 두 개", size: 30 }] },
+        { say: "종이를 다시 펼쳐요. 펼친 색종이를 그려요. 접는 선도 같은 자리에 그대로 있어요.",
+          items: [...sheet(PU, N, N, PAPER), { kind: "line", x1: PU.x + 2 * C, y1: PU.y - 12, x2: PU.x + 2 * C, y2: PU.y + N * C + 12, color: "gold", width: 5, dash: true }] },
+        { say: "먼저 위에 놓여 있지 않던 오른쪽 반을 봐요. 잘린 칸은 그대로, 맨 윗줄 오른쪽 끝 칸이에요.",
+          items: [{ kind: "cells", x: PU.x, y: PU.y, cell: C, cells: cutOpen, fill: HOLE }] },
+        { say: "접혀서 위에 있던 왼쪽 반은, 거울처럼 접는 선을 넘어가 있었어요. 접는 선에서 오른쪽으로 두 칸이니까, 왼쪽으로도 두 칸 가요.",
+          items: [{ kind: "arrow", x1: mid(PU, 0, 3)[0], y1: PU.y - 10, x2: mid(PU, 0, 0)[0], y2: PU.y - 10, bend: 34, color: "red" }] },
+        { say: "그래서 맨 윗줄 왼쪽 끝 칸에도 구멍이 생겨요. 구멍이 두 개예요.",
+          items: [{ kind: "cells", x: PU.x, y: PU.y, cell: C, cells: mirror, fill: HOLE }] },
+        { say: "두 구멍은 접는 선을 사이에 두고 서로 마주 봐요. 접는 선에서 똑같이 두 칸 떨어져 있어요. 접는 선이 거울이에요.",
+          items: [{ kind: "text", x: 830, y: 190, text: "접는 선 = 거울", size: 32, color: "red" }, { kind: "text", x: 830, y: 240, text: "같은 거리에", size: 28, color: "red" }, { kind: "text", x: 830, y: 280, text: "마주 봐요", size: 28, color: "red" }] },
+        { say: "가로로 접어도 똑같이 생각해요. 위쪽 반을 아래로 접고 자르면, 구멍은 가로 접는 선을 사이에 두고 위아래로 마주 봐요.",
+          items: [...sheet(PH, N, N, PAPER, 45), { kind: "line", x1: PH.x - 10, y1: PH.y + 2 * 45, x2: PH.x + N * 45 + 10, y2: PH.y + 2 * 45, color: "gold", width: 4, dash: true }, { kind: "cells", x: PH.x, y: PH.y, cell: 45, cells: [[0, 1], ...mirrorTB([[0, 1]], N)], fill: HOLE }] },
+        { say: "정리해요. 접으면 두 겹. 한 번 자르면 구멍이 두 개. 펼치면 두 구멍은 접는 선에서 같은 거리에 마주 봐요.", mood: "praise",
+          items: [{ kind: "box", x: 300, y: 430, w: 660, h: 130, color: "gold" }, { kind: "text", x: 325, y: 480, text: "접는 선 = 거울, 같은 거리에 마주 봐요", size: 34 }, { kind: "text", x: 325, y: 535, text: "두 겹이면 구멍 두 개", size: 34 }] },
+        { say: "한 문제 풀어 봐요. 왼쪽 반을 오른쪽으로 접고, 맨 아랫줄에서 접는 선에 붙은 칸을 잘랐어요. 펼치면 어떤 모양일까요? 빨간 칸이 구멍이에요.", mood: "think",
+          items: [],
+          check: { question: "왼쪽 반을 오른쪽으로 접고, 맨 아랫줄에서 접는 선에 붙은 칸을 잘랐어요. 펼치면 어떤 모양일까요? (빨간 칸 = 구멍)",
+            options: [{ cols: N, rows: N, cell: 20, cells: [[3, 2], [3, 3]], fill: "red" }, { cols: N, rows: N, cell: 20, cells: [[3, 2]], fill: "red" }, { cols: N, rows: N, cell: 20, cells: checkHoles, fill: "red" }], answer: 2,
+            hint: "두 겹이라 구멍은 두 개예요. 접는 선에서 같은 거리, 건너편을 찾아요.", sayHint: "두 겹을 잘랐으니 구멍은 두 개예요. 잘린 칸이 접는 선에 붙어 있었으니, 건너편에서도 접는 선에 붙은 칸이에요.",
+            right: "맞았어요! 두 구멍이 접는 선에 붙어 마주 봐요.", sayRight: "맞았어요! 접는 선에 붙은 칸을 잘랐으니, 펼치면 접는 선 양쪽에 붙은 두 칸이 구멍이 돼요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
+
+  ,"book-01/fold-two-cut": (() => {
+    const C = 40, N = 4;
+    const P0 = { x: 50, y: 150 }, P1 = { x: 270, y: 150 }, P2 = { x: 420, y: 150 }, Q1 = { x: 560, y: 150 }, Q2 = { x: 760, y: 150 };
+    const PAPER = "#f6d77a", TWO = "#e3b744", FOUR = "#c99a2b", HOLE = "red";
+    const sheet = (at, cols, rows, fill) => [{ kind: "fill", x: at.x, y: at.y, w: cols * C, h: rows * C, fill }, { kind: "grid", x: at.x, y: at.y, cols, rows, cell: C, color: "#b9ab86" }];
+    const vline = (at, rows, color = "gold") => ({ kind: "line", x1: at.x + 2 * C, y1: at.y - 10, x2: at.x + 2 * C, y2: at.y + rows * C + 10, color, width: 4, dash: true });
+    const hline = (at, cols, color = "gold") => ({ kind: "line", x1: at.x - 10, y1: at.y + 2 * C, x2: at.x + cols * C + 10, y2: at.y + 2 * C, color, width: 4, dash: true });
+    // 접기: ① 왼쪽 반 → 오른쪽(남는 곳: 2·3번째 줄) ② 아래쪽 반 → 위(남는 곳: 0·1번째 줄). 네 겹 종이 = 원래 종이의 오른쪽 위 2×2.
+    const toOpen = ([r, c]) => [r, c + 2];
+    const open2 = (cells) => [...cells, ...mirrorTB(cells, N)];       // 마지막(위아래) 접기를 먼저 편다
+    const open1 = (cells) => [...cells, ...mirrorLR(cells, N)];       // 그다음 첫(좌우) 접기
+    const cut = [[1, 1]].map(toOpen);                                 // 네 겹 종이의 오른쪽 아래 칸
+    const afterOne = open2(cut), afterTwo = open1(afterOne);
+    const checkCut = [[0, 0]].map(toOpen), checkHoles = open1(open2(checkCut));
+    const local = (cells, dc = 0) => cells.map(([r, c]) => [r, c - dc]);
+    return {
+      title: "두 번 접고 차례로 펼쳐요",
+      kicker: "1권 2단원 · 손글씨 개념",
+      beats: [
+        { say: "이번에는 색종이를 두 번 접어요. 두 번 접고 자르면 구멍이 몇 개 생길까요? 접는 순서와 펼치는 순서를 꼭 기억하면서 천천히 해 봐요.",
+          items: [{ kind: "text", x: 50, y: 80, text: "두 번 접고 차례로 펼쳐요", size: 54 }] },
+        { say: "모눈 색종이를 그려요. 가운데 세로선과 가로선, 접는 선이 두 개예요.",
+          items: [...sheet(P0, N, N, PAPER), vline(P0, N), hline(P0, N)] },
+        { say: "첫 번째 접기예요. 왼쪽 반을 오른쪽으로 접어요.",
+          items: [{ kind: "arrow", x1: P0.x + 0.5 * C, y1: P0.y - 8, x2: P0.x + 3.5 * C, y2: P0.y - 8, bend: 30, color: "red" }, { kind: "text", x: P0.x, y: P0.y + N * C + 44, text: "① 왼쪽 → 오른쪽", size: 24, color: "red" }] },
+        { say: "반으로 접혀서 두 겹이 됐어요. 세로로 긴 종이예요.",
+          items: [...sheet(P1, 2, N, TWO), hline(P1, 2), { kind: "text", x: P1.x + C, y: P1.y + N * C + 44, text: "두 겹", size: 26, color: "gold", align: "center" }] },
+        { say: "두 번째 접기예요. 아래쪽 반을 위로 접어요.",
+          items: [{ kind: "arrow", x1: P1.x + 2 * C + 12, y1: P1.y + 3.5 * C, x2: P1.x + 2 * C + 12, y2: P1.y + 0.5 * C, color: "green" }, { kind: "text", x: P1.x - 10, y: P1.y + N * C + 80, text: "② 아래 → 위", size: 24, color: "green" }] },
+        { say: "두 겹을 또 반으로 접었으니 네 겹이에요. 두 겹의 두 배, 네 겹. 작은 네모가 됐어요.",
+          items: [...sheet(P2, 2, 2, FOUR), { kind: "text", x: P2.x + C, y: P2.y + 2 * C + 40, text: "네 겹", size: 26, color: "gold", align: "center" }] },
+        { say: "이 네 겹 종이에서 오른쪽 아래 칸을 잘라요. 가위로 한 번 자르면 네 겹이 한꺼번에 잘려요.",
+          items: [{ kind: "cells", x: P2.x, y: P2.y, cell: C, cells: local(cut, 2), fill: HOLE }] },
+        { say: "이제 펼쳐요. 펼칠 때는 거꾸로예요. 마지막에 접은 것부터 먼저 펼쳐요. 두 번째로 접은 위아래 접기를 먼저 풀어요.",
+          items: [{ kind: "text", x: 50, y: 470, text: "펼치기는 거꾸로: 마지막 접기부터", size: 34, color: "green" }] },
+        { say: "위아래 접기를 풀면 두 겹짜리 긴 종이로 돌아와요. 가운데 가로선이 방금 푼 접는 선이에요.",
+          items: [...sheet(Q1, 2, N, TWO), hline(Q1, 2, "green")] },
+        { say: "잘린 칸은 가로 접는 선 바로 위 칸이었어요. 거울처럼 아래로 넘기면 가로 접는 선 바로 아래 칸이에요. 구멍이 두 개가 돼요.",
+          items: [{ kind: "cells", x: Q1.x, y: Q1.y, cell: C, cells: local(afterOne, 2), fill: HOLE }] },
+        { say: "다음은 첫 번째로 접은 좌우 접기를 풀어요. 처음 색종이 크기로 돌아와요. 가운데 세로선이 방금 푼 접는 선이에요.",
+          items: [...sheet(Q2, N, N, PAPER), vline(Q2, N, "red"), { kind: "cells", x: Q2.x, y: Q2.y, cell: C, cells: afterOne, fill: HOLE }] },
+        { say: "오른쪽 끝 줄의 구멍 두 개가, 세로 접는 선 건너편 왼쪽 끝 줄로 똑같이 넘어가요. 같은 거리, 같은 높이예요.",
+          items: [{ kind: "arrow", x1: Q2.x + 3.5 * C, y1: Q2.y - 10, x2: Q2.x + 0.5 * C, y2: Q2.y - 10, bend: 30, color: "red" }, { kind: "cells", x: Q2.x, y: Q2.y, cell: C, cells: mirrorLR(afterOne, N), fill: HOLE }] },
+        { say: `구멍을 세어 봐요. 하나, 둘, 셋, 넷. 모두 ${afterTwo.length}개예요.`,
+          items: [{ kind: "text", x: Q2.x, y: Q2.y + N * C + 44, text: `구멍 ${afterTwo.length}개`, size: 30, color: "red" }] },
+        { say: "왜 네 개일까요? 한 번 접으면 두 겹, 두 번 접으면 네 겹이에요. 네 겹을 한 번 자르니 구멍이 네 개 생긴 거예요.",
+          items: [{ kind: "text", x: 50, y: 525, text: "한 번 접기 → 두 겹,  두 번 접기 → 네 겹 → 구멍 네 개", size: 32 }] },
+        { say: "정리해요. 접은 순서와 펼치는 순서는 반대예요. 마지막 접기부터 하나씩 풀고, 풀 때마다 구멍을 접는 선 건너편 같은 거리에 하나씩 더 그려요.", mood: "praise",
+          items: [{ kind: "box", x: 40, y: 430, w: 920, h: 135, color: "gold" }] },
+        { say: "한 문제 풀어 봐요. 똑같이 왼쪽 반을 오른쪽으로, 아래쪽 반을 위로 접었어요. 이번에는 네 겹 종이의 왼쪽 위 칸을 잘랐어요. 펼치면 어떤 모양일까요?", mood: "think",
+          items: [],
+          check: { question: "왼쪽 반을 오른쪽으로, 아래쪽 반을 위로 접은 뒤 네 겹 종이의 왼쪽 위 칸을 잘랐어요. 펼치면? (빨간 칸 = 구멍)",
+            options: [{ cols: N, rows: N, cell: 20, cells: open2(checkCut), fill: "red" }, { cols: N, rows: N, cell: 20, cells: [...checkCut, [1, 2], [0, 1], [1, 1]], fill: "red" }, { cols: N, rows: N, cell: 20, cells: checkHoles, fill: "red" }], answer: 2,
+            hint: "네 겹을 잘랐으니 구멍은 네 개예요. 위아래 접기부터 풀고, 그다음 좌우 접기를 풀어요.", sayHint: "네 겹을 잘랐으니 구멍은 네 개예요. 마지막에 접은 위아래 접기를 먼저 풀고, 그다음 좌우 접기를 풀며 하나씩 그려 봐요.",
+            right: "맞았어요! 구멍 네 개가 두 접는 선에 대해 마주 봐요.", sayRight: "맞았어요! 위아래 접기를 풀어 두 개, 좌우 접기를 풀어 네 개. 펼칠 때는 마지막 접기부터예요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
 };

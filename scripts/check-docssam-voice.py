@@ -3,7 +3,7 @@
 
     python scripts/check-docssam-voice.py        # 빠진 줄 목록, 하나라도 있으면 exit 1
 
-공부 대사(science-lab/data/voice/*.voice.json)는 느린 목소리(docssam-clone-v2-slow),
+공부 대사(science-lab/data/voice/*.voice.json + fields-classic/question-bank/data/voice/*.voice.json 손글씨 판서)는 느린 목소리(docssam-clone-v2-slow),
 소개 대사(science-lab/intro/narration.json)는 원래 빠르기(docssam-clone-v1)로 있어야 한다.
 파일 이름 규칙은 scripts/omnivoice-docssam.py 의 fname() 과 같다: <id>-<sha1("<목소리>|<글>")[:10]>.mp3
 """
@@ -18,7 +18,7 @@ have = {os.path.basename(p) for p in glob.glob(os.path.join(SL, "audio", "docssa
 name = lambda lid, text, voice: f"{lid}-{hashlib.sha1(f'{voice}|{text}'.encode('utf-8')).hexdigest()[:10]}.mp3"
 
 miss = []
-for f in sorted(glob.glob(os.path.join(SL, "data", "voice", "*.voice.json"))):
+for f in sorted(glob.glob(os.path.join(SL, "data", "voice", "*.voice.json")) + glob.glob(os.path.join(ROOT, "fields-classic", "question-bank", "data", "voice", "*.voice.json"))):
     for l in json.load(open(f, encoding="utf-8")).get("lines", []):
         if name(l["id"], l["text"], SLOW) not in have:
             miss.append((os.path.basename(f), l["id"], l["text"]))

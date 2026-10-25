@@ -1,5 +1,5 @@
 import { CURRICULUM } from "./source-data.js?v=20261024r";
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261025c";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261025i";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
@@ -81,23 +81,51 @@ function buildSlides() {
 // ── 독쌤 ─────────────────────────────────────────────────
 const PORTRAIT = { talk: "docssam-guide.webp", think: "docssam-thinking.webp", praise: "docssam-praise.webp" };
 let lastLine = null;
-function say(text, mood = "talk") {
-  lastLine = [text, mood];
+function say(text, mood = "talk", voiceId = null) {
+  lastLine = [text, mood, voiceId];
   $("guideSay").textContent = text;
   $("talk").dataset.mood = mood;
   $("walkerImg").src = `./${PORTRAIT[mood] || PORTRAIT.talk}`;
   const bubble = $("talk");
   bubble.classList.remove("new"); void bubble.offsetWidth; bubble.classList.add("new");
-  return speak(text);
+  return speak(text, voiceId);
 }
+// 독쌤 복제 음성(OmniVoice, scripts/omnivoice-docssam.py 가 GPU PC에서 만들어 science-lab/audio/docssam/ 에 둔 것).
+// 파일 이름 = <줄 id>-<sha1("<목소리>|<글>") 앞 10자>.mp3 — 글이 바뀌면 이름이 바뀌어 옛 음성을 틀지 않는다. 없는 줄은 기기 음성.
+const CLONE_BASE = new URL("../../science-lab/audio/docssam/", import.meta.url).href;
+let cloneManifest = null;
+function cloneFiles() {
+  return (cloneManifest ||= fetch(CLONE_BASE + "manifest.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null))
+    .then((j) => (j && Array.isArray(j.files) ? { voices: j.voices || [], rates: j.rates || {}, files: new Set(j.files) } : null)).catch(() => null));
+}
+async function sha10(s) { const buf = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(s)); return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 10); }
+async function cloneUrl(id, text) {
+  if (!id || !text || typeof crypto?.subtle === "undefined") return null;
+  const m = await cloneFiles(); if (!m) return null;
+  for (const v of m.voices) { const f = `${id}-${await sha10(`${v}|${text}`)}.mp3`; if (m.files.has(f)) return { url: CLONE_BASE + f, rate: Number(m.rates[v] ?? 1) || 1 }; }
+  return null;
+}
+let cloneAudio = null;
+function stopClone() { if (cloneAudio) { try { cloneAudio.pause(); } catch {} cloneAudio = null; } }
 // 말이 끝나면(소리가 꺼져 있으면 읽을 만한 시간이 지나면) 풀리는 Promise. 기기 음성이 끝을 알리지 않는 경우를 대비해 최대 시간도 둔다.
-function speak(text) {
+function speak(text, voiceId = null) {
   const reading = Math.min(7000, Math.max(900, String(text || "").length * 75));
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     let done = false; const finish = () => { if (!done) { done = true; resolve(); } };
+    stopClone();
+    try { speechSynthesis?.cancel(); } catch {}
+    if (pref.sound && text && voiceId) {
+      const clone = await cloneUrl(voiceId, text).catch(() => null);
+      if (clone) {
+        try {
+          const audio = new Audio(clone.url); cloneAudio = audio; audio.playbackRate = clone.rate; audio.preservesPitch = true;
+          audio.addEventListener("ended", finish); audio.addEventListener("error", finish);
+          await audio.play(); setTimeout(finish, reading * 3 + 3000); return;
+        } catch { stopClone(); }
+      }
+    }
     if (typeof speechSynthesis === "undefined") { setTimeout(finish, reading); return; }
     try {
-      speechSynthesis.cancel();
       if (!pref.sound || !text) { setTimeout(finish, text ? reading : 0); return; }
       const utterance = new SpeechSynthesisUtterance(text);
       const ko = (speechSynthesis.getVoices() || []).find((voice) => /^ko/i.test(voice.lang));
@@ -115,8 +143,8 @@ function paintGuideButtons() {
   $("pauseBtn").title = pref.paused ? "다음 장으로 저절로 넘어가기 켜기" : "저절로 넘어가기 멈추기";
   $("pauseBtn").setAttribute("aria-pressed", String(pref.paused));
 }
-$("voiceBtn").addEventListener("click", () => { pref.sound = !pref.sound; savePref(); paintGuideButtons(); if (pref.sound && lastLine) speak(lastLine[0]); else speak(""); });
-$("againBtn").addEventListener("click", () => { if (lastLine) { pref.sound = true; savePref(); paintGuideButtons(); speak(lastLine[0]); } });
+$("voiceBtn").addEventListener("click", () => { pref.sound = !pref.sound; savePref(); paintGuideButtons(); if (pref.sound && lastLine) speak(lastLine[0], lastLine[2]); else speak(""); });
+$("againBtn").addEventListener("click", () => { if (lastLine) { pref.sound = true; savePref(); paintGuideButtons(); speak(lastLine[0], lastLine[2]); } });
 $("pauseBtn").addEventListener("click", () => { pref.paused = !pref.paused; savePref(); paintGuideButtons(); if (pref.paused) cancelAuto(); });
 
 // ── 저절로 다음 장 ───────────────────────────────────────
@@ -207,7 +235,7 @@ async function mountNative(slide) {
   host.className = "sd-native";
   $("slideBody").replaceChildren(host);
   nativeGame = mod[game.mount](host, {
-    say: (text, mood) => say(text, mood),   // 말 끝을 기다릴 수 있게 Promise를 돌려준다(판서가 비트마다 기다린다)
+    say: (text, mood, voiceId) => say(text, mood, voiceId),   // 말 끝을 기다릴 수 있게 Promise를 돌려준다(판서가 비트마다 기다린다). voiceId가 있으면 독쌤 복제 음성
     board: game.board, lesson: slide.lesson,
     onDone: () => { if (game.doneSay !== null) say(game.doneSay || "게임을 끝까지 해냈어요! 이제 골든벨 문제로 가요.", "praise"); auto(game.board ? 4000 : 2200); }
   });

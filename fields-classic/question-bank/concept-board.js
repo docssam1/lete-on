@@ -4,7 +4,7 @@
 // 움직임 줄이기 설정이면 바로 완성 장면.
 // 글자는 손글씨 글꼴(나눔펜, OFL · assets/fonts/nm-lesson-hand.woff2)을 펜이 지나가며 드러내고, 그림은 실제 선(stroke)을 펜이 그린다.
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
-import { BOARDS } from "./concept-boards.js?v=20261025b";
+import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261025g";
 
 const NS = "http://www.w3.org/2000/svg";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -177,6 +177,12 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
       return [{ kind: "path", d, stroke: item.color || "red", width: item.width || 4 }, { kind: "path", ...arrowHead(item.x2, item.y2, headAng, 14, item.color || "red"), width: 4, quick: true }];
     }
     if (k === "ring") return [{ kind: "path", d: arcPath(item.cx, item.cy, item.r, -20, 340), stroke: item.color || "red", width: 4 }];
+    if (k === "digit") {   // 디지털 숫자: 꺼진 막대(옅게, 즉시)를 먼저, 켜진 막대를 펜으로 하나씩
+      const out = [], w = Math.max(10, item.h * 0.09);
+      if (item.dim !== false) for (const s of "abcdefg") { const [x1, y1, x2, y2] = segGeom(item.x, item.y, item.h, s); out.push({ kind: "path", d: `M ${x1} ${y1} L ${x2} ${y2}`, stroke: "#e6e0d2", width: w, quick: true }); }
+      for (const s of item.on || "") { const [x1, y1, x2, y2] = segGeom(item.x, item.y, item.h, s); out.push({ kind: "path", d: `M ${x1} ${y1} L ${x2} ${y2}`, stroke: item.color || "ink", width: w }); }
+      return out;
+    }
     return [item];
   }
   async function drawItem(item, instant) {
@@ -214,7 +220,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
       checkState.solved = true;
       buttons.forEach((b, k) => { b.disabled = true; b.classList.toggle("right", k === i); });
       verdict.textContent = check.right || "맞았어요!";
-      await say(check.sayRight || "맞았어요! 개념을 잘 익혔어요.", "praise");
+      await say(check.sayRight || "맞았어요! 개념을 잘 익혔어요.", "praise", lineId(boardId, "right"));
       finish();
       return;
     }
@@ -223,13 +229,13 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     if (checkState.tries >= 2) {
       buttons.forEach((b, k) => { b.disabled = true; b.classList.toggle("right", k === check.answer); });
       verdict.textContent = check.reveal || "정답을 표시했어요. 왜 그런지 판서를 다시 봐요.";
-      await say(check.sayReveal || "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요.", "think");
+      await say(check.sayReveal || "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요.", "think", lineId(boardId, "reveal"));
       checkState.solved = true;
       finish();
       return;
     }
     verdict.textContent = check.hint || "다시 생각해 봐요.";
-    say(check.sayHint || check.hint || "다시 생각해 봐요.", "think");
+    say(check.sayHint || check.hint || "다시 생각해 봐요.", "think", lineId(boardId, "hint"));
   }
   function finish() { if (finished) return; finished = true; stepEl.textContent = `${beats.length} / ${beats.length}`; root.classList.add("is-done"); onDone(); }
 
@@ -238,7 +244,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
   async function playBeat(k) {
     const beat = beats[k], my = runId;
     setCaption(beat, k);
-    const sayP = beat.say ? say(beat.say, beat.mood || "talk") : Promise.resolve();
+    const sayP = beat.say ? say(beat.say, beat.mood || "talk", lineId(boardId, "b", k + 1)) : Promise.resolve();
     for (const item of beat.items || []) { const ok = await drawItem(item, false); if (!ok || my !== runId) return false; }
     penOff();
     if (beat.check) { renderCheck(beat.check); await sayP; return my === runId; }
@@ -247,9 +253,9 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     await sleep(dur(900));   // 비트 사이 숨 고르기(천천히)
     return my === runId;
   }
-  function renderUpTo(k) {   // 0..k-1 비트를 즉시 완성 상태로
+  async function renderUpTo(k) {   // 0..k-1 비트를 즉시 완성 상태로 — 순서대로 기다리며 그린다(동시에 그리면 뒤 비트의 켜진 막대 위에 앞 비트의 꺼진 막대가 덮인다)
     runId += 1; try { speechSynthesis.cancel(); } catch {} layer.replaceChildren(); defs.replaceChildren(); penOff(); checkBox.hidden = true; checkState = null; finished = false; root.classList.remove("is-done");
-    for (let i = 0; i < k; i++) for (const item of beats[i].items || []) drawItem(item, true);
+    for (let i = 0; i < k; i++) for (const item of beats[i].items || []) await drawItem(item, true);
     if (k > 0 && beats[k - 1].check) { setCaption(beats[k - 1], k - 1); renderCheck(beats[k - 1].check); }
   }
   let loopSeq = 0;   // 되감기·건너뛰기로 새 진행이 시작되면 옛 진행은 다음 확인 지점에서 조용히 끝난다
@@ -269,9 +275,9 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     const b = root.querySelector('[data-cb="toggle"]');
     b.textContent = playing ? "❚❚" : "▶"; b.setAttribute("aria-label", playing ? "멈추기" : "이어서 보기");
   }
-  function jump(k, { autoplay = true } = {}) {
+  async function jump(k, { autoplay = true } = {}) {
     k = Math.max(0, Math.min(beats.length, k));
-    renderUpTo(k); at = k;
+    await renderUpTo(k); at = k;
     const shown = Math.max(0, k - 1); setCaption(beats[shown], shown);   // 멈춘 채로 보면 「k / 전체」 = 지금까지 그린 비트 수
     if (k >= beats.length) { if (!beats[beats.length - 1].check) finish(); playing = false; paintToggle(); return; }
     playing = autoplay && !reduced; paintToggle();
