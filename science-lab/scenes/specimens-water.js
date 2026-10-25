@@ -3,6 +3,12 @@
 // 이름은 처음엔 숨긴다(대회처럼 번호로 부르고 생김새로 설명). 모양은 실제 식물의 특징을 따라 코드로 만든 모형이다(실사 사진은 따로 붙인다).
 // 좌표: 물통 바닥 흙 윗면 y=SOIL, 수면 y=WATER. 1 단위의 실제 길이는 표본마다 cmPerUnit.
 import { THREE, mat, glossMat, label, PALETTE, clamp01, ease, lerp } from './_kit.js';
+import { leafTextures, leafMesh } from './_organic.js';
+const LILY_TEX = () => leafTextures('lf:lily', { outline: 'lily', veins: 'radial', top: '#2f7a3a', topEdge: '#6fb05a', under: '#7b3550', seed: 12, w: 512, h: 512 });
+const PETAL_TEX = () => leafTextures('lf:petal', { outline: 'petal', veins: 'parallel', top: '#fbf7ef', topEdge: '#f1e3d3', under: '#f3dcd6', veinN: 0, glossSpots: false, w: 256, h: 384 });
+const HYA_TEX = () => leafTextures('lf:hya', { outline: 'round', veins: 'palmate', top: '#3e8a35', topEdge: '#74b452', under: '#5f9442', seed: 14, w: 512, h: 512 });
+const DUCK_TEX = () => leafTextures('lf:duck', { outline: 'ovate', veins: 'parallel', top: '#8fcf5a', topEdge: '#c0e27e', under: '#7a5a6a', veinN: 0, glossSpots: false, w: 256, h: 384 });
+const HYD_TEX = () => leafTextures('lf:hyd', { outline: 'lance', veins: 'pinnate', top: '#2f6b2c', topEdge: '#5a9a44', under: '#2f6b2c', veinN: 0, glossSpots: false, w: 128, h: 512 });
 
 const WATER = 2.6, SOIL = 0.35, TW = 5.2, TD = 3.0;
 const GREEN = 0x3f8f3a, GREEN_L = 0x6db35a, PURPLE = 0x7b3550, ROOT = 0x4b3a4f;
@@ -69,9 +75,10 @@ function lily() {
   spots.forEach(([x, z, r, rot], i) => {
     const base = [-0.6 + i * 0.25, SOIL + 0.05, 0];
     g.add(tube([base, [lerp(base[0], x, 0.3), 1.0, z * 0.4], [lerp(base[0], x, 0.8), 2.0, z * 0.85], [x, WATER - 0.02, z]], 0.035, 0x8a6a3e));
-    const lf = twoFace(leafShape(r, 0.32), GREEN, PURPLE, 0.8); lf.rotation.x = -Math.PI / 2; lf.rotation.z = rot; lf.position.set(x, WATER + 0.012, z); g.add(lf); leaves.push(lf);
+    const lf = new THREE.Group(), pad = leafMesh(LILY_TEX(), { w: r * 2, h: r * 2, curl: -0.1, droop: -0.05, segs: [16, 16], gloss: 0.95 }); pad.position.y = -r; lf.add(pad);
+    lf.rotation.x = -Math.PI / 2; lf.rotation.z = rot; lf.position.set(x, WATER + 0.012, z); g.add(lf); leaves.push(lf);
   });
-  const fl = new THREE.Group(); for (let k = 0; k < 2; k++) for (let i = 0; i < 10; i++) { const p = new THREE.Mesh(new THREE.SphereGeometry(0.16, 14, 10), mat(0xfbf7ef, { roughness: 0.5 })); p.scale.set(0.45, 0.22, 1.1); const a = (i / 10) * Math.PI * 2 + k * 0.3; p.position.set(Math.cos(a) * (0.16 - k * 0.06), 0.06 + k * 0.08, Math.sin(a) * (0.16 - k * 0.06)); p.rotation.y = -a + Math.PI / 2; p.rotation.x = 0.4 + k * 0.4; fl.add(p); }
+  const fl = new THREE.Group(); for (let k = 0; k < 3; k++) for (let i = 0; i < 8; i++) { const pg = new THREE.Group(), p = leafMesh(PETAL_TEX(), { w: 0.2 - k * 0.03, h: 0.48 - k * 0.1, curl: 0.35, droop: -0.5, segs: [6, 10], gloss: 0.25 }); pg.add(p); const a = (i / 8) * Math.PI * 2 + k * 0.4; pg.position.set(Math.cos(a) * 0.1, 0.04 + k * 0.03, Math.sin(a) * 0.1); pg.rotation.set(0, -a, 0); pg.rotateX(0.55 + k * 0.35); pg.rotateY(0); p.rotation.y = Math.PI / 2; fl.add(pg); }
   const ctr = new THREE.Mesh(new THREE.SphereGeometry(0.08, 14, 10), mat(0xf2c94c)); ctr.position.y = 0.14; fl.add(ctr); fl.position.set(0.5, WATER, 0.6); g.add(fl);
   g.add(tube([[-0.1, SOIL + 0.05, 0], [0.2, 1.4, 0.3], [0.5, WATER, 0.6]], 0.03, 0x7d6a3a));
   const sec = section([[0, 0, 0.17], [0.42, 0.28, 0.16], [-0.42, 0.28, 0.16], [0.42, -0.3, 0.15], [-0.42, -0.3, 0.15], [0, 0.52, 0.09], [0, -0.52, 0.09]], { title: '잎자루 단면(확대)' });
@@ -93,7 +100,8 @@ function duckweed() {
   pos.forEach(([x, z], i) => {
     const cl = new THREE.Group(), n = 2 + (i % 3);
     for (let k = 0; k < n; k++) {
-      const f = twoFace(ovalShape(0.2, 0.28, 0.1), GREEN_L, 0x6d3a5a, 0.4); f.rotation.x = -Math.PI / 2; f.rotation.z = (k / n) * Math.PI * 2 + i; f.position.set(Math.cos(k * 2.1) * 0.22 * (k ? 1 : 0), 0, Math.sin(k * 2.1) * 0.22 * (k ? 1 : 0)); cl.add(f);
+      const f = new THREE.Group(), fm = leafMesh(DUCK_TEX(), { w: 0.42, h: 0.58, curl: 0.04, droop: 0, segs: [6, 8], gloss: 0.5 }); fm.position.y = -0.29; f.add(fm);
+      f.rotation.x = -Math.PI / 2; f.rotation.z = (k / n) * Math.PI * 2 + i; f.position.set(Math.cos(k * 2.1) * 0.22 * (k ? 1 : 0), 0, Math.sin(k * 2.1) * 0.22 * (k ? 1 : 0)); cl.add(f);
       const rt = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.9, 6), mat(0xd9dfc8)); rt.position.set(f.position.x, -0.46, f.position.z); cl.add(rt);
       const cap = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 6), mat(0x9a8a6a)); cap.position.set(f.position.x, -0.92, f.position.z); cl.add(cap);
     }
@@ -119,7 +127,7 @@ function hyacinth() {
   for (let i = 0; i < 7; i++) {
     const a = (i / 7) * Math.PI * 2, arm = new THREE.Group();
     const b = new THREE.Mesh(bulbGeo, bulbMat); b.castShadow = true; arm.add(b);
-    const blade = twoFace(ovalShape(0.32, 0.38, -0.1), 0x3e8a35, 0x4f7f3a, 1); blade.position.set(0, 1.32, 0); blade.rotation.x = -0.35; arm.add(blade);
+    const blade = leafMesh(HYA_TEX(), { w: 0.7, h: 0.8, curl: 0.14, droop: 0.18, segs: [10, 12], gloss: 1 }); blade.position.set(0, 0.96, 0); blade.rotation.x = -0.35; arm.add(blade);
     arm.rotation.z = -0.55 - (i % 2) * 0.15; arm.rotation.y = a; arm.position.y = 0.05; plant.add(arm);
   }
   const rootMat = new THREE.LineBasicMaterial({ color: ROOT }), pts = [];
@@ -141,11 +149,14 @@ function hyacinth() {
 // ── ④ 물속에 잠겨 사는 것(검정말형) ──
 function hydrilla() {
   const g = new THREE.Group(), stems = [], cm = 2.5;
-  const leafGeo = new THREE.ShapeGeometry(ovalShape(0.045, 0.2, 0.3), 12), leafMat = mat(0x2f6b2c, { side: THREE.DoubleSide, roughness: 0.55 });
+  const hyTex = HYD_TEX(), leafGeo = new THREE.PlaneGeometry(0.1, 0.42, 1, 1); leafGeo.translate(0, 0.21, 0);
+  const leafMat = new THREE.MeshStandardMaterial({ map: hyTex.top, alphaMap: hyTex.alpha, alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.6 }), dd = new THREE.Object3D();
   [[-1.2, -0.3, 0.1], [0, 0.4, -0.08], [1.1, -0.2, 0.06]].forEach(([x, z, lean]) => {
     const s = new THREE.Group(), H = WATER - SOIL - 0.18, gap = 0.22, n = Math.floor(H / gap);
     const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.022, H, 8), mat(0x6f8f4a)); stem.position.y = H / 2; s.add(stem);
-    for (let k = 1; k <= n; k++) for (let j = 0; j < 4; j++) { const l = new THREE.Mesh(leafGeo, leafMat); const a = (j / 4) * Math.PI * 2 + k * 0.4; l.position.set(Math.cos(a) * 0.12, k * gap, Math.sin(a) * 0.12); l.rotation.set(0, -a + Math.PI / 2, 0); l.rotateX(-0.6); s.add(l); }
+    const im = new THREE.InstancedMesh(leafGeo, leafMat, n * 4); let q = 0;
+    for (let k = 1; k <= n; k++) for (let j = 0; j < 4; j++) { const a = (j / 4) * Math.PI * 2 + k * 0.4; dd.position.set(Math.cos(a) * 0.12, k * gap, Math.sin(a) * 0.12); dd.rotation.set(0, -a + Math.PI / 2, 0); dd.rotateX(-0.6); dd.scale.set(1, 1, 1); dd.updateMatrix(); im.setMatrixAt(q++, dd.matrix); }
+    im.instanceMatrix.needsUpdate = true; im.castShadow = true; s.add(im);
     for (let r = 0; r < 6; r++) s.add(tube([[0, 0.02, 0], [Math.cos(r) * 0.2, -0.12, Math.sin(r) * 0.2]], 0.008, 0xd8d0b0));
     s.position.set(x, SOIL, z); s.rotation.z = lean; s.userData.lean = lean; g.add(s); stems.push(s);
   });

@@ -173,6 +173,8 @@
   - `observe-leaves`(초등, 잎차례 유형): 어긋나기·마주나기·돌려나기·뭉쳐나기 + 밋밋·톱니·손바닥·겹잎 6종, 잎 뒤집기·햇빛 비추기(그림자 겹침)·바람, 마디 표시·세로 자. 보고서는 `unit.reportSkip:['env']`로 두 장소 비교 칸을 뺀다.
   - `observe-water`(중등): 물에 사는 식물 4종(단면 확대 원·자·물 떨어뜨리기·누르기·꺼내기·물살).
   - **실사 사진은 아직 없다** — `assets/observe/<표본 id>-1.jpg`(lily·duckweed·hyacinth·hydrilla / cricket·longhead·stripe / alt-entire·opp-serrate·whorl·rosette·alt-palmate·alt-compound)에 넣으면 「실사 사진」 탭에 바로 뜬다.
+  - **질감(2026-10-24, 원장 「3D 더 질 높여 세밀하게」)**: `scenes/_organic.js`. 잎은 `leafTextures()`(캔버스에 윤곽·잎맥·톱니·색 변화를 그리고 알파로 오려 냄) + `leafMesh()`(잘게 나눈 평면을 접힘·처짐·물결로 휘게, 앞뒷면 다른 색, alphaTest로 윤곽대로 그림자). 곤충은 `chitinTex`(알락무늬·마디 띠)·`facetTex`(겹눈)·`femurTex`(넓적다리 깃 무늬)·`ringTex`(더듬이 마디)·`wingTex`(날개맥·귀뚜라미 소리판)·`soilTex`·`grassTex`·`stemTex`. 새 윤곽은 `OUTLINES`에 반쪽 점 목록(위→아래, t 단조) 또는 `full` 폴리곤으로 추가.
+  - 겪은 사고: 색 질감을 `destination-in`으로 오려 낼 때 **fillStyle을 불투명으로 먼저 두지 않으면**(직전 광택점의 rgba가 남아) 잎 전체 알파가 0.08쯤 되어 alphaTest 0.5에 통째로 사라진다 — 수련 잎이 안 보였던 원인. 검사용으로 `window.__organicTex`(질감 캔버스)·`window.__obStage`(무대)를 열어 두었다. 질감을 눈으로 볼 땐 `toDataURL`로 뽑아 본다.
   - 3D를 고칠 때 **한 줄짜리 코드 뒤에 `//` 주석을 붙이지 말 것** — 같은 줄의 나머지 코드가 주석이 되어 화면이 통째로 비었다(두 번 겪음). `node --check`는 이걸 못 잡았고 브라우저 로드 검사(pageerror)만 잡았다.
 - **수상작 갤러리** `data/invent-gallery.js`: 2018~2026 전국학생과학발명품경진대회·대한민국학생발명전시회 초·중 수상작 22건을 불편·아이디어·원리·기법으로 요약(학생 이름 뺌, 기법은 대부분 우리가 붙인 것, 출처 주소 있음). **웹 검색 요약 기반이라 원문 대조 전** — 틀린 곳은 src를 열어 고친다.
 - **보고서 설정은 15실험 전부** `data/reports.js`에 있다(탐구 문제 또는 불편함 + 결과 표 + 가이드·질문). 대회가 둘인 실험(seed·top·wing·ttukbaegi)은 `by.<대회>`로 두 번째 양식의 설정을 따로 둔다 — 검사기가 대회 목록(`CONTEST_OF`)과 맞는지 본다.

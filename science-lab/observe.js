@@ -39,6 +39,7 @@ export function renderObserve($app, { topbar, footer }, setId) {
   </main>${footer()}`;
   const $c = $app.querySelector('.ob-stage canvas'), $photo = $app.querySelector('.ob-photo'), $note = $app.querySelector('.ob-note');
   if (Stage.canWebGL()) stage = new Stage($c); else { mode = 'photo'; $c.hidden = true; }
+  if (typeof window !== 'undefined') window.__obStage = stage;   // 검사 스크립트용
 
   const draw = () => {
     const s = cur?.spec;
