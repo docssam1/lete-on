@@ -1,0 +1,593 @@
+{
+  "cricket": {
+    "observation": 183451834,
+    "taxon": "Loxoblemmus arietulus",
+    "observed_on": "2021-08-19",
+    "author": "renshuchu",
+    "photo": {
+      "id": 320057675,
+      "license_code": "cc0",
+      "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/320057675/square.jpeg",
+      "attribution": "no rights reserved"
+    },
+    "uri": "https://www.inaturalist.org/observations/183451834",
+    "quality_grade": "research",
+    "retrieved": "2026-10-25",
+    "file": "cricket-1.jpg",
+    "name": "알락귀뚜라미",
+    "visible_features": "긴 더듬이·뒷다리·앞날개가 보이는 실제 표본. 사진에서 길이를 재지는 않아요.",
+    "original_download_size": [
+      1024,
+      768
+    ],
+    "crop": null,
+    "width": 1024,
+    "height": 768,
+    "bytes": 68727,
+    "sha256": "92b56062cdb58006445f1b1dc17e6284003714555247cfc585dfdd8124c46daa",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인",
+    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/320057675/original.jpeg",
+    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/320057675/large.jpeg",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "stripe": {
+    "observation": 327818673,
+    "taxon": "Patanga japonica",
+    "observed_on": "2025-11-22",
+    "author": "renshuchu",
+    "photo": {
+      "id": 593950091,
+      "license_code": "cc0",
+      "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/593950091/square.jpg",
+      "attribution": "no rights reserved"
+    },
+    "uri": "https://www.inaturalist.org/observations/327818673",
+    "quality_grade": "research",
+    "retrieved": "2026-10-25",
+    "file": "stripe-1.jpg",
+    "name": "등줄메뚜기(각시메뚜기, Patanga japonica)",
+    "visible_features": "갈색 성체의 등판·앞날개·뒷다리 확인. 사진의 실제 길이·기존 3D와의 동일 종 여부는 확인하지 않음.",
+    "original_download_size": [
+      1024,
+      768
+    ],
+    "crop": null,
+    "width": 1024,
+    "height": 768,
+    "bytes": 179519,
+    "sha256": "7b72663040dc974ed00858e308c364cd371aaa8b549710a825f54c4ef2c1e9c6",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인",
+    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/593950091/original.jpg",
+    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/593950091/large.jpg",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "target_name_status": "confirmed-by-rda-genebank",
+    "taxon_identification_status": "iNaturalist research grade; photo visually reviewed; not an independent expert determination",
+    "name_reference": {
+      "url": "https://genebank.rda.go.kr/PB/jw/insectView.bo?page=3&species_id=ZE1AA0021&use_kind=03",
+      "publisher": "농촌진흥청 국립농업과학원 씨앗은행",
+      "checked": "2026-10-25",
+      "finding": "학명 Patanga japonica, 국명 각시메뚜기, 다른 이름에 등줄메뚜기를 명시. 국명 대응 근거이며 사진 라이선스 근거가 아님."
+    }
+  },
+  "alt-entire": {
+    "observation": 279488178,
+    "taxon": "Diospyros kaki",
+    "observed_on": "2025-03-22",
+    "author": "leaf0605",
+    "photo": {
+      "id": 501873494,
+      "license_code": "cc0",
+      "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/501873494/square.jpeg",
+      "attribution": "no rights reserved"
+    },
+    "uri": "https://www.inaturalist.org/observations/279488178",
+    "quality_grade": "research",
+    "retrieved": "2026-10-25",
+    "file": "alt-entire-1.jpg",
+    "name": "감나무 — 어긋나기·밋밋한 가장자리",
+    "visible_features": "줄기를 따라 잎 붙는 자리를 찾아요. 잎이 겹친 곳은 확인하기 어려웠다고 적어요.",
+    "original_download_size": [
+      1024,
+      768
+    ],
+    "crop": null,
+    "width": 1024,
+    "height": 768,
+    "bytes": 141986,
+    "sha256": "3928ecf39b74b1049df908caa7df120b3ec25fa17c2a2037a70ee20eef814188",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인",
+    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/501873494/original.jpeg",
+    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/501873494/large.jpeg",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "opp-serrate": {
+    "observation": 407361979,
+    "taxon": "Perilla frutescens",
+    "observed_on": "2026-10-10",
+    "author": "conhawn",
+    "photo": {
+      "id": 748579833,
+      "license_code": "cc0",
+      "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/748579833/square.jpg",
+      "attribution": "no rights reserved"
+    },
+    "uri": "https://www.inaturalist.org/observations/407361979",
+    "quality_grade": "research",
+    "retrieved": "2026-10-25",
+    "file": "opp-serrate-1.jpg",
+    "name": "들깨 — 마주나기·톱니 가장자리",
+    "visible_features": "사진의 종은 들깨예요. 마주난 잎 두 장과 위 마디의 방향을 비교해요.",
+    "original_download_size": [
+      1024,
+      1024
+    ],
+    "crop": [
+      0,
+      100,
+      1024,
+      868
+    ],
+    "width": 1024,
+    "height": 768,
+    "bytes": 191573,
+    "sha256": "e72cdb52b700a1e6b42fccc60652e5a4ec1c1d7cfb3d2997882e96c40424ab2b",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인",
+    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/748579833/original.jpg",
+    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/748579833/large.jpg",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "rosette": {
+    "observation": 408587039,
+    "taxon": "Taraxacum officinale",
+    "observed_on": "2026-10-15",
+    "author": "terrikoontz",
+    "photo": {
+      "id": 751094668,
+      "license_code": "cc0",
+      "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/751094668/square.jpg",
+      "attribution": "no rights reserved"
+    },
+    "uri": "https://www.inaturalist.org/observations/408587039",
+    "quality_grade": "research",
+    "retrieved": "2026-10-25",
+    "file": "rosette-1.jpg",
+    "name": "서양민들레 — 땅 위 뭉쳐나기",
+    "visible_features": "땅 가까운 한 중심에서 깊게 갈라진 잎들이 퍼진 모습을 보아요.",
+    "original_download_size": [
+      1024,
+      972
+    ],
+    "crop": [
+      0,
+      180,
+      1024,
+      948
+    ],
+    "width": 1024,
+    "height": 768,
+    "bytes": 295546,
+    "sha256": "4ba015f4a963a8a19acea14ae9f30aa00fddb23904340dbe7309dd74a98ba999",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인",
+    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/751094668/original.jpg",
+    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/751094668/large.jpg",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "alt-palmate": {
+    "observation": 409537853,
+    "taxon": "Platanus occidentalis",
+    "observed_on": "2026-10-19",
+    "author": "kzoebel",
+    "photo": {
+      "id": 753024677,
+      "license_code": "cc0",
+      "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/753024677/square.jpg",
+      "attribution": "no rights reserved"
+    },
+    "uri": "https://www.inaturalist.org/observations/409537853",
+    "quality_grade": "research",
+    "retrieved": "2026-10-25",
+    "file": "alt-palmate-1.jpg",
+    "name": "양버즘나무 — 어긋나기·손바닥 모양 잎",
+    "visible_features": "잎몸의 갈라짐과 줄기에서 잎자루가 붙는 자리를 구분해요.",
+    "original_download_size": [
+      768,
+      1024
+    ],
+    "crop": [
+      0,
+      90,
+      768,
+      666
+    ],
+    "width": 768,
+    "height": 576,
+    "bytes": 129527,
+    "sha256": "4049afd50df8c095b482935110253b24e664ea16ba4f9e07c29afa7c97dc33e9",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인",
+    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/753024677/original.jpg",
+    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/753024677/large.jpg",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "alt-compound": {
+    "observation": 408522150,
+    "taxon": "Robinia pseudoacacia",
+    "observed_on": "2026-10-15",
+    "author": "pino_carrasco739",
+    "photo": {
+      "id": 750961098,
+      "license_code": "cc0",
+      "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/750961098/square.jpg",
+      "attribution": "no rights reserved"
+    },
+    "uri": "https://www.inaturalist.org/observations/408522150",
+    "quality_grade": "research",
+    "retrieved": "2026-10-25",
+    "file": "alt-compound-1.jpg",
+    "name": "아까시나무 — 어긋나기·깃꼴겹잎",
+    "visible_features": "작은 잎들의 배열과 겹잎 전체가 가지에 붙는 차례를 구분해요.",
+    "original_download_size": [
+      768,
+      1024
+    ],
+    "crop": [
+      0,
+      150,
+      768,
+      726
+    ],
+    "width": 768,
+    "height": 576,
+    "bytes": 138401,
+    "sha256": "f0e5af3938eb2b84cce96a1822ca3c2a3289ed1454bf2bddbccd9c56c219bacf",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인",
+    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/750961098/original.jpg",
+    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/750961098/large.jpg",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "lily": {
+    "observation": 106210996,
+    "taxon": "Nymphaea tetragona",
+    "observed_on": "2001-07-13",
+    "author": "lallen",
+    "photo": {
+      "id": 178380953,
+      "license_code": "cc0",
+      "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/178380953/square.jpg",
+      "attribution": "no rights reserved"
+    },
+    "uri": "https://www.inaturalist.org/observations/106210996",
+    "quality_grade": "research",
+    "retrieved": "2026-10-25",
+    "file": "lily-1.jpg",
+    "name": "수련",
+    "visible_features": "물 위 잎의 갈라진 틈과 둥근 잎몸을 보아요. 단면·잎 뒷면은 이 사진으로 확인할 수 없어요.",
+    "original_download_size": [
+      1024,
+      670
+    ],
+    "crop": null,
+    "width": 1024,
+    "height": 670,
+    "bytes": 164304,
+    "sha256": "89e2a5cab7c780998de8381d93fbb3ed7c93c4e0f08d8fdb481e596c6d1bb4b1",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인",
+    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/178380953/original.jpg",
+    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/178380953/large.jpg",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "duckweed": {
+    "observation": 399632925,
+    "taxon": "Spirodela polyrhiza",
+    "observed_on": "2026-09-12",
+    "author": "olearam",
+    "photo": {
+      "id": 733221040,
+      "license_code": "cc0",
+      "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/733221040/square.jpg",
+      "attribution": "no rights reserved"
+    },
+    "uri": "https://www.inaturalist.org/observations/399632925",
+    "quality_grade": "research",
+    "retrieved": "2026-10-25",
+    "file": "duckweed-1.jpg",
+    "name": "개구리밥",
+    "visible_features": "수면에 뜬 작은 잎몸 무리를 보아요. 뿌리와 뒷면은 이 사진에서 확인하기 어려워요.",
+    "original_download_size": [
+      914,
+      1024
+    ],
+    "crop": [
+      0,
+      140,
+      914,
+      825
+    ],
+    "width": 914,
+    "height": 685,
+    "bytes": 177150,
+    "sha256": "d2d2b8f817995d04aef82d47792d883ca5d7ffbb7d068ca0a6994a75bcfd4441",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인",
+    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/733221040/original.jpg",
+    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/733221040/large.jpg",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "hyacinth": {
+    "observation": 410087778,
+    "taxon": "Pontederia crassipes",
+    "observed_on": "2026-10-21",
+    "author": "chantalhirst",
+    "photo": {
+      "id": 754145914,
+      "license_code": "cc0",
+      "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/754145914/square.jpg",
+      "attribution": "no rights reserved"
+    },
+    "uri": "https://www.inaturalist.org/observations/410087778",
+    "quality_grade": "research",
+    "retrieved": "2026-10-25",
+    "file": "hyacinth-1.jpg",
+    "name": "부레옥잠",
+    "visible_features": "부푼 잎자루와 둥근 잎몸을 보아요. 속의 공기 공간은 이 사진만으로 확인할 수 없어요.",
+    "original_download_size": [
+      768,
+      1024
+    ],
+    "crop": [
+      0,
+      250,
+      768,
+      826
+    ],
+    "width": 768,
+    "height": 576,
+    "bytes": 79626,
+    "sha256": "5007db8852b77af526bdfedb77eb4e35a232d483aed4fbd72e35807d0d34dc32",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인",
+    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/754145914/original.jpg",
+    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/754145914/large.jpg",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "hydrilla": {
+    "observation": 332276850,
+    "taxon": "Hydrilla verticillata",
+    "observed_on": "2025-12-27",
+    "author": "agnestrekker",
+    "photo": {
+      "id": 602981170,
+      "license_code": "cc0",
+      "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/602981170/square.jpg",
+      "attribution": "no rights reserved"
+    },
+    "uri": "https://www.inaturalist.org/observations/332276850",
+    "quality_grade": "research",
+    "retrieved": "2026-10-25",
+    "file": "hydrilla-1.jpg",
+    "name": "검정말",
+    "visible_features": "물속 줄기 여러 마디에 좁은 잎이 돌려 붙은 모습을 보아요.",
+    "original_download_size": [
+      683,
+      1024
+    ],
+    "crop": [
+      0,
+      200,
+      683,
+      712
+    ],
+    "width": 683,
+    "height": 512,
+    "bytes": 65746,
+    "sha256": "138cf96d7369cc5e23f34a5ff6958f5f0424f75a5f45b97a03ae9fcf5d781c00",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인",
+    "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/602981170/original.jpg",
+    "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/602981170/large.jpg",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "longhead": {
+    "taxon": "Acrida cinerea",
+    "author": "TekuraDF",
+    "uri": "https://commons.wikimedia.org/wiki/File:Acrida_cinerea(Female,Japan,2017.09.19).jpg",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Acrida_cinerea%28Female%2CJapan%2C2017.09.19%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "download_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/Acrida_cinerea%28Female%2CJapan%2C2017.09.19%29.jpg/1280px-Acrida_cinerea%28Female%2CJapan%2C2017.09.19%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "metadata": {
+      "DateTime": {
+        "value": "2017-09-19 02:43:33",
+        "source": "mediawiki-metadata",
+        "hidden": ""
+      },
+      "ObjectName": {
+        "value": "Acrida cinerea(Female,Japan,2017.09.19)",
+        "source": "mediawiki-metadata"
+      },
+      "CommonsMetadataExtension": {
+        "value": 1.2,
+        "source": "extension",
+        "hidden": ""
+      },
+      "Categories": {
+        "value": "Acrida cinerea|CC-Zero|Self-published work",
+        "source": "commons-categories",
+        "hidden": ""
+      },
+      "Assessments": {
+        "value": "",
+        "source": "commons-categories",
+        "hidden": ""
+      },
+      "ImageDescription": {
+        "value": "ショウリョウバッタ雌　広島県",
+        "source": "commons-desc-page"
+      },
+      "DateTimeOriginal": {
+        "value": "2017-09-18 15:18:28",
+        "source": "commons-desc-page"
+      },
+      "Credit": {
+        "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+        "source": "commons-desc-page"
+      },
+      "Artist": {
+        "value": "<a href=\"//commons.wikimedia.org/wiki/User:TekuraDF\" title=\"User:TekuraDF\">TekuraDF</a>",
+        "source": "commons-desc-page"
+      },
+      "LicenseShortName": {
+        "value": "CC0",
+        "source": "commons-desc-page",
+        "hidden": ""
+      },
+      "UsageTerms": {
+        "value": "Creative Commons Zero, Public Domain Dedication",
+        "source": "commons-desc-page"
+      },
+      "AttributionRequired": {
+        "value": "false",
+        "source": "commons-desc-page",
+        "hidden": ""
+      },
+      "LicenseUrl": {
+        "value": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "commons-desc-page"
+      },
+      "Copyrighted": {
+        "value": "True",
+        "source": "commons-desc-page",
+        "hidden": ""
+      },
+      "Restrictions": {
+        "value": "",
+        "source": "commons-desc-page",
+        "hidden": ""
+      },
+      "License": {
+        "value": "cc0",
+        "source": "commons-templates",
+        "hidden": ""
+      }
+    },
+    "retrieved": "2026-10-25",
+    "file": "longhead-1.jpg",
+    "name": "방아깨비",
+    "visible_features": "뾰족한 머리·길쭉한 몸·큰 뒷다리를 비교해요.",
+    "original_download_size": [
+      1280,
+      960
+    ],
+    "crop": null,
+    "width": 1280,
+    "height": 960,
+    "bytes": 283652,
+    "sha256": "5d0421c683ac807898885c90bcf9369e8fdfdc3292ff229f41bddc520e4630d0",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인"
+  },
+  "whorl": {
+    "taxon": "Galium aparine",
+    "author": "AnRo0002",
+    "uri": "https://commons.wikimedia.org/wiki/File:20140319Galium_aparine1.jpg",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/20140319Galium_aparine1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "download_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/20140319Galium_aparine1.jpg/1280px-20140319Galium_aparine1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "license": "CC0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "metadata": {
+      "DateTime": {
+        "value": "2014-03-21 12:03:39",
+        "source": "mediawiki-metadata",
+        "hidden": ""
+      },
+      "ObjectName": {
+        "value": "20140319Galium aparine1",
+        "source": "mediawiki-metadata"
+      },
+      "CommonsMetadataExtension": {
+        "value": 1.2,
+        "source": "extension",
+        "hidden": ""
+      },
+      "Categories": {
+        "value": "Taken with Canon Digital IXUS 510 HS|CC-Zero|Self-published work|Gentianales in the Schwetzinger Hardt in March 2014|Rubiaceae in the Schwetzinger Hardt|Rhein-Neckar-Kreis photographs taken on 2014-03-19|Galium aparine (leaves)|Rubiaceae in the Northern Hemisphere in March 2014",
+        "source": "commons-categories",
+        "hidden": ""
+      },
+      "Assessments": {
+        "value": "",
+        "source": "commons-categories",
+        "hidden": ""
+      },
+      "ImageDescription": {
+        "value": "Kletten-Labkraut (<i>Galium aparine</i>) in der Schwetzinger Hardt",
+        "source": "commons-desc-page"
+      },
+      "DateTimeOriginal": {
+        "value": "Taken on 19 March 2014",
+        "source": "commons-desc-page"
+      },
+      "Credit": {
+        "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+        "source": "commons-desc-page"
+      },
+      "Artist": {
+        "value": "<a href=\"//commons.wikimedia.org/wiki/User:AnRo0002\" title=\"User:AnRo0002\">AnRo0002</a>",
+        "source": "commons-desc-page"
+      },
+      "LicenseShortName": {
+        "value": "CC0",
+        "source": "commons-desc-page",
+        "hidden": ""
+      },
+      "UsageTerms": {
+        "value": "Creative Commons Zero, Public Domain Dedication",
+        "source": "commons-desc-page"
+      },
+      "AttributionRequired": {
+        "value": "false",
+        "source": "commons-desc-page",
+        "hidden": ""
+      },
+      "LicenseUrl": {
+        "value": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "commons-desc-page"
+      },
+      "Copyrighted": {
+        "value": "True",
+        "source": "commons-desc-page",
+        "hidden": ""
+      },
+      "Restrictions": {
+        "value": "",
+        "source": "commons-desc-page",
+        "hidden": ""
+      },
+      "License": {
+        "value": "cc0",
+        "source": "commons-templates",
+        "hidden": ""
+      }
+    },
+    "retrieved": "2026-10-25",
+    "file": "whorl-1.jpg",
+    "name": "갈퀴덩굴 — 돌려난 좁은 잎 모양",
+    "visible_features": "한 마디 주위에 좁은 잎 모양 부분이 여럿 모여 있어요. 일부는 잎처럼 보이는 턱잎이에요.",
+    "original_download_size": [
+      1280,
+      960
+    ],
+    "crop": null,
+    "width": 1280,
+    "height": 960,
+    "bytes": 229655,
+    "sha256": "a41aa874d01c24332a7e39ed19898ce20206a9171ddacd0b57e0c29f5249c9ad",
+    "reviewed": "2026-10-25, 실제 이미지 눈으로 확인"
+  }
+}
