@@ -3721,6 +3721,166 @@
   {
    "id": "fcb-book-04-row-logic-source-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-b01",
+   "text": "수 배열표는 수가 일정한 길을 따라 놓여 있어요. 그 길을 찾으면 빈칸의 수를 알 수 있어요."
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-b02",
+   "text": "다섯 칸씩 네 줄의 표예요. 몇 칸에만 수가 적혀 있고, 아래 줄의 한 칸이 색칠되어 있어요."
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-b03",
+   "text": "먼저 1이 있는 첫 칸을 찾아요. 왼쪽 위예요. 그다음 2, 3, 4, 5가 오른쪽으로 가요."
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-b04",
+   "text": "5 다음 6은 바로 아래 칸이에요. 그리고 7은 왼쪽으로 가요. 줄이 바뀔 때마다 방향이 반대로 바뀌어요."
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-b05",
+   "text": "한 줄에 다섯 칸이니까, 줄의 끝에는 5, 10, 15, 20이 와요. 줄 끝만 알면 한 줄씩 건너뛰며 셀 수 있어요."
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-b06",
+   "text": "셋째 줄은 오른쪽으로 가요. 10 다음 11이 왼쪽 끝에서 시작해 15까지. 넷째 줄은 다시 왼쪽으로, 16이 오른쪽 끝에서 시작해요."
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-b07",
+   "text": "색칠한 칸까지 따라가요. 16, 17, 18, 19. 색칠한 칸은 19예요."
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-b08",
+   "text": "줄 끝으로도 확인해요. 넷째 줄 끝 20이 왼쪽 맨 끝이에요. 색칠한 칸은 그 바로 오른쪽이니 20보다 1 작은 19예요."
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-b09",
+   "text": "정리해요. 1이 있는 첫 칸을 찾고, 수가 가는 방향을 따라가요. 줄 끝이 일정하게 커지면 줄 끝부터 건너뛰어 세요. 마지막에 다시 따라가 확인해요."
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-b10",
+   "text": "한 문제 풀어 봐요. 같은 표에서 셋째 줄 넷째 칸에는 어떤 수가 들어갈까요?"
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-hint",
+   "text": "셋째 줄은 11, 12, 13… 오른쪽으로 가요. 넷째 칸은요?"
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-right",
+   "text": "맞았어요! 11부터 오른쪽으로 세면 넷째 칸은 14예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-05-path-number-grid-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-b01",
+   "text": "달력에서 붙어 있는 두 칸의 합만 알아도 두 날짜를 찾을 수 있어요. 달력의 칸끼리 얼마나 차이 나는지가 열쇠예요."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-b02",
+   "text": "한 달 달력을 그려요. 1일이 수요일에서 시작해요."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-b03",
+   "text": "바로 아래 칸은 일주일 뒤예요. 그래서 위 칸보다 늘 7 커요. 3일 아래는 10일, 10일 아래는 17일."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-b04",
+   "text": "오른쪽 아래 칸은 일주일 하고 하루 더, 8 커요. 두 줄 아래는 14 커요."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-b05",
+   "text": "위아래 두 칸의 합이 33이에요. 두 수는 무엇일까요? 아래 칸이 위 칸보다 7 커요."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-b06",
+   "text": "합에서 더 큰 만큼인 7을 빼면, 두 수가 똑같아진 셈이에요. 33 빼기 7은 26."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-b07",
+   "text": "똑같은 두 수가 26이니까 반으로 나누면 13. 위 칸은 13일, 아래 칸은 13 더하기 7, 20일."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-b08",
+   "text": "확인해요. 13 더하기 20은 33이에요. 달력에서도 13일 바로 아래가 20일이에요."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-b09",
+   "text": "오른쪽 아래 두 칸은 차이가 8이에요. 합이 26이면 26 빼기 8은 18, 반은 9. 9일과 17일이에요."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-b10",
+   "text": "정리해요. 두 칸이 얼마나 차이 나는지 찾아요. 합에서 차이를 빼고 반으로 나누면 작은 수, 거기에 차이를 더하면 큰 수예요. 다시 더해 확인해요."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-b11",
+   "text": "한 문제 풀어 봐요. 달력에서 위아래 두 칸의 합이 45예요. 위 칸은 며칠일까요?"
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-hint",
+   "text": "45 빼기 7은 38이에요. 반으로 나누면요?"
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-right",
+   "text": "맞았어요! 위 칸은 19일, 아래 칸은 26일이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-05-calendar-arithmetic-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-b01",
+   "text": "같은 요일은 7일마다 돌아와요. 이걸 쓰면 달력을 다 그리지 않아도 날짜의 요일을 찾을 수 있어요."
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-b02",
+   "text": "어느 달의 둘째 토요일과 셋째 토요일 날짜를 더하면 29예요. 이 달 30일은 무슨 요일일까요?"
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-b03",
+   "text": "둘째 토요일과 셋째 토요일은 일주일 차이, 7 차이예요. 합에서 7을 빼고 반으로 나누면 둘째 토요일이에요."
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-b04",
+   "text": "둘째 토요일은 11일, 셋째 토요일은 11 더하기 7, 18일이에요."
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-b05",
+   "text": "18일에서 7씩 더해 30일 가까이 가요. 18 더하기 7은 25. 25일도 토요일이에요."
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-b06",
+   "text": "25일에서 30일까지는 다섯 날 더 가요. 토요일에서 하루씩 옮겨요. 일, 월, 화, 수, 목. 30일은 목요일이에요."
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-b07",
+   "text": "달력을 그려서 확인해요. 이 달은 1일이 수요일이에요. 토요일 줄을 보면 4, 11, 18, 25일. 그리고 30일은 목요일 칸에 있어요."
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-b08",
+   "text": "달이 바뀌면 그 달이 며칠까지인지 꼭 보세요. 30일까지 있는 달과 31일까지 있는 달은 다음 달 1일의 요일이 달라져요."
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-b09",
+   "text": "정리해요. 같은 요일 두 날짜의 합이면, 7을 빼고 반으로 나눠 앞 날짜를 찾아요. 7씩 더해 묻는 날 가까이 가고, 남은 날만큼 요일을 옮겨요."
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-b10",
+   "text": "한 문제 풀어 봐요. 어느 달의 둘째 화요일과 셋째 화요일 날짜를 더하면 31이에요. 이 달 30일은 무슨 요일일까요?"
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-hint",
+   "text": "둘째 화요일은 12일, 셋째는 19일, 넷째는 26일이에요. 30일까지 몇 날 남았을까요?"
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-right",
+   "text": "맞았어요! 26일이 화요일이니 나흘 뒤 30일은 토요일이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-05-calendar-weekday-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }
