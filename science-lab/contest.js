@@ -4,6 +4,7 @@
 import { CONTESTS, ORDERED, contestsOf, levelOf, domainOf } from './data/curriculum.js';
 import { CONTEST_GUIDE } from './data/contests.js';
 import { OBSERVE_SETS } from './data/observe-sets.js';
+import { mountPark } from './park.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -22,9 +23,10 @@ export function renderContest($app, { topbar, footer }, id) {
       <h1>${esc(C.title)}</h1>
       <p class="ct-sub">${esc(C.sub)}</p>
       <p class="sub">${esc(G.lead)}</p>
-      <div class="ct-jump">${sets.length ? `<a href="#/observe/${sets[0].id}">${G.icon} 연습 세트 ${sets.length}개 바로 가기</a>` : ''}${units.length ? `<a href="#ct-practice">이 대회로 연습할 실험 ${units.length}개</a>` : ''}</div>
+      <div class="ct-jump">${sets.length ? `<a href="#/observe/${sets[0].id}">${G.icon} 연습 세트 ${sets.length}개 바로 가기</a>` : ''}${units.length ? `<a href="#/contest/${C.id}" data-scroll="ct-practice">이 대회로 연습할 실험 ${units.length}개</a>` : ''}</div>
     </div>
-    <div class="wrap ct-grid">
+    ${C.id === 'nature' ? '<section class="wrap ct-park" aria-label="자연관찰 공원 지도"></section>' : ''}
+    <div class="wrap ct-grid" id="ct-guide">
       <div class="ct-main">
         ${sheet('이 대회는', `${dl(G.names, 'names')}${dl(G.facts)}`)}
         ${sheet('대회 날 하는 일', `<ol class="ct-steps">${G.day.map((t) => `<li>${esc(t)}</li>`).join('')}</ol>`)}
@@ -42,4 +44,9 @@ export function renderContest($app, { topbar, footer }, id) {
       </aside>
     </div>
   </main>${footer()}`;
+  // 자연관찰 폴더는 공원 지도부터(원장 2026-10-25)
+  // 같은 쪽 안에서 내려가기(해시 라우터라 #아이디 링크를 쓰지 않는다)
+  $app.querySelectorAll('[data-scroll]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); document.getElementById(a.dataset.scroll)?.scrollIntoView({ behavior: 'smooth' }); }));
+  const park = C.id === 'nature' ? mountPark($app.querySelector('.ct-park')) : null;
+  return { destroy() { park?.destroy(); } };
 }

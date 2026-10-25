@@ -30,7 +30,7 @@ for (const j of jobs) {
     st.fitMargin = j.margin ?? 0.92; st.setView({ theta: j.theta, phi: j.phi, dist: 8, target: [0, 0.6, 0] }); st._userZoom = false; st._needFit = true;
   }, j);
   await p.waitForTimeout(1800);
-  await p.locator('.ob-stage canvas').screenshot({ path: `${OUT}/${j.name}.png` });
+  await p.locator('.ob-stage canvas').screenshot({ path: `${OUT}/${j.name}.png`, timeout: 180000 });
   console.log('ok', j.name);
 }
 if (errs.length) console.log('errs', errs);
