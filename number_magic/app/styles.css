@@ -2996,6 +2996,15 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 .nm-mza-src{margin-top:12px;font-size:11.5px;line-height:1.7;color:var(--sub);word-break:keep-all}
 .nm-mza-refs{display:flex;flex-wrap:wrap;gap:8px;line-height:1.6;font-size:13px}
 .nm-mza-refs a{display:inline-flex;align-items:center;min-height:44px;color:var(--ink,#1A2233);text-decoration:underline;overflow-wrap:anywhere}
+.nm-mza-inquiry .nm-mza-title{font-weight:700}
+.nm-mza-inquiry .nm-story-spark{margin:16px 0;padding:12px}
+.nm-mza-inquiry .nm-story-spark b{font-size:14px}
+.nm-mza-inquiry .nm-story-spark p{font-size:15px;line-height:1.75}
+.nm-mza-inquiry .nm-story-challenge{margin-top:18px;padding:14px 16px;border:1px solid #ccd7d9;background:#f3f6f6;font-size:15px;line-height:1.7}
+.nm-mza-inquiry .nm-story-challenge>b{font-size:15px}
+.nm-mza-inquiry .nm-story-work{display:none}
+.nm-mza-inquiry .nm-story-feedback{padding:8px 12px}
+.nm-mza-inquiry:lang(zh) p,.nm-mza-inquiry:lang(zh) h4{word-break:normal;overflow-wrap:anywhere}
 .nm-mza-nav{display:flex;gap:10px;margin-top:22px}
 .nm-mza-nav button{flex:1}
 @media (max-width:520px){

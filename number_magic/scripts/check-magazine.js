@@ -52,7 +52,9 @@ function art(a,where,vb,errs,warnsArr){
     if(!PALETTE.has(c)) warnsArr.push(where+' 팔레트 밖 색 '+c);
   for(const t of a.matchAll(/<text[^>]*>([^<]*)<\/text>/g))
     if(HANGUL.test(t[1])) errs.push(where+' 그림 속 한글 "'+t[1].trim().slice(0,16)+'" — 세 언어가 그림을 공유한다');
-  const el=(a.match(/<(rect|circle|ellipse|line|path|polygon|polyline|text|g)\b/g)||[]).length;
+  // Count one typeset fraction as one mathematical label, not three drawing objects.
+  const drawing=a.replace(/<g class="nm-svg-fraction"[^>]*>[\s\S]*?<\/g>/g,'<text>fraction</text>');
+  const el=(drawing.match(/<(rect|circle|ellipse|line|path|polygon|polyline|text|g)\b/g)||[]).length;
   if(el>60) warnsArr.push(where+' 요소 '+el+'개 — 너무 복잡함');
 }
 
@@ -75,6 +77,10 @@ M.articles.forEach((a,i)=>{
   if(!Array.isArray(a.age)||!a.age.length) errs.push('age 없음 — 어느 나이대에 실을지 정해야 한다');
   else a.age.forEach(g=>{ if(AGES.indexOf(g)<0) errs.push('age "'+g+'" 는 young·mid·senior 가 아님'); });
   if(!a.fit||typeof a.fit!=='object') errs.push('fit 없음(빈 배열이라도 둘 것)');
+  if(a.challenge){
+    l3(a.spark,'먼저 생각할 질문',errs);
+    for(const k of ['prompt','hint','reason']) l3(a.challenge[k],'challenge.'+k,errs);
+  }
   if(a.references !== undefined){
     if(!Array.isArray(a.references)||!a.references.length) errs.push('references 는 근거 링크 목록이어야 함');
     else a.references.forEach((r,j)=>{
