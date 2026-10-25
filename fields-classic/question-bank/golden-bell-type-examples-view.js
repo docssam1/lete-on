@@ -265,9 +265,28 @@ function shapeEqFigure(f) {
   return `<div class="tx-shape-eq">${svg(24 + 5 * 40, 26 + f.lines.length * 62 - 10, body, f.lines.map((l) => l.map((t) => (t === "circle" ? "동그라미" : t === "triangle" ? "세모" : t)).join(" ")).join(", "))}</div>`;
 }
 
+// ───── 시각·시간 세로셈: 시는 시끼리, 분은 분끼리 ─────
+// rows: [{ pre, h, hu, m, mu }] · shifts: 줄마다 오후 시각을 12 더한 수 · borrow: 위 줄 시에서 1을 내려 분에 60 · carry: 분에서 받아올린 1
+// res: 결과 줄(나온 칸만). 받아내림·받아올림 표시는 작은 글자로 칸 위에 쓴다.
+function timeColFigure(f) {
+  const color = TONE[f.tone || "given"];
+  const mark = (s, cls = "") => `<small class="tx-time-mark ${cls}">${esc(s)}</small>`;
+  const row = (r, i) => {
+    const shift = f.shifts?.[i];
+    const hTop = (i === 0 && f.borrow ? mark("−1", "borrow") : "") + (shift ? mark(`→${shift}`, "shift") : "");
+    const mTop = i === 0 && f.borrow ? mark("+60", "borrow") : "";
+    return `<tr><th>${i === 1 ? esc(f.op) : ""}</th><td class="pre">${esc(r.pre || "")}</td><td class="num">${hTop}${esc(r.h)}</td><td class="unit">${esc(r.hu)}</td><td class="num">${mTop}${esc(r.m)}</td><td class="unit">${esc(r.mu)}</td></tr>`;
+  };
+  const res = f.res || {};
+  const resRow = `<tr class="res"><th></th><td class="pre"></td><td class="num">${f.carry ? mark("+1", "carry") : ""}${res.h ?? ""}</td><td class="unit">${res.h !== undefined ? esc(res.hu) : ""}</td><td class="num">${res.m ?? ""}</td><td class="unit">${res.m !== undefined ? "분" : ""}</td></tr>`;
+  const label = `${f.rows.map((r) => `${r.pre || ""} ${r.h}${r.hu} ${r.m}${r.mu}`.trim()).join(` ${f.op} `)}${res.m !== undefined ? ` = ${res.h ?? "□"}${res.h !== undefined ? res.hu : ""} ${res.m}분` : ""}`;
+  return `<div class="tx-time" style="--tone:${color}"><table role="img" aria-label="${esc(label)}">${f.rows.map(row).join("")}${resRow}</table></div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
   if (figure.kind === "bundle") return bundleFigure(figure);
+  if (figure.kind === "time-col") return timeColFigure(figure);
   if (figure.kind === "circles") return circlesFigure(figure);
   if (figure.kind === "circles-story") return `<p class="tx-think">${esc(figure.note)}</p>`;
   if (figure.kind === "shape-eq") return shapeEqFigure(figure);

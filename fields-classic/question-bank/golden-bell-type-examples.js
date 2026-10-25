@@ -588,7 +588,91 @@ const CIRCLE_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET });
+// ───────────────────────── 7권 시간 단위 바꾸기 · 시각과 시간의 계산 ─────────────────────────
+// 단위: 큰 단위 하나 = 작은 단위 몇(1일 = 24시간 …). 그림은 묶음 줄(kind "bundle")에 「24시간」 카드를 늘어놓는다.
+// 시각 계산: 원본처럼 시는 시끼리, 분은 분끼리 세로로(kind "time-col"). 60분 = 1시간으로 받아올리고 받아내린다.
+// 오후 시각은 12를 더해 오전과 같은 기준으로 놓는다.
+const TIME_UNIT = { 일: ["시간", 24], 시간: ["분", 60], 분: ["초", 60], 주일: ["일", 7], 년: ["개월", 12] };
+// 「1시간으로」·「1주일로」: 받침이 없거나 ㄹ이면 「로」
+const euro = (word) => { const c = String(word).charCodeAt(String(word).length - 1) - 0xac00, jong = c >= 0 && c <= 11171 ? c % 28 : 0; return `${word}${jong === 0 || jong === 8 ? "로" : "으로"}`; };
+const unitCards = (k, small, big, n, sub = true) => (n <= 4
+  ? Array.from({ length: n }, (_, i) => [...(i ? ["+"] : []), { v: `${k}${small}`, sub: sub ? `1${big}` : undefined, on: sub }]).flat()
+  : [{ v: `${k}${small} × ${n}`, sub: sub ? `${n}${big}` : undefined, on: sub }]);
+// toBig = false: 「4일 6시간 = □시간」 / toBig = true: 「380분 = □시간 □분」
+function timeUnitExample({ id, title, big, n, rest = 0, toBig = false }) {
+  const [small, k] = TIME_UNIT[big], total = n * k + rest;
+  const restCard = rest ? ["+", { v: `${rest}${small}` }] : [];
+  if (!toBig) {
+    const lhs = `${n}${big}${rest ? ` ${rest}${small}` : ""}`;
+    const steps = [
+      { text: `1${big} = ${k}${josa(small, "이에요")}. ${n}${josa(big, "은")} ${k}${josa(small, "이")} ${n}개예요.`, figure: { kind: "bundle", rows: [{ tone: "doing", items: [...unitCards(k, small, big, n), ...restCard] }] } },
+      { text: `${k} × ${n} = ${n * k}${small}${rest ? `, 남은 ${rest}${josa(small, "을")} 더하면 ${n * k} + ${rest} = ${total}${small}` : ""}이에요.`, figure: { kind: "bundle", rows: [{ tone: "doing", items: [...unitCards(k, small, big, n), ...restCard] }, { tone: "check", items: ["=", { v: `${total}${small}`, on: true }] }] } }
+    ];
+    return { id, title, problem: `${lhs} = □${small}에서 □에 알맞은 수를 구해요.`, figure: { kind: "bundle", rows: [{ tone: "given", items: [{ v: lhs }, "=", { v: "□", blank: true }] }] }, steps, answer: `□는 ${josa(total, "이에요")}.`, value: { total, n, rest, k, toBig, big, small } };
+  }
+  const steps = [
+    { text: `${k}${josa(small, "을")} ${euro(`1${big}`)} 묶어요. ${total}${small} 안에 ${k}${small} 묶음이 몇 개 들어가는지 봐요.`, figure: { kind: "bundle", rows: [{ tone: "given", items: [{ v: `${total}${small}` }, "=", ...unitCards(k, small, big, n, false), ...restCard] }] } },
+    { text: `${k} × ${n} = ${n * k}이라 ${k}${small} 묶음이 ${n}개 들어가고, ${total} − ${n * k} = ${rest}${josa(small, "이")} 남아요.`, figure: { kind: "bundle", rows: [{ tone: "doing", items: [{ v: `${total}${small}` }, "=", ...unitCards(k, small, big, n), ...restCard] }] } },
+    { text: `${k}${small} 묶음 ${n}개는 ${n}${josa(big, "이에요")}. 그래서 ${total}${small} = ${n}${big} ${rest}${small}.`, figure: { kind: "bundle", rows: [{ tone: "doing", items: [{ v: `${total}${small}` }, "=", ...unitCards(k, small, big, n), ...restCard] }, { tone: "check", items: ["=", { v: `${n}${big} ${rest}${small}`, on: true }] }] } }
+  ];
+  return { id, title, problem: `${total}${small} = □${big} □${small}에서 □에 알맞은 수를 구해요.`, figure: { kind: "bundle", rows: [{ tone: "given", items: [{ v: `${total}${small}` }, "=", { v: `□${big} □${small}`, blank: true }] }] }, steps, answer: `${n}${big} ${josa(`${rest}${small}`, "이에요")}.`, value: { total, n, rest, k, toBig, big, small } };
+}
+// 세로셈. op "+": top = 시각, bottom = 시간. op "−": top = 늦은 시각, bottom = 이른 시각(걸린 시간이면 끝난 시각이 위).
+// 시각: { pre: "" | "오전" | "오후", h, m, label? } · 시간: { h, m }
+const clock24 = (t) => t.h + (t.pre === "오후" && t.h !== 12 ? 12 : 0);
+const timeName = (t) => `${t.pre ? `${t.pre} ` : ""}${t.h}시 ${t.m}분`;
+function timeColExample({ id, title, op, top, bottom, story = null, ask = null }) {
+  const durRow = (t) => ({ ...t, hu: "시간", mu: "분" });
+  const timeRow = (t) => ({ ...t, hu: "시", mu: "분" });
+  const rows = op === "+" ? [timeRow(top), durRow(bottom)] : [timeRow(top), timeRow(bottom)];
+  const fig = (tone, extra = {}) => ({ kind: "time-col", op, rows, tone, ...extra });
+  const steps = [];
+  const shifts = rows.map((r) => (r.pre === "오후" ? clock24(r) : null));
+  const H1 = rows[0].hu === "시" ? clock24(rows[0]) : rows[0].h, H2 = rows[1].hu === "시" ? clock24(rows[1]) : rows[1].h;
+  if (shifts.some((x) => x !== null)) {
+    const r = rows[shifts.findIndex((x) => x !== null)];
+    steps.push({ text: `오후 시각은 12를 더해 놓아요. 오후 ${r.h}시는 ${r.h} + 12 = ${clock24(r)}시예요.`, figure: fig("doing", { shifts }) });
+  }
+  let H, M, value;
+  if (op === "+") {
+    M = top.m + bottom.m; H = H1 + H2;
+    steps.push({ text: `분끼리 더해요. ${top.m} + ${bottom.m} = ${M}분.`, figure: fig("doing", { shifts, res: { m: M } }) });
+    if (M >= 60) {
+      steps.push({ text: `${M}분은 60분보다 많아요. ${M}분 = 1시간 ${M - 60}분이라, 1시간을 시 쪽으로 받아올려요.`, figure: fig("doing", { shifts, res: { m: M - 60 }, carry: true }) });
+      M -= 60; H += 1;
+    }
+    steps.push({ text: `시끼리 더해요. ${H1} + ${H2}${H !== H1 + H2 ? " + 1" : ""} = ${H}시.${H > 12 ? ` ${H}시는 오후 ${H - 12}시예요.` : ""}`, figure: fig("check", { shifts, res: { h: H, m: M, hu: "시" }, carry: H !== H1 + H2 }) });
+    value = { minutes: H * 60 + M };
+  } else {
+    M = top.m - bottom.m; H = H1 - H2;
+    const borrow = M < 0;
+    if (borrow) { steps.push({ text: `${top.m}분에서 ${bottom.m}분을 뺄 수 없어요. 1시간을 60분으로 받아내리면 ${top.m} + 60 = ${top.m + 60}분이에요.`, figure: fig("doing", { shifts, borrow: true }) }); M += 60; H -= 1; }
+    steps.push({ text: `분끼리 빼요. ${borrow ? top.m + 60 : top.m} − ${bottom.m} = ${M}분.`, figure: fig("doing", { shifts, borrow, res: { m: M } }) });
+    steps.push({ text: `시끼리 빼요. ${H1}${borrow ? " − 1" : ""} − ${H2} = ${H}시간.`, figure: fig("check", { shifts, borrow, res: { h: H, m: M, hu: "시간" } }) });
+    value = { minutes: H * 60 + M };
+  }
+  const pm = op === "+" && (top.pre || story) && H >= 12;
+  const resultText = op === "+" ? `${top.pre || story ? (pm ? "오후 " : "오전 ") : ""}${pm && H > 12 ? H - 12 : H}시 ${M}분` : `${H}시간 ${M}분`;
+  const problem = story || (op === "+" ? `${timeName(top)}에서 ${bottom.h}시간 ${bottom.m}분이 지나면 몇 시 몇 분일까요?` : `${timeName(bottom)}부터 ${timeName(top)}까지는 몇 시간 몇 분일까요?`);
+  return { id, title, problem, figure: fig("given"), steps, answer: `${ask ? `${ask} ` : ""}${josa(resultText, "이에요")}.`, value };
+}
+const TIME_SET = {
+  id: "time",
+  types: {
+    "시간 단위 바꾸기": () => [timeUnitExample({ id: "tu-day", title: "예제 1", big: "일", n: 4, rest: 6 }), timeUnitExample({ id: "tu-min", title: "예제 2", big: "시간", n: 6, rest: 20, toBig: true })],
+    "주일·개월로 바꾸기": () => [timeUnitExample({ id: "tu-week", title: "예제 1", big: "주일", n: 3, rest: 4, toBig: true }), timeUnitExample({ id: "tu-year", title: "예제 2", big: "년", n: 3, rest: 4 })],
+    "시각 + 시간": () => [timeColExample({ id: "tc-add-1", title: "예제 1", op: "+", top: { h: 6, m: 25 }, bottom: { h: 2, m: 15 } }), timeColExample({ id: "tc-add-2", title: "예제 2", op: "+", top: { h: 3, m: 50 }, bottom: { h: 4, m: 35 } })],
+    "시각 − 시각": () => [timeColExample({ id: "tc-sub-1", title: "예제 1", op: "−", top: { h: 9, m: 45 }, bottom: { h: 4, m: 20 } }), timeColExample({ id: "tc-sub-2", title: "예제 2", op: "−", top: { h: 11, m: 15 }, bottom: { h: 8, m: 40 } })],
+    "오후 − 오전": () => [timeColExample({ id: "tc-pm-1", title: "예제 1", op: "−", top: { pre: "오후", h: 4, m: 20 }, bottom: { pre: "오전", h: 8, m: 50 } })],
+    "걸린 시간": () => [timeColExample({ id: "tc-took-1", title: "예제 1", op: "−", top: { pre: "오후", h: 1, m: 20 }, bottom: { pre: "오전", h: 10, m: 35 }, story: "오전 10시 35분에 시작해서 오후 1시 20분에 끝났어요. 걸린 시간은 몇 시간 몇 분일까요?", ask: "걸린 시간은" })],
+    "시간 글 문제": () => [
+      timeColExample({ id: "tc-story-1", title: "예제 1", op: "+", top: { pre: "오후", h: 2, m: 40 }, bottom: { h: 1, m: 50 }, story: "1시간 50분 동안 하는 공연이 오후 2시 40분에 시작해요. 끝나는 시각은 몇 시 몇 분일까요?", ask: "끝나는 시각은" }),
+      timeColExample({ id: "tc-story-2", title: "예제 2", op: "−", top: { pre: "오전", h: 11, m: 10 }, bottom: { pre: "오전", h: 8, m: 35 }, story: "버스가 오전 8시 35분에 출발해서 오전 11시 10분에 도착했어요. 버스를 탄 시간은 몇 시간 몇 분일까요?", ask: "버스를 탄 시간은" })
+    ]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

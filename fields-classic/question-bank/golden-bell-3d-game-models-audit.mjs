@@ -354,6 +354,37 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       }
     }
     for (const item of lesson.original.items) assert.ok(!item.prompt.includes(ex.problem), `${ex.id}: 원본 문장과 같음`);
+  } else if (setId === "time") {
+    if (ex.figure.kind === "bundle") {
+      // 단위 바꾸기: 큰 단위 하나가 작은 단위 몇인지는 정해진 값(1일 = 24시간 …)이다
+      const K = { 일: 24, 시간: 60, 분: 60, 주일: 7, 년: 12 };
+      assert.equal(v.k, K[v.big], `${ex.id}: 1${v.big} = ${K[v.big]}${v.small}`);
+      assert.ok(v.rest >= 0 && v.rest < v.k, `${ex.id}: 남는 수가 한 단위보다 작음`);
+      assert.equal(v.total, v.n * v.k + v.rest, `${ex.id}: 바꾼 값`);
+      const lhs = ex.problem.split(" = ")[0].replace(/\s+/gu, "");
+      for (const item of lesson.original.items) {
+        const toks = (item.visual?.tokens || []).filter((t) => t !== null);
+        assert.notEqual(lhs, String(toks[0] || "") + (toks[1] && toks[1] !== "=" ? toks[1] : ""), `${ex.id}: 원본 식과 같음`);
+      }
+      if (/주일|개월/u.test(typeLabel)) assert.ok(["주일", "년"].includes(v.big), `${ex.id}: 주일·개월 유형`);
+      else assert.ok(["일", "시간", "분"].includes(v.big), `${ex.id}: 시간 단위 유형`);
+    } else {
+      const [t, b] = ex.figure.rows, at24 = (r) => r.h + (r.pre === "오후" && r.h !== 12 ? 12 : 0);
+      for (const r of ex.figure.rows) assert.ok(r.m >= 0 && r.m < 60 && r.h >= 0 && r.h <= 12, `${ex.id}: 시·분 범위`);
+      const minutes = ex.figure.op === "+" ? at24(t) * 60 + t.m + b.h * 60 + b.m : at24(t) * 60 + t.m - (at24(b) * 60 + b.m);
+      assert.ok(minutes > 0 && minutes < 24 * 60, `${ex.id}: 하루 안의 시간`);
+      assert.equal(v.minutes, minutes, `${ex.id}: 답을 분으로 다시 계산`);
+      if (ex.figure.op === "−") assert.ok(/시간 \d+분이에요/u.test(ex.answer), `${ex.id}: 걸린 시간 답`);
+      if (typeLabel === "오후 − 오전") assert.ok(t.pre === "오후" && b.pre === "오전", `${ex.id}: 오후 − 오전`);
+      const nums = (ex.problem.match(/\d+/gu) || []).map(Number);
+      for (const r of ex.figure.rows) assert.ok(nums.includes(r.h) && nums.includes(r.m), `${ex.id}: 문제 글에 그림의 수`);
+      const sig = (rows) => JSON.stringify(rows.map((r) => [r.pre || "", Number(r.h), Number(r.m)]));
+      for (const item of lesson.original.items) {
+        const rows = item.visual?.rows;
+        if (rows) assert.notEqual(sig(ex.figure.rows), sig(rows.map((r) => ({ pre: /오후/u.test(r.pre) ? "오후" : /오전/u.test(r.pre) ? "오전" : "", h: r.h, m: r.m }))), `${ex.id}: 원본 세로셈과 같음`);
+        assert.ok(!item.prompt.includes(ex.problem), `${ex.id}: 원본 문장과 같음`);
+      }
+    }
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

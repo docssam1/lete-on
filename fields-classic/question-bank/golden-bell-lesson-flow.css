@@ -93,6 +93,19 @@
 /* 합차·합과 배수 동그라미 그림 · ○△ 식 */
 .tx-circles, .tx-shape-eq { display: grid; justify-items: center; max-width: 100%; }
 .tx-circles svg, .tx-shape-eq svg { max-width: 100%; height: auto; }
+/* 시각·시간 세로셈 — 수는 굵은 검정, 단위는 회색, 결과 줄 위 굵은 선은 안내 단계 색, 받아올림·받아내림 표시는 작은 빨강·초록 */
+.tx-time { display: grid; justify-items: center; }
+.tx-time table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tx-time th { width: 26px; color: #222; font-size: 24px; font-weight: 900; text-align: center; }
+.tx-time td { padding: 14px 4px 6px; text-align: right; }
+.tx-time td.pre { padding-right: 8px; color: #566274; font-size: 15px; font-weight: 800; }
+.tx-time td.num { position: relative; min-width: 46px; color: #222; font-size: 26px; font-weight: 900; }
+.tx-time td.unit { padding-right: 10px; color: #566274; font-size: 16px; font-weight: 800; text-align: left; }
+.tx-time tr.res td { border-top: 4px solid var(--tone); color: var(--tone); }
+.tx-time-mark { position: absolute; top: -2px; right: 2px; font-size: 13px; font-weight: 900; line-height: 1; }
+.tx-time-mark.borrow { color: #e8503a; }
+.tx-time-mark.carry { color: #e8503a; }
+.tx-time-mark.shift { position: static; display: block; color: #2f6fe0; text-align: right; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }
