@@ -3,24 +3,15 @@
 // 글은 우리가 쓴 것(골든벨 원문을 베끼지 않는다). 확인 문제의 정답은 아래 규칙 함수로 계산하고, 골든벨 정답 DB는 쓰지 않는다.
 // 좌표는 1000×600 칠판 기준. 시계 숫자 n의 자리는 concept-board.js의 clockPoint가 계산한다.
 
+import { jo } from "./concept-board-kit.js?v=20261025a";
+import { BOARDS_B02 } from "./concept-boards-b02.js?v=20261025a";
+export { jo };
+
 // 독쌤 음성 파일의 줄 id. 내보내기(tools/export-board-voice.mjs)와 재생(concept-board.js → study.js)이 같은 규칙을 쓴다.
 //   비트 n번째 말 → fcb-<판서>-bNN · 확인 문제의 힌트/정답/공개 말 → fcb-<판서>-hint|right|reveal
 export const lineId = (boardKey, kind, n = 0) => `fcb-${boardKey.replace(/[^a-z0-9]+/gi, "-")}-${kind === "b" ? `b${String(n).padStart(2, "0")}` : kind}`;
 
 // 시계: 숫자 start에서 quarters(반의 반 바퀴 단위, 시계 방향 +)만큼 돌린 자리
-// 숫자 뒤 조사: 우리말로 읽은 마지막 소리에 받침이 있으면 앞 것, 없으면 뒤 것. ㄹ 받침(1·7·8)은 「로」.
-// jo(5, "을") → "5를", jo(9, "이에요") → "9예요", jo(10, "과") → "10과"
-const BATCHIM = { 0: "ㅇ", 1: "ㄹ", 2: "", 3: "ㅁ", 4: "", 5: "", 6: "ㄱ", 7: "ㄹ", 8: "ㄹ", 9: "" };
-const PAIRS = { "이": ["이", "가"], "가": ["이", "가"], "을": ["을", "를"], "를": ["을", "를"], "은": ["은", "는"], "는": ["은", "는"], "과": ["과", "와"], "와": ["과", "와"], "이에요": ["이에요", "예요"], "예요": ["이에요", "예요"], "으로": ["으로", "로"], "로": ["으로", "로"] };
-export function jo(value, particle) {
-  const t = String(value), last = t.match(/(\d+)\s*$/);
-  let fin;
-  if (last) { const n = Number(last[1]); fin = n % 10 ? BATCHIM[n % 10] : n % 100 ? "ㅂ" : n % 1000 ? "ㄱ" : "ㄴ"; }   // 십·백·천
-  else { const c = t.charCodeAt(t.length - 1); fin = c >= 0xAC00 && c <= 0xD7A3 ? ((c - 0xAC00) % 28 ? "x" : "") : ""; }
-  const [withB, without] = PAIRS[particle];
-  if (withB === "으로") return t + (fin && fin !== "ㄹ" ? "으로" : "로");
-  return t + (fin ? withB : without);
-}
 
 export const landing = (start, quarters) => ((start - 1 + quarters * 3) % 12 + 12) % 12 + 1;
 // 모눈: 칸 [줄, 칸]을 거울·돌리기로 옮긴 자리(rows×cols)
@@ -652,4 +643,5 @@ export const BOARDS = {
       ]
     };
   })()
+  ,...BOARDS_B02
 };

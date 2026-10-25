@@ -4,7 +4,7 @@
 // 움직임 줄이기 설정이면 바로 완성 장면.
 // 글자는 손글씨 글꼴(나눔펜, OFL · assets/fonts/nm-lesson-hand.woff2)을 펜이 지나가며 드러내고, 그림은 실제 선(stroke)을 펜이 그린다.
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
-import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261025l";
+import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261025m";
 
 const NS = "http://www.w3.org/2000/svg";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -188,6 +188,20 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     // 표에 쓰는 표시: o(맞아요) · x(아니에요)
     if (k === "o") return [{ kind: "path", d: arcPath(item.cx, item.cy, item.r || 26, 0, 360), stroke: item.color || "green", width: 4.5 }];
     if (k === "x") { const r = item.r || 20; return [{ kind: "path", d: `M ${item.cx - r} ${item.cy - r} L ${item.cx + r} ${item.cy + r}`, stroke: item.color || "red", width: 4 }, { kind: "path", d: `M ${item.cx + r} ${item.cy - r} L ${item.cx - r} ${item.cy + r}`, stroke: item.color || "red", width: 4, quick: true }]; }
+    // 도형 기호(○ △ □ ◇ ☆): 식 속 도형을 펜으로 그리고, value가 있으면 안에 수를 쓴다
+    if (k === "shape") {
+      const { cx, cy } = item, r = item.r || 26, c = item.color || "ink", w = item.width || 3.5, t = item.type || "circle";
+      const poly = (pts) => `M ${pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(" L ")} Z`;
+      let d;
+      if (t === "circle") d = arcPath(cx, cy, r, 0, 360);
+      else if (t === "square") d = poly([[cx - r * 0.86, cy - r * 0.86], [cx + r * 0.86, cy - r * 0.86], [cx + r * 0.86, cy + r * 0.86], [cx - r * 0.86, cy + r * 0.86]]);
+      else if (t === "triangle") d = poly([[cx, cy - r * 1.05], [cx + r * 1.05, cy + r * 0.8], [cx - r * 1.05, cy + r * 0.8]]);
+      else if (t === "diamond") d = poly([[cx, cy - r * 1.1], [cx + r, cy], [cx, cy + r * 1.1], [cx - r, cy]]);
+      else if (t === "star") d = poly(Array.from({ length: 10 }, (_, i) => { const a = (i * 36 - 90) * Math.PI / 180, rr = i % 2 ? r * 0.45 : r * 1.1; return [cx + rr * Math.cos(a), cy + rr * Math.sin(a)]; }));
+      const size = item.size || Math.round(r * 1.1), dy = t === "triangle" ? r * 0.2 : 0;
+      return [{ kind: "path", d, stroke: c, width: w, quick: item.quick },
+        ...(item.value != null ? [{ kind: "text", x: cx, y: cy + dy + size * 0.36, text: String(item.value), size, align: "center", color: item.textColor || c }] : [])];
+    }
     if (k === "cross") { const w = item.w || 66, h = item.h || 78; return [{ kind: "path", d: `M ${item.x + 6} ${item.y + h - 6} L ${item.x + w - 6} ${item.y + 6}`, stroke: item.color || "red", width: 2.5 }]; }   // 숫자가 읽히도록 가늘게
     if (k === "digit") {   // 디지털 숫자: 꺼진 막대(옅게, 즉시)를 먼저, 켜진 막대를 펜으로 하나씩
       const out = [], w = Math.max(10, item.h * 0.09);

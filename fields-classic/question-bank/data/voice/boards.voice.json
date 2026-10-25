@@ -881,6 +881,286 @@
   {
    "id": "fcb-book-01-book1-equalize-transfer-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b01",
+   "text": "수 하나를 같은 크기 여러 개로 나누는 것을 똑같이 가르기라고 해요. 오늘은 32를 차근차근 갈라 볼 거예요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b02",
+   "text": "맨 위에 전체 수 32를 써요. 이 수를 똑같은 두 수로 가를 거예요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b03",
+   "text": "가지를 두 개 그려요. 두 칸에는 같은 수가 들어가요. 그리고 두 수를 더하면 다시 32가 되어야 해요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b04",
+   "text": "32의 반을 한 번에 찾기 어려우면, 십 묶음과 낱개로 나눠 봐요. 32는 30과 2예요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b05",
+   "text": "30을 똑같이 둘로 가르면 15와 15. 2를 똑같이 둘로 가르면 1과 1."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b06",
+   "text": "한쪽에 15와 1이 모이니까 15 더하기 1은 16이에요. 두 칸 모두 16."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b07",
+   "text": "꼭 다시 더해 봐요. 16 더하기 16은 32. 처음 수가 나왔으니 맞게 갈랐어요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b08",
+   "text": "이번엔 16을 다시 반으로 갈라요. 가지마다 두 개씩, 모두 네 칸이 생겨요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b09",
+   "text": "16은 10과 6. 10의 반은 5, 6의 반은 3. 5 더하기 3은 8이에요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b10",
+   "text": "네 칸 모두 8을 써요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b11",
+   "text": "네 개를 다 더해 봐요. 8 더하기 8은 16, 16 더하기 16은 32. 처음 32로 돌아왔어요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b12",
+   "text": "반으로 두 번 가르면 네 개로 똑같이 가른 것과 같아요. 32를 네 개로 똑같이 가르면 하나는 8이에요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b13",
+   "text": "세 개로 똑같이 가를 때도 있어요. 30을 세 개로 갈라 볼게요. 가지를 세 개 그려요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b14",
+   "text": "30은 10 묶음이 세 개예요. 한 칸에 한 묶음씩 나눠 주면 10, 10, 10. 다시 더하면 30."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b15",
+   "text": "정리해요. 몇 개로 가를지 정해요. 어려우면 십 묶음과 낱개로 나눠서 따로 가른 뒤 모아요. 마지막에 다시 더해 처음 수가 되는지 확인해요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-b16",
+   "text": "한 문제 풀어 봐요. 44를 네 개로 똑같이 가르면 하나는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-02-number-splitting-hint",
+   "text": "44의 반은 40의 반 20과 4의 반 2를 모아 22예요. 22를 또 반으로 가르면 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-02-number-splitting-right",
+   "text": "맞았어요! 44를 반으로 가르면 22, 또 반으로 가르면 11이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-02-number-splitting-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b01",
+   "text": "같은 모양은 언제나 같은 수를 나타내요. 가로줄과 세로줄의 합을 보고, 모양마다 어떤 수인지 찾아볼 거예요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b02",
+   "text": "네 칸짜리 표를 그려요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b03",
+   "text": "윗줄에는 세모 두 개, 아랫줄에는 동그라미와 네모를 그려요. 두 세모는 같은 수예요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b04",
+   "text": "윗줄 오른쪽에 14를 써요. 윗줄의 세모 두 개를 더하면 14라는 뜻이에요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b05",
+   "text": "왼쪽 세로줄 아래에는 11을 써요. 세모와 동그라미를 더하면 11이에요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b06",
+   "text": "아랫줄의 합은 13이에요. 동그라미와 네모를 더하면 13이에요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b07",
+   "text": "어디서부터 풀까요? 모양이 한 가지뿐인 줄부터 봐요. 윗줄은 세모만 두 개 있어요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b08",
+   "text": "세모 두 개가 14예요. 같은 수 두 개로 14를 만들려면 14를 똑같이 둘로 갈라요. 7과 7."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b09",
+   "text": "세모는 7이에요. 세모 두 개 안에 7을 써요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b10",
+   "text": "이제 왼쪽 세로줄을 봐요. 세모 7 더하기 동그라미가 11이에요. 11에서 7을 빼면 4. 동그라미는 4예요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b11",
+   "text": "아랫줄을 봐요. 동그라미 4 더하기 네모가 13이에요. 13 빼기 4는 9. 네모는 9예요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b12",
+   "text": "남은 오른쪽 세로줄의 합도 구할 수 있어요. 세모 7과 네모 9를 더하면 16이에요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b13",
+   "text": "모든 줄을 다시 더해 확인해요. 7 더하기 7은 14, 7 더하기 4는 11, 4 더하기 9는 13. 모두 맞아요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b14",
+   "text": "정리해요. 같은 모양만 있는 줄부터 반으로 갈라 값을 찾아요. 찾은 값을 다른 줄에 넣어 하나씩 풀어요. 마지막에 모든 줄을 다시 더해요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-b15",
+   "text": "한 문제 풀어 봐요. 네모 두 개의 합이 10이고, 동그라미와 네모의 합이 13이에요. 동그라미는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-hint",
+   "text": "네모 두 개가 10이에요. 네모 하나는 얼마일까요? 그 수를 두 번째 식에 넣어 봐요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-right",
+   "text": "맞았어요! 네모는 5이고 동그라미는 13 빼기 5, 8이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-02-addition-matrix-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b01",
+   "text": "두 사람이 가진 수를 같게 만드는 법, 그리고 합과 차만 알 때 두 수를 찾는 법을 차례로 배워요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b02",
+   "text": "가람이는 구슬 16개, 나래는 6개를 가지고 있어요. 줄을 맞춰 늘어놓아요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b03",
+   "text": "줄을 맞추니 가람이가 10개 더 많아요. 16 빼기 6은 10이에요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b04",
+   "text": "하나를 주면 가람이는 하나 줄고 나래는 하나 늘어서, 차이가 2씩 줄어요. 그래서 차이 10의 반, 5개만 주면 돼요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b05",
+   "text": "5개를 주면 가람이는 16 빼기 5, 11개. 나래는 6 더하기 5, 11개. 똑같아졌어요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b06",
+   "text": "이번엔 다른 문제예요. 가람이와 나래의 사탕을 합하면 모두 14개. 가람이가 나래보다 4개 더 많아요. 각각 몇 개일까요?"
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b07",
+   "text": "막대로 그려요. 나래 막대를 먼저 그리고, 가람이 막대는 나래 막대보다 4만큼 더 길게 그려요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b08",
+   "text": "두 막대를 모두 합하면 14예요. 막대 오른쪽에 써 둬요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b09",
+   "text": "가람이 막대에서 더 긴 4만큼을 잠깐 떼어 내요. 그러면 두 막대 길이가 똑같아져요. 전체도 4만큼 줄어서 14 빼기 4, 10이에요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b10",
+   "text": "똑같은 막대 두 개가 10이니까 하나는 10의 반, 5. 나래는 5개예요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b11",
+   "text": "가람이는 나래보다 4개 더 많으니 5 더하기 4, 9개예요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b12",
+   "text": "확인해요. 9 더하기 5는 14, 9 빼기 5는 4. 합도 차도 맞아요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b13",
+   "text": "정리해요. 같게 만들 때는 차이의 반만 옮겨요. 합과 차를 알 때는 전체에서 차이를 빼고 반으로 나눠 작은 수를 찾고, 거기에 차이를 더해 큰 수를 찾아요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-b14",
+   "text": "한 문제 풀어 봐요. 두 수를 합하면 16이고, 큰 수가 작은 수보다 6 더 커요. 큰 수는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-hint",
+   "text": "16에서 6을 빼고 반으로 나눠 작은 수를 먼저 찾아요. 그다음 차이를 더해요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-right",
+   "text": "맞았어요! 작은 수는 5이고 큰 수는 5 더하기 6, 11이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-02-give-take-sum-difference-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b01",
+   "text": "같은 수를 여러 번 더한 식을, 다른 크기의 묶음으로 바꿔 볼 거예요. 전체는 그대로 두고 묶음만 바꿔요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b02",
+   "text": "6 더하기 6 더하기 6을 써요. 6이 세 번 더해졌어요. 6짜리 묶음이 세 개라는 뜻이에요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b03",
+   "text": "칸으로 그려 봐요. 6칸씩 색을 바꿔 가며 세 묶음을 이어 붙여요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b04",
+   "text": "모두 몇일까요? 6 더하기 6은 12, 12 더하기 6은 18이에요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b05",
+   "text": "이번엔 18을 같은 수 두 개로 나타내요. 네모 두 개는 같은 수예요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b06",
+   "text": "같은 수 두 개로 18을 만들려면 18을 똑같이 둘로 갈라요. 칸 한가운데에 선을 그어요. 왼쪽 9칸, 오른쪽 9칸."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b07",
+   "text": "네모는 9예요. 9 더하기 9는 18. 처음 식과 전체가 같아요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b08",
+   "text": "이번엔 세모 여섯 개로 나타내요. 같은 수 여섯 개를 더해서 18이 되어야 해요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b09",
+   "text": "6짜리 묶음 하나를 반으로 가르면 3과 3. 묶음 세 개를 모두 반으로 가르면 3이 여섯 개가 돼요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b10",
+   "text": "세어 봐요. 3, 6, 9, 12, 15, 18. 여섯 번 더하니 18이에요. 세모는 3이에요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b11",
+   "text": "잘 보세요. 묶음이 세 개면 하나는 6, 두 개면 9, 여섯 개면 3이에요. 묶음 수가 많아지면 한 묶음은 작아지고, 묶음 수가 적어지면 한 묶음은 커져요. 전체 18은 그대로예요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b12",
+   "text": "정리해요. 먼저 숫자 쪽 전체를 더해요. 같은 도형이 몇 개인지 세요. 전체를 그 개수로 똑같이 가른 뒤, 다시 더해 확인해요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-b13",
+   "text": "한 문제 풀어 봐요. 별 네 개를 더하면 8 더하기 8과 같아요. 별 하나는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-hint",
+   "text": "8 더하기 8은 16이에요. 16을 네 개로 똑같이 가르면 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-right",
+   "text": "맞았어요! 전체 16을 네 개로 가르면 4예요. 4 더하기 4 더하기 4 더하기 4는 16. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-02-two-term-arithmetic-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }
