@@ -45,3 +45,7 @@ html, body.drill-page { min-height: 100%; margin: 0; background: #fbfaf6; }
 .dr-days { gap: 8px; }
 .dr-key.day { min-width: 74px; font-size: 16px; }
 .dr-key.day.on { border-color: var(--enamel); background: #eaf6f7; box-shadow: 0 0 0 3px rgba(127, 211, 230, .5); color: #164e57; }
+/* 보기 단추(이름·자리·모양) — 모양 보기는 그림을 가운데 두고 이름을 밑에 */
+.dr-choices .dr-key{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.dr-choices .dr-key .symbol-pattern-group{font-size:26px;line-height:1}
+.dr-choices .dr-key small{font-size:13px}

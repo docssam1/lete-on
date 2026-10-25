@@ -13,7 +13,7 @@ import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
 import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261024r";
-import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, totalDifferenceBarsMarkup, balanceUnitEquationsMarkup, distinctShapeEquationsMarkup, numberSequencesMarkup, progressiveNumberTableMarkup, book2GrowthMarkup, centerNumberRuleMarkup, numberRuleGridMarkup, twoDigitComposeRuleMarkup, sudokuGridMarkup } from "./book02-visuals.js?v=20261027a";
+import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, totalDifferenceBarsMarkup, balanceUnitEquationsMarkup, distinctShapeEquationsMarkup, numberSequencesMarkup, progressiveNumberTableMarkup, book2GrowthMarkup, centerNumberRuleMarkup, numberRuleGridMarkup, twoDigitComposeRuleMarkup, sudokuGridMarkup, symbolPatternSequenceMarkup } from "./book02-visuals.js?v=20261027b";
 import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261027a";
 import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup } from "./fold-visuals.js?v=20261027a";
 
@@ -2598,14 +2598,6 @@ function diagnosticAnimalBalanceOrderMarkup(visual) {
   const load = (name) => `<div class="animal-balance-load"><img src="../mock/assets/${DIAGNOSTIC_ANIMAL_ASSETS[name]}" alt="${name}" /><strong>${name}</strong></div>`;
   const scale = (row, index) => `<figure class="animal-balance ${row.heavier}">${load(row.left)}<span class="animal-balance-beam"></span><span class="animal-balance-pivot"></span>${load(row.right)}<figcaption>[저울 ${index + 1}]</figcaption></figure>`;
   return `<div class="animal-balance-order-work">${visual.relations.map(scale).join("")}</div>`;
-}
-
-function symbolPatternSequenceMarkup(visual) {
-  const symbols = {
-    circle: ["○", "●"], triangle: ["△", "▲"], square: ["□", "■"], diamond: ["◇", "◆"], star: ["☆", "★"]
-  };
-  const group = (item) => `<span class="symbol-pattern-group">${Array.from({ length: item.count }, () => `<i>${symbols[item.shape][item.filled ? 1 : 0]}</i>`).join("")}</span>`;
-  return `<div class="symbol-pattern-work">${visual.items.map(group).join("")}<b>→</b><span class="symbol-pattern-target">?</span></div>`;
 }
 
 function triangleEdgeSumMarkup(visual) {

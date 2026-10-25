@@ -1,12 +1,13 @@
 // 연습 공방(drill.js) 차시별 유형 — 「책/차시」 → 문제은행 유형 id 목록. 단계마다 이 순서대로 번갈아 낸다.
 // 유형은 그 단원 문제은행(source-data.js CURRICULUM의 typeIds)에서, 차시 개념과 같은 풀이를 쓰는 것만 골랐다.
 // drill-로 시작하는 id는 문제은행에 맞는 유형이 없는 차시의 공방 전용 유형이다(drill-generators.js).
-// 답 꼴(수 하나 · 수 + 단위 · 쉼표로 쓴 수)과 그림 종류(bookN)는 검사기 drill-audit.mjs가 난이도마다 확인한다.
+// 답 꼴(수 하나 · 수 + 단위 · 쉼표로 쓴 수 · 문제에 나온 이름·자리 가운데 하나)과 그림 종류(bookN)는 검사기 drill-audit.mjs가 난이도마다 확인한다.
 export const DRILL_RECIPES = Object.freeze({
-  // 1권 — 마방진과 가쿠로 · 수 추리 (가쿠로·좋아하는 것 표는 그림·표로 답해 아직 없음)
+  // 1권 — 마방진과 가쿠로 · 수 추리 · 논리 (가쿠로는 칸을 채워 답해 아직 없음). 좋아하는 것 찾기는 같은 풀이의 9권 직업 표도 쓴다
   "book-01/equal-line-sums": ["circle-line-ring-equal-sum"],
   "book-01/number-inference": ["place-value-condition-three", "place-value-condition-four"],
-  // 2권 — 매트릭스와 주고받기 · 양팔저울 · 규칙찾기와 수열 · 약속 (그림은 book02-visuals.js). 모양·색 규칙은 숫자로 답하는 유형이 없어 아직 없음
+  "book-01/preference-logic": ["person-item-logic", "profession-assignment-b9"],
+  // 2권 — 매트릭스와 주고받기 · 양팔저울 · 규칙찾기와 수열 · 약속 (그림은 book02-visuals.js). 모양·색 규칙은 보기 그림 단추로 고른다
   //   2·3·4·5의 배수로 식 바꾸기는 문제은행에 맞는 유형이 없어 공방 전용 유형(drill-generators.js)을 쓴다
   "book-02/number-splitting": ["equal-partition-two", "equal-partition-three", "equal-partition-four"],
   "book-02/give-take-sum-difference": ["equalize-transfer", "total-difference"],
@@ -20,6 +21,7 @@ export const DRILL_RECIPES = Object.freeze({
   "book-02/multiples-3": ["drill-bundle-3"],
   "book-02/multiples-4": ["drill-bundle-4"],
   "book-02/multiples-5": ["drill-bundle-5"],
+  "book-02/dual-shape-color-pattern": ["repeating-symbol-sequence"],
   "book-02/fractions-and-folds": ["equal-part-shaded-fraction", "repeated-fold-cut-count", "fold-punch-doubling"],
   // 3권 — 단위넓이와 분수 · 단위길이와 배수 · 복면산 · 마법카드와 마방진
   //   복면산은 3권 유형의 그림이 문제은행 화면 전용이라 같은 풀이의 8권 유형(난이도 1부터)을 쓴다. 6의 배수 식 바꾸기는 공방 전용 유형(drill-generators.js)
@@ -36,7 +38,7 @@ export const DRILL_RECIPES = Object.freeze({
   "book-03/cryptarithm-linked": ["linked-cryptarithm-b8"],
   "book-03/magic-card-binary": ["colored-cell-number-code", "symbol-value-code"],
   "book-03/magic-square-targets": ["magic-square-three-target", "magic-square-four-target"],
-  // 4권 — 도형 움직이기 · 색종이 접기 · 쌓기나무 · 양팔저울과 비교 · 논리추리 (자리 배치·표 추리는 숫자로 답하는 유형이 없어 아직 없음)
+  // 4권 — 도형 움직이기 · 색종이 접기 · 쌓기나무 · 양팔저울과 비교 · 논리추리 (자리 배치·표 추리는 이름·자리 보기 단추로 고른다)
   //   쌓기나무는 문제은행과 같은 geometry/worksheet 엔진 유형(geometry-worksheet-problem.js)
   //   접기 그림은 fold-visuals.js(문제은행 화면과 같은 그리기)
   "book-04/polyomino-family-count": ["tetromino-family-choice", "tetromino-square-composition"],
@@ -54,6 +56,9 @@ export const DRILL_RECIPES = Object.freeze({
   "book-04/balance-substitution": ["balance-unit-ratio"],
   "book-04/order-logic-source": ["ordinal-line-placement", "measurement-order-chain"],
   "book-04/row-logic-source": ["ordinal-line-placement"],
+  "book-04/cardinal-placement": ["directional-landmark-placement-book4", "directional-seat-placement"],
+  "book-04/circle-logic-source": ["circular-seat-placement"],
+  "book-04/table-logic-source": ["profession-assignment-b9", "person-item-logic"],
   // 5권 — 수 배열표와 달력 · 최단거리와 숫자 카드 · 곱셈 매트릭스 · 삼각수와 사각수 (삼각 계단 쌓기나무는 쌓기나무 엔진 유형)
   "book-05/path-number-grid": ["sequential-path-number-grid", "diagonal-fill-number-grid", "line-cycle-number-table"],
   "book-05/calendar-arithmetic-source": ["calendar-same-weekday-sum", "calendar-month-position"],

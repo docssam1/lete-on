@@ -174,3 +174,10 @@ export function sudokuGridMarkup(visual) {
 export function numberSequencesMarkup(visual) {
   return `<div class="number-sequences">${visual.rows.map((row, index) => `<div><b>(${index + 1})</b>${row.items.map((value) => `<span${value === null ? ' class="blank"' : ""}>${value === null ? "" : value}</span>`).join("")}</div>`).join("")}</div>`;
 }
+
+// 모양·색·개수 반복마디(repeating-symbol-sequence) — 한 묶음 그리기는 연습 공방의 보기 단추도 쓴다
+export const SYMBOL_GLYPHS = Object.freeze({ circle: ["○", "●"], triangle: ["△", "▲"], square: ["□", "■"], diamond: ["◇", "◆"], star: ["☆", "★"] });
+export const symbolGroupMarkup = (item) => `<span class="symbol-pattern-group">${Array.from({ length: item.count }, () => `<i>${SYMBOL_GLYPHS[item.shape][item.filled ? 1 : 0]}</i>`).join("")}</span>`;
+export function symbolPatternSequenceMarkup(visual) {
+  return `<div class="symbol-pattern-work">${visual.items.map(symbolGroupMarkup).join("")}<b>→</b><span class="symbol-pattern-target">?</span></div>`;
+}

@@ -9,7 +9,7 @@ import { DRILL_TYPES } from "./drill-generators.js";
 import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 import { lessonsByUnit } from "./study-map.js";
 import { DRILL_RECIPES } from "./drill-recipes.js";
-import { answerShape, EXTRA_VISUALS, drillGenerator } from "./drill.js";
+import { answerShape, choiceShape, EXTRA_VISUALS, drillGenerator } from "./drill.js";
 
 // 쌓기나무 엔진(GW_GEN)은 브라우저 스크립트다 — 공방 페이지(drill.html)가 싣는 것과 같은 파일을 그대로 읽어 들인다
 for (const f of ["../../geometry/shared/question-bank.js", "../../geometry/worksheet/generators.js"]) {
@@ -40,9 +40,15 @@ for (const [key, types] of Object.entries(DRILL_RECIPES)) {
       let ok = 0, made = 0;
       for (let i = 0; i < TRIES; i++) {
         const p = gen({ max: 30, difficulty }, i); if (!p) continue; made++;
-        const shape = answerShape(p.answer);
+        const shape = answerShape(p.answer) || choiceShape(p);
         if (!shape) continue;
         // 수 카드를 모두 늘어놓는 배치 답(1, 4, 5, 2, 3, 6)은 순서 없이 채점하면 아무 순서나 맞으므로 쓰지 않는다
+        // 보기 단추: 고른 보기가 곧 답이고, 보기가 서로 다르며, 보기에 원탁의 앉은 차례가 그대로 드러나지 않아야 한다
+        if (shape.kind === "choice") {
+          const picked = shape.options[shape.values[0]], order = p.meta?.order;
+          if (picked !== String(p.answer).replace(/<[^>]+>/g, "").trim() || new Set(shape.options).size !== shape.options.length) { fails.push(`${key}: ${id} 보기 ${shape.options.join("/")} · 답 ${p.answer}`); break; }
+          if (Array.isArray(order) && order.length > 2 && shape.options.join() === order.join() && [...order].sort((x, y) => x.localeCompare(y, "ko")).join() !== order.join()) { fails.push(`${key}: ${id} 보기가 앉은 차례 그대로`); break; }
+        }
         if (shape.kind === "list" && shape.values.length >= 5) { fails.push(`${key}: ${id} 배치 답(${shape.values.length}개) — 숫자판으로 채점할 수 없음`); break; }
         if (p.visual && !/^book([1-9]|10)$/.test(p.visual.kind) && !EXTRA_VISUALS[p.visual.kind]) { fails.push(`${key}: ${id} 그림 종류 ${p.visual.kind}`); break; }
         ok++;

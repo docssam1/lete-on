@@ -2,22 +2,22 @@
 // 우리 게임이 아직 없는 차시에 쓴다. 문제는 문제은행 생성기(bookNN-generators.js)가 그 자리에서 만든 실제 유형 문제이고,
 // 그림도 문제은행과 같은 그리기(bookNN-renderers.js)를 쓴다 — 본책·문제은행과 어긋날 수 없다.
 //  · 세 단계: 연습(난이도 1) → 실전(2) → 도전(3). 단계마다 세 문제, 차시에 붙인 유형을 번갈아 낸다(drill-recipes.js).
-//  · 숫자판으로 답을 쓴다. 한 번 틀리면 풀이의 첫 걸음을 귀띔하고, 두 번 틀리면 풀이와 답을 보여 주고 넘어간다.
+//  · 숫자판으로 답을 쓴다(요일·이름·자리처럼 낱말 답은 보기 단추로 고른다). 한 번 틀리면 풀이의 첫 걸음을 귀띔하고, 두 번 틀리면 풀이와 답을 보여 주고 넘어간다.
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
 import { typeById } from "./source-data.js?v=20261024r";
 import { GENERATORS } from "./generators.js?v=20261027a";
 import { DRILL_TYPES } from "./drill-generators.js?v=20261027a";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027k";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027l";
 import { jo } from "./concept-board-kit.js?v=20261026b";
-import * as B2 from "./book02-visuals.js?v=20261027a";
+import * as B2 from "./book02-visuals.js?v=20261027b";
 import * as FOLD from "./fold-visuals.js?v=20261027a";
 import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261027a";
 
-// 2권 그림: 문제은행 화면(app.js visualMarkup)과 같은 감싸는 class로 그린다
 // 유형 → 문제 만들기: 공방 전용(make) · 문제은행 생성기(generator) · 쌓기나무 엔진(worksheetCode, 문제은행 화면과 같은 부르기)
 export const drillGenerator = (type) => type.make
   || GENERATORS[type.generator]
   || (type.worksheetCode ? ({ difficulty }, attempt = 0) => makeGeometryWorksheetProblem(type, difficulty, 0, null, attempt) : null);
+// 2권·접기·쌓기나무 그림: 문제은행 화면(app.js visualMarkup)과 같은 감싸는 class로 그린다
 export const EXTRA_VISUALS = Object.freeze({
   "equal-partition-tree": ["equal-partition-visual", B2.equalPartitionTreeMarkup], "shape-sum-table": ["shape-sum-visual", B2.shapeSumTableMarkup],
   "equalize-bags": ["equalize-visual", B2.equalizeBagsMarkup], "total-difference-bars": ["total-difference-bars-visual", B2.totalDifferenceBarsMarkup],
@@ -25,7 +25,7 @@ export const EXTRA_VISUALS = Object.freeze({
   "number-sequences": ["number-sequences-visual", B2.numberSequencesMarkup], "progressive-number-table": ["progressive-table-visual", B2.progressiveNumberTableMarkup],
   "book2-growth": ["book2-growth-visual", B2.book2GrowthMarkup], "center-number-rule": ["center-number-rule-visual", B2.centerNumberRuleMarkup],
   "number-rule-grid": ["number-rule-grid-visual", B2.numberRuleGridMarkup], "two-digit-compose-rule": ["two-digit-compose-visual", B2.twoDigitComposeRuleMarkup],
-  "sudoku-grid": ["sudoku-grid-visual", B2.sudokuGridMarkup],
+  "sudoku-grid": ["sudoku-grid-visual", B2.sudokuGridMarkup], "symbol-pattern-sequence": ["symbol-pattern-visual", B2.symbolPatternSequenceMarkup],
   "paper-fold": ["paper-fold-visual", FOLD.paperFoldMarkup], "fold-cut-pieces": ["fold-pieces-visual", FOLD.foldCutPiecesMarkup],
   "fold-diagonal-grid": ["fold-diagonal-visual", FOLD.foldDiagonalGridMarkup], "fold-two-diagonal-grid": ["fold-diagonal-visual", FOLD.foldTwoDiagonalGridMarkup],
   "geometry-worksheet": ["geometry-worksheet-visual", geometryWorksheetMarkup]
@@ -63,8 +63,35 @@ export function answerShape(answer) {
   if (/^-?\d+(\s*,\s*-?\d+)+$/.test(a)) return { kind: "list", values: a.split(",").map((x) => Number(x.trim())), unit: "" };
   return null;
 }
+// 낱말 답(이름·과일·직업·자리): 문제에 이미 나온 묶음(사람 · 물건 · 표의 줄과 칸 이름 · 원탁에 앉은 사람 · 자리 이름) 가운데
+// 답이 든 묶음에서 고르게 한다. 원탁의 사람은 앉은 차례(meta.order)라 그대로 늘어놓으면 답이 보이므로 가나다순으로 둔다.
+const seatLabels = (v) => {
+  if (v.subtype !== "directional-seat") return null;
+  const across = v.columns === 2 ? ["왼쪽", "오른쪽"] : ["왼쪽", "가운데", "오른쪽"];
+  return (v.rows === 1 ? [""] : ["윗줄 ", "아랫줄 "]).flatMap((row) => across.map((col) => `${row}${col}`.trim()));
+};
+// 모양 반복마디: 보기는 반복마디의 모양들 + 답의 색을 바꾼 모양(같은 모양을 색으로 가려야 한다). 글은 생성기와 같은 이름이다.
+const SHAPE_NAMES = { circle: "동그라미", triangle: "세모", square: "네모", diamond: "마름모", star: "별" };
+const symbolName = (item) => `${item.filled ? "색칠한" : "색칠하지 않은"} ${SHAPE_NAMES[item.shape]} ${item.count}개`;
+function symbolChoice(p) {
+  const target = p.visual.target, items = [...(p.meta?.pattern || []), { ...target, filled: !target.filled }];
+  const seen = new Map(); for (const item of items) seen.set(symbolName(item), item);
+  const names = [...seen.keys()].sort((x, y) => x.localeCompare(y, "ko")), at = names.indexOf(plain(p.answer));
+  if (at < 0 || names.length < 2) return null;
+  return { kind: "choice", options: names, glyphs: names.map((n) => B2.symbolGroupMarkup(seen.get(n))), values: [at], hint: "반복마디가 몇 묶음마다 되풀이되는지 먼저 찾아 봐요." };
+}
+export function choiceShape(p) {
+  const a = plain(p.answer), v = p.visual || {}, m = p.meta || {};
+  if (v.kind === "symbol-pattern-sequence" && v.target) return symbolChoice(p);
+  if (!a || /\d/.test(a)) return null;
+  const ring = Array.isArray(m.order) && m.order.every((x) => typeof x === "string") ? [...m.order].sort((x, y) => x.localeCompare(y, "ko")) : null;
+  const options = [v.items, v.names, v.places, v.columnLabels, v.rowLabels, m.items, m.names, m.places, seatLabels(v), ring].find((g) => Array.isArray(g) && g.includes(a));
+  if (!options || options.length < 2 || options.length > 8 || new Set(options).size !== options.length) return null;
+  return { kind: "choice", options: [...options], values: [options.indexOf(a)] };
+}
 // 쉼표로 쓴 수는 순서와 상관없이(답이 여러 개), 시각은 순서대로(시 · 분) 맞춘다
 export const sameAnswer = (shape, typed) => {
+  if (shape.kind === "choice") return typed === String(shape.values[0]);
   if (shape.kind === "frac") {   // 크기가 같은 분수도 맞다(3/6 = 1/2)
     const f = typed.match(/^(\d+)\/(\d+)$/);
     return Boolean(f) && Number(f[2]) > 0 && Number(f[1]) * shape.values[1] === Number(f[2]) * shape.values[0];
@@ -95,7 +122,7 @@ async function main() {
     for (let t = 0; t < 200; t++) {
       const p = gen({ max: 30, difficulty: LEVELS[level].difficulty }, t);   // 문제은행과 같은 부르기(조건이 안 맞으면 null — 다시 뽑는다)
       if (!p) continue;
-      const shape = answerShape(p.answer);
+      const shape = answerShape(p.answer) || choiceShape(p);
       if (shape) return { ...p, shape, type };
     }
     throw new Error(`답 꼴이 맞는 문제를 만들지 못했어요: ${typeId}`);
@@ -121,6 +148,7 @@ async function main() {
   // 답 쓰는 곳: 요일은 일~토 단추, 시각은 「시(시간)」 단추로 시와 분을 나누고, 나머지는 숫자판
   function pad(shape) {
     const submit = `<button type="button" class="dr-btn primary" data-dr="answer" ${st.typed ? "" : "disabled"}>답 내기</button>`;
+    if (shape.kind === "choice") return `<div class="dr-pad dr-days dr-choices">${shape.options.map((o, i) => `<button type="button" class="dr-key day${st.typed === String(i) ? " on" : ""}" data-pick="${i}">${shape.glyphs ? `${shape.glyphs[i]}<small>${esc(o)}</small>` : esc(o)}</button>`).join("")}${submit}</div>`;
     if (shape.kind === "weekday") return `<div class="dr-pad dr-days">${DAYS.map((d, i) => `<button type="button" class="dr-key day${st.typed === String(i) ? " on" : ""}" data-day="${i}">${d}요일</button>`).join("")}${submit}</div>`;
     const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<button type="button" class="dr-key" data-key="${n}">${n}</button>`).join("");
     if (shape.kind === "pair") {
@@ -169,7 +197,9 @@ async function main() {
     st.tries += 1; st.typed = "";
     if (st.tries === 1) {
       // 첫 걸음에 답이 그대로 나오면 그 수를 □로 가린다(거꾸로 풀기는 첫 문장이 곧 답인 때가 있다)
-      const step = p.shape.values.reduce((t, v) => t.replace(new RegExp(`(?<![\\d/])${v}(?![\\d/])`, "g"), "□"), firstStep(p.solution));
+      const step = p.shape.hint || (p.shape.kind === "choice"
+        ? firstStep(p.solution).replaceAll(p.shape.options[p.shape.values[0]], "□")
+        : p.shape.values.reduce((t, v) => t.replace(new RegExp(`(?<![\\d/])${v}(?![\\d/])`, "g"), "□"), firstStep(p.solution)));
       st.note = `다시 생각해 봐요. ${step ? `<b>첫 걸음</b> ${esc(step)}` : ""}`;
       render(); say("다시 생각해 봐요. 풀이의 첫 걸음을 보고 한 번 더 해 봐요.", "think"); return;
     }
@@ -185,6 +215,7 @@ async function main() {
     const b = event.target.closest("button"); if (!b || b.disabled) return;
     if (b.dataset.level) { st.level = Number(b.dataset.level); st.index = 0; st.finale = false; return fresh(); }
     if (b.dataset.day) { st.typed = b.dataset.day; return render(); }
+    if (b.dataset.pick) { st.typed = b.dataset.pick; return render(); }
     if (b.dataset.key) { const k = b.dataset.key; st.typed = k === "del" ? st.typed.slice(0, -1) : st.typed.length < 12 ? st.typed + k : st.typed; return render(); }
     const act = b.dataset.dr;
     if (act === "answer") answer(); else if (act === "next") next();
