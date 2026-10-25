@@ -1,3 +1,4 @@
+import {revisedTextbook,revisedTextbookPaper,revisedTextbookUnits} from './revised-textbook.js?v=20261025';
 import {photoFigureHtml} from './photo-figure.js';
 // docssam 과학 탐구 랩 v2 — 단원 = 5E 한 단계 한 화면 + 준비물(QR) + 탐구보고서 + 교재 인쇄.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
@@ -550,7 +551,7 @@ async function pageCheck(only) {
     } });
 }
 async function pageStart(u, L) {
-  const bookMod = BOOKS[u] ? await BOOKS[u]().catch(() => null) : null, src = BOOKX.source || [];
+  const bookMod = BOOKS[u] ? await BOOKS[u]().then(m=>revisedTextbook(u,m)).catch(() => null) : null, src = BOOKX.source || [];
   const sets = [...new Set(src.map((x) => x.sourceRef.set))];
   if (!bookMod && (BANK[u]?.bankOnly || READY[u]?.bankOnly) && src.length) {
     const links=[['sub/E1','소단원별 문제'],['print/student','학생 문제지'],['print/teacher','교사 해설'],['print/answers','정답·해설만'],['print/quick','빠른 정답표'],...sets.map(n=>['exam/'+n,groupLabel(BANK[u],n)])];
@@ -634,10 +635,10 @@ async function pageLabBook(u, mod, mode, pageNo = 1, seg = 'lab-book') {
   const my = ++bookToken, stale = () => my !== bookToken || !location.hash.includes(`/${u}/${seg}/${mode}`);
   const BOOK = seg === 'records-book' ? RECORDS_BOOKS[u] : BOOKS[u];
   if (!BOOK) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
-  const bookMod = await BOOK().catch(() => null);
+  const bookMod = await BOOK().then(m=>seg==='lab-book'?revisedTextbook(u,m):m).catch(() => null);
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
   const teacherEd = mode === 'teacher';
-  const [{ chapter, art, media }, { renderChapter }, { mountBookView }] = await Promise.all([bookMod, import('./book.js'), import('./book-view.js')]);
+  const [{ chapter, art, media }, { renderChapter }, { mountBookView }] = await Promise.all([bookMod, import('./book.js?terms=20261025'), import('./book-view.js')]);
   if (stale()) return;
   const L = seg === 'records-book' && mod.lesson?.explore?.records ? { ...mod.lesson, engage: { ...mod.lesson.engage, scene: null }, explore: { ...mod.lesson.explore, lab: mod.lesson.explore.records } } : mod.lesson;
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((i) => [i.id, i]));
@@ -770,6 +771,7 @@ async function route() {
   if (!u) return pageHome($app, store, teacher);
   if (u === 'check' || a === 'check') return pageCheck(u === 'check' ? null : u);   // 선생님 확인(v2/check.js)
   if (u === 'bank') return pageBank(a);
+  if(a==='workbook'&&revisedTextbookUnits.has(u)){const paper=await revisedTextbookPaper(u);if(!isCurrent())return;$app.innerHTML=paper.workbookPaper({mode:b||'student'});releasePage=paper.wireWorkbookPaper($app);return;}
   const load = UNITS[u] || (BANK[u] ? bankLoader(u) : a === 'lab-book' && BOOKS[u] ? async()=>({items:[]}) : null); if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
   const mod = await load(); if (!isCurrent()) return;
   const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar, source: mod.source || [], items, guidance:mod.unit?.sources?.guidance }; MISC = mod.misc || null;

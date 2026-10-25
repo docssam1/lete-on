@@ -863,16 +863,16 @@ window.NM_MAGAZINE = {
     "zh": "图形"
   },
   "title": {
-    "ko": "깨진 기와에서 원을 되찾는 법",
-    "en": "Finding the Circle in a Broken Roof Tile",
-    "zh": "从破瓦片里找回圆"
+    "ko": "신라의 미소 찾기",
+    "en": "Finding the Smile of Silla",
+    "zh": "寻找新罗的微笑"
   },
   "lede": {
-    "ko": "둥근 기와의 일부만 남았다면 원래 원을 어떻게 찾을까요? 남은 테두리가 정확한 원의 일부라고 가정해요.",
-    "en": "If only part of a round tile remains, how can we recover its circle? Assume the surviving rim is part of an exact circle.",
-    "zh": "如果圆瓦只剩一块，怎样找回原来的圆？假设剩余边缘是一个精确圆的一部分。"
+    "ko": "깨진 기와에 미소가 남아 있어요. 국립경주박물관의 얼굴무늬 수막새예요. 둥근 테두리를 단서로 원의 모습을 찾아볼까요?",
+    "en": "A smile survives on this broken roof tile, the Face-patterned Roof-end Tile at Gyeongju National Museum. Could its curved rim help us find a circle?",
+    "zh": "残瓦上还留着微笑。这是国立庆州博物馆收藏的人面纹瓦当。能从弧形边缘找到圆的线索吗？"
   },
-  "art": head("<circle cx=\"160\" cy=\"80\" r=\"60\" fill=\"none\" stroke=\""+C.grey+"\" stroke-dasharray=\"5 4\"/>"+"<path d=\"M 100 80 A 60 60 0 0 1 220 80 L 192 80 A 32 32 0 0 0 128 80 Z\" fill=\""+C.goldbright+"\" stroke=\""+C.brown+"\" stroke-width=\"2\"/>"+dot(100,80,5,C.red)+dot(160,20,5,C.red)+dot(220,80,5,C.red)+T(160,160,14,C.ink,"3")),
+  "art": head(magazineAssetImage(78,0,164,160,'silla-smile')),
   "body": [
     {
       "h": {
@@ -881,9 +881,9 @@ window.NM_MAGAZINE = {
         "zh": "在边缘上点三个点"
       },
       "p": {
-        "ko": "남은 둥근 테두리에서 <b>서로 다른 세 점</b>을 골라요. 세 점이 한 직선 위에 있지 않으면 세 점을 지나는 원은 하나뿐입니다. 원의 일부라는 가정 덕분에 이 성질을 쓸 수 있어요.",
-        "en": "Choose <b>three distinct points</b> on the remaining curved rim. If they are not collinear, exactly one circle passes through them. The assumption that this rim is circular makes that fact useful.",
-        "zh": "在剩余弧边上取<b>互不相同的三点</b>。只要三点不共线，经过它们的圆就唯一。圆弧假设使我们能使用这条性质。"
+        "ko": "사진의 둥근 테두리를 살펴보세요. 아래는 원리를 설명하는 모형이에요. 둥근 테두리에서 <b>서로 다른 세 점</b>을 골라요. 세 점이 한 직선 위에 있지 않으면 세 점을 지나는 원은 하나뿐입니다. 원의 일부라는 가정 덕분에 이 성질을 쓸 수 있어요.",
+        "en": "Look at the curved rim in the photo. The diagrams below explain a geometric model. Choose <b>three distinct points</b> on its curved rim. If they are not collinear, exactly one circle passes through them. The assumption that this rim is circular makes that fact useful.",
+        "zh": "看看照片中的弧边。下图是说明原理的几何模型，在模型弧边上取<b>互不相同的三点</b>。只要三点不共线，经过它们的圆就唯一。圆弧假设使我们能使用这条性质。"
       },
       "art": fig(tileScene(0))
     },
@@ -920,9 +920,9 @@ window.NM_MAGAZINE = {
     "zh": "不去臆造缺失的部分，只凭残存部分给出的信息把它找回来——这就是数学的修复。"
   },
   "source": {
-    "ko": "원의 일부를 복원하는 창작 기하 모형입니다. 특정 수막새의 실제 복원 기록이나 실측값을 재현한 것은 아닙니다.",
-    "en": "Original geometric model of a circular fragment, not a reconstruction record or measured drawing of a specific artefact.",
-    "zh": "这是还原圆形残片的原创几何模型，不是某件文物的实际修复记录或测量图。"
+    "ko": "사진: 국립경주박물관, 얼굴무늬 수막새(경주1564), 공공누리 제1유형(출처표시). 사진은 원본 그대로이며 아래 작도는 원리 설명용 모형입니다.",
+    "en": "Photo: Gyeongju National Museum, Face-patterned Roof-end Tile (Gyeongju 1564), KOGL Type 1 attribution. Unaltered photo; diagrams explain a geometric model.",
+    "zh": "照片：国立庆州博物馆，人面纹瓦当（庆州1564），KOGL第1类（标示出处）。照片保持原样，下图仅说明几何模型。"
   },
   "fit": {
     "units": [
@@ -935,7 +935,7 @@ window.NM_MAGAZINE = {
   "age": [
     "senior"
   ],
-  "references": [
+  "references": [{"label":"국립경주박물관 · 얼굴무늬 수막새 · 공공누리1","url":"https://gyeongju.museum.go.kr/kor/html/sub04/0402.html?mng_no=395&mode=V"},
     {
       "label": "Wolfram · Circumcircle",
       "url": "https://mathworld.wolfram.com/Circumcircle.html"
@@ -951,15 +951,16 @@ const section=(h,p,art)=>({h,p,art});
 const strip=(x,y,w,h,n,k,colors)=>Array.from({length:n},(_,i)=>box(x+i*w/n,y,w/n,h,i<k?(colors?.[i]||C.ok):C.mist,C.sub)).join('');
 const cup=(x,y,amount)=>'<path d="M '+x+' '+y+' l 8 38 h 26 l 8 -38 Z" fill="'+C.cream+'" stroke="'+C.sub+'" stroke-width="2"/>'+'<path d="M '+(x+4)+' '+(y+15)+' l 5 21 h 24 l 5 -21 Z" fill="'+C.ok+'"/>'+T(x+21,y+61,16,C.ink,amount);
 const bun=(x,y)=>'<path d="M '+x+' '+(y+30)+' V '+(y+10)+' C '+(x-5)+' '+(y-3)+' '+(x+27)+' '+(y-3)+' '+(x+22)+' '+(y+10)+' V '+(y+30)+' Z" fill="'+C.goldbright+'" stroke="'+C.brown+'" stroke-width="2"/>'+line(x+6,y+8,x+10,y+4,C.brown,1.5)+line(x+12,y+10,x+16,y+6,C.brown,1.5);
-const turtle=(x,y)=>'<ellipse cx="'+x+'" cy="'+y+'" rx="18" ry="12" fill="'+C.ok+'" stroke="'+C.ink+'" stroke-width="2"/>'+dot(x+22,y-2,7,C.ok)+line(x-10,y+10,x-13,y+16,C.ink,3)+line(x+10,y+10,x+13,y+16,C.ink,3);
-/* Reuse the approved character asset in SVG diagrams, including subpath deployments. */
-const characterImage=(x,y,w,h)=>{
-  let base='/number_magic/assets/characters/';
+/* Approved project assets; resolve relative to this script for app, worksheet and subpath previews. */
+function magazineAssetImage(x,y,w,h,key){
+  const files={'kid-boy':'characters/kid-boy.png','zeno-tortoise':'characters/zeno-tortoise.png','silla-smile':'magazine/silla-smile.jpg'};
+  if(!files[key])throw new Error('Unknown magazine image');
+  let base='/number_magic/assets/';
   if(typeof document!=='undefined'){
     const script=document.querySelector('script[src*="data/magazine.js"]');
-    if(script)base=new URL('../assets/characters/',script.src).href;
+    if(script)base=new URL('../assets/',script.src).href;
   }
-  return '<image data-nm-character="kid-boy" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" href="'+safeText(base+'kid-boy.png')+'" preserveAspectRatio="xMidYMax meet"/>';
+  return '<image data-nm-asset="'+key+'"'+(key==='kid-boy'?' data-nm-character="kid-boy"':'')+' x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" href="'+safeText(base+files[key])+'" preserveAspectRatio="xMidYMax meet"/>';
 };
 
 /* Teaching models: each mark carries a quantity, a unit, or a position. */
@@ -1045,7 +1046,7 @@ const articles=[
  kicker:l3('제논의 역설','Zeno’s paradox','芝诺悖论'),
  title:l3('거북이를 정말 따라잡을 수 없을까?','Can Achilles ever catch the tortoise?','阿基里斯能追上乌龟吗？'),
  lede:l3('빠른 아킬레우스와 느린 거북이가 달려요. 거북이에게 먼저 출발할 자리를 주면, 빠른 쪽도 영원히 못 따라잡을까요?','Fast Achilles races a slow tortoise. If the tortoise starts ahead, could even the faster runner fail to catch it forever?','跑得快的阿基里斯追赶慢乌龟。让乌龟先站在前面，快的一方就永远追不上了吗？'),
- art:head(line(24,125,296,125,C.ink,3)+characterImage(4,43,62,82)+turtle(155,107)+arrow(67,96,127,96,C.gold)+arrow(184,96,214,96,C.ok)+T(43,35,18,C.ink,'2 m/s')+T(157,67,18,C.ink,'1 m/s')+T(35,156,17,C.sub,'0')+T(155,156,17,C.sub,'1 m')+T(275,156,17,C.sub,'2 m')),
+ art:head(line(24,125,296,125,C.ink,3)+magazineAssetImage(4,43,62,82,'kid-boy')+magazineAssetImage(121.5284,70.5725,65.9440,65.9440,'zeno-tortoise')+arrow(67,96,117,96,C.gold)+arrow(191,96,216,96,C.ok)+T(43,35,18,C.ink,'2 m/s')+T(157,67,18,C.ink,'1 m/s')+T(35,156,17,C.sub,'0')+T(155,156,17,C.sub,'1 m')+T(275,156,17,C.sub,'2 m')),
  spark:l3('“앞선 자리까지 가도 거북이는 또 앞으로 가니, 영원히 못 잡아.” 이 말에서 ‘앞선 순간들’과 ‘만나는 순간’이 뒤섞이지 않았을까요?','“Each time I reach its old position, it has moved again, so I never catch it.” Does this confuse earlier moments with the meeting itself?','“每次到达乌龟原来的位置，它又前进了，所以永远追不上。”这是否把早先的时刻与相遇时刻混在了一起？'),
  body:[
  section(l3('아직 만나기 전의 순간들','A sequence of earlier moments','一系列相遇之前的时刻'),l3('거북이는 1m 앞에서 초당 1m, 아킬레우스는 초당 2m로 가는 모형이에요. A는 아킬레우스, T는 거북이입니다. <b>같은 시각의 두 위치</b>를 표에서 비교해 보세요. ‘거북이의 옛 위치에 도착했다’와 ‘지금 거북이를 만났다’는 다른 말이에요.','Our model gives a 1 m head start and speeds of 2 m/s for Achilles (A) and 1 m/s for the tortoise (T). Compare <b>both positions at the same time</b> in the table. Reaching a past position is different from meeting the tortoise now.','模型中乌龟领先1米，A（阿基里斯）每秒跑2米，T（乌龟）每秒走1米。在表中比较<b>同一时刻的两个位置</b>。到达乌龟过去的位置，与此刻追上它，并不是一回事。'),fig(chaseTable())),
