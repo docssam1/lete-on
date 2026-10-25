@@ -207,6 +207,17 @@
 .tx-tri-layers small { color: var(--tone); font-size: 12px; font-weight: 900; }
 .tx-poly { display: grid; justify-items: center; max-width: 100%; }
 .tx-poly svg { max-width: 100%; height: auto; }
+.tx-eqs { display: grid; justify-items: center; gap: 6px; }
+.tx-eqs p { margin: 0; padding: 6px 12px; border: 2px solid #f0a500; border-radius: 9px; background: #fff3c4; color: #222; font-size: 16px; font-weight: 900; }
+.tx-eqs p.on { border-color: var(--tone); box-shadow: 0 0 0 2px var(--tone) inset; }
+.tx-eqs b { color: var(--tone); font-size: 15px; font-weight: 900; }
+.tx-cards { display: grid; justify-items: center; gap: 8px; }
+.tx-cards div { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+.tx-cards span { display: flex; align-items: center; justify-content: center; width: 34px; height: 40px; border: 2px solid #f0a500; border-radius: 7px; background: #fff3c4; color: #222; font-size: 17px; font-weight: 900; }
+.tx-cards span.used { border-color: #c9c2b4; background: #eee9df; color: #9a9384; text-decoration: line-through; }
+.tx-cards span.on { border-color: var(--tone); background: var(--tone); color: #fff; }
+.tx-cards span.left { border: 2px dashed #8e5bd8; background: #fff; color: #5b2fa8; }
+.tx-cards p { margin: 0; color: #222; font-size: 15px; font-weight: 900; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

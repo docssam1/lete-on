@@ -1679,7 +1679,91 @@ const BALANCE4_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET });
+// ───────────────────────── 4권 크기 비교 · 크기 차이 ─────────────────────────
+// 정해진 값이 없어도 하나(기준)에 적당한 수를 넣으면 나머지가 차례로 정해진다. 순서와 차이는 어떤 수를 넣어도 같다.
+// rels = [[X, Y, d]] — X = Y + d. 그림: 관계식 목록(kind "eqs") → 기준 수를 넣은 수직선(kind "dist-line", min·value).
+const relLine = ([x, y, d]) => `${x} = ${y} ${d > 0 ? "+" : "−"} ${Math.abs(d)}`;
+function solveRels(rels, base, start) {
+  const val = { [base]: start }, order = [];
+  for (let guard = 0; order.length < rels.length && guard < 20; guard++) for (const [i, [x, y, d]] of rels.entries()) {
+    if (order.some((o) => o.i === i)) continue;
+    if (val[y] !== undefined && val[x] === undefined) { val[x] = val[y] + d; order.push({ i, find: x }); }
+    else if (val[x] !== undefined && val[y] === undefined) { val[y] = val[x] - d; order.push({ i, find: y }); }
+    else if (val[x] !== undefined && val[y] !== undefined) order.push({ i, find: null });
+  }
+  return { val, order };
+}
+// clue(rel) = 문장(조건으로 푸는 문제). ask: { kind: "asc" | "desc" | "max" | "min" | "diff", pair, word }
+function relationsExample({ id, title, rels, base, start, ask, problem, clue = null, unit = "" }) {
+  const { val, order } = solveRels(rels, base, start), names = Object.keys(val);
+  if (new Set(Object.values(val)).size !== names.length) throw new Error(`${id}: 값이 겹침`);
+  const lines = rels.map((r) => (clue ? clue(r) : relLine(r)));
+  const sorted = [...names].sort((a, b) => val[a] - val[b]);
+  const vals = Object.values(val), lo = Math.min(...vals), hi = Math.max(...vals);
+  const line = (known, tone, mark = []) => ({ kind: "dist-line", min: lo - 1, points: sorted.filter((n) => known.includes(n)).map((n) => ({ label: n, at: val[n], value: val[n] })), arcs: [], mark, tone });
+  const steps = [{ text: `정해진 값이 없으니 ${base}에 적당한 수 ${josa(start, "을")} 넣어 봐요.${unit === "m" ? " 앞에 있을수록 큰 수로 생각해요." : ""}`, figure: line([base], "doing") }];
+  const known = [base];
+  for (const { i, find } of order) {
+    if (!find) continue;
+    const [x, y, d] = rels[i];
+    known.push(find);
+    steps.push({ text: find === x ? `${lines[i]} → ${x} = ${val[y]} ${d > 0 ? "+" : "−"} ${Math.abs(d)} = ${val[x]}.` : `${lines[i]} → ${y} = ${val[x]} ${d > 0 ? "−" : "+"} ${Math.abs(d)} = ${val[y]}.`, figure: { ...line([...known], "doing"), mark: [find] } });
+  }
+  let answer, value;
+  if (ask.kind === "diff") {
+    const [p, q] = ask.pair, [big, small] = val[p] > val[q] ? [p, q] : [q, p], d = val[big] - val[small];
+    steps.push({ text: `${josa(big, "은")} ${small}보다 ${val[big]} − ${val[small]} = ${d}${unit} ${MORE[unit]?.[0] || "커요"}. 다른 수를 넣어도 차는 같아요.`, figure: line(names, "check", [p, q]) });
+    answer = `${ask.word || "차"}는 ${unit ? `${d}${unit}예요` : josa(d, "이에요")}.`; value = { kind: "diff", d, pair: ask.pair };
+  } else if (ask.kind === "max" || ask.kind === "min") {
+    const who = ask.kind === "max" ? sorted.at(-1) : sorted[0];
+    steps.push({ text: `수직선에서 ${ask.kind === "max" ? "가장 오른쪽" : "가장 왼쪽"}이 ${josa(ask.word, "이에요")}.`, figure: line(names, "check", [who]) });
+    answer = `${josa(ask.word, "은")} ${josa(who, "이에요")}.`; value = { kind: ask.kind, who };
+  } else {
+    const seq = ask.kind === "asc" ? sorted : [...sorted].reverse();
+    steps.push({ text: `수직선에서 ${ask.kind === "asc" ? "왼쪽부터 작은" : "오른쪽부터 큰"} 순서로 읽어요.`, figure: line(names, "check") });
+    answer = `${seq.join(ask.kind === "asc" ? " < " : " > ")}예요.`; value = { kind: ask.kind, seq };
+  }
+  return { id, title, problem, figure: { kind: "eqs", lines, tone: "given" }, steps, answer, value: { ...value, rels, val } };
+}
+// 1부터 n까지 카드를 한 번씩: 결과 칸 수(sums)는 이미 썼고, 남은 카드로 □ + □ 식을 다 만들면 하나가 남는다
+function unusedCardExample({ id, title, n, sums }) {
+  const rest = Array.from({ length: n }, (_, i) => i + 1).filter((v) => !sums.includes(v));
+  const pairs = sums.map((s) => rest.flatMap((a) => rest.filter((b) => b > a && a + b === s).map((b) => [a, b])));
+  const ways = []; const pick = (i, used, chosen) => { if (i === sums.length) { ways.push(chosen); return; } for (const [a, b] of pairs[i]) if (!used.has(a) && !used.has(b)) pick(i + 1, new Set([...used, a, b]), [...chosen, [a, b]]); };
+  pick(0, new Set(), []);
+  const lefts = new Set(ways.map((w) => rest.filter((v) => !w.flat().includes(v)).join()));
+  if (lefts.size !== 1) throw new Error(`${id}: 남는 수가 하나로 정해지지 않음`);
+  const way = ways[0], left = rest.filter((v) => !way.flat().includes(v));
+  const eqs = sums.map((s) => `□ + □ = ${s}`);
+  const steps = [
+    { text: `${sums.join(", ")}은 벌써 썼어요. 남은 카드는 ${rest.join(", ")}.`.replace(`${sums.at(-1)}은`, josa(sums.at(-1), "은")), figure: { kind: "num-cards", n, used: sums, eqs, tone: "doing" } },
+    { text: `합이 되는 짝을 모두 찾아요. ${sums.map((s, i) => `${josa(s, "은")} ${pairs[i].map(([a, b]) => `${a} + ${b}`).join(" 또는 ")}`).join(", ")}.`, figure: { kind: "num-cards", n, used: sums, eqs, tone: "doing" } },
+    { text: `같은 카드를 두 번 쓰지 않게 고르면 ${way.map(([a, b], i) => `${a} + ${b} = ${sums[i]}`).join(", ")}.`, figure: { kind: "num-cards", n, used: sums, pick: way.flat(), eqs: way.map(([a, b], i) => `${a} + ${b} = ${sums[i]}`), tone: "doing" } },
+    { text: `쓰지 못하고 남는 카드는 ${left.join(", ")}.`, figure: { kind: "num-cards", n, used: sums, pick: way.flat(), left, eqs: way.map(([a, b], i) => `${a} + ${b} = ${sums[i]}`), tone: "check" } }
+  ];
+  return { id, title, problem: `1부터 ${n}까지의 수 카드를 한 번씩만 써서 ${eqs.join(", ")}를 완성해요. ${sums.join(", ")}은 이미 썼어요. 쓸 수 없는 수는 무엇일까요?`.replace(`${eqs.at(-1)}를`, `${eqs.at(-1)}${josa(sums.at(-1), "을").slice(-1)}`).replace(`${sums.join(", ")}은 이미`, `${josa(sums.join(", "), "은")} 이미`), figure: { kind: "num-cards", n, used: sums, eqs, tone: "given" }, steps, answer: `${josa(left.join(", "), "이에요")}.`, value: { kind: "cards", n, sums, left } };
+}
+const MORE = { kg: ["무거워요", "가벼워요"], 살: ["많아요", "적어요"], m: ["앞에 있어요", "뒤에 있어요"] };
+const clueOf = (unit) => ([x, y, d]) => `${josa(x, "은")} ${y}보다 ${Math.abs(d)}${unit} ${MORE[unit][d > 0 ? 0 : 1]}.`;
+const RELATION_SET = {
+  id: "relations",
+  types: {
+    "사용하지 않는 숫자카드": () => [unusedCardExample({ id: "card-unused-1", title: "예제 1", n: 7, sums: [6, 7] })],
+    "도형의 크기 비교": () => [
+      relationsExample({ id: "rel-shape-1", title: "예제 1", rels: [["□", "○", 4], ["△", "○", -3]], base: "○", start: 10, ask: { kind: "asc" }, problem: "□ = ○ + 4, △ = ○ − 3이에요. 작은 것부터 순서대로 써요." }),
+      relationsExample({ id: "rel-shape-2", title: "예제 2", rels: [["○", "◇", 5], ["△", "□", 2], ["○", "□", -1]], base: "□", start: 10, ask: { kind: "asc" }, problem: "○ = ◇ + 5, △ = □ + 2, ○ = □ − 1이에요. 작은 것부터 순서대로 써요." })
+    ],
+    "식으로 수의 크기 순서 정하기": () => [relationsExample({ id: "rel-abc-1", title: "예제 1", rels: [["A", "B", -4], ["C", "B", 7]], base: "B", start: 10, ask: { kind: "desc" }, problem: "어떤 수 A, B, C가 A = B − 4, C = B + 7이에요. 큰 수부터 순서대로 써요." })],
+    "식으로 두 수의 차이 구하기": () => [relationsExample({ id: "rel-diff-1", title: "예제 1", rels: [["A", "B", -6], ["C", "D", 3], ["B", "C", -2]], base: "C", start: 20, ask: { kind: "diff", pair: ["A", "C"], word: "A와 C의 차" }, problem: "어떤 수 A, B, C, D가 A = B − 6, C = D + 3, B = C − 2예요. A와 C의 차는 얼마일까요?" })],
+    "도형의 크기 차이": () => [relationsExample({ id: "rel-sdiff-1", title: "예제 1", rels: [["○", "◇", 6], ["△", "□", 4], ["○", "□", -3]], base: "□", start: 20, ask: { kind: "diff", pair: ["○", "△"], word: "○와 △의 차" }, problem: "○ = ◇ + 6, △ = □ + 4, ○ = □ − 3이에요. ○와 △의 차를 구해요." })],
+    "조건으로 차이와 순서 찾기": () => [
+      relationsExample({ id: "rel-clue-1", title: "예제 1", rels: [["A", "B", 6], ["C", "A", -3], ["D", "B", 8]], base: "B", start: 20, unit: "kg", clue: clueOf("kg"), ask: { kind: "diff", pair: ["C", "D"], word: "C와 D의 무게 차" }, problem: "상자 A, B, C, D의 무게를 비교했어요. A는 B보다 6kg 무겁고, C는 A보다 3kg 가볍고, D는 B보다 8kg 무거워요. C와 D는 몇 kg 차이 날까요?" }),
+      relationsExample({ id: "rel-clue-2", title: "예제 2", rels: [["민지", "준호", 12], ["소라", "민지", -20], ["태우", "소라", 5]], base: "준호", start: 50, unit: "m", clue: clueOf("m"), ask: { kind: "min", word: "제일 뒤에 있는 사람" }, problem: "한 줄로 서 있어요. 민지는 준호보다 12m 앞에, 소라는 민지보다 20m 뒤에, 태우는 소라보다 5m 앞에 있어요. 제일 뒤에 있는 사람은 누구일까요?" })
+    ]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

@@ -390,8 +390,10 @@ function distLineFigure(f) {
   // 거리는 꺾쇠 괄호로: 위쪽 거리는 줄 위로, 아래쪽 거리는 점 이름 밑으로, 하나마다 한 층씩 쌓는다.
   const color = TONE[f.tone || "given"], W = 340, x0 = 30, x1 = W - 30, L = 26;
   const overs = f.arcs.filter((a) => a.side === "over"), unders = f.arcs.filter((a) => a.side !== "over");
-  const axis = 16 + overs.length * L + 8, nameY = axis + 16, H = nameY + 14 + unders.length * L + 8;
-  const max = Math.max(...f.points.map((p) => p.at)), X = (at) => x0 + ((x1 - x0) * at) / max;
+  // min이 있으면 그 수부터 그린다(크기 비교에서 기준 수를 넣은 줄). 점에 value가 있으면 이름 밑에 작게
+  const valued = f.points.some((p) => p.value !== undefined);
+  const axis = 16 + overs.length * L + 8, nameY = axis + 16, H = nameY + 14 + (valued ? 14 : 0) + unders.length * L + 8;
+  const min = f.min ?? 0, max = Math.max(...f.points.map((p) => p.at)), X = (at) => x0 + ((x1 - x0) * (at - min)) / (max - min || 1);
   const pos = Object.fromEntries(f.points.map((p) => [p.label, X(p.at)]));
   const mark = new Set(f.mark || []);
   let body = `<line x1="${x0 - 12}" y1="${axis}" x2="${x1 + 12}" y2="${axis}" stroke="#566274" stroke-width="2.5"/>`;
@@ -406,7 +408,7 @@ function distLineFigure(f) {
   const byLen = (a, b) => Math.abs(pos[a.to] - pos[a.from]) - Math.abs(pos[b.to] - pos[b.from]);
   [...overs].sort(byLen).forEach((a, i) => bracket(a, i, true));
   [...unders].sort(byLen).forEach((a, i) => bracket(a, i, false));
-  for (const p of f.points) body += `<circle cx="${pos[p.label]}" cy="${axis}" r="5" fill="#222"/>${text(pos[p.label], nameY, p.label, { size: 13, weight: 900 })}`;
+  for (const p of f.points) body += `<circle cx="${pos[p.label]}" cy="${axis}" r="5" fill="${mark.has(p.label) ? color : "#222"}"/>${text(pos[p.label], nameY, p.label, { size: 13, weight: 900, fill: mark.has(p.label) ? color : "#222" })}${p.value !== undefined ? text(pos[p.label], nameY + 15, p.value, { size: 11, weight: 800, fill: "#566274" }) : ""}`;
   return `<div class="tx-dist">${svg(W, H, body, f.arcs.map((a) => `${a.from}~${a.to} ${a.label}`).join(", "))}</div>`;
 }
 
@@ -618,8 +620,21 @@ function polyFigure(f) {
   return `<div class="tx-poly">${svg(W, H, body, f.label || "도형의 둘레 그림")}</div>`;
 }
 
+// eqs: 관계식이나 조건 문장을 한 줄씩(크기 비교)
+function eqsFigure(f) {
+  const color = TONE[f.tone || "given"];
+  return `<div class="tx-eqs" style="--tone:${color}">${f.lines.map((l, i) => `<p class="${(f.on || []).includes(i) ? "on" : ""}">${esc(l)}</p>`).join("")}${f.note ? `<b>${esc(f.note)}</b>` : ""}</div>`;
+}
+// num-cards: 1부터 n까지 카드. used = 이미 쓴 수, pick = 고른 짝(안내 색), left = 남는 수(보라)
+function numCardsFigure(f) {
+  const color = TONE[f.tone || "given"], used = new Set(f.used || []), pick = new Set(f.pick || []), left = new Set(f.left || []);
+  return `<div class="tx-cards" style="--tone:${color}"><div>${Array.from({ length: f.n }, (_, i) => i + 1).map((v) => `<span class="${used.has(v) ? "used" : pick.has(v) ? "on" : left.has(v) ? "left" : ""}">${v}</span>`).join("")}</div>${(f.eqs || []).map((e) => `<p>${esc(e)}</p>`).join("")}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "eqs") return eqsFigure(figure);
+  if (figure.kind === "num-cards") return numCardsFigure(figure);
   if (figure.kind === "poly") return polyFigure(figure);
   if (figure.kind === "dots") return dotsFigure(figure);
   if (figure.kind === "seq") return seqFigure(figure);
