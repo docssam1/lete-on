@@ -2,7 +2,7 @@
 // 판서의 수와 그림은 골든벨 3권 문항(온칸·반칸 도형들, 6×20+6·6×28+6+6…, 원 3·4·6·8·9·12조각, 모눈 2×2~5×5 등)과
 // 겹치지 않게 골랐다. 겹치면 공개 판서가 비공개 정답을 보여 주게 된다.
 
-import { jo } from "./concept-board-kit.js?v=20261025c";
+import { jo } from "./concept-board-kit.js?v=20261025d";
 
 const KO = { 1: "한", 2: "두", 3: "세", 4: "네", 5: "다섯", 6: "여섯", 7: "일곱", 8: "여덟", 9: "아홉", 10: "열", 11: "열한", 12: "열두" };
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
@@ -11,6 +11,28 @@ const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });
 const polyArea = (pts) => Math.abs(pts.reduce((a, [x1, y1], i) => { const [x2, y2] = pts[(i + 1) % pts.length]; return a + x1 * y2 - x2 * y1; }, 0)) / 2;
 const sectorPath = (cx, cy, r, a0, a1) => { const p = (a) => [cx + r * Math.sin(a * Math.PI / 180), cy - r * Math.cos(a * Math.PI / 180)];
   const [x0, y0] = p(a0), [x1, y1] = p(a1); return `M ${cx} ${cy} L ${x0.toFixed(1)} ${y0.toFixed(1)} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z`; };
+
+// 세로셈 복면산 그림: rows는 더하는 수들(왼쪽→오른쪽 글자 배열), sum은 결과. 오른쪽 끝을 맞춘다.
+const SHAPE_OF = { "□": "square", "△": "triangle", "◇": "diamond", "○": "circle", "☆": "star" };
+function crypt(right, top, rows, sum, cell = 84) {
+  const y = (i) => top + i * cell, x = (k) => right - (k + 0.5) * cell;        // k = 오른쪽에서 몇째 자리(0 = 일의 자리)
+  const glyph = (ch, k, i, color = "ink") => SHAPE_OF[ch] ? { kind: "shape", type: SHAPE_OF[ch], cx: x(k), cy: y(i) + cell / 2, r: Math.round(cell * 0.4), color, width: 3 }
+    : T(x(k), y(i) + cell / 2 + cell * 0.22, ch, color, Math.round(cell * 0.62), "center");
+  const width = Math.max(...rows.map((r) => r.length), sum.length);
+  const items = [];
+  rows.forEach((r, i) => [...r].reverse().forEach((ch, k) => items.push(glyph(ch, k, i))));
+  items.push(T(right - (width + 0.7) * cell, y(rows.length - 1) + cell / 2 + cell * 0.22, "+", "ink", Math.round(cell * 0.62), "center"));
+  const lineY = y(rows.length) + 4;
+  items.push({ kind: "line", x1: right - (width + 1.1) * cell, y1: lineY, x2: right + 6, y2: lineY, color: "ink", width: 3 });
+  [...sum].reverse().forEach((ch, k) => items.push(glyph(ch, k, rows.length + 0.15)));
+  return {
+    items,
+    // 도형 칸 안에 수 쓰기(row = 더하는 수 번호, rows.length = 결과 줄)
+    val: (row, k, v, color = "green") => T(x(k), y(row === rows.length ? row + 0.15 : row) + cell / 2 + cell * 0.16, String(v), color, Math.round(cell * 0.42), "center"),
+    carry: (k, v = 1) => T(x(k), top - 8, String(v), "red", 32, "center"),
+    col: (k) => ({ kind: "box", x: x(k) - cell / 2 + 4, y: top - 4, w: cell - 8, h: (rows.length + 1.15) * cell + 6, color: "gold", dash: true })
+  };
+}
 
 export const BOARDS_B03 = {
   "book-03/unit-area-shapes": (() => {
@@ -303,6 +325,161 @@ export const BOARDS_B03 = {
             options: [String(CHK[1]), String(chk), String(CHK[0] - CHK[1])], answer: 1,
             hint: `${jo(CHK[1], "가")} 기준이에요. ${CHK[0]} 안에 ${jo(CHK[1], "가")} 몇 번 들어가는지 세요.`, sayHint: `${CHK[1]}, ${CHK[1] * 2}, ${CHK[1] * 3}… 이렇게 ${CHK[1]}씩 세어 ${CHK[0]}까지 몇 번인지 봐요.`,
             right: `맞았어요! ${CHK[0]} ÷ ${CHK[1]} = ${chk}.`, sayRight: `맞았어요! ${jo(CHK[1], "가")} ${KO[chk]} 번 들어가요. ${jo(CHK[0], "는")} ${CHK[1]}의 ${chk}배예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+  ,"book-03/basic-vertical-cryptarithm": (() => {
+    const A = crypt(360, 140, ["□", "□", "□"], ["△", "8"], 64);
+    const tries = Array.from({ length: 9 }, (_, i) => ({ v: i + 1, s: 3 * (i + 1) })), hit = tries.find((t) => t.s % 10 === 8);
+    const B = crypt(930, 410, ["□", "□"], ["△", "4"], 54);
+    const CHK = { last: 7 }, chkV = [1, 2, 3, 4, 5, 6, 7, 8, 9].find((v) => (3 * v) % 10 === CHK.last), chkT = Math.floor(3 * chkV / 10);
+    return {
+      title: "같은 도형을 세로로 더해요",
+      kicker: "3권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "숫자 대신 도형이 들어간 덧셈을 복면산이라고 해요. 약속이 두 가지예요. 같은 도형은 같은 숫자, 다른 도형은 다른 숫자예요.",
+          items: [title("복면산 — 같은 도형을 더해요"), T(560, 160, "같은 도형 = 같은 숫자", "blue", 28), T(560, 205, "다른 도형 = 다른 숫자", "blue", 28)] },
+        { say: "네모 세 개를 세로로 맞춰 더했더니, 십의 자리는 세모, 일의 자리는 8이 되었어요. 자리를 맞춰 써요.",
+          items: A.items },
+        { say: "일의 자리부터 봐요. 같은 수를 세 번 더해서 끝자리가 8이 되는 수를 찾아요.",
+          items: [A.col(0)] },
+        { say: `1부터 차례로 세 번 더해 봐요. ${tries.map((t) => t.s).join(", ")}. 끝자리가 8인 것은 ${hit.s}뿐이에요. 그러니까 네모는 ${jo(hit.v, "이에요")}.`,
+          items: [T(560, 280, tries.map((t) => t.s).join(", "), "gray", 24), T(560, 325, `끝자리 8 → ${hit.v}+${hit.v}+${hit.v} = ${hit.s}`, "green", 28)] },
+        { say: `${hit.v} 세 번은 ${hit.s}. 일의 자리에 8을 쓰고, 10은 십의 자리로 1이 올라가요. 이걸 받아올림이라고 해요.`,
+          items: [A.carry(1), ...[0, 1, 2].map((r) => A.val(r, 0, hit.v))] },
+        { say: `십의 자리에는 더할 도형이 없고, 올라온 1만 있어요. 그래서 세모는 1이에요.`,
+          items: [A.val(3, 1, Math.floor(hit.s / 10))] },
+        { say: `확인해요. ${hit.v} 더하기 ${hit.v} 더하기 ${jo(hit.v, "은")} ${hit.s}. 네모는 ${hit.v}, 세모는 1. 서로 다른 숫자라서 약속도 지켰어요.`,
+          items: [T(560, 380, `${hit.v} + ${hit.v} + ${hit.v} = ${hit.s} ✓`, "green", 30)] },
+        { say: "이번엔 네모 두 개예요. 더한 결과는 두 자리 수, 십의 자리가 세모, 일의 자리가 4예요.",
+          items: B.items },
+        { say: "같은 수를 두 번 더해 끝자리가 4가 되는 수는 두 개예요. 2 더하기 2는 4, 7 더하기 7은 14.",
+          items: [T(70, 470, "2+2 = 4,  7+7 = 14", "blue", 28)] },
+        { say: "결과가 두 자리 수여야 해요. 2를 넣으면 4, 한 자리 수라서 안 돼요. 7을 넣으면 14. 네모는 7, 세모는 1이에요.",
+          items: [T(70, 520, "4는 한 자리 ✗ → 14, □ = 7, △ = 1", "green", 26), B.val(0, 0, 7), B.val(1, 0, 7), B.val(2, 1, 1)] },
+        { say: "정리해요. 세로로 자리를 맞추고 일의 자리부터 봐요. 끝자리가 맞는 수를 차례로 찾고, 받아올림을 다음 자리에 꼭 더해요. 후보가 여럿이면 자리 수 같은 조건으로 걸러요.", mood: "praise",
+          items: [T(70, 575, "일의 자리부터, 받아올림 잊지 않기!", "gold", 26)] },
+        { say: `한 문제 풀어 봐요. 같은 동그라미를 세 번 더했더니 십의 자리는 네모, 일의 자리는 ${jo(CHK.last, "이")} 되었어요. 동그라미는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `○ + ○ + ○ = □${CHK.last}일 때 ○는 얼마일까요?`,
+            options: ["3", String(chkV), String(CHK.last)], answer: 1,
+            hint: `같은 수를 세 번 더해 끝자리가 ${jo(CHK.last, "이")} 되는 수를 찾아요.`, sayHint: `1부터 세 번 더해 봐요. 3, 6, 9, 12, 15, 18, 21, 24, 27. 끝자리가 ${CHK.last}인 것은요?`,
+            right: `맞았어요! ${chkV} × 3 = ${3 * chkV}, ○ = ${chkV}, □ = ${chkT}.`, sayRight: `맞았어요! ${chkV} 세 번은 ${3 * chkV}. 동그라미는 ${jo(chkV, "이고")} 네모는 ${jo(chkT, "예요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-03/cryptarithm-repeated": (() => {
+    const A = crypt(420, 150, ["□□", "□□"], ["1", "△", "2"]);
+    const cands = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((v) => (2 * v) % 10 === 2);       // 1, 6
+    const sq = cands.find((v) => 22 * v >= 100), sumV = 22 * sq, tri = Math.floor(sumV / 10) % 10;
+    const CHK = { last: 4 }, chkC = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((v) => (2 * v) % 10 === CHK.last), chkSq = chkC.find((v) => 22 * v >= 100);
+    return {
+      title: "반복되는 숫자 복면산을 풀어요",
+      kicker: "3권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "두 자리 수인데 두 자리가 모두 네모예요. 네모는 모두 같은 숫자예요. 이런 수 두 개를 더한 식을 풀어 봐요.",
+          items: [title("반복되는 숫자 복면산")] },
+        { say: "네모네모 더하기 네모네모가 세 자리 수 1, 세모, 2가 되었어요. 자리를 맞춰 써요.",
+          items: A.items },
+        { say: "같은 도형은 같은 숫자예요. 네모 네 개에 모두 같은 숫자가 들어가요. 하나를 알면 네 개를 다 알아요.",
+          items: [T(560, 170, "□ 네 개 = 모두 같은 숫자", "blue", 28)] },
+        { say: "일의 자리부터 봐요. 네모 더하기 네모의 끝자리가 2예요.",
+          items: [A.col(0)] },
+        { say: `같은 수 두 개를 더해 끝자리가 2인 수는 두 개예요. 1 더하기 1은 2, 6 더하기 6은 12. 네모는 ${cands[0]} 아니면 ${jo(cands[1], "이에요")}.`,
+          items: [T(560, 225, `□ + □ → 끝자리 2:  ${cands.map((v) => `${v}+${v}=${v * 2}`).join(", ")}`, "blue", 26)] },
+        { say: "후보를 식 전체에 넣어 봐요. 1을 넣으면 11 더하기 11은 22. 결과가 세 자리가 아니라서 안 돼요.",
+          items: [T(560, 280, "11 + 11 = 22  ✗ (세 자리가 아님)", "red", 26)] },
+        { say: `${jo(sq, "을")} 넣으면 ${sq}${sq} 더하기 ${sq}${sq}. 일의 자리 ${sq} 더하기 ${jo(sq, "은")} ${sq * 2}, 2를 쓰고 1이 올라가요.`,
+          items: [A.carry(1), A.val(0, 0, sq), A.val(1, 0, sq)] },
+        { say: `십의 자리는 ${sq} 더하기 ${sq} 더하기 올라온 1, ${2 * sq + 1}. ${jo(tri, "을")} 쓰고 1이 올라가요. 그래서 세모는 ${jo(tri, "이에요")}.`,
+          items: [A.carry(2), A.val(0, 1, sq), A.val(1, 1, sq), A.val(2, 1, tri)] },
+        { say: `백의 자리에는 올라온 1뿐이에요. 결과의 1과 맞아요. ${sq}${sq} 더하기 ${jo(`${sq}${sq}`, "는")} ${jo(sumV, "이에요")}.`,
+          items: [T(560, 340, `${sq}${sq} + ${sq}${sq} = ${sumV} ✓  (□ = ${sq}, △ = ${tri})`, "green", 28)] },
+        { say: "정리해요. 같은 도형에는 같은 숫자를 넣어요. 일의 자리에서 후보를 찾고, 후보를 식 전체에 넣어 받아올림과 자리 수까지 맞는지 확인해요.", mood: "praise",
+          items: [T(560, 420, "후보 → 식 전체에 넣어 확인!", "gold", 30)] },
+        { say: `한 문제 풀어 봐요. 네모네모 더하기 네모네모가 1, 세모, ${jo(CHK.last, "가")} 되었어요. 네모는 무엇일까요?`, mood: "think",
+          items: [],
+          check: { question: `□□ + □□ = 1△${CHK.last}일 때 □는?`,
+            options: [String(chkC[0]), String(chkSq), String(Math.floor(22 * chkSq / 10) % 10)], answer: 1,
+            hint: `끝자리가 ${CHK.last}인 후보 두 개를 찾고, 세 자리가 되는지 보세요.`, sayHint: `네모 더하기 네모의 끝자리가 ${CHK.last}인 수는 ${jo(chkC[0], "과")} ${jo(chkC[1], "이에요")}. 둘 다 넣어 보고 결과가 세 자리가 되는 것을 골라요.`,
+            right: `맞았어요! ${chkSq}${chkSq} + ${chkSq}${chkSq} = ${22 * chkSq}.`, sayRight: `맞았어요! ${chkC[0]}${chkC[0]} 더하기 ${jo(`${chkC[0]}${chkC[0]}`, "는")} 두 자리라 안 되고, ${chkSq}${chkSq} 더하기 ${jo(`${chkSq}${chkSq}`, "는")} ${jo(22 * chkSq, "예요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-03/cryptarithm-mixed": (() => {
+    const A = crypt(400, 160, ["3□", "□7"], ["8", "△"]);
+    // 십의 자리: 3 + □ + (받아올림) = 8 → □ = 5(받아올림 없음) 또는 4(받아올림 있음)
+    const t5 = { sq: 5, ones: 5 + 7 }, t4 = { sq: 4, ones: 4 + 7 };
+    const sq = 4, tri = (sq + 7) % 10;
+    const CHK = { a: 5, b: 2, t: 6 }, chkSq = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].find((v) => { const o = CHK.a + v, c = o >= 10 ? 1 : 0; return v + CHK.b + c === CHK.t && v !== o % 10; }), chkTri = (CHK.a + chkSq) % 10;
+    return {
+      title: "여러 도형과 고정 숫자를 함께 풀어요",
+      kicker: "3권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "도형과 숫자가 섞인 복면산이에요. 보이는 숫자는 바뀌지 않으니까 가장 좋은 단서예요.",
+          items: [title("도형과 숫자가 섞인 복면산")] },
+        { say: "삼 네모 더하기 네모 칠이, 팔 세모가 되었어요. 네모 두 개는 같은 숫자예요.",
+          items: A.items },
+        { say: "이번엔 십의 자리부터 생각해 봐요. 3 더하기 네모가 8이 되어야 해요. 그런데 일의 자리에서 1이 올라올 수도 있어요.",
+          items: [A.col(1), T(560, 170, "3 + □ + (올라온 수) = 8", "blue", 28)] },
+        { say: "올라온 수가 없으면 네모는 5, 1이 올라오면 네모는 4. 후보가 두 개예요.",
+          items: [T(560, 220, "올라옴 없음 → □ = 5,  1 올라옴 → □ = 4", "gray", 24)] },
+        { say: `네모가 5라고 해 봐요. 일의 자리는 5 더하기 7, ${jo(t5.ones, "로")} 1이 올라가요. 그러면 십의 자리는 3 더하기 5 더하기 1, 9. 8이 아니라서 안 돼요.`,
+          items: [T(560, 275, `□ = 5: 5+7 = ${t5.ones}, 3+5+1 = 9  ✗`, "red", 26)] },
+        { say: `네모가 4라고 해 봐요. 일의 자리는 4 더하기 7, ${jo(t4.ones, "로")} 1을 쓰고 1이 올라가요. 십의 자리는 3 더하기 4 더하기 1, 8. 맞아요!`,
+          items: [T(560, 325, `□ = 4: 4+7 = ${t4.ones}, 3+4+1 = 8  ✓`, "green", 26), A.carry(1), A.val(0, 0, sq), A.val(1, 1, sq)] },
+        { say: `일의 자리 결과가 세모였으니, 세모는 ${jo(tri, "이에요")}.`,
+          items: [A.val(2, 0, tri)] },
+        { say: `확인해요. 3${sq} 더하기 ${sq}7은 ${30 + sq + sq * 10 + 7}. 팔 세모에 세모 ${tri}, 맞아요. 네모와 세모도 서로 다른 숫자예요.`,
+          items: [T(560, 400, `3${sq} + ${sq}7 = ${30 + sq + sq * 10 + 7} ✓`, "green", 30)] },
+        { say: "받아올림이 있는지 없는지 모를 때는 둘 다 해 보고, 다른 자리와 맞는 쪽을 골라요.",
+          items: [T(560, 460, "받아올림: 있다/없다 둘 다 해 보기", "gold", 26)] },
+        { say: "정리해요. 보이는 숫자를 단서로 써요. 받아올림이 있을 수도, 없을 수도 있으면 둘 다 해 봐요. 마지막에 서로 다른 도형이 다른 숫자인지까지 확인해요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. 네모 ${CHK.a} 더하기 ${CHK.b} 네모가, ${CHK.t} 세모예요. 네모는 무엇일까요?`, mood: "think",
+          items: [],
+          check: { question: `□${CHK.a} + ${CHK.b}□ = ${CHK.t}△일 때 □는?`,
+            options: [String(chkSq - 1), String(chkSq), String(chkTri)], answer: 1,
+            hint: `십의 자리: □ + ${CHK.b} + (올라온 수) = ${CHK.t}. 두 경우를 다 해 봐요.`, sayHint: `올라온 수가 없으면 네모는 ${CHK.t - CHK.b}, 있으면 ${CHK.t - CHK.b - 1}. 일의 자리 ${CHK.a} 더하기 네모에서 정말 1이 올라오는지 확인해요.`,
+            right: `맞았어요! ${chkSq}${CHK.a} + ${CHK.b}${chkSq} = ${CHK.t}${chkTri}.`, sayRight: `맞았어요! 네모는 ${jo(chkSq, "이고")} 일의 자리 ${CHK.a} 더하기 ${jo(chkSq, "는")} ${CHK.a + chkSq}, 올라오는 수가 없어요. 세모는 ${jo(chkTri, "예요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-03/cryptarithm-linked": (() => {
+    const A = crypt(400, 160, ["□△", "△"], ["△", "□"]);
+    const tries = [5, 6, 7, 8, 9].map((t) => { const s2 = 2 * t, sq = s2 % 10, tens = sq + 1; return { t, s2, sq, tens, ok: tens === t }; });
+    const win = tries.find((r) => r.ok);
+    const CHK = { tens: 3 }, chk = [5, 6, 7, 8, 9].map((t) => ({ t, sq: (2 * t) % 10 })).find((r) => r.sq + 1 === CHK.tens);
+    return {
+      title: "여러 자리의 연결 조건으로 풀어요",
+      kicker: "3권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "같은 도형이 위에도, 아래에도, 결과에도 나오는 복면산이에요. 한 도형의 값은 그 도형이 있는 모든 자리에 한꺼번에 들어가요.",
+          items: [title("자리끼리 이어진 복면산")] },
+        { say: "네모 세모 더하기 세모가, 세모 네모가 되었어요. 자리를 맞춰 써요.",
+          items: A.items },
+        { say: "세모가 있는 자리를 모두 찾아요. 첫 수의 일의 자리, 둘째 수, 결과의 십의 자리. 세 곳 모두 같은 숫자예요. 네모도 두 곳이에요.",
+          items: [T(560, 170, "△ 세 곳, □ 두 곳", "blue", 28)] },
+        { say: "십의 자리를 봐요. 위의 네모가 아래로 내려와 결과의 세모가 됐어요. 네모와 세모는 다른 숫자니까, 일의 자리에서 1이 올라와야만 해요.",
+          items: [A.col(1), T(560, 220, "□ + (올라온 1) = △", "blue", 28)] },
+        { say: "1이 올라오려면 일의 자리 세모 더하기 세모가 10 이상이어야 해요. 그래서 세모는 5부터 9 사이예요. 하나씩 넣어 봐요.",
+          items: [T(560, 270, "△ + △ ≥ 10 → △는 5~9", "gray", 26)] },
+        ...tries.map((r, i) => ({ say: r.ok ? `세모가 ${jo(r.t, "이면")} ${r.t} 더하기 ${jo(r.t, "는")} ${r.s2}, 일의 자리 네모는 ${jo(r.sq, "이에요")}. 십의 자리는 ${r.sq} 더하기 1, ${jo(r.tens, "로")} 세모 ${jo(r.t, "와")} 같아요. 맞아요!`
+            : `세모가 ${jo(r.t, "이면")} ${r.t} 더하기 ${jo(r.t, "은")} ${r.s2}, 네모는 ${jo(r.sq, "이에요")}. 십의 자리는 ${r.sq} 더하기 1, ${jo(r.tens, "인데")} 세모 ${jo(r.t, "와")} 달라요.`,
+          items: [T(560, 320 + i * 40, `△=${r.t}: ${r.t}+${r.t}=${r.s2}, □=${r.sq}, ${r.sq}+1=${r.tens} ${r.ok ? "✓" : "✗"}`, r.ok ? "green" : "red", 24)] })),
+        { say: `세모는 ${jo(win.t, "이고")} 네모는 ${jo(win.sq, "이에요")}. 모든 자리에 넣어 봐요. ${win.sq}${win.t} 더하기 ${jo(win.t, "는")} ${win.t}${win.sq}. 맞아요.`,
+          items: [A.carry(1), A.val(0, 1, win.sq), A.val(0, 0, win.t), A.val(1, 0, win.t), A.val(2, 1, win.t), A.val(2, 0, win.sq)] },
+        { say: "정리해요. 같은 도형이 있는 자리를 모두 표시해요. 받아올림이 꼭 있어야 하는지 따져서 후보를 줄이고, 후보를 하나씩 모든 자리에 넣어 맞는 것을 골라요.", mood: "praise",
+          items: [T(70, 520, "한 도형의 값은 모든 자리에 한꺼번에!", "gold", 28)] },
+        { say: `한 문제 풀어 봐요. 네모 세모 더하기 세모가 ${CHK.tens} 네모예요. 세모는 무엇일까요?`, mood: "think",
+          items: [],
+          check: { question: `□△ + △ = ${CHK.tens}□일 때 △는?`,
+            options: [String(chk.sq), String(chk.t), String(CHK.tens)], answer: 1,
+            hint: "십의 자리: □에 1이 올라와 3이 됐어요. □는 얼마일까요?", sayHint: `십의 자리에서 네모에 올라온 1을 더해 ${jo(CHK.tens, "이")} 됐어요. 그럼 네모는 ${jo(CHK.tens - 1, "예요")}. 세모 더하기 세모의 끝자리가 네모가 되는 세모를 찾아요.`,
+            right: `맞았어요! ${chk.sq}${chk.t} + ${chk.t} = ${CHK.tens}${chk.sq}.`, sayRight: `맞았어요! 네모는 ${jo(chk.sq, "이고")} 세모는 ${jo(chk.t, "이에요")}. ${chk.sq}${chk.t} 더하기 ${jo(chk.t, "은")} ${CHK.tens}${chk.sq}. 이제 게임으로 가요.` } }
       ]
     };
   })()
