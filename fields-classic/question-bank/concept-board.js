@@ -95,7 +95,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
   }
   async function drawText(item, instant) {
     const { g, t } = textNode(item);
-    if (instant) return;
+    if (instant) return true;   // 즉시 그리기도 「계속」을 돌려줘야 복합 그림(시계 숫자 12개)이 끊기지 않는다
     const bb = t.getBBox();
     const id = `cbclip${++clipIds.n}`;
     const clip = el("clipPath", { id }, defs);
@@ -248,26 +248,22 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     return my === runId;
   }
   function renderUpTo(k) {   // 0..k-1 비트를 즉시 완성 상태로
-    runId += 1; layer.replaceChildren(); defs.replaceChildren(); penOff(); checkBox.hidden = true; checkState = null; finished = false; root.classList.remove("is-done");
+    runId += 1; try { speechSynthesis.cancel(); } catch {} layer.replaceChildren(); defs.replaceChildren(); penOff(); checkBox.hidden = true; checkState = null; finished = false; root.classList.remove("is-done");
     for (let i = 0; i < k; i++) for (const item of beats[i].items || []) drawItem(item, true);
     if (k > 0 && beats[k - 1].check) { setCaption(beats[k - 1], k - 1); renderCheck(beats[k - 1].check); }
   }
-  let loop = null;
+  let loopSeq = 0;   // 되감기·건너뛰기로 새 진행이 시작되면 옛 진행은 다음 확인 지점에서 조용히 끝난다
   async function run() {
-    if (loop) return;
-    loop = (async () => {
-      while (playing && at < beats.length) {
-        const k = at;
-        const ok = await playBeat(k);
-        if (!ok) break;
-        at = k + 1;
-        if (beats[k].check) { playing = false; paintToggle(); break; }  // 확인 문제는 학생이 답할 때까지 기다린다
-      }
-      if (at >= beats.length && !beats[beats.length - 1]?.check) finish();
-      if (at >= beats.length) { playing = false; paintToggle(); }
-      loop = null;
-    })();
-    await loop;
+    const my = ++loopSeq;
+    while (playing && at < beats.length && my === loopSeq) {
+      const k = at;
+      const ok = await playBeat(k);
+      if (!ok || my !== loopSeq) return;
+      at = k + 1;
+      if (beats[k].check) { playing = false; paintToggle(); return; }  // 확인 문제는 학생이 답할 때까지 기다린다
+    }
+    if (my !== loopSeq) return;
+    if (at >= beats.length) { if (!beats[beats.length - 1]?.check) finish(); playing = false; paintToggle(); }
   }
   function paintToggle() {
     const b = root.querySelector('[data-cb="toggle"]');
@@ -298,5 +294,5 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
 
   if (reduced) jump(beats.length, { autoplay: false });
   else run();
-  return { dispose() { runId += 1; playing = false; root.removeEventListener("click", onClick); } };
+  return { dispose() { runId += 1; loopSeq += 1; playing = false; try { speechSynthesis.cancel(); } catch {} root.removeEventListener("click", onClick); } };
 }
