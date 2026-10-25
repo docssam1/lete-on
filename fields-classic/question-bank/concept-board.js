@@ -4,7 +4,7 @@
 // 움직임 줄이기 설정이면 바로 완성 장면.
 // 글자는 손글씨 글꼴(나눔펜, OFL · assets/fonts/nm-lesson-hand.woff2)을 펜이 지나가며 드러내고, 그림은 실제 선(stroke)을 펜이 그린다.
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
-import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261026f";
+import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261026j";
 
 const NS = "http://www.w3.org/2000/svg";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -145,9 +145,9 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
       return out;
     }
     if (k === "hand") {
-      const [x, y] = clockPoint(item.cx, item.cy, item.r * 0.68, item.to);
+      const [x, y] = clockPoint(item.cx, item.cy, item.r * (item.len || 0.68), item.to);   // len: 짧은바늘 0.45 · 긴바늘 0.75, to는 소수도 됨(2.5 = 2와 3 사이)
       const ang = Math.atan2(-(y - item.cy), x - item.cx) * 180 / Math.PI;
-      return [{ kind: "path", d: `M ${item.cx} ${item.cy} L ${x.toFixed(1)} ${y.toFixed(1)}`, stroke: item.color || "red", width: 7 },
+      return [{ kind: "path", d: `M ${item.cx} ${item.cy} L ${x.toFixed(1)} ${y.toFixed(1)}`, stroke: item.color || "red", width: item.width || 7 },
         { kind: "path", ...arrowHead(x, y, ang, 16, item.color || "red"), width: 6, quick: true }];
     }
     if (k === "arc") {   // 시계판 바깥 호 화살표: from·to는 시계 숫자, ccw면 반대 방향

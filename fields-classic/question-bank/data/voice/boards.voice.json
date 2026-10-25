@@ -5281,6 +5281,302 @@
   {
    "id": "fcb-book-06-make-number-source-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-b01",
+   "text": "같은 달 안에서, 어느 날의 요일을 알면 다른 날의 요일도 찾을 수 있어요. 7일마다 같은 요일로 돌아온다는 것을 써요."
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-b02",
+   "text": "요일 일곱 개를 둥글게 그려요. 한 칸씩 가면 하루 뒤, 일곱 칸 가면 한 바퀴 돌아 같은 요일이에요."
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-b03",
+   "text": "3일이 화요일이에요. 26일은 무슨 요일일까요?"
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-b04",
+   "text": "먼저 두 날짜가 며칠 차이인지 구해요. 26 빼기 3은 23이에요."
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-b05",
+   "text": "23일을 7일씩 묶어요. 7, 14, 21. 세 묶음이 21일, 남는 날은 2예요."
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-b06",
+   "text": "7일 묶음은 요일 바퀴를 한 바퀴씩 돌아 제자리예요. 그러니 남은 2일만 옮기면 돼요."
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-b07",
+   "text": "화요일에서 두 칸 가요. 수, 목. 26일은 목요일이에요."
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-b08",
+   "text": "7씩 더해 확인해도 돼요. 3, 10, 17, 24일이 모두 화요일. 24일에서 두 날 더 가면 26이에요."
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-b09",
+   "text": "정리해요. 두 날짜의 차를 구해 7일씩 묶어요. 묶음은 제자리, 남은 날만큼 요일을 옮겨요."
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-b10",
+   "text": "한 문제 풀어 봐요. 목요일에서 12일 뒤는 무슨 요일일까요?"
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-hint",
+   "text": "일곱 날은 제자리예요. 목요일에서 다섯 칸 가요."
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-right",
+   "text": "맞았어요! 다섯 칸 가면 화요일이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-07-calendar-within-month-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-b01",
+   "text": "이번 달 어느 날의 요일을 알 때, 다음 달 같은 날은 무슨 요일일까요? 이번 달이 며칠까지 있는지가 열쇠예요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-b02",
+   "text": "달마다 날 수가 달라요. 2월은 28일, 4월·6월·9월·11월은 30일, 나머지 달은 31일까지 있어요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-b03",
+   "text": "28일은 7일씩 딱 네 묶음이에요. 남는 날이 없어요. 그래서 2월 어느 날과 3월 같은 날은 같은 요일이에요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-b04",
+   "text": "31일까지 있는 달은 7일씩 네 묶음에 3일이 남아요. 그래서 다음 달 같은 날은 요일이 세 칸 옮겨 가요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-b05",
+   "text": "3월 5일이 금요일이면, 4월 5일은? 3월은 31일까지니까 세 칸 옮겨요. 토, 일, 월. 월요일이에요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-b06",
+   "text": "30일까지 있는 달은 남는 날이 2일. 두 칸 옮겨요. 4월 5일이 월요일이면 5월 5일은 두 칸 더 가서 수요일이에요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-b07",
+   "text": "두 달 넘게 가면 한 달씩 차례로 옮겨요. 달마다 날 수가 다르니까 한꺼번에 하지 말고 한 달씩요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-b08",
+   "text": "정리해요. 처음 달이 며칠까지인지 보고, 7일씩 묶은 뒤 남는 날만큼 요일을 옮겨요. 28일은 그대로, 30일은 두 칸, 31일은 세 칸이에요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-b09",
+   "text": "한 문제 풀어 봐요. 7월 10일이 일요일이에요. 8월 10일은 무슨 요일일까요? 7월은 31일까지 있어요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-hint",
+   "text": "일요일에서 세 칸 옮겨요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-right",
+   "text": "맞았어요! 세 칸 옮겨 수요일이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-07-calendar-next-month-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-b01",
+   "text": "달을 넘어가는 두 날짜 사이에 며칠이 있는지 세고, 7일씩 묶어 요일을 찾아요. 달마다 며칠까지인지 꼭 봐요."
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-b02",
+   "text": "6월 14일이 목요일이에요. 8월 20일은 무슨 요일일까요?"
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-b03",
+   "text": "6월은 30일까지 있어요. 14일에서 30일까지 남은 날은 30 빼기 14, 16일."
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-b04",
+   "text": "7월은 31일 전부 지나가요. 31일."
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-b05",
+   "text": "8월은 1일부터 20일까지, 20일."
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-b06",
+   "text": "모두 더해요. 16 더하기 31 더하기 20은 67일 뒤예요."
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-b07",
+   "text": "67을 7일씩 묶어요. 7 곱하기 9는 63. 67 빼기 63은 4. 남은 날은 4일이에요."
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-b08",
+   "text": "목요일에서 네 칸 가요. 금, 토, 일, 월. 8월 20일은 월요일이에요."
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-b09",
+   "text": "정리해요. 처음 달의 남은 날, 가운데 달 전체, 마지막 달의 날을 더해 며칠 뒤인지 구해요. 7일씩 묶고 남은 날만큼 요일을 옮겨요."
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-b10",
+   "text": "한 문제 풀어 봐요. 10월 25일이 월요일이에요. 11월 9일은 무슨 요일일까요? 10월은 31일까지 있어요."
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-hint",
+   "text": "31 빼기 25는 6, 더하기 9는 15예요. 7일씩 묶으면 남는 날은요?"
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-right",
+   "text": "맞았어요! 15일 뒤라 한 칸 옮겨 화요일이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-07-calendar-weekday-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-07-clock-reading-b01",
+   "text": "바늘 시계를 읽을 때는 긴바늘로 분을, 짧은바늘로 시를 읽어요. 긴바늘부터 읽으면 헷갈리지 않아요."
+  },
+  {
+   "id": "fcb-book-07-clock-reading-b02",
+   "text": "시계판을 그려요. 숫자 1부터 12까지."
+  },
+  {
+   "id": "fcb-book-07-clock-reading-b03",
+   "text": "긴바늘은 한 바퀴에 60분이에요. 숫자 한 칸은 5분. 1을 가리키면 5분, 2면 10분, 3이면 15분."
+  },
+  {
+   "id": "fcb-book-07-clock-reading-b04",
+   "text": "긴바늘을 그려요. 숫자 8을 가리켜요. 5씩 세면 5, 10, 15, 20, 25, 30, 35, 40. 40분이에요."
+  },
+  {
+   "id": "fcb-book-07-clock-reading-b05",
+   "text": "짧은바늘을 그려요. 4와 5 사이에 있어요. 아직 5에 닿지 않았으니 4시예요."
+  },
+  {
+   "id": "fcb-book-07-clock-reading-b06",
+   "text": "그래서 4시 40분이에요."
+  },
+  {
+   "id": "fcb-book-07-clock-reading-b07",
+   "text": "짧은바늘이 숫자 사이에 있는 까닭이 있어요. 긴바늘이 한 바퀴 도는 동안 짧은바늘은 한 칸 가요. 40분이면 한 바퀴의 3분의 2만큼 왔으니, 짧은바늘도 4에서 5 쪽으로 3분의 2쯤 와 있어요."
+  },
+  {
+   "id": "fcb-book-07-clock-reading-b08",
+   "text": "정리해요. 긴바늘이 가리키는 숫자에 5를 곱해 분을 읽어요. 짧은바늘은 지나온 숫자로 시를 읽어요. 두 숫자 사이면 작은 쪽이에요. 12와 1 사이면 12시예요."
+  },
+  {
+   "id": "fcb-book-07-clock-reading-b09",
+   "text": "한 문제 풀어 봐요. 긴바늘이 5를 가리키고, 짧은바늘이 9와 10 사이에 있어요. 몇 시 몇 분일까요?"
+  },
+  {
+   "id": "fcb-book-07-clock-reading-hint",
+   "text": "5 곱하기 5는 25예요. 짧은바늘은 9를 지났어요."
+  },
+  {
+   "id": "fcb-book-07-clock-reading-right",
+   "text": "맞았어요! 9시 25분이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-07-clock-reading-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-07-time-unit-source-b01",
+   "text": "시간에는 여러 단위가 있어요. 큰 단위 하나가 작은 단위 몇 개인지 알면 서로 바꿀 수 있어요."
+  },
+  {
+   "id": "fcb-book-07-time-unit-source-b02",
+   "text": "약속을 써요. 1일은 24시간. 1시간은 60분. 1분은 60초. 1주일은 7일. 1년은 12개월."
+  },
+  {
+   "id": "fcb-book-07-time-unit-source-b03",
+   "text": "2시간 15분은 몇 분일까요? 1시간이 60분이니 2시간은 60 더하기 60, 120분. 거기에 15분을 더해 135분이에요."
+  },
+  {
+   "id": "fcb-book-07-time-unit-source-b04",
+   "text": "거꾸로 200분은 몇 시간 몇 분일까요? 60분씩 묶어요. 60, 120, 180. 세 묶음이 3시간, 남는 것은 200 빼기 180, 20분이에요."
+  },
+  {
+   "id": "fcb-book-07-time-unit-source-b05",
+   "text": "3일 5시간은 몇 시간일까요? 1일은 24시간이니 3일은 24를 세 번, 72시간. 더하기 5, 77시간이에요."
+  },
+  {
+   "id": "fcb-book-07-time-unit-source-b06",
+   "text": "큰 단위를 작은 단위로 바꿀 때는 곱하고 더해요. 작은 단위를 큰 단위로 바꿀 때는 묶음으로 나누고, 남는 것은 그대로 둬요."
+  },
+  {
+   "id": "fcb-book-07-time-unit-source-b07",
+   "text": "정리해요. 큰 단위 하나가 작은 단위 몇 개인지 떠올려요. 60분, 24시간, 7일, 12개월. 곱해서 더하거나, 묶어서 나눠요."
+  },
+  {
+   "id": "fcb-book-07-time-unit-source-b08",
+   "text": "한 문제 풀어 봐요. 1시간 45분은 몇 분일까요?"
+  },
+  {
+   "id": "fcb-book-07-time-unit-source-hint",
+   "text": "60분에 45분을 더해요."
+  },
+  {
+   "id": "fcb-book-07-time-unit-source-right",
+   "text": "맞았어요! 60 더하기 45는 105분이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-07-time-unit-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-b01",
+   "text": "두 시각 사이에 얼마나 지났는지, 그리고 어떤 시각에서 몇 시간 지나면 몇 시인지 계산해요. 시는 시끼리, 분은 분끼리. 60분이 1시간이라는 것을 꼭 기억해요."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-b02",
+   "text": "8시 35분에 시작해서 11시 20분에 끝났어요. 얼마나 걸렸을까요? 세로로 맞춰 써요."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-b03",
+   "text": "분끼리 빼요. 20분에서 35분은 뺄 수 없어요. 1시간을 빌려 와 60분으로 바꿔요. 20 더하기 60은 80분."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-b04",
+   "text": "80 빼기 35는 45분. 시는 1을 빌려 줬으니 10 빼기 8, 2시간."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-b05",
+   "text": "걸린 시간은 2시간 45분이에요. 시작 시각에 더해서 확인해요. 8시 35분 더하기 2시간 45분은 11시 20분."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-b06",
+   "text": "이번엔 더하기예요. 10시 50분에 시작한 공연이 2시간 25분 동안 해요. 분끼리 더하면 50 더하기 25, 75분. 60분이 넘었어요."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-b07",
+   "text": "60분을 1시간으로 올려요. 75분은 1시간 15분. 시는 10 더하기 2 더하기 올라온 1, 13시. 낮 12시를 지났으니 오후 1시 15분이에요."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-b08",
+   "text": "오전과 오후가 섞이면, 오후 시각에 12를 더해 같은 기준으로 놓고 계산해요. 오후 1시는 13시예요."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-b09",
+   "text": "정리해요. 시는 시끼리, 분은 분끼리 계산해요. 분이 모자라면 1시간을 60분으로 빌려 오고, 60분이 넘으면 1시간으로 올려요. 구한 시간을 다시 더해 확인해요."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-b10",
+   "text": "한 문제 풀어 봐요. 7시 45분부터 9시 10분까지는 얼마나 걸렸을까요?"
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-hint",
+   "text": "10분에 60분을 더해 70분, 70 빼기 45는 25분. 시는 1을 빌려 줬으니 8 빼기 7이에요."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-right",
+   "text": "맞았어요! 1시간 25분이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-07-elapsed-time-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }
