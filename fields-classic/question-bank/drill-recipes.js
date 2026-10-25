@@ -3,8 +3,9 @@
 // drill-로 시작하는 id는 문제은행에 맞는 유형이 없는 차시의 공방 전용 유형이다(drill-generators.js).
 // 답 꼴(수 하나 · 수 + 단위 · 쉼표로 쓴 수 · 문제에 나온 이름·자리 가운데 하나)과 그림 종류(bookN)는 검사기 drill-audit.mjs가 난이도마다 확인한다.
 export const DRILL_RECIPES = Object.freeze({
-  // 1권 — 마방진과 가쿠로 · 수 추리 · 논리 (가쿠로는 칸을 채워 답해 아직 없음). 좋아하는 것 찾기는 같은 풀이의 9권 직업 표도 쓴다
+  // 1권 — 마방진과 가쿠로 · 수 추리 · 논리. 가쿠로는 칸에 수 카드를 놓아 답한다. 좋아하는 것 찾기는 같은 풀이의 9권 직업 표도 쓴다
   "book-01/equal-line-sums": ["circle-line-ring-equal-sum"],
+  "book-01/gakuro-sum-grid": ["gakuro-card-placement", "gakuro-card-rectangle-placement", "gakuro-grid-sum"],
   "book-01/number-inference": ["place-value-condition-three", "place-value-condition-four"],
   "book-01/preference-logic": ["person-item-logic", "profession-assignment-b9"],
   // 2권 — 매트릭스와 주고받기 · 양팔저울 · 규칙찾기와 수열 · 약속 (그림은 book02-visuals.js). 모양·색 규칙은 보기 그림 단추로 고른다

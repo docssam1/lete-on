@@ -2,12 +2,12 @@
 // 우리 게임이 아직 없는 차시에 쓴다. 문제는 문제은행 생성기(bookNN-generators.js)가 그 자리에서 만든 실제 유형 문제이고,
 // 그림도 문제은행과 같은 그리기(bookNN-renderers.js)를 쓴다 — 본책·문제은행과 어긋날 수 없다.
 //  · 세 단계: 연습(난이도 1) → 실전(2) → 도전(3). 단계마다 세 문제, 차시에 붙인 유형을 번갈아 낸다(drill-recipes.js).
-//  · 숫자판으로 답을 쓴다(요일·이름·자리처럼 낱말 답은 보기 단추로 고른다). 한 번 틀리면 풀이의 첫 걸음을 귀띔하고, 두 번 틀리면 풀이와 답을 보여 주고 넘어간다.
+//  · 숫자판으로 답을 쓴다(요일·이름·자리처럼 낱말 답은 보기 단추로 고르고, 가쿠로는 칸에 수 카드를 놓는다). 한 번 틀리면 풀이의 첫 걸음을 귀띔하고, 두 번 틀리면 풀이와 답을 보여 주고 넘어간다.
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
 import { typeById } from "./source-data.js?v=20261024r";
 import { GENERATORS } from "./generators.js?v=20261027a";
 import { DRILL_TYPES } from "./drill-generators.js?v=20261027a";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027l";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
 import { jo } from "./concept-board-kit.js?v=20261026b";
 import * as B2 from "./book02-visuals.js?v=20261027b";
 import * as FOLD from "./fold-visuals.js?v=20261027a";
@@ -89,9 +89,29 @@ export function choiceShape(p) {
   if (!options || options.length < 2 || options.length > 8 || new Set(options).size !== options.length) return null;
   return { kind: "choice", options: [...options], values: [options.indexOf(a)] };
 }
+// 가쿠로(수 카드를 빈칸에 놓아 가로·세로 합 맞추기): 칸을 누르고 카드를 놓는다. 채점은 합과 카드 쓰임으로 한다
+// (생성기가 답이 하나뿐인 판만 낸다 — uniqueCount 1). st.typed에 빈칸 차례대로 「5,,2」처럼 둔다.
+export function gridShape(p) {
+  const v = p.visual || {}, m = p.meta || {};
+  if (v.subtype !== "sum-grid" || m.uniqueCount !== 1 || !Array.isArray(m.hidden) || !Array.isArray(m.values) || !Array.isArray(m.cards)) return null;
+  if (m.cards.length !== m.hidden.length) return null;
+  return { kind: "grid", rows: v.rows, columns: v.columns, mask: v.mask, shown: v.shown, rowSums: v.rowSums, columnSums: v.columnSums, hidden: m.hidden, cards: [...m.cards].sort((a, b) => a - b), values: m.hidden.map((i) => m.values[i]) };
+}
+const ORDINAL = ["첫째", "둘째", "셋째", "넷째", "다섯째"];
+export function gridMisses(shape, typed) {
+  const fill = typed.split(","), cells = shape.shown.map((x, i) => { const k = shape.hidden.indexOf(i); return k >= 0 ? Number(fill[k] || 0) : Number(x || 0); });
+  const miss = [], at = (r, c) => (shape.mask[r * shape.columns + c] ? cells[r * shape.columns + c] : 0);
+  for (let r = 0; r < shape.rows; r++) if (Array.from({ length: shape.columns }, (_, c) => at(r, c)).reduce((a, b) => a + b, 0) !== shape.rowSums[r]) miss.push(`${ORDINAL[r]} 가로줄`);
+  for (let c = 0; c < shape.columns; c++) if (Array.from({ length: shape.rows }, (_, r) => at(r, c)).reduce((a, b) => a + b, 0) !== shape.columnSums[c]) miss.push(`${ORDINAL[c]} 세로줄`);
+  return miss;
+}
 // 쉼표로 쓴 수는 순서와 상관없이(답이 여러 개), 시각은 순서대로(시 · 분) 맞춘다
 export const sameAnswer = (shape, typed) => {
   if (shape.kind === "choice") return typed === String(shape.values[0]);
+  if (shape.kind === "grid") {
+    const fill = typed.split(",");
+    return fill.length === shape.hidden.length && fill.every(Boolean) && [...fill].map(Number).sort((a, b) => a - b).join() === shape.cards.join() && !gridMisses(shape, typed).length;
+  }
   if (shape.kind === "frac") {   // 크기가 같은 분수도 맞다(3/6 = 1/2)
     const f = typed.match(/^(\d+)\/(\d+)$/);
     return Boolean(f) && Number(f[2]) > 0 && Number(f[1]) * shape.values[1] === Number(f[2]) * shape.values[0];
@@ -122,13 +142,14 @@ async function main() {
     for (let t = 0; t < 200; t++) {
       const p = gen({ max: 30, difficulty: LEVELS[level].difficulty }, t);   // 문제은행과 같은 부르기(조건이 안 맞으면 null — 다시 뽑는다)
       if (!p) continue;
-      const shape = answerShape(p.answer) || choiceShape(p);
+      const shape = answerShape(p.answer) || choiceShape(p) || gridShape(p);
       if (shape) return { ...p, shape, type };
     }
     throw new Error(`답 꼴이 맞는 문제를 만들지 못했어요: ${typeId}`);
   };
-  const st = { level: 0, index: 0, stars: LEVELS.map(() => 0), typed: "", tries: 0, phase: "ask", p: null, note: "", finale: false };
-  const fresh = () => { st.p = make(st.level, st.index); st.typed = ""; st.tries = 0; st.phase = "ask"; st.note = ""; render(); };
+  const st = { level: 0, index: 0, stars: LEVELS.map(() => 0), typed: "", tries: 0, phase: "ask", p: null, note: "", finale: false, sel: 0, reveal: false };
+  const blank = (shape) => (shape.kind === "grid" ? shape.hidden.map(() => "").join(",") : "");
+  const fresh = () => { st.p = make(st.level, st.index); st.typed = blank(st.p.shape); st.tries = 0; st.phase = "ask"; st.note = ""; st.sel = 0; st.reveal = false; render(); };
   if (params.get("test") === "1") globalThis.__drill = st;   // 브라우저 검사용(정답을 읽는다) — 학생 화면에는 붙지 않는다
 
   function render() {
@@ -138,16 +159,38 @@ async function main() {
       <div class="dr-top"><div class="dr-levels">${LEVELS.map((l, k) => `<button type="button" data-level="${k}" class="${k === st.level ? "on" : ""}"><b>${k + 1}</b>${l.title}${st.stars[k] ? ` <small>★${st.stars[k]}</small>` : ""}</button>`).join("")}</div>
         <div class="dr-dots">${Array.from({ length: PER_LEVEL }, (_, i) => `<i class="${i < st.index ? "done" : i === st.index ? "on" : ""}"></i>`).join("")}</div></div>
       <p class="dr-kind">${esc(p.type.label)}</p>
-      <div class="dr-card"><p class="dr-prompt">${esc(plain(p.prompt)).replaceAll("\n", "<br>")}</p>${visualOf(p.visual)}</div>
+      <div class="dr-card"><p class="dr-prompt">${esc(plain(p.prompt)).replaceAll("\n", "<br>")}</p>${p.shape.kind !== "grid" ? visualOf(p.visual) : st.reveal ? visualOf(p.answerVisual) : gridBoard(p.shape)}</div>
       ${st.note ? `<p class="dr-note${st.phase === "done" ? " good" : ""}" role="status">${st.note}</p>` : ""}
       ${st.phase === "done"
         ? `<div class="dr-actions"><button type="button" class="dr-btn primary" data-dr="next">${nextLabel()} →</button></div>`
         : pad(p.shape)}
     </div>`;
   }
+  // 가쿠로 판: 빈칸은 누르는 단추, 주어진 수는 굵게, 오른쪽에 가로 합 · 아래에 세로 합
+  function gridBoard(shape) {
+    const fill = st.typed.split(","), cells = [];
+    for (let r = 0; r < shape.rows; r++) {
+      for (let c = 0; c < shape.columns; c++) {
+        const i = r * shape.columns + c, k = shape.hidden.indexOf(i);
+        cells.push(!shape.mask[i] ? '<i class="gap"></i>' : k >= 0
+          ? `<button type="button" class="cell${st.sel === k && st.phase !== "done" ? " sel" : ""}" data-cell="${k}" aria-label="빈칸">${esc(fill[k] || "")}</button>`
+          : `<b>${esc(shape.shown[i])}</b>`);
+      }
+      cells.push(`<em>${shape.rowSums[r]}</em>`);
+    }
+    shape.columnSums.forEach((v) => cells.push(`<em>${v}</em>`));
+    cells.push('<em class="sum">합</em>');
+    return `<div class="dr-gakuro" style="--cols:${shape.columns + 1}">${cells.join("")}</div>`;
+  }
   // 답 쓰는 곳: 요일은 일~토 단추, 시각은 「시(시간)」 단추로 시와 분을 나누고, 나머지는 숫자판
   function pad(shape) {
     const submit = `<button type="button" class="dr-btn primary" data-dr="answer" ${st.typed ? "" : "disabled"}>답 내기</button>`;
+    if (shape.kind === "grid") {
+      const fill = st.typed.split(","), used = new Set(fill.filter(Boolean)), full = fill.every(Boolean);
+      return `<div class="dr-pad dr-cards">${shape.cards.map((c) => `<button type="button" class="dr-key card" data-card="${c}" ${used.has(String(c)) ? "disabled" : ""}>${c}</button>`).join("")}
+        <button type="button" class="dr-key wide" data-key="del">지우기</button><button type="button" class="dr-btn primary" data-dr="answer" ${full ? "" : "disabled"}>답 내기</button></div>
+        <p class="dr-tip">빈칸을 누르고 수 카드를 놓아요. 놓은 칸을 다시 누르면 카드가 돌아와요.</p>`;
+    }
     if (shape.kind === "choice") return `<div class="dr-pad dr-days dr-choices">${shape.options.map((o, i) => `<button type="button" class="dr-key day${st.typed === String(i) ? " on" : ""}" data-pick="${i}">${shape.glyphs ? `${shape.glyphs[i]}<small>${esc(o)}</small>` : esc(o)}</button>`).join("")}${submit}</div>`;
     if (shape.kind === "weekday") return `<div class="dr-pad dr-days">${DAYS.map((d, i) => `<button type="button" class="dr-key day${st.typed === String(i) ? " on" : ""}" data-day="${i}">${d}요일</button>`).join("")}${submit}</div>`;
     const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<button type="button" class="dr-key" data-key="${n}">${n}</button>`).join("");
@@ -194,7 +237,17 @@ async function main() {
       st.phase = "done"; st.note = `${st.tries === 0 ? "정답! 한 번에 맞혔어요." : "맞았어요!"} <b>풀이</b> ${esc(plain(p.solution))}`;
       render(); say(st.tries === 0 ? "정답이에요! 한 번에 맞혔어요." : "맞았어요! 잘 고쳐 풀었어요.", "praise"); return;
     }
-    st.tries += 1; st.typed = "";
+    st.tries += 1;
+    if (p.shape.kind === "grid") {
+      if (st.tries === 1) {   // 놓은 카드는 그대로 두고, 합이 안 맞는 줄만 알려 준다
+        const miss = gridMisses(p.shape, st.typed);
+        st.note = `다시 생각해 봐요. <b>첫 걸음</b> ${miss.length ? `${esc(miss.join(", "))}의 합이 맞지 않아요.` : "카드를 한 번씩만 썼는지 확인해 봐요."}`;
+        render(); say("합이 안 맞는 줄부터 다시 봐요.", "think"); return;
+      }
+      st.phase = "done"; st.reveal = true; st.note = `정답은 그림처럼 채워요. <b>풀이</b> ${esc(plain(p.solution))}`;
+      render(); say("정답 판을 같이 보고 다음 문제로 가요.", "talk"); return;
+    }
+    st.typed = "";
     if (st.tries === 1) {
       // 첫 걸음에 답이 그대로 나오면 그 수를 □로 가린다(거꾸로 풀기는 첫 문장이 곧 답인 때가 있다)
       const step = p.shape.hint || (p.shape.kind === "choice"
@@ -216,6 +269,13 @@ async function main() {
     if (b.dataset.level) { st.level = Number(b.dataset.level); st.index = 0; st.finale = false; return fresh(); }
     if (b.dataset.day) { st.typed = b.dataset.day; return render(); }
     if (b.dataset.pick) { st.typed = b.dataset.pick; return render(); }
+    if (st.p?.shape.kind === "grid" && st.phase !== "done" && (b.dataset.cell || b.dataset.card || b.dataset.key === "del")) {
+      const fill = st.typed.split(","), next = () => { const e = fill.findIndex((x, k) => !x && k > st.sel); st.sel = e >= 0 ? e : Math.max(0, fill.findIndex((x) => !x)); };
+      if (b.dataset.cell) { const k = Number(b.dataset.cell); if (fill[k] && st.sel === k) fill[k] = ""; st.sel = k; }
+      else if (b.dataset.card) { fill[st.sel] = b.dataset.card; next(); }   // 고른 칸에 놓는다(있던 카드는 돌아온다)
+      else fill[st.sel] = "";
+      st.typed = fill.join(","); return render();
+    }
     if (b.dataset.key) { const k = b.dataset.key; st.typed = k === "del" ? st.typed.slice(0, -1) : st.typed.length < 12 ? st.typed + k : st.typed; return render(); }
     const act = b.dataset.dr;
     if (act === "answer") answer(); else if (act === "next") next();
