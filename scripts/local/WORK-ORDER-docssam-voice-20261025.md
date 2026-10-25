@@ -4,7 +4,7 @@
 
 ## 목표
 빠진 독쌤 음성을 만들어 `science-lab/audio/docssam/`에 넣고 main에 push 한다.
-- 손글씨 판서 **220줄**(2026-10-25 저녁 기준, 판서가 늘면 더 는다) — 줄 id가 `fcb-`로 시작(`fields-classic/question-bank/data/voice/boards.voice.json`)
+- 손글씨 판서 **1,764줄**(2026-10-27 기준 — 1~10권 학습 차시 126개 판서 완료, 고치면 줄 수가 조금 바뀔 수 있다) — 줄 id가 `fcb-`로 시작(`fields-classic/question-bank/data/voice/boards.voice.json`)
 - 사이언스 랩 **188줄** — `science-lab/data/voice/*.voice.json`
 push 되면 학생 화면이 그 줄을 독쌤 목소리로 틀고, 없는 줄은 지금처럼 기기 음성으로 읽는다. 사이트 코드는 손댈 필요 없다.
 
@@ -26,7 +26,7 @@ push 되면 학생 화면이 그 줄을 독쌤 목소리로 틀고, 없는 줄�
    - torch는 되고 omnivoice만 없으면: `pip install --timeout 30 --retries 5 omnivoice soundfile librosa imageio-ffmpeg`
    - torch부터 깨졌으면: 이 폴더의 `.venv-omnivoice`를 지우고 `scripts\local\_setup-omnivoice.cmd`(CUDA 12.8 torch)로 새로 만든다. pip에 `--timeout 30 --retries 5`를 붙여 멈춤을 막는다.
    - `torch.cuda.is_available()`가 `True`여야 한다. False면 진행하지 말고 보고한다.
-2. **빠진 줄 확인**: `python scripts\check-docssam-voice.py` → 판서(fcb-) 220줄 + 사이언스 랩 188줄 안팎이 나와야 한다.
+2. **빠진 줄 확인**: `python scripts\check-docssam-voice.py` → 판서(fcb-) 1,764줄 + 사이언스 랩 188줄 안팎이 나와야 한다.
 3. **생성**:
    `python scripts\omnivoice-docssam.py --ref "<녹음 경로>" --device auto --speed 0.8`
    - `--speed 0.8` = 공부용 느린 목소리(`docssam-clone-v2-slow`). 판서·사이언스 랩 둘 다 공부 대사라 이 값으로 한다.
