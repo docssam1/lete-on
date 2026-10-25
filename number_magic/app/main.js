@@ -1199,6 +1199,7 @@ let townCleanup=null;
 /* 지도에서 학습·도감을 다녀와도 같은 장소로 돌아온다. 학생 진도와는 별개인
    이번 방문의 시점만 기억하며, localStorage·클라우드 저장에는 넣지 않는다. */
 let townVisitSnapshot=S.townVisitSnapshot||null;
+const illustratedTownVisits=new WeakMap(); // 이번 접속의 각 프로필 객체별 지도 시점만 기억한다.
 let roadVisitSnapshot=null;
 let restoreRoadVisit=false;
 let hqPuzzle=null; /* 수학사 퀴즈(§3 남쪽 항구) — 현재 화면의 퍼즐 상태. S.histQuiz(큐·done)와
@@ -1740,7 +1741,7 @@ function screenTown(){
   more.innerHTML=`<summary>${S.lang==='ko'?'더 보기':S.lang==='en'?'More':'更多'}</summary><div class="nm-town-extra-list"></div>`;
   const list=more.querySelector('div');
   const places=document.createElement('nav');places.className='nm-town-place-list';places.setAttribute('aria-label',S.lang==='ko'?'지도 속 장소':S.lang==='en'?'Map locations':'地图地点');
-  TOWN_SPOTS.forEach(sp=>{const b=document.createElement('button');b.type='button';b.className='nm-iconbtn';b.dataset.place=sp.tier;b.textContent=townDestinationLabel(sp.tier);b.onclick=()=>enterTownDestination(sp.tier);places.appendChild(b);});list.appendChild(places);
+  [...TOWN_SPOTS].sort((a,b)=>(tierById(a.tier)?.order??99)-(tierById(b.tier)?.order??99)).forEach(sp=>{const b=document.createElement('button');b.type='button';b.className='nm-iconbtn';b.dataset.place=sp.tier;b.textContent=townDestinationLabel(sp.tier);b.onclick=()=>enterTownDestination(sp.tier);places.appendChild(b);});list.appendChild(places);
   while(tools.firstChild)list.appendChild(tools.firstChild);
   panel.appendChild(scr.querySelector('#roadBanner'));panel.appendChild(more);tools.appendChild(toolbox);
   toolbox.open=matchMedia('(min-width:760px), (min-width:600px) and (max-height:500px)').matches;
@@ -1748,8 +1749,19 @@ function screenTown(){
   TOWN_GATES.forEach(g=>{const button=document.createElement('button');button.type='button';button.className='nm-iconbtn';button.dataset.townGate=g.id;button.textContent=g.icon+' '+L(g.name);button.onclick=()=>showGateLinksModal(g);list.appendChild(button);});
   list.appendChild(scr.querySelector('.nm-town-hud.ctrls'));
   toolbox.addEventListener('keydown',e=>{if(e.key==='Escape'){toolbox.open=false;toolbox.querySelector('summary').focus();}});
+  toolbox.addEventListener('focusout',e=>{if(e.relatedTarget&&!toolbox.contains(e.relatedTarget))toolbox.open=false;});
   $('#townLeave').onclick=()=>{S.view='title';S.unitReturn=null;S._fromRoadmap=false;S._fromCourseRoad=false;save();render();};
-  townCleanup=initTownWorld(scr);
+  const cleanupWorld=initTownWorld(scr),menuSummary=toolbox.querySelector('summary');
+  const fitMenu=()=>{
+    if(!toolbox.isConnected)return;
+    const bottom=Math.min(innerHeight,scr.getBoundingClientRect().bottom);
+    toolbox.style.setProperty('--town-menu-space',Math.max(44,Math.floor(bottom-menuSummary.getBoundingClientRect().bottom-14))+'px');
+  };
+  const menuObserver=typeof ResizeObserver==='function'?new ResizeObserver(fitMenu):null;
+  if(menuObserver){menuObserver.observe(scr);menuObserver.observe(menuSummary);}
+  addEventListener('resize',fitMenu);
+  const menuFrame=requestAnimationFrame(fitMenu);
+  townCleanup=()=>{cancelAnimationFrame(menuFrame);menuObserver?.disconnect();removeEventListener('resize',fitMenu);cleanupWorld();};
   // Buildings open directly; tapping empty map space optionally moves the avatar.
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
@@ -6623,8 +6635,9 @@ function townSpotAction(id){
 function initTownWorld(scr){
   const vp=scr.querySelector('#townVp'), world=scr.querySelector('#townWorld');
   const modal=scr.querySelector('#tmodal');
+  const visitOwner=S,visit=illustratedTownVisits.get(visitOwner);
   const W=TOWN_WORLD_W,H=TOWN_WORLD_H;
-  let cam={x:0,y:0,scale:1},minS=1,maxS=3;
+  let cam={x:0,y:0,scale:1},minS=1,maxS=3,cameraReady=false;
   const BBOX=computeContentBBox(W,H,.04);
 
   /* 지도를 화면 가득 채운다. 좁은 세로 화면의 바깥 건물은 드래그하거나
@@ -6714,7 +6727,15 @@ function initTownWorld(scr){
   function onWheel(e){e.preventDefault();zoomTo(cam.scale*(e.deltaY<0?1.1:.9),e.clientX,e.clientY);}
   vp.addEventListener('wheel',onWheel,{passive:false});
 
-  const fitRAF=requestAnimationFrame(()=>{fit();center();});
+  const fitRAF=requestAnimationFrame(()=>{
+    fit();
+    if(visit){
+      cam.scale=Math.max(minS,Math.min(maxS,minS*visit.zoom));
+      cam.x=vp.clientWidth/2-visit.center.x*cam.scale;cam.y=vp.clientHeight/2-visit.center.y*cam.scale;
+      setFollow(visit.follow);bound();apply();
+    }else center();
+    cameraReady=true;
+  });
   function onResize(){fit();if(follow)focusPlayer(true);else{bound();apply();}}
   addEventListener('resize',onResize);
 
@@ -6773,6 +6794,7 @@ function initTownWorld(scr){
     {el:scr.querySelector('#nbPoco'),x:45,y:60,tx:45,ty:60,spd:.14,lines:[L({ko:'안녕! 난 3이야 ✨',en:'Hi! I am 3 ✨',zh:'你好！我是3 ✨'}),L({ko:'7이랑 만나면 10! 🔟',en:'With 7 we make 10! 🔟',zh:'和7在一起就是10！🔟'}),L({ko:'게임하러 가자!',en:'Let\'s go play!',zh:'去玩游戏吧！'})]},
     {el:scr.querySelector('#nbMomo'),x:37,y:66,tx:37,ty:66,spd:.08,lines:[L({ko:'안녕! 난 8이야 💖',en:'Hi! I am 8 💖',zh:'你好！我是8 💖'}),L({ko:'2랑 만나면 10! 🔟',en:'With 2 we make 10! 🔟',zh:'和2在一起就是10！🔟'}),L({ko:'실수는 괜찮아!',en:'Mistakes are okay!',zh:'出错也没关系！'})]}
   ];
+  if(visit)[nbs[0],nbs[1]].forEach((n,i)=>Object.assign(n,{x:visit.party[i].x,y:visit.party[i].y,tx:visit.party[i].x,ty:visit.party[i].y}));
   nbs.forEach(n=>{n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';});
   function pick(n){const sp=[[38,58],[44,62],[36,66],[42,68],[48,57],[34,60]];const p=sp[Math.random()*sp.length|0];n.tx=p[0]+Math.random()*6;n.ty=p[1]+Math.random()*4;}
   nbs.forEach(n=>{if(!n.player&&!n.buddy&&!n.still)pick(n);});
@@ -6840,7 +6862,7 @@ function initTownWorld(scr){
   function onMapFocus(event){
     const button=event.target.closest('.nm-zone,.nm-gate');
     if(!button||!button.matches(':focus-visible'))return;
-    const r=button.getBoundingClientRect(),v=vp.getBoundingClientRect();
+    const r=(button.querySelector('.nm-zlabel')||button).getBoundingClientRect(),v=vp.getBoundingClientRect();
     const dx=r.left<v.left+12?v.left+12-r.left:r.right>v.right-12?v.right-12-r.right:0;
     const dy=r.top<v.top+12?v.top+12-r.top:r.bottom>v.bottom-12?v.bottom-12-r.bottom:0;
     if(dx||dy){setFollow(false);cam.x+=dx;cam.y+=dy;bound();apply();}
@@ -6877,6 +6899,10 @@ function initTownWorld(scr){
   };
 
   return function cleanup(){
+    if(cameraReady&&vp.clientWidth&&vp.clientHeight)illustratedTownVisits.set(visitOwner,{
+      zoom:cam.scale/minS,center:{x:(vp.clientWidth/2-cam.x)/cam.scale,y:(vp.clientHeight/2-cam.y)/cam.scale},
+      follow,party:nbs.slice(0,2).map(n=>({x:n.x,y:n.y}))
+    });
     clearInterval(fountainTimer);
     clearInterval(sparkTimer);
     stopVoice();

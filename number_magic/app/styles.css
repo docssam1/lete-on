@@ -3971,9 +3971,9 @@ body.nm-review-mode .nm-title3d{top:48px}
 .nm-town-toolbox{color:#143A64;font-size:14px}
 .nm-town-toolbox summary{display:flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;box-sizing:border-box;background:#FFFFFFF2;border:1px solid #9DB4CE;border-radius:12px;cursor:pointer;font-weight:800;list-style:none}
 .nm-town-toolbox summary::-webkit-details-marker{display:none}
-.nm-town-tool-list{display:flex;flex-direction:column;gap:8px;padding:8px;background:#FFFFFFF2;border:1px solid #9DB4CE;border-radius:12px;margin-top:6px;max-height:calc(100dvh - 200px);overflow-y:auto;overscroll-behavior:contain;box-shadow:0 5px 18px #16417C20}
+.nm-town-tool-list{position:relative;left:100%;transform:translateX(-100%);width:max(100%,10.7em);max-width:calc(100vw - 24px);display:flex;flex-direction:column;gap:8px;padding:8px;scroll-padding-block:10px;background:#FFFFFFF2;border:1px solid #9DB4CE;border-radius:12px;margin-top:6px;max-height:var(--town-menu-space,calc(100dvh - 200px));overflow-y:auto;overscroll-behavior:contain;box-shadow:0 5px 18px #16417C20}
 .nm-town-extra-list{display:grid;gap:6px;padding-top:6px}
-.nm-town-tool-list .nm-iconbtn,.nm-town-tool-list .nm-philobtn{width:100%;min-height:44px;height:auto;box-sizing:border-box;border-radius:8px;display:flex;justify-content:flex-start;align-items:center;gap:7px;padding:8px;font-size:14px;box-shadow:none;border:1px solid #C8D5E5;background:#F5F8FC}
+.nm-town-tool-list .nm-iconbtn,.nm-town-tool-list .nm-philobtn{width:100%;min-width:0;min-height:44px;height:auto;box-sizing:border-box;border-radius:8px;display:flex;justify-content:flex-start;align-items:center;gap:7px;padding:8px;font-size:14px;overflow-wrap:anywhere;transition:background-color .15s,color .15s,box-shadow .15s,transform .12s;box-shadow:none;border:1px solid #C8D5E5;background:#F5F8FC}
 .nm-town-tool-list .nm-iconbtn span{font-size:13px;line-height:1.3;white-space:normal}.nm-town-tool-list .nm-mb-dot{position:static}
 .nm-town-illustrated .nm-town-hud.ctrls{position:static;display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .nm-town-illustrated .nm-town-hud.ctrls .nm-iconbtn{justify-content:center}
@@ -3981,10 +3981,12 @@ body.nm-review-mode .nm-title3d{top:48px}
 .nm-town-illustrated .nm-road-banner-btn{min-height:44px;margin:0!important;padding:9px 6px;font-size:14px;white-space:normal;border-radius:8px;box-shadow:none;background:#F5F8FC;color:#143A64;border:1px solid #C8D5E5}
 .nm-town-illustrated .nm-road-next{display:none}
 .nm-town-illustrated :is(button,summary,a):focus-visible{outline:3px solid #2456C4;outline-offset:3px}
-@media(max-width:759px) and (min-height:501px){.nm-town-illustrated #townVp{inset:0}.nm-town-illustrated .nm-town-hud.info{top:6px;right:8px;width:150px}.nm-town-illustrated .nm-zlabel{font-size:calc(12px / var(--town-map-scale,1));padding:calc(6px / var(--town-map-scale,1)) calc(7px / var(--town-map-scale,1))}.nm-town-tool-list{max-height:calc(100dvh - 190px)}}
-@media(max-height:500px){.nm-town-illustrated #townVp{inset:0}.nm-town-illustrated .nm-town-hud.info{top:6px;right:8px;width:154px}.nm-town-illustrated .nm-town-hud.brand{font-size:14px;top:10px}.nm-town-tool-list{max-height:calc(100dvh - 150px)}}
+.nm-town-illustrated .nm-zone:focus-visible{outline:none}
+.nm-town-illustrated .nm-zone:focus-visible .nm-zlabel{outline:3px solid #2456C4;outline-offset:3px}
+@media(max-width:759px) and (min-height:501px){.nm-town-illustrated #townVp{inset:0}.nm-town-illustrated .nm-town-hud.info{top:6px;right:8px;width:150px}.nm-town-illustrated .nm-zlabel{font-size:calc(12px / var(--town-map-scale,1));padding:calc(6px / var(--town-map-scale,1)) calc(7px / var(--town-map-scale,1))}}
+@media(max-height:500px){.nm-town-illustrated #townVp{inset:0}.nm-town-illustrated .nm-town-hud.info{top:6px;right:8px;width:154px}.nm-town-illustrated .nm-town-hud.brand{font-size:14px;top:10px}}
 
-.nm-town-place-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding-bottom:6px;border-bottom:1px solid #C8D5E5}
+.nm-town-place-list{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;padding-bottom:6px;border-bottom:1px solid #C8D5E5}
 
 /* Illustrated-map actors keep a readable size; their map coordinates mark feet. */
 .nm-town-illustrated .nb{width:52px;min-height:48px;transform:translate(-50%,-100%) scale(calc(1 / var(--town-map-scale,1)));transform-origin:50% 100%;transition:none;will-change:left,top}
