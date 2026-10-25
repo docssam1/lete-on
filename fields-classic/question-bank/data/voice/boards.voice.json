@@ -4909,6 +4909,378 @@
   {
    "id": "fcb-book-06-bent-perimeter-source-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-inclusive-range-count-b01",
+   "text": "몇부터 몇까지 수가 모두 몇 개일까요? 끝에서 처음을 빼기만 하면 하나가 모자라요. 왜 그런지 작은 수로 직접 세어 봐요."
+  },
+  {
+   "id": "fcb-book-06-inclusive-range-count-b02",
+   "text": "3부터 9까지 수를 늘어놓아요."
+  },
+  {
+   "id": "fcb-book-06-inclusive-range-count-b03",
+   "text": "하나씩 세어요. 1, 2, 3, 4, 5, 6, 7. 일곱 개예요."
+  },
+  {
+   "id": "fcb-book-06-inclusive-range-count-b04",
+   "text": "9 빼기 3은 6이에요. 하나가 모자라요. 뺄셈은 수 사이의 간격을 세기 때문이에요."
+  },
+  {
+   "id": "fcb-book-06-inclusive-range-count-b05",
+   "text": "간격은 여섯 개, 수는 일곱 개. 수는 간격보다 하나 많아요. 처음 수를 빠뜨렸으니 1을 더해요."
+  },
+  {
+   "id": "fcb-book-06-inclusive-range-count-b06",
+   "text": "큰 수도 같은 방법이에요. 26부터 73까지는 73 빼기 26 더하기 1, 48개예요."
+  },
+  {
+   "id": "fcb-book-06-inclusive-range-count-b07",
+   "text": "정리해요. 끝 수에서 처음 수를 빼면 간격의 수예요. 처음 수와 끝 수를 모두 세니까 1을 더해요. 헷갈리면 작은 수로 직접 세어 확인해요."
+  },
+  {
+   "id": "fcb-book-06-inclusive-range-count-b08",
+   "text": "한 문제 풀어 봐요. 14부터 52까지 수는 모두 몇 개일까요?"
+  },
+  {
+   "id": "fcb-book-06-inclusive-range-count-hint",
+   "text": "52 빼기 14는 38이에요. 처음 수까지 세려면요?"
+  },
+  {
+   "id": "fcb-book-06-inclusive-range-count-right",
+   "text": "맞았어요! 38에 1을 더해 39개예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-inclusive-range-count-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-b01",
+   "text": "두 자리 수에 한 자리 수를 곱할 때, 수를 십의 자리와 일의 자리로 갈라 타일처럼 그리면 쉽게 계산할 수 있어요."
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-b02",
+   "text": "47 곱하기 6을 계산해요. 47을 40과 7로 갈라요."
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-b03",
+   "text": "직사각형 타일을 그려요. 가로는 40과 7로 나누고, 세로는 6이에요."
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-b04",
+   "text": "큰 칸은 40 곱하기 6, 240이에요. 작은 칸은 7 곱하기 6, 42예요."
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-b05",
+   "text": "두 칸을 더해요. 240 더하기 42는 282예요. 그래서 47 곱하기 6은 282예요."
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-b06",
+   "text": "여러 수를 더할 때는 딱 떨어지는 짝을 먼저 찾아요. 일의 자리끼리 더해 10이 되는 짝이요."
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-b07",
+   "text": "일의 자리끼리 더해 10이 되는 짝을 찾아요. 64와 36이 짝이에요. 4 더하기 6은 10, 64 더하기 36은 100. 27과 73도 짝, 더하면 100."
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-b08",
+   "text": "정리해요. 두 자리 수는 십의 자리와 일의 자리로 갈라 칸마다 곱하고 더해요. 여러 수를 더할 때는 딱 떨어지는 짝부터 묶어요."
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-b09",
+   "text": "한 문제 풀어 봐요. 38 곱하기 4는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-hint",
+   "text": "30 곱하기 4는 120, 8 곱하기 4는 32. 더하면요?"
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-right",
+   "text": "맞았어요! 120과 32를 더해 152예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-multiplication-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-b01",
+   "text": "식에 같은 수가 여러 번 곱해져 있으면, 곱하는 수끼리 먼저 더해 한 번에 곱할 수 있어요. 9나 99처럼 10이나 100에 가까운 수는 바꿔서 계산해요."
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-b02",
+   "text": "7 곱하기 6 더하기 7 곱하기 4를 계산해요."
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-b03",
+   "text": "7이 여섯 번, 그리고 7이 또 네 번이에요. 모두 7이 몇 번일까요? 6 더하기 4, 열 번이에요."
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-b04",
+   "text": "그래서 7 곱하기 10, 70이에요. 따로 곱해 더해도 42 더하기 28, 똑같이 70이에요."
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-b05",
+   "text": "이번엔 9 곱하기 13을 해요. 9는 10보다 1 작아요. 13을 10번 하면 130, 거기서 13을 한 번 빼면 117이에요."
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-b06",
+   "text": "99도 같아요. 99 곱하기 6은 100 곱하기 6에서 6을 빼요. 600 빼기 6, 594예요."
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-b07",
+   "text": "곱하지 않고 혼자 있는 같은 수는 곱하기 1로 보면 돼요. 8 곱하기 9 더하기 8은 8 곱하기 10, 80이에요."
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-b08",
+   "text": "정리해요. 여러 번 나오는 같은 수를 찾아, 곱하는 수끼리 먼저 더해요. 9는 10 빼기 1, 99는 100 빼기 1로 바꿔 곱한 뒤 빼요."
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-b09",
+   "text": "한 문제 풀어 봐요. 6 곱하기 7 더하기 6 곱하기 3은 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-hint",
+   "text": "6이 7번, 또 3번. 모두 열 번이에요."
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-right",
+   "text": "맞았어요! 6이 열 번이라 60이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-same-factor-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-consecutive-source-b01",
+   "text": "11, 12, 13처럼 1씩 커지는 수를 연속수라고 해요. 연속수를 모두 더할 때, 하나씩 더하지 않고 빠르게 구하는 법을 배워요."
+  },
+  {
+   "id": "fcb-book-06-consecutive-source-b02",
+   "text": "11부터 18까지 더해요. 먼저 개수를 세요. 끝 빼기 처음 더하기 1, 18 빼기 11 더하기 1, 여덟 개예요."
+  },
+  {
+   "id": "fcb-book-06-consecutive-source-b03",
+   "text": "여덟 개, 짝수 개예요. 처음과 끝을 짝지어요. 11과 18, 12와 17. 짝마다 합이 29예요."
+  },
+  {
+   "id": "fcb-book-06-consecutive-source-b04",
+   "text": "짝은 8의 반, 네 개. 29 곱하기 4, 116이에요."
+  },
+  {
+   "id": "fcb-book-06-consecutive-source-b05",
+   "text": "홀수 개일 때는 가운데 수를 써요. 21부터 27까지는 일곱 개, 가운데 수는 24예요. 가운데 수가 모든 수의 평균이라서, 가운데 수 곱하기 개수예요."
+  },
+  {
+   "id": "fcb-book-06-consecutive-source-b06",
+   "text": "어느 경우든 처음과 끝을 더해 개수를 곱한 뒤 반으로 나눠도 같아요. 처음 더하기 끝, 곱하기 개수, 나누기 2."
+  },
+  {
+   "id": "fcb-book-06-consecutive-source-b07",
+   "text": "정리해요. 개수는 끝 빼기 처음 더하기 1. 짝수 개는 처음과 끝을 짝지어 짝의 합 곱하기 짝의 수, 홀수 개는 가운데 수 곱하기 개수예요."
+  },
+  {
+   "id": "fcb-book-06-consecutive-source-b08",
+   "text": "한 문제 풀어 봐요. 5부터 14까지 모두 더하면 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-06-consecutive-source-hint",
+   "text": "개수는 14 빼기 5 더하기 1, 열 개예요. 짝은 다섯 개, 짝의 합은 19예요."
+  },
+  {
+   "id": "fcb-book-06-consecutive-source-right",
+   "text": "맞았어요! 19 곱하기 5, 95예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-consecutive-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-b01",
+   "text": "몇 번째 짝수, 몇 번째 홀수를 늘어놓지 않고 바로 구하는 법을 배워요. 거꾸로 어떤 수가 몇 번째인지도 찾아요."
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-b02",
+   "text": "짝수를 차례로 써요. 2, 4, 6, 8, 10. 그 아래에 몇 번째인지 써요."
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-b03",
+   "text": "짝수는 2단 곱셈의 답이에요. 첫째는 2 곱하기 1, 둘째는 2 곱하기 2. 그래서 몇 번째 짝수는 2 곱하기 몇이에요."
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-b04",
+   "text": "12번째 짝수는 2 곱하기 12, 24예요."
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-b05",
+   "text": "홀수를 짝수 바로 아래에 써요. 1, 3, 5, 7, 9. 같은 번째의 짝수보다 늘 1 작아요."
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-b06",
+   "text": "그래서 몇 번째 홀수는 2 곱하기 몇 빼기 1이에요. 12번째 홀수는 24 빼기 1, 23이에요."
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-b07",
+   "text": "거꾸로도 해요. 58은 몇 번째 짝수일까요? 2로 나누면 29, 29번째예요. 41은 몇 번째 홀수일까요? 1을 더해 42, 2로 나누면 21번째예요."
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-b08",
+   "text": "정리해요. 몇 번째 짝수는 2 곱하기 몇, 몇 번째 홀수는 거기서 1을 빼요. 거꾸로는 짝수를 2로 나누고, 홀수는 1을 더해 2로 나눠요."
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-b09",
+   "text": "한 문제 풀어 봐요. 23번째 홀수는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-hint",
+   "text": "23번째 짝수는 46이에요. 홀수는 거기서 1을 빼요."
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-right",
+   "text": "맞았어요! 46에서 1을 빼 45예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-even-odd-order-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-b01",
+   "text": "수와 숫자는 달라요. 15는 수 하나지만, 쓸 때는 숫자 1과 5, 두 개를 써요. 수의 개수와 쓴 숫자의 개수를 구별해 세요."
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-b02",
+   "text": "8부터 15까지 차례로 써요."
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-b03",
+   "text": "수의 개수는 끝 빼기 처음 더하기 1, 15 빼기 8 더하기 1, 여덟 개예요."
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-b04",
+   "text": "이번엔 숫자를 세요. 한 자리 수 8, 9는 숫자를 하나씩 써요. 두 개."
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-b05",
+   "text": "두 자리 수 10부터 15까지는 숫자를 두 개씩 써요. 두 자리 수는 여섯 개, 숫자는 6 곱하기 2, 12 개예요."
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-b06",
+   "text": "쓴 숫자는 모두 2 더하기 12, 14개예요. 수는 여덟 개인데 숫자는 14개. 달라요."
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-b07",
+   "text": "세 자리 수가 섞이면 세 자리 묶음도 따로 세어 3을 곱해요. 자리 수가 같은 수끼리 묶는 게 핵심이에요."
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-b08",
+   "text": "정리해요. 수의 개수는 끝 빼기 처음 더하기 1. 숫자의 개수는 한 자리, 두 자리, 세 자리 수로 나눠, 묶음마다 수의 개수에 자리 수를 곱해 더해요."
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-b09",
+   "text": "한 문제 풀어 봐요. 6부터 13까지 차례로 쓰면 숫자를 모두 몇 개 쓸까요?"
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-hint",
+   "text": "한 자리 수는 6부터 9까지 네 개, 두 자리 수는 10부터 13까지 네 개예요."
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-right",
+   "text": "맞았어요! 4 더하기 8, 숫자는 12개예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-number-and-digit-count-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-b01",
+   "text": "1부터 40까지 쓸 때, 숫자 3이 몇 번 나오는지, 그리고 3이 들어간 수는 몇 개인지 세어요. 둘은 다를 수 있어요."
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-b02",
+   "text": "먼저 일의 자리에 3이 있는 수를 찾아요. 3, 13, 23, 33이에요. 10마다 하나씩, 네 개."
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-b03",
+   "text": "다음은 십의 자리에 3이 있는 수. 30부터 39까지, 열 개예요."
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-b04",
+   "text": "숫자 3을 쓰는 횟수는 둘을 더해 4 더하기 10, 14번이에요."
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-b05",
+   "text": "그런데 33은 두 목록에 다 있어요. 일의 자리에도 십의 자리에도 3이 있으니까요. 3이 들어간 수를 셀 때는 33을 한 번만 세요."
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-b06",
+   "text": "3이 들어간 수는 4 더하기 10 빼기 1, 13개예요."
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-b07",
+   "text": "숫자를 쓴 횟수는 겹쳐도 두 번 세고, 숫자가 들어간 수는 겹치면 한 번만 세요. 무엇을 묻는지 꼭 읽어요."
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-b08",
+   "text": "정리해요. 일의 자리와 십의 자리를 따로 찾아요. 쓴 횟수는 그대로 더하고, 들어간 수는 두 자리에 모두 있는 수를 한 번 빼요."
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-b09",
+   "text": "한 문제 풀어 봐요. 1부터 30까지 쓸 때 숫자 2가 들어간 수는 모두 몇 개일까요?"
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-hint",
+   "text": "일의 자리 2는 2, 12, 22로 세 개. 십의 자리 2는 20부터 29까지 열 개. 22는 두 번 셌어요."
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-right",
+   "text": "맞았어요! 22를 한 번만 세서 12개예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-digit-sign-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-06-make-number-source-b01",
+   "text": "수 사이에 더하기나 빼기를 넣어 원하는 수를 만들어요. 아무렇게나 넣지 말고, 먼저 모두 더해 보고 얼마나 차이 나는지 봐요."
+  },
+  {
+   "id": "fcb-book-06-make-number-source-b02",
+   "text": "8 ○ 3 ○ 4 ○ 1 = 8. 동그라미에 더하기나 빼기를 넣어요."
+  },
+  {
+   "id": "fcb-book-06-make-number-source-b03",
+   "text": "먼저 모두 더해 봐요. 8 더하기 3 더하기 4 더하기 1은 16이에요. 목표 8보다 8 커요."
+  },
+  {
+   "id": "fcb-book-06-make-number-source-b04",
+   "text": "더하기 하나를 빼기로 바꾸면, 그 수만큼 덜 더하고 또 그만큼 빼니까 그 수의 두 배만큼 줄어요. 8만큼 줄이려면 8의 반, 4를 빼기로 바꿔요."
+  },
+  {
+   "id": "fcb-book-06-make-number-source-b05",
+   "text": "4 앞에 빼기를 넣어요. 8 + 3 − 4 + 1. 계산하면 8이에요."
+  },
+  {
+   "id": "fcb-book-06-make-number-source-b06",
+   "text": "모두 더한 값이 목표보다 작으면, 숫자를 붙여 두 자리 수를 만들어요. 1, 2, 3으로 15를 만들려면 12 더하기 3, 15."
+  },
+  {
+   "id": "fcb-book-06-make-number-source-b07",
+   "text": "정리해요. 먼저 모두 더해 목표와 비교해요. 너무 크면 차이의 반인 수 앞을 빼기로, 너무 작으면 숫자를 붙여 큰 수를 만들어요. 마지막에 계산해 확인해요."
+  },
+  {
+   "id": "fcb-book-06-make-number-source-b08",
+   "text": "한 문제 풀어 봐요. 7 ○ 2 ○ 3 = 2가 되게 동그라미에 기호를 차례로 넣으면 무엇일까요?"
+  },
+  {
+   "id": "fcb-book-06-make-number-source-hint",
+   "text": "모두 더하면 12예요. 10만큼 줄여야 해서, 빼기로 바꿀 수들의 합이 5여야 해요. 2와 3을 둘 다 빼면요?"
+  },
+  {
+   "id": "fcb-book-06-make-number-source-right",
+   "text": "맞았어요! 2와 3을 모두 빼면 7 빼기 5, 2예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-06-make-number-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }

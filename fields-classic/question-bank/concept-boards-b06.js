@@ -451,4 +451,275 @@ export const BOARDS_B06 = {
       ]
     };
   })()
+  ,"book-06/inclusive-range-count": (() => {
+    const a = 3, b = 9, n = b - a + 1, X = (v) => 110 + (v - 1) * 80, Y = 300;
+    const A2 = 26, B2 = 73;
+    const CHK = { a: 14, b: 52 }, chk = CHK.b - CHK.a + 1;
+    return {
+      title: "처음과 끝을 넣어 수를 세어요",
+      kicker: "6권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "몇부터 몇까지 수가 모두 몇 개일까요? 끝에서 처음을 빼기만 하면 하나가 모자라요. 왜 그런지 작은 수로 직접 세어 봐요.",
+          items: [title("처음부터 끝까지 몇 개?")] },
+        { say: `${a}부터 ${b}까지 수를 늘어놓아요.`,
+          items: Array.from({ length: n }, (_, i) => ({ kind: "node", cx: X(a + i), cy: Y, r: 30, value: a + i, color: "blue", size: 30 })) },
+        { say: `하나씩 세어요. ${Array.from({ length: n }, (_, i) => i + 1).join(", ")}. ${KO[n]} 개예요.`,
+          items: Array.from({ length: n }, (_, i) => T(X(a + i), Y + 64, String(i + 1), "green", 26, "center")) },
+        { say: `${b} 빼기 ${jo(a, "은")} ${jo(b - a, "이에요")}. 하나가 모자라요. 뺄셈은 수 사이의 간격을 세기 때문이에요.`,
+          items: [...Array.from({ length: n - 1 }, (_, i) => ({ kind: "path", d: `M ${X(a + i) + 6} ${Y - 34} Q ${X(a + i) + 40} ${Y - 70} ${X(a + i + 1) - 6} ${Y - 34}`, stroke: "red", width: 2.5 })), T(110, 420, `${b} − ${a} = ${b - a}  → 간격의 수`, "red", 28)] },
+        { say: `간격은 ${KO[b - a]} 개, 수는 ${KO[n]} 개. 수는 간격보다 하나 많아요. 처음 수를 빠뜨렸으니 1을 더해요.`,
+          items: [T(110, 470, `수의 개수 = ${b} − ${a} + 1 = ${n}`, "green", 30)] },
+        { say: `큰 수도 같은 방법이에요. ${A2}부터 ${B2}까지는 ${B2} 빼기 ${A2} 더하기 1, ${B2 - A2 + 1}개예요.`,
+          items: [T(110, 530, `${A2} ~ ${B2}: ${B2} − ${A2} + 1 = ${B2 - A2 + 1}개`, "blue", 28)] },
+        { say: "정리해요. 끝 수에서 처음 수를 빼면 간격의 수예요. 처음 수와 끝 수를 모두 세니까 1을 더해요. 헷갈리면 작은 수로 직접 세어 확인해요.", mood: "praise",
+          items: [T(640, 470, "끝 − 처음 + 1", "gold", 34)] },
+        { say: `한 문제 풀어 봐요. ${CHK.a}부터 ${CHK.b}까지 수는 모두 몇 개일까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK.a}부터 ${CHK.b}까지 수는 모두 몇 개?`,
+            options: [`${chk - 1}개`, `${chk}개`, `${chk + 1}개`], answer: 1,
+            hint: "끝 − 처음 + 1이에요.", sayHint: `${CHK.b} 빼기 ${jo(CHK.a, "는")} ${jo(CHK.b - CHK.a, "이에요")}. 처음 수까지 세려면요?`,
+            right: `맞았어요! ${CHK.b} − ${CHK.a} + 1 = ${chk}개.`, sayRight: `맞았어요! ${CHK.b - CHK.a}에 1을 더해 ${chk}개예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-06/multiplication-source": (() => {
+    const A = 47, k = 6, t = Math.floor(A / 10) * 10, o = A % 10;
+    const X0 = 120, Y0 = 190, W1 = 300, W2 = 90, H = 110;
+    const ADD = [64, 27, 36, 73];
+    const CHK = { a: 38, k: 4 };
+    return {
+      title: "타일 곱셈과 간편 계산",
+      kicker: "6권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "두 자리 수에 한 자리 수를 곱할 때, 수를 십의 자리와 일의 자리로 갈라 타일처럼 그리면 쉽게 계산할 수 있어요.",
+          items: [title("타일 곱셈")] },
+        { say: `${A} 곱하기 ${jo(k, "을")} 계산해요. ${jo(A, "을")} ${jo(t, "과")} ${jo(o, "로")} 갈라요.`,
+          items: [T(560, 170, `${A} × ${k}`, "ink", 40), T(560, 220, `${A} = ${t} + ${o}`, "blue", 30)] },
+        { say: `직사각형 타일을 그려요. 가로는 ${jo(t, "과")} ${jo(o, "로")} 나누고, 세로는 ${jo(k, "이에요")}.`,
+          items: [{ kind: "box", x: X0, y: Y0, w: W1, h: H, color: "blue" }, { kind: "box", x: X0 + W1, y: Y0, w: W2, h: H, color: "green" }, T(X0 + W1 / 2, Y0 - 12, String(t), "blue", 28, "center"), T(X0 + W1 + W2 / 2, Y0 - 12, String(o), "green", 28, "center"), T(X0 - 14, Y0 + H / 2 + 10, String(k), "ink", 28, "right")] },
+        { say: `큰 칸은 ${t} 곱하기 ${k}, ${jo(t * k, "이에요")}. 작은 칸은 ${o} 곱하기 ${k}, ${jo(o * k, "예요")}.`,
+          items: [T(X0 + W1 / 2, Y0 + H / 2 + 12, String(t * k), "blue", 34, "center"), T(X0 + W1 + W2 / 2, Y0 + H / 2 + 12, String(o * k), "green", 30, "center")] },
+        { say: `두 칸을 더해요. ${t * k} 더하기 ${jo(o * k, "는")} ${jo(A * k, "예요")}. 그래서 ${A} 곱하기 ${jo(k, "은")} ${jo(A * k, "예요")}.`,
+          items: [T(560, 280, `${t * k} + ${o * k} = ${A * k}`, "green", 32)] },
+        { say: "여러 수를 더할 때는 딱 떨어지는 짝을 먼저 찾아요. 일의 자리끼리 더해 10이 되는 짝이요.",
+          items: [T(110, 400, ADD.join(" + "), "ink", 36)] },
+        { say: "일의 자리끼리 더해 10이 되는 짝을 찾아요. 64와 36이 짝이에요. 4 더하기 6은 10, 64 더하기 36은 100. 27과 73도 짝, 더하면 100.",
+          items: [{ kind: "arrow", x1: 140, y1: 420, x2: 330, y2: 420, bend: -30, color: "red", width: 2.5 }, { kind: "arrow", x1: 235, y1: 420, x2: 425, y2: 420, bend: -50, color: "gold", width: 2.5 }, T(110, 470, "(64 + 36) + (27 + 73) = 100 + 100 = 200", "green", 28)] },
+        { say: "정리해요. 두 자리 수는 십의 자리와 일의 자리로 갈라 칸마다 곱하고 더해요. 여러 수를 더할 때는 딱 떨어지는 짝부터 묶어요.", mood: "praise",
+          items: [T(560, 520, "가르고 곱하고 더하기", "gold", 28)] },
+        { say: `한 문제 풀어 봐요. ${CHK.a} 곱하기 ${jo(CHK.k, "는")} 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK.a} × ${CHK.k}는 얼마일까요?`,
+            options: [String(CHK.a * CHK.k - 10), String(CHK.a * CHK.k), String(CHK.a * CHK.k + 10)], answer: 1,
+            hint: "30과 8로 갈라 따로 곱해요.", sayHint: `30 곱하기 4는 120, 8 곱하기 4는 32. 더하면요?`,
+            right: `맞았어요! 120 + 32 = ${CHK.a * CHK.k}.`, sayRight: `맞았어요! 120과 32를 더해 ${jo(CHK.a * CHK.k, "예요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-06/same-factor-source": (() => {
+    const F = 7, a = 6, b = 4;
+    const N = 9, M = 13, N99 = 99, M99 = 6;
+    const CHK = { f: 6, a: 7, b: 3 }, chk = CHK.f * (CHK.a + CHK.b);
+    return {
+      title: "같은 수로 묶기와 9에 가까운 수",
+      kicker: "6권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "식에 같은 수가 여러 번 곱해져 있으면, 곱하는 수끼리 먼저 더해 한 번에 곱할 수 있어요. 9나 99처럼 10이나 100에 가까운 수는 바꿔서 계산해요.",
+          items: [title("같은 수로 묶기")] },
+        { say: `${F} 곱하기 ${a} 더하기 ${F} 곱하기 ${jo(b, "를")} 계산해요.`,
+          items: [T(80, 170, `${F} × ${a} + ${F} × ${b}`, "ink", 40)] },
+        { say: `${jo(F, "이")} ${KO[a]} 번, 그리고 ${jo(F, "이")} 또 ${KO[b]} 번이에요. 모두 ${jo(F, "이")} 몇 번일까요? ${a} 더하기 ${b}, ${KO[a + b]} 번이에요.`,
+          items: [...Array.from({ length: a }, (_, i) => ({ kind: "node", cx: 100 + i * 52, cy: 250, r: 22, value: F, color: "blue", size: 22 })), ...Array.from({ length: b }, (_, i) => ({ kind: "node", cx: 100 + (a + i) * 52, cy: 250, r: 22, value: F, color: "green", size: 22 }))] },
+        { say: `그래서 ${F} 곱하기 ${a + b}, ${jo(F * (a + b), "이에요")}. 따로 곱해 더해도 ${F * a} 더하기 ${F * b}, 똑같이 ${jo(F * (a + b), "이에요")}.`,
+          items: [T(80, 320, `= ${F} × (${a} + ${b}) = ${F} × ${a + b} = ${F * (a + b)}`, "green", 30)] },
+        { say: `이번엔 ${N} 곱하기 ${jo(M, "을")} 해요. 9는 10보다 1 작아요. ${jo(M, "을")} 10번 하면 ${M * 10}, 거기서 ${jo(M, "을")} 한 번 빼면 ${jo(M * 9, "이에요")}.`,
+          items: [T(80, 400, `${N} × ${M} = 10 × ${M} − ${M} = ${M * 10} − ${M} = ${M * 9}`, "blue", 28)] },
+        { say: `99도 같아요. ${N99} 곱하기 ${jo(M99, "은")} 100 곱하기 ${M99}에서 ${jo(M99, "을")} 빼요. 600 빼기 6, ${jo(N99 * M99, "예요")}.`,
+          items: [T(80, 450, `${N99} × ${M99} = 100 × ${M99} − ${M99} = ${N99 * M99}`, "blue", 28)] },
+        { say: "곱하지 않고 혼자 있는 같은 수는 곱하기 1로 보면 돼요. 8 곱하기 9 더하기 8은 8 곱하기 10, 80이에요.",
+          items: [T(80, 510, "8 × 9 + 8 = 8 × (9 + 1) = 80", "gold", 28)] },
+        { say: "정리해요. 여러 번 나오는 같은 수를 찾아, 곱하는 수끼리 먼저 더해요. 9는 10 빼기 1, 99는 100 빼기 1로 바꿔 곱한 뒤 빼요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. ${CHK.f} 곱하기 ${CHK.a} 더하기 ${CHK.f} 곱하기 ${jo(CHK.b, "은")} 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK.f} × ${CHK.a} + ${CHK.f} × ${jo(CHK.b, "는")}?`,
+            options: [String(chk - CHK.f), String(chk), String(CHK.f * CHK.a * CHK.b)], answer: 1,
+            hint: `${jo(CHK.f, "이")} 모두 몇 번인지 세요.`, sayHint: `${jo(CHK.f, "이")} ${CHK.a}번, 또 ${CHK.b}번. 모두 열 번이에요.`,
+            right: `맞았어요! ${CHK.f} × (${CHK.a} + ${CHK.b}) = ${CHK.f} × 10 = ${chk}.`, sayRight: `맞았어요! ${jo(CHK.f, "이")} 열 번이라 ${jo(chk, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-06/consecutive-source": (() => {
+    const a = 11, b = 18, n = b - a + 1, pair = a + b, sum = pair * n / 2;
+    const c = 21, d = 27, m = d - c + 1, mid = (c + d) / 2;
+    const CHK = { a: 5, b: 14 }, cn = CHK.b - CHK.a + 1, csum = (CHK.a + CHK.b) * cn / 2;
+    return {
+      title: "수의 개수와 연속수의 합",
+      kicker: "6권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "11, 12, 13처럼 1씩 커지는 수를 연속수라고 해요. 연속수를 모두 더할 때, 하나씩 더하지 않고 빠르게 구하는 법을 배워요.",
+          items: [title("연속수의 합")] },
+        { say: `${a}부터 ${b}까지 더해요. 먼저 개수를 세요. 끝 빼기 처음 더하기 1, ${b} 빼기 ${a} 더하기 1, ${KO[n]} 개예요.`,
+          items: [T(80, 170, Array.from({ length: n }, (_, i) => a + i).join(" + "), "ink", 30), T(80, 220, `개수: ${b} − ${a} + 1 = ${n}`, "blue", 28)] },
+        { say: `${KO[n]} 개, 짝수 개예요. 처음과 끝을 짝지어요. ${jo(a, "과")} ${b}, ${jo(a + 1, "와")} ${b - 1}. 짝마다 합이 ${jo(pair, "예요")}.`,
+          items: [T(80, 280, `${a} + ${b} = ${a + 1} + ${b - 1} = … = ${pair}`, "red", 28)] },
+        { say: `짝은 ${n}의 반, ${KO[n / 2]} 개. ${pair} 곱하기 ${n / 2}, ${jo(sum, "이에요")}.`,
+          items: [T(80, 330, `${pair} × ${n / 2} = ${sum}`, "green", 32)] },
+        { say: `홀수 개일 때는 가운데 수를 써요. ${c}부터 ${d}까지는 ${KO[m]} 개, 가운데 수는 ${jo(mid, "예요")}. 가운데 수가 모든 수의 평균이라서, 가운데 수 곱하기 개수예요.`,
+          items: [T(80, 410, Array.from({ length: m }, (_, i) => c + i).join(" + "), "ink", 28), T(80, 460, `가운데 ${mid} × 개수 ${m} = ${mid * m}`, "green", 30)] },
+        { say: "어느 경우든 처음과 끝을 더해 개수를 곱한 뒤 반으로 나눠도 같아요. 처음 더하기 끝, 곱하기 개수, 나누기 2.",
+          items: [T(80, 530, "(처음 + 끝) × 개수 ÷ 2", "gold", 30)] },
+        { say: "정리해요. 개수는 끝 빼기 처음 더하기 1. 짝수 개는 처음과 끝을 짝지어 짝의 합 곱하기 짝의 수, 홀수 개는 가운데 수 곱하기 개수예요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. ${CHK.a}부터 ${CHK.b}까지 모두 더하면 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK.a} + ${CHK.a + 1} + … + ${CHK.b}는?`,
+            options: [String(csum - CHK.a), String(csum), String((CHK.a + CHK.b) * cn)], answer: 1,
+            hint: "개수를 세고, 처음과 끝을 짝지어요.", sayHint: `개수는 ${CHK.b} 빼기 ${CHK.a} 더하기 1, 열 개예요. 짝은 다섯 개, 짝의 합은 ${jo(CHK.a + CHK.b, "예요")}.`,
+            right: `맞았어요! ${CHK.a + CHK.b} × ${cn / 2} = ${csum}.`, sayRight: `맞았어요! ${CHK.a + CHK.b} 곱하기 5, ${jo(csum, "예요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-06/even-odd-order-source": (() => {
+    const K = 12, ev = 2 * K, od = 2 * K - 1, E2 = 58, O2 = 41;
+    const X = (i) => 110 + i * 92;
+    const CHK = 23, chk = 2 * CHK - 1;
+    return {
+      title: "짝수와 홀수의 순서",
+      kicker: "6권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "몇 번째 짝수, 몇 번째 홀수를 늘어놓지 않고 바로 구하는 법을 배워요. 거꾸로 어떤 수가 몇 번째인지도 찾아요.",
+          items: [title("짝수와 홀수의 순서")] },
+        { say: "짝수를 차례로 써요. 2, 4, 6, 8, 10. 그 아래에 몇 번째인지 써요.",
+          items: [...[1, 2, 3, 4, 5].flatMap((i) => [{ kind: "node", cx: X(i - 1), cy: 200, r: 30, value: 2 * i, color: "blue", size: 30 }, T(X(i - 1), 260, `${i}번째`, "gray", 20, "center")])] },
+        { say: "짝수는 2단 곱셈의 답이에요. 첫째는 2 곱하기 1, 둘째는 2 곱하기 2. 그래서 몇 번째 짝수는 2 곱하기 몇이에요.",
+          items: [T(600, 200, "□번째 짝수 = 2 × □", "blue", 28)] },
+        { say: `${K}번째 짝수는 2 곱하기 ${K}, ${jo(ev, "예요")}.`,
+          items: [T(600, 250, `${K}번째 짝수 = ${ev}`, "green", 28)] },
+        { say: "홀수를 짝수 바로 아래에 써요. 1, 3, 5, 7, 9. 같은 번째의 짝수보다 늘 1 작아요.",
+          items: [...[1, 2, 3, 4, 5].map((i) => ({ kind: "node", cx: X(i - 1), cy: 330, r: 30, value: 2 * i - 1, color: "red", size: 30 }))] },
+        { say: `그래서 몇 번째 홀수는 2 곱하기 몇 빼기 1이에요. ${K}번째 홀수는 ${ev} 빼기 1, ${jo(od, "이에요")}.`,
+          items: [T(600, 330, "□번째 홀수 = 2 × □ − 1", "red", 28), T(600, 380, `${K}번째 홀수 = ${od}`, "green", 28)] },
+        { say: `거꾸로도 해요. ${jo(E2, "은")} 몇 번째 짝수일까요? 2로 나누면 ${E2 / 2}, ${E2 / 2}번째예요. ${jo(O2, "은")} 몇 번째 홀수일까요? 1을 더해 ${O2 + 1}, 2로 나누면 ${O2 / 2 + 0.5}번째예요.`,
+          items: [T(110, 450, `${E2} ÷ 2 = ${E2 / 2}번째 짝수,  (${O2} + 1) ÷ 2 = ${(O2 + 1) / 2}번째 홀수`, "blue", 26)] },
+        { say: "정리해요. 몇 번째 짝수는 2 곱하기 몇, 몇 번째 홀수는 거기서 1을 빼요. 거꾸로는 짝수를 2로 나누고, 홀수는 1을 더해 2로 나눠요.", mood: "praise",
+          items: [T(110, 520, "짝수 2×□,  홀수 2×□ − 1", "gold", 30)] },
+        { say: `한 문제 풀어 봐요. ${CHK}번째 홀수는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK}번째 홀수는?`,
+            options: [String(CHK * 2), String(chk), String(CHK)], answer: 1,
+            hint: "같은 번째의 짝수보다 1 작아요.", sayHint: `${CHK}번째 짝수는 ${jo(2 * CHK, "이에요")}. 홀수는 거기서 1을 빼요.`,
+            right: `맞았어요! 2 × ${CHK} − 1 = ${chk}.`, sayRight: `맞았어요! ${2 * CHK}에서 1을 빼 ${jo(chk, "예요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-06/number-and-digit-count": (() => {
+    const a = 8, b = 15, nums = b - a + 1, one = 9 - a + 1, two = b - 10 + 1, digits = one * 1 + two * 2;
+    const X = (i) => 90 + i * 100;
+    const CHK = { a: 6, b: 13 }, cOne = 9 - CHK.a + 1, cTwo = CHK.b - 10 + 1, chk = cOne + cTwo * 2;
+    return {
+      title: "수의 개수와 쓴 숫자를 구별해요",
+      kicker: "6권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "수와 숫자는 달라요. 15는 수 하나지만, 쓸 때는 숫자 1과 5, 두 개를 써요. 수의 개수와 쓴 숫자의 개수를 구별해 세요.",
+          items: [title("수의 개수와 숫자의 개수")] },
+        { say: `${a}부터 ${b}까지 차례로 써요.`,
+          items: Array.from({ length: nums }, (_, i) => T(X(i), 200, String(a + i), "blue", 40, "center")) },
+        { say: `수의 개수는 끝 빼기 처음 더하기 1, ${b} 빼기 ${a} 더하기 1, ${KO[nums]} 개예요.`,
+          items: [T(90, 290, `수: ${b} − ${a} + 1 = ${nums}개`, "blue", 30)] },
+        { say: `이번엔 숫자를 세요. 한 자리 수 ${a}, 9는 숫자를 하나씩 써요. ${KO[one]} 개.`,
+          items: [...Array.from({ length: one }, (_, i) => ({ kind: "ring", cx: X(i), cy: 186, r: 30, color: "green" })), T(90, 350, `한 자리 수 ${one}개 × 1 = ${one}`, "green", 28)] },
+        { say: `두 자리 수 10부터 ${b}까지는 숫자를 두 개씩 써요. 두 자리 수는 ${KO[two]} 개, 숫자는 ${two} 곱하기 2, ${KO[two * 2] || two * 2} 개예요.`,
+          items: [...Array.from({ length: two }, (_, i) => ({ kind: "box", x: X(one + i) - 36, y: 160, w: 72, h: 54, color: "red" })), T(90, 400, `두 자리 수 ${two}개 × 2 = ${two * 2}`, "red", 28)] },
+        { say: `쓴 숫자는 모두 ${one} 더하기 ${two * 2}, ${digits}개예요. 수는 ${KO[nums]} 개인데 숫자는 ${digits}개. 달라요.`,
+          items: [T(90, 460, `숫자: ${one} + ${two * 2} = ${digits}개  (수는 ${nums}개)`, "gold", 30)] },
+        { say: "세 자리 수가 섞이면 세 자리 묶음도 따로 세어 3을 곱해요. 자리 수가 같은 수끼리 묶는 게 핵심이에요.",
+          items: [T(90, 520, "자리 수끼리 묶어 × 자리 수", "gold", 28)] },
+        { say: "정리해요. 수의 개수는 끝 빼기 처음 더하기 1. 숫자의 개수는 한 자리, 두 자리, 세 자리 수로 나눠, 묶음마다 수의 개수에 자리 수를 곱해 더해요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. ${CHK.a}부터 ${CHK.b}까지 차례로 쓰면 숫자를 모두 몇 개 쓸까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK.a}부터 ${CHK.b}까지 차례로 쓸 때 쓴 숫자는 모두 몇 개?`,
+            options: [`${CHK.b - CHK.a + 1}개`, `${chk}개`, `${(CHK.b - CHK.a + 1) * 2}개`], answer: 1,
+            hint: "한 자리 수와 두 자리 수를 나눠 세요.", sayHint: `한 자리 수는 ${CHK.a}부터 9까지 ${KO[cOne]} 개, 두 자리 수는 10부터 ${CHK.b}까지 ${KO[cTwo]} 개예요.`,
+            right: `맞았어요! ${cOne} + ${cTwo} × 2 = ${chk}개.`, sayRight: `맞았어요! ${cOne} 더하기 ${cTwo * 2}, 숫자는 ${chk}개예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-06/digit-sign-source": (() => {
+    const a = 1, b = 40, D = 3, ones = Array.from({ length: b }, (_, i) => i + 1).filter((n) => n % 10 === D), tens = Array.from({ length: b }, (_, i) => i + 1).filter((n) => Math.floor(n / 10) === D);
+    const both = ones.filter((n) => tens.includes(n)), withD = [...new Set([...ones, ...tens])].sort((x, y) => x - y);
+    const writes = ones.length + tens.length;
+    const CHK = { b: 30, d: 2 }, cOnes = Array.from({ length: CHK.b }, (_, i) => i + 1).filter((n) => n % 10 === CHK.d), cTens = Array.from({ length: CHK.b }, (_, i) => i + 1).filter((n) => Math.floor(n / 10) === CHK.d), cWith = new Set([...cOnes, ...cTens]).size;
+    const RX = 560;
+    return {
+      title: "수와 숫자의 개수",
+      kicker: "6권 4단원 · 손글씨 개념",
+      beats: [
+        { say: `1부터 ${b}까지 쓸 때, 숫자 ${jo(D, "이")} 몇 번 나오는지, 그리고 ${jo(D, "이")} 들어간 수는 몇 개인지 세어요. 둘은 다를 수 있어요.`,
+          items: [title(`숫자 ${D} 찾기`)] },
+        { say: `먼저 일의 자리에 ${jo(D, "이")} 있는 수를 찾아요. ${jo(ones.join(", "), "이에요")}. 10마다 하나씩, ${KO[ones.length]} 개.`,
+          items: [T(80, 170, `일의 자리 ${D}: ${ones.join(", ")}`, "blue", 28)] },
+        { say: `다음은 십의 자리에 ${jo(D, "이")} 있는 수. 30부터 39까지, ${KO[tens.length]} 개예요.`,
+          items: [T(80, 225, `십의 자리 ${D}: ${tens[0]} ~ ${tens.at(-1)}`, "green", 28)] },
+        { say: `숫자 ${jo(D, "을")} 쓰는 횟수는 둘을 더해 ${ones.length} 더하기 ${tens.length}, ${writes}번이에요.`,
+          items: [T(80, 285, `쓴 횟수: ${ones.length} + ${tens.length} = ${writes}번`, "gold", 28)] },
+        { say: `그런데 ${jo(both[0], "은")} 두 목록에 다 있어요. 일의 자리에도 십의 자리에도 ${jo(D, "이")} 있으니까요. ${jo(D, "이")} 들어간 수를 셀 때는 ${jo(both[0], "을")} 한 번만 세요.`,
+          items: [{ kind: "box", x: 80, y: 370, w: 420, h: 90, color: "red", dash: true }, T(80, 345, `${both[0]}: 일의 자리에도, 십의 자리에도 → 두 번 셌어요`, "red", 24)] },
+        { say: `${jo(D, "이")} 들어간 수는 ${ones.length} 더하기 ${tens.length} 빼기 1, ${withD.length}개예요.`,
+          items: [T(80, 400, `들어간 수: ${ones.length} + ${tens.length} − 1 = ${withD.length}개`, "green", 28)] },
+        { say: "숫자를 쓴 횟수는 겹쳐도 두 번 세고, 숫자가 들어간 수는 겹치면 한 번만 세요. 무엇을 묻는지 꼭 읽어요.",
+          items: [T(RX, 460, "쓴 횟수: 겹쳐도 두 번", "blue", 24), T(RX, 500, "들어간 수: 겹치면 한 번", "red", 24)] },
+        { say: "정리해요. 일의 자리와 십의 자리를 따로 찾아요. 쓴 횟수는 그대로 더하고, 들어간 수는 두 자리에 모두 있는 수를 한 번 빼요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. 1부터 ${CHK.b}까지 쓸 때 숫자 ${jo(CHK.d, "가")} 들어간 수는 모두 몇 개일까요?`, mood: "think",
+          items: [],
+          check: { question: `1부터 ${CHK.b}까지 중 숫자 ${jo(CHK.d, "가")} 들어간 수는 몇 개?`,
+            options: [`${cWith}개`, `${cOnes.length + cTens.length}개`, `${cTens.length}개`], answer: 0,
+            hint: "일의 자리, 십의 자리를 따로 찾고 겹친 수를 한 번 빼요.", sayHint: `일의 자리 2는 2, 12, 22로 세 개. 십의 자리 2는 20부터 29까지 열 개. 22는 두 번 셌어요.`,
+            right: `맞았어요! ${cOnes.length} + ${cTens.length} − 1 = ${cWith}개.`, sayRight: `맞았어요! 22를 한 번만 세서 ${cWith}개예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-06/make-number-source": (() => {
+    const N = [8, 3, 4, 1], TARGET = 8, all = N.reduce((x, y) => x + y, 0), over = all - TARGET, flip = over / 2;
+    const sign = N.map((v, i) => (i > 0 && v === flip ? "−" : "+"));
+    const expr = N.map((v, i) => (i === 0 ? String(v) : `${sign[i]} ${v}`)).join(" ");
+    const B = [1, 2, 3], BT = 15;
+    const CHK = { n: [7, 2, 3], t: 2 };
+    const RX = 560;
+    return {
+      title: "수 만들기",
+      kicker: "6권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "수 사이에 더하기나 빼기를 넣어 원하는 수를 만들어요. 아무렇게나 넣지 말고, 먼저 모두 더해 보고 얼마나 차이 나는지 봐요.",
+          items: [title("기호 넣어 수 만들기")] },
+        { say: `${N.join(" ○ ")} = ${TARGET}. 동그라미에 더하기나 빼기를 넣어요.`,
+          items: [T(80, 170, `${N.join("  ○  ")}  =  ${TARGET}`, "ink", 40)] },
+        { say: `먼저 모두 더해 봐요. ${jo(N.join(" 더하기 "), "는")} ${jo(all, "이에요")}. 목표 ${TARGET}보다 ${over} 커요.`,
+          items: [T(80, 240, `${N.join(" + ")} = ${all}  (${TARGET}보다 ${over} 큼)`, "blue", 28)] },
+        { say: `더하기 하나를 빼기로 바꾸면, 그 수만큼 덜 더하고 또 그만큼 빼니까 그 수의 두 배만큼 줄어요. ${over}만큼 줄이려면 ${over}의 반, ${jo(flip, "를")} 빼기로 바꿔요.`,
+          items: [T(80, 300, `빼기로 바꾸면 그 수 × 2만큼 줄어요`, "gold", 26), T(80, 345, `${over} ÷ 2 = ${flip} → ${flip} 앞을 −로`, "red", 28)] },
+        { say: `${flip} 앞에 빼기를 넣어요. ${expr}. 계산하면 ${jo(TARGET, "이에요")}.`,
+          items: [T(80, 410, `${expr} = ${TARGET} ✓`, "green", 36)] },
+        { say: `모두 더한 값이 목표보다 작으면, 숫자를 붙여 두 자리 수를 만들어요. ${jo(B.join(", "), "으로")} ${jo(BT, "를")} 만들려면 12 더하기 3, 15.`,
+          items: [T(RX, 300, `${B.join(" ○ ")} = ${BT}`, "ink", 30), T(RX, 350, `12 + 3 = ${BT} (1과 2를 붙임)`, "green", 26)] },
+        { say: "정리해요. 먼저 모두 더해 목표와 비교해요. 너무 크면 차이의 반인 수 앞을 빼기로, 너무 작으면 숫자를 붙여 큰 수를 만들어요. 마지막에 계산해 확인해요.", mood: "praise",
+          items: [T(RX, 450, "차이의 반 → 빼기로", "gold", 28)] },
+        { say: `한 문제 풀어 봐요. ${CHK.n.join(" ○ ")} = ${jo(CHK.t, "가")} 되게 동그라미에 기호를 차례로 넣으면 무엇일까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK.n.join(" ○ ")} = ${CHK.t}가 되는 기호를 차례로 고르면?`,
+            options: ["+, −", "−, −", "−, +"], answer: 1,
+            hint: "모두 더하면 12, 목표보다 10 커요.", sayHint: "모두 더하면 12예요. 10만큼 줄여야 해서, 빼기로 바꿀 수들의 합이 5여야 해요. 2와 3을 둘 다 빼면요?",
+            right: `맞았어요! ${CHK.n[0]} − ${CHK.n[1]} − ${CHK.n[2]} = ${CHK.t}.`, sayRight: "맞았어요! 2와 3을 모두 빼면 7 빼기 5, 2예요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
 };
