@@ -34,6 +34,23 @@ const topGrid = (x0, y0, map, cell = 46, color = "blue") => [{ kind: "grid", x: 
   ...map.flatMap((row, r) => row.map((n, c) => T(x0 + (c + 0.5) * cell, y0 + (r + 0.5) * cell + 10, String(n), n ? color : "gray", 28, "center")))];
 const sum2 = (map) => map.flat().reduce((a, b) => a + b, 0);
 
+// 양팔저울(평형): 접시마다 도형 목록. 같은 도형은 지울 수 있게 각 도형의 자리를 돌려준다.
+const scaleEq = (cx, cy, left, right, size = 15, gapW = 34) => {
+  const L = [cx - 150, cy], R = [cx + 150, cy], out = [], spots = { left: [], right: [] };
+  out.push({ kind: "path", d: `M ${cx} ${cy} L ${cx - 24} ${cy + 64} L ${cx + 24} ${cy + 64} Z`, stroke: "gray", width: 3, quick: true });
+  out.push({ kind: "line", x1: L[0], y1: L[1], x2: R[0], y2: R[1], color: "ink", width: 4 });
+  for (const [[x, y], stuff, side] of [[L, left, "left"], [R, right, "right"]]) {
+    out.push({ kind: "line", x1: x, y1: y, x2: x, y2: y + 20, color: "gray", width: 2 });
+    out.push({ kind: "path", d: `M ${x - 92} ${y + 20} Q ${x} ${y + 66} ${x + 92} ${y + 20}`, stroke: "ink", width: 3 });
+    const n = stuff.length, per = Math.min(n, 5);
+    stuff.forEach((type, i) => { const row = Math.floor(i / 5), col = i % 5, m = Math.min(per, n - row * 5);
+      const sx = x + (col - (m - 1) / 2) * gapW, sy = y + 38 - size - row * (size * 2 + 6);
+      spots[side].push([sx, sy]); out.push({ kind: "shape", type, cx: sx, cy: sy, r: size, color: "blue", width: 2.5, quick: true }); });
+  }
+  return { items: out, spots, erase: (side, idx) => idx.map((i) => ({ kind: "x", cx: spots[side][i][0], cy: spots[side][i][1], r: size, color: "red" })) };
+};
+const rep = (type, n) => Array(n).fill(type);
+
 export const BOARDS_B04 = {
   "book-04/polyomino-family-count": (() => {
     const TRAP = [["up", 0, 0], ["down", 0, 0], ["up", 1, 0]];
@@ -379,6 +396,152 @@ export const BOARDS_B04 = {
             options: [String(CHK.put), String(chkAll - CHK.put), String(chkAll)], answer: 1,
             hint: "전체 칸 수를 먼저 구하고, 놓인 수를 빼요.", sayHint: `한 층은 ${CHK.w} 곱하기 ${jo(CHK.d, "은")} ${CHK.w * CHK.d}, 두 층이면 ${jo(chkAll, "이에요")}. 거기서 ${jo(CHK.put, "을")} 빼요.`,
             right: `맞았어요! ${chkAll} − ${CHK.put} = ${chkAll - CHK.put}.`, sayRight: `맞았어요! 전체 ${chkAll}칸에서 ${KO3(CHK.put)} 개를 빼면 ${jo(chkAll - CHK.put, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+  ,"book-04/compare-order-source": (() => {
+    const REL = [["가", "나", 5], ["다", "가", -3]];      // 가 = 나 + 5, 다 = 가 − 3
+    const v = { 나: 10 }; v.가 = v.나 + 5; v.다 = v.가 - 3;
+    const order = Object.entries(v).sort((a, b) => a[1] - b[1]).map(([k]) => k);
+    const X = (n) => 120 + (n - 6) * 34, NY = 440;
+    const CHK = { a: 4, b: 6 };   // 라 = 마 − 4, 바 = 마 + 6 → 바 > 마 > 라
+    return {
+      title: "크기를 비교해 순서를 정해요",
+      kicker: "4권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "가, 나, 다가 무슨 수인지는 몰라도, 누가 누구보다 얼마나 큰지만 알면 크기 순서를 정할 수 있어요.",
+          items: [title("크기 순서 정하기")] },
+        { say: "첫 번째 식이에요. 가는 나에 5를 더한 수예요. 그러니까 가가 나보다 5 커요.",
+          items: [T(80, 160, "가 = 나 + 5", "blue", 38), T(420, 160, "→ 가가 나보다 5 커요", "gray", 26)] },
+        { say: "두 번째 식이에요. 다는 가에서 3을 뺀 수예요. 다가 가보다 3 작아요.",
+          items: [T(80, 220, "다 = 가 − 3", "blue", 38), T(420, 220, "→ 다가 가보다 3 작아요", "gray", 26)] },
+        { say: `정해진 값이 없을 때는, 한 글자에 아무 수나 넣어 봐도 돼요. 나에 ${jo(v.나, "을")} 넣어 볼게요.`,
+          items: [T(80, 290, `나 = ${v.나}  (아무 수나)`, "gold", 30)] },
+        { say: `그러면 가는 ${v.나} 더하기 5, ${jo(v.가, "예요")}. 다는 ${v.가} 빼기 3, ${jo(v.다, "예요")}.`,
+          items: [T(80, 340, `가 = ${v.나} + 5 = ${v.가},  다 = ${v.가} − 3 = ${v.다}`, "blue", 30)] },
+        { say: "수직선에 놓아 보면 순서가 한눈에 보여요.",
+          items: [{ kind: "line", x1: X(8), y1: NY, x2: X(17), y2: NY, color: "ink", width: 3 }, ...Object.entries(v).flatMap(([k, n]) => [{ kind: "line", x1: X(n), y1: NY - 12, x2: X(n), y2: NY + 12, color: "ink", width: 3 }, T(X(n), NY + 42, String(n), "gray", 24, "center"), T(X(n), NY - 24, k, "red", 32, "center")])] },
+        { say: `작은 것부터 ${order.join(", ")}. 다른 수를 넣어도 순서는 똑같아요. 나에 20을 넣으면 가는 25, 다는 22. 여전히 나가 가장 작아요.`,
+          items: [T(620, 440, `작은 것부터: ${order.join(" < ")}`, "green", 30), T(620, 490, "나 = 20 → 가 25, 다 22  (같은 순서)", "gray", 22)] },
+        { say: "정리해요. 식을 누가 누구보다 얼마나 큰지로 읽어요. 한 글자에 아무 수나 넣고 나머지를 차례로 구해요. 늘어놓아 순서를 정하고, 처음 식에 다시 넣어 확인해요.", mood: "praise",
+          items: [T(620, 550, "아무 수나 넣고 차례로!", "gold", 28)] },
+        { say: `한 문제 풀어 봐요. 라는 마보다 ${CHK.a} 작고, 바는 마보다 ${CHK.b} 커요. 가장 큰 것은 무엇일까요?`, mood: "think",
+          items: [],
+          check: { question: `라 = 마 − ${CHK.a}, 바 = 마 + ${CHK.b}일 때 가장 큰 것은?`,
+            options: ["라", "마", "바"], answer: 2,
+            hint: "마에 아무 수나 넣어 라와 바를 구해요.", sayHint: `마에 10을 넣어 봐요. 라는 10 빼기 ${CHK.a}, 바는 10 더하기 ${CHK.b}. 누가 가장 클까요?`,
+            right: "맞았어요! 라 < 마 < 바, 가장 큰 것은 바예요.", sayRight: "맞았어요! 마가 10이면 라는 6, 바는 16이라 바가 가장 커요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
+
+  ,"book-04/compare-difference-source": (() => {
+    // 다온이는 서준이보다 6살 많고, 하율이는 서준이보다 2살 적다 → 다온과 하율의 차이
+    const D = 6, H = 2, base = 10, d = base + D, h = base - H, diff = d - h;
+    const X = (n) => 110 + (n - 4) * 34, NY = 420;
+    const CHK = { a: 9, b: 4 };   // 가 = 다 + 9, 나 = 다 + 4 → 가와 나의 차이 5
+    return {
+      title: "수의 크기 차이를 구해요",
+      kicker: "4권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "두 사람의 나이를 직접 비교한 말이 없어도, 같은 사람과 비교한 말이 있으면 둘의 차이를 구할 수 있어요.",
+          items: [title("두 값의 차이 구하기")] },
+        { say: `다온이는 서준이보다 ${KO3(D)} 살 많아요. 하율이는 서준이보다 ${KO3(H)} 살 적어요. 다온이와 하율이는 몇 살 차이일까요?`,
+          items: [T(80, 160, `다온 = 서준 + ${D}`, "blue", 32), T(80, 210, `하율 = 서준 − ${H}`, "blue", 32)] },
+        { say: "두 말 모두 서준이와 비교했어요. 서준이가 가운데에서 두 말을 이어 줘요.",
+          items: [T(400, 188, "← 둘 다 서준이와 비교", "gold", 24)] },
+        { say: `서준이 나이를 모르니 아무 수나 넣어요. 서준이를 ${base}살로 해 볼게요. 다온이는 ${base} 더하기 ${D}, ${d}살. 하율이는 ${base} 빼기 ${H}, ${h}살.`,
+          items: [T(80, 280, `서준 = ${base} → 다온 ${d}, 하율 ${h}`, "gold", 30)] },
+        { say: `둘의 차이는 ${d} 빼기 ${jo(h, "은")} ${jo(diff, "이에요")}.`,
+          items: [T(80, 335, `${d} − ${h} = ${diff}`, "green", 34)] },
+        { say: `수직선으로 보면 더 잘 보여요. 서준이에서 오른쪽으로 ${D}칸 가면 다온, 왼쪽으로 ${H}칸 가면 하율. 둘 사이는 ${D} 더하기 ${H}, ${diff}칸이에요.`,
+          items: [{ kind: "line", x1: X(6), y1: NY, x2: X(18), y2: NY, color: "ink", width: 3 }, ...[["하율", h, "blue"], ["서준", base, "gray"], ["다온", d, "red"]].flatMap(([k, n, c]) => [{ kind: "line", x1: X(n), y1: NY - 12, x2: X(n), y2: NY + 12, color: "ink", width: 3 }, T(X(n), NY - 22, k, c, 26, "center"), T(X(n), NY + 40, String(n), "gray", 22, "center")]),
+            { kind: "arrow", x1: X(base), y1: NY + 60, x2: X(d), y2: NY + 60, color: "red", width: 2.5 }, T((X(base) + X(d)) / 2, NY + 90, `+${D}`, "red", 22, "center"), { kind: "arrow", x1: X(base), y1: NY + 60, x2: X(h), y2: NY + 60, color: "blue", width: 2.5 }, T((X(base) + X(h)) / 2, NY + 90, `−${H}`, "blue", 22, "center")] },
+        { say: `서준이를 다른 나이로 해도 차이는 같아요. 서준이가 20살이면 다온이는 26살, 하율이는 18살. 26 빼기 18도 ${jo(diff, "이에요")}.`,
+          items: [T(620, 335, `서준 20 → 26 − 18 = ${diff} ✓`, "green", 26)] },
+        { say: "한쪽은 더 많고 한쪽은 더 적으면, 두 차이를 더해요. 둘 다 더 많거나 둘 다 더 적으면, 두 차이를 빼요.",
+          items: [T(620, 160, "반대쪽 → 차이를 더하기", "gold", 26), T(620, 210, "같은 쪽 → 차이를 빼기", "gold", 26)] },
+        { say: "정리해요. 같은 사람과 비교한 말끼리 이어요. 그 사람에 아무 수나 넣어 두 값을 구하고 빼요. 다른 수를 넣어도 차이는 같아요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. 가는 다보다 ${CHK.a} 크고, 나는 다보다 ${CHK.b} 커요. 가와 나의 차이는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `가 = 다 + ${CHK.a}, 나 = 다 + ${CHK.b}일 때 가와 나의 차이는?`,
+            options: [String(CHK.a + CHK.b), String(CHK.a - CHK.b), String(CHK.b)], answer: 1,
+            hint: "둘 다 다보다 커요. 같은 쪽이니 차이를 빼요.", sayHint: `다에 10을 넣으면 가는 ${10 + CHK.a}, 나는 ${10 + CHK.b}. 둘을 빼 봐요.`,
+            right: `맞았어요! ${CHK.a} − ${CHK.b} = ${CHK.a - CHK.b}.`, sayRight: `맞았어요! 둘 다 다보다 크니까 ${CHK.a} 빼기 ${jo(CHK.b, "는")} ${jo(CHK.a - CHK.b, "예요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-04/balance-equality-source": (() => {
+    // 동그라미 3 + 세모 1 = 세모 7  → 세모를 하나씩 지우면 동그라미 3 = 세모 6 → 동그라미 1 = 세모 2
+    const S = scaleEq(500, 210, [...rep("circle", 3), "triangle"], rep("triangle", 7));
+    const S2 = scaleEq(500, 430, rep("circle", 3), rep("triangle", 6));
+    const CHK = { a: 2, b: 1, r: 7 };   // 별 2 + 세모 1 = 세모 7 → 별 1 = 세모 3
+    return {
+      title: "양쪽에서 같은 것을 지워요",
+      kicker: "4권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "평형인 저울의 양쪽에서 똑같은 것을 똑같이 빼도, 저울은 그대로 평형이에요. 이걸 이용하면 한 개의 무게를 찾을 수 있어요.",
+          items: [title("양쪽에서 같은 것 지우기")] },
+        { say: "저울이 평형이에요. 왼쪽에는 동그라미 세 개와 세모 한 개, 오른쪽에는 세모 일곱 개.",
+          items: S.items },
+        { say: "양쪽에 똑같이 있는 것을 찾아요. 세모가 양쪽에 다 있어요.",
+          items: [T(80, 160, "양쪽에 다 있는 것: 세모", "gold", 28)] },
+        { say: "왼쪽 세모 한 개를 지우면, 오른쪽에서도 세모 한 개를 지워요. 똑같이 빼야 평형이 그대로예요.",
+          items: [...S.erase("left", [3]), ...S.erase("right", [6])] },
+        { say: "남은 것을 다시 그려요. 동그라미 세 개가 세모 여섯 개와 같아요.",
+          items: S2.items },
+        { say: "동그라미 세 개가 세모 여섯 개면, 동그라미 하나는? 세모 여섯 개를 세 묶음으로 똑같이 나눠요. 한 묶음에 두 개씩이에요.",
+          items: [T(80, 380, "○ 3개 = △ 6개", "blue", 30), T(80, 430, "6 ÷ 3 = 2", "blue", 30)] },
+        { say: "그래서 동그라미 한 개는 세모 두 개와 무게가 같아요.",
+          items: [T(80, 490, "○ 1개 = △ 2개", "green", 36)] },
+        { say: "처음 저울에 넣어 확인해요. 동그라미 세 개는 세모 여섯 개, 거기에 세모 하나를 더하면 세모 일곱 개. 오른쪽과 같아요.",
+          items: [T(80, 545, "6 + 1 = 7 ✓", "green", 30)] },
+        { say: "정리해요. 양쪽에 똑같이 있는 것을 같은 수만큼 지워요. 남은 것끼리 비교해서, 한 개가 몇 개와 같은지 똑같이 나눠 구해요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. 별 ${KO3(CHK.a)} 개와 세모 ${KO3(CHK.b)} 개가 세모 ${KO3(CHK.r)} 개와 평형이에요. 별 한 개는 세모 몇 개와 같을까요?`, mood: "think",
+          items: [],
+          check: { question: `☆ ${CHK.a}개 + △ ${CHK.b}개 = △ ${CHK.r}개일 때 ☆ 1개는 △ 몇 개?`,
+            options: [String((CHK.r - CHK.b) / CHK.a - 1), String((CHK.r - CHK.b) / CHK.a), String(CHK.r - CHK.b)], answer: 1,
+            hint: "양쪽에서 세모 한 개씩 지우고, 남은 것을 나눠요.", sayHint: `세모 하나씩 지우면 별 두 개가 세모 ${KO3(CHK.r - CHK.b)} 개예요. 둘로 똑같이 나눠요.`,
+            right: `맞았어요! ☆ 2개 = △ ${CHK.r - CHK.b}개, ☆ 1개 = △ ${(CHK.r - CHK.b) / CHK.a}개.`, sayRight: `맞았어요! 별 한 개는 세모 ${KO3((CHK.r - CHK.b) / CHK.a)} 개와 같아요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-04/balance-substitution": (() => {
+    // 저울1: 세모 1 = 네모 3. 저울2: 동그라미 1 = 세모 2 + 네모 1 → 동그라미 = 네모 7
+    const A = scaleEq(260, 180, ["triangle"], rep("square", 3), 14, 30);
+    const B = scaleEq(260, 400, ["circle"], ["triangle", "triangle", "square"], 14, 30);
+    const tri = 3, cir = 2 * tri + 1;
+    const CHK = { star: 2, tri: 1, sq: 2 };   // 세모 1 = 네모 2, 별 1 = 세모 2 → 별 = 네모 4
+    return {
+      title: "도형을 바꾸어 넣어요",
+      kicker: "4권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "저울이 두 개 있어요. 첫 저울에서 알게 된 무게를, 둘째 저울에 바꾸어 넣어 풀어요.",
+          items: [title("바꾸어 넣기")] },
+        { say: "첫째 저울이에요. 세모 한 개가 네모 세 개와 평형이에요. 세모 하나는 네모 셋과 무게가 같아요.",
+          items: [...A.items, T(560, 180, "△ 1 = □ 3", "blue", 32)] },
+        { say: "둘째 저울이에요. 동그라미 한 개가 세모 두 개와 네모 한 개와 평형이에요. 동그라미는 네모 몇 개와 같을까요?",
+          items: [...B.items, T(560, 400, "○ 1 = △ 2 + □ 1", "blue", 32)] },
+        { say: "세모를 네모로 바꾸어 넣어요. 첫째 저울에서 세모 하나는 네모 셋이었어요. 세모 두 개는 네모 셋이 두 번, 여섯 개예요.",
+          items: [...B.erase("right", [0, 1]), T(560, 450, `△ 2 = □ ${2 * tri}`, "red", 28)] },
+        { say: `둘째 저울의 오른쪽은 네모 여섯 개에 원래 있던 네모 한 개를 더해서 네모 ${KO3(cir)} 개예요.`,
+          items: [T(560, 500, `○ 1 = □ ${2 * tri} + □ 1 = □ ${cir}`, "green", 30)] },
+        { say: `그래서 동그라미 한 개는 네모 ${KO3(cir)} 개와 같아요.`,
+          items: [T(560, 550, `○ = □ ${cir}개`, "green", 34)] },
+        { say: "같은 무게끼리는 저울 위에서 서로 바꿔 놓아도 평형이 그대로예요. 그래서 모르는 도형을 아는 도형으로 바꿔 갈 수 있어요.",
+          items: [T(560, 240, "같은 무게끼리는 바꿔 놓기", "gold", 26)] },
+        { say: "정리해요. 한 저울에서 한 도형이 다른 도형 몇 개와 같은지 찾아요. 다음 저울의 그 도형을 그만큼으로 바꾸어 넣어요. 마지막에 한 가지 도형으로 세어요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. 세모 한 개는 네모 ${KO3(CHK.sq)} 개와 같고, 별 한 개는 세모 ${KO3(CHK.star)} 개와 같아요. 별 한 개는 네모 몇 개와 같을까요?`, mood: "think",
+          items: [],
+          check: { question: `△ 1 = □ ${CHK.sq}, ☆ 1 = △ ${CHK.star}일 때 ☆ 1개는 □ 몇 개?`,
+            options: [String(CHK.sq + CHK.star), String(CHK.sq * CHK.star), String(CHK.sq)], answer: 1,
+            hint: "별 안의 세모를 네모로 바꾸어 넣어요.", sayHint: `별은 세모 ${KO3(CHK.star)} 개예요. 세모 하나가 네모 ${KO3(CHK.sq)} 개니까, 세모 ${KO3(CHK.star)} 개는 네모 몇 개일까요?`,
+            right: `맞았어요! ☆ = △ ${CHK.star} = □ ${CHK.sq * CHK.star}.`, sayRight: `맞았어요! 세모 두 개를 네모로 바꾸면 네모 ${KO3(CHK.sq * CHK.star)} 개예요. 이제 게임으로 가요.` } }
       ]
     };
   })()
