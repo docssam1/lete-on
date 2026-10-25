@@ -454,6 +454,28 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       const arcs = (item.visual?.arcs || []).map((a) => a.label).filter(Boolean).map((l) => Number(String(l).replace("cm", ""))).sort((x, y) => x - y).join();
       assert.notEqual(g.slice().sort((x, y) => x - y).join(), arcs, `${ex.id}: 원본과 같은 거리들`);
     }
+  } else if (setId === "digits") {
+    // 문제 글의 수로 하나하나 세어 다시 구한다
+    const nums = (ex.problem.match(/\d+/gu) || []).map(Number);
+    const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+    if (typeLabel === "숫자와 수") assert.deepEqual(v, { numbers: 1, digits: String(nums[0]).length }, `${ex.id}: 수 1개, 숫자는 자릿수만큼`);
+    else if (typeLabel === "수의 개수") assert.equal(v, range(nums[0], nums[1]).length, `${ex.id}: 수의 개수`);
+    else if (typeLabel === "쓴 숫자의 개수") assert.equal(v, range(nums[0], nums[1]).reduce((t, n) => t + String(n).length, 0), `${ex.id}: 쓴 숫자의 개수`);
+    else {
+      const [, end, ...ds] = nums;
+      const list = range(1, end);
+      const want = typeLabel === "숫자가 들어간 수"
+        ? list.filter((n) => ds.some((d) => String(n).includes(String(d)))).length
+        : list.reduce((t, n) => t + String(n).split("").filter((ch) => ds.map(String).includes(ch)).length, 0);
+      assert.equal(v, want, `${ex.id}: ${typeLabel}`);
+      if (typeLabel === "여러 숫자의 개수") assert.ok(ds.length > 1, `${ex.id}: 여러 숫자`);
+    }
+    const norm = (t) => String(t).replace(/\s*\(\d+\)\s*$/u, "").replace(/^\(\d+\)\s*/u, "").replace(/\s+/gu, "");
+    for (const item of lesson.original.items) {
+      assert.notEqual(norm(ex.problem), norm(item.prompt), `${ex.id}: 원본 문장과 같음`);
+      const o = (item.prompt.match(/\d+/gu) || []).map(Number).filter((n) => !/^\(\d+\)/u.test(item.prompt) || n !== Number(item.prompt.match(/^\((\d+)\)/u)?.[1]));
+      if (/수의 개수|쓴 숫자/u.test(typeLabel) && o.length >= 2) assert.ok(!(o.includes(nums[0]) && o.includes(nums[1]) && nums.length === 2), `${ex.id}: 원본과 같은 범위`);
+    }
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

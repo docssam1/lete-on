@@ -116,6 +116,17 @@
 /* 가로수 심기 · 수직선 거리 */
 .tx-stones, .tx-plot, .tx-lake, .tx-dist { display: grid; justify-items: center; gap: 6px; max-width: 100%; }
 .tx-stones svg, .tx-plot svg, .tx-lake svg, .tx-dist svg { max-width: 100%; height: auto; }
+/* 수와 숫자의 개수 — 묶음 칸 · 수 배열판(색칠한 숫자는 안내 단계 색) */
+.tx-digit-groups { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.tx-digit-groups > span { display: grid; justify-items: center; gap: 2px; min-width: 92px; padding: 8px 10px; border: 2px solid #f0a500; border-radius: 10px; background: #fff3c4; }
+.tx-digit-groups > span.whole { color: #222; font-size: 20px; font-weight: 900; }
+.tx-digit-groups b { color: #222; font-size: 18px; font-weight: 900; }
+.tx-digit-groups small { color: #566274; font-size: 12px; font-weight: 800; }
+.tx-digit-groups em { color: var(--tone); font-size: 15px; font-style: normal; font-weight: 900; }
+.tx-digit-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; width: min(100%, 360px); }
+.tx-digit-grid span { display: flex; align-items: center; justify-content: center; height: 26px; border-radius: 4px; background: #f7f3ea; color: #566274; font-size: 12px; font-weight: 800; }
+.tx-digit-grid span.on { background: var(--tone); color: #fff; }
+.tx-digit-grid i { color: var(--tone); font-size: 14px; font-style: normal; font-weight: 900; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

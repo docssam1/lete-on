@@ -401,8 +401,25 @@ function distLineFigure(f) {
   return `<div class="tx-dist">${svg(W, H, body, f.arcs.map((a) => `${a.from}~${a.to} ${a.label}`).join(", "))}</div>`;
 }
 
+// ───── 수와 숫자의 개수 ─────
+// digit-groups: 자릿수가 같은 수끼리 묶은 칸. show: plain(범위만) · range · count(개수) · digits(개수 × 자릿수)
+function digitGroupsFigure(f) {
+  const color = TONE[f.tone || "given"], name = { 1: "한 자리", 2: "두 자리", 3: "세 자리" };
+  if (f.show === "plain") return `<div class="tx-digit-groups"><span class="whole">${esc(f.groups[0].from)}부터 ${esc(f.groups.at(-1).to)}까지</span></div>`;
+  return `<div class="tx-digit-groups" style="--tone:${color}">${f.groups.map((g) => `<span><b>${g.from === g.to ? esc(g.from) : `${esc(g.from)}~${esc(g.to)}`}</b><small>${name[g.digits]} 수</small>${f.show !== "range" ? `<em>${g.count}개${f.show === "digits" ? ` × ${g.digits} = ${g.count * g.digits}` : ""}</em>` : ""}</span>`).join("")}</div>`;
+}
+// digit-grid: 1~end 수 배열판(한 줄에 10개). digits의 숫자를 색칠(place: ones = 일의 자리만, all = 어느 자리든), cells면 그 칸 전체를 칠한다.
+function digitGridFigure(f) {
+  const color = TONE[f.tone || "given"], ds = (f.digits || []).map(String), cells = new Set(f.cells || []);
+  const paint = (n) => String(n).split("").map((ch, i, arr) => (ds.includes(ch) && !f.cells && (f.place === "all" || (f.place === "ones" && i === arr.length - 1)) ? `<i>${ch}</i>` : ch)).join("");
+  const all = Array.from({ length: f.end }, (_, i) => i + 1);
+  return `<div class="tx-digit-grid" style="--tone:${color}" role="img" aria-label="1부터 ${f.end}까지 수 배열판">${all.map((n) => `<span class="${cells.has(n) ? "on" : ""}">${paint(n)}</span>`).join("")}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "digit-groups") return digitGroupsFigure(figure);
+  if (figure.kind === "digit-grid") return digitGridFigure(figure);
   if (figure.kind === "bundle") return bundleFigure(figure);
   if (figure.kind === "stones") return stonesFigure(figure);
   if (figure.kind === "stones-blank") return `<p class="tx-think">바둑돌 ${esc(figure.total)}개로 ${figure.shape === "triangle" ? "정삼각형" : "정사각형"}을 만들었어요. 한 변에 몇 개씩일지 그려 보며 생각해요.</p>`;

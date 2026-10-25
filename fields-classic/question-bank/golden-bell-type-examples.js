@@ -869,7 +869,97 @@ const DIST_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET });
+// ───────────────────────── 6권 수와 숫자의 개수 ─────────────────────────
+// 수의 개수 = 끝 − 처음 + 1. 쓴 숫자의 개수 = 한 자리·두 자리·세 자리 수로 나누어 (개수 × 자릿수)를 더함.
+// 특정 숫자의 개수는 일의 자리·십의 자리로 나누어 세고, 숫자가 들어간 수는 두 자리에 다 들어간 수를 한 번만 센다.
+// 그림: kind "digit-groups"(한 자리·두 자리·세 자리 묶음 칸) · "digit-grid"(1~100 수 배열판에 표시)
+const digitLen = (n) => String(n).length;
+function digitGroups(from, to) {
+  const groups = [];
+  for (const [lo, hi, d] of [[1, 9, 1], [10, 99, 2], [100, 999, 3]]) {
+    const a = Math.max(lo, from), b = Math.min(hi, to);
+    if (a <= b) groups.push({ from: a, to: b, count: b - a + 1, digits: d });
+  }
+  return groups;
+}
+function numberCountExample({ id, title, from, to }) {
+  const n = to - from + 1;
+  const steps = [
+    { text: `${to} − ${from} = ${josa(to - from, "은")} ${josa(from, "을")} 빼고 센 개수예요.`, figure: { kind: "consec", from, to, mode: "count", tone: "doing", skipFirst: true } },
+    { text: `처음 수 ${from}도 넣어야 하니 1을 더해요. ${to - from} + 1 = ${n}개예요.`, figure: { kind: "consec", from, to, mode: "count", tone: "check" } }
+  ];
+  return { id, title, problem: `${from}부터 ${to}까지 수는 모두 몇 개일까요?`, figure: { kind: "consec", from, to, mode: "count" }, steps, answer: `${n}개예요.`, value: n };
+}
+function digitWrittenExample({ id, title, from, to }) {
+  const gs = digitGroups(from, to), total = gs.reduce((s, g) => s + g.count * g.digits, 0);
+  const fig = (tone, show) => ({ kind: "digit-groups", groups: gs, show, tone });
+  const name = { 1: "한 자리", 2: "두 자리", 3: "세 자리" };
+  const steps = [
+    { text: `자릿수가 같은 수끼리 나눠요. ${gs.map((g) => `${josa(`${g.from}~${g.to}`, "은")} ${name[g.digits]} 수`).join(", ")}예요.`, figure: fig("doing", "range") },
+    { text: `묶음마다 수의 개수를 세요. ${gs.map((g) => `${g.to} − ${g.from} + 1 = ${g.count}개`).join(", ")}.`, figure: fig("doing", "count") },
+    { text: `수 하나를 쓰는 데 자릿수만큼 숫자를 써요. ${gs.map((g) => `${g.count} × ${g.digits}`).join(" + ")} = ${josa(total, "이에요")}.`, figure: fig("check", "digits") }
+  ];
+  return { id, title, problem: `${from}부터 ${to}까지 수를 차례로 쓸 때, 쓴 숫자는 모두 몇 개일까요?`, figure: fig("given", "plain"), steps, answer: `쓴 숫자는 ${total}개예요.`, value: total };
+}
+// 1부터 100까지(또는 end까지) 쓸 때 숫자 d를 쓰는 횟수: 일의 자리 + 십의 자리(+ 백의 자리)
+function digitTimesExample({ id, title, ds, end = 100 }) {
+  const count = (d) => { let c = 0; for (let n = 1; n <= end; n++) for (const ch of String(n)) if (ch === String(d)) c++; return c; };
+  const ones = (d) => { let c = 0; for (let n = 1; n <= end; n++) if (String(n).at(-1) === String(d)) c++; return c; };
+  const tens = (d) => count(d) - ones(d);
+  const each = ds.map((d) => ({ d, ones: ones(d), tens: tens(d), all: count(d) }));
+  const total = each.reduce((s, e) => s + e.all, 0);
+  const one = ds.length === 1;
+  // 백의 자리에 쓰는 숫자는 100의 「1」뿐이다(이 묶음은 100까지)
+  const upper = (d) => (d === 1 && end >= 100 ? "십의 자리·백의 자리" : "십의 자리");
+  const steps = one
+    ? [
+      { text: `일의 자리가 ${ds[0]}인 수를 세요. ${each[0].ones}번이에요.`, figure: { kind: "digit-grid", end, digits: ds, place: "ones", tone: "doing" } },
+      { text: `${upper(ds[0])}에 쓴 ${josa(ds[0], "을")} 세면 ${each[0].tens}번. 모두 ${each[0].ones} + ${each[0].tens} = ${each[0].all}번이에요.`, figure: { kind: "digit-grid", end, digits: ds, place: "all", tone: "check" } }
+    ]
+    : [
+      ...each.map((e) => ({ text: `숫자 ${e.d}: 일의 자리에 ${e.ones}번, ${upper(e.d)}에 ${e.tens}번이에요. 모두 ${e.ones} + ${e.tens} = ${e.all}번.`, figure: { kind: "digit-grid", end, digits: [e.d], place: "all", tone: "doing" } })),
+      { text: `모두 더하면 ${each.map((e) => e.all).join(" + ")} = ${total}번이에요.`, figure: { kind: "digit-grid", end, digits: ds, place: "all", tone: "check" } }
+    ];
+  return { id, title, problem: `1부터 ${end}까지 수를 차례로 쓸 때, ${one ? `숫자 ${josa(ds[0], "은")} 모두 몇 번 쓸까요?` : `숫자 ${josa(ds.join(", "), "을")} 쓰는 횟수를 모두 더하면 몇 번일까요?`}`, figure: { kind: "digit-grid", end, digits: [], tone: "given" }, steps, answer: `${total}번이에요.`, value: total };
+}
+// 숫자가 들어간 수: d(또는 d1·d2 중 하나라도)가 들어간 수의 개수. 두 번 들어간 수(33)는 한 번만.
+function numbersWithDigitExample({ id, title, ds, end = 100 }) {
+  const has = (n) => ds.some((d) => String(n).includes(String(d)));
+  const list = []; for (let n = 1; n <= end; n++) if (has(n)) list.push(n);
+  const onesHit = []; for (let n = 1; n <= end; n++) if (ds.some((d) => String(n).at(-1) === String(d))) onesHit.push(n);
+  const tensOnly = list.filter((n) => !onesHit.includes(n));
+  const steps = [
+    { text: `일의 자리에 ${josa(ds.join(" 또는 "), "이")} 있는 수를 세요. ${onesHit.length}개예요.`, figure: { kind: "digit-grid", end, digits: ds, cells: onesHit, tone: "doing" } },
+    { text: `십의 자리에만 있는 수(일의 자리에서 이미 센 수는 빼요)를 더 세요. ${tensOnly.length}개예요.`, figure: { kind: "digit-grid", end, digits: ds, cells: list, tone: "doing" } },
+    { text: `모두 ${onesHit.length} + ${tensOnly.length} = ${list.length}개예요. 두 자리에 다 들어간 수는 한 번만 셌어요.`, figure: { kind: "digit-grid", end, digits: ds, cells: list, tone: "check" } }
+  ];
+  return { id, title, problem: `1부터 ${end}까지의 수 가운데 숫자 ${josa(ds.join(" 또는 "), "이")} ${ds.length > 1 ? "하나라도 " : ""}들어간 수는 몇 개일까요?`, figure: { kind: "digit-grid", end, digits: [], tone: "given" }, steps, answer: `${list.length}개예요.`, value: list.length };
+}
+
+// 「숫자와 수」: 수 하나를 쓰는 데 숫자를 몇 개 쓰는지
+function digitVsNumberExample({ id, title, n }) {
+  const k = String(n).length;
+  const steps = [
+    { text: `수를 쓰는 데 쓰는 기호 0~9를 숫자라고 해요. ${n}에는 숫자 ${String(n).split("").join(", ")}를 썼어요.`.replace(/(\d)를 썼어요/u, (m, d) => `${josa(d, "을")} 썼어요`), figure: { kind: "digit-groups", groups: [{ from: n, to: n, count: 1, digits: k }], show: "digits", tone: "doing" } },
+    { text: `그래서 ${josa(n, "은")} 수 1개이고, 숫자는 ${k}개예요.`, figure: { kind: "digit-groups", groups: [{ from: n, to: n, count: 1, digits: k }], show: "digits", tone: "check" } }
+  ];
+  return { id, title, problem: `${josa(n, "을")} 쓸 때 수는 몇 개이고, 쓴 숫자는 몇 개일까요?`, figure: { kind: "digit-groups", groups: [{ from: n, to: n, count: 1, digits: k }], show: "plain", tone: "given" }, steps, answer: `수는 1개, 숫자는 ${k}개예요.`, value: { numbers: 1, digits: k } };
+}
+const DIGIT_SET = {
+  id: "digits",
+  // 「수의 개수와 쓴 숫자를 구별해요」·「처음과 끝을 넣어 수를 세어요」 차시는 유형 이름이 비어 있어 문장으로 나눈다
+  typeOf: (item) => item.typeLabel || (/쓴 숫자/u.test(item.prompt) ? "쓴 숫자의 개수" : "수의 개수"),
+  types: {
+    "숫자와 수": () => [digitVsNumberExample({ id: "dvn-1", title: "예제 1", n: 507 })],
+    "수의 개수": () => [numberCountExample({ id: "dcount-1", title: "예제 1", from: 7, to: 31 }), numberCountExample({ id: "dcount-2", title: "예제 2", from: 36, to: 92 })],
+    "쓴 숫자의 개수": () => [digitWrittenExample({ id: "dwrite-1", title: "예제 1", from: 4, to: 27 }), digitWrittenExample({ id: "dwrite-2", title: "예제 2", from: 8, to: 125 })],
+    "특정 숫자의 개수": () => [digitTimesExample({ id: "dtimes-1", title: "예제 1", ds: [5] }), digitTimesExample({ id: "dtimes-2", title: "예제 2", ds: [6], end: 70 })],
+    "여러 숫자의 개수": () => [digitTimesExample({ id: "dtimes-many-1", title: "예제 1", ds: [2, 6] })],
+    "숫자가 들어간 수": () => [numbersWithDigitExample({ id: "dwith-1", title: "예제 1", ds: [4] }), numbersWithDigitExample({ id: "dwith-2", title: "예제 2", ds: [2, 5], end: 60 })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

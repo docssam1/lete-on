@@ -143,7 +143,7 @@ async function main() {
       const p = gen({ max: 30, difficulty: LEVELS[level].difficulty }, t);   // 문제은행과 같은 부르기(조건이 안 맞으면 null — 다시 뽑는다)
       if (!p) continue;
       const shape = answerShape(p.answer) || choiceShape(p) || gridShape(p);
-      if (shape) return { ...p, shape, type };
+      if (shape) return { ...p, shape, type, typeId };
     }
     throw new Error(`답 꼴이 맞는 문제를 만들지 못했어요: ${typeId}`);
   };
@@ -151,8 +151,23 @@ async function main() {
   const blank = (shape) => (shape.kind === "grid" ? shape.hidden.map(() => "").join(",") : "");
   const fresh = () => { st.p = make(st.level, st.index); st.typed = blank(st.p.shape); st.tries = 0; st.phase = "ask"; st.note = ""; st.sel = 0; st.reveal = false; render(); };
   if (params.get("test") === "1") globalThis.__drill = st;   // 브라우저 검사용(정답을 읽는다) — 학생 화면에는 붙지 않는다
+  // 창이 다시 만들어져도(골든벨 화면이 정답 자료를 받은 뒤 다시 그릴 때 등) 하던 문제에서 이어 간다.
+  // 탭이 열려 있는 동안·한 시간 안만(sessionStorage). 유형(type)은 함수를 품을 수 있어 id로 다시 찾는다.
+  const SAVE_KEY = `fc-drill:${key}`;
+  const save = () => { try { sessionStorage.setItem(SAVE_KEY, JSON.stringify({ ...st, p: st.p && { ...st.p, type: undefined }, at: Date.now() })); } catch { /* 저장 못 해도 공방은 돈다 */ } };
+  const restore = () => {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(SAVE_KEY) || "null");
+      const type = saved?.p && (DRILL_TYPES[saved.p.typeId] || typeById(saved.p.typeId));
+      if (!type || Date.now() - saved.at > 3600e3) return false;
+      delete saved.at;
+      Object.assign(st, saved, { p: { ...saved.p, type } });
+      return true;
+    } catch { return false; }
+  };
 
   function render() {
+    save();
     if (st.finale) return renderFinale();
     const p = st.p;
     root.innerHTML = `<div class="dr">
@@ -282,7 +297,7 @@ async function main() {
     else if (act === "restart") { st.level = 0; st.index = 0; st.stars = LEVELS.map(() => 0); st.finale = false; fresh(); }
     else if (act === "done") post({ event: "done" });
   });
-  fresh();
-  say("연습 공방이에요. 개념에서 본 풀이로 실제 문제를 풀어 봐요.", "talk");
+  if (restore()) render();
+  else { fresh(); say("연습 공방이에요. 개념에서 본 풀이로 실제 문제를 풀어 봐요.", "talk"); }
 }
 if (typeof document !== "undefined") main().catch((error) => { document.getElementById("drill").innerHTML = `<p class="dr-missing">연습 공방을 열지 못했어요: ${esc(error.message)}</p>`; });
