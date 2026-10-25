@@ -5577,6 +5577,158 @@
   {
    "id": "fcb-book-07-elapsed-time-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-b01",
+   "text": "끝이 처음과 만나는 닫힌 둘레에 나무나 돌을 놓을 때는, 꼭짓점에 놓인 것을 두 변이 함께 써요. 그래서 한 변씩 그냥 곱하면 너무 많아져요."
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-b02",
+   "text": "정사각형 모양으로 바둑돌을 놓아요. 한 변에 다섯 개씩이에요."
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-b03",
+   "text": "한 변에 다섯 개, 변이 네 개니까 5 곱하기 4, 20개일까요? 아니에요. 네 모서리의 돌은 두 변에 함께 들어 있어요."
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-b04",
+   "text": "모서리 돌을 두 번 세었어요. 모서리는 네 개니까 20에서 4를 빼면 16개예요."
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-b05",
+   "text": "다른 방법도 있어요. 한 변에서 마지막 돌은 다음 변의 첫 돌이니까, 한 변마다 4개씩만 세요. 4 곱하기 4, 16이에요."
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-b06",
+   "text": "원처럼 둥근 둘레도 닫혀 있어요. 둘레가 120미터인 호수에 15미터 간격으로 나무를 심으면, 간격이 120 나누기 15, 여덟 개. 닫힌 둘레에서는 나무 수와 간격 수가 같아서 나무도 여덟 그루예요."
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-b07",
+   "text": "곧은 길에 심을 때는 양 끝에 다 심으니 나무가 간격보다 하나 많아요. 닫힌 둘레는 끝과 처음이 만나서 같아요."
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-b08",
+   "text": "정리해요. 닫힌 도형의 꼭짓점에 놓인 것은 두 변이 함께 써요. 한 변에서 하나씩 빼고 변의 수를 곱해요. 둥근 둘레는 간격 수와 나무 수가 같아요."
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-b09",
+   "text": "한 문제 풀어 봐요. 정삼각형 모양으로 바둑돌을 놓았어요. 한 변에 일곱 개씩이에요. 바둑돌은 모두 몇 개일까요?"
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-hint",
+   "text": "한 변마다 6개씩만 세면 세 변이에요."
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-right",
+   "text": "맞았어요! 6 곱하기 3, 18개예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-07-closed-loop-planting-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-b01",
+   "text": "한 줄 위에 장소 네 곳이 있어요. 겹치는 두 거리를 알면, 겹친 부분이나 전체 거리를 구할 수 있어요."
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-b02",
+   "text": "한 줄 위에 가, 나, 다, 라를 차례로 찍어요."
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-b03",
+   "text": "가에서 다까지는 15센티미터예요."
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-b04",
+   "text": "나에서 라까지는 16센티미터예요."
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-b05",
+   "text": "가에서 라까지 전체는 22센티미터예요. 나에서 다 사이는 얼마일까요?"
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-b06",
+   "text": "가다와 나라를 더하면 15 더하기 16, 31. 그런데 나에서 다 사이는 두 거리에 모두 들어 있어서 두 번 더해졌어요."
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-b07",
+   "text": "그래서 더한 값이 전체보다 겹친 만큼 커요. 31 빼기 22는 9. 나와 다 사이는 9센티미터예요."
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-b08",
+   "text": "확인해요. 가나는 15 빼기 9, 6. 다라는 16 빼기 9, 7. 6 더하기 9 더하기 7은 22예요."
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-b09",
+   "text": "정리해요. 겹치는 두 거리를 더하면 겹친 부분이 두 번 들어가요. 전체를 빼면 겹친 부분이 나와요. 전체에서 한쪽을 빼면 나머지예요."
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-b10",
+   "text": "한 문제 풀어 봐요. 가다가 10, 나라가 13, 가라 전체가 18이에요. 겹친 나다는 몇 센티미터일까요?"
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-hint",
+   "text": "10 더하기 13은 23이에요. 전체 18을 빼요."
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-right",
+   "text": "맞았어요! 23 빼기 18은 5센티미터예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-07-distance-line-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-b01",
+   "text": "두 가지를 조사할 때 둘 다 좋아하는 친구가 있으면, 그 친구는 양쪽에 다 세어져요. 동그라미 두 개를 겹쳐 그리면 잘 보여요."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-b02",
+   "text": "우리 반 24명이 모두 줄넘기나 훌라후프 가운데 적어도 하나를 좋아해요. 줄넘기는 14명, 훌라후프는 17명이 좋아해요."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-b03",
+   "text": "동그라미 두 개를 겹쳐 그려요. 왼쪽은 줄넘기, 오른쪽은 훌라후프. 겹친 곳은 둘 다 좋아하는 친구예요."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-b04",
+   "text": "14 더하기 17은 31. 반 친구는 24명뿐인데 더 많아요. 둘 다 좋아하는 친구를 두 번 세었기 때문이에요."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-b05",
+   "text": "넘친 만큼이 둘 다 좋아하는 친구예요. 31 빼기 24는 7명."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-b06",
+   "text": "줄넘기만 좋아하는 친구는 14 빼기 7, 7명. 훌라후프만은 17 빼기 7, 10명."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-b07",
+   "text": "확인해요. 7 더하기 7 더하기 10은 24예요. 반 전체와 같아요."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-b08",
+   "text": "둘 다 싫어하는 친구가 있으면, 그 친구는 동그라미 밖에 있어요. 전체에서 먼저 빼고 같은 방법으로 해요."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-b09",
+   "text": "정리해요. 두 모임의 수를 더하면 겹친 수를 두 번 세요. 동그라미 안에 있는 사람 수를 빼면 겹친 수예요. 하나만 좋아하는 수는 각 모임에서 겹친 수를 빼요."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-b10",
+   "text": "한 문제 풀어 봐요. 학생 40명 가운데 축구를 좋아하는 학생은 26명, 농구는 22명, 둘 다 싫어하는 학생은 3명이에요. 둘 다 좋아하는 학생은 몇 명일까요?"
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-hint",
+   "text": "동그라미 안에 있는 학생은 40 빼기 3, 37명. 26 더하기 22에서 그 수를 빼요."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-right",
+   "text": "맞았어요! 48 빼기 37, 11명이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-07-venn-overlap-all-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }

@@ -239,4 +239,117 @@ export const BOARDS_B07 = {
       ]
     };
   })()
+  ,"book-07/closed-loop-planting": (() => {
+    const N = 4, side = 5, total = (side - 1) * 4;          // 정사각형 한 변에 돌 5개
+    const S = 60, X0 = 130, Y0 = 170;
+    const stones = []; for (let i = 0; i < side; i++) for (let j = 0; j < side; j++) if (i === 0 || j === 0 || i === side - 1 || j === side - 1) stones.push([i, j]);
+    const corner = ([i, j]) => (i === 0 || i === side - 1) && (j === 0 || j === side - 1);
+    const dot = ([i, j], color, fill) => ({ kind: "shape", type: "circle", cx: X0 + j * S, cy: Y0 + i * S, r: 15, color, fill, quick: true });
+    const P = 120, gap = 15, trees = P / gap;
+    const C = { cx: 760, cy: 380, r: 110 };
+    const CHK = { side: 7 }, chk = (CHK.side - 1) * 3;
+    const RX = 520;
+    return {
+      title: "가로수 심기(닫힌 도형)",
+      kicker: "7권 3단원 · 손글씨 개념",
+      beats: [
+        { say: "끝이 처음과 만나는 닫힌 둘레에 나무나 돌을 놓을 때는, 꼭짓점에 놓인 것을 두 변이 함께 써요. 그래서 한 변씩 그냥 곱하면 너무 많아져요.",
+          items: [title("닫힌 둘레에 놓기")] },
+        { say: `정사각형 모양으로 바둑돌을 놓아요. 한 변에 ${KO[side]} 개씩이에요.`,
+          items: stones.map((p) => dot(p, "ink", "#e9e4d6")) },
+        { say: `한 변에 ${KO[side]} 개, 변이 네 개니까 ${side} 곱하기 4, 20개일까요? 아니에요. 네 모서리의 돌은 두 변에 함께 들어 있어요.`,
+          items: [...stones.filter(corner).map((p) => dot(p, "red", "#f6dcd3")), T(RX, 180, `${side} × 4 = 20 ✗`, "red", 30)] },
+        { say: "모서리 돌을 두 번 세었어요. 모서리는 네 개니까 20에서 4를 빼면 16개예요.",
+          items: [T(RX, 235, "20 − 4 = 16", "blue", 30)] },
+        { say: `다른 방법도 있어요. 한 변에서 마지막 돌은 다음 변의 첫 돌이니까, 한 변마다 ${side - 1}개씩만 세요. ${side - 1} 곱하기 4, ${jo(total, "이에요")}.`,
+          items: [...[0, 1, 2, 3].map((k) => ({ kind: "box", x: X0 - 22 + (k === 1 ? (side - 1) * S : 0), y: Y0 - 22 + (k === 2 ? (side - 1) * S : 0), w: k % 2 ? 44 : (side - 1) * S, h: k % 2 ? (side - 1) * S : 44, color: ["blue", "green", "gold", "red"][k], dash: true })), T(RX, 290, `(${side} − 1) × 4 = ${total}`, "green", 30)] },
+        { say: `원처럼 둥근 둘레도 닫혀 있어요. 둘레가 ${P}미터인 호수에 ${gap}미터 간격으로 나무를 심으면, 간격이 ${P} 나누기 ${gap}, ${KO[trees]} 개. 닫힌 둘레에서는 나무 수와 간격 수가 같아서 나무도 ${KO[trees]} 그루예요.`,
+          items: [{ kind: "shape", type: "circle", cx: C.cx, cy: C.cy, r: C.r, color: "blue", width: 3 }, ...Array.from({ length: trees }, (_, i) => { const a = (i * 360 / trees) * Math.PI / 180; return { kind: "shape", type: "triangle", cx: C.cx + C.r * Math.sin(a), cy: C.cy - C.r * Math.cos(a), r: 12, color: "green", fill: "#e9f0e7", quick: true }; }), T(RX, 350, `${P} ÷ ${gap} = ${trees}간격 = ${trees}그루`, "green", 26)] },
+        { say: "곧은 길에 심을 때는 양 끝에 다 심으니 나무가 간격보다 하나 많아요. 닫힌 둘레는 끝과 처음이 만나서 같아요.",
+          items: [T(RX, 410, "곧은 길: 나무 = 간격 + 1", "gray", 24), T(RX, 450, "닫힌 둘레: 나무 = 간격", "gold", 26)] },
+        { say: "정리해요. 닫힌 도형의 꼭짓점에 놓인 것은 두 변이 함께 써요. 한 변에서 하나씩 빼고 변의 수를 곱해요. 둥근 둘레는 간격 수와 나무 수가 같아요.", mood: "praise",
+          items: [T(RX, 510, "(한 변 − 1) × 변의 수", "gold", 28)] },
+        { say: `한 문제 풀어 봐요. 정삼각형 모양으로 바둑돌을 놓았어요. 한 변에 ${KO[CHK.side]} 개씩이에요. 바둑돌은 모두 몇 개일까요?`, mood: "think",
+          items: [],
+          check: { question: `정삼각형 모양, 한 변에 바둑돌 ${CHK.side}개씩이면 모두 몇 개?`,
+            options: [String(CHK.side * 3), String(chk), String(chk - 3)], answer: 1,
+            hint: "꼭짓점의 돌은 두 변이 함께 써요.", sayHint: `한 변마다 ${CHK.side - 1}개씩만 세면 세 변이에요.`,
+            right: `맞았어요! (${CHK.side} − 1) × 3 = ${chk}개.`, sayRight: `맞았어요! ${CHK.side - 1} 곱하기 3, ${chk}개예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-07/distance-line-source": (() => {
+    const pos = { 가: 0, 나: 6, 다: 15, 라: 22 }, U = 20, X0 = 100, Y = 330, X = (k) => X0 + pos[k] * U;
+    const AC = pos.다 - pos.가, BD = pos.라 - pos.나, BC = pos.다 - pos.나, AD = pos.라 - pos.가;
+    const span = (a, b, y, label, color) => [{ kind: "line", x1: X(a), y1: y, x2: X(b), y2: y, color, width: 3 }, { kind: "line", x1: X(a), y1: y - 8, x2: X(a), y2: y + 8, color, width: 3 }, { kind: "line", x1: X(b), y1: y - 8, x2: X(b), y2: y + 8, color, width: 3 }, T((X(a) + X(b)) / 2, y - 12, label, color, 24, "center")];
+    const CHK = { ac: 10, bd: 13, ad: 18 }, chk = CHK.ac + CHK.bd - CHK.ad;
+    return {
+      title: "수직선 위의 거리",
+      kicker: "7권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "한 줄 위에 장소 네 곳이 있어요. 겹치는 두 거리를 알면, 겹친 부분이나 전체 거리를 구할 수 있어요.",
+          items: [title("수직선 위의 거리")] },
+        { say: "한 줄 위에 가, 나, 다, 라를 차례로 찍어요.",
+          items: [{ kind: "line", x1: X0 - 30, y1: Y, x2: X("라") + 30, y2: Y, color: "ink", width: 3 }, ...Object.keys(pos).flatMap((k) => [{ kind: "shape", type: "circle", cx: X(k), cy: Y, r: 7, color: "ink", fill: "ink", quick: true }, T(X(k), Y + 40, k, "ink", 30, "center")])] },
+        { say: `가에서 다까지는 ${AC}센티미터예요.`,
+          items: span("가", "다", Y - 110, `${AC}`, "blue") },
+        { say: `나에서 라까지는 ${BD}센티미터예요.`,
+          items: span("나", "라", Y - 60, `${BD}`, "green") },
+        { say: `가에서 라까지 전체는 ${AD}센티미터예요. 나에서 다 사이는 얼마일까요?`,
+          items: [...span("가", "라", Y + 80, `${AD}`, "gray")] },
+        { say: `가다와 나라를 더하면 ${AC} 더하기 ${BD}, ${AC + BD}. 그런데 나에서 다 사이는 두 거리에 모두 들어 있어서 두 번 더해졌어요.`,
+          items: [{ kind: "fill", x: X("나"), y: Y - 6, w: X("다") - X("나"), h: 12, fill: "#f6dcd3" }, T(620, 430, `${AC} + ${BD} = ${AC + BD}`, "blue", 28)] },
+        { say: `그래서 더한 값이 전체보다 겹친 만큼 커요. ${AC + BD} 빼기 ${jo(AD, "는")} ${BC}. 나와 다 사이는 ${BC}센티미터예요.`,
+          items: [T(620, 475, `나다 = ${AC + BD} − ${AD} = ${BC}`, "red", 30)] },
+        { say: `확인해요. 가나는 ${AC} 빼기 ${BC}, ${pos.나}. 다라는 ${BD} 빼기 ${BC}, ${pos.라 - pos.다}. ${pos.나} 더하기 ${BC} 더하기 ${jo(pos.라 - pos.다, "은")} ${jo(AD, "이에요")}.`,
+          items: [T(620, 520, `${pos.나} + ${BC} + ${pos.라 - pos.다} = ${AD} ✓`, "green", 28)] },
+        { say: "정리해요. 겹치는 두 거리를 더하면 겹친 부분이 두 번 들어가요. 전체를 빼면 겹친 부분이 나와요. 전체에서 한쪽을 빼면 나머지예요.", mood: "praise",
+          items: [T(80, 560, "두 거리의 합 − 전체 = 겹친 부분", "gold", 24)] },
+        { say: `한 문제 풀어 봐요. 가다가 ${CHK.ac}, 나라가 ${CHK.bd}, 가라 전체가 ${jo(CHK.ad, "예요")}. 겹친 나다는 몇 센티미터일까요?`, mood: "think",
+          items: [],
+          check: { question: `가~다 ${CHK.ac}cm, 나~라 ${CHK.bd}cm, 가~라 ${CHK.ad}cm일 때 나~다는?`,
+            options: [`${chk}cm`, `${CHK.ad - CHK.ac}cm`, `${CHK.ac + CHK.bd}cm`], answer: 0,
+            hint: "두 거리를 더하면 나다를 두 번 센 거예요.", sayHint: `${CHK.ac} 더하기 ${jo(CHK.bd, "은")} ${jo(CHK.ac + CHK.bd, "이에요")}. 전체 ${jo(CHK.ad, "을")} 빼요.`,
+            right: `맞았어요! ${CHK.ac} + ${CHK.bd} − ${CHK.ad} = ${chk}cm.`, sayRight: `맞았어요! ${CHK.ac + CHK.bd} 빼기 ${jo(CHK.ad, "은")} ${chk}센티미터예요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-07/venn-overlap-all": (() => {
+    const ALL = 24, A = 14, B = 17, both = A + B - ALL;
+    const L = { cx: 250, cy: 360, r: 130 }, R = { cx: 410, cy: 360, r: 130 };
+    const CHK = { all: 40, a: 26, b: 22, none: 3 }, chk = CHK.a + CHK.b - (CHK.all - CHK.none);
+    const RX = 600;
+    return {
+      title: "벤 다이어그램",
+      kicker: "7권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "두 가지를 조사할 때 둘 다 좋아하는 친구가 있으면, 그 친구는 양쪽에 다 세어져요. 동그라미 두 개를 겹쳐 그리면 잘 보여요.",
+          items: [title("벤 다이어그램")] },
+        { say: `우리 반 ${ALL}명이 모두 줄넘기나 훌라후프 가운데 적어도 하나를 좋아해요. 줄넘기는 ${A}명, 훌라후프는 ${B}명이 좋아해요.`,
+          items: [T(RX, 170, `전체 ${ALL}명 (모두 하나 이상)`, "ink", 26), T(RX, 210, `줄넘기 ${A}명, 훌라후프 ${B}명`, "blue", 26)] },
+        { say: "동그라미 두 개를 겹쳐 그려요. 왼쪽은 줄넘기, 오른쪽은 훌라후프. 겹친 곳은 둘 다 좋아하는 친구예요.",
+          items: [{ kind: "box", x: 90, y: 200, w: 480, h: 320, color: "gray" }, { kind: "shape", type: "circle", ...L, color: "blue", width: 3.5 }, { kind: "shape", type: "circle", ...R, color: "green", width: 3.5 }, T(L.cx - 60, L.cy - 140, "줄넘기", "blue", 24, "center"), T(R.cx + 60, R.cy - 140, "훌라후프", "green", 24, "center")] },
+        { say: `${A} 더하기 ${jo(B, "은")} ${A + B}. 반 친구는 ${ALL}명뿐인데 더 많아요. 둘 다 좋아하는 친구를 두 번 세었기 때문이에요.`,
+          items: [T(RX, 280, `${A} + ${B} = ${A + B} > ${ALL}`, "red", 28)] },
+        { say: `넘친 만큼이 둘 다 좋아하는 친구예요. ${A + B} 빼기 ${jo(ALL, "는")} ${both}명.`,
+          items: [T(RX, 330, `둘 다 = ${A + B} − ${ALL} = ${both}`, "green", 30), T((L.cx + R.cx) / 2, L.cy + 12, String(both), "red", 36, "center")] },
+        { say: `줄넘기만 좋아하는 친구는 ${A} 빼기 ${both}, ${A - both}명. 훌라후프만은 ${B} 빼기 ${both}, ${B - both}명.`,
+          items: [T(L.cx - 50, L.cy + 12, String(A - both), "blue", 34, "center"), T(R.cx + 50, R.cy + 12, String(B - both), "green", 34, "center")] },
+        { say: `확인해요. ${A - both} 더하기 ${both} 더하기 ${jo(B - both, "은")} ${jo(ALL, "예요")}. 반 전체와 같아요.`,
+          items: [T(RX, 390, `${A - both} + ${both} + ${B - both} = ${ALL} ✓`, "green", 28)] },
+        { say: "둘 다 싫어하는 친구가 있으면, 그 친구는 동그라미 밖에 있어요. 전체에서 먼저 빼고 같은 방법으로 해요.",
+          items: [T(RX, 450, "둘 다 싫음 → 동그라미 밖, 먼저 빼기", "gold", 22)] },
+        { say: "정리해요. 두 모임의 수를 더하면 겹친 수를 두 번 세요. 동그라미 안에 있는 사람 수를 빼면 겹친 수예요. 하나만 좋아하는 수는 각 모임에서 겹친 수를 빼요.", mood: "praise",
+          items: [T(RX, 510, "합 − 동그라미 안 = 겹친 수", "gold", 26)] },
+        { say: `한 문제 풀어 봐요. 학생 ${CHK.all}명 가운데 축구를 좋아하는 학생은 ${CHK.a}명, 농구는 ${CHK.b}명, 둘 다 싫어하는 학생은 ${CHK.none}명이에요. 둘 다 좋아하는 학생은 몇 명일까요?`, mood: "think",
+          items: [],
+          check: { question: `학생 ${CHK.all}명: 축구 ${CHK.a}명, 농구 ${CHK.b}명, 둘 다 싫어함 ${CHK.none}명. 둘 다 좋아하는 학생은?`,
+            options: [`${chk}명`, `${CHK.a + CHK.b - CHK.all}명`, `${chk + CHK.none}명`], answer: 0,
+            hint: "둘 다 싫어하는 학생을 전체에서 먼저 빼요.", sayHint: `동그라미 안에 있는 학생은 ${CHK.all} 빼기 ${CHK.none}, ${CHK.all - CHK.none}명. ${CHK.a} 더하기 ${CHK.b}에서 그 수를 빼요.`,
+            right: `맞았어요! ${CHK.a} + ${CHK.b} − ${CHK.all - CHK.none} = ${chk}명.`, sayRight: `맞았어요! ${CHK.a + CHK.b} 빼기 ${CHK.all - CHK.none}, ${chk}명이에요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
 };
