@@ -4,6 +4,7 @@
 // 모형은 코드로 만든 것이다(실사 사진은 따로 붙인다). 이름은 「이름 확인」 전엔 번호로만.
 import { THREE, mat, glossMat, label, clamp01, ease, lerp } from './_kit.js';
 import { chitinTex, facetTex, femurTex, ringTex, wingTex as organicWingTex, soilTex, grassTex, rng, hex } from './_organic.js';
+import { insectSound } from './_sound.js';
 
 const DISH_R = 2.1, DISH_H = 0.12, TOP = DISH_H;
 const PLACES = {
@@ -94,13 +95,13 @@ function buildInsect(P) {
 const SPECS = [
   { id: 'cricket', no: '①', name: '알락귀뚜라미', hint: '갈색, 더듬이가 몸보다 길다', place: 'A', cm: 2.2, build: () => buildInsect({ id: 'cricket', L: 2.6, color: 0x6b4a2a, belly: 0x8a6a46, spot: 0x2a1a0e, mottle: 0.9, head: 'round', antenna: 0.85, wing: 0.42, hind: 0.26, cerci: true, flat: true, wingColor: 0x5a4028 }),
     think: ['더듬이는 몸길이와 비교해 얼마나 긴가요?', '날개는 배를 다 덮나요? 두 날개가 어떻게 포개져 있나요?', '갈색 몸은 장소 A의 무엇과 색이 비슷한가요?'],
-    notes: { wing: '두 앞날개를 포개고 비비는 모습을 보세요. 소리와 관계가 있을까요?', jump: '뒷다리가 펴지는 길이를 다른 곤충과 비교해 보세요.', flip: '배 쪽의 색과 다리가 붙은 자리를 보세요.' } },
+    notes: { wing: '두 앞날개를 포개고 비비는 모습을 보세요. 소리와 관계가 있을까요?', jump: '뒷다리가 펴지는 길이를 다른 곤충과 비교해 보세요.', flip: '배 쪽의 색과 다리가 붙은 자리를 보세요.', sound: '앞날개 두 장을 서로 비벼 소리를 내요(합성한 소리라 실제와 똑같진 않아요). 날개의 어느 부분이 움직이는지 보세요.' } },
   { id: 'longhead', no: '②', name: '방아깨비', hint: '연두색, 머리가 뾰족하고 몸이 길다', place: 'B', cm: 7, build: () => buildInsect({ id: 'longhead', L: 3.6, color: 0x7bb651, belly: 0x9ccc65, spot: 0x4f8a2e, mottle: 0.08, head: 'cone', antenna: 0.3, wing: 0.78, hind: 0.42, femurPattern: true, wingColor: 0x86b85a }),
     think: ['뒷다리는 몸길이의 몇 배쯤인가요?', '머리 모양이 다른 곤충과 어떻게 다른가요? 어디에 좋을까요?', '연두색 몸은 장소 B의 무엇과 색이 비슷한가요?'],
-    notes: { wing: '날개가 포개져 있지 않고 나란히 놓인 것을 보세요. 소리를 낼 수 있을까요?', jump: '뒷다리가 아주 길게 펴집니다. 뛸 때 어떤 점이 좋을까요?', flip: '배 쪽 마디를 세어 보세요.' } },
+    notes: { wing: '날개가 포개져 있지 않고 나란히 놓인 것을 보세요. 소리를 낼 수 있을까요?', jump: '뒷다리가 아주 길게 펴집니다. 뛸 때 어떤 점이 좋을까요?', flip: '배 쪽 마디를 세어 보세요.', sound: '앉아서는 소리를 못 내고, 날 때 날개로 「따다다닥」 소리를 내요(합성한 소리). 귀뚜라미와 무엇이 다른가요?' } },
   { id: 'stripe', no: '③', name: '등줄메뚜기', hint: '연두·갈색, 등에 밝은 줄', place: 'B', cm: 3, build: () => buildInsect({ id: 'stripe', L: 2.8, color: 0x8aa84a, belly: 0xa8b86a, spot: 0x5a6a2a, mottle: 0.25, head: 'round', antenna: 0.45, wing: 0.7, hind: 0.33, stripe: 0xe8e2b0, femurPattern: true, wingColor: 0x8a9a5a }),
     think: ['등의 밝은 줄은 어디서 어디까지 이어지나요?', '뒷다리 넓적다리의 굵기를 ②와 비교해 보세요.', '날개 길이가 배보다 긴가요, 짧은가요?'],
-    notes: { wing: '뒷날개가 부채처럼 펴집니다. 접혀 있을 때는 어디에 있었나요?', jump: '넓적다리가 굵습니다. 무엇이 들어 있을까요?', flip: '다리가 몸 어디에 붙어 있는지 세어 보세요.' } },
+    notes: { wing: '뒷날개가 부채처럼 펴집니다. 접혀 있을 때는 어디에 있었나요?', jump: '넓적다리가 굵습니다. 무엇이 들어 있을까요?', flip: '다리가 몸 어디에 붙어 있는지 세어 보세요.', sound: '뒷다리 넓적다리 안쪽을 앞날개에 비벼 거친 소리를 내요(합성한 소리). 귀뚜라미는 날개끼리, 이 곤충은 다리와 날개 — 소리 내는 자리가 달라요.' } },
 ];
 export const VIEWS = { angle: { theta: 0.55, phi: 1.05, name: '비스듬히' }, top: { theta: 0.15, phi: 0.3, name: '위에서 본 모습' }, side: { theta: 0, phi: 1.45, name: '옆에서 본 모습' }, front: { theta: Math.PI / 2, phi: 1.3, name: '앞에서 본 모습' } };   // 머리가 +x 쪽: 옆 = +z에서, 앞 = +x에서
 export const TOOLS = [{ id: 'detail', name: '🔍 날개 확대' }, { id: 'ruler', name: '📏 자 대기' }];
@@ -196,19 +197,26 @@ export function mountSpecimen(stage, make) {
     wing: { name: '🪽 날개 펼쳐 보기', dur: 3.6, note: spec.notes.wing, step: (t) => { const o = t < 0.3 ? ease.io(t / 0.3) : t > 0.72 ? 1 - ease.io((t - 0.72) / 0.28) : 1; U.wings.fore.forEach((p, i) => { p.rotation.y = (i ? -1 : 1) * 0.95 * o; }); U.wings.hind.forEach(({ piv, mesh }, i) => { mesh.visible = o > 0.02; piv.rotation.y = (i ? -1 : 1) * 0.75 * o; mesh.scale.set(o, (i ? -1 : 1) * o, 1); }); if (spec.id === 'cricket') U.wings.fore[0].position.x = -U.L * 0.02 + Math.sin(t * 60) * 0.02 * (1 - o); } },
     jump: { name: '🦵 뒷다리 펴 보기', dur: 3.2, note: spec.notes.jump, step: (t) => { const o = t < 0.3 ? ease.out(t / 0.3) : t > 0.7 ? 1 - ease.io((t - 0.7) / 0.3) : 1; U.legs.hind.forEach((l) => l.pose(o)); U.body.rotation.z = 0.22 * o; U.body.position.x = -U.L * 0.05 * o; } },
     flip: { name: '🔄 뒤집어 보기', dur: 4, note: spec.notes.flip, step: (t) => { const o = t < 0.25 ? ease.io(t / 0.25) : t > 0.75 ? 1 - ease.io((t - 0.75) / 0.25) : 1; U.body.rotation.x = Math.PI * o; U.body.position.y = (U.topY + U.L * 0.06) * Math.sin(Math.PI * o) + U.topY * o * 0.5; } },
+    sound: { name: '🔊 소리 듣기', dur: 3.6, note: spec.notes.sound, start: () => insectSound.play(spec.id, 3.5), end: () => insectSound.stop(), step: (t) => {
+      const on = t < 0.97, w = Math.sin(t * Math.PI * 60) * (on ? 1 : 0);   // 소리와 함께 비비는 움직임
+      if (spec.id === 'cricket') { U.wings.fore.forEach((p, i) => { p.rotation.y = (i ? -1 : 1) * (0.18 + 0.1 * w); p.position.x = -U.L * 0.02 + 0.03 * w * (i ? -1 : 1); }); }
+      else if (spec.id === 'stripe') { U.legs.hind.forEach((l) => l.pose(0.12 + 0.1 * w)); }
+      else { U.wings.fore.forEach((p, i) => { p.rotation.y = (i ? -1 : 1) * 0.5 * Math.abs(w) * (t > 0.08 && t < 0.9 ? 1 : 0); }); U.wings.hind.forEach(({ piv, mesh }, i) => { const o = Math.abs(w) * (t > 0.08 && t < 0.9 ? 1 : 0); mesh.visible = o > 0.05; piv.rotation.y = (i ? -1 : 1) * 0.6 * o; mesh.scale.set(o, (i ? -1 : 1) * o, 1); }); }
+    } },
     wind: { name: '🍃 바람 보기', dur: 4, env: true, note: '풀잎이 얼마나 흔들리는지 보세요. 두 장소에서 같은 방법으로 봐야 비교가 돼요.', step: (t) => { const h = hab.userData, amp = (h.P.shade ? 0.05 : 0.09) * Math.sin(Math.PI * t); h.sway.forEach((b, i) => { h.d.position.set(b.x, 0, b.z); h.d.rotation.set(b.lean + amp * Math.sin(t * 18 + b.ph), b.ry, 0); h.d.scale.set(1, b.h, 1); h.d.updateMatrix(); h.grass.setMatrixAt(i, h.d.matrix); }); h.grass.instanceMatrix.needsUpdate = true; } },
     soil: { name: '✋ 흙 쥐어 보기', dur: 5, env: true, note: '흙을 3초 쥐었다 폈을 때 손에 남은 흙을 보세요. 많이 남으면 물기가 많은 거예요.', step: (t) => { const h = hab.userData; h.hand.visible = t > 0.15 && t < 0.98; h.hand.scale.setScalar(0.6 + 0.4 * ease.out(clamp01((t - 0.15) / 0.2))); } },
     sun: { name: '☀ 햇빛 보기', dur: 4, env: true, note: '같은 흰 종이를 땅에 놓고 밝기를 보세요. 나무 그늘인지, 하늘이 트였는지도 적어요.', step: (t) => { hab.userData.paper.visible = t > 0.1 && t < 0.98; } },
   };
-  let running = null;
-  stage.update = (dt) => { if (!running) return; running.t += dt / running.a.dur; running.a.step(clamp01(running.t)); if (running.t >= 1) { running.a.step(1); running = null; } };
+  let running = null; insectSound.stop();
+  const finish = () => { if (!running) return; running.a.step(1); running.a.end?.(); running = null; };
+  stage.update = (dt) => { if (!running) return; running.t += dt / running.a.dur; running.a.step(clamp01(running.t)); if (running.t >= 1) finish(); };
   const api = {
     spec, places: PLACE_LIST, place: () => placeId,
     actions: () => Object.entries(actions).map(([id, a]) => ({ id, name: a.name, env: !!a.env })),
-    run(id) { const a = actions[id]; if (!a) return null; if (running) running.a.step(1); running = { a, t: 0 }; return a.note; },
+    run(id) { const a = actions[id]; if (!a) return null; finish(); running = { a, t: 0 }; a.start?.(); return a.note; },
     setView(id) { const v = VIEWS[id] || VIEWS.angle; stage.setView({ theta: v.theta, phi: v.phi, dist: 8, target: [0, 0.6, 0] }); },
     toggle(what, on) { if (what === 'detail') det.visible = on; if (what === 'ruler') rl.visible = on; stage._needFit = true; },
-    setPlace,
+    setPlace, dispose() { finish(); insectSound.stop(); },
   };
   api.setView('angle');
   return api;
