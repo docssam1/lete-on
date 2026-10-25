@@ -35,7 +35,7 @@ function updateNavigation(){const ci=courses.findIndex(c=>c.id===$('course').val
 function fillRounds(index=0){const c=courses.find(c=>c.id===$('course').value);$('round').replaceChildren(...rows(c).map((row,i)=>new Option((i+1)+'회차'+(row.test?' · 과정 점검':c.studyPlan?'':label(row.title)?' · '+label(row.title):''),String(i))));$('round').value=String(Math.min(Math.max(0,index),rows(c).length-1));updateNavigation();}
 function show(){
  const c=catalog?courses.find(c=>c.id===$('course').value):null,ri=c?Number($('round').value):0,url=new URL('../ws.html',location.href);
- url.search=new URLSearchParams({c:c?.extensionGrade?c.anchor:c?.id||'C0',w:week,n:$('name').value,auto:'0',v:'20261025-path-lesson1',p:'1',s:String(c?.studyPlan?rows(c)[ri].startSession:ri+1)});
+ url.search=new URLSearchParams({c:c?.extensionGrade?c.anchor:c?.id||'C0',w:week,n:$('name').value,auto:'0',v:'20261025-independent2',p:'1',s:String(c?.studyPlan?rows(c)[ri].startSession:ri+1)});
  if(c?.extensionGrade){const g=c.extensionGrade,p={courseKey:c.anchor,sessionIndex:catalog[c.anchor].sessions.length,startDate:start,speed:1,amount:1,cadence:'w1',pace:'p2',middleExtensions:{[g]:'20261024-middle-extension1'},extensionAnchor:{grade:g,index:ri}};for(const [k,v]of Object.entries({dv:NM_DELIVERY_PLAN.VERSION,dp:NM_DELIVERY_PLAN.encode(p),k:1,cad:'w1',amt:1}))url.searchParams.set(k,v);}
  else if(c?.studyPlan)url.searchParams.set('hp','1');
  $('status').textContent=c?label(c.title)+' · '+(ri+1)+'회차를 불러오고 있습니다.':'전체 과정 목록을 불러오고 있습니다.';
