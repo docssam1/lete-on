@@ -672,7 +672,90 @@ const TIME_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET });
+// ───────────────────────── 6권 사각형의 둘레 ─────────────────────────
+// 직사각형·평행사변형은 마주 보는 변의 길이가 같아 (가로 + 세로) × 2, 정사각형·마름모는 네 변이 같아 한 변 × 4.
+// 거꾸로: 둘레의 반(가로 + 세로)에서 아는 변을 빼거나, 둘레 ÷ 4. 그림은 kind "quad"(모양 색표: 네모 파랑 · 평행사변형 노랑 · 마름모 보라).
+// sides: { top, right } — 위와 오른쪽 변에 쓰는 글(수 또는 「가」). 그림은 네 변에 모두 쓴다(마주 보는 변 같음을 보여 줄 때).
+const QUAD_NAME = { rect: "직사각형", para: "평행사변형", square: "정사각형", rhombus: "마름모", trapezoid: "사다리꼴" };
+function perimeterExample({ id, title, shape, a, b = a }) {
+  const name = QUAD_NAME[shape], four = shape === "square" || shape === "rhombus";
+  const P = four ? a * 4 : (a + b) * 2;
+  const fig = (tone, extra = {}) => ({ kind: "quad", shape, top: String(a), right: four ? undefined : String(b), tone, ...extra });
+  const steps = four
+    ? [
+      { text: `${josa(name, "은")} 네 변의 길이가 모두 같아요. 네 변이 모두 ${a}cm예요.`, figure: fig("doing", { all: true }) },
+      { text: `한 변 × 4 = ${a} × 4 = ${P}cm예요.`, figure: fig("check", { all: true, inner: `둘레 ${P}cm` }) }
+    ]
+    : [
+      { text: `${josa(name, "은")} 마주 보는 변의 길이가 같아요. 위아래가 ${a}cm, 양옆이 ${b}cm예요.`, figure: fig("doing", { all: true }) },
+      { text: `가로와 세로를 하나씩 더하면 ${a} + ${b} = ${a + b}cm. 둘레의 반이에요.`, figure: fig("doing", { all: true, half: true }) },
+      { text: `둘레는 그 두 배예요. ${a + b} × 2 = ${P}cm.`, figure: fig("check", { all: true, inner: `둘레 ${P}cm` }) }
+    ];
+  return { id, title, problem: four ? `한 변이 ${a}cm인 ${name}의 둘레는 몇 cm일까요?` : `${name}의 둘레는 몇 cm일까요?`, figure: fig("given", four ? { inner: "둘레 가" } : {}), steps, answer: `둘레는 ${P}cm예요.`, value: { P, a, b: four ? a : b, shape } };
+}
+// 둘레에서 한 변 찾기. 직사각형·평행사변형은 ask: "top" | "right"(known은 다른 쪽 변), 정사각형·마름모는 한 변.
+function sideFromPerimeterExample({ id, title, shape, P, known = null, ask = "top" }) {
+  const name = QUAD_NAME[shape], four = shape === "square" || shape === "rhombus";
+  if (four) {
+    if (P % 4) throw new Error(`${id}: 네 변이 같게 나눌 수 없음`);
+    const s = P / 4;
+    const fig = (tone, extra = {}) => ({ kind: "quad", shape, top: "가", inner: `둘레 ${P}cm`, tone, ...extra });
+    const steps = [
+      { text: `${josa(name, "은")} 네 변의 길이가 모두 같아요. 둘레 ${P}cm는 같은 변 4개를 더한 것이에요.`, figure: fig("doing", { all: true }) },
+      { text: `한 변은 ${P} ÷ 4 = ${s}cm예요.`, figure: { kind: "quad", shape, top: String(s), inner: `둘레 ${P}cm`, tone: "check", all: true } }
+    ];
+    return { id, title, problem: `둘레가 ${P}cm인 ${name}의 한 변(가)은 몇 cm일까요?`, figure: fig("given"), steps, answer: `가는 ${s}cm예요.`, value: { side: s, P, shape } };
+  }
+  if (P % 2) throw new Error(`${id}: 둘레가 홀수`);
+  const half = P / 2, x = half - known;
+  if (x <= 0) throw new Error(`${id}: 변이 0보다 작음`);
+  const labels = (v) => (ask === "top" ? { top: v, right: String(known) } : { top: String(known), right: v });
+  const fig = (tone, v, extra = {}) => ({ kind: "quad", shape, ...labels(v), inner: `둘레 ${P}cm`, tone, ...extra });
+  const steps = [
+    { text: `마주 보는 변의 길이가 같아서, 둘레는 가로와 세로를 두 번씩 더한 거예요.`, figure: fig("doing", "가", { all: true }) },
+    { text: `둘레의 반은 ${P} ÷ 2 = ${half}cm. 가로 하나와 세로 하나를 더한 길이예요.`, figure: fig("doing", "가", { all: true, half: true }) },
+    { text: `가 = ${half} − ${known} = ${x}cm예요.`, figure: fig("check", String(x), { all: true, half: true }) }
+  ];
+  return { id, title, problem: `둘레가 ${P}cm인 ${name}에서 가에 알맞은 수를 구해요.`, figure: fig("given", "가"), steps, answer: `가는 ${x}cm예요.`, value: { side: x, P, known, shape } };
+}
+// 사각형 알아보기: 다섯 사각형 중 조건에 맞는 것을 모두 고른다. 각 사각형의 성질은 아래 표(평행한 변 쌍·같은 변·같은 각).
+const QUAD_FACTS = {
+  trapezoid: { parallel: 1, equalSides: false, equalAngles: false },
+  para: { parallel: 2, equalSides: false, equalAngles: false },
+  rhombus: { parallel: 2, equalSides: true, equalAngles: false },
+  rect: { parallel: 2, equalSides: false, equalAngles: true },
+  square: { parallel: 2, equalSides: true, equalAngles: true }
+};
+function quadKindExample({ id, title, ask }) {
+  const order = ["trapezoid", "para", "rhombus", "rect", "square"], letters = ["가", "나", "다", "라", "마"];
+  const tests = { "equal-sides": [(f) => f.equalSides, "네 변의 길이가 모두 같은"], "two-parallel": [(f) => f.parallel === 2, "마주 보는 변이 두 쌍 모두 평행한"] };
+  const [test, words] = tests[ask];
+  const hit = order.filter((k) => test(QUAD_FACTS[k]));
+  const fig = (tone, mark = []) => ({ kind: "quad-gallery", items: order.map((k, i) => [letters[i], k]), mark, tone });
+  const named = hit.map((k) => `${letters[order.indexOf(k)]}(${QUAD_NAME[k]})`).join(", ");
+  const steps = [
+    { text: `하나씩 살펴봐요. ${ask === "equal-sides" ? "변의 길이 표시가 네 변 모두 같은지" : "마주 보는 변이 두 쌍 모두 나란한지"} 봐요.`, figure: fig("doing") },
+    { text: `${named}이 조건에 맞아요. ${ask === "equal-sides" ? "직사각형과 평행사변형은 마주 보는 변끼리만 같아요." : "사다리꼴은 한 쌍만 평행해요."}`, figure: fig("check", hit) }
+  ];
+  return { id, title, problem: `${words} 사각형을 모두 찾아요.`, figure: fig("given"), steps, answer: `${named}이에요.`, value: hit };
+}
+const PERIMETER_SET = {
+  id: "perimeter",
+  typeOf: (item) => item.typeLabel || "직사각형의 한 변",   // 「둘레로 빠진 변을 찾아요」 차시는 유형 이름이 비어 있다
+  types: {
+    "사각형 알아보기": () => [quadKindExample({ id: "quad-kind-1", title: "예제 1", ask: "equal-sides" }), quadKindExample({ id: "quad-kind-2", title: "예제 2", ask: "two-parallel" })],
+    "직사각형의 둘레": () => [perimeterExample({ id: "rect-p-1", title: "예제 1", shape: "rect", a: 12, b: 7 }), perimeterExample({ id: "rect-p-2", title: "예제 2", shape: "rect", a: 21, b: 13 })],
+    "직사각형의 한 변": () => [sideFromPerimeterExample({ id: "rect-s-1", title: "예제 1", shape: "rect", P: 42, known: 8, ask: "top" }), sideFromPerimeterExample({ id: "rect-s-2", title: "예제 2", shape: "rect", P: 120, known: 35, ask: "right" })],
+    "평행사변형의 둘레": () => [perimeterExample({ id: "para-p-1", title: "예제 1", shape: "para", a: 15, b: 9 })],
+    "평행사변형의 한 변": () => [sideFromPerimeterExample({ id: "para-s-1", title: "예제 1", shape: "para", P: 64, known: 19, ask: "right" })],
+    "정사각형의 둘레": () => [perimeterExample({ id: "sq-p-1", title: "예제 1", shape: "square", a: 16 })],
+    "정사각형의 한 변": () => [sideFromPerimeterExample({ id: "sq-s-1", title: "예제 1", shape: "square", P: 84 })],
+    "마름모의 둘레": () => [perimeterExample({ id: "rh-p-1", title: "예제 1", shape: "rhombus", a: 23 })],
+    "마름모의 한 변": () => [sideFromPerimeterExample({ id: "rh-s-1", title: "예제 1", shape: "rhombus", P: 108 })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

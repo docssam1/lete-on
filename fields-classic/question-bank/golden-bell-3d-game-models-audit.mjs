@@ -385,6 +385,33 @@ function verifyExample(setId, typeLabel, ex, lesson) {
         assert.ok(!item.prompt.includes(ex.problem), `${ex.id}: 원본 문장과 같음`);
       }
     }
+  } else if (setId === "perimeter") {
+    if (ex.figure.kind === "quad-gallery") {
+      // 사각형의 성질(검사기가 따로 적은 표): 네 변이 같은 것 = 마름모·정사각형, 두 쌍이 평행한 것 = 사다리꼴만 빼고
+      const truth = /네 변의 길이가 모두 같은/u.test(ex.problem) ? ["rhombus", "square"] : /두 쌍 모두 평행/u.test(ex.problem) ? ["para", "rhombus", "rect", "square"] : null;
+      assert.ok(truth, `${ex.id}: 아는 조건`);
+      assert.deepEqual([...v].sort(), [...truth].sort(), `${ex.id}: 고른 사각형`);
+      for (const item of lesson.original.items) assert.notEqual(ex.problem, item.prompt, `${ex.id}: 원본 문장과 같음`);
+    } else {
+      const f0 = ex.figure, last = ex.steps.at(-1).figure, four = ["square", "rhombus"].includes(f0.shape);
+      const num = (t) => Number(String(t).replace(/[^0-9]/gu, ""));
+      if (/둘레$/u.test(typeLabel)) {
+        const a = num(f0.top), b = four ? a : num(f0.right);
+        assert.equal(v.P, four ? 4 * a : 2 * (a + b), `${ex.id}: 둘레`);
+        assert.equal(num(last.inner), v.P, `${ex.id}: 마지막 그림의 둘레`);
+      } else {
+        const P = num(f0.inner);
+        const known = four ? null : num(f0.top === "가" ? f0.right : f0.top);
+        assert.equal(v.side, four ? P / 4 : P / 2 - known, `${ex.id}: 한 변`);
+        assert.ok(Number.isInteger(v.side) && v.side > 0, `${ex.id}: 자연수 변`);
+        assert.ok(f0.top === "가" || f0.right === "가", `${ex.id}: 처음 그림에 가`);
+        assert.ok([last.top, last.right].includes(String(v.side)), `${ex.id}: 마지막 그림에 구한 변`);
+      }
+      const shapeOf = { "직사각형": "rect", "평행사변형": "para", "정사각형": "square", "마름모": "rhombus" }[typeLabel.replace(/의 (둘레|한 변)$/u, "")];
+      if (shapeOf) assert.equal(f0.shape, shapeOf, `${ex.id}: 유형과 같은 모양`);
+      const sig = (o) => JSON.stringify([o.shape, String(o.top ?? ""), String(o.right ?? o.side ?? ""), String(o.inner ?? "")]);
+      for (const item of lesson.original.items) if (item.visual?.subtype === "source-quad") assert.notEqual(sig(f0), sig(item.visual), `${ex.id}: 원본 그림과 같음`);
+    }
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

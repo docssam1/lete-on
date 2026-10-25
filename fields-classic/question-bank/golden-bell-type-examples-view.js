@@ -283,9 +283,52 @@ function timeColFigure(f) {
   return `<div class="tx-time" style="--tone:${color}"><table role="img" aria-label="${esc(label)}">${f.rows.map(row).join("")}${resRow}</table></div>`;
 }
 
+// ───── 사각형의 둘레 ─────
+// 모양 색: 직사각형·정사각형 네모 파랑, 평행사변형 노랑, 마름모 보라, 사다리꼴 하늘(골든벨 색표).
+const QUAD_COLOR = { rect: SHAPE.square, square: SHAPE.square, para: { fill: "#fff3c4", line: "#d9a400" }, rhombus: SHAPE.diamond, trapezoid: { fill: "#dff3ff", line: "#1aa3c9" } };
+const QUAD_PTS = {   // 왼쪽 위부터 시계 방향(위 변 = 0→1, 오른쪽 변 = 1→2, 아래 = 2→3, 왼쪽 = 3→0)
+  rect: [[30, 30], [230, 30], [230, 140], [30, 140]],
+  square: [[60, 20], [190, 20], [190, 150], [60, 150]],
+  para: [[70, 30], [240, 30], [200, 140], [30, 140]],
+  rhombus: [[95, 25], [215, 25], [165, 145], [45, 145]],
+  trapezoid: [[80, 30], [180, 30], [230, 140], [30, 140]]
+};
+function quadShape(shape, pts, { stroke, fill, width = 3 }) {
+  return `<polygon points="${pts.map((p) => p.join(",")).join(" ")}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" stroke-linejoin="round"/>`;
+}
+function quadFigure(f) {
+  const pts = QUAD_PTS[f.shape], c = QUAD_COLOR[f.shape], tone = TONE[f.tone || "given"];
+  let body = quadShape(f.shape, pts, { stroke: c.line, fill: c.fill });
+  const mid = (i) => { const a = pts[i], b = pts[(i + 1) % 4]; return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; };
+  // 둘레의 반: 위 변과 오른쪽 변을 안내 색으로 굵게
+  // 점선으로 그려 모양 선(평행사변형 노랑)과 같은 색이어도 구별된다
+  if (f.half) for (const i of [0, 1]) body += `<line x1="${pts[i][0]}" y1="${pts[i][1]}" x2="${pts[(i + 1) % 4][0]}" y2="${pts[(i + 1) % 4][1]}" stroke="#fff" stroke-width="8" stroke-linecap="round"/><line x1="${pts[i][0]}" y1="${pts[i][1]}" x2="${pts[(i + 1) % 4][0]}" y2="${pts[(i + 1) % 4][1]}" stroke="${tone}" stroke-width="6" stroke-dasharray="12 6" stroke-linecap="round"/>`;
+  const four = f.shape === "square" || f.shape === "rhombus";
+  const labelOf = (i) => (i % 2 === 0 ? f.top : four ? f.top : f.right);
+  const show = f.all ? [0, 1, 2, 3] : [0, 1];
+  for (const i of show) {
+    const v = labelOf(i);
+    if (v === undefined || v === null) continue;
+    const [mx, my] = mid(i), off = [[0, -16], [22, 0], [0, 18], [-22, 0]][i];
+    const txt = /^\d+$/u.test(v) ? `${v}cm` : v;
+    body += `<text x="${mx + off[0]}" y="${my + off[1]}" font-size="15" font-weight="900" fill="${v === "가" ? "#5b2fa8" : "#222"}" text-anchor="middle" dominant-baseline="central" stroke="#fff" stroke-width="4" paint-order="stroke">${esc(txt)}</text>`;
+  }
+  if (f.inner) body += text(130, 86, f.inner, { size: 15, weight: 900, fill: /가/u.test(f.inner) ? "#5b2fa8" : "#222" });
+  return `<div class="tx-quad">${svg(320, 172, `<g transform="translate(25 0)">${body}</g>`, `${{ rect: "직사각형", square: "정사각형", para: "평행사변형", rhombus: "마름모", trapezoid: "사다리꼴" }[f.shape]}${f.top ? `, 위 변 ${f.top}` : ""}${f.right ? `, 오른쪽 변 ${f.right}` : ""}${f.inner ? `, ${f.inner}` : ""}`)}</div>`;
+}
+function quadGalleryFigure(f) {
+  const mark = new Set(f.mark || []);
+  return `<div class="tx-quad-gallery">${f.items.map(([letter, shape]) => {
+    const c = QUAD_COLOR[shape], on = mark.has(shape), pts = QUAD_PTS[shape].map(([x, y]) => [x * 0.42 + 4, y * 0.42 + 4]);
+    return `<figure class="${on ? "on" : ""}" style="--tone:${TONE.check}">${svg(110, 76, quadShape(shape, pts, { stroke: c.line, fill: c.fill, width: 2.5 }), shape)}<figcaption>${esc(letter)}</figcaption></figure>`;
+  }).join("")}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
   if (figure.kind === "bundle") return bundleFigure(figure);
+  if (figure.kind === "quad") return quadFigure(figure);
+  if (figure.kind === "quad-gallery") return quadGalleryFigure(figure);
   if (figure.kind === "time-col") return timeColFigure(figure);
   if (figure.kind === "circles") return circlesFigure(figure);
   if (figure.kind === "circles-story") return `<p class="tx-think">${esc(figure.note)}</p>`;
