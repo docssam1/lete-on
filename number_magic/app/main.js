@@ -6594,7 +6594,7 @@ function mountTown3DInto(scr){
 function townDestinationLabel(id){
   if(id==='_theater')return S.lang==='ko'?'학습지·시험':S.lang==='en'?'Worksheets':'学习单';
   if(id==='_closet')return S.lang==='ko'?'옷장':S.lang==='en'?'Closet':'衣橱';
-  const sp=TOWN_SPOTS.find(x=>x.tier===id);return sp?L(sp.sub):'';
+  const sp=TOWN_SPOTS.find(x=>x.tier===id);return sp?L(sp.sub):((tierById(id)||{}).title||'');
 }
 function enterTownDestination(id){
   if(id==='_closet'||id==='_theater'){S.view=id==='_closet'?'closet':'exam';save();render();return;}

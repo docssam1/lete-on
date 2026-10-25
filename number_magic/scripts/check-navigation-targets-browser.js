@@ -3,7 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const {chromium}=require('./lib/playwright');
 const ROOT=path.resolve(__dirname,'../..'),OUT=process.env.NM_NAV_ARTIFACTS||'/tmp/nm-navigation-targets';
-const bridge=`\nwindow.__NAV=(()=>{let baseline;return{ready:()=>booted,prepare:()=>{guardianEntry=false;S.onboarded=true;S.symbolDex=Object.fromEntries(allUnitSymbols().map(s=>[s.sym,{unitId:s.unitId,earnedAt:1}]));baseline=JSON.stringify(S);},reset:()=>{S=JSON.parse(baseline);wsHelperId=null;guardianEntry=false;render();},view:v=>{S.view=v;render();},course:()=>enterContinueUnit('N-01',true),continued:()=>{S.view='title';enterContinueUnit('N-01',false);},story:()=>enterRoadUnit('N-01'),tier:()=>{enterTier('numberland');enterUnit('N-01');},mail:()=>{S.placement={course:'C1'};S._mbWeek=null;S.view='mailbox';render();},helper:()=>{wsHelperId=NM_EXAM.worksheetCode({thread:'ML12',level:1,count:12,seed:'navcheck'});history.replaceState(null,'',location.pathname+'?enter=1&ws='+encodeURIComponent(wsHelperId));S.view='town';render();return wsHelperId;},dex:()=>{S._dexFrom='title';S.view='symboldex';render();},state:()=>JSON.parse(JSON.stringify({view:S.view,unit:S.unit,tier:S.tierId,unitReturn:S.unitReturn,courseOrigin:S._fromCourseRoad,storyOrigin:S._fromRoadmap,week:S._mbWeek,helper:wsHelperId,coins:S.coins,progress:S.progress}))};})();`;
+const bridge=`\nwindow.__NAV=(()=>{let baseline;return{ready:()=>booted,prepare:()=>{guardianEntry=false;S.onboarded=true;S.symbolDex=Object.fromEntries(allUnitSymbols().map(s=>[s.sym,{unitId:s.unitId,earnedAt:1}]));baseline=JSON.stringify(S);},reset:()=>{S=JSON.parse(baseline);wsHelperId=null;guardianEntry=false;render();},view:v=>{S.view=v;render();},course:()=>enterContinueUnit('N-01',true),continued:()=>{S.view='title';enterContinueUnit('N-01',false);},story:()=>enterRoadUnit('N-01'),tier:()=>{enterTier('numberland');enterUnit('N-01');},catalog:()=>CUR.tiers.map(t=>({id:t.id,title:t.title})),catalogTier:id=>enterTier(id),mail:()=>{S.placement={course:'C1'};S._mbWeek=null;S.view='mailbox';render();},helper:()=>{wsHelperId=NM_EXAM.worksheetCode({thread:'ML12',level:1,count:12,seed:'navcheck'});history.replaceState(null,'',location.pathname+'?enter=1&ws='+encodeURIComponent(wsHelperId));S.view='town';render();return wsHelperId;},dex:()=>{S._dexFrom='title';S.view='symboldex';render();},state:()=>JSON.parse(JSON.stringify({view:S.view,unit:S.unit,tier:S.tierId,unitReturn:S.unitReturn,courseOrigin:S._fromCourseRoad,storyOrigin:S._fromRoadmap,week:S._mbWeek,helper:wsHelperId,coins:S.coins,progress:S.progress}))};})();`;
 const server=http.createServer((req,res)=>{const f=path.resolve(ROOT,'.'+decodeURIComponent(req.url.split('?')[0]));if(!f.startsWith(ROOT+'/')||!fs.existsSync(f)||!fs.statSync(f).isFile()){res.writeHead(404);return res.end();}res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.woff2':'font/woff2'})[path.extname(f)]||'application/octet-stream');let body=fs.readFileSync(f);if(f.endsWith('/app/main.js')){const s=body.toString(),i=s.lastIndexOf('\n})();');body=s.slice(0,i)+bridge+s.slice(i);}res.end(body);});
 const labelPatterns={courseroad:/연산|course roadmap|运算路线/i,roadmap:/스토리|story map|故事地图/i,tier:/단원 목록|unit list|单元列表/i,town:/마을|village|村庄/i,title:/모드 선택|mode selection|模式选择/i,worksheethelper:/학습지 도우미|worksheet helper|学习单助手/i,mailbox:/선택한 학습지|selected worksheet|所选学习单/i};
 (async()=>{
@@ -12,7 +12,7 @@ const labelPatterns={courseroad:/연산|course roadmap|运算路线/i,roadmap:/�
  const state=p=>p.evaluate(()=>__NAV.state());
  async function back(p,selector,key,destination,width,lang,extra={}){
   const e=p.locator(selector).first();await e.waitFor();const before=await state(p),label=await e.innerText(),aria=await e.getAttribute('aria-label'),layout=await e.evaluate(e=>{const r=e.getBoundingClientRect(),b=e.closest('.nm-unit-bar,.nmsc-header');return{w:r.width,h:r.height,scroll:e.scrollWidth,client:e.clientWidth,scrollHeight:e.scrollHeight,clientHeight:e.clientHeight,barOverflow:b?b.scrollWidth-b.clientWidth:0};});
-  if(destination==='tier')assert(label.includes(lang==='ko'?'베이직':lang==='en'?'Basic':'BASIC'),'unit exit names the actual destination tier');
+  if(destination==='tier')assert(label.includes(extra.tierName||(lang==='ko'?'베이직':lang==='en'?'Basic':'BASIC')),'unit exit names the actual destination tier');
   const actions=await p.locator('.nm-skip-btns .nm-btn').evaluateAll(es=>es.map(e=>{const r=document.createRange();r.selectNodeContents(e);const b=e.getBoundingClientRect();return{lines:r.getClientRects().length,h:b.height,right:b.right,bottom:b.bottom};}));
   assert(actions.every(x=>x.lines===1&&x.h>=44&&x.right<=width&&x.bottom<=844),'practice entry actions fit on one line inside the phone viewport');
   if(key==='course-unit'||(lang==='ko'&&width===390))await p.screenshot({path:path.join(OUT,`${width}-${lang}-${key}-before.png`)});
@@ -31,6 +31,13 @@ const labelPatterns={courseroad:/연산|course roadmap|运算路线/i,roadmap:/�
     if(width===390&&lang==='ko'){
      await p.evaluate(()=>{__NAV.reset();__NAV.course();});await p.locator('#charChipBtn').click();await p.locator('#backCloset').click();await p.evaluate(()=>__NAV.tier());await back(p,'#backMap','course-closet-tier','tier',width,lang);
      await p.evaluate(()=>{__NAV.reset();__NAV.continued();});await back(p,'#backMap','desk-continue-unit','title',width,lang);
+    }
+    const upper=await p.evaluate(()=>__NAV.catalog().filter(t=>!['numberland','beginner','intermediate','advanced'].includes(t.id)));
+    for(const tier of upper){
+     await p.evaluate(id=>{__NAV.reset();__NAV.catalogTier(id);},tier.id);
+     assert.equal(await p.locator('.nm-unit-title').evaluate(e=>e.firstChild.textContent),tier.title,'upper-school catalog title is preserved');
+     await p.locator('.nm-unit[data-unit]:not(.trial-locked)').first().click();
+     await back(p,'#backMap','upper-tier-'+tier.id,'tier',width,lang,{tierName:tier.title});
     }
     console.log('NAV_CASE_OK '+width+' '+lang);
    }finally{await ctx.close();fs.writeFileSync(path.join(OUT,'navigation-targets.json'),JSON.stringify(report,null,2));}
