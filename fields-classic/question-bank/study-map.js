@@ -118,7 +118,7 @@ export async function loadGoldenBell() {
 // 원장(2026-10-24): 「링크를 가져오는 거 아냐. 우리 걸 써야 돼. 그걸 발전시켜 우리 학습에 맞는 게임으로.」
 // 지오메트리 게임의 계산·생김새를 가져와 골든벨 풀이 순서대로 다시 만든 게임. replaces = 덱에서 이 게임이 대신하는 옛 체험(골든벨 화면·학습지 QR에는 그대로 남는다).
 // 손글씨 판서가 있는 개념 학습(원장 2026-10-24 「손글씨 개념부터」): 덱에서 골든벨 개념 화면 대신 판서를 보여 준다. 대본은 concept-boards.js.
-const BOARD = { module: "./concept-board.js?v=20261025w", css: "./concept-board.css?v=20261025b", mount: "mountConceptBoard", doneSay: null };
+const BOARD = { module: "./concept-board.js?v=20261025x", css: "./concept-board.css?v=20261025b", mount: "mountConceptBoard", doneSay: null };
 export const STUDY_BOARDS = Object.freeze({
   "book-01/clock-turning": BOARD,
   "book-01/mirror-reflection": BOARD,
@@ -175,7 +175,12 @@ export const STUDY_BOARDS = Object.freeze({
   "book-04/compare-order-source": BOARD,
   "book-04/compare-difference-source": BOARD,
   "book-04/balance-equality-source": BOARD,
-  "book-04/balance-substitution": BOARD
+  "book-04/balance-substitution": BOARD,
+  "book-04/order-logic-source": BOARD,
+  "book-04/cardinal-placement": BOARD,
+  "book-04/circle-logic-source": BOARD,
+  "book-04/table-logic-source": BOARD,
+  "book-04/row-logic-source": BOARD
 });
 
 export const STUDY_GAMES = Object.freeze({

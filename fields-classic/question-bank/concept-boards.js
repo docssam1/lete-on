@@ -6,7 +6,7 @@
 import { jo, landing, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, SEGMENT_MAPS, moveSegs, readDigit, transformDigit, segGeom, segMid } from "./concept-board-kit.js?v=20261025f";
 import { BOARDS_B02 } from "./concept-boards-b02.js?v=20261025g";
 import { BOARDS_B03 } from "./concept-boards-b03.js?v=20261025e";
-import { BOARDS_B04 } from "./concept-boards-b04.js?v=20261025c";
+import { BOARDS_B04 } from "./concept-boards-b04.js?v=20261025d";
 export { jo, landing, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, SEGMENT_MAPS, moveSegs, readDigit, transformDigit, segGeom, segMid };
 
 // 독쌤 음성 파일의 줄 id. 내보내기(tools/export-board-voice.mjs)와 재생(concept-board.js → study.js)이 같은 규칙을 쓴다.

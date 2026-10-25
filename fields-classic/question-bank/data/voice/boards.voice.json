@@ -3453,6 +3453,274 @@
   {
    "id": "fcb-book-04-balance-substitution-reveal",
    "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-b01",
+   "text": "네 친구가 한 줄로 섰어요. 단서 세 개로 앞에서부터 누가 서 있는지 정해요. 자리가 바로 정해지는 단서부터 쓰는 게 핵심이에요."
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-b02",
+   "text": "단서를 써요. 하나, 가온이는 맨 뒤예요. 둘, 하늘이는 가온이 바로 앞이에요. 셋, 보람이는 누리와 하늘이 사이에 있어요."
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-b03",
+   "text": "자리 네 칸을 그려요. 왼쪽이 맨 앞이에요."
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-b04",
+   "text": "자리가 바로 정해지는 단서부터 써요. 첫째 단서, 가온이는 맨 뒤. 넷째 칸에 가온이를 써요."
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-b05",
+   "text": "둘째 단서예요. 하늘이는 가온이 바로 앞. 바로라는 말이 있으면 딱 붙어 있어요. 셋째 칸에 하늘이를 써요."
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-b06",
+   "text": "셋째 단서예요. 보람이는 누리와 하늘이 사이. 남은 자리는 첫째와 둘째 칸이에요. 하늘이 옆, 둘째 칸에 보람이가 와야 누리와 하늘이 사이가 돼요."
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-b07",
+   "text": "남은 첫째 칸은 누리예요."
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-b08",
+   "text": "처음부터 다시 확인해요. 가온이는 맨 뒤, 맞아요. 하늘이는 가온이 바로 앞, 맞아요. 보람이는 누리와 하늘이 사이, 맞아요."
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-b09",
+   "text": "정리해요. 맨 앞, 맨 뒤, 몇 번째처럼 자리가 바로 정해지는 단서를 먼저 써요. 바로 앞, 바로 뒤는 붙여서 놓아요. 마지막에 모든 단서를 다시 읽어 확인해요."
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-b10",
+   "text": "한 문제 풀어 봐요. 같은 줄에서 뒤에서 세 번째는 누구일까요?"
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-hint",
+   "text": "맨 뒤 가온이가 하나, 하늘이가 둘. 셋은 누구일까요?"
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-right",
+   "text": "맞았어요! 가온, 하늘, 그다음 보람이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-04-order-logic-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-b01",
+   "text": "동쪽, 서쪽, 남쪽, 북쪽으로 장소의 자리를 찾아요. 지도에서는 위가 북쪽, 아래가 남쪽, 오른쪽이 동쪽, 왼쪽이 서쪽이에요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-b02",
+   "text": "방향을 먼저 그려요. 위에 북, 아래에 남, 오른쪽에 동, 왼쪽에 서."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-b03",
+   "text": "같은 가로줄에 있으면 동쪽이나 서쪽, 같은 세로줄에 있으면 북쪽이나 남쪽이에요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-b04",
+   "text": "단서예요. 우체국은 공원의 동쪽에 있어요. 도서관은 공원의 북쪽에 있어요. 빵집은 우체국의 남쪽에 있어요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-b05",
+   "text": "여러 단서에 함께 나오는 것을 기준으로 가운데에 놓아요. 공원이 두 번 나와요. 공원을 가운데 칸에 써요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-b06",
+   "text": "우체국은 공원의 동쪽, 공원 오른쪽 칸이에요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-b07",
+   "text": "도서관은 공원의 북쪽, 공원 위 칸이에요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-b08",
+   "text": "빵집은 우체국의 남쪽, 우체국 아래 칸이에요. 공원이 아니라 우체국이 기준이에요. 누구를 기준으로 말했는지 꼭 보세요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-b09",
+   "text": "그러면 빵집은 공원에서 보면 어디일까요? 동쪽으로 한 칸, 남쪽으로 한 칸. 공원의 남동쪽이에요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-b10",
+   "text": "정리해요. 동서는 같은 가로줄, 남북은 같은 세로줄이에요. 여러 번 나오는 장소를 기준 칸에 먼저 놓고, 누구를 기준으로 말했는지 따라가며 하나씩 채워요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-b11",
+   "text": "한 문제 풀어 봐요. 지금 그린 지도에서 도서관은 빵집의 어느 쪽일까요?"
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-hint",
+   "text": "빵집에서 도서관으로 가려면 위로 두 칸, 왼쪽으로 한 칸 가요. 위는 북, 왼쪽은 서예요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-right",
+   "text": "맞았어요! 도서관은 빵집에서 위쪽과 왼쪽, 북서쪽이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-04-cardinal-placement-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-b01",
+   "text": "둥근 식탁에 둘러앉았을 때 누가 어디에 앉았는지 찾아요. 원탁에서는 왼쪽, 오른쪽을 읽는 방법이 중요해요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-b02",
+   "text": "둥근 식탁과 자리 네 개를 그려요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-b03",
+   "text": "원탁에서 오른쪽, 왼쪽은 앉은 사람이 식탁 가운데를 바라볼 때를 기준으로 해요. 맨 위 자리 사람이 가운데를 보면, 그 사람의 오른쪽은 그림에서 왼쪽이에요. 헷갈리면 직접 그 자리에 앉았다고 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-b04",
+   "text": "단서예요. 하나, 하람이는 맨 위 자리예요. 둘, 도담이는 하람이의 왼쪽이에요. 셋, 이솔이는 하람이와 마주 보고 앉아요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-b05",
+   "text": "자리가 정해진 하람이부터 써요. 맨 위예요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-b06",
+   "text": "도담이는 하람이의 왼쪽이에요. 하람이가 가운데를 바라보면 왼쪽은 그림에서 오른쪽 자리예요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-b07",
+   "text": "이솔이는 하람이와 마주 봐요. 마주 보는 자리는 식탁 건너편, 맨 아래예요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-b08",
+   "text": "남은 왼쪽 자리는 미루예요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-b09",
+   "text": "확인해요. 도담이 자리에 앉아 가운데를 보면, 도담이의 오른쪽에 하람이가, 왼쪽에 이솔이가 있어요. 단서와 맞아요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-b10",
+   "text": "정리해요. 자리가 정해진 사람을 먼저 놓아요. 왼쪽, 오른쪽은 가운데를 바라보는 사람 기준으로 읽어요. 마주 보는 자리는 식탁 건너편이에요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-b11",
+   "text": "한 문제 풀어 봐요. 같은 식탁에서 미루의 오른쪽에 앉은 사람은 누구일까요?"
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-hint",
+   "text": "미루는 그림의 왼쪽 자리예요. 가운데를 보면 오른쪽 손이 그림의 아래쪽을 가리켜요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-right",
+   "text": "맞았어요! 미루가 가운데를 보면 오른쪽에 이솔이가 있어요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-04-circle-logic-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-b01",
+   "text": "네 친구가 사과, 배, 감, 귤 중 서로 다른 과일을 하나씩 골라요. 단서가 많을 때는 표에 ○와 ×를 쳐 가며 지우면 헷갈리지 않아요."
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-b02",
+   "text": "표를 그려요. 왼쪽에 친구, 위에 과일."
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-b03",
+   "text": "단서가 네 개예요. 하나, 건우는 감을 골랐어요. 둘, 유나는 사과도 귤도 고르지 않았어요. 셋, 태민이는 배를 고르지 않았어요. 넷, 소율이는 귤을 고르지 않았어요."
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-b04",
+   "text": "확실한 첫째 단서부터. 건우와 감이 만나는 칸에 ○. 건우의 다른 칸과 감의 다른 칸은 모두 ×."
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-b05",
+   "text": "둘째 단서. 유나는 사과와 귤이 ×. 유나 줄에 남은 칸은 배 하나뿐이에요. 유나는 배. 배의 다른 칸은 ×."
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-b06",
+   "text": "넷째 단서. 소율이는 귤이 ×. 소율이 줄에 남은 칸은 사과 하나. 소율이는 사과예요."
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-b07",
+   "text": "태민이 줄에 남은 칸은 귤 하나. 태민이는 귤이에요. 셋째 단서, 태민이는 배가 아니라고 했는데 맞아요."
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-b08",
+   "text": "모든 가로줄과 세로줄에 ○가 하나씩 있어요. 유나 배, 건우 감, 소율 사과, 태민 귤."
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-b09",
+   "text": "정리해요. 확실한 단서로 ○를 치면, 그 사람의 다른 칸과 그 과일의 다른 칸을 모두 ×로 지워요. 한 칸만 남은 줄이 생기면 그게 답이에요. 단서를 쓰는 순서는 확실한 것부터예요."
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-b10",
+   "text": "한 문제 풀어 봐요. 별이, 솔이, 담이가 빨강, 노랑, 초록 중 서로 다른 색을 골랐어요. 솔이는 노랑이고, 별이는 빨강이 아니에요. 담이의 색은 무엇일까요?"
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-hint",
+   "text": "솔이가 노랑이니 별이는 노랑이 아니에요. 빨강도 아니니 별이는 초록. 남은 색은요?"
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-right",
+   "text": "맞았어요! 별이가 초록이니 남은 빨강이 담이 거예요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-04-table-logic-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-b01",
+   "text": "줄을 섰을 때 앞에서 몇 번째, 뒤에서 몇 번째라는 말로 모두 몇 명인지, 두 사람 사이에 몇 명이 있는지 구해요. 한 사람을 두 번 세지 않게 조심해요."
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-b02",
+   "text": "예나는 앞에서 다섯 번째, 뒤에서 네 번째에 서 있어요. 줄은 모두 몇 명일까요?"
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-b03",
+   "text": "줄을 그려요. 앞에서부터 하나, 둘, 셋, 넷, 다섯. 다섯째가 예나예요."
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-b04",
+   "text": "예나부터 뒤로 세어 넷째가 되게 그려요. 예나가 하나, 그 뒤로 둘, 셋, 넷."
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-b05",
+   "text": "모두 세면 여덟 명이에요. 식으로는 5 더하기 4를 해서 9인데, 예나를 앞에서도 뒤에서도 세었으니 한 번 빼요. 9 빼기 1은 8이에요."
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-b06",
+   "text": "이번엔 두 사람 사이예요. 11명이 서 있어요. 주원이는 앞에서 세 번째, 시아는 뒤에서 네 번째예요. 둘 사이에는 몇 명일까요?"
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-b07",
+   "text": "두 사람을 같은 기준으로 바꿔요. 시아가 앞에서 몇 번째인지 구해요. 전체 11명에서 뒤에서 4번째는 앞에서 11 빼기 4 더하기 1, 8번째예요."
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-b08",
+   "text": "주원이는 3번째, 시아는 8번째. 그 사이는 4번째부터 7번째까지, 8 빼기 3 빼기 1, 4명이에요."
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-b09",
+   "text": "정리해요. 한 사람을 앞뒤에서 세면 두 순서를 더하고 1을 빼요. 두 사람이면 한 사람의 순서를 같은 기준으로 바꾼 뒤, 사이의 수는 큰 순서에서 작은 순서를 빼고 1을 더 빼요."
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-b10",
+   "text": "한 문제 풀어 봐요. 어떤 친구가 앞에서 여섯 번째, 뒤에서 여덟 번째에 서 있어요. 줄은 모두 몇 명일까요?"
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-hint",
+   "text": "6 더하기 8은 14예요. 그 친구를 두 번 셌으니까요?"
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-right",
+   "text": "맞았어요! 14에서 1을 빼면 13명이에요. 이제 게임으로 가요."
+  },
+  {
+   "id": "fcb-book-04-row-logic-source-reveal",
+   "text": "정답을 표시했어요. 판서를 다시 보고 왜 그런지 생각해 봐요."
   }
  ]
 }
