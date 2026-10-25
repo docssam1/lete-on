@@ -15,3 +15,4 @@
 @media(max-height:500px){.answer-dock{padding-right:86px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .tutorial-actions{display:flex;gap:8px;flex-wrap:wrap}.tutorial-actions button{flex:1 1 110px}.tutorial-actions #tutorialSkip{border:1px solid #bad0c0;background:#fff;color:var(--green)}
+@media (orientation:landscape) and (max-height:500px){.game-shell{grid-template-rows:44px 36px minmax(0,1fr) 48px}.board-stage{padding:4px}.partition-svg{width:auto;height:calc(var(--app-dvh) - 188px);max-width:100%;overflow:hidden}}

@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const playwrightModule = process.env.PLAYWRIGHT_MODULE;
@@ -33,6 +35,18 @@ try {
       await page.locator("#tutorialSkip").click();
       assert.equal(await page.locator("#tutorial").isVisible(), false, `${game.name}/${language} skip did not close`);
       assert.ok(await page.locator(game.board).first().isVisible(), `${game.name}/${language} board did not open`);
+      if (game.name === "equal-partition") {
+        const boardFits = await page.locator(".partition-svg").evaluate((svg) => {
+          const art = svg.getBBox();
+          const matrix = svg.getScreenCTM();
+          const stage = document.querySelector("#boardStage").getBoundingClientRect();
+          return [[art.x, art.y], [art.x + art.width, art.y], [art.x, art.y + art.height], [art.x + art.width, art.y + art.height]]
+            .map(([x, y]) => new DOMPoint(x, y).matrixTransform(matrix))
+            .every((point) => point.x >= stage.left - 2 && point.x <= stage.right + 2 && point.y >= stage.top - 2 && point.y <= stage.bottom + 2);
+        });
+        assert.ok(boardFits, `${game.name}/${language} board artwork clipped`);
+      }
+      if (language === "ko") await page.screenshot({ path: join(tmpdir(), `geometry-${game.name}-after-start.png`) });
       assert.deepEqual(errors, [], `${game.name}/${language} page error`);
       await page.reload({ waitUntil: "networkidle" });
       assert.equal(await page.locator("#tutorial").isVisible(), false, `${game.name}/${language} tutorial returned after reload`);
@@ -40,6 +54,13 @@ try {
     }
     console.log(`${game.name}: first-visit start and 4 locales passed`);
   }
+  const portrait = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await portrait.goto(`${baseUrl}/geometry/games/paper-turn/?level=1`, { waitUntil: "networkidle" });
+  await portrait.locator("#tutorialSkip").click();
+  assert.ok(await portrait.locator("#choiceGrid button").first().isVisible(), "paper-turn portrait board did not open");
+  assert.ok(await portrait.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), "paper-turn portrait overflow");
+  await portrait.screenshot({ path: join(tmpdir(), "geometry-paper-turn-portrait-after-start.png") });
+  await portrait.close();
 } finally {
   await browser.close();
 }
