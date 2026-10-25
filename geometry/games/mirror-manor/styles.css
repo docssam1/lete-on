@@ -400,6 +400,12 @@ body { background: #d7e5e5 }
   box-shadow: inset 0 0 0 3px rgba(255,255,255,.72), 0 0 0 3px rgba(163,113,11,.24);
 }
 .cell.hint-source { box-shadow: inset 0 0 0 4px #9ce7ef, inset 0 0 0 7px rgba(16,101,111,.45) }
+.cell.tutorial-source {
+  z-index: 8;
+  outline: 4px solid #f4c84e;
+  outline-offset: -5px;
+  box-shadow: inset 0 0 0 2px #fff, 0 0 0 3px rgba(163,113,11,.4);
+}
 .distance-source.hinted { outline: 4px solid #f4c84e; outline-offset: 4px }
 .board.hint-axis .mirror-line { box-shadow: 0 0 0 3px #f4c84e, 0 0 18px rgba(100,222,232,.95), inset 0 0 3px #fff }
 .cell.occupied { background: rgba(45,117,124,.08) }

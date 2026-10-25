@@ -14,3 +14,4 @@
 @media(max-height:500px){.topbar{grid-template-columns:38px minmax(0,1fr) auto 38px auto}.level-button{position:static;width:auto;white-space:nowrap}}
 @media(max-height:500px){.answer-dock{padding-right:86px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.tutorial-actions{display:flex;gap:8px;flex-wrap:wrap}.tutorial-actions button{flex:1 1 110px}.tutorial-actions #tutorialSkip{border:1px solid #bad0c0;background:#fff;color:var(--green)}

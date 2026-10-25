@@ -16,7 +16,10 @@ const checks = [
   "geometry/games/geoboard/geoboard.browsercheck.mjs",
   "geometry/worksheet/net-observatory/net-observatory-sheet.browsercheck.mjs",
   "geometry/worksheet/dice-roll/dice-roll-sheet.browsercheck.mjs",
-  "geometry/worksheet/geoboard/geoboard-sheet.browsercheck.mjs"
+  "geometry/worksheet/geoboard/geoboard-sheet.browsercheck.mjs",
+  "geometry/tutorial-entry.browsercheck.mjs",
+  "geometry/shared/game-flow.browsercheck.mjs",
+  "geometry/all-games-entry.browsercheck.mjs"
 ];
 
 for (const check of checks) {

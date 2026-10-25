@@ -5,8 +5,8 @@
    - ONE kind of answer action per screen. Level 1 is tap-only, level 2 is
      drag-only. There is no submit button, no rotate button and no flip button,
      because any of those would be a second answer action on the same screen.
-   - Cubi speaks only in three places: the first-visit tutorial, a hint the child
-     asked for, and level completion. Ordinary taps and drops get a short tone.
+   - Cubi speaks only for a requested hint and level completion. The first-visit
+     cue lives on the playable board, not in a blocking dialog.
    - A wrong action never plays praise audio and never reveals the answer; it
      reports WHICH KIND of mistake it was (방향만 틀림 / 거리가 틀림).
    - Success shows one of GOOD JOB! / GREAT JOB! / SUCCESS! for about a second.
@@ -20,7 +20,7 @@ import {
   levels, readyLevels, validateLevels, classifyCell, classifyPlacement,
   reflectCell, mirrorDistance, isGivenSide, inGrid, GAME_ID, PROGRESS_KEY
 } from "./levels.js?v=mirror-manor-11";
-import { messages, text } from "./i18n.js?v=mirror-manor-11";
+import { messages, text } from "./i18n.js?v=mirror-manor-12";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -60,6 +60,7 @@ const state = {
   hintTrayPiece: null,
   wrong: 0,
   hints: 0,
+  tutorialActive: false,
   audio: localStorage.getItem("gfield-audio-muted") !== "true",
   lang: language
 };
@@ -69,7 +70,6 @@ const ui = {
   mirror: $("#mirrorLine"), mirrorSecondary: $("#mirrorLineSecondary"),
   prompt: $("#prompt"), answerPrompt: $("#answerPrompt"), tray: $("#tray"), next: $("#nextButton"),
   guide: $("#cubiGuide"), bubble: $("#guideBubble"), toast: $("#toast"), success: $("#success"),
-  tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialNext: $("#tutorialNext"),
   levelDialog: $("#levelDialog"), levelList: $("#levelList"), complete: $("#completeDialog")
 };
 
@@ -231,6 +231,7 @@ function renderCells() {
       if (doubleMirror && given) node.classList.add("double-source-quadrant");
       if (!given) node.classList.add("answer-side");
       if (paint && givenIds.has(cellId(cell))) node.classList.add("given");
+      if (state.tutorialActive && cellId(cell) === cellId(p.sourceCells[0])) node.classList.add("tutorial-source");
       if (paint && state.painted.has(cellId(cell))) node.classList.add("painted");
       if (state.hintCells.has(cellId(cell))) node.classList.add("hinted");
       if (state.hintSourceCells.has(cellId(cell))) node.classList.add("hint-source");
@@ -476,6 +477,7 @@ function onCellClick(event) {
   if (verdict !== "correct") return reportWrong(verdict, node);
   state.painted.add(cellId(cell));
   playTone("tap");
+  if (state.tutorialActive) finishTutorial();
   renderCells();
   renderStatus();
   if (state.painted.size === p.targetCells.length) solveProblem();
@@ -775,7 +777,7 @@ function renderStatus() {
     : p.interaction === "drag-reflection" ? "promptDrag"
       : p.interaction === "distance-match" ? "promptDistance"
         : p.interaction === "double-mirror" ? "promptDouble" : "promptSymbol");
-  ui.answerPrompt.textContent = p.interaction === "paint-reflection"
+  ui.answerPrompt.textContent = state.tutorialActive ? t("tutorialAction") : p.interaction === "paint-reflection"
     ? t("paintProgress", { done: state.painted.size, total: p.targetCells.length })
     : p.interaction === "drag-reflection"
       ? t("dragProgress", { done: state.usedTargets.size, total: p.targets.length })
@@ -813,6 +815,7 @@ function resetProblem() {
   ui.guide.classList.remove("show");
   ui.board.classList.remove("hint-axis");
   renderAll();
+  if (state.tutorialActive) showGuides([{ cell: problem().sourceCells[0], side: "given" }]);
   requestAnimationFrame(() => {
     const first = ui.cells.querySelector("button:not(:disabled)") || ui.tray.querySelector("button:not(:disabled)");
     first?.focus();
@@ -859,27 +862,21 @@ function renderLevelList() {
 
 /* ---------------------------------------------------------------- tutorial */
 
-const tutorialSteps = ["tutorial1", "tutorial2", "tutorial3"];
-let tutorialStep = 0;
-
-// Only on the very first problem of a first visit — never again on this device.
+// The first visit keeps the board live. A single source tile provides a visual
+// starting point; the learner still has to find and tap its reflection.
 function openTutorial() {
-  if (state.problem !== 0 || state.level !== readyLevels[0].id) return;
+  if (state.problem !== 0 || state.level !== readyLevels[0].id || state.painted.size || state.solved) return;
   if (localStorage.getItem(TUTORIAL_KEY) === "done") return;
-  ui.tutorial.hidden = false;
-  renderTutorial();
+  state.tutorialActive = true;
+  showGuides([{ cell: problem().sourceCells[0], side: "given" }]);
+  renderCells();
+  renderStatus();
 }
 
-function renderTutorial() {
-  const line = t(tutorialSteps[tutorialStep]);
-  ui.tutorialText.textContent = line;
-  ui.tutorialDots.replaceChildren(...tutorialSteps.map((_, index) => {
-    const dot = document.createElement("i");
-    if (index === tutorialStep) dot.className = "active";
-    return dot;
-  }));
-  ui.tutorialNext.textContent = t(tutorialStep === tutorialSteps.length - 1 ? "tutorialStart" : "tutorialNext");
-  speak(line);
+function finishTutorial() {
+  state.tutorialActive = false;
+  localStorage.setItem(TUTORIAL_KEY, "done");
+  ui.guides.replaceChildren();
 }
 
 /* ---------------------------------------------------------------- language */
@@ -969,12 +966,6 @@ $("#levelButton").addEventListener("click", () => {
 });
 $("#closeLevels").addEventListener("click", () => { ui.levelDialog.hidden = true; });
 ui.levelDialog.addEventListener("click", (event) => { if (event.target === ui.levelDialog) ui.levelDialog.hidden = true; });
-ui.tutorialNext.addEventListener("click", () => {
-  if (tutorialStep < tutorialSteps.length - 1) { tutorialStep += 1; renderTutorial(); return; }
-  localStorage.setItem(TUTORIAL_KEY, "done");
-  ui.tutorial.hidden = true;
-  cubiSays(t("guideStart"));
-});
 $("#nextLevelButton").addEventListener("click", () => {
   const next = levels.find((level) => level.id === state.level + 1);
   if (next?.ready) location.assign(`?level=${next.id}`);
@@ -1010,4 +1001,4 @@ loadSession();
 applyLanguage();
 renderLevelList();
 renderAll();
-setTimeout(openTutorial, 200);
+openTutorial();

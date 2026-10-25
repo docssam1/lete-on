@@ -146,6 +146,7 @@ function updatePrompt() {
 
 function shouldShowConceptTutorial() {
   const forced = params.get("tutorial") === "1";
+  if (!forced && Number(new URLSearchParams(window.location.search).get("level")) > 1) return false;
   return state.levelIndex === 0
     && state.problemIndex === 0
     && (forced || localStorage.getItem(tutorialStorageKey) !== "done");

@@ -162,6 +162,44 @@ assert.ok(reducedMotionMs >= 600 && reducedMotionMs < 1100, `reduced-motion auto
 assert.equal(await reducedPage.locator(".success").evaluate((element) => getComputedStyle(element).animationName), "none");
 await reducedPage.close();
 
+const firstVisit = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
+await firstVisit.addInitScript(() => {
+  localStorage.setItem("gfield-audio-muted", "true");
+  localStorage.setItem("gfield-language", "ko");
+  localStorage.setItem("gfield-pool-mirror-manor-1", "0");
+});
+await firstVisit.goto(gameUrl(1), { waitUntil: "networkidle" });
+await firstVisit.locator(".cell.tutorial-source").waitFor({ state: "visible" });
+await firstVisit.screenshot({ path: "C:/Users/user/AppData/Local/Temp/gfield-mirror-manor-first-action.png", fullPage: false });
+assert.equal(await firstVisit.locator("#tutorial").count(), 0);
+assert.match(await firstVisit.locator("#answerPrompt").textContent(), /빛나는 칸/);
+const firstTarget = levels[0].problems[0].targetCells[0];
+await firstVisit.locator(`.cell[data-x="${firstTarget[0]}"][data-y="${firstTarget[1]}"]`).click();
+assert.equal(await firstVisit.locator(".cell.tutorial-source").count(), 0);
+assert.equal(await firstVisit.evaluate(() => localStorage.getItem("gfield-mirror-manor-tutorial-v1")), "done");
+await firstVisit.reload({ waitUntil: "networkidle" });
+assert.equal(await firstVisit.locator(".cell.tutorial-source").count(), 0);
+await firstVisit.close();
+
+for (const locale of ["en", "zh", "ja"]) {
+  const localPage = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
+  await localPage.addInitScript((lang) => {
+    localStorage.setItem("gfield-language", lang);
+    localStorage.setItem("gfield-audio-muted", "true");
+    localStorage.setItem("gfield-pool-mirror-manor-1", "0");
+  }, locale);
+  await localPage.goto(gameUrl(1), { waitUntil: "networkidle" });
+  await localPage.locator(".cell.tutorial-source").waitFor({ state: "visible" });
+  const cue = await localPage.evaluate(() => {
+    const message = document.querySelector("#answerPrompt").getBoundingClientRect();
+    const dock = document.querySelector(".answer-dock").getBoundingClientRect();
+    return { messageBottom: message.bottom, dockBottom: dock.bottom, scrollWidth: document.documentElement.scrollWidth };
+  });
+  assert.ok(cue.messageBottom <= cue.dockBottom, `${locale}: first-action cue is clipped below the dock`);
+  assert.equal(cue.scrollWidth, 390, `${locale}: first-action cue causes horizontal overflow`);
+  await localPage.close();
+}
+
 await page.evaluate(() => localStorage.setItem("gfield-language", "ko"));
 await openLevel(1);
 const screenshotPath = "C:/Users/user/AppData/Local/Temp/gfield-mirror-manor-desktop.png";

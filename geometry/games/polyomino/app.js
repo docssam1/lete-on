@@ -32,7 +32,7 @@ const ui = {
   target: $("#targetSlot"), tray: $("#pieceTray"), prompt: $("#prompt"), answer: $("#answerPrompt"),
   next: $("#nextButton"), toast: $("#toast"), success: $("#success"), guide: $("#cubiGuide"), bubble: $("#guideBubble"),
   levelDialog: $("#levelDialog"), levelList: $("#levelList"), complete: $("#completeDialog"),
-  tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialNext: $("#tutorialNext"),
+  tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialSkip: $("#tutorialSkip"), tutorialNext: $("#tutorialNext"),
   turn: $("#turnButton"), flip: $("#flipButton"), hint: $("#hintButton"), clear: $("#clearButton")
 };
 
@@ -393,6 +393,7 @@ function renderTutorial() {
     return dot;
   }));
   ui.tutorialNext.textContent = t(tutorialStep === tutorialSteps.length - 1 ? "tutorialStart" : "tutorialNext");
+  ui.tutorialSkip.textContent = t("tutorialStart");
   speak(line);
 }
 
@@ -497,14 +498,18 @@ $("#soundButton").addEventListener("click", () => {
 $("#levelButton").addEventListener("click", () => { ui.levelDialog.hidden = false; });
 $("#closeLevels").addEventListener("click", () => { ui.levelDialog.hidden = true; });
 ui.levelDialog.addEventListener("click", (event) => { if (event.target === ui.levelDialog) ui.levelDialog.hidden = true; });
+function closeTutorial() {
+  localStorage.setItem(ui.tutorial.dataset.storageKey, "done");
+  ui.tutorial.hidden = true;
+}
+ui.tutorialSkip.addEventListener("click", closeTutorial);
 ui.tutorialNext.addEventListener("click", () => {
   if (tutorialStep < tutorialSteps.length - 1) {
     tutorialStep += 1;
     renderTutorial();
     return;
   }
-  localStorage.setItem(ui.tutorial.dataset.storageKey, "done");
-  ui.tutorial.hidden = true;
+  closeTutorial();
 });
 $("#nextLevelButton").addEventListener("click", () => location.assign(`?level=${state.level + 1}`));
 $("#practiceButton").addEventListener("click", () => location.assign(`?level=${state.level}&practice=1`));
