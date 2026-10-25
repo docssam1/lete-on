@@ -127,6 +127,25 @@
 .tx-digit-grid span { display: flex; align-items: center; justify-content: center; height: 26px; border-radius: 4px; background: #f7f3ea; color: #566274; font-size: 12px; font-weight: 800; }
 .tx-digit-grid span.on { background: var(--tone); color: #fff; }
 .tx-digit-grid i { color: var(--tone); font-size: 14px; font-style: normal; font-weight: 900; }
+/* 거꾸로 생각하기 — 계산 사슬(수 칸 숫자카드 노랑, 처음 칸 빈 상자 보라) · 주고받기 표 */
+.tx-op-chain { display: grid; justify-items: center; gap: 8px; max-width: 100%; }
+.tx-op-chain > div { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; }
+.tx-op-eq { margin: 0; color: #222; font-size: 20px; font-weight: 900; }
+.tx-op-chain .node { min-width: 40px; padding: 6px 8px; border: 2px solid #f0a500; border-radius: 9px; background: #fff3c4; color: #222; font-size: 20px; font-weight: 900; text-align: center; }
+.tx-op-chain .node.start { border: 2px dashed #8e5bd8; background: #fff; }
+.tx-op-chain .node.found { border: 3px solid #16734b; background: #e3f5ea; color: #16734b; }
+.tx-op-chain .arrow { display: grid; justify-items: center; gap: 2px; padding: 0 2px; }
+.tx-op-chain .arrow b { color: #222; font-size: 15px; font-weight: 900; white-space: nowrap; }
+.tx-op-chain .arrow small { color: #e8503a; font-size: 14px; font-weight: 900; white-space: nowrap; }
+.tx-op-chain .arrow.on b, .tx-op-chain .arrow.on small { padding: 0 4px; border-radius: 6px; background: var(--tone); color: #fff; }
+.tx-give { display: grid; justify-items: center; max-width: 100%; overflow-x: auto; }
+.tx-give table { border-collapse: separate; border-spacing: 6px; }
+.tx-give th { color: #222; font-size: 15px; font-weight: 900; }
+.tx-give td { min-width: 70px; padding: 8px 10px; border: 2px solid #f0a500; border-radius: 9px; background: #fff3c4; color: #222; font-size: 18px; font-weight: 900; text-align: center; }
+.tx-give td.unknown { border: 2px dashed #8e5bd8; background: #fff; color: #5b2fa8; }
+.tx-give td.on { box-shadow: 0 0 0 3px var(--tone); }
+.tx-give tr.moves td { border: 0; background: transparent; color: #566274; font-size: 12px; font-weight: 800; }
+.tx-give tr.moves td:empty { padding: 0; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

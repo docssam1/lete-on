@@ -476,6 +476,24 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       const o = (item.prompt.match(/\d+/gu) || []).map(Number).filter((n) => !/^\(\d+\)/u.test(item.prompt) || n !== Number(item.prompt.match(/^\((\d+)\)/u)?.[1]));
       if (/수의 개수|쓴 숫자/u.test(typeLabel) && o.length >= 2) assert.ok(!(o.includes(nums[0]) && o.includes(nums[1]) && nums.length === 2), `${ex.id}: 원본과 같은 범위`);
     }
+  } else if (setId === "reverse") {
+    // 찾은 처음 수로 앞에서부터 다시 계산(사슬)·다시 주고받기(구슬)해 문제의 결과가 되는지 본다
+    if (v.ops) {
+      const run = v.ops.reduce((x, [op, n]) => ({ "+": x + n, "−": x - n, "×": x * n, "÷": x / n })[op], v.start);
+      assert.equal(run, v.end, `${ex.id}: 처음 수로 다시 계산`);
+      assert.ok(ex.problem.includes(String(v.end)) || ex.figure.nodes.at(-1) === v.end, `${ex.id}: 결과가 문제에 있음`);
+      for (const item of lesson.original.items) {
+        const o = item.visual?.ops; if (o) assert.notEqual(JSON.stringify(o), JSON.stringify(v.ops.map(([op, n]) => `${op}${n}`)), `${ex.id}: 원본 사슬과 같음`);
+        assert.ok(!item.prompt.replace(/\s+/gu, "").includes(ex.figure.equation?.replace(/\s+/gu, "") || "@@"), `${ex.id}: 원본 식과 같음`);
+      }
+    } else {
+      let A = v.a, B = v.b;
+      for (const mv of v.moves) { const have = { A, B }, n = mv.n === "have" ? have[mv.to] : mv.n; if (mv.from === "A") { A -= n; B += n; } else { B -= n; A += n; } assert.ok(A >= 0 && B >= 0, `${ex.id}: 구슬이 음수`); }
+      if (v.ask === "end") assert.deepEqual([v.A, v.B], [A, B], `${ex.id}: 주고받은 뒤`);
+      else { assert.equal(A, B, `${ex.id}: 끝에 같아짐`); assert.ok(ex.problem.includes(`${A}개씩`), `${ex.id}: 문제의 끝 개수`); assert.equal(v.A, v.a, `${ex.id}: 처음 A`); }
+      const nums = (t) => (t.match(/\d+/gu) || []).map(Number);
+      for (const item of lesson.original.items) assert.notEqual(nums(ex.problem).join(), nums(item.prompt).join(), `${ex.id}: 원본과 같은 수`);
+    }
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

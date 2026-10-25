@@ -959,7 +959,82 @@ const DIGIT_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET });
+// ───────────────────────── 8권 거꾸로 생각하기 ─────────────────────────
+// 계산 사슬: 마지막 결과에서 순서를 뒤집고, 더하기 ↔ 빼기, 곱하기 ↔ 나누기로 되돌린다(그림 kind "op-chain").
+// 가진 만큼 주기: 받은 사람은 2배가 되므로, 거꾸로 갈 때는 받은 사람을 반으로 나누고 준 사람에게 그만큼 돌려준다(그림 kind "give-table").
+const OP_DO = { "+": (x, n) => x + n, "−": (x, n) => x - n, "×": (x, n) => x * n, "÷": (x, n) => x / n };
+const OP_UNDO = { "+": "−", "−": "+", "×": "÷", "÷": "×" };
+const OP_WORD = { "+": "더하기", "−": "빼기", "×": "곱하기", "÷": "나누기" };
+function opChainExample({ id, title, start, ops, style = "chain" }) {
+  // ops: [["+", 6], ["−", 2]] — 처음 수(start)는 코드가 답을 확인하는 데만 쓴다
+  const values = [start];
+  for (const [op, n] of ops) values.push(OP_DO[op](values.at(-1), n));
+  if (!values.every((x) => Number.isInteger(x) && x >= 0)) throw new Error(`${id}: 사슬 중간에 자연수가 아님`);
+  const end = values.at(-1);
+  const shown = (upto) => values.map((x, i) => (i === values.length - 1 || i >= upto ? x : null));   // 오른쪽부터 채운다
+  const steps = [{ text: `마지막 결과 ${end}에서 거꾸로 가요. 계산 순서를 뒤집고, 반대 계산을 해요.`, figure: { kind: "op-chain", ops, nodes: shown(values.length), back: true, tone: "doing" } }];
+  for (let i = ops.length - 1; i >= 0; i--) {
+    const [op, n] = ops[i], undo = OP_UNDO[op];
+    steps.push({ text: `${josa(`${op}${n}`, "을")} 되돌려 ${undo}${n}: ${values[i + 1]} ${undo} ${n} = ${values[i]}.`, figure: { kind: "op-chain", ops, nodes: shown(i), back: true, focus: i, tone: i === 0 ? "check" : "doing" } });
+  }
+  const eq = `□ ${ops.map(([op, n]) => `${op} ${n}`).join(" ")} = ${end}`;
+  return {
+    id, title,
+    problem: style === "equation" ? `${eq}에서 □에 알맞은 수를 구해요.` : "화살표를 따라 차례로 계산했어요. □에 알맞은 수를 구해요.",
+    figure: { kind: "op-chain", ops, nodes: shown(values.length), tone: "given", equation: style === "equation" ? eq : null }, steps,
+    answer: `□는 ${josa(start, "이에요")}.`, value: { start, ops, end }
+  };
+}
+// 주고받기 기록: moves = [{ from, to, n: "have" | 수 }] — "have"는 받는 사람이 가진 만큼.
+function giveMovesForward(a, b, moves) {
+  const s = [{ A: a, B: b }];
+  for (const mv of moves) { const cur = { ...s.at(-1) }, n = mv.n === "have" ? cur[mv.to] : mv.n; cur[mv.from] -= n; cur[mv.to] += n; s.push(cur); }
+  return s;
+}
+const moveText = (mv) => `${josa(mv.from, "이")} ${mv.to}에게 ${mv.n === "have" ? `${mv.to}가 가진 만큼` : `${mv.n}개`}`;
+function giveExample({ id, title, a, b, moves, ask = "start" }) {
+  const states = giveMovesForward(a, b, moves);
+  if (!states.every((x) => x.A >= 0 && x.B >= 0)) throw new Error(`${id}: 구슬이 0보다 적어짐`);
+  const last = states.at(-1), cols = states.length;
+  const fig = (tone, filled, extra = {}) => ({ kind: "give-table", moves, states: states.map((x, i) => (filled.includes(i) ? x : null)), tone, ...extra });
+  const steps = [];
+  let story, answer, value;
+  if (ask === "end") {
+    steps.push({ text: `처음에 A는 ${a}개, B는 ${b}개예요.`, figure: fig("given", [0]) });
+    moves.forEach((mv, i) => {
+      const n = mv.n === "have" ? states[i][mv.to] : mv.n;
+      steps.push({ text: `${moveText(mv)} 주면 ${mv.from}는 ${states[i][mv.from]} − ${n} = ${states[i + 1][mv.from]}, ${mv.to}는 ${states[i][mv.to]} + ${n} = ${josa(states[i + 1][mv.to], "이에요")}.`, figure: fig(i === moves.length - 1 ? "check" : "doing", Array.from({ length: i + 2 }, (_, k) => k), { focus: i }) });
+    });
+    story = `구슬을 A는 ${a}개, B는 ${b}개 가지고 있어요. ${moves.map((mv) => `${moveText(mv)} 주었어요`).join(". ")}. 이제 A와 B는 각각 몇 개일까요?`;
+    answer = `A는 ${last.A}개, B는 ${last.B}개예요.`; value = { A: last.A, B: last.B };
+  } else {
+    if (last.A !== last.B) throw new Error(`${id}: 끝에 같아지지 않음`);
+    steps.push({ text: `마지막에 둘 다 ${last.A}개예요. 끝에서부터 거꾸로 가요.`, figure: fig("doing", [cols - 1]) });
+    for (let i = moves.length - 1; i >= 0; i--) {
+      const mv = moves[i], before = states[i], after = states[i + 1];
+      const text = mv.n === "have"
+        ? `${josa(mv.to, "은")} 가진 만큼 받아 2배가 됐어요. 받기 전 ${mv.to}는 ${after[mv.to]} ÷ 2 = ${before[mv.to]}, 준 ${mv.from}는 ${after[mv.from]} + ${before[mv.to]} = ${before[mv.from]}개예요.`
+        : `${josa(mv.from, "이")} ${mv.n}개를 줬으니 되돌려요. ${mv.from}는 ${after[mv.from]} + ${mv.n} = ${before[mv.from]}, ${mv.to}는 ${after[mv.to]} − ${mv.n} = ${before[mv.to]}개예요.`;
+      steps.push({ text, figure: fig(i === 0 ? "check" : "doing", Array.from({ length: cols - i }, (_, k) => cols - 1 - k), { focus: i }) });
+    }
+    story = `${moves.map((mv) => `${moveText(mv)} 주었어요`).join(". 다시 ")}. 그랬더니 두 사람 모두 ${last.A}개씩이 되었어요. A가 처음에 가진 구슬은 몇 개일까요?`;
+    answer = `A는 처음에 ${a}개를 가지고 있었어요.`; value = { A: a, B: b };
+  }
+  return { id, title, problem: story, figure: fig("given", ask === "end" ? [0] : [cols - 1]), steps, answer, value: { ...value, a, b, moves, ask } };
+}
+const REVERSE_SET = {
+  id: "reverse",
+  types: {
+    "식을 거꾸로 풀기": () => [opChainExample({ id: "rev-eq-1", title: "예제 1", start: 8, ops: [["+", 9], ["−", 4]], style: "equation" }), opChainExample({ id: "rev-eq-2", title: "예제 2", start: 13, ops: [["−", 3], ["+", 8], ["−", 6], ["+", 2]], style: "equation" })],
+    "계산 사슬을 거꾸로": () => [opChainExample({ id: "rev-chain-1", title: "예제 1", start: 4, ops: [["×", 4], ["−", 6], ["÷", 2]] }), opChainExample({ id: "rev-chain-2", title: "예제 2", start: 4, ops: [["+", 7], ["×", 2], ["−", 4], ["÷", 3]] })],
+    "가진 만큼 주고 난 뒤": () => [giveExample({ id: "give-fwd-1", title: "예제 1", a: 13, b: 5, moves: [{ from: "A", to: "B", n: "have" }], ask: "end" })],
+    "가진 만큼 주기 거꾸로": () => [giveExample({ id: "give-rev-1", title: "예제 1", a: 24, b: 8, moves: [{ from: "A", to: "B", n: "have" }] })],
+    "두 번 주고받기 거꾸로": () => [giveExample({ id: "give-two-1", title: "예제 1", a: 11, b: 7, moves: [{ from: "A", to: "B", n: "have" }, { from: "B", to: "A", n: 5 }] })],
+    "서로 가진 만큼 주기 거꾸로": () => [giveExample({ id: "give-each-1", title: "예제 1", a: 25, b: 15, moves: [{ from: "A", to: "B", n: "have" }, { from: "B", to: "A", n: "have" }] })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

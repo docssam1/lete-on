@@ -416,8 +416,29 @@ function digitGridFigure(f) {
   return `<div class="tx-digit-grid" style="--tone:${color}" role="img" aria-label="1부터 ${f.end}까지 수 배열판">${all.map((n) => `<span class="${cells.has(n) ? "on" : ""}">${paint(n)}</span>`).join("")}</div>`;
 }
 
+// ───── 거꾸로 생각하기 ─────
+// op-chain: □ → (+6) → … → 결과. back이면 화살표 밑에 반대 계산(빨강 ←), nodes의 null은 「?」(처음 칸은 □).
+const OP_BACK = { "+": "−", "−": "+", "×": "÷", "÷": "×" };
+function opChainFigure(f) {
+  const color = TONE[f.tone || "given"];
+  const node = (v, i) => `<span class="node${i === 0 ? " start" : ""}${v !== null && i === 0 ? " found" : ""}">${v === null ? (i === 0 ? "□" : "?") : esc(v)}</span>`;
+  const arrow = ([op, n], i) => `<span class="arrow${f.focus === i ? " on" : ""}"><b>${esc(op)}${esc(n)} →</b>${f.back ? `<small>← ${esc(OP_BACK[op])}${esc(n)}</small>` : ""}</span>`;
+  const eq = f.equation ? `<p class="tx-op-eq">${esc(f.equation)}</p>` : "";
+  return `<div class="tx-op-chain" style="--tone:${color}">${eq}<div>${f.nodes.map((v, i) => `${node(v, i)}${i < f.ops.length ? arrow(f.ops[i], i) : ""}`).join("")}</div></div>`;
+}
+// give-table: 열 = 처음 · 1번 뒤 · 2번 뒤, 행 = A · B. 열 사이에 주고받은 일, 모르는 칸은 「?」.
+function giveTableFigure(f) {
+  const color = TONE[f.tone || "given"];
+  const head = f.states.map((_, i) => `<th>${i === 0 ? "처음" : `${i}번 뒤`}</th>`).join("");
+  const moves = `<tr class="moves"><td></td>${f.states.map((_, i) => `<td>${i === 0 ? "" : `${esc(f.moves[i - 1].from)} → ${esc(f.moves[i - 1].to)} ${f.moves[i - 1].n === "have" ? "가진 만큼" : `${esc(f.moves[i - 1].n)}개`}`}</td>`).join("")}</tr>`;
+  const row = (who) => `<tr><th>${who}</th>${f.states.map((st, i) => `<td class="${st ? "" : "unknown"}${f.focus === i || f.focus === i - 1 ? " on" : ""}">${st ? `${esc(st[who])}개` : "?"}</td>`).join("")}</tr>`;
+  return `<div class="tx-give" style="--tone:${color}"><table><thead><tr><th></th>${head}</tr></thead><tbody>${moves}${row("A")}${row("B")}</tbody></table></div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "op-chain") return opChainFigure(figure);
+  if (figure.kind === "give-table") return giveTableFigure(figure);
   if (figure.kind === "digit-groups") return digitGroupsFigure(figure);
   if (figure.kind === "digit-grid") return digitGridFigure(figure);
   if (figure.kind === "bundle") return bundleFigure(figure);
