@@ -540,6 +540,19 @@
     word-break:keep-all; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mz-src { flex:0 0 auto; margin-top:3mm; font-size:9.5px; line-height:1.6; color:#777;
     word-break:keep-all; }
+  /* Added stories use the same A4 skeleton, with a readable editorial hierarchy. */
+  .nm-mz-feature .nm-hist-head { display:block; border-color:#245b60; }
+  .nm-mz-feature .nm-mz-kicker { display:inline-block; background:#245b60; font-weight:700; }
+  .nm-mz-feature .nm-hist-head b { display:block; margin-top:2mm; font-size:26px; line-height:1.3; font-weight:700; color:#1d4a4e; word-break:keep-all; }
+  .nm-mz-feature .nm-mz-lede { font-size:14px; font-weight:500; color:#20343b; margin-bottom:2mm; }
+  .nm-mz-feature .nm-mz-hero { margin-bottom:2mm; }
+  .nm-mz-feature .nm-mz-hero svg { max-height:41mm; }
+  .nm-mz-feature .nm-mz-sec { grid-template-columns:minmax(0,1fr) 60mm; gap:5mm; padding-top:3mm; }
+  .nm-mz-feature .nm-mz-sec h4 { font-size:16px; color:#245b60; }
+  .nm-mz-feature .nm-mz-sec p { font-size:14.5px; line-height:1.7; overflow-wrap:anywhere; }
+  .nm-mz-feature .nm-mz-close { font-size:13px; background:#f3f6f6; border-color:#ccd7d9; color:#20343b; font-weight:500; }
+  .nm-mz-feature .nm-mz-src { margin-bottom:0; font-size:9px; }
+  .nm-mz-src a { color:#245b60; text-decoration:underline; overflow-wrap:anywhere; }
   /* 매거진형 수학 이야기(2026-09-25) — 참고: 원장이 보낸 과학 이야기 지면. 색은 학습지 청록·금색만. */
   .nm-mzs-page { gap:0; }
   /* 머리띠 글자 다듬기(2026-09-28, 원장 "왜 자꾸 텍스트가 마음에 안들지 — 초록색 배너의").
@@ -2694,6 +2707,7 @@ function w2MagazinePick(items, band, code){
     if(info && info.unitId) units[info.unitId] = 1;
   });
   const hit = list.filter(a => {
+    if(!(a.age || []).includes(band)) return false;
     const f = a.fit || {};
     return (f.threads || []).some(t => threads[t]) || (f.units || []).some(u => units[u]);
   });
@@ -2709,15 +2723,22 @@ function w2MagazinePick(items, band, code){
 /* 매거진 글에는 강조용 <b> 가 들어 있다 — 그대로 esc 하면 태그가 글자로 찍혔다(2026-09-28).
    이스케이프한 뒤 <b>·</b> 만 되살린다(다른 태그는 여전히 글자). */
 function escMz(t){ return esc(String(t == null ? '' : t)).replace(/&lt;(\/?)b&gt;/g, '<$1b>'); }
+function magazineReferences(art){
+  return (art.references || []).filter(r => /^https:\/\//.test(r.url || ''))
+    .map(r => `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.label)}</a>`).join(' · ');
+}
 function w2MagazinePageHtml(items, code, band){
   const art = w2MagazinePick(items, band, code);
+  return w2MagazineArticleHtml(art, code);
+}
+function w2MagazineArticleHtml(art, code){
   if(!art) return '';
   const secs = (art.body || []).map(b => `
     <div class="nm-mz-sec">
       <div><h4>${escMz(pickL(b.h) || '')}</h4><p>${escMz(pickL(b.p) || '')}</p></div>
       <div class="nm-mz-fig">${b.art || ''}</div>
     </div>`).join('');
-  return `<div class="nm-w2-page nm-mz-page">
+  return `<div class="nm-w2-page nm-mz-page${art.references ? ' nm-mz-feature' : ''}" data-magazine="${esc(art.id)}">
   <div class="nm-hist-head">
     <span class="nm-mz-kicker">${escMz(pickL(art.kicker) || '')}</span>
     <b>${escMz(pickL(art.title) || '')}</b>
@@ -2726,7 +2747,8 @@ function w2MagazinePageHtml(items, code, band){
   <div class="nm-mz-hero">${art.art || ''}</div>
   <div class="nm-mz-body">${secs}</div>
   <div class="nm-mz-close">${escMz(pickL(art.close) || '')}</div>
-  <p class="nm-mz-src">${escMz(pickL(art.source) || '')}</p>
+  <p class="nm-mz-src">${escMz(pickL(art.source) || '')}${art.references ? '<br>'+magazineReferences(art) : ''}</p>
+  <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : '지필드 · Numbers of Magic')}</div>
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
 </div>`;
 }
@@ -7078,7 +7100,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   /* 매거진 지면 — 만화 다음, 종이 교구 앞(2026-09-20). 회차 상황과 나이대로 고르고 봉투 코드로
      돌린다(과정 번호는 안 쓴다). 주간 학습지(표지가 있는 것)에만 싣는다 — 편지함 편집기가 한 회차만
      뽑을 때까지 읽을거리를 딸려 보내면 문제보다 읽을거리가 많아진다. */
-  const magazineHtml = opts.cover && !opts.pacing && !highCompact
+  const magazineHtml = opts.cover && !opts.pacing && rBand !== 'young'
     ? w2MagazinePageHtml(items, envelopeCode, readingAgeBand(opts, items, allProblems)) : '';
   const extraPages = (historyHtml ? 1 : 0) + (langHtml ? 1 : 0) + (magazineHtml ? 1 : 0) + (paperHtml ? 1 : 0);
   const series=opts.cover&&window.NM_WORKSHEET_SERIES;
@@ -7604,6 +7626,10 @@ function plannedEnvelope(refs, weekKey, opts){
 const NM_EXAM = {
   getAmount, setAmount, amounts:AMOUNTS.slice(),
   plannedEnvelope,
+  // Reuse the actual print article in the story preview; no separate preview copy.
+  magazineArticle(id){
+    return w2MagazineArticleHtml(((window.NM_MAGAZINE || {}).articles || []).find(a => a.id === id), '');
+  },
 
   /* LaTeX→평문 치환(KaTeX 미로딩 폴백). drill.html 등 다른 스코프도 이걸 재사용한다. */
   texToPlain,
