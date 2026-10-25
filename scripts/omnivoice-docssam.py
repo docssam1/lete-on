@@ -114,15 +114,25 @@ def fname(lid, text, voice=None):
 # 읽기용 글 — 로마자·숫자를 한글 발음으로(앞의 것이 먼저 적용된다)
 SPOKEN = [
     (r"3D", "쓰리디"), (r"QR", "큐알"), (r"N과 S", "엔과 에스"), (r"(?<![A-Za-z])O(?![A-Za-z])", "오"), (r"(?<![A-Za-z])X(?![A-Za-z])", "엑스"),
-    (r"3분의 1", "삼분의 일"), (r"3학년", "삼학년"), (r"6학년", "육학년"), (r"5분", "오분"), (r"(?<![0-9])0에", "영에"),
 ]
 DIG = dict(zip("0123456789", ["영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"]))
+
+
+def korean_integer(number):
+    """Read one whole integer, so 12 is 십이 rather than the digits 일이."""
+    n = int(number)
+    for unit, label in [(10**12, "조"), (10**8, "억"), (10000, "만"), (1000, "천"), (100, "백"), (10, "십")]:
+        if n >= unit:
+            head, tail = divmod(n, unit)
+            prefix = "" if head == 1 and unit <= 10000 else korean_integer(head)
+            return prefix + label + (korean_integer(tail) if tail else "")
+    return DIG[str(n)]
 
 
 def spoken(text):
     for a, b in SPOKEN:
         text = re.sub(a, b, text)
-    return re.sub(r"[0-9]", lambda m: DIG[m.group(0)], text)
+    return re.sub(r"[0-9]+", lambda m: korean_integer(m.group(0)), text)
 
 
 def hangul(s):
