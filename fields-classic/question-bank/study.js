@@ -1,5 +1,5 @@
 import { CURRICULUM } from "./source-data.js?v=20261024r";
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261027r";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261027s";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
@@ -62,7 +62,8 @@ function buildSlides() {
   }
   for (const lesson of lessons) {
     const flow = bellData.games.flows[`${book.id}/${lesson.id}`];
-    if (flow?.game) list.push({ kind: "game", lesson, game: flow.game, title: bellData.games.flowTitles[flow.game] || "게임" });
+    // 연습 공방이 게임인 흐름은 덱 안의 연습 공방(STUDY_GAMES)과 같은 것이라 또 붙이지 않는다
+    if (flow?.game && flow.game !== "drill") list.push({ kind: "game", lesson, game: flow.game, title: bellData.games.flowTitles[flow.game] || "게임" });
     for (const [id, activity] of Object.entries(bellData.games.activities)) {
       if (activity.lesson === lesson.id && bellData.games.handsOnBooks.get(id) === book.id && id !== flow?.game && !replaced.has(id)) list.push({ kind: "game", lesson, game: id, title: activity.title });
     }

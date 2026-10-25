@@ -247,7 +247,7 @@ try {
       const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height }, hasTouch: vp.touch, isMobile: vp.touch, reducedMotion: "reduce" });
       const errors = watch(page);
       await page.route("**/functions/v1/**", (r) => r.fulfill({ status: 401, contentType: "application/json", body: '{"error":"login_required"}' }));
-      await page.goto(`${base}/golden-bell.html?student=3D-QA&book=${bookId}`, { waitUntil: "networkidle" });
+      await page.goto(`${base}/golden-bell.html?student=3D-QA&book=${bookId}${flow.game === "drill" ? "&test=1" : ""}`, { waitUntil: "networkidle" });
       const before = await page.evaluate(() => localStorage.getItem("fields-classic-golden-bell:3D-QA"));
       await page.locator(`.lesson-button[data-lesson="${lessonId}"]`).click();
       // 1) 개념 칸
@@ -283,6 +283,30 @@ try {
       assert.equal(await page.locator(".tx-type.done").count(), typeCount, `${name}: 모든 유형을 봄`);
       // 3) 게임
       await page.locator('.gb-flow [data-flow-go="game"]').click();
+      if (flow.game === "drill") {
+        // 연습 공방(창): 세 단계 아홉 문제를 정답으로 끝까지 풀고, 「골든벨 문제로」를 누르면 골든벨 문제 단계로 간다.
+        const frame = page.frameLocator(".gb-flow-game iframe.drill-frame");
+        await frame.locator(".dr-prompt").waitFor();
+        await shot(page, `${name}-3-game`);
+        for (let k = 0; k < 9; k++) {
+          const sh = await page.locator(".gb-flow-game iframe.drill-frame").evaluate((el) => el.contentWindow.__drill.p.shape);
+          if (sh.kind === "choice") await frame.locator(`[data-pick="${sh.values[0]}"]`).click();
+          else for (const ch of sh.values.join(sh.kind === "frac" ? "/" : ",")) await frame.locator(`.dr-key[data-key="${ch}"]`).click();
+          await frame.locator('[data-dr="answer"]').click();
+          assert.match(await frame.locator(".dr-note").innerText(), /정답|맞았어요/u, `${name}: 공방 ${k + 1}번 정답`);
+          await frame.locator('[data-dr="next"]').click();
+        }
+        await frame.locator(".dr-finale").waitFor();
+        await frame.locator('[data-dr="done"]').click();
+        await page.waitForFunction(() => document.querySelector('#stageSteps [data-phase="original"]')?.classList.contains("active"));
+        assert.equal(await page.locator(".gb-flow-game").count(), 0, `${name}: 게임 화면이 정리됨`);
+        assert.equal(await page.evaluate(() => localStorage.getItem("fields-classic-golden-bell:3D-QA")), before, `${name}: 게임·예제는 학습 기록을 바꾸지 않는다`);
+        assert.deepEqual(errors, [], `${name}: 오류`);
+        results.push(`${name} examples=${exampleCount} drill=9`);
+        console.log(`GOLDEN_BELL_3D_FLOW_OK ${results.at(-1)}`);
+        await page.close();
+        continue;
+      }
       const game = page.locator(".gb-flow-game");
       await game.locator(".cg").waitFor();
       assert.equal(await game.locator(".g3d").first().getAttribute("data-renderer"), "webgl", `${name}: WebGL 무대`);

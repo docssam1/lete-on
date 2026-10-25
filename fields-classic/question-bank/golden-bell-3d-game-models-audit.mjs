@@ -279,6 +279,81 @@ function verifyExample(setId, typeLabel, ex, lesson) {
     } else if (/가장 가벼운/u.test(typeLabel)) assert.ok(items.every((t) => t === v || heavier(t, v)), `${ex.id}: 가장 가벼운 것`);
     else assert.ok(items.every((t) => t === v || heavier(v, t)), `${ex.id}: 더 무거운 것`);
     for (const item of lesson.original.items) assert.notEqual(JSON.stringify(scales.map((s) => [s.left, s.right, s.heavy])), JSON.stringify((item.visual?.scales || []).map((s) => [s.left, s.right, s.heavier])), `${ex.id}: 원본 저울과 같음`);
+  } else if (setId === "bundle-equations") {
+    // □에 답을 넣어 식의 양쪽을 다시 계산한다. 묶음 수(유형 이름의 N)는 문제 식에 그 수가 쓰여 있어야 하고, 원본 식과 같으면 안 된다.
+    const row = ex.figure.rows[0];
+    const expr = row.items.map((it) => (typeof it === "string" ? it : it.v)).join("").replace(/\s+/gu, "");
+    const calc = (side) => Function(`return (${side.replaceAll("□", `(${v})`).replaceAll("×", "*").replaceAll("−", "-")})`)();
+    const [left, right] = expr.split("=");
+    assert.ok(Number.isInteger(v) && v > 0, `${ex.id}: 답이 자연수`);
+    assert.equal(calc(left), calc(right), `${ex.id}: ${expr}에 □=${v}을 넣으면 양쪽이 같음`);
+    const base = Number(typeLabel.match(/^(\d+)의 배수/u)?.[1]);
+    assert.ok(base && expr.includes(String(base)), `${ex.id}: ${base}의 묶음 식`);
+    const norm = (t) => String(t || "").replace(/\s+/gu, "").replaceAll("?", "□").replaceAll("-", "−");
+    for (const item of lesson.original.items) assert.notEqual(norm(expr), norm(item.visual?.expression), `${ex.id}: 원본 식과 같음`);
+    // 마지막 그림은 □ 자리에 계산한 수(또는 같은 묶음 식)를 놓고 확인 색이다
+    assert.equal(ex.steps.at(-1).figure.rows.at(-1).tone, "check", `${ex.id}: 마지막 그림이 확인 색`);
+  } else if (setId === "consecutive") {
+    // 답을 하나하나 더하거나 늘어놓아 다시 구한다. 원본의 수 범위(식 글자·그림 자료)와 같은 예제는 쓰지 않는다.
+    const f = ex.figure;
+    if (f.mode === "order") {
+      const odd = f.odd, list = Array.from({ length: 200 }, (_, i) => (odd ? 2 * i + 1 : 2 * i + 2));
+      const k = ex.steps.at(-1).figure.k, at = ex.steps.at(-1).figure.v;
+      assert.equal(list[k - 1], at, `${ex.id}: ${k}번째 ${odd ? "홀수" : "짝수"}`);
+      assert.equal(v, /순서/u.test(typeLabel) ? k : at, `${ex.id}: 답`);
+      assert.ok(/홀수/u.test(typeLabel) === odd, `${ex.id}: 유형과 홀짝이 맞음`);
+      assert.ok(k > 10, `${ex.id}: 원본(10번째까지)과 다른 번째`);
+    } else {
+      const nums = Array.from({ length: f.to - f.from + 1 }, (_, i) => f.from + i), total = nums.reduce((a, b) => a + b, 0);
+      if (/개수/u.test(typeLabel)) assert.equal(v, nums.length, `${ex.id}: 수의 개수`);
+      else if (/가운데 수 찾기/u.test(typeLabel)) { assert.equal(nums.length % 2, 1); assert.deepEqual(v, { middle: nums[(nums.length - 1) / 2], sum: total }, `${ex.id}: 가운데 수와 합`); }
+      else { assert.equal(v, total, `${ex.id}: 합`); assert.equal(nums.length % 2, /짝수 개|1부터|중간부터/u.test(typeLabel) ? 0 : 1, `${ex.id}: 짝수 개·홀수 개가 유형과 맞음`); }
+      const norm = (t) => String(t || "").replace(/\s+/gu, "");
+      const mine = [norm(ex.problem.split("의 합")[0].split("에서")[0]), `${f.from}~${f.to}`];
+      for (const item of lesson.original.items) {
+        const vis = item.visual || {};
+        assert.ok(!mine.includes(norm(vis.expression)), `${ex.id}: 원본 식과 같음`);
+        assert.ok(!JSON.stringify(vis).includes(`[${f.from},${f.to}]`), `${ex.id}: 원본 그림과 같은 범위`);
+      }
+    }
+  } else if (setId === "sum-multiple") {
+    // 동그라미 하나의 값을 1~300에서 모두 대입해 조건에 맞는 값이 하나뿐인지, 그 값으로 낸 답이 같은지 본다.
+    if (ex.figure.kind === "shape-eq" || typeLabel === "합과 차의 식") {
+      const [[, , , , S], [, , , , D]] = ex.steps[0].figure.lines;
+      const fits = [];
+      for (let c = 0; c <= 200; c++) for (let t = 0; t <= 200; t++) if (c + t === S && c - t === D) fits.push([c, t]);
+      assert.deepEqual(fits, [[v.circle, v.triangle]], `${ex.id}: ○·△가 하나로 정해짐`);
+    } else {
+      const f = ex.steps.find((st) => st.figure?.kind === "circles").figure, [rA, rB] = f.rows;
+      const extra = rB.extra ? Number(rB.extra.replace("−", "-").replace(/\s+/gu, "")) : 0;
+      const fits = [];
+      for (let u = 1; u <= 300; u++) {
+        const A = rA.n * u, B = rB.n * u + extra;
+        if (B > 0 && (f.sum !== undefined ? A + B === f.sum : B - A === f.diff)) fits.push({ A, B });
+      }
+      assert.equal(fits.length, 1, `${ex.id}: 동그라미 하나의 값이 하나로 정해짐`);
+      assert.equal(fits[0].A, v.A, `${ex.id}: A`); assert.equal(fits[0].B, v.B, `${ex.id}: B`);
+      if (/배수|배보다/u.test(typeLabel)) assert.ok(rB.n > 1, `${ex.id}: 몇 배`); else assert.ok(rA.n === 1 && rB.n === 1 && extra > 0, `${ex.id}: 합차는 한 개씩 + 차`);
+      if (/^몇 배보다 많은 수/u.test(typeLabel)) assert.ok(extra > 0, `${ex.id}: 몇 배보다 많음`);
+      if (/^몇 배보다 적은 수/u.test(typeLabel)) assert.ok(extra < 0, `${ex.id}: 몇 배보다 적음`);
+      if (/차와 배수/u.test(typeLabel)) assert.ok(f.diff !== undefined, `${ex.id}: 차가 주어짐`);
+      if (/문장제|주고 받아/u.test(typeLabel)) {
+        // 글에 쓴 합·차·몇 배·더 많은(적은) 수가 그림과 같아야 한다(글을 손으로 고치다 어긋나는 것을 막는다)
+        const nums = (ex.problem.match(/\d+/gu) || []).map(Number);
+        assert.ok(nums.includes(f.sum ?? f.diff), `${ex.id}: 글의 합·차`);
+        if (rB.n > 1) assert.ok(nums.includes(rB.n), `${ex.id}: 글의 몇 배`);
+        if (extra && !/주고 받아/u.test(typeLabel)) assert.ok(nums.includes(Math.abs(extra)), `${ex.id}: 글의 더 많은(적은) 수`);
+        if (/주고 받아/u.test(typeLabel)) assert.ok(nums.includes(extra / 2), `${ex.id}: 글의 준 개수`);
+        assert.ok(v.asked === v.A || v.asked === v.B, `${ex.id}: 물은 답`);
+      }
+      for (const item of lesson.original.items) {
+        const o = item.visual || {};
+        if (o.subtype !== "source-sumdiff") continue;
+        const same = JSON.stringify(o.rows?.map((r) => [r.n, r.extra || ""])) === JSON.stringify(f.rows.map((r) => [r.n, (r.extra || "").replace("−", "-")])) && ((f.sum !== undefined && o.sum === f.sum) || (f.diff !== undefined && o.diff?.value === f.diff));
+        assert.ok(!same, `${ex.id}: 원본 그림과 같음`);
+      }
+    }
+    for (const item of lesson.original.items) assert.ok(!item.prompt.includes(ex.problem), `${ex.id}: 원본 문장과 같음`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

@@ -153,8 +153,125 @@ function balanceFigure(f) {
   return `<div class="tx-balance"><div class="tx-scales">${f.scales.map((s, k) => scaleSvg(s, k, f)).join("")}</div>${chain}</div>`;
 }
 
+// ───── 묶음으로 식 바꾸기(2·3·4·5·6의 배수) ─────
+// rows: 식 한 줄씩 [{ items: [「6」 같은 수 카드 { v, sub? } 또는 「+」 같은 기호 문자열], tone }]. sub는 카드 밑의 「2×3」(묶음으로 바꾼 꼴).
+function bundleFigure(f) {
+  const card = (it) => `<span class="${it.blank ? "blank" : ""}${it.on ? " on" : ""}"><i>${esc(it.v)}</i>${it.sub ? `<small>${esc(it.sub)}</small>` : ""}</span>`;
+  // 「4×」와 그 뒤 칸은 한 덩어리로 둔다(좁은 화면에서 줄이 바뀌어 □만 아래로 떨어지지 않게)
+  const row = (r) => `<div class="tx-bundle-row" style="--tone:${TONE[r.tone || "given"]}">${r.items.map((it, i) => {
+    if (typeof it !== "string") return typeof r.items[i - 1] === "string" && r.items[i - 1].endsWith("×") ? "" : card(it);
+    const next = r.items[i + 1];
+    return it.endsWith("×") && next && typeof next !== "string" ? `<em class="tx-bundle-glue"><b>${esc(it)}</b>${card(next)}</em>` : `<b>${esc(it)}</b>`;
+  }).join("")}</div>`;
+  const label = f.rows.map((r) => r.items.map((it) => (typeof it === "string" ? it : `${it.v}${it.sub ? `(${it.sub})` : ""}`)).join(" ")).join(", ");
+  return `<div class="tx-bundle" role="img" aria-label="${esc(label)}">${f.rows.map(row).join("")}</div>`;
+}
+
+// ───── 연속수: 수 줄(길면 앞 셋 … 뒤 셋) ─────
+// mode: plain · count(처음 수를 뺀 칸은 흐리게, skipFirst면 처음 수 칸도 흐리게) · pairs(양 끝부터 짝 고리) ·
+//       middle(가운데 칸) · middle-pairs(가운데에서 같은 만큼 떨어진 짝) · order(짝수·홀수 줄과 번째)
+function consecFigure(f) {
+  const color = TONE[f.tone || "given"];
+  if (f.mode === "order") {
+    const ks = [1, 2, 3, 4, 5], val = (k) => (f.odd ? 2 * k - 1 : 2 * k);
+    const cols = [...ks.map((k) => ({ k, v: val(k) })), { k: "…", v: "…" }, ...(f.k ? [{ k: f.k, v: f.v, on: true }] : [])];
+    const W = 52, body = cols.map((c, i) => {
+      const x = 8 + i * W, on = c.on;
+      return `<rect x="${x}" y="8" width="${W - 8}" height="36" rx="8" fill="${on ? "#e3f5ea" : "#fff3c4"}" stroke="${on ? TONE.check : "#f0a500"}" stroke-width="${on ? 3 : 2}"/>${text(x + (W - 8) / 2, 27, c.v, { size: 17, weight: 900 })}${text(x + (W - 8) / 2, 60, c.k === "…" ? "" : `${c.k}번째`, { size: 12, weight: 800, fill: on ? TONE.check : "#566274" })}`;
+    }).join("");
+    return `<div class="tx-consec">${svg(16 + cols.length * W, 74, body, `${f.odd ? "홀수" : "짝수"}를 차례로 늘어놓은 줄과 번째`)}</div>`;
+  }
+  const n = f.to - f.from + 1, long = n > 8;
+  const cells = long ? [f.from, f.from + 1, f.from + 2, null, f.to - 2, f.to - 1, f.to] : Array.from({ length: n }, (_, i) => f.from + i);
+  const W = 46, arcRoom = f.mode === "pairs" || f.mode === "middle-pairs" ? 76 : 10, y = arcRoom + 6, mid = (f.from + f.to) / 2;
+  const cx = (i) => 8 + i * W + (W - 8) / 2;
+  let body = "";
+  // 짝 고리: 보이는 칸끼리 바깥부터(…를 건너 바깥 짝이 진짜 짝이다)
+  if (f.mode === "pairs" || f.mode === "middle-pairs") {
+    const idx = cells.map((v, i) => (v === null ? -1 : i)).filter((i) => i >= 0);
+    for (let a = 0; a < Math.floor(idx.length / 2); a++) {
+      // 바깥 고리일수록 높다. 글자는 고리 꼭대기 바로 위, 흰 테두리로 아래 고리와 겹쳐도 읽힌다.
+      const i = idx[a], j = idx[idx.length - 1 - a], h = (arcRoom - 4) / 0.75 - a * 24, top = y - h * 0.75;
+      body += `<path d="M${cx(i)} ${y} C${cx(i)} ${y - h} ${cx(j)} ${y - h} ${cx(j)} ${y}" fill="none" stroke="${color}" stroke-width="2.5"/>`;
+      body += `<text x="${(cx(i) + cx(j)) / 2}" y="${top - 1}" font-size="12" font-weight="900" fill="${color}" text-anchor="middle" dominant-baseline="central" stroke="#fff" stroke-width="4" paint-order="stroke">${esc(f.mode === "pairs" ? `${cells[i]}+${cells[j]}=${cells[i] + cells[j]}` : `${cells[i]}+${cells[j]}`)}</text>`;
+    }
+  }
+  cells.forEach((v, i) => {
+    const x = 8 + i * W;
+    if (v === null) { body += text(cx(i), y + 18, "…", { size: 20, weight: 900, fill: "#566274" }); return; }
+    const faded = f.mode === "count" && f.skipFirst && v === f.from;
+    const on = (f.mode === "middle" || f.mode === "middle-pairs") && v === mid;
+    body += `<rect x="${x}" y="${y}" width="${W - 8}" height="36" rx="8" fill="${on ? "#e3f5ea" : faded ? "#f2f2f2" : "#fff3c4"}" stroke="${on ? TONE.check : faded ? "#d6d6d6" : "#f0a500"}" stroke-width="${on ? 3 : 2}" ${faded ? 'stroke-dasharray="4 3"' : ""}/>${text(cx(i), y + 19, v, { size: 16, weight: 900, fill: faded ? "#9aa3ad" : "#222" })}`;
+  });
+  const note = f.note ? `<p class="tx-consec-note" style="--tone:${color}">${esc(f.note)}</p>` : "";
+  const label = `${f.from}부터 ${f.to}까지의 수 ${n}개${f.mode === "pairs" ? ", 양 끝부터 짝을 지음" : f.mode.startsWith("middle") ? `, 가운데 수 ${mid}` : ""}`;
+  return `<div class="tx-consec">${svg(16 + cells.length * W, y + 44, body, label)}${note}</div>`;
+}
+
+// ───── 합차·합과 배수: 같은 수를 동그라미 하나로(세는 점 노랑) ─────
+// rows: [{ label, n, extra }] · sum이면 오른쪽 괄호 「합」, diff면 B의 더 많은 동그라미 위에 「차」.
+// mark: all(모든 동그라미) · diff(더 많은 동그라미) · hideExtra(붙은 수를 뺀 뒤 흐리게) · unit(동그라미 안에 값) · values(줄 끝에 답)
+function circlesFigure(f) {
+  const color = TONE[f.tone || "given"], R = 16, G = 40, X0 = 64, rowH = 58, top = f.diff !== undefined ? 34 : 12;
+  const maxN = Math.max(...f.rows.map((r) => r.n));
+  const extraW = f.rows.some((r) => r.extra) ? 62 : 0, braceX = X0 + maxN * G + extraW + 10;
+  const W = braceX + (f.sum !== undefined ? 92 : 20) + (f.values ? 60 : 0), H = top + f.rows.length * rowH + 6;
+  let body = "";
+  const minN = Math.min(...f.rows.map((r) => r.n));
+  f.rows.forEach((r, k) => {
+    const cy = top + k * rowH + rowH / 2;
+    body += `<rect x="6" y="${cy - 16}" width="44" height="32" rx="8" fill="#fff" stroke="#566274" stroke-width="2"/>${text(28, cy + 1, r.label, { size: r.label.length > 1 ? 13 : 17, weight: 900 })}`;
+    for (let i = 0; i < r.n; i++) {
+      const cx = X0 + i * G + R, on = f.mark === "all" || (f.mark === "diff" && i >= minN && r.n > minN);
+      body += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="#ffd45c" stroke="${on ? color : "#a8741a"}" stroke-width="${on ? 3.5 : 2}"/>`;
+      if (f.unit !== undefined) body += text(cx, cy + 1, f.unit, { size: 13, weight: 900 });
+    }
+    if (r.extra) {
+      const ex = X0 + r.n * G + 4, faded = f.hideExtra;
+      body += `<rect x="${ex}" y="${cy - 15}" width="52" height="30" rx="8" fill="${faded ? "#f2f2f2" : "#ffe9cc"}" stroke="${faded ? "#d6d6d6" : "#f39a1e"}" stroke-width="2" ${faded ? 'stroke-dasharray="4 3"' : ""}/>${text(ex + 26, cy + 1, r.extra, { size: 15, weight: 900, fill: faded ? "#9aa3ad" : "#222" })}`;
+    }
+    if (f.values) body += text(braceX + (f.sum !== undefined ? 92 : 20) + 24, cy + 1, `= ${f.values[k]}`, { size: 16, weight: 900, fill: TONE.check });
+  });
+  if (f.sum !== undefined) {
+    const y0 = top + 8, y1 = top + f.rows.length * rowH - 8, ym = (y0 + y1) / 2;
+    body += `<path d="M${braceX} ${y0} Q${braceX + 12} ${y0} ${braceX + 12} ${y0 + 12} V${ym - 8} Q${braceX + 12} ${ym} ${braceX + 22} ${ym} Q${braceX + 12} ${ym} ${braceX + 12} ${ym + 8} V${y1 - 12} Q${braceX + 12} ${y1} ${braceX} ${y1}" fill="none" stroke="#566274" stroke-width="2.5"/>`;
+    body += `<rect x="${braceX + 26}" y="${ym - 15}" width="62" height="30" rx="8" fill="#fff3c4" stroke="#f0a500" stroke-width="2"/>${text(braceX + 57, ym + 1, `합 ${f.sum}`, { size: 14, weight: 900 })}`;
+  }
+  if (f.diff !== undefined) {
+    const k = f.rows.findIndex((r) => r.n > minN), x0 = X0 + minN * G + 2, x1 = X0 + f.rows[k].n * G - 6, y = top + k * rowH + rowH / 2 - R - 4;
+    body += `<path d="M${x0} ${y} V${y - 8} H${x1} V${y}" fill="none" stroke="${f.mark === "diff" ? color : "#566274"}" stroke-width="2.5"/>`;
+    body += `<rect x="${(x0 + x1) / 2 - 31}" y="${y - 30}" width="62" height="22" rx="7" fill="#fff3c4" stroke="#f0a500" stroke-width="2"/>${text((x0 + x1) / 2, y - 19, `차 ${f.diff}`, { size: 13, weight: 900 })}`;
+  }
+  const label = f.rows.map((r) => `${r.label}: 동그라미 ${r.n}개${r.extra ? ` ${r.extra}` : ""}`).join(", ") + (f.sum !== undefined ? `, 합 ${f.sum}` : `, 차 ${f.diff}`);
+  return `<div class="tx-circles">${svg(W, H, body, label)}</div>`;
+}
+// ○ + △ = S, ○ − △ = D (모양 색표: 동그라미 빨강 · 세모 초록). vals가 있으면 모양 밑에 값.
+function shapeEqFigure(f) {
+  const glyph = (t, x, y) => (t === "circle"
+    ? `<circle cx="${x}" cy="${y}" r="14" fill="${SHAPE.circle.fill}" stroke="${SHAPE.circle.line}" stroke-width="2.5"/>`
+    : `<path d="M${x} ${y - 14} L${x + 15} ${y + 12} L${x - 15} ${y + 12} Z" fill="${SHAPE.triangle.fill}" stroke="${SHAPE.triangle.line}" stroke-width="2.5" stroke-linejoin="round"/>`);
+  let body = "";
+  f.lines.forEach((line, k) => {
+    const y = 26 + k * 62;
+    line.forEach((tok, i) => {
+      const x = 24 + i * 40;
+      if (tok === "circle" || tok === "triangle") {
+        body += glyph(tok, x, y);
+        const v = f.vals?.[tok];
+        if (v !== undefined) body += text(x, y + 28, v, { size: 13, weight: 900, fill: TONE.check });
+      } else body += text(x, y + 1, tok, { size: 20, weight: 900 });
+    });
+  });
+  return `<div class="tx-shape-eq">${svg(24 + 5 * 40, 26 + f.lines.length * 62 - 10, body, f.lines.map((l) => l.map((t) => (t === "circle" ? "동그라미" : t === "triangle" ? "세모" : t)).join(" ")).join(", "))}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "bundle") return bundleFigure(figure);
+  if (figure.kind === "circles") return circlesFigure(figure);
+  if (figure.kind === "circles-story") return `<p class="tx-think">${esc(figure.note)}</p>`;
+  if (figure.kind === "shape-eq") return shapeEqFigure(figure);
+  if (figure.kind === "consec") return consecFigure(figure);
   if (figure.kind === "cube-views") return cubeViewsFigure(figure);
   if (figure.kind === "cube-map") return cubeMapFigure(figure);
   if (figure.kind === "magic") return magicFigure(figure);

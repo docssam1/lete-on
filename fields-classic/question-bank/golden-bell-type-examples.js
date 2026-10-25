@@ -342,7 +342,253 @@ const BALANCE_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET });
+// ───────────────────────── 2권 2·3·4·5의 배수 · 3권 6의 배수: 묶음으로 식 바꾸기 ─────────────────────────
+// 원본은 「2+4+4=2×?」·「3×7=3+3+3+3+?」·「5×28=10×?」처럼 세 가지 움직임이다: 묶어서 계산하기 · 빠진 수 · 묶음 크기 바꾸기.
+// 예제는 다른 수로 새로 짓고, 묶음 수와 답은 아래 코드가 계산한다. 그림은 줄마다 식 한 줄(figureMarkup kind "bundle").
+// 항: 수 { v } 또는 이미 곱셈인 { mul: 묶음 수 }, 둘째 항부터 op "+"/"−".
+const bundleGroups = (base, t) => (t.mul !== undefined ? t.mul : t.v / base);
+const bundleTerm = (base, t) => (t.mul !== undefined ? `${base}×${t.mul}` : String(t.v));
+const rowText = (row) => row.items.map((it) => (typeof it === "string" ? it : it.v)).join(" ").replace(/× /gu, "×");
+function bundleSumExample({ id, title, base, terms }) {
+  for (const t of terms) if (t.mul === undefined && t.v % base) throw new Error(`${id}: ${t.v}는 ${base}의 묶음이 아님`);
+  const gs = terms.map((t) => bundleGroups(base, t));
+  const total = gs.reduce((s, g, i) => (i && terms[i].op === "−" ? s - g : s + g), 0);
+  const line = (tone, sub) => ({ tone, items: [...terms.flatMap((t, i) => [...(i ? [t.op] : []), { v: bundleTerm(base, t), sub: sub ? `${base}×${gs[i]}` : undefined, on: sub }]), "=", `${base}×`, { v: "□", blank: true }] });
+  const start = line("given", false);
+  const say = terms.map((t, i) => (t.mul !== undefined ? `${josa(bundleTerm(base, t), "은")} 이미 ${josa(base, "이")} ${gs[i]}묶음` : `${josa(t.v, "은")} ${base}×${gs[i]}`));
+  const groupsExpr = gs.map((g, i) => `${i ? ` ${terms[i].op} ` : ""}${g}`).join("");
+  const steps = [
+    { text: `수마다 ${josa(base, "이")} 몇 묶음인지 써요. ${josa(say.join(", "), "이에요")}.`, figure: { kind: "bundle", rows: [line("doing", true)] } },
+    { text: `묶음 수끼리 계산해요. ${groupsExpr} = ${total}묶음이에요.`, figure: { kind: "bundle", rows: [line("given", true), { tone: "doing", items: ["=", { v: `${base}×${total}`, on: true }] }] } },
+    { text: `${base}×□ = ${base}×${total}이니까 □는 ${josa(total, "이에요")}.`, figure: { kind: "bundle", rows: [line("given", true), { tone: "check", items: ["=", { v: `${base}×${total}`, on: true }] }] } }
+  ];
+  return { id, title, problem: `${rowText(start)}에서 □에 알맞은 수를 구해요.`, figure: { kind: "bundle", rows: [start] }, steps, answer: `□는 ${josa(total, "이에요")}.`, value: total };
+}
+// 빠진 수: base×whole = 수 + 수 + □
+function bundleMissingExample({ id, title, base, whole, terms }) {
+  const gs = terms.map((v) => { if (v % base) throw new Error(`${id}: ${v}는 ${base}의 묶음이 아님`); return v / base; });
+  const left = whole - sum(gs);
+  if (left <= 0) throw new Error(`${id}: 빠진 묶음이 없음`);
+  const row = (tone, sub, blank = { v: "□", blank: true }) => ({ tone, items: [{ v: `${base}×${whole}` }, "=", ...terms.flatMap((v, i) => [...(i ? ["+"] : []), { v: String(v), sub: sub ? `${base}×${gs[i]}` : undefined, on: sub }]), "+", blank] });
+  const start = row("given", false);
+  const steps = [
+    { text: `${base}×${josa(whole, "은")} ${josa(base, "이")} ${whole}묶음이에요. 오른쪽 수도 묶음으로 바꾸면 ${terms.map((v, i) => `${josa(v, "은")} ${gs[i]}묶음`).join(", ")}이에요.`, figure: { kind: "bundle", rows: [row("doing", true)] } },
+    { text: `□는 남은 묶음이에요. ${whole} − ${gs.join(" − ")} = ${left}묶음이에요.`, figure: { kind: "bundle", rows: [row("doing", true, { v: "□", blank: true, sub: `${base}×${left}`, on: true })] } },
+    { text: `${base}×${left} = ${base * left}이니까 □는 ${josa(base * left, "이에요")}.`, figure: { kind: "bundle", rows: [row("check", true, { v: String(base * left), sub: `${base}×${left}`, on: true })] } }
+  ];
+  return { id, title, problem: `${rowText(start)}에서 □에 알맞은 수를 구해요.`, figure: { kind: "bundle", rows: [start] }, steps, answer: `□는 ${josa(base * left, "이에요")}.`, value: base * left };
+}
+// 묶음 크기 바꾸기: from이 count개(repeat면 덧셈으로 늘어놓음) = to×□. to가 from의 몇 배이거나, from이 to의 몇 배.
+function bundleResizeExample({ id, title, from, count, to, repeat = false }) {
+  const up = to > from, k = up ? to / from : from / to;
+  if (!Number.isInteger(k) || (up && count % k)) throw new Error(`${id}: 묶음을 고르게 바꿀 수 없음`);
+  const q = up ? count / k : count * k;
+  const lhs = repeat ? Array.from({ length: count }, (_, i) => [...(i ? ["+"] : []), { v: String(from) }]).flat() : [{ v: `${from}×${count}` }];
+  const row = (tone, blank) => ({ tone, items: [...lhs, "=", `${to}×`, blank] });
+  const start = row("given", { v: "□", blank: true });
+  const have = repeat ? `${josa(from, "을")} ${count}번 더했으니 ${josa(from, "이")} ${count}개예요.` : `${from}×${josa(count, "은")} ${josa(from, "이")} ${count}개예요.`;
+  const steps = up
+    ? [
+      { text: `${josa(to, "은")} ${josa(from, "이")} ${k}개 모인 수예요. ${have}`, figure: { kind: "bundle", rows: [row("doing", { v: "□", blank: true, sub: `${from} ${k}개`, on: true })] } },
+      { text: `${josa(from, "을")} ${k}개씩 묶으면 ${to} 묶음이 ${count / k}개 생겨요.`, figure: { kind: "bundle", rows: [row("doing", { v: "□", blank: true, sub: `${count}개를 ${k}개씩`, on: true })] } },
+      { text: `${to}×${q} = ${from * count}이니까 □는 ${josa(q, "이에요")}.`, figure: { kind: "bundle", rows: [row("check", { v: String(q), on: true })] } }
+    ]
+    : [
+      { text: `${josa(from, "은")} ${josa(to, "이")} ${k}개 모인 수예요. ${have}`, figure: { kind: "bundle", rows: [row("doing", { v: "□", blank: true, sub: `${from} 하나 = ${to} ${k}개`, on: true })] } },
+      { text: `${from} 하나마다 ${josa(to, "이")} ${k}개씩이니 ${josa(to, "은")} ${Array(k).fill(count).join(" + ")} = ${q}개예요.`, figure: { kind: "bundle", rows: [row("doing", { v: "□", blank: true, sub: `${to} ${q}개`, on: true })] } },
+      { text: `${to}×${q} = ${from * count}이니까 □는 ${josa(q, "이에요")}.`, figure: { kind: "bundle", rows: [row("check", { v: String(q), on: true })] } }
+    ];
+  return { id, title, problem: `${rowText(start)}에서 □에 알맞은 수를 구해요.`, figure: { kind: "bundle", rows: [start] }, steps, answer: `□는 ${josa(q, "이에요")}.`, value: q };
+}
+const BUNDLE_SET = {
+  id: "bundle-equations",
+  types: {
+    "2의 배수로 식 바꾸기": () => [
+      bundleSumExample({ id: "bundle2-sum", title: "예제 1", base: 2, terms: [{ v: 6 }, { op: "+", v: 4 }, { op: "+", v: 10 }] }),
+      bundleSumExample({ id: "bundle2-mixed", title: "예제 2", base: 2, terms: [{ mul: 13 }, { op: "+", v: 20 }, { op: "−", v: 6 }] })
+    ],
+    "3의 배수로 식 바꾸기": () => [
+      bundleSumExample({ id: "bundle3-sum", title: "예제 1", base: 3, terms: [{ v: 9 }, { op: "+", v: 12 }, { op: "+", v: 30 }] }),
+      bundleMissingExample({ id: "bundle3-missing", title: "예제 2", base: 3, whole: 8, terms: [3, 6] })
+    ],
+    "4의 배수로 식 바꾸기": () => [
+      bundleSumExample({ id: "bundle4-sum", title: "예제 1", base: 4, terms: [{ v: 40 }, { op: "+", v: 8 }, { op: "−", v: 4 }] }),
+      bundleResizeExample({ id: "bundle4-resize", title: "예제 2", from: 2, count: 8, to: 4, repeat: true })
+    ],
+    "5의 배수로 식 바꾸기": () => [
+      bundleSumExample({ id: "bundle5-mixed", title: "예제 1", base: 5, terms: [{ mul: 12 }, { op: "+", v: 10 }, { op: "−", v: 5 }] }),
+      bundleResizeExample({ id: "bundle5-resize", title: "예제 2", from: 5, count: 18, to: 10 })
+    ],
+    "6의 배수 등가식": () => [
+      bundleSumExample({ id: "bundle6-mixed", title: "예제 1", base: 6, terms: [{ mul: 15 }, { op: "+", v: 12 }, { op: "+", v: 6 }] }),
+      bundleResizeExample({ id: "bundle6-resize", title: "예제 2", from: 12, count: 5, to: 6 })
+    ]
+  }
+};
+
+// ───────────────────────── 6권·10권 연속수: 수의 개수 · 짝지어 더하기 · 가운데 수 · 몇 번째 짝수/홀수 ─────────────────────────
+// 그림(kind "consec"): from~to 수 줄(길면 앞 셋 … 뒤 셋), pairs면 양 끝부터 짝 고리, middle이면 가운데 칸, order면 짝수·홀수 줄과 번째.
+const consecRange = (from, to) => (to - from + 1 > 8 ? `${from} + ${from + 1} + ${from + 2} + … + ${to - 2} + ${to - 1} + ${to}` : Array.from({ length: to - from + 1 }, (_, i) => from + i).join(" + "));
+function countExample({ id, title, from, to, problem = `${from}부터 ${to}까지의 수는 모두 몇 개일까요?` }) {
+  const n = to - from + 1;
+  const steps = [
+    { text: `${to} − ${from} = ${josa(to - from, "은")} ${josa(from, "을")} 빼고 센 개수예요.`, figure: { kind: "consec", from, to, mode: "count", tone: "doing", skipFirst: true } },
+    { text: `처음 수 ${from}도 넣어야 하니 1을 더해요. ${to - from} + 1 = ${n}개예요.`, figure: { kind: "consec", from, to, mode: "count", tone: "check" } }
+  ];
+  return { id, title, problem, figure: { kind: "consec", from, to, mode: "count" }, steps, answer: `${from}부터 ${to}까지는 ${n}개예요.`, value: n };
+}
+function pairSumExample({ id, title, from, to }) {
+  const n = to - from + 1;
+  if (n % 2) throw new Error(`${id}: 짝수 개가 아님`);
+  const s = from + to, p = n / 2;
+  const steps = [
+    { text: `수는 ${to} − ${from} + 1 = ${n}개예요.`, figure: { kind: "consec", from, to, mode: "count", tone: "given" } },
+    { text: `양 끝부터 짝을 지어요. ${from} + ${to} = ${s}, ${from + 1} + ${to - 1} = ${s}. 짝마다 합이 ${josa(s, "이에요")}.`, figure: { kind: "consec", from, to, mode: "pairs", tone: "doing" } },
+    { text: `${n}개를 둘씩 짝지으면 ${p}짝이에요.`, figure: { kind: "consec", from, to, mode: "pairs", tone: "doing", note: `${p}짝` } },
+    { text: `합이 ${s}인 짝이 ${p}개니까 ${s} × ${p} = ${josa(s * p, "이에요")}.`, figure: { kind: "consec", from, to, mode: "pairs", tone: "check", note: `${s} × ${p}` } }
+  ];
+  return { id, title, problem: `${consecRange(from, to)}의 합을 구해요.`, figure: { kind: "consec", from, to, mode: "plain" }, steps, answer: `합은 ${josa(s * p, "이에요")}.`, value: s * p };
+}
+function middleSumExample({ id, title, from, to, askMiddle = false }) {
+  const n = to - from + 1;
+  if (n % 2 === 0) throw new Error(`${id}: 홀수 개가 아님`);
+  const m = (from + to) / 2;
+  const steps = [
+    { text: `수는 ${to} − ${from} + 1 = ${n}개예요. 홀수 개라 한가운데 수가 하나 있어요.`, figure: { kind: "consec", from, to, mode: "count", tone: "given" } },
+    { text: `가운데 수는 양 끝의 한가운데, (${from} + ${to}) ÷ 2 = ${josa(m, "이에요")}.`, figure: { kind: "consec", from, to, mode: "middle", tone: "doing" } },
+    { text: `${m - 1} + ${m + 1} = ${m} + ${m}처럼, 가운데에서 같은 만큼 떨어진 두 수는 가운데 수 두 개와 같아요.`, figure: { kind: "consec", from, to, mode: "middle-pairs", tone: "doing" } },
+    { text: `${josa(m, "을")} ${n}번 더한 것과 같으니 ${m} × ${n} = ${josa(m * n, "이에요")}.`, figure: { kind: "consec", from, to, mode: "middle", tone: "check", note: `${m} × ${n}` } }
+  ];
+  return {
+    id, title,
+    problem: askMiddle ? `${consecRange(from, to)}에서 가운데 수를 찾고, 합을 구해요.` : `${consecRange(from, to)}의 합을 구해요.`,
+    figure: { kind: "consec", from, to, mode: "plain" }, steps,
+    answer: askMiddle ? `가운데 수는 ${m}, 합은 ${josa(m * n, "이에요")}.` : `합은 ${josa(m * n, "이에요")}.`,
+    value: askMiddle ? { middle: m, sum: m * n } : m * n
+  };
+}
+// 몇 번째 짝수·홀수: odd면 1, 3, 5…. ask "value"면 k번째 수, "order"면 그 수가 몇 번째인지.
+function orderExample({ id, title, odd, ask, k }) {
+  const name = odd ? "홀수" : "짝수", v = odd ? 2 * k - 1 : 2 * k;
+  const first = odd ? "1, 3, 5, 7" : "2, 4, 6, 8";
+  const steps = ask === "value"
+    ? [
+      { text: `${name}를 차례로 써요: ${first}, …. 1번째 ${odd ? 1 : 2}, 2번째 ${odd ? 3 : 4}, 3번째 ${josa(odd ? 5 : 6, "이에요")}.`, figure: { kind: "consec", mode: "order", odd, tone: "given" } },
+      { text: odd ? "번째에 2를 곱한 수보다 1 작아요. 3번째는 3 × 2 − 1 = 5예요." : "번째에 2를 곱하면 돼요. 3번째는 3 × 2 = 6이에요.", figure: { kind: "consec", mode: "order", odd, tone: "doing" } },
+      { text: odd ? `${k}번째는 ${k} × 2 − 1 = ${josa(v, "이에요")}.` : `${k}번째는 ${k} × 2 = ${josa(v, "이에요")}.`, figure: { kind: "consec", mode: "order", odd, tone: "check", k, v } }
+    ]
+    : [
+      { text: `${name}를 차례로 써요: ${first}, …. 1번째 ${odd ? 1 : 2}, 2번째 ${odd ? 3 : 4}, 3번째 ${josa(odd ? 5 : 6, "이에요")}.`, figure: { kind: "consec", mode: "order", odd, tone: "given" } },
+      { text: odd ? "거꾸로 가요. 1을 더한 뒤 2로 나누면 몇 번째인지 나와요. 5는 (5 + 1) ÷ 2 = 3번째예요." : "거꾸로 가요. 2로 나누면 몇 번째인지 나와요. 6은 6 ÷ 2 = 3번째예요.", figure: { kind: "consec", mode: "order", odd, tone: "doing" } },
+      { text: odd ? `${josa(v, "은")} (${v} + 1) ÷ 2 = ${k}번째예요.` : `${josa(v, "은")} ${v} ÷ 2 = ${k}번째예요.`, figure: { kind: "consec", mode: "order", odd, tone: "check", k, v } }
+    ];
+  return {
+    id, title,
+    problem: ask === "value" ? `${name}를 작은 것부터 늘어놓을 때 ${k}번째 ${josa(name, "은")} 무엇일까요?` : `${josa(v, "은")} 몇 번째 ${name}일까요?`,
+    figure: { kind: "consec", mode: "order", odd, tone: "given" }, steps,
+    answer: ask === "value" ? `${k}번째 ${josa(name, "은")} ${josa(v, "이에요")}.` : `${josa(v, "은")} ${k}번째 ${name}예요.`,
+    value: ask === "value" ? v : k
+  };
+}
+const CONSEC_SET = {
+  id: "consecutive",
+  types: {
+    // 10권
+    "범위 안의 수의 개수": () => [countExample({ id: "count-1", title: "예제 1", from: 15, to: 42 }), countExample({ id: "count-2", title: "예제 2", from: 200, to: 350 })],
+    "1부터 시작하는 연속수의 합": () => [pairSumExample({ id: "pair-one-1", title: "예제 1", from: 1, to: 12 }), pairSumExample({ id: "pair-one-2", title: "예제 2", from: 1, to: 40 })],
+    "중간부터 시작하는 연속수의 합": () => [pairSumExample({ id: "pair-mid-1", title: "예제 1", from: 4, to: 11 }), pairSumExample({ id: "pair-mid-2", title: "예제 2", from: 13, to: 28 })],
+    "가운데 수 찾기": () => [middleSumExample({ id: "mid-find-1", title: "예제 1", from: 1, to: 7, askMiddle: true }), middleSumExample({ id: "mid-find-2", title: "예제 2", from: 1, to: 25, askMiddle: true })],
+    "가운데 수로 합 구하기": () => [middleSumExample({ id: "mid-sum-1", title: "예제 1", from: 11, to: 15 }), middleSumExample({ id: "mid-sum-2", title: "예제 2", from: 23, to: 31 })],
+    // 6권
+    "수의 개수": () => [countExample({ id: "count6-1", title: "예제 1", from: 4, to: 19 }), countExample({ id: "count6-2", title: "예제 2", from: 26, to: 61 })],
+    "연속수의 합(짝수 개)": () => [pairSumExample({ id: "pair6-1", title: "예제 1", from: 3, to: 10 }), pairSumExample({ id: "pair6-2", title: "예제 2", from: 1, to: 16 })],
+    "연속수의 합(홀수 개)": () => [middleSumExample({ id: "mid6-1", title: "예제 1", from: 8, to: 16 }), middleSumExample({ id: "mid6-2", title: "예제 2", from: 1, to: 11 })],
+    "몇 번째 짝수": () => [orderExample({ id: "even-k-1", title: "예제 1", odd: false, ask: "value", k: 17 }), orderExample({ id: "even-k-2", title: "예제 2", odd: false, ask: "value", k: 45 })],
+    "짝수의 순서": () => [orderExample({ id: "even-at-1", title: "예제 1", odd: false, ask: "order", k: 23 })],
+    "몇 번째 홀수": () => [orderExample({ id: "odd-k-1", title: "예제 1", odd: true, ask: "value", k: 14 }), orderExample({ id: "odd-k-2", title: "예제 2", odd: true, ask: "value", k: 38 })],
+    "홀수의 순서": () => [orderExample({ id: "odd-at-1", title: "예제 1", odd: true, ask: "order", k: 29 })]
+  }
+};
+
+// ───────────────────────── 8권 합차 · 합과 배수 · 몇 배보다 많거나 적은 수 ─────────────────────────
+// 원본 그림처럼 같은 수를 동그라미 하나로 그린다. A는 동그라미 a개, B는 동그라미 b개 + extra. 합(sum)이나 차(diff)가 주어진다.
+// 예제의 수는 동그라미 하나의 값(unit)으로 새로 짓고, 합·차·답은 코드가 계산한다.
+const signed = (e) => (e > 0 ? `+ ${e}` : `− ${-e}`);
+function circleRows(a, b, extra, names = ["A", "B"]) { return [{ label: names[0], n: a }, { label: names[1], n: b, extra: extra ? signed(extra) : "" }]; }
+function circleExample({ id, title, a, b, extra = 0, unit, given, story = null, names = ["A", "B"], ask = null }) {
+  const A = a * unit, B = b * unit + extra, k = a + b;
+  const [nA, nB] = names;
+  const rows = circleRows(a, b, extra, names);
+  // 문장제 글의 수는 코드가 계산한 합·차로 채운다
+  if (typeof story === "function") story = story({ sum: A + B, diff: B - A });
+  const base = given === "sum" ? { sum: A + B } : { diff: B - A };
+  if (given === "diff" && (extra || b <= a)) throw new Error(`${id}: 차 예제는 B가 동그라미로만 더 많아야 함`);
+  const fig = (tone, extraFig = {}) => ({ kind: "circles", rows, ...base, tone, ...extraFig });
+  const steps = [];
+  const bCircles = b === 1 ? "동그라미 하나" : `동그라미 ${b}개`;
+  if (story) steps.push({ text: `${josa(nA, "을")} 동그라미 하나로 그리면 ${josa(nB, "은")} ${bCircles}${extra ? `보다 ${Math.abs(extra)} ${extra > 0 ? "많아요" : "적어요"}` : "예요"}.`, figure: fig("doing") });
+  if (given === "sum") {
+    const S = A + B, rest = S - extra;
+    steps.push({ text: `동그라미는 모두 ${a} + ${b} = ${k}개예요.`, figure: fig("doing", { mark: "all" }) });
+    steps.push(extra > 0
+      ? { text: `${nB}에 붙은 ${josa(extra, "을")} 합에서 빼요. ${S} − ${extra} = ${josa(rest, "이")} 동그라미 ${k}개예요.`, figure: fig("doing", { mark: "all", hideExtra: true }) }
+      : extra < 0
+        ? { text: `${josa(nB, "은")} 동그라미보다 ${-extra} 적으니, 합에 ${josa(-extra, "을")} 더해요. ${S} + ${-extra} = ${josa(rest, "이")} 동그라미 ${k}개예요.`, figure: fig("doing", { mark: "all", hideExtra: true }) }
+        : { text: `합 ${josa(S, "이")} 동그라미 ${k}개예요.`, figure: fig("doing", { mark: "all" }) });
+    steps.push({ text: `동그라미 하나는 ${rest} ÷ ${k} = ${josa(unit, "이에요")}.`, figure: fig("doing", { unit }) });
+  } else {
+    const D = B - A;
+    steps.push({ text: `${josa(nB, "이")} ${nA}보다 동그라미 ${b} − ${a} = ${b - a}개 더 많아요. 그 차가 ${josa(D, "이에요")}.`, figure: fig("doing", { mark: "diff" }) });
+    steps.push({ text: `동그라미 하나는 ${D} ÷ ${b - a} = ${josa(unit, "이에요")}.`, figure: fig("doing", { mark: "diff", unit }) });
+  }
+  steps.push({ text: `${josa(nA, "은")} ${a === 1 ? `동그라미 하나라 ${A}` : `${a} × ${unit} = ${A}`}, ${josa(nB, "은")} ${b === 1 ? unit : `${b} × ${unit}`}${extra ? ` ${signed(extra)}` : ""} = ${josa(B, "이에요")}.`, figure: fig("check", { unit, values: [A, B] }) });
+  return {
+    id, title,
+    problem: story || `그림을 보고 ${josa(nA, "과")} ${josa(nB, "을")} 구해요. 동그라미 하나는 모두 같은 수예요.`,
+    figure: story ? { kind: "circles-story", note: `${josa(nA, "을")} 동그라미 하나로 그려 보면 쉬워요.` } : fig("given"), steps,
+    // 문장제는 물은 사람(ask: 0 = 동그라미 하나인 쪽, 1 = 다른 쪽)만 답한다
+    answer: ask === null ? `${josa(nA, "은")} ${A}, ${josa(nB, "은")} ${josa(B, "이에요")}.` : `${josa(names[ask], "은")} ${josa(ask ? B : A, "이에요")}.`,
+    value: { A, B, a, b, extra, given, sum: A + B, diff: B - A, asked: ask === null ? null : ask ? B : A }
+  };
+}
+// ○ + △ = S, ○ − △ = D
+function shapePairExample({ id, title, big, small }) {
+  const S = big + small, D = big - small;
+  const rows = (tone, vals) => ({ kind: "shape-eq", lines: [["circle", "+", "triangle", "=", S], ["circle", "−", "triangle", "=", D]], tone, vals });
+  const steps = [
+    { text: `두 식을 더하면 △는 더했다가 빼서 없어지고 ○만 두 개 남아요. ○ + ○ = ${S} + ${D} = ${josa(S + D, "이에요")}.`, figure: rows("doing") },
+    { text: `○ 하나는 ${S + D} ÷ 2 = ${josa(big, "이에요")}.`, figure: rows("doing", { circle: big }) },
+    { text: `첫째 식에서 △ = ${S} − ${big} = ${josa(small, "이에요")}.`, figure: rows("check", { circle: big, triangle: small }) }
+  ];
+  return { id, title, problem: `○ + △ = ${S}, ○ − △ = ${josa(D, "이에요")}. ○와 △가 나타내는 수를 구해요.`, figure: rows("given"), steps, answer: `○는 ${big}, △는 ${josa(small, "이에요")}.`, value: { circle: big, triangle: small, S, D } };
+}
+// A가 B에게 g개를 주면 같아진다 → A는 B보다 2g 많다(합차로 푼다)
+function giveEqualExample({ id, title, small, g, giver = "A" }) {
+  const big = small + 2 * g, S = big + small;
+  const other = giver === "A" ? "B" : "A";
+  const story = `${josa("A", "과")} B가 가진 구슬은 모두 ${S}개예요. ${josa(giver, "이")} ${other}에게 ${g}개를 주면 둘이 같아져요. ${giver}는 몇 개를 가지고 있을까요?`;
+  const ex = circleExample({ id, title, a: 1, b: 1, extra: 2 * g, unit: small, given: "sum", names: [other, giver], ask: 1, story });
+  ex.steps.unshift({ text: `${josa(giver, "이")} ${g}개를 주면 같아지니, ${josa(giver, "은")} ${other}보다 ${g} + ${g} = ${2 * g}개 많아요.`, figure: { kind: "circles", rows: circleRows(1, 1, 2 * g, [other, giver]), sum: S, tone: "doing" } });
+  return ex;
+}
+const CIRCLE_SET = {
+  id: "sum-multiple",
+  types: {
+    "합과 차를 그림으로": () => [circleExample({ id: "sd-pic-1", title: "예제 1", a: 1, b: 1, extra: 9, unit: 8, given: "sum" }), circleExample({ id: "sd-pic-2", title: "예제 2", a: 1, b: 1, extra: 4, unit: 15, given: "sum" })],
+    "합과 차의 식": () => [shapePairExample({ id: "sd-eq-1", title: "예제 1", big: 11, small: 6 }), shapePairExample({ id: "sd-eq-2", title: "예제 2", big: 25, small: 9 })],
+    "합차 문장제": () => [circleExample({ id: "sd-story-1", title: "예제 1", a: 1, b: 1, extra: 8, unit: 9, given: "sum", names: ["동생", "언니"], ask: 1, story: ({ sum }) => `언니와 동생이 가진 사탕은 모두 ${sum}개예요. 언니가 동생보다 8개 더 많아요. 언니는 몇 개를 가지고 있을까요?` })],
+    "주고 받아 같아지는 합차": () => [giveEqualExample({ id: "sd-give-1", title: "예제 1", small: 10, g: 4, giver: "A" }), giveEqualExample({ id: "sd-give-2", title: "예제 2", small: 12, g: 5, giver: "B" })],
+    "합과 배수를 그림으로": () => [circleExample({ id: "sm-pic-1", title: "예제 1", a: 1, b: 3, unit: 9, given: "sum" }), circleExample({ id: "sm-pic-2", title: "예제 2", a: 2, b: 3, unit: 7, given: "sum" })],
+    "합과 배수 문장제": () => [circleExample({ id: "sm-story-1", title: "예제 1", a: 1, b: 6, unit: 5, given: "sum", ask: 0, story: ({ sum }) => `A와 B가 가진 구슬은 모두 ${sum}개예요. B는 A의 6배예요. A는 몇 개를 가지고 있을까요?` })],
+    "차와 배수를 그림으로": () => [circleExample({ id: "dm-pic-1", title: "예제 1", a: 1, b: 5, unit: 7, given: "diff" }), circleExample({ id: "dm-pic-2", title: "예제 2", a: 2, b: 5, unit: 11, given: "diff" })],
+    "차와 배수 문장제": () => [circleExample({ id: "dm-story-1", title: "예제 1", a: 1, b: 3, unit: 13, given: "diff", ask: 1, story: ({ diff }) => `B는 A보다 구슬이 ${diff}개 더 많고, B는 A의 3배예요. B는 몇 개를 가지고 있을까요?` })],
+    "몇 배보다 많거나 적은 수를 그림으로": () => [circleExample({ id: "ap-pic-1", title: "예제 1", a: 1, b: 2, extra: 6, unit: 8, given: "sum" }), circleExample({ id: "ap-pic-2", title: "예제 2", a: 1, b: 4, extra: -2, unit: 6, given: "sum" })],
+    "몇 배보다 많은 수 문장제": () => [circleExample({ id: "ap-more-1", title: "예제 1", a: 1, b: 3, extra: 2, unit: 9, given: "sum", names: ["아들", "아빠"], ask: 1, story: ({ sum }) => `아빠와 아들의 나이를 더하면 ${sum}살이에요. 아빠는 아들 나이의 3배보다 2살 많아요. 아빠는 몇 살일까요?` })],
+    "몇 배보다 적은 수 문장제": () => [circleExample({ id: "ap-less-1", title: "예제 1", a: 1, b: 4, extra: -3, unit: 7, given: "sum", names: ["B", "A"], ask: 1, story: ({ sum }) => `A와 B가 가진 카드를 더하면 ${sum}장이에요. A는 B의 4배보다 3장 적어요. A는 몇 장을 가지고 있을까요?` })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

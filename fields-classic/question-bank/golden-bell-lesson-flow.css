@@ -66,6 +66,33 @@
 .tx-chain span { padding: 4px 12px; border: 2px solid #f0a500; border-radius: 10px; background: #fff3c4; }
 .tx-chain span.on { border-color: #16734b; background: #e3f5ea; color: #16734b; }
 .tx-chain b { color: #566274; }
+/* 묶음으로 식 바꾸기 — 수 카드(숫자카드 노랑), 빈칸은 빈 상자 보라 점선, 줄마다 안내 단계 색(--tone)으로 밑에 「2×3」 */
+.tx-bundle { display: grid; gap: 12px; justify-items: center; }
+.tx-bundle-row { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 6px; padding: 8px 10px; border-left: 4px solid var(--tone); border-radius: 8px; background: #fffdf7; }
+.tx-bundle-row > b { align-self: center; padding: 0 2px; color: #222; font-size: 22px; font-weight: 900; }
+.tx-bundle-row > span { display: grid; justify-items: center; gap: 3px; }
+.tx-bundle-row > span i { min-width: 40px; padding: 4px 8px; border: 2px solid #f0a500; border-radius: 9px; background: #fff3c4; color: #222; font-size: 22px; font-style: normal; font-weight: 900; text-align: center; }
+.tx-bundle-row > span.on i { border-color: var(--tone); box-shadow: 0 0 0 2px var(--tone); }
+.tx-bundle-row > span.blank i { border: 2px dashed #8e5bd8; background: #fff; }
+.tx-bundle-row > span small, .tx-bundle-glue > span small { color: var(--tone); font-size: 14px; font-weight: 900; }
+.tx-bundle-glue { display: inline-flex; align-items: flex-start; gap: 4px; font-style: normal; }
+.tx-bundle-glue > b { align-self: flex-start; padding-top: 4px; color: #222; font-size: 22px; font-weight: 900; }
+.tx-bundle-glue > span { display: grid; justify-items: center; gap: 3px; }
+.tx-bundle-glue > span i { min-width: 40px; padding: 4px 8px; border: 2px dashed #8e5bd8; border-radius: 9px; background: #fff; color: #222; font-size: 22px; font-style: normal; font-weight: 900; text-align: center; }
+.tx-bundle-glue > span.on i { border: 2px solid var(--tone); box-shadow: 0 0 0 2px var(--tone); background: #fff3c4; }
+@media (max-width: 420px) {
+  .tx-bundle-row { gap: 3px; padding: 6px; }
+  .tx-bundle-row > b, .tx-bundle-glue > b { font-size: 18px; }
+  .tx-bundle-row > span i, .tx-bundle-glue > span i { min-width: 30px; padding: 3px 5px; font-size: 18px; }
+  .tx-bundle-row > span small, .tx-bundle-glue > span small { font-size: 12px; }
+}
+/* 연속수 수 줄 — 칸은 숫자카드 노랑, 짝 고리·쪽지는 안내 단계 색(--tone) */
+.tx-consec { display: grid; justify-items: center; gap: 6px; max-width: 100%; overflow-x: auto; }
+.tx-consec svg { max-width: 100%; height: auto; }
+.tx-consec-note { margin: 0; padding: 3px 12px; border: 2px solid var(--tone); border-radius: 999px; color: var(--tone); font-size: 16px; font-weight: 900; }
+/* 합차·합과 배수 동그라미 그림 · ○△ 식 */
+.tx-circles, .tx-shape-eq { display: grid; justify-items: center; max-width: 100%; }
+.tx-circles svg, .tx-shape-eq svg { max-width: 100%; height: auto; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

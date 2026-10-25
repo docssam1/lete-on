@@ -1,5 +1,5 @@
-import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261024t";
-import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261022a";
+import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261027a";
+import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261027a";
 
 // 개념 단계 안의 학습 순서: ① 개념 설명 → ② 유형별 예제 → ③ 게임 → (골든벨 문제).
 // 원장 지시: "개념마다 설명하는 튜토리얼, 문제 유형마다 예제 1~2개, 그다음 게임."
@@ -7,7 +7,8 @@ import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=202610
 // 위의 단계 막대(개념 → 골든벨 → 추가 학습 → 완료)는 그대로 두고, 그 안의 「개념」 단계를 세 칸으로 나눈다.
 //
 // 표 한 줄: "<책 id>/<레슨 id>": { examples: <golden-bell-type-examples.js의 예제 묶음 id>, game: <게임 id> }
-//   게임 id: turn-clock(1권 시계) · b2-*(2권 레벨 게임) · b9-*(9권 레벨 게임). 새 게임은 아래 mountGame에 한 줄 추가.
+//   게임 id: turn-clock(1권 시계) · b2-*(2권 레벨 게임) · b9-*(9권 레벨 게임) · drill(연습 공방 — drill-recipes.js에 차시가 있어야 한다).
+//   새 게임은 아래 mountGame에 한 줄 추가.
 //
 // 다른 레슨에 붙이는 순서(1~10권 공통):
 //  1) 유형 확인: 그 레슨 original.items의 typeLabel 목록(없으면 예제 묶음에 typeOf(item)로 나눈다 — 1권 시계 참고).
@@ -25,9 +26,23 @@ export const LESSON_FLOWS = Object.freeze({
   "book-01/clock-turning": { examples: "b1-clock", game: "turn-clock" },
   "book-02/balance-order": { examples: "b2-balance", game: "b2-balance" },
   "book-09/cube-min-max-source": { examples: "b9-cube-min-max", game: "b9-cubes" },
-  "book-09/magic-square-missing": { examples: "b9-magic", game: "b9-magic" }
+  "book-09/magic-square-missing": { examples: "b9-magic", game: "b9-magic" },
+  // 게임 칸이 연습 공방인 차시(학생 덱은 덱 안의 연습 공방을 그대로 쓰므로 이 게임을 또 붙이지 않는다)
+  "book-02/multiples-2": { examples: "bundle-equations", game: "drill" },
+  "book-02/multiples-3": { examples: "bundle-equations", game: "drill" },
+  "book-02/multiples-4": { examples: "bundle-equations", game: "drill" },
+  "book-02/multiples-5": { examples: "bundle-equations", game: "drill" },
+  "book-03/six-multiple-equations": { examples: "bundle-equations", game: "drill" },
+  "book-06/consecutive-source": { examples: "consecutive", game: "drill" },
+  "book-06/even-odd-order-source": { examples: "consecutive", game: "drill" },
+  "book-10/number-count-source": { examples: "consecutive", game: "drill" },
+  "book-10/consecutive-even-source": { examples: "consecutive", game: "drill" },
+  "book-10/consecutive-odd-source": { examples: "consecutive", game: "drill" },
+  "book-08/sum-difference-source": { examples: "sum-multiple", game: "drill" },
+  "book-08/sum-multiple-source": { examples: "sum-multiple", game: "drill" },
+  "book-08/sum-multiple-applied-source": { examples: "sum-multiple", game: "drill" }
 });
-export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창" });
+export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방" });
 const STEPS = [["tutorial", "개념 설명"], ["examples", "유형별 예제"], ["game", "게임"]];
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -83,6 +98,12 @@ function exampleView(view, groups) {
 }
 
 async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson }) {
+  if (gameId === "drill") {
+    // 연습 공방은 창(iframe) 안에서 돈다. 마지막 「골든벨 문제로」를 누르면 골든벨 문제 칸으로 간다.
+    if (!document.querySelector('link[data-drill-css]')) document.head.insertAdjacentHTML("beforeend", '<link rel="stylesheet" href="./game-drill.css?v=20261027a" data-drill-css>');
+    const { mountDrill } = await import("./game-drill.js?v=20261027a");
+    return mountDrill(host, { lesson, onDone: () => onQuestions?.() });
+  }
   if (gameId === "turn-clock") {
     const { mountClockGame } = await import("./golden-bell-clock-game.js?v=20261024t");
     return mountClockGame(host, { single: false, saved, onQuestions, onComplete });
