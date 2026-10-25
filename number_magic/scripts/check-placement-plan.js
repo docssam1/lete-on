@@ -893,9 +893,9 @@ function main(){
   });
 
   const recommendationFixtures = [
-    { baseline: 'f-compare5', previous: 'f-quantity5', t: 'NL1', lv: 3, session: 11 },
-    { baseline: 'f-order10', previous: 'f-compare5', t: 'NL10', lv: 1, session: 3 },
-    { baseline: 'f-ten10', previous: 'f-join9', t: 'NL2', lv: 3, session: 16 }
+    { baseline: 'f-compare5', previous: 'f-quantity5', t: 'NL1', lv: 3, session: 1 },
+    { baseline: 'f-order10', previous: 'f-compare5', t: 'NL10', lv: 1, session: 5 },
+    { baseline: 'f-ten10', previous: 'f-join9', t: 'NL2', lv: 3, session: 12 }
   ];
   recommendationFixtures.forEach(fixture => {
     const plan = node.api.build(fixture.baseline, 'review-counterexample');

@@ -50,7 +50,8 @@ function situation(rng, infant, round, kinds){
   if(infant) ks = ks.filter(k => k !== '배수');
   const kind = pick(rng, ks.length ? ks : ['합병','첨가']);
   const range = (!infant && round >= 1) ? 'B' : 'A';
-  const s = WP().makeSituation(rng, { range, kind, numeric:'decimal' });
+  let s;
+  for(let i=0;i<512;i++){s=WP().makeSituation(rng,{range,kind,numeric:'decimal'});if(!infant||[s.n1,s.n2,WP().resultOf(s)].every(n=>n>=0&&n<=10))break;}
   s.range = range;
   return s;
 }
@@ -144,7 +145,7 @@ ATOM.opch = (c, withMul) => {
 };
 /* 수직선 — 화살표가 무엇을 나타내는지 */
 ATOM.numline = c => {
-  const k = c.kind, n1 = c.n1, n2 = c.n2, W = 300, mx = 25, x = n => 10 + n * (W - 20) / mx;
+  const k = c.kind, n1 = c.n1, n2 = c.n2, W = 300, mx = c.s.infant?10:25, x = n => 10 + n * (W - 20) / mx;
   const up = c.op === '+';
   let g = `<line x1="${x(0)}" y1="30" x2="${x(mx)}" y2="30" stroke="#20343b" stroke-width="1.5"/>`;
   for(let n = 0; n <= mx; n++) g += `<line x1="${x(n)}" y1="${n % 5 ? 27 : 24}" x2="${x(n)}" y2="${n % 5 ? 33 : 36}" stroke="#20343b" stroke-width="1"/>` + (n % 5 === 0 ? `<text x="${x(n)}" y="46" font-size="8" text-anchor="middle" fill="#20343b">${n}</text>` : '');
@@ -260,6 +261,13 @@ ATOM.fillGiven = c => {
 };
 /* 내용 요약 */
 ATOM.summary = c => {
+  if(c.s.infant){
+    const compare=c.kind==='구차',plus=c.kind==='합병'||c.kind==='첨가';
+    const q=c.t('이야기를 읽고 빈칸에 알맞은 수를 써 보세요.','Read the story and fill in the numbers.','读故事，在空格里填上合适的数。');
+    const sentence=compare?c.t(`${eun(c.A)} ${eul(c.on)} ${box(12)}${c.u}, ${neun(c.B)} ${box(12)}${c.u} 가지고 있어요. ${neun(c.A)} ${c.B}보다 ${box(12)}${c.u} 더 많이 가지고 있어요.`,`${c.A} has ${box(12)} ${c.on}. ${c.B} has ${box(12)}. ${c.A} has ${box(12)} more than ${c.B}.`,`${c.A}有${box(12)}${c.u}${c.on}，${c.B}有${box(12)}${c.u}。${c.A}比${c.B}多${box(12)}${c.u}。`)
+      :c.t(`처음 두 수는 ${box(12)}${c.u}와 ${box(12)}${c.u}예요. ${plus?'모으면 모두':'덜고 나면'} ${box(12)}${c.u}예요.`,`The two numbers are ${box(12)} and ${box(12)}. ${plus?'Together there are':'After taking away there are'} ${box(12)}.`,`两个数是${box(12)}和${box(12)}。${plus?'合起来':'减去后'}有${box(12)}。`);
+    return {q,x:'<p class="nm-lt-fill">'+sentence+'</p>',a:`${c.n1}, ${c.n2}, ${c.r}`};
+  }
   const words = shuffle(c.rng, [c.on, c.A, String(c.n1), String(c.n2)]);
   return { q: c.t('글을 읽고, □ 안에 알맞은 낱말을 넣어 내용을 간추려 보시오.', 'Read the problem and fill the boxes to sum it up.', '读题，在□里填上合适的词，概括内容。'),
     x: `<div class="nm-lt-wordbank">${words.map(w => `<span>${esc(w)}</span>`).join('')}</div><p class="nm-lt-fill">${c.t(`${box(14)}은(는) ${box(14)}을(를) ${box(12)}${c.u} 가지고 있고, ${box(12)}${c.u}가 달라졌습니다.`, `${box(14)} had ${box(14)}: ${box(12)}, and ${box(12)} changed.`, `${box(14)}有${box(14)}：${box(12)}，变化了${box(12)}。`)}</p>`, a: `${c.A}, ${c.on}, ${c.n1}, ${c.n2}` };
@@ -273,7 +281,7 @@ ATOM.result = c => ({ q: c.kind === '구차' ? c.t(`${eun(lg(c, c.tgt))} 몇 ${c
 function unknownCtx(c){
   for(let i = 0; i < 80; i++){
     const p = G('wp7_unknown', { range: c.s.range }, c.rng);
-    if(p && p.wp.pos === 'change' && (p.wp.kind === '첨가' || p.wp.kind === '구잔')) return { p, kind: p.wp.kind, n1: p.wp.n1, n2: p.wp.n2, r: p.wp.result, up: p.wp.kind === '첨가' };
+    if(p && (!c.s.infant||[p.wp.n1,p.wp.n2,p.wp.result].every(n=>n>=0&&n<=10)) && p.wp.pos === 'change' && (p.wp.kind === '첨가' || p.wp.kind === '구잔')) return { p, kind: p.wp.kind, n1: p.wp.n1, n2: p.wp.n2, r: p.wp.result, up: p.wp.kind === '첨가' };
   }
   return null;
 }
@@ -290,7 +298,7 @@ ATOM.uAnswer = (c, u) => ({ q: c.t('답을 쓰시오.', 'Write the answer.', '�
 ATOM.uOp = (c, u) => ({ q: c.t(`처음 수 ${u.n1}에서 □를 ( 더해야, 빼야 ) 합니다.`, `From the first number ${u.n1}, you ( add, subtract ) □.`, `从原来的${u.n1}，要（加上，减去）□。`), x: `<div class="nm-lt-opl"><b>${u.n1}</b><i class="nm-lt-opc"></i><b>□</b></div>`, a: u.up ? c.t('더해야', 'add', '加上') : c.t('빼야', 'subtract', '减去') });
 ATOM.uEq = (c, u) => ({ q: c.t('□를 사용한 식으로 나타내면', 'Write it with a □', '用□列出算式'), x: `<div class="nm-lt-eqw"><span>${box(60, 11)}</span></div>`, a: `${u.n1} ${u.up ? '+' : '−'} □ = ${u.r}` });
 ATOM.uNumline = (c, u) => {
-  const W = 300, mx = 25, x = n => 10 + n * (W - 20) / mx;
+  const W = 300, mx = c.s.infant?10:25, x = n => 10 + n * (W - 20) / mx;
   let g = `<line x1="${x(0)}" y1="30" x2="${x(mx)}" y2="30" stroke="#20343b" stroke-width="1.5"/>`;
   for(let n = 0; n <= mx; n++) g += `<line x1="${x(n)}" y1="${n % 5 ? 27 : 24}" x2="${x(n)}" y2="${n % 5 ? 33 : 36}" stroke="#20343b" stroke-width="1"/>` + (n % 5 === 0 ? `<text x="${x(n)}" y="46" font-size="8" text-anchor="middle" fill="#20343b">${n}</text>` : '');
   if(u.n1 <= mx) g += `<path d="M ${x(0)} 22 Q ${x(u.n1 / 2)} 2 ${x(u.n1)} 22" fill="none" stroke="#D9534F" stroke-width="2"/>`;
@@ -302,7 +310,7 @@ ATOM.uNumline = (c, u) => {
 const FRUITS = [ { ko:'사과', en:'apples', zh:'苹果', ku:'개', zu:'个' }, { ko:'귤', en:'tangerines', zh:'橘子', ku:'개', zu:'个' }, { ko:'배', en:'pears', zh:'梨', ku:'개', zu:'个' }, { ko:'복숭아', en:'peaches', zh:'桃子', ku:'개', zu:'个' } ];
 function threeCtx(c){
   const f = shuffle(c.rng, FRUITS).slice(0, 3), hi = c.s.range === 'B' ? 30 : 9;
-  const v = [R2(c.rng, 2, hi), R2(c.rng, 2, hi), R2(c.rng, 2, hi)];
+  let v;do{v=[R2(c.rng,2,c.s.infant?4:hi),R2(c.rng,2,c.s.infant?4:hi),R2(c.rng,2,c.s.infant?4:hi)];}while(c.s.infant&&v.reduce((a,n)=>a+n,0)>10);
   return { f, v, sum: v[0] + v[1] + v[2] };
 }
 function threeStory(c, t){
@@ -311,7 +319,7 @@ function threeStory(c, t){
     `A basket has ${t.v[0]} ${t.f[0].en}, ${t.v[1]} ${t.f[1].en} and ${t.v[2]} ${t.f[2].en}. How many fruits are there in all?`,
     `篮子里有${t.v[0]}个${t.f[0].zh}、${t.v[1]}个${t.f[1].zh}、${t.v[2]}个${t.f[2].zh}。水果一共有几个？`);
 }
-const miniStory = (rng, infant, range, kinds) => { const s = WP().makeSituation(rng, { range, kind: pick(rng, kinds), numeric:'decimal' }); s.range = range; return s; };
+const miniStory = (rng, infant, range, kinds) => {const s=situation(rng,infant,range==='B'?1:0,kinds);s.infant=!!infant;return s;};
 const KIND_OP = { 합병:'+', 첨가:'+', 구잔:'−', 구차:'−', 배수:'×' };
 const compactOf = (s, lang) => (s.compact && (s.compact[lang] || s.compact.ko)) || '';
 function phraseList(c){

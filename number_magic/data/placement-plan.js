@@ -12,13 +12,13 @@
   const clone = value => JSON.parse(JSON.stringify(value));
   const FOUNDATION = [
     { id: 'f-count5', label: text('5까지 수 세기', 'Counting to 5', '数数到5'), course: 'C0', session: 1, kind: 'foundation', refs: [{ t: 'NL1', lv: 1, session: 1 }] },
-    { id: 'f-quantity5', label: text('5까지 수량과 숫자', 'Quantity and numerals to 5', '5以内数量与数字'), course: 'C0', session: 11, kind: 'foundation', refs: [{ t: 'NL1', lv: 3, session: 11 }, { t: 'NL7', lv: 3, session: 17 }] },
-    { id: 'f-compare5', label: text('5까지 많고 적음', 'More and less to 5', '5以内比较多少'), course: 'C0', session: 3, kind: 'foundation', refs: [{ t: 'NL10', lv: 1, session: 3 }] },
-    { id: 'f-order10', label: text('10까지 수의 순서', 'Number order to 10', '10以内数的顺序'), course: 'C0', session: 1, kind: 'foundation', refs: [{ t: 'NL4', lv: 1, session: 2 }, { t: 'NL7', lv: 1, session: 1 }] },
-    { id: 'f-split5', label: text('5까지 가르기', 'Splitting to 5', '5以内分一分'), course: 'C0', session: 6, kind: 'foundation', refs: [{ t: 'NL2', lv: 1, session: 6 }] },
-    { id: 'f-split9', label: text('9까지 가르기와 0', 'Splitting to 9, including 0', '9以内分一分和0'), course: 'C0', session: 9, kind: 'foundation', refs: [{ t: 'NL2', lv: 2, session: 9 }] },
-    { id: 'f-join9', label: text('9까지 모으기', 'Joining to 9', '9以内合一合'), course: 'C0', session: 16, kind: 'foundation', refs: [{ t: 'NL2', lv: 3, session: 16 }] },
-    { id: 'f-ten10', label: text('10의 짝꿍', 'Partners to 10', '凑10好朋友'), course: 'C0', session: 7, kind: 'foundation', refs: [{ t: 'NL6', lv: 1, session: 7, diagnosticTransform: 'single-target-and-empty-full-boundaries' }] }
+    { id: 'f-quantity5', label: text('5까지 수량과 숫자', 'Quantity and numerals to 5', '5以内数量与数字'), course: 'C0', session: 1, kind: 'foundation', refs: [{ t: 'NL1', lv: 3, session: 1 }, { t: 'NL7', lv: 3, session: 1 }] },
+    { id: 'f-compare5', label: text('5까지 많고 적음', 'More and less to 5', '5以内比较多少'), course: 'C0', session: 5, kind: 'foundation', refs: [{ t: 'NL10', lv: 1, session: 5 }] },
+    { id: 'f-order10', label: text('10까지 수의 순서', 'Number order to 10', '10以内数的顺序'), course: 'C0', session: 2, kind: 'foundation', refs: [{ t: 'NL4', lv: 1, session: 2 }, { t: 'NL7', lv: 1, session: 2 }] },
+    { id: 'f-split5', label: text('5까지 가르기', 'Splitting to 5', '5以内分一分'), course: 'C0', session: 9, kind: 'foundation', refs: [{ t: 'NL2', lv: 1, session: 9 }] },
+    { id: 'f-split9', label: text('9까지 가르기와 0', 'Splitting to 9, including 0', '9以内分一分和0'), course: 'C0', session: 10, kind: 'foundation', refs: [{ t: 'NL2', lv: 2, session: 10 }] },
+    { id: 'f-join9', label: text('9까지 모으기', 'Joining to 9', '9以内合一合'), course: 'C0', session: 12, kind: 'foundation', refs: [{ t: 'NL2', lv: 3, session: 12 }] },
+    { id: 'f-ten10', label: text('10의 짝꿍', 'Partners to 10', '凑10好朋友'), course: 'C0', session: 11, kind: 'foundation', refs: [{ t: 'NL6', lv: 1, session: 11, diagnosticTransform: 'single-target-and-empty-full-boundaries' }] }
   ];
   let stageCache = null;
 
