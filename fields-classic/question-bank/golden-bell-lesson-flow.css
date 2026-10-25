@@ -146,6 +146,16 @@
 .tx-give td.on { box-shadow: 0 0 0 3px var(--tone); }
 .tx-give tr.moves td { border: 0; background: transparent; color: #566274; font-size: 12px; font-weight: 800; }
 .tx-give tr.moves td:empty { padding: 0; }
+/* 곱셈을 칸으로 나누어 계산 — 머리 칸 파랑(곱해지는 수)·주황(곱하는 수), 곱 칸은 숫자카드 노랑 */
+.tx-split { display: grid; justify-items: center; gap: 6px; max-width: 100%; overflow-x: auto; }
+.tx-split-q { margin: 0; color: #222; font-size: 20px; font-weight: 900; }
+.tx-split table { border-collapse: separate; border-spacing: 4px; }
+.tx-split th { min-width: 56px; padding: 6px 8px; border-radius: 8px; background: #dde9ff; color: #222; font-size: 17px; font-weight: 900; }
+.tx-split tr th:first-child { background: #ffe9cc; }
+.tx-split th.corner { background: transparent; color: #566274; }
+.tx-split td { min-width: 70px; height: 40px; padding: 6px 8px; border: 2px dashed #d6d6d6; border-radius: 8px; color: #222; font-size: 18px; font-weight: 900; text-align: center; }
+.tx-split td.on { border: 2px solid #f0a500; background: #fff3c4; }
+.tx-split-total { margin: 0; padding: 3px 14px; border: 2px solid var(--tone); border-radius: 999px; color: var(--tone); font-size: 17px; font-weight: 900; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

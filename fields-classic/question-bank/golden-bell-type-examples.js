@@ -1034,7 +1034,36 @@ const REVERSE_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET });
+// ───────────────────────── 10권 곱셈을 칸으로 나누어 계산 ─────────────────────────
+// 곱해지는 수를 몇십과 몇으로 나누어 칸(열)을 만들고, 곱하는 수도 두 자리면 몇십과 몇으로 나누어 줄(행)을 만든다.
+// 칸마다 곱하고 모두 더한다(그림 kind "split-box").
+const placeParts = (n) => String(n).split("").map((d, i, a) => Number(d) * 10 ** (a.length - 1 - i)).filter(Boolean);
+// 수 뒤 「으로/로」: 받침 없음(2·4·5·9)과 ㄹ 받침(1·7·8)은 「로」, 삼·육·십·백은 「으로」
+const numEuro = (n) => `${n}${/[0369]$/u.test(String(n)) ? "으로" : "로"}`;
+const partsText = (ps) => `${ps.slice(0, -1).map((p) => josa(p, "과")).join(" ")} ${numEuro(ps.at(-1))}`.trim();
+function splitBoxExample({ id, title, first, second, splitSecond = false }) {
+  const cols = placeParts(first), rows = splitSecond ? placeParts(second) : [second];
+  const cells = rows.map((r) => cols.map((c) => c * r)), all = cells.flat(), total = all.reduce((a, b) => a + b, 0);
+  if (total !== first * second) throw new Error(`${id}: 칸의 합이 곱과 다름`);
+  const fig = (tone, show) => ({ kind: "split-box", first, second, cols, rows, cells: show ? cells : null, total: show === "total" ? total : null, tone });
+  const steps = [
+    { text: `${josa(first, "을")} ${partsText(cols)} 나눠 칸을 만들어요.`, figure: fig("doing", null) },
+    ...(splitSecond ? [{ text: `곱하는 수 ${second}도 ${partsText(rows)} 나눠 줄을 만들어요.`, figure: fig("doing", null) }] : []),
+    { text: `칸마다 곱해요. ${rows.flatMap((r) => cols.map((c) => `${c} × ${r} = ${c * r}`)).join(", ")}.`, figure: fig("doing", "cells") },
+    { text: `칸을 모두 더하면 ${all.join(" + ")} = ${josa(total, "이에요")}.`, figure: fig("check", "total") }
+  ];
+  return { id, title, problem: `${first} × ${josa(second, "을")} 칸으로 나누어 계산해요.`, figure: fig("given", null), steps, answer: `${first} × ${second} = ${josa(total, "이에요")}.`, value: { first, second, total, cols, rows } };
+}
+const SPLIT_SET = {
+  id: "split-box",
+  types: {
+    "(두 자리 수) × (한 자리 수)": () => [splitBoxExample({ id: "split-1x-1", title: "예제 1", first: 26, second: 4 }), splitBoxExample({ id: "split-1x-2", title: "예제 2", first: 57, second: 8 })],
+    "(두 자리 수) × (몇십)": () => [splitBoxExample({ id: "split-10x-1", title: "예제 1", first: 36, second: 40 }), splitBoxExample({ id: "split-10x-2", title: "예제 2", first: 65, second: 20 })],
+    "곱하는 수도 나누어 곱하기": () => [splitBoxExample({ id: "split-2x-1", title: "예제 1", first: 34, second: 52, splitSecond: true }), splitBoxExample({ id: "split-2x-2", title: "예제 2", first: 48, second: 73, splitSecond: true })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

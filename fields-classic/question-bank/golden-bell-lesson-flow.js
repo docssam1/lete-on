@@ -51,7 +51,8 @@ export const LESSON_FLOWS = Object.freeze({
   "book-06/number-and-digit-count": { examples: "digits", game: "drill" },
   "book-06/digit-sign-source": { examples: "digits", game: "drill" },
   "book-08/reverse-operation-chain": { examples: "reverse", game: "drill" },
-  "book-08/give-same-source": { examples: "reverse", game: "drill" }
+  "book-08/give-same-source": { examples: "reverse", game: "drill" },
+  "book-10/napier-split-source": { examples: "split-box", game: "drill" }
 });
 export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방" });
 const STEPS = [["tutorial", "개념 설명"], ["examples", "유형별 예제"], ["game", "게임"]];

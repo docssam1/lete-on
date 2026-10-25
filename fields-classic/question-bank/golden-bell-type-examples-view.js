@@ -435,8 +435,18 @@ function giveTableFigure(f) {
   return `<div class="tx-give" style="--tone:${color}"><table><thead><tr><th></th>${head}</tr></thead><tbody>${moves}${row("A")}${row("B")}</tbody></table></div>`;
 }
 
+// ───── 곱셈을 칸으로 나누어 계산: 위에 곱해지는 수의 몇십·몇, 왼쪽에 곱하는 수(나누면 몇십·몇), 칸에 곱 ─────
+function splitBoxFigure(f) {
+  const color = TONE[f.tone || "given"];
+  const head = `<tr><th class="corner">×</th>${f.cols.map((c) => `<th>${esc(c)}</th>`).join("")}</tr>`;
+  const body = f.rows.map((r, i) => `<tr><th>${esc(r)}</th>${f.cols.map((c, j) => `<td class="${f.cells ? "on" : ""}">${f.cells ? esc(f.cells[i][j]) : ""}</td>`).join("")}</tr>`).join("");
+  const total = f.total !== null && f.total !== undefined ? `<p class="tx-split-total">합 ${esc(f.total)}</p>` : "";
+  return `<div class="tx-split" style="--tone:${color}"><p class="tx-split-q">${esc(f.first)} × ${esc(f.second)}</p><table role="img" aria-label="${esc(`${f.first} × ${f.second}를 칸으로 나눈 표`)}">${head}${body}</table>${total}</div>`;
+}
+
 export function figureMarkup(figure) {
   if (!figure) return "";
+  if (figure.kind === "split-box") return splitBoxFigure(figure);
   if (figure.kind === "op-chain") return opChainFigure(figure);
   if (figure.kind === "give-table") return giveTableFigure(figure);
   if (figure.kind === "digit-groups") return digitGroupsFigure(figure);

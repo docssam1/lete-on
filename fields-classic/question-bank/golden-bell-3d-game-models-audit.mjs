@@ -494,6 +494,18 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       const nums = (t) => (t.match(/\d+/gu) || []).map(Number);
       for (const item of lesson.original.items) assert.notEqual(nums(ex.problem).join(), nums(item.prompt).join(), `${ex.id}: 원본과 같은 수`);
     }
+  } else if (setId === "split-box") {
+    // 나눈 칸이 자릿값 그대로인지, 칸마다의 곱을 모두 더하면 곱과 같은지, 원본과 같은 곱셈이 아닌지
+    const f = ex.steps.at(-1).figure;
+    assert.equal(f.cols.reduce((a, b) => a + b, 0), v.first, `${ex.id}: 곱해지는 수를 나눔`);
+    assert.equal(f.rows.reduce((a, b) => a + b, 0), v.second, `${ex.id}: 곱하는 수를 나눔`);
+    assert.ok(f.cols.every((c) => String(c).replace(/0+$/u, "").length === 1), `${ex.id}: 몇십·몇으로`);
+    assert.equal(f.cells.flat().reduce((a, b) => a + b, 0), v.first * v.second, `${ex.id}: 칸의 합 = 곱`);
+    assert.equal(v.total, v.first * v.second, `${ex.id}: 답`);
+    if (/몇십/u.test(typeLabel)) assert.ok(v.second % 10 === 0 && v.second < 100, `${ex.id}: 몇십`);
+    if (/한 자리/u.test(typeLabel)) assert.ok(v.second < 10, `${ex.id}: 한 자리`);
+    if (/곱하는 수도/u.test(typeLabel)) assert.ok(f.rows.length > 1, `${ex.id}: 곱하는 수도 나눔`);
+    for (const item of lesson.original.items) assert.ok(!(item.visual?.first === v.first && item.visual?.second === v.second), `${ex.id}: 원본과 같은 곱셈`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);
