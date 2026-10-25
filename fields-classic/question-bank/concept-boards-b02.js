@@ -2,7 +2,7 @@
 // 판서의 수는 골든벨 2권 문항(가르기 2·4·6…84·200, 주고받기 10/4·15/7·22/6…, 합차 10/2·13/3·15/3·17/3·22/6·24/10 등)과
 // 겹치지 않게 골랐다. 겹치면 공개 판서가 비공개 정답을 보여 주게 된다.
 
-import { jo } from "./concept-board-kit.js?v=20261025b";
+import { jo } from "./concept-board-kit.js?v=20261025c";
 
 // 말에서 개수는 우리말로 읽는다(「3번」을 「삼 번」으로 읽지 않게)
 const KO = { 1: "한", 2: "두", 3: "세", 4: "네", 5: "다섯", 6: "여섯", 7: "일곱", 8: "여덟", 9: "아홉", 10: "열" };
@@ -11,6 +11,50 @@ const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });
 const half = (n) => n / 2;
 // 두 수를 십 묶음과 낱개로 나눠 반씩 — 「32의 반 = 30의 반 15 + 2의 반 1」
 const tensOnes = (n) => [Math.floor(n / 10) * 10, n % 10];
+
+// 3·4·5의 배수 판서 틀 — 묶음은 주사위 눈 모양(3: 대각선, 4: 네 모서리, 5: 모서리 + 가운데)
+const DICE = { 3: [[0, 0], [1, 1], [2, 2]], 4: [[0, 0], [2, 0], [0, 2], [2, 2]], 5: [[0, 0], [2, 0], [1, 1], [0, 2], [2, 2]] };
+const KO_BUNDLE = { 1: "한", 2: "두", 3: "세", 4: "네", 5: "다섯", 6: "여섯", 7: "일곱", 8: "여덟", 9: "아홉", 10: "열", 12: "열두", 13: "열세" };
+function multiplesBoard(base, M) {
+  const BW = 46, GAP = 54, step = 13;
+  const groups = (x0, y0, n, color) => Array.from({ length: n }, (_, i) => { const x = x0 + i * GAP;
+    return [{ kind: "box", x, y: y0, w: BW, h: BW, color }, ...DICE[base].map(([c, r]) => ({ kind: "shape", type: "circle", cx: x + 10 + c * step, cy: y0 + 10 + r * step, r: 5.5, color, fill: color, quick: true }))]; }).flat();
+  const g = M.terms.map((v) => v / base), gt = g.reduce((a, b) => a + b, 0), tot = M.terms.reduce((a, b) => a + b, 0);
+  const colors = ["blue", "green", "gold"], RX = 610;
+  let x = 80; const starts = g.map((n) => { const at = x; x += n * GAP + 22; return at; });
+  const skip = (n) => Array.from({ length: n }, (_, i) => base * (i + 1)).join(", ");
+  const [b1, b2] = M.big, [s1, s2] = M.sub;
+  const chk = (M.check[0] + M.check[1]) / base;
+  return {
+    title: `${base}의 배수로 식을 바꿔요`,
+    kicker: "2권 4단원 · 손글씨 개념",
+    beats: [
+      { say: `이번엔 ${base}개씩 묶어요. 주사위 눈처럼 점 ${KO[base]} 개를 한 묶음으로 그려요. ${base} 곱하기 몇은 ${jo(base, "가")} 몇 묶음인지를 뜻해요.`,
+        items: [title(`${base}개씩 묶어 세요`), ...groups(80, 120, 1, "gray"), T(150, 152, `${base}개 = 한 묶음`, "gray", 26)] },
+      { say: `이 식을 풀어 볼게요. ${jo(M.terms.join(" 더하기 "), "는")}, ${base} 곱하기 몇과 같을까요?`,
+        items: [T(70, 245, `${M.terms.join(" + ")} = ${base} × □`, "ink", 38)] },
+      ...M.terms.map((v, i) => ({ say: `${jo(v, "은")} ${jo(base, "가")} 몇 묶음일까요? ${skip(g[i])}. ${KO_BUNDLE[g[i]]} 묶음이에요.`,
+        items: [...groups(starts[i], 290, g[i], colors[i]), T(starts[i] + (g[i] * GAP - 8) / 2, 372, `${g[i]}묶음`, colors[i], 24, "center")] })),
+      { say: `모두 몇 묶음일까요? ${jo(g.join(" 더하기 "), "은")} ${gt}. 그러니까 네모는 ${jo(gt, "이에요")}.`,
+        items: [T(RX, 245, `${g.join(" + ")} = ${gt}묶음 → □ = ${gt}`, "green", 28)] },
+      { say: `확인해요. ${jo(base, "가")} ${KO_BUNDLE[gt]} 묶음이면 ${skip(gt)}. 처음 식 ${M.terms.join(" 더하기 ")}도 ${jo(tot, "이에요")}. 같아요.`,
+        items: [T(RX, 300, `${base} × ${gt} = ${tot} ✓`, "green", 28)] },
+      { say: `큰 수도 묶음으로 바꿔요. ${jo(b1, "은")} ${jo(base, "가")} ${KO_BUNDLE[b1 / base]} 묶음이에요. ${base}씩 열 번 세면 ${jo(b1, "이")}니까요. ${jo(b2, "는")} ${KO_BUNDLE[b2 / base]} 묶음. 그래서 ${b1} 더하기 ${jo(b2, "는")} ${jo(base, "가")} ${(b1 + b2) / base}묶음.`,
+        items: [T(70, 440, `${b1} + ${b2} = ${base} × (${b1 / base} + ${b2 / base}) = ${base} × ${(b1 + b2) / base}`, "blue", 28)] },
+      { say: `빼기도 묶음끼리 빼요. ${s1} 빼기 ${jo(s2, "는")} ${KO_BUNDLE[s1 / base]} 묶음에서 ${KO_BUNDLE[s2 / base]} 묶음을 빼서 ${KO_BUNDLE[(s1 - s2) / base]} 묶음. ${base} 곱하기 ${jo((s1 - s2) / base, "는")} ${s1 - s2}, ${s1} 빼기 ${s2}도 ${jo(s1 - s2, "이에요")}.`,
+        items: [T(70, 490, `${s1} − ${s2} = ${base} × (${s1 / base} − ${s2 / base}) = ${base} × ${(s1 - s2) / base}`, "blue", 28)] },
+      ...(M.extra ? [M.extra] : []),
+      { say: `정리해요. 수마다 ${jo(base, "가")} 몇 묶음인지 바꿔요. 묶음 수끼리 더하거나 빼요. 마지막에 처음 식을 계산해서 같은지 확인해요.`, mood: "praise",
+        items: [T(70, 560, `수마다 ${jo(base, "가")} 몇 묶음?`, "gold", 30)] },
+      { say: `한 문제 풀어 봐요. ${M.check[0]} 더하기 ${jo(M.check[1], "는")} ${base} 곱하기 몇일까요?`, mood: "think",
+        items: [],
+        check: { question: `${M.check[0]} + ${M.check[1]} = ${base} × □에서 □는 얼마일까요?`,
+          options: [String(chk - 1), String(chk), String(M.check[0] + M.check[1])], answer: 1,
+          hint: `두 수가 각각 ${jo(base, "가")} 몇 묶음인지 세어 더해요.`, sayHint: `${jo(M.check[0], "은")} ${jo(base, "가")} ${KO_BUNDLE[M.check[0] / base]} 묶음이에요. ${jo(M.check[1], "은")} 몇 묶음일까요?`,
+          right: `맞았어요! ${M.check[0] / base}묶음 + ${M.check[1] / base}묶음 = ${chk}묶음.`, sayRight: `맞았어요! ${KO_BUNDLE[M.check[0] / base]} 묶음과 ${KO_BUNDLE[M.check[1] / base]} 묶음, 모두 ${KO_BUNDLE[chk]} 묶음이에요. 이제 게임으로 가요.` } }
+    ]
+  };
+}
 
 export const BOARDS_B02 = {
   "book-02/number-splitting": (() => {
@@ -554,6 +598,160 @@ export const BOARDS_B02 = {
             options: [String(chkV - CHK.d), String(chkV), String(chkV + CHK.d)], answer: 1,
             hint: "몇 개씩 늘었는지 보고, 네 번째 다음부터 이어 가요.", sayHint: `${CHK.d}개씩 늘어요. 네 번째가 ${CHK.first + CHK.d * 3}개면, 다섯째와 여섯째는요?`,
             right: `맞았어요! ${CHK.first + CHK.d * 3} → ${CHK.first + CHK.d * 4} → ${chkV}.`, sayRight: `맞았어요! ${CHK.d}개씩 늘어서 ${CHK.first + CHK.d * 4}, 그다음 ${jo(chkV, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+  ,"book-02/multiples-3": multiplesBoard(3, { terms: [9, 6, 3], big: [30, 9], sub: [15, 6], check: [12, 15] })
+  ,"book-02/multiples-4": multiplesBoard(4, { terms: [8, 12, 4], big: [40, 8], sub: [20, 8], check: [16, 12],
+      extra: { say: "2짜리 두 묶음을 합치면 4짜리 한 묶음이 돼요. 그래서 2가 여덟 묶음인 16은, 4가 네 묶음이기도 해요. 묶음이 두 배로 커지면 묶음 수는 반이 돼요.",
+        items: [T(610, 360, "2 × 8 = 16 = 4 × 4", "gold", 28)] } })
+  ,"book-02/multiples-5": multiplesBoard(5, { terms: [15, 20, 5], big: [50, 10], sub: [25, 10], check: [20, 15],
+      extra: { say: "5짜리 두 묶음은 10이에요. 그래서 5가 여섯 묶음인 30은, 10이 세 묶음이기도 해요. 5 곱하기 6은 10 곱하기 3과 같아요.",
+        items: [T(610, 360, "5 × 6 = 30 = 10 × 3", "gold", 28)] } })
+
+  ,"book-02/diamond-number-promise": (() => {
+    // 약속: 위 = 왼쪽 + 오른쪽 − 아래 (골든벨 원문과 다른 약속)
+    const rule = ({ L, R, B }) => L + R - B;
+    const EX = [{ L: 4, R: 7, B: 2 }, { L: 6, R: 5, B: 3 }, { L: 8, R: 6, B: 4 }].map((e) => ({ ...e, T: rule(e) }));
+    const Q = { L: 7, R: 9, B: 5 }, qT = rule(Q);
+    const INV = { T: 12, L: 5, B: 3 }, invR = INV.T + INV.B - INV.L;
+    const D = 58, r = 23;
+    const diamond = (cx, cy, v, color = "blue", big = 1) => { const d = D * big, rr = r * big, pts = { T: [cx, cy - d], L: [cx - d, cy], R: [cx + d, cy], B: [cx, cy + d] }, out = [];
+      out.push({ kind: "path", d: `M ${cx} ${cy - d + rr} L ${cx + d - rr} ${cy} L ${cx} ${cy + d - rr} L ${cx - d + rr} ${cy} Z`, stroke: "gray", width: 2, quick: true });
+      for (const k of ["T", "L", "R", "B"]) out.push({ kind: "node", cx: pts[k][0], cy: pts[k][1], r: rr, value: v[k] ?? "?", color: v[k] == null ? "red" : color, size: Math.round(26 * big) });
+      return out; };
+    const CX = [130, 320, 510], CY = 225;
+    const CHK = { L: 9, R: 4, B: 6 }, chkT = rule(CHK);
+    return {
+      title: "네 수의 약속을 찾아요",
+      kicker: "2권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "네 수가 마름모 모양으로 놓여 있어요. 다 채워진 그림에서 네 수 사이의 약속을 찾고, 같은 약속으로 빈칸을 채워요.",
+          items: [title("네 수의 약속")] },
+        { say: `다 채워진 그림 세 개를 그려요. 첫째 그림은 위 ${EX[0].T}, 왼쪽 ${EX[0].L}, 오른쪽 ${EX[0].R}, 아래 ${jo(EX[0].B, "예요")}.`,
+          items: diamond(CX[0], CY, EX[0]) },
+        { say: "둘째, 셋째 그림도 그려요. 세 그림은 모두 같은 약속을 지켜요.",
+          items: [...diamond(CX[1], CY, EX[1]), ...diamond(CX[2], CY, EX[2])] },
+        { say: `약속을 하나씩 짐작해 봐요. 먼저, 위를 빼고 세 수를 다 더하면 위가 될까요? ${EX[0].L} 더하기 ${EX[0].R} 더하기 ${jo(EX[0].B, "는")} ${EX[0].L + EX[0].R + EX[0].B}. 위의 ${jo(EX[0].T, "가")} 아니에요.`,
+          items: [T(70, 370, `${EX[0].L} + ${EX[0].R} + ${EX[0].B} = ${EX[0].L + EX[0].R + EX[0].B} ≠ ${EX[0].T}`, "red", 28), { kind: "x", cx: 400, cy: 360, r: 14, color: "red" }] },
+        { say: `다른 짐작을 해 봐요. 왼쪽과 오른쪽만 더하면 ${EX[0].L} 더하기 ${jo(EX[0].R, "은")} ${EX[0].L + EX[0].R}. 위의 ${EX[0].T}보다 ${EX[0].L + EX[0].R - EX[0].T} 커요. 그런데 아래 수가 ${jo(EX[0].B, "예요")}. 아래 수만큼 빼면 위가 돼요.`,
+          items: [T(70, 420, `${EX[0].L} + ${EX[0].R} − ${EX[0].B} = ${EX[0].T}`, "green", 30)] },
+        { say: `약속이 맞는지 다른 그림에서도 확인해요. 둘째, ${EX[1].L} 더하기 ${jo(EX[1].R, "는")} ${EX[1].L + EX[1].R}, 빼기 ${jo(EX[1].B, "은")} ${jo(EX[1].T, "이에요")}. 셋째, ${EX[2].L} 더하기 ${jo(EX[2].R, "은")} ${EX[2].L + EX[2].R}, 빼기 ${jo(EX[2].B, "는")} ${EX[2].T}. 세 그림 모두 맞아요.`,
+          items: [T(70, 465, `${EX[1].L}+${EX[1].R}−${EX[1].B}=${EX[1].T} ✓   ${EX[2].L}+${EX[2].R}−${EX[2].B}=${EX[2].T} ✓`, "green", 26)] },
+        { say: "약속을 말로 써 둬요. 왼쪽과 오른쪽을 더하고, 아래를 빼면 위.",
+          items: [{ kind: "box", x: 60, y: 495, w: 470, h: 56, color: "gold" }, T(75, 533, "약속: 왼쪽 + 오른쪽 − 아래 = 위", "gold", 28)] },
+        { say: `이제 빈칸이 있는 그림이에요. 왼쪽 ${Q.L}, 오른쪽 ${Q.R}, 아래 ${jo(Q.B, "예요")}. 위는 얼마일까요?`,
+          items: diamond(800, 225, { L: Q.L, R: Q.R, B: Q.B }, "blue", 1.2) },
+        { say: `약속대로 해요. ${Q.L} 더하기 ${jo(Q.R, "는")} ${Q.L + Q.R}, 빼기 ${jo(Q.B, "는")} ${jo(qT, "이에요")}.`,
+          items: [{ kind: "fill", x: 800 - 26, y: 225 - D * 1.2 - 26, w: 52, h: 52, fill: "#fffdf7" }, { kind: "node", cx: 800, cy: 225 - D * 1.2, r: r * 1.2, value: qT, color: "green", size: 31 }, T(640, 370, `${Q.L} + ${Q.R} − ${Q.B} = ${qT}`, "green", 30)] },
+        { say: `빈칸이 다른 자리에 있을 때도 있어요. 위 ${INV.T}, 왼쪽 ${INV.L}, 아래 ${jo(INV.B, "이고")} 오른쪽이 비었어요. 약속을 거꾸로 생각해요. 왼쪽 더하기 오른쪽에서 ${jo(INV.B, "을")} 빼면 ${jo(INV.T, "니까")}, 왼쪽 더하기 오른쪽은 ${INV.T} 더하기 ${INV.B}, ${jo(INV.T + INV.B, "예요")}.`,
+          items: [T(640, 430, `${INV.L} + ? = ${INV.T} + ${INV.B} = ${INV.T + INV.B}`, "blue", 28)] },
+        { say: `${INV.L} 더하기 몇이 ${INV.T + INV.B}일까요? ${INV.T + INV.B} 빼기 ${jo(INV.L, "는")} ${invR}. 오른쪽은 ${jo(invR, "이에요")}.`,
+          items: [T(640, 480, `? = ${INV.T + INV.B} − ${INV.L} = ${invR}`, "green", 28)] },
+        { say: "정리해요. 다 채워진 그림에서 약속을 짐작하고, 모든 그림에서 맞는지 확인해요. 빈칸이 위가 아니면 약속을 거꾸로 계산해요.", mood: "praise",
+          items: [T(640, 545, "짐작 → 모든 그림 확인!", "gold", 30)] },
+        { say: `한 문제 풀어 봐요. 같은 약속이에요. 왼쪽 ${CHK.L}, 오른쪽 ${CHK.R}, 아래 ${jo(CHK.B, "이에요")}. 위는 얼마일까요?`, mood: "think",
+          items: [],
+          check: { question: `약속: 왼쪽 + 오른쪽 − 아래 = 위. 왼쪽 ${CHK.L}, 오른쪽 ${CHK.R}, 아래 ${CHK.B}일 때 위는?`,
+            options: [String(CHK.L + CHK.R + CHK.B), String(chkT), String(CHK.L + CHK.R)], answer: 1,
+            hint: "왼쪽과 오른쪽을 더한 뒤 아래를 빼요.", sayHint: `${CHK.L} 더하기 ${jo(CHK.R, "는")} ${jo(CHK.L + CHK.R, "이에요")}. 거기서 ${jo(CHK.B, "을")} 빼면요?`,
+            right: `맞았어요! ${CHK.L} + ${CHK.R} − ${CHK.B} = ${chkT}.`, sayRight: `맞았어요! ${CHK.L + CHK.R} 빼기 ${jo(CHK.B, "은")} ${jo(chkT, "이에요")}. 이제 게임으로 가요.` } }
+      ]
+    };
+  })()
+
+  ,"book-02/sudoku": (() => {
+    const SOL = [[1, 2, 3, 4], [3, 4, 1, 2], [2, 1, 4, 3], [4, 3, 2, 1]];
+    const GIVEN = [[1, 0, 3, 4], [0, 4, 0, 0], [2, 0, 0, 3], [0, 3, 2, 0]];
+    const X0 = 110, Y0 = 150, S = 80;
+    const cell = (r, c, v, color) => ({ kind: "num", cx: X0 + (c + 0.5) * S, cy: Y0 + (r + 0.5) * S, value: v, color, size: 42 });
+    const bold = [{ kind: "line", x1: X0 + 2 * S, y1: Y0, x2: X0 + 2 * S, y2: Y0 + 4 * S, color: "ink", width: 6 }, { kind: "line", x1: X0, y1: Y0 + 2 * S, x2: X0 + 4 * S, y2: Y0 + 2 * S, color: "ink", width: 6 }];
+    // 보는 줄 표시는 판 바깥의 작은 화살표로(판 안에 테두리를 쌓으면 다 채운 판이 어지러워진다)
+    const hl = (kind, i) => kind === "row" ? { kind: "arrow", x1: X0 - 46, y1: Y0 + (i + 0.5) * S, x2: X0 - 12, y2: Y0 + (i + 0.5) * S, color: "gold", width: 3 }
+      : kind === "col" ? { kind: "arrow", x1: X0 + (i + 0.5) * S, y1: Y0 - 40, x2: X0 + (i + 0.5) * S, y2: Y0 - 10, color: "gold", width: 3 }
+      : { kind: "box", x: X0 + (i % 2) * 2 * S - 4, y: Y0 + Math.floor(i / 2) * 2 * S - 4, w: 2 * S + 8, h: 2 * S + 8, color: "gold", dash: true };
+    const RX = 500, line = (y, text, color = "blue", size = 26) => T(RX, y, text, color, size);
+    // 채우는 차례: [r, c, 어디를 보나, 말]
+    const steps = [
+      [0, 1, ["row", 0], "첫째 가로줄은 1, 빈칸, 3, 4. 빈칸이 하나뿐이에요. 1부터 4 가운데 빠진 수는 2. 2를 써요."],
+      [1, 0, ["box", 0], "왼쪽 위 굵은 네모를 봐요. 1, 2, 4가 있어요. 빈칸 하나에 빠진 3을 써요."],
+      [3, 0, ["col", 0], "첫째 세로줄은 1, 3, 2, 빈칸. 빠진 수는 4예요."],
+      [3, 3, ["row", 3], "넷째 가로줄은 4, 3, 2, 빈칸. 빠진 수는 1이에요."],
+      [1, 3, ["col", 3], "넷째 세로줄은 4, 빈칸, 3, 1. 빠진 수는 2예요."],
+      [1, 2, ["row", 1], "둘째 가로줄은 3, 4, 빈칸, 2. 빠진 수는 1이에요."],
+      [2, 1, ["col", 1], "둘째 세로줄은 2, 4, 빈칸, 3. 빠진 수는 1이에요."],
+      [2, 2, ["row", 2], "셋째 가로줄은 2, 1, 빈칸, 3. 마지막 빈칸은 4예요."]
+    ];
+    const lineY = (i) => 150 + i * 44;
+    const CHK = { row: [2, null, null, 1], col3: true };
+    return {
+      title: "가로와 세로에서 빠진 수를 찾아요",
+      kicker: "2권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "스도쿠는 가로줄, 세로줄, 굵은 선으로 나눈 네모 안에 1부터 4까지가 한 번씩만 들어가는 퍼즐이에요.",
+          items: [title("스도쿠")] },
+        { say: "네 칸씩 네 줄의 판을 그려요. 굵은 선으로 판을 네 개의 작은 네모로 나눠요.",
+          items: [{ kind: "grid", x: X0, y: Y0, cols: 4, rows: 4, cell: S, color: "ink" }, ...bold] },
+        { say: "처음부터 있는 수를 써요. 이 수들은 바꾸지 않아요.",
+          items: GIVEN.flatMap((row, r) => row.map((v, c) => (v ? cell(r, c, v, "ink") : null)).filter(Boolean)) },
+        { say: "어디부터 채울까요? 빈칸이 하나뿐인 줄이나 네모부터 찾아요. 하나만 비어 있으면 빠진 수가 바로 보여요.",
+          items: [line(lineY(0) - 10, "빈칸이 하나뿐인 곳부터!", "gold", 28)] },
+        ...steps.map(([r, c, [kind, i], say], k) => ({ say,
+          items: [hl(kind, i), cell(r, c, SOL[r][c], "green"), line(lineY(k + 1), `${kind === "row" ? `${i + 1}번째 가로줄` : kind === "col" ? `${i + 1}번째 세로줄` : "굵은 네모"} → ${SOL[r][c]}`, "green", 24)] })),
+        { say: "다 채웠어요. 가로줄 네 개, 세로줄 네 개, 굵은 네모 네 개에 1, 2, 3, 4가 한 번씩 들어 있는지 확인해요. 모두 맞아요.",
+          items: [line(lineY(9) + 4, "가로·세로·굵은 네모 모두 1~4 ✓", "green", 26)] },
+        { say: "정리해요. 빈칸이 하나뿐인 줄이나 네모부터 채워요. 한 칸을 채우면 그 칸이 들어 있는 줄이 달라지니, 다시 빈칸이 하나뿐인 곳을 찾아요.", mood: "praise",
+          items: [] },
+        { say: "한 문제 풀어 봐요. 어떤 가로줄이 2, 가, 나, 1이에요. 가가 있는 세로줄에는 이미 3이 있어요. 가는 무엇일까요?", mood: "think",
+          items: [],
+          check: { question: "가로줄이 2, (가), (나), 1이에요. (가)가 있는 세로줄에 3이 이미 있어요. (가)는?",
+            options: ["3", "4", "2"], answer: 1,
+            hint: "가로줄에 빠진 수는 3과 4예요. 세로줄에 3이 있으면?", sayHint: "가로줄에는 2와 1이 있으니 빠진 수는 3과 4예요. 가의 세로줄에 이미 3이 있으니, 가에는 3을 쓸 수 없어요.",
+            right: "맞았어요! (가)는 4, (나)는 3이에요.", sayRight: "맞았어요! 가는 4, 나는 남은 3이에요. 이제 게임으로 가요." } }
+      ]
+    };
+  })()
+
+  ,"book-02/fractions-and-folds": (() => {
+    const PX = 80, PY = 140, PS = 170;
+    const part = (x, y, w, h, fill) => ({ kind: "fill", x, y, w, h, fill, rx: 0 });
+    const QX = 330, QW = 240, QH = 120, QY = 150;   // 4조각 막대
+    const FX = 640, FY = 140, FS = 120;
+    const CHK = { n: 5, k: 2 };
+    return {
+      title: "같은 조각의 분수와 접은 횟수를 알아요",
+      kicker: "2권 4단원 · 손글씨 개념",
+      beats: [
+        { say: "전체를 같은 크기의 조각으로 나눈 뒤, 그중 몇 조각인지 나타내는 수를 분수라고 해요. 같은 크기라는 게 가장 중요해요.",
+          items: [title("같은 크기 조각과 분수")] },
+        { say: "색종이 한 장이에요. 아직 접지 않은 온전한 한 장을 전체라고 해요.",
+          items: [{ kind: "box", x: PX, y: PY, w: PS, h: PS, color: "ink" }, T(PX + PS / 2, PY + PS + 34, "전체 1", "ink", 26, "center")] },
+        { say: "반으로 한 번 접었다 펴요. 접은 선을 따라 같은 크기 두 조각이 생겨요. 한 조각은 전체의 2분의 1이에요.",
+          items: [{ kind: "line", x1: PX + PS / 2, y1: PY, x2: PX + PS / 2, y2: PY + PS, color: "red", width: 3, dash: true }, part(PX + 4, PY + 4, PS / 2 - 8, PS - 8, "#e9f0e7"), T(PX + PS / 4, PY + PS / 2 + 10, "1/2", "green", 30, "center")] },
+        { say: "분수를 읽는 법이에요. 아래 수는 전체를 몇 조각으로 나눴는지, 위 수는 그중 몇 조각인지예요. 2분의 1은, 두 조각 가운데 한 조각.",
+          items: [T(PX, PY + PS + 80, "1 ← 고른 조각 수", "green", 24), T(PX, PY + PS + 112, "─", "ink", 24), T(PX, PY + PS + 144, "2 ← 전체 조각 수", "blue", 24)] },
+        { say: "이번엔 막대를 같은 크기 네 조각으로 나눠요. 그중 세 조각을 색칠해요.",
+          items: [{ kind: "box", x: QX, y: QY, w: QW, h: QH / 2, color: "ink" }, ...[1, 2, 3].map((i) => ({ kind: "line", x1: QX + i * QW / 4, y1: QY, x2: QX + i * QW / 4, y2: QY + QH / 2, color: "ink", width: 2.5 })), ...[0, 1, 2].map((i) => part(QX + i * QW / 4 + 4, QY + 4, QW / 4 - 8, QH / 2 - 8, "#cfe0f5"))] },
+        { say: "전체는 네 조각, 색칠한 것은 세 조각. 4분의 3이에요. 아래에 전체 조각 수 4, 위에 고른 조각 수 3.",
+          items: [T(QX + QW / 2, QY + QH / 2 + 46, "3/4", "blue", 34, "center")] },
+        { say: "조심할 것이 있어요. 조각의 크기가 다르면 분수로 말할 수 없어요. 이 막대는 세 조각이지만 크기가 달라서 3분의 1이라고 할 수 없어요.",
+          items: [{ kind: "box", x: QX, y: QY + 130, w: QW, h: QH / 2, color: "gray" }, { kind: "line", x1: QX + 40, y1: QY + 130, x2: QX + 40, y2: QY + 130 + QH / 2, color: "gray", width: 2.5 }, { kind: "line", x1: QX + 170, y1: QY + 130, x2: QX + 170, y2: QY + 130 + QH / 2, color: "gray", width: 2.5 }, { kind: "x", cx: QX + QW + 30, cy: QY + 130 + QH / 4, r: 14, color: "red" }, T(QX, QY + 230, "크기가 다르면 분수 ✗", "red", 24)] },
+        { say: "다시 색종이로 돌아가요. 접을 때마다 조각이 어떻게 늘어나는지 봐요. 한 번 접으면 두 조각.",
+          items: [{ kind: "box", x: FX, y: FY, w: FS, h: FS, color: "ink" }, { kind: "line", x1: FX + FS / 2, y1: FY, x2: FX + FS / 2, y2: FY + FS, color: "red", width: 2.5, dash: true }, T(FX + FS + 20, FY + 40, "1번 → 2조각, 1/2", "blue", 24)] },
+        { say: "두 번 접으면, 두 조각이 각각 반으로 나뉘어 네 조각. 한 조각은 4분의 1.",
+          items: [{ kind: "line", x1: FX, y1: FY + FS / 2, x2: FX + FS, y2: FY + FS / 2, color: "red", width: 2.5, dash: true }, T(FX + FS + 20, FY + 80, "2번 → 4조각, 1/4", "blue", 24)] },
+        { say: "세 번 접으면 네 조각이 또 반씩, 여덟 조각. 한 조각은 8분의 1. 네 번 접으면 열여섯 조각, 16분의 1이에요.",
+          items: [{ kind: "line", x1: FX + FS / 4, y1: FY, x2: FX + FS / 4, y2: FY + FS, color: "gold", width: 2, dash: true }, { kind: "line", x1: FX + FS * 3 / 4, y1: FY, x2: FX + FS * 3 / 4, y2: FY + FS, color: "gold", width: 2, dash: true }, T(FX + FS + 20, FY + 120, "3번 → 8조각, 1/8", "blue", 24), T(FX + FS + 20, FY + 160, "4번 → 16조각", "blue", 24)] },
+        { say: "한 번 접을 때마다 조각 수가 두 배가 돼요. 2, 4, 8, 16. 그래서 한 조각은 점점 작아져요.",
+          items: [T(FX, FY + FS + 120, "2 → 4 → 8 → 16  (두 배씩)", "gold", 26)] },
+        { say: "정리해요. 먼저 모든 조각의 크기가 같은지 봐요. 전체 조각 수를 아래에, 고른 조각 수를 위에 써요. 접을 때마다 조각 수는 두 배가 돼요.", mood: "praise",
+          items: [] },
+        { say: `한 문제 풀어 봐요. 전체를 같은 크기 다섯 조각으로 나누고 두 조각을 색칠했어요. 분수로 무엇일까요?`, mood: "think",
+          items: [],
+          check: { question: "같은 크기 5조각 중 2조각을 색칠했어요. 분수로 나타내면?",
+            options: [`${CHK.k}/${CHK.n}`, `${CHK.n - CHK.k}/${CHK.n}`, `${CHK.n}/${CHK.k}`], answer: 0,
+            hint: "아래에는 전체 조각 수, 위에는 색칠한 조각 수예요.", sayHint: "전체는 다섯 조각이에요. 아래에 5. 색칠한 것은 몇 조각일까요?",
+            right: "맞았어요! 5분의 2, 2/5예요.", sayRight: "맞았어요! 전체 다섯 조각 가운데 두 조각, 5분의 2예요. 이제 게임으로 가요." } }
       ]
     };
   })()
