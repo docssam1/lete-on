@@ -219,6 +219,8 @@ async function solveMagic(page, vp, mode, tap3d) {
   await page.locator("[data-game-next]").click();
 }
 
+// 이 검사가 끝까지 풀 줄 아는 게임(나머지는 뜨는지만 본다)
+const SOLVED_GAMES = new Set(["turn-clock", "b2-balance", "b9-cubes", "b9-magic"]);
 async function playLevelOne(page, vp, gameId) {
   const isClock = gameId === "turn-clock";
   const root = page.locator(".gb-flow-game .cg");
@@ -331,6 +333,28 @@ try {
         assert.equal(await page.evaluate(() => localStorage.getItem("fields-classic-golden-bell:3D-QA")), before, `${name}: 게임·예제는 학습 기록을 바꾸지 않는다`);
         assert.deepEqual(errors, [], `${name}: 오류`);
         results.push(`${name} examples=${exampleCount} handsOn=${rounds.length}`);
+        console.log(`GOLDEN_BELL_3D_FLOW_OK ${results.at(-1)}`);
+        await page.close();
+        continue;
+      }
+      if (!SOLVED_GAMES.has(flow.game)) {
+        // 흐름 검사가 풀이를 모르는 게임(그 게임은 자기 검사기가 끝까지 푼다): 게임이 뜨고 그려지는지만 보고 「골든벨 문제 풀기」로 넘어간다
+        const game = page.locator(".gb-flow-game"), level = !HANDS_ON_ACTIVITIES[flow.game] || HANDS_ON_ACTIVITIES[flow.game].kind === "level-game";
+        if (level) {
+          await game.locator(".cg").waitFor();
+          await page.locator("[data-game-go]").first().click();
+          await game.locator("[data-game-controls]").first().waitFor();
+          // 3D 무대가 있는 게임만 그려졌는지 본다(2권 게임 몇은 평면)
+          if (await game.locator(".g3d").count()) { assert.equal(await game.locator(".g3d").first().getAttribute("data-renderer"), "webgl", `${name}: WebGL 무대`); const canvas = game.locator(".g3d-canvas").first(); await canvas.scrollIntoViewIfNeeded(); await canvasPainted(page, canvas, `${name} 게임`); }
+        } else await game.locator(".hand-scene").first().waitFor();
+        await noOverflow(page, `${name} 게임`);
+        await shot(page, `${name}-3-game`);
+        await page.locator('.gb-flow-actions [data-next-phase="original"]').click();
+        await page.waitForFunction(() => document.querySelector('#stageSteps [data-phase="original"]')?.classList.contains("active"));
+        assert.equal(await page.locator(".gb-flow-game").count(), 0, `${name}: 게임 화면이 정리됨`);
+        assert.equal(await page.evaluate(() => localStorage.getItem("fields-classic-golden-bell:3D-QA")), before, `${name}: 게임·예제는 학습 기록을 바꾸지 않는다`);
+        assert.deepEqual(errors, [], `${name}: 오류`);
+        results.push(`${name} examples=${exampleCount} game=mounted`);
         console.log(`GOLDEN_BELL_3D_FLOW_OK ${results.at(-1)}`);
         await page.close();
         continue;

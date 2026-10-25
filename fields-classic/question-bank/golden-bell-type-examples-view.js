@@ -713,6 +713,29 @@ function ringFigure(f) {
   return `<div class="tx-ring">${svg(C * 2, C * 2, body, `${n}각형 곱셈 고리`)}</div>`;
 }
 
+// line-board: 같은 합이 되어야 하는 줄(굵은 띠) 위의 자리. vals[i] = 수(빈 문자열이면 빈자리, "?"면 물음 칸), hi = 안내 색 자리
+function lineBoardFigure(f) {
+  const color = TONE[f.tone || "given"], hi = new Set(f.hi || []), k = 1.7, pad = 26, W = 100 * k + pad * 2;
+  const P = ([x, y]) => [pad + x * k, pad + y * k];
+  let body = "";
+  for (const ln of f.lines) body += `<polyline points="${ln.map((i) => P(f.pts[i]).join(",")).join(" ")}" fill="none" stroke="#eadfc8" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>`;
+  f.pts.forEach((pt, i) => {
+    const [x, y] = P(pt), v = f.vals[i], empty = v === "" || v === null || v === undefined, ask = v === "?", on = hi.has(i);
+    body += `<circle cx="${x}" cy="${y}" r="18" fill="${on ? color : empty || ask ? "#fff" : "#fff3c4"}" stroke="${on ? color : empty || ask ? "#8e5bd8" : "#f0a500"}" stroke-width="2.2"${(empty || ask) && !on ? ' stroke-dasharray="4 3"' : ""}/>`;
+    if (!empty) body += text(x, y, v, { size: 15, weight: 900, fill: on ? "#fff" : ask ? "#5b2fa8" : "#222" });
+  });
+  return `<div class="tx-line-board">${svg(W, W, body, `줄 ${f.lines.length}개가 만나는 숫자 판`)}</div>`;
+}
+// sudoku: n × n 칸(4×4는 굵은 선으로 네 칸 구역). cells = 수 또는 알파벳, filled = 채운 빈칸, hi = 방금 채운 칸
+function sudokuFigure(f) {
+  const color = TONE[f.tone || "given"], filled = new Set(f.filled || []), hi = new Set(f.hi || []);
+  const cells = f.cells.map((v, i) => {
+    const r = Math.floor(i / f.n), c = i % f.n, cls = [/^\d$/u.test(v) ? (filled.has(i) ? "got" : "") : "letter", f.n === 4 && c === 1 ? "br" : "", f.n === 4 && r === 1 ? "bb" : "", hi.has(i) ? "on" : ""].filter(Boolean).join(" ");
+    return `<span class="${cls}">${esc(v)}</span>`;
+  }).join("");
+  return `<div class="tx-sudoku" style="--tone:${color};--n:${f.n}" role="img" aria-label="${f.n}×${f.n} 스도쿠">${cells}</div>`;
+}
+
 // ───── 2권 수: 가르기 나무 · 단계 표 · 성냥개비 · 숫자 마름모 ─────
 function treeFigure(f) {
   const color = TONE[f.tone || "given"];
@@ -821,6 +844,8 @@ export function figureMarkup(figure) {
   if (figure.kind === "match-row") return matchRowFigure(figure);
   if (figure.kind === "diamonds") return diamondsFigure(figure);
   if (figure.kind === "mgrid") return mgridFigure(figure);
+  if (figure.kind === "line-board") return lineBoardFigure(figure);
+  if (figure.kind === "sudoku") return sudokuFigure(figure);
   if (figure.kind === "ring") return ringFigure(figure);
   if (figure.kind === "crypt") return cryptFigure(figure);
   if (figure.kind === "slots") return slotsFigure(figure);

@@ -1,5 +1,5 @@
-import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028n";
-import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261028n";
+import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028o";
+import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261028o";
 
 // 개념 단계 안의 학습 순서: ① 개념 설명 → ② 유형별 예제 → ③ 게임 → (골든벨 문제).
 // 원장 지시: "개념마다 설명하는 튜토리얼, 문제 유형마다 예제 1~2개, 그다음 게임."
@@ -111,9 +111,14 @@ export const LESSON_FLOWS = Object.freeze({
   "book-01/equal-line-sums": { examples: "book1", game: "drill" },
   "book-01/gakuro-sum-grid": { examples: "book1", game: "drill" },
   "book-01/number-inference": { examples: "book1", game: "drill" },
-  "book-01/preference-logic": { examples: "logic", game: "drill" }
+  "book-01/preference-logic": { examples: "logic", game: "drill" },
+  "book-01/equal-line-placement": { examples: "book1", game: "cross-sums" },
+  "book-01/relative-order-running": { examples: "logic", game: "line-order" },
+  "book-02/addition-matrix": { examples: "matrix", game: "b2-matrix" },
+  "book-02/repeating-sequence": { examples: "book2", game: "b2-pattern" },
+  "book-02/sudoku": { examples: "book2", game: "b2-sudoku" }
 });
-export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방", "share-equally": "같아지도록 옮기기" });
+export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방", "share-equally": "같아지도록 옮기기", "cross-sums": "두 줄의 합 맞추기", "line-order": "조건대로 줄 세우기", "b2-matrix": "도형 값 찾기", "b2-pattern": "무늬 기차", "b2-sudoku": "빈칸 채우기" });
 const STEPS = [["tutorial", "개념 설명"], ["examples", "유형별 예제"], ["game", "게임"]];
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 

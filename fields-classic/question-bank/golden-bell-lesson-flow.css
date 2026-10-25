@@ -296,6 +296,15 @@
 .tx-route svg { max-width: 100%; height: auto; }
 .tx-analog, .tx-venn, .tx-bars, .tx-tape { display: grid; justify-items: center; max-width: 100%; }
 .tx-analog svg, .tx-venn svg, .tx-bars svg, .tx-tape svg { max-width: 100%; height: auto; }
+.tx-line-board { display: flex; justify-content: center; }
+.tx-line-board svg { width: min(100%, 222px); height: auto; }
+.tx-sudoku { display: grid; grid-template-columns: repeat(var(--n), 42px); width: max-content; margin: 0 auto; border: 3px solid #2b2b2b; border-radius: 4px; overflow: hidden; }
+.tx-sudoku span { display: flex; align-items: center; justify-content: center; height: 42px; border: 1px solid #c9c2b4; background: #fffdf7; font-size: 19px; font-weight: 900; color: #222; }
+.tx-sudoku span.letter { color: #5b2fa8; background: #f6f0ff; }
+.tx-sudoku span.got { color: var(--tone); background: #fff3c4; }
+.tx-sudoku span.br { border-right: 3px solid #2b2b2b; }
+.tx-sudoku span.bb { border-bottom: 3px solid #2b2b2b; }
+.tx-sudoku span.on { box-shadow: inset 0 0 0 3px var(--tone); }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

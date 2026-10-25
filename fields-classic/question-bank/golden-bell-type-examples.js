@@ -1767,7 +1767,7 @@ const RELATION_SET = {
 // ───────────────────────── 4권 논리: 순서 · 줄 세기 · 동서남북 · 원탁 · O/X 표 ─────────────────────────
 // 조건(clue)은 자료로 두고 문제 글도 그 자료로 만든다 — 검사기가 같은 자료로 모든 배치를 다 넣어 보아 답이 하나뿐인지 본다.
 // 원탁: 식탁 가운데를 보고 앉으면 내 왼쪽은 시계 바늘이 도는 쪽 옆자리(그림에서 자리 번호 + 1).
-const orderClueText = (c) => (c.t === "first" ? `${c.p} 앞에 달리는 사람은 없어요.` : c.t === "last" ? `${josa(c.p, "은")} 맨 뒤에서 달려요.` : c.t === "before" ? `${josa(c.a, "은")} ${c.b}보다 앞에서 달려요.` : c.t === "notLast" ? `${josa(c.p, "은")} 맨 뒤가 아니에요.` : `${josa(c.p, "은")} ${josa(c.a, "과")} ${c.b} 사이에서 달려요.`);
+const orderClueText = (c) => (c.t === "only" ? `${c.a}의 앞에는 ${c.b}만 있어요.` : c.t === "next" ? `${josa(c.b, "은")} ${c.a} 바로 뒤에서 달려요.` : c.t === "first" ? `${c.p} 앞에 달리는 사람은 없어요.` : c.t === "last" ? `${josa(c.p, "은")} 맨 뒤에서 달려요.` : c.t === "before" ? `${josa(c.a, "은")} ${c.b}보다 앞에서 달려요.` : c.t === "notLast" ? `${josa(c.p, "은")} 맨 뒤가 아니에요.` : `${josa(c.p, "은")} ${josa(c.a, "과")} ${c.b} 사이에서 달려요.`);
 function runOrderExample({ id, title, people, clues, plan, seq }) {
   const labels = people.map((_, i) => `${i + 1}등`);
   const steps = plan.map((p, i) => ({ text: p.text, figure: { kind: "slots", labels, names: p.names, hi: p.hi, tone: i === plan.length - 1 ? "check" : "doing" } }));
@@ -1796,6 +1796,20 @@ function rowCountExample({ id, title, cons, between = null }) {
   if (cons.some((c) => pos(c, n) < 1 || pos(c, n) > n)) throw new Error(`${id}: 줄 밖`);
   const text0 = between ? `${josa(cons[0].who, "은")} 앞에서 ${cons[0].k}번째, ${josa(cons[1].who, "은")} 뒤에서 ${cons[1].k}번째에 서 있고, 두 사람 사이에 ${between.count}명이 있어요.` : `${josa(cons[0].who, "은")} 앞에서 ${cons[0].k}번째, 뒤에서 ${cons[1].k}번째에 서 있어요.`;
   return { id, title, problem: `${text0} 줄을 선 사람은 모두 몇 명일까요?`, figure: { kind: "row-line", n: Math.min(n, 6), marks: {}, tone: "given" }, steps, answer: `모두 ${n}명이에요.`, value: { kind: "row", cons, between, n } };
+}
+// 줄에서 앞·뒤로 세기: 왼쪽이 앞. 뒤에서 k번째 = 앞에서 (n − k + 1)번째
+const ORDINAL = ["첫", "두", "세", "네", "다섯", "여섯", "일곱"];
+function lineCountExample({ id, title, names, from, k }) {
+  const n = names.length, pos = from === "front" ? k : n - k + 1, ans = names[pos - 1], side = from === "front" ? "앞" : "뒤";
+  const marks = Object.fromEntries(names.map((nm, i) => [i + 1, nm])), fig = (tone, spans) => ({ kind: "row-line", n, marks, spans, tone });
+  const steps = from === "front" ? [
+    { text: `앞은 왼쪽이에요. 맨 앞의 ${names[0]}부터 1, 2, 3… 세어요.`, figure: fig("doing", [{ from: 1, to: pos, label: `${k}명` }]) },
+    { text: `앞에서 ${ORDINAL[k - 1]} 번째는 ${ans}.`, figure: fig("check", [{ from: pos, to: pos, label: `${k}번째` }]) }
+  ] : [
+    { text: `뒤에서 셀 때는 맨 뒤(오른쪽 끝)의 ${names[n - 1]}부터 1, 2, 3… 세어요.`, figure: fig("doing", [{ from: pos, to: n, label: `${k}명` }]) },
+    { text: `뒤에서 ${ORDINAL[k - 1]} 번째는 ${ans}. 앞에서 세면 ${n} − ${k} + 1 = ${pos}번째예요.`, figure: fig("check", [{ from: pos, to: pos, label: `${pos}번째` }]) }
+  ];
+  return { id, title, problem: `${names.join(", ")} ${n}명이 이 순서로 한 줄로 서 있어요. 맨 앞은 ${josa(names[0], "이에요")}. ${side}에서 ${ORDINAL[k - 1]} 번째에 서 있는 사람은 누구일까요?`, figure: fig("given", []), steps, answer: `${josa(ans, "이에요")}.`, value: { kind: "linecount", names, from, k, ans } };
 }
 const DIR = { 북: [-1, 0], 남: [1, 0], 서: [0, -1], 동: [0, 1] };
 function compassGridExample({ id, title, rows, asks }) {
@@ -1851,6 +1865,20 @@ const LOGIC_SET = {
         { text: "솔은 맨 뒤가 아니라 1등, 남은 준이 3등이에요.", names: ["솔", "민", "준"], hi: [0, 2] }
       ] })
     ],
+    // 1권 앞뒤 순서
+    "달리기 순서": () => [
+      runOrderExample({ id: "run-1", title: "예제 1", people: ["가람", "나리", "다온"], clues: [{ t: "only", a: "나리", b: "다온" }], seq: ["다온", "나리", "가람"], plan: [
+        { text: "나리의 앞에는 다온만 있으니 다온이 1등, 나리가 2등이에요.", names: ["다온", "나리", null], hi: [0, 1] },
+        { text: "남은 가람이 3등이에요.", names: ["다온", "나리", "가람"], hi: [2] }
+      ] }),
+      runOrderExample({ id: "run-2", title: "예제 2", people: ["가람", "나리", "다온", "라희"], clues: [{ t: "next", a: "라희", b: "가람" }, { t: "last", p: "나리" }, { t: "before", a: "다온", b: "라희" }], seq: ["다온", "라희", "가람", "나리"], plan: [
+        { text: "나리는 맨 뒤라 4등이에요.", names: [null, null, null, "나리"], hi: [3] },
+        { text: "가람은 라희 바로 뒤라 두 사람은 붙어서 달려요. 1·2등이거나 2·3등이에요.", names: [null, null, null, "나리"], hi: [0, 1, 2] },
+        { text: "다온은 라희보다 앞이라 다온 1등, 라희 2등, 가람 3등.", names: ["다온", "라희", "가람", "나리"], hi: [0, 1, 2] }
+      ] })
+    ],
+    "앞에서 세기": () => [lineCountExample({ id: "front-1", title: "예제 1", names: ["솔", "별", "윤", "담", "현"], from: "front", k: 4 })],
+    "뒤에서 세기": () => [lineCountExample({ id: "back-1", title: "예제 1", names: ["솔", "별", "윤", "담", "현"], from: "back", k: 2 })],
     "줄에서 앞뒤 순서 세기": () => [
       rowCountExample({ id: "row-1", title: "예제 1", cons: [{ who: "준서", from: "front", k: 8 }, { who: "준서", from: "back", k: 4 }] }),
       rowCountExample({ id: "row-2", title: "예제 2", cons: [{ who: "민서", from: "front", k: 5 }, { who: "하준", from: "back", k: 3 }], between: { a: "민서", b: "하준", count: 4 } })
@@ -2075,9 +2103,28 @@ function productGridExample({ id, title, cells, values, plan }) {
   const letters = Object.keys(values);
   return { id, title, problem: `가로줄 두 수의 곱은 오른쪽에, 세로줄 두 수의 곱은 아래에 썼어요. ${letters.join(", ")}에 알맞은 수를 구해요.`, figure: fig("given"), steps, answer: `${letters.map((l, i) => (i === letters.length - 1 ? `${josa(l, "은")} ${josa(values[l], "이에요")}` : `${josa(l, "은")} ${values[l]}`)).join(", ")}.`, value: { kind: "pgrid", cells, rows, cols, values } };
 }
+// 2권: 도형식(같은 모양 = 같은 수). eqs = [{ terms: ["○", "△"], total }]
+function shapeEqsExample({ id, title, eqs, values, ask, plan }) {
+  for (const e of eqs) if (sum(e.terms.map((t) => values[t])) !== e.total) throw new Error(`${id}: 식이 맞지 않음`);
+  const lines = eqs.map((e) => `${e.terms.join(" + ")} = ${e.total}`);
+  const steps = plan.map((p, i) => ({ text: p.text, figure: { kind: "eqs", lines: [...lines, ...(p.add || [])], on: p.on, tone: i === plan.length - 1 ? "check" : "doing" } }));
+  return { id, title, problem: `같은 모양은 같은 수예요. ${lines.join(", ")}일 때 ${ask.join(", ")}에 알맞은 수를 구해요.`, figure: { kind: "eqs", lines, tone: "given" }, steps, answer: `${josa(ask.map((a) => `${a} = ${values[a]}`).join(", "), "이에요")}.`, value: { kind: "shape-eqs", eqs, values, ask } };
+}
 const MATRIX_SET = {
   id: "matrix",
   types: {
+    // 2권 가로와 세로의 합
+    "가로와 세로의 합으로 도형값 찾기": () => [
+      shapeEqsExample({ id: "seq2m-1", title: "예제 1", eqs: [{ terms: ["○", "△"], total: 11 }, { terms: ["○", "△", "△"], total: 15 }], values: { "○": 7, "△": 4 }, ask: ["△", "○"], plan: [
+        { text: "둘째 식은 첫째 식보다 △가 하나 더 있어요. 15 − 11 = 4라 △ = 4.", on: [1], add: ["△ = 15 − 11 = 4"] },
+        { text: "첫째 식에 넣으면 ○ + 4 = 11이라 ○ = 7.", on: [0], add: ["△ = 4", "○ = 11 − 4 = 7"] }
+      ] }),
+      sumGridExample({ id: "sg2-1", title: "예제 2", cells: [["◇", "◇"], ["○", "□"]], values: { "◇": 7, "○": 5, "□": 8 }, ask: { row: 1 }, plan: [
+        { text: "윗줄은 ◇만 두 개예요. ◇ + ◇ = 14라 ◇ = 7.", reveal: { "◇": 7 }, focus: { row: 0 } },
+        { text: "왼쪽 세로줄: 7 + ○ = 12라 ○ = 5. 오른쪽 세로줄: 7 + □ = 15라 □ = 8.", reveal: { "◇": 7, "○": 5, "□": 8 }, focus: { col: 0 } },
+        { text: "?가 있는 아랫줄은 ○ + □ = 5 + 8 = 13.", reveal: { "◇": 7, "○": 5, "□": 8 }, focus: { row: 1 }, done: true }
+      ] })
+    ],
     // 8권 덧셈 매트릭스
     "3×3 매트릭스 · 빈 칸의 합": () => [sumGridExample({ id: "sg3-1", title: "예제 1", cells: [["△", "△", "△"], ["△", "○", "☆"], ["○", "○", "☆"]], values: { "△": 5, "○": 3, "☆": 7 }, ask: { col: 2 }, plan: [
       { text: "첫째 가로줄은 △만 세 개예요. △ + △ + △ = 15라 △ = 15 ÷ 3 = 5.", reveal: { "△": 5 }, focus: { row: 0 } },
@@ -2745,11 +2792,104 @@ const BOOK1_SET = {
     "세 조건의 두 자리 수": () => [conditionExample({ id: "cond-3", title: "예제 1", digits: 2, conds: [COND.over(70), COND.even(), COND.onesLess(2)], all: false })],
     "세 자리 수 모두 찾기": () => [conditionExample({ id: "cond-4", title: "예제 1", digits: 3, conds: [COND.down(1)] })],
     "조건을 더해 하나 찾기": () => [conditionExample({ id: "cond-5", title: "예제 1", digits: 3, conds: [COND.down(3), COND.ones(2)], all: false })],
-    "세 조건의 세 자리 수": () => [conditionExample({ id: "cond-6", title: "예제 1", digits: 3, conds: [COND.allEven(), COND.digitSum(14), COND.incr()], all: false })]
+    "세 조건의 세 자리 수": () => [conditionExample({ id: "cond-6", title: "예제 1", digits: 3, conds: [COND.allEven(), COND.digitSum(14), COND.incr()], all: false })],
+    // 숫자 카드로 모든 줄의 합을 같게
+    "교차점에 가능한 수 모두 찾기": () => [crossCenterExample({ id: "center-1", title: "예제 1", cards: [2, 4, 6, 8, 10] })],
+    "숫자 카드로 같은 합 만들기": () => [lineCardsExample({ id: "tline-1", title: "예제 1", layout: "t", full: [8, 6, 4, 9, 3], shown: { 0: 8, 4: 3 }, plan: [
+      { text: "가운데 칸은 두 줄이 함께 써요. 그래서 가로줄의 양 끝 합(8 + 오른쪽)과 세로줄의 아래 두 칸 합(가운데 아래 + 3)이 같아야 해요.", known: [], hi: [1] },
+      { text: "8 + 오른쪽 = 가운데 아래 + 3이니 가운데 아래 칸이 오른쪽 칸보다 5 커요. 카드 4, 6, 9 중 5 차이는 4와 9뿐이라 오른쪽 4, 가운데 아래 9.", known: [2, 3], hi: [2, 3] },
+      { text: "남은 6이 가운데예요. 8 + 6 + 4 = 18, 6 + 9 + 3 = 18.", known: [1, 2, 3], hi: [1] }
+    ] })],
+    "각 자리 숫자의 합이 같은 두 자리 수": () => [digitSumListExample({ id: "dsum-1", title: "예제 1", sums: [11, 12, 13] })]
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET });
+// ───────────────────────── 1권 카드로 줄의 합 · 2권 마디수열 · 스도쿠 ─────────────────────────
+// 줄 판(kind "line-board"): pts = 자리 좌표(0~100), lines = 같은 합이 되어야 하는 줄(자리 번호 묶음). 교차점은 여러 줄이 함께 쓴다.
+const LINE_LAYOUT = {
+  cross: { pts: [[10, 50], [30, 50], [50, 50], [70, 50], [90, 50], [50, 10], [50, 30], [50, 70], [50, 90]], lines: [[0, 1, 2, 3, 4], [5, 6, 2, 7, 8]] },
+  cross5: { pts: [[15, 50], [50, 50], [85, 50], [50, 15], [50, 85]], lines: [[0, 1, 2], [3, 1, 4]] },
+  t: { pts: [[15, 15], [50, 15], [85, 15], [50, 50], [50, 85]], lines: [[0, 1, 2], [1, 3, 4]] }
+};
+const lineBoard = (layout, vals, p = {}) => ({ kind: "line-board", ...LINE_LAYOUT[layout], vals, hi: p.hi, pair: p.pair, tone: p.tone || "doing" });
+// 교차점 후보: 카드 다섯 장을 십자에 한 번씩. 가운데를 빼고 남은 네 장이 같은 합의 두 짝으로 나뉘면 된다
+function crossCenterExample({ id, title, cards }) {
+  const total = sum(cards), trial = cards.map((c) => {
+    const rest = cards.filter((x) => x !== c), split = [1, 2, 3].map((j) => [[rest[0], rest[j]], rest.slice(1).filter((_, k) => k !== j - 1)]).find(([a, b]) => sum(a) === sum(b));
+    return { c, rest, pair: split || null };
+  });
+  const good = trial.filter((t) => t.pair);
+  if (!good.length) throw new Error(`${id}: 가운데 후보 없음`);
+  const pairText = (t) => `${t.pair[0].join(" + ")} = ${t.pair[1].join(" + ")} = ${sum(t.pair[0])}`;
+  const steps = [
+    { text: "가운데 칸은 가로줄과 세로줄이 함께 써요. 가운데를 빼고 남은 네 장을 합이 같은 두 짝으로 나눌 수 있어야 해요.", figure: lineBoard("cross5", ["", "?", "", "", ""], { hi: [1] }) },
+    ...trial.map((t, i) => ({ text: t.pair ? `가운데 ${ira(t.c, "면")} 남은 ${t.rest.join(", ")}. ${ira(pairText(t))} 돼요.` : `가운데 ${ira(t.c, "면")} 남은 ${t.rest.join(", ")}의 합은 ${sum(t.rest)}. 같은 합의 두 짝으로 나눌 수 없어요.`, figure: lineBoard("cross5", t.pair ? [t.pair[0][0], t.c, t.pair[0][1], t.pair[1][0], t.pair[1][1]] : ["", t.c, "", "", ""], { hi: [1], tone: i === trial.length - 1 ? "check" : "doing" }) }))
+  ];
+  steps.at(-1).text += ` 가운데에 올 수 있는 수는 ${good.map((t) => t.c).join(", ")}.`;
+  return { id, title, problem: `숫자 카드 ${josa(cards.join(", "), "을")} 십자 모양 다섯 칸에 한 번씩 놓아 가로줄과 세로줄의 합을 같게 해요. 가운데 칸에 올 수 있는 수를 모두 구해요.`, figure: lineBoard("cross5", ["", "", "", "", ""], { tone: "given" }), steps, answer: `${josa(good.map((t) => t.c).join(", "), "이에요")}.`, value: { kind: "center", layout: "cross5", cards, centers: good.map((t) => t.c), total } };
+}
+// 빈자리에 카드를 놓아 줄의 합 같게(T자): shown = { 자리: 수 }, plan은 글만 — 검사기가 카드를 모든 자리에 넣어 보고 하나뿐인지 본다
+function lineCardsExample({ id, title, layout, full, shown, plan }) {
+  const L = LINE_LAYOUT[layout], sums = L.lines.map((ln) => sum(ln.map((i) => full[i])));
+  if (new Set(sums).size !== 1) throw new Error(`${id}: 줄의 합이 다름`);
+  const cards = full.filter((_, i) => shown[i] === undefined).sort((a, b) => a - b);
+  const vals = (known) => full.map((v, i) => (shown[i] !== undefined || known.includes(i) ? v : ""));
+  const steps = plan.map((p, i) => ({ text: p.text, figure: lineBoard(layout, vals(p.known), { hi: p.hi, tone: i === plan.length - 1 ? "check" : "doing" }) }));
+  return { id, title, problem: `숫자 카드 ${josa(cards.join(", "), "을")} 빈자리에 한 번씩 놓아 두 줄의 합을 같게 해요. 한 줄의 합은 얼마일까요?`, figure: lineBoard(layout, vals([]), { tone: "given" }), steps, answer: `한 줄의 합은 ${josa(sums[0], "이에요")}.`, value: { kind: "line-cards", layout, full, shown, cards, lineSum: sums[0] } };
+}
+// 각 자리 숫자의 합이 k인 두 자리 수: 십의 자리를 1씩 올리면 일의 자리는 1씩 내려간다
+function digitSumListExample({ id, title, sums }) {
+  const lists = sums.map((k) => { const out = []; for (let t = 1; t <= 9; t++) if (k - t >= 0 && k - t <= 9) out.push(t * 10 + (k - t)); return out; });
+  const steps = [
+    { text: "십의 자리 숫자를 1씩 크게 하면 일의 자리 숫자는 1씩 작아져야 합이 그대로예요. 일의 자리는 9까지만 돼요.", figure: { kind: "eqs", lines: sums.map((k) => `십의 자리 + 일의 자리 = ${k}`), tone: "doing" } },
+    ...sums.map((k, i) => ({ text: `합이 ${ira(k, "면")} ${lists[i].join(", ")} — ${lists[i].length}개.`, figure: { kind: "seq", values: lists[i], tone: i === sums.length - 1 ? "check" : "doing" } }))
+  ];
+  steps.at(-1).text += ` 합이 1 커질 때마다 1개씩 줄어요.`;
+  return { id, title, problem: `각 자리 숫자의 합이 ${sums.join(", ")}인 두 자리 수를 빠짐없이 쓰고, 몇 개씩인지 세어요.`, figure: { kind: "eqs", lines: sums.map((k) => `십의 자리 + 일의 자리 = ${k}`), tone: "given" }, steps, answer: `${sums.map((k, i) => `합 ${k}: ${lists[i].length}개`).join(", ")}예요.`, value: { kind: "dsum", sums, lists } };
+}
+// 마디수열: period를 되풀이할 때 n번째. n ÷ 마디 길이의 나머지가 0이면 마디의 마지막
+function periodExample({ id, title, period, n, what = "수" }) {
+  const len = period.length, q = Math.floor(n / len), r = n % len, ans = period[(n - 1) % len], shown = [...period, ...period, period[0]];
+  const steps = [
+    { text: `${josa(period.join(", "), "이")} 다시 처음부터 나와요. ${len}칸이 한 마디예요.`, figure: { kind: "seq", values: shown, notes: shown.map((_, i) => (i < len * 2 ? `${(i % len) + 1}` : "")), tone: "doing" } },
+    { text: `${n}번째는 ${n} ÷ ${len} = ${q} … ${r}. 마디를 ${q}번 다 돌고 ${r ? `${r}칸 더 가요` : "딱 끝나요"}.`, figure: { kind: "eqs", lines: [`${n} ÷ ${len} = ${q} … ${r}`], tone: "doing" } },
+    { text: r ? `나머지가 ${ira(r)} 한 마디의 ${r}번째 ${what}, ${ans}.` : `나머지가 0이라 한 마디의 마지막 ${what}, ${ans}.`, figure: { kind: "seq", values: period, notes: period.map((_, i) => (i === (n - 1) % len ? "여기" : "")), tone: "check" } }
+  ];
+  return { id, title, problem: `${period.join(", ")}, ${period.join(", ")}, …처럼 되풀이돼요. ${n}번째 ${josa(what, "은")} 무엇일까요?`, figure: { kind: "seq", values: shown, tone: "given", ask: "?" }, steps, answer: `${josa(ans, "이에요")}.`, value: { kind: "period", period, n, ans } };
+}
+// 스도쿠: 가로줄·세로줄(4×4는 굵은 네 칸 구역도)에 1부터 n까지 한 번씩. 빈칸마다 알파벳, 들어갈 수가 하나뿐인 칸부터 채운다
+function sudokuCands(g, n, i) {
+  const r = Math.floor(i / n), c = i % n, used = new Set();
+  for (let k = 0; k < n; k++) { used.add(g[r * n + k]); used.add(g[k * n + c]); }
+  if (n === 4) { const br = r - (r % 2), bc = c - (c % 2); for (const [dr, dc] of [[0, 0], [0, 1], [1, 0], [1, 1]]) used.add(g[(br + dr) * n + bc + dc]); }
+  return Array.from({ length: n }, (_, k) => k + 1).filter((v) => !used.has(v));
+}
+function sudokuExample({ id, title, n, solution, blanks }) {
+  const letters = Object.fromEntries(blanks.map((i, k) => [i, "ABCDEFGH"[k]])), g = solution.map((v, i) => (blanks.includes(i) ? 0 : v));
+  const fig = (tone, hi) => ({ kind: "sudoku", n, cells: g.map((v, i) => (v ? String(v) : letters[i])), filled: blanks.filter((i) => g[i]), hi, tone });
+  const given = fig("given"), steps = [];
+  const seen = (i) => { const r = Math.floor(i / n), c = i % n, out = new Set(); for (let k = 0; k < n; k++) { out.add(g[r * n + k]); out.add(g[k * n + c]); } if (n === 4) { const br = r - (r % 2), bc = c - (c % 2); for (const [dr, dc] of [[0, 0], [0, 1], [1, 0], [1, 1]]) out.add(g[(br + dr) * n + bc + dc]); } out.delete(0); return [...out].sort((a, b) => a - b); };
+  for (let guard = 0; guard < 20 && g.includes(0); guard++) {
+    const i = g.findIndex((v, k) => v === 0 && sudokuCands(g, n, k).length === 1);
+    if (i < 0) throw new Error(`${id}: 한 칸씩 정해지지 않음`);
+    const v = sudokuCands(g, n, i)[0], have = seen(i);
+    g[i] = v;
+    steps.push({ text: `${letters[i]} 칸과 같은 가로줄·세로줄${n === 4 ? "·굵은 구역" : ""}에 ${josa(have.join(", "), "이")} 있어요. 남은 수는 ${v}.`, figure: fig("doing", [i]) });
+  }
+  steps.push({ text: `모든 가로줄과 세로줄${n === 4 ? ", 굵은 구역" : ""}에 1부터 ${n}까지 한 번씩 들어갔어요.`, figure: fig("check", []) });
+  return { id, title, problem: `가로줄, 세로줄${n === 4 ? ", 굵은 선 안" : ""}에 1부터 ${n}까지 한 번씩 들어가도록 ${blanks.map((i) => letters[i]).join(", ")} 칸을 채워요.`, figure: given, steps, answer: `${josa(blanks.map((i) => `${letters[i]} = ${solution[i]}`).join(", "), "이에요")}.`, value: { kind: "sudoku", n, solution, blanks } };
+}
+const BOOK2_SET = {
+  id: "book2",
+  types: {
+    "마디수열의 특정 번째 수": () => [periodExample({ id: "period-1", title: "예제 1", period: [5, 1, 8], n: 17 }), periodExample({ id: "period-2", title: "예제 2", period: [7, 3, 9, 2], n: 24 })],
+    "마디수열의 특정 번째 모양": () => [periodExample({ id: "period-3", title: "예제 1", period: ["○", "△", "□", "◇"], n: 19, what: "모양" })],
+    "3×3 스도쿠 빈칸 채우기": () => [sudokuExample({ id: "sdk3-1", title: "예제 1", n: 3, solution: [2, 3, 1, 1, 2, 3, 3, 1, 2], blanks: [1, 2, 3, 4, 5] })],
+    "4×4 스도쿠 빈칸 채우기": () => [sudokuExample({ id: "sdk4-1", title: "예제 1", n: 4, solution: [1, 4, 2, 3, 2, 3, 1, 4, 4, 1, 3, 2, 3, 2, 4, 1], blanks: [1, 4, 5, 7, 11, 14] })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {
