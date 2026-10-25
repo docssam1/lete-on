@@ -391,7 +391,7 @@
       return K.nlCard(K.nlStage(`<svg class="nm-nl-g79-svg nm-obj-svg" viewBox="0 0 ${g.W} ${g.H}" style="height:30mm;width:auto" role="img">${s}</svg>`));
     },
     label: listLabel,
-    ask(p, K) { return String(K.pickL(p.prompt) || ''); }
+    ask(p, K) { return K.lk('선으로 이어진 네모 두 개의 수를 더하면, 그 사이 동그라미의 수가 돼요. 빈칸에 수를 써요.','Add the two squares at the ends of a side to find the circle between them. Fill in the blanks.','一条边两端正方形里的数相加，等于中间圆里的数。填写空格。'); }
   };
 
   /* ── wheelFill ────────────────────────────────────────── */

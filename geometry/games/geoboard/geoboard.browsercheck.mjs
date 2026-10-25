@@ -152,6 +152,53 @@ assert.ok(portrait.bubbleBottom <= portrait.dockTop && portrait.firstPegSize >= 
 assert.equal(new Set(portrait.toolRects.map((rect) => Math.round(rect.y))).size, 1);
 await page.screenshot({ path: `${screenshotRoot}/gfield-geoboard-portrait.png` });
 
+const copyPortrait = [];
+for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 568 }]) {
+  await page.setViewportSize(viewport);
+  await openLevel(viewport.width === 390 ? 1 : 2);
+  const layout = await page.evaluate(() => {
+    const bounds = (selector) => document.querySelector(selector).getBoundingClientRect().toJSON();
+    return {
+      copyMode: document.body.classList.contains("copy-mode"),
+      model: bounds("#modelBoard"), board: bounds("#board"), tools: bounds("#toolPanel"), guide: bounds("#cubiGuide"),
+      dock: bounds(".answer-dock"), scrollWidth: document.documentElement.scrollWidth,
+      scrollHeight: document.documentElement.scrollHeight, viewportWidth: innerWidth, viewportHeight: innerHeight
+    };
+  });
+  assert.ok(layout.copyMode);
+  assert.equal(layout.scrollWidth, viewport.width);
+  assert.ok(layout.model.width >= 130 && layout.board.width >= (viewport.width === 390 ? 330 : 260));
+  assert.ok(layout.model.bottom < layout.board.top && layout.board.bottom < layout.tools.top && layout.tools.bottom <= layout.dock.top);
+  assert.ok(layout.guide.top >= layout.dock.top);
+  await page.screenshot({ path: `${screenshotRoot}/gfield-geoboard-copy-${viewport.width}.png`, fullPage: true });
+  copyPortrait.push({ viewport, ...layout });
+}
+
+for (const lang of ["ko", "en", "zh", "ja"]) {
+  await page.evaluate((value) => localStorage.setItem("gfield-language", value), lang);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openLevel(1);
+  const labelsFit = await page.evaluate(() => [...document.querySelectorAll(".model-panel .board-heading, .build-panel .board-heading")]
+    .every((node) => node.scrollWidth <= node.clientWidth + 1));
+  assert.ok(labelsFit, `${lang} copy-mode headings overflow`);
+}
+await page.evaluate(() => localStorage.setItem("gfield-language", "ko"));
+
+const touchContext = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+await touchContext.addInitScript(() => {
+  localStorage.setItem("gfield-audio-muted", "true");
+  localStorage.setItem("gfield-language", "ko");
+  localStorage.setItem("gfield-geoboard-tutorial-v1", "done");
+  localStorage.setItem("gfield-pool-geoboard-1", "0");
+});
+const touchPage = await touchContext.newPage();
+await openLevel(1, touchPage);
+for (const [x, y] of levels[0].problems[0].vertices) {
+  await touchPage.locator(`.peg-hit[data-x="${x}"][data-y="${y}"]`).tap();
+}
+await touchPage.locator("#success.show").waitFor({ state: "visible" });
+await touchContext.close();
+
 await page.setViewportSize({ width: 1280, height: 900 });
 await openLevel(5);
 for (let index = 0; index < 5; index += 1) {
@@ -195,20 +242,113 @@ const tutorialPage = await browser.newPage({ viewport: { width: 390, height: 844
 await tutorialPage.addInitScript(() => {
   localStorage.setItem("gfield-audio-muted", "true");
   localStorage.setItem("gfield-language", "ko");
-  localStorage.removeItem("gfield-geoboard-tutorial-v1");
+  localStorage.setItem("gfield-pool-geoboard-1", "0");
 });
 await openLevel(1, tutorialPage);
-await tutorialPage.locator("#tutorial").waitFor({ state: "visible" });
+await tutorialPage.locator(".answer-dock.tutorial-active").waitFor({ state: "visible" });
 const tutorial = await tutorialPage.evaluate(() => ({
-  copyWidth: document.querySelector(".tutorial-copy").getBoundingClientRect().width,
-  card: document.querySelector(".tutorial-card").getBoundingClientRect().toJSON(),
+  highlighted: document.querySelectorAll("#pegLayer .tutorial-target").length,
+  skipVisible: !document.querySelector("#tutorialSkip").hidden,
+  guide: document.querySelector("#answerPrompt").textContent,
+  board: document.querySelector("#board").getBoundingClientRect().toJSON(),
+  dock: document.querySelector(".answer-dock").getBoundingClientRect().toJSON(),
   viewport: [innerWidth, innerHeight],
   scroll: [document.documentElement.scrollWidth, document.documentElement.scrollHeight]
 }));
-assert.ok(tutorial.copyWidth >= 230);
-assert.deepEqual(tutorial.scroll, tutorial.viewport);
-await tutorialPage.screenshot({ path: `${screenshotRoot}/gfield-geoboard-tutorial-portrait.png` });
+assert.equal(tutorial.highlighted, 2);
+assert.ok(tutorial.skipVisible && tutorial.guide.includes("빛나는 못"));
+assert.ok(tutorial.board.bottom < tutorial.dock.top && tutorial.scroll[0] === tutorial.viewport[0]);
+await tutorialPage.screenshot({ path: `${screenshotRoot}/gfield-geoboard-tutorial-real-board.png`, fullPage: true });
+const tutorialProblem = levels[0].problems[0];
+await tapPeg([4, 4], tutorialPage);
+assert.equal(await tutorialPage.locator("#pegLayer .tutorial-target").count(), 2);
+assert.equal(await tutorialPage.locator("#bandLayer .band").count(), 0);
+await tapPeg(tutorialProblem.vertices.at(-1), tutorialPage);
+assert.equal(await tutorialPage.locator("#pegLayer .tutorial-target").count(), 1);
+assert.equal(await tutorialPage.locator("#bandLayer .band-node").count(), 1);
+await tutorialPage.screenshot({ path: `${screenshotRoot}/gfield-geoboard-tutorial-one-peg.png`, fullPage: true });
+await tapPeg(tutorialProblem.vertices.at(-2), tutorialPage);
+assert.equal(await tutorialPage.locator(".answer-dock.tutorial-active").count(), 0);
+assert.equal(await tutorialPage.evaluate(() => localStorage.getItem("gfield-geoboard-tutorial-v1")), "done");
+assert.ok(await tutorialPage.locator("#bandLayer .band").count() >= 1);
+await tutorialPage.reload({ waitUntil: "networkidle" });
+assert.equal(await tutorialPage.locator(".answer-dock.tutorial-active").count(), 0);
+await tutorialPage.setViewportSize({ width: 320, height: 568 });
+await tutorialPage.goto(`${gameUrl(1)}&tutorial=1`, { waitUntil: "networkidle" });
+await tutorialPage.locator(".answer-dock.tutorial-active").waitFor({ state: "visible" });
+await tutorialPage.screenshot({ path: `${screenshotRoot}/gfield-geoboard-tutorial-320.png`, fullPage: true });
+await tutorialPage.locator("#tutorialSkip").click();
+assert.equal(await tutorialPage.locator(".answer-dock.tutorial-active").count(), 0);
+assert.equal(await tutorialPage.evaluate(() => localStorage.getItem("gfield-geoboard-tutorial-v1")), "done");
+for (const lang of ["ko", "en", "zh", "ja"]) {
+  await tutorialPage.evaluate((value) => localStorage.setItem("gfield-language", value), lang);
+  await tutorialPage.goto(`${gameUrl(1)}&tutorial=1`, { waitUntil: "networkidle" });
+  await tutorialPage.locator(".answer-dock.tutorial-active").waitFor({ state: "visible" });
+  const layout = await tutorialPage.evaluate(() => {
+    const dock = document.querySelector(".answer-dock").getBoundingClientRect();
+    const skip = document.querySelector("#tutorialSkip").getBoundingClientRect();
+    const avatar = document.querySelector("#cubiGuide").getBoundingClientRect();
+    return { width: document.documentElement.scrollWidth, skipInside: skip.left >= dock.left && skip.right <= dock.right && skip.bottom <= dock.bottom, avatarClear: skip.right < avatar.left, text: document.querySelector("#answerPrompt").textContent };
+  });
+  assert.equal(layout.width, 320, `${lang} tutorial overflows horizontally`);
+  assert.ok(layout.skipInside && layout.avatarClear && layout.text.length > 5, `${lang} tutorial controls overlap`);
+}
+await tutorialPage.evaluate(() => localStorage.setItem("gfield-language", "ko"));
+await tutorialPage.goto(`${gameUrl(1)}&tutorial=1`, { waitUntil: "networkidle" });
+await tutorialPage.locator(".answer-dock.tutorial-active").waitFor({ state: "visible" });
+const firstGuidedPeg = tutorialPage.locator('.peg-hit[tabindex="0"]');
+assert.deepEqual(await firstGuidedPeg.evaluate((node) => [Number(node.dataset.x), Number(node.dataset.y)]), tutorialProblem.vertices[0]);
+assert.match(await firstGuidedPeg.getAttribute("aria-label"), /안내된 못/);
+await firstGuidedPeg.focus();
+await tutorialPage.keyboard.press("Enter");
+assert.deepEqual(await tutorialPage.evaluate(() => [Number(document.activeElement.dataset.x), Number(document.activeElement.dataset.y)]), tutorialProblem.vertices[1]);
+assert.match(await tutorialPage.locator('.peg-hit[tabindex="0"]').getAttribute("aria-label"), /안내된 못/);
+await tutorialPage.keyboard.press("Enter");
+assert.equal(await tutorialPage.locator(".answer-dock.tutorial-active").count(), 0);
+await tutorialPage.setViewportSize({ width: 844, height: 390 });
+await tutorialPage.goto(`${gameUrl(1)}&tutorial=1`, { waitUntil: "networkidle" });
+await tutorialPage.locator(".answer-dock.tutorial-active").waitFor({ state: "visible" });
+const tutorialLandscape = await tutorialPage.evaluate(() => {
+  const dock = document.querySelector(".answer-dock").getBoundingClientRect();
+  const skip = document.querySelector("#tutorialSkip").getBoundingClientRect();
+  const prompt = document.querySelector("#answerPrompt").getBoundingClientRect();
+  return { width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight, skipInside: skip.top >= dock.top && skip.bottom <= dock.bottom, promptInside: prompt.top >= dock.top && prompt.bottom <= dock.bottom };
+});
+assert.deepEqual([tutorialLandscape.width, tutorialLandscape.height], [844, 390]);
+assert.ok(tutorialLandscape.skipInside && tutorialLandscape.promptInside);
 await tutorialPage.close();
+
+const tutorialTouchContext = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+await tutorialTouchContext.addInitScript(() => {
+  localStorage.setItem("gfield-audio-muted", "true");
+  localStorage.setItem("gfield-pool-geoboard-1", "0");
+});
+const tutorialTouchPage = await tutorialTouchContext.newPage();
+await openLevel(1, tutorialTouchPage);
+await tutorialTouchPage.locator(".answer-dock.tutorial-active").waitFor({ state: "visible" });
+for (const [x, y] of tutorialProblem.vertices.slice(0, 2)) {
+  await tutorialTouchPage.locator(`.peg-hit[data-x="${x}"][data-y="${y}"]`).tap();
+}
+assert.equal(await tutorialTouchPage.locator(".answer-dock.tutorial-active").count(), 0);
+assert.equal(await tutorialTouchPage.evaluate(() => localStorage.getItem("gfield-geoboard-tutorial-v1")), "done");
+await tutorialTouchContext.close();
+
+const longerTutorialPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+await longerTutorialPage.addInitScript(() => {
+  localStorage.setItem("gfield-audio-muted", "true");
+  localStorage.setItem("gfield-pool-geoboard-1", "1");
+});
+await openLevel(1, longerTutorialPage);
+await longerTutorialPage.locator(".answer-dock.tutorial-active").waitFor({ state: "visible" });
+const longerVertices = levels[0].problems[5].vertices;
+assert.ok(longerVertices.length > 2);
+await tapPeg(longerVertices.at(-1), longerTutorialPage);
+await tapPeg(longerVertices.at(-2), longerTutorialPage);
+assert.equal(await longerTutorialPage.locator(".answer-dock.tutorial-active").count(), 0);
+assert.equal(await longerTutorialPage.locator("#success.show").count(), 0);
+for (const point of longerVertices.slice(0, -2).reverse()) await tapPeg(point, longerTutorialPage);
+await longerTutorialPage.locator("#success.show").waitFor({ state: "visible" });
+await longerTutorialPage.close();
 
 await page.setViewportSize({ width: 1280, height: 900 });
 await openLevel(1);
@@ -226,5 +366,5 @@ assert.match(material.pegFill, /url/);
 assert.notEqual(material.toolShadow, "none");
 assert.deepEqual(errors, []);
 
-console.log(JSON.stringify({ baseUrl, advances, landscape, portrait, reducedMotionMs, pixelDeviation, material, levelsChecked: [1, 2, 3, 4, 5], languagesChecked: ["ko", "en", "zh", "ja"] }, null, 2));
+console.log(JSON.stringify({ baseUrl, advances, landscape, portrait, copyPortrait, reducedMotionMs, pixelDeviation, material, levelsChecked: [1, 2, 3, 4, 5], languagesChecked: ["ko", "en", "zh", "ja"] }, null, 2));
 await browser.close();

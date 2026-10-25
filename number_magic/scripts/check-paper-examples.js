@@ -30,8 +30,30 @@ const server=http.createServer((req,res)=>{const f=path.resolve(repo,'.'+decodeU
    const d=document.createElement('div');d.innerHTML=m.after;const text=d.textContent;
    for(const q of m.checks)eq(q.op==='+'?q.a+q.b:q.a-q.b,q.c,'False teaching equation '+ref);
    switch(p.widget){
-    case 'numberBond':if(p.dir==='join'){const originalPic=document.createElement('div');originalPic.innerHTML=__paperKit.visual(p);for(const pic of [originalPic,d])for(const[k,n]of[['a',p.a],['b',p.b]]){const part=pic.querySelector('.nm-bond-objects-part[data-bond-part="'+k+'"]');if(!part)throw Error('Joining problem has words but no objects');eq(part.querySelectorAll('[data-bond-object]').length,n,'Object count must match its branch number');eq(Number(part.dataset.bondCount),n,'Wrong pictured group');if(n===0&&!part.querySelector('.nm-bond-zero'))throw Error('Empty group needs an explicit zero label');}eq(originalPic.querySelectorAll('.nm-bond text[x="80"]').length,0,'Practice total must stay blank');eq(d.querySelector('.nm-bond text[x="80"]').textContent,String(p.answer),'Completed total');}break;
-    case 'g13Count':case 'frameRead':case 'tapCount':eq(m.answer,String(p.answer),'Wrong counted amount '+ref+' '+JSON.stringify(p));break;
+    case 'numberBond':{
+     const originalPic=document.createElement('div');originalPic.innerHTML=__paperKit.visual(p);
+     if(p.dir==='join'){
+      for(const pic of [originalPic,d])for(const[k,n]of[['a',p.a],['b',p.b]]){
+       const part=pic.querySelector('.nm-bond-objects-part[data-bond-part="'+k+'"]');if(!part)throw Error('Joining problem has words but no objects');
+       eq(part.querySelectorAll('[data-bond-object]').length,n,'Object count must match its branch number');eq(Number(part.dataset.bondCount),n,'Wrong pictured group');
+       if(n===0)eq(part.textContent.trim(),'','Zero group must stay empty');
+      }
+      eq(originalPic.querySelectorAll('.nm-bond text[x="80"]').length,0,'Practice total must stay blank');eq(d.querySelector('.nm-bond text[x="80"]').textContent,String(p.answer),'Completed total');
+     }else{
+      for(const pic of [originalPic,d])eq(pic.querySelectorAll('.nm-bond-whole [data-bond-object]').length,p.whole,'Missing total objects in split');
+      if(/무당벌레/.test(p.prompt.ko)){
+       const side=/오른쪽 날개에/.test(p.prompt.ko)?'right':'left';eq(originalPic.querySelector('.nm-bond').dataset.knownSide,side,'Numeric wing side mismatch');eq(originalPic.querySelector('.nm-bond-ladybug').dataset.knownSide,side,'Picture wing side mismatch');
+       eq(originalPic.querySelectorAll('[data-bond-spot="known"]').length,p.a,'Wrong given spot count');eq(originalPic.querySelectorAll('[data-bond-spot="answer"]').length,0,'Practice wing reveals answer');eq(d.querySelectorAll('[data-bond-spot="answer"]').length,p.answer,'Completed wing is empty');
+       for(const spot of originalPic.querySelectorAll('[data-bond-spot]'))eq(Number(spot.getAttribute('cx'))>60,side==='right','Spots on wrong wing');
+      }else{
+       eq(originalPic.querySelectorAll('.nm-bond-plate:not([data-bond-unknown]) [data-bond-object]').length,p.a,'Missing known plate objects');eq(originalPic.querySelector('[data-bond-unknown]').children.length,0,'Practice plate reveals answer');eq(d.querySelectorAll('[data-bond-unknown] [data-bond-object]').length,p.answer,'Completed plate is empty');
+      }
+     }
+     break;
+    }
+    case 'tapCount':if(p.step===10){const pic=document.createElement('div');pic.innerHTML=__paperKit.visual(p);eq(pic.querySelectorAll('[data-coin-given]').length,p.items.length,'Wrong given coin count');eq(pic.querySelectorAll('[data-coin-add]').length,p.answer/10-p.items.length,'Missing extra-coin drawing space');}else eq(m.answer,String(p.answer),'Wrong counted amount '+ref);break;
+    case 'g13Dots':{const ask=__paperKit.ask(p);if(/완성해요|finish the|画出/.test(ask))throw Error('Dot-joining prompt reveals the picture');eq(d.querySelector('[data-pe-route="dots"]').getAttribute('points').split(' ').length,p.pts.length+(p.close?1:0),'Dot route does not close');}break;
+    case 'g13Count':case 'frameRead':eq(m.answer,String(p.answer),'Wrong counted amount '+ref+' '+JSON.stringify(p));break;
     case 'balanceScale':eq(p.answer,/무거운/.test(p.prompt.ko)?(p.left>p.right?0:1):(p.left<p.right?0:1),'Wrong requested pan');eq(d.querySelector('[data-pe-balance-mark]')?.dataset.peBalanceMark,String(p.answer),'Wrong pan circled');break;
     case 'g11_cardEq':for(const line of p.sample.split(' · ')){const a=line.match(/^(\d+)\s*([+−-])\s*(\d+)\s*=\s*(\d+)$/);if(!a)throw Error('Unverified card equation');eq(a[2]==='+'?+a[1]+ +a[3]:+a[1]- +a[3],+a[4],'False card equation');if(p.target!=null)eq(+a[4],p.target,'Wrong card target');}break;
     case 'tapWrong':for(const token of p.tokens.ko.filter(x=>x.wrong)){if(!text.includes(String(p.answer)))throw Error('Wrong story was not corrected');}break;
@@ -48,7 +70,20 @@ const server=http.createServer((req,res)=>{const f=path.resolve(repo,'.'+decodeU
    }
    widgets.add(p.widget);checked++;
   }
-  return{refs:refs.size,checked,semantic,widgets:widgets.size};
+  let pencils=0;
+  for(const [t,lv]of[['NL4',3],['NL4',4]])for(let seed=1;seed<=80;seed++){
+   const p=NM_EXAM.buildProblems(t,lv,1,seed*1907)[0],ask=__paperKit.ask(p);
+   if(/완성해요|finish the|画出/.test(ask))throw Error('Dot prompt reveals the picture name');
+   eq(p.answer,p.pts.length,'Drawing changed the counted dots');
+   const original=document.createElement('div');original.innerHTML=__paperKit.visual(p);
+   if(original.querySelector('[data-dot-detail]')){
+    pencils++;eq(p.pts.length,7,'Pencil dot count changed');eq(original.querySelectorAll('[data-dot-detail]').length,2,'Pencil needs wood and graphite boundaries');
+    const done=document.createElement('div');done.innerHTML=__paperBody(p);const route=done.querySelector('[data-pe-route="dots"]');
+    eq(route.getAttribute('points').split(' ').length,p.pts.length+1,'Completed outline must close');
+   }
+  }
+  if(pencils<2)throw Error('Both dot-joining generators need a tested pencil');
+  return{refs:refs.size,checked,semantic,widgets:widgets.size,pencils};
  });
  assert(result.checked>900&&result.widgets>=60,JSON.stringify(result));console.log('PASS worked pictures',result);
  for(const[c,s]of[['C18',5],['C25',4]]){
