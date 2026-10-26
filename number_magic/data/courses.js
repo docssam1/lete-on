@@ -361,24 +361,47 @@ const COURSE_SPEC = [
       24드릴=12회차라 주2회 기준 8주, 한 학기 두 달 목표에 맞는다. */
    drills:['MD73','MD74','MD65','MD75','MD76','MD73@2','MD74@2','MD65@2','MD75@2','MD76@2','MD73@3','MD74@3','MD65@3','MD75@3','MD76@3','MD74@4','MD65@4','MD74@5','MD65@5','MD88','MD88@2','MD88@3','MD88@4','MD88@5'], minSessions:12, magic:[['M-73'],['M-74'],['M-65'],['M-75'],['M-76'],['M-88']], creative:['MD88@5','MD88@4','MD76@3']},
  {id:35, tier:'middle3', title:{ko:'제곱근의 세계',en:'World of Square Roots',zh:'平方根的世界'},
-   /* 2026-09-21 — 디딤돌 개념연산 중3-1A 대조로 찾은 가장 큰 구멍을 여기에 채운다:
-      MD15~17이 "정리하는 법"만 가르치고 "더하거나 빼는 법"이 아예 없었다. MD83(제곱근의
-      덧셈과 뺄셈, 6레벨) 신설·편입. 16항목, minSessions 8. */
-   drills:['MD15','MD16','MD17','MD83','MD18@1','MD15@2','MD16@2','MD17@2','MD83@2','MD15@3','MD16@3','MD17@3','MD83@3','MD83@4','MD83@5','MD83@6','MD15@4','MD15@5','MD15@6'], minSessions:10, magic:[['M-15'],['M-16'],['M-17'],['M-83']],
+   /* 2026-09-21 — 근호 덧뺄셈 누락으로 MD83을 추가했다. */
+   /* 2022 수학 [9수01-07~10], 중3-1A: 제곱근·실수 → 근호 곱나눗셈
+      → 덧뺄셈 → 기본 유리화 → 혼합 계산. MD18의 세 갈래를 모두 이 과정에 둔다. */
+   drills:['MD15@1','MD15@2','MD15@3','MD15@4','MD15@5','MD15@6',
+     'MD16@1','MD16@2','MD16@3','MD17@1','MD17@2','MD17@3',
+     'MD83@1','MD83@2','MD83@3','MD83@4',
+     'MD18@1','MD18@2','MD18@3','MD83@5','MD83@6'],
+   minSessions:10, magic:[['M-15'],[],['M-16'],['M-17'],['M-83'],['M-18']],
    /* MD90(제곱근의 활용 — 정사각형의 넓이와 한 변)는 이 과정의 적용 회차다(2026-09-25). */
    creative:['MD90@1','MD83@6','MD90@2','MD83@5','MD90@3','MD17@3']},
  {id:36, tier:'middle3', title:{ko:'인수분해와 이차방정식',en:'Factoring & Quadratic Equations',zh:'因式分解与二次方程'},
-   /* 2026-09-21 — MD20 이 4레벨(완전제곱·합차·공통인수·십자곱셈), MD66 이 1레벨(근의 공식)
-      늘었다. 드릴 슬롯은 회차마다 2개뿐이라 9회차(18슬롯)로는 19개 항목이 안 들어간다 →
-      minSessions 11. 늘어난 두 주는 마법 없이 이 두 스레드의 새 계단만 밟는다.
-      같은 날 두 번째 편입 — 디딤돌 개념연산 중3-1A·3-1B 대조로 MD19 가 5레벨(곱셈공식의
-      활용), MD66 이 3레벨(중근·근의 개수·이차방정식 구하기) 더 늘었다. 27항목,
-      minSessions 14. */
-   drills:['MD18@1','MD19','MD20','MD66','MD77','MD18@2','MD19@2','MD20@2','MD66@2','MD77@2','MD19@3','MD20@3','MD66@3','MD77@3','MD18@3','MD20@4','MD66@4','MD20@5','MD20@6','MD19@4','MD19@5','MD19@6','MD19@7','MD19@8','MD66@5','MD66@6','MD66@7'], minSessions:14, magic:[['M-18'],['M-19'],['M-20'],['M-66'],['M-77']], creative:['MD19@8','MD66@7','MD77@3']},
+   /* 2026-09-21 — MD19·MD20·MD66의 세부 레벨을 보강했다. */
+   /* 2022 수학 [9수02-19~20], 중3-1A/B: 공식을 전개한 뒤 역으로
+      인수분해하고, 그다음 이차방정식을 푼다. 활용은 풀이 뒤에만 낸다. */
+   drills:['MD19@1','MD19@2','MD19@3','MD19@4','MD19@5','MD19@6','MD19@7','MD19@8',
+     'MD20@1','MD20@2','MD20@3','MD20@4','MD20@5','MD20@6',
+     'MD66@1','MD66@2','MD66@3','MD66@4','MD66@5','MD66@6','MD66@7',
+     'MD77@1','MD77@2','MD77@3'],
+   perSessionDrills:[
+     ['MD19@1','MD19@2','MD19@3'], ['MD19@4','MD19@5','MD19@6'],
+     ['MD19@7','MD19@8','MD19@3'], ['MD20@1','MD20@2','MD20@3'],
+     ['MD20@4','MD20@5','MD20@6'], ['MD66@1','MD66@2','MD66@3'],
+     ['MD66@4','MD66@5','MD66@6'], ['MD66@7','MD77@1','MD77@2'],
+     ['MD20@6','MD66@4','MD77@3']
+   ],
+   minSessions:14, magic:[['M-19'],[],[],['M-20'],[],['M-66'],[],['M-77']],
+   creative:['MD19@8','MD66@7','MD77@3']},
  {id:37, tier:'middle3', title:{ko:'이차함수와 자료 분석',en:'Quadratic Functions & Data Analysis',zh:'二次函数与数据分析'},
    /* 중3-2 비도형 자료 분석 MD85~87을 마지막 중등 과정에 연결한다. 전체 32항목이라
       주 2회 기준 8주인 16회차로 편성한다. 쉬운 갈래12, 핵심·그리기 갈래24문항. */
-   drills:['MD78','MD79','MD67','MD80','MD81','MD78@2','MD79@2','MD67@2','MD80@2','MD81@2','MD78@3','MD79@3','MD78@4','MD79@4','MD67@3','MD80@3','MD81@3','MD67@4','MD85','MD85@2','MD85@3','MD85@4','MD86','MD86@2','MD86@3','MD86@4','MD86@5','MD86@6','MD87','MD87@2','MD87@3','MD87@4'], minSessions:16, magic:[['M-78'],['M-79'],['M-67'],['M-80'],['M-81'],['M-85'],['M-86'],['M-87']], creative:['MD86@6','MD87@4','MD85@4']},
+   /* 2022 수학 [9수02-21~22], [9수04-07~09], 중3-1B:
+      y=ax² → 평행이동 → 꼭짓점/일반형 → 식 구하기 → 자료 분석. */
+   drills:['MD78@1','MD78@2','MD78@3','MD78@4',
+     'MD79@1','MD79@2','MD79@3','MD79@4',
+     'MD67@1','MD67@2','MD67@3','MD67@4',
+     'MD80@1','MD80@2','MD80@3','MD81@1','MD81@2','MD81@3',
+     'MD85@1','MD85@2','MD85@3','MD85@4',
+     'MD86@1','MD86@2','MD86@3','MD86@4','MD86@5','MD86@6',
+     'MD87@1','MD87@2','MD87@3','MD87@4'],
+   minSessions:16, magic:[['M-78'],['M-79'],[],['M-67'],['M-80'],['M-81'],['M-85'],[],['M-86'],[],['M-87']],
+   creative:['MD86@6','MD87@4','MD85@4']},
 
  /* 38~45 실배치(2026-08-25, 고등 W11~W14; 2026-09-21 중등 두 과정을 끼우며 재번호;
     2026-09-28 원장 "고등이 너무 건너뛰어" — 구몬·눈높이(6~7단계로 굵게 묶는 체계)와
@@ -809,34 +832,12 @@ function composeSession(ss, i, spec, lists, maxLevel){
   ss.creative = [...ss.strategy.practice, ...ss.application.filter(a => a.from === 'creative' && a.kind !== 'drawing')];
 }
 
-/* 2026-10-26 curriculum repair. Swap existing source blocks, not source session
-   IDs. Legacy delivery selects its frozen course map before rendering these
-   revised sessions. Level numbers are branches, not a prerequisite ordering. */
-function prepareCurriculumSequence(sessions, courseId){
-  const locate = tag => {
-    const [t, lv] = tag.split('@');
-    for(const s of sessions){
-      const i = s.drills.findIndex(d => !d.review && d.t === t && d.lv === Number(lv));
-      if(i >= 0) return [s.drills, i];
-    }
-    throw new Error('Missing curriculum source block C'+courseId+' '+tag);
-  };
-  const swap = (a,b) => { const [x,i]=locate(a),[y,j]=locate(b); [x[i],y[j]]=[y[j],x[i]]; };
-  // C29~C32 follow the authored prerequisite order in COURSE_SPEC. Their
-  // queue is consumed sequentially below so later chapters cannot jump ahead.
-  if(courseId === 36){
-    swap('MD20@2','MD18@2');
-    const row=sessions[1].drills,a=row.findIndex(d=>d.t==='MD20'),b=row.findIndex(d=>d.t==='MD66');
-    if(a>b)[row[a],row[b]]=[row[b],row[a]];
-  }
-}
-
 function applicationPrerequisites(d){
   if(d.kind==='drawing')return d.mode==='direct'?['MD68@1','MD51@1']
     :d.mode==='inverse'?['MD68@1','MD69@1']:d.mode==='quadratic'?['MD78@1','MD79@1']:[];
   if(d.t==='MD89')return ['MD2@1'];
   if(d.t==='MD70')return ['MD50@1'];
-  if(d.t==='MD77')return ['MD20@2','MD66@1'];
+  if(d.t==='MD77')return ['MD20@2','MD66@7'];
   if(d.t==='MD85'&&d.lv>=2)return ['MD85@1'];
   if(d.t==='MD86'&&d.lv>=2)return d.lv>=4?['MD86@1','MD86@2','MD86@3']:['MD86@1'];
   if(d.t==='MD87'&&d.lv>=2)return d.lv>=4?['MD87@1','MD87@3']:['MD87@1'];
@@ -852,8 +853,11 @@ function prepareCurriculumApplication(ss,courseId,learned,maxLevel){
     // An already practised application fills the slot while its new topic is
     // waiting for instruction. Never promote an arbitrary higher numeric level.
     const occupied=new Set([...ss.school,...ss.strategy.practice].map(d=>d.t+'@'+d.lv));
-    const tag=['DV7@2','DV7@3','DV8@1','DV8@2','MD89@1','MD89@2','MD89@3',
-      'MD81@1','MD79@2','MD80@1','MD90@3']
+    const ownTopics=courseId===36?new Set(['MD19','MD20','MD66','MD77'])
+      :courseId===37?new Set(['MD78','MD79','MD67','MD80','MD81','MD85','MD86','MD87']):null;
+    const relevant=ownTopics?[...learned].reverse().filter(k=>ownTopics.has(k.split('@')[0])):[];
+    const tag=relevant.concat(['DV7@2','DV7@3','DV8@1','DV8@2','MD89@1','MD89@2','MD89@3',
+      'MD81@1','MD79@2','MD80@1','MD90@3'])
       .find(k=>learned.has(k)&&!occupied.has(k));
     if(!tag)throw new Error('No taught application available in C'+courseId);
     const [t,lv]=tag.split('@');
@@ -982,6 +986,9 @@ function buildCourses(NM_THREADS){
       targetCount = 3;
       const capSum = n => Array.from({ length:n }, (_, i) => capAt(i)).reduce((a, b) => a + b, 0);
       while(capSum(targetCount) < ownDrills.length) targetCount++;
+      // C36 keeps the nine historical practice slots; the last slot is a
+      // deliberate factoring→quadratic review, not an advanced MD25 detour.
+      if(spec.id===36)targetCount=Math.max(targetCount,9);
     }
     if(segments.length === 0){
       segments = new Array(targetCount).fill(null);
@@ -1042,7 +1049,8 @@ function buildCourses(NM_THREADS){
         }
         const picked = [queue.shift()];
         while(picked.length < want && queue.length){
-          let k = spec.id>=29&&spec.id<=32 ? 0 : queue.findIndex(q => !picked.some(p => p.t === q.t));
+          let k = (spec.id>=29&&spec.id<=32)||(spec.id>=35&&spec.id<=37)
+            ? 0 : queue.findIndex(q => !picked.some(p => p.t === q.t));
           if(k < 0) k = queue.findIndex(q => !picked.some(p => p.t === q.t && p.lv === q.lv));
           if(k < 0) break;
           picked.push(queue.splice(k, 1)[0]);
@@ -1112,7 +1120,6 @@ function buildCourses(NM_THREADS){
       return { magic: seg, drills, creative: cre };
     });
 
-    prepareCurriculumSequence(sessions,spec.id);
     sessions.forEach((ss, i) => {
       if(spec.blockMinimum)ss.blockMinimum=spec.blockMinimum;
       composeSession(ss, i, spec, lists, drillMax);
@@ -1162,7 +1169,8 @@ function buildCourses(NM_THREADS){
       sessions
     };
     if([29,30,31,35,36,37,59,71,72,73].includes(spec.id)){
-      OUT['C'+spec.id].curriculumRevision='20261026-prerequisites';
+      OUT['C'+spec.id].curriculumRevision=[35,36,37].includes(spec.id)
+        ?'20261026-middle3-2022':'20261026-prerequisites';
       if(spec.perSessionDrills)OUT['C'+spec.id].curriculumCoverage={
         required:[...new Set(spec.perSessionDrills.flat())],
         extension:(spec.extensionPins||[]).slice(),review:(spec.reviewPins||[]).slice()

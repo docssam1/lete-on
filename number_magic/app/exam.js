@@ -1066,6 +1066,7 @@
   .nm-w2-page-magic .nm-mzs-title { font-size:calc(26px * var(--ws-fs, 1)); margin-top:4mm; }
   .nm-w2-page-magic .nm-mzs-sub { margin-bottom:2mm; }
   .nm-w2-page-magic .nm-mn-stage { counter-increment:mzc; flex-direction:column; gap:1.5mm; border-top:1.3px solid #245b60; padding:3mm 0 2mm; }
+  .nm-magic-c22 .nm-mn-stage { padding:2mm 0 1.5mm; }
   .nm-w2-page-magic .nm-mn-stages { counter-reset:mzc; }
   .nm-w2-page-magic .nm-mn-tag { background:none; color:#a3521c; border-radius:0; padding:0; font-size:calc(11px * var(--ws-fs, 1)); letter-spacing:.04em; }
   .nm-mn-book { margin-top:2mm; background:#f3f6f6; border-left:3px solid #245b60; border-radius:0 2.5mm 2.5mm 0; padding:2mm 3mm;
@@ -6349,7 +6350,7 @@ function renderMagicNotePage(item, opts){
     groups=[[0],[1,2]];
     groups.tail=1;
   }
-  const html = groups.map((g, pi) => `<div class="nm-w2-page nm-w2-page-magic${/^N-(?:0[2-9]|1[0-5])$/.test(item.magicUnit)?' nm-preschool-note':''}${/^M-13[6-9]$/.test(item.magicUnit)?' nm-math-graph-note':''}">
+  const html = groups.map((g, pi) => `<div class="nm-w2-page nm-w2-page-magic${/^N-(?:0[2-9]|1[0-5])$/.test(item.magicUnit)?' nm-preschool-note':''}${/^M-13[6-9]$/.test(item.magicUnit)?' nm-math-graph-note':''}${item.magicUnit==='C-22'?' nm-magic-c22':''}">
   ${wm}
   ${w2HeadHtml(headItem, code, (pi + 1) + '/' + groups.length, null, {roundNo: opts.roundNo, name: opts.name, first: pi === 0})}
   ${pi === 0 ? boardHtml : ''}

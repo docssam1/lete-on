@@ -77,10 +77,9 @@
     if(!n) return [];
     count = Math.min(count, n);
     // Partition the same source sessions using the full estimate, including a
-    // missing-duration test and the approved bridge attached to the final view.
+    // missing-duration test attached to the final view.
     // No source is split, inserted, removed or renumbered.
     const weights = source.map((_, i) => timeEstimate(course, [i]).estimatedMinutes);
-    if(course.tier === 'middle3' && Number(course.order) === 36) weights[n - 1] += 24 * TEST_SECONDS.middle3 / 60;
     if(!weights.some(Boolean)) weights.fill(1);
     const prefix = [0];
     weights.forEach(weight => prefix.push(prefix[prefix.length - 1] + weight));
@@ -128,11 +127,6 @@
         // One common sequence: 20 bundles per grade. The saved cadence chooses
         // 20 weeks at one/week or 10 weeks at two/week, with the same content.
         const lessons = makeLessons(course, index === 2 ? 8 : 6);
-        if(tier === 'middle3' && Number(course.order) === 36 && lessons.length){
-          const last = lessons[lessons.length - 1];
-          lessons[lessons.length - 1] = makeLesson(course, last.index, last.sourceIndices,
-            [{t:'MD25', lv:1, n:12}, {t:'MD25', lv:2, n:12}]);
-        }
         const plan = {version:MIDDLE_VERSION, lessons, weeksW2:lessons.length / 2};
         if(JSON.stringify(course.studyPlan) !== JSON.stringify(plan)) course.studyPlan = plan;
       });

@@ -9,6 +9,7 @@
 | **`omnivoice-nm.cmd`** | **넘버스 앱 대사 약 760줄 전부**를 복제 목소리로 만들어 `number_magic/audio/omni/` 에 담는다(2026-09-29 "복제음성으로 해"). 받아 적기 검사를 못 넘은 줄은 빼고 앱이 구글 음성으로 읽는다. 끝나면 그 폴더와 `number_magic/data/tts-map-omni.js` 를 푸시 | **아니오** |
 | `omnivoice-audition.cmd` | 목소리를 새로 *설계*해 본다(누미·독쌤·할아버지 4종) | **아니오** |
 | **`book-photos.command`** | **맥(애플 칩)용** 교재 실사 사진 — mflux 로 FLUX.1-schnell 8비트(메모리 약 13 GB). 원장 맥(M5 Pro·24 GB)은 이것 | **아니오** |
+| **`park-flux.command`** | **맥(애플 칩)용** 자연관찰대회 공원 지도 실사풍(2026-10-26 「FLUX.2 Klein 으로 진행해」) — Blender 렌더를 참조 그림으로 mflux 의 FLUX.2 [klein] 4B(Apache 2.0) 4비트가 다시 그림. 화면마다 후보 3장 → `inbox/park-flux` 로 올림. 끝나면 Claude 에게 "지도 올렸어" | **아니오** |
 | **`book-photos.cmd`** | **교재 실사 사진**(2026-10-19 "실사 수준으로")을 장면마다 후보 3장씩 만들고 GitHub 수신 브랜치 `inbox/book-photos` 로 올린다. 끝나면 Claude 에게 "사진 올렸어" | **아니오** |
 | `_setup-omnivoice.cmd` | 위 둘이 같이 쓰는 준비 단계(가상환경·설치·GPU 확인) | — |
 | **`omnivoice-clone.command`** · `omnivoice-nm.command` · `omnivoice-docssam.command` · `omnivoice-audition.command` | **맥(애플 칩)판** — 하는 일은 같은 이름의 `.cmd` 와 같다. 준비 단계는 `_setup-omnivoice.sh` | **아니오** |
