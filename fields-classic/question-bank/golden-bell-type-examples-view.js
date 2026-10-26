@@ -726,6 +726,24 @@ function lineBoardFigure(f) {
   });
   return `<div class="tx-line-board">${svg(W, W, body, `줄 ${f.lines.length}개가 만나는 숫자 판`)}</div>`;
 }
+// strip: 마법카드 칸 줄(rows 여러 줄이면 같은 값 칸이 위아래로). w = 칸의 값("?"면 빈칸), on = 색칠, total = 색칠한 칸의 합
+function stripFigure(f) {
+  const color = TONE[f.tone || "given"];
+  const rows = f.rows.map((row) => `<div>${row.map((c) => `<span class="${c.on ? "on" : c.w === "?" ? "ask" : ""}">${esc(c.w === "?" ? "□" : c.w)}</span>`).join("")}</div>`).join("");
+  return `<div class="tx-strip" style="--tone:${color}">${rows}${f.total !== undefined ? `<b>= ${esc(f.total)}</b>` : ""}</div>`;
+}
+// pieces: 같은 길이의 막대를 줄마다 n조각으로. len = 오른쪽에 쓰는 길이(null이면 「?」)
+function piecesFigure(f) {
+  const color = TONE[f.tone || "given"], x0 = 64, w = 200, W = x0 + w + 64, H = f.rows.length * 38 + 8;
+  let body = "";
+  f.rows.forEach((r, i) => {
+    const y = 6 + i * 38, cell = w / r.n, fill = i === 0 ? "#ffd45c" : i === 1 ? "#dcf5e5" : "#dde9ff", line = i === 0 ? "#a8741a" : i === 1 ? SHAPE.triangle.line : SHAPE.square.line;
+    body += text(x0 - 8, y + 13, r.label, { size: 13, weight: 900, anchor: "end" });
+    for (let k = 0; k < r.n; k++) body += `<rect x="${x0 + k * cell}" y="${y}" width="${cell}" height="26" rx="${r.n > 20 ? 1 : 4}" fill="${fill}" stroke="${line}" stroke-width="1.4"/>`;
+    body += text(x0 + w + 8, y + 13, r.len === null || r.len === undefined ? "?" : r.len, { size: 12, weight: 900, fill: r.len === null || r.len === undefined ? "#5b2fa8" : color, anchor: "start" });
+  });
+  return `<div class="tx-pieces">${svg(W, H, body, f.rows.map((r) => `${r.label} ${r.n}조각`).join(", "))}</div>`;
+}
 // sudoku: n × n 칸(4×4는 굵은 선으로 네 칸 구역). cells = 수 또는 알파벳, filled = 채운 빈칸, hi = 방금 채운 칸
 function sudokuFigure(f) {
   const color = TONE[f.tone || "given"], filled = new Set(f.filled || []), hi = new Set(f.hi || []);
@@ -846,6 +864,8 @@ export function figureMarkup(figure) {
   if (figure.kind === "mgrid") return mgridFigure(figure);
   if (figure.kind === "line-board") return lineBoardFigure(figure);
   if (figure.kind === "sudoku") return sudokuFigure(figure);
+  if (figure.kind === "strip") return stripFigure(figure);
+  if (figure.kind === "pieces") return piecesFigure(figure);
   if (figure.kind === "ring") return ringFigure(figure);
   if (figure.kind === "crypt") return cryptFigure(figure);
   if (figure.kind === "slots") return slotsFigure(figure);

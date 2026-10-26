@@ -193,7 +193,7 @@ function verifyExample(setId, typeLabel, ex, lesson) {
     const n = ex.figure.n, cells = ex.figure.cells;
     const shown = cells.map((c) => (c.v === null ? null : c.v));
     // 「A + B」 예제는 판을 다 채우지 않는다(두 수의 합만 구한다). 나머지 유형은 마지막 그림이 다 채운 마방진.
-    const pairType = typeLabel === "가운데 수로 A + B";
+    const pairType = typeLabel === "가운데 수로 A + B" || typeLabel === "겹치는 세 줄로 두 도형의 합 찾기";
     const full = ex.steps.at(-1).figure.cells.map((c) => c.v);
     assert.equal(full.length, n * n);
     const S = pairType ? v.sum : magicSum(n, full);
@@ -202,11 +202,11 @@ function verifyExample(setId, typeLabel, ex, lesson) {
     if (n === 3) {
       const { options } = brute3(shown);
       for (const [label, i] of Object.entries(labels)) {
-        if (typeLabel === "가운데 수로 A + B") continue;
+        if (pairType) continue;
         assert.deepEqual([...options[i]], [full[i]], `${ex.id}: ${label}가 하나로 정해짐`);
         assert.equal(v[label], full[i]);
       }
-      if (typeLabel === "가운데 수로 A + B") {
+      if (pairType) {
         const sums = new Set();
         for (let c = 1; c <= 40; c++) for (let a = -39; a <= 39; a++) for (let b = -39; b <= 39; b++) {
           const w = magicSquare3(c, a, b);
@@ -952,11 +952,11 @@ function verifyExample(setId, typeLabel, ex, lesson) {
     else if (v.kind === "times") { let n = 0, s = 0; while (s < v.b) { s += v.a; n++; } assert.ok(s === v.b && n === v.k); assert.ok(has(n)); }
     else if (v.kind === "len") { assert.equal(v.lenB * v.a, v.lenA * v.b); assert.ok(has(v.lenB)); }
     else assert.fail(`${ex.id}: 모르는 예제`);
-  } else if (setId === "book1") {
+  } else if (setId === "book1" || setId === "arrange") {
     const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number), has = (n) => nums(ex.answer).includes(n);
     const add = (xs) => xs.reduce((a, b) => a + b, 0);
     // 원본 그림의 수(가쿠로 합·나눌 수 묶음·조건 카드)와 예제 문제의 수가 통째로 같으면 안 된다
-    for (const item of lesson.original.items) { const vis = (item.visual || [])[0] || {}; const src = vis.rowSums ? [...vis.rowSums, ...vis.columnSums] : vis.values || vis.cards || nums((vis.clues || []).join(" ")); if (src.length) assert.notEqual(nums(ex.problem).join(), src.join(), `${ex.id}: 원본과 같은 수`); }
+    for (const item of lesson.original.items) { const vis = (item.visual || [])[0] || {}; if (vis.cells && v.cells) assert.notEqual(JSON.stringify(vis.cells), JSON.stringify(v.cells), `${ex.id}: 원본과 같은 삼각진`); const src = vis.rowSums ? [...vis.rowSums, ...vis.columnSums] : vis.values || vis.cards || nums((vis.clues || []).join(" ")); if (src.length) assert.notEqual(nums(ex.problem).join(), src.join(), `${ex.id}: 원본과 같은 수`); }
     if (v.kind === "gakuro") {
       assert.deepEqual(v.rows, v.grid.map(add), `${ex.id}: 가로 합`); assert.deepEqual(v.cols, v.grid[0].map((_, j) => add(v.grid.map((r) => r[j]))), `${ex.id}: 세로 합`);
       const blanks = v.known.flatMap((r, i) => r.map((x, j) => (x === null ? [i, j] : null)).filter(Boolean));
@@ -985,10 +985,56 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       const fits = perms(v.cards).map((arr) => v.full.map((x, i) => (v.shown[i] !== undefined ? v.shown[i] : arr[blanks.indexOf(i)]))).filter((g) => new Set(lines.map((ln) => add(ln.map((i) => g[i])))).size === 1);
       assert.equal(new Set(fits.map((g) => g.join())).size, 1, `${ex.id}: 카드 자리가 하나로 정해짐`); assert.equal(fits[0].join(), v.full.join(), `${ex.id}: 자리`);
       assert.equal(add(lines[0].map((i) => fits[0][i])), v.lineSum); assert.ok(has(v.lineSum), `${ex.id}: 답`);
+    } else if (["tri-blank", "tri-shared", "tri-extreme"].includes(v.kind)) {
+      // 삼각진: 세 변 [맨 위, 왼쪽 가운데, 왼쪽 아래] · [맨 위, 오른쪽 가운데, 오른쪽 아래] · [왼쪽 아래, 아래 가운데, 오른쪽 아래]
+      const sides = [[0, 1, 3], [0, 2, 5], [3, 4, 5]], equal = (g) => new Set(sides.map((sd) => add(sd.map((i) => g[i])))).size === 1;
+      if (v.kind === "tri-extreme") {
+        const perms = (xs) => (xs.length <= 1 ? [xs] : xs.flatMap((x, i) => perms([...xs.slice(0, i), ...xs.slice(i + 1)]).map((r) => [x, ...r])));
+        const sums = perms(v.cards).filter(equal).map((g) => add(sides[0].map((i) => g[i])));
+        assert.deepEqual([v.min, v.max], [Math.min(...sums), Math.max(...sums)], `${ex.id}: 가장 작은 합·큰 합`); assert.deepEqual(nums(ex.answer), [v.min, v.max]);
+      } else {
+        // 모르는 칸(빈칸과 □)에 1~20을 모두 넣어 세 변이 같아지는 경우의 □ 값을 모은다
+        const ask = v.kind === "tri-blank" ? v.blank : v.ask, base = v.kind === "tri-blank" ? v.cells.map((x, i) => (i === ask ? null : x)) : v.cells, free = base.map((x, i) => (x === null || i === ask ? i : -1)).filter((i) => i >= 0);
+        const got = new Set(), g = [...base];
+        const go = (k) => { if (k === free.length) { if (equal(g)) got.add(g[ask]); return; } for (let d = 1; d <= 20; d++) { g[free[k]] = d; go(k + 1); } };
+        go(0);
+        const want = v.kind === "tri-blank" ? v.cells[ask] : v.value;
+        assert.deepEqual([...got], [want], `${ex.id}: □가 하나로 정해짐`); assert.ok(has(want), `${ex.id}: 답`);
+      }
     } else if (v.kind === "dsum") {
       v.sums.forEach((k, i) => { const list = []; for (let n = 10; n <= 99; n++) if (Math.floor(n / 10) + (n % 10) === k) list.push(n); assert.deepEqual(v.lists[i], list, `${ex.id}: 합 ${k}`); assert.ok(ex.answer.includes(`합 ${k}: ${list.length}개`)); });
     }
     else if (v.kind === "cross") { assert.equal(v.t + v.c + v.b, v.l + v.c + v.r, `${ex.id}: 두 줄의 합`); assert.ok(v.b > 0 && has(v.b)); }
+    else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "book3") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number), add = (xs) => xs.reduce((a, b) => a + b, 0);
+    for (const item of lesson.original.items) { const vis = (item.visual || [])[0] || {}; if (vis.weights && v.weights) assert.notEqual(JSON.stringify(vis.weights), JSON.stringify(v.weights), `${ex.id}: 원본과 같은 칸`); }
+    // 칸을 고르는 모든 경우(2^n)의 합을 모아 본다
+    const subsetSums = (ws) => { const out = []; for (let m = 0; m < 1 << ws.length; m++) out.push(add(ws.filter((_, i) => m >> i & 1))); return out; };
+    const covers = (ws) => { const got = new Set(subsetSums(ws)), max = add(ws); return [...Array(max + 1).keys()].every((x) => got.has(x)); };
+    if (v.kind === "strip-fill") {
+      assert.ok(v.full.every((w, i) => v.weights[i] === "?" || v.weights[i] === w), `${ex.id}: 보이는 칸 그대로`); assert.ok(covers(v.full), `${ex.id}: 0부터 빠짐없이`);
+      // 빈칸이 하나 더 크면 빠지는 수가 생긴다(가장 크게 고른 값인지)
+      assert.ok(!covers(v.full.map((w, i) => (v.weights[i] === "?" ? w + 1 : w))), `${ex.id}: 빈칸이 가장 큰 값`);
+      assert.deepEqual(nums(ex.answer), [v.missing, add(v.full)], `${ex.id}: 답`);
+    } else if (v.kind === "strip-max") {
+      const ws = Array.from({ length: v.cells }, (_, i) => 2 ** i); assert.ok(covers(ws)); assert.equal(v.max, add(ws)); assert.ok(nums(ex.answer).includes(v.max));
+    } else if (v.kind === "strip-read") { assert.equal(v.value, add(v.on.map((i) => v.weights[i]))); assert.ok(nums(ex.answer).includes(v.value)); }
+    else if (v.kind === "strip-make") {
+      const ways = []; for (let m = 0; m < 1 << v.weights.length; m++) if (add(v.weights.filter((_, i) => m >> i & 1)) === v.target) ways.push(v.weights.map((_, i) => i).filter((i) => m >> i & 1));
+      assert.deepEqual(ways, [v.pick], `${ex.id}: 고르는 칸이 하나뿐`); assert.deepEqual(nums(ex.answer), v.pick.map((i) => v.weights[i]));
+    } else if (v.kind === "cell-read") { const n = v.weights.length; assert.equal(v.value, add(v.on.map((k) => v.weights[k % n]))); assert.ok(nums(ex.answer).includes(v.value)); }
+    else if (v.kind === "cell-max") { assert.equal(v.max, Math.max(...subsetSums([...v.weights, ...v.weights]))); assert.ok(nums(ex.answer).includes(v.max)); }
+    else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "measure") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    for (const item of lesson.original.items) assert.notEqual(nums(item.prompt).join(), nums(ex.problem).join(), `${ex.id}: 원본과 같은 수`);
+    if (v.kind === "pencil") {
+      let len = v.L; if (len === null) { len = 1; while (len % v.a || len % v.b) len++; }
+      const A = len / v.a, B = len / v.b; assert.ok(Number.isInteger(A) && Number.isInteger(B));
+      assert.deepEqual(nums(ex.answer), [...(v.L === null ? [len] : []), A, B, A - B], `${ex.id}: 답`);
+    } else if (v.kind === "measure") { assert.equal(v.k * v.len2, v.total); assert.ok(nums(ex.answer).includes(v.k)); }
+    else if (v.kind === "measure-ratio") { assert.equal(v.k * v.count2, v.count1); assert.ok(nums(ex.answer).includes(v.k)); }
     else assert.fail(`${ex.id}: 모르는 예제`);
   } else if (setId === "book2") {
     const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
@@ -998,6 +1044,11 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       const len = v.period.length; assert.ok([...Array(len - 1).keys()].every((d) => v.period.some((x, i) => x !== v.period[(i + d + 1) % len])), `${ex.id}: 가장 짧은 마디`);
       const long = []; while (long.length < v.n) long.push(...v.period);
       assert.equal(long[v.n - 1], v.ans, `${ex.id}: ${v.n}번째`); assert.ok(ex.answer.startsWith(String(v.ans)));
+    } else if (v.kind === "dual") {
+      // 처음부터 하나씩 늘어놓아 n번째를 센다
+      const FILL = { "○": "●", "□": "■", "△": "▲", "◇": "◆" }, line = [];
+      for (let k = 0; k < v.n; k++) { const sh = v.shapes[k % v.shapes.length]; line.push(v.colors[k % v.colors.length] ? FILL[sh] : sh); }
+      assert.equal(line.at(-1), v.ans, `${ex.id}: ${v.n}번째`); assert.ok(ex.answer.includes(v.ans)); assert.deepEqual(ex.figure.values, line.slice(0, 8));
     } else if (v.kind === "sudoku") {
       const n = v.n, ok = (g) => { for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) { const x = g[r * n + c]; if (!x) continue; for (let k = 0; k < n; k++) { if (k !== c && g[r * n + k] === x) return false; if (k !== r && g[k * n + c] === x) return false; } if (n === 4) for (let rr = r - (r % 2); rr < r - (r % 2) + 2; rr++) for (let cc = c - (c % 2); cc < c - (c % 2) + 2; cc++) if ((rr !== r || cc !== c) && g[rr * n + cc] === x) return false; } return true; };
       const sols = [], g = v.solution.map((x, i) => (v.blanks.includes(i) ? 0 : x));

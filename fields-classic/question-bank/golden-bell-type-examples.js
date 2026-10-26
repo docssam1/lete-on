@@ -171,6 +171,8 @@ const SQ_D = magicSquare3(11, 2, -5);  // 한 줄의 합 33
 const SQ_4A = magicSquare4(0, false, 0, false);
 const SQ_4B = magicSquare4(0, false, 3, true);
 const ASK = "가로, 세로, 대각선의 합이 모두 같은 마방진이에요.";
+const SQ_E = magicSquare3(6, 1, 3);    // 한 줄의 합 18 (3권)
+const SQ_F = magicSquare3(12, 1, 4);   // 한 줄의 합 36 (3권)
 const MAGIC_SET = {
   id: "b9-magic",
   types: {
@@ -194,6 +196,16 @@ const MAGIC_SET = {
       magicExample({ id: "magic-first-1", title: "예제 1", full: SQ_C, show: [1, 5, 7, 8], targets: { 2: "A", 4: "B" }, ask: "first", problem: `${ASK} A와 B 중 먼저 구할 수 있는 칸을 찾고, A와 B와 한 줄의 합을 구해요.` }),
       magicExample({ id: "magic-first-2", title: "예제 2", full: SQ_A, show: [2, 3, 5, 6, 8], targets: { 0: "A", 1: "B" }, ask: "first", problem: `${ASK} A와 B 중 먼저 구할 수 있는 칸을 찾고, A와 B와 한 줄의 합을 구해요.` })
     ],
+    // 3권 같은 줄의 합으로 빈칸
+    "3×3 마방진의 한 줄 합과 빈칸": () => [
+      magicExample({ id: "magic3-sum-1", title: "예제 1", full: SQ_E, show: [0, 1, 2, 4], targets: { 8: "△" }, ask: "sum", problem: `${ASK} 한 줄의 합과 △에 들어갈 수를 구해요.` }),
+      magicExample({ id: "magic3-sum-2", title: "예제 2", full: SQ_F, show: [3, 4, 5, 6], targets: { 2: "△" }, ask: "sum", problem: `${ASK} 한 줄의 합과 △에 들어갈 수를 구해요.` })
+    ],
+    "겹치는 세 줄로 도형의 수 찾기": () => [magicExample({ id: "magic3-overlap-1", title: "예제 1", full: SQ_F, show: [1, 3, 6], targets: { 2: "△" }, problem: `${ASK} △에 들어갈 수를 구해요.` })],
+    "겹치는 세 줄로 두 도형의 합 찾기": () => [magicExample({ id: "magic3-pair-1", title: "예제 1", full: SQ_E, show: [4], targets: { 1: "A", 7: "B" }, ask: "pair", problem: `${ASK} A + B를 구해요.` })],
+    "4×4 표시 줄의 도형값 찾기": () => [magicExample({ id: "magic3-big-1", title: "예제 1", n: 4, full: SQ_4B, show: [0, 1, 3, 6, 14], targets: { 10: "△" }, problem: `${ASK} △에 들어갈 수를 구해요.` })],
+    "여러 줄의 공통 합으로 가운데 수 찾기": () => [magicExample({ id: "magic3-big-2", title: "예제 1", n: 4, full: SQ_4A, show: [0, 2, 3, 5, 13], targets: { 9: "△" }, problem: `${ASK} △에 들어갈 수를 구해요.` })],
+    "4×4 표시 줄의 여러 도형값 찾기": () => [magicExample({ id: "magic3-big-3", title: "예제 1", n: 4, full: SQ_4A, show: [0, 1, 9, 13, 15], targets: { 10: "◇" }, problem: `${ASK} ◇에 들어갈 수를 구해요.` })],
     "큰 마방진의 겹치는 칸": () => [
       magicExample({ id: "magic-big-1", title: "예제 1", n: 4, full: SQ_4A, show: [2, 6, 8, 11, 14], targets: { 9: "A" }, problem: `${ASK} A에 들어갈 수를 구해요.` }),
       magicExample({ id: "magic-big-2", title: "예제 2", n: 4, full: SQ_4B, show: [0, 4, 7, 10, 15], targets: { 6: "A" }, problem: `${ASK} A에 들어갈 수를 구해요.` })
@@ -2809,7 +2821,8 @@ const BOOK1_SET = {
 const LINE_LAYOUT = {
   cross: { pts: [[10, 50], [30, 50], [50, 50], [70, 50], [90, 50], [50, 10], [50, 30], [50, 70], [50, 90]], lines: [[0, 1, 2, 3, 4], [5, 6, 2, 7, 8]] },
   cross5: { pts: [[15, 50], [50, 50], [85, 50], [50, 15], [50, 85]], lines: [[0, 1, 2], [3, 1, 4]] },
-  t: { pts: [[15, 15], [50, 15], [85, 15], [50, 50], [50, 85]], lines: [[0, 1, 2], [1, 3, 4]] }
+  t: { pts: [[15, 15], [50, 15], [85, 15], [50, 50], [50, 85]], lines: [[0, 1, 2], [1, 3, 4]] },
+  tri6: { pts: [[50, 8], [29, 47], [71, 47], [8, 86], [50, 86], [92, 86]], lines: [[0, 1, 3], [0, 2, 5], [3, 4, 5]] }
 };
 const lineBoard = (layout, vals, p = {}) => ({ kind: "line-board", ...LINE_LAYOUT[layout], vals, hi: p.hi, pair: p.pair, tone: p.tone || "doing" });
 // 교차점 후보: 카드 다섯 장을 십자에 한 번씩. 가운데를 빼고 남은 네 장이 같은 합의 두 짝으로 나뉘면 된다
@@ -2885,11 +2898,205 @@ const BOOK2_SET = {
     "마디수열의 특정 번째 수": () => [periodExample({ id: "period-1", title: "예제 1", period: [5, 1, 8], n: 17 }), periodExample({ id: "period-2", title: "예제 2", period: [7, 3, 9, 2], n: 24 })],
     "마디수열의 특정 번째 모양": () => [periodExample({ id: "period-3", title: "예제 1", period: ["○", "△", "□", "◇"], n: 19, what: "모양" })],
     "3×3 스도쿠 빈칸 채우기": () => [sudokuExample({ id: "sdk3-1", title: "예제 1", n: 3, solution: [2, 3, 1, 1, 2, 3, 3, 1, 2], blanks: [1, 2, 3, 4, 5] })],
+    // 모양과 색의 규칙
+    "한 가지 반복 규칙": () => [periodExample({ id: "period-4", title: "예제 1", period: ["●", "○", "○", "●"], n: 26, what: "모양" })],
+    "모양과 색·개수의 이중 규칙": () => [dualExample({ id: "dual-1", title: "예제 1", shapes: ["○", "△", "□"], colors: [0, 1], n: 10 })],
     "4×4 스도쿠 빈칸 채우기": () => [sudokuExample({ id: "sdk4-1", title: "예제 1", n: 4, solution: [1, 4, 2, 3, 2, 3, 1, 4, 4, 1, 3, 2, 3, 2, 4, 1], blanks: [1, 4, 5, 7, 11, 14] })]
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET });
+// ───────────────────────── 3권 마법카드 ─────────────────────────
+// 칸 줄(kind "strip"): rows = [[{ w, on }]] — w는 칸의 값("?"면 빈칸), on이면 색칠. 다음 칸 = 앞 칸을 모두 더한 수 + 1이면 0부터 빠짐없이.
+const strip = (weights, on = [], p = {}) => ({ kind: "strip", rows: [weights.map((w, i) => ({ w, on: on.includes(i) }))], total: p.total, tone: p.tone || "doing" });
+function stripFillExample({ id, title, weights }) {
+  const at = weights.indexOf("?"), known = weights.filter((w) => w !== "?"), full = [...weights];
+  const sorted = [...known].sort((a, b) => a - b), below = sorted.filter((w) => weights.indexOf(w) > at), missing = sum(below) + 1;
+  full[at] = missing;
+  const max = sum(full);
+  const steps = [
+    { text: `0, 1, 2, …를 빠짐없이 만들려면 칸마다 자기보다 작은 칸을 모두 더한 수보다 1 커야 해요. ${below.length ? `빈칸보다 작은 칸을 모두 더하면 ${below.length > 1 ? `${below.join(" + ")} = ` : ""}${ira(sum(below))} ${sum(below)}까지는 만들 수 있으니 빈칸은 ${sum(below)} + 1 = ${missing}.` : "빈칸이 가장 작은 칸이라 1을 만들려면 빈칸은 1이에요."}`, figure: strip(full, [at], { tone: "doing" }) },
+    { text: `모든 칸을 색칠하면 가장 큰 수예요. ${full.join(" + ")} = ${max}.`, figure: strip(full, full.map((_, i) => i), { total: max, tone: "check" }) }
+  ];
+  return { id, title, problem: `[${weights.map((w) => (w === "?" ? "□" : w)).join(", ")}] 칸을 골라 색칠한 칸의 값을 더해, 0부터 하나씩 커지는 수를 빠짐없이 나타내요. 빈칸의 값과 나타낼 수 있는 가장 큰 수를 구해요.`, figure: strip(weights, [], { tone: "given" }), steps, answer: `빈칸은 ${missing}, 가장 큰 수는 ${josa(max, "이에요")}.`, value: { kind: "strip-fill", weights, full, missing, max } };
+}
+function stripMaxExample({ id, title, cells }) {
+  const w = Array.from({ length: cells }, (_, i) => 2 ** (cells - 1 - i)), max = 2 ** cells - 1;
+  const steps = [
+    { text: `가장 작은 칸은 1. 그다음 칸은 앞 칸을 다 더한 수보다 1 크게: 1 + 1 = 2, 1 + 2 + 1 = 4, …. 칸마다 두 배가 돼요.`, figure: strip([4, 2, 1], [], { tone: "doing" }) },
+    { text: `${cells}칸은 ${[...w].reverse().join(", ")}.`, figure: strip(w, [], { tone: "doing" }) },
+    { text: `모두 색칠하면 ${w.join(" + ")} = ${max}.`, figure: strip(w, w.map((_, i) => i), { total: max, tone: "check" }) }
+  ];
+  return { id, title, problem: `${cells}칸 마법카드의 칸마다 수를 넣어, 색칠한 칸의 합으로 0부터 하나씩 커지는 수를 가장 많이 나타내려고 해요. 나타낼 수 있는 가장 큰 수는 얼마일까요?`, figure: strip(Array(cells).fill("?"), [], { tone: "given" }), steps, answer: `${josa(max, "이에요")}.`, value: { kind: "strip-max", cells, max } };
+}
+// 읽기(on을 주면 그 무늬의 수) · 만들기(target을 주면 큰 칸부터 고르기)
+function stripCodeExample({ id, title, weights, on = null, target = null, word = "칸" }) {
+  if (on) {
+    const value = sum(on.map((i) => weights[i]));
+    const steps = [
+      { text: `색칠한 ${word}의 값만 읽어요. ${on.map((i) => weights[i]).join(", ")}.`, figure: strip(weights, on, { tone: "doing" }) },
+      { text: `모두 더하면 ${on.map((i) => weights[i]).join(" + ")} = ${value}.`, figure: strip(weights, on, { total: value, tone: "check" }) }
+    ];
+    return { id, title, problem: `${word}의 값은 ${ira(weights.join(", "), "고")}, 색칠한 ${word}의 값을 더해 수를 나타내요. 그림의 무늬가 나타내는 수는 얼마일까요?`, figure: strip(weights, on, { tone: "given" }), steps, answer: `${josa(value, "이에요")}.`, value: { kind: "strip-read", weights, on, value } };
+  }
+  const pick = [], plan = []; let left = target;
+  for (const [i, w] of weights.entries()) if (w <= left) { pick.push(i); plan.push(`${left}에서 ${josa(w, "을")} 빼면 ${left - w}`); left -= w; }
+  if (left) throw new Error(`${id}: 만들 수 없음`);
+  const steps = [
+    { text: `큰 ${word}부터 봐요. ${josa(target, "을")} 넘지 않는 가장 큰 값을 고르고, 남은 수로 다시 해요.`, figure: strip(weights, [], { tone: "doing" }) },
+    { text: `${plan.join(", ")}.`, figure: strip(weights, pick, { tone: "doing" }) },
+    { text: `고른 ${word}: ${pick.map((i) => weights[i]).join(" + ")} = ${target}.`, figure: strip(weights, pick, { total: target, tone: "check" }) }
+  ];
+  return { id, title, problem: `${word}의 값은 ${josa(weights.join(", "), "이에요")}. ${josa(target, "을")} 나타내려면 어느 ${josa(word, "을")} 색칠할까요?`, figure: strip(weights, [], { tone: "given" }), steps, answer: `${josa(pick.map((i) => weights[i]).join(", "), "을")} 색칠해요.`, value: { kind: "strip-make", weights, target, pick } };
+}
+// 두 줄 칸 카드: 같은 값의 칸이 위아래로 두 개라 한 값을 0번·1번·2번 쓸 수 있다
+const cellRows = (weights, on, p = {}) => ({ kind: "strip", rows: [0, 1].map((r) => weights.map((w, i) => ({ w, on: on.includes(r * weights.length + i) }))), total: p.total, tone: p.tone || "doing" });
+function cellCodeExample({ id, title, weights, on = null, ask = "read" }) {
+  const n = weights.length;
+  if (ask === "max") {
+    const max = 2 * sum(weights);
+    const steps = [
+      { text: `값마다 칸이 두 개라 ${weights.slice(0, 2).map((w) => `${josa(w, "은")} 0, ${w}, ${w * 2}`).join(", ")}처럼 0번·1번·2번 쓸 수 있어요.`, figure: cellRows(weights, [], { tone: "doing" }) },
+      { text: `모두 색칠하면 가장 커요. (${weights.join(" + ")}) × 2 = ${max}.`, figure: cellRows(weights, Array.from({ length: n * 2 }, (_, i) => i), { total: max, tone: "check" }) }
+    ];
+    return { id, title, problem: `위아래 두 줄에 값이 ${weights.join(", ")}인 칸이 하나씩 있어요. 칸을 색칠해 값을 더할 때 나타낼 수 있는 가장 큰 수는 얼마일까요?`, figure: cellRows(weights, [], { tone: "given" }), steps, answer: `${josa(max, "이에요")}.`, value: { kind: "cell-max", weights, max } };
+  }
+  const value = sum(on.map((k) => weights[k % n]));
+  const cols = weights.map((w, i) => on.filter((k) => k % n === i).length);
+  const steps = [
+    { text: `값마다 색칠한 칸이 몇 개인지 세요. ${weights.map((w, i) => `${w}: ${cols[i]}개`).join(", ")}.`, figure: cellRows(weights, on, { tone: "doing" }) },
+    { text: `${weights.map((w, i) => (cols[i] ? `${w} × ${cols[i]}` : null)).filter(Boolean).join(" + ")} = ${value}.`, figure: cellRows(weights, on, { total: value, tone: "check" }) }
+  ];
+  return { id, title, problem: `위아래 두 줄에 값이 ${weights.join(", ")}인 칸이 하나씩 있어요. 색칠한 칸의 값을 더하면 얼마일까요?`, figure: cellRows(weights, on, { tone: "given" }), steps, answer: `${josa(value, "이에요")}.`, value: { kind: "cell-read", weights, on, value } };
+}
+const BOOK3_SET = {
+  id: "book3",
+  types: {
+    "0부터 빠짐없이 나타내는 두 칸 마법카드": () => [stripFillExample({ id: "fill2-1", title: "예제 1", weights: ["?", 1] })],
+    "0부터 빠짐없이 나타내는 세 칸 마법카드": () => [stripFillExample({ id: "fill3-1", title: "예제 1", weights: [4, "?", 1] }), stripFillExample({ id: "fill4-1", title: "예제 2", weights: [8, 4, 2, "?"] })],
+    "다섯 칸 마법카드의 가장 큰 수": () => [stripMaxExample({ id: "max4-1", title: "예제 1", cells: 4 })],
+    "여섯 칸 마법카드의 가장 큰 수": () => [stripMaxExample({ id: "max7-1", title: "예제 1", cells: 7 })],
+    "마법카드로 목표 수 나타내기": () => [stripCodeExample({ id: "read-1", title: "예제 1", weights: [16, 8, 4, 2, 1], on: [0, 2, 3] }), stripCodeExample({ id: "make-1", title: "예제 2", weights: [16, 8, 4, 2, 1], target: 13 })],
+    "별 조각의 값을 더해 목표 수 만들기": () => [stripCodeExample({ id: "star-1", title: "예제 1", weights: [16, 8, 4, 2, 1], target: 27, word: "조각" })],
+    "두 줄 칸 카드로 목표 수 나타내기": () => [cellCodeExample({ id: "cell-1", title: "예제 1", weights: [9, 3, 1], on: [0, 1, 4, 5] })],
+    "두 줄 칸 카드의 가장 큰 수": () => [cellCodeExample({ id: "cell-2", title: "예제 1", weights: [9, 3, 1], ask: "max" })]
+  }
+};
+
+// ───────────────────────── 9권 원형진·삼각진 ─────────────────────────
+// 삼각진 자리 = [맨 위, 왼쪽 가운데, 오른쪽 가운데, 왼쪽 아래, 아래 가운데, 오른쪽 아래]. 꼭짓점(0, 3, 5)은 두 변이 함께 쓴다.
+const TRI_SIDES = [[0, 1, 3], [0, 2, 5], [3, 4, 5]];
+function triBlankExample({ id, title, cells, blank }) {
+  const full = [...cells], S = sum(TRI_SIDES.find((s) => !s.includes(blank)).map((i) => cells[i]));
+  const side = TRI_SIDES.find((s) => s.includes(blank)), others = side.filter((i) => i !== blank);
+  full[blank] = S - sum(others.map((i) => cells[i]));
+  if (TRI_SIDES.some((s) => sum(s.map((i) => full[i])) !== S)) throw new Error(`${id}: 세 변의 합이 다름`);
+  const vals = (k) => full.map((v, i) => (i === blank ? k : v)), done = TRI_SIDES.find((s) => !s.includes(blank)), third = TRI_SIDES.find((s) => s !== done && s !== side);
+  const steps = [
+    { text: `수가 다 있는 변부터 더해요. ${done.map((i) => full[i]).join(" + ")} = ${S}. 세 변의 합은 모두 ${josa(S, "이에요")}.`, figure: lineBoard("tri6", vals("?"), { hi: done }) },
+    { text: `□가 있는 변: ${others.map((i) => full[i]).join(" + ")} + □ = ${S}라 □ = ${S} − ${others.map((i) => full[i]).join(" − ")} = ${full[blank]}.`, figure: lineBoard("tri6", vals(full[blank]), { hi: [blank] }) },
+    { text: `남은 변도 확인해요. ${third.map((i) => full[i]).join(" + ")} = ${S}.`, figure: lineBoard("tri6", vals(full[blank]), { hi: third, tone: "check" }) }
+  ];
+  return { id, title, problem: "삼각형의 세 변에 놓인 세 수의 합이 모두 같아요. □에 들어갈 수를 구해요.", figure: lineBoard("tri6", vals("?"), { tone: "given" }), steps, answer: `□는 ${josa(full[blank], "이에요")}.`, value: { kind: "tri-blank", cells: full, blank, S } };
+}
+// 꼭짓점을 같이 쓰는 두 변: 그 꼭짓점을 양쪽에서 빼면 나머지 두 수끼리 합이 같다
+function triSharedExample({ id, title, cells, ask }) {
+  const sides = TRI_SIDES.filter((s) => s.includes(ask)), other = TRI_SIDES.find((s) => !s.includes(ask));
+  const shared = [0, 3, 5].find((v) => other.includes(v) && sides.some((s) => s.includes(v)) && cells[v] === null);
+  const sOther = other, sAsk = sides.find((s) => s.includes(shared));
+  const restOther = sOther.filter((i) => i !== shared), restAsk = sAsk.filter((i) => i !== shared && i !== ask);
+  const value = sum(restOther.map((i) => cells[i])) - sum(restAsk.map((i) => cells[i]));
+  const vals = (k) => cells.map((v, i) => (i === ask ? k : v === null ? "" : v));
+  const steps = [
+    { text: `두 변이 같이 쓰는 빈 꼭짓점이 있어요. 그 수는 양쪽 변에 똑같이 들어가니 빼도 돼요.`, figure: lineBoard("tri6", vals("?"), { hi: [shared] }) },
+    { text: `그러면 ${restOther.map((i) => cells[i]).join(" + ")} = ${restAsk.map((i) => cells[i]).join(" + ")} + □. ${sum(restOther.map((i) => cells[i]))} − ${sum(restAsk.map((i) => cells[i]))} = ${value}.`, figure: lineBoard("tri6", vals(value), { hi: [...restOther, ...restAsk, ask], tone: "check" }) }
+  ];
+  return { id, title, problem: "삼각형의 세 변에 놓인 세 수의 합이 모두 같아요. 빈 칸에는 아직 모르는 수가 있어요. □에 들어갈 수를 구해요.", figure: lineBoard("tri6", vals("?"), { tone: "given" }), steps, answer: `□는 ${josa(value, "이에요")}.`, value: { kind: "tri-shared", cells, ask, value } };
+}
+function triExtremeExample({ id, title, cards }) {
+  const total = sum(cards), sorted = [...cards].sort((a, b) => a - b), lo = sorted.slice(0, 3), hi = sorted.slice(-3);
+  const place = (corners, S) => { const [t, l, r] = corners; return [t, S - t - l, S - t - r, l, S - l - r, r]; };
+  const Smin = (total + sum(lo)) / 3, Smax = (total + sum(hi)) / 3;
+  const minCells = place([lo[1], lo[0], lo[2]], Smin), maxCells = place([hi[0], hi[1], hi[2]], Smax);
+  if (![...minCells, ...maxCells].every((x) => cards.includes(x)) || new Set(minCells).size !== 6 || new Set(maxCells).size !== 6) throw new Error(`${id}: 놓을 수 없음`);
+  const steps = [
+    { text: `세 변을 모두 더하면 꼭짓점의 세 수는 두 번씩 더해져요. 그래서 (한 줄의 합) × 3 = 모든 수의 합 ${total} + 꼭짓점 세 수.`, figure: { kind: "eqs", lines: [`${cards.join(" + ")} = ${total}`, `한 줄의 합 × 3 = ${total} + (꼭짓점 세 수)`], tone: "doing" } },
+    { text: `가장 작게: 꼭짓점에 ${lo.join(", ")}. (${total} + ${sum(lo)}) ÷ 3 = ${Smin}.`, figure: lineBoard("tri6", minCells, { hi: [0, 3, 5] }) },
+    { text: `가장 크게: 꼭짓점에 ${hi.join(", ")}. (${total} + ${sum(hi)}) ÷ 3 = ${Smax}.`, figure: lineBoard("tri6", maxCells, { hi: [0, 3, 5], tone: "check" }) }
+  ];
+  return { id, title, problem: `${josa(cards.join(", "), "을")} 한 번씩 넣어 삼각형의 세 변에 놓인 세 수의 합이 모두 같게 해요. 한 줄의 합이 가장 작을 때와 가장 클 때를 구해요.`, figure: lineBoard("tri6", ["", "", "", "", "", ""], { tone: "given" }), steps, answer: `가장 작을 때 ${Smin}, 가장 클 때 ${josa(Smax, "이에요")}.`, value: { kind: "tri-extreme", cards, min: Smin, max: Smax } };
+}
+const ARRANGE_SET = {
+  id: "arrange",
+  types: {
+    "원형진의 가운데 칸": () => [crossCenterExample({ id: "center-9", title: "예제 1", cards: [4, 5, 6, 7, 8] })],
+    "삼각진의 빈칸": () => [triBlankExample({ id: "tri-1", title: "예제 1", cells: [5, 8, null, 2, 9, 4], blank: 2 })],
+    "삼각진의 겹치는 칸": () => [triSharedExample({ id: "tri-2", title: "예제 1", cells: [null, 8, 2, 3, null, null], ask: 5 })],
+    "삼각진의 가장 작은 합·가장 큰 합": () => [triExtremeExample({ id: "tri-3", title: "예제 1", cards: [2, 3, 4, 5, 6, 7] })]
+  }
+};
+
+// ───────────────────────── 6권 막대로 길이 재기 ─────────────────────────
+// 그림 kind "pieces": 같은 길이의 막대를 줄마다 n조각으로(조각이 작을수록 많다)
+const pieces = (rows, tone = "doing") => ({ kind: "pieces", rows, tone });
+const lcmOf = (a, b) => { let m = Math.max(a, b); while (m % a || m % b) m++; return m; };
+function pencilExample({ id, title, a, b, L = null }) {
+  const len = L ?? lcmOf(a, b), A = len / a, B = len / b, C = A - B;
+  if (!Number.isInteger(A) || !Number.isInteger(B) || C <= 0) throw new Error(`${id}: 딱 떨어지지 않음`);
+  const rows = (show) => [{ label: "연필", n: 1, len: show.p ? `${len}cm` : null }, { label: "A", n: a, len: show.a ? `${A}cm` : null }, { label: "B", n: b, len: show.b ? `${B}cm` : null }];
+  const mult = (k) => Array.from({ length: len / k }, (_, i) => k * (i + 1));
+  const steps = L === null ? [
+    { text: `연필은 A ${a}개, B ${b}개와 같아요. 그래서 연필의 길이는 ${a}단에도 ${b}단에도 나오는 수예요.`, figure: pieces(rows({})) },
+    { text: `${a}단 ${mult(a).join(", ")} · ${b}단 ${mult(b).join(", ")}. 처음 같아지는 ${josa(len, "이")} 가장 짧은 연필이에요.`, figure: pieces(rows({ p: 1 })) },
+    { text: `A = ${len} ÷ ${a} = ${A}cm, B = ${len} ÷ ${b} = ${B}cm, C = ${A} − ${B} = ${C}cm.`, figure: pieces(rows({ p: 1, a: 1, b: 1 }), "check") }
+  ] : [
+    { text: `A ${a}개가 ${len}cm라 A = ${len} ÷ ${a} = ${A}cm.`, figure: pieces(rows({ p: 1, a: 1 })) },
+    { text: `B ${b}개도 ${len}cm라 B = ${len} ÷ ${b} = ${B}cm.`, figure: pieces(rows({ p: 1, a: 1, b: 1 })) },
+    { text: `C는 A와 B의 길이 차이라 ${A} − ${B} = ${C}cm.`, figure: pieces(rows({ p: 1, a: 1, b: 1 }), "check") }
+  ];
+  return { id, title, problem: L === null ? `연필의 길이는 A ${a}개를 이은 길이, B ${b}개를 이은 길이와 같아요. C는 A와 B의 길이 차이예요. 길이가 모두 cm로 딱 떨어지고 연필이 가장 짧을 때 연필·A·B·C의 길이를 구해요.` : `연필의 길이 ${len}cm는 A ${a}개를 이은 길이, B ${b}개를 이은 길이와 같아요. C는 A와 B의 길이 차이예요. A, B, C의 길이를 구해요.`, figure: pieces(rows({ p: L !== null }), "given"), steps, answer: `${L === null ? `연필 ${len}cm, ` : ""}A ${A}cm, B ${B}cm, C ${C}cm예요.`, value: { kind: "pencil", a, b, L, len, A, B, C } };
+}
+// 잰 횟수: 전체 길이 = 막대 길이 × 잰 횟수. mode "unit"(다른 막대로 몇 번) · "ratio"(두 도구의 횟수로 큰 도구가 작은 도구 몇 번)
+function measureExample({ id, title, thing, tool1, len1, count1, tool2, len2 = null, count2 = null }) {
+  if (len2 !== null) {
+    const total = len1 * count1, k = total / len2;
+    if (!Number.isInteger(k)) throw new Error(`${id}: 나누어떨어지지 않음`);
+    const steps = [
+      { text: `먼저 전체 길이: ${len1}cm × ${count1} = ${total}cm.`, figure: pieces([{ label: thing, n: 1, len: `${total}cm` }, { label: tool1, n: count1, len: `${len1}cm씩` }]) },
+      { text: `${len2}cm짜리 ${euro(tool2)}는 ${total} ÷ ${len2} = ${k}번.`, figure: pieces([{ label: thing, n: 1, len: `${total}cm` }, { label: tool1, n: count1, len: `${len1}cm씩` }, { label: tool2, n: k, len: `${k}번` }], "check") }
+    ];
+    return { id, title, problem: `${josa(thing, "은")} ${len1}cm인 ${euro(tool1)} ${count1}번 잰 길이와 같아요. 같은 ${josa(thing, "을")} ${len2}cm인 ${euro(tool2)} 재면 몇 번일까요?`, figure: pieces([{ label: thing, n: 1, len: null }, { label: tool1, n: count1, len: `${len1}cm씩` }], "given"), steps, answer: `${k}번이에요.`, value: { kind: "measure", total, len2, k } };
+  }
+  const k = count1 / count2;
+  if (!Number.isInteger(k)) throw new Error(`${id}: 나누어떨어지지 않음`);
+  const steps = [
+    { text: `같은 ${josa(thing, "을")} ${euro(tool1)}는 ${count1}번, ${euro(tool2)}는 ${count2}번 재요. ${tool2} 한 번에 ${josa(tool1, "이")} 똑같이 몇 번씩 들어가요.`, figure: pieces([{ label: tool1, n: count1, len: `${count1}번` }, { label: tool2, n: count2, len: `${count2}번` }]) },
+    { text: `${count1} ÷ ${count2} = ${k}. ${josa(tool2, "은")} ${euro(tool1)} ${k}번이에요.`, figure: pieces([{ label: tool1, n: count1, len: `${count1}번` }, { label: tool2, n: count2, len: `${count2}번` }], "check") }
+  ];
+  return { id, title, problem: `${thing}의 길이를 ${euro(tool1)} 재면 ${count1}번, ${euro(tool2)} 재면 ${count2}번이에요. ${josa(tool2, "은")} ${euro(tool1)} 몇 번 잰 길이와 같을까요?`, figure: pieces([{ label: tool1, n: count1, len: null }, { label: tool2, n: count2, len: null }], "given"), steps, answer: `${k}번이에요.`, value: { kind: "measure-ratio", count1, count2, k } };
+}
+const MEASURE_SET = {
+  id: "measure",
+  types: {
+    "가장 짧은 연필 길이": () => [pencilExample({ id: "pencil-1", title: "예제 1", a: 2, b: 5 }), pencilExample({ id: "pencil-2", title: "예제 2", a: 4, b: 6 })],
+    "정한 연필 길이": () => [pencilExample({ id: "pencil-3", title: "예제 1", a: 4, b: 5, L: 40 })],
+    "잰 횟수와 길이": () => [measureExample({ id: "measure-1", title: "예제 1", thing: "책장의 높이", tool1: "지우개", len1: 6, count1: 5, tool2: "필통", len2: 10 }), measureExample({ id: "measure-2", title: "예제 2", thing: "칠판", tool1: "숟가락", count1: 12, tool2: "국자", count2: 3 })]
+  }
+};
+
+// ───────────────────────── 2권 모양과 색의 이중 규칙 ─────────────────────────
+const FILLED = { "○": "●", "□": "■", "△": "▲", "◇": "◆" }, SHAPE_WORD = { "○": "동그라미", "□": "네모", "△": "세모", "◇": "마름모" };
+function dualExample({ id, title, shapes, colors, n }) {
+  const glyph = (k) => { const s = shapes[k % shapes.length]; return colors[k % colors.length] ? FILLED[s] : s; };
+  const seq = Array.from({ length: 8 }, (_, k) => glyph(k)), s = shapes[(n - 1) % shapes.length], c = colors[(n - 1) % colors.length], ans = glyph(n - 1);
+  const steps = [
+    { text: `색을 가리고 모양만 보면 ${shapes.join(", ")}, ${shapes.length}칸마다 되풀이돼요. ${n} ÷ ${shapes.length}의 나머지 ${n % shapes.length || 0}${n % shapes.length ? "" : "(마지막)"} → ${SHAPE_WORD[s]}.`, figure: { kind: "seq", values: seq, notes: seq.map((_, k) => SHAPE_WORD[shapes[k % shapes.length]]), tone: "doing" } },
+    { text: `모양을 가리고 색만 보면 ${colors.map((x) => (x ? "색칠" : "빈")).join(", ")}, ${colors.length}칸마다 되풀이돼요. ${n} ÷ ${colors.length}의 나머지 ${n % colors.length}${n % colors.length ? "" : "(마지막)"} → ${c ? "색칠" : "빈"} 모양.`, figure: { kind: "seq", values: seq, notes: seq.map((_, k) => (colors[k % colors.length] ? "색칠" : "빈")), tone: "doing" } },
+    { text: `두 규칙을 합치면 ${n}번째는 ${c ? "색칠한" : "빈"} ${SHAPE_WORD[s]} ${ans}.`, figure: { kind: "seq", values: [ans], tone: "check" } }
+  ];
+  return { id, title, problem: `${seq.join(" ")} …처럼 모양과 색이 함께 되풀이돼요. ${n}번째 모양은 무엇일까요?`, figure: { kind: "seq", values: seq, tone: "given", ask: "?" }, steps, answer: `${c ? "색칠한" : "빈"} ${SHAPE_WORD[s]} ${josa(ans, "이에요")}.`, value: { kind: "dual", shapes, colors, n, ans } };
+}
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {
