@@ -43,6 +43,7 @@
 .gold-hands-on .retry { color: #b42332; }
 .gold-hands-on .hand-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--hand-line); padding-top: 16px; }
 .gold-hands-on .hand-tools { display: flex; gap: 8px; }
+.gold-hands-on .hand-tools .hand-skip { min-height: 44px; padding: 4px 16px; border: 2px solid rgba(0, 0, 0, .12); border-radius: 999px; background: #fff; color: #5a6470; font-size: 15px; font-weight: 800; cursor: pointer; }
 .gold-hands-on .icon-only { width: 44px; height: 44px; padding: 8px; }
 .gold-hands-on .hand-primary { color: #fff; background: #2456c4; border-color: #2456c4; }
 .gold-hands-on .hand-primary:hover:not(:disabled) { background: #193e91; color: #fff; }

@@ -1,5 +1,5 @@
 import { THREE, createStage3D, material, roundedBoxGeometry, planarUV, woodMaterial, textTexture, GB_COLORS, easeOutBack } from "./golden-bell-3d-engine.js?v=20261023w";
-import { magicLines } from "./golden-bell-book09-game-models.js?v=20261024t";
+import { magicLines } from "./golden-bell-book09-game-models.js?v=20261028y";
 
 // 숫자 유리창(마방진) 판(3D). 보이는 수는 파스텔 칸, 빈칸은 보라 테두리 홈, 채운 수는 노랑 숫자카드가 내려앉는다.
 // 줄마다 끝에 불이 있어, 줄이 다 차면 합이 맞으면 초록·다르면 주황으로 켜지고 줄 위에 빛 띠가 지나간다.

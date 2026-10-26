@@ -43,6 +43,7 @@ export function mountClockGame(host, { single = true, onQuestions = null, onComp
       <button type="button" class="cg-level" data-clock-levels><span class="cg-level-no" data-clock-level-no></span><span class="cg-level-name" data-clock-level-name></span><span class="cg-level-more" aria-hidden="true">▾</span></button>
       <ol class="cg-track" aria-label="이번 레벨 진행"></ol>
       <div class="cg-score" aria-live="polite"><span class="cg-stars" title="이번 레벨에서 모은 별"><b data-clock-stars>0</b></span><span class="cg-streak" data-clock-streak hidden></span></div>
+      <button type="button" class="cg-skip" data-clock-skip>넘어가기 ›</button>
       <button type="button" class="cg-sound" data-clock-sound aria-pressed="${sound.on}" title="소리"><span class="cg-sound-icon" aria-hidden="true"></span><span class="cg-sr">소리 ${sound.on ? "끄기" : "켜기"}</span></button>
     </header>
     <div class="cg-main">
@@ -114,6 +115,7 @@ export function mountClockGame(host, { single = true, onQuestions = null, onComp
   function renderControls() {
     $("[data-clock-controls]").innerHTML = controlsHtml();
     root.dataset.phase = phase;
+    $("[data-clock-skip]").disabled = !problem || busy || !["play", "wrong"].includes(phase);
   }
 
   function load() {
@@ -345,6 +347,13 @@ export function mountClockGame(host, { single = true, onQuestions = null, onComp
     } else if (d.clockChoice !== undefined) {
       chooseCard(Number(d.clockChoice));
     } else if (d.clockNext !== undefined) {
+      next();
+    } else if (d.clockSkip !== undefined) {
+      // 넘어가기: 이 문제는 별 없이 넘기고(약한 종류로 적는다) 다음 문제로
+      if (!problem || busy || !["play", "wrong"].includes(phase)) return;
+      if (!wrong) noteKind(false);
+      saved.results[problem.index] = { stars: 0, tries: wrong, skipped: true };
+      saved.streak = 0;
       next();
     } else if (d.clockQuestions !== undefined) {
       onQuestions?.();

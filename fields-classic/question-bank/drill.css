@@ -59,3 +59,6 @@ html, body.drill-page { min-height: 100%; margin: 0; background: #fbfaf6; }
 .dr-gakuro em{font-style:normal;font-size:18px;color:#8a5a12;background:#fff7e6;border:1px solid #efd9a8}
 .dr-gakuro em.sum{font-size:14px;color:#7a6a50;background:transparent;border:0}
 .dr-cards .card{font-size:22px;font-weight:800;min-width:52px}
+.dr-right { display: flex; align-items: center; gap: 12px; }
+.dr-skip { min-height: 36px; padding: 4px 14px; border: 1.5px solid #d7dfe2; border-radius: 999px; background: #fff; color: #5c6b74; font-size: 14px; font-weight: 600; cursor: pointer; }
+.dr-skip:hover { border-color: #6a4bb0; color: #46307a; }

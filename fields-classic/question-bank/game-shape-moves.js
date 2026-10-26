@@ -148,7 +148,7 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     host.innerHTML = `<div class="smv">
       <header class="smv-top">
         <nav class="smv-levels">${LEVELS.map((l, k) => `<button type="button" class="${k === st.level ? "on" : ""}" data-level="${k}"><b>${l.id}</b>${l.title}${st.stars[k] ? ` <small>★${st.stars[k]}</small>` : ""}</button>`).join("")}</nav>
-        <span class="smv-dots">${lv.problems.map((_, k) => `<i class="${k < st.index ? "done" : k === st.index ? "on" : ""}"></i>`).join("")}</span>
+        <span class="smv-right"><span class="smv-dots">${lv.problems.map((_, k) => `<i class="${k < st.index ? "done" : k === st.index ? "on" : ""}"></i>`).join("")}</span>${st.solved || st.showing ? "" : '<button type="button" class="smv-skip" data-smv="skip">넘어가기 ›</button>'}</span>
       </header>
       <p class="smv-mission">${p.names.length > 1 ? `처음 모양을 <b>${p.names.map((x) => esc(OPS[x].label)).join("</b> 하고 <b>")}</b> 했어요. ${st.step + 1}번째 움직임의 결과를 만들어요.` : `처음 모양을 <b>${esc(o.label)}</b> 했어요. 결과를 만들어요.`}
         ${st.solved || st.showing ? "" : st.free ? `<span class="smv-ask">이제 나머지 칸도 오른쪽 판에 그려 보세요.</span>` : `<span class="smv-ask">${o.kind === "flip" ? "반짝이는 칸과 대칭인 자리" : "반짝이는 칸이 돌아간 자리"}를 오른쪽 판에서 눌러 볼까요?</span>`}</p>
@@ -225,6 +225,10 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     const p = st.problem;
     st.check = null;
     if (st.step < p.names.length - 1) { st.step += 1; st.solved = false; st.tries = 0; resetStep(); say(`이번에는 방금 만든 모양을 ${OPS[name()].label} 해요. ${guideLine()}`, "talk"); return; }
+    advance();
+  }
+  // 다음 문제로(마지막이면 다음 단계, 다 했으면 끝). 「넘어가기」도 여기로 — 별은 주지 않는다
+  function advance() {
     st.showedSolution = false;
     if (st.index < LEVELS[st.level].problems.length - 1) { st.index += 1; newProblem(); return; }
     if (st.level < LEVELS.length - 1) { st.level += 1; st.index = 0; newProblem(); return; }
@@ -266,6 +270,7 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     else if (act === "check") check();
     else if (act === "show") showSolution();
     else if (act === "next") next();
+    else if (act === "skip") { clearTimeout(timer); st.check = null; advance(); }
     else if (act === "restart") { st.level = 0; st.index = 0; st.finale = false; st.stars = LEVELS.map(() => 0); newProblem(); }
     else if (act === "done") onDone();
   }, { signal: listening.signal });

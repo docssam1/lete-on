@@ -94,3 +94,6 @@
   .dg-key { min-width: 40px; }
 }
 @media (prefers-reduced-motion: reduce) { .dg-board { transition: none; } }
+.dg-right { display: flex; align-items: center; gap: 12px; }
+.dg-skip { min-height: 36px; padding: 4px 14px; border: 1.5px solid #d7dfe2; border-radius: 999px; background: #fff; color: #5c6b74; font-size: 14px; font-weight: 600; cursor: pointer; }
+.dg-skip:hover { border-color: var(--enamel); color: #164e57; }
