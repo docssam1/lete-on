@@ -1147,6 +1147,28 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       assert.deepEqual(fits, [want], `${ex.id}: 처음 수가 하나로 정해짐`); assert.deepEqual(nums(ex.answer), [want]);
     } else if (v.kind === "frac-diff") { assert.equal(v.total % v.n, 0); assert.equal(v.d, (v.total / v.n) * v.k - (v.total / v.n) * v.m); assert.deepEqual(nums(ex.answer), [v.d]); }
     else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "area") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    // 모눈 문제 글의 수는 「한 칸의 넓이 1」뿐이라 도형으로 비교하고, 겹친 도형만 글의 수를 비교한다
+    if (["nest", "grow"].includes(v.kind)) for (const item of lesson.original.items) assert.notEqual(nums(item.prompt).join(), nums(ex.problem).join(), `${ex.id}: 원본과 같은 수`);
+    if (["cell-area", "poly-area"].includes(v.kind)) {
+      // 픽의 정리로 넓이를 다시 잰다(꼭짓점 공식은 쓰지 않는다): 넓이 = 안쪽 모눈점 + 변 위의 모눈점 ÷ 2 − 1
+      const g = (a, b) => (b ? g(b, a % b) : Math.abs(a));
+      const onEdge = (x, y, pts) => pts.some(([ax, ay], k) => { const [bx, by] = pts[(k + 1) % pts.length]; return (bx - ax) * (y - ay) === (by - ay) * (x - ax) && Math.min(ax, bx) <= x && x <= Math.max(ax, bx) && Math.min(ay, by) <= y && y <= Math.max(ay, by); });
+      const inside = (x, y, pts) => { let c = false; for (let a = 0, b = pts.length - 1; a < pts.length; b = a++) { const [xi, yi] = pts[a], [xj, yj] = pts[b]; if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c; } return c; };
+      let pick = 0;
+      for (const pts of v.polys) {
+        const B = pts.reduce((acc, [ax, ay], k) => { const [bx, by] = pts[(k + 1) % pts.length]; return acc + g(bx - ax, by - ay); }, 0);
+        const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]); let I = 0;
+        for (let x = Math.min(...xs); x <= Math.max(...xs); x++) for (let y = Math.min(...ys); y <= Math.max(...ys); y++) if (!onEdge(x, y, pts) && inside(x, y, pts)) I++;
+        pick += I + B / 2 - 1;
+      }
+      assert.equal(pick, v.area, `${ex.id}: 넓이(픽의 정리로 잰 값 ${pick})`);
+      assert.deepEqual(nums(ex.answer), [v.area]);
+      for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) for (const pts of [vis.points, ...(vis.polygons || [])].filter(Boolean)) assert.ok(!v.polys.some((q) => JSON.stringify(q) === JSON.stringify(pts)), `${ex.id}: 원본과 같은 도형`);
+    } else if (v.kind === "nest") { let a = v.given; if (v.to > v.from) for (let k = v.from; k < v.to; k++) a /= 2; else for (let k = v.from; k > v.to; k--) a *= 2; assert.equal(v.ans, a); assert.deepEqual(nums(ex.answer), [a]); }
+    else if (v.kind === "grow") { let a = 1; for (let k = 1; k < v.target; k++) a *= 2; assert.equal(v.ans, a); assert.deepEqual(nums(ex.answer), [a]); }
+    else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

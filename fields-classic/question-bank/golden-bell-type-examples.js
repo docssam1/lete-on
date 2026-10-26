@@ -3492,7 +3492,106 @@ const FRAC_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET, [NLINE6_SET.id]: NLINE6_SET, [FRAC_SET.id]: FRAC_SET });
+// ───────────────────────── 3·9권 넓이: 온칸과 반칸 · 직사각형의 반 · 틀에서 빼기 · 겹친 정사각형과 마름모 ─────────────────────────
+// 그림 kind "agrid": 모눈 w × h, polys = 색칠한 다각형(꼭짓점은 모눈점), frame = 틀 [x0, y0, x1, y1], marks = { full, half } 칸 표시, tris = 틀에서 뺄 삼각형.
+const agrid = (w, h, polys, p = {}) => ({ kind: "agrid", w, h, polys, frame: p.frame, marks: p.marks, tris: p.tris, tone: p.tone || "doing" });
+const shoelace = (pts) => Math.abs(pts.reduce((a, [x, y], i) => { const [u, v] = pts[(i + 1) % pts.length]; return a + x * v - u * y; }, 0)) / 2;
+const inPoly = (x, y, pts) => { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j]; if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c; } return c; };
+// 칸마다 다각형이 덮는 양(0, 반, 1)을 점을 찍어 잰다
+function cellCover(w, h, polys) {
+  const N = 10, full = [], half = [];
+  for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) {
+    let hit = 0; for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) { const x = c + (i + 0.5) / N, y = r + (j + 0.5) / N; if (polys.some((pts) => inPoly(x, y, pts))) hit++; }
+    const f = hit / (N * N);
+    if (f > 0.97) full.push([c, r]); else if (Math.abs(f - 0.5) < 0.08) half.push([c, r]); else if (f > 0.03) return null;
+  }
+  return { full, half };
+}
+function cellAreaExample({ id, title, w, h, polys, note = "" }) {
+  const cov = cellCover(w, h, polys);
+  if (!cov) throw new Error(`${id}: 온칸·반칸으로 나뉘지 않음`);
+  const F = cov.full.length, Hf = cov.half.length, area = F + Hf / 2;
+  if (!Number.isInteger(area)) throw new Error(`${id}: 반칸이 홀수`);
+  const steps = [
+    { text: `${note}한 칸의 넓이를 1로 봐요. 꽉 찬 칸(온칸)을 세면 ${F}개.`, figure: agrid(w, h, polys, { marks: { full: cov.full } }) },
+    { text: `비스듬한 선이 지나는 반칸은 ${Hf}개. 반칸 두 개를 모으면 온칸 하나라 ${Hf} ÷ 2 = ${Hf / 2}.`, figure: agrid(w, h, polys, { marks: { full: cov.full, half: cov.half } }) },
+    { text: `넓이는 ${F} + ${Hf / 2} = ${area}.`, figure: agrid(w, h, polys, { marks: { full: cov.full, half: cov.half }, tone: "check" }) }
+  ];
+  return { id, title, problem: "모눈 한 칸의 넓이가 1일 때 색칠한 도형의 넓이를 구해요.", figure: agrid(w, h, polys, { tone: "given" }), steps, answer: `${josa(area, "이에요")}.`, value: { kind: "cell-area", w, h, polys, area } };
+}
+function rectAreaExample({ id, title, w, h, x, y, rw, rh }) {
+  const poly = [[x, y], [x + rw, y], [x + rw, y + rh], [x, y + rh]], area = rw * rh;
+  const steps = [
+    { text: `가로로 ${rw}칸, 세로로 ${rh}칸이에요.`, figure: agrid(w, h, [poly]) },
+    { text: `한 줄에 ${rw}칸씩 ${rh}줄이라 ${rw} × ${rh} = ${area}.`, figure: agrid(w, h, [poly], { marks: { full: cellCover(w, h, [poly]).full }, tone: "check" }) }
+  ];
+  return { id, title, problem: "모눈 한 칸의 넓이를 1로 보고 색칠한 직사각형의 넓이를 구해요.", figure: agrid(w, h, [poly], { tone: "given" }), steps, answer: `${josa(area, "이에요")}.`, value: { kind: "poly-area", polys: [poly], area } };
+}
+// 직사각형을 대각선으로 반으로 나눈 삼각형: 직사각형 넓이 ÷ 2
+function halfTriExample({ id, title, w, h, x, y, a, b, flip = false }) {
+  const tri = flip ? [[x, y], [x + a, y], [x + a, y + b]] : [[x, y], [x, y + b], [x + a, y + b]], rect = a * b, area = rect / 2;
+  if (!Number.isInteger(area)) throw new Error(`${id}: 반이 딱 떨어지지 않음`);
+  const steps = [
+    { text: `삼각형을 둘러싸는 직사각형을 그려요. 가로 ${a}칸, 세로 ${b}칸이라 ${a} × ${b} = ${rect}.`, figure: agrid(w, h, [tri], { frame: [x, y, x + a, y + b] }) },
+    { text: `대각선이 직사각형을 똑같이 둘로 나누니 삼각형은 그 반: ${rect} ÷ 2 = ${area}.`, figure: agrid(w, h, [tri], { frame: [x, y, x + a, y + b], tone: "check" }) }
+  ];
+  return { id, title, problem: "모눈 한 칸의 넓이를 1로 보고 색칠한 삼각형의 넓이를 구해요.", figure: agrid(w, h, [tri], { tone: "given" }), steps, answer: `${josa(area, "이에요")}.`, value: { kind: "poly-area", polys: [tri], area } };
+}
+// 틀에서 빼기: 틀 직사각형 넓이 − 색칠하지 않은 삼각형들(모두 직각삼각형, 두 변의 칸 수 × ÷ 2)
+function frameAreaExample({ id, title, w, h, frame, pts, cuts }) {
+  const [x0, y0, x1, y1] = frame, F = (x1 - x0) * (y1 - y0), parts = cuts.map((t) => shoelace(t)), area = F - sum(parts);
+  if (Math.abs(area - shoelace(pts)) > 1e-9) throw new Error(`${id}: 틀에서 뺀 값이 도형 넓이와 다름`);
+  const marks = "①②③④".split(""), legs = cuts.map((t) => { const xs = t.map((p) => p[0]), ys = t.map((p) => p[1]); return [Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)]; });
+  const tris = cuts.map((t, i) => ({ pts: t, label: marks[i] }));
+  const steps = [
+    { text: `도형을 꼭 맞게 둘러싼 틀은 가로 ${x1 - x0}칸, 세로 ${y1 - y0}칸: ${x1 - x0} × ${y1 - y0} = ${F}.`, figure: agrid(w, h, [pts], { frame }) },
+    { text: `틀에서 색칠하지 않은 곳은 직각삼각형 ${cuts.length}개예요. ${legs.map(([a, b], i) => `${marks[i]} ${a} × ${b} ÷ 2 = ${parts[i]}`).join(", ")}.`, figure: agrid(w, h, [pts], { frame, tris }) },
+    { text: `넓이는 ${F} − (${parts.join(" + ")}) = ${F} − ${sum(parts)} = ${area}.`, figure: agrid(w, h, [pts], { frame, tris, tone: "check" }) }
+  ];
+  return { id, title, problem: "직사각형 틀 안에 색칠한 도형의 넓이를 구해요. 모눈 한 칸의 넓이는 1이에요.", figure: agrid(w, h, [pts], { frame, tone: "given" }), steps, answer: `${josa(area, "이에요")}.`, value: { kind: "poly-area", polys: [pts], area, frame } };
+}
+// 정사각형의 변의 가운데를 이으면 넓이가 반인 마름모. 번갈아 그리면 바깥으로 갈 때마다 두 배
+const nest = (n, p = {}) => ({ kind: "nest", n, hi: p.hi, labels: p.labels || {}, tone: p.tone || "doing" });
+function nestAreaExample({ id, title, n, given, from, to }) {
+  // from(0 = 가장 바깥)의 넓이로 나머지를 정한다
+  const at = (k) => given * 2 ** (from - k);
+  const ans = at(to), word = (k) => (k % 2 === 0 ? "정사각형" : "마름모");
+  const chain = (to > from ? range(from + 1, to + 1) : range(to, from).reverse()).map((k) => `${at(k)}`);
+  const steps = [
+    { text: "정사각형의 네 변의 가운데를 이으면 마름모가 생겨요. 가운데 십자로 접어 보면 마름모는 정사각형의 반이에요.", figure: nest(2, { hi: [1] }) },
+    { text: `${to > from ? "안쪽으로 한 겹 들어갈 때마다 반이에요" : "바깥으로 한 겹 나갈 때마다 두 배예요"}. ${at(from)} → ${chain.join(" → ")}.`, figure: nest(n, { labels: Object.fromEntries(range(Math.min(from, to), Math.max(from, to) + 1).map((k) => [k, String(at(k))])) }) },
+    { text: `그래서 ${to + 1}번째 ${word(to)}의 넓이는 ${ans}.`, figure: nest(n, { hi: [to], labels: { [from]: String(given), [to]: String(ans) }, tone: "check" }) }
+  ];
+  return { id, title, problem: `정사각형과 마름모를 번갈아 겹쳐 그렸어요. 가장 바깥부터 ${from + 1}번째 ${word(from)}의 넓이가 ${given}일 때, ${to + 1}번째 ${word(to)}의 넓이를 구해요.`, figure: nest(n, { labels: { [from]: String(given), [to]: "?" }, tone: "given" }), steps, answer: `${josa(ans, "이에요")}.`, value: { kind: "nest", given, from, to, ans } };
+}
+function growAreaExample({ id, title, target }) {
+  const list = range(1, target + 1).map((k) => 2 ** (k - 1));
+  const steps = [
+    { text: "넓이 1인 정사각형에서 시작해 바깥에 마름모, 정사각형을 번갈아 둘러요. 바깥 도형은 안쪽 도형의 두 배예요.", figure: nest(3, { labels: { 2: "1", 1: "2", 0: "4" } }) },
+    { text: `넓이를 차례로 쓰면 ${list.join(", ")}.`, figure: { kind: "seq", values: list, notes: list.map((_, i) => `${i + 1}번째`), tone: "doing" } },
+    { text: `${target}번째는 1에 2를 ${target - 1}번 곱한 ${list.at(-1)}.`, figure: { kind: "seq", values: list, notes: list.map((_, i) => `${i + 1}번째`), tone: "check" } }
+  ];
+  return { id, title, problem: `넓이가 1인 정사각형에서 시작해 바깥으로 마름모와 정사각형을 번갈아 둘러 그려요(1번째가 넓이 1인 정사각형). ${target}번째 바깥 도형의 넓이를 구해요.`, figure: nest(4, { tone: "given" }), steps, answer: `${josa(list.at(-1), "이에요")}.`, value: { kind: "grow", target, ans: list.at(-1) } };
+}
+const AREA_SET = {
+  id: "area",
+  types: {
+    // 3권
+    "모눈 한 칸으로 도형 넓이 세기": () => [cellAreaExample({ id: "cell-1", title: "예제 1", w: 4, h: 3, polys: [[[0, 1], [1, 0], [3, 0], [4, 1], [4, 3], [0, 3]]] }), cellAreaExample({ id: "cell-2", title: "예제 2", w: 5, h: 4, polys: [[[1, 0], [3, 0], [5, 2], [3, 4], [1, 4], [1, 3], [0, 3], [0, 1], [1, 1]]] })],
+    "번갈아 커지는 도형 넓이": () => [growAreaExample({ id: "grow-1", title: "예제 1", target: 6 })],
+    "겹친 정사각형과 마름모 넓이": () => [nestAreaExample({ id: "nest-1", title: "예제 1", n: 3, given: 3, from: 1, to: 0 }), nestAreaExample({ id: "nest-2", title: "예제 2", n: 4, given: 40, from: 0, to: 2 })],
+    // 9권
+    "직사각형의 넓이": () => [rectAreaExample({ id: "rect-1", title: "예제 1", w: 6, h: 4, x: 1, y: 1, rw: 4, rh: 2 })],
+    "반으로 나눈 정사각형": () => [halfTriExample({ id: "half-sq", title: "예제 1", w: 4, h: 4, x: 1, y: 1, a: 2, b: 2 })],
+    "반 칸 삼각형 모으기": () => [cellAreaExample({ id: "cell-3", title: "예제 1", w: 5, h: 3, polys: [[[0, 2], [2, 0], [4, 2]]] })],
+    "직사각형을 반으로 나눈 삼각형": () => [halfTriExample({ id: "half-1", title: "예제 1", w: 7, h: 5, x: 1, y: 1, a: 5, b: 2 }), halfTriExample({ id: "half-2", title: "예제 2", w: 6, h: 6, x: 1, y: 1, a: 3, b: 4, flip: true })],
+    "여러 모양의 넓이": () => [cellAreaExample({ id: "cell-4", title: "예제 1", w: 6, h: 4, polys: [[[1, 3], [3, 1], [5, 1], [3, 3]]], note: "평행사변형은 비스듬한 쪽의 반칸끼리 짝을 지어요. " })],
+    "틀 안의 도형": () => [frameAreaExample({ id: "frame-1", title: "예제 1", w: 6, h: 5, frame: [1, 1, 5, 4], pts: [[1, 1], [5, 2], [3, 4]], cuts: [[[1, 1], [5, 1], [5, 2]], [[5, 2], [5, 4], [3, 4]], [[1, 1], [3, 4], [1, 4]]] })],
+    "틀 안의 기운 사각형": () => [frameAreaExample({ id: "frame-2", title: "예제 1", w: 8, h: 8, frame: [1, 1, 7, 7], pts: [[1, 3], [5, 1], [7, 5], [3, 7]], cuts: [[[1, 1], [5, 1], [1, 3]], [[5, 1], [7, 1], [7, 5]], [[7, 5], [7, 7], [3, 7]], [[3, 7], [1, 7], [1, 3]]] })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET, [NLINE6_SET.id]: NLINE6_SET, [FRAC_SET.id]: FRAC_SET, [AREA_SET.id]: AREA_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

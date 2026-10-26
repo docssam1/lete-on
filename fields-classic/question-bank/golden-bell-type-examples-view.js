@@ -2,7 +2,7 @@
 // 한 단계씩 연다: 0단계 = 문제만, 1~N단계 = 풀이가 하나씩, 마지막 = 답. 답은 마지막 단계 전에는 화면에 없다.
 // 색은 골든벨 색표(쌓기나무·모양·숫자판·저울), 안내 단계 색은 주어진 것 파랑 · 하는 일 금색 · 확인 진초록.
 
-import { book04Markup, obliqueCubes } from "./book04-renderers.js?v=20261028s";
+import { book04Markup, obliqueCubes } from "./book04-renderers.js?v=20261028t";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const TONE = { given: "#2f6fe0", doing: "#d39b20", check: "#16734b" };
@@ -798,6 +798,32 @@ function fbarFigure(f) {
   if (f.brace) { const xa = x0 + f.brace.from * w, xb = x0 + (f.brace.to + 1) * w, by = y + h + 10; body += `<path d="M${xa + 2} ${by} V${by + 8} H${xb - 2} V${by}" fill="none" stroke="#f39a1e" stroke-width="2.2"/>${text((xa + xb) / 2, by + 20, f.brace.label, { size: 13, weight: 900, fill: color })}`; H = by + 32; }
   return `<div class="tx-fbar">${svg(W, H, body, `띠를 ${f.parts}칸으로 나눈 그림`)}</div>`;
 }
+// agrid: 모눈 위 다각형. marks.full 칸에 「1」, marks.half 칸에 「반」, frame = 틀(점선), tris = 틀에서 뺄 삼각형(보라 빗금 + 번호)
+function agridFigure(f) {
+  const color = TONE[f.tone || "given"], s = Math.min(32, 290 / f.w, 230 / f.h), pad = 6, W = f.w * s + pad * 2, H = f.h * s + pad * 2, P = ([x, y]) => `${(pad + x * s).toFixed(1)},${(pad + y * s).toFixed(1)}`;
+  let body = "";
+  for (let i = 0; i <= f.w; i++) body += `<line x1="${pad + i * s}" y1="${pad}" x2="${pad + i * s}" y2="${pad + f.h * s}" stroke="#d8d2c4" stroke-width="1"/>`;
+  for (let j = 0; j <= f.h; j++) body += `<line x1="${pad}" y1="${pad + j * s}" x2="${pad + f.w * s}" y2="${pad + j * s}" stroke="#d8d2c4" stroke-width="1"/>`;
+  for (const pts of f.polys) body += `<polygon points="${pts.map(P).join(" ")}" fill="${SHADE.fill}" fill-opacity="0.85" stroke="${SHADE.line}" stroke-width="2" stroke-linejoin="round"/>`;
+  for (const t of f.tris || []) { const cx = t.pts.reduce((a, p) => a + p[0], 0) / 3, cy = t.pts.reduce((a, p) => a + p[1], 0) / 3; body += `<polygon points="${t.pts.map(P).join(" ")}" fill="#ece0fb" stroke="#8e5bd8" stroke-width="1.6"/>${text(pad + cx * s, pad + cy * s, t.label, { size: 13, weight: 900, fill: "#5b2fa8" })}`; }
+  if (f.frame) { const [x0, y0, x1, y1] = f.frame; body += `<rect x="${pad + x0 * s}" y="${pad + y0 * s}" width="${(x1 - x0) * s}" height="${(y1 - y0) * s}" fill="none" stroke="#8e5bd8" stroke-width="2.4" stroke-dasharray="6 4"/>`; }
+  for (const [c, r] of f.marks?.full || []) body += text(pad + (c + 0.5) * s, pad + (r + 0.5) * s, "1", { size: 11, weight: 900, fill: color });
+  for (const [c, r] of f.marks?.half || []) body += text(pad + (c + 0.5) * s, pad + (r + 0.5) * s, "반", { size: 10, weight: 900, fill: "#5b2fa8" });
+  return `<div class="tx-agrid">${svg(W, H, body, `모눈 ${f.w}×${f.h} 위의 도형`)}</div>`;
+}
+// nest: 정사각형과 마름모를 번갈아 겹친 그림. 0 = 가장 바깥 정사각형. labels = { 몇째: 넓이 }
+function nestFigure(f) {
+  const color = TONE[f.tone || "given"], C = 100, hi = new Set(f.hi || []);
+  let body = "", half = 86;
+  for (let k = 0; k < f.n; k++) {
+    const sq = k % 2 === 0, pts = sq ? [[C - half, C - half], [C + half, C - half], [C + half, C + half], [C - half, C + half]] : [[C, C - half], [C + half, C], [C, C + half], [C - half, C]];
+    const lab = f.labels?.[k];
+    body += `<polygon points="${pts.map((p) => p.join(",")).join(" ")}" fill="${hi.has(k) ? SHADE.fill : k % 2 ? "#fff3c4" : "#fffdf7"}" stroke="${hi.has(k) ? color : "#333"}" stroke-width="${hi.has(k) ? 2.6 : 1.8}"/>`;
+    if (lab !== undefined) body += text(sq ? C - half + 14 : C, sq ? C - half + 12 : C - half + 14, lab, { size: 12, weight: 900, fill: lab === "?" ? "#5b2fa8" : "#222" });
+    if (!sq) half /= 2;
+  }
+  return `<div class="tx-nest">${svg(C * 2, C * 2, body, `정사각형과 마름모 ${f.n}겹`)}</div>`;
+}
 // fracs: 위아래로 쌓은 분수 카드. [분자, 분모] — null은 빈칸
 function fracsFigure(f) {
   const color = TONE[f.tone || "given"], hi = new Set(f.hi || []);
@@ -955,6 +981,8 @@ export function figureMarkup(figure) {
   if (figure.kind === "fracs") return fracsFigure(figure);
   if (figure.kind === "fshape") return fshapeFigure(figure);
   if (figure.kind === "fbar") return fbarFigure(figure);
+  if (figure.kind === "agrid") return agridFigure(figure);
+  if (figure.kind === "nest") return nestFigure(figure);
   if (figure.kind === "pieces") return piecesFigure(figure);
   if (figure.kind === "ring") return ringFigure(figure);
   if (figure.kind === "crypt") return cryptFigure(figure);

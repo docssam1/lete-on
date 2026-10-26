@@ -334,6 +334,9 @@
 .tx-fshape, .tx-fbar { display: flex; justify-content: center; }
 .tx-fshape svg { max-width: 100%; height: auto; }
 .tx-fbar svg { width: min(100%, 320px); height: auto; }
+.tx-agrid, .tx-nest { display: flex; justify-content: center; }
+.tx-agrid svg { max-width: 100%; height: auto; }
+.tx-nest svg { width: min(100%, 200px); height: auto; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }
