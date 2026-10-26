@@ -200,22 +200,21 @@ NM_TGEN['ns2_split'] = function(params, rng){
 };
 
 /* ── NS3 보수 5·10 ──
-   params.target은 "이 레벨에서 다룰 최대 목표수"로 해석한다 — 실제 문항은
-   2~target 사이의 여러 부분목표(subTarget)를 오가며 만들어 문항 다양성을 늘린다
-   (보수 5·10은 조합 수가 본질적으로 적어 target을 고정값으로만 쓰면 20문항
-   안에서 반복이 심하다). */
+   일반 과정은 레벨에 적힌 목표수의 짝을 묻는다. 8개 식 모양으로
+   목표 5도 32개, 목표 10은 72개의 서로 다른 문제를 만들 수 있다.
+   승인된 C0 프로필의 생성 규칙과 난수 소비 순서는 보존한다. */
 NM_TGEN['ns3_comp510'] = function(params, rng){
   params = params || {};
   const target = params.target || 10;
-  /* 목표수 근방(±2)까지 살짝 넓혀 20문항 안 중복을 더 낮춘다 */
-  const subTarget = R(rng, 2, target + 2);
+  const sampledTarget = R(rng, 2, target + 2);
+  const subTarget = params.c0 ? sampledTarget : target;
   const k = R(rng, 1, subTarget - 1);
   const need = subTarget - k;
   const tex = pick(rng, _bondForms(k, need, subTarget));
 
   return {
     prompt: {
-      ko: `${k}에서 ${subTarget}을 만들려면 얼마가 더 필요해요?`,
+      ko: params.c0 ? `${k}에서 ${subTarget}을 만들려면 얼마가 더 필요해요?` : `${k}에서 ${NM_RNG.koJosa(subTarget,'을','를')} 만들려면 얼마가 더 필요해요?`,
       en: `You have ${k}. How many more to make ${subTarget}?`,
       zh: `有${k}个，还需要几个才能凑成${subTarget}？`
     },
@@ -229,15 +228,16 @@ NM_TGEN['ns3_comp510'] = function(params, rng){
 };
 
 /* ── NS4 보수 100·1000 ──
-   NS3와 같은 이유로 target을 "최대 목표수"로 해석해, step의 배수인 여러
-   부분목표(subTarget) 사이를 오가며 문항을 만든다. */
+   목표수는 고정하고 알려 주는 수만 step의 배수로 바꾼다.
+   C0 프로필의 기존 규칙은 별도로 보존한다. */
 NM_TGEN['ns4_comp100'] = function(params, rng){
   params = params || {};
   const target = params.target || 100;
   const step   = params.step   || 10;
 
   const maxMult   = Math.floor(target / step);        /* subTarget = subMult*step */
-  const subMult   = R(rng, 2, maxMult);
+  const sampledMult = R(rng, 2, maxMult);
+  const subMult   = params.c0 ? sampledMult : maxMult;
   const subTarget = subMult * step;
   const mult      = R(rng, 1, subMult - 1);
   const a = mult * step;

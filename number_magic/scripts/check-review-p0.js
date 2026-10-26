@@ -9,7 +9,7 @@ const server=http.createServer((req,res)=>{
  if(!file.startsWith(ROOT+path.sep)||!fs.existsSync(file)||fs.statSync(file).isDirectory()){res.writeHead(404);return res.end();}
  res.setHeader('Content-Type',({'.js':'text/javascript','.css':'text/css','.html':'text/html','.svg':'image/svg+xml','.woff2':'font/woff2'})[path.extname(file)]||'application/octet-stream');
  let content=fs.readFileSync(file);
- if(file.endsWith('/app/exam.js'))content=content.toString().replace('window.NM_EXAM = NM_EXAM;','window.NM_EXAM = NM_EXAM;window.__reviewQA={applyPartialBlanks,printAskText,w2CellHtml,stripConceptTags,sortRoundProblems,assignStudyDays,prosePowersHtml,w2LevelInstruction};');
+ if(file.endsWith('/app/exam.js'))content=content.toString().replace('window.NM_EXAM = NM_EXAM;','window.NM_EXAM = NM_EXAM;window.__reviewQA={applyPartialBlanks,printAskText,w2CellHtml,stripConceptTags,sortRoundProblems,assignStudyDays,prosePowersHtml,w2LevelInstruction,rampLevelFor,withC0};');
  res.end(content);
 });
 (async()=>{let browser;await new Promise(r=>server.listen(0,'127.0.0.1',r));try{
@@ -88,6 +88,34 @@ const server=http.createServer((req,res)=>{
    ok(rad.solution.every(s=>/\\square/.test(s.tex)),'Rationalization steps must require completion');
    eq((rad.tex.match(/=/g)||[]).length,1,'Remove the already-simplified denominator from the question');
   }
+  eq(Q.rampLevelFor('NS3',1),null,'A bond-of-five lesson must not silently become bonds of ten');
+  eq(Q.rampLevelFor('NS4',1),null,'Tens complements must not silently become ones subtraction');
+  for(let seed=1;seed<=400;seed++){
+   for(const [lv,target]of[[1,5],[2,10]]){
+    const p=gen('NS3',lv,seed);eq(p.cubes.moveTo,target,'Keep the fixed bond target');
+    eq(p.answer,target-p.cubes.piles[0],'Fixed bond arithmetic');
+   }
+   for(const [lv,target,step]of[[1,100,10],[2,100,1],[3,1000,1]]){
+    const p=gen('NS4',lv,seed),m=p.steps[0].tex.match(/^(\d+) \+ \\square = (\d+)/);
+    eq(+m[2],target,'Keep the hundred/thousand target');eq(+m[1]%step,0,'Known addend stays in the level step');
+    eq(p.answer,target- +m[1],'Hundred/thousand complement');
+   }
+  }
+  for(let seed=1;seed<=120;seed++){
+   const p=gen('WP3',1,seed);
+   ok(!/변화|부분전체|비교|동수누가|등분제|포함제/.test(p.answerNote.ko),'Keep teacher classification out of the public answer note');
+  }
+  const visibleBonds=new Set(),rawBonds=new Set();
+  for(let k=1;k<5;k++)for(let form=0;form<8;form++){
+   const values=[.5,(k-.5)/4,(form+.5)/8];let pos=0;
+   const p=NM_TGEN.ns3_comp510({target:5},()=>values[pos++]);p.__bond=true;
+   const h=Q.w2CellHtml(p,1,'NS3',false,false,'visual',0,1,false,'');
+   ok(h.includes('nm-bond')&&h.includes('nm-w2-tex'),'Bond picture and equation both remain visible');
+   rawBonds.add(p.tex);visibleBonds.add(h);
+   const infant=Q.withC0(NM_COURSES.C0.sessions[0].c0,()=>Q.w2CellHtml(p,1,'NS3',false,false,'visual',0,1,false,''));
+   ok(!infant.includes('data-tex='),'Do not add equation notation to the C0 picture profile');
+  }
+  eq(rawBonds.size,32,'Finite fixed-target pool');eq(visibleBonds.size,32,'A hidden expression alone is not a new visible problem');
   const blocks=[0,1,2,3].map(()=>({base10:{tens:5,ones:6},tex:'50 + 6 = \\square',answer:56}));
   Q.applyPartialBlanks(blocks,'medium',{});eq(blocks.map(p=>p.answer),[56,56,56,56],'Pictures retain their whole-number answer');
   for(const [t,lv]of[['MD34',3],['MD85',4],['MD101',2],['MD105',2],['MD110',3],['MD127',3],['MD153',1],['MD156',2],['MD158',2],['MD159',2]]){

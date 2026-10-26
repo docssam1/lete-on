@@ -3284,7 +3284,9 @@ function concreteTeachingHtml(p,solved,threadId){
   if(BOND_THREADS[threadId]&&p.cubes&&Number.isFinite(p.cubes.moveTo)){
     let svg=bondSvg(p.cubes.moveTo,p.cubes.moveTo-p.answer);
     if(solved)svg=svg.replace('</svg>',`<text x="126" y="88" text-anchor="middle" dominant-baseline="central" fill="#2f6b4a">${esc(p.answer)}</text></svg>`);
-    return `<div class="nm-concrete-teach" data-concrete="bond">${svg}</div>`;
+    const equation=solved&&threadId==='NS3'&&!W2_C0&&p.tex
+      ? `<div class="nm-w2-tex" data-tex="${esc(texDisplay(texSubstituteAnswer(p.tex,p.answer)))}"></div>` : '';
+    return `<div class="nm-concrete-teach" data-concrete="bond">${svg}${equation}</div>`;
   }
   return '';
 }
@@ -5065,6 +5067,8 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
   } else if(p.__bond && p.cubes && typeof p.cubes.moveTo === 'number' && typeof p.answer === 'number'){
     cls += ' nm-w2-item-vis';
     inner = bondSvg(p.cubes.moveTo, p.cubes.moveTo - p.answer);
+    // Show each equation variant: a different hidden tex alone is not a new visible question.
+    if(threadId==='NS3'&&!W2_C0&&p.tex)inner+=`<div class="nm-w2-tex" data-tex="${esc(texDisplay(p.tex))}"></div>`;
   } else if(p.scatterPlot){
     cls += ' nm-w2-item-vis nm-w2-item-scatter';
     inner = scatterPlotHtml(p,false) + `<div class="nm-w2-tex" data-tex="${esc(texDisplay(String(p.tex||'')))}"></div>`;
@@ -6635,6 +6639,7 @@ function renderRoundPagesBody(item, opts){
   const band = opts.band || printAgeBand(item, problems);
   const young = band === 'young';
   const layout = classifyRoundLayout(problems, item.thread, young, !!item.creative);
+  if(item.thread==='NS3'&&!item.c0)Object.assign(layout,{cols:2,rows:3,perPage:6,firstRows:0,pitch:74});
   if(problems.some(p=>p.numline))Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:1,pitch:100});
   // Each path needs room for explicit endpoint words, arrows and a written total.
   if(item.thread==='NL59'||item.thread==='DC3')Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
@@ -7436,6 +7441,9 @@ function rampLevelFor(threadId, lv){
   const base = th.levels.find(l => l.id === lv), next = th.levels.find(l => l.id === lv + 1);
   if(!base || !next) return null;
   if(base.offLadder || next.offLadder) return null;
+  // A fixed whole (5/10/100) or a tens-to-ones step is a new bond lesson,
+  // not an unannounced difficulty increase within this lesson.
+  if(['NS3','NS4'].includes(threadId)&&['target','step'].some(k=>(base.params||{})[k] !== (next.params||{})[k]))return null;
   const bk = Object.keys(base.params || {}).sort(), nk = Object.keys(next.params || {}).sort();
   if(!bk.length || bk.join() !== nk.join()) return null;
   if(bk.some(k => k === 'mode' || k === 'level' || k === 'digits')) return null;

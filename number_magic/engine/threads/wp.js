@@ -781,18 +781,6 @@
     '÷': { ko:'나누기', en:'division', zh:'除法' }
   };
 
-  /* 의미 유형(§3-2)의 이름 — 정답지의 메모에만 쓴다. 채점하는 사람에게 "왜 이 답인가"를
-     한 낱말로 알려 주는 자리라, 학술 용어가 아니라 그 언어의 교실 말로 적는다. */
-  const KINDNAME = {
-    합병: { ko:'합병', en:'putting together', zh:'合并' },
-    첨가: { ko:'첨가', en:'adding on',        zh:'添加' },
-    구잔: { ko:'구잔', en:'taking away',      zh:'求剩' },
-    구차: { ko:'구차', en:'comparing',        zh:'求差' },
-    배수: { ko:'배수', en:'equal groups',     zh:'倍数' },
-    등분: { ko:'등분', en:'sharing equally',  zh:'等分' },
-    포함: { ko:'포함', en:'making groups',    zh:'包含除' }
-  };
-
   /* 그 레벨 안에 '연산은 같고 의미 유형은 다른' 짝이 있는가 */
   function hasPartner(range, kind) {
     return Object.keys(KIND_W[range]).some(k => k !== kind && OPS[k] === OPS[kind]);
@@ -865,9 +853,9 @@
                   zh:'下面哪道题和上面用同样的运算？请写出序号。' };
     return assemble(s, ask, choices, answer,
       { story, mode:'same', correctText: opts[0].ko,
-        note: { ko: `${OPNAME[s.op].ko} — ${KINDNAME[okKind].ko}`,
-                en: `${OPNAME[s.op].en} — ${KINDNAME[okKind].en}`,
-                zh: `${OPNAME[s.op].zh} — ${KINDNAME[okKind].zh}` } });
+        note: { ko: OPNAME[s.op].ko,
+                en: OPNAME[s.op].en,
+                zh: OPNAME[s.op].zh } });
   };
 
 
