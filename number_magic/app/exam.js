@@ -7422,7 +7422,11 @@ ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-an
   };
   printMedia.addEventListener('change',repaginateForPrint);
   const fontsReady=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();
-  const ready=Promise.all([fontsReady,...[...sheet.querySelectorAll('img')].map(img=>img.decode?img.decode().catch(()=>{}):Promise.resolve())]);
+  // A print sheet includes off-screen pages. Lazy images otherwise keep decode()
+  // pending until a scroll that never happens before automatic printing.
+  const printImages=[...sheet.querySelectorAll('img')];
+  printImages.forEach(img=>{img.loading='eager';});
+  const ready=Promise.all([fontsReady,...printImages.map(img=>img.decode?img.decode().catch(()=>{}):Promise.resolve())]);
   window.NM_LAST_PRINT_READY=ready;
   ready.then(()=>{
     paginateAnswers();
