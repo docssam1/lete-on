@@ -102,7 +102,7 @@ export function mountPark($host) {
     if (!intro || reduced) { s = go.s; tx = go.tx; ty = go.ty; clamp(); apply(); showPins(); return; }
     // 시작: 전체 지도를 잠깐 보여 주고 → 두 아이가 입구에서 광장으로 걸어 들어오는 동안 지도가 광장 쪽으로 확대 → 표가 하나씩 떠오른다
     s = fit; tx = 0; ty = 0; clamp(); apply(); $pins.forEach((b) => b.classList.remove('show'));
-    setTimeout(() => { if (!alive) return; kid.follow = false; fly(go, 2600, showPins); kid.spot = 'gate'; walkTo(key(hub()), 2500, () => say(HELLO)); }, 900);
+    setTimeout(() => { if (!alive) return; kid.follow = false; fly(go, 2600, showPins); kid.spot = 'gate'; $pins.forEach((b) => b.classList.toggle('here', b.dataset.spot === 'gate')); walkTo(key(hub()), 2500, () => say(HELLO)); }, 900);
   };
   $img.onload = () => load(true);
   $img.src = PARK.images[$v.clientWidth / Math.max(1, $v.clientHeight) < 0.8 ? 'tall' : 'wide'].src;
@@ -132,7 +132,7 @@ export function mountPark($host) {
     $panel.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
   };
   const go = (id) => {
-    $pins.forEach((b) => b.classList.toggle('on', b.dataset.spot === id));
+    $pins.forEach((b) => b.classList.toggle('on', b.dataset.spot === id)); $pins.forEach((b) => b.classList.remove('here'));
     kid.spot = id; kid.follow = s > fit * 1.15;
     walkTo(key(stand(id)), 0, () => { if (kid.spot === id) open(id); });
   };

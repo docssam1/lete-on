@@ -1,9 +1,9 @@
-# 자연관찰 공원 지도(디오라마) — Blender로 섬 모양 공원을 만들고 렌더한다. 원장 2026-10-26: 「솔은 이 정도 된다는데?(Blender 디오라마) — 난 맵을 말하는 거야 먼저」.
+# 자연관찰 공원 지도 — Blender로 해변 공원(공원 + 둘레 길·해변·바다, 그림 끝까지 땅이 이어짐)을 만들고 렌더한다. 원장 2026-10-26: 「솔은 이 정도 된다는데?(Blender 디오라마) — 난 맵을 말하는 거야 먼저」.
 # 렌더 두 장(넓은 화면 2560×1440 · 세로 화면 1440×2560) + 지점·길 좌표(그림 위 %)를 JSON으로 낸다 → data/park-map.js에 옮긴다(tools/blender/park-apply.py).
 # 실행(머리 없이):  blender -b -P park-map.py -- --out <폴더> [--preview] [--trees <나무 모델 .blend>]
 #   이 컨테이너: python3.13 -m venv /tmp/bpyenv && /tmp/bpyenv/bin/pip install bpy==5.2.3 → /tmp/bpyenv/bin/python -I park-map.py -- --out <폴더>
 #   원장 맥: Blender 앱의 blender 실행 파일로 같은 명령. --trees에 나무 모델 파일을 주면 그 안의 물체(이름에 tree가 든 것)를 나무 자리에 놓는다(없으면 코드로 만든 나무).
-# 단위 m, Z가 위. 섬 크기 약 64×40 m. 실제 장소를 그대로 옮긴 것이 아니다(장소 이름은 화면에 쓰지 않는다).
+# 단위 m, Z가 위. 공원 약 104×57 m(남·동쪽 해변, 북·서쪽 차도). 실제 장소를 그대로 옮긴 것이 아니다(장소 이름은 화면에 쓰지 않는다).
 import bpy, bmesh, math, random, json, os, sys
 from mathutils import Vector, Matrix, noise as mnoise
 from bpy_extras.object_utils import world_to_camera_view
@@ -471,6 +471,125 @@ for k, (loc, h, kind, tint) in enumerate(TREE_SPOTS):
     else:
         tree(f'tree{k}', loc, h, kind, tint, seed=k + 3)
 
+# ── 공원 밖: 그림 끝까지 땅이 이어지게(원장 2026-10-26 「지도가 저렇게 끊기는 거 이상해 — 테두리에 도로를 두거나, 백사장과 해변을 넣어 해수욕장 공원」) ──
+# 서·남·북은 길(차도 + 보도)과 그 너머 나무, 동쪽은 백사장과 바다. 공원 둘레는 낮은 생울타리(입구·해변 쪽은 틔움).
+# 해안선(모래가 시작하는 곳): 남쪽을 따라 오다가 동쪽으로 꺾여 북쪽으로. 바다는 그 바깥(오른쪽).
+COAST = [(-300, -32.5), (-60, -32.5), (10, -32.5), (36, -31), (50, -24), (55.5, -10), (56, 4), (54, 22), (49, 40), (42, 80), (30, 200), (20, 300)]
+CP = catmull([(x, y, 0) for x, y in COAST], n=10)
+CN = []
+for i, p_ in enumerate(CP):
+    t = (CP[min(i + 1, len(CP) - 1)] - CP[max(i - 1, 0)]).normalized(); CN.append(Vector((t.y, -t.x, 0)))
+def on_land(x, y, margin=3):
+    i = min(range(len(CP)), key=lambda k: (CP[k].x - x) ** 2 + (CP[k].y - y) ** 2)
+    return (Vector((x, y, 0)) - CP[i]).dot(CN[i]) < -margin
+bm = bmesh.new(); vs = [bm.verts.new((-300, 300, TOP - 0.005))] + [bm.verts.new((p_.x, p_.y, TOP - 0.005)) for p_ in CP[::2]]
+bm.faces.new(vs); me = bpy.data.meshes.new('ground'); bm.to_mesh(me); bm.free()
+ground = link(bpy.data.objects.new('ground', me)); me.materials.append(GRASS)
+hole = prism('islandhole', ring, TOP - 3, TOP + 3, GRASS)
+md = ground.modifiers.new('hole', 'BOOLEAN'); md.operation = 'DIFFERENCE'; md.object = hole; md.solver = 'EXACT'
+bpy.context.view_layer.objects.active = ground; bpy.ops.object.modifier_apply(modifier='hole'); bpy.data.objects.remove(hole)
+for f_ in ground.data.polygons:
+    if f_.normal.z < 0: f_.flip()
+# 백사장: 해안선에서 바다 쪽으로 조금씩 낮아지는 모래(물낯 아래로 들어가며 물가가 저절로 생김)
+SAND = noise_mat('sand', (0.60, 0.50, 0.34), (0.74, 0.64, 0.46), scale=3, rough=0.95, bump=0.2, bump_scale=120)
+SEA = principled('sea', (0.02, 0.17, 0.22), rough=0.04)
+sn = SEA.node_tree; nb = sn.nodes.new('ShaderNodeTexNoise'); nb.inputs['Scale'].default_value = 3; bp = sn.nodes.new('ShaderNodeBump'); bp.inputs['Strength'].default_value = 0.12
+sn.links.new(nb.outputs['Fac'], bp.inputs['Height']); sn.links.new(bp.outputs['Normal'], sn.nodes['Principled BSDF'].inputs['Normal'])
+SW, COLS = 11.0, 8
+def sand_z(t): return TOP + 0.02 - 0.6 * t ** 1.3
+verts = []; faces = []
+for i, (p_, n_) in enumerate(zip(CP, CN)):
+    for j in range(COLS + 1):
+        t = j / COLS; q = p_ + n_ * SW * t; verts.append((q.x, q.y, sand_z(t)))
+    if i:
+        for j in range(COLS):
+            a_ = (i - 1) * (COLS + 1) + j; b_ = i * (COLS + 1) + j; faces.append((a_, a_ + 1, b_ + 1, b_))
+sand = mesh_obj('sand', verts, faces, SAND)
+for f_ in sand.data.polygons:
+    if f_.normal.z < 0: f_.flip()
+bpy.ops.mesh.primitive_plane_add(size=1, location=(0, 0, TOP - 0.3)); sea = bpy.context.object; sea.scale = (800, 800, 1); sea.data.materials.append(SEA)
+# 물가 흰 거품 띠: 모래가 물낯(−0.3)과 만나는 곳
+TF = (0.32 / 0.6) ** (1 / 1.3)
+FOAM = principled('foam', (0.92, 0.95, 0.95), rough=0.4)
+ribbon('foam', [((p_ + n_ * SW * TF).x, (p_ + n_ * SW * TF).y) for p_, n_ in list(zip(CP, CN))[::3] if -150 < p_.x < 150 and p_.y < 150], 0.7, FOAM, z=TOP - 0.29, thick=0.01)
+# 해변 산책로(해안선 안쪽): 정문이 여기로 열린다
+PROM = [((p_ - n_ * 1.7).x, (p_ - n_ * 1.7).y) for p_, n_ in zip(CP, CN) if -90 < p_.x and p_.y < 70][::2]
+ribbon('promenade', PROM, 3.0, PAVE, z=TOP + 0.03)
+ribbon('entry2', [(-6, -29.5), (-6, -31.4)], 2.8, PAVE, z=TOP + 0.045)
+# 파라솔·돗자리·안전요원 망루
+PARA = [principled(f'para{i}', c, rough=0.6) for i, c in enumerate([(0.85, 0.15, 0.12), (0.10, 0.35, 0.75), (0.95, 0.75, 0.10), (0.15, 0.6, 0.35), (0.95, 0.95, 0.92)])]
+rr = random.Random(91); spots_b = [k for k, p_ in enumerate(CP) if (-45 < p_.x < 30 and p_.y < -30) or (p_.x > 48 and -18 < p_.y < 32)][::4]
+for m_, k in enumerate(spots_b):
+    q = CP[k] + CN[k] * rr.uniform(2.5, 4.5); x, y = q.x, q.y
+    bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.05, depth=2.2, location=(x, y, TOP + 1.1)); bpy.context.object.data.materials.append(POLE)
+    bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=1.5, radius2=0.05, depth=0.55, location=(x, y, TOP + 2.25)); bpy.context.object.data.materials.append(PARA[m_ % 5])
+    bpy.ops.mesh.primitive_cube_add(location=(x + 1.0, y - 0.6, TOP + 0.04)); o = bpy.context.object; o.scale = (0.9, 0.45, 0.02); o.rotation_euler.z = rr.uniform(-0.4, 0.4); o.data.materials.append(PARA[(m_ + 2) % 5])
+kq = min(range(len(CP)), key=lambda k: abs(CP[k].x - 14) + abs(CP[k].y + 32.5)); q = CP[kq] + CN[kq] * 4.5; lx, ly = q.x, q.y
+for dx in (-0.8, 0.8):
+    for dy in (-0.8, 0.8):
+        bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.08, depth=3, location=(lx + dx, ly + dy, TOP + 1.5)); bpy.context.object.data.materials.append(WOOD)
+bpy.ops.mesh.primitive_cube_add(location=(lx, ly, TOP + 3.1)); o = bpy.context.object; o.scale = (1.1, 1.1, 0.12); o.data.materials.append(WOOD)
+bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=1.6, radius2=0.05, depth=0.9, location=(lx, ly, TOP + 4.1), rotation=(0, 0, math.radians(45))); bpy.context.object.data.materials.append(PARA[0])
+# 공원에서 동쪽 해변으로 나가는 길(습지 길을 이어서)
+ribbon('beachpath', [(33, -3.5), (42, -1.5), (53.5, -1)], 2.0, PAVE, z=TOP + 0.025)
+
+# 길: 북·남(가로), 서(세로). 겹치는 네거리에서 같은 높이면 검게 나오니 높이를 조금씩 다르게.
+ASPH = noise_mat('asphalt', (0.06, 0.06, 0.07), (0.11, 0.11, 0.12), scale=20, rough=0.9, bump=0.1, bump_scale=200)
+LINE = principled('roadline', (0.92, 0.85, 0.40), rough=0.6); WLINE = principled('crosswalk', (0.92, 0.92, 0.90), rough=0.6)
+ROADS = [('north', [(-300, 35), (46, 35)], TOP + 0.02), ('west', [(-62, -29), (-62, 300)], TOP + 0.024)]
+for name, pts, z in ROADS:
+    (x0, y0), (x1, y1) = pts; d = Vector((x1 - x0, y1 - y0)); n = Vector((-d.y, d.x)).normalized()
+    for k, (wd, mat, dz) in enumerate([(11, PAVE, -0.01), (7, ASPH, 0.0)]):
+        bpy.ops.mesh.primitive_cube_add(location=((x0 + x1) / 2, (y0 + y1) / 2, z + dz)); o = bpy.context.object; o.scale = (d.length / 2, wd / 2, 0.02); o.rotation_euler.z = math.atan2(d.y, d.x); o.data.materials.append(mat)
+    u = d.normalized(); dv = []; df = []
+    for t in np.arange(0.0, 1.0, 6 / d.length):
+        c = Vector((x0, y0)) + d * t; i0 = len(dv)
+        dv += [tuple(c - u * 1.4 - n * 0.1) + (z + 0.035,), tuple(c - u * 1.4 + n * 0.1) + (z + 0.035,), tuple(c + u * 1.4 + n * 0.1) + (z + 0.035,), tuple(c + u * 1.4 - n * 0.1) + (z + 0.035,)]
+        df.append((i0, i0 + 1, i0 + 2, i0 + 3))
+    lo = mesh_obj(f'{name}_line', dv, df, LINE)
+    for f_ in lo.data.polygons:
+        if f_.normal.z < 0: f_.flip()
+# 공원 둘레 생울타리(입구와 해변 쪽은 틔움)
+HEDGE = noise_mat('hedge', (0.07, 0.20, 0.05), (0.13, 0.30, 0.08), scale=4, rough=0.9, bump=0.6, bump_scale=40)
+segs = [[]]
+for sp in ring:
+    gap = (abs(sp.x + 6) < 3.2 and sp.y < -20) or sp.x > 38
+    if gap: segs.append([])
+    else: segs[-1].append((sp.x, sp.y))
+for k, sg in enumerate(segs):
+    if len(sg) < 3: continue
+    o, _ = ribbon(f'hedge{k}', sg[::3] + [sg[-1]], 0.9, HEDGE, z=TOP + 0.65, thick=0.65)
+# 공원 밖 나무(멀리 보이는 것이라 가볍게: 줄기 + 잎 덩어리)
+OUTLEAF = [noise_mat(f'outleaf{i}', c1, c2, scale=3, rough=0.85, bump=0.8, bump_scale=30) for i, (c1, c2) in enumerate([((0.06, 0.18, 0.04), (0.14, 0.30, 0.07)), ((0.09, 0.22, 0.05), (0.18, 0.34, 0.08)), ((0.30, 0.18, 0.04), (0.50, 0.30, 0.07))])]
+# 모양 6가지를 한 번만 만들고, 나무마다 그 메시를 같이 쓰는 복사본을 놓는다(bpy.ops를 수백 번 부르면 장면이 커질수록 느려진다)
+BLOBS = []
+for q in range(6):
+    rq = random.Random(500 + q); parts = []
+    bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.035, depth=0.45, location=(0, 0, 0.22)); t = bpy.context.object; t.data.materials.append(BARK); parts.append(t)
+    m = OUTLEAF[2 if q == 5 else q % 2]
+    for k in range(3):
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=rq.uniform(0.2, 0.28), location=(rq.uniform(-.15, .15), rq.uniform(-.15, .15), rq.uniform(0.55, 0.75)))
+        o = bpy.context.object; o.data.materials.append(m)
+        for v in o.data.vertices: v.co *= 0.85 + 0.3 * mnoise.noise(v.co * 10 + Vector((q, k, 0)))
+        for p_ in o.data.polygons: p_.use_smooth = True
+        parts.append(o)
+    bpy.ops.object.select_all(action='DESELECT')
+    for o in parts: o.select_set(True)
+    bpy.context.view_layer.objects.active = parts[0]; bpy.ops.object.join(); b = bpy.context.object; b.name = f'blob{q}'
+    sc.collection.objects.unlink(b); BLOBS.append(b)
+def blob_tree(x, y, h, rr):
+    src = BLOBS[5 if rr.random() < 0.12 else rr.randrange(5)]
+    o = src.copy(); o.location = (x, y, TOP); o.scale = (h, h, h); o.rotation_euler.z = rr.random() * 6.283; link(o)
+rr = random.Random(101)
+for k in range(520):
+    x, y = rr.uniform(-180, 60), rr.uniform(-110, 190)
+    if not on_land(x, y, 5): continue
+    if abs(y - 35) < 7.5 or (abs(x + 62) < 7.5 and y > -34): continue
+    if -60 < x and -33 < y < 33: continue
+    blob_tree(x, y, rr.uniform(6, 10), rr)
+# 길가 가로수(공원 쪽 보도)
+for x in np.arange(-56, 42, 9.0): blob_tree(x, 30.8, 7, random.Random(int(x * 7)))
+
 # ── 빛·카메라·렌더 ──
 w = bpy.data.worlds.new('w'); sc.world = w; w.use_nodes = True; w.node_tree.nodes['Background'].inputs['Color'].default_value = (0.78, 0.84, 0.92, 1); w.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.9
 bpy.ops.object.light_add(type='SUN', rotation=(math.radians(48), math.radians(-12), math.radians(-35))); bpy.context.object.data.energy = 4.2; bpy.context.object.data.angle = math.radians(4)
@@ -502,7 +621,7 @@ def proj(cam, pts, res):
     return out
 
 result = {}
-for kind, res, loc, lens, tgt in [('wide', (2560, 1440), (5, -100, 78), 38, (0, 1.5, -3)), ('tall', (1440, 2560), (52, -2, 138), 36, (0, 3.5, -2))]:
+for kind, res, loc, lens, tgt in [('wide', (2560, 1440), (5, -104, 78), 38, (0, -2, -3)), ('tall', (1440, 2560), (52, -2, 138), 36, (0, 3.5, -2))]:
     if ONLY and kind != ONLY: continue
     cam = camera('cam_' + kind, loc, tgt, lens); sc.camera = cam
     sc.render.resolution_x, sc.render.resolution_y = res[0] // DIV, res[1] // DIV

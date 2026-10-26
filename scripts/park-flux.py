@@ -5,8 +5,8 @@
 
   모델  FLUX.2 [klein] 4B(Apache 2.0, 상업 사용 가능) — mflux(MLX, MIT)로 4비트 실행.
         9B 는 비상업 라이선스라 쓰지 않는다.
-  입력  science-lab/assets/park/park-{wide,tall}.webp(Blender 렌더) + science-lab/tools/blender/park-mask-{wide,tall}.png(섬 모양)
-  출력  park-flux/<wide|tall>-<번호>.webp(후보, 섬 모양 밖은 원래 바탕으로 덮음 — 지도 위 표 자리가 그대로 맞는다)
+  입력  science-lab/assets/park/park-{wide,tall}.webp(Blender 렌더 — 그림 끝까지 공원·길·해변·바다가 차 있다)
+  출력  park-flux/<wide|tall>-<번호>.webp(후보, 2560 크기로 늘림 — 편집 모드라 배치가 그대로여서 지도 위 표 자리가 맞는다)
         + park-flux/고르기.html(한 장에 모두, 원래 렌더와 나란히)
   전달  후보를 GitHub 수신 브랜치 inbox/park-flux 로 올린다(맥의 작업 폴더·main 은 건드리지 않는다).
 
@@ -17,18 +17,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PARK = ROOT / 'science-lab' / 'assets' / 'park'
-MASK = ROOT / 'science-lab' / 'tools' / 'blender'
 BRANCH = 'inbox/park-flux'
-BG = (232, 235, 230)
 # 생성 크기(16의 배수). 다 만든 뒤 2560 쪽으로 늘린다.
 SIZE = {'wide': (1792, 1008), 'tall': (1008, 1792)}
 FULL = {'wide': (2560, 1440), 'tall': (1440, 2560)}
-PROMPT = ('Turn this 3D render into a photorealistic tilt-shift aerial photograph of a miniature park diorama on a thick soil base. '
-          'Keep exactly the same layout, outlines, shapes and positions of everything: the island outline and soil edge, the pond with lily pads, '
+PROMPT = ('Turn this 3D render into a photorealistic tilt-shift aerial photograph of a seaside park. '
+          'Keep exactly the same layout, outlines, shapes and positions of everything: the sandy beach with parasols and a lifeguard tower, the sea and its white surf line, '
+          'the seaside promenade, the roads with lane markings and street trees, the low hedge around the park, the pond with lily pads, '
           'duckweed, water hyacinth and reeds, the pavilion with a dark roof, the stream and wooden bridge, the paved paths, the brick plaza with two white tents, '
           'the flower beds, the tall grass meadow, the rocky hill, the reed marsh with a wooden boardwalk, the entrance gate and the forest with some autumn trees. '
           'Make trees look like real trees with natural dense foliage, real grass texture, clear pond water with reflections, natural stone, soft afternoon sunlight, '
-          'gentle shadows. Plain light background around the diorama. No people, no text, no labels.')
+          'gentle shadows. No people, no cars, no text, no labels.')
 
 
 def run_flux(src, out_png, seed, w, h, model, model_path, quant):
@@ -39,14 +38,10 @@ def run_flux(src, out_png, seed, w, h, model, model_path, quant):
     subprocess.run(cmd, check=True)
 
 
-def finish(gen_png, mask_png, kind, out_webp):
-    """섬 모양 밖은 바탕색으로 — 렌더와 같은 윤곽이라 지도 표·걷는 길 좌표가 그대로 맞는다."""
-    from PIL import Image, ImageFilter
-    W, H = FULL[kind]
-    im = Image.open(gen_png).convert('RGB').resize((W, H), Image.LANCZOS)
-    m = Image.open(mask_png).convert('L').resize((W, H), Image.LANCZOS).filter(ImageFilter.GaussianBlur(1.2))
-    bg = Image.new('RGB', (W, H), BG)
-    Image.composite(im, bg, m).save(out_webp, 'WEBP', quality=84, method=6)
+def finish(gen_png, kind, out_webp):
+    """지도 크기(2560)로 늘려 webp로."""
+    from PIL import Image
+    Image.open(gen_png).convert('RGB').resize(FULL[kind], Image.LANCZOS).save(out_webp, 'WEBP', quality=84, method=6)
 
 
 def contact_sheet(out, rows):
@@ -100,8 +95,8 @@ def main():
     out = ROOT / a.out; out.mkdir(exist_ok=True)
     rows = []
     for kind in ([a.only] if a.only else ['wide', 'tall']):
-        src, mask = PARK / f'park-{kind}.webp', MASK / f'park-mask-{kind}.png'
-        if not src.exists() or not mask.exists(): sys.exit(f'  [!] 렌더나 섬 모양 파일이 없어요: {src.name}, {mask.name}')
+        src = PARK / f'park-{kind}.webp'
+        if not src.exists(): sys.exit(f'  [!] 렌더 파일이 없어요: {src}')
         files = [src]
         for i in range(1, a.n + 1):
             dst = out / f'{kind}-{i}.webp'
@@ -109,7 +104,7 @@ def main():
                 w, h = SIZE[kind]; png = out / f'{kind}-{i}.raw.png'
                 print(f'  {kind} 후보 {i}/{a.n} 그리는 중... ({w}x{h})', flush=True)
                 run_flux(src, png, 1000 + i * 17, w, h, a.model, a.model_path, a.quantize or None)
-                finish(png, mask, kind, dst); png.unlink()
+                finish(png, kind, dst); png.unlink()
             files.append(dst)
         rows.append((kind, files))
     contact_sheet(out, rows)
