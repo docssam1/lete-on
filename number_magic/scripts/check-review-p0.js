@@ -9,7 +9,7 @@ const server=http.createServer((req,res)=>{
  if(!file.startsWith(ROOT+path.sep)||!fs.existsSync(file)||fs.statSync(file).isDirectory()){res.writeHead(404);return res.end();}
  res.setHeader('Content-Type',({'.js':'text/javascript','.css':'text/css','.html':'text/html','.svg':'image/svg+xml','.woff2':'font/woff2'})[path.extname(file)]||'application/octet-stream');
  let content=fs.readFileSync(file);
- if(file.endsWith('/app/exam.js'))content=content.toString().replace('window.NM_EXAM = NM_EXAM;','window.NM_EXAM = NM_EXAM;window.__reviewQA={applyPartialBlanks,printAskText,w2CellHtml,stripConceptTags,sortRoundProblems,assignStudyDays,prosePowersHtml};');
+ if(file.endsWith('/app/exam.js'))content=content.toString().replace('window.NM_EXAM = NM_EXAM;','window.NM_EXAM = NM_EXAM;window.__reviewQA={applyPartialBlanks,printAskText,w2CellHtml,stripConceptTags,sortRoundProblems,assignStudyDays,prosePowersHtml,w2LevelInstruction};');
  res.end(content);
 });
 (async()=>{let browser;await new Promise(r=>server.listen(0,'127.0.0.1',r));try{
@@ -49,6 +49,12 @@ const server=http.createServer((req,res)=>{
   for(const [n,a,b,want] of [['3/2','과','와','3/2과'],['2/3','과','와','2/3와'],['장','이에요','예요','장이에요'],['1','으로','로','1로'],['6','으로','로','6으로']])eq(NM_RNG.koJosa(n,a,b),want,'Spoken Korean particle');
   const inline=Q.prosePowersHtml('A^C와 2^(2/3)은 수식이에요.');
   ok(inline.includes('data-tex="A^C"')&&inline.includes('data-tex="2^{2/3}"')&&inline.includes('와 '),'Inline powers retain surrounding prose');
+  const indexed=Q.prosePowersHtml('log_a N=k, a_n은 일반항이에요.');
+  ok(indexed.includes('data-tex="\\log_a N"')&&indexed.includes('data-tex="a_n"'),'Logarithm bases and sequence indices are typeset as math');
+  ok(!Q.w2LevelInstruction('MD86',1).includes('상자그림'),'Quartile calculation is not a drawing instruction');
+  ok(Q.w2LevelInstruction('MD86',6).includes('상자그림'),'Box drawing keeps its drawing instruction');
+  ok(!Q.w2LevelInstruction('MD87',2).includes('표의 순서쌍'),'Scatter reading is not point plotting');
+  ok(Q.w2LevelInstruction('MD15',4).includes('①'),'Comparison explains the answer codes');
   const rounds=[{problems:Array(60).fill({}),html:[0,24,6,12,18].map(n=>'<div class="nm-w2-page">'+Array(n).fill('<div class="nm-w2-item"></div>').join('')+'</div>').join('')}];
   eq(Q.assignStudyDays(rounds,3),3,'Three study days');
   const loads=[0,0,0];[0,24,6,12,18].forEach((n,i)=>loads[rounds[0].pageStudyDays[i]-1]+=n);
@@ -57,6 +63,30 @@ const server=http.createServer((req,res)=>{
   for(const c of Object.values(NM_COURSES)){
     const learned={};for(const session of c.sessions.filter(s=>!s.test))for(const d of (session.drills||[]).concat(session.creative||[]))if(d?.t)learned[d.t]=Math.max(learned[d.t]||0,d.lv||0);
     for(const entry of c.sessions.find(s=>s.test)?.pool||[])if(learned[entry.t])eq(entry.lv,learned[entry.t],'Course test uses its actual practised level C'+c.order+' '+entry.t);
+  }
+  for(let seed=1;seed<=240;seed++){
+   for(const t of ['ML6','ML15','ML21']){
+    const p=gen(t,1,seed),m=p.tex.match(/(\d+) \\times (\d+)/);
+    eq(p.answer,+m[1]*+m[2],'Scaffold changes preserve multiplication '+t);
+    if(t==='ML6'&&+m[1]%10===0)eq(p.steps.length,1,'Do not print the whole product as the tens subtotal');
+    if(t==='ML15')ok(p.steps.every(s=>!new RegExp('(^|[^0-9])'+p.answer+'(?![0-9])').test(s.tex)),'x11 steps must not print the final product');
+    if(t==='ML21')ok(!p.steps.some(s=>/\\text\{\d+자리\}/.test(s.tex)),'Predicting digit count must remain the learner task');
+   }
+   const fr=gen('FR2',1,seed),im=fr.tex.match(/^\\frac\{(\d+)\}\{(\d+)\} = \\square/);
+   if(im){eq(fr.answer,Math.floor(+im[1]/+im[2]),'Improper to mixed quotient');ok(fr.steps.every(s=>/\\square/.test(s.tex)),'Keep both quotient/mixed steps incomplete');ok(/= \\square \\cdots/.test(fr.steps[0].tex),'Quotient must not be prefilled');}
+   else{const m=fr.tex.match(/^(\d+)\\frac\{(\d+)\}\{(\d+)\}/);eq(fr.answer,+m[1]*+m[3]+ +m[2],'Mixed to improper numerator');ok(fr.steps.at(-1).tex.includes('\\frac{\\square}'),'Final numerator must not be prefilled');}
+   const dc=gen('DC1',1,seed),m=dc.tex.match(/^0\.(\d) ([+-]) 0\.(\d)/);
+   eq(dc.answer,m[2]==='+'?+m[1]+ +m[3]:+m[1]- +m[3],'Decimal tenths arithmetic');
+   if(m[2]==='+'&&dc.answer>=10)eq(dc.steps.at(-1).tex,dc.tex,'Carry step does not print the decimal answer');
+   const gp=gen('MD69',3,seed),x=+gp.tex.match(/x = (-?\d+)/)[1];
+   eq(gp.graph.pts.length,0,'Graph reading must not label the answer coordinate');
+   eq(gp.answer,gp.graph.kind==='line'?gp.graph.m*x+gp.graph.b:gp.graph.k/x,'Curve still represents the requested value');
+   const vertex=gen('MD67',1,seed);
+   ok(!vertex.solution.some(s=>/y = -?\\times/.test(s.tex)),'A scalar coefficient 1 must not disappear before a multiplication sign');
+   const rad=gen('MD18',3,seed),n=+rad.tex.match(/\\sqrt\{(\d+)\}/)[1],a=rad.solution[0].blank[0],b=rad.solution[0].blank[1];
+   eq(a*a*b,n,'Root decomposition');eq(rad.answer,[b,a*b],'Rationalization answer preserved');
+   ok(rad.solution.every(s=>/\\square/.test(s.tex)),'Rationalization steps must require completion');
+   eq((rad.tex.match(/=/g)||[]).length,1,'Remove the already-simplified denominator from the question');
   }
   const blocks=[0,1,2,3].map(()=>({base10:{tens:5,ones:6},tex:'50 + 6 = \\square',answer:56}));
   Q.applyPartialBlanks(blocks,'medium',{});eq(blocks.map(p=>p.answer),[56,56,56,56],'Pictures retain their whole-number answer');

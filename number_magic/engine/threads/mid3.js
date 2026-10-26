@@ -469,15 +469,15 @@ NM_TGEN['md18_rationalize'] = function (params, rng) {
   do { a = R(rng, 2, 11); b = pick(rng, SQFREE_SMALL); N = a * a * b; } while (N > 500);
   return {
     prompt: {
-      ko: `먼저 분모의 근호부터 정리(√${N}=${a}√${b})하고, 그다음 분자·분모에 √${b}를 곱해 유리화합니다`,
-      en: `First simplify the denominator's root (√${N}=${a}√${b}), then multiply top and bottom by √${b} to rationalize`,
-      zh: `先化简分母的根号(√${N}=${a}√${b})，再用√${b}乘分子分母进行有理化`
+        ko: '먼저 분모의 근호를 간단히 하세요. 그다음 분자와 분모에 같은 근호를 곱해 분모를 유리화하세요.',
+        en: 'Simplify the denominator’s root first. Then multiply the numerator and denominator by the same root to rationalize.',
+        zh: '先化简分母的根号，再把分子与分母同乘一个相同的根号，使分母有理化。'
     },
-    tex: `\\dfrac{1}{\\sqrt{${N}}} = \\dfrac{1}{${a}\\sqrt{${b}}} = \\dfrac{\\sqrt{\\square}}{\\square}`,
+    tex: `\\dfrac{1}{\\sqrt{${N}}} = \\dfrac{\\sqrt{\\square}}{\\square}`,
     answer: [b, a * b], answerShape: 'radicalFraction', answerType: 'number', widget: 'numpad',
     solution: [
-      { tex: `\\sqrt{${N}} = ${a}\\sqrt{${b}}` },
-      { tex: `\\dfrac{1}{${a}\\sqrt{${b}}} = \\dfrac{1\\times\\sqrt{${b}}}{${a}\\sqrt{${b}}\\times\\sqrt{${b}}}` },
+      { tex: `\\sqrt{${N}} = \\square\\sqrt{\\square}`, blank:[a,b] },
+      { tex: `\\dfrac{1}{\\square\\sqrt{\\square}} = \\dfrac{\\sqrt{\\square}}{\\square}`, blank:[a,b,b,a*b] },
       { tex: `= \\dfrac{\\sqrt{\\square}}{\\square}`, blank: [b, a * b] }
     ]
   };

@@ -5464,9 +5464,26 @@ const W2_LEVEL_CONCEPTS = {
 /* 지시문(2026-09-06) — "계산을 하시오."가 안 맞는 유형. 없으면 renderRoundPages 가 기본 문구. */
 const W2_INSTR = {
   NS1: {ko:'□ 안에 알맞은 숫자를 쓰시오.', en:'Write the correct digit in each box.', zh:'在□里填上正确的数字。'},
+  NS3: {ko:'□ 안에 알맞은 수를 쓰세요.',en:'Fill each box with the correct number.',zh:'在□里填上合适的数。'},
+  NS4: {ko:'□ 안에 알맞은 수를 쓰세요.',en:'Fill each box with the correct number.',zh:'在□里填上合适的数。'},
   MD16: {ko:'근호 안을 가장 간단히 하시오.', en:'Simplify each radical.', zh:'把根号化到最简。'},
   MD86: {ko:'값을 계산하거나, 주어진 다섯 수를 눈금에 표시해 상자그림을 완성하시오.', en:'Calculate the value, or plot the given five numbers and complete the box plot.', zh:'计算数值，或把给出的五个数标在刻度上完成箱形图。'}
 };
+function w2LevelInstruction(threadId,level){
+  const th=(window.NM_THREADS||{})[threadId]||{};
+  const lv=(th.levels||[]).find(l=>l.id===level)||{},mode=(lv.params||{}).mode||'';
+  if(threadId==='MD15'&&/^compare/.test(mode))return lk('두 수의 크기를 비교하여 ① 왼쪽이 큼, ② 같음, ③ 오른쪽이 큼 중 알맞은 번호를 쓰세요.','Compare the numbers: write 1 if the left is greater, 2 if equal, or 3 if the right is greater.','比较两数大小：左边大填1，相等填2，右边大填3。');
+  if(threadId==='MD85'&&mode==='compare')return lk('두 자료를 비교하여 문제에서 정한 번호로 답하세요.','Compare the two data sets and answer with the number specified in the question.','比较两组数据，按题目指定的编号回答。');
+  if(threadId==='MD86')return mode==='boxDraw'
+    ? lk('주어진 다섯 수를 눈금에 표시하고 상자그림을 완성하세요.','Mark the five values and complete the box plot.','标出给定的五个数，完成箱形图。')
+    : lk('자료를 보고 □ 안에 알맞은 값을 쓰세요.','Use the data to fill each box with the correct value.','根据数据，在□里填上合适的值。');
+  if(threadId==='MD87'){
+    if(mode==='plot')return lk('표의 순서쌍을 모두 모눈에 찍고, 찍은 점의 수를 쓰세요.','Plot every ordered pair in the table, then write the number of points.','把表中的有序数对都描在方格中，再写出点的个数。');
+    if(mode==='read')return lk('산점도에서 주어진 조건에 맞는 점의 수를 쓰세요.','Count the plotted points that satisfy the condition.','数出散点图中符合条件的点。');
+    return lk('산점도의 상관관계를 보고 보기에서 알맞은 번호를 쓰세요.','Choose the option that describes the scatter plot’s correlation.','观察散点图的相关关系，填写合适的选项编号。');
+  }
+  return pickL(th.instr||W2_INSTR[threadId])||'';
+}
 /* 수학 팁(기억 고리, data/math-tips.js) — 원장 2026-09-08 "잘 기억하고 이해할 수 있는 스킬이나 팁".
    한 번 찍고 마는 상자가 아니라 그 유형을 다시 만나는 자리마다 같이 나온다(원장 "팁이 잘
    녹아들어갈 수 있도록"): 회차 첫 장 개념 아래 · 정답지 머리 아래(채점하며 다시 읽는 자리) ·
@@ -5511,15 +5528,14 @@ function w2StrategyBandHtml(threadId, level){
    별표 두 개가 그대로 찍히고 있었다(2026-09-21, 학습지 렌더로 발견 — MD69 "x와 y를
    **곱하면**"). 스레드 데이터 수십 곳이 이 표기를 쓰므로 데이터가 아니라 여기서 푼다.
    esc() 로 먼저 막은 뒤 별표만 태그로 바꾼다 — 그래야 데이터의 <b> 가 살아나지 않는다. */
-/* Prose can contain a small power without making its Korean sentence a formula.
-   Format only the base/exponent token; the surrounding text keeps its normal font. */
+/* Keep prose in its reading font; typeset powers, indices and log bases as math. */
 function prosePowersHtml(raw,escapeText){
   const input=String(raw==null?'':raw), encode=escapeText||esc;
-  const re=/(?:[A-Za-z0-9]+|\([^()\n]+\))\^(?:\{[^{}\n]+\}|\([^()\n]+\)|[A-Za-z0-9−-]+)/g;
+  const re=/log_(?:\{[^{}\n]+\}|[A-Za-z0-9])(?:\s+[A-Za-z])?|(?:[A-Za-z0-9]+|\([^()\n]+\))(?:[_^](?:\{[^{}\n]+\}|\([^()\n]+\)|[A-Za-z0-9−-]+))+/g;
   let out='',last=0,m;
   while((m=re.exec(input))){
     out+=encode(input.slice(last,m.index));
-    const tex=m[0].replace(/\^\(([^()]+)\)/,'^{$1}');
+    const tex=m[0].replace(/\^\(([^()]+)\)/g,'^{$1}').replace(/^log_/,'\\log_');
     out+=`<span class="nm-w2-tex" data-tex="${esc(tex)}"></span>`;
     last=m.index+m[0].length;
   }
@@ -6941,7 +6957,7 @@ function renderRoundPagesBody(item, opts){
   const instrText = item.c0&&window.NM_C0 ? pickL(NM_C0.copy(item.thread,item.level).instr) : item.instr ? pickL(item.instr)
     : layout.type === 'word'
     ? lk('다음 물음에 답하시오.','Answer each question.','请回答下列各题。')
-    : pickL(((th.levels || []).find(l => l.id === item.level) || {}).instr || th.instr || W2_INSTR[item.thread]) || lk('계산을 하시오.','Solve each problem.','请计算下列各题。');
+    : pickL(((th.levels || []).find(l => l.id === item.level) || {}).instr) || w2LevelInstruction(item.thread,item.level) || lk('계산을 하시오.','Solve each problem.','请计算下列各题。');
   const html = pages.map((pageItems, pi) => {
     const first = pi === 0;
     const cap = first ? firstCap : layout.perPage;

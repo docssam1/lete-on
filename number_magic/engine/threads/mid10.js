@@ -175,7 +175,7 @@ NM_TGEN['md69_proportionGraph'] = function (params, rng) {
           zh: `在图象上找到给定的x，竖直走到直线上读出y` },
         tex: `x = ${x0} \\quad\\Rightarrow\\quad y = \\square`,
         answer: y0, answerType: 'number', widget: 'graphPlane', negative: y0 < 0,
-        graph: { kind: 'line', m: a, b: 0, pts: [[x0, y0]], xr: xr, yr: yr },
+        graph: { kind: 'line', m: a, b: 0, pts: [], xr: xr, yr: yr },
         solution: [
           { tex: `\\text{그래프는 } y = ${coefLead(a)}x` },
           { tex: `${a} \\times (${x0}) = \\square`, blank: y0 }
@@ -192,7 +192,7 @@ NM_TGEN['md69_proportionGraph'] = function (params, rng) {
         zh: `反比例图象也一样——找到x，走到曲线上读出y` },
       tex: `x = ${x0} \\quad\\Rightarrow\\quad y = \\square`,
       answer: y0, answerType: 'number', widget: 'graphPlane', negative: y0 < 0,
-      graph: { kind: 'hyperbola', k: k, pts: [[x0, y0]], xr: xr, yr: yr },
+      graph: { kind: 'hyperbola', k: k, pts: [], xr: xr, yr: yr },
       solution: [
         { tex: `\\text{그래프는 } y = \\dfrac{${k}}{x}` },
         { tex: `${k} \\div ${x0} = \\square`, blank: y0 }

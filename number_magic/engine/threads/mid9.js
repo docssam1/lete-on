@@ -671,7 +671,7 @@ NM_TGEN['md67_quadVertex'] = function (params, rng) {
     answer: [p, q], answerType: 'number', widget: 'numpad', negative: hasNeg([p, q]),
     solution: [
       { tex: `(x ${wrapPlus(-p)})^2 = 0 \\quad\\Rightarrow\\quad x = \\square`, blank: p },
-      { tex: `\\text{그때 } y = ${coefLead(a)}\\times 0 ${wrapPlus(q)} = \\square`, blank: q },
+      { tex: `\\text{그때 } y = ${a<0?'('+a+')':a}\\times 0 ${wrapPlus(q)} = \\square`, blank: q },
       { tex: `\\text{꼭짓점} \\left(\\square,\\, \\square\\right)`, blank: [p, q] }
     ]
   };

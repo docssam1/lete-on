@@ -199,11 +199,9 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
         };
       } else {
         /* 올림 있음: 합 >= 10 → 1.x */
-        const carry = Math.floor(sum / 10);   /* = 1 */
-        const frac  = sum % 10;
         return {
           prompt: {
-            ko: `소수 한 자리 덧셈(올림 있음): 십의 자리로 올림해요`,
+            ko: `소수 한 자리 덧셈(올림 있음): 일의 자리로 올림해요`,
             en: `1-place decimal addition with carry into ones`,
             zh: `一位小数进位加法`
           },
@@ -213,7 +211,7 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
           widget:     'vertical',
           steps: [
             { tex: `${a} + ${b} = \\square \\;(\\text{십분의 자리 합})`, blank: sum  },
-            { tex: `${carry}.${frac} = \\dfrac{\\square}{10}`,            blank: sum  }
+            { tex: `0.${a} + 0.${b} = \\dfrac{\\square}{10}`, blank: sum }
           ]
         };
       }

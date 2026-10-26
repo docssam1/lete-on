@@ -376,7 +376,7 @@ NM_TGEN['ml6_mul2d1dMental'] = function(params, rng) {
 
   return {
     prompt: {
-      ko: `${a}를 ${tensV}과 ${ones}으로 나누어 ${b}을 곱해요`,
+      ko: ones===0 ? `${a}에 ${NM_RNG.koJosa(b,'을','를')} 곱해요` : `${NM_RNG.koJosa(a,'을','를')} ${NM_RNG.koJosa(tensV,'과','와')} ${NM_RNG.koJosa(ones,'으로','로')} 나누어 ${NM_RNG.koJosa(b,'을','를')} 곱해요`,
       en: `Split ${a} into ${tensV} and ${ones}, then multiply each by ${b}`,
       zh: `把${a}拆成${tensV}和${ones}，分别乘以${b}`
     },
@@ -384,7 +384,7 @@ NM_TGEN['ml6_mul2d1dMental'] = function(params, rng) {
     answer,
     answerType: 'steps',
     widget: 'steps',
-    steps: [
+    steps: ones===0 ? [{tex:`${a} \\times ${b} = \\square`,blank:answer}] : [
       { tex: `${tensV} \\times ${b} = \\square`,    blank: step1  },
       { tex: `${ones} \\times ${b} = \\square`,     blank: step2  },
       { tex: `${step1} + ${step2} = \\square`,       blank: answer }
@@ -1367,7 +1367,6 @@ NM_TGEN['ml_digit_pred'] = function(params, rng) {
   const a      = R(rng, 11, hi);
   const b      = R(rng, 11, hi);
   const answer = a * b;
-  const digits = answer.toString().length;
 
   const aT  = Math.floor(a / 10);
   const bT  = Math.floor(b / 10);
@@ -1381,7 +1380,7 @@ NM_TGEN['ml_digit_pred'] = function(params, rng) {
     answer, answerType:'steps', widget:'steps',
     steps:[
       { tex:`${aT} \\times ${bT} = \\square \\;\\text{(앞 자리 곱)}`, blank:leadProd },
-      { tex:`\\therefore \\; \\text{${digits}자리} \\;|\\; ${a} \\times ${b} = \\square`, blank:answer }
+      { tex:`\\therefore \\; ${a} \\times ${b} = \\square`, blank:answer }
     ]
   };
 };
@@ -1414,7 +1413,7 @@ NM_TGEN['ml_x11'] = function(params, rng) {
       answer, answerType:'steps', widget:'steps',
       steps:[
         { tex:`${aT} + ${aO} = \\square \\;\\text{(가운데 자리)}`, blank:mid    },
-        { tex:`\\text{올림 포함} \\Rightarrow ${h}${m}${aO}= \\square`, blank:answer }
+        { tex:`${a} \\times 11 = \\square`, blank:answer }
       ]
     };
   }
@@ -1427,7 +1426,7 @@ NM_TGEN['ml_x11'] = function(params, rng) {
     answer, answerType:'steps', widget:'steps',
     steps:[
       { tex:`${aT} + ${aO} = \\square \\;\\text{(가운데 자리)}`, blank:mid    },
-      { tex:`\\Rightarrow ${aT}${mid}${aO} = \\square`,  blank:answer }
+      { tex:`${a} \\times 11 = \\square`,  blank:answer }
     ]
   };
 };

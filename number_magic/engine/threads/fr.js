@@ -74,8 +74,8 @@ NM_TGEN['fr2_improperMixed'] = function(params, rng){
       answer: whole,
       answerType: 'steps',
       steps: [
-        { tex: impN + ' \\div ' + d + ' = ' + whole + ' \\cdots ' + rem + ' \\quad \\text{(몫=}\\square\\text{)}', blank: whole },
-        { tex: whole + '\\frac{' + rem + '}{' + d + '}', blank: whole }
+        { tex: impN + ' \\div ' + d + ' = \\square \\cdots ' + rem, blank: whole },
+        { tex: '\\square\\frac{' + rem + '}{' + d + '}', blank: whole }
       ],
       widget: 'steps',
       solution: [
@@ -95,7 +95,7 @@ NM_TGEN['fr2_improperMixed'] = function(params, rng){
       answerType: 'steps',
       steps: [
         { tex: whole + ' \\times ' + d + ' + ' + rem + ' = \\square', blank: impN },
-        { tex: '\\frac{' + impN + '}{' + d + '}', blank: impN }
+        { tex: '\\frac{\\square}{' + d + '}', blank: impN }
       ],
       widget: 'steps',
       solution: [
