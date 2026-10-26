@@ -209,7 +209,7 @@ function exampleView(view, groups) {
 // 학습 덱의 우리 게임(study-map.js OWN_GAMES와 같은 파일·꼬리표). 끝내면 골든벨 문제로 간다
 const OWN_FLOW_GAMES = {
   digital: { module: "./game-digital.js?v=20261024d", css: "./game-digital.css?v=20261024a", mount: "mountDigitalWorkshop" },
-  "shape-moves": { module: "./game-shape-moves.js?v=20261024d", css: "./game-shape-moves.css?v=20261024c", mount: "mountShapeMoves" }
+  "shape-moves": { module: "./game-shape-moves.js?v=20261028x", css: "./game-shape-moves.css?v=20261028x", mount: "mountShapeMoves" }
 };
 async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson }) {
   if (Object.hasOwn(OWN_FLOW_GAMES, gameId)) {
