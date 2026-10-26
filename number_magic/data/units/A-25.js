@@ -26,7 +26,7 @@ window.NM_UNITS['A-25'] = {
         result:{ ko:'200+350-100+450-200=700 ✓', en:'200+350-100+450-200=700 ✓', zh:'200+350-100+450-200=700 ✓' },
         book:{ ko:'덧셈끼리 먼저 모아 큰 합을 만든 뒤, 뺄셈끼리 모은 합을 한 번에 빼요.', en:'Group all additions first to make a big sum, then subtract the combined subtractions at once.', zh:'先把所有加法聚在一起得到大数，再一次性减去所有减法之和。' } },
       { tag:{ ko:'② 왜 순서를 바꿔도 될까요?', en:'2) Why can we rearrange the order?', zh:'② 为什么可以改变顺序？' },
-        head:{ ko:'덧셈과 뺄셈은 교환법칙이 성립해요', en:'Addition and subtraction satisfy a rearrangement property', zh:'加减法满足可交换的性质' },
+        head:{ ko:'덧셈은 순서를 바꿔도 같아요. 빼는 수는 빼기 부호와 함께 옮겨요', en:'Addition is commutative; keep each subtraction sign with its number', zh:'加法可以交换顺序；减数必须连同减号一起移动' },
         desc:{ ko:'a+b-c+d = a+b+d-c. 부호가 붙어 이동하기 때문에 정확해요. 단, <b>뺄셈 부호는 함께 가져가야 해요</b>!',
                en:'a+b-c+d = a+b+d-c. The sign travels with the number. <b>Always bring the minus sign along!</b>',
                zh:'a+b-c+d = a+b+d-c。符号跟着数字走，所以是准确的。<b>注意减号要一起带走</b>！' },

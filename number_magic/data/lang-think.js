@@ -232,7 +232,7 @@ ATOM.unrelated = c => {
   const noise = pick(c.rng, [
     { ko: v => `우리 학교 교실은 ${v}층에 있습니다.`, en: v => `Our classroom is on floor ${v}.`, zh: v => `我们的教室在${v}楼。`, v: R2(c.rng, 2, 4) },
     { ko: v => `${v}번 버스를 타고 학교에 갑니다.`, en: v => `I take bus number ${v} to school.`, zh: v => `我坐${v}路车上学。`, v: R2(c.rng, 3, 9) }]);
-  const own = [c.t(`${neun(c.A)} ${eul(c.on)} ${c.n1}${c.u} 가지고 있습니다.`, `${c.A} has ${c.n1} ${c.on}.`, `${c.A}有${c.n1}${c.u}${c.on}。`), c.t(`${c.n2}${c.u}${c.op === '+' ? '이 더 생겼습니다.' : '이 줄었습니다.'}`.replace(/(.)이 /, ' '), `The number changes by ${c.n2}.`, `数量变化了${c.n2}${c.u}。`), c.t(`${eul(c.on)} 모두 세어 봅니다.`, `${c.A} counts them all.`, `把${c.on}都数一数。`)];
+  const own = [c.t(`${neun(c.A)} ${eul(c.on)} ${c.n1}${c.u} 가지고 있습니다.`, `${c.A} has ${c.n1} ${c.on}.`, `${c.A}有${c.n1}${c.u}${c.on}。`), c.t(`${iga(c.n2+c.u)} ${c.op === '+' ? '더 생겼습니다.' : '줄었습니다.'}`, `The number changes by ${c.n2}.`, `数量变化了${c.n2}${c.u}。`), c.t(`${eul(c.on)} 모두 세어 봅니다.`, `${c.A} counts them all.`, `把${c.on}都数一数。`)];
   const all = own.concat([c.t(noise.ko(noise.v), noise.en(noise.v), noise.zh(noise.v))]);
   const ord = shuffle(c.rng, [0, 1, 2, 3]);
   return { q: c.t('글의 내용과 어울리지 않는 문장을 찾아 번호를 쓰시오.', 'Find the sentence that does not belong and write its number.', '找出和内容不相符的句子，写出序号。'), x: `<ul class="nm-lt-ord">${ord.map((i, j) => `<li><b>${circled(j)}</b> ${esc(all[i])}</li>`).join('')}</ul><span class="nm-lt-inl">${box(14)}</span>`, a: circled(ord.indexOf(3)) };
@@ -265,7 +265,7 @@ ATOM.summary = c => {
     const compare=c.kind==='구차',plus=c.kind==='합병'||c.kind==='첨가';
     const q=c.t('이야기를 읽고 빈칸에 알맞은 수를 써 보세요.','Read the story and fill in the numbers.','读故事，在空格里填上合适的数。');
     const sentence=compare?c.t(`${eun(c.A)} ${eul(c.on)} ${box(12)}${c.u}, ${neun(c.B)} ${box(12)}${c.u} 가지고 있어요. ${neun(c.A)} ${c.B}보다 ${box(12)}${c.u} 더 많이 가지고 있어요.`,`${c.A} has ${box(12)} ${c.on}. ${c.B} has ${box(12)}. ${c.A} has ${box(12)} more than ${c.B}.`,`${c.A}有${box(12)}${c.u}${c.on}，${c.B}有${box(12)}${c.u}。${c.A}比${c.B}多${box(12)}${c.u}。`)
-      :c.t(`처음 두 수는 ${box(12)}${c.u}와 ${box(12)}${c.u}예요. ${plus?'모으면 모두':'덜고 나면'} ${box(12)}${c.u}예요.`,`The two numbers are ${box(12)} and ${box(12)}. ${plus?'Together there are':'After taking away there are'} ${box(12)}.`,`两个数是${box(12)}和${box(12)}。${plus?'合起来':'减去后'}有${box(12)}。`);
+      :c.t(`처음 두 수는 ${box(12)}${NM_RNG.koJosa(c.u,'과','와')} ${box(12)}${NM_RNG.koJosa(c.u,'이에요','예요')}. ${plus?'모으면 모두':'덜고 나면'} ${box(12)}${NM_RNG.koJosa(c.u,'이에요','예요')}.`,`The two numbers are ${box(12)} and ${box(12)}. ${plus?'Together there are':'After taking away there are'} ${box(12)}.`,`两个数是${box(12)}和${box(12)}。${plus?'合起来':'减去后'}有${box(12)}。`);
     return {q,x:'<p class="nm-lt-fill">'+sentence+'</p>',a:`${c.n1}, ${c.n2}, ${c.r}`};
   }
   const words = shuffle(c.rng, [c.on, c.A, String(c.n1), String(c.n2)]);
@@ -616,7 +616,7 @@ const ANSWER = T3('정답', 'Answers', '答案');
 
 /* ── 지면 하나 ── idx: 회차(0부터) · seed: 봉투 코드 · lang · courseTitle · code · infant: 과정 0 */
 function topicsFor(infant){ return TOPICS.filter(t => !(infant && t.noInfant)); }
-function pageHtml(idx, seed, lang, courseTitle, code, infant){
+function pageHtml(idx, seed, lang, courseTitle, code, infant, answersOnly){
   lang = (lang === 'en' || lang === 'zh') ? lang : 'ko';
   if(!window.NM_WP) return '';
   const list = topicsFor(!!infant), n = list.length;
@@ -634,6 +634,8 @@ function pageHtml(idx, seed, lang, courseTitle, code, infant){
   if(!page) return '';
   const st = STEPS[topic.step], c = page.c;
   const qs = page.qs.filter(Boolean);
+  const answers = qs.map((it, k) => `${circled(k)} ${esc(String(it.a == null ? '' : it.a).replace(/<[^>]+>/g, ''))}`).join('  ·  ');
+  if(answersOnly) return `<div class="nm-ak-section nm-lt-answer-key"><h4 class="nm-ak-subhead">${esc(L(BAND,lang))} · ${esc(st.no)}-${topic.no}</h4><p>${answers}</p></div>`;
   return `<div class="nm-w2-page nm-lt-page${infant ? ' nm-lt-infant' : ''}">
   <div class="nm-mzs-band"><b>${esc(L(BAND, lang))}</b><span>${esc(courseTitle || 'Numbers of Magic')}</span></div>
   <div class="nm-mzs-dash"></div>
@@ -641,7 +643,6 @@ function pageHtml(idx, seed, lang, courseTitle, code, infant){
   ${page.story ? storyBox(c, page.story) : ''}
   ${page.think ? think(c, page.think[0], page.think[1]) : ''}
   <ol class="nm-lt-ladder${qs.length <= 2 ? ' nm-lt-few' : ''}">${qs.map((it, k) => `<li class="nm-lt-qi"><span class="nm-lt-qn">${circled(k)}</span><div><p class="nm-lt-qt">${it.q}</p>${it.x || ''}</div></li>`).join('')}</ol>
-  <p class="nm-lt-answers"><b>${esc(L(ANSWER, lang))}</b> ${qs.map((it, k) => `${circled(k)} ${esc(String(it.a == null ? '' : it.a).replace(/<[^>]+>/g, ''))}`).join('  ·  ')}</p>
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
 </div>`;
 }

@@ -25,9 +25,9 @@ window.NM_UNITS['C-23'] = {
     stages:[
       { tag:{ko:'① 세로로 놓고 세 걸음',en:'1) Stack and take three moves',zh:'① 竖放三步走'},
         head:{ko:'32×41: 일 → 교차 → 십!',en:'32×41: ones → cross → tens!',zh:'32×41：个→交叉→十！'},
-        desc:{ko:'수백 년 전 인도의 수학책에서 전해진 초고속 곱셈이에요! 32와 41을 위아래로 놓고: ①<b>일×일</b>: 2×1=2 ②<b>교차 곱의 합</b>: 3×1+2×4=11 ③<b>십×십</b>: 3×4=12. 오른쪽부터 자리에 놓으면(올림 처리) <b>1312</b>. 엑스맨 곱셈(C-12)의 원조가 바로 이 방법이에요!',
-              en:'Handed down from Indian mathematics centuries ago — super-fast multiplication! Stack 32 over 41: ①<b>ones×ones</b>: 2×1=2 ②<b>sum of cross products</b>: 3×1+2×4=11 ③<b>tens×tens</b>: 3×4=12. Place from the right (with carries): <b>1312</b>. The X-cross method (C-12) descends from exactly this!',
-              zh:'源自数百年前印度数学的超速乘法！32和41上下放：①<b>个×个</b>：2×1=2 ②<b>交叉积之和</b>：3×1+2×4=11 ③<b>十×十</b>：3×4=12。从右往左放好(处理进位)：<b>1312</b>。X交叉乘法(C-12)的祖先就是它！'},
+        desc:{ko:'수백 년 전 인도의 수학책에서 전해진 초고속 곱셈이에요! 32와 41을 위아래로 놓고: ①<b>일×일</b>: 2×1=2 ②<b>교차 곱의 합</b>: 3×1+2×4=11 ③<b>십×십</b>: 3×4=12. 오른쪽부터 자리에 놓으면(올림 처리) <b>1312</b>. 엑스맨 곱셈의 원조가 바로 이 방법이에요!',
+              en:'Handed down from Indian mathematics centuries ago — super-fast multiplication! Stack 32 over 41: ①<b>ones×ones</b>: 2×1=2 ②<b>sum of cross products</b>: 3×1+2×4=11 ③<b>tens×tens</b>: 3×4=12. Place from the right (with carries): <b>1312</b>. The X-cross method descends from exactly this!',
+              zh:'源自数百年前印度数学的超速乘法！32和41上下放：①<b>个×个</b>：2×1=2 ②<b>交叉积之和</b>：3×1+2×4=11 ③<b>十×十</b>：3×4=12。从右往左放好(处理进位)：<b>1312</b>。X交叉乘法的祖先就是它！'},
         mathSteps:[{ko:'① 일: 2×1=2',en:'① \\text{ones: } 2×1=2',zh:'① 个位：2×1=2'},{ko:'② 교차: 3×1+2×4=11',en:'② \\text{cross: } 3×1+2×4=11',zh:'② 交叉：3×1+2×4=11'},{ko:'③ 십: 3×4=12',en:'③ \\text{tens: } 3×4=12',zh:'③ 十位：3×4=12'},'→ 12|11|2 → 1312'],
         result:{ko:'32×41=1312! 일→교차→십, 리듬을 타면 빨라져요.',en:'32×41=1312! Ones→cross→tens — catch the rhythm and speed up.',zh:'32×41=1312！个→交叉→十——抓住节奏就快了。'},
         book:{ko:'"베다(VEDA)"는 인도의 오래된 책 이름이에요. 이런 암산 기법을 정리한 것을 베다 수학이라 부르고, 이 곱셈은 "세로-교차" 기법으로 알려져 있어요.',
@@ -41,9 +41,9 @@ window.NM_UNITS['C-23'] = {
               zh:'把三步结果12|11|2放好。每位<b>只能留一个数字</b>！从右开始：个位2(不变)→十位11<b>留1进1</b>→百位12+1(进位)=13。从左读：13-1-2→<b>1312</b>。进位像波浪一样向左流！'},
         mathSteps:[{ko:'일: 2',en:'\\text{ones: } 2',zh:'个位：2'},{ko:'십: 11 → 1 (올림 1)',en:'\\text{tens: } 11 → 1 \\text{ (carry 1)}',zh:'十位：11 → 1（进1）'},{ko:'백: 12+1 = 13',en:'\\text{hundreds: } 12+1 = 13',zh:'百位：12+1 = 13'},'→ 1312'],
         result:{ko:'자리마다 한 숫자, 나머지는 왼쪽으로 — 올림의 물결!',en:'One digit per place, the rest flows left — the carry wave!',zh:'每位一个数字，其余向左流——进位波浪！'},
-        book:{ko:'검산 팁: 자릿수 예측(C-09)으로 3×4=12 → 4자리 예상. 1312는 4자리 ✓. 예측과 결과를 항상 짝지어요.',
-              en:'Check tip: digit prediction (C-09) gives 3×4=12 → expect 4 digits. 1312 has 4 ✓. Always pair prediction with result.',
-              zh:'检验技巧：位数预测(C-09)得3×4=12→预计4位。1312是4位✓。预测和结果永远配对。'} },
+        book:{ko:'검산 팁: 자릿수 예측으로 3×4=12 → 4자리 예상. 1312는 4자리 ✓. 예측과 결과를 항상 짝지어요.',
+              en:'Check tip: digit prediction gives 3×4=12 → expect 4 digits. 1312 has 4 ✓. Always pair prediction with result.',
+              zh:'检验技巧：位数预测得3×4=12→预计4位。1312是4位✓。预测和结果永远配对。'} },
 
       { tag:{ko:'③ 종이 없이 도전!',en:'3) Try it without paper!',zh:'③ 挑战不用纸！'},
         head:{ko:'익숙해지면 눈으로만 계산해요',en:'With practice, your eyes alone compute it',zh:'熟练后只用眼睛就能算'},
@@ -66,9 +66,9 @@ window.NM_UNITS['C-23'] = {
       { tex:'43 \\times 22 = \\square', answer:946,
         hint:{ ko:'일:3×2=6, 교차:4×2+3×2=14, 십:4×2=8 → 8|14|6', en:'O:3×2=6, X:4×2+3×2=14, T:4×2=8 → 8|14|6', zh:'个:3×2=6，交叉:4×2+3×2=14，十:4×2=8 → 8|14|6' } }
     ],
-    open:{ ko:'VEDA 곱셈과 엑스맨 곱셈(C-12)의 관계를 설명해 봐요. 두 방법의 세 조각은 왜 같을까요?',
-      en:'Explain how VEDA relates to the X-cross method (C-12). Why are their three pieces identical?',
-      zh:'说说VEDA乘法和X交叉乘法(C-12)的关系。为什么两种方法的三块相同？' },
+    open:{ ko:'VEDA 곱셈과 엑스맨 곱셈의 관계를 설명해 봐요. 두 방법의 세 조각은 왜 같을까요?',
+      en:'Explain how VEDA relates to the X-cross method. Why are their three pieces identical?',
+      zh:'说说VEDA乘法和X交叉乘法的关系。为什么两种方法的三块相同？' },
     openHint:{ ko:'예) 둘 다 (10a+b)(10c+d)=100ac+10(ad+bc)+bd에서 나와요. 엑스맨은 X 그림으로, VEDA는 일→교차→십 순서로 같은 세 조각(ac, ad+bc, bd)을 구하는 것 — 표현만 다른 같은 마법이에요.',
       en:'e.g. Both come from (10a+b)(10c+d)=100ac+10(ad+bc)+bd. X-cross draws an X; VEDA sequences ones→cross→tens — the same three pieces (ac, ad+bc, bd) in different clothing.',
       zh:'例）都来自(10a+b)(10c+d)=100ac+10(ad+bc)+bd。X交叉画X图，VEDA按个→交叉→十的顺序——同样的三块(ac、ad+bc、bd)，只是穿着不同的衣服。' }

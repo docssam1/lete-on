@@ -53,7 +53,7 @@ window.NM_UNITS['M-55'] = {
               en:'At 60° (sin=√3/2), root and fraction overlap and get messier — this unit sticks to 30°/45°/90°, which land cleanly on an integer or a root form.',
               zh:'60°(sin=√3/2)根号和分数叠在一起会更复杂——本单元只处理能干净落在整数或根号形式的30°·45°·90°。'} }
     ],
-    rule:{ ko:'사인법칙 a/sinA = 2R — 30°·90°는 정수로, 45°는 [계수,근호안] 두 정수로 딱 떨어집니다!',
+    rule:{ ko:'사인법칙 a/sinA = 2R — 30°·90°는 정수로, 45°는 근호 밖과 안의 빈칸을 채워 답합니다.',
       en:'The law of sines a/sinA = 2R — 30° and 90° land on an integer, while 45° lands on [coefficient, radicand], two integers!',
       zh:'正弦定理a/sinA = 2R——30°·90°得到整数，45°得到[系数,根号内]两个整数！' }
   },

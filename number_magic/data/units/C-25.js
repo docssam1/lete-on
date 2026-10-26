@@ -41,9 +41,9 @@ window.NM_UNITS['C-25'] = {
               zh:'0.01是<b>1除以100</b>(1/100)。所以×0.01等于<b>÷100</b>：7×0.01 = 7÷100 = <b>0.07</b>。每多一位小数(0.1→0.01→0.001)，滑动的格数就多一格。位数不够就<b>用0补齐</b>。'},
         mathSteps:['7 × 0.01','= 7 ÷ 100','= 0.07'],
         result:{ko:'7×0.01=0.07! 빈 자리는 0으로 채워요.',en:'7×0.01=0.07! Fill empty spots with zeros.',zh:'7×0.01=0.07！空位用0补齐。'},
-        book:{ko:'정리표: ×0.1=÷10 | ×0.01=÷100 | ×0.001=÷1000. 소수점 아래 0의 개수만큼 소수점이 왼쪽으로 미끄러져요.',
-              en:'Summary: ×0.1=÷10 | ×0.01=÷100 | ×0.001=÷1000. The point slides left one place per zero after the decimal.',
-              zh:'汇总表：×0.1=÷10 | ×0.01=÷100 | ×0.001=÷1000。小数点后有几个0，小数点就左滑几格。'} },
+        book:{ko:'정리표: ×0.1=÷10 | ×0.01=÷100 | ×0.001=÷1000. 곱하는 수의 소수점 아래 자릿수만큼 소수점이 왼쪽으로 미끄러져요.',
+              en:'Summary: ×0.1=÷10 | ×0.01=÷100 | ×0.001=÷1000. The point slides left one place per decimal place in the multiplier.',
+              zh:'汇总表：×0.1=÷10 | ×0.01=÷100 | ×0.001=÷1000。乘数的小数点后有几位，小数点就左移几位。'} },
 
       { tag:{ko:'③ 스키 타는 소수점',en:'3) The skiing decimal point',zh:'③ 滑雪的小数点'},
         head:{ko:'몇 칸 미끄러질지만 정하면 끝!',en:'Just count the places, and you\'re done!',zh:'数好格数就完成！'},
@@ -94,7 +94,7 @@ window.NM_UNITS['C-25'] = {
 
   voice:{
     correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'멋진 활강! 🎿',en:'Nice slide!',zh:'滑得漂亮！'}, {ko:'대단해! 🌟',en:'Amazing!',zh:'太棒了！'} ],
-    wrong:[ {ko:'0.1은 ÷10과 같아!',en:'×0.1 is the same as ÷10!',zh:'×0.1就是÷10！'}, {ko:'0의 개수만큼 미끄러뜨려!',en:'Slide one place per zero!',zh:'有几个0滑几格！'} ],
+    wrong:[ {ko:'0.1은 ÷10과 같아!',en:'×0.1 is the same as ÷10!',zh:'×0.1就是÷10！'}, {ko:'소수점 아래 자릿수만큼 옮겨요!',en:'Count the decimal places!',zh:'按小数位数移动！'} ],
     finish:{ ko:'완벽해! 소수점 스키어! 🎿✨', en:'Perfect! Decimal Skier!', zh:'完美！小数点滑雪者！' }
   }
 };

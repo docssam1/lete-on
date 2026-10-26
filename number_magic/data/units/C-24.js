@@ -42,9 +42,9 @@ window.NM_UNITS['C-24'] = {
               zh:'想象13×13的方块瓷砖。撕下一行(13块)贴到旁边：得到<b>12×14的长方形+多出的1块</b>！移动一行使一边减1、另一边加1，角上剩1块。所以12×14 = 13²−1。一张图证明了公式！'},
         mathSteps:[{ko:'13×13 정사각형',en:'13×13 \\text{ square}',zh:'13×13的正方形'},{ko:'한 줄을 옆으로 이동',en:'\\text{move one row to the side}',zh:'把一行移到旁边'},'= 12×14 + 1','∴ 12×14 = 169−1'],
         result:{ko:'정사각형 − 모퉁이 1칸 = 직사각형! 그림이 증명이에요.',en:'Square minus one corner tile = rectangle! The picture is the proof.',zh:'正方形减角上1块=长方形！图就是证明。'},
-        book:{ko:'대수로도: (n−1)(n+1) = n²+n−n−1 = n²−1. 풀풀곱셈(C-10)으로 펼치면 가운데 항 +n과 −n이 서로 지워져요.',
-              en:'Algebraically: (n−1)(n+1) = n²+n−n−1 = n²−1. Expanding full-full style (C-10), the middle terms +n and −n cancel.',
-              zh:'代数上：(n−1)(n+1) = n²+n−n−1 = n²−1。用全全乘法(C-10)展开，中间项+n和−n互相抵消。'} },
+        book:{ko:'대수로도: (n−1)(n+1) = n²+n−n−1 = n²−1. 풀풀곱셈으로 펼치면 가운데 항 +n과 −n이 서로 지워져요.',
+              en:'Algebraically: (n−1)(n+1) = n²+n−n−1 = n²−1. Expanding full-full style, the middle terms +n and −n cancel.',
+              zh:'代数上：(n−1)(n+1) = n²+n−n−1 = n²−1。用全全乘法展开，中间项+n和−n互相抵消。'} },
 
       { tag:{ko:'③ 제곱수 무기고',en:'3) Your arsenal of squares',zh:'③ 平方数武器库'},
         head:{ko:'제곱수를 알면 이웃 곱이 공짜!',en:'Know a square, get its neighbours free!',zh:'会平方数，相邻乘积免费送！'},

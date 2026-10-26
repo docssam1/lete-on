@@ -69,7 +69,7 @@ window.NM_UNITS['M-39'] = {
     generator:'md39_trigSpecialAngle', level:'main', count:4,
     params:{mode:'mixed'},
     intro:{
-      ko:'이번엔 근호가 있는 값들! √가 들어간 특수각 값을 [계수,근호안,분모] 순서로 입력해봐.',
+      ko:'이번엔 근호가 있는 값들! √가 들어간 특수각 값을 빈칸에 들어갈 수를 순서대로 써 봐.',
       en:'Values with a root this time! Enter the special-angle values as [coefficient, radicand, denominator].',
       zh:'这次是带根号的值！按[系数,根号内,分母]顺序输入特殊角的值。'
     }

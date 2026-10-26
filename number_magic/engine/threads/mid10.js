@@ -292,7 +292,7 @@ NM_TGEN['md70_linearApply'] = function (params, rng) {
     const n = R(rng, 5, 30);                  /* 답: 가운데 수 */
     const sum = (n - 1) + n + (n + 1);
     return wordItem(
-      L3(`연속하는 세 자연수가 있어요. 세 수의 합은 ${sum}이에요.`,
+      L3(`연속하는 세 자연수가 있어요. 세 수의 합은 ${NM_RNG.koJosa(sum,'이에요','예요')}.`,
          `There are three consecutive whole numbers. Their sum is ${sum}.`,
          `有三个连续的自然数，它们的和是${sum}。`),
       L3('가운데 수는 얼마일까요?', 'What is the middle number?', '中间的数是多少？'),
@@ -311,7 +311,7 @@ NM_TGEN['md70_linearApply'] = function (params, rng) {
     L3(`올해 ${nm[0]}의 아버지의 나이는 ${nm[0]}의 나이의 ${mult}배이고, ${yr}년 뒤에는 아버지가 ${parent + yr}살이 돼요.`,
        `This year ${nm[1]}'s father is ${mult} times as old as ${nm[1]}, and in ${yr} years the father will be ${parent + yr}.`,
        `今年${nm[2]}父亲的年龄是${nm[2]}的${mult}倍，${yr}年后父亲将是${parent + yr}岁。`),
-    L3(`올해 ${nm[0]}는 몇 살일까요?`, `How old is ${nm[1]} this year?`, `${nm[2]}今年几岁？`),
+    L3(`올해 ${NM_RNG.koJosa(nm[0],'은','는')} 몇 살일까요?`, `How old is ${nm[1]} this year?`, `${nm[2]}今年几岁？`),
     L3('살', 'years old', '岁'),
     child,
     [
@@ -344,7 +344,7 @@ NM_TGEN['md71_inequalityApply'] = function (params, rng) {
     if (c < 0 || c > 100) {                   /* 배분이 어긋나면 균등하게 */
       const e = Math.floor(got / 3);
       return wordItem(
-        L3(`${nm[0]}는 세 번의 시험에서 ${e}점, ${e}점, ${got - 2 * e}점을 받았어요. 네 번의 평균이 ${want}점 이상이 되게 하려고 해요.`,
+        L3(`${NM_RNG.koJosa(nm[0],'은','는')} 세 번의 시험에서 ${e}점, ${e}점, ${got - 2 * e}점을 받았어요. 네 번의 평균이 ${want}점 이상이 되게 하려고 해요.`,
            `${nm[1]} scored ${e}, ${e} and ${got - 2 * e} on three tests, and wants the average of four tests to be at least ${want}.`,
            `${nm[2]}三次考试得了${e}分、${e}分、${got - 2 * e}分，希望四次的平均分不低于${want}分。`),
         L3('네 번째 시험에서 적어도 몇 점을 받아야 할까요?', 'What is the lowest score needed on the fourth test?', '第四次考试至少要得多少分？'),
@@ -356,7 +356,7 @@ NM_TGEN['md71_inequalityApply'] = function (params, rng) {
       );
     }
     return wordItem(
-      L3(`${nm[0]}는 세 번의 시험에서 ${a}점, ${b}점, ${c}점을 받았어요. 네 번의 평균이 ${want}점 이상이 되게 하려고 해요.`,
+      L3(`${NM_RNG.koJosa(nm[0],'은','는')} 세 번의 시험에서 ${a}점, ${b}점, ${c}점을 받았어요. 네 번의 평균이 ${want}점 이상이 되게 하려고 해요.`,
          `${nm[1]} scored ${a}, ${b} and ${c} on three tests, and wants the average of four tests to be at least ${want}.`,
          `${nm[2]}三次考试得了${a}分、${b}分、${c}分，希望四次的平均分不低于${want}分。`),
       L3('네 번째 시험에서 적어도 몇 점을 받아야 할까요?', 'What is the lowest score needed on the fourth test?', '第四次考试至少要得多少分？'),
@@ -868,7 +868,7 @@ NM_TGEN['md77_quadApply'] = function (params, rng) {
   const n = rng() * 26 < 12 ? legacyN : R(rng, 16, 29);
   const prod = n * (n + 1);
   return wordItem(
-    L3(`연속하는 두 자연수의 곱이 ${prod}이에요.`,
+    L3(`연속하는 두 자연수의 곱이 ${NM_RNG.koJosa(prod,'이에요','예요')}.`,
        `The product of two consecutive whole numbers is ${prod}.`,
        `两个连续自然数的乘积是${prod}。`),
     L3('두 수 중 작은 수는 얼마일까요?', 'What is the smaller of the two numbers?', '较小的那个数是多少？'),

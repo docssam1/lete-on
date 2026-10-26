@@ -30,7 +30,7 @@ window.NM_UNITS['A-23'] = {
         desc:{ ko:'두 전략 모두 <b>"차는 변하지 않는다"</b>는 원리를 이용해요. 어느 쪽으로 올리면 더 편한지 보고 골라요!',
                en:'Both strategies use the principle <b>"the difference doesn\'t change"</b>. Choose whichever is more convenient!',
                zh:'两个策略都利用<b>"差不变"</b>的原理。看哪个方向凑整更方便，就选哪个！' },
-        mathSteps:['85 - 57 = □',{ko:'방법1(A-20): 57+3=60, 85+3=88, 88-60=28',en:'\\text{method 1 (A-20): } 57+3=60, 85+3=88, 88-60=28',zh:'方法1（A-20）：57+3=60, 85+3=88, 88-60=28'},{ko:'방법2(A-23): 85+5=90, 57+5=62, 90-62=28',en:'\\text{method 2 (A-23): } 85+5=90, 57+5=62, 90-62=28',zh:'方法2（A-23）：85+5=90, 57+5=62, 90-62=28'}],
+        mathSteps:['85 - 57 = □',{ko:'방법1: 57+3=60, 85+3=88, 88-60=28',en:'\\text{method 1: } 57+3=60, 85+3=88, 88-60=28',zh:'方法1：57+3=60, 85+3=88, 88-60=28'},{ko:'방법2: 85+5=90, 57+5=62, 90-62=28',en:'\\text{method 2: } 85+5=90, 57+5=62, 90-62=28',zh:'方法2：85+5=90, 57+5=62, 90-62=28'}],
         result:{ ko:'두 방법 모두 85-57=28 ✓', en:'Both: 85-57=28 ✓', zh:'两种方法都得85-57=28 ✓' },
         book:null }
     ],
@@ -44,7 +44,7 @@ window.NM_UNITS['A-23'] = {
       { tex:'73-38: 73+\\square=80', answer:7, hint:{ ko:'73에서 80까지 몇이에요?', en:'How far from 73 to 80?', zh:'从73到80差多少？' } },
       { tex:'80-45=\\square', answer:35, hint:{ ko:'0-5는 안 되니 10을 빌려 10-5=5, 십의 자리는 7-4=3 → 35', en:'80-45=35', zh:'80-45=35' } }
     ],
-    open:{ ko:'이사시켜 빼기(A-23)와 같은수 빼서 빼기(A-21)의 차이점을 설명해봐요.', en:'Explain the difference between A-23 (move up) and A-21 (subtract same to round down minuend).', zh:'说说A-23（向上凑整）和A-21（向下凑整）有什么不同。' },
+    open:{ ko:'이사시켜 빼기와 같은수 빼서 빼기의 차이점을 설명해봐요.', en:'Explain the difference between A-23 (move up) and A-21 (subtract same to round down minuend).', zh:'说说A-23（向上凑整）和A-21（向下凑整）有什么不同。' },
     openHint:{ ko:'A-21은 빼지는 수를 아래로(d를 빼서), A-23은 위로(d를 더해서) □0으로 만들어요.', en:'A-21 rounds the minuend DOWN (subtracts d); A-23 rounds it UP (adds d).', zh:'A-21把被减数向下降（减d），A-23向上升（加d）。' }
   },
 

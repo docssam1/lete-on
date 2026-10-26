@@ -39,9 +39,9 @@ window.NM_UNITS['M-25'] = {
               zh:'27=3³，所以a=3。直接代入x³+a³=(x+a)(x²-ax+a²)得<b>(x+3)(x²-3x+9)</b>。展开验算，中间项再次抵消，回到x³+27。'},
         mathSteps:['27=3^3', 'x^3+3^3=(x+3)(x^2-3x+3^2)', '=(x+3)(x^2-3x+9)'],
         result:{ko:'세제곱수를 찾으면 합·차의 세제곱 공식을 거꾸로 쓸 수 있습니다!',en:'Spot the cube, and you can run the sum/difference-of-cubes formula backward!',zh:'找到立方数，就能把立方和差公式反过来用！'},
-        book:{ko:'x³+a³=(x+a)(x²-ax+a²), x³-a³=(x-a)(x²+ax+a²) — 곱셈공식(MD22)의 짝꿍 인수분해입니다.',
-              en:'x³+a³=(x+a)(x²-ax+a²), x³-a³=(x-a)(x²+ax+a²) — the factored counterpart of the multiplication formulas (MD22).',
-              zh:'x³+a³=(x+a)(x²-ax+a²)，x³-a³=(x-a)(x²+ax+a²)——是乘法公式(MD22)的因式分解版本。'} },
+        book:{ko:'x³+a³=(x+a)(x²-ax+a²), x³-a³=(x-a)(x²+ax+a²) — 곱셈공식의 짝꿍 인수분해입니다.',
+              en:'x³+a³=(x+a)(x²-ax+a²), x³-a³=(x-a)(x²+ax+a²) — the factored counterpart of the multiplication formulas.',
+              zh:'x³+a³=(x+a)(x²-ax+a²)，x³-a³=(x-a)(x²+ax+a²)——是乘法公式的因式分解版本。'} },
 
       { tag:{ko:'② 치환으로 낯선 식을 익숙하게',en:'2) Substitute to make it familiar',zh:'② 用换元变熟悉'},
         head:{ko:'x^4+5x^2+6 = (x^2+2)(x^2+3)',en:'x^4+5x^2+6 = (x^2+2)(x^2+3)',zh:'x^4+5x^2+6 = (x^2+2)(x^2+3)'},
@@ -66,7 +66,7 @@ window.NM_UNITS['M-25'] = {
       { tex:'x^4 + 3x^2 + 2 = (x^2 + \\square)(x^2 + \\square)', answer:[1,2],
         hint:{ ko:'t=x²로 치환: t²+3t+2=(t+1)(t+2)', en:'substitute t=x²: t²+3t+2=(t+1)(t+2)', zh:'令t=x²：t²+3t+2=(t+1)(t+2)' } }
     ],
-    open:{ ko:'x⁴+7x²+12을 치환으로 인수분해하는 과정을 설명해봅니다.',
+    open:{ ko:'x⁴+7x²+12를 치환으로 인수분해하는 과정을 설명해봅니다.',
       en:'Explain how to factor x⁴+7x²+12 using substitution.',
       zh:'说说用换元法因式分解x⁴+7x²+12的过程。' },
     openHint:{ ko:'t=x²: t²+7t+12=(t+3)(t+4) → (x²+3)(x²+4)',

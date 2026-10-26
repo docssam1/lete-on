@@ -2936,16 +2936,34 @@ function assignStudyDays(rounds, requestedDays){
     for(const r of rounds){if(r.problems?.length){while(index>=best.cuts[day])day++;r.studyDays=[day];index++;}else r.studyDays=[Math.min(day,dayCount)];}
     return dayCount;
   }
-  const target = total / dayCount;
-  let day = 1, done = 0, remaining = practice.length;
-  rounds.forEach(r => {
-    if(!(r.problems || []).length){ r.studyDays = [day]; return; }
-    if(day < dayCount && (done >= target * day || remaining <= dayCount - day)) day++;
-    r.studyDays = [day];
-    done += r.problems.length;
-    remaining--;
+  // Split only at printed page boundaries, so a question/diagram stays whole.
+  const pages=[];
+  rounds.forEach(r=>{
+    const holder=document.createElement('template');holder.innerHTML=r.html||'';
+    r.pageStudyDays=[];
+    [...holder.content.querySelectorAll('.nm-w2-page')].forEach((el,i)=>{
+      const n=el.querySelectorAll('.nm-w2-item').length;
+      pages.push({round:r,index:i,n});
+    });
   });
-  return day;
+  const units=pages.filter(p=>p.n>0),days=Math.min(units.length,Math.max(1,Math.floor(requestedDays)));
+  if(!days)return 0;
+  const prefix=[0];units.forEach(p=>prefix.push(prefix.at(-1)+p.n));
+  const target=prefix.at(-1)/days,dp=Array.from({length:days+1},()=>Array(units.length+1).fill(null));
+  dp[0][0]={max:0,sq:0,cuts:[]};
+  for(let d=1;d<=days;d++)for(let end=d;end<=units.length;end++)for(let from=d-1;from<end;from++){
+    const prev=dp[d-1][from];if(!prev)continue;
+    const load=prefix[end]-prefix[from],candidate={max:Math.max(prev.max,load),sq:prev.sq+(load-target)**2,cuts:prev.cuts.concat(end)};
+    const best=dp[d][end];if(!best||candidate.max<best.max||candidate.max===best.max&&candidate.sq<best.sq)dp[d][end]=candidate;
+  }
+  const cuts=dp[days][units.length].cuts;let d=1;
+  units.forEach((p,i)=>{while(i>=cuts[d-1])d++;p.day=d;});
+  // A concept/example page follows the day of its next practice page.
+  let nextDay=days;
+  for(let i=pages.length-1;i>=0;i--){if(pages[i].day)nextDay=pages[i].day;else pages[i].day=nextDay;}
+  for(const p of pages)p.round.pageStudyDays[p.index]=p.day;
+  for(const r of rounds)r.studyDays=[...new Set(r.pageStudyDays)].sort((a,b)=>a-b);
+  return days;
 }
 /* extra: {history:bool, answerKey:bool} — 표지 뒤에 실제로 붙는 지면을 표지가 안다(2026-09-06).
    전에는 회차만 세어 "7 PAGES"라 적고 실제 PDF 는 9쪽이었다(수학사·정답지 누락).
@@ -3103,6 +3121,8 @@ function schoolTierOf(threadId){
 }
 function schoolTierClass(threadId){ return ' nm-print-school-' + schoolTierOf(threadId); }
 function printAgeBand(config, problems){
+  // Fractions keep mathematical typography even for a young accelerated learner.
+  if((problems||[]).some(p=>/\\(?:[dt]?frac|sqrt)/.test(p.tex||'')))return 'senior';
   const g = config && config.grade;
   if(g){
     /* '1'~'12' 또는 '3A' 같은 학기 키 — 앞 숫자를 수로 읽는다('10'을 정규식 /^[12]/ 로 보면
@@ -4009,11 +4029,19 @@ const W2_LEVEL_PRINT_CONDITIONS = {
 function levelPrintCondition(threadId,level){return pickL(W2_LEVEL_PRINT_CONDITIONS[threadId+'@'+level])||'';}
 function printConditionHtml(condition){return condition?`<div class="nm-print-ask nm-print-condition">${esc(condition)}</div>`:'';}
 
-function printAskText(p){
+function printAskText(p, threadId){
   /* 문장제(p.word)는 아래 word 분기가 본문·물음·보기를 통째로 그린다. 여기서
      prompt를 또 실으면 같은 문장이 카드에 두 번 찍힌다 — WP 스레드를 붙이며
      실제로 그렇게 나왔다(2026-08-29). */
   if(p.word) return '';
+  // These questions keep an essential condition or the requested quantity in
+  // prompt. An equation with a box alone is not a complete question.
+  if(p.printPrompt) return pickL(p.printPrompt);
+  if(threadId==='MD153' && /\\Rightarrow\\\s+d=/.test(p.tex||'')) return lk('모든 자연수 n에서 f(n)을 나누어떨어지게 하는 가장 큰 자연수 d를 구하세요.','Find the greatest positive integer d that divides f(n) for every positive integer n.','求对所有正整数n都整除f(n)的最大正整数d。');
+  if(threadId==='MD153' && /n_0/.test(p.tex||'')) return lk('n≥n₀인 모든 자연수 n에서 부등식이 성립하도록 하는 가장 작은 자연수 n₀을 구하세요.','Find the least positive integer n₀ for which the inequality holds for every integer n≥n₀.','求使不等式对所有n≥n₀的正整数n都成立的最小正整数n₀。');
+  if(threadId==='MD153' && /k\+1/.test(p.tex||'')) return lk('n=k에서 n=k+1로 넘어갈 때 더하는 항을 정리해 빈칸을 채우세요.','Simplify the added term when passing from n=k to n=k+1, and fill in the box.','整理从n=k到n=k+1时增加的一项，并填空。');
+  if(/^(MD34|MD85|MD96|MD98|MD99|MD100|MD101|MD104|MD105|MD107|MD109|MD110|MD111|MD118|MD127|MD147|MD150|MD153|MD156|MD158|MD159)$/.test(threadId||'')) return pickL(p.prompt);
+  if(p.numline) return pickL(p.prompt);
   /* 좌표평면 문항(2026-09-21) — 그림이 곧 문제라 물음 줄이 없어도 뜻이 통하고, 개념 패널이
      읽는 법을 이미 말한다. 안 막으면 같은 문장이 한 쪽에 6번 찍힌다(MD67 실측). */
   if(p.graph) return '';
@@ -4243,6 +4271,7 @@ const WP_ITEMS=[
 /* n개의 사물 — 단복수 일치 */
 function enCount(n,pair){ return n+' '+(n===1?pair[0]:pair[1]); }
 function kJosa(word, withBatchim, without){
+  if(window.NM_RNG.koJosa)return NM_RNG.koJosa(word,withBatchim,without);
   const code = word.charCodeAt(word.length-1);
   if(code<0xAC00||code>0xD7A3) return word+without;
   return ((code-0xAC00)%28>0) ? word+withBatchim : word+without;
@@ -4614,18 +4643,23 @@ const ELEM_TIERS = { level0:1, level1:1, level2:1, level3:1, challenge:1 };
    courses.js 의 annotateRoles 가 만든 school·strategy·application·stretch 를 읽고, 옛 캐시처럼
    그게 없으면 예전 drills·creative 그대로(창의 칸 = creTag)로 돌아간다.
    seed(prefix, i): 교과는 ('', drills 자리), 창의 칸 출신은 ('cr', creative 자리). */
+function printLevelName(threadId,level){
+  const th=(window.NM_THREADS||{})[threadId]||{},lv=(th.levels||[]).find(l=>l.id===level);
+  const label=pickL(lv&&(lv.title||lv.label));
+  return label&&!/^(?:기본|연습|실전|심화|basic|practice|main|基本|练习|实战)$/i.test(label.trim())?label:(pickL(th.name)||threadId);
+}
 function sessionRoleItems(course, session, seed){
   if(session.c0?.incomplete)throw Error('C0 activity metadata is incomplete; load all numberland thread files.');
   /* 2026-09-25 정본: 각 칸의 문항 수는 courses.js planCounts 가 정한 count(30분 분량·난이도별)를 그대로 쓴다.
      적용 칸의 그래프 직접 그리기(kind 'drawing')는 renderDrawingRound 로 간다. */
-  const thNm = t => { const th = (window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
+  const thNm = (t,lv) => printLevelName(t,lv);
   const drills = session.drills || [], cre = session.creative || [];
   const finish=R=>{if(session.c0)Object.values(R).flat().forEach(it=>{it.c0=session.c0;const copy=window.NM_C0?.copy(it.thread,it.level);if(copy){it.topicName=pickL(copy.title);it.levelOnly=true;it.levelTitle=copy.title;it.levelConcept=copy.concept;}});return R;};
   const at = (arr, d) => arr.indexOf(d) >= 0 ? arr.indexOf(d) : arr.findIndex(x => x.t === d.t && x.lv === d.lv);
   const drillItem = (d, tag) => ({ thread:d.t, level:d.lv, n:d.n, count:d.count || undefined, seed:seed('', at(drills, d)),
-    topicName:tag ? tag + thNm(d.t) : undefined });
+    topicName:tag ? tag + thNm(d.t,d.lv) : undefined });
   const creItem = (d, tag) => ({ thread:d.t, level:d.lv, n:d.n || 4, count:d.count || d.n || 4, creative:true,
-    topicName:tag + thNm(d.t), seed:seed('cr', Math.max(0, at(cre, d))) });
+    topicName:tag + thNm(d.t,d.lv), seed:seed('cr', Math.max(0, at(cre, d))) });
   if(!session.school){
     return finish({ school:drills.map(d => drillItem(d)), strategy:cre.filter(d => (window.NM_THREADS||{})[d.t]).map(d => creItem(d, creTag(course.tier))),
       application:[], stretch:[] });
@@ -4638,7 +4672,7 @@ function sessionRoleItems(course, session, seed){
     strategy: ((session.strategy && session.strategy.practice) || []).map(d => Object.assign(creItem(d, lk('독셈 · ', 'Doc-T Math · ', '巧算 · ')), { role:'strategy' })),
     application: (session.application || []).filter(a => a.from !== 'school').map((a, ai) => {
       if(a.kind === 'drawing') return { kind:'drawing', mode:a.mode, thread:a.t, level:a.lv, count:a.count || 6, n:a.count || 6,
-        topicName:(a.title && (a.title.ko || a.title)) || thNm(a.t), seed:seed('dr', ai) };
+        topicName:(a.title && (a.title.ko || a.title)) || thNm(a.t,a.lv), seed:seed('dr', ai) };
       /* role 'application' — 적용 칸은 Training Course 모양을 빌려 쓰지만 창의 회차가 아니다(과정 빈칸·색 힌트 없음) */
       return a.from === 'creative' ? Object.assign(creItem(a, appTag), { role:'application' }) : drillItem(a, appTag);
     }),
@@ -4749,22 +4783,19 @@ function classifyRoundLayout(problems, threadId, young, creative){
   return {type:'long', cols:1, rows:8, perPage:8, flow:'row', firstRows:4, pitch:30};
 }
 
-/* 난이도 정렬 §2-6: 피연산자 자릿수 합 → |answer| → tex 길이. 문장제·그림형은
+/* 난이도 정렬: 피연산자 자릿수 합. 같은 자릿수 안에서는 시드로 만든 순서를 보존한다. 문장제·그림형은
    원래 순서 그대로(정렬하지 않는다). */
 function sortRoundProblems(problems, type){
   if(type === 'word' || type === 'visual' || type === 'solve' || type === 'train') return problems;
   function score(p){
     const nums = String(p.tex||'').match(/\d+(\.\d+)?/g) || [];
     const digitSum = nums.reduce((s,n) => s + n.replace('.','').length, 0);
-    const absAns = Array.isArray(p.answer)
-      ? p.answer.reduce((s,v) => s + Math.abs(+v||0), 0)
-      : Math.abs(+p.answer || 0);
-    return [digitSum, absAns, String(p.tex||'').length];
+    return [digitSum];
   }
   /* 램프 문항(__ramp)은 뒤에 모아 둔다 — 쉬운→어려운 정렬은 그룹 안에서만 */
   return problems
     .map((p,i) => ({p, i, r: p.__ramp ? 1 : 0, s: score(p)}))
-    .sort((a,b) => a.r-b.r || a.s[0]-b.s[0] || a.s[1]-b.s[1] || a.s[2]-b.s[2] || a.i-b.i)
+    .sort((a,b) => a.r-b.r || a.s[0]-b.s[0] || a.i-b.i)
     .map(x => x.p);
 }
 
@@ -5020,13 +5051,13 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
        (전엔 \square 를 texDisplay 없이 넘겨 상자 없는 작은 "= □" 글자가 찍혔다) */
     const ansLine = !plan.ans ? '' : `<div class="nm-w2-train-step nm-w2-train-ans">${TRAIN_EQUAL}<span class="nm-w2-tex" data-tex="${esc(trainDisplay(box))}"></span></div>`;
     const dots = bare ? '<i></i><i></i><i></i>' : '<i></i>';
-    const askHtmlT = condition ? printConditionHtml(condition) : printAskText(p) ? `<div class="nm-print-ask">${esc(printAskText(p))}</div>` : '';
+    const askHtmlT = condition ? printConditionHtml(condition) : printAskText(p,threadId) ? `<div class="nm-print-ask">${esc(printAskText(p,threadId))}</div>` : '';
     const slotAttrT = slotAttrP + (T && PVt ? ` data-cptint="${T.kind}"` : '');
     return `<div class="${cls} nm-w2-item-train"${slotAttrT}><span class="nm-w2-numrow"><span class="nm-w2-num">(${num})</span></span>${askHtmlT}
   <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(trainDisplay(raw))}"></span></div>
   ${stepLines}${ansLine}<div class="nm-w2-train-dots">${dots}</div></div>`;
   }
-  const ask = printAskText(p);
+  const ask = printAskText(p,threadId);
   const askHtml = condition ? printConditionHtml(condition) : ask ? `<div class="nm-print-ask">${esc(ask)}</div>` : '';
   if(p.divBox){
     cls += ' nm-w2-item-vis';
@@ -5043,6 +5074,8 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
   } else if(p.base10 || p.numline){
     cls += ' nm-w2-item-vis';
     inner = p.base10 ? base10Html(p.base10) : numlineSvg(p.numline);
+    if(p.numline && p.numline.blank < 0)
+      inner += `<div class="nm-w2-tex" data-tex="${esc(texDisplay('\\text{'+lk('뛴 횟수','Hops','跳跃次数')+'} = \\square'))}"></div>`;
   } else if(!p.tex && !p.word){
     cls += ' nm-w2-item-vis';
     inner = nlVisualHtml(p) || '';
@@ -5393,10 +5426,18 @@ function w2AnswerKeyHeadHtml(code){
 /* 산문 필드에 들어간 인라인 SVG(그림)는 통째로 걷어낸다 — 태그만 벗기면 그림 속 글자가
    남아 문장 앞에 "93" 같은 부스러기가 붙는다(2026-09-20, M-15 나무 그림). */
 function stripInlineSvg(s){ return String(s||'').replace(/<svg[\s\S]*?<\/svg>/gi, ''); }
-function stripConceptTags(s){ return stripInlineSvg(s).replace(/<[^>]+>/g,''); }
+function stripConceptTags(s){ return stripInlineSvg(s).replace(/<\/?(?:b|u|span|br|i|em|strong|small|sup|sub|p|div)\b[^>]*>/gi,'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&'); }
+function splitRuleLines(rule){
+  const text=String(rule||''),marks='①②③④⑤⑥⑦',cuts=[];let next=0;
+  for(let i=0;i<text.length;i++)if(text[i]===marks[next]&&(i===0||/\s/.test(text[i-1]))){cuts.push(i);next++;}
+  return cuts.length?cuts.map((start,i)=>text.slice(start,cuts[i+1]??text.length).trim()):[text.trim()].filter(Boolean);
+}
 function truncateConceptLine(s, max){
   const t = String(s||'').trim();
-  return t.length > max ? t.slice(0, max - 1).trimEnd() + '…' : t;
+  if(t.length<=max)return t;
+  const sentences=t.match(/.*?[.!?。](?=\s|$)|.+$/g)||[t];
+  let out='';for(const sentence of sentences){if(out&&(out+' '+sentence).length>max)break;out+=(out?' ':'')+sentence.trim();}
+  return out;
 }
 const CONCEPT_STAGE_MARKS = ['①','②'];
 /* 개념 패널(§2-3, v2.1 세분화) — 첫 장 필수(토글 없음). concept 문장 다음에
@@ -5462,7 +5503,7 @@ function w2StrategyBandHtml(threadId, level){
   if(!line) return '';
   return `<div class="nm-w2-strategy">
     <b>◆ ${esc(lk('공부 전략','How to work','解题策略'))}</b>
-    <span>${esc(line)}</span>
+    <span>${escEmph(line)}</span>
   </div>`;
 }
 
@@ -5470,15 +5511,29 @@ function w2StrategyBandHtml(threadId, level){
    별표 두 개가 그대로 찍히고 있었다(2026-09-21, 학습지 렌더로 발견 — MD69 "x와 y를
    **곱하면**"). 스레드 데이터 수십 곳이 이 표기를 쓰므로 데이터가 아니라 여기서 푼다.
    esc() 로 먼저 막은 뒤 별표만 태그로 바꾼다 — 그래야 데이터의 <b> 가 살아나지 않는다. */
+/* Prose can contain a small power without making its Korean sentence a formula.
+   Format only the base/exponent token; the surrounding text keeps its normal font. */
+function prosePowersHtml(raw,escapeText){
+  const input=String(raw==null?'':raw), encode=escapeText||esc;
+  const re=/(?:[A-Za-z0-9]+|\([^()\n]+\))\^(?:\{[^{}\n]+\}|\([^()\n]+\)|[A-Za-z0-9−-]+)/g;
+  let out='',last=0,m;
+  while((m=re.exec(input))){
+    out+=encode(input.slice(last,m.index));
+    const tex=m[0].replace(/\^\(([^()]+)\)/,'^{$1}');
+    out+=`<span class="nm-w2-tex" data-tex="${esc(tex)}"></span>`;
+    last=m.index+m[0].length;
+  }
+  return out+encode(input.slice(last));
+}
 function escEmph(t){
-  return esc(String(t == null ? '' : t)).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+  return prosePowersHtml(t).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
 }
 
 function w2ConceptPanelHtml(threadId, level, extra){
   extra = extra || {};
   const info = resolveConceptUnit(threadId, level);
   if(!info) return '';
-  const nm = pickL(info.thread.name) || threadId;
+  const nm = printLevelName(threadId,level);
   const lvObj = (info.thread.levels || []).find(l => l.id === level);
   if(extra.levelOnly){
     const sentence=pickConcept(extra.levelConcept||(lvObj&&lvObj.concept))||'';
@@ -5491,11 +5546,11 @@ function w2ConceptPanelHtml(threadId, level, extra){
     const focus = pickConcept((lvObj && lvObj.concept) || W2_LEVEL_CONCEPTS[threadId + ':' + level] || info.thread.concept) || '';
     return `<section class="nm-w2-concept nm-mid-concept" aria-label="개념 이해" data-middle-concept="${esc(threadId)}">
       <h3>개념 이해 · ${esc(nm)}</h3>
-      <p><b>왜 이렇게 할까요?</b> ${esc(middle.why)}</p>
+      <p><b>왜 이렇게 할까요?</b> ${escEmph(middle.why)}</p>
       <div class="nm-mid-rule"><span class="nm-w2-tex" data-tex="${esc(middle.rule)}"></span></div>
-      <ol>${middle.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
+      <ol>${middle.steps.map(s => `<li>${escEmph(s)}</li>`).join('')}</ol>
       ${middle.tip ? `<p class="nm-mid-tip"><b>풀이 팁</b> ${escEmph(middle.tip)}</p>` : ''}
-      <p class="nm-mid-caution"><b>헷갈리지 않기</b> ${esc(middle.caution)}</p>
+      <p class="nm-mid-caution"><b>헷갈리지 않기</b> ${escEmph(middle.caution)}</p>
       ${focus ? `<p class="nm-mid-focus"><b>이번 단계에서는</b> ${escEmph(focus)}</p>` : ''}
       ${visual}
       ${extra.rampN ? `<p>마지막 ${extra.rampN}문항은 한 단계 높은 문제입니다. 배운 원리를 연결해 보세요.</p>` : ''}
@@ -5505,7 +5560,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
      같은 문장이 두 번 찍히면 읽는 사람이 둘 중 하나를 못 읽은 것으로 여긴다. */
   const sentence = extra.skipSentence ? ''
     : pickConcept((lvObj && lvObj.concept) || W2_LEVEL_CONCEPTS[threadId + ':' + level] || info.thread.concept) || '';
-  const stages = (info.unit && info.unit.discover && Array.isArray(info.unit.discover.stages))
+  const stages = !(lvObj&&lvObj.concept) && (info.unit && info.unit.discover && Array.isArray(info.unit.discover.stages))
     ? info.unit.discover.stages.slice(0, 2) : [];
   const stageLines = stages.map((s, i) => {
     const headRaw = pickL(s.head) || '';
@@ -5513,19 +5568,19 @@ function w2ConceptPanelHtml(threadId, level, extra){
        stepDiscover와 같은 규칙으로 KaTeX로 — 그냥 esc()하면 "\div"가 날것
        그대로 찍힌다(2026-09-05 발견, C36 개념 패널). */
     const headHtml = !headRaw ? ''
-      : /\\/.test(headRaw) ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(headRaw))}"></span>`
+      : /\\|[A-Za-z0-9})]\s*[_^]/.test(headRaw) ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(headRaw))}"></span>`
       : `<b>${esc(headRaw)}</b>`;
     const descTrunc = truncateConceptLine(stripConceptTags(pickL(s.desc) || ''), 90);
     if(!headRaw && !descTrunc) return '';
     return `<p class="nm-w2-concept-stage">${esc(CONCEPT_STAGE_MARKS[i])} ${headHtml}${headRaw && descTrunc ? ' — ' : ''}${escEmph(descTrunc)}</p>`;
   }).join('');
-  const rule = (info.unit && info.unit.discover && info.unit.discover.rule)
+  const rule = lvObj&&lvObj.rule ? pickL(lvObj.rule) : lvObj&&lvObj.concept ? '' : (info.unit && info.unit.discover && info.unit.discover.rule)
     ? pickL(info.unit.discover.rule) : '';
   const tipHtml = mathTipHtml(threadId);
   if(!sentence && !stageLines && !rule && !tipHtml) return '';
   /* 칠판(참고 학습지 '창의수연', 2026-09-18) — 제목·개념 문장·단계는 초록 칠판에 흰 글씨, 왼쪽에 마스코트.
      '마법의 규칙'은 칠판 아래 "!" 쪽지로(①②③를 줄로 나눠), 팁은 초록 메모장으로. */
-  const ruleLines = rule ? rule.split(/\s*(?=[①②③④⑤⑥⑦])/).map(t => t.trim()).filter(Boolean) : [];
+  const ruleLines = splitRuleLines(rule);
   return `<div class="nm-w2-concept">
   <div class="nm-w2-board">
     <img class="nm-w2-board-mascot" src="assets/characters/docssam.png" alt="">
@@ -5536,7 +5591,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
     </div>
   </div>
   ${visual}
-  ${ruleLines.length ? `<div class="nm-w2-note"><i class="nm-w2-note-bang">!</i><div><b>${esc(lk('마법의 규칙','The Magic Rule','魔法规则'))}</b>${ruleLines.map(t => `<p class="nm-w2-concept-rule">${esc(t)}</p>`).join('')}</div></div>` : ''}
+  ${ruleLines.length ? `<div class="nm-w2-note"><i class="nm-w2-note-bang">!</i><div><b>${esc(lk('마법의 규칙','The Magic Rule','魔法规则'))}</b>${ruleLines.map(t => `<p class="nm-w2-concept-rule">${escEmph(t)}</p>`).join('')}</div></div>` : ''}
   ${tipHtml}
   ${extra.rampN ? `<p class="nm-w2-concept-ramp">${esc(lk(`뒤 ${extra.rampN}문항은 한 단계 어려운 문제예요 — 예시처럼 풀어 보세요.`,`The last ${extra.rampN} are one step harder — solve them like the example.`,`最后${extra.rampN}题难度高一级——照例题的方法做。`))}</p>` : ''}
 </div>`;
@@ -5774,7 +5829,7 @@ function w2ExampleHtml(threadId, level, code, exclude, young, exactSkip, meta){
   const p = drawUnique(threadId, level, rng, exclude, 12, exactSkip);
   if(meta){meta.skip=p.__uniqueSkip||0;meta.key=problemKey(p);}
   if(exclude) exclude.add(problemKey(p));
-  return w2ExampleBodyHtml(p, threadId, young, levelPrintCondition(threadId,level));
+  return w2ExampleBodyHtml(p, threadId, young, levelPrintCondition(threadId,level) || printAskText(p,threadId));
 }
 /* 예시 본체 — 문항 하나를 "완성된 식 + 풀이 사슬"로. 이야기(p.word)가 있으면 이야기를
    먼저, 나눗셈 뜻 그림(divPictureHtml)이 있으면 사슬 앞에 붙인다(2026-09-17). 문장제만인
@@ -5820,7 +5875,7 @@ function w2ExampleBodyHtml(p, threadId, young, condition){
     const bare = !/\\square|\\bigcirc/.test(String(p.tex || ''));
     const completedTex = p.completedTex || (bare ? String(p.tex || '')
       : fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank, ansTex(p))));
-    const completedHtml = `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>`;
+    const completedHtml = String(completedTex).trim() ? `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>` : "";
     const stepParts = stepSrc.map(s => {
       /* blank가 없는 줄은 그대로(변형만 보여주는 줄), 배열 blank는 \square 개수만큼 차례로 채운다 */
       const t = ('blank' in s && /\\square/.test(String(s.tex||''))) ? fixNegSigns(texSubstituteAnswer(String(s.tex||''), s.blank)) : String(s.tex||'');
@@ -5887,19 +5942,19 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
     const stepSrc = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : null);
     const raw = String(p.tex || '');
     const qTex = raw;   /* 끝의 □도 쓰기 상자로(2026-09-18) */
-    const qHtml = `<span class="nm-w2-tex" data-tex="${esc(texDisplay(qTex))}"></span>`;
+    const qHtml = qTex.trim() ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(qTex))}"></span>` : '';
     const chainHtml = (stepSrc && stepSrc.length)
       ? stepSrc.map(s => `<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(s.tex || '')))}"></span>`)
           .join('<span class="nm-w2-guide-arrow">→</span>')
       : (p.word && p.choices && !p.tex)
       ? `<ul class="nm-print-choices" style="flex-basis:100%;margin:0">${(pickChoices(p) || []).map((c, j) => `<li>${j + 1}) ${esc(c)}</li>`).join('')}</ul><span class="nm-w2-guide-blank">${esc(lk('답','Answer','答'))}: ____</span>`
-      : `<span class="nm-w2-guide-blank">= ____</span>`;
+      : `<span class="nm-w2-guide-blank">${esc(lk('답','Answer','答'))}: ____</span>`;
     /* 이야기가 있는 문항(DV12·13 등)은 식 앞에 이야기, 사슬 앞에 뜻 그림(2026-09-17) */
     const storyHtml = p.word
       ? `<div class="nm-w2-guide-story">${esc(pickL(p.word))}${p.wordAsk ? ' <b>' + esc(pickL(p.wordAsk)) + '</b>' : ''}</div>${wpSceneHtml(p)}`
       : '';
     return `<div class="nm-w2-guide-item">
-  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span><span>${printConditionHtml(levelPrintCondition(threadId,lv))}${storyHtml}${qHtml}</span></div>
+  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span><span>${printConditionHtml(levelPrintCondition(threadId,lv) || printAskText(p,threadId))}${storyHtml}${qHtml}</span></div>
   ${p.scatterPlot ? `<div class="nm-teach-graph">${scatterPlotHtml(p,false)}</div>` : p.graph ? `<div class="nm-teach-graph">${graphSvg(p.graph)}</div>` : ''}${concreteTeachingHtml(p,false,threadId)}${(i === 0 && !young) ? divPictureHtml(p, {compact:true}) : ''}<div class="nm-w2-guide-chain">${chainHtml}</div>
 </div>`;
   });
@@ -5914,7 +5969,7 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
     /* MD30@3(행렬 곱셈) — 문제 행렬 + 성분 네 줄 + 답 행렬이라 세 문제가 한 쪽을 471px 넘쳤다(2026-09-29, C48 둘째 장). */
     /* 2026-10-05 — 2+1 로 나눠도 첫 쪽(두 문제 987px)이 52px 넘쳤다(C49·C51 둘째 장 복습). 행렬 곱셈은 한 쪽에 하나. */
     pages: leadConcrete?[wrap(itemHtmls.slice(1))]:((threadId==='MD30' && level===3)||(['MD83','MD65'].includes(threadId)&&level===5&&getFontSize()==='xl')) ? itemHtmls.map(h => wrap([h]))
-      : (problems.some(p=>p.graph||p.base10||p.numline)||BOND_THREADS[threadId] || (threadId==='MD66' && level===4) || (threadId==='MD83' && level===5) || (['CH6','MD21'].includes(threadId)&&['l','xl'].includes(getFontSize()))) ? [wrap(itemHtmls.slice(0,2)),wrap(itemHtmls.slice(2))] : [wrap(itemHtmls)],
+      : (problems.some(p=>p.graph||p.base10||p.numline)||BOND_THREADS[threadId] || (threadId==='MD66' && level===4) || (threadId==='MD58' && level===2) || (threadId==='MD83' && level===5) || (['CH6','MD21'].includes(threadId)&&['l','xl'].includes(getFontSize()))) ? [wrap(itemHtmls.slice(0,2)),wrap(itemHtmls.slice(2))] : [wrap(itemHtmls)],
     problems,
     skips:problems.map(p=>p.__uniqueSkip||0)
   };
@@ -5953,7 +6008,7 @@ function w2MetaFieldsHtml(count, o){
 function w2HeadHtml(item, code, pageLabel, count, opts){
   opts = opts || {};
   const th = (window.NM_THREADS||{})[item.thread] || {};
-  const thName = pickL(item.topicName) || (item.c0&&window.NM_C0?pickL(NM_C0.copy(item.thread,item.level).title):pickL(th.name)) || item.thread;
+  const thName = pickL(item.topicName) || (item.c0&&window.NM_C0?pickL(NM_C0.copy(item.thread,item.level).title):printLevelName(item.thread,item.level)) || item.thread;
   const shortCode = item.codeLabel || `${item.thread}-L${item.level}`;
   const tier = schoolTierOf(item);
   const tierMark = tier === 'elem' ? lk('초','E','小') : tier === 'mid' ? lk('중','M','初') : lk('고','H','高');
@@ -6016,7 +6071,7 @@ function magicStepHtml(step){
   const t = typeof step === 'string' ? step : (pickL(step) || '');
   if(!t) return '';
   /* 백슬래시가 있으면 KaTeX, 아니면 글자 그대로(한글 주석·"= 33" 같은 줄) — 앱 kid 노트와 같은 규칙 */
-  return /\\/.test(t)
+  return /\\|[A-Za-z0-9})]\s*[_^]/.test(t)
     ? `<div class="nm-mn-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span></div>`
     : `<div class="nm-mn-line nm-mn-plain">${esc(t)}</div>`;
 }
@@ -6026,7 +6081,8 @@ function magicStepHtml(step){
 function noteTextHtml(raw){
   return stripInlineSvg(String(raw || ''))
     .replace(/<\/?(?:u|span|br|i|em|strong|small|sup|sub|p|div)\b[^>]*>/gi, '')
-    .replace(/<(?!\/?b>)/g, '&lt;');
+    .replace(/<(?!\/?b>)/g, '&lt;')
+    .split(/(<\/?b>)/).map(part=>/^<\/?b>$/.test(part)?part:prosePowersHtml(part,t=>t)).join('');
 }
 /* Concrete pictures for preschool notes, drawn from the note's existing examples.
    These are teaching illustrations, never new scored questions or audio sources. */
@@ -6073,7 +6129,7 @@ function renderMagicNotePage(item, opts){
   const stageHtml = stages.map((st, i) => {
     const tag = pickL(st.tag) || '';
     const headRaw = pickL(st.head) || '';
-    const headHtml = /\\/.test(headRaw) ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(headRaw))}"></span>` : esc(headRaw);
+    const headHtml = /\\|[A-Za-z0-9})]\s*[_^]/.test(headRaw) ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(headRaw))}"></span>` : esc(headRaw);
     /* <b>만 남기고 다른 태그는 뗀다. SVG 는 stripInlineSvg 가 먼저 통째로 걷어낸다. */
     const descHtml = noteTextHtml(pickL(st.desc) || '');
     const figure=preschoolNoteFigure(item.magicUnit,i);
@@ -6082,21 +6138,21 @@ function renderMagicNotePage(item, opts){
     /* 교과서 말(유닛 stage.book) — 앱의 개념 노트에는 있었는데 종이에는 빠져 있었다(2026-09-25 매거진형) */
     const book = noteTextHtml(pickL(st.book) || '');
     return `<div class="nm-mn-stage">
-  <div class="nm-mn-tag">${esc(tag)}</div>
+  <div class="nm-mn-tag">${escEmph(tag)}</div>
   <div class="nm-mn-body">
     ${headRaw ? `<div class="nm-mn-head">${headHtml}</div>` : ''}
     ${descHtml ? `<p class="nm-mn-desc">${descHtml}</p>` : ''}
     ${figure}
     ${steps ? `<div class="nm-mn-steps">${steps}</div>` : ''}
-    ${result ? `<div class="nm-mn-result">✓ ${esc(result)}</div>` : ''}
+    ${result ? `<div class="nm-mn-result">✓ ${escEmph(result)}</div>` : ''}
     ${book ? `<div class="nm-mn-book"><b>${esc(lk('교과서 말','In the textbook','课本里的说法'))}</b>${book}</div>` : ''}
   </div>
 </div>`;
   });
   const rule = d.rule ? pickL(d.rule) : '';
-  const ruleLines = rule ? rule.split(/\s*(?=[①②③④⑤⑥⑦])/).map(t => t.trim()).filter(Boolean) : [];
+  const ruleLines = splitRuleLines(rule);
   const ruleHtml = ruleLines.length
-    ? `<div class="nm-w2-note"><i class="nm-w2-note-bang">!</i><div><b>${esc(lk('마법의 규칙','The Magic Rule','魔法规则'))}</b>${ruleLines.map(t => `<p class="nm-w2-concept-rule">${esc(t)}</p>`).join('')}</div></div>`
+    ? `<div class="nm-w2-note"><i class="nm-w2-note-bang">!</i><div><b>${esc(lk('마법의 규칙','The Magic Rule','魔法规则'))}</b>${ruleLines.map(t => `<p class="nm-w2-concept-rule">${escEmph(t)}</p>`).join('')}</div></div>`
     : '';
   const labs = guideLabels();
   const fills = (u.check && Array.isArray(u.check.fills)) ? u.check.fills.slice(0, 3) : [];
@@ -6104,12 +6160,12 @@ function renderMagicNotePage(item, opts){
   <div class="nm-w2-guide-title"><i class="nm-w2-sq"></i>${esc(lk('핵심 체크 — □를 채워 보세요.','Key check — fill the □.','核心检查——填□。'))}</div>
   <div class="nm-mn-fills">${fills.map((f, i) => {
     const tex = typeof f.tex === 'string' ? f.tex : (pickL(f.tex) || '');
-    return `<div class="nm-mn-fill"><span class="nm-w2-guide-label">(${esc(labs[i] || (i+1))})</span><span class="nm-w2-tex" data-tex="${esc(texDisplay(tex))}"></span></div>`;
+    return `<div class="nm-mn-fill"${f.prompt?' style="flex-wrap:wrap;width:100%"':''}><span class="nm-w2-guide-label">(${esc(labs[i] || (i+1))})</span>${f.prompt?`<span style="flex-basis:90%">${escEmph(pickL(f.prompt))}</span>`:''}<span class="nm-w2-tex" data-tex="${esc(texDisplay(tex))}"></span></div>`;
   }).join('')}</div>
 </div>` : '';
   const open = (u.check && u.check.open) ? pickL(u.check.open) : '';
   const openHtml = open ? `<div class="nm-mn-open"><div class="nm-w2-guide-title"><i class="nm-w2-sq"></i>${esc(lk('생각해 보기','Think about it','想一想'))}</div>
-  <p class="nm-mn-open-q">${esc(open)}</p><div class="nm-w2-train-dots"><i></i><i></i></div></div>` : '';
+  <p class="nm-mn-open-q">${escEmph(open)}</p><div class="nm-w2-train-dots"><i></i><i></i></div></div>` : '';
   const code = 'MAGIC-' + item.magicUnit;
   const headItem = Object.assign({}, item, { topicName: lk('마법 노트 · ','Magic Note · ','魔法笔记 · ') + title, codeLabel: item.magicUnit });
   const wm = `<div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>`;
@@ -6227,6 +6283,7 @@ function applyPartialBlanks(problems, layoutType, item){
   problems.forEach((p, i) => {
     if(i < 2 || (i % 4) !== 2) return;
     if(p.word || p.__ramp || Array.isArray(p.answer) || typeof p.answer !== 'number') return;
+    if(p.base10 || p.numline || p.graph || p.divBox || p.widget && p.widget !== 'numpad') return;
     const v = parseVert(p.tex || '');
     if(!v) return;
     const a = v.a, b = v.b, c = fmtAns(p.answer);
@@ -6511,7 +6568,7 @@ function renderDrawingRound(item, opts){
   const headItem=Object.assign({},item,{topicName:item.topicName||lesson.title,codeLabel:'직접 그리기',subLabel:'연필·자 준비 · 표 → 점 → 그래프 · 완성 그림과 비교'});
   const pages=[];
   if(showLesson){
-    pages.push(`<div class="nm-w2-page nm-draw-teaching">${w2HeadHtml(headItem,code,'개념',null,opts)}<div class="nm-draw-lesson"><h3>왜 이렇게 그릴까요?</h3><p>${esc(lesson.why)}</p><ol>${lesson.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p><b>기억할 팁</b> ${esc(lesson.tip)}</p><p><b>주의</b> ${esc(lesson.caution)}</p><div class="nm-draw-example"><b>방법을 보는 예시</b><div class="nm-w2-tex" data-tex="${esc(lesson.example.tex)}"></div>${drawingTableHtml(lesson.example,true)}${graphSvg(lesson.example.solutionGraph)}</div></div><div class="nm-w2-foot"><span>${esc(code)} · 예시를 본 뒤 다음 장은 스스로 그립니다.</span></div></div>`);
+    pages.push(`<div class="nm-w2-page nm-draw-teaching">${w2HeadHtml(headItem,code,'개념',null,opts)}<div class="nm-draw-lesson"><h3>왜 이렇게 그릴까요?</h3><p>${esc(lesson.why)}</p><ol>${lesson.steps.map(s=>`<li>${escEmph(s)}</li>`).join('')}</ol><p><b>기억할 팁</b> ${esc(lesson.tip)}</p><p><b>주의</b> ${esc(lesson.caution)}</p><div class="nm-draw-example"><b>방법을 보는 예시</b><div class="nm-w2-tex" data-tex="${esc(lesson.example.tex)}"></div>${drawingTableHtml(lesson.example,true)}${graphSvg(lesson.example.solutionGraph)}</div></div><div class="nm-w2-foot"><span>${esc(code)} · 예시를 본 뒤 다음 장은 스스로 그립니다.</span></div></div>`);
   }
   for(let start=0;start<problems.length;start+=6){
     pages.push(`<div class="nm-w2-page nm-draw-practice">${w2HeadHtml(headItem,code,`${start/6+1}/${Math.ceil(count/6)}`,null,opts)}<div class="nm-w2-instr">y값을 표에 쓰고 점을 찍은 뒤 그래프를 그리세요. 모눈 한 칸은 1입니다.</div><div class="nm-draw-grid">${problems.slice(start,start+6).map((p,i)=>`<div class="nm-w2-item nm-draw-item"><div class="nm-draw-title"><b>${start+i+1}.</b> <span class="nm-w2-tex" data-tex="${esc(p.tex)}"></span></div>${drawingTableHtml(p,false)}${graphSvg(p.graph)}</div>`).join('')}</div><div class="nm-w2-foot"><span>${esc(code)} · 직접 그리기 / 완성 그림과 비교</span></div></div>`);
@@ -6562,6 +6619,7 @@ function renderRoundPagesBody(item, opts){
   const band = opts.band || printAgeBand(item, problems);
   const young = band === 'young';
   const layout = classifyRoundLayout(problems, item.thread, young, !!item.creative);
+  if(problems.some(p=>p.numline))Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:1,pitch:100});
   // Each path needs room for explicit endpoint words, arrows and a written total.
   if(item.thread==='NL59'||item.thread==='DC3')Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:0,pitch:100});
   const wideDecimal=problems.some(p=>p.divBox&&p.divBox.dec&&String(p.divBox.dec.aStr).replace('.','').length+(p.divBox.dec.zeros||0)>=6);
@@ -6766,7 +6824,7 @@ function renderRoundPagesBody(item, opts){
     const cap1 = firstRows * layout.cols;
     if(midPage && cap1 > 0 && cap1 < Math.min(6, problems.length)) firstRows = 0;
   }
-  if((pictureWorked&&exampleHtml)||(item.thread==='DC3'&&!noTeach))firstRows=0;
+  if((pictureWorked&&exampleHtml)||(['DC3','MD118'].includes(item.thread)&&!noTeach))firstRows=0;
   const firstCap = firstRows * layout.cols;
   const pages = [];
   /* 중등 개념 쪽에 연습 6문항을 실은 경우(midFirstSix), 따라 풀기 한 장은 **다음 연습 6문항과 같은 장**에 —
@@ -6943,7 +7001,7 @@ function renderRoundPagesBody(item, opts){
 </div>`;
   }).join('');
 
-  const thName = pickL(item.topicName) || pickL(((window.NM_THREADS||{})[item.thread]||{}).name) || item.thread;
+  const thName = pickL(item.topicName) || printLevelName(item.thread,item.level) || item.thread;
   if(opts.exclude) exclude.forEach(key=>{if(!teachingStart.has(key))opts.exclude.add(key);});
   /* pageSizes: 쪽별 문항 수 — 정답지가 학습지 쪽 순서대로 격자를 나누는 데 쓴다(w2AnswerKeySectionHtml). */
   /* thread: 정답지가 그 회차의 수학 팁을 찾는 데 쓴다(w2AnswerKeySectionHtml, 2026-09-08). */
@@ -7156,12 +7214,16 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   const highCompact=opts.compactHigh||(opts.cover&&opts.cover.compactHigh)||items.some(it=>it.compactHigh);
   const cv = opts.cover || {};
   const sIdx = (cv.sessionIdx != null && isFinite(+cv.sessionIdx)) ? +cv.sessionIdx : null;
-  let langHtml = '';
+  let langHtml = '', langAnswerHtml = '';
   if(!opts.pacing && !highCompact && opts.cover && rBand === 'young' && window.NM_LANG_THINK){
     const isInfant = +cv.courseNum === 0;
     const half = isInfant ? Math.ceil(((opts.courseSessions || 19) - 1) / 2) : 0;   // 19회차 → 9(열 번째 회차)부터
     const on = isInfant ? (sIdx != null && sIdx >= half) : true;
-    if(on) langHtml = NM_LANG_THINK.pageHtml(sIdx != null ? sIdx : mzHash(envelopeCode), envelopeCode, examLang(), cv.courseTitle, envelopeCode, isInfant);
+    if(on){
+      const args=[sIdx != null ? sIdx : mzHash(envelopeCode), envelopeCode, examLang(), cv.courseTitle, envelopeCode, isInfant];
+      langHtml = NM_LANG_THINK.pageHtml(...args);
+      langAnswerHtml = NM_LANG_THINK.pageHtml(...args,true);
+    }
   }
   const historyHtml = (opts.pacing || highCompact || rBand === 'young') ? '' : w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle, rBand);
   /* 종이 교구 지면 — 수학사 지면 다음, 정답지 앞(2026-09-08). */
@@ -7184,14 +7246,16 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   const stampPg = html => html.replace(/<div class="nm-w2-foot">/g, () => `<div class="nm-w2-foot"><span class="nm-w2-pg">${opts.pacing?'학습 '+pg+++'쪽':pg+++' / '+totalPages}</span>`);
   if(studyDays){
     rounds.forEach(r => {
-      const day = r.studyDays && r.studyDays[0];
-      if(!day) return;
-      const label = esc(lk(`${day}일차`, `Day ${day}`, `第${day}天`));
-      r.html = r.html.replace(/(<span class="nm-w2-head-code">[\s\S]*?<\/span>)/g, `$1<span class="nm-w2-study-day">${label}</span>`);
-      // Keep the small running-head label, and make the study day visible in the main title too.
-      const dayHeading=`<span class="nm-w2-day-heading">${label}</span>`;
-      r.html=r.html.replace(/(<(?:span|div) class="nm-w2-head-mid">\s*<b>)/g,`$1${dayHeading}`)
-        .replace(/(<h2 class="nm-mzs-title">)/g,`$1${dayHeading}`);
+      const holder=document.createElement('template');holder.innerHTML=r.html;
+      [...holder.content.querySelectorAll('.nm-w2-page')].forEach((page,i)=>{
+        const day=r.pageStudyDays?.[i]||r.studyDays?.[0];if(!day)return;
+        const label=lk(`${day}일차`,`Day ${day}`,`第${day}天`);
+        const code=page.querySelector('.nm-w2-head-code');
+        if(code){const mark=document.createElement('span');mark.className='nm-w2-study-day';mark.textContent=label;code.after(mark);}
+        const title=page.querySelector('.nm-w2-head-mid b,.nm-mzs-title');
+        if(title){const heading=document.createElement('span');heading.className='nm-w2-day-heading';heading.textContent=label;title.prepend(heading);}
+      });
+      r.html=holder.innerHTML;
     });
   }
   const roundsHtml = stampPg(rounds.map(r => r.html).join(''));
@@ -7217,6 +7281,7 @@ ${paperStamped}
 <div class="nm-print-answer-key">
   ${w2AnswerKeyHeadHtml(envelopeCode)}
   ${akSections}
+  ${langAnswerHtml}
   <div class="nm-w2-foot"><span class="nm-w2-pg">${opts.pacing?'정답·교사 확인':pg+' / '+totalPages}</span><span class="nm-w2-foot-code">${esc(envelopeCode || '')}</span></div>
 </div>
 ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-answer-key">${drawingAnswerKeyHtml(r)}</div>`).join('')}`;
@@ -7289,6 +7354,14 @@ ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-an
     }
   }
   paginateAnswers();
+  // Print media can change available width and line wrapping after screen layout.
+  // Re-measure the existing answer blocks rather than clipping the last line.
+  const printMedia=window.matchMedia('print');
+  const repaginateForPrint=()=>{
+    if(!sheet.isConnected){printMedia.removeEventListener('change',repaginateForPrint);return;}
+    if(printMedia.matches)requestAnimationFrame(paginateAnswers);
+  };
+  printMedia.addEventListener('change',repaginateForPrint);
   const fontsReady=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();
   const ready=Promise.all([fontsReady,...[...sheet.querySelectorAll('img')].map(img=>img.decode?img.decode().catch(()=>{}):Promise.resolve())]);
   window.NM_LAST_PRINT_READY=ready;
@@ -7346,6 +7419,7 @@ function rampLevelFor(threadId, lv){
   if(!th || !Array.isArray(th.levels)) return null;
   const base = th.levels.find(l => l.id === lv), next = th.levels.find(l => l.id === lv + 1);
   if(!base || !next) return null;
+  if(base.offLadder || next.offLadder) return null;
   const bk = Object.keys(base.params || {}).sort(), nk = Object.keys(next.params || {}).sort();
   if(!bk.length || bk.join() !== nk.join()) return null;
   if(bk.some(k => k === 'mode' || k === 'level' || k === 'digits')) return null;
@@ -9099,11 +9173,11 @@ ${round.html}
     }
     if(!session || !(session.drills||[]).length) return null;
     const seedWeek = k === 2 ? (w + '-2') : w;
-    const thName = t => { const th = (window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
+    const thName = (t,lv) => printLevelName(t,lv);
     /* 세 층 순서(2026-09-25): 교과 → 마법 노트 → 창의 전략 → 적용·문장제 → 심화.
        시드는 예전처럼 drills·creative 배열의 원래 자리 번호로 만든다 — 층을 나눠도 같은 주의
        같은 칸은 같은 문항이 나온다(이미 받은 학습지 링크와 PDF 가 달라지지 않게). */
-    const R = session.test ? {school:(session.pool||[]).map((d,i)=>({thread:d.t,level:d.lv,n:d.n,count:d.n,threadMix:[{t:d.t,lv:d.lv}],noTeach:true,seed:seedOf(seedWeek,i),topicName:lk('과정 점검 · ','Course check · ','课程检查 · ')+thName(d.t)})),strategy:[],application:[],stretch:[]}
+    const R = session.test ? {school:(session.pool||[]).map((d,i)=>({thread:d.t,level:d.lv,n:d.n,count:d.n,threadMix:[{t:d.t,lv:d.lv}],noTeach:true,seed:seedOf(seedWeek,i),topicName:lk('과정 점검 · ','Course check · ','课程检查 · ')+thName(d.t,d.lv)})),strategy:[],application:[],stretch:[]}
       : withAmount(amount, () => sessionRoleItems(course, session, (p, i) => seedOf(seedWeek + p, i)));
     const items = R.school.slice();
     /* 마법 노트(2026-09-18, 원장 "교과 연산 사이에 매직 오브 넘버스 개념 넣었어?") — 그 세션의 마법 유닛
@@ -9128,16 +9202,16 @@ ${round.html}
       const d0 = { t:wordItem.t, lv:wordItem.lv };
       const seen = {}; seen[d0.t] = true; const alts = [];
       const push = d => { if(seen[d.t]) return; seen[d.t] = true;
-        alts.push({ thread:d.t, level:d.lv, topicName:'문장제 · ' + thName(d.t) }); };
+        alts.push({ thread:d.t, level:d.lv, topicName:'문장제 · ' + thName(d.t,d.lv) }); };
       session.drills.slice(1).forEach(push);
       course.sessions.forEach(s => { if(s !== session && !s.test) (s.drills||[]).forEach(push); });
       items.push({ thread:d0.t, level:d0.lv, n:wordItem.count || 6, count:wordItem.count || 6, wordType:'all', optionalWord:true,
-        seed:seedOf(seedWeek + 'wp', 0), topicName:'문장제 · ' + thName(d0.t), wordAlts:alts });
+        seed:seedOf(seedWeek + 'wp', 0), topicName:'문장제 · ' + thName(d0.t,d0.lv), wordAlts:alts });
     }
     items.push(...R.stretch);
     /* 단계 점검 — 과정 3개마다(2026-09-16, 원장 "학습지 모드에도 단계마다 넣어").
        문장제 회차 뒤, 회차 목록의 맨 끝에 온다 — 그 주에 배운 것 다음이 순서다. */
-    const chk = stageCheckItem(course, c, seedOf(seedWeek, 900));
+    const chk = session.test ? stageCheckItem(course, c, seedOf(seedWeek, 900)) : null;
     if(chk) items.push(chk);
     const wsId = 'W' + w + '-' + c + (k === 2 ? '-2' : '');
     const title = (course.title && (course.title.ko || course.title)) || c;

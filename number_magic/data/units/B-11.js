@@ -33,11 +33,11 @@ window.NM_UNITS['B-11'] = {
     stages:[
       { tag:{ko:'① 8단 = 두 배 × 두 배 × 두 배', en:'1) 8 times = double × double × double', zh:'① 8的口诀 = 翻倍×翻倍×翻倍'},
         head:{ko:'두 배를 세 번 하면 8배!', en:'Double three times and you get 8 times!', zh:'翻三次倍就是8倍！'},
-        desc:{ko:'8=2×2×2이에요. 그래서 <b>어떤 수든 두 배를 세 번</b> 하면 8배가 돼요! 3×8을 구하려면 3을 출발해서 두 배·두 배·두 배를 해봐요.',
+        desc:{ko:'8=2×2×2예요. 그래서 <b>어떤 수든 두 배를 세 번</b> 하면 8배가 돼요! 3×8을 구하려면 3을 출발해서 두 배·두 배·두 배를 해봐요.',
               en:'Since 8=2×2×2, you can get <b>8 times any number by doubling three times</b>! Start with 3 and double three times to find 3×8.',
               zh:'因为8=2×2×2，所以<b>把任意数翻三次倍</b>就能得到它的8倍！从3出发，翻倍三次来算3×8。'},
         mathSteps:['3×8','= 3 →×2→ 6 →×2→ 12 →×2→ 24','= 24 ✓'],
-        result:{ko:'3→6→12→24. 두 배를 세 번 하면 끝! 3×8=24이에요.', en:'3→6→12→24. Three doublings and you\'re done! 3×8=24.', zh:'3→6→12→24。翻倍三次就完成了！3×8=24。'},
+        result:{ko:'3→6→12→24. 두 배를 세 번 하면 끝! 3×8=24예요.', en:'3→6→12→24. Three doublings and you\'re done! 3×8=24.', zh:'3→6→12→24。翻倍三次就完成了！3×8=24。'},
         book:{ko:'8×n = n을 두 배 세 번. n →×2→ 2n →×2→ 4n →×2→ 8n. 단계별로 차근차근 하면 실수를 줄일 수 있어요.', en:'8×n = double n three times: n → 2n → 4n → 8n. Step by step reduces mistakes.', zh:'8×n = 把n翻倍三次：n → 2n → 4n → 8n。一步步来能减少失误。'} },
 
       { tag:{ko:'② 4단에서 8단으로', en:'2) From 4s to 8s', zh:'② 从4的口诀到8的口诀'},

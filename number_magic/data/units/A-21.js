@@ -45,7 +45,7 @@ window.NM_UNITS['A-21'] = {
       { tex:'60-26=\\square', answer:34, hint:{ ko:'6-2=4, 0-6은 빌려야… 60-26=34', en:'60-26: borrow to get 34', zh:'60-26=34' } }
     ],
     open:{ ko:'A-21(빼서 빼기)와 A-20(더해서 빼기)를 비교하고, 각각 언제 쓰면 좋은지 설명해봐요.', en:'Compare A-21 (subtract same) with A-20 (add same) and explain when to use each.', zh:'比较A-21（同减）和A-20（同加），说说各自适合什么情况。' },
-    openHint:{ ko:'빼지는 수의 일의 자리가 작으면 빼서 □0 (A-21), 빼는 수의 일의 자리가 크면 더해서 □0 (A-20).', en:'Small ones digit in A → subtract same (A-21). Large ones digit in B → add same (A-20).', zh:'被减数个位小→同减（A-21），减数个位大→同加（A-20）。' }
+    openHint:{ ko:'빼지는 수의 일의 자리가 작으면 빼서 □0, 빼는 수의 일의 자리가 크면 더해서 □0.', en:'Small ones digit in A → subtract same. Large ones digit in B → add same.', zh:'被减数个位小→同减，减数个位大→同加。' }
   },
 
   lab:{ generator:'subSameSub', level:'main', count:4,

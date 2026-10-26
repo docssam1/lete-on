@@ -156,7 +156,7 @@ const COURSE_SPEC = [
    drills:['ML4@2','AD6@1', 'AD6@2','AD6@3', 'AD6@4','SB6@1', 'AD6@5','SB6@2', 'SB6@3','AD4@3', 'SB6@4','AD6@6', 'SB6@6','AD6@7'], minSessions:7,
    magic:[['A-16'],['A-24'],['A-13'],['A-22'],['A-14'],['A-15'],['A-23']],
    creative:['AD14@1','AD16@1','SB10@1','SB13@1','SB12@3','SB8@3','SB5@2']},
- {id:6, tier:'level1', title:{ko:'네 자리 수와 2학년 마무리',en:'Four-digit Numbers & Grade 2 Wrap-up',zh:'四位数与二年级总结'},
+ {id:6, tier:'level1', title:{ko:'네 자리 수와 큰 수 계산',en:'Four-digit Numbers & Large-number Arithmetic',zh:'四位数与大数计算'},
    drills:['AD4@4','SB7@1', 'SB7@2','EL1@5', 'NS1@2','AD7@1', 'AD7@2','SB6@5', 'AD7@3','SB6@7', 'AD4@5','EL3@1', 'AD7@4','SB6@4'], minSessions:7,
    magic:[['A-25'],['A-33'],['A-17'],['A-18'],['A-30'],['A-31'],['A-32']],
    creative:['MX7@2','EL6@1','AD14@2','AD15@2','AD15@4','AD15@5','AD15@3']},
@@ -1038,7 +1038,14 @@ function buildCourses(NM_THREADS){
       }));
       poolThreads = tierOwned.concat(poolThreads).filter((t,i,a)=>a.indexOf(t)===i);
     }
-    const pool = poolThreads.map(t => ({t, lv:homeLevel[t], n: spec.boss ? 6 : 8}));
+    // A reused thread can have an earlier, higher off-ladder level in homeLevel.
+    // Test the level actually practised in this course, not that historical maximum.
+    const courseLevel = {};
+    sessions.forEach(session => (session.drills || []).concat(session.creative || []).forEach(d => {
+      if(d && d.t && Number.isFinite(d.lv))courseLevel[d.t] = Math.max(courseLevel[d.t] || 0,d.lv);
+    }));
+    // The cumulative boss retains previously learned threads not practised here.
+    const pool = poolThreads.map(t => ({t, lv:courseLevel[t] || homeLevel[t], n: spec.boss ? 6 : 8}));
     /* noTest — 수의 나라(과정 0)는 "시간을 재지 않는" 단계(stages.js)라 시험 회차가 없다. */
     if(!spec.noTest) sessions.push({ test:true, pool, passRate:0.8 });
 

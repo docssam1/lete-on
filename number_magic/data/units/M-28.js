@@ -26,9 +26,9 @@ window.NM_UNITS['M-28'] = {
       hook:{ ko:'x²+bx+c=(x+p)(x+q) 인수분해는 p,q가 딱 맞아떨어질 때만 통합니다. x²-3x+1=0처럼 정수로 안 떨어지는 방정식은 어떻게 풀까요?',
         en:'Factoring x²+bx+c=(x+p)(x+q) only works when p,q land on nice numbers. How do you solve something like x²-3x+1=0, where they don\'t come out as integers?',
         zh:'因式分解x²+bx+c=(x+p)(x+q)只在p、q刚好凑整数时才行。像x²-3x+1=0这种凑不出整数的方程怎么解？' },
-      history:{ ko:'판별식(MD26)에서 본 b²-4ac가 사실 근의 공식 안에 그대로 들어 있습니다. 완전제곱식으로 바꾸는 과정을 한 번만 미리 해 두면, 어떤 이차방정식이든 대입만으로 풀리는 만능 열쇠가 완성됩니다.',
-        en:'The b²-4ac you saw in the discriminant (MD26) sits right inside the quadratic formula. Doing the "complete the square" work once, in general, produces a master key that solves any quadratic just by substitution.',
-        zh:'在判别式(MD26)里见过的b²-4ac，其实就藏在求根公式里面。把配方的过程一次性提前做好，就得到一把万能钥匙——任何二次方程只需代入就能解开。' }
+      history:{ ko:'판별식에서 본 b²-4ac가 사실 근의 공식 안에 그대로 들어 있습니다. 완전제곱식으로 바꾸는 과정을 한 번만 미리 해 두면, 어떤 이차방정식이든 대입만으로 풀리는 만능 열쇠가 완성됩니다.',
+        en:'The b²-4ac you saw in the discriminant sits right inside the quadratic formula. Doing the "complete the square" work once, in general, produces a master key that solves any quadratic just by substitution.',
+        zh:'在判别式里见过的b²-4ac，其实就藏在求根公式里面。把配方的过程一次性提前做好，就得到一把万能钥匙——任何二次方程只需代入就能解开。' }
     },
     stages:[
       { tag:{ko:'① 공식에 그대로 대입',en:'1) Substitute straight into the formula',zh:'① 直接代入公式'},

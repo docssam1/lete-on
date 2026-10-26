@@ -66,9 +66,9 @@ window.NM_STAGES = [
       {sym:'+', tr:{ko:'모아라',en:'put together',zh:'合起来'}},
       {sym:'=', tr:{ko:'양쪽이 같다 — 답이 나온다는 뜻이 아닙니다',en:'both sides are the same — not "here comes the answer"',zh:'两边一样——不是“答案来了”的意思'}},
       {sym:'□', tr:{ko:'아직 모르는 수의 자리 — 중1의 x가 여기서 자랍니다',en:'the seat of a number we do not know yet — the x of middle school grows from here',zh:'还不知道的数的位置——初一的x就是从这里长出来的'}}],
-    aheadNote:{ko:'학교 진도보다 앞선 편성이라 구구단까지 이 단계에 들어 있습니다.',
-      en:'The plan runs ahead of school, so times tables already sit in this stage.',
-      zh:'编排比学校进度提前，所以乘法口诀已经在这一阶段。'},
+    aheadNote:{ko:'시작 나이와 교과 범위는 달라요. 과정 5·6의 세 자리 덧뺄셈·네 자리 수는 초2~초3 교과 범위를 포함하며, 시작점은 진단으로 정해요.',
+      en:'Starting age and school content are different. Courses 5–6 include Grade 2–3 material: three-digit addition/subtraction and four-digit numbers. Diagnosis determines the starting point.',
+      zh:'起始年龄与教材范围不同。课程5、6涵盖小学二至三年级的三位数加减、四位数，起点由诊断确定。'},
     meta:{ko:'과정 1~7 · 주 2회 기준 25주(주 1회 49주)',en:'Courses 1–7 · 25 weeks at two sheets a week (49 at one)',zh:'课程1~7 · 每周2次约25周(每周1次49周)'}
   },
   {

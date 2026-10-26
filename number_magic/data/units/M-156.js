@@ -60,6 +60,7 @@ window.NM_UNITS['M-156'] = {
       { tex:{ko:"f(x)=2x^3-3x^2-12x\\ \\ \\searrow\\ (\\alpha\\le x\\le\\beta)\\ \\Rightarrow\\ \\alpha+\\beta=\\square",en:"f(x)=2x^3-3x^2-12x\\ \\ \\searrow\\ (\\alpha\\le x\\le\\beta)\\ \\Rightarrow\\ \\alpha+\\beta=\\square",zh:"f(x)=2x^3-3x^2-12x\\ \\ \\searrow\\ (\\alpha\\le x\\le\\beta)\\ \\Rightarrow\\ \\alpha+\\beta=\\square"}, answer:1,
         hint:{ko:"f'(x)=6(x+1)(x-2)",en:"f'(x)=6(x+1)(x-2)",zh:"f'(x)=6(x+1)(x-2)"} },
       { tex:{ko:"f(x)=-x^3+ax^2-12x\\ \\Rightarrow\\ N=\\square",en:"f(x)=-x^3+ax^2-12x\\ \\Rightarrow\\ N=\\square",zh:"f(x)=-x^3+ax^2-12x\\ \\Rightarrow\\ N=\\square"}, answer:13,
+        prompt:{ko:'함수가 실수 전체에서 감소하도록 하는 정수 a의 개수를 N이라 합니다. N을 구하세요.',en:'Let N be the number of integers a for which the function is decreasing on all real numbers. Find N.',zh:'设使函数在实数范围内递减的整数a的个数为N，求N。'},
         hint:{ko:'\\frac{D}{4}=a^2-36\\le0',en:'\\frac{D}{4}=a^2-36\\le0',zh:'\\frac{D}{4}=a^2-36\\le0'} }
     ],
     open:{ ko:'삼차함수가 실수 전체에서 증가할 조건이 "f′(x)=0 의 판별식 D<0" 이 아니라 "D≤0" 인 까닭을 f(x)=x³ 으로 설명해 봅니다.',

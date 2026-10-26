@@ -23,6 +23,7 @@ const { R, pick } = NM_RNG;
 /* ── 공용 헬퍼 ── */
 function nzInt(rng, lo, hi){ return R(rng, lo, hi) * pick(rng, [1, -1]); }   /* 0이 아닌 부호 있는 정수 */
 function wrapPlus(n){ return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`; }         /* "+5" / "- 5" 접속 조각 */
+function par(n){ return n < 0 ? `(${n})` : String(n); }
 
 /* 단항식 표기 — 2026-08-28 인쇄 점검에서 `1x^{3}`·`x^{1}`·`x^{0}`이 그대로
    찍히고 음수 계수가 `\times -9x^{3}`처럼 괄호 없이 나오던 것을 정리한다.
@@ -160,8 +161,8 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
       tex: `(${body})^{${n}} = \\square ${base}^{\\square}`,
       answer: [cn, exp], answerType: 'number', widget: 'numpad', negative: cn < 0,
       solution: [
-        { tex: `(${body})^{${n}} = ${c}^{${n}} \\times (${base}^{${m}})^{${n}}` },
-        { tex: `${c}^{${n}} = ${cn}, \\quad ${base}^{${m}\\times${n}} = ${base}^{${exp}}` },
+        { tex: `(${body})^{${n}} = ${par(c)}^{${n}} \\times (${base}^{${m}})^{${n}}` },
+        { tex: `${par(c)}^{${n}} = ${cn}, \\quad ${base}^{${m}\\times${n}} = ${base}^{${exp}}` },
         { tex: `\\square ${base}^{\\square}`, blank: [cn, exp] }
       ]
     };
@@ -494,7 +495,8 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
     const d1 = pick(rng, [2, 3, 4]);
     let d2 = pick(rng, [2, 3, 4, 5]);
     if (d2 === d1) d2 = d2 === 5 ? 4 : d2 + 1;
-    const D = d1 * d2;
+    const gcd = (a,b) => b ? gcd(b,a%b) : a;
+    const D = d1 * d2 / gcd(d1,d2);
     const op = pick(rng, ['+', '-']);
     const k1 = D / d1, k2 = D / d2;
     const A = op === '+' ? a1 * k1 + a2 * k2 : a1 * k1 - a2 * k2;

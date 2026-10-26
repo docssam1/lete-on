@@ -44,7 +44,7 @@ window.NM_UNITS['M-38'] = {
 
       { tag:{ko:'② 뺄셈은 나눗셈, 밑변환은 정수만',en:'2) Subtracting is dividing; only clean change-of-base',zh:'② 相减是相除，只处理整数换底'},
         head:{ko:'\\log_2 32 - \\log_2 4 = \\log_2 8',en:'\\log_2 32 - \\log_2 4 = \\log_2 8',zh:'\\log_2 32 - \\log_2 4 = \\log_2 8'},
-        desc:{ko:'32÷4=8이니까 log₂32-log₂4=log₂8(5-2=3, log₂8=3와 일치!)이 됩니다. 밑이 다른 log₉81 같은 경우도 9=3²처럼 밑을 3의 거듭제곱으로 볼 수 있으면, 3을 몇 번 곱해야 81이 되는지 세고 2로 나눠 정수로 딱 떨어지게 만들 수 있습니다.',
+        desc:{ko:'32÷4=8이니까 log₂32-log₂4=log₂8(5-2=3, log₂8=3과 일치!)이 됩니다. 밑이 다른 log₉81 같은 경우도 9=3²처럼 밑을 3의 거듭제곱으로 볼 수 있으면, 3을 몇 번 곱해야 81이 되는지 세고 2로 나눠 정수로 딱 떨어지게 만들 수 있습니다.',
               en:'Since 32÷4=8, log₂32-log₂4=log₂8 (5-2=3, matching log₂8=3!). For a different base like log₉81, if the base can be seen as a power of 3 (9=3²), you count how many times 3 must be multiplied to reach 81, then divide by 2 to land cleanly on an integer.',
               zh:'因为32÷4=8，所以log₂32-log₂4=log₂8(5-2=3，正好等于log₂8=3！)。像log₉81这种不同底数，如果底数能看成3的幂(9=3²)，就数一数3要乘几次得到81，再除以2，正好得到整数。'},
         mathSteps:['32\\div4=8', '\\log_2 32-\\log_2 4=\\log_2 8', '5-2=3'],

@@ -64,7 +64,7 @@ window.NM_UNITS['M-08'] = {
       { tex:{ko:'\\dfrac{5}{12} \\;\\Rightarrow\\; \\square\\,(1=\\text{유한},0=\\text{순환})',en:'\\dfrac{5}{12} \\;\\Rightarrow\\; \\square\\,(1=\\text{terminating},0=\\text{repeating})',zh:'\\dfrac{5}{12} \\;\\Rightarrow\\; \\square\\,(1=\\text{有限},0=\\text{循环})'}, answer:0,
         hint:{ ko:'12=2×2×3, 3이 숨어 있습니다', en:'12=2×2×3, a 3 is hiding', zh:'12=2×2×3，藏着一个3' } }
     ],
-    open:{ ko:'6/15는 유한소수일까요? 먼저 약분부터 해봅니다.',
+    open:{ ko:'6/15은 유한소수일까요? 먼저 약분부터 해봅니다.',
       en:'Is 6/15 a terminating decimal? Simplify first.',
       zh:'6/15是有限小数吗？先约分看看。' },
     openHint:{ ko:'6/15=2/5(약분). 분모 5는 2와 5뿐 → 유한소수(0.4)!',

@@ -28,7 +28,7 @@ window.NM_UNITS['B-06'] = {
         desc:{ ko:'3×2와 2×3은 같아요! 배열을 옆으로 돌리면 같은 모양이 돼요. 곱셈은 <b>순서가 달라도 결과가 같아요</b>.',
                en:"3×2 and 2×3 are equal! Rotate the array and it's the same shape. Multiplication <b>order doesn't change the result</b>.",
                zh:'3×2和2×3相等！把阵列旋转一下形状相同。<b>乘法顺序不影响结果</b>。' },
-        mathSteps:['3×2 = 2+2+2 = 6','2×3 = 3+3 = 6','3×2 = 2×3 ✓'],
+        mathSteps:['3×2 = 3+3 = 6','2×3 = 2+2+2 = 6','3×2 = 2×3 ✓'],
         result:{ ko:'3×2 = 2×3 = 6 ✓', en:'3×2 = 2×3 = 6 ✓', zh:'3×2 = 2×3 = 6 ✓' },
         book:{ ko:'곱셈의 교환법칙: a×b = b×a. 더 쉬운 방향으로 계산할 수 있어요!', en:'Commutative law: a×b = b×a. Always pick the easier order!', zh:'乘法交换律：a×b=b×a。选更简单的顺序来计算！' } },
 

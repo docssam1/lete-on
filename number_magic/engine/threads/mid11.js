@@ -139,7 +139,7 @@ function eventProblem(model){
 
 function eitherProblem(model){
   const c=EITHER_CONTEXTS[model.context],a=c.a,b=c.b,u=c.unit;
-  const story=L3(`${a[0]} ${model.a}${u[0]}와 ${b[0]} ${model.b}${u[0]} 중에서 하나만 고릅니다.`,
+  const story=L3(`${a[0]} ${model.a}${u[0]} 및 ${b[0]} ${model.b}${u[0]} 중에서 하나만 고릅니다.`,
     `Choose exactly one from ${model.a} ${a[1]} or ${model.b} ${b[1]}.`,
     `从${model.a}${u[2]}${a[2]}或${model.b}${u[2]}${b[2]}中只选一个。`);
   const ask=L3('두 사건은 겹치지 않습니다. 고르는 방법은 모두 몇 가지입니까?',

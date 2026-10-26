@@ -30,7 +30,7 @@ window.NM_UNITS['A-06'] = {
     stages:[
       { tag:{ ko:'① 두 자리 수도 일의 자리가 열쇠', en:'1) Ones digit is the key for 2-digit numbers too', zh:'① 两位数个位才是关键' },
         head:{ ko:'일의 자리만 보면 짝을 찾을 수 있어요', en:'Just look at the ones digit to find the pair', zh:'只看个位就能找到配对' },
-        desc:{ ko:'A-01에서 한 자리 수의 짝을 배웠어요. 두 자리 수도 <b>일의 자리만 보면</b> 짝을 찾을 수 있어요! 13에서 일의 자리는 3이고, 67에서 일의 자리는 7이에요. 3+7=10이니까 짝꿍이에요!',
+        desc:{ ko:'앞에서 한 자리 수의 짝을 배웠어요. 두 자리 수도 <b>일의 자리만 보면</b> 짝을 찾을 수 있어요! 13에서 일의 자리는 3이고, 67에서 일의 자리는 7이에요. 3+7=10이니까 짝꿍이에요!',
                en:'In A-01 you found pairs with single digits. For 2-digit numbers, just look at the ones place! The ones of 13 is 3, and the ones of 67 is 7. Since 3+7=10, they\'re a pair!',
                zh:'在A-01里学了一位数的配对。两位数也只看个位就行！13的个位是3，67的个位是7。因为3+7=10，所以它们是配对！' },
         mathSteps:[{ko:'13 → 일의 자리: 3',en:'13 → \\text{ones digit: } 3',zh:'13 → 个位：3'}, {ko:'67 → 일의 자리: 7',en:'67 → \\text{ones digit: } 7',zh:'67 → 个位：7'}, {ko:'3 + 7 = 10 → 짝꿍!',en:'3 + 7 = 10 → \\text{partners!}',zh:'3 + 7 = 10 → 是一对！'}],

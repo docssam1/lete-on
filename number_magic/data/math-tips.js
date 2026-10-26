@@ -356,9 +356,9 @@ T["MD36"] = { source:"own",
   why:{ ko:"유리수 지수를 만든 이유가 지수법칙을 분수까지 넓혀 그대로 쓰기 위해서예요",
          en:"Rational exponents exist so the same exponent laws keep working, extended to fractions.",
          zh:"引入有理数指数,就是为了让指数法则同样适用于分数。" },
-  mistake:{ ko:"밑이 음수인데 분모가 짝수면 실수 범위에서 정의가 안 돼요 — 밑 부호부터 확인",
-         en:"If the base is negative and the denominator is even, it's undefined for real numbers — check the base's sign first.",
-         zh:"如果底数为负且分母是偶数,这在实数范围内没有意义——先检查底数的符号。" } };
+  mistake:{ ko:"이 과정에서 유리수 지수의 밑은 양수로 정해요 — 밑의 조건부터 확인",
+         en:"In this course, rational exponents are defined for positive bases — check that condition first.",
+         zh:"本课程中的有理数指数要求底数为正，先检查底数条件。" } };
 
 T["MD37"] = { source:"own",
   hook:{ ko:"밑은 사다리 기둥이라 0보다 크고 1이 아니어야, 진수는 칸이라 항상 양수예요",
@@ -466,7 +466,7 @@ T["MD45"] = { source:"known",
   why:{ ko:"접점 (x0,f(x0))을 지나고 기울기가 f'(x0)인 직선을 바로 쓰는 식이라서예요",
          en:"It's the line through the point (x0,f(x0)) with slope f'(x0), written directly.",
          zh:"这就是过切点(x0,f(x0))、斜率为f'(x0)的直线方程,直接写出来。" },
-  mistake:{ ko:"x0를 f'에 넣을 자리에 f에, f에 넣을 자리에 f'에 넣는 실수가 잦아요",
+  mistake:{ ko:"x0을 f'에 넣을 자리에 f에, f에 넣을 자리에 f'에 넣는 실수가 잦아요",
          en:"It's common to mix up which x0 goes into f and which goes into f'.",
          zh:"常把该代入f的x0和该代入f'的x0弄混。" } };
 

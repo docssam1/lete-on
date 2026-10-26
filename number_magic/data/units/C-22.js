@@ -25,7 +25,7 @@ window.NM_UNITS['C-22'] = {
       hook:{ ko:'옛 수학자의 묘비에 나이 대신 이런 글이 있었대요. 일생의 1/6은 소년, 1/12은 청년, 1/7이 더 지나 결혼, 5년 뒤 아들이 태어나 아버지 삶의 절반을 살고 떠났으며, 4년 뒤 그도 세상을 떠났다. 몇 살까지 살았을까요?',
         en:'An old mathematician had no age on his tomb, only this: one sixth of his life was boyhood, a twelfth more youth, a seventh more before marriage, a son born five years later lived half his fathers years, and he died four years after his son. How long did he live?',
         zh:'一位古代数学家的墓碑上没有年龄，只有这段话：一生的1/6是童年，再1/12是青年，又过1/7后结婚，5年后儿子出生，儿子活了父亲寿命的一半，儿子去世4年后他也走了。他活了多少岁？' },
-      history:{ ko:'84살이에요. 1/6 + 1/12 + 1/7 + 1/2를 더하려면 분모를 84로 맞춰야 해요 — 14/84 + 7/84 + 12/84 + 42/84 = 75/84. 남은 9/84가 5년 + 4년 = 9년이니 전체는 84년이죠. 분모만 맞추면 묘비도 풀립니다.',
+      history:{ ko:'84살이에요. 1/6 + 1/12 + 1/7 + 1/2을 더하려면 분모를 84로 맞춰야 해요 — 14/84 + 7/84 + 12/84 + 42/84 = 75/84. 남은 9/84가 5년 + 4년 = 9년이니 전체는 84년이죠. 분모만 맞추면 묘비도 풀립니다.',
         en:'Eighty-four. To add 1/6 + 1/12 + 1/7 + 1/2 you line the denominators up at 84: 14/84 + 7/84 + 12/84 + 42/84 = 75/84. The leftover 9/84 equals 5 + 4 = 9 years, so the whole life was 84. Match the denominators and even a tombstone gives up its answer.',
         zh:'84岁。要把1/6 + 1/12 + 1/7 + 1/2相加，得把分母统一成84：14/84 + 7/84 + 12/84 + 42/84 = 75/84。剩下的9/84正好是5+4=9年，所以一生是84年。只要对齐分母，连墓碑也能解开。' }
     },
@@ -49,7 +49,7 @@ window.NM_UNITS['C-22'] = {
               zh:'半块和三分之一块都能<b>再切成6等分</b>：1/2 = 3/6(半块=3个六分之一)，1/3 = 2/6(三分之一=2个六分之一)。大小一致了，只加个数：3/6+2/6 = <b>5/6</b>！公分母一般用<b>分母的乘积(2×3=6)</b>或最小公倍数。'},
         mathSteps:['\\dfrac{1}{2} = \\dfrac{3}{6}','\\dfrac{1}{3} = \\dfrac{2}{6}','\\dfrac{3}{6} + \\dfrac{2}{6} = \\dfrac{5}{6}'],
         result:{ko:'1/2+1/3=5/6! 6등분으로 맞추면 개수 덧셈이 돼요.',en:'1/2+1/3=5/6! Match as sixths and it becomes count-adding.',zh:'1/2+1/3=5/6！统一成6等分就变成数个数。'},
-        book:{ko:'분자·분모에 같은 수를 곱해도 분수의 크기는 그대로예요(1/2=2/4=3/6). 약분 나눗셈(C-19)의 "양쪽 똑같이" 규칙이 분수에도!',
+        book:{ko:'분자·분모에 같은 수를 곱해도 분수의 크기는 그대로예요(1/2=2/4=3/6). 약분 나눗셈의 "양쪽 똑같이" 규칙이 분수에도!',
               en:'Multiplying top and bottom by the same number keeps a fraction\'s value (1/2=2/4=3/6) — the "both sides equally" rule from C-19 again!',
               zh:'分子分母同乘一个数，分数大小不变(1/2=2/4=3/6)——又是C-19的"两边同样"规则！'} },
 

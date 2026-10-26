@@ -58,8 +58,10 @@ window.NM_UNITS['M-158'] = {
   check:{
     fills:[
       { tex:{ko:"x^3-3x^2+4=0\\ \\Rightarrow\\ N=\\square",en:"x^3-3x^2+4=0\\ \\Rightarrow\\ N=\\square",zh:"x^3-3x^2+4=0\\ \\Rightarrow\\ N=\\square"}, answer:2,
+        prompt:{ko:'방정식의 서로 다른 실근의 개수를 N이라 합니다. N을 구하세요.',en:'Find N, the number of distinct real roots.',zh:'求方程不同实根的个数N。'},
         hint:{ko:'f(0)=4,\\ f(2)=0',en:'f(0)=4,\\ f(2)=0',zh:'f(0)=4,\\ f(2)=0'} },
       { tex:{ko:"x^3-3x=k\\ \\Rightarrow\\ N=\\square",en:"x^3-3x=k\\ \\Rightarrow\\ N=\\square",zh:"x^3-3x=k\\ \\Rightarrow\\ N=\\square"}, answer:3,
+        prompt:{ko:'방정식이 서로 다른 세 실근을 갖도록 하는 정수 k의 개수를 N이라 합니다. N을 구하세요.',en:'Find N, the number of integers k for which the equation has three distinct real roots.',zh:'设使方程有三个不同实根的整数k的个数为N，求N。'},
         hint:{ko:'f(-1)=2,\\ f(1)=-2',en:'f(-1)=2,\\ f(1)=-2',zh:'f(-1)=2,\\ f(1)=-2'} }
     ],
     open:{ ko:'삼차방정식 f(x)=0 에서 극댓값과 극솟값의 곱이 음수이면 서로 다른 실근이 3 개인 까닭을 그래프로 설명해 봅니다.',

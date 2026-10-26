@@ -1302,7 +1302,7 @@
       prompt: { ko: `${a} × ${b} = ${c}에서 나눗셈 식 두 개를 만들어요.`,
                 en: `From ${a} × ${b} = ${c}, write the two division facts.`,
                 zh: `由${a}×${b}=${c}写出两个除法算式。` },
-      tex: `${a} \\times ${b} = ${c} \;\\Rightarrow\; ${c} \\div ${b} = \\square`,
+      tex: `${a} \\times ${b} = ${c} \\;\\Rightarrow\\; ${c} \\div ${b} = \\square`,
       answer: a, answerType: 'steps', widget: 'steps',
       steps: [
         { tex: `${c} \\div ${a} = \\square`, blank: b },

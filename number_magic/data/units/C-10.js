@@ -47,9 +47,9 @@ window.NM_UNITS['C-10'] = {
 
       { tag:{ko:'③ 빠르게: 큰 조각부터',en:'3) Speed: biggest piece first',zh:'③ 提速：从大块开始'},
         head:{ko:'800 → 100 → 120 → 15 순서로 더해요',en:'Add in order: 800 → 100 → 120 → 15',zh:'按800→100→120→15的顺序加'},
-        desc:{ko:'네 조각을 더할 때는 <b>큰 것부터</b>: 800+100=900, 900+120=1020, 1020+15=1035. 큰 조각부터 더하면 답의 크기가 일찍 보여서 자릿수 예측(C-09)과도 딱 맞는지 확인할 수 있어요.',
-              en:'When adding the four pieces, go <b>biggest first</b>: 800+100=900, 900+120=1020, 1020+15=1035. Starting big reveals the answer\'s size early — and you can check it against your digit prediction (C-09)!',
-              zh:'加四块时<b>从大到小</b>：800+100=900，900+120=1020，1020+15=1035。先加大块能早看出答案大小——还能和位数预测(C-09)对照检查！'},
+        desc:{ko:'네 조각을 더할 때는 <b>큰 것부터</b>: 800+100=900, 900+120=1020, 1020+15=1035. 큰 조각부터 더하면 답의 크기가 일찍 보여서 자릿수 예측과도 딱 맞는지 확인할 수 있어요.',
+              en:'When adding the four pieces, go <b>biggest first</b>: 800+100=900, 900+120=1020, 1020+15=1035. Starting big reveals the answer\'s size early — and you can check it against your digit prediction!',
+              zh:'加四块时<b>从大到小</b>：800+100=900，900+120=1020，1020+15=1035。先加大块能早看出答案大小——还能和位数预测对照检查！'},
         mathSteps:['800 + 100 = 900','900 + 120 = 1020','1020 + 15 = 1035'],
         result:{ko:'큰 조각부터 차곡차곡! 예측한 자릿수와 맞는지 확인.',en:'Stack from the biggest! Check against your predicted digits.',zh:'从大块开始叠加！和预测的位数核对。'},
         book:null }

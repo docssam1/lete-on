@@ -1,4 +1,4 @@
-/* C-21 — 타율로 만나는 분수: 2/3과 3/4은 어떻게 더할까 */
+/* C-21 — 타율로 만나는 분수: 2/3와 3/4은 어떻게 더할까 */
 'use strict';
 module.exports = function(H){
   const {C,svg,arrow,paper,bubble,txt,ground,boy}=H;
@@ -20,7 +20,7 @@ module.exports = function(H){
         +bubble(132,50,40,24,102,78)
         +txt(132,46,12,C.ink,'2/3+3/4')
         +txt(132,62,12,C.ink,'÷2=?')),
-      text: { ko:'이틀 평균 타율은 2/3과 3/4을 더해서 반으로 나누면 되는 걸까요?',
+      text: { ko:'이틀 평균 타율은 2/3와 3/4을 더해서 반으로 나누면 되는 걸까요?',
               en:"Is the two-day average just adding 2/3 and 3/4, then halving?",
               zh:'两天的平均打击率，是把2/3和3/4相加再除以2吗？' } },
     { art: svg(
@@ -31,7 +31,7 @@ module.exports = function(H){
         +arrow(50,54,92,92,C.gold,3)
         +arrow(150,54,118,92,C.gold,3)
         +txt(105,122,26,C.ok,'5/7')),
-      text: { ko:'아니에요! 전체 타수 3+4=7, 전체 안타 2+3=5 — 진짜 평균은 5/7이에요.',
+      text: { ko:'아니에요! 전체 타수 3+4=7, 전체 안타 2+3=5 — 진짜 평균은 5/7예요.',
               en:'No! Total at-bats 3+4=7, total hits 2+3=5 — the real average is 5/7.',
               zh:'不对！总打数3+4=7，总安打2+3=5——真正的平均是5/7。' } },
     { art: svg(

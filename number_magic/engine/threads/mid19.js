@@ -430,9 +430,9 @@ NM_TGEN['md118_circleLine'] = function (params, rng) {
 
   /* count(기본) — 교점의 개수 0·1·2 를 먼저 고른다 */
   const target = pick(rng, [0, 1, 2]);
-  const prompt = L3('중심과 직선 사이의 거리 d 와 반지름 r 을 비교하거나(d<r 이면 2, d=r 이면 1, d>r 이면 0), 연립한 이차방정식의 판별식으로 교점의 개수를 구합니다.',
-    'Compare the distance d from the center to the line with the radius r (d<r: 2, d=r: 1, d>r: 0), or use the discriminant of the combined quadratic, to find the number of common points.',
-    '比较圆心到直线的距离d与半径r(d<r为2，d=r为1，d>r为0)，或用联立所得二次方程的判别式，求交点个数。');
+  const prompt = L3('원과 직선의 교점은 모두 몇 개인가요?',
+    'How many points do the circle and the line have in common?',
+    '圆与直线共有几个交点？');
   if (pick(rng, [0, 1])) {
     /* 원점 중심 x²+y²=Rr, 직선 y=mx+n — D/4 = Rr(1+m²) − n² */
     let m, n, Rr, D4, g = 0;

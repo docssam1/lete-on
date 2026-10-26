@@ -176,23 +176,23 @@ NM_TGEN['md64_linearInequality'] = function (params, rng) {
     const transforms = [];
     ns.forEach(n => transforms.push({ kind:'add', n, scale:1,
       left:`a + ${n}`, right:`b + ${n}`,
-      action:{ko:`양변에 ${n}을 더했으므로`,en:`Since ${n} was added to both sides`,zh:`因为两边都加了${n}`} }));
+      action:{ko:`양변에 ${NM_RNG.koJosa(n,'을','를')} 더했으므로`,en:`Since ${n} was added to both sides`,zh:`因为两边都加了${n}`} }));
     ns.forEach(n => transforms.push({ kind:'subtract', n, scale:1,
       left:`a - ${n}`, right:`b - ${n}`,
-      action:{ko:`양변에서 ${n}을 뺐으므로`,en:`Since ${n} was subtracted from both sides`,zh:`因为两边都减了${n}`} }));
+      action:{ko:`양변에서 ${NM_RNG.koJosa(n,'을','를')} 뺐으므로`,en:`Since ${n} was subtracted from both sides`,zh:`因为两边都减了${n}`} }));
     ns.forEach(n => transforms.push({ kind:'multiplyPositive', n, scale:n,
       left:`${n}a`, right:`${n}b`,
-      action:{ko:`양변에 양수 ${n}을 곱했으므로`,en:`Since both sides were multiplied by positive ${n}`,zh:`因为两边都乘了正数${n}`} }));
+      action:{ko:`양변에 양수 ${NM_RNG.koJosa(n,'을','를')} 곱했으므로`,en:`Since both sides were multiplied by positive ${n}`,zh:`因为两边都乘了正数${n}`} }));
     ns.forEach(n => transforms.push({ kind:'dividePositive', n, scale:1 / n,
       left:`a \\div ${n}`, right:`b \\div ${n}`,
-      action:{ko:`양변을 양수 ${n}으로 나눴으므로`,en:`Since both sides were divided by positive ${n}`,zh:`因为两边都除以正数${n}`} }));
+      action:{ko:`양변을 양수 ${NM_RNG.koJosa(n,'으로','로')} 나눴으므로`,en:`Since both sides were divided by positive ${n}`,zh:`因为两边都除以正数${n}`} }));
     ns.forEach(n => transforms.push({ kind:'multiplyNegative', n, scale:-n,
       left:`-${n}a`, right:`-${n}b`,
-      action:{ko:`양변에 음수 -${n}을 곱했으므로`,en:`Since both sides were multiplied by negative -${n}`,zh:`因为两边都乘了负数-${n}`} }));
+      action:{ko:`양변에 음수 -${NM_RNG.koJosa(n,'을','를')} 곱했으므로`,en:`Since both sides were multiplied by negative -${n}`,zh:`因为两边都乘了负数-${n}`} }));
     const divideNs = [2, 3, 4, 5, 6, 7, 8, 9];
     divideNs.forEach(n => transforms.push({ kind:'divideNegative', n, scale:-1 / n,
       left:`a \\div (-${n})`, right:`b \\div (-${n})`,
-      action:{ko:`양변을 음수 -${n}으로 나눴으므로`,en:`Since both sides were divided by negative -${n}`,zh:`因为两边都除以负数-${n}`} }));
+      action:{ko:`양변을 음수 -${NM_RNG.koJosa(n,'으로','로')} 나눴으므로`,en:`Since both sides were divided by negative -${n}`,zh:`因为两边都除以负数-${n}`} }));
     const base = pick(rng, ['<', '>']);
     const tr = pick(rng, transforms);
     const result = tr.scale < 0 ? FLIP[base] : base;
@@ -497,7 +497,7 @@ NM_TGEN['md66_quadEquation'] = function (params, rng) {
       tex: `x^2 ${wrapPlus(b)}x + ${c} = 0 \\quad\\Rightarrow\\quad (x ${wrapPlus(-p)})^2 = 0 \\quad\\Rightarrow\\quad x = \\square`,
       answer: p, answerType: 'number', widget: 'numpad', negative: p < 0,
       solution: [
-        { tex: `\\dfrac{${b}}{2} = ${p}, \\quad ${par(p)}^2 = ${c}` },
+        { tex: `\\dfrac{${-b}}{2} = ${p}, \\quad ${par(p)}^2 = ${c}` },
         { tex: `(x ${wrapPlus(-p)})^2 = 0` },
         { tex: `x = \\square`, blank: p }
       ]

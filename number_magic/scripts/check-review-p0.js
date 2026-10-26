@@ -1,0 +1,82 @@
+#!/usr/bin/env node
+'use strict';
+// Independent regression cases from the Argon/Opus review. Local rendering only.
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
+const {chromium}=require('./lib/playwright');
+const ROOT=path.resolve(__dirname,'../..');
+const server=http.createServer((req,res)=>{
+ const file=path.resolve(ROOT,'.'+decodeURIComponent(req.url.split('?')[0]));
+ if(!file.startsWith(ROOT+path.sep)||!fs.existsSync(file)||fs.statSync(file).isDirectory()){res.writeHead(404);return res.end();}
+ res.setHeader('Content-Type',({'.js':'text/javascript','.css':'text/css','.html':'text/html','.svg':'image/svg+xml','.woff2':'font/woff2'})[path.extname(file)]||'application/octet-stream');
+ let content=fs.readFileSync(file);
+ if(file.endsWith('/app/exam.js'))content=content.toString().replace('window.NM_EXAM = NM_EXAM;','window.NM_EXAM = NM_EXAM;window.__reviewQA={applyPartialBlanks,printAskText,w2CellHtml,stripConceptTags,sortRoundProblems,assignStudyDays,prosePowersHtml};');
+ res.end(content);
+});
+(async()=>{let browser;await new Promise(r=>server.listen(0,'127.0.0.1',r));try{
+ const origin='http://127.0.0.1:'+server.address().port;
+ browser=await chromium.launch();const page=await browser.newPage({viewport:{width:1100,height:1400}});
+ await page.route('**/*',route=>route.request().url().startsWith(origin+'/')?route.continue():route.abort());
+ await page.goto(origin+'/number_magic/ws.html?c=C4&s=1&p=1&auto=0&w=2026-W43');
+ await page.waitForFunction(()=>window.NM_WS_READY!==undefined);assert.equal(await page.evaluate(()=>NM_WS_READY),true);
+ const result=await page.evaluate(()=>{
+  let assertions=0;const eq=(a,b,msg)=>{assertions++;if(JSON.stringify(a)!==JSON.stringify(b))throw Error(msg+': '+JSON.stringify(a)+' != '+JSON.stringify(b));};
+  const ok=(v,msg)=>eq(!!v,true,msg),Q=__reviewQA;
+  const gen=(t,lv,seed)=>{const th=NM_THREADS[t],l=th.levels.find(x=>x.id===lv);return NM_TGEN[th.gen](l.params||{},NM_RNG.mulberry32(seed));};
+  for(const tex of ['\\int_{-1}^{1}x^2\\,dx','\\int^1_0 x^1 dx','\\sum_{k=1}^{1} k','\\prod_{i=0}^{1}i','\\lim_{x\\to1}x^{1}']){
+   const got=NM_TEX.tidy(tex);ok(got.includes(tex.match(/^\\\w+(?:[_^](?:\{[^}]*\}|\w)){0,2}/)[0]),'Operator limit was removed');
+  }
+  eq(NM_TEX.tidy('x^{1}+2^{1}'),'x+2','Ordinary exponent one still simplifies');
+  for(let seed=1;seed<=240;seed++){
+   const root=gen('MD66',5,seed),m=root.solution[0].tex.match(/\\dfrac\{(-?\d+)\}\{2\}/);
+   eq(+m[1]/2,root.answer,'Double-root solution sign');
+   const pow=gen('MD10',5,seed); // locate the actual distribution level below as well
+   ok(pow&&pow.tex,'Power generation');
+   const dist=NM_TGEN[NM_THREADS.MD10.gen]({mode:'distribute'},NM_RNG.mulberry32(seed));
+   ok(!dist.solution.some(s=>/(^|[= ])-\d+\^/.test(s.tex)),'Negative base needs parentheses');
+   const log=gen('MD54',3,seed),t=log.tex.match(/\\log_\{(\d+)\}\((\d+)x ([+-]) (\d+)\) (\\le|\\ge) (\d+)/);
+   if(!t)throw Error('Log fixture not understood: '+log.tex);
+   const a=+t[1],p=+t[2],q=(t[3]==='-'?-1:1)*+t[4],bound=log.answer,lower=-q/p;
+   eq(p*bound+q,a**+t[6],'Log equality boundary');
+   if(t[5]==='\\le')ok(log.tex.includes('< x \\le \\square'),'Log upper-bound solution must include its domain');
+   for(const x of [lower-1,lower,lower+.01,bound,bound+1]){
+    const analytic=p*x+q>0&&(t[5]==='\\le'?Math.log(p*x+q)/Math.log(a)<=+t[6]+1e-9:Math.log(p*x+q)/Math.log(a)>=+t[6]-1e-9);
+    eq(analytic,t[5]==='\\le'?x>lower&&x<=bound:x>=bound,'Log solution set');
+   }
+   const fr=gen('FR4',2,seed),step=fr.steps[1];
+   const f=step.tex.match(/\\frac\{(\d+)\}\{(\d+)\} ([+-])\s*\\frac\{(\d+)\}\{(\d+)\}/);
+   if(f)eq(step.blank,f[3]==='+'?+f[1]+ +f[4]:+f[1]- +f[4],'Fraction carry/borrow intermediate numerator');
+  }
+  for(const [n,a,b,want] of [['3/2','과','와','3/2과'],['2/3','과','와','2/3와'],['장','이에요','예요','장이에요'],['1','으로','로','1로'],['6','으로','로','6으로']])eq(NM_RNG.koJosa(n,a,b),want,'Spoken Korean particle');
+  const inline=Q.prosePowersHtml('A^C와 2^(2/3)은 수식이에요.');
+  ok(inline.includes('data-tex="A^C"')&&inline.includes('data-tex="2^{2/3}"')&&inline.includes('와 '),'Inline powers retain surrounding prose');
+  const rounds=[{problems:Array(60).fill({}),html:[0,24,6,12,18].map(n=>'<div class="nm-w2-page">'+Array(n).fill('<div class="nm-w2-item"></div>').join('')+'</div>').join('')}];
+  eq(Q.assignStudyDays(rounds,3),3,'Three study days');
+  const loads=[0,0,0];[0,24,6,12,18].forEach((n,i)=>loads[rounds[0].pageStudyDays[i]-1]+=n);
+  eq(loads,[24,18,18],'Balance whole pages without splitting a question');
+  eq(rounds[0].pageStudyDays[0],rounds[0].pageStudyDays[1],'Concept remains with following practice');
+  for(const c of Object.values(NM_COURSES)){
+    const learned={};for(const session of c.sessions.filter(s=>!s.test))for(const d of (session.drills||[]).concat(session.creative||[]))if(d?.t)learned[d.t]=Math.max(learned[d.t]||0,d.lv||0);
+    for(const entry of c.sessions.find(s=>s.test)?.pool||[])if(learned[entry.t])eq(entry.lv,learned[entry.t],'Course test uses its actual practised level C'+c.order+' '+entry.t);
+  }
+  const blocks=[0,1,2,3].map(()=>({base10:{tens:5,ones:6},tex:'50 + 6 = \\square',answer:56}));
+  Q.applyPartialBlanks(blocks,'medium',{});eq(blocks.map(p=>p.answer),[56,56,56,56],'Pictures retain their whole-number answer');
+  for(const [t,lv]of[['MD34',3],['MD85',4],['MD101',2],['MD105',2],['MD110',3],['MD127',3],['MD153',1],['MD156',2],['MD158',2],['MD159',2]]){
+   for(let seed=1;seed<=12;seed++){const p=gen(t,lv,seed),ask=Q.printAskText(p,t);ok(ask&&ask.length>5,'Required prompt missing '+t);const html=Q.w2CellHtml(p,1,t,false,false,'long',0,1,false,'');ok(html.includes('nm-print-ask'),'Printed question lost condition '+t);}
+  }
+  for(let seed=1;seed<=24;seed++){
+   const p=gen('ML25',1,seed),h=Q.w2CellHtml(p,1,'ML25',false,false,'visual',0,1,false,'');
+   ok(h.includes('nm-print-ask'),'Number line needs a question');if(p.numline.blank<0)ok(h.includes('뛴 횟수')&&h.includes('boxed'),'Hop count needs a writing box');
+  }
+  const lt=NM_LANG_THINK.pageHtml(12,'review','ko','C0','review',true),key=NM_LANG_THINK.pageHtml(12,'review','ko','C0','review',true,true);
+  ok(!lt.includes('nm-lt-answers'),'Answers leaked onto student language page');ok(key.includes('nm-lt-answer-key'),'Language answers must remain in guardian key');
+  eq(Q.stripConceptTags('<b>조건</b> 1<x<3, x>0'),'조건 1<x<3, x>0','Inequalities must survive HTML stripping');
+  for(const c of Object.values(NM_COURSES).filter(c=>c.order>0&&c.order%3===0)){
+   for(let i=0;i<c.sessions.length;i++){
+    const e=NM_EXAM.weeklyEnvelope(c,'C'+c.order,'2026-W43',{startSession:i+1,legacySession:true});
+    if(e)eq(e.items.some(it=>(it.topicName||'').startsWith('단계 점검')),i===c.sessions.length-1,'Stage-check timing C'+c.order+' S'+(i+1));
+   }
+  }
+  return{assertions};
+ });
+ console.log('PASS review P0',result);
+ }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

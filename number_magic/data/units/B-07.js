@@ -38,7 +38,7 @@ window.NM_UNITS['B-07'] = {
               en:'Add up the digits of any 3× answer and you always get <b>a multiple of 3</b>! This trick makes checking your work easy.',
               zh:'把3的倍数的各位数字加起来，总是<b>3的倍数</b>！掌握这个秘诀，验算就变得简单了。'},
         mathSteps:['12: 1+2=3 ✓','18: 1+8=9 ✓','27: 2+7=9 ✓',{ko:'→ 3의 배수 특징!',en:'→ \\text{a multiple-of-3 pattern!}',zh:'→ 3的倍数的特点！'}],
-        result:{ko:'3단의 모든 답은 자릿수 합이 3 또는 9예요. 기억해 두세요!', en:'Every answer in the 3 times table has a digit sum of 3, 6, or 9. Remember that!', zh:'3的乘法表中每个答案的数位之和都是3、6或9。记住这一点！'},
+        result:{ko:'3단의 모든 답은 자릿수 합이 3, 6, 9 중 하나예요. 기억해 두세요!', en:'Every answer in the 3 times table has a digit sum of 3, 6, or 9. Remember that!', zh:'3的乘法表中每个答案的数位之和都是3、6或9。记住这一点！'},
         book:{ko:'어떤 수의 각 자리 숫자 합이 3의 배수이면 그 수는 3의 배수예요. 3단 결과는 모두 이 규칙을 따릅니다.', en:'If the digit sum of a number is divisible by 3, so is the number itself. All 3× results follow this rule.', zh:'如果一个数的数位之和能被3整除，那么这个数本身也能被3整除。3的乘法表所有结果都遵循这个规律。'} },
 
       { tag:{ko:'③ 3단 외우기 팁', en:'3) Tips for memorising the 3s', zh:'③ 记忆3的口诀的技巧'},

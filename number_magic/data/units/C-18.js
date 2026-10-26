@@ -33,9 +33,9 @@ window.NM_UNITS['C-18'] = {
     stages:[
       { tag:{ko:'① 나누기 쉬운 조각',en:'1) Easy-to-divide pieces',zh:'① 容易除的块'},
         head:{ko:'312÷3 = 300÷3 + 12÷3',en:'312÷3 = 300÷3 + 12÷3',zh:'312÷3 = 300÷3 + 12÷3'},
-        desc:{ko:'312÷3이 어렵게 보이면 <b>312를 300+12로 쪼개요</b>. 두 조각 다 3으로 딱 나눠져요! 300÷3=100, 12÷3=4 → 100+4=<b>104</b>. 핵심은 <b>나누는 수로 딱 떨어지는 조각</b>을 고르는 것. 곱셈의 분배법칙(C-07)이 나눗셈에도 통해요!',
-              en:'If 312÷3 looks hard, <b>split 312 into 300+12</b> — both pieces divide cleanly by 3! 300÷3=100, 12÷3=4 → 100+4=<b>104</b>. The key is choosing <b>pieces the divisor goes into evenly</b>. The distributive law from multiplication (C-07) works for division too!',
-              zh:'312÷3看着难？<b>把312拆成300+12</b>——两块都能被3整除！300÷3=100，12÷3=4 → 100+4=<b>104</b>。关键是选<b>能被除数整除的块</b>。乘法的分配律(C-07)在除法也适用！'},
+        desc:{ko:'312÷3이 어렵게 보이면 <b>312를 300+12로 쪼개요</b>. 두 조각 다 3으로 딱 나눠져요! 300÷3=100, 12÷3=4 → 100+4=<b>104</b>. 핵심은 <b>나누는 수로 딱 떨어지는 조각</b>을 고르는 것. 곱셈의 분배법칙이 나눗셈에도 통해요!',
+              en:'If 312÷3 looks hard, <b>split 312 into 300+12</b> — both pieces divide cleanly by 3! 300÷3=100, 12÷3=4 → 100+4=<b>104</b>. The key is choosing <b>pieces the divisor goes into evenly</b>. The distributive law from multiplication works for division too!',
+              zh:'312÷3看着难？<b>把312拆成300+12</b>——两块都能被3整除！300÷3=100，12÷3=4 → 100+4=<b>104</b>。关键是选<b>能被除数整除的块</b>。乘法的分配律在除法也适用！'},
         mathSteps:['312 ÷ 3','= (300 + 12) ÷ 3','= 100 + 4','= 104'],
         result:{ko:'312÷3=104! 조각마다 나누고 몫을 더해요.',en:'312÷3=104! Divide each piece, add the quotients.',zh:'312÷3=104！每块分别除，商相加。'},
         book:{ko:'원리: (a+b)÷c = a÷c + b÷c. 단, 나눗셈에서는 나누어지는 수만 쪼갤 수 있어요 — 나누는 수를 쪼개면 안 돼요! 예: 12÷(2+1) ≠ 12÷2+12÷1.',

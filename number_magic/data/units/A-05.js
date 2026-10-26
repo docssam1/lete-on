@@ -30,7 +30,7 @@ window.NM_UNITS['A-05'] = {
     stages:[
       { tag:{ ko:'① 100의 짝이란?', en:'1) What are 100-pairs?', zh:'① 什么是凑百配对？' },
         head:{ ko:'10의 짝처럼 100의 짝도 있어요!', en:'Just like pairs to 10, there are pairs to 100!', zh:'就像凑十一样，凑百也有配对！' },
-        desc:{ ko:'A-01에서 더해서 10이 되는 짝을 배웠어요. 이번엔 더해서 <b>100이 되는 짝</b>이에요. 25와 75, 35와 65처럼요. 이 짝을 먼저 찾아 더하면 계산이 훨씬 쉬워져요!',
+        desc:{ ko:'앞에서 더해서 10이 되는 짝을 배웠어요. 이번엔 더해서 <b>100이 되는 짝</b>이에요. 25와 75, 35와 65처럼요. 이 짝을 먼저 찾아 더하면 계산이 훨씬 쉬워져요!',
                en:'In A-01 you learned pairs to 10. Now it\'s pairs to 100: like 25+75 or 35+65. Find these pairs first and the calculation becomes much easier!',
                zh:'在A-01里学了凑十的配对。这次是凑成100的配对：像25和75、35和65。先找到这些配对，计算就容易多了！' },
         mathSteps:[{ko:'25 + 75 = 100  (짝!)',en:'25 + 75 = 100 \\text{ (a pair!)}',zh:'25 + 75 = 100（凑对！）'}, {ko:'40 + 60 = 100  (짝!)',en:'40 + 60 = 100 \\text{ (a pair!)}',zh:'40 + 60 = 100（凑对！）'}, {ko:'63 + 37 = 100  (짝!)',en:'63 + 37 = 100 \\text{ (a pair!)}',zh:'63 + 37 = 100（凑对！）'}],

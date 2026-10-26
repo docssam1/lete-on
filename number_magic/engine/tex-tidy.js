@@ -19,7 +19,7 @@
 
   /* \text{…} 를 잠시 자리표로 빼 두고 식만 다듬는다 */
   function protect(tex, store) {
-    return String(tex).replace(/\\text\{[^}]*\}/g, m => {
+    return String(tex).replace(/\\text\{[^}]*\}|\\(?:int|iint|iiint|oint|sum|prod|lim)(?:\\limits)?(?:\s*[_^](?:\{[^{}]*\}|[A-Za-z0-9+-])){1,2}/g, m => {
       store.push(m);
       return '\u0000' + (store.length - 1) + '\u0000';
     });

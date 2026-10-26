@@ -46,9 +46,9 @@ window.NM_UNITS['H-07'] = {
               en:'The number of back digits depends on the anchor — two for 50/100, three for 1000. Combining with real addition automatically handles any carrying.',
               zh:'后面的位数取决于基准——50/100用两位，1000用三位。用真正的加法拼接，进位也会自动处理正确。'} }
     ],
-    rule:{ ko:'① 기준수와의 차를 구하기  ② 앞자리 = 기준²÷자리수 + 차(부호 그대로)  ③ 뒷자리 = 차²',
-      en:'① Find the gap from the anchor  ② Front = anchor²÷place-scale + gap (with sign)  ③ Back = gap²',
-      zh:'① 求与基准数的差  ② 前面 = 基准²÷位数 + 差（带符号）  ③ 后面 = 差²' }
+    rule:{ ko:'① 기준수와의 차를 구하기  ② 기준 100·1000: 앞부분=기준수+2×차, 기준 50: 앞부분=25+차  ③ 뒷자리 = 차²',
+      en:'① Find the gap from the anchor  ② Near 100 or 1000: front=anchor+2×gap; near 50: front=25+gap  ③ Back = gap²',
+      zh:'① 求与基准数的差  ② 基准100或1000：前段=基准+2×差；基准50：前段=25+差  ③ 后面 = 差²' }
   },
 
   check:{

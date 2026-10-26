@@ -44,7 +44,7 @@ window.NM_UNITS['M-34'] = {
 
       { tag:{ko:'② 수직: 계수를 엇갈려 곱해 더하면 0',en:'2) Perpendicular: cross-multiply and sum to 0',zh:'② 垂直：交叉相乘之和为0'},
         head:{ko:'3x+2y+1=0,\\;kx-6y+4=0 \\;\\Rightarrow\\; k=4',en:'3x+2y+1=0,\\;kx-6y+4=0 \\;\\Rightarrow\\; k=4',zh:'3x+2y+1=0,\\;kx-6y+4=0 \\;\\Rightarrow\\; k=4'},
-        desc:{ko:'수직 조건은 Ak+BD=0. 여기선 3×k+2×(-6)=0 → 3k=12 → k=<b>4</b>. 기울기로 확인하면 -3/2와 -k/(-6)=k/6의 곱이 -1이 되는 것과 같습니다.',
+        desc:{ko:'수직 조건은 Ak+BD=0. 여기선 3×k+2×(-6)=0 → 3k=12 → k=<b>4</b>. 기울기로 확인하면 -3/2과 -k/(-6)=k/6의 곱이 -1이 되는 것과 같습니다.',
               en:'The perpendicular condition is Ak+BD=0. Here: 3×k+2×(-6)=0 → 3k=12 → k=<b>4</b>. Checking via slopes, this matches -3/2 times k/6 equaling -1.',
               zh:'垂直条件是Ak+BD=0。这里：3×k+2×(-6)=0 → 3k=12 → k=<b>4</b>。用斜率验证，就是-3/2乘以k/6等于-1。'},
         mathSteps:['3k+2\\times(-6)=0', '3k=12', 'k=4'],

@@ -50,7 +50,7 @@ window.NM_UNITS['A-12'] = {
 
       { tag:{ ko:'③ 앞에서부터 계산이 안 될 때 특히 좋아요', en:'3) Especially good when order-by-order gets stuck', zh:'③ 从前往后算不通时特别好用' },
         head:{ ko:'중간에 뺄 수 없어도 끼리끼리로는 풀려요', en:'Even if you get stuck mid-way, grouping solves it', zh:'中途减不出来，用归类法也能算' },
-        desc:{ ko:'27-53+72-15을 앞에서부터 차례로 계산하면 27에서 53을 뺄 수 없어 막혀요. 하지만 <b>더하는 수끼리, 빼는 수끼리 묶으면</b> 문제없이 풀 수 있어요.',
+        desc:{ ko:'27-53+72-15를 앞에서부터 차례로 계산하면 27에서 53을 뺄 수 없어 막혀요. 하지만 <b>더하는 수끼리, 빼는 수끼리 묶으면</b> 문제없이 풀 수 있어요.',
                en:'Calculating 27-53+72-15 step by step gets stuck since 27 is smaller than 53. But <b>grouping plus-terms and minus-terms</b> solves it easily.',
                zh:'按顺序计算27-53+72-15会卡住，因为27减不了53。但<b>用归类法</b>就能顺利算出。' },
         mathSteps:['27 - 53 + 72 - 15','= (27 + 72) - (53 + 15)','= 99 - 68','= 31'],
@@ -72,7 +72,7 @@ window.NM_UNITS['A-12'] = {
         hint:{ ko:'빼는 수 32, 50, 23을 모두 더하면?', en:'Add up all the minus-terms: 32+50+23=?', zh:'把减数32、50、23加起来是多少？' } }
     ],
     open:{
-      ko:'27-53+72-15을 앞에서부터 차례로 계산하면 왜 막힐까요? 끼리끼리 방법으로는 왜 풀 수 있는지 설명해봐요.',
+      ko:'27-53+72-15를 앞에서부터 차례로 계산하면 왜 막힐까요? 끼리끼리 방법으로는 왜 풀 수 있는지 설명해봐요.',
       en:'Why does calculating 27-53+72-15 step by step get stuck? Explain why grouping solves it.',
       zh:'为什么按顺序计算27-53+72-15会卡住？说说为什么归类法能解决。'
     },

@@ -44,16 +44,16 @@ window.NM_UNITS['M-31'] = {
 
       { tag:{ko:'② 완전제곱수가 아니면 근호 정리',en:'2) Simplify the radical if it isn\'t a perfect square',zh:'② 不是完全平方数就化简根号'},
         head:{ko:'A(0,0), B(1,2) \\;\\Rightarrow\\; \\overline{AB}=\\sqrt5',en:'A(0,0), B(1,2) \\;\\Rightarrow\\; \\overline{AB}=\\sqrt5',zh:'A(0,0), B(1,2) \\;\\Rightarrow\\; \\overline{AB}=\\sqrt5'},
-        desc:{ko:'1²+2²=5는 완전제곱수가 아니라 √5 그대로 남습니다. 더 큰 수라면 √48=4√3처럼 근호 정리(MD16)로 계수와 근호 안을 나눠 답합니다.',
-              en:'1²+2²=5 isn\'t a perfect square, so it stays as √5. For bigger numbers, simplify the radical (MD16) as in √48=4√3, splitting into coefficient and radicand.',
-              zh:'1²+2²=5不是完全平方数，就保留√5。数更大时用根号化简(MD16)，像√48=4√3那样分出系数和根号内的部分。'},
+        desc:{ko:'1²+2²=5는 완전제곱수가 아니라 √5 그대로 남습니다. 더 큰 수라면 √48=4√3처럼 근호 정리로 계수와 근호 안을 나눠 답합니다.',
+              en:'1²+2²=5 isn\'t a perfect square, so it stays as √5. For bigger numbers, simplify the radical as in √48=4√3, splitting into coefficient and radicand.',
+              zh:'1²+2²=5不是完全平方数，就保留√5。数更大时用根号化简，像√48=4√3那样分出系数和根号内的部分。'},
         mathSteps:['\\overline{AB}^2=1^2+2^2=5', '\\overline{AB}=\\sqrt5', {ko:'\\text{(정리 안 되면 계수 1, 근호안 5)}',en:'\\text{(if it will not simplify: coefficient 1, 5 under the root)}',zh:'\\text{（化简不了就是系数1、根号内5）}'}],
-        result:{ko:'답은 [계수,근호안] 두 정수 — 정리가 안 되면 계수는 1입니다!',en:'The answer is [coefficient, radicand] — if it doesn\'t simplify, the coefficient is just 1!',zh:'答案是[系数,根号内]两个整数——不能化简时系数就是1！'},
+        result:{ko:'답은 빈칸에는 근호 밖의 수와 근호 안의 수를 순서대로 씁니다. 근호 밖의 수가 없으면 1을 씁니다.',en:'The answer is [coefficient, radicand] — if it doesn\'t simplify, the coefficient is just 1!',zh:'答案是[系数,根号内]两个整数——不能化简时系数就是1！'},
         book:{ko:'근호 정리 규약을 그대로 재사용합니다 — 거리 공식만의 새로운 규약을 만들지 않습니다.',
               en:'This reuses the same radical-simplifying convention — no new rule invented just for distance.',
               zh:'沿用根号化简的同一规约——没有为距离公式另外发明新规则。'} }
     ],
-    rule:{ ko:'① 거리 = √((x₂-x₁)²+(y₂-y₁)²)  ② 답은 [계수,근호안] — 정리 안 되면 계수 1',
+    rule:{ ko:'① 거리 = √((x₂-x₁)²+(y₂-y₁)²)  ② 답은 근호 밖과 안의 빈칸을 채워요. 근호 밖의 수가 없으면 1',
       en:'① Distance = √((x₂-x₁)²+(y₂-y₁)²)  ② Answer is [coefficient, radicand] — coefficient 1 if it doesn\'t simplify',
       zh:'① 距离 = √((x₂-x₁)²+(y₂-y₁)²)  ② 答案是[系数,根号内]——不能化简时系数为1' }
   },

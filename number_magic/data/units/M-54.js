@@ -62,7 +62,7 @@ window.NM_UNITS['M-54'] = {
     fills:[
       { tex:'2^{x} \\ge 2^{5} \\;\\Rightarrow\\; x \\ge \\square', answer:5,
         hint:{ ko:'지수끼리 그대로 비교', en:'Compare the exponents directly', zh:'直接比较指数' } },
-      { tex:'\\log_3(x+2) \\le 2 \\;\\Rightarrow\\; x \\le \\square', answer:7,
+      { tex:'\\log_3(x+2) \\le 2 \\;\\Rightarrow\\; -2 < x \\le \\square', answer:7,
         hint:{ ko:'x+2=3^2=9', en:'x+2=3^2=9', zh:'x+2=3^2=9' } }
     ],
     open:{ ko:'3^(x-1)≥27을 경계값 찾기부터 설명해봅니다.',

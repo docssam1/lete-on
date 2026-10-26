@@ -31,9 +31,9 @@ window.NM_UNITS['C-15'] = {
               zh:'44、33、22这类数<b>两个数位是同一个数字</b>。所以23×44不需要乘两次！只算<b>一次23×4=92</b>，十位部分就是92移一位的920。所以23×44 = 920+92 = <b>1012</b>。'},
         mathSteps:['23 × 44',{ko:'23×4 = 92 (한 번만!)',en:'23×4 = 92 \\text{ (just once!)}',zh:'23×4 = 92（只算一次！）'},'92×10 + 92 = 920+92','= 1012'],
         result:{ko:'23×44=1012! 한 번 곱하고, 밀고, 더하면 끝.',en:'23×44=1012! Multiply once, shift, add — done.',zh:'23×44=1012！乘一次、移位、相加，完成。'},
-        book:{ko:'원리: a×44 = a×4×11 = (a×4)×10 + (a×4). 반복 숫자 수는 "숫자×11"이라서 ×11 마법(C-13)의 자리이동과 똑같은 구조예요.',
-              en:'Principle: a×44 = a×4×11 = (a×4)×10 + (a×4). Repeated-digit numbers are "digit×11", the same shift-and-add structure as the ×11 magic (C-13).',
-              zh:'原理：a×44 = a×4×11 = (a×4)×10 + (a×4)。重复数字数就是"数字×11"，和×11魔法(C-13)的移位结构一样。'} },
+        book:{ko:'원리: a×44 = a×4×11 = (a×4)×10 + (a×4). 반복 숫자 수는 "숫자×11"이라서 ×11 마법의 자리이동과 똑같은 구조예요.',
+              en:'Principle: a×44 = a×4×11 = (a×4)×10 + (a×4). Repeated-digit numbers are "digit×11", the same shift-and-add structure as the ×11 magic.',
+              zh:'原理：a×44 = a×4×11 = (a×4)×10 + (a×4)。重复数字数就是"数字×11"，和×11魔法的移位结构一样。'} },
 
       { tag:{ko:'② 밀어서 더하는 기술',en:'2) The shift-and-add technique',zh:'② 移位相加技术'},
         head:{ko:'92 + 920: 자리를 맞춰 더해요',en:'92 + 920: add with places aligned',zh:'92 + 920：对齐数位相加'},

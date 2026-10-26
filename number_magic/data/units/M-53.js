@@ -33,7 +33,7 @@ window.NM_UNITS['M-53'] = {
     stages:[
       { tag:{ko:'① log의 정의로 x를 찾습니다',en:'1) Use the definition of log to find x',zh:'① 用log的定义求x'},
         head:{ko:'\\log_2(2x+1)=3 \\;\\Rightarrow\\; x=\\dfrac{7}{2}',en:'\\log_2(2x+1)=3 \\;\\Rightarrow\\; x=\\dfrac{7}{2}',zh:'\\log_2(2x+1)=3 \\;\\Rightarrow\\; x=\\dfrac{7}{2}'},
-        desc:{ko:'log₂(2x+1)=3은 정의에 따라 <b>2x+1=2³=8</b>이라는 뜻입니다. 이제 일차방정식 2x+1=8만 풀면 됩니다. (실제 문항은 항상 정수 x가 나오도록 값이 골라져 있습니다.)',
+        desc:{ko:'log₂(2x+1)=3은 정의에 따라 <b>2x+1=2³=8</b>이라는 뜻입니다. 이제 일차방정식 2x+1=8만 풀면 됩니다.',
               en:'By definition, log₂(2x+1)=3 means <b>2x+1=2³=8</b>. Now just solve the linear equation 2x+1=8. (Actual problems are always set up so x comes out an integer.)',
               zh:'按定义log₂(2x+1)=3的意思就是<b>2x+1=2³=8</b>。现在只需解一次方程2x+1=8。(实际题目总会保证x是整数。)'},
         mathSteps:['2x+1=2^3', '2x+1=8', '2x=7'],

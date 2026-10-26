@@ -335,7 +335,7 @@ NM_TGEN['adv_repeatDec'] = function (params, rng) {
       tex: `${n} \\div ${d} = 0.\\overline{\\square}`,
       answer: n, answerType: 'number', widget: 'numpad',
       solution: [
-        { tex: `${d} = \\underbrace{9\\cdots9}_{${nDigits}\\text{자리}} \\;\\Rightarrow\\; \\text{몫의 반복마디는 나눈 수 그대로}` },
+        { tex: `${d} = \\underbrace{9\\cdots9}_{${nDigits}\\text{자리}} \\;\\Rightarrow\\; \\text{몫의 반복마디는 나누어지는 수를 자리 수에 맞춰 쓴 모양}` },
         { tex: `${n} \\div ${d} = 0.\\overline{\\square}`, blank: n }
       ]
     };
@@ -356,7 +356,7 @@ NM_TGEN['adv_repeatDec'] = function (params, rng) {
         en: `What is the ${k}${k === 1 ? 'st' : k === 2 ? 'nd' : k === 3 ? 'rd' : 'th'} digit after the decimal point of ${n} ÷ ${d}?`,
         zh: `${n} ÷ ${d}的小数点后第${k}位是几？`
       },
-      tex: `${n} \\div ${d} = \\square \\;(\\text{소수 ${k}번째 자리})`,
+      tex: `\\text{${n}÷${d}의 소수점 아래 ${k}번째 자리 숫자}=\\square`,
       answer: digit, answerType: 'number', widget: 'numpad',
       solution: [
         { tex: `${n} \\times 10^{${k}} = ${scaled}` },

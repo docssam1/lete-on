@@ -34,7 +34,7 @@ window.NM_UNITS['H-05'] = {
     stages:[
       { tag:{ko:'① 9로 나누면 그대로 반복',en:'1) Divide by 9 — it just repeats',zh:'① 除以9就原样重复'},
         head:{ko:'1÷9=0.111…, 7÷9=0.777…',en:'1÷9=0.111…, 7÷9=0.777…',zh:'1÷9=0.111…，7÷9=0.777…'},
-        desc:{ko:'소수점 아래에 같은 수들이 반복되는 소수를 <b>순환소수</b>라고 해요. 1÷9를 나눠보면 0.111…, 2÷9는 0.222…, 7÷9는 0.777… — <b>나눈 수(9)와 몫의 반복마디가 나누어지는 수와 똑같아요!</b> 99로 나누면 어떨까요? 23÷99=0.232323… — 이번엔 <b>두 자리씩</b> 반복돼요. 9는 한 자리, 99는 두 자리씩 반복시켜요.',
+        desc:{ko:'소수점 아래에 같은 수들이 반복되는 소수를 <b>순환소수</b>라고 해요. 1÷9를 나눠보면 0.111…, 2÷9는 0.222…, 7÷9는 0.777… — <b>이 예에서는 나누어지는 수가 몫의 반복마디예요!</b> 99로 나누면 어떨까요? 23÷99=0.232323… — 이번엔 <b>두 자리씩</b> 반복돼요. 9는 한 자리, 99는 두 자리씩 반복시켜요.',
               en:'A decimal where the same digits repeat forever is a <b>repeating decimal</b>. Try 1÷9=0.111…, 2÷9=0.222…, 7÷9=0.777… — <b>the repeating block matches the number you divided!</b> What about dividing by 99? 23÷99=0.232323… — this time it repeats <b>two digits</b> at a time. 9 repeats one digit; 99 repeats two.',
               zh:'小数点后同样的数字不断重复，就叫<b>循环小数</b>。试试1÷9=0.111…，2÷9=0.222…，7÷9=0.777……<b>循环节正好就是被除数本身！</b>除以99会怎样？23÷99=0.232323……这次是<b>两位两位</b>地重复。9重复一位，99重复两位。'},
         mathSteps:['1÷9 = 0.111…','7÷9 = 0.777…','23÷99 = 0.232323…'],
@@ -54,7 +54,7 @@ window.NM_UNITS['H-05'] = {
               en:'This equation trick (10★−★=whole number) is taught in middle school — you already know it!',
               zh:'这个方程小技巧（10★−★=整数）是初中才学的——你已经提前会了！'} }
     ],
-    rule:{ ko:'① 9·99·999로 나누면 반복마디가 나눈 수 그대로  ② 다른 분모는 긴나눗셈으로 자리를 하나씩 살펴보기  ③ 되돌릴 땐 10★−★로 반복을 지우기',
+    rule:{ ko:'① 9·99·999로 나누면 반복마디는 나누어지는 수를 자리 수에 맞춰 쓴 모양  ② 다른 분모는 긴나눗셈으로 자리를 하나씩 살펴보기  ③ 되돌릴 땐 10★−★로 반복을 지우기',
       en:'① ÷9, ÷99, ÷999 repeat the dividend itself  ② For other divisors, walk through long division digit by digit  ③ To go back, use 10★−★ to erase the repeat',
       zh:'① 除以9、99、999时循环节就是被除数本身  ② 其他除数用长除法逐位查看  ③ 转换回去用10★−★消掉循环' }
   },
@@ -62,7 +62,7 @@ window.NM_UNITS['H-05'] = {
   check:{
     fills:[
       { tex:'5 \\div 9 = 0.\\overline{\\square}', answer:5,
-        hint:{ ko:'9로 나누면 몫이 나눈 수 그대로', en:'÷9 repeats the dividend', zh:'除以9，商就是被除数本身' } },
+        hint:{ ko:'9로 나누면 몫의 반복마디가 나누어지는 수와 같아요', en:'÷9 repeats the dividend', zh:'除以9，商就是被除数本身' } },
       { tex:'17 \\div 99 = 0.\\overline{\\square}', answer:17,
         hint:{ ko:'99로 나누면 두 자리씩 그대로', en:'÷99 repeats two digits at a time', zh:'除以99两位两位重复' } }
     ],

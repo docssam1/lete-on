@@ -38,8 +38,9 @@ for (const f of files) {
   // 수식 안팎 모두: 빈 수식(렌더러가 ' $..$ '로 감싸므로 붙은 $$ 는 내용이 빈 수식), 백슬래시가 빠진 TeX 명령
   for (const m of body.matchAll(/(^|\s)\$\$(?=\s|$)/gm)) add('leftover', '빈 $$', where);
   for (const m of body.matchAll(/(^|[^\\A-Za-z])(ext\{|qquad|mathrm\{)/gm)) add('leftover', '\\ 빠진 TeX(' + m[2] + ')', where);
-  const days = {};
-  for (const m of body.matchAll(/^(\d)일차(?:–\d일차)?\t\d+\t[^\t]+\t(\d+)문항/gm)) days[m[1]] = (days[m[1]] || 0) + Number(m[2]);
+  let days = {};
+  try{days=JSON.parse(raw.slice(1,raw.indexOf('\n'))).days||{};}catch{}
+  if(!Object.keys(days).length)for (const m of body.matchAll(/^(\d)일차(?:–\d일차)?\t\d+\t[^\t]+\t(\d+)문항/gm)) days[m[1]] = (days[m[1]] || 0) + Number(m[2]);
   const v = Object.values(days);
   if (v.length >= 2) { const mx = Math.max(...v), mn = Math.min(...v); if (mx >= 2 * mn && mx - mn >= 10) hits.daysplit.push(where + ' ' + JSON.stringify(days)); }
   let block = null, run = [];

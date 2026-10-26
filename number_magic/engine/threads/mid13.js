@@ -26,11 +26,11 @@ NM_TGEN.md84_center=function(params,rng){
   }
   if(mode==='modeSingle'){
     const target=R(rng,2,30),v=shuffle(rng,[target,target,target].concat(unique(rng,4,1,40,[target])));
-    return base(mode,v,target,list(v)+'\\quad\\text{최빈값}=\\square',[{tex:target+'\\text{은(는) }3\\text{번 나타남}'},{tex:'\\text{가장 많이 나타난 값}=\\square',blank:target}]);
+    return base(mode,v,target,list(v)+'\\quad\\text{최빈값}=\\square',[{tex:NM_RNG.koJosa(target,'은','는')+'\\text{ }3\\text{번 나타남}'},{tex:'\\text{가장 많이 나타난 값}=\\square',blank:target}]);
   }
   if(mode==='modeMultiple'){
     const pair=unique(rng,2,2,30).sort(function(a,b){return a-b;}),v=shuffle(rng,[pair[0],pair[0],pair[0],pair[1],pair[1],pair[1]].concat(unique(rng,2,1,40,pair)));
-    const p=base(mode,v,pair,list(v)+'\\quad\\text{최빈값}=\\left('+boxes(2)+'\\right)',[{tex:pair[0]+',\\;'+pair[1]+'\\text{이(가) 각각 }3\\text{번 나타남}'},{tex:'\\text{최빈값}=\\left('+boxes(2)+'\\right)',blank:pair}]);p.stats.modes=pair.slice();return p;
+    const p=base(mode,v,pair,list(v)+'\\quad\\text{최빈값}=\\left('+boxes(2)+'\\right)',[{tex:pair[0]+',\\;'+NM_RNG.koJosa(pair[1],'이','가')+'\\text{ 각각 }3\\text{번 나타남}'},{tex:'\\text{최빈값}=\\left('+boxes(2)+'\\right)',blank:pair}]);p.stats.modes=pair.slice();return p;
   }
   if(mode==='modeCategory'){
     const banks=[['독서','게임','운동','그림','음악'],['사과','배','귤','포도','복숭아'],['빨강','노랑','초록','파랑','보라'],['축구','야구','농구','수영','배드민턴']];

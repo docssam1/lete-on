@@ -49,9 +49,20 @@ function newCode(){
 const R    = (rng,a,b)=>Math.floor(rng()*(b-a+1))+a;
 const pick = (rng,arr)=>arr[Math.floor(rng()*arr.length)];
 const shuffle = (rng,a)=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+// Korean particles use the spoken ending. a/b is read "b분의 a".
+function koBatchim(value){
+  const s=String(value).trim(),fraction=s.match(/^(-?\d+)\s*\/\s*\d+$/),spoken=fraction?fraction[1]:s,last=spoken.slice(-1);
+  if(/\d/.test(last))return /[013678]/.test(last);
+  const c=last.charCodeAt(0)-0xac00;return c>=0&&c<11172&&c%28!==0;
+}
+function koJosa(value,withBatchim,without){
+  const s=String(value),fraction=s.trim().match(/^(-?\d+)\s*\/\s*\d+$/),last=(fraction?fraction[1]:s.trim()).slice(-1),c=last.charCodeAt(0)-0xac00;
+  const rieul=/[178]/.test(last)||c>=0&&c<11172&&c%28===8;
+  return s+(koBatchim(s)&&!(withBatchim==='으로'&&rieul)?withBatchim:without);
+}
 
-window.NM_RNG = { mulberry32, hashSeed, newCode, R, pick, shuffle };
+window.NM_RNG = { mulberry32, hashSeed, newCode, R, pick, shuffle, koBatchim, koJosa };
 window.NM_TGEN = window.NM_TGEN || {};   // 스레드 생성기 레지스트리 (engine/threads/*.js가 채움)
 
-if(typeof module!=='undefined'&&module.exports)module.exports={mulberry32,hashSeed,newCode,R,pick,shuffle};
+if(typeof module!=='undefined'&&module.exports)module.exports={mulberry32,hashSeed,newCode,R,pick,shuffle,koBatchim,koJosa};
 })();

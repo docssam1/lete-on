@@ -49,9 +49,9 @@ window.NM_UNITS['M-59'] = {
               zh:'两段要在边界x=2处相接，把x=2代入两边必须<b>相等</b>：2+b = 3(2)-1=5。所以b=3。'},
         mathSteps:['3(2)-1=5', '2+b=5', 'b=3'],
         result:{ko:'구간별 함수는 경계에서 왼쪽 식과 오른쪽 식의 값이 같아야 이어집니다!',en:'A piecewise function connects only if the left and right expressions agree at the boundary!',zh:'分段函数只有在边界处左右两式相等才能连接！'},
-        book:{ko:'이 유형은 극한 계산이 아니라 "대입해서 값 맞추기"라서 다항식 대입만 있으면 됩니다(MD43 factorCancel과는 다른 접근).',
-              en:'This type isn\'t about limits — it\'s about "matching values by substitution", so it only needs plain polynomial substitution (a different approach from MD43\'s factorCancel).',
-              zh:'这类题不是求极限，而是"代入配值"，只需要普通的多项式代入(和MD43的factorCancel思路不同)。'} }
+        book:{ko:'이 유형은 극한 계산이 아니라 "대입해서 값 맞추기"라서 다항식 대입만 있으면 됩니다.',
+              en:'This type isn\'t about limits — it\'s about "matching values by substitution", so it only needs plain polynomial substitution .',
+              zh:'这类题不是求极限，而是"代入配值"，只需要普通的多项式代入。'} }
     ],
     rule:{ ko:'함수가 한 점에서 연속이려면 그 점의 함숫값과 극한값이 같아야 합니다 — 미정계수는 그 값에 맞춰서 정합니다!',
       en:'For a function to be continuous at a point, its value there must equal the limit there — solve for the unknown constant to match!',

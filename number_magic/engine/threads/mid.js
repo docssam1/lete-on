@@ -600,7 +600,7 @@ function md5RatPower(rng){
     const tex = `${baseTex} \\times ${qPow} = \\square`;
     const steps = [ { tex: `${qPow} = \\square`, blank: T },
                     { tex: `${wrapSigned(T)} \\div ${qn} = \\square`, blank: T / qn } ];
-    if (p > 1) steps.push({ tex: `${wrapSigned(T / qn)} \\times ${pn} = \\square`, blank: T / qn * pn });
+    if (p > 1) steps.push({ tex: `${wrapSigned(T / qn)} \\times ${wrapSigned(powSign * pn)} = \\square`, blank: T / qn * powSign * pn });
     steps.push({ tex, blank: answer });
     return { tex, answer, steps };
   }
@@ -632,7 +632,7 @@ NM_TGEN['md5_signedPower'] = function (params, rng) {
     let prod = -a;
     for (let i = 1; i < n; i++) {
       const next = prod * (-a);
-      steps.push({ tex: `${prod} \\times (${-a}) = \\square`, blank: next });
+      steps.push({ tex: `${wrapSigned(prod)} \\times (${-a}) = \\square`, blank: next });
       prod = next;
     }
     const answer = prod;

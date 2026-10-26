@@ -372,7 +372,7 @@ NM_TGEN['fr4_unlikeAddSub'] = function(params, rng){
            차 |conv_a−conv_b| 를 넣어 덧셈에서도 차를 답으로 삼았고(표본 47% 불일치),
            앱의 steps 위젯이 이 값으로 채점해 **맞게 푼 학생이 틀렸다고 나왔다**(2026-09-20). */
         { tex: '\\text{분수: } \\frac{' + (op === '-' && conv_a < conv_b ? conv_a + LCD : conv_a) + '}{' + LCD + '} ' + op + ' \\frac{' + conv_b + '}{' + LCD + '} = \\frac{\\square}{' + LCD + '}'
-                 + (op === '-' && conv_a < conv_b ? ' \\quad(1\\text{을 빌림})' : ''), blank: rn },
+                 + (op === '-' && conv_a < conv_b ? ' \\quad(1\\text{을 빌림})' : ''), blank: op === '+' ? conv_a + conv_b : rn },
         { tex: '\\text{자연수: } \\square', blank: rw }
       ],
       widget: 'steps'

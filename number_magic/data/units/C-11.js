@@ -25,9 +25,9 @@ window.NM_UNITS['C-11'] = {
     stages:[
       { tag:{ko:'① 폭포수처럼 흘려 쓰기',en:'1) Cascading like a waterfall',zh:'① 像瀑布一样写下来'},
         head:{ko:'36×24: 부분곱을 한 줄씩 아래로!',en:'36×24: one partial product per line, downward!',zh:'36×24：部分积一行一行往下写！'},
-        desc:{ko:'풀풀곱셈(C-10)의 네 조각을 <b>순서대로 한 줄씩 아래로</b> 흘려 써요. 36×24라면: 30×20=600 ↓ 30×4=120 ↓ 6×20=120 ↓ 6×4=24. 위에서 아래로 폭포처럼 쌓인 <b>600, 120, 120, 24</b>를 더하면 864. 줄만 잘 맞추면 조각을 잃어버릴 일이 없어요!',
-              en:'Write the four pieces of full-full multiplication (C-10) <b>in order, one line at a time, downward</b>. For 36×24: 30×20=600 ↓ 30×4=120 ↓ 6×20=120 ↓ 6×4=24. The waterfall stack <b>600, 120, 120, 24</b> adds to 864. Keep the lines tidy and no piece ever gets lost!',
-              zh:'把全全乘法(C-10)的四块<b>按顺序一行一行往下</b>写。36×24：30×20=600 ↓ 30×4=120 ↓ 6×20=120 ↓ 6×4=24。瀑布般叠好的<b>600、120、120、24</b>相加得864。行对齐了，一块也不会丢！'},
+        desc:{ko:'풀풀곱셈의 네 조각을 <b>순서대로 한 줄씩 아래로</b> 흘려 써요. 36×24라면: 30×20=600 ↓ 30×4=120 ↓ 6×20=120 ↓ 6×4=24. 위에서 아래로 폭포처럼 쌓인 <b>600, 120, 120, 24</b>를 더하면 864. 줄만 잘 맞추면 조각을 잃어버릴 일이 없어요!',
+              en:'Write the four pieces of full-full multiplication <b>in order, one line at a time, downward</b>. For 36×24: 30×20=600 ↓ 30×4=120 ↓ 6×20=120 ↓ 6×4=24. The waterfall stack <b>600, 120, 120, 24</b> adds to 864. Keep the lines tidy and no piece ever gets lost!',
+              zh:'把全全乘法的四块<b>按顺序一行一行往下</b>写。36×24：30×20=600 ↓ 30×4=120 ↓ 6×20=120 ↓ 6×4=24。瀑布般叠好的<b>600、120、120、24</b>相加得864。行对齐了，一块也不会丢！'},
         mathSteps:['30×20 = 600','30×4  = 120','6×20  = 120',{ko:'6×4   = 24  → 합 864',en:'6×4 = 24 → \\text{sum } 864',zh:'6×4 = 24 → 合计864'}],
         result:{ko:'36×24=864! 폭포수 순서: 십×십 → 십×일 → 일×십 → 일×일.',en:'36×24=864! Waterfall order: tens×tens → tens×ones → ones×tens → ones×ones.',zh:'36×24=864！瀑布顺序：十×十→十×个→个×十→个×个。'},
         book:{ko:'폭포수 곱셈은 풀풀곱셈과 조각이 같아요. 차이는 "쓰는 방식" — 세로로 정렬해 쓰기 때문에 받아올림 없이 마지막에 한꺼번에 더해요.',
@@ -47,9 +47,9 @@ window.NM_UNITS['C-11'] = {
 
       { tag:{ko:'③ 마지막 덧셈 요령',en:'3) Finishing the addition',zh:'③ 收尾加法技巧'},
         head:{ko:'600+120+120+24: 위에서부터 차례로',en:'600+120+120+24: from the top, in turn',zh:'600+120+120+24：从上往下依次加'},
-        desc:{ko:'폭포 아래 고인 물을 모아요! <b>위에서부터 차례로</b>: 600+120=720 → 720+120=840 → 840+24=864. 이미 큰 순서로 쌓여 있으니 그대로 내려가며 더하면 돼요. 자릿수 예측(C-09)과 비교해 답을 확인하는 것도 잊지 말기!',
-              en:'Collect the water pooled below! <b>From the top, in turn</b>: 600+120=720 → 720+120=840 → 840+24=864. The stack is already sorted big-to-small, so just descend and add. Don\'t forget to check against your digit prediction (C-09)!',
-              zh:'收集瀑布下积的水！<b>从上往下依次</b>：600+120=720 → 720+120=840 → 840+24=864。已经按从大到小排好，顺着往下加就行。别忘了和位数预测(C-09)对照检查！'},
+        desc:{ko:'폭포 아래 고인 물을 모아요! <b>위에서부터 차례로</b>: 600+120=720 → 720+120=840 → 840+24=864. 이미 큰 순서로 쌓여 있으니 그대로 내려가며 더하면 돼요. 자릿수 예측과 비교해 답을 확인하는 것도 잊지 말기!',
+              en:'Collect the water pooled below! <b>From the top, in turn</b>: 600+120=720 → 720+120=840 → 840+24=864. The stack is already sorted big-to-small, so just descend and add. Don\'t forget to check against your digit prediction!',
+              zh:'收集瀑布下积的水！<b>从上往下依次</b>：600+120=720 → 720+120=840 → 840+24=864。已经按从大到小排好，顺着往下加就行。别忘了和位数预测对照检查！'},
         mathSteps:['600 + 120 = 720','720 + 120 = 840','840 + 24 = 864'],
         result:{ko:'폭포 아래에서 모두 만나면 864! 예측 자릿수와 맞는지 확인.',en:'Everything meets at the bottom: 864! Verify the digit count.',zh:'瀑布下汇合得864！核对位数是否吻合。'},
         book:null }
@@ -66,9 +66,9 @@ window.NM_UNITS['C-11'] = {
       { tex:'52 \\times 34 = \\square', answer:1768,
         hint:{ ko:'1500↓200↓60↓8 → 합은?', en:'1500↓200↓60↓8 → the sum?', zh:'1500↓200↓60↓8 → 和是多少？' } }
     ],
-    open:{ ko:'폭포수 곱셈과 풀풀곱셈(C-10)의 같은 점과 다른 점을 설명해 봐요.',
-      en:'Explain what waterfall multiplication shares with full-full (C-10) and how it differs.',
-      zh:'说说瀑布乘法和全全乘法(C-10)的相同点和不同点。' },
+    open:{ ko:'폭포수 곱셈과 풀풀곱셈의 같은 점과 다른 점을 설명해 봐요.',
+      en:'Explain what waterfall multiplication shares with full-full and how it differs.',
+      zh:'说说瀑布乘法和全全乘法的相同点和不同点。' },
     openHint:{ ko:'예) 같은 점: 네 조각(십×십, 십×일, 일×십, 일×일)이 완전히 같아요. 다른 점: 폭포수는 정해진 순서로 세로로 흘려 써서 조각을 잃지 않고 마지막에 한 번에 더해요.',
       en:'e.g. Same: the four pieces are identical. Different: waterfall writes them in a fixed vertical order so nothing is lost, adding once at the end.',
       zh:'例）相同：四块完全一样。不同：瀑布按固定顺序竖着写，不丢块，最后一次加完。' }

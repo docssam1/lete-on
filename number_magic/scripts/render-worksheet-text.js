@@ -83,10 +83,15 @@ const week = i => varyWeek ? isoWeek(new Date(Date.UTC(2026, 9, 19 + 7 * i))) : 
           b.querySelectorAll('script,style').forEach(e => e.remove());
           document.documentElement.appendChild(b); b.style.position = 'absolute';
           const text = b.innerText; b.remove();
-          return { ready: window.NM_WS_READY, pages: document.querySelectorAll('.nm-w2-page').length, text };
+          const days={};
+          document.querySelectorAll('.nm-print-sheet .nm-w2-page').forEach(page=>{
+            const day=page.querySelector('.nm-w2-study-day')?.textContent.match(/(\d+)일차/);
+            if(day)days[day[1]]=(days[day[1]]||0)+page.querySelectorAll('.nm-w2-item').length;
+          });
+          return { ready: window.NM_WS_READY, pages: document.querySelectorAll('.nm-w2-page').length, days, text };
         });
         if (t.ready !== true) fail++;
-        fs.writeFileSync(path.join(OUT, name + '.txt'), '#' + JSON.stringify({ ...j, url: urlOf(j).replace(base, ''), ready: t.ready, pages: t.pages }) + '\n' + t.text);
+        fs.writeFileSync(path.join(OUT, name + '.txt'), '#' + JSON.stringify({ ...j, url: urlOf(j).replace(base, ''), ready: t.ready, pages: t.pages,days:t.days }) + '\n' + t.text);
       } catch (e) { fail++; fs.writeFileSync(path.join(OUT, name + '.err'), String(e)); }
       await page.close();
     }

@@ -554,17 +554,20 @@ NM_TGEN['md54_expLogInequality'] = function (params, rng) {
     const k = R(rng, 1, 3);
     const N = Math.pow(a, k);
     const q = N - p * x0;
+    const domain = `\\dfrac{${-q}}{${p}}`;
+    const result = cmp === '\\le' ? `${domain} < x \\le \\square` : `x \\ge \\square`;
     return {
+      printPrompt: {ko:'진수가 양수인 범위에서 부등식을 풀고 빈칸을 채우세요.',en:'Solve on the domain where the logarithm argument is positive. Fill in the box.',zh:'在真数为正的范围内解不等式并填空。'},
       prompt: { ko: `밑(${a})이 1보다 크면 log는 증가함수 — 등호가 성립하는 경계값을 구합니다(a^k=진수)`,
         en: `Since the base(${a}) exceeds 1, log is increasing — find the boundary value where equality holds (a^k=argument)`,
         zh: `底数(${a})大于1时log是增函数——求出等号成立的边界值(a^k=真数)` },
-      tex: `\\log_{${a}}(${p}x ${wrapPlus(q)}) ${cmp} ${k} \\;\\Rightarrow\\; x ${cmp} \\square`,
+      tex: `\\log_{${a}}(${p}x ${wrapPlus(q)}) ${cmp} ${k} \\;\\Rightarrow\\; ${result}`,
       answer: x0, answerType: 'number', widget: 'numpad', negative: x0 < 0,
       /* p=1 이면 둘째 줄이 `÷1` 이라 답을 옮겨 적는 것뿐이다 — 그럴 땐 한 줄로 끝낸다. */
-      solution: p === 1
+      solution: [ {tex:`${p}x ${wrapPlus(q)} > 0 \\Rightarrow x > ${domain}`} ].concat(p === 1
         ? [ { tex: `${N} - (${q}) = \\square`, blank: x0 } ]
         : [ { tex: `${N} - (${q}) = \\square`, blank: N - q },
-            { tex: `\\dfrac{${N - q}}{${p}} = \\square`, blank: x0 } ]
+            { tex: `\\dfrac{${N - q}}{${p}} = \\square`, blank: x0 } ])
     };
   }
 
