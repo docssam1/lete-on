@@ -1,8 +1,0 @@
-.game-thumb.thumb-tunnel::before,
-.game-thumb.thumb-tunnel .thumb-art {
-  display: none;
-}
-
-.game-thumb.thumb-tunnel {
-  background: center / cover no-repeat url("./tunnel.webp?v=20260820a");
-}

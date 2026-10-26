@@ -1,6 +1,0 @@
-.source52-cube-box-question,
-.source52-cube-box-solution { color: #17324f; line-height: 1.75; }
-.source52-cube-box-diagram { display: block; width: min(100%, 520px); height: auto; margin: 14px auto 18px; overflow: visible; }
-.source52-cube-box-diagram text { fill: #17324f; font-family: system-ui, sans-serif; font-weight: 650; }
-.source52-cube-box-hint { padding: 10px 12px; border-left: 3px solid #6c88a9; background: #f2f6fa; }
-@media print { .source52-cube-box-diagram { break-inside: avoid; } }

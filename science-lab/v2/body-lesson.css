@@ -1,5 +1,0 @@
-/* 우리 몸 수업의 본문·휴대폰 응답 가독성. 공통 실사형 사진 스타일은 공유한다. */
-.dk[data-unit="c22-s51-u04"] .dk-body{font-size:max(17px,1.65cqw);line-height:1.65}
-@media(max-width:760px){
- .dk[data-unit="c22-s51-u04"] .dk-stage.dense .dk-body,.dk[data-unit="c22-s51-u04"] .dk-stage.dense .dk-given,.dk[data-unit="c22-s51-u04"] .dk-stage.dense .dk-choices button,.dk[data-unit="c22-s51-u04"] .dk-stage.dense .dk-ans{font-size:17px}
-}

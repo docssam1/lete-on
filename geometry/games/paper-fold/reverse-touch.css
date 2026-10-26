@@ -1,4 +1,0 @@
-/* Level 3 crease picking (D3). Loaded after polish.css. */
-.paper-touch-zone.reverse-line-zone { pointer-events: none; }
-.reverse-diagram[role="group"] { cursor: pointer; touch-action: manipulation; }
-.reverse-line-zone.near { opacity: 1; }

@@ -1,9 +1,0 @@
-{
-  "source": 75,
-  "pairs": 75,
-  "supplement": 96,
-  "authoredDuplicatePrompts": 0,
-  "originalPromptExactReuse": 0,
-  "singleChoiceLongAnswerCandidates": [],
-  "clarityRepairs": []
-}

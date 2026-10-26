@@ -1,8 +1,0 @@
-// 교재와 정답표는 동일한96문항·해설 객체를 사용한다.
-import {chapter,art,quickPages} from '../data/book/c22-s52-u01.book.js';
-import {renderEditorialChapter} from './book-editorial.js';
-export function mixtureBankPaperHtml({mode='student'}={}){
- const ch=mode==='answers'?{...chapter,pages:chapter.teacherPages,teacherPages:[]}:mode==='quick'?{...chapter,pages:quickPages,teacherPages:[]}:chapter;
- return `<div class="mixture-print" data-mixture-mode="${mode}"><nav class="mixture-print-tools no-print"><a class="btn" href="#/${chapter.unit}/start">처음으로</a>${[['student','학생용 교재'],['teacher','교사용 교재'],['answers','정답·해설'],['quick','빠른 정답표']].map(([k,t])=>`<a class="btn" href="#/${chapter.unit}/print/${k}">${t}</a>`).join('')}<button class="btn primary" data-mixture-print disabled>A4 인쇄</button><p role="status" data-mixture-status>그림과 글꼴을 준비하고 있어요.</p></nav>${renderEditorialChapter(ch,art,{teacher:mode!=='student'})}</div>`;
-}
-export function wireMixtureBankPaper(root){let active=true;const button=root.querySelector('[data-mixture-print]'),status=root.querySelector('[data-mixture-status]');const ready=im=>im.complete?(im.naturalWidth?Promise.resolve():Promise.reject(Error('image'))):new Promise((a,b)=>{im.addEventListener('load',a,{once:true});im.addEventListener('error',b,{once:true});});Promise.all([document.fonts.load('700 18px Gaegu'),document.fonts.ready,...[...root.querySelectorAll('img')].map(ready)]).then(()=>{if(active&&root.isConnected){button.disabled=false;status.textContent='그림과 글꼴이 준비되었습니다.';}}).catch(()=>{if(active&&root.isConnected)status.textContent='그림을 불러오지 못했어요. 다시 열어 주세요.';});const print=()=>{if(!button.disabled)window.print();};button.addEventListener('click',print);return()=>{active=false;button.removeEventListener('click',print);};}

@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" aria-labelledby="t d" font-family="Pretendard, sans-serif">
- <title id="t">같은 자석과 철 시료의 거리 비교 계획</title><desc id="d">가와 나는 같은 자석과 철 시료를 쓰며 사이 거리만 다르게 놓는 계획이다. 움직임과 실제 거리 값은 표시하지 않았다.</desc>
- <rect width="720" height="430" fill="white"/><g fill="#182230" font-size="24" font-weight="700"><text x="28" y="40">거리만 바꾸고 실제 결과를 기록해요</text><text x="30" y="100">가</text><text x="30" y="245">나</text></g>
- <g stroke="#566274" stroke-width="2"><path d="M28 173H690M28 318H690"/><g fill="#2456c4"><rect x="95" y="125" width="160" height="48" rx="4"/><rect x="95" y="270" width="160" height="48" rx="4"/></g><g fill="#d8dee8"><rect x="370" y="151" width="60" height="22" rx="6"/><rect x="560" y="296" width="60" height="22" rx="6"/></g><g fill="none"><path d="M255 115V100H370V115M255 260V245H560V260"/></g></g>
- <g font-size="22" fill="#182230"><text x="110" y="205">같은 자석</text><text x="358" y="205">철 시료</text><text x="110" y="350">같은 자석</text><text x="548" y="350">철 시료</text><text x="267" y="90">실제 거리·단위</text><text x="308" y="235">실제 거리·단위</text><text x="28" y="393">같게 할 것: 자석·철 시료·바닥·가까이 하는 방법</text></g>
- <g fill="white" font-size="22"><text x="130" y="157">자석</text><text x="130" y="302">자석</text></g>
-</svg>

@@ -1,5 +1,0 @@
-.source62-exploration-given{width:min(440px,100%)}
-.source62-exploration-answer .source62-painted-grid{width:min(128px,100%);margin:0 auto}
-.source62-exploration-answer .source62-painted-histogram{width:100%;margin:6px 0 12px}
-.solution-item:has(.source62-exploration-answer) .math-inline-expression,.solution-viewer-content:has(.source62-exploration-answer) .math-inline-expression{display:inline-block;white-space:nowrap;font:inherit;color:#000}
-@media print{.source62-exploration-given{width:56mm}.source62-exploration-given .source62-m3-image-button{display:block;width:50mm;margin:0 auto}.question-item:has(.source62-exploration-given){padding:14px 0}.question-item:has(.source62-exploration-given) .question-prompt{margin-top:12px}.source62-exploration-answer .source62-painted-layers{grid-template-columns:repeat(2,minmax(0,1fr))}.source62-exploration-answer .source62-painted-grid{width:min(112px,100%)}}

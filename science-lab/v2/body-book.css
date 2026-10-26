@@ -1,8 +1,0 @@
-/* 우리 몸 편집본: 사진의 실제 표시 폭과 바깥 이름표 폭을 일치시킨다. */
-.bk-editorial[data-unit="c22-s51-u04"] .ed-body-photo{max-width:102mm;margin-inline:auto}
-/* 짧은 유형 문항은 두 단으로 묶고 서술 답안의 줄 높이는 유지한다. */
-@media(min-width:701px),print{
- .bk-editorial[data-unit="c22-s51-u04"] .ed-practice .ed-questions{column-count:2;column-gap:5mm}
- .bk-editorial[data-unit="c22-s51-u04"] .ed-practice .ed-question{display:inline-block;width:100%;vertical-align:top}
- .bk-editorial[data-unit="c22-s51-u04"] .ed-practice .ed-choices{grid-template-columns:1fr}
-}

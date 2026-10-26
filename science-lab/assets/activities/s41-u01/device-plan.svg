@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 450" role="img" aria-labelledby="t d" font-family="Pretendard, sans-serif">
- <title id="t">종이를 잡는 장치의 설계 계획</title><desc id="d">고정된 철 부분과 자석 사이에 종이를 놓는 옆모습 계획이다. 부품 고정과 종이 꺼내는 방법을 더 정하며 아직 시험 결과는 없다.</desc>
- <rect width="720" height="450" fill="white"/><text x="28" y="40" fill="#182230" font-size="24" font-weight="700">종이를 잡는 두 부분과 고정 방법을 정해요</text>
- <g stroke="#566274" stroke-width="2"><rect x="170" y="110" width="60" height="240" fill="#d8dee8"/><rect x="270" y="85" width="12" height="300" fill="#eaf0ff"/><rect x="318" y="180" width="110" height="90" rx="5" fill="#2456c4"/><path d="M170 135H95M170 325H95M282 100H425M428 225H585" fill="none"/></g>
- <g fill="#182230" font-size="23"><text x="35" y="125">받침에</text><text x="35" y="154">고정 확인</text><text x="35" y="320">철 부분</text><text x="445" y="108">종이</text><text x="450" y="219">자석 고정</text><text x="450" y="249">빠지지 않게</text><text x="28" y="420">확인할 것: 잡힘·꺼내기·고정·손 끼임</text></g>
- <text x="333" y="234" fill="white" font-size="24">자석</text>
-</svg>

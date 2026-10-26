@@ -1,6 +1,0 @@
-.source62-example2-given{display:grid;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr);align-items:center;gap:8px;width:min(440px,100%);max-width:none;margin:8px auto}
-.source62-example2-given figure{min-width:0;margin:0}
-.source62-example2-given figcaption{font:inherit;color:#000;text-align:center}
-.source62-example2-arrow{text-align:center;font:400 24px var(--bank-font,"Malgun Gothic",Arial,sans-serif);color:#000}
-.solution-item:has(.source62-painted-answer[data-source="6-2-u3-e3-example-2"]) .math-inline-expression{display:inline-block;white-space:nowrap;font:inherit;color:#000}
-@media print{.source62-example2-given{width:78mm;max-width:100%;gap:1mm;grid-template-columns:minmax(0,1fr) 5mm minmax(0,1fr);margin:2mm auto}.source62-example2-arrow{font-size:16pt}}

@@ -1,6 +1,0 @@
-/* 공용 문항집 규약을 쓰되 우리 몸의 인쇄 쪽발은 독립시킨다. */
-@media print{
- @page body-bank{size:A4;margin:17mm 16mm;@bottom-left{content:"우리 몸의 구조와 기능 · 지필드";font:8pt Pretendard,sans-serif;color:#4c596c}@bottom-right{content:counter(page);font:9pt Pretendard,sans-serif;color:#2456c4}}
- .body-bank-paper,.body-bank-paper .solution-paper{page:body-bank}
- .body-bank-paper .bank-photo-figure{max-width:112mm}
-}

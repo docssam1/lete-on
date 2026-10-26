@@ -1,2 +1,0 @@
-.bank-photo-figure{width:100%;max-width:630px;margin:16px auto;break-inside:avoid}.bank-photo-figure img{display:block;width:100%;height:auto}.bank-photo-labels{display:grid;grid-template-columns:repeat(var(--bank-photo-cols),minmax(0,1fr));gap:6px;margin-top:8px;text-align:center;font-weight:700}.bank-photo-figure small{display:block;color:#4c596c;font-size:13px;line-height:1.5;margin-top:6px}
-@media print{.bank-photo-figure{max-width:145mm;margin:3mm auto}.bank-photo-labels{font-size:10pt;margin-top:1mm}.bank-photo-figure small{font-size:8pt;margin-top:1mm}}
