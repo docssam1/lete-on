@@ -3380,7 +3380,119 @@ const NLINE6_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET, [NLINE6_SET.id]: NLINE6_SET });
+// ───────────────────────── 2·3·8권 분수: 색칠한 부분 · 접은 횟수 · 분수만큼의 개수 · 그림으로 거꾸로 풀기 ─────────────────────────
+// 분수는 글에서 「8분의 3」, 그림에서 위아래로 쌓는다. 그림 kind "fshape"(원 조각·모눈·육각형) · "fbar"(띠를 똑같이 나눈 칸).
+const fshape = (shape, parts, shaded, p = {}) => ({ kind: "fshape", shape, parts, rows: p.rows, cols: p.cols, shaded, tone: p.tone || "doing" });
+const fbar = (parts, p = {}) => ({ kind: "fbar", parts, shaded: p.shaded || [], crossed: p.crossed || [], counts: p.counts, sub: p.sub, brace: p.brace, tone: p.tone || "doing" });
+const range = (a, b) => Array.from({ length: b - a }, (_, i) => a + i);
+function shadeFracExample({ id, title, shape, parts, shaded, rows, cols, note = "" }) {
+  const k = shaded.length, fig = (tone) => fshape(shape, parts, shaded, { rows, cols, tone });
+  const steps = [
+    { text: `${note}전체를 같은 크기 ${parts}조각으로 나누었어요. 분모는 ${parts}.`, figure: fig("doing") },
+    { text: `색칠한 조각은 ${k}개라 분자는 ${k}.`, figure: fig("doing") },
+    { text: `그래서 색칠한 부분은 전체의 ${parts}분의 ${k}.`, figure: fracs([[k, parts]], { tone: "check" }) }
+  ];
+  return { id, title, problem: "색칠한 부분은 전체의 얼마인지 분수로 나타내요.", figure: fig("given"), steps, answer: `${parts}분의 ${josa(k, "이에요")}.`, value: { kind: "shade", parts, k } };
+}
+function foldFracExample({ id, title, folds = null, den = null }) {
+  const n = folds ?? Math.log2(den), d = 2 ** n, grids = [[1, 1], [1, 2], [2, 2], [2, 4], [4, 4], [4, 8], [8, 8]];
+  if (!Number.isInteger(n)) throw new Error(`${id}: 2를 거듭 곱한 수가 아님`);
+  const g = (k) => { const [r, c] = grids[k]; return fshape("grid", r * c, [0], { rows: r, cols: c }); };
+  if (folds !== null) {
+    const steps = [
+      { text: "반으로 한 번 접을 때마다 조각 수가 두 배가 돼요.", figure: g(1) },
+      { text: `${range(1, n + 1).map((k) => `${k}번 → ${2 ** k}조각`).join(", ")}.`, figure: g(n) },
+      { text: `${n}번 접은 한 조각은 전체의 ${d}분의 1.`, figure: { ...g(n), tone: "check" } }
+    ];
+    return { id, title, problem: `색종이를 반으로 ${n}번 접으면 원래 색종이 크기의 몇 분의 몇이 될까요?`, figure: fshape("grid", 1, [], { rows: 1, cols: 1, tone: "given" }), steps, answer: `${d}분의 1이에요.`, value: { kind: "fold", folds: n, den: d } };
+  }
+  const steps = [
+    { text: "한 번 접을 때마다 분모가 두 배: 2, 4, 8, 16, … .", figure: g(2) },
+    { text: `${range(1, n + 1).map((k) => 2 ** k).join(", ")} — ${josa(d, "이")} ${n}번째예요.`, figure: fracs([[1, d]]) },
+    { text: `그래서 ${n}번 접었어요.`, figure: fracs([[1, d]], { tone: "check" }) }
+  ];
+  return { id, title, problem: `색종이를 반으로 몇 번 접었더니 원래 크기의 ${d}분의 1이 되었어요. 몇 번 접었을까요?`, figure: fracs([[1, d]], { tone: "given" }), steps, answer: `${n}번이에요.`, value: { kind: "fold", folds: n, den: d } };
+}
+// 전체 total개의 n분의 k: 한 칸 = total ÷ n, k칸. eat이면 먹고 남은 (n − k)칸
+function fracOfExample({ id, title, total, n, k, eat = false, thing = "구슬" }) {
+  const one = total / n;
+  if (!Number.isInteger(one)) throw new Error(`${id}: 나누어떨어지지 않음`);
+  const counts = Array(n).fill(String(one)), take = one * k, rest = total - take;
+  const steps = [
+    { text: `${thing} ${total}개를 똑같이 ${n}칸으로 나눠요. 한 칸은 ${total} ÷ ${n} = ${one}개.`, figure: fbar(n, { counts }) },
+    eat ? { text: `${josa(`${n}분의 ${k}`, "을")} 먹었으니 ${k}칸을 지워요. 남은 것은 ${n - k}칸.`, figure: fbar(n, { counts, crossed: range(0, k) }) } : { text: `${josa(`${n}분의 ${k}`, "은")} ${k}칸이에요.`, figure: fbar(n, { counts, shaded: range(0, k) }) },
+    eat ? { text: `남은 ${n - k}칸은 ${one} × ${n - k} = ${rest}개.`, figure: fbar(n, { counts, crossed: range(0, k), brace: { from: k, to: n - 1, label: `${rest}개` }, tone: "check" }) } : { text: `${k}칸은 ${one} × ${k} = ${take}개.`, figure: fbar(n, { counts, shaded: range(0, k), brace: { from: 0, to: k - 1, label: `${take}개` }, tone: "check" }) }
+  ];
+  return { id, title, problem: eat ? `${thing} ${total}개의 ${josa(`${n}분의 ${k}`, "을")} 먹었어요. 남은 ${josa(thing, "은")} 몇 개일까요?` : `${thing} ${total}개의 ${josa(`${n}분의 ${k}`, "은")} 몇 개일까요?`, figure: fbar(n, { tone: "given" }), steps, answer: `${eat ? rest : take}개예요.`, value: { kind: "frac-of", total, n, k, eat, result: eat ? rest : take } };
+}
+// 거꾸로: n분의 k를 주고(먹고) left가 남았다 → 남은 (n − k)칸 = left
+function giveLeftExample({ id, title, n, k, left, thing = "구슬" }) {
+  const one = left / (n - k), total = one * n;
+  if (!Number.isInteger(one)) throw new Error(`${id}: 나누어떨어지지 않음`);
+  const counts = (show) => Array(n).fill(show ? String(one) : "");
+  const steps = [
+    { text: `처음 ${josa(thing, "을")} ${n}칸으로 나눠 그려요. ${k}칸을 주었으니 남은 것은 ${n - k}칸이에요.`, figure: fbar(n, { crossed: range(0, k), brace: { from: k, to: n - 1, label: `${left}개` } }) },
+    { text: `남은 ${n - k}칸이 ${left}개라 한 칸은 ${left} ÷ ${n - k} = ${one}개.`, figure: fbar(n, { crossed: range(0, k), counts: counts(true), brace: { from: k, to: n - 1, label: `${left}개` } }) },
+    { text: `처음은 ${n}칸이라 ${one} × ${n} = ${total}개. ${total}개의 ${josa(`${n}분의 ${k}`, "은")} ${one * k}개, 주고 나면 ${left}개가 남아요.`, figure: fbar(n, { counts: counts(true), brace: { from: 0, to: n - 1, label: `${total}개` }, tone: "check" }) }
+  ];
+  return { id, title, problem: `가지고 있던 ${thing}의 ${josa(`${n}분의 ${k}`, "을")} 친구에게 주었더니 ${left}개가 남았어요. 처음에 가지고 있던 ${josa(thing, "은")} 몇 개일까요?`, figure: fbar(n, { tone: "given" }), steps, answer: `${total}개예요.`, value: { kind: "give-left", n, k, left, total } };
+}
+// 두 번 덜어 내기: n1분의 k1을 먹고, 나머지의 n2분의 k2를 주었더니 left
+function twiceLeftExample({ id, title, n1, k1, n2, k2, left, thing = "귤" }) {
+  const rest2Parts = n2 - k2, restOne = left / rest2Parts, rest = restOne * n2, one = rest / (n1 - k1), total = one * n1;
+  if (![restOne, one].every(Number.isInteger)) throw new Error(`${id}: 나누어떨어지지 않음`);
+  const last = n1 - 1;
+  const steps = [
+    { text: `전체를 ${n1}칸으로 나눠 ${k1}칸을 먹었어요. 나머지 ${n1 - k1}칸을 다시 ${n2}조각으로 나눠 ${k2}조각을 주었어요.`, figure: fbar(n1, { crossed: range(0, k1), sub: { from: k1, to: last, parts: n2, crossed: range(0, k2) } }) },
+    { text: `남은 ${rest2Parts}조각이 ${left}개라 한 조각은 ${left} ÷ ${rest2Parts} = ${restOne}개, 나머지 전체는 ${restOne} × ${n2} = ${rest}개.`, figure: fbar(n1, { crossed: range(0, k1), sub: { from: k1, to: last, parts: n2, crossed: range(0, k2), counts: Array(n2).fill(String(restOne)) }, brace: { from: k1, to: last, label: `${rest}개` } }) },
+    { text: `나머지 ${rest}개가 ${n1 - k1}칸이라 한 칸은 ${one}개, 처음은 ${one} × ${n1} = ${total}개.`, figure: fbar(n1, { counts: Array(n1).fill(String(one)), brace: { from: 0, to: last, label: `${total}개` }, tone: "check" }) }
+  ];
+  return { id, title, problem: `${thing}의 ${josa(`${n1}분의 ${k1}`, "을")} 먹고, 나머지의 ${josa(`${n2}분의 ${k2}`, "을")} 친구에게 주었더니 ${left}개가 남았어요. 처음 ${josa(thing, "은")} 몇 개였을까요?`, figure: fbar(n1, { tone: "given" }), steps, answer: `${total}개예요.`, value: { kind: "twice-left", n1, k1, n2, k2, left, total } };
+}
+// 차: 전체 total에서 n분의 k와 나머지의 차 · 거꾸로 차 diff로 전체
+function fracDiffExample({ id, title, n, k, total = null, diff = null, who = ["여학생", "남학생"], other = null }) {
+  const m = other ?? n - k, gap = k - m;
+  if (total !== null) {
+    const one = total / n, d = one * gap;
+    if (!Number.isInteger(one)) throw new Error(`${id}: 나누어떨어지지 않음`);
+    const steps = [
+      { text: `전체 ${josa(total, "을")} ${n}칸으로 나누면 한 칸은 ${total} ÷ ${n} = ${one}.`, figure: fbar(n, { counts: Array(n).fill(String(one)) }) },
+      { text: `${other === null ? `${josa(who[0], "은")} ${k}칸, ${josa(who[1], "은")} ${m}칸` : `${josa(`${n}분의 ${k}`, "은")} ${k}칸, ${josa(`${n}분의 ${m}`, "은")} ${m}칸`}. 차는 ${k} − ${m} = ${gap}칸.`, figure: fbar(n, { counts: Array(n).fill(String(one)), shaded: range(0, k), brace: { from: m, to: k - 1, label: `차 ${gap}칸` } }) },
+      { text: `${gap}칸은 ${one} × ${gap} = ${d}.`, figure: fbar(n, { counts: Array(n).fill(String(one)), shaded: range(0, k), tone: "check" }) }
+    ];
+    const problem = other === null ? `모두 ${total}명 중 ${josa(who[0], "이")} 전체의 ${n}분의 ${k}예요. ${josa(who[0], "은")} ${who[1]}보다 몇 명 더 많을까요?` : `${total}의 ${n}분의 ${k}는 ${total}의 ${n}분의 ${m}보다 얼마만큼 더 클까요?`;
+    return { id, title, problem, figure: fbar(n, { tone: "given" }), steps, answer: `${d}${other === null ? "명 더 많아요" : "만큼 더 커요"}.`, value: { kind: "frac-diff", n, k, m, total, d } };
+  }
+  const one = diff / gap, all = one * n;
+  if (!Number.isInteger(one)) throw new Error(`${id}: 나누어떨어지지 않음`);
+  const steps = [
+    { text: `전체를 ${n}칸으로 그려요. ${k}칸과 ${m}칸의 차는 ${k} − ${m} = ${gap}칸이에요.`, figure: fbar(n, { shaded: range(0, k) }) },
+    { text: gap === 1 ? `차 1칸이 ${ira(diff)} 한 칸이 ${josa(one, "이에요")}.` : `${gap}칸이 ${ira(diff, "니")} 한 칸은 ${diff} ÷ ${gap} = ${one}.`, figure: fbar(n, { shaded: range(0, k), counts: Array(n).fill(String(one)) }) },
+    { text: `전체 ${n}칸은 ${one} × ${n} = ${all}.`, figure: fbar(n, { counts: Array(n).fill(String(one)), brace: { from: 0, to: n - 1, label: String(all) }, tone: "check" }) }
+  ];
+  const problem = other === null ? `어느 반 ${josa(who[0], "은")} 반 전체의 ${n}분의 ${k}예요. ${josa(who[0], "이")} ${who[1]}보다 ${diff}명 더 많다면 반 학생은 모두 몇 명일까요?` : `어떤 수의 ${n}분의 ${k}는 어떤 수의 ${n}분의 ${m}보다 ${diff}만큼 더 커요. 어떤 수는 얼마일까요?`;
+  return { id, title, problem, figure: fbar(n, { tone: "given" }), steps, answer: `${other === null ? `${all}명이에요` : josa(all, "이에요")}.`, value: { kind: "frac-diff-back", n, k, m, diff, all } };
+}
+const FRAC_SET = {
+  id: "frac",
+  types: {
+    // 2·3권 색칠한 부분
+    "같은 크기로 나눈 도형의 분수": () => [shadeFracExample({ id: "shade-1", title: "예제 1", shape: "circle", parts: 5, shaded: [0, 1, 2] }), shadeFracExample({ id: "shade-2", title: "예제 2", shape: "grid", parts: 6, rows: 2, cols: 3, shaded: [0, 4, 5] })],
+    "도형을 같은 크기로 나눈 분수": () => [shadeFracExample({ id: "shade-3", title: "예제 1", shape: "hex", parts: 3, shaded: [0, 2], note: "육각형을 가운데에서 꼭짓점 하나 건너 하나씩 이으면 똑같은 마름모 3개가 돼요. " }), shadeFracExample({ id: "shade-4", title: "예제 2", shape: "hex", parts: 6, shaded: [0, 3], note: "육각형의 가운데와 꼭짓점을 모두 이으면 똑같은 삼각형 6개가 돼요. " })],
+    "접은 횟수와 전체의 분수": () => [foldFracExample({ id: "fold-1", title: "예제 1", folds: 4 })],
+    "분수로 접은 횟수 역산": () => [foldFracExample({ id: "fold-2", title: "예제 1", den: 64 })],
+    // 8권 분수
+    "색칠한 부분을 분수로": () => [shadeFracExample({ id: "shade-5", title: "예제 1", shape: "circle", parts: 7, shaded: [0, 1, 2, 3] })],
+    "전체의 몇 분의 몇": () => [fracOfExample({ id: "of-1", title: "예제 1", total: 20, n: 5, k: 2 }), fracOfExample({ id: "of-2", title: "예제 2", total: 28, n: 7, k: 3 })],
+    "먹고 남은 개수": () => [fracOfExample({ id: "eat-1", title: "예제 1", total: 30, n: 5, k: 2, eat: true, thing: "귤" })],
+    "준 뒤 남은 수로 처음 수": () => [giveLeftExample({ id: "give-1", title: "예제 1", n: 6, k: 1, left: 20 }), giveLeftExample({ id: "give-2", title: "예제 2", n: 7, k: 3, left: 16 })],
+    "두 번 덜어 낸 뒤 처음 수": () => [twiceLeftExample({ id: "twice-1", title: "예제 1", n1: 3, k1: 1, n2: 4, k2: 1, left: 9 })],
+    "전체와 분수로 차 구하기": () => [fracDiffExample({ id: "diff-1", title: "예제 1", n: 7, k: 4, total: 35 }), fracDiffExample({ id: "diff-2", title: "예제 2", n: 8, k: 5, total: 32, other: 2 })],
+    "차로 전체 구하기": () => [fracDiffExample({ id: "back-1", title: "예제 1", n: 9, k: 5, diff: 6, who: ["남학생", "여학생"] }), fracDiffExample({ id: "back-2", title: "예제 2", n: 9, k: 5, diff: 15, other: 2 })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET, [NLINE6_SET.id]: NLINE6_SET, [FRAC_SET.id]: FRAC_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

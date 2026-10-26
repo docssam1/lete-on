@@ -2,7 +2,7 @@
 // 한 단계씩 연다: 0단계 = 문제만, 1~N단계 = 풀이가 하나씩, 마지막 = 답. 답은 마지막 단계 전에는 화면에 없다.
 // 색은 골든벨 색표(쌓기나무·모양·숫자판·저울), 안내 단계 색은 주어진 것 파랑 · 하는 일 금색 · 확인 진초록.
 
-import { book04Markup, obliqueCubes } from "./book04-renderers.js?v=20261028r";
+import { book04Markup, obliqueCubes } from "./book04-renderers.js?v=20261028s";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const TONE = { given: "#2f6fe0", doing: "#d39b20", check: "#16734b" };
@@ -758,6 +758,46 @@ function nlineFigure(f) {
   });
   return `<div class="tx-nline">${svg(W, H + 6, body, `수직선 ${f.pts.map((p) => p.label).join(", ")}`)}</div>`;
 }
+// fshape: 같은 크기로 나눈 도형. circle = 맨 위부터 시계 바늘 쪽 조각, grid = rows × cols 칸, hex = 육각형(3 마름모·6 삼각형). 색칠은 주황
+const SHADE = { fill: "#ffa94d", line: "#333" };
+function fshapeFigure(f) {
+  const on = new Set(f.shaded || []), color = TONE[f.tone || "given"];
+  const piece = (i, d) => `<path d="${d}" fill="${on.has(i) ? SHADE.fill : "#fffdf7"}" stroke="${SHADE.line}" stroke-width="1.8" stroke-linejoin="round"/>`;
+  let body = "", W = 170, H = 170;
+  if (f.shape === "circle") {
+    const C = 85, R = 72, P = (a) => [C + R * Math.sin(a), C - R * Math.cos(a)];
+    for (let i = 0; i < f.parts; i++) { const a0 = (2 * Math.PI * i) / f.parts, a1 = (2 * Math.PI * (i + 1)) / f.parts, [x0, y0] = P(a0), [x1, y1] = P(a1); body += f.parts === 1 ? piece(i, `M${C - R} ${C}a${R} ${R} 0 1 0 ${2 * R} 0a${R} ${R} 0 1 0 ${-2 * R} 0`) : piece(i, `M${C} ${C}L${x0} ${y0}A${R} ${R} 0 0 1 ${x1} ${y1}Z`); }
+  } else if (f.shape === "grid") {
+    const s = Math.min(36, 220 / f.cols); W = f.cols * s + 8; H = f.rows * s + 8;
+    for (let r = 0; r < f.rows; r++) for (let c = 0; c < f.cols; c++) { const x = 4 + c * s, y = 4 + r * s; body += piece(r * f.cols + c, `M${x} ${y}h${s}v${s}h${-s}Z`); }
+  } else {
+    const C = 85, R = 74, V = Array.from({ length: 6 }, (_, i) => [C + R * Math.cos((Math.PI / 3) * i - Math.PI / 2), C + R * Math.sin((Math.PI / 3) * i - Math.PI / 2)]);
+    const pt = ([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`;
+    if (f.parts === 3) for (let i = 0; i < 3; i++) body += piece(i, `M${C} ${C}L${pt(V[2 * i])}L${pt(V[2 * i + 1])}L${pt(V[(2 * i + 2) % 6])}Z`);
+    else for (let i = 0; i < 6; i++) body += piece(i, `M${C} ${C}L${pt(V[i])}L${pt(V[(i + 1) % 6])}Z`);
+  }
+  return `<div class="tx-fshape" style="--tone:${color}">${svg(W, H, body, `같은 크기 ${f.parts}조각 중 ${on.size}조각 색칠`)}</div>`;
+}
+// fbar: 띠를 parts칸으로. shaded = 색칠, crossed = 지운 칸(×), counts = 칸 안의 수, sub = { from, to, parts, crossed, counts } 몇 칸을 묶어 다시 나눔, brace = 밑 꺾쇠
+function fbarFigure(f) {
+  const color = TONE[f.tone || "given"], W = 320, x0 = 10, w = (W - 20) / f.parts, y = 10, h = 38, sh = new Set(f.shaded || []), cr = new Set(f.crossed || []);
+  const sub = f.sub;
+  let body = "";
+  const cross = (x, y0, ww, hh) => `<path d="M${x + 5} ${y0 + 5}L${x + ww - 5} ${y0 + hh - 5}M${x + ww - 5} ${y0 + 5}L${x + 5} ${y0 + hh - 5}" stroke="#e8503a" stroke-width="2.2" stroke-linecap="round"/>`;
+  for (let i = 0; i < f.parts; i++) {
+    const x = x0 + i * w;
+    if (sub && i > sub.from && i <= sub.to) continue;
+    body += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${sh.has(i) ? SHADE.fill : cr.has(i) ? "#efe9dd" : "#fffdf7"}" stroke="${SHADE.line}" stroke-width="1.8"/>`;
+    if (cr.has(i)) body += cross(x, y, w, h);
+    if (sub && i === sub.from) {
+      const sw = (w * (sub.to - sub.from + 1)) / sub.parts, sc = new Set(sub.crossed || []);
+      for (let k = 0; k < sub.parts; k++) { const sx = x + k * sw; body += `<rect x="${sx}" y="${y}" width="${sw}" height="${h}" fill="${sc.has(k) ? "#efe9dd" : "#fff3c4"}" stroke="${SHADE.line}" stroke-width="1.2"/>`; if (sc.has(k)) body += cross(sx, y, sw, h); if (sub.counts?.[k]) body += text(sx + sw / 2, y + h / 2, sub.counts[k], { size: 12, weight: 900 }); }
+    } else if (f.counts?.[i]) body += text(x + w / 2, y + h / 2, f.counts[i], { size: 14, weight: 900 });
+  }
+  let H = y + h + 8;
+  if (f.brace) { const xa = x0 + f.brace.from * w, xb = x0 + (f.brace.to + 1) * w, by = y + h + 10; body += `<path d="M${xa + 2} ${by} V${by + 8} H${xb - 2} V${by}" fill="none" stroke="#f39a1e" stroke-width="2.2"/>${text((xa + xb) / 2, by + 20, f.brace.label, { size: 13, weight: 900, fill: color })}`; H = by + 32; }
+  return `<div class="tx-fbar">${svg(W, H, body, `띠를 ${f.parts}칸으로 나눈 그림`)}</div>`;
+}
 // fracs: 위아래로 쌓은 분수 카드. [분자, 분모] — null은 빈칸
 function fracsFigure(f) {
   const color = TONE[f.tone || "given"], hi = new Set(f.hi || []);
@@ -913,6 +953,8 @@ export function figureMarkup(figure) {
   if (figure.kind === "b4-layers") return b4LayersFigure(figure);
   if (figure.kind === "nline") return nlineFigure(figure);
   if (figure.kind === "fracs") return fracsFigure(figure);
+  if (figure.kind === "fshape") return fshapeFigure(figure);
+  if (figure.kind === "fbar") return fbarFigure(figure);
   if (figure.kind === "pieces") return piecesFigure(figure);
   if (figure.kind === "ring") return ringFigure(figure);
   if (figure.kind === "crypt") return cryptFigure(figure);

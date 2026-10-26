@@ -1123,6 +1123,30 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       const g = (m, n) => (n ? g(n, m % n) : m); assert.equal(g(v.x, v.y), 1, `${ex.id}: 가장 간단한 비`); assert.equal(v.x * v.two, v.y * v.one);
       assert.deepEqual(nums(ex.answer), [v.x, v.y, v.one, v.two]);
     } else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "frac") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    // 색칠 문제는 글에 수가 없어(그림이 수) 그림의 분수로 따로 비교한다
+    if (nums(ex.problem).length) for (const item of lesson.original.items) assert.notEqual(nums(item.prompt).join(), nums(ex.problem).join(), `${ex.id}: 원본과 같은 수`);
+    if (v.kind === "shade") {
+      // 그림의 조각을 하나씩 세어 본다(모눈은 행 × 열, 원·육각형은 조각 수)
+      const f = ex.figure, pieces = f.shape === "grid" ? f.rows * f.cols : f.parts, shaded = new Set(f.shaded).size;
+      assert.ok(f.shaded.every((i) => i >= 0 && i < pieces)); assert.deepEqual([v.parts, v.k], [pieces, shaded]);
+      for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) { const tot = vis.parts ?? vis.total ?? (vis.rows && vis.columns ? vis.rows * vis.columns : undefined), sh = Array.isArray(vis.shaded) ? vis.shaded.length : vis.shaded; if (tot !== undefined) assert.notEqual(`${tot}/${sh}`, `${pieces}/${shaded}`, `${ex.id}: 원본과 같은 분수`); }
+      assert.deepEqual(nums(ex.answer), [pieces, shaded]);
+    } else if (v.kind === "fold") { let d = 1; for (let i = 0; i < v.folds; i++) d *= 2; assert.equal(v.den, d); assert.deepEqual(nums(ex.answer), ex.problem.includes("몇 번 접었") ? [v.folds] : [d, 1]); }
+    else if (v.kind === "frac-of") { assert.equal(v.total % v.n, 0); const take = (v.total / v.n) * v.k; assert.equal(v.result, v.eat ? v.total - take : take); assert.deepEqual(nums(ex.answer), [v.result]); }
+    else if (["give-left", "twice-left", "frac-diff-back"].includes(v.kind)) {
+      // 처음 수를 1부터 넣어 앞에서부터 다시 따라가 문제의 결과가 되는 것만 남긴다(나누어떨어질 때만)
+      const fits = [];
+      for (let t = 1; t <= 500; t++) {
+        if (v.kind === "give-left") { if (t % v.n === 0 && t - (t / v.n) * v.k === v.left) fits.push(t); }
+        else if (v.kind === "twice-left") { if (t % v.n1) continue; const r = t - (t / v.n1) * v.k1; if (r % v.n2) continue; if (r - (r / v.n2) * v.k2 === v.left) fits.push(t); }
+        else if (t % v.n === 0 && (t / v.n) * (v.k - v.m) === v.diff) fits.push(t);
+      }
+      const want = v.kind === "frac-diff-back" ? v.all : v.total;
+      assert.deepEqual(fits, [want], `${ex.id}: 처음 수가 하나로 정해짐`); assert.deepEqual(nums(ex.answer), [want]);
+    } else if (v.kind === "frac-diff") { assert.equal(v.total % v.n, 0); assert.equal(v.d, (v.total / v.n) * v.k - (v.total / v.n) * v.m); assert.deepEqual(nums(ex.answer), [v.d]); }
+    else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);
