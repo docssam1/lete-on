@@ -3770,7 +3770,155 @@ function mirrorExample({ id, title, digit, side }) {
   return { id, title, problem: `숫자 ${josa(digit, "을")} ${word} 거울에 비춘 모양을 보기에서 골라요.`, figure: { kind: "glyphs", digit, start: "I", ops: [{ op, show: null }], options: OPTS, tone: "given" }, steps, answer: `${circIs(pick)}.`, value: { kind: "glyph-pick", digit, ops: [op], last: op, pick } };
 }
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET, [NLINE6_SET.id]: NLINE6_SET, [FRAC_SET.id]: FRAC_SET, [AREA_SET.id]: AREA_SET, [FLIP4_SET.id]: FLIP4_SET });
+// ───────────────────────── 1·4권 색종이 접기: 접어 자르기 · 처음 위치 · 맨 위의 수 · 구멍 · 숫자 카드 ─────────────────────────
+// 종이 = n × n 칸(칸 [줄, 칸]). 접기 = { t: "R"|"L"|"D"|"U"|"DIAG"|"ANTI", at }: R은 at 왼쪽(c < at)이 오른쪽으로 넘어가 (r, 2at−1−c),
+// L은 at 오른쪽, D는 위쪽이 아래로, U는 아래쪽이 위로. DIAG = 오른쪽 위 삼각형(c > r)을 왼쪽 아래로 (c, r), ANTI = 왼쪽 위 삼각형(r + c < n − 1)을 오른쪽 아래로.
+// 자른 칸을 펼치면 그 칸으로 포개진 모든 칸이 잘린다. 구멍은 점(x, y)으로 같은 접기를 거울처럼 되돌린다.
+const FOLD_WORD = { R: "왼쪽을 오른쪽으로", L: "오른쪽을 왼쪽으로", D: "위쪽을 아래쪽으로", U: "아래쪽을 위쪽으로", DIAG: "오른쪽 위 삼각형을 왼쪽 아래로", ANTI: "왼쪽 위 삼각형을 오른쪽 아래로" };
+// 「색종이의 왼쪽을 오른쪽으로 접고, 다시 위쪽을 아래쪽으로 접은」처럼 이어 쓴다(last = 끝말)
+const foldPhrase = (noun, folds, last) => `${noun}의 ${folds.map((f) => FOLD_WORD[f.t]).join(" 접고, 다시 ")} ${last}`;
+const foldAt = (f, n) => f.at ?? n / 2;
+const foldMoves = (f, n, r, c) => { const k = foldAt(f, n); return f.t === "R" ? c < k : f.t === "L" ? c >= k : f.t === "D" ? r < k : f.t === "U" ? r >= k : f.t === "DIAG" ? c > r : r + c < n - 1; };
+const foldMap = (f, n, r, c) => { const k = foldAt(f, n); return f.t === "R" || f.t === "L" ? [r, 2 * k - 1 - c] : f.t === "D" || f.t === "U" ? [2 * k - 1 - r, c] : f.t === "DIAG" ? [c, r] : [n - 1 - c, n - 1 - r]; };
+const foldCell = (folds, n, r, c) => folds.reduce(([y, x], f) => (foldMoves(f, n, y, x) ? foldMap(f, n, y, x) : [y, x]), [r, c]);
+const foldCellsOf = (n) => Array.from({ length: n * n }, (_, i) => [Math.floor(i / n), i % n]);
+const regionAfter = (folds, n) => [...new Set(foldCellsOf(n).map(([r, c]) => foldCell(folds, n, r, c).join(",")))].map((k) => k.split(",").map(Number));
+const preimages = (folds, n, cut) => foldCellsOf(n).filter(([r, c]) => cut.some(([a, b]) => foldCell(folds, n, r, c).join() === [a, b].join()));
+const key = (cells) => cells.map(([r, c]) => `${r},${c}`);
+const foldFig = (n, p = {}) => ({ kind: "fold", n, labels: p.labels, done: p.done, region: p.region ? key(p.region) : null, cut: p.cut ? key(p.cut) : [], line: p.line, holes: p.holes, tone: p.tone || "doing" });
+// 접는 단계 그림: 단계마다 남은 칸과 다음에 접을 선
+const foldSteps = (folds, n, labels, cutFinal) => folds.map((f, i) => ({ text: `${i + 1}번째로 ${FOLD_WORD[f.t]} 접어요. 접은 선을 사이에 두고 넘어간 칸이 반대쪽 칸 위에 포개져요.`, figure: foldFig(n, { labels, region: regionAfter(folds.slice(0, i), n), done: folds.slice(0, i), line: f, cut: i === folds.length - 1 ? cutFinal : [] }) }));
+function foldCutExample({ id, title, n = 4, folds, cut, labels = null, ask = "pattern" }) {
+  const region = regionAfter(folds, n);
+  if (!cut.every(([r, c]) => region.some(([a, b]) => a === r && b === c))) throw new Error(`${id}: 자른 칸이 접은 종이 밖`);
+  const all = preimages(folds, n, cut), sumOf = labels ? all.map(([r, c]) => labels[r][c]) : [];
+  const steps = [
+    ...foldSteps(folds, n, labels, []),
+    { text: `다 접은 종이에서 색칠한 ${cut.length}칸을 잘라요. 포개진 칸이 함께 잘려요.`, figure: foldFig(n, { labels, region, done: folds, cut }) },
+    { text: `${folds.length > 1 ? "마지막에 접은 것부터 차례로 펼쳐요. " : ""}펼칠 때마다 잘린 칸이 접은 선 건너편 같은 거리에 하나씩 더 생겨 모두 ${all.length}칸이 잘려요.`, figure: foldFig(n, { labels, cut: all, tone: ask === "pattern" ? "check" : "doing" }) }
+  ];
+  if (ask === "sum") steps.push({ text: `잘린 칸의 수를 더하면 ${sumOf.join(" + ")} = ${sum(sumOf)}.`, figure: foldFig(n, { labels, cut: all, tone: "check" }) });
+  const problem = ask === "sum" ? `${foldPhrase("수가 적힌 색종이", folds, "접은 뒤")} 색칠한 칸을 잘랐어요. 펼쳤을 때 잘려 나간 칸의 수를 모두 더하면 얼마일까요?` : `${foldPhrase("격자 색종이", folds, "접은 뒤")} 색칠한 칸을 잘랐어요. 펼치면 어느 칸이 잘려 있을까요?`;
+  return { id, title, problem, figure: foldFig(n, { labels, region, done: folds, cut, tone: "given" }), steps, answer: ask === "sum" ? `${josa(sum(sumOf), "이에요")}.` : `잘린 칸은 모두 ${all.length}칸, 그림과 같아요.`, value: { kind: "fold-cut", n, folds, cut, all, labels, ask, total: ask === "sum" ? sum(sumOf) : null } };
+}
+// 한 번 접어 자른 반대쪽 칸: 넘어가는 쪽에서 색칠한 칸 → 접은 선 건너편 같은 거리의 칸 번호
+function foldOppositeExample({ id, title, n = 4, fold, shaded }) {
+  const labels = Array.from({ length: n }, (_, r) => Array.from({ length: n }, (_, c) => r * n + c + 1));
+  if (!shaded.every(([r, c]) => foldMoves(fold, n, r, c))) throw new Error(`${id}: 넘어가는 쪽이 아님`);
+  const opp = shaded.map(([r, c]) => foldMap(fold, n, r, c)), nums = opp.map(([r, c]) => labels[r][c]);
+  const steps = [
+    { text: `${FOLD_WORD[fold.t]} 접으면 색칠한 칸은 접은 선 건너편 칸 위에 포개져요.`, figure: foldFig(n, { labels, cut: shaded, line: fold }) },
+    { text: `접은 선에서 같은 거리만큼 건너가면 ${shaded.map(([r, c], i) => `${labels[r][c]} → ${nums[i]}`).join(", ")}.`, figure: foldFig(n, { labels, cut: [...shaded, ...opp], line: fold, tone: "check" }) }
+  ];
+  return { id, title, problem: `${foldPhrase("번호가 적힌 색종이", [fold], "한 번 접어")} 색칠한 칸을 잘랐어요. 펼쳤을 때 반대쪽에 잘리는 칸의 번호를 모두 써요.`, figure: foldFig(n, { labels, cut: shaded, line: fold, tone: "given" }), steps, answer: `${josa(nums.join(", "), "이에요")}.`, value: { kind: "fold-opp", n, fold, shaded, nums } };
+}
+// 처음 위치: 한 번도 넘어가지 않고 그 자리에 남은 칸(맨 아래 겹)
+function foldStayExample({ id, title, n = 4, folds }) {
+  const letters = Array.from({ length: n }, (_, r) => Array.from({ length: n }, (_, c) => String.fromCharCode(65 + r * n + c)));
+  const stay = foldCellsOf(n).filter(([r, c]) => folds.reduce((ok, f, i) => { if (!ok) return false; const [y, x] = foldCell(folds.slice(0, i), n, r, c); return [y, x].join() === [r, c].join() && !foldMoves(f, n, r, c); }, true));
+  const names = stay.map(([r, c]) => letters[r][c]);
+  const steps = [
+    ...folds.map((f, i) => ({ text: `${i + 1}번째: ${FOLD_WORD[f.t]} 접으면 넘어가는 쪽이 아니라 반대쪽이 그 자리에 남아요.`, figure: foldFig(n, { labels: letters, region: regionAfter(folds.slice(0, i), n), done: folds.slice(0, i), line: f }) })),
+    { text: `끝까지 한 번도 넘어가지 않고 남은 칸은 ${names.join(", ")}. 마지막에 남은 모양이 처음 색종이의 이 자리예요.`, figure: foldFig(n, { labels: letters, cut: stay, tone: "check" }) }
+  ];
+  return { id, title, problem: `${foldPhrase("알파벳이 적힌 색종이", folds, "접었어요")}. 마지막에 남는 모양은 처음 색종이의 어느 칸일까요?`, figure: foldFig(n, { labels: letters, line: folds[0], tone: "given" }), steps, answer: `${josa(names.join(", "), "이에요")}.`, value: { kind: "fold-stay", n, folds, names } };
+}
+// 맨 위의 수: 넘어가는 겹은 순서가 뒤집혀 위에 쌓인다
+function foldTopExample({ id, title, labels, folds }) {
+  const n = labels.length; let stacks = new Map(foldCellsOf(n).map(([r, c]) => [`${r},${c}`, [labels[r][c]]]));
+  for (const f of folds) { const next = new Map(); for (const [k, st] of stacks) { const [r, c] = k.split(",").map(Number); if (!foldMoves(f, n, r, c)) next.set(k, [...(next.get(k) || []), ...st]); } for (const [k, st] of stacks) { const [r, c] = k.split(",").map(Number); if (foldMoves(f, n, r, c)) { const t = foldMap(f, n, r, c).join(","); next.set(t, [...(next.get(t) || []), ...[...st].reverse()]); } } stacks = next; }
+  const [only] = [...stacks.values()], top = only.at(-1);
+  if (stacks.size !== 1) throw new Error(`${id}: 한 칸으로 접히지 않음`);
+  const steps = [
+    ...folds.map((f, i) => ({ text: `${i + 1}번째: ${FOLD_WORD[f.t]} 접으면 넘어간 쪽이 위에 올라가요.`, figure: foldFig(n, { labels, region: regionAfter(folds.slice(0, i), n), done: folds.slice(0, i), line: f }) })),
+    { text: `마지막에 넘어간 겹이 가장 위예요. 겹을 아래부터 쓰면 ${only.join(", ")} — 맨 위는 ${top}.`, figure: foldFig(n, { labels, cut: foldCellsOf(n).filter(([r, c]) => labels[r][c] === top), tone: "check" }) }
+  ];
+  return { id, title, problem: `${foldPhrase(`${josa([...labels.flat()].join(", "), "이")} 적힌 색종이`, folds, "접었어요")}. 가장 위에 놓이는 수는 무엇일까요?`, figure: foldFig(n, { labels, line: folds[0], tone: "given" }), steps, answer: `${josa(top, "이에요")}.`, value: { kind: "fold-top", labels, folds, top } };
+}
+// 구멍: 점을 마지막 접기부터 거울처럼 되돌린다. 접은 선 위의 구멍은 펼쳐도 하나
+const pointMirror = (f, n, [x, y]) => { const k = foldAt(f, n); return f.t === "R" || f.t === "L" ? [2 * k - x, y] : f.t === "D" || f.t === "U" ? [x, 2 * k - y] : f.t === "DIAG" ? [y, x] : [n - y, n - x]; };
+function foldHoleExample({ id, title, n = 4, folds, holes }) {
+  let pts = holes.map((p) => [...p]); const steps = [...foldSteps(folds, n, null, [])];
+  steps.push({ text: `다 접은 종이에 구멍 ${holes.length}개를 뚫어요.`, figure: foldFig(n, { region: regionAfter(folds, n), done: folds, holes: pts }) });
+  for (let i = folds.length - 1; i >= 0; i--) {
+    const before = pts.length, add = pts.map((p) => pointMirror(folds[i], n, p)).filter((q) => !pts.some((p) => p[0] === q[0] && p[1] === q[1]));
+    pts = [...pts, ...add];
+    steps.push({ text: `${folds.length - i}번째로 펼쳐요(${FOLD_WORD[folds[i].t]} 접었던 것). 접은 선 건너편에 같은 거리로 하나씩 생기는데, 접은 선 위의 구멍은 그대로 하나예요. ${before}개 → ${pts.length}개.`, figure: foldFig(n, { region: regionAfter(folds.slice(0, i), n), done: folds.slice(0, i), holes: pts, tone: i === 0 ? "check" : "doing" }) });
+  }
+  return { id, title, problem: `${foldPhrase("색종이", folds, "접은 뒤")} 구멍 ${holes.length}개를 뚫었어요. 펼친 색종이에 생기는 구멍은 몇 개일까요?`, figure: foldFig(n, { region: regionAfter(folds, n), done: folds, holes, tone: "given" }), steps, answer: `${pts.length}개예요.`, value: { kind: "fold-hole", n, folds, holes, count: pts.length } };
+}
+// 숫자 카드: 덧셈식의 빈칸, 서로 다른 카드 고르기
+function cardBlankExample({ id, title, terms, total }) {
+  const known = terms.filter((t) => t !== null), b = total - sum(known);
+  const shown = terms.map((t) => (t === null ? "□" : t)).join(" + ");
+  const steps = [
+    { text: `보이는 수를 먼저 더해요. ${known.join(" + ")} = ${sum(known)}.`, figure: { kind: "eqs", lines: [`${shown} = ${total}`], tone: "doing" } },
+    { text: `□ = ${total} − ${sum(known)} = ${b}.`, figure: { kind: "eqs", lines: [`${terms.map((t) => t ?? b).join(" + ")} = ${total}`], tone: "check" } }
+  ];
+  return { id, title, problem: `빈칸에 알맞은 수를 써요. ${shown} = ${total}`, figure: { kind: "eqs", lines: [`${shown} = ${total}`], tone: "given" }, steps, answer: `□는 ${josa(b, "이에요")}.`, value: { kind: "card-blank", terms, total, b } };
+}
+function cardPickExample({ id, title, cards, k, total, fixed = [] }) {
+  const need = total - sum(fixed), out = [];
+  const go = (start, pick) => { if (pick.length === k) { if (sum(pick) === need) out.push([...pick]); return; } for (let i = start; i < cards.length; i++) { pick.push(cards[i]); go(i + 1, pick); pick.pop(); } };
+  go(0, []);
+  if (!out.length) throw new Error(`${id}: 고를 카드가 없음`);
+  const steps = [
+    { text: fixed.length ? `고정된 수를 빼면 고를 카드 ${k}장의 합은 ${total} − ${sum(fixed)} = ${need}.` : `서로 다른 카드 ${k}장의 합이 ${josa(need, "이")} 되도록 작은 카드부터 짝을 지어 봐요.`, figure: { kind: "num-cards", n: cards.at(-1), eqs: [`${Array(k).fill("□").join(" + ")} = ${need}`], tone: "doing" } },
+    { text: `${out.map((p) => `${p.join(" + ")} = ${need}`).join(", ")}.`, figure: { kind: "num-cards", n: cards.at(-1), pick: out[0], eqs: out.map((p) => `${p.join(" + ")} = ${need}`), tone: "check" } }
+  ];
+  const problem = fixed.length ? `${cards[0]}부터 ${cards.at(-1)}까지의 카드 중 서로 다른 ${k}장을 골라 ${[...fixed, ...Array(k).fill("□")].join(" + ")} = ${josa(total, "을")} 완성해요. 고를 수 있는 카드를 모두 찾아요.` : `${cards[0]}부터 ${cards.at(-1)}까지의 카드 중 합이 ${josa(total, "이")} 되는 서로 다른 ${k}장을 모두 찾아요.`;
+  return { id, title, problem, figure: { kind: "num-cards", n: cards.at(-1), tone: "given" }, steps, answer: `${out.map((p) => `(${p.join(", ")})`).join(", ")}${josa(out.at(-1).at(-1), "이에요").slice(String(out.at(-1).at(-1)).length)}.`, value: { kind: "card-pick", cards, k, total, fixed, out } };
+}
+const NUM16 = [[3, 7, 2, 9], [8, 1, 6, 4], [5, 9, 3, 7], [2, 6, 8, 1]];
+const FOLD_SET = {
+  id: "fold",
+  types: {
+    // 1권 한 번 접어 자르기
+    "한 번 접어 자른 모양 펼치기": () => [foldCutExample({ id: "f1-v", title: "예제 1", folds: [{ t: "R" }], cut: [[1, 2], [2, 3]] })],
+    "서로 다른 모양 펼치기": () => [foldCutExample({ id: "f1-h", title: "예제 1", folds: [{ t: "D" }], cut: [[2, 1], [3, 2]] })],
+    "대각선 접기 펼치기": () => [foldCutExample({ id: "f1-d", title: "예제 1", folds: [{ t: "DIAG" }], cut: [[2, 0], [3, 1]] })],
+    "격자 색종이 좌우·상하 펼치기": () => [foldCutExample({ id: "f1-g", title: "예제 1", folds: [{ t: "L" }], cut: [[0, 1], [3, 0]] })],
+    "격자 색종이 대각선 펼치기": () => [foldCutExample({ id: "f1-a", title: "예제 1", folds: [{ t: "ANTI" }], cut: [[2, 3], [3, 1]] })],
+    "잘려 나간 부분의 수 합": () => [foldCutExample({ id: "f1-sum", title: "예제 1", folds: [{ t: "U" }], cut: [[0, 0], [1, 3]], labels: NUM16, ask: "sum" }), foldCutExample({ id: "f2-sum", title: "예제 2", folds: [{ t: "L" }, { t: "U" }], cut: [[0, 1]], labels: NUM16, ask: "sum" })],
+    "덧셈식 빈칸": () => [cardBlankExample({ id: "cb-1", title: "예제 1", terms: [5, null, 8], total: 19 })],
+    "숫자 카드 두 장 고르기": () => [cardPickExample({ id: "cp-1", title: "예제 1", cards: [1, 2, 3, 4, 5], k: 2, total: 11, fixed: [4] })],
+    "합이 되는 카드 모두 고르기": () => [cardPickExample({ id: "cp-2", title: "예제 1", cards: [1, 2, 3, 4, 5, 6], k: 2, total: 10 }), cardPickExample({ id: "cp-3", title: "예제 2", cards: [1, 2, 3, 4, 5, 6, 7], k: 2, total: 9 })],
+    // 1권 두 번 접기
+    "두 번 접은 뒤 맨 위의 수": () => [foldTopExample({ id: "top-1", title: "예제 1", labels: [[5, 6], [7, 8]], folds: [{ t: "U" }, { t: "L" }] })],
+    "두 번 접어 자른 격자 펼치기": () => [foldCutExample({ id: "f2-g", title: "예제 1", folds: [{ t: "R" }, { t: "D" }], cut: [[3, 2]] })],
+    "대각선으로 두 번 접어 펼치기": () => [foldCutExample({ id: "f2-d", title: "예제 1", folds: [{ t: "DIAG" }, { t: "ANTI" }], cut: [[3, 1]] })],
+    "세 카드의 합 모두 고르기": () => [cardPickExample({ id: "cp-4", title: "예제 1", cards: [1, 2, 3, 4, 5, 6], k: 3, total: 10 })],
+    "1~9 카드 짝 모두 찾기": () => [cardPickExample({ id: "cp-5", title: "예제 1", cards: [1, 2, 3, 4, 5, 6, 7, 8, 9], k: 2, total: 12 })],
+    // 4권
+    "접은 색종이의 처음 위치": () => [foldStayExample({ id: "stay-1", title: "예제 1", folds: [{ t: "R" }, { t: "L", at: 3 }, { t: "D" }] })],
+    "한 번 접어 자른 반대쪽 칸": () => [foldOppositeExample({ id: "opp-1", title: "예제 1", fold: { t: "R" }, shaded: [[1, 0], [3, 1]] })],
+    "두 번 접어 자른 뒤 펼친 모양": () => [foldCutExample({ id: "f4-2", title: "예제 1", folds: [{ t: "U" }, { t: "R" }], cut: [[0, 2]] })],
+    "접어 자른 칸의 수 합": () => [foldCutExample({ id: "f4-sum", title: "예제 1", folds: [{ t: "L" }, { t: "D" }], cut: [[2, 1]], labels: NUM16, ask: "sum" })],
+    "대각선으로 두 번 접어 자른 칸의 수 합": () => [foldCutExample({ id: "f4-dsum", title: "예제 1", folds: [{ t: "DIAG" }, { t: "ANTI" }], cut: [[3, 2]], labels: NUM16, ask: "sum" })],
+    "접은 색종이를 펼친 뒤 구멍 수": () => [foldHoleExample({ id: "hole-1", title: "예제 1", folds: [{ t: "R" }, { t: "D" }], holes: [[3, 3], [2, 3]] }), foldHoleExample({ id: "hole-2", title: "예제 2", folds: [{ t: "DIAG" }], holes: [[1, 3], [2, 2]] })]
+  }
+};
+// ───────────────────────── 4권 붙인 정사각형의 모양: 돌리거나 뒤집어 같아지면 한 종류 ─────────────────────────
+// 그림 kind "minos": 칸 묶음 여러 개(같은 종류끼리 같은 색으로 칠할 수 있다)
+const minoNorm = (cells) => { const r0 = Math.min(...cells.map((p) => p[0])), c0 = Math.min(...cells.map((p) => p[1])); return cells.map(([r, c]) => [r - r0, c - c0]).sort((a, b) => a[0] - b[0] || a[1] - b[1]); };
+const minoForms = (cells) => { const out = []; let cur = cells; for (let k = 0; k < 4; k++) { cur = cur.map(([r, c]) => [c, -r]); out.push(minoNorm(cur), minoNorm(cur.map(([r, c]) => [r, -c]))); } return out.map((f) => JSON.stringify(f)); };
+const minoKey = (cells) => minoForms(cells).sort()[0];
+function minoKindsExample({ id, title, shapes }) {
+  const keys = shapes.map(minoKey), kinds = [...new Set(keys)], group = keys.map((k) => kinds.indexOf(k));
+  const steps = [
+    { text: "모두 정사각형 4개를 변끼리 붙인 모양이에요. 하나씩 돌리거나 뒤집어서 다른 모양과 포개지는지 봐요.", figure: { kind: "minos", shapes } },
+    ...kinds.map((k, g) => ({ text: `${shapes.map((_, i) => (group[i] === g ? i + 1 : null)).filter(Boolean).join("번, ")}번은 돌리거나 뒤집으면 꼭 포개져요 — 한 종류예요.`, figure: { kind: "minos", shapes, group: group.map((x) => (x <= g ? x : -1)) } }))
+  ];
+  steps.at(-1).figure.tone = "check";
+  steps.at(-1).text += ` 그래서 모두 ${kinds.length}종류.`;
+  return { id, title, problem: `정사각형 4개를 붙여 만든 모양 ${shapes.length}개가 있어요. 돌리거나 뒤집어서 같아지는 것을 한 종류로 세면 모두 몇 종류일까요?`, figure: { kind: "minos", shapes, tone: "given" }, steps, answer: `${kinds.length}종류예요.`, value: { kind: "mino-kinds", shapes, count: kinds.length } };
+}
+FOLD_SET.types["정사각형 조각으로 만든 서로 다른 모양"] = () => [minoKindsExample({ id: "mino-1", title: "예제 1", shapes: [
+  [[0, 0], [1, 0], [2, 0], [2, 1]], [[0, 1], [1, 1], [1, 0], [2, 0]], [[0, 0], [0, 1], [0, 2], [1, 1]],
+  [[0, 0], [0, 1], [0, 2], [1, 0]], [[0, 0], [1, 0], [1, 1], [2, 1]], [[1, 0], [1, 1], [1, 2], [0, 1]]
+] })];
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET, [NLINE6_SET.id]: NLINE6_SET, [FRAC_SET.id]: FRAC_SET, [AREA_SET.id]: AREA_SET, [FLIP4_SET.id]: FLIP4_SET, [FOLD_SET.id]: FOLD_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

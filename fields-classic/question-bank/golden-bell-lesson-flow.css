@@ -349,6 +349,11 @@
 .tx-upright { display: grid; grid-template-columns: repeat(2, 64px); gap: 4px; justify-content: center; }
 .tx-upright span { display: flex; align-items: center; justify-content: center; height: 64px; border-radius: 10px; }
 .tx-upright span.on { box-shadow: 0 0 0 3px var(--tone); background: #e3f5ea; }
+.tx-fold { display: flex; justify-content: center; }
+.tx-fold svg { width: min(100%, 190px); height: auto; }
+.tx-minos { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: flex-end; }
+.tx-minos figure { margin: 0; display: grid; justify-items: center; gap: 2px; }
+.tx-minos figcaption { font-size: 12px; font-weight: 900; color: #566274; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

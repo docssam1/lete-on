@@ -2,7 +2,7 @@
 // 한 단계씩 연다: 0단계 = 문제만, 1~N단계 = 풀이가 하나씩, 마지막 = 답. 답은 마지막 단계 전에는 화면에 없다.
 // 색은 골든벨 색표(쌓기나무·모양·숫자판·저울), 안내 단계 색은 주어진 것 파랑 · 하는 일 금색 · 확인 진초록.
 
-import { book04Markup, obliqueCubes, digitGlyph, opIcon, sevenSegNumber } from "./book04-renderers.js?v=20261028v";
+import { book04Markup, obliqueCubes, digitGlyph, opIcon, sevenSegNumber } from "./book04-renderers.js?v=20261028w";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const TONE = { given: "#2f6fe0", doing: "#d39b20", check: "#16734b" };
@@ -838,6 +838,44 @@ function glyphsFigure(f) {
 function uprightFigure(f) {
   return `<div class="tx-upright" style="--tone:${TONE[f.tone || "given"]}">${f.cells.map((c, i) => `<span class="${f.hi?.[i] ? "on" : ""}">${digitGlyph(c.value, c.t)}</span>`).join("")}</div>`;
 }
+// fold: n × n 색종이. region = 접고 남은 칸(나머지는 흐리게), cut = 자르는(색칠한) 칸, line = 다음에 접을 선과 넘어가는 방향, holes = 구멍 점
+function foldFigure(f) {
+  const color = TONE[f.tone || "given"], n = f.n, s = n === 2 ? 50 : 36, pad = 20, W = n * s + pad * 2, region = f.region ? new Set(f.region) : null, cut = new Set(f.cut || []);
+  // 접고 남은 종이의 실제 모양: 정사각형을 접기마다 남는 쪽 반평면으로 자른다(대각선으로 접으면 삼각형)
+  let poly = [[0, 0], [n, 0], [n, n], [0, n]];
+  const keep = { R: (p, k) => p[0] - k, L: (p, k) => k - p[0], D: (p, k) => p[1] - k, U: (p, k) => k - p[1], DIAG: (p) => p[1] - p[0], ANTI: (p) => p[0] + p[1] - n };
+  for (const fd of f.done || []) { const g = (p) => keep[fd.t](p, fd.at ?? n / 2), out = []; poly.forEach((p, i) => { const q = poly[(i + 1) % poly.length], a = g(p), b = g(q); if (a >= 0) out.push(p); if ((a >= 0) !== (b >= 0)) out.push([p[0] + ((q[0] - p[0]) * a) / (a - b), p[1] + ((q[1] - p[1]) * a) / (a - b)]); }); poly = out; }
+  const P = (pts) => pts.map(([x, y]) => `${(pad + x * s).toFixed(1)},${(pad + y * s).toFixed(1)}`).join(" "), clipId = `fold-clip-${Math.random().toString(36).slice(2, 8)}`;
+  let body = "", inside = "";
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+    const k = `${r},${c}`, x = pad + c * s, y = pad + r * s;
+    body += `<rect x="${x}" y="${y}" width="${s}" height="${s}" fill="${cut.has(k) && region ? "#f4f1ea" : "#f4f1ea"}" stroke="#d8d2c4" stroke-width="1" stroke-dasharray="3 3"/>`;
+  }
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+    const k = `${r},${c}`, inR = !region || region.has(k), x = pad + c * s, y = pad + r * s;
+    if (!inR && !cut.has(k)) continue;
+    inside += `<rect x="${x}" y="${y}" width="${s}" height="${s}" fill="${cut.has(k) ? SHADE.fill : "#fff3c4"}" stroke="#a8741a" stroke-width="1.6"/>`;
+    if (f.labels) inside += text(x + s / 2, y + s / 2, f.labels[r][c], { size: n === 2 ? 18 : 14, weight: 900 });
+  }
+  body += f.done?.length ? `<clipPath id="${clipId}"><polygon points="${P(poly)}"/></clipPath><g clip-path="url(#${clipId})">${inside}</g><polygon points="${P(poly)}" fill="none" stroke="#a8741a" stroke-width="2.2"/>` : inside;
+  if (f.line) {
+    const L = f.line, at = (L.at ?? n / 2) * s + pad, end = pad + n * s;
+    const seg = L.t === "R" || L.t === "L" ? [at, pad - 8, at, end + 8] : L.t === "D" || L.t === "U" ? [pad - 8, at, end + 8, at] : L.t === "DIAG" ? [pad, pad, end, end] : [end, pad, pad, end];
+    body += `<line x1="${seg[0]}" y1="${seg[1]}" x2="${seg[2]}" y2="${seg[3]}" stroke="#8e5bd8" stroke-width="2.6" stroke-dasharray="7 5"/>`;
+    const mid = pad + (n * s) / 2, q = (n * s) / 4, dir = { R: [-q, 0, q, 0], L: [q, 0, -q, 0], D: [0, -q, 0, q], U: [0, q, 0, -q], DIAG: [q, -q, -q, q], ANTI: [-q, -q, q, q] }[L.t];
+    const ax = L.t === "R" || L.t === "L" ? at : mid, ay = L.t === "D" || L.t === "U" ? at : mid, [x1, y1, x2, y2] = [ax + dir[0] * 0.9, ay + dir[1] * 0.9, ax + dir[2] * 0.9, ay + dir[3] * 0.9];
+    body += `<path d="M${x1} ${y1} Q${(x1 + x2) / 2 + (dir[1] ? 14 : 0)} ${(y1 + y2) / 2 - (dir[0] ? 14 : 0)} ${x2} ${y2}" fill="none" stroke="#e8503a" stroke-width="2.6" marker-end="url(#fold-tip)"/>`;
+  }
+  for (const [x, y] of f.holes || []) body += `<circle cx="${pad + x * s}" cy="${pad + y * s}" r="${s * 0.16}" fill="#fff" stroke="#222" stroke-width="2"/>`;
+  const defs = `<defs><marker id="fold-tip" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#e8503a"/></marker></defs>`;
+  return `<div class="tx-fold" style="--tone:${color}">${svg(W, W, defs + body, `${n}×${n} 색종이`)}</div>`;
+}
+// minos: 정사각형을 붙인 모양 여러 개. group[i] = 같은 종류 번호(-1이면 아직), 종류마다 색
+const MINO_COLOR = ["#ffa94d", "#7cc4ff", "#9be28f", "#e3b5ff"];
+function minosFigure(f) {
+  const s = 16;
+  return `<div class="tx-minos">${f.shapes.map((cells, i) => { const R = Math.max(...cells.map((p) => p[0])) + 1, C = Math.max(...cells.map((p) => p[1])) + 1, g = f.group?.[i] ?? -1; const body = cells.map(([r, c]) => `<rect x="${2 + c * s}" y="${2 + r * s}" width="${s}" height="${s}" fill="${g >= 0 ? MINO_COLOR[g % 4] : "#fff3c4"}" stroke="#333" stroke-width="1.5"/>`).join(""); return `<figure>${svg(C * s + 4, R * s + 4, body, `${i + 1}번 모양`)}<figcaption>${i + 1}번</figcaption></figure>`; }).join("")}</div>`;
+}
 // fracs: 위아래로 쌓은 분수 카드. [분자, 분모] — null은 빈칸
 function fracsFigure(f) {
   const color = TONE[f.tone || "given"], hi = new Set(f.hi || []);
@@ -1000,6 +1038,8 @@ export function figureMarkup(figure) {
   if (figure.kind === "seg7") return seg7Figure(figure);
   if (figure.kind === "glyphs") return glyphsFigure(figure);
   if (figure.kind === "upright") return uprightFigure(figure);
+  if (figure.kind === "fold") return foldFigure(figure);
+  if (figure.kind === "minos") return minosFigure(figure);
   if (figure.kind === "pieces") return piecesFigure(figure);
   if (figure.kind === "ring") return ringFigure(figure);
   if (figure.kind === "crypt") return cryptFigure(figure);

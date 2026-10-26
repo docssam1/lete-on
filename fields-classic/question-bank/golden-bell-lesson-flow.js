@@ -1,5 +1,5 @@
-import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028v";
-import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261028v";
+import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028w";
+import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261028w";
 
 // 개념 단계 안의 학습 순서: ① 개념 설명 → ② 유형별 예제 → ③ 게임 → (골든벨 문제).
 // 원장 지시: "개념마다 설명하는 튜토리얼, 문제 유형마다 예제 1~2개, 그다음 게임."
@@ -143,9 +143,15 @@ export const LESSON_FLOWS = Object.freeze({
   "book-04/digital-flip-source": { examples: "flip4", game: "drill" },
   "book-04/flip-rotate-source": { examples: "flip4", game: "drill" },
   "book-01/digital-turn-flip": { examples: "flip4", game: "digital" },
-  "book-01/mirror-reflection": { examples: "flip4", game: "shape-moves" }
+  "book-01/mirror-reflection": { examples: "flip4", game: "shape-moves" },
+  "book-01/fold-one-cut": { examples: "fold", game: "fold-once" },
+  "book-01/fold-two-cut": { examples: "fold", game: "fold-twice" },
+  "book-04/fold-position-source": { examples: "fold", game: "drill" },
+  "book-04/fold-cut-source": { examples: "fold", game: "drill" },
+  "book-04/fold-hole-count": { examples: "fold", game: "drill" },
+  "book-04/polyomino-family-count": { examples: "fold", game: "drill" }
 });
-export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방", "share-equally": "같아지도록 옮기기", "cross-sums": "두 줄의 합 맞추기", "line-order": "조건대로 줄 세우기", "b2-matrix": "도형 값 찾기", "b2-pattern": "무늬 기차", "b2-sudoku": "빈칸 채우기", digital: "디지털 숫자 공방", "shape-moves": "뒤집고 돌리기 공방" });
+export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방", "share-equally": "같아지도록 옮기기", "cross-sums": "두 줄의 합 맞추기", "line-order": "조건대로 줄 세우기", "b2-matrix": "도형 값 찾기", "b2-pattern": "무늬 기차", "b2-sudoku": "빈칸 채우기", digital: "디지털 숫자 공방", "shape-moves": "뒤집고 돌리기 공방", "fold-once": "한 번 접고 잘라 보기", "fold-twice": "두 번 접고 펼쳐 보기" });
 const STEPS = [["tutorial", "개념 설명"], ["examples", "유형별 예제"], ["game", "게임"]];
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 

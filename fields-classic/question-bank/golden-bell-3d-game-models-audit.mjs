@@ -1211,6 +1211,49 @@ function verifyExample(setId, typeLabel, ex, lesson) {
         for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) if (vis.digit && vis.steps) assert.ok(!(vis.digit === v.digit && vis.steps.length === v.ops.length), `${ex.id}: 원본과 같은 숫자·단계 수`);
       }
     } else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "fold") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    // 접기를 칸마다 따로 따라가 본다(예제 쪽 함수는 쓰지 않는다). 점은 접은 선에서의 거리를 반대로 뒤집는다
+    const half = (f, n) => (f.at ?? n / 2);
+    const moveCell = (f, n, [r, c]) => { const k = half(f, n); if (f.t === "R" && c < k) return [r, 2 * k - 1 - c]; if (f.t === "L" && c >= k) return [r, 2 * k - 1 - c]; if (f.t === "D" && r < k) return [2 * k - 1 - r, c]; if (f.t === "U" && r >= k) return [2 * k - 1 - r, c]; if (f.t === "DIAG" && c > r) return [c, r]; if (f.t === "ANTI" && r + c < n - 1) return [n - 1 - c, n - 1 - r]; return [r, c]; };
+    const final = (folds, n, cell) => folds.reduce((p, f) => moveCell(f, n, p), cell);
+    const grid = (n) => Array.from({ length: n * n }, (_, i) => [Math.floor(i / n), i % n]);
+    const same = (a, b) => a[0] === b[0] && a[1] === b[1];
+    if (v.kind === "fold-cut") {
+      const region = grid(v.n).map((c) => final(v.folds, v.n, c));
+      assert.ok(v.cut.every((c) => region.some((q) => same(q, c))), `${ex.id}: 자른 칸이 접은 종이 위`);
+      const all = grid(v.n).filter((c) => v.cut.some((q) => same(final(v.folds, v.n, c), q)));
+      assert.deepEqual(v.all, all, `${ex.id}: 펼친 뒤 잘린 칸`);
+      if (v.ask === "sum") { const t = all.reduce((a, [r, c]) => a + v.labels[r][c], 0); assert.equal(v.total, t); assert.deepEqual(nums(ex.answer), [t]); } else assert.deepEqual(nums(ex.answer), [all.length]);
+      for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) { if (vis.numbers && v.labels) assert.notEqual(JSON.stringify(vis.numbers), JSON.stringify(v.labels), `${ex.id}: 원본과 같은 수 판`); if (vis.sourcePattern) { const mine = Array.from({ length: v.n }, (_, r) => Array.from({ length: v.n }, (_, c) => (v.cut.some((q) => same(q, [r, c])) ? "X" : "B")).join("")); assert.notEqual(vis.sourcePattern.join(), mine.join(), `${ex.id}: 원본과 같은 자르기`); } }
+    } else if (v.kind === "fold-opp") { const nums2 = v.shaded.map((c) => { const [r, cc] = moveCell(v.fold, v.n, c); return r * v.n + cc + 1; }); assert.deepEqual(v.nums, nums2); assert.ok(v.shaded.every((c) => !same(moveCell(v.fold, v.n, c), c)), `${ex.id}: 넘어가는 쪽`); assert.deepEqual(nums(ex.answer), nums2); }
+    else if (v.kind === "fold-stay") {
+      // 한 번도 자리를 옮기지 않은 칸
+      const stay = grid(v.n).filter((c) => { let p = c; for (const f of v.folds) { const q = moveCell(f, v.n, p); if (!same(q, p)) return false; p = q; } return true; });
+      assert.deepEqual(v.names, stay.map(([r, c]) => String.fromCharCode(65 + r * v.n + c)));
+    } else if (v.kind === "fold-top") {
+      const n = v.labels.length; let st = grid(n).map((c) => ({ at: c, stack: [v.labels[c[0]][c[1]]] }));
+      for (const f of v.folds) { const stayers = st.filter((x) => same(moveCell(f, n, x.at), x.at)), movers = st.filter((x) => !same(moveCell(f, n, x.at), x.at)); for (const m of movers) { const to = moveCell(f, n, m.at), host = stayers.find((x) => same(x.at, to)); host.stack = [...host.stack, ...[...m.stack].reverse()]; } st = stayers; }
+      assert.equal(st.length, 1); assert.equal(v.top, st[0].stack.at(-1), `${ex.id}: 맨 위`); assert.deepEqual(nums(ex.answer), [v.top]);
+      for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) if (vis.subtype === "fold-landing") assert.notEqual(JSON.stringify(vis.folds), JSON.stringify(v.folds.map((f) => f.t)), `${ex.id}: 원본과 같은 접기`);
+    } else if (v.kind === "fold-hole") {
+      // 반 칸 간격의 모든 점을 앞에서부터 접어 보아, 다 접은 뒤 구멍 자리에 오는 점의 수를 센다
+      const movePt = (f, n, [x, y]) => { const k = half(f, n); if (f.t === "R" && x < k) return [2 * k - x, y]; if (f.t === "L" && x > k) return [2 * k - x, y]; if (f.t === "D" && y < k) return [x, 2 * k - y]; if (f.t === "U" && y > k) return [x, 2 * k - y]; if (f.t === "DIAG" && x > y) return [y, x]; if (f.t === "ANTI" && x + y < v.n) return [v.n - y, v.n - x]; return [x, y]; };
+      let count = 0;
+      for (let i = 0; i <= v.n * 2; i++) for (let j = 0; j <= v.n * 2; j++) { const p = v.folds.reduce((q, f) => movePt(f, v.n, q), [i / 2, j / 2]); if (v.holes.some((h) => same(h, p))) count++; }
+      assert.equal(v.count, count, `${ex.id}: 구멍 수`); assert.deepEqual(nums(ex.answer), [count]);
+    } else if (v.kind === "card-blank") { assert.equal(v.b, v.total - v.terms.filter((t) => t !== null).reduce((a, b) => a + b, 0)); assert.ok(v.b > 0); assert.deepEqual(nums(ex.answer), [v.b]); for (const item of lesson.original.items) assert.notEqual(nums(item.prompt).join(), nums(ex.problem).join()); }
+    else if (v.kind === "card-pick") {
+      const out = []; const need = v.total - v.fixed.reduce((a, b) => a + b, 0);
+      for (let m = 0; m < 1 << v.cards.length; m++) { const pick = v.cards.filter((_, i) => m >> i & 1); if (pick.length === v.k && pick.reduce((a, b) => a + b, 0) === need) out.push(pick); }
+      assert.deepEqual(JSON.stringify([...v.out].sort()), JSON.stringify(out.sort()), `${ex.id}: 고를 카드`); assert.deepEqual(nums(ex.answer), v.out.flat());
+      for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) if (vis.expression) assert.ok(!(JSON.stringify(vis.cards) === JSON.stringify(v.cards) && vis.expression.at(-1) === v.total), `${ex.id}: 원본과 같은 카드·합`);
+    } else if (v.kind === "mino-kinds") {
+      // 돌리기 네 번 × 뒤집기 두 번 = 여덟 놓임 가운데 가장 작은 꼴로 같은 종류를 가린다(행렬을 따로 적용)
+      const forms = (cells) => [[1, 0, 0, 1], [0, -1, 1, 0], [-1, 0, 0, -1], [0, 1, -1, 0], [-1, 0, 0, 1], [1, 0, 0, -1], [0, 1, 1, 0], [0, -1, -1, 0]].map(([a, b, c, d]) => { const pts = cells.map(([r, k]) => [a * r + b * k, c * r + d * k]), mr = Math.min(...pts.map((p) => p[0])), mk = Math.min(...pts.map((p) => p[1])); return JSON.stringify(pts.map(([r, k]) => [r - mr, k - mk]).sort((p, q) => p[0] - q[0] || p[1] - q[1])); });
+      const kinds = new Set(v.shapes.map((cells) => forms(cells).sort()[0]));
+      assert.equal(v.count, kinds.size, `${ex.id}: 종류 수`); assert.deepEqual(nums(ex.answer), [kinds.size]);
+    } else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);
