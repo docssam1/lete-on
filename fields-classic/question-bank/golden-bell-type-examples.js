@@ -3591,7 +3591,95 @@ const AREA_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET, [NLINE6_SET.id]: NLINE6_SET, [FRAC_SET.id]: FRAC_SET, [AREA_SET.id]: AREA_SET });
+// ───────────────────────── 4권 디지털 숫자 · 돌리기와 뒤집기 ─────────────────────────
+// 디지털 숫자: 7개 막대(a 위, b 오른쪽 위, c 오른쪽 아래, d 아래, e 왼쪽 아래, f 왼쪽 위, g 가운데). 오른쪽으로 뒤집으면 b↔f, c↔e,
+// 반 바퀴 돌리면 a↔d, b↔e, c↔f. 1은 막대가 한쪽으로 옮겨 가도 1로 읽는다(원본과 같음). 두 자리 이상은 자리 순서도 뒤집힌다.
+// 그림 kind "seg7"(디지털 숫자 줄) · "glyphs"(숫자와 기호 사슬, 4권 그리기 함수) · "upright"(2×2 숫자판).
+const SEG7 = { "0": "abcdef", "1": "bc", "2": "abdeg", "3": "abcdg", "4": "bcfg", "5": "acdfg", "6": "acdefg", "7": "abcf", "8": "abcdefg", "9": "abcdfg" };
+const SEG_MOVE = { LR: { a: "a", b: "f", c: "e", d: "d", e: "c", f: "b", g: "g" }, R180: { a: "d", b: "e", c: "f", d: "a", e: "b", f: "c", g: "g" } };
+const segOf = (d, mode) => { if (d === "1") return "1"; const on = [...SEG7[d]].map((k) => SEG_MOVE[mode][k]).sort().join(""); return Object.keys(SEG7).find((k) => [...SEG7[k]].sort().join("") === on) ?? null; };
+const segNumber = (n, mode) => { const ds = [...String(n)].map((d) => segOf(d, mode)); return ds.includes(null) ? null : ds.reverse().join(""); };
+const MODE_WORD = { LR: "오른쪽으로 뒤집은", R180: "반 바퀴 돌린" }, MODE_IF = { LR: "오른쪽으로 뒤집으면", R180: "반 바퀴 돌리면" };
+function arithExample({ id, title, a, b, op }) {
+  const [a1, a0] = [Math.floor(a / 10), a % 10], [b1, b0] = [Math.floor(b / 10), b % 10], r = op === "+" ? a + b : a - b;
+  const steps = op === "+" ? [
+    { text: `일의 자리부터: ${a0} + ${b0} = ${a0 + b0}${a0 + b0 >= 10 ? `. 일의 자리에 ${josa((a0 + b0) % 10, "을")} 쓰고 1을 십의 자리로 올려요` : ""}.`, figure: { kind: "eqs", lines: [`  ${a}`, `+ ${b}`], tone: "doing" } },
+    { text: `십의 자리: ${a1} + ${b1}${a0 + b0 >= 10 ? " + 1" : ""} = ${a1 + b1 + (a0 + b0 >= 10 ? 1 : 0)}. 답은 ${r}.`, figure: { kind: "eqs", lines: [`  ${a}`, `+ ${b}`, `= ${r}`], tone: "check" } }
+  ] : [
+    { text: a0 < b0 ? `일의 자리 ${a0}에서 ${josa(b0, "을")} 뺄 수 없어 십의 자리에서 10을 빌려 와요. ${a0 + 10} − ${b0} = ${a0 + 10 - b0}.` : `일의 자리부터: ${a0} − ${b0} = ${a0 - b0}.`, figure: { kind: "eqs", lines: [`  ${a}`, `− ${b}`], tone: "doing" } },
+    { text: `십의 자리: ${a0 < b0 ? `${a1} − 1` : a1} − ${b1} = ${a1 - (a0 < b0 ? 1 : 0) - b1}. 답은 ${r}.`, figure: { kind: "eqs", lines: [`  ${a}`, `− ${b}`, `= ${r}`], tone: "check" } }
+  ];
+  return { id, title, problem: `계산해요. ${a} ${op === "+" ? "+" : "−"} ${b} = ?`, figure: { kind: "eqs", lines: [`${a} ${op === "+" ? "+" : "−"} ${b}`], tone: "given" }, steps, answer: `${josa(r, "이에요")}.`, value: { kind: "arith", a, b, op, r } };
+}
+function segExample({ id, title, number, mode, op = "+", card = false }) {
+  const m = segNumber(number, mode);
+  if (m === null) throw new Error(`${id}: 숫자가 되지 않음`);
+  const digits = [...String(number)], moved = digits.map((d) => segOf(d, mode));
+  const big = Math.max(Number(number), Number(m)), small = Math.min(Number(number), Number(m));
+  const r = card ? big - small : op === "+" ? Number(number) + Number(m) : Number(number) - Number(m);
+  const rule = mode === "LR" ? "왼쪽 막대와 오른쪽 막대가 바뀌어요" : "위아래와 왼쪽·오른쪽 막대가 모두 바뀌어요";
+  const steps = [
+    { text: `${MODE_IF[mode]} ${rule}. ${digits.map((d, i) => `${d} → ${moved[i]}`).join(", ")}.`, figure: { kind: "seg7", rows: [{ label: "원래 수", number: String(number) }, { label: "숫자마다", number: moved.join("") }] } },
+    { text: digits.length > 1 ? `자리 순서도 뒤집혀요. ${moved.join("")} → ${m}.` : `한 자리라 그대로 ${m}.`, figure: { kind: "seg7", rows: [{ label: "원래 수", number: String(number) }, { label: MODE_WORD[mode] + " 수", number: m }] } },
+    { text: card ? `큰 수에서 작은 수를 빼면 ${big} − ${small} = ${r}.` : `${number} ${op === "+" ? "+" : "−"} ${m} = ${r}.`, figure: { kind: "seg7", rows: [{ label: "원래 수", number: String(number) }, { label: MODE_WORD[mode] + " 수", number: m }], tone: "check" } }
+  ];
+  const problem = card ? `디지털 숫자 ${josa(number, "이")} 적힌 카드를 반 바퀴 돌렸어요. 돌려서 만들어진 수와 처음 수의 차는 얼마일까요?` : `디지털 숫자 ${number}${op === "+" ? "에" : "에서"} ${MODE_WORD[mode]} 수를 ${op === "+" ? "더하면" : "빼면"} 얼마일까요?`;
+  return { id, title, problem, figure: { kind: "seg7", rows: [{ label: "원래 수", number: String(number) }], tone: "given" }, steps, answer: `${josa(r, "이에요")}.`, value: { kind: "seg", number: String(number), mode, op, card, moved: m, r } };
+}
+// 돌리기·뒤집기: 화면 좌표 2×2 행렬(4권 그리기와 같은 이름). 앞의 움직임을 먼저 하고 뒤의 움직임을 한다
+const MAT = { I: [1, 0, 0, 1], LR: [-1, 0, 0, 1], UD: [1, 0, 0, -1], R180: [-1, 0, 0, -1], CW: [0, -1, 1, 0], CCW: [0, 1, -1, 0], T: [0, 1, 1, 0], AT: [0, -1, -1, 0] };
+const mul = (p, q) => [p[0] * q[0] + p[1] * q[2], p[0] * q[1] + p[1] * q[3], p[2] * q[0] + p[3] * q[2], p[2] * q[1] + p[3] * q[3]];
+const matName = (m) => Object.keys(MAT).find((k) => MAT[k].join() === m.join());
+const compose = (ts) => matName(ts.reduce((acc, t) => mul(MAT[t], acc), MAT.I));
+const MOVE_WORD = { LR: "오른쪽으로 뒤집기", UD: "아래로 뒤집기", R180: "반 바퀴 돌리기", CW: "시계 방향으로 반의 반 바퀴 돌리기", CCW: "시계 반대 방향으로 반의 반 바퀴 돌리기", I: "그대로", T: "대각선으로 뒤집기", AT: "대각선으로 뒤집기" };
+// 보기는 원본과 같은 여덟 가지 놓임(대각선으로 뒤집은 두 모양 T·AT 포함)
+const OPTS = ["I", "LR", "UD", "R180", "CW", "AT", "CCW", "T"];
+const CIRC = "①②③④⑤⑥⑦⑧", CIRC_BATCHIM = [1, 0, 1, 0, 0, 1, 1, 1]; // 일·이·삼·사·오·육·칠·팔
+const circIs = (i) => `${CIRC[i]}${CIRC_BATCHIM[i] ? "이에요" : "예요"}`;
+const T_WORD = { I: "똑바로", LR: "오른쪽으로 뒤집힌 모양", UD: "아래로 뒤집힌 모양", R180: "반 바퀴 돌아간 모양", CW: "시계 방향으로 반의 반 바퀴 돌아간 모양", CCW: "시계 반대 방향으로 반의 반 바퀴 돌아간 모양" };
+const OP_DONE = { LR: "오른쪽으로 뒤집었을", UD: "아래로 뒤집었을", R180: "반 바퀴 돌렸을", CW: "시계 방향으로 반의 반 바퀴 돌렸을", CCW: "시계 반대 방향으로 반의 반 바퀴 돌렸을" };
+// 숫자 모양을 차례로 움직여 마지막 모양 고르기(보기는 같은 숫자의 여섯 가지 놓임)
+function glyphChainExample({ id, title, digit, ops, ask = "pick" }) {
+  const states = [], acc = [];
+  ops.forEach((o) => { acc.push(o); states.push(compose(acc)); });
+  const last = states.at(-1), pick = OPTS.indexOf(last);
+  if (pick < 0) throw new Error(`${id}: 보기에 없는 모양`);
+  const chain = (upto) => ({ kind: "glyphs", digit, start: "I", ops: ops.map((o, i) => ({ op: o, show: i < upto ? states[i] : null })) });
+  const steps = ops.map((o, i) => ({ text: `${i + 1}번째: ${MOVE_WORD[o]}. ${o === "LR" ? "왼쪽과 오른쪽만 바뀌어요." : o === "UD" ? "위와 아래만 바뀌어요." : o === "R180" ? "위아래와 왼쪽·오른쪽이 모두 바뀌어요." : "윗부분이 옆으로 누워요."}`, figure: chain(i + 1) }));
+  if (ask === "once") {
+    steps.push({ text: `처음 모양과 마지막 모양을 비교하면 한 번에 「${MOVE_WORD[last]}」를 한 것과 같아요.`, figure: { ...chain(ops.length), tone: "check" } });
+    return { id, title, problem: `숫자 ${josa(digit, "을")} 차례로 움직였어요. 처음 모양을 마지막 모양으로 한 번 만에 바꾸려면 어떻게 움직일까요?`, figure: { ...chain(0), tone: "given" }, steps, answer: `${MOVE_WORD[last]}예요.`, value: { kind: "glyph-once", digit, ops, last } };
+  }
+  steps.push({ text: `마지막 모양은 보기 ${circIs(pick)}.`, figure: { kind: "glyphs", digit, start: "I", ops: ops.map((o, i) => ({ op: o, show: states[i] })), options: OPTS, hi: pick, tone: "check" } });
+  return { id, title, problem: `숫자 ${josa(digit, "을")} 그림의 차례대로 움직일 때 마지막 모양을 보기에서 골라요.`, figure: { ...chain(0), options: OPTS, tone: "given" }, steps, answer: `${circIs(pick)}.`, value: { kind: "glyph-pick", digit, ops, last, pick } };
+}
+// 숫자판: 칸마다 놓인 방향 t. 판 전체를 op만큼 움직이면 그 칸의 방향은 op 뒤에 t — 「그대로(I)」가 되면 똑바로
+function uprightExample({ id, title, cells, ops }) {
+  const after = cells.map((c) => compose([c.t, ...ops])), up = cells.filter((_, i) => after[i] === "I").map((c) => c.value);
+  if (!up.length) throw new Error(`${id}: 똑바로 놓이는 수가 없음`);
+  const steps = [
+    { text: `칸마다 숫자가 어떻게 놓였는지 봐요. ${cells.map((c) => `${c.value}: ${T_WORD[c.t]}`).join(", ")}.`, figure: { kind: "upright", cells } },
+    { text: `판을 ${OP_DONE[ops[0]].replace(/을$/u, "")}으면 칸마다 그 움직임이 더해져요. 똑바로 돌아오는 칸은 ${up.join(", ")}.`, figure: { kind: "upright", cells: cells.map((c, i) => ({ ...c, t: after[i] })), hi: cells.map((_, i) => after[i] === "I"), tone: "check" } }
+  ];
+  return { id, title, problem: `숫자판을 ${OP_DONE[ops[0]]} 때 똑바로 놓이는 수를 모두 찾아요.`, figure: { kind: "upright", cells, tone: "given" }, steps, answer: `${josa(up.join(", "), "이에요")}.`, value: { kind: "upright", cells, ops, up } };
+}
+const FLIP4_SET = {
+  id: "flip4",
+  types: {
+    "두 자리 수 덧셈·뺄셈": () => [arithExample({ id: "ar-1", title: "예제 1", a: 47, b: 74, op: "+" }), arithExample({ id: "ar-2", title: "예제 2", a: 73, b: 37, op: "-" })],
+    "디지털 숫자 오른쪽으로 뒤집기": () => [segExample({ id: "seg-lr1", title: "예제 1", number: 28, mode: "LR" }), segExample({ id: "seg-lr2", title: "예제 2", number: 85, mode: "LR", op: "-" })],
+    "디지털 숫자 반 바퀴 돌리기": () => [segExample({ id: "seg-r1", title: "예제 1", number: 26, mode: "R180" }), segExample({ id: "seg-r2", title: "예제 2", number: 95, mode: "R180", op: "-" })],
+    "디지털 숫자 카드 반 바퀴": () => [segExample({ id: "seg-card", title: "예제 1", number: 851, mode: "R180", card: true })],
+    "「1」 모양 뒤집기": () => [glyphChainExample({ id: "g-flip", title: "예제 1", digit: "4", ops: ["UD"] })],
+    "「1」 모양 돌리기": () => [glyphChainExample({ id: "g-rot", title: "예제 1", digit: "7", ops: ["CCW"] })],
+    "숫자를 두 번 뒤집은 모양": () => [glyphChainExample({ id: "g-two", title: "예제 1", digit: "6", ops: ["LR", "UD"] })],
+    "숫자 1을 차례로 움직인 마지막 모양": () => [glyphChainExample({ id: "g-chain", title: "예제 1", digit: "2", ops: ["LR", "CW"] })],
+    "한 번에 바꾸는 돌리기": () => [glyphChainExample({ id: "g-once", title: "예제 1", digit: "3", ops: ["CW", "R180"], ask: "once" })],
+    "숫자판을 움직여 똑바로 놓이는 수": () => [uprightExample({ id: "up-1", title: "예제 1", cells: [{ value: "3", t: "CCW" }, { value: "7", t: "I" }, { value: "5", t: "R180" }, { value: "6", t: "CCW" }], ops: ["CW"] })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET, [NLINE6_SET.id]: NLINE6_SET, [FRAC_SET.id]: FRAC_SET, [AREA_SET.id]: AREA_SET, [FLIP4_SET.id]: FLIP4_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

@@ -556,7 +556,7 @@ function flipIcon(axis, size = 40) {
     : `<svg class="b4-flip-icon" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="아래로 뒤집기"><path class="axis" d="M2 ${c}H${size - 2}"/><ellipse class="turn" cx="${c}" cy="${c}" rx="4" ry="${c - 5}"/><path class="turn-head" d="M${c - 7} ${size - 9}l3 4 3-4"/></svg>`;
 }
 
-function opIcon(op) {
+export function opIcon(op) {
   if (op.type === "rotate") return rotateIcon(op.deg, op.dir);
   return flipIcon(op.axis);
 }
@@ -586,7 +586,7 @@ function sourceOneFlip(visual) {
   return `<div class="b4-one-flip">${figure}<div class="b4-one-options">${options}</div></div>`;
 }
 
-function digitGlyph(digit, transform = "I") {
+export function digitGlyph(digit, transform = "I") {
   return `<span class="b4-digit"><i style="transform:${cssMatrix(SCREEN_TRANSFORM[transform])}">${escapeHtml(digit)}</i></span>`;
 }
 
@@ -622,7 +622,7 @@ function sevenSegDigit(digit, x = 0, h = 60) {
   const on = SEVEN_SEGMENTS[String(digit)] || "";
   return `<g transform="translate(${x} 0)">${[...on].map((k) => `<polygon points="${seg[k]}"/>`).join("")}</g>`;
 }
-function sevenSegNumber(text, h = 60, label = "") {
+export function sevenSegNumber(text, h = 60, label = "") {
   const w = h * 0.52;
   const gap = h * 0.22;
   const digits = [...String(text)];

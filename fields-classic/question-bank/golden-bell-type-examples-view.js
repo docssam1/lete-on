@@ -2,7 +2,7 @@
 // 한 단계씩 연다: 0단계 = 문제만, 1~N단계 = 풀이가 하나씩, 마지막 = 답. 답은 마지막 단계 전에는 화면에 없다.
 // 색은 골든벨 색표(쌓기나무·모양·숫자판·저울), 안내 단계 색은 주어진 것 파랑 · 하는 일 금색 · 확인 진초록.
 
-import { book04Markup, obliqueCubes } from "./book04-renderers.js?v=20261028t";
+import { book04Markup, obliqueCubes, digitGlyph, opIcon, sevenSegNumber } from "./book04-renderers.js?v=20261028u";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const TONE = { given: "#2f6fe0", doing: "#d39b20", check: "#16734b" };
@@ -824,6 +824,20 @@ function nestFigure(f) {
   }
   return `<div class="tx-nest">${svg(C * 2, C * 2, body, `정사각형과 마름모 ${f.n}겹`)}</div>`;
 }
+// 4권 돌리기·뒤집기: 숫자 모양·기호·디지털 숫자는 원본 그림과 같은 4권 그리기 함수로
+const OP_ICON = { LR: { type: "axis", axis: "vertical" }, UD: { type: "axis", axis: "horizontal" }, R180: { type: "rotate", deg: 180, dir: "cw" }, CW: { type: "rotate", deg: 90, dir: "cw" }, CCW: { type: "rotate", deg: 90, dir: "ccw" } };
+const CIRCLED_NO = "①②③④⑤⑥⑦⑧";
+function seg7Figure(f) {
+  return `<div class="tx-seg7">${f.rows.map((r) => `<div><small>${esc(r.label)}</small>${sevenSegNumber(r.number, 46)}</div>`).join("")}</div>`;
+}
+function glyphsFigure(f) {
+  const row = `<div class="b4-digit-row">${digitGlyph(f.digit, f.start || "I")}${f.ops.map((s) => `<span class="b4-step-op">${opIcon(OP_ICON[s.op])}</span>${s.show ? digitGlyph(f.digit, s.show) : '<span class="b4-digit-box"></span>'}`).join("")}</div>`;
+  const opts = f.options ? `<div class="tx-glyph-opts">${f.options.map((t, i) => `<span class="${f.hi === i ? "on" : ""}"><b>${CIRCLED_NO[i]}</b>${digitGlyph(f.digit, t)}</span>`).join("")}</div>` : "";
+  return `<div class="tx-glyphs" style="--tone:${TONE[f.tone || "given"]}">${row}${opts}</div>`;
+}
+function uprightFigure(f) {
+  return `<div class="tx-upright" style="--tone:${TONE[f.tone || "given"]}">${f.cells.map((c, i) => `<span class="${f.hi?.[i] ? "on" : ""}">${digitGlyph(c.value, c.t)}</span>`).join("")}</div>`;
+}
 // fracs: 위아래로 쌓은 분수 카드. [분자, 분모] — null은 빈칸
 function fracsFigure(f) {
   const color = TONE[f.tone || "given"], hi = new Set(f.hi || []);
@@ -983,6 +997,9 @@ export function figureMarkup(figure) {
   if (figure.kind === "fbar") return fbarFigure(figure);
   if (figure.kind === "agrid") return agridFigure(figure);
   if (figure.kind === "nest") return nestFigure(figure);
+  if (figure.kind === "seg7") return seg7Figure(figure);
+  if (figure.kind === "glyphs") return glyphsFigure(figure);
+  if (figure.kind === "upright") return uprightFigure(figure);
   if (figure.kind === "pieces") return piecesFigure(figure);
   if (figure.kind === "ring") return ringFigure(figure);
   if (figure.kind === "crypt") return cryptFigure(figure);

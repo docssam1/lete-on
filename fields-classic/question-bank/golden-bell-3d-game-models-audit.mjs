@@ -1169,6 +1169,31 @@ function verifyExample(setId, typeLabel, ex, lesson) {
     } else if (v.kind === "nest") { let a = v.given; if (v.to > v.from) for (let k = v.from; k < v.to; k++) a /= 2; else for (let k = v.from; k > v.to; k--) a *= 2; assert.equal(v.ans, a); assert.deepEqual(nums(ex.answer), [a]); }
     else if (v.kind === "grow") { let a = 1; for (let k = 1; k < v.target; k++) a *= 2; assert.equal(v.ans, a); assert.deepEqual(nums(ex.answer), [a]); }
     else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "flip4") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    if (v.kind === "arith") { assert.equal(v.r, v.op === "+" ? v.a + v.b : v.a - v.b); assert.deepEqual(nums(ex.answer), [v.r]); for (const item of lesson.original.items) assert.notEqual(nums(item.prompt).join(), nums(ex.problem).join(), `${ex.id}: 원본과 같은 식`); }
+    else if (v.kind === "seg") {
+      // 막대마다 옮긴 자리를 다시 구해 숫자로 읽는다(1은 한쪽으로 옮겨도 1)
+      const SEG = { "0": "abcdef", "1": "bc", "2": "abdeg", "3": "abcdg", "4": "bcfg", "5": "acdfg", "6": "acdefg", "7": "abcf", "8": "abcdefg", "9": "abcdfg" };
+      const move = v.mode === "LR" ? { a: "a", b: "f", c: "e", d: "d", e: "c", f: "b", g: "g" } : { a: "d", b: "e", c: "f", d: "a", e: "b", f: "c", g: "g" };
+      const read = (d) => (d === "1" ? "1" : Object.keys(SEG).find((k) => [...SEG[k]].sort().join() === [...SEG[d]].map((x) => move[x]).sort().join()));
+      const m = [...v.number].map(read).reverse().join("");
+      assert.equal(v.moved, m, `${ex.id}: 움직인 수`);
+      const want = v.card ? Math.abs(Number(v.number) - Number(m)) : v.op === "+" ? Number(v.number) + Number(m) : Number(v.number) - Number(m);
+      assert.equal(v.r, want); assert.deepEqual(nums(ex.answer), [want]);
+      for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) assert.notEqual(String(vis.number ?? vis.card), v.number, `${ex.id}: 원본과 같은 수`);
+    } else if (["glyph-pick", "glyph-once", "upright"].includes(v.kind)) {
+      // 화면 좌표 행렬을 곱해 마지막 놓임을 다시 구한다
+      const M = { I: [1, 0, 0, 1], LR: [-1, 0, 0, 1], UD: [1, 0, 0, -1], R180: [-1, 0, 0, -1], CW: [0, -1, 1, 0], CCW: [0, 1, -1, 0], T: [0, 1, 1, 0], AT: [0, -1, -1, 0] };
+      const mm = (p, q) => [p[0] * q[0] + p[1] * q[2], p[0] * q[1] + p[1] * q[3], p[2] * q[0] + p[3] * q[2], p[2] * q[1] + p[3] * q[3]];
+      const run = (ts) => { const r = ts.reduce((acc, t) => mm(M[t], acc), M.I); return Object.keys(M).find((k) => M[k].join() === r.join()); };
+      if (v.kind === "upright") { const up = v.cells.filter((c) => run([c.t, ...v.ops]) === "I").map((c) => c.value); assert.deepEqual(v.up, up); assert.deepEqual(nums(ex.answer), up.map(Number)); for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) if (vis.cells) assert.notEqual(JSON.stringify(vis.cells), JSON.stringify(v.cells), `${ex.id}: 원본과 같은 숫자판`); }
+      else {
+        const last = run(v.ops); assert.equal(v.last, last, `${ex.id}: 마지막 놓임`);
+        if (v.kind === "glyph-pick") { assert.equal(ex.steps.at(-1).figure.options[v.pick], last); assert.ok(ex.answer.startsWith("①②③④⑤⑥⑦⑧"[v.pick])); }
+        for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) if (vis.digit && vis.steps) assert.ok(!(vis.digit === v.digit && vis.steps.length === v.ops.length), `${ex.id}: 원본과 같은 숫자·단계 수`);
+      }
+    } else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);
