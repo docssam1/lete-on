@@ -48,10 +48,11 @@ test('partial compact start never reintroduces completed canonical sources',()=>
  const e=api.plannedEnvelope([{courseKey:'C38',lessonIndex:lesson.index,startSession:start,sourceIndices:plain(indices)}],week,{amount:1});
  assert(e);assert.deepEqual(plain(e.sourceSessions),plain(indices.map(i=>i+1)));assert(e.items.every(it=>!it.legacySession||it.legacySession>=start));
 });
-test('middle expansion retains its canonical extra practice',()=>{
- const key='C36',lesson=C[key].studyPlan.lessons.find(l=>l.extraPractice?.length);assert(lesson);
- const r=ref(key,lesson.index),e=api.plannedEnvelope([r],week,{amount:.85,grade:9}),child=expectedChild(r,{amount:.85,grade:9});
- assert(e);assert.equal(e.items.filter(it=>it.sourceSession===key+'-extra').length,2);assert.equal(e.items.length,child.items.length);assert.deepEqual(plain(e.lessons[0].extraPractice),r.extraPractice);
+test('middle-three print follows its current taught sources without high-school bridge',()=>{
+ const key='C36',lesson=C[key].studyPlan.lessons.at(-1),r=ref(key,lesson.index);
+ const e=api.plannedEnvelope([r],week,{amount:.85,grade:9}),child=expectedChild(r,{amount:.85,grade:9});
+ assert(e);assert.equal(e.items.filter(it=>it.sourceSession===key+'-extra').length,0);
+ assert.equal(e.items.length,child.items.length);assert.equal(e.lessons[0].extraPractice,undefined);
 });
 test('calculus boundary uses its one-to-one source lessons',()=>{
  const refs=[ref('C70',C.C70.studyPlan.lessons.length-1),ref('C71',0)],e=api.plannedEnvelope(refs,week,{amount:1,grade:11});assert(e);assert.equal(e.lessons.length,2);assert.equal(e.sourceSessions.length,2);assert(e.items.every(it=>['C70','C71'].includes(it.courseKey)));

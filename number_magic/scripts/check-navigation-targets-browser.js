@@ -31,6 +31,13 @@ const labelPatterns={courseroad:/연산|course roadmap|运算路线/i,roadmap:/�
     if(width===390&&lang==='ko'){
      await p.evaluate(()=>{__NAV.reset();__NAV.course();});await p.locator('#charChipBtn').click();await p.locator('#backCloset').click();await p.evaluate(()=>__NAV.tier());await back(p,'#backMap','course-closet-tier','tier',width,lang);
      await p.evaluate(()=>{__NAV.reset();__NAV.continued();});await back(p,'#backMap','desk-continue-unit','title',width,lang);
+     await p.evaluate(()=>{__NAV.reset();__NAV.catalogTier('intermediate');});
+     assert.deepEqual(await p.locator('.nm-level-group-title').allTextContents(),['창의수연 중급 전략','구구 기초 · 필요할 때 복습']);
+     assert.equal(await p.locator('.nm-level.open .nm-unit[data-unit]').first().getAttribute('data-unit'),'C-01','ADVANCE starts with creative strategy');
+     assert.equal(await p.locator('.nm-level-group-title').last().evaluate(e=>e.nextElementSibling?.querySelector('.nm-unit')?.getAttribute('data-unit')),'B-01','times tables remain optional review');
+     assert.equal(await p.locator('.nm-tier-progress-n').innerText(),'0/35','optional times tables do not inflate creative progress');
+     assert.equal(await p.locator('.nm-levels').evaluate(e=>e.scrollWidth<=e.clientWidth),true,'ADVANCE catalog fits a phone');
+     await p.screenshot({path:path.join(OUT,'390-ko-advance.png')});
     }
     const upper=await p.evaluate(()=>__NAV.catalog().filter(t=>!['numberland','beginner','intermediate','advanced'].includes(t.id)));
     for(const tier of upper){

@@ -19,6 +19,9 @@ const required={
   C30:['MD4@1','MD7@1'],
   C31:['MD47@1','MD48@1','MD49@1','MD50@1','MD68@1','MD69@1'],
   C32:['MD8@1','MD8@2','MD9@1','MD9@5'],
+  C35:['MD15@1','MD16@1','MD17@1','MD83@1','MD18@1','MD83@6'],
+  C36:['MD19@1','MD19@8','MD20@1','MD20@6','MD66@1','MD66@7','MD77@1'],
+  C37:['MD78@1','MD79@1','MD67@1','MD80@1','MD81@1','MD85@1','MD86@1','MD87@1'],
   C59:['MD38@1','MD38@2','MD38@4'],
   C71:['MD44@4','MD44@5','MD44@1','MD44@2','MD44@3','MD154@1','MD154@2','MD154@3'],
   C72:['MD45@1','MD45@2','MD155@1','MD155@2','MD156@1','MD60@1','MD60@2','MD157@1','MD157@2','MD156@2','MD158@1','MD158@2','MD156@3','MD157@3','MD158@3'],
@@ -43,11 +46,18 @@ function prerequisites(course,d,role){
   if(course==='C73'&&(t==='MD159'||t==='MD61'||(t==='MD62'&&lv>=2)))return ['MD46@3'];
   if(course==='C35'&&t==='MD83'&&lv===5)return ['MD18@1'];
   if(course==='C36'&&t==='MD66')return ['MD20@1','MD20@2'];
+  if(course==='C36'&&t==='MD77')return ['MD66@7'];
+  if(course==='C37'&&t==='MD79')return ['MD78@1'];
+  if(course==='C37'&&t==='MD67')return ['MD79@1'];
+  if(course==='C37'&&t==='MD80')return ['MD67@1'];
+  if(course==='C37'&&t==='MD81')return ['MD80@1'];
+  if(course==='C37'&&t==='MD86')return ['MD85@1'];
+  if(course==='C37'&&t==='MD87')return ['MD86@1'];
   if(role!=='application'||!['C29','C30','C31','C36','C37'].includes(course))return [];
   if(d.kind==='drawing')return d.mode==='direct'?['MD68@1','MD51@1']:d.mode==='inverse'?['MD68@1','MD69@1']:d.mode==='quadratic'?['MD78@1','MD79@1']:[];
   if(t==='MD89')return ['MD2@1'];
   if(t==='MD70')return ['MD50@1'];
-  if(t==='MD77')return ['MD20@2','MD66@1'];
+  if(t==='MD77')return ['MD20@2','MD66@7'];
   if(t==='MD85'&&lv>=2)return ['MD85@1'];
   if(t==='MD86'&&lv>=2)return lv>=4?['MD86@1','MD86@2','MD86@3']:['MD86@1'];
   if(t==='MD87'&&lv>=2)return lv>=4?['MD87@1','MD87@3']:['MD87@1'];
@@ -81,6 +91,7 @@ assert.deepEqual(result.issues,[],'ordered prerequisites and required skill cove
 assert.equal(Object.keys(C).length,74);
 assert.equal(Object.values(C).reduce((n,c)=>n+c.sessions.length,0),551);
 assert.equal(C.C0.sessions.length,19);
+assert(Object.values(C.C36.studyPlan.lessons).every(l=>!l.extraPractice),'regular middle-three course excludes high-school cube factoring');
 for(const [i,s] of C.C0.sessions.entries()){
   assert.equal([...s.school,...s.strategy.practice,...s.application].reduce((n,d)=>n+d.count,0),60);
   assert.equal(s.c0.symbols,i===18);

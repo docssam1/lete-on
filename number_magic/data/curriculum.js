@@ -88,17 +88,17 @@ window.NM_CURRICULUM = {
       ]
     },
 
-    /* ===== ADVANCE · 중급 (구구 기초 + 창의 전략 8단계) ===== */
+    /* ===== ADVANCE · 창의수연 중급 (창의 전략 8단계 + 선택 구구 복습) ===== */
     {
       id:'intermediate', name:'ADVANCE', grade:'ADVANCE', order:2,
-      title:'ADVANCE', subtitle:{ko:'곱셈의 마을 · 구구와 곱셈·나눗셈 전략',en:'Village of Multiplying · Times tables & multiply–divide strategies',zh:'乘法之村·口诀与乘除策略'},
+      title:'ADVANCE', subtitle:{ko:'창의 전략의 마을 · 창의수연 중급',en:'Village of Creative Strategies · Intermediate',zh:'创意策略之村·中级'},
       ageFrom:7, ageLabel:'7세+',
       color:'#5a4a8a', accent:'#EAC996',
-      desc:{ko:'곱셈의 기초 구구부터 창의 전략까지 — 분해·조합·패턴으로 수를 정복해요',
-        en:'From times-table foundations to creative strategies — conquer numbers through decomposition, combination, and patterns',
-        zh:'从口诀基础到创意策略——通过分解、组合和规律征服数字'},
+      desc:{ko:'창의수연 중급의 분해·조합·패턴 전략을 배워요. 구구가 필요하면 아래 준비 학습에서 복습할 수 있어요.',
+        en:'Learn intermediate strategies for splitting, combining, and spotting patterns. Review times tables in the optional preparation section.',
+        zh:'学习中级的拆分、组合与规律策略。需要复习乘法口诀时，可使用下方准备学习。'},
       levels:[
-        /* ── 구구 기초 (B-01~B-23) — 중급 진입 전 구구단 탄탄하게 ── */
+        /* ── 구구 기초 (B-01~B-24) — 필요할 때 선택하는 준비 학습 ── */
         { id:'구구A', available:true,
           title:{ko:'구구 A · 배와 반',en:'Times A · Doubling & Halving',zh:'口诀A · 翻倍与减半'},
           units:['B-01','B-02','B-03'] },
@@ -228,23 +228,25 @@ window.NM_CURRICULUM = {
       ]
     },
 
-    /* ===== MIDDLE3 · 근호의 산맥 (중3 제곱근·실수, 다항식의 곱셈과 인수분해, W10) =====
-       근거: MASTER-ROADMAP.md §5(중3 W10). */
+    /* ===== MIDDLE3 · 2022 개정 중3 연산과 함수·자료, 기본 10주 ===== */
     {
       id:'middle3', name:'MIDDLE3', grade:'중3', order:6,
-      title:'MIDDLE3', subtitle:{ko:'근호의 산맥 · 제곱근과 다항식',en:'Radical Mountains · Roots & Polynomials',zh:'根号山脉·平方根与多项式'},
+      title:'MIDDLE3', subtitle:{ko:'근호의 산맥 · 실수부터 이차함수까지',en:'Radical Mountains · Real Numbers to Quadratics',zh:'根号山脉·从实数到二次函数'},
       ageFrom:14, ageLabel:'중3',
       color:'#16417C', accent:'#7c3aed',
-      desc:{ko:'다 쓸 수 없어서 "무리수" — 제곱근을 다루는 법부터, 곱셈공식으로 완성되는 무지개 덧셈법의 마지막 걸음까지',
-        en:'Numbers you can never finish writing — "irrational." From handling square roots to the final step of the rainbow-addition lineage, completed by the multiplication formulas',
-        zh:'写不完的数——"无理数"。从处理平方根，到由乘法公式完成的彩虹加法法家族的最后一步'},
+      desc:{ko:'제곱근과 실수 → 곱셈공식·인수분해·이차방정식 → 이차함수의 그래프와 자료 분석 순서로 배워요.',
+        en:'Learn roots and real numbers, then factoring and quadratic equations, followed by quadratic graphs and data analysis.',
+        zh:'依次学习平方根与实数、乘法公式与因式分解及一元二次方程，再学习二次函数图象与数据分析。'},
       levels:[
         { id:'34', available:true,
-          title:{ko:'34 제곱근의 세계',en:'34 · World of Square Roots',zh:'34·平方根的世界'},
-          units:['M-15','M-16','M-17'] },
+          title:{ko:'34 제곱근과 실수',en:'34 · Roots & Real Numbers',zh:'34·平方根与实数'},
+          units:['M-15','M-16','M-17','M-83','M-18'] },
         { id:'35', available:true,
-          title:{ko:'35 곱셈공식과 인수분해',en:'35 · Formulas & Factoring',zh:'35·乘法公式与因式分解'},
-          units:['M-18','M-19','M-20'] }
+          title:{ko:'35 곱셈공식·인수분해·이차방정식',en:'35 · Formulas, Factoring & Quadratics',zh:'35·乘法公式、因式分解与一元二次方程'},
+          units:['M-19','M-20','M-66','M-77'] },
+        { id:'36', available:true,
+          title:{ko:'36 이차함수와 자료 분석',en:'36 · Quadratic Graphs & Data',zh:'36·二次函数与数据分析'},
+          units:['M-78','M-79','M-67','M-80','M-81','M-85','M-86','M-87'] }
       ]
     },
 
@@ -370,6 +372,15 @@ window.NM_CURRICULUM = {
     battle:{ ko:'수연 배틀', en:'Battle', desc_ko:'지정된 전략으로 풀어내기' }
   }
 };
+
+/* 창의수연 중급 전략이 어드밴스의 본 과정이다. 기존 B/C 유닛 ID와 학습 기록은
+   그대로 두고, 구구 기초는 본 과정 뒤의 선택 준비 학습으로 보여 준다. */
+const advance=window.NM_CURRICULUM.tiers.find(t=>t.id==='intermediate');
+const creative=advance.levels.filter(l=>!String(l.id).startsWith('구구'));
+const foundation=advance.levels.filter(l=>String(l.id).startsWith('구구'));
+creative.forEach(l=>{l.track='creative';});
+foundation.forEach(l=>{l.track='foundation';});
+advance.levels=creative.concat(foundation);
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_CURRICULUM;
 })();

@@ -76,7 +76,7 @@ for(const [courseKey, gradeEnd] of [['C29', 'C31'], ['C32', 'C34'], ['C35', 'C37
       && +key.slice(1) <= 73).sort(([a], [b]) => +a.slice(1) - +b.slice(1))
       .flatMap(([key, course]) => course.sessions.map((_, index) => key + '-S' + index));
     assert.deepEqual(seenSources, expectedSources, 'custom speed preserves the entire middle-to-high source sequence');
-    assert.equal(bridges, 1, 'middle-three cube factoring occurs once throughout the complete sequence');
+    assert.equal(bridges, 0, 'middle-three core contains no high-school factoring bridge');
     for(const pace of ['p0', 'p2', 'p4']){
       const p = project(courses, {...settings, courseKey, cadence, speed, pace}, opts);
       for(const milestone of p.milestones.filter(m => courses[m.key].studyPlan)){

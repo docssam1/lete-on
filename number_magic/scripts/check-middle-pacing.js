@@ -28,7 +28,7 @@ for(const mode of ['direct','inverse','linear','quadratic'])assert(modes.has(mod
 for(const id of data.legacyIds)assert(data.getSession(+id[1],id),'legacy '+id);
 for(const [grade,id]of [[1,'C29-S01'],[1,'C31-S01'],[2,'C32-S01'],[2,'C34-S01'],[3,'C35-S01'],[3,'C37-S01']])assert(!data.getSession(grade,id).bundle,'canonical legacy '+id);
 const extra=data.grades[3].sessions.filter(s=>s.extraPractice.length);
-assert.equal(extra.length,1);assert.equal(extra[0].course,'C36');assert.deepEqual(JSON.parse(JSON.stringify(extra[0].extraPractice)),[{t:'MD25',lv:1,n:12},{t:'MD25',lv:2,n:12}]);
+assert.equal(extra.length,0,'middle-three core no longer inserts high-school cube factoring');
 assert.equal(JSON.stringify(Object.values(C).map(c=>c.sessions)),original,'source sessions immutable');
 for(const page of ['index.html','drill.html','ws.html']){
  const html=fs.readFileSync(path.join(root,page),'utf8');
