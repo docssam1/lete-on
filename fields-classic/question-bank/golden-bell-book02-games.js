@@ -1,7 +1,7 @@
 import { esc, reduced } from "./golden-bell-game-fx.js?v=20261004a";
 import { createBalanceScene } from "./golden-bell-3d-balance.js?v=20261023w";
 import { flatNotice } from "./golden-bell-3d-engine.js?v=20261023w";
-import { MATRIX, BALANCE, PATTERN, SUDOKU, SHAPES, COLORS, BALANCE_ITEMS, beadAt, beadName, matrixHolds, sudokuValid, matrixSolveOrder } from "./golden-bell-book02-game-models.js?v=20261024t";
+import { MATRIX, BALANCE, PATTERN, SUDOKU, SHAPES, COLORS, BALANCE_ITEMS, beadAt, beadName, matrixHolds, sudokuValid, matrixSolveOrder } from "./golden-bell-book02-game-models.js?v=20261028y";
 
 // 2권 레벨 게임 4종의 화면. 문제 규칙은 golden-bell-book02-game-models.js, 틀(레벨·별·저장)은 golden-bell-level-game.js.
 

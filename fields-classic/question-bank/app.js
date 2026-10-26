@@ -3264,7 +3264,7 @@ function openAnswers() {
 
 function initControls() {
   $("studentName").textContent = student;
-  $("introLink").href = `./intro.html?student=${encodeURIComponent(student)}`;
+  $("introLink").href = `./home.html?student=${encodeURIComponent(student)}`;
   $("startLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
   if (asStudent) {
     const back = document.createElement("a");

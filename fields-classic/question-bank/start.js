@@ -1,8 +1,10 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261024r";
-import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261028w";
+import { lessonsByUnit, lessonsByPart, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261028y";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
 
-// 시작 화면: 권을 고르고 「공부하기」(① 개념 → ② 게임 → ③ 골든벨 → ④ 본책) 또는
+// 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
+// 한 번에 한 장만 보이고, 위의 길(1권 › 01 도형 움직이기)이나 「‹」로 앞 장으로 돌아간다. 브라우저 뒤로 가기도 앞 장으로.
+// 권을 고르고 「공부하기」(① 개념 → ② 게임 → ③ 골든벨 → ④ 본책) 또는
 // 「시험지 만들기」(권별테스트 원문 풀기 · 권별테스트 유사문제 · 교재에서 단원·난이도 골라 만들기)로 들어간다.
 // 이 화면은 길 안내만 한다. 문제를 만들고 채점하는 일은 문제은행(index.html)과 골든벨(golden-bell.html)이 그대로 맡고,
 // 여기서는 그 화면들이 받는 주소(book·lesson·phase·units·stage·count·set·build)만 만든다.
@@ -14,8 +16,11 @@ const student = params.get("student") || "DEMO";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const COUNTS = [10, 20, 30];
 
+const hasBook = CURRICULUM.some((book) => book.id === params.get("book"));
 const view = {
-  bookId: CURRICULUM.some((book) => book.id === params.get("book")) ? params.get("book") : CURRICULUM[0].id,
+  bookId: hasBook ? params.get("book") : CURRICULUM[0].id,
+  step: hasBook ? (params.get("unit") !== null && params.get("door") !== "test" && params.get("as") !== "class" ? 2 : 1) : 0,
+  unit: Math.max(0, Number(params.get("unit")) || 0),
   door: params.get("door") === "test" ? "test" : "study",
   mode: params.get("as") === "class" ? "class" : "self",
   pick: { units: null, stage: "type", count: 20 }
@@ -30,12 +35,44 @@ const bankLink = (entries) => link("index.html", { mode: "curriculum", book: vie
 const bellLink = (entries) => link("golden-bell.html", { book: view.bookId, ...entries });
 const activeBook = () => CURRICULUM.find((book) => book.id === view.bookId);
 
-function syncAddress() {
+function syncAddress(push = false) {
   const next = new URLSearchParams(location.search);
-  next.set("book", view.bookId);
+  if (view.step >= 1) next.set("book", view.bookId); else next.delete("book");
+  if (view.step === 2) next.set("unit", String(view.unit)); else next.delete("unit");
   if (view.door === "test") next.set("door", "test"); else next.delete("door");
   if (view.mode === "class") next.set("as", "class"); else next.delete("as");
-  history.replaceState(null, "", `?${next}`);
+  const query = next.toString();
+  history[push ? "pushState" : "replaceState"]({ step: view.step }, "", query ? `?${query}` : location.pathname);
+}
+
+// ── 한 장씩 넘기기: 권 → 대단원 → 소단원 ──
+let shownStep = -1;
+function showStep() {
+  const book = activeBook();
+  if (view.unit >= book.units.length) view.unit = 0;
+  document.querySelectorAll(".st-pane").forEach((pane) => {
+    const on = Number(pane.dataset.step) === view.step;
+    pane.hidden = !on;
+    if (on && shownStep >= 0 && shownStep !== view.step) {
+      pane.classList.remove("slide-fwd", "slide-back"); void pane.offsetWidth;
+      pane.classList.add(view.step > shownStep ? "slide-fwd" : "slide-back");
+    }
+  });
+  shownStep = view.step;
+  const unit = book.units[view.unit];
+  const crumbs = [`<button type="button" data-go="0"${view.step === 0 ? ' aria-current="page"' : ""}>교재</button>`];
+  if (view.step >= 1) crumbs.push(`<button type="button" data-go="1"${view.step === 1 ? ' aria-current="page"' : ""}>${esc(book.label)}</button>`);
+  if (view.step === 2) crumbs.push(`<button type="button" data-go="2" aria-current="page">${String(view.unit + 1).padStart(2, "0")} ${esc(unit.label)}</button>`);
+  $("crumbs").innerHTML = crumbs.join('<span aria-hidden="true">›</span>');
+  if (view.step === 0) renderBooks();
+  else if (view.step === 1) renderDoors();
+  else renderParts();
+}
+function go(step, push = true) {
+  view.step = step;
+  showStep();
+  syncAddress(push);
+  window.scrollTo({ top: 0 });
 }
 
 // 골든벨 학습을 단원에 나눠 담는 규칙·게임 찾기는 study-map.js(학생 차시 화면과 같이 쓴다).
@@ -43,8 +80,8 @@ const gamesFor = (lesson) => gameTitles(view.bookId, lesson, goldenBell.games);
 
 // ── 권 고르기 ──
 function renderBooks() {
-  $("bookList").innerHTML = CURRICULUM.map((book) => `<button type="button" role="radio" data-book="${book.id}" aria-checked="${book.id === view.bookId}">
-    <b>${esc(book.label)}</b><span>${esc(book.title)}</span></button>`).join("");
+  $("bookList").innerHTML = CURRICULUM.map((book) => `<button type="button" data-book="${book.id}"${book.id === view.bookId && hasBook ? ' class="was"' : ""}>
+    <b>${esc(book.label)}</b><span>${esc(book.title)}</span><i aria-hidden="true">›</i></button>`).join("");
 }
 
 function renderDoors() {
@@ -89,15 +126,31 @@ function lessonRow(lesson) {
 }
 
 // 학습형(학생): 원장 지시(2026-10-24) 「학생용은 우선 권 단원 고르기. 1단원을 2번 정도로 나누어 공부」 —
-// 단원마다 차시(본책의 개념 1 · 개념 2) 단추만 두고, 차시 안에서 개념 배우기 → 게임하기 → 골든벨 → 공부하기(study.html).
+// 대단원을 누르면 그 단원의 차시(소단원) 장으로 넘어가고, 차시 안에서 개념 배우기 → 게임하기 → 골든벨 → 공부하기(study.html).
+const problemCount = (unit, part) => partProblems(unit, part).reduce((sum, block) => sum + block.numbers.length, 0);
 function renderSelfUnits(book) {
-  $("unitList").innerHTML = book.units.map((unit, index) => {
+  $("unitList").innerHTML = `<div class="st-unit-cards">${book.units.map((unit, index) => {
     const { count } = unitParts(unit);
-    const parts = Array.from({ length: count }, (_, k) => {
-      const problems = partProblems(unit, k + 1).reduce((sum, block) => sum + block.numbers.length, 0);
-      return `<a class="st-part" href="${esc(link("study.html", { book: book.id, unit: String(index), part: String(k + 1) }))}"><b>${k + 1}차시 · 개념 ${k + 1}</b><span>본책 ${problems}문항</span></a>`;
-    }).join("");
-    return `<section class="st-unit st-unit-self"><h3><span>${String(index + 1).padStart(2, "0")}</span>${esc(unit.label)}</h3><div class="st-parts">${parts}</div></section>`;
+    const problems = Array.from({ length: count }, (_, k) => problemCount(unit, k + 1)).reduce((a, b) => a + b, 0);
+    return `<button type="button" class="st-unit-card" data-unit="${index}"><span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${count}차시 · 본책 ${problems}문항</small><i aria-hidden="true">›</i></button>`;
+  }).join("")}</div>`;
+}
+// 소단원(차시): 차시마다 그 차시에서 배우는 골든벨 학습 이름을 보여 준다(불러오기 전에는 번호와 문항 수만)
+function renderParts() {
+  const book = activeBook(), unit = book.units[view.unit];
+  $("unitTitle").innerHTML = `<span>${String(view.unit + 1).padStart(2, "0")}</span>${esc(unit.label)}`;
+  const { count } = unitParts(unit);
+  let byPart = null;
+  if (goldenBell) {
+    const bellBook = goldenBell.books.find((entry) => entry.id === book.id);
+    byPart = lessonsByPart(unit, lessonsByUnit(book, bellBook).units[view.unit]);
+  }
+  $("partList").innerHTML = Array.from({ length: count }, (_, k) => {
+    const titles = (byPart?.[k] || []).map((lesson) => lesson.title);
+    return `<a class="st-part" href="${esc(link("study.html", { book: book.id, unit: String(view.unit), part: String(k + 1) }))}">
+      <span class="st-part-no">${k + 1}차시</span>
+      <b>${titles.length ? esc(titles.join(" · ")) : `개념 ${k + 1}`}</b>
+      <small>본책 ${problemCount(unit, k + 1)}문항</small><i aria-hidden="true">›</i></a>`;
   }).join("");
 }
 
@@ -105,7 +158,7 @@ function renderStudy() {
   const book = activeBook();
   document.querySelector(".st-steps").hidden = view.mode === "self";
   if (view.mode === "self") {
-    $("studyLead").innerHTML = "단원을 고르고 차시를 눌러요. 차시마다 <b>개념 배우기</b> → <b>게임하기</b> → <b>골든벨</b> → <b>공부하기</b>(본책에서 모르는 문제는 번호를 눌러 유사문제로) 순서예요.";
+    $("studyLead").textContent = "대단원을 골라요.";
     return renderSelfUnits(book);
   }
   $("studyLead").innerHTML = view.mode === "self"
@@ -165,9 +218,25 @@ $("bookList").addEventListener("click", (event) => {
   const button = event.target.closest("[data-book]");
   if (!button) return;
   view.bookId = button.dataset.book;
-  renderBooks();
-  renderDoors();
-  syncAddress();
+  go(1);
+});
+$("unitList").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-unit]");
+  if (!button) return;
+  view.unit = Number(button.dataset.unit);
+  go(2);
+});
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-go]");
+  if (!button || Number(button.dataset.go) === view.step) return;
+  go(Number(button.dataset.go));
+});
+window.addEventListener("popstate", () => {
+  const next = new URLSearchParams(location.search), known = CURRICULUM.some((book) => book.id === next.get("book"));
+  if (known) view.bookId = next.get("book");
+  view.unit = Math.max(0, Number(next.get("unit")) || 0);
+  view.step = known ? (next.get("unit") !== null ? 2 : 1) : 0;
+  showStep();
 });
 document.querySelector(".st-door-switch").addEventListener("click", (event) => {
   const button = event.target.closest("[data-door]");
@@ -201,12 +270,13 @@ $("pickForm").addEventListener("submit", (event) => {
 $("studentName").textContent = student;
 $("introLink").href = link("home.html", {});
 $("bankLink").href = link("index.html", {});
-renderBooks();
-renderDoors();
+showStep();
+syncAddress();
 
 loadGoldenBell().then((data) => {
   goldenBell = data;
-  if (view.door === "study") renderStudy();
+  if (view.step === 2) renderParts();
+  else if (view.step === 1 && view.door === "study") renderStudy();
 }).catch(() => {
   $("unitList").querySelectorAll(".st-loading").forEach((node) => { node.textContent = "골든벨 학습을 불러오지 못했어요. 새로고침해 주세요."; });
 });

@@ -90,6 +90,7 @@ export function mountLevelGame(host, game, { single = true, onQuestions = null, 
       <button type="button" class="cg-level" data-game-levels><span class="cg-level-no" data-game-level-no></span><span class="cg-level-name" data-game-level-name></span><span class="cg-level-more" aria-hidden="true">▾</span></button>
       <ol class="cg-track" aria-label="이번 레벨 진행"></ol>
       <div class="cg-score" aria-live="polite"><span class="cg-stars" title="이번 레벨에서 모은 별"><b data-game-stars>0</b></span><span class="cg-streak" data-game-streak hidden></span></div>
+      <button type="button" class="cg-skip" data-game-skip>넘어가기 ›</button>
       <button type="button" class="cg-sound" data-game-sound aria-pressed="${sound.on}" title="소리"><span class="cg-sound-icon" aria-hidden="true"></span><span class="cg-sr">소리 ${sound.on ? "끄기" : "켜기"}</span></button>
     </header>
     <div class="cg-main">
@@ -136,7 +137,7 @@ export function mountLevelGame(host, game, { single = true, onQuestions = null, 
     streak.textContent = `연속 ${saved.streak}번`;
     root.dataset.level = String(saved.level);
   }
-  function setPhase(next) { phase = next; root.dataset.phase = next; }
+  function setPhase(next) { phase = next; root.dataset.phase = next; const skip = $("[data-game-skip]"); if (skip) skip.disabled = !["play", "wrong"].includes(next); }
   function renderAfter() {
     const last = saved.index === saved.run.length - 1;
     $("[data-game-after]").innerHTML = phase === "correct" || phase === "revealed" ? `<button type="button" class="cg-next" data-game-next>${last ? "결과 보기" : "다음 문제"}<span aria-hidden="true">▶</span></button>` : "";
@@ -299,6 +300,15 @@ export function mountLevelGame(host, game, { single = true, onQuestions = null, 
     else if (d.gameNextLevel !== undefined) begin(saved.level + 1);
     else if (d.gameRestart !== undefined) begin(saved.level);
     else if (d.gameNext !== undefined) next();
+    else if (d.gameSkip !== undefined) {
+      // 넘어가기: 이 문제는 별 없이 넘기고(약한 종류로 적는다) 다음 문제로
+      if (!problem || busy || !["play", "wrong"].includes(phase)) return;
+      if (!wrong) noteKind(false);
+      saved.results[problem.index] = { stars: 0, tries: wrong, skipped: true };
+      saved.streak = 0;
+      board.lock(true);
+      next();
+    }
     else if (d.gameQuestions !== undefined) onQuestions?.();
   });
 

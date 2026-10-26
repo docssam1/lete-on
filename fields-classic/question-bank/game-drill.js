@@ -6,7 +6,7 @@ export function mountDrill(host, { say = () => {}, onDone = () => {}, lesson } =
   frame.className = "drill-frame";
   frame.title = "연습 공방";
   const test = new URLSearchParams(location.search).get("test") === "1" ? "&test=1" : "";
-  frame.src = `./drill.html?v=20261027b&book=${encodeURIComponent(book)}&lesson=${encodeURIComponent(lesson?.id || "")}${test}`;
+  frame.src = `./drill.html?v=20261028y&book=${encodeURIComponent(book)}&lesson=${encodeURIComponent(lesson?.id || "")}${test}`;
   host.replaceChildren(frame);
   const listen = (event) => {
     if (event.origin !== location.origin || event.source !== frame.contentWindow || event.data?.type !== "fc-drill") return;

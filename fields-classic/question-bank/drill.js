@@ -172,7 +172,7 @@ async function main() {
     const p = st.p;
     root.innerHTML = `<div class="dr">
       <div class="dr-top"><div class="dr-levels">${LEVELS.map((l, k) => `<button type="button" data-level="${k}" class="${k === st.level ? "on" : ""}"><b>${k + 1}</b>${l.title}${st.stars[k] ? ` <small>★${st.stars[k]}</small>` : ""}</button>`).join("")}</div>
-        <div class="dr-dots">${Array.from({ length: PER_LEVEL }, (_, i) => `<i class="${i < st.index ? "done" : i === st.index ? "on" : ""}"></i>`).join("")}</div></div>
+        <div class="dr-right"><div class="dr-dots">${Array.from({ length: PER_LEVEL }, (_, i) => `<i class="${i < st.index ? "done" : i === st.index ? "on" : ""}"></i>`).join("")}</div>${st.phase === "done" ? "" : '<button type="button" class="dr-skip" data-dr="skip">넘어가기 ›</button>'}</div></div>
       <p class="dr-kind">${esc(p.type.label)}</p>
       <div class="dr-card"><p class="dr-prompt">${esc(plain(p.prompt)).replaceAll("\n", "<br>")}</p>${p.shape.kind !== "grid" ? visualOf(p.visual) : st.reveal ? visualOf(p.answerVisual) : gridBoard(p.shape)}</div>
       ${st.note ? `<p class="dr-note${st.phase === "done" ? " good" : ""}" role="status">${st.note}</p>` : ""}
@@ -293,7 +293,7 @@ async function main() {
     }
     if (b.dataset.key) { const k = b.dataset.key; st.typed = k === "del" ? st.typed.slice(0, -1) : st.typed.length < 12 ? st.typed + k : st.typed; return render(); }
     const act = b.dataset.dr;
-    if (act === "answer") answer(); else if (act === "next") next();
+    if (act === "answer") answer(); else if (act === "next" || act === "skip") next();   // 넘어가기: 별 없이 다음 문제로
     else if (act === "restart") { st.level = 0; st.index = 0; st.stars = LEVELS.map(() => 0); st.finale = false; fresh(); }
     else if (act === "done") post({ event: "done" });
   });

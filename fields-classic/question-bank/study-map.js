@@ -104,7 +104,7 @@ export function gameTitles(bookId, lesson, games) {
 export async function loadGoldenBell() {
   const [library, flow, handsOn] = await Promise.all([
     import("./golden-bell-library.js?v=20261023h"),
-    import("./golden-bell-lesson-flow.js?v=20261028w"),
+    import("./golden-bell-lesson-flow.js?v=20261028y"),
     import("./golden-bell-hands-on-models.js?v=20261023t")
   ]);
   const handsOnBooks = new Map();
@@ -232,9 +232,9 @@ export const STUDY_BOARDS = Object.freeze({
 });
 
 const OWN_GAMES = {
-  "book-01/digital-turn-flip": [{ id: "digital", title: "디지털 숫자 공방", module: "./game-digital.js?v=20261024d", css: "./game-digital.css?v=20261024a", mount: "mountDigitalWorkshop", replaces: [] }],
-  "book-01/mirror-reflection": [{ id: "shape-moves", title: "뒤집고 돌리기 공방", module: "./game-shape-moves.js?v=20261024d", css: "./game-shape-moves.css?v=20261024c", mount: "mountShapeMoves", replaces: ["mirror-tiles"] }]
+  "book-01/digital-turn-flip": [{ id: "digital", title: "디지털 숫자 공방", module: "./game-digital.js?v=20261028y", css: "./game-digital.css?v=20261028y", mount: "mountDigitalWorkshop", replaces: [] }],
+  "book-01/mirror-reflection": [{ id: "shape-moves", title: "뒤집고 돌리기 공방", module: "./game-shape-moves.js?v=20261028y", css: "./game-shape-moves.css?v=20261028y", mount: "mountShapeMoves", replaces: ["mirror-tiles"] }]
 };
 // 연습 공방(drill.js): 우리 게임이 아직 없는 차시에 문제은행 실제 유형으로 세 단계 연습 — 차시별 유형은 drill-recipes.js
-const DRILL = { id: "drill", title: "연습 공방", module: "./game-drill.js?v=20261027b", css: "./game-drill.css?v=20261027a", mount: "mountDrill", replaces: [] };
+const DRILL = { id: "drill", title: "연습 공방", module: "./game-drill.js?v=20261028y", css: "./game-drill.css?v=20261027a", mount: "mountDrill", replaces: [] };
 export const STUDY_GAMES = Object.freeze({ ...Object.fromEntries(Object.keys(DRILL_RECIPES).map((key) => [key, [DRILL]])), ...OWN_GAMES });

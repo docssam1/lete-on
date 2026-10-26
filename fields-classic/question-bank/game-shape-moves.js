@@ -6,6 +6,8 @@
 //    칸마다 맞았는지 알려 주지 않고, 다 옮긴 뒤 「확인」에서 채점한다. 뒤집고 돌리기는 중간 모양을 먼저 만들고 그 모양을 돌린다.
 //  · 틀리면 어떤 실수인지 말한다(좌우·위아래를 바꿈, 반대 방향, 반 바퀴만큼 등). 한 번 틀린 뒤에는 고른 칸이 어디로 가는지 줄·칸으로 짚어 주고,
 //    두 번 틀리면 「풀이 보기」로 칸이 하나씩 옮겨 가는 모습을 보여 준다.
+//  · 원장(2026-10-26): 처음 한 칸은 같이 한다. 왼쪽 판의 칸 하나가 반짝이고 「이 칸과 대칭인 자리를 눌러 볼까요?」 — 오른쪽 판에서 그 자리를 누른다.
+//    하나 맞히면 「이제 나머지도 그려 보세요」: 오른쪽 판에 나머지 칸을 바로 칠한다(왼쪽 칸을 먼저 고르지 않는다).
 //  · 생김새는 거울 저택(geometry/games/mirror-manor)의 유리 판·법랑 칸·은빛 거울선을 옮겨 온 것(game-shape-moves.css).
 import { BOOK01_INTERNALS } from "./book01-generators.js?v=20261023h";
 
@@ -84,7 +86,7 @@ export function diagnose(from, built, name) {
 export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}) {
   const listening = new AbortController();
   let alive = true, timer = 0;
-  const st = { level: 0, index: 0, step: 0, problem: null, moves: [], pick: null, tries: 0, note: "", hinted: false, showing: false, stars: LEVELS.map(() => 0), firsts: true, finale: false, solved: false };
+  const st = { level: 0, index: 0, step: 0, problem: null, moves: [], pick: null, tries: 0, note: "", hinted: false, showing: false, stars: LEVELS.map(() => 0), firsts: true, finale: false, solved: false, guide: null, guideMiss: 0, guideMark: null, free: false };
 
   const from = () => st.step === 0 ? st.problem.source : st.problem.boards[st.step];
   const name = () => st.problem.names[st.step];
@@ -95,9 +97,16 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     st.step = 0; st.tries = 0; st.firsts = true; st.solved = false;
     resetStep();
     const n = st.problem.names.map((x) => OPS[x].label);
-    say(n.length > 1 ? `처음 모양을 ${n.join(", 그다음 ")} 해 봐요. 중간 모양부터 차례로 만들어요.` : `처음 모양을 ${n[0]} 한 모양을 만들어 봐요. 칸을 하나 골라 옮겨 갈 자리에 놓아요.`, "talk");
+    say(`${n.length > 1 ? `처음 모양을 ${n.join(", 그다음 ")} 해요. 중간 모양부터 차례로 만들어요. ` : ""}${guideLine()}`, "talk");
   }
-  function resetStep() { st.moves = []; st.pick = null; st.note = ""; st.hinted = st.tries > 0; st.showing = false; render(); }
+  // 처음 한 칸은 같이: 왼쪽 판의 칸 하나가 반짝이고, 그 칸이 갈 자리를 오른쪽 판에서 누른다
+  function startGuide() { st.free = false; st.guide = cid(from()[0]); st.guideMiss = 0; st.guideMark = null; }
+  function guideLine() {
+    return OPS[name()].kind === "flip"
+      ? "이 모양과 대칭인 것을 만들어 볼까요? 왼쪽에 반짝이는 칸이 거울에 비치면 어디에 올지, 오른쪽 판에서 눌러 봐요."
+      : "이 모양을 돌려 볼까요? 왼쪽에 반짝이는 칸이 돌아가면 어디로 갈지, 오른쪽 판에서 눌러 봐요.";
+  }
+  function resetStep() { st.moves = []; st.pick = null; st.note = ""; st.hinted = st.tries > 0; st.showing = false; startGuide(); render(); }
 
   function grid(cells, opts) {
     const { role, done = [], marks = [], picked = null, wrong = [], center = false } = opts;
@@ -105,8 +114,9 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
       const cell = [r, c], k = cid(cell);
       const on = has(cells, cell);
-      const cls = ["smv-cell", on ? (role === "source" || role === "show-source" ? "given" : "painted") : "", done.includes(k) ? "moved" : "", picked === k ? "picked" : "", wrong.includes(k) ? "wrong" : "", marks.includes(k) ? "mark" : ""].filter(Boolean).join(" ");
-      const can = !st.solved && !st.showing && ((role === "source" && on && !done.includes(k)) || (role === "target" && (on || st.pick)));
+      const spark = role === "source" && !st.free && !st.solved && !st.showing && k === st.guide;
+      const cls = ["smv-cell", on ? (role === "source" || role === "show-source" ? "given" : "painted") : "", done.includes(k) ? "moved" : "", picked === k ? "picked" : "", spark ? "spark" : "", role === "target" && k === st.guideMark && !st.free ? "aim" : "", wrong.includes(k) ? "wrong" : "", marks.includes(k) ? "mark" : ""].filter(Boolean).join(" ");
+      const can = !st.solved && !st.showing && role === "target" && (on || !st.free || st.moves.length < from().length);
       html += `<button type="button" class="${cls}" data-role="${role}" data-r="${r}" data-c="${c}" ${can ? "" : "disabled"} aria-label="위에서 ${r + 1}째 줄, 왼쪽에서 ${c + 1}째 칸${on ? (role === "source" ? " · 처음 칸" : " · 칠함") : ""}"></button>`;
     }
     return `<div class="smv-grid${center ? " pin" : ""}">${html}</div>`;
@@ -124,7 +134,7 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     if (st.finale) return renderFinale();
     const p = st.problem, lv = LEVELS[st.level];
     const fromCells = from(), n = name(), o = OPS[n];
-    const moved = st.moves.map((m) => cid(m.from));
+    const moved = st.moves.filter((m) => m.from).map((m) => cid(m.from));
     const toCells = built();
     const wrongCells = st.check?.wrongCells || [];
     const single = p.names.length === 1 && o.kind === "flip";
@@ -138,14 +148,15 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     host.innerHTML = `<div class="smv">
       <header class="smv-top">
         <nav class="smv-levels">${LEVELS.map((l, k) => `<button type="button" class="${k === st.level ? "on" : ""}" data-level="${k}"><b>${l.id}</b>${l.title}${st.stars[k] ? ` <small>★${st.stars[k]}</small>` : ""}</button>`).join("")}</nav>
-        <span class="smv-dots">${lv.problems.map((_, k) => `<i class="${k < st.index ? "done" : k === st.index ? "on" : ""}"></i>`).join("")}</span>
+        <span class="smv-right"><span class="smv-dots">${lv.problems.map((_, k) => `<i class="${k < st.index ? "done" : k === st.index ? "on" : ""}"></i>`).join("")}</span>${st.solved || st.showing ? "" : '<button type="button" class="smv-skip" data-smv="skip">넘어가기 ›</button>'}</span>
       </header>
-      <p class="smv-mission">${p.names.length > 1 ? `처음 모양을 <b>${p.names.map((x) => esc(OPS[x].label)).join("</b> 하고 <b>")}</b> 했어요. ${st.step + 1}번째 움직임의 결과를 만들어요.` : `처음 모양을 <b>${esc(o.label)}</b> 했어요. 결과를 만들어요.`}</p>
+      <p class="smv-mission">${p.names.length > 1 ? `처음 모양을 <b>${p.names.map((x) => esc(OPS[x].label)).join("</b> 하고 <b>")}</b> 했어요. ${st.step + 1}번째 움직임의 결과를 만들어요.` : `처음 모양을 <b>${esc(o.label)}</b> 했어요. 결과를 만들어요.`}
+        ${st.solved || st.showing ? "" : st.free ? `<span class="smv-ask">이제 나머지 칸도 오른쪽 판에 그려 보세요.</span>` : `<span class="smv-ask">${o.kind === "flip" ? "반짝이는 칸과 대칭인 자리" : "반짝이는 칸이 돌아간 자리"}를 오른쪽 판에서 눌러 볼까요?</span>`}</p>
       ${past ? `<div class="smv-past">${past}</div>` : ""}
       <div class="smv-work ${single ? `flip-${o.side}` : "row"}">
-        <figure class="smv-board"><figcaption>${st.step ? `${st.step}번째 결과` : "처음 모양"} · 칸을 골라요</figcaption>${grid(fromCells, { role: "source", done: moved, picked: st.pick, marks: st.check?.wrongFrom || [], center: o.kind === "turn" })}</figure>
+        <figure class="smv-board"><figcaption>${st.step ? `${st.step}번째 결과` : "처음 모양"}</figcaption>${grid(fromCells, { role: "source", done: moved, picked: st.pick, marks: st.check?.wrongFrom || [], center: o.kind === "turn" })}</figure>
         ${single ? `<i class="smv-glass ${o.side === "left" || o.side === "right" ? "v" : "h"}" aria-hidden="true"></i>` : chip(n)}
-        <figure class="smv-board target"><figcaption>${p.names.length > 1 ? `${st.step + 1}번째 결과` : "결과"} · 놓을 자리를 눌러요</figcaption>${grid(toCells, { role: "target", wrong: wrongCells, center: o.kind === "turn" })}</figure>
+        <figure class="smv-board target"><figcaption>${p.names.length > 1 ? `${st.step + 1}번째 결과` : "결과"} · ${st.free ? "칠할 자리를 눌러요" : "반짝이는 칸이 갈 자리를 눌러요"}</figcaption>${grid(toCells, { role: "target", wrong: wrongCells, center: o.kind === "turn" })}</figure>
       </div>
       <p class="smv-rule"><b>규칙</b> ${esc(RULE[o.op])}</p>
       ${pickHint ? `<p class="smv-hint">${pickHint}</p>` : ""}
@@ -188,14 +199,14 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     }
     st.tries += 1; st.firsts = false; st.hinted = true;
     const want = apply(from(), name());
-    const wrongMoves = st.moves.filter((m) => !(m.to[0] === mapCell(m.from, OPS[name()].op)[0] && m.to[1] === mapCell(m.from, OPS[name()].op)[1]));
+    const wrongMoves = st.moves.filter((m) => m.from && !(m.to[0] === mapCell(m.from, OPS[name()].op)[0] && m.to[1] === mapCell(m.from, OPS[name()].op)[1]));
     st.check = { wrongCells: built().filter((c) => !has(want, c)).map(cid), wrongFrom: wrongMoves.map((m) => cid(m.from)) };
     st.note = `${verdict.say}${st.tries >= 2 ? " 「풀이 보기」로 칸이 옮겨 가는 모습을 볼 수 있어요." : " 이제 칸을 고르면 어디로 가는지 알려 줄게요."}`;
     render();
     say(verdict.say, "think");
   }
   function showSolution() {
-    st.showing = true; st.showedSolution = true; st.firsts = false; st.moves = []; st.pick = null; st.check = null;
+    st.showing = true; st.free = true; st.showedSolution = true; st.firsts = false; st.moves = []; st.pick = null; st.check = null;
     const cells = from(), op = OPS[name()].op;
     let k = 0;
     const stepOne = () => {
@@ -213,7 +224,11 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
   function next() {
     const p = st.problem;
     st.check = null;
-    if (st.step < p.names.length - 1) { st.step += 1; st.solved = false; st.tries = 0; resetStep(); say(`이번에는 방금 만든 모양을 ${OPS[name()].label} 해 봐요.`, "talk"); return; }
+    if (st.step < p.names.length - 1) { st.step += 1; st.solved = false; st.tries = 0; resetStep(); say(`이번에는 방금 만든 모양을 ${OPS[name()].label} 해요. ${guideLine()}`, "talk"); return; }
+    advance();
+  }
+  // 다음 문제로(마지막이면 다음 단계, 다 했으면 끝). 「넘어가기」도 여기로 — 별은 주지 않는다
+  function advance() {
     st.showedSolution = false;
     if (st.index < LEVELS[st.level].problems.length - 1) { st.index += 1; newProblem(); return; }
     if (st.level < LEVELS.length - 1) { st.level += 1; st.index = 0; newProblem(); return; }
@@ -226,26 +241,36 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     if (!target || target.disabled || !host.contains(target)) return;
     if (target.dataset.level) { st.level = Number(target.dataset.level); st.index = 0; st.finale = false; newProblem(); return; }
     const role = target.dataset.role;
-    if (role === "source") {
-      const k = `${target.dataset.r},${target.dataset.c}`;
-      st.pick = st.pick === k ? null : k;
-      render(); return;
-    }
     if (role === "target") {
       const cell = [Number(target.dataset.r), Number(target.dataset.c)];
       const at = st.moves.findIndex((m) => m.to[0] === cell[0] && m.to[1] === cell[1]);
-      if (at >= 0) { st.moves.splice(at, 1); st.check = null; render(); return; }   // 놓은 칸을 다시 누르면 되돌린다
-      if (!st.pick) return;
-      const [r, c] = st.pick.split(",").map(Number);
-      st.moves.push({ from: [r, c], to: cell });
-      st.pick = null; st.check = null;
+      if (at >= 0) { st.moves.splice(at, 1); st.check = null; if (!st.moves.length) startGuide(); render(); return; }   // 칠한 칸을 다시 누르면 지운다
+      if (!st.free) {
+        const o = OPS[name()], g = st.guide.split(",").map(Number), want = mapCell(g, o.op);
+        if (cell[0] === want[0] && cell[1] === want[1]) {
+          st.moves.push({ from: g, to: cell }); st.free = true; st.guideMark = null;
+          st.note = "맞았어요! 같은 규칙으로 나머지 칸도 오른쪽 판에 그려 보세요.";
+          render(); say("맞았어요! 이제 나머지도 그려 보세요.", "praise"); return;
+        }
+        st.guideMiss += 1;
+        const line = o.kind === "flip"
+          ? (o.op === "mirror-left-right" ? "거울은 왼쪽과 오른쪽만 바꿔요. 반짝이는 칸과 같은 줄에서, 거울에서 떨어진 칸 수가 같은 자리를 찾아봐요." : "거울은 위와 아래만 바꿔요. 반짝이는 칸과 같은 칸 줄에서, 거울에서 떨어진 줄 수가 같은 자리를 찾아봐요.")
+          : RULE[o.op];
+        if (st.guideMiss >= 2) st.guideMark = cid(want);
+        st.note = `아직 아니에요. ${line}${st.guideMiss >= 2 ? " 노란 테두리 자리예요." : ""}`;
+        render(); say(st.guideMiss >= 2 ? "노란 테두리 자리를 눌러 봐요." : "아직 아니에요. 다시 찾아봐요.", "think"); return;
+      }
+      if (st.moves.length >= from().length) return;
+      st.moves.push({ from: null, to: cell });
+      st.check = null; st.note = "";
       render(); return;
     }
     const act = target.dataset.smv;
-    if (act === "undo") { st.moves.pop(); st.check = null; render(); }
+    if (act === "undo") { st.moves.pop(); st.check = null; if (!st.moves.length) startGuide(); render(); }
     else if (act === "check") check();
     else if (act === "show") showSolution();
     else if (act === "next") next();
+    else if (act === "skip") { clearTimeout(timer); st.check = null; advance(); }
     else if (act === "restart") { st.level = 0; st.index = 0; st.finale = false; st.stars = LEVELS.map(() => 0); newProblem(); }
     else if (act === "done") onDone();
   }, { signal: listening.signal });

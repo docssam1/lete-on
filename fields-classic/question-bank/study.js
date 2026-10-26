@@ -1,5 +1,5 @@
 import { CURRICULUM } from "./source-data.js?v=20261024r";
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261028w";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261028y";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
@@ -249,7 +249,7 @@ function renderHead() {
   $("eyebrow").textContent = `${book.label} ${unitIndex + 1}단원 · ${part}차시`;
   $("unitTitle").textContent = unit.label;
   $("studentName").textContent = student;
-  $("backLink").href = link("start.html", { book: book.id });
+  $("backLink").href = link("start.html", { book: book.id, unit: String(unitIndex) });
 }
 // ── 그림 세계: 섬 다섯 개(그림 1672×941 안의 자리, %) ──
 // 그림의 다섯 터(아래 왼쪽 → 위 오른쪽). 그림을 바꾸면 이 자리를 다시 잰다.
@@ -352,6 +352,7 @@ function show({ atEnd = false } = {}) {
   if (framed) openInFrame(slide, atEnd);
   if (native) mountNative(slide).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">불러오지 못했어요. 새로고침해 주세요.</p>'; });
   $("prevBtn").disabled = index === 0;
+  $("firstBtn").disabled = index === 0;
   $("nextBtn").disabled = !ready || index === slides.length - 1;
   $("nextBtn").querySelector(".sd-next-text").textContent = slide.kind === "cover" ? "출발하기 →" : "다음 →";
   $("count").textContent = `${index + 1} / ${slides.length}`;
@@ -407,6 +408,7 @@ $("sheetClose").addEventListener("click", () => closeSheet());
 // ── 조작 ──────────────────────────────────────────────────
 $("nextBtn").addEventListener("click", next);
 $("prevBtn").addEventListener("click", prev);
+$("firstBtn").addEventListener("click", () => { cancelAuto(); closeSheet(false); go(0); });
 $("signs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-jump]");
   if (button && !button.disabled) { cancelAuto(); go(Number(button.dataset.jump)); }

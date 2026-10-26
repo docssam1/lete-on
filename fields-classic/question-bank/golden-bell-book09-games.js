@@ -1,6 +1,6 @@
 import { esc, reduced } from "./golden-bell-game-fx.js?v=20261004a";
 import { flatNotice } from "./golden-bell-3d-engine.js?v=20261023w";
-import { CUBES, MAGIC, cubeViews, cubeTotal, checkCubes, checkMagic, magicLineStates } from "./golden-bell-book09-game-models.js?v=20261024t";
+import { CUBES, MAGIC, cubeViews, cubeTotal, checkCubes, checkMagic, magicLineStates } from "./golden-bell-book09-game-models.js?v=20261028y";
 import { createCubeScene } from "./golden-bell-3d-cubes.js?v=20261023w";
 import { createMagicScene } from "./golden-bell-3d-magic.js?v=20261024t";
 

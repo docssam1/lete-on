@@ -708,3 +708,24 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 .as-embed #lessonContent>.lesson-kicker,.as-embed #lessonContent>h2,.as-embed .quiz-head h2{display:none}
 .as-embed .protected-answer-notice{margin:0 0 12px;padding:6px 10px;font-size:12.5px;font-weight:700}
 @media (max-width:760px){.as-embed .lesson-content{padding:12px 12px 18px}}
+/* 덱은 가로 화면 전용: 문제 그림은 왼쪽, 문제 글·답 칸은 오른쪽에 나란히 두어 아래로 내리지 않고 푼다 */
+@media (min-width:761px){
+.as-embed .lesson-content{max-width:none}
+.as-embed .source-question-card:has(>.item-quiz-visual){display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);column-gap:20px;align-content:start}
+.as-embed .source-question-card:has(>.item-quiz-visual)>*{grid-column:2;min-width:0}
+.as-embed .source-question-card:has(>.item-quiz-visual)>.item-quiz-visual{grid-column:1;grid-row:1/span 40;align-self:start;position:sticky;top:8px;margin:0;overflow:auto}
+.as-embed .source-question-card:has(>.item-quiz-visual)>.lesson-lead{margin-top:12px}
+.as-embed .source-question-card:has(>.item-quiz-visual)>.quiz-item,.as-embed .source-question-card:has(>.item-quiz-visual)>.quiz-items{margin-top:12px}
+.as-embed .source-question-card:has(>.item-quiz-visual) .answer-part-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+/* 한 그림에 작은 문제 여럿(1권 시계 등): 그림 왼쪽, 작은 문제들은 오른쪽에 차례로 */
+.as-embed .lesson-content:has(>.quiz-visual+.quiz-items){display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,1fr);column-gap:20px;align-content:start}
+.as-embed .lesson-content:has(>.quiz-visual+.quiz-items)>*{grid-column:2;min-width:0}
+.as-embed .lesson-content:has(>.quiz-visual+.quiz-items)>.protected-answer-notice{grid-column:1/-1}
+.as-embed .lesson-content:has(>.quiz-visual+.quiz-items)>.quiz-visual{grid-column:1;grid-row:2/span 40;align-self:start;position:sticky;top:8px;margin:0;overflow:auto}
+.as-embed .lesson-content:has(>.quiz-visual+.quiz-items)>.quiz-items{margin-top:12px}
+.as-embed .lesson-content:has(>.quiz-visual+.quiz-items)>.primary-action{justify-self:end}
+/* 몇 번째 문제인지는 번호 단추가, 단원 이름은 덱 머리가 이미 보여 준다 */
+.as-embed .daily-quiz-head:has(+.source-question-progress){display:none}
+.as-embed .source-question-progress{margin-top:0}
+.as-embed .source-question-progress+.source-question-card{margin-top:10px}
+}

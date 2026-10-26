@@ -156,7 +156,7 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
         ${keypad(st.phase === "read" ? 2 : 3, st.phase === "read" ? label : "합")}`;
     }
     host.innerHTML = `<div class="dg">
-      <header class="dg-top"><nav class="dg-levels">${LEVELS.map((l, k) => `<button type="button" class="${k === st.level ? "on" : ""}" data-level="${k}"><b>${l.id}</b>${l.title}${st.stars[k] ? ` <small>★${st.stars[k]}</small>` : ""}</button>`).join("")}</nav><span class="dg-dots">${lv.problems.map((_, k) => `<i class="${k < st.index ? "done" : k === st.index ? "on" : ""}"></i>`).join("")}</span></header>
+      <header class="dg-top"><nav class="dg-levels">${LEVELS.map((l, k) => `<button type="button" class="${k === st.level ? "on" : ""}" data-level="${k}"><b>${l.id}</b>${l.title}${st.stars[k] ? ` <small>★${st.stars[k]}</small>` : ""}</button>`).join("")}</nav><span class="dg-right"><span class="dg-dots">${lv.problems.map((_, k) => `<i class="${k < st.index ? "done" : k === st.index ? "on" : ""}"></i>`).join("")}</span>${st.phase === "done" ? "" : '<button type="button" class="dg-skip" data-dg="skip">넘어가기 ›</button>'}</span></header>
       ${body}
       ${st.hint ? `<p class="dg-hint">${esc(st.hint)}</p>` : ""}
       ${st.note ? `<p class="dg-note${st.phase === "done" ? " good" : ""}" role="status">${esc(st.note)}</p>` : ""}
@@ -280,6 +280,7 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
     else if (act === "answer") answer();
     else if (act === "show") showSolution();
     else if (act === "next") next();
+    else if (act === "skip") { clearTimeout(timer); next(); }   // 넘어가기: 별 없이 다음 문제로
     else if (act === "restart") { st.level = 0; st.index = 0; st.finale = false; st.stars = LEVELS.map(() => 0); newProblem(); }
     else if (act === "done") onDone();
   }, { signal: listening.signal });

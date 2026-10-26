@@ -159,3 +159,52 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
 .st-part span { font-size: 12.5px; color: var(--muted); }
 .st-part:hover { border-color: var(--accent); background: var(--accent-soft); }
 .st-steps[hidden] { display: none; }
+
+/* ── 오늘 공부할 내용은? 권 → 대단원 → 소단원(한 장씩 옆으로 넘어간다, 원장 2026-10-26) ── */
+.st-today { display: grid; gap: 16px; }
+.st-today-head { display: grid; gap: 6px; }
+.st-today h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.03em; }
+.st-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; min-height: 30px; color: var(--muted); font-size: 14px; }
+.st-crumbs button { padding: 4px 8px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-weight: 600; }
+.st-crumbs button:hover { background: var(--paper-dim); color: var(--ink); }
+.st-crumbs button[aria-current="page"] { color: var(--ink); cursor: default; }
+.st-stage { overflow: hidden; }
+.st-pane.slide-fwd { animation: st-slide-fwd .32s ease-out both; }
+.st-pane.slide-back { animation: st-slide-back .32s ease-out both; }
+@keyframes st-slide-fwd { from { opacity: 0; transform: translateX(56px); } }
+@keyframes st-slide-back { from { opacity: 0; transform: translateX(-56px); } }
+@media (prefers-reduced-motion: reduce) { .st-pane.slide-fwd, .st-pane.slide-back { animation: none; } }
+
+#paneBooks .st-book-list { margin-top: 0; }
+.st-book-list button { position: relative; min-height: 92px; padding: 16px 40px 16px 18px; align-content: center; }
+.st-book-list button b { font-size: 18px; }
+.st-book-list button span { font-size: 13.5px; }
+.st-book-list button i, .st-unit-card i, .st-part i { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-style: normal; font-size: 22px; color: var(--line-strong); }
+.st-book-list button:hover i, .st-unit-card:hover i, .st-part:hover i { color: var(--accent); }
+.st-book-list button.was { border-color: var(--accent); }
+
+.st-back { min-height: 40px; padding: 6px 12px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--paper); color: var(--muted); font-weight: 600; }
+.st-back:hover { border-color: var(--ink); color: var(--ink); }
+.st-book-head h2 { margin-right: auto; }
+
+.st-unit-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 14px; }
+.st-unit-card { position: relative; display: grid; gap: 4px; min-height: 104px; padding: 16px 44px 16px 18px; text-align: left; border: 1px solid var(--line-strong); border-radius: 10px; background: #fff; }
+.st-unit-card:hover { border-color: var(--accent); background: var(--accent-soft); }
+.st-unit-no { font-size: 13px; font-weight: 600; color: var(--gold); letter-spacing: 0.04em; }
+.st-unit-card b { font-size: 18px; font-weight: 700; color: var(--ink); }
+.st-unit-card small { font-size: 13px; color: var(--muted); }
+
+#paneUnit { background: var(--paper); border: 1px solid var(--line-strong); border-radius: 10px; }
+.st-unit-head { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 18px 22px; border-bottom: 1px solid var(--line); }
+.st-unit-head h2 { display: flex; align-items: baseline; gap: 10px; font-size: 20px; }
+.st-unit-head h2 span { font-size: 14px; color: var(--gold); font-weight: 600; }
+.st-part-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; padding: 20px 22px 24px; }
+.st-part-list .st-part { position: relative; gap: 4px; min-height: 104px; padding: 16px 44px 16px 18px; align-content: center; border-radius: 10px; }
+.st-part-no { font-size: 13px; font-weight: 600; color: var(--accent); }
+.st-part-list .st-part b { font-size: 17px; color: var(--ink); line-height: 1.4; word-break: keep-all; }
+.st-part-list .st-part small { font-size: 13px; color: var(--muted); }
+@media (max-width: 640px) {
+  .st-today h1 { font-size: 23px; }
+  #paneBooks .st-book-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; }
+  .st-unit-head, .st-part-list { padding-left: 14px; padding-right: 14px; }
+}
