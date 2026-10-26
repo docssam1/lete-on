@@ -946,7 +946,9 @@ function buildCourses(NM_THREADS){
         .concat(ownDrills.filter(d => roleOf(d, spec.tier) === 'strategy').map(d => ({ t:d.t, lv:d.lv }))),
       apply:(COURSE_APPLY[spec.id] || []).map(P).filter(Boolean)
         .concat(creative.filter(d => roleOf(d, spec.tier, true) === 'application').map(d => ({ t:d.t, lv:d.lv }))),
-      wp:(WP_BY_TIER[spec.tier] || []).map(P).filter(Boolean),
+      // Course 17 checks factors and multiples. Generic WP9 falls back to
+      // first-grade addition/subtraction stories and cannot assess this unit.
+      wp:(spec.id===17 ? ['WP11@1'] : (WP_BY_TIER[spec.tier] || [])).map(P).filter(Boolean),
       school:ownDrills.filter(d => roleOf(d, spec.tier) !== 'application').map(d => ({ t:d.t, lv:d.lv }))
     };
     let segments = spec.magic.slice();

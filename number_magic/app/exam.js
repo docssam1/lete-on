@@ -1072,6 +1072,19 @@
     font-size:calc(11.5px * var(--ws-fs, 1)); line-height:1.6; color:#20343b; word-break:keep-all; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mn-book > b:first-child { display:block; font-size:calc(9.5px * var(--ws-fs, 1)); color:#245b60; letter-spacing:.06em; margin-bottom:.5mm; }
   .nm-mn-book b { color:#245b60; }
+  /* 함수 단원은 식·설명·정확한 좌표 그래프를 같은 개념 흐름으로 읽는다. */
+  .nm-math-graph-note .nm-mn-head { font-size:calc(18px * var(--ws-fs, 1)); max-width:100%; overflow-wrap:anywhere; }
+  .nm-math-graph-note .nm-mn-desc { font-size:calc(14px * var(--ws-fs, 1)); line-height:1.5; overflow-wrap:anywhere; }
+  .nm-math-graph-note .nm-mn-book { font-size:calc(13px * var(--ws-fs, 1)); line-height:1.55; overflow-wrap:anywhere; }
+  .nm-math-graph-note .nm-mn-desc .nm-w2-tex,
+  .nm-math-graph-note .nm-mn-book .nm-w2-tex,
+  .nm-math-graph-note .nm-mn-open-q .nm-w2-tex { display:inline-block; vertical-align:middle; padding:.2em 0; }
+  .nm-math-graph-note .nm-mn-body { min-width:0; max-width:100%; }
+  .nm-mn-graph { display:flex; align-items:center; flex-direction:column; gap:1.5mm; margin:3mm auto; padding:2mm 4mm;
+    border:1px solid #d4dfdb; background:#fbfcfa; max-width:100%; break-inside:avoid; }
+  .nm-mn-graph .nm-gp { width:65mm !important; max-width:100%; height:auto; }
+  .nm-mn-graph figcaption { font-size:calc(11.5px * var(--ws-fs, 1)); line-height:1.4; color:#245b60; text-align:center; }
+  .nm-gp .nm-gp-asymptote { stroke:#b4512e; stroke-width:1.4; stroke-dasharray:5 4; }
   .nm-mn-board { flex:0 0 auto; margin-bottom:7px; }
   .nm-mn-kicker { font-size:calc(10px * var(--ws-fs, 1)); color:#245b60; font-weight:800; letter-spacing:1px; margin-bottom:3px; }
   .nm-mn-board .nm-w2-concept-badge { font-size:calc(23px * var(--ws-fs, 1)); }
@@ -1387,6 +1400,13 @@
   padding:8px 12px; color:#20343b; }
 .nm-w2-board-mascot { display:none; }
 .nm-w2-board-body { flex:1; min-width:0; }
+.nm-w2-function-concept .nm-w2-board { padding:4mm 5mm; }
+.nm-w2-function-concept .nm-w2-concept-sentence { font-size:calc(17px * var(--ws-fs,1)); line-height:1.55; margin-bottom:3mm; overflow-wrap:anywhere; }
+.nm-w2-function-concept .nm-w2-concept-stage { display:grid; grid-template-columns:7mm minmax(0,1fr); gap:2mm;
+  margin:2mm 0; padding:2mm 0; border-top:1px solid #e0e8e5; font-size:calc(14px * var(--ws-fs,1)); line-height:1.5; }
+.nm-w2-function-concept .nm-w2-concept-stage .nm-w2-tex { display:block; font-size:calc(19px * var(--ws-fs,1)); max-width:100%; }
+.nm-w2-function-concept .nm-w2-stage-desc { display:block; margin-top:1.5mm; color:#43575c; overflow-wrap:anywhere; }
+.nm-w2-function-concept .nm-w2-stage-mark { color:#a3521c; font-weight:800; }
 /* 과정 4 편집형 개념 지면: 수의 역할을 글자와 색으로 함께 구분한다. */
 .nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-lesson-body { flex:1; min-height:0; display:flex; flex-direction:column; gap:3mm; }
 .nm-w2-course-c4 .nm-w2-teaching-page:not(.nm-w2-teaching-feature) .nm-w2-lesson-body { justify-content:space-evenly; }
@@ -3394,6 +3414,19 @@ function graphPaperSvg(gm, cls){
    반대로 두면 학습지에서 곡선이 통째로 빠진다. X·Y 는 좌표→화면 변환 함수. */
 function curvePath(g, xr, X, Y){
   if(!g || g.kind === 'points' || g.kind === 'numberline') return '';
+  if(g.kind === 'exponential' || g.kind === 'logarithm'){
+    const base=Number(g.a), shift=Number(g.p||0), rise=Number(g.q||0), scale=Number(g.k==null?1:g.k);
+    if(!(base>0) || base===1) return '';
+    const start=g.kind==='logarithm' ? Math.max(xr[0],shift+0.01) : xr[0];
+    let d='';
+    for(let t=0;t<=180;t++){
+      const x=start+(xr[1]-start)*t/180;
+      const y=g.kind==='logarithm' ? Math.log(x-shift)/Math.log(base)+rise : scale*Math.pow(base,x-shift)+rise;
+      if(!Number.isFinite(y)) continue;
+      d+=(d?'L':'M')+X(x)+' '+Y(y);
+    }
+    return d;
+  }
   if(g.kind === 'parabola'){
     let d = '';
     for(let t = 0; t <= 120; t++){
@@ -3464,6 +3497,12 @@ function graphSvg(g){
   const gm = graphGeom(g, CELL, pad);
   const { xr, W, H, pad: pd, X, Y } = gm;
   let s = graphPaperSvg(gm, 'nm-gp');
+  if(Number.isFinite(g.asymptote)){
+    const horizontal=g.kind==='exponential', v=horizontal?Y(g.asymptote):X(g.asymptote);
+    s+=horizontal
+      ? `<line class="nm-gp-asymptote" x1="${pd}" y1="${v}" x2="${W-pd}" y2="${v}"/>`
+      : `<line class="nm-gp-asymptote" x1="${v}" y1="${pd}" x2="${v}" y2="${H-pd}"/>`;
+  }
   /* 곡선은 상자 밖으로 나가므로 잘라 낸다. clipPath id 는 한 지면에 여러 개가
      들어가도 안 부딪히게 그래프의 값에서 만든다(난수 금지 — 같은 문항은 같은 그림). */
   const cid = 'pgc' + [g.kind, g.m, g.b, g.a, g.p, g.q, g.k, xr[0], gm.yr[0]].join('_').replace(/[^A-Za-z0-9]/g,'');
@@ -5559,11 +5598,13 @@ function w2StrategyBandHtml(threadId, level){
 /* Keep prose in its reading font; typeset powers, indices and log bases as math. */
 function prosePowersHtml(raw,escapeText){
   const input=String(raw==null?'':raw), encode=escapeText||esc;
-  const re=/log_(?:\{[^{}\n]+\}|[A-Za-z0-9])(?:\s+[A-Za-z])?|(?:[A-Za-z0-9]+|\([^()\n]+\))(?:[_^](?:\{[^{}\n]+\}|\([^()\n]+\)|[A-Za-z0-9−-]+))+/g;
+  const re=/log_\(\d+\/\d+\)[A-Za-z]?|\(\d+\/\d+\)[ˣⁿᵃ]?|(?:[A-Za-z0-9]+|\([^()\n]+\))(?:[_^](?:\{[^{}\n]+\}|\([^()\n]+\)|[A-Za-z0-9−-]+))+|\b\d+\/\d+\b/g;
   let out='',last=0,m;
   while((m=re.exec(input))){
     out+=encode(input.slice(last,m.index));
-    const tex=m[0].replace(/\^\(([^()]+)\)/g,'^{$1}').replace(/^log_/,'\\log_');
+    let tex=m[0].replace(/\^\(([^()]+)\)/g,'^{$1}').replace(/^log_/,'\\log_');
+    tex=tex.replace(/(\d+)\/(\d+)/g,'\\dfrac{$1}{$2}').replace(/([ˣⁿᵃ])/g,(_,c)=>`^{${{ˣ:'x',ⁿ:'n',ᵃ:'a'}[c]}}`);
+    tex=tex.replace(/\\log_\((\\dfrac\{\d+\}\{\d+\})\)/,'\\log_{$1}');
     out+=`<span class="nm-w2-tex" data-tex="${esc(tex)}"></span>`;
     last=m.index+m[0].length;
   }
@@ -5616,6 +5657,9 @@ function w2ConceptPanelHtml(threadId, level, extra){
       : `<b>${esc(headRaw)}</b>`;
     const descTrunc = truncateConceptLine(stripConceptTags(pickL(s.desc) || ''), 90);
     if(!headRaw && !descTrunc) return '';
+    if(/^MD13[6-9]$/.test(threadId)){
+      return `<div class="nm-w2-concept-stage"><b class="nm-w2-stage-mark">${esc(CONCEPT_STAGE_MARKS[i])}</b><div>${headHtml}${descTrunc ? `<span class="nm-w2-stage-desc">${escEmph(descTrunc)}</span>` : ''}</div></div>`;
+    }
     return `<p class="nm-w2-concept-stage">${esc(CONCEPT_STAGE_MARKS[i])} ${headHtml}${headRaw && descTrunc ? ' — ' : ''}${escEmph(descTrunc)}</p>`;
   }).join('');
   const rule = lvObj&&lvObj.rule ? pickL(lvObj.rule) : lvObj&&lvObj.concept ? '' : (info.unit && info.unit.discover && info.unit.discover.rule)
@@ -5625,7 +5669,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
   /* 칠판(참고 학습지 '창의수연', 2026-09-18) — 제목·개념 문장·단계는 초록 칠판에 흰 글씨, 왼쪽에 마스코트.
      '마법의 규칙'은 칠판 아래 "!" 쪽지로(①②③를 줄로 나눠), 팁은 초록 메모장으로. */
   const ruleLines = splitRuleLines(rule);
-  return `<div class="nm-w2-concept">
+  return `<div class="nm-w2-concept${/^MD13[6-9]$/.test(threadId)?' nm-w2-function-concept':''}">
   <div class="nm-w2-board">
     <img class="nm-w2-board-mascot" src="assets/characters/docssam.png" alt="">
     <div class="nm-w2-board-body">
@@ -6195,6 +6239,7 @@ function renderMagicNotePage(item, opts){
     const result = pickL(st.result) || '';
     /* 교과서 말(유닛 stage.book) — 앱의 개념 노트에는 있었는데 종이에는 빠져 있었다(2026-09-25 매거진형) */
     const book = noteTextHtml(pickL(st.book) || '');
+    const graph=st.graph ? `<figure class="nm-mn-graph">${graphSvg(st.graph)}<figcaption>${escEmph(pickL(st.graphLabel)||'')}</figcaption></figure>` : '';
     return `<div class="nm-mn-stage">
   <div class="nm-mn-tag">${escEmph(tag)}</div>
   <div class="nm-mn-body">
@@ -6202,6 +6247,7 @@ function renderMagicNotePage(item, opts){
     ${descHtml ? `<p class="nm-mn-desc">${descHtml}</p>` : ''}
     ${figure}
     ${steps ? `<div class="nm-mn-steps">${steps}</div>` : ''}
+    ${graph}
     ${result ? `<div class="nm-mn-result">✓ ${escEmph(result)}</div>` : ''}
     ${book ? `<div class="nm-mn-book"><b>${esc(lk('교과서 말','In the textbook','课本里的说法'))}</b>${book}</div>` : ''}
   </div>
@@ -6297,7 +6343,13 @@ function renderMagicNotePage(item, opts){
     groups = n >= 2 ? [[...Array(split).keys()], [...Array(n - split).keys()].map(i => i + split)] : [[...Array(n).keys()]];
     groups.tail = groups.length - 1;
   }
-  const html = groups.map((g, pi) => `<div class="nm-w2-page nm-w2-page-magic${/^N-(?:0[2-9]|1[0-5])$/.test(item.magicUnit)?' nm-preschool-note':''}">
+  // The graph fills the first teaching page; moving stage ② below it clips its text in A4.
+  // Stage ② and ③ plus the short recap fit together on the following page.
+  if(/^M-13[6-9]$/.test(item.magicUnit) && stageParts.length===3){
+    groups=[[0],[1,2]];
+    groups.tail=1;
+  }
+  const html = groups.map((g, pi) => `<div class="nm-w2-page nm-w2-page-magic${/^N-(?:0[2-9]|1[0-5])$/.test(item.magicUnit)?' nm-preschool-note':''}${/^M-13[6-9]$/.test(item.magicUnit)?' nm-math-graph-note':''}">
   ${wm}
   ${w2HeadHtml(headItem, code, (pi + 1) + '/' + groups.length, null, {roundNo: opts.roundNo, name: opts.name, first: pi === 0})}
   ${pi === 0 ? boardHtml : ''}
@@ -6677,6 +6729,8 @@ function renderRoundPagesBody(item, opts){
   const band = opts.band || printAgeBand(item, problems);
   const young = band === 'young';
   const layout = classifyRoundLayout(problems, item.thread, young, !!item.creative);
+  // 약수·배수 문장제는 맥락 두 줄과 풀이칸이 필요하다. 첫 쪽의 예시·따라 풀기 아래에는 두 문항만 둔다.
+  if(item.thread==='WP11')Object.assign(layout,{cols:1,rows:4,perPage:4,firstRows:2,pitch:62});
   if(item.thread==='NS3'&&!item.c0)Object.assign(layout,{cols:2,rows:3,perPage:6,firstRows:0,pitch:74});
   if(problems.some(p=>p.numline))Object.assign(layout,{cols:2,rows:2,perPage:4,firstRows:1,pitch:100});
   // Each path needs room for explicit endpoint words, arrows and a written total.

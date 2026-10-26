@@ -391,26 +391,36 @@
        나오지 않는 조합만 쓴다. */
     if (mode === 'rule7') {
       let n = 0, a = 0, b = 0, red = -1;
-      for (let t = 0; t < 60 && red < 0; t++) {
+      const wantMultiple = R(rng, 0, 1) === 1;
+      for (let t = 0; t < 120; t++) {
         n = R(rng, 100, 999);
         a = Math.floor(n / 10);
         b = n % 10;
         red = a - 2 * b;
+        if (red >= 0 && (n % 7 === 0) === wantMultiple) break;
       }
-      if (red < 0) { n = 203; a = 20; b = 3; red = 14; }
+      if (red < 0 || (n % 7 === 0) !== wantMultiple) {
+        n = wantMultiple ? 203 : 983;
+        a = Math.floor(n / 10); b = n % 10; red = a - 2 * b;
+      }
+      const verdict = red % 7 === 0 ? 1 : 2;
       return {
         prompt: {
-          ko: `${n}의 뒷자리를 떼고, 남은 수에서 뒷자리의 2배를 빼요 — 7의 배수인지 알아보는 방법이에요`,
-          en: `Drop the last digit of ${n} and subtract twice that digit — this tests divisibility by 7`,
-          zh: `去掉${n}的末位，再从剩下的数里减去末位的2倍——这是判断7的倍数的方法`
+          ko: `${n}이 7의 배수인지 판단해요. 차를 구한 뒤 맞으면 1, 아니면 2를 쓰세요.`,
+          en: `Is ${n} divisible by 7? Find the difference, then write 1 for yes or 2 for no.`,
+          zh: `判断${n}是不是7的倍数。先求差，再填写1（是）或2（否）。`
         },
-        tex:        `${n} \\rightarrow ${a} - 2 \\times ${b} = \\square`,
-        answer:     red,
-        answerType: 'number',
-        widget:     'numpad',
+        tex:        `${n} \\rightarrow ${a}-2\\times${b}=\\square\\quad 7\\text{의 배수? }(1:\\circ,\\ 2:\\times)\\ \\square`,
+        answer:     [red, verdict],
+        answerType: 'steps',
+        widget:     'steps',
+        steps: [
+          { tex: `${a}-2\\times${b}=\\square`, blank:red },
+          { tex: `7\\text{의 배수? }(1:\\circ,\\ 2:\\times)\\ \\square`, blank:verdict }
+        ],
         solution: [
-          { tex: `${n} \\Rightarrow a=${a},\\; b=${b}` },
-          { tex: `${a} - 2 \\times ${b} = \\square`, blank: red }
+          { tex: `${a}-2\\times${b}=\\square`, blank:red },
+          { tex: `${red}\\text{은 7의 배수${verdict===1?'':'가 아님'}}\\Rightarrow\\square`, blank:verdict }
         ]
       };
     }
@@ -421,27 +431,38 @@
        차가 음수가 되지 않는 네 자리 수만 고른다. */
     if (mode === 'rule11') {
       let n = 0, d = [0, 0, 0, 0], odd = 0, even = 0, diff = -1;
-      for (let t = 0; t < 60 && diff < 0; t++) {
+      const wantMultiple = R(rng, 0, 1) === 1;
+      for (let t = 0; t < 120; t++) {
         n = R(rng, 1000, 9999);
         d = String(n).split('').map(Number);
         odd  = d[0] + d[2];   /* 첫째·셋째 자리 */
         even = d[1] + d[3];   /* 둘째·넷째 자리 */
         diff = odd - even;
+        if (diff >= 0 && (n % 11 === 0) === wantMultiple) break;
       }
-      if (diff < 0) { n = 8195; d = [8, 1, 9, 5]; odd = 17; even = 6; diff = 11; }
+      if (diff < 0 || (n % 11 === 0) !== wantMultiple) {
+        n = wantMultiple ? 8195 : 9843;
+        d = String(n).split('').map(Number);
+        odd = d[0] + d[2]; even = d[1] + d[3]; diff = odd - even;
+      }
+      const verdict = diff % 11 === 0 ? 1 : 2;
       return {
         prompt: {
-          ko: `${n}의 홀수번째 자리끼리, 짝수번째 자리끼리 더한 뒤 그 차를 구해요 — 11의 배수인지 알아보는 방법이에요`,
-          en: `Add the digits of ${n} in odd places and in even places, then take the difference — this tests divisibility by 11`,
-          zh: `把${n}奇数位上的数字相加、偶数位上的数字相加，再求两者之差——这是判断11的倍数的方法`
+          ko: `${n}이 11의 배수인지 판단해요. 차를 구한 뒤 맞으면 1, 아니면 2를 쓰세요.`,
+          en: `Is ${n} divisible by 11? Find the alternating digit sum, then write 1 for yes or 2 for no.`,
+          zh: `判断${n}是不是11的倍数。先求奇偶位数字和之差，再填写1（是）或2（否）。`
         },
-        tex:        `${n} \\rightarrow (${d[0]}+${d[2]}) - (${d[1]}+${d[3]}) = \\square`,
-        answer:     diff,
-        answerType: 'number',
-        widget:     'numpad',
+        tex:        `${n} \\rightarrow (${d[0]}+${d[2]})-(${d[1]}+${d[3]})=\\square\\quad 11\\text{의 배수? }(1:\\circ,\\ 2:\\times)\\ \\square`,
+        answer:     [diff, verdict],
+        answerType: 'steps',
+        widget:     'steps',
+        steps: [
+          { tex: `(${d[0]}+${d[2]})-(${d[1]}+${d[3]})=\\square`, blank:diff },
+          { tex: `11\\text{의 배수? }(1:\\circ,\\ 2:\\times)\\ \\square`, blank:verdict }
+        ],
         solution: [
-          { tex: `\\text{홀수째 자리}=${d[0]}+${d[2]}=${odd}\\;,\\;\\text{짝수째 자리}=${d[1]}+${d[3]}=${even}` },
-          { tex: `${odd} - ${even} = \\square`, blank: diff }
+          { tex: `(${d[0]}+${d[2]})-(${d[1]}+${d[3]})=\\square`, blank:diff },
+          { tex: `${diff}\\text{은 11의 배수${verdict===1?'':'가 아님'}}\\Rightarrow\\square`, blank:verdict }
         ]
       };
     }

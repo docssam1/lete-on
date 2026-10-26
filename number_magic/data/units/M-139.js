@@ -30,6 +30,8 @@ window.NM_UNITS['M-139'] = {
     },
     stages:[
       { tag:{ko:'① 양 끝에서',en:'1) At the ends',zh:'① 在两端'},
+        graph:{kind:'logarithm',a:2,p:-1,q:0,xr:[-2,8],yr:[-2,4],pts:[[1,1],[7,3]],asymptote:-1,interval:[1,7]},
+        graphLabel:{ko:'y=log₂(x+1): 1≤x≤7에서 최솟값 1, 최댓값 3',en:'y=log₂(x+1): minimum 1 and maximum 3 for 1≤x≤7',zh:'y=log₂(x+1)：1≤x≤7时最小值1、最大值3'},
         head:{ko:'y=\\log_{2}(x+1)\\ (1\\le x\\le 7):\\ M=3,\\ m=1',en:'y=\\log_{2}(x+1)\\ (1\\le x\\le 7):\\ M=3,\\ m=1',zh:'y=\\log_{2}(x+1)\\ (1\\le x\\le 7):\\ M=3,\\ m=1'},
         desc:{ko:'밑 2>1 이므로 증가합니다. x=7 에서 M=log₂8=<b>3</b>, x=1 에서 m=log₂2=<b>1</b> 입니다.',
               en:'Base 2>1, so it increases: M=log₂8=<b>3</b> at x=7 and m=log₂2=<b>1</b> at x=1.',

@@ -30,6 +30,8 @@ window.NM_UNITS['M-138'] = {
     },
     stages:[
       { tag:{ko:'① 점과 점근선',en:'1) Points and asymptote',zh:'① 点与渐近线'},
+        graph:{kind:'logarithm',a:2,p:1,q:3,xr:[-1,7],yr:[-1,7],pts:[[2,3],[3,4],[5,5]],asymptote:1},
+        graphLabel:{ko:'y=log₂(x−1)+3: 점 (2,3), (3,4), (5,5)와 점근선 x=1',en:'y=log₂(x−1)+3: points (2,3), (3,4), (5,5); asymptote x=1',zh:'y=log₂(x−1)+3：经过(2,3)、(3,4)、(5,5)，渐近线x=1'},
         head:{ko:'y=\\log_{2}(x-1)+3:\\ (5,\\ 5),\\ x=1',en:'y=\\log_{2}(x-1)+3:\\ (5,\\ 5),\\ x=1',zh:'y=\\log_{2}(x-1)+3:\\ (5,\\ 5),\\ x=1'},
         desc:{ko:'x=5 이면 y=log₂4+3=<b>5</b> 입니다. 진수 x−1>0 에서 x>1 이므로 점근선은 <b>x=1</b> 입니다.',
               en:'At x=5, y=log₂4+3=<b>5</b>. The argument needs x−1>0, i.e. x>1, so the asymptote is <b>x=1</b>.',
