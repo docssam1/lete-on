@@ -17,7 +17,7 @@ import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
 import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261028y";
-import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261028y";
+import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261028zb";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
 import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261024r";
@@ -2228,7 +2228,24 @@ $("backLink").href = `./start.html?student=${encodeURIComponent(student)}&book=$
 // 돌아가기는 그 차시로(같은 사이트 안의 상대 주소만 받는다).
 if (params.get("as") === "student" || embed.on) {
   document.body.classList.add("as-student");
-  if (embed.on) document.body.classList.add("as-embed");
+  if (embed.on) {
+    document.body.classList.add("as-embed");
+    // 덱 안(좁은 가로 화면): 문제 그림이 그림 칸보다 넓으면 칸 폭에 맞게 통째로 줄인다(잘리거나 겹치지 않게)
+    const fitVisuals = () => {
+      for (const box of $("lessonContent").querySelectorAll(".quiz-visual")) {
+        const fig = box.firstElementChild;
+        if (!fig) continue;
+        // 그림이 원래 차지하려는 폭(max-content)을 재서, 칸보다 넓으면 그 폭으로 그린 채 줄인다(칸 안에서 서로 겹치지 않게)
+        fig.style.zoom = ""; fig.style.width = "max-content"; fig.style.maxWidth = "none";
+        const natural = fig.getBoundingClientRect().width;
+        const cs = getComputedStyle(box), room = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+        if (natural > room + 1) { fig.style.width = `${Math.ceil(natural)}px`; fig.style.zoom = String(Math.max(0.5, Math.floor((room / natural) * 100) / 100)); }
+        else { fig.style.width = ""; fig.style.maxWidth = ""; }
+      }
+    };
+    new MutationObserver(() => requestAnimationFrame(fitVisuals)).observe($("lessonContent"), { childList: true, subtree: true });
+    addEventListener("resize", () => requestAnimationFrame(fitVisuals));
+  }
   const back = params.get("back") || "";
   if (/^\.\/[\w.-]+\.html(\?[^#]*)?$/u.test(back)) {
     $("backLink").href = back;

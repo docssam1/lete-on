@@ -167,3 +167,40 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
   .sd-talk.new p { animation: none; }
 }
 .sd-native { min-height: 100%; }
+
+/* ── 작은 가로 화면(휴대폰·작은 태블릿, 원장 2026-10-26 「틀도 너무 넓고 한 화면에 가득 차야지」) ──
+   독쌤 말은 두 줄까지만(한 글자씩 세로로 늘어나 내용을 덮던 것을 막는다), 아래 단추는 짧게, 액자 틀은 얇게. */
+.sd-world { background: #efe7f8 url("./assets/study/world-map.webp") center / cover no-repeat; }
+.sd-talk p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sd-guide { min-width: 220px; }
+@media (max-width: 1280px) {
+  .sd-count { display: none; }
+  .sd-prev, .sd-first { min-width: 0; padding: 8px 16px; }
+  .sd-next { min-width: 150px; }
+}
+@media (max-width: 1100px) {
+  .sd-first .sd-btn-word { display: none; }
+}
+@media (max-height: 640px) and (min-width: 761px) {
+  body.sd { --frame-x: 14px; grid-template-rows: 50px minmax(0, 1fr) 58px; }
+  .sd-top { padding-top: 6px; gap: 8px; }
+  .sd-pill { min-height: 38px; padding: 4px 12px; }
+  .sd-brand b { font-size: 16px; }
+  .sd-brand span { display: none; }
+  .sd-step { min-height: 30px; font-size: 13px; }
+  .sd-step b { width: 24px; height: 24px; font-size: 12px; }
+  .sd-main { padding: 6px calc(var(--frame-x) + 4px) 6px; }
+  .sd-card { border-radius: 16px; box-shadow: 0 0 0 4px rgba(255, 255, 255, .72), 0 0 0 5px rgba(207, 193, 236, .9), 0 10px 28px rgba(46, 30, 90, .24); }
+  .sd-slide-head { padding: 6px 16px 5px; gap: 10px; }
+  .sd-slide-head h2 { font-size: 17px; }
+  .sd-kick { font-size: 12px; }
+  .sd-kick-no { width: 20px; height: 20px; font-size: 11px; }
+  .sd-slide-body { padding: 10px 16px; }
+  .sd-bar { gap: 8px; padding-bottom: calc(6px + env(safe-area-inset-bottom)); }
+  .sd-btn { min-height: 42px; padding: 6px 14px; font-size: 15px; }
+  .sd-next { font-size: 16px; }
+  .sd-guide-img { left: -6px; width: 58px; }
+  .sd-talk { margin-left: 50px; padding: 5px 8px 5px 12px; border-radius: 16px; }
+  .sd-talk p { font-size: 13.5px; line-height: 1.35; }
+  .sd-talk-ctl button { min-width: 30px; min-height: 28px; }
+}

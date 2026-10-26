@@ -1,5 +1,5 @@
 import { CURRICULUM } from "./source-data.js?v=20261024r";
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261028y";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261028zb";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
@@ -240,8 +240,21 @@ async function mountNative(slide) {
     board: game.board, lesson: slide.lesson,
     onDone: () => { if (game.doneSay !== null) say(game.doneSay || "게임을 끝까지 해냈어요! 이제 골든벨 문제로 가요.", "praise"); auto(game.board ? 4000 : 2200); }
   });
+  fitObserver.observe(host, { childList: true, subtree: true });
+  requestAnimationFrame(fitNative);
 }
-function disposeNative() { try { nativeGame?.dispose(); } catch {} nativeGame = null; }
+function disposeNative() { fitObserver.disconnect(); try { nativeGame?.dispose(); } catch {} nativeGame = null; }
+// 작은 가로 화면(원장 2026-10-26 「한 화면에 가득 차야지」): 게임판이 칸보다 크면 아래로 내리지 않고 통째로 줄여 한 화면에 넣는다
+const fitObserver = new MutationObserver(() => requestAnimationFrame(fitNative));
+function fitNative() {
+  const body = $("slideBody"), host = body.querySelector(":scope > .sd-native");
+  if (!host || slides[index]?.kind !== "game") return;
+  host.style.zoom = "";
+  const cs = getComputedStyle(body), avail = body.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  const need = host.scrollHeight;
+  if (need > avail + 2) host.style.zoom = String(Math.max(0.55, Math.floor((avail / need) * 100) / 100));
+}
+addEventListener("resize", () => requestAnimationFrame(fitNative));
 
 // ── 화면 ──────────────────────────────────────────────────
 function renderHead() {
