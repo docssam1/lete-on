@@ -118,7 +118,7 @@ test('15실험 전부 보고서 설정(탐구 문제 또는 불편함·결과 �
   const s = reportCfg('seed', 'elem', 'nature'); assert.equal(s.obs.length, 4); assert.ok(!s.question, '자연관찰 양식에는 탐구 문제가 안 간다');
 });
 test('자연관찰 연습 세트: 보고서 설정·대회·표본 모듈이 갖춰져 있고, 빼는 칸은 양식에 있는 칸이다', () => {
-  assert.equal(OBSERVE_SETS.length, 6);
+  assert.equal(OBSERVE_SETS.length, 7);
   for (const S of OBSERVE_SETS) {
     assert.equal(S.unit.id, S.id); assert.ok(REPORTS[S.id]?.obs?.length, `${S.id} 설정`); assert.deepEqual(CONTEST_OF[S.id], ['nature'], S.id);
     assert.ok(['elem', 'mid'].includes(S.level) && REPORTS[S.id].level === S.level, `${S.id} 수준`);
