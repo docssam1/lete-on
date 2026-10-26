@@ -221,3 +221,6 @@ export function mountSpecimen(stage, make) {
   api.setView('angle');
   return api;
 }
+
+// 다른 표본 모듈(낙엽 아래 흙·동물)도 같은 자·손 카드를 쓴다
+export { ruler, handCard };
