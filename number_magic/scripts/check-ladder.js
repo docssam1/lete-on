@@ -54,6 +54,15 @@ for (const s of SPEC) {
     if (firstCourse[t] === undefined) firstCourse[t] = s.id;
   }
 }
+/* 과정별 적용 문장제는 COURSE_SPEC의 드릴·창의 칸과 별도로 편성된다.
+   생성된 수업의 application 칸도 실제 배치로 센다. */
+for (const [key, course] of Object.entries(global.window.NM_COURSES || {})) {
+  const courseNo = Number(key.replace(/^C/, ''));
+  for (const session of course.sessions || []) for (const item of session.application || []) {
+    const t = item.t;
+    if (TH[t] && firstCourse[t] === undefined) firstCourse[t] = courseNo;
+  }
+}
 
 const all = Object.keys(TH);
 const orphans = all.filter(t => firstCourse[t] === undefined);
