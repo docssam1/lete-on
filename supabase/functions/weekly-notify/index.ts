@@ -198,11 +198,12 @@ function parseMembership(r: any, inspectPlan?: (config: any) => string): { manag
   }
   if (d.wholeWeek !== undefined && typeof d.wholeWeek !== "boolean") return null;
   if (d.personalPlanLegacy !== undefined && typeof d.personalPlanLegacy !== "boolean") return null;
-  if (d.deliveryPlanVersion !== undefined && d.deliveryPlanVersion !== "20261024-personal1") return null;
-  if (d.wholeWeek && d.deliveryPlanVersion !== "20261024-personal1") return null;
-  if (d.deliveryPlanVersion === "20261024-personal1" && (!d.wholeWeek || d.personalPlanLegacy || (d.canUse && !link))) return null;
+  const personalVersion = ["20261024-personal1", "20261026-personal2"].includes(d.deliveryPlanVersion);
+  if (d.deliveryPlanVersion !== undefined && !personalVersion) return null;
+  if (d.wholeWeek && !personalVersion) return null;
+  if (personalVersion && (!d.wholeWeek || d.personalPlanLegacy || (d.canUse && !link))) return null;
   let assignmentState: string | undefined;
-  if (d.deliveryPlanVersion === "20261024-personal1" && d.canUse) {
+  if (personalVersion && d.canUse) {
     if (!d.config || typeof d.config !== "object" || Array.isArray(d.config) || typeof inspectPlan !== "function") return null;
     if (d.config.cadence !== d.cadence || d.config.deliveryPlanVersion !== d.deliveryPlanVersion
         || !/^https:\/\/lete-on\.gfieldacademy\.net\/w\/\?m=[0-9a-f]{32}$/.test(link || "")) return null;

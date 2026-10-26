@@ -206,10 +206,32 @@ NM_TGEN['md37_logDefinition'] = function (params, rng) {
 };
 
 /* ── MD38 — 로그의 성질 ── logA+logB=log(AB), logA-logB=log(A÷B),
-   밑변환은 b=a^k 관계로 역산해 정수만 나오게 한다("정수 되는 것만").
-   mode: 'sumProduct' · 'diffQuotient' · 'changeBase'. */
+   changeBase는 옛 ID 호환용 로그 정의 문제이며, 실제 밑변환은
+   changeBaseProduct에서 서로 다른 소수 밑의 로그를 연결한다.
+   mode: 'sumProduct' · 'diffQuotient' · 'changeBase' · 'changeBaseProduct'. */
 NM_TGEN['md38_logProperties'] = function (params, rng) {
   const mode = params.mode || 'sumProduct';
+
+  if (mode === 'changeBaseProduct') {
+    // Distinct prime bases keep the two individual logs non-integer.
+    const a = pick(rng, [2, 3, 5, 7]);
+    const b = pick(rng, [2, 3, 5, 7].filter(v => v !== a));
+    const n = R(rng, 2, 5), N = Math.pow(a, n);
+    return {
+      prompt: {ko:'밑변환 공식으로 두 로그의 밑을 같게 바꾸어 곱을 구하세요.',
+        en:'Use change of base to give both logarithms the same base, then find the product.',
+        zh:'用换底公式把两个对数化为同底，再求积。'},
+      tex: `\\log_{${a}} ${b} \\times \\log_{${b}} ${N} = \\square`,
+      answer:n, answerType:'number', widget:'numpad', negative:false,
+      mathModel:{kind:'changeBaseProduct', a, b, N},
+      solution:[
+        {tex:`\\log_{${b}} ${N}=\\dfrac{\\log_{${a}} ${N}}{\\log_{${a}} ${b}}`},
+        {tex:`\\log_{${a}} ${b}\\times\\dfrac{\\log_{${a}} ${N}}{\\log_{${a}} ${b}}=\\log_{${a}} ${N}`},
+        {tex:`${a}^{\\square}=${N}`,blank:n},
+        {tex:`\\log_{${a}} ${N}=\\square`,blank:n}
+      ]
+    };
+  }
 
   if (mode === 'sumProduct') {
     /* answer=X*Y=a^(m+n) — m,n을 각각 넓히면 지수의 합이 걷잡을 수 없이
@@ -271,9 +293,9 @@ NM_TGEN['md38_logProperties'] = function (params, rng) {
   const { a: b, x: r, N } = pickLogPair(rng, 6, 50, 1000000);
   return {
     prompt: {
-      ko: `log_b N을 구할 때 b 자신이 어떤 수의 거듭제곱이면, b를 한 단위로 삼아 몇 번 곱해야 N이 되는지 세면 됩니다(밑변환이 정수로 떨어지는 경우)`,
-      en: `To find log_b N, when b itself is already a clean power, just count how many times b must be multiplied to reach N (a change-of-base case that lands on an integer)`,
-      zh: `求log_b N时，如果b本身就是某数的整数次幂，只需数b要乘几次得到N(换底后恰为整数的情形)`
+      ko: `log_b N을 구할 때 b를 몇 번 곱해야 N이 되는지 로그의 정의로 구합니다`,
+      en: `To find log_b N, use the definition of a logarithm: count how many times b must be multiplied to reach N`,
+      zh: `求log_b N时，根据对数的定义，求b要乘几次才能得到N`
     },
     tex: `\\log_{${b}} ${N} = \\square`,
     answer: r, answerType: 'number', widget: 'numpad', negative: false,

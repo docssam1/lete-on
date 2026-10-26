@@ -21,7 +21,7 @@ assert.equal(calc.reduce((n,key)=>n+H.durationUnits(courses[key]),0),24,'twenty-
 for(const key of calc){
   const course=courses[key];
   assert.equal(course.sessions,sourceArrays.get(course),'source array identity preserved');
-  assert.equal(course.studyPlan.version,'20261024-calculus3m');
+  assert.equal(course.studyPlan.version,'20261026-calculus3m-v2');
   assert.equal(course.studyPlan.weeksW2,course.sessions.length*6/5/2);
   for(const lesson of course.studyPlan.lessons){
     assert.deepEqual(lesson.sourceIndices,[lesson.index],'one source session per lesson');
@@ -42,7 +42,7 @@ for(const tier of ['highmath1','highmath2','algebra']){
   const band=Object.values(courses).filter(c=>c.tier===tier);
   assert.equal(band.reduce((n,c)=>n+H.length(c),0),24,'existing high lesson counts');
   assert.equal(band.reduce((n,c)=>n+H.durationUnits(c),0),24,'existing high calendar units');
-  band.forEach(c=>assert.equal(c.studyPlan.version,'20261023-high3m'));
+  band.forEach(c=>assert.equal(c.studyPlan.version,'20261026-high3m-v2'));
 }
 const attached=JSON.stringify(courses),startDate='2026-10-26',start=Date.parse(startDate),WEEK=604800000;
 function weekKey(offset){

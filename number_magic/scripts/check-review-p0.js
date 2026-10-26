@@ -62,7 +62,13 @@ const server=http.createServer((req,res)=>{
   eq(rounds[0].pageStudyDays[0],rounds[0].pageStudyDays[1],'Concept remains with following practice');
   for(const c of Object.values(NM_COURSES)){
     const learned={};for(const session of c.sessions.filter(s=>!s.test))for(const d of (session.drills||[]).concat(session.creative||[]))if(d?.t)learned[d.t]=Math.max(learned[d.t]||0,d.lv||0);
-    for(const entry of c.sessions.find(s=>s.test)?.pool||[])if(learned[entry.t])eq(entry.lv,learned[entry.t],'Course test uses its actual practised level C'+c.order+' '+entry.t);
+    for(const entry of c.sessions.find(s=>s.test)?.pool||[])if(learned[entry.t]){
+      if(c.curriculumCoverage){
+        // Authored calculus branches test several taught skills in one thread;
+        // numeric level IDs are not a difficulty order (e.g. MD44@4 and @5).
+        ok(c.sessions.some(s=>!s.test&&(s.drills||[]).concat(s.creative||[]).some(d=>d.t===entry.t&&d.lv===entry.lv)), 'Authored assessment must have exact prior practice');
+      }else eq(entry.lv,learned[entry.t],'Course test uses its actual practised level C'+c.order+' '+entry.t);
+    }
   }
   for(let seed=1;seed<=240;seed++){
    for(const t of ['ML6','ML15','ML21']){

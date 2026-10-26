@@ -24,7 +24,7 @@ function freeze(value){
 }
 Object.values(courses).forEach(course => Object.values(course).forEach(freeze));
 P.attach(courses);
-assert.equal(P.version, '20261023-high3m', 'the established high-school API version is preserved');
+assert.equal(P.version, '20261026-high3m-v2', 'new pacing API is explicitly versioned');
 const withoutPlans = () => JSON.stringify(courses, (key, value) => key === 'studyPlan' ? undefined : value);
 assert.equal(withoutPlans(), before, 'all canonical fields, source sessions and tests are unchanged');
 const near = (actual, expected, label) => assert(Math.abs(actual - expected) < 1e-8, label || `${actual} != ${expected}`);
@@ -56,7 +56,7 @@ for(const expected of bands){
   let drawingQuestions = 0;
   for(const [courseKey, course] of entries){
     assert.equal(course.tier, expected.tier);
-    assert.equal(course.studyPlan.version, '20261023-middle25');
+    assert.equal(course.studyPlan.version, '20261026-middle25-v2');
     assert.equal(course.sessions, sourceArrays.get(course), 'saved source array identity');
     assert.deepEqual(course.studyPlan.lessons.flatMap(lesson => lesson.sourceIndices), Array.from({length:course.sessions.length}, (_, i) => i), 'all sources occur once and in order');
     for(const lesson of course.studyPlan.lessons){

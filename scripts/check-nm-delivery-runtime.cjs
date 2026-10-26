@@ -23,7 +23,7 @@ async function main(){
   check(()=>assert.equal(gate.status,0,gate.stderr));
   const {courses}=BUILD.loadCourses(),DP=require('../number_magic/app/delivery-plan.js'),E=require('../number_magic/data/middle-extension.js');
   function same(p,offset){
-    const c=config(p,week(offset)),at=DP.assignment(courses,p,c.week),expected=at?(at.weekLessons.length?'scheduled':'empty'):'invalid';
+    const c=config(p,week(offset)),at=DP.assignment(courses,p,c.week,c.deliveryPlanVersion),expected=at?(at.weekLessons.length?'scheduled':'empty'):'invalid';
     assert.equal(runtime.personalDeliveryState(c),expected,JSON.stringify({course:p.courseKey,session:p.sessionIndex,speed:p.speed,cadence:p.cadence,anchor:p.extensionAnchor,week:c.week}));
     parity++;if(expected==='scheduled')scheduled++;if(expected==='empty')empty++;
   }

@@ -11,7 +11,7 @@
 <style>body{font-family:system-ui,sans-serif;padding:24px;color:#444}a{color:#2f6f4e}</style>
 </head><body>
 <p id="m">학습지를 여는 중…</p>
-<script src="../number_magic/app/delivery-plan.js?v=20261024-personal1"></script>
+<script src="../number_magic/app/delivery-plan.js?v=20261026-personal2"></script>
 <script>
 (async function(){
   var q = (location.search || '').replace(/^\?/, '').trim();
@@ -31,9 +31,11 @@
         var plan=window.NM_DELIVERY_PLAN&&NM_DELIVERY_PLAN.fromConfig(cfg);
         if(!plan)throw new Error('invalid_personal_link');
         destination.searchParams.set('dp',NM_DELIVERY_PLAN.encode(plan));
-        destination.searchParams.set('dv',NM_DELIVERY_PLAN.VERSION);
-      }else if((cfg.highPlanVersion==='20261023-high3m'&&/^C(3[89]|[4-6][0-9])$/.test(cfg.courseKey))||(cfg.highPlanVersion==='20261024-calculus3m'&&/^C7[0-3]$/.test(cfg.courseKey))||(cfg.highPlanVersion==='20261023-middle25'&&/^C(29|3[0-7])$/.test(cfg.courseKey))){
+        destination.searchParams.set('dv',cfg.deliveryPlanVersion);
+      }else if(cfg.highPlanVersion!=null){
+        if(!NM_DELIVERY_PLAN.managedVersion(cfg.courseKey,cfg.highPlanVersion))throw new Error('invalid_managed_version');
         destination.searchParams.set('hp','1');
+        destination.searchParams.set('highPlanVersion',cfg.highPlanVersion);
         if(typeof cfg.highStartDate==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(cfg.highStartDate)&&Number.isFinite(Date.parse(cfg.highStartDate+'T00:00:00Z'))&&new Date(cfg.highStartDate+'T00:00:00Z').toISOString().slice(0,10)===cfg.highStartDate){
           destination.searchParams.set('hs',cfg.highStartDate);
           if([0.7,0.85,1,1.25,1.5].includes(cfg.highSpeed))destination.searchParams.set('hv',String(cfg.highSpeed));

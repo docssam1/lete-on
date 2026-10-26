@@ -56,7 +56,7 @@ for(const [tier, courseCount, expectedFour] of [['highmath1', 11, 1], ['highmath
   assert.equal(band.filter(course => P.length(course) === 4).length, expectedFour);
   for(const course of band){
     const {lessons} = course.studyPlan, source = course.sessions;
-    assert.equal(course.studyPlan.version, '20261023-high3m');
+    assert.equal(course.studyPlan.version, '20261026-high3m-v2');
     assert([2, 4].includes(lessons.length));
     assert.equal(course.studyPlan.weeksW2, lessons.length / 2);
     assert.equal(course.sessions, arrays.get(course), 'preserve session array identity');

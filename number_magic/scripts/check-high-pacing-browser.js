@@ -78,7 +78,7 @@ async function checkCalculusScheduled(page){
       const overflow=[...sheet.querySelectorAll('.nm-w2-page,.nm-w2-item,.nm-cvw')].filter(el=>el.scrollWidth>el.clientWidth+3||el.scrollHeight>el.clientHeight+3).map(el=>el.className);
       if(actual!==expected||keys!==actual||overflow.length)throw Error(name+' calculus scheduled render '+JSON.stringify({actual,expected,keys,overflow}));
       if(!Number.isFinite(e.cover.lessonMinutes)||!Number.isFinite(e.cover.weeklyMinutes)||e.cover.weeklyMinutes+0.5<e.cover.lessonMinutes)throw Error(name+' calculus time missing '+JSON.stringify({lesson:e.cover.lessonMinutes,weekly:e.cover.weeklyMinutes}));
-      if(e.cover.highPlanVersion!=='20261024-calculus3m')throw Error(name+' calculus compact version missing');
+      if(e.cover.highPlanVersion!=='20261026-calculus3m-v2')throw Error(name+' calculus compact version missing');
       snapshots.push({name,lessons:e.lessons.map(l=>({courseKey:l.courseKey,lessonIndex:l.lessonIndex})),expected,actual,keys,overflow,lessonMinutes:e.cover.lessonMinutes,weeklyMinutes:e.cover.weeklyMinutes});
     }
     if(before!==JSON.stringify({...localStorage}))throw Error('calculus assignment changed saved learning state');

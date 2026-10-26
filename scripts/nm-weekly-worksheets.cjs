@@ -39,17 +39,17 @@ function kstWeekKey() {
 const WEEK = process.env.WEEK || kstWeekKey();
 const AMOUNTS = [0.7, 0.85, 1, 1.25, 1.5];
 const amountOf = (value) => { const n = Number(value); return AMOUNTS.includes(n) ? n : 1; };
-const HIGH_PLAN_VERSION = '20261023-high3m';
+const HIGH_PLAN_VERSION = '20261026-high3m-v2';
 const HIGH_PLAN_COURSE = /^C(3[89]|[4-6][0-9])$/;
-const CALCULUS_PLAN_VERSION = '20261024-calculus3m';
+const CALCULUS_PLAN_VERSION = '20261026-calculus3m-v2';
 const CALCULUS_PLAN_COURSE = /^C7[0-3]$/;
-const MIDDLE_PLAN_VERSION = '20261023-middle25';
+const MIDDLE_PLAN_VERSION = '20261026-middle25-v2';
 const MIDDLE_PLAN_COURSE = /^C(29|3[0-7])$/;
-const DELIVERY_PLAN_VERSION = '20261024-personal1';
+const DELIVERY_PLAN_VERSION = '20261026-personal2';
 const deliveryApi = () => require('../number_magic/app/delivery-plan.js');
 const sessionIndexOf = (value) => { const n = Number(value); return Number.isInteger(n) && n >= 1 && n <= 1000 ? n : null; };
 const planVersionOf = (courseKey) => HIGH_PLAN_COURSE.test(courseKey) ? HIGH_PLAN_VERSION : MIDDLE_PLAN_COURSE.test(courseKey) ? MIDDLE_PLAN_VERSION : CALCULUS_PLAN_COURSE.test(courseKey) ? CALCULUS_PLAN_VERSION : null;
-const studyPlanOf = (target) => !!planVersionOf(target.courseKey) && target.highPlanVersion === planVersionOf(target.courseKey);
+const studyPlanOf = (target) => !!deliveryApi().managedVersion(target.courseKey,target.highPlanVersion);
 const dateOf = (value) => {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
   const date = new Date(value + 'T00:00:00Z');
@@ -62,9 +62,9 @@ function personalPlanOf(target) {
     if (target.learningPlan != null) throw new Error('invalid_delivery_plan');
     return null;
   }
-  if (target.deliveryPlanVersion !== DELIVERY_PLAN_VERSION) throw new Error('unsupported_delivery_plan');
+  if (![deliveryApi().LEGACY_VERSION,DELIVERY_PLAN_VERSION].includes(target.deliveryPlanVersion)) throw new Error('unsupported_delivery_plan');
   const plan = deliveryApi().normalize(target.learningPlan);
-  if (!plan) throw new Error('invalid_delivery_plan');
+  if (!plan || target.deliveryPlanVersion===deliveryApi().LEGACY_VERSION&&plan.curriculumRevision) throw new Error('invalid_delivery_plan');
   return plan;
 }
 function jobsForTarget(target) {
@@ -75,7 +75,7 @@ function buildWorksheetUrl(base, week, target, k) {
   const personal = personalPlanOf(target);
   if (personal) {
     if (k !== 1) throw new Error('personal_plan_whole_week_only');
-    return `${base}/number_magic/ws.html?dv=${DELIVERY_PLAN_VERSION}&dp=${deliveryApi().encode(personal)}&w=${week}&c=${encodeURIComponent(personal.courseKey)}&n=${encodeURIComponent(target.name)}&k=1&cad=${personal.cadence}&amt=${personal.amount}&auto=0`;
+    return `${base}/number_magic/ws.html?dv=${target.deliveryPlanVersion}&dp=${deliveryApi().encode(personal)}&w=${week}&c=${encodeURIComponent(personal.courseKey)}&n=${encodeURIComponent(target.name)}&k=1&cad=${personal.cadence}&amt=${personal.amount}&auto=0`;
   }
   const original = `${base}/number_magic/ws.html?w=${week}&c=${encodeURIComponent(target.courseKey)}&n=${encodeURIComponent(target.name)}&k=${k}&cad=${target.cadence}&amt=${target.amount || 1}&auto=0`;
   // Unmarked targets retain the original URL, selection, and seed contract.
@@ -90,7 +90,7 @@ function worksheetToken(key, week, target, k) {
   const personal = personalPlanOf(target);
   if (personal) {
     if (k !== 1) throw new Error('personal_plan_whole_week_only');
-    const snapshot = JSON.stringify([DELIVERY_PLAN_VERSION,target.name,week,deliveryApi().encode(personal),personal.amount,k]);
+    const snapshot = JSON.stringify([target.deliveryPlanVersion,target.name,week,deliveryApi().encode(personal),personal.amount,k]);
     return crypto.createHmac('sha256', key || 'dry').update(snapshot).digest('hex').slice(0, 32);
   }
   let source = `${target.name}|${week}|${target.courseKey}|a${target.amount || 1}${k > 1 ? '|k' + k : ''}`;
@@ -108,7 +108,7 @@ function worksheetTarget(target) {
     cadence:personal.cadence,amount:personal.amount,learningPlan:personal,wholeWeek:true};
   const version = planVersionOf(target.courseKey);
   if (version) {
-    target.highPlanVersion = version;
+    target.highPlanVersion = target.highPlanVersion || version;
     const startDate = highStartDateOf(target);
     if (startDate) { target.highStartDate = startDate; target.highSpeed = highSpeedOf(target); }
   }
@@ -169,7 +169,7 @@ async function listTargets(options = {}) {
         || delivery.managed && delivery.canUse !== true) {out.push({name:n,skipReason:'membership-denied'});continue;}
       const personalMarked=Object.prototype.hasOwnProperty.call(delivery,'deliveryPlanVersion')
         || Object.prototype.hasOwnProperty.call(delivery,'wholeWeek');
-      if (personalMarked && (delivery.deliveryPlanVersion!==DELIVERY_PLAN_VERSION || delivery.wholeWeek!==true || delivery.config==null))
+      if (personalMarked && (![deliveryApi().LEGACY_VERSION,DELIVERY_PLAN_VERSION].includes(delivery.deliveryPlanVersion) || delivery.wholeWeek!==true || delivery.config==null))
         throw new Error('invalid_delivery_snapshot');
       if (delivery.config != null) {
         const target=targetFromConfig(n,delivery.config,week);

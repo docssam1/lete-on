@@ -74,6 +74,10 @@ function copy(thread,level){
   let title=lv.label||th.name,concept=lv.concept||th.concept;
   const generic=T('그림을 보고 물음에 맞게 풀어 보세요.','Look at the picture and answer the question.','看图，按题意完成。');
   let instr=generic;
+  if(thread==='AD1'&&level===1){title=T('구슬을 모아 더해요','Join beads and add','合起珠子做加法');concept=T('두 묶음의 구슬을 모두 세어 봐요. +는 더한다는 뜻이고, =는 양쪽의 수가 같다는 뜻이에요.','Count all the beads in the two groups. + means add, and = means both sides have the same value.','数一数两组珠子一共有多少。+表示相加，=表示两边的数值相同。');}
+  if(thread==='AD1')instr=T('두 수를 더하면 모두 얼마인지 써 보세요.','Add the two numbers and write the total.','把两个数相加，写出总数。');
+  if(thread==='SB1'&&level!==2)instr=T('앞의 수에서 뒤의 수를 빼면 얼마가 남는지 써 보세요.','Subtract the second number from the first and write how many remain.','从前面的数中减去后面的数，写出还剩多少。');
+  if(thread==='SB1'&&level===2)instr=T('식의 +와 −를 보고, 더하거나 빼서 빈칸에 써 보세요.','Look at + or −, then add or subtract to fill the blank.','看算式中的+或−，做加法或减法，把答案写在空格里。');
   if(thread==='NL27'&&level===1)concept=T('두 개씩 짝지어 봐요. 남지 않으면 짝수, 한 개가 남으면 홀수예요.','Make pairs. If none are left, the number is even; if one is left, it is odd.','两个两个配对，没有剩下的是偶数，剩下一个的是奇数。');
   if(thread==='NL10')instr=T('물음에 맞는 쪽 접시에 동그라미 해요.','Circle the pan named in the question.','按题目要求圈出相应的盘子。');
   if(thread==='NL7'&&level<3)concept=T('수를 차례로 세어 빈칸에 알맞은 수를 찾아요.','Count in order to find the missing number.','按顺序数，找出空缺的数。');

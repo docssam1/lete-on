@@ -349,7 +349,7 @@ const COURSE_SPEC = [
    /* 2026-09-21 — 디딤돌 개념연산 중3-1A 대조로 찾은 가장 큰 구멍을 여기에 채운다:
       MD15~17이 "정리하는 법"만 가르치고 "더하거나 빼는 법"이 아예 없었다. MD83(제곱근의
       덧셈과 뺄셈, 6레벨) 신설·편입. 16항목, minSessions 8. */
-   drills:['MD15','MD16','MD17','MD83','MD14','MD15@2','MD16@2','MD17@2','MD83@2','MD15@3','MD16@3','MD17@3','MD83@3','MD83@4','MD83@5','MD83@6','MD15@4','MD15@5','MD15@6'], minSessions:10, magic:[['M-15'],['M-16'],['M-17'],['M-83']],
+   drills:['MD15','MD16','MD17','MD83','MD18@1','MD15@2','MD16@2','MD17@2','MD83@2','MD15@3','MD16@3','MD17@3','MD83@3','MD83@4','MD83@5','MD83@6','MD15@4','MD15@5','MD15@6'], minSessions:10, magic:[['M-15'],['M-16'],['M-17'],['M-83']],
    /* MD90(제곱근의 활용 — 정사각형의 넓이와 한 변)는 이 과정의 적용 회차다(2026-09-25). */
    creative:['MD90@1','MD83@6','MD90@2','MD83@5','MD90@3','MD17@3']},
  {id:36, tier:'middle3', title:{ko:'인수분해와 이차방정식',en:'Factoring & Quadratic Equations',zh:'因式分解与二次方程'},
@@ -359,7 +359,7 @@ const COURSE_SPEC = [
       같은 날 두 번째 편입 — 디딤돌 개념연산 중3-1A·3-1B 대조로 MD19 가 5레벨(곱셈공식의
       활용), MD66 이 3레벨(중근·근의 개수·이차방정식 구하기) 더 늘었다. 27항목,
       minSessions 14. */
-   drills:['MD18','MD19','MD20','MD66','MD77','MD18@2','MD19@2','MD20@2','MD66@2','MD77@2','MD19@3','MD20@3','MD66@3','MD77@3','MD18@3','MD20@4','MD66@4','MD20@5','MD20@6','MD19@4','MD19@5','MD19@6','MD19@7','MD19@8','MD66@5','MD66@6','MD66@7'], minSessions:14, magic:[['M-18'],['M-19'],['M-20'],['M-66'],['M-77']], creative:['MD19@8','MD66@7','MD77@3']},
+   drills:['MD18@1','MD19','MD20','MD66','MD77','MD18@2','MD19@2','MD20@2','MD66@2','MD77@2','MD19@3','MD20@3','MD66@3','MD77@3','MD18@3','MD20@4','MD66@4','MD20@5','MD20@6','MD19@4','MD19@5','MD19@6','MD19@7','MD19@8','MD66@5','MD66@6','MD66@7'], minSessions:14, magic:[['M-18'],['M-19'],['M-20'],['M-66'],['M-77']], creative:['MD19@8','MD66@7','MD77@3']},
  {id:37, tier:'middle3', title:{ko:'이차함수와 자료 분석',en:'Quadratic Functions & Data Analysis',zh:'二次函数与数据分析'},
    /* 중3-2 비도형 자료 분석 MD85~87을 마지막 중등 과정에 연결한다. 전체 32항목이라
       주 2회 기준 8주인 16회차로 편성한다. 쉬운 갈래12, 핵심·그리기 갈래24문항. */
@@ -452,7 +452,8 @@ const COURSE_SPEC = [
    drills:['MD36','MD134','MD133','MD36@2','MD134@2','MD36@3','MD134@3'], minSessions:7,
    magic:[['M-36'],['M-134']], creative:['MD134@3','MD36@3','MD134@2']},
  {id:59, tier:'algebra', title:{ko:'로그와 상용로그',en:'Logarithms & Common Logarithms',zh:'对数与常用对数'},
-   drills:['MD37','MD38','MD135','MD134','MD37@2','MD38@2','MD135@2','MD37@3','MD38@3','MD135@3'], minSessions:9,
+   drills:['MD37','MD38','MD135','MD134','MD37@2','MD38@2','MD135@2','MD37@3','MD38@3','MD135@3','MD38@4'], minSessions:9,
+   reviewLevelCaps:{MD38:3},
    magic:[['M-37'],['M-38'],['M-135']], creative:['MD135@3','MD38@3','MD37@3']},
  {id:60, tier:'algebra', title:{ko:'지수함수와 로그함수',en:'Exponential & Logarithmic Functions',zh:'指数函数与对数函数'},
    drills:['MD136','MD137','MD138','MD139','MD135','MD136@2','MD137@2','MD138@2','MD139@2','MD136@3','MD137@3','MD138@3','MD139@3'], minSessions:9,
@@ -490,13 +491,26 @@ const COURSE_SPEC = [
    drills:['MD43','MD58','MD59','MD153','MD43@2','MD58@2','MD59@2','MD43@3','MD58@3','MD59@3'], minSessions:4,
    magic:[['M-43'],['M-58'],['M-59']], creative:['MD59@3','MD58@3','MD43@3']},
  {id:71, tier:'calculus1', title:{ko:'미분계수와 도함수',en:'Differential Coefficients & Derivatives',zh:'微分系数与导数'},
-   drills:['MD44','MD154','MD59','MD44@2','MD154@2','MD44@3','MD154@3'], minSessions:3,
+   drills:['MD44@4','MD44@5','MD44@1','MD44@2','MD44@3','MD154@1','MD154@2','MD154@3'], minSessions:3,
+   perSessionDrills:[['MD44@4','MD44@5','MD44@1'],['MD44@2','MD44@3','MD154@1'],['MD154@2','MD154@3']],
+   reviewLevelCaps:{MD44:3},
+   assessmentPins:['MD44@4','MD44@5','MD44@3','MD154@2'], assessmentCount:6, blockMinimum:6,
    magic:[['M-44'],['M-154']], creative:['MD154@3','MD44@3','MD154@2']},
  {id:72, tier:'calculus1', title:{ko:'도함수의 활용',en:'Applications of Derivatives',zh:'导数的应用'},
-   drills:['MD45','MD155','MD156','MD60','MD157','MD158','MD154','MD45@2','MD155@2','MD156@2','MD60@2','MD157@2','MD158@2','MD45@3','MD155@3','MD156@3','MD60@3','MD157@3','MD158@3'], minSessions:5,
+   drills:['MD45@1','MD45@2','MD155@1','MD155@2','MD156@1','MD60@1','MD60@2','MD157@1','MD157@2','MD156@2','MD158@1','MD158@2','MD156@3','MD157@3','MD158@3'], minSessions:5,
+   perSessionDrills:[['MD45@1','MD45@2','MD155@1'],['MD155@2','MD156@1','MD60@1'],['MD60@2','MD157@1','MD157@2'],['MD156@2','MD158@1','MD158@2'],['MD156@3','MD157@3','MD158@3']],
+   // Wider-number repeats (MD45/60 L3) and the extra parameter branch MD155 L3
+   // remain optional; the core explicitly covers tangent equations and extrema values.
+   extensionPins:['MD45@3','MD60@3','MD155@3'], blockMinimum:6,
+   assessmentPins:['MD45@2','MD155@2','MD156@1','MD60@2','MD157@1','MD158@1','MD158@3'],
    magic:[['M-45'],['M-155'],['M-156'],['M-60'],['M-157'],['M-158']], creative:['MD158@3','MD157@3','MD60@3']},
  {id:73, tier:'calculus1', title:{ko:'적분',en:'Integration',zh:'积分'},
-   drills:['MD46','MD159','MD61','MD62','MD158','MD46@2','MD159@2','MD61@2','MD62@2','MD46@3','MD159@3','MD61@3','MD62@3'], minSessions:4,
+   drills:['MD46@1','MD46@2','MD46@3','MD159@1','MD61@1','MD62@2','MD159@2','MD61@2','MD62@3','MD159@3'], minSessions:4,
+   perSessionDrills:[['MD46@1','MD46@2','MD46@3'],['MD159@1','MD61@1','MD62@2'],['MD159@2','MD61@2','MD62@3'],['MD159@3','MD46@3','MD62@2']],
+   // Velocity by differentiation is prior-course review; wider area arithmetic
+   // is optional. Definite integration must precede properties, area and distance.
+   extensionPins:['MD61@3'], reviewPins:['MD62@1','MD158@2'], blockMinimum:6,
+   assessmentPins:['MD46@2','MD46@3','MD159@2','MD61@2','MD62@3'],
    magic:[['M-46'],['M-159'],['M-61'],['M-62']], creative:['MD62@3','MD61@3','MD159@3']},
 ];
 
@@ -694,7 +708,9 @@ function planCounts(ss, tier, maxLevel){
   /* 유아 G1은 한 회차에 4~6종의 조작·읽기 활동이 있다. 모두 최소 12로 고정하면 26~30분이 된다.
      유형·회차는 빼지 않고, 쉬운·기본 활동만 6문항 묶음까지 줄인다. 어려운 활동은 최소 12 유지.
      초등 이후의 최소 12와 난이도별 추가 연습, 사용자의 학습량 조절은 그대로다. */
-  const minimum = d => tier === 'level0' && d.difficulty !== 'hard' ? 6 : 12;
+  // The three authored calculus plans divide the same time budget into smaller
+  // skill blocks instead of silently dropping the tail of the course queue.
+  const minimum = d => ss.blockMinimum === 6 || (tier === 'level0' && d.difficulty !== 'hard') ? 6 : 12;
   const trimPriority = d => tier === 'level0' ? ({easy:0, core:1, hard:2})[d.difficulty] : +(d.difficulty === 'hard');
   /* 넘치면 쉬운 것부터 6씩 덜고, 모자라면 어려운 것부터 6씩 더한다(최대 36) */
   for(let guard = 0; guard < 20 && total() > BUDGET * OVER; guard++){
@@ -776,6 +792,66 @@ function composeSession(ss, i, spec, lists, maxLevel){
   ss.creative = [...ss.strategy.practice, ...ss.application.filter(a => a.from === 'creative' && a.kind !== 'drawing')];
 }
 
+/* 2026-10-26 curriculum repair. Swap existing source blocks, not source session
+   IDs. Legacy delivery selects its frozen course map before rendering these
+   revised sessions. Level numbers are branches, not a prerequisite ordering. */
+function prepareCurriculumSequence(sessions, courseId){
+  const locate = tag => {
+    const [t, lv] = tag.split('@');
+    for(const s of sessions){
+      const i = s.drills.findIndex(d => !d.review && d.t === t && d.lv === Number(lv));
+      if(i >= 0) return [s.drills, i];
+    }
+    throw new Error('Missing curriculum source block C'+courseId+' '+tag);
+  };
+  const swap = (a,b) => { const [x,i]=locate(a),[y,j]=locate(b); [x[i],y[j]]=[y[j],x[i]]; };
+  if(courseId === 29){
+    swap('MD2@1','DV7@2');
+    // Signed numbers are introduced before adding/subtracting them.
+    const first=sessions[0].drills, a=first.findIndex(d=>d.t==='MD1'), b=first.findIndex(d=>d.t==='MD2');
+    if(a>b)[first[a],first[b]]=[first[b],first[a]];
+  }
+  if(courseId === 30){ swap('MD49@1','MD5@1'); swap('MD50@1','MD6@1'); }
+  if(courseId === 31){ swap('MD68@1','MD7@1'); swap('MD51@1','MD8@1'); swap('MD69@1','MD9@1'); }
+  if(courseId === 36){
+    swap('MD20@2','MD18@2');
+    const row=sessions[1].drills,a=row.findIndex(d=>d.t==='MD20'),b=row.findIndex(d=>d.t==='MD66');
+    if(a>b)[row[a],row[b]]=[row[b],row[a]];
+  }
+}
+
+function applicationPrerequisites(d){
+  if(d.kind==='drawing')return d.mode==='direct'?['MD68@1','MD51@1']
+    :d.mode==='inverse'?['MD68@1','MD69@1']:d.mode==='quadratic'?['MD78@1','MD79@1']:[];
+  if(d.t==='MD89')return ['MD2@1'];
+  if(d.t==='MD70')return ['MD50@1'];
+  if(d.t==='MD77')return ['MD20@2','MD66@1'];
+  if(d.t==='MD85'&&d.lv>=2)return ['MD85@1'];
+  if(d.t==='MD86'&&d.lv>=2)return d.lv>=4?['MD86@1','MD86@2','MD86@3']:['MD86@1'];
+  if(d.t==='MD87'&&d.lv>=2)return d.lv>=4?['MD87@1','MD87@3']:['MD87@1'];
+  return [];
+}
+function prepareCurriculumApplication(ss,courseId,learned,maxLevel){
+  if(![29,30,31,36,37].includes(courseId))return;
+  const ready=d=>applicationPrerequisites(d).every(tag=>learned.has(tag));
+  const old=ss.application;
+  ss.application=old.filter(ready);
+  if(ss.application.length===old.length)return;
+  if(!ss.application.length){
+    // An already practised application fills the slot while its new topic is
+    // waiting for instruction. Never promote an arbitrary higher numeric level.
+    const occupied=new Set([...ss.school,...ss.strategy.practice].map(d=>d.t+'@'+d.lv));
+    const tag=['MD81@1','MD79@2','MD80@1','MD90@3','MD89@3']
+      .find(k=>learned.has(k)&&!occupied.has(k));
+    if(!tag)throw new Error('No taught application available in C'+courseId);
+    const [t,lv]=tag.split('@');
+    ss.application.push({t,lv:Number(lv),n:4,kind:'model',from:'creative',review:true});
+  }
+  planCounts(ss,'middle'+(courseId<32?1:courseId<35?2:3),maxLevel);
+  ss.drills=[...ss.school,...ss.application.filter(a=>a.from==='drills')];
+  ss.creative=[...ss.strategy.practice,...ss.application.filter(a=>a.from==='creative'&&a.kind!=='drawing')];
+}
+
 function buildCourses(NM_THREADS){
   NM_THREADS = NM_THREADS || {};
   const maxLevel = t => {
@@ -829,6 +905,7 @@ function buildCourses(NM_THREADS){
   const poolBand = {};    // thread -> 처음 배운 학교 구간(elem·middle·high) — 복습을 같은 구간으로 묶는다
   let globalSessionIdx = 0;
   const OUT = {};
+  const learned = new Set();
 
   COURSE_SPEC.forEach(spec => {
     const ownDrills = spec.drills.map(parsePin);
@@ -1021,12 +1098,21 @@ function buildCourses(NM_THREADS){
       return { magic: seg, drills, creative: cre };
     });
 
-    sessions.forEach((ss, i) => composeSession(ss, i, spec, lists, drillMax));
+    prepareCurriculumSequence(sessions,spec.id);
+    sessions.forEach((ss, i) => {
+      if(spec.blockMinimum)ss.blockMinimum=spec.blockMinimum;
+      composeSession(ss, i, spec, lists, drillMax);
+      // School blocks print before applications, including within one session.
+      ss.school.forEach(d=>learned.add(d.t+'@'+d.lv));
+      prepareCurriculumApplication(ss,spec.id,learned,drillMax);
+      ss.application.forEach(d=>learned.add(d.t+'@'+d.lv));
+    });
 
     /* 회차마다 올라간 레벨을 homeLevel 에 반영한다 — 그래야 이 과정의 시험(pool)과
        뒤 과정의 복습(priorPool)이 **실제로 배운 마지막 레벨**로 나온다. */
     sessions.forEach(ss => (ss.drills || []).forEach(d => {
-      if(ownDrills.some(o => o.t === d.t)) homeLevel[d.t] = Math.max(homeLevel[d.t] || 0, d.lv);
+      const cap=spec.reviewLevelCaps&&spec.reviewLevelCaps[d.t];
+      if(ownDrills.some(o => o.t === d.t)) homeLevel[d.t] = Math.max(homeLevel[d.t] || 0, cap?Math.min(cap,d.lv):d.lv);
     }));
 
     let poolThreads = ownDrills.map(d => d.t).filter((t,i,a)=>a.indexOf(t)===i);
@@ -1045,7 +1131,12 @@ function buildCourses(NM_THREADS){
       if(d && d.t && Number.isFinite(d.lv))courseLevel[d.t] = Math.max(courseLevel[d.t] || 0,d.lv);
     }));
     // The cumulative boss retains previously learned threads not practised here.
-    const pool = poolThreads.map(t => ({t, lv:courseLevel[t] || homeLevel[t], n: spec.boss ? 6 : 8}));
+    const pool = spec.assessmentPins ? spec.assessmentPins.map(raw=>{
+      const d=parsePin(raw);
+      if(!sessions.some(s=>(s.drills||[]).concat(s.creative||[]).some(p=>p.t===d.t&&p.lv===d.pin)))
+        throw new Error('Untaught assessment C'+spec.id+' '+raw);
+      return {t:d.t,lv:d.pin,n:spec.assessmentCount||8};
+    }) : poolThreads.map(t => ({t, lv:courseLevel[t] || homeLevel[t], n: spec.boss ? 6 : 8}));
     /* noTest — 수의 나라(과정 0)는 "시간을 재지 않는" 단계(stages.js)라 시험 회차가 없다. */
     if(!spec.noTest) sessions.push({ test:true, pool, passRate:0.8 });
 
@@ -1056,6 +1147,13 @@ function buildCourses(NM_THREADS){
       boss: !!spec.boss,
       sessions
     };
+    if([29,30,31,35,36,37,59,71,72,73].includes(spec.id)){
+      OUT['C'+spec.id].curriculumRevision='20261026-prerequisites';
+      if(spec.perSessionDrills)OUT['C'+spec.id].curriculumCoverage={
+        required:[...new Set(spec.perSessionDrills.flat())],
+        extension:(spec.extensionPins||[]).slice(),review:(spec.reviewPins||[]).slice()
+      };
+    }
 
     /* 유아 드릴(level0)은 복습 풀에 넣지 않는다 — 풀은 끝까지 순환하므로 넣으면 중등 과정
        학습지에도 '수 세기'가 복습으로 따라붙는다. */

@@ -121,6 +121,44 @@ NM_TGEN['md44_derivative'] = function (params, rng) {
   const mode = params.mode || 'polyPrime';
   const wide = !!params.wide;
 
+  if (mode === 'averageRate' || mode === 'definitionLimit') {
+    const a2 = nzInt(rng, 1, 6), a1 = R(rng, -8, 8), a0 = R(rng, -9, 9);
+    const u = R(rng, -4, 4);
+    const poly = `${coefLead(a2)}x^2${a1 ? ` ${wrapPlusCoef(a1)}x` : ''}${a0 ? ` ${wrapPlus(a0)}` : ''}`;
+    if (mode === 'averageRate') {
+      const v = u + R(rng, 1, 5);
+      const fu = a2*u*u+a1*u+a0, fv = a2*v*v+a1*v+a0;
+      const answer = (fv-fu)/(v-u);
+      return {
+        prompt:{ko:`x가 ${u}에서 ${v}까지 변할 때 평균변화율(두 점을 잇는 할선의 기울기)을 구하세요.`,
+          en:`Find the average rate of change from x=${u} to x=${v}, the slope of the secant through the two points.`,
+          zh:`求x从${u}到${v}时的平均变化率，即连接两点的割线斜率。`},
+        tex:`f(x)=${poly},\\quad \\dfrac{f(${v})-f(${u})}{${v}-(${u})}=\\square`,
+        answer, answerType:'number', widget:'numpad', negative:answer<0,
+        mathModel:{kind:'averageRate',a2,a1,a0,u,v},
+        solution:[
+          {tex:`f(${u})=\\square`,blank:fu},
+          {tex:`f(${v})=\\square`,blank:fv},
+          {tex:`\\dfrac{${fv}-(${fu})}{${v}-(${u})}=\\square`,blank:answer}
+        ]
+      };
+    }
+    const answer = 2*a2*u+a1;
+    return {
+      prompt:{ko:'미분 공식을 쓰지 않고, 차이의 몫을 h≠0에서 정리한 뒤 h→0의 극한으로 미분계수를 구하세요.',
+        en:'Use the definition: simplify the difference quotient for h≠0, then take its limit as h→0.',
+        zh:'用定义求导数值：在h≠0时化简差商，再求h→0时的极限。'},
+      tex:`f(x)=${poly},\\quad f'(${u})=\\lim_{h\\to0}\\dfrac{f((${u})+h)-f(${u})}{h}=\\square`,
+      answer, answerType:'number', widget:'numpad', negative:answer<0,
+      mathModel:{kind:'definitionLimit',a2,a1,a0,u},
+      solution:[
+        {tex:`f((${u})+h)-f(${u})=${a2}h^2 ${wrapPlusCoef(answer)}h`},
+        {tex:`\\dfrac{f((${u})+h)-f(${u})}{h}=${a2}h ${wrapPlus(answer)}\\quad(h\\ne0)`},
+        {tex:`f'(${u})=\\lim_{h\\to0}(${a2}h ${wrapPlus(answer)})=\\square`,blank:answer}
+      ]
+    };
+  }
+
   if (mode === 'decode') {
     const a = nzInt(rng, 1, 9);
     return {

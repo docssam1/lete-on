@@ -3,9 +3,9 @@
 (function(){
   'use strict';
   const W = typeof window !== 'undefined' ? window : globalThis;
-  const VERSION = '20261023-high3m';
-  const MIDDLE_VERSION = '20261023-middle25';
-  const CALCULUS_VERSION = '20261024-calculus3m';
+  const VERSION = '20261026-high3m-v2';
+  const MIDDLE_VERSION = '20261026-middle25-v2';
+  const CALCULUS_VERSION = '20261026-calculus3m-v2';
   const HIGH_TIERS = ['highmath1', 'highmath2', 'algebra'];
   const MIDDLE_TIERS = ['middle1', 'middle2', 'middle3'];
   const TIERS = [...MIDDLE_TIERS, ...HIGH_TIERS, 'calculus1'];
@@ -76,26 +76,31 @@
     const source = sessions(course), n = source.length;
     if(!n) return [];
     count = Math.min(count, n);
-    const minuteWeights = source.map(minutesOf);
-    const weights = minuteWeights.some(Boolean) ? minuteWeights : source.map(() => 1);
+    // Partition the same source sessions using the full estimate, including a
+    // missing-duration test and the approved bridge attached to the final view.
+    // No source is split, inserted, removed or renumbered.
+    const weights = source.map((_, i) => timeEstimate(course, [i]).estimatedMinutes);
+    if(course.tier === 'middle3' && Number(course.order) === 36) weights[n - 1] += 24 * TEST_SECONDS.middle3 / 60;
+    if(!weights.some(Boolean)) weights.fill(1);
     const prefix = [0];
     weights.forEach(weight => prefix.push(prefix[prefix.length - 1] + weight));
-    const lessons = [];
-    let from = 0;
-    for(let group = 0; group < count; group++){
-      let to = n;
-      if(group < count - 1){
-        const latest = n - (count - group - 1);
-        const target = prefix[n] * (group + 1) / count;
-        let distance = Infinity;
-        for(let cut = from + 1; cut <= latest; cut++){
-          const candidate = Math.abs(prefix[cut] - target);
-          if(candidate <= distance){ to = cut; distance = candidate; }
-        }
+    const target = prefix[n] / count;
+    const dp = Array.from({length:count + 1}, () => Array(n + 1).fill(null));
+    dp[0][0] = {max:0, sq:0, cuts:[]};
+    for(let group=1; group<=count; group++) for(let end=group; end<=n; end++){
+      for(let from=group-1; from<end; from++){
+        const previous=dp[group-1][from]; if(!previous) continue;
+        const load=prefix[end]-prefix[from];
+        const candidate={max:Math.max(previous.max,load),sq:previous.sq+(load-target)**2,cuts:previous.cuts.concat(end)};
+        const best=dp[group][end];
+        if(!best || candidate.max<best.max-1e-9 || Math.abs(candidate.max-best.max)<1e-9 && candidate.sq<best.sq-1e-9) dp[group][end]=candidate;
       }
-      lessons.push(makeLesson(course, group, Array.from({length:to - from}, (_, i) => from + i)));
-      from = to;
     }
+    const lessons=[]; let from=0;
+    dp[count][n].cuts.forEach((to, index)=>{
+      lessons.push(makeLesson(course,index,Array.from({length:to-from},(_,i)=>from+i)));
+      from=to;
+    });
     return lessons;
   }
   function attach(courses){

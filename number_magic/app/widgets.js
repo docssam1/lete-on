@@ -6,6 +6,21 @@ function esc(s){
   return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 }
 
+// Exam, guided learning and widgets share full-string grading. The fallback is
+// for standalone widget fixtures that do not load the exam module.
+function numericInputValue(raw){
+  if(typeof raw==='number')return Number.isFinite(raw)?raw:NaN;
+  const s=String(raw==null?'':raw).trim();
+  return /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(s)?Number(s):NaN;
+}
+function matchesLearningAnswer(raw,answer,problem){
+  if(window.NM_EXAM&&typeof NM_EXAM.matchesAnswer==='function')return NM_EXAM.matchesAnswer(raw,answer,problem);
+  if(problem&&problem.scatterPlot&&problem.scatterPlot.mode==='plot')return false;
+  const parts=Array.isArray(raw)?raw:String(raw==null?'':raw).split(',');
+  return Array.isArray(answer)?parts.length===answer.length&&parts.every((v,i)=>numericInputValue(v)===answer[i])
+    :numericInputValue(raw)===answer;
+}
+
 /* it.e / problem.emoji 등에 담긴 문자열을 그린다.
    'animal:kind' 형태면 NM_ANIMALS(animal-art.js, widgets.js보다 먼저 로드)의
    SVG로, 그 외엔 기존처럼 이모지 문자 그대로. 비동물 이모지 경로는 절대 안 건드림.
@@ -196,7 +211,7 @@ function multiPadState(screenEl, answerArr, shape){
     },
     isFull(){ return vals.every(v=>v!==''&&v!=='-'); },
     values(){ return vals.slice(); },
-    equals(){ return vals.length===n&&vals.every((v,i)=>parseFloat(v)===answerArr[i]); },
+    equals(){ return matchesLearningAnswer(vals,answerArr); },
     clear(){ vals=new Array(n).fill('');focus=0;paint(); },
     shake(){ shake(screenEl); }
   };
@@ -207,6 +222,8 @@ function multiPadState(screenEl, answerArr, shape){
 ───────────────────────────────────────── */
 function render(problem, container, onAnswer){
   container.innerHTML='';
+  if(problem.scatterPlot)return problem.scatterPlot.mode==='plot'
+    ?renderScatterResponse(problem,container,onAnswer):renderGraphPlane(problem,container,onAnswer);
   const w=problem.widget||'numpad';
   switch(w){
     case 'cubes':    return renderCubes(problem,container,onAnswer);
@@ -244,6 +261,24 @@ function render(problem, container, onAnswer){
       return renderFallback(problem,container,onAnswer);
     }
   }
+}
+
+function renderScatterResponse(problem,container,onAnswer){
+  const api=window.NM_EXAM,lang=(window.S&&window.S.lang)||document.documentElement.lang||'ko';
+  if(!api||!api.scatterResponseHtml||!api.bindScatterResponses){
+    container.innerHTML='<p role="alert">'+esc(lang==='en'?'Reload to open the coordinate response.':lang==='zh'?'请刷新以打开坐标作答。':'좌표 답칸을 불러오려면 새로고침해 주세요.')+'</p>';return;
+  }
+  const answers=[''];let done=false;
+  container.innerHTML=api.scatterResponseHtml(problem,'',0)+'<button type="button" class="nm-btn" data-scatter-submit>'+esc(lang==='en'?'Check answer':lang==='zh'?'确认答案':'답 확인')+'</button>';
+  api.bindScatterResponses(container,[problem],answers);
+  container.querySelector('[data-scatter-submit]').onclick=()=>{
+    if(done)return;
+    const raw=answers[0]||'';
+    // Wrong points remain editable in practice; successful submissions lock
+    // during the existing feedback delay so one response cannot advance twice.
+    if(matchesLearningAnswer(raw,problem.answer,problem))done=true;
+    onAnswer(raw);
+  };
 }
 
 /* ─────────────────────────────────────────
@@ -581,7 +616,7 @@ function renderSteps(problem, container, onAnswer){
       if(val==='ok'){
         const inp=ns.get();
         if(!inp)return;
-        if(parseFloat(inp)===s.blank){
+        if(numericInputValue(inp)===s.blank){
           // correct
           if(!answered){
             stepIdx++;
@@ -667,7 +702,7 @@ function renderVertical(problem, container, onAnswer){
       if(!inp)return;
       submitted=true;
       root.querySelector('#wvAns').textContent=inp;
-      onAnswer(parseFloat(inp));
+      onAnswer(numericInputValue(inp));
       return;
     }
     ns.handle(val);
@@ -702,7 +737,7 @@ function renderMissing(problem, container, onAnswer){
       const inp=ns.get();
       if(!inp)return;
       submitted=true;
-      onAnswer(parseFloat(inp));
+      onAnswer(numericInputValue(inp));
       return;
     }
     ns.handle(val);
@@ -816,7 +851,7 @@ function renderSelectPairs(problem, container, onAnswer){
       const inp=ns.get();
       if(!inp)return;
       submitted=true;
-      onAnswer(parseFloat(inp));
+      onAnswer(numericInputValue(inp));
       return;
     }
     ns.handle(val);
@@ -1651,7 +1686,7 @@ function renderStoryCard(problem, container, onAnswer){
         const inp=ns.get();
         if(!inp)return;
         lock=true;setTimeout(()=>{lock=false;},700);
-        onAnswer(parseInt(inp,10));
+        onAnswer(numericInputValue(inp));
         ns.clear();
         return;
       }
@@ -1751,7 +1786,7 @@ function renderNumberMachine(problem, container, onAnswer){
       const inp=ns.get();
       if(!inp)return;
       lock=true;setTimeout(()=>{lock=false;},700);
-      onAnswer(parseInt(inp,10));
+      onAnswer(numericInputValue(inp));
       ns.clear();
       return;
     }
@@ -1948,7 +1983,7 @@ function renderTallyBuild(problem, container, onAnswer){
         const inp=ns.get();
         if(!inp)return;
         lock=true;setTimeout(()=>{lock=false;},700);
-        onAnswer(parseInt(inp,10));
+        onAnswer(numericInputValue(inp));
         ns.clear();
         return;
       }
@@ -2051,7 +2086,7 @@ function renderNumline(problem, container, onAnswer){
     if(val==='ok'){
       const inp=ns.get();
       if(!inp)return;
-      if(parseFloat(inp)===answer){
+      if(numericInputValue(inp)===answer){
         submitted=true;
         const blankDot=dotEls[blank];
         if(blankDot){ blankDot.querySelector('text').textContent=String(answer); blankDot.classList.add('found'); }
@@ -2127,7 +2162,7 @@ function renderBase10(problem, container, onAnswer){
     if(val==='ok'){
       const inp=ns.get();
       if(!inp)return;
-      if(parseFloat(inp)===answer){
+      if(numericInputValue(inp)===answer){
         submitted=true;
         root.classList.add('nm-b10-ok');
         setTimeout(()=>onAnswer(answer),400);
@@ -2196,7 +2231,7 @@ function renderCompareSteps(problem, container, onAnswer){
       buildNumpad(root.querySelector('#cmpLPad'), val=>{
         if(val==='ok'){
           const inp=ns.get(); if(!inp)return;
-          if(parseFloat(inp)===left.steps[0].blank){
+          if(numericInputValue(inp)===left.steps[0].blank){
             leftVal=left.steps[0].blank; leftDone=true; paint();
           } else { shake(screen); ns.clear(); }
           return;
@@ -2209,7 +2244,7 @@ function renderCompareSteps(problem, container, onAnswer){
       buildNumpad(root.querySelector('#cmpRPad'), val=>{
         if(val==='ok'){
           const inp=ns.get(); if(!inp)return;
-          if(parseFloat(inp)===right.steps[1].blank){
+          if(numericInputValue(inp)===right.steps[1].blank){
             rightDone=true; paint();
             setTimeout(()=>onAnswer(problem.answer),500);
           } else { shake(screen); ns.clear(); }
@@ -2271,7 +2306,7 @@ function renderFallback(problem, container, onAnswer){
       const inp=ns.get();
       if(!inp)return;
       submitted=true;
-      onAnswer(parseFloat(inp));
+      onAnswer(numericInputValue(inp));
       return;
     }
     ns.handle(val);
@@ -2324,7 +2359,7 @@ function renderGraphPlane(problem, container, onAnswer){
   const root=document.createElement('div');
   root.className='nm-w-graph';
   root.innerHTML=`
-    <div class="nm-gp-hint">${esc(hint0)}</div>
+    ${problem.scatterPlot?'':`<div class="nm-gp-hint">${esc(hint0)}</div>`}
     ${graphPlaneSvg(g)}
     <div class="nm-gp-tex" id="gpTex"></div>
     <div class="nm-numpad-screen" id="gpScreen">&nbsp;</div>
@@ -2342,7 +2377,7 @@ function renderGraphPlane(problem, container, onAnswer){
       if(submitted)return;
       if(val==='ok'){
         if(!mp.isFull())return;
-        submitted=true;
+        submitted=matchesLearningAnswer(mp.values(),problem.answer,problem);
         onAnswer(mp.values().map(Number));
         return;
       }
@@ -2356,8 +2391,8 @@ function renderGraphPlane(problem, container, onAnswer){
     if(val==='ok'){
       const inp=ns.get();
       if(!inp||inp==='-')return;
-      submitted=true;
-      onAnswer(parseFloat(inp));
+      submitted=matchesLearningAnswer(inp,problem.answer,problem);
+      onAnswer(numericInputValue(inp));
       return;
     }
     ns.handle(val);
@@ -2371,6 +2406,7 @@ function renderGraphPlane(problem, container, onAnswer){
 window.NM_WIDGET_KIT={art,esc,shake,buildNumpad,renderKaTeX};
 window.NM_WIDGETS={
   render,
+  matchesAnswer:matchesLearningAnswer,
   renderCubes,
   renderArray,
   renderTenframe,

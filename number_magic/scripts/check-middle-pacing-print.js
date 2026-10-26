@@ -41,13 +41,18 @@ function inspectSheet(){
     const page=await browser.newPage({viewport:{width:1100,height:1100}});
     page.setDefaultTimeout(45000);
     await page.route('**/*',r=>!['GET','HEAD'].includes(r.request().method())||/supabase|google-analytics/.test(r.request().url())?r.abort():r.continue());
+    // Same local inspection fixture as check-middle-extension-browser: exercise
+    // roadmap/editor behavior in isolated preview storage, not real sign-in.
+    await page.route('**/app/entry.js?*',r=>r.fulfill({contentType:'text/javascript',body:'window.NM_ENTRY={mode:"fixture"};'}));
     page.on('pageerror',e=>report.errors.push(e.message));
     await page.addInitScript(()=>{
       window.NM_NO_AUTOPRINT=true;window.__printCalls=0;window.print=()=>{window.__printCalls++;};
       // A previous ordinary worksheet's sparse solve-mode preference must not
       // reduce the planned session, and must remain untouched after printing.
       localStorage.setItem('nm_ws_solve','1');
-      localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'진도 검수',view:'courseroad',avatar:{kind:'boy'},cloudLinked:false,progress:{},account:{status:'active'},placement:{course:'C29',self:true},roadCadence:'w2'}));
+      const fixture={lang:'ko',onboarded:true,name:'진도 검수',view:'courseroad',avatar:{kind:'boy'},cloudLinked:false,progress:{},account:{status:'active'},placement:{course:'C29',self:true},roadCadence:'w2'};
+      localStorage.setItem('nm_state_v1',JSON.stringify(fixture));
+      localStorage.setItem('nm_preview_state_v1',JSON.stringify(fixture));
     });
     const url='http://127.0.0.1:'+server.address().port;
     await page.goto(url+'/drill.html',{waitUntil:'networkidle',timeout:60000});
@@ -90,6 +95,7 @@ function inspectSheet(){
         await page.setViewportSize({width,height:1050});
         await page.goto(url+'/index.html?enter=1',{waitUntil:'networkidle',timeout:60000});
         await page.waitForFunction(()=>window.NM_EXAM&&window.NM_MIDDLE_PACING);
+        await page.addLocatorHandler(page.locator('#nmUnlockOverlayClose'),el=>el.click(),{noWaitAfter:true});
         if(await page.locator('#ttRoad').isVisible())await page.locator('#ttRoad').click();
         if(await page.locator('#townCourseRoad').isVisible())await page.locator('#townCourseRoad').click();
         await page.waitForSelector('#middlePacing1');
@@ -119,6 +125,7 @@ function inspectSheet(){
         await page.locator('#nm-pe-close').click();
         assert.equal(await page.locator('#nm-pe-overlay').count(),0);
         assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).progress),{});
+        assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_preview_state_v1')).progress),{},'preview/editor must not complete lessons');
         assert.equal(await page.evaluate(()=>localStorage.getItem('nm_ws_solve')),'1','Pacing changed ordinary worksheet solve preference');
         report.screens.push({width,session:target.id,questions:target.questions,rerolled:true,printCalls:1,closed:true,learnerProgressUnchanged:true,legacySolveUnchanged:true});
       }catch(e){report.failures.push({width,error:e.message});}

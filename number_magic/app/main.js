@@ -23,6 +23,10 @@ if(REVIEW)NM_REVIEW_SESSION.guard();
 const app=document.getElementById('app');
 const GEN=window.NM_GEN, CUR=window.NM_CURRICULUM, UNITS=window.NM_UNITS;
 const membership=REVIEW?null:window.NM_MEMBERSHIP;
+function matchesLearningAnswer(raw,answer,problem){
+  if(window.NM_EXAM&&NM_EXAM.matchesAnswer)return NM_EXAM.matchesAnswer(raw,answer,problem);
+  return !!(window.NM_WIDGETS&&NM_WIDGETS.matchesAnswer&&NM_WIDGETS.matchesAnswer(raw,answer,problem));
+}
 
 /* NM_TGEN 브리지: 레거시 NM_GEN + 스레드 생성기(NM_TGEN) 통합. params 전달 포함. */
 function genProblem(cfg, level){
@@ -3536,8 +3540,8 @@ function screenCheckup(){
   /* processFirst(threads.js, DV12~15) — 뜻을 묻는 나눗셈은 계산 회차여도 배열·단계 위젯으로
      과정을 밟는다(2026-09-17). 숫자패드로 답만 찍으면 "몇 명에게 몇 개씩"이 사라진다. */
   const processFirst=!!(th && th.processFirst);
-  const useWidget=!!(window.NM_WIDGETS && cur.widget && cur.widget!=='numpad'
-    && (!hasTex || processFirst || (item.kind==='creative' && (hasSteps || cur.widget==='steps'))));
+  const useWidget=!!(window.NM_WIDGETS && (cur.scatterPlot || (cur.widget && cur.widget!=='numpad'
+    && (!hasTex || processFirst || (item.kind==='creative' && (hasSteps || cur.widget==='steps'))))));
   /* 자릿값 색 힌트 — 어린 학습자에게만, 그리고 세 문제에 하나만(원장 "몇 문제는").
      전부 칠하면 색이 배경이 되어 힌트가 아니게 된다.
      ★ 문항 번호가 아니라 **색을 칠할 수 있는 문항**을 센다. 번호로 세면 그 자리가
@@ -3593,9 +3597,7 @@ function screenCheckup(){
   };
   if(useWidget){
     NM_WIDGETS.render(cur,$('#cuWidget'),val=>{
-      const ok=isMulti
-        ? Array.isArray(val)&&val.length===cur.answer.length&&val.every((v,i)=>+v===cur.answer[i])
-        : +val===cur.answer;
+      const ok=matchesLearningAnswer(val,cur.answer,cur);
       submit(ok);
     });
     return;
@@ -3606,10 +3608,8 @@ function screenCheckup(){
     if(val==='ok'){
       if(inp===''||inp==='-') return;
       if(isMulti){
-        const parts=inp.split(',').map(x=>x.trim()).filter(x=>x!=='');
-        const nums=parts.map(parseFloat);
-        submit(nums.length===cur.answer.length&&nums.every((v,i)=>v===cur.answer[i]));
-      } else submit(parseFloat(inp)===cur.answer);
+        submit(matchesLearningAnswer(inp,cur.answer,cur));
+      } else submit(matchesLearningAnswer(inp,cur.answer,cur));
       return;
     }
     if(val==='del') inp=inp.slice(0,-1);
@@ -5530,7 +5530,7 @@ function renderPlacementQuestion(d, rung, idx, stage){
   const th=(window.NM_THREADS||{})[rung.thread];
   /* tex가 있으면 예전 그대로 식 + 넘패드. 수의 나라 문제는 tex가 없고 그림을
      만져야 답이 나오므로 기존 위젯 렌더러(runPracticeWidget과 같은 길)를 쓴다. */
-  const useWidget = !cur.tex && cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
+  const useWidget = window.NM_WIDGETS && (cur.scatterPlot || (!cur.tex && cur.widget && cur.widget!=='numpad'));
   const isMulti = Array.isArray(cur.answer);
 
   const stepNum = isFine ? (d.fineAsked+1) : (d.asked-(d.askedBase||0)+1);
@@ -5562,7 +5562,9 @@ function renderPlacementQuestion(d, rung, idx, stage){
   if(canStop) $('#dgStop').onclick=()=>{ placementFinish(d); save(); screenPlacement(); };
   renderMath(scr);
 
+  let submitted=false;
   const submit=ok=>{
+    if(submitted)return;submitted=true;
     const sec=Math.max(0, Math.round((Date.now()-(d.qStart||Date.now()))/1000));
     if(stage==='q'){
       placementGrade(d, idx, ok);
@@ -5578,9 +5580,7 @@ function renderPlacementQuestion(d, rung, idx, stage){
   };
   if(useWidget){
     NM_WIDGETS.render(cur,$('#dgWidget'),val=>{
-      const ok = isMulti
-        ? Array.isArray(val) && val.length===cur.answer.length && val.every((v,i)=>+v===cur.answer[i])
-        : +val===cur.answer;
+      const ok = matchesLearningAnswer(val,cur.answer,cur);
       submit(ok);
     });
     return;
@@ -5591,11 +5591,9 @@ function renderPlacementQuestion(d, rung, idx, stage){
     if(val==='ok'){
       if(inp===''||inp==='-') return;
       if(isMulti){
-        const parts=inp.split(',').map(s=>s.trim()).filter(s=>s!=='');
-        const nums=parts.map(parseFloat);
-        submit(nums.length===cur.answer.length && nums.every((v,i)=>v===cur.answer[i]));
+        submit(matchesLearningAnswer(inp,cur.answer,cur));
       } else {
-        submit(parseFloat(inp)===cur.answer);
+        submit(matchesLearningAnswer(inp,cur.answer,cur));
       }
       return;
     }
@@ -6214,7 +6212,7 @@ function screenBoost(){
 
   if(!b.cur){ b.cur = boostProblem(b.threadId, b.level, b.weekKey, b.i); }
   const cur=b.cur;
-  const useWidget = cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
+  const useWidget = window.NM_WIDGETS && (cur.scatterPlot || (cur.widget && cur.widget!=='numpad'));
 
   scr.innerHTML=`<div class="nm-unit-bar">
     <button class="nm-back" id="boostBack">← ${lk('선택한 학습지로','Back to selected worksheet','返回所选学习单')}</button>
@@ -6248,9 +6246,7 @@ function screenBoost(){
   if(useWidget){
     NM_WIDGETS.render(cur,$('#boostWidget'),val=>{
       if(!canAnswer())return;
-      const ok = Array.isArray(cur.answer)
-        ? Array.isArray(val) && val.length===cur.answer.length && val.every((v,i)=>+v===cur.answer[i])
-        : +val===cur.answer;
+      const ok = matchesLearningAnswer(val,cur.answer,cur);
       if(ok)playSfx("success");
       logDaily(ok);
       advance(ok);
@@ -6264,7 +6260,7 @@ function screenBoost(){
       if(!canAnswer())return;
       if(val==='ok'){
         if(inp==='')return;
-        const ok=parseFloat(inp)===cur.answer;
+        const ok=matchesLearningAnswer(inp,cur.answer,cur);
         advance(ok);
         return;
       }
@@ -7136,7 +7132,7 @@ function runPractice(body,u){
     $('#nmLessonBegin').onclick=()=>{stopVoice();S.sub.started=true;runPractice(body,u);};
     say(L(cfg.intro));return;
   }
-  if(cur.widget&&cur.widget!=='numpad'&&window.NM_WIDGETS){runPracticeWidget(body,u,cur,first,need);return;}
+  if(window.NM_WIDGETS&&(cur.scatterPlot||(cur.widget&&cur.widget!=='numpad'))){runPracticeWidget(body,u,cur,first,need);return;}
   const splitQuestion=cur.gen==='splitNum'&&(schoolGradeNum()!=null?schoolGradeNum()<3:NM_BAND==='young');
   const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
   const isMulti=Array.isArray(cur.answer);
@@ -7203,7 +7199,7 @@ function runPracticeWidget(body,u,cur,first,need){
   S.sub.started=true;
   say(first?L(cfg.intro):L(cur.prompt));
   NM_WIDGETS.render(cur,$('#pracWidget'),val=>{
-    if(+val===cur.answer){
+    if(matchesLearningAnswer(val,cur.answer,cur)){
       if(NM_WIDGETS._isYoungBand&&NM_WIDGETS._isYoungBand())NM_WIDGETS._correctTone();
       toast(t('correct'),true);numiHappy();
       S.sub.pIdx++;S.sub.cur=null;
@@ -7232,7 +7228,7 @@ function handlePractice(val,body,u){
       return;
     }
     const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
-    if(parseFloat(inp)===cur.answer){
+    if(matchesLearningAnswer(inp,cur.answer,cur)){
       toast(t('correct'),true);numiHappy();
       S.sub.pIdx++;S.sub.inp='';S.sub.cur=null;
       if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');lessonLater(()=>gotoStep('discover'),700);return;}
@@ -7989,7 +7985,7 @@ function stepCheck(body,u){
         return;
       }
       const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
-      if(parseFloat(inp)===fill.answer){
+      if(matchesLearningAnswer(inp,fill.answer)){
         toast(t('correct'),true);numiHappy();
         S.sub.fi++;S.sub.inp='';
         if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};lessonLater(()=>openQuestion(body,u),700);}
@@ -8024,7 +8020,7 @@ function stepLab(body,u){
   const cfg=u.lab;
   S.sub.cur=S.sub.cur||genProblem(cfg,'main');
   if(S.sub.cur.answerType==='selectPairs')stepLabPairs(body,u);
-  else if(S.sub.cur.widget&&S.sub.cur.widget!=='numpad'&&window.NM_WIDGETS)stepLabWidget(body,u);
+  else if(window.NM_WIDGETS&&(S.sub.cur.scatterPlot||(S.sub.cur.widget&&S.sub.cur.widget!=='numpad')))stepLabWidget(body,u);
   else stepLabNumpad(body,u);
 }
 /* 매직랩 — 교구/단계 위젯 (계산기 대신 전략의 중간 과정을 직접 입력) */
@@ -8053,7 +8049,7 @@ function stepLabWidget(body,u){
   renderMath(body);
   say(first?L(cfg.intro):L(cur.prompt));
   NM_WIDGETS.render(cur,$('#labWidget'),val=>{
-    if(+val===cur.answer){
+    if(matchesLearningAnswer(val,cur.answer,cur)){
       if(NM_WIDGETS._isYoungBand&&NM_WIDGETS._isYoungBand())NM_WIDGETS._correctTone();
       {const sfx=playSfx("success");voiceLine(u,u.voice.correct,true,{afterSfx:sfx});numiHappy();}
       S.sub.li++;S.sub.cur=null;
@@ -8165,7 +8161,7 @@ function handleLabNumpad(val,body,u){
       return;
     }
     const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
-    if(parseFloat(inp)===cur.answer){
+    if(matchesLearningAnswer(inp,cur.answer,cur)){
       {const sfx=playSfx("success");voiceLine(u,u.voice.correct,true,{afterSfx:sfx});numiHappy();}
       S.sub.li++;S.sub.inp='';S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');lessonLater(()=>gotoStep(afterLabKey(u)),700);return;}
@@ -8234,6 +8230,20 @@ function stepArena(body,u){
 }
 function nextArena(body,u,need){
   const cur=genProblem(u.arena,'main');S.sub.cur=cur;S.sub.inp='';
+  if(cur.scatterPlot&&window.NM_WIDGETS){
+    body.innerHTML=`<div class="nm-arena"><div class="nm-arena-top"><span class="nm-arena-q">${S.sub.ai+1} / ${need}</span><span class="nm-arena-time" id="atime">${fmt(S.sub.left)}</span></div>
+      ${hostStripHtml('unit',(u.arena&&u.arena.generator)||u.generator||u.id)}
+      <div class="nm-bubble">${esc(L(cur.prompt))}</div><div id="arenaWidget" class="nm-lab-widget nm-board"></div></div>`;
+    let submitted=false;
+    NM_WIDGETS.render(cur,$('#arenaWidget'),raw=>{
+      if(submitted||S.sub.cur!==cur)return;submitted=true;
+      if(matchesLearningAnswer(raw,cur.answer,cur)){S.sub.score++;numiHappyToast();}else toast('✗',false);
+      S.sub.ai++;
+      if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
+      nextArena(body,u,need);
+    });
+    return;
+  }
   const isMulti=Array.isArray(cur.answer);
   if(isMulti)ensureMultiState(cur.answer,cur.answerShape);
   const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
@@ -8257,7 +8267,7 @@ function nextArena(body,u,need){
         nextArena(body,u,need);return;
       }
       const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
-      if(parseFloat(inp)===S.sub.cur.answer){S.sub.score++;numiHappyToast();}else toast('✗',false);
+      if(matchesLearningAnswer(inp,S.sub.cur.answer,S.sub.cur)){S.sub.score++;numiHappyToast();}else toast('✗',false);
       S.sub.ai++;
       if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
       nextArena(body,u,need);return;}
@@ -8378,7 +8388,7 @@ function applyMultiKey(val){
   vals[S.sub.mfocus]=cur;
 }
 function multiIsFull(){ return S.sub.mvals.every(v=>v!==''&&v!=='-'); }
-function multiEquals(answerArr){ return S.sub.mvals.length===answerArr.length&&S.sub.mvals.every((v,i)=>parseFloat(v)===answerArr[i]); }
+function multiEquals(answerArr){ return matchesLearningAnswer(S.sub.mvals,answerArr); }
 function multiClear(answerArr){ S.sub.mvals=answerArr.map(()=>'');S.sub.mfocus=0; }
 function dots(n,cur){let h='';for(let i=0;i<n;i++)h+=`<span class="nm-dot ${i<cur?'on':i===cur?'now':''}"></span>`;return h;}
 function fmt(s){s=Math.max(0,s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}

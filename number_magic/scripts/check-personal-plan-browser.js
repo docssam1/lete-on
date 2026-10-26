@@ -74,7 +74,8 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
       const lay=await page.evaluate(()=>{const w=innerWidth;return{scroll:document.documentElement.scrollWidth>w+2,bad:[...document.querySelectorAll('#nmPersonalPlan, #nmPersonalPlan *, #nmStandardPlan, #nmStandardPlan *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(r.right>w+1||r.left<-1);}).map(e=>e.tagName+'.'+(e.className||''))};});
       assert(!lay.scroll&&lay.bad.length===0,tag+' overflow: '+lay.bad.join(','));
       if(process.env.NM_SCREENSHOT_DIR&&lang==='ko'){fs.mkdirSync(process.env.NM_SCREENSHOT_DIR,{recursive:true});await page.screenshot({path:path.join(process.env.NM_SCREENSHOT_DIR,'personal-plan-'+width+'.png')});}
-      const st=await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')));
+      const st=await page.evaluate(()=>JSON.parse(localStorage.getItem(NM_LEARNER_STORAGE.keyFor(NM_ENTRY.guardianUserId))));
+      assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))),{...original,lang},tag+' legacy source remains unchanged');
       assert.equal(st.adminPlan.version,settings.version);assert.equal(st.roadSpeed,settings.speed);assert.equal(st.roadAmount,settings.amount);assert.equal(st.roadCadence,settings.cadence);assert.equal(st.schoolAge.entryYear,2020);
       for(const k of ['name','progress','character','avatar','cloudOwnerId','cloudLinked','account'])assert.deepEqual(st[k],original[k],tag+' private record '+k+' preserved');
       assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_guardian_session_v1')).access_token),'fake-owner-token');
@@ -105,7 +106,7 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
         });
         assert.deepEqual(result,{standard:84,fast:56,manual:168,weeks:12,fastWeeks:8},tag+' calculus standard 12 / faster 8 / saved slow 24 weeks');
         assert.equal(st.weeklyDigest.highStartDate,settings.startDate,tag+' calculus digest uses saved plan anchor');
-        assert.equal(st.weeklyDigest.highPlanVersion,'20261024-calculus3m',tag+' calculus digest has versioned compact link');
+        assert.equal(st.weeklyDigest.highPlanVersion,'20261026-calculus3m-v2',tag+' calculus digest has versioned compact link');
         assert.equal(st.weeklyDigest.cadence,'w1',tag+' saved admin slow pace is not replaced by the standard');
         if(process.env.NM_EVIDENCE_DIR){fs.mkdirSync(process.env.NM_EVIDENCE_DIR,{recursive:true});await page.screenshot({path:path.join(process.env.NM_EVIDENCE_DIR,'calculus-road-'+width+'-'+lang+'.png')});}
         await page.evaluate(()=>{
@@ -119,7 +120,7 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
         await page.selectOption('[data-calendar=cadence]','w2');await page.selectOption('[data-calendar=speed]','1.5');
         assert.deepEqual(await page.evaluate(()=>window.__paceApplied),[],tag+' calculus preview needs explicit apply');
         await page.click('#pdApplyPace');assert.deepEqual(await page.evaluate(()=>window.__paceApplied),[{speed:1.5,cadence:'w2'}]);
-        assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).progress),original.progress,tag+' calculus preview preserves actual completion');
+        assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem(NM_LEARNER_STORAGE.keyFor(NM_ENTRY.guardianUserId))).progress),original.progress,tag+' calculus preview preserves actual completion');
         const layout=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth+2,bad:[...document.querySelectorAll('#pdStandardPlan,#pdStandardPlan *,#pdCustomPlan,#pdCustomPlan *')].filter(el=>{const r=el.getBoundingClientRect();return r.width>0&&(r.right>innerWidth+1||r.left<-1);}).map(el=>el.tagName+'.'+el.className)}));
         assert(!layout.overflow&&!layout.bad.length,tag+' calculus diagnostic calendar overflow '+JSON.stringify(layout));
         if(process.env.NM_EVIDENCE_DIR)await page.screenshot({path:path.join(process.env.NM_EVIDENCE_DIR,'calculus-plan-'+width+'-'+lang+'.png')});
@@ -141,7 +142,7 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
         await page.selectOption('[data-calendar=cadence]','w2');await page.selectOption('[data-calendar=speed]','1.5');
         assert.deepEqual(await page.evaluate(()=>window.__paceApplied),[],'preview requires explicit apply');
         await page.click('#pdApplyPace');assert.deepEqual(await page.evaluate(()=>window.__paceApplied),[{speed:1.5,cadence:'w2'}]);
-        assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).progress),original.progress,'preview/apply never completes lessons');
+        assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem(NM_LEARNER_STORAGE.keyFor(NM_ENTRY.guardianUserId))).progress),original.progress,'preview/apply never completes lessons');
         if(process.env.NM_EVIDENCE_DIR){fs.mkdirSync(process.env.NM_EVIDENCE_DIR,{recursive:true});await page.screenshot({path:path.join(process.env.NM_EVIDENCE_DIR,'middle-plan-'+width+'-'+lang+'.png')});}
       }
       checks++;await ctx.close();
@@ -168,8 +169,8 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
       const u=new URL(page.url());
       assert.equal(u.origin,base,'redirect stays on the same origin');
       assert.equal(u.pathname,'/number_magic/ws.html');
-      assert.deepEqual(Object.fromEntries(u.searchParams),{c:goodCfg.courseKey,w:'2026-W43',k:'2',cad:'w2',amt:'0.7',s:'2',p:'1',auto:'0',...(compact?{hp:'1',hs:'2026-10-19',hv:'1.5'}:{})});
-      assert.equal([...u.searchParams].length,compact?11:8,'no extra params');
+      assert.deepEqual(Object.fromEntries(u.searchParams),{c:goodCfg.courseKey,w:'2026-W43',k:'2',cad:'w2',amt:'0.7',s:'2',p:'1',auto:'0',...(compact?{hp:'1',highPlanVersion:goodCfg.highPlanVersion,hs:'2026-10-19',hv:'1.5'}:{})});
+      assert.equal([...u.searchParams].length,compact?12:8,'version stays in the managed redirect');
       assert.deepEqual(seen,[{action:'resolve_worksheet',token:TOKEN}]);
       await page.waitForFunction(()=>window.NM_WS_READY!==undefined);
       assert.equal(await page.evaluate(()=>window.NM_WS_READY),true,'personalised worksheet renders');

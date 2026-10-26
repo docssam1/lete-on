@@ -24,3 +24,15 @@ test('authoritative managed links win over stale personal state and keep w2 deli
 test('expired members and dry runs do not dispatch',async()=>{const denied=fixture({...personal,canUse:false,link:null});await box.processContact(denied,contact,ctx);assert.equal(denied.calls.send+denied.calls.reserve,0);const dry=fixture(personal);const r=await box.processContact(dry,contact,{...ctx,dry:true});assert.equal(dry.calls.send+dry.calls.reserve,0);assert.equal(r[0].link,'member');});
 test('actual slow empty week creates no reservation, old PDF fallback or SMS',async()=>{const slow={courseKey:'C73',sessionIndex:1,startDate:'2026-10-19',speed:0.7,amount:1,cadence:'w1',pace:'p2'},cfg=config(slow);assert.equal(personalDeliveryState(cfg),'empty');const d=fixture({...personal,cadence:'w1',config:cfg}),r=await box.processContact(d,contact,ctx);assert.equal(r[0].skip,'no-assigned-worksheet');assert.equal(d.calls.send+d.calls.reserve+d.calls.legacy,0);});
 test('invalid or mismatched frozen personal config cannot send or reserve',async()=>{for(const patch of[{config:null},{config:{...personal.config,week:'2026-W44'}},{config:{...personal.config,learningPlan:{...plan,speed:99}}},{cadence:'w1'},{link:'https://legacy.test/pdf'}]){const d=fixture({...personal,...patch}),r=await box.processContact(d,contact,ctx);assert.match(r[0].skip,/membership-error|membership-mismatch/);assert.equal(d.calls.send+d.calls.reserve+d.calls.legacy,0);}});
+
+test('new v2 personal snapshots dispatch through the same gated path, with no legacy fallback',async()=>{
+ const cfg={...config(plan),deliveryPlanVersion:'20261026-personal2',learningPlan:{...plan,curriculumRevision:'20261026-curriculum2'}};
+ const d=fixture({...personal,deliveryPlanVersion:cfg.deliveryPlanVersion,config:cfg});
+ const r=await box.processContact(d,contact,ctx);
+ assert.equal(d.calls.send,1);assert.equal(d.calls.reserve,1);assert.equal(d.calls.legacy,0);assert.equal(r.length,1);
+});
+test('old version plus new curriculum marker fails closed',async()=>{
+ const d=fixture({...personal,config:{...config(plan),learningPlan:{...plan,curriculumRevision:'20261026-curriculum2'}}});
+ const r=await box.processContact(d,contact,ctx);
+ assert.equal(d.calls.send+d.calls.reserve+d.calls.legacy,0);assert.match(r[0].skip,/membership-error/);
+});

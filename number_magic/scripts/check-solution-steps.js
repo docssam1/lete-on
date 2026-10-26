@@ -19,7 +19,7 @@ const ONLY = process.argv.slice(2).map(s => s.toUpperCase());
 /* 엔진 파일 목록은 앱(index.html)이 싣는 순서 그대로 읽는다(2026-09-25). 예전엔 손으로 적은
    목록이 mid10 에서 멈춰 mid11~15 의 MD84~88 을 "생성기 없음"으로 보고했다. */
 const FILES = [...fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').matchAll(/<script\s+src="(engine\/[^"]+)"/g)]
-  .map(m => m[1]).concat(['data/threads.js']);
+  .map(m => m[1].split('?')[0]).concat(['data/threads.js']);
 
 function loadEngine(readFile){
   const vm = require('vm'); const w = { document: {}, console, Math, JSON, Object, Array, String, Number, RegExp, Date, parseInt, parseFloat, isNaN, isFinite };

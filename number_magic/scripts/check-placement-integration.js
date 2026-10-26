@@ -79,13 +79,23 @@ for(const mode of ['next-wrong','one-earlier-wrong','all-skip']){
   assert.equal(world.S.placement.autoPlan.applied,false);
   assert.equal(world.S.placement.autoPlan.cadence,'w1','maintain label must show actual frequency');
 }
+// The result callback delegates pace edits to the real planning helper. Load its
+// production dependencies; only storage/auth/UI boundaries are disposable stubs.
+for(const file of ['data/high-pacing.js','data/middle-extension.js','app/learning-plan.js','app/plan-control.js'])
+  vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),context,{filename:file});
+world.applyAdminSettings=()=>{};world.stateStorageCurrent=()=>true;
+world.currentCourseKey=()=>world.S.placement.course;
+world.weekKeyFor=()=> '2026-W44';world.syncAmount=()=>{};world.save=()=>true;
+const planningHelpers=main.slice(main.indexOf('function highWeeklySchedule('),main.indexOf('function updateWeeklyDigest('));
+assert(planningHelpers.includes('function applyLearningSettings('),'actual settings helper is extracted');
+vm.runInContext(planningHelpers,context,{filename:'actual-learning-settings-entry'});
 world.ROAD_MULTS_LIST=[0.7,0.85,1,1.25,1.5];
 assert.equal(capture.onPaceApply({speed:1.25,cadence:'w2'}),true);assert.equal(world.S.roadSpeed,1.25);assert.equal(world.S.roadCadence,'w2');assert.equal(world.S.roadAmount,1.5);
 world.S.adminPlan={version:1};assert.equal(capture.onPaceApply({speed:1.5,cadence:'w1'}),false);assert.equal(world.S.roadSpeed,1.25);
 world.NM_PLACEMENT_UI=ui;
 
 // A minimal DOM contract supplements (not replaces) the real browser transition audit.
-const stub=()=>({dataset:{},firstChild:{textContent:''},setAttribute(){},appendChild(){},append(){},before(){},after(){}});
+const stub=()=>({dataset:{},firstChild:{textContent:''},querySelector(){return stub();},querySelectorAll(){return [];},setAttribute(){},appendChild(){},append(){},before(){},after(){}});
 world.document={createElement:stub};
 let markup='',view=null;
 const screen={scrollTop:230,

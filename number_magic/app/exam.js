@@ -1872,6 +1872,7 @@ function ansTex(p){
    호출부는 innerHTML을 채운 뒤 반드시 '.nm-ans-tex'에 renderKaTeX을 돌려야 한다
    (기존 '.nm-vp-tex' 루프와 같은 패턴 — 아래 각 render()에 추가돼 있음). */
 function ansHtml(p){
+  if(isScatterAnswer(p))return esc(p.scatterPlot.points.map(pt=>`(${pt[0]}, ${pt[1]})`).join(' · '));
   if(p && p.answerRelationTex){
     return `<span>${esc(String(fmtAns(p.answer)))}</span> <span class="nm-ans-tex" data-tex="${esc(p.answerRelationTex.replace(/^\d+\\;\(/,'').replace(/\)$/,''))}"></span>`;
   }
@@ -1879,14 +1880,26 @@ function ansHtml(p){
   if(tex)return `<span class="nm-ans-tex" data-tex="${esc(tex)}"></span>`;
   return esc(String(fmtAns(p.answer)));
 }
-/* 다칸 답 채점: raw는 콤마로 구분한 사용자 입력 문자열("3, 5" 등), answer는 problem.answer.
-   answer가 배열이 아니면 기존 parseFloat 비교와 동일. */
-function matchesAnswer(raw, answer){
+/* 입력 전체를 검사한다. '3/2', '3abc'를 숫자 3으로 잘라 채점하지 않는다. */
+function strictAnswerNumber(raw){
+  const value=String(raw==null?'':raw).trim();
+  return /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(value)&&Number.isFinite(Number(value))?Number(value):NaN;
+}
+function isScatterAnswer(p){return !!(p&&p.scatterPlot&&p.scatterPlot.mode==='plot');}
+function answerPresent(raw,p){return raw!=null&&String(raw).trim()!==''&&(!isScatterAnswer(p)||String(raw).trim()!=='[]');}
+function matchesAnswer(raw,answer,p){
+  if(isScatterAnswer(p))return !!(window.NM_SCATTER_ANSWER&&NM_SCATTER_ANSWER.matches(raw,p));
   if(Array.isArray(answer)){
-    const parts=String(raw==null?'':raw).split(',').map(s=>parseFloat(s.trim()));
-    return parts.length===answer.length && parts.every((v,i)=>v===answer[i]);
+    const parts=String(raw==null?'':raw).split(',').map(strictAnswerNumber);
+    return parts.length===answer.length&&parts.every((v,i)=>v===answer[i]);
   }
-  return parseFloat(raw)===answer;
+  return strictAnswerNumber(raw)===answer;
+}
+function scatterResponseHtml(p,raw,index){
+  return window.NM_SCATTER_ANSWER?NM_SCATTER_ANSWER.html(p,raw,index,(q,pts)=>scatterPlotHtml(q,false,pts)):'';
+}
+function bindScatterResponses(container,problems,answers,onChange){
+  if(window.NM_SCATTER_ANSWER)NM_SCATTER_ANSWER.bind(container,problems,answers,(q,pts)=>scatterPlotHtml(q,false,pts),onChange);
 }
 
 /* 온라인 문제 셀(그리드 학습지 채점 화면) — runGridExam(단일 유형)과
@@ -1899,7 +1912,9 @@ function gridCellHtml(p, i, mode, graded, userAnswers){
   const num = circled(i+1);
   let inner;
   let wide = false;
-  if(p.scatterPlot){
+  if(mode==='online'&&isScatterAnswer(p)){
+    wide=true;inner=scatterResponseHtml(p,userAnswers[i],i);
+  } else if(p.scatterPlot){
     wide = true;
     const ansRow = mode==='online'
       ? `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="?">`
@@ -1960,7 +1975,7 @@ function gridCellHtml(p, i, mode, graded, userAnswers){
 </div>`;
   }
   const stateClass = graded && mode==='online'
-    ? (matchesAnswer(userAnswers[i],p.answer) ? ' nm-ws-ok' : (userAnswers[i]!=='' ? ' nm-ws-err' : ''))
+    ? (matchesAnswer(userAnswers[i],p.answer,p) ? ' nm-ws-ok' : (answerPresent(userAnswers[i],p) ? ' nm-ws-err' : ''))
     : '';
   return `<div class="nm-ws-cell${wide?' nm-ws-wide':''}${stateClass}" data-ci="${i}">
   <span class="nm-ws-cnum">${num}</span>
@@ -2072,16 +2087,17 @@ function runSessionTabs(container, items, meta){
       });
     });
 
+    bindScatterResponses(container,t.problems,t.userAnswers);
     container.querySelectorAll('[data-tabidx]').forEach(btn => {
       btn.addEventListener('click', () => { activeTab = parseInt(btn.dataset.tabidx,10); render(); });
     });
     container.querySelector('#nm-ws-grade').addEventListener('click', () => {
       const first=!t.graded;
       t.graded = true; t.gradeScore = 0;
-      t.problems.forEach((p,i) => { if(matchesAnswer(t.userAnswers[i],p.answer)) t.gradeScore++; });
+      t.problems.forEach((p,i) => { if(matchesAnswer(t.userAnswers[i],p.answer,p)) t.gradeScore++; });
       if(first&&window.NM_STATS) NM_STATS.record(t.cfg.thread, t.cfg.level, t.gradeScore, t.cfg.count, null);
       if(first&&evidence)evidence.attempt({id:t.evidenceId,thread:t.cfg.thread,level:t.cfg.level,correct:t.gradeScore,total:t.cfg.count,
-        answered:t.userAnswers.filter(x=>String(x).trim()!=='').length,exposed:false,
+        answered:t.userAnswers.filter((x,i)=>answerPresent(x,t.problems[i])).length,exposed:false,
         course:t.cfg.courseKey||meta.course||null,session:t.cfg.legacySession||meta.session||null},run);
       render();
     });
@@ -3280,6 +3296,8 @@ function base10Html(b){
     + `<span class="nm-b10-op">=</span><span class="nm-b10-blank"></span></div>`;
 }
 function concreteTeachingHtml(p,solved,threadId){
+  const c0Beads=W2_C0&&window.NM_C0_CONCRETE&&NM_C0_CONCRETE.html(p,solved,threadId,examLang());
+  if(c0Beads)return c0Beads;
   if(p.base10){
     const key=`<div class="nm-b10-key"><span>${b10OneSvg()} 1</span><span>${b10RodSvg()} 10</span><span>${b10FlatSvg()} 100</span></div>`;
     let h=base10Html(p.base10);
@@ -3465,11 +3483,11 @@ function graphSvg(g){
 
 /* MD87 산점도. scatterPlot.points는 학생에게 보이는 실제 자료이며, plot 활동은
    학생 지면에서는 빈 모눈으로 두고 정답지에서만 같은 좌표를 완성해 보인다. */
-function scatterPlotHtml(p, teacher){
+function scatterPlotHtml(p, teacher,drawnPoints){
   const sp=p&&p.scatterPlot;if(!sp||!Array.isArray(sp.points))return '';
   const points=sp.points.map(pt=>[Number(pt[0]),Number(pt[1])]);
   const showPoints=sp.mode!=='plot'||!!teacher;
-  const g=Object.assign({},p.graph||{kind:'points',xr:[0,10],yr:[0,10]}, {kind:'points',pts:showPoints?points:[]});
+  const g=Object.assign({},p.graph||{kind:'points',xr:[0,10],yr:[0,10]}, {kind:'points',pts:showPoints?points:(drawnPoints||[])});
   const table=sp.showTable?`<table class="nm-scatter-table" aria-label="${esc(lk('순서쌍 자료표','Ordered-pair table','有序数对表'))}"><tbody>
     <tr><th>x</th>${points.map(pt=>`<td>${esc(String(pt[0]))}</td>`).join('')}</tr>
     <tr><th>y</th>${points.map(pt=>`<td>${esc(String(pt[1]))}</td>`).join('')}</tr>
@@ -5897,9 +5915,12 @@ function w2ExampleBodyHtml(p, threadId, young, condition){
   const stepSrc = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : null);
   const hasSteps = !!(stepSrc && stepSrc.length);
   let bodyHtml;
+  const c0Beads=W2_C0&&window.NM_C0_CONCRETE&&NM_C0_CONCRETE.html(p,true,threadId,examLang());
   /* 그림 문항(모으기·가르기 등 BOND_THREADS)은 격자 칸과 같은 그림으로 보여준다 —
      여기서 parseVert로 먼저 걸러지면 격자와 다른(세로셈) 모양이 나가 버린다. */
-  if(BOND_THREADS[threadId] && p.cubes && typeof p.cubes.moveTo === 'number' && typeof p.answer === 'number'){
+  if(c0Beads){
+    bodyHtml=c0Beads;
+  } else if(BOND_THREADS[threadId] && p.cubes && typeof p.cubes.moveTo === 'number' && typeof p.answer === 'number'){
     bodyHtml = concreteTeachingHtml(p,true,threadId);
   } else if(hasSteps){
     /* 빈칸이 없는 맨 식은 뒤에 "= 답"을 붙이지 않는다(2026-09-20 점검).
@@ -5910,7 +5931,7 @@ function w2ExampleBodyHtml(p, threadId, young, condition){
     const completedTex = p.completedTex || (bare ? String(p.tex || '')
       : fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank, ansTex(p))));
     const completedHtml = String(completedTex).trim() ? `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>` : "";
-    const stepParts = stepSrc.map(s => {
+    const stepParts = stepSrc.filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==String(p.tex||'').trim()).map(s => {
       /* blank가 없는 줄은 그대로(변형만 보여주는 줄), 배열 blank는 \square 개수만큼 차례로 채운다 */
       const t = ('blank' in s && /\\square/.test(String(s.tex||''))) ? fixNegSigns(texSubstituteAnswer(String(s.tex||''), s.blank)) : String(s.tex||'');
       return `<span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span>`;
@@ -5975,12 +5996,14 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
     problems.push(p);
     const stepSrc = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : null);
     const raw = String(p.tex || '');
-    const qTex = raw;   /* 끝의 □도 쓰기 상자로(2026-09-18) */
+    const c0Beads=W2_C0&&window.NM_C0_CONCRETE&&NM_C0_CONCRETE.html(p,false,threadId,examLang());
+    const qTex = c0Beads?'':raw;   /* 그림의 답칸과 같은 식을 반복하지 않는다. */
     const qHtml = qTex.trim() ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(qTex))}"></span>` : '';
-    const chainHtml = (stepSrc && stepSrc.length)
-      ? stepSrc.map(s => `<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(s.tex || '')))}"></span>`)
+    const teachingSteps=(stepSrc||[]).filter(s=>!W2_C0||!['AD1','SB1'].includes(threadId)||String(s.tex||'').trim()!==raw.trim());
+    const chainHtml = c0Beads?'':(teachingSteps.length)
+      ? teachingSteps.map(s => `<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(s.tex || '')))}"></span>`)
           .join('<span class="nm-w2-guide-arrow">→</span>')
-      : (p.word && p.choices && !p.tex)
+      : W2_C0&&['AD1','SB1'].includes(threadId)?'':(p.word && p.choices && !p.tex)
       ? `<ul class="nm-print-choices" style="flex-basis:100%;margin:0">${(pickChoices(p) || []).map((c, j) => `<li>${j + 1}) ${esc(c)}</li>`).join('')}</ul><span class="nm-w2-guide-blank">${esc(lk('답','Answer','答'))}: ____</span>`
       : `<span class="nm-w2-guide-blank">${esc(lk('답','Answer','答'))}: ____</span>`;
     /* 이야기가 있는 문항(DV12·13 등)은 식 앞에 이야기, 사슬 앞에 뜻 그림(2026-09-17) */
@@ -5995,14 +6018,15 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
   const wrap = items => `<div class="nm-w2-guide${(window.NM_MIDDLE_CONCEPTS || {})[threadId] ? ' nm-mid-guide' : ''}">
     <div class="nm-w2-guide-title"><i class="nm-w2-sq"></i>${esc(lk('따라 풀어 보세요.','Try it the same way.','照着做一做。'))}</div>
     ${items.join('')}</div>`;
-  const leadConcrete=(BOND_THREADS[threadId]||problems.some(p=>p.base10))&&['s','m'].includes(getFontSize());
+  const c0Beads=!!(W2_C0&&threadId==='AD1'&&window.NM_C0_CONCRETE);
+  const leadConcrete=(c0Beads||BOND_THREADS[threadId]||problems.some(p=>p.base10))&&['s','m'].includes(getFontSize());
   return {
     html: wrap(itemHtmls),
     leadHtml: leadConcrete?wrap(itemHtmls.slice(0,1)):'',
     // 모눈과 중간식을 축소하지 않는다. 그래프형 세 문제는 두 쪽에 나누어 쓴다.
     /* MD30@3(행렬 곱셈) — 문제 행렬 + 성분 네 줄 + 답 행렬이라 세 문제가 한 쪽을 471px 넘쳤다(2026-09-29, C48 둘째 장). */
     /* 2026-10-05 — 2+1 로 나눠도 첫 쪽(두 문제 987px)이 52px 넘쳤다(C49·C51 둘째 장 복습). 행렬 곱셈은 한 쪽에 하나. */
-    pages: leadConcrete?[wrap(itemHtmls.slice(1))]:((threadId==='MD30' && level===3)||(['MD83','MD65'].includes(threadId)&&level===5&&getFontSize()==='xl')) ? itemHtmls.map(h => wrap([h]))
+    pages: c0Beads?(leadConcrete?[wrap(itemHtmls.slice(1))]:[wrap(itemHtmls.slice(0,2)),wrap(itemHtmls.slice(2))]):leadConcrete?[wrap(itemHtmls.slice(1))]:((threadId==='MD30' && level===3)||(['MD83','MD65'].includes(threadId)&&level===5&&getFontSize()==='xl')) ? itemHtmls.map(h => wrap([h]))
       : (problems.some(p=>p.graph||p.base10||p.numline)||BOND_THREADS[threadId] || (threadId==='MD66' && level===4) || (threadId==='MD58' && level===2) || (threadId==='MD83' && level===5) || (['CH6','MD21'].includes(threadId)&&['l','xl'].includes(getFontSize()))) ? [wrap(itemHtmls.slice(0,2)),wrap(itemHtmls.slice(2))] : [wrap(itemHtmls)],
     problems,
     skips:problems.map(p=>p.__uniqueSkip||0)
@@ -6788,7 +6812,7 @@ function renderRoundPagesBody(item, opts){
      고등 긴 개념에서 문항 없는 첫 장이 종이보다 길었다(MD19 L6 473mm, 주간 학습지 36쪽). */
   const headTooTall = !!(headBand && headBand[1] != null && headBand[1] * fsR > 250);
   const editorialExamplePage=opts.editorialC4&&examLang()==='ko'&&item.thread==='ML1'&&item.level===1&&['l','xl'].includes(getFontSize());
-  const separateGuide = (middleLesson || (!!(window.NM_MIDDLE_CONCEPTS||{})[item.thread]&&getFontSize()==='xl') || (item.thread==='ML9'&&getFontSize()==='xl') || editorialExamplePage || graphRound || problems.some(p=>p.base10||p.numline)||BOND_THREADS[item.thread]||problems.some(p=>p.scene)&&['l','xl'].includes(getFontSize()) || headTooTall || (item.thread==='MD83' && item.level===5)) && !!guided.html;
+  const separateGuide = ((item.c0&&item.thread==='AD1') || middleLesson || (!!(window.NM_MIDDLE_CONCEPTS||{})[item.thread]&&getFontSize()==='xl') || (item.thread==='ML9'&&getFontSize()==='xl') || editorialExamplePage || graphRound || problems.some(p=>p.base10||p.numline)||BOND_THREADS[item.thread]||problems.some(p=>p.scene)&&['l','xl'].includes(getFontSize()) || headTooTall || (item.thread==='MD83' && item.level===5)) && !!guided.html;
   const separateExample=(editorialExamplePage||(['MD15','MD65'].includes(item.thread)&&item.level===5&&getFontSize()==='xl'))&&separateGuide;
   const guidePages = separateGuide ? (guided.pages || [guided.html]).slice() : [];
   if(separateExample)guidePages[0]=exampleHtml+guidePages[0];
@@ -7808,6 +7832,7 @@ function plannedEnvelope(refs, weekKey, opts){
 }
 
 const NM_EXAM = {
+  matchesAnswer, scatterResponseHtml, bindScatterResponses,
   getAmount, setAmount, amounts:AMOUNTS.slice(),
   plannedEnvelope,
   // Reuse the actual print article in the story preview; no separate preview copy.
@@ -8968,11 +8993,11 @@ ${printWatermarkHtml()}
          쉼표로 받는다 — 그런데 입력칸이 type=number라 쉼표를 아예 칠 수가 없어서
          화면으로는 영원히 못 맞히는 상태였다(2026-08-28 발견, 99개 레벨).
          인쇄용 그리드 학습지는 이미 이렇게 처리하고 있어 같은 방식을 맞춘다. */
-      const isMulti = Array.isArray(p.answer);
+      const isMulti = Array.isArray(p.answer),isPlot=isScatterAnswer(p);
       /* type=number를 쓰지 않는 이유: 소수점을 찍는 순간 "3."이 잘못된 수라
          브라우저가 값을 통째로 비워 버려 숫자패드의 소수점 키가 동작하지 않는다.
          text + inputmode=decimal이면 모바일 숫자 자판은 그대로 뜨고 값도 남는다.
-         비교는 어차피 parseFloat/matchesAnswer가 한다. */
+         비교는 matchesAnswer가 입력 전체를 검사한다. */
       container.innerHTML = `
 <div class="nm-exam-run">
   <div class="nm-exam-header">
@@ -8985,7 +9010,7 @@ ${printWatermarkHtml()}
     </div>
   </div>
   <div class="nm-exam-question">
-    ${p.word ? `<div class="nm-ex-word">${esc(pickL(p.word))}</div>
+    ${isPlot?scatterResponseHtml(p,answers[current],current):p.word ? `<div class="nm-ex-word">${esc(pickL(p.word))}</div>
     ${pickL(p.wordAsk) ? `<div class="nm-ex-wordask">${esc(pickL(p.wordAsk))}</div>` : ''}
     ${wpSceneHtml(p)}
     ${p.wordEqn ? `<div class="nm-ex-word-eq">${esc(pickL(p.wordEqn))}</div>` : ''}
@@ -8995,7 +9020,7 @@ ${printWatermarkHtml()}
     ${pickL(p.prompt) ? `<p class="nm-q-hint">${esc(pickL(p.prompt))}</p>` : ''}`}
   </div>
   <div class="nm-exam-input">
-    <input id="nm-ex-ans" type="text" inputmode="decimal"
+    <input id="nm-ex-ans" ${isPlot?'hidden':''} type="text" inputmode="decimal"
            placeholder="${isMulti ? lk('예: 3, 5','e.g. 3, 5','例：3, 5')
               : (pickChoices(p) ? lk('보기 번호','Choice number','选项序号') : lk('답 / Answer','Answer','答案'))}" autocomplete="off">
     <button id="nm-ex-submit" class="nm-btn nm-btn-primary">${lk('확인 ✓','OK ✓','确定 ✓')}</button>
@@ -9007,11 +9032,12 @@ ${printWatermarkHtml()}
 </div>`;
 
       /* 문장제는 tex가 없다 — 위에서 문장을 직접 그렸으므로 수식 칸도 없다 */
-      if(!p.word) renderKaTeX((p.tex||''), $('#nm-ex-qtex', container));
+      if(!p.word&&!isPlot) renderKaTeX((p.tex||''), $('#nm-ex-qtex', container));
+      bindScatterResponses(container,problems,answers);
 
       const input = $('#nm-ex-ans', container);
       if(answers[current] !== null){ input.value = answers[current]; }
-      input.focus();
+      if(!isPlot)input.focus();
 
       $('#nm-ex-submit', container).addEventListener('click', submitAnswer);
       input.addEventListener('keydown', e => { if(e.key==='Enter') submitAnswer(); });
@@ -9020,16 +9046,9 @@ ${printWatermarkHtml()}
     }
 
     function submitAnswer(){
-      const raw = $('#nm-ex-ans', container).value;
-      if(Array.isArray(problems[current].answer)){
-        /* 여러 칸 답은 문자열 그대로 둔다 — matchesAnswer가 쉼표로 갈라 비교한다.
-           parseInt를 태우면 "8, 9"가 8이 되어 항상 오답이 된다. */
-        if(String(raw).trim() !== '') answers[current] = raw;
-      } else {
-        /* parseFloat — 소수 답(DC4·DC5·FR12: 6.8, 136.65 …)이 parseInt에서
-           6으로 잘려 늘 오답이 됐다. matchesAnswer도 parseFloat를 쓴다. */
-        const v = parseFloat(raw);
-        if(!isNaN(v)){ answers[current] = v; }
+      if(!isScatterAnswer(problems[current])){
+        const raw=$('#nm-ex-ans',container).value;
+        answers[current]=raw.trim()===''?null:raw;
       }
       current++;
       if(current >= count){ finish(); }
@@ -9041,9 +9060,9 @@ ${printWatermarkHtml()}
       clearInterval(timerInterval);
       const elapsed = Math.round((Date.now()-startTime)/1000);
       let score = 0;
-      problems.forEach((p,i)=>{ if(matchesAnswer(answers[i],p.answer)) score++; });
+      problems.forEach((p,i)=>{ if(matchesAnswer(answers[i],p.answer,p)) score++; });
       if(evidence)evidence.attempt({id:evidenceId,thread,level,correct:score,total:count,
-        answered:answers.filter(x=>x!==null&&String(x).trim()!=='').length,exposed:false,course:null,session:null},run);
+        answered:answers.filter((x,i)=>answerPresent(x,problems[i])).length,exposed:false,course:null,session:null},run);
       if(run)run.stop();
       onDone && onDone({ score, total:count, time:elapsed, problems, answers, seed, thread, level });
     }
@@ -9074,7 +9093,7 @@ ${printWatermarkHtml()}
     const m = Math.floor(time/60), sec = time%60;
 
     const wrongs = problems.map((p,i)=>({p,i,myAns:answers[i]}))
-                           .filter(x=>!matchesAnswer(x.myAns,x.p.answer));
+                           .filter(x=>!matchesAnswer(x.myAns,x.p.answer,x.p));
 
     container.innerHTML = `
 <div class="nm-exam-result">
@@ -9093,7 +9112,7 @@ ${printWatermarkHtml()}
         ${wrongs.map(w=>`<tr>
           <td>${w.i+1}</td>
           <td class="nm-rtex" data-tex="${esc(w.p.tex||'')}"></td>
-          <td class="nm-wrong-ans">${w.myAns??'—'}</td>
+          <td class="nm-wrong-ans">${esc(String(w.myAns??'—'))}</td>
           <td class="nm-correct-ans">${ansHtml(w.p)}</td>
         </tr>`).join('')}
       </tbody>
@@ -9928,6 +9947,8 @@ window.examScreen = function(container, opts){
         });
       });
 
+      bindScatterResponses(container,problems,userAnswers);
+
       /* 탭 전환 */
       container.querySelectorAll('.nm-ws-tab').forEach(btn=>{
         btn.addEventListener('click', ()=>{
@@ -9941,13 +9962,13 @@ window.examScreen = function(container, opts){
       const gradeBtn = container.querySelector('#nm-ws-grade');
       if(gradeBtn) gradeBtn.addEventListener('click', ()=>{
         graded = true; gradeScore = 0;
-        problems.forEach((p,i)=>{ if(matchesAnswer(userAnswers[i],p.answer)) gradeScore++; });
+        problems.forEach((p,i)=>{ if(matchesAnswer(userAnswers[i],p.answer,p)) gradeScore++; });
         /* 유형별 정답률 추적(과정-로드맵.md §2-4) — 이 스레드+레벨을 한 세트
            풀고 채점한 "세션 1회"로 기록한다. NM_STATS 미로딩 시(스크립트
            누락 등) 조용히 건너뛴다 — 채점 자체는 그 어떤 경우에도 막지 않음. */
         if(window.NM_STATS) NM_STATS.record(thread, level, gradeScore, count, cfg.boost ? {boost:true} : null);
         if(evidence)evidence.attempt({id:evidenceId,thread,level,correct:gradeScore,total:count,
-          answered:userAnswers.filter(x=>String(x).trim()!=='').length,exposed,course:null,session:null},run);
+          answered:userAnswers.filter((x,i)=>answerPresent(x,problems[i])).length,exposed,course:null,session:null},run);
         render();
       });
 
@@ -10013,20 +10034,20 @@ window.examScreen = function(container, opts){
       cnt.innerHTML = `
 <div class="nm-exam-run">
   <h3>오답 재시험 (${current+1}/${wrongProblems.length})</h3>
-  <div class="nm-q-tex" id="nm-ex-qtex2"></div>
-  <input id="nm-ex-ans2" type="number" placeholder="답" style="font-size:1.4em;width:120px;text-align:center;padding:8px">
+  ${isScatterAnswer(p)?scatterResponseHtml(p,answers[current],current):'<div class="nm-q-tex" id="nm-ex-qtex2"></div>'}
+  <input id="nm-ex-ans2" ${isScatterAnswer(p)?'hidden':''} type="text" inputmode="decimal" placeholder="${Array.isArray(p.answer)?'예: 3, 5':'답'}" style="font-size:1.4em;width:120px;text-align:center;padding:8px">
   <button id="nm-ex-sub2" class="nm-btn nm-btn-primary" style="margin-left:8px">확인</button>
 </div>`;
-      renderKaTeX(p.tex||'', document.getElementById('nm-ex-qtex2'));
+      if(!isScatterAnswer(p))renderKaTeX(p.tex||'', document.getElementById('nm-ex-qtex2'));
+      bindScatterResponses(cnt,wrongProblems,answers);
       const inp = document.getElementById('nm-ex-ans2');
       if(answers[current]!==null) inp.value = answers[current];
-      inp.focus();
+      if(!isScatterAnswer(p))inp.focus();
       document.getElementById('nm-ex-sub2').addEventListener('click', () => {
-        const v = parseInt(inp.value);
-        if(!isNaN(v)) answers[current] = v;
+        if(!isScatterAnswer(p))answers[current]=inp.value.trim()===''?null:inp.value;
         current++;
         if(current >= wrongProblems.length){
-          const score = wrongProblems.filter((p,i)=>matchesAnswer(answers[i],p.answer)).length;
+          const score = wrongProblems.filter((p,i)=>matchesAnswer(answers[i],p.answer,p)).length;
           cnt.innerHTML = `<div class="nm-exam-result">
             <div class="nm-result-score">오답 재시험: ${score}/${wrongProblems.length} 맞혔어요!</div>
             <button id="nm-ex-back" class="nm-btn nm-btn-primary">메뉴로 돌아가기</button>
