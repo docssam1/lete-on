@@ -265,6 +265,70 @@ for i in range(46):
     bpy.ops.mesh.primitive_cylinder_add(vertices=20, radius=0.35 + R.random() * 0.3, depth=0.02, location=(x, y, TOP - 0.31 + i * 0.0015)); o = bpy.context.object; o.data.materials.append(LILY)
     if i % 7 == 0: bpy.ops.mesh.primitive_uv_sphere_add(radius=0.16, location=(x, y, TOP - 0.31 + i * 0.0015 + 0.09)); bpy.context.object.scale.z = 0.6; bpy.context.object.data.materials.append(PINK)
 
+# 물에 사는 식물(수초) — 관찰 세트 「물에 사는 식물 8종」과 같은 식물을 사는 자리대로 둔다(원장 2026-10-26 「수초도 있어야지」).
+# 떠 있는 것: 수련(위)·개구리밥·부레옥잠·네가래 / 물속(수면까지 올라온 덤불): 검정말·붕어마름 / 물가에 서 있는 것: 질경이택사·부들
+def pond_edge(a, f):
+    return POND_C + Vector((math.cos(a) * (10.5 + 1.6 * math.sin(3 * a + 1)), math.sin(a) * (6.2 + 1.0 * math.cos(2 * a)), 0)) * f
+WZ = TOP - 0.31   # 물낯
+def scatter_quads(name, mat, cx, cy, rx, ry, n, size, seed, z=WZ + 0.015, rot=True):
+    rr = random.Random(seed); verts = []; faces = []
+    for k in range(n):
+        a = rr.random() * 6.283; d = math.sqrt(rr.random()); x, y = cx + math.cos(a) * rx * d, cy + math.sin(a) * ry * d
+        sz = size * rr.uniform(0.7, 1.3); t = rr.random() * 6.283 if rot else 0; c, s_ = math.cos(t) * sz, math.sin(t) * sz; i0 = len(verts); zz = z + rr.random() * 0.004
+        verts += [(x - c, y - s_, zz), (x - s_, y + c, zz), (x + c, y + s_, zz), (x + s_, y - c, zz)]; faces.append((i0, i0 + 1, i0 + 2, i0 + 3))
+    return mesh_obj(name, verts, faces, mat)
+# 개구리밥: 연두 점이 빽빽이 깔린 물낯
+DUCK = principled('duckweed', (0.30, 0.58, 0.10), rough=0.45)
+# 동그란 한 덩이로 깔면 판을 깐 것처럼 보여서, 크기가 다른 무더기 여럿을 겹쳐 가장자리가 들쭉날쭉하게
+for k, (cx, cy, rx, ry, n) in enumerate([(6.0, 0.6, 1.8, 1.1, 900), (7.4, -0.2, 1.3, 0.9, 600), (5.0, -0.4, 1.0, 0.7, 350), (8.2, 1.2, 0.9, 0.6, 300), (9.6, -1.6, 1.1, 0.7, 450), (4.4, 1.3, 0.6, 0.4, 150)]):
+    scatter_quads(f'duckweed{k}', DUCK, cx, cy, rx, ry, n, 0.055, 41 + k)
+# 네가래: 네 잎 클로버 꼴이 물낯에 뜸
+CLOVER = principled('marsilea', (0.22, 0.52, 0.12), rough=0.5)
+rr = random.Random(43); verts = []; faces = []
+for k in range(45):
+    x, y = rr.uniform(-3, 3), rr.uniform(-3.4, -2.0); t = rr.random() * 6.283; r = rr.uniform(0.15, 0.21)
+    for q in range(4):
+        a = t + q * math.pi / 2; cx, cy = x + math.cos(a) * r, y + math.sin(a) * r; i0 = len(verts); n = 8
+        zc = WZ + 0.02 + k * 0.0025   # 잎끼리 같은 높이로 겹치면 Cycles에서 검은 얼룩이 난다
+        verts.append((x, y, zc))
+        for j in range(n + 1):
+            b = a - 0.75 + 1.5 * j / n; verts.append((x + math.cos(b) * r * 2, y + math.sin(b) * r * 2, zc))
+        for j in range(n): faces.append((i0, i0 + 1 + j, i0 + 2 + j))
+mesh_obj('marsilea', verts, faces, CLOVER)
+# 부레옥잠: 둥글고 반들한 잎이 모여 서고 연보라 꽃대
+HYA = principled('hyacinth', (0.14, 0.42, 0.10), rough=0.25)
+HYAF = principled('hyacinthflower', (0.62, 0.52, 0.86), rough=0.5)
+for k, (x, y) in enumerate([(4.6, 4.4), (5.7, 5.1), (3.9, 5.5), (6.5, 4.0), (5.1, 3.5), (6.9, 5.4)]):
+    rr = random.Random(50 + k)
+    for j in range(7):
+        a = j / 7 * 6.283 + rr.random() * 0.5; bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=8, radius=1, location=(x + math.cos(a) * 0.3, y + math.sin(a) * 0.3, WZ + 0.3))
+        o = bpy.context.object; o.scale = (0.3, 0.05, 0.27); o.rotation_euler = (0, 0, a + math.pi / 2); o.data.materials.append(HYA)
+    if k % 2 == 0:
+        bpy.ops.mesh.primitive_cylinder_add(vertices=8, radius=0.11, depth=0.5, location=(x, y, WZ + 0.78)); o = bpy.context.object; o.data.materials.append(HYAF)
+# 검정말·붕어마름: 물속 덤불이 물낯까지 올라와 짙은 초록 깃털 무더기로 보임
+HORN = principled('hornwort', (0.05, 0.18, 0.06), rough=0.6)
+scatter_quads('hornwort', HORN, -6.6, 3.0, 1.6, 1.2, 900, 0.09, 61, z=WZ + 0.005)
+scatter_quads('hydrilla', principled('hydrilla', (0.07, 0.24, 0.07), rough=0.6), -6.0, -1.0, 1.4, 1.0, 700, 0.08, 62, z=WZ + 0.005)
+# 질경이택사: 물가 얕은 곳, 긴 잎자루 끝에 달걀꼴 잎이 서고 하얀 잔꽃대
+ALI = principled('alisma', (0.20, 0.45, 0.12), rough=0.5); WHITE = principled('aliflower', (0.95, 0.95, 0.92), rough=0.6)
+for k, a in enumerate([2.95, 3.25, 3.55]):
+    c = pond_edge(a, 0.93); rr = random.Random(70 + k)
+    for j in range(6):
+        b = j / 6 * 6.283 + rr.random(); h = rr.uniform(0.45, 0.7)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.015, depth=h, location=(c.x + math.cos(b) * 0.12, c.y + math.sin(b) * 0.12, WZ + h / 2)); bpy.context.object.data.materials.append(ALI)
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=6, radius=1, location=(c.x + math.cos(b) * 0.2, c.y + math.sin(b) * 0.2, WZ + h + 0.08)); o = bpy.context.object; o.scale = (0.07, 0.02, 0.15); o.rotation_euler = (0.3 * math.sin(b), 0.3 * math.cos(b), b); o.data.materials.append(ALI)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.05, depth=0.5, location=(c.x, c.y, WZ + 0.95)); bpy.context.object.data.materials.append(WHITE)
+# 부들: 연못 북쪽 물가, 긴 잎 무리 + 갈색 소시지 꼴 이삭
+rr = random.Random(80); verts = []; faces = []; spikes = []
+for k in range(700):
+    a = rr.uniform(1.55, 2.35) if k % 2 else rr.uniform(0.45, 0.95); c = pond_edge(a, rr.uniform(0.86, 1.0))
+    h = rr.uniform(0.9, 1.6); w = 0.035; t = rr.random() * 6.283; lean = Vector((rr.uniform(-.12, .12), rr.uniform(-.12, .12), 0)); dx, dy = math.cos(t) * w, math.sin(t) * w; i0 = len(verts)
+    verts += [(c.x - dx, c.y - dy, WZ), (c.x + dx, c.y + dy, WZ), tuple(Vector((c.x, c.y, WZ + h)) + lean * h)]; faces.append((i0, i0 + 1, i0 + 2))
+    if k % 12 == 0: spikes.append((c.x, c.y, WZ + h * 0.85))
+mesh_obj('pondreeds', verts, faces, REED)
+for (x, y, z) in spikes:
+    bpy.ops.mesh.primitive_cylinder_add(vertices=8, radius=0.06, depth=0.36, location=(x, y, z)); bpy.context.object.data.materials.append(SPIKE)
+
 # 꽃밭 두 곳: 흙 둔덕 + 꽃송이(색 무리)
 FLOWER_COLS = [(0.95, 0.80, 0.10), (0.92, 0.35, 0.55), (0.85, 0.12, 0.12), (0.96, 0.96, 0.92), (0.95, 0.55, 0.15)]
 fl_mats = [principled(f'fl{i}', c, rough=0.6) for i, c in enumerate(FLOWER_COLS)]

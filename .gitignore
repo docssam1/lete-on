@@ -62,3 +62,5 @@ clone-ref/
 # 교재 실사 사진 생성(원장 PC, scripts/local/book-photos.cmd) — 후보는 inbox/book-photos 브랜치로만 보낸다
 .venv-imagegen/
 /book-photos/
+# 공원 지도 실사풍 후보(맥, scripts/local/park-flux.command) — inbox/park-flux 브랜치로만 보낸다
+/park-flux/
