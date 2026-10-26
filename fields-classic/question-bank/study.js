@@ -352,6 +352,7 @@ function show({ atEnd = false } = {}) {
   if (framed) openInFrame(slide, atEnd);
   if (native) mountNative(slide).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">불러오지 못했어요. 새로고침해 주세요.</p>'; });
   $("prevBtn").disabled = index === 0;
+  $("firstBtn").disabled = index === 0;
   $("nextBtn").disabled = !ready || index === slides.length - 1;
   $("nextBtn").querySelector(".sd-next-text").textContent = slide.kind === "cover" ? "출발하기 →" : "다음 →";
   $("count").textContent = `${index + 1} / ${slides.length}`;
@@ -407,6 +408,7 @@ $("sheetClose").addEventListener("click", () => closeSheet());
 // ── 조작 ──────────────────────────────────────────────────
 $("nextBtn").addEventListener("click", next);
 $("prevBtn").addEventListener("click", prev);
+$("firstBtn").addEventListener("click", () => { cancelAuto(); closeSheet(false); go(0); });
 $("signs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-jump]");
   if (button && !button.disabled) { cancelAuto(); go(Number(button.dataset.jump)); }
