@@ -440,7 +440,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 <script src="app/paper-examples.js?v=20261026-c0-cognitive1"></script>
 <script src="engine/c0-cognitive.js?v=20261026-c0-writing2"></script>
 <script src="app/c0-paper.js?v=20261026-c0-writing2"></script>
-<script src="app/exam.js?v=20261026-review3"></script>
+<script src="app/exam.js?v=20261026-review4"></script>
 
 <script>
 (function(){
@@ -503,7 +503,7 @@ var body = document.getElementById('dr-body');
 
 /* ── 헬퍼 ── */
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-/* 다칸 답(배열) 채점 — app/exam.js?v=20261026-review3의 matchesAnswer와 동일 로직(이 파일은 별도 스코프라 자체 보유) */
+/* 다칸 답(배열) 채점 — app/exam.js?v=20261026-review4의 matchesAnswer와 동일 로직(이 파일은 별도 스코프라 자체 보유) */
 function matchesAnswer(raw, answer){
   if(Array.isArray(answer)){
     var parts = String(raw==null?'':raw).split(',').map(function(s){return parseFloat(s.trim());});

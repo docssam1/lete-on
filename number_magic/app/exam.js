@@ -1841,24 +1841,30 @@ function ansTex(p){
   }
   if(p.answerShape==='mixed'){
     const [w,n,d]=p.answer;
-    return `${w}\\dfrac{${n}}{${d}}`;
+    if(n===0)return String(w);
+    return `${w===0?'':w}\\dfrac{${n}}{${d}}`;
   }
   /* 분모의 유리화(MD18) — 답은 [근호 안 수, 분모]다. 예전엔 'fraction'으로 표시돼
      있어 정답지가 `71/71`로 찍혔다(실제 답은 √71/71). 71/71은 1로 읽히니
      교사가 채점할 수 없는 정답지였다. 2026-08-29. */
   if(p.answerShape==='radicalFraction'){
     const [rad,d]=p.answer;
-    return `\\dfrac{\\sqrt{${rad}}}{${d}}`;
+    const numerator=rad===0?'0':rad===1?'1':`\\sqrt{${rad}}`;
+    return rad===0?'0':d===1?numerator:`\\dfrac{${numerator}}{${d}}`;
   }
   /* 계수√근호(MD39 등) — 답은 [계수, 근호 안 수]. "3, 3"보다 3√3이 읽기 쉽다. */
   if(p.answerShape==='coeffRadical'){
     const [c,rad]=p.answer;
-    return `${c === 1 ? '' : c}\\sqrt{${rad}}`;
+    if(c===0||rad===0)return '0';
+    if(rad===1)return String(c);
+    return `${c===1?'':c===-1?'-':c}\\sqrt{${rad}}`;
   }
   /* 계수√근호/분모(MD39 fracRoot) — [계수, 근호 안 수, 분모] */
   if(p.answerShape==='coeffRadicalFraction'){
     const [c,rad,d]=p.answer;
-    return `\\dfrac{${c === 1 ? '' : c}\\sqrt{${rad}}}{${d}}`;
+    if(c===0||rad===0)return '0';
+    const numerator=rad===1?String(c):`${c===1?'':c===-1?'-':c}\\sqrt{${rad}}`;
+    return d===1?numerator:`\\dfrac{${numerator}}{${d}}`;
   }
   return null;
 }
@@ -5708,6 +5714,14 @@ function texSubstituteAnswer(tex, answer, fillAll, shaped){
   const raw = String(tex||'');
   const squareCount = (raw.match(/\\square/g) || []).length;
   const ansStr = shaped || String(fmtAns(answer));
+  // A shaped answer is a complete expression. Replace its whole final template,
+  // so a zero whole part or sqrt(1) does not survive in a solved example.
+  if(shaped&&Array.isArray(answer)){
+    const rhsTemplate=/\\square\s*\\(?:d?frac)\{\\square\}\{[^{}]+\}\s*$|\\square\s*\\sqrt\{\\square\}\s*$|\\(?:d?frac)\{(?:\\square)?\\sqrt\{\\square\}\}\{\\square\}\s*$/;
+    const match=raw.match(rhsTemplate);
+    if(match)return raw.slice(0,match.index)+'\\color{#d33}{'+shaped+'}';
+  }
+
   if(!squareCount) return raw + ' = \\color{#d33}{' + ansStr + '}';
   /* 대분수 답 [자연수, 분자, 분모] 인데 빈칸은 둘(자연수·분자) — 분모는 식에 이미 찍혀 있다.
      이 경우 앞의 두 값만 차례로 채운다(2026-09-20). 안 그러면 마지막 칸에 `0\dfrac{0}{4}` 가

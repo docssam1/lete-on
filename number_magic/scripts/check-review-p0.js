@@ -9,7 +9,7 @@ const server=http.createServer((req,res)=>{
  if(!file.startsWith(ROOT+path.sep)||!fs.existsSync(file)||fs.statSync(file).isDirectory()){res.writeHead(404);return res.end();}
  res.setHeader('Content-Type',({'.js':'text/javascript','.css':'text/css','.html':'text/html','.svg':'image/svg+xml','.woff2':'font/woff2'})[path.extname(file)]||'application/octet-stream');
  let content=fs.readFileSync(file);
- if(file.endsWith('/app/exam.js'))content=content.toString().replace('window.NM_EXAM = NM_EXAM;','window.NM_EXAM = NM_EXAM;window.__reviewQA={applyPartialBlanks,printAskText,w2CellHtml,stripConceptTags,sortRoundProblems,assignStudyDays,prosePowersHtml,w2LevelInstruction,rampLevelFor,withC0};');
+ if(file.endsWith('/app/exam.js'))content=content.toString().replace('window.NM_EXAM = NM_EXAM;','window.NM_EXAM = NM_EXAM;window.__reviewQA={applyPartialBlanks,printAskText,w2CellHtml,stripConceptTags,sortRoundProblems,assignStudyDays,prosePowersHtml,w2LevelInstruction,rampLevelFor,withC0,ansTex,texSubstituteAnswer};');
  res.end(content);
 });
 (async()=>{let browser;await new Promise(r=>server.listen(0,'127.0.0.1',r));try{
@@ -105,6 +105,18 @@ const server=http.createServer((req,res)=>{
    const p=gen('WP3',1,seed);
    ok(!/변화|부분전체|비교|동수누가|등분제|포함제/.test(p.answerNote.ko),'Keep teacher classification out of the public answer note');
   }
+  for(const [shape,answer,expected]of[
+   ['mixed',[0,2,3],'\\dfrac{2}{3}'],['mixed',[2,0,3],'2'],
+   ['coeffRadical',[3,1],'3'],['coeffRadical',[0,5],'0'],['coeffRadical',[-1,5],'-\\sqrt{5}'],
+   ['coeffRadicalFraction',[3,1,7],'\\dfrac{3}{7}'],['coeffRadicalFraction',[-1,5,1],'-\\sqrt{5}'],
+   ['radicalFraction',[1,7],'\\dfrac{1}{7}'],['radicalFraction',[7,1],'\\sqrt{7}'],['radicalFraction',[0,7],'0']
+  ]){const p={answerShape:shape,answer};eq(Q.ansTex(p),expected,'Use textbook answer notation '+shape);eq(p.answer,answer,'Answer presentation must not change grading data');}
+  for(const [shape,answer,template]of[
+   ['mixed',[0,2,3],'5-4\\frac{1}{3} = \\square\\frac{\\square}{3}'],
+   ['mixed',[2,0,3],'3-1 = \\square\\frac{\\square}{3}'],
+   ['coeffRadical',[3,1],'\\sqrt{9} = \\square\\sqrt{\\square}'],
+   ['radicalFraction',[1,7],'a = \\dfrac{\\sqrt{\\square}}{\\square}']
+  ]){const shaped=Q.ansTex({answerShape:shape,answer});eq(Q.texSubstituteAnswer(template,answer,false,shaped),template.slice(0,template.indexOf(' = ')+3)+'\\color{#d33}{'+shaped+'}','Solved examples must use the whole normalized answer');}
   const visibleBonds=new Set(),rawBonds=new Set();
   for(let k=1;k<5;k++)for(let form=0;form<8;form++){
    const values=[.5,(k-.5)/4,(form+.5)/8];let pos=0;
