@@ -3458,7 +3458,7 @@ MD66:{ name:{ko:'이차방정식 풀이',en:'Solving Quadratic Equations',zh:'�
              en:'For two roots p, q with leading coefficient a, the equation is found by expanding a(x−p)(x−q)=0 — roots 1 and 2 give (x−1)(x−2)=0, that is x²−3x+2=0.',
              zh:'已知两根p、q和x²系数a，展开a(x−p)(x−q)=0就能求出方程——两根为1、2时是(x−1)(x−2)=0，即x²−3x+2=0。'}}] },
 
-MD67:{ name:{ko:'이차함수의 꼭짓점',en:'The Vertex of a Quadratic',zh:'二次函数的顶点'}, gen:'md67_quadVertex', prereq:['MD66'],
+MD67:{ name:{ko:'이차함수의 꼭짓점',en:'The Vertex of a Quadratic',zh:'二次函数的顶点'}, gen:'md67_quadVertex', prereq:['MD79'],
   unit:'M-67',
   concept:{ko:'y=a(x−p)²+q의 그래프는 꼭짓점이 (p, q)인 포물선입니다. (x−p)²는 절대 음수가 될 수 없어서 x=p일 때 0으로 가장 작아지고, 그때 y가 q가 됩니다. 괄호 안의 부호는 반대로 읽습니다.',
     en:'The graph of y=a(x−p)²+q is a parabola with vertex (p, q). Since (x−p)² can never be negative, it is smallest (zero) at x=p, and y is q there. Read the sign inside the brackets the opposite way.',
@@ -3604,7 +3604,7 @@ MD77:{ name:{ko:'이차방정식의 활용',en:'Quadratic Equations in Use',zh:'
           {id:3,label:{ko:'쏘아 올린 물체(실전)',en:'an object thrown upward (main)',zh:'向上抛出的物体(实战)'},params:{mode:'projectile'},
            concept:{ko:'높이가 0이 되는 순간이 땅에 닿는 때입니다. 두 근 중 하나는 쏘아 올린 순간(t=0)이라 답이 아닙니다 — 나머지 하나가 다시 떨어지는 시각입니다.',en:'The object is on the ground when the height is zero. One of the two roots is the moment it was launched (t=0), so the other one is when it lands.',zh:'高度为0的时刻就是落地的时刻。两个根中有一个是抛出的瞬间(t=0)，另一个才是重新落地的时间。'}}] },
 
-MD78:{ name:{ko:'이차함수 y=ax²의 그래프',en:'The Graph of y=ax²',zh:'二次函数y=ax²的图象'}, gen:'md78_quadBasic', prereq:['MD67'],
+MD78:{ name:{ko:'이차함수 y=ax²의 그래프',en:'The Graph of y=ax²',zh:'二次函数y=ax²的图象'}, gen:'md78_quadBasic', prereq:['MD66'],
   unit:'M-78',
   concept:{ko:'y=ax²의 그래프는 원점을 꼭짓점으로 하는 포물선입니다. a가 양수면 아래로 볼록(위로 열림), 음수면 위로 볼록이고, a의 절댓값이 클수록 폭이 좁아집니다. x가 −3이든 3이든 제곱하면 같으니 y축에 대해 좌우가 똑같습니다.',en:'The graph of y=ax2 is a parabola with its vertex at the origin. A positive a opens upward and a negative a opens downward, and the bigger the size of a the narrower it gets. Since -3 and 3 square to the same thing, the two sides mirror each other across the y-axis.',zh:'y=ax²的图象是以原点为顶点的抛物线。a为正时开口向上，为负时开口向下；|a|越大开口越窄。因为−3和3的平方相同，所以图象关于y轴左右对称。'},
   widgets:['numpad','graphPlane'],
@@ -3628,7 +3628,7 @@ MD79:{ name:{ko:'이차함수의 평행이동',en:'Translating a Parabola',zh:'�
           {id:4,label:{ko:'주어진 x의 y값·지나는 점',en:'a y-value and a point on the shifted graph',zh:'平移图象上给定x的y值与点'},params:{mode:'pointValue'},
            concept:{ko:'그래프 위의 점은 항상 함수식을 만족합니다. 주어진 x를 x−p에 대입한 뒤, ① 괄호 안 ② 제곱 ③ a를 곱하고 q를 더하는 순서로 y좌표를 구합니다.',en:'Every point on the graph satisfies the formula. Substitute the given x into x−p, then work in the order: bracket, square, multiply by a, and add q.',zh:'图象上的每个点都满足函数式。把给定的x代入x−p，再按括号、平方、乘a、加q的顺序求y坐标。'}}] },
 
-MD80:{ name:{ko:'이차함수의 최대·최소와 축과의 교점',en:'Extremes & Axis Crossings of a Parabola',zh:'二次函数的最值与轴交点'}, gen:'md80_quadExtrema', prereq:['MD79'],
+MD80:{ name:{ko:'이차함수의 최대·최소와 축과의 교점',en:'Extremes & Axis Crossings of a Parabola',zh:'二次函数的最值与轴交点'}, gen:'md80_quadExtrema', prereq:['MD67'],
   unit:'M-80',
   concept:{ko:'꼭짓점의 y값이 최솟값(아래로 볼록) 또는 최댓값(위로 볼록)입니다. x축과 만나는 곳은 y=0인 자리라 이차방정식의 근이고, y축과 만나는 곳은 x=0인 자리라 상수항 그대로입니다.',en:'The y-coordinate of the vertex is the minimum when the parabola opens upward and the maximum when it opens downward. Where it meets the x-axis is where y=0 - the roots of the quadratic - and where it meets the y-axis is where x=0, which is just the constant term.',zh:'顶点的y值：开口向上时是最小值，开口向下时是最大值。与x轴的交点是y=0的地方，也就是二次方程的根；与y轴的交点是x=0的地方，就是常数项。'},
   widgets:['numpad'],

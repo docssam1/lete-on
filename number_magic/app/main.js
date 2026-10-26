@@ -6927,7 +6927,7 @@ function screenTier(){
   /* "다음" 유닛 — 이 등급 안에서 처음 만나는 미완료·비잠금 유닛 하나(findNextRoadUnit과
      같은 발상, 전체 로드맵이 아니라 이 등급 범위로만 계산) */
   let nextUid=null, doneN=0, totalN=0;
-  tier.levels.forEach(lvl=>{
+  tier.levels.filter(lvl=>tier.id!=='intermediate'||lvl.track!=='foundation').forEach(lvl=>{
     (lvl.units||[]).filter(u=>UNITS[u]).forEach(uid=>{
       totalN++;
       const done=unitDone(uid);
@@ -6952,7 +6952,14 @@ function screenTier(){
      레벨' 기준 순번 — trialUnitSet 이 쓰는 filter(available).slice(0,2) 와 같은 셈법이라야
      여기서 열어 준 챕터와 실제로 풀리는 유닛이 어긋나지 않는다. */
   let availIdx=-1;
+  let lastTrack='';
   tier.levels.forEach(lvl=>{
+    if(tier.id==='intermediate'&&lvl.track!==lastTrack){
+      lastTrack=lvl.track;
+      html+=`<div class="nm-level-group-title">${esc(lvl.track==='foundation'
+        ?lk('구구 기초 · 필요할 때 복습','Times tables · optional review','乘法口诀 · 按需复习')
+        :lk('창의수연 중급 전략','Intermediate creative strategies','中级创意策略'))}</div>`;
+    }
     const units=(lvl.units||[]).filter(u=>UNITS[u]);
     if(lvl.available&&units.length)availIdx++;
     const trialOpen=trialLevelOpen(tier.id,availIdx);

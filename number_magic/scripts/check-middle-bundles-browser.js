@@ -22,7 +22,7 @@ const server=http.createServer((req,res)=>{
   await page.waitForFunction(()=>window.NM_WS_READY!==undefined,{timeout:60000});
   assert.equal(await page.evaluate(()=>NM_WS_READY),true,await page.locator('#wsBody').innerText());
   await page.evaluate(async()=>{
-   const ids=[...new Set(Object.values(NM_COURSES).filter(c=>/^middle/.test(c.tier)).flatMap(c=>c.sessions.flatMap(s=>s.magic||[])).concat('M-25'))];
+   const ids=[...new Set(Object.values(NM_COURSES).filter(c=>/^middle/.test(c.tier)).flatMap(c=>c.sessions.flatMap(s=>s.magic||[])))];
    await Promise.all(ids.filter(id=>!window.NM_UNITS?.[id]).map(id=>new Promise((resolve,reject)=>{const sc=document.createElement('script');sc.src='data/units/'+id+'.js';sc.onload=resolve;sc.onerror=()=>reject(Error(id));document.head.appendChild(sc);})));
   });
   const oldData=execFileSync('git',['show','HEAD:number_magic/data/middle-pacing.js'],{cwd:root,encoding:'utf8'});
@@ -38,15 +38,13 @@ const server=http.createServer((req,res)=>{
   const targets=await page.evaluate(()=>Object.values(NM_MIDDLE_PACING.grades).flatMap(g=>g.sessions.map(s=>({grade:g.grade,id:s.id,course:s.course,lesson:s.lessonIndex}))));
   assert.equal(targets.length,60);
   await page.emulateMedia({media:'print'});await page.addStyleTag({content:'html,body{width:190mm!important}.nm-print-sheet{width:190mm!important}'});
-  for(const target of targets.filter(t=>!process.argv.includes('--extra-only')||t.course==='C36'&&t.lesson===5)){
+  for(const target of targets.filter(t=>(!process.argv.includes('--c36-only')||t.course==='C36')
+      &&(!process.argv.includes('--middle3-only')||['C35','C36','C37'].includes(t.course)))){
    const actual=await page.evaluate(async t=>{
     const e=NM_EXAM.middlePacingEnvelope(t.grade,t.id,'middle-bundles-qa');
     const expected=e.items.reduce((n,it)=>n+(it.magicUnit?0:it.count||20),0),drawing=e.items.filter(it=>it.kind==='drawing').reduce((n,it)=>n+it.count,0);
     if(e.items.some(it=>it.schoolTier!=='mid'))throw Error('wrong school tier '+t.id);
-    if(t.course==='C36'&&t.lesson===NM_COURSES.C36.studyPlan.lessons.length-1){
-     const extra=e.items.filter(it=>it.levelOnly);if(extra.length!==2||extra.some(it=>it.thread!=='MD25'||![1,2].includes(it.level)||it.count!==12))throw Error('factoring bridge mismatch');
-     if(e.items.some(it=>it.magicUnit==='M-25'))throw Error('quartic unit added');
-    }
+    if(t.course==='C36'&&e.items.some(it=>it.levelOnly&&it.thread==='MD25'))throw Error('high-school factoring bridge leaked into middle-three core');
     NM_EXAM.renderPrintMulti(e.items,e.wsId,{mixed:20,compactHigh:true,cover:e.cover,units:e.units});await document.fonts.ready;
     const sheet=document.querySelector('.nm-print-sheet');
     const overflow=[...sheet.querySelectorAll('.nm-w2-page,.nm-w2-item,.nm-cvw,.nm-draw-grid,.nm-draw-key-item')].filter(el=>el.scrollWidth>el.clientWidth+3||el.scrollHeight>el.clientHeight+3).map(el=>({cls:el.className,text:el.textContent.slice(0,110),w:el.clientWidth,sw:el.scrollWidth,h:el.clientHeight,sh:el.scrollHeight,code:el.closest('.nm-w2-page')?.querySelector('.nm-w2-head-code')?.textContent}));

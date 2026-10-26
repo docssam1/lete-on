@@ -29,9 +29,9 @@ const withoutPlans = () => JSON.stringify(courses, (key, value) => key === 'stud
 assert.equal(withoutPlans(), before, 'all canonical fields, source sessions and tests are unchanged');
 const near = (actual, expected, label) => assert(Math.abs(actual - expected) < 1e-8, label || `${actual} != ${expected}`);
 const bands = [
-  {tier:'middle1', from:29, source:31, practice:28, seconds:40, minutes:1041, drawing:30},
-  {tier:'middle2', from:32, source:24, practice:21, seconds:45, minutes:922, drawing:12},
-  {tier:'middle3', from:35, source:31, practice:28, seconds:50, minutes:1280, drawing:18}
+  {tier:'middle1', from:29, source:29, practice:26, seconds:40, minutes:961.3333333333333, drawing:12},
+  {tier:'middle2', from:32, source:26, practice:23, seconds:45, minutes:1010, drawing:12},
+  {tier:'middle3', from:35, source:31, practice:28, seconds:50, minutes:1244.3333333333335, drawing:12}
 ];
 const WEEK_MS = 7 * 86400000;
 const startMs = Date.parse('2026-10-26T00:00:00Z');
@@ -69,27 +69,12 @@ for(const expected of bands){
       near(lesson.estimatedTestMinutes, testMinutes);
       near(lesson.estimatedMinutes, lesson.minutes + testMinutes + (lesson.estimatedExtraMinutes || 0));
       checkedTests += tests.length;
-      if(lesson.extraPractice){
-        bridges++;
-        assert.equal(courseKey, 'C36', 'the bridge belongs to middle-three factoring');
-        assert.equal(lesson.index, course.studyPlan.lessons.length - 1, 'the bridge follows the established factoring sequence');
-        assert.deepEqual(lesson.extraPractice, [{t:'MD25', lv:1, n:12}, {t:'MD25', lv:2, n:12}]);
-        assert.equal(lesson.estimatedExtraMinutes, 20);
-        for(const item of lesson.extraPractice){
-          assert(w.NM_THREADS[item.t].levels.some(level => level.id === item.lv), 'existing registered thread/level');
-          assert(w.NM_THREADS[item.t].prereq.includes('MD20'), 'middle factoring is the prerequisite');
-          assert(item.lv < 3, 'quartic substitution is not silently added');
-        }
-      }
+      assert.equal(lesson.extraPractice, undefined, 'middle core has no high-school cube factoring bridge');
       assert.deepEqual(P.select(course, {lesson:lesson.index}), lesson, 'direct selection retains all metadata');
       for(const index of lesson.sourceIndices){
         const selected = P.select(course, {startSession:index + 1, k:1});
         assert.deepEqual(selected.sourceIndices, lesson.sourceIndices.filter(i => i >= index), 'legacy start trims only old source indices');
-        assert.deepEqual(selected.extraPractice, lesson.extraPractice, 'partial selection retains the bridge exactly once');
-        if(selected.extraPractice){
-          selected.extraPractice[0].n = 99;
-          assert.equal(lesson.extraPractice[0].n, 12, 'the caller cannot mutate a saved plan through selected metadata');
-        }
+        assert.equal(selected.extraPractice, undefined, 'partial selection has no out-of-range bridge');
         checkedStarts++;
       }
     }
@@ -120,11 +105,7 @@ for(const expected of bands){
         for(const ref of result.lessons){
           seenLessons.push(ref.courseKey + '-B' + ref.lessonIndex);
           ref.sourceIndices.forEach(index => seenSources.push(ref.courseKey + '-S' + index));
-          if(ref.extraPractice){
-            bridgeCount++;
-            assert.deepEqual(ref.extraPractice, [{t:'MD25', lv:1, n:12}, {t:'MD25', lv:2, n:12}]);
-            assert.equal(ref.estimatedExtraMinutes, 20);
-          }
+          if(ref.extraPractice)bridgeCount++;
         }
         checkedEnvelopes++;
       }
@@ -132,30 +113,27 @@ for(const expected of bands){
     assert.deepEqual(seenLessons, expectedLessons, 'all five speeds preserve bundle order and assign each once');
     assert.deepEqual(seenSources, expectedSources, 'all five speeds preserve every original session once');
     near(minutes, expected.minutes, 'a faster schedule changes duration, not the total content');
-    assert.equal(bridgeCount, expected.tier === 'middle3' ? 1 : 0, 'bridge is assigned once at every speed');
+    assert.equal(bridgeCount, 0, 'no high-school factoring bridge is assigned in middle school');
     assert.equal(P.assignment(bandCourses, {courseKey:entries[0][0], startDate:'2026-10-28', cadence, speed, weekKey:weekAt(completionWeeks)}), null, 'completed grade has no wraparound');
     if(speed === 1) assert.equal(completionWeeks, cadence === 'w1' ? 20 : 10);
   }
 }
 assert.equal(checkedTests, 9, 'all nine canonical middle-school checks remain in the common path');
-assert.equal(bridges, 1);
+assert.equal(bridges, 0);
 assert.deepEqual([...drawingModes].sort(), ['direct', 'inverse', 'linear', 'quadratic']);
 const crossing = P.assignment(courses, {courseKey:'C37', startSession:courses.C37.sessions.length,
   startDate:'2026-10-26', weekKey:weekAt(0), cadence:'w2', speed:1});
 assert.equal(crossing.weekLessons[0].courseKey, 'C37');
 assert.equal(crossing.weekLessons[1].courseKey, 'C38', 'the same schedule continues into the high-school curriculum');
 assert.equal(crossing.weekLessons[1].lessonIndex, 0);
-const bridgeCourse = courses.C36, bridgeIndex = bridgeCourse.studyPlan.lessons.length - 1;
-const bridgeStart = bridgeCourse.studyPlan.lessons[bridgeIndex].startSession;
-const partialBridge = P.assignment(courses, {courseKey:'C36', startSession:bridgeStart,
+const lastC36 = courses.C36.studyPlan.lessons.at(-1);
+const partialC36 = P.assignment(courses, {courseKey:'C36', startSession:lastC36.startSession,
   startDate:'2026-10-26', weekKey:weekAt(0), cadence:'w1', speed:1});
-assert.deepEqual(partialBridge.lessons[0].extraPractice, [{t:'MD25', lv:1, n:12}, {t:'MD25', lv:2, n:12}]);
-partialBridge.lessons[0].extraPractice[0].n = 1;
-assert.equal(bridgeCourse.studyPlan.lessons[bridgeIndex].extraPractice[0].n, 12);
+assert.equal(partialC36.lessons[0].extraPractice, undefined);
 assert.equal(withoutPlans(), before, 'selection and assignment never write source data');
 const plans = new Map(Object.values(courses).map(course => [course, course.studyPlan]));
 const attached = JSON.stringify(courses); P.attach(courses);
 assert.equal(JSON.stringify(courses), attached, 'reattaching is idempotent');
 Object.values(courses).forEach(course => assert.equal(course.studyPlan, plans.get(course)));
 console.log('MIDDLE_STUDY_PACING_OK grades=3 bundles=20x3 standardWeeks=10x3 fasterWeeks=8x3 individualW1Weeks=20x3 speeds=5 legacyStarts=' + checkedStarts
-  + ' checks=' + checkedTests + ' bridge=24questions/20minutes calendarEnvelopes=' + checkedEnvelopes + ' canonicalMutation=0');
+  + ' checks=' + checkedTests + ' highSchoolBridge=0 calendarEnvelopes=' + checkedEnvelopes + ' canonicalMutation=0');
