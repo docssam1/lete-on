@@ -249,7 +249,7 @@ function renderHead() {
   $("eyebrow").textContent = `${book.label} ${unitIndex + 1}단원 · ${part}차시`;
   $("unitTitle").textContent = unit.label;
   $("studentName").textContent = student;
-  $("backLink").href = link("start.html", { book: book.id });
+  $("backLink").href = link("start.html", { book: book.id, unit: String(unitIndex) });
 }
 // ── 그림 세계: 섬 다섯 개(그림 1672×941 안의 자리, %) ──
 // 그림의 다섯 터(아래 왼쪽 → 위 오른쪽). 그림을 바꾸면 이 자리를 다시 잰다.
