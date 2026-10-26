@@ -5,7 +5,7 @@
 // 끌어서 둘러보기 · Ctrl+휠/두 손가락으로 확대 · 「전체 지도」로 다시 전체. 그림·좌표·길은 data/park-map.js. 표와 아이들은 그림을 확대해도 크기가 거의 그대로다.
 import { PARK } from './data/park-map.js';
 import { OBSERVE_SETS } from './data/observe-sets.js';
-import { kidSvg } from './park-kids.js';
+import { mountKids3d } from './park-kids3d.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 // 두 아이(탐구 짝)가 그 자리에서 떠올린 물음 — 관찰의 출발점. 답은 연습 세트에서 직접 확인한다.
@@ -26,14 +26,14 @@ export function mountPark($host) {
   $host.innerHTML = `<div class="pm-view" tabindex="0" aria-label="${esc(PARK.title)} 지도 — 끌어서 둘러보고, 말꼬리 표를 누르면 두 친구가 그 자리로 걸어가 관찰을 열어요">
       <div class="pm-map"><img class="pm-img" alt="" draggable="false">
         ${PARK.spots.map((p) => `<button type="button" class="pk-pin" data-spot="${p.id}" aria-label="${esc(p.name)}"><span class="pk-tag"><i>${p.icon}</i><b class="full">${esc(p.name)}</b><b class="short">${esc(p.short)}</b></span><span class="pk-dot"></span></button>`).join('')}
-        <div class="pk-kids" aria-hidden="true"><div class="pk-say" hidden></div><div class="pk-kid nr">${kidSvg('narae')}<b>나래</b></div><div class="pk-kid dy flip">${kidSvg('doyun')}<b>도윤</b></div></div></div>
+        <div class="pk-kids" aria-hidden="true"><div class="pk-say" hidden></div><div class="pk-kid3d"><canvas width="132" height="120"></canvas><b class="nr">나래</b><b class="dy">도윤</b></div></div></div>
       <div class="pm-title"><b>${esc(PARK.title)}</b><span>지도를 끌어서 둘러보고, 말꼬리 표를 눌러요</span></div>
       <div class="pm-ctrl"><button type="button" data-z="1" aria-label="확대">＋</button><button type="button" data-z="-1" aria-label="축소">－</button><button type="button" data-z="0">전체 지도</button></div>
       ${PARK.placeholder ? '<span class="pm-temp">임시 그림 — 실사 조감도로 바뀔 자리</span>' : ''}
     </div>
     <div class="pk-panel" hidden aria-live="polite"></div>`;
   const $v = $host.querySelector('.pm-view'), $m = $host.querySelector('.pm-map'), $img = $host.querySelector('.pm-img'), $pins = [...$host.querySelectorAll('.pk-pin')], $panel = $host.querySelector('.pk-panel');
-  const $kids = $host.querySelector('.pk-kids'), $say = $host.querySelector('.pk-say'), [$nr, $dy] = $host.querySelectorAll('.pk-kid');
+  const $kids = $host.querySelector('.pk-kids'), $say = $host.querySelector('.pk-say');
   let kind = '', I = null, s = 1, tx = 0, ty = 0, fit = 1, anim = 0, alive = true;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const apply = () => { $m.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; $m.style.setProperty('--s', s); $m.style.setProperty('--kk', Math.min(1.35, 0.72 * Math.sqrt(s / fit))); };
@@ -65,14 +65,15 @@ export function mountPark($host) {
     const out = []; for (let k = to; k !== undefined; k = prev.get(k)) out.unshift({ k, p: pt(k) }); return out[0]?.k === '@' ? out : [{ k: '@', p: from }, { k: to, p: G.N.get(to) }]; };
   const putKids = () => { $kids.style.left = `${(kid.pos[0] / 100) * I.w}px`; $kids.style.top = `${(kid.pos[1] / 100) * I.h}px`; };
   // 걷는 동안은 둘 다 가는 쪽을 보고, 서 있으면 서로 마주 본다
-  const face = (dx) => { if (dx === 0) { $nr.classList.remove('flip'); $dy.classList.add('flip'); return; } $nr.classList.toggle('flip', dx < 0); $dy.classList.toggle('flip', dx < 0); };
+  const K3 = mountKids3d($host.querySelector('.pk-kid3d canvas'), { reduced });
+  const face = (dx, dy = 0) => K3.face(dx, dy);
   const say = (q) => { clearTimeout(kid.sayT); if (!q) { $say.hidden = true; return; }
     const line = (i) => { $say.innerHTML = `<b>${esc(q[i])}</b>${esc(q[i + 1])}`; $say.hidden = false; $say.style.marginLeft = '0px'; $say.style.setProperty('--tail', '50%');
       // 지도 가장자리에서는 말풍선을 안쪽으로 밀고 꼬리만 아이들 쪽에 남긴다(말풍선은 화면에서 --kk배 크기)
       const r = $say.getBoundingClientRect(), V = $v.getBoundingClientRect(), k = r.width / $say.offsetWidth || 1, sh = r.right > V.right - 8 ? V.right - 8 - r.right : r.left < V.left + 8 ? V.left + 8 - r.left : 0;
       if (sh) { $say.style.marginLeft = `${sh / k}px`; $say.style.setProperty('--tail', `calc(50% - ${sh / k}px)`); } };
     line(0); kid.sayT = setTimeout(() => { line(2); kid.sayT = setTimeout(() => { $say.hidden = true; }, 2600); }, 2600); };
-  const stopWalk = () => { cancelAnimationFrame(kid.raf); kid.walk = null; $kids.classList.remove('walk'); };
+  const stopWalk = () => { cancelAnimationFrame(kid.raf); kid.walk = null; $kids.classList.remove('walk'); K3.setWalking(false); };
   const walkTo = (toKey, ms, done) => {
     const w = kid.walk, links = w ? [w.pts[w.i].k, w.pts[w.i + 1].k].filter((k) => k !== '@') : [key(kid.pos)];
     stopWalk(); say(null);
@@ -80,12 +81,12 @@ export function mountPark($host) {
     if (reduced || len < 1) { kid.pos = pts[pts.length - 1].p; putKids(); face(0); done?.(); return; }
     // 화면에서 너무 느리지 않게: 긴 길도 5초 안쪽
     const v = ms ? len / (ms / 1000) : Math.max(520, len / 5);
-    kid.walk = { pts, i: 0, d: 0, links: links.length ? links : w?.links }; $kids.classList.add('walk');
+    kid.walk = { pts, i: 0, d: 0, links: links.length ? links : w?.links }; $kids.classList.add('walk'); K3.setWalking(true);
     let last = performance.now();
     const step = (now) => { if (!alive || !kid.walk) return; const dt = Math.min(0.05, (now - last) / 1000); last = now; const W = kid.walk; W.d += v * dt;
       while (W.i < segs.length - 1 && W.d > segs[W.i]) { W.d -= segs[W.i]; W.i++; }
       const a = pts[W.i].p, b = pts[W.i + 1].p, t = Math.min(1, W.d / (segs[W.i] || 1));
-      kid.pos = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; putKids(); if (Math.abs(b[0] - a[0]) > 0.3) face(b[0] - a[0]);
+      kid.pos = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; putKids(); face((b[0] - a[0]) * I.w, (b[1] - a[1]) * I.h);
       // 확대해 둔 상태면 지도가 아이들을 따라간다(손으로 끌면 멈춤)
       if (kid.follow) { const g = view(kid.pos[0], kid.pos[1], s / fit); tx += (g.tx - tx) * Math.min(1, dt * 3); ty += (g.ty - ty) * Math.min(1, dt * 3); clamp(); apply(); }
       if (W.i >= segs.length - 1 && t >= 1) { stopWalk(); face(0); done?.(); return; }
@@ -139,5 +140,5 @@ export function mountPark($host) {
   // 화면 크기가 바뀌면(폰 돌리기 등) 그림을 다시 고르고 맞춘다 — 걷던 아이들은 가던 자리에 바로 선다
   let rt = 0; const onResize = () => { clearTimeout(rt); rt = setTimeout(() => { if (!I) return; const want = $v.clientWidth / Math.max(1, $v.clientHeight) < 0.8 ? 'tall' : 'wide'; if (want !== kind) { $img.src = PARK.images[want].src; $img.onload = () => load(false); } else load(false); }, 150); };
   addEventListener('resize', onResize);
-  return { destroy() { alive = false; cancelAnimationFrame(anim); stopWalk(); clearTimeout(kid.sayT); removeEventListener('resize', onResize); } };
+  return { destroy() { alive = false; cancelAnimationFrame(anim); stopWalk(); clearTimeout(kid.sayT); removeEventListener('resize', onResize); K3.dispose(); } };
 }
