@@ -15,11 +15,11 @@ function run(){
   }
   const append=js=>s=>s+'\n'+js;
   for(const page of ['index.html','drill.html','ws.html']){
-    mutant(page+' middle concepts removed',page,s=>s.replace('<script src="data/middle-concepts.js"></script>',''),'CONCEPT_NOT_LOADED');
+    mutant(page+' middle concepts removed',page,s=>s.replace(/<script src="data\/middle-concepts\.js(?:\?[^"]*)?"><\/script>/,''),'CONCEPT_NOT_LOADED');
   }
   mutant('index unit tag removed','index.html',s=>s.replace('<script src="data/units/M-83.js"></script>',''),'UNIT_NOT_LOADED');
-  mutant('ws mid9 tag removed','ws.html',s=>s.replace('<script src="engine/threads/mid9.js"></script>',''),'GENERATOR_NOT_LOADED');
-  mutant('drill mid10 tag removed','drill.html',s=>s.replace('<script src="engine/threads/mid10.js"></script>',''),'GENERATOR_NOT_LOADED');
+  mutant('ws mid9 tag removed','ws.html',s=>s.replace(/<script src="engine\/threads\/mid9\.js(?:\?[^"]*)?"><\/script>/,''),'GENERATOR_NOT_LOADED');
+  mutant('drill mid10 tag removed','drill.html',s=>s.replace(/<script src="engine\/threads\/mid10\.js(?:\?[^"]*)?"><\/script>/,''),'GENERATOR_NOT_LOADED');
   mutant('menu script removed','drill.html',s=>s.replace('<script src="data/drill-topics.js"></script>',''),'PAGE_DATA');
   mutant('menu script deferred','drill.html',s=>s.replace('<script src="data/drill-topics.js">','<script defer src="data/drill-topics.js">'),'SCRIPT_ORDER');
   mutant('menu binding removed','drill.html',s=>s.replace('var TOPICS = window.NM_DRILL_TOPICS;','var TOPICS = [];'),'MENU_BINDING');
