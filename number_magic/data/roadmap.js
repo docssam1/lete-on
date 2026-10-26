@@ -332,10 +332,10 @@ window.NM_ROADMAP = {
        §4 "CHALLENGE 1부 ← W8 정수·유리수 사칙"과도 정합. */
     {
       id:'W8-1', icon:'🌋', grade:'중1',
-      edu:{ko:'중1 정수의 세계',en:'G7 World of Integers',zh:'初一整数的世界'},
-      theme:{ko:'W8-1 · 정수의 세계 — 개념·수직선 위의 자리·덧셈·뺄셈',en:'W8-1 · World of Integers — Concept, Places on the Line, ±',zh:'W8-1·整数的世界——概念·数轴上的位置·加减法'},
+      edu:{ko:'중1 소인수분해와 정수',en:'G7 Prime Factors & Integers',zh:'初一质因数分解与整数'},
+      theme:{ko:'W8-1 · 소수·합성수에서 소인수분해, 정수의 덧뺄셈까지',en:'W8-1 · Primes, Factorization & Signed Addition',zh:'W8-1·质数、质因数分解与整数加减法'},
       units:['M-01','M-82','M-02','M-03'],
-      tip:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 거예요! 그 이름들이 수직선 위에 제 자리를 얻어요.',en:'Above and below sea level, points scored and lost — naming the two directions from 0, and giving each name a place on the line!',zh:'海拔与海底，得分与失分——给0两侧的方向起名字，再让每个名字在数轴上有自己的位置！'}
+      tip:{ko:'먼저 소수와 합성수를 구별하고 소인수로 수를 나타내요. 그런 다음 0을 기준으로 정수와 유리수의 자리를 살펴봅니다.',en:'First distinguish prime and composite numbers and factorize. Then place signed numbers around zero.',zh:'先区分质数和合数并作质因数分解，再以0为基准理解有理数的位置。'}
     },
     {
       id:'W8-2', icon:'🎲', grade:'중1',
@@ -346,10 +346,10 @@ window.NM_ROADMAP = {
     },
     {
       id:'W8-3', icon:'🔁', grade:'중1',
-      edu:{ko:'중1 유리수 정복',en:'G7 Conquering Rationals',zh:'初一征服有理数'},
-      theme:{ko:'W8-3 · 유리수 정복 — 곱나눗·유한소수·순환소수',en:'W8-3 · Conquering Rationals — × ÷, Terminating & Repeating',zh:'W8-3·征服有理数——乘除·有限小数·循环小数'},
-      units:['M-07','M-08','M-09'],
-      tip:{ko:'분모 속 2와 5만 있으면 끝나는 소수, 다른 수가 숨어 있으면 영원히 반복돼요!',en:'Only 2s and 5s in the denominator? It ends. Anything else hiding? It repeats forever!',zh:'分母只有2和5就会结束，藏着别的数就会永远循环！'}
+      edu:{ko:'중1 유리수의 곱셈·나눗셈',en:'G7 Rational Multiplication & Division',zh:'初一有理数乘除'},
+      theme:{ko:'W8-3 · 유리수의 곱셈과 나눗셈',en:'W8-3 · Rational Multiplication & Division',zh:'W8-3·有理数乘除法'},
+      units:['M-07'],
+      tip:{ko:'먼저 부호를 정하고 크기를 계산해요. 유한소수와 순환소수는 중2 첫 단계에서 다룹니다.',en:'Determine the sign first, then calculate the magnitude. Terminating and repeating decimals follow in grade 8.',zh:'先确定符号，再计算大小。有限小数与循环小数在初二开头学习。'}
     },
 
     /* ─────── W8-4·5 : 심화 유형 2차(2026-08-27) — 중1 문자와 식 ────
@@ -402,10 +402,10 @@ window.NM_ROADMAP = {
        동굴) 다음, 문자로 된 식을 다루는 첫 관문. */
     {
       id:'W9-1', icon:'📐', grade:'중2',
-      edu:{ko:'중2 지수와 단항식',en:'G8 Exponents & Monomials',zh:'初二指数与单项式'},
-      theme:{ko:'W9-1 · 지수와 단항식 — 지수법칙·곱나눗·동류항',en:'W9-1 · Exponents & Monomials — Laws, × ÷, Like Terms',zh:'W9-1·指数与单项式——法则·乘除·同类项'},
-      units:['M-10','M-11','M-12'],
-      tip:{ko:'큰 수를 짧게 쓰려는 게으름이 지수법칙을 만들었어요 — 곱한 횟수만 세면 끝!',en:'Laziness about writing big numbers invented the exponent laws — just count how many times you multiplied!',zh:'懒得写长数字，于是发明了指数法则——只需数一数乘了几次！'}
+      edu:{ko:'중2 유한·순환소수와 식의 계산',en:'G8 Rational Decimals & Expressions',zh:'初二有限·循环小数与式的计算'},
+      theme:{ko:'W9-1 · 유한·순환소수에서 지수와 단항식으로',en:'W9-1 · Rational Decimals, Exponents & Monomials',zh:'W9-1·有限·循环小数、指数与单项式'},
+      units:['M-08','M-09','M-10','M-11','M-12'],
+      tip:{ko:'기약분수의 분모가 2와 5만으로 이루어지면 유한소수예요. 순환소수를 살핀 뒤 지수와 단항식 계산으로 이어갑니다.',en:'A reduced fraction terminates when its denominator has only factors 2 and 5. Then move from repeating decimals to exponents and monomials.',zh:'最简分数的分母只含2和5时是有限小数。学习循环小数后再进入指数与单项式运算。'}
     },
     {
       id:'W9-2', icon:'🎁', grade:'중2',

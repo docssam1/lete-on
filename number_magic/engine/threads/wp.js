@@ -1505,6 +1505,44 @@
        missing 풀려면 무엇을 더 알아야 할까요?  정답 = 모르는 수 하나, 오답 둘 = 문제와 상관없는 정보(나이·층·버스 번호·가게 이름)
      보기는 언제나 3개. 본문의 수 개수로 세 경우를 가른다(judge: 완전 2개 · 모자람 1개 · 잡음 포함 3개).
      ============================================================ */
+  /* Course 17 application: the story must actually use factors or multiples.
+     Generic information-judgment stories are addition/subtraction and do not
+     test this course, even if their numbers are made larger. */
+  NM_TGEN['wp11_factorMultiple'] = function (params, rng) {
+    const pair = pick(rng, [[2,3],[3,4],[2,5],[4,5],[3,5],[5,7]]);
+    const common = R(rng, 2, 7);
+    const a = common * pair[0], b = common * pair[1];
+    const cut = pick(rng, [true, false]);
+    const answer = cut ? common : common * pair[0] * pair[1];
+    const word = cut ? {
+      ko:a + ' cm와 ' + b + ' cm 리본을 남김없이 같은 길이로 잘라요.',
+      en:'Cut ' + a + ' cm and ' + b + ' cm ribbons into equal lengths with none left over.',
+      zh:'把' + a + '厘米和' + b + '厘米的丝带剪成等长的小段，不留剩余。'
+    } : {
+      ko:'수아는 ' + a + '일마다, 지우는 ' + b + '일마다 도서관에 가요.',
+      en:'Sua visits every ' + a + ' days and Jiu every ' + b + ' days. Both came today.',
+      zh:'秀雅每隔' + a + '天、智友每隔' + b + '天来一次图书馆，今天两人一起来了。'
+    };
+    const wordAsk = cut ? {
+      ko:'가장 긴 조각은 몇 cm일까요?',
+      en:'What is the longest possible piece in cm?',
+      zh:'每小段最长是几厘米？'
+    } : {
+      ko:'오늘 함께 갔다면 다시 함께 가는 날은 며칠 뒤일까요?',
+      en:'In how many days will they come together again?',
+      zh:'再过几天两人会一起再来？'
+    };
+    const prompt = {};
+    ['ko','en','zh'].forEach(lang => { prompt[lang] = word[lang] + ' ' + wordAsk[lang]; });
+    return {
+      prompt, word, wordAsk, answer, answerType:'number', widget:'numpad',
+      tex:(cut ? '\\gcd' : '\\operatorname{lcm}') + '(' + a + ',' + b + ')=\\square',
+      solution:[{tex:(cut ? '\\gcd' : '\\operatorname{lcm}') + '(' + a + ',' + b + ')=\\square',blank:answer}],
+      answerNote:{ko:(cut?'최대공약수':'최소공배수')+' = '+answer,
+        en:(cut?'GCF':'LCM')+' = '+answer,zh:(cut?'最大公因数':'最小公倍数')+' = '+answer},
+      wp:{kind:cut?'factor':'multiple',mode:cut?'gcd':'lcm',n1:a,n2:b,range:'factors',correct:answer}
+    };
+  };
   function lackStory(kind, s, lang, V) {
     const { n1, n2, o, A, B } = s, u = o.ko.u, on = o.ko.n, en = o.en.n, zn = o.zh.n, zu = o.zh.u;
     if (kind === '합병') return {

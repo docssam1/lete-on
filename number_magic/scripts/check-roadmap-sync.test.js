@@ -20,8 +20,8 @@ function run(){
   mutant('index unit tag removed','index.html',s=>s.replace('<script src="data/units/M-83.js"></script>',''),'UNIT_NOT_LOADED');
   mutant('ws mid9 tag removed','ws.html',s=>s.replace(/<script src="engine\/threads\/mid9\.js(?:\?[^"]*)?"><\/script>/,''),'GENERATOR_NOT_LOADED');
   mutant('drill mid10 tag removed','drill.html',s=>s.replace(/<script src="engine\/threads\/mid10\.js(?:\?[^"]*)?"><\/script>/,''),'GENERATOR_NOT_LOADED');
-  mutant('menu script removed','drill.html',s=>s.replace('<script src="data/drill-topics.js"></script>',''),'PAGE_DATA');
-  mutant('menu script deferred','drill.html',s=>s.replace('<script src="data/drill-topics.js">','<script defer src="data/drill-topics.js">'),'SCRIPT_ORDER');
+  mutant('menu script removed','drill.html',s=>s.replace(/<script src="data\/drill-topics\.js(?:\?[^\"]*)?"><\/script>/,''),'PAGE_DATA');
+  mutant('menu script deferred','drill.html',s=>s.replace(/<script src="(data\/drill-topics\.js(?:\?[^\"]*)?)">/,'<script defer src="$1">'),'SCRIPT_ORDER');
   mutant('menu binding removed','drill.html',s=>s.replace('var TOPICS = window.NM_DRILL_TOPICS;','var TOPICS = [];'),'MENU_BINDING');
   mutant('script duplicated','index.html',s=>s.replace('<script src="data/units/M-83.js"></script>','<script src="data/units/M-83.js"></script>'.repeat(2)),'SCRIPT_DUPLICATE');
   mutant('story unit removed','data/roadmap.js',s=>s.replace("'A-36',",''),'UNIT_NOT_IN_ROADMAP');

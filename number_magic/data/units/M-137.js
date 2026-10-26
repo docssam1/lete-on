@@ -30,6 +30,8 @@ window.NM_UNITS['M-137'] = {
     },
     stages:[
       { tag:{ko:'① 양 끝에서',en:'1) At the ends',zh:'① 在两端'},
+        graph:{kind:'exponential',a:2,p:0,q:1,k:1,xr:[-1,4],yr:[-1,10],pts:[[0,2],[3,9]],asymptote:1,interval:[0,3]},
+        graphLabel:{ko:'y=2^x+1: 0≤x≤3에서 최솟값 2, 최댓값 9',en:'y=2^x+1: minimum 2 and maximum 9 for 0≤x≤3',zh:'y=2^x+1：0≤x≤3时最小值2、最大值9'},
         head:{ko:'y=2^{x}+1\\ (0\\le x\\le 3):\\ M=9,\\ m=2',en:'y=2^{x}+1\\ (0\\le x\\le 3):\\ M=9,\\ m=2',zh:'y=2^{x}+1\\ (0\\le x\\le 3):\\ M=9,\\ m=2'},
         desc:{ko:'밑 2 가 1 보다 크므로 증가합니다. x=3 에서 M=2³+1=<b>9</b>, x=0 에서 m=2⁰+1=<b>2</b> 입니다.',
               en:'Base 2 is greater than 1, so it increases: M=2³+1=<b>9</b> at x=3 and m=2⁰+1=<b>2</b> at x=0.',

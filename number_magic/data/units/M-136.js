@@ -30,6 +30,8 @@ window.NM_UNITS['M-136'] = {
     },
     stages:[
       { tag:{ko:'① 점과 점근선',en:'1) Points and asymptote',zh:'① 点与渐近线'},
+        graph:{kind:'exponential',a:2,p:1,q:3,k:1,xr:[-2,4],yr:[-1,11],pts:[[1,4],[2,5],[3,7]],asymptote:3},
+        graphLabel:{ko:'y=2^(x−1)+3: 점 (1,4), (2,5), (3,7)과 점근선 y=3',en:'y=2^(x−1)+3: points (1,4), (2,5), (3,7); asymptote y=3',zh:'y=2^(x−1)+3：经过(1,4)、(2,5)、(3,7)，渐近线y=3'},
         head:{ko:'y=2^{x-1}+3:\\ (3,\\ 7),\\ y=3',en:'y=2^{x-1}+3:\\ (3,\\ 7),\\ y=3',zh:'y=2^{x-1}+3:\\ (3,\\ 7),\\ y=3'},
         desc:{ko:'x=3 이면 y=2²+3=<b>7</b> 입니다. 2ˣ⁻¹>0 이므로 y>3 이고, 점근선은 <b>y=3</b> 입니다.',
               en:'At x=3, y=2²+3=<b>7</b>. Since 2ˣ⁻¹>0, y>3 and the asymptote is <b>y=3</b>.',

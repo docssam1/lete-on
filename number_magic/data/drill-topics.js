@@ -306,6 +306,7 @@ var CURATED_TOPICS = [
       {label:'정보 판단 (큰 수)', thread:'WP9', level:2, desc:'필요 없는 수·모자란 수 가려내기'},
       {label:'생활 문제 (올림·단위·표)', thread:'WP10', level:1, desc:'답의 뜻을 생각하며 풀기'},
       {label:'생활 문제 (몫과 나머지)', thread:'WP10', level:2, desc:'몇 도막·몇 cm 남나'},
+      {label:'약수·배수 문장제', thread:'WP11', level:1, desc:'최대공약수·최소공배수를 생활 문제에 적용하기'},
       {label:'두 단계 풀기 (작은 수)', thread:'WP8', level:1, desc:'중간에 구한 수를 ①에, 답을 ②에'},
       {label:'두 단계 풀기 (큰 수)', thread:'WP8', level:2, desc:'중간값 이름 없이 스스로'},
       {label:'모르는 수 찾기 (작은 수)', thread:'WP7', level:1, desc:'변화량·처음 수·비교 대상이 □'},

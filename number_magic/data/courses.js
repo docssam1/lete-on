@@ -309,33 +309,48 @@ const COURSE_SPEC = [
  /* 29 — 수직선 위의 위치(MD82)를 MD1 바로 뒤에 붙인다(2026-09-21, 원장 "정수 또는 유리수도
     위치 찾기 연습도 있어야 하고 절댓값도 위치 찾기가 되어야지"). MD1 은 절댓값을 계산만
     시켰고 수직선 위 어디인지를 묻는 자리가 없었다. */
- {id:29, tier:'middle1', title:{ko:'소인수분해와 정수의 세계',en:'Prime Factorisation & Integers',zh:'质因数分解与整数'},
+ {id:29, tier:'middle1', title:{ko:'소인수분해와 정수·유리수의 덧뺄셈',en:'Prime Factors & Signed Addition',zh:'质因数分解与有理数加减'},
    /* 2026-09-25 — 중1-1 첫 단원 소인수분해·최대공약수(DV8·DV7)를 옛 중등 권장 편성에서 옮겨 맨 앞에 싣는다. */
-   /* 2026-10-18 — 교과 칸의 순환소수(CH5)를 뺐다. 분수로 되돌리기(CH5@4)가 순환소수를 분수로(MD9, 과정 31)보다
-      먼저 나와 선수가 뒤집혀 있었다. 그 자리는 유리수 계산에 쓰는 최대공약수·최소공배수와 정수 덧뺄 복습으로 채우고,
-      순환마디 찾기는 창의 칸(CH5@1~3)에 그대로 있다. */
-   drills:['DV8@1','DV8@2','DV8@3','DV7@2','DV7@3','MD1','MD82','MD2','MD3','DV7@3','MD47','MD48','MD1@2','MD82@2','MD2@2','MD3@2','DV7@2','MD47@2','MD48@2','MD1@3','MD82@3','MD2@3','MD3@3','MD2@4','MD47@3','MD48@3','MD1@4','MD2@4','MD3@3','MD2@5'], minSessions:15, magic:[['M-01'],['M-82'],['M-02'],['M-03'],['M-47'],['M-48']],
+   /* 중1-1A 세부 목차의 소수·합성수 → 거듭제곱 → 인수·소인수 → 소인수분해
+      → 최대공약수·최소공배수 → 정수·유리수 덧뺄셈 순서를 따른다. */
+   /* Book 1-1A p.4: prime/composite → powers → factor/prime factor → factorization
+      → GCD/LCM → signed addition/subtraction. Branch ids 4~6 are pinned on purpose. */
+   drills:['DV8@4','DV8@5','DV8@6','DV8@1','DV8@2','DV8@3','DV7@2','DV7@3','DV7@2','DV7@3',
+     'MD1','MD82','MD2','MD1@2','MD82@2','MD2@2','MD3','MD1@3','MD82@3','MD2@3',
+     'MD3@2','MD1@4','MD2@4','MD3@3','MD2@4','MD3@3','MD2@5'],
+   minSessions:15, magic:[[],[],[],['M-01'],['M-82'],['M-02'],['M-03']],
    /* MD89(정수의 활용 — 기온·해발과 해저·수위)는 이 과정의 적용 회차다(2026-09-25). */
-   creative:['MD89@1','MD3@3','MD89@2','MD82@3','MD89@3','MD48@3']},
- /* 30 — 일차방정식은 **푸는 법 다음에 쓰는 법**이 와야 한다(2026-09-21, 원장 "일차방정식의
-    활용도 거리·속력·시간, 원가·정가 등 놓치지 마"). MD70 을 MD50 바로 뒤에 붙인다. */
- {id:30, tier:'middle1', title:{ko:'부호의 규칙과 방정식',en:'Rules of Sign & Equations',zh:'符号的规则与方程'},
-   drills:['MD4','MD5','MD6','MD49','MD50','MD70','MD4@2','MD5@2','MD6@2','MD49@2','MD50@2','MD70@2','MD4@3','MD5@3','MD6@3','MD49@3','MD50@3','MD70@3','MD50@4','MD4@4','MD4@5','MD5@4'], minSessions:10, magic:[['M-04'],['M-05'],['M-06'],['M-49'],['M-50'],['M-70']], creative:['MD70@3','MD50@3','MD6@3']},
- /* 31 — 좌표평면(MD68)과 정비례·반비례 그래프(MD69)를 여기서 연다. 원장 "정비례 반비례는".
-    MD51 은 값만 다뤘고 그래프가 없었다 — 이 둘이 뒤의 일차함수·이차함수 그래프의 바닥이다. */
-  {id:31, tier:'middle1', title:{ko:'유리수·좌표와 대표값',en:'Rationals, Coordinates & Measures of Center',zh:'有理数·坐标与代表值'},
-   /* MD9의 5단계와 중1-2 비기하 통계 MD84를 함께 실제 회차에 싣는다.
+   creative:['DV7@1','MD89@1','MD3@3','MD89@2','MD82@3','MD89@3']},
+ /* 30 — 중1-1A의 정수·유리수 곱나눗셈과 거듭제곱을 마친 뒤 31에서 문자식으로 넘어간다. */
+ {id:30, tier:'middle1', title:{ko:'부호의 규칙과 유리수의 곱셈·나눗셈',en:'Signs & Rational Multiplication',zh:'符号与有理数乘除'},
+   drills:['MD4','MD5','MD6','MD4@2','MD5@2','MD6@2','MD4@3','MD5@3','MD6@3','MD4@4','MD5@4','MD4@5',
+     'MD7','MD7@2','MD7@3','MD7@4'], minSessions:10, magic:[['M-04'],['M-05'],['M-06'],['M-07']],
+   creative:['MD6@3','MD7@3','MD7@4']},
+ /* 31 — 중1-1B의 문자식 → 일차방정식 → 활용 → 좌표·비례 그래프 순서.
+    MD51의 값 계산 뒤에 MD69의 그래프가 이어진다. */
+  {id:31, tier:'middle1', title:{ko:'문자식·방정식과 좌표·그래프',en:'Expressions, Equations & Graphs',zh:'代数式·方程与坐标图像'},
+   /* 중1-2 비기하 통계 MD84도 실제 회차에 싣는다.
       MD84는 확인된 p.224~230의 대표값만 포함하며 도수표 이후는 넣지 않는다. */
-   drills:['MD7','MD8','MD9','MD51','MD68','MD69','MD84','MD7@2','MD8','MD9@2','MD51@2','MD68@2','MD69@2','MD84@2','MD7@3','MD9@3','MD51@3','MD68@3','MD69@3','MD9@4','MD9@5','MD84@3','MD84@4','MD84@5','MD84@6','MD7@4'], minSessions:13, magic:[['M-07'],['M-08'],['M-09'],['M-51'],['M-68'],['M-69'],['M-84']], creative:['MD84@6','MD84@4','MD69@3']},
+   drills:['MD47','MD47@2','MD47@3','MD48','MD48@2','MD48@3','MD49','MD49@2','MD49@3',
+     'MD50','MD50@2','MD50@3','MD50@4','MD70','MD70@2','MD70@3',
+     'MD68','MD68@2','MD68@3','MD51','MD51@2','MD51@3','MD69','MD69@2','MD69@3',
+     'MD84','MD84@2','MD84@3','MD84@4','MD84@5','MD84@6'],
+   minSessions:13, magic:[['M-47'],['M-48'],['M-49'],['M-50'],['M-70'],['M-68'],['M-51'],['M-69'],['M-84']],
+   creative:['MD48@3','MD50@3','MD70@3','MD84@6','MD84@4','MD69@3']},
 
  /* 32~37 중등 재편(2026-09-21) — 원장 "한 단원씩이 아니잖아". 한 과정에 한 단원씩 서도록
     7과정 → 9과정으로 늘렸다. 중2 일차함수(34)와 중3 이차함수(37)가 새로 선 과정이고,
     부등식·연립의 활용(33)과 이차방정식의 활용(36)은 각 풀이 과정 뒤에 붙였다.
     이 두 과정을 끼우느라 고등 36~45 가 38~47 로 밀렸다(stages.js 범위도 함께 고침). */
- {id:32, tier:'middle2', title:{ko:'지수와 식의 계산',en:'Exponents & Algebraic Expressions',zh:'指数与式的运算'},
+ {id:32, tier:'middle2', title:{ko:'유한·순환소수와 식의 계산',en:'Rational Decimals & Algebraic Expressions',zh:'有限·循环小数与式的运算'},
    /* 2026-09-24 — 디딤돌 개념연산 중2-1A p.98~99 대조로 MD13에 다항식÷단항식
       기본·분수 계수·세 항 집중 3레벨을 더했다. 20항목, minSessions 10. */
-   drills:['MD10','MD11','MD12','MD13','MD9','MD10@2','MD11@2','MD12@2','MD13@2','MD10@3','MD11@3','MD12@3','MD13@3','MD10@4','MD10@5','MD12@4','MD12@5','MD13@4','MD13@5','MD13@6','MD11@4'], minSessions:11, magic:[['M-10'],['M-11'],['M-12'],['M-13']],
+   drills:['MD8','MD8@2','MD9','MD9@2','MD9@3','MD9@4','MD9@5',
+     'MD10','MD10@2','MD10@3','MD10@4','MD10@5',
+     'MD11','MD11@2','MD11@3','MD11@4',
+     'MD12','MD12@2','MD12@3','MD12@4','MD12@5',
+     'MD13','MD13@2','MD13@3','MD13@4','MD13@5','MD13@6'],
+   minSessions:11, magic:[['M-08'],['M-09'],['M-10'],['M-11'],['M-12'],['M-13']],
    /* MD11@5(넓이·부피 공식에 단항식 대입)는 이 과정의 적용 회차다(2026-09-25) — 전엔 과정 32 에 적용이 0개였다. */
    creative:['MD11@5','MD13@6','MD12@5','MD10@5']},
  {id:33, tier:'middle2', title:{ko:'부등식과 연립방정식',en:'Inequalities & Systems',zh:'不等式与方程组'},
@@ -559,11 +574,11 @@ const COURSE_STRATEGY = {
   0:['NL15@1','NL12@1','NL1@5','NL8@3','NL18@1','NL14@3','NL16@3','NL12@1',
      'NL35@7','NL35@3','NL38@6','NL43@1','NL11@1','NL11@2','NL42@6','NL63@2',
      'NL60@6','NL5@2','NL6@2'],
-  29:['CH5@1','CH5@2','CH5@3'],
+  29:['DV6@1','DV6@2','DV6@3','SB12@1'],
   /* 30·33·34 — 두 개만 번갈아 나왔다(2026-09-26, 한 과정의 창의는 서로 다른 유형·레벨 셋 이상, 설계 §4-3).
      30 에 SB12@3(같은 수를 양쪽에 ± 해도 차는 그대로 → 등식의 성질, 설계 §2-3 계보 6) ·
      33 에 EL6@3(합과 차 → 연립방정식의 씨앗, 설계 §5 T1-3) · 34 에 MX6@2(가우스 실전 = 등차의 합). */
-  30:['CH1@1','CH1@2','SB12@3'], 31:['MX6@1','MX6@2','MX6@3'],
+  30:['SB12@1','SB12@2','SB12@3'], 31:['CH1@1','CH1@2','MX6@1','MX6@2','MX6@3'],
   32:['CH3@1','CH3@2','CH8@1','CH8@2'], 33:['CH12@1','CH12@2','EL6@3'], 34:['MX6@3','MX6@4','MX6@2'],
   35:['CH8@1','CH8@2','CH10@1','CH10@2'], 36:['CH7@1','CH7@2','CH9@1','CH9@2','ML20@3','ML20@5'],
   37:['CH9@2','CH9@3','CH7@3']
@@ -571,9 +586,11 @@ const COURSE_STRATEGY = {
 /* 중등 적용 — 과정마다 교과 적용 문제(활용 스레드·자료·그래프 직접 그리기). 드릴에 이미 있는 활용
    스레드는 드릴 출신으로 쓰고, 여기 적힌 것은 드릴이 활용이 아닌 회차를 채운다. */
 const COURSE_APPLY = {
-  29:['MD89@1','MD89@2','MD89@3'], 30:['MD70@1','MD70@2','MD70@3'],
-  31:[{draw:'direct'},{draw:'inverse'},'MD84@1','MD84@4','MD84@6'],
-  32:['MD11@5'], 33:['MD71@1','MD71@2','MD71@3','MD72@1','MD72@2','MD72@3'],
+  29:['DV7@1','DV7@1','DV7@1','MD89@1','MD89@2','MD89@3'],
+  30:['MD89@1','MD89@2','MD89@3'],
+  31:['MD89@3','MD89@1','MD89@2','MD89@3','MD70@1','MD70@2','MD70@3','MD89@3',
+    {draw:'direct'},{draw:'inverse'},'MD84@1'],
+  32:['CH5@1','CH5@2','CH5@3','CH5@1','CH5@2','MD11@5'], 33:['MD71@1','MD71@2','MD71@3','MD72@1','MD72@2','MD72@3'],
   34:[{draw:'linear'},'MD76@1','MD76@2','MD76@3','MD88@2','MD88@3'],
   35:['MD90@1','MD90@2','MD90@3'], 36:['MD77@1','MD77@2','MD77@3','MD19@4','MD19@5'],
   37:[{draw:'quadratic'},'MD85@2','MD86@4','MD87@2']
@@ -805,14 +822,8 @@ function prepareCurriculumSequence(sessions, courseId){
     throw new Error('Missing curriculum source block C'+courseId+' '+tag);
   };
   const swap = (a,b) => { const [x,i]=locate(a),[y,j]=locate(b); [x[i],y[j]]=[y[j],x[i]]; };
-  if(courseId === 29){
-    swap('MD2@1','DV7@2');
-    // Signed numbers are introduced before adding/subtracting them.
-    const first=sessions[0].drills, a=first.findIndex(d=>d.t==='MD1'), b=first.findIndex(d=>d.t==='MD2');
-    if(a>b)[first[a],first[b]]=[first[b],first[a]];
-  }
-  if(courseId === 30){ swap('MD49@1','MD5@1'); swap('MD50@1','MD6@1'); }
-  if(courseId === 31){ swap('MD68@1','MD7@1'); swap('MD51@1','MD8@1'); swap('MD69@1','MD9@1'); }
+  // C29~C32 follow the authored prerequisite order in COURSE_SPEC. Their
+  // queue is consumed sequentially below so later chapters cannot jump ahead.
   if(courseId === 36){
     swap('MD20@2','MD18@2');
     const row=sessions[1].drills,a=row.findIndex(d=>d.t==='MD20'),b=row.findIndex(d=>d.t==='MD66');
@@ -841,7 +852,8 @@ function prepareCurriculumApplication(ss,courseId,learned,maxLevel){
     // An already practised application fills the slot while its new topic is
     // waiting for instruction. Never promote an arbitrary higher numeric level.
     const occupied=new Set([...ss.school,...ss.strategy.practice].map(d=>d.t+'@'+d.lv));
-    const tag=['MD81@1','MD79@2','MD80@1','MD90@3','MD89@3']
+    const tag=['DV7@2','DV7@3','DV8@1','DV8@2','MD89@1','MD89@2','MD89@3',
+      'MD81@1','MD79@2','MD80@1','MD90@3']
       .find(k=>learned.has(k)&&!occupied.has(k));
     if(!tag)throw new Error('No taught application available in C'+courseId);
     const [t,lv]=tag.split('@');
@@ -946,7 +958,9 @@ function buildCourses(NM_THREADS){
         .concat(ownDrills.filter(d => roleOf(d, spec.tier) === 'strategy').map(d => ({ t:d.t, lv:d.lv }))),
       apply:(COURSE_APPLY[spec.id] || []).map(P).filter(Boolean)
         .concat(creative.filter(d => roleOf(d, spec.tier, true) === 'application').map(d => ({ t:d.t, lv:d.lv }))),
-      wp:(WP_BY_TIER[spec.tier] || []).map(P).filter(Boolean),
+      // Course 17 checks factors and multiples. Generic WP9 falls back to
+      // first-grade addition/subtraction stories and cannot assess this unit.
+      wp:(spec.id===17 ? ['WP11@1'] : (WP_BY_TIER[spec.tier] || [])).map(P).filter(Boolean),
       school:ownDrills.filter(d => roleOf(d, spec.tier) !== 'application').map(d => ({ t:d.t, lv:d.lv }))
     };
     let segments = spec.magic.slice();
@@ -1028,7 +1042,7 @@ function buildCourses(NM_THREADS){
         }
         const picked = [queue.shift()];
         while(picked.length < want && queue.length){
-          let k = queue.findIndex(q => !picked.some(p => p.t === q.t));
+          let k = spec.id>=29&&spec.id<=32 ? 0 : queue.findIndex(q => !picked.some(p => p.t === q.t));
           if(k < 0) k = queue.findIndex(q => !picked.some(p => p.t === q.t && p.lv === q.lv));
           if(k < 0) break;
           picked.push(queue.splice(k, 1)[0]);

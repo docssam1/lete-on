@@ -391,26 +391,36 @@
        나오지 않는 조합만 쓴다. */
     if (mode === 'rule7') {
       let n = 0, a = 0, b = 0, red = -1;
-      for (let t = 0; t < 60 && red < 0; t++) {
+      const wantMultiple = R(rng, 0, 1) === 1;
+      for (let t = 0; t < 120; t++) {
         n = R(rng, 100, 999);
         a = Math.floor(n / 10);
         b = n % 10;
         red = a - 2 * b;
+        if (red >= 0 && (n % 7 === 0) === wantMultiple) break;
       }
-      if (red < 0) { n = 203; a = 20; b = 3; red = 14; }
+      if (red < 0 || (n % 7 === 0) !== wantMultiple) {
+        n = wantMultiple ? 203 : 983;
+        a = Math.floor(n / 10); b = n % 10; red = a - 2 * b;
+      }
+      const verdict = red % 7 === 0 ? 1 : 2;
       return {
         prompt: {
-          ko: `${n}의 뒷자리를 떼고, 남은 수에서 뒷자리의 2배를 빼요 — 7의 배수인지 알아보는 방법이에요`,
-          en: `Drop the last digit of ${n} and subtract twice that digit — this tests divisibility by 7`,
-          zh: `去掉${n}的末位，再从剩下的数里减去末位的2倍——这是判断7的倍数的方法`
+          ko: `${n}이 7의 배수인지 판단해요. 차를 구한 뒤 맞으면 1, 아니면 2를 쓰세요.`,
+          en: `Is ${n} divisible by 7? Find the difference, then write 1 for yes or 2 for no.`,
+          zh: `判断${n}是不是7的倍数。先求差，再填写1（是）或2（否）。`
         },
-        tex:        `${n} \\rightarrow ${a} - 2 \\times ${b} = \\square`,
-        answer:     red,
-        answerType: 'number',
-        widget:     'numpad',
+        tex:        `${n} \\rightarrow ${a}-2\\times${b}=\\square\\quad 7\\text{의 배수? }(1:\\circ,\\ 2:\\times)\\ \\square`,
+        answer:     [red, verdict],
+        answerType: 'steps',
+        widget:     'steps',
+        steps: [
+          { tex: `${a}-2\\times${b}=\\square`, blank:red },
+          { tex: `7\\text{의 배수? }(1:\\circ,\\ 2:\\times)\\ \\square`, blank:verdict }
+        ],
         solution: [
-          { tex: `${n} \\Rightarrow a=${a},\\; b=${b}` },
-          { tex: `${a} - 2 \\times ${b} = \\square`, blank: red }
+          { tex: `${a}-2\\times${b}=\\square`, blank:red },
+          { tex: `${red}\\text{은 7의 배수${verdict===1?'':'가 아님'}}\\Rightarrow\\square`, blank:verdict }
         ]
       };
     }
@@ -421,27 +431,38 @@
        차가 음수가 되지 않는 네 자리 수만 고른다. */
     if (mode === 'rule11') {
       let n = 0, d = [0, 0, 0, 0], odd = 0, even = 0, diff = -1;
-      for (let t = 0; t < 60 && diff < 0; t++) {
+      const wantMultiple = R(rng, 0, 1) === 1;
+      for (let t = 0; t < 120; t++) {
         n = R(rng, 1000, 9999);
         d = String(n).split('').map(Number);
         odd  = d[0] + d[2];   /* 첫째·셋째 자리 */
         even = d[1] + d[3];   /* 둘째·넷째 자리 */
         diff = odd - even;
+        if (diff >= 0 && (n % 11 === 0) === wantMultiple) break;
       }
-      if (diff < 0) { n = 8195; d = [8, 1, 9, 5]; odd = 17; even = 6; diff = 11; }
+      if (diff < 0 || (n % 11 === 0) !== wantMultiple) {
+        n = wantMultiple ? 8195 : 9843;
+        d = String(n).split('').map(Number);
+        odd = d[0] + d[2]; even = d[1] + d[3]; diff = odd - even;
+      }
+      const verdict = diff % 11 === 0 ? 1 : 2;
       return {
         prompt: {
-          ko: `${n}의 홀수번째 자리끼리, 짝수번째 자리끼리 더한 뒤 그 차를 구해요 — 11의 배수인지 알아보는 방법이에요`,
-          en: `Add the digits of ${n} in odd places and in even places, then take the difference — this tests divisibility by 11`,
-          zh: `把${n}奇数位上的数字相加、偶数位上的数字相加，再求两者之差——这是判断11的倍数的方法`
+          ko: `${n}이 11의 배수인지 판단해요. 차를 구한 뒤 맞으면 1, 아니면 2를 쓰세요.`,
+          en: `Is ${n} divisible by 11? Find the alternating digit sum, then write 1 for yes or 2 for no.`,
+          zh: `判断${n}是不是11的倍数。先求奇偶位数字和之差，再填写1（是）或2（否）。`
         },
-        tex:        `${n} \\rightarrow (${d[0]}+${d[2]}) - (${d[1]}+${d[3]}) = \\square`,
-        answer:     diff,
-        answerType: 'number',
-        widget:     'numpad',
+        tex:        `${n} \\rightarrow (${d[0]}+${d[2]})-(${d[1]}+${d[3]})=\\square\\quad 11\\text{의 배수? }(1:\\circ,\\ 2:\\times)\\ \\square`,
+        answer:     [diff, verdict],
+        answerType: 'steps',
+        widget:     'steps',
+        steps: [
+          { tex: `(${d[0]}+${d[2]})-(${d[1]}+${d[3]})=\\square`, blank:diff },
+          { tex: `11\\text{의 배수? }(1:\\circ,\\ 2:\\times)\\ \\square`, blank:verdict }
+        ],
         solution: [
-          { tex: `\\text{홀수째 자리}=${d[0]}+${d[2]}=${odd}\\;,\\;\\text{짝수째 자리}=${d[1]}+${d[3]}=${even}` },
-          { tex: `${odd} - ${even} = \\square`, blank: diff }
+          { tex: `(${d[0]}+${d[2]})-(${d[1]}+${d[3]})=\\square`, blank:diff },
+          { tex: `${diff}\\text{은 11의 배수${verdict===1?'':'가 아님'}}\\Rightarrow\\square`, blank:verdict }
         ]
       };
     }
@@ -626,6 +647,52 @@
   /* ── DV8 — 소인수분해·약수의 개수 ──────────────────────── */
   NM_TGEN['dv8_primeFact'] = function (params, rng) {
     const mode = (params && params.mode) || 'isPrime';
+
+    /* Middle-school introduction: distinguish the ideas before calculating a
+       factorization.  The three branches have independently checkable answers. */
+    if (mode === 'primeComposite') {
+      const primes=[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97];
+      const composites=[4,6,8,9,10,12,14,15,16,18,20,21,22,24,25,26,27,28,30,32,33,34,35,36,38,39,40,42,44,45];
+      const choice=R(rng,0,9), n=choice===0?1:pick(rng,choice<5?primes:composites);
+      const prime=n>1&&smallestPF(n)===n, answer=n===1?3:prime?1:2;
+      return {
+        prompt:{ko:`${n}은 소수인가요, 합성수인가요? 소수 1, 합성수 2, 둘 다 아니면 3을 쓰세요.`,
+          en:`Classify ${n}: write 1 for prime, 2 for composite, or 3 for neither.`,
+          zh:`判断${n}：质数填1，合数填2，都不是填3。`},
+        tex:`${n}\\;\\text{→ 소수 1, 합성수 2, 둘 다 아님 3: }\\square`,
+        answer,answerType:'number',widget:'numpad',
+        solution:[{tex:n===1?'1\\text{은 소수도 합성수도 아님}'
+          :prime?`${n}\\text{의 약수는 1과 ${n}뿐 → 소수}`
+          :`${n}\\div ${smallestPF(n)}=${n/smallestPF(n)}\\text{ → 합성수}`,
+          blank:answer}]
+      };
+    }
+    if (mode === 'powerNotation') {
+      const base=R(rng,2,12), exponent=R(rng,2,6);
+      return {
+        prompt:{ko:`${base}를 ${exponent}번 곱했어요. 거듭제곱의 지수를 쓰세요.`,
+          en:`Multiply ${base} by itself ${exponent} times. Write the exponent.`,
+          zh:`${base}连乘${exponent}次，填写指数。`},
+        tex:`${Array(exponent).fill(base).join(' \\times ')}=${base}^{\\square}`,
+        answer:exponent,answerType:'number',widget:'numpad',
+        solution:[{tex:`${Array(exponent).fill(base).join(' \\times ')}=${base}^{${exponent}}`,blank:exponent}]
+      };
+    }
+    if (mode === 'primeFactorMeaning') {
+      const n=pick(rng,[12,18,20,24,28,30,36,40,42,48,54,60,72,84]);
+      const factors=allFactors(n), primeFactors=[...new Set(primeFactorArr(n))];
+      const otherFactors=factors.filter(v=>v===1||(v>1&&smallestPF(v)!==v));
+      const yes=R(rng,0,1)===1, factor=pick(rng,yes?primeFactors:otherFactors);
+      return {
+        prompt:{ko:`${factor}은 ${n}의 인수예요. 소인수이기도 한가요? 맞으면 1, 아니면 2를 쓰세요.`,
+          en:`${factor} is a factor of ${n}. Is it also a prime factor? Write 1 for yes or 2 for no.`,
+          zh:`${factor}是${n}的因数，也是质因数吗？是填1，否填2。`},
+        tex:`${n}\\div ${factor}=${n/factor}\\;\\Rightarrow\\;${factor}\\text{은 소인수? }\\square`,
+        answer:yes?1:2,answerType:'number',widget:'numpad',
+        solution:[{tex:yes?`${factor}\\text{은 소수이므로 소인수}`
+          :`${factor}\\text{은 소수가 아니므로 소인수가 아님}`,blank:yes?1:2}]
+      };
+    }
 
     /* ---- 소수 판별: 합성수의 최소 소인수 구하기 ---- */
     if (mode === 'isPrime') {
