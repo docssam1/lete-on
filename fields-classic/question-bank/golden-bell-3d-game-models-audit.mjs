@@ -1058,6 +1058,36 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       assert.deepEqual(nums(ex.answer), v.blanks.map((i) => sols[0][i]), `${ex.id}: 답 문장`);
       assert.deepEqual(ex.steps.at(-1).figure.cells, sols[0].map(String), `${ex.id}: 마지막 그림`);
     } else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "cubes") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number), add = (xs) => xs.reduce((a, b) => a + b, 0);
+    // 원본 그림의 쌓기나무 배치(층수 표·층별 그림)와 같으면 안 된다
+    const mapsOf = (vis) => [vis.map, ...(vis.figures || []).map((f) => f.map), vis.layers].filter(Boolean).map((m) => JSON.stringify(m));
+    const mine = [v.map, v.heights, v.from, v.to].filter(Boolean).map((m) => JSON.stringify(m));
+    for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) for (const m of mapsOf(vis)) assert.ok(!mine.includes(m), `${ex.id}: 원본과 같은 쌓기나무`);
+    if (v.kind === "cube-sum") { assert.equal(v.total, add(v.map.flat())); assert.deepEqual(nums(ex.answer), [v.total]); }
+    else if (v.kind === "cube-hidden") {
+      // 쌓기나무 하나하나: 오른쪽 칸·앞 칸(같은 층)과 바로 위가 모두 차 있으면 어느 면도 안 보인다
+      const h = (r, c) => v.map[r]?.[c] ?? 0; let hidden = 0;
+      for (let r = 0; r < v.map.length; r++) for (let c = 0; c < v.map[r].length; c++) for (let z = 0; z < h(r, c); z++) if (h(r, c + 1) > z && h(r + 1, c) > z && h(r, c) > z + 1) hidden++;
+      const total = add(v.map.flat());
+      assert.deepEqual([v.total, v.hidden, v.seen], [total, hidden, total - hidden], `${ex.id}: 전체·숨은·보이는`);
+      assert.deepEqual(nums(ex.answer), v.ask === "all" ? [total, total - hidden, hidden] : [hidden], `${ex.id}: 답`);
+    } else if (v.kind === "cube-box") {
+      const [W, H, D] = v.dims; assert.ok(v.map.length === D && v.map.every((row) => row.length === W && row.every((x) => x <= H)), `${ex.id}: 상자 안`);
+      assert.equal(v.need, W * H * D - add(v.map.flat())); assert.deepEqual(nums(ex.answer), [v.need]);
+    } else if (v.kind === "cube-remove") {
+      assert.ok(v.to.every((row, r) => row.every((x, c) => x <= v.from[r][c])), `${ex.id}: 빼서 만들 수 있음`); assert.equal(v.diff, add(v.from.flat()) - add(v.to.flat())); assert.deepEqual(nums(ex.answer), [v.diff]);
+    } else if (v.kind === "cube-parts") { assert.equal(v.vertices - v.edges + v.faces, 2, `${ex.id}: 꼭짓점 − 모서리 + 면 = 2`); assert.deepEqual(nums(ex.answer), [6, 12, 8]); }
+    else if (v.kind === "cube-paint") {
+      // n × n × n의 쌓기나무를 하나씩 보며 바깥에 닿은 면을 센다
+      const n = v.n, counts = [0, 0, 0, 0];
+      for (let x = 0; x < n; x++) for (let y = 0; y < n; y++) for (let z = 0; z < n; z++) { const k = [x, y, z].filter((t) => t === 0 || t === n - 1).length; counts[3 - k]++; }
+      assert.deepEqual(v.counts, counts, `${ex.id}: 칠해진 면의 수별 개수`); assert.deepEqual(nums(ex.answer), counts);
+    } else if (v.kind === "cube-views") {
+      const front = v.heights[0].map((_, c) => Math.max(...v.heights.map((row) => row[c]))), side = [...v.heights].reverse().map((row) => Math.max(...row));
+      assert.deepEqual([v.front, v.side], [front, side], `${ex.id}: 앞·옆에서 본 층수`); assert.deepEqual(nums(ex.answer), [...front, ...side]);
+      if (ex.figure.kind === "b4-layers") { const L = ex.figure.layers; assert.deepEqual(v.heights, L[0].map((row, r) => row.map((_, c) => add(L.map((l) => l[r][c])))), `${ex.id}: 층을 겹친 층수`); L.slice(1).forEach((l, k) => l.forEach((row, r) => row.forEach((x, c) => assert.ok(!x || L[k][r][c], `${ex.id}: 아래층이 받친다`)))); }
+    } else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

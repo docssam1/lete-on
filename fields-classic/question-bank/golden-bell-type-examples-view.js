@@ -2,6 +2,8 @@
 // 한 단계씩 연다: 0단계 = 문제만, 1~N단계 = 풀이가 하나씩, 마지막 = 답. 답은 마지막 단계 전에는 화면에 없다.
 // 색은 골든벨 색표(쌓기나무·모양·숫자판·저울), 안내 단계 색은 주어진 것 파랑 · 하는 일 금색 · 확인 진초록.
 
+import { book04Markup, obliqueCubes } from "./book04-renderers.js?v=20261028q";
+
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const TONE = { given: "#2f6fe0", doing: "#d39b20", check: "#16734b" };
 const CUBE = { top: "#ffeaa6", front: "#ffd45c", side: "#f0b23a", line: "#a8741a" };
@@ -726,6 +728,10 @@ function lineBoardFigure(f) {
   });
   return `<div class="tx-line-board">${svg(W, W, body, `줄 ${f.lines.length}개가 만나는 숫자 판`)}</div>`;
 }
+// 4·9권 쌓기나무: 원본과 같은 빗각 그림(book04-renderers). b4-layers = 층별로 위에서 본 칸
+function b4LayersFigure(f) {
+  return `<div class="tx-layers">${f.layers.map((L, k) => `<figure><div style="--cols:${L[0].length}">${L.flat().map((v) => `<span class="${v ? "on" : ""}"></span>`).join("")}</div><figcaption>${k + 1}층</figcaption></figure>`).join("")}</div>`;
+}
 // strip: 마법카드 칸 줄(rows 여러 줄이면 같은 값 칸이 위아래로). w = 칸의 값("?"면 빈칸), on = 색칠, total = 색칠한 칸의 합
 function stripFigure(f) {
   const color = TONE[f.tone || "given"];
@@ -865,6 +871,10 @@ export function figureMarkup(figure) {
   if (figure.kind === "line-board") return lineBoardFigure(figure);
   if (figure.kind === "sudoku") return sudokuFigure(figure);
   if (figure.kind === "strip") return stripFigure(figure);
+  if (figure.kind === "b4-cubes") return `<div class="tx-b4">${obliqueCubes(figure.map, { s: figure.map.length * figure.map[0].length > 9 ? 28 : 34, labels: !!figure.labels, walls: !!figure.walls })}</div>`;
+  if (figure.kind === "b4-box") return `<div class="tx-b4">${book04Markup({ kind: "book4", subtype: "source-cube-box", dimensions: figure.dims, map: figure.map })}</div>`;
+  if (figure.kind === "b4-pair") return `<div class="tx-b4">${book04Markup({ kind: "book4", subtype: "source-hidden-cube", figures: figure.figures })}</div>`;
+  if (figure.kind === "b4-layers") return b4LayersFigure(figure);
   if (figure.kind === "pieces") return piecesFigure(figure);
   if (figure.kind === "ring") return ringFigure(figure);
   if (figure.kind === "crypt") return cryptFigure(figure);

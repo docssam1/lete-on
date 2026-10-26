@@ -322,7 +322,7 @@ function sourceCubeBox(visual) {
 
 // 원본 16~18쪽 쌓기나무: 앞면이 정사각형이고 깊이가 오른쪽 위로 s/3씩 물러나는 빗각 그림.
 // map[줄][칸], 0번 줄이 뒤(위에서 본 그림의 윗줄). walls는 18쪽 「보이는 것」의 벽 모서리 세 줄.
-function obliqueCubes(map, { s = 36, walls = false, labels = false, label = "쌓기나무 그림" } = {}) {
+export function obliqueCubes(map, { s = 36, walls = false, labels = false, label = "쌓기나무 그림" } = {}) {
   const D = map.length;
   const W = Math.max(...map.map((row) => row.length));
   const height = (x, z) => Number(map[D - 1 - z]?.[x] || 0);

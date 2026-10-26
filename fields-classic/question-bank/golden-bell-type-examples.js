@@ -3096,7 +3096,113 @@ function dualExample({ id, title, shapes, colors, n }) {
   return { id, title, problem: `${seq.join(" ")} …처럼 모양과 색이 함께 되풀이돼요. ${n}번째 모양은 무엇일까요?`, figure: { kind: "seq", values: seq, tone: "given", ask: "?" }, steps, answer: `${c ? "색칠한" : "빈"} ${SHAPE_WORD[s]} ${josa(ans, "이에요")}.`, value: { kind: "dual", shapes, colors, n, ans } };
 }
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET });
+// ───────────────────────── 4·9권 쌓기나무: 층수 더하기 · 숨은 쌓기나무 · 상자 채우기 · 페인트칠 · 앞과 옆 ─────────────────────────
+// 그림은 원본과 같은 빗각 그림(kind "b4-cubes", 앞면이 정사각형). map[줄][칸] = 층수, 0번 줄이 맨 뒤.
+// 보이지 않는 쌓기나무 = 오른쪽·앞·위가 모두 막힌 것(셋 중 하나라도 비면 면이 보인다).
+const cubesFig = (map, p = {}) => ({ kind: "b4-cubes", map, labels: p.labels, walls: p.walls, tone: p.tone || "doing" });
+const topFig = (map, tone = "doing") => ({ kind: "mgrid", cells: map.map((row) => row.map((h) => (h ? String(h) : ""))), noTotals: true, tone });
+const cubeTotal = (map) => sum(map.flat());
+const hiddenCubes = (map) => {
+  const has = (r, c, z) => r >= 0 && c >= 0 && (map[r]?.[c] ?? 0) > z, out = [];
+  map.forEach((row, r) => row.forEach((h, c) => { for (let z = 0; z < h; z++) if (has(r, c + 1, z) && has(r + 1, c, z) && has(r, c, z + 1)) out.push([r, c, z]); }));
+  return out;
+};
+const ROW_WORD = (R, r) => (R === 1 ? "" : r === R - 1 ? "앞줄" : r === 0 ? "뒷줄" : "가운데 줄");
+const COL_WORD = (C, c) => (C === 1 ? "" : c === 0 ? "왼쪽" : c === C - 1 ? "오른쪽" : "가운데");
+const placeWord = (map, r, c) => [ROW_WORD(map.length, r), COL_WORD(map[0].length, c)].filter(Boolean).join(" ") || "그";
+function columnSumExample({ id, title, map, word = "최소" }) {
+  const list = map.flat().filter(Boolean), total = cubeTotal(map);
+  const steps = [
+    { text: "기둥마다 맨 위 쌓기나무에 그 기둥이 몇 층인지 써요. 뒤에 가려진 것도 층수에 들어가요.", figure: cubesFig(map, { labels: true }) },
+    { text: "위에서 내려다본 칸에 층수를 옮겨 써요. 빈 자리는 비워 둬요.", figure: topFig(map) },
+    { text: `칸의 수를 모두 더하면 ${list.join(" + ")} = ${total}.`, figure: topFig(map, "check") }
+  ];
+  return { id, title, problem: `쌓기나무는 ${word === "최소" ? "최소 " : "모두 "}몇 개일까요?${word === "최소" ? "" : " (보이지 않는 곳에는 쌓기나무가 없어요.)"}`, figure: cubesFig(map, { tone: "given" }), steps, answer: `${total}개예요.`, value: { kind: "cube-sum", map, total } };
+}
+function hiddenCubeExample({ id, title, map, walls = false, ask = "hidden" }) {
+  const total = cubeTotal(map), hidden = hiddenCubes(map), seen = total - hidden.length;
+  const where = hidden.map(([r, c, z]) => `${placeWord(map, r, c)} 기둥 ${z + 1}층`);
+  const steps = [
+    { text: `기둥마다 층수를 써서 모두 더해요. ${map.flat().filter(Boolean).join(" + ")} = ${total}개가 전체예요.`, figure: cubesFig(map, { labels: true, walls }) },
+    { text: `오른쪽·앞·위가 모두 다른 쌓기나무로 막힌 것은 그림에서 안 보여요. ${where.length ? `${where.join(", ")} — ${hidden.length}개.` : "없어요."}`, figure: topFig(map) },
+    { text: `보이는 것은 ${total} − ${hidden.length} = ${seen}개, 보이지 않는 것은 ${hidden.length}개.`, figure: cubesFig(map, { walls, tone: "check" }) }
+  ];
+  const all = ask === "all";
+  return { id, title, problem: all ? "벽 모서리에 빈틈없이 쌓은 쌓기나무예요. 전체, 보이는 것, 보이지 않는 것은 각각 몇 개일까요?" : "그림에서 보이지 않는 쌓기나무는 몇 개일까요? (보이지 않는 곳에도 빈틈없이 쌓았어요.)", figure: cubesFig(map, { walls, tone: "given" }), steps, answer: all ? `전체 ${total}개, 보이는 것 ${seen}개, 보이지 않는 것 ${hidden.length}개예요.` : `${hidden.length}개예요.`, value: { kind: "cube-hidden", map, total, seen, hidden: hidden.length, ask } };
+}
+function boxFillExample({ id, title, dims, map }) {
+  const [W, H, D] = dims, layer = W * D, total = layer * H, placed = cubeTotal(map), need = total - placed;
+  const box = { kind: "b4-box", dims, map };
+  const steps = [
+    { text: `한 층에 가로 ${W}개 × 세로 ${D}개 = ${layer}개가 들어가요.`, figure: { ...box, tone: "doing" } },
+    { text: `${H}층이라 상자 전체는 ${layer} × ${H} = ${total}개.`, figure: { ...box, tone: "doing" } },
+    { text: `이미 놓인 것은 층수를 더해 ${map.flat().filter(Boolean).join(" + ")} = ${placed}개. 더 필요한 것은 ${total} − ${placed} = ${need}개.`, figure: { ...box, tone: "check" } }
+  ];
+  return { id, title, problem: `가로 ${W}칸, 세로 ${D}칸, 높이 ${H}칸인 상자에 쌓기나무를 넣어 두었어요. 상자를 꽉 채우려면 쌓기나무가 몇 개 더 필요할까요?`, figure: { ...box, tone: "given" }, steps, answer: `${need}개 더 필요해요.`, value: { kind: "cube-box", dims, map, need } };
+}
+function removeCubesExample({ id, title, from, to }) {
+  const a = cubeTotal(from), b = cubeTotal(to);
+  const steps = [
+    { text: `가 모양은 층수를 모두 더해 ${from.flat().filter(Boolean).join(" + ")} = ${a}개.`, figure: cubesFig(from, { labels: true }) },
+    { text: `나 모양은 ${to.flat().filter(Boolean).join(" + ")} = ${b}개.`, figure: cubesFig(to, { labels: true }) },
+    { text: `빼야 하는 것은 ${a} − ${b} = ${a - b}개.`, figure: cubesFig(to, { tone: "check" }) }
+  ];
+  return { id, title, problem: "가 모양에서 쌓기나무를 빼서 나 모양을 만들려고 해요. 몇 개를 빼야 할까요? (보이지 않는 곳에도 빈틈없이 쌓았어요.)", figure: { kind: "b4-pair", figures: [{ label: "가", map: from }, { label: "나", map: to }] }, steps, answer: `${a - b}개를 빼야 해요.`, value: { kind: "cube-remove", from, to, diff: a - b } };
+}
+function cubePartsExample({ id, title }) {
+  const steps = [
+    { text: "면: 위·아래, 앞·뒤, 왼쪽·오른쪽 — 2 + 2 + 2 = 6개.", figure: cubesFig([[1]]) },
+    { text: "모서리: 윗면 둘레 4개, 아랫면 둘레 4개, 위아래를 잇는 기둥 4개 — 4 + 4 + 4 = 12개.", figure: cubesFig([[1]]) },
+    { text: "꼭짓점: 윗면에 4개, 아랫면에 4개 — 4 + 4 = 8개.", figure: cubesFig([[1]], { tone: "check" }) }
+  ];
+  return { id, title, problem: "상자 모양 지우개(직육면체)의 면, 모서리, 꼭짓점은 각각 몇 개일까요?", figure: cubesFig([[1]], { tone: "given" }), steps, answer: "면 6개, 모서리 12개, 꼭짓점 8개예요.", value: { kind: "cube-parts", faces: 6, edges: 12, vertices: 8 } };
+}
+// 페인트칠: 한 모서리에 n개(n × n × n). 꼭짓점 8개는 세 면, 모서리 가운데는 두 면, 면 가운데는 한 면, 속은 칠해지지 않는다
+function paintExample({ id, title, n }) {
+  const m = n - 2, three = 8, two = 12 * m, one = 6 * m * m, zero = m ** 3, full = Array.from({ length: n }, () => Array(n).fill(n));
+  const steps = [
+    { text: `쌓기나무는 ${n} × ${n} × ${n} = ${n ** 3}개. 세 면이 칠해진 것은 꼭짓점 자리라 ${three}개.`, figure: cubesFig(full) },
+    { text: `두 면: 모서리 12개마다 꼭짓점을 뺀 가운데 ${n} − 2 = ${m}개씩, 12 × ${m} = ${two}개.`, figure: cubesFig(full) },
+    { text: `한 면: 면 6개마다 가장자리를 뺀 가운데 ${m} × ${m} = ${m * m}개씩, 6 × ${m * m} = ${one}개.`, figure: cubesFig(full) },
+    { text: `칠해지지 않은 것: 속의 ${m} × ${m} × ${m} = ${zero}개. 더하면 ${three} + ${two} + ${one} + ${zero} = ${n ** 3}.`, figure: cubesFig(full, { tone: "check" }) }
+  ];
+  return { id, title, problem: `쌓기나무 ${n ** 3}개로 만든 큰 정육면체의 바깥쪽 면(바닥 포함)을 모두 칠했어요. 세 면, 두 면, 한 면이 칠해진 쌓기나무와 칠해지지 않은 쌓기나무는 각각 몇 개일까요?`, figure: cubesFig(full, { tone: "given" }), steps, answer: `세 면 ${three}개, 두 면 ${two}개, 한 면 ${one}개, 칠해지지 않은 것 ${zero}개예요.`, value: { kind: "cube-paint", n, counts: [three, two, one, zero] } };
+}
+// 앞과 옆: 앞에서는 세로줄(왼쪽→오른쪽)마다, 오른쪽 옆에서는 가로줄(앞줄→뒷줄)마다 가장 높은 기둥이 보인다
+function viewsExample({ id, title, map = null, layers = null }) {
+  const heights = map || layers[0].map((row, r) => row.map((_, c) => layers.reduce((a, L) => a + L[r][c], 0)));
+  const views = cubeViews(heights), front = views.front, side = views.side;
+  const pre = layers ? [{ text: `층별 그림을 겹쳐 칸마다 몇 층인지 세요. 1층에 있고 2층에도 있으면 2층이에요.`, figure: topFig(heights) }] : [{ text: "위에서 본 칸에 층수를 써요.", figure: topFig(heights) }];
+  const steps = [
+    ...pre,
+    { text: `앞에서 보면 세로줄마다 가장 높은 기둥만 보여요. 왼쪽부터 ${front.join(", ")}층.`, figure: { kind: "cube-map", views, heights, mark: { cols: front.map((_, c) => c) }, tone: "doing" } },
+    { text: `오른쪽 옆에서 보면 앞줄이 왼쪽에 보여요. 가로줄마다 가장 높은 기둥: ${side.join(", ")}층.`, figure: { kind: "cube-map", views, heights, mark: { rows: heights.map((_, r) => r) }, tone: "doing" } },
+    { text: "앞과 옆에서 본 모양을 그리면 이렇게 돼요.", figure: { kind: "cube-views", views } }
+  ];
+  const problem = layers ? `쌓기나무를 층별로 위에서 본 모양이에요(1층부터). 앞과 오른쪽 옆에서 보면 각 줄에 몇 층이 보이는지 왼쪽 줄부터 차례로 써요.` : "쌓기나무를 앞과 오른쪽 옆에서 보면 각 줄에 몇 층이 보이는지 왼쪽 줄부터 차례로 써요. (보이지 않는 곳에는 쌓기나무가 없어요.)";
+  const given = layers ? { kind: "b4-layers", layers } : cubesFig(heights, { tone: "given" });
+  return { id, title, problem, figure: given, steps, answer: `앞 ${front.join(", ")}층, 오른쪽 옆 ${side.join(", ")}층이에요.`, value: { kind: "cube-views", heights, front, side } };
+}
+const CUBES_SET = {
+  id: "cubes",
+  types: {
+    // 4권
+    "윗면에 줄의 개수를 써서 더하기": () => [columnSumExample({ id: "csum-1", title: "예제 1", map: [[3, 2], [1, 1]] }), columnSumExample({ id: "csum-2", title: "예제 2", map: [[2, 3, 1], [1, 2, 0]] })],
+    "윗면 층수로 숨은 수 찾기": () => [hiddenCubeExample({ id: "hid-1", title: "예제 1", map: [[3, 3], [2, 1]] }), hiddenCubeExample({ id: "hid-2", title: "예제 2", map: [[2, 2, 1], [2, 1, 1]] })],
+    "보이지 않는 쌓기나무 찾기": () => [hiddenCubeExample({ id: "hid-3", title: "예제 1", map: [[3, 3], [3, 3]] })],
+    "쌓기나무 상자 채우기": () => [boxFillExample({ id: "box-1", title: "예제 1", dims: [3, 2, 2], map: [[1, 0, 0], [2, 1, 1]] })],
+    // 9권
+    "쌓기나무 전체 개수": () => [columnSumExample({ id: "csum-3", title: "예제 1", map: [[3, 1, 2], [1, 2, 0]], word: "모두" })],
+    "보이지 않는 쌓기나무": () => [hiddenCubeExample({ id: "hid-4", title: "예제 1", map: [[3, 3, 1], [2, 2, 1], [1, 1, 0]], walls: true, ask: "all" })],
+    "빼야 하는 쌓기나무": () => [removeCubesExample({ id: "rm-1", title: "예제 1", from: [[3, 3], [3, 2]], to: [[3, 1], [2, 0]] })],
+    "정육면체의 면·모서리·꼭짓점": () => [cubePartsExample({ id: "parts-1", title: "예제 1" })],
+    "페인트칠한 정육면체": () => [paintExample({ id: "paint-1", title: "예제 1", n: 4 })],
+    "앞과 옆에서 본 모양": () => [viewsExample({ id: "views-1", title: "예제 1", map: [[2, 3, 1], [1, 2, 0], [1, 0, 0]] })],
+    "층별 모양으로 앞·옆 모양": () => [viewsExample({ id: "views-2", title: "예제 1", layers: [[[1, 1, 1], [1, 1, 0], [0, 1, 0]], [[0, 0, 1], [1, 1, 0], [0, 0, 0]], [[0, 0, 0], [1, 0, 0], [0, 0, 0]]] })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

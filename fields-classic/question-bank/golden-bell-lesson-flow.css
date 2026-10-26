@@ -313,6 +313,15 @@
 .tx-strip b { font-size: 17px; font-weight: 900; color: var(--tone); }
 .tx-pieces { display: flex; justify-content: center; }
 .tx-pieces svg { width: min(100%, 328px); height: auto; }
+.tx-b4 { display: flex; justify-content: center; }
+.tx-b4 svg { max-width: 100%; height: auto; }
+.tx-b4 svg:not([width]) { width: min(100%, 240px); }
+.tx-layers { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.tx-layers figure { margin: 0; display: grid; justify-items: center; gap: 4px; }
+.tx-layers div { display: grid; grid-template-columns: repeat(var(--cols), 26px); gap: 2px; }
+.tx-layers span { height: 26px; border: 1.5px solid #c9c2b4; background: #fffdf7; border-radius: 3px; }
+.tx-layers span.on { background: #ffd45c; border-color: #a8741a; }
+.tx-layers figcaption { font-size: 13px; font-weight: 900; color: #566274; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }
