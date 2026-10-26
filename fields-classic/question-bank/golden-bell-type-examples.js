@@ -3675,9 +3675,100 @@ const FLIP4_SET = {
     "숫자를 두 번 뒤집은 모양": () => [glyphChainExample({ id: "g-two", title: "예제 1", digit: "6", ops: ["LR", "UD"] })],
     "숫자 1을 차례로 움직인 마지막 모양": () => [glyphChainExample({ id: "g-chain", title: "예제 1", digit: "2", ops: ["LR", "CW"] })],
     "한 번에 바꾸는 돌리기": () => [glyphChainExample({ id: "g-once", title: "예제 1", digit: "3", ops: ["CW", "R180"], ask: "once" })],
+    // 1권 디지털 숫자를 뒤집고 돌려요
+    "오른쪽으로 뒤집기": () => [segDigitExample({ id: "d1-lr", title: "예제 1", digit: 8, mode: "LR" })],
+    "반 바퀴 돌리기": () => [segDigitExample({ id: "d1-r", title: "예제 1", digit: 0, mode: "R180" })],
+    "한 자리 덧셈과 빈칸": () => [smallAddExample({ id: "sa-1", title: "예제 1", a: 8, b: 6 }), smallAddExample({ id: "sa-2", title: "예제 2", a: 7, b: 8, blank: true })],
+    "두 자리 덧셈": () => [arithExample({ id: "ar-3", title: "예제 1", a: 34, b: 52, op: "+" })],
+    "뒤집어도 같은 숫자": () => [segSameExample({ id: "same-lr", title: "예제 1", digits: [3, 8, 9], mode: "LR" })],
+    "뒤집으면 서로 바뀌는 숫자": () => [segPairExample({ id: "pair-lr", title: "예제 1", number: 15, mode: "LR" })],
+    "두 자리 수 뒤집기": () => [segListExample({ id: "list-lr", title: "예제 1", numbers: [28, 82, 11], mode: "LR" })],
+    "원래 수와 뒤집은 수의 합": () => [segExample({ id: "sum-lr", title: "예제 1", number: 82, mode: "LR" })],
+    "돌려도 같은 숫자": () => [segSameExample({ id: "same-r", title: "예제 1", digits: [2, 4, 7], mode: "R180" })],
+    "돌리면 서로 바뀌는 숫자": () => [segPairExample({ id: "pair-r", title: "예제 1", number: 16, mode: "R180" })],
+    "두 자리 수 반 바퀴": () => [segListExample({ id: "list-r", title: "예제 1", numbers: [19, 26, 58], mode: "R180" })],
+    "원래 수와 돌린 수의 합": () => [segExample({ id: "sum-r", title: "예제 1", number: 59, mode: "R180" })],
+    "받아올림이 있는 덧셈": () => [arithExample({ id: "ar-4", title: "예제 1", a: 27, b: 46, op: "+" })],
+    "두 자리 뺄셈": () => [arithExample({ id: "ar-5", title: "예제 1", a: 74, b: 38, op: "-" })],
+    "세 자리 덧셈": () => [add3Example({ id: "ar-6", title: "예제 1", a: 246, b: 37 })],
+    // 1권 거울에 비친 모양
+    "오른쪽 거울": () => [mirrorExample({ id: "mir-r", title: "예제 1", digit: "4", side: "right" })],
+    "왼쪽 거울": () => [mirrorExample({ id: "mir-l", title: "예제 1", digit: "7", side: "left" })],
+    "위쪽 거울": () => [mirrorExample({ id: "mir-t", title: "예제 1", digit: "2", side: "top" })],
+    "아래쪽 거울": () => [mirrorExample({ id: "mir-b", title: "예제 1", digit: "3", side: "bottom" })],
     "숫자판을 움직여 똑바로 놓이는 수": () => [uprightExample({ id: "up-1", title: "예제 1", cells: [{ value: "3", t: "CCW" }, { value: "7", t: "I" }, { value: "5", t: "R180" }, { value: "6", t: "CCW" }], ops: ["CW"] })]
   }
 };
+
+// ───────────────────────── 1권 디지털 숫자 · 거울 (flip4 묶음의 막대 옮기기와 행렬을 같이 쓴다) ─────────────────────────
+const MODE_DO = { LR: "오른쪽으로 뒤집으면", R180: "반 바퀴 돌리면" };
+function segDigitExample({ id, title, digit, mode }) {
+  const r = segOf(String(digit), mode), on = SEG7[String(digit)];
+  if (r === null) throw new Error(`${id}: 숫자가 되지 않음`);
+  const steps = [
+    { text: `${digit}에 켜진 막대는 ${on.length}개예요. ${MODE_DO[mode]} ${mode === "LR" ? "왼쪽 막대와 오른쪽 막대가 자리를 바꿔요" : "위아래 막대도, 왼쪽·오른쪽 막대도 자리를 바꿔요"}.`, figure: { kind: "seg7", rows: [{ label: "처음", number: String(digit) }] } },
+    { text: `옮긴 막대를 읽으면 ${r}.`, figure: { kind: "seg7", rows: [{ label: "처음", number: String(digit) }, { label: mode === "LR" ? "뒤집은 뒤" : "돌린 뒤", number: r }], tone: "check" } }
+  ];
+  return { id, title, problem: `디지털 숫자 ${josa(digit, "을")} ${mode === "LR" ? "오른쪽으로 뒤집으면" : "반 바퀴 돌리면"} 어떤 수가 될까요?`, figure: { kind: "seg7", rows: [{ label: "처음", number: String(digit) }], tone: "given" }, steps, answer: `${josa(r, "이에요")}.`, value: { kind: "seg-digit", digit: String(digit), mode, r } };
+}
+// 몇 개의 숫자 중에서 움직여도 그대로인 숫자만(0~9 전체가 아니라 고른 숫자들로 방법을 익힌다)
+function segSameExample({ id, title, digits, mode }) {
+  const res = digits.map((d) => segOf(String(d), mode)), same = digits.filter((d, i) => res[i] === String(d));
+  const steps = [
+    ...digits.map((d, i) => ({ text: `${d}: ${MODE_DO[mode]} ${res[i] === null ? "숫자 모양이 아니에요" : res[i] === String(d) ? "그대로예요" : `${josa(res[i], "이")} 돼요`}.`, figure: { kind: "seg7", rows: [{ label: "처음", number: String(d) }, ...(res[i] !== null ? [{ label: "움직인 뒤", number: res[i] }] : [])] } }))
+  ];
+  steps.at(-1).figure.tone = "check";
+  return { id, title, problem: `디지털 숫자 ${digits.join(", ")} 중에서 ${mode === "LR" ? "오른쪽으로 뒤집어도" : "반 바퀴 돌려도"} 자기 자신이 되는 숫자를 모두 찾아요.`, figure: { kind: "seg7", rows: [{ label: "숫자", number: digits.join("") }], tone: "given" }, steps, answer: same.length ? `${josa(same.join(", "), "이에요")}.` : "없어요.", value: { kind: "seg-same", digits: digits.map(String), mode, same: same.map(String) } };
+}
+// 두 자리 수가 서로 바뀌는 짝: number를 움직인 수를 다시 움직이면 처음 수
+function segPairExample({ id, title, number, mode }) {
+  const m = segNumber(number, mode), back = segNumber(m, mode);
+  if (m === null || back !== String(number) || m === String(number)) throw new Error(`${id}: 서로 바뀌는 짝이 아님`);
+  const steps = [
+    { text: `${number}: 숫자마다 움직이고 자리 순서도 뒤집으면 ${m}.`, figure: { kind: "seg7", rows: [{ label: "처음", number: String(number) }, { label: "움직인 뒤", number: m }] } },
+    { text: `${josa(m, "을")} 다시 움직이면 ${back}. 둘은 서로 바뀌는 짝이에요.`, figure: { kind: "seg7", rows: [{ label: "처음", number: m }, { label: "움직인 뒤", number: back }], tone: "check" } }
+  ];
+  return { id, title, problem: `디지털 숫자 ${josa(number, "을")} ${mode === "LR" ? "오른쪽으로 뒤집은" : "반 바퀴 돌린"} 수를 구하고, 그 수를 다시 ${mode === "LR" ? "뒤집으면" : "돌리면"} 무엇이 되는지 알아봐요.`, figure: { kind: "seg7", rows: [{ label: "처음", number: String(number) }], tone: "given" }, steps, answer: `${m}, 다시 ${josa(back, "이에요")}.`, value: { kind: "seg-pair", number: String(number), mode, m } };
+}
+function segListExample({ id, title, numbers, mode }) {
+  const res = numbers.map((n) => segNumber(n, mode));
+  if (res.includes(null)) throw new Error(`${id}: 숫자가 되지 않음`);
+  const steps = numbers.map((n, i) => ({ text: `${n}: 숫자마다 ${[...String(n)].map((d) => `${d} → ${segOf(d, mode)}`).join(", ")}, 자리를 바꾸면 ${res[i]}.`, figure: { kind: "seg7", rows: [{ label: "처음", number: String(n) }, { label: "움직인 뒤", number: res[i] }], tone: i === numbers.length - 1 ? "check" : "doing" } }));
+  return { id, title, problem: `두 자리 수 ${josa(numbers.join(", "), "을")} 각각 ${mode === "LR" ? "오른쪽으로 뒤집어" : "반 바퀴 돌려"} 읽은 수를 써요.`, figure: { kind: "seg7", rows: numbers.map((n) => ({ label: "", number: String(n) })), tone: "given" }, steps, answer: `차례로 ${josa(res.join(", "), "이에요")}.`, value: { kind: "seg-list", numbers: numbers.map(String), mode, res } };
+}
+function smallAddExample({ id, title, a, b, blank = false }) {
+  const total = a + b, ten = 10 - a;
+  if (blank) {
+    const steps = [
+      { text: `${a}에 얼마를 더해 ${josa(total, "이")} 되는지 찾아요. ${a}에 ${josa(ten, "을")} 더하면 10이 돼요.`, figure: { kind: "eqs", lines: [`${a} + □ = ${total}`, `${a} + ${ten} = 10`], tone: "doing" } },
+      { text: `10에서 ${total}까지 ${total - 10} 더. 그래서 □ = ${ten} + ${total - 10} = ${b}.`, figure: { kind: "eqs", lines: [`${a} + ${b} = ${total}`], tone: "check" } }
+    ];
+    return { id, title, problem: `□에 알맞은 수를 구해요. ${a} + □ = ${total}`, figure: { kind: "eqs", lines: [`${a} + □ = ${total}`], tone: "given" }, steps, answer: `□는 ${josa(b, "이에요")}.`, value: { kind: "small-add", a, b, total, blank } };
+  }
+  const steps = [
+    { text: `${josa(a, "이")} 10이 되려면 ${josa(ten, "이")} 더 필요해요. ${josa(b, "을")} ${josa(ten, "과")} ${numEuro(b - ten)} 갈라요.`, figure: { kind: "eqs", lines: [`${a} + ${b}`, `= ${a} + ${ten} + ${b - ten}`], tone: "doing" } },
+    { text: `10 + ${b - ten} = ${total}.`, figure: { kind: "eqs", lines: [`${a} + ${b} = ${total}`], tone: "check" } }
+  ];
+  return { id, title, problem: `계산해요. ${a} + ${b} = ?`, figure: { kind: "eqs", lines: [`${a} + ${b}`], tone: "given" }, steps, answer: `${josa(total, "이에요")}.`, value: { kind: "small-add", a, b, total, blank } };
+}
+function add3Example({ id, title, a, b }) {
+  const r = a + b, ds = (n) => [Math.floor(n / 100), Math.floor(n / 10) % 10, n % 10], [A2, A1, A0] = ds(a), [, B1, B0] = ds(b);
+  const c0 = A0 + B0 >= 10 ? 1 : 0, s1 = A1 + B1 + c0, c1 = s1 >= 10 ? 1 : 0;
+  const steps = [
+    { text: `자리를 맞춰 세로로 써요. 일의 자리: ${A0} + ${B0} = ${A0 + B0}${c0 ? ", 1을 올려요" : ""}.`, figure: { kind: "eqs", lines: [`  ${a}`, `+  ${b}`], tone: "doing" } },
+    { text: `십의 자리: ${A1} + ${B1}${c0 ? " + 1" : ""} = ${s1}${c1 ? ", 1을 올려요" : ""}. 백의 자리${c1 ? `: ${A2} + 1 = ${A2 + 1}` : `는 그대로 ${A2}`}. 답은 ${r}.`, figure: { kind: "eqs", lines: [`  ${a}`, `+  ${b}`, `= ${r}`], tone: "check" } }
+  ];
+  return { id, title, problem: `계산해요. ${a} + ${b} = ?`, figure: { kind: "eqs", lines: [`${a} + ${b}`], tone: "given" }, steps, answer: `${josa(r, "이에요")}.`, value: { kind: "arith", a, b, op: "+", r } };
+}
+// 거울: 옆 거울은 오른쪽으로 뒤집기(LR), 위아래 거울은 아래로 뒤집기(UD). 보기는 같은 숫자의 여덟 가지 놓임
+function mirrorExample({ id, title, digit, side }) {
+  const op = side === "left" || side === "right" ? "LR" : "UD", pick = OPTS.indexOf(op), word = { left: "왼쪽", right: "오른쪽", top: "위쪽", bottom: "아래쪽" }[side];
+  const steps = [
+    { text: `${word} 거울에 비치면 거울 쪽으로 접은 것처럼 ${op === "LR" ? "왼쪽과 오른쪽만 바뀌고 위아래는 그대로" : "위와 아래만 바뀌고 왼쪽·오른쪽은 그대로"}예요.`, figure: { kind: "glyphs", digit, start: "I", ops: [{ op, show: null }] } },
+    { text: `거울에 가까운 쪽은 비친 모양에서도 거울에 가까워요. 그 모양은 보기 ${circIs(pick)}.`, figure: { kind: "glyphs", digit, start: "I", ops: [{ op, show: op }], options: OPTS, hi: pick, tone: "check" } }
+  ];
+  return { id, title, problem: `숫자 ${josa(digit, "을")} ${word} 거울에 비춘 모양을 보기에서 골라요.`, figure: { kind: "glyphs", digit, start: "I", ops: [{ op, show: null }], options: OPTS, tone: "given" }, steps, answer: `${circIs(pick)}.`, value: { kind: "glyph-pick", digit, ops: [op], last: op, pick } };
+}
 
 export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET, [NLINE6_SET.id]: NLINE6_SET, [FRAC_SET.id]: FRAC_SET, [AREA_SET.id]: AREA_SET, [FLIP4_SET.id]: FLIP4_SET });
 

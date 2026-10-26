@@ -1182,7 +1182,24 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       const want = v.card ? Math.abs(Number(v.number) - Number(m)) : v.op === "+" ? Number(v.number) + Number(m) : Number(v.number) - Number(m);
       assert.equal(v.r, want); assert.deepEqual(nums(ex.answer), [want]);
       for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) assert.notEqual(String(vis.number ?? vis.card), v.number, `${ex.id}: 원본과 같은 수`);
-    } else if (["glyph-pick", "glyph-once", "upright"].includes(v.kind)) {
+    } else if (["seg-digit", "seg-same", "seg-pair", "seg-list"].includes(v.kind)) {
+      const SEG = { "0": "abcdef", "1": "bc", "2": "abdeg", "3": "abcdg", "4": "bcfg", "5": "acdfg", "6": "acdefg", "7": "abcf", "8": "abcdefg", "9": "abcdfg" };
+      const move = v.mode === "LR" ? { a: "a", b: "f", c: "e", d: "d", e: "c", f: "b", g: "g" } : { a: "d", b: "e", c: "f", d: "a", e: "b", f: "c", g: "g" };
+      const read = (d) => (d === "1" ? "1" : Object.keys(SEG).find((k) => [...SEG[k]].sort().join() === [...SEG[d]].map((x) => move[x]).sort().join()) ?? null);
+      const num = (n) => { const ds = [...String(n)].map(read); return ds.includes(null) ? null : ds.reverse().join(""); };
+      if (v.kind === "seg-digit") { assert.equal(v.r, read(v.digit)); assert.deepEqual(nums(ex.answer), [Number(v.r)]); }
+      else if (v.kind === "seg-same") { const same = v.digits.filter((d) => read(d) === d); assert.deepEqual(v.same, same); assert.deepEqual(nums(ex.answer), same.map(Number)); assert.ok(v.digits.length < 10, `${ex.id}: 0~9 전체를 다 보이면 원본 답이 된다`); }
+      else if (v.kind === "seg-pair") { assert.equal(v.m, num(v.number)); assert.equal(num(v.m), v.number); assert.notEqual(v.m, v.number); assert.deepEqual(nums(ex.answer), [Number(v.m), Number(v.number)]); }
+      else { assert.deepEqual(v.res, v.numbers.map(num)); assert.deepEqual(nums(ex.answer), v.res.map(Number)); }
+      // 같은 움직임의 원본: 한 숫자 문제(digital-transform)와 두 자리 수 목록·합의 수. 0~9 규칙판은 숫자 전체라 빼고, 고른 숫자만 보는 예제는 길이로 막는다
+      const op = v.mode === "LR" ? "mirror-left-right" : "rotate-half";
+      for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) {
+        if (vis.operation !== op) continue;
+        const theirs = vis.subtype === "digital-transform" ? (vis.digits || []).map(String) : vis.grouped ? vis.digits.map(String) : vis.source ? [vis.source.join("")] : [];
+        for (const d of [v.number, v.digit, ...(v.numbers || [])].filter(Boolean)) assert.ok(!theirs.includes(d), `${ex.id}: 원본과 같은 수 ${d}`);
+      }
+    } else if (v.kind === "small-add") { assert.equal(v.a + v.b, v.total); assert.deepEqual(nums(ex.answer), [v.blank ? v.b : v.total]); }
+    else if (["glyph-pick", "glyph-once", "upright"].includes(v.kind)) {
       // 화면 좌표 행렬을 곱해 마지막 놓임을 다시 구한다
       const M = { I: [1, 0, 0, 1], LR: [-1, 0, 0, 1], UD: [1, 0, 0, -1], R180: [-1, 0, 0, -1], CW: [0, -1, 1, 0], CCW: [0, 1, -1, 0], T: [0, 1, 1, 0], AT: [0, -1, -1, 0] };
       const mm = (p, q) => [p[0] * q[0] + p[1] * q[2], p[0] * q[1] + p[1] * q[3], p[2] * q[0] + p[3] * q[2], p[2] * q[1] + p[3] * q[3]];

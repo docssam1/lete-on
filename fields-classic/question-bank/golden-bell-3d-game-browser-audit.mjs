@@ -339,8 +339,9 @@ try {
       }
       if (!SOLVED_GAMES.has(flow.game)) {
         // 흐름 검사가 풀이를 모르는 게임(그 게임은 자기 검사기가 끝까지 푼다): 게임이 뜨고 그려지는지만 보고 「골든벨 문제 풀기」로 넘어간다
-        const game = page.locator(".gb-flow-game"), level = !HANDS_ON_ACTIVITIES[flow.game] || HANDS_ON_ACTIVITIES[flow.game].kind === "level-game";
-        if (level) {
+        const game = page.locator(".gb-flow-game"), own = ["digital", "shape-moves"].includes(flow.game), level = !own && (!HANDS_ON_ACTIVITIES[flow.game] || HANDS_ON_ACTIVITIES[flow.game].kind === "level-game");
+        if (own) await game.locator(".gb-flow-game-host > :not(.gb-flow-loading)").first().waitFor();   // 학습 덱의 우리 게임: 판이 그려졌는지
+        else if (level) {
           await game.locator(".cg").waitFor();
           await page.locator("[data-game-go]").first().click();
           await game.locator("[data-game-controls]").first().waitFor();

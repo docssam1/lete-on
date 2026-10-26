@@ -2,7 +2,7 @@
 // 한 단계씩 연다: 0단계 = 문제만, 1~N단계 = 풀이가 하나씩, 마지막 = 답. 답은 마지막 단계 전에는 화면에 없다.
 // 색은 골든벨 색표(쌓기나무·모양·숫자판·저울), 안내 단계 색은 주어진 것 파랑 · 하는 일 금색 · 확인 진초록.
 
-import { book04Markup, obliqueCubes, digitGlyph, opIcon, sevenSegNumber } from "./book04-renderers.js?v=20261028u";
+import { book04Markup, obliqueCubes, digitGlyph, opIcon, sevenSegNumber } from "./book04-renderers.js?v=20261028v";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const TONE = { given: "#2f6fe0", doing: "#d39b20", check: "#16734b" };

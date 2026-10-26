@@ -1,5 +1,5 @@
-import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028u";
-import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261028u";
+import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028v";
+import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261028v";
 
 // 개념 단계 안의 학습 순서: ① 개념 설명 → ② 유형별 예제 → ③ 게임 → (골든벨 문제).
 // 원장 지시: "개념마다 설명하는 튜토리얼, 문제 유형마다 예제 1~2개, 그다음 게임."
@@ -141,9 +141,11 @@ export const LESSON_FLOWS = Object.freeze({
   "book-03/unit-area-shapes": { examples: "area", game: "drill" },
   "book-09/unit-area-and-half": { examples: "area", game: "drill" },
   "book-04/digital-flip-source": { examples: "flip4", game: "drill" },
-  "book-04/flip-rotate-source": { examples: "flip4", game: "drill" }
+  "book-04/flip-rotate-source": { examples: "flip4", game: "drill" },
+  "book-01/digital-turn-flip": { examples: "flip4", game: "digital" },
+  "book-01/mirror-reflection": { examples: "flip4", game: "shape-moves" }
 });
-export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방", "share-equally": "같아지도록 옮기기", "cross-sums": "두 줄의 합 맞추기", "line-order": "조건대로 줄 세우기", "b2-matrix": "도형 값 찾기", "b2-pattern": "무늬 기차", "b2-sudoku": "빈칸 채우기" });
+export const FLOW_GAME_TITLES = Object.freeze({ "turn-clock": "시계 바늘 돌리기", "b2-balance": "무게 줄 세우기", "b9-cubes": "쌓기나무 탑 쌓기", "b9-magic": "숫자 유리창", drill: "연습 공방", "share-equally": "같아지도록 옮기기", "cross-sums": "두 줄의 합 맞추기", "line-order": "조건대로 줄 세우기", "b2-matrix": "도형 값 찾기", "b2-pattern": "무늬 기차", "b2-sudoku": "빈칸 채우기", digital: "디지털 숫자 공방", "shape-moves": "뒤집고 돌리기 공방" });
 const STEPS = [["tutorial", "개념 설명"], ["examples", "유형별 예제"], ["game", "게임"]];
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -198,7 +200,18 @@ function exampleView(view, groups) {
   return { type: view.type, example: view.example, step: view.exStep, seen: view.seen };
 }
 
+// 학습 덱의 우리 게임(study-map.js OWN_GAMES와 같은 파일·꼬리표). 끝내면 골든벨 문제로 간다
+const OWN_FLOW_GAMES = {
+  digital: { module: "./game-digital.js?v=20261024d", css: "./game-digital.css?v=20261024a", mount: "mountDigitalWorkshop" },
+  "shape-moves": { module: "./game-shape-moves.js?v=20261024d", css: "./game-shape-moves.css?v=20261024c", mount: "mountShapeMoves" }
+};
 async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson }) {
+  if (Object.hasOwn(OWN_FLOW_GAMES, gameId)) {
+    const game = OWN_FLOW_GAMES[gameId];
+    if (!document.querySelector(`link[href="${game.css}"]`)) document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="${game.css}">`);
+    const mod = await import(game.module);
+    return mod[game.mount](host, { onDone: () => onQuestions?.() });
+  }
   if (gameId === "drill") {
     // 연습 공방은 창(iframe) 안에서 돈다. 마지막 「골든벨 문제로」를 누르면 골든벨 문제 칸으로 간다.
     if (!document.querySelector('link[data-drill-css]')) document.head.insertAdjacentHTML("beforeend", '<link rel="stylesheet" href="./game-drill.css?v=20261027a" data-drill-css>');
