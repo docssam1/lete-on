@@ -3202,7 +3202,185 @@ const CUBES_SET = {
   }
 };
 
-export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET });
+// ───────────────────────── 6권 수직선의 거리 · 수직선과 비 · 분수와 비 · 막대와 저울의 비 ─────────────────────────
+// 수직선(kind "nline"): pts = 큰 눈금 [{ at, label }](label이 「?」·글자면 구할 자리), segs = 큰 눈금 사이마다 { n(똑같이 나눈 칸 수), mark(○·△를 칸마다), name(첫 칸 위 이름), hi },
+// spans = 줄 밑 꺾쇠 [{ from, to, label, ask }](at 값). 분수는 「3분의 2」처럼 말로 쓰고, 그림(kind "fracs")에서 위아래로 쌓는다.
+const nline = (pts, segs, p = {}) => ({ kind: "nline", pts, segs, spans: p.spans || [], tone: p.tone || "doing" });
+const ptsOf = (vals, names = {}) => vals.map((at, i) => ({ at, label: names[i] ?? String(at) }));
+function lineDistExample({ id, title, a, b, n = 1, ask = "one", name = "㉠", word = null }) {
+  const d = b - a, u = d / n;
+  if (!Number.isInteger(u)) throw new Error(`${id}: 나누어떨어지지 않음`);
+  const seg = (p) => [{ n, name: n > 1 ? name : "", ...p }];
+  const steps = [{ text: `큰 수에서 작은 수를 빼면 두 수 사이의 거리예요. ${b} − ${a} = ${d}.`, figure: nline(ptsOf([a, b]), seg({}), { spans: [{ from: a, to: b, label: String(d) }] }) }];
+  if (n > 1) {
+    steps.push({ text: `${word || `똑같이 ${n}칸`}으로 나누었어요. 눈금 수가 아니라 칸 수 ${n}개를 세요.`, figure: nline(ptsOf([a, b]), seg({ hi: true }), { spans: [{ from: a, to: b, label: String(d) }] }) });
+    steps.push({ text: `한 칸은 ${d} ÷ ${n} = ${u}.`, figure: nline(ptsOf([a, b]), seg({ hi: true }), { spans: [{ from: a, to: a + u, label: String(u) }], tone: "check" }) });
+  } else steps.push({ text: `수직선에서 ${a}부터 ${b}까지 ${d}만큼 떨어져 있어요.`, figure: nline(ptsOf([a, b]), seg({}), { spans: [{ from: a, to: b, label: String(d) }], tone: "check" }) });
+  const problem = n === 1 ? `${josa(a, "과")} ${b} 사이의 거리는 얼마일까요?` : ask === "both" ? `${a}부터 ${b}까지를 똑같이 ${n}칸으로 나누었어요. ① 전체 거리와 ② 한 칸의 거리를 구해요.` : `${a}부터 ${b}까지를 ${word || `똑같이 ${n}칸`}으로 나누었어요. ${name}으로 표시한 한 칸의 거리는 얼마일까요?`;
+  const answer = n === 1 ? `${josa(d, "이에요")}.` : ask === "both" ? `① ${d}, ② ${josa(u, "이에요")}.` : `${josa(u, "이에요")}.`;
+  return { id, title, problem, figure: nline(ptsOf([a, b]), seg({}), { tone: "given" }), steps, answer, value: { kind: "line-dist", a, b, n, d, u, ask } };
+}
+// 두 구간: 앞 구간은 n1칸(○), 뒤 구간은 n2칸(△). ask "units" = ○·△ 한 칸, "find" = 칸을 세어 A·B 자리의 수, "multi" = ①②·A·B 한 칸·☆
+function twoSegExample({ id, title, pts, n1, n2, ask = "units", find = null, star = null }) {
+  const [a, b, c] = pts, d1 = b - a, d2 = c - b, u1 = d1 / n1, u2 = d2 / n2;
+  if (!Number.isInteger(u1) || !Number.isInteger(u2)) throw new Error(`${id}: 나누어떨어지지 않음`);
+  const marks = ask === "multi" ? [{ n: n1, name: "A" }, { n: n2, name: "B" }] : [{ n: n1, mark: "○" }, { n: n2, mark: "△" }];
+  const w = ask === "multi" ? ["A", "B"] : ["○", "△"];
+  const base = (p = {}) => nline(ptsOf(pts, p.names || {}), marks.map((s, i) => ({ ...s, hi: p.hi === i })), { spans: p.spans, tone: p.tone });
+  const steps = [
+    { text: `앞 구간: ${b} − ${a} = ${d1}. ${n1}칸으로 나누면 ${w[0]} 한 칸은 ${d1} ÷ ${n1} = ${u1}.`, figure: base({ hi: 0, spans: [{ from: a, to: b, label: String(d1) }] }) },
+    { text: `뒤 구간: ${c} − ${b} = ${d2}. ${n2}칸으로 나누면 ${w[1]} 한 칸은 ${d2} ÷ ${n2} = ${u2}.`, figure: base({ hi: 1, spans: [{ from: b, to: c, label: String(d2) }] }) }
+  ];
+  let problem, answer, value = { kind: "two-seg", pts, n1, n2, u1, u2, ask };
+  if (ask === "units") {
+    steps.at(-1).figure.tone = "check";
+    problem = `${a}, ${b}, ${c} 사이를 ○ 칸 ${n1}개, △ 칸 ${n2}개로 나누었어요. ○ 칸끼리, △ 칸끼리 거리가 같아요. ○와 △는 각각 얼마일까요?`;
+    answer = `○ = ${u1}, △ = ${josa(u2, "이에요")}.`;
+  } else if (ask === "find") {
+    const [k1, k2] = find, A = a + k1 * u1, B = b + k2 * u2;
+    steps.push({ text: `A는 ${a}에서 ○ ${k1}칸: ${a} + ${u1} × ${k1} = ${A}. B는 ${b}에서 △ ${k2}칸: ${b} + ${u2} × ${k2} = ${B}.`, figure: nline([...ptsOf(pts), { at: A, label: "A" }, { at: B, label: "B" }].sort((x, y) => x.at - y.at), marks, { tone: "check" }) });
+    problem = `${a}, ${b}, ${c} 사이를 ○ 칸 ${n1}개, △ 칸 ${n2}개로 나누었어요. ${a}에서 ○ ${k1}칸 간 자리가 A, ${b}에서 △ ${k2}칸 간 자리가 B예요. A와 B에 알맞은 수는?`;
+    answer = `A = ${A}, B = ${josa(B, "이에요")}.`; value = { ...value, A, B, find };
+  } else {
+    const [s1, s2] = star, from = a + s1 * u1, to = b + s2 * u2, len = to - from;
+    steps.push({ text: `☆는 ${a}에서 A ${s1}칸 간 자리부터 ${b}에서 B ${s2}칸 간 자리까지예요. A ${n1 - s1}칸과 B ${s2}칸이라 ${u1} × ${n1 - s1} + ${u2} × ${s2} = ${len}.`, figure: base({ spans: [{ from, to, label: "☆" }], tone: "check" }) });
+    problem = `${a}, ${b}, ${c} 사이를 A 칸 ${n1}개, B 칸 ${n2}개로 나누었어요. A 칸끼리, B 칸끼리 거리가 같아요. ① ${a}~${b}의 거리, ② ${b}~${c}의 거리, A 한 칸, B 한 칸, 그리고 ${a}에서 A ${s1}칸 간 곳부터 ${b}에서 B ${s2}칸 간 곳까지의 거리 ☆를 구해요.`;
+    answer = `① ${d1}, ② ${d2}, A ${u1}, B ${u2}, ☆ ${josa(len, "이에요")}.`; value = { ...value, star, len };
+  }
+  return { id, title, problem, figure: base({ tone: "given" }), steps, answer, value };
+}
+// 같은 길이를 위는 a칸, 아래는 b칸으로
+function splitTwoExample({ id, title, start, end, a, b }) {
+  const T = end - start, A = T / a, B = T / b;
+  if (!Number.isInteger(A) || !Number.isInteger(B)) throw new Error(`${id}: 나누어떨어지지 않음`);
+  const rows = (s) => [{ label: "위", n: a, len: s ? `${A}씩` : null }, { label: "아래", n: b, len: s ? `${B}씩` : null }];
+  const steps = [
+    { text: `총 길이는 ${end} − ${start} = ${T}.`, figure: pieces([{ label: "전체", n: 1, len: String(T) }, ...rows(false)]) },
+    { text: `위는 ${a}칸이라 A = ${T} ÷ ${a} = ${A}, 아래는 ${b}칸이라 B = ${T} ÷ ${b} = ${B}.`, figure: pieces([{ label: "전체", n: 1, len: String(T) }, ...rows(true)]) },
+    { text: `같은 길이를 적게 나눈 위쪽 한 칸이 더 길어요. A : B = ${A} : ${B}.`, figure: pieces([{ label: "전체", n: 1, len: String(T) }, ...rows(true)], "check") }
+  ];
+  return { id, title, problem: `${start}부터 ${end}까지의 같은 길이를 위는 A 칸 ${a}개로, 아래는 B 칸 ${b}개로 똑같이 나누었어요. 총 길이, A 한 칸, B 한 칸의 길이를 구해요.`, figure: pieces([{ label: "전체", n: 1, len: null }, ...rows(false)], "given"), steps, answer: `총 길이 ${T}, A ${A}, B ${josa(B, "이에요")}.`, value: { kind: "split-two", start, end, a, b, T, A, B } };
+}
+function ratioSeqExample({ id, title, p, q, count = 5 }) {
+  const rows = Array.from({ length: count }, (_, k) => [p * (k + 1), q * (k + 1)]), next = [p * (count + 1), q * (count + 1)];
+  const steps = [
+    { text: `앞 수는 ${p}씩, 뒤 수는 ${q}씩 커져요. 첫 비 ${p} : ${q}에 2, 3, 4…를 곱한 것이에요.`, figure: { kind: "eqs", lines: rows.map(([x, y], k) => `${x} : ${y}${k ? `  (× ${k + 1})` : ""}`), tone: "doing" } },
+    { text: `다음은 × ${count + 1}: ${p} × ${count + 1} = ${next[0]}, ${q} × ${count + 1} = ${next[1]}.`, figure: { kind: "eqs", lines: [...rows.map(([x, y]) => `${x} : ${y}`), `${next[0]} : ${next[1]}`], on: [count], tone: "check" } }
+  ];
+  return { id, title, problem: `같은 비를 차례로 늘어놓았어요. ${rows.map(([x, y]) => `${x} : ${y}`).join(", ")} 다음에 올 비는 무엇일까요?`, figure: { kind: "eqs", lines: [...rows.map(([x, y]) => `${x} : ${y}`), "가 : 나"], tone: "given" }, steps, answer: `${next[0]} : ${josa(next[1], "이에요")}.`, value: { kind: "ratio-seq", p, q, count, next } };
+}
+// 분수 그림: fracs = [[분자, 분모]] — null은 빈칸 □
+const fracs = (list, p = {}) => ({ kind: "fracs", list, hi: p.hi, tone: p.tone || "doing" });
+const fracWord = ([n, d]) => `${d}분의 ${n}`;
+function fracChainExample({ id, title, base, items }) {
+  const [bn, bd] = base, done = [base, ...items.map((x) => [...x])], steps = [];
+  items.forEach(([n, d], i) => {
+    const k = n !== null ? n / bn : d / bd;
+    if (!Number.isInteger(k) && !Number.isInteger(1 / k)) throw new Error(`${id}: 배수가 아님`);
+    const fill = [bn * k, bd * k], known = n !== null ? "분자" : "분모", kv = n !== null ? n : d;
+    done[i + 1] = fill;
+    const from = n !== null ? bn : bd, other = n !== null ? "분모" : "분자", ov = n !== null ? bd : bn;
+    steps.push({ text: `${known}가 ${from}에서 ${josa(kv, "이")} 됐어요(${k >= 1 ? `× ${k}` : `÷ ${1 / k}`}). ${other}에도 똑같이: ${k >= 1 ? `${ov} × ${k}` : `${ov} ÷ ${1 / k}`} = ${n !== null ? fill[1] : fill[0]}.`, figure: fracs(done.map((x, j) => (j <= i + 1 ? x : items[j - 1])), { hi: [i + 1] }) });
+  });
+  steps.at(-1).figure.tone = "check";
+  return { id, title, problem: `${josa(fracWord(base), "과")} 크기가 같은 분수가 되도록 빈칸에 알맞은 수를 써요.`, figure: fracs([base, ...items], { tone: "given" }), steps, answer: `${josa(done.slice(1).map(fracWord).join(", "), "이에요")}.`, value: { kind: "frac-chain", base, items, done: done.slice(1) } };
+}
+function ratioWordExample({ id, title, who, things, ask }) {
+  const [[p, x], [q, y]] = who.map((w, i) => [w, things[i]]);
+  if (ask === "ratio") {
+    const steps = [
+      { text: `비는 비교하는 양을 앞에, 기준을 뒤에 써요. ${p} : ${q} 순서대로 ${x}개와 ${y}개.`, figure: { kind: "eqs", lines: [`${p} ${x}개`, `${q} ${y}개`], tone: "doing" } },
+      { text: `${p} : ${q} = ${x} : ${y}.`, figure: { kind: "eqs", lines: [`${x} : ${y}`], tone: "check" } }
+    ];
+    return { id, title, problem: `${josa(p, "은")} 구슬 ${x}개, ${josa(q, "은")} 구슬 ${y}개를 가지고 있어요. ${p} : ${q}를 비로 나타내요.`, figure: { kind: "eqs", lines: [`${p} ${x}개`, `${q} ${y}개`], tone: "given" }, steps, answer: `${x} : ${josa(y, "이에요")}.`, value: { kind: "ratio-word", x, y, ask } };
+  }
+  const steps = [
+    { text: `「${q}의 몇 분의 몇」은 ${q}를 기준으로 봐요. 기준 ${y}개가 분모예요.`, figure: fracs([[null, y]]) },
+    { text: `${p}의 ${x}개가 분자라 ${q}의 ${y}분의 ${x}.`, figure: fracs([[x, y]], { tone: "check" }) }
+  ];
+  return { id, title, problem: `${josa(p, "은")} 구슬 ${x}개, ${josa(q, "은")} 구슬 ${y}개를 가지고 있어요. ${p}의 구슬은 ${q}의 구슬의 몇 분의 몇일까요?`, figure: { kind: "eqs", lines: [`${p} ${x}개`, `${q} ${y}개`], tone: "given" }, steps, answer: `${y}분의 ${josa(x, "이에요")}.`, value: { kind: "ratio-word", x, y, ask } };
+}
+function ratioFillExample({ id, title, p, q, rows }) {
+  const names = "가나다라마바", done = rows.map((r) => [...r]), steps = []; let k = 0;
+  rows.forEach(([x, y], i) => {
+    const m = x !== null ? x / p : y / q, fill = [p * m, q * m];
+    if (!Number.isInteger(m)) throw new Error(`${id}: 배수가 아님`);
+    const nm = names[k++]; done[i] = fill;
+    steps.push({ text: `${x !== null ? `앞 수가 ${p} × ${m}` : `뒤 수가 ${q} × ${m}`}이니 ${nm} = ${x !== null ? `${q} × ${m}` : `${p} × ${m}`} = ${x !== null ? fill[1] : fill[0]}.`, figure: { kind: "eqs", lines: [`${p} : ${q}`, ...done.map((r, j) => (j <= i ? `${r[0]} : ${r[1]}` : `${rows[j][0] ?? names[j]} : ${rows[j][1] ?? names[j]}`))], on: [i + 1], tone: "doing" } });
+  });
+  steps.at(-1).figure.tone = "check";
+  return { id, title, problem: `${p} : ${josa(q, "과")} 같은 비가 되도록 빈칸에 알맞은 수를 써요.`, figure: { kind: "eqs", lines: [`${p} : ${q}`, ...rows.map(([x, y], j) => `${x ?? names[j]} : ${y ?? names[j]}`)], tone: "given" }, steps, answer: `${josa(rows.map((r, j) => `${names[j]} = ${r[0] === null ? done[j][0] : done[j][1]}`).join(", "), "이에요")}.`, value: { kind: "ratio-fill", p, q, rows, done } };
+}
+function fracSumExample({ id, title, base, sums }) {
+  const [n, d] = base, part = n + d, out = sums.map((s) => { if (s % part) throw new Error(`${id}: 나누어떨어지지 않음`); const k = s / part; return [n * k, d * k]; });
+  const steps = [
+    { text: `${josa(fracWord(base), "은")} 분자 + 분모 = ${n} + ${d} = ${part}. 크기가 같은 분수는 분자와 분모에 같은 수를 곱하니 합도 ${part}의 몇 배가 돼요.`, figure: fracs([base]) },
+    ...sums.map((s, i) => ({ text: `합이 ${ira(s, "면")} ${s} ÷ ${part} = ${s / part}배: ${n} × ${s / part} = ${out[i][0]}, ${d} × ${s / part} = ${out[i][1]} → ${fracWord(out[i])}.`, figure: fracs([base, ...out.slice(0, i + 1)], { hi: [i + 1], tone: i === sums.length - 1 ? "check" : "doing" }) }))
+  ];
+  return { id, title, problem: `${josa(fracWord(base), "과")} 크기가 같으면서 분자와 분모의 합이 차례로 ${sums.join(", ")}인 분수를 찾아요.`, figure: fracs([base, ...sums.map(() => [null, null])], { tone: "given" }), steps, answer: `${josa(out.map(fracWord).join(", "), "이에요")}.`, value: { kind: "frac-sum", base, sums, out } };
+}
+// 비와 합·차: p : q = □ : △, □ + △ = total(또는 △ − □ = diff)
+function ratioTotalExample({ id, title, p, q, total = null, diff = null }) {
+  const parts = total !== null ? p + q : q - p, given = total ?? diff, k = given / parts;
+  if (!Number.isInteger(k)) throw new Error(`${id}: 나누어떨어지지 않음`);
+  const sq = p * k, tr = q * k;
+  const steps = [
+    { text: total !== null ? `□ : △ = ${p} : ${ira(q, "면")} □는 ${p}몫, △는 ${q}몫. 합은 ${p} + ${q} = ${parts}몫이에요.` : `□ : △ = ${p} : ${ira(q, "면")} △는 □보다 ${q} − ${p} = ${parts}몫 많아요.`, figure: { kind: "eqs", lines: [`${p} : ${q} = □ : △`, total !== null ? `□ + △ = ${total}` : `△ − □ = ${diff}`], tone: "doing" } },
+    { text: `한 몫은 ${given} ÷ ${parts} = ${k}.`, figure: { kind: "eqs", lines: [`${parts}몫 = ${given}`, `한 몫 = ${k}`], tone: "doing" } },
+    { text: `□ = ${p} × ${k} = ${sq}, △ = ${q} × ${k} = ${tr}.`, figure: { kind: "eqs", lines: [`${p} : ${q} = ${sq} : ${tr}`, total !== null ? `${sq} + ${tr} = ${total}` : `${tr} − ${sq} = ${diff}`], tone: "check" } }
+  ];
+  return { id, title, problem: `${p} : ${q} = □ : △이고 ${total !== null ? `□ + △ = ${josa(total, "이에요")}` : `△ − □ = ${josa(diff, "이에요")}`}. □와 △에 알맞은 수를 구해요.`, figure: { kind: "eqs", lines: [`${p} : ${q} = □ : △`, total !== null ? `□ + △ = ${total}` : `△ − □ = ${diff}`], tone: "given" }, steps, answer: `□ = ${sq}, △ = ${josa(tr, "이에요")}.`, value: { kind: "ratio-total", p, q, total, diff, sq, tr } };
+}
+const gcdOf = (a, b) => (b ? gcdOf(b, a % b) : a);
+// ㉠·㉡은 「기역」「니은」으로 읽어 받침이 있다
+const joMark = (w, pair) => (/^[㉠-㉭]$/u.test(w) ? josa("각", pair).replace("각", w) : josa(w, pair));
+// 막대·저울: 같은 길이(무게)를 이루는 개수가 많을수록 하나는 짧다(가볍다) → 개수의 비를 뒤집는다
+function inverseRatioExample({ id, title, a, b, total, kind = "bar" }) {
+  const g = gcdOf(a, b), x = b / g, y = a / g, unit = total / (x + y);
+  if (!Number.isInteger(unit)) throw new Error(`${id}: 나누어떨어지지 않음`);
+  const [P, Q] = kind === "bar" ? ["㉠", "㉡"] : ["공", "상자"], [one, two] = [x * unit, y * unit], cm = kind === "bar" ? "cm" : "g";
+  const fig = (tone) => (kind === "bar" ? pieces([{ label: P, n: a, len: tone === "check" ? `${one}cm씩` : null }, { label: Q, n: b, len: tone === "check" ? `${two}cm씩` : null }], tone) : { kind: "balance", scales: [{ left: Array(a).fill("circle"), right: Array(b).fill("square"), heavy: "even" }], tone });
+  const steps = [
+    { text: kind === "bar" ? `같은 길이가 ${P} ${a}칸, ${Q} ${b}칸이에요. 칸이 많을수록 한 칸은 짧아요.` : `공 ${a}개와 상자 ${b}개가 수평이에요. 개수가 많은 쪽이 하나는 더 가벼워요.`, figure: fig("doing") },
+    { text: `그래서 ${P} : ${joMark(Q, "은")} 개수를 뒤집은 ${b} : ${a}${g > 1 ? `, 가장 간단히 하면 ${x} : ${y}` : ""}.`, figure: fig("doing") },
+    { text: `${P} 하나와 ${Q} 하나를 합하면 ${total}${cm}. ${x} + ${y} = ${x + y}몫이라 한 몫은 ${total} ÷ ${x + y} = ${unit}. ${P} = ${x} × ${unit} = ${one}${cm}, ${Q} = ${y} × ${unit} = ${two}${cm}.`, figure: fig("check") }
+  ];
+  const problem = kind === "bar" ? `같은 길이를 ${P} 칸 ${a}개, ${Q} 칸 ${b}개로 똑같이 나누었어요. ${P} : ${joMark(Q, "을")} 가장 간단한 자연수의 비로 나타내고, ${P} 하나와 ${Q} 하나를 이은 길이가 ${total}cm일 때 ${joMark(P, "과")} ${Q}의 길이를 구해요.` : `공 ${a}개와 상자 ${b}개를 저울에 올렸더니 수평이에요. 공 : 상자의 무게의 비를 가장 간단한 자연수의 비로 나타내고, 공 하나와 상자 하나를 합한 무게가 ${total}g일 때 각각의 무게를 구해요.`;
+  return { id, title, problem, figure: fig("given"), steps, answer: `${x} : ${y}, ${P} ${one}${cm}, ${Q} ${two}${cm}${cm === "g" ? "이에요" : "예요"}.`, value: { kind: "inverse", a, b, total, x, y, one, two } };
+}
+const NLINE6_SET = {
+  id: "nline6",
+  // 6권 「수직선 한 칸의 거리」 원본은 유형 이름이 비어 있다
+  typeOf: (item) => item.typeLabel || "수직선 한 칸의 거리",
+  types: {
+    "수직선 한 칸의 거리": () => [lineDistExample({ id: "nl-0a", title: "예제 1", a: 13, b: 61, n: 6 }), lineDistExample({ id: "nl-0b", title: "예제 2", a: 28, b: 91, n: 9 })],
+    "두 수 사이의 거리": () => [lineDistExample({ id: "nl-1", title: "예제 1", a: 24, b: 61 })],
+    "가운데로 나눈 한 칸": () => [lineDistExample({ id: "nl-2", title: "예제 1", a: 24, b: 60, n: 2, word: "한가운데에 눈금을 그어 두 칸" })],
+    "3등분한 한 칸": () => [lineDistExample({ id: "nl-3", title: "예제 1", a: 21, b: 48, n: 3 })],
+    "8등분한 한 칸": () => [lineDistExample({ id: "nl-8", title: "예제 1", a: 14, b: 62, n: 8 })],
+    "7등분한 한 칸": () => [lineDistExample({ id: "nl-7", title: "예제 1", a: 32, b: 81, n: 7 })],
+    "전체 거리와 한 칸의 거리": () => [lineDistExample({ id: "nl-both", title: "예제 1", a: 14, b: 50, n: 4, ask: "both" })],
+    "같은 칸의 거리": () => [twoSegExample({ id: "nl-units", title: "예제 1", pts: [8, 32, 57], n1: 4, n2: 5 })],
+    "칸 거리로 수 찾기": () => [twoSegExample({ id: "nl-find", title: "예제 1", pts: [10, 34, 64], n1: 4, n2: 5, ask: "find", find: [2, 3] })],
+    "여러 칸을 묶은 거리": () => [twoSegExample({ id: "nl-multi", title: "예제 1", pts: [12, 40, 70], n1: 4, n2: 5, ask: "multi", star: [1, 2] })],
+    // 수직선과 비
+    "같은 길이를 다르게 나누기": () => [splitTwoExample({ id: "split-1", title: "예제 1", start: 6, end: 30, a: 3, b: 4 })],
+    "같은 비 늘어놓기": () => [ratioSeqExample({ id: "rseq-1", title: "예제 1", p: 4, q: 5 })],
+    // 분수와 비
+    "크기가 같은 분수": () => [fracChainExample({ id: "fchain-1", title: "예제 1", base: [2, 5], items: [[null, 10], [6, null], [null, 25]] }), fracChainExample({ id: "fchain-2", title: "예제 2", base: [24, 36], items: [[null, 12], [4, null], [null, 3]] })],
+    "비로 나타내기": () => [ratioWordExample({ id: "rword-1", title: "예제 1", who: ["언니", "나"], things: [5, 4], ask: "ratio" })],
+    "분수로 나타내기": () => [ratioWordExample({ id: "rword-2", title: "예제 1", who: ["나", "언니"], things: [4, 5], ask: "frac" })],
+    "같은 비 채우기": () => [ratioFillExample({ id: "rfill-1", title: "예제 1", p: 4, q: 7, rows: [[null, 14], [12, null], [null, 35]] })],
+    "합이 정해진 같은 분수": () => [fracSumExample({ id: "fsum-1", title: "예제 1", base: [1, 5], sums: [18, 30, 42] })],
+    "비와 합": () => [ratioTotalExample({ id: "rtot-1", title: "예제 1", p: 4, q: 3, total: 42 })],
+    "비와 차": () => [ratioTotalExample({ id: "rdiff-1", title: "예제 1", p: 2, q: 7, diff: 20 })],
+    // 막대와 저울의 비
+    "막대와 비": () => [inverseRatioExample({ id: "inv-1", title: "예제 1", a: 2, b: 5, total: 28 })],
+    "저울과 비": () => [inverseRatioExample({ id: "inv-2", title: "예제 1", a: 2, b: 6, total: 36, kind: "balance" })]
+  }
+};
+
+export const TYPE_EXAMPLE_SETS = Object.freeze({ [CUBE_SET.id]: CUBE_SET, [MAGIC_SET.id]: MAGIC_SET, [CLOCK_SET.id]: CLOCK_SET, [BALANCE_SET.id]: BALANCE_SET, [BUNDLE_SET.id]: BUNDLE_SET, [CONSEC_SET.id]: CONSEC_SET, [CIRCLE_SET.id]: CIRCLE_SET, [TIME_SET.id]: TIME_SET, [PERIMETER_SET.id]: PERIMETER_SET, [PLANTING_SET.id]: PLANTING_SET, [DIST_SET.id]: DIST_SET, [DIGIT_SET.id]: DIGIT_SET, [REVERSE_SET.id]: REVERSE_SET, [SPLIT_SET.id]: SPLIT_SET, [EQUALIZE_SET.id]: EQUALIZE_SET, [CALENDAR_SET.id]: CALENDAR_SET, [FIGNUM_SET.id]: FIGNUM_SET, [OUTLINE_SET.id]: OUTLINE_SET, [BALANCE4_SET.id]: BALANCE4_SET, [RELATION_SET.id]: RELATION_SET, [LOGIC_SET.id]: LOGIC_SET, [CRYPT_SET.id]: CRYPT_SET, [MATRIX_SET.id]: MATRIX_SET, [PMATRIX_SET.id]: PMATRIX_SET, [SEQ2_SET.id]: SEQ2_SET, [CALC6_SET.id]: CALC6_SET, [COUNT5_SET.id]: COUNT5_SET, [MISC_SET.id]: MISC_SET, [BOOK1_SET.id]: BOOK1_SET, [BOOK2_SET.id]: BOOK2_SET, [BOOK3_SET.id]: BOOK3_SET, [ARRANGE_SET.id]: ARRANGE_SET, [MEASURE_SET.id]: MEASURE_SET, [CUBES_SET.id]: CUBES_SET, [NLINE6_SET.id]: NLINE6_SET });
 
 // 레슨의 원본 문항을 유형으로 묶고(처음 나온 순서), 유형마다 예제를 붙인다. 예제가 없는 유형은 examples: [].
 export function typeExampleGroups(lesson, setId) {

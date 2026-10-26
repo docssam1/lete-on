@@ -322,6 +322,15 @@
 .tx-layers span { height: 26px; border: 1.5px solid #c9c2b4; background: #fffdf7; border-radius: 3px; }
 .tx-layers span.on { background: #ffd45c; border-color: #a8741a; }
 .tx-layers figcaption { font-size: 13px; font-weight: 900; color: #566274; }
+.tx-nline { display: flex; justify-content: center; }
+.tx-nline svg { width: min(100%, 340px); height: auto; }
+.tx-fracs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; }
+.tx-fracs span { display: inline-flex; flex-direction: column; align-items: center; min-width: 40px; padding: 6px 8px; border: 2px solid #e3dccb; border-radius: 9px; background: #fffdf7; }
+.tx-fracs span.on { border-color: var(--tone); box-shadow: 0 0 0 2px var(--tone); }
+.tx-fracs b, .tx-fracs i { font-size: 18px; font-weight: 900; font-style: normal; line-height: 1.15; }
+.tx-fracs i { color: #5b2fa8; }
+.tx-fracs em { display: block; width: 100%; height: 2.5px; margin: 3px 0; background: #222; border-radius: 2px; }
+.tx-fracs small { font-size: 18px; font-weight: 900; color: #566274; }
 @media (max-width: 760px) {
   .tx-figure { flex-basis: 100%; }
   .tx-types { grid-template-columns: 1fr 1fr; }

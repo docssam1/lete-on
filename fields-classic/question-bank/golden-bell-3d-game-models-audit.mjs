@@ -1088,6 +1088,41 @@ function verifyExample(setId, typeLabel, ex, lesson) {
       assert.deepEqual([v.front, v.side], [front, side], `${ex.id}: 앞·옆에서 본 층수`); assert.deepEqual(nums(ex.answer), [...front, ...side]);
       if (ex.figure.kind === "b4-layers") { const L = ex.figure.layers; assert.deepEqual(v.heights, L[0].map((row, r) => row.map((_, c) => add(L.map((l) => l[r][c])))), `${ex.id}: 층을 겹친 층수`); L.slice(1).forEach((l, k) => l.forEach((row, r) => row.forEach((x, c) => assert.ok(!x || L[k][r][c], `${ex.id}: 아래층이 받친다`)))); }
     } else assert.fail(`${ex.id}: 모르는 예제`);
+  } else if (setId === "nline6") {
+    const nums = (t) => (String(t).match(/\d+/gu) || []).map(Number);
+    // 원본 문제와 같은 수 묶음(수직선의 끝 수·나눈 칸 수, 분수 사슬, 비, 합)을 쓰면 안 된다
+    for (const item of lesson.original.items) assert.notEqual(nums(item.prompt).join(), nums(ex.problem).join(), `${ex.id}: 원본과 같은 수`);
+    for (const item of lesson.original.items) for (const vis of [].concat(item.visual || [])) { if (vis.points && v.pts) assert.notEqual(vis.points.join(), v.pts.join(), `${ex.id}: 원본과 같은 수직선`); if (vis.points && v.a !== undefined && v.b !== undefined && v.n !== undefined) assert.notEqual(vis.points.join(), [v.a, v.b].join(), `${ex.id}: 원본과 같은 수직선`); }
+    if (v.kind === "line-dist") {
+      // 수직선에 1씩 눈금을 찍어 세어 본다
+      let d = 0; for (let x = v.a; x < v.b; x++) d++;
+      assert.equal(v.d, d); assert.equal(v.u * v.n, d, `${ex.id}: 한 칸 × 칸 수 = 전체`);
+      assert.deepEqual(nums(ex.answer), v.n === 1 ? [d] : v.ask === "both" ? [d, v.u] : [v.u], `${ex.id}: 답`);
+    } else if (v.kind === "two-seg") {
+      const [a, b, c] = v.pts; assert.equal(v.u1 * v.n1, b - a); assert.equal(v.u2 * v.n2, c - b);
+      if (v.ask === "units") assert.deepEqual(nums(ex.answer), [v.u1, v.u2]);
+      else if (v.ask === "find") { assert.equal(v.A, a + v.find[0] * v.u1); assert.equal(v.B, b + v.find[1] * v.u2); assert.ok(v.A < b && v.B < c); assert.deepEqual(nums(ex.answer), [v.A, v.B]); }
+      else { const from = a + v.star[0] * v.u1, to = b + v.star[1] * v.u2; assert.equal(v.len, to - from); assert.deepEqual(nums(ex.answer), [b - a, c - b, v.u1, v.u2, v.len]); }
+    } else if (v.kind === "split-two") { const T = v.end - v.start; assert.deepEqual([v.T, v.A * v.a, v.B * v.b], [T, T, T]); assert.deepEqual(nums(ex.answer), [T, v.A, v.B]); }
+    else if (v.kind === "ratio-seq") { assert.deepEqual(v.next, [v.p * (v.count + 1), v.q * (v.count + 1)]); assert.deepEqual(nums(ex.answer), v.next); }
+    else if (v.kind === "frac-chain") {
+      // 크기가 같은 분수: 엇갈려 곱한 값이 같다(n × D = N × d)
+      v.done.forEach(([n, d], i) => { assert.equal(n * v.base[1], d * v.base[0], `${ex.id}: ${i + 1}번째 분수의 크기`); const [gn, gd] = v.items[i]; assert.ok((gn === null || gn === n) && (gd === null || gd === d)); });
+      assert.deepEqual(nums(ex.answer), v.done.flatMap(([n, d]) => [d, n]), `${ex.id}: 답(분모, 분자 차례로 읽음)`);
+    } else if (v.kind === "ratio-word") assert.deepEqual(nums(ex.answer), v.ask === "ratio" ? [v.x, v.y] : [v.y, v.x]);
+    else if (v.kind === "ratio-fill") { v.done.forEach(([x, y], i) => { assert.equal(x * v.q, y * v.p, `${ex.id}: ${i + 1}번째 비`); }); assert.deepEqual(nums(ex.answer), v.rows.map((r, j) => (r[0] === null ? v.done[j][0] : v.done[j][1]))); }
+    else if (v.kind === "frac-sum") { v.out.forEach(([n, d], i) => { assert.equal(n + d, v.sums[i]); assert.equal(n * v.base[1], d * v.base[0]); }); assert.deepEqual(nums(ex.answer), v.out.flatMap(([n, d]) => [d, n])); }
+    else if (v.kind === "ratio-total") {
+      // □와 △를 1부터 모두 넣어 비와 합(차)이 맞는 것을 찾는다
+      const fits = []; for (let x = 1; x <= 200; x++) for (let y = 1; y <= 200; y++) if (x * v.q === y * v.p && (v.total !== null ? x + y === v.total : y - x === v.diff)) fits.push([x, y]);
+      assert.deepEqual(fits, [[v.sq, v.tr]], `${ex.id}: 하나로 정해짐`); assert.deepEqual(nums(ex.answer), [v.sq, v.tr]);
+    } else if (v.kind === "inverse") {
+      // 하나의 길이(무게)를 1부터 넣어 「a개 = b개」와 합이 맞는 것을 찾는다
+      const fits = []; for (let x = 1; x <= v.total; x++) { const y = v.total - x; if (y > 0 && x * v.a === y * v.b) fits.push([x, y]); }
+      assert.deepEqual(fits, [[v.one, v.two]], `${ex.id}: 하나로 정해짐`);
+      const g = (m, n) => (n ? g(n, m % n) : m); assert.equal(g(v.x, v.y), 1, `${ex.id}: 가장 간단한 비`); assert.equal(v.x * v.two, v.y * v.one);
+      assert.deepEqual(nums(ex.answer), [v.x, v.y, v.one, v.two]);
+    } else assert.fail(`${ex.id}: 모르는 예제`);
   } else assert.fail(`${setId}: 검사 규칙 없음`);
 }
 console.log(`GOLDEN_BELL_TYPE_EXAMPLES_OK lessons=${Object.keys(LESSON_FLOWS).length} examples=${exampleCount}`);

@@ -2,7 +2,7 @@
 // 한 단계씩 연다: 0단계 = 문제만, 1~N단계 = 풀이가 하나씩, 마지막 = 답. 답은 마지막 단계 전에는 화면에 없다.
 // 색은 골든벨 색표(쌓기나무·모양·숫자판·저울), 안내 단계 색은 주어진 것 파랑 · 하는 일 금색 · 확인 진초록.
 
-import { book04Markup, obliqueCubes } from "./book04-renderers.js?v=20261028q";
+import { book04Markup, obliqueCubes } from "./book04-renderers.js?v=20261028r";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const TONE = { given: "#2f6fe0", doing: "#d39b20", check: "#16734b" };
@@ -728,6 +728,42 @@ function lineBoardFigure(f) {
   });
   return `<div class="tx-line-board">${svg(W, W, body, `줄 ${f.lines.length}개가 만나는 숫자 판`)}</div>`;
 }
+// nline: 수직선. 큰 눈금(pts) 사이를 segs[i].n칸으로 똑같이 나누고 칸마다 작은 활. spans = 줄 밑 꺾쇠(at 값)
+const SEG_COLOR = ["#e8503a", "#2f9e5f", "#2f6fe0"];
+function nlineFigure(f) {
+  const color = TONE[f.tone || "given"], W = 340, x0 = 26, x1 = W - 26, axis = 46, lo = f.pts[0].at, hi = f.pts[f.pts.length - 1].at;
+  const X = (at) => x0 + ((x1 - x0) * (at - lo)) / (hi - lo || 1), H = axis + 34 + f.spans.length * 26;
+  let body = `<line x1="${x0 - 10}" y1="${axis}" x2="${x1 + 10}" y2="${axis}" stroke="#566274" stroke-width="2.5"/>`;
+  const main = f.pts.filter((p) => !/^[A-Z]$/u.test(p.label) || f.segs.length === f.pts.length - 1);
+  const big = f.pts.filter((_, i) => i < f.segs.length + 1);
+  const ends = f.pts.filter((p) => !/^[A-Z]$/u.test(p.label));
+  ends.slice(0, -1).forEach((p, i) => {
+    const s = f.segs[i]; if (!s) return;
+    const q = ends[i + 1], step = (q.at - p.at) / s.n, stroke = s.hi ? color : SEG_COLOR[i % 3];
+    for (let k = 0; k < s.n; k++) {
+      const xa = X(p.at + k * step), xb = X(p.at + (k + 1) * step), h = Math.min(16, (xb - xa) * 0.45);
+      body += `<path d="M${xa} ${axis} Q${(xa + xb) / 2} ${axis - h * 2} ${xb} ${axis}" fill="none" stroke="${stroke}" stroke-width="${s.hi ? 2.6 : 1.8}"/>`;
+      if (k) body += `<line x1="${xa}" y1="${axis - 5}" x2="${xa}" y2="${axis + 5}" stroke="#566274" stroke-width="1.5"/>`;
+      if (s.mark) body += text((xa + xb) / 2, axis - h - 10, s.mark, { size: 11, weight: 900, fill: stroke });
+      else if (s.name && k === 0) body += text((xa + xb) / 2, axis - h - 11, s.name, { size: 13, weight: 900, fill: stroke });
+    }
+  });
+  for (const p of f.pts) {
+    const ask = !/^\d+$/u.test(p.label), x = X(p.at);
+    body += `<line x1="${x}" y1="${axis - 9}" x2="${x}" y2="${axis + 9}" stroke="${ask ? "#8e5bd8" : "#222"}" stroke-width="2.5"/>${text(x, axis + 20, p.label, { size: 13, weight: 900, fill: ask ? "#5b2fa8" : "#222" })}`;
+  }
+  f.spans.forEach((sp, i) => {
+    const xa = X(sp.from), xb = X(sp.to), y = axis + 34 + i * 26;
+    body += `<path d="M${xa} ${y - 8} V${y} H${xb} V${y - 8}" fill="none" stroke="${sp.ask ? "#8e5bd8" : "#f39a1e"}" stroke-width="2.2"/>${text((xa + xb) / 2, y + 10, sp.label, { size: 13, weight: 900, fill: sp.ask ? "#5b2fa8" : "#222" })}`;
+  });
+  return `<div class="tx-nline">${svg(W, H + 6, body, `수직선 ${f.pts.map((p) => p.label).join(", ")}`)}</div>`;
+}
+// fracs: 위아래로 쌓은 분수 카드. [분자, 분모] — null은 빈칸
+function fracsFigure(f) {
+  const color = TONE[f.tone || "given"], hi = new Set(f.hi || []);
+  const cell = (v) => (v === null ? `<i>□</i>` : `<b>${esc(v)}</b>`);
+  return `<div class="tx-fracs" style="--tone:${color}">${f.list.map(([n, d], i) => `<span class="${hi.has(i) ? "on" : ""}" aria-label="${d === null ? "□" : d}분의 ${n === null ? "□" : n}">${cell(n)}<em></em>${cell(d)}</span>`).join('<small>=</small>')}</div>`;
+}
 // 4·9권 쌓기나무: 원본과 같은 빗각 그림(book04-renderers). b4-layers = 층별로 위에서 본 칸
 function b4LayersFigure(f) {
   return `<div class="tx-layers">${f.layers.map((L, k) => `<figure><div style="--cols:${L[0].length}">${L.flat().map((v) => `<span class="${v ? "on" : ""}"></span>`).join("")}</div><figcaption>${k + 1}층</figcaption></figure>`).join("")}</div>`;
@@ -875,6 +911,8 @@ export function figureMarkup(figure) {
   if (figure.kind === "b4-box") return `<div class="tx-b4">${book04Markup({ kind: "book4", subtype: "source-cube-box", dimensions: figure.dims, map: figure.map })}</div>`;
   if (figure.kind === "b4-pair") return `<div class="tx-b4">${book04Markup({ kind: "book4", subtype: "source-hidden-cube", figures: figure.figures })}</div>`;
   if (figure.kind === "b4-layers") return b4LayersFigure(figure);
+  if (figure.kind === "nline") return nlineFigure(figure);
+  if (figure.kind === "fracs") return fracsFigure(figure);
   if (figure.kind === "pieces") return piecesFigure(figure);
   if (figure.kind === "ring") return ringFigure(figure);
   if (figure.kind === "crypt") return cryptFigure(figure);
