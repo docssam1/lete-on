@@ -11,20 +11,21 @@ export function pencilSvg(w, h, draw, { seed = 3, grain = true, cls = 'pz' } = {
   const id = `pz${++uid}`, under = [];
   const d = {
     // 연필 스케치(3D 표본을 흰 종이에 렌더해 선·명암 두 겹으로 만든 그림, tools/sketch/). 손이 선의 뼈대를 따라 그어 가며 선이 드러나고,
-    // 이어서 연필을 눕혀 칠하듯 명암이 드러난다. 드러내는 획은 마스크 안의 .dz 선이라 손이 그 길을 그대로 따라간다(SVG 좌표로 바꿔 둠).
+    // 드러내는 획은 마스크 안의 .dz 선이라 손이 그 길을 그대로 따라간다(SVG 좌표로 바꿔 둠). 명암 층(-tone.webp)은 만들어 두지만 그리지 않는다(아래).
     // 돌려주는 값: { x, y, s, h, at(px, py) } — at은 원본 그림 픽셀 → SVG 좌표(이름표 자리 잡기용).
     drawing: (key, x, y, dw) => {
       const k = STROKES[key], s = dw / k.w, P = (a) => { let t = ''; for (let i = 0; i < a.length; i += 2) t += `${i ? ' L' : 'M'}${(x + a[i] * s).toFixed(1)} ${(y + a[i + 1] * s).toFixed(1)}`; return t; };
       const g = (paths, sw, close) => `<g class="dz" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="${(sw * s).toFixed(1)}"><path d="${paths.map((a) => P(a) + (close ? ' Z' : '')).join(' ')}"/></g>`;
       const u = ++uid, mk = (n, body) => `<mask id="${id}-${n}${u}" maskUnits="userSpaceOnUse" x="0" y="0" width="${w}" height="${h}">${body}</mask>`;
       const img = (layer, m) => `<image href="${SKETCH(key, layer)}" x="${x}" y="${y}" width="${dw}" height="${(k.h * s).toFixed(1)}" mask="url(#${id}-${m}${u})" preserveAspectRatio="none"/>`;
-      under.push(`<defs>${mk('l', k.main.map((a) => g([a], k.lw, true)).join('') + k.more.map((c) => g(c, k.lw, true)).join(''))}${mk('t', k.shade.map((a) => g([a], k.sw, false)).join(''))}</defs>${img('tone', 't')}${img('line', 'l')}`);
+      // 명암 층은 넣지 않는다 — 대회 보고서 그림은 「가는 연필심으로, 색깔이나 명암 없이」(2024 울산 본선 유의점). 선만 그린다.
+      under.push(`<defs>${mk('l', k.main.map((a) => g([a], k.lw, true)).join('') + k.more.map((c) => g(c, k.lw, true)).join(''))}</defs>${img('line', 'l')}`);
       return { x, y, s, h: k.h * s, at: (px, py) => [+(x + px * s).toFixed(1), +(y + py * s).toFixed(1)] };
     },
     // 확대 원 안에 같은 스케치를 크게(zoom배) — (fx, fy)는 확대할 자리(SVG 좌표)
     loupe: (dr, key, cx, cy, r, fx, fy, zoom) => {
       const k = STROKES[key], s = dr.s * zoom, ix = cx - (fx - dr.x) * zoom, iy = cy - (fy - dr.y) * zoom, W = k.w * s, H = k.h * s;
-      return d.magnifier(cx, cy, r, `<g class="dz-f"><image href="${SKETCH(key, 'tone')}" x="${ix.toFixed(1)}" y="${iy.toFixed(1)}" width="${W.toFixed(1)}" height="${H.toFixed(1)}" preserveAspectRatio="none"/><image href="${SKETCH(key, 'line')}" x="${ix.toFixed(1)}" y="${iy.toFixed(1)}" width="${W.toFixed(1)}" height="${H.toFixed(1)}" preserveAspectRatio="none"/></g>`, [fx, fy, Math.max(5, r / zoom)]);
+      return d.magnifier(cx, cy, r, `<g class="dz-f"><image href="${SKETCH(key, 'line')}" x="${ix.toFixed(1)}" y="${iy.toFixed(1)}" width="${W.toFixed(1)}" height="${H.toFixed(1)}" preserveAspectRatio="none"/></g>`, [fx, fy, Math.max(5, r / zoom)]);
     },
     // 흑연 선: 진한 선 + 살짝 어긋난 연한 선 두 번 → 연필 결
     line: (path, { w: sw = 1.3, dark = 0.85, dash = '' } = {}) => `<g class="dz" fill="none" stroke-linecap="round" stroke-linejoin="round"${dash ? ` stroke-dasharray="${dash}"` : ''}><path d="${path}" stroke="#2f2f2f" stroke-width="${sw}" opacity="${dark}"/><path d="${path}" stroke="#555" stroke-width="${sw * 0.7}" opacity="0.32" transform="translate(0.7,-0.5)"/><path d="${path}" stroke="#777" stroke-width="${sw * 0.5}" opacity="0.18" transform="translate(-0.5,0.6)"/></g>`,
