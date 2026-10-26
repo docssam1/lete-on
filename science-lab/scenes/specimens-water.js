@@ -1,4 +1,4 @@
-// 자연관찰 연습 표본 — 물에 사는 식물 4종(물 위에 잎이 뜨는 것 · 떠다니는 것 · 잎자루가 부푼 것 · 물속에 잠긴 것).
+// 자연관찰 연습 표본 — 물에 사는 식물 8종(제25회 중학교 문제지: 8종을 직접 골라 그리고 설명). ①~④ 물 위에 잎이 뜨는 것 · 떠다니는 것 · 잎자루가 부푼 것 · 물속에 잠긴 것, ⑤~⑧은 아래.
 // 자연관찰대회에서 실제로 하는 일(돌려 보기 · 위/옆에서 보기 · 단면 · 자 대기 · 손으로 확인)을 화면에서 연습한다.
 // 이름은 처음엔 숨긴다(대회처럼 번호로 부르고 생김새로 설명). 모양은 실제 식물의 특징을 따라 코드로 만든 모형이다(실사 사진은 따로 붙인다).
 // 좌표: 물통 바닥 흙 윗면 y=SOIL, 수면 y=WATER. 1 단위의 실제 길이는 표본마다 cmPerUnit.
@@ -173,7 +173,126 @@ function hydrilla() {
   };
 }
 
-export const SPECIMENS = [lily, duckweed, hyacinth, hydrilla];
+// ── ⑤~⑧ 제25회 중학교 문제지(8종을 직접 골라 그리고 설명) — 원장이 준 최우수 보고서의 식물 꼴을 따라 4종을 더했다 ──
+// 네잎 모양 잎이 물 위에 뜨는 것(네가래형) · 잎이 Y자로 갈라져 물속에 잠긴 것(붕어마름형) · 질경이 모양 잎이 물 밖으로 선 것(택사형) · 긴 칼 모양 잎이 곧게 선 것(부들형)
+const MARS_TEX = () => leafTextures('lf:mars', { outline: Array.from({ length: 41 }, (_, i) => { const t = i / 40; return [t < 0.22 ? 0.98 * Math.sin((Math.PI / 2) * Math.min(1, (t + 0.02) / 0.22)) ** 0.6 : 0.96 * (1 - (t - 0.22) / 0.78) ** 0.85 + 0.03, t]; }), veins: 'palmate', top: '#3f8f3a', topEdge: '#7cbf62', under: '#8cbf74', veinN: 7, seed: 31, w: 256, h: 256, glossSpots: false });
+const ALI_TEX = () => leafTextures('lf:alisma', { outline: 'elliptic', veins: 'parallel', top: '#3d8a37', topEdge: '#79b85e', under: '#8fbf78', veinN: 7, seed: 33, w: 256, h: 512 });
+const TYPHA_TEX = () => leafTextures('lf:typha', { outline: Array.from({ length: 41 }, (_, i) => { const t = i / 40; return [t < 0.12 ? 0.9 * (t / 0.12) ** 0.7 : 0.9, t]; }), veins: 'parallel', top: '#5a8a3a', topEdge: '#86ad5c', under: '#6f9a4a', veinN: 5, seed: 35, w: 64, h: 1024, glossSpots: false });
+const _q = new THREE.Quaternion(), _u = new THREE.Vector3(0, 1, 0), _s = new THREE.Vector3(1, 1, 1);
+// 인스턴스 막대 하나: p에서 dir 방향으로 len
+const segAt = (im, k, p, dir, len) => { _q.setFromUnitVectors(_u, dir.clone().normalize()); _s.set(1, len, 1); im.setMatrixAt(k, new THREE.Matrix4().compose(p, _q, _s)); };
+
+function marsilea() {
+  const g = new THREE.Group(), leaves = [], cm = 5;
+  g.add(tube([[-1.9, SOIL + 0.02, -0.2], [-0.8, SOIL + 0.04, 0.2], [0.4, SOIL + 0.02, -0.1], [1.8, SOIL + 0.04, 0.25]], 0.035, 0x6a5a3a));
+  for (let i = 0; i < 12; i++) { const x = -1.7 + i * 0.3; g.add(tube([[x, SOIL, 0], [x + 0.08, SOIL - 0.2, (i % 2 ? 0.12 : -0.1)]], 0.008, 0xd8c8a8)); }
+  // [잎자루 밑 x, 잎 x, z, 물 위에 뜸?, 돌림]
+  const spots = [[-1.5, -1.6, 0.6, true, 0.3], [-0.9, -0.6, -0.7, true, 1.1], [-0.2, 0.3, 0.5, true, 2.0], [0.5, 1.2, -0.5, true, 0.7], [1.2, 1.6, 0.7, true, 1.6], [-0.5, -0.4, 0.1, false, 0.4], [0.9, 0.7, -0.1, false, 2.5]];
+  spots.forEach(([bx, x, z, float, rot]) => {
+    const top = float ? WATER + 0.01 : WATER + 0.55;
+    g.add(tube([[bx, SOIL + 0.04, 0], [lerp(bx, x, 0.3), 1.1, z * 0.4], [lerp(bx, x, 0.85), top - 0.6, z * 0.9], [x, top, z]], float ? 0.018 : 0.022, 0x7a8a46));
+    const lf = new THREE.Group();
+    for (let k = 0; k < 4; k++) { const h = new THREE.Group(), m = leafMesh(MARS_TEX(), { w: 0.44, h: 0.42, curl: float ? 0.02 : 0.2, droop: float ? 0 : 0.15, segs: [6, 6], gloss: 0.45 }); h.add(m); h.rotation.z = (k / 4) * Math.PI * 2; lf.add(h); }
+    lf.rotation.x = float ? -Math.PI / 2 : -Math.PI / 2 + 0.35; lf.rotation.z = rot; lf.position.set(x, top, z); g.add(lf); leaves.push(lf);
+  });
+  const sec = section([[0, 0, 0.12], ...Array.from({ length: 8 }, (_, i) => [Math.cos((i / 8) * Math.PI * 2) * 0.5, Math.sin((i / 8) * Math.PI * 2) * 0.5, 0.11])], { title: '잎자루 단면(확대)' });
+  sec.position.set(TW / 2 + 0.95, 1.5, 0.4);
+  const d = drop(); d.visible = false; g.add(d);
+  return {
+    id: 'marsilea', no: '⑤', name: '네가래', hint: '잎이 넷으로 갈라져 물 위에 뜬 것', cmPerUnit: cm, ruler: 10, group: g, section: sec,
+    think: ['잎 한 장은 작은잎 몇 장으로 되어 있나요? 어떤 모양으로 놓여 있나요?', '물 위에 뜬 잎과 물 밖으로 선 잎은 잎자루가 어떻게 다른가요?', '잎자루를 손으로 휘어 보면 잘 휘나요, 꺾이나요?'],
+    actions: {
+      drop: { name: '💧 잎에 물 떨어뜨리기', ...act(3, (t) => { const lf = leaves[2], p0 = lf.position; d.visible = t < 0.98; if (t < 0.35) d.position.set(p0.x, WATER + 1.5 - 1.42 * ease.io(t / 0.35), p0.z); else { const k = (t - 0.35) / 0.65; d.position.set(p0.x + 0.5 * ease.io(k), WATER + 0.08 - (k > 0.75 ? (k - 0.75) * 0.4 : 0), p0.z); } }), note: '물방울이 잎에 스며드나요, 굴러떨어지나요?' },
+      sway: { name: '🌊 물살 일으키기', ...act(3.5, (t) => { leaves.forEach((lf, i) => { lf.position.x += Math.sin(t * Math.PI * 6 + i) * 0.006 * (1 - t); lf.rotation.z += Math.sin(t * Math.PI * 4 + i) * 0.01 * (1 - t); }); }), note: '물살에 잎이 뒤집히나요? 잎자루가 휘나요?' },
+    },
+  };
+}
+function ceratophyllum() {
+  const g = new THREE.Group(), stems = [], cm = 10, segGeo = new THREE.CylinderGeometry(0.01, 0.014, 1, 5); segGeo.translate(0, 0.5, 0);
+  const segMat = mat(0x2f5a2a, { roughness: 0.6 }), up = new THREE.Vector3(0, 1, 0);
+  [[-1.2, -0.2, 0.15], [0.1, 0.35, -0.1], [1.25, -0.25, 0.08]].forEach(([x, z, lean], si) => {
+    const H = WATER - SOIL - 0.3, s = new THREE.Group(), lower = new THREE.Group(), upper = new THREE.Group(), cut = H * 0.62; upper.position.y = cut; s.add(lower); lower.add(upper);
+    const ys = []; let y = 0.12, gap = 0.2; while (y < H) { ys.push(y); y += gap; gap = Math.max(0.055, gap * 0.9); }
+    const im = (n) => new THREE.InstancedMesh(segGeo, segMat, n), imL = im(ys.length * 27), imU = im(ys.length * 27); let kL = 0, kU = 0;
+    const stemL = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.022, cut, 8), mat(0x4a6a32)); stemL.position.y = cut / 2; lower.add(stemL);
+    const stemU = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.02, H - cut, 8), mat(0x4a6a32)); stemU.position.y = (H - cut) / 2; upper.add(stemU);
+    ys.forEach((yy, wi) => {
+      const top = yy >= cut, im2 = top ? imU : imL, oy = top ? yy - cut : yy, sc = 0.75 + 0.25 * (1 - yy / H);
+      for (let j = 0; j < 9; j++) {
+        const a = (j / 9) * Math.PI * 2 + wi * 0.35, o = new THREE.Vector3(Math.cos(a), 0, Math.sin(a)), tg = new THREE.Vector3(-Math.sin(a), 0, Math.cos(a));
+        const dv = o.clone().multiplyScalar(Math.sin(0.95)).addScaledVector(up, Math.cos(0.95)).normalize(), p0 = new THREE.Vector3(o.x * 0.02, oy, o.z * 0.02), L1 = 0.13 * sc, L2 = 0.11 * sc, p1 = p0.clone().addScaledVector(dv, L1);
+        const k0 = top ? kU++ : kL++; segAt(im2, k0, p0, dv, L1);
+        for (const sg of [-1, 1]) { const df = dv.clone().applyQuaternion(new THREE.Quaternion().setFromAxisAngle(tg, sg * 0.38)); segAt(im2, top ? kU++ : kL++, p1, df, L2); }
+      }
+    });
+    imL.count = kL; imU.count = kU; imL.instanceMatrix.needsUpdate = imU.instanceMatrix.needsUpdate = true; imL.castShadow = imU.castShadow = true; lower.add(imL); upper.add(imU);
+    s.position.set(x, SOIL + 0.12 + si * 0.05, z); s.rotation.z = lean; s.userData = { lean, upper, cut }; g.add(s); stems.push(s);
+  });
+  const sec = section([[0, 0, 0.1], ...Array.from({ length: 6 }, (_, i) => [Math.cos((i / 6) * Math.PI * 2) * 0.45, Math.sin((i / 6) * Math.PI * 2) * 0.45, 0.07])], { title: '줄기 단면(확대)', color: 0x6f9a52 });
+  sec.position.set(TW / 2 + 0.95, 1.5, 0.4);
+  return {
+    id: 'ceratophyllum', no: '⑥', name: '붕어마름', hint: '잎이 Y자로 갈라져 물속에 잠긴 것', cmPerUnit: cm, ruler: 10, rulerAt: { pos: [1.6, SOIL + 1, -0.25], vertical: true }, group: g, section: sec,
+    think: ['뿌리가 있나요? 바닥에 박혀 있나요?', '잎은 몇 갈래로 갈라지나요? 한 마디에 몇 장인가요?', '줄기 끝 쪽과 아래쪽의 마디 사이 길이를 비교해 보세요.'],
+    actions: {
+      bend: { name: '✋ 줄기 구부려 보기', ...act(4.2, (t) => { const s = stems[1], U = s.userData.upper, b = t < 0.3 ? ease.io(t / 0.3) : 1, off = t > 0.35 && t < 0.85 ? ease.out((t - 0.35) / 0.5) : t >= 0.85 ? 1 - ease.io((t - 0.85) / 0.15) : 0; U.rotation.z = 0.5 * b * (t < 0.85 ? 1 : 1 - ease.io((t - 0.85) / 0.15)); U.position.set(0.35 * off, s.userData.cut + 0.25 * off, 0); }), note: '조금만 구부려도 똑 부러져요. 부러진 조각은 물에서 어떻게 될까요?' },
+      sway: { name: '🌊 물살 일으키기', ...act(3.5, (t) => { stems.forEach((s, i) => { s.rotation.z = s.userData.lean + Math.sin(t * Math.PI * 6 + i) * 0.22 * (1 - t); }); }), note: '물살에 잎이 어떻게 움직이나요? 잎이 가늘게 갈라져 있으면 무엇이 좋을까요?' },
+    },
+  };
+}
+function alisma() {
+  const g = new THREE.Group(), blades = [], cm = 10;
+  const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 0.25, 12), mat(0x7a7a4a)); crown.position.set(0, SOIL + 0.08, 0); g.add(crown);
+  for (let i = 0; i < 16; i++) { const a = (i / 16) * Math.PI * 2; g.add(tube([[Math.cos(a) * 0.1, SOIL, Math.sin(a) * 0.1], [Math.cos(a) * 0.35, SOIL - 0.25, Math.sin(a) * 0.35]], 0.01, 0xd8d0b8)); }
+  const blade = (a, H, tilt, w, h) => {
+    const bx = Math.cos(a) * (0.55 + H * 0.12), bz = Math.sin(a) * (0.5 + H * 0.1), top = new THREE.Vector3(bx, H, bz);
+    g.add(tube([[Math.cos(a) * 0.08, SOIL + 0.15, Math.sin(a) * 0.08], [bx * 0.4, (SOIL + H) * 0.55, bz * 0.4], [top.x, top.y, top.z]], 0.03, 0x6f8f46));
+    const hold = new THREE.Group(), m = leafMesh(ALI_TEX(), { w, h, curl: 0.18, droop: 0.12, segs: [8, 12], gloss: 0.5 }); hold.add(m); hold.position.copy(top); hold.rotation.set(0, -a + Math.PI / 2, 0); hold.rotateX(-tilt); g.add(hold); blades.push(hold);
+  };
+  [[0.3, 3.4, 0.7], [1.6, 3.7, 0.55], [2.9, 3.3, 0.8], [4.2, 3.6, 0.6], [5.4, 3.2, 0.75]].forEach(([a, H, tilt]) => blade(a, H, tilt, 0.55, 0.95));
+  // 물속 어린 잎: 가늘고 리본 같다
+  [[0.9, 1.4], [3.6, 1.2]].forEach(([a, H]) => { const hold = new THREE.Group(), m = leafMesh(ALI_TEX(), { w: 0.12, h: 0.9, curl: 0.05, droop: 0.3, segs: [2, 10], gloss: 0.2 }); hold.add(m); hold.position.set(Math.cos(a) * 0.2, SOIL + 0.15, Math.sin(a) * 0.2); hold.rotation.set(0, -a + Math.PI / 2, 0); hold.rotateX(-0.5); g.add(hold); });
+  // 꽃대: 마디마다 가지 3개가 돌려나고 끝에 흰 꽃(꽃잎 3장)
+  g.add(tube([[0.05, SOIL + 0.15, 0], [0.1, 3, 0.05], [0.12, 4.7, 0.05]], 0.03, 0x7f9a4e));
+  const pet = new THREE.Mesh(new THREE.CircleGeometry(0.05, 10), mat(0xfbf8f2, { side: THREE.DoubleSide }));
+  [3.6, 4.05, 4.45].forEach((y, wi) => { for (let j = 0; j < 3; j++) { const a = (j / 3) * Math.PI * 2 + wi, L = 0.45 - wi * 0.12, tip = [0.11 + Math.cos(a) * L, y + L * 0.6, 0.05 + Math.sin(a) * L]; g.add(tube([[0.11, y, 0.05], tip], 0.012, 0x8aa65a)); const fl = new THREE.Group(); for (let k = 0; k < 3; k++) { const pp = pet.clone(); pp.position.set(Math.cos((k / 3) * Math.PI * 2) * 0.05, 0, Math.sin((k / 3) * Math.PI * 2) * 0.05); pp.rotation.x = -Math.PI / 2; fl.add(pp); } const c = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), mat(0xe8c84a)); c.position.y = 0.01; fl.add(c); fl.position.set(...tip); g.add(fl); } });
+  const sec = section(spongeHoles(26, 9), { title: '잎자루 단면(확대)', color: 0x8fbf72 }); sec.position.set(TW / 2 + 0.95, 1.5, 0.4);
+  const d = drop(); d.visible = false; g.add(d);
+  return {
+    id: 'alisma', no: '⑦', name: '택사', hint: '질경이 모양 잎이 물 밖으로 선 것', cmPerUnit: cm, ruler: 30, rulerAt: { pos: [-1.9, SOIL + 1.6, 0.3], vertical: true }, group: g, section: sec,
+    think: ['잎맥은 어떻게 뻗나요 — 그물처럼, 나란히?', '물속의 어린 잎과 물 밖의 잎은 모양이 같나요?', '꽃잎은 몇 장인가요? 꽃대의 가지는 한 마디에 몇 개씩 나나요?'],
+    actions: {
+      drop: { name: '💧 잎에 물 떨어뜨리기', ...act(3, (t) => { const b = blades[1].position; d.visible = t < 0.98; if (t < 0.4) d.position.set(b.x, b.y + 1.6 - 1.45 * ease.io(t / 0.4), b.z); else { const k = (t - 0.4) / 0.6; d.position.set(b.x + 0.15 * k, b.y + 0.15 - 0.6 * k * k, b.z + 0.2 * k); } }), note: '물방울이 잎에 퍼지나요, 굴러떨어지나요?' },
+      sway: { name: '🍃 바람 불기', ...act(3.5, (t) => { blades.forEach((b, i) => { b.rotation.z = Math.sin(t * Math.PI * 5 + i) * 0.12 * (1 - t); }); }), note: '잎자루가 바람에 꺾이나요, 휘었다 돌아오나요?' },
+    },
+  };
+}
+function typha() {
+  const g = new THREE.Group(), blades = [], cm = 30;
+  const rh = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 1.8, 10), mat(0x8a6a44)); rh.rotation.z = Math.PI / 2; rh.position.set(0, SOIL - 0.05, 0); g.add(rh);
+  for (let i = 0; i < 14; i++) g.add(tube([[-0.8 + i * 0.12, SOIL - 0.05, 0], [-0.8 + i * 0.12 + 0.05, SOIL - 0.3, (i % 2 ? 0.15 : -0.15)]], 0.01, 0xcfc4a6));
+  [[-0.5, 0.2, 5.0, -0.12], [-0.35, 1.6, 4.4, 0.1], [-0.1, 3.0, 5.4, -0.05], [0.25, 4.3, 4.8, 0.14], [0.45, 5.5, 4.2, -0.18], [0.1, 0.9, 3.8, 0.2], [-0.2, 2.4, 4.6, -0.2]].forEach(([x, a, L, lean]) => {
+    const hold = new THREE.Group(), m = leafMesh(TYPHA_TEX(), { w: 0.07, h: L, curl: 0.02, droop: 0.03, segs: [2, 20], gloss: 0.2 }); hold.add(m); hold.position.set(x, SOIL + 0.05, 0); hold.rotation.set(0, a, lean); g.add(hold); blades.push(hold);
+  });
+  g.add(tube([[0.05, SOIL, 0], [0.08, 3, 0.02], [0.1, 4.9, 0.02]], 0.03, 0x7a8a4a));
+  const fem = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.62, 16), mat(0x5a3a22, { roughness: 0.9 })); fem.position.set(0.09, 4.3, 0.02); g.add(fem);
+  const male = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.04, 0.4, 10), mat(0xc8b06a, { roughness: 1 })); male.position.set(0.1, 4.82, 0.02); g.add(male);
+  // 잎 찢기: 앞쪽에 잎 조각 하나 — 세로로는 쭉 갈라지고 가로로는 잘 안 찢어진다
+  const tear = new THREE.Group(), hl = [-1, 1].map((sg) => { const p = new THREE.Group(), m = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 1.1), mat(0x5a8a3a, { side: THREE.DoubleSide })); m.position.set(sg * 0.035, 0.55, 0); p.add(m); tear.add(p); return p; });
+  tear.position.set(1.7, WATER + 0.3, 0.9); tear.visible = false; g.add(tear);
+  // 잎 단면: 칸막이(격벽)로 나뉜 빈 방이 줄지어 있다
+  const holes = []; for (let i = 0; i < 5; i++) for (const y of [-0.26, 0.26]) holes.push([-0.56 + i * 0.28, y, 0.11]);
+  const sec = section(holes, { title: '잎 단면(확대)', color: 0x7aa75a }); sec.position.set(TW / 2 + 0.95, 2.4, 0.4);
+  return {
+    id: 'typha', no: '⑧', name: '부들', hint: '긴 칼 모양 잎이 곧게 선 것', cmPerUnit: cm, ruler: 150, rulerAt: { pos: [1.5, SOIL + 2.5, -0.4], vertical: true }, group: g, section: sec,
+    think: ['잎을 가로로 찢을 때와 세로로 찢을 때 어떻게 다른가요?', '잎 단면의 칸칸이 나뉜 빈 방은 무슨 일을 할까요?', '키가 큰데 바람에 어떻게 버틸까요? 잎이 비틀려 있나요?'],
+    actions: {
+      tear: { name: '✋ 잎 찢어 보기', ...act(4, (t) => { tear.visible = t > 0.05 && t < 0.98; const o = t < 0.25 ? 0 : t < 0.8 ? ease.out((t - 0.25) / 0.55) : 1; hl.forEach((p, i) => { p.rotation.z = (i ? -1 : 1) * 0.35 * o; }); }), note: '세로로는 잎맥을 따라 쭉 갈라지고, 가로로는 잘 안 찢어져요. 왜 그럴까요?' },
+      sway: { name: '🍃 바람 불기', ...act(3.5, (t) => { blades.forEach((b, i) => { b.rotation.z = b.rotation.z * 0.9 + (Math.sin(t * Math.PI * 4 + i * 0.7) * 0.16 * (1 - t)) * 0.1; }); }), note: '잎이 바람에 꺾이나요, 휘었다 돌아오나요?' },
+    },
+  };
+}
+
+export const SPECIMENS = [lily, duckweed, hyacinth, hydrilla, marsilea, ceratophyllum, alisma, typha];
 export const TOOLS = [{ id: 'section', name: '✂ 단면 보기' }, { id: 'ruler', name: '📏 자 대기' }];
 export const VIEWS = { side: { theta: 0, phi: 1.5, name: '옆에서 본 모습' }, top: { theta: 0, phi: 0.36, name: '위에서 본 모습' }, angle: { theta: 0.55, phi: 1.12, name: '비스듬히' } };
 // 무대에 표본 하나를 올린다. 돌려주는 것: { spec, run(동작 id), setView(id), toggle(이름, 켬) }

@@ -76,10 +76,10 @@ test('가이드·질문: 공통 문구에 실험 문구가 더해지고, 모든 
   assert.equal(reportCfg('seed', 'elem', 'nature').table.columns[1], '3일', 'by.nature가 있으면 그 표');
   assert.equal(reportCfg('seed', 'elem', 'inquiry').table.rows[0], '4℃');
 });
-test('미리 채우기: 자연관찰 연습은 대상 4개 이름표, 발명은 불편함 칸', () => {
+test('미리 채우기: 자연관찰 연습은 대상 수만큼 이름표(물풀 8종), 발명은 불편함 칸', () => {
   const ob = { id: 'observe-water', title: 'x', activity: { materials: ['자'], steps: ['본다'] } };
   const p = prefill(ob, reportCfg('observe-water', 'mid', 'nature'), 'mid', 'nature');
-  assert.equal(p.__obs, 4); assert.equal(p['sheet.0.label'], '①'); assert.match(p.target, /연못/);
+  assert.equal(p.__obs, 8); assert.equal(p['sheet.0.label'], '①'); assert.match(p.target, /연못/);
   const top = UNITS.find((u) => u.id === 'top'), q = prefill(top, { ...reportCfg('top', 'elem', 'invent'), problem: '팽이가 금방 멈춘다' }, 'elem', 'invent');
   assert.equal(q.motive, '팽이가 금방 멈춘다'); assert.match(q.steps, /^1\. /);
   assert.ok(!tableTouched({ columns: ['a', 'b'], rows: [['4℃', ''], ['', '']] })); assert.ok(tableTouched({ columns: ['a', 'b'], rows: [['4℃', '3']] }));
