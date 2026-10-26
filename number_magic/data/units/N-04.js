@@ -1,4 +1,4 @@
-/* Numbers of Magic — 유닛 N-04: 기수법 놀이 (수의 나라 · 유아 5~7세)
+/* Numbers of Magic — 유닛 N-04: 여러 방법으로 수 나타내기 (수의 나라 · 유아 5~7세)
    tier:'basic' → 경량 플로우: practice → discover(1스테이지) → lab → stamp
    콘텐츠는 전부 창작(탤리 막대 도식) — 라이선스 교재 삽화/지문 미사용 */
 (function(){
@@ -8,7 +8,7 @@ window.NM_UNITS = window.NM_UNITS || {};
 window.NM_UNITS['N-04'] = {
   id:'N-04', tier:'basic', level:'N', order:4,
   generator:'nl_tallybuild', edu:'유아',
-  title:{ ko:'기수법 놀이', en:'Number Notation Play', zh:'记数法游戏' },
+  title:{ ko:'여러 방법으로 수 나타내기', en:'Ways to Show a Number', zh:'用不同方法表示数' },
   subtitle:{ ko:'탤리 막대로 수를 만들고, 수와 탤리를 이어요!', en:'Build numbers with tally marks, then match them!', zh:'用计数符号做数字，再连一连！' },
   icon:'🖍️',
 
@@ -44,12 +44,12 @@ window.NM_UNITS['N-04'] = {
   lab:{ generator:'g46_ancient', level:'main', count:4, params:{ mode:'match' },
     intro:{ ko:'옛날 사람들의 숫자예요! 숫자를 먼저 톡 — 같은 수의 기호를 골라 이어요!', en:'Numbers from long ago! Tap a number, then tap its old symbol!', zh:'古人的数字！先点数字，再点同样数的符号！' } },
 
-  stamp:{ label:{ ko:'기수법 마법사', en:'Notation Wizard', zh:'记数法魔法师' }, coins:20 },
+  stamp:{ label:{ ko:'수 나타내기 마법사', en:'Number Artist', zh:'数字表达魔法师' }, coins:20 },
 
   voice:{
     correct:[ {ko:'딩동! 딱 맞는 수! 🖍️',en:'Ding! The right amount!',zh:'叮！数量正好！'}, {ko:'묶음이 완벽해요! ✨',en:'Perfect bundling!',zh:'捆得真完美！'}, {ko:'연결 성공! 🔗',en:'Great matching!',zh:'连对啦！'} ],
     wrong:[ {ko:'음~ 막대를 하나씩 세어 볼까요?',en:'Hmm, count the strokes one by one?',zh:'嗯，一笔一笔数数看？'}, {ko:'다섯 개마다 사선으로 묶여요',en:'Every five strokes get bundled with a diagonal',zh:'每五笔就用斜线捆一下'} ],
-    finish:{ ko:'짝짝짝! 기수법 마법사 탄생! 🖍️✨', en:'Clap clap! A Notation Wizard is born!', zh:'鼓掌！记数法魔法师诞生了！' }
+    finish:{ ko:'훌륭해요! 🌟', en:'Clap clap! A Number Artist is born!', zh:'鼓掌！数字表达魔法师诞生了！' }
   }
 };
 
