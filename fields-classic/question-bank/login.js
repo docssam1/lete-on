@@ -1,4 +1,4 @@
-import { login, logout, checkSession, loggedIn } from "./study-progress.js?v=20261028g";
+import { login, logout, checkSession, loggedIn } from "./study-progress.js?v=20261028n";
 
 // 승인(로그인) 페이지(원장 2026-10-27): 승인번호 + 이름 → 학생은 스스로 공부 첫 화면, 관리자(DOCSSAM)는 선생님 보기.
 // &next=my-study.html 처럼 돌아갈 화면을 줄 수 있다(같은 폴더의 html 만).

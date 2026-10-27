@@ -74,6 +74,21 @@ export function saveRecord(student, kind, key, payload) {
   return entry;
 }
 
+// 데모 선생님 보기: 이 기기에 저장된 모든 학생의 기록(서버 class 와 같은 모양)
+export function loadLocalAll() {
+  const rows = [];
+  try {
+    for (let index = 0; index < localStorage.length; index += 1) {
+      const name = localStorage.key(index);
+      if (!name?.startsWith(PREFIX)) continue;
+      const [studentName, kind, ...rest] = name.slice(PREFIX.length).split(":");
+      const entry = JSON.parse(localStorage.getItem(name) || "null");
+      if (entry && studentName) rows.push({ student_name: studentName, kind, record_key: rest.join(":"), payload: entry.payload, updated_at: entry.updatedAt });
+    }
+  } catch {}
+  return { records: rows, students: [...new Set(rows.map((row) => row.student_name))].map((name) => ({ name })) };
+}
+
 // 선생님 보기: 학생 전체 기록과 승인된 학생 이름(관리자 세션만)
 export async function loadClass() {
   return call({ action: "class" });

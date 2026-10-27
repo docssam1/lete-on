@@ -1,8 +1,9 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
-import { checkSession, loadClass, logout, weekRate } from "./study-progress.js?v=20261028g";
+import { checkSession, loadClass, loadLocalAll, logout, weekRate } from "./study-progress.js?v=20261028n";
 
 // 선생님 보기(원장 2026-10-27): 학생마다 권·주차 수행률, 단원 평가·권별 테스트 점수, 약점 유형. 학생 이름을 누르면 그 학생의 「내 학습 상황」.
-// 관리자(DOCSSAM) 세션만 연다 — 기록은 서버(fields-progress class)에서. 로그인하지 않고 공부한 기록(데모)은 그 기기에만 있어 여기 안 보인다.
+// 지금은 누구나 연다(원장 2026-10-27 「지금은 다 접속되는 걸로」): 로그인 없이 열면 데모 — 이 기기에 저장된 학생 기록만.
+// 관리자(DOCSSAM)로 로그인하면 서버(fields-progress class)의 승인된 학생 전체 기록. 서버 기록은 로그인 없이 열지 않는다(학생 이름·진도 보호).
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -77,21 +78,29 @@ $("books").addEventListener("click", (event) => {
   render();
 });
 
-const me = await checkSession();
-if (!me || me.type !== "admin") {
-  $("status").innerHTML = `선생님(관리자)으로 로그인해야 볼 수 있어요. <a class="ms-btn primary" href="./login.html?next=teacher.html">로그인 ›</a>`;
-} else {
-  $("who").innerHTML = `<span>${esc(me.name)}</span><button type="button" id="logoutBtn">로그아웃</button>`;
-  $("logoutBtn").addEventListener("click", async () => { await logout(); location.assign("./login.html?next=teacher.html"); });
-  const data = await loadClass().catch(() => null);
-  if (!data) $("status").textContent = "기록을 불러오지 못했어요. 새로고침해 주세요.";
-  else {
-    $("status").textContent = "로그인한 학생의 기록이에요. 로그인 없이(데모) 공부한 것은 그 기기에만 있어요.";
+function fill(data) {
     for (const row of data.records || []) {
       if (!byStudent.has(row.student_name)) byStudent.set(row.student_name, new Map());
       byStudent.get(row.student_name).set(`${row.kind}:${row.record_key}`, { key: row.record_key, payload: row.payload, updatedAt: row.updated_at });
     }
     students = [...new Set([...(data.students || []).map((entry) => entry.name), ...byStudent.keys()])];
     render();
+}
+const me = await checkSession();
+if (!me || me.type !== "admin") {
+  $("who").innerHTML = `<a href="./login.html?next=teacher.html">선생님 로그인</a>`;
+  const data = loadLocalAll();
+  $("status").textContent = data.records.length
+    ? "데모 · 이 기기에 저장된 학생 기록이에요. 선생님(DOCSSAM)으로 로그인하면 승인된 학생 전체 기록이 보여요."
+    : "데모 · 이 기기에 아직 공부 기록이 없어요. 스스로 공부를 하면 여기에 보여요. 선생님(DOCSSAM)으로 로그인하면 승인된 학생 전체 기록이 보여요.";
+  fill(data);
+} else {
+  $("who").innerHTML = `<span>${esc(me.name)}</span><button type="button" id="logoutBtn">로그아웃</button>`;
+  $("logoutBtn").addEventListener("click", async () => { await logout(); location.assign("./teacher.html"); });
+  const data = await loadClass().catch(() => null);
+  if (!data) $("status").textContent = "기록을 불러오지 못했어요. 새로고침해 주세요.";
+  else {
+    $("status").textContent = "로그인한 학생의 기록이에요. 로그인 없이(데모) 공부한 것은 그 기기에만 있어요.";
+    fill(data);
   }
 }

@@ -30,7 +30,8 @@ description: 지필드 사고력 문제은행(fields-classic/question-bank) 화�
 - **학습 기록·내 학습 상황**(원장 「학생이 직접 학습 상황을 · 수행률 진도」): `study-progress.js`(`saveRecord`·`readRecord`·`loadRecords`·`weekRate`) 하나로만 저장한다 — 종류 `week`(덱에서 본 장, 수행률 = 본 장 ÷ 모든 장, 단원 평가는 채점까지) · `test`(단원 평가) · `book-test`(권별 테스트). 화면 `my-study.html`(권마다 수행률 · 진도 · 단원 평가 평균 · 권별 테스트 · 주차별 막대 · 약점 유형 다시 공부). 시작 화면 단원 카드에 수행률 막대.
 - **지금은 데모**(원장 「우선은 데모로 두고 나중에 승인 페이지 만들자」): 기록은 이 기기(localStorage `fields-classic-rec:<학생>:<종류>:<열쇠>`). 학생 세션(`sessionStorage gfield_fields_session`, fields-auth)이 있으면 서버 함수 `fields-progress`(save · mine · class · student — class·student는 DOCSSAM 관리자만)가 표 `fields_study_records`에도 저장한다. 문제 글·정답은 넣지 않는다(점수·장 열쇠·유형 id만).
 - **승인(로그인) `login.html`**: 승인번호 + 이름 → `fields-auth` login(12시간 세션, `sessionStorage gfield_fields_session · gf_n · gf_t`). 학생 → `start.html?student=<이름>`, DOCSSAM → `teacher.html`. 「로그인 없이 둘러보기」= 데모(이 기기에만). 서버에는 **로그인한 학생 자신의 이름으로 연 공부만** 저장한다(선생님이 둘러본 것·다른 이름은 저장 안 함).
-- **선생님 보기 `teacher.html`**(관리자 세션만): 권마다 학생별 1~4주 수행률·단원 평가·권별 테스트·약점 유형 수·최근, 이름 → 그 학생의 `my-study.html`(서버 기록), 반 전체 약점 유형 → 그 유형으로 학습지(문제은행 2단계).
+- **지금은 다 접속된다**(원장 「지금은 다 접속되는 걸로」): 로그인 없이도 모든 화면이 열린다. 로그인 페이지 아래 큰 「체험하기」(= DEMO). 선생님 보기를 로그인 없이 열면 **이 기기에 저장된 학생 기록**만 보인다(서버의 승인 학생 기록은 학생 이름·진도라 관리자 로그인 뒤에만).
+- **선생님 보기 `teacher.html`**(관리자로 로그인하면 서버 기록): 권마다 학생별 1~4주 수행률·단원 평가·권별 테스트·약점 유형 수·최근, 이름 → 그 학생의 `my-study.html`(서버 기록), 반 전체 약점 유형 → 그 유형으로 학습지(문제은행 2단계).
 - 이 클라우드에서는 Supabase 연결이 막혀 있다 — 화면 흐름은 Playwright `page.route`로 fields-auth·fields-progress 응답을 흉내 내 확인한다.
 
 ## 2. 화면 가득 틀 (넓은 화면 981px 이상)

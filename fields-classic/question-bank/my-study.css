@@ -78,15 +78,16 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (max-width: 760px) { .ms-stat > b.ms-text { font-size: 17px; } }
 
 /* 승인(로그인) 페이지 */
-.ms-login-page { display: grid; min-height: 100dvh; place-items: center; padding: 24px 16px; }
-.ms-login { display: grid; gap: 14px; width: min(100%, 420px); }
+.ms-login-page { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 100dvh; place-items: center; padding: 24px 16px; }
+[hidden] { display: none !important; }
+.ms-login { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; width: min(100%, 420px); }
 .ms-login-kick { margin: 0; color: var(--muted); font-size: 12px; letter-spacing: .12em; }
 .ms-login h1 { margin: 0; font-size: 28px; }
 .ms-login-lead { margin: 0; color: var(--muted); line-height: 1.6; }
 .ms-login-lead b { color: var(--accent-ink); }
-.ms-login-box { display: grid; gap: 12px; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+.ms-login-box { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
 .ms-login-box label { display: grid; gap: 6px; font-weight: 600; }
-.ms-login-box input { min-height: 48px; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; font: inherit; font-size: 17px; }
+.ms-login-box input { width: 100%; min-width: 0; min-height: 48px; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; font: inherit; font-size: 17px; }
 .ms-login-box input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .ms-login-box p { margin: 0; }
 .ms-login-error { min-height: 1.4em; color: var(--terra); font-size: 14px; }
@@ -108,3 +109,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .ms-table tr.is-idle { color: var(--muted); }
 .ms-weak-count { display: inline-grid; place-items: center; min-width: 26px; height: 26px; border-radius: 99px; background: #f8e6df; color: var(--terra); font-weight: 700; }
 #status .ms-btn { margin-left: 8px; }
+
+/* 로그인 페이지 아래 큰 「체험하기」(원장 「아래 체험하기를 둬 큰 버튼으로」) */
+.ms-login-or { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; }
+.ms-login-or::before, .ms-login-or::after { content: ""; flex: 1; border-top: 1px solid var(--line-strong); }
+.ms-try { display: grid; justify-items: center; gap: 4px; padding: 20px 16px; border: 2px solid var(--accent); border-radius: 14px; background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; }
+.ms-try b { font-size: 24px; font-weight: 700; }
+.ms-try small { color: var(--accent-ink); font-size: 14px; opacity: .85; }
+.ms-try:hover { background: #dfe9dc; }
