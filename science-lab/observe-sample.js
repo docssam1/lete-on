@@ -90,11 +90,12 @@ export function openSample(set) {
   $m.innerHTML = `<div class="sk-box rp-sample-box">
     <header class="sk-head"><b>📄 예시 보고서 — ${esc(set.title)}</b><span class="sk-sp"></span>
       <button type="button" class="sk-btn" data-act="replay">▶ 처음부터 그리기</button><button type="button" class="sk-btn" data-act="skip">⏭ 바로 다 보기</button>
-      <button type="button" class="sk-btn" data-act="snd" aria-pressed="true">🔈 연필 소리</button><button type="button" class="sk-btn" data-act="print">인쇄</button><button type="button" class="sk-btn primary" data-act="close">닫기</button></header>
+      <button type="button" class="sk-btn" data-act="snd" aria-pressed="false">🔇 소리 끔</button><button type="button" class="sk-btn" data-act="print">인쇄</button><button type="button" class="sk-btn primary" data-act="close">닫기</button></header>
     <p class="rp-g-lead">잘 쓴 보고서의 한 예예요. <b>베끼지 말고</b>, 그림에는 무엇을 표시했고 글에는 무엇을 썼는지 보세요. 설명은 <b>본 것 → 확인한 것 → 추정</b>으로 나눠 썼고, 이름을 몰라도 번호로 불렀어요.</p>
     ${sampleArticle(set)}</div>`;
   document.body.appendChild($m); document.body.classList.add('sk-open');
-  const snd = scratch(); let soundOn = true;
+  // 연필 소리는 처음엔 꺼 둔다(원장 2026-10-27 「그리는 소리 거슬려」) — 단추로 켤 수 있다
+  const snd = scratch(); let soundOn = false;
   const D = makeDrawer($m, snd);
   const play = () => { if (soundOn) snd.on(); return D.play(); };
   const close = () => { D.stop(); snd.off(); document.removeEventListener('keydown', onKey); $m.remove(); document.body.classList.remove('sk-open', 'print-sample'); };

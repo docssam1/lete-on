@@ -181,25 +181,29 @@ export function mountPark($host, { field = false, onArrive = null, start = '' } 
   const followKid = (dt) => {
     const sx = tx + (kid.pos[0] / 100) * I.w * s, sy = ty + (kid.pos[1] / 100) * I.h * s, W = $v.clientWidth, H = $v.clientHeight;
     let gx = tx, gy = ty; if (sx < W * 0.3) gx += W * 0.3 - sx; else if (sx > W * 0.7) gx -= sx - W * 0.7; if (sy < H * 0.3) gy += H * 0.3 - sy; else if (sy > H * 0.7) gy -= sy - H * 0.7;
-    const a = 1 - Math.exp(-6 * dt); tx += (gx - tx) * a; ty += (gy - ty) * a; clamp(); apply();
+    const a = 1 - Math.exp(-2.5 * dt); tx += (gx - tx) * a; ty += (gy - ty) * a; clamp(); apply();
   };
   const nearestNode = (p) => { let best = null, bd = 1e9; for (const [k, q] of G.N) { const d = px(q, p); if (d < bd) { bd = d; best = k; } } return best; };
   const stopWalk = () => { cancelAnimationFrame(kid.raf); kid.walk = null; $kids.classList.remove('walk'); K3.setWalking(false); };
   const walkTo = (toKey, ms, done, tail) => {
     // 길 위가 아닌 곳(누른 자리·방향키로 간 자리)에 서 있으면 가장 가까운 길 점에서 출발한다 — 그 자리를 길 점으로 찾으면 길이 없어 멈췄다
     const w = kid.walk, here = G.N.has(key(kid.pos)) ? key(kid.pos) : nearestNode(kid.pos), links = w ? [w.pts[w.i].k, w.pts[w.i + 1].k].filter((k) => G.N.has(k)) : [here];
+    const pts = route(kid.pos, links.length ? links : [here], toKey); if (tail && px(pts[pts.length - 1].p, tail) > 2) pts.push({ k: '@t', p: tail });
+    walkPath(smooth(pts), ms, done);
+  };
+  // 꺾인 길을 둥글게(차이킨 두 번) — 길 모퉁이에서 휙 꺾이지 않고 돌아 걷는다. 처음·끝 점은 그대로
+  const smooth = (pts) => { let q = pts; for (let r = 0; r < 2 && q.length > 2; r++) { const o = [q[0]]; for (let i = 0; i < q.length - 1; i++) { const a = q[i].p, b = q[i + 1].p; if (i > 0) o.push({ k: '@s', p: [a[0] * 0.75 + b[0] * 0.25, a[1] * 0.75 + b[1] * 0.25] }); if (i < q.length - 2) o.push({ k: '@s', p: [a[0] * 0.25 + b[0] * 0.75, a[1] * 0.25 + b[1] * 0.75] }); } o.push(q[q.length - 1]); q = o; } return q; };
+  // 실제 걷기: 점들을 따라. 원장 2026-10-27 「캐릭터 움직이는 게 너무 빨라」 → 초당 그림 220px(전에 460), 아주 먼 길만 조금 빨리(최대 12초)
+  const walkPath = (pts, ms, done) => {
     stopWalk(); say(null);
-    // 가까운 곳(300px 안)을 누르면 길을 돌지 않고 곧장 간다(수의 나라 지도처럼)
-    const direct = tail && px(kid.pos, tail) < 300;
-    const pts = direct ? [{ k: '@', p: kid.pos }, { k: '@t', p: tail }] : route(kid.pos, links.length ? links : [here], toKey); if (!direct && tail && px(pts[pts.length - 1].p, tail) > 2) pts.push({ k: '@t', p: tail }); const segs = pts.slice(1).map((q, i) => px(pts[i].p, q.p)), len = segs.reduce((a, b) => a + b, 0);
+    const segs = pts.slice(1).map((q, i) => px(pts[i].p, q.p)), len = segs.reduce((a, b) => a + b, 0);
     if (reduced || len < 1) { kid.pos = pts[pts.length - 1].p; putKids(); face(0); done?.(); return; }
-    // 화면에서 너무 느리지 않게: 긴 길도 5초 안쪽
-    const v = ms ? len / (ms / 1000) : Math.max(460, len / 5);
-    kid.walk = { pts, i: 0, d: 0, done: 0, vel: 0, links }; $kids.classList.add('walk'); K3.setWalking(true);
+    const v = ms ? len / (ms / 1000) : Math.max(220, len / 12);
+    kid.walk = { pts, i: 0, d: 0, done: 0, vel: 0 }; $kids.classList.add('walk'); K3.setWalking(true);
     let last = performance.now();
     const step = (now) => { if (!alive || !kid.walk) return; const dt = Math.min(0.05, (now - last) / 1000); last = now; const W = kid.walk;
       // 속도는 서서히 붙고, 남은 거리가 줄면 서서히 멈춘다(실제 시간 기준이라 화면 Hz와 무관)
-      const remain = len - W.done, want = Math.min(v, remain * 4 + 30); W.vel += (want - W.vel) * (1 - Math.exp(-9 * dt)); const st = Math.min(remain, W.vel * dt); W.d += st; W.done += st;
+      const remain = len - W.done, want = Math.min(v, remain * 2.5 + 25); W.vel += (want - W.vel) * (1 - Math.exp(-5 * dt)); const st = Math.min(remain, W.vel * dt); W.d += st; W.done += st;
       while (W.i < segs.length - 1 && W.d > segs[W.i]) { W.d -= segs[W.i]; W.i++; }
       const a = pts[W.i].p, b = pts[W.i + 1].p, t = Math.min(1, W.d / (segs[W.i] || 1));
       kid.pos = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; putKids(); face((b[0] - a[0]) * I.w, (b[1] - a[1]) * I.h);
@@ -220,7 +224,7 @@ export function mountPark($host, { field = false, onArrive = null, start = '' } 
     if (!intro || reduced) { s = go.s; tx = go.tx; ty = go.ty; clamp(); apply(); showPins(); return; }
     // 시작: 전체 지도를 잠깐 보여 주고 → 두 아이가 입구에서 광장으로 걸어 들어오는 동안 지도가 광장 쪽으로 확대 → 표가 하나씩 떠오른다
     s = fit; tx = 0; ty = 0; clamp(); apply(); $pins.forEach((b) => b.classList.remove('show'));
-    setTimeout(() => { if (!alive) return; kid.follow = false; fly(go, 2600, showPins); kid.spot = 'gate'; $pins.forEach((b) => b.classList.toggle('here', b.dataset.spot === 'gate')); walkTo(key(hub()), 2500, () => say(HELLO)); }, 900);
+    setTimeout(() => { if (!alive) return; kid.follow = false; fly(go, 3600, showPins); kid.spot = 'gate'; $pins.forEach((b) => b.classList.toggle('here', b.dataset.spot === 'gate')); walkTo(key(hub()), 3400, () => say(HELLO)); }, 900);
   };
   $img.onload = () => { load(!start); seaMask(); if (start) $pins.forEach((b) => b.classList.toggle('here', b.dataset.spot === start)); };
   $img.src = PARK.images.wide.src;
@@ -238,7 +242,8 @@ export function mountPark($host, { field = false, onArrive = null, start = '' } 
   ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => $v.addEventListener(t, up));
   // 대회 폴더 안 지도는 Ctrl+휠(쪽 넘김과 겹치지 않게), 탐험(전체 화면)은 그냥 휠로 확대·축소
   $v.addEventListener('wheel', (e) => { if (!e.ctrlKey && !field) return; e.preventDefault(); const q = loc(e); zoomAt(e.deltaY < 0 ? 1.1 : 1 / 1.1, q[0], q[1]); }, { passive: false });
-  const zoomMid = (f) => zoomAt(f, $v.clientWidth / 2, $v.clientHeight / 2);
+  // 단추·키 확대는 0.35초 동안 부드럽게
+  const zoomMid = (f) => { const ns = Math.max(fit, Math.min(fit * 4, s * f)), cx = $v.clientWidth / 2, cy = $v.clientHeight / 2; fly({ s: ns, tx: cx - ((cx - tx) * ns) / s, ty: cy - ((cy - ty) * ns) / s }, 350); };
   $host.querySelectorAll('[data-zf]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); zoomMid(+b.dataset.zf > 0 ? 1.25 : 0.8); }));
   const onZoomKey = (e) => { if (!field || e.target.closest?.('input, textarea')) return; if (e.key === '+' || e.key === '=') zoomMid(1.25); else if (e.key === '-' || e.key === '_') zoomMid(0.8); };
   if (field) addEventListener('keydown', onZoomKey);
@@ -280,18 +285,19 @@ export function mountPark($host, { field = false, onArrive = null, start = '' } 
   const go = (id) => {
     $pins.forEach((b) => b.classList.toggle('on', b.dataset.spot === id)); $pins.forEach((b) => b.classList.remove('here'));
     kid.spot = id; kid.follow = field || s > fit * 1.15;
-    walkTo(key(stand(id)), 0, () => { if (kid.spot !== id) return; if (field) { $pins.forEach((b) => b.classList.toggle('here', b.dataset.spot === id)); onArrive?.(id); } else open(id); });
+    walkTo(key(stand(id)), 0, () => { if (kid.spot !== id) return; if (field) { $pins.forEach((b) => b.classList.toggle('here', b.dataset.spot === id)); onArrive?.(id, true); } else open(id); });
   };
   $pins.forEach((b) => b.addEventListener('click', (e) => { if (moved > 6) { e.preventDefault(); return; } go(b.dataset.spot); }));
   // ── 탐험: 두 아이 조종(원장 「캐릭터 조정할 수도 있어야지」) — 땅을 누르면 그 자리로 걸어가고(길을 따라 가까운 곳까지 → 그 자리), 방향키·WASD로도 걷는다.
   // 바다는 그림의 파란 픽셀로 알아본다 — 바다를 누르면 가장 가까운 길에서 멈춘다. 걷다가 지점 가까이에서 서면 그 지점에 온 것으로 친다.
-  const arrived = () => { if (!field) return; const near = PARK.spots.filter((x) => x.set).map((x) => ({ x, d: Math.min(px(kid.pos, stand(x.id)), px(kid.pos, x[kind])) })).sort((a, b) => a.d - b.d)[0];
+  const arrived = () => { if (!field) return; const near = PARK.spots.map((x) => ({ x, d: Math.min(px(kid.pos, stand(x.id)), px(kid.pos, x[kind])) })).sort((a, b) => a.d - b.d)[0];
     if (near && near.d < 120 && kid.spot !== near.x.id) { kid.spot = near.x.id; $pins.forEach((b) => { b.classList.toggle('here', b.dataset.spot === kid.spot); b.classList.remove('on'); }); onArrive?.(kid.spot); } else if (!near || near.d >= 120) { const was = kid.spot; kid.spot = ''; $pins.forEach((b) => b.classList.remove('here')); if (was) onArrive?.(''); } };
   const walkHere = (p) => {
-    const best = nearestNode(p);
-    if (!best) return; const tail = seaAt(p) ? null : p;
+    // 누른 곳까지 곧장 걷는다(수의 나라 지도처럼, 길이 아니어도). 가는 길에 물(바다·연못·개울 — 그림의 파란 픽셀)이 있으면 물가에서 멈춘다
+    const a = kid.pos, n = Math.max(1, Math.ceil(px(a, p) / 10)); let end = p;
+    for (let i = 1; i <= n; i++) { const q = [a[0] + ((p[0] - a[0]) * i) / n, a[1] + ((p[1] - a[1]) * i) / n]; if (seaAt(q)) { end = [a[0] + ((p[0] - a[0]) * (i - 1)) / n, a[1] + ((p[1] - a[1]) * (i - 1)) / n]; break; } }
     kid.follow = field || s > fit * 1.15; $pins.forEach((b) => b.classList.remove('on'));
-    walkTo(best, 0, arrived, tail);
+    walkPath([{ k: '@', p: a }, { k: '@t', p: end }], 0, arrived);
   };
   if (field) $v.addEventListener('pointerup', (e) => {
     if (moved > 6 || !I || e.target.closest('.pk-pin, .pk-nhit, .pm-ctrl')) return;
