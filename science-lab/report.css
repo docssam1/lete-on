@@ -517,8 +517,9 @@ body.fw-on .observe-page { padding-bottom: 58vh; }
 /* 지도 위 파도 줄: 바다에서 밀려와 물가에서 넓은 거품이 된다(park.js waveStep) */
 .pk-waves { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible; }
 .pk-waves path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.pk-waves .wv-foam { stroke: rgba(255, 255, 255, .45); filter: url(#wv-soft); }
-.pk-waves .wv-line { stroke: rgba(255, 255, 255, .6); filter: url(#wv-crest); }
+/* 흐림(blur) 필터는 매 프레임 계산이라 지도가 버벅였다 — 넓고 옅은 줄 + 가는 줄로 부드러워 보이게 */
+.pk-waves .wv-foam { stroke: rgba(255, 255, 255, .2); }
+.pk-waves .wv-line { stroke: rgba(255, 255, 255, .5); }
 .pk-nhit { position: absolute; left: -16px; bottom: -4px; width: 32px; height: 64px; padding: 0; border: 0; background: transparent; cursor: pointer; pointer-events: auto; }
 .pk-nsay { position: absolute; left: 0; bottom: 86px; transform: translateX(-50%) scale(calc(1 / var(--kk, .42))); transform-origin: 50% 100%; width: max-content; max-width: 210px; background: rgba(255, 253, 246, .5); color: rgba(31, 42, 31, .8); border: 1px solid rgba(255, 255, 255, .5); border-radius: 12px; padding: 6px 10px; font-size: 12.5px; font-weight: 700; line-height: 1.4; box-shadow: none; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); pointer-events: none; }
 .pk-nsay::after { content: ""; position: absolute; left: 50%; bottom: -7px; transform: translateX(-50%); border: 7px solid transparent; border-bottom: 0; border-top-color: rgba(255, 253, 246, .5); }

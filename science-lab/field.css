@@ -91,3 +91,10 @@ body.field-on { overflow: hidden; }
   /* 종이에 손으로 쓰는 양식 — 화면용 빈칸 안내는 찍지 않는다 */
   .fd-print-sheet .rp-view:empty::before { content: none; }
 }
+
+/* 탐험 지도: 확대 단추 · 누른 자리 표시 */
+.fd-mapbox .pm-zoom { position: absolute; right: 14px; top: 50px; z-index: 5; display: flex; flex-direction: column; gap: 6px; }
+.fd-mapbox .pm-zoom button { width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255, 250, 240, .92); color: var(--fd-green); font-size: 22px; font-weight: 800; box-shadow: 0 2px 8px rgba(0, 0, 0, .2); cursor: pointer; }
+.pk-ping { position: absolute; width: 36px; height: 36px; margin: -18px 0 0 -18px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, .95); box-shadow: 0 0 0 2px rgba(47, 107, 58, .5); transform: scale(calc(1 / var(--s, 1))); animation: pk-ping .8s ease-out forwards; pointer-events: none; z-index: 2; }
+@keyframes pk-ping { from { opacity: 1; scale: .4; } to { opacity: 0; scale: 1.4; } }
+
