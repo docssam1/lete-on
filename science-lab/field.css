@@ -98,3 +98,7 @@ body.field-on { overflow: hidden; }
 .pk-ping { position: absolute; width: 36px; height: 36px; margin: -18px 0 0 -18px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, .95); box-shadow: 0 0 0 2px rgba(47, 107, 58, .5); transform: scale(calc(1 / var(--s, 1))); animation: pk-ping .8s ease-out forwards; pointer-events: none; z-index: 2; }
 @keyframes pk-ping { from { opacity: 1; scale: .4; } to { opacity: 0; scale: 1.4; } }
 
+/* 화면 바뀔 때(지도 ↔ 관찰) 부드럽게 나타나게 */
+.fd { animation: fd-in .6s ease-out; }
+@keyframes fd-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .fd { animation: none; } }

@@ -38,11 +38,17 @@ function mapScreen($app, at) {
   const $say = $app.querySelector('.fd-say'), $next = $app.querySelector('.fd-next');
   let mode = '', here = '';
   const show = (t, label = '다음 ▶', on = true) => { $say.textContent = t; $next.textContent = label; $next.disabled = !on; };
-  const arrive = (sid) => {
+  // picked = 표를 눌러(또는 「다음」으로) 그 장소로 간 것 — 도착하면 아래 띠를 누르지 않아도 바로 관찰을 연다(원장 2026-10-27). 그냥 걷다가 가까이 온 것은 안내만.
+  let enterT = 0;
+  const arrive = (sid, picked = false) => {
+    clearTimeout(enterT);
     const x = SPOTS.find((s) => s.id === sid);
+    // 광장(대회 본부): 대회 안내 — 「다음」을 누르면 대회 안내 쪽을 연다
+    if (sid === 'gate') { mode = 'gate'; here = 'gate'; show('📋 광장 · 대회 본부예요. 대회 날은 여기서 주제와 장소를 받고, 관찰 기록지와 연필을 챙겨요. 「다음」을 누르면 대회 안내(누가 나가는지·몇 분·무엇을 내는지·심사 기준)를 봐요.', '대회 안내 보기 ▶'); return; }
     // 지점에서 걸어 나가면: 자유롭게 걷는 중 — 「다음」은 아직 안 간 다음 장소로
     if (!x) { mode = 'free'; const n = nextSpot(here || 'gate'); show(`표를 누르거나 땅을 눌러 마음대로 걸어가요. 「다음」을 누르면 ${n ? `${n.icon} ${n.name}(으)로` : '처음 장소로'} 같이 가요.`); return; }
     mode = 'arrived'; here = sid;
+    if (picked) { show(`${x.icon} ${x.name}에 왔어요! 관찰을 시작해요…`, '관찰 시작 ▶'); enterT = setTimeout(() => { location.hash = `#/field/${sid}`; }, 1200); return; }
     show(`${x.icon} ${x.name}에 왔어요! ${firstSentence(setOf(x).lead)} 「다음」을 누르면 여기서 관찰을 시작해요.`, '관찰 시작 ▶');
   };
   const park = mountPark($app.querySelector('.fd-mapbox'), { field: true, start: at, onArrive: arrive });
@@ -50,6 +56,7 @@ function mapScreen($app, at) {
   const step = () => {
     if (mode === 'intro0') { mode = 'intro1'; show(`관찰할 곳에는 표가 꽂혀 있어요(모두 ${SPOTS.length}곳). 표를 직접 눌러도 되고, 「다음」을 누르면 첫 장소로 같이 걸어가요.`); return; }
     if (mode === 'arrived') { location.hash = `#/field/${here}`; return; }
+    if (mode === 'gate') { location.hash = '#/contest/nature'; return; }
     goNext();
   };
   $next.onclick = step;
@@ -57,7 +64,7 @@ function mapScreen($app, at) {
     const x = SPOTS.find((s) => s.id === at), n = nextSpot(at); here = at; mode = 'back';
     show(n ? `${x ? `${x.name} 관찰을 마쳤어요! ` : ''}인쇄한 양식에 따라 그려 봤나요? 「다음」을 누르면 다음 장소(${n.icon} ${n.name})로 가요.` : `${SPOTS.length}곳을 모두 돌았어요! 마음에 드는 곳을 다시 눌러 관찰해도 좋아요.`, n ? '다음 장소 ▶' : '처음 장소로 ▶');
   } else { mode = 'intro0'; show('자연관찰대회에 온 걸 환영해요! 유빈·유준과 공원을 돌며 관찰해요. 땅을 누르거나 방향키를 쓰면 두 친구가 그쪽으로 걸어가요.'); }
-  return () => park.destroy();
+  return () => { clearTimeout(enterT); park.destroy(); };
 }
 
 // ── 관찰: 왼쪽 3D · 오른쪽 예시 보고서 · 아래 「다음」 ──
@@ -165,7 +172,8 @@ function observeScreen($app, spot) {
     if ($sec) { $sec.classList.add('fd-now'); $sec.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     const drawn = new Set(steps.slice(0, k).map((x) => x.draw).filter(Boolean));
     D.plans.forEach((p) => { if (drawn.has(p.key)) D.show(p.key); else D.hide(p.key); });
-    if (st.kind === 'end') D.finishAll(); else if (st.draw) { snd.on(); D.draw(st.draw); }
+    // 연필 소리는 내지 않는다(원장 2026-10-27 「그리는 소리 거슬려」)
+    if (st.kind === 'end') D.finishAll(); else if (st.draw) D.draw(st.draw);
     render();
   };
   const printIt = (what) => {
