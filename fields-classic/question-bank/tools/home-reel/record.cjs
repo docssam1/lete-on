@@ -103,13 +103,54 @@ const SCENES = [
       await sleep(700);
       for (const k of [1, 2]) { const chip = f.locator(".source-question-progress span").nth(k); if (await chip.count()) await chip.click().catch(() => {}); await sleep(900); }
     } },
-  { id: "start", kicker: "완성하기", title: "오늘 공부할 내용 고르기", step: 2, url: "start.html",
+  { id: "start", kicker: "공부하고", title: "오늘 공부할 내용 고르기", step: 1, url: "start.html",
     ready: (p) => p.locator("[data-book='book-01']").waitFor(),
     async act(page) {
       await sleep(500);
       await tap(page, "[data-book='book-01']", 750);
       await tap(page, "[data-unit='0']", 1100);
       await page.locator(".st-part-list .st-part").first().hover(); await sleep(500);
+    } },
+  // 문제은행(원장 「문제은행 쪽도 더 배분해」): 범위 고르기 → 상세 편집(쌍둥이로 바꾸고 더하기) → 시험지
+  { id: "bank-range", kicker: "완성하기", title: "문제은행 · 범위 고르기", step: 2, url: "index.html?mode=curriculum&book=book-01",
+    ready: (p) => p.locator("#curriculumTree input[type=checkbox]:not(:disabled)").first().waitFor(),
+    async act(page) {
+      await sleep(300);
+      const boxes = page.locator("#curriculumTree .type-leaf input[type=checkbox]:not(:disabled)");
+      for (let k = 0; k < 3; k++) { await boxes.nth(k).scrollIntoViewIfNeeded(); await boxes.nth(k).click(); mark("tap"); await sleep(260); }
+      await tap(page, '#countChoices [data-count="10"]', 300);
+      await tap(page, "#buildButton", 900);
+    } },
+  { id: "bank-edit", kicker: "완성하기", title: "문제은행 · 상세 편집", step: 2, url: "index.html?mode=curriculum&book=book-01",
+    async ready(page) {
+      await page.locator("#curriculumTree .type-leaf input[type=checkbox]:not(:disabled)").first().waitFor();
+      const boxes = page.locator("#curriculumTree .type-leaf input[type=checkbox]:not(:disabled)");
+      for (let k = 0; k < 3; k++) await boxes.nth(k).check();
+      await page.locator('#countChoices [data-count="10"]').click();
+      await page.locator("#buildButton").click();
+      await page.locator(".ed-card").first().waitFor();
+    },
+    async act(page) {
+      await sleep(300);
+      await tap(page, '.ed-card [data-ed="twin"] >> nth=1', 900);
+      await tap(page, '[data-ed="twin-swap"] >> nth=0', 800, "good");
+      await tap(page, '[data-ed-tab="add"]', 800);
+      await tap(page, '[data-ed="add"] >> nth=0', 900, "good");
+    } },
+  { id: "bank-print", kicker: "완성하기", title: "문제은행 · 시험지 인쇄", step: 2, url: "index.html?mode=curriculum&book=book-01",
+    async ready(page) {
+      await page.locator("#curriculumTree .type-leaf input[type=checkbox]:not(:disabled)").first().waitFor();
+      const boxes = page.locator("#curriculumTree .type-leaf input[type=checkbox]:not(:disabled)");
+      for (let k = 0; k < 3; k++) await boxes.nth(k).check();
+      await page.locator('#countChoices [data-count="10"]').click();
+      await page.locator("#buildButton").click();
+      await page.locator("#edNext").click();
+      await page.locator(".question-card").first().waitFor();
+    },
+    async act(page) {
+      await sleep(500);
+      for (let k = 0; k < 6; k++) { await page.mouse.wheel(0, 260); await sleep(230); }
+      await sleep(400);
     } }
 ];
 

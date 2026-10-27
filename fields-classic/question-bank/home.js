@@ -10,16 +10,19 @@ if (student) {
 
 // 숏릴 장면(초): tools/home-reel/record.cjs 가 영상과 함께 assets/front/reel-scenes.json 에 적는다. 못 읽으면 아래 기본값.
 let SCENES = [
-  { at: 0, id: "shape", kicker: "보고 배우고", title: "뒤집고 돌리기 공방", step: 0 },
-  { at: 3, id: "clock", kicker: "보고 배우고", title: "시계 바늘 돌리기", step: 0 },
-  { at: 8, id: "balance", kicker: "보고 배우고", title: "무게 줄 세우기", step: 0 },
-  { at: 12, id: "cubes", kicker: "보고 배우고", title: "쌓기나무 탑 쌓기", step: 0 },
-  { at: 16, id: "board", kicker: "공부하고", title: "개념 학습 · 독쌤 칠판", step: 1 },
-  { at: 21, id: "bell", kicker: "공부하고", title: "골든벨 문제", step: 1 },
-  { at: 23, id: "start", kicker: "완성하기", title: "오늘 공부할 내용 고르기", step: 2 }
+  {at: 0, id: "shape", kicker: "보고 배우고", title: "뒤집고 돌리기 공방", step: 0},
+  {at: 3, id: "clock", kicker: "보고 배우고", title: "시계 바늘 돌리기", step: 0},
+  {at: 8, id: "balance", kicker: "보고 배우고", title: "무게 줄 세우기", step: 0},
+  {at: 12, id: "cubes", kicker: "보고 배우고", title: "쌓기나무 탑 쌓기", step: 0},
+  {at: 17, id: "board", kicker: "공부하고", title: "개념 학습 · 독쌤 칠판", step: 1},
+  {at: 21, id: "bell", kicker: "공부하고", title: "골든벨 문제", step: 1},
+  {at: 24, id: "start", kicker: "공부하고", title: "오늘 공부할 내용 고르기", step: 1},
+  {at: 27, id: "bank-range", kicker: "완성하기", title: "문제은행 · 범위 고르기", step: 2},
+  {at: 29, id: "bank-edit", kicker: "완성하기", title: "문제은행 · 상세 편집", step: 2},
+  {at: 33, id: "bank-print", kicker: "완성하기", title: "문제은행 · 시험지 인쇄", step: 2}
 ];
 // 장면마다 화면 위에 크게 띄우는 한 줄
-const SAY = { shape: "손으로 뒤집어 보고", clock: "바늘을 직접 돌리고", balance: "무게를 견주고", cubes: "쌓기나무를 쌓아요", board: "개념은 독쌤 칠판으로", bell: "골든벨로 바로 확인", start: "오늘 공부, 골라서 시작!" };
+const SAY = { shape: "손으로 뒤집어 보고", clock: "바늘을 직접 돌리고", balance: "무게도 비교하고", cubes: "쌓기나무를 쌓아요", board: "개념은 독쌤 칠판으로", bell: "골든벨로 바로 확인", start: "오늘 공부, 골라서 시작!", "bank-range": "문제은행에서 범위를 고르고", "bank-edit": "쌍둥이 문제로 바꾸고 더하고", "bank-print": "시험지로 바로 인쇄" };
 fetch("./assets/front/reel-scenes.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).then((j) => { if (j?.scenes?.length) { SCENES = j.scenes; shown = -1; syncCaption(); } }).catch(() => {});
 const video = document.getElementById("reel");
 const cap = document.getElementById("reelCap");
