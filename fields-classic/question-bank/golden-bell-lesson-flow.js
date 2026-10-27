@@ -1,5 +1,5 @@
 import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028w";
-import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261027m";
+import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261027p";
 
 // 개념 단계 안의 학습 순서: ① 개념 설명 → ② 유형별 예제 → ③ 게임 → (골든벨 문제).
 // 원장 지시: "개념마다 설명하는 튜토리얼, 문제 유형마다 예제 1~2개, 그다음 게임."

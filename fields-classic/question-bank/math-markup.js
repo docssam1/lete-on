@@ -50,10 +50,15 @@ export const sub = (base, index) => whole(subPart(base, index));
 export const expr = (...items) => wrap(`<mrow>${items.map(token).join("")}</mrow>`, items.map(said).join(" "));
 
 // 글 속 수식 → MathML(이미 HTML인 글에 쓴다 — 태그 안의 글자는 건드리지 않는다)
+// 분자·분모 글: 수 하나는 그대로, 괄호로 묶은 식((1×2))은 괄호를 벗겨 한 줄 수식으로
+const inner = (text) => {
+  const body = String(text).replace(/^\((.*)\)$/, "$1");
+  return /^\d+$/.test(body) ? body : rowPart(...body.split(/([×÷+\-−])/).map((t) => t.trim()).filter(Boolean));
+};
 const SUPERSCRIPT = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9" };
 export function mathText(html) {
   return String(html ?? "").split(/(<[^>]*>)/).map((chunk) => chunk.startsWith("<") ? chunk : chunk
-    .replace(/(^|[^\d/])(\d+)\/(\d+)(?![\d/])/g, (_, before, n, d) => `${before}${frac(n, d)}`)
+    .replace(/(^|[^\d/)])(\((?:[^()]+)\)|\d+)\/(\((?:[^()]+)\)|\d+)(?![\d/(])/g, (_, before, n, d) => `${before}${frac(inner(n), inner(d))}`)
     .replace(/(\d+|[A-Za-z])\^(\d+)/g, (_, base, exponent) => pow(base, exponent))
     .replace(/(\d+|[A-Za-z])([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (_, base, sup) => pow(base, [...sup].map((c) => SUPERSCRIPT[c]).join("")))).join("");
 }

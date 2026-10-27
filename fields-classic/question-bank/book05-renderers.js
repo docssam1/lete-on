@@ -1,4 +1,4 @@
-import { frac, box } from "./math-markup.js?v=20261027m";
+import { frac, box } from "./math-markup.js?v=20261027p";
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")

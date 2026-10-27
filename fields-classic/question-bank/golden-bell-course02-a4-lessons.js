@@ -1,4 +1,4 @@
-import { frac } from "./math-markup.js?v=20261027m";
+import { frac } from "./math-markup.js?v=20261027p";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 }[ch]));
