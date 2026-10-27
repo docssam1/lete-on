@@ -33,7 +33,7 @@ export function mountPark($host, { field = false, onArrive = null, start = '' } 
   const sets = Object.fromEntries(OBSERVE_SETS.map((s) => [s.id, s]));
   $host.innerHTML = `<div class="pm-view${field ? ' field' : ''}" tabindex="0" aria-label="${esc(PARK.title)} 지도 — 끌어서 둘러보고, 말꼬리 표를 누르면 두 친구가 그 자리로 걸어가 관찰을 열어요">
       <div class="pm-map"><img class="pm-img" alt="" draggable="false">
-        ${PARK.shore ? `<svg class="pk-waves" viewBox="0 0 ${PARK.images.wide.w} ${PARK.images.wide.h}" preserveAspectRatio="none" aria-hidden="true"></svg>` : ''}
+        ${PARK.shore ? '<canvas class="pk-wavecv" aria-hidden="true"></canvas>' : ''}
         ${PARK.spots.map((p) => `<button type="button" class="pk-pin" data-spot="${p.id}" aria-label="${esc(p.name)}"><span class="pk-tag"><i>${p.icon}</i><b class="full">${esc(p.name)}</b><b class="short">${esc(p.short)}</b></span><span class="pk-dot"></span></button>`).join('')}
         ${Object.keys(PARK.npcs || {}).filter((id) => NPC_CAST[id]).map((id) => `<div class="pk-npc" data-npc="${id}"><canvas width="132" height="120" aria-hidden="true"></canvas><button type="button" class="pk-nhit" aria-label="${esc(NPC_LINES[id]?.who || '')}에게 말 걸기"></button><div class="pk-nsay${NPC_LINES[id]?.near ? ' safe' : ''}" hidden></div></div>`).join('')}
         <div class="pk-kids" aria-hidden="true"><div class="pk-say" hidden></div><div class="pk-kid3d"><canvas width="132" height="120"></canvas><b class="nr">유빈</b><b class="dy">유준</b></div></div></div>
@@ -49,7 +49,7 @@ export function mountPark($host, { field = false, onArrive = null, start = '' } 
   // --kk = 사람들이 화면에서 보이는 배율. 원장 「캐릭터가 더 작아야지」 → 전체 지도 0.42, 확대할수록 조금씩(최대 0.85)
   let KK = 0.42;
   // 지도 상자가 좁으면(폰 미리 보기) 그만큼 더 작게 — 상자 폭 900px 아래로는 폭에 비례
-  const apply = () => { KK = Math.min(0.85, 0.42 * Math.sqrt(s / fit)) * Math.min(1, $v.clientWidth / 900); $m.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; $m.style.setProperty('--s', s); $m.style.setProperty('--kk', KK); };
+  const apply = () => { KK = Math.min(0.85, 0.42 * Math.sqrt(s / fit)) * Math.min(1, $v.clientWidth / 900); $m.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; $m.style.setProperty('--s', s); $m.style.setProperty('--kk', KK); $v.classList.toggle('zoomed', s > fit * 2.3); };
   // 그림이 화면을 벗어나 빈 곳이 보이지 않게(전체 지도일 때는 가운데)
   const clamp = () => { const W = $v.clientWidth, H = $v.clientHeight, w = I.w * s, h = I.h * s; tx = w <= W ? (W - w) / 2 : Math.min(0, Math.max(W - w, tx)); ty = h <= H ? (H - h) / 2 : Math.min(0, Math.max(H - h, ty)); };
   const view = (x, y, zs) => { const W = $v.clientWidth, H = $v.clientHeight; const ns = fit * zs; return { s: ns, tx: W / 2 - (x / 100) * I.w * ns, ty: H / 2 - (y / 100) * I.h * ns }; };
@@ -110,33 +110,42 @@ export function mountPark($host, { field = false, onArrive = null, start = '' } 
   const onScreen = (n) => { const r = n.el.getBoundingClientRect(), V = $v.getBoundingClientRect(); return r.left > V.left + 20 && r.right < V.right - 20 && r.top > V.top + 40 && r.top < V.bottom; };
   // ── 파도(원장 2026-10-27 「해변도 파도가 움직이는 모습 연출할 수 있어?」): 바다 쪽 선(out)에서 물가(edge)로 파도 줄 셋이 번갈아 밀려와,
   // 물가에서 넓은 흰 거품이 되어 모래로 살짝 올라왔다 빠진다. 선은 해안선을 따라 조금씩 일렁인다(Blender 공원에서 투영한 해안선이라 그림의 물가와 맞는다).
-  const SH = PARK.shore?.wide, $wv = $host.querySelector('.pk-waves'), WN = 3, WT = 7.5;
-  const waves = SH && $wv ? Array.from({ length: WN }, () => { const g = document.createElementNS('http://www.w3.org/2000/svg', 'g'), wide = document.createElementNS('http://www.w3.org/2000/svg', 'path'), thin = document.createElementNS('http://www.w3.org/2000/svg', 'path'); wide.setAttribute('class', 'wv-foam'); thin.setAttribute('class', 'wv-line'); g.append(wide, thin); $wv.append(g); return { g, wide, thin }; }) : [];
-  // 물마루는 끊긴 조각들(긴 것·짧은 것)로 — 한 줄로 이어 그리면 파도가 아니라 그어 놓은 선처럼 보인다. 파도마다 조각 무늬를 다르게
-  const crest = (seed) => { let r = seed * 9301 + 49297, out = []; const R = () => ((r = (r * 9301 + 49297) % 233280) / 233280); for (let i = 0; i < 18; i++) out.push(Math.round(16 + R() * R() * 280), Math.round(10 + R() * 110)); return out.join(' '); };
-  waves.forEach((w, k) => { w.thin.setAttribute('stroke-dasharray', crest(k + 1)); w.wide.setAttribute('stroke-dasharray', crest(k + 7)); });
+  // 원장 태블릿에서 지도 가운데가 비어 보였다(2026-10-27 화면) — 지도 크기(2560×1440)의 파도 SVG를 매 프레임 다시 그리느라 그래픽 메모리가 모자랐다.
+  // 그래서 파도는 화면(보기 상자) 크기 캔버스에 그린다. 캔버스는 지도 안에 두되 지도의 이동·확대를 되돌려 늘 화면을 덮고, 그릴 때 지도 좌표로 그린다(초당 30번).
+  const SH = PARK.shore?.wide, $wc = $host.querySelector('.pk-wavecv'), wx = $wc?.getContext('2d'), WN = 3, WT = 7.5;
+  // 물마루는 끊긴 조각들(긴 것·짧은 것)로 — 한 줄로 이어 그리면 그어 놓은 선처럼 보인다. 파도마다 조각 무늬를 다르게
+  const crest = (seed) => { let r = seed * 9301 + 49297; const R = () => ((r = (r * 9301 + 49297) % 233280) / 233280), out = []; for (let i = 0; i < 18; i++) out.push(Math.round(16 + R() * R() * 280), Math.round(10 + R() * 110)); return out; };
+  const dashes = Array.from({ length: WN }, (_, k) => [crest(k + 1), crest(k + 7)]);
   // 그림에서 파란 바다만 남기는 가림막 — 그림의 물가가 3D 배치와 조금 달라도 파도가 모래 위로 올라가지 않고, 물가의 흰 거품에 닿으면 그 속으로 사라진다
-  let sea = null;
+  let sea = null, seaCv = null;
   const seaAt = (p) => { if (!sea) return false; const x = Math.round((p[0] / 100) * sea.W), y = Math.round((p[1] / 100) * sea.H); return x >= 0 && y >= 0 && x < sea.W && y < sea.H && sea.a[(y * sea.W + x) * 4 + 3] > 128; };
   const seaMask = () => { try {
     const W = 640, H = Math.round((640 * PARK.images.wide.h) / PARK.images.wide.w), c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d', { willReadFrequently: true });
     x.drawImage($img, 0, 0, W, H); const d = x.getImageData(0, 0, W, H), a = d.data;
     for (let i = 0; i < a.length; i += 4) { const blue = a[i + 2] > a[i] + 30 && a[i + 1] > a[i] + 10; a[i] = a[i + 1] = a[i + 2] = 255; a[i + 3] = blue ? 255 : 0; }
     sea = { W, H, a: new Uint8ClampedArray(a) }; x.putImageData(d, 0, 0); const m = document.createElement('canvas'); m.width = W; m.height = H; const y = m.getContext('2d'); y.filter = 'blur(1.5px)'; y.drawImage(c, 0, 0);
-    if (!$wv) return;
-    const url = `url(${m.toDataURL()})`; Object.assign($wv.style, { maskImage: url, webkitMaskImage: url, maskSize: '100% 100%', webkitMaskSize: '100% 100%' });
-  } catch { $wv?.remove(); } };
+    seaCv = m;
+  } catch { $wc?.remove(); } };
+  let waveLast = -1;
   const waveStep = (T) => {
-    if (!waves.length || !I) return;
-    waves.forEach((w, k) => {
+    if (!SH || !wx || !I || T - waveLast < 1 / 30) return; waveLast = T;
+    const W = $v.clientWidth, H = $v.clientHeight, dpr = Math.min(2, devicePixelRatio || 1), cw = Math.round(W * dpr), ch = Math.round(H * dpr);
+    if ($wc.width !== cw || $wc.height !== ch) { $wc.width = cw; $wc.height = ch; $wc.style.width = `${W}px`; $wc.style.height = `${H}px`; }
+    $wc.style.transform = `translate(${-tx / s}px, ${-ty / s}px) scale(${1 / s})`;
+    wx.setTransform(1, 0, 0, 1, 0, 0); wx.clearRect(0, 0, cw, ch); wx.setTransform(dpr * s, 0, 0, dpr * s, dpr * tx, dpr * ty);
+    wx.lineCap = 'round'; wx.lineJoin = 'round'; wx.strokeStyle = '#fff';
+    for (let k = 0; k < WN; k++) {
       const ph = (T / WT + k / WN) % 1, run = Math.min(1, ph / 0.72), back = ph > 0.72 ? (ph - 0.72) / 0.28 : 0;
-      // s: 0 = 바다 쪽 선, 1 = 물가. 밀려와(가속) 물가를 조금 넘었다가(모래로 올라옴) 되돌아간다
-      const s0 = ph <= 0.72 ? run * run * (3 - 2 * run) : 1 - 0.1 * back;
-      const d = SH.edge.map((e, i) => { const o = SH.out[i], s = s0 + 0.05 * Math.sin(i * 0.9 + T * 0.7 + k * 2.1) + 0.03 * Math.sin(i * 2.3 - T * 1.1); return `${i ? 'L' : 'M'}${((o[0] + (e[0] - o[0]) * s) / 100 * I.w).toFixed(1)} ${((o[1] + (e[1] - o[1]) * s) / 100 * I.h).toFixed(1)}`; }).join('');
-      w.wide.setAttribute('d', d); w.thin.setAttribute('d', d); w.thin.style.strokeDashoffset = w.wide.style.strokeDashoffset = (T * 9 + k * 97).toFixed(1);
-      w.g.style.opacity = (Math.min(1, ph / 0.25) * (1 - back)).toFixed(3);
-      w.wide.style.strokeWidth = (9 + 22 * Math.max(0, run - 0.6) / 0.4 + 12 * back).toFixed(1); w.thin.style.strokeWidth = (2 + 2.5 * run).toFixed(1);
-    });
+      // s0: 0 = 바다 쪽 선, 1 = 물가. 밀려와(가속) 물가에서 넓은 거품이 되어 빠진다
+      const s0 = ph <= 0.72 ? run * run * (3 - 2 * run) : 1 - 0.1 * back, a = Math.min(1, ph / 0.25) * (1 - back);
+      wx.beginPath();
+      SH.edge.forEach((e, i) => { const o = SH.out[i], q = s0 + 0.05 * Math.sin(i * 0.9 + T * 0.7 + k * 2.1) + 0.03 * Math.sin(i * 2.3 - T * 1.1), x = ((o[0] + (e[0] - o[0]) * q) / 100) * I.w, y = ((o[1] + (e[1] - o[1]) * q) / 100) * I.h; if (i) wx.lineTo(x, y); else wx.moveTo(x, y); });
+      wx.globalAlpha = 0.2 * a; wx.lineWidth = 9 + (22 * Math.max(0, run - 0.6)) / 0.4 + 12 * back; wx.setLineDash(dashes[k][1]); wx.lineDashOffset = -(T * 9 + k * 97); wx.stroke();
+      wx.globalAlpha = 0.5 * a; wx.lineWidth = 2 + 2.5 * run; wx.setLineDash(dashes[k][0]); wx.stroke();
+    }
+    wx.globalAlpha = 1; wx.setLineDash([]);
+    // 그림의 파란 바다에만 남긴다(그림의 물가가 3D 배치와 조금 달라도 모래 위로 올라가지 않게)
+    if (seaCv) { wx.globalCompositeOperation = 'destination-in'; wx.drawImage(seaCv, 0, 0, I.w, I.h); wx.globalCompositeOperation = 'source-over'; }
   };
   let npcRaf = 0, npcLast = performance.now(), talkT = 8, lastTalker = null;
   const npcStep = (now) => { if (!alive) return; const dt = Math.min(0.05, (now - npcLast) / 1000); npcLast = now;

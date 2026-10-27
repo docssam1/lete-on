@@ -96,6 +96,9 @@ function observeScreen($app, spot) {
   const stage = Stage.canWebGL() ? new Stage($c) : null; if (!stage) $c.hidden = true;
   if (typeof window !== 'undefined') window.__fdStage = stage;   // 검사 스크립트용
   const snd = scratch(), D = makeDrawer($right, snd); D.reset();
+  // 예시 보고서(860px 종이)를 오른쪽 칸 폭에 맞게 줄인다
+  const fitSheet = () => { $right.style.setProperty('--fz', String(Math.min(1, ($right.clientWidth - 34) / 860))); };
+  const ro = 'ResizeObserver' in window ? new ResizeObserver(fitSheet) : null; ro?.observe($right); fitSheet();
   let cur = null, curSpec = -1, timers = [];
   const load = (i) => { if (!stage || i === curSpec) return; cur?.dispose?.(); cur = M.mountSpecimen(stage, M.SPECIMENS[i]); curSpec = i; hidLabels = []; settle(); };
   // ── 카메라가 함께 움직인다(원장 「화면도 같이 움직여야지」): 단계마다 그 각도(aim)로 1초쯤 걸려 미끄러져 가고, 가만히 있을 때는 좌우로 천천히 흔들려 입체가 보인다.
@@ -133,7 +136,8 @@ function observeScreen($app, spot) {
   const animate = (dur, fn, end) => { cancelAnimationFrame(tween); const t0 = performance.now(); const f = (now) => { const t = reduced ? 1 : Math.min(1, (now - t0) / dur); fn(t); if (t < 1) tween = requestAnimationFrame(f); else end?.(); }; tween = requestAnimationFrame(f); };
   const backOut = (t) => 1 + 2.2 * (t - 1) ** 3 + 1.2 * (t - 1) ** 2;
   // 펴진 상태로(종이 숨김, 자동 맞춤 다시 켬)
-  const upright = () => { cancelAnimationFrame(tween); if (!stage) return; stage.root.scale.y = 1; paper.visible = false; paperMat.opacity = 0; labels(false); if (!stage.autoFit) { stage.autoFit = true; stage._needFit = true; } };
+  let showLabels = false;
+  const upright = () => { cancelAnimationFrame(tween); if (!stage) return; stage.root.scale.y = 1; paper.visible = false; paperMat.opacity = 0; labels(!showLabels); if (!stage.autoFit) { stage.autoFit = true; stage._needFit = true; } };
   const popUp = (i) => {
     if (!stage) return; paperMat.map = sketchTex(i); paperMat.needsUpdate = true; paper.visible = true; stage.autoFit = false; labels(true);
     stage.root.scale.y = 0.02; paperMat.opacity = 1;
@@ -198,7 +202,8 @@ function observeScreen($app, spot) {
     if (st.spec != null) load(st.spec);
     if (cur?.places && (st.sec === 'env' || st.sec === 'table')) cur.setPlace(cur.places[0].id);
     if (st.view && st.act !== 'find') glide(st.view);
-    // 종이에서 일어서기(표본이 처음 나올 때) · 종이로 눕기(같이 그리기) · 그 밖에는 펴진 채
+    // 종이에서 일어서기(표본이 처음 나올 때) · 종이로 눕기(같이 그리기) · 그 밖에는 펴진 채. 떠 있는 이름표는 두 장소 비교·표 단계에서만
+    showLabels = st.sec === 'env' || st.sec === 'table';
     if (st.kind === 'look' && st.sec === 'obs' && !st.act && st.obs != null) popUp(st.obs); else if (st.kind === 'draw' && st.obs != null) layDown(st.obs); else upright();
     // 생각하기 단계의 동작은 「다음(내용 보기)」을 누를 때, 예상 단계는 고른 뒤에 한다 — 먼저 해 버리면 답을 보여 주는 셈
     st.chosen = null;
@@ -210,7 +215,8 @@ function observeScreen($app, spot) {
     if (st.sec === 'env' && st.kind === 'look') st.say = `${note || ''}${st.both ? ' 장소 A를 잰 뒤 장소 B도 같은 방법으로 재요.' : ''}`;
     else if (st.kind === 'look' && st.sec === 'obs' && st.act) st.say = note || '';
     const sp = specs[curSpec];
-    $cap.textContent = st.sec === 'env' || st.sec === 'table' ? (cur?.places ? cur.places.map((p) => `${p.name} · ${p.where || ''}`).join('  →  ') : '') : sp ? `${sp.no || ''} ${sp.hint || ''}` : '';
+    const pl = cur?.places?.find((p) => p.id === cur.place?.());
+    $cap.textContent = st.sec === 'env' || st.sec === 'table' ? (cur?.places ? cur.places.map((p) => `${p.name} · ${p.where || ''}`).join('  →  ') : '') : sp ? `${pl ? `${pl.name}${pl.where ? ` · ${pl.where}` : ''} — ` : ''}${sp.no || ''} ${sp.hint || ''}` : '';
     $n.textContent = `${k + 1} / ${steps.length}`;
     // 오른쪽: 그 칸만 밝게, 지난 그림은 다 그린 채, 이번 그림은 손이 그린다
     $right.querySelectorAll('.fd-now').forEach((e) => e.classList.remove('fd-now'));
@@ -254,5 +260,5 @@ function observeScreen($app, spot) {
   markDone(spot.id);
   if (typeof window !== 'undefined') window.__field = { steps: steps.length, go: (i) => go(i), next: forward, k: () => k, kinds: steps.map((x) => x.kind) };
   go(0);
-  return () => { clear(); D.stop(); snd.off(); cancelAnimationFrame(camRaf); cancelAnimationFrame(tween); paper.geometry.dispose(); paperMat.dispose(); texCache.forEach((t) => t.dispose()); removeEventListener('keydown', onKey); cur?.dispose?.(); stage?.dispose(); };
+  return () => { ro?.disconnect(); clear(); D.stop(); snd.off(); cancelAnimationFrame(camRaf); cancelAnimationFrame(tween); paper.geometry.dispose(); paperMat.dispose(); texCache.forEach((t) => t.dispose()); removeEventListener('keydown', onKey); cur?.dispose?.(); stage?.dispose(); };
 }
