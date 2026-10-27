@@ -4,7 +4,6 @@
 import { CONTESTS, ORDERED, contestsOf, levelOf, domainOf } from './data/curriculum.js';
 import { CONTEST_GUIDE } from './data/contests.js';
 import { OBSERVE_SETS, STAGES, setsOf } from './data/observe-sets.js';
-import { mountPark } from './park.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -25,7 +24,7 @@ export function renderContest($app, { topbar, footer }, id) {
       <p class="sub">${esc(G.lead)}</p>
       <div class="ct-jump">${sets.length ? Object.entries(STAGES).map(([k, st]) => { const xs = sets.filter((x) => x.stage === k); return `<a href="#/observe/${xs[0].id}">${st.icon} ${esc(st.title)} ${xs.length}개</a>`; }).join('') : ''}${units.length ? `<a href="#/contest/${C.id}" data-scroll="ct-practice">이 대회로 연습할 실험 ${units.length}개</a>` : ''}</div>
     </div>
-    ${C.id === 'nature' ? '<section class="wrap ct-park" aria-label="자연관찰 공원 지도"></section>' : ''}
+    ${C.id === 'nature' ? `<section class="wrap ct-park" aria-label="자연관찰 탐험"><a class="ct-explore" href="#/field"><img src="./assets/park/park-wide.webp" alt="" loading="lazy"><span><b>🗺 자연관찰 탐험 시작</b><small>공원 지도가 화면 가득 열려요. 「다음」만 눌러도 장소마다 관찰하고, 예시 보고서를 보며 인쇄한 양식에 따라 그려요.</small><i>시작 ▶</i></span></a></section>` : ''}
     <div class="wrap ct-grid" id="ct-guide">
       <div class="ct-main">
         ${sheet('이 대회는', `${dl(G.names, 'names')}${dl(G.facts)}`)}
@@ -46,9 +45,8 @@ export function renderContest($app, { topbar, footer }, id) {
       </aside>
     </div>
   </main>${footer()}`;
-  // 자연관찰 폴더는 공원 지도부터(원장 2026-10-25)
+  // 자연관찰 폴더는 공원 지도부터(원장 2026-10-25) — 지도는 전체 화면 탐험(#/field)으로 연다(원장 2026-10-27 「맵도 전체 페이지」)
   // 같은 쪽 안에서 내려가기(해시 라우터라 #아이디 링크를 쓰지 않는다)
   $app.querySelectorAll('[data-scroll]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); document.getElementById(a.dataset.scroll)?.scrollIntoView({ behavior: 'smooth' }); }));
-  const park = C.id === 'nature' ? mountPark($app.querySelector('.ct-park')) : null;
-  return { destroy() { park?.destroy(); } };
+  return { destroy() {} };
 }
