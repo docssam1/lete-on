@@ -485,3 +485,27 @@ html.pm-lock, html.pm-lock body { overflow: hidden; }
 .ob-stage-tag:first-child { margin-left: 0; }
 .ob-stage-note { margin: 6px 0 10px; padding: 9px 12px; border-radius: 10px; background: rgba(143, 209, 138, .12); border: 1px dashed rgba(143, 209, 138, .5); color: #d9f0d6; font-size: 13.5px; line-height: 1.55; }
 .ob-stage-note a { color: #8fd18a; font-weight: 700; }
+
+/* 예시 보고서 따라 하기(observe-follow.js) — 화면 아래에 뜨는 안내 카드 + 내 보고서의 지금 칸 밝히기 */
+.pk-btn.alt { background: #fffdf6; color: #2f6b3a; border: 1.5px solid #2f6b3a; }
+.ob-follow { width: 100%; background: #2f6b3a; color: #fff; border: 0; border-radius: 10px; padding: 10px 12px; font: inherit; font-weight: 800; cursor: pointer; text-align: left; }
+.fw-card { position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 900; width: min(760px, calc(100vw - 24px)); max-height: 56vh; display: flex; flex-direction: column; background: #fffdf8; color: #1f2a1f; border-radius: 14px; box-shadow: 0 10px 36px rgba(0, 0, 0, .38); border: 1px solid #d9d2c2; font-size: 14px; }
+.fw-card header, .fw-card footer { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
+.fw-card header { border-bottom: 1px solid #ece5d6; } .fw-card footer { border-top: 1px solid #ece5d6; justify-content: space-between; }
+.fw-card header b { color: #2f6b3a; } .fw-step { font-size: 12px; color: #6b7466; } .fw-sp { flex: 1; }
+.fw-card button { font: inherit; font-size: 13px; font-weight: 700; border: 1px solid #cfc8b8; background: #fff; color: #1f2a1f; border-radius: 8px; padding: 5px 10px; cursor: pointer; }
+.fw-card button:disabled { opacity: .4; cursor: default; }
+.fw-card .fw-main { background: #2f6b3a; border-color: #2f6b3a; color: #fff; }
+.fw-card h3 { margin: 8px 12px 0; font-size: 16px; }
+.fw-body { display: grid; grid-template-columns: 1.25fr 1fr; gap: 12px; padding: 8px 12px 10px; overflow: auto; }
+.fw-tag { display: inline-block; font-size: 11px; font-weight: 800; background: #efe7d4; color: #6b5a2e; border-radius: 999px; padding: 1px 8px; margin-bottom: 6px; } .fw-tag.me { background: #e3f1e1; color: #2f6b3a; }
+.fw-ex .pz-wrap { max-width: 340px; } .fw-obs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: start; }
+.fw-ex .rp-table { font-size: 12px; } .fw-venn p { margin: 0 0 6px; } .fw-venn b { margin-right: 6px; color: #2f6b3a; }
+.fw-tip { margin: 8px 0 0; font-size: 12.5px; color: #5b5440; background: #fbf5e4; border-radius: 8px; padding: 6px 8px; } .fw-none { color: #7a7466; font-size: 13px; }
+.fw-me p { margin: 0 0 8px; line-height: 1.55; } .fw-acts { display: flex; flex-wrap: wrap; gap: 6px; }
+.fw-dots { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; } .fw-dots i { width: 8px; height: 8px; border-radius: 50%; background: #ddd5c4; } .fw-dots i.done { background: #9cc79a; } .fw-dots i.on { background: #2f6b3a; }
+.fw-card.min .fw-body, .fw-card.min h3, .fw-card.min footer .fw-dots { display: none; }
+body.fw-on .observe-page { padding-bottom: 58vh; }
+.fw-now { scroll-margin-top: 70px; outline: 3px solid #f2b705; outline-offset: 4px; border-radius: 6px; box-shadow: 0 0 0 8px rgba(242, 183, 5, .18); transition: outline-color .3s; }
+@media (max-width: 640px) { .fw-body { grid-template-columns: 1fr; } .fw-card { max-height: 62vh; } }
+@media print { .fw-card { display: none !important; } .fw-now { outline: 0; box-shadow: none; } }

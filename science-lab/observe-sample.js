@@ -6,8 +6,8 @@ import { reportCfg } from './data/reports.js';
 import { withMean, chartData } from './report-model.js';
 import { chartSvg } from './report.js';
 
-const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const para = (t) => esc(t).replace(/\[([^\]]+)\]/g, '<b>[$1]</b>').replace(/\n/g, '<br>');
+export const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+export const para = (t) => esc(t).replace(/\[([^\]]+)\]/g, '<b>[$1]</b>').replace(/\n/g, '<br>');
 const HAND = `<g class="pz-hand" opacity="0"><g transform="rotate(32) scale(1.15)">
   <ellipse cx="14" cy="56" rx="26" ry="34" fill="#f3d6bb" stroke="#9a7a5a" stroke-width="1.2"/>
   <path d="M0 0 L-5 15 L5 15 Z" fill="#e2c39a" stroke="#9a7a5a" stroke-width="0.8"/><path d="M0 0 L-1.8 5.5 L1.8 5.5 Z" fill="#333"/>
@@ -22,7 +22,7 @@ function scratch() {
   const on = () => { try { const C = window.AudioContext || window.webkitAudioContext; if (!C) return; if (!ctx) { ctx = new C(); src = ctx.createBufferSource(); const b = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; src.buffer = b; src.loop = true; const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1700; bp.Q.value = 0.7; g = ctx.createGain(); g.gain.value = 0; src.connect(bp); bp.connect(g); g.connect(ctx.destination); src.start(); } if (ctx.state === 'suspended') ctx.resume().catch(() => {}); } catch { /* 소리 없이 */ } };
   return { on, set(v) { if (g && ctx) g.gain.setTargetAtTime(v, ctx.currentTime, 0.03); }, off() { try { src?.stop(); ctx?.close(); } catch { /* */ } ctx = null; } };
 }
-function treeHtml(n, side = '') {
+export function treeHtml(n, side = '') {
   const leaf = !n.yes;
   return `<li class="tn ${leaf ? 'leaf' : ''}">${side ? `<span class="side ${side}">${side === 'y' ? '그렇다' : '그렇지 않다'}</span>` : ''}<div class="box"><div class="chips">${n.items.map((i) => `<span class="chip ${side}">${esc(i)}</span>`).join('')}</div>${leaf ? '' : `<div class="q"><span class="qtext">${esc(n.q)}</span></div>`}</div>${n.yes ? `<ul>${treeHtml(n.yes, 'y')}${treeHtml(n.no, 'n')}</ul>` : ''}</li>`;
 }
