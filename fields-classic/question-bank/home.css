@@ -95,3 +95,12 @@ body.hm {
 @media (prefers-reduced-motion: reduce) {
   .hm-card, .hm-card img { animation: none; transition: none; }
 }
+
+/* 숏릴 큰 글씨(장면마다 바뀌며 아래에서 올라온다) · 소리 단추 */
+.hm-say { position: absolute; left: 0; right: 0; top: 0; margin: 0; padding: 22px 26px 46px; background: linear-gradient(180deg, rgba(11, 10, 9, 0.72), rgba(11, 10, 9, 0)); color: #fff; font-size: clamp(20px, 3.4vw, 34px); font-weight: 800; letter-spacing: -0.02em; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); pointer-events: none; }
+.hm-say.in { animation: hm-say-in 0.42s cubic-bezier(.2, .9, .3, 1.2) both; }
+@keyframes hm-say-in { from { opacity: 0; transform: translateY(14px); } }
+.hm-sound { right: 62px; font-size: 16px; }
+.hm-sound[aria-pressed="true"] { background: var(--yellow); color: var(--card-ink); border-color: transparent; }
+@media (prefers-reduced-motion: reduce) { .hm-say.in { animation: none; } }
+@media (max-width: 640px) { .hm-say { padding: 12px 14px 30px; } }

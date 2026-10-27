@@ -1,0 +1,54 @@
+{
+ "length": 26.22,
+ "scenes": [
+  {
+   "at": 0,
+   "id": "shape",
+   "kicker": "보고 배우고",
+   "title": "뒤집고 돌리기 공방",
+   "step": 0
+  },
+  {
+   "at": 3.06,
+   "id": "clock",
+   "kicker": "보고 배우고",
+   "title": "시계 바늘 돌리기",
+   "step": 0
+  },
+  {
+   "at": 8.25,
+   "id": "balance",
+   "kicker": "보고 배우고",
+   "title": "무게 줄 세우기",
+   "step": 0
+  },
+  {
+   "at": 12.22,
+   "id": "cubes",
+   "kicker": "보고 배우고",
+   "title": "쌓기나무 탑 쌓기",
+   "step": 0
+  },
+  {
+   "at": 16.18,
+   "id": "board",
+   "kicker": "공부하고",
+   "title": "개념 학습 · 독쌤 칠판",
+   "step": 1
+  },
+  {
+   "at": 20.64,
+   "id": "bell",
+   "kicker": "공부하고",
+   "title": "골든벨 문제",
+   "step": 1
+  },
+  {
+   "at": 23.26,
+   "id": "start",
+   "kicker": "완성하기",
+   "title": "오늘 공부할 내용 고르기",
+   "step": 2
+  }
+ ]
+}
