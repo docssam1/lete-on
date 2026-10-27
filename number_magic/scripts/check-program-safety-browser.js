@@ -224,7 +224,8 @@ window.NM_ENTRY={mode:link||signed?'guardian':'preview',guardianUserId:signed?g.
     assert(requests.some(x=>x.method==='POST'&&x.url.includes('grant_type=password')));
     assert(!(await page.evaluate(()=>JSON.stringify(localStorage)+JSON.stringify(sessionStorage))).includes(PASSWORD));checks++;
     profileRows=[{name:original.name,owner_id:owner,state:{name:original.name,lang:'ko',progress:{},onboarded:true}}];
-    await page.evaluate(()=>NM_PROFILE_AUTH.signOut());await page.waitForURL(/access\.html/);
+    // signOut() navigates to access.html, which may end the evaluate before it returns.
+    await Promise.all([page.waitForURL(/access\.html/),page.evaluate(()=>NM_PROFILE_AUTH.signOut()).catch(()=>{})]);
     // A supplied email-link token is only a candidate until the guardian confirms the displayed email.
     await page.goto(base+'/number_magic/index.html?enter=1#access_token=link-test-token&refresh_token=link-refresh&expires_in=3600');
     await page.waitForSelector('#nmGuardAccept');
