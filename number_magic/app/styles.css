@@ -2286,23 +2286,16 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
   margin:10px 0 0;word-break:keep-all;text-align:left}
 .nm-cs-card .nm-slots-grid{margin-bottom:2px}
 
-/* ── 학년 고르기 (온보딩 2단계 · 고치기 시트, 2026-09-16) ── */
+/* ── 나이·학년 한 칸 (온보딩 2단계 · 고치기 시트) — 5세·6세·7세·초1·초2 / 초3~중1 / 중2~고3 다섯 칸씩 (2026-10-27) ── */
 .nm-ob-grades{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:4px 0 14px;width:100%}
-.nm-ob:has(.nm-ob-birth){align-items:flex-start}
-.nm-ob:has(.nm-ob-birth) .nm-ob-card{margin-block:auto;flex-shrink:0}
-.nm-ob:has(.nm-ob-birth) .nm-ob-grades{grid-template-columns:repeat(4,minmax(0,1fr))}
-.nm-ob-birth{display:flex;flex-direction:column;gap:8px;text-align:left;font-size:15px;font-weight:800;color:var(--ink);margin:18px 0}
-.nm-ob-birth select{width:100%;min-height:48px;font:inherit;font-size:16px;color:var(--ink);border:1.5px solid var(--sub);border-radius:12px;background:var(--paper);padding:10px 12px}
-.nm-ob-birth select:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .nm-ob-grade-label{text-align:left;font-size:15px;font-weight:800;color:var(--ink);margin:0 0 8px}
-.nm-ob:has(.nm-ob-birth) .nm-ob-grade{min-height:44px}
 .nm-ob-grade{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 2px;
   font-size:13.5px;font-weight:800;color:var(--ink);cursor:pointer;font-family:'Pretendard',sans-serif;
-  min-width:0;transition:.12s}
+  min-width:0;min-height:44px;transition:.12s}
 .nm-ob-grade:hover{border-color:var(--blue)}
 .nm-ob-grade.sel{background:var(--blue);border-color:var(--blue-deep);color:#fff;
   box-shadow:0 6px 14px -8px rgba(22,65,124,.8)}
-.nm-ob-grades.sheet{grid-template-columns:repeat(4,1fr);margin-bottom:10px}
+.nm-ob-grades.sheet{margin-bottom:10px}
 .nm-cs-lead{font-size:12.5px;line-height:1.55;font-weight:600;color:var(--sub);margin:0 0 11px;word-break:keep-all}
 .nm-cr-who-gr{font-style:normal;font-size:11.5px;font-weight:800;color:var(--sub);margin-left:5px}
 
@@ -2421,7 +2414,7 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 @media (orientation:landscape) and (min-width:760px){
   .nm-wq{max-width:520px}
 }
-@media(max-width:380px){.nm-ob-grades{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:340px){.nm-ob-grades{grid-template-columns:repeat(3,1fr)}}
 
 /* ============================================================
    시작점 고르기 (nm-sp-*, 2026-09-04) — ROAD_TIERS별 접이 섹션 + 과정 카드

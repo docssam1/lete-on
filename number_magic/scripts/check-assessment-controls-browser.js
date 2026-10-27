@@ -28,7 +28,7 @@ async function answer(p){
   await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());
   await c.route('**/functions/v1/nm-review',r=>r.fulfill({json:{scope:'learning_review',username:'assessment-fixture',token:'a'.repeat(64),expiresAt:new Date(Date.now()+7200000).toISOString()}}));
   await p.goto(base+'/number_magic/access.html?lang='+lang);await p.click('#open-book');await p.fill('#login-user','assessment-fixture');await p.fill('#login-password','fixture-only');await p.click('#login-submit');await p.waitForFunction(()=>window.__ASSESS&&document.querySelector('#nmReviewLogout'));await p.evaluate(()=>__ASSESS.reset());
-  await p.selectOption('#pdAge','10');await p.selectOption('#pdGrade','e3');await p.selectOption('#pdStudyBand',band);await p.selectOption('#pdBaseline',baseline);
+  await p.selectOption('#pdLevel','e3');await p.selectOption('#pdStudyBand',band);await p.selectOption('#pdBaseline',baseline);
   const keep=await p.evaluate(()=>__ASSESS.state());
   assert.equal(await p.locator('#pdPrintOptions').getAttribute('open'),null);assert(await p.locator('#pdPaperAnswers').isHidden());
   assert.equal(await p.locator('[data-purpose]').count(),2);await p.screenshot({path:path.join(OUT,width+'-'+lang+'-setup.png'),fullPage:true});

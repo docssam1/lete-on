@@ -13,7 +13,7 @@ function seed(lang,ready){const events=[];if(ready)for(let i=0;i<4;i++){const ts
  return {lang,onboarded:true,name:'기록 검수 가상',character:{number:3,color:'blue'},progress:{'A-02':{introSeen:true,steps:{}}},coins:123,roadAmount:1.25,roadSpeed:.85,roadCadence:'w2',account:{status:'active'},cloudLinked:false,studyLog:{version:1,events}};}
 const load=page=>page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')));
 async function panel(page){
- await page.selectOption('#pdAge','6');await page.locator('.pd-selection details summary').click();await page.selectOption('#pdBaseline','c1');await page.click('#pdStart');
+ await page.selectOption('#pdLevel','a6');await page.locator('.pd-selection details summary').click();await page.selectOption('#pdBaseline','c1');await page.click('#pdStart');
  for(let i=0;i<20;i++)await page.click('#pdSkip');await page.click('#pdRoad');await page.locator('.pd-route-planner > summary').click();
 }
 async function noOverflow(page){assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'no horizontal viewport overflow');}
@@ -25,7 +25,7 @@ for(const lang of (WEBGL?['ko']:['ko','en','zh']))for(const width of (WEBGL?[128
  await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1')){localStorage.setItem('nm_state_v1',JSON.stringify(s));localStorage.setItem('nm_thread_stats_v1',JSON.stringify({NS1:[{ts:Date.now(),rate:1,total:999,correct:999,level:1}]}));}},seed(lang,ready));
  try{
   await page.addLocatorHandler(page.locator('#nmUnlockOverlayClose'),async el=>el.click(),{noWaitAfter:true});
-  await page.goto(base+'/number_magic/index.html?enter=1');await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await page.waitForSelector('#pdAge');
+  await page.goto(base+'/number_magic/index.html?enter=1');await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await page.waitForSelector('#pdLevel');
   const protectedBefore=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return JSON.stringify({progress:s.progress,coins:s.coins,amount:s.roadAmount,speed:s.roadSpeed,cad:s.roadCadence});});
   await panel(page);
   assert.equal(await page.locator('.pd-session-form').count(),1);assert.equal(await page.locator('.pd-projection-form .pd-session-form').count(),0,'completion and projection forms must not be nested');
@@ -59,7 +59,7 @@ for(const lang of (WEBGL?['ko']:['ko','en','zh']))for(const width of (WEBGL?[128
    await page.click('#nm-ws-grade');assert.equal((await load(page)).studyLog.events.length,2,'repeat grade is not another observation');
    await page.click('#nm-ws-reroll');await page.click('#nm-ws-grade');assert.equal((await load(page)).studyLog.events.length,3);assert.equal((await load(page)).studyLog.events[2].answered,0);
    await page.click('#nm-ws-back');assert.equal(await page.evaluate(()=>!!document.getElementById('screen').__nmStudyClock),false,'clock listeners cleaned up on exit');
-   await page.reload();await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await page.waitForSelector('#pdAge');await panel(page);
+   await page.reload();await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await page.waitForSelector('#pdLevel');await panel(page);
    assert.equal((await load(page)).studyLog.events.length,3);assert.deepEqual((await load(page)).studyGoal,goal);assert.equal(await page.locator('.pd-projection-form [name="startSession"]').inputValue(),'2');
    // Storage-full injection: no false saved message and no in-memory duplicate lock.
    await page.evaluate(()=>{window.__storageSet=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='nm_state_v1')throw new DOMException('fixture-full','QuotaExceededError');return window.__storageSet.call(this,k,v);};});
