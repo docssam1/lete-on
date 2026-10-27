@@ -85,7 +85,7 @@ function observeScreen($app, spot) {
     <header class="fd-top"><a class="fd-back" href="#/field?at=${spot.id}">← 지도</a><b>${spot.icon} ${esc(spot.name)}</b><small>${esc(S.title)}</small><span class="sp"></span>
       <button type="button" class="fd-print main" data-print="form">🖨 보고서 양식 인쇄</button><button type="button" class="fd-print" data-print="ex">🖨 예시 보고서 인쇄</button></header>
     <div class="fd-split">
-      <section class="fd-left"><canvas aria-label="표본 3D 모형 — 끌어서 돌려 보기"></canvas><p class="fd-cap"></p></section>
+      <section class="fd-left"><canvas aria-label="표본 3D 모형 — 끌어서 돌려 보기"></canvas><div class="fd-sheet" hidden></div><p class="fd-cap"></p></section>
       <section class="fd-right"><p class="fd-note">📄 <b>예시 보고서</b>예요. 그림과 글이 채워져 있지만 <b>생각이 다르면 다르게 써도 돼요.</b> 「보고서 양식 인쇄」로 뽑아서 보며 따라 그려요.</p>
         ${X ? sampleArticle(S) : '<p class="fd-none">이 장소의 예시 보고서는 준비 중이에요.</p>'}</section>
     </div>
@@ -96,6 +96,16 @@ function observeScreen($app, spot) {
   const stage = Stage.canWebGL() ? new Stage($c) : null; if (!stage) $c.hidden = true;
   if (typeof window !== 'undefined') window.__fdStage = stage;   // 검사 스크립트용
   const snd = scratch(), D = makeDrawer($right, snd); D.reset();
+  // ── 같이 그리기는 왼쪽에서(원장 2026-10-27 「스케치하는 그림은 보이지도 않고 따로 놀아」): 표본이 종이로 눕는 그 자리에 종이 한 장이 올라오고,
+  // 연필 쥔 손이 크게 그린다. 다 그리면 오른쪽 보고서 칸에도 그 그림이 채워진다(오른쪽에서 따로 그리지 않는다).
+  const $sheet = $app.querySelector('.fd-sheet'); let ovD = null;
+  const figOf = (key) => (key.startsWith('x') ? X?.extra?.[+key.slice(1)]?.draw : X?.obs?.[+key]?.draw);
+  const sheetOff = () => { ovD?.stop(); ovD = null; $sheet.hidden = true; $sheet.innerHTML = ''; };
+  const sheetOn = (key, title) => {
+    const f = figOf(key); if (!f) return Promise.resolve(false);
+    $sheet.innerHTML = `<h4>✏ ${esc(title)}</h4><div class="pz-wrap" data-draw="ov">${f()}</div>`; $sheet.hidden = false;
+    ovD = makeDrawer($sheet); ovD.reset(); return ovD.draw('ov');
+  };
   // 예시 보고서(860px 종이)를 오른쪽 칸 폭에 맞게 줄인다
   const fitSheet = () => { $right.style.setProperty('--fz', String(Math.min(1, ($right.clientWidth - 34) / 860))); };
   const ro = 'ResizeObserver' in window ? new ResizeObserver(fitSheet) : null; ro?.observe($right); fitSheet();
@@ -226,7 +236,13 @@ function observeScreen($app, spot) {
     const drawn = new Set(steps.slice(0, k).map((x) => x.draw).filter(Boolean));
     D.plans.forEach((p) => { if (drawn.has(p.key)) D.show(p.key); else D.hide(p.key); });
     // 연필 소리는 내지 않는다(원장 2026-10-27 「그리는 소리 거슬려」)
-    if (st.kind === 'end') { D.finishAll(); markStamp(spot.id); showStamp(); } else if (st.draw) D.draw(st.draw);
+    sheetOff();
+    if (st.kind === 'end') { D.finishAll(); markStamp(spot.id); showStamp(); }
+    else if (st.draw) {
+      // 표본이 눕는 동안(0.7초) 기다렸다가 종이를 올리고 그린다 → 다 그리면 오른쪽 칸에도 채운다
+      const key = st.draw, my = k, sp2 = st.obs != null ? specs[st.obs] : null;
+      timers.push(setTimeout(() => { if (k !== my) return; sheetOn(key, sp2 ? `${sp2.no || ''} 같이 그려요 — 위에서 본 모습` : '같이 그려요').then((ok) => { if (ok && k === my) D.show(key); }); }, st.obs != null ? 700 : 0));
+    }
     render();
   };
   // 도장: 보고서 위에 쾅(한 번 찍힌 자리는 다시 찍지 않는다)
@@ -252,7 +268,7 @@ function observeScreen($app, spot) {
   });
   // 덮개(가린 칸)를 눌러도 들춰진다 — 지금 단계가 그 칸을 묻는 중일 때만
   $right.addEventListener('click', (e) => { const h = e.target.closest('.fd-hide'), st = steps[k]; if (!h || st?.kind !== 'think' || open || maskEl(st.reveal) !== h) return; forward(); });
-  $drew.onclick = () => { D.finishAll(); $say.textContent = '잘했어요! 예시와 견주어 보고, 빠뜨린 이름표나 자가 있으면 더해요.'; $drew.hidden = true; timers.push(setTimeout(() => go(k + 1), 1600)); };
+  $drew.onclick = () => { ovD?.finishAll(); D.finishAll(); $say.textContent = '잘했어요! 예시와 견주어 보고, 빠뜨린 이름표나 자가 있으면 더해요.'; $drew.hidden = true; timers.push(setTimeout(() => go(k + 1), 1600)); };
   $prev.onclick = () => go(k - 1);
   $app.querySelectorAll('[data-print]').forEach((b) => { b.onclick = () => printIt(b.dataset.print); });
   const onKey = (e) => { if (e.target.closest?.('input, textarea')) return; if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); forward(); } if (e.key === 'ArrowLeft') go(k - 1); };
@@ -260,5 +276,5 @@ function observeScreen($app, spot) {
   markDone(spot.id);
   if (typeof window !== 'undefined') window.__field = { steps: steps.length, go: (i) => go(i), next: forward, k: () => k, kinds: steps.map((x) => x.kind) };
   go(0);
-  return () => { ro?.disconnect(); clear(); D.stop(); snd.off(); cancelAnimationFrame(camRaf); cancelAnimationFrame(tween); paper.geometry.dispose(); paperMat.dispose(); texCache.forEach((t) => t.dispose()); removeEventListener('keydown', onKey); cur?.dispose?.(); stage?.dispose(); };
+  return () => { ro?.disconnect(); clear(); sheetOff(); D.stop(); snd.off(); cancelAnimationFrame(camRaf); cancelAnimationFrame(tween); paper.geometry.dispose(); paperMat.dispose(); texCache.forEach((t) => t.dispose()); removeEventListener('keydown', onKey); cur?.dispose?.(); stage?.dispose(); };
 }

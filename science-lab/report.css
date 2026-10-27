@@ -446,7 +446,9 @@ body.sk-open { overflow: hidden; }
 .pm-view { position: relative; height: min(70vh, 640px); min-height: 380px; border-radius: 12px; overflow: hidden; background: #dfeee0; touch-action: pan-y; cursor: grab; user-select: none; outline: none; }
 .pm-view:active { cursor: grabbing; }
 .pm-map { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
-.pm-img { display: block; width: 100%; height: 100%; pointer-events: none; }
+.pm-img { display: none; }
+/* 지도 그림은 화면 크기 캔버스(park.js paint)에 그린다 — 큰 그림을 페이지 층으로 두면 태블릿에서 깜빡였다 */
+.pm-bg { position: absolute; left: 0; top: 0; pointer-events: none; }
 .pm-map .pk-pin { left: 0; top: 0; transform: scale(calc(1 / var(--s, 1))); transform-origin: 0 0; }
 /* 아이들이 가 있는 지점의 표는 아이들(z 3) 위로 — 아이 그림이 표 글씨를 가리지 않게 */
 .pm-map .pk-pin.on, .pm-map .pk-pin.here { z-index: 4; }
@@ -515,7 +517,6 @@ body.fw-on .observe-page { padding-bottom: 58vh; }
 .pk-npc { z-index: 1; } .pk-npc.talk { z-index: 3; }
 /* 말풍선은 워터마크처럼 옅게(원장 2026-10-27 「대화가 약간 워터마크처럼」) — 그림이 비쳐 보인다 */
 /* 지도 위 파도: 화면 크기 캔버스(park.js waveStep) — 지도 크기 SVG는 태블릿에서 지도가 비어 보이게 했다 */
-.pk-wavecv { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 1; transform-origin: 0 0; }
 .pk-nhit { position: absolute; left: -16px; bottom: -4px; width: 32px; height: 64px; padding: 0; border: 0; background: transparent; cursor: pointer; pointer-events: auto; }
 .pk-nsay { position: absolute; left: 0; bottom: 86px; transform: translateX(-50%) scale(calc(1 / var(--kk, .42))); transform-origin: 50% 100%; width: max-content; max-width: 210px; background: rgba(255, 253, 246, .5); color: rgba(31, 42, 31, .8); border: 1px solid rgba(255, 255, 255, .5); border-radius: 12px; padding: 6px 10px; font-size: 12.5px; font-weight: 700; line-height: 1.4; box-shadow: none; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); pointer-events: none; }
 .pk-nsay::after { content: ""; position: absolute; left: 50%; bottom: -7px; transform: translateX(-50%); border: 7px solid transparent; border-bottom: 0; border-top-color: rgba(255, 253, 246, .5); }
