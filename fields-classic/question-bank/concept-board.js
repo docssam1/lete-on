@@ -4,6 +4,7 @@
 // 움직임 줄이기 설정이면 바로 완성 장면.
 // 글자는 손글씨 글꼴(나눔펜, OFL · assets/fonts/nm-lesson-hand.woff2)을 펜이 지나가며 드러내고, 그림은 실제 선(stroke)을 펜이 그린다.
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
+import { mathText } from "./math-markup.js?v=20261027m";
 import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261027c";
 
 const NS = "http://www.w3.org/2000/svg";
@@ -227,7 +228,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
   function renderCheck(check) {
     checkState = { tries: 0, solved: false, check };
     const options = check.options.map((opt, i) => typeof opt === "string"
-      ? `<button type="button" class="cb-opt" data-cb-opt="${i}">${esc(opt)}</button>`
+      ? `<button type="button" class="cb-opt" data-cb-opt="${i}">${mathText(esc(opt))}</button>`   // 보기의 분수(3/8)는 공통 수식으로 위아래로
       : `<button type="button" class="cb-opt cb-opt-grid" data-cb-opt="${i}" aria-label="보기 ${i + 1}">${miniGrid(opt)}</button>`);
     checkBox.innerHTML = `<p class="cb-q">${esc(check.question)}</p><div class="cb-opts">${options.join("")}</div><p class="cb-verdict" data-cb-verdict aria-live="polite"></p>`;
     checkBox.hidden = false;

@@ -1,23 +1,24 @@
+import { frac } from "./math-markup.js?v=20261027m";
 import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261023h";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261023h";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261023h";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261023h";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261027m";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
 import { book02Markup } from "./book02-renderers.js?v=20261023h";
 import { book03Markup } from "./book03-renderers.js?v=20261027a";
 import { book04Markup } from "./book04-renderers.js?v=20261023h";
-import { book05Markup } from "./book05-renderers.js?v=20261023h";
-import { book06Markup } from "./book06-renderers.js?v=20260905d";
+import { book05Markup } from "./book05-renderers.js?v=20261027m";
+import { book06Markup } from "./book06-renderers.js?v=20261027m";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
-import { book08Markup } from "./book08-renderers.js?v=20261027a";
+import { book08Markup } from "./book08-renderers.js?v=20261027m";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
 import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261028y";
-import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261028zb";
+import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261027m";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
 import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261024r";
@@ -1195,7 +1196,7 @@ function originalAnswerControl(item) {
 
 // 분수는 빗금(1/32) 대신 분자를 위, 분모를 아래에 쓴다. 문장 안에서는 {1/32}로 적는다.
 function fractionMarkup(numerator, denominator) {
-  return `<span class="math-frac" role="math" aria-label="${denominator}분의 ${numerator}"><i>${numerator}</i><i>${denominator}</i></span>`;
+  return frac(numerator, denominator);   // 공통 수식(math-markup.js)
 }
 
 function mathText(value, options = {}) {

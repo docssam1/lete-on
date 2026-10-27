@@ -1,3 +1,4 @@
+import { frac, part, rowPart, expr } from "./math-markup.js?v=20261027m";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 }[ch]));
@@ -113,14 +114,13 @@ export const COURSE03_A1_COMPLEX_FRACTION_LESSON = Object.freeze({
   extension, similarPractice
 });
 
-const fractionMarkup = ({ numerator, denominator }) => `<span class="course03-fraction"><span>${esc(numerator)}</span><span>${esc(denominator)}</span></span>`;
-const tailMarkup = (terms, index = 0) => index === terms.length - 1
-  ? `<b>${esc(terms[index])}</b>`
-  : `<span class="course03-continued-whole">${esc(terms[index])} + <span class="course03-fraction"><span>1</span><span>${tailMarkup(terms, index + 1)}</span></span></span>`;
+// 분수는 공통 수식(math-markup.js)으로 — 연분수는 분모 안에 「수 + 분수」를 겹겹이 넣는다
+const fractionMarkup = ({ numerator, denominator }) => frac(numerator, denominator);
+const tailPart = (terms, index = 0) => index === terms.length - 1 ? terms[index] : rowPart(terms[index], "+", part(1, tailPart(terms, index + 1)));
 const continuedMarkup = (terms) => {
   const visible = terms[0] === 0 ? terms.slice(1) : terms;
-  const nested = tailMarkup(visible);
-  return terms[0] === 0 ? `<span class="course03-fraction"><span>1</span><span>${nested}</span></span>` : nested;
+  const nested = tailPart(visible);
+  return terms[0] === 0 ? frac(1, nested) : expr(nested);
 };
 
 const divisionSteps = (numerator, denominator) => {
@@ -139,7 +139,7 @@ export function course03ComplexFractionConceptMarkup(visual) {
   const phase = visual.phase || "problem";
   if (visual.task === "divide") {
     const result = divideFractions(visual.top, visual.bottom);
-    const compound = `<span class="course03-compound-fraction">${fractionMarkup(visual.top)}${fractionMarkup(visual.bottom)}</span>`;
+    const compound = frac(part(visual.top.numerator, visual.top.denominator), part(visual.bottom.numerator, visual.bottom.denominator));   // 번분수
     const body = phase === "problem" ? compound
       : phase === "rewrite" ? `${fractionMarkup(visual.top)}<b>÷</b>${fractionMarkup(visual.bottom)}`
         : phase === "reciprocal" ? `${fractionMarkup(visual.top)}<b>×</b>${fractionMarkup({ numerator: visual.bottom.denominator, denominator: visual.bottom.numerator })}`

@@ -1,3 +1,4 @@
+import { frac } from "./math-markup.js?v=20261027m";
 const escapeHtml = (value) => String(value ?? "")
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
@@ -87,7 +88,7 @@ function fractionParts(denominator, numerator, className = "") {
 }
 
 function fraction(visual) {
-  return `<div class="b8-fraction">${fractionParts(visual.denominator, visual.numerator)}<p>${visual.label ? `${escapeHtml(visual.label)} · ` : ""}${visual.numerator}/${visual.denominator}${visual.shownValue !== undefined ? ` = ${escapeHtml(visual.shownValue)}` : ""}</p><strong>전체 ${escapeHtml(visual.whole)}${visual.unknown ? "개" : ""}</strong></div>`;
+  return `<div class="b8-fraction">${fractionParts(visual.denominator, visual.numerator)}<p>${visual.label ? `${escapeHtml(visual.label)} · ` : ""}${frac(visual.numerator, visual.denominator)}${visual.shownValue !== undefined ? ` = ${escapeHtml(visual.shownValue)}` : ""}</p><strong>전체 ${escapeHtml(visual.whole)}${visual.unknown ? "개" : ""}</strong></div>`;
 }
 
 function fractionProcess(visual) {

@@ -1,3 +1,4 @@
+import { frac, pow } from "./math-markup.js?v=20261027m";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 }[ch]));
@@ -419,9 +420,9 @@ export function course23A2ConceptMarkup(data) {
   } else if (data.task === "digit-product-chain") {
     body = `<div class="a2-digit-chain">${model.sequence.map((value, index) => `<span>${value}${index < model.sequence.length - 1 ? "<small>자리 숫자를 곱해요</small>" : ""}</span>`).join("<b>→</b>")}</div>${phase === "verify" ? `<p>한 자리 수까지 <strong>${model.answer}단계</strong></p>` : ""}`;
   } else if (data.task === "recurring-decimal") {
-    body = `<div class="a2-decimal"><span>${data.numerator}/${data.denominator}</span><b>=</b><span>${model.decimal}${model.period ? "…" : ""}</span></div>${phase === "verify" ? `<p>순환마디 <strong>${model.period}</strong></p>` : ""}`;
+    body = `<div class="a2-decimal"><span>${frac(data.numerator, data.denominator)}</span><b>=</b><span>${model.decimal}${model.period ? "…" : ""}</span></div>${phase === "verify" ? `<p>순환마디 <strong>${model.period}</strong></p>` : ""}`;
   } else if (data.task === "divisor-count") {
-    body = `<div class="a2-primes">${data.primes.map((prime, i) => `<span>${prime}<sup>${data.exponents[i]}</sup></span>`).join("<b>×</b>")}</div>${phase === "problem" ? "" : `<p>${data.exponents.map((exponent) => `(${exponent}+1)`).join(" × ")}${phase === "verify" ? ` = <strong>${model.answer}개</strong>` : ""}</p>`}`;
+    body = `<div class="a2-primes">${data.primes.map((prime, i) => `<span>${pow(prime, data.exponents[i])}</span>`).join("<b>×</b>")}</div>${phase === "problem" ? "" : `<p>${data.exponents.map((exponent) => `(${exponent}+1)`).join(" × ")}${phase === "verify" ? ` = <strong>${model.answer}개</strong>` : ""}</p>`}`;
   } else if (data.task === "eleven-missing-digit") {
     body = `<div class="a2-eleven-digits">${data.digits.map((digit) => `<span>${digit === null ? (phase === "verify" ? model.answer : "□") : digit}</span>`).join("")}</div><p>엇갈린 자리의 합을 비교해요.${phase === "verify" ? ` 빈칸은 <strong>${model.answer}</strong>` : ""}</p>`;
   } else if (data.task === "gcd-lcm") {

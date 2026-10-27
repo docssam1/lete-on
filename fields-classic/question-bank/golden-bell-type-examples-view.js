@@ -2,6 +2,7 @@
 // 한 단계씩 연다: 0단계 = 문제만, 1~N단계 = 풀이가 하나씩, 마지막 = 답. 답은 마지막 단계 전에는 화면에 없다.
 // 색은 골든벨 색표(쌓기나무·모양·숫자판·저울), 안내 단계 색은 주어진 것 파랑 · 하는 일 금색 · 확인 진초록.
 
+import { frac } from "./math-markup.js?v=20261027m";
 import { book04Markup, obliqueCubes, digitGlyph, opIcon, sevenSegNumber } from "./book04-renderers.js?v=20261028w";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -879,8 +880,7 @@ function minosFigure(f) {
 // fracs: 위아래로 쌓은 분수 카드. [분자, 분모] — null은 빈칸
 function fracsFigure(f) {
   const color = TONE[f.tone || "given"], hi = new Set(f.hi || []);
-  const cell = (v) => (v === null ? `<i>□</i>` : `<b>${esc(v)}</b>`);
-  return `<div class="tx-fracs" style="--tone:${color}">${f.list.map(([n, d], i) => `<span class="${hi.has(i) ? "on" : ""}" aria-label="${d === null ? "□" : d}분의 ${n === null ? "□" : n}">${cell(n)}<em></em>${cell(d)}</span>`).join('<small>=</small>')}</div>`;
+  return `<div class="tx-fracs" style="--tone:${color}">${f.list.map(([n, d], i) => `<span class="${hi.has(i) ? "on" : ""}">${frac(n, d)}</span>`).join('<small>=</small>')}</div>`;   // 분수는 공통 수식(null = 빈칸)
 }
 // 4·9권 쌓기나무: 원본과 같은 빗각 그림(book04-renderers). b4-layers = 층별로 위에서 본 칸
 function b4LayersFigure(f) {
