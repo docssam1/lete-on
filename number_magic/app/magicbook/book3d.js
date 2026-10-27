@@ -55,6 +55,7 @@ const GUT = 0.2, DIP = 0.038;                                     // 책등 쪽�
 const DESK_W = 3.2, DESK_H = 2.35, DESK_T = 0.16, RIM = 0.06;      // 나무 판(쌓기나무 판 비율)
 const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const smooth = t => t * t * (3 - 2 * t);      // 로그인 책 펼침과 같은 곡선(app/access.js)
+const backOut = t => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
 const clamp01 = t => Math.max(0, Math.min(1, t));
 
 /* 글 줄바꿈 — 한·영은 낱말 단위, 중국어와 너무 긴 낱말은 글자 단위 */
@@ -127,11 +128,11 @@ export async function mountBook(canvas, opts){
 
   scene.add(new THREE.HemisphereLight('#fffaf0', '#c9b79a', 1.25));
   const sun = new THREE.DirectionalLight('#fff0d8', 2.4);
-  sun.position.set(-2.2, 4.2, 1.8); sun.castShadow = true;
+  sun.position.set(1.7, 3.3, 1.2);    // 오른쪽 앞 위의 해 — 솟은 상자 그림자가 책등 쪽 지면에 길게 떨어진다 sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.045;
   Object.assign(sun.shadow.camera, { left: -2.4, right: 2.4, top: 2.4, bottom: -2.4, near: 0.5, far: 12 });
   scene.add(sun);
-  const fill = new THREE.DirectionalLight('#e8efff', 0.35); fill.position.set(2.5, 2, 3); scene.add(fill);
+  const fill = new THREE.DirectionalLight('#fff4e4', 0.45); fill.position.set(-2.5, 2.4, 2.6); scene.add(fill);
 
   const disposables = [];
   const keep = x => { disposables.push(x); return x; };
@@ -207,68 +208,57 @@ export async function mountBook(canvas, opts){
   const state = { open: false, choice: null, flap: false, moved: 0, view: 'spread' };
   const anim = { work: 0, stamp: 0 };      // 손글씨 풀이 · 도장 진행(0~1)
 
+  /* 4쪽 — 원장 「왼쪽 폰트는 잘 안 보여」: 글자를 크게·굵게·진하게. 자리를 만들려고 핵심 낱말은 「글로 보기」에만 둔다. */
   function drawLeft(){
-    const g = lg, M = 150, IN = 130, W = PW - M - IN;
+    const g = lg, M = 130, IN = 120, W = PW - M - IN, DARK = '#13282a';
     paper(g, 'right');
     g.textBaseline = 'alphabetic'; g.textAlign = 'left';
-    g.fillStyle = '#5e6b66'; g.font = `400 40px Georgia, ${SERIF}`; g.fillText('Numbers ', M, 150); const nw = g.measureText('Numbers ').width;
-    g.font = `italic 400 40px Georgia, ${SERIF}`; g.fillText('of ', M + nw, 150); const ow = g.measureText('of ').width; g.font = `400 40px Georgia, ${SERIF}`; g.fillText('Magic', M + nw + ow, 150);
-    g.fillStyle = '#8a6a2a'; g.font = `700 30px ${SANS}`; g.textAlign = 'right'; g.fillText(T.kicker, PW - IN, 150); g.textAlign = 'left';
-    g.fillStyle = INK; fit(g, T.heading, W, 92, s => `600 ${s}px ${SERIF}`); g.fillText(T.heading, M, 300);
-    g.fillStyle = GOLD; g.fillRect(M, 338, 170, 5);
-    let y = 432; g.font = `400 46px ${SANS}`; g.fillStyle = '#2c3433';
-    for(const p of T.body){ for(const line of wrap(g, p, W)){ g.fillText(line, M, y); y += 72; } y += 14; }
-    /* 핵심 낱말 */
-    y += 8; const boxTop = y, rowH = 66, boxH = 84 + T.words.length * rowH;
-    g.fillStyle = 'rgba(46,125,107,0.08)'; g.strokeStyle = 'rgba(46,125,107,0.38)'; g.lineWidth = 2.5;
-    g.beginPath(); g.roundRect ? g.roundRect(M, boxTop, W, boxH, 20) : g.rect(M, boxTop, W, boxH); g.fill(); g.stroke();
-    g.fillStyle = TEAL; g.font = `700 32px ${SANS}`; g.fillText(T.wordsLabel, M + 38, boxTop + 58);
-    g.font = `700 42px ${SANS}`; const tw = Math.max(...T.words.map(([w]) => g.measureText(w).width)) + 40;
-    T.words.forEach(([w, d], i) => {
-      const ry = boxTop + 124 + i * rowH;
-      g.fillStyle = INK; g.font = `700 42px ${SANS}`; g.fillText(w, M + 38, ry);
-      g.fillStyle = '#545b57'; fit(g, d, W - 76 - tw, 40, s => `400 ${s}px ${SANS}`); g.fillText(d, M + 38 + tw, ry);
-    });
-    y = boxTop + boxH + 92;
+    g.fillStyle = '#4d5a55'; g.font = `500 40px Georgia, ${SERIF}`; g.fillText('Numbers ', M, 140); const nw = g.measureText('Numbers ').width;
+    g.font = `italic 500 40px Georgia, ${SERIF}`; g.fillText('of ', M + nw, 140); const ow = g.measureText('of ').width; g.font = `500 40px Georgia, ${SERIF}`; g.fillText('Magic', M + nw + ow, 140);
+    g.fillStyle = '#7a5a1a'; g.font = `800 34px ${SANS}`; g.textAlign = 'right'; g.fillText(T.kicker, PW - IN, 140); g.textAlign = 'left';
+    g.fillStyle = DARK; fit(g, T.heading, W, 104, s => `700 ${s}px ${SERIF}`); g.fillText(T.heading, M, 290);
+    g.fillStyle = GOLD; g.fillRect(M, 328, 190, 7);
+    let y = 432; g.font = `600 54px ${SANS}`; g.fillStyle = DARK;
+    for(const p of T.body){ for(const line of wrap(g, p, W)){ g.fillText(line, M, y); y += 82; } y += 18; }
     /* 예측 */
-    g.fillStyle = RUST; g.font = `700 32px ${SANS}`; g.fillText(T.predictLabel, M, y); y += 66;
-    g.fillStyle = INK; g.font = `600 50px ${SANS}`; for(const line of wrap(g, T.predictQ, W)){ g.fillText(line, M, y); y += 66; }
+    y += 56; g.fillStyle = RUST; g.font = `800 38px ${SANS}`; g.fillText(T.predictLabel, M, y); y += 80;
+    g.fillStyle = DARK; g.font = `700 60px ${SANS}`; for(const line of wrap(g, T.predictQ, W)){ g.fillText(line, M, y); y += 78; }
     hits.choices = [];
-    const cw = Math.min(330, W / 3);
+    const cw = Math.min(360, W / 3);
     T.choices.forEach((c, i) => {
-      const x = M + i * cw, by = y + 6;
-      g.strokeStyle = INK; g.lineWidth = 3.5; g.strokeRect(x, by, 56, 56);
-      g.fillStyle = INK; g.font = `500 48px ${SANS}`; g.fillText(c, x + 80, by + 48);
-      if(state.choice === i) penCheck(g, x + 28, by + 22, 84);
-      hits.choices.push({ x: x - 20, y: by - 24, w: cw - 10, h: 104, i });
+      const x = M + i * cw, by = y + 8;
+      g.strokeStyle = DARK; g.lineWidth = 5; g.strokeRect(x, by, 68, 68);
+      g.fillStyle = DARK; g.font = `700 58px ${SANS}`; g.fillText(c, x + 94, by + 58);
+      if(state.choice === i) penCheck(g, x + 34, by + 26, 100);
+      hits.choices.push({ x: x - 24, y: by - 28, w: cw - 10, h: 124, i });
     });
-    y += 140;
+    y += 168;
     /* 풀이 — 다 하면 손글씨로 써진다 */
-    const workY = y + 70;
+    const workY = y + 84;
     if(anim.work > 0){
-      g.fillStyle = '#8a7a5a'; g.font = `700 28px ${SANS}`; g.fillText(T.workLabel, M, y);
-      g.save(); g.beginPath(); g.rect(M - 10, workY - 100, (W + 20) * anim.work, 150); g.clip();
-      g.fillStyle = PEN; fit(g, WORK, W, 78, s => `400 ${s}px ${handFont(lang === 'zh' ? 'ko' : lang)}`);
+      g.fillStyle = '#6b5a3a'; g.font = `800 32px ${SANS}`; g.fillText(T.workLabel, M, y);
+      g.save(); g.beginPath(); g.rect(M - 10, workY - 110, (W + 20) * anim.work, 170); g.clip();
+      g.fillStyle = PEN; fit(g, WORK, W, 92, s => `400 ${s}px ${handFont(lang === 'zh' ? 'ko' : lang)}`);
       g.fillText(WORK, M, workY); g.restore();
     }
     /* 날개 아래 정답(날개가 덮고 있다) */
-    const flapH = 270, flapY = PH - 150 - flapH;
+    const flapH = FLAP_H, flapY = PH - 140 - flapH;
     hits.flap = { x: M, y: flapY, w: W, h: flapH };
-    g.fillStyle = 'rgba(200,150,30,0.12)'; g.fillRect(M, flapY, W, flapH);
-    g.fillStyle = INK; g.font = `700 52px ${SANS}`; g.fillText(T.answerTitle, M + 38, flapY + 82);
-    g.fillStyle = '#3a403e'; g.font = `400 40px ${SANS}`;
-    let ay = flapY + 146; for(const line of wrap(g, T.answer, W - 76)){ g.fillText(line, M + 38, ay); ay += 56; }
+    g.fillStyle = 'rgba(200,150,30,0.14)'; g.fillRect(M, flapY, W, flapH);
+    g.fillStyle = DARK; g.font = `800 60px ${SANS}`; g.fillText(T.answerTitle, M + 40, flapY + 92);
+    g.fillStyle = '#1f2b2a'; g.font = `600 46px ${SANS}`;
+    let ay = flapY + 166; for(const line of wrap(g, T.answer, W - 80)){ g.fillText(line, M + 40, ay); ay += 62; }
     /* 도장 */
     if(anim.stamp > 0){
       const s = 1 + (1 - ease(anim.stamp)) * 0.6, a = Math.min(1, anim.stamp * 1.6);
-      g.save(); g.translate(PW - IN - 140, workY - 190); g.rotate(-0.2); g.scale(s, s); g.globalAlpha = a * 0.88;
-      g.strokeStyle = RUST; g.fillStyle = RUST; g.lineWidth = 7; g.beginPath(); g.arc(0, 0, 122, 0, Math.PI * 2); g.stroke();
-      g.lineWidth = 3; g.beginPath(); g.arc(0, 0, 104, 0, Math.PI * 2); g.stroke();
-      g.textAlign = 'center'; fit(g, T.stamp[0], 180, 40, s2 => `800 ${s2}px ${SANS}`); g.fillText(T.stamp[0], 0, -6);
-      fit(g, T.stamp[1], 170, 32, s2 => `700 ${s2}px ${SANS}`); g.fillText(T.stamp[1], 0, 40);
+      g.save(); g.translate(PW - IN - 150, workY - 230); g.rotate(-0.2); g.scale(s, s); g.globalAlpha = a * 0.9;
+      g.strokeStyle = RUST; g.fillStyle = RUST; g.lineWidth = 8; g.beginPath(); g.arc(0, 0, 130, 0, Math.PI * 2); g.stroke();
+      g.lineWidth = 3.5; g.beginPath(); g.arc(0, 0, 110, 0, Math.PI * 2); g.stroke();
+      g.textAlign = 'center'; fit(g, T.stamp[0], 190, 44, s2 => `800 ${s2}px ${SANS}`); g.fillText(T.stamp[0], 0, -6);
+      fit(g, T.stamp[1], 180, 36, s2 => `800 ${s2}px ${SANS}`); g.fillText(T.stamp[1], 0, 44);
       g.restore();
     }
-    g.textAlign = 'center'; g.fillStyle = '#8a7a5a'; g.font = `500 28px ${SANS}`; g.fillText('04', (M + PW - IN) / 2, PH - 70); g.textAlign = 'left';
+    g.textAlign = 'center'; g.fillStyle = '#7a6a4a'; g.font = `600 32px ${SANS}`; g.fillText('04', (M + PW - IN) / 2, PH - 60); g.textAlign = 'left';
     leftTex.needsUpdate = true;
   }
   function drawRight(){
@@ -293,7 +283,7 @@ export async function mountBook(canvas, opts){
     for(let i = 0; i < p.count; i++){ const ax = Math.abs(p.getX(i)); if(ax < GUT) p.setY(i, p.getY(i) - DIP * (0.5 + 0.5 * Math.cos(Math.PI * ax / GUT))); }
     p.needsUpdate = true; geo.computeVertexNormals(); return geo;
   }
-  const pageMat = tex => keep(new THREE.MeshStandardMaterial({ map: tex, roughness: 0.92, emissive: '#ffffff', emissiveMap: tex, emissiveIntensity: 0.3 }));
+  const pageMat = tex => keep(new THREE.MeshStandardMaterial({ map: tex, roughness: 0.92, emissive: '#ffffff', emissiveMap: tex, emissiveIntensity: 0.18 }));
 
   /* 오른쪽 반(가만히): 뒤표지 · 종이 묶음 · 5쪽 */
   const book = new THREE.Group(); scene.add(book);
@@ -319,15 +309,15 @@ export async function mountBook(canvas, opts){
   spine.castShadow = true; book.add(spine);
 
   /* 날개: 4쪽 정답 위에 붙은 종이. 아래쪽 가장자리를 경첩으로 읽는 사람 쪽으로 넘어간다. */
-  const FLAP_W = 1120, FLAP_H = 270, flapCanvas = makeCanvas(FLAP_W, FLAP_H), fg = flapCanvas.getContext('2d'), flapTex = canvasTexture(flapCanvas);
+  const FLAP_W = 1150, FLAP_H = 300, flapCanvas = makeCanvas(FLAP_W, FLAP_H), fg = flapCanvas.getContext('2d'), flapTex = canvasTexture(flapCanvas);
   function drawFlap(){
     const g = fg; g.fillStyle = '#f2e7cd'; g.fillRect(0, 0, FLAP_W, FLAP_H);
     const r = rng(41); for(let i = 0; i < 900; i++){ g.fillStyle = `rgba(120,95,50,${0.03 + r() * 0.05})`; g.fillRect(r() * FLAP_W, r() * FLAP_H, 2, 1.2); }
     g.strokeStyle = 'rgba(120,95,50,0.35)'; g.setLineDash([12, 9]); g.lineWidth = 2.5; g.strokeRect(14, 14, FLAP_W - 28, FLAP_H - 28); g.setLineDash([]);
-    g.textAlign = 'left'; g.fillStyle = RUST; g.font = `700 34px ${SANS}`; g.fillText(T.flapLabel, 46, 86);
-    g.fillStyle = INK; fit(g, T.flapHint, 820, 46, s => `600 ${s}px ${SANS}`); g.fillText(T.flapHint, 46, 166);
-    g.fillStyle = PEN; g.font = `400 52px ${HAND}`; g.textAlign = 'right'; g.fillText(T.flapTag, 1070, 92);
-    g.strokeStyle = PEN; g.lineWidth = 4.5; g.lineCap = 'round'; g.beginPath(); g.moveTo(985, 118); g.quadraticCurveTo(1015, 180, 1066, 214); g.moveTo(1066, 214); g.lineTo(1034, 210); g.moveTo(1066, 214); g.lineTo(1058, 182); g.stroke();
+    g.textAlign = 'left'; g.fillStyle = RUST; g.font = `800 40px ${SANS}`; g.fillText(T.flapLabel, 48, 96);
+    g.fillStyle = '#13282a'; fit(g, T.flapHint, 820, 54, s => `700 ${s}px ${SANS}`); g.fillText(T.flapHint, 48, 190);
+    g.fillStyle = PEN; g.font = `400 60px ${HAND}`; g.textAlign = 'right'; g.fillText(T.flapTag, 1100, 102);
+    g.strokeStyle = PEN; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(1010, 130); g.quadraticCurveTo(1040, 200, 1094, 238); g.moveTo(1094, 238); g.lineTo(1060, 234); g.moveTo(1094, 238); g.lineTo(1086, 204); g.stroke();
     flapTex.needsUpdate = true;
   }
   const flapPivot = new THREE.Group(); leftHalf.add(flapPivot);
@@ -349,10 +339,12 @@ export async function mountBook(canvas, opts){
   const goldLine = keep(new THREE.LineBasicMaterial({ color: GOLD }));
   const paperMat = keep(new THREE.MeshStandardMaterial({ color: '#fffaf0', roughness: 0.95 }));
   const hullMat = keep(new THREE.MeshBasicMaterial({ color: INK, side: THREE.BackSide }));
-  const CELL = 0.148, BR = 0.05, LIFT = 0.085;
+  /* 팝업(원장 「더 위로 튀어나온 느낌」): 뒤 상자는 높게, 앞 상자는 그보다 낮게 계단처럼 서고, 둘 다 읽는 사람 쪽으로 기운다.
+     종이 받침 두 장 + 뒷벽 한 장이 지면에서 상자까지 이어져 「지면에서 접혀 올라온」 모습이 된다. */
+  const CELL = 0.148, BR = 0.05, LIFT_A = 0.33, LIFT_B = 0.21, TILT = 0.13;
   const withEdges = (geo, mat) => { const m = new THREE.Mesh(geo, mat); m.castShadow = true; m.receiveShadow = true;
     const e = new THREE.LineSegments(keep(new THREE.EdgesGeometry(geo, 25)), inkLine); m.add(e); m.userData.edges = e; return m; };
-  function tray(){
+  function tray(LIFT){
     const grp = new THREE.Group(), inner = new THREE.Group(); grp.add(inner);
     const W = CELL * 5 + 0.02, D = CELL * 2 + 0.02;
     const base = withEdges(keep(new THREE.BoxGeometry(W, 0.022, D)), paperMat); base.position.y = LIFT; inner.add(base);
@@ -361,8 +353,9 @@ export async function mountBook(canvas, opts){
     wall(0.012, 0.045, D, -W / 2 + 0.006, 0); wall(0.012, 0.045, D, W / 2 - 0.006, 0);
     for(let i = 1; i < 5; i++) wall(0.008, 0.032, D - 0.02, -W / 2 + 0.01 + i * CELL, 0);
     wall(W - 0.02, 0.032, 0.008, 0, 0);
-    /* 받침: 접힌 종이 두 장 */
-    for(const x of [-0.24, 0.24]){ const t = withEdges(keep(new THREE.BoxGeometry(0.006, LIFT, D * 0.62)), paperMat); t.position.set(x, LIFT / 2, 0); inner.add(t); }
+    /* 받침: 접힌 종이 두 장 + 뒷벽 — 지면에서 상자 밑까지 */
+    for(const x of [-0.25, 0.25]){ const t = withEdges(keep(new THREE.BoxGeometry(0.006, LIFT, D * 0.7)), paperMat); t.position.set(x, LIFT / 2, 0); inner.add(t); }
+    const back = withEdges(keep(new THREE.BoxGeometry(W * 0.92, LIFT, 0.006)), paperMat); back.position.set(0, LIFT / 2, -D / 2 + 0.02); inner.add(back);
     const cells = []; for(let r = 0; r < 2; r++) for(let c = 0; c < 5; c++) cells.push(new THREE.Vector3(-W / 2 + 0.01 + CELL * (c + 0.5), LIFT + 0.011 + BR, -D / 2 + 0.01 + CELL * (r + 0.5)));
     grp.userData = { inner, cells, base };
     return grp;
@@ -372,7 +365,7 @@ export async function mountBook(canvas, opts){
   const amberMat = keep(new THREE.MeshStandardMaterial({ color: AMBER, roughness: 0.3, emissive: '#5a3500', emissiveIntensity: 0.25 }));
   function bead(mat){ const m = new THREE.Mesh(beadGeo, mat); m.castShadow = true; m.add(new THREE.Mesh(hullGeo, hullMat)); return m; }
   const pop = new THREE.Group(); rightHalf.add(pop); pop.position.set(PAGE_W / 2, PIV, 0);
-  const trayA = tray(), trayB = tray(); trayA.position.set(0, 0, -0.33); trayB.position.set(0, 0, 0.09);
+  const trayA = tray(LIFT_A), trayB = tray(LIFT_B); trayA.position.set(0, 0, -0.36); trayB.position.set(0, 0, 0.12);
   pop.add(trayA, trayB);
   const beadsA = [], beadsB = [];
   for(let i = 0; i < 8; i++){ const b = bead(tealMat); b.position.copy(trayA.userData.cells[i]); trayA.userData.inner.add(b); beadsA.push(b); }
@@ -388,7 +381,7 @@ export async function mountBook(canvas, opts){
     return sp;
   }
   const labelA = labelSprite(), labelB = labelSprite();
-  labelA.position.set(-0.47, LIFT + 0.12, -0.33); labelB.position.set(-0.47, LIFT + 0.12, 0.09);
+  labelA.position.set(-0.47, LIFT_A + 0.14, -0.34); labelB.position.set(-0.47, LIFT_B + 0.14, 0.14);
   pop.add(labelA, labelB);
 
   /* 빛: 둥근 빛 무늬(더하기 섞기) — 날아가는 구슬의 빛과 꼬리, 10이 됐을 때의 빛 */
@@ -397,7 +390,7 @@ export async function mountBook(canvas, opts){
     g.fillStyle = gr; g.fillRect(0, 0, 128, 128); return canvasTexture(c); })();
   const glowMat = () => keep(new THREE.SpriteMaterial({ map: glowTex, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false }));
   const trail = [];
-  const trayGlow = new THREE.Sprite(glowMat()); trayGlow.scale.set(1.0, 0.55, 1); trayGlow.position.set(0, LIFT + 0.05, -0.33); trayGlow.material.opacity = 0; pop.add(trayGlow);
+  const trayGlow = new THREE.Sprite(glowMat()); trayGlow.scale.set(1.0, 0.55, 1); trayGlow.position.set(0, LIFT_A + 0.08, -0.3); trayGlow.material.opacity = 0; pop.add(trayGlow);
 
   /* ── 카메라 틀: 어떤 화면비에서도 보고 싶은 상자가 들어오게 ── */
   const camNow = { pos: new THREE.Vector3(), tgt: new THREE.Vector3() }, camFrom = { pos: new THREE.Vector3(), tgt: new THREE.Vector3() }, camTo = { pos: new THREE.Vector3(), tgt: new THREE.Vector3() };
@@ -406,8 +399,8 @@ export async function mountBook(canvas, opts){
     const aspect = canvas.clientWidth / Math.max(1, canvas.clientHeight), portrait = aspect < 0.85;
     let tx, w, d, el;
     if(!state.open){ tx = 0.5; w = 1.5; d = 1.6; el = 0.95; }
-    else if(portrait && state.view !== 'spread'){ tx = state.view === 'left' ? -0.5 : 0.5; w = 1.26; d = 1.42; el = 1.28; }
-    else { tx = 0; w = 2.3; d = 1.5; el = 1.05; }
+    else if(portrait && state.view !== 'spread'){ tx = state.view === 'left' ? -0.5 : 0.5; w = 1.26; d = 1.42; el = state.view === 'left' ? 1.28 : 1.02; }
+    else { tx = 0; w = 2.3; d = 1.5; el = 0.98; }
     const fov = THREE.MathUtils.degToRad(camera.fov), t2 = 2 * Math.tan(fov / 2);
     const dist = Math.max(w / aspect / t2, (d * Math.sin(el) + 0.32) / t2) * 1.08;
     const tgt = new THREE.Vector3(tx, state.open ? PIV : PIV * 1.2, state.open && !(portrait && state.view !== 'spread') ? 0.03 : 0.0);
@@ -428,8 +421,8 @@ export async function mountBook(canvas, opts){
     spine.scale.y = THREE.MathUtils.lerp(PIV * 2 + 0.002, 0.012, ease(clamp01(openT * 1.4)));
     spine.position.set(-0.025 * (1 - openT), spine.scale.y / 2, 0);
     for(const [i, t] of [[0, trayA], [1, trayB]]){
-      const k = ease(clamp01(popT * 1.3 - i * 0.3));
-      t.userData.inner.rotation.x = -(1 - k) * 1.45; t.userData.inner.scale.setScalar(0.001 + k * 0.999); t.visible = k > 0.002;
+      const u = clamp01(popT * 1.3 - i * 0.3), k = backOut(u);      // 살짝 넘쳤다가 자리 잡는 「톡」
+      t.userData.inner.rotation.x = TILT - (1 - k) * (1.45 + TILT); t.userData.inner.scale.setScalar(0.001 + clamp01(u * 1.6) * 0.999); t.visible = u > 0.002;
     }
     labelA.material.opacity = labelB.material.opacity = clamp01(popT * 2 - 1);
     labelA.visible = labelB.visible = popT > 0.5;
@@ -453,7 +446,7 @@ export async function mountBook(canvas, opts){
   function emit(type, extra){ onChange(Object.assign({}, state), Object.assign({ type }, extra || {})); }
   function open(){
     if(state.open || busy) return; busy = true; state.open = true; aimCamera();
-    tween(1.4, k => { openT = k; applyOpen(); }, () => tween(0.9, k => { popT = k; applyOpen(); }, () => { busy = false; emit('opened'); }));
+    tween(1.4, k => { openT = k; applyOpen(); }, () => tween(1.1, k => { popT = k; applyOpen(); }, () => { busy = false; emit('opened'); }));
   }
   function close(){
     if(!state.open || busy) return; busy = true;
