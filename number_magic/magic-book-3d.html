@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>수의 마법 · 마법책</title>
+<meta name="description" content="수의 마법 마법책 시범 두 쪽 — 책상 위 초록 가죽 책을 펼치면 10칸 상자가 지면 위로 솟고, 구슬을 옮겨 10을 만든다.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* 마법책 3D 시범(2026-10-27) — 책상 위 초록 가죽 책. 화면 글자는 전부 HTML(번역·키보드·화면 읽기 프로그램). */
+  @font-face{font-family:'NM Book UI';font-weight:100 900;font-display:swap;src:url('assets/fonts/pretendard-var.woff2') format('woff2')}
+  @font-face{font-family:'NM Book Pen';font-weight:400;font-display:block;src:url('assets/fonts/nm-lesson-hand.woff2') format('woff2')}
+  :root{--ink:#163f39;--ink2:#4a5552;--paper:#fbf6ea;--green:#245b60;--deep:#16302a;--gold:#c8961e;--rust:#a8452c;--glass:rgba(250,246,236,.86);--line:rgba(29,42,42,.14);
+    --ui:'NM Book UI',Pretendard,'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;--serif:'Hahmlet','Noto Serif KR',Georgia,serif}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#3f625f 0,#193c40 40%,#0c222a 85%);background-color:#102e34;color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+  canvas#book{display:block;width:100%;height:100%;touch-action:manipulation;outline:none}
+  canvas#book:focus-visible{outline:3px solid var(--green);outline-offset:-3px}
+  /* 여는 화면: 종이 위에 「수의 마법」이 펜으로 한 글자씩 써지고, 금빛 구슬 하나가 떨어진다 */
+  #loader{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 45%,#3f625f 0,#193c40 40%,#0c222a 85%);z-index:5;transition:opacity .7s;text-align:center;padding:24px}
+  #loader .mark{display:grid;justify-items:center;gap:10px}
+  #loader .word{font:400 clamp(64px,13vw,120px)/1 'NM Book Pen',var(--ui);color:#f3e2b4;display:inline-flex;gap:.02em}
+  #loader .word i{font-style:normal;display:inline-block;clip-path:inset(-20% 100% -20% 0);animation:write .22s linear forwards}
+  #loader .word i:nth-child(1){animation-delay:.15s}#loader .word i:nth-child(2){animation-delay:.38s}#loader .word i:nth-child(3){animation-delay:.6s}#loader .word i:nth-child(4){animation-delay:.84s}#loader .word i:nth-child(5){animation-delay:1.04s}
+  @keyframes write{to{clip-path:inset(-20% 0 -20% 0)}}
+  #loader .bead{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a8,#e8a23a 55%,#a96a12);box-shadow:0 0 18px rgba(255,190,70,.8);opacity:0;transform:translateY(-60px);animation:drop .6s 1.25s cubic-bezier(.55,0,1,.45) forwards}
+  @keyframes drop{20%{opacity:1}80%{transform:translateY(0) scale(1.2,.8)}100%{opacity:1;transform:none}}
+  #loader .sub{font:500 15px/1.4 var(--ui);color:#cdbf98;opacity:0;animation:fade .5s 1.5s forwards}
+  @keyframes fade{to{opacity:1}}
+  body.ready #loader{opacity:0;pointer-events:none}
+  /* 아래 알약 막대 */
+  #bar{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:6px;border-radius:999px;
+    background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 10px 30px rgba(40,30,10,.18),inset 0 0 0 1px rgba(255,255,255,.6);z-index:3;max-width:calc(100vw - 24px)}
+  #bar button,#bar a{appearance:none;border:0;background:transparent;color:var(--ink);font:600 14px/1 var(--ui);min-height:44px;min-width:44px;padding:0 14px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap}
+  #bar button:hover,#bar a:hover{background:rgba(36,91,96,.08)}
+  #bar button:focus-visible,#bar a:focus-visible{outline:3px solid var(--green);outline-offset:1px}
+  #bar .primary{background:var(--green);color:#fff}
+  #bar .primary:hover{background:#1c4a4e}
+  #bar .sep{width:1px;height:24px;background:var(--line);margin:0 2px}
+  #bar svg{width:18px;height:18px;flex:0 0 auto}
+  #bar [aria-pressed=true]{background:rgba(36,91,96,.12)}
+  #pages{display:none}
+  /* 입구로 — 로그인 화면의 「배경음」 알약과 같은 자리 */
+  #back{position:fixed;left:max(12px,env(safe-area-inset-left));top:max(12px,env(safe-area-inset-top));z-index:3;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px 0 10px;border-radius:999px;
+    background:var(--glass);color:var(--ink);font:600 14px/1 var(--ui);text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+  #back svg{width:18px;height:18px}#back:focus-visible{outline:3px solid #f3e2b4;outline-offset:2px}
+  @media (max-width:420px){#soundBtn{display:none}#bar{gap:2px}#bar button{padding:0 10px}}
+  @media (max-aspect-ratio:17/20){#pages{display:inline-flex}}
+  @media (max-width:560px){#bar .label{display:none}#bar button,#bar a{padding:0 11px}}
+  /* 상태 한 줄 — 화면 위쪽 가운데 */
+  #toast{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translate(-50%,-8px);background:var(--deep);color:#f3ead6;font:600 15px/1.4 var(--ui);padding:10px 16px;border-radius:12px;opacity:0;transition:opacity .25s,transform .25s;z-index:4;max-width:calc(100vw - 24px);text-align:center;pointer-events:none;word-break:keep-all}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  @media (max-width:560px){#toast{top:calc(max(12px,env(safe-area-inset-top)) + 56px)}}   /* 휴대폰: 「입구로」 알약 아래로 */
+  /* 글로 보기 */
+  dialog#textView{border:0;border-radius:18px;padding:0;max-width:min(560px,calc(100vw - 24px));width:100%;max-height:min(86vh,760px);background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(20,15,5,.35)}
+  dialog#textView::backdrop{background:rgba(22,32,28,.45)}
+  #textView .inner{padding:24px 24px 20px;overflow:auto;max-height:inherit}
+  #textView h1{font:600 26px/1.3 var(--serif);margin:4px 0 12px}
+  #textView .kicker{font:700 12px/1 var(--ui);letter-spacing:.14em;color:#8a6a2a;text-transform:uppercase}
+  #textView p{font:400 16px/1.7 var(--ui);margin:0 0 10px;word-break:keep-all}
+  #textView h2{font:700 13px/1 var(--ui);letter-spacing:.06em;color:var(--rust);margin:20px 0 10px}
+  #textView dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font:16px/1.5 var(--ui)}
+  #textView dt{font-weight:700}#textView dd{margin:0;color:var(--ink2)}
+  #textView fieldset{border:0;padding:0;margin:0;display:flex;gap:8px;flex-wrap:wrap}
+  #textView legend{font:600 17px/1.5 var(--ui);margin-bottom:8px}
+  #textView label.choice{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1.5px solid var(--line);border-radius:10px;font:500 16px var(--ui);cursor:pointer;background:#fff}
+  #textView label.choice:has(input:checked){border-color:var(--green);background:#eef5f1}
+  #textView input[type=radio]{accent-color:var(--green);width:18px;height:18px}
+  #textView .act{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  #textView .act button,#textView .close{min-height:44px;padding:0 16px;border-radius:10px;border:1.5px solid var(--green);background:#fff;color:var(--green);font:700 15px var(--ui);cursor:pointer}
+  #textView .act button:disabled{opacity:.45;cursor:default}
+  #textView .close{background:var(--green);color:#fff;margin-top:18px;width:100%}
+  #textView .answer{background:rgba(200,150,30,.12);border-radius:10px;padding:12px 14px;margin-top:10px}
+  #textView .work{font:400 30px/1.3 'NM Book Pen',var(--ui);color:#24585a;margin:12px 0 0}
+  #textView .status{font-weight:700;color:var(--green)}
+  #textView :focus-visible{outline:3px solid var(--green);outline-offset:2px}
+  /* 3D 를 열 수 없는 기기 */
+  #nogl{position:fixed;inset:0;display:none;place-items:center;background:#fffcf5;z-index:6;padding:24px;text-align:center}
+  body.nogl #nogl{display:grid}
+  #nogl h1{font:600 22px/1.4 var(--serif);margin:0 0 8px}#nogl p{font:16px/1.6 var(--ui);max-width:420px;margin:0 auto 16px;color:var(--ink2);word-break:keep-all}
+  #nogl button,#nogl a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;margin:4px;border-radius:999px;border:1.5px solid var(--green);background:#fff;color:var(--green);font:700 15px var(--ui);text-decoration:none;cursor:pointer}
+  .sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  @media (prefers-reduced-motion:reduce){#loader .word i{animation:none;clip-path:none}#loader .bead,#loader .sub{animation:none;opacity:1;transform:none}#toast{transition:none}}
+</style>
+</head>
+<body>
+<canvas id="book" tabindex="0" aria-describedby="hint"></canvas>
+<p id="hint" class="sr"></p>
+<div id="loader" role="status" aria-live="polite">
+  <div class="mark"><div class="word" aria-label="수의 마법"><i>수</i><i>의</i><i>&nbsp;</i><i>마</i><i>법</i></div><span class="bead" aria-hidden="true"></span><span class="sub" id="loaderSub">마법책을 펼치는 중</span></div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<a id="back" href="access.html" aria-label="입구로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span id="backLabel">입구로</span></a>
+<nav id="bar" aria-label="마법책 조작">
+  <button id="openBtn" class="primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5c2.8-.8 5.8-.6 9 1.2v12.6c-3.2-1.8-6.2-2-9-1.2zM21 5.5c-2.8-.8-5.8-.6-9 1.2v12.6c3.2-1.8 6.2-2 9-1.2z"/></svg><span class="label" id="openLabel">책 펼치기</span></button>
+  <span id="pages" role="group"><button id="pageLeft" type="button" aria-pressed="false">설명 쪽</button><button id="pageRight" type="button" aria-pressed="true">그림 쪽</button></span>
+  <span class="sep" aria-hidden="true"></span>
+  <button id="resetBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/></svg><span class="label" id="resetLabel">다시 하기</span></button>
+  <button id="textBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 6h14M5 10h14M5 14h10M5 18h7"/></svg><span class="label" id="textLabel">글로 보기</span></button>
+  <button id="soundBtn" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10v4h4l5 4V6L8 10z"/><path id="soundWave" d="M16.5 9.5a4 4 0 0 1 0 5" opacity=".25"/></svg><span class="label" id="soundLabel">소리</span></button>
+  <button id="motionBtn" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4v16" /></svg><span class="label" id="motionLabel">움직임</span></button>
+</nav>
+<dialog id="textView" aria-labelledby="tvTitle"><div class="inner" id="tvInner"></div></dialog>
+<div id="nogl" role="alert"><div><h1 id="noglTitle"></h1><p id="noglBody"></p><button type="button" id="noglText"></button><a href="access.html" id="noglBack"></a></div></div>
+<noscript><p style="position:fixed;inset:auto 0 0 0;padding:12px;background:#fff;text-align:center">마법책을 열려면 자바스크립트가 필요해요.</p></noscript>
+<script type="module">
+import { CONTENT, WORK, CORRECT_CHOICE } from './app/magicbook/content.js?v=20261027-book1';
+import { mountBook, supportsWebGL } from './app/magicbook/book3d.js?v=20261027-book1';
+const Q = new URLSearchParams(location.search);
+const lang = ['ko','en','zh'].includes(Q.get('lang')) ? Q.get('lang') : 'ko', T = CONTENT[lang], U = T.ui;
+const $ = id => document.getElementById(id);
+document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang; document.title = T.title;
+$('loaderSub').textContent = T.loaderSub; $('hint').textContent = U.canvas; $('book').setAttribute('aria-label', T.title);
+$('openLabel').textContent = U.open; $('resetLabel').textContent = U.reset; $('textLabel').textContent = U.text; $('soundLabel').textContent = U.sound; $('motionLabel').textContent = U.motion;
+$('pageLeft').textContent = U.left; $('pageRight').textContent = U.right; $('back').setAttribute('aria-label', U.back); $('backLabel').textContent = U.back; $('back').href = 'access.html?lang=' + lang;
+['openBtn','resetBtn','textBtn','soundBtn','motionBtn'].forEach(id => $(id).setAttribute('aria-label', $(id).querySelector('.label').textContent));
+$('bar').setAttribute('aria-label', T.title);
+
+/* 움직임 줄이기: 기기 설정을 따르고, 막대 단추로 바꾼 값은 이 브라우저에 기억한다 */
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k, v){ try { localStorage.setItem(k, v); } catch(e){} } };
+let reduced = store.get('nmBookMotion') ? store.get('nmBookMotion') === 'off' : matchMedia('(prefers-reduced-motion: reduce)').matches;
+let sound = false;
+const paintMotion = () => { $('motionBtn').setAttribute('aria-pressed', String(!reduced)); $('motionBtn').setAttribute('aria-label', U.motion + ' ' + (reduced ? U.motionOff : U.motionOn)); };
+paintMotion();
+
+let toastTimer = 0;
+function say(text){ const t = $('toast'); t.textContent = text; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600); }
+
+let ctl = null;
+function syncBar(st){
+  $('openLabel').textContent = st.open ? U.close : U.open; $('openBtn').setAttribute('aria-label', st.open ? U.close : U.open);
+  $('openBtn').classList.toggle('primary', !st.open);
+  $('pageLeft').setAttribute('aria-pressed', String(st.view === 'left')); $('pageRight').setAttribute('aria-pressed', String(st.view !== 'left'));
+}
+function onChange(st, ev){
+  syncBar(st);
+  if(ev.type === 'opened'){ say(U.opened); if(matchMedia('(max-aspect-ratio:17/20)').matches) ctl.setView('right'); }
+  if(ev.type === 'pick') say(U.choicePicked(T.choices[st.choice]));
+  if(ev.type === 'flap' && st.flap) say(U.flapOpened);
+  if(ev.type === 'moved') say(T.status(st.moved));
+  if(ev.type === 'full') say(T.full);
+  renderText();
+}
+
+/* 글로 보기 — 3D 와 같은 상태를 같은 동작으로 바꾼다 */
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let local = { choice: null, flap: false, moved: 0 };
+function st(){ return ctl ? ctl.state : local; }
+function renderText(){
+  const s = st(), inner = $('tvInner'); if(!$('textView').open) return;
+  const focusId = document.activeElement && document.activeElement.id;
+  inner.innerHTML = `<span class="kicker">${esc(T.kicker)}</span><h1 id="tvTitle">${esc(T.heading)}</h1>${T.body.map(p => `<p>${esc(p)}</p>`).join('')}
+    <h2>${esc(T.wordsLabel)}</h2><dl>${T.words.map(([w, d]) => `<dt>${esc(w)}</dt><dd>${esc(d)}</dd>`).join('')}</dl>
+    <h2>${esc(T.predictLabel)}</h2><fieldset><legend>${esc(T.predictQ)}</legend>${T.choices.map((c, i) => `<label class="choice"><input type="radio" name="pred" id="tvChoice${i}" value="${i}"${s.choice === i ? ' checked' : ''}>${esc(c)}</label>`).join('')}</fieldset>
+    <h2>${esc(T.flapLabel)}</h2>${s.flap ? `<div class="answer"><p><b>${esc(T.answerTitle)}</b> ${esc(T.answer)}</p></div>` : `<p>${esc(T.flapHint)}</p>`}
+    <div class="act"><button type="button" id="tvFlap">${esc(U.liftFlap)}</button></div>
+    <h2>${esc(T.figCaption)}</h2><p class="status" role="status">${esc(T.status(s.moved))}</p>
+    <div class="act"><button type="button" id="tvMove"${s.moved >= 2 ? ' disabled' : ''}>${esc(U.moveBead)} (${s.moved}/2)</button></div>
+    ${s.moved >= 2 ? `<p class="work" aria-label="${esc(T.workLabel)} ${esc(WORK)}">${esc(WORK)}</p>` : ''}
+    <button type="button" class="close" id="tvClose">${esc(U.closeText)}</button>`;
+  inner.querySelectorAll('input[name=pred]').forEach(r => r.onchange = () => { if(ctl) ctl.pick(Number(r.value)); else { local.choice = Number(r.value); renderText(); } });
+  $('tvFlap').onclick = () => { if(ctl) ctl.liftFlap(); else { local.flap = !local.flap; renderText(); } };
+  $('tvMove').onclick = () => { if(ctl){ if(!ctl.state.open) ctl.open(); else ctl.moveBead(); } else { local.moved = Math.min(2, local.moved + 1); renderText(); } };
+  $('tvClose').onclick = () => $('textView').close();
+  if(focusId && $(focusId)) $(focusId).focus(); else $('tvTitle').setAttribute('tabindex', '-1');
+}
+function openText(){ const d = $('textView'); if(!d.open) d.showModal(); renderText(); const f = $('tvTitle'); if(f){ f.setAttribute('tabindex', '-1'); f.focus(); } }
+$('textBtn').onclick = openText;
+
+$('noglTitle').textContent = U.noGL; $('noglBody').textContent = U.noGLBody; $('noglText').textContent = U.text; $('noglBack').textContent = U.back; $('noglBack').href = 'access.html?lang=' + lang;
+$('noglText').onclick = openText;
+
+async function start(){
+  if(!supportsWebGL() || Q.get('nogl') === '1'){ document.body.classList.add('nogl', 'ready'); $('bar').hidden = true; return; }
+  try {
+    ctl = await mountBook($('book'), { lang, reduced, sound, onChange, startOpen: Q.get('open') === '1' });
+  } catch(e){ console.error(e); document.body.classList.add('nogl', 'ready'); $('bar').hidden = true; return; }
+  window.NM_BOOK = ctl;   // 검사용(읽기·조작 같은 함수)
+  syncBar(ctl.state);
+  setTimeout(() => document.body.classList.add('ready'), reduced ? 0 : 900);
+  $('openBtn').onclick = () => ctl.state.open ? ctl.close() : ctl.open();
+  $('resetBtn').onclick = () => ctl.reset();
+  $('pageLeft').onclick = () => ctl.setView('left'); $('pageRight').onclick = () => ctl.setView('right');
+  $('soundBtn').onclick = () => { sound = !sound; ctl.setSound(sound); $('soundBtn').setAttribute('aria-pressed', String(sound)); $('soundWave').setAttribute('opacity', sound ? '1' : '.25'); };
+  $('motionBtn').onclick = () => { reduced = !reduced; ctl.setReduced(reduced); store.set('nmBookMotion', reduced ? 'off' : 'on'); paintMotion(); };
+  /* 키보드: Enter/Space = 펼치기 또는 구슬 옮기기, ←/→ = 휴대폰에서 쪽 바꾸기 */
+  $('book').addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); ctl.state.open ? ctl.moveBead() : ctl.open(); }
+    if(e.key === 'ArrowLeft') ctl.setView('left'); if(e.key === 'ArrowRight') ctl.setView('right');
+  });
+}
+start();
+</script>
+</body>
+</html>
