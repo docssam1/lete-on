@@ -1,5 +1,5 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261024r";
-import { loadRecords, weekRate } from "./study-progress.js?v=20261028e";
+import { loadRecords, weekRate, loggedIn, logout } from "./study-progress.js?v=20261028g";
 
 // 내 학습 상황(원장 2026-10-27 「학생이 직접 학습 상황을 볼 수 있는 것도 · 수행률 진도」)
 //   권마다: 수행률(4주 + 권별 테스트) · 진도(지금 몇 주) · 단원 평가 평균 · 권별 테스트
@@ -100,10 +100,19 @@ function render() {
   renderWeak(book, state);
   document.title = `내 학습 상황 · ${book.label}`;
   $("backLink").href = link("start.html", { book: book.id });
-  $("note").textContent = synced ? "로그인한 기록이에요. 다른 기기에서 공부한 것도 함께 보여요." : "이 기기에 저장된 기록이에요. (지금은 데모 — 로그인 기능을 붙이면 다른 기기에서도 이어서 보여요.)";
+  const me = loggedIn();
+  if (me?.type === "admin") $("backLink").href = `./teacher.html?${new URLSearchParams({ book: book.id })}`;
+  $("note").textContent = me?.type === "admin" ? `선생님 보기 · ${student} 학생의 서버 기록이에요.` : synced ? "로그인한 기록이에요. 다른 기기에서 공부한 것도 함께 보여요." : "이 기기에 저장된 기록이에요. 로그인하면 다른 기기에서도 이어서 보여요.";
 }
 
 $("studentName").textContent = student;
+// 머리줄: 로그인했으면 로그아웃, 아니면 로그인(승인 페이지)
+function paintWho() {
+  const me = loggedIn();
+  $("who").innerHTML = me ? `<button type="button" id="logoutBtn">로그아웃</button>` : `<a href="./login.html?next=my-study.html">로그인</a>`;
+  document.getElementById("logoutBtn")?.addEventListener("click", async () => { await logout(); location.assign("./login.html?next=my-study.html"); });
+}
+paintWho();
 $("books").addEventListener("click", (event) => {
   const button = event.target.closest("[data-book]");
   if (!button) return;

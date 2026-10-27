@@ -1,6 +1,6 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261024r";
 import { lessonsByUnit, lessonsByPart, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261027p";
-import { readRecord, weekRate } from "./study-progress.js?v=20261028e";
+import { readRecord, weekRate, loggedIn } from "./study-progress.js?v=20261028g";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
@@ -282,6 +282,12 @@ $("studentName").textContent = student;
 $("introLink").href = link("home.html", {});
 $("bankLink").href = link("index.html", {});
 $("myStudyLink").href = link("my-study.html", { book: view.bookId });
+// 로그인(승인 페이지): 로그인했으면 「로그인됨」, 선생님이면 선생님 보기로
+{
+  const me = loggedIn();
+  $("loginLink").textContent = !me ? "로그인" : me.type === "admin" ? "선생님 보기" : "로그인됨";
+  $("loginLink").href = !me ? "./login.html" : me.type === "admin" ? "./teacher.html" : "./login.html";
+}
 showStep();
 syncAddress();
 

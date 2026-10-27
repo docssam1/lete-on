@@ -1,5 +1,5 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261024r";
-import { saveRecord } from "./study-progress.js?v=20261028e";
+import { saveRecord } from "./study-progress.js?v=20261028g";
 
 // 권별테스트 원문 풀기 (원장 지시 2026-10-24): 「교재 권별테스트는 원본 문제 그대로 1세트가 있고, 유사문제로 공부하는 거야.」
 // 원문 쪽 그림을 그대로 보여 주고(답은 없다), 학생이 답안지에 적고 ○✕로 채점한 뒤

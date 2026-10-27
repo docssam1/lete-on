@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fdfbf5" />
+  <title>선생님 보기</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="./my-study.css?v=20261028g" />
+</head>
+<body>
+  <header class="ms-header">
+    <a class="ms-back" href="./start.html"><span aria-hidden="true">←</span> 처음 화면</a>
+    <div class="ms-title"><span>GIFTED MATH BANK · 스스로 공부</span><strong>선생님 보기</strong></div>
+    <div class="ms-who" id="who"></div>
+  </header>
+  <main class="ms-main">
+    <p id="status" class="ms-note" role="status">불러오는 중…</p>
+    <nav class="ms-books" id="books" aria-label="교재 고르기" hidden></nav>
+    <section class="ms-summary" id="summary" hidden></section>
+    <section class="ms-class" id="classBox" hidden>
+      <h2>학생별 진도 <small id="classCount"></small></h2>
+      <div class="ms-table-wrap"><table class="ms-table" id="classTable"></table></div>
+    </section>
+    <section class="ms-weak" id="weak" hidden></section>
+  </main>
+  <script type="module" src="./teacher.js?v=20261028g"></script>
+</body>
+</html>

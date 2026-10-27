@@ -28,7 +28,10 @@ description: 지필드 사고력 문제은행(fields-classic/question-bank) 화�
 - 권별 테스트(`unit-test-viewer.html`)도 ○✕ 뒤 **유형별 진단**과 약점 유형 학습지(picks)를 낸다.
 - 시작 화면 대단원 → 「이번 주 공부 시작하기」 하나 + 그 주 순서 목록, 단원 카드 끝에 권별 테스트 카드.
 - **학습 기록·내 학습 상황**(원장 「학생이 직접 학습 상황을 · 수행률 진도」): `study-progress.js`(`saveRecord`·`readRecord`·`loadRecords`·`weekRate`) 하나로만 저장한다 — 종류 `week`(덱에서 본 장, 수행률 = 본 장 ÷ 모든 장, 단원 평가는 채점까지) · `test`(단원 평가) · `book-test`(권별 테스트). 화면 `my-study.html`(권마다 수행률 · 진도 · 단원 평가 평균 · 권별 테스트 · 주차별 막대 · 약점 유형 다시 공부). 시작 화면 단원 카드에 수행률 막대.
-- **지금은 데모**(원장 「우선은 데모로 두고 나중에 승인 페이지 만들자」): 기록은 이 기기(localStorage `fields-classic-rec:<학생>:<종류>:<열쇠>`). 학생 세션(`sessionStorage gfield_fields_session`, fields-auth)이 있으면 서버 함수 `fields-progress`(save · mine · class · student — class·student는 DOCSSAM 관리자만)가 표 `fields_study_records`에도 저장한다. 문제 글·정답은 넣지 않는다(점수·장 열쇠·유형 id만). 승인(로그인) 페이지와 선생님 보기는 다음 일.
+- **지금은 데모**(원장 「우선은 데모로 두고 나중에 승인 페이지 만들자」): 기록은 이 기기(localStorage `fields-classic-rec:<학생>:<종류>:<열쇠>`). 학생 세션(`sessionStorage gfield_fields_session`, fields-auth)이 있으면 서버 함수 `fields-progress`(save · mine · class · student — class·student는 DOCSSAM 관리자만)가 표 `fields_study_records`에도 저장한다. 문제 글·정답은 넣지 않는다(점수·장 열쇠·유형 id만).
+- **승인(로그인) `login.html`**: 승인번호 + 이름 → `fields-auth` login(12시간 세션, `sessionStorage gfield_fields_session · gf_n · gf_t`). 학생 → `start.html?student=<이름>`, DOCSSAM → `teacher.html`. 「로그인 없이 둘러보기」= 데모(이 기기에만). 서버에는 **로그인한 학생 자신의 이름으로 연 공부만** 저장한다(선생님이 둘러본 것·다른 이름은 저장 안 함).
+- **선생님 보기 `teacher.html`**(관리자 세션만): 권마다 학생별 1~4주 수행률·단원 평가·권별 테스트·약점 유형 수·최근, 이름 → 그 학생의 `my-study.html`(서버 기록), 반 전체 약점 유형 → 그 유형으로 학습지(문제은행 2단계).
+- 이 클라우드에서는 Supabase 연결이 막혀 있다 — 화면 흐름은 Playwright `page.route`로 fields-auth·fields-progress 응답을 흉내 내 확인한다.
 
 ## 2. 화면 가득 틀 (넓은 화면 981px 이상)
 - 1·2단계는 창 전체를 쓴다 — 가운데 상자·바깥 여백 없음, 페이지는 스크롤하지 않고 칸마다 따로 넘긴다(`styles.css` 「화면 가득」 블록, `body[data-bank-step]`로 켠다).

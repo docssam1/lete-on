@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fdfbf5" />
+  <title>스스로 공부 로그인</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="./my-study.css?v=20261028g" />
+</head>
+<body class="ms-login-page">
+  <main class="ms-login">
+    <p class="ms-login-kick">GIFTED MATH BANK · 스스로 공부</p>
+    <h1>로그인</h1>
+    <p class="ms-login-lead">선생님께 받은 <b>승인번호</b>와 <b>이름</b>을 넣어요. 로그인하면 공부한 기록이 저장돼서 다른 기기에서도 이어서 볼 수 있어요.</p>
+    <section id="already" class="ms-login-box" hidden></section>
+    <form id="form" class="ms-login-box" autocomplete="off">
+      <label>승인번호<input id="code" name="code" inputmode="text" autocapitalize="characters" spellcheck="false" required /></label>
+      <label>이름<input id="name" name="name" spellcheck="false" required /></label>
+      <p id="error" class="ms-login-error" role="alert"></p>
+      <button type="submit" class="ms-btn primary" id="submit">로그인</button>
+    </form>
+    <a class="ms-login-demo" id="demoLink" href="./start.html?student=DEMO">로그인 없이 둘러보기(데모 — 이 기기에만 저장)</a>
+  </main>
+  <script type="module" src="./login.js?v=20261028g"></script>
+</body>
+</html>

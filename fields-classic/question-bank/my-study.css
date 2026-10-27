@@ -76,3 +76,35 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .ms-stat > b.ms-text { word-break: keep-all; overflow-wrap: anywhere; }
 @media (max-width: 760px) { .ms-stat > b.ms-text { font-size: 17px; } }
+
+/* 승인(로그인) 페이지 */
+.ms-login-page { display: grid; min-height: 100dvh; place-items: center; padding: 24px 16px; }
+.ms-login { display: grid; gap: 14px; width: min(100%, 420px); }
+.ms-login-kick { margin: 0; color: var(--muted); font-size: 12px; letter-spacing: .12em; }
+.ms-login h1 { margin: 0; font-size: 28px; }
+.ms-login-lead { margin: 0; color: var(--muted); line-height: 1.6; }
+.ms-login-lead b { color: var(--accent-ink); }
+.ms-login-box { display: grid; gap: 12px; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+.ms-login-box label { display: grid; gap: 6px; font-weight: 600; }
+.ms-login-box input { min-height: 48px; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; font: inherit; font-size: 17px; }
+.ms-login-box input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.ms-login-box p { margin: 0; }
+.ms-login-error { min-height: 1.4em; color: var(--terra); font-size: 14px; }
+.ms-login-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.ms-login-demo { color: var(--muted); font-size: 14px; text-align: center; }
+/* 머리줄 로그인 칸 */
+.ms-who { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.ms-who a, .ms-who button { padding: 6px 10px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--paper); color: var(--ink); font-size: 13px; text-decoration: none; }
+/* 선생님 보기 표 */
+.ms-class h2 { margin: 0 0 10px; font-size: 17px; }
+.ms-class h2 small { color: var(--muted); font-size: 13px; font-weight: 500; }
+.ms-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+.ms-table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 14px; }
+.ms-table th, .ms-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+.ms-table thead th { background: var(--paper-dim); color: var(--muted); font-size: 13px; font-weight: 600; }
+.ms-table tbody th a { color: var(--accent-ink); font-weight: 700; }
+.ms-table td .ms-bar { width: 72px; height: 6px; margin-bottom: 4px; }
+.ms-table td small { display: block; color: var(--muted); font-size: 12px; }
+.ms-table tr.is-idle { color: var(--muted); }
+.ms-weak-count { display: inline-grid; place-items: center; min-width: 26px; height: 26px; border-radius: 99px; background: #f8e6df; color: var(--terra); font-weight: 700; }
+#status .ms-btn { margin-left: 8px; }
