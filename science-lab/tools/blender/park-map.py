@@ -624,7 +624,7 @@ def camera(name, loc, target, lens):
     d = Vector(target) - Vector(loc); c.rotation_euler = d.to_track_quat('-Z', 'Y').to_euler(); bpy.context.view_layer.update(); return c
 
 # 지점(그림 위에 표를 붙일 자리)과 두 아이가 걷는 길(입구 → 광장 → 지점). 길의 마지막 점 = 아이들이 서는 자리 — 아이 그림은 위로 서 있어 지점 가까이 세우면 표 글씨를 가린다. 두 그림 모두에서 지점보다 아래에 오도록 지점에서 남쪽(-y, 넓은 그림의 아래)·동쪽(+x, 세로 그림의 아래)으로 비켜 둔다.
-SPOTS = {'gate': (-10.2, -15.2), 'pond': (-1.5, 0.5), 'meadow': (-22, 5), 'flowers': (19, 4), 'leaves': (-4, 18.5), 'litter': (8, 17)}
+SPOTS = {'gate': (-10.2, -15.2), 'pond': (-1.5, 0.5), 'meadow': (-22, 5), 'flowers': (19, 4), 'leaves': (-4, 18.5), 'litter': (8, 17), 'beach': (38.9, -32)}
 HUB = (-6, -11)
 # 공원 안의 다른 사람들(원장 2026-10-27 「NPC 같은 친구들 … 수의 나라나 지도에 있는 캐릭터 더 가지고 와」): 점 하나면 그 자리에 서 있고, 둘 이상이면 그 길을 오간다.
 # 누가 누구인지(모양)는 science-lab/park-chars3d.js의 CAST. 지점 표를 가리지 않게 지점과 떨어진 곳에 둔다.
@@ -648,21 +648,27 @@ WALK = {
     'leaves': [(-12, -6), (-18, -1), (-16, 8), (-10, 13), (-4, 14.5)],
     'litter': [(-12, -6), (-18, -1), (-16, 8), (-10, 13), (-4, 14.5), (4, 15), (12, 14)],
     'flowers': [(2, -10.5), (10, -9.5), (16, -7), (21, -3.5), (24.5, 0)],
+    # 해변(원장 2026-10-27 「해변에도 관찰 지점 만들어」): 정문으로 나가 모래로 내려가 망루(안전요원) 앞을 지나 동쪽 모퉁이 모래밭으로
+    'beach': [(-6, -19), (-6, -27.5), (-6, -31.4), (0, -34), (14, -34.5), (28, -34), (37.8, -34.6)],
 }
 
-def proj(cam, pts, res):
+def proj(cam, pts, res, z=None):
     sc.render.resolution_x, sc.render.resolution_y = res
     out = []
     for (x, y) in pts:
-        v = world_to_camera_view(sc, cam, Vector((x * K, y * K, TOP + 0.3))); out.append([round(v.x * 100, 1), round((1 - v.y) * 100, 1)])
+        v = world_to_camera_view(sc, cam, Vector((x * K, y * K, TOP + 0.3 if z is None else z))); out.append([round(v.x * 100, 1), round((1 - v.y) * 100, 1)])
     return out
 
+# 파도(원장 2026-10-27 「해변도 파도가 움직이는 모습 연출할 수 있어?」): 물가 선(edge = 거품 띠 자리)과 바다 쪽으로 8만큼 나간 선(out). 같은 점 수라 그 사이를 이어 밀려오는 파도 줄을 그린다(park.js).
+SHORE = [(p_, n_) for p_, n_ in list(zip(CP, CN))[::2] if -150 < p_.x < 150 and p_.y < 150]
+SHORE_EDGE = [((p_ + n_ * SW * TF).x, (p_ + n_ * SW * TF).y) for p_, n_ in SHORE]
+SHORE_OUT = [((p_ + n_ * (SW * TF + 8)).x, (p_ + n_ * (SW * TF + 8)).y) for p_, n_ in SHORE]
 result = {}
 # 가로 한 장만 — 폰도 「가로로 크게」로 본다(원장 2026-10-27 「가로 모드로 쓸 거라 상관없잖아」, 세로 그림·세로 카메라는 뺐다)
 for kind, res, loc, lens, tgt in [('wide', (2560, 1440), (5, -104, 78), 38, (0, -2, -3))]:
     cam = camera('cam_' + kind, tuple(c * K for c in loc), tuple(c * K for c in tgt), lens); sc.camera = cam
     sc.render.resolution_x, sc.render.resolution_y = res[0] // DIV, res[1] // DIV
-    r = {'spots': {k: proj(cam, [v], res)[0] for k, v in SPOTS.items()}, 'hub': proj(cam, [HUB], res)[0], 'entrance': proj(cam, ENTRANCE, res), 'walk': {k: proj(cam, v, res) for k, v in WALK.items()}, 'npcs': {k: proj(cam, v, res) for k, v in NPCS.items()}, 'w': res[0], 'h': res[1]}
+    r = {'spots': {k: proj(cam, [v], res)[0] for k, v in SPOTS.items()}, 'hub': proj(cam, [HUB], res)[0], 'entrance': proj(cam, ENTRANCE, res), 'walk': {k: proj(cam, v, res) for k, v in WALK.items()}, 'npcs': {k: proj(cam, v, res) for k, v in NPCS.items()}, 'shore': {'edge': proj(cam, SHORE_EDGE, res, TOP - 0.3), 'out': proj(cam, SHORE_OUT, res, TOP - 0.3)}, 'w': res[0], 'h': res[1]}
     result[kind] = r
     sc.render.resolution_x, sc.render.resolution_y = res[0] // DIV, res[1] // DIV
     if not COORDS_ONLY: sc.render.filepath = os.path.join(OUT, f'park-{kind}.png'); bpy.ops.render.render(write_still=True)
