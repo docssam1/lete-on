@@ -19,11 +19,15 @@ try {
       const page = await browser.newPage({ viewport: { width, height: 1000 }, isMobile: width === 390, hasTouch: width === 390 });
       const errors = [];
       page.on("pageerror", (error) => errors.push(error.message));
-      // 교재 단원별 화면의 단원 테스트 통합 목록은 2026-10-27에 뺐다(원장 「아래 단원별로 구분한 것만 살려」).
-      // 권별테스트 유사문제는 시작 화면처럼 주소(set=unit-test)로 고른다 — 검토를 마친 번호만 담겨야 한다.
+      // 단원 목록에는 권별평가를 섞지 않는다(원장 「아래 단원별로 구분한 것만 살려」). 권별평가는 심화 옆 「권별평가」 칸에서
+      // 따로 고르고(원장 2026-10-27), 주소 set=unit-test 는 그 칸을 연다 — 검토를 마친 번호만 담겨야 한다.
+      await page.goto(`${base}/fields-classic/question-bank/?student=DEMO&mode=curriculum&book=${bookId}`, { waitUntil: "networkidle" });
+      assert.equal(await page.locator("input[data-unit-test-key]").count(), 0, "단원 목록에 권별평가 문항을 섞지 않는다");
+      assert.equal(await page.locator("#curriculumTree button[data-curriculum-view=\"unit-test\"]").count(), 1, "심화 옆 권별평가 칸");
       await page.goto(`${base}/fields-classic/question-bank/?student=DEMO&mode=curriculum&book=${bookId}&set=unit-test`, { waitUntil: "networkidle" });
       const expected = inventory.filter((entry) => entry.verified);
-      assert.equal(await page.locator("input[data-unit-test-key]").count(), 0, "교재 단원별 화면에는 단원 테스트 통합 목록이 없다");
+      assert.equal(await page.locator("input[data-unit-test-key]:checked").count(), expected.length, "권별평가 칸에 검토한 번호가 골라져 있다");
+      assert.equal(await page.locator(".curriculum-unit").count(), 0, "권별평가 칸에서는 단원 목록을 숨긴다");
       await page.locator("#buildButton").click(); await page.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
       await page.locator("#worksheetSection").waitFor({ state: "visible" });
       const cards = page.locator(".question-card");

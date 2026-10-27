@@ -1,5 +1,5 @@
 import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261024r";
-import { GENERATORS } from "./generators.js?v=20261027a";
+import { GENERATORS } from "./generators.js?v=20261027s";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
 import { book02Markup } from "./book02-renderers.js?v=20261023h";
@@ -88,6 +88,8 @@ const state = {
   difficulty: "actual",
   curriculumBookId: CURRICULUM[0]?.id || "book-01",
   curriculumStage: "type",
+  // 교재 단원별 목록: "units"(교재 4단원) | "unit-test"(권별평가 25문항) — 심화 옆 「권별평가」 칸
+  curriculumView: "units",
   searchQuery: "",
   order: "exam",
   includeSolution: true,
@@ -625,7 +627,7 @@ function curriculumSearchModel(book) {
     const item = typeById(question.typeId);
     return !hasQuery || bookMatch || typeMatchesSearch(item, book.label, book.title, "단원 테스트", question.label, `${question.number}번`);
   });
-  return { book, units, testQuestions, matchCount: units.reduce((sum, entry) => sum + entry.types.length, 0) + testQuestions.length };
+  return { book, units, testQuestions, matchCount: state.curriculumView === "unit-test" ? testQuestions.length : units.reduce((sum, entry) => sum + entry.types.length, 0) };
 }
 
 function renderCurriculum() {
@@ -635,9 +637,11 @@ function renderCurriculum() {
   const bookTabs = `<nav class="curriculum-book-tabs" aria-label="교재 권 선택">${CURRICULUM.map((book) =>
     `<button type="button" data-curriculum-book="${book.id}" class="${book.id === activeBook.id ? "active" : ""}">${book.label}</button>`
   ).join("")}</nav>`;
+  const unitTestView = state.curriculumView === "unit-test";
+  const unitTestCount = activeBook.source.unitTestQuestions?.length || 0;
   const stageTabs = `<div class="curriculum-inline-stages" aria-label="교재 학습 단계 선택">${TEXTBOOK_STAGES.map((stage) =>
-    `<button type="button" data-curriculum-stage="${stage.id}" class="${stage.id === state.curriculumStage ? `active ${stage.id}` : stage.id}"><strong>${stage.label}</strong><span>${stage.sourceLabel}</span></button>`
-  ).join("")}</div>`;
+    `<button type="button" data-curriculum-stage="${stage.id}" class="${!unitTestView && stage.id === state.curriculumStage ? `active ${stage.id}` : stage.id}"><strong>${stage.label}</strong><span>${stage.sourceLabel}</span></button>`
+  ).join("")}${unitTestCount ? `<button type="button" data-curriculum-view="unit-test" class="unit-test ${unitTestView ? "active" : ""}"><strong>권별평가</strong><span>단원 테스트 ${unitTestCount}문항</span></button>` : ""}</div>`;
   const bookModels = (hasQuery ? CURRICULUM : [activeBook])
     .map(curriculumSearchModel)
     .filter((model) => !hasQuery || model.matchCount > 0);
@@ -675,8 +679,26 @@ function renderCurriculum() {
         <div class="type-leaves">${typeRows}</div>
       </details>`;
     }).join("");
+    if (unitTestView) {
+      // 권별평가: 원본 번호 순서 그대로, 고른 번호는 같은 구조의 문제로 나온다
+      const testRows = testQuestions.map((question) => {
+        const item = typeById(question.typeId);
+        const ready = question.verified && isSelectableType(item);
+        const key = unitTestKey(book.id, question.number);
+        return `<label class="unit-test-question ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}" data-preview-unit-test-key="${key}"` : ""}>
+          <input type="checkbox" data-unit-test-key="${key}" ${state.selected.unitTest.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
+          <b>${question.number}번</b><span><strong>${question.label}</strong><small>${item?.middle || "유형 대조 중"}</small></span>
+          <em>${ready ? "같은 구조 생성" : "원본 구조 재설계 중"}</em>
+        </label>`;
+      }).join("");
+      return `<details class="tree-group curriculum-book" open>
+      <summary><strong>${book.label} · ${book.title}</strong><span>권별평가 ${testQuestions.length}문항</span></summary>
+      <p class="unit-test-head"><strong>권별평가</strong><span>번호를 고르면 같은 구조의 문제로 나와요</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></p>
+      <div class="unit-test-question-list" aria-label="${book.label} 권별평가 문항">${testRows}</div>
+    </details>`;
+    }
     return `<details class="tree-group curriculum-book" open>
-      <summary><strong>${book.label} · ${book.title}</strong><span>교재 4단원 + 단원 테스트 25문항</span></summary>
+      <summary><strong>${book.label} · ${book.title}</strong><span>교재 4단원</span></summary>
       <div class="curriculum-units">${units}</div>
     </details>`;
   }).join("");
@@ -692,6 +714,9 @@ function renderCurriculum() {
   $("curriculumTree").querySelectorAll("button[data-curriculum-stage]").forEach((button) => button.addEventListener("click", () => {
     setCurriculumStage(button.dataset.curriculumStage);
   }));
+  $("curriculumTree").querySelectorAll("button[data-curriculum-view]").forEach((button) => button.addEventListener("click", () => {
+    setCurriculumView(button.dataset.curriculumView);
+  }));
 
   $("curriculumTree").querySelectorAll("input[data-curriculum-key]").forEach((input) => input.addEventListener("change", () => {
     if (input.checked) state.selected.curriculum.add(input.dataset.curriculumKey);
@@ -701,6 +726,7 @@ function renderCurriculum() {
   $("curriculumTree").querySelectorAll("input[data-unit-test-key]").forEach((input) => input.addEventListener("change", () => {
     if (input.checked) state.selected.unitTest.add(input.dataset.unitTestKey);
     else state.selected.unitTest.delete(input.dataset.unitTestKey);
+    syncUnitTestCount();
     updateSummary();
   }));
 }
@@ -787,9 +813,23 @@ function renderAcademyStyleFilters() {
   }));
 }
 
+// 권별평가 칸(심화 옆): 단원 목록 대신 그 권의 권별평가 번호 목록. 고른 것은 단계를 바꿔도 남는다.
+function setCurriculumView(view) {
+  state.curriculumView = view === "unit-test" ? "unit-test" : "units";
+  $("curriculumStageChoices").querySelectorAll("button").forEach((button) => {
+    button.classList.toggle("active", state.curriculumView === "unit-test" ? button.dataset.stage === "unit-test" : button.dataset.stage === state.curriculumStage);
+  });
+  typePreviewCache.clear();
+  hideTypePreview();
+  renderCurriculum();
+  updateSummary();
+}
+
 function setCurriculumStage(stageId) {
+  if (stageId === "unit-test") return setCurriculumView("unit-test");
   if (!TEXTBOOK_STAGES.some((stage) => stage.id === stageId)) return;
   state.curriculumStage = stageId;
+  state.curriculumView = "units";
   $("curriculumStageChoices").querySelectorAll("button").forEach((button) => {
     button.classList.toggle("active", button.dataset.stage === stageId);
   });
@@ -920,6 +960,7 @@ function selectedReferences() {
           reference: `${book.label} 단원 테스트 ${number}번 · ${question.label}`,
           difficulty: question.difficulty || 2,
           fixedSeed: freshUnitTest ? null : `unit-test:${book.id}:${number}`,
+          unitTest: true,
           classification: question.classification,
           generationCase: generationCaseForSource("unit-test", book.id, number)
         });
@@ -980,6 +1021,16 @@ function toggleVisible(selector, set, keyGetter) {
   updateSummary();
 }
 
+// 권별평가 문항은 원본 구조 그대로 나와 같은 번호를 여러 번 넣으면 같은 문제가 된다 —
+// 권별평가만 골랐으면 문제 수를 고른 번호 수에 맞춘다(주소 &set=unit-test 와 같게).
+function syncUnitTestCount() {
+  if (state.mode !== "curriculum" || state.selected.curriculum.size || !state.selected.unitTest.size) return;
+  const count = Math.min(MAX_QUESTIONS, state.selected.unitTest.size);
+  state.count = count;
+  $("questionCount").value = String(count);
+  $("countChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", Number(button.dataset.count) === count));
+}
+
 function toggleCurriculumSelections() {
   const curriculumInputs = [...document.querySelectorAll("#curriculumTree input[data-curriculum-key]")].filter((input) => !input.disabled);
   const testInputs = [...document.querySelectorAll("#curriculumTree input[data-unit-test-key]")].filter((input) => !input.disabled);
@@ -993,6 +1044,7 @@ function toggleCurriculumSelections() {
     if (shouldSelect) set.add(key);
     else set.delete(key);
   }
+  syncUnitTestCount();
   updateSummary();
 }
 
@@ -1082,6 +1134,7 @@ function makeQuestions() {
       if (!problem || !signatures.has(problemSignature(problem))) break;
     }
     if (problem) signatures.add(problemSignature(problem));
+    if (problem && reference.unitTest) problem.studyStage = UNIT_TEST_STAGE;
     return problem;
   });
   if (questions.some((problem) => !problem)) {
@@ -1133,6 +1186,8 @@ function refreshQuestions() {
 // 오른쪽: 선택한 문제 목록(삭제·쌍둥이). 아래: 난이도(단계)별 개수 · 문제 수 · 다음 단계(인쇄 설정).
 const editor = { tab: "summary", focus: 0, twins: [], twinLevel: null, adds: null, addLimit: 12 };
 const LEVEL_LABEL = { 1: "쉽게", 2: "같게", 3: "어렵게" };
+// 권별평가에서 고른 문제의 단계 꼬리표(교재 4단계와 따로)
+const UNIT_TEST_STAGE = Object.freeze({ id: "unit-test", label: "권별평가", sourceLabel: "단원 테스트", description: "권 전체를 확인하는 문제입니다." });
 const MAX_QUESTIONS = 50;
 const levelLabel = (question) => question.studyStage ? question.studyStage.label : `${LEVEL_LABEL[question.generationDifficulty] || "같게"}`;
 function levelOrder() {
@@ -2358,7 +2413,8 @@ function g1SourceMarkup(visual) {
     return `<div class="g1-winter-product-layout"><div class="core">${Array.from({ length: 16 }, (_, index) => `<span class="${visual.shadedIndices.includes(index) ? "target" : "plain"}">${visual.shadedIndices.includes(index) ? "" : "·"}</span>`).join("")}</div><div class="rows">${visual.rowProducts.map((value) => `<b>${value}</b>`).join("")}</div><div class="columns">${visual.columnProducts.map((value) => `<b>${value}</b>`).join("")}</div><div class="cards">${visual.numbers.map((value) => `<i>${value}</i>`).join("")}</div></div>`;
   }
   if (visual.kind === "g1-winter-three-digit-cards-above") {
-    return `<div class="g1-winter-card-threshold"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><strong>${visual.threshold}보다 큰 수</strong></div>`;
+    // 숫자 카드만 그린다 — 기준 수는 문제 글에 있으니 상자에 다시 쓰지 않는다
+    return `<div class="g1-winter-card-threshold"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div></div>`;
   }
   if (visual.kind === "g1-winter-three-balance-substitution") {
     const repeat = (symbol, count) => Array.from({ length: count }, () => symbol).join(" ");
@@ -2366,7 +2422,7 @@ function g1SourceMarkup(visual) {
     return `<div class="g1-winter-three-balance"><section><span>${repeat("☆", r.starCount)}</span><b>=</b><span>${repeat("◇", r.diamondCount)}</span></section><section><span>□</span><b>=</b><span>${repeat("☆", r.squareStars)} ${repeat("◇", r.squareDiamonds)}</span></section><section><span>○</span><b>=</b><span>${repeat("□", r.circleSquares)} ${repeat("◇", r.circleDiamonds)}</span></section><p>○ 1개 = ◇ (　)개</p></div>`;
   }
   if (visual.kind === "g1-winter-three-cards-parity-chain") {
-    return `<div class="g1-winter-card-chain"><div>${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><ul>${visual.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div>`;
+    return `<div class="g1-winter-card-chain"><div>${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div></div>`;
   }
   if (visual.kind === "g1-stacked-shape-cycle") {
     return `<div class="g1-stacked-cycle">${visual.items.map((item, index) => `<section><span>${Array.from({ length: item.count }, () => `<i>${patternShapeSvg(item.shape, "stacked-shape-svg")}</i>`).join("")}</span><b>${index + 1}</b></section>`).join("")}<em>…</em><strong>${visual.target}번째</strong></div>`;
@@ -3594,6 +3650,8 @@ setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") 
       picked += 1;
     }
     if (picked) setCount(picked);
+    state.curriculumView = "unit-test";
+    $("curriculumStageChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", button.dataset.stage === "unit-test"));
   } else if (params.has("units")) {
     const wanted = new Set(params.get("units").split(",").map(Number));
     const pick = () => book.units.forEach((unit, unitIndex) => {

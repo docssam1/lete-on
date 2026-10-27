@@ -1,4 +1,4 @@
-import { G1_GENERATORS } from "./g1-generators.js?v=20260823m";
+import { G1_GENERATORS } from "./g1-generators.js?v=20261027s";
 import { G1_WINTER_GENERATORS } from "./g1-winter-generators.js?v=20260824a";
 import { BOOK01_GENERATORS } from "./book01-generators.js?v=20260829f";
 import { BOOK03_GENERATORS } from "./book03-generators.js?v=20260827b";

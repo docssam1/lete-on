@@ -5,7 +5,7 @@
 //  · 숫자판으로 답을 쓴다(요일·이름·자리처럼 낱말 답은 보기 단추로 고르고, 가쿠로는 칸에 수 카드를 놓는다). 한 번 틀리면 풀이의 첫 걸음을 귀띔하고, 두 번 틀리면 풀이와 답을 보여 주고 넘어간다.
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
 import { typeById } from "./source-data.js?v=20261024r";
-import { GENERATORS } from "./generators.js?v=20261027a";
+import { GENERATORS } from "./generators.js?v=20261027s";
 import { DRILL_TYPES } from "./drill-generators.js?v=20261027a";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
 import { jo } from "./concept-board-kit.js?v=20261026b";
