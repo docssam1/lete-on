@@ -7,6 +7,7 @@ import { Stage } from './engine.js';
 import { OBSERVE_SETS, STAGES, observeSet } from './data/observe-sets.js';
 import { renderReport } from './report.js';
 import { openSample } from './observe-sample.js';
+import { openFollow } from './observe-follow.js';
 import { sampleFor } from './data/observe-samples.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -36,7 +37,7 @@ export function renderObserve($app, { topbar, footer }, setId) {
         <p class="ob-note" aria-live="polite"></p>
         <details class="ob-think"><summary>생각할 거리</summary><ul></ul></details>
         <div class="ob-row"><button type="button" class="ob-reveal" data-reveal>이름 확인하기</button><span class="ob-name"></span></div>
-        ${sampleFor(S.id) ? '<div class="ob-row ob-sample-row"><button type="button" class="ob-sample" data-sample>📄 예시 보고서 보기 — 연필이 그려 가는 관찰그림</button><small>다 그린 뒤에 내 것과 비교해 봐요.</small></div>' : ''}
+        ${sampleFor(S.id) ? '<div class="ob-row ob-sample-row"><button type="button" class="ob-follow" data-follow>📝 예시 보고서 따라 하기 — 칸 하나씩, 예시를 보며 내 보고서 쓰기</button></div><div class="ob-row ob-sample-row"><button type="button" class="ob-sample" data-sample>📄 예시 보고서 통째로 보기 — 연필이 그려 가는 관찰그림</button><small>다 쓴 뒤에 내 것과 비교해 봐요.</small></div>' : ''}
       </section>
       <section class="ob-report" id="ob-report" aria-label="관찰 보고서"></section>
     </div>
@@ -85,5 +86,10 @@ export function renderObserve($app, { topbar, footer }, setId) {
     if (!stage) return null; stage.renderer.render(stage.scene, stage.camera); return $c.toDataURL('image/jpeg', 0.82);
   };
   const rep = renderReport(S.unit, $app.querySelector('#ob-report'), { embedded: true, reference });
-  return { destroy() { sample?.close?.(); cur?.dispose?.(); rep.destroy(); stage?.dispose(); stage = null; } };
+  // 예시 따라 하기 — 공원 지도의 「예시 따라 하기」(#/observe/<세트>/follow)로 들어오면 바로 시작
+  let follow = null;
+  const startFollow = () => { follow?.close?.(); sample?.close?.(); follow = openFollow(S, { $app, showSpecimen: (i) => { if (i !== idx && i < M.SPECIMENS.length) load(i); } }); };
+  $app.querySelector('[data-follow]')?.addEventListener('click', startFollow);
+  if (/\/follow\b/.test(location.hash) && sampleFor(S.id)) setTimeout(startFollow, 300);
+  return { destroy() { follow?.close?.(); sample?.close?.(); cur?.dispose?.(); rep.destroy(); stage?.dispose(); stage = null; } };
 }
