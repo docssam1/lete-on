@@ -30,34 +30,37 @@ const server=http.createServer((req,res)=>{
   await c.addInitScript(lang=>localStorage.setItem('nm_state_v1',JSON.stringify({lang,onboarded:true,name:'Profile fixture',avatar:{kind:'boy'},view:'title',coins:100,progress:{},cloudLinked:true,cloudOwnerId:'profile-fixture-owner'})),lang);
   await p.goto(base+'/number_magic/access.html?lang='+lang);await p.click('#open-book');await p.fill('#login-user','guardian@example.test');await p.fill('#login-password','fixture-only');await p.click('#login-submit');await p.waitForFunction(()=>window.__PROFILE_CHECK&&NM_PROFILE_AUTH.peek()?.user);
   await p.waitForSelector('#screen');await p.evaluate(()=>__PROFILE_CHECK.welcome());
-  await p.locator('.nm-av-card').first().click();await p.click('#obAvNext');await p.click('[data-g="3"]');assert(await p.locator('#obGrNext').isDisabled(),'grade alone is not an age');
-  const year=await p.evaluate(()=>new Date().getFullYear()),birth=year-9;
-  await p.selectOption('#obBirthYear',String(birth));await p.click('[data-g="4"]');assert.equal(await p.inputValue('#obBirthYear'),String(birth),'grade redraw keeps birth year');await p.click('[data-g="3"]');
+  // 나이·학년은 한 칸(5세·6세·7세·초1…) — 출생연도·실제 학년을 따로 묻지 않는다(2026-10-27).
+  await p.locator('.nm-av-card').first().click();await p.click('#obAvNext');assert.equal(await p.locator('#obBirthYear').count(),0,'no birth-year question');
+  assert(await p.locator('#obGrNext').isDisabled(),'a choice is required to continue');
+  await p.click('[data-level="e4"]');await p.click('[data-level="e3"]');assert(await p.locator('#obGrNext').isEnabled());
+  assert.equal(await p.locator('.nm-ob-grade.sel').getAttribute('data-level'),'e3','last choice wins');
+  const levels=await p.locator('.nm-ob-grade').evaluateAll(es=>es.map(e=>e.dataset.level));assert.deepEqual(levels.slice(0,4),['a5','a6','a7','e1']);assert.equal(levels.at(-1),'h3');
+  const lv=await p.evaluate(()=>({e3:NM_DIAGNOSTIC_ROADMAP.fromLevel('e3'),e4:NM_DIAGNOSTIC_ROADMAP.fromLevel('e4'),a5:NM_DIAGNOSTIC_ROADMAP.fromLevel('a5')})),birth=lv.e3.birthYear;
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-  const input=await p.locator('#obBirthYear').evaluate(e=>({height:e.getBoundingClientRect().height,font:getComputedStyle(e).fontSize}));assert(input.height>=44);assert.equal(input.font,'16px');
-  await p.locator('#obBirthYear').focus();await p.keyboard.press('Tab');assert.equal(await p.evaluate(()=>document.activeElement.dataset.g),'0');
+  const btn=await p.locator('.nm-ob-grade').first().evaluate(e=>e.getBoundingClientRect().height);assert(btn>=44,'touch target');
   await p.screenshot({path:path.join(OUT,width+'-'+lang+'-profile.png'),fullPage:true});
   if(process.env.NM_PROFILE_SETUP_ONLY==='1'){
    for(const box of await p.locator('.nm-ob-grade').evaluateAll(es=>es.map(e=>({client:e.clientWidth,scroll:e.scrollWidth}))))assert(box.scroll<=box.client,'grade labels fit their buttons');
    assert.deepEqual(errors,[]);report.push({width,lang,setupOnly:true,externalWrites:0});await c.close();continue;
   }
   await p.click('#obGrNext');await p.fill('#obName','Profile fixture');await p.click('#obGo');await p.waitForSelector('#obName',{state:'detached'});await p.waitForTimeout(2000);
-  await p.evaluate(()=>__PROFILE_CHECK.start());await p.waitForSelector('#pdStart');assert.equal(await p.inputValue('#pdGrade'),'e3');assert.equal(await p.inputValue('#pdAge'),'10');assert(await p.locator('#pdStart').isEnabled());
+  await p.evaluate(()=>__PROFILE_CHECK.start());await p.waitForSelector('#pdStart');assert.equal(await p.inputValue('#pdLevel'),'e3');assert.equal(await p.locator('#pdAge,#pdGrade').count(),0);assert(await p.locator('#pdStart').isEnabled());
   const keep=await p.evaluate(()=>__PROFILE_CHECK.snapshot());await p.click('#pdStart');await p.click('#pdSkip');const active=await p.evaluate(()=>__PROFILE_CHECK.snapshot());assert.equal(active.run.selection.scopeSource,'grade');
   // Editing the profile must not regenerate an already started assessment.
   await p.evaluate(()=>{__PROFILE_CHECK.grade(7);__PROFILE_CHECK.start();});let next=await p.evaluate(()=>__PROFILE_CHECK.snapshot());assert.deepEqual(next.run,active.run);assert.equal(next.schoolAge.birthYear,birth);
   // A fresh retest follows the latest actual grade when the old scope was automatic.
-  await p.evaluate(()=>{__PROFILE_CHECK.finish();__PROFILE_CHECK.start();});assert.equal(await p.inputValue('#pdGrade'),'m1');assert.equal(await p.inputValue('#pdStudyBand'),'middle');
-  await p.selectOption('#pdStudyBand','high');await p.selectOption('#pdBaseline','c41');await p.selectOption('#pdAge','11');assert.equal(await p.inputValue('#pdBaseline'),'c41','birth correction keeps manual scope');await p.selectOption('#pdGrade','e4');assert.equal(await p.inputValue('#pdBaseline'),'c41');
-  await p.click('#pdStart');next=await p.evaluate(()=>__PROFILE_CHECK.snapshot());assert.equal(next.run.selection.scopeSource,'manual');assert.equal(next.schoolAge.birthYear,year-10);
+  await p.evaluate(()=>{__PROFILE_CHECK.finish();__PROFILE_CHECK.start();});assert.equal(await p.inputValue('#pdLevel'),'m1');assert.equal(await p.inputValue('#pdStudyBand'),'middle');
+  await p.selectOption('#pdStudyBand','high');await p.selectOption('#pdBaseline','c41');await p.selectOption('#pdLevel','e4');assert.equal(await p.inputValue('#pdBaseline'),'c41','level correction keeps manual scope');
+  await p.click('#pdStart');next=await p.evaluate(()=>__PROFILE_CHECK.snapshot());assert.equal(next.run.selection.scopeSource,'manual');assert.equal(next.schoolAge.birthYear,lv.e4.birthYear);
   for(let i=0;i<20;i++)await p.click('#pdSkip');await p.waitForSelector('.pd-calendar-table');assert.equal(await p.locator('#pdMonthlyPlan').locator('tbody tr').count(),12);
-  await p.evaluate(()=>{__PROFILE_CHECK.grade(5);__PROFILE_CHECK.start();});assert.equal(await p.inputValue('#pdGrade'),'e5');assert.equal(await p.inputValue('#pdBaseline'),'c41','retest keeps manual advanced study');
-  await p.evaluate(()=>__PROFILE_CHECK.adminGrade(new Date().getFullYear()-4));assert.equal((await p.evaluate(()=>__PROFILE_CHECK.snapshot())).schoolAge.birthYear,year-10,'admin plan keeps birth year');
-  await p.evaluate(()=>__PROFILE_CHECK.clear());await p.click('#ageClear');next=await p.evaluate(()=>__PROFILE_CHECK.snapshot());assert.equal(next.schoolAge.birthYear,year-10);assert.equal(next.schoolAge.entryYear,undefined,'clear grade does not clear age');
+  await p.evaluate(()=>{__PROFILE_CHECK.grade(5);__PROFILE_CHECK.start();});assert.equal(await p.inputValue('#pdLevel'),'e5');assert.equal(await p.inputValue('#pdBaseline'),'c41','retest keeps manual advanced study');
+  await p.evaluate(()=>__PROFILE_CHECK.adminGrade(new Date().getFullYear()-4));assert.equal((await p.evaluate(()=>__PROFILE_CHECK.snapshot())).schoolAge.birthYear,lv.e4.birthYear,'admin plan keeps birth year');
+  await p.evaluate(()=>__PROFILE_CHECK.clear());assert.equal(await p.locator('#nmAgeSheet .nm-ob-grade.sel').getAttribute('data-level'),'e5','sheet shows current level');await p.click('#ageClear');next=await p.evaluate(()=>__PROFILE_CHECK.snapshot());assert.equal(next.schoolAge,null,'clear removes the one age/grade choice');
   assert.equal(next.coins,keep.coins);assert.deepEqual(next.progress,keep.progress);assert.deepEqual(errors,[]);
-  // The common onboarding helper also traverses the real birth-year field.
-  if(width===390&&lang==='ko'){await p.evaluate(()=>__PROFILE_CHECK.welcome());await onboard(p,{grade:0,birthYear:year-5});assert.equal((await p.evaluate(()=>__PROFILE_CHECK.snapshot())).schoolAge.entryYear,year+2);}
-  report.push({width,lang,birthYearAndGradeRequired:true,profileCarryOver:true,activeAssessmentUnchanged:true,automaticRetestUpdated:true,manualAdvancedScopePreserved:true,calendarMonths:12,externalWrites:0});await c.close();
+  // The common onboarding helper also traverses the real level buttons (preschool).
+  if(width===390&&lang==='ko'){await p.evaluate(()=>__PROFILE_CHECK.welcome());await onboard(p,{level:'a5'});await p.waitForFunction(()=>__PROFILE_CHECK.snapshot().schoolAge,null,{timeout:10000});const sa=(await p.evaluate(()=>__PROFILE_CHECK.snapshot())).schoolAge;assert.equal(sa.entryYear,lv.a5.entryYear);assert.equal(sa.birthYear,lv.a5.birthYear);}
+  report.push({width,lang,singleAgeGradeChoice:true,profileCarryOver:true,activeAssessmentUnchanged:true,automaticRetestUpdated:true,manualAdvancedScopePreserved:true,calendarMonths:12,externalWrites:0});await c.close();
  }
  fs.writeFileSync(path.join(OUT,process.env.NM_PROFILE_SETUP_ONLY==='1'?'setup-report.json':'report.json'),JSON.stringify(report,null,2));console.log('PROFILE_INTAKE_OK '+JSON.stringify(report));
  }finally{await browser.close();await new Promise(r=>server.close(r));}

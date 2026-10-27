@@ -171,7 +171,7 @@ async function fullCase(f,c,tag){
   let assessmentReturn;
   if(c.course==='C29'&&c.width===390&&c.lang==='ko'){
     await page.evaluate(()=>{const original=NM_PLACEMENT_UI.render;window.__originalPlacementRender=original;NM_PLACEMENT_UI.render=function(opts){window.__observedDiagnosticState=opts.state;return original.call(this,opts);};});
-    await page.locator('#crDiag').click();await page.selectOption('#pdAge','14');await page.selectOption('#pdGrade','m1');
+    await page.locator('#crDiag').click();await page.selectOption('#pdLevel','m1');
     await page.locator('[data-route=age]').click();await page.selectOption('#pdStudyBand','middle');await page.selectOption('#pdBaseline','c29');
     await page.locator('#pdStart').click();for(let n=0;n<20;n++)await page.locator('#pdSkip').click();
     await page.waitForSelector('#pdRoad');

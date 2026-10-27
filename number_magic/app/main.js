@@ -170,17 +170,22 @@ function setSchoolGrade(gradeNum,birthYear){
   S.schoolAge={...(birth?{birthYear:birth}:{}),
     entryYear:gradeNum<1&&birth?Math.max(academicYearNow()+1,birth+7):academicYearNow()-(gradeNum-1),setAt:Date.now()};
 }
-/* 실제 학년 목록. 미취학은 0이며 출생연도로 입학 연도를 정한다. */
-function schoolGradeOptions(){
-  const ko=S.lang==='ko', en=S.lang==='en';
-  const lk=(k,e,z)=>ko?k:en?e:z;
-  const out=[{g:0,label:lk('미취학','Preschool','学龄前')}];
-  for(let i=1;i<=6;i++) out.push({g:i,label:lk('초'+i,'G'+i,'小'+i)});
-  for(let i=1;i<=3;i++) out.push({g:6+i,label:lk('중'+i,'G'+(6+i),'初'+i)});
-  for(let i=1;i<=3;i++) out.push({g:9+i,label:lk('고'+i,'G'+(9+i),'高'+i)});
-  return out;
+/* 나이·학년 한 칸(2026-10-27 원장 「5·6·7세, 초1·초2… 이렇게 두면 되지」 「몇 년생 필요없어」).
+   고른 칸에서 출생연도·입학 연도를 계산해 예전과 같은 S.schoolAge 로 저장한다(변환은 NM_DIAGNOSTIC_ROADMAP 하나). */
+function schoolLevelOptions(){
+  const ko=S.lang==='ko', en=S.lang==='en', lk=(k,e,z)=>ko?k:en?e:z, R=window.NM_DIAGNOSTIC_ROADMAP;
+  return R?R.levelOptions(lk).map(([code,label])=>({code,label:en?label.replace(/^Grade /,'G'):label})):[];   // 영어 단추는 한 줄에 들어가게 G1…G12
 }
-
+function schoolLevelCode(){
+  const R=window.NM_DIAGNOSTIC_ROADMAP, sa=S.schoolAge;
+  return R&&sa?R.toLevel({birthYear:sa.birthYear,entryYear:sa.entryYear}):'';
+}
+function setSchoolLevel(code){
+  const R=window.NM_DIAGNOSTIC_ROADMAP, p=R&&R.fromLevel(code);
+  if(!p)return false;
+  S.schoolAge={birthYear:p.birthYear,entryYear:p.entryYear,setAt:Date.now()};
+  return true;
+}
 /* 자릿값 색 힌트를 줄 대상인가 (2026-09-16 원장 "어린 아이들은 자릿수의 개념이 없어서").
    기준은 학령 24개월(초3 3월) 미만 — 원장이 고등 기준선으로 준 그 자리를 그대로 쓴다.
    학년을 모르면 진도로 대신 본다(NM_BAND가 young이면 어린 쪽으로 친다). */
@@ -1349,7 +1354,7 @@ function screenWelcome(){
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   const ob = { number:S.character.number||3, color:S.character.color||'blue',
     bg:S.character.bg||'plain', cape:S.character.cape||'none',
-    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&(S.avatar.look||S.avatar.kind))||null, grade:null, birthYear:'' };
+    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&(S.avatar.look||S.avatar.kind))||null, level:'' };
   const NUMS=[0,1,2,3,4,5,6,7,8,9];
 
   /* 1단계 — 나(사람 아바타) 고르기. 고를 때까지 "다음"이 비활성. */
@@ -1380,29 +1385,26 @@ function screenWelcome(){
      건너뛸 수 있게 둔다. 학년은 잠금에 쓰지 않고 안내에만 쓰므로, 모른다고
      해서 앱이 막히면 안 된다(모르면 안내를 안 할 뿐이다). */
   function stepGrade(){
-    const opts=schoolGradeOptions();
-    const year=new Date().getFullYear();
+    const opts=schoolLevelOptions();
     scr.innerHTML=`
     <div class="nm-ob">
       <div class="nm-ob-card">
         <h1 class="nm-ob-title">${lk('아이에 대해 알려 주세요','Tell us about the learner','请告诉我们孩子的信息')}</h1>
-        <p class="nm-ob-sub">${lk('나이와 실제 학년으로 진단의 시작 범위와 월별 계획을 준비해요. 배우는 내용은 따로 고를 수 있어요.',
-          'Age and school grade help prepare a diagnostic scope and monthly plan. You can choose a different study topic.',
-          '年龄和实际年级用于准备测评范围与月度计划，学习内容可以另外选择。')}</p>
-        <label class="nm-ob-birth">${lk('출생연도','Birth year','出生年份')}<select id="obBirthYear"><option value="">${lk('선택해 주세요','Select year','请选择')}</option>${Array.from({length:16},(_,i)=>year-3-i).map(y=>`<option value="${y}"${String(y)===ob.birthYear?' selected':''}>${lk(y+'년생',String(y),y+'年出生')}</option>`).join('')}</select></label>
-        <p class="nm-ob-grade-label">${lk('지금 다니는 학년','Current school grade','当前实际年级')}</p>
+        <p class="nm-ob-sub">${lk('나이나 학년으로 진단의 시작 범위와 월별 계획을 준비해요. 배우는 내용은 따로 고를 수 있어요.',
+          'Age or grade helps prepare a diagnostic scope and monthly plan. You can choose a different study topic.',
+          '根据年龄或年级准备测评范围与月度计划，学习内容可以另外选择。')}</p>
+        <p class="nm-ob-grade-label">${lk('나이·학년','Age (Korean age) / grade','年龄（韩国年龄）/年级')}</p>
         <div class="nm-ob-grades">${opts.map(o=>
-          `<button class="nm-ob-grade${ob.grade===o.g?' sel':''}" data-g="${o.g}" aria-pressed="${ob.grade===o.g}">${esc(o.label)}</button>`).join('')}</div>
-        <button class="nm-btn nm-ob-go" id="obGrNext"${ob.grade==null||!ob.birthYear?' disabled':''}>${lk('다음 ›','Next ›','下一步 ›')}</button>
+          `<button class="nm-ob-grade${ob.level===o.code?' sel':''}" data-level="${o.code}" aria-pressed="${ob.level===o.code}">${esc(o.label)}</button>`).join('')}</div>
+        <button class="nm-btn nm-ob-go" id="obGrNext"${!ob.level?' disabled':''}>${lk('다음 ›','Next ›','下一步 ›')}</button>
         <button class="nm-btn ghost nm-ob-go" id="obGrSkip">${lk('나중에 할래요','Later','以后再说')}</button>
       </div>
     </div>`;
-    scr.querySelectorAll('[data-g]').forEach(b=>{
-      b.onclick=()=>{ ob.grade=+b.dataset.g; stepGrade(); };
+    scr.querySelectorAll('[data-level]').forEach(b=>{
+      b.onclick=()=>{ ob.level=b.dataset.level; stepGrade(); };
     });
-    $('#obBirthYear').onchange=e=>{ob.birthYear=e.target.value;$('#obGrNext').disabled=ob.grade==null||!ob.birthYear;};
-    $('#obGrNext').onclick=()=>{ if(ob.grade!=null&&ob.birthYear) draw(); };
-    $('#obGrSkip').onclick=()=>{ ob.grade=null;ob.birthYear=''; draw(); };
+    $('#obGrNext').onclick=()=>{ if(ob.level) draw(); };
+    $('#obGrSkip').onclick=()=>{ ob.level=''; draw(); };
   }
 
   function draw(){
@@ -1527,7 +1529,7 @@ function screenWelcome(){
     S.avatar = NM_HUMANS.clean({id:'avatar-1',look:ob.avatar});
     S.avatarCollection=[S.avatar];
     S.name = ob.name;
-    if(ob.grade!=null) setSchoolGrade(ob.grade,ob.birthYear);
+    if(ob.level) setSchoolLevel(ob.level);
     S.onboarded = true;
     if(ob.claimedOwner&&isGuardianOwner(ob.claimedOwner)){S.cloudLinked=true;S.cloudOwnerId=ob.claimedOwner;}
     save();
@@ -3800,34 +3802,34 @@ function openLearningPlanSheet(initial){
   find('planX').focus({preventScroll:true});
 }
 
-/* 학년 고치기 시트 — 온보딩에서 건너뛰었거나 학년이 바뀐 경우.
-   저장은 setSchoolGrade() 하나만 쓴다(입학 연도로 환산해 넣는다). */
+/* 나이·학년 고치기 시트 — 온보딩에서 건너뛰었거나 학년이 바뀐 경우.
+   온보딩과 같은 한 칸(5세·6세·7세·초1…)을 고르고, 저장은 setSchoolLevel() 하나만 쓴다. */
 function openAgeSheet(after){
   if(document.getElementById('nmAgeSheet')) return;
   const ko=S.lang==='ko', en=S.lang==='en';
   const lk=(k,e,z)=>ko?k:en?e:z;
-  const cur=schoolGradeNum();
-  const opts=schoolGradeOptions();
+  const cur=schoolLevelCode();
+  const opts=schoolLevelOptions();
   document.body.insertAdjacentHTML('beforeend',`<div class="nm-gate-overlay nm-cs-overlay" id="nmAgeSheet">
     <div class="nm-gate-card nm-cs-card">
       <button class="nm-gate-x" id="ageX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
-      <h3 class="nm-cs-title">🎒 ${lk('몇 학년인가요?','What grade?','几年级？')}</h3>
-      <p class="nm-cs-lead">${lk('학년은 어떤 과정도 잠그지 않아요. 중등·고등 구간을 열 때 지금 시작해도 될지 안내하는 데만 써요.',
-        'Grade never locks a course. We only use it to advise when you open the middle- and high-school stretches.',
-        '年级不会锁住任何课程，只在打开初中、高中区间时用来提示现在是否合适。')}</p>
+      <h3 class="nm-cs-title">🎒 ${lk('나이·학년을 골라 주세요','Pick age or grade','请选择年龄或年级')}</h3>
+      <p class="nm-cs-lead">${lk('나이·학년은 어떤 과정도 잠그지 않아요. 중등·고등 구간을 열 때 지금 시작해도 될지 안내하는 데만 써요.',
+        'Age and grade never lock a course. We only use them to advise when you open the middle- and high-school stretches.',
+        '年龄和年级不会锁住任何课程，只在打开初中、高中区间时用来提示现在是否合适。')}</p>
       <div class="nm-ob-grades sheet">${opts.map(o=>
-        `<button class="nm-ob-grade${cur!=null&&Math.max(0,cur)===o.g?' sel':''}" data-g="${o.g}" aria-pressed="${cur!=null&&Math.max(0,cur)===o.g}">${esc(o.label)}</button>`).join('')}</div>
-      ${S.schoolAge?.entryYear?`<button class="nm-btn full ghost" id="ageClear">${lk('학년 지우기','Clear grade','清除年级')}</button>`:''}
+        `<button class="nm-ob-grade${cur===o.code?' sel':''}" data-level="${o.code}" aria-pressed="${cur===o.code}">${esc(o.label)}</button>`).join('')}</div>
+      ${S.schoolAge?`<button class="nm-btn full ghost" id="ageClear">${lk('나이·학년 지우기','Clear age and grade','清除年龄和年级')}</button>`:''}
     </div>
   </div>`);
   const close=()=>{ const m=document.getElementById('nmAgeSheet'); if(m)m.remove(); };
   document.getElementById('ageX').onclick=close;
   document.getElementById('nmAgeSheet').addEventListener('click',e=>{ if(e.target.id==='nmAgeSheet') close(); });
   document.querySelectorAll('#nmAgeSheet .nm-ob-grade').forEach(b=>{
-    b.onclick=()=>{ setSchoolGrade(+b.dataset.g); save(); close(); if(after)after(); else render(); };
+    b.onclick=()=>{ if(!setSchoolLevel(b.dataset.level)) return; save(); close(); if(after)after(); else render(); };
   });
   const clr=document.getElementById('ageClear');
-  if(clr) clr.onclick=()=>{ S.schoolAge=S.schoolAge?.birthYear?{birthYear:S.schoolAge.birthYear,setAt:Date.now()}:null; save(); close(); if(after)after(); else render(); };
+  if(clr) clr.onclick=()=>{ S.schoolAge=null; save(); close(); if(after)after(); else render(); };
 }
 
 function openStudentSwitch(){
@@ -3837,7 +3839,7 @@ function openStudentSwitch(){
     <div class="nm-gate-card nm-cs-card"><button class="nm-gate-x" id="whoX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
       <h3 class="nm-cs-title">${lk('내 학습 정보','My learning details','我的学习信息')}</h3>
       <p>${lk('학생마다 별도 아이디(이메일)로 로그인해요. 형제는 보호자 전화번호가 같아도 돼요.','Each learner signs in with a separate email account. Siblings may share a guardian phone number.','每位学生使用独立邮箱账号登录，兄弟姐妹可共用监护人手机号。')}</p>
-      <button class="nm-btn full ghost" id="whoAge">🎒 ${schoolGradeLabel()?lk(`학년 — ${schoolNowLabel()} · 고치기`,`Grade — ${schoolNowLabel()} · change`,`年级 — ${schoolNowLabel()} · 修改`):lk('학년 알려주기','Tell us the grade','告诉我们年级')}</button>
+      <button class="nm-btn full ghost" id="whoAge">🎒 ${schoolGradeLabel()?lk(`나이·학년 — ${schoolNowLabel()} · 고치기`,`Age/grade — ${schoolNowLabel()} · change`,`年龄/年级 — ${schoolNowLabel()} · 修改`):lk('나이·학년 알려주기','Tell us age or grade','告诉我们年龄或年级')}</button>
       <a class="nm-btn full" href="access.html?lang=${encodeURIComponent(S.lang)}" id="whoLogin">${lk('다른 아이디로 로그인','Sign in to another account','登录其他账号')}</a>
     </div></div>`);
   const close=()=>document.getElementById('nmWhoSheet')?.remove();

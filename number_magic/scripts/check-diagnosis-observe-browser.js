@@ -9,11 +9,11 @@ const server=http.createServer((req,res)=>{const file=path.resolve(ROOT,'.'+deco
 const seed=lang=>({lang,onboarded:true,name:'진단 검수',view:'placement',avatar:{kind:'boy'},character:{number:3,color:'gold'},coins:321,progress:{'A-02':{introSeen:true,steps:{}}},account:{status:'active'},r0BannerSeen:true,roadSpeed:.85,roadAmount:1.5,roadCadence:'w1',roadManual:false,cloudLinked:false});
 async function context(browser,base,width,lang){const ctx=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});await ctx.route('**/*',r=>new URL(r.request().url()).origin===base&&['GET','HEAD'].includes(r.request().method())?r.continue():r.abort());await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1'))localStorage.setItem('nm_state_v1',JSON.stringify(s));},seed(lang));return ctx;}
 async function openDiagnostic(page){
- await page.waitForSelector('#pdAge,#pdStart,#pdSkip,#townCourseRoad,#ttGame',{timeout:30000});
- if(await page.locator('#pdAge,#pdStart,#pdSkip').count())return;
+ await page.waitForSelector('#pdLevel,#pdStart,#pdSkip,#townCourseRoad,#ttGame',{timeout:30000});
+ if(await page.locator('#pdLevel,#pdStart,#pdSkip').count())return;
  if(await page.locator('#ttGame').isVisible())await page.click('#ttGame');
  for(let i=0;i<4;i++){const close=page.locator('#nmUnlockOverlayClose,#nmSymClose');if(!await close.count())break;await close.last().click();}
- await page.click('#townCourseRoad');await page.click('#crDiag');await page.waitForSelector('#pdAge,#pdStart,#pdSkip');
+ await page.click('#townCourseRoad');await page.click('#crDiag');await page.waitForSelector('#pdLevel,#pdStart,#pdSkip');
 }
 async function enter(page,base){await page.goto(base+'/number_magic/index.html?enter=1');await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await openDiagnostic(page);}
 async function overflow(page){assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'viewport horizontal overflow');}
@@ -26,9 +26,9 @@ try{
    await page.addLocatorHandler(page.locator('#nmUnlockOverlayClose'),async el=>el.click(),{noWaitAfter:true});
    await enter(page,base);assert(await page.locator('#pdStart').isDisabled());assert.equal(await page.locator('[data-route]').count(),4);
    assert.equal(await page.locator('#pdSeries,#pdStep,#pdBookCourse,#pdBookDetail,#pdProgress').count(),0,'no duplicate progress questionnaires or free-text book detail');
-   await page.selectOption('#pdAge','6');assert.equal(await page.locator('#pdBaseline').inputValue(),'f-split5');
+   await page.selectOption('#pdLevel','a6');assert.equal(await page.locator('#pdBaseline').inputValue(),'f-split5');
    await page.click('[data-route="unlearned"]');assert.equal(await page.locator('#pdBaseline').inputValue(),'f-count5');
-   await page.click('[data-route="school"]');assert.equal(await page.locator('#pdAge').count(),0,'school progress does not require age');
+   await page.click('[data-route="school"]');assert.equal(await page.locator('#pdLevel').count(),0,'school progress does not require age');
    await page.selectOption('#pdSchoolGrade','e3');await page.selectOption('#pdSemester','2');
    assert.equal(await page.locator('#pdBaseline').inputValue(),'','school grade does not claim a studied topic');
    assert(await page.locator('#pdStart').isDisabled());await page.selectOption('#pdBaseline','c8');
@@ -36,8 +36,7 @@ try{
    const schoolHref=await page.locator('#pdPaper').getAttribute('href');
    assert(schoolHref.includes('route=school')&&schoolHref.includes('grade=e3')&&schoolHref.includes('semester=2'),'school-only print link retains grade and semester');
    await page.selectOption('#pdSemester','1');assert.equal(await page.locator('#pdBaseline').inputValue(),'','changing semester clears the diagnostic topic');
-   await page.click('[data-route="age"]');await page.selectOption('#pdAge','16');
-   await page.selectOption('#pdGrade','m2');assert.equal(await page.locator('#pdBaseline').inputValue(),'c32');
+   await page.click('[data-route="age"]');await page.selectOption('#pdLevel','m2');assert.equal(await page.locator('#pdBaseline').inputValue(),'c32');
    await page.click('[data-route="book"]');await page.selectOption('[data-book-series="0"]','kumon');await page.selectOption('[data-book-step="0"]','stage-i');assert(await page.locator('#pdStart').isDisabled(),'unknown book mapping needs topic confirmation');
    await page.selectOption('#pdBaseline','c35');assert.equal(await page.locator('#pdStart').isDisabled(),false);
    await page.selectOption('[data-book-series="0"]','dunoro');
@@ -116,9 +115,9 @@ try{
     assert((await page.locator('#pdPaper').getAttribute('href')).includes('bookSeries=miracle-elem-2021&bookVolume=10'),'Miracle print link preserves the identified publication and volume');
     assert((await page.locator('.pd-blueprint').innerText()).includes('교재와 같은 주제나 문제 형식일 필요는 없어요'),'whole-volume paper does not require a textbook topic match');
    }
-   await page.click('[data-route="age"]');await page.selectOption('#pdAge','16');assert.equal(await page.locator('#pdBaseline').inputValue(),'c35');
+   await page.click('[data-route="age"]');await page.selectOption('#pdLevel','m3');assert.equal(await page.locator('#pdBaseline').inputValue(),'c35');
    await page.locator('.pd-selection details summary').click();await page.selectOption('#pdBaseline','f-count5');assert.equal(await page.locator('.pd-selection details').getAttribute('open'),'');
-   await page.locator('.pd-selection details summary').click();await page.selectOption('#pdAge','6');await page.click('[data-route="unlearned"]');await overflow(page);await page.waitForFunction(()=>!document.querySelector('.nm-confetti'));await page.screenshot({path:path.join(OUT,lang+'-'+width+'-setup.png')});
+   await page.locator('.pd-selection details summary').click();await page.selectOption('#pdLevel','a6');await page.click('[data-route="unlearned"]');await overflow(page);await page.waitForFunction(()=>!document.querySelector('.nm-confetti'));await page.screenshot({path:path.join(OUT,lang+'-'+width+'-setup.png')});
    if(lang==='ko'&&width===390){
     const before=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return JSON.stringify({speed:s.roadSpeed,amount:s.roadAmount,cadence:s.roadCadence,coins:s.coins,progress:s.progress});});
     await page.click('#pdStart');assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.plan.items.length),20);

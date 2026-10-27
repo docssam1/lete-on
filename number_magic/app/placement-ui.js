@@ -225,14 +225,14 @@
       if(paperParams&&s.route==='book')paperParams.books=JSON.stringify(s.completedBooks);
       if(paperParams&&s.route==='school'){paperParams.grade=s.grade;paperParams.semester=s.semester;}
       const paperQuery=paperParams?new URLSearchParams(paperParams).toString():'';
-      const setupHint=!profileReady?t('출생연도와 현재 학년을 먼저 확인해 주세요.','First confirm birth year and current grade.','请先确认出生年份和目前年级。'):s.route==='book'&&!booksReady?t('교재마다 마지막으로 완료한 권 또는 과정을 골라 주세요.','Select the last completed volume or course for every book.','请选择每种教材最后完成的册次或课程。'):
+      const setupHint=!profileReady?t('나이나 학년을 먼저 골라 주세요.','First choose the age or grade.','请先选择年龄或年级。'):s.route==='book'&&!booksReady?t('교재마다 마지막으로 완료한 권 또는 과정을 골라 주세요.','Select the last completed volume or course for every book.','请选择每种教材最后完成的册次或课程。'):
         s.route==='book'&&bookSources.length>1&&!focus&&!s.baselineId?t('이번 진단의 기준 교재를 골라 주세요.','Choose the book for this check.','请选择本次测评依据的教材。'):
         s.route==='book'&&!baseline?t('완료한 내용에 가까운 앱 진단 범위를 확인해 주세요.','Confirm the app diagnostic scope closest to the completed topics.','请确认最接近已完成内容的应用测评范围。'):
         s.route==='school'&&!s.grade?t('학교 학년을 골라 주세요.','Choose the school grade.','请选择学校年级。'):
         s.route==='school'&&!baseline?t('이번에 확인할 교과 연산 내용을 골라 주세요.','Choose the school arithmetic topic to check.','请选择本次确认的学校运算内容。'):
         !s.age?t('나이를 골라 주세요.','Choose the current age.','请选择目前年龄。'):'';
       const schoolFields='';
-      const profileFields='<section class="pd-profile"><h2>'+t('1. 아이의 현재 정보','1. About the learner','1. 学生目前信息')+'</h2><div class="pd-profile-fields"><label>'+t('출생연도 · 필수','Birth year · required','出生年份 · 必填')+'<select id="pdAge" required>'+options(ages,s.age)+'</select></label><label>'+t('현재 학교 학년 · 필수','Actual school grade · required','目前学校年级 · 必填')+'<select id="pdGrade" required>'+option('',t('학년 선택','Choose grade','选择年级'),s.profileGrade)+options(grades,s.profileGrade)+'</select></label></div><p class="pd-note">'+t('나이는 한국 나이로 표시해요. 실제 학년과 배우는 수학 진도는 따로 봅니다.','Age labels use Korean year-count age. Actual grade and studied math are separate.','年龄按韩国虚岁显示。实际年级与数学进度分开记录。')+'</p></section>';
+      const profileFields='<section class="pd-profile"><h2>'+t('1. 아이의 현재 정보','1. About the learner','1. 学生目前信息')+'</h2><div class="pd-profile-fields"><label>'+t('나이·학년 · 필수','Age / grade · required','年龄/年级 · 必填')+'<select id="pdLevel" required>'+option('',t('나이·학년 선택','Choose age or grade','选择年龄或年级'),'')+calendar.levelOptions(t).map(([v,l])=>option(v,l,calendar.toLevel(s,now))).join('')+'</select></label></div><p class="pd-note">'+t('미취학은 한국 나이로, 학생은 학년으로 골라 주세요. 배우는 수학 진도는 아래에서 따로 고릅니다.','Choose Korean age for preschoolers and school grade for students. Studied math is chosen separately below.','学龄前按韩国年龄、学生按年级选择。所学数学进度在下方另选。')+'</p></section>';
       const topicFields='<label>'+t('배우는 수학 범위','Studied math level','正在学习的数学范围')+'<select id="pdStudyBand">'+options([['foundation',t('유아 · 수 감각','Early number sense','幼儿数感')],['elementary',t('초등 연산','Elementary arithmetic','小学运算')],['middle',t('중등 과정','Middle-school topics','初中课程')],['high',t('고등 과정','High-school topics','高中课程')]],s.studyBand)+'</select></label>'+range+(gradePicked?'<p class="pd-intake-hint" id="pdGradePicked">'+t('현재 학년에 맞춰 진단 범위를 골라 두었어요. 지금 배우는 내용과 다르면 바꿔 주세요.','We picked the scope for the current grade. Change it if the learner studies something else.','已按目前年级选好测评范围。若正在学习的内容不同，请更改。')+'</p>':'')+'<p class="pd-note">'+t('실제 학년과 관계없이 지금 배우는 내용을 고르세요. 초등학생도 중·고등 내용을 선택할 수 있어요.','Choose what is being studied, regardless of actual grade. Younger learners may select middle or high-school content.','不受实际年级限制，选择目前学习内容。小学生也可选择初高中内容。')+'</p>';
       shell(t('학습 시작점 찾기','Find your starting point','找到学习起点'),
         '<header class="pd-header"><p class="pd-kicker">NUMBERS OF MAGIC</p><h1>'+t('어디부터 시작할까요?','Where shall we begin?','从哪里开始？')+'</h1><p>'+t('아이 정보와 배운 내용을 고르면 20문항으로 확인해요.','Tell us about the learner and studied topics, then check 20 questions.','填写学生信息和学过的内容，开始20题测评。')+'</p></header>'+
@@ -272,8 +272,7 @@
         answers.onclick=()=>begin('paper');
         $('#pdPaper').onclick=e=>{if(!begin('paper'))e.preventDefault();};
       }
-      if($('#pdAge'))$('#pdAge').onchange=e=>{s.age=e.target.value;s.birthYear=s.age?new Date(+new Date(now)+9*3600000).getUTCFullYear()-Number(s.age)+1:null;if(!s.profileGrade||s.gradeInferred){s.profileGrade=s.age?(Number(s.age)<8?'pre':grades[Math.min(Number(s.age)-7,12)][0]):'';s.gradeInferred=!!s.age;s.entryYear=null;}if(!s.baselineId&&s.scopeSource!=='manual')s.studyBand='';redraw();};
-      $('#pdGrade').onchange=e=>{s.profileGrade=e.target.value;s.gradeInferred=false;s.entryYear=null;if(!s.baselineId&&s.scopeSource!=='manual')s.studyBand='';redraw();};
+      if($('#pdLevel'))$('#pdLevel').onchange=e=>{const p=calendar.fromLevel(e.target.value,now);if(p)Object.assign(s,p);else{s.age='';s.birthYear=null;s.profileGrade='';s.entryYear=null;s.profileAt=null;}s.gradeInferred=false;if(!s.baselineId&&s.scopeSource!=='manual')s.studyBand='';redraw();};
       all('[data-route]').forEach(el=>el.onclick=()=>{s.route=el.dataset.route;s.baselineId='';s.scopeSource='';redraw();});
       if($('#pdStudyBand'))$('#pdStudyBand').onchange=e=>{s.studyBand=e.target.value;s.baselineId='';s.scopeSource='manual';redraw();};
       if(s.route==='book'){
