@@ -9,7 +9,8 @@
    원장 「책은 더 두꺼워야 돼. 책상 초록 안 돼. 지오메트리 쌓기나무 판 정도로」 → 두꺼운 종이 묶음 · 나무 판 책상.
    책은 두 반쪽이다. 오른쪽 반(뒤표지·종이 묶음·5쪽)은 가만히 있고, 왼쪽 반(앞표지·종이 묶음·4쪽)이 책등을 축으로
    돌아 덮였다 펼쳐진다. 덮이면 앞표지(가죽)가 위를 본다.
-   4쪽 = 개념 · 핵심 낱말 · 예측(누르면 손글씨 체크) · 날개(들추면 정답) · 다 하면 손글씨 풀이와 도장.
+   4쪽 = 마커 쥔 손이 써 가는 쪽(소피 영어 스토리처럼): 제목 · 문장(읽는 문장에 노란 띠) · 가르기 그림 · 예측(누르면 손글씨 체크) ·
+   날개(들추면 정답) · 다 하면 윗줄에 「= 10 + 5 = 15」를 이어 쓰고 도장.
    5쪽 = 지면 위로 솟는 10칸 상자 두 개(8 · 7). 노란 구슬을 누르면 빛을 남기며 8 쪽으로 날아가 10을 만든다.
    쪽 글자는 캔버스로 찍어 종이 위에 입힌다(한·영·중). 같은 내용·같은 조작은 페이지의 「글로 보기」에도 있다.
    움직임 줄이기면 모든 움직임이 즉시 끝난 모습으로 바뀐다.
@@ -19,7 +20,7 @@
    setReduced(bool) · setSound(bool) · state · dispose()
    ============================================================ */
 import * as THREE from '../../../world-explorer/vendor/three.module.js';
-import { CONTENT, WORK, CORRECT_CHOICE } from './content.js';
+import { CONTENT, CORRECT_CHOICE } from './content.js';
 
 export function supportsWebGL(){
   try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); }
@@ -30,6 +31,8 @@ export function supportsWebGL(){
 const INK = '#163f39', PAPER = '#fffcf5', GOLD = '#c8961e', TEAL = '#2e7d6b', AMBER = '#e8a23a', RUST = '#a8452c', PEN = '#24585a';
 const FONT_DIR = new URL('../../assets/fonts/', import.meta.url);
 const COVER_URL = new URL('../../assets/promo/grimoire-emerald.webp', import.meta.url);
+/* 마커 쥔 손: 소피 화이트보드 영상(reading-world/share/sophie-whiteboard)에서 오려 낸 그림 — science-lab/assets/observe/hand-marker.webp 와 같은 파일 */
+const HAND_URL = new URL('../../assets/magicbook/hand-marker.webp', import.meta.url);
 let fontsP = null;
 function loadFonts(){
   if(fontsP) return fontsP;
@@ -52,6 +55,7 @@ const handFont = lang => lang === 'en' ? '"NM Book Kalam", cursive' : lang === '
 const PAGE_W = 1, PAGE_H = 1.34, PW = 1400, PH = Math.round(1400 * 1.34);
 const BOARD = 0.03, STACK = 0.12, PIV = BOARD + STACK;             // 종이 윗면 높이(두꺼운 책: 덮으면 0.3 — 쪽 너비의 30%)
 const GUT = 0.2, DIP = 0.038;                                     // 책등 쪽으로 휘어 들어가는 너비·깊이
+const FLAP_W = 1150, FLAP_H = 300;                                 // 날개(캔버스 px)
 const DESK_W = 3.2, DESK_H = 2.35, DESK_T = 0.16, RIM = 0.06;      // 나무 판(쌓기나무 판 비율)
 const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const smooth = t => t * t * (3 - 2 * t);      // 로그인 책 펼침과 같은 곡선(app/access.js)
@@ -128,7 +132,7 @@ export async function mountBook(canvas, opts){
 
   scene.add(new THREE.HemisphereLight('#fffaf0', '#c9b79a', 1.25));
   const sun = new THREE.DirectionalLight('#fff0d8', 2.4);
-  sun.position.set(1.7, 3.3, 1.2);    // 오른쪽 앞 위의 해 — 솟은 상자 그림자가 책등 쪽 지면에 길게 떨어진다 sun.castShadow = true;
+  sun.position.set(1.7, 3.3, 1.2); sun.castShadow = true;   // 오른쪽 앞 위의 해 — 솟은 상자 그림자가 책등 쪽 지면에 길게 떨어진다
   sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.045;
   Object.assign(sun.shadow.camera, { left: -2.4, right: 2.4, top: 2.4, bottom: -2.4, near: 0.5, far: 12 });
   scene.add(sun);
@@ -206,59 +210,220 @@ export async function mountBook(canvas, opts){
   const leftTex = canvasTexture(leftCanvas), rightTex = canvasTexture(rightCanvas);
   const hits = { choices: [], flap: null };
   const state = { open: false, choice: null, flap: false, moved: 0, view: 'spread' };
-  const anim = { work: 0, stamp: 0 };      // 손글씨 풀이 · 도장 진행(0~1)
+  const anim = { stamp: 0 };      // 도장 진행(0~1)
 
-  /* 4쪽 — 원장 「왼쪽 폰트는 잘 안 보여」: 글자를 크게·굵게·진하게. 자리를 만들려고 핵심 낱말은 「글로 보기」에만 둔다. */
+  /* ── 4쪽: 마커 쥔 손이 한 가지씩 써 가는 쪽 ──
+     원장 「왼쪽은 우리 영어 스토리의 그림 그리는 로직(소피의 영어 스토리)」 → reading-world/share/sophie-whiteboard 처럼
+     초록 마커를 쥔 손(그 영상에서 오려 낸 그림 — science-lab 예시 보고서와 같은 손)이 제목 → 문장 → 가르기 그림 → 예측 문제를
+     차례로 쓴다. 읽고 있는 문장에는 소피 책과 같은 노란 띠(#f7cf73)가 손을 따라 칠해진다.
+     소리를 켜면 기기 음성이 그 문장을 읽고, 다 읽어야 다음으로 간다. 쪽을 누르면 바로 다 써진다. 움직임 줄이기면 처음부터 다 써진 쪽.
+     원장 「필기」: 글도 손글씨(마커 굵기로 한 번 더 긋고 크게 — 「왼쪽 폰트는 잘 안 보여」를 함께 지킨다). */
+  const handImg = await new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = HAND_URL.href; });
+  const LM = 130, LIN = 190, LW = PW - LM - LIN, DARK = '#13282a', AMBER_INK = '#b8740f';
+  const HF = s => `400 ${s}px ${handFont(lang === 'zh' ? 'ko' : lang)}`;
+  /* 원장 「필기」: 쪽 글 전부를 손글씨 글꼴로(한 나눔펜 · 영 Kalam · 중 마산 붓). 글꼴마다 같은 px 에서 글자 크기가 달라 언어별로 맞춘다. */
+  const Z = { ko: { head: 132, body: 76, lh: 96, q: 78, qlh: 98, label: 50, choice: 74 },
+              en: { head: 96, body: 54, lh: 82, q: 58, qlh: 84, label: 40, choice: 58 },
+              zh: { head: 108, body: 62, lh: 88, q: 66, qlh: 90, label: 46, choice: 64 } }[lang];
+  const CJK = /[　-〿一-鿿＀-￯]/, NO_START = /^[，。！？、：；]/;
+  function buildLeft(){
+    const g = lg, steps = [];
+    const step = say => { const s = { items: [], say: say || '', len: 0 }; steps.push(s); return s; };
+    const add = (s, it) => { s.items.push(it); s.len += it.cost; return it; };
+    const text = (s, str, x, y, font, size, color, sent) => { g.font = font; const w = g.measureText(str).width; return add(s, { k: 't', str, x, y, w, font, size, color, sent: !!sent, cost: Math.max(w, 1) }); };
+    const path = (s, pts, width, color) => { const cum = [0]; for(let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+      return add(s, { k: 'p', pts, cum, len: cum[cum.length - 1], width, color, cost: cum[cum.length - 1] * 0.8 }); };
+    const quad = (a, c, b, n = 24) => Array.from({ length: n + 1 }, (_, i) => { const t = i / n, u = 1 - t; return [u * u * a[0] + 2 * u * t * c[0] + t * t * b[0], u * u * a[1] + 2 * u * t * c[1] + t * t * b[1]]; });
+    let cx = LM, cy = 0;
+    /* 줄 흘리기: 한·영은 낱말, 중국어는 글자. 문장은 앞 문장이 끝난 자리에서 이어 쓴다(같은 문단). */
+    const flow = (s, str, font, size, lh, color) => {
+      g.font = font;
+      const toks = str.match(/[　-〿一-鿿＀-￯]|[^\s　-〿一-鿿＀-￯]+\s*|\s+/g) || [];
+      for(const tk of toks){
+        const w = g.measureText(tk).width, wt = g.measureText(tk.trimEnd()).width;
+        if(cx > LM && cx + wt > LM + LW && !NO_START.test(tk)){ cx = LM; cy += lh; }
+        if(cx === LM && !tk.trim()) continue;
+        text(s, tk, cx, cy, font, size, color, true); cx += w;
+      }
+    };
+    const sentences = p => (p.match(/[^.!?。！？]+[.!?。！？]*\s*/g) || [p]).filter(x => x.trim());
+    /* 1 제목 + 금색 밑줄 */
+    const s0 = step(T.heading);
+    const hs = fit(g, T.heading, LW, Z.head, z => `400 ${z}px ${HAND}`);
+    text(s0, T.heading, LM, 290, `400 ${hs}px ${HAND}`, hs, PEN, true);
+    path(s0, [[LM, 331], [LM + 190, 329]], 8, GOLD);
+    /* 2 본문 — 문장마다 한 걸음 */
+    const BF = `400 ${Z.body}px ${HAND}`; cy = 430; let splitStep = null, lastBase = cy;
+    T.body.forEach((p, pi) => {
+      cx = LM;
+      sentences(p).forEach((sn, si) => { const s = step(sn.trim()); flow(s, sn, BF, Z.body, Z.lh, DARK); if(pi === 1 && si === 0) splitStep = s; });
+      lastBase = cy; cy += Z.lh + 16;
+    });
+    splitStep = splitStep || steps[steps.length - 1];
+    /* 3 가르기 그림 — 「7을 2와 5로 가르고, 2를 8에게 주면 10」 문장을 읽는 동안 손이 그린다.
+       윗줄 8 + 7, 7에서 두 갈래로 2(노란 구슬 색)와 5, 2에서 8 밑으로 화살표, 8 밑에 10. 끝나면 윗줄에 「= 10 + 5 = 15」가 이어진다. */
+    /* 그림 크기: 칸 간격 DS, 글자는 DS × 1.3(나눔펜 숫자는 같은 크기의 다른 글꼴보다 작다). 너비(이어 쓸 「= 10 + 5 = 15」까지)와
+       높이(예측 문제·보기 칸이 날개 위에 들어오게) 둘 다 맞을 때까지 줄인다. */
+    const TAIL = ['=', '10', '+', '5', '=', '15'];
+    g.font = `400 ${Z.q}px ${HAND}`; const qLines = wrap(g, T.predictQ, LW).length;
+    const yD = lastBase + 52, x0 = LM + 90;
+    /* 글자 크기 GS 는 「10」의 너비가 칸 간격의 0.8 이 되게 — 나눔펜(좁음)과 Kalam(넓음)이 같은 자리에 들어간다 */
+    g.font = HF(100); const w10 = g.measureText('10').width / 100;
+    const gsOf = z => Math.round(Math.min(z * 1.35, z * 0.8 / w10));
+    const tailW = z => { g.font = HF(gsOf(z)); return TAIL.reduce((a, t) => a + g.measureText(t).width + z * 0.3, 0); };
+    const bottomOf = z => yD + z * 2.85 + 64 + Z.label * 1.9 + qLines * Z.qlh + 8 + 68;
+    let DS = 124;
+    while(DS > 60 && (x0 + DS * 2.3 + DS * 0.3 + tailW(DS) > LM + LW || bottomOf(DS) > PH - 140 - FLAP_H - 40)) DS -= 4;
+    const GS = gsOf(DS), yA = yD + DS * 0.95, yB = yA + DS * 1.5;
+    const wd = t => { g.font = HF(GS); return g.measureText(t).width; };
+    const x8c = x0, xPl = x0 + DS * 1.15, x7c = x0 + DS * 2.3, x2c = x7c - DS * 0.5, x5c = x7c + DS * 0.6;
+    const glyph = (s, t, xc, y, color) => text(s, t, xc - wd(t) / 2, y, HF(GS), GS, color);
+    const d = splitStep;
+    glyph(d, '8', x8c, yA, PEN); glyph(d, '+', xPl, yA, PEN); glyph(d, '7', x7c, yA, PEN);
+    path(d, [[x7c - DS * 0.1, yA + DS * 0.16], [x2c + DS * 0.06, yB - DS * 0.86]], 7, PEN);
+    path(d, [[x7c + DS * 0.1, yA + DS * 0.16], [x5c - DS * 0.06, yB - DS * 0.86]], 7, PEN);
+    glyph(d, '2', x2c, yB, AMBER_INK); glyph(d, '5', x5c, yB, PEN);
+    const ay = yB - DS * 0.36, a0 = [x2c - wd('2') / 2 - DS * 0.14, ay], a1 = [x8c + wd('10') / 2 + DS * 0.16, ay];
+    path(d, quad(a0, [(a0[0] + a1[0]) / 2, ay + DS * 0.3], a1), 7, RUST);
+    path(d, [[a1[0] + DS * 0.2, ay - DS * 0.17], a1, [a1[0] + DS * 0.22, ay + DS * 0.12]], 7, RUST);
+    path(d, [[x8c, yA + DS * 0.18], [x8c, yB - DS * 0.9]], 6, RUST);
+    glyph(d, '10', x8c, yB, RUST);
+    const work = { items: [], say: '', len: 0, work: true };
+    let tx = x7c + wd('7') / 2 + DS * 0.3;
+    TAIL.forEach((t, i) => { text(work, t, tx, yA, HF(GS), GS, i === TAIL.length - 1 ? RUST : PEN); tx += wd(t) + DS * 0.3; });
+    const stamp = { x: LM + LW - 135, y: yB + DS * 0.05 };
+    /* 4 예측 문제 + 보기 칸 */
+    let y = yB + DS * 0.4 + 64;
+    const sp = step(T.predictQ);
+    text(sp, T.predictLabel, LM, y, `400 ${Z.label}px ${HAND}`, Z.label, RUST); y += Z.label * 1.9;
+    cx = LM; cy = y; flow(sp, T.predictQ, `400 ${Z.q}px ${HAND}`, Z.q, Z.qlh, DARK); y = cy + Z.qlh;
+    const choices = [], cw = Math.min(360, LW / 3);
+    T.choices.forEach((c, i) => {
+      const x = LM + i * cw, by = y + 8;
+      path(sp, [[x, by], [x + 68, by], [x + 68, by + 68], [x, by + 68], [x, by - 2.5]], 5, DARK);
+      text(sp, c, x + 94, by + 60, `400 ${Z.choice}px ${HAND}`, Z.choice, DARK);
+      choices.push({ x: x - 24, y: by - 28, w: cw - 10, h: 124, i, cx: x + 34, cy: by + 26 });
+    });
+    return { steps, work, stamp, choices, predict: steps.indexOf(sp) };
+  }
+  const L = buildLeft();
+  hits.choices = L.choices; hits.flap = { x: LM, y: PH - 140 - FLAP_H, w: LW, h: FLAP_H };
+
+  /* 쓰는 상태: k = 지금 쓰는 걸음, d = 그 걸음에서 쓴 길이(캔버스 px), phase = write(쓰는 중) · wait(읽기 끝나길 기다림) · idle */
+  const SPEED = 1100;      // 캔버스 px/초 — 한 줄(약 1100px)을 1초에
+  const wr = { k: 0, d: 0, phase: 'idle', pause: 0, speaking: false, deadline: 0 };
+  const writeList = () => state.moved >= 2 ? [...L.steps, L.work] : L.steps;
+  const writingNow = () => wr.phase !== 'idle';
+  const VOICE = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN' };
+  const spoken = t => t.replace(/\s*\+\s*/g, lang === 'en' ? ' plus ' : lang === 'zh' ? ' 加 ' : ' 더하기 ');
+  function speakLine(t){
+    wr.speaking = false;
+    if(!sound || !t || !('speechSynthesis' in window)) return;
+    try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(spoken(t)); u.lang = VOICE[lang]; u.rate = 0.95;
+      u.onend = u.onerror = () => { wr.speaking = false; wake(); };
+      wr.speaking = true; wr.deadline = performance.now() + 2500 + t.length * 170; speechSynthesis.speak(u); }
+    catch(e){ wr.speaking = false; }
+  }
+  const hush = () => { wr.speaking = false; try { if('speechSynthesis' in window) speechSynthesis.cancel(); } catch(e){} };
+  function startStep(){ const s = writeList()[wr.k]; if(!s){ wr.phase = 'idle'; return; } wr.d = 0; wr.pause = 0; wr.phase = 'write'; speakLine(s.say); wake(); }
+  function stepDone(s){ if(s === L.steps[L.steps.length - 1]) emit('written'); if(s === L.work) tween(0.5, k => { anim.stamp = k; drawLeft(); }); }
+  function beginWriting(){ if(wr.k === 0 && wr.phase === 'idle'){ if(reduced){ wr.phase = 'write'; finishWriting(); } else startStep(); } }
+  function finishWriting(){
+    if(!writingNow()) return; hush();
+    const list = writeList(); while(wr.k < list.length){ const s = list[wr.k]; wr.k++; stepDone(s); }
+    wr.phase = 'idle'; drawLeft(); wake();
+  }
+  function writerTick(dt){
+    if(!writingNow()) return;
+    const list = writeList(), s = list[wr.k];
+    if(!s){ wr.phase = 'idle'; drawLeft(); return; }
+    if(wr.phase === 'write'){
+      wr.d += dt * SPEED;
+      if(wr.d >= s.len){ wr.d = s.len; wr.phase = 'wait'; }
+      drawLeft();
+    } else {
+      wr.pause += dt;
+      if(wr.pause >= 0.35 && (!wr.speaking || performance.now() > wr.deadline)){
+        wr.k++; stepDone(s);
+        if(wr.k < writeList().length) startStep(); else { wr.phase = 'idle'; }
+        drawLeft();
+      }
+    }
+  }
+
+  /* 한 획(글자 덩어리·선)을 a(0~1)만큼 그린다 */
+  function drawItem(g, it, a){
+    if(it.k === 't'){
+      /* 나눔펜 획이 가늘어 같은 색으로 한 번 더 그어 마커 굵기로 */
+      g.font = it.font; g.fillStyle = it.color; g.strokeStyle = it.color; g.lineWidth = Math.max(1.5, it.size * 0.035); g.lineJoin = 'round';
+      const ink = () => { g.fillText(it.str, it.x, it.y); g.strokeText(it.str, it.x, it.y); };
+      if(a >= 1){ ink(); return; }
+      g.save(); g.beginPath(); g.rect(it.x - 8, it.y - it.size * 1.25, it.w * a + 8, it.size * 1.7); g.clip(); ink(); g.restore();
+      return;
+    }
+    const want = it.len * a; g.save(); g.strokeStyle = it.color; g.lineWidth = it.width; g.lineCap = 'round'; g.lineJoin = 'round';
+    g.beginPath(); g.moveTo(it.pts[0][0], it.pts[0][1]);
+    for(let i = 1; i < it.pts.length; i++){
+      if(it.cum[i] <= want){ g.lineTo(it.pts[i][0], it.pts[i][1]); continue; }
+      const f = (want - it.cum[i - 1]) / Math.max(1e-6, it.cum[i] - it.cum[i - 1]);
+      g.lineTo(it.pts[i - 1][0] + (it.pts[i][0] - it.pts[i - 1][0]) * f, it.pts[i - 1][1] + (it.pts[i][1] - it.pts[i - 1][1]) * f); break;
+    }
+    g.stroke(); g.restore();
+  }
+  /* 마커 끝 자리 — 글자는 줄 위를 오르내리며 지나가고, 선은 선 끝을 따라간다 */
+  function tipOf(it, a){
+    if(it.k === 't') return [it.x + it.w * a, it.y - it.size * (0.34 + 0.16 * Math.sin(a * it.w * 0.09))];
+    const want = it.len * a; let i = 1; while(i < it.pts.length - 1 && it.cum[i] < want) i++;
+    const f = clamp01((want - it.cum[i - 1]) / Math.max(1e-6, it.cum[i] - it.cum[i - 1]));
+    return [it.pts[i - 1][0] + (it.pts[i][0] - it.pts[i - 1][0]) * f, it.pts[i - 1][1] + (it.pts[i][1] - it.pts[i - 1][1]) * f];
+  }
+  /* 손: 그림 속 마커 끝(4, 2)이 끝 자리에 오게. 높이 = 쪽 높이의 약 22% */
+  function drawHand(g, x, y){
+    if(!handImg) return; const h = 420, s = h / handImg.naturalHeight;
+    g.save(); g.shadowColor = 'rgba(70,45,15,0.28)'; g.shadowBlur = 22; g.shadowOffsetX = 14; g.shadowOffsetY = 18;
+    g.drawImage(handImg, x - 4 * s, y - 2 * s, handImg.naturalWidth * s, h); g.restore();
+  }
+
   function drawLeft(){
-    const g = lg, M = 130, IN = 120, W = PW - M - IN, DARK = '#13282a';
+    const g = lg;
     paper(g, 'right');
     g.textBaseline = 'alphabetic'; g.textAlign = 'left';
-    g.fillStyle = '#4d5a55'; g.font = `500 40px Georgia, ${SERIF}`; g.fillText('Numbers ', M, 140); const nw = g.measureText('Numbers ').width;
-    g.font = `italic 500 40px Georgia, ${SERIF}`; g.fillText('of ', M + nw, 140); const ow = g.measureText('of ').width; g.font = `500 40px Georgia, ${SERIF}`; g.fillText('Magic', M + nw + ow, 140);
-    g.fillStyle = '#7a5a1a'; g.font = `800 34px ${SANS}`; g.textAlign = 'right'; g.fillText(T.kicker, PW - IN, 140); g.textAlign = 'left';
-    g.fillStyle = DARK; fit(g, T.heading, W, 104, s => `700 ${s}px ${SERIF}`); g.fillText(T.heading, M, 290);
-    g.fillStyle = GOLD; g.fillRect(M, 328, 190, 7);
-    let y = 432; g.font = `600 54px ${SANS}`; g.fillStyle = DARK;
-    for(const p of T.body){ for(const line of wrap(g, p, W)){ g.fillText(line, M, y); y += 82; } y += 18; }
-    /* 예측 */
-    y += 56; g.fillStyle = RUST; g.font = `800 38px ${SANS}`; g.fillText(T.predictLabel, M, y); y += 80;
-    g.fillStyle = DARK; g.font = `700 60px ${SANS}`; for(const line of wrap(g, T.predictQ, W)){ g.fillText(line, M, y); y += 78; }
-    hits.choices = [];
-    const cw = Math.min(360, W / 3);
-    T.choices.forEach((c, i) => {
-      const x = M + i * cw, by = y + 8;
-      g.strokeStyle = DARK; g.lineWidth = 5; g.strokeRect(x, by, 68, 68);
-      g.fillStyle = DARK; g.font = `700 58px ${SANS}`; g.fillText(c, x + 94, by + 58);
-      if(state.choice === i) penCheck(g, x + 34, by + 26, 100);
-      hits.choices.push({ x: x - 24, y: by - 28, w: cw - 10, h: 124, i });
-    });
-    y += 168;
-    /* 풀이 — 다 하면 손글씨로 써진다 */
-    const workY = y + 84;
-    if(anim.work > 0){
-      g.fillStyle = '#6b5a3a'; g.font = `800 32px ${SANS}`; g.fillText(T.workLabel, M, y);
-      g.save(); g.beginPath(); g.rect(M - 10, workY - 110, (W + 20) * anim.work, 170); g.clip();
-      g.fillStyle = PEN; fit(g, WORK, W, 92, s => `400 ${s}px ${handFont(lang === 'zh' ? 'ko' : lang)}`);
-      g.fillText(WORK, M, workY); g.restore();
-    }
+    g.fillStyle = '#4d5a55'; g.font = `500 40px Georgia, ${SERIF}`; g.fillText('Numbers ', LM, 140); const nw = g.measureText('Numbers ').width;
+    g.font = `italic 500 40px Georgia, ${SERIF}`; g.fillText('of ', LM + nw, 140); const ow = g.measureText('of ').width; g.font = `500 40px Georgia, ${SERIF}`; g.fillText('Magic', LM + nw + ow, 140);
+    g.fillStyle = '#7a5a1a'; g.font = `800 34px ${SANS}`; g.textAlign = 'right'; g.fillText(T.kicker, PW - LIN, 140); g.textAlign = 'left';
     /* 날개 아래 정답(날개가 덮고 있다) */
-    const flapH = FLAP_H, flapY = PH - 140 - flapH;
-    hits.flap = { x: M, y: flapY, w: W, h: flapH };
-    g.fillStyle = 'rgba(200,150,30,0.14)'; g.fillRect(M, flapY, W, flapH);
-    g.fillStyle = DARK; g.font = `800 60px ${SANS}`; g.fillText(T.answerTitle, M + 40, flapY + 92);
+    const f = hits.flap;
+    g.fillStyle = 'rgba(200,150,30,0.14)'; g.fillRect(f.x, f.y, f.w, f.h);
+    g.fillStyle = DARK; g.font = `800 60px ${SANS}`; g.fillText(T.answerTitle, f.x + 40, f.y + 92);
     g.fillStyle = '#1f2b2a'; g.font = `600 46px ${SANS}`;
-    let ay = flapY + 166; for(const line of wrap(g, T.answer, W - 80)){ g.fillText(line, M + 40, ay); ay += 62; }
+    let ay = f.y + 166; for(const line of wrap(g, T.answer, f.w - 80)){ g.fillText(line, f.x + 40, ay); ay += 62; }
+    /* 쓴 것 · 쓰는 중인 것 */
+    const list = writeList(); let tip = null;
+    for(let i = 0; i < list.length && i <= wr.k; i++){
+      const s = list[i], current = i === wr.k && writingNow();
+      if(i === wr.k && !current) break;           // 아직 시작 안 한 걸음
+      let left = current && wr.phase === 'write' ? wr.d : Infinity; const shown = [];
+      for(const it of s.items){ if(left <= 0) break; const a = Math.min(1, left / it.cost); left -= it.cost; shown.push([it, a]); }
+      if(current){   // 읽는 문장 = 노란 띠(손이 지나간 데까지)
+        g.fillStyle = 'rgba(247,207,115,0.55)';
+        for(const [it, a] of shown) if(it.sent){ g.beginPath(); g.roundRect ? g.roundRect(it.x - 6, it.y - it.size * 0.9, it.w * a + 10, it.size * 1.18, 10) : g.rect(it.x - 6, it.y - it.size * 0.9, it.w * a + 10, it.size * 1.18); g.fill(); }
+      }
+      for(const [it, a] of shown) drawItem(g, it, a);
+      if(current && wr.phase === 'write' && shown.length){ const [it, a] = shown[shown.length - 1]; tip = tipOf(it, a); }
+    }
+    if(state.choice !== null && (wr.k > L.predict)){ const c = L.choices[state.choice]; if(c) penCheck(g, c.cx, c.cy, 100); }
     /* 도장 */
     if(anim.stamp > 0){
       const s = 1 + (1 - ease(anim.stamp)) * 0.6, a = Math.min(1, anim.stamp * 1.6);
-      g.save(); g.translate(PW - IN - 150, workY - 230); g.rotate(-0.2); g.scale(s, s); g.globalAlpha = a * 0.9;
-      g.strokeStyle = RUST; g.fillStyle = RUST; g.lineWidth = 8; g.beginPath(); g.arc(0, 0, 130, 0, Math.PI * 2); g.stroke();
-      g.lineWidth = 3.5; g.beginPath(); g.arc(0, 0, 110, 0, Math.PI * 2); g.stroke();
-      g.textAlign = 'center'; fit(g, T.stamp[0], 190, 44, s2 => `800 ${s2}px ${SANS}`); g.fillText(T.stamp[0], 0, -6);
-      fit(g, T.stamp[1], 180, 36, s2 => `800 ${s2}px ${SANS}`); g.fillText(T.stamp[1], 0, 44);
+      g.save(); g.translate(L.stamp.x, L.stamp.y); g.rotate(-0.2); g.scale(s, s); g.globalAlpha = a * 0.9;
+      g.strokeStyle = RUST; g.fillStyle = RUST; g.lineWidth = 8; g.beginPath(); g.arc(0, 0, 118, 0, Math.PI * 2); g.stroke();
+      g.lineWidth = 3.5; g.beginPath(); g.arc(0, 0, 100, 0, Math.PI * 2); g.stroke();
+      g.textAlign = 'center'; fit(g, T.stamp[0], 170, 42, s2 => `800 ${s2}px ${SANS}`); g.fillText(T.stamp[0], 0, -6);
+      fit(g, T.stamp[1], 160, 34, s2 => `800 ${s2}px ${SANS}`); g.fillText(T.stamp[1], 0, 42);
       g.restore();
     }
-    g.textAlign = 'center'; g.fillStyle = '#7a6a4a'; g.font = `600 32px ${SANS}`; g.fillText('04', (M + PW - IN) / 2, PH - 60); g.textAlign = 'left';
+    g.textAlign = 'center'; g.fillStyle = '#7a6a4a'; g.font = `600 32px ${SANS}`; g.fillText('04', (LM + PW - LIN) / 2, PH - 60); g.textAlign = 'left';
+    if(tip) drawHand(g, tip[0], tip[1]);
     leftTex.needsUpdate = true;
   }
   function drawRight(){
@@ -309,7 +474,7 @@ export async function mountBook(canvas, opts){
   spine.castShadow = true; book.add(spine);
 
   /* 날개: 4쪽 정답 위에 붙은 종이. 아래쪽 가장자리를 경첩으로 읽는 사람 쪽으로 넘어간다. */
-  const FLAP_W = 1150, FLAP_H = 300, flapCanvas = makeCanvas(FLAP_W, FLAP_H), fg = flapCanvas.getContext('2d'), flapTex = canvasTexture(flapCanvas);
+  const flapCanvas = makeCanvas(FLAP_W, FLAP_H), fg = flapCanvas.getContext('2d'), flapTex = canvasTexture(flapCanvas);
   function drawFlap(){
     const g = fg; g.fillStyle = '#f2e7cd'; g.fillRect(0, 0, FLAP_W, FLAP_H);
     const r = rng(41); for(let i = 0; i < 900; i++){ g.fillStyle = `rgba(120,95,50,${0.03 + r() * 0.05})`; g.fillRect(r() * FLAP_W, r() * FLAP_H, 2, 1.2); }
@@ -446,14 +611,14 @@ export async function mountBook(canvas, opts){
   function emit(type, extra){ onChange(Object.assign({}, state), Object.assign({ type }, extra || {})); }
   function open(){
     if(state.open || busy) return; busy = true; state.open = true; aimCamera();
-    tween(1.4, k => { openT = k; applyOpen(); }, () => tween(1.1, k => { popT = k; applyOpen(); }, () => { busy = false; emit('opened'); }));
+    tween(1.4, k => { openT = k; applyOpen(); }, () => tween(1.1, k => { popT = k; applyOpen(); }, () => { busy = false; emit('opened'); beginWriting(); }));
   }
   function close(){
     if(!state.open || busy) return; busy = true;
     tween(0.6, k => { popT = 1 - k; applyOpen(); }, () => { state.open = false; aimCamera(); tween(1.2, k => { openT = 1 - k; applyOpen(); }, () => { busy = false; emit('closed'); }); });
   }
   function pick(i){
-    if(i < 0 || i >= T.choices.length) return; state.choice = i; drawLeft(); wake(); chime([660], 0.25);
+    if(i < 0 || i >= T.choices.length) return; finishWriting(); state.choice = i; drawLeft(); wake(); chime([660], 0.25);
     emit('pick', { correct: i === CORRECT_CHOICE });
   }
   function liftFlap(){
@@ -490,7 +655,8 @@ export async function mountBook(canvas, opts){
   }
   function success(){
     chime([660, 880, 1320], 0.6);
-    tween(1.3, k => { anim.work = k; drawLeft(); }, () => tween(0.5, k => { anim.stamp = k; drawLeft(); }));
+    /* 손이 윗줄에 「= 10 + 5 = 15」를 이어 쓰고, 다 쓰면 도장(stepDone). 쪽을 아직 쓰는 중이면 그 뒤에 이어서 쓴다. */
+    if(!writingNow()){ if(reduced){ wr.phase = 'write'; finishWriting(); } else startStep(); }
     tween(2.6, k => { trayGlow.material.opacity = 0.45 * Math.sin(Math.PI * k);
       const e = k < 0.85 ? goldLine : inkLine; trayA.userData.inner.traverse(o => { if(o.isLineSegments) o.material = e; }); });
     emit('success');
@@ -498,7 +664,8 @@ export async function mountBook(canvas, opts){
   function nudge(t){ const x0 = t.position.x; tween(0.4, k => { t.position.x = x0 + Math.sin(k * Math.PI * 4) * 0.012 * (1 - k); }); }
   function reset(){
     if(flying) return; queued = 0;
-    state.choice = null; state.moved = 0; anim.work = 0; anim.stamp = 0;
+    state.choice = null; state.moved = 0; anim.stamp = 0;
+    if(wr.k > L.steps.length || (wr.k === L.steps.length && writingNow())){ hush(); wr.k = L.steps.length; wr.phase = 'idle'; }
     beadsB.forEach((b, i) => { trayB.userData.inner.attach(b); b.position.copy(trayB.userData.cells[i]); b.scale.setScalar(1); });
     trayA.userData.inner.traverse(o => { if(o.isLineSegments) o.material = inkLine; }); trayGlow.material.opacity = 0;
     if(state.flap){ state.flap = false; flapPivot.rotation.x = 0; }
@@ -520,6 +687,7 @@ export async function mountBook(canvas, opts){
       if(h.object === leftPage && h.uv){
         const px = h.uv.x * PW, py = (1 - h.uv.y) * PH;
         const c = hits.choices.find(c => px >= c.x && px <= c.x + c.w && py >= c.y && py <= c.y + c.h);
+        if(writingNow()) return { kind: 'skip', i: c ? c.i : null };   // 쓰는 중에 쪽을 누르면 바로 다 써진다
         if(c) return { kind: 'choice', i: c.i };
         return null;
       }
@@ -535,6 +703,7 @@ export async function mountBook(canvas, opts){
   const onUp = e => {
     if(!down) return; const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y); down = null; if(moved > 10) return;
     const h = hitAt(e.clientX, e.clientY); if(!h) return;
+    if(h.kind === 'skip'){ finishWriting(); if(h.i != null) pick(h.i); return; }
     if(h.kind === 'book') open(); else if(h.kind === 'bead') moveBead(); else if(h.kind === 'flap') liftFlap(); else if(h.kind === 'choice') pick(h.i); else if(h.kind === 'full'){ emit('full'); nudge(trayA); }
   };
   let hoverRaf = 0;
@@ -553,11 +722,12 @@ export async function mountBook(canvas, opts){
     /* 시간은 벽시계로 — 느린 기기에서도 펼침·날아가기가 정해진 초 안에 끝난다(과학 탐구 랩 규칙과 같음) */
     raf = 0; const dt = Math.min(0.25, (now - last) / 1000); last = now;
     for(let i = tweens.length - 1; i >= 0; i--){ const tw = tweens[i]; tw.t += dt; const k = clamp01(tw.t / tw.dur); tw.fn(k); if(k >= 1){ tweens.splice(i, 1); tw.done && tw.done(); } }
+    writerTick(dt);
     for(let i = trail.length - 1; i >= 0; i--){ const s = trail[i]; s.userData.life -= dt; s.material.opacity = Math.max(0, s.userData.life / 0.55) * 0.7; s.scale.setScalar(0.12 * (0.5 + s.userData.life)); if(s.userData.life <= 0){ scene.remove(s); s.material.dispose(); trail.splice(i, 1); } }
     if(camT < 1){ camT = Math.min(1, camT + dt / 1.4); const k = smooth(camT); camNow.pos.lerpVectors(camFrom.pos, camTo.pos, k); camNow.tgt.lerpVectors(camFrom.tgt, camTo.tgt, k); }
     camera.position.copy(camNow.pos); camera.lookAt(camNow.tgt);
     renderer.render(scene, camera);
-    const active = tweens.length || trail.length || camT < 1 || flying;
+    const active = tweens.length || trail.length || camT < 1 || flying || writingNow();
     if(active) idleFrames = 0; else idleFrames++;
     if(idleFrames < 3 && !document.hidden) raf = requestAnimationFrame(frame);
   }
@@ -568,28 +738,30 @@ export async function mountBook(canvas, opts){
   drawLeft(); drawRight(); drawFlap(); placeFlap(); setLabels();
   openT = 0; popT = 0; applyOpen();
   const f0 = framing(); camNow.pos.copy(f0.pos); camNow.tgt.copy(f0.tgt); resize();
-  if(opts.startOpen){ state.open = true; openT = 1; popT = 1; applyOpen(); aimCamera(true); }
+  if(opts.startOpen){ state.open = true; openT = 1; popT = 1; applyOpen(); aimCamera(true); wr.k = L.steps.length; drawLeft(); }
   wake();
 
   return {
     get state(){ return Object.assign({}, state); },
-    get busy(){ return flying > 0 || tweens.length > 0 || queued > 0; },
+    get busy(){ return flying > 0 || tweens.length > 0 || queued > 0 || writingNow() || camT < 1; },
+    get writing(){ return writingNow(); },
+    finishWriting,
     open, close, reset, moveBead, liftFlap, pick,
     setView(v){ state.view = v; aimCamera(); },
-    setReduced(v){ reduced = !!v; },
-    setSound(v){ sound = !!v; },
+    setReduced(v){ reduced = !!v; if(reduced) finishWriting(); },
+    setSound(v){ sound = !!v; if(!sound) hush(); },
     render(){ wake(); },
-    get _debug(){ return { scene, renderer, sun, camera }; },   // 검사·문제 찾기용
+    get _debug(){ return { scene, renderer, sun, camera, hand: !!handImg, step: wr.k, steps: L.steps.length, phase: wr.phase }; },   // 검사·문제 찾기용
     /* 검사용: 이름으로 찾은 물건(노란 구슬 · 날개)의 화면 좌표 */
     _hit(x, y){ return hitAt(x, y); },
     _screenOf(kind){
-      const o = kind === 'flap' ? flap : beadsB[beadsB.length - 1 - state.moved];
+      const o = kind === 'flap' ? flap : kind === 'page' ? leftPage : beadsB[beadsB.length - 1 - state.moved];
       if(!o) return null; const v = new THREE.Vector3(); o.getWorldPosition(v);
-      if(kind === 'flap'){ const bb = new THREE.Box3().setFromObject(flap); bb.getCenter(v); }
+      if(kind === 'flap' || kind === 'page'){ const bb = new THREE.Box3().setFromObject(o); bb.getCenter(v); if(kind === 'page') v.z -= PAGE_H * 0.2; }
       v.project(camera); const r = canvas.getBoundingClientRect();
       return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height };
     },
-    dispose(){ disposed = true; cancelAnimationFrame(raf); ro.disconnect(); document.removeEventListener('visibilitychange', onVis);
+    dispose(){ disposed = true; hush(); cancelAnimationFrame(raf); ro.disconnect(); document.removeEventListener('visibilitychange', onVis);
       canvas.removeEventListener('pointerdown', onDown); canvas.removeEventListener('pointerup', onUp); canvas.removeEventListener('pointermove', onMove);
       disposables.forEach(d => d.dispose && d.dispose()); renderer.dispose(); }
   };

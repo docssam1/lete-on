@@ -107,8 +107,8 @@
 <div id="nogl" role="alert"><div><h1 id="noglTitle"></h1><p id="noglBody"></p><button type="button" id="noglText"></button><a href="access.html" id="noglBack"></a></div></div>
 <noscript><p style="position:fixed;inset:auto 0 0 0;padding:12px;background:#fff;text-align:center">마법책을 열려면 자바스크립트가 필요해요.</p></noscript>
 <script type="module">
-import { CONTENT, WORK, CORRECT_CHOICE } from './app/magicbook/content.js?v=20261027-book3';
-import { mountBook, supportsWebGL } from './app/magicbook/book3d.js?v=20261027-book3';
+import { CONTENT, WORK, CORRECT_CHOICE } from './app/magicbook/content.js?v=20261027-book4';
+import { mountBook, supportsWebGL } from './app/magicbook/book3d.js?v=20261027-book4';
 const Q = new URLSearchParams(location.search);
 const lang = ['ko','en','zh'].includes(Q.get('lang')) ? Q.get('lang') : 'ko', T = CONTENT[lang], U = T.ui;
 const $ = id => document.getElementById(id);
@@ -137,7 +137,10 @@ function syncBar(st){
 }
 function onChange(st, ev){
   syncBar(st);
-  if(ev.type === 'opened'){ say(U.opened); if(matchMedia('(max-aspect-ratio:17/20)').matches) ctl.setView('right'); }
+  /* 휴대폰(한 쪽씩): 펼치면 손이 쓰는 설명 쪽부터, 다 쓰면 그림 쪽으로 넘어간다(소피 책이 다음 장면으로 넘어가듯) */
+  const portrait = matchMedia('(max-aspect-ratio:17/20)').matches;
+  if(ev.type === 'opened'){ say(U.opened); if(portrait){ ctl.setView('left'); syncBar(ctl.state); } }
+  if(ev.type === 'written' && portrait && ctl) setTimeout(() => { if(ctl.state.view === 'left'){ ctl.setView('right'); syncBar(ctl.state); } }, 500);
   if(ev.type === 'pick') say(U.choicePicked(T.choices[st.choice]));
   if(ev.type === 'flap' && st.flap) say(U.flapOpened);
   if(ev.type === 'moved') say(T.status(st.moved));
