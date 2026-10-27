@@ -474,7 +474,7 @@ async function buildPilotWorksheet(page, pilot, expectedBeats, label, count = 1)
   await pilot.locator("input").check();
   await page.locator("#questionCount").fill(String(count));
   await page.locator("#questionCount").dispatchEvent("input");
-  await page.locator("#buildButton").click();
+  await page.locator("#buildButton").click(); await page.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
   assert.equal(await page.locator(".question-card").count(), count, `${label}: pilot question count mismatch`);
   assert.equal(await page.locator("#typePreview[hidden]").count(), 1, `${label}: preview remained over worksheet`);
   const tutorial = page.locator("#questionGrid .textbook-concept-tutorial.source-backed");

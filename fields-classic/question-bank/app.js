@@ -676,8 +676,7 @@ function renderCurriculum() {
         <div class="type-leaves">${typeRows}</div>
       </details>`;
     }).join("");
-    const testReadyCount = testQuestions.filter((question) => question.verified && isSelectableType(typeById(question.typeId))).length;
-    const testQuestionRows = testQuestions.length ? `<div class="unit-test-question-list" aria-label="${book.label} 단원 테스트 문항별 유사문제">
+    const testQuestionRows = testQuestions.length ? `<p class="unit-test-head"${hasQuery ? " hidden" : ""}><strong>단원 테스트</strong><span>문항을 고르면 유사문제로 나와요</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></p><div class="unit-test-question-list" aria-label="${book.label} 단원 테스트 문항별 유사문제">
       ${testQuestions.map((question) => {
         const item = typeById(question.typeId);
         const ready = question.verified && isSelectableType(item);
@@ -691,17 +690,8 @@ function renderCurriculum() {
     </div>` : "";
     return `<details class="tree-group curriculum-book" open>
       <summary><strong>${book.label} · ${book.title}</strong><span>교재 4단원 + 단원 테스트 25문항</span></summary>
-      <div class="curriculum-sources"${hasQuery ? " hidden" : ""}>
-        <div><strong>교재 본문 유사문제</strong><span>아래 단원 안에서 세부 유형별 선택</span></div>
-        <div><strong>교재 학습 단계</strong><span>개념·유형·연습·심화를 교재 원본 구조대로 유지</span></div>
-        <div><strong>골든벨 학습</strong><span>${book.source.goldenBellStatus === "ready" ? "개념 → 골든벨 → 이야기" : "준비 중"}</span><a class="source-view-link" href="./golden-bell.html?student=${encodeURIComponent(student)}&book=${book.id}">${book.source.goldenBellStatus === "ready" ? "학습 열기" : "진행 상태"}</a></div>
-        <div><strong>단원 테스트 원문</strong><span>${book.source.unitTest}</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></div>
-        <div><strong>단원 테스트 유사문제</strong><span>${testQuestions.length ? `25문항 중 ${testReadyCount}문항 원본 구조 검증 완료` : "문항별 유형 대조 후 연결"}</span><em>${testQuestions.length ? "문항별 선택" : "분석 중"}</em></div>
-        ${book.source.reviewSourceBookLabel ? `<div><strong>책 뒤 리뷰</strong><span>${book.source.reviewSourceBookLabel} 세부 유형의 복습·재출제 근거${book.source.reviewQuestionCount ? ` · ${book.source.reviewQuestionCount}문항` : ""}</span><em>${book.source.reviewVerified ? "문제번호 연결 완료" : "문제번호 연결 중"}</em></div>` : ""}
-      </div>
       ${testQuestionRows}
       <div class="curriculum-units">${units}</div>
-      <p class="book-policy">골든벨은 별도 개념 학습으로 연결${book.source.reviewSourceBookLabel ? ` · 리뷰는 ${book.source.reviewSourceBookLabel} 유형 복습으로 연결${book.source.reviewQuestionCount ? ` (${book.source.reviewQuestionCount}문항 대조)` : ""}` : " · 앞 권 리뷰 연결 없음"}</p>
     </details>`;
   }).join("");
   const emptyResult = hasQuery && !bookModels.length ? `<div class="search-empty"><strong>검색 결과가 없습니다.</strong><span>다른 낱말이나 단원 이름으로 찾아보세요.</span></div>` : "";
@@ -1087,9 +1077,9 @@ function problemSignature(problem) {
   return JSON.stringify([problem.reference, problem.type.id, problem.prompt, problem.visual || null, problem.image || null]);
 }
 
-function buildQuestions() {
+function makeQuestions() {
   let references = selectedReferences().filter((item) => isSelectableType(typeById(item.typeId)));
-  if (!references.length) return;
+  if (!references.length) return false;
   if (state.order === "domain") references.sort((a, b) => domainIndex[typeById(a.typeId).domain] - domainIndex[typeById(b.typeId).domain]);
   if (state.order === "mixed") references = shuffle(references);
   const counters = new Map();
@@ -1110,17 +1100,189 @@ function buildQuestions() {
   if (questions.some((problem) => !problem)) {
     state.questions = [];
     window.alert("문항을 끝까지 만들지 못했습니다. 같은 선택으로 다시 생성해 주세요.");
-    return;
+    return false;
   }
   state.questions = questions;
-  mountPrintTemplate();
-  printTemplatePanel.resetCoverText(printTemplateInfo(worksheetTitleText()));
-  renderWorksheet();
-  $("builderPanel").hidden = true;
-  $("worksheetSection").hidden = false;
+  coverFresh = true;
+  return true;
+}
+
+// 범위를 고른 뒤: 선생님은 2단계 상세 편집으로, 학생(유사문제 바로 풀기)은 곧바로 문제로.
+function buildQuestions() {
+  if (!makeQuestions()) return;
+  if (asStudent) showWorksheet(); else openEditor();
+}
+// 같은 범위로 새 문제(3단계에서) — 편집 화면을 거치지 않고 그 자리에서 다시 만든다
+function regenerateQuestions() {
+  if (makeQuestions()) showWorksheet();
+}
+
+// ── 단계 화면: 1 범위 선택 · 2 상세 편집 · 3 인쇄 설정 ──
+let coverFresh = false;
+function setStepView(step) {
+  $("builderPanel").hidden = step !== 1;
+  $("editorSection").hidden = step !== 2;
+  $("worksheetSection").hidden = step !== 3;
+  document.body.dataset.bankStep = String(step);
+  // 편집 화면을 떠나면 그 안의 문제 그림을 비운다(숨은 그림이 인쇄 화면의 그림과 겹쳐 세어지지 않게, 가볍게)
+  if (step !== 2) { $("edList").innerHTML = ""; $("edPane").innerHTML = ""; }
   // 인쇄 직전까지 부드러운 스크롤이 남으면 현재 스크롤 위치가 PDF에
   // 반영되어 시험지 머리글과 첫 문항 윗부분이 잘릴 수 있다.
   window.scrollTo({ top: 0, behavior: "auto" });
+}
+function showWorksheet() {
+  mountPrintTemplate();
+  if (coverFresh) { printTemplatePanel.resetCoverText(printTemplateInfo(worksheetTitleText())); coverFresh = false; }
+  renderWorksheet();
+  setStepView(3);
+}
+// 문항을 고치면 지금 보이는 단계 화면을 다시 그린다
+function refreshQuestions() {
+  if (!$("editorSection").hidden) renderEditor(); else renderWorksheet();
+}
+
+// ── 2단계 학습지 상세 편집(원장 2026-10-27 「박스에 막혀 있으면 안 돼」 — 매쓰플랫 상세 편집처럼) ──
+// 왼쪽: 단원 요약(문제 통계·문항 표) · 새 문제 추가(고른 유형마다 한 문제씩 미리 보고 추가) · 쌍둥이·유사(같은 유형 새 문제로 교체·추가)
+// 오른쪽: 선택한 문제 목록(삭제·쌍둥이). 아래: 난이도(단계)별 개수 · 문제 수 · 다음 단계(인쇄 설정).
+const editor = { tab: "summary", focus: 0, twins: [], twinLevel: null, adds: null, addLimit: 12 };
+const LEVEL_LABEL = { 1: "쉽게", 2: "같게", 3: "어렵게" };
+const MAX_QUESTIONS = 50;
+const levelLabel = (question) => question.studyStage ? question.studyStage.label : `${LEVEL_LABEL[question.generationDifficulty] || "같게"}`;
+function levelOrder() {
+  return state.mode === "curriculum" ? TEXTBOOK_STAGES.map((stage) => stage.label) : [1, 2, 3].map((n) => LEVEL_LABEL[n]);
+}
+function openEditor() {
+  Object.assign(editor, { tab: "summary", focus: 0, twins: [], twinLevel: null, adds: null, addLimit: 12 });
+  renderEditor();
+  setStepView(2);
+}
+function editorProblemMarkup(question) {
+  return `<p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>${worksheetVisualMarkup(question)}`;
+}
+function editorCardMarkup(question, index) {
+  const domain = DOMAINS.find((item) => item.id === question.type.domain);
+  const source = question.generationCase?.mode === "source";
+  return `<article class="ed-card${index === editor.focus ? " is-focus" : ""}" data-ed-card="${index}">
+    <header><b>${index + 1}</b><span>${escapeAttribute(question.type.label)}</span><small>${escapeAttribute(domain?.label || "")} · ${escapeAttribute(question.type.middle)}</small></header>
+    <div class="ed-card-body"><em class="ed-level">${escapeAttribute(levelLabel(question))}</em><div class="ed-q">${editorProblemMarkup(question)}</div>
+      <button type="button" class="ed-del" data-ed="remove" data-i="${index}" aria-label="${index + 1}번 문제 빼기" title="빼기" ${state.questions.length <= 1 ? "disabled" : ""}>🗑</button></div>
+    <footer>${source ? '<span class="ed-note">원문 문항</span>' : `<button type="button" data-ed="twin" data-i="${index}">쌍둥이 · 유사</button>`}</footer>
+  </article>`;
+}
+function levelCounts() {
+  const counts = new Map(levelOrder().map((label) => [label, 0]));
+  for (const question of state.questions) { const label = levelLabel(question); counts.set(label, (counts.get(label) || 0) + 1); }
+  return counts;
+}
+function renderEditorSummary() {
+  const counts = levelCounts(), max = Math.max(1, ...counts.values());
+  const types = new Set(state.questions.map((question) => question.type.id)).size;
+  return `<div class="ed-stat"><div class="ed-stat-total"><span>총 문제 수</span><b>${state.questions.length}<small>문제</small></b><span>유형 ${types}가지</span></div>
+    <div class="ed-bars">${[...counts].map(([label, n]) => `<div><span>${n}문제</span><i style="height:${Math.round((n / max) * 64) + 4}px"></i><small>${escapeAttribute(label)}</small></div>`).join("")}</div></div>
+    <table class="ed-table"><thead><tr><th>번호</th><th>단계</th><th>유형</th><th>순서</th></tr></thead><tbody>
+    ${state.questions.map((question, index) => `<tr data-ed-row="${index}" class="${index === editor.focus ? "is-focus" : ""}"><td>${index + 1}</td><td>${escapeAttribute(levelLabel(question))}</td><td>${escapeAttribute(question.type.label)}</td>
+      <td><button type="button" data-ed="up" data-i="${index}" aria-label="위로" ${index === 0 ? "disabled" : ""}>↑</button><button type="button" data-ed="down" data-i="${index}" aria-label="아래로" ${index === state.questions.length - 1 ? "disabled" : ""}>↓</button></td></tr>`).join("")}
+    </tbody></table>`;
+}
+// 같은 유형의 새 문제 몇 개(지금 목록에 없는 것)
+function twinCandidates(question, level, count = 3) {
+  const taken = new Set(state.questions.map(problemSignature)), out = [];
+  for (let attempt = 0; attempt < 160 && out.length < count; attempt += 1) {
+    const candidate = generatedProblem(question.type, attempt + out.length * 7, question.reference, null, attempt, level ?? question.generationDifficulty, question.classification, question.generationCase);
+    if (!candidate) continue;
+    const signature = problemSignature(candidate);
+    if (taken.has(signature)) continue;
+    taken.add(signature);
+    out.push(candidate);
+  }
+  return out;
+}
+function renderEditorTwin() {
+  const question = state.questions[editor.focus];
+  if (!question) return '<p class="ed-empty">오른쪽 목록에서 문제의 「쌍둥이 · 유사」를 눌러요.</p>';
+  if (question.generationCase?.mode === "source") return `<p class="ed-empty">${editor.focus + 1}번은 원문 문항이라 쌍둥이 문제를 만들지 않아요.</p>`;
+  if (!editor.twins.length) editor.twins = twinCandidates(question, editor.twinLevel);
+  const levels = state.mode === "curriculum" ? "" : `<div class="ed-levels" role="group" aria-label="난이도">${[1, 2, 3].map((n) => `<button type="button" data-ed="twin-level" data-level="${n}" aria-pressed="${(editor.twinLevel ?? question.generationDifficulty) === n}">${LEVEL_LABEL[n]}</button>`).join("")}</div>`;
+  return `<div class="ed-pane-head"><div><strong>${editor.focus + 1}번 쌍둥이 · 유사문제</strong><span>같은 유형의 새 문제로 바꾸거나 더할 수 있어요.</span></div><button type="button" data-ed="twin-refresh">새로 불러오기</button></div>${levels}
+    ${editor.twins.length ? editor.twins.map((candidate, k) => `<article class="ed-cand"><header><b>${k + 1}</b><span>${escapeAttribute(candidate.type.label)}</span><em>${escapeAttribute(levelLabel(candidate))}</em>
+      <button type="button" data-ed="twin-swap" data-k="${k}">⇄ 교체</button><button type="button" data-ed="twin-add" data-k="${k}">＋ 추가</button></header><div class="ed-q">${editorProblemMarkup(candidate)}</div></article>`).join("") : '<p class="ed-empty">새 문제를 만들지 못했어요. 「새로 불러오기」를 눌러요.</p>'}`;
+}
+// 새 문제 추가: 고른 범위의 유형마다 한 문제씩
+function addCandidates() {
+  const seen = new Set(), list = [];
+  for (const reference of selectedReferences()) {
+    const item = typeById(reference.typeId);
+    if (!isSelectableType(item) || seen.has(item.id) || reference.generationCase?.mode === "source") continue;
+    seen.add(item.id);
+    list.push(reference);
+  }
+  return list;
+}
+function addProblem(reference, attempt = 0) {
+  const item = typeById(reference.typeId), taken = new Set(state.questions.map(problemSignature));
+  for (let k = 0; k < 60; k += 1) {
+    const candidate = generatedProblem(item, attempt * 61 + k, reference.reference, null, attempt * 61 + k, reference.difficulty, reference.classification, reference.generationCase);
+    if (candidate && !taken.has(problemSignature(candidate))) return candidate;
+  }
+  return null;
+}
+function renderEditorAdd() {
+  if (!editor.adds) editor.adds = addCandidates().map((reference) => ({ reference, problem: null, attempt: 0 }));
+  const shown = editor.adds.slice(0, editor.addLimit);
+  for (const entry of shown) if (!entry.problem) entry.problem = addProblem(entry.reference, entry.attempt);
+  return `<div class="ed-pane-head"><div><strong>새 문제 추가</strong><span>고른 범위의 유형 ${editor.adds.length}가지 · 유형마다 한 문제씩 보여 줘요.</span></div></div>
+    ${shown.map((entry, k) => entry.problem ? `<article class="ed-cand"><header><b>${k + 1}</b><span>${escapeAttribute(entry.problem.type.label)}</span><em>${escapeAttribute(levelLabel(entry.problem))}</em>
+      <button type="button" data-ed="add-other" data-k="${k}">↻ 다른 문제</button><button type="button" data-ed="add" data-k="${k}">＋ 추가</button></header><div class="ed-q">${editorProblemMarkup(entry.problem)}</div></article>` : "").join("")}
+    ${editor.adds.length > editor.addLimit ? `<button type="button" class="ed-more" data-ed="add-more">유형 더 보기 (${editor.adds.length - editor.addLimit}가지 남음)</button>` : ""}`;
+}
+function renderEditor() {
+  if (editor.focus >= state.questions.length) editor.focus = Math.max(0, state.questions.length - 1);
+  document.querySelectorAll("[data-ed-tab]").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.edTab === editor.tab)));
+  $("edPane").innerHTML = editor.tab === "add" ? renderEditorAdd() : editor.tab === "twin" ? renderEditorTwin() : renderEditorSummary();
+  $("edList").innerHTML = state.questions.map(editorCardMarkup).join("");
+  const counts = levelCounts();
+  $("edStats").textContent = [...counts].filter(([, n]) => n).map(([label, n]) => `${label} ${n}`).join(" · ");
+  $("edTotal").textContent = `문제 수 ${state.questions.length}개`;
+  $("edListMeta").textContent = worksheetTitleText();
+}
+function editorInsert(problem, at = state.questions.length) {
+  if (!problem) return;
+  if (state.questions.length >= MAX_QUESTIONS) { window.alert(`학습지에는 ${MAX_QUESTIONS}문제까지 넣을 수 있어요.`); return; }
+  state.questions.splice(at, 0, problem);
+  syncQuestionCountControls();
+}
+function focusCard(index) {
+  editor.focus = index;
+  renderEditor();
+  $("edList").querySelector(`[data-ed-card="${index}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+function initEditor() {
+  document.querySelector(".ed-tabs").addEventListener("click", (event) => {
+    const tab = event.target.closest("[data-ed-tab]");
+    if (!tab) return;
+    editor.tab = tab.dataset.edTab;
+    renderEditor();
+  });
+  $("editorSection").addEventListener("click", (event) => {
+    const row = event.target.closest("[data-ed-row]");
+    const button = event.target.closest("[data-ed]");
+    if (!button) { if (row) focusCard(Number(row.dataset.edRow)); const card = event.target.closest("[data-ed-card]"); if (card && !row) { editor.focus = Number(card.dataset.edCard); renderEditor(); } return; }
+    if (button.disabled) return;
+    const i = Number(button.dataset.i), k = Number(button.dataset.k), act = button.dataset.ed;
+    if (act === "remove") { removeQuestion(i); return; }
+    if (act === "up" || act === "down") { const to = act === "up" ? i - 1 : i + 1; moveQuestion(i, to); editor.focus = to; renderEditor(); return; }
+    if (act === "twin") { editor.focus = i; editor.tab = "twin"; editor.twins = []; editor.twinLevel = null; renderEditor(); return; }
+    if (act === "twin-refresh") { editor.twins = []; renderEditor(); return; }
+    if (act === "twin-level") { editor.twinLevel = Number(button.dataset.level); editor.twins = []; renderEditor(); return; }
+    if (act === "twin-swap") { state.questions[editor.focus] = editor.twins[k]; editor.twins.splice(k, 1); renderEditor(); return; }
+    if (act === "twin-add") { editorInsert(editor.twins[k], editor.focus + 1); editor.twins.splice(k, 1); renderEditor(); return; }
+    if (act === "add") { const entry = editor.adds[k]; editorInsert(entry.problem); entry.attempt += 1; entry.problem = null; renderEditor(); $("edList").lastElementChild?.scrollIntoView({ block: "nearest", behavior: "smooth" }); return; }
+    if (act === "add-other") { const entry = editor.adds[k]; entry.attempt += 1; entry.problem = null; renderEditor(); return; }
+    if (act === "add-more") { editor.addLimit += 12; renderEditor(); }
+  });
+  $("edPrev").addEventListener("click", () => setStepView(1));
+  $("edClose").addEventListener("click", () => setStepView(1));
+  $("edNext").addEventListener("click", showWorksheet);
 }
 
 function syncQuestionCountControls() {
@@ -1136,7 +1298,7 @@ function moveQuestion(fromIndex, toIndex) {
   if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= state.questions.length || toIndex >= state.questions.length) return;
   const [question] = state.questions.splice(fromIndex, 1);
   state.questions.splice(toIndex, 0, question);
-  renderWorksheet();
+  refreshQuestions();
 }
 
 function replaceQuestion(index) {
@@ -1158,7 +1320,7 @@ function replaceQuestion(index) {
     return;
   }
   state.questions[index] = replacement;
-  renderWorksheet();
+  refreshQuestions();
 }
 
 function removeQuestion(index) {
@@ -1168,7 +1330,7 @@ function removeQuestion(index) {
   }
   state.questions.splice(index, 1);
   syncQuestionCountControls();
-  renderWorksheet();
+  refreshQuestions();
 }
 
 function bindQuestionEditor() {
@@ -3325,8 +3487,10 @@ function initControls() {
   $("solutionToggle").addEventListener("change", (event) => { state.includeSolution = event.target.checked; });
   $("watermarkToggle").addEventListener("change", (event) => { state.watermark = event.target.checked; });
   $("buildButton").addEventListener("click", buildQuestions);
-  $("backToBuilder").addEventListener("click", () => { $("worksheetSection").hidden = true; $("builderPanel").hidden = false; });
-  $("regenerateButton").addEventListener("click", buildQuestions);
+  $("backToBuilder").addEventListener("click", () => { renderEditor(); setStepView(2); });
+  $("regenerateButton").addEventListener("click", regenerateQuestions);
+  initEditor();
+  document.body.dataset.bankStep = "1";
   $("answerButton").addEventListener("click", openAnswers);
   $("printButton").addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "auto" });

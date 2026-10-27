@@ -62,7 +62,7 @@ try {
       for (const key of enabledKeys) await page.locator(`[data-unit-test-key="${key}"]`).check();
       await page.locator("#questionCount").fill(String(expected.length));
       await page.locator("#questionCount").dispatchEvent("change");
-      await page.locator("#buildButton").click();
+      await page.locator("#buildButton").click(); await page.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
       await page.locator("#worksheetSection").waitFor({ state: "visible" });
       const cards = page.locator(".question-card");
       assert.equal(await cards.count(), expected.length);

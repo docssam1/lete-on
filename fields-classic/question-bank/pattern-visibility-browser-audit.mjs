@@ -42,7 +42,7 @@ try {
       }, auditCase.typeId);
       await page.locator("#questionCount").fill("1");
       await page.locator("#questionCount").dispatchEvent("change");
-      await page.locator("#buildButton").click();
+      await page.locator("#buildButton").click(); await page.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
       await page.locator("#worksheetSection").waitFor({ state: "visible", timeout: 30000 });
 
       const nodes = page.locator(`.question-card[data-type-id="${auditCase.typeId}"] ${auditCase.selector}`);

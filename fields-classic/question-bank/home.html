@@ -7,7 +7,7 @@
   <meta name="description" content="Gifted Math Bank — 보고 배우고(사고력 게임), 공부하고(개념 학습), 완성하기(사고력 문제은행)." />
   <title>Gifted Math Bank</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./home.css?v=20261024f" />
+  <link rel="stylesheet" href="./home.css?v=20261027a" />
 </head>
 <body class="hm">
   <!-- 첫 화면(원장 2026-10-24 「그냥 심플하게」, GDWEB 지학사 2022 개정교과서 참고): 검은 바탕 · WELCOME TO · 뒤에 얇은 큰 글자 · 기울어진 카드 셋 · 아래에 실제 화면 숏릴과 설명 -->
@@ -24,12 +24,14 @@
       </nav>
     </section>
 
-    <!-- 숏릴: 실제 화면을 그대로 찍은 35초(게임 5개 → 개념 학습 → 문제은행). 자막은 영상 시간에 맞춰 바뀐다. -->
+    <!-- 숏릴: 실제 화면을 그대로 찍은 26초(게임 4개 → 독쌤 칠판 → 골든벨 → 오늘 공부 고르기). 음악·효과음은 영상 안에(처음엔 소리 꺼짐), 큰 글씨는 장면에 맞춰 바뀐다. 다시 찍기: tools/home-reel/record.cjs -->
     <section class="hm-reel" aria-labelledby="reelTitle">
       <h2 id="reelTitle" class="hm-sr">실제 화면 보기</h2>
       <figure class="hm-screen">
         <video id="reel" muted loop playsinline autoplay preload="metadata" poster="./assets/front/reel-poster.jpg" width="960" height="618"><source src="./assets/front/reel.mp4" type="video/mp4" /></video>
+        <p class="hm-say" id="reelSay" aria-hidden="true">손으로 뒤집어 보고</p>
         <figcaption id="reelCap"><em>보고 배우고</em><span>뒤집고 돌리기 공방</span></figcaption>
+        <button type="button" class="hm-play hm-sound" id="reelSound" aria-pressed="false" aria-label="소리 켜기">🔇</button>
         <button type="button" class="hm-play" id="reelPlay" aria-pressed="true" aria-label="영상 멈추기">❚❚</button>
       </figure>
       <ol class="hm-three">
@@ -41,6 +43,6 @@
   </main>
 
   <footer class="hm-foot">GFIELD GIFTED EDUCATION</footer>
-  <script type="module" src="./home.js?v=20261024t"></script>
+  <script type="module" src="./home.js?v=20261027b"></script>
 </body>
 </html>

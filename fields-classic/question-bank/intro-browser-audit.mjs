@@ -22,7 +22,7 @@ async function captureProductImages(page) {
   await type.locator("input").check();
   await page.locator("#questionCount").fill("4");
   await page.locator("#questionCount").dispatchEvent("change");
-  await page.locator("#buildButton").click();
+  await page.locator("#buildButton").click(); await page.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
   await page.locator("#worksheetSection").screenshot({ path: path.join(assetDir, "question-bank-sheet.webp"), type: "webp", quality: 86 });
 }
 

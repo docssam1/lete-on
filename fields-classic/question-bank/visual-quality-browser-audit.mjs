@@ -62,7 +62,7 @@ try {
       if (difficulty) await page.locator(`#difficultyChoices button[data-level="${difficulty}"]`).click();
       await page.locator("#questionCount").fill(String(questionCount));
       await page.locator("#questionCount").dispatchEvent("change");
-      await page.locator("#buildButton").click();
+      await page.locator("#buildButton").click(); await page.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
       const cards = page.locator(`.question-card[data-type-id="${typeId}"]`);
       const card = cards.first();
       await card.waitFor({ state: "visible", timeout: 30000 });
