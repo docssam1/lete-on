@@ -7,6 +7,7 @@
 - 올라온 것: 커밋 `72159610` 「독쌤 음성: 손글씨 판서 97줄」 · `79042f2d` 「독쌤 음성: 사이언스 랩 188줄」(둘 다 2026-10-26 01:32).
   - `science-lab/audio/docssam/manifest.json`의 `files` 405개, 그중 `fcb-` 97개 = 1권 5개 차시 분량.
 - **남은 것: 판서(`fcb-`) 1,667줄. 사이언스 랩은 0줄 — 다 끝났다.**
+- **추가(2026-10-28): 스스로 공부 덱 대사(`fcs-`) 207줄** — `fields-classic/question-bank/data/voice/study-deck.voice.json`. 같은 생성기가 같은 폴더를 읽으므로 따로 할 일은 없다(판서와 같이 만들어진다). 덱 대사를 고치면 `node fields-classic/question-bank/tools/export-study-voice.mjs`로 목록을 다시 만든다.
   - `python scripts/check-docssam-voice.py` 마지막 줄이 `빠진 독쌤 음성: 1667줄`, 전부 `boards.voice.json`.
   - 판서 전체는 1,764줄(126개 차시). 97 + 1,667 = 1,764.
 - 97줄에서 왜 멈췄는지는 기록이 없다. **먼저 원인을 확인하고 보고한다**(중간에 창을 닫았는지, 메모리 부족인지, CER 검사에서 빠진 것인지). `.docssam-work\report.json`이 남아 있으면 거기부터 본다.
