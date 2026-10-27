@@ -172,7 +172,9 @@
       const booksReady=s.route==='book'&&s.completedBooks.length>0&&s.completedBooks.length<=8&&bookChoices.length===s.completedBooks.length;
       const single=s.route==='book'&&booksReady&&bookChoices.length===1?bookChoices[0]:null;
       const resolved=single&&books?books.resolve(single.row.series,single.row.step,s.progress,single.row.editionId):null;
-      const candidate=s.route==='book'?(resolved&&resolved.baselineId||null):s.route==='unlearned'?'f-count5':s.baselineId||(gradeStage&&bandOf(gradeStage)===s.studyBand?gradeStage.id:null)||stages.find(x=>bandOf(x)===s.studyBand)?.id;
+      // 진도를 고르지 않은 미취학은 나이로 첫 기초 칸을 채운다(5세 수 세기 · 6세 가르기 · 7세 10의 짝꿍, data/placement-paths.js).
+      const preschoolStage=!gradeStage&&s.studyBand==='foundation'&&profileReady&&window.NM_PLACEMENT_PATHS?window.NM_PLACEMENT_PATHS.startingPoint({route:'age',age:s.age}):null;
+      const candidate=s.route==='book'?(resolved&&resolved.baselineId||null):s.route==='unlearned'?'f-count5':s.baselineId||(gradeStage&&bandOf(gradeStage)===s.studyBand?gradeStage.id:null)||preschoolStage||stages.find(x=>bandOf(x)===s.studyBand)?.id;
       const mayChoose=profileReady&&(s.route==='book'?booksReady:!!candidate);
       // A paper uses either one selected book or an explicit mix of supported
       // completed books. A manual app scope overrides that book choice.
