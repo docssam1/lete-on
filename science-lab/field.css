@@ -130,3 +130,10 @@ body.field-on { overflow: hidden; }
 .fd-right .fd-note { max-width: none; }
 /* 태블릿 폭에서는 보고서 쪽을 조금 넓게(글씨가 너무 작아지지 않게) */
 @media (min-width: 761px) and (max-width: 1280px) { .fd-split { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); } }
+
+/* 같이 그리기: 3D 위로 올라오는 종이 한 장(표본이 누운 자리) — 손이 크게 그린다 */
+.fd-sheet { position: absolute; left: 50%; top: 47%; z-index: 3; width: min(90%, 640px); padding: 10px 14px 14px; border-radius: 6px; background: #fbf6ea; box-shadow: 0 14px 34px rgba(0, 0, 0, .38); transform: translate(-50%, -50%) rotate(-1.2deg); animation: fd-sheet-in .55s cubic-bezier(.2, .9, .3, 1); }
+.fd-sheet h4 { margin: 0 0 6px; font-size: 15px; color: #6b5a2e; }
+.fd-sheet .pz-wrap svg { display: block; width: 100%; height: auto; }
+@keyframes fd-sheet-in { from { opacity: 0; transform: translate(-50%, -38%) rotate(-4deg); } to { opacity: 1; transform: translate(-50%, -50%) rotate(-1.2deg); } }
+
