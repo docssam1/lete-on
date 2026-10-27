@@ -120,6 +120,13 @@ body.field-on { overflow: hidden; }
 @keyframes fd-stamp { from { transform: rotate(-14deg) scale(2.4); opacity: 0; } to { transform: rotate(-14deg) scale(1); opacity: 1; } }
 /* 지도: 도장 받은 장소 표 · 도장 수 */
 .fd-stamps { position: absolute; left: 140px; top: 12px; z-index: 5; padding: 7px 14px; border-radius: 999px; background: rgba(255, 250, 240, .92); color: #c0392b; font-weight: 800; font-size: 14px; box-shadow: 0 2px 8px rgba(0, 0, 0, .2); }
-.pm-map .pk-pin.stamped .pk-tag::after { content: '✓'; position: absolute; right: -10px; top: -10px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #c0392b; color: #c0392b; background: #fff8ef; font-size: 13px; font-weight: 900; display: flex; align-items: center; justify-content: center; transform: rotate(-12deg); }
-.pm-map .pk-pin .pk-tag { position: relative; }
+.pm-map .pk-pin.stamped .pk-tag::before { content: '✓'; position: absolute; right: -10px; top: -10px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #c0392b; color: #c0392b; background: #fff8ef; font-size: 13px; font-weight: 900; display: flex; align-items: center; justify-content: center; transform: rotate(-12deg); }
 
+/* 지도 표 이름: 넓게 볼 때는 짧은 이름(긴 이름끼리 겹쳤다 — 원장 태블릿 화면), 확대하면 긴 이름 */
+.pm-view.field:not(.zoomed) .pk-tag .full { display: none; }
+.pm-view.field:not(.zoomed) .pk-tag .short { display: inline; }
+/* 오른쪽 예시 보고서는 860px 종이 그대로 두고 칸 폭에 맞게 줄인다(field.js가 --fz를 정함) — 좁은 화면에서 오른쪽이 잘렸다 */
+.fd-right .rp-sheet { width: 860px; max-width: none; zoom: var(--fz, 1); }
+.fd-right .fd-note { max-width: none; }
+/* 태블릿 폭에서는 보고서 쪽을 조금 넓게(글씨가 너무 작아지지 않게) */
+@media (min-width: 761px) and (max-width: 1280px) { .fd-split { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); } }
