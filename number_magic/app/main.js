@@ -529,7 +529,7 @@ window.NM_GATE={trialUnitSet,isTrialUnit,unitLocked,accountActive,externalBlocke
 function accountActive(){
   if(REVIEW)return NM_REVIEW_SESSION.active();
   if(window.NM_ENTRY?.mode==='preview')return false;
-  if(membership&&guardianAuth?.peek())return S.cloudLinked&&S.cloudOwnerId===guardianAuth.peek().user.id&&!guardianAuth.requiresPassword()&&membership.contactReady()&&membership.canUse();
+  if(membership&&guardianAuth?.peek())return !!(S.cloudLinked&&S.cloudOwnerId===guardianAuth.peek().user.id&&!guardianAuth.requiresPassword()&&membership.contactReady()&&membership.canUse());
   return !S.guardianManaged&&!!(S.account&&S.account.status==='active'); // preserve local approvals only until guardian enrollment
 }
 function unitLocked(uid){return !accountActive()&&!isTrialUnit(uid);}

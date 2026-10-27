@@ -11,22 +11,25 @@ const server=http.createServer((req,res)=>{const file=path.resolve(ROOT,'.'+deco
 const localDay=ms=>{const d=new Date(ms);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
 function seed(lang,ready){const events=[];if(ready)for(let i=0;i<4;i++){const ts=Date.now()-(20-i*6)*86400000;events.push({id:'fixture-'+i,kind:'session',at:ts,day:localDay(ts),course:'C1',session:i+1,minutes:20,whole:true,source:'adult-confirmed',total:20,correct:20});}
  return {lang,onboarded:true,name:'기록 검수 가상',character:{number:3,color:'blue'},progress:{'A-02':{introSeen:true,steps:{}}},coins:123,roadAmount:1.25,roadSpeed:.85,roadCadence:'w2',account:{status:'active'},cloudLinked:false,studyLog:{version:1,events}};}
-const load=page=>page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')));
+const load=page=>page.evaluate(()=>JSON.parse(localStorage.getItem('nm_preview_state_v1')));
 async function panel(page){
- await page.selectOption('#pdLevel','a6');await page.locator('.pd-selection details summary').click();await page.selectOption('#pdBaseline','c1');await page.click('#pdStart');
+ await page.selectOption('#pdLevel','a6');await page.click('[data-route=age]');await page.selectOption('#pdStudyBand','elementary');await page.selectOption('#pdBaseline','c1');await page.click('#pdStart');
  for(let i=0;i<20;i++)await page.click('#pdSkip');await page.click('#pdRoad');await page.locator('.pd-route-planner > summary').click();
 }
 async function noOverflow(page){assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'no horizontal viewport overflow');}
+// app/entry.js admits index.html only once per hand-off from access.html; 「가입 전에 체험하기」 grants a preview
+// (app/access.js grant('preview')), whose learner record lives in nm_preview_state_v1.
+async function openPreview(page,base){await page.goto(base+'/number_magic/access.html');await page.evaluate(()=>sessionStorage.setItem('nm_entry_once_v1',JSON.stringify({mode:'preview',at:Date.now(),userId:null})));await page.goto(base+'/number_magic/index.html?enter=1');}
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;let browser;const report=[];
 try{browser=await chromium.launch({headless:true,args:WEBGL?['--enable-unsafe-swiftshader']:['--disable-3d-apis','--disable-webgl','--disable-webgl2']});
 for(const lang of (WEBGL?['ko']:['ko','en','zh']))for(const width of (WEBGL?[1280]:[390,1280])){
  const ready=lang==='ko'&&width===1280,ctx=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'}),page=await ctx.newPage(),errors=[];
  page.on('pageerror',e=>errors.push(e.message));await ctx.route('**/*',r=>new URL(r.request().url()).origin===base&&['GET','HEAD'].includes(r.request().method())?r.continue():r.abort());
- await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1')){localStorage.setItem('nm_state_v1',JSON.stringify(s));localStorage.setItem('nm_thread_stats_v1',JSON.stringify({NS1:[{ts:Date.now(),rate:1,total:999,correct:999,level:1}]}));}},seed(lang,ready));
+ await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_preview_state_v1')){localStorage.setItem('nm_preview_state_v1',JSON.stringify(s));localStorage.setItem('nm_thread_stats_v1',JSON.stringify({NS1:[{ts:Date.now(),rate:1,total:999,correct:999,level:1}]}));}},seed(lang,ready));
  try{
   await page.addLocatorHandler(page.locator('#nmUnlockOverlayClose'),async el=>el.click(),{noWaitAfter:true});
-  await page.goto(base+'/number_magic/index.html?enter=1');await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await page.waitForSelector('#pdLevel');
-  const protectedBefore=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return JSON.stringify({progress:s.progress,coins:s.coins,amount:s.roadAmount,speed:s.roadSpeed,cad:s.roadCadence});});
+  await openPreview(page,base);await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await page.waitForSelector('#pdLevel');
+  const protectedBefore=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_preview_state_v1'));return JSON.stringify({progress:s.progress,coins:s.coins,amount:s.roadAmount,speed:s.roadSpeed,cad:s.roadCadence});});
   await panel(page);
   assert.equal(await page.locator('.pd-session-form').count(),1);assert.equal(await page.locator('.pd-projection-form .pd-session-form').count(),0,'completion and projection forms must not be nested');
   assert.equal(await page.locator('[name="rampWeeks"]').getAttribute('min'),'2');
@@ -59,15 +62,15 @@ for(const lang of (WEBGL?['ko']:['ko','en','zh']))for(const width of (WEBGL?[128
    await page.click('#nm-ws-grade');assert.equal((await load(page)).studyLog.events.length,2,'repeat grade is not another observation');
    await page.click('#nm-ws-reroll');await page.click('#nm-ws-grade');assert.equal((await load(page)).studyLog.events.length,3);assert.equal((await load(page)).studyLog.events[2].answered,0);
    await page.click('#nm-ws-back');assert.equal(await page.evaluate(()=>!!document.getElementById('screen').__nmStudyClock),false,'clock listeners cleaned up on exit');
-   await page.reload();await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await page.waitForSelector('#pdLevel');await panel(page);
+   await openPreview(page,base);await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await page.waitForSelector('#pdLevel');await panel(page);
    assert.equal((await load(page)).studyLog.events.length,3);assert.deepEqual((await load(page)).studyGoal,goal);assert.equal(await page.locator('.pd-projection-form [name="startSession"]').inputValue(),'2');
    // Storage-full injection: no false saved message and no in-memory duplicate lock.
-   await page.evaluate(()=>{window.__storageSet=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='nm_state_v1')throw new DOMException('fixture-full','QuotaExceededError');return window.__storageSet.call(this,k,v);};});
+   await page.evaluate(()=>{window.__storageSet=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='nm_preview_state_v1')throw new DOMException('fixture-full','QuotaExceededError');return window.__storageSet.call(this,k,v);};});
    await page.locator('.pd-session-confirm > summary').click();const fail=page.locator('.pd-session-form');await fail.locator('[name="session"]').fill('2');await fail.locator('[name="minutes"]').fill('20');await fail.locator('[name="whole"]').check();await fail.locator('button[type="submit"]').click();
    assert.match(await fail.locator('[role="status"]').textContent(),/저장하지 못/);assert.equal(await page.evaluate(()=>window.NM_STUDY_RECORDS.snapshot().studyLog.events.length),3);
    await page.evaluate(()=>Storage.prototype.setItem=window.__storageSet);await fail.locator('button[type="submit"]').click();assert.equal((await load(page)).studyLog.events.length,4);
   }
-  const protectedAfter=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return JSON.stringify({progress:s.progress,coins:s.coins,amount:s.roadAmount,speed:s.roadSpeed,cad:s.roadCadence});});assert.equal(protectedAfter,protectedBefore);
+  const protectedAfter=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_preview_state_v1'));return JSON.stringify({progress:s.progress,coins:s.coins,amount:s.roadAmount,speed:s.roadSpeed,cad:s.roadCadence});});assert.equal(protectedAfter,protectedBefore);
   assert.deepEqual(errors,[]);report.push({lang,width,ready,webgl:WEBGL,protectedStateUnchanged:true,errors});
  }catch(e){await page.screenshot({path:path.join(OUT,'failure-'+lang+'-'+width+'.png')});fs.writeFileSync(path.join(OUT,'failure-dom.txt'),await page.locator('body').innerText());throw e;}finally{await ctx.close();}
 }
