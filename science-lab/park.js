@@ -1,6 +1,6 @@
 // 자연관찰 공원 지도 — 자연관찰대회 폴더(#/contest/nature) 맨 위.
 // 원장 2026-10-25: 「페이지에 들어오면 전체 지도가 줌인되면서 시작」 · 「두 친구의 아바타는? 돌아다니는 거 아니야?」.
-// 전체 조감도 → 나래·도윤이 입구에서 광장으로 걸어 들어오고 지도는 광장 쪽으로 확대 → 지점마다 점 + 말꼬리 표.
+// 전체 조감도 → 유빈·유준이 입구에서 광장으로 걸어 들어오고 지도는 광장 쪽으로 확대 → 지점마다 점 + 말꼬리 표.
 // 표를 누르면 두 아이가 길을 따라 그 자리로 걸어가고(확대해 있으면 지도가 따라감), 도착하면 둘이 물음을 주고받고 그 자리의 관찰(연습 세트)이 열린다.
 // 끌어서 둘러보기 · Ctrl+휠/두 손가락으로 확대 · 「전체 지도」로 다시 전체. 그림·좌표·길은 data/park-map.js. 표와 아이들은 그림을 확대해도 크기가 거의 그대로다.
 import { PARK } from './data/park-map.js';
@@ -15,14 +15,14 @@ const CIRCLED = '①②③④⑤⑥⑦⑧⑨⑩';
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 // 두 아이(탐구 짝)가 그 자리에서 떠올린 물음 — 관찰의 출발점. 답은 연습 세트에서 직접 확인한다.
 const ASK = {
-  gate: ['나래', '오늘 과제는 어디서 받아?', '도윤', '안내부터 읽자. 시간·내는 것·심사 기준!'],
-  pond: ['나래', '수련 잎은 왜 물에 안 가라앉지?', '도윤', '잎자루를 잘라 보면 알 수 있을까?'],
-  meadow: ['도윤', '그늘엔 갈색 곤충, 햇빛엔 연두색 곤충?', '나래', '두 곳을 같은 방법으로 재 보자.'],
-  flowers: ['나래', '국화랑 장미, 잎이 줄기에 붙는 차례가 달라!', '도윤', '마디마다 몇 장인지 세어 보자.'],
-  litter: ['나래', '낙엽 아래 흙은 왜 이렇게 축축하지?', '도윤', '맨땅이랑 같은 틀로 흙 속 동물을 세어 보자.'],
-  leaves: ['도윤', '이 두 잎, 눈으론 구분이 안 돼.', '나래', '길이랑 폭을 재서 비율로 바꿔 보자.'],
+  gate: ['유빈', '오늘 과제는 어디서 받아?', '유준', '안내부터 읽자. 시간·내는 것·심사 기준!'],
+  pond: ['유빈', '수련 잎은 왜 물에 안 가라앉지?', '유준', '잎자루를 잘라 보면 알 수 있을까?'],
+  meadow: ['유준', '그늘엔 갈색 곤충, 햇빛엔 연두색 곤충?', '유빈', '두 곳을 같은 방법으로 재 보자.'],
+  flowers: ['유빈', '국화랑 장미, 잎이 줄기에 붙는 차례가 달라!', '유준', '마디마다 몇 장인지 세어 보자.'],
+  litter: ['유빈', '낙엽 아래 흙은 왜 이렇게 축축하지?', '유준', '맨땅이랑 같은 틀로 흙 속 동물을 세어 보자.'],
+  leaves: ['유준', '이 두 잎, 눈으론 구분이 안 돼.', '유빈', '길이랑 폭을 재서 비율로 바꿔 보자.'],
 };
-const HELLO = ['나래', '와, 대회장이다! 어디부터 가 볼까?', '도윤', '말꼬리 표를 누르면 같이 걸어갈게.'];
+const HELLO = ['유빈', '와, 대회장이다! 어디부터 가 볼까?', '유준', '말꼬리 표를 누르면 같이 걸어갈게.'];
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const key = (p) => `${p[0]},${p[1]}`;
 
@@ -32,7 +32,7 @@ export function mountPark($host) {
       <div class="pm-map"><img class="pm-img" alt="" draggable="false">
         ${PARK.spots.map((p) => `<button type="button" class="pk-pin" data-spot="${p.id}" aria-label="${esc(p.name)}"><span class="pk-tag"><i>${p.icon}</i><b class="full">${esc(p.name)}</b><b class="short">${esc(p.short)}</b></span><span class="pk-dot"></span></button>`).join('')}
         ${Object.keys(PARK.npcs || {}).filter((id) => NPC_CAST[id]).map((id) => `<div class="pk-npc" data-npc="${id}"><canvas width="132" height="120" aria-hidden="true"></canvas><button type="button" class="pk-nhit" aria-label="${esc(NPC_LINES[id]?.who || '')}에게 말 걸기"></button><div class="pk-nsay${NPC_LINES[id]?.near ? ' safe' : ''}" hidden></div></div>`).join('')}
-        <div class="pk-kids" aria-hidden="true"><div class="pk-say" hidden></div><div class="pk-kid3d"><canvas width="132" height="120"></canvas><b class="nr">나래</b><b class="dy">도윤</b></div></div></div>
+        <div class="pk-kids" aria-hidden="true"><div class="pk-say" hidden></div><div class="pk-kid3d"><canvas width="132" height="120"></canvas><b class="nr">유빈</b><b class="dy">유준</b></div></div></div>
       <div class="pm-title"><b>${esc(PARK.title)}</b><span>지도를 끌어서 둘러보고, 말꼬리 표를 눌러요</span></div>
       <div class="pm-ctrl"><button type="button" data-z="1" aria-label="확대">＋</button><button type="button" data-z="-1" aria-label="축소">－</button><button type="button" data-z="0">전체 지도</button><button type="button" class="pm-big" data-big>⛶ 가로로 크게</button><button type="button" class="pm-close" data-close>✕ 닫기</button></div>
       ${PARK.placeholder ? '<span class="pm-temp">임시 그림 — 실사 조감도로 바뀔 자리</span>' : ''}
@@ -75,7 +75,7 @@ export function mountPark($host) {
   const putKids = () => { $kids.style.left = `${(kid.pos[0] / 100) * I.w}px`; $kids.style.top = `${(kid.pos[1] / 100) * I.h}px`; };
   // 걷는 동안은 둘 다 가는 쪽을 보고, 서 있으면 서로 마주 본다
   const cast = createCast({ reduced });
-  const K3 = cast.add($host.querySelector('.pk-kid3d canvas'), ['narae', 'doyun']);
+  const K3 = cast.add($host.querySelector('.pk-kid3d canvas'), ['yubin', 'yujun']);
   // ── 공원 안의 다른 사람들: 길(점 둘 이상)이 있으면 그 길을 오가고, 자리(점 하나)면 그 둘레를 조금씩 거닌다.
   // 가끔 한 사람씩 말을 하고(매번 다른 말), 누르면 바로 한마디. 지키는 사람(관리인·안전요원)은 아이들이 가까이 오면 안전 한마디를 먼저 한다.
   const npcs = [...$host.querySelectorAll('.pk-npc')].map((el) => ({ id: el.dataset.npc, el, $say: el.querySelector('.pk-nsay'), L: NPC_LINES[el.dataset.npc] || { who: '', lines: [] }, A: cast.add(el.querySelector('canvas'), NPC_CAST[el.dataset.npc]), pts: [], i: 0, dir: 1, t: 0, wait: Math.random() * 2, pos: [0, 0], tgt: null, from: null, last: '', sayT: 0, nearT: 0 }));
