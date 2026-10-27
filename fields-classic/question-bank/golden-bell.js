@@ -5,7 +5,7 @@ import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBoo
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261023h";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261028c";
-import { book01Markup } from "./book01-renderers.js?v=20261022a";
+import { book01Markup } from "./book01-renderers.js?v=20261028m";
 import { book02Markup } from "./book02-renderers.js?v=20261028c";
 import { book03Markup } from "./book03-renderers.js?v=20261027a";
 import { book04Markup } from "./book04-renderers.js?v=20261023h";

@@ -1,4 +1,4 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261024r";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
 import { checkSession, loadClass, logout, weekRate } from "./study-progress.js?v=20261028g";
 
 // 선생님 보기(원장 2026-10-27): 학생마다 권·주차 수행률, 단원 평가·권별 테스트 점수, 약점 유형. 학생 이름을 누르면 그 학생의 「내 학습 상황」.

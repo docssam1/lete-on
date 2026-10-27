@@ -318,8 +318,421 @@ function logicCluesMarkup(visual) {
   return `<div class="b1-logic-clues">${header}<ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol><strong>${esc(visual.question)}</strong></div>`;
 }
 
+// ── 권별테스트(단원 테스트) 원본 구조 그림 ────────────────────────────────
+// 문제은행 화면(styles.css)에는 골든벨 CSS가 없으므로 채움·선·글자 모양을 그림 안에 직접 적는다.
+// 글자는 `.book01-visual svg text` 규칙이 덮지 않도록 style 속성으로 준다.
+const UT = Object.freeze({
+  ink: "#222", line: "#7a6f5c", soft: "#c9bda2",
+  paper: "#fde9b8", paperLine: "#c08a2e", grid: "#d9b46a", cut: "#f39a1e", crease: "#a8741a", arrow: "#e8503a",
+  box: "#8e5bd8", boxFill: "#ffffff", tint: "#ece0fb", card: "#fff3c4", cardLine: "#f0a500",
+  guide: "#e8503a", digit: "#e8503a", dot: "#2f6fe0", flip: "#f39a1e",
+  pieces: ["#ffe1dc", "#dcf5e5", "#dde9ff", "#fff3c4"], pieceA: "#dcf5e5", pieceB: "#ece0fb", pastel: ["#ffe1dc", "#dcf5e5", "#dde9ff", "#fff3c4"]
+});
+
+const utText = (x, y, value, { size = 15, anchor = "middle", weight = 700, fill = UT.ink } = {}) => `<text x="${x}" y="${y}" text-anchor="${anchor}" dominant-baseline="central" style="font-size:${size}px;font-weight:${weight};fill:${fill};text-anchor:${anchor};dominant-baseline:central;letter-spacing:0">${esc(value)}</text>`;
+const utSvg = (width, height, label, body, maxWidth = width) => `<svg class="b1-ut-svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="${esc(label)}" style="display:block;width:100%;max-width:${maxWidth}px;height:auto;margin:0 auto">${body}</svg>`;
+const utBox = (x, y, w, h, { fill = UT.boxFill, stroke = UT.box, width = 1.8, radius = 3 } = {}) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${radius}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
+
+function utCardsRow(cards, width, y = 4, size = 30) {
+  if (!cards?.length) return "";
+  const gap = 6;
+  const start = (width - (cards.length * size + (cards.length - 1) * gap)) / 2;
+  return cards.map((card, index) => {
+    const x = start + index * (size + gap);
+    return `${utBox(x, y, size, size, { fill: UT.card, stroke: UT.cardLine, width: 1.8 })}${utText(x + size / 2, y + size / 2 + 1, card, { size: 15, weight: 800 })}`;
+  }).join("");
+}
+
+function utSetMarkup(visual) {
+  const columns = Math.max(1, visual.columns || visual.items.length);
+  const items = visual.items.map((item) => `<figure style="margin:0;min-width:0"><figcaption style="margin:0 0 4px;color:${UT.ink};font-size:12px;font-weight:800;line-height:1.35">${esc(item.label || "")}</figcaption>${book01Markup(item.visual)}</figure>`).join("");
+  return `<div class="b1-ut-set" style="display:grid;grid-template-columns:repeat(${columns},minmax(0,1fr));gap:10px 14px;width:100%">${items}</div>`;
+}
+
+function utSquirrel(cx, cy) {
+  return `<g transform="translate(${cx} ${cy})"><circle cx="-8" cy="-9" r="4.2" fill="#c98b3c" stroke="#8a5a1e" stroke-width="1"/><circle cx="8" cy="-9" r="4.2" fill="#c98b3c" stroke="#8a5a1e" stroke-width="1"/><circle r="11.5" fill="#e0a85a" stroke="#8a5a1e" stroke-width="1.2"/><ellipse cy="4" rx="6.5" ry="5" fill="#fbe3bd"/><circle cx="-4.2" cy="-2.5" r="1.7" fill="#222"/><circle cx="4.2" cy="-2.5" r="1.7" fill="#222"/><circle cy="2.4" r="1.4" fill="#7a3b10"/></g>`;
+}
+
+function utPartitionMarkup(visual) {
+  const { rows, columns } = visual;
+  const cell = 40;
+  const pad = 8;
+  const width = columns * cell + pad * 2;
+  const height = rows * cell + pad * 2;
+  const x = (column) => pad + column * cell;
+  const y = (row) => pad + row * cell;
+  let body = `<rect x="${pad}" y="${pad}" width="${columns * cell}" height="${rows * cell}" fill="#fff"/>`;
+  if (visual.labels) {
+    visual.labels.forEach((label, index) => { body += `<rect x="${x(index % columns)}" y="${y(Math.floor(index / columns))}" width="${cell}" height="${cell}" fill="${UT.pieces[label % 4]}"/>`; });
+  }
+  const edge = (a, b) => {
+    const row = Math.floor(a / columns);
+    const column = a % columns;
+    return b === a + 1 ? [x(column + 1), y(row), x(column + 1), y(row + 1)] : [x(column), y(row + 1), x(column + 1), y(row + 1)];
+  };
+  const line = ([x1, y1, x2, y2], stroke, strokeWidth, dash = "") => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linecap="round"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
+  const inner = [];
+  for (let index = 0; index < rows * columns; index += 1) {
+    if (index % columns < columns - 1) inner.push([index, index + 1]);
+    if (Math.floor(index / columns) < rows - 1) inner.push([index, index + columns]);
+  }
+  body += inner.map(([a, b]) => line(edge(a, b), UT.soft, 1.2, "4 3")).join("");
+  (visual.symbols || []).forEach((symbol, index) => {
+    if (!symbol) return;
+    const cx = x(index % columns) + cell / 2;
+    const cy = y(Math.floor(index / columns)) + cell / 2;
+    body += symbol === "squirrel" ? utSquirrel(cx, cy + 2) : utText(cx, cy + 1, symbol, { size: 18, weight: 700 });
+  });
+  if (visual.labels) body += inner.filter(([a, b]) => visual.labels[a] !== visual.labels[b]).map(([a, b]) => line(edge(a, b), UT.ink, 3.6)).join("");
+  body += (visual.guides || []).map(([a, b]) => line(edge(a, b), UT.guide, 4.2)).join("");
+  body += `<rect x="${pad}" y="${pad}" width="${columns * cell}" height="${rows * cell}" fill="none" stroke="${visual.fence ? "#8a5a1e" : UT.ink}" stroke-width="${visual.fence ? 3.4 : 2.4}"/>`;
+  if (visual.pivot) body += `<circle cx="${pad + columns * cell / 2}" cy="${pad + rows * cell / 2}" r="4.6" fill="${UT.ink}"/>`;
+  return utSvg(width, height, visual.labels ? "네 조각으로 나눈 답" : "네 조각으로 나눌 판", body, 220);
+}
+
+// 7세그먼트 숫자. 1은 원본처럼 칸 가운데에 세운다.
+const UT_SEGMENTS = Object.freeze({
+  a: "M10 6L13.5 2.5H32.5L36 6L32.5 9.5H13.5Z", g: "M10 38L13.5 34.5H32.5L36 38L32.5 41.5H13.5Z", d: "M10 70L13.5 66.5H32.5L36 70L32.5 73.5H13.5Z",
+  f: "M7 9L10.5 12.5V31.5L7 35L3.5 31.5V12.5Z", e: "M7 41L10.5 44.5V63.5L7 67L3.5 63.5V44.5Z",
+  b: "M39 9L42.5 12.5V31.5L39 35L35.5 31.5V12.5Z", c: "M39 41L42.5 44.5V63.5L39 67L35.5 63.5V44.5Z"
+});
+function utDigitalDigit(value, cx, cy, scale = 1) {
+  const segments = DIGIT_SEGMENTS[value] || "";
+  const shift = value === 1 ? -16 : 0;
+  const paths = [...segments].map((name) => `<path d="${UT_SEGMENTS[name]}" fill="${UT.digit}" transform="translate(${shift} 0)"/>`).join("");
+  return `<g transform="translate(${(cx - 23 * scale).toFixed(1)} ${(cy - 38 * scale).toFixed(1)}) scale(${scale})">${paths}</g>`;
+}
+
+function utDigitCells(digits, x, y, cellWidth = 50, cellHeight = 64) {
+  const boxes = digits.map((_, index) => utBox(x + index * cellWidth, y, cellWidth, cellHeight, { radius: 2 })).join("");
+  const scale = Math.min((cellWidth - 12) / 40, (cellHeight - 10) / 72);
+  const glyphs = digits.map((digit, index) => (digit == null ? "" : utDigitalDigit(digit, x + index * cellWidth + cellWidth / 2, y + cellHeight / 2, scale))).join("");
+  return boxes + glyphs;
+}
+
+function utFlipIcon(cx, cy) {
+  return `<line x1="${cx}" y1="${cy - 24}" x2="${cx}" y2="${cy + 24}" stroke="#8a8a94" stroke-width="1.6" stroke-dasharray="4 3"/><path d="M${cx - 15} ${cy + 3}A15 7 0 1 0 ${cx + 15} ${cy + 3}" fill="none" stroke="${UT.flip}" stroke-width="2.2"/><path d="M${cx + 15} ${cy + 3}l-1 -8l7 4z" fill="${UT.flip}"/><path d="M${cx - 15} ${cy + 3}A15 7 0 0 1 ${cx + 15} ${cy + 3}" fill="none" stroke="${UT.flip}" stroke-width="1.4" stroke-dasharray="2 3"/>`;
+}
+
+function utDigitalFlipMarkup(visual) {
+  const body = `${utDigitCells(visual.digits, 6, 8)}${utFlipIcon(150, 40)}${utDigitCells([null, null], 194, 8)}`;
+  return utSvg(300, 82, `두 자리 수 ${visual.digits.join("")}를 오른쪽으로 뒤집기`, body, 330);
+}
+
+function utDigitalAdditionMarkup(visual) {
+  const x = 36;
+  const body = `${utDigitCells(visual.digits, x, 6, 44, 56)}${utText(x + 96, 34, "← 원래 수", { size: 13, anchor: "start", weight: 700 })}${utText(14, 108, "+", { size: 24, weight: 800 })}${utDigitCells([null, null], x, 80, 44, 56)}${utText(x + 96, 108, "← 돌린 수", { size: 13, anchor: "start", weight: 700 })}<line x1="6" y1="148" x2="${x + 100}" y2="148" stroke="${UT.ink}" stroke-width="1.8"/>${utDigitCells([null, null], x, 158, 44, 56)}`;
+  return utSvg(206, 220, `원래 수 ${visual.digits.join("")}와 반 바퀴 돌린 수의 덧셈`, body, 220);
+}
+
+const UT_STATE_TRANSFORM = Object.freeze({ normal: "", rot90: "rotate(90)", rot180: "rotate(180)", rot270: "rotate(-90)", flipX: "scale(-1 1)", flipY: "scale(1 -1)" });
+function utOrientedBoardMarkup(visual) {
+  const cell = 62;
+  const pad = 6;
+  let body = "";
+  visual.cells.forEach((item, index) => {
+    const row = Math.floor(index / 3);
+    const column = index % 3;
+    const cx = pad + column * cell + cell / 2;
+    const cy = pad + row * cell + cell / 2;
+    body += `<rect x="${pad + column * cell}" y="${pad + row * cell}" width="${cell}" height="${cell}" fill="${UT.pastel[(row + column) % 4]}" stroke="${UT.box}" stroke-width="1.6"/>`;
+    body += `<g transform="translate(${cx} ${cy}) ${UT_STATE_TRANSFORM[item.state]}">${utText(0, 0, item.digit, { size: 34, weight: 600 })}</g>`;
+  });
+  body += `<rect x="${pad}" y="${pad}" width="${cell * 3}" height="${cell * 3}" fill="none" stroke="${UT.box}" stroke-width="2.6"/>`;
+  return utSvg(cell * 3 + pad * 2, cell * 3 + pad * 2, "여러 방향으로 놓인 숫자판", body, 200);
+}
+
+// 색종이 접기 그림: 단위 정사각형 좌표(y는 아래)로 받은 도형을 칸마다 그리고, 칸 사이에 화살표를 둔다.
+const UT_POLY_STYLE = Object.freeze({
+  paper: `fill="${UT.paper}" stroke="${UT.paperLine}" stroke-width="1.8" stroke-linejoin="round"`,
+  flap: `fill="#fff" stroke="${UT.paperLine}" stroke-width="1.3" stroke-dasharray="5 4"`,
+  cut: `fill="${UT.cut}" stroke="${UT.cut}" stroke-width="0.6" stroke-linejoin="round"`,
+  removed: `fill="#fff" stroke="${UT.paperLine}" stroke-width="1.4" stroke-linejoin="round"`,
+  blank: `fill="#fff" stroke="${UT.paperLine}" stroke-width="1.8"`,
+  "piece-a": `fill="${UT.pieceA}" stroke="${UT.ink}" stroke-width="1.3" stroke-linejoin="round"`,
+  "piece-b": `fill="${UT.pieceB}" stroke="${UT.ink}" stroke-width="1.3" stroke-linejoin="round"`
+});
+const UT_SEG_STYLE = Object.freeze({
+  grid: `stroke="${UT.grid}" stroke-width="1" stroke-dasharray="3 3"`,
+  "grid-flap": `stroke="${UT.soft}" stroke-width="0.9" stroke-dasharray="3 3"`,
+  "grid-blank": `stroke="${UT.grid}" stroke-width="1.1" stroke-dasharray="4 3"`,
+  crease: `stroke="${UT.crease}" stroke-width="1.6" stroke-dasharray="6 4"`,
+  "crease-next": `stroke="${UT.arrow}" stroke-width="1.6" stroke-dasharray="6 4"`,
+  "crease-line": `stroke="${UT.crease}" stroke-width="1.8"`,
+  cutline: `stroke="${UT.ink}" stroke-width="2.2" stroke-linecap="round"`
+});
+
+function utFoldPanelBounds(panel) {
+  const points = [];
+  for (const item of panel.items) {
+    if (item.t === "poly") points.push(...item.pts);
+    if (item.t === "seg") points.push(item.a, item.b);
+  }
+  const xs = points.map(([x]) => x);
+  const ys = points.map(([, y]) => y);
+  return { x0: Math.min(...xs), y0: Math.min(...ys), x1: Math.max(...xs), y1: Math.max(...ys) };
+}
+
+function utFoldPanel(panel, ox, oy, scale) {
+  const bounds = utFoldPanelBounds(panel);
+  const X = (value) => (ox + (value - bounds.x0) * scale).toFixed(1);
+  const Y = (value) => (oy + (value - bounds.y0) * scale).toFixed(1);
+  let body = "";
+  for (const item of panel.items) {
+    if (item.t === "poly") body += `<polygon points="${item.pts.map(([x, y]) => `${X(x)},${Y(y)}`).join(" ")}" ${UT_POLY_STYLE[item.role] || UT_POLY_STYLE.paper}/>`;
+    else if (item.t === "seg") body += `<line x1="${X(item.a[0])}" y1="${Y(item.a[1])}" x2="${X(item.b[0])}" y2="${Y(item.b[1])}" ${UT_SEG_STYLE[item.role] || UT_SEG_STYLE.grid}/>`;
+    else if (item.t === "num") body += utText(X(item.x), Y(item.y), item.v, { size: Math.max(11, Math.round(scale * 0.13)), weight: 600 });
+    else if (item.t === "circle") body += `<circle cx="${X(item.x)}" cy="${Y(item.y)}" r="${(item.r * scale).toFixed(1)}" fill="#fff" stroke="#8a8a94" stroke-width="1.5"/>`;
+    else if (item.t === "semi") {
+      const angle = Math.atan2(-item.ny, -item.nx);
+      const points = Array.from({ length: 17 }, (_, index) => {
+        const theta = angle - Math.PI / 2 + Math.PI * index / 16;
+        return `${(ox + (item.x + Math.cos(theta) * item.r - bounds.x0) * scale).toFixed(1)},${(oy + (item.y + Math.sin(theta) * item.r - bounds.y0) * scale).toFixed(1)}`;
+      });
+      body += `<polygon points="${points.join(" ")}" fill="#fff" stroke="#8a8a94" stroke-width="1.5" stroke-linejoin="round"/>`;
+    } else if (item.t === "arrow") {
+      const [ax, ay] = item.a;
+      const [bx, by] = item.b;
+      const [cx, cy] = item.c;
+      const tangentX = bx - cx;
+      const tangentY = by - cy;
+      const length = Math.hypot(tangentX, tangentY) || 1;
+      const ux = tangentX / length;
+      const uy = tangentY / length;
+      const head = 8 / scale;
+      const tip = [bx, by];
+      const left = [bx - ux * head - uy * head * 0.55, by - uy * head + ux * head * 0.55];
+      const right = [bx - ux * head + uy * head * 0.55, by - uy * head - ux * head * 0.55];
+      body += `<path d="M${X(ax)} ${Y(ay)}Q${X(cx)} ${Y(cy)} ${X(bx)} ${Y(by)}" fill="none" stroke="${UT.arrow}" stroke-width="2" stroke-linecap="round"/><polygon points="${[tip, left, right].map(([x, y]) => `${X(x)},${Y(y)}`).join(" ")}" fill="${UT.arrow}"/>`;
+    }
+  }
+  return { body, width: (bounds.x1 - bounds.x0) * scale, height: (bounds.y1 - bounds.y0) * scale };
+}
+
+function utBlockArrow(x, y) {
+  return `<path d="M${x} ${y - 5}H${x + 12}V${y - 10}L${x + 22} ${y}L${x + 12} ${y + 10}V${y + 5}H${x}Z" fill="${UT.cut}"/>`;
+}
+
+function utLegendMarkup(legend, width, y) {
+  const slot = 150;
+  const start = (width - legend.length * slot) / 2;
+  return legend.map((entry, index) => {
+    const x = start + index * slot;
+    const icon = entry.shape === "triangle"
+      ? `<polygon points="${x + 6},${y + 4} ${x + 6},${y + 36} ${x + 38},${y + 36}" fill="${UT.pieceA}" stroke="${UT.ink}" stroke-width="1.4"/>`
+      : `<polygon points="${x + 22},${y + 2} ${x + 42},${y + 20} ${x + 22},${y + 38} ${x + 2},${y + 20}" fill="${UT.pieceB}" stroke="${UT.ink}" stroke-width="1.4"/>`;
+    return `${icon}${utText(x + 56, y + 20, ":", { size: 16 })}${utBox(x + 66, y + 4, 40, 32)}${entry.value == null ? "" : utText(x + 86, y + 21, entry.value, { size: 16, weight: 800 })}${utText(x + 116, y + 20, "개", { size: 15, weight: 700 })}`;
+  }).join("");
+}
+
+function utFoldPanelsMarkup(visual) {
+  const scale = visual.scale || 108;
+  const gap = 36;
+  const pad = 6;
+  let x = pad;
+  let height = 0;
+  const rendered = visual.panels.map((panel, index) => {
+    const bounds = utFoldPanelBounds(panel);
+    const zoom = panel.zoom || 1;
+    const panelScale = scale * zoom;
+    const h = (bounds.y1 - bounds.y0) * panelScale;
+    height = Math.max(height, h);
+    const out = { panel, x, panelScale, h, w: (bounds.x1 - bounds.x0) * panelScale };
+    x += out.w + (index < visual.panels.length - 1 ? gap : 0);
+    return out;
+  });
+  const width = x + pad;
+  let body = "";
+  rendered.forEach((item, index) => {
+    const oy = pad + (height - item.h) / 2;
+    body += utFoldPanel(item.panel, item.x, oy, item.panelScale).body;
+    if (index < rendered.length - 1) body += utBlockArrow(item.x + item.w + 7, pad + height / 2);
+  });
+  let total = height + pad * 2;
+  if (visual.legend?.length) {
+    body += utLegendMarkup(visual.legend, width, total + 4);
+    total += 50;
+  }
+  return utSvg(Math.ceil(width), Math.ceil(total), "색종이를 접고 자르는 과정", body, Math.min(Math.ceil(width) * 1.15, 640));
+}
+
+function utCrossBoard(cx, cy, board, size = 30) {
+  const spots = [["top", 0, -1], ["left", -1, 0], ["center", 0, 0], ["right", 1, 0], ["bottom", 0, 1]];
+  return spots.map(([key, dx, dy]) => {
+    const x = cx + dx * size - size / 2;
+    const y = cy + dy * size - size / 2;
+    const value = board?.[key];
+    return `${utBox(x, y, size, size, { fill: key === "center" ? UT.card : "#fff", stroke: UT.box, radius: 1 })}${value == null ? "" : utText(x + size / 2, y + size / 2 + 1, value, { size: 15 })}`;
+  }).join("");
+}
+
+function utSumSlot(cx, y, value) {
+  return `${utText(cx - 34, y + 16, "합 :", { size: 14 })}${utBox(cx - 14, y, 44, 32)}${value == null ? "" : utText(cx + 8, y + 17, value, { size: 15, weight: 800 })}`;
+}
+
+function utCrossSetMarkup(visual) {
+  const slot = 128;
+  const width = slot * visual.boards.length + 8;
+  const top = visual.cards?.length ? 44 : 6;
+  const body = utCardsRow(visual.cards, width) + visual.boards.map((board, index) => {
+    const cx = 4 + slot * index + slot / 2;
+    return utCrossBoard(cx, top + 48, board) + utSumSlot(cx, top + 104, visual.sums?.[index]);
+  }).join("");
+  return utSvg(width, top + 142, "가운데 수가 다른 세 십자 마방진", body, 470);
+}
+
+function utFlowerBoard(cx, cy, board) {
+  const radius = 40;
+  const petals = Array.from({ length: 6 }, (_, index) => {
+    const angle = -Math.PI / 2 + index * Math.PI / 3;
+    return [cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius];
+  });
+  const lines = petals.map(([x, y]) => `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${UT.box}" stroke-width="1.4"/>`).join("");
+  const nodes = petals.map(([x, y], index) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="13" fill="#fff" stroke="${UT.box}" stroke-width="1.6"/>${board?.petals?.[index] == null ? "" : utText(x.toFixed(1), (y + 0.5).toFixed(1), board.petals[index], { size: 13 })}`).join("");
+  return `${lines}${nodes}<circle cx="${cx}" cy="${cy}" r="14" fill="${UT.card}" stroke="${UT.box}" stroke-width="1.8"/>${board?.center == null ? "" : utText(cx, cy + 0.5, board.center, { size: 14, weight: 800 })}`;
+}
+
+function utFlowerSetMarkup(visual) {
+  const slot = 136;
+  const width = slot * visual.boards.length + 8;
+  const top = visual.cards?.length ? 44 : 6;
+  const body = utCardsRow(visual.cards, width) + visual.boards.map((board, index) => {
+    const cx = 4 + slot * index + slot / 2;
+    return utFlowerBoard(cx, top + 58, board) + utSumSlot(cx, top + 116, visual.sums?.[index]);
+  }).join("");
+  return utSvg(width, top + 154, "가운데 수가 다른 세 원형진", body, 470);
+}
+
+const UT_RING8_SPOTS = Object.freeze([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2], [1, 2], [0, 2], [0, 1]]);
+function utRing8Markup(visual) {
+  const size = 40;
+  const step = 66;
+  const width = Math.max(2 * step + size + 60, (visual.cards?.length || 0) * 34 + 8);
+  const top = visual.cards?.length ? 46 : 8;
+  const left = (width - (2 * step + size)) / 2;
+  const center = (column, row) => [left + column * step + size / 2, top + row * step + size / 2];
+  let body = utCardsRow(visual.cards, width, 4, 28);
+  for (const [a, b] of [[0, 2], [2, 4], [4, 6], [6, 0]]) {
+    const [x1, y1] = center(...UT_RING8_SPOTS[a]);
+    const [x2, y2] = center(...UT_RING8_SPOTS[b]);
+    body += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${UT.box}" stroke-width="1.4"/>`;
+  }
+  UT_RING8_SPOTS.forEach(([column, row], index) => {
+    const x = left + column * step;
+    const y = top + row * step;
+    const value = visual.shown[index];
+    body += `${utBox(x, y, size, size, { radius: 2 })}${value == null ? "" : utText(x + size / 2, y + size / 2 + 1, value, { size: 20, weight: 600 })}`;
+  });
+  return utSvg(Math.ceil(width), top + 2 * step + size + 6, "네 줄의 합이 같은 네모 둘레", body, 320);
+}
+
+const UT_TRIANGLE6_POINTS = Object.freeze([[110, 24], [70, 82], [150, 82], [30, 140], [110, 140], [190, 140]]);
+function utTriangle6Markup(visual) {
+  const p = UT_TRIANGLE6_POINTS;
+  const lines = [[0, 3], [0, 5], [3, 5]].map(([a, b]) => `<line x1="${p[a][0]}" y1="${p[a][1]}" x2="${p[b][0]}" y2="${p[b][1]}" stroke="${UT.box}" stroke-width="1.5"/>`).join("");
+  const nodes = p.map(([x, y], index) => `<circle cx="${x}" cy="${y}" r="19" fill="${[0, 3, 5].includes(index) ? UT.tint : "#fff"}" stroke="${UT.box}" stroke-width="1.7"/>${visual.shown[index] == null ? "" : utText(x, y + 1, visual.shown[index], { size: 17, weight: 700 })}`).join("");
+  return utSvg(220, 164, "꼭짓점과 변에 수를 놓는 삼각진", lines + nodes, 210);
+}
+
+function utGakuroMarkup(visual) {
+  const size = 46;
+  const clue = 30;
+  const top = visual.cards?.length ? 46 : 6;
+  const left = 46;
+  const width = left + 3 * size + 14;
+  const cellX = (column) => left + column * size;
+  const cellY = (row) => top + clue + row * size;
+  let body = utCardsRow(visual.cards, Math.max(width, visual.cards?.length * 36 || 0), 4, 28);
+  const firstRow = [0, 0, 1];
+  const firstColumn = [0, 0, 1];
+  visual.columnSums.forEach((value, column) => {
+    const x = cellX(column);
+    const y = cellY(firstRow[column]);
+    body += `<polygon points="${x + 3},${y} ${x + size - 3},${y} ${x + size / 2},${y - clue + 2}" fill="#ffe9cc" stroke="${UT.cut}" stroke-width="1.5"/>${utText(x + size / 2, y - 9, value, { size: 14, weight: 800 })}`;
+  });
+  visual.rowSums.forEach((value, row) => {
+    const x = cellX(firstColumn[row]);
+    const y = cellY(row);
+    body += `<polygon points="${x},${y + 3} ${x},${y + size - 3} ${x - clue + 2},${y + size / 2}" fill="#ffe9cc" stroke="${UT.cut}" stroke-width="1.5"/>${utText(x - 10, y + size / 2, value, { size: 14, weight: 800 })}`;
+  });
+  visual.mask.forEach((active, index) => {
+    if (!active) return;
+    const x = cellX(index % 3);
+    const y = cellY(Math.floor(index / 3));
+    body += `<rect x="${x}" y="${y}" width="${size}" height="${size}" fill="#fff" stroke="${UT.box}" stroke-width="1.7"/>${visual.shown[index] == null ? "" : utText(x + size / 2, y + size / 2 + 1, visual.shown[index], { size: 20, weight: 600 })}`;
+  });
+  const svgWidth = Math.max(width, (visual.cards?.length || 0) * 34 + 8);
+  return utSvg(Math.ceil(svgWidth), top + clue + 3 * size + 6, "가로줄과 세로줄의 합을 맞추는 수 퍼즐", body, 290);
+}
+
+function utEllipseMarkup(visual) {
+  const top = visual.cards?.length ? 46 : 8;
+  const cx = 120;
+  const cy = top + 92;
+  const r = 82;
+  const spots = [[cx, cy - r], [cx - r, cy], [cx, cy], [cx + r, cy], [cx, cy + r]];
+  let body = utCardsRow(visual.cards, 240, 4, 30);
+  body += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${UT.box}" stroke-width="1.5"/><line x1="${cx}" y1="${cy - r}" x2="${cx}" y2="${cy + r}" stroke="${UT.box}" stroke-width="1.5"/><line x1="${cx - r}" y1="${cy}" x2="${cx + r}" y2="${cy}" stroke="${UT.box}" stroke-width="1.5"/>`;
+  body += spots.map(([x, y], index) => `<circle cx="${x}" cy="${y}" r="18" fill="${index === 2 ? UT.card : "#fff"}" stroke="${UT.box}" stroke-width="1.7"/>${visual.shown[index] == null ? "" : utText(x, y + 1, visual.shown[index], { size: 17 })}`).join("");
+  return utSvg(240, cy + r + 22, "원 둘레와 두 직선 위의 수", body, 230);
+}
+
+function utConditionsMarkup(visual) {
+  const list = `<ul style="margin:0;padding:0 0 0 18px;display:grid;gap:5px">${visual.clues.map((clue) => `<li style="font-size:13px;font-weight:700;line-height:1.5;color:${UT.ink};word-break:keep-all">${esc(clue)}</li>`).join("")}</ul>`;
+  const box = `<div style="width:min(100%,440px);padding:10px 14px;border:1.5px solid ${UT.soft};border-radius:6px;background:#fdfbf5">${list}</div>`;
+  if (!visual.places?.length) return `<div class="b1-ut-conditions" style="display:grid;place-items:center;width:100%">${box}</div>`;
+  const size = 48;
+  const body = visual.places.map((place, index) => `${utBox(4 + index * size, 4, size, 36, { fill: UT.card, stroke: UT.box, radius: 0 })}${utText(4 + index * size + size / 2, 23, place, { size: 14 })}${utBox(4 + index * size, 40, size, size, { radius: 0 })}`).join("");
+  return `<div class="b1-ut-conditions" style="display:grid;place-items:center;gap:10px;width:100%">${box}${utSvg(visual.places.length * size + 8, 96, "자리 표", body, 170)}</div>`;
+}
+
+function utLogicMarkup(visual) {
+  const clues = visual.clues?.length ? utConditionsMarkup({ clues: visual.clues }) : "";
+  let svg;
+  if (visual.layout === "columns") {
+    const rowGap = 48;
+    const height = visual.left.length * rowGap + 4;
+    const body = visual.left.map((name, index) => {
+      const y = 6 + index * rowGap;
+      return `${utBox(10, y, 76, 34, { stroke: UT.line, radius: 7 })}${utText(48, y + 18, name, { size: 15 })}<circle cx="102" cy="${y + 17}" r="5" fill="${UT.dot}"/>`;
+    }).join("") + visual.right.map((item, index) => {
+      const y = 6 + index * rowGap;
+      return `<circle cx="168" cy="${y + 17}" r="5" fill="${UT.dot}"/>${utBox(184, y, 76, 34, { stroke: UT.line, radius: 7 })}${utText(222, y + 18, item, { size: 15 })}`;
+    }).join("");
+    svg = utSvg(270, height, "사람과 짝을 잇는 그림", body, 270);
+  } else {
+    const count = visual.left.length;
+    const slot = 72;
+    const side = visual.ends ? 46 : 8;
+    const width = side * 2 + count * slot;
+    const body = visual.left.map((name, index) => {
+      const x = side + index * slot;
+      return `${utBox(x + 4, 6, slot - 8, 32, { stroke: UT.line, radius: 7 })}${utText(x + slot / 2, 23, name, { size: 14 })}<circle cx="${x + slot / 2}" cy="52" r="4.6" fill="${UT.dot}"/>`;
+    }).join("") + visual.right.map((item, index) => {
+      const x = side + index * slot;
+      return `<circle cx="${x + slot / 2}" cy="94" r="4.6" fill="${UT.dot}"/>${utBox(x + 4, 106, slot - 8, 32, { stroke: UT.line, radius: 7 })}${utText(x + slot / 2, 123, item, { size: 14 })}`;
+    }).join("") + (visual.ends ? `${utText(side / 2, 123, `(${visual.ends[0]})`, { size: 12, weight: 600 })}${utText(width - side / 2, 123, `(${visual.ends[1]})`, { size: 12, weight: 600 })}` : "");
+    svg = utSvg(width, 144, "사람과 짝을 잇는 그림", body, Math.min(width, 380));
+  }
+  return `<div class="b1-ut-logic" style="display:grid;place-items:center;gap:10px;width:100%">${clues}${svg}</div>`;
+}
+
 export function book01Markup(visual) {
   if (!visual || visual.kind !== "book1") return "";
+  if (visual.subtype === "ut-set") return utSetMarkup(visual);
+  if (visual.subtype === "ut-partition") return utPartitionMarkup(visual);
+  if (visual.subtype === "ut-digital-flip") return utDigitalFlipMarkup(visual);
+  if (visual.subtype === "ut-digital-addition") return utDigitalAdditionMarkup(visual);
+  if (visual.subtype === "ut-oriented-board") return utOrientedBoardMarkup(visual);
+  if (visual.subtype === "ut-fold-panels") return utFoldPanelsMarkup(visual);
+  if (visual.subtype === "ut-cross-set") return utCrossSetMarkup(visual);
+  if (visual.subtype === "ut-flower-set") return utFlowerSetMarkup(visual);
+  if (visual.subtype === "ut-ring8") return utRing8Markup(visual);
+  if (visual.subtype === "ut-triangle6") return utTriangle6Markup(visual);
+  if (visual.subtype === "ut-gakuro") return utGakuroMarkup(visual);
+  if (visual.subtype === "ut-ellipse") return utEllipseMarkup(visual);
+  if (visual.subtype === "ut-conditions") return utConditionsMarkup(visual);
+  if (visual.subtype === "ut-logic") return utLogicMarkup(visual);
   if (visual.subtype === "shape-transform") return shapeTransformMarkup(visual);
   if (visual.subtype === "partition-draw") return partitionDrawMarkup(visual);
   if (visual.subtype === "digital-transform") return digitalTransformMarkup(visual);
