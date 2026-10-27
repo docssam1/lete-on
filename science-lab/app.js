@@ -6,6 +6,7 @@ import { renderObserve } from './observe.js';
 import { OBSERVE_SETS, STAGES } from './data/observe-sets.js';
 import { CONTEST_GUIDE } from './data/contests.js';
 import { renderContest } from './contest.js';
+import { renderField } from './field.js';
 
 const $app = document.getElementById('app');
 const STORE_KEY = 'sciLab.v1';
@@ -25,7 +26,8 @@ function route() {
   const h = location.hash.replace(/^#\/?/, '');
   const m = h.match(/^u\/([\w-]+)(\/report)?/);
   teardown3D(); homeOff?.(); homeOff = null; reportOff?.(); reportOff = null;
-  if (/^contest\//.test(h)) reportOff = renderContest($app, { topbar, footer }, h.split('/')[1] || '').destroy;
+  if (/^field\b/.test(h)) reportOff = renderField($app, h.replace(/^field\/?/, '')).destroy;
+  else if (/^contest\//.test(h)) reportOff = renderContest($app, { topbar, footer }, h.split('/')[1] || '').destroy;
   else if (/^observe\b/.test(h)) reportOff = renderObserve($app, { topbar, footer }, h.split('/')[1] || '').destroy;
   else if (m && unitById(m[1]) && m[2]) reportOff = renderReport(unitById(m[1]), $app, { topbar, footer, contest: (h.match(/[?&]ct=(\w+)/) || [])[1] || '' }).destroy;
   else if (m && unitById(m[1])) renderUnit(unitById(m[1])); else renderHome();

@@ -10,12 +10,17 @@ const server=http.createServer((req,res)=>{
   if(!file.startsWith(ROOT+path.sep)||!fs.existsSync(file)||!fs.statSync(file).isFile()){res.writeHead(404);return res.end();}
   res.setHeader('Content-Type',MIME[path.extname(file)]||'application/octet-stream');fs.createReadStream(file).pipe(res);
 });
+// app/entry.js without the access.html gate: a guardian sign-in still reopens the page into that
+// guardian's own learner storage (single-use nm_entry_once_v1 hand-off, or an email-link hash).
+const ENTRY_FIXTURE=`(function(){let g=null;try{g=JSON.parse(sessionStorage.getItem('nm_entry_once_v1')||'null');sessionStorage.removeItem('nm_entry_once_v1');}catch(e){}
+const link=/^#(?:.*&)?(?:access_token|code)=/.test(location.hash),signed=g&&g.mode==='guardian'&&typeof g.userId==='string';
+window.NM_ENTRY={mode:link||signed?'guardian':'preview',guardianUserId:signed?g.userId:null};})();`;
 (async()=>{
   await new Promise(r=>server.listen(0,'127.0.0.1',r));
   const base='http://127.0.0.1:'+server.address().port;
   const browser=await chromium.launch({headless:true,args:['--disable-3d-apis','--disable-webgl','--disable-webgl2']});
   let checks=0;
-  const context=async()=>{const c=await browser.newContext({viewport:{width:390,height:900},reducedMotion:'reduce'});await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());await c.route('**/app/entry.js*',r=>r.fulfill({contentType:'application/javascript',body:'window.NM_ENTRY={mode:"fixture"};'}));return c;};
+  const context=async()=>{const c=await browser.newContext({viewport:{width:390,height:900},reducedMotion:'reduce'});await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());await c.route('**/app/entry.js*',r=>r.fulfill({contentType:'application/javascript',body:ENTRY_FIXTURE}));return c;};
   try{
     for(const lang of ['ko','en','zh']){
       const ctx=await context(),page=await ctx.newPage();
@@ -32,7 +37,7 @@ const server=http.createServer((req,res)=>{
       assert.match(await page.locator('#wsPrint').innerText(),lang==='ko'?/인쇄/:lang==='en'?/Print/:/打印/);
       checks++;
       // Rendering exceptions must also be text, even if their message contains HTML.
-      await page.route('**/app/exam.js',async r=>r.fulfill({contentType:'application/javascript',body:fs.readFileSync(path.join(ROOT,'number_magic/app/exam.js'),'utf8')+'\nNM_EXAM.renderPrintMulti=()=>{throw new Error('+JSON.stringify(attack)+');};'}));
+      await page.route('**/app/exam.js*',async r=>r.fulfill({contentType:'application/javascript',body:fs.readFileSync(path.join(ROOT,'number_magic/app/exam.js'),'utf8')+'\nNM_EXAM.renderPrintMulti=()=>{throw new Error('+JSON.stringify(attack)+');};'}));
       await page.goto(base+'/number_magic/ws.html?c=C4&auto=0&l='+lang);
       await page.waitForFunction(()=>window.NM_WS_READY==='error');
       assert.equal(await page.evaluate(()=>window.__nmInjected),undefined);
@@ -42,11 +47,15 @@ const server=http.createServer((req,res)=>{
     }
     for(const raw of ['not-json','null','[]','"text"','42']){
       const ctx=await context(),page=await ctx.newPage();
-      await ctx.addInitScript(raw=>localStorage.setItem('nm_state_v1',raw),raw);
+      // A damaged profile in this browser's own key is kept as *_recovery and replaced by a fresh onboarding.
+      // A damaged legacy key (nm_state_v1) is never read, written or renamed (app/learner-storage.js).
+      await ctx.addInitScript(raw=>{localStorage.setItem('nm_preview_state_v1',raw);localStorage.setItem('nm_state_v1',raw);},raw);
       await page.goto(base+'/number_magic/index.html?enter=1');
       await page.waitForSelector('.nm-av-card');
+      assert.equal(await page.evaluate(()=>NM_STATE_KEY),'nm_preview_state_v1');
       assert.equal(await page.evaluate(()=>NM_GATE.accountActive()),false);
-      assert.equal(await page.evaluate(()=>localStorage.getItem('nm_state_v1_recovery')),raw);
+      assert.equal(await page.evaluate(()=>localStorage.getItem('nm_preview_state_v1_recovery')),raw);
+      assert.equal(await page.evaluate(()=>localStorage.getItem('nm_state_v1')),raw,'legacy key left untouched');
       checks++;await ctx.close();
     }
     const ctx=await context(),page=await ctx.newPage(),requests=[];
@@ -75,30 +84,34 @@ const server=http.createServer((req,res)=>{
       return r.fulfill({json:{id:owner,email:'guardian@example.test'}});
     };
     // Mock-only membership endpoint (/functions/v1/nm-membership): status + register_contact. Same shape as app/membership.js expects.
-    const DAY=86400000,PHONE_RAW='010-1234-5678',PHONE_DIGITS='01012345678';
+    const PRIVACY_VERSION='2026-10-22-v1',DAY=86400000,PHONE_RAW='010-1234-5678',PHONE_DIGITS='01012345678';
     const makeMem=(registered,mode)=>({registered,mode:mode||'trial',sms:false,calls:[],registrations:[]});
     const membershipRoute=mem=>async r=>{
       const req=r.request(),cors={'access-control-allow-origin':'*','access-control-allow-headers':'*','access-control-allow-methods':'POST, OPTIONS'};
       if(req.method()==='OPTIONS')return r.fulfill({status:204,headers:cors});
       const body=req.postDataJSON()||{},now=Date.now(),expired=mem.mode==='expired';
       mem.calls.push({action:body.action,authorization:req.headers().authorization,body});
-      const contact=()=>({registered:mem.registered,phoneMasked:mem.registered?'010-****-5678':null,smsConsent:mem.sms});
+      const contact=()=>({registered:mem.registered,phoneMasked:mem.registered?'010-****-5678':null,smsConsent:mem.sms,privacyVersion:mem.registered?PRIVACY_VERSION:null,consentedAt:mem.registered?new Date(now).toISOString():null});
       if(body.action==='status')return r.fulfill({headers:cors,json:{membership:{userId:owner,serverNow:new Date(now).toISOString(),trialStartedAt:new Date(now-(expired?14:1)*DAY).toISOString(),trialEndsAt:new Date(now+(expired?-7:6)*DAY).toISOString(),endsAt:null,status:expired?'expired':'trial',plan:null,canUse:!expired},settings:null,contact:contact()}});
       if(body.action==='register_contact'){
-        if(!/^01\d{8,9}$/.test(String(body.phone||'').replace(/\D/g,''))||body.collectionConsent!==true)return r.fulfill({status:400,headers:cors,json:{error:'invalid_contact'}});
+        if(!/^01\d{8,9}$/.test(String(body.phone||'').replace(/\D/g,''))||body.collectionConsent!==true||body.guardianConsent!==true||body.privacyVersion!==PRIVACY_VERSION)return r.fulfill({status:400,headers:cors,json:{error:'invalid_contact'}});
         mem.registered=true;mem.sms=body.smsConsent===true;mem.registrations.push(body);
-        return r.fulfill({headers:cors,json:{ok:true,contact:contact()}});
+        return r.fulfill({headers:cors,json:{ok:true,userId:owner,contact:contact()}});
       }
       return r.fulfill({status:400,headers:cors,json:{error:'unknown_action'}});
     };
     const mainMem=makeMem(false); // fresh signup: no phone registered yet
     let extra=0;
+    const openGuard=async p=>{await p.goto(base+'/number_magic/index.html?enter=1');await p.locator('[data-id="game"]:visible,#ttGame:visible').first().click();await p.click('#charChipBtn');await p.click('.nm-closet-settings > summary');await p.waitForSelector('#nmGuardEmail');};
     const fillPassword=async(p,pw,confirm)=>{await p.waitForSelector('#nmGuardNewPassword');await p.fill('#nmGuardNewPassword',pw);await p.fill('#nmGuardConfirmPassword',confirm);await p.click('#nmGuardPasswordSave');};
     const status=(p,sel)=>p.locator(sel).innerText();
     const layout=p=>p.evaluate(()=>{const w=innerWidth;return{scroll:document.documentElement.scrollWidth>w+2,bad:[...document.querySelectorAll('.nm-guard-card, .nm-guard-card *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(r.right>w+1||r.left<-1);}).map(e=>e.id||e.className||e.tagName)};});
     const sizes=(p,sels)=>p.evaluate(sels=>sels.map(s=>{const e=document.querySelector(s),cs=getComputedStyle(e);return{s,fs:parseFloat(cs.fontSize),h:e.getBoundingClientRect().height};}),sels);
     const original={name:'이메일검수',lang:'ko',onboarded:true,cloudLinked:true,progress:{'A-02':{done:true,steps:{stamp:true}}},account:{status:'active'},character:{number:3,color:'blue'},avatar:{kind:'boy'}};
-    await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1'))localStorage.setItem('nm_state_v1',JSON.stringify(s));},original);
+    await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_preview_state_v1'))localStorage.setItem('nm_preview_state_v1',JSON.stringify(s));},original);
+    // After sign-in the page reopens in this guardian's own learner storage, where onboarding is finished
+    // (no name yet, not linked, no progress) — the ID card then registers the learner name.
+    await ctx.addInitScript(o=>{const k='nm_learner_state_v1_'+o;if(!localStorage.getItem(k))localStorage.setItem(k,JSON.stringify({lang:'ko',onboarded:true,character:{number:3,color:'blue'},avatar:{kind:'boy'},progress:{}}));},owner);
     await ctx.route('**/auth/v1/**',authRoute(requests));
     await ctx.route('**/auth/v1/user',userRoute); // later routes win: GET user (email link) and PUT user (set password)
     await ctx.route('**/functions/v1/nm-membership',membershipRoute(mainMem));
@@ -152,17 +165,20 @@ const server=http.createServer((req,res)=>{
     assert.equal(profiles.length,0,'no profile request before phone registration');
     assert(mainMem.calls.some(x=>x.action==='status'&&x.authorization==='Bearer verified-test-token'),'status is checked with the guardian session');
     const phoneCard=page.locator('#nmGuardPhone').locator('xpath=ancestor::*[contains(@class,"nm-guard-card")][1]');
-    const boxes=phoneCard.locator('input[type=checkbox]');
-    assert(await boxes.count()>=2,'collection and SMS consent checkboxes are present');
-    const consent=await boxes.evaluateAll(l=>l.map(e=>({required:e.required||e.getAttribute('aria-required')==='true',checked:e.checked})));
-    assert(consent[0].required&&!consent[0].checked,'collection consent is mandatory and not pre-checked');
-    assert(!consent[1].required&&!consent[1].checked,'SMS consent is optional and unchecked');
+    // app/privacy-consent.js: [필수] 수집·이용 · [필수] 보호자 확인 · [선택] 문자. None is pre-checked.
+    const box=id=>phoneCard.locator('#nmContact'+id);
+    const consent={};for(const id of ['Privacy','Guardian','Sms'])consent[id]=await box(id).evaluate(e=>({required:e.required,checked:e.checked}));
+    assert(consent.Privacy.required&&!consent.Privacy.checked,'collection consent is mandatory and not pre-checked');
+    assert(consent.Guardian.required&&!consent.Guardian.checked,'guardian confirmation is mandatory and not pre-checked');
+    assert(!consent.Sms.required&&!consent.Sms.checked,'SMS consent is optional and unchecked');
     const phoneSave=phoneCard.locator('#nmGuardPhoneSave,button[type=submit]').first();
     await page.fill('#nmGuardPhone',PHONE_RAW);await phoneSave.click();
     await page.waitForTimeout(300);
     assert.equal(mainMem.registrations.length,0,'phone is not sent without collection consent');
     assert.equal(await page.locator('#idClaim').count(),0);
-    await boxes.nth(0).check();await phoneSave.click();
+    await box('Privacy').check();await phoneSave.click();await page.waitForTimeout(300);
+    assert.equal(mainMem.registrations.length,0,'phone is not sent without guardian confirmation');
+    await box('Guardian').check();await phoneSave.click();
     await page.waitForSelector('#idClaim');assert.equal(profiles.length,0);
     assert.equal(mainMem.registrations.length,1);assert.equal(mainMem.registrations[0].collectionConsent,true);assert.equal(mainMem.registrations[0].smsConsent,false,'SMS consent stays opt-in');
     assert.equal(mainMem.registrations[0].phone.replace(/\D/g,''),PHONE_DIGITS);
@@ -174,17 +190,22 @@ const server=http.createServer((req,res)=>{
     assert.equal(passwordPuts.length,2);assert.equal(passwordPuts[1].body.password,PASSWORD);
     assert.equal(JSON.parse(await page.evaluate(()=>localStorage.getItem('nm_guardian_session_v1'))).password_setup_pending,false);
     assert(!(await page.evaluate(()=>JSON.stringify(localStorage)+JSON.stringify(sessionStorage))).includes(PASSWORD),'password is never persisted');checks++;
-    await page.click('#idClaim');await page.waitForSelector('.nm-idcard.linked',{state:'attached'});
+    // The sign-in reopened the page in this guardian's own learner storage. The preview profile is not copied in.
+    assert.equal(await page.evaluate(()=>NM_STATE_KEY),'nm_learner_state_v1_'+owner);
+    if(await page.locator('#idName').count())await page.fill('#idName',original.name);
+    await page.click('#idClaim');await page.waitForSelector('.nm-idcard.linked',{state:'attached',timeout:8000}).catch(async e=>{console.error('CLAIM:',await page.locator('#nm-idcard-slot').innerText(),JSON.stringify(profiles.map(x=>[x.method,x.url.split('?')[1],x.body])).slice(0,800));throw e;});
     assert.equal(await page.evaluate(()=>NM_GATE.accountActive()),true,'own linked learner + registered phone + usable trial opens the account');
-    await page.click('.nm-closet-settings > summary');
     const insert=profiles.find(x=>x.method==='POST');assert(insert);assert.equal(insert.headers.authorization,'Bearer verified-test-token');assert.equal(insert.body.owner_id,owner);
     assert(profiles.filter(x=>x.method==='GET').every(x=>x.url.includes('owner_id=eq.'+owner)));
-    assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).progress),original.progress);checks++;
-    await page.click('#nmGuardOut');await page.waitForSelector('#nmGuardEmail');
+    const previewProgress=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('nm_preview_state_v1')).progress);
+    assert.deepEqual(await previewProgress(),original.progress,'preview profile is left untouched');checks++;
+    // Sign-out returns to the access page; the guardian session is gone and the preview cannot be approved locally.
+    await page.click('#nmGuardOut');await page.waitForURL(/access\.html/);
     assert.equal(await page.evaluate(()=>localStorage.getItem('nm_guardian_session_v1')),null);
+    await openGuard(page);
     assert.equal(await page.evaluate(()=>NM_GATE.accountActive()),false,'logout cannot reactivate a legacy local approval after guardian enrollment');
     assert.equal(await page.locator('#accCode').count(),0,'enrolled learner is not offered a legacy approval-code bypass');
-    assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).progress),original.progress);checks++;
+    assert.deepEqual(await previewProgress(),original.progress);checks++;
     assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2)),'email controls fit mobile viewport');
     // Later sign-in works with email + password (no OTP), and a wrong password shows a safe message.
     const otpBefore=requests.filter(x=>x.url.includes('/otp')).length;
@@ -195,22 +216,17 @@ const server=http.createServer((req,res)=>{
     assert.equal(await page.inputValue('#nmGuardLoginPassword'),'');
     assert.equal(await page.evaluate(()=>localStorage.getItem('nm_guardian_session_v1')),null);
     await page.fill('#nmGuardLoginPassword',PASSWORD);await page.click('#nmGuardLogin');
-    await page.waitForSelector('#idClaim');
+    // The same guardian's learner storage opens again, already linked.
+    await page.waitForFunction(o=>window.NM_STATE_KEY==='nm_learner_state_v1_'+o&&window.NM_GATE&&NM_GATE.accountActive(),owner);
     assert.equal(await page.locator('#nmGuardNewPassword').count(),0,'password sign-in does not ask for a new password');
     assert.equal(JSON.parse(await page.evaluate(()=>localStorage.getItem('nm_guardian_session_v1'))).password_setup_pending,false);
     assert.equal(requests.filter(x=>x.url.includes('/otp')).length,otpBefore,'password sign-in sends no email');
     assert(requests.some(x=>x.method==='POST'&&x.url.includes('grant_type=password')));
     assert(!(await page.evaluate(()=>JSON.stringify(localStorage)+JSON.stringify(sessionStorage))).includes(PASSWORD));checks++;
-    await page.click('#nmGuardOut');await page.waitForSelector('#nmGuardEmail');
-    // Resuming a cloud copy preserves the previous local progress and normalizes missing account data.
     profileRows=[{name:original.name,owner_id:owner,state:{name:original.name,lang:'ko',progress:{},onboarded:true}}];
-    await page.fill('#nmGuardEmail','guardian@example.test');await page.fill('#nmGuardToken','123456');await page.click('#nmGuardVerify');
-    await fillPassword(page,PASSWORD,PASSWORD); // OTP re-verification (reset) always asks for a password before resuming
-    await page.waitForSelector('#idClaim');await page.click('#idClaim');await page.waitForSelector('#idResume');await page.click('#idResume');
-    assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1_preresume')).progress),original.progress);
-    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).account.status),'trial');checks++;
+    // signOut() navigates to access.html, which may end the evaluate before it returns.
+    await Promise.all([page.waitForURL(/access\.html/),page.evaluate(()=>NM_PROFILE_AUTH.signOut()).catch(()=>{})]);
     // A supplied email-link token is only a candidate until the guardian confirms the displayed email.
-    await page.click('.nm-closet-settings > summary');await page.click('#nmGuardOut');await page.waitForSelector('#nmGuardEmail');
     await page.goto(base+'/number_magic/index.html?enter=1#access_token=link-test-token&refresh_token=link-refresh&expires_in=3600');
     await page.waitForSelector('#nmGuardAccept');
     assert.equal(await page.evaluate(()=>localStorage.getItem('nm_guardian_session_v1')),null);
@@ -218,7 +234,7 @@ const server=http.createServer((req,res)=>{
     await page.click('#nmGuardAccept');await page.waitForSelector('#nmGuardNewPassword');
     assert.equal(await page.locator('#idClaim').count(),0,'a confirmed email link also requires a password first');
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_guardian_session_v1')).password_setup_pending),true);
-    await fillPassword(page,PASSWORD,PASSWORD);await page.waitForSelector('#idClaim');
+    await fillPassword(page,PASSWORD,PASSWORD);await page.waitForFunction(()=>window.NM_GATE&&NM_GATE.accountActive());
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_guardian_session_v1')).user.id),owner);checks++;
     await ctx.close();
     const fresh=await context(),newPage=await fresh.newPage();
@@ -234,8 +250,11 @@ const server=http.createServer((req,res)=>{
     await fillPassword(newPage,PASSWORD,PASSWORD);
     await newPage.waitForSelector('#idClaim');await newPage.fill('#idName',original.name);await newPage.click('#idClaim');
     await newPage.waitForSelector('#idResume',{timeout:10000}).catch(async e=>{console.error('New-device resume state:',await newPage.locator('#nm-idcard-slot').innerText());throw e;});await newPage.click('#idResume');
-    assert.equal(await newPage.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).onboarded),true);
-    assert.equal(await newPage.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).cloudOwnerId),owner);checks++;
+    // Resuming a cloud copy keeps a backup of what was on this device and normalizes missing account data.
+    assert.notEqual(await newPage.evaluate(()=>localStorage.getItem(NM_STATE_KEY+'_preresume')),null);
+    assert.equal(await newPage.evaluate(()=>JSON.parse(localStorage.getItem(NM_STATE_KEY)).account.status),'trial');
+    assert.equal(await newPage.evaluate(()=>JSON.parse(localStorage.getItem(NM_STATE_KEY)).onboarded),true);
+    assert.equal(await newPage.evaluate(()=>JSON.parse(localStorage.getItem(NM_STATE_KEY)).cloudOwnerId),owner);checks++;
     await fresh.close();
     // ko/en/zh at 390px: login + password screens fit, controls are >=16px/>=44px, errors are localized and safe.
     const T={
@@ -244,7 +263,7 @@ const server=http.createServer((req,res)=>{
       zh:{login:/登录/,bad:/不正确/,mismatch:/不一致/,fail:/无法保存密码/}};
     for(const lang of ['ko','en','zh']){
       const lctx=await context(),lpage=await lctx.newPage(),t=T[lang];
-      await lctx.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1'))localStorage.setItem('nm_state_v1',JSON.stringify(s));},{...original,lang});
+      await lctx.addInitScript(s=>{if(!localStorage.getItem('nm_preview_state_v1'))localStorage.setItem('nm_preview_state_v1',JSON.stringify(s));},{...original,lang});
       await lctx.route('**/auth/v1/**',authRoute([]));await lctx.route('**/auth/v1/user',userRoute);
       await lctx.route('**/functions/v1/nm-membership',membershipRoute(makeMem(true)));
       await lctx.route('**/rest/v1/nm_profiles**',r=>r.fulfill({json:[]}));
@@ -284,7 +303,7 @@ const server=http.createServer((req,res)=>{
     // Expired membership: server says canUse=false, so only the free-trial gate must not stay open (even for trial units).
     {
       const ex=await context(),exPage=await ex.newPage(),exMem=makeMem(true,'expired');
-      await ex.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1'))localStorage.setItem('nm_state_v1',JSON.stringify(s));},original);
+      await ex.addInitScript(s=>{if(!localStorage.getItem('nm_preview_state_v1'))localStorage.setItem('nm_preview_state_v1',JSON.stringify(s));},original);
       await ex.route('**/auth/v1/**',authRoute([]));await ex.route('**/auth/v1/user',userRoute);
       await ex.route('**/rest/v1/nm_profiles**',r=>r.fulfill({json:[]}));
       await ex.route('**/functions/v1/nm-membership',membershipRoute(exMem));
