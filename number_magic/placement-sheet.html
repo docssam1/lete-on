@@ -52,14 +52,30 @@
   /* 학습 시작점 확인 시험지 — 주간 학습지(매거진형)와 같은 띠·금 줄·명조 제목. 유아·초등·중등은 글씨 크기와 쪽당 문항 수가 다르다 */
   .ws-bar .pl-tools{display:flex;gap:6px;flex-wrap:wrap}
   .ws-bar .pl-tools select,.ws-bar .pl-tools input{padding:7px 8px;border:1px solid #cfe0d5;border-radius:8px;font:inherit;font-size:13px;background:#fff;max-width:230px}
-  #plScore{max-width:210mm;margin:12px auto 40px;padding:14px 16px;background:#fff;border:1px solid #e6dcc8;border-radius:10px}
-  #plScore h2{margin:0 0 8px;font-size:15px}
-  .pl-sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:8px 12px}
-  .pl-sc-item{display:flex;align-items:center;gap:6px;font-size:14px;min-width:0}.pl-sc-item b{min-width:22px}
-  .pl-sc-item label{cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;background:#f0f5f0;border-radius:8px}.pl-sc-item input{margin-right:4px;accent-color:#245b60}
-  .pl-sc-item button{cursor:pointer;min-width:48px;min-height:48px;border:1.5px solid #566274;background:#fff;border-radius:6px;font:700 24px/1 system-ui;color:#182230}
-  .pl-sc-item button[aria-pressed=true]{border:3px solid #2456c4;background:#eaf0ff;color:#16417c}
-  .pl-sc-item button:focus-visible{outline:3px solid #2456c4;outline-offset:3px}
+  /* 채점 칸 — 화면 맨 위, 접어 둔 상자. 칸 하나에 번호·정답·○X (2026-10-27) */
+  #plScore{max-width:210mm;margin:12px auto;padding:0 16px;background:#fff;border:1px solid #e6dcc8;border-radius:10px}
+  #plScore>summary{cursor:pointer;min-height:48px;display:flex;align-items:center;font-weight:800;font-size:15px;color:#245b60}
+  #plScore>summary:focus-visible{outline:3px solid #245b60;outline-offset:2px;border-radius:6px}
+  #plScore[open]{padding-bottom:16px}
+  .pl-sc-help{margin:0 0 8px;font-size:13px;line-height:1.6;color:#5c6b70;word-break:keep-all}
+  .pl-sc-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}
+  .pl-sc-tools button{min-height:44px;padding:6px 12px;border:1.5px solid #c9d6cf;border-radius:8px;background:#f4f8f5;font:600 13px/1.3 inherit;color:#245b60;cursor:pointer}
+  .pl-sc-tools a{font-size:13px;color:#245b60;margin-left:auto}
+  .pl-sc-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+  .pl-sc-cell{position:relative;display:grid;grid-template-rows:auto auto;justify-items:center;gap:2px;min-height:64px;padding:6px 4px 8px;border:1.5px solid #c9d6cf;border-radius:8px;background:#fff;cursor:pointer;font:inherit;color:#182230;min-width:0}
+  .pl-sc-cell b{font-size:12px;color:#5c6b70;font-variant-numeric:tabular-nums}
+  .pl-sc-ans{font-size:13px;font-weight:700;line-height:1.25;max-width:100%;overflow-wrap:anywhere;text-align:center}
+  .pl-sc-mark{position:absolute;top:4px;right:6px;font:800 17px/1 system-ui;font-style:normal;pointer-events:none}
+  .pl-sc-cell[data-state=o]{border-color:#245b60;background:#eef5f1}.pl-sc-cell[data-state=o] .pl-sc-mark{color:#245b60}
+  .pl-sc-cell[data-state=x]{border-color:#a8452c;background:#fbf0ec}.pl-sc-cell[data-state=x] .pl-sc-mark{color:#a8452c}
+  .pl-sc-cell:focus-visible{outline:3px solid #245b60;outline-offset:2px}
+  .pl-sc-count{margin:8px 0 0;font-size:13px;color:#5c6b70;font-variant-numeric:tabular-nums}
+  @media (max-width:360px){.pl-sc-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .pl-ladder{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:3px}
+  .pl-ladder li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:5px 8px;border-radius:6px;font-size:13px}
+  .pl-ladder li.is-pass{color:#5c6b70}.pl-ladder li.is-later{color:#8a9893}
+  .pl-ladder li.is-start{background:#eef5f1;font-weight:700;color:#182230}
+  .pl-ladder em{font-style:normal;font-size:11px;background:#245b60;color:#fff;border-radius:999px;padding:1px 8px}
   #plGo{margin-top:10px;padding:9px 16px;min-height:48px;border:0;border-radius:10px;background:#245b60;color:#fff;font-weight:800;cursor:pointer}
   #plOut{margin-top:10px;font-size:14px;line-height:1.6;scroll-margin-top:12px}.pl-reason{color:#5c6b70}
   /* 추천 결과 머리: 시작 수준 · 학습 목표 (2026-10-27) */
@@ -246,9 +262,9 @@
 <script src="data/dunoro-courses.js?v=20261018-dunoro-arith1"></script>
 <script src="data/soma-p-2019.js?v=20261018-soma-p1"></script>
 <script src="data/book-volume-topics.js?v=20261018-volumes1"></script>
-<script src="data/placement-plan.js?v=20261026-c0-cognitive1"></script>
-<script src="data/placement-paths.js?v=20261022-marks1"></script>
-<link rel="stylesheet" href="app/placement-ui.css?v=20261022-marks1">
+<script src="data/placement-plan.js?v=20261027-ladder1"></script>
+<script src="data/placement-paths.js?v=20261027-ladder1"></script>
+<link rel="stylesheet" href="app/placement-ui.css?v=20261027-ladder1">
 <script src="data/study-projection.js?v=20261015-records1"></script>
 <script src="app/study-route.js?v=20261015-records1"></script>
 <!-- 추천 보기 아래 월별 진도 로드맵 — 온라인 진단 결과와 같은 모듈(2026-10-27) -->
@@ -300,6 +316,8 @@ var BOOK_COUNTS = {'soma-k':8,'soma-a':8,'soma-b':8,'soma-c':8,'soma-d':6,'mirac
 var BOOK_SERIES = !DUNORO && !SOMA_P && Object.prototype.hasOwnProperty.call(BOOK_COUNTS,Q.get('bookSeries')) ? Q.get('bookSeries') : '';
 var BOOK_VOLUME = BOOK_SERIES && /^(?:[1-9]|1[0-2])$/.test(Q.get('bookVolume') || '') && Number(Q.get('bookVolume')) <= BOOK_COUNTS[BOOK_SERIES] ? Number(Q.get('bookVolume')) : 0;
 if(!BOOK_VOLUME) BOOK_SERIES = '';
+/* 연산을 안 배운 5·6·7세 사다리 진단(ladder=a5|a6|a7): 쉬운 단계부터 그 나이 교재 수준까지 20문항 (2026-10-27) */
+var LADDER = !DUNORO && !SOMA_P && !BOOK_SERIES && PLAN.ladderCodes && PLAN.ladderCodes().indexOf(Q.get('ladder')) >= 0 ? Q.get('ladder') : '';
 /* URL의 교재 정보는 등록된 선택지만 사용한다. 교재 번호는 앱 진단 기준 b와 별개다. */
 function validatedBook(raw, legacy){
   var books = window.NM_PLACEMENT_BOOKS;
@@ -372,7 +390,7 @@ function mixedBookSources(){
   return sources;
 }
 var AVAILABLE_MIX_SOURCES=mixedBookSources();
-var MIX_SOURCES=Q.get('mixBooks')==='1'&&!DUNORO&&!SOMA_P&&!BOOK_SERIES?AVAILABLE_MIX_SOURCES:[];
+var MIX_SOURCES=Q.get('mixBooks')==='1'&&!DUNORO&&!SOMA_P&&!BOOK_SERIES&&!LADDER?AVAILABLE_MIX_SOURCES:[];
 function sourceHtml(stage){
   var bookPart = COMPLETED_BOOKS.length ? '<div class="pl-books"><b>' + esc(T('완료한 교재', 'Completed books', '已完成的教材')) + ' (' + COMPLETED_BOOKS.length + '):</b><ol class="pl-book-list">' +
     COMPLETED_BOOKS.map(function(label){ return '<li>' + esc(label) + '</li>'; }).join('') + '</ol></div>' : '';
@@ -483,6 +501,9 @@ function firstHeader(stage, layout){
   var sub = T('선택한 진단 범위와 그 앞뒤를 20문항으로 확인해요. 아직 배우지 않은 문제는 건너뛰어도 좋아요.',
               'These 20 questions check the selected diagnostic scope and its adjacent topics. Skip topics not yet learned.',
               '用20道题检查所选测评范围及相邻内容。尚未学过的题目可以跳过。');
+  if(PLAN_NOW && PLAN_NOW.ladder) sub = T('쉬운 문제부터 차례로 조금씩 어려워져요. 모르는 문제는 건너뛰어도 좋아요.',
+              'Questions start easy and get a little harder each step. Skip any you do not know.',
+              '题目从简单开始逐步变难，不会的题可以跳过。');
   return '<h1 class="nm-mzs-title">' + esc(t1) + '</h1><p class="pl-sub">' + esc(sub) + '</p>' +
     sourceHtml(stage) +
     '<div class="pl-fields"><span>' + esc(T('이름','Name','姓名')) + ' <u>' + esc(NAME) + '</u></span><span>' + esc(T('날짜','Date','日期')) + ' <u></u></span><span>' + esc(T('맞힌 수','Score','得分')) + ' <u></u> / 20</span></div>';
@@ -500,26 +521,30 @@ function ansText(it){
 function keyPage(plan, stage){
   var BL = { previous: T('이전','Earlier','之前'), current: T('현재','Current','现在'), next: T('다음','Next','之后') };
   var rows = plan.items.map(function(it, i){
-    return '<tr class="pl-b-' + it.band + '"><td>' + (i + 1) + '</td><td>' + esc(BL[it.band]) + '</td><td>' + esc(L(it.label)) + '</td><td class="pl-ak">' + esc(ansText(it)) + '</td><td class="pl-mark">○ × ' + esc(T('모름','?','不会')) + '</td></tr>';
+    var bandText = plan.ladder ? T((it.ladderStep + 1) + '단계', 'Step ' + (it.ladderStep + 1), '第' + (it.ladderStep + 1) + '阶段') : BL[it.band];
+    return '<tr class="pl-b-' + it.band + '"><td>' + (i + 1) + '</td><td>' + esc(bandText) + '</td><td>' + esc(L(it.label)) + '</td><td class="pl-ak">' + esc(ansText(it)) + '</td><td class="pl-mark">○ × ' + esc(T('모름','?','不会')) + '</td></tr>';
   }).join('');
   return '<h1 class="nm-mzs-title">' + esc(T('보호자용 정답과 채점', 'Answers and marking for parents', '家长用答案与评分')) + '</h1>' +
     '<p class="pl-sub">' + esc(T('아이에게 먼저 보여 주지 마세요. 모르는 문제는 틀린 문제와 다르게 ‘모름’에 표시해요. 결과는 20문항에 근거한 연습 제안이며, 숙달이나 입학을 판정하지 않아요.',
       'Do not show this to the child first. Mark “?” for skipped items — it is different from wrong. The result is a practice suggestion from 20 questions, not a mastery or admission judgement.',
       '请先不要给孩子看。不会的题标“不会”，与做错不同。结果只是基于20题的练习建议，不代表掌握程度或入学判断。')) + '</p>' + sourceHtml(stage) +
-    '<table class="pl-key"><thead><tr><th>#</th><th>' + esc(T('구간','Band','区间')) + '</th><th>' + esc(T('영역','Topic','内容')) + '</th><th>' + esc(T('정답','Answer','答案')) + '</th><th>' + esc(T('채점','Mark','评分')) + '</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+    '<table class="pl-key"><thead><tr><th>#</th><th>' + esc(plan.ladder ? T('단계','Step','阶段') : T('구간','Band','区间')) + '</th><th>' + esc(T('영역','Topic','内容')) + '</th><th>' + esc(T('정답','Answer','答案')) + '</th><th>' + esc(T('채점','Mark','评分')) + '</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+    (plan.ladder ? '<p class="pl-sub">' + esc(T('단계마다 2문항 이상(1문항 단계는 그 문항) 틀리거나 모르면 그 단계부터 시작해요. 화면 맨 위 ‘인쇄한 시험지 채점하기’에 ○×를 넣으면 시작 단계를 바로 볼 수 있어요(인쇄에는 나오지 않아요).',
+      'Start at the first step with two or more wrong or unknown answers (or the single item in a one-question step). On screen, “Mark the printed sheet” at the top shows the starting step (it is not printed).',
+      '从第一个错或不会两题以上（单题阶段为该题）的阶段开始。在屏幕最上方“为打印的试卷评分”填入○×即可看到起始阶段（不会打印）。')) + '</p>' :
     '<div class="pl-tally"><span>' + esc(T('이전','Earlier','之前')) + ' <u></u>/6</span><span>' + esc(T('현재','Current','现在')) + ' <u></u>/10</span><span>' + esc(T('다음','Next','之后')) + ' <u></u>/4</span><span>' + esc(T('모름','Skipped','跳过')) + ' <u></u></span></div>' +
-    '<p class="pl-sub">' + esc(T('다음 4문항은 아직 배우지 않았을 수 있는 범위예요. 다음 구간의 오답을 지금 약점으로 보지 않아요. 화면 맨 아래 ‘채점 입력’에 ○×를 넣으면 추천 시작 회차를 바로 볼 수 있어요(인쇄에는 나오지 않아요).',
-      'The last 4 questions may cover content not yet taught; do not treat misses there as current weaknesses. On screen, the “Enter marks” panel at the bottom shows the suggested starting session (it is not printed).',
-      '最后4题可能是尚未学到的内容，这里做错不算当前弱点。在屏幕最下方“输入评分”处填入○×即可看到建议的起始课次（不会打印）。')) + '</p>';
+    '<p class="pl-sub">' + esc(T('다음 4문항은 아직 배우지 않았을 수 있는 범위예요. 다음 구간의 오답을 지금 약점으로 보지 않아요. 화면 맨 위 ‘인쇄한 시험지 채점하기’에 ○×를 넣으면 추천 시작 회차를 바로 볼 수 있어요(인쇄에는 나오지 않아요).',
+      'The last 4 questions may cover content not yet taught; do not treat misses there as current weaknesses. On screen, “Mark the printed sheet” at the top shows the suggested starting session (it is not printed).',
+      '最后4题可能是尚未学到的内容，这里做错不算当前弱点。在屏幕最上方“为打印的试卷评分”填入○×即可看到建议的起始课次（不会打印）。')) + '</p>');
 }
 
 /* ── 조립 ── */
 var PLAN_NOW = null;
 function build(){
-  PLAN_NOW = DUNORO ? PLAN.buildBook('dunoro', DUNORO, SEED) : SOMA_P ? PLAN.buildBook('soma-p', SOMA_P, SEED) : BOOK_SERIES ? PLAN.buildBook(BOOK_SERIES, BOOK_VOLUME, SEED) : MIX_SOURCES.length ? PLAN.buildBooks(MIX_SOURCES, SEED) : PLAN.build(BASE, SEED);
-  var stage = DUNORO || SOMA_P || BOOK_SERIES || MIX_SOURCES.length ? PLAN_NOW.baseline : STAGES.find(function(s){ return s.id === BASE; });
-  var layout = layoutOf(stage);
-  CODE = 'PL-' + (DUNORO ? 'dunoro' + DUNORO : SOMA_P ? 'somaP' + SOMA_P : BOOK_SERIES ? BOOK_SERIES + BOOK_VOLUME : MIX_SOURCES.length ? 'mixed' + MIX_SOURCES.length : BASE) + '-' + SEED + '-' + LANG;
+  PLAN_NOW = LADDER ? PLAN.buildLadder(LADDER, SEED) : DUNORO ? PLAN.buildBook('dunoro', DUNORO, SEED) : SOMA_P ? PLAN.buildBook('soma-p', SOMA_P, SEED) : BOOK_SERIES ? PLAN.buildBook(BOOK_SERIES, BOOK_VOLUME, SEED) : MIX_SOURCES.length ? PLAN.buildBooks(MIX_SOURCES, SEED) : PLAN.build(BASE, SEED);
+  var stage = LADDER || DUNORO || SOMA_P || BOOK_SERIES || MIX_SOURCES.length ? PLAN_NOW.baseline : STAGES.find(function(s){ return s.id === BASE; });
+  var layout = LADDER ? { band:'young', cap:7, cls:'pl-young' } : layoutOf(stage);
+  CODE = 'PL-' + (LADDER ? 'ladder-' + LADDER : DUNORO ? 'dunoro' + DUNORO : SOMA_P ? 'somaP' + SOMA_P : BOOK_SERIES ? BOOK_SERIES + BOOK_VOLUME : MIX_SOURCES.length ? 'mixed' + MIX_SOURCES.length : BASE) + '-' + SEED + '-' + LANG;
   var old = document.querySelector('.nm-print-sheet'); if(old) old.remove();
   var sheet = document.createElement('div');
   sheet.className = 'nm-print-sheet nm-print-age-' + layout.band + ' ' + layout.cls;
@@ -543,13 +568,25 @@ function build(){
 
 /* ── 화면 전용: ○×를 눌러 추천 보기(인쇄에는 안 나온다). 온라인 진단과 같은 summarize 를 쓴다 ── */
 function renderScorer(stage){
-  var box = document.getElementById('plScore'); if(!box){ box = document.createElement('div'); box.id = 'plScore'; document.body.appendChild(box); }
+  /* 채점은 화면 맨 위(인쇄 쪽들보다 앞) — 인쇄한 뒤 아래로 끝까지 내리지 않게. 칸마다 정답을 같이 보여 답지 쪽도 안 찾게 한다.
+     칸을 누를 때마다 ○ → X → 비움. (2026-10-27 원장 「아래로 쭉 내리게 하지 말고 좀 간결하게」) */
+  var box = document.getElementById('plScore');
+  if(!box){ box = document.createElement('details'); box.id = 'plScore'; }
+  var sheetEl = document.querySelector('.nm-print-sheet');
+  if(box.parentNode !== document.body || box.nextElementSibling !== sheetEl) document.body.insertBefore(box, sheetEl);
   var items = PLAN_NOW.items;
   var marks = items.map(function(){return '';});
   var key = document.querySelector('.pl-keypage'); if(key)key.id = 'plAnswerKey';
-  box.innerHTML = '<h2>' + esc(T('맞으면 ○, 틀리면 X', 'Correct ○, wrong X', '答对○，答错X')) + '</h2><p>' + esc(T('모르면 아무것도 체크하지 마세요. 체크한 버튼을 다시 누르면 지워져요.', 'Leave unknown answers unmarked. Tap again to clear a mark.', '不会的题不勾选，再次点击可清除标记。')) + '</p><a href="#plAnswerKey">' + esc(T('답지 보기', 'View answer key', '查看答案')) + '</a><div class="pl-sc-grid">' + items.map(function(it, i){
-    return '<div class="pl-sc-item" role="group" aria-label="' + (i+1) + '"><b>' + (i + 1) + '</b>' + ['o','x'].map(function(k){ return '<button type="button" data-mark-index="' + i + '" data-mark="' + k + '" aria-pressed="false" aria-label="' + (i+1) + ' ' + esc(k === 'o' ? T('맞음','Correct','正确') : T('틀림','Wrong','错误')) + '">' + (k === 'o' ? '○' : 'X') + '</button>'; }).join('') + '</div>';
-  }).join('') + '</div><button type="button" id="plGo">' + esc(T('추천 보기', 'Show suggestion', '查看建议')) + '</button><div id="plOut" tabindex="-1"></div><section id="plRoadmap" class="pd-calendar" hidden></section><div id="plPlanner"></div>';
+  var MARK_NAME = { '': T('채점 안 함','not marked','未评分'), o: T('맞음','correct','正确'), x: T('틀림','wrong','错误') };
+  var shortAns = function(it){ return it.responseMode === 'count-tap' ? it.answer + T('개','','个') : ansText(it); };
+  box.innerHTML = '<summary>' + esc(T('인쇄한 시험지 채점하기 · ○×', 'Mark the printed sheet · ○×', '为打印的试卷评分 · ○×')) + '</summary>' +
+    '<p class="pl-sc-help">' + esc(T('칸을 한 번 누르면 ○, 두 번 누르면 X, 한 번 더 누르면 지워져요. 모르는 문제는 비워 두세요. 칸의 작은 글씨가 정답이에요.',
+      'Tap a cell once for ○, twice for X, again to clear. Leave unknown answers blank. The small text in each cell is the answer.',
+      '点一次为○，两次为X，再点一次清除。不会的题留空。格子里的小字是正确答案。')) + '</p>' +
+    '<div class="pl-sc-tools"><button type="button" data-mark-all="o">' + esc(T('모두 ○로 채우기','Mark all ○','全部标○')) + '</button><button type="button" data-mark-all="">' + esc(T('모두 지우기','Clear all','全部清除')) + '</button><a href="#plAnswerKey">' + esc(T('답지 쪽 보기', 'Answer-key page', '答案页')) + '</a></div>' +
+    '<div class="pl-sc-grid" role="group" aria-label="' + esc(T('문항별 채점','Marks by question','逐题评分')) + '">' + items.map(function(it, i){
+      return '<button type="button" class="pl-sc-cell" data-mark-cell="' + i + '" data-state="" aria-label="' + esc((i + 1) + T('번 · 정답 ',' · answer ',' · 答案 ') + shortAns(it) + ' · ' + MARK_NAME['']) + '"><b>' + (i + 1) + '</b><span class="pl-sc-ans">' + esc(shortAns(it)) + '</span><i class="pl-sc-mark" aria-hidden="true"></i></button>';
+    }).join('') + '</div><p class="pl-sc-count" aria-live="polite"></p><button type="button" id="plGo">' + esc(T('추천 보기', 'Show suggestion', '查看建议')) + '</button><div id="plOut" tabindex="-1"></div><section id="plRoadmap" class="pd-calendar" hidden></section><div id="plPlanner"></div>';
   var out = box.querySelector('#plOut'), roadmap = box.querySelector('#plRoadmap'), planner = box.querySelector('#plPlanner');
   var clearPlanner = function(){ if(planner.__studyRoutePanel)planner.__studyRoutePanel.dispose(); planner.replaceChildren(); };
   var clearResult = function(){ out.textContent = ''; roadmap.replaceChildren(); roadmap.hidden = true; clearPlanner(); };
@@ -561,8 +598,8 @@ function renderScorer(stage){
     try{
       var analysis = window.NM_PLACEMENT_PATHS.paperAnalysis(PLAN_NOW, marks, {goal:SHEET_SEL.goal || undefined, goalTarget:SHEET_SEL.goalTarget, cadence:SHEET_SEL.cadence || undefined});
       var r = analysis.result, rec = analysis.path.main, b = r.bands;
-      out.innerHTML = resultHead(analysis) + '<div class="pl-detail"><p><b>' + esc(T('이전','Earlier','之前')) + '</b> ' + b.previous.correct + '/' + b.previous.asked + ' · <b>' + esc(T('현재','Current','现在')) + '</b> ' + b.current.correct + '/' + b.current.asked + ' · <b>' + esc(T('다음','Next','之后')) + '</b> ' + b.next.correct + '/' + b.next.asked + ' · ' + esc(T('모름','Unknown','不会')) + ' ' + (b.previous.skipped + b.current.skipped + b.next.skipped) + '</p>' +
-        '<p><b>' + esc(T('본진도 후보','Main-study candidate','主要进度候选')) + '</b> ' + esc((rec.course || '') + ' · ' + T('회차','session','课次') + ' ' + (rec.session || '')) + (rec.label ? ' · ' + esc(L(rec.label)) : '') + '</p><p class="pl-reason">' + esc(L(analysis.comment)) + '</p><p>'+esc(L(analysis.limitation))+'</p><h3>'+esc(T('지금은 유지 · 관찰','Maintain · observe for now','先保持并观察'))+'</h3><p>'+esc(L(analysis.workload.reasons[0]))+'</p><p>'+esc(L(analysis.workload.note))+'</p><ul>'+analysis.path.support.map(function(row){return '<li>'+esc(L(row.label))+' · X '+row.wrong+' · '+esc(T('모름','Unknown','不会'))+' '+row.skipped+'</li>';}).join('')+'</ul></div>';
+      out.innerHTML = resultHead(analysis) + (rec.ladder ? '<div class="pl-detail"><p class="pl-reason">' + esc(L(analysis.limitation)) + '</p></div>' : '<div class="pl-detail"><p><b>' + esc(T('이전','Earlier','之前')) + '</b> ' + b.previous.correct + '/' + b.previous.asked + ' · <b>' + esc(T('현재','Current','现在')) + '</b> ' + b.current.correct + '/' + b.current.asked + ' · <b>' + esc(T('다음','Next','之后')) + '</b> ' + b.next.correct + '/' + b.next.asked + ' · ' + esc(T('모름','Unknown','不会')) + ' ' + (b.previous.skipped + b.current.skipped + b.next.skipped) + '</p>' +
+        '<p><b>' + esc(T('본진도 후보','Main-study candidate','主要进度候选')) + '</b> ' + esc((rec.course || '') + ' · ' + T('회차','session','课次') + ' ' + (rec.session || '')) + (rec.label ? ' · ' + esc(L(rec.label)) : '') + '</p><p class="pl-reason">' + esc(L(analysis.comment)) + '</p><p>'+esc(L(analysis.limitation))+'</p><h3>'+esc(T('지금은 유지 · 관찰','Maintain · observe for now','先保持并观察'))+'</h3><p>'+esc(L(analysis.workload.reasons[0]))+'</p><p>'+esc(L(analysis.workload.note))+'</p><ul>'+analysis.path.support.map(function(row){return '<li>'+esc(L(row.label))+' · X '+row.wrong+' · '+esc(T('모름','Unknown','不会'))+' '+row.skipped+'</li>';}).join('')+'</ul></div>');
       wireGoal();
       if(analysis.path.assessment.answered > 0 && window.NM_DIAGNOSTIC_ROADMAP && window.NM_LEARNING_PLAN){
         roadmap.hidden = false;
@@ -585,7 +622,10 @@ function renderScorer(stage){
     /* 채점 결과가 권하는 출발(이전·현재 오답 중 가장 이른 곳)이 기준 범위와 다르면 「먼저 보강할 곳」으로 함께 보인다.
        로드맵 출발점은 온라인 진단 결과와 같이 기준 범위(path.main)다. */
     var fix = analysis.result.recommendation, fixCourse = fix && (window.NM_COURSES || {})[fix.course];
-    if(!fix || !answered || (fix.course === rec.course && fix.session === rec.session))fix = null;
+    if(!fix || !answered || rec.ladder || (fix.course === rec.course && fix.session === rec.session))fix = null;
+    /* 사다리 진단: 단계마다 ○ 수와 처음 막힌 단계(시작점) */
+    var lad = rec.ladder, ladderHtml = lad ? '<ol class="pl-ladder">' + lad.steps.map(function(x, i){ return '<li class="' + (i === lad.start ? 'is-start' : i < lad.start ? 'is-pass' : 'is-later') + '"><span>' + esc(L(x.label)) + '</span><b>' + x.correct + '/' + x.asked + '</b>' + (i === lad.start ? '<em>' + esc(T('시작','Start','起点')) + '</em>' : '<span></span>') + '</li>'; }).join('') + '</ol>' +
+      '<p class="pl-muted">' + esc(lad.start >= lad.steps.length ? T('모든 단계를 2문항 이상 놓치지 않았어요. 다음 교재 수준에서 시작해요.','No step had two or more misses. Start at the next book level.','所有阶段都没有错两题以上，从下一本教材水平开始。') : T('처음으로 2문항 이상(1문항 단계는 그 문항) 틀리거나 모른 단계에서 시작해요.','Start at the first step with two or more wrong or unknown answers.','从第一个错或不会两题以上的阶段开始。')) + '</p>' : '';
     var fixNo = fix ? Number(String(fix.course).slice(1)) : 0, fixTitle = fixCourse ? L(fixCourse.title) : (fix ? fix.course : '');
     /* 현재 진도 20문항 중 10문항이 다룬 연산: 유형 이름(첫 레벨 이름 → 끝 레벨 이름) */
     var skills = [];
@@ -601,9 +641,9 @@ function renderScorer(stage){
       (group ? '<p>' + esc(T('단계: ','Stage: ','阶段：') + L(group.name) + (group.band ? ' (' + L(group.band) + T(' 기준',' reference',' 参考') + ')' : '')) + '</p>' : '') +
       (skillText ? '<p>' + esc(T('이 수준에서 확인한 연산: ','Arithmetic checked at this level: ','此水平确认的运算：') + skillText) + '</p>' : '') +
       (fix ? '<p><b>' + esc(T('먼저 보강할 곳: ','Practice first: ','先补充练习：')) + '</b>' + esc(T('과정 ','Course ','课程 ') + fixNo + ' 「' + fixTitle + '」 ' + T(fix.session + '회차', 'session ' + fix.session, '第' + fix.session + '课次') + (fix.label && L(fix.label) !== fixTitle ? ' · ' + L(fix.label) : '') + T(' — 이전·현재 문항에서 틀린 곳 중 가장 이른 위치예요.',' — the earliest place among missed earlier/current items.',' — 此前与当前错题中最早的位置。')) + '</p>' : '') +
-      '<p class="pl-muted">' + esc(T('현재 진도 ','Current topic ','当前进度 ') + b.current.correct + '/' + b.current.asked + T(' 정답 · 이전 ',' correct · earlier ',' 正确 · 此前 ') + b.previous.correct + '/' + b.previous.asked + T(' · 다음(미리보기) ',' · next (preview) ',' · 后续（预览）') + b.next.correct + '/' + b.next.asked) + '</p>' +
+      (lad ? ladderHtml : '<p class="pl-muted">' + esc(T('현재 진도 ','Current topic ','当前进度 ') + b.current.correct + '/' + b.current.asked + T(' 정답 · 이전 ',' correct · earlier ',' 正确 · 此前 ') + b.previous.correct + '/' + b.previous.asked + T(' · 다음(미리보기) ',' · next (preview) ',' · 后续（预览）') + b.next.correct + '/' + b.next.asked) + '</p>') +
       (path.next ? '<p class="pl-muted">' + esc(T('다음에 이어질 수준: ','Next level: ','接下来的水平：') + L(path.next.label)) + '</p>' : '') +
-      '<p class="pl-muted">' + esc(T('고른 범위의 20문항으로 정한 연습 출발점이에요. 과정 전체를 익혔다는 판정은 아니에요.','A practice starting point from 20 questions around the chosen range, not proof of whole-course mastery.','依据所选范围20题确定的练习起点，不代表掌握全部课程。')) + '</p>'
+      '<p class="pl-muted">' + esc(lad ? T('쉬운 단계부터 20문항으로 정한 연습 출발점이에요. 교재를 끝냈다는 판정은 아니에요.','A practice starting point from 20 questions climbing from easy steps, not proof of finishing the book.','从简单阶段起20题确定的练习起点，不代表完成教材。') : T('고른 범위의 20문항으로 정한 연습 출발점이에요. 과정 전체를 익혔다는 판정은 아니에요.','A practice starting point from 20 questions around the chosen range, not proof of whole-course mastery.','依据所选范围20题确定的练习起点，不代表掌握全部课程。')) + '</p>'
       : '<small>' + esc(T('진단으로 확인한 시작 수준','Starting level from this check','测评确认的起点水平')) + '</small><strong>' + esc(T('아직 확인하지 못했어요','Not determined yet','尚未确认')) + '</strong><p>' + esc(T('○·X를 체크한 뒤 다시 「추천 보기」를 눌러 주세요. 체크한 답이 없으면 시작 수준과 로드맵을 만들지 않아요.','Mark ○ or X, then press “Show suggestion” again. Without marks, no starting level or roadmap is made.','请先勾选○或X，再点击“查看建议”。没有勾选就不生成起点和路线图。')) + '</p>';
     var goals = window.NM_PLACEMENT_PATHS.goals, targets = window.NM_PLACEMENT_PATHS.targets;
     var goal = goals.find(function(g){ return g.id === SHEET_SEL.goal; });
@@ -630,7 +670,22 @@ function renderScorer(stage){
   }
   box.querySelector('#plGo').onclick = function(){ showResult('result'); };
   const invalidate=clearResult;
-  box.querySelectorAll('[data-mark]').forEach(function(el){el.onclick=function(){var i=Number(el.dataset.markIndex),mark=el.dataset.mark;marks[i]=marks[i]===mark?'':mark;box.querySelectorAll('[data-mark-index="'+i+'"]').forEach(function(b){b.setAttribute('aria-pressed',String(marks[i]===b.dataset.mark));});invalidate();};});
+  var count = box.querySelector('.pl-sc-count');
+  var paint = function(i){
+    var cell = box.querySelector('[data-mark-cell="' + i + '"]'), it = items[i];
+    cell.dataset.state = marks[i];
+    cell.querySelector('.pl-sc-mark').textContent = marks[i] === 'o' ? '○' : marks[i] === 'x' ? 'X' : '';
+    cell.setAttribute('aria-label', (i + 1) + T('번 · 정답 ',' · answer ',' · 答案 ') + shortAns(it) + ' · ' + MARK_NAME[marks[i]]);
+  };
+  var tally = function(){
+    var o = marks.filter(function(m){ return m === 'o'; }).length, x = marks.filter(function(m){ return m === 'x'; }).length;
+    count.textContent = T('○ ' + o + ' · X ' + x + ' · 비움 ' + (20 - o - x), '○ ' + o + ' · X ' + x + ' · blank ' + (20 - o - x), '○ ' + o + ' · X ' + x + ' · 空 ' + (20 - o - x));
+  };
+  box.querySelectorAll('[data-mark-cell]').forEach(function(el){ el.onclick = function(){
+    var i = Number(el.dataset.markCell); marks[i] = marks[i] === '' ? 'o' : marks[i] === 'o' ? 'x' : ''; paint(i); tally(); invalidate(); }; });
+  box.querySelectorAll('[data-mark-all]').forEach(function(el){ el.onclick = function(){
+    marks.forEach(function(_, i){ marks[i] = el.dataset.markAll; paint(i); }); tally(); invalidate(); }; });
+  tally();
 }
 
 /* ── 상단 도구(화면 전용) ── */

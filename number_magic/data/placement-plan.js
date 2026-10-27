@@ -735,6 +735,131 @@
           '不同主题的教材也可一起测评。依据各本已完成教材的进度轮流出应用题。此前6题和后续4题可能无法覆盖每本书。') },
       boundaries: { previous: 'mixed-topics', next: 'mixed-topics' } };
   }
+  /* 「연산 학습을 안 했어요」 사다리 진단 (2026-10-27 원장: 5세 소마셈 P · 6세 소마셈 K · 7세 기적의 계산법 1권,
+   * 「연산 단계를 길게 확인」). 쉬운 단계부터 그 교재 수준 끝까지 단계마다 1~4문항씩 20문항.
+   * 처음으로 2문항 이상(1문항 단계는 그 1문항) 틀리거나 모른 단계가 시작점이다. 모두 맞으면 다음 교재 첫 단계.
+   * 문항은 이 앱이 만든 것이며 교재 문항·풀이 방식과 같을 필요는 없다. */
+  const L3 = (ko, en, zh) => text(ko, en, zh);
+  const LADDERS = {
+    a5: { baseline: 'f-count5', title: L3('소마셈 P 수준 단계 확인', 'SomaSem P level ladder', 'SomaSem P 水平阶梯'),
+      after: { label: L3('소마셈 K 수준', 'SomaSem K level', 'SomaSem K 水平'), keys: ['AD1@1', 'SB1@1'] },
+      steps: [
+        { id: 'count', n: 2, foundation: 'f-count5', label: L3('5까지 수 세기', 'Counting to 5', '数数到5') },
+        { id: 'p1', n: 3, somaP: 1, label: L3('P1 · 30까지 5 더하기·빼기', 'P1 · ±5 within 30', 'P1 · 30以内加减5') },
+        { id: 'p2', n: 2, somaP: 2, label: L3('P2 · 30까지 6 더하기·빼기', 'P2 · ±6 within 30', 'P2 · 30以内加减6') },
+        { id: 'p3', n: 3, somaP: 3, label: L3('P3 · 30까지 10 더하기·빼기', 'P3 · ±10 within 30', 'P3 · 30以内加减10') },
+        { id: 'p4', n: 2, somaP: 4, label: L3('P4 · 30까지 9 더하기·빼기', 'P4 · ±9 within 30', 'P4 · 30以内加减9') },
+        { id: 'p5', n: 3, somaP: 5, label: L3('P5 · 9까지 가르기·모으기', 'P5 · Split and join to 9', 'P5 · 9以内分合') },
+        { id: 'p6', n: 2, somaP: 6, label: L3('P6 · 10 가르기·모으기', 'P6 · Split and join 10', 'P6 · 10的分合') },
+        { id: 'p7', n: 2, somaP: 7, label: L3('P7 · 10을 이용한 더하기', 'P7 · Adding through 10', 'P7 · 凑十法加法') },
+        { id: 'p8', n: 1, somaP: 8, label: L3('P8 · 10을 이용한 빼기', 'P8 · Subtracting through 10', 'P8 · 破十法减法') }
+      ] },
+    a6: { baseline: 'f-split5', title: L3('소마셈 K 수준 단계 확인', 'SomaSem K level ladder', 'SomaSem K 水平阶梯'),
+      after: { label: L3('소마셈 A 수준', 'SomaSem A level', 'SomaSem A 水平'), keys: ['AD10@1', 'AD3@1'] },
+      steps: [
+        { id: 'order', n: 2, foundation: 'f-order10', label: L3('10까지 수의 순서', 'Number order to 10', '10以内数的顺序') },
+        { id: 'bond9', n: 3, somaP: 5, label: L3('9까지 가르기·모으기', 'Split and join to 9', '9以内分合') },
+        { id: 'bond10', n: 3, somaP: 6, label: L3('10 가르기·모으기', 'Split and join 10', '10的分合') },
+        { id: 'k10', n: 4, keys: ['AD1@1', 'SB1@1'], max: 10, label: L3('K1·K3·K5 · 10까지 더하기·빼기', 'K1·K3·K5 · Add and subtract within 10', 'K1·K3·K5 · 10以内加减') },
+        { id: 'carry', n: 3, somaP: 7, label: L3('10을 이용한 더하기', 'Adding through 10', '凑十法加法') },
+        { id: 'borrow', n: 3, somaP: 8, label: L3('10을 이용한 빼기', 'Subtracting through 10', '破十法减法') },
+        { id: 'k20', n: 2, keys: ['AD2@1', 'SB2@1'], max: 20, label: L3('K2·K4·K6·K7 · 20까지 더하기·빼기', 'K2·K4·K6·K7 · Add and subtract within 20', 'K2·K4·K6·K7 · 20以内加减') }
+      ] },
+    a7: { baseline: 'f-ten10', title: L3('기적의 계산법 1권 수준 단계 확인', 'Miracle Calculation vol. 1 level ladder', '奇迹计算法第1册水平阶梯'),
+      after: { label: L3('기적의 계산법 2권 수준', 'Miracle Calculation vol. 2 level', '奇迹计算法第2册水平'), keys: ['AD3@2', 'SB3@2'] },
+      steps: [
+        { id: 'order', n: 2, foundation: 'f-order10', label: L3('10까지 수의 순서', 'Number order to 10', '10以内数的顺序') },
+        { id: 'bond9', n: 3, keys: ['NL2@2', 'NL2@3'], label: L3('9까지 가르기·모으기', 'Split and join to 9', '9以内分合') },
+        { id: 'add9', n: 3, keys: ['AD1@1', 'SB1@1'], label: L3('1권 · 9까지 더하기·빼기', 'Vol. 1 · Add and subtract to 9', '第1册 · 9以内加减') },
+        { id: 'three', n: 2, keys: ['AD10@1'], label: L3('1권 · 세 수 계산(10까지)', 'Vol. 1 · Three numbers to 10', '第1册 · 三个数(10以内)') },
+        { id: 'two1', n: 3, keys: ['AD3@1', 'SB3@1'], label: L3('1권 · 두 자리 ± 한 자리', 'Vol. 1 · 2-digit ± 1-digit', '第1册 · 两位数加减一位数') },
+        { id: 'two2', n: 3, keys: ['AD4@1', 'AD5@1', 'SB4@1'], label: L3('1권 · 몇십, 두 자리 ± 두 자리', 'Vol. 1 · Tens, 2-digit ± 2-digit', '第1册 · 整十与两位数加减') },
+        { id: 'ten', n: 2, keys: ['NL6@1', 'NS3@2'], label: L3('2권 · 10 만들기', 'Vol. 2 · Making 10', '第2册 · 凑十') },
+        { id: 'carry', n: 2, keys: ['AD2@1', 'SB2@1'], label: L3('2권 · 받아올림·받아내림', 'Vol. 2 · Carrying and borrowing', '第2册 · 进位与退位') }
+      ] }
+  };
+  function ladderCodes() { return Object.keys(LADDERS); }
+  function buildLadder(code, seed) {
+    const def = LADDERS[code];
+    if (!def) fail('unknown ladder ' + code);
+    dependencies();
+    const seedText = seed == null ? '0' : String(seed), items = [], seen = new Set(), steps = [];
+    const order = new Map(W.NM_COURSE_SPEC.map((s, i) => ['C' + s.id, i]));
+    def.steps.forEach((step, index) => {
+      const stepId = 'ladder-' + code + ':' + step.id, made = [];
+      const put = (q, anchor, thread, level) => {
+        const fp = fingerprint(q);
+        if (seen.has(fp)) return;
+        seen.add(fp);
+        made.push({ id: stepId + ':' + (made.length + 1), band: 'current', stageId: stepId, stageLabel: clone(step.label), ladderStep: index,
+          domain: q.domain, label: clone(step.label), course: anchor.course, session: anchor.session, thread, level,
+          responseMode: q.responseMode, renderData: q.renderData, prompt: q.prompt, answer: q.answer, fingerprint: fp });
+      };
+      if (step.foundation) {
+        const stage = allStages().find(x => x.id === step.foundation);
+        for (let attempt = 0; attempt < 4096 && made.length < step.n; attempt++) {
+          const ref = stage.refs[attempt % stage.refs.length], p = source(ref, seedText + '|' + stepId + '|' + attempt);
+          const q = foundation(stage, ref, p, false, attempt);
+          if (q) put(q, { course: stage.course, session: ref.session || stage.session }, ref.t, ref.lv);
+        }
+      } else if (step.somaP) {
+        const pool = somaPCandidates(step.somaP), rng = W.NM_RNG.mulberry32(W.NM_RNG.hashSeed(seedText + '|' + stepId));
+        for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+        const domains = [...new Set(pool.map(x => x.domain))], queues = domains.map(d => pool.filter(x => x.domain === d)), balanced = [];
+        while (queues.some(qu => qu.length)) queues.forEach(qu => { if (qu.length) balanced.push(qu.shift()); });
+        for (const c of balanced) {
+          if (made.length >= step.n) break;
+          const anchor = bookRefs([c.thread + '@' + c.level])[0];
+          if (!anchor) fail('missing app practice anchor for ladder ' + stepId);
+          put({ domain: c.domain, responseMode: 'number', prompt: clone(NEUTRAL_BLANK), answer: c.answer,
+            renderData: { tex: c.tex, steps: [], answerType: 'number', answerCount: 1 } }, anchor, c.thread, c.level);
+        }
+      } else {
+        const refs = bookRefs(step.keys);
+        if (!refs.length) fail('no supported refs for ladder ' + stepId);
+        const offset = W.NM_RNG.hashSeed(seedText + '|' + stepId);
+        for (let attempt = 0; attempt < 4096 && made.length < step.n; attempt++) {
+          const ref = refs[(offset + attempt) % refs.length], p = source(ref, seedText + '|' + stepId + '|' + attempt);
+          const q = ref.foundationStageId ? foundation({ id: ref.foundationStageId }, ref, p, false, attempt) : numberQuestion(ref, p, false);
+          if (!q) continue;
+          if (step.max) {
+            const nums = ((q.renderData.tex || '').match(/\d+/g) || []).map(Number).concat(Array.isArray(q.answer) ? q.answer : [q.answer]);
+            if (nums.some(v => v < 0 || v > step.max)) continue;
+          }
+          put(q, ref, ref.t, ref.lv);
+        }
+      }
+      if (made.length !== step.n) fail('insufficient unique items for ladder ' + stepId + ' (' + made.length + '/' + step.n + ')');
+      const anchor = made.slice().sort((a, b) => (order.get(a.course) - order.get(b.course)) || a.session - b.session)[0];
+      steps.push({ id: stepId, label: clone(step.label), count: step.n, course: anchor.course, session: anchor.session });
+      items.push(...made);
+    });
+    if (items.length !== 20) fail('ladder ' + code + ' must have 20 items (' + items.length + ')');
+    // 모두 맞힌 아이의 다음 출발은 사다리에서 이미 확인한 가장 늦은 앱 회차보다 앞서면 안 된다.
+    const later = (a, b) => (order.get(a.course) - order.get(b.course)) || a.session - b.session;
+    const first = bookRefs(def.after.keys)[0];
+    if (!first) fail('missing after-ladder anchor for ' + code);
+    const last = items.slice().sort(later).pop(), after = later(first, last) >= 0 ? first : { course: last.course, session: last.session, t: last.thread, lv: last.level };
+    const baseline = allStages().find(x => x.id === def.baseline);
+    const n = steps.length;
+    return { baseline: clone(baseline), counts: { previous: 0, current: 20, next: 0 }, items, seed: seedText,
+      ladder: { code, title: clone(def.title), steps, after: { label: clone(def.after.label), course: after.course, session: after.session, t: after.t, lv: after.lv } },
+      book: { series: 'ladder', course: 0, label: clone(def.title), title: clone(def.title), topics: '',
+        mix: text('쉬운 단계부터 ' + n + '단계 · 20문항', n + ' steps from easiest · 20 questions', '由易到难' + n + '个阶段 · 20题'),
+        notice: text('연산을 따로 배우지 않은 아이를 위해 쉬운 단계부터 차례로 확인해요. 처음으로 2문항 이상 틀리거나 모르는 단계가 시작점이에요. 교재와 같은 문제일 필요는 없어요.',
+          'For a child who has not studied arithmetic, steps go from easiest upward. The first step with two or more wrong or unknown answers is the start. Questions need not match the book.',
+          '为未学过运算的孩子从最简单的阶段依次确认。第一个错或不会两题以上的阶段就是起点。题目不必与教材相同。') },
+      boundaries: { previous: null, next: null } };
+  }
+  function ladderResult(plan, profile) {
+    return plan.ladder.steps.map(step => {
+      const rows = profile.filter(p => p.stageId === step.id);
+      const miss = rows.filter(p => p.skipped || p.ok === false).length;
+      return { id: step.id, label: clone(step.label), asked: rows.length, correct: rows.filter(p => p.ok === true).length,
+        wrong: rows.filter(p => !p.skipped && p.ok === false).length, unknown: rows.filter(p => p.skipped).length,
+        stop: miss >= Math.min(2, rows.length) };
+    });
+  }
   function normalize(value, array) {
     if (Array.isArray(value)) return array && value.length && value.every(x => normalize(x, false) !== null) ? value.map(x => normalize(x, false)) : null;
     if (typeof value === 'number') return Number.isFinite(value) && !array ? value : null;
@@ -765,6 +890,20 @@
       refs.forEach(ref => { if (!practiceSessions.some(r => canonical(r) === canonical(ref))) practiceSessions.push(ref); });
       return Object.assign(rec, { stageId: stage.id, label: clone(stage.label), practiceSessions });
     };
+    if (plan.ladder) {
+      const rows = ladderResult(plan, profile), at = rows.findIndex(r => r.stop);
+      if (at < 0) {
+        const a = plan.ladder.after;
+        return Object.assign({ course: a.course, session: a.session, threads: [{ t: a.t, lv: a.lv }], stageId: plan.ladder.code + ':after',
+          label: clone(a.label), practiceSessions: [{ course: a.course, session: a.session, t: a.t, lv: a.lv }], ladder: { start: rows.length, steps: rows },
+          reason: '모든 단계를 2문항 이상 놓치지 않았어요. 다음 교재 수준에서 시작해 보고, 어려우면 마지막 단계로 돌아가요.' });
+      }
+      const step = plan.ladder.steps[at], mine = plan.items.filter(x => x.stageId === step.id), threads = [];
+      mine.forEach(item => { if (!threads.some(r => r.t === item.thread && r.lv === item.level)) threads.push({ t: item.thread, lv: item.level }); });
+      return Object.assign(addTopic({ course: step.course, session: step.session, threads,
+        reason: '쉬운 단계부터 확인해 처음으로 2문항 이상(1문항 단계는 그 문항) 틀리거나 모른 단계예요. 이 단계부터 연습을 시작해요.' },
+        { id: step.id, label: step.label, refs: [] }, mine), { ladder: { start: at, steps: rows } });
+    }
     if (baseline.kind === 'foundation' && !profile.some(x => x.ok === true)) {
       return addTopic({ course: 'C0', session: 1, threads: [{ t: 'NL1', lv: 1 }], reason: confirmed.length ? '기초 확인 문항에서 정답이 확인되지 않았어요. 수 세기부터 함께 확인해요. 회차 번호는 능력 순서가 아닙니다.' : '아직 정답 근거가 없어요. 수 세기부터 함께 확인해요. 회차 번호는 능력 순서가 아닙니다.' }, allStages()[0]);
     }
@@ -825,5 +964,7 @@
   W.NM_PLACEMENT_PLAN = { stages, build, summarize };
   W.NM_PLACEMENT_PLAN.buildBook = buildBook;
   W.NM_PLACEMENT_PLAN.buildBooks = buildBooks;
+  W.NM_PLACEMENT_PLAN.buildLadder = buildLadder;
+  W.NM_PLACEMENT_PLAN.ladderCodes = ladderCodes;
   if (typeof module !== 'undefined' && module.exports) module.exports = W.NM_PLACEMENT_PLAN;
 })();

@@ -51,11 +51,18 @@
       const ref={course:item.course,session:item.session,t:item.thread,lv:item.level};
       if(!activities.some(x=>JSON.stringify(x)===JSON.stringify(ref)))activities.push(ref);
     });
+    // 사다리 진단(연산을 안 배운 미취학)은 고른 범위가 없다 — 처음 막힌 단계가 본진도 출발이다.
+    const ladder = plan.ladder && result.recommendation && result.recommendation.ladder;
+    const rec = result.recommendation, steps = plan.ladder ? plan.ladder.steps : null;
+    const ladderNext = ladder ? (steps[ladder.start + 1] || (ladder.start < steps.length ? plan.ladder.after : null)) : null;
     return { version: 'goal-path-v1', config, goal: clone(goal),
       target: config.goalTarget ? clone(targets.find(x => x.id === config.goalTarget)) : null,
-      main: { stageId: baseline.id, course: baseline.course, session: baseline.kind === 'foundation' ? 1 : baseline.session,
+      main: ladder ? { stageId: rec.stageId, course: rec.course, session: rec.session, label: clone(rec.label), status: 'selected-not-certified',
+        practiceSessions: clone(rec.practiceSessions || []), ladder: clone(ladder) } :
+        { stageId: baseline.id, course: baseline.course, session: baseline.kind === 'foundation' ? 1 : baseline.session,
         label: clone(baseline.label), status: 'selected-not-certified', practiceSessions: activities },
-      support, next: next ? { stageId: next.id, course: next.course, session: next.kind === 'foundation' ? 1 : next.session,
+      support: ladder ? [] : support, next: ladder ? (ladderNext ? { stageId: ladderNext.id || 'after', course: ladderNext.course, session: ladderNext.session,
+        label: clone(ladderNext.label), status: 'preview-not-advancement' } : null) : next ? { stageId: next.id, course: next.course, session: next.kind === 'foundation' ? 1 : next.session,
         label: clone(next.label), status: 'preview-not-advancement' } : null,
       assessment: { answered: result.profile.filter(x => !x.skipped).length, correct: result.correct, asked: result.asked,
         admissionReadiness: 'not-assessed', languageReadiness: 'not-assessed' },

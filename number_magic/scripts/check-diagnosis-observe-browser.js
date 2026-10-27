@@ -32,7 +32,9 @@ try{
    await enter(page,base);assert(await page.locator('#pdStart').isDisabled());assert.equal(await page.locator('[data-route]').count(),3);assert.equal(await page.locator('[data-route="school"]').count(),0,'the school-progress route was retired');
    assert.equal(await page.locator('#pdSeries,#pdStep,#pdBookCourse,#pdBookDetail,#pdProgress').count(),0,'no duplicate progress questionnaires or free-text book detail');
    for(const [level,stage] of [['a5','f-count5'],['a7','f-ten10'],['a6','f-split5']]){await page.selectOption('#pdLevel',level);assert.equal(await page.locator('#pdBaseline').inputValue(),stage,level+' without a chosen topic starts at '+stage);}
-   await page.click('[data-route="unlearned"]');assert.equal(await page.locator('#pdBaseline').inputValue(),'f-count5');
+   // 연산을 안 배운 6세 → 소마셈 K 수준 사다리(7단계), 학령기 아이는 예전처럼 수 세기부터 6/10/4.
+   await page.click('[data-route="unlearned"]');assert.equal(await page.locator('.pd-ladder-steps li').count(),7,'a6 unlearned climbs the SomaSem K ladder');
+   await page.selectOption('#pdLevel','e1');assert.equal(await page.locator('.pd-ladder-steps').count(),0);assert.equal(await page.locator('#pdBaseline').inputValue(),'f-count5');
    await page.click('[data-route="age"]');await page.selectOption('#pdLevel','m2');assert.equal(await page.locator('#pdBaseline').inputValue(),'c32');
    await page.click('[data-route="book"]');await page.selectOption('[data-book-series="0"]','kumon');await page.selectOption('[data-book-step="0"]','stage-i');assert(await page.locator('#pdStart').isDisabled(),'unknown book mapping needs topic confirmation');
    await page.selectOption('#pdBaseline','c35');assert.equal(await page.locator('#pdStart').isDisabled(),false);
@@ -114,7 +116,7 @@ try{
    }
    await page.click('[data-route="age"]');await page.selectOption('#pdLevel','m3');assert.equal(await page.locator('#pdBaseline').inputValue(),'c35');
    await page.selectOption('#pdStudyBand','foundation');await page.selectOption('#pdBaseline','f-count5');assert.equal(await page.locator('#pdBaseline').inputValue(),'f-count5','an explicit earlier topic is kept');
-   await page.selectOption('#pdLevel','a6');await page.click('[data-route="unlearned"]');await overflow(page);await page.waitForFunction(()=>!document.querySelector('.nm-confetti'));await page.screenshot({path:path.join(OUT,lang+'-'+width+'-setup.png')});
+   await page.selectOption('#pdLevel','e1');await page.click('[data-route="unlearned"]');await overflow(page);await page.waitForFunction(()=>!document.querySelector('.nm-confetti'));await page.screenshot({path:path.join(OUT,lang+'-'+width+'-setup.png')});
    if(lang==='ko'&&width===390){
     const before=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_preview_state_v1'));return JSON.stringify({speed:s.roadSpeed,amount:s.roadAmount,cadence:s.roadCadence,coins:s.coins,progress:s.progress});});
     await page.click('#pdStart');assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_preview_state_v1'))._diag.plan.items.length),20);
@@ -171,15 +173,17 @@ try{
     await openPreview(page,base);assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_preview_state_v1')).placement.selection.completedBooks[0].bookCourseNumber),17,'book course number survives reload');
    }
    await page.goto(completedBookSheetHref?base+'/number_magic/'+completedBookSheetHref:base+'/number_magic/placement-sheet.html?b=f-count5&seed=browser-observe&l='+lang);await page.waitForFunction(()=>window.NM_WS_READY);
-   if(completedBookSheetHref){const source=(await page.locator('.pl-source').allInnerTexts()).join(' ');assert(source.includes('완료한 교재')&&source.includes('Level 3')&&source.includes('교재 과정 17')&&source.includes('소마셈 P'),'printed sheet names both completed books');assert.equal(await page.locator('.pl-sc-item').count(),20);}
-   await page.click('#plGo');assert.match(await page.locator('#plOut').innerText(),lang==='ko'?/아직 확인하지 못했어요/:lang==='en'?/Not determined yet/:/尚未确认/,'no marks → no start level');assert(await page.locator('#plRoadmap').isHidden(),'no roadmap without marks');
+   if(completedBookSheetHref){const source=(await page.locator('.pl-source').allInnerTexts()).join(' ');assert(source.includes('완료한 교재')&&source.includes('Level 3')&&source.includes('교재 과정 17')&&source.includes('소마셈 P'),'printed sheet names both completed books');assert.equal(await page.locator('.pl-sc-cell').count(),20);}
+   await page.click('#plScore>summary');await page.click('#plGo');assert.match(await page.locator('#plOut').innerText(),lang==='ko'?/아직 확인하지 못했어요/:lang==='en'?/Not determined yet/:/尚未确认/,'no marks → no start level');assert(await page.locator('#plRoadmap').isHidden(),'no roadmap without marks');
    // ○·X buttons per question (placement-sheet.html): the last pick wins and is shown as pressed.
-   await page.click('[data-mark-index="0"][data-mark="x"]');await page.click('[data-mark-index="0"][data-mark="o"]');
-   assert.equal(await page.getAttribute('[data-mark-index="0"][data-mark="o"]','aria-pressed'),'true');assert.equal(await page.getAttribute('[data-mark-index="0"][data-mark="x"]','aria-pressed'),'false');
-   for(let i=1;i<20;i++)await page.click('[data-mark-index="'+i+'"][data-mark="'+(i>=16?'x':'o')+'"]');
+   // One cell per question at the top of the page: tap → ○, again → X, again → blank (placement-sheet.html).
+   const cell=i=>'[data-mark-cell="'+i+'"]',mark=async(i,m)=>{for(let k=0;k<(m==='o'?1:m==='x'?2:0);k++)await page.click(cell(i));};
+   await page.click(cell(0));await page.click(cell(0));assert.equal(await page.getAttribute(cell(0),'data-state'),'x');await page.click(cell(0));assert.equal(await page.getAttribute(cell(0),'data-state'),'');await page.click(cell(0));
+   assert.equal(await page.getAttribute(cell(0),'data-state'),'o');
+   for(let i=1;i<20;i++)await mark(i,i>=16?'x':'o');
    await page.click('#plGo');const text=await page.locator('#plOut').innerText();assert(text.includes('6/6')&&text.includes('10/10')&&text.includes('0/4'));assert.equal(await page.locator('#plOut li').count(),0,'next-stage X is not a current gap');
-   await overflow(page);const overlap=await page.locator('.pl-sc-item').evaluateAll(rows=>rows.some(row=>{const r=row.getBoundingClientRect();return [...row.children].some(e=>{const x=e.getBoundingClientRect();return x.right>r.right+1||x.left<r.left-1;});}));assert.equal(overlap,false,'OX controls fit their row');
-   assert.equal(await page.locator('.pl-sc-item [data-mark]').evaluateAll(xs=>xs.some(x=>x.getBoundingClientRect().height<44)),false);
+   await overflow(page);const overlap=await page.locator('.pl-sc-cell').evaluateAll(rows=>rows.some(row=>{const r=row.getBoundingClientRect();return [...row.children].some(e=>{const x=e.getBoundingClientRect();return x.right>r.right+1||x.left<r.left-1;});}));assert.equal(overlap,false,'mark cells hold their number and answer');
+   assert.equal(await page.locator('.pl-sc-cell').evaluateAll(xs=>xs.some(x=>x.getBoundingClientRect().height<44)),false);
    await page.locator('#plScore').screenshot({path:path.join(OUT,lang+'-'+width+'-paper-marks.png')});
    if(lang==='ko'&&width===1280){
     await page.locator('.pd-route-planner summary').click();
@@ -201,7 +205,7 @@ try{
    await page.addLocatorHandler(page.locator('#nmUnlockOverlayClose'),async el=>el.click(),{noWaitAfter:true});
    page.on('console',m=>{if(m.text().startsWith('[study-route]'))console.log(m.text());});
    await page.goto(base+'/number_magic/placement-sheet.html?b=c1&seed=branches&l=ko');await page.waitForFunction(()=>window.NM_WS_READY);
-   for(let i=0;i<20;i++)await page.click('[data-mark-index="'+i+'"][data-mark="o"]');await page.click('#plGo');
+   await page.click('#plScore>summary');await page.click('[data-mark-all="o"]');await page.click('#plGo');
    await page.locator('.pd-route-planner summary').click();
    for(const [name,value] of Object.entries({startDate:'2026-10-15',targetDate:'2026-12-10',frequency:'2',minutes:'20',observedWeeks:'2',observedVisits:'4',completedSessions:'4',observedMinutes:'80',reviewSessions:'2'}))await page.locator('[name="'+name+'"]').fill(value);
    await page.locator('[name="reviewed"]').check();const state=await page.evaluate(()=>localStorage.getItem('nm_preview_state_v1'));await page.locator('.pd-projection-form button[type="submit"]').click();

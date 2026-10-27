@@ -42,14 +42,32 @@
 @media(max-width:550px){.pd-profile-fields{grid-template-columns:1fr}.pd-profile{padding-top:8px}.pd-calendar-table{max-height:380px}.pd-calendar th,.pd-calendar td{padding:10px 8px;font-size:13px}.pd-header{padding:18px 0 14px}}
 
 /* Self-marking: correct, wrong, or neither (unknown). */
-.nm-placement .pd-marks-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}
-.nm-placement .pd-mark-row{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 6px;border:1px solid #c4cec8;border-radius:8px;background:#fff}
-.nm-placement .pd-mark-row>b{min-width:24px;font-size:18px;text-align:center}
-.nm-placement .pd-mark-row button{min-width:44px;min-height:48px;border:1.5px solid #566274;border-radius:6px;background:#fff;color:#182230;font:700 26px/1 Pretendard,system-ui,sans-serif;cursor:pointer}
-.nm-placement .pd-mark-row button[aria-pressed=true]{border:3px solid #2456c4;background:#eaf0ff;color:#16417c}
-.nm-placement :is(.pd-mark-row button,.pd-answer-key summary):focus-visible{outline:3px solid #2456c4;outline-offset:3px}
+.nm-placement .pd-marks-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:10px 0}
+.nm-placement .pd-mark-cell{position:relative;display:grid;justify-items:center;gap:2px;min-height:64px;padding:6px 4px 8px;border:1.5px solid #c4cec8;border-radius:8px;background:#fff;color:#182230;font:inherit;cursor:pointer;min-width:0}
+.nm-placement .pd-mark-cell b{font-size:12px;color:#63746e;font-variant-numeric:tabular-nums}
+.nm-placement .pd-mark-cell span{font-size:14px;font-weight:700;line-height:1.25;max-width:100%;overflow-wrap:anywhere;text-align:center}
+.nm-placement .pd-mark-cell i{position:absolute;top:4px;right:6px;font:800 17px/1 Pretendard,system-ui,sans-serif;font-style:normal}
+.nm-placement .pd-mark-cell[data-state=o]{border-color:var(--pd-accent);background:#eef3ed}.nm-placement .pd-mark-cell[data-state=o] i{color:var(--pd-accent)}
+.nm-placement .pd-mark-cell[data-state=x]{border-color:#a8452c;background:#fbf0ec}.nm-placement .pd-mark-cell[data-state=x] i{color:#a8452c}
+.nm-placement .pd-mark-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.nm-placement .pd-mark-tools button{min-height:44px;padding:6px 12px;border:1.5px solid #c4cec8;border-radius:8px;background:#eef3ed;color:#193b3c;font:600 14px/1.3 inherit;cursor:pointer}
+.nm-placement .pd-mark-count{margin:4px 0 12px;font-size:13px;color:#63746e;font-variant-numeric:tabular-nums}
+.nm-placement :is(.pd-mark-cell,.pd-mark-tools button,.pd-answer-key summary):focus-visible{outline:3px solid var(--pd-accent);outline-offset:2px}
+@media(max-width:340px){.nm-placement .pd-marks-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .nm-placement .pd-answer-key{border-block:1px solid #a6bbad;padding:8px 0;margin:8px 0 20px}
 .nm-placement .pd-answer-key summary{cursor:pointer;min-height:48px;display:flex;align-items:center;font-weight:700;font-size:18px}
 .nm-placement .pd-answer-key table{border-collapse:collapse;width:100%;font-size:18px;background:#fff}
 .nm-placement .pd-answer-key :is(th,td){padding:10px 12px;border:1px solid #c4cec8;text-align:left;overflow-wrap:anywhere}
-@media(max-width:700px){.nm-placement .pd-marks-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* 연산을 안 배운 5·6·7세 사다리 진단(2026-10-27) — 단계 목록과 단계별 결과 */
+.pd-ladder-steps{margin:10px 0 0;padding:0;list-style:none;counter-reset:step;display:grid;gap:4px}
+.pd-ladder-steps li{counter-increment:step;display:flex;align-items:baseline;gap:8px;font-size:14px;line-height:1.5;color:#193b3c}
+.pd-ladder-steps li::before{content:counter(step);flex:0 0 22px;height:22px;border-radius:50%;background:#eef3ed;color:#2d5a4f;font-size:12px;font-weight:700;display:grid;place-items:center}
+.pd-ladder-steps small{color:#63746e;font-variant-numeric:tabular-nums}
+.pd-ladder-result{border-top:1px solid #d9dfd9;padding:18px 0 4px}
+.pd-ladder-result ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.pd-ladder-result li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:14px;line-height:1.45}
+.pd-ladder-result li b{font-variant-numeric:tabular-nums}
+.pd-ladder-result li.is-pass{color:#63746e}
+.pd-ladder-result li.is-start{background:#eef3ed;color:#193b3c;font-weight:700}
+.pd-ladder-result li.is-later{color:#8a9893}
+.pd-ladder-result em{font-style:normal;font-size:12px;background:var(--pd-accent);color:#fff;border-radius:999px;padding:2px 9px}

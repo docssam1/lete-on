@@ -32,16 +32,16 @@ async function answer(p){
   const keep=await p.evaluate(()=>__ASSESS.state());
   assert.equal(await p.locator('#pdPrintOptions').getAttribute('open'),null);assert(await p.locator('#pdPaperAnswers').isHidden());
   assert.equal(await p.locator('[data-purpose]').count(),2);await p.screenshot({path:path.join(OUT,width+'-'+lang+'-setup.png'),fullPage:true});
-  await p.click('#pdStart');assert.equal(await p.locator('.pd-mark-row').count(),0);assert(await p.locator('#pdSubmit').isVisible());await answer(p);
+  await p.click('#pdStart');assert.equal(await p.locator('.pd-mark-cell').count(),0);assert(await p.locator('#pdSubmit').isVisible());await answer(p);
   const active=await p.evaluate(()=>__ASSESS.state().run);assert.equal(active.responses.length,1);
   await p.click('#pdRetry');await p.locator('dialog [data-cancel]').click();assert.deepEqual(await p.evaluate(()=>__ASSESS.state().run),active,'cancel preserves current attempt');
   await p.click('#pdRetry');await p.locator('dialog [data-confirm]').click();let st=await p.evaluate(()=>__ASSESS.state());assert.equal(st.run.responses.length,0);assert.notEqual(st.run.seed,active.seed);assert.equal(st.run.selection.baselineId,baseline);assert.equal(st.run.phase,'setup');
-  await p.click('#pdPrintOptions summary');await p.click('#pdPaperAnswers');await p.locator('[data-mark=o]').first().click();const paper=await p.evaluate(()=>__ASSESS.state().run);
+  await p.click('#pdPrintOptions summary');await p.click('#pdPaperAnswers');await p.locator('.pd-mark-cell').first().click();const paper=await p.evaluate(()=>__ASSESS.state().run);
   if(width===390&&lang==='ko'){
    await p.reload();await p.waitForSelector('#pdResumeOnline,#open-book');
    if(await p.locator('#open-book').isVisible()){await p.click('#open-book');await p.fill('#login-user','assessment-fixture');await p.fill('#login-password','fixture-only');await p.click('#login-submit');await p.waitForFunction(()=>window.__ASSESS&&document.querySelector('#nmReviewLogout'));await p.locator('.nm-title3d [data-id="diag"]:visible,#ttDiag:visible').first().click();}
   }else{await p.click('#pdBack');await p.evaluate(()=>__ASSESS.start());}
-  await p.waitForSelector('#pdResumeOnline');assert.equal(await p.locator('.pd-mark-row').count(),0,'re-entry asks how to continue, never defaults to O/X');
+  await p.waitForSelector('#pdResumeOnline');assert.equal(await p.locator('.pd-mark-cell').count(),0,'re-entry asks how to continue, never defaults to O/X');
   assert.deepEqual((await p.evaluate(()=>__ASSESS.state().run)).plan,paper.plan);await p.click('#pdResumeOnline');assert(await p.locator('#pdSubmit').isVisible());await p.click('#pdQuestionPaper');assert.deepEqual((await p.evaluate(()=>__ASSESS.state().run)).paperMarks,paper.paperMarks);
   await p.click('#pdReset');await p.locator('dialog [data-confirm]').click();st=await p.evaluate(()=>__ASSESS.state());assert.equal(st.run.phase,'setup');assert.equal(st.run.plan,null);assert.deepEqual(st.run.selection.completedBooks,[]);assert.equal(st.run.selection.baselineId,'');assert.equal(st.run.selection.profileGrade,'e3');assert.equal(st.run.selection.birthYear,keep.run.selection.birthYear);assert.deepEqual(st.placement,keep.placement);
   await p.click('[data-purpose=achievement]');await p.selectOption('#pdStudyBand',band);await p.selectOption('#pdBaseline',baseline);await p.click('#pdStart');
