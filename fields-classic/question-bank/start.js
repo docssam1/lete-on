@@ -1,5 +1,6 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261024r";
 import { lessonsByUnit, lessonsByPart, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261027p";
+import { readRecord, weekRate } from "./study-progress.js?v=20261028e";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
@@ -132,7 +133,9 @@ function renderSelfUnits(book) {
   $("unitList").innerHTML = `<div class="st-unit-cards">${book.units.map((unit, index) => {
     const { count } = unitParts(unit);
     const problems = Array.from({ length: count }, (_, k) => problemCount(unit, k + 1)).reduce((a, b) => a + b, 0);
-    return `<button type="button" class="st-unit-card" data-unit="${index}"><span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${index + 1}주 · 본책 ${problems}문항 · 과제 · 단원 평가</small><i aria-hidden="true">›</i></button>`;
+    const key = `${book.id}-u${index}`, rate = weekRate(readRecord(student, "week", key), readRecord(student, "test", key));
+    const test = readRecord(student, "test", key);
+    return `<button type="button" class="st-unit-card" data-unit="${index}"><span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${index + 1}주 · 본책 ${problems}문항 · 과제 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
   }).join("")}${book.source.unitTestQuestions?.length ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
 }
 // 한 주 = 한 단원(원장 2026-10-27 「스스로 공부하기는 한 주 공부하는 흐름대로」): 대단원을 누르면 그 주의 공부 순서를 보여 주고
@@ -148,7 +151,7 @@ function renderParts() {
   }
   const problems = Array.from({ length: count }, (_, k) => problemCount(unit, k + 1)).reduce((a, b) => a + b, 0);
   const last = view.unit === book.units.length - 1;
-  const result = (() => { try { return JSON.parse(localStorage.getItem(`fields-classic-test:${student}:${book.id}-u${view.unit}`) || "null"); } catch { return null; } })();
+  const result = readRecord(student, "test", `${book.id}-u${view.unit}`);
   const steps = [
     ["개념 배우기", titles.length ? titles.join(" · ") : "골든벨 개념"],
     ["게임하기", "풀이를 손으로 해 보기"],
@@ -278,6 +281,7 @@ $("pickForm").addEventListener("submit", (event) => {
 $("studentName").textContent = student;
 $("introLink").href = link("home.html", {});
 $("bankLink").href = link("index.html", {});
+$("myStudyLink").href = link("my-study.html", { book: view.bookId });
 showStep();
 syncAddress();
 

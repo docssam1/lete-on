@@ -1,0 +1,78 @@
+/* 내 학습 상황 — gfield-textbook-design: 따뜻한 종이 + 깊은 초록, Pretendard. 파랑 금지 */
+@font-face { font-family: 'FC Sans'; src: url('./assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 700; font-style: normal; font-display: swap; }
+:root {
+  --bg: #f1ece1; --paper: #fdfbf5; --paper-dim: #f7f2e7;
+  --ink: #2a241c; --muted: #7a6f5c; --line: #e2d9c6; --line-strong: #c9bda2;
+  --accent: #2f6b4a; --accent-ink: #1e4631; --accent-soft: #e9f0e7; --terra: #b4512e; --gold: #a87c22;
+  --sans: 'FC Sans', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.55; letter-spacing: -0.01em; }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:is(a, button):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+.ms-header { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; gap: 16px; padding: 10px 24px; background: var(--paper); border-bottom: 1px solid var(--line-strong); }
+.ms-back { padding: 8px 10px; border-radius: 6px; color: var(--muted); text-decoration: none; font-size: 14px; }
+.ms-back:hover { background: var(--paper-dim); color: var(--ink); }
+.ms-title { display: grid; margin-right: auto; line-height: 1.25; }
+.ms-title span { color: var(--muted); font-size: 11px; letter-spacing: .12em; }
+.ms-title strong { font-size: 19px; }
+.ms-student { padding: 6px 14px; border: 1px solid var(--line-strong); border-radius: 999px; font-weight: 700; }
+
+.ms-main { display: grid; gap: 18px; max-width: 1100px; margin: 0 auto; padding: 20px 24px 48px; }
+.ms-books { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; }
+.ms-books button { display: grid; justify-items: center; gap: 2px; padding: 9px 4px 0; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--paper); overflow: hidden; }
+.ms-books button b { font-size: 15px; }
+.ms-books button small { color: var(--muted); font-size: 12px; }
+.ms-books button i { display: block; width: 100%; height: 5px; margin-top: 6px; background: linear-gradient(90deg, var(--accent) var(--rate), var(--line) var(--rate)); }
+.ms-books button.is-on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); }
+
+.ms-summary { display: grid; grid-template-columns: 1.3fr 1.4fr 1fr 1fr; gap: 10px; }
+.ms-stat { display: grid; align-content: start; gap: 4px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+.ms-stat > span { color: var(--muted); font-size: 13px; font-weight: 600; }
+.ms-stat > b { font-size: 34px; line-height: 1.1; font-weight: 700; }
+.ms-stat > b small { font-size: 16px; font-weight: 600; color: var(--muted); }
+.ms-stat > b.ms-text { font-size: 20px; line-height: 1.35; }
+.ms-stat > small { color: var(--muted); font-size: 12.5px; }
+.ms-rate > b { color: var(--accent-ink); }
+.ms-rate > i, .ms-bar { display: block; height: 8px; border-radius: 99px; background: linear-gradient(90deg, var(--accent) var(--rate), var(--line) var(--rate)); }
+
+.ms-weeks h2, .ms-weak h2 { margin: 0 0 10px; font-size: 17px; }
+.ms-weak h2 small { color: var(--terra); font-size: 14px; font-weight: 600; }
+.ms-week-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.ms-week { display: grid; gap: 10px; align-content: start; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+.ms-week.is-on { border-color: var(--accent); box-shadow: inset 4px 0 0 var(--accent); }
+.ms-week-head { display: flex; align-items: baseline; gap: 8px; }
+.ms-week-head b { flex: 1; font-size: 16px; }
+.ms-week-head em { font-style: normal; font-weight: 700; color: var(--accent-ink); }
+.ms-week-no { padding: 2px 8px; border-radius: 99px; background: var(--paper-dim); color: var(--muted); font-size: 12px; font-weight: 700; }
+.ms-phases { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin: 0; padding: 0; list-style: none; }
+.ms-phases li { display: grid; gap: 1px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: var(--muted); }
+.ms-phases b { font-size: 12.5px; font-weight: 600; }
+.ms-phases span { font-size: 12px; }
+.ms-phases li.is-part { border-color: var(--line-strong); color: var(--ink); }
+.ms-phases li.is-done { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); }
+.ms-week-note { margin: 0; color: var(--muted); font-size: 13px; }
+.ms-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 16px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--paper); font-weight: 600; text-decoration: none; }
+.ms-btn:hover { border-color: var(--ink); }
+.ms-btn.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+.ms-btn.primary:hover { background: var(--accent-ink); }
+
+.ms-weak { padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+.ms-weak-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 6px; margin: 0 0 12px; padding: 0; list-style: none; }
+.ms-weak-list li { display: grid; padding: 8px 12px; border-left: 3px solid var(--terra); background: #fff; }
+.ms-weak-list small { color: var(--muted); }
+.ms-empty { margin: 0; color: var(--muted); }
+.ms-note { margin: 0; color: var(--muted); font-size: 13px; text-align: center; }
+
+@media (max-width: 760px) {
+  .ms-header { padding: 8px 14px; gap: 10px; }
+  .ms-main { padding: 14px 16px 40px; }
+  .ms-books { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .ms-summary { grid-template-columns: 1fr 1fr; }
+  .ms-stat > b { font-size: 28px; }
+}
+.ms-stat > b.ms-text { word-break: keep-all; overflow-wrap: anywhere; }
+@media (max-width: 760px) { .ms-stat > b.ms-text { font-size: 17px; } }

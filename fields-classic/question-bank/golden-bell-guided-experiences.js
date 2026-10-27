@@ -1,7 +1,7 @@
 // 분수는 빗금 대신 위아래로 쓴다.
 const fractionText = (text) => mathText(text);   // 공통 수식(math-markup.js): 빗금 분수·거듭제곱을 수식으로
 import { mathText } from "./math-markup.js?v=20261027p";
-import { book02Markup } from "./book02-renderers.js?v=20261023h";
+import { book02Markup } from "./book02-renderers.js?v=20261028c";
 import { book03Markup } from "./book03-renderers.js?v=20261027a";
 import { book06Markup } from "./book06-renderers.js?v=20261027p";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";

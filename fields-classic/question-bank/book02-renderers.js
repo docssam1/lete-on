@@ -136,9 +136,10 @@ function balanceScaleSvg(scale) {
       const iy = y - 14 - size - row * size * 2.05;
       return shapeSvg(item, ix, iy, size);
     }).join("");
-    return `<path d="M${(x - 40).toFixed(1)} ${(y - 12).toFixed(1)}H${(x + 40).toFixed(1)}L${(x + 32).toFixed(1)} ${(y - 4).toFixed(1)}H${(x - 32).toFixed(1)}Z" class="pan"/><path d="M${x.toFixed(1)} ${(y - 4).toFixed(1)}V${y.toFixed(1)}" class="post"/>${shapes}`;
+    return `<path d="M${(x - 40).toFixed(1)} ${(y - 12).toFixed(1)}H${(x + 40).toFixed(1)}L${(x + 32).toFixed(1)} ${(y - 4).toFixed(1)}H${(x - 32).toFixed(1)}Z" class="pan" fill="#fff4c2" stroke="#f39a1e" stroke-width="1.6"/><path d="M${x.toFixed(1)} ${(y - 4).toFixed(1)}V${y.toFixed(1)}" class="post" stroke="#f39a1e" stroke-width="3"/>${shapes}`;
   };
-  return `<svg class="b2-scale-svg" viewBox="0 0 260 150" aria-hidden="true"><path d="M118 146H142L136 108H124Z" class="stand"/><g><path d="M${(cx - arm).toFixed(1)} ${(cy - arm * Math.sin(rad)).toFixed(1)}L${(cx + arm).toFixed(1)} ${(cy + arm * Math.sin(rad)).toFixed(1)}" class="beam"/></g><circle cx="${cx}" cy="${cy}" r="6" class="pivot"/>${pan(scale.left, -1)}${pan(scale.right, 1)}</svg>`;
+  // 색은 그림 안에 적는다 — 이 그림의 CSS(golden-bell-book02.css)가 없는 문제은행 화면에서 검게 칠해지지 않게(골든벨 화면은 CSS가 덮는다)
+  return `<svg class="b2-scale-svg" viewBox="0 0 260 150" aria-hidden="true"><path d="M118 146H142L136 108H124Z" class="stand" fill="#ffd45c" stroke="#d79a00" stroke-width="1.2"/><g><path d="M${(cx - arm).toFixed(1)} ${(cy - arm * Math.sin(rad)).toFixed(1)}L${(cx + arm).toFixed(1)} ${(cy + arm * Math.sin(rad)).toFixed(1)}" class="beam" stroke="#f39a1e" stroke-width="9" stroke-linecap="round" fill="none"/></g><circle cx="${cx}" cy="${cy}" r="6" class="pivot" fill="#fff" stroke="#f39a1e" stroke-width="2"/>${pan(scale.left, -1)}${pan(scale.right, 1)}</svg>`;
 }
 
 function balanceMarkup(visual) {

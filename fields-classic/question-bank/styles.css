@@ -1595,3 +1595,10 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
 .test-answer{display:grid;gap:6px;margin-top:12px;padding:10px 12px;border-left:3px solid #2f6b4a;background:#f3f6f0}
 .test-answer p{margin:0}
 @media print{.test-panel,.test-answer{display:none!important}}
+/* 2권 양팔저울(그림 저울 b2-scale-svg): 예전 글자 저울 칸(grid) 규칙을 풀고 저울을 나란히 — 한 문제가 반 쪽을 넘지 않게 */
+.book02-visual .b2-balance-set{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;width:min(100%,780px)}
+.book02-visual .b2-balance-set>.b2-scale{display:block;width:210px;max-width:100%;min-height:0;margin:0;border:0;background:transparent}
+.book02-visual .b2-scale-svg{display:block;width:100%;height:auto;overflow:visible}
+.book02-visual .b2-balance-set>strong{flex-basis:100%}
+@media print{.book02-visual .b2-balance-set>.b2-scale{width:46mm}}
+.book02-visual .b2-scale-svg .stand{display:inline}

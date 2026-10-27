@@ -1,4 +1,5 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261024r";
+import { saveRecord } from "./study-progress.js?v=20261028e";
 
 // 권별테스트 원문 풀기 (원장 지시 2026-10-24): 「교재 권별테스트는 원본 문제 그대로 1세트가 있고, 유사문제로 공부하는 거야.」
 // 원문 쪽 그림을 그대로 보여 주고(답은 없다), 학생이 답안지에 적고 ○✕로 채점한 뒤
@@ -52,6 +53,11 @@ function renderDiagnosis() {
   }
   const list = [...rows.values()].sort((a, b) => b.wrong - a.wrong);
   const weak = list.filter((row) => row.wrong && row.typeId);
+  // 「내 학습 상황」에 남긴다(원문 답은 남기지 않고 점수·틀린 번호·약점 유형 id만)
+  saveRecord(student, "book-test", book.id, {
+    right: marked.filter(({ number }) => sheet[number].mark === "right").length, total: questions.length, marked: marked.length,
+    wrong: questions.filter(({ number }) => sheet[number]?.mark === "wrong").map(({ number }) => number), weak: weak.map((row) => row.typeId)
+  });
   box.hidden = false;
   box.innerHTML = `<h3 id="diagnosisHeading">유형별 진단</h3>
     <ol class="ut-diag-rows">${list.map((row) => `<li class="${row.wrong ? "is-weak" : row.right === row.numbers.length ? "is-clear" : ""}"><span>${esc(row.label)}</span><small>${row.numbers.join("·")}번</small><b>${row.wrong ? `✕ ${row.wrong}` : row.right === row.numbers.length ? "○" : "–"}</b></li>`).join("")}</ol>

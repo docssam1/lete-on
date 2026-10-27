@@ -1,8 +1,9 @@
 import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261024r";
 import { GENERATORS } from "./generators.js?v=20261027s";
+import { saveRecord } from "./study-progress.js?v=20261028e";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
-import { book02Markup } from "./book02-renderers.js?v=20261023h";
+import { book02Markup } from "./book02-renderers.js?v=20261028c";
 import { book03Markup } from "./book03-renderers.js?v=20261027a";
 import { book04Markup } from "./book04-renderers.js?v=20261023h";
 import { book05Markup } from "./book05-renderers.js?v=20261027p";
@@ -3465,7 +3466,6 @@ function renderWorksheet() {
 // 화면에서 푼 답은 자동으로 ○✕를 채우고(그림 답·빈 답은 비워 둔다), 인쇄해서 푼 학생은 ○✕만 누르면 된다.
 const testMarks = [];
 let testGraded = false;
-const testKey = () => `fields-classic-test:${student}:${testId}`;
 function testAnswerMarkup(question) {
   const picture = answerVisualMarkup(question);
   return `<div class="test-answer" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${question.answer}</div>` : `<span>${question.answer}</span>`}${question.solution ? `<p><b>풀이</b> ${question.solution}</p>` : ""}</div>`;
@@ -3502,7 +3502,7 @@ function renderTestPanel() {
       <h3>유형별 진단</h3>
       <table class="test-diagnosis"><thead><tr><th>유형</th><th>번호</th><th>결과</th></tr></thead><tbody>${rows.map((row) => `<tr class="${row.wrong ? "is-weak" : ""}"><td>${escapeAttribute(row.type.middle)} · ${escapeAttribute(row.type.label)}</td><td>${row.numbers.join(", ")}</td><td>${row.wrong ? `✕ ${row.wrong}` : row.right === row.numbers.length ? "○" : "채점 전"}</td></tr>`).join("")}</tbody></table>
       ${weak.length ? `<a class="test-weak" href="${escapeAttribute(weakStudyLink(weak))}">약점 유형 공부하기 · ${weak.length}유형 × 2문제 →</a>` : marked === total ? `<p class="test-clear">약점 유형이 없어요. 다음으로 가요.</p>` : ""}`;
-    try { localStorage.setItem(testKey(), JSON.stringify({ at: Date.now(), right, total, marked, weak: weak.map((row) => row.type.id) })); } catch {}
+    if (testId) saveRecord(student, "test", testId, { right, total, marked, weak: weak.map((row) => row.type.id) });
     if (parent !== window) parent.postMessage({ type: "fc-embed", event: "test-result", testId, right, total, marked, weak: weak.map((row) => row.type.label) }, location.origin);
   }
   panel.querySelector("[data-test=grade]")?.addEventListener("click", () => {

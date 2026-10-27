@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fdfbf5" />
+  <title>내 학습 상황</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="./my-study.css?v=20261028f" />
+</head>
+<body>
+  <header class="ms-header">
+    <a class="ms-back" id="backLink" href="./start.html"><span aria-hidden="true">←</span> 처음 화면</a>
+    <div class="ms-title"><span>GIFTED MATH BANK · 스스로 공부</span><strong>내 학습 상황</strong></div>
+    <div class="ms-student" id="studentName">DEMO</div>
+  </header>
+  <main class="ms-main">
+    <nav class="ms-books" id="books" aria-label="교재 고르기"></nav>
+    <section class="ms-summary" id="summary" aria-label="수행률과 진도"></section>
+    <section class="ms-weeks" aria-labelledby="weeksHeading">
+      <h2 id="weeksHeading">주차별 공부</h2>
+      <ol class="ms-week-list" id="weeks"></ol>
+    </section>
+    <section class="ms-weak" id="weak" aria-labelledby="weakHeading"></section>
+    <p class="ms-note" id="note"></p>
+  </main>
+  <script type="module" src="./my-study.js?v=20261028e"></script>
+</body>
+</html>

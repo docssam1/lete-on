@@ -1,5 +1,6 @@
 import { CURRICULUM } from "./source-data.js?v=20261024r";
 import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261027p";
+import { readRecord, saveRecord } from "./study-progress.js?v=20261028e";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
@@ -109,7 +110,28 @@ function weekTypes() {
   return out;
 }
 const testId = `${book.id}-u${unitIndex}`;
-const testResult = (id = testId) => { try { return JSON.parse(localStorage.getItem(`fields-classic-test:${student}:${id}`) || "null"); } catch { return null; } };
+const testResult = (id = testId) => readRecord(student, "test", id);
+// 수행률·진도: 이 주(단원)에서 본 장을 적어 둔다(표지·도착·권별 테스트 안내는 빼고). 「내 학습 상황」(my-study.html)이 읽는다.
+const weekKey = `${book.id}-u${unitIndex}`;
+const COUNTED = (slide) => !["cover", "end", "booktest"].includes(slide.kind);
+function recordVisit() {
+  const slide = slides[index];
+  if (!ready || !COUNTED(slide)) return;
+  const same = slides.filter((entry) => entry.kind === slide.kind);
+  const id = `${slide.kind}:${same.indexOf(slide)}`;
+  const week = readRecord(student, "week", weekKey) || {};
+  const seenIds = new Set(week.seen || []);
+  const fresh = !seenIds.has(id);
+  seenIds.add(id);
+  const phases = {};
+  for (const [kind] of PHASES) {
+    const all = slides.filter((entry) => entry.kind === kind).length;
+    if (all) phases[kind] = [[...seenIds].filter((entry) => entry.startsWith(`${kind}:`)).length, all];
+  }
+  // 같은 장을 다시 열 때는 마지막 장만 바꾼다(서버에 저장할 일이 덜 생기게)
+  if (!fresh && week.last === index + 1) return;
+  saveRecord(student, "week", weekKey, { total: slides.filter(COUNTED).length, seen: [...seenIds], phases, last: index + 1, unit: unit.label });
+}
 // 문제은행 학생 화면 주소. 화면에서 풀 때는 embed, 인쇄할 때는 새 창에서 print=1
 function sheetUrl(slide, { print = false } = {}) {
   const base = { mode: "curriculum", book: book.id, build: "1", as: "student" };
@@ -426,6 +448,7 @@ function endMarkup() {
     <p class="sd-cover-lead">${esc(unit.label)}${result ? ` · 단원 평가 ${result.right} / ${result.total}` : ""}</p>
     <div class="sd-end-actions">
       ${!lastUnit ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex + 1) }))}">다음 주 · ${unitIndex + 2}단원 시작하기 ›</a>` : `<a class="sd-btn primary" href="${esc(link("unit-test-viewer.html", { book: book.id }))}">${esc(book.label)} 권별 테스트 ›</a>`}
+      <a class="sd-btn" href="${esc(link("my-study.html", { book: book.id }))}">내 학습 상황</a>
       <a class="sd-btn" href="${esc(link("start.html", { book: book.id }))}">단원 고르기</a>
       <button type="button" class="sd-btn" data-act="restart">처음부터 다시 하기</button>
     </div>
@@ -466,6 +489,7 @@ function show({ atEnd = false } = {}) {
   renderSigns();
   placeWorld();
   say(lineFor(slide), slide.kind === "end" ? "praise" : "talk");
+  recordVisit();
   const url = new URL(location.href);
   url.searchParams.set("s", String(index + 1));
   history.replaceState(null, "", url);
