@@ -5,7 +5,7 @@
 // 끌어서 둘러보기 · Ctrl+휠/두 손가락으로 확대 · 「전체 지도」로 다시 전체. 그림·좌표·길은 data/park-map.js. 표와 아이들은 그림을 확대해도 크기가 거의 그대로다.
 import { PARK } from './data/park-map.js';
 import { OBSERVE_SETS } from './data/observe-sets.js';
-import { mountKids3d } from './park-kids3d.js';
+import { createCast, NPC_CAST } from './park-chars3d.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 // 두 아이(탐구 짝)가 그 자리에서 떠올린 물음 — 관찰의 출발점. 답은 연습 세트에서 직접 확인한다.
@@ -26,6 +26,7 @@ export function mountPark($host) {
   $host.innerHTML = `<div class="pm-view" tabindex="0" aria-label="${esc(PARK.title)} 지도 — 끌어서 둘러보고, 말꼬리 표를 누르면 두 친구가 그 자리로 걸어가 관찰을 열어요">
       <div class="pm-map"><img class="pm-img" alt="" draggable="false">
         ${PARK.spots.map((p) => `<button type="button" class="pk-pin" data-spot="${p.id}" aria-label="${esc(p.name)}"><span class="pk-tag"><i>${p.icon}</i><b class="full">${esc(p.name)}</b><b class="short">${esc(p.short)}</b></span><span class="pk-dot"></span></button>`).join('')}
+        ${Object.keys(PARK.npcs || {}).filter((id) => NPC_CAST[id]).map((id) => `<div class="pk-npc" data-npc="${id}" aria-hidden="true"><canvas width="132" height="120"></canvas></div>`).join('')}
         <div class="pk-kids" aria-hidden="true"><div class="pk-say" hidden></div><div class="pk-kid3d"><canvas width="132" height="120"></canvas><b class="nr">나래</b><b class="dy">도윤</b></div></div></div>
       <div class="pm-title"><b>${esc(PARK.title)}</b><span>지도를 끌어서 둘러보고, 말꼬리 표를 눌러요</span></div>
       <div class="pm-ctrl"><button type="button" data-z="1" aria-label="확대">＋</button><button type="button" data-z="-1" aria-label="축소">－</button><button type="button" data-z="0">전체 지도</button></div>
@@ -36,7 +37,9 @@ export function mountPark($host) {
   const $kids = $host.querySelector('.pk-kids'), $say = $host.querySelector('.pk-say');
   let kind = '', I = null, s = 1, tx = 0, ty = 0, fit = 1, anim = 0, alive = true;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const apply = () => { $m.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; $m.style.setProperty('--s', s); $m.style.setProperty('--kk', Math.min(1.35, 0.72 * Math.sqrt(s / fit))); };
+  // --kk = 사람들이 화면에서 보이는 배율. 원장 「캐릭터가 더 작아야지」 → 전체 지도 0.42, 확대할수록 조금씩(최대 0.85)
+  let KK = 0.42;
+  const apply = () => { KK = Math.min(0.85, 0.42 * Math.sqrt(s / fit)); $m.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; $m.style.setProperty('--s', s); $m.style.setProperty('--kk', KK); };
   // 그림이 화면을 벗어나 빈 곳이 보이지 않게(전체 지도일 때는 가운데)
   const clamp = () => { const W = $v.clientWidth, H = $v.clientHeight, w = I.w * s, h = I.h * s; tx = w <= W ? (W - w) / 2 : Math.min(0, Math.max(W - w, tx)); ty = h <= H ? (H - h) / 2 : Math.min(0, Math.max(H - h, ty)); };
   const view = (x, y, zs) => { const W = $v.clientWidth, H = $v.clientHeight; const ns = fit * zs; return { s: ns, tx: W / 2 - (x / 100) * I.w * ns, ty: H / 2 - (y / 100) * I.h * ns }; };
@@ -65,13 +68,35 @@ export function mountPark($host) {
     const out = []; for (let k = to; k !== undefined; k = prev.get(k)) out.unshift({ k, p: pt(k) }); return out[0]?.k === '@' ? out : [{ k: '@', p: from }, { k: to, p: G.N.get(to) }]; };
   const putKids = () => { $kids.style.left = `${(kid.pos[0] / 100) * I.w}px`; $kids.style.top = `${(kid.pos[1] / 100) * I.h}px`; };
   // 걷는 동안은 둘 다 가는 쪽을 보고, 서 있으면 서로 마주 본다
-  const K3 = mountKids3d($host.querySelector('.pk-kid3d canvas'), { reduced });
+  const cast = createCast({ reduced });
+  const K3 = cast.add($host.querySelector('.pk-kid3d canvas'), ['narae', 'doyun']);
+  // ── 공원 안의 다른 사람들: 점 하나면 그 자리에 서 있고(가끔 손 흔듦), 둘 이상이면 그 길을 천천히 오간다
+  const npcs = [...$host.querySelectorAll('.pk-npc')].map((el) => ({ id: el.dataset.npc, el, A: cast.add(el.querySelector('canvas'), NPC_CAST[el.dataset.npc]), pts: [], i: 0, dir: 1, t: 0, wait: Math.random() * 2, pos: [0, 0] }));
+  const putNpc = (n) => { n.el.style.left = `${(n.pos[0] / 100) * I.w}px`; n.el.style.top = `${(n.pos[1] / 100) * I.h}px`; };
+  const npcReset = () => npcs.forEach((n) => { n.pts = PARK.npcs[n.id]?.[kind] || []; n.i = 0; n.dir = 1; n.t = 0; n.pos = n.pts[0] || [0, 0]; n.A.setWalking(false); n.A.face(0); putNpc(n); });
+  let npcRaf = 0, npcLast = performance.now(), waveT = 4;
+  const npcStep = (now) => { if (!alive) return; const dt = Math.min(0.05, (now - npcLast) / 1000); npcLast = now;
+    if (I && !reduced) {
+      for (const n of npcs) {
+        if (n.pts.length < 2) continue;
+        if (n.wait > 0) { n.wait -= dt; if (n.wait <= 0) n.A.setWalking(true); continue; }
+        const a = n.pts[n.i], b = n.pts[n.i + n.dir], seg = px(a, b) || 1; n.t += (14 * dt) / seg;
+        n.pos = [a[0] + (b[0] - a[0]) * Math.min(1, n.t), a[1] + (b[1] - a[1]) * Math.min(1, n.t)]; putNpc(n); n.A.face((b[0] - a[0]) * I.w, (b[1] - a[1]) * I.h);
+        if (n.t >= 1) { n.t = 0; n.i += n.dir; if (n.i <= 0 || n.i >= n.pts.length - 1) { n.dir = -n.dir; n.wait = 2 + Math.random() * 3; n.A.setWalking(false); n.A.face(0); } }
+      }
+      waveT -= dt; if (waveT < 0) { waveT = 6 + Math.random() * 6; const st = npcs.filter((n) => n.pts.length < 2); st[Math.floor(Math.random() * st.length)]?.A.wave(); }
+    }
+    npcRaf = requestAnimationFrame(npcStep); };
+  npcRaf = requestAnimationFrame(npcStep);
+  // 지도가 화면 밖이면 그리기를 쉰다
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver((es) => cast.pause(!es[es.length - 1].isIntersecting)) : null; io?.observe($v);
   const face = (dx, dy = 0) => K3.face(dx, dy);
   const say = (q) => { clearTimeout(kid.sayT); if (!q) { $say.hidden = true; return; }
     const line = (i) => { $say.innerHTML = `<b>${esc(q[i])}</b>${esc(q[i + 1])}`; $say.hidden = false; $say.style.marginLeft = '0px'; $say.style.setProperty('--tail', '50%');
       // 지도 가장자리에서는 말풍선을 안쪽으로 밀고 꼬리만 아이들 쪽에 남긴다(말풍선은 화면에서 --kk배 크기)
-      const r = $say.getBoundingClientRect(), V = $v.getBoundingClientRect(), k = r.width / $say.offsetWidth || 1, sh = r.right > V.right - 8 ? V.right - 8 - r.right : r.left < V.left + 8 ? V.left + 8 - r.left : 0;
-      if (sh) { $say.style.marginLeft = `${sh / k}px`; $say.style.setProperty('--tail', `calc(50% - ${sh / k}px)`); } };
+      // 말풍선은 아이들 배율(--kk)을 되돌려 늘 같은 크기 → 옮길 거리는 부모(아이들) 단위로 sh/KK, 꼬리는 말풍선 단위(=화면)로 sh
+      const r = $say.getBoundingClientRect(), V = $v.getBoundingClientRect(), sh = r.right > V.right - 8 ? V.right - 8 - r.right : r.left < V.left + 8 ? V.left + 8 - r.left : 0;
+      if (sh) { $say.style.marginLeft = `${sh / KK}px`; $say.style.setProperty('--tail', `calc(50% - ${sh}px)`); } };
     line(0); kid.sayT = setTimeout(() => { line(2); kid.sayT = setTimeout(() => { $say.hidden = true; }, 2600); }, 2600); };
   const stopWalk = () => { cancelAnimationFrame(kid.raf); kid.walk = null; $kids.classList.remove('walk'); K3.setWalking(false); };
   const walkTo = (toKey, ms, done) => {
@@ -98,7 +123,7 @@ export function mountPark($host) {
     $m.style.width = `${I.w}px`; $m.style.height = `${I.h}px`; place();
     fit = Math.min($v.clientWidth / I.w, $v.clientHeight / I.h);
     const st = PARK.start[kind], go = view(st[0], st[1], st[2]);
-    stopWalk(); kid.pos = intro && !reduced ? PARK.walk.entrance[kind][0] : stand(kid.spot); putKids(); face(0);
+    stopWalk(); kid.pos = intro && !reduced ? PARK.walk.entrance[kind][0] : stand(kid.spot); putKids(); face(0); npcReset();
     if (!intro || reduced) { s = go.s; tx = go.tx; ty = go.ty; clamp(); apply(); showPins(); return; }
     // 시작: 전체 지도를 잠깐 보여 주고 → 두 아이가 입구에서 광장으로 걸어 들어오는 동안 지도가 광장 쪽으로 확대 → 표가 하나씩 떠오른다
     s = fit; tx = 0; ty = 0; clamp(); apply(); $pins.forEach((b) => b.classList.remove('show'));
@@ -140,5 +165,5 @@ export function mountPark($host) {
   // 화면 크기가 바뀌면(폰 돌리기 등) 그림을 다시 고르고 맞춘다 — 걷던 아이들은 가던 자리에 바로 선다
   let rt = 0; const onResize = () => { clearTimeout(rt); rt = setTimeout(() => { if (!I) return; const want = $v.clientWidth / Math.max(1, $v.clientHeight) < 0.8 ? 'tall' : 'wide'; if (want !== kind) { $img.src = PARK.images[want].src; $img.onload = () => load(false); } else load(false); }, 150); };
   addEventListener('resize', onResize);
-  return { destroy() { alive = false; cancelAnimationFrame(anim); stopWalk(); clearTimeout(kid.sayT); removeEventListener('resize', onResize); K3.dispose(); } };
+  return { destroy() { alive = false; cancelAnimationFrame(anim); stopWalk(); clearTimeout(kid.sayT); removeEventListener('resize', onResize); cancelAnimationFrame(npcRaf); io?.disconnect(); cast.dispose(); } };
 }

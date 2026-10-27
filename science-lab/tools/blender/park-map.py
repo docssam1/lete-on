@@ -21,6 +21,9 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene
 R = random.Random(7)
 TOP = 0.0          # 잔디 윗면 높이
+# 원장 2026-10-27 「너무 오밀조밀 모여 있는 것 같아」 → 자리(땅·길·물·지점)만 K배로 벌리고 나무·천막·정자·사람 같은 물건 크기는 그대로.
+# 아래 좌표는 벌리기 전 값으로 쓰고, 다 지은 뒤 spread_layout()이 한 번에 벌린다(카메라·지점 좌표도 K배).
+K = 1.5
 THICK = 1.4        # 섬 두께
 
 def link(o):
@@ -165,6 +168,7 @@ for i, p in enumerate(pond_pts):
 
 # ── 길(띠) ──
 def ribbon(name, center, width, mat, z=TOP + 0.04, thick=0.08, closed=False):
+    width = width / K   # 나중에 땅과 함께 K배로 벌어지므로 미리 나눠 둔다
     pts = catmull([(x, y, 0) for x, y in center], n=6, closed=closed); verts = []; faces = []
     n = len(pts)
     for i, p in enumerate(pts):
@@ -183,7 +187,7 @@ ribbon('entry', [(-6, -28.5), (-6, -22), (-6, -12)], 2.8, PAVE)
 ribbon('west', [(-18, -1), (-25, -3.5), (-32, -4.5), (-37, -3)], 2.0, PAVE, z=TOP + 0.03)
 ribbon('east', [(24.5, 0), (29, -2), (33, -3.5)], 2.0, PAVE, z=TOP + 0.03)
 # 광장(둥근 벽돌 마당)
-bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=6, depth=0.2, location=(-6, -12, TOP + 0.07)); plaza = bpy.context.object; plaza.data.materials.append(PLAZA)
+bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=6, depth=0.2, location=(-6, -12, TOP + 0.07)); plaza = bpy.context.object; plaza.data.materials.append(PLAZA); plaza['lay'] = 'xy'
 
 # 개울 + 다리
 STREAM = [(11.5, 0), (14, -3.5), (16, -7), (20, -10.5), (25.5, -12.5), (31, -12)]
@@ -199,7 +203,7 @@ for s in (-1, 1):
 GRAVEL = noise_mat('gravel', (0.20, 0.17, 0.13), (0.32, 0.28, 0.22), scale=6, rough=0.95, bump=0.5, bump_scale=80)
 DARK = noise_mat('basalt', (0.16, 0.16, 0.17), (0.28, 0.27, 0.27), scale=5, rough=0.8, bump=0.5)
 GRANITE = noise_mat('granite', (0.24, 0.22, 0.20), (0.42, 0.40, 0.37), scale=14, rough=0.7, bump=0.3)
-bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=1, location=(-42, 4, TOP - 0.2)); hill = bpy.context.object; hill.scale = (8.5, 6.5, 2.0); hill.data.materials.append(GRAVEL)
+bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=1, location=(-42, 4, TOP - 0.2)); hill = bpy.context.object; hill.scale = (8.5, 6.5, 2.0); hill.data.materials.append(GRAVEL); hill['lay'] = 'xy'
 for p_ in hill.data.polygons: p_.use_smooth = True
 rr = random.Random(21)
 for k in range(16):
@@ -212,7 +216,7 @@ rock('bigrock', (-38.5, 0.5, TOP + 0.6), (2.6, 1.9, 1.5), 330, GRANITE)
 REED = principled('reed', (0.36, 0.48, 0.14), rough=0.8)
 SPIKE = principled('cattail', (0.30, 0.17, 0.08), rough=0.9)
 rr = random.Random(31); verts = []; faces = []
-for k in range(2600):
+for k in range(5200):
     i = rr.randrange(len(marsh_pts)); q = MARSH_C + (marsh_pts[i] - MARSH_C) * rr.uniform(0.55, 1.18)
     if (Vector((q.x, q.y)) - Vector((36, -6.5))).length < 2.2: continue
     h = rr.uniform(1.0, 2.0); w = 0.04; t = rr.random() * 6.283; lean = Vector((rr.uniform(-.15, .15), rr.uniform(-.15, .15), 0))
@@ -227,7 +231,7 @@ bpy.data.objects.remove(spike)
 DECK = [(33, -3.5), (35.5, -6.5), (37, -9.5), (38.5, -12.5)]
 for k, (a, b) in enumerate(zip(DECK, DECK[1:])):
     a, b = Vector(a), Vector(b); m = (a + b) / 2; d = b - a
-    bpy.ops.mesh.primitive_cube_add(location=(m.x, m.y, TOP + 0.12 + k * 0.012)); o = bpy.context.object; o.scale = (d.length / 2 + 0.3, 0.8, 0.07); o.rotation_euler.z = math.atan2(d.y, d.x); o.data.materials.append(WOOD)
+    bpy.ops.mesh.primitive_cube_add(location=(m.x, m.y, TOP + 0.12 + k * 0.012)); o = bpy.context.object; o.scale = (d.length / 2 + 0.3, 0.8, 0.07); o.rotation_euler.z = math.atan2(d.y, d.x); o.data.materials.append(WOOD); o['lay'] = 'len'
 
 # 대회 본부 천막 둘 + 안내판(광장 가장자리), 남쪽 입구 나무 문
 TENT = principled('tent', (0.94, 0.94, 0.90), rough=0.6); TENT2 = principled('tent2', (0.22, 0.52, 0.32), rough=0.6); POLE = principled('pole', (0.75, 0.75, 0.75), rough=0.4, **{'Metallic': 0.6})
@@ -259,11 +263,11 @@ bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=4.2, radius2=3.6, depth=0.25
 # 수련 잎·꽃
 LILY = principled('lily', (0.12, 0.32, 0.08), rough=0.35)
 PINK = principled('pink', (0.95, 0.55, 0.65), rough=0.5)
-for i in range(46):
+for i in range(80):
     a = R.random() * math.pi * 2; rr = math.sqrt(R.random()) * 0.8
     x, y = POND_C.x - 3 + math.cos(a) * 5.5 * rr, POND_C.y - 1 + math.sin(a) * 3.2 * rr
-    bpy.ops.mesh.primitive_cylinder_add(vertices=20, radius=0.35 + R.random() * 0.3, depth=0.02, location=(x, y, TOP - 0.31 + i * 0.0015)); o = bpy.context.object; o.data.materials.append(LILY)
-    if i % 7 == 0: bpy.ops.mesh.primitive_uv_sphere_add(radius=0.16, location=(x, y, TOP - 0.31 + i * 0.0015 + 0.09)); bpy.context.object.scale.z = 0.6; bpy.context.object.data.materials.append(PINK)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=20, radius=0.35 + R.random() * 0.3, depth=0.02, location=(x, y, TOP - 0.31 + i * 0.0008)); o = bpy.context.object; o.data.materials.append(LILY)
+    if i % 7 == 0: bpy.ops.mesh.primitive_uv_sphere_add(radius=0.16, location=(x, y, TOP - 0.31 + i * 0.0008 + 0.09)); bpy.context.object.scale.z = 0.6; bpy.context.object.data.materials.append(PINK)
 
 # 물에 사는 식물(수초) — 관찰 세트 「물에 사는 식물 8종」과 같은 식물을 사는 자리대로 둔다(원장 2026-10-26 「수초도 있어야지」).
 # 떠 있는 것: 수련(위)·개구리밥·부레옥잠·네가래 / 물속(수면까지 올라온 덤불): 검정말·붕어마름 / 물가에 서 있는 것: 질경이택사·부들
@@ -320,7 +324,7 @@ for k, a in enumerate([2.95, 3.25, 3.55]):
     bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.05, depth=0.5, location=(c.x, c.y, WZ + 0.95)); bpy.context.object.data.materials.append(WHITE)
 # 부들: 연못 북쪽 물가, 긴 잎 무리 + 갈색 소시지 꼴 이삭
 rr = random.Random(80); verts = []; faces = []; spikes = []
-for k in range(700):
+for k in range(1300):
     a = rr.uniform(1.55, 2.35) if k % 2 else rr.uniform(0.45, 0.95); c = pond_edge(a, rr.uniform(0.86, 1.0))
     h = rr.uniform(0.9, 1.6); w = 0.035; t = rr.random() * 6.283; lean = Vector((rr.uniform(-.12, .12), rr.uniform(-.12, .12), 0)); dx, dy = math.cos(t) * w, math.sin(t) * w; i0 = len(verts)
     verts += [(c.x - dx, c.y - dy, WZ), (c.x + dx, c.y + dy, WZ), tuple(Vector((c.x, c.y, WZ + h)) + lean * h)]; faces.append((i0, i0 + 1, i0 + 2))
@@ -334,13 +338,13 @@ FLOWER_COLS = [(0.95, 0.80, 0.10), (0.92, 0.35, 0.55), (0.85, 0.12, 0.12), (0.96
 fl_mats = [principled(f'fl{i}', c, rough=0.6) for i, c in enumerate(FLOWER_COLS)]
 GREEN = principled('bush', (0.10, 0.28, 0.07), rough=0.8)
 for (cx, cy, rx, ry, seed) in [(18.5, 5.0, 4.2, 2.6, 1), (20.5, -0.5, 3.2, 2.0, 2)]:
-    bpy.ops.mesh.primitive_uv_sphere_add(radius=1, location=(cx, cy, TOP)); m = bpy.context.object; m.scale = (rx, ry, 0.5); m.data.materials.append(GREEN)
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=1, location=(cx, cy, TOP)); m = bpy.context.object; m.scale = (rx, ry, 0.5); m.data.materials.append(GREEN); m['lay'] = 'xy'
     rr = random.Random(seed); verts = []; faces = []; mats = []
     for k in range(5):
         bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=0.11); src = bpy.context.object
         obj = src; obj.data.materials.append(fl_mats[(k + seed) % 5])
         pts = []
-        for j in range(160):
+        for j in range(380):
             a = rr.random() * 6.283; d = math.sqrt(rr.random())
             if (math.atan2(math.sin(a), math.cos(a)) + math.pi) / (2 * math.pi) * 5 // 1 != k: continue
             x, y = cx + math.cos(a) * rx * 0.95 * d, cy + math.sin(a) * ry * 0.95 * d; z = TOP + 0.5 * math.sqrt(max(0, 1 - d * d)) + 0.05
@@ -352,7 +356,7 @@ for (cx, cy, rx, ry, seed) in [(18.5, 5.0, 4.2, 2.6, 1), (20.5, -0.5, 3.2, 2.0, 
 # 그늘 풀밭의 큰 나무 자리·숲 바닥 낙엽
 LEAFLIT = [principled(f'lit{i}', c, rough=0.9) for i, c in enumerate([(0.45, 0.25, 0.08), (0.62, 0.38, 0.10), (0.35, 0.20, 0.10), (0.70, 0.52, 0.15)])]
 verts = []; faces = []; mi = []
-for k in range(7000):
+for k in range(14000):
     x = R.uniform(-36, 40); y = R.uniform(16, 27) if R.random() < 0.85 else R.uniform(12, 16)
     inside = True
     if not inside: continue
@@ -377,8 +381,8 @@ def grass_patch(cx, cy, rx, ry, n, seed):
         verts += [(x - dx, y - dy, TOP), (x + dx, y + dy, TOP), tuple(Vector((x, y, TOP + h)) + lean * h)]
         faces.append((i0, i0 + 1, i0 + 2))
     o = mesh_obj(f'grass{seed}', verts, faces, TALL); return o
-grass_patch(-22, 4.5, 6.5, 4.5, 4200, 7)
-grass_patch(-15.5, 10.5, 3.0, 2.0, 900, 8)
+grass_patch(-22, 4.5, 6.5, 4.5, 9000, 7)
+grass_patch(-15.5, 10.5, 3.0, 2.0, 2000, 8)
 for (cx, cy, rx, ry, seed) in [(-22, 4.5, 6, 4, 11)]:
     rr = random.Random(seed)
     for k in range(70):
@@ -426,7 +430,7 @@ def tree(name, base, h, kind='broad', tint=(1, 1, 1), seed=1, spread=1.0):
                 a = k / 6 * 6.283 + lv * 0.5 + rr.random() * 0.4; e = base + Vector((math.cos(a) * rad, math.sin(a) * rad, z - rad * 0.15))
                 spline([base + Vector((0, 0, z)), e], h * 0.01, h * 0.004)
                 for j in range(3): leaves.append(base + Vector((0, 0, z)) + (e - base - Vector((0, 0, z))) * (0.4 + 0.3 * j))
-    o = link(bpy.data.objects.new(name, cu)); cu.materials.append(BARK)
+    o = link(bpy.data.objects.new(name, cu)); cu.materials.append(BARK); o['lay'] = 'tree'; o['base'] = [base.x, base.y]
     # 잎 카드: 잎 자리마다 여러 장, 바깥·위를 보게 돌려 놓는다
     verts = []; faces = []; uvs = []; cols = []
     size = (0.32 if kind == 'broad' else 0.6) * (h / 9)
@@ -443,14 +447,14 @@ def tree(name, base, h, kind='broad', tint=(1, 1, 1), seed=1, spread=1.0):
     me = bpy.data.meshes.new(name + '_l'); me.from_pydata([tuple(v) for v in verts], [], faces); me.update()
     uv = me.uv_layers.new(name='UVMap'); ca = me.color_attributes.new('tint', 'FLOAT_COLOR', 'CORNER')
     for li in range(len(me.loops)): uv.data[li].uv = uvs[me.loops[li].vertex_index] if False else uvs[li]; ca.data[li].color = cols[li]
-    lo = link(bpy.data.objects.new(name + '_leaves', me)); me.materials.append(LEAF if kind == 'broad' else NEEDLE)
+    lo = link(bpy.data.objects.new(name + '_leaves', me)); me.materials.append(LEAF if kind == 'broad' else NEEDLE); lo['lay'] = 'tree'; lo['base'] = [base.x, base.y]
     return o
 
 TREE_SPOTS = []
 # 숲(북쪽 가장자리): 활엽수·소나무·가을빛 나무
-for row, (y0, xs) in enumerate([(17.5, np.linspace(-30, 34, 15)), (22.5, np.linspace(-36, 40, 13)), (26, np.linspace(-14, 24, 6))]):
+for row, (y0, xs) in enumerate([(17.5, np.linspace(-30, 34, 21)), (20, np.linspace(-33, 37, 18)), (22.5, np.linspace(-36, 40, 20)), (25.5, np.linspace(-20, 30, 12))]):
     for i, x in enumerate(xs):
-        x = x + R.uniform(-1.2, 1.2) + row * 1.5; y = y0 + R.uniform(-1.2, 0.8)
+        x = x + R.uniform(-1.0, 1.0) + row * 0.8; y = y0 + R.uniform(-0.8, 0.6)
         if abs(x + 42) < 9 and y < 14: continue
         kind = 'pine' if (i + row) % 4 == 1 else 'broad'
         tint = (1.6, 1.15, 0.5) if (i + row) % 6 == 3 else (1.25, 0.95, 0.45) if (i + row) % 7 == 5 else (1, 1, 1)
@@ -459,7 +463,8 @@ for (x, y) in [(-3, 12.2), (9, 11.6), (15, 15.6)]: TREE_SPOTS.append(((x, y, TOP
 # 그늘 풀밭의 큰 나무
 TREE_SPOTS.append(((-24, 6.5, TOP), 12.5, 'broad', (0.95, 1.0, 0.95)))
 # 광장 둘레·연못 둘레
-for (x, y) in [(-15, -16), (3, -17), (-20, -9), (-10, 4), (14, 9.5), (27, -6), (29, 5), (-30, -15), (-40, -12), (-24, -22), (-46, -4), (18, -21), (34, -21), (44, 4), (42, 13), (-33, 12), (-44, 14), (8, -24)]: TREE_SPOTS.append(((x, y, TOP), R.uniform(6.5, 8.5), 'broad', (1, 1, 1)))
+for (x, y) in [(-15, -16), (3, -17), (-20, -9), (-10, 4), (14, 9.5), (27, -6), (29, 5), (-30, -15), (-40, -12), (-24, -22), (-46, -4), (18, -21), (34, -21), (44, 4), (42, 13), (-33, 12), (-44, 14), (8, -24),
+               (-36, -20), (-29, -9), (-14, -23), (12, -14), (24, -17), (40, -18), (46, -10), (-46, 8), (-27, 13), (36, 9), (21, 11), (-12, -24)]: TREE_SPOTS.append(((x, y, TOP), R.uniform(6.5, 8.5), 'broad', (1, 1, 1)))
 
 asset_trees = []
 if TREES and os.path.exists(TREES):
@@ -518,7 +523,7 @@ ribbon('promenade', PROM, 3.0, PAVE, z=TOP + 0.03)
 ribbon('entry2', [(-6, -29.5), (-6, -31.4)], 2.8, PAVE, z=TOP + 0.045)
 # 파라솔·돗자리·안전요원 망루
 PARA = [principled(f'para{i}', c, rough=0.6) for i, c in enumerate([(0.85, 0.15, 0.12), (0.10, 0.35, 0.75), (0.95, 0.75, 0.10), (0.15, 0.6, 0.35), (0.95, 0.95, 0.92)])]
-rr = random.Random(91); spots_b = [k for k, p_ in enumerate(CP) if (-45 < p_.x < 30 and p_.y < -30) or (p_.x > 48 and -18 < p_.y < 32)][::4]
+rr = random.Random(91); spots_b = [k for k, p_ in enumerate(CP) if (-45 < p_.x < 30 and p_.y < -30) or (p_.x > 48 and -18 < p_.y < 32)][::2]
 for m_, k in enumerate(spots_b):
     q = CP[k] + CN[k] * rr.uniform(2.5, 4.5); x, y = q.x, q.y
     bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.05, depth=2.2, location=(x, y, TOP + 1.1)); bpy.context.object.data.materials.append(POLE)
@@ -540,7 +545,7 @@ ROADS = [('north', [(-300, 35), (46, 35)], TOP + 0.02), ('west', [(-62, -29), (-
 for name, pts, z in ROADS:
     (x0, y0), (x1, y1) = pts; d = Vector((x1 - x0, y1 - y0)); n = Vector((-d.y, d.x)).normalized()
     for k, (wd, mat, dz) in enumerate([(11, PAVE, -0.01), (7, ASPH, 0.0)]):
-        bpy.ops.mesh.primitive_cube_add(location=((x0 + x1) / 2, (y0 + y1) / 2, z + dz)); o = bpy.context.object; o.scale = (d.length / 2, wd / 2, 0.02); o.rotation_euler.z = math.atan2(d.y, d.x); o.data.materials.append(mat)
+        bpy.ops.mesh.primitive_cube_add(location=((x0 + x1) / 2, (y0 + y1) / 2, z + dz)); o = bpy.context.object; o.scale = (d.length / 2, wd / 2, 0.02); o.rotation_euler.z = math.atan2(d.y, d.x); o.data.materials.append(mat); o['lay'] = 'len'
     u = d.normalized(); dv = []; df = []
     for t in np.arange(0.0, 1.0, 6 / d.length):
         c = Vector((x0, y0)) + d * t; i0 = len(dv)
@@ -590,6 +595,25 @@ for k in range(520):
 # 길가 가로수(공원 쪽 보도)
 for x in np.arange(-56, 42, 9.0): blob_tree(x, 30.8, 7, random.Random(int(x * 7)))
 
+# ── 자리 벌리기(K배) ──
+# 원점에 놓인 땅·물·길·풀 같은 메시(꼭짓점이 세계 좌표) → 꼭짓점 xy를 K배. 나무(곡선·잎 카드) → 밑동 자리만큼 통째로 옮김.
+# 제자리에 놓인 물건(정자·천막·바위·파라솔·나무 복사본 …) → 자리만 K배, 크기는 그대로. 'xy' 표시(광장·꽃밭 둔덕·언덕)는 넓이도 K배, 'len'(차도·데크)은 길이만 K배.
+def spread_layout():
+    done = set()
+    for o in list(sc.collection.objects):
+        lay = o.get('lay')
+        if lay == 'tree':
+            b = o['base']; o.location.x += b[0] * (K - 1); o.location.y += b[1] * (K - 1); continue
+        if o.type == 'MESH' and o.location.length < 1e-6 and not lay:
+            if o.data.name in done: continue
+            done.add(o.data.name)
+            for v in o.data.vertices: v.co.x *= K; v.co.y *= K
+            continue
+        o.location.x *= K; o.location.y *= K
+        if lay == 'xy': o.scale.x *= K; o.scale.y *= K
+        if lay == 'len': o.scale.x *= K
+spread_layout()
+
 # ── 빛·카메라·렌더 ──
 w = bpy.data.worlds.new('w'); sc.world = w; w.use_nodes = True; w.node_tree.nodes['Background'].inputs['Color'].default_value = (0.78, 0.84, 0.92, 1); w.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.9
 bpy.ops.object.light_add(type='SUN', rotation=(math.radians(48), math.radians(-12), math.radians(-35))); bpy.context.object.data.energy = 4.2; bpy.context.object.data.angle = math.radians(4)
@@ -603,6 +627,18 @@ def camera(name, loc, target, lens):
 # 지점(그림 위에 표를 붙일 자리)과 두 아이가 걷는 길(입구 → 광장 → 지점). 길의 마지막 점 = 아이들이 서는 자리 — 아이 그림은 위로 서 있어 지점 가까이 세우면 표 글씨를 가린다. 두 그림 모두에서 지점보다 아래에 오도록 지점에서 남쪽(-y, 넓은 그림의 아래)·동쪽(+x, 세로 그림의 아래)으로 비켜 둔다.
 SPOTS = {'gate': (-10.2, -15.2), 'pond': (-1.5, 0.5), 'meadow': (-22, 5), 'flowers': (19, 4), 'leaves': (-4, 18.5), 'litter': (8, 17)}
 HUB = (-6, -11)
+# 공원 안의 다른 사람들(원장 2026-10-27 「NPC 같은 친구들 … 수의 나라나 지도에 있는 캐릭터 더 가지고 와」): 점 하나면 그 자리에 서 있고, 둘 이상이면 그 길을 오간다.
+# 누가 누구인지(모양)는 science-lab/park-chars3d.js의 CAST. 지점 표를 가리지 않게 지점과 떨어진 곳에 둔다.
+NPCS = {
+    'doc': [(-3.2, -14.8)],                      # 독쌤(수의 나라) — 대회 안내판 앞
+    'elder': [(-10.5, -5.8)],                    # 할아버지(수의 나라) — 연못 서쪽 물가
+    'luca': [(-35.5, -3.8)],                     # 루카(월드 익스플로러) — 바위 언덕 앞
+    'robin': [(36.2, -8.0)],                     # 로빈(월드 익스플로러) — 습지 데크 위
+    'walkers': [(-40, -30.8), (28, -30.8)],      # 유빈·유준 — 해변 산책로를 오감
+    'sora': [(2, -37.5)],                        # 소라 — 백사장
+    'buddies': [(-24, -37.0), (-14, -38.0)],     # 수의 친구 누미(0)·포코(3) — 백사장에서 놂
+    'momo': [(59.5, 8), (60.5, -6)],             # 모모(8) — 동쪽 백사장을 오감
+}
 ENTRANCE = [(-6, -27.5), (-6, -19)]
 WALK = {
     'gate': [],
@@ -617,15 +653,15 @@ def proj(cam, pts, res):
     sc.render.resolution_x, sc.render.resolution_y = res
     out = []
     for (x, y) in pts:
-        v = world_to_camera_view(sc, cam, Vector((x, y, TOP + 0.3))); out.append([round(v.x * 100, 1), round((1 - v.y) * 100, 1)])
+        v = world_to_camera_view(sc, cam, Vector((x * K, y * K, TOP + 0.3))); out.append([round(v.x * 100, 1), round((1 - v.y) * 100, 1)])
     return out
 
 result = {}
 for kind, res, loc, lens, tgt in [('wide', (2560, 1440), (5, -104, 78), 38, (0, -2, -3)), ('tall', (1440, 2560), (52, -2, 138), 36, (0, 3.5, -2))]:
     if ONLY and kind != ONLY: continue
-    cam = camera('cam_' + kind, loc, tgt, lens); sc.camera = cam
+    cam = camera('cam_' + kind, tuple(c * K for c in loc), tuple(c * K for c in tgt), lens); sc.camera = cam
     sc.render.resolution_x, sc.render.resolution_y = res[0] // DIV, res[1] // DIV
-    r = {'spots': {k: proj(cam, [v], res)[0] for k, v in SPOTS.items()}, 'hub': proj(cam, [HUB], res)[0], 'entrance': proj(cam, ENTRANCE, res), 'walk': {k: proj(cam, v, res) for k, v in WALK.items()}, 'w': res[0], 'h': res[1]}
+    r = {'spots': {k: proj(cam, [v], res)[0] for k, v in SPOTS.items()}, 'hub': proj(cam, [HUB], res)[0], 'entrance': proj(cam, ENTRANCE, res), 'walk': {k: proj(cam, v, res) for k, v in WALK.items()}, 'npcs': {k: proj(cam, v, res) for k, v in NPCS.items()}, 'w': res[0], 'h': res[1]}
     result[kind] = r
     sc.render.resolution_x, sc.render.resolution_y = res[0] // DIV, res[1] // DIV
     if not COORDS_ONLY: sc.render.filepath = os.path.join(OUT, f'park-{kind}.png'); bpy.ops.render.render(write_still=True)

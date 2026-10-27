@@ -460,9 +460,12 @@ body.sk-open { overflow: hidden; }
 .pk-kids { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 3; pointer-events: none; transform: scale(calc(var(--kk, .72) / var(--s, 1))); transform-origin: 0 0; }
 .pk-kid3d { position: absolute; left: -66px; bottom: -13.5px; width: 132px; height: 120px; }
 .pk-kid3d canvas { display: block; width: 132px; height: 120px; }
-.pk-kid3d b { position: absolute; top: 100%; transform: translate(-50%, -12px); font-size: 11px; font-weight: 800; color: #1f2a1f; background: rgba(255, 253, 246, .92); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
+/* 공원 안의 다른 사람들(독쌤·할아버지·탐험가·숫자 친구) — 아이들과 같은 배율, 아이들보다 아래 층 */
+.pk-npc { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 2; pointer-events: none; transform: scale(calc(var(--kk, .42) / var(--s, 1))); transform-origin: 0 0; }
+.pk-npc canvas { position: absolute; left: -66px; bottom: -13.5px; width: 132px; height: 120px; }
+.pk-kid3d b { position: absolute; top: 100%; transform: translate(-50%, -12px) scale(calc(1 / var(--kk, .42))); transform-origin: 50% 0; font-size: 11px; font-weight: 800; color: #1f2a1f; background: rgba(255, 253, 246, .92); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
 .pk-kid3d b.nr { left: calc(50% - 28.5px); } .pk-kid3d b.dy { left: calc(50% + 28.5px); }
-.pk-say { position: absolute; left: 0; bottom: 96px; transform: translateX(-50%); width: max-content; max-width: 230px; background: #fffdf6; color: #1f2a1f; border-radius: 14px; padding: 8px 12px; font-size: 13.5px; font-weight: 700; line-height: 1.4; box-shadow: 0 4px 14px rgba(0, 0, 0, .28); }
+.pk-say { position: absolute; left: 0; bottom: 96px; transform: translateX(-50%) scale(calc(1 / var(--kk, .42))); transform-origin: 50% 100%; width: max-content; max-width: 230px; background: #fffdf6; color: #1f2a1f; border-radius: 14px; padding: 8px 12px; font-size: 13.5px; font-weight: 700; line-height: 1.4; box-shadow: 0 4px 14px rgba(0, 0, 0, .28); }
 .pk-say::after { content: ""; position: absolute; left: var(--tail, 50%); bottom: -8px; transform: translateX(-50%); border: 8px solid transparent; border-bottom: 0; border-top-color: #fffdf6; }
 .pk-say b { color: #2f6b3a; margin-right: 6px; }
 /* 자연관찰 세트 단계: 현장(하루) / 사전 탐구보고서(오래 관찰) */
