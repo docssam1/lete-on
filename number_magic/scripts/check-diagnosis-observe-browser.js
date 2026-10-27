@@ -31,7 +31,7 @@ try{
    await page.addLocatorHandler(page.locator('#nmUnlockOverlayClose'),async el=>el.click(),{noWaitAfter:true});
    await enter(page,base);assert(await page.locator('#pdStart').isDisabled());assert.equal(await page.locator('[data-route]').count(),3);assert.equal(await page.locator('[data-route="school"]').count(),0,'the school-progress route was retired');
    assert.equal(await page.locator('#pdSeries,#pdStep,#pdBookCourse,#pdBookDetail,#pdProgress').count(),0,'no duplicate progress questionnaires or free-text book detail');
-   await page.selectOption('#pdLevel','a6');assert.match(await page.locator('#pdBaseline').inputValue(),/^f-/,'a preschooler starts in the foundation stages');
+   for(const [level,stage] of [['a5','f-count5'],['a7','f-ten10'],['a6','f-split5']]){await page.selectOption('#pdLevel',level);assert.equal(await page.locator('#pdBaseline').inputValue(),stage,level+' without a chosen topic starts at '+stage);}
    await page.click('[data-route="unlearned"]');assert.equal(await page.locator('#pdBaseline').inputValue(),'f-count5');
    await page.click('[data-route="age"]');await page.selectOption('#pdLevel','m2');assert.equal(await page.locator('#pdBaseline').inputValue(),'c32');
    await page.click('[data-route="book"]');await page.selectOption('[data-book-series="0"]','kumon');await page.selectOption('[data-book-step="0"]','stage-i');assert(await page.locator('#pdStart').isDisabled(),'unknown book mapping needs topic confirmation');

@@ -260,7 +260,7 @@ export function mountPark($host, { field = false, onArrive = null, start = '' } 
   };
   const go = (id) => {
     $pins.forEach((b) => b.classList.toggle('on', b.dataset.spot === id)); $pins.forEach((b) => b.classList.remove('here'));
-    kid.spot = id; kid.follow = s > fit * 1.15;
+    kid.spot = id; kid.follow = field || s > fit * 1.15;
     walkTo(key(stand(id)), 0, () => { if (kid.spot !== id) return; if (field) { $pins.forEach((b) => b.classList.toggle('here', b.dataset.spot === id)); onArrive?.(id); } else open(id); });
   };
   $pins.forEach((b) => b.addEventListener('click', (e) => { if (moved > 6) { e.preventDefault(); return; } go(b.dataset.spot); }));
@@ -271,7 +271,7 @@ export function mountPark($host, { field = false, onArrive = null, start = '' } 
   const walkHere = (p) => {
     let best = null, bd = 1e9; for (const [k, q] of G.N) { const d = px(q, p); if (d < bd) { bd = d; best = k; } }
     if (!best) return; const tail = seaAt(p) ? null : p;
-    kid.follow = s > fit * 1.15; $pins.forEach((b) => b.classList.remove('on'));
+    kid.follow = field || s > fit * 1.15; $pins.forEach((b) => b.classList.remove('on'));
     walkTo(best, 0, arrived, tail);
   };
   if (field) $v.addEventListener('pointerup', (e) => {
