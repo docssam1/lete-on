@@ -709,7 +709,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 .as-embed .protected-answer-notice{margin:0 0 12px;padding:6px 10px;font-size:12.5px;font-weight:700}
 @media (max-width:760px){.as-embed .lesson-content{padding:12px 12px 18px}}
 /* 덱은 가로 화면 전용: 문제 그림은 왼쪽, 문제 글·답 칸은 오른쪽에 나란히 두어 아래로 내리지 않고 푼다 */
-@media (min-width:761px){
+@media (min-width:560px){
 .as-embed .lesson-content{max-width:none}
 .as-embed .source-question-card:has(>.item-quiz-visual){display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);column-gap:20px;align-content:start}
 .as-embed .source-question-card:has(>.item-quiz-visual)>*{grid-column:2;min-width:0}
@@ -729,3 +729,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 .as-embed .source-question-progress{margin-top:0}
 .as-embed .source-question-progress+.source-question-card{margin-top:10px}
 }
+
+/* 덱 안·낮은 가로 화면: 위쪽 안내·번호 단추를 얇게 */
+@media (max-height:520px){.as-embed .lesson-content{padding:8px 14px 14px}.as-embed .protected-answer-notice{margin-bottom:6px;padding:4px 8px;font-size:11.5px}.as-embed .source-question-progress span{min-width:30px;height:28px;line-height:26px}.as-embed .source-question-card{padding:12px}.as-embed .source-question-card .lesson-lead{font-size:15px;line-height:1.55}}

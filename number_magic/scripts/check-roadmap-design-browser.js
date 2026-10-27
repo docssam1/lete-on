@@ -74,6 +74,24 @@ async function fullCase(f,c,tag){
   const page=f.page,checks=[],observe=[];
   await page.locator('#crBody').evaluate(e=>e.scrollTop=0);
   const start=await layout(page);checks.push('road body and initial standard plan');
+  if(c.course==='C1'&&c.width===390&&c.lang==='ko'){
+    const sequence=await page.evaluate(()=>{
+      const nodes=[...document.querySelectorAll('.nm-cr-path .nm-cr-node[data-c]')];
+      const index=key=>nodes.findIndex(n=>n.dataset.c===key);
+      const before=key=>{
+        const node=nodes[index(key)];let el=node?.closest('.nm-cr-row')?.previousElementSibling;
+        while(el&&!el.classList.contains('nm-cr-station'))el=el.previousElementSibling;
+        return el?.querySelector('.nm-cr-stname')?.textContent?.trim()||'';
+      };
+      return{
+        first:nodes.slice(0,6).map(n=>n.dataset.c),c4:index('C4'),c5:index('C5'),
+        stage4:before('C4'),stage5:before('C5')
+      };
+    });
+    assert.deepEqual(sequence.first,['C0','C1','C2','C3','C4','C5']);
+    assert(sequence.c4<sequence.c5&&sequence.stage4.includes('같은 수')&&sequence.stage5.includes('큰 수'),tag+' cognitive stages '+JSON.stringify(sequence));
+    checks.push('course 0→5 order and cognitive stage signs');
+  }
   assert(!start.documentOverflow,tag+' document overflow');
   assert(start.regions['#crBody'].scrollWidth<=start.regions['#crBody'].clientWidth+2,tag+' road body horizontal overflow '+JSON.stringify(start.roadHorizontalOverflow));
   assert(start.plansInsideRoad,tag+' plan cards must share the road scroll container');

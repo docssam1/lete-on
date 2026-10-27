@@ -1880,7 +1880,9 @@ function screenRoadmap(){
       <button class="nm-back" id="roadBack">← ${navigationLabel('town')}</button>
       <div class="nm-unit-title"><span class="nm-road-title-ic" aria-hidden="true">🗺️</span> ${L(road.title)}</div>
       <div class="nm-road-sub">${L(road.subtitle)}</div>
+      <p class="nm-road-sub">${S.lang==='ko'?'이야기별로 둘러보는 지도예요. 순서대로 공부할 때는 과정 길을 따라가요.':S.lang==='en'?'Browse stories by theme here. Follow the course road to study in order.':'这里按主题浏览故事。按顺序学习请走课程道路。'}</p>
       <div class="nm-road-nav">
+        <button class="nm-btn nm-btn-secondary" id="roadCourseOrder">${S.lang==='ko'?'과정 순서대로 공부하기':S.lang==='en'?'Study in course order':'按课程顺序学习'}</button>
         <button class="nm-btn nm-btn-secondary" id="roadSuggested" ${nextId?'':'disabled'}>${S.lang==='ko'?'추천 위치':S.lang==='en'?'Suggested start':'推荐位置'}</button>
         <button class="nm-btn nm-btn-secondary" id="roadBrowseStart">${S.lang==='ko'?'처음부터 둘러보기':S.lang==='en'?'Browse from the beginning':'从头浏览'}</button>
       </div>
@@ -1979,6 +1981,7 @@ function screenRoadmap(){
     el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}};
   });
   $('#roadSuggested').onclick=()=>goSuggested(true);
+  $('#roadCourseOrder').onclick=()=>{S.view='courseroad';save();render();};
   $('#roadBrowseStart').onclick=()=>{
     scr.querySelector('.nm-road-wrap').scrollTop=0;
     const first=scr.querySelector('.nm-road-stone,.nm-road-gamestone');
@@ -2162,22 +2165,23 @@ function roadStartChapterIdx(){
 function findNextRoadUnit(){
   if(!window.NM_ROADMAP)return null;
   const roadIds=new Set(NM_ROADMAP.chapters.flatMap(ch=>ch.units||[]));
-  /* 명시된 시작점/실제 학습이 있으면 과정 지도의 위치를 재사용한다.
-     기본 C1을 신규 학생의 진도로 간주하지 않는다. 저장값·해금은 바꾸지 않는다. */
-  if(hasRoadCourseContext()){
-    const course=NM_COURSES[currentCourseKey()];
-    if(course){
-      const courses=Object.values(NM_COURSES).filter(c=>c.order>=course.order).sort((a,b)=>a.order-b.order);
-      for(const c of courses)for(const session of c.sessions||[])for(const uid of session.magic||[]){
-        if(roadIds.has(uid)&&UNITS[uid]&&!stepDone(uid,'stamp'))return uid;
-      }
-      return null; // 시작점 이전은 자유 탐색으로만 연다. 유아 첫 유닛으로 되돌리지 않는다.
-    }
-  }
-  for(const ch of NM_ROADMAP.chapters){
-    if(!ch.units)continue;
-    for(const uid of ch.units){
-      if(!stepDone(uid,'stamp'))return uid;
+  /* 이야기 지도는 주제별로 묶여 있지만 자동 추천은 실제 과정·회차 순서다.
+     처음 온 학생은 기본값 C1이 아니라 C0부터 찾고, 직접 고른 시작점은 존중한다. */
+  return nextCourseUnit(roadIds)?.uid||null;
+}
+
+function nextCourseUnit(allowedIds){
+  const selected=S.placement?.course;
+  const startKey=(S.learningPlan||S.adminPlan)
+    ?currentCourseKey()
+    :selected&&NM_COURSES[selected]
+      ?selected
+      :mostRecentTouchedUnit()?currentCourseKey():'C0';
+  const start=Number(startKey.slice(1));
+  for(const {key,num,c} of roadCourseList()){
+    if(num<start)continue;
+    for(const session of c.sessions||[])for(const uid of session.magic||[]){
+      if((!allowedIds||allowedIds.has(uid))&&UNITS[uid]&&!stepDone(uid,'stamp'))return {key,uid};
     }
   }
   return null;
@@ -2192,7 +2196,7 @@ function enterRoadUnit(uid){
   save();render();
 }
 function hasRoadCourseContext(){
-  return !!(window.NM_COURSES&&(mostRecentTouchedUnit()||(S.placement&&NM_COURSES[S.placement.course])));
+  return !!(window.NM_COURSES&&(S.learningPlan||S.adminPlan||mostRecentTouchedUnit()||(S.placement&&NM_COURSES[S.placement.course])));
 }
 
 /* ─── Make-10 미니게임 ─── */
@@ -2726,6 +2730,11 @@ function progressSummaryLine(){
     const key=currentCourseKey(),course=(window.NM_COURSES||{})[key];
     if(course)return `${t('titleCourse')} ${key.slice(1)} · ${L(course.title)}`;
   }
+  const next=nextCourseUnit();
+  if(next){
+    const c=(window.NM_COURSES||{})[next.key];
+    return `${t('titleCourse')} ${next.key.slice(1)} · ${L(c.title)}`;
+  }
   const uid = mostRecentTouchedUnit();
   if(!uid) return '';
   const u = UNITS[uid];
@@ -2830,6 +2839,18 @@ const ROAD_TIERS=[
   name:{ko:'미적분Ⅰ',en:'Calculus I',zh:'微积分Ⅰ'},
   band:{ko:'극한 · 미분 · 적분',en:'Limits, Derivatives & Integrals',zh:'极限 · 导数 · 积分'}}
 ];
+/* 초등 길의 표지판은 연산 종류별 묶음이 아니라 실제로 배우는 순서다.
+   과정 ID·tier·저장된 진도는 유지한다. 특히 C4 구구단 다음에 C5 세 자리 받아올림이 온다. */
+const ROAD_COGNITIVE_STAGES=[
+ {key:'sense',from:0,to:0,accent:'#6FA85B',name:{ko:'수를 보고 뜻 알기',en:'Seeing what numbers mean',zh:'理解数字的意思'},band:{ko:'세고, 비교하고, 그림으로 나타내요',en:'Count, compare and show with pictures',zh:'数一数、比一比、用图表示'}},
+ {key:'small',from:1,to:3,accent:'var(--gold-deep)',name:{ko:'작은 수에서 자리값으로',en:'From small numbers to place value',zh:'从小数到数位'},band:{ko:'10을 만들고 두 자리 수까지 계산해요',en:'Make 10 and work with two-digit numbers',zh:'凑十并计算两位数'}},
+ {key:'groups',from:4,to:4,accent:'var(--gold-deep)',name:{ko:'같은 수를 묶어 보기',en:'Seeing equal groups',zh:'认识相同的组'},band:{ko:'구구단을 먼저 만나고 곱셈의 뜻을 알아요',en:'Learn times tables and what multiplication means',zh:'先学乘法口诀，理解乘法的意思'}},
+ {key:'place',from:5,to:7,accent:'var(--gold-deep)',name:{ko:'큰 수를 차근차근 다루기',en:'Working with larger numbers',zh:'逐步学习较大的数'},band:{ko:'구구단 뒤에 세 자리 받아올림과 큰 수를 배워요',en:'After times tables, tackle three-digit carrying and larger numbers',zh:'乘法口诀后学习三位数进位和大数'}},
+ {key:'methods',from:8,to:13,accent:'var(--blue)',name:{ko:'곱하고 나누는 방법 넓히기',en:'Expanding multiplication and division',zh:'扩展乘除方法'},band:{ko:'한 자리에서 여러 자리 계산으로 넓혀요',en:'Grow from one-digit to multi-digit methods',zh:'从一位数扩展到多位数计算'}},
+ {key:'parts',from:14,to:16,accent:'var(--blue)',name:{ko:'한 부분도 수로 보기',en:'Seeing parts as numbers',zh:'把部分也看作数'},band:{ko:'분수와 소수의 뜻을 그림과 계산으로 익혀요',en:'Explore fractions and decimals with pictures and calculations',zh:'用图和计算理解分数与小数'}},
+ {key:'relations',from:17,to:25,accent:'var(--blue-deep)',name:{ko:'수의 관계 넓혀 보기',en:'Exploring number relationships',zh:'拓展数的关系'},band:{ko:'약수·배수에서 분수·소수·비율까지 연결해요',en:'Connect factors and multiples with fractions, decimals and ratios',zh:'连接因数倍数、分数、小数和比率'}}
+];
+function roadCognitiveStage(num){return ROAD_COGNITIVE_STAGES.find(s=>num>=s.from&&num<=s.to)||null;}
 function roadTierInfo(key){
   return ROAD_TIERS.find(x=>x.key===key)
     || {key, accent:'var(--blue)', name:{ko:key,en:key,zh:key}, band:{ko:'',en:'',zh:''}};
@@ -4354,8 +4375,8 @@ function screenCourseRoad(){
         <span class="nm-cr-who-txt"><small>${lk('이 학생의 로드맵','Roadmap for','此学生的路线图')}</small><b>${S.name?esc(S.name):'#'+S.character.number}${schoolNowLabel()?` <em class="nm-cr-who-gr">${esc(schoolNowLabel())}</em>`:''}</b></span>
         <span class="nm-cr-who-sw">${lk('바꾸기','Switch','切换')}</span>
       </button>
-      <div class="nm-cr-sub"><span class="nm-cr-eyebrow">${lk('나의 연산 로드맵','My arithmetic roadmap','我的运算路线图')}</span>
-        <span class="nm-cr-lead">${lk('어디까지 왔고 다음에 무엇을 배우는지 살펴봐요.','See where you are and what you will learn next.','看看现在学到哪里，接下来学习什么。')}</span></div>
+      <div class="nm-cr-sub"><span class="nm-cr-eyebrow">${lk('나의 학습 순서','My learning order','我的学习顺序')}</span>
+        <span class="nm-cr-lead">${lk('과정 번호를 따라 하나씩 배워요. 구구단은 세 자리 받아올림보다 먼저 나와요.','Follow course numbers one by one. Times tables come before three-digit carrying.','按课程编号逐个学习。乘法口诀先于三位数进位。')}</span></div>
       <!-- 정복의 뜻은 about.html의 철학과 같은 것이어야 한다("수를 정복하기 위한
            DOCSSAM의 철학" · "어려운 수를 내가 다루기 쉬운 수로 펼쳐서"). 로드맵이
            따로 노는 은유를 만들지 않도록 그 문장을 여기서 다시 말하고 원문으로 잇는다. -->
@@ -4655,21 +4676,21 @@ function screenCourseRoad(){
     }
 
     /* ── 길 ── */
-    /* 등급이 바뀌는 자리마다 역을 세운다 — 과정 번호 순서를 절대 흐트러뜨리지
-       않으려고 "같은 등급을 전부 모으기"가 아니라 "연속 구간"으로 끊는다.
-       대수·미적분Ⅰ처럼 번호가 번갈아 나오는 등급은 역이 두 번 서고,
-       두 번째부터는 '이어서'로 표시한다. */
+    /* 유아·초등은 인지 단계, 이후는 교과 구간의 경계에 역을 세운다.
+       어느 쪽이든 과정 번호 순서를 바꾸지 않는다. */
     html+=`<div class="nm-cr-path"><div class="nm-cr-rail" id="crRail"></div>`;
-    let ci=0, prevTier=null;
-    const seenTier={};
+    let ci=0, prevGroup=null;
+    const seenGroup={};
     list.forEach(x=>{
       const c=x.c;
-      if(c.tier!==prevTier){
-        const tierDef=roadTierInfo(c.tier);
+      const cognitive=roadCognitiveStage(x.num);
+      const groupKey=cognitive?cognitive.key:c.tier;
+      if(groupKey!==prevGroup){
+        const tierDef=cognitive||roadTierInfo(c.tier);
         const run=[], runItems=[]; let k=list.indexOf(x);
-        while(k<list.length&&list[k].c.tier===c.tier){ run.push(list[k].num); runItems.push(list[k]); k++; }
-        const again=!!seenTier[c.tier];
-        seenTier[c.tier]=true;
+        while(k<list.length&&(roadCognitiveStage(list[k].num)?.key||list[k].c.tier)===groupKey){ run.push(list[k].num); runItems.push(list[k]); k++; }
+        const again=!!seenGroup[groupKey];
+        seenGroup[groupKey]=true;
         const rangeTxt = run.length>1 ? `${run[0]}~${run[run.length-1]}` : `${run[0]}`;
         /* 이 구간을 정복했는가 — 판정할 수 있는 과정(마법 유닛이 있는 과정)만 센다 */
         const markable=runItems.filter(it=>courseUnitIds(it.c).length>0);
@@ -4705,7 +4726,7 @@ function screenCourseRoad(){
         if(!again) html+=middlePacingHtml(c.tier);
         if(!again&&c.studyPlan&&c.tier==='calculus1') html+=`<p class="nm-cr-cadfoot">${lk('미적분Ⅰ 20회차 · 기본 12주(약 3개월). 과정 점검 4회를 포함해 매주 1~2회차를 나누어 공부해요.','Calculus I: 20 sessions over 12 weeks (about 3 months), including four course checks. One or two sessions are scheduled each week.','微积分Ⅰ20课次，基础12周（约3个月），包含4次课程检查，每周安排1~2课次。')}</p>`;
         else if(!again&&c.studyPlan&&!/^middle/.test(c.tier)) html+=`<p class="nm-cr-cadfoot">${lk('교과 연산 24묶음 · 주 2회 기준 12주(약 3개월). 기존 회차를 합쳐 주당 학습량을 늘렸어요.','24 curriculum-practice bundles · 12 weeks at two bundles a week. Existing sessions are combined into a larger weekly workload.','24组课内运算 · 每周2组共12周（约3个月）。合并原课次，增加每周学习量。')}</p>`;
-        prevTier=c.tier;
+        prevGroup=groupKey;
       }
       const tierDef=roadTierInfo(c.tier);
       {
@@ -5698,8 +5719,6 @@ function screenStartPick(){
   }
 
   const curKey=currentCourseKey();
-  const curCourse=(window.NM_COURSES||{})[curKey];
-  const curTier=curCourse?curCourse.tier:null;
   const list=roadCourseList();
   const specById={};
   (window.NM_COURSE_SPEC||[]).forEach(s=>{ specById[s.id]=s; });
@@ -5746,10 +5765,17 @@ function screenStartPick(){
   }
 
   let body='';
-  ROAD_TIERS.forEach(tierDef=>{
-    const items=list.filter(x=>x.c.tier===tierDef.key);
+  const pickGroups=[...ROAD_COGNITIVE_STAGES.map(s=>({
+    ...s,items:list.filter(x=>x.num>=s.from&&x.num<=s.to)
+  })),...ROAD_TIERS.map(t=>({
+    ...t,items:list.filter(x=>x.num>25&&x.c.tier===t.key)
+  }))];
+  pickGroups.forEach(tierDef=>{
+    const items=tierDef.items;
     if(!items.length) return;
-    const open=tierDef.key===curTier;
+    const open=hasRoadCourseContext()
+      ?items.some(x=>x.key===curKey)
+      :items.some(x=>x.num===0);
     body+=`<details class="nm-sp-tier"${open?' open':''} style="--acc:${tierDef.accent}">
       <summary class="nm-sp-tier-h">
         <span class="nm-sp-tier-bar"></span>
@@ -5763,7 +5789,7 @@ function screenStartPick(){
     <div class="nm-cr-header">
       <button class="nm-back" id="spBack">← ${navigationLabel('town')}</button>
       <div class="nm-cr-titlerow"><div class="nm-cr-title">🎯 ${lk('시작점 고르기','Pick your start','选择起点')}</div></div>
-      <div class="nm-cr-sub">${lk('진단 없이 원하는 과정에서 바로 시작할 수 있어요. 언제든 바꿔도 돼요.','Start at any course without a check-up. You can change it any time.','不用测评也能从想要的课程开始，随时都可以换。')}</div>
+      <div class="nm-cr-sub">${lk('배우는 순서대로 과정을 놓았어요. 진단 없이 원하는 과정에서 시작할 수도 있어요.','Courses follow learning order. You can also choose where to begin without a check-up.','课程按学习顺序排列，也可以不测评直接选择起点。')}</div>
     </div>
     <div class="nm-cr-body nm-sp-body">${body}</div>
   </div>`;
@@ -5794,7 +5820,6 @@ function screenTitle(){
   const scr=$('#screen');
   const ko=S.lang==='ko', en=S.lang==='en';
   const lk=(k,e,z)=>ko?k:en?e:z;
-  const uid = mostRecentTouchedUnit();
   const summary = progressSummaryLine();
   const badge = mostRecentBadge();
 
@@ -5862,7 +5887,12 @@ function screenTitle(){
     </div>
   </div>`;
   $('#ttAttendance')?.addEventListener('click',e=>showAttendanceBook(e.currentTarget));
-  $('#ttContinue').onclick=()=>S.learningPlan&&!S.adminPlan?enterCourseNode(currentCourseKey()):enterContinueUnit(uid);
+  $('#ttContinue').onclick=()=>{
+    if(S.learningPlan||S.adminPlan){enterCourseNode(currentCourseKey());return;}
+    const next=nextCourseUnit();
+    if(next){enterCourseNode(next.key);return;}
+    S.view='courseroad';save();render();
+  };
   $('#ttDiag').onclick=()=>startPlacement();
   $('#ttGame').onclick=()=>{ S.view='town'; save(); render(); };
   $('#ttSheet').onclick=()=>{ S.view='exam'; save(); render(); };

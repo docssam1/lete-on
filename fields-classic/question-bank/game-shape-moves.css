@@ -103,3 +103,12 @@
 .smv-right { display: flex; align-items: center; gap: 12px; }
 .smv-skip { min-height: 36px; padding: 4px 14px; border: 1.5px solid #d7dfe2; border-radius: 999px; background: #fff; color: #5c6b74; font-size: 14px; font-weight: 600; cursor: pointer; }
 .smv-skip:hover { border-color: var(--enamel); color: #164e57; }
+
+@media (max-height: 640px) {
+  .smv { gap: 6px; --cell: clamp(22px, 6.4vh, 54px); }
+  .smv-mission { font-size: 15px; line-height: 1.4; }
+  .smv-levels button { min-height: 34px; padding: 2px 12px 2px 4px; font-size: 13px; }
+  .smv-levels button b { width: 24px; height: 24px; }
+  .smv-work { padding: 8px 12px; }
+  .smv-rule { padding: 4px 10px; font-size: 13px; }
+}
