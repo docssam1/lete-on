@@ -83,13 +83,23 @@ export function mountPark($host) {
   const npcs = [...$host.querySelectorAll('.pk-npc')].map((el) => ({ id: el.dataset.npc, el, $say: el.querySelector('.pk-nsay'), L: NPC_LINES[el.dataset.npc] || { who: '', lines: [] }, A: cast.add(el.querySelector('canvas'), NPC_CAST[el.dataset.npc]), pts: [], i: 0, dir: 1, t: 0, wait: Math.random() * 2, pos: [0, 0], tgt: null, from: null, last: '', sayT: 0, nearT: 0 }));
   const putNpc = (n) => { n.el.style.left = `${(n.pos[0] / 100) * I.w}px`; n.el.style.top = `${(n.pos[1] / 100) * I.h}px`; };
   const npcReset = () => npcs.forEach((n) => { n.pts = PARK.npcs[n.id]?.[kind] || []; n.i = 0; n.dir = 1; n.t = 0; n.tgt = null; n.wait = 1 + Math.random() * 4; n.pos = n.pts[0] || [0, 0]; n.A.setWalking(false); n.A.face(0); putNpc(n); });
-  // why: 'near' = 아이들이 가까이 옴(자리 설명 · 지키는 사람은 안전 한마디와 번갈아), 'tap' = 눌림(아무 줄), 없으면 = 거닐다 가끔(lines)
+  // why: 'near' = 아이들이 묻고 나서 자리 설명(place), 'safe' = 지키는 사람의 안전 한마디, 'tap' = 눌림(아무 줄), 없으면 = 거닐다 가끔(lines + 「한번 가 봐」 go)
   const npcSay = (n, why) => {
-    const L = n.L, ls = why === 'near' ? (L.near && (n.nc = (n.nc || 0) + 1) % 2 ? L.near : L.place || L.near || L.lines) : why === 'tap' ? [...(L.place || []), ...L.lines, ...(L.near || [])] : L.lines;
+    const L = n.L, ls = why === 'near' ? L.place || L.near || L.lines : why === 'safe' ? L.near : why === 'tap' ? [...(L.place || []), ...L.lines, ...(L.go || []), ...(L.near || [])] : [...L.lines, ...(L.go || [])];
     if (!ls?.length) return;
     let k = Math.floor(Math.random() * ls.length); if (ls.length > 1 && ls[k] === n.last) k = (k + 1 + Math.floor(Math.random() * (ls.length - 1))) % ls.length;
     n.last = ls[k]; n.$say.innerHTML = `<b>${esc(L.who)}</b>${esc(ls[k])}`; n.$say.hidden = false; n.el.classList.add('talk'); n.A.wave();
     clearTimeout(n.sayT); n.sayT = setTimeout(() => { n.$say.hidden = true; n.el.classList.remove('talk'); }, 4200);
+  };
+  // 아이들이 가까이 가면: 지키는 사람은 두 번에 한 번 안전 한마디부터, 그 밖에는 두 아이 중 하나가 묻고(어른께는 높임말) 그 사람이 자리를 알려 준다
+  const ADULT = new Set(['doc', 'elder', 'ranger', 'lifeguard']);
+  const meet = (n) => {
+    if (n.L.near && (n.nc = (n.nc || 0) + 1) % 2) { npcSay(n, 'safe'); return; }
+    if (!n.L.place) { npcSay(n, 'near'); return; }
+    // 두 아이가 말하는 중이면 묻지 않고 대답도 하지 않는다 — 1초 뒤 아직 가까우면 그때 묻는다
+    if (!$say.hidden) { n.nearT = 1; return; }
+    const who = Math.random() < 0.5 ? '유빈' : '유준', qs = ADULT.has(n.id) ? ['여기는 어떤 곳이에요?', '여기서는 뭘 볼 수 있어요?'] : ['여기는 어떤 곳이야?', '여기서는 뭘 볼 수 있어?'];
+    say([who, qs[Math.floor(Math.random() * qs.length)]]); setTimeout(() => { if (alive) npcSay(n, 'near'); }, 1400);
   };
   npcs.forEach((n) => n.el.querySelector('.pk-nhit').addEventListener('click', (e) => { e.stopPropagation(); if (moved > 6) return; npcSay(n, 'tap'); }));
   // 지금 화면에 보이는 사람만 골라 말하게(안 보이는 곳에서 말하면 소용없다)
@@ -141,7 +151,7 @@ export function mountPark($host) {
         if (n.t >= 1) { n.tgt = null; n.wait = 4 + Math.random() * 6; n.A.setWalking(false); n.A.face(0); }
       }
       // 아이들이 가까이(그림 위 160px 안) 오면 그 사람이 한마디 — 자리 설명, 지키는 사람은 안전 한마디와 번갈아(같은 사람은 14초에 한 번)
-      for (const n of npcs) { n.nearT -= dt; if (n.nearT <= 0 && px(kid.pos, n.pos) < 160) { n.nearT = 14; npcSay(n, 'near'); } }
+      for (const n of npcs) { n.nearT -= dt; if (n.nearT <= 0 && px(kid.pos, n.pos) < 160) { n.nearT = 14; meet(n); } }
       talkT -= dt;
       // 그 밖에는 거닐다가 가끔 한 사람만(16~26초에 한 번, 화면에 보이고 걷고 있는 사람). 두 아이가 말하는 동안은 쉰다
       if (talkT < 0 && $say.hidden) { talkT = 16 + Math.random() * 10; const can = npcs.filter((n) => n !== lastTalker && n.$say.hidden && n.wait <= 0 && onScreen(n)); const n = can[Math.floor(Math.random() * can.length)]; if (n) { lastTalker = n; npcSay(n); } }
@@ -158,7 +168,7 @@ export function mountPark($host) {
       const r = $say.getBoundingClientRect(), V = $v.getBoundingClientRect();
       const sh = rot ? (r.bottom > V.bottom - 8 ? V.bottom - 8 - r.bottom : r.top < V.top + 8 ? V.top + 8 - r.top : 0) : (r.right > V.right - 8 ? V.right - 8 - r.right : r.left < V.left + 8 ? V.left + 8 - r.left : 0);
       if (sh) { $say.style.marginLeft = `${sh / KK}px`; $say.style.setProperty('--tail', `calc(50% - ${sh}px)`); } };
-    line(0); kid.sayT = setTimeout(() => { line(2); kid.sayT = setTimeout(() => { $say.hidden = true; }, 2600); }, 2600); };
+    line(0); kid.sayT = setTimeout(() => { if (q.length < 4) { $say.hidden = true; return; } line(2); kid.sayT = setTimeout(() => { $say.hidden = true; }, 2600); }, 2600); };
   const stopWalk = () => { cancelAnimationFrame(kid.raf); kid.walk = null; $kids.classList.remove('walk'); K3.setWalking(false); };
   const walkTo = (toKey, ms, done) => {
     const w = kid.walk, links = w ? [w.pts[w.i].k, w.pts[w.i + 1].k].filter((k) => k !== '@') : [key(kid.pos)];
