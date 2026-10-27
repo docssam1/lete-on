@@ -1,5 +1,5 @@
 import { GOLDEN_BELL_RECOVERY } from "./golden-bell-recovery-data.js?v=20261021a";
-import { hasProtectedAnswer, hydrateProtectedAnswers } from "./golden-bell-protected.js?v=20260906c";
+import { hasProtectedAnswer, hydrateProtectedAnswers } from "./golden-bell-protected.js?v=20261028s";
 
 export function appendProtectedRecoveryItems(book, records, groups = GOLDEN_BELL_RECOVERY) {
   const group = groups.find((entry) => entry.bookId === book.id);

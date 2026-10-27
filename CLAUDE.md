@@ -30,6 +30,7 @@ GitHub Pages 배포: `docssam1/lete-on` 저장소 → `/reading-world/` 경로.
   금지 꼴: "교사용 답(□=N)", "공개 답은 N", "=N으로 검산", "(a/b)". 그냥 "교사용 답안과 대조해 바로잡음"처럼 숫자 없이 쓴다.
 - 원본 오류를 바로잡은 내역(교사용 답 오타 등)은 그 문항 답 기록의 `sourceNote`에 남긴다. 문항이 없는 보류 메모는 `/books/<id>/history/<경로>` 키에 둔다.
 - 데이터를 고친 뒤에는 반드시 `node fields-classic/question-bank/golden-bell-protection-audit.mjs`를 돌린다(메모 칸 정답 문구도 잡는다).
+- **2026-10-27 원장 결정 「모두에게 열기」**: 골든벨 정답 서버 함수 `golden-bell-answers`가 로그인 없이도 정답을 내준다(체험하기에서 채점되게, 함수 안 `OPEN_ACCESS = true`). 정답은 여전히 비공개 DB에만 두고 git·공개 파일에는 쓰지 않는다(위 규칙 그대로). 다시 막을 때는 `OPEN_ACCESS`를 false로 두고 재배포 — 화면(`golden-bell-protected.js`)은 로그인했으면 세션을 붙이고 아니면 세션 없이 부른다.
 - 참고: 2026-09-05 정답 보호 이전의 공개 git 이력에는 정답이 통째로 남아 있다. 이력은 다시 쓰지 않기로 했다(2026-10-08). 이력까지 숨기려면 저장소를 비공개로 바꾸는 방법뿐이다.
 - **골든벨 원본 대조 작업(2~4권 완료분·4권 남은 묶음 3~6·5~10권)을 이어받을 때는 `fields-classic/question-bank/HANDOVER-GOLDEN-BELL-SOURCE-REVIEW.md`부터 읽는다.** 저장 위치·answerRef 번호·DB 절차·검사 명령·했던 실수가 다 거기 있다. 작업 도구는 `fields-classic/question-bank/tools/golden-bell-book04/`.
 - **골든벨 원본 = 골든벨 자료(골든벨 PPT·판서)뿐.** 본교재(수업용 교재·교사용 지도서) 문항은 골든벨에 넣지 않는다 — 문제은행 권별(`index.html`, `source-data.js` `CURRICULUM`)의 자리다(2026-10-23, 10권에서 잘못 넣었던 지도서 단원을 뺌).

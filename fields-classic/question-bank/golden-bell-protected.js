@@ -31,8 +31,10 @@ export async function ensureFieldsSession(student) {
   return result.token;
 }
 
+// 원장 결정(2026-10-27 「모두에게 열기」): 로그인하지 않았으면 세션 없이 정답을 받는다(서버 golden-bell-answers 의 OPEN_ACCESS).
+// 로그인했으면 지금처럼 세션을 붙인다. 정답은 여전히 비공개 DB에만 있고 이 저장소에는 없다.
 export async function loadProtectedGoldenBellBook(bookId, student) {
-  const token = await ensureFieldsSession(student);
+  const token = await ensureFieldsSession(student).catch(() => "");
   return request("golden-bell-answers", { bookId }, token);
 }
 
