@@ -1,5 +1,5 @@
 # 자연관찰 공원 지도 — Blender로 해변 공원(공원 + 둘레 길·해변·바다, 그림 끝까지 땅이 이어짐)을 만들고 렌더한다. 원장 2026-10-26: 「솔은 이 정도 된다는데?(Blender 디오라마) — 난 맵을 말하는 거야 먼저」.
-# 렌더 두 장(넓은 화면 2560×1440 · 세로 화면 1440×2560) + 지점·길 좌표(그림 위 %)를 JSON으로 낸다 → data/park-map.js에 옮긴다(tools/blender/park-apply.py).
+# 렌더 한 장(가로 2560×1440 — PC와 폰의 「가로로 크게」 모두) + 지점·길·사람들 좌표(그림 위 %)를 JSON으로 낸다 → tools/blender/park-apply.mjs가 data/park-map.js에 옮긴다.
 # 실행(머리 없이):  blender -b -P park-map.py -- --out <폴더> [--preview] [--trees <나무 모델 .blend>]
 #   이 컨테이너: python3.13 -m venv /tmp/bpyenv && /tmp/bpyenv/bin/pip install bpy==5.2.3 → /tmp/bpyenv/bin/python -I park-map.py -- --out <폴더>
 #   원장 맥: Blender 앱의 blender 실행 파일로 같은 명령. --trees에 나무 모델 파일을 주면 그 안의 물체(이름에 tree가 든 것)를 나무 자리에 놓는다(없으면 코드로 만든 나무).
@@ -12,7 +12,6 @@ import numpy as np
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 OUT = argv[argv.index('--out') + 1] if '--out' in argv else '/tmp/park'
 PREVIEW = '--preview' in argv
-ONLY = argv[argv.index('--only') + 1] if '--only' in argv else None   # wide | tall 한 장만
 COORDS_ONLY = '--coords-only' in argv  # 렌더 없이 지점 좌표(park-coords.json)만
 DIV = int(argv[argv.index('--div') + 1]) if '--div' in argv else (4 if PREVIEW else 1)   # 해상도 나누기(시험용)
 TREES = argv[argv.index('--trees') + 1] if '--trees' in argv else None
@@ -657,13 +656,13 @@ def proj(cam, pts, res):
     return out
 
 result = {}
-for kind, res, loc, lens, tgt in [('wide', (2560, 1440), (5, -104, 78), 38, (0, -2, -3)), ('tall', (1440, 2560), (52, -2, 138), 36, (0, 3.5, -2))]:
-    if ONLY and kind != ONLY: continue
+# 가로 한 장만 — 폰도 「가로로 크게」로 본다(원장 2026-10-27 「가로 모드로 쓸 거라 상관없잖아」, 세로 그림·세로 카메라는 뺐다)
+for kind, res, loc, lens, tgt in [('wide', (2560, 1440), (5, -104, 78), 38, (0, -2, -3))]:
     cam = camera('cam_' + kind, tuple(c * K for c in loc), tuple(c * K for c in tgt), lens); sc.camera = cam
     sc.render.resolution_x, sc.render.resolution_y = res[0] // DIV, res[1] // DIV
     r = {'spots': {k: proj(cam, [v], res)[0] for k, v in SPOTS.items()}, 'hub': proj(cam, [HUB], res)[0], 'entrance': proj(cam, ENTRANCE, res), 'walk': {k: proj(cam, v, res) for k, v in WALK.items()}, 'npcs': {k: proj(cam, v, res) for k, v in NPCS.items()}, 'w': res[0], 'h': res[1]}
     result[kind] = r
     sc.render.resolution_x, sc.render.resolution_y = res[0] // DIV, res[1] // DIV
     if not COORDS_ONLY: sc.render.filepath = os.path.join(OUT, f'park-{kind}.png'); bpy.ops.render.render(write_still=True)
-json.dump(result, open(os.path.join(OUT, f'park-coords{"-" + ONLY if ONLY else ""}.json'), 'w'), ensure_ascii=False, indent=1)
+json.dump(result, open(os.path.join(OUT, 'park-coords.json'), 'w'), ensure_ascii=False, indent=1)
 print('done', OUT)

@@ -87,7 +87,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--out', default='park-flux')
     ap.add_argument('--n', type=int, default=3, help='화면마다 후보 수')
-    ap.add_argument('--only', choices=['wide', 'tall'], default='wide', help='기본 wide — 폰도 가로 그림을 「가로로 크게」로 본다(2026-10-27)')
+    ap.add_argument('--only', choices=['wide'], default='wide', help='가로 한 장뿐 — 폰도 「가로로 크게」로 본다(2026-10-27 세로 그림을 뺌)')
     ap.add_argument('--model', default='flux2-klein-4b', help='mflux 모델 이름(기본 flux2-klein-4b · Apache 2.0)')
     ap.add_argument('--model-path', default=os.environ.get('PARK_FLUX_MODEL_PATH'), help='이미 받아 둔(4비트로 저장한) 모델 폴더가 있으면 그 경로')
     ap.add_argument('--quantize', type=int, default=4, help='4 또는 8. --model-path 로 이미 4비트 저장본을 주면 0')
