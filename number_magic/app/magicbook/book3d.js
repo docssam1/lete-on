@@ -3,9 +3,10 @@
    참고로 본 것: Every Joule(iamtechartist) — 책상 위 진짜 책, 지면에서 솟는 펜 선 그림, 빛으로 흐르는 양,
    예측 → 직접 해 보기 → 날개 들추기 → 도장. 그쪽 코드·그림은 라이선스가 없어 쓰지 않았다. 전부 새로 그렸다.
 
-   장면: 로그인 책과 같은 밤빛 청록 바탕(배경은 페이지 CSS) 위에 같은 초록 가죽 책(assets/promo/grimoire-emerald.webp).
-   원장 「우리 책은 스르륵이야. 로그인에 사용했던 거」 — 책상·깔개 없이, 거의 위에서 보는 모습으로, 로그인 책처럼
-   1.4초 동안 부드럽게(smoothstep) 펼쳐진다. 종이는 로그인 속지와 같은 크림색(#FFFCF5).
+   장면: 로그인 책과 같은 초록 가죽 책(assets/promo/grimoire-emerald.webp)이 도형 나라 쌓기나무 판과 같은
+   밝은 단풍나무 판(geometry/app.js createWoodTexture·createWoodBoard 의 색과 결) 위에 놓여 있다. 바탕은 도형 나라와 같은 크림.
+   원장 「우리 책은 스르륵이야. 로그인에 사용했던 거」 → 로그인 책처럼 1.4초 smoothstep 으로 펼쳐진다.
+   원장 「책은 더 두꺼워야 돼. 책상 초록 안 돼. 지오메트리 쌓기나무 판 정도로」 → 두꺼운 종이 묶음 · 나무 판 책상.
    책은 두 반쪽이다. 오른쪽 반(뒤표지·종이 묶음·5쪽)은 가만히 있고, 왼쪽 반(앞표지·종이 묶음·4쪽)이 책등을 축으로
    돌아 덮였다 펼쳐진다. 덮이면 앞표지(가죽)가 위를 본다.
    4쪽 = 개념 · 핵심 낱말 · 예측(누르면 손글씨 체크) · 날개(들추면 정답) · 다 하면 손글씨 풀이와 도장.
@@ -49,7 +50,9 @@ const handFont = lang => lang === 'en' ? '"NM Book Kalam", cursive' : lang === '
 
 /* ── 쪽 크기(세계 단위) · 캔버스 크기 ── */
 const PAGE_W = 1, PAGE_H = 1.34, PW = 1400, PH = Math.round(1400 * 1.34);
-const BOARD = 0.02, STACK = 0.05, PIV = BOARD + STACK;             // 종이 윗면 높이
+const BOARD = 0.03, STACK = 0.12, PIV = BOARD + STACK;             // 종이 윗면 높이(두꺼운 책: 덮으면 0.3 — 쪽 너비의 30%)
+const GUT = 0.2, DIP = 0.038;                                     // 책등 쪽으로 휘어 들어가는 너비·깊이
+const DESK_W = 3.2, DESK_H = 2.35, DESK_T = 0.16, RIM = 0.06;      // 나무 판(쌓기나무 판 비율)
 const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const smooth = t => t * t * (3 - 2 * t);      // 로그인 책 펼침과 같은 곡선(app/access.js)
 const clamp01 = t => Math.max(0, Math.min(1, t));
@@ -122,11 +125,11 @@ export async function mountBook(canvas, opts){
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(34, 1, 0.05, 40);
 
-  scene.add(new THREE.HemisphereLight('#fff8ec', '#47706a', 1.15));
+  scene.add(new THREE.HemisphereLight('#fffaf0', '#c9b79a', 1.25));
   const sun = new THREE.DirectionalLight('#fff0d8', 2.4);
   sun.position.set(-2.2, 4.2, 1.8); sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.045;
-  Object.assign(sun.shadow.camera, { left: -2.2, right: 2.2, top: 2.2, bottom: -2.2, near: 0.5, far: 12 });
+  Object.assign(sun.shadow.camera, { left: -2.4, right: 2.4, top: 2.4, bottom: -2.4, near: 0.5, far: 12 });
   scene.add(sun);
   const fill = new THREE.DirectionalLight('#e8efff', 0.35); fill.position.set(2.5, 2, 3); scene.add(fill);
 
@@ -135,9 +138,36 @@ export async function mountBook(canvas, opts){
   const canvasTexture = (c, srgb = true) => { const t = keep(new THREE.CanvasTexture(c)); if(srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = maxAniso; return t; };
   const makeCanvas = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
 
-  /* ── 바닥: 보이지 않고 그림자만 받는 면(로그인 책처럼 밤빛 바탕 위에 책만 떠 있다) ── */
-  { const floor = new THREE.Mesh(keep(new THREE.PlaneGeometry(14, 10)), keep(new THREE.ShadowMaterial({ opacity: 0.42, color: '#04161a' })));
-    floor.rotation.x = -Math.PI / 2; floor.position.y = -0.002; floor.receiveShadow = true; scene.add(floor); }
+  /* ── 나무 판: 도형 나라 쌓기나무 판과 같은 단풍나무 결(geometry/app.js createWoodTexture 의 색·결 그대로) ── */
+  const woodTex = (() => {
+    const c = makeCanvas(512, 512), g = c.getContext('2d');
+    const base = g.createLinearGradient(0, 0, 512, 512); base.addColorStop(0, '#fff7e7'); base.addColorStop(0.46, '#f0d4a5'); base.addColorStop(1, '#d9b57e');
+    g.fillStyle = base; g.fillRect(0, 0, 512, 512);
+    for(let i = 0; i < 76; i++){ const y = 18 + i * 6.5 + Math.sin(i * 1.7) * 6; g.beginPath(); g.moveTo(-20, y);
+      for(let x = -20; x <= 540; x += 18) g.lineTo(x, y + Math.sin(x * 0.036 + i) * 3.6 + Math.sin(x * 0.012 + i * 0.4) * 2.4);
+      g.strokeStyle = i % 3 === 0 ? 'rgba(115,78,39,.095)' : 'rgba(255,255,245,.24)'; g.lineWidth = i % 3 === 0 ? 1.15 : 0.9; g.stroke(); }
+    for(let i = 0; i < 34; i++){ g.beginPath(); g.ellipse(44 + (i * 83) % 432, 38 + (i * 117) % 420, 20, 6, i, 0, Math.PI * 2); g.strokeStyle = 'rgba(105,70,35,.07)'; g.lineWidth = 1; g.stroke(); }
+    const t = canvasTexture(c); t.wrapS = t.wrapT = THREE.MirroredRepeatWrapping; return t;
+  })();
+  const roundRect = (w, h, r, holeW, holeH, holeR) => {
+    const sh = new THREE.Shape(), rr = (path, w, h, r) => { path.moveTo(-w / 2 + r, -h / 2); path.lineTo(w / 2 - r, -h / 2); path.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r);
+      path.lineTo(w / 2, h / 2 - r); path.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2); path.lineTo(-w / 2 + r, h / 2); path.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r);
+      path.lineTo(-w / 2, -h / 2 + r); path.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2); };
+    rr(sh, w, h, r); if(holeW){ const hole = new THREE.Path(); rr(hole, holeW, holeH, holeR); sh.holes.push(hole); } return sh;
+  };
+  const woodSlab = (shape, depth, bevel, color) => {
+    const geo = keep(new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 4, curveSegments: 10 }));
+    geo.rotateX(-Math.PI / 2);      // 두께가 위로
+    /* 판 전체에 결 한 장(이음매 없이) — 쌓기나무 판처럼 */
+    const uv = geo.attributes.uv; for(let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) / DESK_W + 0.5, uv.getY(i) / DESK_H + 0.5);
+    const m = new THREE.Mesh(geo, keep(new THREE.MeshStandardMaterial({ color, map: woodTex, bumpMap: woodTex, bumpScale: 0.01, roughness: 0.58, metalness: 0.01 })));
+    m.castShadow = m.receiveShadow = true; return m;
+  };
+  const desk = woodSlab(roundRect(DESK_W, DESK_H, 0.16), DESK_T, 0.025, '#e7c28e'); desk.position.y = -DESK_T; scene.add(desk);
+  const rim = woodSlab(roundRect(DESK_W - 0.02, DESK_H - 0.02, 0.15, DESK_W - 0.02 - RIM * 2, DESK_H - 0.02 - RIM * 2, 0.1), 0.035, 0.012, '#d0a36b'); rim.position.y = 0.012; scene.add(rim);
+  /* 판 밑 그림자만 받는 바닥(바탕은 페이지 CSS 의 크림) */
+  { const floor = new THREE.Mesh(keep(new THREE.PlaneGeometry(16, 12)), keep(new THREE.ShadowMaterial({ opacity: 0.22, color: '#5b4326' })));
+    floor.rotation.x = -Math.PI / 2; floor.position.y = -DESK_T - 0.03; floor.receiveShadow = true; scene.add(floor); }
 
   /* ── 표지(가죽) 텍스처: 입구와 같은 그림 + 금박 제목 ── */
   const coverImg = await new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = COVER_URL.href; });
@@ -260,7 +290,7 @@ export async function mountBook(canvas, opts){
     const geo = keep(new THREE.PlaneGeometry(PAGE_W, PAGE_H, 40, 2));
     geo.rotateX(-Math.PI / 2); geo.translate(side === 'left' ? -PAGE_W / 2 : PAGE_W / 2, 0, 0);
     const p = geo.attributes.position;
-    for(let i = 0; i < p.count; i++){ const ax = Math.abs(p.getX(i)); if(ax < 0.14) p.setY(i, p.getY(i) - 0.02 * (0.5 + 0.5 * Math.cos(Math.PI * ax / 0.14))); }
+    for(let i = 0; i < p.count; i++){ const ax = Math.abs(p.getX(i)); if(ax < GUT) p.setY(i, p.getY(i) - DIP * (0.5 + 0.5 * Math.cos(Math.PI * ax / GUT))); }
     p.needsUpdate = true; geo.computeVertexNormals(); return geo;
   }
   const pageMat = tex => keep(new THREE.MeshStandardMaterial({ map: tex, roughness: 0.92, emissive: '#ffffff', emissiveMap: tex, emissiveIntensity: 0.3 }));
@@ -273,7 +303,7 @@ export async function mountBook(canvas, opts){
     m.castShadow = m.receiveShadow = true; return m;
   };
   { const b = board('right'); b.position.set(PAGE_W / 2 + 0.005, BOARD / 2, 0); rightHalf.add(b);
-    const st = new THREE.Mesh(keep(new THREE.BoxGeometry(PAGE_W - 0.13, STACK, PAGE_H - 0.01)), stackMats('right')); st.position.set(0.13 + (PAGE_W - 0.13) / 2 - 0.005, BOARD + STACK / 2 - 0.004, 0); st.receiveShadow = true;   /* 종이 묶음은 쪽 아래에 숨어 있다 — 그림자를 드리우면 휜 쪽에 줄무늬가 진다 */ rightHalf.add(st);
+    const st = new THREE.Mesh(keep(new THREE.BoxGeometry(PAGE_W - 0.01, STACK, PAGE_H - 0.01)), stackMats('right')); st.position.set(PAGE_W / 2, BOARD + STACK / 2 - 0.004, 0); st.receiveShadow = true;   /* 종이 묶음은 쪽 아래에 숨어 있다 — 그림자를 드리우면 휜 쪽에 줄무늬가 진다 */ rightHalf.add(st);
     const pg = new THREE.Mesh(pageGeometry('right'), pageMat(rightTex)); pg.position.y = PIV + 0.0005; pg.receiveShadow = true; pg.name = 'rightPage'; rightHalf.add(pg); }
 
   /* 왼쪽 반(책등을 축으로 돈다): 앞표지(가죽) · 종이 묶음 · 4쪽 · 날개 */
@@ -282,10 +312,10 @@ export async function mountBook(canvas, opts){
   { const b = board('left'); b.position.set(-PAGE_W / 2 - 0.005, -PIV + BOARD / 2, 0); leftHalf.add(b);
     /* 앞표지 그림은 판의 아랫면에 붙는다 — 덮이면(π 회전) 그 면이 위를 본다. 회전으로 뒤집히는 방향을 맞춘다. */
     coverTex.center.set(0.5, 0.5); coverTex.rotation = Math.PI;
-    const st = new THREE.Mesh(keep(new THREE.BoxGeometry(PAGE_W - 0.13, STACK, PAGE_H - 0.01)), stackMats('left')); st.position.set(-(0.13 + (PAGE_W - 0.13) / 2 - 0.005), -PIV + BOARD + STACK / 2 - 0.004, 0); st.receiveShadow = true;   /* 종이 묶음은 쪽 아래에 숨어 있다 — 그림자를 드리우면 휜 쪽에 줄무늬가 진다 */ leftHalf.add(st);
+    const st = new THREE.Mesh(keep(new THREE.BoxGeometry(PAGE_W - 0.01, STACK, PAGE_H - 0.01)), stackMats('left')); st.position.set(-PAGE_W / 2, -PIV + BOARD + STACK / 2 - 0.004, 0); st.receiveShadow = true;   /* 종이 묶음은 쪽 아래에 숨어 있다 — 그림자를 드리우면 휜 쪽에 줄무늬가 진다 */ leftHalf.add(st);
     leftPage = new THREE.Mesh(pageGeometry('left'), pageMat(leftTex)); leftPage.position.y = 0.0005; leftPage.receiveShadow = true; leftPage.name = 'leftPage'; leftHalf.add(leftPage); }
   /* 책등: 덮였을 때는 두 반쪽을 잇는 두꺼운 가죽, 펼치면 얇아져 아래로 숨는다 */
-  const spine = new THREE.Mesh(keep(new THREE.BoxGeometry(0.035, 1, PAGE_H + 0.05)), leather);
+  const spine = new THREE.Mesh(keep(new THREE.BoxGeometry(0.05, 1, PAGE_H + 0.05)), leather);
   spine.castShadow = true; book.add(spine);
 
   /* 날개: 4쪽 정답 위에 붙은 종이. 아래쪽 가장자리를 경첩으로 읽는 사람 쪽으로 넘어간다. */
@@ -375,12 +405,12 @@ export async function mountBook(canvas, opts){
   function framing(){
     const aspect = canvas.clientWidth / Math.max(1, canvas.clientHeight), portrait = aspect < 0.85;
     let tx, w, d, el;
-    if(!state.open){ tx = 0.5; w = 1.3; d = 1.5; el = 1.36; }
-    else if(portrait && state.view !== 'spread'){ tx = state.view === 'left' ? -0.5 : 0.5; w = 1.26; d = 1.42; el = 1.3; }
-    else { tx = 0; w = 2.16; d = 1.44; el = 1.22; }
+    if(!state.open){ tx = 0.5; w = 1.5; d = 1.6; el = 0.95; }
+    else if(portrait && state.view !== 'spread'){ tx = state.view === 'left' ? -0.5 : 0.5; w = 1.26; d = 1.42; el = 1.28; }
+    else { tx = 0; w = 2.3; d = 1.5; el = 1.05; }
     const fov = THREE.MathUtils.degToRad(camera.fov), t2 = 2 * Math.tan(fov / 2);
     const dist = Math.max(w / aspect / t2, (d * Math.sin(el) + 0.32) / t2) * 1.08;
-    const tgt = new THREE.Vector3(tx, 0.08, state.open && !(portrait && state.view !== 'spread') ? 0.02 : 0.0);
+    const tgt = new THREE.Vector3(tx, state.open ? PIV : PIV * 1.2, state.open && !(portrait && state.view !== 'spread') ? 0.03 : 0.0);
     return { tgt, pos: new THREE.Vector3(tx, tgt.y + dist * Math.sin(el), tgt.z + dist * Math.cos(el)) };
   }
   function aimCamera(instant){
@@ -396,7 +426,7 @@ export async function mountBook(canvas, opts){
   function applyOpen(){
     leftHalf.rotation.z = -Math.PI * (1 - smooth(openT));
     spine.scale.y = THREE.MathUtils.lerp(PIV * 2 + 0.002, 0.012, ease(clamp01(openT * 1.4)));
-    spine.position.set(-0.0175 * (1 - openT), spine.scale.y / 2, 0);
+    spine.position.set(-0.025 * (1 - openT), spine.scale.y / 2, 0);
     for(const [i, t] of [[0, trayA], [1, trayB]]){
       const k = ease(clamp01(popT * 1.3 - i * 0.3));
       t.userData.inner.rotation.x = -(1 - k) * 1.45; t.userData.inner.scale.setScalar(0.001 + k * 0.999); t.visible = k > 0.002;
@@ -437,11 +467,11 @@ export async function mountBook(canvas, opts){
     state.flap = !state.flap; const from = flapPivot.rotation.x, to = state.flap ? 2.85 : 0;
     tween(0.75, k => { flapPivot.rotation.x = from + (to - from) * ease(k); }); chime(state.flap ? [520, 780] : [440], 0.3); emit('flap');
   }
-  let flying = 0;
+  let flying = 0, queued = 0;   // 날아가는 동안 또 누르면 내려앉은 뒤 이어서 날린다(빠르게 두 번 눌러도 잃지 않게)
   function moveBead(){
     if(!state.open){ open(); return; }
     if(state.moved >= 2){ emit('full'); nudge(trayA); return; }
-    if(flying) return;
+    if(flying){ if(state.moved + queued < 2) queued++; return; }
     const bd = beadsB[beadsB.length - 1 - state.moved] ;
     const slot = trayA.userData.cells[8 + state.moved];
     state.moved++; flying++;
@@ -461,6 +491,7 @@ export async function mountBook(canvas, opts){
       chime([880], 0.35); setLabels(); drawRight();
       emit('moved', { moved: state.moved });
       if(state.moved >= 2) success();
+      else if(queued > 0){ queued--; moveBead(); }
     });
     drawRight();
   }
@@ -473,7 +504,7 @@ export async function mountBook(canvas, opts){
   }
   function nudge(t){ const x0 = t.position.x; tween(0.4, k => { t.position.x = x0 + Math.sin(k * Math.PI * 4) * 0.012 * (1 - k); }); }
   function reset(){
-    if(flying) return;
+    if(flying) return; queued = 0;
     state.choice = null; state.moved = 0; anim.work = 0; anim.stamp = 0;
     beadsB.forEach((b, i) => { trayB.userData.inner.attach(b); b.position.copy(trayB.userData.cells[i]); b.scale.setScalar(1); });
     trayA.userData.inner.traverse(o => { if(o.isLineSegments) o.material = inkLine; }); trayGlow.material.opacity = 0;
@@ -549,6 +580,7 @@ export async function mountBook(canvas, opts){
 
   return {
     get state(){ return Object.assign({}, state); },
+    get busy(){ return flying > 0 || tweens.length > 0 || queued > 0; },
     open, close, reset, moveBead, liftFlap, pick,
     setView(v){ state.view = v; aimCamera(); },
     setReduced(v){ reduced = !!v; },
@@ -556,6 +588,7 @@ export async function mountBook(canvas, opts){
     render(){ wake(); },
     get _debug(){ return { scene, renderer, sun, camera }; },   // 검사·문제 찾기용
     /* 검사용: 이름으로 찾은 물건(노란 구슬 · 날개)의 화면 좌표 */
+    _hit(x, y){ return hitAt(x, y); },
     _screenOf(kind){
       const o = kind === 'flap' ? flap : beadsB[beadsB.length - 1 - state.moved];
       if(!o) return null; const v = new THREE.Vector3(); o.getWorldPosition(v);

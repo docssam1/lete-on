@@ -16,19 +16,19 @@
   :root{--ink:#163f39;--ink2:#4a5552;--paper:#fbf6ea;--green:#245b60;--deep:#16302a;--gold:#c8961e;--rust:#a8452c;--glass:rgba(250,246,236,.86);--line:rgba(29,42,42,.14);
     --ui:'NM Book UI',Pretendard,'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;--serif:'Hahmlet','Noto Serif KR',Georgia,serif}
   *{box-sizing:border-box}
-  html,body{margin:0;height:100%;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#3f625f 0,#193c40 40%,#0c222a 85%);background-color:#102e34;color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+  html,body{margin:0;height:100%;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,253,248,.98)),radial-gradient(circle at 12% 8%,#dff4f7 0 16%,transparent 17%),radial-gradient(circle at 82% 18%,#f7e6ad 0 12%,transparent 13%),#f8f2e8;background-color:#f8f2e8;color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
   canvas#book{display:block;width:100%;height:100%;touch-action:manipulation;outline:none}
   canvas#book:focus-visible{outline:3px solid var(--green);outline-offset:-3px}
   /* 여는 화면: 종이 위에 「수의 마법」이 펜으로 한 글자씩 써지고, 금빛 구슬 하나가 떨어진다 */
-  #loader{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 45%,#3f625f 0,#193c40 40%,#0c222a 85%);z-index:5;transition:opacity .7s;text-align:center;padding:24px}
+  #loader{position:fixed;inset:0;display:grid;place-items:center;background:#f8f2e8;z-index:5;transition:opacity .7s;text-align:center;padding:24px}
   #loader .mark{display:grid;justify-items:center;gap:10px}
-  #loader .word{font:400 clamp(64px,13vw,120px)/1 'NM Book Pen',var(--ui);color:#f3e2b4;display:inline-flex;gap:.02em}
+  #loader .word{font:400 clamp(64px,13vw,120px)/1 'NM Book Pen',var(--ui);color:var(--ink);display:inline-flex;gap:.02em}
   #loader .word i{font-style:normal;display:inline-block;clip-path:inset(-20% 100% -20% 0);animation:write .22s linear forwards}
   #loader .word i:nth-child(1){animation-delay:.15s}#loader .word i:nth-child(2){animation-delay:.38s}#loader .word i:nth-child(3){animation-delay:.6s}#loader .word i:nth-child(4){animation-delay:.84s}#loader .word i:nth-child(5){animation-delay:1.04s}
   @keyframes write{to{clip-path:inset(-20% 0 -20% 0)}}
   #loader .bead{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a8,#e8a23a 55%,#a96a12);box-shadow:0 0 18px rgba(255,190,70,.8);opacity:0;transform:translateY(-60px);animation:drop .6s 1.25s cubic-bezier(.55,0,1,.45) forwards}
   @keyframes drop{20%{opacity:1}80%{transform:translateY(0) scale(1.2,.8)}100%{opacity:1;transform:none}}
-  #loader .sub{font:500 15px/1.4 var(--ui);color:#cdbf98;opacity:0;animation:fade .5s 1.5s forwards}
+  #loader .sub{font:500 15px/1.4 var(--ui);color:#7a6a4a;opacity:0;animation:fade .5s 1.5s forwards}
   @keyframes fade{to{opacity:1}}
   body.ready #loader{opacity:0;pointer-events:none}
   /* 아래 알약 막대 */
@@ -46,7 +46,7 @@
   /* 입구로 — 로그인 화면의 「배경음」 알약과 같은 자리 */
   #back{position:fixed;left:max(12px,env(safe-area-inset-left));top:max(12px,env(safe-area-inset-top));z-index:3;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px 0 10px;border-radius:999px;
     background:var(--glass);color:var(--ink);font:600 14px/1 var(--ui);text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.18)}
-  #back svg{width:18px;height:18px}#back:focus-visible{outline:3px solid #f3e2b4;outline-offset:2px}
+  #back svg{width:18px;height:18px}#back:focus-visible{outline:3px solid var(--green);outline-offset:2px}
   @media (max-width:420px){#soundBtn{display:none}#bar{gap:2px}#bar button{padding:0 10px}}
   @media (max-aspect-ratio:17/20){#pages{display:inline-flex}}
   @media (max-width:560px){#bar .label{display:none}#bar button,#bar a{padding:0 11px}}

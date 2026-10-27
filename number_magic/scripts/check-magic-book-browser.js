@@ -26,11 +26,10 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
    assert.equal(await p.evaluate(()=>NM_BOOK.state.open),false,'starts closed');
    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'no horizontal overflow');
    const small=await p.locator('#bar button:visible,#back').evaluateAll(xs=>xs.filter(x=>x.getBoundingClientRect().height<44).length);assert.equal(small,0,'44px controls');
-   await p.click('#openBtn');await until(p,()=>NM_BOOK.state.open&&document.getElementById('openBtn').getAttribute('aria-label')!==null&&!document.getElementById('openBtn').classList.contains('primary'));
-   await sleep(1500);
+   await p.click('#openBtn');await until(p,()=>NM_BOOK.state.open&&!document.getElementById('openBtn').classList.contains('primary')&&!NM_BOOK.busy,null,90000);
    if(w<500){await p.click('#pageRight');await sleep(2500);}
    // 노란 구슬을 화면에서 직접 두 번 누른다
-   for(let n=1;n<=2;n++){const pt=await p.evaluate(()=>NM_BOOK._screenOf('bead'));await p.mouse.click(pt.x,pt.y);await until(p,k=>NM_BOOK.state.moved===k,n);await sleep(2200);}
+   for(let n=1;n<=2;n++){const pt=await p.evaluate(()=>NM_BOOK._screenOf('bead'));await p.mouse.click(pt.x,pt.y);await until(p,k=>NM_BOOK.state.moved===k,n);await until(p,()=>!NM_BOOK.busy,null,90000);}
    await until(p,()=>/15/.test(document.getElementById('toast').textContent));   // 두 번째 구슬이 내려앉으면 「… 10 + 5 = 15」
    // 다 채운 뒤 또 누르면 「가득 찼어요」
    const pt3=await p.evaluate(()=>NM_BOOK._screenOf('bead'));if(pt3){await p.mouse.click(pt3.x,pt3.y);await sleep(600);}
@@ -46,7 +45,10 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
    await p.click('#tvClose');assert.equal(await p.locator('#textView[open]').count(),0);
    // 다시 하기
    await p.click('#resetBtn');await until(p,()=>{const s=NM_BOOK.state;return s.moved===0&&s.choice===null&&s.flap===false;});
-   assert.deepEqual(errors,[]);report.push({width:w,lang,beadTaps:2,flapTap:true,textView:true,reset:true});await ctx.close();
+   if(w>500){   // 빠르게 두 번: 날아가는 동안 누른 것도 이어서 날아간다
+     const a1=await p.evaluate(()=>NM_BOOK._screenOf('bead'));await p.mouse.click(a1.x,a1.y);await sleep(150);await p.mouse.click(a1.x-60,a1.y);
+     await until(p,()=>NM_BOOK.state.moved===2&&!NM_BOOK.busy,null,90000);}
+   assert.deepEqual(errors,[]);report.push({width:w,lang,beadTaps:2,flapTap:true,textView:true,reset:true,quickDoubleTap:w>500});await ctx.close();
   }
   // 움직임 줄이기: 펼치기가 바로 끝난다
   {const {ctx,p,errors}=await page(1280,800,'',{reduced:true});await until(p,()=>window.NM_BOOK,null,120000);
