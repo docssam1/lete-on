@@ -4,11 +4,26 @@
 // 움직임 줄이기 설정이면 바로 완성 장면.
 // 글자는 손글씨 글꼴(나눔펜, OFL · assets/fonts/nm-lesson-hand.woff2)을 펜이 지나가며 드러내고, 그림은 실제 선(stroke)을 펜이 그린다.
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
+import { mathText } from "./math-markup.js?v=20261027p";
 import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261027c";
 
 const NS = "http://www.w3.org/2000/svg";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// 「1/4 = 1/8 두 개」 → ["", {n:"1",d:"4"}, " = ", {n:"1",d:"8"}, " 두 개"] — 괄호로 묶은 식((1×2)/(3×2))도 한 분수로
+const FRACTION = /(^|[^\d/)])(\((?:[^()]+)\)|\d+)\/(\((?:[^()]+)\)|\d+)(?![\d/(])/g;
+function splitFractions(text) {
+  const out = [];
+  let last = 0;
+  for (const m of text.matchAll(FRACTION)) {
+    const start = m.index + m[1].length;
+    if (start > last) out.push(text.slice(last, start));
+    out.push({ n: m[2].replace(/^\((.*)\)$/, "$1"), d: m[3].replace(/^\((.*)\)$/, "$1") });
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out.length ? out : [text];
+}
 const el = (tag, attrs = {}, parent = null) => {
   const node = document.createElementNS(NS, tag);
   for (const [k, v] of Object.entries(attrs)) if (v !== undefined && v !== null) node.setAttribute(k, String(v));
@@ -42,6 +57,8 @@ function arrowHead(x, y, angleDeg, size, stroke) {
 
 export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone = () => {}, board: boardId } = {}) {
   const script = BOARDS[boardId];
+  const fracs = !String(boardId).startsWith("book-07/");   // 7권 판서의 「3/5」는 날짜(3월 5일)다
+  const mathOf = (text) => (fracs ? mathText(esc(text)) : esc(text));
   if (!script) { host.innerHTML = `<p class="cb-missing">판서 대본이 없어요: ${esc(boardId)}</p>`; return { dispose() {} }; }
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const pref = (() => { try { return JSON.parse(localStorage.getItem("fc.board.pref") || "{}"); } catch { return {}; } })();
@@ -89,9 +106,55 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
   }
   function textNode(item) {
     const g = el("g", { class: `cb-text ${item.font === "sans" ? "sans" : "hand"}` }, layer);
-    const t = el("text", { x: item.x, y: item.y, "font-size": item.size || 40, fill: color(item.color), "text-anchor": item.align === "center" ? "middle" : item.align === "right" ? "end" : "start" }, g);
-    t.textContent = item.text;
-    return { g, t };
+    const parts = fracs ? splitFractions(String(item.text)) : null;
+    if (!parts || parts.length === 1 && typeof parts[0] === "string") {
+      const t = el("text", { x: item.x, y: item.y, "font-size": item.size || 40, fill: color(item.color), "text-anchor": item.align === "center" ? "middle" : item.align === "right" ? "end" : "start" }, g);
+      t.textContent = item.text;
+      return { g, t };
+    }
+    return { g, t: stackedText(item, parts, g) };
+  }
+  // 칠판 글 속 분수(3/8, (1×2)/(3×2))는 빗금 대신 위아래로 쌓는다(원장 2026-10-27, 화면의 MathML 분수와 같은 꼴).
+  // SVG 안이라 MathML을 쓸 수 없어 조각마다 글자를 따로 놓고 가로줄을 긋는다. 묶음(g)째로 펜이 지나가며 드러난다.
+  function stackedText(item, parts, g) {
+    const size = item.size || 40, small = size * 0.9, fill = color(item.color), bar = item.y - size * 0.32;
+    const placed = [];
+    let width = 0;
+    for (const part of parts) {
+      if (typeof part === "string") {
+        const t = el("text", { x: 0, y: item.y, "font-size": size, fill }, g);
+        t.textContent = part;
+        const w = t.getComputedTextLength();
+        placed.push({ nodes: [t], at: width, w, kind: "text" });
+        width += w;
+        continue;
+      }
+      const top = el("text", { x: 0, y: bar - small * 0.16, "font-size": small, fill, "text-anchor": "middle" }, g);
+      const bottom = el("text", { x: 0, y: bar + small * 0.84, "font-size": small, fill, "text-anchor": "middle" }, g);
+      top.textContent = part.n; bottom.textContent = part.d;
+      const w = Math.max(top.getComputedTextLength(), bottom.getComputedTextLength()) + size * 0.24;
+      const line = el("line", { x1: 0, y1: bar, x2: 0, y2: bar, stroke: fill, "stroke-width": Math.max(2, size * 0.07), "stroke-linecap": "round" }, g);
+      placed.push({ nodes: [top, bottom], line, at: width, w, kind: "frac" });
+      width += w + size * 0.06;
+    }
+    const layout = () => {
+      // 손글씨 글꼴이 늦게 오면 폭이 달라진다 — 글꼴이 다 온 뒤 한 번 더 잰다
+      let at = 0;
+      for (const p of placed) {
+        p.at = at;
+        p.w = p.kind === "text" ? p.nodes[0].getComputedTextLength() : Math.max(...p.nodes.map((node) => node.getComputedTextLength())) + size * 0.24;
+        at += p.w + (p.kind === "frac" ? size * 0.06 : 0);
+      }
+      const x0 = item.align === "center" ? item.x - at / 2 : item.align === "right" ? item.x - at : item.x;
+      for (const p of placed) {
+        if (p.kind === "text") { p.nodes[0].setAttribute("x", x0 + p.at); continue; }
+        p.nodes.forEach((node) => node.setAttribute("x", x0 + p.at + p.w / 2));
+        p.line.setAttribute("x1", x0 + p.at + size * 0.08); p.line.setAttribute("x2", x0 + p.at + p.w - size * 0.08);
+      }
+    };
+    layout();
+    if (document.fonts?.status !== "loaded") document.fonts?.ready.then(layout);
+    return g;
   }
   async function drawText(item, instant) {
     const { g, t } = textNode(item);
@@ -227,9 +290,9 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
   function renderCheck(check) {
     checkState = { tries: 0, solved: false, check };
     const options = check.options.map((opt, i) => typeof opt === "string"
-      ? `<button type="button" class="cb-opt" data-cb-opt="${i}">${esc(opt)}</button>`
+      ? `<button type="button" class="cb-opt" data-cb-opt="${i}">${mathOf(opt)}</button>`   // 보기의 분수(3/8)는 공통 수식으로 위아래로
       : `<button type="button" class="cb-opt cb-opt-grid" data-cb-opt="${i}" aria-label="보기 ${i + 1}">${miniGrid(opt)}</button>`);
-    checkBox.innerHTML = `<p class="cb-q">${esc(check.question)}</p><div class="cb-opts">${options.join("")}</div><p class="cb-verdict" data-cb-verdict aria-live="polite"></p>`;
+    checkBox.innerHTML = `<p class="cb-q">${mathOf(check.question)}</p><div class="cb-opts">${options.join("")}</div><p class="cb-verdict" data-cb-verdict aria-live="polite"></p>`;
     checkBox.hidden = false;
   }
   function miniGrid(opt) {
@@ -246,7 +309,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
     if (i === check.answer) {
       checkState.solved = true;
       buttons.forEach((b, k) => { b.disabled = true; b.classList.toggle("right", k === i); });
-      verdict.textContent = check.right || "맞았어요!";
+      verdict.innerHTML = mathOf(check.right || "맞았어요!");
       await say(check.sayRight || "맞았어요! 개념을 잘 익혔어요.", "praise", lineId(boardId, "right"));
       finish();
       return;
@@ -267,7 +330,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
   function finish() { if (finished) return; finished = true; stepEl.textContent = `${beats.length} / ${beats.length}`; root.classList.add("is-done"); onDone(); }
 
   // 비트 실행: 그림과 말을 같이 시작해, 둘 다 끝나면 다음으로
-  function setCaption(beat, k) { cap.textContent = beat.say || ""; stepEl.textContent = `${Math.min(k + 1, beats.length)} / ${beats.length}`; }
+  function setCaption(beat, k) { cap.innerHTML = mathOf(beat.say || ""); stepEl.textContent = `${Math.min(k + 1, beats.length)} / ${beats.length}`; }
   async function playBeat(k) {
     const beat = beats[k], my = runId;
     setCaption(beat, k);

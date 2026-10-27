@@ -26,13 +26,9 @@ try {
 
   let selected;
   if (answerBookId) {
-    await page.locator('#builderTabs button[data-mode="curriculum"]').click();
-    await page.locator(`[data-curriculum-book="${answerBookId}"]`).click();
-    selected = await page.locator("input[data-unit-test-key]:not([disabled])").evaluateAll((inputs) => inputs.map((input) => {
-      input.checked = true;
-      input.dispatchEvent(new Event("change", { bubbles: true }));
-      return input.dataset.unitTestKey;
-    }));
+    // 단원 테스트 통합 목록은 화면에서 뺐다(2026-10-27) — 시작 화면처럼 주소로 검토된 번호를 모두 고른다
+    await page.goto(`${url}${url.includes("?") ? "&" : "?"}mode=curriculum&book=${answerBookId}&set=unit-test`, { waitUntil: "networkidle", timeout: 30000 });
+    selected = Array.from({ length: Number(await page.locator("#questionCount").inputValue()) }, (_, index) => `${answerBookId}:${index + 1}`);
   } else {
     await page.locator('#builderTabs button[data-mode="type"]').click();
     const candidates = process.env.FIELDS_ANSWER_TYPES

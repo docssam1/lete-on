@@ -1,5 +1,5 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261024r";
-import { lessonsByUnit, lessonsByPart, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261028zb";
+import { lessonsByUnit, lessonsByPart, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261027p";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).

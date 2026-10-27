@@ -1,3 +1,4 @@
+import { frac, box } from "./math-markup.js?v=20261027p";
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
@@ -632,8 +633,8 @@ function sourceShapeEquations(visual) {
 const BLANK_LABELS = ["가", "나", "다", "라", "마", "바", "사", "아"];
 const fractionMarkup = (fractions, start = 0) => {
   let blank = start;
-  const cell = (v) => (v == null ? `<i class="blank"><small>${BLANK_LABELS[blank++]}</small></i>` : `<i>${escapeHtml(v)}</i>`);
-  return fractions.map(([num, den]) => `<span class="frac">${cell(num)}<span class="bar"></span>${cell(den)}</span>`).join('<b class="eq">=</b>');
+  const cell = (v) => (v == null ? box(BLANK_LABELS[blank++]) : v);
+  return fractions.map(([num, den]) => `<span class="frac mm-host">${frac(cell(num), cell(den))}</span>`).join('<b class="eq">=</b>');
 };
 
 // 원판: pieces 조각 중 shaded 조각을 12시부터 시계 방향으로 색칠. 원판마다 아래에 분수 빈칸(가·나…)을 붙인다.

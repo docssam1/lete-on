@@ -19,49 +19,11 @@ try {
       const page = await browser.newPage({ viewport: { width, height: 1000 }, isMobile: width === 390, hasTouch: width === 390 });
       const errors = [];
       page.on("pageerror", (error) => errors.push(error.message));
-      await page.goto(`${base}/fields-classic/question-bank/?student=DEMO&mode=curriculum`, { waitUntil: "networkidle" });
-      await page.locator(`[data-curriculum-book="${bookId}"]`).click();
+      // 교재 단원별 화면의 단원 테스트 통합 목록은 2026-10-27에 뺐다(원장 「아래 단원별로 구분한 것만 살려」).
+      // 권별테스트 유사문제는 시작 화면처럼 주소(set=unit-test)로 고른다 — 검토를 마친 번호만 담겨야 한다.
+      await page.goto(`${base}/fields-classic/question-bank/?student=DEMO&mode=curriculum&book=${bookId}&set=unit-test`, { waitUntil: "networkidle" });
       const expected = inventory.filter((entry) => entry.verified);
-      const rows = page.locator("input[data-unit-test-key]");
-      assert.equal(await rows.count(), 25, "The entire source inventory must be visible, including held items");
-      const enabledKeys = await rows.evaluateAll((nodes) => nodes.filter((node) => !node.disabled).map((node) => node.dataset.unitTestKey));
-      assert.deepEqual(enabledKeys, expected.map((entry) => `${bookId}:${entry.number}`));
-      assert.equal(await page.locator(".unit-test-question.not-ready").count(), inventory.length - expected.length);
-      const list = page.locator(".unit-test-question-list");
-      await list.scrollIntoViewIfNeeded();
-      if (bookId === "book-02") {
-        const matrixCases = [
-          { number: 1, rows: 3, columns: 3, target: "column", strategy: /같은 도형 3개인 줄/ },
-          { number: 2, rows: 4, columns: 4, target: "row", strategy: /같은 도형 4개인 줄/ },
-          { number: 22, rows: 3, columns: 4, target: "row", cross: true, strategy: /두 가로줄을 비교/ }
-        ];
-        for (const sourceCase of matrixCases) {
-          const key = `${bookId}:${sourceCase.number}`;
-          const input = page.locator(`[data-unit-test-key="${key}"]`);
-          const row = input.locator("xpath=..");
-          await row.scrollIntoViewIfNeeded();
-          if (width === 390) {
-            await row.locator("[data-touch-preview]").click();
-            assert.equal(await input.isChecked(), false, "Opening a touch preview must not select the question");
-          } else {
-            await row.hover();
-          }
-          const preview = page.locator("#typePreview");
-          await preview.waitFor({ state: "visible" });
-          assert.match(await preview.locator(".representative-concept>strong").textContent(), sourceCase.strategy);
-          assert.equal(await preview.locator(".b2-matrix>span").count(), sourceCase.rows * sourceCase.columns);
-          assert.equal(await preview.locator(".b2-row-sums>b").count(), sourceCase.rows);
-          assert.equal(await preview.locator(".b2-column-sums>b").count(), sourceCase.columns);
-          assert.equal(await preview.locator(sourceCase.target === "row" ? ".b2-row-sums>b" : ".b2-column-sums>b").filter({ hasText: "?" }).count(), 1);
-          if (sourceCase.cross) assert.equal(await preview.locator(".cross-shape").count(), 1);
-          if (output) await preview.screenshot({ path: path.join(output, `book-02-q${String(sourceCase.number).padStart(2, "0")}-preview-${width}.png`) });
-          await page.keyboard.press("Escape");
-        }
-      }
-      if (output) await page.screenshot({ path: path.join(output, `${bookId}-unit-links-${width}.png`) });
-      for (const key of enabledKeys) await page.locator(`[data-unit-test-key="${key}"]`).check();
-      await page.locator("#questionCount").fill(String(expected.length));
-      await page.locator("#questionCount").dispatchEvent("change");
+      assert.equal(await page.locator("input[data-unit-test-key]").count(), 0, "교재 단원별 화면에는 단원 테스트 통합 목록이 없다");
       await page.locator("#buildButton").click(); await page.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
       await page.locator("#worksheetSection").waitFor({ state: "visible" });
       const cards = page.locator(".question-card");
@@ -120,7 +82,7 @@ try {
       assert.equal(pdfPages, Math.ceil(expected.length / 2), "The print layout must keep two questions per A4 page without an extra page");
       await page.emulateMedia({ media: "screen" });
       await page.locator("#backToBuilder").click();
-      for (const key of enabledKeys) assert.ok(await page.locator(`[data-unit-test-key="${key}"]`).isChecked());
+      assert.equal(await page.locator(".ed-card").count(), expected.length, "인쇄 화면에서 돌아오면 상세 편집에 같은 문제가 있다");
       assert.deepEqual(errors, []);
       results.push({ bookId, width, inventory: inventory.length, enabled: expected.length, held: inventory.length - expected.length, pdfPages });
       await page.close();

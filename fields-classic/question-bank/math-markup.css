@@ -1,0 +1,13 @@
+/* 수식(math-markup.js) — 숫자는 둘레 글꼴 그대로, 크기는 줄이지 않는다(아이 교재: 분수 안의 분수도 같은 크기), 줄은 글자색 */
+math.mm { font-family: inherit; font-size: 1em; math-style: normal; line-height: 1; vertical-align: middle; }
+math.mm mfrac > * { math-style: normal; math-depth: 0; font-size: inherit; padding-inline: .12em; }
+math.mm mn, math.mm mi, math.mm mo, math.mm mtext { font-family: inherit; font-weight: inherit; font-style: normal; }
+math.mm msup > :last-child { font-size: .62em; }
+/* 빈칸 상자(그림 색표: 숫자판·빈 상자 = 보라 테두리) — 안에 작은 글자(가·나…)를 넣을 수 있다 */
+math.mm .mm-box { display: inline-block; min-width: 2.2em; padding: .5em .5em; border: 1.5px solid #8e5bd8; border-radius: 3px; background: #fff; color: #8e5bd8; font-size: .7em; line-height: 1.2; text-align: center; }
+/* 근호(√)는 글꼴의 수식 표가 있어야 늘어난다 — 근호만 수식 글꼴로 */
+math.mm msqrt, math.mm mroot { font-family: math, 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', serif; }
+@media print { math.mm { color: #191511; } }
+/* 예전 분수 칸(위·줄·아래 3칸 틀)에 수식이 들어오면 틀을 풀어 수식 하나만 가운데에 */
+:is(.fraction, .frac, .tx-fracs span):has(> math.mm) { display: inline-flex; flex-direction: row; align-items: center; justify-content: center; grid-template-rows: none; min-width: 0; }
+.tx-fracs math.mm, .b6-fraction-chain math.mm { font-size: 20px; font-weight: 700; }

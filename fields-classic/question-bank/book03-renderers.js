@@ -577,19 +577,19 @@ function gridPathMarkup(visual) {
 }
 
 function numberLineMarkup(visual) {
-  // 원본 13·17쪽: 같은 간격 호(‖ 표시)와 빈칸 상자.
+  // 원본 13·17쪽: 같은 간격 호(‖ 표시)와 빈칸 상자. 채움은 그림 안에 적어 둔다 — 어느 화면 CSS에서도 호·빈칸이 검게 칠해지지 않게.
   const n = visual.divisions;
   const x = (index) => 35 + index * 300 / n;
   const ticks = Array.from({ length: n + 1 }, (_, index) => `<line x1="${x(index)}" y1="70" x2="${x(index)}" y2="84"/>`).join("");
   const arcs = Array.from({ length: n }, (_, index) => {
     const a = x(index); const b = x(index + 1); const m = (a + b) / 2;
-    const mark = visual.target === "middle" ? `<path class="mark" d="M${m - 3} 40V50M${m + 3} 40V50"/>` : "";
-    return `<path class="arc" d="M${a} 77Q${m} ${visual.target === "interval" && index > 0 ? 77 : 30} ${b} 77"/>${mark}`;
+    const mark = visual.target === "middle" ? `<path class="mark" fill="none" stroke="#333" d="M${m - 3} 40V50M${m + 3} 40V50"/>` : "";
+    return `<path class="arc" fill="none" stroke="#5a9d5e" d="M${a} 77Q${m} ${visual.target === "interval" && index > 0 ? 77 : 30} ${b} 77"/>${mark}`;
   }).join("");
   const labels = `<text x="${x(0)}" y="108">${visual.left}</text><text x="${x(n)}" y="108">${visual.right}</text>`;
   const box = visual.target === "middle"
-    ? `<rect class="blank" x="${x(n / 2) - 14}" y="92" width="28" height="22"/>`
-    : `<rect class="blank" x="${(x(0) + x(1)) / 2 - 14}" y="20" width="28" height="22"/>`;
+    ? `<rect class="blank" fill="#fff" stroke="#8e5bd8" x="${x(n / 2) - 14}" y="92" width="28" height="22"/>`
+    : `<rect class="blank" fill="#fff" stroke="#8e5bd8" x="${(x(0) + x(1)) / 2 - 14}" y="20" width="28" height="22"/>`;
   return `<svg class="b3-svg b3-number-line" viewBox="0 0 370 125" role="img" aria-label="똑같은 간격으로 나눈 수직선"><line x1="35" y1="77" x2="335" y2="77"/>${visual.target === "interval" ? arcs.split("</path>")[0] + "</path>" : arcs}${ticks}${labels}${box}</svg>`;
 }
 

@@ -1,3 +1,4 @@
+import { frac } from "./math-markup.js?v=20261027p";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 }[ch]));
@@ -572,7 +573,7 @@ export function course02A4ConceptMarkup(data) {
   } else if (data.task === "gcd-pack") {
     body = `<div class="a4-number-groups">${data.values.map((value) => `<span>${value}</span>`).join("")}</div><p>모두 나누는 가장 큰 수</p>`;
   } else if (data.task === "unit-fraction-sets") {
-    body = `<div class="a4-fraction-goal"><span>서로 다른 단위분수 ${data.termCount}개</span><b>=</b><span>${data.targetNumerator}/${data.targetDenominator}</span></div>`;
+    body = `<div class="a4-fraction-goal"><span>서로 다른 단위분수 ${data.termCount}개</span><b>=</b><span>${frac(data.targetNumerator, data.targetDenominator)}</span></div>`;
   } else if (data.task === "lcm-cycle") {
     body = `<div class="a4-cycle">${data.periods.map((period) => `<span style="--period:${period}">${period}일</span>`).join("")}</div>`;
   } else if (data.task === "consecutive-conditions") {

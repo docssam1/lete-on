@@ -1,3 +1,4 @@
+import { frac } from "./math-markup.js?v=20261027p";
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
@@ -47,7 +48,7 @@ function rods(visual) {
 }
 
 function fractionChain(visual) {
-  const fraction = ([top, bottom]) => `<span class="fraction"><b>${top}</b><i></i><b>${bottom}</b></span>`;
+  const fraction = ([top, bottom]) => `<span class="fraction">${frac(top, bottom)}</span>`;
   return `<div class="b6-fraction-chain">${fraction(visual.left)}<strong>${visual.symbol}</strong>${fraction(visual.right)}</div>`;
 }
 

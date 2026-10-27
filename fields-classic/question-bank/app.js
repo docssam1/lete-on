@@ -3,12 +3,12 @@ import { GENERATORS } from "./generators.js?v=20261027a";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
 import { book02Markup } from "./book02-renderers.js?v=20261023h";
-import { book03Markup } from "./book03-renderers.js?v=20261023h";
+import { book03Markup } from "./book03-renderers.js?v=20261027a";
 import { book04Markup } from "./book04-renderers.js?v=20261023h";
-import { book05Markup } from "./book05-renderers.js?v=20261023h";
-import { book06Markup } from "./book06-renderers.js?v=20260905d";
+import { book05Markup } from "./book05-renderers.js?v=20261027p";
+import { book06Markup } from "./book06-renderers.js?v=20261027p";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
-import { book08Markup } from "./book08-renderers.js?v=20261027a";
+import { book08Markup } from "./book08-renderers.js?v=20261027p";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
@@ -307,7 +307,11 @@ function positionTypePreview(anchor) {
   const width = Math.min(390, window.innerWidth - margin * 2);
   panel.style.width = `${width}px`;
   panel.style.maxHeight = "";
-  const fitsRight = rect.right + margin + width <= window.innerWidth;
+  // 화면 가득 틀(2026-10-27)에서는 오른쪽 설정 칸·「문제 구성 확인」을 덮지 않게 왼쪽 목록 칸 안에만 띄운다
+  const settings = document.getElementById("bankSettings");
+  const settingsLeft = settings && !document.getElementById("builderPanel").hidden ? settings.getBoundingClientRect().left : 0;
+  const limitRight = settingsLeft > window.innerWidth / 2 ? settingsLeft - margin : window.innerWidth;
+  const fitsRight = rect.right + margin + width <= limitRight;
   const fitsLeft = rect.left - width - margin >= 0;
   if (fitsRight || fitsLeft) {
     const left = fitsRight ? rect.right + margin : rect.left - width - margin;
@@ -323,7 +327,7 @@ function positionTypePreview(anchor) {
   const room = Math.max(below, above, 120);
   panel.style.maxHeight = `${room}px`;
   const height = Math.min(panel.offsetHeight, room);
-  panel.style.left = `${margin}px`;
+  panel.style.left = `${Math.max(margin, Math.min(limitRight - width, rect.right - width))}px`;
   panel.style.top = `${below >= above ? rect.bottom + margin : Math.max(margin, rect.top - margin - height)}px`;
 }
 
@@ -356,14 +360,9 @@ function showTypePreview(anchor) {
   }
   const domain = DOMAINS.find((entry) => entry.id === item.domain);
   const sourcePreview = unitTestPreviewContext(anchor);
-  const representativeConcept = sourcePreview?.concept || representativeConceptForType(item.id);
   const previewLabel = sourcePreview?.label || item.label;
-  const isConceptStage = problem.studyStage?.id === "concept";
+  // 미리보기는 문제만(원장 2026-10-27 「문제만 보이면 되지 너무 복잡해」): 이름 한 줄 + 문제 글 + 그림
   panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${previewLabel}</strong></div>
-    ${problem.studyStage ? `<div class="study-stage-banner ${problem.studyStage.id}"><strong>${problem.studyStage.label}</strong><span>${problem.studyStage.sourceLabel} · ${problem.studyStage.description}</span></div>` : ""}
-    ${isConceptStage ? textbookConceptTutorialMarkup(problem, true) : representativeConcept ? `<section class="representative-concept"><strong>대표 개념 · ${representativeConcept.label}</strong><p>${representativeConcept.summary}</p><small>이 유형의 핵심 · ${representativeConcept.principle}</small></section>` : ""}
-    ${learningMapPreviewMarkup(item)}
-    ${!isConceptStage && problem.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${problem.conceptGuide}</span></div>` : ""}
     <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
     ${problem.image ? `<img src="${problem.image}" alt="${item.label} 예시 그림" />` : visualMarkup(problem.visual)}`;
   panel.hidden = false;
@@ -676,21 +675,8 @@ function renderCurriculum() {
         <div class="type-leaves">${typeRows}</div>
       </details>`;
     }).join("");
-    const testQuestionRows = testQuestions.length ? `<p class="unit-test-head"${hasQuery ? " hidden" : ""}><strong>단원 테스트</strong><span>문항을 고르면 유사문제로 나와요</span><a class="source-view-link" href="./unit-test-viewer.html?book=${sourceFolder}&student=${encodeURIComponent(student)}">원문 보기</a></p><div class="unit-test-question-list" aria-label="${book.label} 단원 테스트 문항별 유사문제">
-      ${testQuestions.map((question) => {
-        const item = typeById(question.typeId);
-        const ready = question.verified && isSelectableType(item);
-        const key = unitTestKey(book.id, question.number);
-        return `<label class="unit-test-question ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}" data-preview-unit-test-key="${key}"` : ""}>
-          <input type="checkbox" data-unit-test-key="${key}" ${state.selected.unitTest.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
-          <b>${question.number}번</b><span><strong>${question.label}</strong><small>${item?.middle || "유형 대조 중"}</small></span>
-          <em>${ready ? "유사문제 연결" : "원본 구조 재설계 중"}</em>
-        </label>`;
-      }).join("")}
-    </div>` : "";
     return `<details class="tree-group curriculum-book" open>
       <summary><strong>${book.label} · ${book.title}</strong><span>교재 4단원 + 단원 테스트 25문항</span></summary>
-      ${testQuestionRows}
       <div class="curriculum-units">${units}</div>
     </details>`;
   }).join("");
@@ -1085,7 +1071,8 @@ function makeQuestions() {
   const counters = new Map();
   const signatures = new Set();
   const questions = Array.from({ length: state.count }, (_, index) => {
-    const reference = references[index % references.length];
+    // 같은 단원(같은 기준 문제)의 문제는 이어서 놓는다(원장 「구분이 있어야지」) — 섞기를 고르면 위에서 이미 섞였다
+    const reference = references.length >= state.count ? references[index] : references[Math.floor((index * references.length) / state.count)];
     const item = typeById(reference.typeId);
     const sequence = counters.get(item.id) || 0;
     counters.set(item.id, sequence + 1);
@@ -1151,6 +1138,15 @@ const levelLabel = (question) => question.studyStage ? question.studyStage.label
 function levelOrder() {
   return state.mode === "curriculum" ? TEXTBOOK_STAGES.map((stage) => stage.label) : [1, 2, 3].map((n) => LEVEL_LABEL[n]);
 }
+// 문제가 어디서 왔는지(원장 「문제집 번호나 구분이 있어야지」): 기준 문제 글에서 묶음(권·단원 / 단원 테스트 / 시험지)과 원본 번호를 뽑는다.
+//   교재: 「1권 도형 움직이기 · 유형(활동 01 확인 01~03) · 유형 이름」 → 묶음 「1권 도형 움직이기」, 원본 「유형(활동 01 확인 01~03)」
+//   단원 테스트: 「1권 단원 테스트 7번 · 이름」 → 묶음 「1권 단원 테스트」, 원본 「7번」 / 시험지: 「○○ 3번」 → 묶음 「○○」, 원본 「3번」
+function sourceOf(question) {
+  const parts = String(question.reference || "").split(" · ");
+  if (parts.length >= 3) return { group: parts[0], number: parts[1] };
+  const head = parts[0], match = head.match(/^(.*?)\s*(\d+번)$/);
+  return match ? { group: match[1], number: `${match[2]}` } : { group: head, number: "" };
+}
 function openEditor() {
   Object.assign(editor, { tab: "summary", focus: 0, twins: [], twinLevel: null, adds: null, addLimit: 12 });
   renderEditor();
@@ -1161,12 +1157,14 @@ function editorProblemMarkup(question) {
 }
 function editorCardMarkup(question, index) {
   const domain = DOMAINS.find((item) => item.id === question.type.domain);
-  const source = question.generationCase?.mode === "source";
-  return `<article class="ed-card${index === editor.focus ? " is-focus" : ""}" data-ed-card="${index}">
-    <header><b>${index + 1}</b><span>${escapeAttribute(question.type.label)}</span><small>${escapeAttribute(domain?.label || "")} · ${escapeAttribute(question.type.middle)}</small></header>
+  const original = question.generationCase?.mode === "source";
+  const source = sourceOf(question), previous = index ? sourceOf(state.questions[index - 1]) : null;
+  const divider = !previous || previous.group !== source.group ? `<p class="ed-group">${escapeAttribute(source.group)}</p>` : "";
+  return `${divider}<article class="ed-card${index === editor.focus ? " is-focus" : ""}" data-ed-card="${index}">
+    <header><b>${index + 1}</b>${source.number ? `<em class="ed-src">${escapeAttribute(source.number)}</em>` : ""}<span>${escapeAttribute(question.type.label)}</span><small>${escapeAttribute(domain?.label || "")} · ${escapeAttribute(question.type.middle)}</small></header>
     <div class="ed-card-body"><em class="ed-level">${escapeAttribute(levelLabel(question))}</em><div class="ed-q">${editorProblemMarkup(question)}</div>
       <button type="button" class="ed-del" data-ed="remove" data-i="${index}" aria-label="${index + 1}번 문제 빼기" title="빼기" ${state.questions.length <= 1 ? "disabled" : ""}>🗑</button></div>
-    <footer>${source ? '<span class="ed-note">원문 문항</span>' : `<button type="button" data-ed="twin" data-i="${index}">쌍둥이 · 유사</button>`}</footer>
+    <footer>${original ? '<span class="ed-note">원문 문항</span>' : `<button type="button" data-ed="twin" data-i="${index}">쌍둥이 · 유사</button>`}</footer>
   </article>`;
 }
 function levelCounts() {
@@ -1179,9 +1177,9 @@ function renderEditorSummary() {
   const types = new Set(state.questions.map((question) => question.type.id)).size;
   return `<div class="ed-stat"><div class="ed-stat-total"><span>총 문제 수</span><b>${state.questions.length}<small>문제</small></b><span>유형 ${types}가지</span></div>
     <div class="ed-bars">${[...counts].map(([label, n]) => `<div><span>${n}문제</span><i style="height:${Math.round((n / max) * 64) + 4}px"></i><small>${escapeAttribute(label)}</small></div>`).join("")}</div></div>
-    <table class="ed-table"><thead><tr><th>번호</th><th>단계</th><th>유형</th><th>순서</th></tr></thead><tbody>
-    ${state.questions.map((question, index) => `<tr data-ed-row="${index}" class="${index === editor.focus ? "is-focus" : ""}"><td>${index + 1}</td><td>${escapeAttribute(levelLabel(question))}</td><td>${escapeAttribute(question.type.label)}</td>
-      <td><button type="button" data-ed="up" data-i="${index}" aria-label="위로" ${index === 0 ? "disabled" : ""}>↑</button><button type="button" data-ed="down" data-i="${index}" aria-label="아래로" ${index === state.questions.length - 1 ? "disabled" : ""}>↓</button></td></tr>`).join("")}
+    <table class="ed-table"><thead><tr><th>번호</th><th>원본</th><th>단계</th><th>유형</th><th>순서</th></tr></thead><tbody>
+    ${state.questions.map((question, index) => { const source = sourceOf(question); return `<tr data-ed-row="${index}" class="${index === editor.focus ? "is-focus" : ""}"><td>${index + 1}</td><td class="ed-src-cell">${escapeAttribute(source.group)}${source.number ? `<br><small>${escapeAttribute(source.number)}</small>` : ""}</td><td>${escapeAttribute(levelLabel(question))}</td><td>${escapeAttribute(question.type.label)}</td>
+      <td><button type="button" data-ed="up" data-i="${index}" aria-label="위로" ${index === 0 ? "disabled" : ""}>↑</button><button type="button" data-ed="down" data-i="${index}" aria-label="아래로" ${index === state.questions.length - 1 ? "disabled" : ""}>↓</button></td></tr>`; }).join("")}
     </tbody></table>`;
 }
 // 같은 유형의 새 문제 몇 개(지금 목록에 없는 것)
