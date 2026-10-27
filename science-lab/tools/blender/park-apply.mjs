@@ -27,5 +27,12 @@ if (W.npcs) {
   if (/^  npcs: \{.*\},$/m.test(src)) src = src.replace(/^  npcs: \{.*\},$/m, line);
   else src = src.replace(/^  spots: \[/m, `  // 공원 안의 다른 사람들 — 누가 누구인지는 park-chars3d.js NPC_CAST\n${line}\n  spots: [`);
 }
+// 파도: 물가 선과 바다 쪽 선(화면 밖은 조금만 남기고 자른다 — 두 선의 점 수는 같게)
+if (W.shore) {
+  const keep = W.shore.edge.map((p, i) => [p, W.shore.out[i]]).filter(([a, b]) => [a, b].some((q) => q[0] > -10 && q[0] < 110 && q[1] > -10 && q[1] < 110));
+  const line = `  shore: { wide: { edge: ${list(keep.map((k) => k[0]))}, out: ${list(keep.map((k) => k[1]))} } },`;
+  if (/^  shore: \{.*\},$/m.test(src)) src = src.replace(/^  shore: \{.*\},$/m, line);
+  else src = src.replace(/^  spots: \[/m, `  // 파도가 밀려오는 물가(edge)와 바다 쪽 선(out) — park.js가 그 사이에 움직이는 파도 줄을 그린다\n${line}\n  spots: [`);
+}
 writeFileSync(MAP, src);
 console.log('옮김:', MAP);

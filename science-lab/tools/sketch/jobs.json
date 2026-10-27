@@ -33,5 +33,9 @@
  {"name": "water-mars", "set": "observe-water", "spec": 4, "theta": 0.35, "phi": 1.2, "hide": [0]},
  {"name": "water-cerat", "set": "observe-water", "spec": 5, "theta": 0.2, "phi": 1.4, "hide": [0]},
  {"name": "water-alisma", "set": "observe-water", "spec": 6, "theta": 0.35, "phi": 1.35, "hide": [0]},
- {"name": "water-typha", "set": "observe-water", "spec": 7, "theta": 0.35, "phi": 1.4, "hide": [0]}
+ {"name": "water-typha", "set": "observe-water", "spec": 7, "theta": 0.35, "phi": 1.4, "hide": [0]},
+ {"name": "beach-clam", "set": "observe-beach", "spec": 0, "theta": 0.15, "phi": 0.12, "hide": [0]},
+ {"name": "beach-scallop", "set": "observe-beach", "spec": 1, "theta": 0.15, "phi": 0.12, "hide": [0]},
+ {"name": "beach-oyster", "set": "observe-beach", "spec": 2, "theta": 0.15, "phi": 0.12, "hide": [0]},
+ {"name": "beach-snail", "set": "observe-beach", "spec": 3, "theta": 0.15, "phi": 0.12, "hide": [0]}
 ]

@@ -1,4 +1,4 @@
-# 작업 지시서 — 자연관찰 연습 표본 실사 사진 18장 채우기 (2026-10-27)
+# 작업 지시서 — 자연관찰 연습 표본 실사 사진 22장 채우기 (2026-10-27)
 
 받는 사람: 원장 맥에서 일하는 GPT(Codex)
 보낸 사람: Claude(클라우드 세션 — iNaturalist 검색 API가 막혀 있어 맡긴다. 사진 저장소 S3는 열려 있어 받은 뒤 넣는 일은 Claude가 한다)
@@ -6,7 +6,7 @@
 
 ## 1. 무엇이 비어 있나
 
-과학 탐구 실험실 자연관찰 연습(`#/observe/<세트>`)에서 표본마다 「실사 사진」 탭이 있다. 아래 18개는 파일이 없어 「이 표본의 실사 사진은 준비 중이에요」가 뜬다.
+과학 탐구 실험실 자연관찰 연습(`#/observe/<세트>`)에서 표본마다 「실사 사진」 탭이 있다. 아래 22개는 파일이 없어 「이 표본의 실사 사진은 준비 중이에요」가 뜬다.
 파일 이름 = `science-lab/assets/observe/<표본 id>-1.jpg`.
 
 | 세트 | 표본 id | 이름(앱 표기) | 찾을 학명·사진 조건 |
@@ -23,6 +23,10 @@
 | 〃 | `millipede` | 노래기 | 노래기류(Diplopoda) — 한국·일본에 흔한 *Oxidus gracilis* 등. 마디마다 다리 2쌍이 보이면 좋음 |
 | 〃 | `centipede` | 지네 | 지네류(Chilopoda) — *Scolopendra* 등. 마디마다 다리 1쌍. 손에 든 사진은 피함 |
 | 〃 | `worm` | 지렁이 | 지렁이(Lumbricidae 등) — 환대(띠)가 보이면 좋음 |
+| 해변(초등, 2026-10-27 추가) | `clam` | 바지락 | *Ruditapes philippinarum* — 빈 껍데기 겉면(격자 무늬·가장자리와 나란한 줄)이 보이게. 살아 있는 개체를 캐는 장면은 피함 |
+| 〃 | `scallop` | 가리비 | 가리비과(Pectinidae) — 국내 *Patinopecten yessoensis*·*Argopecten irradians* 등. **꼭지 양옆의 귀 2개와 부채살 골**이 보이는 한 장 |
+| 〃 | `oyster` | 굴 | *Magallana gigas*(= *Crassostrea gigas*) — 층이 겹친 울퉁불퉁한 겉면. 식탁 위 요리 사진은 피함(해변·바위 위) |
+| 〃 | `snail` | 고둥 | 바다 고둥 빈 껍데기 — 총알고둥(*Littorina brevicula*)·갯고둥(*Batillaria*) 등. **나선(바퀴)**과 입구가 보이게 |
 | 강낭콩 자람(사전 탐구보고서) | `bean-sun` · `bean-shade` · `bean-dry` | 창가 / 그늘 복도 / 물 사흘에 한 번 | 아래 3절 |
 | 곰팡이 관찰일기(사전 탐구보고서) | `mold-bread` · `mold-orange` · `mold-rice` | 식빵 털곰팡이 / 귤 푸른곰팡이 / 밥 누룩곰팡이 | 아래 3절 |
 
@@ -48,7 +52,7 @@
 1. 사진·`provenance.json`·`SOURCES.md` 변경만 담은 커밋을 **`inbox/observe-photos`** 브랜치로 올린다(main·작업 브랜치에 바로 올리지 않는다).
 2. 원장에게 보고:
 ```
-observe-photos 완료 — 채운 것 N/18
+observe-photos 완료 — 채운 것 N/22
 - 못 찾은 것: (표본 id — 이유)
 - 확인이 애매한 것: (표본 id — 무엇이 애매한지)
 ```

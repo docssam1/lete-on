@@ -515,7 +515,7 @@ export const CONTEST_OF = {
   inquiry: ['inquiry'], bubble: ['inquiry'], powders: ['inquiry'], hotwater: ['inquiry'], osmosis: ['inquiry'], charcoal: ['inquiry'], onggi: ['inquiry'], subway: ['inquiry'],
   seed: ['inquiry', 'nature'], muscle: ['nature'], spider: ['nature'],
   top: ['invent', 'inquiry'], wing: ['invent', 'inquiry'], tunnel: ['invent'], ttukbaegi: ['invent', 'inquiry'],
-  'observe-water': ['nature'], 'observe-insects': ['nature'], 'observe-leaves': ['nature'], 'observe-leafkey': ['nature'], 'observe-grow': ['nature'], 'observe-mold': ['nature'], 'observe-litter': ['nature'],   // 자연관찰 연습(#/observe) — 실험 카드가 아니라 연습 화면
+  'observe-water': ['nature'], 'observe-insects': ['nature'], 'observe-leaves': ['nature'], 'observe-leafkey': ['nature'], 'observe-grow': ['nature'], 'observe-mold': ['nature'], 'observe-litter': ['nature'], 'observe-beach': ['nature'],   // 자연관찰 연습(#/observe) — 실험 카드가 아니라 연습 화면
 };
 export const contestsOf = (u) => (CONTEST_OF[u.id] || ['inquiry']).map((id) => CONTESTS.find((c) => c.id === id));
 export const contestOf = (u) => contestsOf(u)[0];

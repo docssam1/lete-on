@@ -20,6 +20,7 @@ const ASK = {
   meadow: ['유준', '그늘엔 갈색 곤충, 햇빛엔 연두색 곤충?', '유빈', '두 곳을 같은 방법으로 재 보자.'],
   flowers: ['유빈', '국화랑 장미, 잎이 줄기에 붙는 차례가 달라!', '유준', '마디마다 몇 장인지 세어 보자.'],
   litter: ['유빈', '낙엽 아래 흙은 왜 이렇게 축축하지?', '유준', '맨땅이랑 같은 틀로 흙 속 동물을 세어 보자.'],
+  beach: ['유빈', '파도 닿는 모래는 단단한데 위쪽 모래는 발이 푹 빠져!', '유준', '같은 틀로 두 곳의 조개껍데기를 세어 보자. 물가는 어른이랑!'],
   leaves: ['유준', '이 두 잎, 눈으론 구분이 안 돼.', '유빈', '길이랑 폭을 재서 비율로 바꿔 보자.'],
 };
 const HELLO = ['유빈', '와, 대회장이다! 어디부터 가 볼까?', '유준', '말꼬리 표를 누르면 같이 걸어갈게.'];
@@ -30,6 +31,7 @@ export function mountPark($host) {
   const sets = Object.fromEntries(OBSERVE_SETS.map((s) => [s.id, s]));
   $host.innerHTML = `<div class="pm-view" tabindex="0" aria-label="${esc(PARK.title)} 지도 — 끌어서 둘러보고, 말꼬리 표를 누르면 두 친구가 그 자리로 걸어가 관찰을 열어요">
       <div class="pm-map"><img class="pm-img" alt="" draggable="false">
+        ${PARK.shore ? `<svg class="pk-waves" viewBox="0 0 ${PARK.images.wide.w} ${PARK.images.wide.h}" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="wv-soft" x="-5%" y="-50%" width="110%" height="200%"><feGaussianBlur stdDeviation="5"/></filter><filter id="wv-crest" x="-5%" y="-50%" width="110%" height="200%"><feGaussianBlur stdDeviation="1.4"/></filter></defs></svg>` : ''}
         ${PARK.spots.map((p) => `<button type="button" class="pk-pin" data-spot="${p.id}" aria-label="${esc(p.name)}"><span class="pk-tag"><i>${p.icon}</i><b class="full">${esc(p.name)}</b><b class="short">${esc(p.short)}</b></span><span class="pk-dot"></span></button>`).join('')}
         ${Object.keys(PARK.npcs || {}).filter((id) => NPC_CAST[id]).map((id) => `<div class="pk-npc" data-npc="${id}"><canvas width="132" height="120" aria-hidden="true"></canvas><button type="button" class="pk-nhit" aria-label="${esc(NPC_LINES[id]?.who || '')}에게 말 걸기"></button><div class="pk-nsay${NPC_LINES[id]?.near ? ' safe' : ''}" hidden></div></div>`).join('')}
         <div class="pk-kids" aria-hidden="true"><div class="pk-say" hidden></div><div class="pk-kid3d"><canvas width="132" height="120"></canvas><b class="nr">유빈</b><b class="dy">유준</b></div></div></div>
@@ -77,22 +79,52 @@ export function mountPark($host) {
   const cast = createCast({ reduced });
   const K3 = cast.add($host.querySelector('.pk-kid3d canvas'), ['yubin', 'yujun']);
   // ── 공원 안의 다른 사람들: 길(점 둘 이상)이 있으면 그 길을 오가고, 자리(점 하나)면 그 둘레를 조금씩 거닌다.
-  // 가끔 한 사람씩 말을 하고(매번 다른 말), 누르면 바로 한마디. 지키는 사람(관리인·안전요원)은 아이들이 가까이 오면 안전 한마디를 먼저 한다.
+  // 아이들이 가까이 오면 자기 자리를 알려 주고(지키는 사람은 안전 한마디와 번갈아), 그 밖에는 거닐다가 가끔 한 사람만 말한다. 누르면 바로 한마디. 매번 다른 말.
   const npcs = [...$host.querySelectorAll('.pk-npc')].map((el) => ({ id: el.dataset.npc, el, $say: el.querySelector('.pk-nsay'), L: NPC_LINES[el.dataset.npc] || { who: '', lines: [] }, A: cast.add(el.querySelector('canvas'), NPC_CAST[el.dataset.npc]), pts: [], i: 0, dir: 1, t: 0, wait: Math.random() * 2, pos: [0, 0], tgt: null, from: null, last: '', sayT: 0, nearT: 0 }));
   const putNpc = (n) => { n.el.style.left = `${(n.pos[0] / 100) * I.w}px`; n.el.style.top = `${(n.pos[1] / 100) * I.h}px`; };
   const npcReset = () => npcs.forEach((n) => { n.pts = PARK.npcs[n.id]?.[kind] || []; n.i = 0; n.dir = 1; n.t = 0; n.tgt = null; n.wait = 1 + Math.random() * 4; n.pos = n.pts[0] || [0, 0]; n.A.setWalking(false); n.A.face(0); putNpc(n); });
-  const npcSay = (n, near = false) => {
-    const ls = (near && n.L.near) || n.L.lines; if (!ls.length) return;
+  // why: 'near' = 아이들이 가까이 옴(자리 설명 · 지키는 사람은 안전 한마디와 번갈아), 'tap' = 눌림(아무 줄), 없으면 = 거닐다 가끔(lines)
+  const npcSay = (n, why) => {
+    const L = n.L, ls = why === 'near' ? (L.near && (n.nc = (n.nc || 0) + 1) % 2 ? L.near : L.place || L.near || L.lines) : why === 'tap' ? [...(L.place || []), ...L.lines, ...(L.near || [])] : L.lines;
+    if (!ls?.length) return;
     let k = Math.floor(Math.random() * ls.length); if (ls.length > 1 && ls[k] === n.last) k = (k + 1 + Math.floor(Math.random() * (ls.length - 1))) % ls.length;
-    n.last = ls[k]; n.$say.innerHTML = `<b>${esc(n.L.who)}</b>${esc(ls[k])}`; n.$say.hidden = false; n.el.classList.add('talk'); n.A.wave();
-    clearTimeout(n.sayT); n.sayT = setTimeout(() => { n.$say.hidden = true; n.el.classList.remove('talk'); }, 3800);
+    n.last = ls[k]; n.$say.innerHTML = `<b>${esc(L.who)}</b>${esc(ls[k])}`; n.$say.hidden = false; n.el.classList.add('talk'); n.A.wave();
+    clearTimeout(n.sayT); n.sayT = setTimeout(() => { n.$say.hidden = true; n.el.classList.remove('talk'); }, 4200);
   };
-  npcs.forEach((n) => n.el.querySelector('.pk-nhit').addEventListener('click', (e) => { e.stopPropagation(); if (moved > 6) return; npcSay(n); }));
+  npcs.forEach((n) => n.el.querySelector('.pk-nhit').addEventListener('click', (e) => { e.stopPropagation(); if (moved > 6) return; npcSay(n, 'tap'); }));
   // 지금 화면에 보이는 사람만 골라 말하게(안 보이는 곳에서 말하면 소용없다)
   const onScreen = (n) => { const r = n.el.getBoundingClientRect(), V = $v.getBoundingClientRect(); return r.left > V.left + 20 && r.right < V.right - 20 && r.top > V.top + 40 && r.top < V.bottom; };
-  let npcRaf = 0, npcLast = performance.now(), talkT = 3, lastTalker = null;
+  // ── 파도(원장 2026-10-27 「해변도 파도가 움직이는 모습 연출할 수 있어?」): 바다 쪽 선(out)에서 물가(edge)로 파도 줄 셋이 번갈아 밀려와,
+  // 물가에서 넓은 흰 거품이 되어 모래로 살짝 올라왔다 빠진다. 선은 해안선을 따라 조금씩 일렁인다(Blender 공원에서 투영한 해안선이라 그림의 물가와 맞는다).
+  const SH = PARK.shore?.wide, $wv = $host.querySelector('.pk-waves'), WN = 3, WT = 7.5;
+  const waves = SH && $wv ? Array.from({ length: WN }, () => { const g = document.createElementNS('http://www.w3.org/2000/svg', 'g'), wide = document.createElementNS('http://www.w3.org/2000/svg', 'path'), thin = document.createElementNS('http://www.w3.org/2000/svg', 'path'); wide.setAttribute('class', 'wv-foam'); thin.setAttribute('class', 'wv-line'); g.append(wide, thin); $wv.append(g); return { g, wide, thin }; }) : [];
+  // 물마루는 끊긴 조각들(긴 것·짧은 것)로 — 한 줄로 이어 그리면 파도가 아니라 그어 놓은 선처럼 보인다. 파도마다 조각 무늬를 다르게
+  const crest = (seed) => { let r = seed * 9301 + 49297, out = []; const R = () => ((r = (r * 9301 + 49297) % 233280) / 233280); for (let i = 0; i < 18; i++) out.push(Math.round(16 + R() * R() * 280), Math.round(10 + R() * 110)); return out.join(' '); };
+  waves.forEach((w, k) => { w.thin.setAttribute('stroke-dasharray', crest(k + 1)); w.wide.setAttribute('stroke-dasharray', crest(k + 7)); });
+  // 그림에서 파란 바다만 남기는 가림막 — 그림의 물가가 3D 배치와 조금 달라도 파도가 모래 위로 올라가지 않고, 물가의 흰 거품에 닿으면 그 속으로 사라진다
+  const seaMask = () => { if (!$wv) return; try {
+    const W = 640, H = Math.round((640 * PARK.images.wide.h) / PARK.images.wide.w), c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d', { willReadFrequently: true });
+    x.drawImage($img, 0, 0, W, H); const d = x.getImageData(0, 0, W, H), a = d.data;
+    for (let i = 0; i < a.length; i += 4) { const sea = a[i + 2] > a[i] + 30 && a[i + 1] > a[i] + 10; a[i] = a[i + 1] = a[i + 2] = 255; a[i + 3] = sea ? 255 : 0; }
+    x.putImageData(d, 0, 0); const m = document.createElement('canvas'); m.width = W; m.height = H; const y = m.getContext('2d'); y.filter = 'blur(1.5px)'; y.drawImage(c, 0, 0);
+    const url = `url(${m.toDataURL()})`; Object.assign($wv.style, { maskImage: url, webkitMaskImage: url, maskSize: '100% 100%', webkitMaskSize: '100% 100%' });
+  } catch { $wv.remove(); } };
+  const waveStep = (T) => {
+    if (!waves.length || !I) return;
+    waves.forEach((w, k) => {
+      const ph = (T / WT + k / WN) % 1, run = Math.min(1, ph / 0.72), back = ph > 0.72 ? (ph - 0.72) / 0.28 : 0;
+      // s: 0 = 바다 쪽 선, 1 = 물가. 밀려와(가속) 물가를 조금 넘었다가(모래로 올라옴) 되돌아간다
+      const s0 = ph <= 0.72 ? run * run * (3 - 2 * run) : 1 - 0.1 * back;
+      const d = SH.edge.map((e, i) => { const o = SH.out[i], s = s0 + 0.05 * Math.sin(i * 0.9 + T * 0.7 + k * 2.1) + 0.03 * Math.sin(i * 2.3 - T * 1.1); return `${i ? 'L' : 'M'}${((o[0] + (e[0] - o[0]) * s) / 100 * I.w).toFixed(1)} ${((o[1] + (e[1] - o[1]) * s) / 100 * I.h).toFixed(1)}`; }).join('');
+      w.wide.setAttribute('d', d); w.thin.setAttribute('d', d); w.thin.style.strokeDashoffset = w.wide.style.strokeDashoffset = (T * 9 + k * 97).toFixed(1);
+      w.g.style.opacity = (Math.min(1, ph / 0.25) * (1 - back)).toFixed(3);
+      w.wide.style.strokeWidth = (9 + 22 * Math.max(0, run - 0.6) / 0.4 + 12 * back).toFixed(1); w.thin.style.strokeWidth = (2 + 2.5 * run).toFixed(1);
+    });
+  };
+  let npcRaf = 0, npcLast = performance.now(), talkT = 8, lastTalker = null;
   const npcStep = (now) => { if (!alive) return; const dt = Math.min(0.05, (now - npcLast) / 1000); npcLast = now;
     if (I && !reduced) {
+      waveStep(now / 1000);
       for (const n of npcs) {
         if (n.wait > 0) { n.wait -= dt; if (n.wait <= 0 && n.pts.length >= 2) n.A.setWalking(true); continue; }
         if (n.pts.length >= 2) {
@@ -108,11 +140,11 @@ export function mountPark($host) {
         n.pos = [n.from[0] + (n.tgt[0] - n.from[0]) * Math.min(1, n.t), n.from[1] + (n.tgt[1] - n.from[1]) * Math.min(1, n.t)]; putNpc(n); n.A.face((n.tgt[0] - n.from[0]) * I.w, (n.tgt[1] - n.from[1]) * I.h);
         if (n.t >= 1) { n.tgt = null; n.wait = 4 + Math.random() * 6; n.A.setWalking(false); n.A.face(0); }
       }
-      // 지키는 사람: 아이들이 가까이(그림 위 150px 안) 오면 안전 한마디(같은 사람은 15초에 한 번)
-      for (const n of npcs) { n.nearT -= dt; if (n.L.near && n.nearT <= 0 && px(kid.pos, n.pos) < 150) { n.nearT = 15; npcSay(n, true); } }
+      // 아이들이 가까이(그림 위 160px 안) 오면 그 사람이 한마디 — 자리 설명, 지키는 사람은 안전 한마디와 번갈아(같은 사람은 14초에 한 번)
+      for (const n of npcs) { n.nearT -= dt; if (n.nearT <= 0 && px(kid.pos, n.pos) < 160) { n.nearT = 14; npcSay(n, 'near'); } }
       talkT -= dt;
-      // 두 아이가 말하는 동안은 쉰다(말풍선이 겹치지 않게) — 안전 한마디(near)는 예외
-      if (talkT < 0 && $say.hidden) { talkT = 5 + Math.random() * 4; const can = npcs.filter((n) => n !== lastTalker && n.$say.hidden && onScreen(n)); const n = can[Math.floor(Math.random() * can.length)]; if (n) { lastTalker = n; npcSay(n); } }
+      // 그 밖에는 거닐다가 가끔 한 사람만(16~26초에 한 번, 화면에 보이고 걷고 있는 사람). 두 아이가 말하는 동안은 쉰다
+      if (talkT < 0 && $say.hidden) { talkT = 16 + Math.random() * 10; const can = npcs.filter((n) => n !== lastTalker && n.$say.hidden && n.wait <= 0 && onScreen(n)); const n = can[Math.floor(Math.random() * can.length)]; if (n) { lastTalker = n; npcSay(n); } }
     }
     npcRaf = requestAnimationFrame(npcStep); };
   npcRaf = requestAnimationFrame(npcStep);
@@ -159,7 +191,7 @@ export function mountPark($host) {
     s = fit; tx = 0; ty = 0; clamp(); apply(); $pins.forEach((b) => b.classList.remove('show'));
     setTimeout(() => { if (!alive) return; kid.follow = false; fly(go, 2600, showPins); kid.spot = 'gate'; $pins.forEach((b) => b.classList.toggle('here', b.dataset.spot === 'gate')); walkTo(key(hub()), 2500, () => say(HELLO)); }, 900);
   };
-  $img.onload = () => load(true);
+  $img.onload = () => { load(true); seaMask(); };
   $img.src = PARK.images.wide.src;
   // 끌기·두 손가락 확대
   // 세로로 든 폰에서 「가로로 크게」는 지도 상자를 90° 돌려 그린다 → 손가락 좌표를 상자 안 좌표로 바꿔 쓴다(돌린 상자: 안쪽 x = 화면 y, 안쪽 y = 화면 폭 − 화면 x)

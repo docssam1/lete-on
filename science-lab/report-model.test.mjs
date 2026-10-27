@@ -118,7 +118,7 @@ test('15실험 전부 보고서 설정(탐구 문제 또는 불편함·결과 �
   const s = reportCfg('seed', 'elem', 'nature'); assert.equal(s.obs.length, 4); assert.ok(!s.question, '자연관찰 양식에는 탐구 문제가 안 간다');
 });
 test('자연관찰 연습 세트: 보고서 설정·대회·표본 모듈이 갖춰져 있고, 빼는 칸은 양식에 있는 칸이다', () => {
-  assert.equal(OBSERVE_SETS.length, 7);
+  assert.equal(OBSERVE_SETS.length, 8);
   for (const S of OBSERVE_SETS) {
     assert.equal(S.unit.id, S.id); assert.ok(REPORTS[S.id]?.obs?.length, `${S.id} 설정`); assert.deepEqual(CONTEST_OF[S.id], ['nature'], S.id);
     assert.ok(['elem', 'mid'].includes(S.level) && REPORTS[S.id].level === S.level, `${S.id} 수준`);
@@ -184,4 +184,14 @@ test('대회 폴더: 대회마다 안내가 있고, 연습 세트 고리가 실�
     for (const [, set] of g.tasks?.rows || []) if (set) assert.ok(ids.has(set), `${c.id} 과제 → ${set}`);
     assert.ok(g.cautions.some((t) => /요강/.test(t)), `${c.id} 그해 요강 확인 안내`);
   }
+});
+
+test('해변 세트: 예시 보고서 표·환경 값이 표본 모듈(PLACES)과 같고, 줄·층·바퀴 수가 모형과 맞는다', async () => {
+  const bc = await import('./scenes/specimens-beach.js'), { sampleFor } = await import('./data/observe-samples.js'), S = sampleFor('observe-beach');
+  S.table.forEach((row, i) => { assert.equal(row[2], String(bc.PLACES.A.count[i]), `${row[0]} A`); assert.equal(row[3], String(bc.PLACES.B.count[i]), `${row[0]} B`); });
+  for (const k of ['temp', 'poke', 'grain']) for (const P of [bc.PLACES.A, bc.PLACES.B]) assert.ok(S.env.includes(String(P[k])), `env ${P.id}.${k}`);
+  assert.ok(bc.PLACES.A.poke < bc.PLACES.B.poke && bc.PLACES.A.temp < bc.PLACES.B.temp && bc.PLACES.A.grain > bc.PLACES.B.grain, '젖은 모래가 더 단단하고 차갑고 굵다(예시 글의 비교와 같은 방향)');
+  const specs = bc.SPECIMENS.map((f) => f());
+  assert.deepEqual(specs.map((s) => s.cm), [4, 6, 7, 2.5]);
+  assert.match(S.obs[0].text, /굵은 줄이 4개/); assert.match(S.obs[1].text, /20개/); assert.match(S.obs[2].text, /5겹/); assert.match(S.obs[3].text, /5바퀴/);
 });
