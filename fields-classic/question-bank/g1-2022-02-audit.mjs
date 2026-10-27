@@ -27,7 +27,9 @@ const expected = [
   [19, "g1-summer-orange-ratio-distribution", "g1SummerOrangeRatioDistribution"],
   [20, "g1-odd-even-sum-difference", "g1OddEvenSumDifference"]
 ];
-const visualQuestions = new Set(expected.map(([number]) => number).filter((number) => ![9, 16].includes(number)));
+const visualQuestions = new Set(expected.map(([number]) => number).filter((number) => ![9, 16, 19, 20].includes(number)));
+// 19·20번은 문제 글에 조건이 다 있어 글을 되풀이하는 상자를 두지 않는다(원장 2026-10-27)
+const textOnlyQuestions = new Set([19, 20]);
 const PRODUCT_SHADED_INDICES = [0, 1, 6, 7, 9, 11, 12, 14];
 
 function fail(message) {
@@ -69,6 +71,7 @@ function checkMapping() {
 function checkCore(number, difficulty, problem) {
   check(number, difficulty, problem && text(problem.prompt) && text(problem.answer) && text(problem.solution), "문제·정답·풀이 누락");
   if (visualQuestions.has(number)) check(number, difficulty, text(problem?.visual?.kind), "그림 데이터 누락");
+  if (textOnlyQuestions.has(number)) check(number, difficulty, !problem?.visual, "문제 글을 되풀이하는 상자");
 }
 
 function checkMagicSquare(problem, difficulty) {

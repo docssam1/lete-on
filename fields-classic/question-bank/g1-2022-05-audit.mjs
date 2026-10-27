@@ -228,7 +228,7 @@ function checkOrangeRatio(problem, difficulty) {
   if (children !== adults * 3 || people !== children + adults || oranges !== children / 3 + adults * 3 || problem.answer !== `어린이 ${children}명, 어른 ${adults}명`) {
     fail(`18번 난이도 ${difficulty} 귤 나누기 계산 오류`);
   }
-  if (problem.visual?.kind !== "g1-summer-orange-ratio" || !problem.prompt || !problem.solution) fail(`18번 난이도 ${difficulty} 가시성 데이터 오류`);
+  if (problem.visual || !problem.prompt || !problem.solution) fail(`18번 난이도 ${difficulty} 문제 글을 되풀이하는 상자 또는 글 누락`);
 }
 
 function checkRectilinearPerimeter(problem, difficulty) {

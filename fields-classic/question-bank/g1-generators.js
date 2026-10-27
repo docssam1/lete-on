@@ -33,6 +33,10 @@ function conjunctionParticle(value) {
   return hasNameBatchim(value) ? "과" : "와";
 }
 
+function subjectGa(value) {
+  return `${value}${hasNameBatchim(value) ? "이" : "가"}`;
+}
+
 function objectParticle(value) {
   return `${value}${hasBatchim(value) ? "을" : "를"}`;
 }
@@ -599,7 +603,6 @@ function g1SummerOrangeRatioDistribution({ difficulty = 2 }) {
   const oranges = children / 3 + adults * 3;
   return {
     prompt: `${people}명의 어린이와 어른이 ${oranges}개의 귤을 나누어 먹습니다. 어린이는 3명이 귤 1개를 나누어 먹고, 어른은 1명이 귤 3개를 먹습니다. 어린이와 어른은 각각 몇 명인지 구하세요.`,
-    visual: { kind: "g1-summer-orange-ratio", people, oranges },
     answer: `어린이 ${children}명, 어른 ${adults}명`,
     solution: `어른을 ${adults}명이라 하면 귤을 ${adults}×3=${adults * 3}개 먹습니다. 남은 귤 ${oranges - adults * 3}개는 어린이 ${children}명이 3명씩 나누어 먹는 양입니다. 따라서 어린이는 ${children}명, 어른은 ${adults}명입니다.`,
     meta: { difficulty, children, adults, people, oranges }
@@ -670,10 +673,9 @@ function g1FallThreePersonTotalTransfer({ difficulty = 2 }) {
   const names = shuffle(["하윤", "윤하", "석호", "민서", "지우", "서준"]);
   const [fixedName, higherName, lowerName] = names;
   return {
-    prompt: `${fixedName}·${higherName}·${lowerName}가 가진 구슬은 모두 ${total}개입니다. ${fixedName}는 ${fixed}개를 가지고 있습니다. ${higherName}가 ${lowerName}에게 ${transfer}개를 주면 두 사람이 가진 구슬 수가 같아집니다. ${higherName}가 처음에 가진 구슬은 몇 개인지 구하세요.`,
-    visual: { kind: "g1-fall-three-person-transfer", people: [{ name: fixedName, count: fixed }, { name: higherName, count: null }, { name: lowerName, count: null }], transfer },
+    prompt: `${fixedName}·${higherName}·${subjectGa(lowerName)} 가진 구슬은 모두 ${total}개입니다. ${subjectParticle(fixedName)} ${fixed}개를 가지고 있습니다. ${subjectGa(higherName)} ${lowerName}에게 ${transfer}개를 주면 두 사람이 가진 구슬 수가 같아집니다. ${subjectGa(higherName)} 처음에 가진 구슬은 몇 개인지 구하세요.`,
     answer: `${higher}개`,
-    solution: `${higherName}와 ${lowerName}가 가진 구슬은 ${total}-${fixed}=${higher + lower}개입니다. ${transfer}개를 준 뒤 같아지므로 두 사람은 각각 ${(higher + lower) / 2}개가 됩니다. ${higherName}는 주기 전에는 ${transfer}개 더 많았으므로 ${higher}개입니다.`,
+    solution: `${higherName}${conjunctionParticle(higherName)} ${subjectGa(lowerName)} 가진 구슬은 ${total}-${fixed}=${higher + lower}개입니다. ${transfer}개를 준 뒤 같아지므로 두 사람은 각각 ${(higher + lower) / 2}개가 됩니다. ${subjectParticle(higherName)} 주기 전에는 ${transfer}개 더 많았으므로 ${higher}개입니다.`,
     meta: { difficulty, total, fixed, transfer, higher, lower, fixedName, higherName, lowerName, answer: higher }
   };
 }
@@ -812,10 +814,9 @@ function g1FallTotalTripleShare({ difficulty = 2 }) {
   const total = smaller + larger;
   const [largerName, smallerName] = shuffle(["재석", "광수", "민준", "도윤"]);
   return {
-    prompt: `${largerName}와 ${smallerName}가 딱지 ${total}장을 나누어 가졌습니다. ${largerName}가 가진 딱지는 ${smallerName}가 가진 딱지의 3배입니다. ${largerName}는 몇 장을 가졌는지 구하세요.`,
-    visual: { kind: "g1-fall-triple-share", total, largerName, smallerName },
+    prompt: `${largerName}${conjunctionParticle(largerName)} ${subjectGa(smallerName)} 딱지 ${total}장을 나누어 가졌습니다. ${subjectGa(largerName)} 가진 딱지는 ${subjectGa(smallerName)} 가진 딱지의 3배입니다. ${subjectParticle(largerName)} 몇 장을 가졌는지 구하세요.`,
     answer: `${larger}장`,
-    solution: `전체를 3묶음과 1묶음으로 나누면 한 묶음은 ${total}÷4=${smaller}장입니다. ${largerName}는 3묶음이므로 ${larger}장입니다.`,
+    solution: `전체를 3묶음과 1묶음으로 나누면 한 묶음은 ${total}÷4=${smaller}장입니다. ${subjectParticle(largerName)} 3묶음이므로 ${larger}장입니다.`,
     meta: { difficulty, total, smaller, larger, largerName, smallerName, answer: larger }
   };
 }
@@ -1081,7 +1082,6 @@ function g1RatioDistribution({ difficulty = 2 }) {
   const items = children / childGroup + adults * adultItems;
   return {
     prompt: `${people}명의 어린이와 어른이 ${items}개의 귤을 나누어 먹습니다. 어린이는 ${childGroup}명이 1개를 나누어 먹고, 어른은 1명이 ${adultItems}개를 먹습니다. 어린이와 어른은 각각 몇 명인지 구하세요.`,
-    visual: { kind: "g1-ratio-distribution", people, items, childGroup, adultItems },
     answer: `어린이 ${children}명, 어른 ${adults}명`,
     solution: `어른 수를 하나씩 늘려 보며 전체 사람 수와 귤 수를 함께 맞춥니다. 어린이 ${children}명은 ${children / childGroup}개, 어른 ${adults}명은 ${adults * adultItems}개를 먹어 모두 ${items}개입니다.`,
     meta: { difficulty, people, items, childGroup, adultItems, children, adults }
@@ -1094,7 +1094,6 @@ function g1OddEvenSumDifference({ difficulty = 2 }) {
   const evenEnd = difference * 2;
   return {
     prompt: `1부터 ㉠까지의 자연수 중에서 짝수 전체의 합과 홀수 전체의 합의 차가 ${difference}입니다. ㉠이 될 수 있는 수를 모두 구하세요.`,
-    visual: { kind: "g1-odd-even-difference", difference, oddEnd, evenEnd },
     answer: `${oddEnd}, ${evenEnd}`,
     solution: `1부터 차례로 홀수와 짝수를 한 쌍씩 묶으면 한 쌍마다 짝수가 1 큽니다. ${difference}쌍까지 쓴 ${evenEnd}, 마지막 짝수를 쓰기 전인 ${oddEnd}에서 모두 차가 ${difference}이므로 답은 ${oddEnd}, ${evenEnd}입니다.`,
     meta: { difficulty, difference, oddEnd, evenEnd, answer: [oddEnd, evenEnd] }

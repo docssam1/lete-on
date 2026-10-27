@@ -1,5 +1,5 @@
 import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261024r";
-import { GENERATORS } from "./generators.js?v=20261027a";
+import { GENERATORS } from "./generators.js?v=20261027s";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
 import { book02Markup } from "./book02-renderers.js?v=20261023h";
@@ -2358,7 +2358,8 @@ function g1SourceMarkup(visual) {
     return `<div class="g1-winter-product-layout"><div class="core">${Array.from({ length: 16 }, (_, index) => `<span class="${visual.shadedIndices.includes(index) ? "target" : "plain"}">${visual.shadedIndices.includes(index) ? "" : "·"}</span>`).join("")}</div><div class="rows">${visual.rowProducts.map((value) => `<b>${value}</b>`).join("")}</div><div class="columns">${visual.columnProducts.map((value) => `<b>${value}</b>`).join("")}</div><div class="cards">${visual.numbers.map((value) => `<i>${value}</i>`).join("")}</div></div>`;
   }
   if (visual.kind === "g1-winter-three-digit-cards-above") {
-    return `<div class="g1-winter-card-threshold"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><strong>${visual.threshold}보다 큰 수</strong></div>`;
+    // 숫자 카드만 그린다 — 기준 수는 문제 글에 있으니 상자에 다시 쓰지 않는다
+    return `<div class="g1-winter-card-threshold"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div></div>`;
   }
   if (visual.kind === "g1-winter-three-balance-substitution") {
     const repeat = (symbol, count) => Array.from({ length: count }, () => symbol).join(" ");
@@ -2366,7 +2367,7 @@ function g1SourceMarkup(visual) {
     return `<div class="g1-winter-three-balance"><section><span>${repeat("☆", r.starCount)}</span><b>=</b><span>${repeat("◇", r.diamondCount)}</span></section><section><span>□</span><b>=</b><span>${repeat("☆", r.squareStars)} ${repeat("◇", r.squareDiamonds)}</span></section><section><span>○</span><b>=</b><span>${repeat("□", r.circleSquares)} ${repeat("◇", r.circleDiamonds)}</span></section><p>○ 1개 = ◇ (　)개</p></div>`;
   }
   if (visual.kind === "g1-winter-three-cards-parity-chain") {
-    return `<div class="g1-winter-card-chain"><div>${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><ul>${visual.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div>`;
+    return `<div class="g1-winter-card-chain"><div>${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div></div>`;
   }
   if (visual.kind === "g1-stacked-shape-cycle") {
     return `<div class="g1-stacked-cycle">${visual.items.map((item, index) => `<section><span>${Array.from({ length: item.count }, () => `<i>${patternShapeSvg(item.shape, "stacked-shape-svg")}</i>`).join("")}</span><b>${index + 1}</b></section>`).join("")}<em>…</em><strong>${visual.target}번째</strong></div>`;

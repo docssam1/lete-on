@@ -44,7 +44,9 @@ function checkMapping() {
 }
 
 function checkProblem(number, problem) {
-  if (!problem?.prompt || !problem.answer || !problem.solution || !problem.visual?.kind) return fail(`${number}번 빈 생성 결과`);
+  if (!problem?.prompt || !problem.answer || !problem.solution) return fail(`${number}번 빈 생성 결과`);
+  // 1·14번은 문제 글에 조건이 다 있어 글을 되풀이하는 상자를 두지 않는다(원장 2026-10-27)
+  if ([1, 14].includes(number) ? problem.visual : !problem.visual?.kind) return fail(`${number}번 그림 구성 오류`);
   const m = problem.meta || {};
   if (number === 1 && (m.total !== m.fixed + m.higher + m.lower || m.higher - m.lower !== m.transfer * 2 || numeric(problem) !== m.higher)) fail("1번 계산 오류");
   if (number === 2 && (m.count !== 4 || m.names.length !== 4 || new Set(m.ordered).size !== 4 || problem.answer !== m.ordered[m.targetRank - 1])) fail("2번 순서 오류");

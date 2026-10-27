@@ -216,10 +216,10 @@ function checkProblem(number, problem, difficulty) {
       if (assertBase(problem, number, difficulty, "g1-paired-sequences") && (meta.topLast !== meta.topStart + (meta.terms - 1) * meta.topStep || meta.answer !== meta.bottomStart + (meta.terms - 1) * meta.bottomStep || numberAnswer(problem) !== meta.answer || problem.visual.terms !== meta.terms || problem.visual.topStart !== meta.topStart || problem.visual.topStep !== meta.topStep || problem.visual.topLast !== meta.topLast || problem.visual.bottomStart !== meta.bottomStart || problem.visual.bottomStep !== meta.bottomStep)) fail(`${number}번 난이도 ${difficulty}: 두 줄 수열·그림 오류`);
       break;
     case 19:
-      if (assertBase(problem, number, difficulty, "g1-ratio-distribution") && (meta.people !== meta.children + meta.adults || meta.items !== meta.children / meta.childGroup + meta.adults * meta.adultItems || problem.answer !== `어린이 ${meta.children}명, 어른 ${meta.adults}명` || problem.visual.people !== meta.people || problem.visual.items !== meta.items || problem.visual.childGroup !== meta.childGroup || problem.visual.adultItems !== meta.adultItems)) fail(`${number}번 난이도 ${difficulty}: 사람·귤 배분·그림 오류`);
+      if (assertBase(problem, number, difficulty, null) && (meta.people !== meta.children + meta.adults || meta.items !== meta.children / meta.childGroup + meta.adults * meta.adultItems || problem.answer !== `어린이 ${meta.children}명, 어른 ${meta.adults}명` || problem.visual)) fail(`${number}번 난이도 ${difficulty}: 사람·귤 배분 오류 또는 글을 되풀이하는 상자`);
       break;
     case 20:
-      if (assertBase(problem, number, difficulty, "g1-odd-even-difference") && (meta.oddEnd !== meta.difference * 2 - 1 || meta.evenEnd !== meta.difference * 2 || problem.answer !== `${meta.oddEnd}, ${meta.evenEnd}` || problem.visual.difference !== meta.difference || problem.visual.oddEnd !== meta.oddEnd || problem.visual.evenEnd !== meta.evenEnd)) fail(`${number}번 난이도 ${difficulty}: 홀짝 합 차·그림 오류`);
+      if (assertBase(problem, number, difficulty, null) && (meta.oddEnd !== meta.difference * 2 - 1 || meta.evenEnd !== meta.difference * 2 || problem.answer !== `${meta.oddEnd}, ${meta.evenEnd}` || problem.visual)) fail(`${number}번 난이도 ${difficulty}: 홀짝 합 차 오류 또는 글을 되풀이하는 상자`);
       break;
     default:
       fail(`알 수 없는 문항 번호 ${number}`);
