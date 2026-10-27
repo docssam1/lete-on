@@ -132,26 +132,34 @@ function renderSelfUnits(book) {
   $("unitList").innerHTML = `<div class="st-unit-cards">${book.units.map((unit, index) => {
     const { count } = unitParts(unit);
     const problems = Array.from({ length: count }, (_, k) => problemCount(unit, k + 1)).reduce((a, b) => a + b, 0);
-    return `<button type="button" class="st-unit-card" data-unit="${index}"><span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${count}차시 · 본책 ${problems}문항</small><i aria-hidden="true">›</i></button>`;
-  }).join("")}</div>`;
+    return `<button type="button" class="st-unit-card" data-unit="${index}"><span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${index + 1}주 · 본책 ${problems}문항 · 과제 · 단원 평가</small><i aria-hidden="true">›</i></button>`;
+  }).join("")}${book.source.unitTestQuestions?.length ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
 }
-// 소단원(차시): 차시마다 그 차시에서 배우는 골든벨 학습 이름을 보여 준다(불러오기 전에는 번호와 문항 수만)
+// 한 주 = 한 단원(원장 2026-10-27 「스스로 공부하기는 한 주 공부하는 흐름대로」): 대단원을 누르면 그 주의 공부 순서를 보여 주고
+// 「이번 주 공부 시작하기」 하나로 덱(study.html)을 연다. 차시로 나누지 않는다.
 function renderParts() {
   const book = activeBook(), unit = book.units[view.unit];
-  $("unitTitle").innerHTML = `<span>${String(view.unit + 1).padStart(2, "0")}</span>${esc(unit.label)}`;
+  $("unitTitle").innerHTML = `<span>${String(view.unit + 1).padStart(2, "0")}</span>${esc(unit.label)} <small>${view.unit + 1}주</small>`;
   const { count } = unitParts(unit);
-  let byPart = null;
+  let titles = [];
   if (goldenBell) {
     const bellBook = goldenBell.books.find((entry) => entry.id === book.id);
-    byPart = lessonsByPart(unit, lessonsByUnit(book, bellBook).units[view.unit]);
+    titles = lessonsByPart(unit, lessonsByUnit(book, bellBook).units[view.unit]).flat().map((lesson) => lesson.title);
   }
-  $("partList").innerHTML = Array.from({ length: count }, (_, k) => {
-    const titles = (byPart?.[k] || []).map((lesson) => lesson.title);
-    return `<a class="st-part" href="${esc(link("study.html", { book: book.id, unit: String(view.unit), part: String(k + 1) }))}">
-      <span class="st-part-no">${k + 1}차시</span>
-      <b>${titles.length ? esc(titles.join(" · ")) : `개념 ${k + 1}`}</b>
-      <small>본책 ${problemCount(unit, k + 1)}문항</small><i aria-hidden="true">›</i></a>`;
-  }).join("");
+  const problems = Array.from({ length: count }, (_, k) => problemCount(unit, k + 1)).reduce((a, b) => a + b, 0);
+  const last = view.unit === book.units.length - 1;
+  const result = (() => { try { return JSON.parse(localStorage.getItem(`fields-classic-test:${student}:${book.id}-u${view.unit}`) || "null"); } catch { return null; } })();
+  const steps = [
+    ["개념 배우기", titles.length ? titles.join(" · ") : "골든벨 개념"],
+    ["게임하기", "풀이를 손으로 해 보기"],
+    ["골든벨", "골든벨 문항 풀기"],
+    ["공부하기", `본책 ${problems}문항 · 화면에서 · 인쇄해서 · 유사 문제`],
+    ["과제", "집에서 풀 과제"],
+    ["단원 평가", result ? `○✕ 진단 · ${result.right} / ${result.total}` : "다 풀고 ○✕ 진단 · 약점 유형 다시 공부"],
+    ...(last && book.source.unitTestQuestions?.length ? [["권별 테스트", `${book.label} ${book.source.unitTestQuestions.length}문제 · 4단원을 마치면`]] : [])
+  ];
+  $("partList").innerHTML = `<a class="st-week-start st-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(view.unit) }))}">이번 주 공부 시작하기 ›</a>
+    <ol class="st-week">${steps.map(([label, note], k) => `<li><b>${k + 1}</b><span>${esc(label)}</span><small>${esc(note)}</small></li>`).join("")}</ol>`;
 }
 
 function renderStudy() {

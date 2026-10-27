@@ -1576,3 +1576,22 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
 }
 .ed-bars>div:nth-child(5) i{background:#2a241c}
 .study-stage-banner.unit-test{border-left-color:#2a241c;background:#f7f2e7}.study-stage-banner.unit-test strong{color:#2a241c}
+
+/* ── 테스트(semi test·약점 확인) 채점표 — 다 풀고 채점 → ○✕ → 유형별 진단 → 약점 유형 (원장 2026-10-27) ── */
+.test-panel{display:grid;gap:14px;max-width:760px;margin:20px auto 40px;padding:20px 22px;border:1px solid #e2d9c6;border-radius:12px;background:#fdfbf5;color:#2a241c;font-family:'FC Sans',Pretendard,system-ui,sans-serif}
+.test-panel>p{margin:0;color:#7a6f5c;font-size:15px;line-height:1.6}
+.test-panel h3{margin:6px 0 0;font-size:16px}
+.test-grade,.test-weak{display:flex;align-items:center;justify-content:center;min-height:52px;border:0;border-radius:10px;background:#2f6b4a;color:#fff;font:inherit;font-size:17px;font-weight:700;text-decoration:none;cursor:pointer}
+.test-score{display:flex;align-items:baseline;gap:12px}.test-score b{font-size:30px}.test-score span{color:#7a6f5c;font-size:15px}
+.test-marks{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin:0;padding:0;list-style:none}
+.test-marks li{display:grid;grid-template-columns:28px minmax(0,1fr) 40px 40px;align-items:center;gap:6px;padding:6px 8px;border:1px solid #e2d9c6;border-radius:8px;background:#fff}
+.test-marks li>span{overflow:hidden;font-size:13px;text-overflow:ellipsis;white-space:nowrap}
+.test-marks button{height:36px;border:1px solid #c9bda2;border-radius:6px;background:#fff;font-size:18px;cursor:pointer}
+.test-marks button[aria-pressed="true"][data-value="right"]{border-color:#2f6b4a;background:#e9f0e7;color:#1e4631}
+.test-marks button[aria-pressed="true"][data-value="wrong"]{border-color:#b4512e;background:#f8e6df;color:#b4512e}
+.test-diagnosis{width:100%;border-collapse:collapse;font-size:14px}.test-diagnosis th,.test-diagnosis td{padding:8px;border-bottom:1px solid #eee6d6;text-align:left}
+.test-diagnosis th{background:#f7f2e7;color:#7a6f5c;font-weight:600}.test-diagnosis tr.is-weak td{color:#b4512e;font-weight:600}
+.test-clear{color:#2f6b4a!important;font-weight:600}
+.test-answer{display:grid;gap:6px;margin-top:12px;padding:10px 12px;border-left:3px solid #2f6b4a;background:#f3f6f0}
+.test-answer p{margin:0}
+@media print{.test-panel,.test-answer{display:none!important}}

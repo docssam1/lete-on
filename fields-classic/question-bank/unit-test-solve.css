@@ -79,3 +79,16 @@ button { cursor: pointer; }
   .ut-pages img { width: auto; max-width: 100%; max-height: 279mm; margin: 0 auto; }
   .ut-watermark { top: 0; opacity: 0.08; }
 }
+
+/* 유형별 진단 — ○✕를 유형으로 묶고 약점 유형 학습지로 */
+.ut-diagnosis { display: grid; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
+.ut-diagnosis h3 { margin: 0; font-size: 15px; font-weight: 700; }
+.ut-diag-rows { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; max-height: 220px; overflow: auto; }
+.ut-diag-rows li { display: grid; grid-template-columns: minmax(0, 1fr) auto 34px; gap: 6px; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.ut-diag-rows li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ut-diag-rows li small { color: var(--muted); }
+.ut-diag-rows li b { text-align: center; color: var(--muted); }
+.ut-diag-rows li.is-weak span, .ut-diag-rows li.is-weak b { color: var(--terra); font-weight: 600; }
+.ut-diag-rows li.is-clear b { color: var(--accent); }
+.ut-diag-clear { margin: 0; color: var(--accent-ink); font-weight: 600; }
+@media print { .ut-diagnosis { display: none; } }

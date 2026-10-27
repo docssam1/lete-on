@@ -45,6 +45,14 @@ const freshUnitTest = params.get("fresh") === "1";
 const asStudent = params.get("as") === "student";
 const studentRef = params.get("ref") || "";
 const studentBack = /^\.\/[\w.-]+\.html(\?[^#]*)?$/u.test(params.get("back") || "") ? params.get("back") : "";
+// 스스로 공부 덱(한 주 흐름)에서 쓰는 학생 화면 (원장 2026-10-27 「공부하기에 문제 나오게 · 직접 풀어도 되고 인쇄해서 풀어도 되고 · 유사 문제 · 과제 · semi test · 권별 테스트 · O/X 진단 · 약점 유형」)
+//   &title=학습지 제목 · &test=1 문제를 다 푼 뒤 채점표(자동 채점 + ○✕)·유형별 진단·약점 유형 유사문제 · &print=1 만들자마자 인쇄
+//   &picks=유형~단계~본책 번호~단원|… 본책 번호마다 한 문제(번호 순서 그대로, 단계마다 난이도) — preselectCurriculum 참고
+const studentTitle = params.get("title") || "";
+const testMode = asStudent && params.get("test") === "1";
+const printNow = params.get("print") === "1";
+const testId = params.get("testId") || "";
+if (testMode) document.body.classList.add("as-test");
 if (asStudent) document.body.classList.add("as-student");
 // 학생 차시 덱(study.html)의 유사문제 창 안(?embed=1): 머리줄은 덱이 맡는다
 if (asStudent && params.get("embed") === "1" && parent !== window) document.body.classList.add("as-embed");
@@ -90,6 +98,8 @@ const state = {
   curriculumStage: "type",
   // 교재 단원별 목록: "units"(교재 4단원) | "unit-test"(권별평가 25문항) — 심화 옆 「권별평가」 칸
   curriculumView: "units",
+  // &picks= 로 들어온 본책 번호 목록(선택 칸을 거치지 않고 그대로 문제로)
+  picks: null,
   searchQuery: "",
   order: "exam",
   includeSolution: true,
@@ -928,6 +938,7 @@ function selectedReferences() {
     classification: questionClassificationForType(typeId, { academyStyleIds: academyStyleIdsForType(typeById(typeId)) })
   }));
   if (state.mode === "curriculum") {
+    if (state.picks) return state.picks.map((pick) => ({ ...pick }));
     const result = [];
     for (const key of state.selected.curriculum) {
       const [bookId, indexText, typeId] = key.split(":");
@@ -960,7 +971,7 @@ function selectedReferences() {
           reference: `${book.label} 단원 테스트 ${number}번 · ${question.label}`,
           difficulty: question.difficulty || 2,
           fixedSeed: freshUnitTest ? null : `unit-test:${book.id}:${number}`,
-          unitTest: true,
+          studyStage: UNIT_TEST_STAGE,
           classification: question.classification,
           generationCase: generationCaseForSource("unit-test", book.id, number)
         });
@@ -1134,7 +1145,8 @@ function makeQuestions() {
       if (!problem || !signatures.has(problemSignature(problem))) break;
     }
     if (problem) signatures.add(problemSignature(problem));
-    if (problem && reference.unitTest) problem.studyStage = UNIT_TEST_STAGE;
+    if (problem && reference.studyStage) applyStudyStage(problem, reference.studyStage, reference.bookRef);
+    if (problem && reference.unitIndex !== undefined) problem.unitIndex = reference.unitIndex;
     return problem;
   });
   if (questions.some((problem) => !problem)) {
@@ -1372,8 +1384,18 @@ function replaceQuestion(index) {
     window.alert("같은 유형의 새 문항을 만들지 못했습니다. 잠시 후 다시 눌러 주세요.");
     return;
   }
+  if (current.studyStage) applyStudyStage(replacement, current.studyStage, current.bookRef);
+  replacement.unitIndex = current.unitIndex;
   state.questions[index] = replacement;
   refreshQuestions();
+}
+
+// 기준 문제가 정한 단계(본책 번호의 단계·권별평가)를 문제에 붙인다 — 화면 전체의 단계 칸과 따로
+function applyStudyStage(problem, stage, bookRef = "") {
+  problem.studyStage = stage;
+  problem.conceptGuide = stage.id === "concept" ? textbookGuideForType(problem.type.id) : "";
+  if (bookRef) problem.bookRef = bookRef;
+  return problem;
 }
 
 function removeQuestion(index) {
@@ -3332,7 +3354,7 @@ function studentCheckMarkup(question, index) {
   const typed = !["drawing", "visual-fill"].includes(question.responseKind);
   return `<div class="student-check" data-student-index="${index}">
     <div class="student-check-actions"><button type="button" class="student-check-button" data-student-check="${index}">${typed ? "답 확인" : "정답 보기"}</button>
-      <button type="button" data-question-action="replace" data-question-index="${index}">다른 문제</button></div>
+      ${question.generationCase?.mode === "source" ? "" : `<button type="button" data-question-action="replace" data-question-index="${index}">유사 문제 풀기</button>`}</div>
     <p class="student-check-message" role="status"></p>
     <div class="student-answer" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${question.answer}</div>` : `<span>${question.answer}</span>`}${question.solution ? `<p><b>풀이</b> ${question.solution}</p>` : ""}</div>
   </div>`;
@@ -3366,6 +3388,7 @@ function bindStudentChecks(grid) {
 }
 
 function worksheetTitleText() {
+  if (studentTitle) return studentTitle;
   if (asStudent && studentRef) {
     const book = CURRICULUM.find((entry) => entry.id === state.curriculumBookId);
     return `${book ? `${book.label} · ` : ""}${studentRef} 유사문제`;
@@ -3408,8 +3431,8 @@ function renderWorksheet() {
         : question.responseKind === "visual-fill"
           ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
           : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
-      ${textbookConceptSolutionMarkup(question)}
-      ${asStudent ? studentCheckMarkup(question, index) : ""}
+      ${testMode ? "" : textbookConceptSolutionMarkup(question)}
+      ${testMode ? testAnswerMarkup(question) : asStudent ? studentCheckMarkup(question, index) : ""}
     </article>`;
   });
   const info = printTemplateInfo(title);
@@ -3435,6 +3458,68 @@ function renderWorksheet() {
     });
   });
   bindQuestionEditor();
+  if (testMode) renderTestPanel();
+}
+
+// ── 테스트(semi test·약점 확인): 다 풀고 채점 → ○✕ → 유형별 진단 → 약점 유형 유사문제 ──
+// 화면에서 푼 답은 자동으로 ○✕를 채우고(그림 답·빈 답은 비워 둔다), 인쇄해서 푼 학생은 ○✕만 누르면 된다.
+const testMarks = [];
+let testGraded = false;
+const testKey = () => `fields-classic-test:${student}:${testId}`;
+function testAnswerMarkup(question) {
+  const picture = answerVisualMarkup(question);
+  return `<div class="test-answer" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${question.answer}</div>` : `<span>${question.answer}</span>`}${question.solution ? `<p><b>풀이</b> ${question.solution}</p>` : ""}</div>`;
+}
+function testTypeRows() {
+  const rows = new Map();
+  state.questions.forEach((question, index) => {
+    const row = rows.get(question.type.id) || { type: question.type, stage: question.studyStage?.id || "practice", unit: question.unitIndex, numbers: [], wrong: 0, right: 0 };
+    row.numbers.push(index + 1);
+    if (testMarks[index] === "wrong") row.wrong += 1;
+    if (testMarks[index] === "right") row.right += 1;
+    rows.set(question.type.id, row);
+  });
+  return [...rows.values()];
+}
+function weakStudyLink(rows) {
+  const picks = rows.flatMap((row) => [0, 1].map(() => [row.type.id, row.stage, "약점 유형", row.unit ?? ""].join("~"))).join("|");
+  const url = new URLSearchParams(params);
+  ["picks", "test", "testId", "print", "title", "units", "only", "stage", "count", "set", "numbers", "ref"].forEach((key) => url.delete(key));
+  url.set("picks", picks); url.set("build", "1"); url.set("title", "약점 유형 다시 공부하기");
+  return `./index.html?${url}`;
+}
+function renderTestPanel() {
+  const panel = $("testPanel");
+  panel.hidden = false;
+  if (!testGraded) {
+    panel.innerHTML = `<p>다 풀었으면 채점해요. 인쇄해서 풀었다면 채점하기를 누르고 번호마다 ○ · ✕를 눌러요.</p><button type="button" class="test-grade" data-test="grade">다 풀었어요 · 채점하기</button>`;
+  } else {
+    const marked = testMarks.filter(Boolean).length, right = testMarks.filter((mark) => mark === "right").length, total = state.questions.length;
+    const rows = testTypeRows(), weak = rows.filter((row) => row.wrong);
+    panel.innerHTML = `<div class="test-score"><b>${right} / ${total}</b><span>${marked < total ? `${total - marked}문제 채점 전 — ○ · ✕를 눌러요` : weak.length ? `약점 유형 ${weak.length}가지` : "모두 맞았어요!"}</span></div>
+      <ol class="test-marks">${state.questions.map((question, index) => `<li class="${testMarks[index] ? `is-${testMarks[index]}` : ""}"><b>${index + 1}</b><span>${escapeAttribute(question.type.label)}</span>
+        <button type="button" data-test-mark="${index}" data-value="right" aria-pressed="${testMarks[index] === "right"}" aria-label="${index + 1}번 맞음">○</button><button type="button" data-test-mark="${index}" data-value="wrong" aria-pressed="${testMarks[index] === "wrong"}" aria-label="${index + 1}번 틀림">✕</button></li>`).join("")}</ol>
+      <h3>유형별 진단</h3>
+      <table class="test-diagnosis"><thead><tr><th>유형</th><th>번호</th><th>결과</th></tr></thead><tbody>${rows.map((row) => `<tr class="${row.wrong ? "is-weak" : ""}"><td>${escapeAttribute(row.type.middle)} · ${escapeAttribute(row.type.label)}</td><td>${row.numbers.join(", ")}</td><td>${row.wrong ? `✕ ${row.wrong}` : row.right === row.numbers.length ? "○" : "채점 전"}</td></tr>`).join("")}</tbody></table>
+      ${weak.length ? `<a class="test-weak" href="${escapeAttribute(weakStudyLink(weak))}">약점 유형 공부하기 · ${weak.length}유형 × 2문제 →</a>` : marked === total ? `<p class="test-clear">약점 유형이 없어요. 다음으로 가요.</p>` : ""}`;
+    try { localStorage.setItem(testKey(), JSON.stringify({ at: Date.now(), right, total, marked, weak: weak.map((row) => row.type.id) })); } catch {}
+    if (parent !== window) parent.postMessage({ type: "fc-embed", event: "test-result", testId, right, total, marked, weak: weak.map((row) => row.type.label) }, location.origin);
+  }
+  panel.querySelector("[data-test=grade]")?.addEventListener("click", () => {
+    testGraded = true;
+    state.questions.forEach((question, index) => {
+      const verdict = ["drawing", "visual-fill"].includes(question.responseKind) ? null : studentAnswerMatches(question.responseValue, question.answer);
+      testMarks[index] = verdict === null ? testMarks[index] || null : verdict ? "right" : "wrong";
+    });
+    document.querySelectorAll("#questionGrid .test-answer").forEach((box) => { box.hidden = false; });
+    renderTestPanel();
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  panel.querySelectorAll("[data-test-mark]").forEach((button) => button.addEventListener("click", () => {
+    const index = Number(button.dataset.testMark);
+    testMarks[index] = testMarks[index] === button.dataset.value ? null : button.dataset.value;
+    renderTestPanel();
+  }));
 }
 
 // 표지·내지·바닥글에 쓸 공개 정보. 교재 단원 학습지면 그 권의 제목과 번호를 쓴다.
@@ -3483,6 +3568,7 @@ function initControls() {
   $("introLink").href = `./home.html?student=${encodeURIComponent(student)}`;
   $("startLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.curriculumBookId}`;
   if (asStudent) {
+    $("regenerateButton").textContent = "모두 유사 문제로";
     const back = document.createElement("a");
     back.className = "back-link student-back";
     back.href = studentBack || $("startLink").href;
@@ -3652,6 +3738,41 @@ setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") 
     if (picked) setCount(picked);
     state.curriculumView = "unit-test";
     $("curriculumStageChoices").querySelectorAll("button").forEach((button) => button.classList.toggle("active", button.dataset.stage === "unit-test"));
+  } else if (params.has("picks")) {
+    // 본책 번호마다 한 문제: 유형~단계~본책 번호(「활동 1-3번」)~단원 번호. 그 단계에서 아직 못 만들면 가까운 단계로 물러선다.
+    const refs = [];
+    for (const item of params.get("picks").split("|").filter(Boolean)) {
+      const [typeId, stageId, label = "", unitText = ""] = item.split("~");
+      const type = typeById(typeId);
+      const unitIndex = unitText === "" ? book.units.findIndex((entry) => entry.typeIds.includes(typeId)) : Number(unitText);
+      const unit = book.units[unitIndex];
+      if (!type) continue;
+      // 권별테스트에만 있는 유형(어느 단원에도 없는 것)은 단원 대조 없이 검증된 유형이면 연습 난이도로
+      if (!unit) {
+        if (!isSelectableType(type)) continue;
+        const stage = TEXTBOOK_STAGES.find((entry) => entry.id === (stageId || "practice")) || TEXTBOOK_STAGES[2];
+        refs.push({ typeId, reference: `${book.label} ${label || stage.label} · ${type.label}`, classification: questionClassificationForType(typeId), difficulty: stage.difficulty, studyStage: stage, bookRef: label });
+        continue;
+      }
+      // 그 단계를 못 만들면 난이도가 가까운 단계부터(단원 평가의 심화 → 연습 → 유형)
+      const NEAR = { concept: ["type", "practice", "advanced"], type: ["concept", "practice", "advanced"], practice: ["advanced", "type", "concept"], advanced: ["practice", "type", "concept"] };
+      const stage = [stageId, ...(NEAR[stageId] || ["type", "practice", "concept", "advanced"])].map((id) => TEXTBOOK_STAGES.find((entry) => entry.id === id))
+        .find((entry) => entry && isSelectableCurriculumType(type, book, unit, entry.id));
+      if (!stage) continue;
+      refs.push({
+        typeId, unitIndex,
+        reference: `${book.label} ${unit.label} · ${label || stage.label} · ${type.label}`,
+        classification: questionClassificationForType(typeId),
+        difficulty: stage.difficulty,
+        studyStage: stage,
+        bookRef: label
+      });
+    }
+    if (refs.length) {
+      state.picks = refs.slice(0, MAX_QUESTIONS);
+      picked = state.picks.length;
+      setCount(picked);
+    }
   } else if (params.has("units")) {
     const wanted = new Set(params.get("units").split(",").map(Number));
     const pick = () => book.units.forEach((unit, unitIndex) => {
@@ -3679,5 +3800,9 @@ setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") 
   }
   renderCurriculum();
   updateSummary();
-  if (picked && params.get("build") === "1") buildQuestions();
+  if (picked && params.get("build") === "1") {
+    buildQuestions();
+    // 인쇄해서 풀기: 글꼴·그림이 자리 잡은 뒤 인쇄 창
+    if (printNow) document.fonts.ready.then(() => setTimeout(() => window.print(), 400));
+  }
 })();

@@ -1,4 +1,4 @@
-import { CURRICULUM } from "./source-data.js?v=20261024r";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261024r";
 
 // 권별테스트 원문 풀기 (원장 지시 2026-10-24): 「교재 권별테스트는 원본 문제 그대로 1세트가 있고, 유사문제로 공부하는 거야.」
 // 원문 쪽 그림을 그대로 보여 주고(답은 없다), 학생이 답안지에 적고 ○✕로 채점한 뒤
@@ -28,6 +28,34 @@ function similarLink(numbers) {
   const url = new URLSearchParams({ student, mode: "curriculum", book: book.id, set: "unit-test", fresh: "1", build: "1" });
   if (numbers) url.set("numbers", numbers.join(","));
   return `./index.html?${url}`;
+}
+
+// 유형별 진단(원장 2026-10-27 「테스트 O,X 연결해서 진단해 주고 유형별 유사 유형으로 약점 유형 공부하기」):
+// ○✕를 유형으로 묶어 약한 유형을 보이고, 그 유형마다 같은 유형 새 문제 2개(교재 연습 단계)로 학습지를 만든다.
+function weakTypeLink(typeIds) {
+  const picks = typeIds.flatMap((typeId) => [0, 1].map(() => `${typeId}~practice~권별 약점 유형`)).join("|");
+  return `./index.html?${new URLSearchParams({ student, mode: "curriculum", book: book.id, picks, build: "1", as: "student", title: `${book.label} 약점 유형 다시 공부하기` })}`;
+}
+function renderDiagnosis() {
+  const box = $("diagnosis");
+  const marked = questions.filter(({ number }) => sheet[number]?.mark);
+  if (!marked.length) { box.hidden = true; box.innerHTML = ""; return; }
+  const rows = new Map();
+  for (const question of questions) {
+    const type = typeById(question.typeId);
+    const key = type?.id || question.label;
+    const row = rows.get(key) || { label: type ? `${type.middle} · ${type.label}` : question.label, typeId: type?.id, numbers: [], right: 0, wrong: 0 };
+    row.numbers.push(question.number);
+    if (sheet[question.number]?.mark === "right") row.right += 1;
+    if (sheet[question.number]?.mark === "wrong") row.wrong += 1;
+    rows.set(key, row);
+  }
+  const list = [...rows.values()].sort((a, b) => b.wrong - a.wrong);
+  const weak = list.filter((row) => row.wrong && row.typeId);
+  box.hidden = false;
+  box.innerHTML = `<h3 id="diagnosisHeading">유형별 진단</h3>
+    <ol class="ut-diag-rows">${list.map((row) => `<li class="${row.wrong ? "is-weak" : row.right === row.numbers.length ? "is-clear" : ""}"><span>${esc(row.label)}</span><small>${row.numbers.join("·")}번</small><b>${row.wrong ? `✕ ${row.wrong}` : row.right === row.numbers.length ? "○" : "–"}</b></li>`).join("")}</ol>
+    ${weak.length ? `<a class="ut-btn primary" href="${esc(weakTypeLink(weak.map((row) => row.typeId)))}">약점 유형 공부하기 · ${weak.length}유형 × 2문제</a>` : marked.length === questions.length ? `<p class="ut-diag-clear">약점 유형이 없어요. 잘했어요!</p>` : ""}`;
 }
 
 document.title = `${book.label} 권별테스트 원문 풀기`;
@@ -71,6 +99,7 @@ function renderFoot() {
   link.title = wrongOff ? `유사문제가 아직 없는 틀린 번호 ${wrongOff}개는 빠집니다` : "";
   $("allLink").textContent = ready.size === questions.length ? `${questions.length}문항 전체 유사문제` : `준비된 ${ready.size}문항 유사문제`;
   $("allLink").href = similarLink(null);
+  renderDiagnosis();
 }
 
 $("sheet").addEventListener("input", (event) => {

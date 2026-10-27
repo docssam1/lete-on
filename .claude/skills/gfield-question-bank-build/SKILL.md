@@ -19,6 +19,15 @@ description: 지필드 사고력 문제은행(fields-classic/question-bank) 화�
 - 2단계를 떠나면 편집 칸(`#edList`·`#edPane`)을 비운다 — 숨은 그림이 인쇄 화면의 그림과 겹쳐 세어진 전례(검사기 40 ≠ 20).
 - 쌍둥이·추가는 같은 유형 생성기로 만들고 `problemSignature`로 목록에 이미 있는 문제를 거른다. 원문 문항(`generationCase.mode === "source"`)은 쌍둥이를 만들지 않는다. 최대 50문제.
 
+## 1-1. 스스로 공부 = 한 주(한 단원) 흐름 (원장 2026-10-27)
+- 덱(`study.html?book=&unit=`)은 **단원 하나 = 한 주**: 개념 → 게임 → 골든벨 → 공부하기 → 과제 → 단원 평가(semi test) → (그 권의 마지막 단원이면) 권별 테스트 → 도착. 차시로 나누지 않는다(`&part=`는 무시, `&at=game`처럼 장 종류로 연다).
+- 공부하기·과제·단원 평가는 **문제가 장 안에 나온다** — 문제은행 학생 화면을 `iframe#workFrame`으로: `index.html?mode=curriculum&book=&build=1&as=student&embed=1&picks=…`. 「🖨 인쇄해서 풀기」는 같은 주소에 `print=1`(새 창). 문제마다 「유사 문제 풀기」, 위 「모두 유사 문제로」.
+- `&picks=유형~단계~본책 번호~단원|…`: 본책 번호마다 한 문제(순서 그대로, 단계마다 난이도·단계 꼬리표 `applyStudyStage`). 그 단계를 못 만들면 가까운 단계로(`NEAR`). 단원에 없는 유형(권별테스트에만 있는 것)은 연습 난이도로.
+- 과제 = 단원 유형마다 연습 1문제, 단원 평가 = 유형마다 심화 1문제 + `&test=1&testId=<권>-u<단원>`.
+- `&test=1`: 문제마다 채점하지 않고 끝의 「채점하기」 → 화면에 쓴 답은 자동 ○✕, 그림 답·인쇄해서 푼 것은 ○✕를 눌러 → 유형별 진단 → 「약점 유형 공부하기」(틀린 유형 × 2문제, picks). 결과는 `localStorage fields-classic-test:<학생>:<testId>`와 덱에 `postMessage(test-result)`.
+- 권별 테스트(`unit-test-viewer.html`)도 ○✕ 뒤 **유형별 진단**과 약점 유형 학습지(picks)를 낸다.
+- 시작 화면 대단원 → 「이번 주 공부 시작하기」 하나 + 그 주 순서 목록, 단원 카드 끝에 권별 테스트 카드.
+
 ## 2. 화면 가득 틀 (넓은 화면 981px 이상)
 - 1·2단계는 창 전체를 쓴다 — 가운데 상자·바깥 여백 없음, 페이지는 스크롤하지 않고 칸마다 따로 넘긴다(`styles.css` 「화면 가득」 블록, `body[data-bank-step]`로 켠다).
 - 1단계: `.builder-body`를 `display: contents`로 풀고 `#builderPanel` 격자 영역 `head / tabs / search·side / main·side / main·dock`.

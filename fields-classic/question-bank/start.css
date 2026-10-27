@@ -208,3 +208,14 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
   #paneBooks .st-book-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; }
   .st-unit-head, .st-part-list { padding-left: 14px; padding-right: 14px; }
 }
+
+/* ── 한 주 = 한 단원: 이번 주 공부 순서 + 시작 단추 (원장 2026-10-27) ── */
+.st-week-start { display: flex; align-items: center; justify-content: center; min-height: 56px; margin-bottom: 12px; font-size: 17px; text-decoration: none; }
+.st-week { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.st-week li { display: grid; grid-template-columns: 34px 96px minmax(0, 1fr); gap: 10px; align-items: center; min-height: 52px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.st-week b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-ink); font-size: 13px; }
+.st-week span { font-weight: 700; }
+.st-week small { color: var(--muted); font-size: 13px; line-height: 1.45; }
+#unitTitle small { margin-left: 6px; color: var(--muted); font-size: 14px; font-weight: 500; }
+.st-unit-card.st-book-test { text-decoration: none; color: inherit; border-style: dashed; }
+@media (max-width: 560px) { .st-week li { grid-template-columns: 28px minmax(0, 1fr); } .st-week small { grid-column: 2; } }
