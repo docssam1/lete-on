@@ -65,12 +65,16 @@ export function createCast({ reduced = false } = {}) {
   // 지도 카메라처럼 약 40° 내려다본다. 가로 ±2.2, 세로 4.0(아래 0.45 · 위 3.55)
   const cam = new THREE.OrthographicCamera(-2.2, 2.2, 3.55, -0.45, 0.1, 50);
   const el = THREE.MathUtils.degToRad(38); cam.position.set(0, Math.sin(el) * 20, Math.cos(el) * 20); cam.lookAt(0, 0, 0);
-  const actors = new Set(); let raf = 0, last = performance.now(), paused = false;
+  const actors = new Set(); let raf = 0, last = performance.now(), paused = false, n = 0;
+  // 화면 밖 사람은 그리지 않고(setHidden), 서 있는 사람은 두 프레임에 한 번만 그린다 — 사람 13명을 매 프레임 따로 그리느라 지도가 버벅였다.
+  // 건너뛴 시간은 모아 두었다가 다음에 그릴 때 한꺼번에 넘겨, 서 있는 몸짓 빠르기는 그대로다.
   const frame = (now) => {
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    const dt = Math.min(0.05, (now - last) / 1000); last = now; n++;
     if (!paused) for (const a of actors) {
-      if (a.hidden) continue;
-      a.members.forEach((m) => m.tick(dt, a.walking, reduced));
+      a.acc += dt;
+      if (a.hidden || (!a.walking && (n + a.slot) % 2)) continue;
+      const step = Math.min(0.1, a.acc); a.acc = 0;
+      a.members.forEach((m) => m.tick(step, a.walking, reduced));
       R.render(a.scene, cam); a.ctx.clearRect(0, 0, a.ctx.canvas.width, a.ctx.canvas.height); a.ctx.drawImage(R.domElement, 0, 0, a.ctx.canvas.width, a.ctx.canvas.height);
     }
     raf = requestAnimationFrame(frame);
@@ -88,10 +92,11 @@ export function createCast({ reduced = false } = {}) {
         const blob = new THREE.Mesh(new THREE.CircleGeometry(CAST[id].nm?.kind === 'buddy' ? 0.42 : 0.62, 24), new THREE.MeshBasicMaterial({ color: 0x14200f, transparent: true, opacity: 0.28, depthWrite: false }));
         blob.rotation.x = -Math.PI / 2; blob.position.set(x, 0.01, 0); scene.add(blob, m.obj); m.setFace(rest[i] ?? 0); return m;
       });
-      const a = { scene, members, ctx: canvas.getContext('2d'), walking: false, hidden: false };
+      const a = { scene, members, ctx: canvas.getContext('2d'), walking: false, hidden: false, acc: 0, slot: actors.size };
       actors.add(a);
       return {
         setWalking(on) { a.walking = !!on; },
+        setHidden(on) { a.hidden = !!on; },
         // dx·dy = 그림 위 이동 방향(화면 아래 = 앞). 0, 0이면 서 있는 방향
         face(dx = 0, dy = 0) { if (!dx && !dy) members.forEach((m, i) => m.setFace(rest[i] ?? 0)); else { const ang = Math.atan2(dx, dy); members.forEach((m) => m.setFace(ang)); } },
         wave() { members.forEach((m) => m.wave()); },
