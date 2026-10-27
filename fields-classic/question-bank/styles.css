@@ -1494,3 +1494,61 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
 .ed-src{padding:2px 7px;border-radius:4px;background:#2a241c;color:#fdfbf5;font-size:12px;font-style:normal;font-weight:600;white-space:nowrap}
 .ed-src-cell{color:#7a6f5c;font-size:12px;line-height:1.35}
 .ed-src-cell small{color:#2a241c;font-size:12px;font-weight:600}
+
+/* ── 1단계 범위 선택·미리보기도 따뜻한 종이 + 깊은 초록, 글씨는 Pretendard(원장 2026-10-27 「미리보기 틀 글씨체」, gfield-textbook-design 2·3절) ──
+   화면에서만. 인쇄 시험지는 print-templates.css 의 글꼴·흑백 규칙을 그대로 따른다. */
+@font-face { font-family: 'FC Sans'; src: url('./assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 700; font-style: normal; font-display: swap; }
+@media screen {
+  body:not(.as-student):not(.as-embed) { background: #f1ece1; }
+  .app-header, #builderPanel, .type-preview, .bk-editor, .worksheet-actions, .answer-dialog .dialog-head { font-family: 'FC Sans', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .app-header, #builderPanel, .type-preview { --ink: #2a241c; --muted: #7a6f5c; --line: #e2d9c6; --paper: #fdfbf5; --bg: #f1ece1; --blue: #2f6b4a; --blue-dark: #1e4631; --blue-soft: #e9f0e7; --green: #2f6b4a; color: #2a241c; }
+  .app-header { background: #fdfbf5; border-bottom-color: #c9bda2; }
+  .app-header .back-link { border-color: #c9bda2; color: #2a241c; }
+  .app-header .intro-link, .student-name { color: #1e4631; }
+  #builderPanel { background: #fdfbf5; }
+  #builderPanel .step-head { background: #f7f2e7; border-bottom-color: #e2d9c6; }
+  #builderPanel .step-head > div span { color: #2f6b4a; }
+  #builderPanel .builder-tabs { border-bottom-color: #e2d9c6; }
+  #builderPanel .builder-tabs button { background: #fdfbf5; color: #7a6f5c; }
+  #builderPanel .builder-tabs button.active { border-bottom-color: #2f6b4a; color: #2a241c; }
+  #builderPanel .builder-tabs > a { background: #fdfbf5; border-left-color: #e2d9c6; color: #1e4631; }
+  #builderPanel .builder-tabs > a:hover { background: #e9f0e7; border-bottom-color: #2f6b4a; }
+  #builderPanel .bank-search { background: #f7f2e7; border-bottom-color: #e2d9c6; }
+  #builderPanel .bank-search label { border-color: #c9bda2; background: #fff; }
+  #builderPanel .bank-search label:focus-within { border-color: #2f6b4a; box-shadow: 0 0 0 2px rgba(47, 107, 74, .15); }
+  #builderPanel .bank-search label > span, #builderPanel .bank-search input { color: #2a241c; }
+  #builderPanel .bank-search input::placeholder, #builderPanel .bank-search > small { color: #7a6f5c; }
+  #builderPanel .bank-search > button { border-color: #c9bda2; color: #2a241c; }
+  #builderPanel :is(.age-strip, .choice-grid, .curriculum-book-tabs, .curriculum-inline-stages, .curriculum-stage-choices) button.active { border-color: #2f6b4a; background: #e9f0e7; color: #1e4631; }
+  #builderPanel .curriculum-stage-choices button.active span { color: #1e4631; }
+  #builderPanel :is(.exam-row, .type-leaf):has(input:checked) { background: #e9f0e7; }
+  #builderPanel :is(.tree-check, .type-leaf input, .exam-row input, .switch-row input, .academy-style-filter input) { accent-color: #2f6b4a; }
+  #builderPanel :is(.curriculum-stage-map, .curriculum-inline-stages) :is(.concept) { border-top-color: #8fb89c; }
+  #builderPanel :is(.curriculum-stage-map, .curriculum-inline-stages) :is(.type) { border-top-color: #2f6b4a; }
+  #builderPanel :is(.curriculum-stage-map, .curriculum-inline-stages) :is(.practice) { border-top-color: #a87c22; }
+  #builderPanel :is(.curriculum-stage-map, .curriculum-inline-stages) :is(.advanced) { border-top-color: #b4512e; }
+  #builderPanel .curriculum-inline-stages { border-color: #e2d9c6; background: #e2d9c6; }
+  #builderPanel .curriculum-inline-stages button:not(.active) { background: #fdfbf5; }
+  #builderPanel .source-view-link { border-color: #c9bda2; color: #1e4631; }
+  #builderPanel .source-notice { border-left-color: #d9a62e; background: #f7f2e7; color: #7a6f5c; }
+  #builderPanel .academy-style-filter label:has(input:checked) { border-color: #2f6b4a; background: #e9f0e7; color: #1e4631; }
+  #builderPanel .settings-pane { background: #f7f2e7; }
+  #builderPanel .selection-dock { background: #f1ece1; border-top-color: #c9bda2; }
+  #builderPanel .next-button { background: #2f6b4a; }
+  #builderPanel .next-button:hover:not(:disabled) { background: #1e4631; }
+  #builderPanel .next-button:disabled { background: #d8cfbd; color: #fff; }
+  #builderPanel .settings-jump { color: #1e4631; }
+  #builderPanel :is(button, a, input, summary):focus-visible { outline-color: #2f6b4a; }
+  #builderPanel :is(.type-leaf, .exam-row):not(.not-ready) strong { color: #2a241c; }
+  #builderPanel :is(.type-leaf, .exam-row) span, #builderPanel .selection-total :is(span, small) { color: #7a6f5c; }
+  /* 「보기」 단추는 줄 안의 span이라 줄 글씨 규칙(.type-leaf span)을 받지 않게 한 번 더 못 박는다 */
+  #builderPanel :is(.type-leaf, .exam-row, label) .touch-preview-button { display: inline-flex; align-items: center; justify-content: center; margin: 0; border-color: #c9bda2; border-radius: 8px; background: #fff; color: #1e4631; font-size: 14px; font-weight: 600; line-height: 1; }
+  #builderPanel :is(.type-leaf, .exam-row, label) .touch-preview-button:hover { border-color: #2f6b4a; background: #e9f0e7; }
+  /* 미리보기 틀: 종이 바탕 + 초록 밑줄 머리, 글씨는 읽을 만한 크기로 */
+  .type-preview { border-color: #c9bda2; border-radius: 10px; background: #fdfbf5; box-shadow: 0 18px 45px rgba(42, 36, 28, .22); }
+  .type-preview-head { padding: 12px 16px 10px; border-bottom: 2px solid #2f6b4a; background: #f7f2e7; color: #2a241c; }
+  .type-preview-head span { color: #7a6f5c; font-size: 12px; font-weight: 500; opacity: 1; }
+  .type-preview-head strong { margin-top: 3px; font-size: 16px; font-weight: 700; }
+  .type-preview > p { padding: 14px 16px 8px; color: #2a241c; font-size: 15px; font-weight: 600; line-height: 1.7; }
+  .type-preview > .visual, .type-preview > img { width: calc(100% - 28px); margin: 0 14px 14px; }
+}
