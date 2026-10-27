@@ -11,6 +11,7 @@ import { BOOK09_GENERATORS, BOOK09_UNIT_TEST_GENERATORS } from "./book09-generat
 import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS } from "./book10-generators.js?v=20260826h";
 import { MOCK06_GENERATORS } from "./mock06-generators.js?v=20260823b";
 import { book02UnitTestProblem } from "./book02-unit-test-generators.js?v=20260918b";
+import { book01UnitTestProblem } from "./book01-unit-test-generators.js?v=20261028u1";
 
 const COLORS = ["흰색", "검은색"];
 const SHAPES = ["동그라미", "세모", "네모"];
@@ -6765,3 +6766,15 @@ export const GENERATORS = {
   paperFoldHoleCount,
   practiceThreeFoldHoleCount
 };
+
+// 1권 권별테스트 원본 번호(sourceCase)로 부르면 원본 구조 생성기가 먼저 만든다. 그 밖에는 원래 생성기 그대로.
+for (const name of [
+  "symbolBalancedCongruentPartition", "digitalTwoDigitTransform", "digitalTransformAddition", "digitalTransformBoardSum",
+  "rotationalPartitionFour", "foldNumberCutSumTextbook", "foldCutShapeChoice", "foldCutPieceCount", "foldPunchShapeCount",
+  "crossShapeMagicSum", "circularMagicSevenLineSum", "equalLineSumEightCards", "triangleEdgeSumSix", "gakuroGridIrregularSum",
+  "circleLineRingEqualSum", "sourceTwoDigitSumDifference", "twoDigitEvenOnesGreaterGap", "threeDigitStepSequence",
+  "personItemLogicBook1", "relativeOrderLogicBook1"
+]) {
+  const fallback = GENERATORS[name];
+  if (typeof fallback === "function") GENERATORS[name] = (options = {}) => book01UnitTestProblem(options) || fallback(options);
+}

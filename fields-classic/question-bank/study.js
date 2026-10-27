@@ -1,4 +1,4 @@
-import { CURRICULUM } from "./source-data.js?v=20261024r";
+import { CURRICULUM } from "./source-data.js?v=20261028u1";
 import { unitParts, partProblems, lessonsByUnit, lessonsByPart, loadGoldenBell, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261027p";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261028e";
 

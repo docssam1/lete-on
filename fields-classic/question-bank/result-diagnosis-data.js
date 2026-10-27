@@ -7,7 +7,7 @@ import {
   PRACTICE_EXAM_TYPES,
   SOURCE_QUESTION_INDEX,
   typeById
-} from "./source-data.js?v=20261024r";
+} from "./source-data.js?v=20261028u1";
 
 const DOMAIN_BY_ID = new Map(DOMAINS.map((item) => [item.id, item]));
 const STYLE_BY_ID = new Map(ACADEMY_STYLES.map((item) => [item.id, item]));

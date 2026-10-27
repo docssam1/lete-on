@@ -1,4 +1,4 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261024r";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261028u1";
 import { loadRecords, weekRate } from "./study-progress.js?v=20261028e";
 
 // 내 학습 상황(원장 2026-10-27 「학생이 직접 학습 상황을 볼 수 있는 것도 · 수행률 진도」)

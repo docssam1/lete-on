@@ -1,4 +1,4 @@
-import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261024r";
+import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261028u1";
 import { lessonsByUnit, lessonsByPart, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261027p";
 import { readRecord, weekRate } from "./study-progress.js?v=20261028e";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";

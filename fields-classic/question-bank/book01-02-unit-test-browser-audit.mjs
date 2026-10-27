@@ -72,11 +72,40 @@ try {
         const directions = await folding.evaluate((node) => ({ h: node.dataset.foldHorizontal, v: node.dataset.foldVertical }));
         assert.match(await folding.locator("figcaption").nth(0).textContent(), directions.h === "up" ? /아래쪽을 위로/ : /위쪽을 아래로/);
         assert.match(await folding.locator("figcaption").nth(1).textContent(), directions.v === "left" ? /오른쪽을 왼쪽으로/ : /왼쪽을 오른쪽으로/);
-        for (const card of await cards.all()) {
-          assert.ok(await card.locator("svg").count(), "Fold and ring questions need their diagrams");
-          const bounds = await card.locator("svg").first().boundingBox();
-          assert.ok(bounds.width > 100 && bounds.height > 50);
+        const card = (number) => cards.nth(number - 1);
+        // 원본 구조: 두 문제·세 그림·접는 단계 수가 원본과 같아야 한다.
+        assert.equal(await card(1).locator(".b1-ut-set>figure").count(), 2);
+        assert.equal(await card(2).locator(".b1-ut-set>figure").count(), 2);
+        assert.equal(await card(3).locator(".b1-ut-set>figure").count(), 2);
+        assert.equal(await card(6).locator(".b1-ut-set>figure").count(), 2);
+        assert.equal(await card(15).locator(".b1-ut-set>figure").count(), 2);
+        assert.equal(await card(4).locator(".b1-ut-svg text").count(), 9);
+        assert.equal(await card(9).locator(".b1-ut-svg").count(), 1);
+        assert.equal(await card(10).locator(".b1-ut-svg").count(), 1);
+        assert.equal(await card(12).locator(".b1-ut-svg").count(), 1);
+        assert.equal(await card(16).locator(".b1-ut-svg").count(), 1);
+        assert.equal(await card(19).locator(".b1-ut-conditions li").count(), 2);
+        assert.equal(await card(20).locator(".b1-ut-conditions li").count(), 2);
+        assert.equal(await card(21).locator(".b1-ut-conditions li").count(), 2);
+        assert.equal(await card(23).locator(".b1-ut-conditions li").count(), 3);
+        assert.equal(await card(25).locator(".b1-ut-conditions li").count(), 3);
+        for (const [index, item] of (await cards.all()).entries()) {
+          if ([19, 20].includes(index + 1)) continue;   // 조건 상자만 있는 문항(원본도 그림이 없다)
+          assert.ok(await item.locator("svg").count(), `${index + 1}번 그림이 없다`);
+          const bounds = await item.locator("svg").first().boundingBox();
+          assert.ok(bounds.width > 100 && bounds.height > 50, `${index + 1}번 그림이 너무 작다`);
         }
+        // 그림의 채움은 그림 안에 적었다 — CSS가 없는 화면에서 검게 칠해지는 칸이 없어야 한다.
+        const blackFills = await page.evaluate(() => [...document.querySelectorAll(".question-card .b1-ut-svg :is(rect,polygon,circle,path)")]
+          .filter((node) => ["rgb(0, 0, 0)"].includes(getComputedStyle(node).fill)).length);
+        assert.equal(blackFills, 0, "권별테스트 그림에 검게 칠해진 도형이 있다");
+        await page.locator("#answerButton").click();
+        await page.locator("#answerDialog").waitFor({ state: "visible" });
+        assert.equal(await page.locator("#answerBody>tr").count(), 25);
+        assert.ok(await page.locator("#answerDialog .b1-ut-svg").count() >= 10, "그림 답이 답안지에 나와야 한다");
+        assert.doesNotMatch(await page.locator("#answerDialog").textContent(), /undefined|NaN|\[object Object\]/);
+        if (output) await page.locator("#answerDialog").screenshot({ path: path.join(output, `book-01-unit-answers-${width}.png`) });
+        await page.locator("#closeAnswer").click();
       }
       if (output) await page.screenshot({ path: path.join(output, `${bookId}-unit-worksheet-${width}.png`), fullPage: true });
       await page.emulateMedia({ media: "print" });

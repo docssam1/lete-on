@@ -1,4 +1,4 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261024r";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261028u1";
 import { saveRecord } from "./study-progress.js?v=20261028e";
 
 // 권별테스트 원문 풀기 (원장 지시 2026-10-24): 「교재 권별테스트는 원본 문제 그대로 1세트가 있고, 유사문제로 공부하는 거야.」
