@@ -61,7 +61,23 @@
   .pl-sc-item button[aria-pressed=true]{border:3px solid #2456c4;background:#eaf0ff;color:#16417c}
   .pl-sc-item button:focus-visible{outline:3px solid #2456c4;outline-offset:3px}
   #plGo{margin-top:10px;padding:9px 16px;min-height:48px;border:0;border-radius:10px;background:#245b60;color:#fff;font-weight:800;cursor:pointer}
-  #plOut{margin-top:10px;font-size:14px;line-height:1.6}.pl-reason{color:#5c6b70}
+  #plOut{margin-top:10px;font-size:14px;line-height:1.6;scroll-margin-top:12px}.pl-reason{color:#5c6b70}
+  /* 추천 결과 머리: 시작 수준 · 학습 목표 (2026-10-27) */
+  .pl-result-head{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px;margin:4px 0 12px}
+  .pl-result-head>h2{grid-column:1/-1;margin:0;font-size:17px}
+  .pl-card{border:1px solid #d9cfba;border-radius:10px;padding:12px 14px;background:#fbf8f1;min-width:0}
+  .pl-card>small{display:block;font-size:12px;font-weight:800;letter-spacing:.04em;color:#245b60}
+  .pl-card>strong{display:block;margin:4px 0 2px;font-size:18px;line-height:1.35;color:#182230;overflow-wrap:anywhere}
+  .pl-card p{margin:4px 0}.pl-card .pl-muted{color:#5c6b70;font-size:13px}
+  .pl-card.is-missing{background:#fff7e6;border-color:#d39a2c}
+  .pl-goal-pick{display:grid;gap:6px;margin-top:8px}
+  .pl-goal-pick button{min-height:44px;padding:8px 12px;text-align:left;border:1.5px solid #566274;border-radius:8px;background:#fff;font:600 14px/1.4 inherit;cursor:pointer}
+  .pl-goal-pick button:focus-visible,.pl-card select:focus-visible{outline:3px solid #2456c4;outline-offset:2px}
+  .pl-card label{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;margin-top:8px;font-size:13px}.pl-card select{min-height:44px;width:100%;min-width:0;max-width:100%}
+  .pl-detail{border-top:1px solid #eee3cf;padding-top:8px}
+  #plRoadmap{margin-top:14px;padding-top:12px;border-top:2px solid #245b60;scroll-margin-top:12px}
+  #plRoadmap .pd-calendar-table{overflow-x:auto;max-width:100%}
+  #plRoadmap select{min-height:44px;min-width:0;max-width:100%}
   @media print{#plScore{display:none!important}}
 
   .pl-page .nm-mzs-title{margin-top:5mm}
@@ -235,6 +251,11 @@
 <link rel="stylesheet" href="app/placement-ui.css?v=20261022-marks1">
 <script src="data/study-projection.js?v=20261015-records1"></script>
 <script src="app/study-route.js?v=20261015-records1"></script>
+<!-- 추천 보기 아래 월별 진도 로드맵 — 온라인 진단 결과와 같은 모듈(2026-10-27) -->
+<script src="data/middle-extension.js?v=20261024-middle-extension1"></script>
+<script src="app/learning-plan.js?v=20261024-middle-extension1"></script>
+<script src="data/diagnostic-reference.js?v=20261022-intake1"></script>
+<script src="app/diagnostic-roadmap.js?v=20261027-sheet-goal1"></script>
 <script>
 (function(){
 'use strict';
@@ -251,6 +272,21 @@ document.getElementById('wsPrint').textContent = T('🖨 인쇄 · PDF로 저장
 var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
 var L = function(o){ return o ? (o[LANG] || o.ko || '') : ''; };
 var CIRC = ['①','②','③','④','⑤','⑥'];
+/* 추천 결과의 목표·월별 계획 선택(2026-10-27). 목표는 URL(goal·target)로만 받고, 없으면 비워 둔다 —
+   기본값으로 채우지 않는다. 나이·학년은 이 탭에서만 기억한다(sessionStorage, 실패해도 화면은 그대로). */
+var SHEET_GOALS = ((window.NM_PLACEMENT_PATHS || {}).goals || []).map(function(g){ return g.id; });
+var SHEET_SEL = { goal: SHEET_GOALS.indexOf(Q.get('goal')) >= 0 ? Q.get('goal') : '', goalTarget: Q.get('goal') === 'competition' ? (Q.get('target') || '') : '',
+  cadence: ['w1','w2'].indexOf(Q.get('cadence')) >= 0 ? Q.get('cadence') : '' };
+try{ var savedProfile = JSON.parse(sessionStorage.getItem('nmSheetProfile') || 'null');
+  if(savedProfile && typeof savedProfile === 'object')['age','birthYear','profileGrade','entryYear','profileAt'].forEach(function(k){ if(savedProfile[k] != null)SHEET_SEL[k] = savedProfile[k]; });
+}catch(e){}
+function saveSheetProfile(){ try{ sessionStorage.setItem('nmSheetProfile', JSON.stringify({age:SHEET_SEL.age, birthYear:SHEET_SEL.birthYear, profileGrade:SHEET_SEL.profileGrade, entryYear:SHEET_SEL.entryYear, profileAt:SHEET_SEL.profileAt})); }catch(e){} }
+function syncGoalUrl(){
+  try{ var u = new URL(location.href);
+    if(SHEET_SEL.goal)u.searchParams.set('goal', SHEET_SEL.goal); else u.searchParams.delete('goal');
+    if(SHEET_SEL.goalTarget)u.searchParams.set('target', SHEET_SEL.goalTarget); else u.searchParams.delete('target');
+    history.replaceState(history.state, '', u.href); }catch(e){}
+}
 
 function fail(msg){ document.getElementById('wsBody').innerHTML = '<div class="ws-err">' + esc(msg) + '</div>'; document.getElementById('wsPrint').disabled = true; window.NM_WS_READY = 'error'; }
 if(!PLAN) return fail(T('진단 자료를 불러오지 못했어요.', 'Could not load the diagnostic data.', '无法加载测评数据。'));
@@ -513,23 +549,87 @@ function renderScorer(stage){
   var key = document.querySelector('.pl-keypage'); if(key)key.id = 'plAnswerKey';
   box.innerHTML = '<h2>' + esc(T('맞으면 ○, 틀리면 X', 'Correct ○, wrong X', '答对○，答错X')) + '</h2><p>' + esc(T('모르면 아무것도 체크하지 마세요. 체크한 버튼을 다시 누르면 지워져요.', 'Leave unknown answers unmarked. Tap again to clear a mark.', '不会的题不勾选，再次点击可清除标记。')) + '</p><a href="#plAnswerKey">' + esc(T('답지 보기', 'View answer key', '查看答案')) + '</a><div class="pl-sc-grid">' + items.map(function(it, i){
     return '<div class="pl-sc-item" role="group" aria-label="' + (i+1) + '"><b>' + (i + 1) + '</b>' + ['o','x'].map(function(k){ return '<button type="button" data-mark-index="' + i + '" data-mark="' + k + '" aria-pressed="false" aria-label="' + (i+1) + ' ' + esc(k === 'o' ? T('맞음','Correct','正确') : T('틀림','Wrong','错误')) + '">' + (k === 'o' ? '○' : 'X') + '</button>'; }).join('') + '</div>';
-  }).join('') + '</div><button type="button" id="plGo">' + esc(T('추천 보기', 'Show suggestion', '查看建议')) + '</button><div id="plOut"></div><div id="plPlanner"></div>';
-  box.querySelector('#plGo').onclick = function(){
-    if(box.querySelector('#plPlanner').__studyRoutePanel)box.querySelector('#plPlanner').__studyRoutePanel.dispose();
-    box.querySelector('#plPlanner').replaceChildren();
-    var out = box.querySelector('#plOut');
-    out.setAttribute('role','status');out.setAttribute('aria-live','polite');
+  }).join('') + '</div><button type="button" id="plGo">' + esc(T('추천 보기', 'Show suggestion', '查看建议')) + '</button><div id="plOut" tabindex="-1"></div><section id="plRoadmap" class="pd-calendar" hidden></section><div id="plPlanner"></div>';
+  var out = box.querySelector('#plOut'), roadmap = box.querySelector('#plRoadmap'), planner = box.querySelector('#plPlanner');
+  var clearPlanner = function(){ if(planner.__studyRoutePanel)planner.__studyRoutePanel.dispose(); planner.replaceChildren(); };
+  var clearResult = function(){ out.textContent = ''; roadmap.replaceChildren(); roadmap.hidden = true; clearPlanner(); };
+  /* 추천 결과 — 맨 위에 「진단으로 확인한 시작 수준」과 「선택한 학습 목표」, 그 아래 세부 결과와
+     월별 진도 로드맵(온라인 진단과 같은 NM_DIAGNOSTIC_ROADMAP)과 보호자용 목표·속도 비교(NM_STUDY_ROUTE).
+     move: 'result' = 결과 머리로 이동(추천 보기), 'goal' = 목표만 바꿈(화면 위치 유지) (2026-10-27) */
+  var showResult = function(move){
+    clearResult();
     try{
-      var params = new URL(location.href).searchParams;
-      var analysis=window.NM_PLACEMENT_PATHS.paperAnalysis(PLAN_NOW,marks,{goal:params.get('goal'),goalTarget:params.get('target'),cadence:params.get('cadence')});
-      var r=analysis.result, rec=analysis.path.main;
-      var b = r.bands;
-      out.innerHTML = '<p><b>' + esc(T('이전','Earlier','之前')) + '</b> ' + b.previous.correct + '/' + b.previous.asked + ' · <b>' + esc(T('현재','Current','现在')) + '</b> ' + b.current.correct + '/' + b.current.asked + ' · <b>' + esc(T('다음','Next','之后')) + '</b> ' + b.next.correct + '/' + b.next.asked + ' · ' + esc(T('모름','Unknown','不会')) + ' ' + (b.previous.skipped + b.current.skipped + b.next.skipped) + '</p>' +
-        '<p><b>' + esc(T('본진도 후보','Main-study candidate','主要进度候选')) + '</b> ' + esc((rec.course || '') + ' · ' + T('회차','session','课次') + ' ' + (rec.session || '')) + (rec.label ? ' · ' + esc(L(rec.label)) : '') + '</p><p class="pl-reason">' + esc(L(analysis.comment)) + '</p><p>'+esc(L(analysis.limitation))+'</p><h3>'+esc(T('지금은 유지 · 관찰','Maintain · observe for now','先保持并观察'))+'</h3><p>'+esc(L(analysis.workload.reasons[0]))+'</p><p>'+esc(L(analysis.workload.note))+'</p><ul>'+analysis.path.support.map(function(row){return '<li>'+esc(L(row.label))+' · X '+row.wrong+' · '+esc(T('모름','Unknown','不会'))+' '+row.skipped+'</li>';}).join('')+'</ul>';
-      window.NM_STUDY_ROUTE.mount(box.querySelector('#plPlanner'),{lang:LANG,course:rec.course,session:rec.session});
+      var analysis = window.NM_PLACEMENT_PATHS.paperAnalysis(PLAN_NOW, marks, {goal:SHEET_SEL.goal || undefined, goalTarget:SHEET_SEL.goalTarget, cadence:SHEET_SEL.cadence || undefined});
+      var r = analysis.result, rec = analysis.path.main, b = r.bands;
+      out.innerHTML = resultHead(analysis) + '<div class="pl-detail"><p><b>' + esc(T('이전','Earlier','之前')) + '</b> ' + b.previous.correct + '/' + b.previous.asked + ' · <b>' + esc(T('현재','Current','现在')) + '</b> ' + b.current.correct + '/' + b.current.asked + ' · <b>' + esc(T('다음','Next','之后')) + '</b> ' + b.next.correct + '/' + b.next.asked + ' · ' + esc(T('모름','Unknown','不会')) + ' ' + (b.previous.skipped + b.current.skipped + b.next.skipped) + '</p>' +
+        '<p><b>' + esc(T('본진도 후보','Main-study candidate','主要进度候选')) + '</b> ' + esc((rec.course || '') + ' · ' + T('회차','session','课次') + ' ' + (rec.session || '')) + (rec.label ? ' · ' + esc(L(rec.label)) : '') + '</p><p class="pl-reason">' + esc(L(analysis.comment)) + '</p><p>'+esc(L(analysis.limitation))+'</p><h3>'+esc(T('지금은 유지 · 관찰','Maintain · observe for now','先保持并观察'))+'</h3><p>'+esc(L(analysis.workload.reasons[0]))+'</p><p>'+esc(L(analysis.workload.note))+'</p><ul>'+analysis.path.support.map(function(row){return '<li>'+esc(L(row.label))+' · X '+row.wrong+' · '+esc(T('모름','Unknown','不会'))+' '+row.skipped+'</li>';}).join('')+'</ul></div>';
+      wireGoal();
+      if(analysis.path.assessment.answered > 0 && window.NM_DIAGNOSTIC_ROADMAP && window.NM_LEARNING_PLAN){
+        roadmap.hidden = false;
+        window.NM_DIAGNOSTIC_ROADMAP.mount(roadmap, {selection:SHEET_SEL, course:rec.course, session:rec.session, lang:LANG, settings:{},
+          save:saveSheetProfile, onGoalChange:function(){ SHEET_SEL.goalTarget = ''; syncGoalUrl(); showResult('goal'); }});
+      }
+      window.NM_STUDY_ROUTE.mount(planner, {lang:LANG, course:rec.course, session:rec.session});
+      var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(move === 'result'){ out.scrollIntoView({block:'start', behavior:reduce ? 'auto' : 'smooth'}); out.focus({preventScroll:true}); }
+      else if(move === 'goal'){ var g = out.querySelector('#plGoalCard'); if(g)g.focus({preventScroll:true}); }
     }catch(e){ out.textContent = String(e && e.message || e); }
   };
-  const invalidate=function(){box.querySelector('#plOut').textContent='';if(box.querySelector('#plPlanner').__studyRoutePanel)box.querySelector('#plPlanner').__studyRoutePanel.dispose();box.querySelector('#plPlanner').replaceChildren();};
+  /* 시작 수준 = 진단 사다리의 출발 칸(무엇을 하는 수준인지) + 수의 마법 과정·회차 + 그 근거 표본.
+     목표는 고른 값만 보여 준다. 고르지 않았으면 기본값으로 채우지 않고 고르게 한다. */
+  function resultHead(analysis){
+    var path = analysis.path, rec = path.main, b = analysis.result.bands, answered = path.assessment.answered;
+    var course = (window.NM_COURSES || {})[rec.course], no = Number(String(rec.course).slice(1));
+    var group = (window.NM_STAGES || []).find(function(s){ return s.courses && no >= s.courses.from && no <= s.courses.to; });
+    var title = course ? L(course.title) : rec.course;
+    /* 채점 결과가 권하는 출발(이전·현재 오답 중 가장 이른 곳)이 기준 범위와 다르면 「먼저 보강할 곳」으로 함께 보인다.
+       로드맵 출발점은 온라인 진단 결과와 같이 기준 범위(path.main)다. */
+    var fix = analysis.result.recommendation, fixCourse = fix && (window.NM_COURSES || {})[fix.course];
+    if(!fix || !answered || (fix.course === rec.course && fix.session === rec.session))fix = null;
+    var fixNo = fix ? Number(String(fix.course).slice(1)) : 0, fixTitle = fixCourse ? L(fixCourse.title) : (fix ? fix.course : '');
+    /* 현재 진도 20문항 중 10문항이 다룬 연산: 유형 이름(첫 레벨 이름 → 끝 레벨 이름) */
+    var skills = [];
+    (rec.practiceSessions || []).forEach(function(x){
+      var th = (window.NM_THREADS || {})[x.t]; if(!th)return;
+      var lv = (th.levels || []).find(function(v){ return v.id === x.lv; }), lvName = lv && lv.label ? L(lv.label) : '';
+      var row = skills.find(function(s){ return s.t === x.t; });
+      if(!row){ skills.push({t:x.t, name:L(th.name), levels:lvName ? [lvName] : []}); }
+      else if(lvName && row.levels.indexOf(lvName) < 0)row.levels.push(lvName);
+    });
+    var skillText = skills.slice(0, 4).map(function(s){ return s.name + (s.levels.length ? '(' + (s.levels.length > 1 ? s.levels[0] + ' → ' + s.levels[s.levels.length - 1] : s.levels[0]) + ')' : ''); }).join(' · ');
+    var level = answered ? '<small>' + esc(T('진단으로 확인한 시작 수준','Starting level from this check','测评确认的起点水平')) + '</small><strong>' + esc((L(rec.label) && L(rec.label) !== title ? L(rec.label) + ' · ' : '') + T('과정 ','Course ','课程 ') + no + ' 「' + title + '」 ' + T(rec.session + '회차부터', 'from session ' + rec.session, '第' + rec.session + '课次起')) + '</strong>' +
+      (group ? '<p>' + esc(T('단계: ','Stage: ','阶段：') + L(group.name) + (group.band ? ' (' + L(group.band) + T(' 기준',' reference',' 参考') + ')' : '')) + '</p>' : '') +
+      (skillText ? '<p>' + esc(T('이 수준에서 확인한 연산: ','Arithmetic checked at this level: ','此水平确认的运算：') + skillText) + '</p>' : '') +
+      (fix ? '<p><b>' + esc(T('먼저 보강할 곳: ','Practice first: ','先补充练习：')) + '</b>' + esc(T('과정 ','Course ','课程 ') + fixNo + ' 「' + fixTitle + '」 ' + T(fix.session + '회차', 'session ' + fix.session, '第' + fix.session + '课次') + (fix.label && L(fix.label) !== fixTitle ? ' · ' + L(fix.label) : '') + T(' — 이전·현재 문항에서 틀린 곳 중 가장 이른 위치예요.',' — the earliest place among missed earlier/current items.',' — 此前与当前错题中最早的位置。')) + '</p>' : '') +
+      '<p class="pl-muted">' + esc(T('현재 진도 ','Current topic ','当前进度 ') + b.current.correct + '/' + b.current.asked + T(' 정답 · 이전 ',' correct · earlier ',' 正确 · 此前 ') + b.previous.correct + '/' + b.previous.asked + T(' · 다음(미리보기) ',' · next (preview) ',' · 后续（预览）') + b.next.correct + '/' + b.next.asked) + '</p>' +
+      (path.next ? '<p class="pl-muted">' + esc(T('다음에 이어질 수준: ','Next level: ','接下来的水平：') + L(path.next.label)) + '</p>' : '') +
+      '<p class="pl-muted">' + esc(T('고른 범위의 20문항으로 정한 연습 출발점이에요. 과정 전체를 익혔다는 판정은 아니에요.','A practice starting point from 20 questions around the chosen range, not proof of whole-course mastery.','依据所选范围20题确定的练习起点，不代表掌握全部课程。')) + '</p>'
+      : '<small>' + esc(T('진단으로 확인한 시작 수준','Starting level from this check','测评确认的起点水平')) + '</small><strong>' + esc(T('아직 확인하지 못했어요','Not determined yet','尚未确认')) + '</strong><p>' + esc(T('○·X를 체크한 뒤 다시 「추천 보기」를 눌러 주세요. 체크한 답이 없으면 시작 수준과 로드맵을 만들지 않아요.','Mark ○ or X, then press “Show suggestion” again. Without marks, no starting level or roadmap is made.','请先勾选○或X，再点击“查看建议”。没有勾选就不生成起点和路线图。')) + '</p>';
+    var goals = window.NM_PLACEMENT_PATHS.goals, targets = window.NM_PLACEMENT_PATHS.targets;
+    var goal = goals.find(function(g){ return g.id === SHEET_SEL.goal; });
+    var target = goal && goal.id === 'competition' ? targets.find(function(x){ return x.id === SHEET_SEL.goalTarget; }) : null;
+    var goalHtml = '<small>' + esc(T('선택한 학습 목표','Selected learning goal','所选学习目标')) + '</small>';
+    if(goal){
+      goalHtml += '<strong>' + esc(L(goal.label)) + '</strong>' + (target ? '<p><b>' + esc(L(target.label)) + '</b> · ' + esc(T('목표 진도와 맞추는 시점은 확인이 필요해요','Timing against this target still needs checking','与该目标进度对应的时间仍需确认')) + '</p>' : '') +
+        '<p>' + esc(L(goal.direction)) + '</p><p class="pl-muted">' + esc(L(goal.focus)) + '</p>' +
+        (answered ? '<p class="pl-muted">' + esc(T('아래 로드맵은 위 시작 수준에서 출발해 이 목표로 이어지는 월별 계획이에요.','The roadmap below starts at this level and continues toward this goal month by month.','下方路线图从上述起点出发，按月延续到此目标。')) + '</p>' : '') +
+        '<label>' + esc(T('목표 바꾸기','Change goal','更改目标')) + '<select data-sheet-goal>' + goals.map(function(g){ return '<option value="' + g.id + '"' + (g.id === goal.id ? ' selected' : '') + '>' + esc(L(g.label)) + '</option>'; }).join('') + '</select></label>' +
+        (goal.id === 'competition' ? '<label>' + esc(T('목표 진도(선택)','Target progress (optional)','目标进度（可选）')) + '<select data-sheet-target><option value="">' + esc(T('고르지 않음','Not chosen','未选择')) + '</option>' + targets.map(function(x){ return '<option value="' + x.id + '"' + (target && x.id === target.id ? ' selected' : '') + '>' + esc(L(x.label)) + '</option>'; }).join('') + '</select></label>' : '');
+    }else{
+      goalHtml += '<strong>' + esc(T('아직 고르지 않았어요','Not chosen yet','尚未选择')) + '</strong><p>' + esc(T('학습 목표는 자동으로 정하지 않아요. 아이에게 맞는 목표를 골라 주세요.','The learning goal is never chosen automatically. Choose the goal that fits the learner.','学习目标不会自动设定，请选择适合孩子的目标。')) + '</p>' +
+        '<div class="pl-goal-pick" role="group" aria-label="' + esc(T('학습 목표 고르기','Choose a learning goal','选择学习目标')) + '">' + goals.map(function(g){ return '<button type="button" data-goal-pick="' + g.id + '">' + esc(L(g.label)) + '</button>'; }).join('') + '</div>';
+    }
+    return '<div class="pl-result-head"><h2>' + esc(T('추천 결과','Suggestion','建议结果')) + '</h2><section class="pl-card' + (answered ? '' : ' is-missing') + '" id="plLevelCard" aria-label="' + esc(T('진단으로 확인한 시작 수준','Starting level from this check','测评确认的起点水平')) + '">' + level + '</section>' +
+      '<section class="pl-card' + (goal ? '' : ' is-missing') + '" id="plGoalCard" tabindex="-1" aria-label="' + esc(T('선택한 학습 목표','Selected learning goal','所选学习目标')) + '">' + goalHtml + '</section>' +
+      '<p class="pl-muted" role="status" style="grid-column:1/-1;margin:0">' + esc(answered ? T('추천 결과를 새로 만들었어요.','Suggestion updated.','建议已更新。') : T('체크한 답이 없어요.','No marks yet.','尚未勾选。')) + '</p></div>';
+  }
+  function wireGoal(){
+    out.querySelectorAll('[data-goal-pick]').forEach(function(el){ el.onclick = function(){ SHEET_SEL.goal = el.dataset.goalPick; SHEET_SEL.goalTarget = ''; syncGoalUrl(); showResult('goal'); }; });
+    var gs = out.querySelector('[data-sheet-goal]'); if(gs)gs.onchange = function(){ SHEET_SEL.goal = gs.value; SHEET_SEL.goalTarget = ''; syncGoalUrl(); showResult('goal'); };
+    var ts = out.querySelector('[data-sheet-target]'); if(ts)ts.onchange = function(){ SHEET_SEL.goalTarget = ts.value; syncGoalUrl(); showResult('goal'); };
+  }
+  box.querySelector('#plGo').onclick = function(){ showResult('result'); };
+  const invalidate=clearResult;
   box.querySelectorAll('[data-mark]').forEach(function(el){el.onclick=function(){var i=Number(el.dataset.markIndex),mark=el.dataset.mark;marks[i]=marks[i]===mark?'':mark;box.querySelectorAll('[data-mark-index="'+i+'"]').forEach(function(b){b.setAttribute('aria-pressed',String(marks[i]===b.dataset.mark));});invalidate();};});
 }
 
