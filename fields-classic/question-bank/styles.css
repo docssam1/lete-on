@@ -1488,3 +1488,9 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
 @media(max-width:640px){.ed-card-body{grid-template-columns:auto 1fr auto}.ed-level{grid-column:1;grid-row:1}.ed-del{grid-column:3;grid-row:1}.ed-q{grid-column:1/-1;grid-row:2;min-width:0;overflow-x:auto}.ed-cand header{flex-wrap:wrap}.ed-cand header span{flex-basis:calc(100% - 40px)}.ed-tabs button{font-size:14px}}
 .unit-test-head{display:flex;align-items:center;gap:10px;margin:4px 0 8px 57px}.unit-test-head strong{font-size:12px}.unit-test-head span{color:var(--muted);font-size:11px}.unit-test-head a{margin-left:auto}
 @media(max-width:560px){.unit-test-head{margin-left:28px}}
+/* 2단계: 묶음(권·단원 / 단원 테스트 / 시험지) 구분 줄과 원본 번호 */
+.ed-group{margin:6px 2px -4px;color:#d9a62e;font-size:13px;font-weight:700;letter-spacing:.02em}
+.ed-group:first-child{margin-top:0}
+.ed-src{padding:2px 7px;border-radius:4px;background:#2a241c;color:#fdfbf5;font-size:12px;font-style:normal;font-weight:600;white-space:nowrap}
+.ed-src-cell{color:#7a6f5c;font-size:12px;line-height:1.35}
+.ed-src-cell small{color:#2a241c;font-size:12px;font-weight:600}

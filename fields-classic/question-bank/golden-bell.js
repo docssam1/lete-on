@@ -6,7 +6,7 @@ import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bel
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261023h";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
 import { book02Markup } from "./book02-renderers.js?v=20261023h";
-import { book03Markup } from "./book03-renderers.js?v=20261023h";
+import { book03Markup } from "./book03-renderers.js?v=20261027a";
 import { book04Markup } from "./book04-renderers.js?v=20261023h";
 import { book05Markup } from "./book05-renderers.js?v=20261023h";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
