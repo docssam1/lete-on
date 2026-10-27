@@ -12,7 +12,7 @@ export const PARK = {
   // 들어오면 전체 지도 → 여기로 확대(x %, y %, 전체 대비 배율): 대회 본부 천막이 있는 광장
   start: { wide: [40.3, 58.5, 2] },
   // 공원 안의 다른 사람들 — 누가 누구인지는 park-chars3d.js NPC_CAST
-  npcs: { doc: { wide: [[46.6, 58.5]] }, elder: { wide: [[41, 49.3]] }, luca: { wide: [[20.8, 46.4]] }, robin: { wide: [[81, 53.6]] }, walkers: { wide: [[9.3, 74.7], [76.8, 79.1]] }, sora: { wide: [[50.3, 86.6]] }, buddies: { wide: [[23.4, 84], [33.5, 86.2]] }, momo: { wide: [[97.2, 40.3], [101.7, 52.8]] } },
+  npcs: { doc: { wide: [[46.6, 58.5]] }, elder: { wide: [[41, 49.3]] }, luca: { wide: [[20.8, 46.4]] }, robin: { wide: [[81, 53.6]] }, walkers: { wide: [[9.3, 74.7], [76.8, 79.1]] }, sora: { wide: [[50.3, 86.6]] }, buddies: { wide: [[23.4, 84], [33.5, 86.2]] }, momo: { wide: [[97.2, 40.3], [101.7, 52.8]] }, ranger: { wide: [[61.2, 53.2]] }, lifeguard: { wide: [[65.9, 85.9]] } },
   spots: [
     { id: 'gate', name: '광장 · 대회 안내', short: '안내', icon: '📋', set: null, wide: [40.3, 58.5], path: { wide: [] } },
     { id: 'pond', name: '연못 · 수련', short: '연못', icon: '🪷', set: 'observe-water', wide: [48.9, 44.1], path: { wide: [[48, 53.2], [48.6, 49.5]] } },

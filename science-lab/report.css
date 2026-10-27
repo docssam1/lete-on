@@ -509,3 +509,19 @@ body.fw-on .observe-page { padding-bottom: 58vh; }
 .fw-now { scroll-margin-top: 70px; outline: 3px solid #f2b705; outline-offset: 4px; border-radius: 6px; box-shadow: 0 0 0 8px rgba(242, 183, 5, .18); transition: outline-color .3s; }
 @media (max-width: 640px) { .fw-body { grid-template-columns: 1fr; } .fw-card { max-height: 62vh; } }
 @media print { .fw-card { display: none !important; } .fw-now { outline: 0; box-shadow: none; } }
+
+/* 공원 사람들의 말(park.js npcSay) — 아이들 말풍선처럼 배율을 되돌려 글씨 크기 그대로. 지키는 사람(관리인·안전요원)은 빨간 이름 */
+.pm-map .pk-pin { z-index: 2; }
+.pk-npc { z-index: 1; } .pk-npc.talk { z-index: 3; }
+.pk-nhit { position: absolute; left: -16px; bottom: -4px; width: 32px; height: 64px; padding: 0; border: 0; background: transparent; cursor: pointer; pointer-events: auto; }
+.pk-nsay { position: absolute; left: 0; bottom: 86px; transform: translateX(-50%) scale(calc(1 / var(--kk, .42))); transform-origin: 50% 100%; width: max-content; max-width: 210px; background: #fffdf6; color: #1f2a1f; border-radius: 12px; padding: 6px 10px; font-size: 12.5px; font-weight: 700; line-height: 1.4; box-shadow: 0 3px 12px rgba(0, 0, 0, .25); pointer-events: none; }
+.pk-nsay::after { content: ""; position: absolute; left: 50%; bottom: -7px; transform: translateX(-50%); border: 7px solid transparent; border-bottom: 0; border-top-color: #fffdf6; }
+.pk-nsay b { color: #8a5a2b; margin-right: 6px; } .pk-nsay.safe b { color: #c0392b; }
+@media (max-width: 560px) { .pm-view:not(.big) .pk-nsay { display: none !important; } }
+/* 지점에서 바로 그리기 */
+.pk-sk { margin: 10px 0; padding: 10px 12px; background: #f4f8ef; border: 1px solid #d4e3c8; border-radius: 10px; }
+.pk-sk b { color: #2f6b3a; margin-right: 8px; } .pk-sk small { display: block; margin-top: 6px; color: #5d6b55; font-size: 12px; line-height: 1.5; }
+.pk-sk-btns { display: inline-flex; flex-wrap: wrap; gap: 6px; vertical-align: middle; }
+.pk-sk-btns button { min-width: 38px; height: 34px; border-radius: 8px; border: 1.5px solid #2f6b3a; background: #fff; color: #2f6b3a; font: inherit; font-weight: 800; cursor: pointer; }
+.pk-sk-btns button.done { background: #2f6b3a; color: #fff; } .pk-sk-btns button.done::after { content: " ✓"; font-size: 11px; }
+.pk-sk-msg { margin: 6px 0 0; font-size: 13px; color: #2f6b3a; font-weight: 700; } .pk-sk-msg:empty { display: none; }
