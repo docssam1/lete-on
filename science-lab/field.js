@@ -9,13 +9,19 @@ import { mountPark } from './park.js';
 import { Stage } from './engine.js';
 import { sampleArticle, makeDrawer, scratch, esc } from './observe-sample.js';
 import { renderReport } from './report.js';
+import * as THREE from '../world-explorer/vendor/three.module.js';
 import { REPORTS } from './data/reports.js';
 
 const SPOTS = PARK.spots.filter((x) => x.set && OBSERVE_SETS.some((s) => s.id === x.set));
 const setOf = (spot) => OBSERVE_SETS.find((s) => s.id === spot.set);
 const KEY = 'sciLab.field';
-const done = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}').done || []; } catch { return []; } };
-const markDone = (id) => { try { const d = done(); if (!d.includes(id)) d.push(id); localStorage.setItem(KEY, JSON.stringify({ done: d })); } catch { /* 저장 못 해도 진행 */ } };
+const load_ = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; } };
+const save_ = (o) => { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch { /* 저장 못 해도 진행 */ } };
+const done = () => load_().done || [];
+const stamps = () => load_().stamps || [];
+const markDone = (id) => { const o = load_(); o.done = [...new Set([...(o.done || []), id])]; save_(o); };
+// 도장 = 그 장소를 끝까지 마침(Every Joule의 「도전을 마치면 도장」, 원장 2026-10-27 「좋아」)
+const markStamp = (id) => { const o = load_(); o.stamps = [...new Set([...(o.stamps || []), id])]; save_(o); };
 const nextSpot = (from) => { const d = done(), i = SPOTS.findIndex((x) => x.id === from); for (let k = 1; k <= SPOTS.length; k++) { const x = SPOTS[(i + k + SPOTS.length) % SPOTS.length]; if (!d.includes(x.id)) return x; } return null; };
 const firstSentence = (t) => (t.match(/^[^.?!]*[.?!]/) || [t])[0];
 
@@ -34,7 +40,7 @@ export function renderField($app, rest) {
 function mapScreen($app, at) {
   $app.innerHTML = `<div class="fd fd-map"><div class="fd-mapbox"></div>
     <a class="fd-home" href="#/contest/nature">← 대회 안내</a>
-    <span class="fd-hint">땅을 누르거나 ← ↑ → ↓ 키로 두 친구를 움직여요</span>${bar(false)}</div>`;
+    <span class="fd-hint">땅을 누르거나 ← ↑ → ↓ 키로 두 친구를 움직여요</span><span class="fd-stamps">🏅 도장 ${stamps().filter((x) => SPOTS.some((y) => y.id === x)).length} / ${SPOTS.length}</span>${bar(false)}</div>`;
   const $say = $app.querySelector('.fd-say'), $next = $app.querySelector('.fd-next');
   let mode = '', here = '';
   const show = (t, label = '다음 ▶', on = true) => { $say.textContent = t; $next.textContent = label; $next.disabled = !on; };
@@ -52,6 +58,8 @@ function mapScreen($app, at) {
     show(`${x.icon} ${x.name}에 왔어요! ${firstSentence(setOf(x).lead)} 「다음」을 누르면 여기서 관찰을 시작해요.`, '관찰 시작 ▶');
   };
   const park = mountPark($app.querySelector('.fd-mapbox'), { field: true, start: at, onArrive: arrive });
+  // 마친 장소의 표에 도장
+  for (const id of stamps()) $app.querySelector(`.pk-pin[data-spot="${id}"]`)?.classList.add('stamped');
   const goNext = () => { const x = nextSpot(here || at || 'gate') || SPOTS[0]; mode = 'walking'; show(`${x.icon} ${x.name}(으)로 걸어가요…`, '걸어가는 중', false); park.go(x.id); };
   const step = () => {
     if (mode === 'intro0') { mode = 'intro1'; show(`관찰할 곳에는 표가 꽂혀 있어요(모두 ${SPOTS.length}곳). 표를 직접 눌러도 되고, 「다음」을 누르면 첫 장소로 같이 걸어가요.`); return; }
@@ -82,14 +90,14 @@ function observeScreen($app, spot) {
         ${X ? sampleArticle(S) : '<p class="fd-none">이 장소의 예시 보고서는 준비 중이에요.</p>'}</section>
     </div>
     <div class="fd-bar"><span class="fd-who"><img src="./assets/docssam-A1-mouth-closed.webp" alt=""><b>독쌤</b></span><p class="fd-say" aria-live="polite"></p>
-      <span class="fd-n"></span><button type="button" class="fd-prev" aria-label="이전">◀</button><button type="button" class="fd-drew" hidden>✏ 다 그렸어요</button><button type="button" class="fd-next">다음 ▶</button></div></div>`;
+      <span class="fd-n"></span><button type="button" class="fd-prev" aria-label="이전">◀</button><span class="fd-choices" hidden></span><button type="button" class="fd-drew" hidden>✏ 다 그렸어요</button><button type="button" class="fd-next">다음 ▶</button></div></div>`;
   const $c = $app.querySelector('.fd-left canvas'), $cap = $app.querySelector('.fd-cap'), $right = $app.querySelector('.fd-right'), $say = $app.querySelector('.fd-say'), $n = $app.querySelector('.fd-n');
-  const $next = $app.querySelector('.fd-next'), $drew = $app.querySelector('.fd-drew'), $prev = $app.querySelector('.fd-prev');
+  const $next = $app.querySelector('.fd-next'), $drew = $app.querySelector('.fd-drew'), $prev = $app.querySelector('.fd-prev'), $choices = $app.querySelector('.fd-choices');
   const stage = Stage.canWebGL() ? new Stage($c) : null; if (!stage) $c.hidden = true;
   if (typeof window !== 'undefined') window.__fdStage = stage;   // 검사 스크립트용
   const snd = scratch(), D = makeDrawer($right, snd); D.reset();
   let cur = null, curSpec = -1, timers = [];
-  const load = (i) => { if (!stage || i === curSpec) return; cur?.dispose?.(); cur = M.mountSpecimen(stage, M.SPECIMENS[i]); curSpec = i; settle(); };
+  const load = (i) => { if (!stage || i === curSpec) return; cur?.dispose?.(); cur = M.mountSpecimen(stage, M.SPECIMENS[i]); curSpec = i; hidLabels = []; settle(); };
   // ── 카메라가 함께 움직인다(원장 「화면도 같이 움직여야지」): 단계마다 그 각도(aim)로 1초쯤 걸려 미끄러져 가고, 가만히 있을 때는 좌우로 천천히 흔들려 입체가 보인다.
   // 각도를 바꿀 때마다 엔진의 home도 같이 옮겨 자동 맞춤(거리·가운데)이 계속 맞게 한다. 손으로 돌리면(「처음 시점」 단추가 뜸) 그동안은 손대지 않는다.
   let aim = null, swayT0 = 0, hold = 0, camRaf = 0, last = performance.now();
@@ -104,6 +112,37 @@ function observeScreen($app, spot) {
     o.theta += d * k; o.phi += (aim.ph - o.phi) * k; if (h) { h.theta = o.theta; h.phi = o.phi; }
   };
   camRaf = requestAnimationFrame(director);
+  // ── 종이 그림이 3D로 일어선다(Every Joule 「Watch the drawing lift off the page」): 표본이 처음 나올 때 그 표본의 연필 스케치가 그려진 종이 위에서
+  // 납작했던 장면이 솟아오르고, 「같이 그려 볼까요?」에서는 다시 종이 위로 눕는다(그리는 것은 위에서 본 모습이므로). 종이는 장면 밖(scene)에 두어 표본을 바꿔도 남는다.
+  const paperMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, toneMapped: false });
+  const paper = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 4.8), paperMat); paper.rotation.x = -Math.PI / 2; paper.position.y = 0.14; paper.renderOrder = 5; paper.userData.noFrame = true; paper.visible = false;
+  stage?.scene.add(paper);
+  const texCache = new Map();
+  const sketchTex = (i) => {
+    if (texCache.has(i)) return texCache.get(i);
+    const href = $right.querySelector(`.rp-obs-row[data-obs="${i}"] svg image`)?.getAttribute('href');
+    const cv = document.createElement('canvas'); cv.width = cv.height = 1024; const c = cv.getContext('2d');
+    c.fillStyle = '#fbf6ea'; c.fillRect(0, 0, 1024, 1024); c.strokeStyle = 'rgba(120,150,190,.25)'; c.lineWidth = 2; for (let y = 60; y < 1024; y += 48) { c.beginPath(); c.moveTo(0, y); c.lineTo(1024, y); c.stroke(); }
+    const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+    if (href) { const im = new Image(); im.onload = () => { const f = Math.min(860 / im.width, 860 / im.height), w = im.width * f, h = im.height * f; c.drawImage(im, (1024 - w) / 2, (1024 - h) / 2, w, h); tex.needsUpdate = true; }; im.src = href; }
+    texCache.set(i, tex); return tex;
+  };
+  let tween = 0, hidLabels = [];
+  // 떠 있는 이름표(라벨)는 납작해지면 검은 줄처럼 보인다 — 납작한 동안 숨겼다가 펴지면 되돌린다
+  const labels = (hide) => { if (!stage) return; if (hide) { stage.root.traverse((o) => { if (o.userData?.isLabel && o.visible) { o.visible = false; hidLabels.push(o); } }); } else { hidLabels.forEach((o) => { o.visible = true; }); hidLabels = []; } };
+  const animate = (dur, fn, end) => { cancelAnimationFrame(tween); const t0 = performance.now(); const f = (now) => { const t = reduced ? 1 : Math.min(1, (now - t0) / dur); fn(t); if (t < 1) tween = requestAnimationFrame(f); else end?.(); }; tween = requestAnimationFrame(f); };
+  const backOut = (t) => 1 + 2.2 * (t - 1) ** 3 + 1.2 * (t - 1) ** 2;
+  // 펴진 상태로(종이 숨김, 자동 맞춤 다시 켬)
+  const upright = () => { cancelAnimationFrame(tween); if (!stage) return; stage.root.scale.y = 1; paper.visible = false; paperMat.opacity = 0; labels(false); if (!stage.autoFit) { stage.autoFit = true; stage._needFit = true; } };
+  const popUp = (i) => {
+    if (!stage) return; paperMat.map = sketchTex(i); paperMat.needsUpdate = true; paper.visible = true; stage.autoFit = false; labels(true);
+    stage.root.scale.y = 0.02; paperMat.opacity = 1;
+    animate(1400, (t) => { stage.root.scale.y = Math.max(0.02, backOut(t)); paperMat.opacity = Math.max(0, 1 - t * 1.6); }, () => upright());
+  };
+  const layDown = (i) => {
+    if (!stage) return; paperMat.map = sketchTex(i); paperMat.needsUpdate = true; paper.visible = true; stage.autoFit = false; labels(true);
+    animate(1100, (t) => { const e = t * t * (3 - 2 * t); stage.root.scale.y = 1 - 0.97 * e; paperMat.opacity = Math.max(0, (t - 0.45) / 0.55); });
+  };
   $c.addEventListener('pointerdown', () => { hold = performance.now() + 5000; });
   load(0);
   const acts = () => (cur ? cur.actions() : []);
@@ -124,14 +163,17 @@ function observeScreen($app, spot) {
   });
   load(0);
   const envIds = env(), hasFind = acts().some((a) => a.id === 'find'), two = !!cur?.places;
+  // 잴 것마다 「어디가 더 ~할까요?」 — 정답은 표본 모듈의 장소 값(모형 값)으로 정한다. 값이 없으면 묻지 않는다
+  const PRED = { soil: ['어느 곳이 더 축축할까요?', 'wet'], temp: ['어느 곳이 더 따뜻할까요?', 'temp'], stick: ['같은 힘으로 누르면 어디에 꼬챙이가 더 깊이 들어갈까요?', 'poke'], grain: ['어느 곳 모래알이 더 굵을까요?', 'grain'], profile: ['어느 곳 낙엽층이 더 두꺼울까요?', 'litter'], sun: ['어느 곳이 더 밝을까요?', 'bright'], find: ['어느 곳에서 더 많이 찾을까요?', 'count'] };
+  const predictOf = (a) => { const p = PRED[a], [A, B] = cur?.places || []; if (!p || !A || !B) return null; const v = (x) => (p[1] === 'count' ? (x.count || []).reduce((m, n) => m + n, 0) : x[p[1]]); const va = v(A), vb = v(B); if (typeof va !== 'number' || typeof vb !== 'number') return null; return { q: p[0], ans: Math.abs(va - vb) <= Math.max(Math.abs(va), Math.abs(vb)) * 0.08 ? 'same' : va > vb ? 'A' : 'B' }; };
   (X?.extra || []).forEach((e, i) => { steps.push({ kind: 'think', sec: `x${i}`, reveal: `x${i}`, q: `${e.title} — 무엇이 보일까요?` }); if (e.draw) steps.push({ kind: 'draw', sec: `x${i}`, draw: `x${i}`, say: '같이 그려 볼까요? 양식의 빈 곳에 함께 그려요.' }); });
-  if (X?.env && envIds.length) { envIds.forEach((a) => steps.push({ kind: 'look', sec: 'env', act: a, both: two, view: 'angle', say: '' })); steps.push({ kind: 'think', sec: 'env', reveal: 'env', q: ask('env', '두 장소는 무엇이 달랐나요? 왜 그럴까요?') }); }
-  if (X) { if (hasFind) steps.push({ kind: 'look', sec: 'table', act: 'find', both: two, say: '같은 넓이의 틀 안에서 찾은 것을 종류별로 세어요. 두 장소를 같은 방법으로 세야 비교가 돼요.' }); steps.push({ kind: 'think', sec: 'table', reveal: 'table', q: ask('result', '찾은 것을 표에 어떻게 정리할까요?') }); }
+  if (X?.env && envIds.length) { envIds.forEach((a) => steps.push({ kind: 'look', sec: 'env', act: a, both: two, view: 'angle', say: '', predict: two ? predictOf(a) : null })); steps.push({ kind: 'think', sec: 'env', reveal: 'env', q: ask('env', '두 장소는 무엇이 달랐나요? 왜 그럴까요?') }); }
+  if (X) { if (hasFind) steps.push({ kind: 'look', sec: 'table', act: 'find', both: two, predict: two ? predictOf('find') : null, say: '같은 넓이의 틀 안에서 찾은 것을 종류별로 세어요. 두 장소를 같은 방법으로 세야 비교가 돼요.' }); steps.push({ kind: 'think', sec: 'table', reveal: 'table', q: ask('result', '찾은 것을 표에 어떻게 정리할까요?') }); }
   if (X?.tree) steps.push({ kind: 'think', sec: 'tree', reveal: 'tree', q: ask('classify', '어떤 기준으로 둘씩 나눌 수 있을까요? 누가 봐도 같게 나뉘는 기준부터.') });
   if (X) steps.push({ kind: 'think', sec: 'venn', reveal: 'venn', q: '두 가지를 골라 볼까요? 같은 점과 다른 점은 무엇일까요?' });
   if (X?.adapt) steps.push({ kind: 'think', sec: 'adapt', reveal: 'adapt', q: ask('adapt', '생김새는 사는 곳에서 어떤 점이 좋을까요?') });
   if (X) steps.push({ kind: 'think', sec: 'next', reveal: 'next', q: ask('next', '더 알아보고 싶은 것은 무엇인가요? 무엇을 바꾸고, 무엇을 재고, 무엇을 같게 할까요?') });
-  steps.push({ kind: 'end', say: '끝! 이제 「🖨 보고서 양식 인쇄」로 뽑아서, 오른쪽 예시를 보며 직접 그리고 써 봐요. 생각이 다르면 다르게 써도 돼요.' });
+  steps.push({ kind: 'end', say: `도장 쾅! ${spot.name} 관찰을 마쳤어요. 이제 「🖨 보고서 양식 인쇄」로 뽑아서, 오른쪽 예시를 보며 직접 그리고 써 봐요. 생각이 다르면 다르게 써도 돼요.` });
 
   // 가릴 칸: think 단계가 드러내는 것(reveal) — 관찰 줄은 글만, 나머지는 칸 몸통
   const maskEl = (key) => (key.startsWith('obs') ? $right.querySelector(`.rp-obs-row[data-obs="${key.slice(3)}"] .rp-obs-text`) : $right.querySelector(`[data-sec="${key}"] .rp-body`));
@@ -147,6 +189,8 @@ function observeScreen($app, spot) {
     $say.textContent = say.trim();
     $next.textContent = st.kind === 'end' ? '🖨 보고서 양식 인쇄' : st.kind === 'think' && !open ? '다음 ▶ (내용 보기)' : '다음 ▶';
     $next.classList.toggle('print', st.kind === 'end'); $drew.hidden = st.kind !== 'draw'; $prev.disabled = k === 0;
+    const asking = !!st.predict && !st.chosen; $choices.hidden = !asking;
+    if (asking) { $say.textContent = `예상해 볼까요? ${st.predict.q}`; $choices.innerHTML = [['A', cur?.places?.[0]?.name || '장소 A'], ['B', cur?.places?.[1]?.name || '장소 B'], ['same', '비슷해요']].map(([v, l]) => `<button type="button" data-pick="${v}">${esc(l)}</button>`).join(''); $next.textContent = '건너뛰기 ▶'; }
   };
   const go = (to) => {
     clear(); D.stop(); k = Math.max(0, Math.min(steps.length - 1, to)); open = false; const st = steps[k];
@@ -154,11 +198,14 @@ function observeScreen($app, spot) {
     if (st.spec != null) load(st.spec);
     if (cur?.places && (st.sec === 'env' || st.sec === 'table')) cur.setPlace(cur.places[0].id);
     if (st.view && st.act !== 'find') glide(st.view);
-    // 생각하기 단계의 동작은 「다음(내용 보기)」을 누를 때 한다 — 먼저 해 버리면 답을 보여 주는 셈
-    const note = cur && st.act && st.kind !== 'think' ? cur.run(st.act) : '';
+    // 종이에서 일어서기(표본이 처음 나올 때) · 종이로 눕기(같이 그리기) · 그 밖에는 펴진 채
+    if (st.kind === 'look' && st.sec === 'obs' && !st.act && st.obs != null) popUp(st.obs); else if (st.kind === 'draw' && st.obs != null) layDown(st.obs); else upright();
+    // 생각하기 단계의 동작은 「다음(내용 보기)」을 누를 때, 예상 단계는 고른 뒤에 한다 — 먼저 해 버리면 답을 보여 주는 셈
+    st.chosen = null;
+    const note = cur && st.act && st.kind !== 'think' && !st.predict ? cur.run(st.act) : '';
     // 틀 찾기는 엔진이 위에서 내려다보는 각도로 바꿨다가 끝나면 되돌린다 — 그동안 카메라를 놓아 둔다
     if (st.act === 'find') aim = null;
-    if (cur && st.act && st.both) timers.push(setTimeout(() => { cur.setPlace(cur.places[1].id); cur.run(st.act); }, 6500));
+    if (cur && st.act && st.both && !st.predict) timers.push(setTimeout(() => { cur.setPlace(cur.places[1].id); cur.run(st.act); }, 6500));
     st.note = '';
     if (st.sec === 'env' && st.kind === 'look') st.say = `${note || ''}${st.both ? ' 장소 A를 잰 뒤 장소 B도 같은 방법으로 재요.' : ''}`;
     else if (st.kind === 'look' && st.sec === 'obs' && st.act) st.say = note || '';
@@ -173,9 +220,11 @@ function observeScreen($app, spot) {
     const drawn = new Set(steps.slice(0, k).map((x) => x.draw).filter(Boolean));
     D.plans.forEach((p) => { if (drawn.has(p.key)) D.show(p.key); else D.hide(p.key); });
     // 연필 소리는 내지 않는다(원장 2026-10-27 「그리는 소리 거슬려」)
-    if (st.kind === 'end') D.finishAll(); else if (st.draw) D.draw(st.draw);
+    if (st.kind === 'end') { D.finishAll(); markStamp(spot.id); showStamp(); } else if (st.draw) D.draw(st.draw);
     render();
   };
+  // 도장: 보고서 위에 쾅(한 번 찍힌 자리는 다시 찍지 않는다)
+  const showStamp = () => { if ($right.querySelector('.fd-stamp')) return; const $s = document.createElement('div'); $s.className = 'fd-stamp'; $s.innerHTML = `<b>참 잘했어요</b><i>${spot.icon}</i><small>${esc(spot.short || spot.name)}</small>`; $right.appendChild($s); };
   const printIt = (what) => {
     clear(); D.finishAll(); $right.querySelectorAll('.fd-hide').forEach((e) => e.classList.remove('fd-hide'));
     const $p = document.createElement('div'); $p.className = 'fd-print-sheet'; document.body.appendChild($p);
@@ -186,6 +235,17 @@ function observeScreen($app, spot) {
   };
   const forward = () => { const st = steps[k]; if (st.kind === 'end') return printIt('form'); if (st.kind === 'think' && !open) { open = true; if (cur && st.act) st.note = cur.run(st.act) || ''; render(); return; } go(k + 1); };
   $next.onclick = forward;
+  const LABEL = { A: '장소 A', B: '장소 B', same: '비슷해요' };
+  $choices.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-pick]'), st = steps[k]; if (!b || !st?.predict || st.chosen) return;
+    st.chosen = b.dataset.pick; render();
+    const note = cur.run(st.act) || '';
+    $say.textContent = `「${LABEL[st.chosen]}」(이)라고 예상했어요. ${note} 장소 A를 잰 뒤 장소 B도 같은 방법으로 재요.`;
+    timers.push(setTimeout(() => { cur.setPlace(cur.places[1].id); cur.run(st.act); }, 6500));
+    timers.push(setTimeout(() => { const hit = st.chosen === st.predict.ans; $say.textContent = hit ? `예상이 맞았어요! ✓ 결과는 「${LABEL[st.predict.ans]}」. 보고서에 잰 방법과 결과를 함께 적어요.` : `예상과 달랐어요. 결과는 「${LABEL[st.predict.ans]}」 — 왜 그럴까요? 다르게 나온 까닭을 생각해 보는 것도 좋은 관찰이에요.`; }, 12500));
+  });
+  // 덮개(가린 칸)를 눌러도 들춰진다 — 지금 단계가 그 칸을 묻는 중일 때만
+  $right.addEventListener('click', (e) => { const h = e.target.closest('.fd-hide'), st = steps[k]; if (!h || st?.kind !== 'think' || open || maskEl(st.reveal) !== h) return; forward(); });
   $drew.onclick = () => { D.finishAll(); $say.textContent = '잘했어요! 예시와 견주어 보고, 빠뜨린 이름표나 자가 있으면 더해요.'; $drew.hidden = true; timers.push(setTimeout(() => go(k + 1), 1600)); };
   $prev.onclick = () => go(k - 1);
   $app.querySelectorAll('[data-print]').forEach((b) => { b.onclick = () => printIt(b.dataset.print); });
@@ -194,5 +254,5 @@ function observeScreen($app, spot) {
   markDone(spot.id);
   if (typeof window !== 'undefined') window.__field = { steps: steps.length, go: (i) => go(i), next: forward, k: () => k, kinds: steps.map((x) => x.kind) };
   go(0);
-  return () => { clear(); D.stop(); snd.off(); cancelAnimationFrame(camRaf); removeEventListener('keydown', onKey); cur?.dispose?.(); stage?.dispose(); };
+  return () => { clear(); D.stop(); snd.off(); cancelAnimationFrame(camRaf); cancelAnimationFrame(tween); paper.geometry.dispose(); paperMat.dispose(); texCache.forEach((t) => t.dispose()); removeEventListener('keydown', onKey); cur?.dispose?.(); stage?.dispose(); };
 }
