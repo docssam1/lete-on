@@ -174,7 +174,8 @@ async function auditDockStructure(page, context) {
     });
     check(`selection-dock-structure:${context}`, result.exists && result.insidePanel && result.outsideBody
       && result.hasSummary && result.hasBuildButton && result.hasSettingsJump
-      && result.position === "sticky" && result.bottom >= 0, { context, result });
+      // 넓은 화면은 화면 가득 틀(2026-10-27)이라 아래 줄이 오른쪽 칸 맨 아래에 붙어 있다(static), 좁으면 따라 내려온다(sticky)
+      && (result.position === "sticky" || (result.position === "static" && /desktop/.test(context))) && result.bottom >= 0, { context, result });
   } catch (error) {
     check(`selection-dock-structure:${context}`, false, { context, error: errorText(error) });
   }
@@ -323,6 +324,7 @@ async function auditBuildWorkflow(page, viewport) {
     const button = page.locator("#buildButton");
     check(`build-button-enabled:${context}`, await button.isEnabled(), { context });
     await button.click();
+    await page.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
     await page.locator("#worksheetSection").waitFor({ state: "visible", timeout: 30000 });
     await settle(page);
     const questionCount = await page.locator(".question-card").count();
@@ -340,7 +342,8 @@ async function auditBuildWorkflow(page, viewport) {
       await fs.writeFile(path.join(output, "worksheet-no-answers.pdf"), pdf);
       await page.emulateMedia({ media: "screen" });
     }
-    await page.locator("#backToBuilder").click();
+    await page.locator("#backToBuilder").click();   // 인쇄 화면 → 2단계 상세 편집 → 1단계 범위 선택
+    await page.locator("#edPrev").click();
     await settle(page);
     check(`back-to-builder:${context}`, await page.locator("#builderPanel").isVisible() && await page.locator("#worksheetSection").isHidden(), { context });
     await auditDockStructure(page, context);

@@ -55,7 +55,7 @@ try {
   const requestedCount = answerBookId ? selected.length : 20;
   await page.locator("#questionCount").fill(String(requestedCount));
   await page.locator("#questionCount").dispatchEvent("change");
-  await page.locator("#buildButton").click();
+  await page.locator("#buildButton").click(); await page.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
   await page.locator("#worksheetSection").waitFor({ state: "visible", timeout: 30000 });
   assert.equal(await page.locator(".question-card").count(), requestedCount, "The stress worksheet must contain every requested question");
 

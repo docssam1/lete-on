@@ -57,6 +57,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       continue;
     }
     await build.click();
+    await page.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
     await page.locator(".question-card").first().waitFor({ state: "visible" });
     const screen = await page.locator(".question-card").evaluateAll((cards) => cards.map((card) => ({
       reference: card.querySelector(".question-reference")?.textContent?.trim() || "",

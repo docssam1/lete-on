@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f3f7fa" />
   <title>Gifted Math Bank 문제은행</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./styles.css?v=20261024e" />
+  <link rel="stylesheet" href="./styles.css?v=20261027b" />
   <link rel="stylesheet" href="./print-templates.css?v=20261024a" />
   <link rel="stylesheet" href="./cover-designs.css?v=20261024a" />
 </head>
@@ -21,7 +21,7 @@
     <section class="builder-panel" id="builderPanel">
       <div class="step-head">
         <div><span>STEP 1</span><strong>문제 범위 선택</strong></div>
-        <ol><li class="active">1 범위 선택</li><li>2 문제 확인</li><li>3 인쇄 설정</li></ol>
+        <ol><li class="active">1 범위 선택</li><li>2 상세 편집</li><li>3 인쇄 설정</li></ol>
       </div>
 
       <div class="builder-tabs" id="builderTabs" role="tablist" aria-label="문제 선택 방식">
@@ -106,8 +106,37 @@
       </div>
     </section>
 
+    <!-- 2단계 학습지 상세 편집(원장 2026-10-27): 왼쪽 단원 요약·새 문제 추가·쌍둥이 유사, 오른쪽 선택한 문제 목록 -->
+    <section id="editorSection" class="bk-editor" hidden>
+      <div class="step-head">
+        <div><span>STEP 2</span><strong>학습지 상세 편집</strong></div>
+        <ol><li>1 범위 선택</li><li class="active">2 상세 편집</li><li>3 인쇄 설정</li></ol>
+        <button type="button" class="ed-close" id="edClose">범위 다시 선택</button>
+      </div>
+      <div class="ed-body">
+        <section class="ed-left" aria-label="문제 편집 도구">
+          <div class="ed-tabs" role="tablist">
+            <button type="button" role="tab" data-ed-tab="summary" aria-selected="true">단원 요약</button>
+            <button type="button" role="tab" data-ed-tab="add" aria-selected="false">새 문제 추가</button>
+            <button type="button" role="tab" data-ed-tab="twin" aria-selected="false">쌍둥이 · 유사</button>
+          </div>
+          <div class="ed-pane" id="edPane"></div>
+        </section>
+        <section class="ed-right" aria-label="선택한 문제 목록">
+          <header class="ed-right-head"><strong>선택한 문제 목록</strong><span id="edListMeta"></span></header>
+          <div class="ed-list" id="edList"></div>
+          <footer class="ed-foot">
+            <button type="button" class="ed-prev" id="edPrev">이전</button>
+            <span class="ed-stats" id="edStats"></span>
+            <strong class="ed-total" id="edTotal"></strong>
+            <button type="button" class="ed-next" id="edNext">다음 단계 →</button>
+          </footer>
+        </section>
+      </div>
+    </section>
+
     <section id="worksheetSection" class="worksheet-section" hidden>
-      <div class="worksheet-actions"><button id="backToBuilder" type="button">범위 다시 선택</button><div><button id="regenerateButton" type="button">새 문제</button><button id="answerButton" type="button">답안 보기</button><button id="printButton" class="primary" type="button">문제 인쇄</button></div></div>
+      <div class="worksheet-actions"><button id="backToBuilder" type="button">← 상세 편집</button><div><button id="regenerateButton" type="button">새 문제</button><button id="answerButton" type="button">답안 보기</button><button id="printButton" class="primary" type="button">문제 인쇄</button></div></div>
       <div id="printTemplatePanel" class="pt-panel-host"></div>
       <div id="printTemplateLead" class="pt-lead"></div>
       <div class="worksheet-head"><span id="worksheetLessonNo" class="pt-lesson-no pt-only-lesson" aria-hidden="true">1</span><div><span id="worksheetBand">GIFTED MATH BANK</span><h1 id="worksheetTitle">맞춤 모의고사</h1><p id="worksheetGoal" class="pt-lesson-goal pt-only-lesson"></p></div><dl><div class="pt-only-exam"><dt>반</dt><dd></dd></div><div><dt>이름</dt><dd id="worksheetStudent">DEMO</dd></div><div class="pt-only-exam"><dt>날짜</dt><dd></dd></div><div><dt>점수</dt><dd></dd></div></dl></div>
@@ -127,6 +156,6 @@
   <script src="../../geometry/worksheet/generators.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/render.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/card.js?v=20260829g"></script>
-  <script type="module" src="./app.js?v=20261028z"></script>
+  <script type="module" src="./app.js?v=20261027b"></script>
 </body>
 </html>

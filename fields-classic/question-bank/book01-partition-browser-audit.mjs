@@ -24,7 +24,7 @@ try {
   }
   await page.locator("#questionCount").fill("2");
   await page.locator("#questionCount").dispatchEvent("change");
-  await page.locator("#buildButton").click();
+  await page.locator("#buildButton").click(); await page.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
   assert.equal(await page.locator("#questionGrid .b1-rotational-partition").count(), 2, "rotational partition worksheet count mismatch");
   assert.equal(await page.locator("#questionGrid .b1-rotational-partition .b1-rotation-line.given").count(), 2, "each problem must reveal one complete red guide path");
   assert.equal(await page.locator("#questionGrid .answer-line").count(), 0, "drawing question incorrectly renders a text answer line");
@@ -55,7 +55,7 @@ try {
   }
   await mobile.locator("#questionCount").fill("2");
   await mobile.locator("#questionCount").dispatchEvent("change");
-  await mobile.locator("#buildButton").click();
+  await mobile.locator("#buildButton").click(); await mobile.locator("#edNext").click();   // 2단계 상세 편집을 지나 인쇄 화면으로
   assert.equal(await mobile.locator("#questionGrid .b1-rotational-partition").count(), 2, "mobile partition worksheet count mismatch");
   assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1), false, "mobile horizontal overflow");
   console.log(`BOOK01_PARTITION_BROWSER_OK guidePoints=${guidePointCounts.join(",")} answerLines=${answerLineCounts.join(",")} mobile=2 printPages=${printPages}`);
