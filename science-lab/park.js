@@ -29,7 +29,7 @@ export function mountPark($host) {
         ${Object.keys(PARK.npcs || {}).filter((id) => NPC_CAST[id]).map((id) => `<div class="pk-npc" data-npc="${id}" aria-hidden="true"><canvas width="132" height="120"></canvas></div>`).join('')}
         <div class="pk-kids" aria-hidden="true"><div class="pk-say" hidden></div><div class="pk-kid3d"><canvas width="132" height="120"></canvas><b class="nr">나래</b><b class="dy">도윤</b></div></div></div>
       <div class="pm-title"><b>${esc(PARK.title)}</b><span>지도를 끌어서 둘러보고, 말꼬리 표를 눌러요</span></div>
-      <div class="pm-ctrl"><button type="button" data-z="1" aria-label="확대">＋</button><button type="button" data-z="-1" aria-label="축소">－</button><button type="button" data-z="0">전체 지도</button></div>
+      <div class="pm-ctrl"><button type="button" data-z="1" aria-label="확대">＋</button><button type="button" data-z="-1" aria-label="축소">－</button><button type="button" data-z="0">전체 지도</button><button type="button" class="pm-big" data-big>⛶ 가로로 크게</button><button type="button" class="pm-close" data-close>✕ 닫기</button></div>
       ${PARK.placeholder ? '<span class="pm-temp">임시 그림 — 실사 조감도로 바뀔 자리</span>' : ''}
     </div>
     <div class="pk-panel" hidden aria-live="polite"></div>`;
@@ -39,7 +39,8 @@ export function mountPark($host) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   // --kk = 사람들이 화면에서 보이는 배율. 원장 「캐릭터가 더 작아야지」 → 전체 지도 0.42, 확대할수록 조금씩(최대 0.85)
   let KK = 0.42;
-  const apply = () => { KK = Math.min(0.85, 0.42 * Math.sqrt(s / fit)); $m.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; $m.style.setProperty('--s', s); $m.style.setProperty('--kk', KK); };
+  // 지도 상자가 좁으면(폰 미리 보기) 그만큼 더 작게 — 상자 폭 900px 아래로는 폭에 비례
+  const apply = () => { KK = Math.min(0.85, 0.42 * Math.sqrt(s / fit)) * Math.min(1, $v.clientWidth / 900); $m.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; $m.style.setProperty('--s', s); $m.style.setProperty('--kk', KK); };
   // 그림이 화면을 벗어나 빈 곳이 보이지 않게(전체 지도일 때는 가운데)
   const clamp = () => { const W = $v.clientWidth, H = $v.clientHeight, w = I.w * s, h = I.h * s; tx = w <= W ? (W - w) / 2 : Math.min(0, Math.max(W - w, tx)); ty = h <= H ? (H - h) / 2 : Math.min(0, Math.max(H - h, ty)); };
   const view = (x, y, zs) => { const W = $v.clientWidth, H = $v.clientHeight; const ns = fit * zs; return { s: ns, tx: W / 2 - (x / 100) * I.w * ns, ty: H / 2 - (y / 100) * I.h * ns }; };
@@ -95,7 +96,8 @@ export function mountPark($host) {
     const line = (i) => { $say.innerHTML = `<b>${esc(q[i])}</b>${esc(q[i + 1])}`; $say.hidden = false; $say.style.marginLeft = '0px'; $say.style.setProperty('--tail', '50%');
       // 지도 가장자리에서는 말풍선을 안쪽으로 밀고 꼬리만 아이들 쪽에 남긴다(말풍선은 화면에서 --kk배 크기)
       // 말풍선은 아이들 배율(--kk)을 되돌려 늘 같은 크기 → 옮길 거리는 부모(아이들) 단위로 sh/KK, 꼬리는 말풍선 단위(=화면)로 sh
-      const r = $say.getBoundingClientRect(), V = $v.getBoundingClientRect(), sh = r.right > V.right - 8 ? V.right - 8 - r.right : r.left < V.left + 8 ? V.left + 8 - r.left : 0;
+      const r = $say.getBoundingClientRect(), V = $v.getBoundingClientRect();
+      const sh = rot ? (r.bottom > V.bottom - 8 ? V.bottom - 8 - r.bottom : r.top < V.top + 8 ? V.top + 8 - r.top : 0) : (r.right > V.right - 8 ? V.right - 8 - r.right : r.left < V.left + 8 ? V.left + 8 - r.left : 0);
       if (sh) { $say.style.marginLeft = `${sh / KK}px`; $say.style.setProperty('--tail', `calc(50% - ${sh}px)`); } };
     line(0); kid.sayT = setTimeout(() => { line(2); kid.sayT = setTimeout(() => { $say.hidden = true; }, 2600); }, 2600); };
   const stopWalk = () => { cancelAnimationFrame(kid.raf); kid.walk = null; $kids.classList.remove('walk'); K3.setWalking(false); };
@@ -119,7 +121,8 @@ export function mountPark($host) {
     kid.raf = requestAnimationFrame(step); };
 
   const load = (intro) => {
-    kind = $v.clientWidth / Math.max(1, $v.clientHeight) < 0.8 ? 'tall' : 'wide'; I = PARK.images[kind]; G = graph();
+    // 그림은 가로 한 장 — 폰은 「가로로 크게」(가로 전체 화면)로 본다(원장 2026-10-27 「가로 모달로 하면 되지」)
+    kind = 'wide'; I = PARK.images[kind]; G = graph();
     $m.style.width = `${I.w}px`; $m.style.height = `${I.h}px`; place();
     fit = Math.min($v.clientWidth / I.w, $v.clientHeight / I.h);
     const st = PARK.start[kind], go = view(st[0], st[1], st[2]);
@@ -130,17 +133,20 @@ export function mountPark($host) {
     setTimeout(() => { if (!alive) return; kid.follow = false; fly(go, 2600, showPins); kid.spot = 'gate'; $pins.forEach((b) => b.classList.toggle('here', b.dataset.spot === 'gate')); walkTo(key(hub()), 2500, () => say(HELLO)); }, 900);
   };
   $img.onload = () => load(true);
-  $img.src = PARK.images[$v.clientWidth / Math.max(1, $v.clientHeight) < 0.8 ? 'tall' : 'wide'].src;
+  $img.src = PARK.images.wide.src;
   // 끌기·두 손가락 확대
+  // 세로로 든 폰에서 「가로로 크게」는 지도 상자를 90° 돌려 그린다 → 손가락 좌표를 상자 안 좌표로 바꿔 쓴다(돌린 상자: 안쪽 x = 화면 y, 안쪽 y = 화면 폭 − 화면 x)
+  let rot = false;
+  const loc = (e) => { if (rot) return [e.clientY, innerWidth - e.clientX]; const r = $v.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
   const pts = new Map(); let moved = 0, pinch = 0;
-  $v.addEventListener('pointerdown', (e) => { if (e.target.closest('.pm-ctrl')) return; pts.set(e.pointerId, [e.clientX, e.clientY]); moved = 0; cancelAnimationFrame(anim); kid.follow = false; if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = Math.hypot(a[0] - b[0], a[1] - b[1]); } });
-  $v.addEventListener('pointermove', (e) => { const p = pts.get(e.pointerId); if (!p) return; const dx = e.clientX - p[0], dy = e.clientY - p[1];
+  $v.addEventListener('pointerdown', (e) => { if (e.target.closest('.pm-ctrl, .pk-panel')) return; pts.set(e.pointerId, loc(e)); moved = 0; cancelAnimationFrame(anim); kid.follow = false; if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = Math.hypot(a[0] - b[0], a[1] - b[1]); } });
+  $v.addEventListener('pointermove', (e) => { const p = pts.get(e.pointerId); if (!p) return; const q = loc(e), dx = q[0] - p[0], dy = q[1] - p[1];
     if (pts.size === 1) { moved += Math.abs(dx) + Math.abs(dy); if (moved > 6) { $v.setPointerCapture?.(e.pointerId); tx += dx; ty += dy; clamp(); apply(); } }
-    pts.set(e.pointerId, [e.clientX, e.clientY]);
-    if (pts.size === 2) { const [a, b] = [...pts.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]), r = $v.getBoundingClientRect(); if (pinch) zoomAt(d / pinch, (a[0] + b[0]) / 2 - r.left, (a[1] + b[1]) / 2 - r.top); pinch = d; moved = 99; } });
+    pts.set(e.pointerId, q);
+    if (pts.size === 2) { const [a, b] = [...pts.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch) zoomAt(d / pinch, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2); pinch = d; moved = 99; } });
   const up = (e) => { pts.delete(e.pointerId); if (pts.size < 2) pinch = 0; };
   ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => $v.addEventListener(t, up));
-  $v.addEventListener('wheel', (e) => { if (!e.ctrlKey) return; e.preventDefault(); const r = $v.getBoundingClientRect(); zoomAt(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+  $v.addEventListener('wheel', (e) => { if (!e.ctrlKey) return; e.preventDefault(); const q = loc(e); zoomAt(e.deltaY < 0 ? 1.15 : 1 / 1.15, q[0], q[1]); }, { passive: false });
   $host.querySelectorAll('[data-z]').forEach((b) => b.addEventListener('click', () => { const z = +b.dataset.z; kid.follow = false; if (!z) return fly({ s: fit, tx: 0, ty: 0 }, 700); zoomAt(z > 0 ? 1.4 : 1 / 1.4, $v.clientWidth / 2, $v.clientHeight / 2); }));
   // 표 → 그 자리의 관찰
   const open = (id) => {
@@ -154,7 +160,7 @@ export function mountPark($host) {
         <div class="pk-go"><a class="pk-btn" href="#/contest/nature" data-guide>대회 안내 읽기 ↓</a></div>`}`;
     $panel.querySelector('[data-guide]')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('ct-guide')?.scrollIntoView({ behavior: 'smooth' }); });
     say(q);
-    $panel.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    if (!big) $panel.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' }); else $panel.scrollTop = 0;
   };
   const go = (id) => {
     $pins.forEach((b) => b.classList.toggle('on', b.dataset.spot === id)); $pins.forEach((b) => b.classList.remove('here'));
@@ -162,8 +168,34 @@ export function mountPark($host) {
     walkTo(key(stand(id)), 0, () => { if (kid.spot === id) open(id); });
   };
   $pins.forEach((b) => b.addEventListener('click', (e) => { if (moved > 6) { e.preventDefault(); return; } go(b.dataset.spot); }));
-  // 화면 크기가 바뀌면(폰 돌리기 등) 그림을 다시 고르고 맞춘다 — 걷던 아이들은 가던 자리에 바로 선다
-  let rt = 0; const onResize = () => { clearTimeout(rt); rt = setTimeout(() => { if (!I) return; const want = $v.clientWidth / Math.max(1, $v.clientHeight) < 0.8 ? 'tall' : 'wide'; if (want !== kind) { $img.src = PARK.images[want].src; $img.onload = () => load(false); } else load(false); }, 150); };
+  // 「가로로 크게」: 지도 상자가 화면을 다 덮는다. 안드로이드 등은 전체 화면 + 가로 고정, 안 되는 기기(아이폰)에서 세로로 들고 있으면 상자를 90° 돌려 그린다.
+  // 관찰 패널도 그 안으로 옮겨 겹쳐 띄운다(닫으면 제자리).
+  let big = false, fsOn = false;
+  const portrait = () => innerHeight > innerWidth;
+  const setRot = () => { rot = big && portrait(); $v.classList.toggle('rot', rot); };
+  const enterBig = async () => {
+    if (big) return; big = true; $v.classList.add('big'); document.documentElement.classList.add('pm-lock'); $v.appendChild($panel); $panel.classList.add('in-big');
+    let fs = false;
+    try { if ($v.requestFullscreen && portrait()) { await $v.requestFullscreen({ navigationUI: 'hide' }); await screen.orientation.lock('landscape'); fs = true; } } catch (_) { if (document.fullscreenElement) await document.exitFullscreen().catch(() => {}); }
+    // 고정했다는데 화면이 실제로 안 돌아간 기기 — 전체 화면에서는 상자를 돌릴 수 없으니(브라우저가 막음) 전체 화면을 풀고 돌려 그린다
+    if (fs) { await new Promise((r) => setTimeout(r, 700)); if (portrait()) { fs = false; try { screen.orientation.unlock?.(); } catch (_) {} await document.exitFullscreen?.().catch(() => {}); } }
+    if (!fs && !portrait() && $v.requestFullscreen) { try { await $v.requestFullscreen({ navigationUI: 'hide' }); fs = true; } catch (_) {} }
+    fsOn = fs; setRot(); load(false);
+  };
+  const exitBig = () => {
+    if (!big) return; big = false; rot = false; fsOn = false; $v.classList.remove('big', 'rot'); document.documentElement.classList.remove('pm-lock'); $panel.classList.remove('in-big'); $v.after($panel);
+    try { screen.orientation?.unlock?.(); } catch (_) {}
+    if (document.fullscreenElement === $v) document.exitFullscreen?.().catch(() => {});
+    load(false);
+  };
+  $host.querySelector('[data-big]').addEventListener('click', enterBig);
+  $host.querySelector('[data-close]').addEventListener('click', exitBig);
+  // 전체 화면이 밖에서 풀리면(뒤로 가기·쓸어내리기) 같이 닫는다 — 전체 화면을 못 써 돌려 그린 경우는 해당 없음
+  const onFs = () => { if (big && fsOn && !document.fullscreenElement) exitBig(); };
+  document.addEventListener('fullscreenchange', onFs);
+  $v.addEventListener('keydown', (e) => { if (e.key === 'Escape') exitBig(); });
+  // 화면 크기가 바뀌면(폰 돌리기 등) 다시 맞춘다 — 걷던 아이들은 가던 자리에 바로 선다
+  let rt = 0; const onResize = () => { clearTimeout(rt); rt = setTimeout(() => { if (!I) return; setRot(); load(false); }, 150); };
   addEventListener('resize', onResize);
-  return { destroy() { alive = false; cancelAnimationFrame(anim); stopWalk(); clearTimeout(kid.sayT); removeEventListener('resize', onResize); cancelAnimationFrame(npcRaf); io?.disconnect(); cast.dispose(); } };
+  return { destroy() { alive = false; cancelAnimationFrame(anim); stopWalk(); clearTimeout(kid.sayT); removeEventListener('resize', onResize); document.removeEventListener('fullscreenchange', onFs); document.documentElement.classList.remove('pm-lock'); cancelAnimationFrame(npcRaf); io?.disconnect(); cast.dispose(); } };
 }
