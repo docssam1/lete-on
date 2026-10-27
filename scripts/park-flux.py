@@ -12,7 +12,7 @@
 
 키·비용 없음. 처음 한 번 모델(약 15 GB)을 받는다.
 """
-import argparse, base64, io, os, subprocess, sys, tempfile, time
+import argparse, base64, hashlib, io, os, subprocess, sys, tempfile, time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,9 +31,10 @@ PROMPT = ('Turn this 3D render into a photorealistic tilt-shift aerial photograp
 
 
 def run_flux(src, out_png, seed, w, h, model, model_path, quant):
-    cmd = ['mflux-generate-flux2-edit', '--model', model, '--image-paths', str(src), '--prompt', PROMPT,
+    # 받아 둔 모델 폴더가 있으면 그 경로를 --model 로, 어떤 모델인지는 --base-model 로(원장 맥 mflux 에서 확인된 꼴)
+    cmd = ['mflux-generate-flux2-edit', '--model', model_path or model, '--image-paths', str(src), '--prompt', PROMPT,
            '--steps', '4', '--seed', str(seed), '--width', str(w), '--height', str(h), '--output', str(out_png)]
-    if model_path: cmd += ['--model-path', model_path]
+    if model_path: cmd += ['--base-model', model]
     if quant: cmd += ['--quantize', str(quant)]
     subprocess.run(cmd, check=True)
 
@@ -67,9 +68,9 @@ def git(*args, env=None):
     return r.stdout.strip()
 
 
-def push_inbox(out):
+def push_inbox(out, kinds):
     """후보만 담은 커밋을 inbox/park-flux 로 올린다. 작업 폴더·현재 브랜치는 그대로 둔다."""
-    files = sorted(p for p in out.rglob('*') if p.is_file() and p.suffix in ('.webp', '.html'))
+    files = sorted(p for p in out.rglob('*') if p.is_file() and (p.suffix == '.html' or (p.suffix == '.webp' and p.name.split('-')[0] in kinds)))   # 이번에 만든 화면 것만
     with tempfile.TemporaryDirectory() as td:
         env = {**os.environ, 'GIT_INDEX_FILE': str(Path(td) / 'index')}
         git('read-tree', '--empty', env=env)
@@ -86,7 +87,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--out', default='park-flux')
     ap.add_argument('--n', type=int, default=3, help='화면마다 후보 수')
-    ap.add_argument('--only', choices=['wide', 'tall'], default=None)
+    ap.add_argument('--only', choices=['wide'], default='wide', help='가로 한 장뿐 — 폰도 「가로로 크게」로 본다(2026-10-27 세로 그림을 뺌)')
     ap.add_argument('--model', default='flux2-klein-4b', help='mflux 모델 이름(기본 flux2-klein-4b · Apache 2.0)')
     ap.add_argument('--model-path', default=os.environ.get('PARK_FLUX_MODEL_PATH'), help='이미 받아 둔(4비트로 저장한) 모델 폴더가 있으면 그 경로')
     ap.add_argument('--quantize', type=int, default=4, help='4 또는 8. --model-path 로 이미 4비트 저장본을 주면 0')
@@ -97,6 +98,13 @@ def main():
     for kind in ([a.only] if a.only else ['wide', 'tall']):
         src = PARK / f'park-{kind}.webp'
         if not src.exists(): sys.exit(f'  [!] 렌더 파일이 없어요: {src}')
+        # 렌더가 바뀌었으면(배치를 고친 뒤) 옛 후보는 옛 배치라 지우고 새로 만든다 — 그대로 두면 「이미 있음」으로 건너뛰어 옛 후보만 다시 올라간다
+        sig = hashlib.sha1(src.read_bytes()).hexdigest(); mark = out / f'.src-{kind}.sha1'
+        if not mark.exists() or mark.read_text().strip() != sig:
+            old = sorted(out.glob(f'{kind}-*.webp'))
+            if old: print(f'  {kind}: 렌더가 바뀌어 옛 후보 {len(old)}장을 지우고 새로 만들어요', flush=True)
+            for f in old: f.unlink()
+            mark.write_text(sig)
         files = [src]
         for i in range(1, a.n + 1):
             dst = out / f'{kind}-{i}.webp'
@@ -110,7 +118,7 @@ def main():
     contact_sheet(out, rows)
     print(f'  후보 → {out}', flush=True)
     if not a.no_push:
-        try: print(f'  GitHub {BRANCH} 로 올림: {push_inbox(out)}개 파일', flush=True)
+        try: print(f'  GitHub {BRANCH} 로 올림: {push_inbox(out, [k for k, _ in rows])}개 파일', flush=True)
         except Exception as e: print(f'  [!] 올리기 실패: {e}\n      park-flux 폴더를 구글 드라이브에 올리고 알려 주세요.', flush=True)
 
 
