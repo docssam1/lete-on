@@ -8,13 +8,9 @@ import { chartSvg } from './report.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 export const para = (t) => esc(t).replace(/\[([^\]]+)\]/g, '<b>[$1]</b>').replace(/\n/g, '<br>');
-const HAND = `<g class="pz-hand" opacity="0"><g transform="rotate(32) scale(1.15)">
-  <ellipse cx="14" cy="56" rx="26" ry="34" fill="#f3d6bb" stroke="#9a7a5a" stroke-width="1.2"/>
-  <path d="M0 0 L-5 15 L5 15 Z" fill="#e2c39a" stroke="#9a7a5a" stroke-width="0.8"/><path d="M0 0 L-1.8 5.5 L1.8 5.5 Z" fill="#333"/>
-  <rect x="-5" y="15" width="10" height="72" fill="#f2c94c" stroke="#8a6d1f" stroke-width="0.8"/><path d="M-1.6 15 L-1.6 87" stroke="#d9ac2a" stroke-width="1"/><rect x="-5" y="87" width="10" height="7" fill="#c9c0b4" stroke="#8a8078" stroke-width="0.6"/><rect x="-5" y="94" width="10" height="9" rx="2" fill="#e88a8a" stroke="#b05a5a" stroke-width="0.6"/>
-  <rect x="-12" y="18" width="24" height="12" rx="6" fill="#f3d6bb" stroke="#9a7a5a" stroke-width="1"/><rect x="-10" y="31" width="24" height="12" rx="6" fill="#f3d6bb" stroke="#9a7a5a" stroke-width="1"/><rect x="-8" y="44" width="24" height="12" rx="6" fill="#f3d6bb" stroke="#9a7a5a" stroke-width="1"/>
-  <path d="M-6 20 C-16 10, -16 -2, -4 2 C2 4, 4 12, 2 18" fill="#f3d6bb" stroke="#9a7a5a" stroke-width="1"/>
-</g></g>`;
+// 그려 가는 손 = 영어 스토리 화이트보드 영상(reading-world/share/sophie-whiteboard)의 초록 마커 쥔 손을 오려 낸 그림(assets/observe/hand-marker.webp, 243×279).
+// 원장 2026-10-27 「이 뚱뚱보 손가락 뭐야」 「영어 스토리 쪽에 손가락 있어」. 마커 끝이 (0,0)에 오도록 그림 안 끝 자리(4, 2)만큼 당긴다. 높이 = 그림 좌표 140.
+const HAND = `<g class="pz-hand" opacity="0"><image href="./assets/observe/hand-marker.webp" x="-2" y="-1" width="122" height="140"/></g>`;
 
 // 연필 소리: 좁게 거른 잡음을 선을 긋는 동안만 연다
 export function scratch() {
