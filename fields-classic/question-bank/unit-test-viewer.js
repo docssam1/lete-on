@@ -1,7 +1,6 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
 import { saveRecord } from "./study-progress.js?v=20261028n";
-import { book01UnitTestOriginal, BOOK01_UNIT_TEST_ORIGINAL_NUMBERS } from "./book01-unit-test-generators.js?v=20261028zb";
-import { book01Markup } from "./book01-renderers.js?v=20261028za";
+import { mathText } from "./math-markup.js?v=20261027p";
 
 // 권별테스트 원문 풀기 (원장 지시 2026-10-24): 「교재 권별테스트는 원본 문제 그대로 1세트가 있고, 유사문제로 공부하는 거야.」
 // 원문을 보여 주고, 다 풀면 「답안 확인 및 진단하기」(원장 2026-10-28 「답을 쓰는 란은 필요없고 … 답안지 인쇄와 o,x를 하면 부족한 영역 진단」)로
@@ -80,14 +79,17 @@ $("eyebrow").textContent = `GIFTED MATH BANK · 1과정 · ${book.title}`;
 $("backLink").href = `./start.html?${new URLSearchParams({ student, book: book.id, door: "test" })}`;
 // 원문을 우리 시험지 꼴로 다시 짠 권(원장 2026-10-28 「권별 테스트 원문은 폼을 바꾸자 · 글씨체와 색도 · 우리쪽에 맞추자」):
 // 수·이름·그림 배치는 원문 그대로, 글꼴(문제 명조 · 번호 Pretendard)·색·그림은 우리 것. 아직 안 옮긴 권은 원문 쪽 그림을 그대로 보인다.
-const ORIGINAL_SETS = {
-  "book-01": { numbers: BOOK01_UNIT_TEST_ORIGINAL_NUMBERS, get: book01UnitTestOriginal, figure: book01Markup }
-};
-const original = ORIGINAL_SETS[book.id];
+// 권마다 unit-test-originals/book-NN.js 가 { numbers, get(number) → { number, prompt, visual, responseKind? }, figure(visual) → SVG } 를 내보낸다.
+// 다시 짠 권 목록 — 새 권을 끝내면 여기에 한 줄 더한다.
+const TYPESET_BOOKS = { "book-01": "20261028zc" };
+// ?preview=typeset — 목록에 올리기 전에 만드는 사람이 원문과 나란히 대조할 때(tools/unit-test-originals 비교 스크립트)
+const previewTypeset = params.get("preview") === "typeset";
+const typesetTag = TYPESET_BOOKS[book.id] || (previewTypeset ? String(Date.now()) : "");
+const original = typesetTag ? await import(`./unit-test-originals/${book.id}.js?v=${typesetTag}`).catch((error) => { console.error(error); return null; }) : null;
 const PER_PAGE = 4;
 function originalQuestionMarkup(question) {
   const answer = question.responseKind ? "" : `<p class="ut-q-ans">답 <span aria-hidden="true">(</span><i></i><span aria-hidden="true">)</span></p>`;
-  return `<section class="ut-q" aria-label="${question.number}번"><div class="ut-q-head"><b>${question.number}</b><p>${esc(question.prompt)}</p></div><div class="ut-q-fig">${original.figure(question.visual)}</div>${answer}</section>`;
+  return `<section class="ut-q" aria-label="${question.number}번"><div class="ut-q-head"><b>${question.number}</b><p>${question.mathPrompt ? mathText(esc(question.prompt)) : esc(question.prompt)}</p></div><div class="ut-q-fig">${original.figure(question.visual)}</div>${answer}</section>`;
 }
 function originalPagesMarkup() {
   const questions = original.numbers.map(original.get).filter(Boolean);
@@ -128,7 +130,7 @@ function renderSheet() {
     const figure = answerFigure(key);
     return `<li class="ut-row ${entry.mark ? `is-${entry.mark}` : ""}">
       <b>${number}</b>
-      <div class="ut-key">${key ? `<span>${esc(key.text)}</span>${figure ? `<details><summary>답 그림</summary><div class="ut-key-fig">${figure}</div></details>` : ""}` : `<span class="is-off">${answers ? "정답 준비 중" : "선생님 답지로 확인"}</span>`}</div>
+      <div class="ut-key">${key ? `<span>${mathText(esc(key.text))}</span>${figure ? `<details><summary>답 그림</summary><div class="ut-key-fig">${figure}</div></details>` : ""}` : `<span class="is-off">${answers ? "정답 준비 중" : "선생님 답지로 확인"}</span>`}</div>
       <span class="ut-marks" role="group" aria-label="${number}번 채점">
         <button type="button" data-mark="${number}" data-value="right" aria-pressed="${entry.mark === "right"}" aria-label="${number}번 맞음">○</button>
         <button type="button" data-mark="${number}" data-value="wrong" aria-pressed="${entry.mark === "wrong"}" aria-label="${number}번 틀림">✕</button>
@@ -145,7 +147,7 @@ function renderSheet() {
 function answerPagesMarkup() {
   const items = questions.map(({ number }) => {
     const key = answers?.[number];
-    return `<section class="ut-ans-item"><b>${number}</b><div><p>${esc(key?.text || "")}</p>${answerFigure(key) ? `<div class="ut-ans-fig">${answerFigure(key)}</div>` : ""}</div></section>`;
+    return `<section class="ut-ans-item"><b>${number}</b><div><p>${mathText(esc(key?.text || ""))}</p>${answerFigure(key) ? `<div class="ut-ans-fig">${answerFigure(key)}</div>` : ""}</div></section>`;
   }).join("");
   return `<header class="ut-test-run"><span>1과정 · ${esc(book.label)} 권별 테스트</span><span>정답</span></header><h2 class="ut-ans-title">${esc(book.title)} · 정답</h2><div class="ut-ans-grid">${items}</div><footer class="ut-test-foot"><span>지필드 영재교육</span><span>정답</span></footer>`;
 }
