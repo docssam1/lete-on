@@ -27,7 +27,9 @@ export function sampleArticle(set) {
   const X = sampleFor(set.id); if (!X) return '';
   const cfg = reportCfg(set.id, set.level, 'nature'), mid = set.level === 'mid';
   let table = { columns: cfg.table.columns.slice(), rows: X.table.map((r) => r.slice()) }; if (mid) table = withMean(table);
-  const isInsect = set.id === 'observe-insects', Tt = X.titles || {}, chart = X.chart ? chartData(table) : null;
+  // 칸 제목: 예시의 titles → 세트 보고서 설정(reportPatch) → 기본 문구 순서. 해변·숲 바닥은 reportPatch에만 제목이 있어 기본 「잎 모양…」이 잘못 붙었다
+  const RP = set.unit?.reportPatch || {}, Tt = { env: RP.env?.title, adapt: RP.adapt?.title, ...(X.titles || {}) };
+  const isInsect = set.id === 'observe-insects', chart = X.chart ? chartData(table) : null;
   let n = 0; const sec = (title, ask, body, key) => `<section class="rp-cell kind-text" data-sec="${key}"><h3>${++n}. ${esc(title)}${ask ? `<small>${esc(ask)}</small>` : ''}</h3><div class="rp-body">${body}</div></section>`;
   const view = (t) => `<div class="rp-view sv">${para(t)}</div>`;
   const tableSec = () => sec(Tt.table || (mid ? '측정 기록' : '채집·관찰 기록표'), Tt.tableAsk || '', `<div class="rp-table-wrap"><table class="rp-table"><thead><tr>${table.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${table.rows.map((r) => `<tr>${r.map((v, j) => `<td class="${table.columns[j] === '평균' ? 'mean' : ''}">${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${chart ? `<div class="rp-chart">${chartSvg(chart)}</div>` : ''}`, 'table');
@@ -43,17 +45,22 @@ export function sampleArticle(set) {
       ${sec(Tt.venn || '같은 점과 다른 점', '', `<div class="rp-venn static"><div class="ring a"></div><div class="ring b"></div><b class="rp-venn-name a">${esc(X.venn.la)}</b><b class="rp-venn-name b">${esc(X.venn.lb)}</b>
         <div class="rp-venn-zone a"><b>ㄱ만</b>${view(X.venn.a)}</div><div class="rp-venn-zone both"><b>같은 점</b>${view(X.venn.both)}</div><div class="rp-venn-zone b"><b>ㄴ만</b>${view(X.venn.b)}</div></div>`, 'venn')}
       ${X.adapt ? sec(Tt.adapt || (isInsect ? '생김새와 하는 일' : mid ? '구조와 기능 → 유리한 점' : '잎 모양·잎차례의 유리한 점'), '', `${X.adaptDraw ? `<div class="pz-wrap wide" data-draw="fn">${X.adaptDraw()}</div>` : ''}${view(X.adapt)}`, 'adapt') : ''}
-      ${sec('더 알아보고 싶은 것', '의문 → 바꿀 것·잴 것·같게 할 것', view(X.next), 'next')}
+      ${sec(Tt.next || RP.next?.title || '더 알아보고 싶은 것', '의문 → 바꿀 것·잴 것·같게 할 것', view(X.next), 'next')}
       <div class="rp-foot"><span>GFIELD · 자연관찰대회 연습 · 예시 보고서</span><span>그림·글 모두 지필드가 새로 쓴 예시입니다</span></div>
     </article>`;
 }
 // 예시 보고서를 A4 쪽으로 나눠 인쇄한다(원장 2026-10-28 「정확하게 A4 구조에 맞도록 정렬」).
 // 쪽마다 210×297mm 상자 하나 — 둘째 쪽부터 머리줄(제목·이름), 모든 쪽 아래에 쪽 번호. 칸은 쪽 경계에서 잘리지 않게 통째로 넘기고,
 // 관찰그림 표는 줄 단위로 나눠 다음 쪽에 표 머리를 다시 단다. 쪽보다 큰 칸과 옆으로 넓은 분류 나무는 줄여서(zoom) 맞춘다.
-export async function printSampleA4(set) {
+// 지점이 세트의 일부 칸만 다룰 때(해변 둘로 나눔): 관찰 장소와 대상 + 그 칸만 남기고 번호를 다시 매긴다
+export function secsOnly(root, secs) {
+  const keep = new Set(['target', ...secs]); let n = 0;
+  root.querySelectorAll('section.rp-cell[data-sec]').forEach((el) => { if (!keep.has(el.dataset.sec)) { el.style.display = 'none'; return; } const h = el.querySelector('h3'); if (h?.firstChild?.nodeType === 3) h.firstChild.nodeValue = h.firstChild.nodeValue.replace(/^\d+\./, `${++n}.`); });
+}
+export async function printSampleA4(set, { secs } = {}) {
   document.querySelectorAll('.a4-print').forEach((e) => e.remove());
   const html = sampleArticle(set); if (!html) return;
-  const parse = () => { const d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild; };
+  const parse = () => { const d = document.createElement('div'); d.innerHTML = html; const a = d.firstElementChild; if (secs) { secsOnly(a, secs); a.querySelectorAll('section.rp-cell[data-sec]').forEach((el) => { if (el.style.display === 'none') el.remove(); }); } return a; };
   const art0 = parse();
   const title = art0.querySelector('.rp-head h1')?.textContent || '', name = art0.querySelector('.rp-who i')?.textContent || '';
   const foot = art0.querySelector('.rp-foot span')?.textContent || '';
