@@ -147,7 +147,7 @@ CC0 법문 URL은 같지만 각 사진의 지정 근거는 아래 개별 페이�
 
 - 찾은 곳: iNaturalist Open Data(AWS `inaturalist-open-data`)의 `taxa`·`observations`·`photos`·`observers` 표(2026-10-27판). 이 세션에서는 iNaturalist API·웹과 Wikimedia가 막혀 있어 공개 데이터 표를 직접 훑었다.
 - 거른 조건: 관찰 `quality_grade=research` + 대상 학명(또는 그 아래 분류군) + **사진마다의 `license=CC0`**(관찰 라이선스가 아님). 사진 파일은 같은 버킷의 `photos/<id>/large`에서 받았다.
-- 표본마다 후보 12장을 나란히 놓고 눈으로 골랐다. 사람 손·얼굴이 크게 나온 사진, 글자·워터마크가 있는 사진은 뺐다. 생성 이미지는 없다. 편집은 JPEG 재압축뿐(자르기 없음).
+- 표본마다 후보 12장을 나란히 놓고 눈으로 골랐다. 사람 손·얼굴이 크게 나온 사진, 글자·워터마크가 있는 사진은 뺐다. 생성 이미지는 없다. 편집은 JPEG 재압축뿐이고, 자른 것은 아래에 따로 적었다.
 - 1차와 다른 점: 사진 페이지·API로 라이선스를 다시 대조하지 못했다(공개 데이터 표의 값만 근거). 관찰 번호 대신 관찰 UUID로 기록했다(`https://www.inaturalist.org/observations/<UUID>`).
 - 종이 작업 지시서와 다른 것: 택사→질경이택사(Alisma plantago-aquatica), 부들→넓은잎부들(Typha latifolia), 왕벚나무→벚나무(Prunus serrulata), 등→Wisteria sinensis. 각 `visible_features`에 적었다.
 
@@ -169,3 +169,7 @@ CC0 법문 URL은 같지만 각 사진의 지정 근거는 아래 개별 페이�
 | `oyster-1.jpg` | 굴(참굴, Magallana gigas) — 바위에 붙은 굴 — 껍데기가 층층이 겹쳐 울퉁불퉁한 가장자리와 둘레의 따개비가 보여요. 껍데기 안쪽은 보이지 않아요. | [al_kordesch](https://www.inaturalist.org/observations/9aaddca9-b757-4ab2-a39b-dae940a1ae29) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×768 · 278613 B |
 | `snail-1.jpg` | 고둥(Batillaria attramentaria) — 바위 위 고둥 껍데기 — 나선으로 감긴 층(바퀴)과 둥근 입구가 보여요. 사진의 종은 Batillaria attramentaria예요. 몇 바퀴인지는 끝이 가려 정확히 세기 어려워요. | [twsummer](https://www.inaturalist.org/observations/95a52b48-63a7-4248-9ff2-8c4a608cefa1) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×768 · 186334 B |
 | `mold-orange-1.jpg` | 푸른곰팡이(Penicillium digitatum) — 귤(감귤류) 껍질 위에 핀 청록색 곰팡이와 흰 가장자리(균사)가 보여요. 원장님 실험의 귤·조건과 같은 사진은 아니에요 — 생김새 참고용이에요. | [megachile](https://www.inaturalist.org/observations/7deb8877-1cff-4eed-b9a4-c94734e8da19) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×768 · 135463 B |
+| `marsilea-1.jpg` | 네가래(Marsilea quadrifolia) — 물 위에 뜬 네 잎 클로버 꼴 잎이 여럿 보여요. 잎자루가 물밑 땅까지 이어지는지는 이 사진으로 확인할 수 없어요. | [cgmayers](https://www.inaturalist.org/observations/0c39b70d-c05c-4294-b373-c1f5d4f222b0) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 1024×771 · 268817 B |
+| `mold-bread-1.jpg` | 털곰팡이류(Rhizopus stolonifer) — 식빵 가장자리에서 가는 실(균사) 끝에 까만 공(포자주머니)이 달린 모습이 보여요. 원장님 실험의 식빵·조건과 같은 사진은 아니에요 — 생김새 참고용이에요. | [bettong-whisperer](https://www.inaturalist.org/observations/7cd24ab5-e3f4-46df-93da-e1bb0117080e) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 768×576 · 91694 B |
+
+- `mold-bread-1.jpg`는 세로 사진을 가로로 잘랐다(편집: 자르기·재압축). 나머지는 자르지 않았다.
