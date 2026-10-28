@@ -1,12 +1,15 @@
-# 작업 지시서 — 맥에서 스스로 공부 덱 대사 207줄 만들기 (2026-10-28)
+# 작업 지시서 — 맥에서 스스로 공부 덱 대사 208줄 만들기 (2026-10-28, 오후 이름 바꿈 반영)
 
-PC(윈도우)는 손글씨 판서(`fcb-`)를 계속 만든다. **맥은 스스로 공부 덱 대사(`fcs-`) 207줄만** 만든다.
+PC(윈도우)는 손글씨 판서(`fcb-`)를 계속 만든다. **맥은 스스로 공부 덱 대사(`fcs-`) 208줄만** 만든다.
 같은 줄을 두 컴퓨터가 겹쳐 만들지 않게 줄 이름 앞머리로 나눈다(생성기 `--prefix fcs-`).
 환경·주의점은 `WORK-ORDER-docssam-voice-20261025.md`·`-20261026.md`와 같다. 여기에는 맥에서 다른 것만 적는다.
 
 ## 지금 상태
-- `python3 scripts/check-docssam-voice.py` 마지막 줄 `빠진 독쌤 음성: 1133줄` = 판서 926 + 덱 대사 207(2026-10-28 오전).
+- `python3 scripts/check-docssam-voice.py` 마지막 줄 `빠진 독쌤 음성: 1103줄` = 판서 895 + 덱 대사 **208**(2026-10-28 오후, main `c8b18fe7`).
 - 덱 대사 목록: `fields-classic/question-bank/data/voice/study-deck.voice.json`(줄 id `fcs-…`).
+- **2026-10-28 오후 화면 이름이 바뀌었다**: 「골든벨」→「워밍업」, 연산 골든벨 차시 →「필수연산」. 덱 대사 42줄의 글이 바뀌어 id도 바뀌었고 「필수연산 문제예요…」 1줄이 새로 생겼다(207 → 208줄). 판서는 1줄(`fcb-book-04-polyomino-family-count-b01`)의 글이 바뀌었다.
+  - **반드시 `git pull` 뒤에 만든다.** 옛 목록으로 만들면 「골든벨」이라고 읽는 음성이 나온다.
+  - 확인: `grep -c 골든벨 fields-classic/question-bank/data/voice/study-deck.voice.json` 이 **0**, `grep -c 필수연산 …` 이 **1**이어야 한다.
 - **맥에서 끝까지 돌려 본 적이 아직 없다.** 첫 실행이 곧 설치다(uv · 파이썬 3.12 · torch · OmniVoice 모델 몇 GB).
 
 ## 순서
@@ -16,7 +19,7 @@ PC(윈도우)는 손글씨 판서(`fcb-`)를 계속 만든다. **맥은 스스�
 3. 실행: Finder에서 `scripts/local/omnivoice-docssam-deck.command` 더블클릭
    (터미널이면 `bash scripts/local/omnivoice-docssam-deck.command`).
    - 안에서 `python scripts/omnivoice-docssam.py --ref <녹음> --device auto --speed 0.8 --prefix fcs-`를 부른다.
-   - 첫 줄에 `이번에 만들 것 207줄`이 찍혀야 한다(판서가 섞여 나오면 멈추고 보고).
+   - 첫 줄에 `이번에 만들 것 208줄`이 찍혀야 한다(판서가 섞여 나오면 멈추고 보고).
    - MPS(애플 칩)에서 오류가 나면 `--device cpu`로 다시 돌리고 오류 글을 그대로 보고한다.
 4. **처음 몇 줄이 나오면 먼저 듣는다**: `.docssam-work/듣기.html`에서 원본 녹음, 그리고 이미 올라간 판서 음성(`science-lab/audio/docssam/fcb-…mp3` 아무거나)과 번갈아 들어 **같은 사람·같은 빠르기**인지. 다르면 멈추고 보고한다.
 5. 끝나면 `python3 scripts/check-docssam-voice.py` → `fcs-` 줄이 남아 있으면 CER(받아 적기) 검사에서 빠진 것 — 그 id만 보고한다.
@@ -24,6 +27,8 @@ PC(윈도우)는 손글씨 판서(`fcb-`)를 계속 만든다. **맥은 스스�
    ```
    git pull
    python3 scripts/omnivoice-docssam.py --manifest-only     # 두 컴퓨터의 mp3를 합쳐 목록을 다시 만든다
+   # 옛 글(골든벨)로 먼저 만들어 둔 fcs- 파일이 있으면 목록(manifest)에 없는 것만 지운다
+   python3 -c "import json,os;d='science-lab/audio/docssam';k=set(json.load(open(d+'/manifest.json'))['files']);[os.remove(os.path.join(d,f)) or print('지움',f) for f in os.listdir(d) if f.startswith('fcs-') and f.endswith('.mp3') and f not in k]"
    git add science-lab/audio/docssam/fcs-*.mp3 science-lab/audio/docssam/manifest.json
    git commit -m "독쌤 음성: 스스로 공부 덱 대사 N줄 (맥)"
    git push
@@ -37,6 +42,6 @@ PC(윈도우)는 손글씨 판서(`fcb-`)를 계속 만든다. **맥은 스스�
 
 ## 보고할 것
 1. 맥 기종·칩·메모리, 쓴 장치(mps/cpu)
-2. 207줄을 만드는 데 걸린 시간(로그의 RTF가 있으면 그것도)
+2. 208줄을 만드는 데 걸린 시간(로그의 RTF가 있으면 그것도)
 3. 듣기 확인 결과(같은 목소리인지)
 4. CER 검사에서 빠진 줄 id
