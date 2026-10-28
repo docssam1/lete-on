@@ -81,7 +81,7 @@ $("backLink").href = `./start.html?${new URLSearchParams({ student, book: book.i
 // 수·이름·그림 배치는 원문 그대로, 글꼴(문제 명조 · 번호 Pretendard)·색·그림은 우리 것. 아직 안 옮긴 권은 원문 쪽 그림을 그대로 보인다.
 // 권마다 unit-test-originals/book-NN.js 가 { numbers, get(number) → { number, prompt, visual, responseKind? }, figure(visual) → SVG } 를 내보낸다.
 // 다시 짠 권 목록 — 새 권을 끝내면 여기에 한 줄 더한다.
-const TYPESET_BOOKS = { "book-01": "20261028zc" };
+const TYPESET_BOOKS = Object.fromEntries(["book-01", "book-02", "book-03", "book-04", "book-05", "book-06", "book-07", "book-08", "book-09", "book-10"].map((id) => [id, "20261028ze"]));
 // ?preview=typeset — 목록에 올리기 전에 만드는 사람이 원문과 나란히 대조할 때(tools/unit-test-originals 비교 스크립트)
 const previewTypeset = params.get("preview") === "typeset";
 const typesetTag = TYPESET_BOOKS[book.id] || (previewTypeset ? String(Date.now()) : "");
