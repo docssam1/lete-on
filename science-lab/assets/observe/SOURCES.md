@@ -173,3 +173,10 @@ CC0 법문 URL은 같지만 각 사진의 지정 근거는 아래 개별 페이�
 | `mold-bread-1.jpg` | 털곰팡이류(Rhizopus stolonifer) — 식빵 가장자리에서 가는 실(균사) 끝에 까만 공(포자주머니)이 달린 모습이 보여요. 원장님 실험의 식빵·조건과 같은 사진은 아니에요 — 생김새 참고용이에요. | [bettong-whisperer](https://www.inaturalist.org/observations/7cd24ab5-e3f4-46df-93da-e1bb0117080e) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 768×576 · 91694 B |
 
 - `mold-bread-1.jpg`는 세로 사진을 가로로 잘랐다(편집: 자르기·재압축). 나머지는 자르지 않았다.
+
+### 2차에서 비워 둔 것 (4개)
+
+- `bean-sun` 강낭콩: 공개 데이터 전체(사진 표 21 GB를 끝까지 읽음)에서 강낭콩(*Phaseolus vulgaris*)의 **연구등급 + 사진별 CC0** 사진이 0장이었다. iNaturalist는 심어 기른 식물을 연구등급으로 올리지 않는(casual) 경우가 대부분이라 그렇다. 등급을 낮춰 넣지 않았다.
+- `bean-shade` · `bean-dry`: 「그늘에서」「물을 사흘에 한 번」 키운 조건은 사진만으로 확인할 수 없어 처음부터 넣지 않기로 했다.
+- `mold-rice` 밥 누룩곰팡이: *Aspergillus* CC0 연구등급 사진은 현미경 사진·배양 접시·양파 위에 핀 것뿐이었고, 밥(쌀) 위에 핀 실제 사진은 없었다.
+- 이 실험(강낭콩 자람·곰팡이 관찰일기) 사진은 원장님 반에서 직접 키워 찍는 것이 가장 좋다. 그때는 「원장 직접 촬영」으로 기록한다.
