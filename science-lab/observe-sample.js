@@ -47,6 +47,71 @@ export function sampleArticle(set) {
       <div class="rp-foot"><span>GFIELD · 자연관찰대회 연습 · 예시 보고서</span><span>그림·글 모두 지필드가 새로 쓴 예시입니다</span></div>
     </article>`;
 }
+// 예시 보고서를 A4 쪽으로 나눠 인쇄한다(원장 2026-10-28 「정확하게 A4 구조에 맞도록 정렬」).
+// 쪽마다 210×297mm 상자 하나 — 둘째 쪽부터 머리줄(제목·이름), 모든 쪽 아래에 쪽 번호. 칸은 쪽 경계에서 잘리지 않게 통째로 넘기고,
+// 관찰그림 표는 줄 단위로 나눠 다음 쪽에 표 머리를 다시 단다. 쪽보다 큰 칸과 옆으로 넓은 분류 나무는 줄여서(zoom) 맞춘다.
+export async function printSampleA4(set) {
+  document.querySelectorAll('.a4-print').forEach((e) => e.remove());
+  const html = sampleArticle(set); if (!html) return;
+  const parse = () => { const d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild; };
+  const art0 = parse();
+  const title = art0.querySelector('.rp-head h1')?.textContent || '', name = art0.querySelector('.rp-who i')?.textContent || '';
+  const foot = art0.querySelector('.rp-foot span')?.textContent || '';
+  const $root = document.createElement('div'); $root.className = 'a4-print'; document.body.appendChild($root);
+  if (document.fonts?.ready) await document.fonts.ready;
+  // scale: 칸 전체 배율. 마지막 쪽에 한 칸만 조금 남으면 조금 줄여 다시 나눠 본다.
+  const build = (scale) => {
+    $root.innerHTML = '';
+    const art = parse();
+    let body = null;
+    const newPage = () => {
+      const pg = document.createElement('section'); pg.className = 'a4-page' + ($root.children.length ? '' : ' first');
+      pg.innerHTML = `<div class="a4-run"><b>${esc(title)} · 예시 보고서</b><span>이름 ${esc(name)}</span></div><div class="a4-body rp-sheet form-nature sample"></div><div class="a4-foot"><span>${esc(foot)}</span><span class="a4-no"></span></div>`;
+      $root.appendChild(pg); body = pg.querySelector('.a4-body');
+    };
+    newPage();
+    // 첫 쪽은 머리줄이 없어 본문 자리가 더 길다 — 높이는 쪽마다 잰다
+    const GAP = parseFloat(getComputedStyle(body).rowGap) || 0;
+    const hOf = (el) => el.getBoundingClientRect().height;
+    const usedNow = () => [...body.children].reduce((acc, c, i) => acc + hOf(c) + (i ? GAP : 0), 0);
+    const zoom = (el, z) => { if (z < 0.999) el.style.zoom = String(z); else el.style.removeProperty('zoom'); };
+    // 칸 하나를 지금 쪽에 넣어 본다. 조금 모자라면(18% 이내) 살짝 줄이고, 아니면 다음 쪽으로. 한 쪽보다 크면 줄인다.
+    const place = (el) => {
+      const free = body.clientHeight - usedNow() - (body.children.length ? GAP : 0);
+      body.appendChild(el); zoom(el, scale);
+      const tree = el.querySelector('.rp-tree');
+      if (tree && tree.scrollWidth > tree.clientWidth + 1) tree.style.zoom = String(tree.clientWidth / tree.scrollWidth);
+      const h = hOf(el);
+      if (h <= free) return;
+      if (h * 0.82 <= free) { zoom(el, scale * free / h); el.dataset.fit = '1'; return; }
+      if (body.children.length > 1) { el.remove(); newPage(); body.appendChild(el); }
+      const H = body.clientHeight; if (h > H) { zoom(el, scale * H / h); el.dataset.fit = '1'; }
+    };
+    const head = art.querySelector('.rp-head'); if (head) place(head);
+    for (const sec of art.querySelectorAll(':scope > section')) {
+      const rows = sec.dataset.sec === 'obs' ? [...sec.querySelectorAll('.rp-obs-row')] : [];
+      if (!rows.length) { place(sec); continue; }
+      rows.forEach((r) => r.remove());
+      const chunk = (cont) => { const c = sec.cloneNode(true); if (cont) { const h3 = c.querySelector('h3'); h3.querySelector('small')?.remove(); h3.append(' (이어서)'); } return c; };
+      let c = chunk(false);
+      for (const r of rows) {
+        c.querySelector('.rp-obs').appendChild(r);
+        if (!c.parentElement) { place(c); continue; }
+        if (!c.dataset.fit && usedNow() <= body.clientHeight + 0.5) continue;
+        r.remove(); newPage(); c = chunk(true); c.querySelector('.rp-obs').appendChild(r); place(c);
+      }
+    }
+    return { pages: $root.children.length, last: usedNow() / body.clientHeight };
+  };
+  const r = build(1);
+  if (r.pages > 1 && r.last < 0.3 && !(build(0.95).pages < r.pages) && !(build(0.9).pages < r.pages)) build(1);
+  const pages = [...$root.querySelectorAll('.a4-page')];
+  pages.forEach((pg, i) => { pg.querySelector('.a4-no').textContent = `${i + 1} / ${pages.length}쪽`; });
+  const done = () => { document.body.classList.remove('a4-printing'); $root.remove(); };
+  document.body.classList.add('a4-printing');
+  addEventListener('afterprint', done, { once: true });
+  print();
+}
 // 연필 그림 그리기: root 안의 그림(.pz-wrap svg)마다 그리는 순서(ops)를 만든다. draw(key)는 그 그림 하나를 손이 그려 간다(key = data-draw).
 export function makeDrawer(root, snd = { on() {}, set() {}, off() {} }) {
   const plans = [...root.querySelectorAll('.pz-wrap svg')].map((svg) => {
@@ -105,7 +170,7 @@ export function openSample(set) {
   $m.querySelector('[data-act="replay"]').onclick = () => { play(); };
   $m.querySelector('[data-act="skip"]').onclick = () => { D.finishAll(); };
   $m.querySelector('[data-act="snd"]').onclick = (e) => { soundOn = !soundOn; e.currentTarget.setAttribute('aria-pressed', String(soundOn)); e.currentTarget.textContent = soundOn ? '🔈 연필 소리' : '🔇 소리 끔'; if (!soundOn) snd.set(0); else snd.on(); };
-  $m.querySelector('[data-act="print"]').onclick = () => { D.finishAll(); document.body.classList.add('print-sample'); print(); setTimeout(() => document.body.classList.remove('print-sample'), 800); };
+  $m.querySelector('[data-act="print"]').onclick = () => { D.finishAll(); printSampleA4(set); };
   if (typeof window !== 'undefined') window.__obSample = { plans: D.plans.length, ops: D.plans.reduce((a, p) => a + p.ops.length, 0), finishAll: D.finishAll, play };
   play();
   return { close };

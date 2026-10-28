@@ -7,7 +7,7 @@ import { OBSERVE_SETS } from './data/observe-sets.js';
 import { sampleFor } from './data/observe-samples.js';
 import { mountPark } from './park.js';
 import { Stage } from './engine.js';
-import { sampleArticle, makeDrawer, scratch, esc } from './observe-sample.js';
+import { sampleArticle, makeDrawer, scratch, esc, printSampleA4 } from './observe-sample.js';
 import { renderReport } from './report.js';
 import * as THREE from '../world-explorer/vendor/three.module.js';
 import { REPORTS } from './data/reports.js';
@@ -249,9 +249,10 @@ function observeScreen($app, spot) {
   const showStamp = () => { if ($right.querySelector('.fd-stamp')) return; const $s = document.createElement('div'); $s.className = 'fd-stamp'; $s.innerHTML = `<b>참 잘했어요</b><i>${spot.icon}</i><small>${esc(spot.short || spot.name)}</small>`; $right.appendChild($s); };
   const printIt = (what) => {
     clear(); D.finishAll(); $right.querySelectorAll('.fd-hide').forEach((e) => e.classList.remove('fd-hide'));
+    if (what === 'ex') { printSampleA4(S); return; }
     const $p = document.createElement('div'); $p.className = 'fd-print-sheet'; document.body.appendChild($p);
     let rep = null;
-    if (what === 'ex') $p.innerHTML = sampleArticle(S); else rep = renderReport(S.unit, $p, { embedded: true });
+    rep = renderReport(S.unit, $p, { embedded: true });
     document.body.classList.add('fd-printing');
     setTimeout(() => { print(); setTimeout(() => { document.body.classList.remove('fd-printing'); rep?.destroy?.(); $p.remove(); render(); }, 400); }, 120);
   };
