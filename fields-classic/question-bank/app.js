@@ -1,8 +1,8 @@
 import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261028m";
-import { GENERATORS } from "./generators.js?v=20261028m";
+import { GENERATORS } from "./generators.js?v=20261028za";
 import { saveRecord } from "./study-progress.js?v=20261028n";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
-import { book01Markup } from "./book01-renderers.js?v=20261028m";
+import { book01Markup } from "./book01-renderers.js?v=20261028za";
 import { book02Markup } from "./book02-renderers.js?v=20261028c";
 import { book03Markup } from "./book03-renderers.js?v=20261027a";
 import { book04Markup } from "./book04-renderers.js?v=20261023h";

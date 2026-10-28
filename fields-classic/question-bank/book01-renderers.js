@@ -349,8 +349,19 @@ function utSetMarkup(visual) {
   return `<div class="b1-ut-set" style="display:grid;grid-template-columns:repeat(${columns},minmax(0,1fr));gap:10px 14px;width:100%">${items}</div>`;
 }
 
+// 다람쥐: 앉아 있는 옆모습 — 크게 말린 꼬리 · 귀 · 볼록한 배 (예전 그림은 곰처럼 보였다, 원장 2026-10-28 「캐릭터 좀 바꿔야돼」)
 function utSquirrel(cx, cy) {
-  return `<g transform="translate(${cx} ${cy})"><circle cx="-8" cy="-9" r="4.2" fill="#c98b3c" stroke="#8a5a1e" stroke-width="1"/><circle cx="8" cy="-9" r="4.2" fill="#c98b3c" stroke="#8a5a1e" stroke-width="1"/><circle r="11.5" fill="#e0a85a" stroke="#8a5a1e" stroke-width="1.2"/><ellipse cy="4" rx="6.5" ry="5" fill="#fbe3bd"/><circle cx="-4.2" cy="-2.5" r="1.7" fill="#222"/><circle cx="4.2" cy="-2.5" r="1.7" fill="#222"/><circle cy="2.4" r="1.4" fill="#7a3b10"/></g>`;
+  const brown = "#c98b3c", dark = "#8a5a1e", light = "#fbe3bd", tail = "#e0a85a";
+  return `<g transform="translate(${cx} ${cy})" stroke="${dark}" stroke-width="1" stroke-linejoin="round">`
+    + `<path d="M3 10C14 11 17 0 13 -7C10 -13 3 -13 2 -7C1 -3 6 -2 7 -5" fill="${tail}"/>`
+    + `<path d="M5 -3C8 -6 10 -2 8 2" fill="none" stroke="${brown}" stroke-width="1.4"/>`
+    + `<ellipse cx="-3" cy="5" rx="7" ry="7.5" fill="${brown}"/>`
+    + `<ellipse cx="-4.5" cy="6.5" rx="3.6" ry="4.6" fill="${light}" stroke="none"/>`
+    + `<circle cx="-5" cy="-6" r="6.2" fill="${brown}"/>`
+    + `<path d="M-8 -11L-7.5 -16L-4.5 -11.5Z" fill="${brown}"/>`
+    + `<circle cx="-7.2" cy="-6.6" r="1.25" fill="#222" stroke="none"/>`
+    + `<circle cx="-10.6" cy="-4.4" r="0.95" fill="#7a3b10" stroke="none"/>`
+    + `<path d="M-6 3.5L-9.5 5.5" fill="none"/></g>`;
 }
 
 function utPartitionMarkup(visual) {
@@ -425,7 +436,8 @@ function utDigitalAdditionMarkup(visual) {
   return utSvg(206, 220, `원래 수 ${visual.digits.join("")}와 반 바퀴 돌린 수의 덧셈`, body, 220);
 }
 
-const UT_STATE_TRANSFORM = Object.freeze({ normal: "", rot90: "rotate(90)", rot180: "rotate(180)", rot270: "rotate(-90)", flipX: "scale(-1 1)", flipY: "scale(1 -1)" });
+// flipD·flipA: 대각선에 대고 뒤집은 모양(돌리고 뒤집기) — 원문 숫자판에 그대로 있는 놓임
+const UT_STATE_TRANSFORM = Object.freeze({ normal: "", rot90: "rotate(90)", rot180: "rotate(180)", rot270: "rotate(-90)", flipX: "scale(-1 1)", flipY: "scale(1 -1)", flipD: "scale(1 -1) rotate(90)", flipA: "scale(-1 1) rotate(90)" });
 function utOrientedBoardMarkup(visual) {
   const cell = 62;
   const pad = 6;
@@ -529,7 +541,9 @@ function utFoldPanelsMarkup(visual) {
   const scale = visual.scale || 108;
   const gap = 36;
   const pad = 6;
-  let x = pad;
+  // leadArrow: 앞 줄에서 이어지는 칸(원문처럼 「➡ 펼친 종이」를 다음 줄에 크게 둘 때)
+  const lead = visual.leadArrow ? 34 : 0;
+  let x = pad + lead;
   let height = 0;
   const rendered = visual.panels.map((panel, index) => {
     const bounds = utFoldPanelBounds(panel);
@@ -541,8 +555,12 @@ function utFoldPanelsMarkup(visual) {
     x += out.w + (index < visual.panels.length - 1 ? gap : 0);
     return out;
   });
-  const width = x + pad;
+  // 아래 범례(△ · ◇ 개수 칸)가 그림보다 넓으면 판을 넓히고 그림을 가운데로
+  const width = Math.max(x + pad, visual.legend?.length ? visual.legend.length * 150 + 12 : 0);
+  const shift = (width - (x + pad)) / 2;
+  rendered.forEach((item) => { item.x += shift; });
   let body = "";
+  if (lead) body += utBlockArrow(pad + shift, pad + height / 2);
   rendered.forEach((item, index) => {
     const oy = pad + (height - item.h) / 2;
     body += utFoldPanel(item.panel, item.x, oy, item.panelScale).body;
@@ -717,6 +735,23 @@ function utLogicMarkup(visual) {
   return `<div class="b1-ut-logic" style="display:grid;place-items:center;gap:10px;width:100%">${clues}${svg}</div>`;
 }
 
+// 오각진: 꼭짓점 다섯과 변의 가운데 다섯(위 꼭짓점부터 시계 방향으로 꼭짓점·변 번갈아), 가운데에 「합 : N」
+function utPentagonMarkup(visual) {
+  const cx = 150, cy = 142, radius = 108;
+  const vertices = Array.from({ length: 5 }, (_, index) => {
+    const angle = -Math.PI / 2 + index * Math.PI * 2 / 5;
+    return [cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius];
+  });
+  const spots = vertices.flatMap((vertex, index) => {
+    const next = vertices[(index + 1) % 5];
+    return [vertex, [(vertex[0] + next[0]) / 2, (vertex[1] + next[1]) / 2]];
+  });
+  const outline = `<polygon points="${vertices.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ")}" fill="none" stroke="${UT.box}" stroke-width="1.6"/>`;
+  const nodes = spots.map(([x, y], index) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="20" fill="${index % 2 ? "#fff" : UT.tint}" stroke="${UT.box}" stroke-width="1.7"/>${visual.shown?.[index] == null ? "" : utText(x.toFixed(1), (y + 1).toFixed(1), visual.shown[index], { size: 17, weight: 700 })}`).join("");
+  const sum = visual.lineSum == null ? "" : utText(cx, cy + 4, `합 : ${visual.lineSum}`, { size: 16, weight: 700 });
+  return utSvg(300, 270, "오각형 다섯 변에 수를 놓는 오각진", outline + nodes + sum, 280);
+}
+
 export function book01Markup(visual) {
   if (!visual || visual.kind !== "book1") return "";
   if (visual.subtype === "ut-set") return utSetMarkup(visual);
@@ -733,6 +768,7 @@ export function book01Markup(visual) {
   if (visual.subtype === "ut-ellipse") return utEllipseMarkup(visual);
   if (visual.subtype === "ut-conditions") return utConditionsMarkup(visual);
   if (visual.subtype === "ut-logic") return utLogicMarkup(visual);
+  if (visual.subtype === "ut-pentagon") return utPentagonMarkup(visual);
   if (visual.subtype === "shape-transform") return shapeTransformMarkup(visual);
   if (visual.subtype === "partition-draw") return partitionDrawMarkup(visual);
   if (visual.subtype === "digital-transform") return digitalTransformMarkup(visual);

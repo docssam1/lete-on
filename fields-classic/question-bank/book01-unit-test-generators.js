@@ -1291,3 +1291,205 @@ export function book01UnitTestProblem({ difficulty = 2, sourceCase } = {}) {
 }
 
 export const BOOK01_UNIT_TEST_INTERNALS = Object.freeze({ CONGRUENT_TILINGS, CENTER_GUIDES, FOLD_LINE, SQUARE });
+
+// ── 원문 그대로 다시 그리기 (원장 2026-10-28 「권별 테스트 원문은 폼을 바꾸자 · 글씨체와 색도 · 우리쪽에 맞추자」) ──
+// 위의 유사 문제와 달리 원문 시험지의 수·배치·이름·접는 방향을 그대로 옮긴다. 그림만 우리 그림(같은 렌더러)으로 바뀐다.
+// 정답은 두지 않는다 — 원문 풀기 화면의 채점은 선생님 답지로 한다(unit-test-viewer.js 머리말).
+const ALL_SIDES = TRIANGLE_SIDES;
+const ORIGINAL_NUMBER_GRID_A = Object.freeze([[1, 3, 4, 2], [8, 6, 7, 5], [4, 1, 2, 3], [6, 5, 7, 8]]);
+const ORIGINAL_NUMBER_GRID_B = Object.freeze([[2, 3, 4, 5], [6, 7, 8, 9], [2, 3, 4, 5], [6, 7, 8, 9]]);
+const set = (items, columns = 2) => ({ kind: "book1", subtype: "ut-set", columns, items });
+const panels = (list, extra = {}) => ({ kind: "book1", subtype: "ut-fold-panels", panels: list, ...extra });
+const longCreaseOf = (stage) => {
+  const [a, b] = stage.crease;
+  return segItem([lerp(a, b, -0.1), lerp(a, b, 1.1)], "crease-line");
+};
+
+function originalDiagonalOnce(fold, cuts) {
+  const { stages, packet } = foldStages([fold]);
+  const stage = stages[0];
+  return panels([
+    { items: [polyItem(stage.moving, "flap"), ...gridItems(stage.moving, "grid-flap"), polyItem(packet, "paper"), ...gridItems(packet), ...unitPolygons(cuts).map((triangle) => polyItem(triangle, "cut")), { t: "arrow", ...stage.arrow }] },
+    numberGridPanel(ORIGINAL_NUMBER_GRID_A)
+  ]);
+}
+
+function originalTwoFoldCut(folds, cuts, firstPanel) {
+  const { stages, packet } = foldStages(folds);
+  return panels([
+    firstPanel(stages[0]),
+    { items: [polyItem(stages[1].polygon, "paper"), ...gridItems(stages[1].polygon), segItem(stages[1].crease, "crease-next"), { t: "arrow", ...stages[1].arrow }] },
+    { zoom: 1.15, items: [polyItem(packet, "paper"), ...gridItems(packet), ...unitPolygons(cuts).map((triangle) => polyItem(triangle, "cut"))] }
+  ]);
+}
+
+function originalCornerCuts() {
+  const folds = [{ line: "h", keep: 1 }, { line: "v", keep: 1 }];
+  const { stages, packet } = foldStages(folds);
+  const cuts = [
+    [{ x: 1, y: 0.5 }, { x: 0.8, y: 0.5 }, { x: 1, y: 0.7 }],
+    [{ x: 0.5, y: 1 }, { x: 0.7, y: 1 }, { x: 0.5, y: 0.8 }]
+  ];
+  // 원문처럼 접는 과정은 위 줄, 펼친 종이(그려 넣을 자리)는 아래 줄에 크게
+  return set([
+    { label: "", visual: panels([stagePanel(stages[0]), stagePanel(stages[1]), { items: [polyItem(packet, "paper"), ...cuts.map((cut) => polyItem(cut, "cut"))] }]) },
+    { label: "", visual: panels([unfoldBlankPanel()], { leadArrow: true }) }
+  ], 1);
+}
+
+function originalLineCuts() {
+  const folds = [{ line: "h", keep: 1 }, { line: "v", keep: 1 }];
+  const { stages, packet } = foldStages(folds);
+  const chords = [{ a: 1, b: -1, c: 0 }, { a: 1, b: 1, c: 1.5 }];
+  const cutSegments = chords.map((chord) => chordSegment(chord, packet)).filter(Boolean);
+  return set([
+    { label: "", visual: panels([stagePanel(stages[0]), stagePanel(stages[1]), { items: [polyItem(packet, "paper"), ...cutSegments.map((segment) => segItem(segment, "cutline"))] }]) },
+    { label: "", visual: panels([unfoldBlankPanel()], { leadArrow: true, legend: [{ shape: "triangle" }, { shape: "diamond" }] }) }
+  ], 1);
+}
+
+function originalPunch() {
+  const folds = [{ line: "d2", keep: 1 }, { line: "d1", keep: 1 }];
+  const { stages, packet } = foldStages(folds);
+  const s = Math.SQRT1_2;
+  return panels([
+    stagePanel(stages[0]),
+    stagePanel(stages[1]),
+    { zoom: 1.35, items: [polyItem(packet, "paper"), { t: "circle", x: 0.5, y: 0.83, r: 0.075 }, { t: "semi", x: 0.74, y: 0.74, r: 0.07, nx: round(s), ny: round(-s) }] }
+  ]);
+}
+
+const ORIGINALS = {
+  1: () => ({
+    prompt: "다음과 같이 1, 2, 3, 4가 적힌 작은 정사각형으로 이루어진 도형이 있습니다. 각 도형에 1, 2, 3, 4가 하나씩 들어가도록 모양과 크기가 같은 도형으로 나누시오.",
+    visual: set([[[1, 2, 4, 3], [2, 3, 4, 1], [1, 4, 3, 2], [3, 1, 2, 4]], [[4, 3, 1, 2], [1, 3, 2, 4], [4, 2, 3, 1], [2, 1, 4, 3]]].map((grid, index) => ({
+      label: `(${index + 1})`,
+      visual: { kind: "book1", subtype: "ut-partition", rows: 4, columns: 4, symbols: grid.flat().map(String), guides: [[5, 6], [9, 10], [5, 9], [6, 10]], pivot: true }
+    }))),
+    responseKind: "drawing"
+  }),
+  2: () => ({
+    prompt: "다음 두 자리 수를 오른쪽으로 뒤집은 수를 구하시오.",
+    visual: set([[1, 5], [8, 2]].map((digits, index) => ({ label: `(${index + 1})`, visual: { kind: "book1", subtype: "ut-digital-flip", digits } })), 1),
+    responseKind: "fill"
+  }),
+  3: () => ({
+    prompt: "다음 식은 원래 두 자리 수와 그 수를 반 바퀴 돌려 읽은 수를 더한 것입니다. 빈 칸에 알맞은 수를 구하시오.",
+    visual: set([[6, 1], [5, 2]].map((digits, index) => ({ label: `(${index + 1})`, visual: { kind: "book1", subtype: "ut-digital-addition", digits } }))),
+    responseKind: "fill"
+  }),
+  4: () => ({
+    prompt: "다음 숫자판을 오른쪽으로 뒤집은 후 아래로 뒤집었을 때, 똑바로 놓이는 수들의 합을 구하시오.",
+    visual: { kind: "book1", subtype: "ut-oriented-board", cells: [
+      { digit: 1, state: "rot270" }, { digit: 2, state: "rot90" }, { digit: 3, state: "flipX" },
+      { digit: 6, state: "normal" }, { digit: 5, state: "rot270" }, { digit: 4, state: "rot180" },
+      { digit: 7, state: "rot90" }, { digit: 8, state: "rot90" }, { digit: 9, state: "normal" }
+    ] }
+  }),
+  5: () => ({
+    prompt: "우리 안의 다람쥐들이 다음과 같은 위치에 있을 때, 똑같은 수의 다람쥐가 들어가면서 크기와 모양이 같은 4부분이 되도록 울타리를 완성하시오. (단, 4부분으로 나눌 때 다람쥐의 위치는 같지 않아도 됩니다.)",
+    visual: { kind: "book1", subtype: "ut-partition", rows: 4, columns: 4, fence: true, symbols: [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1].map((value) => (value ? "squirrel" : "")) },
+    responseKind: "drawing"
+  }),
+  6: () => ({
+    prompt: "색종이를 한 번 접은 후 칠해진 부분을 잘라내었습니다. 잘려나간 부분에 있는 수들의 합을 구하시오.",
+    visual: set([
+      { label: "(1)", visual: originalDiagonalOnce({ line: "d1", keep: -1 }, [{ row: 0, column: 0, sides: ["top", "right"] }, { row: 0, column: 3, sides: ALL_SIDES }, { row: 3, column: 3, sides: ["top", "right"] }]) },
+      { label: "(2)", visual: originalDiagonalOnce({ line: "d1", keep: 1 }, [{ row: 2, column: 1, sides: ALL_SIDES }, { row: 2, column: 2, sides: ["bottom", "left"] }]) }
+    ], 1)
+  }),
+  7: () => ({
+    prompt: "다음과 같이 수가 쓰인 색종이를 접어서 색칠된 부분을 자른 후 펼쳤을 때, 잘려나간 부분에 있는 수들의 합을 구하시오.",
+    visual: originalTwoFoldCut([{ line: "v", keep: -1 }, { line: "h", keep: -1 }], [{ row: 1, column: 1, sides: ALL_SIDES }], (stage) => numberGridPanel(ORIGINAL_NUMBER_GRID_B, [longCreaseOf(stage), { t: "arrow", ...stage.arrow }]))
+  }),
+  8: () => ({
+    prompt: "색종이를 두 번 접은 후 칠해진 부분을 잘라내었습니다. 남은 부분을 펼쳤을 때의 그림을 그려 보시오.",
+    visual: originalCornerCuts(),
+    responseKind: "drawing"
+  }),
+  9: () => ({
+    prompt: "다음과 같이 수가 쓰인 색종이를 접어서 색칠된 부분을 자른 후 펼쳤을 때, 잘려나간 부분에 있는 수들의 합을 구하시오.",
+    visual: originalTwoFoldCut([{ line: "d2", keep: -1 }, { line: "d1", keep: 1 }], [{ row: 0, column: 0, sides: ["left", "bottom"] }, { row: 1, column: 0, sides: ALL_SIDES }], (stage) => numberGridPanel(ORIGINAL_NUMBER_GRID_B, [longCreaseOf(stage), { t: "arrow", ...stage.arrow }]))
+  }),
+  10: () => ({
+    prompt: "정사각형 모양의 색종이를 다음과 같이 두 번 접어서 선을 따라 잘랐을 때 나오는 도형의 종류별 개수를 각각 구하시오.",
+    visual: originalLineCuts(),
+    responseKind: "fill"
+  }),
+  11: () => ({
+    prompt: "정사각형 모양의 색종이를 다음과 같이 2번 접은 후, 원 모양의 구멍과 반원 모양의 구멍을 뚫었습니다. 펼친 모양에서 뚫린 구멍은 모두 몇 개인지 구하시오.",
+    visual: originalPunch()
+  }),
+  12: () => ({
+    prompt: "다음 주어진 수들을 이용하여 가로와 세로에 있는 세 수의 합이 같도록 십자 마방진을 완성하려고 합니다. 가운데 들어갈 수 있는 수와 한 줄의 합이 될 수 있는 수를 각각 구하시오.",
+    visual: { kind: "book1", subtype: "ut-cross-set", cards: [2, 4, 6, 8, 10], boards: [null, null, null], sums: [null, null, null] },
+    responseKind: "fill"
+  }),
+  13: () => ({
+    prompt: "3에서 9까지의 숫자 카드를 사용하여 같은 줄에 있는 세 수의 합이 모두 같도록 만들려고 합니다. 가운데 들어갈 수 있는 수와, 한 줄의 합이 될 수 있는 수를 각각 구하시오.",
+    visual: { kind: "book1", subtype: "ut-flower-set", cards: [3, 4, 5, 6, 7, 8, 9], boards: [null, null, null], sums: [null, null, null] },
+    responseKind: "fill"
+  }),
+  14: () => ({
+    prompt: "2부터 9까지 수를 한 번씩 사용하여 가로, 세로 각 줄의 합이 18이 되도록 빈 칸에 알맞은 수를 써 넣으시오.",
+    visual: { kind: "book1", subtype: "ut-ring8", cards: [2, 3, 4, 5, 6, 7, 8, 9], shown: [4, null, 9, null, null, null, 8, null] },
+    responseKind: "drawing"
+  }),
+  15: () => ({
+    prompt: "삼각형의 꼭짓점과 변에 놓인 ○ 안에 3에서 8까지의 수를 넣어 주어진 조건을 만족하는 삼각진을 완성하시오.",
+    visual: set([
+      { label: "(1) 한 줄의 합이 15인 경우", visual: { kind: "book1", subtype: "ut-triangle6", shown: [3, null, null, null, null, 5] } },
+      { label: "(2) 한 줄의 합이 18인 경우", visual: { kind: "book1", subtype: "ut-triangle6", shown: [6, null, null, 7, null, null] } }
+    ]),
+    responseKind: "drawing"
+  }),
+  16: () => ({
+    prompt: "주어진 숫자카드의 수를 한 번씩만 써서 가로줄, 세로줄에 있는 수의 합이 표의 위 또는 왼쪽에 쓰인 수가 되도록 빈 칸을 채우시오.",
+    visual: { kind: "book1", subtype: "ut-gakuro", mask: [1, 1, 0, 1, 1, 1, 0, 1, 1], rowSums: [16, 12, 8], columnSums: [12, 17, 7], cards: [1, 2, 3, 6, 7, 8, 9], shown: [null, null, null, null, null, null, null, null, 6] },
+    responseKind: "drawing"
+  }),
+  17: () => ({
+    prompt: "다음 오각진의 빈 원 안에 1부터 10까지의 수를 한 번씩 넣어 한 줄 위에 있는 세 수의 합이 모두 14가 되게 만드시오.",
+    visual: { kind: "book1", subtype: "ut-pentagon", shown: [null, null, 2, null, null, null, null, 10, 1, 9], lineSum: 14 },
+    responseKind: "drawing"
+  }),
+  18: () => ({
+    prompt: "다음 그림의 원 안에 수 1, 2, 3, 4, 5를 넣어 직선 위에 있는 세 수의 합과 원의 둘레에 있는 네 수의 합이 모두 같게 만들려고 합니다. 가운데 들어갈 수를 구하시오.",
+    visual: { kind: "book1", subtype: "ut-ellipse", cards: [1, 2, 3, 4, 5], shown: [null, null, null, null, null] }
+  }),
+  19: () => ({
+    prompt: "다음 주어진 조건에 맞는 두 자리 수를 구하시오.",
+    visual: { kind: "book1", subtype: "ut-conditions", clues: ["일의 자리 숫자와 십의 자리 숫자를 더하면 8입니다.", "50보다 크고 70보다 작은 홀수입니다."] }
+  }),
+  20: () => ({
+    prompt: "다음 주어진 조건에 맞는 두 자리 수를 구하시오.",
+    visual: { kind: "book1", subtype: "ut-conditions", clues: ["70보다 큰 두 자리 짝수입니다.", "십의 자리 숫자가 일의 자리 숫자보다 4가 큽니다."] }
+  }),
+  21: () => ({
+    prompt: "다음 주어진 조건에 맞는 세 자리 수를 구하시오.",
+    visual: { kind: "book1", subtype: "ut-conditions", clues: ["321과 같이 자리가 내려갈수록 1씩 작아집니다.", "각 자리 숫자의 합이 20보다 큰 짝수입니다."], places: ["백", "십", "일"] }
+  }),
+  22: () => ({
+    prompt: "민준, 연지, 루나는 감, 딸기, 참외 중 서로 다른 과일을 한 가지씩 좋아합니다. 루나가 좋아하는 과일을 구하시오.",
+    visual: { kind: "book1", subtype: "ut-logic", layout: "columns", left: ["민준", "연지", "루나"], right: ["감", "딸기", "참외"], clues: ["민준이는 감을 좋아하지 않습니다.", "연지는 참외를 좋아합니다."] }
+  }),
+  23: () => ({
+    prompt: "태하, 주상, 유찬, 현우는 빨강, 파랑, 초록, 노랑 중에서 서로 다른 한 가지 색을 좋아합니다. 파랑을 좋아하는 사람은 누구인지 구하시오.",
+    visual: { kind: "book1", subtype: "ut-logic", layout: "rows", left: ["태하", "주상", "유찬", "현우"], right: ["빨강", "파랑", "초록", "노랑"], clues: ["태하는 노란 해바라기를 좋아합니다.", "주상이는 초록 숲을 보면 기분이 좋아집니다.", "유찬이는 파란색을 싫어합니다."] }
+  }),
+  24: () => ({
+    prompt: "의사, 소방관, 선생님은 병원, 소방서, 학교 중 서로 다른 장소에 있습니다. 소방서에 있는 사람은 누구인지 구하시오.",
+    visual: { kind: "book1", subtype: "ut-logic", layout: "columns", left: ["의사", "소방관", "선생님"], right: ["병원", "소방서", "학교"], clues: ["소방관은 학교에 있습니다.", "선생님은 소방서에 없습니다."] }
+  }),
+  25: () => ({
+    prompt: "다음은 민우, 은율, 예서, 수민의 키를 비교한 것입니다. 키가 세 번째로 큰 사람은 누구인지 구하시오.",
+    visual: { kind: "book1", subtype: "ut-logic", layout: "rows", left: ["민우", "은율", "예서", "수민"], right: ["1", "2", "3", "4"], clues: ["민우는 은율이보다 작습니다.", "예서는 수민이보다 작고 은율이보다 큽니다.", "수민이가 가장 큽니다."], ends: ["크다", "작다"] }
+  })
+};
+
+// 원문 문항 하나 { number, prompt, visual, responseKind? } — 없는 번호는 null
+export function book01UnitTestOriginal(number) {
+  const make = ORIGINALS[Number(number)];
+  return make ? { number: Number(number), ...make() } : null;
+}
+export const BOOK01_UNIT_TEST_ORIGINAL_NUMBERS = Object.freeze(Object.keys(ORIGINALS).map(Number));

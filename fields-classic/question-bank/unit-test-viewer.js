@@ -1,5 +1,7 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
 import { saveRecord } from "./study-progress.js?v=20261028n";
+import { book01UnitTestOriginal, BOOK01_UNIT_TEST_ORIGINAL_NUMBERS } from "./book01-unit-test-generators.js?v=20261028za";
+import { book01Markup } from "./book01-renderers.js?v=20261028za";
 
 // 권별테스트 원문 풀기 (원장 지시 2026-10-24): 「교재 권별테스트는 원본 문제 그대로 1세트가 있고, 유사문제로 공부하는 거야.」
 // 원문 쪽 그림을 그대로 보여 주고(답은 없다), 학생이 답안지에 적고 ○✕로 채점한 뒤
@@ -68,7 +70,32 @@ document.title = `${book.label} 권별테스트 원문 풀기`;
 $("title").textContent = `${book.label} 권별테스트 · 원문`;
 $("eyebrow").textContent = `GIFTED MATH BANK · 1과정 · ${book.title}`;
 $("backLink").href = `./start.html?${new URLSearchParams({ student, book: book.id, door: "test" })}`;
-$("pages").innerHTML = Array.from({ length: book.source.unitTestPageCount }, (_, index) => {
+// 원문을 우리 시험지 꼴로 다시 짠 권(원장 2026-10-28 「권별 테스트 원문은 폼을 바꾸자 · 글씨체와 색도 · 우리쪽에 맞추자」):
+// 수·이름·그림 배치는 원문 그대로, 글꼴(문제 명조 · 번호 Pretendard)·색·그림은 우리 것. 아직 안 옮긴 권은 원문 쪽 그림을 그대로 보인다.
+const ORIGINAL_SETS = {
+  "book-01": { numbers: BOOK01_UNIT_TEST_ORIGINAL_NUMBERS, get: book01UnitTestOriginal, figure: book01Markup }
+};
+const original = ORIGINAL_SETS[book.id];
+const PER_PAGE = 4;
+function originalQuestionMarkup(question) {
+  const answer = question.responseKind ? "" : `<p class="ut-q-ans">답 <span aria-hidden="true">(</span><i></i><span aria-hidden="true">)</span></p>`;
+  return `<section class="ut-q" aria-label="${question.number}번"><div class="ut-q-head"><b>${question.number}</b><p>${esc(question.prompt)}</p></div><div class="ut-q-fig">${original.figure(question.visual)}</div>${answer}</section>`;
+}
+function originalPagesMarkup() {
+  const questions = original.numbers.map(original.get).filter(Boolean);
+  const pages = [];
+  for (let start = 0; start < questions.length; start += PER_PAGE) pages.push(questions.slice(start, start + PER_PAGE));
+  const course = "1과정";
+  const head = (index) => index === 0
+    ? `<header class="ut-test-head"><p class="ut-test-band"><span>${esc(course)} · ${esc(book.label)}</span><span>권별 테스트</span></p><h1>${esc(book.title)}</h1><dl><div><dt>이름</dt><dd></dd></div><div><dt>날짜</dt><dd></dd></div><div><dt>맞은 개수</dt><dd><span>/ ${questions.length}</span></dd></div></dl></header>`
+    : `<header class="ut-test-run"><span>${esc(course)} · ${esc(book.label)} 권별 테스트</span><span>${esc(book.title)}</span></header>`;
+  return pages.map((group, index) => `<article class="ut-test-page" aria-label="${index + 1}쪽">${head(index)}<div class="ut-test-body">${group.map(originalQuestionMarkup).join("")}</div><footer class="ut-test-foot"><span>지필드 영재교육</span><span>${index + 1}</span></footer></article>`).join("");
+}
+if (original) {
+  document.body.classList.add("is-typeset");
+  $("guide").innerHTML = "원문 문제를 우리 시험지로 옮겼어요(수와 그림 배치는 그대로). 공책이나 인쇄한 시험지에 풀고, 오른쪽 답안지에 답을 적으세요. 채점한 뒤 틀린 번호는 <b>유사문제</b>로 다시 공부합니다.";
+}
+$("pages").innerHTML = original ? originalPagesMarkup() : Array.from({ length: book.source.unitTestPageCount }, (_, index) => {
   const page = String(index + 1).padStart(2, "0");
   return `<figure><img src="./assets/unit-tests/${folder}/page-${page}.png?v=20261024a" alt="${esc(book.label)} 권별테스트 원문 ${index + 1}쪽" loading="${index > 1 ? "lazy" : "eager"}" /></figure>`;
 }).join("");
