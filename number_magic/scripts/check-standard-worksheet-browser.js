@@ -3,7 +3,7 @@
 /* 표준 학습지 검사(2026-10-28, 원장 「같은 과정·같은 회차는 같은 시험지 — 몇월 몇주는 표지·문자에만」).
  * ws.html?w=주차&c=과정&r=회차[&amt=1.25] 가
  *  ① 주차가 달라도 같은 과정·회차면 문항이 똑같고  ② 다음 회차는 다르고  ③ 1.25배 판은 문항이 더 많고
- *  ④ 표지에 「몇월 몇주차 · N회차」(묶음 과정은 날짜만, 1.25배는 연습량)가 찍히고  ⑤ 없는 회차는 안내를 띄우고
+ *  ④ 학습 안내 첫 줄에 「N회차」(1.25배는 연습량)가 찍히고 날짜(월·주차)는 어디에도 없고(2026-10-24 「과정만 쓰면 되지」)  ⑤ 없는 회차는 안내를 띄우고
  *  ⑥ 짧은 링크 /w/?YYWW.과정.회차[L] 이 그 주소로 넘어가는지 본다. 외부 요청은 막는다.
  * usage: node scripts/check-standard-worksheet-browser.js */
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
@@ -21,7 +21,8 @@ const server=http.createServer((req,res)=>{let f=path.resolve(ROOT,'.'+decodeURI
    await p.goto(base+'/number_magic/ws.html?'+q);await p.waitForFunction(()=>window.NM_WS_READY,null,{timeout:120000});
    const r=await p.evaluate(()=>({ready:window.NM_WS_READY,err:(document.querySelector('.ws-err')||{}).textContent||'',
      text:[...document.querySelectorAll('.nm-print-sheet')].map(x=>x.innerText).join('\n'),
-     kicker:[...document.querySelectorAll('.nm-cvw .nm-cv-kicker')].map(e=>e.innerText).join('|')}));
+     kicker:[...document.querySelectorAll('.nm-cvw .nm-cv-kicker')].map(e=>e.innerText).join('|'),
+     covers:[...document.querySelectorAll('.nm-series-front,.nm-cvw')].map(e=>e.innerText).join('|')}));
    await p.close();return {...r,errors};};
  // 문항만 비교: 표지의 날짜 글자와 학습지 번호는 뺀다
  const body=t=>t.replace(/\d{1,2}월 \d(-\d)?주차/g,'').replace(/S-C\d+-[MH]?\d+(-x[\d.]+)?/g,'');
@@ -34,7 +35,7 @@ const server=http.createServer((req,res)=>{let f=path.resolve(ROOT,'.'+decodeURI
     assert.equal(body(later.text),body(a.text),c+' same course and round in another week must be identical');
     assert.notEqual(body(next.text),body(a.text),c+' the next round must differ');
     assert.ok(more.text.length>a.text.length,c+' 1.25x has more practice');
-    assert.match(a.kicker,/10월 4주차/,c+' cover shows the week');
+    assert.doesNotMatch(a.covers+more.covers,/\d+월|주차|월호/,c+' cover and guide never show a month or week');
     if(!compact)assert.match(a.kicker,new RegExp(' '+r+'회차'),c+' cover shows the round');
     assert.match(more.kicker,/1\.25배/,c+' cover shows the amount');
     report.push({course:c,round:r,sameAcrossWeeks:true,nextDiffers:true,kicker:a.kicker});
