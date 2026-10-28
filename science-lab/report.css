@@ -529,3 +529,37 @@ body.fw-on .observe-page { padding-bottom: 58vh; }
 .pk-sk-btns button { min-width: 38px; height: 34px; border-radius: 8px; border: 1.5px solid #2f6b3a; background: #fff; color: #2f6b3a; font: inherit; font-weight: 800; cursor: pointer; }
 .pk-sk-btns button.done { background: #2f6b3a; color: #fff; } .pk-sk-btns button.done::after { content: " ✓"; font-size: 11px; }
 .pk-sk-msg { margin: 6px 0 0; font-size: 13px; color: #2f6b3a; font-weight: 700; } .pk-sk-msg:empty { display: none; }
+
+/* ── 예시 보고서 A4 쪽 인쇄(observe-sample.js printSampleA4, 원장 2026-10-28) ── */
+/* 화면에서는 보이지 않는 자리에서 쪽을 재고, 인쇄할 때만 나온다. 한 쪽 = 210×297mm 상자 하나. */
+.a4-print { position: fixed; left: -10000px; top: 0; visibility: hidden; pointer-events: none; }
+.a4-page { width: 210mm; height: 296.5mm; box-sizing: border-box; padding: 12mm 14mm 9mm; display: flex; flex-direction: column; background: #fff; overflow: hidden; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.a4-run, .a4-foot { flex: none; display: flex; justify-content: space-between; gap: 8mm; font-size: 8.5pt; color: #5b6570; }
+.a4-run { border-bottom: .35mm solid #1d2329; padding-bottom: 1.5mm; margin-bottom: 4mm; }
+.a4-run b { color: #1d2329; }
+.a4-page.first .a4-run { display: none; }
+.a4-foot { border-top: .25mm solid #b9c0c8; padding-top: 1.6mm; margin-top: 3mm; }
+.a4-body.rp-sheet { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 3mm; padding: 0; margin: 0; border: 0; border-radius: 0; box-shadow: none; max-width: none; background: transparent; }
+.a4-body > * { flex: none; margin: 0 !important; }
+.a4-body .rp-head { padding-bottom: 2.5mm; }
+.a4-body .rp-cell { grid-template-columns: 34mm 1fr; padding: 2.5mm 0; break-inside: auto; }
+.a4-body .rp-cell:last-child { border-bottom: 0; }
+.a4-body .rp-cell[data-sec="obs"], .a4-body .rp-cell[data-sec="tree"], .a4-body .rp-cell[data-sec="venn"], .a4-body .rp-cell[data-sec^="x"], .a4-body .rp-cell[data-sec="adapt"] { grid-template-columns: 1fr; gap: 2mm; }
+.a4-body .rp-cell[data-sec="obs"] > h3 small, .a4-body .rp-cell[data-sec="tree"] > h3 small, .a4-body .rp-cell[data-sec="venn"] > h3 small, .a4-body .rp-cell[data-sec^="x"] > h3 small, .a4-body .rp-cell[data-sec="adapt"] > h3 small { display: inline; margin: 0 0 0 2mm; }
+.a4-body.rp-sheet .rp-obs-head, .a4-body.rp-sheet .rp-obs-row { grid-template-columns: 74mm 1fr; }
+.a4-body .rp-tree { overflow: visible; }
+.a4-body .pz-hand { display: none; }
+@media print {
+  @page a4sheet { size: A4; margin: 0; @bottom-right { content: none; } }
+  html:has(body.a4-printing), body.a4-printing { background: #fff !important; }
+  body.a4-printing > :not(.a4-print) { display: none !important; }
+  body.a4-printing .a4-print { position: static; visibility: visible; left: auto; }
+  .a4-page { page: a4sheet; break-after: page; }
+  .a4-page:last-child { break-after: auto; }
+}
+/* 벤 그림: 가운데 글이 두 원이 겹친 자리(렌즈) 안에 들어가게 */
+.a4-body .rp-venn { grid-template-columns: 1fr .6fr 1fr; align-items: center; }
+.a4-body .rp-venn .ring { width: 64%; }
+.a4-body .rp-venn-zone.both { padding: 18px 2px 10px; }
+.a4-body .rp-venn-zone.both .rp-view { font-size: 12.5px; line-height: 1.6; }
+.a4-body .rp-venn-zone.a { padding-right: 16px; } .a4-body .rp-venn-zone.b { padding-left: 16px; }

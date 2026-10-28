@@ -92,6 +92,7 @@ body.field-on { overflow: hidden; }
 .fd-print-sheet { display: none; }
 @media print {
   body.fd-printing > :not(.fd-print-sheet) { display: none !important; }
+  html:has(body.fd-printing), body.fd-printing { background: #fff !important; }
   body.fd-printing .fd-print-sheet { display: block !important; }
   body.fd-printing .pz-hand { display: none !important; }
   .fd-print-sheet .rp-obs-row { break-inside: avoid; }
