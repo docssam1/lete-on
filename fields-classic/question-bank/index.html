@@ -26,8 +26,9 @@
       </div>
 
       <div class="builder-tabs" id="builderTabs" role="tablist" aria-label="문제 선택 방식">
-        <button type="button" class="active" data-mode="exam">시험지별</button>
-        <button type="button" data-mode="curriculum">교재 단원별</button>
+        <!-- 시험지별(모의고사 시트)은 숨김(원장 2026-10-28 「사고력 문제은행에서 모의고사는 숨겨 … 시험지별이라 만들어져 있는 시트」). 코드는 남겨 둠 -->
+        <button type="button" data-mode="exam" hidden>시험지별</button>
+        <button type="button" class="active" data-mode="curriculum">교재 단원별</button>
         <button type="button" data-mode="type">유형별</button>
         <a id="resultDiagnosisLink" href="./result-diagnosis.html">시험 결과 진단</a>
         <a id="goldenBellLink" href="./golden-bell.html">워밍업 학습</a>
@@ -159,6 +160,6 @@
   <script src="../../geometry/worksheet/generators.js?v=20261028zb"></script>
   <script src="../../geometry/worksheet/render.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/card.js?v=20260829g"></script>
-  <script type="module" src="./app.js?v=20261028zb"></script>
+  <script type="module" src="./app.js?v=20261028zf"></script>
 </body>
 </html>

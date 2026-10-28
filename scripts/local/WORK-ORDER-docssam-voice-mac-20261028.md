@@ -4,6 +4,12 @@ PC(윈도우)는 손글씨 판서(`fcb-`)를 계속 만든다. **맥은 스스�
 같은 줄을 두 컴퓨터가 겹쳐 만들지 않게 줄 이름 앞머리로 나눈다(생성기 `--prefix fcs-`).
 환경·주의점은 `WORK-ORDER-docssam-voice-20261025.md`·`-20261026.md`와 같다. 여기에는 맥에서 다른 것만 적는다.
 
+## 추가(2026-10-28 저녁) — 게임 말 79줄
+덱 대사 208줄은 다 올라갔다. 원장이 「1권 게임 음성이 아직 윈도우 음성」이라고 해서 **덱 안 게임(연습 공방·디지털 숫자 공방·뒤집고 돌리기 공방)의 독쌤 말 79줄**을 목록에 더했다(줄 id `fcs-game-…`, 목록 파일은 같은 `study-deck.voice.json`, 287줄).
+- `git pull` → `python3 scripts/check-docssam-voice.py` 마지막 줄이 **`빠진 독쌤 음성: 79줄`**이어야 한다.
+- 아래 순서 3번처럼 `omnivoice-docssam-deck.command`를 다시 돌리면 이미 있는 208줄은 건너뛰고 79줄만 만든다(첫 줄 `이번에 만들 것 79줄`). 줄마다 약 10초 → 15분 안팎.
+- 올리기는 아래 6번 그대로(옛 파일 지우기 한 줄은 건너뛰어도 된다).
+
 ## 지금 상태
 - `python3 scripts/check-docssam-voice.py` 마지막 줄 `빠진 독쌤 음성: 1103줄` = 판서 895 + 덱 대사 **208**(2026-10-28 오후, main `c8b18fe7`).
 - 덱 대사 목록: `fields-classic/question-bank/data/voice/study-deck.voice.json`(줄 id `fcs-…`).

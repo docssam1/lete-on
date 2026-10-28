@@ -1,6 +1,6 @@
 import { CURRICULUM } from "./source-data.js?v=20261028m";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261028x";
-import { PHASES, FIXED_LINES, voiceLine, weekBlocks as unitWeekBlocks, weekTypes as unitWeekTypes, buildWeekSlides, slideLine, bellLabel } from "./study-deck.js?v=20261028y";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261028zf";
+import { PHASES, FIXED_LINES, voiceLine, weekBlocks as unitWeekBlocks, weekTypes as unitWeekTypes, buildWeekSlides, slideLine, bellLabel } from "./study-deck.js?v=20261028zf";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261028n";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -283,7 +283,8 @@ async function mountNative(slide, intro = Promise.resolve()) {
   nativeGame = mod[game.mount](host, {
     // 말 끝을 기다릴 수 있게 Promise를 돌려준다(판서가 비트마다 기다린다). voiceId가 있으면 독쌤 복제 음성.
     // 장 안내 말(intro)이 끝난 뒤에 말한다 — 판서 첫 말이 안내 말을 끊거나 겹치지 않게
-    say: async (text, mood, voiceId) => { await intro; if (slides[index] !== slide) return; return say(text, mood, voiceId); },
+    // 게임은 id 없이 말한다 → 글로 id를 만들어 녹음을 찾는다(목록: tools/export-study-voice.mjs). 녹음이 없으면 기기 음성
+    say: async (text, mood, voiceId) => { await intro; if (slides[index] !== slide) return; return say(text, mood, voiceId || (slide.kind === "game" && text ? voiceLine("game", text).id : null)); },
     board: game.board, lesson: slide.lesson,
     onDone: () => { if (game.doneSay !== null) { const done = game.doneSay ? voiceLine("game", game.doneSay) : FIXED_LINES.nativeDone; say(done.text, "praise", done.id); } auto(game.board ? 4000 : 2200); }
   });

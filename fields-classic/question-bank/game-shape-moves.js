@@ -83,6 +83,16 @@ export function diagnose(from, built, name) {
   return { ok: false, wrong, say: `옮긴 칸 중 ${wrong}칸의 자리가 달라요. 규칙을 다시 읽고 한 칸씩 확인해 봐요.` };
 }
 
+// 독쌤 말(문제마다 바뀌는 것) — 화면과 음성 목록(tools/export-study-voice.mjs)이 같이 쓴다
+export const guideFor = (name) => OPS[name].kind === "flip"
+  ? "이 모양과 대칭인 것을 만들어 볼까요? 왼쪽에 반짝이는 칸이 거울에 비치면 어디에 올지, 오른쪽 판에서 눌러 봐요."
+  : "이 모양을 돌려 볼까요? 왼쪽에 반짝이는 칸이 돌아가면 어디로 갈지, 오른쪽 판에서 눌러 봐요.";
+export function firstLine(names) {
+  const n = names.map((x) => OPS[x].label);
+  return `${n.length > 1 ? `처음 모양을 ${n.join(", 그다음 ")} 해요. 중간 모양부터 차례로 만들어요. ` : ""}${guideFor(names[0])}`;
+}
+export const nextLine = (name) => `이번에는 방금 만든 모양을 ${OPS[name].label} 해요. ${guideFor(name)}`;
+
 export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}) {
   const listening = new AbortController();
   let alive = true, timer = 0;
@@ -96,16 +106,11 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     st.problem = makeProblem(st.level, st.index);
     st.step = 0; st.tries = 0; st.firsts = true; st.solved = false;
     resetStep();
-    const n = st.problem.names.map((x) => OPS[x].label);
-    say(`${n.length > 1 ? `처음 모양을 ${n.join(", 그다음 ")} 해요. 중간 모양부터 차례로 만들어요. ` : ""}${guideLine()}`, "talk");
+    say(firstLine(st.problem.names), "talk");
   }
   // 처음 한 칸은 같이: 왼쪽 판의 칸 하나가 반짝이고, 그 칸이 갈 자리를 오른쪽 판에서 누른다
   function startGuide() { st.free = false; st.guide = cid(from()[0]); st.guideMiss = 0; st.guideMark = null; }
-  function guideLine() {
-    return OPS[name()].kind === "flip"
-      ? "이 모양과 대칭인 것을 만들어 볼까요? 왼쪽에 반짝이는 칸이 거울에 비치면 어디에 올지, 오른쪽 판에서 눌러 봐요."
-      : "이 모양을 돌려 볼까요? 왼쪽에 반짝이는 칸이 돌아가면 어디로 갈지, 오른쪽 판에서 눌러 봐요.";
-  }
+  const guideLine = () => guideFor(name());
   function resetStep() { st.moves = []; st.pick = null; st.note = ""; st.hinted = st.tries > 0; st.showing = false; startGuide(); render(); }
 
   function grid(cells, opts) {
@@ -224,7 +229,7 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
   function next() {
     const p = st.problem;
     st.check = null;
-    if (st.step < p.names.length - 1) { st.step += 1; st.solved = false; st.tries = 0; resetStep(); say(`이번에는 방금 만든 모양을 ${OPS[name()].label} 해요. ${guideLine()}`, "talk"); return; }
+    if (st.step < p.names.length - 1) { st.step += 1; st.solved = false; st.tries = 0; resetStep(); say(nextLine(name()), "talk"); return; }
     advance();
   }
   // 다음 문제로(마지막이면 다음 단계, 다 했으면 끝). 「넘어가기」도 여기로 — 별은 주지 않는다

@@ -89,7 +89,7 @@ function requestedStage() {
 }
 
 const state = {
-  mode: "exam",
+  mode: "curriculum",
   stage: requestedStage(),
   selected: { exam: new Set(), curriculum: new Set(), unitTest: new Set(), type: new Set() },
   academyStyles: new Set(ACADEMY_STYLES.map((item) => item.id)),
@@ -448,6 +448,7 @@ function initTypePreviews() {
 }
 
 function setMode(mode) {
+  if (mode === "exam") mode = "curriculum";   // 시험지별(모의고사) 숨김 — 원장 2026-10-28
   state.mode = mode;
   document.querySelectorAll("#builderTabs button").forEach((button) => button.classList.toggle("active", button.dataset.mode === mode));
   $("examBuilder").hidden = mode !== "exam";
@@ -3653,7 +3654,7 @@ renderAcademyStyleFilters();
 renderTypeTree();
 initControls();
 initTypePreviews();
-setMode(params.get("mode") === "curriculum" ? "curriculum" : params.get("mode") === "type" ? "type" : "exam");
+setMode(params.get("mode") === "type" ? "type" : "curriculum");
 
 // ?exam=<시험지 id> 로 들어오면 그 시험지에서 열려 있는 문항을 모두 골라 둔다.
 // 프로그램 페이지의 모의고사 카드에서 바로 넘어올 때 쓴다. 잠긴 문항은 건드리지 않으므로

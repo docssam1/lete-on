@@ -8,6 +8,7 @@
 //    다 옮긴 뒤 「확인」. 맞으면 만든 숫자를 읽어 쓴다. 숫자판은 똑바로 설 숫자를 먼저 고르고, 판을 돌려 확인한 뒤 합을 쓴다.
 //  · 틀리면 실수의 종류를 말하고(위아래·좌우를 바꿈, 자리 순서, 누운 방향), 두 번 틀리면 「풀이 보기」.
 import { BOOK01_INTERNALS } from "./book01-generators.js?v=20261023h";
+import { jo } from "./concept-board-kit.js?v=20261026b";
 
 const { transformDigit, transformDisplay } = BOOK01_INTERNALS;
 export const DIGIT_SEGMENTS = Object.freeze({ 0: "abcdef", 1: "bc", 2: "abdeg", 3: "abcdg", 4: "bcfg", 5: "acdfg", 6: "acdefg", 7: "abc", 8: "abcdefg", 9: "abcdfg" });
@@ -99,6 +100,9 @@ function digitSvg({ lit = "", role = "show", place = 0, picked = null, moved = [
   return `<svg class="dg-digit${small ? " small" : ""}${role === "target" ? " target" : ""}" viewBox="0 0 60 100" aria-hidden="${role === "show" ? "true" : "false"}">${parts}</svg>`;
 }
 
+// 문제마다 첫 독쌤 말 — 화면과 음성 목록(tools/export-study-voice.mjs)이 같이 쓴다
+export const problemLine = (p) => p.kind === "build" ? `켜진 막대를 하나 골라서 ${OP_LABEL[p.op]} 하면 어디로 가는지 옮겨 놓아 봐요.` : p.kind === "board" ? `숫자판을 ${TURN[p.op].label} 돌리면 똑바로 서는 숫자를 모두 골라 봐요.` : `${jo(p.value, "을")} ${OP_LABEL[p.op].replace(" 돌리기", " 돌려").replace("뒤집기", "뒤집어")} 읽은 수부터 써 봐요.`;
+
 export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} } = {}) {
   const listening = new AbortController();
   let alive = true, timer = 0;
@@ -110,7 +114,7 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
     st.moves = []; st.pick = null; st.tries = 0; st.note = ""; st.hint = ""; st.typed = ""; st.first = true; st.picked = new Set(); st.turned = false; st.check = null;
     render();
     const p = st.p;
-    say(p.kind === "build" ? `켜진 막대를 하나 골라서 ${OP_LABEL[p.op]} 하면 어디로 가는지 옮겨 놓아 봐요.` : p.kind === "board" ? `숫자판을 ${TURN[p.op].label} 돌리면 똑바로 서는 숫자를 모두 골라 봐요.` : `${p.value}을 ${OP_LABEL[p.op].replace(" 돌리기", " 돌려")} 읽은 수부터 써 봐요.`, "talk");
+    say(problemLine(p), "talk");
   }
   const lit = (i) => DIGIT_SEGMENTS[st.p.digits[i]];
 

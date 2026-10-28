@@ -1,4 +1,4 @@
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261028x";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261028zf";
 
 // 한 주(한 단원) 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 독쌤 말 id는 글에서 나온다(`fcs-<종류>-<글의 FNV 해시>`): 같은 글이면 같은 음성 파일, 글을 고치면 새 id라 옛 음성을 틀지 않는다.
