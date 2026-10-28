@@ -1,0 +1,43 @@
+name: Mirror a Supabase bucket to R2
+description: >
+  음성·그림을 Supabase에 올린 워크플로 끝에서 같은 버킷을 Cloudflare R2(gfield-assets)에도 맞춰 둔다.
+  새 파일과 다시 만든 파일만 올리고, 경로·크기를 대조한다. R2 열쇠가 아직 없으면 아무것도 하지 않고 넘어간다.
+inputs:
+  bucket:
+    description: Supabase 버킷 이름(audio · library-images · library-pdfs · nm-worksheets)
+    required: true
+  supabase-key:
+    required: true
+  r2-account-id:
+    required: false
+    default: ""
+  r2-access-key-id:
+    required: false
+    default: ""
+  r2-secret-access-key:
+    required: false
+    default: ""
+  r2-bucket:
+    required: false
+    default: gfield-assets
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        SUPABASE_SERVICE_ROLE_KEY: ${{ inputs.supabase-key }}
+        R2_ACCOUNT_ID: ${{ inputs.r2-account-id }}
+        R2_ACCESS_KEY_ID: ${{ inputs.r2-access-key-id }}
+        R2_SECRET_ACCESS_KEY: ${{ inputs.r2-secret-access-key }}
+        SOURCE_BUCKET: ${{ inputs.bucket }}
+        R2_BUCKET: ${{ inputs.r2-bucket }}
+        SKIP_IF_NO_R2: "1"
+      run: |
+        if [ -z "$R2_ACCOUNT_ID" ] || [ -z "$R2_ACCESS_KEY_ID" ] || [ -z "$R2_SECRET_ACCESS_KEY" ]; then
+          echo "R2 열쇠가 아직 없어 $SOURCE_BUCKET → R2 복사를 건너뜁니다(Supabase에는 올라가 있음)."
+          exit 0
+        fi
+        tmp="$RUNNER_TEMP/r2-sdk"; mkdir -p "$tmp"
+        npm install --prefix "$tmp" --no-save --no-package-lock --silent @aws-sdk/client-s3@3
+        cp scripts/migrate-storage-to-r2.mjs "$tmp/migrate.mjs"
+        node "$tmp/migrate.mjs"
