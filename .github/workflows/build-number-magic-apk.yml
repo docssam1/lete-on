@@ -1,9 +1,14 @@
 name: Build Numbers of Magic APK
 
-# 수의 마법 안드로이드 앱(2026-10-28). android/number-magic 이 바뀌면 APK 를 만들어
-# number_magic/downloads/GFIELD-Numbers-of-Magic.apk 로 올리고 사이트를 다시 배포한다(설치 안내 install.html 의 「APK 받기」).
-# 서명: 비밀값 NM_ANDROID_KEYSTORE(base64)·NM_ANDROID_KEYSTORE_PASSWORD 가 있으면 정식 서명.
-#       없으면 디버그 서명 — 설치는 되지만 빌드마다 서명이 달라 업데이트하려면 지우고 다시 깔아야 한다.
+# 수의 마법 안드로이드 앱(2026-10-28). android/number-magic 이 바뀌면(또는 손으로 실행하면) APK 를 만든다.
+#
+# 학부모에게 나가는 APK 는 늘 같은 열쇠로 서명돼야 한다 — 열쇠가 바뀌면 이미 깐 기기는 업데이트가 안 되고 지우고 다시 깔아야 한다.
+# 그래서 사이트(number_magic/downloads)에 올리는 것은 아래를 모두 통과한 APK 뿐이다(2026-10-28 「학부모 배포 전 고정 서명·설치→업데이트 확인」):
+#   1) 비밀값 NM_ANDROID_KEYSTORE(base64)·NM_ANDROID_KEYSTORE_PASSWORD 로 정식 서명
+#   2) 서명 인증서 지문이 저장소의 android/number-magic/signing-cert.sha256 과 같다
+#   3) 사이트에 있던 APK 보다 버전 번호가 크다
+#   4) 에뮬레이터에서 옛 버전 설치 → 새 버전 덮어 설치(업데이트) → 열기, 다른 열쇠 APK 거절, 사이트의 APK → 새 버전 업데이트
+# 비밀값이 없으면 디버그 서명으로 만들어 1)~2) 없이 4)만 해 보고 산출물(artifact)로만 남긴다 — 사이트에는 올리지 않는다.
 on:
   push:
     branches: [main]
@@ -25,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APK_NAME: GFIELD-Numbers-of-Magic.apk
-      NM_VERSION_CODE: ${{ github.run_number }}
+      PUBLISHED: number_magic/downloads/GFIELD-Numbers-of-Magic.apk
     steps:
       - uses: actions/checkout@v4
 
@@ -40,7 +45,8 @@ jobs:
           SDKM=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | sort -V | tail -1)
           echo "sdkmanager: $SDKM"
           yes | "$SDKM" --licenses > /dev/null || true
-          "$SDKM" 'platforms;android-35' 'build-tools;35.0.0'
+          "$SDKM" 'platforms;android-35' 'build-tools;35.0.0' 'platform-tools'
+          echo "BT=$ANDROID_HOME/build-tools/35.0.0" >> "$GITHUB_ENV"
 
       - uses: gradle/actions/setup-gradle@v4
         with:
@@ -52,40 +58,91 @@ jobs:
           KEYSTORE_B64: ${{ secrets.NM_ANDROID_KEYSTORE }}
         run: |
           if [ -n "$KEYSTORE_B64" ]; then
-            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/nm-release.jks"
-            echo "file=$RUNNER_TEMP/nm-release.jks" >> "$GITHUB_OUTPUT"
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/nm-release.p12"
+            echo "file=$RUNNER_TEMP/nm-release.p12" >> "$GITHUB_OUTPUT"
+            echo "mode=release" >> "$GITHUB_OUTPUT"
             echo "정식 서명으로 만듭니다."
           else
-            echo "::warning::NM_ANDROID_KEYSTORE 비밀값이 없어 디버그 서명으로 만듭니다. 다음 빌드부터 업데이트하려면 지우고 다시 깔아야 합니다."
+            echo "mode=debug" >> "$GITHUB_OUTPUT"
+            echo "::warning::NM_ANDROID_KEYSTORE 비밀값이 없어 디버그 서명으로 시험만 합니다. 사이트에는 올리지 않습니다."
           fi
 
-      - name: Build APK
+      # 버전 번호: 실행 번호 + 100(옛 시험판 1.0.2 보다 늘 크게). 업데이트 시험용으로 한 번 낮은 번호도 같은 열쇠로 만든다.
+      - name: Build APKs (test-old and new, same key)
         env:
           NM_KEYSTORE_FILE: ${{ steps.sign.outputs.file }}
           NM_KEYSTORE_PASSWORD: ${{ secrets.NM_ANDROID_KEYSTORE_PASSWORD }}
           NM_KEY_ALIAS: ${{ secrets.NM_ANDROID_KEY_ALIAS }}
           NM_KEY_PASSWORD: ${{ secrets.NM_ANDROID_KEY_PASSWORD }}
+          MODE: ${{ steps.sign.outputs.mode }}
         run: |
-          mkdir -p apk-output
-          if [ -n "$NM_KEYSTORE_FILE" ]; then
-            gradle -p android/number-magic :app:assembleRelease --no-daemon
-            cp android/number-magic/app/build/outputs/apk/release/app-release.apk "apk-output/$APK_NAME"
-          else
-            gradle -p android/number-magic :app:assembleDebug --no-daemon
-            cp android/number-magic/app/build/outputs/apk/debug/app-debug.apk "apk-output/$APK_NAME"
-          fi
+          C=$(( ${{ github.run_number }} + 100 ))
+          echo "VERSION_CODE=$C" >> "$GITHUB_ENV"
+          mkdir -p apk-output apk-test
+          TASK=$([ "$MODE" = release ] && echo assembleRelease || echo assembleDebug)
+          OUT=$([ "$MODE" = release ] && echo release/app-release.apk || echo debug/app-debug.apk)
+          NM_VERSION_CODE=$((C - 1)) gradle -p android/number-magic :app:$TASK --no-daemon
+          cp "android/number-magic/app/build/outputs/apk/$OUT" apk-test/old.apk
+          NM_VERSION_CODE=$C gradle -p android/number-magic :app:$TASK --no-daemon --rerun-tasks
+          cp "android/number-magic/app/build/outputs/apk/$OUT" "apk-output/$APK_NAME"
           (cd apk-output && sha256sum "$APK_NAME" > "$APK_NAME.sha256")
-          ls -la apk-output
+          "$BT/aapt2" dump badging "apk-output/$APK_NAME" | head -1
+          "$BT/aapt2" dump badging apk-test/old.apk | head -1
+
+      - name: Check signing certificate and version
+        env:
+          MODE: ${{ steps.sign.outputs.mode }}
+        run: |
+          cert(){ "$BT/apksigner" verify --print-certs "$1" | grep -m1 'certificate SHA-256 digest' | awk '{print $NF}'; }
+          vc(){ "$BT/aapt2" dump badging "$1" | head -1 | grep -o "versionCode='[0-9]*'" | grep -o '[0-9]*'; }
+          NEW_CERT=$(cert "apk-output/$APK_NAME"); OLD_CERT=$(cert apk-test/old.apk)
+          echo "새 APK 인증서: $NEW_CERT"
+          [ "$NEW_CERT" = "$OLD_CERT" ] || { echo "::error::시험용 두 APK 의 서명이 다르다"; exit 1; }
+          if [ "$MODE" = release ]; then
+            PIN=$(tr -d ' \n' < android/number-magic/signing-cert.sha256)
+            [ "$NEW_CERT" = "$PIN" ] || { echo "::error::서명 열쇠가 저장소에 적힌 열쇠($PIN)와 다르다 — 이 APK 는 이미 깐 기기에 업데이트되지 않는다"; exit 1; }
+            echo "고정 열쇠 일치"
+          fi
+          if [ -f "$PUBLISHED" ]; then
+            PUB_CERT=$(cert "$PUBLISHED"); PUB_VC=$(vc "$PUBLISHED")
+            echo "사이트의 APK: versionCode=$PUB_VC 인증서=$PUB_CERT"
+            if [ "$PUB_CERT" = "$NEW_CERT" ]; then
+              [ "$VERSION_CODE" -gt "$PUB_VC" ] || { echo "::error::버전 번호($VERSION_CODE)가 사이트의 APK($PUB_VC)보다 크지 않다"; exit 1; }
+              cp "$PUBLISHED" apk-test/published.apk
+            else
+              echo "사이트의 APK 는 다른 열쇠(옛 시험판) — 그 위 업데이트는 시험하지 않는다"
+            fi
+          fi
+          # 음성 대조군: 같은 APK 를 다른(일회용) 열쇠로 다시 서명 — 에뮬레이터가 이것은 거절해야 한다
+          keytool -genkeypair -storetype PKCS12 -keystore "$RUNNER_TEMP/other.p12" -alias other -keyalg RSA -keysize 2048 -validity 2 \
+            -storepass otherpass -keypass otherpass -dname "CN=other" > /dev/null 2>&1
+          "$BT/apksigner" sign --ks "$RUNNER_TEMP/other.p12" --ks-pass pass:otherpass --out apk-test/other-key.apk "apk-output/$APK_NAME"
+
+      - name: Enable KVM for the emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install → update test on an emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: bash android/number-magic/ci/install-update-test.sh apk-test/old.apk apk-output/GFIELD-Numbers-of-Magic.apk apk-test/other-key.apk apk-test/published.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: GFIELD-Numbers-of-Magic-APK
+          name: GFIELD-Numbers-of-Magic-APK-${{ steps.sign.outputs.mode }}
           path: apk-output/
           if-no-files-found: error
           retention-days: 30
 
       - name: Publish APK to the site
-        if: github.ref_name == 'main'
+        if: github.ref_name == 'main' && steps.sign.outputs.mode == 'release'
         run: |
           mkdir -p number_magic/downloads
           cp "apk-output/$APK_NAME" "apk-output/$APK_NAME.sha256" number_magic/downloads/
@@ -93,7 +150,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add number_magic/downloads
           if git diff --cached --quiet; then echo "바뀐 것 없음"; exit 0; fi
-          git commit -m "build(android): 수의 마법 APK 1.0.${NM_VERSION_CODE}"
+          git commit -m "build(android): 수의 마법 APK 1.0.${VERSION_CODE} (정식 서명·업데이트 시험 통과)"
           for i in 1 2 3 4; do
             git pull --rebase origin main && git push origin HEAD:main && break
             sleep $((2 ** i))
@@ -101,7 +158,7 @@ jobs:
 
       # 봇이 올린 커밋은 다른 워크플로를 깨우지 않는다 — 사이트 배포를 직접 부른다
       - name: Redeploy the site
-        if: github.ref_name == 'main'
+        if: github.ref_name == 'main' && steps.sign.outputs.mode == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run deploy-pages.yml --ref main

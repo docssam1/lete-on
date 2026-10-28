@@ -6,5 +6,10 @@
 - 결과: `number_magic/downloads/GFIELD-Numbers-of-Magic.apk` → 설치 안내 `number_magic/install.html`(짧은 주소 `/app`)의 「APK 받기」
 - 앱만 하는 일: 매일 공부 알림(`window.NMAndroid.setReminder(시, 분)` · `cancelReminder()` · `getReminder()`), 화면 꺼짐 방지, `window.print()` → 안드로이드 인쇄, 뒤로 가기, 다른 사이트 링크는 바깥 브라우저
 - 인터넷 없이 열기: 사이트의 서비스 워커(`number_magic/sw.js`)가 맡는다(WebView 도 서비스 워커를 쓴다)
-- 서명: GitHub 비밀값 `NM_ANDROID_KEYSTORE`(키스토어 base64) · `NM_ANDROID_KEYSTORE_PASSWORD` (선택 `NM_ANDROID_KEY_ALIAS`=numbermagic · `NM_ANDROID_KEY_PASSWORD`).
-  없으면 디버그 서명 — 설치는 되지만 빌드마다 서명이 달라져, 새 APK 를 옛 APK 위에 깔 수 없다(지우고 다시 깔아야 함). **APK 를 널리 나눠 주기 전에 비밀값부터 넣을 것.** 한 번 정한 열쇠는 바꾸면 안 된다(바꾸면 모든 기기에서 지우고 다시 깔아야 한다) — 열쇠 파일은 원장이 따로 보관.
+- **서명(고정 열쇠, 2026-10-28)**: 열쇠는 PKCS12 `numbermagic`(RSA 4096, 2056년까지). 인증서 SHA-256 지문은 `signing-cert.sha256`(공개해도 되는 값).
+  열쇠 파일·비밀번호는 저장소에 없다 — GitHub 비밀값 `NM_ANDROID_KEYSTORE`(열쇠 파일 base64) · `NM_ANDROID_KEYSTORE_PASSWORD`, 그리고 원장 보관본.
+  **열쇠를 잃거나 바꾸면 모든 기기에서 지우고 다시 깔아야 한다.** 바꿔야 한다면 `signing-cert.sha256`도 같이 바꾸고 학부모에게 재설치를 안내할 것.
+- **사이트에 올라가는 조건**(워크플로가 다 확인): 정식 서명 · 지문 일치 · 사이트의 APK 보다 큰 버전 번호 ·
+  에뮬레이터 설치→업데이트 시험(`ci/install-update-test.sh`: 옛 버전 설치·열기 → 지우지 않고 새 버전 덮어 설치 → 처음 설치 시각 그대로·버전 상승·열기,
+  다른 열쇠 APK 거절, 사이트의 APK → 새 버전). 비밀값이 없으면 디버그 서명으로 시험만 하고 사이트에는 올리지 않는다.
+- 버전 번호 = 워크플로 실행 번호 + 100.

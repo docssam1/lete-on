@@ -3617,3 +3617,9 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 - 했던 실수: 설치 안내의 `hidden` 칸들이 `.card{display:grid}`에 덮여 다 보였다 → `[hidden]{display:none!important}`. 「앱 설정」 단추 코드를 서비스 워커 조건 뒤에 둬서 검사 브라우저에서 안 나왔다 → 앞으로 옮김.
 - 반영(2026-10-28): main `6531ceed`(앱) · `cf453044`(빌드 고침 — `android-actions/setup-android@v3`가 없어진 `tools` 꾸러미를 찾다 실패해 러너에 있는 SDK 를 쓰게 함) ·
   `fef9926e`(봇이 올린 APK 1.0.2, 218KB, **디버그 서명**) → Pages [40685407011](https://github.com/docssam1/lete-on/actions/runs/40685407011) 성공. 이 세션에서는 운영 주소에 직접 접속하지 못해(프록시 차단) 운영 화면은 열어 보지 못했다 — 실제 휴대폰 설치·알림·인쇄도 아직 확인 전.
+- **학부모 배포 전 고정 서명·설치→업데이트 시험(2026-10-28 원장 「학부모 배포 전 고정 배포 서명과 실제 설치→업데이트 테스트」)**:
+  디버그 서명 1.0.2 는 빌드마다 서명이 달라 다음 버전을 덮어 깔 수 없으므로 **사이트에서 내렸다**(`number_magic/downloads` 비움 → 설치 안내의 「APK 받기」 단추가 저절로 숨는다).
+  1.0.2 를 이미 깐 기기가 있으면 정식판으로 갈 때 한 번 지우고 다시 깔아야 한다.
+  고정 열쇠를 만들어(지문 `android/number-magic/signing-cert.sha256`) 원장에게 넘겼다 — 원장이 GitHub 비밀값 `NM_ANDROID_KEYSTORE`·`NM_ANDROID_KEYSTORE_PASSWORD`를 넣으면
+  워크플로가 정식 서명 · 지문 일치 · 버전 상승 · **에뮬레이터 설치→업데이트 시험**(`android/number-magic/ci/install-update-test.sh`)을 모두 통과한 APK 만 사이트에 올린다.
+  비밀값이 없을 때는 디버그 서명으로 같은 시험만 하고 올리지 않는다. 실제 학부모 휴대폰에서의 확인은 정식판이 올라간 뒤 따로 할 것.
