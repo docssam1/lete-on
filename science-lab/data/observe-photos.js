@@ -6,4 +6,8 @@ export const PHOTO_SERIES = {
     { n: 3, cap: '갈고리처럼 굽어 올라온 새싹' },
     { n: 1, cap: '창가 — 떡잎과 본잎' },
   ],
+  'mold-rice': [
+    { n: 1, cap: '쌀알에 핀 회녹색 점' },
+    { n: 2, cap: '쌀 사이를 덮은 하얀 균사' },
+  ],
 };
