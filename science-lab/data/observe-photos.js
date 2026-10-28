@@ -10,6 +10,11 @@ export const PHOTO_SERIES = {
   'bean-shade': [
     { n: 1, cap: '가늘고 긴 줄기 · 떡잎' },
     { n: 2, cap: '본잎이 펼쳐짐' },
+    { n: 3, cap: '줄기가 길어지고 덩굴손이 나옴' },
+  ],
+  'bean-dry': [
+    { n: 2, cap: '지지대에 집게로 묶음' },
+    { n: 1, cap: '지지대를 감고 높이 오름' },
   ],
   'mold-rice': [
     { n: 1, cap: '쌀알에 핀 회녹색 점' },
