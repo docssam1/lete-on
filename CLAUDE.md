@@ -797,6 +797,7 @@ HuggingFace 에서 받는다.
   **키를 하나도 안 쓰고 아무것도 안 올린다.** 쓰는 법은 `scripts/local/README.md`.
 - **Kitten TTS(KittenML/KittenTTS) 검토 → 안 씀(원장 2026-10-24: "그냥 omni보이스 하자")**: 한국어 목소리가 학습 언어 목록에 없고(영어 외 9개 언어), 모델 라이선스가 따로(Stellon Labs Community License — 매출·투자 100만 달러 기준·등록·표시 요구로 알려짐). 음성은 OmniVoice 하나로 간다.
 - **맥(애플 칩)에서도 돈다(2026-10-24)**: `scripts/local/omnivoice-*.command` + `_setup-omnivoice.sh`(uv·파이썬 3.12·MPS). 첫 실행 = 설치. 맥 실행은 아직 확인 전.
+- **두 컴퓨터로 나눠 만들기(2026-10-28)**: 생성기 `--prefix`(줄 id 앞머리). PC = 판서 `fcb-`, 맥 = 스스로 공부 덱 대사 `fcs-`(`scripts/local/omnivoice-docssam-deck.command`, 지시서 `WORK-ORDER-docssam-voice-mac-20261028.md`). 올리기 전 `git pull` → `--manifest-only`로 목록을 다시 만들어 충돌을 피한다.
 - `scripts/omnivoice-audition.py` — 앱에 실제로 들어 있는 대사(누미 3줄 + 영·중 1줄씩)를
   캐릭터 설계안 4종으로 읽는다. `--device auto` 가 GPU 를 알아서 잡고(있으면 float16,
   없으면 CPU+float32) 무엇을 쓰는지·VRAM 이 얼마인지 찍는다. 참조 음성을 주면 복제 모드.

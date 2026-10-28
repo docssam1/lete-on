@@ -235,6 +235,7 @@ def main():
     ap.add_argument("--ref", help="독쌤 목소리 녹음(mp4/m4a/mp3/wav)")
     ap.add_argument("--ref-ready", action="store_true", help="--ref 가 이미 다듬은 참조 음성이다")
     ap.add_argument("--only", default="", help="이 id 들만(쉼표)")
+    ap.add_argument("--prefix", default="", help="id 가 이것으로 시작하는 줄만(쉼표) — 예: fcs- (스스로 공부 덱 대사), fcb- (판서). 두 컴퓨터가 나눠 만들 때")
     ap.add_argument("--shard", default="", help="k/n — n 조각 중 k 번째(0부터)만")
     ap.add_argument("--out", default=OUT, help="mp3 를 둘 곳(러너는 조각마다 따로 두었다가 모은다)")
     ap.add_argument("--force", action="store_true", help="이미 있어도 다시 만든다")
@@ -260,6 +261,9 @@ def main():
 
     only = set(x for x in a.only.split(",") if x)
     todo = pending_lines(study_lines() if a.speed else lines(), a.out, only, a.force)
+    prefixes = tuple(x for x in a.prefix.split(",") if x)
+    if prefixes:
+        todo = [(i, t) for i, t in todo if i.startswith(prefixes)]
     if a.shard:
         k, n = map(int, a.shard.split("/")); todo = todo[k::n]
     print(f"독쌤 대사 {len(lines())}줄 중 이번에 만들 것 {len(todo)}줄", flush=True)
