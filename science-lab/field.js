@@ -7,7 +7,7 @@ import { OBSERVE_SETS } from './data/observe-sets.js';
 import { sampleFor } from './data/observe-samples.js';
 import { mountPark } from './park.js';
 import { Stage } from './engine.js';
-import { sampleArticle, makeDrawer, scratch, esc, printSampleA4 } from './observe-sample.js';
+import { sampleArticle, makeDrawer, scratch, esc, printSampleA4, secsOnly } from './observe-sample.js';
 import { renderReport } from './report.js';
 import * as THREE from '../world-explorer/vendor/three.module.js';
 import { REPORTS } from './data/reports.js';
@@ -93,6 +93,7 @@ function observeScreen($app, spot) {
       <span class="fd-n"></span><button type="button" class="fd-prev" aria-label="이전">◀</button><span class="fd-choices" hidden></span><button type="button" class="fd-drew" hidden>✏ 다 그렸어요</button><button type="button" class="fd-next">다음 ▶</button></div></div>`;
   const $c = $app.querySelector('.fd-left canvas'), $cap = $app.querySelector('.fd-cap'), $right = $app.querySelector('.fd-right'), $say = $app.querySelector('.fd-say'), $n = $app.querySelector('.fd-n');
   const $next = $app.querySelector('.fd-next'), $drew = $app.querySelector('.fd-drew'), $prev = $app.querySelector('.fd-prev'), $choices = $app.querySelector('.fd-choices');
+  if (spot.secs) secsOnly($right, spot.secs);
   const stage = Stage.canWebGL() ? new Stage($c) : null; if (!stage) $c.hidden = true;
   if (typeof window !== 'undefined') window.__fdStage = stage;   // 검사 스크립트용
   const snd = scratch(), D = makeDrawer($right, snd); D.reset();
@@ -166,7 +167,7 @@ function observeScreen($app, spot) {
   const ask = (key, fb) => R.asks?.[key]?.[0] || P[key]?.ask || fb;
 
   // 단계: { kind: look|think|draw|end, sec(오른쪽 칸), obs(관찰 줄), spec, act, view, both(장소 A→B), draw(그림 키), q(생각할 거리), say }
-  const steps = [{ kind: 'look', sec: 'target', reveal: 'target', spec: 0, view: 'angle', say: `${S.title}. 보고서 맨 위에는 관찰 장소와 대상을 적어요 — 어디서, 언제, 날씨, 무엇을. 이름을 모르면 번호로 불러요.` }];
+  const steps = [{ kind: 'look', sec: 'target', reveal: 'target', spec: 0, view: 'angle', say: `${spot.secs ? spot.name : S.title}. 보고서 맨 위에는 관찰 장소와 대상을 적어요 — 어디서, 언제, 날씨, 무엇을. 이름을 모르면 번호로 불러요.` }];
   specs.forEach((sp, i) => {
     const hs = (() => { load(i); return hand(); })(), no = sp.no || i + 1;
     // 보기(동작 없이 돌려 보기) → 생각하기(묻고, 「다음」에 3D가 직접 해 보이며 글이 드러남) → 두 번째 동작(있으면) → 같이 그리기
@@ -187,6 +188,8 @@ function observeScreen($app, spot) {
   if (X) steps.push({ kind: 'think', sec: 'venn', reveal: 'venn', q: '두 가지를 골라 볼까요? 같은 점과 다른 점은 무엇일까요?' });
   if (X?.adapt) steps.push({ kind: 'think', sec: 'adapt', reveal: 'adapt', q: ask('adapt', '생김새는 사는 곳에서 어떤 점이 좋을까요?') });
   if (X) steps.push({ kind: 'think', sec: 'next', reveal: 'next', q: ask('next', '더 알아보고 싶은 것은 무엇인가요? 무엇을 바꾸고, 무엇을 재고, 무엇을 같게 할까요?') });
+  // 한 세트를 두 지점으로 나눈 곳(해변): 그 지점의 칸만 단계로 남긴다
+  if (spot.secs) { const keep = new Set(['target', ...spot.secs]); for (let j = steps.length - 1; j >= 0; j--) if (!keep.has(steps[j].sec)) steps.splice(j, 1); }
   steps.push({ kind: 'end', say: `도장 쾅! ${spot.name} 관찰을 마쳤어요. 이제 「🖨 보고서 양식 인쇄」로 뽑아서, 오른쪽 예시를 보며 직접 그리고 써 봐요. 생각이 다르면 다르게 써도 돼요.` });
 
   // 가릴 칸: think 단계가 드러내는 것(reveal) — 관찰 줄은 글만, 나머지는 칸 몸통
@@ -249,7 +252,7 @@ function observeScreen($app, spot) {
   const showStamp = () => { if ($right.querySelector('.fd-stamp')) return; const $s = document.createElement('div'); $s.className = 'fd-stamp'; $s.innerHTML = `<b>참 잘했어요</b><i>${spot.icon}</i><small>${esc(spot.short || spot.name)}</small>`; $right.appendChild($s); };
   const printIt = (what) => {
     clear(); D.finishAll(); $right.querySelectorAll('.fd-hide').forEach((e) => e.classList.remove('fd-hide'));
-    if (what === 'ex') { printSampleA4(S); return; }
+    if (what === 'ex') { printSampleA4(S, { secs: spot.secs }); return; }
     const $p = document.createElement('div'); $p.className = 'fd-print-sheet'; document.body.appendChild($p);
     let rep = null;
     rep = renderReport(S.unit, $p, { embedded: true });
