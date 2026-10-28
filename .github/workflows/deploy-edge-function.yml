@@ -49,4 +49,8 @@ jobs:
       - name: 배포
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN || secrets.SUBBASE }}
-        run: supabase functions deploy "${{ inputs.function }}" --project-ref fgahqumaldheqettmvqg --use-api
+        # 묶기(bundle)는 이 러너의 Docker 에서 한다. Supabase 서버 쪽 묶기(--use-api)는 2026-10-28 jsr.io 를 10초 안에
+        # 못 받아 두 번 실패했다. Docker 묶기가 안 되면 그때만 서버 묶기로 한 번 더 해 본다.
+        run: |
+          supabase functions deploy "${{ inputs.function }}" --project-ref fgahqumaldheqettmvqg --use-docker \
+            || supabase functions deploy "${{ inputs.function }}" --project-ref fgahqumaldheqettmvqg --use-api
