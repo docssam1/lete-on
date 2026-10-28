@@ -3557,7 +3557,9 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 - 한계: 회차는 「과정에 들어온 주부터 한 주에 한 회차」로 센다. 학생이 실제로 늦거나 빠르면 앱을 열 때 맞춰지지 않는다(앱은 과정이 바뀔 때만 1회차로 되돌린다).
 - 검사: `node scripts/check-standard-worksheet-browser.js`(같은 회차 다른 주 = 같은 문항, 다음 회차 다름, 1.25배 더 많음, 회차 글자, 표지·안내에 월·주차 없음, 없는 회차, 짧은 링크) ·
   `node scripts/check-notify-delivery.js`(회차 셈·해 넘김·마지막 회차·잘못된 값·90바이트).
-- 배포: `weekly-notify` 함수는 고친 코드를 **아직 배포하지 않았다**(원장 확인 뒤). 배포 전까지 문자는 예전 과정 링크로 나간다.
+- 배포: `weekly-notify` v24 배포 완료(2026-10-28, 원장 확인). 새 워크플로 「Deploy edge function」(`.github/workflows/deploy-edge-function.yml`, 손으로 실행)이
+  번들 대조·발송 모의 테스트 뒤 Supabase CLI 로 올린다. 토큰은 GitHub 비밀값 `SUBBASE`(또는 `SUPABASE_ACCESS_TOKEN`). Supabase 서버 쪽 묶기(`--use-api`)는
+  jsr.io 를 10초 안에 못 받아 두 번 실패해서 러너의 Docker 로 묶는다(`--use-docker`, 실패하면 서버 묶기로 한 번 더). verify_jwt 는 그대로 true.
 
 ### 3D 마법책 시범 두 쪽 — 2026-10-27
 

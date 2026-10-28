@@ -3,7 +3,7 @@ name: Deploy edge function
 # Supabase 서버 함수를 저장소의 코드 그대로 배포한다. 손으로만 실행한다(푸시로는 돌지 않음).
 # 2026-10-28: weekly-notify 는 개인 계획용 번들(delivery-runtime.mjs, 444KB)과 함께 올라가야 해서
 # 대화창의 배포 도구로는 보낼 수 없다 — 그래서 여기서 Supabase CLI 로 올린다(맥에서 하던 것과 같은 명령).
-# 필요한 GitHub 비밀값: SUPABASE_ACCESS_TOKEN (Supabase 계정 → Access Tokens). 없으면 아무것도 하지 않고 멈춘다.
+# 필요한 GitHub 비밀값: SUPABASE_ACCESS_TOKEN 또는 SUBBASE(원장이 2026-10-28 이 이름으로 넣음) — Supabase 계정 → Access Tokens 의 sbp_ 토큰. 없으면 아무것도 하지 않고 멈춘다.
 on:
   workflow_dispatch:
     inputs:
@@ -31,7 +31,7 @@ jobs:
           node-version: 22
       - name: 키 확인
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN || secrets.SUBBASE }}
         run: |
           if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
             echo "GitHub 비밀값 SUPABASE_ACCESS_TOKEN 이 없어 배포하지 않습니다."
@@ -48,5 +48,9 @@ jobs:
           version: 2.122.0
       - name: 배포
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase functions deploy "${{ inputs.function }}" --project-ref fgahqumaldheqettmvqg --use-api
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN || secrets.SUBBASE }}
+        # 묶기(bundle)는 이 러너의 Docker 에서 한다. Supabase 서버 쪽 묶기(--use-api)는 2026-10-28 jsr.io 를 10초 안에
+        # 못 받아 두 번 실패했다. Docker 묶기가 안 되면 그때만 서버 묶기로 한 번 더 해 본다.
+        run: |
+          supabase functions deploy "${{ inputs.function }}" --project-ref fgahqumaldheqettmvqg --use-docker \
+            || supabase functions deploy "${{ inputs.function }}" --project-ref fgahqumaldheqettmvqg --use-api
