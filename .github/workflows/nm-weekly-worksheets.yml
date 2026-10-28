@@ -50,3 +50,12 @@ jobs:
           ARGS=""
           if [ -n "${{ github.event.inputs.name }}" ]; then ARGS="--name '${{ github.event.inputs.name }}' --course '${{ github.event.inputs.course }}' --cadence '${{ github.event.inputs.cadence }}'"; fi
           eval node scripts/nm-weekly-worksheets.cjs $ARGS
+
+      - name: R2에도 맞춰 두기(R2 열쇠가 없으면 건너뜀)
+        uses: ./.github/actions/mirror-to-r2
+        with:
+          bucket: nm-worksheets
+          supabase-key: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
+          r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
