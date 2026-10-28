@@ -1,0 +1,51 @@
+plugins {
+    id 'com.android.application'
+}
+
+/* 서명: GitHub 비밀값 NM_ANDROID_KEYSTORE(+ 비밀번호)가 있으면 워크플로가 NM_KEYSTORE_FILE 등으로 넘겨 정식 서명한다.
+   없으면 디버그 서명(설치는 되지만, 다음 빌드가 다른 서명이면 지우고 다시 깔아야 한다). */
+def ksFile = System.getenv('NM_KEYSTORE_FILE')
+
+android {
+    namespace 'kr.co.gfield.numbermagic'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'kr.co.gfield.numbermagic'
+        minSdk 24
+        targetSdk 35
+        // 빌드마다 올라가야 새 APK가 옛 APK 위에 깔린다 — 워크플로가 실행 번호를 넘긴다
+        versionCode Integer.parseInt(System.getenv('NM_VERSION_CODE') ?: '1')
+        versionName '1.0.' + (System.getenv('NM_VERSION_CODE') ?: '0')
+    }
+
+    signingConfigs {
+        release {
+            if (ksFile) {
+                storeFile file(ksFile)
+                storePassword System.getenv('NM_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('NM_KEY_ALIAS') ?: 'numbermagic'
+                keyPassword System.getenv('NM_KEY_PASSWORD') ?: System.getenv('NM_KEYSTORE_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (ksFile) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

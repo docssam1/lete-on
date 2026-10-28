@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'academy/**'
+      - 'app/**'
       - 'boarding-school-math/**'
       - 'fields-classic/**'
       - 'hselementary/**'
@@ -74,6 +75,7 @@ jobs:
           mkdir -p _site/geometry
           mkdir -p _site/number_magic
           mkdir -p _site/w
+          mkdir -p _site/app
           mkdir -p _site/personality
           mkdir -p _site/premier
           mkdir -p _site/promo/hwangso-last-month
@@ -106,8 +108,12 @@ jobs:
           test ! -e _site/hyper-focus/qa
           test ! -e _site/hyper-focus/supabase
           test ! -e _site/hyper-focus/output
+          # 「다 받아 두기」 목록은 배포할 때마다 지금 파일로 다시 만든다(파일을 더하거나 지워도 목록이 어긋나지 않게)
+          node number_magic/scripts/build-offline-list.js
           cp -R number_magic/. _site/number_magic/
           cp -R w/. _site/w/
+          # 짧은 주소 /app → 수의 마법 앱 설치 안내(2026-10-28)
+          cp app/index.html _site/app/index.html
           cp -R personality/. _site/personality/
           cp -R premier/. _site/premier/
           rm -rf _site/premier/qa

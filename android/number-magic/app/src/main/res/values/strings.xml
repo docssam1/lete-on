@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">수의 마법</string>
+    <string name="connection_error">인터넷에 연결되면 다시 열어 주세요.\n(「다 받아 두기」를 해 두면 인터넷 없이도 열려요.)</string>
+    <string name="retry">다시 열기</string>
+    <string name="no_app_for_link">이 링크를 열 수 있는 앱이 없어요.</string>
+    <string name="no_file_picker">파일을 고를 앱을 찾지 못했어요.</string>
+    <string name="channel_name">공부 알림</string>
+    <string name="channel_description">매일 정한 시간에 공부할 시간을 알려 줘요.</string>
+    <string name="reminder_title">수의 마법</string>
+    <string name="reminder_text">오늘의 마법을 풀 시간이에요 ✨</string>
+</resources>

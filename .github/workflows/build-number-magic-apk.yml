@@ -1,0 +1,104 @@
+name: Build Numbers of Magic APK
+
+# 수의 마법 안드로이드 앱(2026-10-28). android/number-magic 이 바뀌면 APK 를 만들어
+# number_magic/downloads/GFIELD-Numbers-of-Magic.apk 로 올리고 사이트를 다시 배포한다(설치 안내 install.html 의 「APK 받기」).
+# 서명: 비밀값 NM_ANDROID_KEYSTORE(base64)·NM_ANDROID_KEYSTORE_PASSWORD 가 있으면 정식 서명.
+#       없으면 디버그 서명 — 설치는 되지만 빌드마다 서명이 달라 업데이트하려면 지우고 다시 깔아야 한다.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/number-magic/**'
+      - '.github/workflows/build-number-magic-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: number-magic-apk
+  cancel-in-progress: false
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    env:
+      APK_NAME: GFIELD-Numbers-of-Magic.apk
+      NM_VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install Android platform
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Prepare signing key (if set)
+        id: sign
+        env:
+          KEYSTORE_B64: ${{ secrets.NM_ANDROID_KEYSTORE }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/nm-release.jks"
+            echo "file=$RUNNER_TEMP/nm-release.jks" >> "$GITHUB_OUTPUT"
+            echo "정식 서명으로 만듭니다."
+          else
+            echo "::warning::NM_ANDROID_KEYSTORE 비밀값이 없어 디버그 서명으로 만듭니다. 다음 빌드부터 업데이트하려면 지우고 다시 깔아야 합니다."
+          fi
+
+      - name: Build APK
+        env:
+          NM_KEYSTORE_FILE: ${{ steps.sign.outputs.file }}
+          NM_KEYSTORE_PASSWORD: ${{ secrets.NM_ANDROID_KEYSTORE_PASSWORD }}
+          NM_KEY_ALIAS: ${{ secrets.NM_ANDROID_KEY_ALIAS }}
+          NM_KEY_PASSWORD: ${{ secrets.NM_ANDROID_KEY_PASSWORD }}
+        run: |
+          mkdir -p apk-output
+          if [ -n "$NM_KEYSTORE_FILE" ]; then
+            gradle -p android/number-magic :app:assembleRelease --no-daemon
+            cp android/number-magic/app/build/outputs/apk/release/app-release.apk "apk-output/$APK_NAME"
+          else
+            gradle -p android/number-magic :app:assembleDebug --no-daemon
+            cp android/number-magic/app/build/outputs/apk/debug/app-debug.apk "apk-output/$APK_NAME"
+          fi
+          (cd apk-output && sha256sum "$APK_NAME" > "$APK_NAME.sha256")
+          ls -la apk-output
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GFIELD-Numbers-of-Magic-APK
+          path: apk-output/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish APK to the site
+        if: github.ref_name == 'main'
+        run: |
+          mkdir -p number_magic/downloads
+          cp "apk-output/$APK_NAME" "apk-output/$APK_NAME.sha256" number_magic/downloads/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add number_magic/downloads
+          if git diff --cached --quiet; then echo "바뀐 것 없음"; exit 0; fi
+          git commit -m "build(android): 수의 마법 APK 1.0.${NM_VERSION_CODE}"
+          for i in 1 2 3 4; do
+            git pull --rebase origin main && git push origin HEAD:main && break
+            sleep $((2 ** i))
+          done
+
+      # 봇이 올린 커밋은 다른 워크플로를 깨우지 않는다 — 사이트 배포를 직접 부른다
+      - name: Redeploy the site
+        if: github.ref_name == 'main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy-pages.yml --ref main

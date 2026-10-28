@@ -1,0 +1,19 @@
+{
+  "id": "./?app=number-magic",
+  "name": "수의 마법 · Numbers of Magic",
+  "short_name": "수의 마법",
+  "description": "계산하는 힘, 읽고 생각하는 힘 — 지필드 수의 마법",
+  "lang": "ko",
+  "start_url": "./access.html?source=app",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#102e34",
+  "theme_color": "#102e34",
+  "categories": ["education", "kids"],
+  "icons": [
+    { "src": "assets/app-icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/app-icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/app-icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#102e34">
+<title>수의 마법 앱 설치</title>
+<link rel="icon" href="assets/favicon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/app-icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="수의 마법"><meta name="apple-mobile-web-app-status-bar-style" content="black">
+<!-- 수의 마법 앱 설치 안내(2026-10-28, 원장 「이제 프로그램·iOS·APK 하자 — 설치하기 어떻게 조치할지」).
+     기기를 알아보고 그 기기 방법을 맨 위에 둔다. 다른 기기 방법도 탭으로 볼 수 있다.
+     안드로이드: 크롬 「앱 설치」(홈 화면 앱) 또는 APK. 아이폰·아이패드: 사파리 「홈 화면에 추가」(애플 개발자 계정 없이 가는 길).
+     윈도우·맥: 크롬·엣지 「앱 설치」. 「다 받아 두기」는 sw.js 가 offline-files.json 목록을 전부 받아 둔다.
+     APK 안에서 열리면(사용자 에이전트 GFIELDNumberMagic) 공부 알림 설정을 보여 준다(window.NMAndroid). -->
+<style>
+@font-face{font-family:"NM Pretendard";src:url("assets/fonts/pretendard-var.woff2") format("woff2");font-weight:100 900;font-display:swap}
+:root{
+  --ground:#102e34;--ground-2:#173d44;--paper:#f7f2e7;--paper-2:#efe6d3;--ink:#1d2a2c;--ink-soft:#56635f;
+  --gold:#d9a62e;--gold-ink:#7a5a12;--green:#2f6b4a;--line:#ddd2bb;--ok:#2f7d4f;--warn:#a6531f;
+  --radius:18px;--shadow:0 1px 0 rgba(255,255,255,.6) inset,0 10px 30px rgba(4,20,24,.28);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--ground);color:var(--ink);
+  font:16px/1.6 "NM Pretendard",Pretendard,"Noto Sans KR",system-ui,sans-serif;
+  background-image:radial-gradient(1200px 600px at 50% -200px,#1f4d55 0,transparent 70%)}
+.wrap{max-width:720px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));display:grid;gap:16px}
+header{display:flex;gap:16px;align-items:center;color:var(--paper);padding:8px 4px 4px}
+header img{width:72px;height:72px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.35);flex:none}
+header h1{margin:0;font-size:26px;line-height:1.25;font-weight:800;letter-spacing:-.01em;text-wrap:balance}
+header p{margin:4px 0 0;color:#c8d6d3;font-size:15px;text-wrap:pretty}
+.card{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;display:grid;gap:14px}
+.card h2{margin:0;font-size:19px;line-height:1.35;font-weight:800;letter-spacing:-.01em}
+.card .lead{margin:0;color:var(--ink-soft);font-size:15px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--gold-ink);text-transform:uppercase}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;padding:4px;background:var(--paper-2);border-radius:12px}
+.tabs button{flex:1 1 auto;min-width:0;border:0;border-radius:9px;padding:9px 10px;background:transparent;color:var(--ink-soft);font:600 14px/1.2 inherit;cursor:pointer}
+.tabs button[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.tabs button:focus-visible,.btn:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.panel{display:grid;gap:12px}
+ol.steps{margin:0;padding:0;list-style:none;display:grid;gap:10px;counter-reset:s}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start}
+ol.steps li::before{content:counter(s);width:30px;height:30px;border-radius:50%;background:var(--ground);color:var(--paper);display:grid;place-items:center;font-weight:800;font-size:14px}
+ol.steps b{font-weight:800}
+.ico{display:inline-flex;vertical-align:-5px;width:22px;height:22px;margin:0 2px;color:#1a73e8}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 18px;border-radius:14px;border:0;
+  background:var(--ground);color:var(--paper);font:700 16px/1.2 inherit;text-decoration:none;cursor:pointer}
+.btn.gold{background:var(--gold);color:#102e34}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn[disabled]{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.note{margin:0;font-size:14px;color:var(--ink-soft)}
+.callout{border-radius:12px;padding:12px 14px;background:#fff7e3;border:1px solid #f0d995;font-size:15px}
+.callout.ok{background:#eaf5ee;border-color:#b9dcc6}
+.meter{height:12px;border-radius:999px;background:var(--paper-2);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),#4f9a6c);transition:width .3s}
+.stat{font-variant-numeric:tabular-nums;font-size:14px;color:var(--ink-soft)}
+.qr{display:grid;grid-template-columns:132px 1fr;gap:16px;align-items:center}
+.qr img{width:132px;height:132px;border-radius:10px;background:#fff;padding:6px;border:1px solid var(--line)}
+details{border-top:1px solid var(--line);padding-top:10px}
+details+details{margin-top:-4px}
+summary{cursor:pointer;font-weight:700;font-size:15px;padding:4px 0}
+details p{margin:6px 0 4px;font-size:15px;color:var(--ink-soft)}
+.time{font:700 18px/1 inherit;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-variant-numeric:tabular-nums}
+.switch{display:flex;gap:10px;align-items:center;font-weight:700}
+.switch input{width:22px;height:22px;accent-color:var(--green)}
+footer{color:#9fb3af;font-size:13px;text-align:center}
+footer a{color:#d7e3e0}
+@media (max-width:480px){.qr{grid-template-columns:1fr}.qr img{margin:0 auto}header h1{font-size:23px}}
+@media (prefers-reduced-motion:reduce){.meter i{transition:none}}
+</style>
+<script src="app/pwa.js?v=20261028-app2" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="assets/app-icons/icon-192.png" alt="">
+    <div>
+      <h1>수의 마법을 앱으로 쓰기</h1>
+      <p>한 번 설치하면 홈 화면에서 바로 열려요. 다 받아 두면 인터넷 없이도 공부할 수 있어요.</p>
+    </div>
+  </header>
+
+  <section class="card" id="already" hidden>
+    <div class="callout ok"><b>지금 앱으로 열려 있어요.</b> 설치는 끝났어요. 아래 「다 받아 두기」만 한 번 해 두면 좋아요.</div>
+    <div class="row"><a class="btn gold" href="access.html?source=app">수의 마법 열기</a></div>
+  </section>
+
+  <section class="card" id="install">
+    <div class="eyebrow" id="device-label">이 기기</div>
+    <h2 id="install-title">설치하기</h2>
+    <div class="tabs" role="tablist" aria-label="기기 고르기">
+      <button role="tab" id="tab-android" aria-controls="p-android" aria-selected="false" data-tab="android">안드로이드</button>
+      <button role="tab" id="tab-ios" aria-controls="p-ios" aria-selected="false" data-tab="ios">아이폰·아이패드</button>
+      <button role="tab" id="tab-pc" aria-controls="p-pc" aria-selected="false" data-tab="pc">윈도우·맥</button>
+    </div>
+
+    <div class="panel" id="p-android" role="tabpanel" aria-labelledby="tab-android" hidden>
+      <div class="callout" data-inapp hidden>카카오톡·네이버 같은 앱 안의 창에서는 설치가 안 돼요. <b>크롬으로 열어</b> 주세요.
+        <div class="row" style="margin-top:10px"><a class="btn" data-open-external href="#">크롬으로 열기</a></div></div>
+      <p class="lead">두 가지 중 편한 것으로 하세요. 둘 다 같은 수의 마법이고, 로그인하면 기록이 그대로 이어져요.</p>
+      <div class="row">
+        <button class="btn gold" type="button" data-install hidden>앱 설치</button>
+        <a class="btn" data-apk href="downloads/GFIELD-Numbers-of-Magic.apk" download hidden>APK 받기</a>
+      </div>
+      <ol class="steps" data-install-manual>
+        <li><span>크롬 오른쪽 위 <b>⋮</b>(점 세 개)을 눌러요.</span></li>
+        <li><span><b>「앱 설치」</b> 또는 <b>「홈 화면에 추가」</b>를 눌러요.</span></li>
+        <li><span>홈 화면에 생긴 <b>수의 마법</b> 아이콘으로 열어요.</span></li>
+      </ol>
+      <details data-apk-help hidden>
+        <summary>APK는 무엇이 다른가요?</summary>
+        <p>APK는 공부 알림(매일 정한 시간)과 화면 꺼짐 방지가 더 있어요. 받은 파일을 열면 「출처를 알 수 없는 앱」을 허용할지 물어요 — 이번 한 번만 허용하면 돼요. 플레이 스토어 앱이 아니라서 그래요.</p>
+      </details>
+    </div>
+
+    <div class="panel" id="p-ios" role="tabpanel" aria-labelledby="tab-ios" hidden>
+      <div class="callout" data-ios-notsafari hidden>지금 창에서는 홈 화면에 추가가 안 될 수 있어요. 주소를 복사해 <b>사파리</b>에서 열어 주세요.
+        <div class="row" style="margin-top:10px"><button class="btn" type="button" data-copy>주소 복사</button><a class="btn ghost" data-open-external href="#" hidden>사파리로 열기</a></div></div>
+      <ol class="steps">
+        <li><span>사파리 아래쪽(아이패드는 위쪽)의 <b>공유</b> 단추
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-label="공유"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>를 눌러요.
+          안 보이면 주소창 옆 <b>…</b>을 먼저 눌러요.</span></li>
+        <li><span>목록을 아래로 내려 <b>「홈 화면에 추가」</b>
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-label="홈 화면에 추가"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>를 눌러요.</span></li>
+        <li><span>오른쪽 위 <b>「추가」</b>를 누르면 홈 화면에 <b>수의 마법</b>이 생겨요.</span></li>
+      </ol>
+      <p class="note">아이폰·아이패드는 앱 스토어 앱 대신 이 방법으로 써요. 열면 주소창 없이 앱처럼 화면 가득 열리고, 새 버전은 저절로 받아요.</p>
+    </div>
+
+    <div class="panel" id="p-pc" role="tabpanel" aria-labelledby="tab-pc" hidden>
+      <div class="row"><button class="btn gold" type="button" data-install hidden>앱 설치</button></div>
+      <ol class="steps" data-install-manual>
+        <li><span><b>크롬</b>이나 <b>엣지</b>로 이 화면을 열어요.</span></li>
+        <li><span>주소창 오른쪽의 설치 아이콘
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-label="설치"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M12 7v6M9 10l3 3 3-3M8 21h8"/></svg>을 누르거나, 메뉴 <b>⋮ / …</b> → <b>「앱 설치」</b>(엣지는 「앱 → 이 사이트를 앱으로 설치」)를 눌러요.</span></li>
+        <li><span>시작 메뉴·바탕 화면에 <b>수의 마법</b>이 생기고, 따로 창으로 열려요.</span></li>
+      </ol>
+      <p class="note">맥의 사파리는 메뉴 <b>파일 → Dock에 추가</b>로 같은 일을 해요.</p>
+    </div>
+  </section>
+
+  <section class="card" id="offline">
+    <h2>다 받아 두기</h2>
+    <p class="lead">공부에 쓰는 그림·소리·문제를 이 기기에 한 번에 받아 둬요. 그 뒤로는 인터넷이 끊겨도 열려요. 와이파이에서 해 주세요.</p>
+    <div class="meter" aria-hidden="true"><i id="dl-bar"></i></div>
+    <div class="row" style="justify-content:space-between">
+      <span class="stat" id="dl-stat">확인하는 중…</span>
+      <button class="btn" type="button" id="dl-btn" disabled>다 받아 두기</button>
+    </div>
+    <p class="note" id="dl-note" hidden></p>
+  </section>
+
+  <section class="card" id="settings" hidden>
+    <h2>공부 알림</h2>
+    <p class="lead">매일 정한 시간에 「오늘의 마법을 풀 시간이에요」 알림을 띄워요. 이 기기에서만 울려요.</p>
+    <label class="switch"><input type="checkbox" id="rm-on"> 매일 알림 켜기</label>
+    <div class="row"><label for="rm-time" class="note">시간</label><input class="time" type="time" id="rm-time" value="17:00"></div>
+    <p class="note" id="rm-note" hidden></p>
+  </section>
+
+  <section class="card" id="phone">
+    <h2>휴대폰으로 열기</h2>
+    <div class="qr">
+      <img src="assets/app-icons/install-qr.svg" alt="이 안내 화면으로 가는 QR 코드">
+      <div class="panel" style="gap:8px">
+        <p class="lead">휴대폰 카메라로 비추면 이 안내 화면이 열려요. 주소로 열려면</p>
+        <p style="margin:0;font-weight:800;font-size:17px;word-break:break-all">lete-on.gfieldacademy.net/app</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>궁금한 것</h2>
+    <details><summary>새 버전은 어떻게 받나요?</summary><p>저절로 받아요. 앱을 연 채로 새 버전이 나오면 아래에 「새 버전이 있어요」가 떠요 — 「새로 열기」를 누르면 돼요.</p></details>
+    <details><summary>로그인·기록은 어떻게 되나요?</summary><p>회원 로그인과 공부 기록은 지금처럼 인터넷으로 이어져요. 앱으로 설치해도 같은 계정으로 들어가면 그대로예요.</p></details>
+    <details><summary>얼마나 차지하나요?</summary><p id="size-answer">다 받아 두면 약 100MB 안팎이에요. 지우고 싶으면 앱을 지우거나 브라우저의 사이트 데이터를 지우면 돼요.</p></details>
+    <details><summary>앱을 지우려면?</summary><p>홈 화면 아이콘을 길게 눌러 「삭제」(아이폰은 「앱 제거 → 홈 화면에서 제거」)를 누르면 돼요. 회원 정보는 지워지지 않아요.</p></details>
+  </section>
+
+  <footer>지필드 · Numbers of Magic · <a href="access.html">수의 마법 처음 화면</a></footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const ua=navigator.userAgent;
+const isApk=/GFIELDNumberMagic/.test(ua);
+const ios=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const android=/Android/i.test(ua);
+const kakao=/KAKAOTALK/i.test(ua);
+const inApp=kakao||/NAVER\(|; ?wv\)|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp/i.test(ua);
+const iosSafari=ios&&/Safari\//.test(ua)&&!/CriOS|FxiOS|EdgiOS|KAKAOTALK|NAVER|Instagram|FBAN|Line\//.test(ua);
+const PWA=()=>window.NM_PWA;
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true||isApk;
+const here=location.href.split('#')[0];
+
+/* 탭 */
+function show(tab){
+  $$('[role=tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===tab)));
+  $$('.panel[role=tabpanel]').forEach(p=>p.hidden=p.id!=='p-'+tab);
+}
+$$('[role=tab]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.tab)));
+const device=ios?'ios':android?'android':'pc';
+show(device);
+$('#device-label').textContent=ios?'이 기기 · 아이폰·아이패드':android?'이 기기 · 안드로이드':'이 기기 · 컴퓨터';
+if(standalone){$('#already').hidden=false;$('#install').hidden=true;}
+if(ios||android)$('#phone').hidden=true;
+
+/* 앱 안의 창(카카오톡 등) → 바깥 브라우저로 */
+const ext=$$('[data-open-external]');
+const externalUrl=kakao?'kakaotalk://web/openExternal?url='+encodeURIComponent(here)
+  :android?'intent://'+here.replace(/^https?:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;end':null;
+if(inApp&&android)$('[data-inapp]').hidden=false;
+if(ios&&!iosSafari){$('[data-ios-notsafari]').hidden=false;}
+ext.forEach(a=>{if(externalUrl&&(android||kakao)){a.href=externalUrl;a.hidden=false;}});
+$$('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText(here);b.textContent='복사했어요';}
+  catch(_){prompt('이 주소를 복사하세요',here);}
+}));
+
+/* 설치 단추(크롬·엣지가 기회를 줄 때만 보인다) */
+function syncInstall(){
+  const can=!!(PWA()&&PWA().installEvent);
+  $$('[data-install]').forEach(b=>b.hidden=!can);
+  $$('[data-install-manual]').forEach(o=>o.style.opacity=can?'.65':'1');
+}
+$$('[data-install]').forEach(b=>b.addEventListener('click',async()=>{
+  const r=await PWA().install();
+  if(r==='accepted'){b.textContent='설치했어요';}
+  syncInstall();
+}));
+
+/* APK — 파일이 실제로 올라가 있을 때만 보인다 */
+const apk=$('[data-apk]');
+fetch(apk.getAttribute('href'),{method:'HEAD',cache:'no-store'}).then(r=>{
+  if(r.ok&&!/text\/html/.test(r.headers.get('content-type')||'')){apk.hidden=false;$('[data-apk-help]').hidden=false;}
+}).catch(()=>{});
+
+/* 다 받아 두기 */
+const bar=$('#dl-bar'),stat=$('#dl-stat'),btn=$('#dl-btn'),note=$('#dl-note');
+const mb=b=>(b/1048576).toFixed(b>=1048576*10?0:1)+'MB';
+let total=0,listBytes=0,running=false;
+fetch('offline-files.json',{cache:'no-cache'}).then(r=>r.json()).then(j=>{
+  total=j.count;listBytes=j.bytes;
+  $('#size-answer').textContent='다 받아 두면 약 '+mb(listBytes)+'예요. 지우고 싶으면 앱을 지우거나 브라우저의 사이트 데이터를 지우면 돼요.';
+}).catch(()=>{});
+function setProgress(have,all,text){
+  bar.style.width=(all?Math.round(have/all*100):0)+'%';
+  stat.textContent=text;
+}
+function bindPwa(){
+  const p=PWA();
+  if(!p||!p.supported||(navigator.webdriver&&!/[?&]pwa=1/.test(location.search))){
+    stat.textContent='이 브라우저는 받아 두기를 할 수 없어요.';return;
+  }
+  p.on((type,d)=>{
+    if(type==='installable'||type==='installed')syncInstall();
+    if(type==='status'){
+      if(d.error){stat.textContent='목록을 받지 못했어요. 인터넷을 확인해 주세요.';btn.disabled=false;return;}
+      const doneAll=d.total&&d.have>=d.total;
+      setProgress(d.have,d.total,doneAll?'다 받아 두었어요 ('+d.total+'개)':d.have?d.have+' / '+d.total+'개 받아 둠':'아직 받지 않았어요 ('+mb(listBytes)+')');
+      btn.disabled=false;btn.textContent=doneAll?'새로 확인':'다 받아 두기';
+    }
+    if(type==='download'){
+      if(d.error){running=false;btn.disabled=false;stat.textContent='목록을 받지 못했어요. 인터넷을 확인해 주세요.';return;}
+      setProgress(d.done,d.total,d.done+' / '+d.total+'개');
+      if(d.finished){
+        running=false;btn.disabled=false;btn.textContent='새로 확인';
+        stat.textContent=d.failed?'다 받았어요 — '+d.failed+'개는 못 받았어요(다시 누르면 그것만 받아요)':'다 받아 두었어요 ('+d.total+'개)';
+        note.hidden=false;note.textContent=d.failed?'인터넷이 잠깐 끊겼을 수 있어요.':'이제 인터넷이 없어도 수의 마법이 열려요.';
+      }
+    }
+  });
+  p.ready().then(()=>p.status());
+  syncInstall();
+}
+btn.addEventListener('click',()=>{
+  if(running)return;running=true;btn.disabled=true;btn.textContent='받는 중…';note.hidden=true;
+  PWA().downloadAll().then(ok=>{if(!ok){running=false;btn.disabled=false;stat.textContent='잠시 뒤 다시 눌러 주세요.';}});
+});
+if(PWA())bindPwa();else addEventListener('DOMContentLoaded',bindPwa);
+
+/* APK 안: 공부 알림(네이티브 다리 window.NMAndroid) */
+const bridge=window.NMAndroid;
+if(isApk&&bridge){
+  $('#settings').hidden=false;
+  const on=$('#rm-on'),time=$('#rm-time'),rnote=$('#rm-note');
+  try{const cur=JSON.parse(bridge.getReminder()||'{}');on.checked=!!cur.on;if(cur.on)time.value=String(cur.hour).padStart(2,'0')+':'+String(cur.minute).padStart(2,'0');}catch(_){}
+  const save=()=>{
+    const [h,m]=(time.value||'17:00').split(':').map(Number);
+    let r='';
+    try{r=on.checked?bridge.setReminder(h,m):bridge.cancelReminder();}catch(_){r='error';}
+    rnote.hidden=false;
+    rnote.textContent=r==='asked'?'「알림 허용」 창이 뜨면 「허용」을 눌러 주세요.'
+      :r==='denied'?'알림이 꺼져 있어요. 휴대폰 설정 → 앱 → 수의 마법 → 알림을 켜 주세요.'
+      :r==='error'?'설정하지 못했어요. 앱을 다시 열어 주세요.'
+      :on.checked?'매일 '+time.value+'에 알려 줄게요.':'알림을 껐어요.';
+  };
+  addEventListener('nm-android',e=>{
+    if(!e.detail||e.detail.type!=='notify-permission')return;
+    rnote.hidden=false;
+    rnote.textContent=e.detail.value?'매일 '+time.value+'에 알려 줄게요.':'알림이 꺼져 있어요. 휴대폰 설정 → 앱 → 수의 마법 → 알림을 켜 주세요.';
+  });
+  on.addEventListener('change',save);time.addEventListener('change',()=>{if(on.checked)save();});
+}
+})();
+</script>
+</body>
+</html>
