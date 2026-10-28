@@ -70,7 +70,7 @@ function decorate(sheet,cv){
    toc.classList.add('nm-series-contents');
    const hero=toc.querySelector('.nm-cvw-hero');
    if(hero){hero.querySelector('.nm-cvw-title').textContent=m.lang==='ko'?'이번 주 학습 안내':m.lang==='zh'?'本周学习指南':'This week’s learning guide';
-     /* 표준 학습지 링크(ws.html r=회차)만 「몇월 몇주차 · N회차 · 연습량」을 붙인다(2026-10-28). 다른 인쇄는 그대로. */
+     /* 표준 학습지 링크(ws.html r=회차)만 「N회차 · 연습량」을 붙인다(2026-10-28). 날짜는 붙이지 않는다(과정만 — 2026-10-24). */
      hero.querySelector('.nm-cv-kicker').textContent=m.level+(cv&&cv.roundLabel?' · '+cv.roundLabel:'');
      hero.querySelector('.nm-cvw-cover-teaser')?.remove();hero.querySelector('.nm-cvw-cover-character')?.remove();
      const banner=document.createElement('div');banner.className='nm-series-mentor';

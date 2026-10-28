@@ -155,7 +155,7 @@
 <script src="app/g1/10-12.print.js?v=20261025-elementary-review1"></script>
 <script src="app/g1/13-15.print.js?v=20261025-elementary-review1"></script>
 <link rel="stylesheet" href="app/worksheet-series.css?v=20261024-monthly-series2">
-<script src="app/worksheet-series.js?v=20261028-standard1"></script>
+<script src="app/worksheet-series.js?v=20261028-standard2"></script>
 <script src="app/paper-examples.js?v=20261026-c0-cognitive1"></script>
 <script src="engine/c0-cognitive.js?v=20261026-review5"></script>
 <script src="app/c0-paper.js?v=20261026-c0-writing2"></script>
@@ -268,11 +268,9 @@
   if(!wk) return fail(q.get('hs') ? text('이 주에 배정된 학습지가 없어요. 시작일과 학습 속도를 확인해 주세요.','No worksheet is scheduled for this week. Check the start date and pace.','本周未安排学习单，请确认开始日期和学习速度。') : text('이 과정에는 아직 학습지가 없어요.','No worksheet is available for this course yet.','本课程暂时没有学习单。'));
   var items = wk.items, wsId = wk.wsId, cover = wk.cover, units = wk.units, title = wk.title;
   if(round && cover){
-    /* 표지 날짜: 이 링크를 받은 주(w)를 「몇월 몇주차」로 + 회차. 문항은 날짜와 무관하다. */
-    var wm = /^(\d{4})-W(\d{2})$/.exec(w), when = '';
-    if(wm){ var j4 = new Date(Date.UTC(+wm[1], 0, 4)), dd = (j4.getUTCDay() + 6) % 7, mon = new Date(j4.getTime() - dd * 86400000 + (+wm[2] - 1) * 7 * 86400000);
-      when = (mon.getUTCMonth() + 1) + '월 ' + (Math.floor((mon.getUTCDate() - 1) / 7) + 1) + '주차'; }
-    var parts = []; if(when) parts.push(when); if(!compact) parts.push(round + '회차');   // 묶음 과정은 제목에 「수업 N」이 이미 있다
+    /* 학습 안내 쪽 첫 줄에 「N회차 · 연습량」만 붙인다. 날짜(월·주차)는 쓰지 않는다 — 2026-10-24 원장 「과정만 쓰면 되지」
+       (표지·학습 안내에 월호·달력 월·주차 금지, gfield-textbook-design 스킬). 날짜는 문자에만. 묶음 과정은 제목에 「수업 N」이 이미 있다. */
+    var parts = []; if(!compact) parts.push(round + '회차');
     if(cover.amount != null && cover.amount !== 1) parts.push(cover.amountLabel || cover.amount + '×');
     cover = Object.assign({}, cover, { roundLabel: parts.join(' · ') });
   }
