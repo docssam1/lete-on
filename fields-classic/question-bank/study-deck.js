@@ -1,4 +1,4 @@
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261028w";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261028x";
 
 // 한 주(한 단원) 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 독쌤 말 id는 글에서 나온다(`fcs-<종류>-<글의 FNV 해시>`): 같은 글이면 같은 음성 파일, 글을 고치면 새 id라 옛 음성을 틀지 않는다.
@@ -92,13 +92,16 @@ export function buildWeekSlides(book, unitIndex, bellData) {
   return list;
 }
 
+// 워밍업 장의 이름 — 연산 골든벨 자료에서 온 차시는 「필수연산」(원장 2026-10-28 「연산 골든벨은 필수연산」)
+export const bellLabel = (slide) => slide.lesson?.original?.title === "필수연산" ? "필수연산" : "워밍업";
+
 // 장마다 독쌤이 하는 말 { id, text }
 export function slideLine(slide, { book, unitIndex }) {
   const unit = book.units[unitIndex];
   if (slide.kind === "cover") return voiceLine("cover", `이번 주는 ${unit.label}이에요. 개념을 배우고, 게임으로 익히고, 워밍업을 풀고, 본책 문제를 풀어요. 과제를 하고 단원 평가까지 봐요. 출발하기를 눌러 봐요.`);
   if (slide.kind === "concept") return voiceLine("concept", slide.native ? `${slide.lesson.title} 개념이에요. 칠판을 봐요.` : `${slide.lesson.title} 개념이에요. 한 장씩 천천히 보고 다음을 눌러요.`);
   if (slide.kind === "game") return voiceLine("game", `${slide.title} 게임이에요. 개념에서 본 풀이 순서대로 손으로 직접 해 봐요.`);
-  if (slide.kind === "bell") return voiceLine("bell", "워밍업 문제예요. 개념에서 배운 대로 한 문제씩 풀어 봐요.");
+  if (slide.kind === "bell") return voiceLine("bell", `${bellLabel(slide)} 문제예요. 개념에서 배운 대로 한 문제씩 풀어 봐요.`);
   if (slide.kind === "board") return voiceLine("board", `본책 ${slide.block.label} 문제예요. 화면에서 풀어도 되고, 인쇄해서 풀어도 돼요. 어려우면 유사 문제를 풀어 봐요.`);
   if (slide.kind === "homework") return voiceLine("homework", "이번 주 과제예요. 인쇄해서 집에서 풀고, 다 풀면 화면에서 답을 확인해요.");
   if (slide.kind === "test") return voiceLine("test", "단원 평가예요. 다 풀고 채점하기를 누르면 맞은 것과 틀린 것을 표시해요. 약한 유형은 다시 공부해요.");

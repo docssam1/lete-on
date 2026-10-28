@@ -3,6 +3,10 @@
  "note": "스스로 공부 한 주 덱(study.html) 독쌤 말. 손으로 고치지 말고 tools/export-study-voice.mjs 로 다시 만든다. 음성 파일은 science-lab/audio/docssam/ (scripts/omnivoice-docssam.py).",
  "lines": [
   {
+   "id": "fcs-bell-7s7lpg",
+   "text": "필수연산 문제예요. 개념에서 배운 대로 한 문제씩 풀어 봐요."
+  },
+  {
    "id": "fcs-bell-h5ovxs",
    "text": "워밍업 문제예요. 개념에서 배운 대로 한 문제씩 풀어 봐요."
   },

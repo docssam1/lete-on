@@ -1,6 +1,6 @@
 import "../../geometry/worksheet/generators.js";
 import "../../geometry/worksheet/render.js";
-import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js?v=20261028w";
+import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js?v=20261028x";
 import { guidedConceptVisual } from "./golden-bell-guided-experiences.js";
 
 // Keep this list aligned with the explicit branches in guidedConceptVisual().

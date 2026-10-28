@@ -103,7 +103,7 @@ export function gameTitles(bookId, lesson, games) {
 // 골든벨·게임 데이터는 크다(1.8MB) — 첫 화면을 그린 뒤 불러온다. 골든벨 화면과 같은 꼬리표로 불러 캐시를 같이 쓴다.
 export async function loadGoldenBell() {
   const [library, flow, handsOn] = await Promise.all([
-    import("./golden-bell-library.js?v=20261028w"),
+    import("./golden-bell-library.js?v=20261028x"),
     import("./golden-bell-lesson-flow.js?v=20261028w"),
     import("./golden-bell-hands-on-models.js?v=20261023t")
   ]);

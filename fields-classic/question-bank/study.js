@@ -1,6 +1,6 @@
 import { CURRICULUM } from "./source-data.js?v=20261028m";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261028w";
-import { PHASES, FIXED_LINES, voiceLine, weekBlocks as unitWeekBlocks, weekTypes as unitWeekTypes, buildWeekSlides, slideLine } from "./study-deck.js?v=20261028w";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261028x";
+import { PHASES, FIXED_LINES, voiceLine, weekBlocks as unitWeekBlocks, weekTypes as unitWeekTypes, buildWeekSlides, slideLine, bellLabel } from "./study-deck.js?v=20261028x";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261028n";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -345,7 +345,7 @@ function slideTitle(slide) {
 }
 function slideHead(slide) {
   if (slide.kind === "cover" || slide.kind === "end" || slide.kind === "booktest") return "";
-  const label = PHASES[phaseNo(slide.kind) - 1][1];
+  const label = slide.kind === "bell" ? bellLabel(slide) : PHASES[phaseNo(slide.kind) - 1][1];
   const title = slideTitle(slide);
   return `<p class="sd-kick"><span class="sd-kick-no">${phaseNo(slide.kind)}</span>${label}${slide.of ? ` <em>${slide.of}</em>` : ""}<span id="slidePage" class="sd-page"></span></p><h2>${esc(title)}</h2>`;
 }
