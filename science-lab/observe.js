@@ -9,6 +9,7 @@ import { renderReport } from './report.js';
 import { openSample } from './observe-sample.js';
 import { openFollow } from './observe-follow.js';
 import { sampleFor } from './data/observe-samples.js';
+import { PHOTO_SERIES } from './data/observe-photos.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const CIRCLED = '①②③④⑤⑥⑦⑧⑨⑩';
@@ -63,8 +64,11 @@ export function renderObserve($app, { topbar, footer }, setId) {
     $app.querySelector('[data-reveal]').textContent = reveal ? '이름 숨기기' : '이름 확인하기';
     $app.querySelectorAll('[data-act]').forEach((b) => { b.onclick = () => { const note = cur.run(b.dataset.act); $note.textContent = (note || '') + ' 본 것을 보고서에 써요.'; }; });
     if (mode === 'photo') {
-      $photo.innerHTML = `<img alt="${esc(`${CIRCLED[idx]} 실사 사진`)}" src="${PHOTO(s?.id || idx, 1)}"><p class="ob-photo-none" hidden>이 표본의 실사 사진은 준비 중이에요. 3D 모형으로 관찰해요.</p>`;
+      // 날짜별 사진이 있으면 아래 단추로 차례대로 넘겨 본다(처음엔 대표 사진 n:1)
+      const series = PHOTO_SERIES[s?.id] || null;
+      $photo.innerHTML = `<img alt="${esc(`${CIRCLED[idx]} 실사 사진`)}" src="${PHOTO(s?.id || idx, 1)}"><p class="ob-photo-none" hidden>이 표본의 실사 사진은 준비 중이에요. 3D 모형으로 관찰해요.</p>${series ? `<div class="ob-photo-steps" role="group" aria-label="날짜별 사진">${series.map((p, j) => `<button type="button" data-pn="${p.n}" aria-pressed="${p.n === 1}"><b>${j + 1}</b>${esc(p.cap)}</button>`).join('')}</div>` : ''}`;
       const img = $photo.querySelector('img'); img.onerror = () => { img.hidden = true; $photo.querySelector('.ob-photo-none').hidden = false; };
+      $photo.querySelectorAll('[data-pn]').forEach((b) => { b.onclick = () => { img.hidden = false; img.src = PHOTO(s.id, b.dataset.pn); $photo.querySelectorAll('[data-pn]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); }; });
     }
   };
   const load = (i) => {
