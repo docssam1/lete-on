@@ -1381,9 +1381,9 @@ const ORIGINALS = {
   4: () => ({
     prompt: "다음 숫자판을 오른쪽으로 뒤집은 후 아래로 뒤집었을 때, 똑바로 놓이는 수들의 합을 구하시오.",
     visual: { kind: "book1", subtype: "ut-oriented-board", cells: [
-      { digit: 1, state: "rot270" }, { digit: 2, state: "rot90" }, { digit: 3, state: "flipX" },
+      { digit: 1, state: "rot270" }, { digit: 2, state: "rot90" }, { digit: 3, state: "rot180" },
       { digit: 6, state: "normal" }, { digit: 5, state: "rot270" }, { digit: 4, state: "rot180" },
-      { digit: 7, state: "rot90" }, { digit: 8, state: "rot90" }, { digit: 9, state: "normal" }
+      { digit: 7, state: "rot90" }, { digit: 8, state: "rot270" }, { digit: 9, state: "normal" }
     ] }
   }),
   5: () => ({

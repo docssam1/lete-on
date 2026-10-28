@@ -152,3 +152,37 @@ button { cursor: pointer; }
   .ut-q-ans i { width: 110px; }
   .ut-test-foot { font-size: 11px; padding-top: 8px; }
 }
+
+/* 답안 확인 및 진단하기 (원장 2026-10-28 「답을 쓰는 란은 필요없고 … 답안지 인쇄와 o,x를 하면 부족한 영역 진단」) */
+.ut-check-start { display: grid; gap: 12px; }
+.ut-check-btn { min-height: 56px; font-size: 16px; }
+.ut-check { display: grid; gap: 10px; }
+.ut-check[hidden], .ut-check-start[hidden], .ut-btn[hidden] { display: none; }
+.ut-check-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ut-answer-status { color: var(--muted); font-size: 12.5px; }
+.ut-key { min-width: 0; display: grid; gap: 2px; font-size: 14px; font-weight: 600; line-height: 1.4; word-break: keep-all; }
+.ut-key .is-off { color: var(--muted); font-weight: 400; font-size: 12px; }
+.ut-key details summary { color: var(--accent-ink); font-size: 12px; font-weight: 600; cursor: pointer; }
+.ut-key-fig { padding: 6px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+.ut-key-fig svg { max-height: 220px; }
+.ut-row.is-right .ut-key span { color: var(--accent-ink); }
+.ut-row.is-wrong .ut-key span { color: var(--terra); }
+.ut-diag-rows li span small { display: block; color: var(--muted); font-size: 11px; font-weight: 400; }
+.ut-diag-rows li span { white-space: normal; }
+.ut-diag-weak { margin: 0; font-size: 13.5px; }
+.ut-diag-weak b { color: var(--terra); }
+
+/* 답안지(정답지) — 화면에는 숨기고 「답안지 인쇄」 때만 */
+.ut-answer-print { display: none; }
+.ut-ans-title { margin: 10px 0 14px; font-family: 'FC Serif', serif; font-size: 22px; font-weight: 700; }
+.ut-ans-grid { columns: 2; column-gap: 28px; }
+.ut-ans-item { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 8px; break-inside: avoid; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.ut-ans-item b { font-size: 17px; }
+.ut-ans-item p { margin: 0; font-family: 'FC Serif', serif; font-size: 14px; line-height: 1.6; }
+.ut-ans-fig { margin-top: 4px; }
+.ut-ans-fig svg { max-height: 150px; }
+@media print {
+  @page answers { size: A4; margin: 14mm; }
+  body.print-answers .ut-pages, body.print-answers .ut-watermark { display: none !important; }
+  body.print-answers .ut-answer-print { display: block; page: answers; color: #191511; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}

@@ -1,5 +1,5 @@
 import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261028m";
-import { GENERATORS } from "./generators.js?v=20261028za";
+import { GENERATORS } from "./generators.js?v=20261028zb";
 import { saveRecord } from "./study-progress.js?v=20261028n";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261028za";

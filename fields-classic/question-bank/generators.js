@@ -11,7 +11,7 @@ import { BOOK09_GENERATORS, BOOK09_UNIT_TEST_GENERATORS } from "./book09-generat
 import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS } from "./book10-generators.js?v=20260826h";
 import { MOCK06_GENERATORS } from "./mock06-generators.js?v=20260823b";
 import { book02UnitTestProblem } from "./book02-unit-test-generators.js?v=20260918b";
-import { book01UnitTestProblem } from "./book01-unit-test-generators.js?v=20261028za";
+import { book01UnitTestProblem } from "./book01-unit-test-generators.js?v=20261028zb";
 
 const COLORS = ["흰색", "검은색"];
 const SHAPES = ["동그라미", "세모", "네모"];

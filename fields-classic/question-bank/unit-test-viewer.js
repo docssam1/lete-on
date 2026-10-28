@@ -1,11 +1,12 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
 import { saveRecord } from "./study-progress.js?v=20261028n";
-import { book01UnitTestOriginal, BOOK01_UNIT_TEST_ORIGINAL_NUMBERS } from "./book01-unit-test-generators.js?v=20261028za";
+import { book01UnitTestOriginal, BOOK01_UNIT_TEST_ORIGINAL_NUMBERS } from "./book01-unit-test-generators.js?v=20261028zb";
 import { book01Markup } from "./book01-renderers.js?v=20261028za";
 
 // 권별테스트 원문 풀기 (원장 지시 2026-10-24): 「교재 권별테스트는 원본 문제 그대로 1세트가 있고, 유사문제로 공부하는 거야.」
-// 원문 쪽 그림을 그대로 보여 주고(답은 없다), 학생이 답안지에 적고 ○✕로 채점한 뒤
-// 틀린 번호만 문제은행 유사문제(같은 구조, 새 숫자)로 다시 푼다. 원문 정답은 이 화면에 두지 않는다 — 채점은 선생님 답지로.
+// 원문을 보여 주고, 다 풀면 「답안 확인 및 진단하기」(원장 2026-10-28 「답을 쓰는 란은 필요없고 … 답안지 인쇄와 o,x를 하면 부족한 영역 진단」)로
+// 정답을 보며 ○✕를 누른다. 정답은 git·공개 파일에 없다 — 비공개 DB(fields_unit_test_answer_keys)에서 서버 함수 unit-test-answers 로
+// 버튼을 누를 때만 받아 온다(정답이 아직 없는 권은 선생님 답지로 ○✕). 틀린 번호는 문제은행 유사문제(같은 구조, 새 숫자)로 다시 푼다.
 // 주소: ?book=book01 (예전 형식) 또는 ?book=book-01
 
 const $ = (id) => document.getElementById(id);
@@ -39,31 +40,38 @@ function weakTypeLink(typeIds) {
   const picks = typeIds.flatMap((typeId) => [0, 1].map(() => `${typeId}~practice~권별 약점 유형`)).join("|");
   return `./index.html?${new URLSearchParams({ student, mode: "curriculum", book: book.id, picks, build: "1", as: "student", title: `${book.label} 약점 유형 다시 공부하기` })}`;
 }
+// 부족한 영역 진단: 단원이 아니라 문항마다 달린 분류(대분류 › 중분류)로 묶는다.
+// 시험 문항의 유형이 교재 단원 목록에 없는 권이 많아서(8~10권은 25문항 모두) 단원으로는 묶이지 않는다.
+const areaOf = (question) => {
+  const c = question.classification || {};
+  const type = typeById(question.typeId);
+  return { key: `${c.majorDomainLabel || type?.domainLabel || ""}|${c.minorDomain || type?.middle || question.label}`, major: c.majorDomainLabel || "", minor: c.minorDomain || type?.middle || question.label };
+};
 function renderDiagnosis() {
   const box = $("diagnosis");
   const marked = questions.filter(({ number }) => sheet[number]?.mark);
   if (!marked.length) { box.hidden = true; box.innerHTML = ""; return; }
   const rows = new Map();
   for (const question of questions) {
-    const type = typeById(question.typeId);
-    const key = type?.id || question.label;
-    const row = rows.get(key) || { label: type ? `${type.middle} · ${type.label}` : question.label, typeId: type?.id, numbers: [], right: 0, wrong: 0 };
+    const area = areaOf(question);
+    const row = rows.get(area.key) || { ...area, numbers: [], right: 0, wrong: 0, typeIds: new Set() };
     row.numbers.push(question.number);
     if (sheet[question.number]?.mark === "right") row.right += 1;
-    if (sheet[question.number]?.mark === "wrong") row.wrong += 1;
-    rows.set(key, row);
+    if (sheet[question.number]?.mark === "wrong") { row.wrong += 1; if (typeById(question.typeId)) row.typeIds.add(question.typeId); }
+    rows.set(area.key, row);
   }
-  const list = [...rows.values()].sort((a, b) => b.wrong - a.wrong);
-  const weak = list.filter((row) => row.wrong && row.typeId);
+  const list = [...rows.values()].sort((a, b) => b.wrong / b.numbers.length - a.wrong / a.numbers.length || b.wrong - a.wrong);
+  const weak = list.filter((row) => row.wrong);
+  const weakTypes = [...new Set(weak.flatMap((row) => [...row.typeIds]))];
   // 「내 학습 상황」에 남긴다(원문 답은 남기지 않고 점수·틀린 번호·약점 유형 id만)
   saveRecord(student, "book-test", book.id, {
     right: marked.filter(({ number }) => sheet[number].mark === "right").length, total: questions.length, marked: marked.length,
-    wrong: questions.filter(({ number }) => sheet[number]?.mark === "wrong").map(({ number }) => number), weak: weak.map((row) => row.typeId)
+    wrong: questions.filter(({ number }) => sheet[number]?.mark === "wrong").map(({ number }) => number), weak: weakTypes
   });
   box.hidden = false;
-  box.innerHTML = `<h3 id="diagnosisHeading">유형별 진단</h3>
-    <ol class="ut-diag-rows">${list.map((row) => `<li class="${row.wrong ? "is-weak" : row.right === row.numbers.length ? "is-clear" : ""}"><span>${esc(row.label)}</span><small>${row.numbers.join("·")}번</small><b>${row.wrong ? `✕ ${row.wrong}` : row.right === row.numbers.length ? "○" : "–"}</b></li>`).join("")}</ol>
-    ${weak.length ? `<a class="ut-btn primary" href="${esc(weakTypeLink(weak.map((row) => row.typeId)))}">약점 유형 공부하기 · ${weak.length}유형 × 2문제</a>` : marked.length === questions.length ? `<p class="ut-diag-clear">약점 유형이 없어요. 잘했어요!</p>` : ""}`;
+  box.innerHTML = `<h3 id="diagnosisHeading">부족한 영역 진단</h3>
+    <ol class="ut-diag-rows">${list.map((row) => `<li class="${row.wrong ? "is-weak" : row.right === row.numbers.length ? "is-clear" : ""}"><span><small>${esc(row.major)}</small>${esc(row.minor)}</span><small>${row.numbers.join("·")}번</small><b>${row.wrong ? `✕ ${row.wrong}` : row.right === row.numbers.length ? "○" : "–"}</b></li>`).join("")}</ol>
+    ${weak.length ? `<p class="ut-diag-weak">더 공부할 영역: <b>${weak.map((row) => esc(row.minor)).join(" · ")}</b></p>${weakTypes.length ? `<a class="ut-btn primary" href="${esc(weakTypeLink(weakTypes))}">약점 영역 공부하기 · ${weakTypes.length}유형 × 2문제</a>` : ""}` : marked.length === questions.length ? `<p class="ut-diag-clear">부족한 영역이 없어요. 잘했어요!</p>` : ""}`;
 }
 
 document.title = `${book.label} 권별테스트 원문 풀기`;
@@ -93,7 +101,7 @@ function originalPagesMarkup() {
 }
 if (original) {
   document.body.classList.add("is-typeset");
-  $("guide").innerHTML = "원문 문제를 우리 시험지로 옮겼어요(수와 그림 배치는 그대로). 공책이나 인쇄한 시험지에 풀고, 오른쪽 답안지에 답을 적으세요. 채점한 뒤 틀린 번호는 <b>유사문제</b>로 다시 공부합니다.";
+  $("guide").innerHTML = "원문 문제를 우리 시험지로 옮겼어요(수와 그림 배치는 그대로). 공책이나 인쇄한 시험지에 풀고, 다 풀면 <b>답안 확인 및 진단하기</b>를 눌러요. 틀린 번호는 <b>유사문제</b>로 다시 공부합니다.";
 }
 $("pages").innerHTML = original ? originalPagesMarkup() : Array.from({ length: book.source.unitTestPageCount }, (_, index) => {
   const page = String(index + 1).padStart(2, "0");
@@ -101,12 +109,26 @@ $("pages").innerHTML = original ? originalPagesMarkup() : Array.from({ length: b
 }).join("");
 $("watermark").innerHTML = Array.from({ length: 4 }, () => `<span>${esc(student)} · GFIELD · ${esc(student)} · GFIELD · ${esc(student)}</span>`).join("");
 
+// 정답(비공개 DB) — 「답안 확인 및 진단하기」를 누를 때 한 번 받아 온다
+const ANSWER_API = "https://fgahqumaldheqettmvqg.supabase.co/functions/v1/unit-test-answers";
+let answers = null;
+async function loadAnswers() {
+  try {
+    const response = await fetch(ANSWER_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ bookId: book.id }) });
+    if (!response.ok) return null;
+    return (await response.json()).answers || null;
+  } catch { return null; }
+}
+const answerFigure = (entry) => (entry?.visual && original ? original.figure(entry.visual) : "");
+
 function renderSheet() {
   $("sheet").innerHTML = questions.map(({ number, label }) => {
     const entry = sheet[number] || {};
+    const key = answers?.[number];
+    const figure = answerFigure(key);
     return `<li class="ut-row ${entry.mark ? `is-${entry.mark}` : ""}">
       <b>${number}</b>
-      <input type="text" inputmode="text" autocomplete="off" data-answer="${number}" value="${esc(entry.answer || "")}" aria-label="${number}번 답" />
+      <div class="ut-key">${key ? `<span>${esc(key.text)}</span>${figure ? `<details><summary>답 그림</summary><div class="ut-key-fig">${figure}</div></details>` : ""}` : `<span class="is-off">${answers ? "정답 준비 중" : "선생님 답지로 확인"}</span>`}</div>
       <span class="ut-marks" role="group" aria-label="${number}번 채점">
         <button type="button" data-mark="${number}" data-value="right" aria-pressed="${entry.mark === "right"}" aria-label="${number}번 맞음">○</button>
         <button type="button" data-mark="${number}" data-value="wrong" aria-pressed="${entry.mark === "wrong"}" aria-label="${number}번 틀림">✕</button>
@@ -117,6 +139,25 @@ function renderSheet() {
     </li>`;
   }).join("");
   renderFoot();
+}
+
+// 답안지(정답지) 인쇄: 시험지와 같은 꼴의 A4 — 번호 · 정답 · 답 그림
+function answerPagesMarkup() {
+  const items = questions.map(({ number }) => {
+    const key = answers?.[number];
+    return `<section class="ut-ans-item"><b>${number}</b><div><p>${esc(key?.text || "")}</p>${answerFigure(key) ? `<div class="ut-ans-fig">${answerFigure(key)}</div>` : ""}</div></section>`;
+  }).join("");
+  return `<header class="ut-test-run"><span>1과정 · ${esc(book.label)} 권별 테스트</span><span>정답</span></header><h2 class="ut-ans-title">${esc(book.title)} · 정답</h2><div class="ut-ans-grid">${items}</div><footer class="ut-test-foot"><span>지필드 영재교육</span><span>정답</span></footer>`;
+}
+async function openCheck() {
+  $("checkStart").hidden = true;
+  $("checkPanel").hidden = false;
+  $("answerStatus").textContent = "정답을 불러오는 중…";
+  if (!answers) answers = await loadAnswers();
+  $("answerStatus").textContent = answers ? "정답을 보며 ○ · ✕를 눌러요." : "이 권은 정답이 아직 없어요. 선생님 답지로 ○ · ✕를 눌러요.";
+  $("answerPrintButton").hidden = !answers;
+  $("answerPages").innerHTML = answers ? answerPagesMarkup() : "";
+  renderSheet();
 }
 
 function renderFoot() {
@@ -135,12 +176,6 @@ function renderFoot() {
   renderDiagnosis();
 }
 
-$("sheet").addEventListener("input", (event) => {
-  const number = event.target.dataset.answer;
-  if (!number) return;
-  sheet[number] = { ...sheet[number], answer: event.target.value };
-  save();
-});
 $("sheet").addEventListener("click", (event) => {
   const button = event.target.closest("[data-mark]");
   if (!button) return;
@@ -158,10 +193,18 @@ $("wrongLink").addEventListener("click", (event) => {
   if ($("wrongLink").getAttribute("aria-disabled") === "true") event.preventDefault();
 });
 $("clearButton").addEventListener("click", () => {
-  if (!window.confirm("적은 답과 채점을 모두 지울까요?")) return;
+  if (!window.confirm("○✕ 채점을 모두 지울까요?")) return;
   for (const key of Object.keys(sheet)) delete sheet[key];
   save();
   renderSheet();
 });
 $("printButton").addEventListener("click", () => window.print());
-renderSheet();
+$("checkButton").addEventListener("click", openCheck);
+$("answerPrintButton").addEventListener("click", () => {
+  document.body.classList.add("print-answers");
+  window.print();
+});
+window.addEventListener("afterprint", () => document.body.classList.remove("print-answers"));
+// 이미 ○✕를 누른 적이 있으면 바로 열어 둔다
+if (questions.some(({ number }) => sheet[number]?.mark)) openCheck();
+else renderFoot();

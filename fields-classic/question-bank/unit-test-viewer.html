@@ -7,7 +7,7 @@
   <title>권별테스트 원문 풀기</title>
   <link rel="icon" href="data:," />
   <link rel="stylesheet" href="./math-markup.css?v=20261027n" />
-  <link rel="stylesheet" href="./unit-test-solve.css?v=20261028za" />
+  <link rel="stylesheet" href="./unit-test-solve.css?v=20261028zb" />
 </head>
 <body>
   <header class="ut-header">
@@ -17,25 +17,35 @@
   </header>
   <main class="ut-main">
     <section class="ut-paper" aria-label="권별테스트 원문">
-      <p class="ut-guide" id="guide">원문 시험지 그대로입니다. 공책이나 인쇄한 시험지에 풀고, 오른쪽 답안지에 답을 적으세요. 채점한 뒤 틀린 번호는 <b>유사문제</b>로 다시 공부합니다.</p>
+      <p class="ut-guide" id="guide">원문 시험지 그대로입니다. 공책이나 인쇄한 시험지에 풀고, 다 풀면 <b>답안 확인 및 진단하기</b>를 눌러요. 틀린 번호는 <b>유사문제</b>로 다시 공부합니다.</p>
       <div id="watermark" class="ut-watermark" aria-hidden="true"></div>
       <div id="pages" class="ut-pages"></div>
+      <div id="answerPages" class="ut-answer-print" aria-hidden="true"></div>
     </section>
     <aside class="ut-sheet" aria-labelledby="sheetHeading">
       <div class="ut-sheet-head">
-        <h2 id="sheetHeading">답안지</h2>
+        <h2 id="sheetHeading">답안 확인 · 진단</h2>
         <span id="sheetScore" role="status"></span>
       </div>
-      <p class="ut-sheet-help">답을 적고, 채점할 때 <b>○</b> 맞음 · <b>✕</b> 틀림을 누르세요. 적은 답은 이 기기에 저장됩니다.</p>
-      <ol id="sheet" class="ut-rows"></ol>
-      <section id="diagnosis" class="ut-diagnosis" hidden aria-labelledby="diagnosisHeading"></section>
-      <div class="ut-sheet-foot">
-        <a id="wrongLink" class="ut-btn primary" href="./index.html" aria-disabled="true">틀린 번호 유사문제 공부하기</a>
-        <a id="allLink" class="ut-btn" href="./index.html">25문항 전체 유사문제</a>
-        <button type="button" id="clearButton" class="ut-text-btn">답안지 지우기</button>
+      <div id="checkStart" class="ut-check-start">
+        <p class="ut-sheet-help">문제를 다 풀었으면 눌러요. 정답을 보며 번호마다 <b>○</b> · <b>✕</b>를 누르면 부족한 영역을 알려 줘요.</p>
+        <button type="button" id="checkButton" class="ut-btn primary ut-check-btn">답안 확인 및 진단하기</button>
+      </div>
+      <div id="checkPanel" class="ut-check" hidden>
+        <div class="ut-check-tools">
+          <button type="button" id="answerPrintButton" class="ut-btn">답안지 인쇄</button>
+          <span id="answerStatus" class="ut-answer-status" role="status"></span>
+        </div>
+        <ol id="sheet" class="ut-rows"></ol>
+        <section id="diagnosis" class="ut-diagnosis" hidden aria-labelledby="diagnosisHeading"></section>
+        <div class="ut-sheet-foot">
+          <a id="wrongLink" class="ut-btn primary" href="./index.html" aria-disabled="true">틀린 번호 유사문제 공부하기</a>
+          <a id="allLink" class="ut-btn" href="./index.html">25문항 전체 유사문제</a>
+          <button type="button" id="clearButton" class="ut-text-btn">○✕ 지우기</button>
+        </div>
       </div>
     </aside>
   </main>
-  <script type="module" src="./unit-test-viewer.js?v=20261028za"></script>
+  <script type="module" src="./unit-test-viewer.js?v=20261028zb"></script>
 </body>
 </html>
