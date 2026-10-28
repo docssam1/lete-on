@@ -271,7 +271,7 @@
     /* 학습 안내 쪽 첫 줄에 「N회차 · 연습량」만 붙인다. 날짜(월·주차)는 쓰지 않는다 — 2026-10-24 원장 「과정만 쓰면 되지」
        (표지·학습 안내에 월호·달력 월·주차 금지, gfield-textbook-design 스킬). 날짜는 문자에만. 묶음 과정은 제목에 「수업 N」이 이미 있다. */
     var parts = []; if(!compact) parts.push(round + '회차');
-    if(cover.amount != null && cover.amount !== 1) parts.push(cover.amountLabel || cover.amount + '×');
+    if(cover.amount != null && cover.amount > 1) parts.push(text('문제 UP','Problems UP','题量 UP'));   // 1.25배 판(원장 「많은 연습량 말고 문제 up」)
     cover = Object.assign({}, cover, { roundLabel: parts.join(' · ') });
   }
   if(personalPlan)window.NM_WS_ENVELOPE=wk;

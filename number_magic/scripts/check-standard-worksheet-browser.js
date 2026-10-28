@@ -3,7 +3,7 @@
 /* 표준 학습지 검사(2026-10-28, 원장 「같은 과정·같은 회차는 같은 시험지 — 몇월 몇주는 표지·문자에만」).
  * ws.html?w=주차&c=과정&r=회차[&amt=1.25] 가
  *  ① 주차가 달라도 같은 과정·회차면 문항이 똑같고  ② 다음 회차는 다르고  ③ 1.25배 판은 문항이 더 많고
- *  ④ 학습 안내 첫 줄에 「N회차」(1.25배는 연습량)가 찍히고 날짜(월·주차)는 어디에도 없고(2026-10-24 「과정만 쓰면 되지」)  ⑤ 없는 회차는 안내를 띄우고
+ *  ④ 학습 안내 첫 줄에 「N회차」(1.25배 판은 「문제 UP」)가 찍히고 날짜(월·주차)는 어디에도 없고(2026-10-24 「과정만 쓰면 되지」)  ⑤ 없는 회차는 안내를 띄우고
  *  ⑥ 짧은 링크 /w/?YYWW.과정.회차[L] 이 그 주소로 넘어가는지 본다. 외부 요청은 막는다.
  * usage: node scripts/check-standard-worksheet-browser.js */
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
@@ -37,7 +37,7 @@ const server=http.createServer((req,res)=>{let f=path.resolve(ROOT,'.'+decodeURI
     assert.ok(more.text.length>a.text.length,c+' 1.25x has more practice');
     assert.doesNotMatch(a.covers+more.covers,/\d+월|주차|월호/,c+' cover and guide never show a month or week');
     if(!compact)assert.match(a.kicker,new RegExp(' '+r+'회차'),c+' cover shows the round');
-    assert.match(more.kicker,/1\.25배/,c+' cover shows the amount');
+    assert.match(more.kicker,/문제 UP/,c+' guide marks the larger edition');
     report.push({course:c,round:r,sameAcrossWeeks:true,nextDiffers:true,kicker:a.kicker});
   }
   const bad=await open('w=2026-W44&c=C4&r=99');assert.equal(bad.ready,'error');assert.match(bad.err,/회차/);
