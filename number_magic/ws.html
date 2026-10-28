@@ -155,11 +155,11 @@
 <script src="app/g1/10-12.print.js?v=20261025-elementary-review1"></script>
 <script src="app/g1/13-15.print.js?v=20261025-elementary-review1"></script>
 <link rel="stylesheet" href="app/worksheet-series.css?v=20261024-monthly-series2">
-<script src="app/worksheet-series.js?v=20261024-course-series3"></script>
+<script src="app/worksheet-series.js?v=20261028-standard1"></script>
 <script src="app/paper-examples.js?v=20261026-c0-cognitive1"></script>
 <script src="engine/c0-cognitive.js?v=20261026-review5"></script>
 <script src="app/c0-paper.js?v=20261026-c0-writing2"></script>
-<script src="app/scatter-answer.js?v=20261026-review5"></script><script src="app/c0-concrete.js?v=20261026-review5"></script><script src="app/exam.js?v=20261026-c18-magic1"></script>
+<script src="app/scatter-answer.js?v=20261026-review5"></script><script src="app/c0-concrete.js?v=20261026-review5"></script><script src="app/exam.js?v=20261028-standard1"></script>
 <script>
 (function(){
   var q = new URLSearchParams(location.search);
@@ -254,10 +254,28 @@
      세션 선택(주 2회 두 번째 회차)·필산 회차·독셈 회차·문장제(대안 포함)·표지·마법 유닛 전부 그쪽. */
   /* s = 이 과정에서 몇 번째 회차인가(1부터) — 없으면 모름. 언어사고력 주제 순환·유아 "중반부터" 판정용(2026-09-30). */
   var sParam = parseInt(q.get('s') || '', 10);
-  var wk = personalPlan ? NM_EXAM.plannedEnvelope(personalAt.weekLessons,w,{name:name,cad:personalPlan.cadence,amount:personalPlan.amount})
-    : NM_EXAM.weeklyEnvelope(course, c, w, { k: k, name: name, cad: cad, sessionIdx: isNaN(sParam) ? null : sParam - 1, startSession:q.get('p')==='1'?sParam:null, compactHigh:q.get('p')!=='1'||q.get('hp')==='1', highStartDate:q.get('hp')==='1'?q.get('hs'):null, highSpeed:Number(q.get('hv')||1), legacySession:q.get('p')==='1'&&q.get('hp')!=='1' });
+  /* 표준 학습지(2026-10-28, 원장 「같은 과정·같은 회차는 같은 시험지 — 몇월 몇주는 표지·문자에만」).
+     문항은 과정 + 회차로만 정해진다(exam.js standard). r = 회차(1부터) — 중·고등 묶음 과정은 수업 번호,
+     나머지는 세션 번호. 주차(w)는 표지의 날짜 글자에만 쓴다. */
+  var compact = !!(course.studyPlan && course.studyPlan.lessons);
+  var rParam = parseInt(q.get('r') || '', 10);
+  var round = !personalPlan && q.get('hp') !== '1' && rParam >= 1 && rParam <= (compact ? course.studyPlan.lessons.length : course.sessions.length) ? rParam : null;
+  if(q.has('r') && !round && !personalPlan && q.get('hp') !== '1') return fail(text('이 과정에 그 회차가 없어요. 학원에 새 링크를 요청해 주세요.','That round does not exist in this course. Ask the academy for a new link.','本课程没有这个回次，请向学院申请新链接。'));
+  var wk = personalPlan ? NM_EXAM.plannedEnvelope(personalAt.weekLessons,w,{name:name,cad:personalPlan.cadence,amount:personalPlan.amount,standard:true})
+    : round ? NM_EXAM.weeklyEnvelope(course, c, w, { k: 1, name: name, cad: 'w1', standard: true, compactHigh: compact,
+        lesson: compact ? round - 1 : undefined, startSession: compact ? null : round, sessionIdx: compact ? course.studyPlan.lessons[round - 1].startSession - 1 : round - 1 })
+    : NM_EXAM.weeklyEnvelope(course, c, w, { k: k, name: name, cad: cad, standard: true, sessionIdx: isNaN(sParam) ? null : sParam - 1, startSession:q.get('p')==='1'?sParam:null, compactHigh:q.get('p')!=='1'||q.get('hp')==='1', highStartDate:q.get('hp')==='1'?q.get('hs'):null, highSpeed:Number(q.get('hv')||1), legacySession:q.get('p')==='1'&&q.get('hp')!=='1' });
   if(!wk) return fail(q.get('hs') ? text('이 주에 배정된 학습지가 없어요. 시작일과 학습 속도를 확인해 주세요.','No worksheet is scheduled for this week. Check the start date and pace.','本周未安排学习单，请确认开始日期和学习速度。') : text('이 과정에는 아직 학습지가 없어요.','No worksheet is available for this course yet.','本课程暂时没有学习单。'));
   var items = wk.items, wsId = wk.wsId, cover = wk.cover, units = wk.units, title = wk.title;
+  if(round && cover){
+    /* 표지 날짜: 이 링크를 받은 주(w)를 「몇월 몇주차」로 + 회차. 문항은 날짜와 무관하다. */
+    var wm = /^(\d{4})-W(\d{2})$/.exec(w), when = '';
+    if(wm){ var j4 = new Date(Date.UTC(+wm[1], 0, 4)), dd = (j4.getUTCDay() + 6) % 7, mon = new Date(j4.getTime() - dd * 86400000 + (+wm[2] - 1) * 7 * 86400000);
+      when = (mon.getUTCMonth() + 1) + '월 ' + (Math.floor((mon.getUTCDate() - 1) / 7) + 1) + '주차'; }
+    var parts = []; if(when) parts.push(when); if(!compact) parts.push(round + '회차');   // 묶음 과정은 제목에 「수업 N」이 이미 있다
+    if(cover.amount != null && cover.amount !== 1) parts.push(cover.amountLabel || cover.amount + '×');
+    cover = Object.assign({}, cover, { roundLabel: parts.join(' · ') });
+  }
   if(personalPlan)window.NM_WS_ENVELOPE=wk;
   document.title = 'Numbers of Magic' + (name ? ' · ' + name : '') + ' — ' + wsId;
   sub.textContent = (name ? name + ' · ' : '') + w + ' · ' + (personalPlan?'':c+'. ') + title;

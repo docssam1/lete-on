@@ -23,8 +23,8 @@ assert.ok(a >= 0 && b > a, "pure markers missing");
 const js = ts ? ts.transpileModule(src.slice(a, b), { compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.None } }).outputText : strip(src.slice(a,b));
 const sandbox = { crypto: crypto.webcrypto, TextEncoder, Uint8Array, Array, String, Number };
 vm.createContext(sandbox);
-vm.runInContext(js + "\nthis.autoKind=autoKind;this.parseMembership=parseMembership;this.processContact=processContact;", sandbox);
-const { autoKind, parseMembership, processContact } = sandbox;
+vm.runInContext(js + "\nthis.autoKind=autoKind;this.parseMembership=parseMembership;this.processContact=processContact;this.standardPart=standardPart;", sandbox);
+const { autoKind, parseMembership, processContact, standardPart } = sandbox;
 
 const sha16 = (s) => crypto.createHash("sha256").update(s).digest("hex").slice(0, 16);
 const LINK = "https://lete-on.gfieldacademy.net/w/?m=abc123";
@@ -209,6 +209,27 @@ const mk = (name, ph = "01012345678") => ({ profile_name: name, phone: ph, send_
   // parseMembership 단독
   assert.equal(JSON.stringify(parseMembership({ data: { managed: false } })), '{"managed":false}');
   assert.equal(parseMembership(null), null);
+
+  // 표준 학습지 회차(2026-10-28): 저장한 회차에서 주마다 나아가고, 주 2회는 두 회차, 마지막 회차에서 멈춘다
+  {
+    const dg = { courseKey: "C4", round: 2, roundAt: "2026-W40", rounds: 9, amount: 1 };
+    assert.equal(standardPart(dg, "2026-W40", 1, "w1"), "C4.2");
+    assert.equal(standardPart(dg, "2026-W43", 1, "w1"), "C4.5");
+    assert.equal(standardPart(dg, "2026-W43", 1, "w2"), "C4.8");
+    assert.equal(standardPart(dg, "2026-W43", 2, "w2"), "C4.9");
+    assert.equal(standardPart(dg, "2026-W52", 1, "w1"), "C4.9", "stops at the last round");
+    assert.equal(standardPart({ ...dg, roundAt: "2025-W52" }, "2026-W01", 1, "w1"), "C4.3", "crosses the year");
+    assert.equal(standardPart(dg, "2026-W38", 1, "w1"), "C4.2", "never goes back");
+    assert.equal(standardPart({ ...dg, amount: 1.25 }, "2026-W40", 1, "w1"), "C4.2L");
+    assert.equal(standardPart({ ...dg, amount: 0.85 }, "2026-W40", 1, "w1"), "C4.2");
+    for (const bad of [null, {}, { ...dg, round: 0 }, { ...dg, rounds: "x" }, { ...dg, roundAt: "2026-40" }, { ...dg, courseKey: "C4;x" }])
+      assert.equal(standardPart(bad, "2026-W40", 1, "w1"), "", "malformed digest falls back");
+    // 단문 90바이트: 가장 긴 형태(3자 이름 · 12월 5-2주차 · C73.12L)도 이름을 넣은 형식에 들어간다
+    const bytes = (t) => [...t].reduce((n, ch) => n + (ch.codePointAt(0) < 128 ? 1 : 2), 0);
+    const url = "https://docssam1.github.io/lete-on/w/?2652.C73.12L";
+    assert.ok(bytes(`[numbers of magic] 김민준 12월 5-2주차\n${url}`) <= 90, "standard link keeps SMS");
+    assert.ok(bytes(`[numbers of magic] 12월 5-2주차 학습지\n${url}`) <= 90, "standard link keeps SMS (no name)");
+  }
 
   console.log("check-notify-delivery: OK");
 })().catch((e) => { console.error(e); process.exit(1); });

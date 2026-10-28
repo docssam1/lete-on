@@ -7711,6 +7711,7 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
   const k=opts.k===2?2:1;
   const middle=/^middle[123]$/.test(course.tier),cadence=opts.cad==='w2'||k===2?'w2':'w1';
   const amount=opts.amount==null?getAmount():normAmount(opts.amount);
+  const sk=opts.standard?'S':weekKey;   // 표준 학습지: 수업(lesson)·회차로만 정한다
   let first=null;
   sourceIndices.forEach(index=>{
     const source=course.sessions[index];
@@ -7719,7 +7720,7 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
     if(!child)return;
     if(!first)first=child;
     const sourceItems=source.test?(source.pool||[]).map((d,i)=>({thread:d.t,level:d.lv,n:d.n,count:d.n,threadMix:[{t:d.t,lv:d.lv}],noTeach:true,
-      seed:(weekKey+courseKey+'h'+lesson.index+'k'+k+'s'+index+'test'+i).toLowerCase().replace(/[^a-z0-9]/g,''),
+      seed:(sk+courseKey+'h'+lesson.index+(opts.standard?'':'k'+k)+'s'+index+'test'+i).toLowerCase().replace(/[^a-z0-9]/g,''),
       topicName:lk('과정 점검 · ','Course check · ','课程检查 · ')+(((window.NM_THREADS||{})[d.t]||{}).name?.ko||d.t)}))
       :child.items.filter(it=>!String(it.seed||'').endsWith('stagechk'));
     sourceItems.forEach(it=>items.push({...it,sourceSession:courseKey+'-S'+(index+1),courseKey,legacySession:index+1,
@@ -7742,7 +7743,7 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
       :{ko:'세제곱의 차 인수분해',en:'Factoring a difference of cubes',zh:'立方差的因式分解'}:level&&level.label;
     const count=withAmount(amount,()=>scaleCount(d,d.n));
     items.push({thread:d.t,level:d.lv,n:d.n,count,levelOnly:true,levelConcept,levelTitle,
-      seed:(weekKey+courseKey+'b'+lesson.index+'extra'+i).toLowerCase().replace(/[^a-z0-9]/g,''),
+      seed:(sk+courseKey+'b'+lesson.index+'extra'+i).toLowerCase().replace(/[^a-z0-9]/g,''),
       topicName:pickL(levelTitle)||d.t,sourceSession:courseKey+'-extra',courseKey,compactHigh:true,
       sessionLabel:lk('인수분해 연결 연습','Factoring practice','因式分解练习')});
   });
@@ -7754,12 +7755,12 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
     else concepts.add(key);
   });
   if(sourceIndices.includes(course.sessions.length-1)){
-    const check=stageCheckItem(course,courseKey,(weekKey+courseKey+'h'+lesson.index).toLowerCase().replace(/[^a-z0-9]/g,''));
+    const check=stageCheckItem(course,courseKey,(sk+courseKey+'h'+lesson.index).toLowerCase().replace(/[^a-z0-9]/g,''));
     if(check)items.push({...check,sourceSession:courseKey+'-checkpoint',courseKey,compactHigh:true});
   }
   const pair=Math.floor(lesson.index/2)*2;
   const weeklyMinutes=middle&&cadence==='w1'?(lesson.estimatedMinutes??lesson.minutes):lessons.slice(pair,pair+2).reduce((n,l)=>n+(l.estimatedMinutes??l.minutes),0);
-  const wsId='W'+weekKey+'-'+courseKey+'-'+(middle?'M':'H')+(lesson.index+1);
+  const wsId=(opts.standard?'S-':'W'+weekKey+'-')+courseKey+'-'+(middle?'M':'H')+(lesson.index+1)+(opts.standard&&amount!==1?'-x'+amount:'');
   const cover={...first.cover,k,cadence,code:wsId,compactHigh:true,compactMiddle:middle,
     weekLabel:first.cover.weekLabel.replace(/-1주차$/,'-'+k+'주차'),
     studyDays:middle&&cadence==='w1'?5:lesson.index%2===1?2:3,lessonMinutes:Math.round(lesson.estimatedMinutes??lesson.minutes),weeklyMinutes,amount,
@@ -7840,7 +7841,8 @@ function plannedEnvelope(refs, weekKey, opts){
     const child=NM_EXAM.weeklyEnvelope(course,ref.courseKey,weekKey,{...opts,
       amount,cad:cadence,k:1,compactHigh:high,legacySession:!!canonical,highStartDate:null,
       highWholeWeek:false,startSession:start,sessionIdx:start-1,lesson:high?lesson:undefined,
-      seedScope:canonical?'extension'+canonical.grade+'e'+canonical.extensionIndex+'p'+i:'plan'+i+'s'+(start-1)});
+      seedScope:canonical?'extension'+canonical.grade+'e'+canonical.extensionIndex+'p'+i:'plan'+i+'s'+(start-1),
+      standardScope:canonical?'extension'+canonical.grade:''});
     if(!child)return null;
     if(canonical)child.compactHigh=true;
     const indices=canonical?[]:high?child.sourceSessions.map(n=>n-1):[start-1];
@@ -9276,19 +9278,26 @@ ${round.html}
     const name = opts.name || '';
     const amount = opts.amount == null ? getAmount() : normAmount(opts.amount);
     const grade = opts.grade != null ? opts.grade : (window.NM_PRINT_GRADE ? window.NM_PRINT_GRADE() : undefined);
-    const seedOf = (wk, i) => (wk + c + (opts.seedScope||'') + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g, '');
+    /* 표준 학습지(2026-10-28, 원장 「같은 과정 같은 회차는 표준 시험지 — 날짜는 문자로만」): opts.standard 면
+       문항이 주차가 아니라 「과정 + 회차(세션 번호)」로만 정해진다. 언제·누가 열어도 같은 회차는 같은 문항.
+       seedScope(묶음 안 자리·k)도 쓰지 않는다 — 같은 회차가 어느 묶음에 들어가도 같게. standardScope 만 따로 붙는다. */
+    const scope = opts.standard ? (opts.standardScope||'') : (opts.seedScope||'');
+    const seedOf = (wk, i) => (wk + c + scope + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g, '');
     let session = course.sessions.find(s => !s.test && s.magic && s.magic.length) || course.sessions.find(s => !s.test) || null;
+    let sessionNo = session ? course.sessions.indexOf(session) + 1 : 0;
     const exact = Number(opts.startSession);
     if(Number.isInteger(exact)&&exact>=1&&exact<=course.sessions.length){
       const selected=course.sessions[exact-1];
       session=selected.test?{...selected,drills:selected.pool||[],school:selected.pool||[],magic:[],creative:[],application:[],stretch:[]}:selected;
+      sessionNo=exact;
     }else if(k === 2 && session){
       const list = course.sessions.filter(s => !s.test);
       const idx = list.indexOf(session);
       if(list.length > 1) session = list[(idx + 1) % list.length];
+      sessionNo = course.sessions.indexOf(session) + 1;
     }
     if(!session || !(session.drills||[]).length) return null;
-    const seedWeek = k === 2 ? (w + '-2') : w;
+    const seedWeek = opts.standard ? ('S' + sessionNo) : k === 2 ? (w + '-2') : w;
     const thName = (t,lv) => printLevelName(t,lv);
     /* 세 층 순서(2026-09-25): 교과 → 마법 노트 → 창의 전략 → 적용·문장제 → 심화.
        시드는 예전처럼 drills·creative 배열의 원래 자리 번호로 만든다 — 층을 나눠도 같은 주의
@@ -9329,7 +9338,8 @@ ${round.html}
        문장제 회차 뒤, 회차 목록의 맨 끝에 온다 — 그 주에 배운 것 다음이 순서다. */
     const chk = session.test ? stageCheckItem(course, c, seedOf(seedWeek, 900)) : null;
     if(chk) items.push(chk);
-    const wsId = 'W' + w + '-' + c + (k === 2 ? '-2' : '');
+    const wsId = opts.standard ? ('S-' + c + '-' + sessionNo + (amount !== 1 ? '-x' + amount : ''))
+      : 'W' + w + '-' + c + (k === 2 ? '-2' : '');
     const title = (course.title && (course.title.ko || course.title)) || c;
     const weekLabel = (() => {
       const m = /^(\d{4})-W(\d{2})$/.exec(w); if(!m) return w;

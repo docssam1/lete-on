@@ -70,7 +70,8 @@ function decorate(sheet,cv){
    toc.classList.add('nm-series-contents');
    const hero=toc.querySelector('.nm-cvw-hero');
    if(hero){hero.querySelector('.nm-cvw-title').textContent=m.lang==='ko'?'이번 주 학습 안내':m.lang==='zh'?'本周学习指南':'This week’s learning guide';
-     hero.querySelector('.nm-cv-kicker').textContent=m.level;
+     /* 표준 학습지 링크(ws.html r=회차)만 「몇월 몇주차 · N회차 · 연습량」을 붙인다(2026-10-28). 다른 인쇄는 그대로. */
+     hero.querySelector('.nm-cv-kicker').textContent=m.level+(cv&&cv.roundLabel?' · '+cv.roundLabel:'');
      hero.querySelector('.nm-cvw-cover-teaser')?.remove();hero.querySelector('.nm-cvw-cover-character')?.remove();
      const banner=document.createElement('div');banner.className='nm-series-mentor';
      banner.innerHTML=(!m.academic?'<img src="assets/characters/'+m.hero+'.png" alt="">':'<span class="nm-series-mentor-mark" aria-hidden="true">∑</span>')+'<div><b>'+esc(m.lang==='ko'?'나의 학습 순서':m.lang==='zh'?'我的学习顺序':'My learning sequence')+'</b><p>'+esc(m.lang==='ko'?'개념을 살펴보고, 예시를 따라 풀고, 스스로 풀어 보세요.':m.lang==='zh'?'先看概念，再跟着例题练习，最后独立解答。':'Explore the concept, follow an example, then try it yourself.')+'</p></div>';
