@@ -74,15 +74,12 @@ function shortLink(wk: string, part: string): string {
   return `${SHORT_BASE}?${yyww}.${part}`;
 }
 
-// 학습지 링크: ① nm_weekly_pdf 의 PDF(토큰) ② ws.html(과정 키) ③ 없음
-async function worksheetLink(sb: any, profileName: string, wk: string, digest: any, k = 1): Promise<{ url: string; kind: "pdf" | "web" | "" }> {
-  try {
-    const { data } = await sb.from("nm_weekly_pdf").select("url").eq("profile_name", profileName).eq("week_key", wk).eq("k", k).limit(1);
-    const u = data && data[0] && data[0].url;
-    const m = u ? /\/nm-worksheets\/[^/]+\/([0-9a-f]+)\.pdf/.exec(String(u)) : null;
-    if (m) return { url: shortLink(wk, m[1]), kind: "pdf" };
-    if (u) return { url: String(u), kind: "pdf" };
-  } catch (_) { /* 표가 없거나 권한 문제면 웹 링크로 */ }
+// 학습지 링크(2026-10-28, 원장 「같은 과정·회차는 표준 시험지, 몇월 몇주는 문자로」):
+// ① 표준 학습지 /w/?YYWW.과정.회차[L] — 앱이 저장한 회차(weeklyDigest.round·roundAt)를 이번 주까지 나아가게 셈한다(standardPart)
+// ② 옛 앱이라 회차가 없으면 과정 링크 /w/?YYWW.과정 ③ 없음. 학생별 PDF(nm_weekly_pdf)는 더 만들지 않는다.
+function worksheetLink(wk: string, digest: any, k = 1, cadence = "w1"): { url: string; kind: "standard" | "web" | "" } {
+  const part = standardPart(digest, wk, k, cadence);
+  if (part) return { url: shortLink(wk, part), kind: "standard" };
   if (digest && digest.courseKey) return { url: shortLink(wk, String(digest.courseKey) + (k > 1 ? `-${k}` : "")), kind: "web" };
   return { url: "", kind: "" };
 }
@@ -175,6 +172,25 @@ async function aligoEnqueue(sb: any, endpoint: "send" | "remain", query: string)
 }
 
 // @@pure-start (check-notify-delivery.js 가 이 구간만 잘라 transpile 해 모의 테스트한다 — 외부 import·Deno 의존 금지)
+// ISO 주차 'YYYY-Www' → 주 번호(이어지는 정수). 형식이 틀리면 null.
+function weekIndex(wk: string): number | null {
+  const m = /^(\d{4})-W(\d{2})$/.exec(String(wk || ""));
+  if (!m || +m[2] < 1 || +m[2] > 53) return null;
+  const jan4 = Date.UTC(+m[1], 0, 4), day = (new Date(jan4).getUTCDay() + 6) % 7;
+  return Math.round((jan4 - day * 86400000) / (7 * 86400000)) + (+m[2] - 1);
+}
+// 표준 학습지 짧은 링크의 뒷부분 「과정.회차[L]」. 앱이 저장한 회차(round, 그 주 roundAt)에서 주마다 한 회차
+// (주 2회면 두 회차, 두 번째 문자는 +1) 나아가고, 과정의 마지막 회차(rounds)에서 멈춘다. L = 양 늘린 판(1.25배).
+// 회차 정보가 없거나 모양이 틀리면 "" (호출하는 쪽이 옛 과정 링크로 넘어간다).
+function standardPart(digest: any, wk: string, k: number, cadence: string): string {
+  if (!digest || !/^C\d{1,3}$/.test(String(digest.courseKey || ""))) return "";
+  const rounds = Number(digest.rounds), base = Number(digest.round);
+  const at = weekIndex(digest.roundAt), now = weekIndex(wk);
+  if (!Number.isInteger(rounds) || rounds < 1 || rounds > 999 || !Number.isInteger(base) || base < 1 || at === null || now === null) return "";
+  const per = cadence === "w2" ? 2 : 1;
+  const round = Math.min(rounds, Math.max(1, base + Math.max(0, now - at) * per + (k > 1 ? 1 : 0)));
+  return `${digest.courseKey}.${round}${Number(digest.amount) > 1 ? "L" : ""}`;
+}
 // 자동 발송 중복 방지 kind: weekly[-2]-<SHA-256(profile_name) 앞 16 hex>. 학생 이름은 kind 에 넣지 않는다.
 // 같은 보호자 번호의 형제 계정이 (phone,week_key,kind) unique 에 서로 막히지 않게 한다.
 async function autoKind(profileName: string, k: number): Promise<string> {
@@ -429,11 +445,9 @@ Deno.serve(async (req: Request) => {
     bytes: smsBytes,
     send: (phone: string, title: string, msg: string, msgType: "SMS" | "LMS") => sendOne(sb, phone, title, msg, msgType),
   };
-  let curName = "";
-  const worksheetLinkFor = (k: number, st: any) => worksheetLink(sb, curName, wk, st.weeklyDigest, k);
+  const worksheetLinkFor = (k: number, st: any) => worksheetLink(wk, st.weeklyDigest, k, st.roadCadence === "w2" ? "w2" : "w1");
   const ctx = { wk, kstDow, gDow, gDow2, force, dry };
   for (const c of contacts ?? []) {
-    curName = c.profile_name;
     results.push(...await processContact(deps, c, ctx));
   }
   return new Response(JSON.stringify({ week: wk, kst: { dow: kstDow, hour: kstHour }, settings: { send_dow: gDow, send_dow2: gDow2, send_hour: gHour }, count: results.length, results }), {

@@ -820,10 +820,19 @@ function updateWeeklyDigest(){
     const current=currentCourseKey(),plan=highWeeklySchedule(current),key=plan?plan.courseKey:current;
     const c=(window.NM_COURSES||{})[key];
     if(!c)return;
+    const d=S.weeklyDigest||{};
+    /* 표준 학습지 회차(2026-10-28): 문자 링크 /w/?YYWW.과정.회차[L]. round = 이 과정에서 지금 몇 회차인가
+       (묶음 과정은 수업 번호, 나머지는 세션 번호), roundAt = 그 회차였던 주. 매주 한 회차씩(주 2회면 두 회차)
+       나아가는 셈은 서버(weekly-notify)가 한다 — 앱을 안 열어도 다음 주엔 다음 회차가 나간다.
+       과정이 바뀌면 그 주부터 1회차. 학원이 정한 개인 계획 학생은 문자에 회원 링크(w/?m=)가 나가므로 이 값을 쓰지 않는다. */
+    const compact=!!(c.studyPlan&&c.studyPlan.lessons),rounds=compact?c.studyPlan.lessons.length:c.sessions.length;
+    const same=d.courseKey===key&&Number.isInteger(d.round)&&/^\d{4}-W\d{2}$/.test(String(d.roundAt||''));
+    const round=same?d.round:1,roundAt=same?d.roundAt:weekKeyFor(new Date());
+    const amount=Number(effectiveLearningSettings().amount)||1;
     const fields={courseKey:key,courseNum:c.order,
       courseTitle:(c.title&&c.title.ko)||key,cadence:plan?plan.cadence:S.roadCadence,
+      round:Math.max(1,Math.min(rounds,round)),roundAt,rounds,amount,
       ...(plan?{sessionIndex:plan.sessionIndex,highPlanVersion:c.studyPlan.version,highStartDate:plan.startDate,highSpeed:plan.speed}:{})};
-    const d=S.weeklyDigest||{};
     if(Object.keys(fields).every(k=>d[k]===fields[k])&&!!d.highStartDate===!!fields.highStartDate)return;
     S.weeklyDigest={...fields,at:Date.now()};
     save();
@@ -6419,9 +6428,9 @@ function screenMailbox(){
       /* 링크 학습지(ws.html)와 같은 구성(2026-09-08 파리티) — 필산 회차 + 독셈 + 문장제, 표지·
          마법 유닛까지 exam.js weeklyEnvelope 하나가 만든다. 편집기에서 문항을 바꿔도 회차 구성은 같다. */
       const wk = env.plannedRefs&&window.NM_EXAM?.plannedEnvelope
-        ? NM_EXAM.plannedEnvelope(env.plannedRefs,env.weekKey,{name:S.name,cad:env.planSettings.cadence,amount:env.planSettings.amount,grade:printGradeKey()})
+        ? NM_EXAM.plannedEnvelope(env.plannedRefs,env.weekKey,{name:S.name,cad:env.planSettings.cadence,amount:env.planSettings.amount,grade:printGradeKey(),standard:true})
         : (window.NM_EXAM && NM_EXAM.weeklyEnvelope)
-        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:env.planSettings?.cadence||S.roadCadence, amount:env.planSettings?.amount, grade:printGradeKey(), compactHigh:true,
+        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:env.planSettings?.cadence||S.roadCadence, amount:env.planSettings?.amount, grade:printGradeKey(), compactHigh:true, standard:true,
             startSession:env.highPlan?env.highPlan.sessionIndex:S.adminPlan?.courseKey===env.courseKey?S.adminPlan.sessionIndex:null,
             highStartDate:env.highPlan?.startDate,highSpeed:env.highPlan?.speed,highWholeWeek:true,
             /* 몇 번째 회차인가 = 이 주 전에 연 봉투 수(2026-09-30, 언어사고력 주제 순환·유아 중반 판정) */
