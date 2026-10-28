@@ -6,6 +6,10 @@ export const PHOTO_SERIES = {
     { n: 3, cap: '갈고리처럼 굽어 올라온 새싹' },
     { n: 1, cap: '창가 — 떡잎과 본잎' },
   ],
+  'bean-shade': [
+    { n: 1, cap: '가늘고 긴 줄기 · 떡잎' },
+    { n: 2, cap: '본잎이 펼쳐짐' },
+  ],
   'mold-rice': [
     { n: 1, cap: '쌀알에 핀 회녹색 점' },
     { n: 2, cap: '쌀 사이를 덮은 하얀 균사' },
