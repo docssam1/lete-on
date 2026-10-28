@@ -1220,5 +1220,79 @@
    "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 관찰 라이선스가 아니라 사진 라이선스. 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
    "taxon_identification_status": "iNaturalist research grade(Open Data observations.csv quality_grade); photo visually reviewed; not an independent expert determination"
   }
+ ],
+ [
+  "marsilea",
+  {
+   "observation": "0c39b70d-c05c-4294-b373-c1f5d4f222b0",
+   "taxon": "Marsilea quadrifolia",
+   "observed_on": "2023-08-27",
+   "author": "cgmayers",
+   "photo": {
+    "id": 314500738,
+    "license_code": "cc0",
+    "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/314500738/square.jpeg",
+    "attribution": "no rights reserved"
+   },
+   "uri": "https://www.inaturalist.org/observations/0c39b70d-c05c-4294-b373-c1f5d4f222b0",
+   "quality_grade": "research",
+   "retrieved": "2026-10-28",
+   "file": "marsilea-1.jpg",
+   "name": "네가래(Marsilea quadrifolia)",
+   "visible_features": "물 위에 뜬 네 잎 클로버 꼴 잎이 여럿 보여요. 잎자루가 물밑 땅까지 이어지는지는 이 사진으로 확인할 수 없어요.",
+   "original_download_size": [
+    1024,
+    771
+   ],
+   "crop": null,
+   "width": 1024,
+   "height": 771,
+   "bytes": 268817,
+   "sha256": "6053537f8dd54fe0fcdf4f974799c8dd03f48e6283cfe1702d6918e52bed0bc7",
+   "reviewed": "2026-10-28, 실제 이미지 눈으로 확인(Claude)",
+   "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/314500738/original.jpeg",
+   "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/314500738/large.jpeg",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 관찰 라이선스가 아니라 사진 라이선스. 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
+   "taxon_identification_status": "iNaturalist research grade(Open Data observations.csv quality_grade); photo visually reviewed; not an independent expert determination"
+  }
+ ],
+ [
+  "mold-bread",
+  {
+   "observation": "7cd24ab5-e3f4-46df-93da-e1bb0117080e",
+   "taxon": "Rhizopus stolonifer",
+   "observed_on": "2023-02-11",
+   "author": "bettong-whisperer",
+   "photo": {
+    "id": 255711657,
+    "license_code": "cc0",
+    "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/255711657/square.jpg",
+    "attribution": "no rights reserved"
+   },
+   "uri": "https://www.inaturalist.org/observations/7cd24ab5-e3f4-46df-93da-e1bb0117080e",
+   "quality_grade": "research",
+   "retrieved": "2026-10-28",
+   "file": "mold-bread-1.jpg",
+   "name": "털곰팡이류(Rhizopus stolonifer)",
+   "visible_features": "식빵 가장자리에서 가는 실(균사) 끝에 까만 공(포자주머니)이 달린 모습이 보여요. 원장님 실험의 식빵·조건과 같은 사진은 아니에요 — 생김새 참고용이에요.",
+   "original_download_size": [
+    768,
+    1024
+   ],
+   "crop": "세로 사진(768×1024)에서 위 26% 지점부터 768×576 가로로 잘라 곰팡이 가장자리만 남김",
+   "width": 768,
+   "height": 576,
+   "bytes": 91694,
+   "sha256": "52e1999c7327d83ee4a10305c5fd1e4a29c80f4075351372a6de539420a58d36",
+   "reviewed": "2026-10-28, 실제 이미지 눈으로 확인(Claude)",
+   "original_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/255711657/original.jpg",
+   "download_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/255711657/large.jpg",
+   "license": "CC0",
+   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 관찰 라이선스가 아니라 사진 라이선스. 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
+   "taxon_identification_status": "iNaturalist research grade(Open Data observations.csv quality_grade); photo visually reviewed; not an independent expert determination"
+  }
  ]
 ]
