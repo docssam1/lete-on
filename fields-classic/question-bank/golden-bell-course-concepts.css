@@ -239,6 +239,7 @@ body[data-course-pilot="true"] .answer-input-wrap input {font-size:20px;min-heig
 body[data-course-pilot="true"] .quiz-visual {min-height:0;overflow:visible}
 @media (max-width:600px) {
   .book-index {display:flex;flex-direction:column;gap:8px}
+  .book-index>:is(.course-picker,.print-actions,.game-print-toggle,.gold-print-status) {margin-inline:16px;width:auto}
   .course-picker {width:100%}.course-picker select {max-width:100%;flex:1}
   .course-concept-scene {padding:12px 0;min-height:330px}
   .course-concept-problem,.course-concept-caption {font-size:18px}

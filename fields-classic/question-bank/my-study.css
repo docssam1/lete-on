@@ -21,7 +21,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .ms-title strong { font-size: 19px; }
 .ms-student { padding: 6px 14px; border: 1px solid var(--line-strong); border-radius: 999px; font-weight: 700; }
 
-.ms-main { display: grid; gap: 18px; max-width: 1100px; margin: 0 auto; padding: 20px 24px 48px; }
+.ms-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; max-width: 1100px; margin: 0 auto; padding: 20px 24px 48px; }
 .ms-books { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; }
 .ms-books button { display: grid; justify-items: center; gap: 2px; padding: 9px 4px 0; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--paper); overflow: hidden; }
 .ms-books button b { font-size: 15px; }
@@ -117,3 +117,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .ms-try b { font-size: 24px; font-weight: 700; }
 .ms-try small { color: var(--accent-ink); font-size: 14px; opacity: .85; }
 .ms-try:hover { background: #dfe9dc; }
+/* 머리줄이 폰에서 눌려 「로/그/인」처럼 세로로 쪼개지지 않게: 단추·이름은 한 줄, 제목만 줄어든다 */
+.ms-back, .ms-who a, .ms-who button, .ms-student { white-space: nowrap; flex: none; }
+.ms-title { min-width: 0; }
+.ms-title span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+@media (max-width: 480px) {
+  .ms-header { gap: 8px; padding: 8px 12px; }
+  .ms-back { padding: 6px 4px; }
+  .ms-title strong { font-size: 17px; }
+  .ms-student { padding: 5px 10px; }
+}

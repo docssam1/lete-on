@@ -64,17 +64,18 @@ export function buildWeekSlides(book, unitIndex, bellData) {
     // 손글씨 판서가 있으면 그 판서(덱 안에서 직접 그림), 없으면 골든벨 개념 화면(창)
     list.push(STUDY_BOARDS[key] ? { kind: "concept", lesson, native: { ...STUDY_BOARDS[key], board: key } } : { kind: "concept", lesson });
   }
-  const replaced = new Set();
+  const replaced = new Set(), nativeIds = new Set();
   for (const lesson of lessons) {
     for (const game of STUDY_GAMES[`${book.id}/${lesson.id}`] || []) {
       list.push({ kind: "game", lesson, native: game, title: game.title });
+      nativeIds.add(game.id);
       for (const old of game.replaces || []) replaced.add(old);
     }
   }
   for (const lesson of lessons) {
     const flow = bellData.games.flows[`${book.id}/${lesson.id}`];
-    // 연습 공방이 게임인 흐름은 덱 안의 연습 공방(STUDY_GAMES)과 같은 것이라 또 붙이지 않는다
-    if (flow?.game && flow.game !== "drill") list.push({ kind: "game", lesson, game: flow.game, title: bellData.games.flowTitles[flow.game] || "게임" });
+    // 흐름의 게임이 덱 안 게임(STUDY_GAMES — 연습 공방·디지털 숫자 공방·뒤집고 돌리기 공방)과 같은 것이면 또 붙이지 않는다
+    if (flow?.game && flow.game !== "drill" && !nativeIds.has(flow.game)) list.push({ kind: "game", lesson, game: flow.game, title: bellData.games.flowTitles[flow.game] || "게임" });
     for (const [id, activity] of Object.entries(bellData.games.activities)) {
       if (activity.lesson === lesson.id && bellData.games.handsOnBooks.get(id) === book.id && id !== flow?.game && !replaced.has(id)) list.push({ kind: "game", lesson, game: id, title: activity.title });
     }
