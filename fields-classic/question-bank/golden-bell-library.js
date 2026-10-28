@@ -1,6 +1,6 @@
-import { GOLDEN_BELL_BOOKS as courseOneBooks } from "./golden-bell-data.js?v=20261023h";
+import { GOLDEN_BELL_BOOKS as courseOneBooks } from "./golden-bell-data.js?v=20261028w";
 import { COURSE_CATALOG, courseById, resolveCourseBook } from "./course-catalog.js";
-import { COURSE23_PILOT_BOOKS } from "./golden-bell-course23-data.js?v=20260913d";
+import { COURSE23_PILOT_BOOKS } from "./golden-bell-course23-data.js?v=20261028w";
 import { applyBook01SourceFixes } from "./golden-bell-book01-source-fixes.js?v=20261003b";
 
 applyBook01SourceFixes(courseOneBooks);

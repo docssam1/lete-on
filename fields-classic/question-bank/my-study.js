@@ -11,7 +11,7 @@ const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const link = (page, entries) => `./${page}?${new URLSearchParams({ student, ...entries })}`;
-const PHASES = [["concept", "개념"], ["game", "게임"], ["bell", "골든벨"], ["board", "공부하기"], ["homework", "과제"], ["test", "단원 평가"]];
+const PHASES = [["concept", "개념"], ["game", "게임"], ["bell", "워밍업"], ["board", "공부하기"], ["homework", "과제"], ["test", "단원 평가"]];
 let bookId = CURRICULUM.some((book) => book.id === params.get("book")) ? params.get("book") : null;
 let records = new Map();
 let synced = false;

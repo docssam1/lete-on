@@ -1,10 +1,10 @@
 import { frac } from "./math-markup.js?v=20261027p";
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261023h";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261028w";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261028c";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20261028s";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261028s";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261028c";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261028w";
 import { book01Markup } from "./book01-renderers.js?v=20261028m";
 import { book02Markup } from "./book02-renderers.js?v=20261028c";
 import { book03Markup } from "./book03-renderers.js?v=20261027a";
@@ -18,10 +18,10 @@ import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
 import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261028y";
-import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261027p";
+import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261028w";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
-import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261024r";
+import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261028w";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -43,7 +43,7 @@ const coverStorageKey = "fields-classic-golden-bell-print-cover";
 const coverLabels = { concept: "도형 배경", simple: "모눈 배경", ...Object.fromEntries(COVER_DESIGNS.map((design) => [design.id, design.label])), none: "표지 없음" };
 {
   const host = document.querySelector("#printCoverFieldset .cover-options");
-  const sample = { title: "도형 움직이기와 마방진", subtitle: "골든벨 개념 학습", volume: "1", eyebrow: "GIFTED MATH BANK · 1과정", stats: "단원 4 · 학습 12" };
+  const sample = { title: "도형 움직이기와 마방진", subtitle: "워밍업 개념 학습", volume: "1", eyebrow: "GIFTED MATH BANK · 1과정", stats: "단원 4 · 학습 12" };
   host?.insertAdjacentHTML("beforeend", COVER_DESIGNS.map((design) => `<label class="cover-design-option"><input type="radio" name="coverStyle" value="${design.id}" /><span class="cover-swatch design cv-thumb" aria-hidden="true">${coverDesignPage(design.id, sample)}</span><strong><small>${design.group}</small>${design.label}</strong></label>`).join(""));
   const none = host?.querySelector('input[value="none"]')?.closest("label");
   if (none) host.append(none);
@@ -60,7 +60,7 @@ let draftPrintMode = "study";
 let draftLessonIds = new Set();
 const lessonSelections = new Map();
 // 인쇄할 부분: 개념 설명(개념 쪽·함께 풀어보기·개념 요약) · 골든벨 문항 · 추가 학습. 답안 쪽도 같은 부분만 남긴다.
-const PRINT_SECTIONS = Object.freeze({ concept: "개념 설명", original: "골든벨 문항", story: "추가 학습" });
+const PRINT_SECTIONS = Object.freeze({ concept: "개념 설명", original: "워밍업 문항", story: "추가 학습" });
 let draftSections = new Set(Object.keys(PRINT_SECTIONS));
 let printSections = new Set(Object.keys(PRINT_SECTIONS));
 let printPreparing = false;
@@ -1075,7 +1075,7 @@ function renderLessonList() {
 }
 
 function renderStageSteps() {
-  const sourceLabel = activeBook().source?.origin === "textbook-derived" ? "교재" : activeBook().status === "pilot" ? "연습" : "골든벨";
+  const sourceLabel = activeBook().source?.origin === "textbook-derived" ? "교재" : activeBook().status === "pilot" ? "연습" : "워밍업";
   const phases = [
     ["concept", "1", "개념"],
     ["original", "2", sourceLabel],
@@ -1350,7 +1350,7 @@ function renderComplete(lesson) {
 
 function renderPending(book) {
   if (book.status === "unavailable") return '<section class="pending-panel" role="alert"><h2>요청한 교재를 찾지 못했어요.</h2><p>과정과 권을 다시 골라 주세요.</p></section>';
-  return `<section class="pending-panel"><span>!</span><h2>${book.label} 골든벨 학습 준비 중</h2><p>학습 자료를 준비하고 있어요.</p></section>`;
+  return `<section class="pending-panel"><span>!</span><h2>${book.label} 워밍업 학습 준비 중</h2><p>학습 자료를 준비하고 있어요.</p></section>`;
 }
 
 function printResponseMarkup(item) {
@@ -1400,7 +1400,7 @@ function printLessonPage(lesson, lessonNumber, book) {
 function printBookCover(book, lessons, { includeAnswers = false, style = coverStyle, includeGames = $("printGameQR").checked } = {}) {
   if (isCoverDesign(style)) return printDesignCover(book, lessons, style) + printBookCover(book, lessons, { includeAnswers, style: "plain", includeGames });
   const courseNumber = /^course-(\d+)$/u.exec(book.courseId || "")?.[1];
-  const courseLabel = courseNumber ? `${Number(courseNumber)}과정` : "골든벨";
+  const courseLabel = courseNumber ? `${Number(courseNumber)}과정` : "워밍업";
   const units = printUnits(book).filter((unit) => unit.lessons.some((lesson) => lessons.includes(lesson)));
   const range = units.map((unit) => unit.label).join(" / ");
   const games = includeGames ? printCoverGames(book, lessons, units) : [];
@@ -1408,8 +1408,8 @@ function printBookCover(book, lessons, { includeAnswers = false, style = coverSt
   const densityClass = lessons.length > 12 ? " is-dense is-crowded" : lessons.length > 6 ? " is-dense" : "";
   return `<article class="gold-print-page gold-print-cover cover-${style}${densityClass}${games.length ? " has-cover-games" : ""}" data-cover-style="${style}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" data-watermark="${escapeAttribute(student)} · GFIELD">
     ${style === "plain" ? "" : `<img class="gold-cover-art" src="./assets/fc-cover-${style === "simple" ? "grid" : "shapes"}.svg" alt="" aria-hidden="true" />`}
-    <header class="gold-print-cover-head"><span>GOLDEN BELL</span><strong>${escapeAttribute(courseLabel)} · 골든벨</strong></header>
-    <section class="gold-print-cover-title"><small>${escapeAttribute(book.label)} · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}</small><h1>${escapeAttribute(book.title || "골든벨 개념 학습")}</h1><dl class="gold-print-cover-meta"><div><dt>이름</dt><dd>${student === "DEMO" ? "" : escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></section>
+    <header class="gold-print-cover-head"><span>WARM-UP</span><strong>${escapeAttribute(courseLabel)} · 워밍업</strong></header>
+    <section class="gold-print-cover-title"><small>${escapeAttribute(book.label)} · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}</small><h1>${escapeAttribute(book.title || "워밍업 개념 학습")}</h1><dl class="gold-print-cover-meta"><div><dt>이름</dt><dd>${student === "DEMO" ? "" : escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></section>
     <section class="gold-print-cover-range"><h2>학습 범위</h2><p>${escapeAttribute(range)}</p><span>${includeAnswers ? "답안과 풀이 포함" : "답안 제외"}</span></section>
     <section class="gold-print-cover-concepts"><h2>유형과 핵심 개념</h2><ol>${conceptRows}</ol>${printCoverGamesMarkup(games)}</section>
     <footer class="gold-print-footer">${escapeAttribute(courseLabel)} · ${escapeAttribute(book.label)} · 개념 학습 교재</footer>
@@ -1420,11 +1420,11 @@ function designCoverInfo(book, lessons) {
   const courseNumber = /^course-(\d+)$/u.exec(book.courseId || "")?.[1];
   const units = printUnits(book).filter((unit) => unit.lessons.some((lesson) => lessons.includes(lesson)));
   return {
-    title: book.title || "골든벨 개념 학습",
-    subtitle: `골든벨 개념 학습 · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}`,
+    title: book.title || "워밍업 개념 학습",
+    subtitle: `워밍업 개념 학습 · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}`,
     volume: String(book.label || "").replace(/[^0-9]/gu, ""),
-    eyebrow: `GIFTED MATH BANK · ${courseNumber ? `${Number(courseNumber)}과정` : "골든벨"}`,
-    pubRight: "GOLDEN BELL SERIES",
+    eyebrow: `GIFTED MATH BANK · ${courseNumber ? `${Number(courseNumber)}과정` : "워밍업"}`,
+    pubRight: "WARM-UP SERIES",
     stats: `단원 ${units.length} · 학습 ${lessons.length}`
   };
 }
@@ -1593,7 +1593,7 @@ function renumberPrintPages(root) {
 }
 
 function printLessonExercises(lesson, lessonNumber, book) {
-  const header = (part) => `<header class="gold-print-head"><div><span>GOLDEN BELL · ${part}</span><h1>${book.label} ${lessonNumber}. ${lesson.title}</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></header>`;
+  const header = (part) => `<header class="gold-print-head"><div><span>WARM-UP · ${part}</span><h1>${book.label} ${lessonNumber}. ${lesson.title}</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></header>`;
   const footer = `<footer class="gold-print-footer">${book.label} · ${lesson.unit}</footer>`;
   const concept = `<p class="gold-print-concept"><strong>생각할 개념</strong><br>${lesson.representativeConcept}</p>`;
   const sourcePrintPaged = lesson.original.mode === "paged" || lesson.original.printMode === "paged";
@@ -1630,7 +1630,7 @@ function printLessonExercises(lesson, lessonNumber, book) {
   const sharedVisual = !hasItemVisuals || visualHasResponseBoxes ? `<div class="gold-print-visual">${visualMarkup(lesson.original.visual)}</div>` : "";
   const originalItems = visualHasResponseBoxes ? "" : lesson.original.items.map((item, index) => `<section class="gold-print-source-item"><h2><span>${escapeAttribute(questionNo(item, index))}</span>${escapeAttribute(item.typeLabel || "문제")}</h2><p>${mathText(item.prompt)}${item.conditions?.length ? `<br>${item.conditions.map(escapeAttribute).join(" · ")}` : ""}</p>${item.visual ? `<div class="gold-print-visual">${visualMarkup(item.visual)}</div>` : ""}${printResponseMarkup(item)}</section>`).join("");
   const sharedClass = !hasItemVisuals && !visualHasResponseBoxes ? " shared-source-visual" : "";
-  const originalPage = `<article class="gold-print-page source-practice-print${sharedClass}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${lesson.experience ? experienceSummaryMarkup(lesson.experience) : ""}<section class="gold-print-block"><h2>골든벨</h2><p>${lesson.original.prompt}</p>${sharedVisual}${originalItems ? `<div class="gold-print-source-items">${originalItems}</div>` : ""}</section>${footer}</article>`;
+  const originalPage = `<article class="gold-print-page source-practice-print${sharedClass}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${lesson.experience ? experienceSummaryMarkup(lesson.experience) : ""}<section class="gold-print-block"><h2>워밍업</h2><p>${lesson.original.prompt}</p>${sharedVisual}${originalItems ? `<div class="gold-print-source-items">${originalItems}</div>` : ""}</section>${footer}</article>`;
   return originalPage + storyPages;
 }
 
@@ -2102,7 +2102,7 @@ function renderSummary() {
   $("coursePrintModeWrap").hidden = !book.lessons.length;
   updateCoverButton();
   $("courseSelect").value = book.courseId || "";
-  $("courseBrand").textContent = book.courseId ? `${Number(book.courseId.slice(-2))}과정` : "골든벨";
+  $("courseBrand").textContent = book.courseId ? `${Number(book.courseId.slice(-2))}과정` : "워밍업";
   const completed = book.lessons.filter(isLessonComplete).length;
   $("currentBookLabel").textContent = book.label;
   $("completedCount").textContent = `${completed} / ${book.lessons.length || "-"}`;
@@ -2110,7 +2110,7 @@ function renderSummary() {
   $("bookTitle").textContent = `${book.label} · ${book.title}`;
   const readyNote = book.source?.origin === "textbook-derived"
     ? `교재 기반 학습입니다. ${book.source.note}`
-    : "개념을 골든벨과 이야기로 익힙니다.";
+    : "개념을 워밍업과 이야기로 익힙니다.";
   const dailyNote = book.lessons.length ? `<br>추가 학습 ${book.dailyPractice?.problemCount || 8}문제${book.status === "pilot" ? "" : ` · 약 ${book.dailyPractice?.estimatedMinutes || 30}분`}` : "";
   $("bookSource").innerHTML = `<strong>학습 안내</strong><br>${book.lessons.length ? readyNote : "준비 중입니다."}${dailyNote}`;
   $("printLessonButton").disabled = printPreparing || !book.lessons.length;

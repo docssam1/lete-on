@@ -243,7 +243,7 @@ async function main() {
     root.innerHTML = `<div class="dr dr-finale"><p class="dr-kick">연습 공방 · 완성</p><h3>세 단계를 모두 마쳤어요!</h3>
       <p class="dr-score">처음에 바로 맞힌 문제 <b>${stars}</b> / ${total}</p>
       <ul class="dr-rules">${LEVELS.map((l, k) => `<li><b>${k + 1}단계 ${l.title}</b> ★ ${st.stars[k]} / ${PER_LEVEL}</li>`).join("")}</ul>
-      <div class="dr-actions"><button type="button" class="dr-btn" data-dr="restart">처음부터 다시</button>${parent !== window ? '<button type="button" class="dr-btn primary" data-dr="done">골든벨 문제로 →</button>' : ""}</div></div>`;
+      <div class="dr-actions"><button type="button" class="dr-btn" data-dr="restart">처음부터 다시</button>${parent !== window ? '<button type="button" class="dr-btn primary" data-dr="done">워밍업 문제로 →</button>' : ""}</div></div>`;
   }
   function answer() {
     const p = st.p;
@@ -277,7 +277,7 @@ async function main() {
   function next() {
     if (st.index < PER_LEVEL - 1) { st.index += 1; return fresh(); }
     if (st.level < LEVELS.length - 1) { st.level += 1; st.index = 0; return fresh(); }
-    st.finale = true; render(); say("세 단계를 모두 마쳤어요! 이제 골든벨 문제로 가요.", "praise");
+    st.finale = true; render(); say("세 단계를 모두 마쳤어요! 이제 워밍업 문제로 가요.", "praise");
   }
   root.addEventListener("click", (event) => {
     const b = event.target.closest("button"); if (!b || b.disabled) return;

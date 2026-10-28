@@ -1,5 +1,5 @@
 import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261028w";
-import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261027p";
+import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261028w";
 
 // 개념 단계 안의 학습 순서: ① 개념 설명 → ② 유형별 예제 → ③ 게임 → (골든벨 문제).
 // 원장 지시: "개념마다 설명하는 튜토리얼, 문제 유형마다 예제 1~2개, 그다음 게임."
@@ -173,7 +173,7 @@ export function setLessonFlowStep(bookId, lessonId, step) { if (STEPS.some(([id]
 
 function navMarkup(view) {
   const steps = STEPS.map(([id, label], i) => `<button type="button" class="gb-flow-step${view.step === id ? " active" : ""}" data-flow-go="${id}" aria-current="${view.step === id ? "step" : "false"}"><b>${i + 1}</b><span>${label}</span></button>`).join('<i aria-hidden="true">›</i>');
-  return `<nav class="gb-flow" aria-label="개념 학습 순서">${steps}<i aria-hidden="true">›</i><span class="gb-flow-step is-after"><b>★</b><span>골든벨 문제</span></span></nav>`;
+  return `<nav class="gb-flow" aria-label="개념 학습 순서">${steps}<i aria-hidden="true">›</i><span class="gb-flow-step is-after"><b>★</b><span>워밍업 문제</span></span></nav>`;
 }
 const NEXT_PHASE = /<button type="button" class="primary-action" data-next-phase="original"([^>]*)>([^<]*)<\/button>\s*$/u;
 
@@ -184,7 +184,7 @@ export function renderFlowConcept({ bookId, lesson, tutorialHtml }) {
   const view = viewOf(bookId, lesson.id);
   const nav = navMarkup(view);
   const forward = (to, label) => `<button type="button" class="primary-action gb-flow-forward" data-flow-go="${to}">${label} ▶</button>`;
-  const skip = '<button type="button" class="primary-action gb-flow-skip" data-next-phase="original">골든벨 문제로 바로 가기</button>';
+  const skip = '<button type="button" class="primary-action gb-flow-skip" data-next-phase="original">워밍업 문제로 바로 가기</button>';
   if (view.step === "tutorial") {
     const body = NEXT_PHASE.test(tutorialHtml)
       ? tutorialHtml.replace(NEXT_PHASE, (_, attrs, label) => `<div class="gb-flow-actions">${forward("examples", "유형별 예제 보기")}<button type="button" class="primary-action gb-flow-skip" data-next-phase="original"${attrs}>${label}</button></div>`)
@@ -195,9 +195,9 @@ export function renderFlowConcept({ bookId, lesson, tutorialHtml }) {
   if (view.step === "examples") {
     const groups = typeExampleGroups(lesson, flow.examples);
     const total = groups.reduce((s, g) => s + g.count, 0);
-    return `${head}${nav}<p class="gb-flow-lead">골든벨 문제 ${total}개는 ${groups.length}가지 유형이에요. 유형마다 예제를 한 단계씩 풀어 봐요. 예제의 수는 골든벨 문제와 달라요.</p><div class="gb-flow-examples" data-flow-examples>${typeExamplesMarkup(groups, exampleView(view, groups))}</div><div class="gb-flow-actions">${forward("game", "게임하러 가기")}${skip}</div>`;
+    return `${head}${nav}<p class="gb-flow-lead">워밍업 문제 ${total}개는 ${groups.length}가지 유형이에요. 유형마다 예제를 한 단계씩 풀어 봐요. 예제의 수는 워밍업 문제와 달라요.</p><div class="gb-flow-examples" data-flow-examples>${typeExamplesMarkup(groups, exampleView(view, groups))}</div><div class="gb-flow-actions">${forward("game", "게임하러 가기")}${skip}</div>`;
   }
-  return `${head}${nav}<p class="gb-flow-lead">${esc(FLOW_GAME_TITLES[flow.game] || "게임")} — 예제에서 본 방법으로 직접 해 봐요. 게임을 다 하면 골든벨 문제로 가요.</p><section class="gold-hands-on gb-flow-game" data-flow-game="${esc(flow.game)}"><div class="gb-flow-game-host" data-flow-game-host><p class="gb-flow-loading" role="status">게임을 불러오고 있어요.</p></div></section><div class="gb-flow-actions"><button type="button" class="primary-action" data-next-phase="original">골든벨 문제 풀기</button></div>`;
+  return `${head}${nav}<p class="gb-flow-lead">${esc(FLOW_GAME_TITLES[flow.game] || "게임")} — 예제에서 본 방법으로 직접 해 봐요. 게임을 다 하면 워밍업 문제로 가요.</p><section class="gold-hands-on gb-flow-game" data-flow-game="${esc(flow.game)}"><div class="gb-flow-game-host" data-flow-game-host><p class="gb-flow-loading" role="status">게임을 불러오고 있어요.</p></div></section><div class="gb-flow-actions"><button type="button" class="primary-action" data-next-phase="original">워밍업 문제 풀기</button></div>`;
 }
 function exampleView(view, groups) {
   view.type = Math.min(view.type, Math.max(0, groups.length - 1));
@@ -208,8 +208,8 @@ function exampleView(view, groups) {
 
 // 학습 덱의 우리 게임(study-map.js OWN_GAMES와 같은 파일·꼬리표). 끝내면 골든벨 문제로 간다
 const OWN_FLOW_GAMES = {
-  digital: { module: "./game-digital.js?v=20261028y", css: "./game-digital.css?v=20261028zb", mount: "mountDigitalWorkshop" },
-  "shape-moves": { module: "./game-shape-moves.js?v=20261028y", css: "./game-shape-moves.css?v=20261028zb", mount: "mountShapeMoves" }
+  digital: { module: "./game-digital.js?v=20261028w", css: "./game-digital.css?v=20261028zb", mount: "mountDigitalWorkshop" },
+  "shape-moves": { module: "./game-shape-moves.js?v=20261028w", css: "./game-shape-moves.css?v=20261028zb", mount: "mountShapeMoves" }
 };
 async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson }) {
   if (Object.hasOwn(OWN_FLOW_GAMES, gameId)) {

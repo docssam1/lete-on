@@ -93,39 +93,39 @@ const course02A2 = Object.freeze({
   id: "course-02-a2", bookId: "course-02-a2", courseId: "course-02", label: "A2",
   title: "복제수와 님게임", status: "pilot", lessons: COURSE02_A2_LESSONS,
   dailyPractice: { problemCount: 40, estimatedMinutes: 30 },
-  source: { origin: "textbook-derived", note: "교사용 지도서의 네 단원 활동 구조를 확인하고 수와 문장을 새로 구성한 골든벨입니다." }
+  source: { origin: "textbook-derived", note: "교사용 지도서의 네 단원 활동 구조를 확인하고 수와 문장을 새로 구성한 워밍업입니다." }
 });
 const course03A2 = Object.freeze({
   id: "course-03-a2", bookId: "course-03-a2", courseId: "course-03", label: "A2",
   title: "순환소수와 수직선좌표", status: "pilot", lessons: COURSE03_A2_LESSONS,
   dailyPractice: { problemCount: 40, estimatedMinutes: 30 },
-  source: { origin: "textbook-derived", note: "교사용 지도서의 네 단원 활동 구조를 확인하고 수와 문장을 새로 구성한 골든벨입니다." }
+  source: { origin: "textbook-derived", note: "교사용 지도서의 네 단원 활동 구조를 확인하고 수와 문장을 새로 구성한 워밍업입니다." }
 });
 
 const course02A3 = Object.freeze({
   id: "course-02-a3", bookId: "course-02-a3", courseId: "course-02", label: "A3",
   title: "수열과 최단거리", status: "pilot", lessons: COURSE02_A3_LESSONS,
   dailyPractice: { problemCount: 40, estimatedMinutes: 30 },
-  source: { origin: "textbook-derived", note: "교사용 지도서의 세부 활동과 권별 테스트를 함께 확인하고 수와 문장을 새로 구성한 골든벨입니다." }
+  source: { origin: "textbook-derived", note: "교사용 지도서의 세부 활동과 권별 테스트를 함께 확인하고 수와 문장을 새로 구성한 워밍업입니다." }
 });
 const course03A3 = Object.freeze({
   id: "course-03-a3", bookId: "course-03-a3", courseId: "course-03", label: "A3",
   title: "비례식과 속력·농도", status: "pilot", lessons: COURSE03_A3_LESSONS,
   dailyPractice: { problemCount: 40, estimatedMinutes: 30 },
-  source: { origin: "textbook-derived", note: "최신 교사용 지도서의 실제 활동과 권별 테스트를 교차 확인하고 새 수와 상황으로 구성한 골든벨입니다." }
+  source: { origin: "textbook-derived", note: "최신 교사용 지도서의 실제 활동과 권별 테스트를 교차 확인하고 새 수와 상황으로 구성한 워밍업입니다." }
 });
 
 const course02A4 = Object.freeze({
   id: "course-02-a4", bookId: "course-02-a4", courseId: "course-02", label: "A4",
   title: "마방진·복면산과 비", status: "pilot", lessons: COURSE02_A4_LESSONS,
   dailyPractice: { problemCount: 40, estimatedMinutes: 30 },
-  source: { origin: "textbook-derived", note: "학생용 교재와 권별 테스트의 실제 네 단원 및 답 계약을 대조하고 새 수와 상황으로 구성한 골든벨입니다." }
+  source: { origin: "textbook-derived", note: "학생용 교재와 권별 테스트의 실제 네 단원 및 답 계약을 대조하고 새 수와 상황으로 구성한 워밍업입니다." }
 });
 const course02G4 = Object.freeze({
   id: "course-02-g4", bookId: "course-02-g4", courseId: "course-02", label: "G4",
   title: "도형의 복원과 측정", status: "pilot", lessons: COURSE02_G4_LESSONS,
   dailyPractice: { problemCount: 40, estimatedMinutes: 30 },
-  source: { origin: "textbook-derived", note: "교사용 지도서의 실제 네 단원과 풀이 근거를 확인하고 새 수와 도형으로 구성한 골든벨입니다." }
+  source: { origin: "textbook-derived", note: "교사용 지도서의 실제 네 단원과 풀이 근거를 확인하고 새 수와 도형으로 구성한 워밍업입니다." }
 });
 
 export const COURSE23_PILOT_BOOKS = Object.freeze([course02A1, course02A2, course02A3, course02A4, course02G4, course03A1, course03A2, course03A3]);

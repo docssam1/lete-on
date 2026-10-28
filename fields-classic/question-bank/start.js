@@ -1,5 +1,5 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261028m";
-import { lessonsByUnit, lessonsByPart, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261027p";
+import { lessonsByUnit, lessonsByPart, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261028w";
 import { readRecord, weekRate, loggedIn } from "./study-progress.js?v=20261028n";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
 
@@ -117,12 +117,12 @@ function lessonRow(lesson) {
     <a class="st-step${tutorial ? " has-tutorial" : ""}" href="${esc(bellLink({ lesson: lesson.id }))}"><i>①</i>${concept}</a>
     ${games.length
       ? `<a class="st-step" href="${esc(bellLink({ lesson: lesson.id }))}"><i>②</i>${esc(games.join(" · "))}</a>`
-      : DRILL_RECIPES[`${view.bookId}/${lesson.id}`]   // 골든벨 게임이 없는 차시는 연습 공방(drill.html)으로
+      : DRILL_RECIPES[`${view.bookId}/${lesson.id}`]   // 워밍업 게임이 없는 차시는 연습 공방(drill.html)으로
         ? `<a class="st-step" href="./drill.html?book=${esc(view.bookId)}&amp;lesson=${esc(lesson.id)}"><i>②</i>연습 공방</a>`
         : `<span class="st-step is-empty"><i>②</i>게임 준비 중</span>`}
     ${count
-      ? `<a class="st-step" href="${esc(bellLink({ lesson: lesson.id, phase: "original" }))}"><i>③</i>골든벨 ${count}문항${self ? "" : " · 수업 화면"}</a>`
-      : `<span class="st-step is-empty"><i>③</i>골든벨 준비 중</span>`}
+      ? `<a class="st-step" href="${esc(bellLink({ lesson: lesson.id, phase: "original" }))}"><i>③</i>워밍업 ${count}문항${self ? "" : " · 수업 화면"}</a>`
+      : `<span class="st-step is-empty"><i>③</i>워밍업 준비 중</span>`}
   </li>`;
 }
 
@@ -153,9 +153,9 @@ function renderParts() {
   const last = view.unit === book.units.length - 1;
   const result = readRecord(student, "test", `${book.id}-u${view.unit}`);
   const steps = [
-    ["개념 배우기", titles.length ? titles.join(" · ") : "골든벨 개념"],
+    ["개념 배우기", titles.length ? titles.join(" · ") : "워밍업 개념"],
     ["게임하기", "풀이를 손으로 해 보기"],
-    ["골든벨", "골든벨 문항 풀기"],
+    ["워밍업", "워밍업 문항 풀기"],
     ["공부하기", `본책 ${problems}문항 · 화면에서 · 인쇄해서 · 유사 문제`],
     ["과제", "집에서 풀 과제"],
     ["단원 평가", result ? `○✕ 진단 · ${result.right} / ${result.total}` : "다 풀고 ○✕ 진단 · 약점 유형 다시 공부"],
@@ -177,20 +177,20 @@ function renderStudy() {
     : "선생님 화면에 띄워 같은 순서로 수업해요. ④ 본책은 교재형 학습지로 인쇄해요.";
   if (!goldenBell) {
     $("unitList").innerHTML = book.units.map((unit, index) => `<section class="st-unit"><h3><span>${String(index + 1).padStart(2, "0")}</span>${esc(unit.label)}</h3>
-      <div class="st-unit-body"><p class="st-loading">골든벨 학습을 불러오는 중…</p>${bookCell(index)}</div></section>`).join("");
+      <div class="st-unit-body"><p class="st-loading">워밍업 학습을 불러오는 중…</p>${bookCell(index)}</div></section>`).join("");
     return;
   }
   const bellBook = goldenBell.books.find((entry) => entry.id === book.id);
   const { units, rest } = lessonsByUnit(book, bellBook);
   const unitBlocks = book.units.map((unit, index) => `<section class="st-unit">
-    <h3><span>${String(index + 1).padStart(2, "0")}</span>${esc(unit.label)}<small>본책 ${unit.typeIds.length}개 유형 · 골든벨 학습 ${units[index].length}개</small></h3>
+    <h3><span>${String(index + 1).padStart(2, "0")}</span>${esc(unit.label)}<small>본책 ${unit.typeIds.length}개 유형 · 워밍업 학습 ${units[index].length}개</small></h3>
     <div class="st-unit-body">
-      ${units[index].length ? `<ol class="st-lessons">${units[index].map(lessonRow).join("")}</ol>` : `<p class="st-empty">이 단원은 본책 문제로 공부해요. 골든벨 학습은 준비하고 있어요.</p>`}
+      ${units[index].length ? `<ol class="st-lessons">${units[index].map(lessonRow).join("")}</ol>` : `<p class="st-empty">이 단원은 본책 문제로 공부해요. 워밍업 학습은 준비하고 있어요.</p>`}
       ${bookCell(index)}
     </div>
   </section>`).join("");
   const restBlock = rest.length ? `<section class="st-unit st-rest">
-    <h3><span>+</span>그 밖의 골든벨<small>본책 단원과 짝이 없는 골든벨 학습 ${rest.length}개</small></h3>
+    <h3><span>+</span>그 밖의 워밍업<small>본책 단원과 짝이 없는 워밍업 학습 ${rest.length}개</small></h3>
     <div class="st-unit-body"><ol class="st-lessons">${rest.map(lessonRow).join("")}</ol></div>
   </section>` : "";
   $("unitList").innerHTML = unitBlocks + restBlock;
@@ -296,5 +296,5 @@ loadGoldenBell().then((data) => {
   if (view.step === 2) renderParts();
   else if (view.step === 1 && view.door === "study") renderStudy();
 }).catch(() => {
-  $("unitList").querySelectorAll(".st-loading").forEach((node) => { node.textContent = "골든벨 학습을 불러오지 못했어요. 새로고침해 주세요."; });
+  $("unitList").querySelectorAll(".st-loading").forEach((node) => { node.textContent = "워밍업 학습을 불러오지 못했어요. 새로고침해 주세요."; });
 });

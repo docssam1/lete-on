@@ -181,7 +181,7 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
     const total = LEVELS.reduce((s, l) => s + l.problems.length, 0), stars = st.stars.reduce((a, b) => a + b, 0);
     host.innerHTML = `<div class="dg dg-finale"><p class="dg-kick">디지털 숫자 공방 · 완성</p><h3>네 단계를 모두 마쳤어요!</h3><p class="dg-score">처음에 바로 맞힌 문제 <b>${stars}</b> / ${total}</p>
       <ul class="dg-rules">${LEVELS.map((l, k) => `<li><b>${l.id}단계 ${l.title}</b> ★ ${st.stars[k]} / ${l.problems.length}</li>`).join("")}<li><b>기억해요</b> 판 전체를 오른쪽으로 뒤집거나 반 바퀴 돌리면 막대도, 자리 순서도 바뀌어요.</li></ul>
-      <div class="dg-actions"><button type="button" class="dg-btn" data-dg="restart">처음부터 다시</button><button type="button" class="dg-btn primary" data-dg="done">골든벨 문제로 →</button></div></div>`;
+      <div class="dg-actions"><button type="button" class="dg-btn" data-dg="restart">처음부터 다시</button><button type="button" class="dg-btn primary" data-dg="done">워밍업 문제로 →</button></div></div>`;
   }
   function solved(msg) {
     st.phase = "done";
@@ -250,7 +250,7 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
   function next() {
     if (st.index < LEVELS[st.level].problems.length - 1) { st.index += 1; newProblem(); return; }
     if (st.level < LEVELS.length - 1) { st.level += 1; st.index = 0; newProblem(); return; }
-    st.finale = true; render(); say("네 단계를 모두 마쳤어요! 이제 골든벨 문제로 가요.", "praise");
+    st.finale = true; render(); say("네 단계를 모두 마쳤어요! 이제 워밍업 문제로 가요.", "praise");
   }
 
   host.addEventListener("click", (event) => {

@@ -6,7 +6,7 @@
 import { jo, landing, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, SEGMENT_MAPS, moveSegs, readDigit, transformDigit, segGeom, segMid } from "./concept-board-kit.js?v=20261026b";
 import { BOARDS_B02 } from "./concept-boards-b02.js?v=20261027c";
 import { BOARDS_B03 } from "./concept-boards-b03.js?v=20261027c";
-import { BOARDS_B04 } from "./concept-boards-b04.js?v=20261027c";
+import { BOARDS_B04 } from "./concept-boards-b04.js?v=20261028w";
 import { BOARDS_B05 } from "./concept-boards-b05.js?v=20261027c";
 import { BOARDS_B06 } from "./concept-boards-b06.js?v=20261027c";
 import { BOARDS_B07 } from "./concept-boards-b07.js?v=20261027c";

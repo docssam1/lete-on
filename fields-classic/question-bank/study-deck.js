@@ -1,4 +1,4 @@
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261027p";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261028w";
 
 // 한 주(한 단원) 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 독쌤 말 id는 글에서 나온다(`fcs-<종류>-<글의 FNV 해시>`): 같은 글이면 같은 음성 파일, 글을 고치면 새 id라 옛 음성을 틀지 않는다.
@@ -7,7 +7,7 @@ import { unitParts, partProblems, lessonsByUnit, lessonsByPart, STUDY_GAMES, STU
 export const PHASES = Object.freeze([
   ["concept", "개념 배우기"],
   ["game", "게임하기"],
-  ["bell", "골든벨"],
+  ["bell", "워밍업"],
   ["board", "공부하기"],
   ["homework", "과제"],
   ["test", "단원 평가"],
@@ -24,10 +24,10 @@ export const voiceLine = (kind, text) => ({ id: `fcs-${kind}-${fnv(text)}`, text
 // 덱 밖의 고정 말(덱 안 게임·골든벨이 끝났을 때, 불러오기 실패)
 export const FIXED_LINES = Object.freeze({
   loading: voiceLine("cover", "공부할 것을 준비하고 있어요. 잠깐만 기다려 줘요."),
-  bellDone: voiceLine("bell", "골든벨 문제를 다 풀었어요! 정말 잘했어요. 다음으로 넘어가요."),
+  bellDone: voiceLine("bell", "워밍업 문제를 다 풀었어요! 정말 잘했어요. 다음으로 넘어가요."),
   gameDone: voiceLine("game", "게임을 끝까지 해냈어요! 결과를 보고 다음으로 가요."),
-  nativeDone: voiceLine("game", "게임을 끝까지 해냈어요! 이제 골든벨 문제로 가요."),
-  bellLoadFail: voiceLine("cover", "골든벨 학습을 불러오지 못했어요. 새로고침하면 다시 불러와요. 본책 문제는 지금도 풀 수 있어요.")
+  nativeDone: voiceLine("game", "게임을 끝까지 해냈어요! 이제 워밍업 문제로 가요."),
+  bellLoadFail: voiceLine("cover", "워밍업 학습을 불러오지 못했어요. 새로고침하면 다시 불러와요. 본책 문제는 지금도 풀 수 있어요.")
 });
 
 // 한 주(단원)의 본책 묶음: 차시마다 나뉜 것을 묶음 이름으로 합친다 — 활동 1 · 확인 1 · 활동 2 · 확인 2 … · 연습 · 도전
@@ -95,10 +95,10 @@ export function buildWeekSlides(book, unitIndex, bellData) {
 // 장마다 독쌤이 하는 말 { id, text }
 export function slideLine(slide, { book, unitIndex }) {
   const unit = book.units[unitIndex];
-  if (slide.kind === "cover") return voiceLine("cover", `이번 주는 ${unit.label}이에요. 개념을 배우고, 게임으로 익히고, 골든벨을 풀고, 본책 문제를 풀어요. 과제를 하고 단원 평가까지 봐요. 출발하기를 눌러 봐요.`);
+  if (slide.kind === "cover") return voiceLine("cover", `이번 주는 ${unit.label}이에요. 개념을 배우고, 게임으로 익히고, 워밍업을 풀고, 본책 문제를 풀어요. 과제를 하고 단원 평가까지 봐요. 출발하기를 눌러 봐요.`);
   if (slide.kind === "concept") return voiceLine("concept", slide.native ? `${slide.lesson.title} 개념이에요. 칠판을 봐요.` : `${slide.lesson.title} 개념이에요. 한 장씩 천천히 보고 다음을 눌러요.`);
   if (slide.kind === "game") return voiceLine("game", `${slide.title} 게임이에요. 개념에서 본 풀이 순서대로 손으로 직접 해 봐요.`);
-  if (slide.kind === "bell") return voiceLine("bell", "골든벨 문제예요. 개념에서 배운 대로 한 문제씩 풀어 봐요.");
+  if (slide.kind === "bell") return voiceLine("bell", "워밍업 문제예요. 개념에서 배운 대로 한 문제씩 풀어 봐요.");
   if (slide.kind === "board") return voiceLine("board", `본책 ${slide.block.label} 문제예요. 화면에서 풀어도 되고, 인쇄해서 풀어도 돼요. 어려우면 유사 문제를 풀어 봐요.`);
   if (slide.kind === "homework") return voiceLine("homework", "이번 주 과제예요. 인쇄해서 집에서 풀고, 다 풀면 화면에서 답을 확인해요.");
   if (slide.kind === "test") return voiceLine("test", "단원 평가예요. 다 풀고 채점하기를 누르면 맞은 것과 틀린 것을 표시해요. 약한 유형은 다시 공부해요.");

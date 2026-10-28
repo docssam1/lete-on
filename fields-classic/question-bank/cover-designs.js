@@ -127,7 +127,7 @@ export function coverDesignPage(id, info, { ground = "green" } = {}) {
   const eyebrow = esc(info.eyebrow || "GIFTED MATH BANK");
   const title = titleLines(info.title);
   const sub = esc(info.subtitle || "");
-  const pub = `<span class="pt-pub"><span>지필드 영재교육</span><span>${esc(info.pubRight || "GOLDEN BELL SERIES")}</span></span>`;
+  const pub = `<span class="pt-pub"><span>지필드 영재교육</span><span>${esc(info.pubRight || "WARM-UP SERIES")}</span></span>`;
   let body;
   if (["a", "b", "c"].includes(id)) {
     const badge = id === "a" && volume ? `<span class="pt-cover-lv">${esc(volume)}</span>` : id === "c" && volume ? `<span class="pt-cover-num">${esc(volume)}</span>` : "";

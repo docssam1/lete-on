@@ -183,7 +183,7 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
       <p class="smv-score">처음에 바로 맞힌 문제 <b>${stars}</b> / ${total}</p>
       <ul class="smv-rules">${LEVELS.map((l, k) => `<li><b>${l.id}단계 ${l.title}</b> ★ ${st.stars[k]} / ${l.problems.length}</li>`).join("")}
         <li><b>뒤집고 돌리기</b> 첫 번째 움직임의 결과를 먼저 만들고, 그 모양에 두 번째 움직임을 해요.</li></ul>
-      <div class="smv-actions"><button type="button" class="smv-btn" data-smv="restart">처음부터 다시</button><button type="button" class="smv-btn primary" data-smv="done">골든벨 문제로 →</button></div></div>`;
+      <div class="smv-actions"><button type="button" class="smv-btn" data-smv="restart">처음부터 다시</button><button type="button" class="smv-btn primary" data-smv="done">워밍업 문제로 →</button></div></div>`;
   }
 
   function check() {
@@ -233,7 +233,7 @@ export function mountShapeMoves(host, { say = () => {}, onDone = () => {} } = {}
     if (st.index < LEVELS[st.level].problems.length - 1) { st.index += 1; newProblem(); return; }
     if (st.level < LEVELS.length - 1) { st.level += 1; st.index = 0; newProblem(); return; }
     st.finale = true; render();
-    say("세 단계를 모두 마쳤어요! 이제 골든벨 문제로 가요.", "praise");
+    say("세 단계를 모두 마쳤어요! 이제 워밍업 문제로 가요.", "praise");
   }
 
   host.addEventListener("click", (event) => {

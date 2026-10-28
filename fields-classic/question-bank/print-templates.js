@@ -3,7 +3,7 @@
 // 문항 카드는 app.js 가 만든 그대로 쓰고, 여기서는 쪽 묶음과 쪽 바깥(표지·내지·바닥글)만 그린다.
 // 표지·내지에는 공개 정보(책 제목·단원 이름·유형 이름·문항 수)만 쓴다 — 정답은 여기 오지 않는다.
 
-import { COVER_DESIGNS, COVER_GROUNDS, coverDesignPage } from "./cover-designs.js?v=20261024r";
+import { COVER_DESIGNS, COVER_GROUNDS, coverDesignPage } from "./cover-designs.js?v=20261028w";
 
 const STORAGE_KEY = "fcPrintTemplate.v1";
 

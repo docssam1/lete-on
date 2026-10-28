@@ -86,7 +86,7 @@ try {
       page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
       await page.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=A2-QA&course=${book.courseId}&book=${book.id}`, { waitUntil: "networkidle" });
       assert.equal(await page.locator(".lesson-button").count(), 4, `${book.id}: lesson count`);
-      const expectedSourceLabel = book.source?.origin === "textbook-derived" ? "교재" : book.status === "pilot" ? "연습" : "골든벨";
+      const expectedSourceLabel = book.source?.origin === "textbook-derived" ? "교재" : book.status === "pilot" ? "연습" : "워밍업";
       assert.equal((await page.locator('[data-phase="original"] span').textContent())?.trim(), expectedSourceLabel, `${book.id}: source phase label`);
       for (const [lessonIndex, lesson] of book.lessons.entries()) {
         await page.locator(`[data-lesson="${lesson.id}"]`).click();

@@ -1,6 +1,6 @@
 import { CURRICULUM } from "./source-data.js?v=20261028m";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261027p";
-import { PHASES, FIXED_LINES, voiceLine, weekBlocks as unitWeekBlocks, weekTypes as unitWeekTypes, buildWeekSlides, slideLine } from "./study-deck.js?v=20261028t";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261028w";
+import { PHASES, FIXED_LINES, voiceLine, weekBlocks as unitWeekBlocks, weekTypes as unitWeekTypes, buildWeekSlides, slideLine } from "./study-deck.js?v=20261028w";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261028n";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -306,7 +306,7 @@ function renderHead() {
 // ── 그림 세계: 섬 다섯 개(그림 1672×941 안의 자리, %) ──
 // 그림의 다섯 터(아래 왼쪽 → 위 오른쪽). 그림을 바꾸면 이 자리를 다시 잰다.
 const ISLANDS = [[15, 78], [35.5, 55], [52, 38.5], [73.5, 33.5], [87.6, 15.5]];
-const STATIONS = [["concept", "개념 배우기"], ["game", "게임하기"], ["bell", "골든벨"], ["board", "공부하기"], ["homework", "과제"], ["test", "단원 평가"], ["booktest", "권별 테스트"], ["end", "도착"]];
+const STATIONS = [["concept", "개념 배우기"], ["game", "게임하기"], ["bell", "워밍업"], ["board", "공부하기"], ["homework", "과제"], ["test", "단원 평가"], ["booktest", "권별 테스트"], ["end", "도착"]];
 const visibleStations = () => STATIONS.filter(([kind]) => kind !== "booktest" || slides.some((slide) => slide.kind === "booktest"));
 const stationOf = (slide) => Math.max(0, visibleStations().findIndex(([kind]) => kind === slide.kind));
 function renderSigns() {

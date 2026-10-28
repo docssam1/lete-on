@@ -1096,7 +1096,7 @@ export function typeExamplesMarkup(groups, view) {
   const ex = group.examples[view.example] || group.examples[0];
   const types = groups.map((g, i) => {
     const done = g.examples.some((_, e) => view.seen.has(`${i}:${e}`));
-    return `<button type="button" class="tx-type${i === view.type ? " active" : ""}${done ? " done" : ""}" data-tx-type="${i}" aria-pressed="${i === view.type}"><b>${done ? "✓" : i + 1}</b><span>${esc(g.typeLabel)}</span><small>골든벨 ${g.count}문제</small></button>`;
+    return `<button type="button" class="tx-type${i === view.type ? " active" : ""}${done ? " done" : ""}" data-tx-type="${i}" aria-pressed="${i === view.type}"><b>${done ? "✓" : i + 1}</b><span>${esc(g.typeLabel)}</span><small>워밍업 ${g.count}문제</small></button>`;
   }).join("");
   if (!ex) return `<section class="tx"><nav class="tx-types" aria-label="문제 유형">${types}</nav><p class="tx-empty">이 유형의 예제를 준비하고 있어요.</p></section>`;
   const step = Math.max(0, Math.min(view.step, ex.steps.length));

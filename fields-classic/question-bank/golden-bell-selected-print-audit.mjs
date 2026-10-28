@@ -43,9 +43,9 @@ try {
     await page.addInitScript(() => window.addEventListener("DOMContentLoaded", () => { const qr = document.getElementById("printGameQR"); if (qr) qr.checked = false; }));
     await page.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=DEMO&book=book-01`, { waitUntil: "networkidle" });
     await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
-    assert.equal(await page.title(), "골든벨 학습");
+    assert.equal(await page.title(), "워밍업 학습");
     // 회사 이름(FC·필즈)은 화면에 내지 않는다(2026-10-13 원장 지시).
-    assert.match(await page.locator("#courseBrand").innerText(), /^(\d+과정|골든벨)$/u);
+    assert.match(await page.locator("#courseBrand").innerText(), /^(\d+과정|워밍업)$/u);
     const dialog = page.locator("#coverDialog");
     const open = async () => { await page.locator("#printSelectedButton").click(); assert.equal(await dialog.isVisible(), true); };
     const choose = async (keys) => {

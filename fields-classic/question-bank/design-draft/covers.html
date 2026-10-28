@@ -18,12 +18,12 @@
   </style>
 </head>
 <body>
-  <nav class="draft-nav" aria-label="시안 이동"><b>디자인 시안</b><a href="./index.html">① 문제은행 화면</a><a href="./exam.html">② A4 시험지</a><a href="./covers.html" aria-current="page">③ 교재 표지</a><a href="./unit.html">④ 단원 내지</a><span style="margin-left:auto;color:var(--muted)">인쇄할 때 이 가운데서 고릅니다 — 문제은행 「인쇄 양식」 · 골든벨 「교재 인쇄 → 표지」</span></nav>
+  <nav class="draft-nav" aria-label="시안 이동"><b>디자인 시안</b><a href="./index.html">① 문제은행 화면</a><a href="./exam.html">② A4 시험지</a><a href="./covers.html" aria-current="page">③ 교재 표지</a><a href="./unit.html">④ 단원 내지</a><span style="margin-left:auto;color:var(--muted)">인쇄할 때 이 가운데서 고릅니다 — 문제은행 「인쇄 양식」 · 워밍업 「교재 인쇄 → 표지」</span></nav>
   <main class="cover-gallery" id="gallery"></main>
   <script type="module">
     // 그림은 실제 인쇄와 같은 함수(cover-designs.js)로 그린다 — 시안과 인쇄물이 따로 놀지 않게.
-    import { COVER_DESIGNS, coverDesignPage } from "../cover-designs.js?v=20261024a";
-    const info = { title: "도형 움직이기와 마방진", subtitle: "1과정 · 사고력 수학의 첫걸음", volume: "1", eyebrow: "GFIELD CLASSIC · 1과정", stats: "단원 4 · 골든벨 학습 12\n직접 해 보기 게임 7" };
+    import { COVER_DESIGNS, coverDesignPage } from "../cover-designs.js?v=20261028w";
+    const info = { title: "도형 움직이기와 마방진", subtitle: "1과정 · 사고력 수학의 첫걸음", volume: "1", eyebrow: "GFIELD CLASSIC · 1과정", stats: "단원 4 · 워밍업 학습 12\n직접 해 보기 게임 7" };
     const notes = {
       a: "흰 바탕에 광택 도형 묶음, 뒤에 옅은 큰 권 번호.", b: "딥 그린 바탕 위 금선 하나. 바탕은 초록·와인·먹 중 고름.", c: "위는 여백과 제목, 아래 먹색 띠에 도형 여섯.",
       "r2-cubes": "쌓기나무 계단탑과 윤곽선 권 번호.", "r2-paper": "초록 언덕 위 마방진 패·쌓기나무·열기구. (당시 「촌스럽다」 의견)", "r2-motif": "시계·별·거울·주사위 무늬 바탕 + 가운데 패. (당시 「촌스럽다」 의견)",
@@ -32,7 +32,7 @@
     const groups = [...new Set(COVER_DESIGNS.map((design) => design.group))];
     document.getElementById("gallery").innerHTML = groups.map((group) => `<h2>${group}<small>${COVER_DESIGNS.filter((d) => d.group === group).length}가지</small></h2>${COVER_DESIGNS.filter((d) => d.group === group).map((design) =>
       `<figure>${coverDesignPage(design.id, info)}<figcaption><b>${design.label}</b>${notes[design.id] || ""}</figcaption></figure>`).join("")}`).join("")
-      + `<h2>골든벨 표지<small>2가지 · 골든벨 교재 인쇄에서만</small></h2>
+      + `<h2>워밍업 표지<small>2가지 · 워밍업 교재 인쇄에서만</small></h2>
       <figure><div class="gb-plain" style="background-image:url('../assets/fc-cover-shapes.svg')"></div><figcaption><b>도형 배경</b>배경 위에 학습 범위·유형과 핵심 개념·게임 QR을 한 장에.</figcaption></figure>
       <figure><div class="gb-plain" style="background-image:url('../assets/fc-cover-grid.svg')"></div><figcaption><b>모눈 배경</b>같은 내용, 모눈 배경.</figcaption></figure>`;
   </script>
