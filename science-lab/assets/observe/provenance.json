@@ -1294,5 +1294,27 @@
    "license_source": "iNaturalist Open Data(AWS) photos.csv 2026-10-27판의 사진별 license=CC0 — 관찰 라이선스가 아니라 사진 라이선스. 이 세션에서는 iNaturalist API가 막혀 웹 페이지로 다시 확인하지 못함",
    "taxon_identification_status": "iNaturalist research grade(Open Data observations.csv quality_grade); photo visually reviewed; not an independent expert determination"
   }
+ ],
+ [
+  "mold-rice",
+  {
+   "source": "원장 직접 촬영",
+   "author": "원장(지필드)",
+   "received": "2026-10-28, 대화로 받음",
+   "file": "mold-rice-1.jpg",
+   "name": "누룩곰팡이가 핀 쌀(누룩)",
+   "visible_features": "쌀알 겉에 핀 흰색·회녹색 곰팡이(균사·포자)가 보여요. 곰팡이 종을 따로 동정하지 않았어요 — 누룩곰팡이(Aspergillus)라는 것은 원장님 설명 기준이에요. 원장님 실험의 밥과 같은 조건의 사진인지는 확인하지 않았어요.",
+   "original_size": [
+    2000,
+    1500
+   ],
+   "crop": null,
+   "width": 1024,
+   "height": 768,
+   "bytes": 91040,
+   "sha256": "1dc53dc9a501ee75319147e471e681987919ba1764a29738a095d3ec3af67bdf",
+   "reviewed": "2026-10-28, 실제 이미지 눈으로 확인(Claude). 메타데이터(EXIF)는 다시 저장하며 지움",
+   "license": "원장 소유 — 이 교재에서 사용"
+  }
  ]
 ]
