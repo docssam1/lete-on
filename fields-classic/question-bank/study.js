@@ -135,25 +135,31 @@ async function cloneUrl(id, text) {
   for (const v of m.voices) { const f = `${id}-${await sha10(`${v}|${text}`)}.mp3`; if (m.files.has(f)) return { url: CLONE_BASE + f, rate: Number(m.rates[v] ?? 1) || 1 }; }
   return null;
 }
-let cloneAudio = null;
-function stopClone() { if (cloneAudio) { try { cloneAudio.pause(); } catch {} cloneAudio = null; } }
+let cloneAudio = null, cloneEnd = null, speakSeq = 0;
+function stopClone() { if (cloneAudio) { try { cloneAudio.pause(); } catch {} cloneAudio = null; } const end = cloneEnd; cloneEnd = null; end?.(); }
 // 말이 끝나면(소리가 꺼져 있으면 읽을 만한 시간이 지나면) 풀리는 Promise. 기기 음성이 끝을 알리지 않는 경우를 대비해 최대 시간도 둔다.
+// 새 말이 오면 앞의 말은 끊고 바로 풀린다. 복제 음성 파일을 찾는 사이(await)에 새 말이 왔으면 앞의 말은 아예 틀지 않는다 — 안 그러면 두 목소리가 겹친다.
 function speak(text, voiceId = null) {
   const reading = Math.min(7000, Math.max(900, String(text || "").length * 75));
+  const seq = ++speakSeq;
   return new Promise(async (resolve) => {
     let done = false; const finish = () => { if (!done) { done = true; resolve(); } };
     stopClone();
     try { speechSynthesis?.cancel(); } catch {}
     if (pref.sound && text && voiceId) {
       const clone = await cloneUrl(voiceId, text).catch(() => null);
+      if (seq !== speakSeq) { finish(); return; }
       if (clone) {
         try {
-          const audio = new Audio(clone.url); cloneAudio = audio; audio.playbackRate = clone.rate; audio.preservesPitch = true;
+          const audio = new Audio(clone.url); cloneAudio = audio; cloneEnd = finish; audio.playbackRate = clone.rate; audio.preservesPitch = true;
           audio.addEventListener("ended", finish); audio.addEventListener("error", finish);
-          await audio.play(); setTimeout(finish, reading * 3 + 3000); return;
-        } catch { stopClone(); }
+          await audio.play();
+          if (seq !== speakSeq) { audio.pause(); finish(); return; }
+          setTimeout(finish, reading * 3 + 3000); return;
+        } catch { if (seq === speakSeq) stopClone(); else { finish(); return; } }
       }
     }
+    if (seq !== speakSeq) { finish(); return; }
     if (typeof speechSynthesis === "undefined") { setTimeout(finish, reading); return; }
     try {
       if (!pref.sound || !text) { setTimeout(finish, text ? reading : 0); return; }
@@ -261,7 +267,7 @@ function askFrame(cmd) {
 // ── 덱 안의 우리 게임 ──────────────────────────────────────
 let nativeGame = null;
 const loadedCss = new Set();
-async function mountNative(slide) {
+async function mountNative(slide, intro = Promise.resolve()) {
   const game = slide.native;
   if (!loadedCss.has(game.css)) {
     loadedCss.add(game.css);
@@ -275,7 +281,9 @@ async function mountNative(slide) {
   host.className = "sd-native";
   $("slideBody").replaceChildren(host);
   nativeGame = mod[game.mount](host, {
-    say: (text, mood, voiceId) => say(text, mood, voiceId),   // 말 끝을 기다릴 수 있게 Promise를 돌려준다(판서가 비트마다 기다린다). voiceId가 있으면 독쌤 복제 음성
+    // 말 끝을 기다릴 수 있게 Promise를 돌려준다(판서가 비트마다 기다린다). voiceId가 있으면 독쌤 복제 음성.
+    // 장 안내 말(intro)이 끝난 뒤에 말한다 — 판서 첫 말이 안내 말을 끊거나 겹치지 않게
+    say: async (text, mood, voiceId) => { await intro; if (slides[index] !== slide) return; return say(text, mood, voiceId); },
     board: game.board, lesson: slide.lesson,
     onDone: () => { if (game.doneSay !== null) { const done = game.doneSay ? voiceLine("game", game.doneSay) : FIXED_LINES.nativeDone; say(done.text, "praise", done.id); } auto(game.board ? 4000 : 2200); }
   });
@@ -408,8 +416,10 @@ function show({ atEnd = false } = {}) {
   $("slideBody").hidden = framed;
   $("slideBody").innerHTML = slide.kind === "cover" ? coverMarkup() : ["board", "homework", "test"].includes(slide.kind) ? workMarkup(slide) : slide.kind === "booktest" ? bookTestMarkup() : slide.kind === "end" ? endMarkup() : native ? '<p class="sd-wait">준비하고 있어요…</p>' : "";
   $("slideBody").classList.toggle("is-work", ["board", "homework", "test"].includes(slide.kind));
+  const line = lineFor(slide);
+  const intro = say(line.text, slide.kind === "end" ? "praise" : "talk", line.id);
   if (framed) openInFrame(slide, atEnd);
-  if (native) mountNative(slide).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">불러오지 못했어요. 새로고침해 주세요.</p>'; });
+  if (native) mountNative(slide, intro).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">불러오지 못했어요. 새로고침해 주세요.</p>'; });
   $("prevBtn").disabled = index === 0;
   $("firstBtn").disabled = index === 0;
   $("nextBtn").disabled = !ready || index === slides.length - 1;
@@ -417,8 +427,6 @@ function show({ atEnd = false } = {}) {
   $("count").textContent = `${index + 1} / ${slides.length}`;
   renderSigns();
   placeWorld();
-  const line = lineFor(slide);
-  say(line.text, slide.kind === "end" ? "praise" : "talk", line.id);
   recordVisit();
   const url = new URL(location.href);
   url.searchParams.set("s", String(index + 1));
