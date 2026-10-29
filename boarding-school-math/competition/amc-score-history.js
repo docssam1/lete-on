@@ -5,7 +5,9 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  const SCHEMA_VERSION = "gfield-amc-score-history-v1";
+  const SCHEMA_VERSION = "gfield-amc-score-history-v2";
+  const LEGACY_SCHEMA_VERSION = "gfield-amc-score-history-v1";
+  const REGIONS = Object.freeze(["maa-us-canada", "international"]);
   const PROGRAMS = Object.freeze({ amc8: Object.freeze({ title: "AMC 8", max: 25, forms: ["AMC 8"] }), amc10: Object.freeze({ title: "AMC 10", max: 150, forms: ["A", "B"] }), amc12: Object.freeze({ title: "AMC 12", max: 150, forms: ["A", "B"] }) });
   const CURRENT_AIME_SOURCE = "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/";
   const INVITATIONAL_SOURCE = "https://maa.org/maa-invitational-competitions/";
@@ -14,8 +16,10 @@
   function fail(code) { const error = new Error(code); error.code = code; throw error; }
   function ownKeys(value, keys) { return value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).every(function (key) { return keys.includes(key); }); }
   function validDate(value) { return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`)) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value; }
-  function validateRecord(input) {
-    if (!ownKeys(input, ["id", "programId", "cycle", "form", "examDate", "rawScore", "maxScore"])) fail("RECORD_SHAPE");
+  function validateRecord(input, options) {
+    const allowLegacyShape = Boolean(options && options.allowLegacyShape);
+    const allowedKeys = ["id", "programId", "cycle", "form", "examDate", "rawScore", "maxScore", "regionId"];
+    if (!ownKeys(input, allowedKeys) || (!allowLegacyShape && !Object.prototype.hasOwnProperty.call(input, "regionId"))) fail("RECORD_SHAPE");
     const program = PROGRAMS[input.programId];
     if (!program) fail("PROGRAM_INVALID");
     if (typeof input.id !== "string" || !/^[A-Za-z0-9_-]{1,80}$/.test(input.id)) fail("RECORD_ID_INVALID");
@@ -25,11 +29,13 @@
     if (!validDate(input.examDate)) fail("DATE_INVALID");
     if (input.maxScore !== program.max || !Number.isFinite(input.rawScore) || input.rawScore < 0 || input.rawScore > program.max) fail("SCORE_INVALID");
     if (input.programId === "amc8" ? !Number.isInteger(input.rawScore) : !Number.isInteger(input.rawScore * 2)) fail("SCORE_INCREMENT_INVALID");
-    return Object.freeze({ id: input.id, programId: input.programId, cycle: input.cycle, form: input.form, examDate: input.examDate, rawScore: input.rawScore, maxScore: input.maxScore });
+    const regionId = input.regionId == null || input.regionId === "" ? null : input.regionId;
+    if (regionId !== null && !REGIONS.includes(regionId)) fail("REGION_INVALID");
+    return Object.freeze({ id: input.id, programId: input.programId, cycle: input.cycle, form: input.form, examDate: input.examDate, rawScore: input.rawScore, maxScore: input.maxScore, regionId: regionId });
   }
   function validateArchive(input) {
-    if (!ownKeys(input, ["schemaVersion", "records"]) || input.schemaVersion !== SCHEMA_VERSION || !Array.isArray(input.records) || input.records.length > 100) fail("ARCHIVE_INVALID");
-    const records = input.records.map(validateRecord);
+    if (!ownKeys(input, ["schemaVersion", "records"]) || ![SCHEMA_VERSION, LEGACY_SCHEMA_VERSION].includes(input.schemaVersion) || !Array.isArray(input.records) || input.records.length > 100) fail("ARCHIVE_INVALID");
+    const records = input.records.map(function (record) { return validateRecord(record, { allowLegacyShape: input.schemaVersion === LEGACY_SCHEMA_VERSION }); });
     const ids = records.map(function (record) { return record.id; });
     if (new Set(ids).size !== ids.length) fail("RECORD_ID_DUPLICATE");
     return Object.freeze({ schemaVersion: SCHEMA_VERSION, records: Object.freeze(records) });
@@ -70,5 +76,14 @@
       eligibilitySource: INVITATIONAL_SOURCE
     });
   }
-  return Object.freeze({ schemaVersion: SCHEMA_VERSION, programs: PROGRAMS, validateRecord: validateRecord, validateArchive: validateArchive, compare: compare, cycleContext: cycleContext });
+  function qualificationProgress(record) {
+    const context = record && cycleContext(record.programId, record.cycle, record.regionId);
+    if (!context || context.kind !== "maa-us-canada" || !Number.isFinite(record.rawScore)) return null;
+    const officialExamDate = record.form === "A" ? "2026-11-05" : "2026-11-13";
+    if (record.examDate !== officialExamDate) return null;
+    const pointsRemaining = Math.max(0, Math.round((context.threshold - record.rawScore) * 2) / 2);
+    return Object.freeze({ threshold: context.threshold, maxScore: context.maxScore, reached: pointsRemaining === 0, pointsRemaining: pointsRemaining,
+      label: pointsRemaining === 0 ? "점수 기준 이상 · 나이와 기타 자격 확인" : `점수 기준까지 ${pointsRemaining}점` });
+  }
+  return Object.freeze({ schemaVersion: SCHEMA_VERSION, legacySchemaVersion: LEGACY_SCHEMA_VERSION, programs: PROGRAMS, validateRecord: validateRecord, validateArchive: validateArchive, compare: compare, cycleContext: cycleContext, qualificationProgress: qualificationProgress });
 });

@@ -245,7 +245,11 @@
       const tbody = document.createElement("tbody");
       group.entries.forEach(function (record) {
         const row = document.createElement("tr");
-        [record.examDate, `${record.cycle} · ${record.form}`, `${record.rawScore} / ${record.maxScore}`].forEach(function (value) { const cell = document.createElement("td"); cell.textContent = value; row.append(cell); });
+        [record.examDate, `${record.cycle} · ${record.form}`].forEach(function (value) { const cell = document.createElement("td"); cell.textContent = value; row.append(cell); });
+        const scoreCell = document.createElement("td"); scoreCell.textContent = `${record.rawScore} / ${record.maxScore}`;
+        const progress = historyEngine.qualificationProgress(record);
+        if (progress) { const note = document.createElement("small"); note.className = `score-history-benchmark${progress.reached ? " is-reached" : ""}`; note.textContent = progress.label; scoreCell.append(document.createElement("br"), note); }
+        row.append(scoreCell);
         const actionCell = document.createElement("td"); const remove = document.createElement("button"); remove.type = "button"; remove.className = "history-remove"; remove.dataset.removeHistory = record.id; remove.setAttribute("aria-label", `${record.cycle} ${group.title} ${record.form} 기록 삭제`); remove.textContent = "삭제"; actionCell.append(remove); row.append(actionCell); tbody.append(row);
       });
       table.append(tbody); section.append(table); host.append(section);
@@ -304,7 +308,7 @@
     const program = historyEngine.programs[programId];
     try {
       const record = historyEngine.validateRecord({ id: makeHistoryId(), programId: programId, cycle: $("history-cycle").value.trim(), form: $("history-form").value,
-        examDate: $("history-date").value, rawScore: Number($("history-score").value), maxScore: program.max });
+        examDate: $("history-date").value, rawScore: Number($("history-score").value), maxScore: program.max, regionId: $("history-region").value || null });
       if (scoreHistory.length >= 100) throw Object.assign(new Error("HISTORY_LIMIT"), { code: "HISTORY_LIMIT" });
       scoreHistory.push(record);
       renderHistory();
@@ -312,7 +316,7 @@
       $("history-score").value = "";
       historySuccess("회차 기록을 추가했어요.");
     } catch (error) {
-      const messages = { CYCLE_INVALID: "대회 주기는 YYYY-YY 형식으로 정확히 입력해 주세요.", FORM_INVALID: "선택한 대회의 시험지 구분을 확인해 주세요.", DATE_INVALID: "시험 날짜를 확인해 주세요.", SCORE_INVALID: `점수는 0부터 ${program.max} 사이로 입력해 주세요.`, SCORE_INCREMENT_INVALID: program.max === 25 ? "AMC 8 점수는 정수로 입력해 주세요." : "AMC 10/12 점수는 0.5점 단위로 입력해 주세요.", HISTORY_LIMIT: "비교 기록은 100회까지 담을 수 있어요. 먼저 JSON 파일로 저장해 주세요." };
+      const messages = { CYCLE_INVALID: "대회 주기는 YYYY-YY 형식으로 정확히 입력해 주세요.", FORM_INVALID: "선택한 대회의 시험지 구분을 확인해 주세요.", DATE_INVALID: "시험 날짜를 확인해 주세요.", REGION_INVALID: "응시 지역을 다시 선택해 주세요.", SCORE_INVALID: `점수는 0부터 ${program.max} 사이로 입력해 주세요.`, SCORE_INCREMENT_INVALID: program.max === 25 ? "AMC 8 점수는 정수로 입력해 주세요." : "AMC 10/12 점수는 0.5점 단위로 입력해 주세요.", HISTORY_LIMIT: "비교 기록은 100회까지 담을 수 있어요. 먼저 JSON 파일로 저장해 주세요." };
       historyError(messages[error.code] || "기록을 추가하지 못했어요. 입력값을 확인해 주세요.");
     }
   });

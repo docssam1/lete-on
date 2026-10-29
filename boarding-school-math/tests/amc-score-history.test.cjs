@@ -4,7 +4,7 @@ const test = require("node:test");
 const history = require("../competition/amc-score-history.js");
 
 function record(overrides = {}) {
-  return { id: "attempt-1", programId: "amc10", cycle: "2025-26", form: "A", examDate: "2025-11-06", rawScore: 99.5, maxScore: 150, ...overrides };
+  return { id: "attempt-1", programId: "amc10", cycle: "2025-26", form: "A", examDate: "2025-11-06", rawScore: 99.5, maxScore: 150, regionId: null, ...overrides };
 }
 
 test("records only contest, cycle, form, date, and reported raw score", function () {
@@ -39,6 +39,17 @@ test("archive rejects unknown fields, malformed cycles, and duplicate IDs", func
   assert.throws(() => history.validateArchive({ schemaVersion: "old", records: [] }), { code: "ARCHIVE_INVALID" });
   assert.throws(() => history.validateRecord(record({ cycle: "2025-27" })), { code: "CYCLE_INVALID" });
   assert.throws(() => history.validateArchive({ schemaVersion: history.schemaVersion, records: Array.from({ length: 101 }, (_, index) => record({ id: `id-${index}` })) }), { code: "ARCHIVE_INVALID" });
+  assert.throws(() => history.validateRecord(record({ regionId: "unknown" })), { code: "REGION_INVALID" });
+});
+
+test("imports v1 score archives with unknown region and exports the v2 shape", function () {
+  const legacyRecord = record();
+  delete legacyRecord.regionId;
+  const imported = history.validateArchive({ schemaVersion: history.legacySchemaVersion, records: [legacyRecord] });
+  assert.equal(imported.schemaVersion, history.schemaVersion);
+  assert.equal(imported.records[0].regionId, null);
+  assert.deepEqual(history.validateArchive({ schemaVersion: history.schemaVersion, records: [record({ regionId: "maa-us-canada" })] }).records[0].regionId, "maa-us-canada");
+  assert.throws(() => history.validateArchive({ schemaVersion: history.schemaVersion, records: [legacyRecord] }), { code: "RECORD_SHAPE" });
 });
 
 test("only returns the published MAA 2026-27 US/Canada fixed-score context", function () {
@@ -49,4 +60,19 @@ test("only returns the published MAA 2026-27 US/Canada fixed-score context", fun
   assert.equal(history.cycleContext("amc10", "2026-27", "international").kind, "international");
   assert.equal(history.cycleContext("amc8", "2026-27"), null);
   assert.equal(history.cycleContext("amc10", "2025-26"), null);
+});
+
+test("shows only cycle, region, and contest matched AIME score target progress", function () {
+  const below = history.qualificationProgress(record({ cycle: "2026-27", form: "A", examDate: "2026-11-05", regionId: "maa-us-canada", rawScore: 99.5 }));
+  assert.deepEqual(below, { threshold: 100, maxScore: 150, reached: false, pointsRemaining: 0.5, label: "점수 기준까지 0.5점" });
+  const reached = history.qualificationProgress(record({ cycle: "2026-27", form: "A", examDate: "2026-11-05", regionId: "maa-us-canada", rawScore: 100 }));
+  assert.equal(reached.reached, true);
+  assert.match(reached.label, /점수 기준 이상.*자격 확인/);
+  assert.equal(history.qualificationProgress(record({ programId: "amc12", cycle: "2026-27", form: "A", examDate: "2026-11-05", regionId: "maa-us-canada", rawScore: 85 })).threshold, 85);
+  assert.equal(history.qualificationProgress(record({ cycle: "2025-26", regionId: "maa-us-canada", rawScore: 130 })), null);
+  assert.equal(history.qualificationProgress(record({ cycle: "2026-27", form: "B", examDate: "2026-11-05", regionId: "maa-us-canada", rawScore: 130 })), null);
+  assert.equal(history.qualificationProgress(record({ cycle: "2026-27", form: "A", examDate: "2026-10-30", regionId: "maa-us-canada", rawScore: 130 })), null);
+  assert.equal(history.qualificationProgress(record({ cycle: "2026-27", regionId: "international", rawScore: 130 })), null);
+  assert.equal(history.qualificationProgress(record({ programId: "amc8", cycle: "2026-27", regionId: "maa-us-canada", form: "AMC 8", rawScore: 25, maxScore: 25 })), null);
+  assert.equal(history.qualificationProgress(record({ cycle: "2026-27", rawScore: 130 })), null);
 });

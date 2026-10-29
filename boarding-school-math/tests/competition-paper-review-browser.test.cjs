@@ -325,6 +325,7 @@ test("AMC score records stay separated by contest, export/import as a local file
   await page.getByRole("button", { name: "비교 기록에 추가" }).click();
   await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("추가했어요"));
   assert.equal(await page.locator(".score-history-group").count(), 1);
+  assert.match(await page.locator(".score-history-table").innerText(), /점수 기준 이상 · 나이와 기타 자격 확인/);
   assert.equal(await page.locator("#history-program").inputValue(), "amc10", "the contest selection stays ready for the next entry");
   assert.equal(await page.locator("#history-cycle").inputValue(), "2026-27");
   assert.equal(await page.locator("#history-form").inputValue(), "B");
@@ -350,8 +351,10 @@ test("AMC score records stay separated by contest, export/import as a local file
   const download = await downloadPromise;
   assert.equal(download.suggestedFilename(), "gfield-amc-score-history.json");
   const exported = JSON.parse(await fs.promises.readFile(await download.path(), "utf8"));
-  assert.equal(exported.schemaVersion, "gfield-amc-score-history-v1");
+  assert.equal(exported.schemaVersion, "gfield-amc-score-history-v2");
   assert.equal(exported.records.length, 2);
+  assert.equal(exported.records.find((record) => record.programId === "amc10").regionId, "maa-us-canada");
+  assert.equal(exported.records.find((record) => record.programId === "amc8").regionId, "international");
   assert.equal(Object.hasOwn(exported.records[0], "answers"), false);
   assert.equal(Object.hasOwn(exported.records[0], "studentName"), false);
   page.once("dialog", (dialog) => dialog.dismiss());
