@@ -12,3 +12,36 @@
 @media(prefers-reduced-motion:reduce){.pco-root button{transition:none}}
 
 @media(min-width:801px){.pco-travel{display:grid;grid-template-columns:190px minmax(0,1fr);gap:12px;align-items:center;padding:6px 16px}.pco-travel-top{gap:6px}.pco-travel-top span{font-size:11px}}
+
+ .pco-mobile-choices{display:none}
+/* On phones, use the full width for navigation and reserve height for reading.
+   Cohort choices are also available in the concerns tab; its duplicate bottom
+   workspace switch is unnecessary here. Other planner flows are unchanged. */
+@media screen and (max-width:800px){
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel){--pco-header-height:56px}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) .top{height:var(--pco-header-height);min-height:var(--pco-header-height);padding:4px 8px;gap:6px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:thin}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) .top .logo{font-size:20px;flex:none;margin-right:auto}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) .top .logo-sep{display:none}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) .top .gear{flex:none;white-space:nowrap;min-height:44px;font-size:12px;padding:8px}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel).exploring main{height:calc(100dvh - var(--pco-header-height) - env(safe-area-inset-bottom));min-height:0;padding:0;gap:0}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) #journeyPanel{height:100%;max-height:none;margin:0;padding:0;border:0;border-radius:0}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) #journeyPanel>.journey-heading{flex:none;flex-wrap:nowrap;min-height:48px;padding:2px 8px;gap:8px}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) #journeyTitle{font-size:13px;line-height:1.5;margin:0;overflow-wrap:anywhere}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) .atlas-heading-actions{width:auto;flex:none}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) .mobile-workspace-nav{display:none!important}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) .workspace-tabs{display:flex;flex:none;position:static;justify-content:flex-start;overflow-x:auto;scrollbar-width:thin;gap:8px!important;padding:4px 8px 6px!important;min-height:54px;max-width:100%;box-sizing:border-box;scroll-padding-inline:8px}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) .workspace-tabs button{flex:0 0 auto;min-height:44px;white-space:nowrap;font-size:13px;line-height:1.5;padding:8px 12px;scroll-margin-inline:8px}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) .workspace-panel{padding:12px;scroll-padding-block:12px}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) #pathwayCoach{display:none!important}
+ body.roadmap-studio.integrated-planner[data-history-workspace=true]:has(.pco-travel) #vmap{display:block!important}
+ .pco-mobile-choices{display:block;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--pco-line)}
+ .pco-mobile-choices .pco-coach>h2{font-size:20px}
+ .pco-travel{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:6px;padding:2px 8px;border-top:0}
+ .pco-travel-top,.pco-travel-steps{display:contents}
+ .pco-travel-top>button{grid-column:1;grid-row:1;white-space:nowrap;padding:8px 4px;font-size:12px}
+ .pco-travel-progress{grid-column:2;grid-row:1;font-size:12px;text-align:center;white-space:nowrap}
+ .pco-travel-progress>span{display:none}.pco-travel-progress>b{font-weight:500}
+ .pco-travel-steps>button{font-size:12px;padding:8px;min-width:44px;white-space:nowrap}
+ .pco-travel-steps>button:first-child{grid-column:3;grid-row:1}.pco-travel-steps>button:last-child{grid-column:4;grid-row:1}
+ .pco-travel-steps>strong{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+}

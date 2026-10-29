@@ -281,7 +281,7 @@ function handleCohortChoice(button){
  const m=pc.model(HC.model(historyState).index,cohortState);
  if(!m.selected.choices.some(c=>c.id===button.dataset.cohortChoice))return true;
  cohortState=pc.choose(cohortState,m.selected.id,button.dataset.cohortChoice);PlannerStorage.setItem(cohortKey,JSON.stringify(cohortState));drawHistoryJourney();
- $('pathwayCoachContent').querySelector('[data-cohort-choice="'+button.dataset.cohortChoice+'"]')?.focus({preventScroll:true});return true;
+ (workspaceView==='records'?$('workspace-panel-records'):$('pathwayCoachContent')).querySelector('[data-cohort-choice="'+button.dataset.cohortChoice+'"]')?.focus({preventScroll:true});return true;
 }
 const SP=PlannerStudyPlan,SPV=PlannerStudyPlanView,studyKey='gfield.demo2.study-plan-grade5.v1';
 let studyActive=false,studyState=SP.restore(null),studySaved=null,studyReturnView='map',studyReturnPane='result';

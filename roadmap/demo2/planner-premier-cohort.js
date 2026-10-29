@@ -48,7 +48,7 @@ function stageButton(m,index,label,attrs=''){return '<button type="button" data-
 function phaseNav(m){return '<nav class="pco-phase-nav" aria-label="함께 살펴볼 공부의 전환">'+m.phases.map((p,i)=>stageButton(m,i,'<b>'+(i+1)+'</b><span>'+esc(PHASE_SHORT[i]||p.title)+'</span>',' aria-label="'+esc(p.title)+'" aria-pressed="'+p.selected+'"')).join('')+'</nav>';}
 function summary(value){
  const m=asModel(value);if(!m)return unavailable();
- return '<nav class="pco-root pco-travel" aria-label="프리미어 합격생 사례 이동"><div class="pco-travel-top"><button type="button" data-history-close>← 내 계획</button><span>합격생들의 공부 · '+(m.stageIndex+1)+' / '+m.phases.length+'</span></div><div class="pco-travel-steps">'+
+ return '<nav class="pco-root pco-travel" aria-label="프리미어 합격생 사례 이동"><div class="pco-travel-top"><button type="button" data-history-close>← 내 계획</button><span class="pco-travel-progress"><span>합격생들의 공부 · </span><b>'+(m.stageIndex+1)+' / '+m.phases.length+'</b></span></div><div class="pco-travel-steps">'+
   stageButton(m,Math.max(0,m.stageIndex-1),'← 이전',' data-history-step="prev"'+(m.stageIndex===0?' disabled':''))+'<strong>'+esc(m.selected.title)+'</strong>'+
   stageButton(m,Math.min(m.phases.length-1,m.stageIndex+1),'다음 →',' data-history-step="next"'+(m.stageIndex===m.phases.length-1?' disabled':''))+'</div></nav>';
 }
@@ -88,7 +88,7 @@ function table(value){
 function qa(items,openFirst=false){return (items||[]).map((x,i)=>'<details'+(openFirst&&i===0?' open':'')+'><summary>'+esc(x.q)+'</summary><p>'+esc(x.a)+'</p></details>').join('');}
 function records(value){
  const m=asModel(value);if(!m)return unavailable();
- return '<section class="pco-root pco-records"><header class="pco-section-title"><small>공부와 부모의 선택을 함께</small><h3>전환마다 달라진 고민</h3><p>'+esc(m.intro)+'</p></header>'+m.phases.map((p,i)=>'<section class="pco-concern'+(p.selected?' pco-current-concern':'')+'"><header>'+stageButton(m,i,'<span>'+(i+1)+'</span><strong>'+esc(p.title)+'</strong>',' aria-pressed="'+p.selected+'"')+'<small>'+esc(p.period)+'</small></header><p>'+esc(p.comment)+'</p>'+qa(p.questions,p.selected)+'</section>').join('')+((m.notes||[]).length?'<aside class="pco-closing-notes">'+m.notes.map(n=>'<p>'+esc(n)+'</p>').join('')+'</aside>':'')+'</section>';
+ return '<section class="pco-root pco-records"><div class="pco-mobile-choices">'+choices(m)+'</div><header class="pco-section-title"><small>공부와 부모의 선택을 함께</small><h3>전환마다 달라진 고민</h3><p>'+esc(m.intro)+'</p></header>'+m.phases.map((p,i)=>'<section class="pco-concern'+(p.selected?' pco-current-concern':'')+'"><header>'+stageButton(m,i,'<span>'+(i+1)+'</span><strong>'+esc(p.title)+'</strong>',' aria-pressed="'+p.selected+'"')+'<small>'+esc(p.period)+'</small></header><p>'+esc(p.comment)+'</p>'+qa(p.questions,p.selected)+'</section>').join('')+((m.notes||[]).length?'<aside class="pco-closing-notes">'+m.notes.map(n=>'<p>'+esc(n)+'</p>').join('')+'</aside>':'')+'</section>';
 }
 function questions(value){
  const m=asModel(value);if(!m)return unavailable();
