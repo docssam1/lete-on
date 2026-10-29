@@ -53,7 +53,7 @@ function startServer() {
         const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u6")?.subunits.find(x => x.name === "사건의 가능성")?.types.find(x => x.sourceItemId === id);
         return type && { reviewLocked: type.reviewLocked, sourceVerified: type.sourceVerified, generationMode: type.generationMode, verifiedVariantCount: type.verifiedVariantCount, generatorKey: window.HSE_GENERATORS.generatorKey(type) };
       }, itemId);
-      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 1, generatorKey: `source52ProbabilityPage65Mission${n}` });
+      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: n===1?3:1, generatorKey: `source52ProbabilityPage65Mission${n}` });
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u6");
@@ -68,7 +68,7 @@ function startServer() {
       const problemItem = problemView.locator(`[data-source-item-id='${itemId}']`).first();
       await problemItem.waitFor({ state: "visible" });
       const prompt = await problemItem.innerText();
-      const expectedPrompts = {1:["동전", "세 개", "같은 면"],2:["20", "두 장", "3의 배수"],3:["1cm", "5cm", "삼각형"],4:["수험생", "책상"],5:["제비", "당첨", "다시 넣지"],6:["주사위", "세 개", "적어도 두"]};
+      const expectedPrompts = {1:["동전", "4개", "같은 면"],2:["20", "두 장", "3의 배수"],3:["1cm", "5cm", "삼각형"],4:["수험생", "책상"],5:["제비", "당첨", "다시 넣지"],6:["주사위", "세 개", "적어도 두"]};
       for(const t of expectedPrompts[n]) assert(prompt.includes(t), `${itemId}: ${t}`);
       assert.equal(await problemView.locator(`[data-source-answer='${itemId}']`).count(), 0);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `problem horizontal overflow ${width}px`);
@@ -79,7 +79,7 @@ function startServer() {
       await page.locator("#solutionTab").click();
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
-      const fractionLabel=({1:"4분의 1",2:"190분의 99",3:"10분의 3",4:"8분의 3",5:"15분의 1",6:"9분의 4"})[n];
+      const fractionLabel=({1:"8분의 1",2:"190분의 99",3:"10분의 3",4:"8분의 3",5:"15분의 1",6:"9분의 4"})[n];
       assert(await solutionView.locator(`.math-fraction[aria-label="${fractionLabel}"]`).count()>0,`fraction rendering ${fractionLabel}`);
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);
