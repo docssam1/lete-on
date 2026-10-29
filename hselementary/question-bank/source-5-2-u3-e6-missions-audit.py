@@ -45,3 +45,11 @@ assert reflected_direction(30,-20)==290
 assert reflected_direction(290,0)==70
 assert reflected_direction(70,-20)==250
 print('Wedge return path independently verified: launch angle 30 degrees')
+
+# Folded rectangle: independently compute the marked upper trapezoid by shoelace.
+upper=[(6,0),(8,0),(8,8),(6,6)]
+upper_area=abs(sum(x*v-u*y for (x,y),(u,v) in zip(upper,upper[1:]+upper[:1])))/2
+lower_area=(8-6)*(22-16)
+assert upper_area==14 and lower_area==12
+assert 8*upper_area+2*lower_area==136
+print('Folded rectangle layer counts and upper trapezoid area verified')
