@@ -69,6 +69,15 @@ test("7.NS.A declares the gated 36 plus 8 sequence and exact section balance", f
   assert.notEqual(source.pack.workbookItems.slice(0,4).map(source.solveItem).join(""),source.pack.workbookItems.slice(4,8).map(source.solveItem).join(""));
 });
 
+test("standard-filtered practice covers each 7.NS.A strand without changing the unit total", function () {
+  const items = source.pack.workbookItems;
+  const matches = function (item, standard) { return item.standardIds.some(function (id) { return id === standard || (id.startsWith(standard) && /^[a-z]$/.test(id.slice(standard.length))); }); };
+  assert.deepEqual(Object.fromEntries(["7.NS.A.1", "7.NS.A.2", "7.NS.A.2d", "7.NS.A.3"].map(function (standard) { return [standard, items.filter(function (item) { return matches(item, standard); }).length]; })), {
+    "7.NS.A.1": 18, "7.NS.A.2": 14, "7.NS.A.2d": 4, "7.NS.A.3": 4
+  });
+  assert.equal(items.filter(function (item) { return matches(item, "7.NS.A.1") || matches(item, "7.NS.A.2") || matches(item, "7.NS.A.3"); }).length, 36);
+});
+
 test("a separate BigInt solver proves every rational answer and nonzero divisor", function () {
   all().filter(function (item) { return item.kind !== "decimal-form"; }).forEach(function (item) {
     const expected = exactExpected(item), selected = choiceValue(item);

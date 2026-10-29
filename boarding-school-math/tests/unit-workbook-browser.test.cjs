@@ -60,6 +60,7 @@ test("ratio student edition is a 36-item printable unit with exact-response inpu
   assert.equal(await page.locator(".book-page").count(),12);
   assert.equal(await page.locator(".book-problem").count(),36);
   assert.equal(await page.locator(".answer-input").count(),36);
+  assert.equal(await page.locator("#standard-filter-wrap").isVisible(),true);
   assert.equal(await page.locator(".choice-button,.teacher-key,.teacher-move").count(),0);
   assert.equal(await page.locator("h1").innerText(),"6.RP.A 비와 비율 단원 워크북");
   assert.match(await page.locator("main").innerText(),/단위율과 같은 비로 구하기/);
@@ -116,6 +117,7 @@ test("fraction-division student edition renders 36 exact-response items on 12 pa
   assert.equal(await page.locator(".book-page").count(),12);
   assert.equal(await page.locator(".book-problem").count(),36);
   assert.equal(await page.locator(".answer-input").count(),36);
+  assert.equal(await page.locator("#standard-filter-wrap").isHidden(),true);
   assert.equal(await page.locator(".teacher-key,.teacher-move,.choice-button").count(),0);
   assert.equal(await page.locator("h1").innerText(),"6.NS.A 분수 나눗셈 단원 워크북");
   assert.match(await page.locator("main").innerText(),/몇 묶음인지와 한 몫의 크기/);
@@ -322,8 +324,8 @@ test("ratio, algebra, and geometry workbooks stay usable at 320px and 390px",asy
     const dimensions=await page.evaluate(function(){return[document.documentElement.scrollWidth,document.documentElement.clientWidth];});
     assert.deepEqual(dimensions,[width,width]);
     assert.equal(await page.locator(".answer-input").count(),36);
-    const targets=await page.locator("button,select,input,.brand").evaluateAll(function(nodes){return nodes.filter(function(node){return getComputedStyle(node).display!=="none";}).map(function(node){const box=node.getBoundingClientRect();return[box.width,box.height];});});
-    targets.forEach(function(size){assert.ok(size[0]>=44);assert.ok(size[1]>=44);});
+    const targets=await page.locator("button,select,input,.brand").evaluateAll(function(nodes){return nodes.filter(function(node){return node.checkVisibility();}).map(function(node){const box=node.getBoundingClientRect();return[box.width,box.height];});});
+    targets.forEach(function(size){assert.ok(size[0]>=44,cluster+" at "+width+"px has a "+size[0]+"px-wide control");assert.ok(size[1]>=44,cluster+" at "+width+"px has a "+size[1]+"px-tall control");});
     assert.deepEqual(errors,[]);
     await page.close();
   }
@@ -454,6 +456,24 @@ test("Grade 7 rational-number locale and audience matrix keeps stacked fractions
     assert.equal(await page.locator(".book-page").count(),student?12:20,locale+":"+audience+":pages");assert.equal(await page.locator(".book-problem").count(),36,locale+":"+audience+":items");assert.ok(await page.locator("main mfrac").count()>80,locale+":"+audience+":stacked fractions");assert.equal(await page.evaluate(function(){return document.documentElement.scrollWidth-document.documentElement.clientWidth;}),0,locale+":"+audience+":screen overflow");const expectedNegativeLabel=locale==="ko"?"음의 4분의 3":locale==="zh-Hans"?"负4分之3":"negative 3 over 4",expectedRepeatLabel=locale==="ko"?"반복되는 숫자 묶음 6":locale==="zh-Hans"?"循环节6":"repeating block 6";assert.equal(await page.locator('[data-item-id="g7nsa-w01"] .problem-prompt math').first().getAttribute("aria-label"),expectedNegativeLabel,locale+":"+audience+":negative fraction label");assert.equal(await page.locator('[data-item-id="g7nsa-w30"] .math-repeating-block[data-repeat-block="6"]').first().getAttribute("aria-label"),expectedRepeatLabel,locale+":"+audience+":repeat block label");
     const content=await page.locator(".problem-prompt,.choice-label,.problem-visual,.concept-card,.scope-notice,.reflection-box,.teacher-key,.teacher-move").allInnerTexts(),joined=content.join("\n");assert.equal((joined.match(/[−-]?\d+\s*[/]\s*[1-9]\d*/g)||[]).length,0,locale+":"+audience+":slash fractions");assert.equal((joined.match(/(^|[\s(=:+×÷,])-\d/gm)||[]).length,0,locale+":"+audience+":formal minus sign");assert.equal(joined.includes("…"),false,locale+":"+audience+":ellipsis decimal");assert.ok(await page.locator('.math-repeating-block[data-repeat-block]').count()>0,locale+":"+audience+":repeating-decimal overbar");await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0,locale+":"+audience+":print overflow");assert.deepEqual(errors,[],locale+":"+audience+":browser errors");await context.close();
   }}
+});
+
+test("Grade 7 standard-focused practice filters mobile and print without changing full-unit completion",async function(){
+  const page=await browser.newPage({viewport:{width:320,height:844},isMobile:true});const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4&standard=7.NS.A.2d`,{waitUntil:"networkidle"});
+  await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});
+  assert.equal(await page.locator("#standard-filter").isVisible(),true);assert.equal(await page.locator("#standard-filter").inputValue(),"7.NS.A.2d");assert.equal(await page.locator(".book-problem").count(),4);assert.equal(await page.locator("#progress-chip").innerText(),"0 / 4");
+  assert.match(await page.locator(".book-cover .page-kicker").innerText(),/7\.NS\.A\.2D/);assert.deepEqual(await page.evaluate(function(){return[document.documentElement.scrollWidth,document.documentElement.clientWidth];}),[320,320]);
+  await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.equal(await page.locator(".teacher-key,.teacher-move").count(),0);assert.deepEqual(errors,[]);await page.emulateMedia({media:null});
+  await page.locator("#standard-filter").selectOption("");assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator("#progress-chip").innerText(),"0 / 36");assert.doesNotMatch(page.url(),/standard=/);
+  await page.close();
+});
+
+test("a standard without matching recheck items explains the empty state and restores on reset",async function(){
+  const page=await browser.newPage({viewport:{width:390,height:844}});const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=7.NS.A&mode=recheck&audience=teacher&locale=ko&paper=A4&standard=7.NS.A.2c`,{waitUntil:"networkidle"});
+  assert.equal(await page.locator(".book-problem").count(),0);assert.match(await page.locator("#book-content").innerText(),/이 기준에는 새 재확인 문항이 없어요/);assert.equal(await page.locator("#print-book").isDisabled(),true);assert.equal(await page.locator("[data-mode='recheck']").isDisabled(),true);assert.equal(await page.locator("#progress-chip").isHidden(),true);
+  await page.locator("#standard-filter").selectOption("");await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});assert.equal(await page.locator(".book-problem").count(),8);assert.equal(await page.locator("#progress-chip").isVisible(),true);assert.deepEqual(errors,[]);await page.close();
 });
 
 test("Grade 7 rational-number teacher recheck exposes guidance without student controls",async function(){

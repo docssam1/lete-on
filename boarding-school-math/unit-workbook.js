@@ -19,6 +19,14 @@
   const source = sources[requestedCluster];
   if (!source) throw new Error("UNIT_WORKBOOK_SOURCE_MISSING");
   source.validatePack();
+  const exactStandards = Array.from(new Set(source.pack.workbookItems.flatMap(function (item) { return item.standardIds || []; }))).sort();
+  const standardOptions = Array.from(new Set(exactStandards.concat(exactStandards.map(function (standard) { return standard.replace(/([1-9])[a-z]$/, "$1"); })))).sort();
+  const requestedStandard = standardOptions.includes(query.get("standard")) ? query.get("standard") : "";
+  function matchesStandard(item, standard) {
+    return !standard || (item.standardIds || []).some(function (candidate) {
+      return candidate === standard || (candidate.startsWith(standard) && /^[a-z]$/.test(candidate.slice(standard.length)));
+    });
+  }
   const completionKey = source.pack.completionKey || (["6.RP.A","6.NS.A","6.NS.B","6.NS.C","6.EE.A","6.EE.B","6.EE.C","6.G.A"].includes(source.pack.clusterId)?"gfield-unit-workbook:":"gfield-clinic-workbook:")+source.pack.clusterId+":v1";
   function workbookCompleted() {
     try { return localStorage.getItem(completionKey) === "complete-v1"; }
@@ -32,17 +40,22 @@
     mode: requestedAudience === "student" && requestedMode === "recheck" && !workbookCompleted() ? "workbook" : requestedMode,
     locale: ["ko","en","zh-Hans"].includes(query.get("locale")) ? query.get("locale") : "ko",
     paper: ["A4","Letter"].includes(query.get("paper")) ? query.get("paper") : "A4",
+    standard: requestedStandard,
     selected: new Map(),
     correct: new Set()
   };
   if (state.cluster !== source.pack.clusterId) throw new Error("UNIT_WORKBOOK_CLUSTER_UNSUPPORTED");
 
   const COPY = {
-    ko:{ student:"학생용 · 단원 워크북",teacher:"교사용 · 지도서",studentEdition:"학생용",teacherEdition:"교사용",unit:"단원",recheck:"재확인",recheckLocked:"재확인은 단원 문항을 모두 맞힌 뒤 열립니다.",language:"언어",paper:"용지",progress:"맞힌 문제",name:"이름",date:"날짜",class:"반",concept:"개념 학습",practice:"유형 연습",items:"문제",answer:"정답과 검산",teaching:"오답 지도",correct:"맞았습니다.",wrong:"다시 생각해 보세요.",check:"정답 확인",answerPlaceholder:"답 쓰기",record:"학습 기록 · 답안표",reflection:"내가 만든 조사 질문",reflectionPrompt:"우리 반에서 조사할 수 있고 학생마다 답이 달라질 수 있는 질문을 하나 만든 뒤, 어떤 자료를 모아야 하는지 쓰세요.",print:"워크북 인쇄 · PDF 저장"},
-    en:{ student:"Student · Unit Workbook",teacher:"Teacher · Guide",studentEdition:"Student",teacherEdition:"Teacher",unit:"Unit",recheck:"Recheck",recheckLocked:"Recheck opens after all unit items are correct.",language:"Language",paper:"Paper",progress:"Items correct",name:"Name",date:"Date",class:"Class",concept:"Concept Lesson",practice:"Practice",items:"items",answer:"Answer and check",teaching:"Teaching move",correct:"Correct.",wrong:"Think again.",check:"Check answer",answerPlaceholder:"Write answer",record:"Learning Record · Answer Sheet",reflection:"My Statistical Question",reflectionPrompt:"Write one statistical question about your class. Then state which answer could vary from student to student.",print:"Print Workbook · Save PDF"},
-    "zh-Hans":{ student:"学生版 · 单元练习册",teacher:"教师版 · 教学指南",studentEdition:"学生版",teacherEdition:"教师版",unit:"单元",recheck:"复测",recheckLocked:"完成单元全部题目并答对后，才能开始复测。",language:"语言",paper:"纸张",progress:"答对题数",name:"姓名",date:"日期",class:"班级",concept:"概念学习",practice:"分类练习",items:"题",answer:"答案与核验",teaching:"教学提示",correct:"正确。",wrong:"请再想一想。",check:"核验答案",answerPlaceholder:"填写答案",record:"学习记录 · 答题表",reflection:"我提出的调查问题",reflectionPrompt:"提出一个适合在班里调查、而且答案可能因学生而不同的问题，并写出需要收集的数据。",print:"打印练习册 · 保存PDF"}
+    ko:{ student:"학생용 · 단원 워크북",teacher:"교사용 · 지도서",studentEdition:"학생용",teacherEdition:"교사용",unit:"단원",recheck:"재확인",recheckLocked:"재확인은 단원 문항을 모두 맞힌 뒤 열립니다.",recheckEmpty:"이 기준에는 새 재확인 문항이 없어요. 전체 기준이나 다른 기준을 골라 주세요.",language:"언어",paper:"용지",standard:"기준",allStandards:"전체 기준",progress:"맞힌 문제",name:"이름",date:"날짜",class:"반",concept:"개념 학습",practice:"유형 연습",items:"문제",answer:"정답과 검산",teaching:"오답 지도",correct:"맞았습니다.",wrong:"다시 생각해 보세요.",check:"정답 확인",answerPlaceholder:"답 쓰기",record:"학습 기록 · 답안표",reflection:"내가 만든 조사 질문",reflectionPrompt:"우리 반에서 조사할 수 있고 학생마다 답이 달라질 수 있는 질문을 하나 만든 뒤, 어떤 자료를 모아야 하는지 쓰세요.",print:"워크북 인쇄 · PDF 저장"},
+    en:{ student:"Student · Unit Workbook",teacher:"Teacher · Guide",studentEdition:"Student",teacherEdition:"Teacher",unit:"Unit",recheck:"Recheck",recheckLocked:"Recheck opens after all unit items are correct.",recheckEmpty:"There are no new recheck items for this standard. Choose all standards or another standard.",language:"Language",paper:"Paper",standard:"Standard",allStandards:"All standards",progress:"Items correct",name:"Name",date:"Date",class:"Class",concept:"Concept Lesson",practice:"Practice",items:"items",answer:"Answer and check",teaching:"Teaching move",correct:"Correct.",wrong:"Think again.",check:"Check answer",answerPlaceholder:"Write answer",record:"Learning Record · Answer Sheet",reflection:"My Statistical Question",reflectionPrompt:"Write one statistical question about your class. Then state which answer could vary from student to student.",print:"Print Workbook · Save PDF"},
+    "zh-Hans":{ student:"学生版 · 单元练习册",teacher:"教师版 · 教学指南",studentEdition:"学生版",teacherEdition:"教师版",unit:"单元",recheck:"复测",recheckLocked:"完成单元全部题目并答对后，才能开始复测。",recheckEmpty:"此标准没有新的复测题。请选择全部标准或其他标准。",language:"语言",paper:"纸张",standard:"标准",allStandards:"全部标准",progress:"答对题数",name:"姓名",date:"日期",class:"班级",concept:"概念学习",practice:"分类练习",items:"题",answer:"答案与核验",teaching:"教学提示",correct:"正确。",wrong:"请再想一想。",check:"核验答案",answerPlaceholder:"填写答案",record:"学习记录 · 答题表",reflection:"我提出的调查问题",reflectionPrompt:"提出一个适合在班里调查、而且答案可能因学生而不同的问题，并写出需要收集的数据。",print:"打印练习册 · 保存PDF"}
   };
   function c() { return COPY[state.locale]; }
+  function activeItems() {
+    const items = state.mode === "workbook" ? source.pack.workbookItems : source.pack.recheckItems;
+    return items.filter(function (item) { return matchesStandard(item, state.standard); });
+  }
   function recheckLockedMessage() {
     if(state.locale==="en") return "Recheck opens after all "+source.pack.workbookItems.length+" unit items are correct.";
     if(state.locale==="zh-Hans") return "完成单元"+source.pack.workbookItems.length+"题并全部答对后，才能开始复测。";
@@ -83,32 +96,49 @@
   }
   function setUrl() {
     const url=new URL(location.href); url.search="";
-    Object.entries(state).forEach(function(entry){ if(["selected","correct","cluster"].includes(entry[0])) return; url.searchParams.set(entry[0],entry[1]); });
-    url.searchParams.set("cluster",state.cluster); history.replaceState({},"",url);
+    Object.entries(state).forEach(function(entry){ if(["selected","correct","cluster","standard"].includes(entry[0])) return; url.searchParams.set(entry[0],entry[1]); });
+    url.searchParams.set("cluster",state.cluster);
+    if(state.standard) url.searchParams.set("standard",state.standard); else url.searchParams.delete("standard");
+    history.replaceState({},"",url);
   }
   function page(number, className) { const node=el("section","book-page "+(className||"")); node.dataset.pageNumber=String(number); return node; }
   function syncModeControls() {
     const locked = state.audience === "student" && !workbookCompleted();
+    const workbookCount = source.pack.workbookItems.filter(function (item) { return matchesStandard(item, state.standard); }).length;
+    const recheckCount = source.pack.recheckItems.filter(function (item) { return matchesStandard(item, state.standard); }).length;
     document.querySelectorAll("[data-mode]").forEach(function(button){
       const isRecheck = button.dataset.mode === "recheck";
-      button.textContent = (isRecheck ? c().recheck : c().unit) + " " + (isRecheck ? source.pack.recheckItems.length : source.pack.workbookItems.length);
-      button.disabled = isRecheck && locked;
+      button.textContent = (isRecheck ? c().recheck : c().unit) + " " + (isRecheck ? recheckCount : workbookCount);
+      button.disabled = isRecheck && (locked || recheckCount === 0);
       button.setAttribute("aria-pressed",String(button.dataset.mode===state.mode));
       if (isRecheck && locked) button.title = recheckLockedMessage();
+      else if (isRecheck && recheckCount === 0) button.title = c().recheckEmpty;
       else button.removeAttribute("title");
     });
   }
+  function syncStandardFilter() {
+    const wrapper = document.getElementById("standard-filter-wrap");
+    const select = document.getElementById("standard-filter");
+    wrapper.hidden = standardOptions.length <= 1;
+    document.getElementById("standard-filter-label").textContent = c().standard;
+    select.setAttribute("aria-label", c().standard);
+    select.replaceChildren();
+    const all = document.createElement("option"); all.value = ""; all.textContent = c().allStandards; select.append(all);
+    standardOptions.forEach(function (standard) { const option = document.createElement("option"); option.value = standard; option.textContent = standard; select.append(option); });
+    select.value = state.standard;
+  }
   function updateProgress() {
-    const active=state.mode==="workbook"?source.pack.workbookItems:source.pack.recheckItems;
+    const active=activeItems();
     const progress=document.getElementById("progress-chip");
-    progress.textContent=state.correct.size+" / "+active.length;
+    progress.hidden=active.length===0;
+    progress.textContent=active.filter(function (item) { return state.correct.has(item.id); }).length+" / "+active.length;
     progress.setAttribute("aria-label",c().progress+" "+progress.textContent);
   }
   function renderCover(pageNumber) {
     const node=page(pageNumber,"book-cover");
     const gradeMatch=/^(\d+)\./.exec(String(source.pack.clusterId||source.pack.standardRange||""));
     const gradeLabel=gradeMatch?"US GRADE "+gradeMatch[1]:"US CORE MATH";
-    node.append(el("p","page-kicker","GFIELD MATH · "+gradeLabel+" · "+source.pack.standardRange),el("h1","",text(source.pack.title)),mathEl("p","book-subtitle",text(source.pack.subtitle)),el("div","cover-rule"));
+    node.append(el("p","page-kicker","GFIELD MATH · "+gradeLabel+" · "+source.pack.standardRange+(state.standard?" · "+state.standard:"")),el("h1","",text(source.pack.title)),mathEl("p","book-subtitle",text(source.pack.subtitle)),el("div","cover-rule"));
     const grid=el("div","cover-grid");
     [[c().name,""],[c().class,""],[c().date,""]].forEach(function(entry){ const box=el("div"); box.append(el("span","",entry[0]),el("strong","","")); grid.append(box); });
     node.append(grid);
@@ -136,8 +166,7 @@
       const feedback=card.querySelector(".choice-feedback");
       if(source.evaluateResponse(problem,response)){
         state.correct.add(problem.id); if(control) control.classList.add("is-correct"); feedback.className="choice-feedback correct"; feedback.textContent=c().correct;
-        const active=state.mode==="workbook"?source.pack.workbookItems:source.pack.recheckItems;
-        if(state.mode==="workbook"&&state.correct.size===active.length){try{localStorage.setItem(completionKey,"complete-v1");}catch(_error){/* session progress remains visible */}syncModeControls();}
+        if(state.mode==="workbook"&&source.pack.workbookItems.every(function (item) { return state.correct.has(item.id); })){try{localStorage.setItem(completionKey,"complete-v1");}catch(_error){/* session progress remains visible */}syncModeControls();}
       }else{state.correct.delete(problem.id);if(control)control.classList.remove("is-correct");feedback.className="choice-feedback wrong";feedback.replaceChildren();appendMathText(feedback,c().wrong+" "+source.hintFor(problem,state.locale));}
       updateProgress();
     }
@@ -177,11 +206,12 @@
     setUrl(); document.documentElement.lang=state.locale; document.body.classList.toggle("paper-letter",state.paper==="Letter"); document.body.dataset.audience=state.audience;
     let pageStyle=document.getElementById("dynamic-page-size"); if(!pageStyle){pageStyle=document.createElement("style"); pageStyle.id="dynamic-page-size"; document.head.append(pageStyle);} pageStyle.textContent="@page { size: "+state.paper+"; margin: 0; }";
     const printButton=document.getElementById("print-book"); printButton.disabled=true; printButton.dataset.ready="false";
-    document.title=text(source.pack.title)+" · GFIELD Math"; const conceptLink=document.getElementById("concept-link");conceptLink.href=source.pack.conceptDelivery==="embedded"?(state.mode==="workbook"?"#unit-concepts":"./unit-workbook.html?audience="+encodeURIComponent(state.audience)+"&mode=workbook&locale="+encodeURIComponent(state.locale)+"&paper="+encodeURIComponent(state.paper)+"&cluster="+encodeURIComponent(state.cluster)+"#unit-concepts"):"./concept-learning.html?cluster="+encodeURIComponent(state.cluster)+"&from=diagnostic"; document.getElementById("role-chip").textContent=state.audience==="teacher"?c().teacher:c().student; document.getElementById("edition-label").textContent=state.audience==="teacher"?c().teacherEdition:c().studentEdition; printButton.textContent=c().print;
-    syncModeControls();
+    document.title=text(source.pack.title)+" · GFIELD Math"; const conceptLink=document.getElementById("concept-link");conceptLink.href=source.pack.conceptDelivery==="embedded"?(state.mode==="workbook"?"#unit-concepts":"./unit-workbook.html?audience="+encodeURIComponent(state.audience)+"&mode=workbook&locale="+encodeURIComponent(state.locale)+"&paper="+encodeURIComponent(state.paper)+"&cluster="+encodeURIComponent(state.cluster)+(state.standard?"&standard="+encodeURIComponent(state.standard):"")+"#unit-concepts"):"./concept-learning.html?cluster="+encodeURIComponent(state.cluster)+"&from=diagnostic"; document.getElementById("role-chip").textContent=state.audience==="teacher"?c().teacher:c().student; document.getElementById("edition-label").textContent=state.audience==="teacher"?c().teacherEdition:c().studentEdition; printButton.textContent=c().print;
+    syncModeControls(); syncStandardFilter();
     document.getElementById("locale-label").textContent=c().language; document.getElementById("paper-label").textContent=c().paper;
     document.getElementById("locale-select").value=state.locale; document.getElementById("paper-select").value=state.paper; updateProgress();
-    const host=document.getElementById("book-content"); host.replaceChildren(); const items=state.mode==="workbook"?source.pack.workbookItems:source.pack.recheckItems;
+    const host=document.getElementById("book-content"); host.replaceChildren(); const items=activeItems();
+    if(!items.length){host.append(el("p","standard-empty",c().recheckEmpty));return;}
     let number=1; host.append(renderCover(number++));
     if(state.mode==="workbook") host.append(renderConcepts(number++));
     const practice=renderPracticePages(number,items); practice.forEach(function(node){host.append(node);}); number+=practice.length;
@@ -192,6 +222,7 @@
   document.querySelectorAll("[data-mode]").forEach(function(button){button.addEventListener("click",function(){update("mode",button.dataset.mode);});});
   document.getElementById("locale-select").addEventListener("change",function(event){update("locale",event.target.value);});
   document.getElementById("paper-select").addEventListener("change",function(event){update("paper",event.target.value);});
+  document.getElementById("standard-filter").addEventListener("change",function(event){update("standard",event.target.value);});
   document.getElementById("print-book").addEventListener("click",function(){window.print();});
   render();
 })();

@@ -427,6 +427,20 @@ test("Grade 7 NS.A roadmap breaks the strand into four observable checks with re
   assert.match(await page.locator("#grade7-stage-resource").getAttribute("href"), /cluster=7.NS.A/);
   assert.match(await page.locator("#grade7-stage-resource").innerText(), /36문항/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await page.getByRole("link", { name: "7.NS.A.1 워크북에서 연습" }).click();
+  await page.waitForURL(/unit-workbook\.html\?cluster=7\.NS\.A.*standard=7\.NS\.A\.1/);
+  assert.equal(await page.locator("#standard-filter").inputValue(), "7.NS.A.1");
+  assert.equal(await page.locator(".book-problem").count(), 18);
+  assert.equal(await page.locator("[data-mode='workbook']").innerText(), "단원 18");
+  assert.equal(await page.locator("[data-mode='recheck']").innerText(), "재확인 4");
+  const standardItems = require("../learning/grade7-ns-a-unit-workbook.js").pack.workbookItems.filter(function (item) { return item.standardIds.some(function (standard) { return standard === "7.NS.A.1" || /^7\.NS\.A\.1[a-z]$/.test(standard); }); });
+  for (const item of standardItems) await page.locator(`[data-item-id="${item.id}"] [data-answer-id="${require("../learning/grade7-ns-a-unit-workbook.js").solveItem(item)}"]`).click();
+  assert.equal(await page.locator("#progress-chip").innerText(), "18 / 18");
+  assert.equal(await page.locator("[data-mode='recheck']").isDisabled(), true, "mastering a filtered standard must not unlock the full-unit recheck");
+  await page.locator("#standard-filter").selectOption("");
+  assert.equal(await page.locator(".book-problem").count(), 36);
+  assert.equal(await page.locator("#progress-chip").innerText(), "18 / 36");
+  assert.doesNotMatch(page.url(), /standard=/);
   await page.close();
 });
 
