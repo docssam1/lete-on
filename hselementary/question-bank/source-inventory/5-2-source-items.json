@@ -4900,16 +4900,18 @@
       "pdfPage": 56,
       "printedPage": 60,
       "sourceShape": "50명 공 넣기 득점 6~0점 학생 수 표에서 4점·0점 빈칸과 빨간 공 34개 조건의 흰 공 수 구하기",
-      "answerContract": "multipart: 4점 12명, 0점 4명; 흰 공 31개",
+      "answerContract": "candidate: table and combination",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 60쪽 표, 색별 3·2·1점과 두 물음을 대조하고 공 조합 및 학생 수를 독립 열거했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조와 표를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-exploration"
     },
     {
       "sourceItemId": "5-2-u6-e2-example-1",
