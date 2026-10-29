@@ -1,0 +1,52 @@
+"use strict";
+const assert = require("node:assert/strict");
+const test = require("node:test");
+const history = require("../competition/amc-score-history.js");
+
+function record(overrides = {}) {
+  return { id: "attempt-1", programId: "amc10", cycle: "2025-26", form: "A", examDate: "2025-11-06", rawScore: 99.5, maxScore: 150, ...overrides };
+}
+
+test("records only contest, cycle, form, date, and reported raw score", function () {
+  const saved = history.validateRecord(record());
+  assert.deepEqual(saved, record());
+  assert.equal(Object.hasOwn(saved, "studentName"), false);
+  assert.equal(Object.hasOwn(saved, "answers"), false);
+});
+
+test("validates program-specific scoring scales and forms", function () {
+  assert.throws(() => history.validateRecord(record({ programId: "amc8", form: "AMC 8", maxScore: 25, rawScore: 20.5 })), { code: "SCORE_INCREMENT_INVALID" });
+  assert.throws(() => history.validateRecord(record({ programId: "amc10", form: "AMC 8" })), { code: "FORM_INVALID" });
+  assert.throws(() => history.validateRecord(record({ programId: "amc12", form: "C" })), { code: "FORM_INVALID" });
+  assert.throws(() => history.validateRecord(record({ programId: "amc8", form: "AMC 8", maxScore: 25, rawScore: 26 })), { code: "SCORE_INVALID" });
+  assert.throws(() => history.validateRecord(record({ examDate: "2025-02-30" })), { code: "DATE_INVALID" });
+});
+
+test("compares scores only within each contest and orders each record by date", function () {
+  const groups = history.compare([
+    record({ id: "feb-amc10b", form: "B", examDate: "2026-02-01", rawScore: 102 }),
+    record({ id: "amc8", programId: "amc8", cycle: "2025-26", form: "AMC 8", examDate: "2026-01-22", rawScore: 20, maxScore: 25 }),
+    record({ id: "nov-amc10a", examDate: "2025-11-06", rawScore: 96 })
+  ]);
+  assert.deepEqual(groups.map((group) => [group.programId, group.entries.length]), [["amc8", 1], ["amc10", 2]]);
+  assert.deepEqual(groups.find((group) => group.programId === "amc10").entries.map((entry) => entry.id), ["nov-amc10a", "feb-amc10b"]);
+  assert.equal(Object.hasOwn(groups.find((group) => group.programId === "amc10").entries[1], "delta"), false);
+});
+
+test("archive rejects unknown fields, malformed cycles, and duplicate IDs", function () {
+  assert.throws(() => history.validateArchive({ schemaVersion: history.schemaVersion, records: [record({ privateNote: "unexpected" })] }), { code: "RECORD_SHAPE" });
+  assert.throws(() => history.validateArchive({ schemaVersion: history.schemaVersion, records: [record(), record()] }), { code: "RECORD_ID_DUPLICATE" });
+  assert.throws(() => history.validateArchive({ schemaVersion: "old", records: [] }), { code: "ARCHIVE_INVALID" });
+  assert.throws(() => history.validateRecord(record({ cycle: "2025-27" })), { code: "CYCLE_INVALID" });
+  assert.throws(() => history.validateArchive({ schemaVersion: history.schemaVersion, records: Array.from({ length: 101 }, (_, index) => record({ id: `id-${index}` })) }), { code: "ARCHIVE_INVALID" });
+});
+
+test("only returns the published MAA 2026-27 US/Canada fixed-score context", function () {
+  assert.equal(history.cycleContext("amc10", "2026-27").kind, "select-region");
+  assert.equal(history.cycleContext("amc10", "2026-27", "maa-us-canada").threshold, 100);
+  assert.equal(history.cycleContext("amc12", "2026-27", "maa-us-canada").threshold, 85);
+  assert.match(history.cycleContext("amc10", "2026-27", "maa-us-canada").note, /만 13세 이상/);
+  assert.equal(history.cycleContext("amc10", "2026-27", "international").kind, "international");
+  assert.equal(history.cycleContext("amc8", "2026-27"), null);
+  assert.equal(history.cycleContext("amc10", "2025-26"), null);
+});

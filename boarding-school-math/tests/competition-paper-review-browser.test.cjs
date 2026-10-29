@@ -83,6 +83,79 @@ test("complete AMC 8 marks show a correct-count reference estimate", async funct
   await page.close();
 });
 
+test("AMC score records stay separated by contest, export/import as a local file, and show the current-cycle reference", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(url, { waitUntil: "networkidle" });
+  await page.locator("#history-program").selectOption("amc10");
+  await page.locator("#history-cycle").fill("2026-27");
+  assert.match(await page.locator("#score-history-context").innerText(), /실제 응시 프로그램을 선택/);
+  await page.locator("#history-region").selectOption("maa-us-canada");
+  assert.match(await page.locator("#score-history-context").innerText(), /100 \/ 150/);
+  assert.match(await page.locator("#score-history-context").innerText(), /만 13세 이상/);
+  assert.equal(await page.getByRole("link", { name: "MAA 2027 AIME 공식 공지 ↗" }).getAttribute("href"), "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/");
+  assert.equal(await page.getByRole("link", { name: "MAA AIME 자격 조건 ↗" }).getAttribute("href"), "https://maa.org/maa-invitational-competitions/");
+  assert.equal(await page.locator("#history-score").getAttribute("max"), "150");
+  assert.equal(await page.locator("#history-score").getAttribute("step"), "0.5");
+  assert.equal(await page.locator("#history-score").getAttribute("inputmode"), "decimal");
+  await page.locator("#history-form").selectOption("B");
+  await page.locator("#history-date").fill("2026-11-13");
+  await page.locator("#history-score").fill("100");
+  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+  assert.equal(await page.locator(".score-history-group").count(), 1);
+  assert.equal(await page.locator("#history-program").inputValue(), "amc10", "the contest selection stays ready for the next entry");
+  assert.equal(await page.locator("#history-cycle").inputValue(), "2026-27");
+  assert.equal(await page.locator("#history-form").inputValue(), "B");
+  assert.equal(await page.locator("#history-score").inputValue(), "");
+  assert.match(await page.locator("#score-history-context").innerText(), /2026–27 미국·캐나다 MAA AIME 점수 기준 · 100 \/ 150/);
+  assert.match(await page.locator("#score-history-context").innerText(), /만 13세 이상/);
+
+  await page.locator("#history-region").selectOption("international");
+  assert.match(await page.locator("#score-history-context").innerText(), /International Group Leader/);
+  assert.doesNotMatch(await page.locator("#score-history-context").innerText(), /100 \/ 150/);
+
+  await page.locator("#history-program").selectOption("amc8");
+  assert.equal(await page.locator("#history-score").getAttribute("inputmode"), "numeric");
+  await page.locator("#history-cycle").fill("2026-27");
+  await page.locator("#history-date").fill("2027-01-24");
+  await page.locator("#history-score").fill("20");
+  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+  assert.equal(await page.locator(".score-history-group").count(), 2, "AMC 8 and AMC 10 are kept in separate comparison groups");
+  assert.equal(await page.evaluate(() => localStorage.length), 0, "no learner history is persisted by the page");
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "JSON 파일로 저장" }).click();
+  const download = await downloadPromise;
+  assert.equal(download.suggestedFilename(), "gfield-amc-score-history.json");
+  const exported = JSON.parse(await fs.promises.readFile(await download.path(), "utf8"));
+  assert.equal(exported.schemaVersion, "gfield-amc-score-history-v1");
+  assert.equal(exported.records.length, 2);
+  assert.equal(Object.hasOwn(exported.records[0], "answers"), false);
+  assert.equal(Object.hasOwn(exported.records[0], "studentName"), false);
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.locator("#history-clear").click();
+  assert.equal(await page.locator(".score-history-group").count(), 0);
+
+  const archive = { schemaVersion: "gfield-amc-score-history-v1", records: [{ id: "imported-attempt", programId: "amc8", cycle: "2025-26", form: "AMC 8", examDate: "2026-01-23", rawScore: 21, maxScore: 25 }] };
+  await page.locator("#history-import").setInputFiles({ name: "history.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(archive)) });
+  await page.waitForFunction(() => !document.querySelector("#score-history-status").hidden);
+  assert.match(await page.locator("#score-history-status").innerText(), /1개 기록을 가져왔어요/);
+  assert.equal(await page.locator(".score-history-group").count(), 1);
+  assert.match(await page.locator(".score-history-table").innerText(), /21 \/ 25/);
+  await page.locator("#history-import").setInputFiles({ name: "history-again.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(archive)) });
+  await page.waitForFunction(() => !document.querySelector("#score-history-error").hidden);
+  assert.match(await page.locator("#score-history-error").innerText(), /이미 있는 기록과 겹치거나/);
+  assert.equal(await page.locator(".score-history-group").count(), 1, "duplicate imports do not append a second copy");
+  const unsafeArchive = { schemaVersion: "gfield-amc-score-history-v1", records: [{ ...archive.records[0], id: "unsafe-attempt", answers: ["A"] }] };
+  await page.locator("#history-import").setInputFiles({ name: "unsafe.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(unsafeArchive)) });
+  await page.waitForFunction(() => !document.querySelector("#score-history-error").hidden && !document.querySelector("#score-history-error").classList.contains("is-success"));
+  assert.match(await page.locator("#score-history-error").innerText(), /기록 파일을 읽지 못했어요/);
+  assert.equal(await page.locator(".score-history-group").count(), 1, "invalid imports do not alter the in-memory records");
+  await page.reload({ waitUntil: "networkidle" });
+  assert.equal(await page.locator(".score-history-group").count(), 0, "records are session-only until exported and imported");
+  assert.equal(await page.evaluate(() => localStorage.length), 0);
+  await page.close();
+});
+
 test("direct entry waits for a contest and keeps empty results out of view", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(url, { waitUntil: "networkidle" });
@@ -137,12 +210,58 @@ test("contest format changes question count and clears old marks", async functio
   await page.close();
 });
 
-test("paper review reflows without horizontal overflow", async function () {
-  for (const size of [{ width: 375, height: 812 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 844, height: 390 }]) {
+test("paper review and score history reflow without horizontal overflow", async function () {
+  for (const size of [{ width: 320, height: 720 }, { width: 375, height: 812 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 844, height: 390 }]) {
     const page = await browser.newPage({ viewport: size });
     await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+    if (size.width === 320) {
+      await page.locator("#history-program").selectOption("amc10");
+      await page.locator("#history-cycle").fill("2026-27");
+      await page.locator("#history-region").selectOption("maa-us-canada");
+      await page.locator("#history-form").selectOption("A");
+      await page.locator("#history-date").fill("2026-11-05");
+      await page.locator("#history-score").fill("100");
+      await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+      assert.equal(await page.locator(".score-history-group").count(), 1);
+    }
     const dimensions = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
     assert.deepEqual(dimensions, [size.width, size.width], `overflow at ${size.width}`);
     await page.close();
   }
+});
+
+test("history announcements and delete focus support keyboard and assistive technology", async function () {
+  const page = await browser.newPage({ viewport: { width: 900, height: 900 } });
+  await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  await page.locator("#history-program").selectOption("amc10");
+  await page.locator("#history-cycle").fill("2026-27");
+  await page.locator("#history-region").selectOption("maa-us-canada");
+  await page.locator("#history-form").selectOption("A");
+  await page.locator("#history-date").fill("2026-11-05");
+  await page.locator("#history-score").fill("100");
+  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+  assert.equal(await page.locator("#score-history-status").getAttribute("role"), "status");
+  assert.equal(await page.locator("#score-history-error").getAttribute("role"), "alert");
+  assert.match(await page.locator("#score-history-status").innerText(), /추가했어요/);
+  await page.locator("#history-score").fill("99.5");
+  assert.equal(await page.locator("#score-history-context").locator("article").count(), 1, "keystrokes do not rebuild unchanged live context");
+  await page.locator(".history-remove").click();
+  assert.equal(await page.locator("#score-history-title").evaluate((node) => node === document.activeElement), true, "after removing the last record, focus returns to the section title");
+  assert.equal(await page.locator("#score-history-status").isHidden(), true, "delete clears the old success announcement");
+  await page.close();
+});
+
+test("the paper review still works if optional score history is unavailable", async function () {
+  const page = await browser.newPage();
+  await page.route("**/competition/amc-score-history.js*", (route) => route.fulfill({ status: 200, contentType: "text/javascript", body: "" }));
+  await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".score-history").isHidden(), true);
+  assert.equal(await page.locator(".paper-mark-row").count(), 25);
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator(".review-report").isVisible(), true);
+  await page.emulateMedia({ media: "print" });
+  assert.equal(await page.locator(".score-history").evaluate((node) => getComputedStyle(node).display), "none");
+  assert.equal(await page.locator(".review-report").evaluate((node) => getComputedStyle(node).display), "block");
+  await page.close();
 });

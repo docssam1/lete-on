@@ -2,6 +2,7 @@
   "use strict";
   const roadmap = window.GFIELDBoardingGradeRoadmap;
   const analyzer = window.GFIELDPaperReviewAnalysis;
+  const historyEngine = window.GFIELDAMCScoreHistory;
   if (!roadmap || !analyzer) return;
   const $ = function (id) { return document.getElementById(id); };
   const params = new URLSearchParams(location.search);
@@ -10,6 +11,8 @@
   const statuses = [{ id: "unmarked", title: "표시 안 함" }, { id: "correct", title: "O · 맞힘" }, { id: "wrong", title: "X · 틀림" }, { id: "blank", title: "미응답 · 답안 공란" }];
   const domains = [{ id: "unclassified", title: "영역 선택" }].concat(roadmap.strands.map(function (entry) { return { id: entry.id, title: entry.title }; }));
   const reasons = [{ id: "none", title: "이유 선택" }, { id: "concept", title: "개념" }, { id: "approach", title: "풀이 생각" }, { id: "calculation", title: "계산" }, { id: "reading", title: "조건 읽기" }, { id: "time", title: "시간" }];
+  let scoreHistory = [];
+  let lastHistoryContextKey = "";
   function setText(id, value) { $(id).textContent = value; }
   function selectedFormat() { return roadmap.competitionOptions(grade).find(function (entry) { return entry.id === programId; }); }
   function option(value, title) { const node = document.createElement("option"); node.value = value; node.textContent = title; return node; }
@@ -125,6 +128,144 @@
     const small = document.createElement("small"); small.textContent = note;
     node.append(title, number, small); return node;
   }
+  function updateHistoryScale() {
+    if (!historyEngine) return;
+    const program = historyEngine.programs[$("history-program").value];
+    const formSelect = $("history-form");
+    formSelect.replaceChildren();
+    program.forms.forEach(function (form) { formSelect.append(option(form, form)); });
+    const input = $("history-score");
+    input.max = String(program.max);
+    input.step = program.max === 25 ? "1" : "0.5";
+    input.setAttribute("inputmode", program.max === 25 ? "numeric" : "decimal");
+    setText("score-history-scale", `${program.title} · 0–${program.max}점${program.max === 150 ? " · 0.5점 단위" : ""}`);
+    renderHistoryContext();
+  }
+  function buildHistoryContext(context) {
+    const article = document.createElement("article");
+    const heading = document.createElement("strong"); heading.textContent = context.threshold == null ? context.title : `${context.title} · ${context.threshold} / ${context.maxScore}`;
+    const note = document.createElement("p"); note.textContent = context.note;
+    article.append(heading, note);
+    if (context.source) {
+      const link = document.createElement("a"); link.href = context.source; link.target = "_blank"; link.rel = "noopener noreferrer";
+      link.textContent = context.kind === "international" ? "MAA AMC International 안내 ↗" : "MAA 2027 AIME 공식 공지 ↗";
+      article.append(link);
+    }
+    if (context.eligibilitySource) {
+      const eligibilityLink = document.createElement("a"); eligibilityLink.href = context.eligibilitySource; eligibilityLink.target = "_blank"; eligibilityLink.rel = "noopener noreferrer";
+      eligibilityLink.textContent = "MAA AIME 자격 조건 ↗";
+      article.append(eligibilityLink);
+    }
+    return article;
+  }
+  function renderHistoryContext() {
+    if (!historyEngine) return;
+    const host = $("score-history-context");
+    const context = historyEngine.cycleContext($("history-program").value, $("history-cycle").value.trim(), $("history-region").value);
+    const key = context ? JSON.stringify([context.kind, context.title, context.threshold, context.maxScore, context.note, context.source]) : "none";
+    if (key === lastHistoryContextKey) return;
+    lastHistoryContextKey = key;
+    host.replaceChildren();
+    if (context) host.append(buildHistoryContext(context));
+  }
+  function renderHistory() {
+    const host = $("score-history-groups");
+    host.replaceChildren();
+    const groups = historyEngine.compare(scoreHistory);
+    if (!groups.length) {
+      const empty = document.createElement("p"); empty.className = "score-history-empty"; empty.textContent = "아직 추가된 회차가 없습니다."; host.append(empty);
+    }
+    groups.forEach(function (group) {
+      const section = document.createElement("section"); section.className = "score-history-group";
+      const heading = document.createElement("h3"); heading.textContent = group.title; section.append(heading);
+      const table = document.createElement("table"); table.className = "score-history-table";
+      const caption = document.createElement("caption"); caption.className = "visually-hidden"; caption.textContent = `${group.title} 회차별 성적표 원점수 기록`; table.append(caption);
+      const thead = document.createElement("thead"); const headRow = document.createElement("tr");
+      ["시험 날짜", "주기 · 시험지", "성적표 원점수", "기록"].forEach(function (label) { const th = document.createElement("th"); th.scope = "col"; th.textContent = label; headRow.append(th); });
+      thead.append(headRow); table.append(thead);
+      const tbody = document.createElement("tbody");
+      group.entries.forEach(function (record) {
+        const row = document.createElement("tr");
+        [record.examDate, `${record.cycle} · ${record.form}`, `${record.rawScore} / ${record.maxScore}`].forEach(function (value) { const cell = document.createElement("td"); cell.textContent = value; row.append(cell); });
+        const actionCell = document.createElement("td"); const remove = document.createElement("button"); remove.type = "button"; remove.className = "history-remove"; remove.dataset.removeHistory = record.id; remove.setAttribute("aria-label", `${record.cycle} ${group.title} ${record.form} 기록 삭제`); remove.textContent = "삭제"; actionCell.append(remove); row.append(actionCell); tbody.append(row);
+      });
+      table.append(tbody); section.append(table); host.append(section);
+    });
+    $("history-export").disabled = scoreHistory.length === 0;
+  }
+  function clearHistoryMessages() { $("score-history-error").hidden = true; $("score-history-status").hidden = true; }
+  function historyError(message) { $("score-history-status").hidden = true; setText("score-history-error", message); $("score-history-error").hidden = false; }
+  function historySuccess(message) { $("score-history-error").hidden = true; setText("score-history-status", message); $("score-history-status").hidden = false; }
+  function makeHistoryId() { return typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `attempt-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`; }
+  if (historyEngine) {
+  $("history-program").addEventListener("change", function () { clearHistoryMessages(); updateHistoryScale(); });
+  $("history-cycle").addEventListener("input", renderHistoryContext);
+  $("history-region").addEventListener("change", renderHistoryContext);
+  $("score-history-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    clearHistoryMessages();
+    const programId = $("history-program").value;
+    const program = historyEngine.programs[programId];
+    try {
+      const record = historyEngine.validateRecord({ id: makeHistoryId(), programId: programId, cycle: $("history-cycle").value.trim(), form: $("history-form").value,
+        examDate: $("history-date").value, rawScore: Number($("history-score").value), maxScore: program.max });
+      if (scoreHistory.length >= 100) throw Object.assign(new Error("HISTORY_LIMIT"), { code: "HISTORY_LIMIT" });
+      scoreHistory.push(record);
+      renderHistory();
+      $("history-date").value = "";
+      $("history-score").value = "";
+      historySuccess("회차 기록을 추가했어요.");
+    } catch (error) {
+      const messages = { CYCLE_INVALID: "대회 주기는 YYYY-YY 형식으로 정확히 입력해 주세요.", FORM_INVALID: "선택한 대회의 시험지 구분을 확인해 주세요.", DATE_INVALID: "시험 날짜를 확인해 주세요.", SCORE_INVALID: `점수는 0부터 ${program.max} 사이로 입력해 주세요.`, SCORE_INCREMENT_INVALID: program.max === 25 ? "AMC 8 점수는 정수로 입력해 주세요." : "AMC 10/12 점수는 0.5점 단위로 입력해 주세요.", HISTORY_LIMIT: "비교 기록은 100회까지 담을 수 있어요. 먼저 JSON 파일로 저장해 주세요." };
+      historyError(messages[error.code] || "기록을 추가하지 못했어요. 입력값을 확인해 주세요.");
+    }
+  });
+  $("score-history-groups").addEventListener("click", function (event) {
+    const button = event.target.closest("[data-remove-history]");
+    if (!button) return;
+    const group = button.closest(".score-history-group");
+    const row = button.closest("tr");
+    const rowIndex = Array.from(row.parentElement.children).indexOf(row);
+    const groupTitle = group.querySelector("h3").textContent;
+    scoreHistory = scoreHistory.filter(function (record) { return record.id !== button.dataset.removeHistory; });
+    clearHistoryMessages();
+    renderHistory();
+    const nextGroup = Array.from($("score-history-groups").querySelectorAll(".score-history-group")).find(function (entry) { return entry.querySelector("h3").textContent === groupTitle; });
+    const nextButtons = nextGroup ? nextGroup.querySelectorAll("[data-remove-history]") : [];
+    if (nextButtons.length) nextButtons[Math.min(rowIndex, nextButtons.length - 1)].focus();
+    else if (nextGroup) { const heading = nextGroup.querySelector("h3"); heading.tabIndex = -1; heading.focus(); }
+    else $("score-history-title").focus();
+  });
+  $("history-export").addEventListener("click", function () {
+    if (!scoreHistory.length) return;
+    const archive = historyEngine.validateArchive({ schemaVersion: historyEngine.schemaVersion, records: scoreHistory });
+    const blob = new Blob([JSON.stringify(archive, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob); const link = document.createElement("a");
+    link.href = url; link.download = "gfield-amc-score-history.json"; link.click(); window.setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  });
+  $("history-import").addEventListener("change", async function (event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    clearHistoryMessages();
+    try {
+      if (file.size > 100000) throw Object.assign(new Error("IMPORT_TOO_LARGE"), { code: "IMPORT_TOO_LARGE" });
+      const archive = historyEngine.validateArchive(JSON.parse(await file.text()));
+      const ids = new Set(scoreHistory.map(function (record) { return record.id; }));
+      if (archive.records.some(function (record) { return ids.has(record.id); }) || scoreHistory.length + archive.records.length > 100) throw Object.assign(new Error("IMPORT_COLLISION"), { code: "IMPORT_COLLISION" });
+      scoreHistory = scoreHistory.concat(archive.records);
+      renderHistory();
+      historySuccess(`${archive.records.length}개 기록을 가져왔어요.`);
+    } catch (error) {
+      historyError(error.code === "IMPORT_TOO_LARGE" ? "기록 파일은 100KB 이하만 가져올 수 있어요." : error.code === "IMPORT_COLLISION" ? "이미 있는 기록과 겹치거나 100회 한도를 넘습니다. 현재 기록을 저장한 뒤 다시 시도해 주세요." : "기록 파일을 읽지 못했어요. GFIELD AMC 기록 JSON 파일인지 확인해 주세요.");
+    } finally { event.target.value = ""; }
+  });
+  $("history-clear").addEventListener("click", function () {
+    if (!scoreHistory.length || !window.confirm("이 화면에 불러온 모든 회차 기록을 비울까요? 저장한 JSON 파일은 그대로 남습니다.")) return;
+    scoreHistory = []; renderHistory(); clearHistoryMessages(); $("history-program").focus();
+  });
+  } else {
+    document.querySelector(".score-history").hidden = true;
+  }
   function renderResult(result) {
     const label = $("review-paper-label").value.trim();
     setText("report-title", `${selectedFormat().title} · ${result.complete ? "전체 결과" : "입력한 결과"}`);
@@ -177,4 +318,5 @@
   });
   renderSettings();
   renderMarks();
+  if (historyEngine) { updateHistoryScale(); renderHistory(); }
 })();
