@@ -4922,16 +4922,18 @@
       "pdfPage": 56,
       "printedPage": 60,
       "sourceShape": "400m² 밭을 5명 48분과 9명 40분 동안 캘 때 한 사람의 1시간 평균 작업 넓이 구하기",
-      "answerContract": "single-value: 40m²",
+      "answerContract": "candidate: single-value",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 60쪽 작업 인원·시간·같은 작업량 조건을 대조하고 600인·분을 시간으로 환산해 검산했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-example-1"
     },
     {
       "sourceItemId": "5-2-u6-e2-example-2",
@@ -4942,16 +4944,18 @@
       "pdfPage": 56,
       "printedPage": 60,
       "sourceShape": "5월 31일 동안 매일 50m씩 증가하고 평균 1500m인 달리기의 첫날 거리 구하기",
-      "answerContract": "single-value: 750m",
+      "answerContract": "candidate: single-value",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 60쪽 5월·매일 50m 증가·평균 1500m 조건을 대조하고 31일 전체 수열을 독립 검산했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-example-2"
     },
     {
       "sourceItemId": "5-2-u6-e2-example-3",

@@ -426,11 +426,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e2-example-1",
       "publisherKeyVerified": false,
-      "releaseEvidence": "원문 400m²·5명 48분·9명 40분 및 동일 작업량 조건 확인. 600인·분=10인·시간, 40m² 독립 검산. 공식 출판사 답안 미확인."
+      "releaseEvidence": "원문 400m²·5명 48분·9명 40분 및 동일 작업량 조건 확인. 600인·분=10인·시간, 40m² 독립 검산. 공식 출판사 답안 미확인.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e2-example-2-2",
@@ -453,11 +454,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e2-example-2",
       "publisherKeyVerified": false,
-      "releaseEvidence": "원문 5월·매일 50m 증가·평균 1500m 확인. 31일 전체 수열 합 46,500m와 첫날 750m 독립 검산. 공식 출판사 답안 미확인."
+      "releaseEvidence": "원문 5월·매일 50m 증가·평균 1500m 확인. 31일 전체 수열 합 46,500m와 첫날 750m 독립 검산. 공식 출판사 답안 미확인.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e2-example-2-3",
