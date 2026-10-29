@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  const SCHEMA_VERSION = "gfield-external-math-evidence-v1";
+  const SCHEMA_VERSION = "gfield-external-math-evidence-v2";
   const SOURCES = Object.freeze({
     "school-placement": Object.freeze({ label: "학교 수학 Placement Test", role: "course-placement", placementWeight: "primary", scoreLabel: "정답률" }),
     "map-growth": Object.freeze({ label: "NWEA MAP Growth Math", role: "instructional-growth", placementWeight: "supporting", scoreLabel: "성취 백분위" }),
@@ -61,29 +61,11 @@
   function evidenceMetric(input, source) {
     if (source.id === "school-placement") return finite(input.overallPercent, "OVERALL_PERCENT", 0, 100, true);
     if (source.id === "isee") {
-      const quant = finite(input.quantStanine, "QUANT_STANINE", 1, 9, true);
-      const math = finite(input.mathStanine, "MATH_STANINE", 1, 9, true);
-      return Math.round((quant + math) / 2 * 10) / 10;
+      finite(input.quantStanine, "QUANT_STANINE", 1, 9, true);
+      finite(input.mathStanine, "MATH_STANINE", 1, 9, true);
+      return null;
     }
     return finite(input.percentile, "PERCENTILE", 1, 99, true);
-  }
-  function performanceBand(sourceId, metric) {
-    if (sourceId === "school-placement") {
-      if (metric >= 85) return "advanced-evidence";
-      if (metric >= 70) return "on-track-evidence";
-      if (metric >= 50) return "developing-evidence";
-      return "foundation-evidence";
-    }
-    if (sourceId === "isee") {
-      if (metric >= 8) return "advanced-evidence";
-      if (metric >= 6) return "on-track-evidence";
-      if (metric >= 4) return "developing-evidence";
-      return "foundation-evidence";
-    }
-    if (metric >= 85) return "advanced-evidence";
-    if (metric >= 60) return "on-track-evidence";
-    if (metric >= 35) return "developing-evidence";
-    return "foundation-evidence";
   }
   function routeBetween(startId, targetId) {
     const start = COURSES.findIndex(function (row) { return row.id === startId; });
@@ -103,32 +85,17 @@
     const testDate = date(input.testDate);
     const domains = normalizeDomains(input.domains);
     const metric = evidenceMetric(input, source);
-    const band = performanceBand(source.id, metric);
     const schoolCut = source.id === "school-placement" ? finite(input.schoolCut, "SCHOOL_CUT", 0, 100, false) : null;
     const rit = source.id === "map-growth" ? finite(input.rit, "RIT", 100, 350, true) : null;
     const scaleScore = source.id === "ctp" || source.id === "ssat" ? finite(input.scaleScore, "SCALE_SCORE", 0, 2000, false) : null;
     const stanine = source.id === "ctp" ? finite(input.stanine, "STANINE", 1, 9, false) : source.id === "isee" ? metric : null;
-    const normGroup = typeof input.normGroup === "string" && input.normGroup.trim() ? input.normGroup.trim().slice(0, 80) : null;
-    const season = typeof input.season === "string" && ["fall", "winter", "spring", "summer"].includes(input.season) ? input.season : null;
+    const normGroup = source.id === "ctp" && typeof input.normGroup === "string" && input.normGroup.trim() ? input.normGroup.trim().slice(0, 80) : null;
+    const season = source.id === "map-growth" && typeof input.season === "string" && ["fall", "winter", "spring", "summer"].includes(input.season) ? input.season : null;
     const sortedDomains = domains.slice().sort(function (a, b) { return a.percent - b.percent || a.id.localeCompare(b.id); });
-    const priorityDomains = sortedDomains.filter(function (row) { return row.percent < 70; }).slice(0, 2);
-    const minimumDomain = sortedDomains.length ? sortedDomains[0].percent : null;
     const clearsEnteredCut = schoolCut == null ? null : metric >= schoolCut;
-    const targetCandidate = source.id === "school-placement" && clearsEnteredCut === true && (minimumDomain == null || minimumDomain >= 70);
-    let recommendedIndex = currentIndex;
-    if (band === "foundation-evidence") recommendedIndex = Math.max(0, currentIndex - 1);
-    else if (band === "advanced-evidence" && source.role !== "admission-support" && domains.length >= 3 && minimumDomain >= 70) recommendedIndex = Math.min(currentIndex + 1, targetIndex);
-    if (targetCandidate) recommendedIndex = targetIndex;
-    const recommended = COURSES[recommendedIndex];
-    const gapCount = priorityDomains.length;
-    const baseWeeks = { "foundation-evidence": 12, "developing-evidence": 10, "on-track-evidence": 8, "advanced-evidence": 6 }[band];
-    const weeks = Math.min(16, baseWeeks + gapCount * 2);
-    const studyDaysPerWeek = band === "foundation-evidence" ? 5 : band === "developing-evidence" ? 4 : 3;
-    const minutesPerDay = grade <= 5 ? 35 : grade <= 8 ? 45 : 60;
-    const problemCountPerDay = band === "foundation-evidence" ? 8 : band === "developing-evidence" ? 10 : 12;
-    const confidence = source.placementWeight === "primary" && schoolCut != null && domains.length >= 4 ? "high-for-gmap-plan" : domains.length >= 3 ? "medium-for-gmap-plan" : "low-for-gmap-plan";
+    const targetCandidate = source.id === "school-placement" && clearsEnteredCut === true;
     const placementState = source.role === "admission-support" ? "admission-evidence-only" : schoolCut == null ? "school-policy-required" : clearsEnteredCut ? "entered-cut-met-school-review-required" : "entered-cut-not-met";
-    const primaryPriority = priorityDomains[0] || sortedDomains[0] || Object.freeze({ id: "reasoning", label: DOMAIN_SPECS.reasoning.label, axis: DOMAIN_SPECS.reasoning.axis, clusterId: DOMAIN_SPECS.reasoning.clusterId, percent: null });
+    const primaryPriority = null;
     return Object.freeze({
       schemaVersion: SCHEMA_VERSION,
       evidenceKind: "user-entered-external-assessment",
@@ -137,22 +104,23 @@
       testDate,
       grade,
       scores: Object.freeze({ metric, metricLabel: source.scoreLabel, rit, scaleScore, stanine, percentile: source.id !== "school-placement" && source.id !== "isee" ? metric : null, schoolCut, clearsEnteredCut, normGroup, season }),
-      band,
-      confidence,
+      band: null,
+      confidence: "not-calculated",
       placementState,
       currentCourse: current,
       targetCourse: target,
-      recommendedStart: recommended,
+      recommendedStart: current,
+      domainComparisons: Object.freeze(sortedDomains),
       targetCandidate,
-      route: routeBetween(recommended.id, target.id),
+      route: routeBetween(current.id, target.id),
       domains: Object.freeze(domains),
-      priorityDomains: Object.freeze(priorityDomains),
+      priorityDomains: Object.freeze([]),
       primaryPriority,
-      plan: Object.freeze({ weeks, studyDaysPerWeek, minutesPerDay, problemCountPerDay, retentionDays: Object.freeze([1, 3, 7, 14]) }),
+      plan: Object.freeze({ weeks: null, studyDaysPerWeek: null, minutesPerDay: null, problemCountPerDay: null, retentionDays: Object.freeze([1, 3, 7, 14]) }),
       materialState: grade === 6 && current.id === "pre-algebra" ? "verified-grade6-public-materials" : "pathway-only-content-locked",
-      decisionNotice: source.role === "admission-support" ? "입학시험 결과는 지원 준비의 보조 근거이며 수학 과정 배정을 단독 결정하지 않습니다." : "이 결과는 G·MAP 권장 진도이며 학교의 공식 배정은 학교 정책과 교사 검토로 확정됩니다."
+      decisionNotice: source.role === "admission-support" ? "입학시험 점수는 입력한 자료로 기록합니다. 수학 과정 배정을 단독 결정하지 않습니다." : "시험 점수와 사용자가 입력한 과정의 비교 자료입니다. 학교의 공식 배정은 학교 정책과 교사 검토로 결정합니다."
     });
   }
 
-  return Object.freeze({ SCHEMA_VERSION, SOURCES, COURSES, DOMAIN_SPECS, analyze, performanceBand });
+  return Object.freeze({ SCHEMA_VERSION, SOURCES, COURSES, DOMAIN_SPECS, analyze });
 });

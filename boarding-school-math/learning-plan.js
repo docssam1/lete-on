@@ -257,9 +257,10 @@
     text("today-minutes", `${plan.today.totalMinutes}분`);
     text("today-problems", `${plan.today.totalProblemCount}문항 내외`);
     const competition = linkedCompetitionEvidence();
+    const assessmentEvidence = linkedAssessmentEvidence();
     const grade6Diagnostic = linkedGrade6DiagnosticEvidence();
     const scoreOnlyPaper = competition && ["legacy-unreviewed", "legacy-diagnostic-superseded", "taxonomy-review-pending"].includes(competition.diagnosticState);
-    text("today-description", grade6Diagnostic && grade6Diagnostic.priorities.length ? `${plan.priorities[0].label}의 ${plan.priorities[0].errorLabel}에 맞춘 오늘의 계획입니다. 학생 응답이나 정답은 학습계획에 저장하지 않습니다.` : scoreOnlyPaper ? `이 기출 기록은 점수만 연결합니다. ${plan.priorities[0].label} 학습은 현재 선택 또는 별도 유형 점검에 따르며, 검수 중인 영역 판정으로 확정한 약점이 아닙니다.` : competition && !competition.priorityAxis ? `${plan.priorities[0].label} 유지 학습을 위한 오늘의 계획입니다. 이 기출에서는 자동 확정할 약점이 없었습니다.` : `${plan.priorities[0].label} 약점에 맞춘 오늘의 계획입니다. 실제 진단 뒤에는 최대 두 약점만 함께 배정합니다.`);
+    text("today-description", grade6Diagnostic && grade6Diagnostic.priorities.length ? `${plan.priorities[0].label}의 ${plan.priorities[0].errorLabel}에 맞춘 오늘의 계획입니다. 학생 응답이나 정답은 학습계획에 저장하지 않습니다.` : scoreOnlyPaper ? `이 기출 기록은 점수만 연결합니다. ${plan.priorities[0].label} 학습은 현재 선택 또는 별도 유형 점검에 따르며, 검수 중인 영역 판정으로 확정한 약점이 아닙니다.` : assessmentEvidence ? `${plan.priorities[0].label}을(를) 직접 선택한 학습 영역으로 삼은 계획입니다. 외부 성적표만으로 약점이나 배정을 자동 판정하지 않습니다.` : competition && !competition.priorityAxis ? `${plan.priorities[0].label} 유지 학습을 위한 오늘의 계획입니다. 이 기출에서는 자동 확정할 약점이 없었습니다.` : `${plan.priorities[0].label} 선택 영역에 맞춘 오늘의 계획 예시입니다. 실제 진단 뒤에는 근거가 있는 항목만 조정합니다.`);
     const host = document.getElementById("today-blocks");
     host.replaceChildren();
     plan.today.blocks.forEach(function (block, index) {
@@ -353,7 +354,7 @@
     text("goal-program", plan.goal.label);
     text("plan-title", `${plan.calendar.calendarWeeks}주 학습 계획`);
     const scheduleCopy = `주 ${plan.availability.studyDaysPerWeek}일, 하루 ${plan.availability.minutesPerDay}분을 기준으로 했어요. 빠진 수업과 복습을 위해 시간의 80%만 계획에 넣었어요.`;
-    text("plan-description", grade6Diagnostic ? `${scheduleCopy} 교사 검토가 끝난 Grade 6 42문항 진단의 점수 요약과 우선 약점을 반영했습니다. 학생 응답, 정답, 풀이 원문은 이 계획에 저장하지 않습니다.` : assessmentEvidence ? `${scheduleCopy} ${assessmentEvidence.source.label} 결과와 영역별 약점을 반영해 ${assessmentEvidence.recommendedStart.label}에서 시작하는 G·MAP 진도를 구성했습니다.` : competitionEvidence ? competitionScoreOnly ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70은 점수 이력으로만 연결했습니다. 영역 분류는 재검수 대상이어서 자동 약점 처방에 사용하지 않습니다.` : competitionPriorityConfirmed ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70과 영역별 약점을 반영해 오늘의 우선 학습을 골랐습니다.` : `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70을 연결했습니다. 충분한 약점 신호가 없어 현재 선택한 영역을 유지 학습으로 구성합니다.` : scheduleCopy);
+    text("plan-description", grade6Diagnostic ? `${scheduleCopy} 교사 검토가 끝난 Grade 6 42문항 진단의 점수 요약과 우선 약점을 반영했습니다. 학생 응답, 정답, 풀이 원문은 이 계획에 저장하지 않습니다.` : assessmentEvidence ? `${scheduleCopy} ${assessmentEvidence.source.label}의 입력 점수를 참고란에 연결했습니다. 현재·목표 과정과 학습 영역은 사용자가 선택하며, 외부 점수로 약점이나 배정을 자동 판정하지 않습니다.` : competitionEvidence ? competitionScoreOnly ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70은 점수 이력으로만 연결했습니다. 영역 분류는 재검수 대상이어서 자동 약점 처방에 사용하지 않습니다.` : competitionPriorityConfirmed ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70과 영역별 약점을 반영해 오늘의 우선 학습을 골랐습니다.` : `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70을 연결했습니다. 충분한 약점 신호가 없어 현재 선택한 영역을 유지 학습으로 구성합니다.` : scheduleCopy);
     text("days-remaining", plural(plan.calendar.daysRemaining, "일", "일"));
     text("study-day-count", plural(plan.calendar.studyDays, "일", "일"));
     text("capacity-minutes", `${plan.calendar.usableMinutes.toLocaleString("ko-KR")}분`);
@@ -361,7 +362,7 @@
     state.textContent = grade6Diagnostic ? "42문항 진단 연결" : assessmentEvidence ? "학교 평가 연결" : competitionScoreOnly ? "기출 점수 연결" : competitionEvidence ? "기출 진단 연결" : "진단 결과 없음";
     state.className = `state-chip ${evidence ? "connected" : "waiting"}`;
     text("prediction-title", grade6Diagnostic ? "42문항 진단이 오늘의 개념과 문제 수로 이어졌습니다." : assessmentEvidence ? "학교 평가 결과가 오늘의 학습에 반영되었습니다." : competitionScoreOnly ? "기출 점수만 학습계획에 연결했습니다." : competitionEvidence ? "검증된 기출 결과가 오늘의 학습에 반영되었습니다." : "예상 성적은 진단 후 계산합니다.");
-    text("prediction-copy", grade6Diagnostic ? `${grade6Diagnostic.score.earnedPoints} / ${grade6Diagnostic.score.maxPoints}점 · ${grade6Diagnostic.score.percentage}% · ${grade6Diagnostic.priorities.length ? `우선 보완 ${plan.priorities[0].label}` : "자동 확인된 약점 없음"}. 이 결과는 학교의 공식 배정·승급 판정이나 실전 예상 점수가 아닙니다.` : assessmentEvidence ? `${assessmentEvidence.source.label} · G·MAP 권장 시작 ${assessmentEvidence.recommendedStart.label} · 우선 보완 ${plan.priorities[0].label}. 이는 학교의 공식 배정이 아니며, 실전 예상 점수는 별도의 최초 모의 기록이 쌓인 뒤 계산합니다.` : competitionEvidence ? `실제 점수 ${competitionEvidence.score.rawScore} / 70 · ${competitionScoreOnly ? `영역 판정 재검수 중 · ${plan.priorities[0].label} 학습` : competitionPriorityConfirmed ? `우선 보완 ${plan.priorities[0].label}` : `자동 확정 약점 없음 · ${plan.priorities[0].label} 유지 학습`}. ${scoreOutlook}` : `${plan.diagnostic.actionLabel}의 최초 응시 결과와 이후 실전 모의 기록이 있어야 점수 범위와 신뢰도를 계산합니다.`);
+    text("prediction-copy", grade6Diagnostic ? `${grade6Diagnostic.score.earnedPoints} / ${grade6Diagnostic.score.maxPoints}점 · ${grade6Diagnostic.score.percentage}% · ${grade6Diagnostic.priorities.length ? `우선 보완 ${plan.priorities[0].label}` : "자동 확인된 약점 없음"}. 이 결과는 학교의 공식 배정·승급 판정이나 실전 예상 점수가 아닙니다.` : assessmentEvidence ? `${assessmentEvidence.source.label} · 현재 과정 ${assessmentEvidence.currentCourse.label} · 학습 영역 ${plan.priorities[0].label} (직접 선택). 학교의 공식 배정이나 약점 판정이 아니며, 실전 예상 점수도 계산하지 않습니다.` : competitionEvidence ? `실제 점수 ${competitionEvidence.score.rawScore} / 70 · ${competitionScoreOnly ? `영역 판정 재검수 중 · ${plan.priorities[0].label} 학습` : competitionPriorityConfirmed ? `우선 보완 ${plan.priorities[0].label}` : `자동 확정 약점 없음 · ${plan.priorities[0].label} 유지 학습`}. ${scoreOutlook}` : `${plan.diagnostic.actionLabel}의 최초 응시 결과와 이후 실전 모의 기록이 있어야 점수 범위와 신뢰도를 계산합니다.`);
     const diagnosticAction = document.getElementById("diagnostic-action");
     if (grade6Diagnostic) diagnosticAction.href = "./diagnostic.html?runtime=local-qa";
     else if (assessmentEvidence) diagnosticAction.href = "./assessment-entry.html";
@@ -430,7 +431,7 @@
     goalId.value = "school-g6";
     if ([3, 4, 5, 6].includes(evidence.plan.studyDaysPerWeek)) studyDays.value = String(evidence.plan.studyDaysPerWeek);
     if ([30, 45, 60, 75, 90].includes(evidence.plan.minutesPerDay)) minutesPerDay.value = String(evidence.plan.minutesPerDay);
-    targetDate.value = isoDate(Math.max(7, evidence.plan.weeks * 7));
+    if (Number.isInteger(evidence.plan.weeks) && evidence.plan.weeks > 0) targetDate.value = isoDate(Math.max(7, evidence.plan.weeks * 7));
   }
   document.getElementById("plan-form").addEventListener("submit", function (event) {
     event.preventDefault();

@@ -12,6 +12,12 @@
 - 사용자가 실제 성적표에서 옮긴 AMC 8/10/12 원점수는 대회별 기록표에 나란히 입력할 수 있다. 기록은 현재 탭 메모리에만 두고 JSON 파일로 직접 저장·가져오며, 이름·답안·교사 계정은 기록하지 않는다. 시험지 난도 보정, 성장 등급, 준비도 판정은 하지 않는다.
 - 2026–27 미국·캐나다 AMC 10/12의 AIME 고정 원점수 기준은 사용자가 응시 지역에서 미국·캐나다 MAA 경로를 명시적으로 선택했을 때만 공개된 MAA 안내에 따라 참고 정보로 표시한다. 이는 자격 판정이 아니며, 2027년 AIME에는 만 13세 이상 및 기타 조건이 별도로 적용된다. 국제 AMC 경로를 선택하면 점수 기준을 표시하지 않고 국가별 International Group Leader 안내로 연결한다.
 
+### 외부 학교 평가 입력 경계 (2026-10-30)
+
+학교 Placement, MAP Growth, ERB CTP, SSAT, ISEE 입력 화면은 원점수·성적표 백분위·비교집단·Stanine과 사용자가 선택한 현재/목표 과정을 나란히 보여 준다. MAP의 RIT를 학년 등급으로 바꾸거나, 전체 점수·백분위에 임의의 GFIELD 준비도 밴드를 붙이지 않는다. 영역 성적표 값을 낮은 순으로 정리할 수 있지만, 내부 70% 컷이나 자동 약점·수업 기간 처방은 적용하지 않는다. ISEE의 Quantitative Reasoning 및 Mathematics Achievement Stanine은 별도 값으로 유지하고 평균을 만들어 공식 점수처럼 표시하지 않는다. 학교가 직접 제공한 Placement 컷을 사용자가 입력한 경우, 그 컷 충족 여부만 표시하고 최종 배정은 학교 판단으로 둔다.
+
+이 경계는 MAP의 RIT가 학년별 문항 난도와 직접 동치가 아니며, 백분위가 같은 학년·과목 규준집단에서의 상대 위치라는 NWEA 설명 및 ERB의 percentile/stanine 정의를 따르는 최소한의 표시 규칙이다. 점수의 규준연도와 비교집단은 성적표를 우선한다. Sources: [NWEA: Comparing RIT scores across grade levels](https://connection.nwea.org/s/article/Comparing-RIT-scores-across-grade-levels), [NWEA 2025 MAP Growth norms](https://www.nwea.org/map-growth-norms/), [ERB CTP score report help](https://www.erblearn.org/ctpscorereporthelp/).
+
 10문항은 영역별 1–3문항으로 나뉘며 일부 주제는 한 문항뿐이다. 표본 응답과 독립적인 타당도 근거도 없으므로 Grade 7 학생의 영역 숙달, AMC 준비도, 점수 예측을 판단할 수 없다. 현재 세트는 Grade 6 개념 연결 연습이라는 원래 범위를 유지한다.
 
 ## AMC 8 공식 범위 경계

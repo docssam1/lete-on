@@ -29,7 +29,7 @@ test.before(async function () {
 });
 test.after(async function () { if (browser) await browser.close(); if (server) await new Promise(function (resolve) { server.close(resolve); }); });
 
-test("school placement evidence creates a local Grade 6 prescription and carries it into today's plan", async function () {
+test("school placement evidence remains descriptive and carries no automated weakness into today's plan", async function () {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();
   const errors = errorsFor(page);
@@ -45,25 +45,27 @@ test("school placement evidence creates a local Grade 6 prescription and carries
   await page.locator('[data-domain="reasoning"]').fill("74");
   await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
   assert.equal(await page.locator("#recommended-course").innerText(), "Pre-Algebra");
-  assert.match(await page.locator("#priority-list").innerText(), /기하·측정/);
-  assert.match(await page.locator("#decision-notice").innerText(), /G·MAP 권장 진도/);
+  assert.match(await page.locator("#priority-list").innerText(), /기하·측정[\s\S]*61%/);
+  assert.match(await page.locator("#recommendation-reason").innerText(), /컷 충족만 표시하며 G·MAP 준비도나 배정을 판정하지 않습니다/);
+  assert.match(await page.locator("#decision-notice").innerText(), /사용자가 입력한 과정의 비교 자료/);
   assert.match(await page.locator("#decision-notice").innerText(), /공식 배정/);
   assert.notEqual(await page.locator("#send-to-plan").getAttribute("aria-disabled"), "true");
   const stored = await page.evaluate(function () { return JSON.parse(localStorage.getItem("gmap-local-learning-record-v1:external-assessment")); });
   assert.equal(stored.officialPlacement, false);
-  assert.equal(stored.primaryPriority.clusterId, "6.G.A");
+  assert.equal(stored.primaryPriority, null);
+  assert.deepEqual(stored.priorityDomains, []);
   await page.locator("#send-to-plan").click();
   await page.waitForURL(/learning-plan\.html/);
   assert.equal(await page.locator("#plan-state").innerText(), "학교 평가 연결");
-  assert.match(await page.locator("#today-description").innerText(), /기하·측정/);
-  assert.match(await page.locator("#prediction-copy").innerText(), /공식 배정이 아니며/);
-  assert.equal(await page.locator("#study-days").inputValue(), "3");
+  assert.match(await page.locator("#today-description").innerText(), /외부 성적표만으로 약점이나 배정을 자동 판정하지 않습니다/);
+  assert.match(await page.locator("#prediction-copy").innerText(), /직접 선택/);
+  assert.equal(await page.locator("#study-days").inputValue(), "4");
   assert.equal(await page.locator("#minutes-per-day").inputValue(), "45");
   assert.deepEqual(errors, []);
   await context.close();
 });
 
-test("assessment entry distinguishes MAP evidence and locks unverified grades on mobile and print", async function () {
+test("assessment entry keeps MAP metrics distinct and locks unverified grades on mobile and print", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   const errors = errorsFor(page);
   await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
@@ -77,12 +79,28 @@ test("assessment entry distinguishes MAP evidence and locks unverified grades on
   await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
   assert.match(await page.locator("#metric-value").innerText(), /RIT 218/);
   assert.match(await page.locator("#metric-value").innerText(), /64th percentile/);
+  assert.match(await page.locator("#recommendation-reason").innerText(), /점수 구간·준비도/);
   assert.equal(await page.locator("#send-to-plan").getAttribute("aria-disabled"), "true");
   assert.equal(await page.locator("#published-resource").isVisible(), true);
   assert.match(await page.locator("#published-resource").getAttribute("href"), /catalog\.html\?role=student&grade=7/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   await page.emulateMedia({ media: "print" });
   assert.equal(await page.locator("#evidence-form").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("ISEE stanines stay separate instead of becoming an invented average", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = errorsFor(page);
+  await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#source-id").selectOption("isee");
+  await page.locator("#quant-stanine").fill("9");
+  await page.locator("#math-stanine").fill("8");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  assert.match(await page.locator("#metric-value").innerText(), /Quantitative Reasoning 9 · Mathematics Achievement 8 stanine/);
+  assert.doesNotMatch(await page.locator("#metric-value").innerText(), /평균|8\.5/);
+  assert.equal(await page.locator("#confidence-value").innerText(), "성적표 표기 기준");
   assert.deepEqual(errors, []);
   await page.close();
 });

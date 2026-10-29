@@ -82,8 +82,8 @@
     };
   }
   function sanitizedAssessment(value) {
-    if (!object(value) || value.schemaVersion !== "gfield-external-math-evidence-v1" || !object(value.source) || !object(value.recommendedStart) || !object(value.primaryPriority) || !object(value.plan)) return null;
-    const domains = Array.isArray(value.priorityDomains) ? value.priorityDomains.slice(0, 2).map(function (domain) {
+    if (!object(value) || value.schemaVersion !== "gfield-external-math-evidence-v2" || !object(value.source) || !object(value.currentCourse) || !object(value.recommendedStart) || !object(value.plan)) return null;
+    const domains = Array.isArray(value.domainComparisons) ? value.domainComparisons.slice(0, 6).map(function (domain) {
       if (!object(domain) || typeof domain.label !== "string" || typeof domain.clusterId !== "string" || !Number.isFinite(domain.percent)) return null;
       return { id: String(domain.id || "").slice(0, 32), label: domain.label.slice(0, 80), clusterId: domain.clusterId.slice(0, 32), percent: domain.percent };
     }).filter(Boolean) : [];
@@ -92,17 +92,19 @@
       source: { id: String(value.source.id || "").slice(0, 32), label: String(value.source.label || "").slice(0, 100), role: String(value.source.role || "").slice(0, 40) },
       testDate: typeof value.testDate === "string" ? value.testDate : null,
       grade: Number.isInteger(value.grade) ? value.grade : null,
-      band: typeof value.band === "string" ? value.band : null,
-      confidence: typeof value.confidence === "string" ? value.confidence : null,
+      band: null,
+      confidence: "not-calculated",
       placementState: typeof value.placementState === "string" ? value.placementState : null,
       officialPlacement: false,
-      targetCandidate: value.targetCandidate === true,
-      scores: object(value.scores) ? { metric: Number.isFinite(value.scores.metric) ? value.scores.metric : null, metricLabel: String(value.scores.metricLabel || "입력 점수").slice(0, 80), rit: Number.isFinite(value.scores.rit) ? value.scores.rit : null, scaleScore: Number.isFinite(value.scores.scaleScore) ? value.scores.scaleScore : null, stanine: Number.isFinite(value.scores.stanine) ? value.scores.stanine : null, percentile: Number.isFinite(value.scores.percentile) ? value.scores.percentile : null, schoolCut: Number.isFinite(value.scores.schoolCut) ? value.scores.schoolCut : null, clearsEnteredCut: value.scores.clearsEnteredCut === true ? true : value.scores.clearsEnteredCut === false ? false : null } : null,
+      targetCandidate: value.targetCandidate === true && value.source.id === "school-placement" && value.scores && value.scores.clearsEnteredCut === true,
+      scores: object(value.scores) ? { metric: Number.isFinite(value.scores.metric) ? value.scores.metric : null, metricLabel: String(value.scores.metricLabel || "입력 점수").slice(0, 80), rit: Number.isFinite(value.scores.rit) ? value.scores.rit : null, scaleScore: Number.isFinite(value.scores.scaleScore) ? value.scores.scaleScore : null, stanine: Number.isFinite(value.scores.stanine) ? value.scores.stanine : null, percentile: Number.isFinite(value.scores.percentile) ? value.scores.percentile : null, schoolCut: Number.isFinite(value.scores.schoolCut) ? value.scores.schoolCut : null, clearsEnteredCut: value.scores.clearsEnteredCut === true ? true : value.scores.clearsEnteredCut === false ? false : null, normGroup: typeof value.scores.normGroup === "string" ? value.scores.normGroup.slice(0, 80) : null, season: typeof value.scores.season === "string" ? value.scores.season.slice(0, 12) : null } : null,
+      currentCourse: { id: String(value.currentCourse.id || "").slice(0, 40), label: String(value.currentCourse.label || "").slice(0, 80), publicLearning: value.currentCourse.publicLearning === true },
       recommendedStart: { id: String(value.recommendedStart.id || "").slice(0, 40), label: String(value.recommendedStart.label || "").slice(0, 80), publicLearning: value.recommendedStart.publicLearning === true },
       targetCourse: object(value.targetCourse) ? { id: String(value.targetCourse.id || "").slice(0, 40), label: String(value.targetCourse.label || "").slice(0, 80) } : null,
       route: Array.isArray(value.route) ? value.route.slice(0, 8).map(function (course) { return object(course) ? { id: String(course.id || "").slice(0, 40), label: String(course.label || "").slice(0, 80), stage: String(course.stage || "").slice(0, 80), publicLearning: course.publicLearning === true } : null; }).filter(Boolean) : [],
-      primaryPriority: { label: String(value.primaryPriority.label || "").slice(0, 80), axis: String(value.primaryPriority.axis || "").slice(0, 40), clusterId: String(value.primaryPriority.clusterId || "").slice(0, 32), percent: Number.isFinite(value.primaryPriority.percent) ? value.primaryPriority.percent : null },
-      priorityDomains: domains,
+      primaryPriority: null,
+      priorityDomains: [],
+      domainComparisons: domains,
       plan: { weeks: Number(value.plan.weeks) || null, studyDaysPerWeek: Number(value.plan.studyDaysPerWeek) || null, minutesPerDay: Number(value.plan.minutesPerDay) || null, problemCountPerDay: Number(value.plan.problemCountPerDay) || null },
       materialState: typeof value.materialState === "string" ? value.materialState : null,
       decisionNotice: typeof value.decisionNotice === "string" ? value.decisionNotice.slice(0, 240) : null,

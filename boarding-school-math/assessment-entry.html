@@ -21,7 +21,7 @@
   <main id="main" tabindex="-1">
     <section class="evidence-hero">
       <div class="evidence-shell hero-layout">
-        <div><p class="eyebrow">SCHOOL EVIDENCE → DAILY STUDY</p><h1>학교 평가 결과가<br><span>오늘의 진도가 됩니다.</span></h1><p>Placement Test, MAP Growth, ERB CTP, SSAT, ISEE 결과를 같은 점수처럼 섞지 않습니다. 시험의 역할을 구분하고, 현재 과정과 목표 과정 사이에서 시작할 위치와 학습량을 계산합니다.</p></div>
+        <div><p class="eyebrow">SCHOOL EVIDENCE → COURSE COMPARISON</p><h1>학교 평가 결과와<br><span>배움의 경로를 나란히 봐요.</span></h1><p>Placement Test, MAP Growth, ERB CTP, SSAT, ISEE 결과를 같은 점수처럼 섞지 않습니다. 성적표의 수치와 비교집단을 정리하고, 직접 선택한 현재 과정과 목표 과정 사이를 살펴봅니다.</p></div>
         <aside class="boundary-card"><strong>먼저 확인하세요</strong><p>학교별 공식 컷은 학교마다 다릅니다. 학교가 제시한 컷을 직접 입력한 경우에만 비교하며, 최종 배정은 학교와 교사가 확정합니다.</p><span>결과는 이 기기의 브라우저에만 저장됩니다.</span></aside>
       </div>
     </section>
@@ -44,7 +44,7 @@
             <label class="field source-field" data-sources="map-growth ctp ssat"><span id="percentile-label">성취 백분위</span><span class="input-unit"><input id="percentile" inputmode="numeric" type="number" min="1" max="99"><b>percentile</b></span></label>
             <label class="field source-field" data-sources="ctp ssat"><span id="scale-score-label">Scale score</span><input id="scale-score" inputmode="decimal" type="number" min="0" max="2000" placeholder="성적표 값"></label>
             <label class="field source-field" data-sources="ctp"><span>Stanine</span><input id="stanine" inputmode="numeric" type="number" min="1" max="9" placeholder="선택"></label>
-            <label class="field source-field" data-sources="ctp"><span>비교 집단</span><select id="norm-group"><option value="Independent School Norm">Independent School Norm</option><option value="National Norm">National Norm</option><option value="School / Grade Norm">School / Grade Norm</option><option value="Other reported norm">Other reported norm</option></select></label>
+            <label class="field source-field" data-sources="ctp"><span>성적표 비교 집단</span><select id="norm-group"><option value="">성적표 표기 기준을 선택</option><option value="Independent School Norm">Independent School Norm</option><option value="National Norm">National Norm</option><option value="School / Grade Norm">School / Grade Norm</option><option value="Other reported norm">Other reported norm</option></select></label>
             <label class="field source-field" data-sources="isee"><span>Quantitative Reasoning stanine</span><input id="quant-stanine" inputmode="numeric" type="number" min="1" max="9"></label>
             <label class="field source-field" data-sources="isee"><span>Mathematics Achievement stanine</span><input id="math-stanine" inputmode="numeric" type="number" min="1" max="9"></label>
           </div>
@@ -52,18 +52,18 @@
 
         <fieldset class="domain-entry"><legend>영역별 점수 <small>선택 · 있으면 진도가 더 정확해집니다</small></legend><div class="domain-grid"><label><span>수와 연산</span><span class="input-unit"><input data-domain="number" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>비와 비례</span><span class="input-unit"><input data-domain="proportional" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>식·방정식</span><span class="input-unit"><input data-domain="algebra" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>기하·측정</span><span class="input-unit"><input data-domain="geometry" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>자료·확률</span><span class="input-unit"><input data-domain="data" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label><label><span>문제 해결·추론</span><span class="input-unit"><input data-domain="reasoning" type="number" min="0" max="100" inputmode="numeric"><b>%</b></span></label></div></fieldset>
 
-        <p class="form-error" id="form-error" role="alert"></p><button class="primary-submit" type="submit">권장 진도 만들기 <span aria-hidden="true">→</span></button>
+        <p class="form-error" id="form-error" role="alert"></p><button class="primary-submit" type="submit">비교 결과 보기 <span aria-hidden="true">→</span></button>
       </form>
 
       <aside class="result-panel" aria-live="polite">
-        <div id="result-empty" class="result-empty"><span>02</span><h2>입력하면 여기서 바로 진도가 나옵니다.</h2><p>추천 시작 과정, 목표까지의 경로, 우선 약점, 주당 횟수, 하루 시간과 문항 수를 한 번에 보여 줍니다.</p><ol><li>평가의 역할을 구분합니다.</li><li>현재 과정과 목표 과정 사이를 계산합니다.</li><li>영역별 약점을 실제 Grade 6 자료에 연결합니다.</li></ol></div>
+        <div id="result-empty" class="result-empty"><span>02</span><h2>성적표와 선택한 과정을 함께 확인해요.</h2><p>입력한 시험 점수·비교 기준과 현재·목표 과정을 정리합니다. 시험 점수만으로 학년 등급이나 약점, 자동 배정은 만들지 않습니다.</p><ol><li>시험의 역할과 점수 단위를 구분합니다.</li><li>직접 고른 현재 과정부터 목표 과정까지 살펴봅니다.</li><li>영역 점수는 성적표에 입력한 값 그대로 확인합니다.</li></ol></div>
         <div id="result-content" class="result-content" hidden>
-          <div class="result-meta"><span id="result-state">G·MAP 권장</span><b id="result-source">—</b></div>
-          <p class="result-kicker">RECOMMENDED START</p><h2 id="recommended-course">—</h2><p id="recommendation-reason"></p>
-          <dl class="score-summary"><div><dt id="metric-label">입력 점수</dt><dd id="metric-value">—</dd></div><div><dt>계획 신뢰도</dt><dd id="confidence-value">—</dd></div><div><dt>학교 배정</dt><dd id="placement-value">—</dd></div></dl>
+          <div class="result-meta"><span id="result-state">입력 근거</span><b id="result-source">—</b></div>
+          <p class="result-kicker">선택한 현재 과정</p><h2 id="recommended-course">—</h2><p id="recommendation-reason"></p>
+          <dl class="score-summary"><div><dt id="metric-label">성적표 값</dt><dd id="metric-value">—</dd></div><div><dt>시험 시기·비교 기준</dt><dd id="confidence-value">성적표 기준</dd></div><div><dt>학교 배정</dt><dd id="placement-value">—</dd></div></dl>
           <section class="route-card"><h3>목표 과정까지</h3><div id="course-route" class="course-route"></div></section>
-          <section class="priority-card"><h3>먼저 보완할 영역</h3><div id="priority-list"></div></section>
-          <section class="study-load"><h3>권장 학습량</h3><div><article><strong id="plan-weeks">—</strong><span>권장 기간</span></article><article><strong id="plan-days">—</strong><span>주당 학습</span></article><article><strong id="plan-daily">—</strong><span>하루 학습</span></article><article><strong id="plan-problems">—</strong><span>하루 문항</span></article></div></section>
+          <section class="priority-card"><h3>입력한 영역 값 <small>성적표에 적힌 값만 낮은 순으로 표시</small></h3><div id="priority-list"></div></section>
+          <section class="study-load"><h3>다음 단계</h3><p>이 화면은 시험 근거와 선택한 과정을 나란히 정리합니다. 공부할 영역·기간·학습량은 풀이와 교사 확인 뒤 따로 정하세요.</p></section>
           <p class="decision-notice" id="decision-notice"></p>
           <div class="result-actions"><a id="send-to-plan" href="./learning-plan.html?goal=school-g6&fromAssessment=external">이 진도로 학습 계획 만들기</a><a id="open-material" href="./catalog.html?role=student&grade=6">연결 자료 확인</a><a id="published-resource" href="./catalog.html?role=student&grade=7" hidden>Grade 7 공개 자료 살펴보기</a></div>
         </div>

@@ -96,20 +96,23 @@ test("Grade 6 diagnostic evidence keeps only an answer-safe teacher-reviewed sum
 test("external assessment evidence is reduced to an answer-safe local planning summary", function () {
   const store = records.create(memoryStorage());
   const saved = store.saveAssessmentEvidence({
-    schemaVersion: "gfield-external-math-evidence-v1",
+    schemaVersion: "gfield-external-math-evidence-v2",
     source: { id: "map-growth", label: "NWEA MAP Growth Math", role: "instructional-growth" },
-    testDate: "2026-09-01", grade: 6, band: "on-track-evidence", confidence: "medium-for-gmap-plan", placementState: "school-policy-required", officialPlacement: false,
+    testDate: "2026-09-01", grade: 6, band: null, confidence: "not-calculated", placementState: "school-policy-required", officialPlacement: false,
+    currentCourse: { id: "pre-algebra", label: "Pre-Algebra", publicLearning: true },
     recommendedStart: { id: "pre-algebra", label: "Pre-Algebra", publicLearning: true },
     targetCourse: { id: "algebra-1", label: "Algebra 1" },
-    primaryPriority: { label: "기하·측정", axis: "geometry-spatial", clusterId: "6.G.A", percent: 58 },
-    priorityDomains: [{ id: "geometry", label: "기하·측정", clusterId: "6.G.A", percent: 58 }],
-    plan: { weeks: 10, studyDaysPerWeek: 4, minutesPerDay: 45, problemCountPerDay: 10 },
+    scores: { metric: 64, metricLabel: "성취 백분위", rit: 218, percentile: 64, normGroup: null, season: "fall" },
+    primaryPriority: null, priorityDomains: [], domainComparisons: [{ id: "geometry", label: "기하·측정", clusterId: "6.G.A", percent: 58 }],
+    plan: { weeks: null, studyDaysPerWeek: null, minutesPerDay: null, problemCountPerDay: null },
     materialState: "verified-grade6-public-materials", decisionNotice: "G·MAP 권장 진도"
   });
   assert.equal(saved, true);
   const evidence = store.loadAssessmentEvidence();
   assert.equal(evidence.source.id, "map-growth");
-  assert.equal(evidence.primaryPriority.clusterId, "6.G.A");
+  assert.equal(evidence.primaryPriority, null);
+  assert.equal(evidence.domainComparisons[0].clusterId, "6.G.A");
+  assert.equal(evidence.band, null);
   assert.equal(evidence.officialPlacement, false);
   assert.equal(store.clearAssessmentEvidence(), true);
   assert.equal(store.loadAssessmentEvidence(), null);

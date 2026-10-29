@@ -16,29 +16,36 @@ function base(overrides) {
   }, overrides || {});
 }
 
-test("an entered school cutoff can create a target-course candidate but never official placement", function () {
+test("school-cut comparison reports only the entered cutoff and never official placement", function () {
   const result = engine.analyze(base());
   assert.equal(result.targetCandidate, true);
-  assert.equal(result.recommendedStart.id, "algebra-1");
+  assert.equal(result.recommendedStart.id, "pre-algebra");
   assert.equal(result.officialPlacement, false);
   assert.equal(result.placementState, "entered-cut-met-school-review-required");
-  assert.equal(result.confidence, "high-for-gmap-plan");
+  assert.equal(result.band, null);
+  assert.equal(result.confidence, "not-calculated");
+  assert.equal(result.plan.weeks, null);
 });
 
-test("a low prerequisite domain blocks target-course acceleration even when the total clears the entered cut", function () {
+test("entered domain values are shown descriptively and do not apply an invented readiness cutoff", function () {
   const result = engine.analyze(base({ domains: [{ id: "number", percent: 90 }, { id: "algebra", percent: 88 }, { id: "geometry", percent: 61 }, { id: "reasoning", percent: 80 }] }));
-  assert.equal(result.targetCandidate, false);
+  assert.equal(result.targetCandidate, true);
   assert.equal(result.recommendedStart.id, "pre-algebra");
-  assert.equal(result.primaryPriority.clusterId, "6.G.A");
-  assert.deepEqual(result.plan.retentionDays, [1, 3, 7, 14]);
+  assert.equal(result.primaryPriority, null);
+  assert.deepEqual(result.priorityDomains, []);
+  assert.equal(result.domainComparisons[0].clusterId, "6.G.A");
+  assert.equal(result.domainComparisons[0].percent, 61);
 });
 
-test("MAP evidence keeps RIT distinct from percentile and produces an instructional route", function () {
+test("MAP evidence keeps RIT distinct from percentile and reflects only the selected course route", function () {
   const result = engine.analyze(base({ sourceId: "map-growth", overallPercent: undefined, schoolCut: undefined, rit: 218, percentile: 64, season: "fall" }));
   assert.equal(result.scores.rit, 218);
   assert.equal(result.scores.percentile, 64);
-  assert.equal(result.band, "on-track-evidence");
+  assert.equal(result.band, null);
+  assert.equal(result.scores.season, "fall");
   assert.equal(result.placementState, "school-policy-required");
+  assert.equal(result.recommendedStart.id, "pre-algebra");
+  assert.equal(result.targetCandidate, false);
 });
 
 test("a high supporting score without domain evidence cannot advance a course by itself", function () {
@@ -55,6 +62,7 @@ test("SSAT and ISEE remain admissions evidence and cannot independently advance 
   const isee = engine.analyze(base({ sourceId: "isee", overallPercent: undefined, schoolCut: undefined, quantStanine: 9, mathStanine: 8, domains: [] }));
   assert.equal(isee.recommendedStart.id, "pre-algebra");
   assert.equal(isee.officialPlacement, false);
+  assert.equal(isee.scores.metric, null);
 });
 
 test("invalid ranges and backwards course targets are rejected", function () {
