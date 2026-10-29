@@ -498,7 +498,8 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다.",
+      "sourceReviewCorrection20261030": "정본은 네 자리 자연수를 백의 자리까지 세 방법으로 어림한다. 생성 연습문항은 숫자 자릿수와 기준 자리를 바꾼 세 변형이며 각 조건을 독립 열거했다."
     },
     {
       "sourceItemId": "5-2-u1-e2-mission-6",
@@ -515,7 +516,8 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다.",
+      "sourceReviewCorrection20261030": "정본은 세 자리 자연수에 십·백의 자리 조건을 적용한다. 생성 연습문항은 숫자 자릿수와 두 기준 자리를 바꾼 세 변형이며 각 조건을 독립 열거했다."
     },
     {
       "sourceItemId": "5-2-u1-e3-exploration",
