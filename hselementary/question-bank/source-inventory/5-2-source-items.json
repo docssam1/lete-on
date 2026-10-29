@@ -592,6 +592,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "원문 총 수량이 상자·묶음 단위로 나누어떨어지지 않아 모두 판매·낱개 미판매 조건이 모순됨. 수정 원문 또는 출판사 해설 확인 전 잠금.",
+      "syntheticRuntimeTypeId": "5-2-u1-e3-example-3-synthetic",
       "publisherKeyVerified": false,
       "publicDecision": "locked"
     },
@@ -611,6 +612,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "원문은 남은 거리를 100m 단위로 올림해 과금하는지 완주한 단위만 과금하는지 명시하지 않음. 해석 확인 전 잠금.",
+      "syntheticRuntimeTypeId": "5-2-u1-e3-example-4-synthetic",
       "publisherKeyVerified": false,
       "publicDecision": "locked"
     },
