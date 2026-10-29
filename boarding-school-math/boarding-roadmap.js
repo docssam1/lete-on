@@ -187,17 +187,25 @@
     endNote.hidden = Boolean(next);
     if (next) $("journey-next-title").textContent = next[0];
   }
+  function matchingAssessmentEvidence() {
+    try {
+      const records = window.GFIELDLocalLearningRecord;
+      const evidence = records && records.storage.loadAssessmentEvidence();
+      return evidence && !evidence.legacyEvidence && evidence.grade === grade && evidence.source && evidence.currentCourse ? evidence : null;
+    } catch (error) { return null; }
+  }
+  function assessmentDate(evidence) {
+    return typeof evidence.testDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(evidence.testDate)
+      ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${evidence.testDate}T00:00:00Z`))
+      : "날짜 미입력";
+  }
   function renderAssessmentEvidence() {
     const label = $("journey-evidence-label");
     const title = $("journey-evidence-title");
     const copy = $("journey-evidence-copy");
     $("journey-assessment-link").href = `./assessment-entry.html?grade=${grade}`;
-    let evidence = null;
-    try {
-      const records = window.GFIELDLocalLearningRecord;
-      evidence = records && records.storage.loadAssessmentEvidence();
-    } catch (error) { evidence = null; }
-    if (!evidence || evidence.legacyEvidence || evidence.grade !== grade || !evidence.source || !evidence.currentCourse) {
+    const evidence = matchingAssessmentEvidence();
+    if (!evidence) {
       label.textContent = "평가 기록 · " + grade + "학년";
       title.textContent = "아직 입력한 평가 기록이 없어요";
       copy.textContent = "시험 점수와 과정 선택은 평가 결과 비교에서 확인할 수 있어요. 이 경로는 공식 학교 배정이나 학생 등급을 뜻하지 않아요.";
@@ -205,10 +213,7 @@
     }
     label.textContent = `${evidence.source.label || "사용자 입력 평가"} · ${grade}학년`;
     title.textContent = `${evidence.currentCourse.label} → ${evidence.targetCourse ? evidence.targetCourse.label : evidence.currentCourse.label}`;
-    const date = typeof evidence.testDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(evidence.testDate)
-      ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${evidence.testDate}T00:00:00Z`))
-      : "날짜 미입력";
-    copy.textContent = `${date} 성적표와 직접 고른 현재·목표 과정이에요. 점수로 학생 등급이나 공식 과목 배정을 판정하지 않아요.`;
+    copy.textContent = `${assessmentDate(evidence)} 성적표와 직접 고른 현재·목표 과정이에요. 점수로 학생 등급이나 공식 과목 배정을 판정하지 않아요.`;
     label.setAttribute("title", "이 기기에 저장된 사용자의 평가 입력");
   }
   function renderRoutes() {
@@ -347,11 +352,27 @@
     renderComparisonColumn("current", current);
     renderComparisonColumn("target", target);
     renderMobileComparison(current, target);
+    renderComparisonAssessment(current, target);
     setText("comparison-bridge-copy", `${current.grade}학년: ${current.bridge}  /  ${target.grade}학년: ${target.bridge}`);
     const hasInferred = current.source === "inferred" || target.source === "inferred";
     setText("comparison-note", hasInferred
       ? `${current.grade}학년과 ${target.grade}학년 자료를 비교해요. 추정안은 학교 과목 순서를 확인해 주세요.`
       : `${current.grade}학년과 ${target.grade}학년의 학습 주제와 개념 연결을 비교해요.`);
+  }
+  function renderComparisonAssessment(current, target) {
+    const evidence = matchingAssessmentEvidence();
+    $("comparison-assessment-link").href = `./assessment-entry.html?grade=${current.grade}`;
+    setText("comparison-assessment-link", evidence ? "평가 결과 확인·수정 →" : "평가 기록 입력 →");
+    setText("comparison-assessment-current-label", `${current.grade}학년 · ${evidence ? (evidence.source.label || "성적표 입력") : "평가 기록"}`);
+    setText("comparison-assessment-current-title", evidence
+      ? `${evidence.currentCourse.label} → ${evidence.targetCourse ? evidence.targetCourse.label : evidence.currentCourse.label}`
+      : "선택한 과정 경로가 없어요");
+    setText("comparison-assessment-current-copy", evidence
+      ? `${assessmentDate(evidence)} · 성적표에서 직접 입력한 현재·목표 과정`
+      : "현재 학년의 성적표와 과정을 입력하면 선택한 경로를 여기에 보여 드려요.");
+    setText("comparison-assessment-target-label", `${target.grade}학년 · ${target.source === "inferred" ? "추정 계획 예시" : "계획 예시"}`);
+    setText("comparison-assessment-target-title", target.title);
+    setText("comparison-assessment-target-copy", target.core);
   }
   function renderGradeFocus() {
     const host = $("grade-focus-list"); host.replaceChildren();
