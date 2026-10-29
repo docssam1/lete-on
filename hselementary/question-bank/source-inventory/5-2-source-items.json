@@ -48,7 +48,7 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "reviewLockedItems": 248
+    "reviewLockedItems": 246
   },
   "units": [
     {
@@ -4645,16 +4645,18 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 55,
-      "printedPage": 57,
-      "sourceShape": "평균의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 59,
+      "sourceShape": "두 수의 평균을 나타내는 ♥ 연산 (23♥□)♥32=33에서 빈 수 구하기",
+      "answerContract": "single-value: 45",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 59쪽 원문 수식과 괄호를 대조하고 평균 연산을 역산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-2",
@@ -4663,16 +4665,18 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 55,
-      "printedPage": 57,
-      "sourceShape": "평균의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 59,
+      "sourceShape": "국어·수학·사회·과학 4과목 성적표와 평균 열, 찢어진 두 점수의 남은 자리로 두 점수 구하기",
+      "answerContract": "ordered-pair: 수학 70점, 사회 83점",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "필기 없는 원문에서 네 과목과 수학 십의 자리 7, 사회 일의 자리 3을 대조하고 가능한 자릿수를 전수 계산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-3",
