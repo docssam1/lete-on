@@ -3053,15 +3053,15 @@
       "ordinal": 1,
       "pdfPage": 32,
       "printedPage": 36,
-      "sourceShape": "점대칭도형의 성질의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: rubric-or-single-choice",
+      "sourceShape": "점대칭도형: 정사각형 여섯 개를 변끼리 붙여 만들 수 있는 점대칭 도형을 회전·뒤집기 중복 없이 센다.",
+      "answerContract": "candidate: count-of-shapes",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 조건과 독립 전수 열거를 확인했으나 공식 답안과 공개 그림 검수 전 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u3-e7-example-1",
