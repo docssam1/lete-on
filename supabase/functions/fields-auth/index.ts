@@ -1,6 +1,14 @@
-import "jsr:@supabase/functions-js@2.5.0/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { FieldsAccessError, isFieldsAdminName, authenticateFieldsAdmin, resolveFieldsSession } from "../_shared/fields-admin-access.js";
+import { membershipSummary } from "../_shared/fields-membership.js";
+
+// 가입 회원(fields_members, 원장 2026-10-29)이면 체험이 끝났거나 멈춘 경우 로그인을 막고, 열린 권을 함께 돌려준다.
+// 회원 표에 없는 옛 승인번호(원장이 직접 만든 것)는 그대로 들어온다.
+async function memberOf(service: any, name: string) {
+  const { data, error } = await service.from("fields_members").select("*").eq("child_name", name).maybeSingle();
+  if (error) return null;
+  return membershipSummary(data);
+}
 
 const ALLOWED_ORIGINS = new Set([
   "https://lete-on.gfieldacademy.net",
@@ -11,6 +19,8 @@ const ALLOWED_ORIGINS = new Set([
   "http://localhost:8794",
   "http://127.0.0.1:8796",
   "http://localhost:8796",
+  "http://127.0.0.1:8767",
+  "http://localhost:8767",
 ]);
 
 function headers(req: Request) {
@@ -95,6 +105,8 @@ Deno.serve(async (req: Request) => {
       if (error) console.error("fields_access_account_query_failed", error.code, error.message);
       if (error) return json(req, { error: "account_lookup_failed" }, 503);
       if (!account?.active || account.code_hash !== codeHash) return json(req, { error: "credentials_invalid" }, 401);
+      const member = await memberOf(service, account.student_name);
+      if (member && !member.open) return json(req, { error: member.reason, member }, 403);
       const token = randomToken();
       const tokenHash = await sha256(token);
       const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString();
@@ -104,7 +116,7 @@ Deno.serve(async (req: Request) => {
         expires_at: expiresAt,
       });
       if (insertError) return json(req, { error: "session_create_failed" }, 503);
-      return json(req, { token, expiresAt, name: account.student_name, permissions: account.permissions, type: account.student_type });
+      return json(req, { token, expiresAt, name: account.student_name, permissions: account.permissions, type: account.student_type, member });
     }
 
     const token = String(req.headers.get("x-fields-session") || body?.token || "");
@@ -117,6 +129,8 @@ Deno.serve(async (req: Request) => {
     }
     if (action !== "session") return json(req, { error: "action_invalid" }, 400);
     const account = await resolveFieldsSession(service, tokenHash);
+    const member = account.type === "admin" ? null : await memberOf(service, account.name);
+    if (member && !member.open) return json(req, { error: member.reason, member }, 403);
     await service.from("fields_access_sessions").update({ last_seen_at: new Date().toISOString() }).eq("token_hash", tokenHash);
     return json(req, {
       ok: true,
@@ -124,6 +138,7 @@ Deno.serve(async (req: Request) => {
       permissions: account.permissions,
       type: account.type,
       expiresAt: account.expiresAt,
+      member,
     });
   } catch (error) {
     if (error instanceof FieldsAccessError) return json(req, { error: error.message }, error.status);
