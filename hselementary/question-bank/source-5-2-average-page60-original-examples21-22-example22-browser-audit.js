@@ -52,7 +52,7 @@ function startServer() {
         const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u6")?.subunits.find(x => x.name === "평균의 활용")?.types.find(x => x.sourceItemId === id);
         return type && { reviewLocked: type.reviewLocked, sourceVerified: type.sourceVerified, generationMode: type.generationMode, verifiedVariantCount: type.verifiedVariantCount, generatorKey: window.HSE_GENERATORS.generatorKey(type) };
       }, itemId);
-      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 1, generatorKey: "source52AverageOriginalPage60Example22" });
+      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 3, generatorKey: "source52AverageOriginalPage60Example22" });
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u6");
@@ -67,7 +67,7 @@ function startServer() {
       const problemItem = problemView.locator(`[data-source-item-id='${itemId}']`).first();
       await problemItem.waitFor({ state: "visible" });
       const prompt = await problemItem.innerText();
-      for (const t of ["5월", "50m씩", "1500m"]) assert(prompt.includes(t));
+      for (const t of ["3월", "40m씩", "1200m"]) assert(prompt.includes(t));
       assert.equal(await problemView.locator(`[data-source-answer='${itemId}']`).count(), 0);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `problem horizontal overflow ${width}px`);
       const fontStatus = await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('600 16px "Pretendard"', "성적표의 평균을 구하여라"); });
@@ -77,7 +77,7 @@ function startServer() {
       await page.locator("#solutionTab").click();
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
-      assert.match(solutionText.replace(/\s/g, ""), /31일.*16일째.*750/, solutionText);
+      assert.match(solutionText.replace(/\s/g, ""), /31일.*16일째.*600/, solutionText);
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);
       await page.screenshot({ path: path.join(outputDir, `example22-solution-${width}.png`), fullPage: true });

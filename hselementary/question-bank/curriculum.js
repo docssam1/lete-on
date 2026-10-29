@@ -2428,7 +2428,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
         difficultyBand:0, sourceItemId:id, sourceItemLabel:`예제 2-${ordinal}`, sourceSection:"example", sourceTier:"advanced",
         sourcePdfPage:56, sourcePrintedPage:60, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
-        generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        generationMode:"fixed-verified-pool", verifiedVariantTarget:3, verifiedVariantCount:3,
         answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
     }
   }
