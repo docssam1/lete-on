@@ -5136,16 +5136,18 @@
       "pdfPage": 58,
       "printedPage": 62,
       "sourceShape": "직육면체 인접 꼭짓점 사이 중복 방문 없는 모서리 경로",
-      "answerContract": "15가지",
+      "answerContract": "candidate: simple edge paths",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 62쪽 원문과 필요한 그림을 확인하고 독립 경우의 수 열거. 출판사 답안 미대조.",
+      "reviewReason": "원문 그림과 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 꼭짓점으로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-exploration"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-1",
