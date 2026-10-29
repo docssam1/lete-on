@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-4
+
+- Printed p.58 source compares the average of Eul's first two tests to Gap's fourth and fifth, not to Eul's own fourth and fifth as the prior ledger stated. Corrected the condition and result: intermediary values ㉠=85 and ㉡=95 give the requested ㉢=78. Publisher answer key unverified; handwritten entries were not used as evidence.
+- Independently checked all 1,030,301 triples of integer scores in 0–100 and found one solution. 1440/375/320px browser, separate one-page A4 visual checks, release gate and 77,640 runtime generations passed.
+- Counts: 2,082 types, 1,294 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Other Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-3
 
 - Printed p.58 graph checked against both source scans: air temperatures 4,7,11,21,16,7 sum to 66; water 7,9,10,14,16,12 sum to 68. Their exact mean difference is 1/3°C. The prior ledger's provisional 2/3°C swapped the June points; the original line connections show June air 11°C and water 10°C. The publisher answer key remains unverified.

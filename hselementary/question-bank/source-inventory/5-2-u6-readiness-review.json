@@ -39,7 +39,7 @@
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-3을 원문 수치와 독립 계산으로 연결했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4를 원문 수치와 독립 계산으로 연결했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 4,
-    "lockedCount": 40
+    "publicCandidateCount": 5,
+    "lockedCount": 39
   },
   "items": [
     {
@@ -182,17 +182,25 @@
       "sourcePrintedPage": 58,
       "commonTypeId": "average-table-missing-three-values",
       "childFriendlyTypeLabel": "평균 조건으로 세 점수 구하기",
-      "originalStructure": "두 사람의 5회 시험 점수표와 평균 조건을 이용해 세 빈칸을 구합니다.",
-      "conditions": ["갑의 5회 점수와 갑의 평균이 같음", "을의 1·2회 평균과 4·5회 평균이 같음", "갑의 평균이 을의 평균보다 3점 낮음"],
+      "originalStructure": "두 사람의 5회 시험 점수표와 평균 조건을 이용해 ㉢의 점수를 구합니다.",
+      "conditions": [
+        "갑의 5회 점수와 갑의 평균이 같음",
+        "을의 1·2회 평균과 갑의 4·5회 평균이 같음",
+        "갑의 평균이 을의 평균보다 3점 낮음",
+        "요구값은 ㉢"
+      ],
       "visualRequirement": "갑·을의 회차 표와 세 빈칸 위치를 정확히 보여야 합니다.",
-      "independentCalculation": "갑: (68+77+95+100+가)÷5=가 이므로 가=85. 을의 평균은 88, 을 1·2회와 4·5회 평균 조건 및 전체 합 440을 함께 풀면 나=89, 다=84",
-      "independentAnswer": "가=85, 나=89, 다=84",
+      "independentCalculation": "갑: (68+77+95+100+㉠)÷5=㉠이므로 ㉠=85. (㉡+90)÷2=(100+85)÷2이므로 ㉡=95. 을의 평균은 88, 전체 합은 440이므로 ㉢=440−95−90−82−95=78. 이전 장부는 비교 대상을 을로 잘못 기록함.",
+      "independentAnswer": "㉢=78점 (중간값 ㉠=85, ㉡=95)",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "세 빈칸 답 입력과 표의 회차 순서를 검수하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e1-example-4",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 58쪽 원문 문장·표 및 구할 자리 ㉢ 대조. 0~100의 정수 점수 조합을 독립 전수 검사. 공식 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-1",
