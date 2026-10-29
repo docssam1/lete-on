@@ -4856,16 +4856,18 @@
       "pdfPage": 55,
       "printedPage": 59,
       "sourceShape": "평균 31인 일곱 자연수를 차례로 1~7만큼 키운 뒤의 평균 구하기",
-      "answerContract": "single-value: 35",
+      "answerContract": "candidate: single-value",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문에서 1~7은 원래 수가 아니라 각 수의 증가량임을 확인하고 새 평균 35를 계산했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e1-mission-5"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-6",
@@ -4876,16 +4878,18 @@
       "pdfPage": 55,
       "printedPage": 59,
       "sourceShape": "리듬체조 6명의 심판 점수에서 각 선수별 최고·최저를 제외한 평균을 비교하기",
-      "answerContract": "winner-and-difference: 은영 0.25점",
+      "answerContract": "candidate: average comparison",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "원문의 두 선수와 여섯 심판 점수 및 최고·최저 제외 규칙을 대조하고 평균을 독립 계산했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e1-mission-6"
     },
     {
       "sourceItemId": "5-2-u6-e2-exploration",
