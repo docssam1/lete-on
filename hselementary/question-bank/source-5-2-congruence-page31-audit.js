@@ -214,6 +214,10 @@ for (const def of source.definitions) {
         assert.notDeepEqual([height,width], [16,8], "generated values do not reproduce the source numbers");
         assert.match(item.prompt, new RegExp(`ㄱㄴ=${height}cm`));
         assert.match(item.prompt, new RegExp(`ㄹㅁ=${width}cm`));
+        assert.match(item.answerVisual, /삼각형 넓이/);
+        assert.match(item.answerVisual, /<polygon points=/);
+        assert.doesNotMatch(item.answerVisual, /㉠/);
+        assert.ok(!(height === 16 && width === 8), "synthetic dimensions differ from the original");
         assert.match(item.solution, /합동 표기 순서대로/);
         assert.match(item.solution, /직사각형/);
         assert.match(item.solution, /data-source52-figure|area-proof/);
@@ -247,16 +251,25 @@ for (const def of source.definitions) {
         assert.ok(Math.abs(dot(d,r,g))/(distance(r,d)*distance(g,r)) < 1e-8, "base RD is perpendicular to GR");
         assert.equal(midpointWidth, (top+bottom)/2);
         assert.equal(answer, height*midpointWidth/2);
-        if (variant === 0 && difficultyOffset === 0) {
-          assert.deepEqual({ top, bottom, height, midpointWidth, answer }, { top:10, bottom:8, height:6, midpointWidth:9, answer:27 }, "the source's original dimensions and answer must be present in the verified pool");
-        }
+        assert.ok(!(top === 10 && bottom === 8 && height === 6), "synthetic dimensions differ from the original");
+        const triArea = (a,b,c) => Math.abs((b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x))/2;
+        assert.ok(Math.abs(2*triArea(g,n,m)-triArea(g,n,d)) < 0.02, "midpoint divides triangle GND into equal areas");
+        assert.ok(Math.abs(triArea(g,n,d)-triArea(g,n,r)) < 0.02, "triangles on the same base and between parallel lines have equal areas");
+        assert.ok(Math.abs(2*triArea(r,m,d)-triArea(r,n,d)) < 0.02, "midpoint halves triangle RND");
+        assert.ok(Math.abs(triArea(g,r,m)-triArea(g,n,m)-triArea(r,m,d)) < 0.02, "target equals both remaining areas together");
         assert.ok(Math.abs(area / ((Math.min(14,240/top,180/height))**2) - answer) < 1e-8, "rendered target triangle matches the answer");
         assert.match(svg, new RegExp(`>${bottom}cm<\/text>`));
         assert.match(svg, new RegExp(`>${top}cm<\/text>`));
         assert.match(svg, new RegExp(`>${height}cm<\/text>`));
         assert.match(item.prompt, /삼각형 ㄱㄹㅁ의 넓이/);
         assert.match(item.prompt, /점 ㅁ은 변 ㄴㄷ의 한가운데 점/);
-        assert.match(item.solution, /사다리꼴의 중선 길이는 두 평행한 변의 길이의 평균/);
+        assert.match(item.solution, /보조선 ㄹㄴ/);
+        assert.match(item.solution, /data-construction="diagonal-rn"/);
+        assert.doesNotMatch(item.prompt, /data-construction="diagonal-rn"/);
+        assert.match(item.solution, /사다리꼴 넓이의 절반/);
+        assert.match(item.answerVisual, /삼각형 넓이/);
+        assert.match(item.answerVisual, /<polygon points=/);
+        assert.doesNotMatch(item.answerVisual, /㉠/);
         assert.match(item.solution, new RegExp(`${answer}cm²`));
         assert.equal(item.reviewLocked, false);
         assert.equal(source.isPublicReady(def.sourceItemId), true);

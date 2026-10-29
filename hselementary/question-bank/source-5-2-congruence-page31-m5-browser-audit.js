@@ -16,8 +16,12 @@ async function prepare(page, width) {
   await page.setViewportSize({ width, height: 1000 });
   await page.addInitScript(() => { localStorage.clear(); sessionStorage.clear(); window.print = () => {}; });
   await page.goto(`${origin}/hselementary/question-bank/`);
+  await page.waitForFunction(() => window.HSE_GENERATORS && window.HSE_SOURCE_52_CONGRUENCE_PAGE31);
   await page.locator("#gradeFilter [data-grade='5']").click();
+  await page.waitForFunction(() => document.querySelector("#gradeFilter [data-grade='5']")?.classList.contains("is-active"));
   await page.locator("#termFilter [data-term='2']").click();
+  await page.waitForFunction(() => document.querySelector("#termFilter [data-term='2']")?.classList.contains("is-active"));
+  await page.waitForFunction(() => [...document.querySelectorAll("#unitFilter option")].some(option => option.value === "5-2-u3"));
   await page.locator("#unitFilter").selectOption("5-2-u3");
   const checkbox = page.locator(`#typeList input[data-type-id='${id}']`);
   assert.equal(await checkbox.isDisabled(), false, `Mission 5 enabled at ${width}px`);
