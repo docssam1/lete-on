@@ -599,11 +599,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e2-mission-3",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 61쪽 표의 아홉 변화와 두 물음 대조, 점수 재구성 및 기호 4가지 전수 검사. 이전 장부는 Mission 5 내용을 잘못 기재. 공식 출판사 답안 미확인."
+      "releaseEvidence": "인쇄 61쪽 표의 아홉 변화와 두 물음 대조, 점수 재구성 및 기호 4가지 전수 검사. 이전 장부는 Mission 5 내용을 잘못 기재. 공식 출판사 답안 미확인.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-4",
