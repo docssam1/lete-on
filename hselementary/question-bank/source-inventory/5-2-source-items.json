@@ -5290,16 +5290,18 @@
       "pdfPage": 59,
       "printedPage": 63,
       "sourceShape": "10·50·100원 동전 15개 이하로 380원 만들기",
-      "answerContract": "8가지",
+      "answerContract": "candidate: bounded coin combinations",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 63쪽 원문·조건과 필요한 그림을 확인하고 독립 전수 검사. 출판사 정답 미대조.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 금액과 제한으로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-mission-3"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-4",
