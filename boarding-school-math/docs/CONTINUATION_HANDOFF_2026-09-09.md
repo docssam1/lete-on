@@ -379,3 +379,5 @@ The review report now links to the selected grade's roadmap at the grade map sec
 Verification after the roadmap link change: the full paper-review analysis, contest browser, local-record, Grade 3–12 roadmap model, and roadmap browser suites passed 58/58. Browser checks cover Grade 7 and Grade 9 URLs, generated link text, its accessible description, and clearing a visible result when the selected grade changes. `git diff --check` passed. Local-only; no push, upload, publish, or deploy.
 
 A follow-up browser test now clicks the selected Grade 9 result link and confirms the roadmap opens at `#grade-map` with the Grade 9 heading. Competition and roadmap browser suites pass 31/31; the complete five-suite set previously passed 58/58 before this additional case. Local-only, no push or deployment.
+
+The click-through check also exposed a conflicting 20px scroll margin under the 56px sticky section bar. Grade-map and route sections now reserve 72px, and the test verifies the linked heading settles below the sticky navigation. Competition and roadmap browser suites pass 31/31 after this adjustment.

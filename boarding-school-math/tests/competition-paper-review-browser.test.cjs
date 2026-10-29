@@ -207,6 +207,11 @@ test("contest review opens the selected grade map from its result link", async f
   await page.locator("#report-roadmap-link").click();
   await page.waitForURL(/boarding-roadmap\.html\?grade=9#grade-map$/);
   assert.match(await page.locator("#grade-map-title").innerText(), /9학년 수학/);
+  await page.waitForFunction(function () {
+    const section = document.querySelector("#grade-map");
+    const shortcuts = document.querySelector(".roadmap-shortcuts");
+    return section.getBoundingClientRect().top >= shortcuts.getBoundingClientRect().bottom;
+  });
   await page.close();
 });
 
