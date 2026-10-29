@@ -365,3 +365,11 @@ Implemented locally: the paper review lists every directly marked wrong or blank
 Grade comparison now labels Grades 7, 8, and 10 as accelerated learning examples rather than school-grade norms; Grade 9 remains explicitly inferred. Grades 3–5 comparison columns state that the source plan does not specify a contest-preparation track instead of implying contests are unavailable.
 
 Verification: focused paper-review analysis, browser, local-record, grade-roadmap model, and roadmap browser tests passed 55/55. Desktop and 390px screenshots of the updated contest review were visually inspected; existing GFIELD colors, spacing, keyboard focus, and responsive layout were retained. `git diff --check` passed. Claude Code CLI used the existing Claude Max subscription, not a separately billed Anthropic API call. Local-only; no upload, publish, or deploy.
+
+### 2026-10-30 blank-response review cues
+
+The manual paper-review form now distinguishes wrong-answer reasons from self-reported blank-response reasons (time shortage, skipped, or could not start). These cues affect only the live review and item list; the saved local summary still contains only the pre-existing aggregate fields and wrong-answer reason counts. The blank section appears only when at least one blank is marked. Mobile controls use a short option label and keep the domain and reason side by side; status changes update the control's visible and accessible label. Invalid status/reason combinations are rejected with a field-specific message.
+
+Claude Max Opus reviewed the sanitized public diff and found mobile blank-row layout, storage-boundary evidence, empty-state noise, terminology, and select-label risks. The implementation was updated and regression-tested. The Claude Max re-review command then stalled without returning content and was interrupted; no second-review approval is claimed. The direct save-flow browser assertion verifies blank reason labels are absent from local storage.
+
+Verification: paper-review analysis, contest browser, local-record, Grade 3–12 roadmap model, and roadmap browser suites passed 58/58; `git diff --check` passed. This remains a manually entered post-paper reflection, not an ability or qualification diagnostic. Local-only; no upload, publish, or deploy.

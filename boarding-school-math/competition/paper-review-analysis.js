@@ -8,9 +8,12 @@
   // Reference formulas: MAA 2023 AMC 8 and 2022 AMC 10A booklets. Check the selected paper's own instructions; MAA may update rules.
   const statusIds = Object.freeze(["unmarked", "correct", "wrong", "blank"]);
   const domainIds = Object.freeze(["unclassified", "algebra", "number", "geometry", "counting"]);
-  const reasonIds = Object.freeze(["none", "concept", "approach", "calculation", "reading", "time"]);
+  const wrongReasonIds = Object.freeze(["none", "concept", "approach", "calculation", "reading", "time"]);
+  const blankReasonIds = Object.freeze(["none", "time", "skipped", "could-not-start"]);
+  const reasonIds = Object.freeze(Array.from(new Set(wrongReasonIds.concat(blankReasonIds))));
   const domainNames = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률" });
   const reasonNames = Object.freeze({ concept: "개념", approach: "접근 아이디어", calculation: "계산", reading: "조건 읽기", time: "시간" });
+  const blankReasonNames = Object.freeze({ time: "시간 부족", skipped: "건너뜀", "could-not-start": "시작 방법을 찾지 못함" });
 
   function analyze(entries, itemCount, program) {
     if (!Number.isInteger(itemCount) || itemCount < 1 || itemCount > 30 || !Array.isArray(entries) || entries.length !== itemCount) {
@@ -27,9 +30,15 @@
     let unclassified = 0;
     let domainClassified = 0;
     let reasonClassified = 0;
+    let blankReasonClassified = 0;
+    const blankReasons = Object.keys(blankReasonNames).map(function (id) { return { id: id, name: blankReasonNames[id], count: 0 }; });
+    const byBlankReason = new Map(blankReasons.map(function (reason) { return [reason.id, reason]; }));
     for (let index = 0; index < entries.length; index += 1) {
       const entry = entries[index];
-      if (!entry || !statusIds.includes(entry.status) || !domainIds.includes(entry.domain) || !reasonIds.includes(entry.reason)) {
+      if (!entry || !statusIds.includes(entry.status) || !domainIds.includes(entry.domain) || !reasonIds.includes(entry.reason)
+        || (entry.status === "wrong" && !wrongReasonIds.includes(entry.reason))
+        || (entry.status === "blank" && !blankReasonIds.includes(entry.reason))
+        || ((entry.status === "correct" || entry.status === "unmarked") && entry.reason !== "none")) {
         return { valid: false, error: "문항별 표시와 영역을 확인하세요." };
       }
       counts[entry.status] += 1;
@@ -54,6 +63,10 @@
       if (entry.status === "wrong" && entry.reason !== "none") {
         reasonClassified += 1;
         byReason.get(entry.reason).count += 1;
+      }
+      if (entry.status === "blank" && entry.reason !== "none") {
+        blankReasonClassified += 1;
+        byBlankReason.get(entry.reason).count += 1;
       }
     }
     if (counts.unmarked === itemCount) return { valid: false, error: "표시한 문제가 없습니다. 채점한 문제부터 표시하세요." };
@@ -86,8 +99,10 @@
       unclassified: unclassified,
       domainClassified: domainClassified,
       reasonClassified: reasonClassified,
+      blankReasonClassified: blankReasonClassified,
       domains: domains,
       reasons: reasons.filter(function (reason) { return reason.count > 0; }),
+      blankReasons: blankReasons.filter(function (reason) { return reason.count > 0; }),
       lowestDomains: lowestDomains,
       reviewItems: reviewItems,
       domainReviewItemNumbers: Object.freeze(Object.fromEntries(domains.map(function (domain) {
@@ -98,5 +113,5 @@
       level: null
     };
   }
-  return Object.freeze({ analyze: analyze, statusIds: statusIds, domainIds: domainIds, reasonIds: reasonIds });
+  return Object.freeze({ analyze: analyze, statusIds: statusIds, domainIds: domainIds, reasonIds: reasonIds, wrongReasonIds: wrongReasonIds, blankReasonIds: blankReasonIds });
 });

@@ -54,6 +54,29 @@ test("paper review shows all ties and separately includes blank responses", func
   assert.deepEqual(tiedLowest.lowestDomains.map((domain) => domain.name), ["식·대수", "수와 정수론"]);
 });
 
+test("blank response reasons stay separate from wrong-answer reasons", function () {
+  const report = analyze([
+    entry("wrong", "algebra", "time"),
+    entry("blank", "number", "time"),
+    entry("blank", "geometry", "skipped"),
+    entry("blank", "counting", "could-not-start")
+  ], 4);
+  assert.equal(report.reasonClassified, 1);
+  assert.deepEqual(report.reasons, [{ id: "time", name: "시간", count: 1 }]);
+  assert.equal(report.blankReasonClassified, 3);
+  assert.deepEqual(report.blankReasons, [
+    { id: "time", name: "시간 부족", count: 1 },
+    { id: "skipped", name: "건너뜀", count: 1 },
+    { id: "could-not-start", name: "시작 방법을 찾지 못함", count: 1 }
+  ]);
+});
+
+test("paper review rejects reasons that do not match the selected response state", function () {
+  assert.equal(analyze([entry("wrong", "algebra", "skipped")], 1).valid, false);
+  assert.equal(analyze([entry("blank", "number", "concept")], 1).valid, false);
+  assert.equal(analyze([entry("correct", "geometry", "time")], 1).valid, false);
+});
+
 test("complete AMC marks can show a cautious raw-score estimate using format-specific scoring", function () {
   const amc8 = [entry("correct"), entry("wrong"), ...Array.from({ length: 23 }, function () { return entry("blank"); })];
   const amc10 = [...Array.from({ length: 10 }, function () { return entry("correct"); }), ...Array.from({ length: 5 }, function () { return entry("wrong"); }), ...Array.from({ length: 10 }, function () { return entry("blank"); })];

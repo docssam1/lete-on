@@ -40,6 +40,7 @@ test("users can opt to save an answer-free AMC review summary and see it only on
   await page.locator('[data-question="2"][data-field="reason"]').selectOption("reading");
   await page.locator('[data-question="3"][data-field="status"]').selectOption("blank");
   await page.locator('[data-question="3"][data-field="domain"]').selectOption("counting");
+  await page.locator('[data-question="3"][data-field="reason"]').selectOption("skipped");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#save-diagnostic").isVisible(), true);
   assert.equal(await page.locator("#save-diagnostic").innerText(), "복습 요약을 기기에 저장");
@@ -55,6 +56,7 @@ test("users can opt to save an answer-free AMC review summary and see it only on
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   const raw = await page.evaluate(function () { return localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"); });
   assert.doesNotMatch(raw, /responses|answer|correct-answer/);
+  assert.doesNotMatch(raw, /skipped|could-not-start|시간 부족/);
   await page.locator("#review-exam-date").fill("2026-10-30");
   await page.locator("#review-paper-label").fill(`Practice B-${"X".repeat(69)}`);
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
@@ -132,7 +134,7 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   assert.match(await page.locator("#score-estimate-note").innerText(), /참고 원점수는 25문항을 모두 표시한 뒤/);
   assert.match(await page.locator("#report-metrics").innerText(), /1\/2/);
   assert.match(await page.locator("#report-domains h3").innerText(), /직접 분류한 영역 · 2\/25문항/);
-  assert.match(await page.locator("#report-reasons h3").innerText(), /1\/1개 오답 분류/);
+  assert.match(await page.locator("#report-reasons h3").first().innerText(), /1\/1개 분류/);
   assert.doesNotMatch(await page.locator("#report-metrics").innerText(), /50%/);
   assert.doesNotMatch(await page.locator("#report-domains").innerText(), /50%/);
   assert.equal(await page.locator("#report-title").evaluate((node) => node === document.activeElement), true);
@@ -296,6 +298,24 @@ test("phone rows show one status first, then only relevant follow-up fields", as
   const widths = await row.locator("select:visible").evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().width));
   assert.ok(widths[0] > widths[1] && widths[1] >= 100 && widths[2] >= 100, `mobile control widths: ${widths}`);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  await page.close();
+});
+
+test("blank response reason is captured separately and never shown as an answer error", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  const row = page.locator(".paper-mark-row").first();
+  await row.locator('[data-field="status"]').selectOption("blank");
+  assert.equal(await row.locator(".mark-reason span").innerText(), "미응답 이유");
+  assert.equal(await row.locator('[data-field="reason"]').isEnabled(), true);
+  assert.deepEqual(await row.locator('[data-field="reason"] option').allTextContents(), ["이유 선택", "시간 부족", "건너뜀", "시작 못 함"]);
+  await row.locator('[data-field="domain"]').selectOption("number");
+  await row.locator('[data-field="reason"]').selectOption("skipped");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 미응답 · 수와 정수론 · 건너뜀/);
+  assert.match(await page.locator("#report-reasons").innerText(), /미응답 이유 · 1\/1개 공란 분류/);
+  assert.match(await page.locator("#report-reasons").innerText(), /건너뜀 · 1문항/);
+  assert.match(await page.locator("#report-reasons").innerText(), /오답 이유 · 0\/0개 분류/);
   await page.close();
 });
 

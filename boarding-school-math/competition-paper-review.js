@@ -12,12 +12,26 @@
   const statuses = [{ id: "unmarked", title: "표시 안 함" }, { id: "correct", title: "O · 맞힘" }, { id: "wrong", title: "X · 틀림" }, { id: "blank", title: "미응답 · 답안 공란" }];
   const domains = [{ id: "unclassified", title: "영역 선택" }].concat(roadmap.strands.map(function (entry) { return { id: entry.id, title: entry.title }; }));
   const reasons = [{ id: "none", title: "이유 선택" }, { id: "concept", title: "개념" }, { id: "approach", title: "접근 아이디어" }, { id: "calculation", title: "계산" }, { id: "reading", title: "조건 읽기" }, { id: "time", title: "시간" }];
+  const blankReasons = [{ id: "none", title: "이유 선택" }, { id: "time", title: "시간 부족" }, { id: "skipped", title: "건너뜀" }, { id: "could-not-start", title: "시작 못 함" }];
   let scoreHistory = [];
   let lastDiagnostic = null;
   let lastHistoryContextKey = "";
   function setText(id, value) { $(id).textContent = value; }
   function selectedFormat() { return roadmap.competitionOptions(grade).find(function (entry) { return entry.id === programId; }); }
   function option(value, title) { const node = document.createElement("option"); node.value = value; node.textContent = title; return node; }
+  function syncReasonField(row, status) {
+    const number = row.querySelector('[data-field="status"]').dataset.question;
+    const reasonSelect = row.querySelector('[data-field="reason"]');
+    const reasonLabel = row.querySelector(".mark-reason span");
+    const isBlank = status === "blank";
+    const reasonName = isBlank ? "미응답 이유" : "오답 이유";
+    const values = isBlank ? blankReasons : reasons;
+    reasonLabel.textContent = reasonName;
+    reasonSelect.setAttribute("aria-label", `${number}번 ${reasonName}`);
+    reasonSelect.replaceChildren();
+    values.forEach(function (entry) { reasonSelect.append(option(entry.id, entry.title)); });
+    reasonSelect.disabled = status !== "wrong" && !isBlank;
+  }
   function updateUrl() {
     const url = new URL(location.href);
     url.searchParams.set("grade", String(grade));
@@ -89,7 +103,7 @@
       [
         { field: "status", values: statuses, label: "표시" },
         { field: "domain", values: domains, label: "영역" },
-        { field: "reason", values: reasons, label: "오류 이유" }
+        { field: "reason", values: reasons, label: "오답 이유" }
       ].forEach(function (config) {
         const field = document.createElement("label");
         field.className = `mark-field mark-${config.field}`;
@@ -103,8 +117,8 @@
         select.addEventListener("change", function () {
           if (config.field === "status") {
             li.dataset.state = select.value;
+            syncReasonField(li, select.value);
             const reasonSelect = li.querySelector('[data-field="reason"]');
-            reasonSelect.disabled = select.value !== "wrong";
             if (reasonSelect.disabled) reasonSelect.value = "none";
             if (select.value === "unmarked") li.querySelector('[data-field="domain"]').value = "unclassified";
           }
@@ -348,21 +362,32 @@
       const domain = domains.find(function (entry) { return entry.id === item.domain; });
       const reason = reasons.find(function (entry) { return entry.id === item.reason; });
       const itemState = item.status === "wrong" ? "오답" : "미응답";
-      const details = [domain && item.domain !== "unclassified" ? domain.title : "영역 미분류", item.status === "wrong" && reason && item.reason !== "none" ? reason.title : ""].filter(Boolean);
+      const blankReason = blankReasons.find(function (entry) { return entry.id === item.reason; });
+      const details = [domain && item.domain !== "unclassified" ? domain.title : "영역 미분류", item.status === "wrong" && reason && item.reason !== "none" ? reason.title : "", item.status === "blank" && blankReason && item.reason !== "none" ? blankReason.title : ""].filter(Boolean);
       row.textContent = `${item.number}번 · ${itemState} · ${details.join(" · ")}`;
       reviewList.append(row);
     });
     $("report-review-items").hidden = result.reviewItems.length === 0;
     const reasonHost = $("report-reasons");
     reasonHost.replaceChildren();
-    const reasonHeading = document.createElement("h3"); reasonHeading.textContent = `오류 이유 · ${result.reasonClassified}/${result.counts.wrong}개 오답 분류`; reasonHost.append(reasonHeading);
+    const reasonHeading = document.createElement("h3"); reasonHeading.textContent = `오답 이유 · ${result.reasonClassified}/${result.counts.wrong}개 분류`; reasonHost.append(reasonHeading);
     const reasonNote = document.createElement("p"); reasonNote.className = "report-evidence-note";
-    reasonNote.textContent = "선택한 오류 이유만 모았어요. 이유를 고르지 않은 오답은 집계하지 않습니다.";
+    reasonNote.textContent = "선택한 오답 이유만 모았어요. 이유를 고르지 않은 오답은 집계하지 않습니다.";
     reasonHost.append(reasonNote);
     if (result.reasons.length) result.reasons.forEach(function (reason) {
       const row = document.createElement("p"); row.textContent = `${reason.name} · ${reason.count}문항`; reasonHost.append(row);
     });
     else { const empty = document.createElement("p"); empty.textContent = "아직 선택된 오류 이유가 없습니다."; reasonHost.append(empty); }
+    if (result.counts.blank > 0) {
+      const blankReasonHeading = document.createElement("h3"); blankReasonHeading.textContent = `미응답 이유 · ${result.blankReasonClassified}/${result.counts.blank}개 공란 분류`; reasonHost.append(blankReasonHeading);
+      const blankReasonNote = document.createElement("p"); blankReasonNote.className = "report-evidence-note";
+      blankReasonNote.textContent = "이번 화면에서 선택한 미응답 이유예요. 저장된 복습 요약에는 포함하지 않습니다.";
+      reasonHost.append(blankReasonNote);
+      if (result.blankReasons.length) result.blankReasons.forEach(function (reason) {
+        const row = document.createElement("p"); row.textContent = `${reason.name} · ${reason.count}문항`; reasonHost.append(row);
+      });
+      else { const empty = document.createElement("p"); empty.textContent = "아직 선택된 미응답 이유가 없습니다."; reasonHost.append(empty); }
+    }
     const lowestAreas = result.lowestDomains.map(function (entry) { return `${entry.name} ${entry.correct}/${entry.attempted}`; });
     setText("report-next", lowestAreas.length
       ? `표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 ${lowestAreas.join(" · ")}입니다. 적은 문항의 관찰이므로 학습 수준을 판정하지 않아요.`
@@ -382,7 +407,7 @@
     const format = selectedFormat();
     if (!format) { setText("paper-error", "대회를 선택해 주세요."); $("paper-error").hidden = false; return; }
     const result = analyzer.analyze(readMarks(), format.itemCount, format.id);
-    if (!result.valid) { setText("paper-error", result.error); $("paper-error").hidden = false; return; }
+    if (!result.valid) { setText("paper-error", result.error === "문항별 표시와 영역을 확인하세요." ? "문항별 표시·영역·이유를 확인하세요." : result.error); $("paper-error").hidden = false; return; }
     $("paper-error").hidden = true;
     renderResult(result);
   });
