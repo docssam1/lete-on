@@ -652,11 +652,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e2-mission-5",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조."
+      "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-6",
@@ -679,11 +680,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e2-mission-6",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조."
+      "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-exploration-1",
@@ -706,11 +708,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e3-exploration",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조. 그림의 선을 따라가는 뜻을 명확히 모서리로 안내함."
+      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조. 그림의 선을 따라가는 뜻을 명확히 모서리로 안내함.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-1",
@@ -733,11 +736,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e3-example-1",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조."
+      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-2",
@@ -760,11 +764,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e3-example-2",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조."
+      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-3",
@@ -787,11 +792,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e3-example-3",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조."
+      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-4",
@@ -814,11 +820,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e3-example-4",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조."
+      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-1",
@@ -841,11 +848,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e3-mission-1",
-      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조."
+      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-2",
@@ -868,11 +876,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e3-mission-2",
-      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조."
+      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-3",
@@ -895,11 +904,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e3-mission-3",
-      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조."
+      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-4",
@@ -922,11 +932,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e3-mission-4",
-      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조."
+      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-5",
@@ -975,11 +986,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e3-mission-6",
-      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조."
+      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e4-exploration-1",
@@ -1003,11 +1015,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e4-exploration",
-      "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조."
+      "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e4-example-4-1",
@@ -1030,11 +1043,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e4-example-1",
-      "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조."
+      "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e4-example-4-2",
@@ -1058,10 +1072,11 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e4-example-2",
+      "originalSourceReleaseStatus": "locked",
       "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조."
     },
     {
@@ -1110,10 +1125,11 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e4-example-4",
+      "originalSourceReleaseStatus": "locked",
       "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조."
     },
     {
@@ -1137,9 +1153,10 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e4-mission-1",
+      "originalSourceReleaseStatus": "locked",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
@@ -1165,9 +1182,10 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e4-mission-2",
+      "originalSourceReleaseStatus": "locked",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
@@ -1192,9 +1210,10 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e4-mission-3",
+      "originalSourceReleaseStatus": "locked",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
@@ -1219,9 +1238,10 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e4-mission-4",
+      "originalSourceReleaseStatus": "locked",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
@@ -1247,9 +1267,10 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e4-mission-5",
+      "originalSourceReleaseStatus": "locked",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
@@ -1274,9 +1295,10 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e4-mission-6",
+      "originalSourceReleaseStatus": "locked",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     }

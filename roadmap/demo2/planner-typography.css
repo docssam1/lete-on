@@ -1,0 +1,233 @@
+/* Final, scoped type contract for the parent planner. Keep content readable;
+   let boxes grow rather than clipping copy or shrinking it to fit. */
+body.roadmap-studio.integrated-planner {
+  --type-title: 1.375rem;
+  --type-section: 1.125rem;
+  --type-body: .9375rem;
+  --type-control: .875rem;
+  --type-caption: .75rem;
+  font-family: var(--font-ui);
+  font-size: var(--type-body);
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: -.012em;
+}
+body.roadmap-studio.integrated-planner :is(button,summary,table) {
+  font-family: var(--font-ui);
+  letter-spacing: -.012em;
+}
+body.roadmap-studio.integrated-planner :is(h1,h2,h3,h4,h5) {
+  font-weight: 650;
+  letter-spacing: -.025em;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  min-width: 0;
+}
+body.roadmap-studio.integrated-planner :is(p,dd,li,summary) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+/* All screen explanations use the same face; the existing wordmark is retained. */
+body.roadmap-studio.integrated-planner :is(.course-summary,.course-book-other,.pathway-detail p,.pathway-detail li,.study-steps p,.transition-plan-detail dd,.course-inspector p,.workspace-note p) {
+  font-family: var(--font-ui);
+  line-height: 1.8;
+  letter-spacing: -.012em;
+}
+body.roadmap-studio.integrated-planner :is(#pathwayTitle,#questionTitle) {
+  font-size: var(--type-title);
+  font-weight: 650;
+  line-height: 1.5;
+  letter-spacing: -.025em;
+}
+body.roadmap-studio.integrated-planner :is(#pathwaySummary,#questionHelp).planner-guide-bubble,
+body.roadmap-studio.integrated-planner .planner-guide-bubble .speech-copy {
+  font-size: var(--type-body);
+  line-height: 1.8;
+  font-weight: 400;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+body.roadmap-studio.integrated-planner :is(.planner-guide-bubble,.course-popover,.reference-current,.reference-plan-context,.reference-design-trail,.study-chosen-book,.plan-question-shortcut) {
+  min-width: 0;
+  max-width: 100%;
+}
+body.roadmap-studio.integrated-planner #pathwayCoach .pathway-options>button,
+body.roadmap-studio.integrated-planner .question-options>button {
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+  font-size: var(--type-control);
+  font-weight: 550;
+  line-height: 1.6;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+body.roadmap-studio.integrated-planner :is(.pathway-options,.question-options)>button :is(strong,b:not(:last-child)) {
+  font-size: inherit;
+  font-weight: 550;
+  line-height: inherit;
+}
+body.roadmap-studio.integrated-planner :is(.choice-help,.pathway-detail,.coach-reference,.workspace-note,.reference-current)>summary {
+  font-size: var(--type-caption);
+  line-height: 1.7;
+  min-height: 44px;
+  height: auto;
+}
+body.roadmap-studio.integrated-planner .workspace-tabs button {
+  min-width: 0;
+  font-size: .8125rem;
+  font-weight: 550;
+  line-height: 1.45;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+body.roadmap-studio.integrated-planner .workspace-tabs button span { font-size: inherit; min-width: 0; }
+body.roadmap-studio.integrated-planner .workspace-tabs button[aria-selected=true] { font-weight: 650; }
+body.roadmap-studio.integrated-planner :is(.plan-travel button,.top .gear,.top .nav button) {
+  font-weight: 550;
+  line-height: 1.5;
+  min-width: 0;
+}
+body.roadmap-studio.integrated-planner .plan-travel .plan-design-entry {
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  height: auto;
+}
+body.roadmap-studio.integrated-planner :is(.workspace-schedule h3,.transition-graph h4,.course-popover h3) {
+  font-size: var(--type-section);
+  line-height: 1.5;
+  font-weight: 650;
+}
+body.roadmap-studio.integrated-planner :is(.reference-plan-context summary strong,.reference-current dd,.course-date,.course-stop-label>span,.reference-design-trail button) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+body.roadmap-studio.integrated-planner :is(.course-stop-label,.landscape-label,.intake-growing-map li) {
+  min-width: 0;
+  height: auto;
+  white-space: normal;
+}
+body.roadmap-studio.integrated-planner :is(.intake-growing-map li strong,.history-later strong,.senior-route-card>strong) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+body.roadmap-studio.integrated-planner .course-stop-label strong {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  font-weight: 650;
+  letter-spacing: -.02em;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+body.roadmap-studio.integrated-planner .course-stop-label small { font-size: .6875rem; line-height: 1.5; }
+body.roadmap-studio.integrated-planner .course-stop-label>span { font-size: .75rem; line-height: 1.5; text-wrap: balance; }
+body.roadmap-studio.integrated-planner :is(.parallel-tags button,.reference-plan-context button) {
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+/* Every duration keeps its horizontal position and width. A shared grid row
+   measures the tallest label and gives ALL bars equal, sufficient height. */
+body.integrated-planner .horizontal-course-grid .standard-lane-track {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  padding-block: 8px;
+  height: auto;
+  min-height: 112px;
+}
+body.integrated-planner .horizontal-course-grid .standard-block {
+  position: relative;
+  grid-area: 1 / 1;
+  top: auto;
+  transform: none;
+  align-self: stretch;
+  height: auto;
+  min-height: 94px;
+  min-width: 0;
+  padding: 10px 6px;
+  overflow: visible;
+  text-align: center;
+}
+body.integrated-planner .horizontal-course-grid .standard-block :is(strong,small) {
+  flex-shrink: 0;
+  min-width: 0;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+body.integrated-planner .horizontal-course-grid .standard-block strong { font-size: .8125rem; line-height: 1.55; font-weight: 600; text-wrap: balance; }
+body.integrated-planner .horizontal-course-grid .standard-block small { font-size: .6875rem; line-height: 1.55; font-variant-numeric: tabular-nums; }
+body.roadmap-studio.integrated-planner :is(.standard-table,.workspace-schedule table) { font-size: .8125rem; line-height: 1.75; }
+body.roadmap-studio.integrated-planner :is(.standard-table,.workspace-schedule table) :is(th,td) { font-variant-numeric: tabular-nums; }
+body.roadmap-studio.integrated-planner :is(.workspace-level-caption,.workspace-graph-result,.transition-legend) { font-size: .75rem; line-height: 1.75; }
+body.roadmap-studio.integrated-planner .transition-legend li { min-width: 0; }
+body.roadmap-studio.integrated-planner .transition-legend li i { flex-shrink: 0; }
+@media(max-width:800px) {
+  body.roadmap-studio.integrated-planner { --type-title: 1.25rem; --type-section: 1.0625rem; }
+  body.roadmap-studio.integrated-planner .workspace-tabs { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); }
+  body.roadmap-studio.integrated-planner .workspace-tabs button { font-size: .75rem; min-height: 58px; padding: 6px 3px; gap: 3px; flex-direction: column; }
+  body.roadmap-studio.integrated-planner .workspace-tabs .editorial-menu-icon { width: 18px; height: 18px; }
+  body.roadmap-studio.integrated-planner .course-stop-label strong { font-size: 1.375rem; }
+  body.roadmap-studio.integrated-planner .course-stop-label>span { font-size: .6875rem; }
+  body.roadmap-studio.integrated-planner .plan-travel .plan-design-entry { font-size: .75rem; }
+}
+
+/* Keep each course's approximate start/end visible on the map itself. */
+body.roadmap-studio.integrated-planner .course-stop-label>.course-stop-schedule {
+  display: block;
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px solid #ded2e5;
+  color: #624773;
+  font-size: .75rem;
+  line-height: 1.6;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+  text-wrap: initial;
+}
+body.roadmap-studio.integrated-planner .course-stop-schedule>span { display: block; white-space: nowrap; }
+body.roadmap-studio.integrated-planner .course-stop-schedule.is-undated { white-space: normal; }
+@media(max-width:800px) {
+  body.integrated-planner .course-terrain,
+  body.integrated-planner .course-terrain.is-extended { height: calc(140px + var(--stop-rows,1)*220px); }
+  body.integrated-planner .course-stops li { top: calc(230px - var(--stop-col)*42px + var(--stop-row)*220px); }
+  body.roadmap-studio.integrated-planner .course-stop-label>.course-stop-schedule { font-size: .6875rem; margin-top: 5px; padding-top: 4px; line-height: 1.55; letter-spacing: -.025em; }
+}
+
+body.roadmap-studio.integrated-planner .course-landscape>.course-popover {
+  position: relative;
+  inset: auto;
+  width: auto;
+  margin: 14px 16px;
+}
+
+/* Age-specific L references and their full-course pace stay visible with the graph. */
+body.roadmap-studio.integrated-planner .level-comparison { margin:22px 0; padding-top:18px; border-top:1px solid #ded3e5; }
+body.roadmap-studio.integrated-planner .level-comparison>header h5 { font-size:16px; margin:0 0 8px; }
+body.roadmap-studio.integrated-planner .level-comparison>header p,
+body.roadmap-studio.integrated-planner .level-comparison>p { font-size:12px; line-height:1.8; color:#786783; }
+body.roadmap-studio.integrated-planner .level-comparison-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px; }
+body.roadmap-studio.integrated-planner .level-comparison-card { min-width:0; padding:16px; border:1px solid #ded3e5; border-radius:14px; background:#fdfbfd; }
+body.roadmap-studio.integrated-planner .level-comparison-card.is-current { border-color:#a486b6; background:#f5eff8; }
+body.roadmap-studio.integrated-planner .level-comparison-card header small { font-size:11px; color:#786283; }
+body.roadmap-studio.integrated-planner .level-comparison-card h6 { font:650 16px/1.5 var(--font-ui); margin:6px 0; }
+body.roadmap-studio.integrated-planner .level-comparison-card header p { font-size:13px; line-height:1.7; margin:0; word-break:keep-all; overflow-wrap:anywhere; }
+body.roadmap-studio.integrated-planner .level-comparison-pace { padding:12px 0; margin:12px 0; border-block:1px solid #e4dbe9; display:grid; gap:5px; font-size:12px; line-height:1.7; }
+body.roadmap-studio.integrated-planner .level-comparison-pace strong { font-weight:600; }
+body.roadmap-studio.integrated-planner .level-comparison-pace small { font-size:11px; }
+body.roadmap-studio.integrated-planner .level-comparison-card dl { display:grid; grid-template-columns:36px minmax(0,1fr); gap:7px 8px; margin:0; font-size:12px; line-height:1.75; }
+body.roadmap-studio.integrated-planner .level-comparison-card dt { color:#7a6686; }
+body.roadmap-studio.integrated-planner .level-comparison-card dd { margin:0; }
+body.roadmap-studio.integrated-planner .level-comparison-note { display:block; margin-top:12px; color:#82718d; font-size:11px; line-height:1.8; }
+@media(max-width:1100px) {
+ body.roadmap-studio.integrated-planner .level-comparison-grid { grid-template-columns:1fr; }
+ body.roadmap-studio.integrated-planner .level-comparison-card { padding:14px; }
+}

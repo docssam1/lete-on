@@ -122,7 +122,7 @@ function cloud(){
   return g;
 }
 
-export async function mountMap3D(host, ms){
+export async function mountMap3D(host, ms, {onSelect}={}){
   if(!host) return null;
   let r; try{r=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power'});}catch{return null;}
   host.innerHTML='';host.classList.add('m3g');host.appendChild(r.domElement);
@@ -142,7 +142,7 @@ export async function mountMap3D(host, ms){
   function add(m,pos,radius=1.1){const g=island(m,radius);g.position.copy(pos);world.add(g);
     if(m.alternate)g.traverse(o=>{if(o.isMesh){o.material.transparent=true;o.material.opacity=.32;}});
     const it={m,g,pos,el:document.createElement('button'),line:document.createElementNS('http://www.w3.org/2000/svg','line')};
-    it.el.type='button';it.el.className='m3g-card k-'+m.kind+(m.chosen?' chosen':'')+(m.alternate?' alternate':'');it.el.setAttribute('aria-label',m.title+' '+m.sub);it.el.onclick=()=>{focusIndex=items.indexOf(it);needsLayout=true;};
+    it.el.type='button';it.el.className='m3g-card k-'+m.kind+(m.chosen?' chosen':'')+(m.alternate?' alternate':'');it.el.setAttribute('aria-label',m.title+' '+m.sub+' · 상세 보기');it.el.setAttribute('aria-haspopup','dialog');it.el.setAttribute('aria-controls','courseDetail');it.el.onclick=()=>{focusIndex=items.indexOf(it);needsLayout=true;onSelect?.(it.m);};
     labels.appendChild(it.el);leaders.appendChild(it.line);items.push(it);return it;
   }
   function pathBetween(points,chosen=true){
@@ -193,7 +193,7 @@ export async function mountMap3D(host, ms){
       const nearest=data.forks.slice().sort((a,b)=>a.m-b.m)[0],junction=items.findIndex(x=>x.m.fork?.id===nearest?.id),visible=viewMode==='all'||it.m.kind==='now'||it.m.forkId===nearest?.id||i===junction||i===junction+1;
       it.el.hidden=!visible;it.line.style.display=visible?'':'none';if(!visible)continue;
       const v=it.g.position.clone().add(new THREE.Vector3(0,1.6,0)).project(cam),px=(v.x/2+.5)*w,py=(-v.y/2+.5)*h,isFocus=mobile&&i===focusIndex;
-      it.el.classList.toggle('is-focus',isFocus);it.el.innerHTML='<b>'+(mobile&&!isFocus?(it.m.mainIndex>=0?String(it.m.mainIndex+1):it.m.badge||it.m.title.slice(0,2)):it.m.title)+'</b><small>'+it.m.sub+'</small>';
+      it.el.classList.toggle('is-focus',isFocus);it.el.replaceChildren();const heading=document.createElement('b'),summary=document.createElement('small');heading.textContent=mobile&&!isFocus?(it.m.mainIndex>=0?String(it.m.mainIndex+1):it.m.badge||it.m.title.slice(0,2)):it.m.title;summary.textContent=it.m.sub;it.el.append(heading,summary);
       const ew=it.el.offsetWidth,eh=it.el.offsetHeight;
       let x=Math.max(8,Math.min(w-ew-8,px-ew/2)),y=Math.max(72,Math.min(h-eh-8,py-eh-20));
       if(isFocus){x=12;y=72;}

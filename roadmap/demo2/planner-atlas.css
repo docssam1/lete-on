@@ -1,0 +1,233 @@
+/* A learning atlas: current courses, parallel routes, calendar, then questions. */
+body.roadmap-studio{--atlas-blue:#2456c4;--atlas-pale:#edf3fc;--atlas-rule:#dce5f2;background:#f2f4f7}
+body.roadmap-studio .top{border-bottom:0;box-shadow:0 1px 0 #18223014}
+body.roadmap-studio .journey-panel{border:0;border-radius:10px;box-shadow:0 4px 24px #18223008}
+body.roadmap-studio .journey-heading h2{font-size:28px;font-weight:700;letter-spacing:-.045em}
+body.roadmap-studio .journey-heading{border-bottom:0;margin-bottom:8px}
+body.roadmap-studio .atlas-navigation{display:flex;gap:20px;align-items:center;border-bottom:1px solid var(--atlas-rule);padding:0 0 12px;margin-bottom:24px}
+body.roadmap-studio .atlas-navigation button{border:0;background:transparent;padding:8px 0;min-height:44px;font-size:13px;color:var(--sub);cursor:pointer;white-space:nowrap}
+body.roadmap-studio .atlas-navigation button:hover{color:var(--p)}
+body.roadmap-studio .atlas-navigation button:disabled{color:#737e8e;cursor:default}
+body.roadmap-studio .journey-start{align-items:baseline;gap:16px;margin:8px 0 24px;flex-wrap:wrap}
+body.roadmap-studio .journey-start>span{border:0;border-radius:0;padding:0;font-size:24px;letter-spacing:-.04em;font-weight:650;color:var(--ink)}
+body.roadmap-studio .journey-start>b{font-size:13px}
+body.roadmap-studio .atlas-lane-key{display:grid;grid-template-columns:88px minmax(0,1fr) minmax(0,1fr);gap:16px;padding:0 0 12px;color:var(--sub);font-size:12px}
+body.roadmap-studio .atlas-lane-key>span:last-child{padding-left:32px}
+body.roadmap-studio .journey-panel .journey-lanes{display:grid;grid-template-columns:1fr;gap:0;margin:0 0 24px;border-top:1px solid var(--atlas-rule)}
+body.roadmap-studio .journey-panel .journey-lane{display:grid;grid-template-columns:88px minmax(0,1fr) 32px minmax(0,1fr);gap:0 16px;align-items:stretch;border-bottom:1px solid var(--atlas-rule);padding:16px 0}
+body.roadmap-studio .journey-panel .journey-lane:before{display:none}
+body.roadmap-studio .journey-panel .journey-axis{display:flex;flex-direction:column;align-items:start;justify-content:center;gap:6px;border:0;padding:0;margin:0;min-height:0}
+body.roadmap-studio .journey-panel .journey-axis:before{display:none}
+body.roadmap-studio .journey-panel .journey-axis b{font-size:15px;font-weight:650;letter-spacing:-.03em}
+body.roadmap-studio .journey-panel .journey-axis small{font-size:11px;color:var(--sub)}
+body.roadmap-studio .journey-panel .journey-lane>button:first-of-type,body.roadmap-studio .journey-panel .journey-lane>.journey-empty{grid-column:2;border:0;border-radius:4px;background:var(--atlas-pale);padding:12px 16px;min-height:76px;align-content:center;margin:0;text-align:left}
+body.roadmap-studio .journey-panel .journey-lane button strong{font-size:14px;font-weight:600;line-height:1.65}
+body.roadmap-studio .journey-panel .journey-lane>button:first-of-type:before{display:none}
+body.roadmap-studio .journey-panel .journey-node-label{font-size:11px;margin-bottom:4px}
+body.roadmap-studio .journey-panel .journey-lane>button.journey-next-button{grid-column:4;position:relative;margin:0;padding:12px 0;min-height:76px;align-content:center;border:0;background:transparent;box-shadow:none}
+body.roadmap-studio .journey-panel .journey-next-button:before{display:none}
+body.roadmap-studio .journey-panel .journey-next-button small{font-size:11px;margin:0 0 4px}
+body.roadmap-studio .journey-panel .journey-next-button span{font-size:14px;font-weight:500;line-height:1.65}
+body.roadmap-studio .journey-panel .journey-next-unset{grid-column:4;align-self:center;margin:0;font-size:12px;color:var(--sub);line-height:1.8}
+body.roadmap-studio .journey-connection{grid-column:3;grid-row:1;align-self:center;position:relative;height:1px;background:#9eb3d8;display:block}
+body.roadmap-studio .journey-connection:before{content:'';position:absolute;right:-2px;top:-3px;width:7px;height:7px;border:1.5px solid #7290c2;border-radius:50%;background:white}
+body.roadmap-studio .journey-lane.is-empty .journey-connection{background:var(--line)}
+body.roadmap-studio .journey-lane.is-empty .journey-connection:before{border-color:var(--line)}
+body.roadmap-studio .journey-panel .journey-lane>.journey-empty{background:#f6f7f9;color:var(--sub);font-size:13px}
+body.roadmap-studio .journey-panel .journey-lane button:disabled{color:var(--sub);background:#f6f7f9}
+body.roadmap-studio .journey-panel .journey-lane button:hover:not(:disabled){background:#e5edfc}
+body.roadmap-studio .pathway-options.study-options{gap:8px}
+body.roadmap-studio .pathway-options.study-options>button{position:relative;border:1px solid transparent;border-bottom-color:#cdd5e1;border-radius:0;background:transparent;padding:18px 12px 18px 32px;box-shadow:none}
+body.roadmap-studio .pathway-options.study-options>button:before{content:'';position:absolute;left:4px;top:23px;width:14px;height:14px;border:1px solid #8b9ab0;border-radius:50%;background:white;box-sizing:border-box}
+body.roadmap-studio .pathway-options.study-options>button[aria-pressed=true]{background:#e7eefb;border-radius:5px;border-color:transparent;box-shadow:none}
+body.roadmap-studio .pathway-options.study-options>button[aria-pressed=true]:before{border:4px solid var(--p)}
+body.roadmap-studio .transition-graph{border:0;border-radius:0;padding:24px 0;margin:20px 0;background:white}
+body.roadmap-studio .transition-graph h4{font-size:24px;line-height:1.5;letter-spacing:-.04em}
+body.roadmap-studio .transition-overview{background:transparent;border:0;margin:24px 0;padding:0}
+body.roadmap-studio .transition-overview>div{padding:0 16px}
+body.roadmap-studio .transition-overview>div:first-child{padding-left:0}
+body.roadmap-studio .transition-overview>div+div{border-color:var(--atlas-rule)}
+body.roadmap-studio .transition-overview dd{font-size:17px;font-weight:650;letter-spacing:-.03em}
+body.roadmap-studio .transition-chart-wrap{background:#f8fafd;border-radius:6px;padding:16px 8px 4px;margin-top:20px}
+body.roadmap-studio .transition-chart-wrap .curve-quarter-band.band-0{fill:#edf2fa}
+body.roadmap-studio .transition-chart-wrap .curve-quarter-band.band-1{fill:#f8fafd}
+body.roadmap-studio .transition-chart-wrap .curve-calendar-grid{stroke:#e0e7f2;stroke-width:1}
+body.roadmap-studio .transition-chart-wrap .curve-now-line{stroke:#7596ce;stroke-width:1.5}
+body.roadmap-studio .transition-chart-wrap .curve-grid{stroke:#dbe3ef;stroke-dasharray:none}
+body.roadmap-studio .transition-chart-wrap path.curve-gradual{stroke-width:4.5}
+body.roadmap-studio .transition-chart-wrap path.curve-keep{stroke-width:2.5}
+body.roadmap-studio .transition-chart-wrap .curve-current-point{r:5;stroke:white;stroke-width:2}
+body.roadmap-studio .transition-legend{border:0;padding-top:4px;gap:12px 24px}
+body.roadmap-studio .transition-graph-actions{margin-top:24px}
+body.roadmap-studio .transition-graph-actions button{width:auto;text-align:left;padding-inline:20px}
+body.roadmap-studio .graph-level-guide{margin-top:32px;border-color:var(--atlas-rule)}
+body.roadmap-studio .transition-nodes{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+body.roadmap-studio .transition-nodes li{flex:1 1 180px;border:0;padding:0}
+body.roadmap-studio .transition-nodes li:before{content:'';width:5px;height:5px;top:21px;left:0;border-radius:50%;background:var(--p)}
+body.roadmap-studio .transition-nodes button{border:0;border-bottom:1px solid var(--atlas-rule);padding:12px 12px 12px 16px;width:100%;height:100%;min-height:88px}
+
+/* Question carousel follows personality's overlapping blue rolling cards. */
+body.roadmap-studio .faq-orbit{margin:48px 0 24px;min-width:0;scroll-margin-top:130px}
+body.roadmap-studio .faq-orbit>header h3{font-size:23px;letter-spacing:-.04em;margin:0 0 8px;line-height:1.5}
+body.roadmap-studio .faq-orbit>header p{font-size:13px;color:var(--sub);line-height:1.8;margin:0 0 24px}
+body.roadmap-studio .faq-deck{position:relative;height:260px;isolation:isolate;margin-inline:8px}
+body.roadmap-studio .faq-deck button{width:100%;font-family:inherit;text-align:left;cursor:pointer;word-break:keep-all;overflow-wrap:anywhere}
+body.roadmap-studio .faq-ghost{position:absolute;left:18px!important;width:calc(100% - 36px)!important;height:60px;min-height:44px;border:1px solid #dce6f6;background:#f0f5fc;border-radius:9px;padding:12px 18px;color:#617b9f;font-size:13px;line-height:1.65;overflow:hidden}
+body.roadmap-studio .faq-previous{top:0}
+body.roadmap-studio .faq-next{bottom:0;display:flex;align-items:end}
+body.roadmap-studio .faq-ghost span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.roadmap-studio .faq-main{position:absolute;inset:48px 0;border:1px solid #d3e1f8;background:linear-gradient(170deg,#fff 35%,#edf5ff 82%,#e2eeff);border-radius:10px;box-shadow:0 16px 32px -12px #2456c442;padding:24px 28px;z-index:1;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;color:var(--ink)}
+body.roadmap-studio .faq-watermark{position:absolute;right:20px;bottom:-17px;color:#2456c40b;font-size:130px;line-height:1;font-weight:700;pointer-events:none}
+body.roadmap-studio .faq-question-text{font-size:19px;line-height:1.55;font-weight:600;letter-spacing:-.035em;position:relative;max-width:38ch}
+body.roadmap-studio .faq-read{display:flex;align-items:center;gap:12px;color:var(--p);font-size:12px;position:relative;margin-top:12px}
+body.roadmap-studio .faq-read>span{font-size:20px;line-height:1}
+body.roadmap-studio .faq-controls{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:4px 8px 16px;font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums}
+body.roadmap-studio .faq-controls button{border:0;background:transparent;color:var(--p);font-size:12px;min-height:44px;cursor:pointer;padding:8px 0}
+body.roadmap-studio .faq-answer{margin-top:12px;padding:20px 24px;border-left:2px solid var(--p);background:#f5f8fd;font-size:14px;line-height:1.9}
+body.roadmap-studio .faq-answer .parent-answer{padding:0;border:0;background:transparent}
+body.roadmap-studio .faq-answer p{margin:0}
+body.roadmap-studio .faq-answer a{display:inline-block;min-height:44px;padding-block:10px;color:var(--p);text-underline-offset:4px}
+body.roadmap-studio .faq-library{border-top:1px solid var(--atlas-rule);margin-top:20px}
+body.roadmap-studio .faq-library>summary{font-size:13px;font-weight:500;cursor:pointer;min-height:48px;align-content:center;color:var(--sub)}
+body.roadmap-studio .faq-library .pathway-parent-questions{margin:20px 0 32px}
+body.roadmap-studio .faq-library .pathway-parent-questions h3{font-size:17px}
+body.roadmap-studio .faq-orbit button:focus-visible,body.roadmap-studio .atlas-navigation button:focus-visible{outline:3px solid var(--p);outline-offset:3px}
+body.roadmap-studio .faq-orbit [hidden]{display:none!important}
+
+@media(min-width:801px){
+ body.roadmap-studio.exploring .journey-panel>.journey-heading{border-radius:10px 10px 0 0;margin-bottom:0;padding-bottom:12px}
+ body.roadmap-studio.questioning .journey-panel{position:sticky;top:20px;max-height:calc(100dvh - 132px);overflow:auto;box-sizing:border-box;scroll-padding:24px}
+ body.roadmap-studio.questioning .journey-panel>.journey-heading{position:sticky;top:-32px;margin:-32px -32px 0;padding:24px 32px 12px;z-index:3;background:#fff;border-radius:10px 10px 0 0}
+}
+@media(max-width:1100px) and (min-width:801px){
+ body.roadmap-studio .atlas-lane-key{grid-template-columns:60px minmax(0,1fr) minmax(0,1fr);gap:10px}
+ body.roadmap-studio .journey-panel .journey-lane{grid-template-columns:60px minmax(0,1fr) 18px minmax(0,1fr);gap:0 10px}
+ body.roadmap-studio .journey-panel .journey-lane>button:first-of-type{padding-inline:10px}
+ body.roadmap-studio .atlas-navigation{gap:16px}
+}
+@media(max-width:800px){
+ body.roadmap-studio .top .nav button{min-width:0;padding-inline:6px;font-size:12px;white-space:nowrap}
+ body.roadmap-studio .journey-heading h2{font-size:25px}
+ body.roadmap-studio .atlas-navigation{gap:0;justify-content:space-between;margin-bottom:24px}
+ body.roadmap-studio .atlas-navigation button{font-size:12px}
+ body.roadmap-studio .journey-start>span{font-size:22px}
+ body.roadmap-studio .atlas-lane-key{display:none}
+ body.roadmap-studio .journey-panel .journey-lane{grid-template-columns:56px minmax(0,1fr);gap:0 12px;padding:16px 0}
+ body.roadmap-studio .journey-panel .journey-axis{grid-column:1;grid-row:1 / span 2;justify-content:start;padding-top:14px}
+ body.roadmap-studio .journey-panel .journey-axis b{font-size:13px}
+ body.roadmap-studio .journey-panel .journey-axis small{font-size:10px;word-break:keep-all}
+ body.roadmap-studio .journey-panel .journey-lane>button:first-of-type{min-height:68px;padding:12px}
+ body.roadmap-studio .journey-connection{display:none}
+ body.roadmap-studio .journey-panel .journey-lane>button.journey-next-button,body.roadmap-studio .journey-panel .journey-next-unset{grid-column:2;grid-row:2;padding:16px 12px 0;margin:0;min-height:44px}
+ body.roadmap-studio .journey-panel .journey-next-button:before{display:block;left:18px;top:0;height:12px;width:1px;border:0;border-radius:0;background:#9eb3d8}
+ body.roadmap-studio .journey-panel .journey-lane>.journey-empty{min-height:60px;padding:12px}
+ body.roadmap-studio .transition-graph{padding:16px 0}
+ body.roadmap-studio .transition-graph h4{font-size:21px}
+ body.roadmap-studio .transition-overview{padding:0;margin:16px 0}
+ body.roadmap-studio .transition-overview>div,body.roadmap-studio .transition-overview>div:first-child{padding:12px 0}
+ body.roadmap-studio .transition-overview dd{font-size:15px}
+ body.roadmap-studio .transition-chart-wrap{padding-inline:0}
+ body.roadmap-studio .transition-graph-actions button{width:100%;text-align:center;font-size:13px}
+ body.roadmap-studio .transition-nodes li{flex-basis:100%}
+ body.roadmap-studio .faq-orbit{margin-top:40px;scroll-margin-top:90px}
+ body.roadmap-studio .faq-orbit>header h3{font-size:21px}
+ body.roadmap-studio .faq-deck{height:292px;margin-inline:0}
+ body.roadmap-studio .faq-main{inset:48px 0;padding:20px}
+ body.roadmap-studio .faq-question-text{font-size:17px;line-height:1.65}
+ body.roadmap-studio .faq-ghost{padding-inline:12px;font-size:12px}
+ body.roadmap-studio .faq-answer{padding:16px;font-size:14px}
+ body.roadmap-studio .faq-controls{margin-inline:0}
+}
+@media(min-width:801px) and (max-height:600px){body.roadmap-studio.questioning .journey-panel{max-height:calc(100dvh - 180px)}}
+@media(prefers-reduced-motion:reduce){body.roadmap-studio .faq-orbit *,body.roadmap-studio .journey-lane *{animation:none!important;transition:none!important}}
+@media print{body.roadmap-studio .atlas-navigation,body.roadmap-studio .faq-deck,body.roadmap-studio .faq-controls{display:none!important}}
+
+/* Full-screen reading uses the same live map and retains all current choices. */
+body.roadmap-studio .atlas-heading-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+body.roadmap-studio #atlasExpand{border:1px solid #a4b6d4;background:#fff;color:var(--p);border-radius:5px;min-height:44px;padding:8px 12px;font-size:12px;cursor:pointer;white-space:nowrap}
+body.roadmap-studio .atlas-graph-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+body.roadmap-studio .atlas-graph-actions button{min-height:44px;font-size:12px;white-space:nowrap}
+body.roadmap-studio.atlas-is-fullscreen{overflow:hidden}
+body.roadmap-studio .atlas-fullscreen{inset:0;width:100%;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:#fff;color:var(--ink)}
+body.roadmap-studio .atlas-fullscreen[open]{display:flex;flex-direction:column}
+body.roadmap-studio .atlas-fullscreen::backdrop{background:#fff}
+body.roadmap-studio .atlas-fullscreen-toolbar{display:flex;justify-content:space-between;gap:20px;align-items:center;flex:none;padding:16px 32px;border-bottom:1px solid var(--atlas-rule);background:white}
+body.roadmap-studio .atlas-fullscreen-toolbar h2{font-size:19px;margin:0;line-height:1.5;letter-spacing:-.035em}
+body.roadmap-studio .atlas-fullscreen-toolbar button{min-height:44px;flex:none;padding:10px 16px;background:#fff;border:1px solid #a4b6d4;border-radius:5px;color:var(--p);font-size:13px;cursor:pointer}
+body.roadmap-studio .atlas-fullscreen-body{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;scroll-padding:24px}
+body.roadmap-studio .atlas-fullscreen #journeyPanel{position:static;max-height:none;overflow:visible;width:min(1160px,100%);margin:0 auto;padding:24px 32px 48px;border:0;border-radius:0;box-shadow:none}
+body.roadmap-studio .atlas-fullscreen #journeyPanel>.journey-heading{display:none}
+body.roadmap-studio .atlas-fullscreen [data-atlas-full]{display:none}
+body.roadmap-studio .atlas-fullscreen[data-view=graph] #journeyMap>:not(.workspace-results),body.roadmap-studio .atlas-fullscreen[data-view=graph] .progress-panel>:not(.transition-graph),body.roadmap-studio .atlas-fullscreen[data-view=graph] .journey-note,body.roadmap-studio .atlas-fullscreen[data-view=graph] .pathway-status{display:none}
+body.roadmap-studio .atlas-fullscreen[data-view=graph] .progress-panel{border:0;padding:0;margin:0}
+body.roadmap-studio .atlas-fullscreen[data-view=graph] .transition-graph{padding:0;margin:0}
+body.roadmap-studio .atlas-fullscreen[data-view=graph] .transition-graph>header{margin-bottom:12px}
+body.roadmap-studio .atlas-fullscreen[data-view=graph] .transition-overview{margin:16px 0}
+body.roadmap-studio .atlas-fullscreen[data-view=graph] .transition-chart-wrap{margin-top:12px}
+body.roadmap-studio .atlas-fullscreen[data-view=graph] .transition-chart-wrap svg{max-height:calc(100dvh - 450px);min-height:260px}
+body.roadmap-studio .atlas-fullscreen button:focus-visible{outline:3px solid var(--p);outline-offset:3px}
+@media(max-width:800px){
+ body.roadmap-studio .atlas-heading-actions{flex-direction:column;align-items:end;gap:4px}
+ body.roadmap-studio #atlasExpand{padding:8px;font-size:11px}
+ body.roadmap-studio .atlas-fullscreen-toolbar{padding:12px 16px;gap:12px}
+ body.roadmap-studio .atlas-fullscreen-toolbar h2{font-size:17px}
+ body.roadmap-studio .atlas-fullscreen-toolbar button{font-size:12px;padding-inline:10px}
+ body.roadmap-studio .atlas-fullscreen #journeyPanel{padding:20px 16px 40px}
+ body.roadmap-studio .atlas-fullscreen[data-view=graph] .transition-chart-wrap svg{max-height:none;min-height:0}
+}
+@media print{body.roadmap-studio .atlas-fullscreen,body.roadmap-studio [data-atlas-full]{display:none!important}}
+
+/* Selected school routes keep their three parallel study ranges inspectable. */
+body.roadmap-studio .study-current-range{font-size:13px;color:var(--sub);line-height:1.8;margin:0 0 20px}
+body.roadmap-studio .study-parallel-plan{margin:24px 0;padding:20px;background:#f5f8fd;border-radius:6px}
+body.roadmap-studio .study-parallel-plan>h4{font-size:16px;margin:0 0 16px;line-height:1.6}
+body.roadmap-studio .study-parallel-plan article{display:grid;grid-template-columns:48px minmax(0,1fr);gap:4px 16px;padding:16px 0;border-top:1px solid var(--atlas-rule)}
+body.roadmap-studio .study-parallel-plan h5{grid-column:1;grid-row:1 / span 2;font-size:13px;margin:0;line-height:1.8;color:var(--p)}
+body.roadmap-studio .study-parallel-plan p{grid-column:2;font-size:13px;line-height:1.85;margin:0;color:var(--sub)}
+body.roadmap-studio .study-parallel-plan .study-parallel-current{font-weight:600;color:var(--ink);font-size:14px}
+body.roadmap-studio .study-parallel-plan .study-parallel-note{margin-top:16px;font-size:12px;line-height:1.8}
+body.roadmap-studio .transition-overview dd{overflow-wrap:anywhere}
+@media(max-width:800px){body.roadmap-studio .study-parallel-plan{padding:16px}body.roadmap-studio .study-parallel-plan article{grid-template-columns:34px minmax(0,1fr);gap:4px 10px}}
+
+body.roadmap-studio .transition-scenario{border-top:1px solid var(--atlas-rule);margin-top:20px;padding-top:18px}
+body.roadmap-studio .transition-scenario h5{font-size:16px;margin:0 0 10px}
+body.roadmap-studio .transition-scenario p,body.roadmap-studio .transition-scenario li{font-size:13px;line-height:1.85;color:var(--sub)}
+body.roadmap-studio .transition-scenario ol{padding-left:20px}
+body.roadmap-studio .transition-scenario li{padding:7px 0}
+body.roadmap-studio .transition-scenario li b{display:block;color:var(--ink)}
+body.roadmap-studio .transition-scenario button{min-height:44px;padding:10px 16px;border:1px solid var(--atlas-rule);border-radius:5px;background:#fff;color:var(--p);font:inherit;font-size:13px;cursor:pointer}
+
+body.roadmap-studio .transition-curve-note{font-size:13px;line-height:1.7;color:var(--p);border-left:2px solid var(--p);padding:7px 12px;margin:0 0 16px;background:#f4f7fc}
+@media(min-width:801px){body.roadmap-studio .atlas-fullscreen[data-view=graph] .transition-chart-wrap svg{max-height:calc(100dvh - 540px)}}
+
+body.roadmap-studio .design-stages{grid-template-columns:repeat(var(--stage-count,6),minmax(0,1fr))}
+body.roadmap-studio .transition-curve-note strong{display:block;margin-top:4px;font-weight:600}
+body.roadmap-studio .scenario-assumptions,body.roadmap-studio .scenario-difference dl{display:grid;grid-template-columns:140px minmax(0,1fr);gap:12px 20px;margin:24px 0;font-size:13px;line-height:1.85}
+body.roadmap-studio .scenario-assumptions dt,body.roadmap-studio .scenario-difference dt{color:var(--ink);font-weight:600}
+body.roadmap-studio .scenario-assumptions dd,body.roadmap-studio .scenario-difference dd{margin:0;color:var(--sub)}
+body.roadmap-studio .scenario-difference{border-top:1px solid var(--atlas-rule);padding-top:20px;margin-top:20px}
+body.roadmap-studio .scenario-difference h6{font-size:15px;margin:0}
+@media(max-width:800px){body.roadmap-studio .scenario-assumptions,body.roadmap-studio .scenario-difference dl{grid-template-columns:1fr;gap:4px;margin:20px 0}body.roadmap-studio .scenario-assumptions dd,body.roadmap-studio .scenario-difference dd{margin-bottom:12px}body.roadmap-studio .design-stages li{font-size:11px}}
+
+body.roadmap-studio .scenario-baseline,body.roadmap-studio .scenario-ramp{width:100%;border-collapse:collapse;font-size:13px;line-height:1.8;margin:24px 0}
+body.roadmap-studio .scenario-baseline caption,body.roadmap-studio .scenario-ramp caption{text-align:left;font-weight:600;color:var(--ink);margin-bottom:10px}
+body.roadmap-studio .scenario-baseline th,body.roadmap-studio .scenario-baseline td,body.roadmap-studio .scenario-ramp th,body.roadmap-studio .scenario-ramp td{text-align:left;padding:10px 6px;border-bottom:1px solid var(--atlas-rule)}
+
+body.roadmap-studio .curve-chase-window{fill:#2448b8;fill-opacity:.07;stroke:#2448b8;stroke-opacity:.35;stroke-dasharray:3 5;stroke-width:1}
+body.roadmap-studio .transition-chart-wrap .curve-chase-label{fill:var(--p);font-size:12px;font-weight:600}
+
+body.roadmap-studio .catch-example-link{display:inline-flex;align-items:center;min-height:44px;padding:10px 12px;border:1px solid var(--atlas-rule);border-radius:5px;color:var(--p);text-decoration:none;font-size:13px}
+body.roadmap-studio .curve-catch-line{stroke:var(--p);stroke-width:1;stroke-dasharray:4 5;opacity:.5}
+body.roadmap-studio .curve-catch-point{fill:white;stroke:var(--p);stroke-width:2.5}
+body.roadmap-studio .transition-chart-wrap .curve-catch-label{fill:var(--p);font-size:12px;font-weight:600;paint-order:stroke;stroke:white;stroke-width:4px;stroke-linejoin:round}
+body.roadmap-studio .catch-detail{border-top:1px solid var(--atlas-rule);padding-top:24px;margin-top:24px;font-size:13px;line-height:1.85}
+body.roadmap-studio .catch-detail h5{font-size:17px;margin:0 0 18px}
+body.roadmap-studio .catch-detail dl{display:grid;grid-template-columns:170px minmax(0,1fr);gap:12px 24px}
+body.roadmap-studio .catch-detail dt{font-weight:600}
+body.roadmap-studio .catch-detail dd{margin:0;color:var(--sub)}
+body.roadmap-studio .catch-detail table{border-collapse:collapse;width:100%;margin:24px 0;font-size:13px}
+body.roadmap-studio .catch-detail caption{text-align:left;font-weight:600;margin-bottom:12px}
+body.roadmap-studio .catch-detail th,body.roadmap-studio .catch-detail td{padding:10px 8px;border-bottom:1px solid var(--atlas-rule);text-align:left}
+@media(max-width:800px){body.roadmap-studio .catch-detail dl{grid-template-columns:1fr;gap:4px}body.roadmap-studio .catch-detail dd{margin-bottom:12px}body.roadmap-studio .catch-detail th,body.roadmap-studio .catch-detail td{padding:8px 4px}}
+
+@media(max-width:400px){body.roadmap-studio .catch-detail table{font-size:12px}body.roadmap-studio .catch-detail td:nth-child(2),body.roadmap-studio .catch-detail td:nth-child(3){white-space:nowrap}body.roadmap-studio .catch-detail th,body.roadmap-studio .catch-detail td{padding:8px 3px}}

@@ -1,0 +1,31 @@
+.source52-u4-p44-e24-question,
+.source52-u4-p44-e24-solution { color:#2a241c; font-family:Pretendard,sans-serif; line-height:1.48; }
+.source52-u4-p44-e24-question > p:first-child { margin:0 0 .55rem; }
+.source52-u4-p44-e24-figure { margin:.45rem auto .6rem; max-width:320px; text-align:center; }
+.source52-u4-p44-e24-figure svg { display:block; width:100%; height:auto; overflow:visible; }
+.source52-u4-p44-e24-figure figcaption { color:#625b50; font-size:.84em; margin-top:.12rem; }
+.source52-u4-p44-e24-figure .e24-added { fill:#f5f0e5; stroke:#2a241c; stroke-width:1.5; }
+.source52-u4-p44-e24-figure .e24-original { fill:#fff; stroke:#2a241c; stroke-width:1.5; }
+.source52-u4-p44-e24-figure .e24-line,.source52-u4-p44-e24-figure .e24-dim { fill:none; stroke:#2a241c; stroke-width:1.3; }
+.source52-u4-p44-e24-figure text { fill:#2a241c; font-family:Pretendard,sans-serif; font-size:11px; }
+.source52-u4-p44-e24-figure .e24-main-label { font-size:13px; font-weight:600; }
+.source52-u4-p44-e24-figure .e24-caption { font-size:12px; font-weight:600; }
+.source52-u4-p44-e24-figure .e24-dim-label { font-size:10px; }
+.source52-u4-p44-e24-solution ol { margin:0; padding-left:1.35rem; }
+.source52-u4-p44-e24-solution li { margin:0 0 .35rem; overflow-wrap:anywhere; }
+@media print {
+  .source52-u4-p44-e24-question,.source52-u4-p44-e24-solution { color:#191511; }
+  .source52-u4-p44-e24-question > p:first-child,.source52-u4-p44-e24-solution li { font-size:10pt; line-height:1.3; }
+  .source52-u4-p44-e24-figure { max-width:240px; margin:.25rem auto .35rem; }
+  .source52-u4-p44-e24-figure figcaption { font-size:8.5pt; }
+  .source52-u4-p44-e24-solution li { margin-bottom:1mm; }
+  .answer-page:has(.source52-u4-p44-e24-solution) .solution-list { gap:2mm; margin-top:2mm; }
+  .solution-item:has(.source52-u4-p44-e24-solution) header>span,
+  .solution-item:has(.source52-u4-p44-e24-solution) header strong { padding:4px 7px; }
+  .solution-item:has(.source52-u4-p44-e24-solution) header>span { font-size:9pt; line-height:1.15; }
+  .solution-item:has(.source52-u4-p44-e24-solution) header strong { font-size:11pt; }
+  .solution-item:has(.source52-u4-p44-e24-solution) .solution-answer-visual .source52-u4-p44-e24-figure { max-width:240px; margin:0 auto; }
+  .solution-item:has(.source52-u4-p44-e24-solution) .source52-u4-p44-e24-figure figcaption { display:none; }
+  .solution-item:has(.source52-u4-p44-e24-solution) p { padding:5px 8px; font-size:8.5pt; line-height:1.28; }
+  .solution-item:has(.source52-u4-p44-e24-solution) .source52-u4-p44-e24-solution li { margin-bottom:.4mm; }
+}

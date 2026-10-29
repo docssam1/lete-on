@@ -4,7 +4,7 @@ name: Build Numbers of Magic APK
 #
 # 학부모에게 나가는 APK 는 늘 같은 열쇠로 서명돼야 한다 — 열쇠가 바뀌면 이미 깐 기기는 업데이트가 안 되고 지우고 다시 깔아야 한다.
 # 그래서 사이트(number_magic/downloads)에 올리는 것은 아래를 모두 통과한 APK 뿐이다(2026-10-28 「학부모 배포 전 고정 서명·설치→업데이트 확인」):
-#   1) 비밀값 NM_ANDROID_KEYSTORE(base64)·NM_ANDROID_KEYSTORE_PASSWORD 로 정식 서명
+#   1) 고정 열쇠로 정식 서명(GitHub 비밀값 NM_ANDROID_KEYSTORE·_PASSWORD, 없으면 Supabase Vault 의 같은 열쇠 — 아래 Prepare signing key)
 #   2) 서명 인증서 지문이 저장소의 android/number-magic/signing-cert.sha256 과 같다
 #   3) 사이트에 있던 APK 보다 버전 번호가 크다
 #   4) 에뮬레이터에서 옛 버전 설치 → 새 버전 덮어 설치(업데이트) → 열기, 다른 열쇠 APK 거절, 사이트의 APK → 새 버전 업데이트
@@ -52,30 +52,47 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Prepare signing key (if set)
+      # 서명 열쇠: GitHub 비밀값 NM_ANDROID_KEYSTORE(+_PASSWORD)가 있으면 그것, 없으면 Supabase Vault(nm_android_keystore · nm_android_keystore_password)에서
+      # 이미 있는 비밀값 SUBBASE(Supabase 계정 토큰)로 꺼낸다(2026-10-29 원장 「네가 해」 — GitHub 비밀값을 원장이 따로 넣지 않아도 되게).
+      - name: Prepare signing key
         id: sign
         env:
           KEYSTORE_B64: ${{ secrets.NM_ANDROID_KEYSTORE }}
+          KEYSTORE_PASS: ${{ secrets.NM_ANDROID_KEYSTORE_PASSWORD }}
+          SB_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN || secrets.SUBBASE }}
         run: |
-          if [ -n "$KEYSTORE_B64" ]; then
+          if [ -z "$KEYSTORE_B64" ] && [ -n "$SB_TOKEN" ]; then
+            Q=$(jq -n --arg q "select name, decrypted_secret from vault.decrypted_secrets where name in ('nm_android_keystore','nm_android_keystore_password')" '{query:$q}')
+            if curl -sf -X POST "https://api.supabase.com/v1/projects/fgahqumaldheqettmvqg/database/query" \
+                 -H "Authorization: Bearer $SB_TOKEN" -H 'Content-Type: application/json' -d "$Q" > "$RUNNER_TEMP/vault.json"; then
+              KEYSTORE_B64=$(jq -r '.[] | select(.name=="nm_android_keystore") | .decrypted_secret' "$RUNNER_TEMP/vault.json")
+              KEYSTORE_PASS=$(jq -r '.[] | select(.name=="nm_android_keystore_password") | .decrypted_secret' "$RUNNER_TEMP/vault.json")
+              echo "::add-mask::$KEYSTORE_PASS"
+              echo "Supabase Vault 에서 서명 열쇠를 꺼냈습니다."
+            else
+              echo "::warning::Supabase Vault 에서 서명 열쇠를 꺼내지 못했습니다."
+            fi
+            rm -f "$RUNNER_TEMP/vault.json"
+          fi
+          if [ -n "$KEYSTORE_B64" ] && [ -n "$KEYSTORE_PASS" ]; then
             echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/nm-release.p12"
+            printf '%s' "$KEYSTORE_PASS" > "$RUNNER_TEMP/nm-release.pass"
             echo "file=$RUNNER_TEMP/nm-release.p12" >> "$GITHUB_OUTPUT"
             echo "mode=release" >> "$GITHUB_OUTPUT"
             echo "정식 서명으로 만듭니다."
           else
             echo "mode=debug" >> "$GITHUB_OUTPUT"
-            echo "::warning::NM_ANDROID_KEYSTORE 비밀값이 없어 디버그 서명으로 시험만 합니다. 사이트에는 올리지 않습니다."
+            echo "::warning::서명 열쇠가 없어 디버그 서명으로 시험만 합니다. 사이트에는 올리지 않습니다."
           fi
 
       # 버전 번호: 실행 번호 + 100(옛 시험판 1.0.2 보다 늘 크게). 업데이트 시험용으로 한 번 낮은 번호도 같은 열쇠로 만든다.
       - name: Build APKs (test-old and new, same key)
         env:
           NM_KEYSTORE_FILE: ${{ steps.sign.outputs.file }}
-          NM_KEYSTORE_PASSWORD: ${{ secrets.NM_ANDROID_KEYSTORE_PASSWORD }}
           NM_KEY_ALIAS: ${{ secrets.NM_ANDROID_KEY_ALIAS }}
-          NM_KEY_PASSWORD: ${{ secrets.NM_ANDROID_KEY_PASSWORD }}
           MODE: ${{ steps.sign.outputs.mode }}
         run: |
+          if [ "$MODE" = release ]; then export NM_KEYSTORE_PASSWORD=$(cat "$RUNNER_TEMP/nm-release.pass"); export NM_KEY_PASSWORD="$NM_KEYSTORE_PASSWORD"; fi
           C=$(( ${{ github.run_number }} + 100 ))
           echo "VERSION_CODE=$C" >> "$GITHUB_ENV"
           mkdir -p apk-output apk-test

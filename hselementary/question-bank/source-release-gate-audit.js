@@ -5,6 +5,33 @@ require("./source-inventory-4-1.js");
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-5-2-u4-page42-exploration1.js");
+require("./source-5-2-u4-page42-example11.js");
+require("./source-5-2-u4-page42-example12.js");
+require("./source-5-2-u4-page42-example13.js");
+require("./source-5-2-u4-page42-example14.js");
+require("./source-5-2-u4-page43-mission1.js");
+require("./source-5-2-u4-page43-mission2.js");
+require("./source-5-2-u4-page43-mission3.js");
+require("./source-5-2-u4-page43-mission4.js");
+require("./source-5-2-u4-page43-mission5.js");
+require("./source-5-2-u4-page43-mission6.js");
+require("./source-5-2-u4-page44-exploration2.js");
+require("./source-5-2-u4-page44-example21.js");
+require("./source-5-2-u4-page44-example22.js");
+require("./source-5-2-u4-page44-example23.js");
+require("./source-5-2-u4-page44-example24.js");
+require("./source-5-2-u4-page45-mission1.js");
+require("./source-5-2-u4-page45-mission2.js");
+require("./source-5-2-u4-page45-mission3.js");
+require("./source-5-2-u4-page45-mission4.js");
+require("./source-5-2-u4-page45-mission5.js");
+require("./source-5-2-u4-page45-mission6.js");
+require("./source-5-2-u3-page24-exploration1.js");
+require("./source-5-2-u3-page24-example13-synthetic.js");
+require("./source-5-2-u3-page24-example14-synthetic.js");
+require("./source-5-2-u3-page24-example12-synthetic.js");
+require("./source-5-2-u3-page25-mission1-synthetic.js");
 require("./source-5-2-range-e1.js");
 require("./source-5-2-range-missions.js");
 require("./source-5-2-rounding-e2.js");
@@ -233,9 +260,9 @@ for (const semester of window.HSE_CURRICULUM.semesters) {
   }
 }
 
-if (total !== 2162) failures.push(`전체 유형 수가 2162가 아니라 ${total}입니다.`);
-if (ready !== 1374) failures.push(`원문 연결 공개 유형 수가 1374가 아니라 ${ready}입니다.`);
-if (lockedWithoutSource !== 380) failures.push(`원문 미연결 잠금 유형 수가 380이 아니라 ${lockedWithoutSource}입니다.`);
+if (total !== 2180) failures.push(`전체 유형 수가 2180가 아니라 ${total}입니다.`);
+if (ready !== 1401) failures.push(`원문 연결 공개 유형 수가 1401가 아니라 ${ready}입니다.`);
+if (lockedWithoutSource !== 371) failures.push(`원문 미연결 잠금 유형 수가 371이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {
   console.error(`원문 연결 공개 문턱 실패: ${failures.length}건`);

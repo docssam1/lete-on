@@ -1,0 +1,4 @@
+"use strict";
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-page25-mission1-synthetic.js');
+const answers=new Set();
+for(let i=0;i<3;i++)for(const d of [-1,0,1]){const p=api.derive(i),q=api.build(i,d),dx=p.c.x-p.a.x,dy=p.a.y-p.c.y,angle=Math.atan2(dy,dx)*180/Math.PI,ratio=Math.hypot(dx,dy)/Math.hypot(p.b.x-p.a.x,p.b.y-p.a.y);assert(Math.abs(angle-p.angle)<1e-9);assert(Math.abs(ratio-p.side/p.base)<1e-9);assert.deepEqual([...p.order].sort(),[1,2,3,4]);assert.equal(q.answer,p.order.join(', '));assert.equal((q.prompt.match(/<rect x="5"/g)||[]).length,4);assert(!q.prompt.includes('순서 표시'));assert(q.answerVisual.includes('순서 표시'));answers.add(q.answer)}assert.equal(answers.size,3);console.log('Three synthetic construction sequences: actual angles and proportional lengths verified');

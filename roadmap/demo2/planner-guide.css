@@ -1,0 +1,27 @@
+/* Approved math Docssam is reused whole; the open explanation crops its face. */
+body.roadmap-studio .guide.planner-guide{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:center;gap:14px;padding:0 0 12px;border:0;min-width:0}
+body.roadmap-studio .guide.planner-guide .planner-guide-portrait{display:block;position:relative;overflow:hidden;width:64px;height:64px;border-radius:50%;background:#f3eef6;border:1px solid #ded3e5;box-shadow:0 4px 12px #5945660a;flex:none}
+body.roadmap-studio .guide.planner-guide img.planner-guide-image{display:block;position:absolute;left:-34px;top:-6px;width:132px;height:198px;max-width:none;border:0;border-radius:0;background:transparent;object-fit:contain;box-shadow:none;transition:opacity 180ms ease-out}
+body.roadmap-studio .guide.planner-guide .planner-guide-meta{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+body.roadmap-studio .guide.planner-guide .planner-guide-meta>span:not(.planner-guide-caption){font-size:13px;font-weight:600;color:#5f4770;line-height:1.55}
+body.roadmap-studio .guide.planner-guide .planner-guide-meta small{display:block;font-size:12px;font-weight:400;color:#786783;margin-top:3px;line-height:1.6}
+body.roadmap-studio .guide.planner-guide .planner-guide-caption{display:none;font-size:12px;color:#786783;line-height:1.5}
+body.roadmap-studio .guide.planner-guide button.planner-guide-toggle{display:inline-flex;align-items:center;justify-content:flex-start;min-width:80px;min-height:44px;padding:8px 0;background:none;border:0;border-radius:4px;box-shadow:none;font:inherit;font-size:12px;font-weight:550;color:#6c4a84;text-decoration:underline;text-decoration-color:#c3b0d0;text-underline-offset:4px;cursor:pointer}
+body.roadmap-studio .guide.planner-guide button.planner-guide-toggle:focus-visible{outline:2px solid #704692;outline-offset:4px}
+body.roadmap-studio .guide.planner-guide button.planner-guide-toggle[hidden]{display:none}
+body.roadmap-studio .guide.planner-guide[data-guide-state=idle]{grid-template-columns:100px minmax(0,1fr);align-items:center;gap:14px}
+body.roadmap-studio .guide.planner-guide[data-guide-state=idle] .planner-guide-portrait{width:100px;height:150px;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible}
+body.roadmap-studio .guide.planner-guide[data-guide-state=idle] img.planner-guide-image{position:static;width:100px;height:150px;filter:drop-shadow(0 5px 6px #503b6412)}
+body.roadmap-studio .guide.planner-guide[data-guide-state=idle] .planner-guide-caption{display:block;margin-top:6px}
+body.roadmap-studio .planner-guide-bubble[hidden]{display:none!important}
+body.roadmap-studio #questionHelp.planner-guide-bubble,body.roadmap-studio #pathwaySummary.planner-guide-bubble{position:relative;background:#fff;border:1px solid #dccde5;border-radius:4px 17px 17px 17px;padding:15px 17px;margin:0 0 22px;box-shadow:0 5px 20px #5d42730a;font-size:14px;line-height:1.85;color:#65556f;word-break:keep-all;overflow-wrap:anywhere}
+body.roadmap-studio .planner-guide-bubble:before{content:'';position:absolute;width:12px;height:12px;background:#fff;left:24px;top:-7px;border-left:1px solid #dccde5;border-top:1px solid #dccde5;transform:rotate(45deg)}
+@media(max-width:800px){
+ body.roadmap-studio .guide.planner-guide{grid-template-columns:56px minmax(0,1fr);gap:12px}
+ body.roadmap-studio .guide.planner-guide .planner-guide-portrait{width:56px;height:56px}
+ body.roadmap-studio .guide.planner-guide img.planner-guide-image{width:116px;height:174px;left:-30px;top:-5px}
+ body.roadmap-studio .guide.planner-guide[data-guide-state=idle]{grid-template-columns:84px minmax(0,1fr)}
+ body.roadmap-studio .guide.planner-guide[data-guide-state=idle] .planner-guide-portrait,body.roadmap-studio .guide.planner-guide[data-guide-state=idle] img.planner-guide-image{width:84px;height:126px}
+ body.roadmap-studio #questionHelp.planner-guide-bubble,body.roadmap-studio #pathwaySummary.planner-guide-bubble{padding:14px 15px;font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){body.roadmap-studio .guide.planner-guide img.planner-guide-image{transition:none;animation:none}}

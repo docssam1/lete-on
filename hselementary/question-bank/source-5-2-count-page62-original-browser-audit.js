@@ -53,7 +53,7 @@ function startServer() {
         const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u6")?.subunits.find(x => x.name === "사건의 가짓수")?.types.find(x => x.sourceItemId === id);
         return type && { reviewLocked: type.reviewLocked, sourceVerified: type.sourceVerified, generationMode: type.generationMode, verifiedVariantCount: type.verifiedVariantCount, generatorKey: window.HSE_GENERATORS.generatorKey(type) };
       }, itemId);
-      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 1, generatorKey: n ? `source52CountPage62Example${n}` : "source52CountPage62Exploration" });
+      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 3, generatorKey: n ? `source52CountPage62Example${n}` : "source52CountPage62Exploration" });
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u6");
@@ -68,13 +68,13 @@ function startServer() {
       const problemItem = problemView.locator(`[data-source-item-id='${itemId}']`).first();
       await problemItem.waitFor({ state: "visible" });
       const prompt = await problemItem.innerText();
-      const expectedPrompts = [["직육면체", "ㄱ", "ㄴ"],["빨간", "파란", "3의 배수"],["ㄱ", "ㄴ", "ㄷ", "짧게"],["ㄱ", "ㄷ", "지점"],["남학생", "여학생", "이웃"]];
+      const expectedPrompts = [["직육면체", "ㄱ", "ㄴ"],["흰", "초록", "2의 배수"],["ㄱ", "ㄴ", "ㄷ", "짧게"],["ㄱ", "ㄷ", "지점"],["남학생", "여학생", "이웃"]];
       for(const t of expectedPrompts[n]) assert(prompt.includes(t), `${itemId}: ${t}`);
       assert.equal(await problemView.locator(`[data-source-answer='${itemId}']`).count(), 0);
       assert.equal(await problemItem.locator("svg.source52-p62-figure").count(), [1,0,1,1,0][n]);
       if(n===0) assert.equal(await problemItem.locator("line[data-edge]").count(),12);
       if(n===2) assert.equal(await problemItem.locator("line").count(),9);
-      if(n===3) assert.equal(await problemItem.locator("path[data-edge]").count(),12);
+      if(n===3) assert.equal(await problemItem.locator("path[data-edge]").count(),9);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `problem horizontal overflow ${width}px`);
       const fontStatus = await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('600 16px "Pretendard"', "성적표의 평균을 구하여라"); });
       assert.equal(fontStatus, true, `local Pretendard loaded at ${width}px`);
@@ -83,7 +83,7 @@ function startServer() {
       await page.locator("#solutionTab").click();
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
-      assert(solutionText.includes(["15가지","12가지","18가지","39가지","144가지"][n]),solutionText);
+      assert(solutionText.includes(["15가지","18가지","20가지","16가지","48가지"][n]),solutionText);
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);
       await page.screenshot({ path: path.join(outputDir, `item${n}-solution-${width}.png`), fullPage: true });
