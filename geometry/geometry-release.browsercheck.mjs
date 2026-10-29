@@ -18,6 +18,7 @@ const checks = [
   "geometry/worksheet/dice-roll/dice-roll-sheet.browsercheck.mjs",
   "geometry/worksheet/geoboard/geoboard-sheet.browsercheck.mjs",
   "geometry/tutorial-entry.browsercheck.mjs",
+  "geometry/studio-landscape.browsercheck.mjs",
   "geometry/shared/game-flow.browsercheck.mjs",
   "geometry/all-games-entry.browsercheck.mjs"
 ];
