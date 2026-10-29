@@ -931,7 +931,9 @@
       ],
       "sourceVerified": false,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다.",
+      "syntheticRuntimeTypeId": "5-2-u1-e4-mission-6-rounded-place-synthetic",
+      "sourceReviewCorrection20261030": "정본은 반올림할 자릿수를 명시하지 않는다. 일의 자리까지 반올림도 허용하면 가능한 수 한 개인 경우가 있으며 십·백의 자리까지는 각각 10개·100개이다. 생성 유사문항은 십의 자리 이상으로 한정하는 조건을 명시한다. 원문 해석과 출판사 답안은 추가 확인하며 원문 잠금을 유지한다."
     },
     {
       "sourceItemId": "5-2-u2-e1-exploration",
