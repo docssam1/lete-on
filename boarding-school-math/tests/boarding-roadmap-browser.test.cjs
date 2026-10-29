@@ -411,6 +411,12 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   await page.close();
 });
 
+test("each Grade 7 NS.A standard link opens a populated filtered workbook with accessible controls",async function(){
+  const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true});await page.goto(`${url}?grade=7`,{waitUntil:"networkidle"});await page.getByRole("button",{name:/살펴볼 지점 1, 유리수/}).click();
+  const standards=await page.locator("#grade7-stage-questions .grade7-standard-code").evaluateAll(function(nodes){return nodes.map(function(node){return{standard:node.textContent,href:node.href,height:Math.round(node.getBoundingClientRect().height),minHeight:parseFloat(getComputedStyle(node).minHeight)};});});assert.deepEqual(standards.map(function(entry){return entry.standard;}),["7.NS.A.1","7.NS.A.2","7.NS.A.2d","7.NS.A.3"]);assert.ok(standards.every(function(entry){return entry.height>=44&&entry.minHeight>=44;}));for(let index=0;index<20&&!(await page.locator("#grade7-stage-questions .grade7-standard-code:focus-visible").count());index+=1)await page.keyboard.press("Tab");assert.ok(await page.locator("#grade7-stage-questions .grade7-standard-code:focus-visible").count(),"keyboard can focus a standard link");
+  const route=await browser.newPage({viewport:{width:1280,height:900}});for(const entry of standards){await route.goto(entry.href,{waitUntil:"networkidle"});assert.equal(new URL(route.url()).searchParams.get("standard"),entry.standard);assert.ok(await route.locator(".book-problem").count()>0,entry.standard+" must open matching practice items");}await route.close();await page.close();
+});
+
 test("Grade 7 NS.A roadmap breaks the strand into four observable checks with references", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
@@ -431,8 +437,8 @@ test("Grade 7 NS.A roadmap breaks the strand into four observable checks with re
   await page.waitForURL(/unit-workbook\.html\?cluster=7\.NS\.A.*standard=7\.NS\.A\.1/);
   assert.equal(await page.locator("#standard-filter").inputValue(), "7.NS.A.1");
   assert.equal(await page.locator(".book-problem").count(), 18);
-  assert.equal(await page.locator("[data-mode='workbook']").innerText(), "단원 18");
-  assert.equal(await page.locator("[data-mode='recheck']").innerText(), "재확인 4");
+  assert.equal(await page.locator("[data-mode='workbook']").innerText(), "기준별 연습 18");
+  assert.equal(await page.locator("[data-mode='recheck']").innerText(), "기준별 재확인 4");
   const standardItems = require("../learning/grade7-ns-a-unit-workbook.js").pack.workbookItems.filter(function (item) { return item.standardIds.some(function (standard) { return standard === "7.NS.A.1" || /^7\.NS\.A\.1[a-z]$/.test(standard); }); });
   for (const item of standardItems) await page.locator(`[data-item-id="${item.id}"] [data-answer-id="${require("../learning/grade7-ns-a-unit-workbook.js").solveItem(item)}"]`).click();
   assert.equal(await page.locator("#progress-chip").innerText(), "18 / 18");
