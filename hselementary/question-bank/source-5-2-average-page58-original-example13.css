@@ -1,0 +1,9 @@
+.source52-p58ex13-chart { display: block; width: min(100%, 600px); height: auto; margin: .7rem auto; }
+.source52-p58ex13-grid { stroke: #b7b7b7; stroke-width: .5; }
+.source52-p58ex13-grid.major, .source52-p58ex13-grid-vertical { stroke: #777; stroke-width: .8; }
+.source52-p58ex13-axis { stroke: #111; stroke-width: 1.4; }
+.source52-p58ex13-axis-label, .source52-p58ex13-legend { fill: #111; font: 15px sans-serif; }
+.source52-p58ex13-title { fill: #111; font: 17px sans-serif; font-weight: 700; }
+.source52-p58ex13-line { fill: none; stroke: #111; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.source52-p58ex13-line.water { stroke-dasharray: 7 4; }
+.source52-p58ex13-point { fill: #111; }
