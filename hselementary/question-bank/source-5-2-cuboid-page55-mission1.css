@@ -1,0 +1,23 @@
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-400-normal.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: swap; unicode-range: U+1100-11FF,U+3130-318F,U+AC00-D7AF; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-600-normal.woff2") format("woff2"); font-style: normal; font-weight: 600; font-display: swap; unicode-range: U+1100-11FF,U+3130-318F,U+AC00-D7AF; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-400-normal.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: swap; unicode-range: U+0000-00FF,U+2000-206F,U+2070-218F; }
+
+.source52-p55m1-question > p,
+.source52-p55m1-solution > p { margin: 0 0 14px; line-height: 1.65; }
+.source52-p55m1-diagram { display: block; width: min(100%, 520px); height: auto; margin: 10px auto 14px; overflow: visible; }
+.source52-p55m1-face { fill: #fff; stroke: #191511; stroke-width: 2; stroke-linejoin: round; }
+.source52-p55m1-label { fill: #191511; font-family: "Noto Serif KR", serif; font-size: 20px; font-weight: 600; }
+.source52-p55m1-solution ol { margin: 12px 0; padding-left: 1.6em; line-height: 1.7; }
+.source52-p55m1-solution li { margin: 0 0 8px; }
+.source52-p55m1-final-answer { font-weight: 700; }
+@media (max-width: 680px) {
+  .source52-p55m1-question > p,
+  .source52-p55m1-solution > p { font-size: 15px; }
+  .source52-p55m1-diagram { width: 100%; }
+}
+@media print {
+  .source52-p55m1-question,
+  .source52-p55m1-solution { color: #191511; font-family: "Noto Serif KR", "Batang", serif; font-size: 10.5pt; line-height: 1.45; }
+  .source52-p55m1-diagram { max-height: 62mm; }
+  .source52-p55m1-solution ol { line-height: 1.45; }
+}

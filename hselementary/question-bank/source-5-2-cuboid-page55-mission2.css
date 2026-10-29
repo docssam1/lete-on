@@ -1,0 +1,38 @@
+.source52-p55m2-question,
+.source52-p55m2-solution {
+  color: #2a241c;
+  font-family: "Noto Serif KR", "Batang", serif;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.source52-p55m2-question > p,
+.source52-p55m2-solution > p { margin: 0 0 0.65rem; }
+.source52-p55m2-cube-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(0.2rem, 1.6vw, 1rem); align-items: center; max-width: 38rem; margin: 0.65rem auto 0.9rem; }
+.source52-p55m2-cube { display: block; width: 100%; max-width: 12rem; height: auto; margin-inline: auto; overflow: visible; }
+.source52-p55m2-faces polygon { fill: #fff; stroke: #2a241c; stroke-width: 2; stroke-linejoin: round; }
+.source52-p55m2-faces path { fill: none; stroke: #2a241c; stroke-width: 2; stroke-linejoin: round; }
+.source52-p55m2-cube text { fill: #191511; text-anchor: middle; dominant-baseline: middle; font: 600 23px "Noto Serif KR", "Batang", serif; }
+.source52-p55m2-answer-lines { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; margin: 0; padding-left: 1.5rem; }
+.source52-p55m2-answer-lines li { min-width: 0; padding: 0.2rem 0; }
+.source52-p55m2-answer-lines span { display: inline-block; min-width: 2.3rem; border-bottom: 1px solid #7a6f5c; }
+.source52-p55m2-solution ol { margin: 0.35rem 0 0.65rem; padding-left: 1.5rem; }
+.source52-p55m2-solution li { margin: 0.25rem 0; }
+.source52-p55m2-final-answer { color: #1e4631; font-weight: 700; }
+
+@media (max-width: 560px) {
+  .source52-p55m2-cube-row { gap: 0.1rem; margin-block: 0.5rem 0.75rem; }
+  .source52-p55m2-cube text { font-size: 27px; }
+  .source52-p55m2-answer-lines { grid-template-columns: 1fr; gap: 0.05rem; }
+}
+
+@media print {
+  .source52-p55m2-question,
+  .source52-p55m2-solution { font-size: 10.2pt; line-height: 1.42; }
+  .source52-p55m2-cube-row { max-width: 5.7in; gap: 0.12in; margin: 0.06in auto 0.12in; }
+  .source52-p55m2-cube { max-width: 1.85in; }
+  .source52-p55m2-answer-lines { gap: 0.12in; }
+  .source52-p55m2-answer-lines li { padding: 0; }
+  .source52-p55m2-solution ol { margin: 0.2rem 0 0.35rem; }
+  .source52-p55m2-solution li { margin: 0.12rem 0; }
+}
