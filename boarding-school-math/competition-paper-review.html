@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./competition-paper-review.css?v=20261030-7">
+  <link rel="stylesheet" href="./competition-paper-review.css?v=20261030-8">
 </head>
 <body class="academy-page page-paper-review">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -27,6 +27,7 @@
       </section>
       <aside class="review-report" aria-labelledby="report-title" aria-live="polite" tabindex="-1" hidden><p class="review-kicker">02 · 결과</p><h2 id="report-title">입력한 결과</h2><p id="report-intro"></p><div class="report-metrics" id="report-metrics"></div><p id="score-estimate" class="score-estimate" hidden><strong id="score-estimate-value"></strong><span>모든 문항을 표시한 입력값으로 계산한 참고치예요. 공식 성적표와 시험지 안내를 우선하세요.</span><a href="https://maa.org/student-programs/amc/" target="_blank" rel="noopener noreferrer">MAA 공식 안내 ↗</a></p><p id="score-estimate-note" class="score-estimate-note" hidden></p><div id="report-domains" class="report-domains"></div><div id="report-reasons" class="report-reasons"></div><p id="report-next" class="report-next"></p><div class="diagnostic-save"><button id="save-diagnostic" type="button">이 학년 진단 요약을 기기에 저장</button><p id="diagnostic-save-status" role="status" aria-live="polite"></p></div><p class="report-boundary">수상·AIME 진출·학교 과목 배정은 판단하지 않습니다.</p></aside>
     </div>
+    <section id="saved-diagnostic-history" class="saved-diagnostic-history review-shell" aria-labelledby="saved-diagnostic-title" hidden><div class="review-heading"><p class="review-kicker">이 기기에 저장</p><h2 id="saved-diagnostic-title" tabindex="-1">문항별 진단 기록</h2><p>응시 날짜와 선택한 학년·대회별 기록입니다. 각 시험은 따로 읽으며 난도나 점수 구간을 보정하지 않습니다.</p></div><div id="saved-diagnostic-list" class="saved-diagnostic-list" aria-live="polite"></div></section>
     <section class="score-history review-shell" aria-labelledby="score-history-title">
       <div class="review-heading"><p class="review-kicker">경시 · 회차별 기록</p><h2 id="score-history-title" tabindex="-1">AMC 결과를 회차별로 모아 보기</h2><p>성적표의 점수를 직접 입력하면 같은 대회끼리 날짜순으로 정리해요. 시험 난이도를 보정하거나 준비도·등급을 판정하지 않습니다.</p></div>
       <form id="score-history-form" class="score-history-form">
@@ -53,6 +54,6 @@
   <script src="./shared/gmap-local-learning-record.js?v=20261030-3"></script>
   <script src="./competition/amc-score-history.js?v=20261030-3"></script>
   <script src="./competition/paper-review-analysis.js?v=20261030-2"></script>
-  <script src="./competition-paper-review.js?v=20261030-7"></script>
+  <script src="./competition-paper-review.js?v=20261030-8"></script>
 </body>
 </html>

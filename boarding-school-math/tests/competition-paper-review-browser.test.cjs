@@ -44,6 +44,12 @@ test("users can opt to save an answer-free AMC diagnostic and see it only on the
   assert.equal(await page.locator("#save-diagnostic").isVisible(), true);
   await page.locator("#save-diagnostic").click();
   assert.match(await page.locator("#diagnostic-save-status").innerText(), /이 기기에 저장/);
+  assert.equal(await page.locator(".saved-diagnostic-entry").count(), 1);
+  await page.locator(".saved-diagnostic-remove").click();
+  assert.equal(await page.locator("#saved-diagnostic-history").isVisible(), false);
+  await page.locator("#save-diagnostic").click();
+  assert.equal(await page.locator(".saved-diagnostic-entry").count(), 1);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   const raw = await page.evaluate(function () { return localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"); });
   assert.doesNotMatch(raw, /responses|answer|correct-answer/);
   await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7`, { waitUntil: "networkidle" });

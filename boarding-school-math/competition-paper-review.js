@@ -201,6 +201,37 @@
     });
     $("history-export").disabled = scoreHistory.length === 0;
   }
+  function renderSavedDiagnosticHistory() {
+    const section = $("saved-diagnostic-history");
+    const host = $("saved-diagnostic-list");
+    if (!localRecords) { section.hidden = true; return; }
+    const history = localRecords.storage.loadCompetitionDiagnosticHistory();
+    section.hidden = history.length === 0;
+    host.replaceChildren();
+    history.forEach(function (record) {
+      const card = document.createElement("article"); card.className = "saved-diagnostic-entry";
+      const heading = document.createElement("div"); heading.className = "saved-diagnostic-entry-heading";
+      const title = document.createElement("h3"); title.textContent = `${record.programTitle} · Grade ${record.grade}`;
+      const date = document.createElement("time"); date.textContent = record.examDate || "날짜 미입력"; if (record.examDate) date.dateTime = record.examDate;
+      heading.append(title, date);
+      const meta = document.createElement("p");
+      meta.textContent = `${record.paperLabel ? `${record.paperLabel} · ` : ""}정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}`;
+      const domainHost = document.createElement("div"); domainHost.className = "saved-diagnostic-entry-domains";
+      record.domains.forEach(function (domain) {
+        const item = document.createElement("div");
+        const label = document.createElement("strong"); label.textContent = domain.name;
+        const value = document.createElement("span"); value.textContent = domain.attempted ? `${domain.correct}/${domain.attempted}${domain.rate === null ? "" : ` · ${domain.rate}%`}` : "—";
+        const note = document.createElement("small"); note.textContent = `${domain.evidence}${domain.blank ? ` · 미응답 ${domain.blank}` : ""}`;
+        item.append(label, value, note); domainHost.append(item);
+      });
+      const reasons = document.createElement("p");
+      const reasonNames = { concept: "개념", approach: "접근 아이디어", calculation: "계산", reading: "조건 읽기", time: "시간" };
+      reasons.textContent = `오답 이유 분류 ${record.summary.reasonClassified}/${record.summary.wrong}${record.reasons.length ? ` · ${record.reasons.map(function (reason) { return `${reasonNames[reason.id]} ${reason.count}`; }).join(" · ")}` : ""}`;
+      const remove = document.createElement("button"); remove.type = "button"; remove.className = "saved-diagnostic-remove"; remove.dataset.removeDiagnostic = record.id; remove.textContent = "이 기록 삭제";
+      remove.setAttribute("aria-label", `${record.programTitle} Grade ${record.grade} ${record.examDate || "날짜 미입력"} 진단 요약 삭제`);
+      card.append(heading, meta, domainHost, reasons, remove); host.append(card);
+    });
+  }
   function clearHistoryMessages() { $("score-history-error").hidden = true; $("score-history-status").hidden = true; }
   function historyError(message) { $("score-history-status").hidden = true; setText("score-history-error", message); $("score-history-error").hidden = false; }
   function historySuccess(message) { $("score-history-error").hidden = true; setText("score-history-status", message); $("score-history-status").hidden = false; }
@@ -355,8 +386,17 @@
       reasons: lastDiagnostic.reasons.map(function (reason) { return { id: reason.id, count: reason.count }; })
     });
     $("diagnostic-save-status").textContent = record ? `${record.programTitle} · Grade ${record.grade} 요약을 이 기기에 저장했어요. 문항별 응답과 점수는 저장하지 않았습니다.` : "저장하지 못했어요. 입력한 학년과 문항 결과를 확인해 주세요.";
+    renderSavedDiagnosticHistory();
+  });
+  $("saved-diagnostic-list").addEventListener("click", function (event) {
+    const button = event.target.closest("[data-remove-diagnostic]");
+    if (!button || !localRecords) return;
+    localRecords.storage.removeCompetitionDiagnostic(button.dataset.removeDiagnostic);
+    renderSavedDiagnosticHistory();
+    if (!$("saved-diagnostic-history").hidden) { $("saved-diagnostic-title").focus(); }
   });
   renderSettings();
   renderMarks();
+  renderSavedDiagnosticHistory();
   if (historyEngine) { updateHistoryScale(); renderHistory(); }
 })();
