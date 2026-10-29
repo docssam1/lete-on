@@ -299,6 +299,8 @@ body.academy-page.page-boarding-roadmap { color: #182230; background: #f5f6f8; b
 .grade7-stage-check strong { color: #60418f; font-size: .82rem; }
 .grade7-stage-check ol { margin: 8px 0 0; padding-left: 1.35rem; display: grid; gap: 7px; color: #354255; font-size: .83rem; line-height: 1.55; }
 .grade7-stage-check li::marker { color: #60418f; font-weight: 850; }
+.grade7-standard-code { min-height: 22px; padding: 1px 7px; display: inline-flex; align-items: center; border: 1px solid #ddd4ec; border-radius: 999px; color: #55377f; background: #f5f1fa; font-size: .68rem; font-weight: 850; line-height: 1; }
+.grade7-check-prompt { margin-top: 2px; display: block; }
 .grade7-stage-references { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px 14px; }
 .grade7-stage-references[hidden] { display: none; }
 .grade7-stage-references a { min-height: 40px; display: inline-flex; align-items: center; color: #4f347a; font-size: .78rem; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }

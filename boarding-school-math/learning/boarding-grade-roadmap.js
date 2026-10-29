@@ -8,10 +8,10 @@
 
   const grade7Stops = Object.freeze([
     Object.freeze({ id: "nsa", title: "유리수", description: "유리수의 덧셈·뺄셈에서 곱셈·나눗셈으로 확장하고, 소수 표현과 문장제까지 연결해요.", checks: Object.freeze([
-      "덧셈·뺄셈: 수직선에서 이동과 거리를 나타내고, 빼기를 반대수 더하기로 설명할 수 있나요?",
-      "곱셈·나눗셈: 부호와 연산 성질을 적용하고, 0이 아닌 수로 나누는 이유를 설명할 수 있나요?",
-      "분수와 소수: 분수를 소수로 나타내고, 소수가 끝나는지 반복되는지 판별할 수 있나요?",
-      "문장제: 상황에 맞게 유리수 네 연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?"
+      Object.freeze({ standard: "7.NS.A.1", prompt: "덧셈·뺄셈: 수직선에서 이동과 거리를 나타내고, 빼기를 반대수 더하기로 설명할 수 있나요?" }),
+      Object.freeze({ standard: "7.NS.A.2", prompt: "곱셈·나눗셈: 부호와 연산 성질을 적용하고, 0이 아닌 수로 나누는 이유를 설명할 수 있나요?" }),
+      Object.freeze({ standard: "7.NS.A.2d", prompt: "분수와 소수: 분수를 소수로 나타내고, 소수가 끝나는지 반복되는지 판별할 수 있나요?" }),
+      Object.freeze({ standard: "7.NS.A.3", prompt: "문장제: 상황에 맞게 유리수 네 연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?" })
     ]), clusterId: "7.NS.A", resourceState: "review-preview" }),
     Object.freeze({ id: "rpa", title: "비례 관계", description: "단위율과 비례 관계를 표·그래프·식으로 나타내요.", check: "두 양이 비례하는지 표와 그래프를 보고 설명할 수 있나요?", clusterId: "7.RP.A", resourceState: "public" }),
     Object.freeze({ id: "ee", title: "식·방정식", description: "분배법칙으로 식을 정리하고 등식의 양쪽이 왜 같은지 확인해요.", check: "식을 바꾼 뒤에도 같은 값을 나타내는 이유를 말할 수 있나요?" }),

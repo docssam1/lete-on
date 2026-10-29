@@ -182,7 +182,14 @@
       const checks = $("grade7-stage-questions");
       checks.replaceChildren();
       (stop.checks || [stop.check]).filter(Boolean).forEach(function (question) {
-        const item = document.createElement("li"); item.textContent = question; checks.append(item);
+        const item = document.createElement("li");
+        if (typeof question === "string") item.textContent = question;
+        else {
+          const standard = document.createElement("span"); standard.className = "grade7-standard-code"; standard.textContent = question.standard;
+          const prompt = document.createElement("span"); prompt.className = "grade7-check-prompt"; prompt.textContent = question.prompt;
+          item.append(standard, prompt);
+        }
+        checks.append(item);
       });
       $("grade7-stage-references").hidden = stop.id !== "nsa";
       if (stop.clusterId) {

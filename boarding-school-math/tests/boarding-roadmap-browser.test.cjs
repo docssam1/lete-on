@@ -414,12 +414,13 @@ test("Grade 7 NS.A roadmap breaks the strand into four observable checks with re
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   await page.getByRole("button", { name: /살펴볼 지점 1, 유리수/ }).click();
-  assert.deepEqual(await page.locator("#grade7-stage-questions li").allInnerTexts(), [
+  assert.deepEqual(await page.locator("#grade7-stage-questions .grade7-check-prompt").allInnerTexts(), [
     "덧셈·뺄셈: 수직선에서 이동과 거리를 나타내고, 빼기를 반대수 더하기로 설명할 수 있나요?",
     "곱셈·나눗셈: 부호와 연산 성질을 적용하고, 0이 아닌 수로 나누는 이유를 설명할 수 있나요?",
     "분수와 소수: 분수를 소수로 나타내고, 소수가 끝나는지 반복되는지 판별할 수 있나요?",
     "문장제: 상황에 맞게 유리수 네 연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?"
   ]);
+  assert.deepEqual(await page.locator("#grade7-stage-questions .grade7-standard-code").allInnerTexts(), ["7.NS.A.1", "7.NS.A.2", "7.NS.A.2d", "7.NS.A.3"]);
   assert.equal(await page.locator("#grade7-stage-references a").count(), 3);
   assert.equal(await page.locator("#grade7-stage-references a").nth(0).getAttribute("href"), "https://www.thecorestandards.org/Math/Content/7/NS/");
   assert.match(await page.locator("#grade7-stage-resource").getAttribute("href"), /cluster=7.NS.A/);
