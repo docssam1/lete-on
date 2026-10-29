@@ -1015,11 +1015,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e4-exploration",
-      "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조."
+      "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e4-example-4-1",
