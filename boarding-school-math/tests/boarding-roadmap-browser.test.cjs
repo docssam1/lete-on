@@ -622,3 +622,26 @@ test("cross-grade concept flows render as examples on phone, tablet, and desktop
     await page.close();
   }
 });
+
+test("the same learning-world map frames every grade while phones keep the vertical path", async function () {
+  const desktop = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  for (const grade of [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) {
+    await desktop.goto(`${url}?grade=${grade}`, { waitUntil: "networkidle" });
+    assert.equal(await desktop.locator("#stage-list button").count(), 4, `Grade ${grade} has four named route stops`);
+    assert.ok(await desktop.locator("#stage-list button strong").allTextContents().then((labels) => labels.every((label) => label.trim())), `Grade ${grade} route labels are HTML text`);
+    assert.match(await desktop.locator(".stage-map").evaluate((node) => getComputedStyle(node).backgroundImage), /mathematics-learning-world\.webp/, `Grade ${grade} uses the shared map scene`);
+    await desktop.locator("#stage-list button").nth(1).click();
+    assert.equal(await desktop.getByText("살펴보는 중", { exact: true }).count(), 1, `Grade ${grade} selected state is real DOM text`);
+    assert.deepEqual(await desktop.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [1280, 1280], `Grade ${grade} has no horizontal overflow`);
+  }
+  await desktop.close();
+
+  const phone = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
+  await phone.goto(`${url}?grade=8`, { waitUntil: "networkidle" });
+  assert.doesNotMatch(await phone.locator(".stage-map").evaluate((node) => getComputedStyle(node).backgroundImage), /mathematics-learning-world\.webp/);
+  assert.equal(await phone.locator("#stage-list").evaluate((node) => getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).length), 1);
+  await phone.locator("#stage-list button").nth(1).click();
+  assert.equal(await phone.getByText("살펴보는 중", { exact: true }).count(), 1);
+  assert.deepEqual(await phone.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  await phone.close();
+});

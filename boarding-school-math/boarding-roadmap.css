@@ -397,23 +397,23 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
 @media print { .grade-comparison:not(.has-comparison) { display: none; } }
 @media print { .comparison-evidence-link { display: none; } }
 @media print { .boarding-header, .boarding-intro-actions, .grade-track, .grade-comparison-controls, .journey-actions, .route-buttons, .competition-form, .competition-links, .boarding-close, .site-footer { display: none !important; }.boarding-intro, .boarding-close { color: #182230; background: #fff; }.boarding-intro .boarding-shell { padding-block: 12px; }.boarding-intro h1, .boarding-intro h1 span { color: #182230; }.boarding-intro p:not(.boarding-kicker) { color: #566274; }.grade-map, .grade-comparison, .level-section, .route-section, .competition-section { padding-block: 12px; }.journey-layout, .route-layout, .competition-layout { display: block; }.journey-side { border: 1px solid #d8dee8; }.route-explanation { margin-top: 12px; } }
-/* Grade 7 gets a map scene; all route text and selectable stops stay in the DOM. */
-.journey-main.grade7-active .stage-map {
+/* Every grade gets the same map world; all route text and selectable stops stay in the DOM. */
+.journey-main .stage-map {
   min-height: 324px;
   padding: 20px 0 8px;
   border-color: #e3dced;
   background-color: #f3eef7;
-  background-image: linear-gradient(180deg,rgba(250,248,252,.12),rgba(250,248,252,.24)),url("./assets/roadmap/grade7-learning-world.webp");
+  background-image: linear-gradient(180deg,rgba(250,248,252,.12),rgba(250,248,252,.24)),url("./assets/roadmap/mathematics-learning-world.webp");
   background-position: center;
   background-size: cover;
 }
-.journey-main.grade7-active .stage-map-track { display: none; }
-.journey-main.grade7-active .stage-list { min-height: 276px; }
-.journey-main.grade7-active .stage-list li:nth-child(1) { transform: translateY(34px); }
-.journey-main.grade7-active .stage-list li:nth-child(2) { transform: translateY(-52px); }
-.journey-main.grade7-active .stage-list li:nth-child(3) { transform: translateY(52px); }
-.journey-main.grade7-active .stage-list li:nth-child(4) { transform: translateY(-34px); }
-.journey-main.grade7-active .grade7-path .stage-button {
+.journey-main .stage-map-track { display: none; }
+.journey-main .stage-list { min-height: 276px; }
+.journey-main .stage-list li:nth-child(1) { transform: translateY(34px); }
+.journey-main .stage-list li:nth-child(2) { transform: translateY(-52px); }
+.journey-main .stage-list li:nth-child(3) { transform: translateY(52px); }
+.journey-main .stage-list li:nth-child(4) { transform: translateY(-34px); }
+.journey-main .stage-list .stage-button {
   min-height: 140px;
   max-width: 180px;
   padding: 12px 8px;
@@ -423,28 +423,28 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
   box-shadow: 0 5px 18px rgba(62,43,79,.08);
   backdrop-filter: blur(5px);
 }
-.journey-main.grade7-active .grade7-path .stage-button[aria-pressed="true"] {
+.journey-main .stage-list .stage-button[aria-pressed="true"] {
   border-color: rgba(96,65,143,.4);
   background: rgba(255,255,255,.94);
   box-shadow: 0 8px 24px rgba(62,43,79,.16);
 }
-.journey-main.grade7-active .grade7-path .stage-button:hover { text-decoration: none; }
-.journey-main.grade7-active .grade7-path .stage-button strong { color: #241b31; }
+.journey-main .stage-list .stage-button:hover { text-decoration: none; }
+.journey-main .stage-list .stage-button strong { color: #241b31; }
 .stage-button[aria-pressed="true"]::after,
-.grade7-path .stage-button[aria-pressed="true"]::after { content: none; }
+.stage-list .stage-button[aria-pressed="true"]::after { content: none; }
 .stage-selected-note { color: #60418f; font-size: .72rem; font-weight: 850; line-height: 1.25; }
 @media (max-width: 600px) {
-  .journey-main.grade7-active .stage-map {
+  .journey-main .stage-map {
     min-height: 0;
     padding: 14px 12px;
     background-image: radial-gradient(ellipse at 12% 90%, rgba(203,224,206,.44), transparent 36%),radial-gradient(ellipse at 88% 8%, rgba(226,216,245,.52), transparent 36%),linear-gradient(#faf9fc,#faf9fc);
   }
-  .journey-main.grade7-active .stage-list { min-height: 0; }
-  .journey-main.grade7-active .stage-list li:nth-child(1),
-  .journey-main.grade7-active .stage-list li:nth-child(2),
-  .journey-main.grade7-active .stage-list li:nth-child(3),
-  .journey-main.grade7-active .stage-list li:nth-child(4) { transform: none; }
-  .journey-main.grade7-active .grade7-path .stage-button {
+  .journey-main .stage-list { min-height: 0; }
+  .journey-main .stage-list li:nth-child(1),
+  .journey-main .stage-list li:nth-child(2),
+  .journey-main .stage-list li:nth-child(3),
+  .journey-main .stage-list li:nth-child(4) { transform: none; }
+  .journey-main .stage-list .stage-button {
     max-width: none;
     min-height: 76px;
     padding: 9px 10px 9px 0;
@@ -455,7 +455,7 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
     box-shadow: none;
     backdrop-filter: none;
   }
-  .journey-main.grade7-active .grade7-path .stage-button[aria-pressed="true"] {
+  .journey-main .stage-list .stage-button[aria-pressed="true"] {
     border-color: transparent;
     border-radius: 12px;
     background: rgba(255,255,255,.92);
