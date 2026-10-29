@@ -1705,7 +1705,7 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
 
 // ── 한 차시 교재(원장 2026-10-29 「워밍업 교재 표지와 같게, 한 회차 교재 구성 전체를 묶으라고」) ──
 // ?sessionbook=1&book=&lessons=id,id&label=1단원 1차시&range=…&parts=…&sheet=<문제은행 학습지 주소>[&preview=1]
-// 표지(워밍업 교재와 같은 「도형 배경」) → 그 차시 워밍업 학습마다 개념·워밍업 쪽 → 본책 · 오늘의 과제 · 데일리 테스트(마지막 차시는 단원 평가).
+// 표지(워밍업 교재와 같은 「도형 배경」) → (2차시부터 &presheet) 지난 차시 데일리 테스트 → 그 차시 워밍업 학습마다 개념·워밍업 쪽 → 본책 · 오늘의 과제 → (마지막 차시) 단원 평가.
 // 덱(study.html)의 차시 순서 그대로다. 정답·풀이는 넣지 않는다.
 async function printSessionBook() {
   const book = activeBook();
@@ -1720,8 +1720,10 @@ async function printSessionBook() {
     await Promise.all([...root.querySelectorAll("img")].map((image) => image.decode().catch(() => null)));
     compactGoldenBellPrint(root);
     renumberPrintPages(root);
-    const sheetUrl = params.get("sheet");
-    if (sheetUrl && new URL(sheetUrl, location.href).origin === location.origin) root.append(await importQuestionSheet(sheetUrl));
+    const sameOrigin = (url) => url && new URL(url, location.href).origin === location.origin;
+    // 2차시부터: 표지 바로 뒤에 지난 차시 데일리 테스트(&presheet=)
+    if (sameOrigin(params.get("presheet"))) root.firstElementChild.after(await importQuestionSheet(params.get("presheet")));
+    if (sameOrigin(params.get("sheet"))) root.append(await importQuestionSheet(params.get("sheet")));
     document.body.classList.add("session-book");
     // 워밍업 쪽은 종이 여백 11mm로, 문제은행 학습지 쪽은 여백 0으로 설계됐다 — 한 묶음에서는 종이 여백을 0으로 두고 워밍업 쪽에 11mm를 준다
     const pageStyle = document.createElement("style");

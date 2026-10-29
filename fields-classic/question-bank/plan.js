@@ -1,7 +1,7 @@
 import { CURRICULUM } from "./source-data.js?v=20261028m";
 import { loadRecords, saveRecord, loggedIn, memberCall } from "./study-progress.js?v=20261029q";
-import { sessionCount } from "./study-deck.js?v=20261029z";
-import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, changesOf, isClassDay, parseYmd, today } from "./study-plan.js?v=20261029z";
+import { sessionCount } from "./study-deck.js?v=20261030a";
+import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, changesOf, isClassDay, parseYmd, today } from "./study-plan.js?v=20261030a";
 
 // 학습 진도표 화면 — 계산은 study-plan.js. 계획은 학생 기록 plan/main 에 둔다(이 기기 + 로그인하면 서버).
 const $ = (id) => document.getElementById(id);
@@ -22,18 +22,19 @@ function save() {
   saveRecord(student, "plan", "main", plan);
   records.set("plan:main", { kind: "plan", key: "main", payload: plan, updatedAt: new Date().toISOString() });
 }
-// 그 차시를 끝냈나: 차시 끝의 데일리 테스트·단원 평가까지 갔거나 그 테스트를 채점했으면
+// 그 차시를 끝냈나: 차시 끝(앞 차시는 오늘의 과제, 마지막 차시는 단원 평가)까지 갔거나, 그 차시 내용을 본 테스트를 채점했으면
+// (데일리 테스트는 다음 차시 맨 앞에서 지난 차시를 본다 — 원장 2026-10-29 「데일리 테스트는 다음날이야」)
 function sessionDone(session) {
   const key = `${session.book}-u${session.unit}`;
   const week = get("week", key);
-  const kind = session.lastPart ? "test" : "daily";
+  const kind = session.lastPart ? "test" : "homework";
   if ((week?.seen || []).some((id) => id.startsWith(`p${session.part}:${kind}:`))) return true;
   const test = get("test", session.lastPart ? key : `${key}-d${session.part}`);
   return Boolean(test?.marked);
 }
 const dayText = (date) => { const d = parseYmd(date); return `${d.getMonth() + 1}/${d.getDate()} (${WEEKDAYS[d.getDay()]})`; };
 const sessionText = (s) => `${s.bookLabel} ${s.unit + 1}단원 ${s.part}차시`;
-const sessionTags = (s) => [s.lastPart ? "단원 평가" : "데일리 테스트", ...(s.booktest ? ["권별 테스트"] : [])];
+const sessionTags = (s) => [...(s.part > 1 ? [`${s.part - 1}차시 데일리 테스트`] : []), ...(s.lastPart ? ["단원 평가"] : []), ...(s.booktest ? ["권별 테스트"] : [])];
 const toggle = (list, date) => (list.includes(date) ? list.filter((entry) => entry !== date) : [...list, date].sort());
 
 // ── 계획 정하기 ──

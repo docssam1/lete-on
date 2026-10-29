@@ -3,7 +3,7 @@ import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } fr
 import { readRecord, weekRate, loggedIn, checkSession } from "./study-progress.js?v=20261029q";
 import { canStudy, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261029q";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
-import { sessionBookPicks } from "./study-deck.js?v=20261029z";
+import { sessionBookPicks, sessionDailyPicks } from "./study-deck.js?v=20261030a";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
 // 한 번에 한 장만 보이고, 위의 길(1권 › 01 도형 움직이기)이나 「‹」로 앞 장으로 돌아간다. 브라우저 뒤로 가기도 앞 장으로.
@@ -162,27 +162,31 @@ function renderParts() {
   const result = readRecord(student, "test", `${book.id}-u${view.unit}`);
   const sessions = Array.from({ length: count }, (_, k) => {
     const part = k + 1, lessons = all.slice(k * size, part * size);
-    const daily = readRecord(student, "test", `${book.id}-u${view.unit}-d${part}`);
+    const daily = part > 1 ? readRecord(student, "test", `${book.id}-u${view.unit}-d${part - 1}`) : null;
     const lastPart = part === count;
+    // 2차시부터 맨 앞에 지난 차시 데일리 테스트(원장 2026-10-29 「데일리 테스트는 다음날이야」), 마지막 차시 끝에 단원 평가
     const steps = [
+      ...(part > 1 ? [[`데일리 테스트`, daily ? `${part - 1}차시 복습 4문제 · ${daily.right} / ${daily.total}` : `${part - 1}차시 복습 4문제 · ○✕`]] : []),
       ...(lessons.length ? [["개념 → 게임 → 워밍업", lessons.map((lesson) => lesson.title).join(" · ")]] : []),
       ["공부하기", `본책 ${problemCount(unit, part)}문항 · 화면에서 · 인쇄해서 · 유사 문제`],
       ["오늘의 과제", "칠판에 적힌 과제 · 집에서"],
-      lastPart ? ["단원 평가", result ? `10문제 · ${result.right} / ${result.total}` : "10문제 · ○✕ 진단 · 약점 유형"] : ["데일리 테스트", daily ? `4문제 · ${daily.right} / ${daily.total}` : "4문제 · ○✕"],
+      ...(lastPart ? [["단원 평가", result ? `10문제 · ${result.right} / ${result.total}` : "10문제 · ○✕ 진단 · 약점 유형"]] : []),
       ...(lastPart && last && book.source.unitTestQuestions?.length ? [["권별 테스트", `${book.label} ${book.source.unitTestQuestions.length}문제 · ${book.units.length}단원을 마치면`]] : [])
     ];
     const on = week?.part === part;
     // 한 차시 교재 인쇄(원장 2026-10-29 「워밍업 교재 표지와 같게, 한 회차 교재 구성 전체를 묶으라고」):
-    // 워밍업 교재 표지 → 워밍업 학습마다 개념·워밍업 → 본책 → 오늘의 과제 → 데일리 테스트/단원 평가 (golden-bell.html?sessionbook=1)
+    // 워밍업 교재 표지 → (2차시부터) 지난 차시 데일리 테스트 → 워밍업 학습마다 개념·워밍업 → 본책 → 오늘의 과제 → (마지막 차시) 단원 평가 (golden-bell.html?sessionbook=1)
     const sheet = link("index.html", { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1",
       picks: sessionBookPicks(unit, view.unit, part), title: `${book.label} ${view.unit + 1}단원 ${part}차시 · 본책과 과제` });
+    const presheet = part > 1 ? link("index.html", { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1",
+      picks: sessionDailyPicks(unit, view.unit, part), title: `${book.label} ${view.unit + 1}단원 ${part - 1}차시 · 데일리 테스트` }) : "";
+    const testParts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), `본책 ${problemCount(unit, part)}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
     const bookPrint = link("golden-bell.html", { book: book.id, sessionbook: "1", lessons: lessons.map((lesson) => lesson.id).join(","),
-      label: `${view.unit + 1}단원 ${part}차시`, range: `${unit.label} · ${part}차시`,
-      parts: `${lessons.length ? `워밍업 ${lessons.length} · ` : ""}본책 ${problemCount(unit, part)}문항 · 오늘의 과제 · ${lastPart ? "단원 평가" : "데일리 테스트"}`, sheet });
+      label: `${view.unit + 1}단원 ${part}차시`, range: `${unit.label} · ${part}차시`, parts: testParts.join(" · "), sheet, ...(presheet ? { presheet } : {}) });
     return `<section class="st-session${on ? " is-on" : ""}"><h4>${part}차시</h4>
       <ol class="st-week">${steps.map(([label, note], i) => `<li><b>${i + 1}</b><span>${esc(label)}</span><small>${esc(note)}</small></li>`).join("")}</ol>
       <a class="st-week-start st-btn${on || (!week && part === 1) ? " primary" : ""}" href="${esc(link("study.html", { book: book.id, unit: String(view.unit), part: String(part), ...(on ? { s: String(week.last || 1) } : {}) }))}">${part}차시 ${on ? "이어서 하기" : "공부 시작하기"} ›</a>
-      ${goldenBell ? `<a class="st-session-print" href="${esc(bookPrint)}" target="_blank" rel="noopener">🖨 ${part}차시 교재 인쇄 <small>표지 · 개념 · 워밍업 · 본책 · 과제 · ${lastPart ? "단원 평가" : "데일리 테스트"}</small></a>` : ""}</section>`;
+      ${goldenBell ? `<a class="st-session-print" href="${esc(bookPrint)}" target="_blank" rel="noopener">🖨 ${part}차시 교재 인쇄 <small>표지 · ${part > 1 ? "데일리 테스트 · " : ""}개념 · 워밍업 · 본책 · 과제${lastPart ? " · 단원 평가" : ""}</small></a>` : ""}</section>`;
   });
   $("partList").innerHTML = `<div class="st-sessions">${sessions.join("")}</div>`;
 }

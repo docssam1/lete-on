@@ -1,6 +1,6 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261029a";
-import { PHASES, FIXED_LINES, voiceLine, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261029z";
+import { PHASES, FIXED_LINES, voiceLine, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261030a";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
 import { canStudy, lockPage } from "./fields-access.js?v=20261029q";
 
@@ -50,7 +50,8 @@ const buildSlides = () => buildSessionSlides(book, unitIndex, part, bellData);
 const todayTypes = () => sessionTypes(unit, part);
 // 단원 평가는 단원마다 하나(권별 테스트 안내·내 학습 상황이 읽는다), 데일리 테스트는 차시마다
 const testId = `${book.id}-u${unitIndex}`;
-const dailyId = `${book.id}-u${unitIndex}-d${part}`;
+// 데일리 테스트 기록은 「무엇을 시험 봤나」로 — 이 차시 맨 앞의 데일리 테스트는 지난 차시(part − 1)를 본다
+const dailyId = `${book.id}-u${unitIndex}-d${part - 1}`;
 const testResult = (id = testId) => readRecord(student, "test", id);
 // 수행률·진도: 이 단원에서 본 장을 차시를 합쳐 적어 둔다(표지·도착·권별 테스트 안내는 빼고). 「내 학습 상황」(my-study.html)·시작 화면이 읽는다.
 // 장 id = p<차시>:<종류>:<그 차시에서 몇 번째>
@@ -87,7 +88,7 @@ function sheetUrl(slide, { print = false } = {}) {
   } else if (slide.kind === "homework") {
     entries = { picks: todayTypes().map((typeId) => [typeId, "practice", "오늘의 과제", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 오늘의 과제` };
   } else if (slide.kind === "daily") {
-    entries = { picks: dailyTypes(unit, part).map((typeId) => [typeId, "practice", "데일리 테스트", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 데일리 테스트`, test: "1", testId: dailyId };
+    entries = { picks: dailyTypes(unit, part - 1).map((typeId) => [typeId, "practice", "데일리 테스트", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트`, test: "1", testId: dailyId };
   } else {
     entries = { picks: unitTestTypes(unit).map((typeId) => [typeId, "advanced", "단원 평가", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 평가`, test: "1", testId };
   }
@@ -111,7 +112,7 @@ function workMarkup(slide) {
     : slide.kind === "homework"
       ? "칠판에 적힌 대로 <b>인쇄해서</b> 집에서 풀고, 화면에서 <b>답과 풀이</b>를 확인해요."
       : slide.kind === "daily"
-        ? `오늘 배운 것으로 <b>데일리 테스트 ${DAILY_COUNT}문제</b>. 다 풀고 채점하면 ○✕로 알려 줘요.`
+        ? `지난 시간(${part - 1}차시)에 배운 것으로 <b>데일리 테스트 ${DAILY_COUNT}문제</b>. 다 풀고 채점하면 ○✕로 알려 줘요.`
         : `이 단원 <b>단원 평가 ${UNIT_TEST_COUNT}문제</b>예요. 다 풀고 채점하면 ○✕로 약점 유형을 알려 줘요.`;
   return `<div class="sd-work${slide.kind === "homework" ? " has-chalk" : ""}">
     ${slide.kind === "homework" ? chalkMarkup() : ""}
@@ -483,10 +484,11 @@ function renderHead() {
 // ── 그림 세계: 섬 다섯 개(그림 1672×941 안의 자리, %) ──
 // 그림의 다섯 터(아래 왼쪽 → 위 오른쪽). 그림을 바꾸면 이 자리를 다시 잰다.
 const ISLANDS = [[15, 78], [35.5, 55], [52, 38.5], [73.5, 33.5], [87.6, 15.5]];
-const STATIONS = [["concept", "개념 배우기"], ["game", "게임하기"], ["bell", "워밍업"], ["board", "공부하기"], ["homework", "오늘의 과제"], ["daily", "데일리 테스트"], ["test", "단원 평가"], ["booktest", "권별 테스트"], ["end", "도착"]];
-// 데일리 테스트·단원 평가·권별 테스트는 그 차시에 있을 때만(앞 차시는 데일리, 마지막 차시는 단원 평가)
+const STATIONS = [["daily", "데일리 테스트"], ["concept", "개념 배우기"], ["game", "게임하기"], ["bell", "워밍업"], ["board", "공부하기"], ["homework", "오늘의 과제"], ["test", "단원 평가"], ["booktest", "권별 테스트"], ["end", "도착"]];
+// 데일리 테스트·단원 평가·권별 테스트는 그 차시에 있을 때만(2차시부터 맨 앞에 지난 차시 데일리, 마지막 차시 끝에 단원 평가)
 const OPTIONAL = ["daily", "test", "booktest"];
-const visibleStations = () => STATIONS.filter(([kind]) => !OPTIONAL.includes(kind) ? true : ready ? slides.some((slide) => slide.kind === kind) : kind === (part < parts ? "daily" : "test"));
+const expectedOptional = (kind) => kind === "daily" ? part > 1 : kind === "test" ? part >= parts : false;
+const visibleStations = () => STATIONS.filter(([kind]) => !OPTIONAL.includes(kind) ? true : ready ? slides.some((slide) => slide.kind === kind) : expectedOptional(kind));
 const stationOf = (slide) => Math.max(0, visibleStations().findIndex(([kind]) => kind === slide.kind));
 function renderSigns() {
   const slide = slides[index];
@@ -518,7 +520,7 @@ addEventListener("resize", () => placeWorld());
 function slideTitle(slide) {
   if (slide.kind === "board") return `본책 ${slide.block.label}`;
   if (slide.kind === "homework") return `${unitIndex + 1}단원 ${part}차시 · ${todayTypes().length}문제`;
-  if (slide.kind === "daily") return `${unitIndex + 1}단원 ${part}차시 · ${DAILY_COUNT}문제`;
+  if (slide.kind === "daily") return `${unitIndex + 1}단원 ${part - 1}차시 복습 · ${DAILY_COUNT}문제`;
   if (slide.kind === "test") return `${unitIndex + 1}단원 평가 · ${UNIT_TEST_COUNT}문제`;
   if (slide.kind === "booktest") return `${book.label} 권별 테스트`;
   return slide.kind === "game" ? slide.title : slide.lesson.title;
@@ -532,7 +534,7 @@ function slideHead(slide) {
   return `<p class="sd-kick"><span class="sd-kick-no">${stationOf(slide) + 1}</span>${label}${slide.of ? ` <em>${slide.of}</em>` : ""}<span id="slidePage" class="sd-page"></span>${skip}</p><h2>${esc(title)}</h2>`;
 }
 // 표지 공부 순서: 데일리 테스트·단원 평가·권별 테스트는 그 차시에 있는 것만
-const planPhases = (counts) => PHASES.filter(([kind]) => !OPTIONAL.includes(kind) || (ready ? counts[kind] : kind === (part < parts ? "daily" : "test")));
+const planPhases = (counts) => PHASES.filter(([kind]) => !OPTIONAL.includes(kind) || (ready ? counts[kind] : expectedOptional(kind)));
 function coverMarkup() {
   const counts = {
     concept: slides.filter((s) => s.kind === "concept").length,
@@ -564,7 +566,7 @@ function boardMarkup(block) {
 }
 function endMarkup() {
   const lastPart = part >= parts;
-  const result = testResult(lastPart ? testId : dailyId);
+  const result = lastPart ? testResult(testId) : null;
   const nextLink = !lastPart
     ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex), part: String(part + 1) }))}">다음 · ${unitIndex + 1}단원 ${part + 1}차시 시작하기 ›</a>`
     : !lastUnit
