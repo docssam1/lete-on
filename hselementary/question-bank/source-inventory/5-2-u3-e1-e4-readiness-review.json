@@ -1793,22 +1793,22 @@
         "△ㄱㄴㄷ은 정삼각형",
         "△ㄷㄹㅁ은 정삼각형",
         "∠ㄴㅁㄷ=140°",
-        "그림에서 ㉮는 점 ㄹ의 ∠ㄱㄹㄷ"
+        "그림에서 ㉮는 점 ㄹ의 ∠ㄱㄹㅁ"
       ],
-      "visualRequirement": "깨끗한 대체 원본의 인쇄 31쪽에서 ㉮가 점 ㄹ의 ∠ㄱㄹㄷ임을 확인했습니다. △ㄱㄴㄷ과 △ㄷㄹㅁ의 방향 및 공통 꼭짓점 ㄷ을 보존해야 합니다.",
-      "independentCalculation": "점 ㄷ을 중심으로 시계 방향 60° 회전하면 정삼각형 △ㄱㄴㄷ에서 ㄴ→ㄱ, △ㄷㄹㅁ에서 ㅁ→ㄹ, ㄷ→ㄷ으로 대응합니다. 따라서 회전은 ∠ㄴㅁㄷ을 ∠ㄱㄹㄷ으로 옮깁니다. 원문에서 ∠ㄴㅁㄷ=140°이므로 ㉮=∠ㄱㄹㄷ=140°입니다.",
-      "answerFormula": "R_{ㄷ,−60°}(ㄴ)=ㄱ, R_{ㄷ,−60°}(ㅁ)=ㄹ; ∠ㄴㅁㄷ=∠ㄱㄹㄷ=140°",
-      "independentAnswer": "140°",
+      "visualRequirement": "확대 원문에서 ㉮는 ㄹ을 꼭짓점으로 ㄹㄱ과 ㄹㅁ이 이루는 각입니다. 기존 ∠ㄱㄹㄷ 표기는 원문 호와 달라 철회합니다.",
+      "independentCalculation": "60° 회전으로 ∠ㄱㄹㄷ=∠ㄴㅁㄷ=140°입니다. 정삼각형에서 ∠ㄷㄹㅁ=60°이고 그림의 나머지 각이 ㉮이므로 ㉮=360°−140°−60°=160°입니다. 출판사 인쇄 정답은 미확인입니다.",
+      "answerFormula": "㉮=360°−∠ㄴㅁㄷ−60°=160°",
+      "independentAnswer": "160°",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "동일한 시계 방향 60° 회전이 주어진 각의 두 변을 목표각의 두 변으로 옮기므로 정답은 하나입니다.",
+      "singleAnswerCheck": "원문 각 호를 ㄹㄱ과 ㄹㅁ 사이로 대조하고 회전 및 정삼각형의 60°를 이용해 계산했습니다. 출판사 정답은 미확인입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "reviewed",
-      "publicDecision": "public-candidate",
-      "lockReason": null
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그대로의 문항은 공개하지 않습니다. 수정한 창작 변형의 목표각과 독립 계산은 별도로 검증합니다."
     },
     {
       "sourceItemId": "5-2-u3-e4-mission-4",

@@ -18,7 +18,7 @@
   ]);
   const squareAlphas = [9, 14, 19];
   const circleBaseVertices = [48, 57, 72];
-  const triangleBaseTargets = [118, 130, 152];
+  const triangleBaseTargets = [128, 136, 152];
   const areaBaseHeights = [10, 14, 18];
   const areaBaseWidths = [6, 10, 14];
   const trapezoidTopBases = [10, 16, 20];
@@ -115,8 +115,8 @@
     const a = (p,q) => `<line x1="${p.x.toFixed(2)}" y1="${p.y.toFixed(2)}" x2="${q.x.toFixed(2)}" y2="${q.y.toFixed(2)}"/>`;
     const text = (p,label,dx,dy) => `<text x="${(p.x+dx).toFixed(2)}" y="${(p.y+dy).toFixed(2)}">${label}</text>`;
     const givenMark = angleMark(m,n,d,18);
-    const targetMark = angleMark(r,g,d,18);
-    return `<svg class="source52-p31-diagram source52-p31-equilateral" data-source52-figure="equilateral-rotation" data-target-angle="${target}" viewBox="0 0 360 390" role="img" aria-label="공통 꼭짓점 ㄷ을 둔 두 정삼각형, 주어진 각과 회전 대응각 그림" xmlns="http://www.w3.org/2000/svg">${a(d,n)}${a(n,g)}${a(g,d)}${a(d,m)}${a(m,r)}${a(r,d)}${a(m,n)}${a(r,g)}<path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text class="source52-angle-label" x="${(givenMark.label.x-20).toFixed(2)}" y="${(givenMark.label.y+4).toFixed(2)}">${target}°</text>${text(g,"ㄱ",-20,0)}${text(n,"ㄴ",8,-10)}${text(d,"ㄷ",-18,18)}${text(r,"ㄹ",18,-2)}${text(m,"ㅁ",8,-9)}<text class="source52-target-label" x="${(targetMark.label.x-8).toFixed(2)}" y="${(targetMark.label.y+4).toFixed(2)}">㉠</text></svg>`;
+    const targetMark = angleMark(r,g,m,18);
+    return `<svg class="source52-p31-diagram source52-p31-equilateral" data-source52-figure="equilateral-rotation" data-target-angle="${target}" viewBox="0 0 360 390" role="img" aria-label="공통 꼭짓점 ㄷ을 둔 두 정삼각형, 주어진 각과 목표각 ㄱㄹㅁ 그림" xmlns="http://www.w3.org/2000/svg">${a(d,n)}${a(n,g)}${a(g,d)}${a(d,m)}${a(m,r)}${a(r,d)}${a(m,n)}${a(r,g)}<path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text class="source52-angle-label" style="paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round" x="${(givenMark.label.x-20).toFixed(2)}" y="${(givenMark.label.y+4).toFixed(2)}">${target}°</text>${text(g,"ㄱ",-20,0)}${text(n,"ㄴ",8,-10)}${text(d,"ㄷ",-18,18)}${text(r,"ㄹ",18,-2)}${text(m,"ㅁ",8,-9)}</svg>`;
   }
 
   function equilateralExampleDiagram(alpha, beta, showCorrespondingAngle = false) {
@@ -234,11 +234,11 @@
   }
 
   function buildMission3(variant, offset) {
-    const target = triangleBaseTargets[variant] + difficultyDeltas[offset + 1];
-    const rotation = 60;
-    const prompt = `<div class="source52-p31-question"><p>정삼각형 ㄱㄴㄷ과 정삼각형 ㄷㄹㅁ이 있습니다. ∠ㄴㅁㄷ=${target}°일 때 그림의 ㉠의 크기를 구하세요.</p>${equilateralDiagram(target,10)}</div>`;
-    const solution = `<div class="source52-p31-solution"><ol><li>점 ㄷ을 중심으로 시계 방향 ${rotation}° 회전하면 첫 번째 정삼각형에서 ㄴ은 ㄱ으로 옮겨집니다.</li><li>같은 회전에서 두 번째 정삼각형의 ㅁ은 ㄹ로 옮겨지고 ㄷ은 그대로입니다.</li><li>회전은 각의 크기를 보존하므로 ∠ㄴㅁㄷ=∠ㄱㄹㄷ입니다. 따라서 ㉠=${target}°입니다.</li></ol></div>`;
-    return result("5-2-u3-e4-mission-3", variant, offset, prompt, `${target}°`, solution, { targetAngle: target, rotationDegrees: rotation }, false, answerVisual("회전으로 옮겨진 같은 각", `${target}°`));
+    const given = triangleBaseTargets[variant] + difficultyDeltas[offset + 1];
+    const rotation = 60, answer = 300 - given;
+    const prompt = `<div class="source52-p31-question"><p>정삼각형 ㄱㄴㄷ과 정삼각형 ㄷㄹㅁ이 있습니다. ∠ㄴㅁㄷ=${given}°일 때 그림의 ∠ㄱㄹㅁ의 크기를 구하세요.</p>${equilateralDiagram(given,10)}</div>`;
+    const solution = `<div class="source52-p31-solution"><ol><li>점 ㄷ을 중심으로 시계 방향 ${rotation}° 회전하면 ㄴ은 ㄱ으로, ㅁ은 ㄹ로 옮겨지고 ㄷ은 그대로입니다. 따라서 ∠ㄱㄹㄷ=∠ㄴㅁㄷ=${given}°입니다.</li><li>정삼각형 ㄷㄹㅁ에서 ∠ㄷㄹㅁ=60°입니다. 그림에서 ∠ㄱㄹㅁ은 점 ㄹ의 나머지 각이므로 ∠ㄱㄹㅁ=360°−${given}°−60°=<b>${answer}°</b>입니다.</li></ol></div>`;
+    return result("5-2-u3-e4-mission-3", variant, offset, prompt, `${answer}°`, solution, { targetAngle: given, rotationDegrees: rotation, answer }, false, answerVisual("정삼각형의 목표각", `${answer}°`, "∠ㄱㄹㅁ"));
   }
 
   function trisectionSquareDiagram(k, outerArea, answer) {
@@ -266,8 +266,8 @@
     return result("5-2-u3-e4-mission-4", variant, offset, prompt, `${answer}cm²`, solution, { k, side, outerArea, trisectedLength, cornerArea, answer }, false, areaAnswerVisual("작은 정사각형 넓이", `${answer}cm²`));
   }
 
-  function answerVisual(label, answer) {
-    return `<svg class="source52-p31-answer-visual" viewBox="0 0 320 72" role="img" aria-label="${esc(label)}: ${esc(answer)}" xmlns="http://www.w3.org/2000/svg"><path d="M18 54 A32 32 0 0 1 45 24" fill="none" stroke="#2f6b4a" stroke-width="3"/><text x="62" y="48" fill="#191511" font-size="21" font-family="serif">㉠ = ${esc(answer)}</text></svg>`;
+  function answerVisual(label, answer, marker = "㉠") {
+    return `<svg class="source52-p31-answer-visual" viewBox="0 0 320 72" role="img" aria-label="${esc(label)}: ${esc(answer)}" xmlns="http://www.w3.org/2000/svg"><path d="M18 54 A32 32 0 0 1 45 24" fill="none" stroke="#2f6b4a" stroke-width="3"/><text x="62" y="48" fill="#191511" font-size="21" font-family="serif">${esc(marker)} = ${esc(answer)}</text></svg>`;
   }
 
   function areaAnswerVisual(label, answer) {
