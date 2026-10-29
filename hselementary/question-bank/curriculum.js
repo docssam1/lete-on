@@ -2218,6 +2218,26 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     }
   }
 
+
+  if (source52CuboidNets) {
+    for (const [ordinal, name, generatorKey] of [
+      [1, "직육면체 전개도의 둘레 구하기", "source52CuboidNetPaperPerimeterPage51Mission1"],
+      [2, "정사각형 종이 전개도로 만든 직육면체의 모서리 합", "source52CuboidNetPaperEdgeSumPage51Mission2"],
+      [3, "세 방향에서 본 직육면체 전개도의 가장 짧은 둘레", "source52CuboidNetMinPerimeterPage51Mission3"]
+    ]) {
+      const id = `5-2-u5-e2-mission-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidNets.types.push({
+        id, number: source52CuboidNets.types.length + 1, typeNumber, name, label: name,
+        difficultyBand: 0, sourceItemId: id, sourceItemLabel: `Mission ${ordinal}`,
+        sourceSection: "mission", sourceTier: "advanced", sourcePdfPage: 47, sourcePrintedPage: 51,
+        sourceVerified: true, publisherKeyVerified: false, reviewLocked: false, generatorKey,
+        generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+        answerVisualRequired: true, answerVisualStatus: "verified-reconstruction", implementationStatus: "fixed-verified-pool"
+      });
+    }
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;

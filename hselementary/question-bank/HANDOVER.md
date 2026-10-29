@@ -1,3 +1,12 @@
+## 2026-10-29 Grade 5-2 Unit 5 Page 51 Missions 1–3
+
+- Source PDF p.47 / clean comparison PDF p.46 / printed p.51. Added three source-backed fixed questions: net perimeter 52cm, folded cuboid edge sum 132cm, shortest net perimeter 36cm. The publisher answer key is unverified.
+- Mission 3 uses the face-perimeter sum and a proven bound on connecting edges plus a valid attaining net. Removed the unsupported runtime claim that 384 nonoverlapping nets were enumerated. Mission 1's detailed ledger was corrected to ask for the net perimeter, not the surrounding paper perimeter.
+- Source and ledger audits, 1440/375/320px browser checks, six one-page A4 PDFs, release gate and 76,500 runtime generations passed. Overall 2,063 types, 1,275 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts and 79 missing 6-2 review reasons).
+- Preserve the dirty original worktree and student data. Other locked source items, including p.52 Exploration 3 and p.53 Mission 5, require independent review.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 5 Page 50 Examples 2-1 to 2-4
 
 - Source PDF p.46 / printed p.50: four source-backed fixed items enabled. Independent answers: 40cm; 88cm; 4, 8, 9, 10; longest 70cm and shortest 52cm. Publisher answer key remains unverified.
