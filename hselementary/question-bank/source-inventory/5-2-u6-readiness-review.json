@@ -39,7 +39,7 @@
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6을 연결했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2를 연결했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 11,
-    "lockedCount": 33
+    "publicCandidateCount": 12,
+    "lockedCount": 32
   },
   "items": [
     {
@@ -371,16 +371,25 @@
       "commonTypeId": "average-score-distribution-reverse",
       "childFriendlyTypeLabel": "평균과 점수표로 빈 학생 수 구하기",
       "originalStructure": "공 던지기 점수별 학생 수 표에서 빈 학생 수를 채우고, 빨강·흰 공의 개수를 구합니다.",
-      "conditions": ["학생 50명", "한 사람당 빨강·흰·파랑 공을 하나씩 던짐", "점수별 학생 수와 전체 평균 3.8점", "빨강 공이 들어간 수 34개"],
+      "conditions": [
+        "학생 50명, 1인당 빨강·흰·파랑 각 1개",
+        "빨강 3점, 흰색 2점, 파랑 1점, 들어간 공의 점수 합",
+        "점수 6·5·4·3·2·1·0점별 학생 수 7·14·빈칸·6·5·2·빈칸",
+        "전체 평균 3.8점",
+        "두 번째 물음에서 빨간 공 34개"
+      ],
       "visualRequirement": "점수 0~6과 빈 칸이 있는 표를 원본 순서로 보여야 합니다.",
       "independentCalculation": "학생 수로 4점 학생 12명, 0점 학생 4명. 점수별 공 조합을 전부 나열하면 6점은 세 공, 5점은 빨강·흰, 4점은 빨강·파랑, 3점은 빨강 또는 흰·파랑이다. 빨강 34개 조건에서 3점 학생 중 빨강만 들어간 1명이 정해져 흰 공은 31개",
       "independentAnswer": "(1) 4점 12명, 0점 4명 (2) 흰 공 31개",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "점수표와 공의 색 조합을 데이터 모델로 옮기기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e2-exploration",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "원문 표와 두 물음 확인. 공 3개의 8가지 부분집합과 0~50명 빈칸을 독립 열거하여 (4점 12명, 0점 4명, 흰 공 31개) 확인. 공식 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u6-e2-example-2-1",
