@@ -28,7 +28,7 @@
     const support = difficultyOffset === -1 ? `<p class="source52-perimeter-hint">도움말: 안쪽 선분과 바깥쪽 선분의 길이를 각각 더해 전체 가로·세로와 비교해 보세요.</p>` : "";
     const extra = difficultyOffset === 1 ? `<p>둘레를 mm로 먼저 구한 다음, 자연수 cm로 어림한 방법을 설명하세요.</p>` : "";
     const prompt = `<div class="source52-perimeter-question"><p>아래 그림과 같은 도형의 둘레는 약 몇 cm인지 자연수로 나타내어라.</p>${diagram(height, width)}${extra}${support}</div>`;
-    const solution = `<div class="source52-perimeter-solution"><ol><li>ㄱ자 도형의 가로 선분을 모두 더하면 전체 가로 ${width}mm와 같고, 세로 선분을 모두 더하면 전체 세로 ${height}mm와 같습니다.</li><li>둘레는 (${width}+${height})×2 = ${perimeterMm}mm입니다.</li><li>${perimeterMm}mm = ${perimeterMm / 10}cm이므로 가장 가까운 자연수 cm로 나타내면 ${answerCm}cm입니다.</li></ol></div>`;
+    const solution = `<div class="source52-perimeter-solution"><ol><li>ㄱ자 도형의 위쪽과 안쪽 가로 선분을 더하면 아래쪽의 전체 가로 ${width}mm와 같습니다. 오른쪽과 안쪽 세로 선분을 더하면 왼쪽의 전체 세로 ${height}mm와 같습니다.</li><li>둘레는 (${width}+${height})×2 = ${perimeterMm}mm입니다.</li><li>${perimeterMm}mm = ${perimeterMm / 10}cm이므로 가장 가까운 자연수 cm로 나타내면 ${answerCm}cm입니다.</li></ol></div>`;
     return {
       prompt: `<div data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${variant}" data-variant="${variant}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}">${prompt}</div>`,
       answer: `${answerCm}cm`, solution, sourceItemId, generator: generatorKey,
