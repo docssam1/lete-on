@@ -85,11 +85,13 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문은 보호 잠금이며 창작 자료로 대체 출제합니다.",
       "runtimeTypeId": "5-2-u6-e1-exploration",
       "publisherKeyVerified": false,
-      "releaseEvidence": "원문 표 대조 및 독립 산술 검산: 합 1029cm, 평균 147cm. 공식 출판사 답안 미확인."
+      "releaseEvidence": "원문 구조를 대조했고 공개 유형은 창작 자료의 평균을 독립 검산했습니다. 출판사 답안은 미확인입니다.",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e1-exploration"
     },
     {
       "sourceItemId": "5-2-u6-e1-example-1-1",

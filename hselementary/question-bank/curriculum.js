@@ -2309,7 +2309,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       id, number: source52AverageFirst.types.length + 1, typeNumber, name, label: name,
       difficultyBand: 0, sourceItemId: id, sourceItemLabel: "개념탐구 1", sourceSection: "exploration", sourceTier: "advanced",
       sourcePdfPage: 54, sourcePrintedPage: 58, sourceVerified: true, publisherKeyVerified: false, reviewLocked: false,
-      generatorKey: "source52AverageOriginalPage58Exploration1", generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+      generatorKey: "source52AverageOriginalPage58Exploration1", generationMode: "fixed-verified-pool", verifiedVariantTarget: 3, verifiedVariantCount: 3,
       answerVisualRequired: false, answerVisualStatus: "not-required", implementationStatus: "fixed-verified-pool"
     });
   }
