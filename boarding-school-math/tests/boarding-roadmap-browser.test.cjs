@@ -284,6 +284,36 @@ test("grade comparison rounds legacy decimal RIT differences to one decimal plac
   await page.close();
 });
 
+test("MAP grade percentiles compare only when norm year, season, and instruction week match", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
+  await page.evaluate(function () {
+    [
+      { grade: 7, rit: 218, percentile: 55, normYear: "2025", season: "fall", instructionalWeeks: 4 },
+      { grade: 8, rit: 224, percentile: 63, normYear: "2025", season: "fall", instructionalWeeks: 4 }
+    ].forEach(function (entry) {
+      const record = window.GFIELDExternalMathEvidenceEngine.analyze({ sourceId: "map-growth", testDate: "2026-09-01", grade: entry.grade, currentCourseId: "pre-algebra", targetCourseId: "algebra-1", rit: entry.rit, percentile: entry.percentile, normYear: entry.normYear, season: entry.season, instructionalWeeks: entry.instructionalWeeks, domains: [] });
+      window.GFIELDLocalLearningRecord.storage.saveAssessmentEvidence(record);
+    });
+  });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#comparison-grade").selectOption("8");
+  const percentile = page.locator("#map-percentile-comparison-copy");
+  assert.equal(await page.locator("#map-percentile-comparison").getAttribute("data-state"), "comparable-grade-norms");
+  assert.match(await percentile.innerText(), /Grade 7 백분위 55 → Grade 8 백분위 63 · 차이 \+8 percentile points \(2025 norms · Fall\)/);
+  assert.match(await percentile.innerText(), /같은 학생의 기록인지 확인/);
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=8`, { waitUntil: "networkidle" });
+  await page.evaluate(function () {
+    const record = window.GFIELDExternalMathEvidenceEngine.analyze({ sourceId: "map-growth", testDate: "2026-09-01", grade: 8, currentCourseId: "pre-algebra", targetCourseId: "algebra-1", rit: 224, percentile: 63, normYear: "2025", season: "fall", instructionalWeeks: 5, domains: [] });
+    window.GFIELDLocalLearningRecord.storage.saveAssessmentEvidence(record);
+  });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#comparison-grade").selectOption("8");
+  assert.equal(await page.locator("#map-percentile-comparison").getAttribute("data-state"), "needs-matching-norms");
+  assert.doesNotMatch(await page.locator("#map-percentile-comparison-copy").innerText(), /차이 \+/);
+  await page.close();
+});
+
 test("grade comparison does not calculate a difference between different assessment sources", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });

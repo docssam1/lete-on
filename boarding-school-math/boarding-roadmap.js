@@ -443,6 +443,26 @@
       ritComparison.textContent = "두 학년에 모두 MAP Growth 수학 RIT 기록이 있을 때만 같은 RIT 척도의 입력값을 나란히 보여줘요. MAP·학교 Placement·SSAT 등 서로 다른 시험 점수는 섞지 않아요.";
       ritComparison.dataset.state = "needs-matching-map-records";
     }
+    const percentileSection = $("map-percentile-comparison");
+    const percentileCopy = $("map-percentile-comparison-copy");
+    const sameNormReference = comparableRit
+      && mapEvidence.scores.percentile != null && targetMapEvidence.scores.percentile != null
+      && ["2020", "2025"].includes(mapEvidence.scores.normYear)
+      && mapEvidence.scores.normYear === targetMapEvidence.scores.normYear
+      && ["fall", "winter", "spring"].includes(mapEvidence.scores.season)
+      && mapEvidence.scores.season === targetMapEvidence.scores.season;
+    const matchingInstructionWindow = sameNormReference
+      && Number.isInteger(mapEvidence.scores.instructionalWeeks)
+      && mapEvidence.scores.instructionalWeeks === targetMapEvidence.scores.instructionalWeeks;
+    if (matchingInstructionWindow) {
+      const pointDifference = targetMapEvidence.scores.percentile - mapEvidence.scores.percentile;
+      const pointText = pointDifference > 0 ? `+${pointDifference}` : String(pointDifference);
+      percentileCopy.textContent = `Grade ${current.grade} 백분위 ${mapEvidence.scores.percentile} → Grade ${target.grade} 백분위 ${targetMapEvidence.scores.percentile} · 차이 ${pointText} percentile points (${mapEvidence.scores.normYear} norms · ${seasonLabel(mapEvidence.scores.season)}). 같은 학생의 기록인지 확인하세요. 각 학년 규준에서의 상대 위치를 보여 주며, 성장량·수학 내용 숙달·과목 배정을 판정하지 않습니다.`;
+      percentileSection.dataset.state = "comparable-grade-norms";
+    } else {
+      percentileCopy.textContent = "MAP Growth percentile은 규준 연도·Fall/Winter/Spring 시기·시험 전 수업 주차가 두 기록에서 모두 확인되고 같을 때만 비교해요. 확인되지 않으면 숫자를 계산하지 않습니다.";
+      percentileSection.dataset.state = "needs-matching-norms";
+    }
     renderCompetitionGradeComparison(current, target);
   }
   function buildCompetitionRecordCard(record, heading, id) {

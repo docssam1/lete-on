@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  const SCHEMA_VERSION = "gfield-external-math-evidence-v2";
+  const SCHEMA_VERSION = "gfield-external-math-evidence-v3";
   const SOURCES = Object.freeze({
     "school-placement": Object.freeze({ label: "학교 수학 Placement Test", role: "course-placement", placementWeight: "primary", scoreLabel: "정답률" }),
     "map-growth": Object.freeze({ label: "NWEA MAP Growth Math", role: "instructional-growth", placementWeight: "supporting", scoreLabel: "성취 백분위" }),
@@ -94,6 +94,9 @@
     const stanine = source.id === "ctp" ? finite(input.stanine, "STANINE", 1, 9, false) : null;
     const normGroup = source.id === "ctp" && typeof input.normGroup === "string" && input.normGroup.trim() ? input.normGroup.trim().slice(0, 80) : null;
     const season = source.id === "map-growth" && typeof input.season === "string" && ["fall", "winter", "spring", "summer"].includes(input.season) ? input.season : null;
+    const normYear = source.id === "map-growth" && ["2020", "2025"].includes(String(input.normYear || "")) ? String(input.normYear) : null;
+    const instructionalWeeks = source.id === "map-growth" ? finite(input.instructionalWeeks, "INSTRUCTIONAL_WEEKS", 1, 40, false) : null;
+    if (instructionalWeeks != null && !Number.isInteger(instructionalWeeks)) fail("INSTRUCTIONAL_WEEKS_INVALID");
     const sortedDomains = domains.slice().sort(function (a, b) { return a.percent - b.percent || a.id.localeCompare(b.id); });
     const clearsEnteredCut = schoolCut == null ? null : metric >= schoolCut;
     const targetCandidate = source.id === "school-placement" && clearsEnteredCut === true;
@@ -106,7 +109,7 @@
       source,
       testDate,
       grade,
-      scores: Object.freeze({ metric, metricLabel: source.scoreLabel, rit, scaleScore, stanine, quantStanine, mathStanine, percentile: source.id !== "school-placement" && source.id !== "isee" ? metric : null, schoolCut, clearsEnteredCut, normGroup, season }),
+      scores: Object.freeze({ metric, metricLabel: source.scoreLabel, rit, scaleScore, stanine, quantStanine, mathStanine, percentile: source.id !== "school-placement" && source.id !== "isee" ? metric : null, schoolCut, clearsEnteredCut, normGroup, season, normYear, instructionalWeeks }),
       band: null,
       confidence: "not-calculated",
       placementState,

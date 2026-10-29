@@ -193,11 +193,18 @@ test("assessment entry keeps MAP metrics distinct and locks unverified grades on
   assert.equal(await page.locator("#rit").isVisible(), true);
   await page.locator("#rit").fill("218");
   await page.locator("#percentile").fill("64");
+  await page.locator("#season").selectOption("fall");
+  await page.locator("#norm-year").selectOption("2025");
+  await page.locator("#instructional-weeks").fill("4");
   await page.locator("#current-course").selectOption("pre-algebra");
   await page.locator("#target-course").selectOption("algebra-1");
   await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
   assert.match(await page.locator("#metric-value").innerText(), /RIT 218/);
   assert.match(await page.locator("#metric-value").innerText(), /64th percentile/);
+  assert.match(await page.locator("#confidence-value").innerText(), /2025 norms · Fall · 4 instructional weeks/);
+  const stored = await page.evaluate(function () { return JSON.parse(localStorage.getItem("gmap-local-learning-record-v1:external-assessment")); });
+  assert.equal(stored.scores.normYear, "2025");
+  assert.equal(stored.scores.instructionalWeeks, 4);
   assert.match(await page.locator("#recommendation-reason").innerText(), /점수 구간·준비도/);
   assert.equal(await page.locator("#send-to-plan").getAttribute("aria-disabled"), "true");
   assert.equal(await page.locator("#published-resource").isVisible(), true);
@@ -206,6 +213,24 @@ test("assessment entry keeps MAP metrics distinct and locks unverified grades on
   await page.emulateMedia({ media: "print" });
   assert.equal(await page.locator("#evidence-form").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
   assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("saved MAP v2 evidence restores while clearly marking missing norm comparison context", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.addInitScript(function () {
+    localStorage.setItem("gmap-local-learning-record-v1:external-assessment", JSON.stringify({
+      schemaVersion: "gfield-external-math-evidence-v2", source: { id: "map-growth", label: "NWEA MAP Growth Math", role: "instructional-growth" },
+      testDate: "2026-09-01", grade: 7, band: null, confidence: "not-calculated", placementState: "school-policy-required", officialPlacement: false,
+      currentCourse: { id: "pre-algebra", label: "Pre-Algebra", publicLearning: true }, recommendedStart: { id: "pre-algebra", label: "Pre-Algebra", publicLearning: true }, targetCourse: { id: "algebra-1", label: "Algebra 1" },
+      scores: { metric: 64, metricLabel: "성취 백분위", rit: 218, percentile: 64, season: "fall" }, primaryPriority: null, priorityDomains: [], domainComparisons: [], plan: {}, materialState: null, decisionNotice: "사용자 입력"
+    }));
+  });
+  await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#metric-value").innerText(), /RIT 218.*64th percentile/);
+  assert.equal(await page.locator("#norm-year").inputValue(), "");
+  assert.equal(await page.locator("#instructional-weeks").inputValue(), "");
+  assert.match(await page.locator("#legacy-evidence-note").innerText(), /규준 연도와 시험 전 수업 주차가 없어/);
   await page.close();
 });
 

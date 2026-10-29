@@ -72,7 +72,7 @@
   function inputRecord() {
     return {
       sourceId: sourceSelect.value, testDate: value("test-date"), grade: Number(value("grade")), currentCourseId: currentCourse.value, targetCourseId: targetCourse.value,
-      overallPercent: numberOrNull("overall-percent"), schoolCut: numberOrNull("school-cut"), rit: numberOrNull("rit"), percentile: numberOrNull("percentile"), scaleScore: numberOrNull("scale-score"), stanine: numberOrNull("stanine"), quantStanine: numberOrNull("quant-stanine"), mathStanine: numberOrNull("math-stanine"), normGroup: value("norm-group"), season: value("season"), domains: domains()
+      overallPercent: numberOrNull("overall-percent"), schoolCut: numberOrNull("school-cut"), rit: numberOrNull("rit"), percentile: numberOrNull("percentile"), scaleScore: numberOrNull("scale-score"), stanine: numberOrNull("stanine"), quantStanine: numberOrNull("quant-stanine"), mathStanine: numberOrNull("math-stanine"), normGroup: value("norm-group"), season: value("season"), normYear: value("norm-year"), instructionalWeeks: numberOrNull("instructional-weeks"), domains: domains()
     };
   }
   function metricText(result) {
@@ -80,6 +80,12 @@
     if (result.source.id === "map-growth") return `RIT ${result.scores.rit} · ${result.scores.percentile}th percentile`;
     if (result.source.id === "isee") return `Quantitative Reasoning ${result.scores.quantStanine ?? "—"} · Mathematics Achievement ${result.scores.mathStanine ?? "—"} stanine`;
     return `${result.scores.percentile}th percentile${result.scores.scaleScore == null ? "" : ` · ${result.scores.scaleScore}`}`;
+  }
+  function seasonLabel(season) { return ({ fall: "Fall", winter: "Winter", spring: "Spring", summer: "Summer" })[season] || season; }
+  function referenceText(result) {
+    const scores = result.scores || {};
+    if (result.source.id === "map-growth") return [scores.normYear ? `${scores.normYear} norms` : null, scores.season ? seasonLabel(scores.season) : null, Number.isInteger(scores.instructionalWeeks) ? `${scores.instructionalWeeks} instructional weeks` : null].filter(Boolean).join(" · ") || "성적표 규준 정보 미기재";
+    return scores.normGroup || (scores.season ? `${seasonLabel(scores.season)} · 성적표 표기 기준` : "성적표 표기 기준");
   }
   function recommendationReason(result) {
     const courseCopy = `${result.currentCourse.label}에서 ${result.targetCourse.label}까지의 경로는 입력한 과정을 기준으로 표시합니다.`;
@@ -109,7 +115,7 @@
     document.getElementById("recommendation-reason").textContent = recommendationReason(result);
     document.getElementById("metric-label").textContent = result.scores.metricLabel;
     document.getElementById("metric-value").textContent = metricText(result);
-    document.getElementById("confidence-value").textContent = result.scores.normGroup || (result.scores.season ? `${result.scores.season} · 성적표 표기 기준` : "성적표 표기 기준");
+    document.getElementById("confidence-value").textContent = referenceText(result);
     document.getElementById("placement-value").textContent = placementCopy[result.placementState];
     const route = document.getElementById("course-route"); route.replaceChildren();
     const targetSelection = result.targetCourse || result.currentCourse;
@@ -139,7 +145,7 @@
   function historyMetric(result) {
     const scores = result.scores || {};
     if (result.source.id === "school-placement") return scores.metric == null ? "점수 미입력" : `${scores.metric}%`;
-    if (result.source.id === "map-growth") return [`RIT ${scores.rit}`, scores.percentile == null ? null : `${scores.percentile}th percentile`].filter(Boolean).join(" · ");
+    if (result.source.id === "map-growth") return [`RIT ${scores.rit}`, scores.percentile == null ? null : `${scores.percentile}th percentile`, scores.normYear ? `${scores.normYear} norms` : null, scores.season ? seasonLabel(scores.season) : null, Number.isInteger(scores.instructionalWeeks) ? `${scores.instructionalWeeks} instructional weeks` : null].filter(Boolean).join(" · ");
     if (result.source.id === "isee") return `Quantitative Reasoning ${scores.quantStanine ?? "—"} · Mathematics Achievement ${scores.mathStanine ?? "—"} stanine`;
     return [scores.percentile == null ? null : `${scores.percentile}th percentile`, scores.scaleScore == null ? null : `Scale ${scores.scaleScore}`, scores.stanine == null ? null : `Stanine ${scores.stanine}`].filter(Boolean).join(" · ") || "성적표 값";
   }
@@ -157,7 +163,7 @@
       heading.append(title, date);
       const detail = document.createElement("p"); detail.textContent = historyMetric(entry);
       const route = document.createElement("p"); route.className = "assessment-history-route";
-      route.textContent = `${entry.currentCourse.label} → ${entry.targetCourse ? entry.targetCourse.label : entry.currentCourse.label}${entry.scores.normGroup ? ` · ${entry.scores.normGroup}` : ""}${entry.scores.season ? ` · ${entry.scores.season}` : ""}`;
+      route.textContent = `${entry.currentCourse.label} → ${entry.targetCourse ? entry.targetCourse.label : entry.currentCourse.label}${entry.scores.normGroup ? ` · ${entry.scores.normGroup}` : ""}`;
       article.append(heading, detail, route); list.append(article);
     });
   }
@@ -201,7 +207,9 @@
       "quant-stanine": scores.quantStanine,
       "math-stanine": scores.mathStanine,
       "norm-group": scores.normGroup,
-      season: scores.season
+      season: scores.season,
+      "norm-year": scores.normYear,
+      "instructional-weeks": scores.instructionalWeeks
     };
     Object.keys(values).forEach(function (id) {
       const field = document.getElementById(id);
@@ -225,7 +233,14 @@
   if (requestedGrade !== null) document.getElementById("grade").value = String(requestedGrade);
   const history = records.storage.loadAssessmentEvidenceHistory();
   const saved = requestedGrade !== null ? records.storage.loadLatestAssessmentEvidence(requestedGrade) : records.storage.loadAssessmentEvidence();
-  if (saved && saved.schemaVersion === engine.SCHEMA_VERSION) { restoreSavedInputs(saved); render(saved, false); }
+  if (saved && [engine.SCHEMA_VERSION, "gfield-external-math-evidence-v2"].includes(saved.schemaVersion)) {
+    restoreSavedInputs(saved); render(saved, false);
+    if (saved.schemaVersion === "gfield-external-math-evidence-v2" && saved.source.id === "map-growth") {
+      const note = document.getElementById("legacy-evidence-note");
+      note.textContent = "이전 MAP 기록을 복원했어요. 저장 당시 규준 연도와 시험 전 수업 주차가 없어 학년별 백분위 비교에는 사용하지 않습니다. 성적표를 확인해 두 항목을 입력하고 다시 저장해 주세요.";
+      note.hidden = false;
+    }
+  }
   else {
     const legacy = records.storage.loadAssessmentEvidence();
     if (legacy && legacy.legacyEvidence && (requestedGrade === null || legacy.grade === requestedGrade) && history.length === 0) restoreLegacyInputs(legacy);

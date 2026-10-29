@@ -44,6 +44,8 @@
             <label class="field source-field" data-sources="school-placement"><span>학교가 안내한 목표 과정 컷</span><span class="input-unit"><input id="school-cut" inputmode="decimal" type="number" min="0" max="100" step="0.1" placeholder="모르면 비워 두기"><b>%</b></span></label>
             <label class="field source-field" data-sources="map-growth"><span>Math RIT</span><input id="rit" inputmode="numeric" type="number" min="100" max="350" placeholder="예: 218"></label>
             <label class="field source-field" data-sources="map-growth ctp ssat"><span id="percentile-label">성취 백분위</span><span class="input-unit"><input id="percentile" inputmode="numeric" type="number" min="1" max="99"><b>percentile</b></span></label>
+            <label class="field source-field" data-sources="map-growth"><span>MAP 규준 연도</span><select id="norm-year"><option value="">성적표에서 확인 안 됨</option><option value="2020">2020 norms</option><option value="2025">2025 norms</option></select><small>백분위 비교에는 같은 시험 시기와 규준 연도, 시험 전 수업 주차가 필요합니다.</small></label>
+            <label class="field source-field" data-sources="map-growth"><span>시험 전 수업 주차</span><input id="instructional-weeks" inputmode="numeric" type="number" min="1" max="40" step="1" placeholder="성적표·시행 기준 확인"><small>성적표나 학교 시행 정보에서 확인한 경우 입력해요.</small></label>
             <label class="field source-field" data-sources="ctp ssat"><span id="scale-score-label">Scale score</span><input id="scale-score" inputmode="decimal" type="number" min="0" max="2000" placeholder="성적표 값"></label>
             <label class="field source-field" data-sources="ctp"><span>Stanine</span><input id="stanine" inputmode="numeric" type="number" min="1" max="9" placeholder="선택"></label>
             <label class="field source-field" data-sources="ctp"><span>성적표 비교 집단</span><select id="norm-group"><option value="">성적표 표기 기준을 선택</option><option value="Independent School Norm">Independent School Norm</option><option value="National Norm">National Norm</option><option value="School / Grade Norm">School / Grade Norm</option><option value="Other reported norm">Other reported norm</option></select></label>
@@ -83,8 +85,8 @@
     <section class="evidence-roles evidence-shell"><p class="step-label">왜 시험마다 다르게 읽나요?</p><div><article><span>수업 배정</span><h3>학교 PT · MAP · CTP</h3><p>현재 학습 위치와 영역별 강약점을 판단하는 근거입니다. 학교별 정책과 함께 사용합니다.</p></article><article><span>입학 준비</span><h3>SSAT · ISEE</h3><p>지원자 집단 안에서의 입학 준비 근거입니다. 높은 점수만으로 Algebra 1이나 Geometry 배정을 확정하지 않습니다.</p></article><article><span>학습 점검</span><h3>문항별 첫 응답</h3><p>개인 진단은 아직 검수 중입니다. 문항별 기록만으로 교재나 과목을 자동 배정하지 않습니다.</p></article></div></section>
   </main>
   <footer class="site-footer"><span>G·MAP · 학교 평가에서 오늘의 학습까지</span><span><a href="./index.html">전체 과정 지도</a> · <a href="./learning-plan.html">나의 학습 계획</a></span></footer>
-  <script src="./assessment/external-math-evidence-engine.js?v=20261030-2"></script>
-  <script src="./shared/gmap-local-learning-record.js?v=20261030-2"></script>
-  <script src="./assessment-entry.js?v=20261030-7"></script>
+  <script src="./assessment/external-math-evidence-engine.js?v=20261030-4"></script>
+  <script src="./shared/gmap-local-learning-record.js?v=20261030-4"></script>
+  <script src="./assessment-entry.js?v=20261030-10"></script>
 </body>
 </html>

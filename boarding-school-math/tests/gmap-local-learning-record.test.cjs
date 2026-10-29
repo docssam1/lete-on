@@ -122,6 +122,28 @@ test("external assessment evidence is reduced to an answer-safe local planning s
   assert.equal(store.loadAssessmentEvidence(), null);
 });
 
+test("external MAP norm-year reference survives safe local storage and legacy v2 rows remain readable", function () {
+  const store = records.create(memoryStorage());
+  const evidence = {
+    schemaVersion: "gfield-external-math-evidence-v3",
+    source: { id: "map-growth", label: "NWEA MAP Growth Math", role: "instructional-growth" },
+    testDate: "2026-09-01", grade: 7, band: null, confidence: "not-calculated", placementState: "school-policy-required", officialPlacement: false,
+    currentCourse: { id: "pre-algebra", label: "Pre-Algebra", publicLearning: true },
+    recommendedStart: { id: "pre-algebra", label: "Pre-Algebra", publicLearning: true },
+    targetCourse: { id: "algebra-1", label: "Algebra 1" },
+    scores: { metric: 64, metricLabel: "성취 백분위", rit: 218, percentile: 64, season: "fall", normYear: "2025", instructionalWeeks: 4 },
+    primaryPriority: null, priorityDomains: [], domainComparisons: [], plan: {}, materialState: null, decisionNotice: "사용자 입력"
+  };
+  assert.equal(store.saveAssessmentEvidence(evidence), true);
+  assert.equal(store.loadAssessmentEvidence().scores.normYear, "2025");
+  assert.equal(store.loadAssessmentEvidence().scores.instructionalWeeks, 4);
+  evidence.schemaVersion = "gfield-external-math-evidence-v2";
+  evidence.scores.normYear = "2020";
+  assert.equal(store.saveAssessmentEvidence(evidence), true);
+  assert.equal(store.loadAssessmentEvidence().scores.normYear, null);
+  assert.equal(store.loadAssessmentEvidence().scores.instructionalWeeks, null);
+});
+
 test("external assessment history keeps grade and source records separate and replaces duplicate date entries", function () {
   const store = records.create(memoryStorage());
   function evidence(grade, sourceId, date, label) {

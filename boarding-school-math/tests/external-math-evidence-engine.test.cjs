@@ -39,14 +39,28 @@ test("entered domain values are shown descriptively and do not apply an invented
 });
 
 test("MAP evidence keeps RIT distinct from percentile and reflects only the selected course route", function () {
-  const result = engine.analyze(base({ sourceId: "map-growth", overallPercent: undefined, schoolCut: undefined, rit: 218, percentile: 64, season: "fall" }));
+  const result = engine.analyze(base({ sourceId: "map-growth", overallPercent: undefined, schoolCut: undefined, rit: 218, percentile: 64, season: "fall", normYear: "2025", instructionalWeeks: 4 }));
   assert.equal(result.scores.rit, 218);
   assert.equal(result.scores.percentile, 64);
   assert.equal(result.band, null);
   assert.equal(result.scores.season, "fall");
+  assert.equal(result.scores.normYear, "2025");
+  assert.equal(result.scores.instructionalWeeks, 4);
   assert.equal(result.placementState, "school-policy-required");
   assert.equal(result.recommendedStart.id, "pre-algebra");
   assert.equal(result.targetCandidate, false);
+});
+
+test("MAP norm year is kept only for supported, explicitly selected references", function () {
+  const supported = engine.analyze(base({ sourceId: "map-growth", overallPercent: undefined, schoolCut: undefined, rit: 218, percentile: 64, season: "fall", normYear: "2025" }));
+  const unknown = engine.analyze(base({ sourceId: "map-growth", overallPercent: undefined, schoolCut: undefined, rit: 218, percentile: 64, season: "fall" }));
+  const invalid = engine.analyze(base({ sourceId: "map-growth", overallPercent: undefined, schoolCut: undefined, rit: 218, percentile: 64, season: "fall", normYear: "2015" }));
+  const unrelated = engine.analyze(base({ sourceId: "school-placement", normYear: "2025" }));
+  assert.equal(supported.scores.normYear, "2025");
+  assert.equal(unknown.scores.normYear, null);
+  assert.equal(invalid.scores.normYear, null);
+  assert.equal(unrelated.scores.normYear, null);
+  assert.throws(function () { engine.analyze(base({ sourceId: "map-growth", overallPercent: undefined, schoolCut: undefined, rit: 218, percentile: 64, instructionalWeeks: 4.5 })); }, /INSTRUCTIONAL_WEEKS_INVALID/);
 });
 
 test("a high supporting score without domain evidence cannot advance a course by itself", function () {
