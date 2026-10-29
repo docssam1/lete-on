@@ -820,11 +820,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e3-example-4",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조."
+      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-1",
