@@ -2418,6 +2418,21 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
   }
 
+  if (source52AverageApplication) {
+    for (const [ordinal, name, generatorKey] of [
+      [1, "한 사람의 시간당 작업 넓이", "source52AverageOriginalPage60Example21"],
+      [2, "평균 달리기 거리로 첫날 거리 구하기", "source52AverageOriginalPage60Example22"]
+    ]) {
+      const id = `5-2-u6-e2-example-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`예제 2-${ordinal}`, sourceSection:"example", sourceTier:"advanced",
+        sourcePdfPage:56, sourcePrintedPage:60, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
+        generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
