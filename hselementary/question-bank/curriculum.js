@@ -2505,7 +2505,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52Probability) for (const [n,name] of [[1,"동전이 모두 같은 면일 가능성"],[2,"카드 중 배수가 있을 가능성"],[3,"세 끈으로 삼각형 만들 가능성"],[4,"모두 자기 책상을 피할 가능성"],[5,"당첨 제비를 연속으로 뽑을 가능성"],[6,"세 주사위에서 같은 눈이 있을 가능성"]]) {
     const id = `5-2-u6-e4-mission-${n}`;
     const typeNumber = Math.max(0,...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
-    source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`Mission ${n}`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:61,sourcePrintedPage:65,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52ProbabilityPage65Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:n<=3?3:1,verifiedVariantCount:n<=3?3:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`Mission ${n}`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:61,sourcePrintedPage:65,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52ProbabilityPage65Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:n<=4?3:1,verifiedVariantCount:n<=4?3:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
   }
 
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
