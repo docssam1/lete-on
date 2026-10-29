@@ -2853,6 +2853,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Application.types.push({id,number:source52Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`예제 3-${n} 구조 연습`,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:6,sourcePrintedPage:8,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52Page8Example${n}Synthetic`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문은 조건 확인 전 잠금이며, 조건을 명확히 한 별도 창작 연습을 독립 검산했습니다."});
   }
 
+  if (source52Application) {
+    const id="5-2-u1-e3-exploration-life-synthetic",name="어림이 쓰이는 생활 상황 설명하기 · 연습";
+    const typeNumber=Math.max(0,...source52Unit1.subunits.flatMap(subunit=>subunit.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Application.types.push({id,number:source52Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"개념탐구 3 구조 연습",sourceSection:"exploration",sourceTier:"advanced",sourcePdfPage:6,sourcePrintedPage:8,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52RoundingLifeSynthetic",resultContract:"open-response-example",multipleAnswers:true,automaticGrading:false,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문은 답안 확인 전 잠금이며, 여러 답이 가능한 별도 설명 연습과 예시 풀이를 검산했습니다."});
+  }
+
   const source52Unit2 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u2");
   const source52Unit2First = source52Unit2?.subunits.find(subunit => subunit.name === "분수와 자연수의 곱셈");
   if (source52Unit2First) for (const [n,name] of [[1,"두 집단의 분수만큼 더하기"],[2,"같은 방향 자동차 거리 차"]]) {

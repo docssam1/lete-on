@@ -128,6 +128,7 @@ require("./source-5-2-probability-page64-original.js");
 require("./source-5-2-u6-route-probability-synthetic.js");
 require("./source-5-2-probability-page65-original.js");
 require("./source-5-2-rounding-page8-examples12.js");
+require("./source-5-2-u1-rounding-life-synthetic.js");
 require("./source-5-2-u1-page8-examples34-synthetic.js");
 require("./source-5-2-u2-page14-examples12-synthetic.js");
 require("./source-5-2-u2-page14-examples34-synthetic.js");
@@ -293,8 +294,8 @@ for (const semester of window.HSE_CURRICULUM.semesters) {
   }
 }
 
-if (total !== 2214) failures.push(`전체 유형 수가 2214가 아니라 ${total}입니다.`);
-if (ready !== 1435) failures.push(`원문 연결 공개 유형 수가 1435가 아니라 ${ready}입니다.`);
+if (total !== 2215) failures.push(`전체 유형 수가 2215가 아니라 ${total}입니다.`);
+if (ready !== 1436) failures.push(`원문 연결 공개 유형 수가 1436가 아니라 ${ready}입니다.`);
 if (lockedWithoutSource !== 371) failures.push(`원문 미연결 잠금 유형 수가 371이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {

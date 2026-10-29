@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 5-2 Unit 1 Open-Response Rounding Practice
+
+- Original printed p.8 Exploration 3 asks for real-life situations and remains locked pending source-answer review. Added separately identified synthetic practice preserving all three open-response methods, with different numbers, example responses, explicit multiple-answer guidance and no automatic grading claim. Source record links to the practice; publisher answer unverified.
+- Independently checked all three rounding operations for three pools × three difficulty states and the open-response contract. Local bank 1440/375/320px, A4 question/solution (one page each), answer spaces and example labels visually checked. Structural inventory and release gates pass; runtime audit 86,160 generations: 2,215 types / 1,436 available / 779 awaiting. Previous roundtrip practice deployed and verified live across the same widths and difficulties. Counts do not prove all source answers reviewed.
+
+---
+
 ## 2026-10-30 Grade 5-2 Unit 6 Simple Roundtrip Practice
 
 - Original printed p.63 Mission 5 remains locked because its backtracking rule is unstated; publisher answer unverified. Added a separately identified synthetic practice with different road counts, explicitly simple outward and return legs and permission to reuse a road on return. Its labelled graph shows the road counts; the original source record links to the practice.
