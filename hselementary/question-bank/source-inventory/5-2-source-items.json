@@ -1784,7 +1784,9 @@
       "printedPage": 24,
       "sourceShape": "여섯 삼각형 구성 조건 중 회전·뒤집기를 같은 모양으로 보아 한 가지로 정해지는 경우를 고르는 문제.",
       "answerContract": "set of unique congruent triangle cases",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 별도 도형 없이 여섯 조건을 글로 제시한다. 변·각의 기호와 조건 번호를 구분하고 필기 스케치는 원문 그림으로 취급하지 않는다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 창작 조건의 합동 여부와 SSA 두 해를 독립 검산하여 연결.",
@@ -3649,7 +3651,9 @@
       "printedPage": 43,
       "sourceShape": "나눈 몫을 반올림한 값으로 자연수의 범위를 구하고 합하는 문장제.",
       "answerContract": "single numeric sum",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 도형 없는 문장제다. 나누는 수, 반올림 자리와 자연수 범위의 경계 포함 여부를 구분한다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 구조가 같은 창작 변형을 독립 검산하여 연결.",
@@ -3668,7 +3672,9 @@
       "printedPage": 44,
       "sourceShape": "두 소수의 곱에서 표시된 두 자릿수에 들어갈 한 자리 자연수를 구하는 식.",
       "answerContract": "ordered pair of digits",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 도형 없는 곱셈식이다. 두 미지 자리의 기호와 소수점 위치를 분명히 표시한다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 구조가 같은 창작 변형의 곱과 자리값을 독립 검산하여 연결.",
@@ -3687,7 +3693,9 @@
       "printedPage": 44,
       "sourceShape": "기준 곱셈식을 이용해 소수점 위치가 다른 네 곱셈식의 미지수를 각각 구하는 문제.",
       "answerContract": "ordered four-value tuple",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 상자 안의 네 수식이다. 각 미지 기호와 소수점 위치가 해당 식에 정확히 대응해야 한다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 창작 변형의 네 식을 독립 검산하여 연결.",
@@ -3706,7 +3714,9 @@
       "printedPage": 44,
       "sourceShape": "양수로 나눈 몫을 소수 첫째 자리까지 반올림한 값으로 원래 수의 범위를 구하는 문제.",
       "answerContract": "half-open numeric interval",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 도형 없는 문장제다. 나누는 수와 반올림 자릿수 및 범위의 양쪽 경계를 명확히 한다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 창작 변형의 반올림 경계와 범위를 독립 검산하여 연결.",
@@ -3725,7 +3735,9 @@
       "printedPage": 44,
       "sourceShape": "반복한 소수 곱의 특정 자리와 연속 소수 곱의 자릿수를 각각 구하는 두 문항.",
       "answerContract": "ordered pair: digit and decimal places",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 도형 없는 두 소문항이다. 반복 횟수와 소수 자릿수 및 연속 곱의 각 인수를 구별한다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 창작 변형의 끝자리와 소수 자릿수를 독립 검산하여 연결.",
@@ -3765,7 +3777,9 @@
       "printedPage": 45,
       "sourceShape": "소수 곱과 분배법칙을 포함하는 네 혼합 계산식.",
       "answerContract": "ordered four-value tuple",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 도형 없는 네 계산식이다. 식 번호와 곱셈·뺄셈·괄호가 각각 명확해야 한다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 창작 변형의 네 식을 독립 검산하여 연결.",
@@ -3784,7 +3798,9 @@
       "printedPage": 45,
       "sourceShape": "두 곱 사이의 소수 둘째 자리 숫자가 지정된 두 자리 소수의 개수를 구하는 문장제.",
       "answerContract": "count of strict interval candidates",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 도형 없는 문장제다. 두 곱의 경계와 지정된 소수 둘째 자리 숫자를 구분한다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 창작 변형의 경계와 조건을 독립 검산하여 연결.",
@@ -3803,7 +3819,9 @@
       "printedPage": 45,
       "sourceShape": "잘못 나눈 몫과 나머지로 원래 수를 구해 바르게 곱하는 문장제.",
       "answerContract": "corrected product",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 도형 없는 문장제다. 잘못한 나눗셈의 몫·나머지와 원래 해야 할 곱셈을 구분한다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 창작 변형의 나눗셈 복원과 곱을 독립 검산하여 연결.",
@@ -3822,7 +3840,9 @@
       "printedPage": 45,
       "sourceShape": "같은 곳에서 같은 방향으로 출발한 두 차량의 속력과 시간으로 거리 차를 구하는 문장제.",
       "answerContract": "distance gap",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 도형 없는 문장제다. 두 차량의 거리·시간 단위, 출발 방향과 경과 시간을 구분한다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 창작 변형에 일정 속력 조건을 명시하고 거리 차를 독립 검산하여 연결.",
@@ -3841,7 +3861,9 @@
       "printedPage": 45,
       "sourceShape": "두 소수의 합과 한 수의 소수점 누락 후 차로 두 수의 곱을 구하는 문장제.",
       "answerContract": "product of two decimals",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 도형 없는 문장제다. 두 수의 기호와 소수점 생략이 적용된 대상을 분명히 한다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 창작 변형의 두 조건과 곱을 독립 검산하여 연결.",
@@ -3860,7 +3882,9 @@
       "printedPage": 45,
       "sourceShape": "소수 한 자리 수의 곱이 정해진 범위의 소수 한 자리 수가 되는 입력 수의 개수.",
       "answerContract": "count of non-integer tenths inputs",
-      "visualRisk": [],
+      "visualRisk": [
+        "인쇄 원문은 도형 없는 문장제다. 입력과 곱의 소수 자릿수 및 범위의 엄격한 양쪽 경계를 명확히 한다."
+      ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
       "reviewReason": "원문은 공개 잠금이며 출판사 답안은 미확인; 창작 변형은 입력과 곱의 자릿수 조건을 명시하고 독립 열거했다.",
