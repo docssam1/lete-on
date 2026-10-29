@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 5-2 Unit 6 Simple Roundtrip Practice
+
+- Original printed p.63 Mission 5 remains locked because its backtracking rule is unstated; publisher answer unverified. Added a separately identified synthetic practice with different road counts, explicitly simple outward and return legs and permission to reuse a road on return. Its labelled graph shows the road counts; the original source record links to the practice.
+- Independently enumerated pairs of simple paths for all three variants × three difficulty states. Local bank passed 1440/375/320px, separate problem and solution each fit one A4 page, and the graph was visually checked. Structural inventory and release gates pass; runtime audit 86,100 generations: 2,214 types / 1,435 available / 779 awaiting. Previous equal-route practice deployed and was verified on production at the same widths and difficulties. These counts do not prove all source answers reviewed.
+
+---
+
 ## 2026-10-30 Grade 5-2 Unit 6 Equal-Route Probability Practice
 
 - Original printed p.64 Example 4-3 remains locked because its route-selection model is unspecified; publisher answer unverified. Added a separate synthetic practice with different road counts, an explicit uniform-over-complete-routes rule, and a labelled graph. Its locked source record links to the practice.
