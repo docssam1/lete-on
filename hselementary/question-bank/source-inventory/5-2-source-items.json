@@ -4768,16 +4768,18 @@
       "pdfPage": 55,
       "printedPage": 59,
       "sourceShape": "두 수의 평균을 나타내는 ♥ 연산 (23♥□)♥32=33에서 빈 수 구하기",
-      "answerContract": "single-value: 45",
+      "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 59쪽 원문 수식과 괄호를 대조하고 평균 연산을 역산했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조와 필요한 그림을 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e1-mission-1"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-2",
@@ -4788,16 +4790,18 @@
       "pdfPage": 55,
       "printedPage": 59,
       "sourceShape": "국어·수학·사회·과학 4과목 성적표와 평균 열, 찢어진 두 점수의 남은 자리로 두 점수 구하기",
-      "answerContract": "ordered-pair: 수학 70점, 사회 83점",
+      "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "필기 없는 원문에서 네 과목과 수학 십의 자리 7, 사회 일의 자리 3을 대조하고 가능한 자릿수를 전수 계산했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조와 필요한 그림을 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e1-mission-2"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-3",

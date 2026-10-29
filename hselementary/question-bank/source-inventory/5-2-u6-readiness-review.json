@@ -228,11 +228,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "releaseEvidence": "원문의 ♥ 기호·괄호·숫자와 식 순서 대조 및 역산. 공식 출판사 답안 미확인.",
       "runtimeTypeId": "5-2-u6-e1-mission-1",
-      "publisherKeyVerified": false
+      "publisherKeyVerified": false,
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-2",
@@ -255,11 +256,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "releaseEvidence": "필기 없는 원문에서 수학 7과 사회 3의 위치를 확대 대조하고 100개 자릿수 조합 전수 검사. 공식 출판사 답안 미확인.",
       "runtimeTypeId": "5-2-u6-e1-mission-2",
-      "publisherKeyVerified": false
+      "publisherKeyVerified": false,
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-3",
