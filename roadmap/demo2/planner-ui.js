@@ -352,7 +352,7 @@ function setWorkspaceView(view,focus=false){
  if(!['map','graph','table','records'].includes(view))return;
  workspaceView=view;rememberWorkspace();
  $('atlasExpand').dataset.atlasFull=view==='graph'?'graph':'map';
- if(PlannerFullscreen.isOpen())$('atlasFullscreenTitle').textContent=view==='graph'?'진도와 속도 비교':view==='table'?'월별 교재와 병행 계획':'우리 아이의 공부 지도';
+ if(PlannerFullscreen.isOpen())$('atlasFullscreenTitle').textContent=$('workspace-tab-'+view)?.textContent.trim()||'학습 로드맵';
  for(const pane of $('journeyMap').querySelectorAll('[data-workspace-panel]'))pane.hidden=pane.dataset.workspacePanel!==view;
  for(const tab of $('journeyMap').querySelectorAll('[data-workspace-view]')){if(tab.getAttribute('role')!=='tab')continue;const on=tab.dataset.workspaceView===view;tab.setAttribute('aria-selected',String(on));tab.tabIndex=on?0:-1;}
  window.PlannerResponsiveNavigation?.syncOrientation();if(focus){const active=$('workspace-tab-'+view);active?.focus({preventScroll:true});active?.scrollIntoView({block:'nearest',inline:'nearest'});}PlannerPresentation.refresh($('journeyMap'));document.querySelectorAll('.top .nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===({map:'vmap',graph:'vrep',table:'vplan',records:'vrep'})[view]));
@@ -536,8 +536,8 @@ function prepareReport(){
  if(studyActive){const m=SPV.model(studyState);report.front.prose=['현재 초5에서 5-2 응용을 공부하고 있고, 연산은 6-1 안팎입니다. 새 교과는 2026년 11월 6-1부터, 쎈은 이미 배운 5-2부터 이어가겠습니다.',m.overview.firstYear,m.overview.winter,m.overview.summer,m.overview.after,m.overview.high,'국어는 어휘·독해·문학·서술을 함께, 과학은 초5·6 기본과 탐구를 확인한 뒤 오투 중1-1부터 이어갑니다. 이후 중등 기본을 마치면 하이탑 통합과학 1·2의 기본 개념과 탐구로 연결합니다. 두 과목의 출발점은 현재 진도를 확인한 뒤 조정합니다.'];
   report.front.prose.push('초등 교과는 주 '+m.classPlan.elementary.sessions+'회, 회당 '+m.classPlan.elementary.hours+'시간으로 공부합니다. 쎈 5-2를 12월에 정리한 뒤 2027년 1~6월에는 3% 올림피아드 1과정을 여섯 달 동안 병행합니다. 과학은 '+m.classPlan.science.label+'으로 배정합니다.');
   if(m.assessment?.current?.id)report.front.prose.splice(1,0,m.assessment.current.label+'입니다. 바로 위 참고 일정은 '+m.assessment.next.map(r=>r.label+' · '+r.pace.course+' 한 학기 '+r.pace.months+'개월').join(', ')+'입니다. '+m.assessment.planPace.text);
-  report.front.priorities[1]={title:'쎈 활용·연산을 함께',text:'중등 쎈은 한 학기 뒤에서 유형과 활용을 다집니다. 공통수학의 쎈 활용은 정규 수업에 포함된 같은 공부이며 별도 과제로 중복하지 않습니다. 연산은 디딤돌 6B 뒤 기적의 중학연산으로 연결하고, 이후에는 현재 교과의 식 계산과 오답을 짧게 유지합니다.',section:'math',sectionLabel:'교재·월별 과정'};
-  report.front.priorities.push({title:'내신 준비월에는 새 선행을 멈춥니다',text:'공통수학 구간의 4·6·9·11월은 학교 시험 준비 약 3주와 배운 범위 복습으로 두었습니다. 중1에도 정기시험이 있다면 앞선 중등 계획과 공통수학의 시작·완료월도 함께 늦춥니다. 실제 학교 시험 일정은 아직 확인하지 않은 예시입니다.',section:'comparison',sectionLabel:'진도·활용 그래프'});
+  report.front.priorities[1]={title:'쎈 활용·연산을 함께',text:'중등 쎈은 한 학기 뒤에서 유형과 활용을 다집니다. 공통수학의 쎈 활용은 정규 수업에 포함된 같은 공부이며 별도 과제로 중복하지 않습니다. 연산은 디딤돌 6B 뒤 기적의 중학연산으로 연결하고, 이후에는 현재 교과의 식 계산과 오답을 짧게 유지합니다.',section:'math',sectionLabel:'교재·월별 계획'};
+  report.front.priorities.push({title:'내신 준비월에는 새 선행을 멈춥니다',text:'공통수학 구간의 4·6·9·11월은 학교 시험 준비 약 3주와 배운 범위 복습으로 두었습니다. 중1에도 정기시험이 있다면 앞선 중등 계획과 공통수학의 시작·완료월도 함께 늦춥니다. 실제 학교 시험 일정은 아직 확인하지 않은 예시입니다.',section:'comparison',sectionLabel:'진도 비교'});
  }
  $('plannerReportContent').innerHTML=PlannerReport.render(report,{prefix:'report'});
  return true;
@@ -609,7 +609,7 @@ function openPathwayPlan(page='books'){
  planPage=!d.bookInfo?'books':page==='books'?'books':page==='methods'?'methods':d.methodInfo?'summary':'methods';flowMode='pathway-plan';
  const choice=(kind,x,on)=>`<button type="button" data-plan-kind="${kind}" data-plan-value="${esc(x.id)}"${on?' aria-pressed="true"':''}><strong>${esc(x.title)}</strong><span>${esc(x.summary)}</span>${on?'<small>선택한 항목</small>':''}</button>`;
  const context=`<p class="study-focus">${esc(I.studentLabel(answers,intakeFields())==='미선택'?'학년·현재 진도는 아직 선택 전이에요. 교재의 학기와 과정은 현재 공부를 고른 뒤 확인할 수 있어요.':I.studentLabel(answers,intakeFields())+' · 학교 학년과 교재 진도를 구분합니다.')}</p><p class="study-current-range">현재 교과 · ${esc(pathwayContext().currentStudy.school)}</p>`;
- const back='<div class="personality-actions"><button type="button" data-plan-back>공부 경로의 갈림길로 돌아가기</button></div>';
+ const back='<div class="personality-actions"><button type="button" data-plan-back>공부 경로의 설계 화면으로 돌아가기</button></div>';
  if(planPage==='books'){
   coach('이 경로에서는 어떤 교재로 공부할까요?',d.title+'의 공부를 현재 진도와 연결합니다.');
   $('pathwayCoachContent').innerHTML=context+`<div class="pathway-options study-options">${d.books.map(b=>choice('book',b,d.book===b.id)).join('')}</div><details class="pathway-detail"><summary>교재를 고를 때 살펴볼 점</summary><p>현재 배우는 범위와 혼자 풀 수 있는 정도를 먼저 봅니다. 쓰던 교재를 유지해도 좋고, 부족한 부분에 맞춰 다른 교재를 비교해도 좋습니다.</p></details>`+back;
@@ -840,7 +840,7 @@ function drawStudyJourney(){
  $('pathwayTitle').textContent='초5부터 공통수학 2까지 함께 설계합니다.';$('pathwaySummary').textContent=m.overview.winter;
  $('pathwayCoachContent').innerHTML=SPV.choices(m);$('pathwayCoach').querySelector('.coach-reference').hidden=true;$('pathwayCoach').querySelector('.pathway-coach-actions').hidden=true;$('flowMapPeek').hidden=true;
  $('coachQuestions').replaceChildren();$('intakeQuestions').replaceChildren();
- const tabs=[['map','공부 지도'],['graph','진도·활용 그래프'],['table','교재·월별 과정'],['records','설계 기준·질문']],pane=(id,html)=>'<section id="workspace-panel-'+id+'" class="workspace-panel" data-workspace-panel="'+id+'" role="tabpanel" aria-labelledby="workspace-tab-'+id+'" tabindex="0"'+(workspaceView===id?'':' hidden')+'>'+html+'</section>';
+ const tabs=[['map','학습 로드맵'],['graph','진도 비교'],['table','교재·월별 계획'],['records','학부모 질문']],pane=(id,html)=>'<section id="workspace-panel-'+id+'" class="workspace-panel" data-workspace-panel="'+id+'" role="tabpanel" aria-labelledby="workspace-tab-'+id+'" tabindex="0"'+(workspaceView===id?'':' hidden')+'>'+html+'</section>';
  $('journeyMap').innerHTML='<div class="workspace-results">'+SPV.summary(m)+'<div class="workspace-tabs" role="tablist" aria-label="초5 설계 예시의 같은 계획 비교">'+tabs.map(([id,t])=>'<button type="button" role="tab" id="workspace-tab-'+id+'" data-workspace-view="'+id+'" aria-controls="workspace-panel-'+id+'" aria-selected="'+(workspaceView===id)+'" tabindex="'+(workspaceView===id?0:-1)+'">'+t+'</button>').join('')+'</div>'+pane('map',SPV.map(m))+pane('graph',SPV.graph(m))+pane('table',SPV.table(m)+SPV.weekly(m)+SPV.scienceRibbon(m))+pane('records',SPV.records(m)+(window.PlannerCounsellingUpdates?.render('elementary')||'')+(window.PlannerCounsellingUpdates?.render('middle')||''))+'</div>';
  $('journeyTitle').textContent='초5 남학생 · 공통수학 2까지의 학습 설계';$('journeyCount').textContent='교과·사고력·쎈·연산·국어·과학';$('openReport').hidden=false;$('backToQuestion').textContent='계획 선택으로 돌아가기 ↑';
  $('pathwayStatus').textContent='이 설계 예시는 기존 학생 답변과 별도로 저장됩니다.';setWorkspaceView(workspaceView);PlannerGuide.mount(document);
@@ -917,7 +917,7 @@ function drawPremierCohortJourney(){
  $('planningOverview').hidden=true;$('pathwayTitle').textContent='합격생들은 무엇을 보완하며 공부했을까요?';$('pathwaySummary').textContent='교과·심화·사고력·연산을 함께 놓고, 세 가정이 고민한 선택을 살펴봅니다.';
  $('pathwayCoachContent').innerHTML=pc.choices(m);$('pathwayCoach').querySelector('.coach-reference').hidden=true;$('pathwayCoach').querySelector('.pathway-coach-actions').hidden=true;$('flowMapPeek').hidden=true;
  $('coachQuestions').replaceChildren();$('intakeQuestions').replaceChildren();
- const tabs=[['map','합격생 로드맵'],['graph','공통 학습 흐름'],['table','교재·월별 과정'],['records','고민·선택']];
+ const tabs=[['map','학습 로드맵'],['graph','시기별 학습 과정'],['table','교재·진도 기록'],['records','학부모 질문']];
  const pane=(id,html)=>'<section id="workspace-panel-'+id+'" class="workspace-panel" data-workspace-panel="'+id+'" role="tabpanel" aria-labelledby="workspace-tab-'+id+'" tabindex="0"'+(workspaceView===id?'':' hidden')+'>'+html+'</section>';
  $('journeyMap').innerHTML='<div class="workspace-results">'+pc.summary(m)+'<div class="workspace-tabs" role="tablist" aria-label="합격생들의 공부와 고민">'+tabs.map(([id,title])=>'<button type="button" role="tab" id="workspace-tab-'+id+'" data-workspace-view="'+id+'" aria-controls="workspace-panel-'+id+'" aria-selected="'+(workspaceView===id)+'" tabindex="'+(workspaceView===id?0:-1)+'">'+title+'</button>').join('')+'</div>'+pane('map',(window.PlannerCounsellingUpdates?.render('preschool',{compact:true,historical:true})||'')+pc.map(m)+pc.questions(m))+pane('graph',pc.graph(m))+pane('table',pc.table(m))+pane('records',pc.records(m)+(window.PlannerCounsellingUpdates?.render('preschool',{historical:true})||''))+'</div>';
  PlannerFaq.mount($('workspace-panel-map'),{selector:'.pco-questions'});$('journeyTitle').textContent=m.title;$('journeyCount').textContent='합격생들의 공부 · 다섯 시기';$('backToQuestion').textContent='고민 선택으로 돌아가기 ↑';
@@ -934,7 +934,7 @@ function drawHistoryJourney(){
  $('pathwayTitle').textContent='전환을 고르면 병행 공부가 이어집니다.';$('pathwaySummary').textContent='기존 공부를 바꾸지 않고, 두 경로의 교과·사고력·영재원과 보완 지점을 살펴봅니다.';
  $('pathwayCoachContent').innerHTML=HC.choices(historyState);$('pathwayCoach').querySelector('.coach-reference').hidden=true;$('pathwayCoach').querySelector('.pathway-coach-actions').hidden=true;$('flowMapPeek').hidden=true;
  $('coachQuestions').replaceChildren();$('intakeQuestions').replaceChildren();
- const tabs=[['map','공부 지도'],['graph','과정 시점'],['table','교재·월별 과정'],['records','질문·공부 과정']];
+ const tabs=[['map','학습 로드맵'],['graph','시기별 학습 과정'],['table','교재·진도 기록'],['records','학부모 질문']];
  const comparison=historyState.compare?historyComparison():'';
  const pane=(id,html)=>'<section id="workspace-panel-'+id+'" class="workspace-panel" data-workspace-panel="'+id+'" role="tabpanel" aria-labelledby="workspace-tab-'+id+'" tabindex="0"'+(workspaceView===id?'':' hidden')+'>'+html+'</section>';
  $('journeyMap').innerHTML='<div class="workspace-results">'+HC.summary(historyState)+'<div class="workspace-tabs" role="tablist" aria-label="같은 사례 비교">'+tabs.map(([id,t])=>'<button type="button" role="tab" id="workspace-tab-'+id+'" data-workspace-view="'+id+'" aria-controls="workspace-panel-'+id+'" aria-selected="'+(workspaceView===id)+'" tabindex="'+(workspaceView===id?0:-1)+'">'+t+'</button>').join('')+'</div>'+pane('map',comparison+HC.map(historyState))+pane('graph',comparison+HC.graph(historyState))+pane('table',comparison+HC.calendar(m))+pane('records',comparison+'<div class="workspace-question-source">'+HC.questions(historyState)+'</div>'+HC.records(historyState))+'</div>';
@@ -1010,14 +1010,14 @@ function drawCaseJourney(){
  $('pathwayTitle').textContent=caseScienceOpen?'과학 공부를 이어갑니다.':'같이 이어갈 공부를 조정해 봅니다.';
  $('pathwaySummary').textContent=caseState.algebra==='after'?'응용을 마친 7월부터 초등 계통 대수심화를 시작합니다. 중등 시작도 두 달 뒤로 이어지며, 사고력의 6개월 흐름은 유지합니다.':'초3 5~6월에는 응용 6-2와 초등 계통 대수심화를 나란히 공부합니다. 응용을 끝낸 뒤에도 초등 계통 대수심화는 10월까지 이어갑니다.';
  $('pathwayCoachContent').innerHTML=HC.library('legacy')+R.renderChoices(caseRoutes,m,Q.rootButton()+S.root(caseScience,true,caseScienceOpen),caseScienceOpen?S.choices(caseScience,sc):'')+'<details class="case-plan-adjustments"'+(caseRoutes.active?'':' open')+'><summary>교재·병행 시기 조정</summary>'+V.choices(m)+'</details><button type="button" class="gear" data-case-close>우리 아이 계획으로 돌아가기</button>';
- if(caseGoalOpen){$('pathwayTitle').textContent='사례의 현재 공부에서 진학 목표 비교';$('pathwaySummary').textContent='사례의 교재·월별 기간은 유지하며 다음 공부 방향을 비교합니다.';$('pathwayCoachContent').innerHTML=Q.choices(caseScience.schoolGoal,goalContext())+'<button type="button" data-case-goal-close>사례 갈림길로 돌아가기</button>'; }
+ if(caseGoalOpen){$('pathwayTitle').textContent='사례의 현재 공부에서 진학 목표 비교';$('pathwaySummary').textContent='사례의 교재·월별 기간은 유지하며 다음 공부 방향을 비교합니다.';$('pathwayCoachContent').innerHTML=Q.choices(caseScience.schoolGoal,goalContext())+'<button type="button" data-case-goal-close>사례 설계 화면으로 돌아가기</button>'; }
  $('pathwayCoach').querySelector('.coach-reference').hidden=true;$('pathwayCoach').querySelector('.pathway-coach-actions').hidden=true;$('flowMapPeek').hidden=true;
  $('coachQuestions').replaceChildren();$('intakeQuestions').replaceChildren();
- const tabs=[['map','공부 지도'],['graph','진도 비교'],['table','교재·월별 계획'],['records','사례와 선택 기록']];
+ const tabs=[['map','학습 로드맵'],['graph','진도 비교'],['table','교재·월별 계획'],['records','학부모 질문']];
  const pane=(id,content)=>`<section id="workspace-panel-${id}" data-workspace-panel="${id}" class="workspace-panel" role="tabpanel" aria-labelledby="workspace-tab-${id}" tabindex="0"${workspaceView===id?'':' hidden'}>${content}</section>`;
  $('journeyMap').innerHTML='<div class="workspace-results">'+V.summary(m)+'<div class="workspace-tabs" role="tablist" aria-label="같은 사례 비교">'+tabs.map(([id,title])=>`<button type="button" role="tab" id="workspace-tab-${id}" data-workspace-view="${id}" aria-controls="workspace-panel-${id}" aria-selected="${workspaceView===id}" tabindex="${workspaceView===id?0:-1}">${title}</button>`).join('')+'</div>'+pane('map',caseScienceOpen?S.render(caseScience,sc,'map')+V.map(m,R.renderMap(caseRoutes,m)):V.map(m,R.renderMap(caseRoutes,m)+S.render(caseScience,sc,'map')))+pane('graph',R.renderContext(caseRoutes,m)+(caseScienceOpen?S.render(caseScience,sc,'graph')+V.graph(m):V.graph(m)+S.render(caseScience,sc,'graph')))+pane('table',caseScienceOpen?S.render(caseScience,sc,'table')+R.renderMap(caseRoutes,m)+V.table(m):R.renderMap(caseRoutes,m)+V.table(m)+S.render(caseScience,sc,'table'))+pane('records',R.renderMap(caseRoutes,m)+V.records(m,true)+S.render(caseScience,sc,'table'))+'</div><div class="workspace-question-source">'+V.questions(m,[...Q.questions(caseScience.schoolGoal,goalContext()),...(caseScienceOpen?[...S.questions(caseScience,sc),...R.questions(caseRoutes,m)]:[...R.questions(caseRoutes,m),...S.questions(caseScience,sc)])])+'</div>';
  PlannerFaq.mount($('journeyMap'));const faq=$('journeyMap').querySelector('.faq-orbit');if(faq)$('coachQuestions').append(faq);
- $('journeyTitle').textContent=caseScienceOpen?'과학 공부 · 영재원 대비':'교과·심화·사고력, 나란히 이어지는 과정';$('journeyCount').textContent='상담 사례 · 같은 월별 일정으로 지도·그래프·표 비교';$('backToQuestion').textContent='갈림길로 돌아가기 ↑';
+ $('journeyTitle').textContent=caseScienceOpen?'과학 공부 · 영재원 대비':'교과·심화·사고력, 나란히 이어지는 과정';$('journeyCount').textContent='상담 사례 · 같은 월별 일정으로 지도·그래프·표 비교';$('backToQuestion').textContent='설계 화면으로 돌아가기 ↑';
  for(const view of ['map','graph','table','records'])$('workspace-panel-'+view)?.insertAdjacentHTML(caseGoalOpen&&view!=='graph'?'afterbegin':'beforeend',Q.render(caseScience.schoolGoal,goalContext(),view));
  $('pathwayStatus').textContent=({durable:'이 기기에 저장되었습니다.',session:'현재 탭에 저장되었습니다.',memory:'현재 화면에만 유지됩니다.'})[PlannerStorage.status()];
  setWorkspaceView(workspaceView);PlannerGuide.mount(document);
@@ -1063,9 +1063,9 @@ function drawJourney(){
  const standard=PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision}),standardActive=completed&&roadmapMode==='standard';
  document.body.dataset.planMode=standardActive?'standard':completed?'custom':'intake';document.body.dataset.scienceFlow=String(flowMode==='science');document.body.dataset.referenceFlow=String(flowMode==='reference');
  $('planningOverview').hidden=!completed;
- $('planningOverview').innerHTML=completed?'<details class="plan-current-details"><summary>현재 공부·선택한 계획</summary><div class="plan-current-popover">'+PlannerWorkspace.currentSummary(answers,intakeFields())+'<button type="button" data-student-choice>남학생·여학생 선택 변경</button><button type="button" data-plan-references>전체 답변·기존 시기별 지도 보기</button></div></details>':'';
+ $('planningOverview').innerHTML=completed?'<details class="plan-current-details"><summary>현재 공부·선택한 계획</summary><div class="plan-current-popover">'+PlannerWorkspace.currentSummary(answers,intakeFields())+'<button type="button" data-student-choice>남학생·여학생 선택 변경</button><button type="button" data-plan-references>전체 답변·기존 시기별 학습 로드맵 보기</button></div></details>':'';
  const board=intakeFields().internationalCalendar?'':PlannerWorkspace.render(transition,progression,answers,{...intakeFields(),supplementDecision},pathwayTrail,{course:workspaceCourse}),schedule=intakeFields().internationalCalendar?'':PlannerWorkspace.renderSchedule(transition,progression,answers,{...intakeFields(),calcDaysPerWeek,supplementDecision},pathwayTrail);
- const tabs=flowMode==='language'&&languageState.active==='english'?[['map','공부 지도'],['graph',intakeFields().internationalCalendar?'학교 과정 흐름':'학년별 흐름'],['table','교재·병행 과정'],['records','질문·선택 기록']]:[['map','공부 지도'],['graph','진도 비교'],['table','교재·수업 계획'],['records','질문·선택 기록']];
+ const tabs=flowMode==='language'&&languageState.active==='english'?[['map','학습 로드맵'],['graph',intakeFields().internationalCalendar?'학교 교육과정':'학년별 학습 과정'],['table','교재·월별 계획'],['records','학부모 질문']]:[['map','학습 로드맵'],['graph','진도 비교'],['table','교재·월별 계획'],['records','학부모 질문']];
  const pane=(id,content)=>`<section id="workspace-panel-${id}" data-workspace-panel="${id}" class="workspace-panel" role="tabpanel" aria-labelledby="workspace-tab-${id}" tabindex="0"${workspaceView===id?'':' hidden'}>${content}</section>`;
  const records='<details class="workspace-current"><summary>현재 공부 · '+journeyModel.ready+'가지</summary>'+PlannerJourney.render(journeyModel,{directions:false})+'</details><details class="workspace-comparison" open><summary>레벨 뜻과 영역별 비교</summary>'+G.render(progression,answers,intakeFields(),{timeline:' '})+'</details><details class="workspace-choices"><summary>선택한 교재·범위 수정</summary>'+T.renderTrail(transition,progression,answers,intakeFields())+'</details>'+X.renderTrail(pathwayTrail,pathwayActiveId)+R.renderTrail(pathwayPlan,pathwayTrail,pathwayContext())+(flowMode==='personality'?Y.renderMap(personalityState):'');
  const routeLedger='<section class="route-ledger" aria-label="함께 선택한 공부 경로">'+X.renderTrail(pathwayTrail,pathwayActiveId)+R.renderTrail(pathwayPlan,pathwayTrail,pathwayContext())+(flowMode==='personality'?Y.renderMap(personalityState):'')+'</section>';
@@ -1104,7 +1104,7 @@ function drawJourney(){
    const panel=$('workspace-panel-'+view);
    if(flowMode==='language'){
     const fold=document.createElement('details');fold.className='language-core-fold';
-    const title=document.createElement('summary');title.textContent='수학 로드맵·'+(view==='graph'?'기존 진도 그래프':view==='table'?'교재·월별 과정':'현재 계획')+' 함께 보기';
+    const title=document.createElement('summary');title.textContent='수학 로드맵·'+(view==='graph'?'기존 진도 그래프':view==='table'?'교재·월별 계획':'현재 계획')+' 함께 보기';
     fold.append(title,...panel.childNodes);panel.append(fold);
    }
    const ids=flowMode==='language'?[languageState.active,...languageIds.filter(id=>id!==languageState.active)]:languageIds;

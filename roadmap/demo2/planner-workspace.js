@@ -124,7 +124,7 @@ function renderSchedule(value,progress,answers,fields,path=[]){
 function renderQuestions(value,progress,answers,fields,path=[]){
  const p=model(value,progress,answers,fields,path);if(!p.book||!p.range||!p.d.deep?.book||!p.d.deepScope)return '';
  const scope=p.d.deepScope.lag===null?T.schoolLabel(p.d.deepScope.start):p.d.deepScope.title,book=p.d.deep.book;
- const items=[{q:book+' '+scope+' 범위를 바꾸면 교과 진도도 바뀌나요?',a:'심화는 '+book+' '+scope+'에서 따로 이어갑니다. 교과 '+p.book+' '+p.range+'와 현재 사고력·연산의 기간은 유지합니다. '+(p.newDepthBook?'새로 선택한 심화 교재는 해당 범위의 처음부터 배치한 참고 일정입니다.':'현재 심화의 남은 범위와 이후 과정을 별도로 확인합니다.')},{q:'현재 심화 진도를 고치면 추가 회차를 다시 골라야 하나요?',a:(p.load?p.load+' 목표와 교과의 풀이 확인·배분 선택은 유지합니다.':'교과의 추가 회차는 별도 갈림길에서 선택합니다.')+' 심화 진도만 수정하면 심화의 교재·월별 과정이 바뀌고 교과의 비교 그래프와 다른 영역의 일정은 유지합니다. 교과 자체의 출발점이나 풀이 확인을 바꾸면 그 교과의 적용 조건은 다시 확인합니다.'}];
+ const items=[{q:book+' '+scope+' 범위를 바꾸면 교과 진도도 바뀌나요?',a:'심화는 '+book+' '+scope+'에서 따로 이어갑니다. 교과 '+p.book+' '+p.range+'와 현재 사고력·연산의 기간은 유지합니다. '+(p.newDepthBook?'새로 선택한 심화 교재는 해당 범위의 처음부터 배치한 참고 일정입니다.':'현재 심화의 남은 범위와 이후 과정을 별도로 확인합니다.')},{q:'현재 심화 진도를 고치면 추가 회차를 다시 골라야 하나요?',a:(p.load?p.load+' 목표와 교과의 풀이 확인·배분 선택은 유지합니다.':'교과의 추가 회차는 별도 갈림길에서 선택합니다.')+' 심화 진도만 수정하면 심화의 교재·월별 계획이 바뀌고 교과의 비교 그래프와 다른 영역의 일정은 유지합니다. 교과 자체의 출발점이나 풀이 확인을 바꾸면 그 교과의 적용 조건은 다시 확인합니다.'}];
  return '<section class="pathway-parent-questions custom-area-questions">'+items.map(item=>'<details><summary>'+esc(item.q)+'</summary><p>'+esc(item.a)+'</p></details>').join('')+'</section>';
 }
 function compactCoach(root){

@@ -30,7 +30,7 @@ function globalControls(){
  const panes=doc.querySelector('.mobile-workspace-nav');move(panes,top);
  for(const button of panes?.querySelectorAll('button')||[]){
   if(!button.dataset.prnOriginal){button.dataset.prnOriginal=button.textContent;button.setAttribute('aria-label',button.textContent);}
-  button.textContent=button.dataset.mobileWorkspace==='choice'?'선택하기':'로드맵 보기';
+  button.textContent=button.dataset.mobileWorkspace==='choice'?'선택하기':'결과 보기';
  }
 }
 function toolsFor(results){
