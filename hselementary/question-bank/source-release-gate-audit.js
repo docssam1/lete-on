@@ -80,6 +80,26 @@ require("./source-5-2-u2-page16-example22-synthetic.js");
 require("./source-5-2-u2-page16-example23-synthetic.js");
 require("./source-5-2-u2-page16-example24-synthetic.js");
 require("./source-5-2-u2-page17-mission1-synthetic.js");
+require("./source-5-2-u2-page17-mission2-synthetic.js");
+require("./source-5-2-u2-page17-mission3-synthetic.js");
+require("./source-5-2-u2-page17-mission4-synthetic.js");
+require("./source-5-2-u2-page17-mission5-synthetic.js");
+require("./source-5-2-u2-page18-exploration3-synthetic.js");
+require("./source-5-2-u2-page18-example31-synthetic.js");
+require("./source-5-2-u2-page18-example32-synthetic.js");
+require("./source-5-2-u2-page18-example33-synthetic.js");
+require("./source-5-2-u2-page18-example34-synthetic.js");
+require("./source-5-2-u2-page19-mission1-synthetic.js");
+require("./source-5-2-u2-page19-mission2-synthetic.js");
+require("./source-5-2-u2-page19-mission3-synthetic.js");
+require("./source-5-2-u2-page19-mission4-synthetic.js");
+require("./source-5-2-u2-page19-mission5-synthetic.js");
+require("./source-5-2-u2-page19-mission6-synthetic.js");
+require("./source-5-2-u2-page20-exploration4-synthetic.js");
+require("./source-5-2-u2-page20-example41-synthetic.js");
+require("./source-5-2-u2-page20-example42-synthetic.js");
+require("./source-5-2-u2-page20-example43-synthetic.js");
+require("./source-5-2-u2-page20-example44-synthetic.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
@@ -207,8 +227,8 @@ for (const semester of window.HSE_CURRICULUM.semesters) {
   }
 }
 
-if (total !== 2136) failures.push(`전체 유형 수가 2136가 아니라 ${total}입니다.`);
-if (ready !== 1348) failures.push(`원문 연결 공개 유형 수가 1348가 아니라 ${ready}입니다.`);
+if (total !== 2156) failures.push(`전체 유형 수가 2156가 아니라 ${total}입니다.`);
+if (ready !== 1368) failures.push(`원문 연결 공개 유형 수가 1368가 아니라 ${ready}입니다.`);
 if (lockedWithoutSource !== 380) failures.push(`원문 미연결 잠금 유형 수가 380이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {

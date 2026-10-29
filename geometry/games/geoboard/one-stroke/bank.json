@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "learnerStage": "early-primary-euler-trail-exploration",
+  "authoring": "internally-authored",
+  "answerContract": "any-continuous-trail-using-every-undirected-edge-exactly-once",
+  "problems": [
+    {"id":"os-bend","level":1,"nodes":{"a":[0,1],"b":[1,1],"c":[1,2],"d":[3,2]},"edges":[["a","b"],["b","c"],["c","d"]],"starts":["a","d"]},
+    {"id":"os-steps","level":1,"nodes":{"a":[0,3],"b":[0,0],"c":[1,0],"d":[1,1],"e":[3,1]},"edges":[["a","b"],["b","c"],["c","d"],["d","e"]],"starts":["a","e"]},
+    {"id":"os-triangle","level":1,"nodes":{"a":[0,3],"b":[3,3],"c":[1,0]},"edges":[["a","b"],["b","c"],["c","a"]],"starts":["a","b","c"]},
+    {"id":"os-square","level":1,"nodes":{"a":[0,0],"b":[3,0],"c":[3,3],"d":[0,3]},"edges":[["a","b"],["b","c"],["c","d"],["d","a"]],"starts":["a","b","c","d"]},
+    {"id":"os-triangle-tail","level":2,"nodes":{"a":[0,2],"b":[2,2],"c":[1,0],"d":[3,2]},"edges":[["a","b"],["b","c"],["c","a"],["b","d"]],"starts":["b","d"]},
+    {"id":"os-house","level":2,"nodes":{"a":[0,3],"b":[2,3],"c":[2,1],"d":[0,1],"e":[1,0]},"edges":[["a","b"],["b","c"],["c","d"],["d","a"],["c","e"],["e","d"]],"starts":["c","d"]},
+    {"id":"os-bridge","level":2,"nodes":{"a":[0,0],"b":[1,1],"c":[0,2],"d":[2,1],"e":[3,0],"f":[3,2]},"edges":[["a","b"],["b","c"],["c","a"],["d","e"],["e","f"],["f","d"],["b","d"]],"starts":["b","d"]},
+    {"id":"os-two-loops","level":2,"nodes":{"o":[1,1],"a":[0,0],"b":[2,0],"c":[2,2],"d":[0,2]},"edges":[["o","a"],["a","b"],["b","o"],["o","c"],["c","d"],["d","o"]],"starts":["o","a","b","c","d"]},
+    {"id":"os-house-diagonal","level":3,"nodes":{"a":[0,3],"b":[2,3],"c":[2,1],"d":[0,1],"e":[1,0]},"edges":[["a","b"],["b","c"],["c","d"],["d","a"],["c","e"],["e","d"],["a","c"]],"starts":["a","d"]},
+    {"id":"os-three-loops","level":3,"nodes":{"o":[1,1],"a":[0,0],"b":[2,0],"c":[3,1],"d":[2,3],"e":[0,3],"f":[0,1]},"edges":[["o","a"],["a","b"],["b","o"],["o","c"],["c","d"],["d","o"],["o","e"],["e","f"],["f","o"]],"starts":["o","a","b","c","d","e","f"]},
+    {"id":"os-loops-tail","level":3,"nodes":{"o":[1,1],"a":[0,0],"b":[2,0],"c":[2,2],"d":[0,2],"e":[3,1]},"edges":[["o","a"],["a","b"],["b","o"],["o","c"],["c","d"],["d","o"],["o","e"]],"starts":["o","e"]},
+    {"id":"os-hexagon","level":3,"nodes":{"a":[0,1],"b":[1,0],"c":[3,0],"d":[3,2],"e":[2,3],"f":[0,3]},"edges":[["a","b"],["b","c"],["c","d"],["d","e"],["e","f"],["f","a"],["a","d"]],"starts":["a","d"]}
+  ]
+}

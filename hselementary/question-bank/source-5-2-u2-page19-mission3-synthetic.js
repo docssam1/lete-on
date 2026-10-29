@@ -1,0 +1,28 @@
+(function(root,factory){"use strict";const api=factory();if(typeof module==="object"&&module.exports)module.exports=api;root.HSE_SOURCE_52_U2_PAGE19_MISSION3=api;api.install(root)})(typeof window!=="undefined"?window:globalThis,function(){
+  "use strict";
+  const id="5-2-u2-e3-mission-3-synthetic",key="source52U2Page19Mission3",pools=Object.freeze([
+    {first:[1,4],second:[1,3],third:[1,2],lastCount:20},
+    {first:[2,7],second:[1,4],third:[1,2],lastCount:60},
+    {first:[3,8],second:[2,5],third:[1,3],lastCount:50}
+  ]);
+  const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a),frac=(n,d)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||d<=0)throw new Error("분수 계산을 확인하세요.");const g=gcd(n,d);return{n:n/g,d:d/g}},sub=(a,b)=>frac(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>frac(a.n*b.n,a.d*b.d),div=(a,b)=>frac(a.n*b.d,a.d*b.n),fmt=x=>x.d===1?x.n.toLocaleString("en-US"):x.n>x.d?`${Math.floor(x.n/x.d).toLocaleString("en-US")} ${x.n%x.d}/${x.d}`:`${x.n}/${x.d}`,esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),math=s=>`<span class="math-inline-expression">${esc(s)}</span>`;
+  function derive(index){const p=pools[index],first=frac(...p.first),second=frac(...p.second),third=frac(...p.third),left1=sub(frac(1,1),first),left2=mul(left1,sub(frac(1,1),second)),lastShare=mul(left2,sub(frac(1,1),third)),total=div(frac(p.lastCount,1),lastShare),firstCount=mul(total,first);if(total.d!==1||firstCount.d!==1||mul(total,left1).d!==1||mul(total,left2).d!==1||mul(total,lastShare).d!==1)throw new Error("스티커 수가 자연수인지 확인하세요.");return{p,first,second,third,left1,left2,lastShare,total,firstCount,answer:`${firstCount.n}개`}}
+  function build(index,difficulty){const v=derive(index),p=v.p,first=fmt(v.first),second=fmt(v.second),third=fmt(v.third),left1=fmt(v.left1),left2=fmt(v.left2),lastShare=fmt(v.lastShare),total=fmt(v.total),answer=fmt(v.firstCount),lastCount=p.lastCount.toLocaleString("en-US");
+    const prompt=`<div class="source52-p19m3-question"><p>상자에 파랑, 빨강, 초록, 노랑 스티커가 있습니다. 전체의 ${math(first)}은 파랑이고, 파랑을 제외한 나머지의 ${math(second)}은 빨강입니다. 다시 남은 것의 ${math(third)}은 초록이며, 끝으로 남은 노랑 스티커가 ${lastCount}개입니다. 파랑 스티커는 몇 개인가요?</p></div>`;
+    const steps=difficulty<0?[
+      `파랑 스티커을 나누고 남은 비율은 ${math(`1−${first}=${left1}`)}입니다. 빨강 스티커까지 나누고 남은 비율은 ${math(`${left1}×(1−${second})=${left2}`)}입니다.`,
+      `초록 스티커까지 나누고 남은 노랑 스티커의 비율은 ${math(`${left2}×(1−${third})=${lastShare}`)}입니다. 전체는 ${math(`${lastCount}÷${lastShare}=${total}`)}개이므로 파랑 스티커은 ${math(`${total}×${first}=${answer}`)}개입니다.`
+    ]:difficulty===0?[
+      `노랑 스티커이 차지하는 비율은 전체의 ${math(`(1−${first})×(1−${second})×(1−${third})=${lastShare}`)}입니다. 따라서 전체 스티커 수는 ${math(`${lastCount}÷${lastShare}=${total}`)}개입니다.`,
+      `파랑 스티커은 전체의 ${math(first)}이므로 ${math(`${total}×${first}=${answer}`)}개입니다.`
+    ]:[
+      `노랑 스티커는 전체의 ${math(lastShare)}이므로 전체는 ${math(`${lastCount}÷${lastShare}=${total}`)}개입니다.`,
+      `파랑 스티커는 전체의 ${math(first)}이므로 ${math(`${total}×${first}=${answer}`)}개입니다.`
+
+    ];
+    return{prompt,answer:v.answer,solution:`<span data-source-answer="${id}" class="source52-u2-solution">${steps.map((s,i)=>`<span class="source52-u2-step">${i+1}. ${s}</span>`).join("")}</span>`,answerVisual:"",answerModel:{numerator:v.firstCount.n,denominator:1,total:v.total.n,unit:"개",answer:v.answer},questionModel:{kind:"successive-candy-remainders-find-first-share",sourceSubitem:id},sourceValuesExcluded:true};
+  }
+  function generate(type,u,d,s,variant=0){if(type?.sourceItemId!==id||type?.id!==id||type?.sourceVerified!==true||type?.reviewLocked!==false||type?.generatorKey!==key)return null;if(!Number.isSafeInteger(variant)||variant<0||![-1,0,1].includes(d))throw new Error("고정 변형 또는 난이도 값이 올바르지 않습니다.");const poolIndex=variant%pools.length,q=build(poolIndex,d);return Object.freeze({...q,prompt:`<div data-source-item-id="${id}" data-pool-index="${poolIndex}" data-variant="${poolIndex}" data-difficulty-offset="${d}" data-level="${d+1}">${q.prompt}</div>`,sourceItemId:id,generator:key,generationMode:"fixed-verified-pool",verifiedPoolIndex:poolIndex,verifiedVariantCount:3,verifiedVariantTarget:3,verifiedVariantId:`${id}:v${poolIndex}`,variantProvenance:"synthetic-source-structure",answerVisualRequired:false,answerVisualStatus:"not-required",difficultyDesign:["guided-cumulative-remainders","standard-last-share-inversion","efficient-total-variable-equation"][d+1],reasoningSteps:2,sourceStructurePreserved:true,sourceEvidenceRef:"canonical-source:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; printed p.19 Mission 3; Apple Vision OCR + direct visual fraction cross-check",publisherKeyVerified:false,publisherAnswerVerified:false,handwrittenAnswerVerified:false,answerVerification:"independent-exact-successive-candy-remainders"})}
+  function install(target){const api=target?.HSE_GENERATORS;if(!api||typeof api.generatorKey!=="function"||typeof api.generate!=="function")return false;if(api.__source52U2Page19Mission3Installed)return true;const oldKey=api.generatorKey.bind(api),oldGenerate=api.generate.bind(api);api.generatorKey=t=>t?.sourceItemId===id||t?.id===id||t?.generatorKey===key?(t.id===id&&t.sourceItemId===id&&t.generatorKey===key&&t.sourceVerified===true&&t.reviewLocked===false?key:""):oldKey(t);api.generate=(t,u,d,s,v=0)=>t?.sourceItemId===id||t?.id===id||t?.generatorKey===key?generate(t,u,d,s,v):oldGenerate(t,u,d,s,v);if(Array.isArray(api.names)&&!api.names.includes(key))api.names.push(key);Object.defineProperty(api,"__source52U2Page19Mission3Installed",{value:true});return true}
+  return Object.freeze({id,key,pools,derive,generate,build,install});
+});

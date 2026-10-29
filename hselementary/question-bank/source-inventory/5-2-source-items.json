@@ -1228,14 +1228,16 @@
       "ordinal": 2,
       "pdfPage": 13,
       "printedPage": 17,
-      "sourceShape": "분수의 곱셈의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "거리의 연속 배율로 최종 거리 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 17쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e2-mission-2-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e2-mission-3",
@@ -1245,14 +1247,16 @@
       "ordinal": 3,
       "pdfPage": 13,
       "printedPage": 17,
-      "sourceShape": "분수의 곱셈의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "분모별 분수 배열에서 특정 순서와 곱 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 17쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e2-mission-3-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e2-mission-4",
@@ -1262,14 +1266,16 @@
       "ordinal": 4,
       "pdfPage": 13,
       "printedPage": 17,
-      "sourceShape": "분수의 곱셈의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "일정한 차의 분수열에서 주어진 항까지 연속 곱 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 17쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e2-mission-4-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e2-mission-5",
@@ -1279,14 +1285,16 @@
       "ordinal": 5,
       "pdfPage": 13,
       "printedPage": 17,
-      "sourceShape": "분수의 곱셈의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "공의 세 번째 상승까지 이동 거리 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 17쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e2-mission-5-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e2-mission-6",
@@ -1296,14 +1304,15 @@
       "ordinal": 6,
       "pdfPage": 13,
       "printedPage": 17,
-      "sourceShape": "분수의 곱셈의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "sourceShape": "같은 크기의 원이 일정한 간격으로 겹친 직사각형의 넓이",
+      "answerContract": "blocked-missing-circle-spacing",
       "visualRisk": [
-        "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
+        "그림의 축척만으로 이웃한 원의 중심 간격을 확정할 수 없음"
       ],
       "sourceVerified": false,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 이미지에서 원의 지름에 해당하는 높이는 확인했으나 원의 중심 간격이나 직사각형 가로 길이의 수치가 제시되지 않습니다. 서로 다른 간격이 조건을 만족해 넓이를 유일하게 확정할 수 없으므로 잠금 유지합니다.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e3-exploration",
@@ -1313,14 +1322,16 @@
       "ordinal": 1,
       "pdfPage": 14,
       "printedPage": 18,
-      "sourceShape": "분수의 곱셈의 활용의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "두 막대의 같은 잠긴 길이와 길이 차로 깊이 구하기",
       "answerContract": "candidate: multi-part",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 18쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e3-exploration-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e3-example-1",
@@ -1330,14 +1341,16 @@
       "ordinal": 1,
       "pdfPage": 14,
       "printedPage": 18,
-      "sourceShape": "분수의 곱셈의 활용의 예제 3-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "반복 반동 높이에서 처음 높이 역산",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 18쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e3-example-1-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e3-example-2",
@@ -1347,14 +1360,16 @@
       "ordinal": 2,
       "pdfPage": 14,
       "printedPage": 18,
-      "sourceShape": "분수의 곱셈의 활용의 예제 3-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "부분 인원으로 전체 집단과 해당 인원의 비율 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 18쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e3-example-2-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e3-example-3",
@@ -1364,14 +1379,16 @@
       "ordinal": 3,
       "pdfPage": 14,
       "printedPage": 18,
-      "sourceShape": "분수의 곱셈의 활용의 예제 3-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "연속해서 남은 부분의 분수로 전체 넓이 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 18쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e3-example-3-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e3-example-4",
@@ -1381,14 +1398,16 @@
       "ordinal": 4,
       "pdfPage": 14,
       "printedPage": 18,
-      "sourceShape": "분수의 곱셈의 활용의 예제 3-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "각자의 분수값이 같은 두 금액과 합에서 각각 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 18쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e3-example-4-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e3-mission-1",
@@ -1398,14 +1417,16 @@
       "ordinal": 1,
       "pdfPage": 15,
       "printedPage": 19,
-      "sourceShape": "분수의 곱셈의 활용의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "직사각형 둘레와 가로세로 비로 넓이 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 19쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e3-mission-1-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e3-mission-2",
@@ -1415,14 +1436,16 @@
       "ordinal": 2,
       "pdfPage": 15,
       "printedPage": 19,
-      "sourceShape": "분수의 곱셈의 활용의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "연속 이동 비율과 마지막 거리로 탄 거리의 합 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 19쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e3-mission-2-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e3-mission-3",
@@ -1432,14 +1455,16 @@
       "ordinal": 3,
       "pdfPage": 15,
       "printedPage": 19,
-      "sourceShape": "분수의 곱셈의 활용의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "네 종류 중 남은 수량으로 첫 종류 수량 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 19쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e3-mission-3-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e3-mission-4",
@@ -1449,14 +1474,16 @@
       "ordinal": 4,
       "pdfPage": 15,
       "printedPage": 19,
-      "sourceShape": "분수의 곱셈의 활용의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "묶음 가격과 배율·차이로 한 개의 가격 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 19쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e3-mission-4-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e3-mission-5",
@@ -1466,14 +1493,16 @@
       "ordinal": 5,
       "pdfPage": 15,
       "printedPage": 19,
-      "sourceShape": "분수의 곱셈의 활용의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "세 사람의 전체 분수와 추가 수량으로 한 사람의 수량 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 19쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e3-mission-5-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e3-mission-6",
@@ -1483,14 +1512,16 @@
       "ordinal": 6,
       "pdfPage": 15,
       "printedPage": 19,
-      "sourceShape": "분수의 곱셈의 활용의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "두 번 나눠 준 양과 남은 양의 배율·차이로 남은 양 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 19쪽의 조건과 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e3-mission-6-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e4-exploration",
@@ -1500,14 +1531,16 @@
       "ordinal": 1,
       "pdfPage": 16,
       "printedPage": 20,
-      "sourceShape": "분수의 곱셈의 응용의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "세 분수 모두에 곱해 자연수가 되는 최소 양의 분수",
       "answerContract": "candidate: multi-part",
       "visualRisk": [
-        "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
+        "조건을 나타내는 세 분수 표기 확인"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 20쪽 조건을 눈으로 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e4-exploration-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e4-example-1",
@@ -1517,14 +1550,16 @@
       "ordinal": 1,
       "pdfPage": 16,
       "printedPage": 20,
-      "sourceShape": "분수의 곱셈의 응용의 예제 4-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "직사각형의 부분 넓이와 가로로 기약분수 세로의 분자·분모 곱 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
-        "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
+        "기약분수 기호와 단위 표기 확인; 별도 그림 없음"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 20쪽 조건을 눈으로 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e4-example-1-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e4-example-2",
@@ -1534,14 +1569,16 @@
       "ordinal": 2,
       "pdfPage": 16,
       "printedPage": 20,
-      "sourceShape": "분수의 곱셈의 응용의 예제 4-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "등분한 직사각형의 대각선과 수직선으로 표시점의 수 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
-        "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
+        "여덟 구간의 가로선과 대각선 교점의 수직 투영을 확인"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 20쪽의 그림·조건을 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e4-example-2-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e4-example-3",
@@ -1551,14 +1588,16 @@
       "ordinal": 3,
       "pdfPage": 16,
       "printedPage": 20,
-      "sourceShape": "분수의 곱셈의 응용의 예제 4-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "기약분수 곱의 상한과 자연수 조건을 만족하는 모든 값",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
-        "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
+        "기약분수 기호 및 자연수 범위를 확인"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 20쪽 조건을 확인하고 창작 유사문항을 독립 검산했습니다. 원문은 공개 보호로 잠금 유지하며 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e4-example-3-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e4-example-4",
@@ -1568,14 +1607,16 @@
       "ordinal": 4,
       "pdfPage": 16,
       "printedPage": 20,
-      "sourceShape": "분수의 곱셈의 응용의 예제 4-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "주어진 수로 만든 기약 진분수의 곱이 특정 값인 짝 세기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
-        "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
+        "분수 간 숫자 재사용 조건 해석이 원문에서 명확하지 않음"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 20쪽 조건을 확인하고 창작 유사문항을 독립 검산했습니다. 원문은 공개 보호로 잠금 유지하며 출판사 정답 미대조. 원문의 숫자 재사용 여부에 해석 차이가 있어 유사문항에 조건을 명시했습니다.",
+      "syntheticRuntimeTypeId": "5-2-u2-e4-example-4-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e4-mission-1",

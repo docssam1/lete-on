@@ -2566,6 +2566,46 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name:"다섯 분수 곱셈 계산",label:"다섯 분수 곱셈 계산",difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-e2-mission-1",sourceItemLabel:"Mission 1 유사문항",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:13,sourcePrintedPage:17,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2Page17Mission1Synthetic",generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 다섯 소문항의 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
   }
 
+  if (source52Unit2Product) for (const [n,name] of [[2,"연속 배율로 거리 구하기"],[3,"분수 배열의 순서와 곱"],[4,"규칙적인 분수의 연속 곱"],[5,"세 번째 상승까지 공의 이동 거리"]]) {
+    const id = `5-2-u2-e2-mission-${n}-synthetic`, typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e2-mission-${n}`,sourceItemLabel:`Mission ${n} 유사문항`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:13,sourcePrintedPage:17,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page17Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
+  const source52Unit2Equation = source52Unit2?.subunits.find(subunit => subunit.name === "식 세워 풀기");
+  if (source52Unit2Equation) for (const [suffix,name,label,section,key] of [
+    ["exploration","두 막대의 잠긴 길이로 깊이 구하기","개념탐구 3 유사문항","exploration","source52U2Page18Exploration3"],
+    ["example-1","반동 높이에서 처음 높이 역산","예제 3-1 유사문항","example","source52U2Page18Example31"],
+    ["example-2","부분 인원으로 전체 회원 비율 구하기","예제 3-2 유사문항","example","source52U2Page18Example32"]]) {
+    const id = `5-2-u2-e3-${suffix}-synthetic`, typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Equation.types.push({id,number:source52Unit2Equation.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e3-${suffix}`,sourceItemLabel:label,sourceSection:section,sourceTier:"advanced",sourcePdfPage:14,sourcePrintedPage:18,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
+  if (source52Unit2Equation) for (const [n,name] of [[3,"연속해서 남은 넓이로 전체 구하기"],[4,"같은 분수값과 합으로 두 금액 구하기"]]) {
+    const id = `5-2-u2-e3-example-${n}-synthetic`, typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Equation.types.push({id,number:source52Unit2Equation.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e3-example-${n}`,sourceItemLabel:`예제 3-${n} 유사문항`,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:14,sourcePrintedPage:18,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page18Example3${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
+  if (source52Unit2Equation) for (const [n,name] of [[1,"둘레와 가로세로 비로 넓이 구하기"],[2,"남은 도보 거리로 교통 이동 거리 구하기"],[3,"연속해서 남은 수량으로 처음 종류 구하기"]]) {
+    const id = `5-2-u2-e3-mission-${n}-synthetic`, typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Equation.types.push({id,number:source52Unit2Equation.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e3-mission-${n}`,sourceItemLabel:`Mission ${n} 유사문항`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:15,sourcePrintedPage:19,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page19Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
+  if (source52Unit2Equation) for (const [n,name] of [[4,"묶음 가격과 배율 차로 한 개 가격 구하기"],[5,"전체의 분수와 추가 수량으로 세 사람의 수 구하기"],[6,"두 번 나눈 양과 남은 양의 배율 비교"]]) {
+    const id = `5-2-u2-e3-mission-${n}-synthetic`, typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Equation.types.push({id,number:source52Unit2Equation.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e3-mission-${n}`,sourceItemLabel:`Mission ${n} 유사문항`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:15,sourcePrintedPage:19,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page19Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
+  const source52Unit2Application = source52Unit2?.subunits.find(subunit => subunit.name === "분수의 곱셈 응용 문제");
+  if (source52Unit2Application) for (const [suffix,name,label,section,key] of [
+    ["exploration","세 분수에 곱해 자연수가 되는 가장 작은 분수","개념탐구 4 유사문항","exploration","source52U2Page20Exploration4"],
+    ["example-1","부분 넓이로 직사각형 세로 구하기","예제 4-1 유사문항","example","source52U2Page20Example41"],
+    ["example-2","대각선과 분할선으로 수직선의 수 구하기","예제 4-2 유사문항","example","source52U2Page20Example42"],
+    ["example-3","기약분수 곱의 자연수 조건","예제 4-3 유사문항","example","source52U2Page20Example43"],
+    ["example-4","곱이 일정한 기약 진분수 짝의 수","예제 4-4 유사문항","example","source52U2Page20Example44"]]) {
+    const id = `5-2-u2-e4-${suffix}-synthetic`, typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Application.types.push({id,number:source52Unit2Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e4-${suffix}`,sourceItemLabel:label,sourceSection:section,sourceTier:"advanced",sourcePdfPage:16,sourcePrintedPage:20,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
