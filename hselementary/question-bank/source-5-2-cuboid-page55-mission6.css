@@ -1,0 +1,40 @@
+.source52-p55m6-question,
+.source52-p55m6-solution { color: #2a241c; font-family: "Noto Serif KR", "Batang", serif; font-size: 1rem; line-height: 1.62; }
+.source52-p55m6-question > p,
+.source52-p55m6-solution > p { margin: 0 0 0.55rem; }
+.source52-p55m6-figures { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%; margin: 0.55rem auto 0.8rem; }
+.source52-p55m6-figure { min-width: 0; margin: 0; padding: 0.6rem 0.55rem; border: 1px solid #d9d3c8; border-radius: 0.35rem; background: #fffefa; text-align: center; }
+.source52-p55m6-figure figcaption { color: #354f3b; font: 700 0.96rem "Pretendard", sans-serif; }
+.source52-p55m6-shape { display: block; width: min(100%, 18rem); height: auto; margin: 0.2rem auto 0; overflow: visible; }
+.source52-p55m6-top { fill: #fff; stroke: #2a241c; stroke-width: 1.8; stroke-linejoin: round; }
+.source52-p55m6-side { fill: #f1ece1; stroke: #2a241c; stroke-width: 1.8; stroke-linejoin: round; }
+.source52-p55m6-front { fill: #fff; stroke: #2a241c; stroke-width: 1.8; }
+.source52-p55m6-contact { margin: 0.3rem 0 0; color: #675d4c; font: 600 0.86rem "Pretendard", sans-serif; }
+.source52-p55m6-outer { margin: 0.15rem 0 0; color: #354f3b; font: 600 0.9rem "Pretendard", sans-serif; }
+.source52-p55m6-outer strong { color: #176850; font-size: 1.2rem; }
+.source52-p55m6-answer-visual { margin: 0 0 0.45rem; }
+.source52-p55m6-answer-line { margin-top: 0.35rem !important; color: #675d4c; font-family: "Pretendard", sans-serif; font-weight: 600; }
+.source52-p55m6-solution ol { margin: 0.3rem 0 0.6rem; padding-left: 1.45rem; }
+.source52-p55m6-solution li { margin: 0.28rem 0; }
+.source52-p55m6-final-answer { color: #1e4631; font-weight: 700; }
+
+@media (max-width: 700px) {
+  .source52-p55m6-figures { grid-template-columns: minmax(0, 1fr); gap: 0.65rem; }
+  .source52-p55m6-figure { padding: 0.45rem 0.5rem; }
+  .source52-p55m6-shape { width: min(100%, 17rem); }
+  .source52-p55m6-question,
+  .source52-p55m6-solution { font-size: 0.92rem; }
+}
+
+@media print {
+  .source52-p55m6-question,
+  .source52-p55m6-solution { font-size: 10.2pt; line-height: 1.4; }
+  .source52-p55m6-figures { gap: 0.12in; margin: 0.06in auto 0.08in; }
+  .source52-p55m6-figure { padding: 0.04in 0.06in; }
+  .source52-p55m6-shape { width: 2.35in; }
+  .source52-p55m6-contact { font-size: 8.5pt; }
+  .source52-p55m6-outer { font-size: 9pt; }
+  .source52-p55m6-outer strong { font-size: 11pt; }
+  .source52-p55m6-solution ol { margin: 0.15rem 0 0.3rem; }
+  .source52-p55m6-solution li { margin: 0.12rem 0; }
+}
