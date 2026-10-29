@@ -1808,7 +1808,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               id: "5-2-u3-e4-mission-4",
               name: "삼등분점을 이은 작은 정사각형의 넓이",
               sourceItemId: "5-2-u3-e4-mission-4",
-              sourceItemLabel: "Mission 4",
+              sourceItemLabel: "Mission 4 유사문항",
               sourceSection: "mission",
               sourceTier: "advanced",
               sourcePdfPage: 27,

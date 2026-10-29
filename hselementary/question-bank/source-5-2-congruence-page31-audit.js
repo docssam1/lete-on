@@ -127,21 +127,28 @@ for (const def of source.definitions) {
           const next = polygon[(index+1)%polygon.length];
           return sum + point.x*next.y-point.y*next.x;
         },0))/2;
-        const scale = (n.x-g.x)/side;
+        const scale = (r.x-g.x)/side;
         assert.equal(readAttr("k"), k);
         assert.equal(readAttr("side-length"), side);
         assert.equal(readAttr("outer-area"), outerArea);
         assert.equal(side, 3*k);
         assert.equal(outerArea, side*side);
         assert.equal(trisectedLength, k);
-        assert.deepEqual(m, { x:g.x+2*(n.x-g.x)/3, y:g.y }, "M is two thirds along the top side");
-        assert.deepEqual(b, { x:r.x, y:g.y+(r.y-g.y)/3 }, "B is one third down the left side");
-        assert.deepEqual(s, { x:r.x+(d.x-r.x)/3, y:r.y }, "S is one third along the bottom side");
-        assert.deepEqual(o, { x:n.x, y:n.y+2*(d.y-n.y)/3 }, "O is two thirds down the right side");
+        assert.deepEqual(m, { x:g.x+2*(r.x-g.x)/3, y:g.y }, "M is two thirds along the top side");
+        assert.deepEqual(b, { x:n.x, y:g.y+(n.y-g.y)/3 }, "B is one third down the left side");
+        assert.deepEqual(s, { x:n.x+(d.x-n.x)/3, y:n.y }, "S is one third along the bottom side");
+        assert.deepEqual(o, { x:r.x, y:r.y+2*(d.y-r.y)/3 }, "O is two thirds down the right side");
         const sides = [distance(m,b), distance(b,s), distance(s,o), distance(o,m)];
         assert.ok(sides.every(value => Math.abs(value-sides[0]) < 1e-8), "inner quadrilateral is a square");
         assert.ok(Math.abs(dot(m,b,s)) < 1e-8 && Math.abs(dot(b,s,o)) < 1e-8, "adjacent inner sides are perpendicular");
-        assert.equal((svg.match(/class="source52-corner-triangle"/g) ?? []).length, 4, "four outer corner triangles are represented");
+        const corners = [...svg.matchAll(/<polygon class="source52-corner-triangle" points="([^"]+)"\/>/g)].map(match => match[1].split(" ").map(pair => { const [x,y] = pair.split(",").map(Number); return {x,y}; }));
+        assert.deepEqual(corners, [[g,m,b],[r,m,o],[d,o,s],[n,s,b]], "corner triangles use adjacent trisection points");
+        for (const [a,b,c] of corners) {
+          const area = Math.abs((b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x))/2/(scale*scale);
+          assert.ok(Math.abs(area-cornerArea) < 1e-8, "rendered corner area matches its calculation");
+        }
+        assert.match(svg, /<text x="356" y="38">ㄹ<\/text>/);
+        assert.match(svg, /<text x="48" y="342">ㄴ<\/text>/);
         assert.equal(cornerArea, k*2*k/2);
         assert.equal(answer, outerArea-4*cornerArea);
         assert.ok(Math.abs(visualArea/(scale*scale)-answer) < 1e-8, "rendered inner square area matches the answer");
@@ -158,9 +165,7 @@ for (const def of source.definitions) {
         assert.match(type.sourceEvidence, /d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463/);
         assert.match(type.sourceEvidence, /clean-alternate-sha256:6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88/);
         assert.match(type.sourceEvidence, /PDF p\.26; printed p\.31/);
-        if (variant === 1 && difficultyOffset === 0) {
-          assert.deepEqual({ k, side, outerArea, trisectedLength, cornerArea, answer }, { k:5, side:15, outerArea:225, trisectedLength:5, cornerArea:25, answer:125 }, "the verified pool includes the exact source values and independent answer");
-        }
+        assert.notEqual(outerArea, 225, "synthetic values must differ from the original source");
         trisectionPoolSignatures.add(`${k}:${outerArea}:${answer}`);
       } else if (def.sourceItemId.endsWith("mission-5")) {
         const { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer } = item.answerModel;

@@ -54,12 +54,12 @@ async function prepare(page, width) {
       labels: [...svg.querySelectorAll("text")].map(node => node.textContent.trim()),
       label: svg.getAttribute("aria-label"), box: svg.getBoundingClientRect().toJSON()
     }));
-    const k = [8, 5, 12][variant] + difficulty;
+    const k = [8, 11, 14][variant] + difficulty;
     const expectedAnswer = 5*k*k;
     assert.equal(facts.k, k);
     assert.equal(facts.side, 3*k);
     assert.equal(facts.outerArea, 9*k*k);
-    assert.deepEqual(facts.labels, ["ㄱ","ㄴ","ㄷ","ㄹ","ㅁ","ㅂ","ㅅ","ㅇ"]);
+    assert.deepEqual(facts.labels, ["ㄱ","ㄹ","ㄷ","ㄴ","ㅁ","ㅂ","ㅅ","ㅇ"]);
     assert(facts.label.includes("삼등분") && facts.label.includes("작은 정사각형"));
     assert(facts.box.width <= width - 20, `Diagram must fit ${width}px viewport`);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `Problem overflow ${width}/${variant}/${difficulty}`);
@@ -94,5 +94,5 @@ async function prepare(page, width) {
   }
   await browser.close();
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ status: "passed", sourceItemId: id, states, widths, difficultyOffsets: difficulties, variants, sourceExactCombo: { variant: 1, difficulty: 0, outerArea: 225, answer: 125 }, blockedExternalRequests: blockedRequests, noAnswerLeak: true, problemSolutionSeparated: true, overflowChecks: states * 2, a4ProblemAndSolutionExported: Boolean(evidenceDir), observations }, null, 2));
+  console.log(JSON.stringify({ status: "passed", sourceItemId: id, states, widths, difficultyOffsets: difficulties, variants, sourceExactExcluded: true, blockedExternalRequests: blockedRequests, noAnswerLeak: true, problemSolutionSeparated: true, overflowChecks: states * 2, a4ProblemAndSolutionExported: Boolean(evidenceDir), observations }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; });

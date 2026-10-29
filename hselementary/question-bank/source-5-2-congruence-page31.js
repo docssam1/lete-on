@@ -242,20 +242,20 @@
   }
 
   function trisectionSquareDiagram(k, outerArea, answer) {
-    const g = { x: 72, y: 44 }, n = { x: 348, y: 44 }, d = { x: 348, y: 320 }, r = { x: 72, y: 320 };
-    const side = n.x - g.x;
+    const g = { x: 72, y: 44 }, n = { x: 72, y: 320 }, d = { x: 348, y: 320 }, r = { x: 348, y: 44 };
+    const side = r.x - g.x;
     const m = { x: g.x + 2 * side / 3, y: g.y };
-    const o = { x: n.x, y: n.y + 2 * side / 3 };
-    const s = { x: r.x + side / 3, y: r.y };
-    const b = { x: r.x, y: g.y + side / 3 };
+    const o = { x: r.x, y: r.y + 2 * side / 3 };
+    const s = { x: n.x + side / 3, y: n.y };
+    const b = { x: n.x, y: g.y + side / 3 };
     const coords = p => `${Number(p.x.toFixed(2))},${Number(p.y.toFixed(2))}`;
     const polygon = [m, b, s, o].map(coords).join(" ");
     const triangle = points => `<polygon class="source52-corner-triangle" points="${points.map(coords).join(" ")}"/>`;
-    return `<svg class="source52-p31-diagram source52-p31-square-trisection" data-source52-figure="square-trisection-inner-area" data-k="${k}" data-side-length="${3*k}" data-outer-area="${outerArea}" data-g="${coords(g)}" data-n="${coords(n)}" data-d="${coords(d)}" data-r="${coords(r)}" data-m="${coords(m)}" data-b="${coords(b)}" data-s="${coords(s)}" data-o="${coords(o)}" viewBox="0 0 420 365" role="img" aria-label="넓이가 ${outerArea}제곱센티미터인 정사각형의 각 변을 삼등분한 점을 이어 만든 작은 정사각형의 넓이 그림" xmlns="http://www.w3.org/2000/svg">${triangle([g,n,m])}${triangle([n,d,o])}${triangle([d,r,s])}${triangle([r,g,b])}<polygon class="source52-area-target" points="${polygon}"/><path d="M${coords(g)} L${coords(n)} L${coords(d)} L${coords(r)} Z"/><path d="M${coords(m)} L${coords(b)} L${coords(s)} L${coords(o)} Z"/><text x="48" y="38">ㄱ</text><text x="356" y="38">ㄴ</text><text x="356" y="342">ㄷ</text><text x="48" y="342">ㄹ</text><text x="245" y="28">ㅁ</text><text x="54" y="140">ㅂ</text><text x="154" y="352">ㅅ</text><text x="356" y="232">ㅇ</text></svg>`;
+    return `<svg class="source52-p31-diagram source52-p31-square-trisection" data-source52-figure="square-trisection-inner-area" data-k="${k}" data-side-length="${3*k}" data-outer-area="${outerArea}" data-g="${coords(g)}" data-n="${coords(n)}" data-d="${coords(d)}" data-r="${coords(r)}" data-m="${coords(m)}" data-b="${coords(b)}" data-s="${coords(s)}" data-o="${coords(o)}" viewBox="0 0 420 365" role="img" aria-label="넓이가 ${outerArea}제곱센티미터인 정사각형의 각 변을 삼등분한 점을 이어 만든 작은 정사각형의 넓이 그림" xmlns="http://www.w3.org/2000/svg">${triangle([g,m,b])}${triangle([r,m,o])}${triangle([d,o,s])}${triangle([n,s,b])}<polygon class="source52-area-target" points="${polygon}"/><path d="M${coords(g)} L${coords(r)} L${coords(d)} L${coords(n)} Z"/><path d="M${coords(m)} L${coords(b)} L${coords(s)} L${coords(o)} Z"/><text x="48" y="38">ㄱ</text><text x="356" y="38">ㄹ</text><text x="356" y="342">ㄷ</text><text x="48" y="342">ㄴ</text><text x="245" y="28">ㅁ</text><text x="54" y="140">ㅂ</text><text x="154" y="352">ㅅ</text><text x="356" y="232">ㅇ</text></svg>`;
   }
 
   function buildMission4(variant, offset) {
-    const k = [8, 5, 12][variant] + offset;
+    const k = [8, 11, 14][variant] + offset;
     const side = 3 * k;
     const outerArea = side * side;
     const trisectedLength = k;
