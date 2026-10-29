@@ -220,9 +220,10 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .competition-record-pair-note { margin: 6px 0 0; color: #566274; font-size: .72rem; line-height: 1.5; }
 .competition-record-pair-cards { margin-top: 10px; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
 .competition-record-pair-card { min-width: 0; padding: 12px; border: 1px solid #d8dee8; background: #faf9fc; }
-.competition-record-pair-card h5 { margin: 0; font-size: .76rem; overflow-wrap: anywhere; }
-.competition-record-pair-card p { margin: 6px 0 0; color: #566274; font-size: .68rem; line-height: 1.5; }
-.competition-record-pair-card ul { margin: 8px 0 0; padding-left: 17px; color: #354255; font-size: .68rem; line-height: 1.55; }
+.competition-record-pair-card h5 { margin: 0; font-size: 1rem; line-height: 1.4; overflow-wrap: anywhere; }
+.competition-record-pair-card h5 time { white-space: nowrap; }
+.competition-record-pair-card p { margin: 8px 0 0; color: #354255; font-size: 1rem; line-height: 1.55; }
+.competition-record-pair-card ul { margin: 10px 0 0; padding-left: 20px; color: #354255; font-size: 1rem; line-height: 1.55; }
 .competition-record-pair-card li + li { margin-top: 3px; }
 .saved-diagnostic-heading p { overflow-wrap: anywhere; }
 .boarding-close { color: #fff; background: #182230; }

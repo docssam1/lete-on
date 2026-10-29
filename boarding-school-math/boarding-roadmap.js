@@ -447,7 +447,10 @@
   }
   function buildCompetitionRecordCard(record, heading, id) {
     const card = document.createElement("article"); card.className = "competition-record-pair-card";
-    const title = document.createElement("h5"); title.id = id; title.textContent = heading;
+    const title = document.createElement("h5"); title.id = id;
+    const label = document.createElement("span"); label.textContent = heading;
+    const date = document.createElement("time"); date.dateTime = record.examDate || ""; date.textContent = record.examDate || "";
+    title.append(label, document.createTextNode(" · "), date);
     card.setAttribute("aria-labelledby", title.id);
     const summary = document.createElement("p"); summary.textContent = `정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}`;
     const reasonNames = { concept: "개념", approach: "접근", calculation: "계산", reading: "조건 읽기", time: "시간" };
@@ -502,8 +505,8 @@
     section.dataset.state = "comparable-format";
     copy.textContent = `${currentOption.title} · ${currentOption.itemCount}문항의 가장 최근 날짜 기록을 비교해요. 회차별 난도는 보정하지 않으므로 차이를 성장이나 실력 등급으로 해석하지 않아요.`;
     cards.append(
-      buildCompetitionRecordCard(currentRecord, `${current.grade}학년 · ${currentRecord.paperLabel || currentRecord.programTitle} · ${currentRecord.examDate}`, "competition-grade-current-record-title"),
-      buildCompetitionRecordCard(targetRecord, `${target.grade}학년 · ${targetRecord.paperLabel || targetRecord.programTitle} · ${targetRecord.examDate}`, "competition-grade-target-record-title")
+      buildCompetitionRecordCard(currentRecord, `${current.grade}학년 · ${currentRecord.paperLabel || currentRecord.programTitle}`, "competition-grade-current-record-title"),
+      buildCompetitionRecordCard(targetRecord, `${target.grade}학년 · ${targetRecord.paperLabel || targetRecord.programTitle}`, "competition-grade-target-record-title")
     );
   }
   function renderGradeFocus() {
@@ -600,7 +603,7 @@
     const datedRecords = (records || []).filter(function (record) { return typeof record.examDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(record.examDate); });
     pairSection.hidden = datedRecords.length < 2;
     if (datedRecords.length >= 2) datedRecords.slice(0, 2).forEach(function (record, index) {
-      pairCards.append(buildCompetitionRecordCard(record, `${index === 0 ? "최근 기록" : "이전 기록"} · ${record.paperLabel || record.programTitle} · ${record.examDate}`, `competition-record-pair-card-title-${index}`));
+      pairCards.append(buildCompetitionRecordCard(record, `${index === 0 ? "최근 기록" : "이전 기록"} · ${record.paperLabel || record.programTitle}`, `competition-record-pair-card-title-${index}`));
     });
     if (!evidence) return;
     setText("competition-saved-title", `${evidence.programTitle} · Grade ${evidence.grade}`);

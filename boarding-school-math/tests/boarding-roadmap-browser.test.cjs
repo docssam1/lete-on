@@ -388,6 +388,9 @@ test("grade comparison can pair dated reviews from the same contest across grade
   await page.locator("#comparison-grade").selectOption("6");
   assert.equal(await page.locator("#competition-grade-comparison").getAttribute("data-state"), "comparable-format");
   assert.equal(await page.locator("#competition-grade-comparison-cards article").count(), 2);
+  assert.deepEqual(await page.locator("#competition-grade-comparison-cards article p, #competition-grade-comparison-cards article li").evaluateAll(function (nodes) {
+    return [...new Set(nodes.map(function (node) { return getComputedStyle(node).fontSize; }))];
+  }), ["16px"]);
   const comparisonText = await page.locator("#competition-grade-comparison-cards").innerText();
   assert.match(comparisonText, /6학년 · Grade 6 practice · 2026-10-01/);
   assert.match(comparisonText, /7학년 · Grade 7 practice · 2026-10-02/);
