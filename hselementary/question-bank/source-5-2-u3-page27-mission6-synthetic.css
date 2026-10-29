@@ -1,0 +1,3 @@
+.u3e2m6-figure { display:block; width:min(100%, 360px); height:auto; margin:1em auto; }
+.u3e2m6-figure text { font: 12px sans-serif; }
+@media print { .u3e2m6-figure { max-height:190px; } }
