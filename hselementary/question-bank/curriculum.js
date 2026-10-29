@@ -2724,6 +2724,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 4 유사문항",sourceSection:"mission",sourcePdfPage:23,sourcePrintedPage:27,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 변형의 삼각형 부등식과 서로 다른 변 조건을 검증했습니다.",generatorKey:"source52TriangleDistinctNaturalSideSyntheticPage27Mission4",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
 
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t => t.id === "5-2-u3-e2-mission-6")) {
+    const id="5-2-u3-e2-mission-6",name="이등변삼각형 안의 작은 삼각형 합동쌍";
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 6 유사문항",sourceSection:"mission",sourcePdfPage:23,sourcePrintedPage:27,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 변형의 작은 삼각형의 합동쌍과 집계 범위을 검증했습니다.",generatorKey:"source52IsoscelesSmallTrianglePairsSyntheticPage27Mission6",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52Application = source52Unit1?.subunits.find(subunit => subunit.name === "어림하기의 활용 · 개념탐구 3 원문 연결");
   if (source52Application) for (const [n,name] of [[1,"어림한 방법 모두 찾기"],[2,"단위로 파는 리본의 가격"]]) {
