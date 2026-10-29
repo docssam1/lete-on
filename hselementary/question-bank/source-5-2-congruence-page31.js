@@ -99,8 +99,8 @@
     const givenMark = angleMark(rr,{x:cx,y:cy},m,16);
     const targetMark = angleMark(m,rr,b,17);
     const firstEqual = `<line class="source52-equal-mark" x1="${g.x}" y1="${g.y}" x2="${rr.x}" y2="${rr.y}"/>`;
-    const xOne = { x: cx + 45*Math.cos(rad(48)), y: cy - 45*Math.sin(rad(48)) };
-    const xTwo = { x: cx + 68*Math.cos(rad(16)), y: cy - 68*Math.sin(rad(16)) };
+    const xOne = { x: cx + 45*Math.cos(rad(1.5*x)), y: cy - 45*Math.sin(rad(1.5*x)) };
+    const xTwo = { x: cx + 68*Math.cos(rad(x/2)), y: cy - 68*Math.sin(rad(x/2)) };
     return `<svg class="source52-p31-diagram source52-p31-circle" data-source52-figure="semicircle-angle" data-central-arc="${centralArc}" viewBox="0 0 500 330" role="img" aria-label="지름 ㄱㄷㄴ, 같은 현 ㄱㄹ과 ㅁㅂ, 같은 중심각, 목표각 ㉠을 표시한 반원" xmlns="http://www.w3.org/2000/svg"><path class="source52-circle-arc" d="M${point(g.x,g.y)} A${r} ${r} 0 0 1 ${point(n.x,n.y)}"/><line x1="${g.x}" y1="${g.y}" x2="${n.x}" y2="${n.y}"/><line x1="${cx}" y1="${cy}" x2="${rr.x}" y2="${rr.y}"/><line x1="${cx}" y1="${cy}" x2="${m.x}" y2="${m.y}"/><line x1="${cx}" y1="${cy}" x2="${b.x}" y2="${b.y}"/><line x1="${g.x}" y1="${g.y}" x2="${rr.x}" y2="${rr.y}"/><line x1="${rr.x}" y1="${rr.y}" x2="${m.x}" y2="${m.y}"/><line x1="${m.x}" y1="${m.y}" x2="${b.x}" y2="${b.y}"/><line x1="${b.x}" y1="${b.y}" x2="${n.x}" y2="${n.y}"/>${equalTick(g,rr)}${equalTick(m,b)}<circle cx="${cx}" cy="${cy}" r="4"/><path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text x="${cx+8}" y="${cy+18}">ㄷ</text>${labels(g,"ㄱ",-20,18)}${labels(rr,"ㄹ",-14,-10)}${labels(m,"ㅁ",-4,-12)}${labels(b,"ㅂ",-1,-12)}${labels(n,"ㄴ",8,18)}<text class="source52-angle-label" x="${Number((givenMark.label.x-16).toFixed(1))}" y="${Number((givenMark.label.y+4).toFixed(1))}">${baseVertexAngle}°</text><text class="source52-angle-label" x="${Number(xOne.x.toFixed(1))}" y="${Number(xOne.y.toFixed(1))}">x</text><text class="source52-angle-label" x="${Number(xTwo.x.toFixed(1))}" y="${Number(xTwo.y.toFixed(1))}">x</text><text class="source52-target-label" x="${Number((targetMark.label.x-8).toFixed(1))}" y="${Number((targetMark.label.y+4).toFixed(1))}">㉠</text></svg>`;
   }
 
@@ -229,8 +229,9 @@
     const equalArc = (180 - arcRM) / 3;
     const answer = 180 - (arcRM + equalArc) / 2;
     const prompt = `<div class="source52-p31-question"><p>중심이 ㄷ인 반원의 호 위에 ㄱ, ㄹ, ㅁ, ㅂ, ㄴ이 차례로 놓여 있습니다. ㄷㄹ=ㄷㅁ이고, ㄱㄹ=ㅁㅂ이며, ∠ㅁㄷㅂ=∠ㅂㄷㄴ입니다. ∠ㄷㄹㅁ=${vertexAngle}°일 때 ∠ㄹㅁㅂ을 구하세요.</p>${semicircleDiagram(vertexAngle,equalArc,arcRM)}</div>`;
-    const solution = `<div class="source52-p31-solution"><ol><li>ㄷㄹ과 ㄷㅁ은 반지름이므로 △ㄷㄹㅁ은 이등변삼각형입니다. 밑각이 각각 ${vertexAngle}°이므로 중심각 ∠ㄹㄷㅁ=${arcRM}°입니다.</li><li>같은 중심각은 같은 호를 나타내고, 같은 현 ㄱㄹ과 ㅁㅂ도 같은 호를 나타냅니다. 따라서 호 ㄱㄹ, ㅁㅂ, ㅂㄴ의 크기를 각각 x라 두면 반원에서 3x+${arcRM}°=180°이므로 x=${fmt(equalArc)}°입니다.</li><li>ㄹ에서 ㅂ까지 ㅁ을 지나는 작은 호는 ${arcRM}°+${fmt(equalArc)}°=${fmt(arcRM+equalArc)}°입니다. ∠ㄹㅁㅂ은 반대쪽 큰 호 ${fmt(360-arcRM-equalArc)}°를 바라봅니다.</li><li>원주각은 바라보는 호의 절반이므로 ∠ㄹㅁㅂ=${fmt((360-arcRM-equalArc)/2)}°입니다.</li></ol></div>`;
-    return result("5-2-u3-e4-mission-2", variant, offset, prompt, `${fmt(answer)}°`, solution, { vertexAngle, centralArc: arcRM, equalArc, answer }, false, answerVisual("반원 문제의 원주각", `${fmt(answer)}°`));
+    const solution = `<div class="source52-p31-solution"><ol><li>ㄷㄹ과 ㄷㅁ은 반지름이므로 △ㄷㄹㅁ은 이등변삼각형입니다. 두 밑각은 각각 ${vertexAngle}°이므로 ∠ㄹㄷㅁ=180°−${vertexAngle}°−${vertexAngle}°=${arcRM}°입니다.</li><li>ㄷㄱ, ㄷㄹ, ㄷㅁ, ㄷㅂ은 모두 반지름이고 ㄱㄹ=ㅁㅂ이므로 △ㄷㄱㄹ과 △ㄷㅁㅂ은 세 변의 길이가 각각 같아 합동입니다. 따라서 ∠ㄱㄷㄹ=∠ㅁㄷㅂ이고, 문제에서 ∠ㅁㄷㅂ=∠ㅂㄷㄴ이므로 이 세 각은 같습니다.</li><li>그 세 각을 각각 x°라 하면 반원에서 3x+${arcRM}=180입니다. 따라서 x=${fmt(equalArc)}이고 ∠ㅁㄷㅂ=${fmt(equalArc)}°입니다.</li><li>△ㄷㅁㅂ도 두 반지름이 같은 이등변삼각형이므로 ∠ㄷㅁㅂ=(180°−${fmt(equalArc)}°)÷2=${fmt((180-equalArc)/2)}°입니다. 그림에서 ㄷㅁ은 ∠ㄹㅁㅂ 안에 있으므로 ∠ㄹㅁㅂ=${vertexAngle}°+${fmt((180-equalArc)/2)}°=${fmt(answer)}°입니다.</li></ol></div>`;
+    const illustratedSolution = solution.replace("</ol></div>", `</ol>${semicircleDiagram(vertexAngle,equalArc,arcRM)}</div>`);
+    return result("5-2-u3-e4-mission-2", variant, offset, prompt, `${fmt(answer)}°`, illustratedSolution, { vertexAngle, centralArc: arcRM, equalArc, answer }, false, answerVisual("반원 속 목표각", `${fmt(answer)}°`));
   }
 
   function buildMission3(variant, offset) {
