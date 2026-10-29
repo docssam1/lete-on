@@ -218,6 +218,7 @@
   function renderComparison() {
     const current = data.getGrade(grade);
     const target = data.getGrade(comparisonGrade);
+    $("assessment-entry-link").href = `./assessment-entry.html?grade=${grade}`;
     const table = $("comparison-table");
     document.querySelector(".grade-comparison").classList.toggle("has-comparison", Boolean(target));
     table.hidden = !target;

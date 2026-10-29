@@ -137,6 +137,8 @@ test("grade comparison shows curriculum examples without implying measured level
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=8`, { waitUntil: "networkidle" });
   const comparison = page.getByLabel("비교할 학년");
+  assert.equal(await page.locator("#assessment-entry-link").getAttribute("href"), "./assessment-entry.html?grade=8");
+  assert.match(await page.locator(".comparison-evidence-link").innerText(), /학교 Placement Test나 MAP·CTP/);
   assert.equal(await comparison.inputValue(), "");
   await comparison.selectOption("9");
   assert.equal(await page.locator("#comparison-table").isVisible(), true);
