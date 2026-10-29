@@ -15,3 +15,11 @@ def reflect(theta,axis):return 2*axis-theta
 for theta in range(-180,180):
  result=reflect(reflect(theta,0),45);difference=abs((result-theta+180)%360-180);assert difference==90
 print('5-2 independent coordinate model: 82°; 5-3 reflection transform: 90° for all integer rays')
+
+# Equal circles: verify the candidate line reflects each center to the other.
+a=(2,2);b=(14,10);mid=((a[0]+b[0])/2,(a[1]+b[1])/2)
+p=(12,0);q=(4,12);direction=(q[0]-p[0],q[1]-p[1]);center_vector=(b[0]-a[0],b[1]-a[1])
+assert mid==(8,6)
+assert (mid[0]-p[0])*direction[1] == (mid[1]-p[1])*direction[0]
+assert direction[0]*center_vector[0]+direction[1]*center_vector[1]==0
+print('5-4 perpendicular bisector: midpoint and normal independently verified')
