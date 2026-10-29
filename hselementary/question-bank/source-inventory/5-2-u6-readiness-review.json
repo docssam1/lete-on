@@ -1267,9 +1267,10 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e4-mission-5",
+      "originalSourceReleaseStatus": "locked",
       "publisherKeyVerified": false,
       "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
