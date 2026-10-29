@@ -338,6 +338,12 @@ Inspected Grade 7 roadmap, side-by-side grade comparison, and contest-record sec
 
 Verification: `boarding-grade-roadmap.test.cjs` and `boarding-roadmap-browser.test.cjs` pass 23/23, including the footer style assertion, Grade 7 path behavior, same-source MAP comparison, and mobile/tablet layouts. No horizontal overflow at 390px or 320px. `git diff --check` passed. Local-only; no publication or sync.
 
+### Grade 7 NS.A teacher-confirmed next-step draft
+
+Implemented the next step named in the NS.A screener contract. `assessment/grade7-ns-a-teacher-next-step-plan.js` accepts only a valid teacher report projection and explicit teacher-selected `7.NS.A` focus IDs. For sufficiently observed focuses it records an opaque target for the teacher-only workbook concept preview, localized for Korean, English, or Simplified Chinese; the direct URL remains null until an authenticated server resolves it. A focus below the planned two-observation minimum returns an additional-observation state and no resource. The result omits scores and learner identity, requires authenticated teacher delivery, and leaves student assignment and release false/locked. This is not an operational student route; item releases and the delivery adapter remain pending.
+
+Verification: screener plan, analysis, scoring-readiness, report-projection, and next-step tests pass 22/22. Cases cover teacher-only inputs, explicit selections, invalid/duplicate selections, locale routing, insufficient observations, and locked authorization/assignment state. `git diff --check` passed. Local only.
+
 ### Contest practice eligibility clarification
 
 The roadmap's AMC options are age- and grade-bounded learning suggestions only; they do not evaluate official eligibility. The selected contest guidance now sends AMC users to the current MAA cycle rules (which include age requirements) and other contest users to their organizer's current rules. The manual grouped score form explains that the learner/teacher classifies items and that its descriptive rates do not determine an achievement band, eligibility, award, or qualification.
