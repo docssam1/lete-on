@@ -1,3 +1,10 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 62 Exploration 3 and Examples 3-1–3-4
+
+- Independently enumerated the source diagrams and cases: adjacent cuboid vertices 15 edge paths (interpreting the diagram as edge paths and stating that in the learner prompt); distinguishable two dice 12; 4×3 grid via its middle point 18; multi-edge roads 39 with edge counts 3/1/2/2/4; six distinct students with the three boys adjacent 144. Publisher answer keys remain unverified. Source ledger page and descriptions corrected.
+- Exhaustive enumeration, diagram edge counts, 1440/375/320px browser checks, separate A4 problem/solution checks, release gate and 78,840 runtime generations passed. Counts: 2,102 types, 1,314 generatable, 788 awaiting review. Broader inventory audit retains 81 existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Page 61 Mission 4 remains locked pending selection criteria. Preserve existing work and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 61 Missions 5–6
 
 - Printed p.61 Mission 5: the two missing scores sum to 135; the highest score exceeds 91 and is twice another score, yielding Eungyeong 41 and Hyogeun 94. The prior review ledger incorrectly described another question. Mission 6: the 25- and 35-point groups contain 10 and 11 students, respectively; only six of the 25-point students answered question 3 alone, so 25 students answered question 3 correctly. Publisher answer keys remain unverified.
