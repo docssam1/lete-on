@@ -16,6 +16,10 @@ for(let i=0;i<source.pools.length;i++) for(const difficulty of [-1,0,1]) {
  assert.equal(q.answer,`${shape.answer}°`);
  assert.doesNotMatch(q.prompt,/data-answer-angle|data-source-answer/);
  assert.match(q.answerVisual,new RegExp(`data-answer-angle="${shape.answer}"`));
+ const labels = [...q.prompt.matchAll(/<g class="source52-p29m4-points">([\s\S]*?)<\/g>/g)][0]?.[1];
+ assert.ok(labels);
+ const pointNames = [...labels.matchAll(/<text[^>]*>([^<]+)<\/text>/g)].map(match => match[1]);
+ assert.deepEqual(pointNames,["ㄱ","ㄹ","ㄷ","ㄴ","ㅂ","ㅁ","ㅈ","ㅇ","ㅅ"],"each source point has the correct distinct label");
  assert.notEqual(beta,32);assert.notEqual(90-2*alpha,46);
  assert.equal(q.publisherKeyVerified,false);assert.equal(q.handwrittenAnswerVerified,false);
 }
