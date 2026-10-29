@@ -1,10 +1,2 @@
 "use strict";
-const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path");global.window={};require("./source-inventory-4-1.js");require("./source-inventory-grade6.js");require("./curriculum.js");require("./generators.js");
-const source=require("./source-5-2-average-page61-original-mission3.js"),unit=window.HSE_CURRICULUM.semesters.find(s=>s.id==="5-2").units.find(u=>u.id==="5-2-u6");
-const scores=[80];for(const delta of [8,-4,-2,11,-10,9,-2])scores.push(scores.at(-1)+delta);assert.deepEqual(scores,[80,88,84,82,93,83,92,90]);assert.equal(scores.slice(0,7).reduce((a,b)=>a+b)/7,86);
-const signCases=[];for(const a of [-1,1])for(const b of [-1,1]){const ninth=90+5*a,tenth=ninth+7*b;if((90+ninth+tenth)===3*89)signCases.push([a,b,ninth,tenth]);}assert.deepEqual(signCases,[[-1,1,85,92]]);
-const groupCases=[];for(let p=0;p<=1000;p++)for(let f=0;f<=1000;f++)if(Math.abs(p-f)===105&&200*p+100*f===216000)groupCases.push([p/10,f/10]);assert.deepEqual(groupCases,[[68.5,79],[75.5,65]]);
-const type=unit.subunits.flatMap(s=>s.types).find(t=>t.sourceItemId===source.sourceItemId);assert(type&&!type.reviewLocked&&type.sourceVerified);const q=window.HSE_GENERATORS.generate(type,2,0,54,0);for(const x of ["86점","㉠ ▼","㉡ ▲"])assert(q.answer.includes(x));assert.equal(q.publisherKeyVerified,false);assert.equal(window.HSE_GENERATORS.generate(type,2,0,54,1),null);assert.equal(window.HSE_GENERATORS.generate({...type,reviewLocked:true},2,0,54,0),null);
-for(const [file,key] of [["5-2-source-items.json","sourceItems"],["5-2-u6-readiness-review.json","items"]]){const d=JSON.parse(fs.readFileSync(path.join(__dirname,"source-inventory",file),"utf8")),row=d[key].find(x=>x.sourceItemId===source.sourceItemId);assert(row.sourceVerified);assert.equal(row.publisherKeyVerified,false);assert.equal(row.publicDecision,"public");}
-const review=JSON.parse(fs.readFileSync(path.join(__dirname,"source-inventory/5-2-u6-readiness-review.json"),"utf8")).items.find(x=>x.sourceItemId==="5-2-u6-e2-mission-4");assert.equal(review.publicDecision,"locked");assert.equal(review.candidateAnswerCount,2);assert.equal(review.singleAnswer,null);
-console.log(JSON.stringify({status:"passed",sourceItemId:source.sourceItemId,scores,signCases,mission4Cases:groupCases,publisherKeyVerified:false}));
+require("./source-5-2-average-page61-mission3-synthetic-audit.js");
