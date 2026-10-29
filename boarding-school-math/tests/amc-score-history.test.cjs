@@ -4,7 +4,7 @@ const test = require("node:test");
 const history = require("../competition/amc-score-history.js");
 
 function record(overrides = {}) {
-  return { id: "attempt-1", programId: "amc10", cycle: "2025-26", form: "A", examDate: "2025-11-06", rawScore: 99.5, maxScore: 150, regionId: null, ...overrides };
+  return { id: "attempt-1", programId: "amc10", cycle: "2025-26", form: "A", examDate: "2025-11-06", rawScore: 99.5, maxScore: 150, regionId: null, studentGrade: null, ...overrides };
 }
 
 test("records only contest, cycle, form, date, and reported raw score", function () {
@@ -20,6 +20,15 @@ test("validates program-specific scoring scales and forms", function () {
   assert.throws(() => history.validateRecord(record({ programId: "amc12", form: "C" })), { code: "FORM_INVALID" });
   assert.throws(() => history.validateRecord(record({ programId: "amc8", form: "AMC 8", maxScore: 25, rawScore: 26 })), { code: "SCORE_INVALID" });
   assert.throws(() => history.validateRecord(record({ examDate: "2025-02-30" })), { code: "DATE_INVALID" });
+  assert.throws(() => history.validateRecord(record({ studentGrade: 13 })), { code: "GRADE_INVALID" });
+  assert.throws(() => history.validateRecord(record({ studentGrade: "7" })), { code: "GRADE_INVALID" });
+});
+
+test("keeps the reported grade as context without deriving a peer rank", function () {
+  assert.equal(history.validateRecord(record({ studentGrade: 7 })).studentGrade, 7);
+  assert.equal(history.validateRecord(record({ studentGrade: "K" })).studentGrade, "K");
+  assert.equal(history.validateRecord(record({ studentGrade: null })).studentGrade, null);
+  assert.equal(Object.hasOwn(history.validateRecord(record({ studentGrade: 7 })), "percentile"), false);
 });
 
 test("compares scores only within each contest and orders each record by date", function () {
@@ -42,12 +51,17 @@ test("archive rejects unknown fields, malformed cycles, and duplicate IDs", func
   assert.throws(() => history.validateRecord(record({ regionId: "unknown" })), { code: "REGION_INVALID" });
 });
 
-test("imports v1 score archives with unknown region and exports the v2 shape", function () {
+test("imports v1 and v2 score archives and exports the v3 shape", function () {
   const legacyRecord = record();
   delete legacyRecord.regionId;
   const imported = history.validateArchive({ schemaVersion: history.legacySchemaVersion, records: [legacyRecord] });
   assert.equal(imported.schemaVersion, history.schemaVersion);
   assert.equal(imported.records[0].regionId, null);
+  for (const schemaVersion of history.legacySchemaVersions) {
+    const v2Record = record();
+    delete v2Record.studentGrade;
+    assert.equal(history.validateArchive({ schemaVersion: schemaVersion, records: [v2Record] }).records[0].studentGrade, null);
+  }
   assert.deepEqual(history.validateArchive({ schemaVersion: history.schemaVersion, records: [record({ regionId: "maa-us-canada" })] }).records[0].regionId, "maa-us-canada");
   assert.throws(() => history.validateArchive({ schemaVersion: history.schemaVersion, records: [legacyRecord] }), { code: "RECORD_SHAPE" });
 });

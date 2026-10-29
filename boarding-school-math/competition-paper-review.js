@@ -240,12 +240,12 @@
       const table = document.createElement("table"); table.className = "score-history-table";
       const caption = document.createElement("caption"); caption.className = "visually-hidden"; caption.textContent = `${group.title} 회차별 성적표 원점수 기록`; table.append(caption);
       const thead = document.createElement("thead"); const headRow = document.createElement("tr");
-      ["시험 날짜", "주기 · 시험지", "성적표 원점수", "기록"].forEach(function (label) { const th = document.createElement("th"); th.scope = "col"; th.textContent = label; headRow.append(th); });
+      ["시험 날짜", "주기 · 시험지", "응시 당시 학년", "성적표 원점수", "기록"].forEach(function (label) { const th = document.createElement("th"); th.scope = "col"; th.textContent = label; headRow.append(th); });
       thead.append(headRow); table.append(thead);
       const tbody = document.createElement("tbody");
       group.entries.forEach(function (record) {
         const row = document.createElement("tr");
-        [record.examDate, `${record.cycle} · ${record.form}`].forEach(function (value) { const cell = document.createElement("td"); cell.textContent = value; row.append(cell); });
+        [record.examDate, `${record.cycle} · ${record.form}`, record.studentGrade == null ? "미기록" : record.studentGrade === "K" ? "Kindergarten" : `Grade ${record.studentGrade}`].forEach(function (value) { const cell = document.createElement("td"); cell.textContent = value; row.append(cell); });
         const scoreCell = document.createElement("td"); scoreCell.textContent = `${record.rawScore} / ${record.maxScore}`;
         const progress = historyEngine.qualificationProgress(record);
         if (progress) { const note = document.createElement("small"); note.className = `score-history-benchmark${progress.reached ? " is-reached" : ""}`; note.textContent = progress.label; scoreCell.append(document.createElement("br"), note); }
@@ -307,8 +307,10 @@
     const programId = $("history-program").value;
     const program = historyEngine.programs[programId];
     try {
+      const gradeValue = $("history-grade").value;
       const record = historyEngine.validateRecord({ id: makeHistoryId(), programId: programId, cycle: $("history-cycle").value.trim(), form: $("history-form").value,
-        examDate: $("history-date").value, rawScore: Number($("history-score").value), maxScore: program.max, regionId: $("history-region").value || null });
+        examDate: $("history-date").value, rawScore: Number($("history-score").value), maxScore: program.max, regionId: $("history-region").value || null,
+        studentGrade: gradeValue === "" ? null : gradeValue === "K" ? "K" : Number(gradeValue) });
       if (scoreHistory.length >= 100) throw Object.assign(new Error("HISTORY_LIMIT"), { code: "HISTORY_LIMIT" });
       scoreHistory.push(record);
       renderHistory();

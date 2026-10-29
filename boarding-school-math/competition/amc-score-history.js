@@ -5,8 +5,8 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  const SCHEMA_VERSION = "gfield-amc-score-history-v2";
-  const LEGACY_SCHEMA_VERSION = "gfield-amc-score-history-v1";
+  const SCHEMA_VERSION = "gfield-amc-score-history-v3";
+  const LEGACY_SCHEMA_VERSIONS = Object.freeze(["gfield-amc-score-history-v1", "gfield-amc-score-history-v2"]);
   const REGIONS = Object.freeze(["maa-us-canada", "international"]);
   const PROGRAMS = Object.freeze({ amc8: Object.freeze({ title: "AMC 8", max: 25, forms: ["AMC 8"] }), amc10: Object.freeze({ title: "AMC 10", max: 150, forms: ["A", "B"] }), amc12: Object.freeze({ title: "AMC 12", max: 150, forms: ["A", "B"] }) });
   const CURRENT_AIME_SOURCE = "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/";
@@ -18,7 +18,7 @@
   function validDate(value) { return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`)) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value; }
   function validateRecord(input, options) {
     const allowLegacyShape = Boolean(options && options.allowLegacyShape);
-    const allowedKeys = ["id", "programId", "cycle", "form", "examDate", "rawScore", "maxScore", "regionId"];
+    const allowedKeys = ["id", "programId", "cycle", "form", "examDate", "rawScore", "maxScore", "regionId", "studentGrade"];
     if (!ownKeys(input, allowedKeys) || (!allowLegacyShape && !Object.prototype.hasOwnProperty.call(input, "regionId"))) fail("RECORD_SHAPE");
     const program = PROGRAMS[input.programId];
     if (!program) fail("PROGRAM_INVALID");
@@ -31,11 +31,13 @@
     if (input.programId === "amc8" ? !Number.isInteger(input.rawScore) : !Number.isInteger(input.rawScore * 2)) fail("SCORE_INCREMENT_INVALID");
     const regionId = input.regionId == null || input.regionId === "" ? null : input.regionId;
     if (regionId !== null && !REGIONS.includes(regionId)) fail("REGION_INVALID");
-    return Object.freeze({ id: input.id, programId: input.programId, cycle: input.cycle, form: input.form, examDate: input.examDate, rawScore: input.rawScore, maxScore: input.maxScore, regionId: regionId });
+    const studentGrade = input.studentGrade == null || input.studentGrade === "" ? null : input.studentGrade;
+    if (studentGrade !== null && studentGrade !== "K" && (!Number.isInteger(studentGrade) || studentGrade < 1 || studentGrade > 12)) fail("GRADE_INVALID");
+    return Object.freeze({ id: input.id, programId: input.programId, cycle: input.cycle, form: input.form, examDate: input.examDate, rawScore: input.rawScore, maxScore: input.maxScore, regionId: regionId, studentGrade: studentGrade });
   }
   function validateArchive(input) {
-    if (!ownKeys(input, ["schemaVersion", "records"]) || ![SCHEMA_VERSION, LEGACY_SCHEMA_VERSION].includes(input.schemaVersion) || !Array.isArray(input.records) || input.records.length > 100) fail("ARCHIVE_INVALID");
-    const records = input.records.map(function (record) { return validateRecord(record, { allowLegacyShape: input.schemaVersion === LEGACY_SCHEMA_VERSION }); });
+    if (!ownKeys(input, ["schemaVersion", "records"]) || ![SCHEMA_VERSION].concat(LEGACY_SCHEMA_VERSIONS).includes(input.schemaVersion) || !Array.isArray(input.records) || input.records.length > 100) fail("ARCHIVE_INVALID");
+    const records = input.records.map(function (record) { return validateRecord(record, { allowLegacyShape: LEGACY_SCHEMA_VERSIONS.includes(input.schemaVersion) }); });
     const ids = records.map(function (record) { return record.id; });
     if (new Set(ids).size !== ids.length) fail("RECORD_ID_DUPLICATE");
     return Object.freeze({ schemaVersion: SCHEMA_VERSION, records: Object.freeze(records) });
@@ -85,5 +87,5 @@
     return Object.freeze({ threshold: context.threshold, maxScore: context.maxScore, reached: pointsRemaining === 0, pointsRemaining: pointsRemaining,
       label: pointsRemaining === 0 ? "점수 기준 이상 · 나이와 기타 자격 확인" : `점수 기준까지 ${pointsRemaining}점` });
   }
-  return Object.freeze({ schemaVersion: SCHEMA_VERSION, legacySchemaVersion: LEGACY_SCHEMA_VERSION, programs: PROGRAMS, validateRecord: validateRecord, validateArchive: validateArchive, compare: compare, cycleContext: cycleContext, qualificationProgress: qualificationProgress });
+  return Object.freeze({ schemaVersion: SCHEMA_VERSION, legacySchemaVersions: LEGACY_SCHEMA_VERSIONS, legacySchemaVersion: LEGACY_SCHEMA_VERSIONS[0], programs: PROGRAMS, validateRecord: validateRecord, validateArchive: validateArchive, compare: compare, cycleContext: cycleContext, qualificationProgress: qualificationProgress });
 });
