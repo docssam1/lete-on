@@ -53,7 +53,7 @@ function startServer() {
         const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u6")?.subunits.find(x => x.name === "사건의 가짓수")?.types.find(x => x.sourceItemId === id);
         return type && { reviewLocked: type.reviewLocked, sourceVerified: type.sourceVerified, generationMode: type.generationMode, verifiedVariantCount: type.verifiedVariantCount, generatorKey: window.HSE_GENERATORS.generatorKey(type) };
       }, itemId);
-      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: n<=1?3:1, generatorKey: n ? `source52CountPage62Example${n}` : "source52CountPage62Exploration" });
+      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: n<=2?3:1, generatorKey: n ? `source52CountPage62Example${n}` : "source52CountPage62Exploration" });
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u6");
@@ -83,7 +83,7 @@ function startServer() {
       await page.locator("#solutionTab").click();
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
-      assert(solutionText.includes(["15가지","18가지","18가지","39가지","144가지"][n]),solutionText);
+      assert(solutionText.includes(["15가지","18가지","20가지","39가지","144가지"][n]),solutionText);
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);
       await page.screenshot({ path: path.join(outputDir, `item${n}-solution-${width}.png`), fullPage: true });
