@@ -238,7 +238,8 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다.",
+      "sourceReviewCorrection20261030": "정본 인쇄 5쪽을 재확인했다. 원문은 두 범위의 합집합 개수와 교집합의 합 외에 각 범위에서 하나씩 고른 두 수의 합의 범위까지 세 부분을 묻는다. 생성기도 이 세 부분을 제공하며 별도 수치를 사용한다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-2",
@@ -306,7 +307,8 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다.",
+      "sourceReviewCorrection20261030": "정본은 두 버스 크기별 적어도 필요한 대수를 표현한다. 생성 유사문항은 각 조건을 필요한 최소 대수가 정확히 주어진 것으로 명시한다. 원문 답 판정에는 이 최소 대수 해석과 출판사 답안의 추가 대조가 필요하다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-6",
