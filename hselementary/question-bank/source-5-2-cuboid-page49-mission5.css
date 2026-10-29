@@ -1,0 +1,32 @@
+.source52-p49m5-question,
+.source52-p49m5-solution { color: #25231f; line-height: 1.58; }
+.source52-p49m5-question > p,
+.source52-p49m5-solution > p { margin: 0 0 12px; }
+.source52-p49m5-diagram { display: block; width: min(100%, 450px); height: auto; margin: 12px auto; overflow: visible; }
+.source52-p49m5-outline { fill: none; stroke: #28241e; stroke-width: 2.5; stroke-linejoin: round; }
+.source52-p49m5-dimensions line { stroke: #686257; stroke-width: 1.2; }
+.source52-p49m5-dimensions text { fill: #3d3932; font: 17px sans-serif; }
+.source52-p49m5-table-wrap { max-width: 680px; margin: 14px auto; overflow-x: auto; }
+.source52-p49m5-table { width: 100%; border-collapse: collapse; font-size: .94em; }
+.source52-p49m5-table caption { padding: 7px; font-weight: 700; text-align: left; }
+.source52-p49m5-table th,
+.source52-p49m5-table td { border: 1px solid #c9d4df; padding: 6px 9px; text-align: center; }
+.source52-p49m5-table th { background: #eff4f8; }
+.source52-p49m5-final-answer { color: #145b48; font-weight: 800; font-size: 1.1em; }
+@media (max-width: 680px) {
+  .source52-p49m5-question > p,
+  .source52-p49m5-solution > p { font-size: 15px; }
+  .source52-p49m5-table { font-size: .82em; }
+  .source52-p49m5-table th,
+  .source52-p49m5-table td { padding: 5px 4px; }
+}
+@media print {
+  .source52-p49m5-question,
+  .source52-p49m5-solution { font-size: 10.5pt; line-height: 1.4; }
+  .source52-p49m5-diagram { width: 105mm; max-height: 65mm; margin: 3mm auto; }
+  .source52-p49m5-table-wrap { overflow: visible; margin: 2mm auto; }
+  .source52-p49m5-table { font-size: 9pt; }
+  .source52-p49m5-table th,
+  .source52-p49m5-table td { padding: 2.2mm 3mm; }
+  .source52-p49m5-solution li { margin: 1mm 0; }
+}
