@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const root = __dirname;
+const root = process.env.HSE_SOURCE_INVENTORY_ROOT || __dirname;
 const specs = [
   {
     semester: "5-2",
@@ -18,22 +18,26 @@ const specs = [
     file: "6-1-source-items.json",
     arrayKey: "items",
     total: 264,
-    units: [22, 44, 44, 66, 44, 44],
-    sections: { exploration: 24, example: 96, mission: 144 }
+    units: [22, 44, 44, 67, 43, 44],
+    sections: { exploration: 27, example: 93, mission: 144 },
+    statuses: { "review-locked": 38, "fixed-verified-pool": 206, implemented: 20 }
   },
   {
     semester: "6-2",
     file: "6-2-source-items.json",
     arrayKey: "items",
-    total: 352,
-    units: [66, 66, 44, 66, 66, 44],
-    sections: { exploration: 32, example: 128, mission: 192 }
+    total: 355,
+    units: [66, 69, 44, 66, 66, 44],
+    sections: { exploration: 35, example: 128, mission: 192 },
+    statuses: { "review-locked": 200, "fixed-verified-pool": 148, "verified-fixed-pool": 2,
+      "source-rebuilt-answer-reading-locked": 1, "handwriting-conflict-locked": 2,
+      "source-condition-ambiguity-locked": 1, "source-decimal-place-ambiguity-locked": 1 }
   }
 ];
 
 const failures = [];
 const verified5_2Page49 = new Set([2, 3, 4, 6].map(n => `5-2-u5-e1-mission-${n}`));
-const reviewed5_2Releases = new Set(["5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
+const reviewed5_2Releases = new Set(["5-2-u1-e4-mission-1", "5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
 const allIds = new Set();
 const semesterCounts = {};
 
@@ -57,7 +61,7 @@ function isPrivateMetadata(metadata) {
 
 function matchesSourceId(item, semester) {
   if (item.section === "exploration") {
-    return new RegExp(`^${semester}-u\\d+-e\\d+-exploration$`).test(item.sourceItemId);
+    return new RegExp(`^${semester}-u\\d+-e\\d+-exploration(?:-\\d+(?:-\\d+)?)?$`).test(item.sourceItemId);
   }
   return new RegExp(`^${semester}-u\\d+-e\\d+-(example|mission)-\\d+(?:-\\d+)?$`).test(item.sourceItemId);
 }
@@ -90,6 +94,7 @@ for (const spec of specs) {
 
   const byUnit = new Map();
   const bySection = { exploration: 0, example: 0, mission: 0 };
+  const byStatus = {};
   let verifiedCount = 0;
   for (const [index, item] of items.entries()) {
     const label = `${spec.semester}[${index}]`;
@@ -110,18 +115,29 @@ for (const spec of specs) {
     for (const field of ["sourceShape", "reviewReason", "visualRisk"]) {
       if (!isNonEmpty(item[field])) fail(`${label}: ${field}가 비어 있습니다.`);
     }
-    const expectedImplementationStatus = verified5_2Page49.has(item.sourceItemId) ? "verified-local" : reviewed5_2Releases.has(item.sourceItemId) ? "reviewed" : "review-locked";
-    if (item.implementationStatus !== expectedImplementationStatus) {
-      fail(`${label}: implementationStatus가 ${expectedImplementationStatus}가 아닙니다.`);
+    const status = item.implementationStatus;
+    byStatus[status] = (byStatus[status] || 0) + 1;
+    if (spec.semester === "5-2") {
+      const expected = verified5_2Page49.has(item.sourceItemId) ? "verified-local" : reviewed5_2Releases.has(item.sourceItemId) ? "reviewed" : "review-locked";
+      if (status !== expected) fail(`${label}: implementationStatus가 ${expected}가 아닙니다.`);
+    } else if (!(status in spec.statuses)) {
+      fail(`${label}: 알 수 없는 implementationStatus ${status}`);
     }
-    if (item.sourceVerified === false && item.implementationStatus !== "review-locked") {
+    const locked = typeof status === "string" && status.includes("locked");
+    if (typeof item.sourceVerified !== "boolean") fail(`${label}: sourceVerified가 참/거짓이 아닙니다.`);
+    if (item.sourceVerified === false && !locked) {
       fail(`${label}: sourceVerified false인데 잠금이 아닙니다.`);
     }
+    if (!locked && item.sourceVerified !== true) fail(`${label}: 생성 상태에 원문 확인이 없습니다.`);
     if (item.sourceVerified === true) verifiedCount += 1;
     if (allIds.has(item.sourceItemId)) fail(`${label}: sourceItemId 중복 ${item.sourceItemId}`);
     allIds.add(item.sourceItemId);
     byUnit.set(item.unitId, (byUnit.get(item.unitId) || 0) + 1);
     bySection[item.section] += 1;
+  }
+
+  if (spec.statuses) for (const [status,expected] of Object.entries(spec.statuses)) {
+    if ((byStatus[status] || 0) !== expected) fail(`${spec.semester}: ${status} 수가 ${expected}가 아닙니다 (${byStatus[status] || 0}).`);
   }
 
   for (let unitNumber = 1; unitNumber <= 6; unitNumber += 1) {
@@ -133,12 +149,14 @@ for (const spec of specs) {
   }
   for (const [section, expected] of Object.entries(spec.sections)) {
     if (bySection[section] !== expected) fail(`${spec.semester} ${section}: ${expected}개가 아닙니다 (${bySection[section]}).`);
+    const recorded = document.integrity?.actualBySection?.[section];
+    if (recorded !== undefined && recorded !== bySection[section]) fail(`${spec.semester} ${section}: 실제 항목 수와 장부에 기록한 실제 수가 다릅니다 (${bySection[section]} / ${recorded}).`);
   }
   if (spec.semester === "5-2" && verifiedCount !== 31) {
     fail(`5-2: sourceVerified true 항목은 31개여야 합니다 (${verifiedCount}).`);
   }
   if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
-    fail("5-2: 검수 완료로 공개 후보가 된 항목이 인쇄 30쪽 예제 4-2 및 인쇄 31쪽 Mission 4–6 외에 있습니다.");
+    fail("5-2: reviewed 항목의 원문 확인 또는 명시 목록이 일치하지 않습니다.");
   }
   if (spec.semester === "5-2" && [...reviewed5_2Releases].some(id => items.filter(item => item.sourceItemId === id).length !== 1)) {
     fail("5-2: 검수 완료한 인쇄 30쪽 예제 4-2와 인쇄 31쪽 Mission 4–6 원문 항목이 각각 하나여야 합니다.");
