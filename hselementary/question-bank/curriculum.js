@@ -2571,6 +2571,15 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e2-mission-${n}`,sourceItemLabel:`Mission ${n} 유사문항`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:13,sourcePrintedPage:17,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page17Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
   }
 
+  const source52Unit2Equation = source52Unit2?.subunits.find(subunit => subunit.name === "식 세워 풀기");
+  if (source52Unit2Equation) for (const [suffix,name,label,section,key] of [
+    ["exploration","두 막대의 잠긴 길이로 깊이 구하기","개념탐구 3 유사문항","exploration","source52U2Page18Exploration3"],
+    ["example-1","반동 높이에서 처음 높이 역산","예제 3-1 유사문항","example","source52U2Page18Example31"],
+    ["example-2","부분 인원으로 전체 회원 비율 구하기","예제 3-2 유사문항","example","source52U2Page18Example32"]]) {
+    const id = `5-2-u2-e3-${suffix}-synthetic`, typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Equation.types.push({id,number:source52Unit2Equation.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e3-${suffix}`,sourceItemLabel:label,sourceSection:section,sourceTier:"advanced",sourcePdfPage:14,sourcePrintedPage:18,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
