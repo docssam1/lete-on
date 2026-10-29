@@ -472,3 +472,6 @@ body.integrated-planner .standard-month-axis>span{font-size:12px;color:#705082}
 
 body.integrated-planner .current-study-edit{display:block;width:100%;min-height:44px;border:0;background:transparent;padding:0;text-align:left;font:inherit;color:inherit;cursor:pointer}body.integrated-planner .current-study-edit:focus-visible{outline:2px solid #79558e;outline-offset:4px;border-radius:4px}
 body.integrated-planner .horizontal-course-grid .timeline-book-change{min-height:48px}
+
+/* A source schedule ending is an explicit unplanned interval. */
+body.integrated-planner .standard-lane-tail{box-sizing:border-box;inset-block:0;display:flex;align-items:center;justify-content:center;padding:8px 12px;border:1px dashed #b9a6c6;background:#f9f6fc;color:#74637e;font-size:12px;line-height:1.5;text-align:center;overflow-wrap:anywhere}
