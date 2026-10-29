@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 5 Page 55 Missions 5–6
+
+- Source PDF p.51 / clean comparison PDF p.50 / printed p.55. Added two fixed source questions: after 90 rolls the die shows top 5, front 6, right 4; maximum outside pip sums are 72 for the square and 76 for the zigzag. Publisher answer keys remain unverified; the source path's continuation is read as straight after its marked turn.
+- Independently checked 90 normal-vector rotations, pip geometry, contact tuples and same-die attainability. Source, ledger, 1440/375/320px browser and four one-page A4 checks passed; release gate and 77,340 runtime generations passed.
+- Counts: 2,077 types, 1,289 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Preserve the dirty source worktree and student data. Other locked source items need independent review.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 5 Page 55 Missions 3–4
 
 - Source PDF p.51 / clean comparison PDF p.50 / printed p.55. Added two fixed source questions: six-cube net stack target 2; four-die unseen pip sum 57. Publisher answer keys remain unverified.

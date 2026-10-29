@@ -51,10 +51,10 @@
     "bySourceSection": {"exploration": 4, "example": 16, "mission": 24},
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "calculationCheckedCount": 28,
-    "visualOrConstructionLockedCount": 18,
-    "publicCandidateCount": 26,
-    "lockedCount": 18
+    "calculationCheckedCount": 30,
+    "visualOrConstructionLockedCount": 16,
+    "publicCandidateCount": 28,
+    "lockedCount": 16
   },
   "items": [
     {
@@ -1483,21 +1483,38 @@
       "typeLabel": "주사위를 굴린 뒤 마지막 면에 눈 그리기",
       "childFriendlyTypeLabel": "주사위를 굴린 뒤 마지막 면에 눈 그리기",
       "originalStructure": "주사위를 그림의 길을 따라 90도씩 굴렸을 때 마지막 칸에 도착한 주사위의 보이는 면에 알맞은 눈을 그립니다.",
-      "conditions": ["주사위 그림", "90도 회전", "정해진 이동 경로", "마지막 주사위"],
+      "conditions": [
+        "주사위 그림",
+        "90도 회전",
+        "정해진 이동 경로",
+        "마지막 주사위"
+      ],
       "visualRequirement": "첫 주사위의 위·앞·옆 눈과 이동 경로의 방향·회전 순서를 정확히 표시해야 합니다.",
-      "independentCalculation": "각 이동을 90도 회전 변환으로 기록해 마지막 주사위의 세 보이는 면을 다시 계산해야 한다.",
-      "answerFormula": null,
-      "independentAnswer": null,
+      "independentCalculation": "원문 시작 주사위의 위·앞·오른쪽 눈은 2·6·3이고, 첫째와 둘째 칸은 같은 축, 셋째 칸부터 90째 칸까지는 다른 축으로 이어집니다. 오른쪽으로 두 번 굴린 뒤 남은 88번은 같은 방향으로 굴리는 회전 모델을 적용했습니다. 88은 4의 배수라 둘째 축 회전은 네 번 주기 후 방향이 처음으로 돌아옵니다. 90째 칸의 위·앞·오른쪽 눈은 각각 5·6·4입니다.",
+      "answerFormula": "2 rolls along first path axis, then 88 along the perpendicular axis; 88 mod 4 = 0. Final visible faces: top 5, front 6, right 4.",
+      "independentAnswer": {
+        "top": 5,
+        "front": 6,
+        "right": 4
+      },
       "resultContract": "constructed-figure",
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
-      "singleAnswerCheck": "경로의 방향과 회전 횟수를 순서대로 적용해야 답이 하나로 정해진다.",
+      "candidateAnswerCount": 1,
+      "singleAnswer": {
+        "top": 5,
+        "front": 6,
+        "right": 4
+      },
+      "singleAnswerCheck": "그림의 시작 눈과 90칸 경로의 방향 전환을 고정해 90회 회전을 모델링했습니다. 90째 칸의 세 면은 위 5, 앞 6, 오른쪽 4입니다.",
       "sourceVerified": true,
-      "calculationStatus": "blocked-dice-simulation",
-      "visualCheckStatus": "confirmed-source-path",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "주사위 눈을 그림에 임의로 배치하지 않고 이동별 회전 상태를 검산합니다."
+      "calculationStatus": "checked-dice-roll-model",
+      "visualCheckStatus": "confirmed-source-path-screen-a4",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
+      "sourceAuditUpdate": "원문 구조대로 시작 주사위와 첫째·둘째·셋째·90째 칸의 방향 전환을 그렸습니다. 별도 90단계 회전 모의 계산으로 90째 칸의 위·앞·오른쪽 눈 5·6·4를 확인했습니다. PC·375px·320px 및 A4 문제/풀이 각 한 쪽 통과; 공식 답안표 미확인.",
+      "publisherKeyVerified": false,
+      "releaseStatus": "runtime-enabled-in-current-release",
+      "releaseEvidence": "인쇄 55쪽 원문 그림과 독립 풀이, 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u5-e4-mission-6",
@@ -1509,22 +1526,38 @@
       "commonTypeId": "four-dice-shape-outer-pips-max",
       "typeLabel": "주사위 네 개로 만든 두 모양의 겉면 눈 합",
       "childFriendlyTypeLabel": "주사위 모양의 겉면 눈 합 가장 큰 값 구하기",
-      "originalStructure": "마주 보는 두 면의 눈 합이 7인 주사위 4개로 두 모양을 만들었을 때, 각 도형의 겉면 눈의 합이 가장 큰 경우의 두 합을 구합니다.",
-      "conditions": ["주사위 4개", "마주 보는 면의 합 7", "두 모양", "겉면 눈 합 최댓값"],
+      "originalStructure": "마주 보는 두 면의 눈 합이 7인 주사위 4개를 눈이 같은 면끼리 이어 붙여 두 모양을 만들었을 때, 각 도형의 겉면 눈의 합이 가장 큰 경우의 두 합을 구합니다.",
+      "conditions": [
+        "주사위 4개",
+        "마주 보는 면의 합 7",
+        "눈이 같은 면끼리 붙임",
+        "두 모양",
+        "겉면 눈 합 최댓값"
+      ],
       "visualRequirement": "두 모양의 주사위 배열과 접촉 면, 겉면을 정확히 표시해야 합니다.",
-      "independentCalculation": "두 배열의 접촉 관계를 고정하고 가능한 주사위 회전 상태를 전수 열거해 겉면 합의 최댓값을 구해야 한다.",
-      "answerFormula": null,
-      "independentAnswer": null,
+      "independentCalculation": "원문은 같은 눈의 면끼리 붙이며 마주 보는 면의 합은 7이라고 합니다. 주사위 4개의 전체 눈은 84입니다. 2×2 정사각형 배열은 각 주사위가 접촉면 2개를 가지며, 서로 다른 인접면의 최소 접촉 눈 조합은 1+2=3입니다. 네 주사위의 접촉 눈 합(양 끝에서 두 번 센 값)은 최소 12, 즉 접촉쌍 눈 합은 최소 6이고 1·2를 변마다 번갈아 배치해 달성하므로 겉면 최댓값은 84−2×6=72입니다. 꺾인 배열은 접촉 차수가 1,2,2,1이므로 접촉 눈의 전체 발생합은 최소 1+3+3+1=8, 접촉쌍 눈 합은 최소 4입니다. 경로의 세 접촉에 1,2,1을 배치해 달성하므로 겉면 최댓값은 84−2×4=76입니다.",
+      "answerFormula": "Square: 84−2×6=72. Zigzag: 84−2×4=76. The lower bounds are attained by matching contact labels 1/2 alternating around the square and 1,2,1 along the zigzag.",
+      "independentAnswer": [
+        72,
+        76
+      ],
       "resultContract": "ordered-maxima",
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
-      "singleAnswerCheck": "각 배열에서 모든 회전 상태를 검사해야 최댓값의 유일성을 판단할 수 있다.",
+      "candidateAnswerCount": 1,
+      "singleAnswer": [
+        72,
+        76
+      ],
+      "singleAnswerCheck": "48개 허용 면 배치를 각 주사위에 놓고 그림의 접촉 그래프를 전수 대조했습니다. 정사각형의 최소 접촉 합은 6, 꺾인 경로는 4로 각각 달성되어 최대 겉면 합은 순서대로 72, 76입니다.",
       "sourceVerified": true,
-      "calculationStatus": "blocked-dice-enumeration",
-      "visualCheckStatus": "confirmed-source-dice-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "주사위 접촉 구조와 회전 상태를 전수 검수하기 전에는 공개하지 않습니다."
+      "calculationStatus": "checked-dice-contact-optimization",
+      "visualCheckStatus": "confirmed-source-shapes-screen-a4",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
+      "sourceAuditUpdate": "원문형 2×2와 꺾인 배열을 구현하고 네 주사위 전체합 84에서 접촉쌍 눈을 각각 두 번 뺍니다. 독립 전수 탐색은 접촉합 최솟값 6·4, 겉면 최댓값 72·76을 확인했습니다. 화면 1440·375·320px와 A4 문제/풀이 각 한 쪽 통과; 출판사 답안표는 미확인.",
+      "publisherKeyVerified": false,
+      "releaseStatus": "runtime-enabled-in-current-release",
+      "releaseEvidence": "인쇄 55쪽 원문 그림과 독립 풀이, 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다."
     }
   ],
   "summary": {
@@ -1533,11 +1566,11 @@
     "explorationCount": 4,
     "exampleCount": 16,
     "missionCount": 24,
-    "calculationCheckedCount": 28,
-    "visualOrConstructionLockedCount": 18,
+    "calculationCheckedCount": 30,
+    "visualOrConstructionLockedCount": 16,
     "nonUniqueCount": 0,
-    "publicCandidateCount": 26,
-    "lockedCount": 18,
+    "publicCandidateCount": 28,
+    "lockedCount": 16,
     "notes": [
       "5단원은 PDF 43쪽 단원 표지와 PDF 44~51쪽 문항으로 확정했습니다.",
       "개념탐구·예제·Mission의 각 번호를 하나의 세부 유형으로 기록했습니다.",

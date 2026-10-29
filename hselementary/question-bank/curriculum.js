@@ -2283,7 +2283,9 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       [1, "다섯 정육면체의 맞붙은 면으로 빈 숫자 찾기", "source52CuboidDiceChainPage55Mission1"],
       [2, "세 방향 그림으로 마주 보는 글자 찾기", "source52CubeThreeViewsOppositesPage55Mission2"],
       [3, "전개도로 쌓은 정육면체의 뒤쪽 수 합", "source52CuboidNetStackBackSumPage55Mission3"],
-      [4, "벽에 쌓은 주사위의 보이지 않는 눈의 합", "source52FourDiceWallHiddenPipsPage55Mission4"]
+      [4, "벽에 쌓은 주사위의 보이지 않는 눈의 합", "source52FourDiceWallHiddenPipsPage55Mission4"],
+      [5, "90번 굴린 주사위의 보이는 면", "source52CuboidDiceRollNinetiethFacePage55Mission5"],
+      [6, "붙인 주사위 겉면 눈의 합 최댓값", "source52FourDiceOuterPipsMaxPage55Mission6"]
     ]) {
       const id = `5-2-u5-e4-mission-${ordinal}`;
       const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
@@ -2293,7 +2295,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         sourceSection: "mission", sourceTier: "advanced", sourcePdfPage: 51, sourcePrintedPage: 55,
         sourceVerified: true, publisherKeyVerified: false, reviewLocked: false, generatorKey,
         generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
-        answerVisualRequired: false, answerVisualStatus: "not-required", implementationStatus: "fixed-verified-pool"
+        answerVisualRequired: ordinal >= 5, answerVisualStatus: ordinal === 5 ? "verified-drawing" : ordinal === 6 ? "verified-contact-witnesses" : "not-required", implementationStatus: "fixed-verified-pool"
       });
     }
   }
