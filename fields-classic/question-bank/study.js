@@ -161,10 +161,10 @@ async function cloneUrl(id, text) {
   return null;
 }
 let cloneAudio = null, cloneEnd = null, speakSeq = 0;
-// 말하는 중인지 알리는 곳(오른쪽 독쌤이 입을 움직인다)
+// 말하는 중인지 알리는 곳(오른쪽 독쌤이 입을 움직인다) — info: { text, audio(복제 음성) | start·charIndex(기기 음성) }
 const talkWatchers = new Set();
-let talkingNow = false;
-const setTalking = (on) => { talkingNow = on; talkWatchers.forEach((fn) => fn(on)); };
+let talkingNow = null;
+const setTalking = (info) => { talkingNow = info; talkWatchers.forEach((fn) => fn(info)); };
 function stopClone() { if (cloneAudio) { try { cloneAudio.pause(); } catch {} cloneAudio = null; } const end = cloneEnd; cloneEnd = null; end?.(); }
 // 말이 끝나면(소리가 꺼져 있으면 읽을 만한 시간이 지나면) 풀리는 Promise. 기기 음성이 끝을 알리지 않는 경우를 대비해 최대 시간도 둔다.
 // 새 말이 오면 앞의 말은 끊고 바로 풀린다. 복제 음성 파일을 찾는 사이(await)에 새 말이 왔으면 앞의 말은 아예 틀지 않는다 — 안 그러면 두 목소리가 겹친다.
@@ -172,7 +172,7 @@ function speak(text, voiceId = null) {
   const reading = Math.min(7000, Math.max(900, String(text || "").length * 75));
   const seq = ++speakSeq;
   return new Promise(async (resolve) => {
-    let done = false; const finish = () => { if (!done) { done = true; if (seq === speakSeq) setTalking(false); resolve(); } };
+    let done = false; const finish = () => { if (!done) { done = true; if (seq === speakSeq) setTalking(null); resolve(); } };
     stopClone();
     try { speechSynthesis?.cancel(); } catch {}
     if (pref.sound && text && voiceId) {
@@ -184,7 +184,7 @@ function speak(text, voiceId = null) {
           audio.addEventListener("ended", finish); audio.addEventListener("error", finish);
           await audio.play();
           if (seq !== speakSeq) { audio.pause(); finish(); return; }
-          setTalking(true);
+          setTalking({ text, audio });
           setTimeout(finish, reading * 3 + 3000); return;
         } catch { if (seq === speakSeq) stopClone(); else { finish(); return; } }
       }
@@ -196,7 +196,9 @@ function speak(text, voiceId = null) {
       const utterance = new SpeechSynthesisUtterance(text);
       const ko = (speechSynthesis.getVoices() || []).find((voice) => /^ko/i.test(voice.lang));
       utterance.lang = "ko-KR"; utterance.rate = 0.9;   // 천천히(원장 2026-10-25) if (ko) utterance.voice = ko;
-      utterance.onend = finish; utterance.onerror = finish; utterance.onstart = () => { if (seq === speakSeq) setTalking(true); };
+      utterance.onend = finish; utterance.onerror = finish; const info = { text, start: 0, charIndex: 0 };
+      utterance.onstart = () => { if (seq === speakSeq) { info.start = performance.now(); setTalking(info); } };
+      utterance.onboundary = (event) => { info.charIndex = event.charIndex || info.charIndex; info.at = performance.now(); };
       speechSynthesis.speak(utterance);
       setTimeout(finish, reading * 2.5 + 2000);
     } catch { setTimeout(finish, reading); }
@@ -296,47 +298,122 @@ function askFrame(cmd) {
 }
 
 // ── 판서 오른쪽 독쌤(시안, &look=sketch) ─────────────────────
-// 원장 2026-10-29 「필기 개념 이런 식으로(손그림 판서 + 오른쪽에 발표자)」「독쌤 여러 표정들 있잖아」「오른쪽에 독쌤을」.
-// 수학 독쌤 그림 10장(assets/docssam-math/, 같은 틀로 잘라 몸이 흔들리지 않는다): 입 모양 A1~A4 · 눈 감기 A5 · 표정 B1~B5.
-// 말할 때(음성이 실제로 나는 동안) 입 모양을 바꾸고, 쉬면 가끔 눈을 깜빡인다. 생각(think)은 턱 괴기, 칭찬(praise)은 엄지 척.
+// 원장 2026-10-29 「필기 개념 이런 식으로 · 오른쪽에 독쌤을」「입이 더 움직이고 표정과 행동도 바뀌고 살아 있는 것처럼」.
+// 수학 독쌤 그림 10장(assets/docssam-math/, 같은 틀로 잘라 몸이 흔들리지 않는다): 입 A1 다묾 · A2 반 · A3 벌림 · A4 오 · A5 눈 감기,
+// 표정 B1 손가락(가리킴·놀람) · B2 갸웃(생각) · B3 미소(칭찬) · B4 격려 · B5 엄지 척. 움직이는 법은 사이언스 랩 독쌤(스킬 docssam-talking-guide)을 따른다:
+//  · 입은 소리가 나는 동안에만, 지금 읽는 글자의 모음으로(ㅏㅓ류 벌림 · ㅗㅜ류 오 · 나머지 반), 1초에 12번, 세 번에 한 번은 다문다
+//  · 몸은 CSS 움직임만: 가만히 숨쉬기 · 말할 때 끄덕이며 기울기 · 칭찬 깡충 · 놀람 움찔 · 격려 끄덕 · 생각 기울기 · 가리킬 때 앞으로
+//  · 말 첫머리에 글에 맞는 몸짓을 잠깐(「봐요」 가리킴, 물음 갸웃, 「잘했어요」 깡충+엄지, 「해 봐요」 격려) 한 뒤 말하는 얼굴로
+//  · 오래 가만히 있으면 가끔 끄덕이거나 갸웃한다. 움직임 줄이기 설정이면 몸은 가만히, 얼굴만 바뀐다.
 const LOOK = params.get("look") === "sketch" ? "sketch" : "";
 const FACE = (name) => `./assets/docssam-math/${name}.webp`;
-const FACES = { closed: "A1-mouth-closed", half: "A2-mouth-half", open: "A3-mouth-open", o: "A4-mouth-o", blink: "A5-eyes-closed", surprised: "B1-surprised", think: "B2-puzzled-thinking", praise: "B3-praise", encourage: "B4-encourage", thumbs: "B5-happy-thumbs-up" };
+const FACES = { closed: "A1-mouth-closed", half: "A2-mouth-half", open: "A3-mouth-open", o: "A4-mouth-o", blink: "A5-eyes-closed", point: "B1-surprised", think: "B2-puzzled-thinking", smile: "B3-praise", cheer: "B4-encourage", thumbs: "B5-happy-thumbs-up" };
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function mouthFor(ch) {
+  const c = (ch || " ").charCodeAt(0) - 0xac00; if (c < 0 || c > 11171) return null;
+  const j = Math.floor(c / 28) % 21;
+  return [0, 2, 4, 6, 9, 14].includes(j) ? "open" : [8, 12, 13, 17].includes(j) ? "o" : "half";
+}
+// 말 첫머리 몸짓: 글과 기분(mood)으로 고른다 → [얼굴, 움직임, 길이 ms]
+function gestureFor(text, mood) {
+  const t = String(text || "");
+  if (mood === "praise" || /맞았|정답이에요|잘했|훌륭|해냈|멋져/.test(t)) return ["thumbs", "hop", 1100];
+  if (mood === "think" || /\?|볼까요|일까요|생각해/.test(t)) return ["think", "lean", 900];
+  if (/해 봐요|할 수 있|천천히|다시/.test(t)) return ["cheer", "nod", 800];
+  if (/봐요|보세요|여기|이제|먼저|짜잔/.test(t)) return ["point", "present", 800];
+  return null;
+}
 let presenter = null;
 function makePresenter() {
   const aside = document.createElement("aside");
   aside.className = "sd-presenter";
   aside.setAttribute("aria-hidden", "true");
   // 그림을 미리 다 불러 둔다(바꿔 낄 때 깜빡이지 않게)
-  aside.innerHTML = Object.values(FACES).map((name) => `<img src="${FACE(name)}" data-face="${name}" alt="" width="475" height="720" />`).join("");
-  let mood = "talk", talking = false, mouthTimer = 0, blinkTimer = 0, praiseFlip = false;
-  const show = (name) => aside.querySelectorAll("img").forEach((img) => img.classList.toggle("on", img.dataset.face === name));
-  const MOUTH = [FACES.half, FACES.open, FACES.o, FACES.half, FACES.closed, FACES.open, FACES.half];
-  const rest = () => show(mood === "think" ? FACES.think : mood === "praise" ? (praiseFlip ? FACES.praise : FACES.thumbs) : FACES.closed);
-  function tick() {
-    clearTimeout(mouthTimer);
-    if (!talking || mood !== "talk") { rest(); return; }
-    let k = 0;
-    const step = () => { show(MOUTH[k++ % MOUTH.length]); mouthTimer = setTimeout(step, 95 + Math.random() * 70); };
-    step();
+  aside.innerHTML = `<span class="sd-pres-shadow"></span><div class="sd-pres-act"><div class="sd-pres-bob">${Object.values(FACES).map((name) => `<img src="${FACE(name)}" data-face="${name}" alt="" width="475" height="720" decoding="async" />`).join("")}</div></div>`;
+  const act = aside.querySelector(".sd-pres-act");
+  const imgs = new Map([...aside.querySelectorAll("img")].map((img) => [img.dataset.face, img]));
+  let shown = "";
+  const show = (key) => { const name = FACES[key] || key; if (name === shown) return; imgs.get(shown)?.classList.remove("on"); imgs.get(name)?.classList.add("on"); shown = name; };
+  let mood = "talk", talk = null, gesture = null, gestureUntil = 0, lastText = "";
+  let mouthTimer = 0, blinkTimer = 0, idleTimer = 0, calmTimer = 0, blinking = false, settled = "closed";
+  const kick = (motion) => { if (!motion || reducedMotion) return; delete act.dataset.motion; void act.offsetWidth; act.dataset.motion = motion; };
+  act.addEventListener("animationend", (event) => { if (/^sd-pres-(hop|shake|nod|present|lean-in)/.test(event.animationName)) delete act.dataset.motion; });
+  // 지금 읽는 글자
+  function charNow() {
+    if (!talk) return "";
+    const text = talk.text || "";
+    if (talk.audio) {
+      const a = talk.audio;
+      if (!(a.duration > 0)) return "";
+      return text[Math.min(text.length - 1, Math.floor((a.currentTime / a.duration) * text.length))];
+    }
+    // 기기 음성: 낱말 경계(charIndex)부터 1초에 약 7글자씩 나아간다고 보고 짐작
+    const since = (performance.now() - (talk.at || talk.start || performance.now())) / 1000;
+    return text[Math.min(text.length - 1, (talk.charIndex || 0) + Math.floor(since * 7))];
   }
+  function render() {
+    const now = performance.now();
+    if (gesture && now < gestureUntil) { show(gesture); return; }
+    gesture = null;
+    if (talk) {
+      const a = talk.audio;
+      if (a && (a.paused || a.ended)) { show("closed"); return; }
+      const t = a ? a.currentTime : (now - (talk.start || now)) / 1000;
+      const m = Math.floor(t * 12) % 3 ? mouthFor(charNow()) : null;
+      show(m || "closed");
+      return;
+    }
+    show(blinking ? "blink" : settled);
+  }
+  function loop() { clearTimeout(mouthTimer); render(); if (talk || gesture) mouthTimer = setTimeout(loop, 80); }
   function blink() {
     clearTimeout(blinkTimer);
     blinkTimer = setTimeout(() => {
-      if (!talking && mood === "talk") { show(FACES.blink); setTimeout(() => { if (!talking && mood === "talk") show(FACES.closed); }, 150); }
+      if (!talk && !gesture && settled === "closed" && !reducedMotion) { blinking = true; render(); setTimeout(() => { blinking = false; render(); }, 140); }
       blink();
-    }, 2800 + Math.random() * 2600);
+    }, 2600 + Math.random() * 2600);
   }
-  const onTalk = (on) => { talking = on; tick(); };
+  // 오래 가만히 있으면 가끔 끄덕이거나 갸웃
+  function idle() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      if (!talk && !gesture && settled === "closed") {
+        const [face, motion, ms] = Math.random() < 0.5 ? ["cheer", "nod", 1200] : ["think", "lean", 1600];
+        gesture = face; gestureUntil = performance.now() + ms; kick(motion); loop();
+      }
+      idle();
+    }, 7000 + Math.random() * 5000);
+  }
+  const onTalk = (info) => {
+    talk = info;
+    aside.classList.toggle("talking", Boolean(info));
+    if (info && info.text !== lastText) {
+      lastText = info.text;
+      const g = gestureFor(info.text, mood);
+      if (g) { gesture = g[0]; gestureUntil = performance.now() + g[2]; kick(g[1]); }
+    }
+    if (!info) {
+      // 말이 끝나면 기분에 맞는 얼굴로 쉬었다가 기본으로
+      settled = mood === "praise" ? "smile" : mood === "think" ? "think" : "closed";
+      clearTimeout(calmTimer);
+      if (settled !== "closed") calmTimer = setTimeout(() => { settled = "closed"; render(); }, 2600);
+    }
+    loop();
+  };
   talkWatchers.add(onTalk);
   // 처음엔 「자, 봐요」 하는 얼굴. 장 안내 말이 이미 나오고 있으면 바로 입을 움직인다
-  talking = talkingNow;
-  if (talking) tick(); else show(FACES.encourage);
-  blink();
+  if (talkingNow) onTalk(talkingNow); else { gesture = "cheer"; gestureUntil = performance.now() + 1200; kick("nod"); loop(); }
+  blink(); idle();
   return {
     el: aside,
-    mood(next) { if (next === "praise" && mood !== "praise") praiseFlip = !praiseFlip; mood = next || "talk"; tick(); },
-    dispose() { clearTimeout(mouthTimer); clearTimeout(blinkTimer); talkWatchers.delete(onTalk); aside.remove(); }
+    mood(next) {
+      mood = next || "talk";
+      if (mood === "praise") { gesture = "thumbs"; gestureUntil = performance.now() + 1100; kick("hop"); }
+      else if (mood === "think") { gesture = "think"; gestureUntil = performance.now() + 900; kick("lean"); }
+      lastText = "";   // 새 말이면 첫머리 몸짓을 다시
+      loop();
+    },
+    dispose() { [mouthTimer, blinkTimer, idleTimer, calmTimer].forEach(clearTimeout); talkWatchers.delete(onTalk); aside.remove(); }
   };
 }
 
