@@ -39,7 +39,7 @@
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1·2를 연결했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~4를 연결했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 7,
-    "lockedCount": 37
+    "publicCandidateCount": 9,
+    "lockedCount": 35
   },
   "items": [
     {
@@ -263,17 +263,24 @@
       "sourcePrintedPage": 59,
       "commonTypeId": "average-reading-record",
       "childFriendlyTypeLabel": "읽은 쪽수의 평균으로 빠진 날의 기록 구하기",
-      "originalStructure": "며칠 동안 읽은 쪽수와 처음 며칠의 평균보다 더 많이 읽었다는 조건으로 빠진 날의 쪽수를 구합니다.",
-      "conditions": ["첫째 83쪽, 둘째 74쪽, 셋째 71쪽, 넷째 64쪽", "다섯째 날은 앞의 5일 평균보다 12쪽 많음", "다섯째 날 기록"],
+      "originalStructure": "처음 네 날의 쪽수와 다섯째 날이 5일 전체 평균보다 12쪽 많다는 조건으로 다섯째 날을 구합니다.",
+      "conditions": [
+        "첫째 83쪽, 둘째 74쪽, 셋째 71쪽, 넷째 64쪽",
+        "다섯째 날은 다섯째 날을 포함한 5일 평균보다 12쪽 많음",
+        "다섯째 날 기록"
+      ],
       "visualRequirement": "날짜와 쪽수를 구분해 보여야 합니다.",
       "independentCalculation": "앞의 네 날 합은 292쪽. 다섯째 날을 x라 하면 x=12+(292+x)÷5이므로 4x=352, x=88",
       "independentAnswer": "88쪽",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "평균과 빠진 기록의 식을 초등 표현으로 검수하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "releaseEvidence": "필기 없는 원문 대조, 5일 평균을 포함하는 식과 88쪽 직접 검산. 다른 사본 손글씨 85는 조건에 맞지 않아 근거에서 제외. 공식 출판사 답안 미확인.",
+      "runtimeTypeId": "5-2-u6-e1-mission-3",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-4",
@@ -284,16 +291,22 @@
       "commonTypeId": "average-replace-natural-number",
       "childFriendlyTypeLabel": "자료 하나를 바꾼 뒤 평균으로 원래 수 구하기",
       "originalStructure": "자연수 10개의 평균에서 한 수를 50으로 바꾸었을 때 평균이 달라지는 조건으로 원래 수를 구합니다.",
-      "conditions": ["자연수 10개의 평균 42", "한 수를 50으로 바꾸면 평균 44"],
+      "conditions": [
+        "자연수 10개의 평균 42",
+        "한 수를 50으로 바꾸면 평균 44"
+      ],
       "visualRequirement": "바꾸기 전·후의 전체 합을 구분해 보여야 합니다.",
       "independentCalculation": "처음 합 420, 바꾼 뒤 합 440. 합이 20 늘었으므로 원래 수는 50-20=30",
       "independentAnswer": "30",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "평균 변화와 자료 하나의 변화 관계를 검수하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "releaseEvidence": "원문 숫자·자연수·한 수 교체 조건을 대조하고 전후 합 420·440을 독립 검산. 공식 출판사 답안 미확인.",
+      "runtimeTypeId": "5-2-u6-e1-mission-4",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-5",
