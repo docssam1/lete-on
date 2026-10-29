@@ -2160,6 +2160,24 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       verifiedVariantTarget: 1, verifiedVariantCount: 1, answerVisualRequired: true,
       answerVisualStatus: "verified-reconstruction", implementationStatus: "fixed-verified-pool"
     });
+    for (const [ordinal, name, generatorKey] of [
+      [2, "앞과 위에서 본 직육면체의 옆면 둘레", "source52CuboidViewsSidePerimeterPage49Mission2"],
+      [3, "세 방향으로 묶은 상자의 테이프 길이", "source52CuboidTapeWrapPage49Mission3"],
+      [6, "정육면체를 아홉 조각으로 자른 모든 모서리의 길이", "source52CuboidNinePieceEdgeSumPage49Mission6"]
+    ]) {
+      const id = `5-2-u5-e1-mission-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidProperties.types.push({
+        id, number: source52CuboidProperties.types.length + 1, typeNumber, name, label: name,
+        difficultyBand: 0, sourceItemId: id, sourceItemLabel: `Mission ${ordinal}`,
+        sourceSection: "mission", sourceTier: "advanced", sourcePdfPage: 45, sourcePrintedPage: 49,
+        sourceVerified: true, publisherKeyVerified: false, reviewLocked: false,
+        generatorKey, generationMode: "fixed-verified-pool", verifiedVariantTarget: 1,
+        verifiedVariantCount: 1, answerVisualRequired: ordinal === 6,
+        answerVisualStatus: ordinal === 6 ? "verified-reconstruction" : "not-required",
+        implementationStatus: "fixed-verified-pool"
+      });
+    }
   }
 
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {

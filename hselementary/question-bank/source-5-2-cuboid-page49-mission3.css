@@ -1,0 +1,33 @@
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-400-normal.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: swap; unicode-range: U+1100-11FF,U+3130-318F,U+AC00-D7AF; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-600-normal.woff2") format("woff2"); font-style: normal; font-weight: 600; font-display: swap; unicode-range: U+1100-11FF,U+3130-318F,U+AC00-D7AF; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-700-normal.woff2") format("woff2"); font-style: normal; font-weight: 700; font-display: swap; unicode-range: U+1100-11FF,U+3130-318F,U+AC00-D7AF; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-400-normal.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: swap; unicode-range: U+0000-00FF,U+2000-206F,U+2070-218F; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-600-normal.woff2") format("woff2"); font-style: normal; font-weight: 600; font-display: swap; unicode-range: U+0000-00FF,U+2000-206F,U+2070-218F; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-700-normal.woff2") format("woff2"); font-style: normal; font-weight: 700; font-display: swap; unicode-range: U+0000-00FF,U+2000-206F,U+2070-218F; }
+
+.source52-p49m3-question > p,
+.source52-p49m3-solution > p { margin: 0 0 14px; line-height: 1.65; }
+.source52-p49m3-diagram { display: block; width: min(100%, 600px); height: auto; margin: 12px auto 8px; overflow: visible; }
+.source52-p49m3-cuboid path { fill: none; stroke: #191511; stroke-width: 2.2; stroke-linejoin: round; }
+.source52-p49m3-cuboid .source52-p49m3-hidden { stroke: #7a6f5c; stroke-width: 1.4; stroke-dasharray: 5 5; }
+.source52-p49m3-wraps path { fill: none; stroke: #2f6b4a; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.source52-p49m3-knot path { fill: none; stroke: #2f6b4a; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.source52-p49m3-dimensions path { fill: none; stroke: #51604f; stroke-width: 1.4; }
+.source52-p49m3-diagram text { fill: #191511; font-family: "Noto Serif KR", serif; font-size: 15px; }
+.source52-p49m3-loop-labels text { fill: #2f6b4a; font-weight: 600; font-size: 13px; }
+.source52-p49m3-final-answer { font-weight: 700; }
+.source52-p49m3-solution ol { margin: 12px 0; padding-left: 1.5em; }
+.source52-p49m3-solution li { margin: 4px 0; }
+@media (max-width: 680px) {
+  .source52-p49m3-question > p,
+  .source52-p49m3-solution > p { font-size: 15px; }
+  .source52-p49m3-diagram { width: 100%; }
+}
+@media print {
+  .source52-p49m3-question,
+  .source52-p49m3-solution { color: #191511; font-family: "Noto Serif KR", "Batang", serif; font-size: 10.5pt; line-height: 1.45; }
+  .source52-p49m3-diagram { max-height: 72mm; }
+  .source52-p49m3-wraps path,
+  .source52-p49m3-knot path { stroke: #191511; }
+  .source52-p49m3-loop-labels text { fill: #191511; }
+}
