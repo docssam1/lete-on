@@ -2258,6 +2258,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e3-example-3-synthetic",
       "publisherKeyVerified": false,
       "reviewReason": "原図では回転後の頂点が元の斜辺上にあるように示されている。これを条件に含めると独立計算では30°に定まる。以前の45°反例はこの位置条件を満たさず、原図に対する反例として不十分だった。正式答案と位置関係の追加確認、生成画面の検証までは原文を潜在的公開対象として確定せずロックを維持する。"
     },

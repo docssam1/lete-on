@@ -1,0 +1,34 @@
+'use strict';
+const assert = require('node:assert/strict');
+const api = require('./source-5-2-u3-page28-example33-synthetic.js');
+const p = api.points;
+const sub = (a,b) => ({x:a.x-b.x,y:a.y-b.y});
+const cross = (a,b) => a.x*b.y-a.y*b.x;
+const dot = (a,b) => a.x*b.x+a.y*b.y;
+const len = a => Math.hypot(a.x,a.y);
+const angle = (a,v,b) => Math.acos(Math.max(-1,Math.min(1,dot(sub(a,v),sub(b,v))/(len(sub(a,v))*len(sub(b,v))))))*180/Math.PI;
+const near = (a,b,tolerance=1e-5) => assert.ok(Math.abs(a-b)<tolerance, `${a} != ${b}`);
+near(cross(sub(p.R,p.G),sub(p.N,p.G)),0,0.001);
+assert.ok(dot(sub(p.R,p.G),sub(p.R,p.N))<0, 'R must be between G and N');
+near(cross(sub(p.D,p.N),sub(p.M,p.R)),0,0.001);
+near(angle(p.G,p.D,p.N),90);
+near(len(sub(p.N,p.D)),len(sub(p.R,p.D)));
+near(len(sub(p.G,p.D)),len(sub(p.M,p.D)));
+near(len(sub(p.G,p.N)),len(sub(p.M,p.R)));
+near(angle(p.N,p.D,p.R),60);
+near(angle(p.G,p.D,p.M),60);
+near(angle(p.D,p.M,p.R),30);
+const inventory=require('./source-inventory/5-2-source-items.json');
+const items=Array.isArray(inventory)?inventory:inventory.sourceItems;
+const original=items.find(x=>x.syntheticRuntimeTypeId===api.sourceItemId);
+assert.ok(original && original.publicDecision==='locked' && original.publisherKeyVerified===false);
+for (let i=0;i<3;i++) {
+ const q=api.makeQuestion(i);
+ assert.equal(q.answer,`${api.targets[i].answer}°`);
+ assert.ok(q.prompt.includes('∠ㄱㄷㄴ=90°') && q.prompt.includes('빗변 ㄱㄴ 위의 점 ㄹ'));
+ assert.ok(q.solution.includes('2x+x=180'));
+ assert.ok(q.answerVisual.includes(`${api.targets[i].answer}°`));
+ assert.equal(q.publisherAnswerVerified,false);
+ assert.equal(q.variantProvenance,'synthetic-explicit-collinearity');
+}
+console.log('유사문항: 위치·평행·회전·목표각·원문 잠금 검증 통과');
