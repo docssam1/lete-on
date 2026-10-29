@@ -1,0 +1,11 @@
+"use strict";
+const assert=require("node:assert/strict");global.window={};require("./source-inventory-4-1.js");require("./source-inventory-grade6.js");require("./curriculum.js");require("./generators.js");
+const item=require("./source-5-2-cuboid-page50-example24.js"),m=item.verifyModel();
+const type=window.HSE_CURRICULUM.semesters.find(s=>s.id==="5-2").units.find(u=>u.id==="5-2-u5").subunits.flatMap(s=>s.types).find(t=>t.sourceItemId===item.sourceItemId);
+assert(type);assert.equal(type.id,item.sourceItemId);assert.equal(type.reviewLocked,false);assert.equal(type.sourceVerified,true);assert.equal(type.publisherKeyVerified,false);assert.equal(window.HSE_GENERATORS.generatorKey(type),item.generatorKey);
+const q=window.HSE_GENERATORS.generate(type,2,0,50,0);assert(q);assert.equal(window.HSE_GENERATORS.generate(type,2,0,50,1),null);
+assert.deepEqual(m.dimensions,[6,4,3]);assert.equal(m.facePerimeterSum,104);assert.deepEqual([m.maximumSeamSum,m.minimumSeamSum],[17,26]);assert.deepEqual([m.maximumPerimeter,m.minimumPerimeter],[70,52]);assert.match(q.solution,/3×3\+2×4=17cm/);assert.match(q.solution,/3×6\+2×4=26cm/);
+assert.match(q.prompt,/다음 직육면체/);assert.match(q.prompt,/가장 길 때와 가장 짧을 때/);assert.match(q.prompt,/M64 200 126 158 M126 38 126 158 286 158/);assert.match(q.solution,/104−2Σ/);assert.match(q.solution,/70cm/);assert.match(q.solution,/52cm/);assert.match(q.answer,/70cm.*52cm/);
+assert.equal((q.prompt.match(/class="geometry-diagram source52-p50e24-cuboid"/g)||[]).length,1);assert.equal((q.answerVisual.match(/class="source52-p50e24-net"/g)||[]).length,2);assert.equal(q.generationMode,"fixed-verified-pool");assert.equal(q.handwrittenAnswerVerified,false);
+const readiness=require("./source-inventory/5-2-u5-readiness-review.json").items.find(r=>r.sourceItemId===item.sourceItemId);assert.equal(readiness.implementationStatus,"verified-local");assert.equal(readiness.publicDecision,"public");
+console.log("5-2 U5 p.50 Example 2-4: 6×4×3cm source cuboid, spanning-tree bounds and net perimeter formula and extrema (70cm/52cm), fixed pool, and public release audit passed.");

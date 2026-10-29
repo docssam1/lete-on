@@ -1,0 +1,14 @@
+"use strict";
+const assert=require("node:assert/strict");global.window={};require("./source-inventory-4-1.js");require("./source-inventory-grade6.js");require("./curriculum.js");require("./generators.js");
+const item=require("./source-5-2-cuboid-page51-mission1.js"),m=item.verifyModel();
+const type=window.HSE_CURRICULUM.semesters.find(s=>s.id==="5-2").units.find(u=>u.id==="5-2-u5").subunits.flatMap(s=>s.types).find(t=>t.sourceItemId===item.sourceItemId);
+assert(type);assert.equal(type.id,item.sourceItemId);assert.equal(type.sourceVerified,true);assert.equal(type.reviewLocked,false);assert.equal(type.publisherKeyVerified,false);assert.equal(window.HSE_GENERATORS.generatorKey(type),item.generatorKey);
+const q=window.HSE_GENERATORS.generate(type,2,0,50,0);assert(q);assert.equal(window.HSE_GENERATORS.generate(type,2,0,50,1),null);
+assert.deepEqual(m.dimensions,[6,2,4]);assert.equal(m.faceCount,6);assert.equal(m.facePerimeterSum,96);assert.deepEqual(m.seamsCm,[2,4,4,6,6]);assert.equal(m.seamSum,22);assert.equal(m.perimeterCm,52);
+assert.deepEqual(item.faces[5],{x:14,y:6,w:4,h:2,label:"4×2"});
+assert.doesNotMatch(item.netSvg(),/<text/);assert.match(item.netSvg(true),/>4×2<\/text>/);
+assert.match(item.cubeSvg(),/M55 184l65-43 M120 29v112h170/);
+assert.match(q.prompt,/6cm, 2cm, 4cm/);assert.match(q.prompt,/전개도와 같은 형태/);assert.match(q.solution,/96−2×\(4\+4\+6\+6\+2\)=96−44/);assert.match(q.answer,/52cm/);
+assert.equal((q.prompt.match(/class="source52-p51m1-net"/g)||[]).length,1);assert.equal((q.answerVisual.match(/class="source52-p51m1-net"/g)||[]).length,1);assert.equal(q.generationMode,"fixed-verified-pool");assert.equal(q.verifiedVariantCount,1);assert.equal(q.handwrittenAnswerVerified,false);
+const readiness=require("./source-inventory/5-2-u5-readiness-review.json").items.find(r=>r.sourceItemId===item.sourceItemId);assert.equal(readiness.implementationStatus,"verified-local");assert.equal(readiness.publicDecision,"public");
+console.log("5-2 U5 p.51 Mission 1: source net six-face reconstruction, five seams (4,4,6,6,2), 52cm perimeter, fixed pool, and public release audit passed.");

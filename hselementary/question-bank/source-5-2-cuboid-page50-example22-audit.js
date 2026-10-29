@@ -1,0 +1,17 @@
+"use strict";
+const assert=require("node:assert/strict");global.window={};require("./source-inventory-4-1.js");require("./source-inventory-grade6.js");require("./curriculum.js");require("./generators.js");
+const item=require("./source-5-2-cuboid-page50-example22.js"),m=item.verifyModel();
+const type=window.HSE_CURRICULUM.semesters.find(s=>s.id==="5-2").units.find(u=>u.id==="5-2-u5").subunits.flatMap(s=>s.types).find(t=>t.sourceItemId===item.sourceItemId);
+assert(type);assert.equal(type.id,item.sourceItemId);assert.equal(type.reviewLocked,false);assert.equal(type.sourceVerified,true);assert.equal(type.publisherKeyVerified,false);assert.equal(window.HSE_GENERATORS.generatorKey(type),item.generatorKey);
+const q=window.HSE_GENERATORS.generate(type,2,0,50,0);assert(q);assert.equal(window.HSE_GENERATORS.generate(type,2,0,50,1),null);
+assert.deepEqual(m.sideWidths,[4,6,4,6]);assert.equal(m.height,12);assert.deepEqual(m.dimensions,[12,4,6]);assert.equal(m.edgeSum,88);assert.equal(q.answer,"88cm");
+assert.match(q.prompt,/한 변의 길이가 20cm인 정사각형/);assert.match(q.solution,/20−4−4=<strong>12cm<\/strong>/);assert.match(q.solution,/4×\(4\+6\+12\)=<strong>88cm<\/strong>/);
+assert.match(q.solution,/20−14=<strong>6cm<\/strong>/, "infer the 6cm face from the given 14cm cut");
+assert.doesNotMatch(q.solution,/20−4−10/, "do not assume an unlabelled 10cm cut");
+assert.equal((m.side-2*m.bottomOpening)/2,4,"the complementary width follows from the full side strip");
+assert.equal((q.prompt.match(/class="geometry-diagram source52-p50e22-diagram"/g)||[]).length,1);assert.equal(q.generationMode,"fixed-verified-pool");assert.equal(q.handwrittenAnswerVerified,false);
+assert.doesNotMatch(q.prompt,/source52-p50e22-fold/,"original problem does not reveal inferred fold lines");
+assert.equal((q.answerVisual.match(/class="source52-p50e22-fold"/g)||[]).length,3,"answer visual shows all inferred folds");
+assert.equal(m.topOpening,6);assert.equal(m.bottomOpening,6);
+const readiness=require("./source-inventory/5-2-u5-readiness-review.json").items.find(r=>r.sourceItemId===item.sourceItemId);assert.equal(readiness.implementationStatus,"verified-local");assert.equal(readiness.publicDecision,"public");
+console.log("5-2 U5 p.50 Example 2-2 source net, 4/6/4/6cm side strip, 4×6×12cm cuboid, 88cm edge sum, fixed pool, and public release audit passed.");

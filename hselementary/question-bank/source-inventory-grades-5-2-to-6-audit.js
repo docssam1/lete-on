@@ -36,7 +36,7 @@ const specs = [
 ];
 
 const failures = [];
-const verified5_2Page49 = new Set([...([2, 3, 4, 5, 6].map(n => `5-2-u5-e1-mission-${n}`)), "5-2-u5-e1-example-2", "5-2-u5-e1-example-3"]);
+const verified5_2Page49 = new Set([...([2, 3, 4, 5, 6].map(n => `5-2-u5-e1-mission-${n}`)), "5-2-u5-e1-example-2", "5-2-u5-e1-example-3", ...([1, 2, 3, 4].map(n => `5-2-u5-e2-example-${n}`)), ...([1, 2, 3].map(n => `5-2-u5-e2-mission-${n}`))]);
 const reviewed5_2Releases = new Set(["5-2-u1-e4-mission-1", "5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
 const allIds = new Set();
 const semesterCounts = {};
@@ -152,8 +152,8 @@ for (const spec of specs) {
     const recorded = document.integrity?.actualBySection?.[section];
     if (recorded !== undefined && recorded !== bySection[section]) fail(`${spec.semester} ${section}: 실제 항목 수와 장부에 기록한 실제 수가 다릅니다 (${bySection[section]} / ${recorded}).`);
   }
-  if (spec.semester === "5-2" && verifiedCount !== 34) {
-    fail(`5-2: sourceVerified true 항목은 34개여야 합니다 (${verifiedCount}).`);
+  if (spec.semester === "5-2" && verifiedCount !== 41) {
+    fail(`5-2: sourceVerified true 항목은 41개여야 합니다 (${verifiedCount}).`);
   }
   if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
     fail("5-2: reviewed 항목의 원문 확인 또는 명시 목록이 일치하지 않습니다.");

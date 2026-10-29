@@ -1,0 +1,13 @@
+"use strict";
+const assert=require("node:assert/strict");global.window={};require("./source-inventory-4-1.js");require("./source-inventory-grade6.js");require("./curriculum.js");require("./generators.js");
+const item=require("./source-5-2-cuboid-page50-example23.js"),m=item.verifyModel();
+const type=window.HSE_CURRICULUM.semesters.find(s=>s.id==="5-2").units.find(u=>u.id==="5-2-u5").subunits.flatMap(s=>s.types).find(t=>t.sourceItemId===item.sourceItemId);
+assert(type);assert.equal(type.id,item.sourceItemId);assert.equal(type.reviewLocked,false);assert.equal(type.sourceVerified,true);assert.equal(type.publisherKeyVerified,false);assert.equal(window.HSE_GENERATORS.generatorKey(type),item.generatorKey);
+const q=window.HSE_GENERATORS.generate(type,2,0,50,0);assert(q);assert.equal(window.HSE_GENERATORS.generate(type,2,0,50,1),null);
+assert.deepEqual(m.valid,[4,8,9,10]);assert.equal(m.validCount,4);assert.deepEqual(Object.values(m.checks),["duplicate-face","overlap-cycle","duplicate-face","valid","duplicate-face","overlap-cycle","duplicate-face","valid","valid","valid"]);
+assert.equal(q.answer,"4, 8, 9, 10");assert.match(q.prompt,/색칠한 부분과 ①부터 ⑩까지/);assert.match(q.solution,/1, 3, 5, 7/);assert.match(q.solution,/4, 8, 9, 10은 여섯 면이 서로 다른 방향/);
+assert.equal((q.prompt.match(/class="geometry-diagram source52-p50e23-diagram"/g)||[]).length,1);assert.equal(q.generationMode,"fixed-verified-pool");assert.equal(q.handwrittenAnswerVerified,false);
+assert.match(q.prompt,/다음 그림에서 색칠한 부분과/);
+assert.match(q.prompt,/class="source52-p50e23-fold" d="M169 183v64 M233 183v64 M233 183h64 M233 247h64"/,"four fold seams join adjacent shaded squares");
+const readiness=require("./source-inventory/5-2-u5-readiness-review.json").items.find(r=>r.sourceItemId===item.sourceItemId);assert.equal(readiness.implementationStatus,"verified-local");assert.equal(readiness.publicDecision,"public");
+console.log("5-2 U5 p.50 Example 2-3: all ten source-positioned candidates classified; only 4, 8, 9, 10 form a valid cube net; fixed pool and public release audit passed.");
