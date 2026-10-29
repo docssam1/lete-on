@@ -53,7 +53,7 @@ function startServer() {
         const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u6")?.subunits.find(x => x.name === "평균의 활용")?.types.find(x => x.sourceItemId === id);
         return type && { reviewLocked: type.reviewLocked, sourceVerified: type.sourceVerified, generationMode: type.generationMode, verifiedVariantCount: type.verifiedVariantCount, generatorKey: window.HSE_GENERATORS.generatorKey(type) };
       }, itemId);
-      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 1, generatorKey: `source52AverageOriginalPage61Mission${n}` });
+      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 3, generatorKey: `source52AverageOriginalPage61Mission${n}` });
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u6");
@@ -68,10 +68,10 @@ function startServer() {
       const problemItem = problemView.locator(`[data-source-item-id='${itemId}']`).first();
       await problemItem.waitFor({ state: "visible" });
       const prompt = await problemItem.innerText();
-      for(const t of (n === 5 ? ["64점", "100점", "은경", "효근"] : ["40명", "27.75점", "16명", "25점"])) assert(prompt.includes(t));
+      for(const t of (n === 5 ? ["69점", "100점", "가와 바"] : ["40명", "27.75점", "15명", "25점"])) assert(prompt.includes(t));
       assert.equal(await problemView.locator(`[data-source-answer='${itemId}']`).count(), 0);
       const table=problemItem.locator(".source52-p61m56-table");
-      if(n===5){assert.deepEqual(await table.locator("thead th").allTextContents(),["이름","은경","가영","한초","도영","민정","효근","미애","서진"]);assert.deepEqual((await table.locator("tbody td").allTextContents()).map(x=>x.trim()),["","42","91","76","47","","55","66"]);}else{assert.deepEqual(await table.locator("tbody th").allTextContents(),["0","10","15","25","35","40","50"]);assert.deepEqual((await table.locator("tbody td").allTextContents()).map(x=>x.trim()),["1","3","7","","","6","2"]);}
+      if(n===5){assert.deepEqual(await table.locator("thead th").allTextContents(),["이름","가","나","다","라","마","바","사","아"]);assert.deepEqual((await table.locator("tbody td").allTextContents()).map(x=>x.trim()),["□","35","89","59","42","□","50","86"]);}else{assert.deepEqual(await table.locator("tbody th").allTextContents(),["0","10","15","25","35","40","50"]);assert.deepEqual((await table.locator("tbody td").allTextContents()).map(x=>x.trim()),["2","4","6","□","□","6","4"]);}
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `problem horizontal overflow ${width}px`);
       const fontStatus = await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('600 16px "Pretendard"', "성적표의 평균을 구하여라"); });
       assert.equal(fontStatus, true, `local Pretendard loaded at ${width}px`);
@@ -80,7 +80,7 @@ function startServer() {
       await page.locator("#solutionTab").click();
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
-      assert.match(solutionText.replace(/\s/g, ""), n===5 ? /512점.*377점.*135점.*94점.*41점/ : /1110점.*21명.*475점.*11명.*10명.*6명.*25명/, solutionText);
+      assert.match(solutionText.replace(/\s/g, ""), n===5 ? /552점.*361점.*191점.*91점.*100점/ : /1110점.*18명.*570점.*9명.*9명.*5명.*24명/, solutionText);
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);
       await page.screenshot({ path: path.join(outputDir, `mission${n}-solution-${width}.png`), fullPage: true });

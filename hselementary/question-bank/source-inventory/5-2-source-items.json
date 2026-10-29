@@ -5092,16 +5092,18 @@
       "pdfPage": 57,
       "printedPage": 61,
       "sourceShape": "8명 점수표에서 평균과 최고점·두 배 조건으로 빈 두 점수를 구하기",
-      "answerContract": "은경 41점, 효근 94점",
+      "answerContract": "candidate: score-table answers",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 61쪽 원문과 표를 대조하고 독립 전수 검사. 출판사 답안은 미확인.",
+      "reviewReason": "원문 구조와 표를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-mission-5"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-6",
@@ -5112,16 +5114,18 @@
       "pdfPage": 57,
       "printedPage": 61,
       "sourceShape": "40명 점수별 학생 수 표와 배점·평균·한 문제만 맞힌 인원으로 3번 정답자 수 구하기",
-      "answerContract": "25명",
+      "answerContract": "candidate: score-table answers",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 61쪽 원문과 표를 대조하고 독립 전수 검사. 출판사 답안은 미확인.",
+      "reviewReason": "원문 구조와 표를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-mission-6"
     },
     {
       "sourceItemId": "5-2-u6-e3-exploration",
