@@ -2735,6 +2735,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CongruenceApplicationOne = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ①");
+  if (source52CongruenceApplicationOne && !source52CongruenceApplicationOne.types.some(t => t.id === "5-2-u3-e3-exploration-synthetic")) {
+    const id="5-2-u3-e3-exploration-synthetic",name="합동 이등변삼각형과 교차각";
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 3 유사문항",sourceSection:"exploration",sourcePdfPage:24,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"대응점과 이등변 조건을 명시한 창작 문항을 독립 검산했습니다.",generatorKey:"source52CongruentIsoscelesPage28ExplorationSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   if (source52CongruenceApplicationOne && !source52CongruenceApplicationOne.types.some(t => t.id === "5-2-u3-e3-example-4-synthetic")) {
     const id="5-2-u3-e3-example-4-synthetic",name="직사각형을 두 번 접은 각";
     source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 3-4 유사문항",sourceSection:"example",sourcePdfPage:24,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"두 접는 선과 점의 이동을 명시한 창작 문항을 독립 검산했습니다.",generatorKey:"source52RectangleDoubleFoldPage28Example34Synthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
