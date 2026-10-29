@@ -1,0 +1,30 @@
+.source52-p54e44-question,
+.source52-p54e44-solution { color: #2a241c; line-height: 1.62; }
+.source52-p54e44-question > p,
+.source52-p54e44-solution > p { margin: 0 0 0.65rem; }
+.source52-p54e44-diagrams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; max-width: 570px; margin: 0.6rem auto; }
+.source52-p54e44-shape { min-width: 0; margin: 0; text-align: center; }
+.source52-p54e44-diagram { display: block; width: min(100%, 270px); height: auto; margin: auto; }
+.source52-p54e44-diagram .top { fill: #f7f2e7; }
+.source52-p54e44-diagram .front { fill: #fdfbf5; }
+.source52-p54e44-diagram .right { fill: #e4ddce; }
+.source52-p54e44-shape figcaption { margin-top: 0.1rem; color: #7a6f5c; font-size: 0.92rem; }
+.source52-p54e44-question ol,
+.source52-p54e44-solution ol { margin: 0.55rem 0; padding-left: 1.45rem; }
+.source52-p54e44-question li,
+.source52-p54e44-solution li { margin: 0 0 0.42rem; }
+.source52-p54e44-final { text-align: center; line-height: 1.9; font-size: 1.08rem; }
+@media (max-width: 430px) {
+  .source52-p54e44-diagrams { grid-template-columns: 1fr; max-width: 320px; }
+  .source52-p54e44-diagram { width: min(100%, 280px); }
+  .source52-p54e44-question ol,
+  .source52-p54e44-solution ol { padding-left: 1.25rem; }
+}
+@media print {
+  .source52-p54e44-question,
+  .source52-p54e44-solution { color: #191511; }
+  .source52-p54e44-diagrams { max-width: 460px; gap: 0.4rem; }
+  .source52-p54e44-diagram { width: min(100%, 220px); }
+  .source52-p54e44-question li,
+  .source52-p54e44-solution li { margin-bottom: 0.25rem; }
+}

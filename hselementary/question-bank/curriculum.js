@@ -2246,7 +2246,9 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52Dice) {
     for (const [ordinal, name, generatorKey] of [
       [1, "이어 붙인 주사위의 면에 적힌 수 구하기", "source52CuboidPage54Example41"],
-      [2, "세 방향의 주사위 그림으로 마주 보는 면 찾기", "source52CuboidPage54Example42"]
+      [2, "세 방향의 주사위 그림으로 마주 보는 면 찾기", "source52CuboidPage54Example42"],
+      [3, "붙인 주사위의 바깥 면 눈의 합", "source52CuboidPage54Example43"],
+      [4, "주사위 겉면 눈의 합의 최댓값과 최솟값", "source52CuboidPage54Example44"]
     ]) {
       const id = `5-2-u5-e4-example-4-${ordinal}`;
       const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;

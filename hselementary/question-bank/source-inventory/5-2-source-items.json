@@ -48,7 +48,7 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "reviewLockedItems": 262
+    "reviewLockedItems": 260
   },
   "units": [
     {
@@ -4350,16 +4350,23 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 50,
-      "printedPage": 52,
-      "sourceShape": "직육면체의 활용의 예제 4-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 54,
+      "sourceShape": "주사위 12개를 붙여 놓은 모양에서 맞닿는 두 면의 눈이 같고 주사위의 마주 보는 두 면의 눈 합이 7이라는 조건을 이용해 바깥 면 눈의 합을 구합니다.",
+      "answerContract": "single-value: 116",
       "visualRisk": [
-        "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
-        "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
+        "12개 주사위의 배열, 접촉 면, 바깥 면을 모두 표시해야 합니다."
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 54쪽 원문 그림과 독립 계산 및 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "sourceAuditUpdate": "2026-10-26: canonical + clean p.54 scans and Apple Vision OCR reconciled the 3×2×2 block and visible front/top pips. Axis-by-axis exterior sum is 4×7 + 2×20 + 2×24 = 116. Fixed local item, responsive browser review and one-page problem/solution A4 passed; publisher key remains unverified; subsequently released with user authorization.",
+      "publicDecision": "public",
+      "lockReason": "",
+      "independentCalculation": "The source diagram is a 3×2×2 block. The six front-facing values are 1,6,1 on the upper row and 5,2,5 on the lower row, sum 20. Each of the six top faces has four pips, sum 24. For the length-3 direction there are four lines of dice; each line's two exterior end faces sum 7 because the two internal contacts match and opposite faces sum 7, contributing 28. For each length-2 line, the two exterior faces are equal: if the visible front/top end is a, the opposite-side exterior end is also a, contributing 2a. Thus the front-row exterior contribution is 2×20=40 and the top contribution is 2×24=48. Total exterior pips =28+40+48=116. The unseen contact faces were handled only through the printed equal-contact and opposite-sum conditions; handwritten arithmetic was excluded.",
+      "independentAnswer": "116",
+      "runtimeTypeId": "5-2-u5-e4-example-4-3",
+      "implementationEvidence": "source-5-2-cuboid-page54-example43.js · source-5-2-cuboid-page54-example43-audit.js · source-5-2-cuboid-page54-example43-app-audit.js · current focused source/math audit passed 2026-10-27; existing screen/A4 review retained · local: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page54/example43-runtime-review-20261026/ · owner-only Drive note 1KNnjlEJVaILymNO-DJos8bhRxqqnkQ-m · evidence ZIP 1IMXXVQ5TGp2PsjBgqNoaC75n9pCz11-v (12,813,367 bytes; SHA-256 ee198d5a34372f24dd908f1f09defc9f4426f455d5e315bcbf26b9747dbe53bd) · 2026-10-28 top-face geometry correction and 1440/375/320, A4 recheck: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page54/example43-figure-review-20261028/; Drive note updated, ZIP predates correction.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u5-e4-example-4",
@@ -4368,16 +4375,23 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 50,
-      "printedPage": 52,
-      "sourceShape": "직육면체의 활용의 예제 4-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 54,
+      "sourceShape": "마주 보는 두 면의 눈 합이 7인 주사위 4개로 두 가지 모양을 만들고, 붙는 면의 눈이 같을 때 두 도형의 겉면 눈 합의 최댓값과 최솟값을 구합니다.",
+      "answerContract": "ordered-max-min: (가),(나) max=68,68; min=58,58",
       "visualRisk": [
-        "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
-        "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
+        "두 모양의 주사위 접촉 구조와 앞·위·옆 면을 정확히 표시해야 합니다."
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 54쪽 원문 그림과 독립 계산 및 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "sourceAuditUpdate": "2026-10-26: canonical + clean p.54 scans and Apple Vision OCR confirm the four-die line and bent shapes and max/min prompts. Exhaustive legal contact choices give both shapes contact-sum bounds 8..13, hence exterior extrema 68 and 58. Fixed local item, responsive browser, and one-page problem/solution A4 passed; publisher key remains unverified; subsequently released with user authorization.",
+      "publicDecision": "public",
+      "lockReason": "",
+      "independentCalculation": "네 주사위의 전체 면 눈 합은 4×21=84이고, 같은 눈끼리 붙인 접촉면은 내부에서 두 번 세므로 바깥 합은 84−2×(세 접촉값의 합)입니다. (가) 일렬에서는 세 접촉값이 x, 7−x, x이므로 합은 7+x (8~13)입니다. (나) 꺾인 모양도 일렬의 두 접촉값 합이 7입니다. 꺾인 주사위의 직각 방향 접촉면은 직선 접촉면과 서로 다른 인접면이어야 하므로 같은 눈 또는 그 반대면의 눈을 제외합니다. 직선 쪽 5,2에 가지 접촉 1 또는 6을 두면 양 끝값이 실제로 가능합니다. 따라서 두 모양 모두 바깥 눈 합 최댓값은 84−2×8=68, 최솟값은 84−2×13=58입니다. 필기 흔적은 사용하지 않았습니다.",
+      "independentAnswer": "max (가) 68, (나) 68; min (가) 58, (나) 58",
+      "runtimeTypeId": "5-2-u5-e4-example-4-4",
+      "implementationEvidence": "source-5-2-cuboid-page54-example44.js · source-5-2-cuboid-page54-example44-audit.js · source-5-2-cuboid-page54-example44-app-audit.js · current focused source/math audit passed 2026-10-27; existing screen/A4 review retained · local: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page54/example44-runtime-review-20261026/ · owner-only Drive note 11sYQ0h1VXOqm8VbJkyONToZERTkD2Jw7 · evidence ZIP 12pd9k31Z3M9kQcNiLibeX6s7zWTwu_U- (11,767,838 bytes; SHA-256 f1827167679d9821d8de4fbe11d13a41bdf7531b931e9f0aa9bdc73b6fa28da9) · 2026-10-28 top-face geometry and elbow adjacency correction; focused audit and 1440/375/320, A4 recheck: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page54/example44-figure-review-20261028/; Drive note updated; ZIP predates correction.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u5-e4-mission-1",
