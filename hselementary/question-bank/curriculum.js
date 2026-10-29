@@ -2443,6 +2443,21 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
   }
 
+  if (source52AverageApplication) {
+    for (const [ordinal, name, generatorKey] of [
+      [1, "사람 수에 따른 일하는 날짜 구하기", "source52AverageOriginalPage61Mission1"],
+      [2, "평균 변화로 가장 큰 수 구하기", "source52AverageOriginalPage61Mission2"]
+    ]) {
+      const id = `5-2-u6-e2-mission-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${ordinal}`, sourceSection:"mission", sourceTier:"advanced",
+        sourcePdfPage:57, sourcePrintedPage:61, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
+        generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
