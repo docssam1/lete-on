@@ -187,11 +187,12 @@
     endNote.hidden = Boolean(next);
     if (next) $("journey-next-title").textContent = next[0];
   }
-  function matchingAssessmentEvidence() {
+  function matchingAssessmentEvidence(selectedGrade) {
+    const gradeToMatch = Number.isInteger(selectedGrade) ? selectedGrade : grade;
     try {
       const records = window.GFIELDLocalLearningRecord;
-      const evidence = records && records.storage.loadLatestAssessmentEvidence(grade);
-      return evidence && !evidence.legacyEvidence && evidence.grade === grade && evidence.source && evidence.currentCourse ? evidence : null;
+      const evidence = records && records.storage.loadLatestAssessmentEvidence(gradeToMatch);
+      return evidence && !evidence.legacyEvidence && evidence.grade === gradeToMatch && evidence.source && evidence.currentCourse ? evidence : null;
     } catch (error) { return null; }
   }
   function assessmentDate(evidence) {
@@ -360,9 +361,14 @@
       : `${current.grade}학년과 ${target.grade}학년의 학습 주제와 개념 연결을 비교해요.`);
   }
   function renderComparisonAssessment(current, target) {
-    const evidence = matchingAssessmentEvidence();
+    const evidence = matchingAssessmentEvidence(current.grade);
+    const targetEvidence = matchingAssessmentEvidence(target.grade);
     $("comparison-assessment-link").href = `./assessment-entry.html?grade=${current.grade}`;
     setText("comparison-assessment-link", evidence ? "평가 결과 확인·수정 →" : "평가 기록 입력 →");
+    const targetLink = $("comparison-assessment-target-link");
+    targetLink.href = `./assessment-entry.html?grade=${target.grade}`;
+    targetLink.hidden = Boolean(targetEvidence);
+    $("comparison-assessment-heading").textContent = evidence && targetEvidence ? "학년별 평가 기록 경로를 나란히 비교해요" : "선택한 학년의 학습 경로를 비교해요";
     setText("comparison-assessment-current-label", `${current.grade}학년 · ${evidence ? (evidence.source.label || "성적표 입력") : "평가 기록"}`);
     setText("comparison-assessment-current-title", evidence
       ? `${evidence.currentCourse.label} → ${evidence.targetCourse ? evidence.targetCourse.label : evidence.currentCourse.label}`
@@ -370,9 +376,13 @@
     setText("comparison-assessment-current-copy", evidence
       ? `${assessmentDate(evidence)} · 성적표에서 직접 입력한 현재·목표 과정`
       : "현재 학년의 성적표와 과정을 입력하면 선택한 경로를 여기에 보여 드려요.");
-    setText("comparison-assessment-target-label", `${target.grade}학년 · ${target.source === "inferred" ? "추정 계획 예시" : "계획 예시"}`);
-    setText("comparison-assessment-target-title", target.title);
-    setText("comparison-assessment-target-copy", target.core);
+    setText("comparison-assessment-target-label", `${target.grade}학년 · ${targetEvidence ? (targetEvidence.source.label || "성적표 입력") : target.source === "inferred" ? "추정 계획 예시" : "계획 예시"}`);
+    setText("comparison-assessment-target-title", targetEvidence
+      ? `${targetEvidence.currentCourse.label} → ${targetEvidence.targetCourse ? targetEvidence.targetCourse.label : targetEvidence.currentCourse.label}`
+      : target.title);
+    setText("comparison-assessment-target-copy", targetEvidence
+      ? `${assessmentDate(targetEvidence)} · 성적표에서 직접 입력한 현재·목표 과정`
+      : target.core);
   }
   function renderGradeFocus() {
     const host = $("grade-focus-list"); host.replaceChildren();

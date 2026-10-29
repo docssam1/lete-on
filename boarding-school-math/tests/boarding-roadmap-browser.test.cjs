@@ -141,7 +141,7 @@ test("roadmap shows only user-entered assessment evidence for the selected grade
   assert.equal(await page.locator("#comparison-assessment-link").innerText(), "평가 결과 확인·수정 →");
   assert.equal(await page.locator("#comparison-assessment-target-title").innerText(), "대수와 기하를 함께");
   assert.match(await page.locator("#comparison-assessment-target-copy").innerText(), /함수와 기하/);
-  assert.match(await page.locator("#comparison-pair-note, .comparison-pair-note").innerText(), /공식 학교 배정을 판정하지 않아요/);
+  assert.match(await page.locator("#comparison-pair-note, .comparison-pair-note").innerText(), /공식 배정을 판정하지 않아요/);
   await page.locator(".grade-track > summary").click();
   await page.getByRole("button", { name: "Grade 8 지도 보기" }).click();
   assert.equal(await page.locator("#journey-evidence-title").innerText(), "아직 입력한 평가 기록이 없어요");
@@ -169,7 +169,12 @@ test("roadmap loads each grade's own assessment route from local history", async
   await page.locator("#target-course").selectOption("geometry");
   await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  await page.getByLabel("비교할 학년").selectOption("8");
   assert.equal(await page.locator("#journey-evidence-title").innerText(), "Pre-Algebra → Algebra 1");
+  assert.equal(await page.locator("#comparison-assessment-current-title").innerText(), "Pre-Algebra → Algebra 1");
+  assert.equal(await page.locator("#comparison-assessment-target-title").innerText(), "Algebra 1 → Geometry");
+  assert.match(await page.locator("#comparison-assessment-target-copy").innerText(), /성적표에서 직접 입력한 현재·목표 과정/);
+  assert.equal(await page.locator("#comparison-assessment-target-link").isVisible(), false);
   await page.locator(".grade-track > summary").click();
   await page.getByRole("button", { name: "Grade 8 지도 보기" }).click();
   assert.equal(await page.locator("#journey-evidence-title").innerText(), "Algebra 1 → Geometry");

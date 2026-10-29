@@ -140,6 +140,7 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .comparison-pair-columns h4 { margin: 7px 0 0; font-size: .96rem; line-height: 1.45; overflow-wrap: anywhere; }
 .comparison-pair-columns p { margin: 7px 0 0; color: #566274; font-size: .82rem; line-height: 1.55; }
 .comparison-pair-columns a { min-height: 40px; margin-top: 9px; display: inline-flex; align-items: center; color: #4f347a; font-size: .8rem; font-weight: 800; text-underline-offset: 3px; }
+.comparison-pair-columns a[hidden] { display: none; }
 .comparison-pair-note { margin: 10px 0 0; color: #566274; font-size: .78rem; line-height: 1.5; }
 .level-section { padding-bottom: clamp(60px, 7vw, 94px); }
 .level-grid { margin-top: 26px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border: 1px solid #d8dee8; background: #fff; }
