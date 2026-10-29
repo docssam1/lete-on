@@ -92,6 +92,20 @@ test("student and teacher unit-screener reports preserve evidence while separati
   assert.equal(teacher.interpretation.teacherConfirmationRequired, true);
 });
 
+test("teacher feedback and teacher-confirmed next-step preview carry all three locales", function () {
+  const teacher = projections.buildTeacherReport(analysis());
+  assert.equal(projections.validateTeacherReport(teacher), true);
+  for (const item of teacher.itemFeedback) {
+    assert.deepEqual(Object.keys(item.comment).sort(), ["en", "ko", "zh-Hans"]);
+    assert.deepEqual(item.comment, engine.FEEDBACK[item.commentCode]);
+  }
+  const draft = nextSteps.buildDraft(teacher, ["7.NS.A.1b"], "zh-Hans");
+  assert.equal(draft.locale, "zh-Hans");
+  assert.equal(draft.steps[0].title, "用数轴方向和距离表示有理数和");
+  assert.equal(draft.authorizationVerified, false);
+  assert.equal(draft.studentAssignmentAuthorized, false);
+});
+
 test("next-step drafts preserve caller selections without resolving resources before teacher authorization", function () {
   const teacherReport = projections.buildTeacherReport(analysis());
   const draft = nextSteps.buildDraft(teacherReport, ["7.NS.A.1b", "7.NS.A.2d"], "ko");
