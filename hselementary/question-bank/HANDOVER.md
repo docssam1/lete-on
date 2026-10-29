@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 64 Exploration 4 and Examples 4-1–4-4
+
+- Source-checked and independently enumerated Exploration 4 and Examples 4-1, 4-2, 4-4: 1/6, 1/4, 3/10, 41/60 under the usual equally likely outcome models. Example 4-1 prior ledger incorrectly required adjacency and reversed the relationship; the printed condition is A to the right of B, with A not at either end. The six valid arrangements include nonadjacent cases. Publisher answer keys remain unverified.
+- Example 4-3 remains locked: 36 of 39 simple paths pass ㄹ, so 12/13 applies if complete paths are uniformly chosen. The original does not specify a path-selection model; choosing uniformly at each available junction can yield a different probability. The distinction is recorded pending clarification.
+- Independent enumeration, 1440/375/320px browser, stacked fractions and separate one-page A4 checks, release gate and 79,380 runtime generations passed. Counts: 2,111 types, 1,323 generatable, 788 awaiting review. The broader inventory audit retains 81 existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Preserve existing work and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 63 Missions 1–6
 
 - Independently enumerated and connected Missions 1, 2, 3, 4, 6: 9 derangements, 10 distinguishable dice outcomes, 8 coin combinations, 24 shortest grid paths through B, and 240 arrangements with the two people adjacent. The source-ledger Mission 2 label incorrectly said sum; corrected to product. Publisher answer keys remain unverified.
