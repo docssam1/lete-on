@@ -10,7 +10,6 @@
 
   if (!projections) throw new Error("GFIELDUnitScreenerReportProjections is required");
 
-  const RESOURCE_ID = "grade7-ns-a-teacher-workbook-concepts";
   const FOCUS = Object.freeze({
     "7.NS.A.1a": Object.freeze({ ko: "반대되는 양이 0이 되는 상황 설명", en: "Describe a context where opposite quantities combine to zero", "zh-Hans": "说明相反数量相加为零的情境" }),
     "7.NS.A.1b": Object.freeze({ ko: "유리수의 합을 수직선의 방향과 거리로 표현", en: "Represent rational sums with number-line direction and distance", "zh-Hans": "用数轴方向和距离表示有理数和" }),
@@ -34,9 +33,9 @@
     if (projections.validateTeacherReport(teacherReport) !== true) fail("teacher report is invalid");
     if (teacherReport.assessment.purpose !== "unit-screener" || teacherReport.assessment.blueprintId !== "asm-bdg-grade7-nsa-screener-v1") fail("Grade 7 NS.A unit-screener report is required");
     if (!["ko", "en", "zh-Hans"].includes(locale)) fail("teacher locale is invalid");
-    const selected = denseArray(teacherConfirmedFocusIds, "teacherConfirmedFocusIds");
-    if (!selected.length || selected.length > Object.keys(FOCUS).length) fail("select at least one teacher-confirmed focus");
-    if (new Set(selected).size !== selected.length || selected.some(function (id) { return !Object.prototype.hasOwnProperty.call(FOCUS, id); })) fail("teacher-confirmed focus selection is invalid");
+    const selected = denseArray(teacherConfirmedFocusIds, "selectedFocusIds");
+    if (!selected.length || selected.length > Object.keys(FOCUS).length) fail("select at least one focus");
+    if (selected.some(function (id) { return typeof id !== "string" || !Object.prototype.hasOwnProperty.call(FOCUS, id); }) || new Set(selected).size !== selected.length) fail("selected focus input is invalid");
 
     const reportFocuses = new Map(teacherReport.focuses.map(function (focus) { return [focus.standardFocus, focus]; }));
     const steps = selected.map(function (focusId) {
@@ -46,10 +45,10 @@
       return Object.freeze({
         standardFocus: focusId,
         title: FOCUS[focusId][locale],
-        teacherSelected: true,
+        callerSelected: true,
         reviewedObservationCount: focus.itemCount,
-        state: sufficient ? "teacher-selected-review-preview" : "additional-observation-needed",
-        resource: sufficient ? Object.freeze({ resourceId: RESOURCE_ID, audience: "teacher", availability: "review-preview-only", href: null }) : null
+        state: sufficient ? "awaiting-authenticated-teacher-review" : "additional-observation-needed",
+        resourceResolutionState: sufficient ? "locked-until-teacher-authorization" : "not-available-insufficient-evidence"
       });
     });
 
@@ -59,6 +58,10 @@
       authorizationVerified: false,
       requiresAuthenticatedTeacherDelivery: true,
       releaseState: "locked-review-preview-only",
+      locale: locale,
+      sourceAssessment: Object.freeze({ blueprintId: teacherReport.assessment.blueprintId, blueprintVersion: teacherReport.assessment.blueprintVersion, purpose: teacherReport.assessment.purpose }),
+      sourceBindingState: "blueprint-only-awaiting-authenticated-attempt-binding",
+      selectionProvenance: "unverified-caller-input",
       steps: Object.freeze(steps),
       teacherConfirmationRequired: true,
       automaticPrescription: false,

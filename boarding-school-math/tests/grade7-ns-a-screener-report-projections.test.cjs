@@ -92,30 +92,33 @@ test("student and teacher unit-screener reports preserve evidence while separati
   assert.equal(teacher.interpretation.teacherConfirmationRequired, true);
 });
 
-test("next-step drafts follow only explicitly teacher-selected focuses and remain locked to teacher preview", function () {
+test("next-step drafts preserve caller selections without resolving resources before teacher authorization", function () {
   const teacherReport = projections.buildTeacherReport(analysis());
   const draft = nextSteps.buildDraft(teacherReport, ["7.NS.A.1b", "7.NS.A.2d"], "ko");
   assert.equal(draft.audience, "teacher");
   assert.equal(draft.authorizationVerified, false);
   assert.equal(draft.requiresAuthenticatedTeacherDelivery, true);
   assert.equal(draft.releaseState, "locked-review-preview-only");
+  assert.equal(draft.locale, "ko");
+  assert.deepEqual(draft.sourceAssessment, { blueprintId: "asm-bdg-grade7-nsa-screener-v1", blueprintVersion: 1, purpose: "unit-screener" });
+  assert.equal(draft.sourceBindingState, "blueprint-only-awaiting-authenticated-attempt-binding");
+  assert.equal(draft.selectionProvenance, "unverified-caller-input");
   assert.equal(draft.automaticPrescription, false);
   assert.equal(draft.studentAssignmentAuthorized, false);
   assert.deepEqual(draft.steps.map(function (step) { return step.standardFocus; }), ["7.NS.A.1b", "7.NS.A.2d"]);
-  assert.ok(draft.steps.every(function (step) { return step.teacherSelected && step.state === "teacher-selected-review-preview"; }));
-  assert.ok(draft.steps.every(function (step) { return step.resource && step.resource.audience === "teacher" && step.resource.availability === "review-preview-only"; }));
-  assert.ok(draft.steps.every(function (step) { return step.resource.resourceId === "grade7-ns-a-teacher-workbook-concepts" && step.resource.href === null; }));
-  assert.doesNotMatch(JSON.stringify(draft), /earnedPoints|percentage|learnerId|itemId|answer/);
+  assert.ok(draft.steps.every(function (step) { return step.callerSelected && step.state === "awaiting-authenticated-teacher-review"; }));
+  assert.ok(draft.steps.every(function (step) { return step.resourceResolutionState === "locked-until-teacher-authorization"; }));
+  assert.doesNotMatch(JSON.stringify(draft), /resourceId|href|attemptId|earnedPoints|percentage|learnerId|itemId|answer/);
   const englishDraft = nextSteps.buildDraft(teacherReport, ["7.NS.A.1b"], "en");
   assert.equal(englishDraft.steps[0].title, "Represent rational sums with number-line direction and distance");
 });
 
-test("teacher-selected focus with too few observations requests evidence without a resource link", function () {
+test("caller-selected focus with too few observations requests evidence and keeps resource unavailable", function () {
   const teacherReport = projections.buildTeacherReport(analysis(17));
   const draft = nextSteps.buildDraft(teacherReport, ["7.NS.A.3"], "ko");
   assert.deepEqual(draft.steps.map(function (step) {
-    return { state: step.state, reviewedObservationCount: step.reviewedObservationCount, resource: step.resource };
-  }), [{ state: "additional-observation-needed", reviewedObservationCount: 1, resource: null }]);
+    return { state: step.state, reviewedObservationCount: step.reviewedObservationCount, resourceResolutionState: step.resourceResolutionState };
+  }), [{ state: "additional-observation-needed", reviewedObservationCount: 1, resourceResolutionState: "not-available-insufficient-evidence" }]);
 });
 
 test("next-step draft rejects student projections and invalid or duplicate teacher selections", function () {
@@ -123,8 +126,9 @@ test("next-step draft rejects student projections and invalid or duplicate teach
   const teacher = projections.buildTeacherReport(report);
   const student = projections.buildStudentReport(report);
   assert.throws(function () { nextSteps.buildDraft(student, ["7.NS.A.1b"], "ko"); }, /teacher unit-screener projection/);
-  assert.throws(function () { nextSteps.buildDraft(teacher, ["7.NS.A.1b", "7.NS.A.1b"], "ko"); }, /selection is invalid/);
-  assert.throws(function () { nextSteps.buildDraft(teacher, ["7.NS.A.4"], "ko"); }, /selection is invalid/);
+  assert.throws(function () { nextSteps.buildDraft(teacher, ["7.NS.A.1b", "7.NS.A.1b"], "ko"); }, /selected focus input is invalid/);
+  assert.throws(function () { nextSteps.buildDraft(teacher, ["7.NS.A.4"], "ko"); }, /selected focus input is invalid/);
+  assert.throws(function () { nextSteps.buildDraft(teacher, [new String("7.NS.A.1b")], "ko"); }, /selected focus input is invalid/);
   assert.throws(function () { nextSteps.buildDraft(teacher, ["7.NS.A.1b"], "fr"); }, /locale is invalid/);
 });
 
