@@ -1,0 +1,8 @@
+.geoboard-lobby .type-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.geoboard-lobby .type-card:last-child{grid-column:auto;display:flex;min-height:279px}
+.geoboard-lobby .type-card:last-child .type-art{height:124px;border-right:0;border-bottom:1px solid #b9c8bf}
+.geoboard-lobby .card-euler{--type-accent:#287f74;--type-pale:#e9f2eb}
+.geoboard-lobby .card-euler .type-art::before,.geoboard-lobby .card-euler .type-art::after{display:none}
+.card-euler .type-art svg{width:154px;height:112px;filter:drop-shadow(0 3px 2px #5f4b3233)}
+@media(max-width:880px){.geoboard-lobby .type-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.geoboard-lobby .type-card:last-child{min-height:255px}}

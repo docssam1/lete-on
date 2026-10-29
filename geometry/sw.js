@@ -6,7 +6,7 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v54";
+const CACHE = "gfield-geo-v61-geoboard-euler";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/lab/",
@@ -20,7 +20,8 @@ const CORE = [
   "/geometry/mirror-manor/",
   "/geometry/mirror-manor/app.js?v=mirror-lobby-1",
   "/geometry/geoboard/",
-  "/geometry/geoboard/app.js?v=geoboard-lobby-1",
+  "/geometry/geoboard/app.js?v=geoboard-lobby-2",
+  "/geometry/geoboard/euler-card.css?v=euler-1",
   "/geometry/cube-town/",
   "/geometry/cube-town/styles.css?v=catalog-studio-3",
   "/geometry/cube-town/app.js?v=catalog-studio-4",
@@ -51,6 +52,7 @@ const CORE = [
   "/geometry/assets/ui/cube-yellow.webp",
   "/geometry/assets/ui/panel-cream.webp",
   "/geometry/assets/ui/wood-light.webp",
+  "/geometry/assets/ui/wood-mid.webp",
   "/geometry/solid-vista/",
   "/geometry/solid-vista/styles.css?v=solid-studio-3",
   "/geometry/solid-vista/soma.css?v=solid-2",
@@ -94,6 +96,14 @@ const CORE = [
   "/geometry/games/geoboard/",
   "/geometry/games/geoboard/styles.css?v=geoboard-10",
   "/geometry/games/geoboard/app.js?v=geoboard-10",
+  "/geometry/games/geoboard/entry.js?v=euler-1",
+  "/geometry/games/geoboard/one-stroke/app.js?v=euler-1",
+  "/geometry/games/geoboard/one-stroke/core.js?v=euler-1",
+  "/geometry/games/geoboard/one-stroke/i18n.js?v=euler-1",
+  "/geometry/games/geoboard/one-stroke/styles.css?v=euler-1",
+  "/geometry/games/geoboard/one-stroke/bank.json?v=euler-1",
+  "/geometry/games/paper-fold/fonts/SUIT-Variable.woff2",
+  "/geometry/shared/material-audio.js?v=material-2",
   "/geometry/games/geoboard/levels.js?v=geoboard-8",
   "/geometry/games/geoboard/i18n.js?v=geoboard-10",
   "/geometry/games/geoboard/lattice-enumerator.js?v=1",
