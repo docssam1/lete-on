@@ -531,3 +531,7 @@ Verification: Grade 3–12 roadmap model/browser suites pass 32/32, including th
 ### 2026-10-30 combined roadmap and AMC verification
 
 Strengthened the roadmap model contract with the exact four-stage title sequence supplied for Grades 6, 7, 8, and 10, while preserving Grade 9's inferred label. Re-ran the combined Grade 3–12 roadmap logic/browser plus AMC paper-review model/browser suites on the current shared-map and elementary-book changes: 57/57 pass. This covers the user-supplied annual sequence, grade comparison, the shared map and selection states, AMC small-sample behavior, answer-free saved summaries, and responsive review screens.
+
+### 2026-10-30 AMC eligibility source refresh
+
+Checked the current primary MAA 2026–27 AMC Rules and Policies PDF, updated 2026-10-28: U.S./Canada eligibility requires both grade and age limits (AMC 8 through grade 8 / age 15.5 or younger; AMC 10 through grade 10 / age 17.5 or younger; AMC 12 through grade 12 / age 19.5 or younger), as well as eligible U.S./Canada school enrollment/attendance. The roadmap's contest picker is still grade-filtered only as an available practice/logging path; its selected-contest note tells users that age and current-cycle eligibility must be checked through MAA. It does not decide eligibility or infer it from the school grade. The international program remains separate. Source: https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-Policies.pdf (pp. 3–5). The existing regression assertion for the age/official-guidance message passed in the 57/57 combined roadmap and AMC test run.
