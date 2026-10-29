@@ -1,0 +1,34 @@
+"use strict";
+const assert = require("node:assert/strict");
+global.window = {};
+require("./source-inventory-4-1.js");
+require("./source-inventory-grade6.js");
+require("./curriculum.js");
+require("./generators.js");
+const item = require("./source-5-2-cuboid-page49-mission4.js");
+const model = item.verifyModel();
+const type = window.HSE_CURRICULUM.semesters.find(row => row.id === "5-2")
+  .units.find(unit => unit.id === "5-2-u5").subunits.find(subunit => subunit.name === "직육면체의 성질")
+  .types.find(row => row.sourceItemId === item.definition.sourceItemId);
+assert(type, "curriculum type exists");
+assert.equal(type.reviewLocked, false);
+assert.equal(type.sourceVerified, true);
+assert.equal(type.publisherKeyVerified, false);
+assert.equal(type.publicDecision, undefined);
+assert.equal(window.HSE_GENERATORS.generatorKey(type), item.definition.generatorKey);
+const generated = window.HSE_GENERATORS.generate(type, 2, 0, 49, 0);
+assert(generated, "fixed source item generates");
+assert.equal(window.HSE_GENERATORS.generate(type, 2, 0, 49, 1), null, "no invented variant");
+assert.deepEqual([model.width, model.height, model.depth, model.pieceCount, model.answer], [3, 3, 3, 27, 36]);
+assert.equal((generated.prompt.match(/class="source52-p49m4-diagram"/g) || []).length, 1);
+assert.equal((generated.solution.match(/class="source52-p49m4-diagram"/g) || []).length, 0, "solution does not duplicate answer visual");
+assert.equal((generated.answerVisual.match(/class="source52-p49m4-diagram"/g) || []).length, 1, "one answer visual remains");
+assert.deepEqual([1, 2, 3].map(size => (3 - size + 1) ** 3), [27, 8, 1]);
+assert.match(generated.prompt, /선을 따라 잘라서 만들 수 있는/);
+assert.match(generated.solution, /27\+8\+1=/);
+assert.match(generated.solution, /36/);
+assert.match(generated.solution, /답: 36개/);
+assert.equal(generated.answer, "36개");
+assert.equal(generated.handwrittenAnswerVerified, false);
+assert.equal(generated.generationMode, "fixed-verified-pool");
+console.log("5-2 U5 p.49 Mission 4 source grid, 36 possible cubes, fixed one-item pool, source diagram and public lock audit passed.");

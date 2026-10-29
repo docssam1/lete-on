@@ -1,0 +1,12 @@
+.source52-p49m4-question > p,
+.source52-p49m4-solution > p { margin: 0 0 12px; line-height: 1.65; }
+.source52-p49m4-diagram { display: block; width: min(100%, 470px); height: auto; margin: 8px auto 0; }
+.source52-p49m4-outline { fill: none; stroke: #28241e; stroke-width: 2.4; stroke-linejoin: round; }
+.source52-p49m4-grid { fill: none; stroke: #5f5a51; stroke-width: 1.7; }
+.source52-p49m4-final-answer { font-weight: 700; }
+@media (max-width: 680px) {
+  .source52-p49m4-question > p,
+  .source52-p49m4-solution > p { font-size: 15px; }
+  .source52-p49m4-diagram { width: min(100%, 360px); }
+}
+@media print { .source52-p49m4-diagram { width: 115mm; max-height: none; } }
