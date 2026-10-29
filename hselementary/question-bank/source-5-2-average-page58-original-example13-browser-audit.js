@@ -52,7 +52,7 @@ function startServer() {
         const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u6")?.subunits.find(x => x.name === "평균 구하기")?.types.find(x => x.sourceItemId === id);
         return type && { reviewLocked: type.reviewLocked, sourceVerified: type.sourceVerified, generationMode: type.generationMode, verifiedVariantCount: type.verifiedVariantCount, generatorKey: window.HSE_GENERATORS.generatorKey(type) };
       }, itemId);
-      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 1, generatorKey: "source52AverageOriginalPage58Example13" });
+      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 3, generatorKey: "source52AverageOriginalPage58Example13" });
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u6");
@@ -77,7 +77,7 @@ function startServer() {
         return {air:series("air"),water:series("water"),airLine:lines("air"),waterLine:lines("water"), grid:svg.querySelectorAll(".source52-p58ex13-grid").length};
       });
       assert.equal(graphState.grid, 23);
-      for (const [name, expected] of [["air",[4,7,11,21,16,7]],["water",[7,9,10,14,16,12]]]) {
+      for (const [name, expected] of [["air",[3,6,9,19,14,6]],["water",[6,8,10,15,16,8]]]) {
         assert.deepEqual(graphState[name].map(p => p.value),expected);
         graphState[name].forEach((p,i) => { assert.equal(p.month,(i+1)*2); assert.equal(p.x,65+i*75); assert.equal(p.y,250-10*expected[i]); assert.deepEqual(graphState[name+"Line"][i],[p.x,p.y]); });
       }
@@ -89,7 +89,7 @@ function startServer() {
       await page.locator("#solutionTab").click();
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
-      assert.match(solutionText.replace(/\s/g, ""), /66.*68.*⅓/, solutionText);
+      assert.match(solutionText.replace(/\s/g, ""), /57.*63.*1/, solutionText);
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);
       await page.screenshot({ path: path.join(outputDir, `example13-solution-${width}.png`), fullPage: true });

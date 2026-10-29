@@ -114,11 +114,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e1-example-1",
       "publisherKeyVerified": false,
-      "releaseEvidence": "원문 찢어진 표의 9와 4를 확대 대조하고 자릿수 100쌍을 독립 열거. 공식 출판사 답안 미확인."
+      "releaseEvidence": "원문 찢어진 표의 9와 4를 확대 대조하고 자릿수 100쌍을 독립 열거. 공식 출판사 답안 미확인.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e1-example-1-2",
@@ -171,11 +172,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e1-example-3",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 58쪽 확대본의 1℃ 눈금과 6월 전후 두 선의 연결을 확인하고 각 점과 SVG 좌표를 독립 검사. 공식 출판사 답안 미확인."
+      "releaseEvidence": "인쇄 58쪽 확대본의 1℃ 눈금과 6월 전후 두 선의 연결을 확인하고 각 점과 SVG 좌표를 독립 검사. 공식 출판사 답안 미확인.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e1-example-1-4",
