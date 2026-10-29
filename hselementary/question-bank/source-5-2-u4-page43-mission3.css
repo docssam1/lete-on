@@ -1,0 +1,16 @@
+.source52-u4-p43-m3-question,
+.source52-u4-p43-m3-solution { color: #2a241c; font-family: Pretendard, sans-serif; }
+.source52-u4-p43-m3-question p,
+.source52-u4-p43-m3-solution p { margin: 0; }
+.source52-u4-p43-m3-question .source52-u4-p43-m3-hint { margin-top: .5rem; color: #6d604c; font-size: .92em; }
+.source52-u4-p43-m3-solution ol { margin: 0; padding-left: 1.35rem; }
+.source52-u4-p43-m3-solution li { margin: 0 0 .42rem; line-height: 1.55; }
+.source52-u4-p43-m3-answer { margin-top: .55rem !important; color: #1e4631; }
+@media print {
+  .source52-u4-p43-m3-question,
+  .source52-u4-p43-m3-solution { color: #191511; }
+  .source52-u4-p43-m3-question .source52-u4-p43-m3-hint { color: #191511; }
+}
+
+@page source52U4Mission3Answer { size: A4; margin: 10mm 0; }
+@media print { .answer-page:has(.source52-u4-p43-m3-solution) { page: source52U4Mission3Answer; } }
