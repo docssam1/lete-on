@@ -479,9 +479,10 @@
         sourceLink.removeAttribute("rel");
       }
     }
+    const isAmc = ["amc8", "amc10", "amc12"].includes(competition);
     setText("competition-guidance", selected
-      ? "영역별로 푼 문제 수와 정답 수를 적어 주세요. 영역을 모르겠다면 문제별 복습에서 확인해요."
-      : "대회를 고르면 영역별 입력칸이 나와요.");
+      ? `선택한 학년의 연습 경로예요. 영역별로 푼 문제 수와 정답 수를 적어 주세요. ${isAmc ? "AMC는 학년 외에도 연령 등 해당 연도 응시 조건이 있으니 MAA 공식 안내를 확인해 주세요." : "응시 자격과 회차별 규정은 대회 주관 기관 안내를 확인해 주세요."} 영역을 모르겠다면 문항별 복습에서 확인할 수 있어요.`
+      : "대회를 고르면 영역별 입력칸이 나와요. 목록은 학년별 연습 경로이며 공식 응시 자격 판정이 아닙니다.");
     renderSavedCompetitionDiagnostic();
   }
   function renderSavedCompetitionDiagnostic() {

@@ -74,6 +74,8 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator("#paper-label-field").isVisible(), true);
   assert.equal(await page.locator("#paper-review-link").innerText(), "문항별 복습 · AMC 회차별 기록 →");
   assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=7&program=amc8/);
+  assert.match(await page.locator("#competition-guidance").innerText(), /연습 경로.*연령.*MAA 공식 안내/);
+  assert.match(await page.locator(".competition-input-note").innerText(), /직접 분류.*대회 자격/);
   assert.equal(await page.locator(".competition-submit").isVisible(), true);
   assert.equal(await page.locator("#competition-practice-link").isVisible(), true);
   assert.match(await page.locator("#competition-source-link").getAttribute("href"), /maa\.org/);
@@ -110,6 +112,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#competition-report-rows").innerText(), /3문제 미만/);
   assert.doesNotMatch(await page.locator("#competition-report-rows").innerText(), /50%/);
   assert.match(await page.locator("#competition-report-summary").innerText(), /6\/25문항 입력[\s\S]*두 영역에서 각각 3문제 이상/);
+  assert.match(await page.locator(".competition-report-boundary").innerText(), /실력 등급.*응시 자격/);
   await page.locator('[data-strand="geometry"][data-field="attempted"]').fill("4");
   await page.locator('[data-strand="geometry"][data-field="correct"]').fill("3");
   await page.getByRole("button", { name: "영역별 결과 보기" }).click();
