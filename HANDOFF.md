@@ -12,3 +12,9 @@ Claude Max Opus UI-source review was attempted using sanitized HTML/CSS only (no
 
 
 Historical R4 desktop/390px screenshots were re-opened for reference. They show the intended list/preview flow but predate R6 and do not count as current visual QA. The old screen-visible watermark has been made print-only in source. Current browser/A4 evidence remains outstanding.
+
+## 2026-10-30 roadmap and contest feature audit
+
+Current source evidence: the roadmap's grade comparison places two grade-plan examples side by side and labels Grade 9 as inferred; it does not compare a learner's measured score/grade or assign placement. The competition-paper review accepts manually entered O/X/blank marks and optional domain/error labels for an already-scored external paper. It reports raw counts and cautious within-paper review cues; it has no answer key, official score, readiness/award/AIME estimate, learner history, or automatic course decision. The Grade 6 AMC 8 set remains topic practice, while the separate private Grade 7 42-candidate set remains locked pending human review and pilot approval.
+
+Verification on 2026-10-30 with the bundled Mac Node runtime: roadmap and paper-review core tests passed 8/8. The associated browser test files could not load because `playwright` is not installed in this checkout; no browser-test pass is claimed. Current private R6 visual browser/A4 QA also remains pending under the recorded CUA security restriction.
