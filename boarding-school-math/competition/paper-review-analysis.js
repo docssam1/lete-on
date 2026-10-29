@@ -22,6 +22,8 @@
     const reasons = Object.keys(reasonNames).map(function (id) { return { id: id, name: reasonNames[id], count: 0 }; });
     const byReason = new Map(reasons.map(function (reason) { return [reason.id, reason]; }));
     let unclassified = 0;
+    let domainClassified = 0;
+    let reasonClassified = 0;
     for (const entry of entries) {
       if (!entry || !statusIds.includes(entry.status) || !domainIds.includes(entry.domain) || !reasonIds.includes(entry.reason)) {
         return { valid: false, error: "문항별 표시와 영역을 확인하세요." };
@@ -30,11 +32,15 @@
       if (entry.status === "unmarked") continue;
       if (entry.domain === "unclassified") { unclassified += 1; }
       else {
+        domainClassified += 1;
         const domain = byDomain.get(entry.domain);
         if (entry.status === "blank") domain.blank += 1;
         else { domain.attempted += 1; domain[entry.status] += 1; }
       }
-      if (entry.status === "wrong" && entry.reason !== "none") byReason.get(entry.reason).count += 1;
+      if (entry.status === "wrong" && entry.reason !== "none") {
+        reasonClassified += 1;
+        byReason.get(entry.reason).count += 1;
+      }
     }
     if (counts.unmarked === itemCount) return { valid: false, error: "표시한 문제가 없습니다. 채점한 문제부터 표시하세요." };
     const attempted = counts.correct + counts.wrong;
@@ -57,6 +63,8 @@
       accuracy: attempted >= 3 ? Math.round(counts.correct / attempted * 100) : null,
       complete: counts.unmarked === 0,
       unclassified: unclassified,
+      domainClassified: domainClassified,
+      reasonClassified: reasonClassified,
       domains: domains,
       reasons: reasons.filter(function (reason) { return reason.count > 0; }),
       reviewFirst: comparable.length >= 2 && comparable[0].rate < comparable[comparable.length - 1].rate ? comparable[0].name : null,

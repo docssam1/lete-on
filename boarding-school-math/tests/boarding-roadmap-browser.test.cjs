@@ -151,14 +151,32 @@ test("grade comparison shows curriculum examples without implying measured level
   assert.match(await page.locator("#comparison-target-tracks").innerText(), /10–12개월 · 추정/);
   assert.match(await page.locator(".comparison-boundary").innerText(), /학생의 현재 위치.*판단하지 않아요/);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true);
-  const positions = await page.locator(".comparison-column").evaluateAll((nodes) => nodes.map((node) => ({ x: node.getBoundingClientRect().x, y: node.getBoundingClientRect().y })));
-  assert.ok(positions[1].y > positions[0].y, "comparison columns stack on a phone");
+  assert.equal(await page.locator(".comparison-desktop-view").isVisible(), false);
+  assert.equal(await page.locator(".comparison-mobile-view").isVisible(), true);
+  const pairedRows = page.locator(".comparison-mobile-row:not(.comparison-mobile-header)");
+  assert.ok(await pairedRows.count() >= 8);
+  for (const row of await pairedRows.all()) assert.equal(await row.locator(".comparison-mobile-cell").count(), 2, "each mobile comparison row keeps both grade values together");
+  assert.match(await page.locator("#comparison-mobile-view").innerText(), /학교 수학[\s\S]*경시 · 선택[\s\S]*SAT · 선택[\s\S]*1–3개월/);
+  assert.doesNotMatch(await page.locator("#comparison-mobile-view").innerText(), /학습 주제|기간 1/);
+  assert.match(await page.locator(".comparison-mobile-note").innerText(), /인접 학년 자료를 연결한 추정안/);
   await page.emulateMedia({ media: "print" });
   assert.equal(await page.locator("#comparison-table").isVisible(), true);
   assert.equal(await page.locator(".grade-comparison-controls").isVisible(), false);
   await page.emulateMedia({ media: "screen" });
   await page.locator("#competition-select").selectOption("amc8");
   assert.equal(await page.locator("#competition-practice-link").isHidden(), true, "Grade 8 should not be offered the Grade 6 bridge as a grade-level practice set");
+  await page.close();
+});
+
+test("grade comparison keeps paired columns on desktop", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  await page.getByLabel("비교할 학년").selectOption("8");
+  assert.equal(await page.locator(".comparison-desktop-view").isVisible(), true);
+  assert.equal(await page.locator(".comparison-mobile-view").isVisible(), false);
+  const positions = await page.locator(".comparison-column").evaluateAll((nodes) => nodes.map((node) => ({ x: node.getBoundingClientRect().x, y: node.getBoundingClientRect().y })));
+  assert.equal(positions.length, 2);
+  assert.ok(positions[1].x > positions[0].x && positions[1].y === positions[0].y);
   await page.close();
 });
 

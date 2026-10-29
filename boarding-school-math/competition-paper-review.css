@@ -52,6 +52,8 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .report-metrics small, .report-domain-row small { color: #566274; font-size: .72rem; }
 .score-estimate { margin: 14px 0 0; padding: 14px; display: grid; gap: 6px; border-left: 4px solid #2456c4; background: #f1f5ff; }
 .score-estimate[hidden] { display: none; }
+.score-estimate-note, .report-evidence-note { margin: 8px 0 14px; color: #566274; font-size: .82rem; line-height: 1.55; }
+.score-estimate-note[hidden] { display: none; }
 .score-estimate strong { color: #1746a7; font-size: 1rem; }
 .score-estimate span { color: #354255; font-size: .8rem; line-height: 1.5; }
 .score-estimate a { min-height: 40px; display: inline-flex; align-items: center; color: #1746a7; font-size: .8rem; font-weight: 800; }

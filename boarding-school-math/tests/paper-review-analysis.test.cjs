@@ -11,6 +11,8 @@ test("unmarked and unanswered questions are distinct from wrong attempts", funct
   assert.deepEqual(report.counts, { correct: 1, wrong: 1, blank: 1, unmarked: 1 });
   assert.equal(report.attempted, 2);
   assert.equal(report.accuracy, null);
+  assert.equal(report.domainClassified, 3);
+  assert.equal(report.reasonClassified, 1);
   assert.equal(report.domains.find((domain) => domain.id === "algebra").rate, null);
   assert.equal(report.domains.find((domain) => domain.id === "geometry").blank, 1);
   assert.deepEqual(report.reasons, [{ id: "reading", name: "조건 읽기", count: 1 }]);
@@ -24,6 +26,8 @@ test("domain comparison requires enough classified attempts in two domains", fun
   const report = analyze(entries, entries.length);
   assert.equal(report.reviewFirst, "수와 정수론");
   assert.equal(report.unclassified, 1);
+  assert.equal(report.domainClassified, 6);
+  assert.equal(report.reasonClassified, 3);
   assert.equal(report.domains.find((domain) => domain.id === "number").rate, 33);
   assert.equal(report.domains.find((domain) => domain.id === "geometry").evidence, "미측정");
 });

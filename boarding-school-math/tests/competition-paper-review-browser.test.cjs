@@ -43,7 +43,10 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-title").innerText(), /입력한 결과/);
   assert.match(await page.locator("#report-intro").innerText(), /22문제는 표시하지 않았습니다/);
+  assert.match(await page.locator("#score-estimate-note").innerText(), /참고 원점수는 25문항을 모두 표시한 뒤/);
   assert.match(await page.locator("#report-metrics").innerText(), /1\/2/);
+  assert.match(await page.locator("#report-domains h3").innerText(), /2\/25문항 분류/);
+  assert.match(await page.locator("#report-reasons h3").innerText(), /1\/1개 오답 분류/);
   assert.doesNotMatch(await page.locator("#report-metrics").innerText(), /50%/);
   assert.doesNotMatch(await page.locator("#report-domains").innerText(), /50%/);
   assert.equal(await page.locator(".review-report").evaluate((node) => node === document.activeElement), true);
@@ -65,6 +68,7 @@ test("complete AMC 10 marks show the raw-score estimate without a qualification 
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#score-estimate").isVisible(), true);
   assert.match(await page.locator("#score-estimate-value").innerText(), /AMC 10 참고 원점수 · 75 \/ 150/);
+  assert.equal(await page.locator("#score-estimate-note").isHidden(), true);
   assert.match(await page.locator("#score-estimate").innerText(), /공식 성적표/);
   assert.match(await page.locator(".report-boundary").innerText(), /수상·AIME 진출.*판단하지 않습니다/);
   await page.close();

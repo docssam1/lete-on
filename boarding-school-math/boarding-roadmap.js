@@ -209,8 +209,6 @@
     setText(`comparison-${prefix}-core`, entry.core);
     const list = $(`comparison-${prefix}-tracks`);
     list.replaceChildren();
-    const inferredNote = document.querySelector(`.comparison-inferred-note[data-column="${prefix}"]`);
-    if (inferredNote) inferredNote.remove();
     data.getTracks(entry.grade).forEach(function (track) {
       const term = document.createElement("dt"); term.textContent = track[0];
       const description = document.createElement("dd"); description.textContent = track[1];
@@ -226,13 +224,69 @@
       const description = document.createElement("dd"); description.textContent = `${period[1]} · ${period[2]}`;
       list.append(term, description);
     });
-    if (entry.source === "inferred") {
+  }
+  function renderMobileComparison(current, target) {
+    const host = $("comparison-mobile-view");
+    host.replaceChildren();
+    const header = document.createElement("div");
+    header.className = "comparison-mobile-row comparison-mobile-header";
+    header.setAttribute("aria-label", "비교하는 학년");
+    [current, target].forEach(function (entry) {
+      const cell = document.createElement("div");
+      cell.className = "comparison-mobile-cell";
+      const label = document.createElement("strong");
+      label.textContent = `${entry.grade}학년${entry.grade === grade ? " · 현재" : ""}${entry.source === "inferred" ? " · 추정안" : ""}`;
+      const title = document.createElement("span"); title.textContent = entry.title;
+      cell.append(label, title); header.append(cell);
+    });
+    host.append(header);
+    if (current.source === "inferred" || target.source === "inferred") {
       const note = document.createElement("p");
-      note.className = "comparison-inferred-note";
-      note.dataset.column = prefix;
-      note.textContent = "제공된 인접 학년 자료를 잇는 추정안이에요.";
-      list.after(note);
+      note.className = "comparison-mobile-note";
+      note.textContent = `${target.source === "inferred" ? target.grade : current.grade}학년 계획은 제공된 인접 학년 자료를 연결한 추정안이에요. 학교 과목 순서를 확인해 주세요.`;
+      host.append(note);
     }
+    function addPair(label, left, right) {
+      const row = document.createElement("article"); row.className = "comparison-mobile-row";
+      const heading = document.createElement("h3"); heading.textContent = label;
+      const values = document.createElement("div"); values.className = "comparison-mobile-values";
+      [[current, left], [target, right]].forEach(function (pair) {
+        const cell = document.createElement("div"); cell.className = "comparison-mobile-cell";
+        const gradeLabel = document.createElement("span"); gradeLabel.className = "comparison-mobile-grade";
+        gradeLabel.textContent = `${pair[0].grade}학년${pair[0].source === "inferred" ? " · 추정" : ""}`;
+        const copy = document.createElement("p"); copy.textContent = pair[1] == null ? "이 학년 자료에 별도 항목 없음" : pair[1];
+        cell.append(gradeLabel, copy); values.append(cell);
+      });
+      row.append(heading, values); host.append(row);
+    }
+    addPair("과정", `${current.title} · ${current.core}`, `${target.title} · ${target.core}`);
+    const currentTracks = data.getTracks(current.grade), targetTracks = data.getTracks(target.grade);
+    const trackKinds = [
+      ["school", "학교 수학"], ["contest", "경시 · 선택"], ["sat", "SAT · 선택"], ["problem-solving", "문제 해결"]
+    ];
+    function trackKind(track) {
+      if (/학교 수학/.test(track[0])) return "school";
+      if (/경시/.test(track[0])) return "contest";
+      if (/SAT/.test(track[0])) return "sat";
+      if (/문제 해결/.test(track[0])) return "problem-solving";
+      return null;
+    }
+    trackKinds.forEach(function (kind) {
+      const left = currentTracks.find(function (track) { return trackKind(track) === kind[0]; });
+      const right = targetTracks.find(function (track) { return trackKind(track) === kind[0]; });
+      if (left || right) addPair(kind[1], left && left[1], right && right[1]);
+    });
+    const currentPlan = data.getAnnualPlan(current.grade), targetPlan = data.getAnnualPlan(target.grade);
+    addPair("연간 흐름", currentPlan ? currentPlan.title : "월별 계획 자료 없음", targetPlan ? targetPlan.title : "월별 계획 자료 없음");
+    const leftPeriods = currentPlan ? currentPlan.periods : [], rightPeriods = targetPlan ? targetPlan.periods : [];
+    for (let index = 0; index < Math.max(leftPeriods.length, rightPeriods.length); index += 1) {
+      const left = leftPeriods[index], right = rightPeriods[index];
+      const leftLabel = left ? left[0].replace(/\s*·\s*추정$/, "") : "";
+      const rightLabel = right ? right[0].replace(/\s*·\s*추정$/, "") : "";
+      const label = leftLabel || rightLabel || `기간 ${index + 1}`;
+      addPair(label, left ? `${left[1]} · ${left[2]}` : "월별 계획 없음", right ? `${right[1]} · ${right[2]}` : "월별 계획 없음");
+    }
+    addPair("개념 연결", current.bridge, target.bridge);
   }
   function renderComparison() {
     const current = data.getGrade(grade);
@@ -247,6 +301,7 @@
     }
     renderComparisonColumn("current", current);
     renderComparisonColumn("target", target);
+    renderMobileComparison(current, target);
     setText("comparison-bridge-copy", `${current.grade}학년: ${current.bridge}  /  ${target.grade}학년: ${target.bridge}`);
     const hasInferred = current.source === "inferred" || target.source === "inferred";
     setText("comparison-note", hasInferred

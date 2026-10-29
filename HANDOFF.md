@@ -78,3 +78,13 @@ Focused Mac verification passed 62/62 across external-score engine/storage, asse
 ### R6 independent AI solve cross-check (2026-10-30)
 
 Codex independently solved the private R6 blind packet and matched 42/42 mapped keys. Forty were genuinely solved before the private ID/key map was loaded; two keys were exposed during initial workspace inspection and are explicitly marked non-blind. A separate Claude Max Opus read-only review of the only flagged geometry interpretation found the stem determinate as written and no required edit. The private report is stored outside Git in the candidate folder. These are AI checks only; the item ledger's independent human math/language, age-fit, distractor, rights/similarity, current R6 browser/A4, and pilot gates remain pending. Form remains locked.
+
+## 2026-10-30 comparison and contest-review usability follow-up
+
+Claude Max Opus reviewed a sanitized description of the public grade-comparison and contest-review interactions. It identified two actionable clarity gaps: optional domain/error tags did not show their evidence denominator, and mobile grade comparisons put complete grade plans one after another. The Grade 3–10 comparison now pairs corresponding topics and periods in each mobile row while retaining the two-column desktop view; Grade 9 inference context appears once in the mobile comparison. Contest results now show how many questions had a domain and error reason assigned, explain why an incomplete AMC paper has no reference raw score, and distinguish unentered questions from unanswered ones. No diagnostic bands, readiness or placement predictions were added.
+
+The focused roadmap, paper-review, and browser suites passed 30/30. Updated scripts passed `node --check`; `git diff --check` passed. Desktop and 390px captures were visually reviewed; the mobile comparison keeps both grades visible per row, and the result screen shows the denominators and incomplete-score explanation. This work remains local; no push or deployment.
+
+The public-exposure audit was also run, but did not complete its full-history scan: the local partial clone is missing a promisor object and lazy fetch is disabled. No historical privacy-audit pass is claimed; no fetch or remote sync was initiated.
+
+Separately, Codex recorded a second blind-solve review of the private Grade 7 NS.A revision-11 candidate outside Git. All 14 auto-scored keys matched; the four teacher-scored responses were checked against their open-response requirements. The exact-rational checker and locked-state preflight pass. This is AI cross-check evidence only and does not replace human review, rights review, current pilot acceptance, or release approval. The candidate remains locked.

@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261030-5">
+  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261030-6">
 </head>
 <body class="academy-page page-boarding-roadmap">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -69,9 +69,10 @@
       <div class="map-head"><div><p class="boarding-kicker">학년 비교</p><h2 id="grade-comparison-title">두 학년의 배움 나란히 보기</h2></div><p>학년별 계획 예시를 비교해요. 점수나 학생 등급 비교는 아니에요.</p></div>
       <div class="grade-comparison-controls"><label for="comparison-grade">비교할 학년<select id="comparison-grade"><option value="">학년 선택</option></select></label><p id="comparison-note" aria-live="polite">현재 선택한 학년과 비교할 학년을 고르면 배움의 연결을 보여 드려요.</p></div>
       <div id="comparison-table" class="comparison-table" role="group" aria-labelledby="grade-comparison-title" hidden>
-        <article class="comparison-column"><p class="comparison-grade-label" id="comparison-current-label"></p><h3 id="comparison-current-title"></h3><p id="comparison-current-core"></p><dl id="comparison-current-tracks"></dl></article>
-        <article class="comparison-column"><p class="comparison-grade-label" id="comparison-target-label"></p><h3 id="comparison-target-title"></h3><p id="comparison-target-core"></p><dl id="comparison-target-tracks"></dl></article>
-        <p class="comparison-bridge"><strong>개념 연결</strong><span id="comparison-bridge-copy"></span></p>
+        <div class="comparison-desktop-view"><article class="comparison-column"><p class="comparison-grade-label" id="comparison-current-label"></p><h3 id="comparison-current-title"></h3><p id="comparison-current-core"></p><dl id="comparison-current-tracks"></dl></article>
+          <article class="comparison-column"><p class="comparison-grade-label" id="comparison-target-label"></p><h3 id="comparison-target-title"></h3><p id="comparison-target-core"></p><dl id="comparison-target-tracks"></dl></article>
+          <p class="comparison-bridge"><strong>개념 연결</strong><span id="comparison-bridge-copy"></span></p></div>
+        <div id="comparison-mobile-view" class="comparison-mobile-view"></div>
       </div>
       <p class="comparison-boundary">학년 자료를 나란히 보여 주는 계획 예시예요. 실제 수업 순서·학생의 현재 위치·배정 과목을 판단하지 않아요.</p>
       <div class="comparison-evidence-link"><div><strong>실제 결과로 학습 위치 확인</strong><p>학교 Placement Test나 MAP·CTP 성적표가 있다면 현재 과정과 목표 과정을 입력해 비교할 수 있어요.</p><small>경로 제안은 학교의 공식 과목 배정을 대신하지 않습니다.</small></div><a id="assessment-entry-link" href="./assessment-entry.html?grade=7">평가 결과 비교하기 →</a></div>
@@ -100,6 +101,6 @@
   </main>
   <footer class="site-footer"><span>G·MAP · 보딩스쿨 수학 성장 지도</span><span><a href="./index.html">홈</a> · <a href="./learning-plan.html">학습 계획</a></span></footer>
   <script src="./learning/boarding-grade-roadmap.js?v=20261030-2"></script>
-  <script src="./boarding-roadmap.js?v=20261030-4"></script>
+  <script src="./boarding-roadmap.js?v=20261030-5"></script>
 </body>
 </html>

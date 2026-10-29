@@ -33,6 +33,8 @@
     setText("report-next", "학습 단계를 정하려면 실제 풀이를 확인해야 해요.");
     $("score-estimate").hidden = true;
     setText("score-estimate-value", "");
+    $("score-estimate-note").hidden = true;
+    setText("score-estimate-note", "");
     $("report-metrics").replaceChildren();
     $("report-domains").replaceChildren();
     $("report-reasons").replaceChildren();
@@ -272,6 +274,14 @@
     setText("report-intro", `${label ? `${label} · ` : ""}${result.itemCount}문제 중 ${result.counts.unmarked}문제는 표시하지 않았습니다. ${result.attempted < 3 ? "푼 문제가 3개 미만이어서 비율 비교는 보류했습니다." : `정답률은 실제로 푼 ${result.attempted}문제 기준입니다.`}`);
     $("score-estimate").hidden = !result.scoreEstimate;
     if (result.scoreEstimate) setText("score-estimate-value", `${result.scoreEstimate.label} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}`);
+    const scoreNote = $("score-estimate-note");
+    const isAmcRawReference = ["amc8", "amc10", "amc12"].includes(selectedFormat().id) && result.itemCount === 25;
+    scoreNote.hidden = !isAmcRawReference || Boolean(result.scoreEstimate);
+    if (isAmcRawReference && !result.scoreEstimate) {
+      setText("score-estimate-note", result.counts.unmarked
+        ? `참고 원점수는 25문항을 모두 표시한 뒤 계산해요. 아직 표시하지 않은 ${result.counts.unmarked}문항은 ‘표시 안 함’으로 두고, 답안 공란은 ‘미응답’으로 표시하세요.`
+        : "참고 원점수를 계산할 수 없어요. 선택한 시험지의 채점 안내와 공식 성적표를 확인하세요.");
+    }
     const metrics = $("report-metrics");
     metrics.replaceChildren(
       metric("정답", String(result.counts.correct), "입력한 O"),
@@ -281,7 +291,10 @@
     );
     const domainHost = $("report-domains");
     domainHost.replaceChildren();
-    const heading = document.createElement("h3"); heading.textContent = "영역별 비교"; domainHost.append(heading);
+    const heading = document.createElement("h3"); heading.textContent = `영역별 비교 · ${result.domainClassified}/${result.itemCount}문항 분류`; domainHost.append(heading);
+    const domainNote = document.createElement("p"); domainNote.className = "report-evidence-note";
+    domainNote.textContent = "영역별 수치는 풀이 영역을 표시한 문항만 포함해요. 3문제 미만은 비율 비교를 보류합니다.";
+    domainHost.append(domainNote);
     result.domains.forEach(function (domain) {
       const row = document.createElement("div"); row.className = "report-domain-row";
       const title = document.createElement("strong"); title.textContent = domain.name;
@@ -291,7 +304,10 @@
     });
     const reasonHost = $("report-reasons");
     reasonHost.replaceChildren();
-    const reasonHeading = document.createElement("h3"); reasonHeading.textContent = "표시한 오류 이유"; reasonHost.append(reasonHeading);
+    const reasonHeading = document.createElement("h3"); reasonHeading.textContent = `오류 이유 · ${result.reasonClassified}/${result.counts.wrong}개 오답 분류`; reasonHost.append(reasonHeading);
+    const reasonNote = document.createElement("p"); reasonNote.className = "report-evidence-note";
+    reasonNote.textContent = "선택한 오류 이유만 모았어요. 이유를 고르지 않은 오답은 집계하지 않습니다.";
+    reasonHost.append(reasonNote);
     if (result.reasons.length) result.reasons.forEach(function (reason) {
       const row = document.createElement("p"); row.textContent = `${reason.name} · ${reason.count}문항`; reasonHost.append(row);
     });
