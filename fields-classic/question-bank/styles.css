@@ -1008,7 +1008,8 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
 @media(max-width:700px){.bank-search{grid-template-columns:minmax(0,1fr) 44px}.curriculum-book-tabs{grid-template-columns:repeat(10,64px)}.curriculum-inline-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @page{size:A4 portrait;margin:0}
 @media print{
-  html,body{width:210mm;min-width:210mm}
+  /* 화면 배경색이 마지막 장 아래에 회색 띠로 찍히지 않게 */
+  html,body{width:210mm;min-width:210mm;background:#fff!important}
   .builder-shell{width:210mm;max-width:210mm;margin:0}
   .concept-worked-solution{display:none!important}
   .textbook-concept-tutorial{margin:4px 0 6px;break-inside:avoid}

@@ -3433,7 +3433,7 @@ function renderWorksheet() {
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
       ${worksheetVisualMarkup(question)}
       ${question.responseKind === "drawing"
-        ? '<span class="drawing-answer-note">위 빈 상자 안에 그림을 그리세요.</span>'
+        ? '<span class="drawing-answer-note">위 그림에 직접 그려서 답하세요.</span>'
         : question.responseKind === "visual-fill"
           ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
           : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
