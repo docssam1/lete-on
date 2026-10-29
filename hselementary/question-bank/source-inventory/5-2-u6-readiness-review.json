@@ -652,11 +652,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e2-mission-5",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조."
+      "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-6",
@@ -679,11 +680,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e2-mission-6",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조."
+      "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-exploration-1",

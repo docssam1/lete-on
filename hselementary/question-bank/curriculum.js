@@ -2475,7 +2475,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
         difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${n}`, sourceSection:"mission", sourceTier:"advanced",
         sourcePdfPage:57, sourcePrintedPage:61, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
-        generatorKey:`source52AverageOriginalPage61Mission${n}`, generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        generatorKey:`source52AverageOriginalPage61Mission${n}`, generationMode:"fixed-verified-pool", verifiedVariantTarget:3, verifiedVariantCount:3,
         answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
     }
   }

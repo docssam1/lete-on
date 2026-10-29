@@ -1,0 +1,15 @@
+"use strict";
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');global.window={};require('./source-inventory-4-1.js');require('./source-inventory-grade6.js');require('./curriculum.js');require('./generators.js');const mod=require('./source-5-2-average-page61-original-missions56.js');const types=window.HSE_CURRICULUM.semesters.find(x=>x.id==='5-2').units.find(x=>x.id==='5-2-u6').subunits.flatMap(x=>x.types);
+for(let n=0;n<2;n++){
+ const id=mod.ids[n],type=types.find(t=>t.id===id);assert(type&&!type.reviewLocked&&type.verifiedVariantCount===3);assert.equal(type.generatorKey,mod.keys[n]);for(const bad of [{id:'bad'},{sourceItemId:'bad'},{generatorKey:'bad'},{reviewLocked:true},{sourceVerified:false}])assert.equal(window.HSE_GENERATORS.generate({...type,...bad},2,0,0,0),null);
+ const prompts=new Set();for(let i=0;i<3;i++){
+  const q=window.HSE_GENERATORS.generate(type,2,0,0,i),p=q.questionModel;assert.equal(q.variantProvenance,'synthetic-source-structure');assert.equal(q.publisherKeyVerified,false);prompts.add(q.prompt);assert(q.solution.includes(`data-source-answer="${id}"`));
+  if(n===0){const sols=[];for(let a=0;a<=100;a++)for(let b=0;b<=100;b++)if(a+b+p.known.reduce((x,y)=>x+y,0)===p.mean*8&&b>Math.max(a,...p.known)&&[...p.known,a].some(x=>x*2===b))sols.push({a,b});assert.deepEqual(sols,[q.answerModel]);const cells=[...q.prompt.matchAll(/<td>(.*?)<\/td>/g)].map(x=>x[1]);assert.deepEqual(cells,['□',...p.known.slice(0,4).map(String),'□',...p.known.slice(4).map(String)]);assert.equal(q.answer,`가 ${sols[0].a}점, 바 ${sols[0].b}점`);}
+  else{const [z,t,f,only3,both12,thirtyfive,forty,fifty]=p.counts;const subsets=[];for(let mask=0;mask<8;mask++){const bits=[1,2,4].filter(bit=>mask&bit),score=bits.reduce((v,bit)=>v+({1:10,2:15,4:25}[bit]),0);subsets.push({mask,score});}assert.deepEqual(subsets.filter(x=>x.score===25).map(x=>x.mask).sort(),[3,4]);const sols=[];for(let n25=0;n25<=p.n;n25++)for(let n35=0;n35<=p.n;n35++)for(let thirdOnly=0;thirdOnly<=n25;thirdOnly++){
+   if(z+t+f+n25+n35+forty+fifty!==p.n||10*t+15*f+25*n25+35*n35+40*forty+50*fifty!==p.total||t+f+thirdOnly!==p.one)continue;sols.push({score25:n25,score35:n35,onlyThird:thirdOnly,thirdCorrect:thirdOnly+n35+forty+fifty});}
+   assert.deepEqual(sols,[q.answerModel]);assert.equal(q.answer,`${sols[0].thirdCorrect}명`);const cells=[...q.prompt.matchAll(/<td>(.*?)<\/td>/g)].map(x=>x[1]);assert.deepEqual(cells,[String(z),String(t),String(f),'□','□',String(forty),String(fifty)]);}
+ }
+ assert.equal(prompts.size,3);
+}
+const ledger=JSON.parse(fs.readFileSync(path.join(__dirname,'source-inventory/5-2-source-items.json'),'utf8'));assert.equal(ledger.sourceItems.find(x=>x.sourceItemId==='5-2-u6-e2-mission-4').implementationStatus,'review-locked');let possible=[];for(let pass=0;pass<=200;pass++)for(let fail=0;fail<=200;fail++)if(200*pass+100*fail===300*144&&Math.abs(pass-fail)===21)possible.push([pass/2,fail/2]);assert.deepEqual(possible,[[68.5,79],[75.5,65]]);
+console.log('Missions 5–6: all variants uniquely enumerated with correct table cells; ambiguous Mission 4 stays locked');
