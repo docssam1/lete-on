@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 1 Page 8 Examples 3-1–3-2
+
+- Rechecked the printed source and its existing private evidence. Connected two source-structure synthetic examples with different values: enumerate every matching rounding method, and purchase ribbon in whole units. Synthetic variants and answers were independently verified; publisher answer keys remain unverified. The open-ended Exploration 3 asks for real-life situations, whereas the existing three public types practice calculations, so its source row remains locked pending a faithful open-response treatment.
+- Examples 3-3 and 3-4 remain locked: the printed packing quantities are incompatible with selling all items only in the specified bundle sizes; the taxi question does not establish how a partial distance increment is charged. Preserve the existing private source-review and lock evidence.
+- Independent rounding enumeration and unit-cost checks, 1440/375/320px browser, separate one-page A4 problem and solution PDFs, release gate and 79,860 runtime generations passed. Counts: 2,119 types, 1,331 generatable, 788 awaiting review. The broader inventory audit retains 81 existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Preserve existing work and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 65 Missions 1–6
 
 - Source-checked and independently enumerated six original missions under the usual equally likely outcome models: 1/4, 99/190, 3/10, 3/8, 1/15 and 4/9. Mission 3's previous ledger incorrectly counted (2,3,5) as a triangle; equality makes a straight line, leaving three of ten triples. Mission 4's previous ledger duplicated the dice problem in Mission 6; corrected it to the four students and assigned desks problem. Publisher answer keys remain unverified.
