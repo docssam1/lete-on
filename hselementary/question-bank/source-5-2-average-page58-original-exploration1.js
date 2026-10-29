@@ -8,16 +8,23 @@
   "use strict";
   const sourceItemId = "5-2-u6-e1-exploration";
   const generatorKey = "source52AverageOriginalPage58Exploration1";
-  const names = Object.freeze(["효근", "동민", "석기", "예슬", "영수", "한별", "한초"]);
-  const tenths = Object.freeze([1528, 1404, 1486, 1420, 1492, 1418, 1542]);
-  function makeQuestion() {
-    const sum = tenths.reduce((a, b) => a + b, 0);
-    if (sum !== 10290 || sum / tenths.length !== 1470) throw new Error("원문 평균 검산 실패");
-    const values = tenths.map(n => String(n / 10));
-    const rows = names.map((name, i) => `<tr><th scope="row">${name}</th><td>${values[i]}</td></tr>`).join("");
-    const prompt = `<div class="source52-p58e1-question" data-source-item-id="${sourceItemId}" data-pool-index="0"><p>다음은 예슬이네 모둠의 키를 조사하여 나타낸 표입니다. 키의 평균을 구하여라.</p><table class="source52-p58e1-table"><caption>예슬이네 모둠의 키</caption><thead><tr><th scope="col">이름</th><th scope="col">키(cm)</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-    const solution = `<div class="source52-p58e1-solution" data-source-answer="${sourceItemId}"><p>일곱 사람의 키를 모두 더합니다.</p><p class="math-inline-expression">152.8 + 140.4 + 148.6 + 142 + 149.2 + 141.8 + 154.2 = 1029 (cm)</p><p>합을 사람 수 7로 나누면 평균입니다.</p><p class="math-inline-expression">1029 ÷ 7 = <strong>147</strong> (cm)</p></div>`;
-    return Object.freeze({ prompt, answer: "147cm", solution, sourceItemId, generator: generatorKey, variant: 0, variantIndex: 0, poolIndex: 0, verifiedPoolIndex: 0, verifiedVariantId: `${sourceItemId}:original`, difficultyOffset: 0, difficultyLevel: 2, difficultyRank: 2, sourceStructurePreserved: true, variantProvenance: "source-original-fixed", generationMode: "fixed-verified-pool", verifiedVariantCount: 1, verifiedVariantTarget: 1, answerVisualRequired: false, answerVisualStatus: "not-required", publisherKeyVerified: false, publisherAnswerVerified: false, handwrittenAnswerVerified: false, answerVerification: "independent-exact-arithmetic", answerModel: Object.freeze({ sum: 1029, count: 7, mean: 147, unit: "cm" }) });
+  // Synthetic tenths of a centimetre; the licensed source remains in private records.
+  const pools = Object.freeze([
+    Object.freeze([1360, 1380, 1390, 1400, 1410, 1420, 1440]),
+    Object.freeze([1395, 1415, 1425, 1435, 1445, 1455, 1475]),
+    Object.freeze([1335, 1355, 1365, 1375, 1385, 1395, 1415])
+  ]);
+  const format = n => Number((n / 10).toFixed(1)).toString();
+  function makeQuestion(variant = 0) {
+    if (!Number.isSafeInteger(variant) || variant < 0) return null;
+    const index = variant % pools.length, values = pools[index];
+    const sum = values.reduce((a, b) => a + b, 0);
+    if (sum % values.length !== 0) throw new Error("평균이 소수 첫째 자리로 나타나는지 확인하세요.");
+    const average = sum / values.length;
+    const rows = values.map((value, i) => `<tr><th scope="row">학생 ${i + 1}</th><td>${format(value)}</td></tr>`).join("");
+    const prompt = `<div class="source52-p58e1-question" data-source-item-id="${sourceItemId}" data-pool-index="${index}"><p>표에 나타낸 일곱 학생의 키의 평균을 구하세요.</p><table class="source52-p58e1-table"><caption>학생들의 키</caption><thead><tr><th scope="col">학생</th><th scope="col">키(cm)</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    const solution = `<div class="source52-p58e1-solution" data-source-answer="${sourceItemId}"><p>일곱 학생의 키를 모두 더합니다.</p><p class="math-inline-expression">${values.map(format).join(" + ")} = ${format(sum)} (cm)</p><p>합을 학생 수로 나누면 평균입니다.</p><p class="math-inline-expression">${format(sum)} ÷ ${values.length} = <strong>${format(average)}</strong> (cm)</p></div>`;
+    return Object.freeze({ prompt, answer: `${format(average)}cm`, solution, sourceItemId, generator: generatorKey, variant: index, variantIndex: index, poolIndex: index, verifiedPoolIndex: index, verifiedVariantId: `${sourceItemId}:synthetic:${index}`, difficultyOffset: 0, difficultyLevel: 2, difficultyRank: 2, sourceStructurePreserved: true, variantProvenance: "synthetic-source-structure", generationMode: "fixed-verified-pool", verifiedVariantCount: pools.length, verifiedVariantTarget: pools.length, answerVisualRequired: false, answerVisualStatus: "not-required", publisherKeyVerified: false, publisherAnswerVerified: false, handwrittenAnswerVerified: false, answerVerification: "independent-synthetic-mean", answerModel: Object.freeze({ sumTenths: sum, count: values.length, meanTenths: average, unit: "cm" }), questionModel: Object.freeze({ heightTenths: [...values] }) });
   }
   function install(target) {
     const api = target?.HSE_GENERATORS;
@@ -26,10 +33,10 @@
     const previousKey = api.generatorKey.bind(api), previousGenerate = api.generate.bind(api);
     const matches = type => type && (type.id === sourceItemId || type.sourceItemId === sourceItemId || type.generatorKey === generatorKey);
     api.generatorKey = type => matches(type) ? type.id === sourceItemId && type.sourceItemId === sourceItemId && type.generatorKey === generatorKey && type.reviewLocked === false && type.sourceVerified === true ? generatorKey : "" : previousKey(type);
-    api.generate = (type, rank, difficulty, seed, variant = 0) => matches(type) ? api.generatorKey(type) && Number(variant) === 0 ? makeQuestion() : null : previousGenerate(type, rank, difficulty, seed, variant);
+    api.generate = (type, rank, difficulty, seed, variant = 0) => matches(type) ? api.generatorKey(type) ? makeQuestion(variant) : null : previousGenerate(type, rank, difficulty, seed, variant);
     if (Array.isArray(api.names) && !api.names.includes(generatorKey)) api.names.push(generatorKey);
     Object.defineProperty(api, "__source52P58OriginalE1Installed", { value: true });
     return true;
   }
-  return Object.freeze({ sourceItemId, generatorKey, names, tenths, makeQuestion, install });
+  return Object.freeze({ sourceItemId, generatorKey, pools, makeQuestion, install });
 });

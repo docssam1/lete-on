@@ -4658,16 +4658,18 @@
       "pdfPage": 54,
       "printedPage": 58,
       "sourceShape": "일곱 사람의 이름과 키(cm) 표를 읽어 평균 구하기",
-      "answerContract": "single-value: 147cm",
+      "answerContract": "candidate: single-value",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 58쪽 표와 원문 수치를 직접 대조하고 합 1029cm, 평균 147cm를 독립 계산했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 표 구조와 독립 계산을 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e1-exploration"
     },
     {
       "sourceItemId": "5-2-u6-e1-example-1",
