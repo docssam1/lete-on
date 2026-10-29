@@ -1,0 +1,4 @@
+@page source52U4Example11Answer { size: A4; margin: 10mm 0; }
+@media print {
+  .answer-page:has(.source52-u4-p42-e11-solution) { page: source52U4Example11Answer; }
+}
