@@ -2561,6 +2561,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e2-example-${n}`,sourceItemLabel:`예제 2-${n} 유사문항`,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:12,sourcePrintedPage:16,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page16Example2${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:visual,answerVisualStatus:visual?"verified-reconstruction":"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조와 그림을 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
   }
 
+  if (source52Unit2Product) {
+    const id = "5-2-u2-e2-mission-1-synthetic", typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name:"다섯 분수 곱셈 계산",label:"다섯 분수 곱셈 계산",difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-e2-mission-1",sourceItemLabel:"Mission 1 유사문항",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:13,sourcePrintedPage:17,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2Page17Mission1Synthetic",generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 다섯 소문항의 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
