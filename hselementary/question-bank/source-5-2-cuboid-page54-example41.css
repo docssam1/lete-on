@@ -1,0 +1,27 @@
+.source52-p54e41-question,
+.source52-p54e41-solution { color: #202a35; line-height: 1.68; }
+.source52-p54e41-question > p,
+.source52-p54e41-solution > p { margin: 0 0 0.75rem; }
+.source52-p54e41-question figure,
+.source52-p54e41-solution figure { margin: 0.7rem auto; max-width: 550px; text-align: center; }
+.source52-p54e41-diagram { display: block; width: min(100%, 520px); height: auto; margin: 0 auto; overflow: visible; }
+.source52-p54e41-diagram polygon { stroke: #344354; stroke-width: 1.5; stroke-linejoin: round; }
+.source52-p54e41-diagram .top { fill: #eef3f8; }
+.source52-p54e41-diagram .right { fill: #cbd6e2; }
+.source52-p54e41-diagram .front { fill: #dce5ed; }
+.source52-p54e41-diagram text { fill: #142232; font: 700 20px/1 sans-serif; text-anchor: middle; dominant-baseline: middle; }
+.source52-p54e41-diagram .blank-label { font-size: 18px; }
+.source52-p54e41-question figcaption,
+.source52-p54e41-solution figcaption { color: #586575; font-size: 0.88rem; }
+.source52-p54e41-solution ol { margin: 0.55rem 0; padding-left: 1.45rem; }
+.source52-p54e41-solution li { margin: 0 0 0.48rem; padding-left: 0.18rem; }
+.source52-p54e41-final { margin: 0.75rem 0; font-size: 1.12rem; font-weight: 700; }
+.source52-p54e41-check { color: #586575; font-size: 0.9rem; }
+@media print {
+  .source52-p54e41-question,
+  .source52-p54e41-solution { color: #111; }
+  .source52-p54e41-diagram { max-width: 440px; }
+  .source52-p54e41-question figure,
+  .source52-p54e41-solution figure { margin: 0.35rem auto; }
+  .source52-p54e41-solution li { margin-bottom: 0.25rem; }
+}

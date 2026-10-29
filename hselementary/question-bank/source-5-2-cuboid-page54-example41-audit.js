@@ -1,0 +1,27 @@
+"use strict";
+const assert = require("node:assert/strict");
+const source = require("./source-5-2-cuboid-page54-example41.js");
+
+assert.equal(source.diceOrientations.length, 48);
+assert.equal(source.joins.length, 5);
+const model = source.verifyModel();
+assert.equal(model.answer, 4);
+assert.deepEqual([...model.answers], [4]);
+assert.equal(model.modelCount, 32768);
+const html = source.makeQuestion();
+assert.equal(html.answer, "4");
+assert.equal(html.answerModel.answer, 4);
+assert.equal((html.prompt.match(/class="die die-/g) || []).length, 6);
+assert.match(html.prompt, /면 ㉮에 적힌 수/);
+assert.match(html.prompt, /붙인 주사위 여섯 개/);
+assert.match(html.solution, /앞뒤 면은 1과 6/);
+assert.match(html.solution, /따라서 시작 주사위의 앞면 ㉮는 그 반대 면인 <strong>4<\/strong>/);
+const type = { id: source.definition.sourceItemId, sourceItemId: source.definition.sourceItemId, generatorKey: source.definition.generatorKey, sourceVerified: true, reviewLocked: false };
+const api = { names: [], generatorKey: () => "legacy", generate: () => null };
+source.install({ HSE_GENERATORS: api });
+assert.equal(api.generatorKey(type), source.definition.generatorKey);
+assert.equal(api.generate(type, 0, 0, 0, 0).answer, "4");
+assert.equal(api.generate(type, 0, 0, 0, 1), null);
+assert.equal(api.generate({ ...type, reviewLocked: true }, 0, 0, 0, 0), null);
+assert.equal(api.generate({ ...type, sourceVerified: false }, 0, 0, 0, 0), null);
+console.log("5-2 U5 p.54 Example 4-1 source layout, 32,768 exhaustive die assignments, unique answer 4, fixed pool, and lock audit passed.");

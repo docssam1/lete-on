@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 5 Page 54 Examples 4-1 and 4-2
+
+- Source PDF p.50 / clean comparison PDF p.49 / printed p.54. Added two fixed source questions: six-die contact-chain missing face 4; opposite faces A–B, D–F, E–C. Publisher answer key remains unverified.
+- Example 4-1 was independently enumerated over 32,768 assignments without assuming identical die handedness. Example 4-2 has an independent adjacency graph check and a proper-rotation consistency check. Source, ledger, 1440/375/320px browser and four one-page A4 checks passed; release gate and 76,800 runtime generations passed.
+- Counts: 2,068 types, 1,280 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Preserve existing dirty worktree and student data. Other locked source items remain to be reviewed.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 5 Page 51 Missions 4–6
 
 - Source PDF p.47 / clean comparison PDF p.46 / printed p.51. Enabled three fixed source questions: overlapping cube faces 바 and 차; shaded area 63cm²; total cube edge length 84cm. The publisher answer key remains unverified. Mission 6 is text-only in the source.
