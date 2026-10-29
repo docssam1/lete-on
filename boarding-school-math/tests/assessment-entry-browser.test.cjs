@@ -57,6 +57,26 @@ test("assessment history is stored on device and only matching grade is restored
   await context.close();
 });
 
+test("ISEE stanines survive save, history rendering, and reload", async function () {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true });
+  const page = await context.newPage();
+  const errors = errorsFor(page);
+  await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#source-id").selectOption("isee");
+  await page.locator("#quant-stanine").fill("7");
+  await page.locator("#math-stanine").fill("6");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  assert.match(await page.locator("#metric-value").innerText(), /Quantitative Reasoning 7 · Mathematics Achievement 6 stanine/);
+  assert.match(await page.locator("#assessment-history-list").innerText(), /Quantitative Reasoning 7 · Mathematics Achievement 6 stanine/);
+  await page.reload({ waitUntil: "networkidle" });
+  assert.match(await page.locator("#metric-value").innerText(), /Quantitative Reasoning 7 · Mathematics Achievement 6 stanine/);
+  assert.equal(await page.locator("#quant-stanine").inputValue(), "7");
+  assert.equal(await page.locator("#math-stanine").inputValue(), "6");
+  assert.doesNotMatch(await page.locator("#assessment-history-list").innerText(), /undefined/);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
 test("school placement evidence remains descriptive and carries no automated weakness into today's plan", async function () {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();
@@ -99,6 +119,7 @@ test("assessment entry keeps MAP metrics distinct and locks unverified grades on
   await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
   await page.locator("#source-id").selectOption("map-growth");
   assert.equal(await page.locator("#overall-percent").isEnabled(), false);
+  assert.equal(await page.locator("#overall-percent").inputValue(), "");
   assert.equal(await page.locator("#rit").isVisible(), true);
   await page.locator("#rit").fill("218");
   await page.locator("#percentile").fill("64");

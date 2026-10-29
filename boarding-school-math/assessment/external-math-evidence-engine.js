@@ -85,10 +85,12 @@
     const testDate = date(input.testDate);
     const domains = normalizeDomains(input.domains);
     const metric = evidenceMetric(input, source);
+    const quantStanine = source.id === "isee" ? finite(input.quantStanine, "QUANT_STANINE", 1, 9, true) : null;
+    const mathStanine = source.id === "isee" ? finite(input.mathStanine, "MATH_STANINE", 1, 9, true) : null;
     const schoolCut = source.id === "school-placement" ? finite(input.schoolCut, "SCHOOL_CUT", 0, 100, false) : null;
     const rit = source.id === "map-growth" ? finite(input.rit, "RIT", 100, 350, true) : null;
     const scaleScore = source.id === "ctp" || source.id === "ssat" ? finite(input.scaleScore, "SCALE_SCORE", 0, 2000, false) : null;
-    const stanine = source.id === "ctp" ? finite(input.stanine, "STANINE", 1, 9, false) : source.id === "isee" ? metric : null;
+    const stanine = source.id === "ctp" ? finite(input.stanine, "STANINE", 1, 9, false) : null;
     const normGroup = source.id === "ctp" && typeof input.normGroup === "string" && input.normGroup.trim() ? input.normGroup.trim().slice(0, 80) : null;
     const season = source.id === "map-growth" && typeof input.season === "string" && ["fall", "winter", "spring", "summer"].includes(input.season) ? input.season : null;
     const sortedDomains = domains.slice().sort(function (a, b) { return a.percent - b.percent || a.id.localeCompare(b.id); });
@@ -103,7 +105,7 @@
       source,
       testDate,
       grade,
-      scores: Object.freeze({ metric, metricLabel: source.scoreLabel, rit, scaleScore, stanine, percentile: source.id !== "school-placement" && source.id !== "isee" ? metric : null, schoolCut, clearsEnteredCut, normGroup, season }),
+      scores: Object.freeze({ metric, metricLabel: source.scoreLabel, rit, scaleScore, stanine, quantStanine, mathStanine, percentile: source.id !== "school-placement" && source.id !== "isee" ? metric : null, schoolCut, clearsEnteredCut, normGroup, season }),
       band: null,
       confidence: "not-calculated",
       placementState,

@@ -136,6 +136,9 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .comparison-pair-columns { margin-top: 14px; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0; border: 1px solid #d8dee8; background: #fff; }
 .comparison-pair-columns article { min-width: 0; padding: 16px 18px; }
 .comparison-pair-columns article + article { border-left: 1px solid #d8dee8; }
+.rit-comparison { margin-top: 14px; padding: 15px 18px; border: 1px solid #d8dee8; background: #fff; }
+.rit-comparison h4 { margin: 0; color: #60418f; font-size: .82rem; }
+.rit-comparison p { margin: 7px 0 0; color: #354255; font-size: .79rem; line-height: 1.6; }
 .comparison-pair-columns article > span { color: #60418f; font-size: .76rem; font-weight: 850; }
 .comparison-pair-columns h4 { margin: 7px 0 0; font-size: .96rem; line-height: 1.45; overflow-wrap: anywhere; }
 .comparison-pair-columns p { margin: 7px 0 0; color: #566274; font-size: .82rem; line-height: 1.55; }

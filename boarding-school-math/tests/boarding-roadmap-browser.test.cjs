@@ -182,6 +182,49 @@ test("roadmap loads each grade's own assessment route from local history", async
   await page.close();
 });
 
+test("grade comparison displays arithmetic RIT difference only for matching MAP records", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#source-id").selectOption("map-growth");
+  await page.locator("#rit").fill("218");
+  await page.locator("#percentile").fill("55");
+  await page.locator("#season").selectOption("fall");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=8`, { waitUntil: "networkidle" });
+  await page.locator("#source-id").selectOption("map-growth");
+  await page.locator("#rit").fill("231");
+  await page.locator("#percentile").fill("62");
+  await page.locator("#season").selectOption("");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  await page.getByLabel("비교할 학년").selectOption("8");
+  const comparison = page.locator("#rit-comparison-copy");
+  assert.equal(await comparison.getAttribute("data-state"), "comparable-scale");
+  assert.match(await comparison.innerText(), /Grade 7.*RIT 218 → Grade 8.*RIT 231 · 입력값 차이 \+13 RIT/);
+  assert.match(await comparison.innerText(), /시기 미기재/);
+  assert.match(await comparison.innerText(), /예상 성장.*동학년 백분위.*모든 내용 숙달을 판정하지 않아요/);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await page.close();
+});
+
+test("grade comparison does not calculate a difference between different assessment sources", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#source-id").selectOption("map-growth");
+  await page.locator("#rit").fill("218");
+  await page.locator("#percentile").fill("55");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=8`, { waitUntil: "networkidle" });
+  await page.locator("#overall-percent").fill("82");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  await page.getByLabel("비교할 학년").selectOption("8");
+  assert.equal(await page.locator("#rit-comparison-copy").getAttribute("data-state"), "needs-matching-map-records");
+  assert.doesNotMatch(await page.locator("#rit-comparison-copy").innerText(), /RIT 218.*→.*82%|입력값 차이 \+/);
+  assert.match(await page.locator("#rit-comparison-copy").innerText(), /서로 다른 시험 점수는 섞지 않아요/);
+  await page.close();
+});
+
 test("released unit practice is reachable without exposing the private Grade 7 diagnostic", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=6`, { waitUntil: "networkidle" });

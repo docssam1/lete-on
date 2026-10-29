@@ -66,7 +66,7 @@
   function metricText(result) {
     if (result.source.id === "school-placement") return `${result.scores.metric}%`;
     if (result.source.id === "map-growth") return `RIT ${result.scores.rit} · ${result.scores.percentile}th percentile`;
-    if (result.source.id === "isee") return `Quantitative Reasoning ${value("quant-stanine")} · Mathematics Achievement ${value("math-stanine")} stanine`;
+    if (result.source.id === "isee") return `Quantitative Reasoning ${result.scores.quantStanine ?? "—"} · Mathematics Achievement ${result.scores.mathStanine ?? "—"} stanine`;
     return `${result.scores.percentile}th percentile${result.scores.scaleScore == null ? "" : ` · ${result.scores.scaleScore}`}`;
   }
   function recommendationReason(result) {
@@ -117,7 +117,7 @@
     const scores = result.scores || {};
     if (result.source.id === "school-placement") return scores.metric == null ? "점수 미입력" : `${scores.metric}%`;
     if (result.source.id === "map-growth") return [`RIT ${scores.rit}`, scores.percentile == null ? null : `${scores.percentile}th percentile`].filter(Boolean).join(" · ");
-    if (result.source.id === "isee") return `Quantitative Reasoning ${scores.quantStanine} · Mathematics Achievement ${scores.mathStanine} stanine`;
+    if (result.source.id === "isee") return `Quantitative Reasoning ${scores.quantStanine ?? "—"} · Mathematics Achievement ${scores.mathStanine ?? "—"} stanine`;
     return [scores.percentile == null ? null : `${scores.percentile}th percentile`, scores.scaleScore == null ? null : `Scale ${scores.scaleScore}`, scores.stanine == null ? null : `Stanine ${scores.stanine}`].filter(Boolean).join(" · ") || "성적표 값";
   }
   function renderHistory() {
@@ -160,6 +160,36 @@
       : "이전 성적표 점수를 입력칸에 복원했어요. 시험 시기·규준집단, 현재·목표 과정, 영역 점수는 저장되지 않았으니 성적표를 보고 확인·보완한 뒤 비교 결과를 다시 만들어 주세요. 예전 준비도·약점 판정은 복원하지 않았습니다.";
     note.hidden = false;
   }
+  function restoreSavedInputs(saved) {
+    sourceSelect.value = saved.source.id;
+    updateSourceFields();
+    document.getElementById("grade").value = String(saved.grade);
+    document.getElementById("test-date").value = saved.testDate || today();
+    currentCourse.value = saved.currentCourse.id;
+    updateTargetOptions();
+    document.getElementById("target-course").value = (saved.targetCourse || saved.currentCourse).id;
+    const scores = saved.scores || {};
+    const values = {
+      "overall-percent": saved.source.id === "school-placement" ? scores.metric : null,
+      "school-cut": scores.schoolCut,
+      rit: scores.rit,
+      percentile: scores.percentile,
+      "scale-score": scores.scaleScore,
+      stanine: scores.stanine,
+      "quant-stanine": scores.quantStanine,
+      "math-stanine": scores.mathStanine,
+      "norm-group": scores.normGroup,
+      season: scores.season
+    };
+    Object.keys(values).forEach(function (id) {
+      const field = document.getElementById(id);
+      if (field && values[id] != null) field.value = String(values[id]);
+    });
+    (saved.domains || []).forEach(function (domain) {
+      const field = document.querySelector(`[data-domain="${domain.id}"]`);
+      if (field) field.value = String(domain.percent);
+    });
+  }
   form.addEventListener("submit", function (event) {
     event.preventDefault(); document.getElementById("form-error").textContent = "";
     try { const result = engine.analyze(inputRecord()); if (!records.storage.saveAssessmentEvidence(result)) throw new Error("SAVE_FAILED"); render(result); renderHistory(); }
@@ -172,7 +202,7 @@
   if (Number.isInteger(requestedGrade) && requestedGrade >= 3 && requestedGrade <= 12) document.getElementById("grade").value = String(requestedGrade);
   const history = records.storage.loadAssessmentEvidenceHistory();
   const saved = Number.isInteger(requestedGrade) ? records.storage.loadLatestAssessmentEvidence(requestedGrade) : records.storage.loadAssessmentEvidence();
-  if (saved && saved.schemaVersion === engine.SCHEMA_VERSION) render(saved);
+  if (saved && saved.schemaVersion === engine.SCHEMA_VERSION) { restoreSavedInputs(saved); render(saved); }
   else {
     const legacy = records.storage.loadAssessmentEvidence();
     if (legacy && legacy.legacyEvidence && (!Number.isInteger(requestedGrade) || legacy.grade === requestedGrade) && history.length === 0) restoreLegacyInputs(legacy);

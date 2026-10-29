@@ -188,11 +188,14 @@
     endNote.hidden = Boolean(next);
     if (next) $("journey-next-title").textContent = next[0];
   }
-  function matchingAssessmentEvidence(selectedGrade) {
+  function matchingAssessmentEvidence(selectedGrade, sourceId) {
     const gradeToMatch = Number.isInteger(selectedGrade) ? selectedGrade : grade;
     try {
       const records = window.GFIELDLocalLearningRecord;
-      const evidence = records && records.storage.loadLatestAssessmentEvidence(gradeToMatch);
+      if (!records) return null;
+      const evidence = sourceId
+        ? records.storage.loadAssessmentEvidenceHistory().find(function (entry) { return entry.grade === gradeToMatch && entry.source && entry.source.id === sourceId; })
+        : records.storage.loadLatestAssessmentEvidence(gradeToMatch);
       return evidence && !evidence.legacyEvidence && evidence.grade === gradeToMatch && evidence.source && evidence.currentCourse ? evidence : null;
     } catch (error) { return null; }
   }
@@ -200,6 +203,9 @@
     return typeof evidence.testDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(evidence.testDate)
       ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${evidence.testDate}T00:00:00Z`))
       : "날짜 미입력";
+  }
+  function seasonLabel(season) {
+    return ({ fall: "Fall", winter: "Winter", spring: "Spring", summer: "Summer" })[season] || "시기 미기재";
   }
   function renderAssessmentEvidence() {
     const label = $("journey-evidence-label");
@@ -384,6 +390,20 @@
     setText("comparison-assessment-target-copy", targetEvidence
       ? `${assessmentDate(targetEvidence)} · 성적표에서 직접 입력한 현재·목표 과정`
       : target.core);
+    const ritComparison = $("rit-comparison-copy");
+    const mapEvidence = matchingAssessmentEvidence(current.grade, "map-growth");
+    const targetMapEvidence = matchingAssessmentEvidence(target.grade, "map-growth");
+    const comparableRit = mapEvidence && targetMapEvidence
+      && Number.isFinite(mapEvidence.scores && mapEvidence.scores.rit) && Number.isFinite(targetMapEvidence.scores && targetMapEvidence.scores.rit);
+    if (comparableRit) {
+      const difference = targetMapEvidence.scores.rit - mapEvidence.scores.rit;
+      const differenceText = difference > 0 ? `+${difference}` : String(difference);
+      ritComparison.textContent = `Grade ${current.grade} · ${assessmentDate(mapEvidence)} (${seasonLabel(mapEvidence.scores.season)}) RIT ${mapEvidence.scores.rit} → Grade ${target.grade} · ${assessmentDate(targetMapEvidence)} (${seasonLabel(targetMapEvidence.scores.season)}) RIT ${targetMapEvidence.scores.rit} · 입력값 차이 ${differenceText} RIT. 같은 수학 RIT 수직 척도의 산술 비교예요. 이 차이만으로 예상 성장, 동학년 백분위, 해당 학년의 모든 내용 숙달을 판정하지 않아요.`;
+      ritComparison.dataset.state = "comparable-scale";
+    } else {
+      ritComparison.textContent = "두 학년에 모두 MAP Growth 수학 RIT 기록이 있을 때만 같은 RIT 척도의 입력값을 나란히 보여줘요. MAP·학교 Placement·SSAT 등 서로 다른 시험 점수는 섞지 않아요.";
+      ritComparison.dataset.state = "needs-matching-map-records";
+    }
   }
   function renderGradeFocus() {
     const host = $("grade-focus-list"); host.replaceChildren();
