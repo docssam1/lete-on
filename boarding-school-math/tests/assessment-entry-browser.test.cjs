@@ -113,6 +113,34 @@ test("school placement evidence remains descriptive and carries no automated wea
   await context.close();
 });
 
+test("high-school elective comparison records only the chosen courses and avoids Grade 6 domain tags", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
+  const errors = errorsFor(page);
+  await page.goto(`${baseUrl}assessment-entry.html?grade=12`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#grade").inputValue(), "12");
+  assert.match(await page.locator(".course-choice-note").innerText(), /과목 순서는 학교마다 달라요/);
+  const target = page.locator("#target-course");
+  const labels = await target.locator("option").allTextContents();
+  assert.ok(labels.some(function (label) { return /Statistics · 고등학교 선택 과목 · 학교별/.test(label); }));
+  assert.ok(labels.some(function (label) { return /Calculus · 고등학교 선택 과목 · 학교별/.test(label); }));
+  await page.locator("#current-course").selectOption("algebra-2");
+  await target.selectOption("statistics");
+  await page.locator("#overall-percent").fill("82");
+  await page.locator('[data-domain="data"]').fill("61");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  assert.equal(await page.locator(".course-route span").count(), 2);
+  assert.match(await page.locator("#course-route").innerText(), /현재 선택 · Algebra 2[\s\S]*비교 목표 · Statistics/);
+  assert.doesNotMatch(await page.locator("#course-route").innerText(), /Precalculus|Calculus/);
+  assert.match(await page.locator("#priority-list").innerText(), /자료·확률[\s\S]*성적표 입력값/);
+  assert.doesNotMatch(await page.locator("#priority-list").innerText(), /6\.SP\.A/);
+  assert.equal(await page.locator("#recommended-course").innerText(), "Algebra 2");
+  const saved = await page.evaluate(function () { return JSON.parse(localStorage.getItem("gmap-local-learning-record-v1:external-assessment")); });
+  assert.equal(saved.targetCourse.id, "statistics");
+  assert.equal(saved.domainComparisons[0].clusterId, null);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("assessment entry keeps MAP metrics distinct and locks unverified grades on mobile and print", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   const errors = errorsFor(page);

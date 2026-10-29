@@ -112,8 +112,8 @@
     if (object(value) && value.schemaVersion === "gfield-external-math-evidence-v1") return sanitizedLegacyAssessment(value);
     if (!object(value) || value.schemaVersion !== "gfield-external-math-evidence-v2" || !object(value.source) || !object(value.currentCourse) || !object(value.recommendedStart) || !object(value.plan)) return null;
     const domains = Array.isArray(value.domainComparisons) ? value.domainComparisons.slice(0, 6).map(function (domain) {
-      if (!object(domain) || typeof domain.label !== "string" || typeof domain.clusterId !== "string" || !Number.isFinite(domain.percent)) return null;
-      return { id: String(domain.id || "").slice(0, 32), label: domain.label.slice(0, 80), clusterId: domain.clusterId.slice(0, 32), percent: domain.percent };
+      if (!object(domain) || typeof domain.label !== "string" || (domain.clusterId !== null && typeof domain.clusterId !== "string") || !Number.isFinite(domain.percent)) return null;
+      return { id: String(domain.id || "").slice(0, 32), label: domain.label.slice(0, 80), clusterId: domain.clusterId === null ? null : domain.clusterId.slice(0, 32), percent: domain.percent };
     }).filter(Boolean) : [];
     return {
       schemaVersion: value.schemaVersion,

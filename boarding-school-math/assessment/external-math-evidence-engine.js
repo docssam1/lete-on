@@ -16,10 +16,13 @@
   const COURSES = Object.freeze([
     Object.freeze({ id: "elementary-foundations", label: "Elementary Foundations", stage: "K–5", publicLearning: false }),
     Object.freeze({ id: "pre-algebra", label: "Pre-Algebra", stage: "Grades 6–8", publicLearning: true }),
-    Object.freeze({ id: "algebra-1", label: "Algebra 1", stage: "보통 Grades 8–10", publicLearning: false }),
-    Object.freeze({ id: "geometry", label: "Geometry", stage: "보통 Grades 9–10", publicLearning: false }),
-    Object.freeze({ id: "algebra-2", label: "Algebra 2", stage: "보통 Grades 10–11", publicLearning: false }),
-    Object.freeze({ id: "precalculus", label: "Precalculus", stage: "보통 Grades 11–12", publicLearning: false })
+    Object.freeze({ id: "algebra-1", label: "Algebra 1", stage: "학교별 과목 순서 확인", publicLearning: false }),
+    Object.freeze({ id: "geometry", label: "Geometry", stage: "학교별 과목 순서 확인", publicLearning: false }),
+    Object.freeze({ id: "algebra-2", label: "Algebra 2", stage: "학교별 과목 순서 확인", publicLearning: false }),
+    Object.freeze({ id: "precalculus", label: "Precalculus", stage: "학교별 과목 순서 확인", publicLearning: false }),
+    Object.freeze({ id: "calculus", label: "Calculus", stage: "고등학교 선택 과목 · 학교별", publicLearning: false }),
+    Object.freeze({ id: "statistics", label: "Statistics", stage: "고등학교 선택 과목 · 학교별", publicLearning: false }),
+    Object.freeze({ id: "discrete-mathematics", label: "Discrete Mathematics", stage: "고등학교 선택 과목 · 학교별", publicLearning: false })
   ]);
   const DOMAIN_SPECS = Object.freeze({
     number: Object.freeze({ label: "수와 연산", axis: "number-operations", clusterId: "6.NS.B" }),
@@ -49,13 +52,13 @@
     if (!found) fail(`${field}_INVALID`);
     return found;
   }
-  function normalizeDomains(domains) {
+  function normalizeDomains(domains, grade) {
     if (!Array.isArray(domains)) return [];
     const seen = new Set();
     return domains.map(function (row) {
       if (!record(row) || !DOMAIN_SPECS[row.id] || seen.has(row.id)) fail("DOMAIN_INVALID");
       seen.add(row.id);
-      return Object.freeze({ id: row.id, label: DOMAIN_SPECS[row.id].label, axis: DOMAIN_SPECS[row.id].axis, clusterId: DOMAIN_SPECS[row.id].clusterId, percent: finite(row.percent, `DOMAIN_${row.id.toUpperCase()}`, 0, 100, true) });
+      return Object.freeze({ id: row.id, label: DOMAIN_SPECS[row.id].label, axis: DOMAIN_SPECS[row.id].axis, clusterId: grade === 6 ? DOMAIN_SPECS[row.id].clusterId : null, percent: finite(row.percent, `DOMAIN_${row.id.toUpperCase()}`, 0, 100, true) });
     });
   }
   function evidenceMetric(input, source) {
@@ -68,10 +71,10 @@
     return finite(input.percentile, "PERCENTILE", 1, 99, true);
   }
   function routeBetween(startId, targetId) {
-    const start = COURSES.findIndex(function (row) { return row.id === startId; });
-    const target = COURSES.findIndex(function (row) { return row.id === targetId; });
-    const low = Math.min(start, target); const high = Math.max(start, target);
-    return Object.freeze(COURSES.slice(low, high + 1).map(function (row) { return Object.freeze({ id: row.id, label: row.label, stage: row.stage, publicLearning: row.publicLearning }); }));
+    return Object.freeze([startId, targetId].filter(function (id, index, ids) { return index === 0 || id !== ids[index - 1]; }).map(function (id) {
+      const row = course(id, "ROUTE_COURSE");
+      return Object.freeze({ id: row.id, label: row.label, stage: row.stage, publicLearning: row.publicLearning });
+    }));
   }
   function analyze(input) {
     if (!record(input) || !SOURCES[input.sourceId]) fail("SOURCE_INVALID");
@@ -80,10 +83,8 @@
     if (!Number.isInteger(grade)) fail("GRADE_INVALID");
     const current = course(input.currentCourseId, "CURRENT_COURSE");
     const target = course(input.targetCourseId, "TARGET_COURSE");
-    const currentIndex = COURSES.indexOf(current); const targetIndex = COURSES.indexOf(target);
-    if (targetIndex < currentIndex) fail("TARGET_COURSE_BEFORE_CURRENT");
     const testDate = date(input.testDate);
-    const domains = normalizeDomains(input.domains);
+    const domains = normalizeDomains(input.domains, grade);
     const metric = evidenceMetric(input, source);
     const quantStanine = source.id === "isee" ? finite(input.quantStanine, "QUANT_STANINE", 1, 9, true) : null;
     const mathStanine = source.id === "isee" ? finite(input.mathStanine, "MATH_STANINE", 1, 9, true) : null;

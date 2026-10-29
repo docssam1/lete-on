@@ -65,10 +65,24 @@ test("SSAT and ISEE remain admissions evidence and cannot independently advance 
   assert.equal(isee.scores.metric, null);
 });
 
-test("invalid ranges and backwards course targets are rejected", function () {
+test("invalid ranges are rejected while the user-selected course comparison may branch either way", function () {
   assert.throws(function () { engine.analyze(base({ grade: 1 })); }, /GRADE_INVALID/);
   assert.throws(function () { engine.analyze(base({ sourceId: "map-growth", overallPercent: undefined, schoolCut: undefined, rit: 99, percentile: 50 })); }, /RIT_INVALID/);
-  assert.throws(function () { engine.analyze(base({ currentCourseId: "algebra-1", targetCourseId: "pre-algebra" })); }, /TARGET_COURSE_BEFORE_CURRENT/);
+  const selected = engine.analyze(base({ currentCourseId: "algebra-1", targetCourseId: "pre-algebra" }));
+  assert.deepEqual(selected.route.map(function (course) { return course.id; }), ["algebra-1", "pre-algebra"]);
+  assert.equal(selected.band, null);
+});
+
+test("high-school elective comparisons preserve school choice and do not imply an intermediate sequence", function () {
+  const ids = engine.COURSES.map(function (course) { return course.id; });
+  assert.ok(ids.includes("calculus"));
+  assert.ok(ids.includes("statistics"));
+  assert.ok(ids.includes("discrete-mathematics"));
+  const result = engine.analyze(base({ grade: 12, currentCourseId: "algebra-2", targetCourseId: "statistics", domains: [{ id: "data", percent: 61 }] }));
+  assert.deepEqual(result.route.map(function (course) { return course.id; }), ["algebra-2", "statistics"]);
+  assert.equal(result.domainComparisons[0].clusterId, null);
+  const grade6 = engine.analyze(base({ grade: 6, domains: [{ id: "geometry", percent: 61 }] }));
+  assert.equal(grade6.domainComparisons[0].clusterId, "6.G.A");
 });
 
 test("only the verified Grade 6 Pre-Algebra bridge unlocks current public materials", function () {

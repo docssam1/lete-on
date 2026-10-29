@@ -17,7 +17,7 @@
   };
   const errorCopy = {
     SOURCE_INVALID: "평가 종류를 다시 선택하세요.", TEST_DATE_INVALID: "시험일을 확인하세요.", GRADE_INVALID: "응시 학년을 확인하세요.",
-    CURRENT_COURSE_INVALID: "현재 과정을 확인하세요.", TARGET_COURSE_INVALID: "목표 과정을 확인하세요.", TARGET_COURSE_BEFORE_CURRENT: "목표 과정은 현재 과정과 같거나 이후 과정이어야 합니다.",
+    CURRENT_COURSE_INVALID: "현재 과정을 확인하세요.", TARGET_COURSE_INVALID: "목표 과정을 확인하세요.",
     OVERALL_PERCENT_REQUIRED: "전체 정답률을 입력하세요.", OVERALL_PERCENT_INVALID: "전체 정답률은 0~100 사이로 입력하세요.", SCHOOL_CUT_INVALID: "학교 컷은 0~100 사이로 입력하세요.",
     RIT_REQUIRED: "Math RIT를 입력하세요.", RIT_INVALID: "Math RIT 값을 확인하세요.", PERCENTILE_REQUIRED: "성취 백분위를 입력하세요.", PERCENTILE_INVALID: "백분위는 1~99 사이로 입력하세요.",
     QUANT_STANINE_REQUIRED: "Quantitative Reasoning stanine을 입력하세요.", QUANT_STANINE_INVALID: "Stanine은 1~9 사이입니다.", MATH_STANINE_REQUIRED: "Mathematics Achievement stanine을 입력하세요.", MATH_STANINE_INVALID: "Stanine은 1~9 사이입니다."
@@ -30,16 +30,11 @@
   function value(id) { return document.getElementById(id).value; }
   function numberOrNull(id) { const raw = value(id); return raw === "" ? null : Number(raw); }
   function populateCourses() {
-    engine.COURSES.forEach(function (course, index) {
+    engine.COURSES.forEach(function (course) {
       [currentCourse, targetCourse].forEach(function (select) { const option = document.createElement("option"); option.value = course.id; option.textContent = `${course.label} · ${course.stage}`; select.append(option); });
-      if (course.id === "pre-algebra") currentCourse.selectedIndex = index;
-      if (course.id === "algebra-1") targetCourse.selectedIndex = index;
+      if (course.id === "pre-algebra") currentCourse.value = course.id;
+      if (course.id === "algebra-1") targetCourse.value = course.id;
     });
-  }
-  function updateTargetOptions() {
-    const currentIndex = engine.COURSES.findIndex(function (course) { return course.id === currentCourse.value; });
-    Array.from(targetCourse.options).forEach(function (option, index) { option.disabled = index < currentIndex; });
-    if (targetCourse.selectedIndex < currentIndex) targetCourse.selectedIndex = currentIndex;
   }
   function updateSourceFields() {
     const sourceId = sourceSelect.value;
@@ -87,10 +82,12 @@
     document.getElementById("confidence-value").textContent = result.scores.normGroup || (result.scores.season ? `${result.scores.season} · 성적표 표기 기준` : "성적표 표기 기준");
     document.getElementById("placement-value").textContent = placementCopy[result.placementState];
     const route = document.getElementById("course-route"); route.replaceChildren();
-    result.route.forEach(function (course, index) { const chip = document.createElement("span"); chip.innerHTML = `<b>${index + 1}. ${course.label}</b><small>${course.publicLearning ? "검증 자료 연결" : "경로 공개 · 자료 검수 대기"}</small>`; route.append(chip); });
+    const targetSelection = result.targetCourse || result.currentCourse;
+    const selectedCourses = result.currentCourse.id === targetSelection.id ? [result.currentCourse] : [result.currentCourse, targetSelection];
+    selectedCourses.forEach(function (course, index) { const chip = document.createElement("span"); const role = selectedCourses.length === 1 ? "현재·목표 선택" : index === 0 ? "현재 선택" : "비교 목표"; chip.innerHTML = `<b>${role} · ${course.label}</b><small>${course.publicLearning ? "검증 자료 연결" : "경로 공개 · 자료 검수 대기"}</small>`; route.append(chip); });
     const priorities = document.getElementById("priority-list"); priorities.replaceChildren();
     if (!result.domainComparisons.length) { const empty = document.createElement("p"); empty.className = "priority-empty"; empty.textContent = "입력한 영역별 점수가 없습니다. 단일 점수만으로 세부 강점·보완 영역을 추정하지 않습니다."; priorities.append(empty); }
-    result.domainComparisons.forEach(function (domain, index) { const row = document.createElement("div"); row.className = "priority-row"; row.innerHTML = `<div><strong>${index + 1}. ${domain.label}</strong><small>${domain.clusterId} · 성적표 입력값</small></div><span>${domain.percent}%</span>`; priorities.append(row); });
+    result.domainComparisons.forEach(function (domain, index) { const row = document.createElement("div"); row.className = "priority-row"; const mapping = result.grade === 6 && domain.clusterId ? `${domain.clusterId} · ` : ""; row.innerHTML = `<div><strong>${index + 1}. ${domain.label}</strong><small>${mapping}성적표 입력값</small></div><span>${domain.percent}%</span>`; priorities.append(row); });
     document.getElementById("decision-notice").textContent = result.decisionNotice;
     const material = document.getElementById("open-material");
     if (result.materialState === "verified-grade6-public-materials" && result.domainComparisons.length) { const first = result.domainComparisons[0]; material.href = `./unit-workbook.html?cluster=${encodeURIComponent(first.clusterId)}&mode=workbook&audience=student&locale=ko&paper=A4`; material.textContent = `입력값이 가장 낮은 ${first.label} 연습 자료`; material.removeAttribute("aria-disabled"); }
@@ -166,7 +163,6 @@
     document.getElementById("grade").value = String(saved.grade);
     document.getElementById("test-date").value = saved.testDate || today();
     currentCourse.value = saved.currentCourse.id;
-    updateTargetOptions();
     document.getElementById("target-course").value = (saved.targetCourse || saved.currentCourse).id;
     const scores = saved.scores || {};
     const values = {
@@ -196,8 +192,7 @@
     catch (error) { document.getElementById("form-error").textContent = errorCopy[error.message] || "입력값을 다시 확인하세요."; }
   });
   sourceSelect.addEventListener("change", updateSourceFields);
-  currentCourse.addEventListener("change", updateTargetOptions);
-  populateCourses(); updateTargetOptions(); updateSourceFields(); document.getElementById("test-date").value = today();
+  populateCourses(); updateSourceFields(); document.getElementById("test-date").value = today();
   const requestedGrade = Number(new URLSearchParams(window.location.search).get("grade"));
   if (Number.isInteger(requestedGrade) && requestedGrade >= 3 && requestedGrade <= 12) document.getElementById("grade").value = String(requestedGrade);
   const history = records.storage.loadAssessmentEvidenceHistory();
