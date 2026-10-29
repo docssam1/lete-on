@@ -2684,15 +2684,15 @@
       "ordinal": 2,
       "pdfPage": 28,
       "printedPage": 32,
-      "sourceShape": "선대칭도형의 예제 5-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "선대칭도형: 사각형과 삼각형이 각각 선대칭이고 공통 도형과 직선 위 점들의 각을 구한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 구조와 독립 계산을 확인했으나 공식 답안과 공개 그림 대조가 남아 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u3-e5-example-3",
@@ -2702,15 +2702,15 @@
       "ordinal": 3,
       "pdfPage": 28,
       "printedPage": 32,
-      "sourceShape": "선대칭도형의 예제 5-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "선대칭도형: 서로 만나는 두 직선을 기준으로 점을 차례로 반사한 뒤 중심각을 구한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 구조와 독립 계산을 확인했으나 공식 답안과 공개 그림 대조가 남아 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u3-e5-example-4",
@@ -2720,15 +2720,15 @@
       "ordinal": 4,
       "pdfPage": 28,
       "printedPage": 32,
-      "sourceShape": "선대칭도형의 예제 5-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "sourceShape": "선대칭도형: 같은 반지름의 두 원을 서로 옮기는 대칭축을 그린다.",
+      "answerContract": "candidate: constructed-figure",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문과 중심 위치를 확인했으나 공식 답안과 공개 그림 대조가 남아 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u3-e5-mission-1",
