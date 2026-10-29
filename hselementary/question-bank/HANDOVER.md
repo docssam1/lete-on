@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 6-1 Source Section Census
+
+- Re-read all 24 exploration/example pages in the SHA-256-matched 6-1 source (PDF 2, 4, 7, 9, 11, 13, 16, 18, 20, 22, 25, 27, 29, 31, 33, 35, 38, 40, 42, 44, 47, 49, 51, 53). There are 24 printed exploration blocks and 92 numbered examples: each graph exploration has three examples, the others four. The existing common ledger groups most exploration blocks but splits U4 E4 and U5 E1/E4 into independent subquestions, giving 28 exploration rows. Updated its grouping description and expected section counts, retaining the earlier 27/93 expectations as historical metadata. No source items, answers, generators or locks were changed.
+- New page-by-page census guard and 5-2–6 inventory structural audit pass (905 records). Existing locked-practice/review-reason negative controls, grade 6 public inventory and release gate pass. This is structural census verification, not individual answer or publisher-key verification.
+
+---
+
 ## 2026-10-30 Grade 5-2 Locked-Practice Inventory Gate
 
 - Updated the stale source-inventory status allowlist for 23 known locally reviewed entries. Each must retain `publicDecision: locked`, unverified publisher key, source verification and the exact registered practice mapping with three verified variants. The audit now records the current 195 sourceVerified flags as a count, not independent proof of 195 publisher answers. No source records or release decisions changed.

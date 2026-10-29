@@ -8,10 +8,11 @@
     "sourceReference": "생각하는 황소 초등 6-1 심화 원본",
     "sourceEvidenceState": "탐구 단위 쪽수와 개수는 렌더 확인 기록을 바탕으로 색인했습니다. 개별 문항은 sourceVerified가 true인 항목만 조건·정답·그림을 직접 대조했으며, 나머지는 검수 대기입니다.",
     "countingRule": {
-      "oneExplorationBodyIsOneSourceItem": true,
+      "oneExplorationBodyIsOneSourceItem": false,
+      "explorationCountingNote": "개념탐구 원문 블록 24개를 기본으로 하되 4단원 탐구4와 5단원 탐구1·4는 실제 소문항을 나누어 장부 28행으로 기록한다. 나머지 복합 본문은 한 행이다.",
       "oneNumberedExampleIsOneSourceItem": true,
       "oneNumberedMissionIsOneSourceItem": true,
-      "compositeExplorationSubquestionsRemainOneItem": true
+      "compositeExplorationSubquestionsRemainOneItem": false
     },
     "itemDefaults": {
       "sourceVerified": false,
@@ -24,6 +25,11 @@
     "expectedTotalItems": 264,
     "actualTotalItems": 264,
     "expectedBySection": {
+      "exploration": 28,
+      "example": 92,
+      "mission": 144
+    },
+    "priorUnreconciledExpectedBySection": {
       "exploration": 27,
       "example": 93,
       "mission": 144
@@ -33,7 +39,7 @@
       "example": 92,
       "mission": 144
     },
-    "sectionCountReview": "실제 행 수를 다시 집계했습니다. 예상 27/93과 실제 28/92가 달라 원문 분류 기준 확인 전까지 차이를 유지합니다.",
+    "sectionCountReview": "정본 PDF의 개념탐구·예제 24쪽을 대조했습니다. 예제 번호는 그래프 단원에서 탐구마다 3개이고 나머지는 탐구마다 4개여서 총 92개입니다. 개념탐구 24개 블록 중 세 블록은 독립 소문항으로 나누어 장부 28행입니다. 이전 예상 27/93은 보존하되 장부 기준과 구분합니다.",
     "expectedByUnit": {
       "6-1-u1": 22,
       "6-1-u2": 44,

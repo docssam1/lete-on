@@ -9,7 +9,7 @@ try {
   const dir=path.join(root,'source-inventory');fs.mkdirSync(dir);
   for(const f of ['5-2-source-items.json','6-1-source-items.json','6-2-source-items.json'])fs.copyFileSync(path.join(__dirname,'source-inventory',f),path.join(dir,f));
   const file=path.join(dir,'6-2-source-items.json'), original=JSON.parse(fs.readFileSync(file,'utf8'));
-  function check(mutate,expected){const document=structuredClone(original);const row=document.items.find(x=>x.sourceItemId==='6-2-u2-e2-example-1');mutate(row);fs.writeFileSync(file,JSON.stringify(document));const r=spawnSync(process.execPath,[path.join(__dirname,'source-inventory-grades-5-2-to-6-audit.js')],{env:{...process.env,HSE_SOURCE_INVENTORY_ROOT:root},encoding:'utf8'});assert.equal(r.status,1);assert.equal(r.stderr.includes('reviewReason가 비어 있으며 확인된 공개 유형 연결이 없습니다.'),expected,r.stderr);}
+  function check(mutate,expected){const document=structuredClone(original);const row=document.items.find(x=>x.sourceItemId==='6-2-u2-e2-example-1');mutate(row);fs.writeFileSync(file,JSON.stringify(document));const r=spawnSync(process.execPath,[path.join(__dirname,'source-inventory-grades-5-2-to-6-audit.js')],{env:{...process.env,HSE_SOURCE_INVENTORY_ROOT:root},encoding:'utf8'});assert.equal(r.status,expected?1:0);assert.equal(r.stderr.includes('reviewReason가 비어 있으며 확인된 공개 유형 연결이 없습니다.'),expected,r.stderr);}
   check(()=>{},false);
   check(row=>{row.implementationStatus='review-locked';},true);
   check(row=>{row.sourceVerified=false;},true);
