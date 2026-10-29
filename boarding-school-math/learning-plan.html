@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./learning-plan.css?v=20261024-2">
+  <link rel="stylesheet" href="./learning-plan.css?v=20261030-2">
 </head>
 <body class="academy-page page-learning-plan">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -34,10 +34,11 @@
       <form class="plan-form" id="plan-form">
         <div class="section-heading"><p class="eyebrow">01 · 목표와 시간</p><h2 id="plan-setup-title">언제, 얼마나 공부할까요?</h2><p>첫 진단이나 모의고사 결과가 있어야 예상 점수를 볼 수 있어요.</p></div>
         <a class="assessment-import" href="./assessment-entry.html"><span>학교 시험 결과가 있나요?</span><strong>학교 시험 결과 입력하기 →</strong></a>
-        <label>목표 과정<select id="goal-id" name="goalId"><option value="school-g6">Grade 6 학교 과정·배치</option><option value="sasmo-primary6">SASMO Primary 6</option><option value="promotion-g6">Grade 6 승급·선발 대비</option></select></label>
+        <label>목표 과정<select id="goal-id" name="goalId"><option value="school-g6">Grade 6 학교 과정·배치</option><option value="school-g7-nsa">Grade 7 · 7.NS.A 유리수 단원</option><option value="sasmo-primary6">SASMO Primary 6</option><option value="promotion-g6">Grade 6 승급·선발 대비</option></select></label>
         <div class="form-row"><label>목표일<input id="target-date" name="targetDate" type="date" required></label><label>주당 학습일<select id="study-days" name="studyDaysPerWeek"><option value="3">주 3일</option><option value="4" selected>주 4일</option><option value="5">주 5일</option><option value="6">주 6일</option></select></label></div>
         <label>하루 학습 시간<select id="minutes-per-day" name="minutesPerDay"><option value="30">30분</option><option value="45" selected>45분</option><option value="60">60분</option><option value="75">75분</option><option value="90">90분</option></select></label>
-        <fieldset><legend id="priority-legend">현재 가장 먼저 보완할 영역</legend><div class="priority-options" role="radiogroup" aria-label="현재 우선 보완 영역"><label><input type="radio" name="priority" value="geometry" checked><span><b>기하·공간 추론</b><small>그림·도형 조건을 관계식으로 바꾸기</small></span></label><label><input type="radio" name="priority" value="ratio"><span><b>비와 비례</b><small>표·비율·단위율로 관계 이해하기</small></span></label><label><input type="radio" name="priority" value="algebra"><span><b>식과 방정식</b><small>식의 구조를 읽고 미지수 관계 세우기</small></span></label></div></fieldset>
+        <fieldset id="grade6-priorities"><legend id="priority-legend">현재 가장 먼저 보완할 영역</legend><div class="priority-options" role="radiogroup" aria-label="현재 우선 보완 영역"><label><input type="radio" name="priority-g6" value="geometry" checked><span><b>기하·공간 추론</b><small>그림·도형 조건을 관계식으로 바꾸기</small></span></label><label><input type="radio" name="priority-g6" value="ratio"><span><b>비와 비례</b><small>표·비율·단위율로 관계 이해하기</small></span></label><label><input type="radio" name="priority-g6" value="algebra"><span><b>식과 방정식</b><small>식의 구조를 읽고 미지수 관계 세우기</small></span></label></div></fieldset>
+        <fieldset id="grade7-priorities" hidden><legend>학습할 개념을 골라요</legend><p class="priority-help">진단 전 직접 고르는 학습 주제예요. 학생의 약점이나 수준을 뜻하지 않아요.</p><div class="priority-options" role="radiogroup" aria-label="7학년 유리수 학습 주제"><label><input type="radio" name="priority-g7" value="rational-add" checked disabled><span><b>유리수 더하기·빼기</b><small>수직선, 반대수, 절댓값으로 계산 뜻 설명하기</small></span></label><label><input type="radio" name="priority-g7" value="rational-multiply" disabled><span><b>유리수 곱하기·나누기</b><small>부호 규칙과 연산 성질을 예로 설명하기</small></span></label><label><input type="radio" name="priority-g7" value="rational-decimal" disabled><span><b>분수와 소수 표현</b><small>유한·순환소수와 분수 표현을 연결하기</small></span></label><label><input type="radio" name="priority-g7" value="rational-context" disabled><span><b>유리수 문장제</b><small>상황을 식으로 나타내고 연산 순서 해석하기</small></span></label></div></fieldset>
         <button class="primary-action" type="submit">학습 계획 보기</button>
       </form>
 
@@ -46,7 +47,7 @@
         <h2 id="plan-title">나의 8주 학습 계획</h2>
         <p id="plan-description">공부할 시간을 먼저 정해요. 진단 결과가 생기면 계획을 다시 조정할 수 있어요.</p>
         <dl class="plan-numbers"><div><dt>남은 기간</dt><dd id="days-remaining">—</dd></div><div><dt>학습일</dt><dd id="study-day-count">—</dd></div><div><dt>사용 가능 시간</dt><dd id="capacity-minutes">—</dd></div></dl>
-        <section class="prediction-panel" aria-labelledby="prediction-title"><p class="eyebrow">예상 점수</p><h3 id="prediction-title">예상 성적은 진단 후 계산합니다.</h3><p id="prediction-copy">처음 푼 진단과 실전 모의고사의 영역별 정답률·난이도·시간 기록이 쌓이면 점수 범위와 신뢰도를 보여 줍니다.</p></section>
+        <section class="prediction-panel" aria-labelledby="prediction-title"><p class="eyebrow" id="prediction-label">예상 점수</p><h3 id="prediction-title">예상 성적은 진단 후 계산합니다.</h3><p id="prediction-copy">처음 푼 진단과 실전 모의고사의 영역별 정답률·난이도·시간 기록이 쌓이면 점수 범위와 신뢰도를 보여 줍니다.</p></section>
         <section class="review-queue" id="review-queue" aria-labelledby="review-queue-title" hidden><p class="eyebrow">처음 푼 문제</p><h3 id="review-queue-title">최초 응시 다시 보기</h3><p id="review-queue-copy"></p><ol id="review-queue-list"></ol></section>
         <a class="diagnostic-action" id="diagnostic-action" href="./diagnostic.html">Grade 6 42문항 진단 시작</a>
       </aside>
@@ -58,6 +59,7 @@
         <div><p class="eyebrow">02 · 진단과 학습 속도</p><h2 id="roadmap-title">점수 한 번으로 진도를 바꾸지 않아요.</h2></div>
         <p id="roadmap-intro-copy">종이 진단에 O/X를 표시해 보세요. 다시 확인한 뒤 학습 시간이나 목표일을 조정할 수 있어요.</p>
       </div>
+      <p id="grade7-plan-notice" class="assessment-import" hidden>7.NS.A 개인 진단·등급 비교는 준비 중이에요. 현재 화면에서는 직접 고른 개념의 학습 계획과 공개 워크북만 볼 수 있어요.</p>
       <div class="roadmap-controls" aria-label="로드맵 계산 조건">
         <label><span id="roadmap-curriculum-label">교육과정 기준</span><select id="roadmap-locale"><option value="ko">한국 수학 과정</option><option value="en">U.S. Grade &amp; Course Path</option><option value="zh-Hans">新加坡数学课程</option></select></label>
         <label><span id="roadmap-observations-label">누적 관찰</span><select id="roadmap-observations"><option value="1">1회 · 첫 진단</option><option value="2">2회 · 재확인</option><option value="3">3회 · 추세 확인</option></select></label>
@@ -91,10 +93,10 @@
 
     <section class="today-section plan-shell" aria-labelledby="today-title">
       <div class="section-heading"><p class="eyebrow">03 · 오늘의 학습</p><h2 id="today-title">오늘 무엇을, 얼마나 할까요?</h2><p id="today-description">직접 선택한 학습 영역에 맞춘 계획 예시입니다. 외부 성적표만으로 약점이나 배정을 자동 판정하지 않습니다.</p></div>
-      <div class="today-layout"><article class="today-total"><span>오늘</span><strong id="today-minutes">45분</strong><small id="today-problems">—문항</small><p>문항 수를 고정하지 않습니다. 개념 결손이면 설명 시간을 늘리고, 계산 실수면 짧은 연습을 늘립니다.</p></article><ol class="today-blocks" id="today-blocks"></ol></div>
+      <div class="today-layout"><article class="today-total"><span>오늘</span><strong id="today-minutes">45분</strong><small id="today-problems">—문항</small><p id="today-plan-note">문항 수를 고정하지 않습니다. 개념 결손이면 설명 시간을 늘리고, 계산 실수면 짧은 연습을 늘립니다.</p></article><ol class="today-blocks" id="today-blocks"></ol></div>
     </section>
 
-    <section class="learning-loop" aria-labelledby="loop-title"><div class="plan-shell"><div class="section-heading"><p class="eyebrow">04 · 공부 순서</p><h2 id="loop-title">진단 뒤에는 이렇게 공부해요.</h2></div><ol><li><b>진단</b><span>영역·유형·오류 원인 확인</span></li><li><b>개념 교재</b><span>모델·대표 예제·핵심 언어</span></li><li><b>교사 수업</b><span>수업 워크북과 관찰 포인트</span></li><li><b>가정 학습</b><span>약점 보완과 혼합 연습</span></li><li><b>재확인</b><span>1·3·7·14일 뒤 유지 확인</span></li></ol></div></section>
+    <section class="learning-loop" aria-labelledby="loop-title"><div class="plan-shell"><div class="section-heading"><p class="eyebrow">04 · 공부 순서</p><h2 id="loop-title">진단 뒤에는 이렇게 공부해요.</h2></div><ol><li><b id="loop-step-1-title">진단</b><span id="loop-step-1-copy">영역·유형·오류 원인 확인</span></li><li><b id="loop-step-2-title">개념 교재</b><span id="loop-step-2-copy">모델·대표 예제·핵심 언어</span></li><li><b id="loop-step-3-title">교사 수업</b><span id="loop-step-3-copy">수업 워크북과 관찰 포인트</span></li><li><b id="loop-step-4-title">가정 학습</b><span id="loop-step-4-copy">약점 보완과 혼합 연습</span></li><li><b id="loop-step-5-title">재확인</b><span id="loop-step-5-copy">1·3·7·14일 뒤 유지 확인</span></li></ol></div></section>
 
     <section class="teacher-section plan-shell" id="teacher-pack" aria-labelledby="teacher-title" hidden>
       <div class="section-heading"><p class="eyebrow">교사용 자료</p><h2 id="teacher-title">지금 볼 영역의 수업 자료</h2><p>학생용 자료에는 답을 넣지 않고, 교사용 지도서에서만 풀이·관찰 포인트·정답을 확인합니다.</p></div>
@@ -111,9 +113,9 @@
   <script src="./curriculum/us-k8-content-registry.js?v=20260924-1"></script>
   <script src="./assessment/grade6-placement-plan.js?v=20260924-1"></script>
   <script src="./shared/gmap-local-learning-record.js?v=20261009-3"></script>
-  <script src="./learning/learner-plan-engine.js?v=20261003-1"></script>
+  <script src="./learning/learner-plan-engine.js?v=20261030-3"></script>
   <script src="./learning/roadmap-pace-engine.js?v=20261015-1"></script>
-  <script src="./learning-plan.js?v=20261024-2"></script>
+  <script src="./learning-plan.js?v=20261030-3"></script>
   <script type="importmap">{"imports":{"three":"../geometry/vendor/three/three.module.js"}}</script>
   <script type="module" src="./learning-plan-roadmap-3d.js?v=20261024-2"></script>
 </body>

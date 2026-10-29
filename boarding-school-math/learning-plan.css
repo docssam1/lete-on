@@ -2,6 +2,7 @@
 * { box-sizing: border-box; }
 body { margin: 0; color: var(--academy-ink); background: #f5f6f8; word-break: keep-all; overflow-wrap: break-word; }
 body.academy-page.page-learning-plan { color: #182230; background: #f5f6f8; background-image: none; font-family: Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif; }
+.page-learning-plan [hidden] { display: none !important; }
 .page-learning-plan h1, .page-learning-plan h2 { font-family: inherit; font-weight: 800; text-wrap: initial; }
 .plan-shell { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
 .page-learning-plan .site-header { min-height: 70px; padding: 10px max(24px, calc((100vw - 1120px) / 2)); display: flex; align-items: center; gap: 24px; border-bottom: 1px solid #d8dee8; background: rgba(255,255,255,.96); position: sticky; top: 0; z-index: 20; }
@@ -32,6 +33,7 @@ body.academy-page.page-learning-plan { color: #182230; background: #f5f6f8; back
 .plan-form select, .plan-form input { min-height: 48px; padding: 10px 12px; border: 1px solid #566274; border-radius: 4px; color: #182230; background: #fff; font-size: 1rem; }
 .plan-form fieldset { margin: 22px 0 0; padding: 0; border: 0; }
 .plan-form legend { padding: 0; color: #182230; font-size: .79rem; font-weight: 850; }
+.priority-help { margin: 7px 0 0; color: #566274; font-size: .72rem; line-height: 1.5; }
 .priority-options { margin-top: 9px; display: grid; gap: 8px; }
 .priority-options label { min-height: 60px; padding: 11px 12px; display: flex; align-items: center; gap: 10px; border: 1px solid #d8dee8; border-radius: 4px; cursor: pointer; }
 .priority-options label:has(input:checked) { border-color: #2456c4; background: #eaf0ff; }

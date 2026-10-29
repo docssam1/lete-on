@@ -486,6 +486,8 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.equal(await page.locator(".grade-track").evaluate(function (node) { return node.open; }), false);
   assert.ok(await page.locator(".grade7-path").evaluate(function (node) { return node.getBoundingClientRect().top < window.innerHeight; }), "Grade 7 path should start in the first phone screen");
   assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
+  assert.match(await page.locator("#boarding-learning-plan-link").getAttribute("href"), /learning-plan\.html\?goal=school-g7-nsa/);
+  assert.match(await page.locator("#boarding-learning-plan-link-bottom").getAttribute("href"), /learning-plan\.html\?goal=school-g7-nsa/);
   assert.match(await page.locator(".journey-position-card").innerText(), /아직 입력한 평가 기록이 없어요/);
   assert.match(await page.locator("#grade7-position").innerText(), /지점을 고르면/);
   assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /현재 위치 미확인/);

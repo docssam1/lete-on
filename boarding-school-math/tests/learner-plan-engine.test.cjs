@@ -45,6 +45,25 @@ test("plan retains spaced rechecks and rejects invalid daily capacity", function
   assert.throws(function () { engine.buildPlan(invalid); }, /minutesPerDay/);
 });
 
+test("Grade 7 rational-number plan opens the embedded public lesson and keeps diagnosis pending", function () {
+  const input = baseInput();
+  input.goalId = "school-g7-nsa";
+  input.priorities = [{ label: "유리수 더하기·빼기", errorType: "concept-gap", difficulty: "core", clusterId: "7.NS.A" }];
+  const plan = engine.buildPlan(input);
+  assert.equal(plan.goal.clusterId, "7.NS.A");
+  assert.equal(plan.diagnostic.state, "preparing");
+  assert.equal(plan.diagnostic.actionLabel, "7.NS.A 단원 진단 준비 중");
+  assert.equal(plan.prediction.range, null);
+  assert.match(plan.materials.studentConceptHref, /cluster=7\.NS\.A.*#unit-concepts/);
+  assert.match(plan.materials.teacherLessonHref, /audience=teacher.*#unit-concepts/);
+  assert.match(plan.today.blocks.find(function (block) { return block.id === "concept"; }).href, /#unit-concepts/);
+  const minutes = plan.today.blocks.map(function (block) { return block.minutes; });
+  input.priorities[0].errorType = "strategy-gap";
+  assert.deepEqual(engine.buildPlan(input).today.blocks.map(function (block) { return block.minutes; }), minutes);
+  input.prediction = { range: [52, 58], confidence: "medium" };
+  assert.throws(function () { engine.buildPlan(input); }, /prediction is unavailable/);
+});
+
 test("all seven diagnostic error types produce a complete daily learning budget", function () {
   [20, 45, 180].forEach(function (minutesPerDay) {
     ["prerequisite-gap", "concept-gap", "representation-error", "calculation-error", "condition-missed", "strategy-gap", "explanation-incomplete"].forEach(function (errorType) {

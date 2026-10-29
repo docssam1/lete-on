@@ -1,6 +1,14 @@
 # Boarding School Math continuation handoff
 
-Updated: 2026-10-25 KST (Mac continuation; older release evidence retained below)
+Updated: 2026-10-30 KST (Mac continuation; older release evidence retained below)
+
+### 2026-10-30 Grade 7 7.NS.A study-plan connection
+
+Added a selectable Grade 7 · 7.NS.A goal to the learner plan. The learner can choose one of four manually selected concepts (rational addition/subtraction, multiplication/division, fraction/decimal forms, or word problems); daily concept links open the embedded 7.NS.A lesson in the public student workbook. The teacher view points to the teacher edition, 36-item workbook, and 8-item recheck. The Grade 7 learning-plan CTA on the boarding roadmap now opens this goal directly.
+
+The 7.NS.A individual diagnostic remains explicitly “in preparation”; the Grade 7 plan rejects score predictions and hides the synthetic paper O/X pace simulator rather than treating it as evidence. Manual topic selection does not assign a weakness, rank, grade band, or competition level. The public workbook is used only for learning.
+
+Verification on Mac: learner-plan engine + browser tests and Grade 3–12 boarding roadmap model/browser tests pass 47/47, including Grade 7 roadmap deep links. The 390px phone and 1440px desktop learning-plan views, student/teacher material separation, and no-fake-score state were visually inspected; generic “weakness” wording was removed from the learner-selected Grade 7 plan. UI rules consulted: local `ui-ux-pro-max` and `gfield-design-system` skills; hidden-state CSS was fixed after an initial failed browser check. A read-only Claude Max CLI review was attempted but the CLI returned “Not logged in”; no Claude API key/API call or Claude review is claimed. No private diagnostic material, Drive sync, push, publish, or deployment.
 
 This file is the short restart contract for the Boarding School Math product only. Do not mix it with `hsmiddle`, high-school selection, Geometry World, Number Magic, Fields Classic, or other repositories.
 

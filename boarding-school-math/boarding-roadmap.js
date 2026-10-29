@@ -790,6 +790,11 @@
   }
   function render(historyMode) {
     const entry = data.getGrade(grade);
+    const planHref = grade === 7 ? "./learning-plan.html?goal=school-g7-nsa" : "./learning-plan.html";
+    $("boarding-learning-plan-link").href = planHref;
+    $("boarding-learning-plan-link").textContent = grade === 7 ? "7학년 학습 계획" : "학습 계획";
+    $("boarding-learning-plan-link-bottom").href = planHref;
+    $("boarding-learning-plan-link-bottom").textContent = grade === 7 ? "7학년 학습 계획 보기 →" : "학습 계획 보기 →";
     setText("grade-map-title", `${grade}학년 수학 한눈에`);
     setText("grade-label", `${grade}학년`);
     setText("grade-title", entry.title);
