@@ -250,7 +250,7 @@
     document.querySelector(".domain-header").hidden = !selected;
     $("domain-rows").hidden = !selected;
     document.querySelector(".competition-submit").hidden = !selected;
-    $("competition-practice-link").hidden = !(grade === 6 && competition === "amc8");
+    $("competition-practice-link").hidden = !(grade >= 6 && grade <= 7 && competition === "amc8");
     const source = competitionSources[competition];
     const sourceLink = $("competition-source-link");
     sourceLink.hidden = !source;

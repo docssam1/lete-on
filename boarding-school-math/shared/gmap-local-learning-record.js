@@ -77,11 +77,7 @@
       attempted: summary.attempted,
       itemCount: Number.isInteger(summary.itemCount) && summary.itemCount > 0 ? summary.itemCount : 0,
       firstCorrect: Number.isInteger(summary.firstCorrect) && summary.firstCorrect >= 0 ? summary.firstCorrect : 0,
-      accuracy: Number.isInteger(summary.accuracy) && summary.accuracy >= 0 && summary.accuracy <= 100 ? summary.accuracy : null,
       complete: summary.complete === true,
-      readinessBand: typeof summary.readinessBand === "string" ? summary.readinessBand : "collecting",
-      strengthAxis: typeof summary.strengthAxis === "string" && AXIS_PRIORITIES[summary.strengthAxis] ? summary.strengthAxis : null,
-      priorityAxis: typeof summary.priorityAxis === "string" && AXIS_PRIORITIES[summary.priorityAxis] ? summary.priorityAxis : null,
       recordedAt: new Date().toISOString()
     };
   }

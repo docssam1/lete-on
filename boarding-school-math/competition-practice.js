@@ -57,14 +57,6 @@
     "add-side-lengths-for-area":{ko:"가로와 세로를 곱하지 않고 더하는 오류",en:"adding side lengths instead of multiplying for area","zh-Hans":"求面积时把边长相加而不是相乘"},
     "add-multiple-counts-without-overlap":{ko:"공배수를 두 번 센 채 두 개수를 더하는 오류",en:"adding both counts without removing common multiples","zh-Hans":"相加时没有减去被重复计算的公倍数"}
   };
-  const axisCopy={
-    "number-operations":{ko:"수와 연산",en:"Number and operations","zh-Hans":"数与运算"},
-    "patterns-algebra":{ko:"규칙과 대수",en:"Patterns and algebra","zh-Hans":"规律与代数"},
-    "geometry-spatial":{ko:"도형과 공간 감각",en:"Geometry and spatial reasoning","zh-Hans":"几何与空间思维"},
-    "combinatorics-logic":{ko:"조합과 논리",en:"Combinatorics and logic","zh-Hans":"组合与逻辑"},
-    "data-probability":{ko:"자료와 가능성",en:"Data and probability","zh-Hans":"数据与可能性"},
-    "problem-solving-strategies":{ko:"문제 해결 전략",en:"Problem-solving strategies","zh-Hans":"问题解决策略"}
-  };
   const coachHintCopy={
     "sasmo-g6-model-01":{ko:"두 상자의 차이만큼을 먼저 떼어 낸 뒤, 남은 수를 똑같이 나누어 보세요.",en:"Remove the difference first, then split the remaining amount equally.","zh-Hans":"先去掉两个盒子相差的数量，再把剩余数量平均分。"},
     "sasmo-g6-pattern-01":{ko:"이웃한 두 수 사이의 변화를 차례로 비교하고, 두 단계가 반복되는지 확인해 보세요.",en:"Compare each pair of neighboring terms and check whether a two-step pattern repeats.","zh-Hans":"依次比较相邻两项的变化，看看是否每两步重复一次。"},
@@ -78,7 +70,6 @@
     "sasmo-g6-cube-01":{ko:"정확히 두 면이 칠해진 작은 정육면체는 큰 정육면체의 모서리에 있지만 꼭짓점에는 없습니다.",en:"A unit cube with exactly two painted faces lies on an edge of the large cube, but not at a corner.","zh-Hans":"恰有两个面涂色的小正方体在大正方体的棱上，但不在顶点处。"}
   };
   function misconceptionText(id){const row=misconceptionCopy[id];return row?localized(row):id;}
-  function axisText(id){const row=axisCopy[id];return row?localized(row):id;}
   function coachHint(candidate){const row=coachHintCopy[candidate.id];if(row)return localized(row);return state.locale.startsWith("en")?"Mark the given information and the target, then connect them with one verified relationship.":state.locale==="zh-Hans"?"先标出已知条件和所求量，再写出连接它们的一条关系。":"주어진 조건과 구하려는 것을 표시하고, 둘을 잇는 관계를 한 줄로 적어 보세요.";}
   function updateUrl(){const next=new URL(location.href);next.searchParams.set("program",state.programId);next.searchParams.set("audience",state.audience);next.searchParams.set("locale",state.locale);history.replaceState(null,"",next);}
   function copy(){
@@ -102,20 +93,20 @@
   function typeCountLabel(count){if(state.locale.startsWith("en"))return count+" types";if(state.locale==="zh-Hans")return count+"种题型";return count+"개 유형";}
   function experienceCopy(){
     const rows={
-      ko:{studentDisclosure:"학생 연습 화면 · 첫 풀이 결과는 이 기기의 브라우저에만 저장됩니다. 공식 성적이나 공유 학생 기록이 아닙니다.",teacherDisclosure:"교사용 공개 미리보기 · 계정, 학생 기록, 실제 배정 기능은 없습니다.",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"첫 유형부터 차례로 풀어 보세요.",studentStartCopy:"정답을 확인하면 다음에 풀 유형을 안내합니다.",teacherTitle:"정답·풀이·예상 오류를 함께 봅니다.",teacherCopy:"수업 설계 예시이며 인증된 교사 대시보드가 아닙니다.",first:"첫 유형으로 이동",next:"다음 유형으로 이동",teacherLink:"첫 풀이로 이동",complete:"이 대회의 10개 유형을 모두 확인했습니다.",completeCopy:"공식 점수나 수상 예측이 아닌 자체 연습 완료입니다.",review:"처음부터 다시 보기",nextPrefix:"다음 유형",plan:"나의 학습 계획에 반영",planNote:"이 유형 점검은 오늘의 보완 학습을 고르는 예비 근거입니다."},
-      en:{studentDisclosure:"Student practice preview · first-attempt results stay only in this browser. They are not an official score or shared learner record.",teacherDisclosure:"Public teacher preview · no account, learner record, or assignment tools.",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"Start with the first problem type.",studentStartCopy:"After a correct response, the next type is shown here.",teacherTitle:"Review answers, solutions, and likely errors together.",teacherCopy:"This is a lesson-design preview, not an authenticated teacher dashboard.",first:"Go to the first type",next:"Go to the next type",teacherLink:"Go to the first solution",complete:"You reviewed all 10 problem types.",completeCopy:"This is GFIELD practice completion, not an official score or award prediction.",review:"Review from the first type",nextPrefix:"Next type",plan:"Use this in my study plan",planNote:"This type check is preliminary evidence for choosing today’s review."},
-      "zh-Hans":{studentDisclosure:"学生练习预览 · 首次作答结果仅保存在本设备浏览器中，不是官方成绩或共享学生记录。",teacherDisclosure:"教师公开预览 · 不含账号、学生记录或实际布置功能。",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"从第一种题型开始练习。",studentStartCopy:"答对后，这里会提示下一种题型。",teacherTitle:"同时查看答案、解法和常见错误。",teacherCopy:"这是教学设计预览，并非已认证的教师后台。",first:"前往第一种题型",next:"前往下一种题型",teacherLink:"前往第一个解答",complete:"已完成本竞赛的10种题型。",completeCopy:"这是GFIELD练习完成状态，并非官方成绩或获奖预测。",review:"从第一种题型重新查看",nextPrefix:"下一种题型",plan:"纳入我的学习计划",planNote:"这项题型检查只是选择今日补强学习的初步依据。"}
+      ko:{studentDisclosure:"학생 연습 화면 · 첫 풀이 결과는 이 기기의 브라우저에만 저장됩니다. 공식 성적이나 공유 학생 기록이 아닙니다.",teacherDisclosure:"교사용 공개 미리보기 · 계정, 학생 기록, 실제 배정 기능은 없습니다.",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"첫 유형부터 차례로 풀어 보세요.",studentStartCopy:"정답을 확인하면 다음에 풀 유형을 안내합니다.",teacherTitle:"정답·풀이·예상 오류를 함께 봅니다.",teacherCopy:"수업 설계 예시이며 인증된 교사 대시보드가 아닙니다.",first:"첫 유형으로 이동",next:"다음 유형으로 이동",teacherLink:"첫 풀이로 이동",complete:"이 대회의 10개 유형을 모두 확인했습니다.",completeCopy:"공식 점수나 수상 예측이 아닌 자체 연습 완료입니다.",review:"처음부터 다시 보기",nextPrefix:"다음 유형"},
+      en:{studentDisclosure:"Student practice preview · first-attempt results stay only in this browser. They are not an official score or shared learner record.",teacherDisclosure:"Public teacher preview · no account, learner record, or assignment tools.",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"Start with the first problem type.",studentStartCopy:"After a correct response, the next type is shown here.",teacherTitle:"Review answers, solutions, and likely errors together.",teacherCopy:"This is a lesson-design preview, not an authenticated teacher dashboard.",first:"Go to the first type",next:"Go to the next type",teacherLink:"Go to the first solution",complete:"You reviewed all 10 problem types.",completeCopy:"This is GFIELD practice completion, not an official score or award prediction.",review:"Review from the first type",nextPrefix:"Next type"},
+      "zh-Hans":{studentDisclosure:"学生练习预览 · 首次作答结果仅保存在本设备浏览器中，不是官方成绩或共享学生记录。",teacherDisclosure:"教师公开预览 · 不含账号、学生记录或实际布置功能。",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"从第一种题型开始练习。",studentStartCopy:"答对后，这里会提示下一种题型。",teacherTitle:"同时查看答案、解法和常见错误。",teacherCopy:"这是教学设计预览，并非已认证的教师后台。",first:"前往第一种题型",next:"前往下一种题型",teacherLink:"前往第一个解答",complete:"已完成本竞赛的10种题型。",completeCopy:"这是GFIELD练习完成状态，并非官方成绩或获奖预测。",review:"从第一种题型重新查看",nextPrefix:"下一种题型"}
     };
     if(state.locale==="en-SG")return Object.assign({},rows.en,{studentDisclosure:"Primary 6 practice preview · first-attempt results stay only in this browser. They are not an official result or shared learner record.",teacherDisclosure:"Public teacher preview · no account, learner record, or assignment tools.",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"Start with the first Primary 6 problem type.",teacherTitle:"Review answers, worked solutions, and likely errors together.",teacherCopy:"This is a lesson-planning preview, not an authenticated teacher dashboard."});
     return localized(rows);
   }
   function diagnosticCopy(){
     const rows={
-      ko:{heading:"GFIELD 연습 관찰",intro:"첫 응답을 기준으로 이 연습 세트 안의 풀이 상태만 보여 줍니다.",boundary:"이 결과는 자체 연습 기록이며, 실제 대회 점수·수상 등급·학교 배치·학습 처방 근거가 아닙니다.",jump:"연습 기록 보기",collecting:"연습 중",complete:"연습 기록 완료",emptyTitle:"한 문제를 풀면 연습 기록이 시작됩니다.",emptyCopy:"첫 응답을 기준으로 이 세트 안의 풀이 상태만 기록합니다. 문제마다 질문 도우미에서 정답 없이 한 단계 힌트를 받을 수 있습니다.",start:"첫 문제 풀기",firstAccuracy:"첫 응답 정답률",eventual:"끝까지 해결",readiness:"현재 연습 상태",strength:"관찰된 강점",priority:"다시 볼 유형",domains:"6개 연습 영역",unmeasured:"미측정",thin:"연습 1문항",provisional:"연습 관찰",noStrength:"아직 확인된 연습 강점이 없습니다.",noPriority:"현재 응답에서 다시 볼 유형이 없습니다.",next:"다음 연습",review:"다시 볼 문항으로 이동",continue:"다음 미응답 문항",reset:"현재 연습 다시 시작",teacherEvidence:"교사용 문항별 연습 기록",question:"문항",type:"유형",firstResult:"첫 응답",attempts:"시도",error:"관찰 오류",correctFirst:"첫 응답 정답",wrongFirst:"첫 응답 오답",notTried:"미응답",none:"없음",attemptUnit:"회",placed:"배치",answered:"응답",noSample:"현재 표본 없음",coach:"문제의 ‘질문 도우미’를 열어 한 단계 힌트와 현재 풀이 분석을 확인하세요.",bands:{collecting:"연습 진행 중",strong:"연습 표본 안정",readyWithReview:"다시 보기 필요",developing:"연습 중",foundation:"기초 연습"}},
-      en:{heading:"GFIELD practice review",intro:"First attempts describe only this practice set.",boundary:"This is a GFIELD practice record, not contest-score, award, school-placement, diagnosis, or study-prescription evidence.",jump:"View practice record",collecting:"Practice in progress",complete:"Practice record ready",emptyTitle:"The practice record starts after one response.",emptyCopy:"First attempts describe only this set. Each problem also has a local question coach that gives one step without revealing the answer.",start:"Start the first problem",firstAccuracy:"First-attempt accuracy",eventual:"Solved eventually",readiness:"Current practice status",strength:"Observed strength",priority:"Type to revisit",domains:"Six practice domains",unmeasured:"Not measured",thin:"One practice item",provisional:"Practice observation",noStrength:"No practice strength is visible yet.",noPriority:"No type to revisit is visible in the current responses.",next:"Next practice step",review:"Go to item to revisit",continue:"Go to next unanswered item",reset:"Restart this practice",teacherEvidence:"Instructor practice record",question:"Item",type:"Type",firstResult:"First response",attempts:"Attempts",error:"Observed error",correctFirst:"Correct first try",wrongFirst:"Wrong first try",notTried:"Not attempted",none:"None",attemptUnit:"",placed:"placed",answered:"answered",noSample:"No current sample",coach:"Open the problem’s Question coach for one-step guidance and attempt analysis.",bands:{collecting:"Practice in progress",strong:"Practice sample strong",readyWithReview:"Review needed",developing:"Practising",foundation:"Foundation practice"}},
-      "zh-Hans":{heading:"GFIELD练习记录",intro:"首次作答只反映本练习组内的完成情况。",boundary:"本结果只是GFIELD自编练习记录，不是竞赛成绩、获奖等级、学校分班、诊断或学习处方依据。",jump:"查看练习记录",collecting:"练习中",complete:"练习记录完成",emptyTitle:"完成一道题后开始记录。",emptyCopy:"系统只记录本练习组的首次作答情况。每道题都可使用本地题目辅导，在不直接显示答案的情况下获得一步提示。",start:"开始第一题",firstAccuracy:"首次作答正确率",eventual:"最终完成",readiness:"当前练习状态",strength:"已观察到的优势",priority:"需要重做的题型",domains:"六个练习领域",unmeasured:"未测量",thin:"仅1道练习题",provisional:"练习观察",noStrength:"目前尚无可见的练习优势。",noPriority:"当前作答中没有需要重做的题型。",next:"下一步练习",review:"前往需要重做的题目",continue:"前往下一道未答题",reset:"重新开始当前练习",teacherEvidence:"教师版逐题练习记录",question:"题目",type:"题型",firstResult:"首次作答",attempts:"尝试",error:"观察到的错误",correctFirst:"首次答对",wrongFirst:"首次答错",notTried:"未作答",none:"无",attemptUnit:"次",placed:"已安排",answered:"已作答",noSample:"当前无样本",coach:"打开题目中的“题目辅导”，查看一步提示和当前作答分析。",bands:{collecting:"练习进行中",strong:"练习样本稳定",readyWithReview:"需要复习",developing:"练习中",foundation:"基础练习"}}
+      ko:{heading:"GFIELD 연습 기록",intro:"이 세트에서 처음 고른 답과 문항별 시도를 확인해요.",boundary:"GFIELD 자체 연습 기록입니다. 공식 대회 진단이나 점수·수상·배치 예측에 사용할 수 없습니다.",jump:"연습 기록 보기",collecting:"연습 중",complete:"연습 기록 완료",emptyTitle:"한 문제를 풀면 연습 기록이 시작돼요.",emptyCopy:"이 세트에서 처음 고른 답과 문항별 시도만 기록합니다. 질문 도우미에서 정답을 바로 보여 주지 않는 한 단계 힌트를 받을 수 있어요.",start:"첫 문제 풀기",firstAccuracy:"첫 응답 정답",practiceOnly:"이번 자체 연습 기준",questionRecord:"문항별 응답",eventual:"한 번 이상 해결",reset:"연습 기록 지우기",correctFirst:"첫 응답 정답",wrongFirst:"첫 응답 오답",notTried:"미응답",attemptUnit:"회",coach:"문항별 기록은 이 연습 세트 안에서만 확인하세요. 결과만으로 학생의 실력이나 다음 학습을 판정하지 않습니다."},
+      en:{heading:"GFIELD practice record",intro:"Review first responses and attempts in this set.",boundary:"GFIELD-authored practice record only. Not an official contest diagnostic, score, award, or placement prediction.",jump:"View practice record",collecting:"In progress",complete:"Practice record complete",emptyTitle:"Your practice record starts after one response.",emptyCopy:"Only first choices and attempts in this set are recorded. The local question coach can offer a one-step hint without revealing the answer.",start:"Start the first problem",firstAccuracy:"First responses correct",practiceOnly:"in this practice set",questionRecord:"Item responses",eventual:"Solved at least once",reset:"Clear this practice record",correctFirst:"Correct first try",wrongFirst:"Wrong first try",notTried:"Not attempted",attemptUnit:"",coach:"Use item-level records only within this practice set. Do not use the result alone to assign a learner level or next course."},
+      "zh-Hans":{heading:"GFIELD练习记录",intro:"查看本练习组的首次作答和每题尝试次数。",boundary:"仅为GFIELD原创练习记录，不是官方竞赛诊断、成绩、获奖或分班预测。",jump:"查看练习记录",collecting:"练习中",complete:"练习记录已完成",emptyTitle:"作答一道题后开始记录。",emptyCopy:"只记录本练习组的首次选择和作答次数。题目辅导可在不直接显示答案的情况下提供一步提示。",start:"开始第一题",firstAccuracy:"首次答对题数",practiceOnly:"本练习组内",questionRecord:"逐题作答记录",eventual:"至少答对一次",reset:"清除此练习记录",correctFirst:"首次答对",wrongFirst:"首次答错",notTried:"未作答",attemptUnit:"次",coach:"仅在本练习组内查看逐题记录。不要仅凭结果判定学生等级或下一门课程。"}
     };
-    if(state.locale==="en-SG"&&state.programId==="sasmo-g6"&&allowSasmoFoundationPreview)return Object.assign({},rows.en,{heading:"Internal foundation-set review",boundary:"This retired GFIELD-authored Primary 6 set is for local regression review only. It is not a SASMO paper, diagnosis, award, DSA, placement, or study-prescription source.",teacherEvidence:"Teacher regression record"});
+    if(state.locale==="en-SG"&&state.programId==="sasmo-g6"&&allowSasmoFoundationPreview)return Object.assign({},rows.en,{heading:"Internal foundation-set review",boundary:"This retired GFIELD-authored Primary 6 set is for local regression review only. It is not a SASMO paper, diagnosis, award, DSA, placement, or study-prescription source."});
     return localized(rows);
   }
   function currentRows(){return bank.items.filter(function(row){return row.programId===state.programId;});}
@@ -135,20 +126,17 @@
     if(!state.attempts.has(itemId))state.attempts.set(itemId,{responses:[],solved:false});
     return state.attempts.get(itemId);
   }
-  function readinessLabel(summary,c){
-    const key=summary.readinessBand==="ready-with-review"?"readyWithReview":summary.readinessBand;
-    return c.bands[key]||c.bands.collecting;
-  }
-  function evidenceLabel(domain,c){
-    if(domain.evidenceState==="unmeasured")return c.unmeasured;
-    if(domain.evidenceState==="thin")return c.thin;
-    return c.provisional;
-  }
   function resultText(evidence,c){
     if(!evidence.attempted)return c.notTried;
     return evidence.firstCorrect?c.correctFirst:c.wrongFirst;
   }
   function renderDiagnostic(){
+    const results=document.getElementById("diagnostic-results");
+    const resultsJump=document.getElementById("results-jump");
+    const studentView=state.audience==="student";
+    results.hidden=!studentView;
+    resultsJump.hidden=!studentView;
+    if(!studentView)return;
     const rows=currentRows();
     const summary=analysis.summarize(rows,state.attempts);
     const c=diagnosticCopy();
@@ -171,34 +159,13 @@
     }
 
     const byId=new Map(rows.map(function(item){return[item.id,item];}));
-    const strength=summary.domains.find(function(domain){return domain.axis===summary.strengthAxis;});
-    const priority=summary.domains.find(function(domain){return domain.axis===summary.priorityAxis;});
-    const priorityItem=summary.itemEvidence.find(function(item){return item.axis===summary.priorityAxis&&item.firstCorrect===false;});
-    const nextItem=summary.itemEvidence.find(function(item){return !item.attempted;});
-    const actionEvidence=priorityItem||nextItem||summary.itemEvidence[0];
-    const strengthCopy=strength?axisText(strength.axis)+" · "+strength.firstCorrect+" / "+strength.attempted:c.noStrength;
-    const priorityCopy=priority?axisText(priority.axis)+" · "+priority.firstCorrect+" / "+priority.attempted:c.noPriority;
-    const accuracy=summary.accuracy===null?"—":summary.accuracy+"%";
-    const actionItem=byId.get(actionEvidence.itemId);
-    const actionLabel=priorityItem?c.review:nextItem?c.continue:c.review;
-    const sectionHtml=summary.sections.map(function(section){
-      const value=section.percentage===null?c.unmeasured:section.percentage+"%";
-      return '<span><b>'+escapeHtml(tierText(section.tier))+'</b> '+escapeHtml(value)+' <small>'+section.firstCorrect+' / '+section.attempted+'</small></span>';
+    const itemRows=summary.itemEvidence.map(function(evidence){
+      const item=byId.get(evidence.itemId);
+      const result=resultText(evidence,c);
+      const attemptText=evidence.attempted?evidence.attemptCount+" "+c.attemptUnit:c.notTried;
+      return '<li data-item-id="'+escapeHtml(evidence.itemId)+'"><a href="#problem-'+escapeHtml(item.id)+'"><span>'+String(evidence.questionNumber).padStart(2,"0")+'</span> '+escapeHtml(text(item.typeTitle))+'</a><span class="practice-item-result">'+escapeHtml(result)+' · '+escapeHtml(attemptText)+'</span></li>';
     }).join("");
-    const domainHtml=summary.domains.map(function(domain){
-      const value=domain.percentage===null?c.unmeasured:domain.percentage+"%";
-      const width=domain.percentage===null?0:domain.percentage;
-      const count=domain.itemCount+" "+c.placed+" · "+domain.attempted+" "+c.answered;
-      return '<div class="domain-row" data-axis="'+escapeHtml(domain.axis)+'"><div class="domain-label"><strong>'+escapeHtml(axisText(domain.axis))+'</strong><span>'+escapeHtml(evidenceLabel(domain,c))+'</span></div><div class="domain-meter" role="meter" aria-label="'+escapeHtml(axisText(domain.axis))+'" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+width+'"><i style="width:'+width+'%"></i></div><div class="domain-value"><b>'+escapeHtml(value)+'</b><small>'+escapeHtml(count)+'</small></div></div>';
-    }).join("");
-    const errorEvidence=summary.itemEvidence.filter(function(item){return item.firstCorrect===false;});
-    const errorHtml=errorEvidence.length?'<ul class="diagnostic-error-list">'+errorEvidence.slice(0,4).map(function(evidence){const item=byId.get(evidence.itemId);return '<li><a href="#problem-'+escapeHtml(item.id)+'">'+String(evidence.questionNumber).padStart(2,"0")+' · '+escapeHtml(text(item.typeTitle))+'</a><span>'+escapeHtml(misconceptionText(evidence.misconception))+'</span></li>';}).join("")+'</ul>':'';
-    let teacherHtml="";
-    if(state.audience==="teacher"){
-      teacherHtml='<section class="teacher-evidence"><h3>'+escapeHtml(c.teacherEvidence)+'</h3><div class="teacher-table-wrap"><table><thead><tr><th>'+escapeHtml(c.question)+'</th><th>'+escapeHtml(c.type)+'</th><th>'+escapeHtml(c.firstResult)+'</th><th>'+escapeHtml(c.attempts)+'</th><th>'+escapeHtml(c.error)+'</th></tr></thead><tbody>'+summary.itemEvidence.map(function(evidence){const item=byId.get(evidence.itemId);return '<tr><td>'+String(evidence.questionNumber).padStart(2,"0")+'</td><td><a href="#problem-'+escapeHtml(item.id)+'">'+escapeHtml(text(item.typeTitle))+'</a></td><td>'+escapeHtml(resultText(evidence,c))+'</td><td>'+evidence.attemptCount+escapeHtml(c.attemptUnit)+'</td><td>'+escapeHtml(evidence.misconception?misconceptionText(evidence.misconception):c.none)+'</td></tr>';}).join("")+'</tbody></table></div></section>';
-    }
-    const planLink="";
-    target.innerHTML='<div class="diagnostic-overview"><article><span>'+escapeHtml(c.firstAccuracy)+'</span><strong>'+escapeHtml(accuracy)+'</strong><small>'+summary.firstCorrect+' / '+summary.attempted+'</small></article><article><span>'+escapeHtml(c.eventual)+'</span><strong>'+summary.solved+' / '+summary.itemCount+'</strong><small>'+escapeHtml(sectionHtml?"":c.noSample)+'</small></article><article><span>'+escapeHtml(c.readiness)+'</span><strong>'+escapeHtml(readinessLabel(summary,c))+'</strong><small>'+escapeHtml(summary.complete?c.complete:c.collecting)+'</small></article><article><span>'+escapeHtml(c.strength)+'</span><strong>'+escapeHtml(strengthCopy)+'</strong></article><article><span>'+escapeHtml(c.priority)+'</span><strong>'+escapeHtml(priorityCopy)+'</strong></article></div><div class="diagnostic-section-scores">'+sectionHtml+'</div><div class="diagnostic-detail-grid"><section class="domain-analysis"><h3>'+escapeHtml(c.domains)+'</h3>'+domainHtml+'</section><aside class="diagnostic-prescription"><h3>'+escapeHtml(c.next)+'</h3><strong>'+escapeHtml(text(actionItem.typeTitle))+'</strong><p>'+escapeHtml(priorityItem?misconceptionText(priorityItem.misconception):c.coach)+'</p><p class="coach-direction">'+escapeHtml(c.coach)+'</p><a href="#problem-'+escapeHtml(actionItem.id)+'">'+escapeHtml(actionLabel)+' <span aria-hidden="true">↑</span></a>'+planLink+errorHtml+'<button type="button" id="diagnostic-reset">'+escapeHtml(c.reset)+'</button></aside></div>'+teacherHtml;
+    target.innerHTML='<div class="diagnostic-overview"><article><span>'+escapeHtml(c.firstAccuracy)+'</span><strong>'+summary.firstCorrect+' / '+summary.attempted+'</strong><small>'+escapeHtml(c.practiceOnly)+'</small></article><article><span>'+escapeHtml(c.eventual)+'</span><strong>'+summary.solved+' / '+summary.itemCount+'</strong><small>'+escapeHtml(summary.complete?c.complete:c.collecting)+'</small></article></div><section class="practice-response-list"><h3>'+escapeHtml(c.questionRecord)+'</h3><p>'+escapeHtml(c.coach)+'</p><ol class="practice-item-list">'+itemRows+'</ol><button type="button" id="diagnostic-reset">'+escapeHtml(c.reset)+'</button></section>';
     document.getElementById("diagnostic-reset").addEventListener("click",function(){
       rows.forEach(function(item){state.attempts.delete(item.id);state.correct.delete(item.id);});
       if(state.audience==="student")localRecord.storage.clearPractice(state.programId);

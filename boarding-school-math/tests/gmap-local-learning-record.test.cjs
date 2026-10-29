@@ -55,8 +55,10 @@ test("practice records retain only sanitized local first-attempt evidence", func
   const saved = store.loadPractice("sasmo-g6");
   assert.deepEqual(Object.keys(saved.attempts), ["sasmo-g6-model-01"]);
   assert.deepEqual(saved.attempts["sasmo-g6-model-01"].responses, [{ answerId: "A", correct: false }, { answerId: "D", correct: true }]);
-  assert.equal(saved.summary.priorityAxis, "number-operations");
-  assert.equal(saved.summary.accuracy, 0);
+  assert.equal("priorityAxis" in saved.summary, false);
+  assert.equal("readinessBand" in saved.summary, false);
+  assert.equal("strengthAxis" in saved.summary, false);
+  assert.equal("accuracy" in saved.summary, false);
 });
 
 test("only mapped axes can change a learner-plan priority and records can be cleared", function () {

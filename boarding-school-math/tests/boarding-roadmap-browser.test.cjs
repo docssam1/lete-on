@@ -66,7 +66,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator("#paper-label-field").isVisible(), true);
   assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=7&program=amc8/);
   assert.equal(await page.locator(".competition-submit").isVisible(), true);
-  assert.equal(await page.locator("#competition-practice-link").isHidden(), true);
+  assert.equal(await page.locator("#competition-practice-link").isVisible(), true);
   assert.match(await page.locator("#competition-source-link").getAttribute("href"), /maa\.org/);
   await page.locator("#competition-select").selectOption("");
   assert.equal(await page.locator("#paper-review-link").isHidden(), true);
@@ -151,6 +151,9 @@ test("grade comparison shows curriculum examples without implying measured level
   await page.emulateMedia({ media: "print" });
   assert.equal(await page.locator("#comparison-table").isVisible(), true);
   assert.equal(await page.locator(".grade-comparison-controls").isVisible(), false);
+  await page.emulateMedia({ media: "screen" });
+  await page.locator("#competition-select").selectOption("amc8");
+  assert.equal(await page.locator("#competition-practice-link").isHidden(), true, "Grade 8 should not be offered the Grade 6 bridge as a grade-level practice set");
   await page.close();
 });
 
@@ -162,6 +165,7 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.ok(await page.locator(".grade7-path").evaluate(function (node) { return node.getBoundingClientRect().top < window.innerHeight; }), "Grade 7 path should start in the first phone screen");
   assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
   assert.match(await page.locator("#grade7-position").innerText(), /현재 위치 미확인/);
+  assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /진단 후/);
   assert.equal(await page.locator(".stage-detail").isHidden(), true);
   assert.deepEqual(await page.locator(".grade7-path .stage-button strong").allInnerTexts(), ["유리수", "비례 관계", "식·방정식", "기하·혼합 문제"]);
   assert.deepEqual(await page.locator(".grade7-path .stage-button[aria-pressed='true']").allInnerTexts(), []);
@@ -174,9 +178,8 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /비례 관계/);
   await page.locator("#grade7-branches summary").click();
   assert.match(await page.locator("#grade7-branches details p").innerText(), /정식 SAT 진단/);
-  await page.locator("#grade7-branches a[href='#competition-diagnostic']").click();
-  assert.match(page.url(), /#competition-diagnostic$/);
-  assert.equal(await page.locator("#competition-select").inputValue(), "");
+  assert.match(await page.locator("#grade7-branches a").getAttribute("href"), /competition-practice\.html\?program=amc8$/);
+  assert.match(await page.locator("#grade7-branches a").innerText(), /6학년 기초 연결/);
   await page.locator(".grade-track > summary").focus();
   await page.keyboard.press("Enter");
   assert.equal(await page.locator(".grade-track").evaluate(function (node) { return node.open; }), true);
