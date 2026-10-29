@@ -6,6 +6,7 @@
 <title>I-Dentify — 아이 성향 맞춤 코칭</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="service-config.js"></script>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -1423,7 +1424,10 @@ let rollIndex = 0;
 let rollList = [];
 let radarChart = null;
 let chatCount = 0;
+let chatSession = 0;
 const CHAT_LIMIT = 5;
+const CHAT_ENDPOINT = window.LETEON_PERSONALITY_CHAT_URL;
+const CHAT_UNAVAILABLE = 'AI 상담 연결이 원활하지 않습니다. 질문 횟수는 차감되지 않았습니다. 위 추천 질문의 답변을 이용하거나 잠시 후 다시 시도해 주세요.';
 
 // --- 화면 전환 ---
 const screens = ['intro','pre','survey','result'];
@@ -1860,6 +1864,11 @@ async function sendChat(query) {
     return;
   }
 
+  if (!CHAT_ENDPOINT) {
+    addMsg(CHAT_UNAVAILABLE, 'bot');
+    return;
+  }
+
   // 직접 입력 → 횟수 체크
   if (chatCount >= CHAT_LIMIT) {
     addMsg(`직접 질문은 최대 ${CHAT_LIMIT}회까지 가능합니다. 위 추천 질문을 이용해 주세요.`, 'bot');
@@ -1872,6 +1881,7 @@ async function sendChat(query) {
   chatCount++;
   updateChatCounter();
 
+  const session = chatSession;
   const thinkingDiv = addMsg('답변을 생성하고 있습니다...', 'bot');
 
   // RAG 컨텍스트
@@ -1881,17 +1891,31 @@ async function sendChat(query) {
     : '';
   const sysPrompt = `당신은 15년 이상 경력의 영재교육 전문가입니다. 아이의 성향 진단 결과를 바탕으로 학부모께 전문적이고 구체적인 코칭 조언을 드립니다. 답변은 [원인 분석] → [맞춤 솔루션] → [긍정적 기대 효과] 순서로 구체적이고 즉시 실천 가능하게 작성하세요. 특정 브랜드·기관명은 언급하지 마세요.\n\n[이 아이 정보]\n이름: ${studentInfo.name}, 나이: ${studentInfo.age}세\n성향 진단: ${personalityResult.label}\n${mathInfo}\n\n[참고 자료]\n${ctx}`;
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30_000);
   try {
-    const res = await fetch('https://algebra2-gemini-proxy-v2-243382036810.asia-northeast3.run.app/identify-chat', {
+    const res = await fetch(CHAT_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, systemPrompt: sysPrompt })
+      body: JSON.stringify({ query, systemPrompt: sysPrompt }),
+      signal: controller.signal
     });
-    if (!res.ok) throw new Error(res.statusText);
+    if (!res.ok) throw new Error('chat_unavailable');
     const data = await res.json();
-    thinkingDiv.textContent = data.candidates[0].content.parts[0].text;
+    const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (typeof answer !== 'string' || !answer.trim()) throw new Error('chat_response_invalid');
+    if (session === chatSession) thinkingDiv.textContent = answer;
   } catch(e) {
-    thinkingDiv.textContent = '오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+    if (session !== chatSession) return;
+    chatCount = Math.max(0, chatCount - 1);
+    updateChatCounter();
+    const input = document.getElementById('chat-input');
+    input.disabled = false;
+    input.placeholder = '궁금한 점을 질문해 주세요';
+    document.getElementById('chat-submit').disabled = false;
+    thinkingDiv.textContent = CHAT_UNAVAILABLE;
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -1937,6 +1961,7 @@ document.getElementById('btn-restart').onclick = () => {
   document.getElementById('math-level').value = '';
   document.getElementById('math-advance').value = '';
   stopAutoRoll();
+  chatSession++;
   chatCount = 0;
   updateChatCounter();
   document.getElementById('chat-input').disabled = false;
