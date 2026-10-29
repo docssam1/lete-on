@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 5-2 Source Visual-Risk Records
+
+- Rechecked the SHA-256-matched original PDF pages 20 and 39–41 (printed 24 and 43–45). Twelve records had empty visual-risk arrays. Recorded the absence of printed geometry and the relevant equation, symbol, decimal-place, order and boundary distinctions for each; pencil annotations are not source figures. This records presentation evidence only and does not unlock originals or establish publisher answers.
+- The broader inventory audit now reports 26 remaining findings: 23 fixed 5-2 status expectations, one verified-count expectation and two 6-1 section-count differences. Release gate and review-reason negative controls pass. Preserve student data and all source files.
+
+---
+
 ## 2026-10-30 Grade 6-1 Graphs Page 51 Mission 6 Basis
 
 - Rechecked the SHA-256-matched source p.45 / printed p.51: the requested percentage is among male students. The generated prompt and independent calculation already use male students as the denominator; the public label and detailed/common descriptions were ambiguous. Corrected these descriptions without changing generation, answers or release status. Publisher answer unverified.
