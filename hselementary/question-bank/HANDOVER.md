@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 5-2 Unit 6 Pass/Fail Mean Practice
+
+- Rechecked printed page 60 Example 2-3 and page 61 Mission 4: their direction of mean difference is not specified, so both original records remain locked and publisher keys unverified. Added one shared, separately identified synthetic practice type to avoid duplicating the identical structure; it explicitly states which group has the higher mean and uses different values. Both locked source rows link to the same practice.
+- Independent enumeration checks three variants × three difficulty states; local bank 1440/375/320px × three difficulties and separate one-page A4 problem/solution output pass. Full runtime audit passes 85,980 generations, release gate 2,212 types / 1,433 available / 779 awaiting, and 905-record structural inventory audit passes. Counts do not mean all source answers have been reviewed. Preserve student data and source files.
+
+---
+
 ## 2026-10-30 Grade 6-1 Source Section Census
 
 - Re-read all 24 exploration/example pages in the SHA-256-matched 6-1 source (PDF 2, 4, 7, 9, 11, 13, 16, 18, 20, 22, 25, 27, 29, 31, 33, 35, 38, 40, 42, 44, 47, 49, 51, 53). There are 24 printed exploration blocks and 92 numbered examples: each graph exploration has three examples, the others four. The existing common ledger groups most exploration blocks but splits U4 E4 and U5 E1/E4 into independent subquestions, giving 28 exploration rows. Updated its grouping description and expected section counts, retaining the earlier 27/93 expectations as historical metadata. No source items, answers, generators or locks were changed.

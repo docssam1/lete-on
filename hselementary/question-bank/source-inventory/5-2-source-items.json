@@ -5164,6 +5164,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "원문은 두 평균의 차만 명시해 어느 쪽이 더 높은지 보장하지 않습니다. 점수순 선발이면 92점, 별도 기준이면 32점도 산술상 가능하므로 공개를 보류합니다.",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-passfail-mean-synthetic",
       "publisherKeyVerified": false
     },
     {
@@ -5271,6 +5272,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "원문은 평균의 차만 명시해 높은 쪽을 보장하지 않습니다. 점수순 합격이면 75.5점이지만 기준이 없으면 68.5점도 산술상 가능해 보류합니다.",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-passfail-mean-synthetic",
       "publisherKeyVerified": false
     },
     {
