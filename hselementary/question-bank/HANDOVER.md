@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 6-1 Graphs Page 51 Mission 6 Basis
+
+- Rechecked the SHA-256-matched source p.45 / printed p.51: the requested percentage is among male students. The generated prompt and independent calculation already use male students as the denominator; the public label and detailed/common descriptions were ambiguous. Corrected these descriptions without changing generation, answers or release status. Publisher answer unverified.
+- The focused audit independently recomputes all three pools at all difficulties using the male denominator; public grade 6 inventory and real local bank 1440/375/320px × three difficulties pass. The 38 wider inventory findings remain open.
+
+---
+
 ## 2026-10-30 Grade 6-1 Graphs Page 47 Missions 1–2
 
 - Re-read the SHA-256-matched source page and independently checked the class/fruit count and the difference between the two schools. The detailed ledger and public type labels incorrectly described two questions from page 51, although their conditions, arithmetic and generator variants already corresponded to page 47. Corrected the common and detailed ledger descriptions, graph metadata, public labels, type IDs and answer contracts; publisher answers remain unverified. Generation and release locks are unchanged.

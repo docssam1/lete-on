@@ -6030,7 +6030,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u5-e4-mission-6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
-      "typeLabel": "원그래프와 띠그래프로 전체 비율 구하기",
+      "typeLabel": "남학생 중 특정 상표 선호 비율 구하기",
       "commonTypeId": "circle-and-strip-product-preference",
       "sourceVerified": true,
       "typeLanguageVerified": true,
