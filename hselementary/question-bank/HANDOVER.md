@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 5 Page 55 Missions 3–4
+
+- Source PDF p.51 / clean comparison PDF p.50 / printed p.55. Added two fixed source questions: six-cube net stack target 2; four-die unseen pip sum 57. Publisher answer keys remain unverified.
+- Mission 3 independently folds the net and checks all six candidate values. Mission 4 independently verifies the nine visible faces sum to 27 and subtracts them from 84 total pips. The fourth die is treated as fully concealed in the source view; exact physical arrangement has not been independently verified. Source, ledger, 1440/375/320px browser and four one-page A4 checks passed; release gate and 77,220 runtime generations passed.
+- Counts: 2,075 types, 1,287 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Preserve the dirty source worktree and student data. Other locked source items need independent review.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 5 Page 55 Missions 1–2
 
 - Source PDF p.51 / clean comparison PDF p.50 / printed p.55. Added two fixed source questions: five-die contact-chain target 4 and opposite pairs 가–라, 나–마, 다–바. Publisher answer keys remain unverified; printed glyph interpretation is a source input.
