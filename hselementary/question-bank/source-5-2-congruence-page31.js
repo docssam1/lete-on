@@ -21,7 +21,7 @@
   const triangleBaseTargets = [128, 136, 152];
   const areaBaseHeights = [10, 14, 18];
   const areaBaseWidths = [6, 10, 14];
-  const trapezoidTopBases = [10, 16, 20];
+  const trapezoidTopBases = [12, 16, 20];
   const trapezoidBottomBases = [8, 10, 14];
   const trapezoidBaseHeights = [6, 8, 10];
   const difficultyDeltas = [-2, 0, 2];
@@ -184,7 +184,7 @@
     const answer = rectangleArea - leftCorner - rightCorner - topCorner;
     const prompt = `<div class="source52-p31-question"><p>삼각형 ㄱㄴㄷ과 삼각형 ㄷㄹㅁ은 서로 합동입니다. ㄱㄴ=${height}cm, ㄹㅁ=${width}cm일 때 삼각형 ㄱㄷㅁ의 넓이를 구하세요.</p>${congruentTriangleAreaDiagram(height,width)}</div>`;
     const solution = `<div class="source52-p31-solution"><ol><li>합동 표기 순서대로 대응점을 맞추면 ㄱ↔ㄷ, ㄴ↔ㄹ, ㄷ↔ㅁ입니다.<br>따라서 ㄴㄷ=ㄹㅁ=${width}cm, ㄷㄹ=ㄱㄴ=${height}cm입니다.</li><li>ㄱ과 같은 높이의 점 ㅂ을 ㄹ 위에 잡아 직사각형 ㄱㄴㄹㅂ을 만듭니다.${congruentTriangleAreaProofDiagram(height,width)}직사각형의 가로는 ${totalWidth}cm, 세로는 ${height}cm이므로 넓이는 ${height}×${totalWidth}=${rectangleArea}cm²입니다.</li><li>직사각형에서 삼각형 ㄱㄷㅁ을 제외한 세 부분을 뺍니다. 왼쪽 아래와 오른쪽 아래 삼각형은 각각 ${height}×${width}÷2=${leftCorner}cm²이고, 위쪽 삼각형은 ${totalWidth}×(${height}−${width})÷2=${topCorner}cm²입니다.</li><li>따라서 삼각형 ㄱㄷㅁ의 넓이는 ${rectangleArea}−${leftCorner}−${rightCorner}−${topCorner}=${answer}cm²입니다.</li></ol></div>`;
-    return result("5-2-u3-e4-mission-5", variant, offset, prompt, `${answer}cm²`, solution, { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer }, false, answerVisual("합동인 두 삼각형으로 만든 삼각형의 넓이", `${answer}cm²`));
+    return result("5-2-u3-e4-mission-5", variant, offset, prompt, `${answer}cm²`, solution, { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer }, false, triangleAreaAnswerVisual("삼각형 넓이", `${answer}cm²`));
   }
 
   function trapezoidMidpointDiagram(top, bottom, height, proof = false) {
@@ -199,8 +199,8 @@
     const p = { x: x0, y: m.y };
     const pt = value => point(value.x, value.y);
     const rightAngle = (v, dx, dy) => `<path class="source52-right-angle-mark" d="M${point(v.x+dx*12,v.y)} L${point(v.x+dx*12,v.y+dy*12)} L${point(v.x,v.y+dy*12)}"/>`;
-    const construction = proof ? `<line class="source52-midpoint-line" x1="${p.x}" y1="${p.y}" x2="${m.x}" y2="${m.y}"/><circle class="source52-midpoint-dot" cx="${p.x}" cy="${p.y}" r="4"/><text class="source52-construction-label" x="${p.x-20}" y="${p.y+6}">ㅂ</text><text class="source52-measure-label" x="${(p.x+m.x)/2-14}" y="${p.y-8}">${(top+bottom)/2}cm</text>` : "";
-    return `<svg class="source52-p31-diagram source52-p31-trapezoid${proof ? " source52-p31-trapezoid-proof" : ""}" data-source52-figure="trapezoid-midpoint-area" data-top="${top}" data-bottom="${bottom}" data-height="${height}" data-g="${pt(g)}" data-n="${pt(n)}" data-d="${pt(d)}" data-r="${pt(r)}" data-m="${pt(m)}" data-p="${pt(p)}" viewBox="0 0 420 330" role="img" aria-label="윗변 ${top}cm, 아랫변 ${bottom}cm, 높이 ${height}cm인 사다리꼴과 옆변의 중점 ㅁ, 목표 삼각형 ㄱㄹㅁ의 넓이를 구하는 그림${proof ? " 및 사다리꼴의 중선" : ""}" xmlns="http://www.w3.org/2000/svg"><polygon class="source52-area-target" points="${pt(g)} ${pt(r)} ${pt(m)}"/><path d="M${pt(g)} L${pt(n)} L${pt(d)} L${pt(r)} Z"/><line x1="${g.x}" y1="${g.y}" x2="${r.x}" y2="${r.y}"/><line x1="${r.x}" y1="${r.y}" x2="${d.x}" y2="${d.y}"/><line x1="${d.x}" y1="${d.y}" x2="${m.x}" y2="${m.y}"/><line x1="${n.x}" y1="${n.y}" x2="${m.x}" y2="${m.y}"/><line x1="${g.x}" y1="${g.y}" x2="${m.x}" y2="${m.y}"/>${rightAngle(g,-1,-1)}${rightAngle(r,-1,1)}${construction}<path class="source52-measure-guide" d="M${r.x} ${y0-14} L${r.x} ${y0-5} M${d.x} ${y0-14} L${d.x} ${y0-5} M${g.x} ${g.y+16} L${g.x} ${g.y+5} M${n.x} ${n.y+16} L${n.x} ${n.y+5} M${x0-18} ${r.y} L${x0-5} ${r.y} M${x0-18} ${g.y} L${x0-5} ${g.y}"/><text x="${r.x-26}" y="${r.y-6}">ㄹ</text><text x="${d.x+7}" y="${d.y+5}">ㄷ</text><text x="${n.x+7}" y="${n.y+8}">ㄴ</text><text x="${g.x-28}" y="${g.y+8}">ㄱ</text><text x="${m.x+8}" y="${m.y+1}">ㅁ</text><text class="source52-length-label" x="${(r.x+d.x)/2-22}" y="${y0-16}">${top}cm</text><text class="source52-length-label" x="${(g.x+n.x)/2-22}" y="${g.y+36}">${bottom}cm</text><text class="source52-length-label" x="${x0-58}" y="${(g.y+r.y)/2+4}">${height}cm</text></svg>`;
+    const construction = proof ? `<line class="source52-midpoint-line" data-construction="diagonal-rn" x1="${r.x}" y1="${r.y}" x2="${n.x}" y2="${n.y}"/>` : "";
+    return `<svg class="source52-p31-diagram source52-p31-trapezoid${proof ? " source52-p31-trapezoid-proof" : ""}" data-source52-figure="trapezoid-midpoint-area" data-top="${top}" data-bottom="${bottom}" data-height="${height}" data-g="${pt(g)}" data-n="${pt(n)}" data-d="${pt(d)}" data-r="${pt(r)}" data-m="${pt(m)}" data-p="${pt(p)}" viewBox="0 0 420 330" role="img" aria-label="윗변 ${top}cm, 아랫변 ${bottom}cm, 높이 ${height}cm인 사다리꼴과 옆변의 중점 ㅁ, 목표 삼각형 ㄱㄹㅁ의 넓이를 구하는 그림${proof ? " 및 보조선 ㄹㄴ" : ""}" xmlns="http://www.w3.org/2000/svg"><polygon class="source52-area-target" points="${pt(g)} ${pt(r)} ${pt(m)}"/><path d="M${pt(g)} L${pt(n)} L${pt(d)} L${pt(r)} Z"/><line x1="${g.x}" y1="${g.y}" x2="${r.x}" y2="${r.y}"/><line x1="${r.x}" y1="${r.y}" x2="${d.x}" y2="${d.y}"/><line x1="${d.x}" y1="${d.y}" x2="${m.x}" y2="${m.y}"/><line x1="${n.x}" y1="${n.y}" x2="${m.x}" y2="${m.y}"/><line x1="${g.x}" y1="${g.y}" x2="${m.x}" y2="${m.y}"/>${rightAngle(g,-1,-1)}${rightAngle(r,-1,1)}${construction}<path class="source52-measure-guide" d="M${r.x} ${y0-14} L${r.x} ${y0-5} M${d.x} ${y0-14} L${d.x} ${y0-5} M${g.x} ${g.y+16} L${g.x} ${g.y+5} M${n.x} ${n.y+16} L${n.x} ${n.y+5} M${x0-18} ${r.y} L${x0-5} ${r.y} M${x0-18} ${g.y} L${x0-5} ${g.y}"/><text x="${r.x-26}" y="${r.y-6}">ㄹ</text><text x="${d.x+7}" y="${d.y+5}">ㄷ</text><text x="${n.x+7}" y="${n.y+8}">ㄴ</text><text x="${g.x-28}" y="${g.y+8}">ㄱ</text><text x="${m.x+8}" y="${m.y+1}">ㅁ</text><text class="source52-length-label" x="${(r.x+d.x)/2-22}" y="${y0-16}">${top}cm</text><text class="source52-length-label" x="${(g.x+n.x)/2-22}" y="${g.y+36}">${bottom}cm</text><text class="source52-length-label" x="${x0-58}" y="${(g.y+r.y)/2+4}">${height}cm</text></svg>`;
   }
 
   function buildMission6(variant, offset) {
@@ -210,8 +210,8 @@
     const midpointWidth = (top+bottom)/2;
     const answer = height*midpointWidth/2;
     const prompt = `<div class="source52-p31-question"><p>사다리꼴 ㄱㄴㄷㄹ에서 선분 ㄱㄴ과 선분 ㄷㄹ은 각각 선분 ㄱㄹ에 수직입니다. 삼각형 ㄱㄹㅁ의 넓이를 구하세요. (단, 점 ㅁ은 변 ㄴㄷ의 한가운데 점입니다.)</p>${trapezoidMidpointDiagram(top,bottom,height)}</div>`;
-    const solution = `<div class="source52-p31-solution"><ol><li>점 ㅁ은 변 ㄴㄷ의 중점입니다. ㅁ을 지나 ㄱㄹ과 평행한 선분을 그어 만나는 점을 ㅂ이라 하면 사다리꼴의 중선이 됩니다.${trapezoidMidpointDiagram(top,bottom,height,true)}</li><li>사다리꼴의 중선 길이는 두 평행한 변의 길이의 평균이므로 ㅂㅁ=(${top}+${bottom})÷2=${midpointWidth}cm입니다.</li><li>삼각형 ㄱㄹㅁ에서 밑변 ㄱㄹ=${height}cm이고 그 밑변에 수직인 높이는 ㅂㅁ=${midpointWidth}cm입니다.</li><li>넓이는 ${height}×${midpointWidth}÷2=${answer}cm²입니다.</li></ol></div>`;
-    return result("5-2-u3-e4-mission-6",variant,offset,prompt,`${answer}cm²`,solution,{top,bottom,height,midpointWidth,answer},false,answerVisual("사다리꼴의 중점으로 구하는 삼각형의 넓이",`${answer}cm²`));
+    const solution = `<div class="source52-p31-solution"><ol><li>보조선 ㄹㄴ을 긋습니다. 점 ㅁ은 ㄴㄷ의 한가운데이므로 ㄴㅁ=ㅁㄷ입니다.${trapezoidMidpointDiagram(top,bottom,height,true)}</li><li>△ㄱㄴㅁ과 △ㄱㅁㄷ은 밑변 ㄴㅁ과 ㅁㄷ이 같고 ㄱ에서 이 직선까지의 높이도 같으므로 넓이가 같습니다. 따라서 △ㄱㄴㅁ은 △ㄱㄴㄷ의 절반입니다.</li><li>△ㄱㄴㄷ과 △ㄱㄴㄹ은 밑변 ㄱㄴ이 같고 ㄷ과 ㄹ이 ㄱㄴ에 평행한 선 위에 있으므로 높이도 같아 넓이가 같습니다. 따라서 △ㄱㄴㅁ은 △ㄱㄴㄹ의 절반입니다. 같은 방법으로 △ㄹㅁㄷ은 △ㄹㄴㄷ의 절반입니다.</li><li>사다리꼴에서 △ㄱㄹㅁ을 빼면 △ㄱㄴㅁ과 △ㄹㅁㄷ이 남습니다. 두 넓이의 합은 △ㄱㄴㄹ과 △ㄹㄴㄷ의 넓이 합, 즉 사다리꼴 넓이의 절반이므로 △ㄱㄹㅁ도 나머지 절반입니다.</li><li>사다리꼴의 넓이는 (${top}+${bottom})×${height}÷2=${(top+bottom)*height/2}cm²입니다. 따라서 △ㄱㄹㅁ의 넓이는 ${(top+bottom)*height/2}÷2=${answer}cm²입니다.</li></ol></div>`;
+    return result("5-2-u3-e4-mission-6",variant,offset,prompt,`${answer}cm²`,solution,{top,bottom,height,midpointWidth,answer},false,triangleAreaAnswerVisual("삼각형 넓이",`${answer}cm²`));
   }
 
   function buildMission1(variant, offset) {
@@ -269,6 +269,10 @@
 
   function answerVisual(label, answer, marker = "㉠") {
     return `<svg class="source52-p31-answer-visual" viewBox="0 0 320 72" role="img" aria-label="${esc(label)}: ${esc(answer)}" xmlns="http://www.w3.org/2000/svg"><path d="M18 54 A32 32 0 0 1 45 24" fill="none" stroke="#2f6b4a" stroke-width="3"/><text x="62" y="48" fill="#191511" font-size="21" font-family="serif">${esc(marker)} = ${esc(answer)}</text></svg>`;
+  }
+
+  function triangleAreaAnswerVisual(label, answer) {
+    return `<svg class="source52-p31-answer-visual" viewBox="0 0 360 72" role="img" aria-label="${esc(label)}: ${esc(answer)}" xmlns="http://www.w3.org/2000/svg"><polygon points="18,60 42,12 66,60" fill="#e9f0e7" stroke="#2f6b4a" stroke-width="3"/><text x="82" y="46" fill="#191511" font-size="18" font-family="serif">${esc(label)} = ${esc(answer)}</text></svg>`;
   }
 
   function areaAnswerVisual(label, answer) {
