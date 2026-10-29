@@ -87,6 +87,21 @@ for (const def of source.definitions) {
         assert.ok(Math.abs(centralArc - (180 - 2 * vertexAngle)) < 1e-9);
         assert.ok(Math.abs(3 * equalArc + centralArc - 180) < 1e-9);
         assert.ok(Math.abs(answer - (360 - centralArc - equalArc) / 2) < 1e-9);
+        const onCircle = degrees => ({ x: Math.cos(degrees * Math.PI / 180), y: Math.sin(degrees * Math.PI / 180) });
+        const d = { x: 0, y: 0 }, g = onCircle(180), r = onCircle(180-equalArc), m = onCircle(2*equalArc), b = onCircle(equalArc);
+        assert.ok(Math.abs(distance(g,r)-distance(m,b)) < 1e-9, "the given chords have equal lengths");
+        assert.ok(Math.abs(angleAt(d,r,m)-vertexAngle) < 1e-8, "the diagram's given angle");
+        assert.ok(Math.abs(angleAt(r,m,d)-vertexAngle) < 1e-8, "the first isosceles base angle");
+        assert.ok(Math.abs(angleAt(d,m,b)-(180-equalArc)/2) < 1e-8, "the second isosceles base angle");
+        assert.ok(Math.abs(angleAt(r,m,b)-answer) < 1e-8, "the target angle agrees with the answer");
+        assert.match(item.solution, /세 변의 길이가 각각 같아 합동/);
+        assert.doesNotMatch(item.solution + item.answerVisual, /원주각/);
+        assert.match(item.solution, /data-source52-figure="semicircle-angle"/);
+        const labels = [...item.prompt.matchAll(/<text class="source52-angle-label" x="([\d.]+)" y="([\d.]+)">x<\/text>/g)].map(match => ({x:Number(match[1]), y:Number(match[2])}));
+        assert.equal(labels.length, 2);
+        const labelAngle = p => Math.atan2(260-p.y,p.x-250)*180/Math.PI;
+        assert.ok(labelAngle(labels[0]) > equalArc && labelAngle(labels[0]) < 2*equalArc, "first x label is in the correct sector");
+        assert.ok(labelAngle(labels[1]) > 0 && labelAngle(labels[1]) < equalArc, "second x label is in the correct sector");
         assert.notEqual(vertexAngle, 60);
         assert.notEqual(answer, 130);
       } else if (def.sourceItemId.endsWith("mission-3")) {
