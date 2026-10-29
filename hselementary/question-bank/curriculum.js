@@ -2586,6 +2586,15 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52DecimalSubunit.types.push({id, number:source52DecimalSubunit.types.length+1, typeNumber, name, label:name, sourceItemId:id, sourceItemLabel:"Mission 5", sourceSection:"mission", sourceTier:"advanced", sourcePdfPage:39, sourcePrintedPage:43, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52ClosedTapeRingLengthPage43Mission5", generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:3, verifiedVariantTarget:3, answerVisualRequired:true, answerVisualStatus:"verified-reconstruction"});
   }
 
+  const source52DecimalDecimal = source52DecimalUnit?.subunits.find(s => s.name === "소수와 소수의 곱셈");
+  if (source52DecimalDecimal) {
+    const index = source52DecimalDecimal.types.findIndex(t => t.name === "소수 곱의 빠진 숫자 찾기");
+    if (index >= 0) {
+      const previous = source52DecimalDecimal.types[index], id = "5-2-u4-e2-exploration", name = "소수 곱의 빠진 숫자 찾기";
+      source52DecimalDecimal.types[index] = {...previous, id, name, label:name, sourceItemId:id, sourceItemLabel:"개념탐구 2", sourceSection:"exploration", sourcePdfPage:40, sourcePrintedPage:44, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, reviewReason:"원문 구조를 대조하고 창작 수치의 곱과 자리값을 검산했습니다.", generatorKey:"source52DecimalProductMissingDigitsPage44Exploration2", variant:0, generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:3, verifiedVariantTarget:3, answerVisualRequired:false, answerVisualStatus:"not-required"};
+    }
+  }
+
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52Application = source52Unit1?.subunits.find(subunit => subunit.name === "어림하기의 활용 · 개념탐구 3 원문 연결");
   if (source52Application) for (const [n,name] of [[1,"어림한 방법 모두 찾기"],[2,"단위로 파는 리본의 가격"]]) {
