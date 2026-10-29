@@ -86,7 +86,7 @@
     const rectangle = [line("G", "N", "outline"), line("N", "D", "outline"), line("D", "R", "hidden"), line("R", "B", "hidden"), line("B", "G", "outline")].join("");
     const foldedEdges = [line("B", "S", "folded"), line("S", "M", "hidden-fold"), line("M", "O", "hidden-fold"), line("O", "D", "folded"), line("B", "J", "crease"), line("J", "D", "crease"), line("S", "O", "crease"), line("S", "J", "folded"), line("J", "O", "folded")].join("");
     const offsets = { G:[-19,-8], N:[12,-8], D:[12,14], R:[-19,17], B:[-18,8], M:[-3,-15], S:[-23,-6], O:[7,-8], J:[-5,24] };
-    const labels = Object.entries(offsets).map(([key,[dx,dy]]) => text(key, key === "G" ? "ㄱ" : key === "N" ? "ㄹ" : key === "D" ? "ㄷ" : key === "R" ? "ㄴ" : key === "B" ? "ㅂ" : key === "M" ? "ㅁ" : key === "S" ? "ㅈ" : key === "O" ? "ㅇ" : "ㅈ", dx, dy)).join("");
+    const labels = Object.entries(offsets).map(([key,[dx,dy]]) => text(key, key === "G" ? "ㄱ" : key === "N" ? "ㄹ" : key === "D" ? "ㄷ" : key === "R" ? "ㄴ" : key === "B" ? "ㅂ" : key === "M" ? "ㅁ" : key === "S" ? "ㅈ" : key === "O" ? "ㅇ" : "ㅅ", dx, dy)).join("");
     const beta = round(shape.angles.bjs), given = round(shape.angles.odn), result = round(shape.answer);
     const unit = (from, to) => { const d = { x: p[to].x-p[from].x, y:p[to].y-p[from].y }; const n=Math.hypot(d.x,d.y); return {x:d.x/n,y:d.y/n}; };
     const u=unit("J","S"), v=unit("J","O"), j=p.J, size=11;
