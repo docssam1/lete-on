@@ -257,3 +257,24 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
 .sd-gate-weak small { color: #c0392b; font-weight: 700; }
 .sd-gate-clear { margin: 0 0 14px; color: var(--muted); }
 .sd-gate-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+
+/* 판서 오른쪽 독쌤(시안 &look=sketch, 원장 2026-10-29 「오른쪽에 독쌤을」) — 수학 독쌤 10장을 겹쳐 두고 한 장만 보인다 */
+.sd-native.has-presenter { display: grid; grid-template-columns: minmax(0, 1fr) clamp(170px, 21vw, 290px); align-items: center; gap: 0; }
+.sd-board-host { min-width: 0; }
+.sd-presenter { position: relative; width: 100%; aspect-ratio: 475 / 720; align-self: center; }
+.sd-presenter img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; }
+.sd-presenter img.on { opacity: 1; }
+body.has-presenter .sd-guide-img { visibility: hidden; }
+@media (max-width: 900px) {
+  .sd-native.has-presenter { grid-template-columns: minmax(0, 1fr); }
+  .sd-presenter { display: none; }
+  body.has-presenter .sd-guide-img { visibility: visible; }
+}
+/* 손그림 판서 느낌: 줄 없는 종이 · 초록 점선 틀 · 알약 제목 */
+.look-sketch .cb-paper { background: #fbfaf6; border-color: #e6dfcf; }
+.look-sketch .cb-paper::before { inset: 12px; background: none; border: 2px dashed #3f8f61; border-radius: 14px; }
+.look-sketch .cb-top { justify-content: center; }
+.look-sketch .cb-kicker { display: none; }
+.look-sketch .cb-title { padding: 6px 20px; border-radius: 999px; background: #dcece2; color: #1f5a3a; font-size: 15px; font-weight: 700; letter-spacing: 0.12em; }
+.look-sketch .cb-step { position: absolute; right: 8px; }
+.look-sketch .cb-top { position: relative; }

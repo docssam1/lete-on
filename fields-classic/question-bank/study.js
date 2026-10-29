@@ -140,6 +140,7 @@ function say(text, mood = "talk", voiceId = null, spoken = text) {
   $("guideSay").textContent = text;
   $("talk").dataset.mood = mood;
   $("walkerImg").src = `./${PORTRAIT[mood] || PORTRAIT.talk}`;
+  presenter?.mood(mood);
   const bubble = $("talk");
   bubble.classList.remove("new"); void bubble.offsetWidth; bubble.classList.add("new");
   return speak(spoken, voiceId);
@@ -160,6 +161,10 @@ async function cloneUrl(id, text) {
   return null;
 }
 let cloneAudio = null, cloneEnd = null, speakSeq = 0;
+// 말하는 중인지 알리는 곳(오른쪽 독쌤이 입을 움직인다)
+const talkWatchers = new Set();
+let talkingNow = false;
+const setTalking = (on) => { talkingNow = on; talkWatchers.forEach((fn) => fn(on)); };
 function stopClone() { if (cloneAudio) { try { cloneAudio.pause(); } catch {} cloneAudio = null; } const end = cloneEnd; cloneEnd = null; end?.(); }
 // 말이 끝나면(소리가 꺼져 있으면 읽을 만한 시간이 지나면) 풀리는 Promise. 기기 음성이 끝을 알리지 않는 경우를 대비해 최대 시간도 둔다.
 // 새 말이 오면 앞의 말은 끊고 바로 풀린다. 복제 음성 파일을 찾는 사이(await)에 새 말이 왔으면 앞의 말은 아예 틀지 않는다 — 안 그러면 두 목소리가 겹친다.
@@ -167,7 +172,7 @@ function speak(text, voiceId = null) {
   const reading = Math.min(7000, Math.max(900, String(text || "").length * 75));
   const seq = ++speakSeq;
   return new Promise(async (resolve) => {
-    let done = false; const finish = () => { if (!done) { done = true; resolve(); } };
+    let done = false; const finish = () => { if (!done) { done = true; if (seq === speakSeq) setTalking(false); resolve(); } };
     stopClone();
     try { speechSynthesis?.cancel(); } catch {}
     if (pref.sound && text && voiceId) {
@@ -179,6 +184,7 @@ function speak(text, voiceId = null) {
           audio.addEventListener("ended", finish); audio.addEventListener("error", finish);
           await audio.play();
           if (seq !== speakSeq) { audio.pause(); finish(); return; }
+          setTalking(true);
           setTimeout(finish, reading * 3 + 3000); return;
         } catch { if (seq === speakSeq) stopClone(); else { finish(); return; } }
       }
@@ -190,7 +196,7 @@ function speak(text, voiceId = null) {
       const utterance = new SpeechSynthesisUtterance(text);
       const ko = (speechSynthesis.getVoices() || []).find((voice) => /^ko/i.test(voice.lang));
       utterance.lang = "ko-KR"; utterance.rate = 0.9;   // 천천히(원장 2026-10-25) if (ko) utterance.voice = ko;
-      utterance.onend = finish; utterance.onerror = finish;
+      utterance.onend = finish; utterance.onerror = finish; utterance.onstart = () => { if (seq === speakSeq) setTalking(true); };
       speechSynthesis.speak(utterance);
       setTimeout(finish, reading * 2.5 + 2000);
     } catch { setTimeout(finish, reading); }
@@ -289,6 +295,51 @@ function askFrame(cmd) {
   waitTimer = setTimeout(() => { if (waiting === cmd) { waiting = null; cmd === "next" ? go(index + 1) : go(index - 1, { atEnd: true }); } }, 2000);
 }
 
+// ── 판서 오른쪽 독쌤(시안, &look=sketch) ─────────────────────
+// 원장 2026-10-29 「필기 개념 이런 식으로(손그림 판서 + 오른쪽에 발표자)」「독쌤 여러 표정들 있잖아」「오른쪽에 독쌤을」.
+// 수학 독쌤 그림 10장(assets/docssam-math/, 같은 틀로 잘라 몸이 흔들리지 않는다): 입 모양 A1~A4 · 눈 감기 A5 · 표정 B1~B5.
+// 말할 때(음성이 실제로 나는 동안) 입 모양을 바꾸고, 쉬면 가끔 눈을 깜빡인다. 생각(think)은 턱 괴기, 칭찬(praise)은 엄지 척.
+const LOOK = params.get("look") === "sketch" ? "sketch" : "";
+const FACE = (name) => `./assets/docssam-math/${name}.webp`;
+const FACES = { closed: "A1-mouth-closed", half: "A2-mouth-half", open: "A3-mouth-open", o: "A4-mouth-o", blink: "A5-eyes-closed", surprised: "B1-surprised", think: "B2-puzzled-thinking", praise: "B3-praise", encourage: "B4-encourage", thumbs: "B5-happy-thumbs-up" };
+let presenter = null;
+function makePresenter() {
+  const aside = document.createElement("aside");
+  aside.className = "sd-presenter";
+  aside.setAttribute("aria-hidden", "true");
+  // 그림을 미리 다 불러 둔다(바꿔 낄 때 깜빡이지 않게)
+  aside.innerHTML = Object.values(FACES).map((name) => `<img src="${FACE(name)}" data-face="${name}" alt="" width="475" height="720" />`).join("");
+  let mood = "talk", talking = false, mouthTimer = 0, blinkTimer = 0, praiseFlip = false;
+  const show = (name) => aside.querySelectorAll("img").forEach((img) => img.classList.toggle("on", img.dataset.face === name));
+  const MOUTH = [FACES.half, FACES.open, FACES.o, FACES.half, FACES.closed, FACES.open, FACES.half];
+  const rest = () => show(mood === "think" ? FACES.think : mood === "praise" ? (praiseFlip ? FACES.praise : FACES.thumbs) : FACES.closed);
+  function tick() {
+    clearTimeout(mouthTimer);
+    if (!talking || mood !== "talk") { rest(); return; }
+    let k = 0;
+    const step = () => { show(MOUTH[k++ % MOUTH.length]); mouthTimer = setTimeout(step, 95 + Math.random() * 70); };
+    step();
+  }
+  function blink() {
+    clearTimeout(blinkTimer);
+    blinkTimer = setTimeout(() => {
+      if (!talking && mood === "talk") { show(FACES.blink); setTimeout(() => { if (!talking && mood === "talk") show(FACES.closed); }, 150); }
+      blink();
+    }, 2800 + Math.random() * 2600);
+  }
+  const onTalk = (on) => { talking = on; tick(); };
+  talkWatchers.add(onTalk);
+  // 처음엔 「자, 봐요」 하는 얼굴. 장 안내 말이 이미 나오고 있으면 바로 입을 움직인다
+  talking = talkingNow;
+  if (talking) tick(); else show(FACES.encourage);
+  blink();
+  return {
+    el: aside,
+    mood(next) { if (next === "praise" && mood !== "praise") praiseFlip = !praiseFlip; mood = next || "talk"; tick(); },
+    dispose() { clearTimeout(mouthTimer); clearTimeout(blinkTimer); talkWatchers.delete(onTalk); aside.remove(); }
+  };
+}
+
 // ── 덱 안의 우리 게임 ──────────────────────────────────────
 let nativeGame = null;
 const loadedCss = new Set();
@@ -302,9 +353,19 @@ async function mountNative(slide, intro = Promise.resolve()) {
   }
   const mod = await import(game.module);
   if (slides[index] !== slide) return;   // 불러오는 사이에 장을 넘겼다
-  const host = document.createElement("div");
-  host.className = "sd-native";
-  $("slideBody").replaceChildren(host);
+  const wrap = document.createElement("div");
+  wrap.className = "sd-native";
+  let host = wrap;
+  // 시안(&look=sketch): 판서 오른쪽에 독쌤
+  if (LOOK && game.board) {
+    wrap.classList.add("has-presenter", `look-${LOOK}`);
+    host = document.createElement("div");
+    host.className = "sd-board-host";
+    presenter = makePresenter();
+    wrap.append(host, presenter.el);
+    document.body.classList.add("has-presenter");
+  }
+  $("slideBody").replaceChildren(wrap);
   nativeGame = mod[game.mount](host, {
     // 말 끝을 기다릴 수 있게 Promise를 돌려준다(판서가 비트마다 기다린다). voiceId가 있으면 독쌤 복제 음성.
     // 장 안내 말(intro)이 끝난 뒤에 말한다 — 판서 첫 말이 안내 말을 끊거나 겹치지 않게
@@ -313,10 +374,13 @@ async function mountNative(slide, intro = Promise.resolve()) {
     board: game.board, lesson: slide.lesson,
     onDone: () => { if (game.doneSay !== null) { const done = game.doneSay ? voiceLine("game", game.doneSay) : FIXED_LINES.nativeDone; say(done.text, "praise", done.id); } auto(game.board ? 4000 : 2200); }
   });
-  fitObserver.observe(host, { childList: true, subtree: true });
+  fitObserver.observe(wrap, { childList: true, subtree: true });
   requestAnimationFrame(fitNative);
 }
-function disposeNative() { fitObserver.disconnect(); try { nativeGame?.dispose(); } catch {} nativeGame = null; }
+function disposeNative() {
+  fitObserver.disconnect(); try { nativeGame?.dispose(); } catch {} nativeGame = null;
+  presenter?.dispose(); presenter = null; document.body.classList.remove("has-presenter");
+}
 // 작은 가로 화면(원장 2026-10-26 「한 화면에 가득 차야지」): 게임판이 칸보다 크면 아래로 내리지 않고 통째로 줄여 한 화면에 넣는다
 const fitObserver = new MutationObserver(() => requestAnimationFrame(fitNative));
 function fitNative() {
