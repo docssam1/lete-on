@@ -1,3 +1,10 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 61 Missions 5–6
+
+- Printed p.61 Mission 5: the two missing scores sum to 135; the highest score exceeds 91 and is twice another score, yielding Eungyeong 41 and Hyogeun 94. The prior review ledger incorrectly described another question. Mission 6: the 25- and 35-point groups contain 10 and 11 students, respectively; only six of the 25-point students answered question 3 alone, so 25 students answered question 3 correctly. Publisher answer keys remain unverified.
+- Independent enumeration, source table and blank-cell checks, 1440/375/320px browser checks, separate one-page A4 problem and solution PDFs, release gate and 78,540 runtime generations passed. Counts: 2,097 types, 1,309 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Mission 4 stays locked pending selection criteria. Preserve existing work and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 61 Missions 3–4
 
 - Printed p.61 Mission 3: the first seven scores total 602, giving a mean of 86. Enumerating the four sign combinations for the last three scores gives ㉠▼ and ㉡▲ as the unique combination with mean 89. The prior ledger described an unrelated score table. Publisher answer key remains unverified.
