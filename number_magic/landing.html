@@ -252,7 +252,7 @@ section{padding:88px 0}
 .price .plan{max-width:560px;margin:0 auto;background:#fff;border:2px solid var(--blue-deep);border-radius:var(--radius);padding:30px 28px;box-shadow:var(--shadow-2)}
 .plan .amt{display:flex;align-items:baseline;justify-content:center;gap:6px;font-family:var(--sans);font-weight:900;letter-spacing:-.035em;font-size:clamp(52px,9vw,84px);color:var(--blue-deep);line-height:1;font-variant-numeric:tabular-nums}
 .plan .amt .cur{font-size:.42em;font-weight:800;letter-spacing:0;color:var(--gold);align-self:flex-start;margin-top:.18em}
-.plan .amt .unit{font-size:.36em;font-weight:800;letter-spacing:0;color:var(--sub)}
+.plan .amt .unit{white-space:nowrap;font-size:.36em;font-weight:800;letter-spacing:0;color:var(--sub)}
 .plan .per{font-size:15px;color:var(--sub);margin-top:10px;font-weight:600}
 .plan .badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;padding:5px 12px;border-radius:999px;background:var(--blue-deep);color:#fff;margin-bottom:18px}
 .price .lead{margin-left:auto;margin-right:auto}
@@ -536,7 +536,7 @@ footer a{color:var(--sub)}
     <h2 class="reveal" data-i18n="wyH2">학습지가 매주 오고, <span class="accent">멈춘 자리</span>를 아이별로 잡아냅니다</h2>
     <p class="lead reveal" data-i18n="wyLead">학원은 반 단위로만 멈출 수 있습니다. 같은 유형에서 두 번 연속 막히면 그 아이만 한 단계 아래로 내려갔다 옵니다.</p>
     <div class="grid">
-      <div class="wcard reveal"><b data-i18n="wy1b">매주 도착하는 학습지</b><p data-i18n="wy1p">진단이 정한 과정의 그 주 회차가 봉투로 옵니다. 회차마다 개념과 빨간 예시 풀이가 앞에 있고, 필산 → 독셈 → 문장제 순서로 이어집니다. 초등 연산 구간에는 <b>그 주에 쓸 종이 교구</b>가 함께 인쇄되고(오려 쓰면 되니 따로 사실 것이 없습니다), 중·고등 과정에는 실제로 쓰이는 암기법을 골라 담은 <b>기억 고리</b>가 개념 아래와 정답지에 붙습니다.</p><span class="fact" data-i18n="wy1f">주 1회 1만 원 · 주 2회 2만 원</span></div>
+      <div class="wcard reveal"><b data-i18n="wy1b">매주 도착하는 학습지</b><p data-i18n="wy1p">진단이 정한 과정의 그 주 회차가 봉투로 옵니다. 회차마다 개념과 빨간 예시 풀이가 앞에 있고, 필산 → 독셈 → 문장제 순서로 이어집니다. 초등 연산 구간에는 <b>그 주에 쓸 종이 교구</b>가 함께 인쇄되고(오려 쓰면 되니 따로 사실 것이 없습니다), 중·고등 과정에는 실제로 쓰이는 암기법을 골라 담은 <b>기억 고리</b>가 개념 아래와 정답지에 붙습니다.</p><span class="fact" data-i18n="wy1f">1년 6만 원 · 두 배 코스(주 2회) 10만 원</span></div>
       <div class="wcard reveal"><b data-i18n="wy2b">개인별 정체 감지와 보강</b><p data-i18n="wy2p">같은 유형에서 최근 두 번이 연속으로 기준 아래면 봉투 맨 위에 몸풀기 카드가 올라옵니다. 십진블록·수직선처럼 한 단계 아래 시각화로 내려갔다 다시 올라옵니다.</p><span class="fact" data-i18n="wy2f">권유이지 잠금이 아닙니다</span></div>
       <div class="wcard reveal"><b data-i18n="wy3b">진단 → 지금 여기 → 주차별 로드맵</b><p data-i18n="wy3p">몇 문제로 유아부터 고등까지 어디서 시작할지 찾고, 그 자리가 로드맵 위에 찍힙니다. 주 1회·주 2회를 고르면 과정 전체가 주차로 나뉜 개인 계획표로 인쇄됩니다.</p><span class="fact" data-i18n="wy3f">레벨은 언제든 바꿉니다</span></div>
       <div class="wcard reveal"><b data-i18n="wy4b">한국어 · 영어 · 중국어</b><p data-i18n="wy4p">유닛 제목과 개념 설명, 유형 이름, 문장제 본문, 학습지와 진단 화면까지 같은 데이터에서 세 언어가 나옵니다. 다문화 가정과 영어 유치원 아이가 같은 로드맵을 걷습니다.</p><span class="fact" data-i18n="wy4f">세 언어 전 구간</span></div>
@@ -650,14 +650,14 @@ footer a{color:var(--sub)}
 
 <section class="price">
   <div class="wrap">
-    <p class="kicker reveal" data-i18n="prKicker">Price · 월 구독</p>
-    <h2 class="reveal" data-i18n="prH2">주 1회 <span class="accent">만 원</span>, 주 2회 <span class="accent">2만 원</span></h2>
-    <p class="lead reveal" data-i18n="prLead">학습지 횟수만 다르고, 연산 게임 학습과 무제한 연산 학습은 둘 다 전부 들어 있습니다. 아이 한 명, 한 달 기준.</p>
+    <p class="kicker reveal" data-i18n="prKicker">Price · 1년 이용권</p>
+    <h2 class="reveal" data-i18n="prH2">1년 <span class="accent">6만&nbsp;원</span>, 두&nbsp;배&nbsp;코스 <span class="accent">10만&nbsp;원</span></h2>
+    <p class="lead reveal" data-i18n="prLead">학습지 횟수만 다르고, 연산 게임 학습과 무제한 연산 학습은 둘 다 전부 들어 있습니다. 아이 한 명, 1년 기준.</p>
     <div class="plans">
       <div class="plan reveal">
         <span class="badge" data-i18n="prBadge">주 1회</span>
-        <div class="amt" data-i18n="prAmt"><span class="cur">₩</span>10,000<span class="unit">/월</span></div>
-        <div class="per" data-i18n="prPer">아이 한 명 · 한 달</div>
+        <div class="amt" data-i18n="prAmt"><span class="cur">₩</span>60,000<span class="unit">/년</span></div>
+        <div class="per" data-i18n="prPer">아이 한 명 · 1년 · 한 달 5천 원꼴</div>
         <ul>
           <li data-i18n="pr1">학습지 <b>주 1회</b> — 매주 월요일 편지함 봉투, 집에서 인쇄</li>
           <li data-i18n="pr2"><b>연산 게임 학습</b> — 숫자 마을의 모든 배움터와 아레나·도장</li>
@@ -667,9 +667,9 @@ footer a{color:var(--sub)}
         <a class="btn primary" href="index.html?enter=1" data-i18n="prCta">시작하기 →</a>
       </div>
       <div class="plan two reveal">
-        <span class="badge" data-i18n="prBadge2">주 2회</span>
-        <div class="amt" data-i18n="prAmt2"><span class="cur">₩</span>20,000<span class="unit">/월</span></div>
-        <div class="per" data-i18n="prPer2">아이 한 명 · 한 달</div>
+        <span class="badge" data-i18n="prBadge2">주 2회 · 두 배 코스</span>
+        <div class="amt" data-i18n="prAmt2"><span class="cur">₩</span>100,000<span class="unit">/년</span></div>
+        <div class="per" data-i18n="prPer2">아이 한 명 · 1년 · 한 달 약 8,300원꼴</div>
         <ul>
           <li data-i18n="pr21">학습지 <b>주 2회</b> — 한 주에 두 장, 같은 과정을 절반씩 더 자주</li>
           <li data-i18n="pr22">주차가 <b>9월 1-1주차, 1-2주차</b>로 나뉜 개인 로드맵</li>
@@ -830,7 +830,7 @@ footer a{color:var(--sub)}
       pr6b:'연산은 가정에서 매일 하는 것입니다', pr6p:'그래서 저희가 드리는 것은 수업이 아니라 학습지와 진단, 계획입니다. 짧은 진단이 지금 자리를 찾고, 그 자리가 주차별 로드맵으로 펼쳐지고, 매주 학습지가 도착합니다.',
       wyKicker:'Why · 상담에서 늘 받는 질문', wyH2:'학습지가 매주 오고, <span class="accent">멈춘 자리</span>를 아이별로 잡아냅니다',
       wyLead:'학원은 반 단위로만 멈출 수 있습니다. 같은 유형에서 두 번 연속 막히면 그 아이만 한 단계 아래로 내려갔다 옵니다.',
-      wy1b:'매주 도착하는 학습지', wy1p:'진단이 정한 과정의 그 주 회차가 봉투로 옵니다. 회차마다 개념과 빨간 예시 풀이가 앞에 있고, 필산 → 독셈 → 문장제 순서로 이어집니다. 초등 연산 구간에는 <b>그 주에 쓸 종이 교구</b>가 함께 인쇄되고(오려 쓰면 되니 따로 사실 것이 없습니다), 중·고등 과정에는 실제로 쓰이는 암기법을 골라 담은 <b>기억 고리</b>가 개념 아래와 정답지에 붙습니다.', wy1f:'주 1회 1만 원 · 주 2회 2만 원',
+      wy1b:'매주 도착하는 학습지', wy1p:'진단이 정한 과정의 그 주 회차가 봉투로 옵니다. 회차마다 개념과 빨간 예시 풀이가 앞에 있고, 필산 → 독셈 → 문장제 순서로 이어집니다. 초등 연산 구간에는 <b>그 주에 쓸 종이 교구</b>가 함께 인쇄되고(오려 쓰면 되니 따로 사실 것이 없습니다), 중·고등 과정에는 실제로 쓰이는 암기법을 골라 담은 <b>기억 고리</b>가 개념 아래와 정답지에 붙습니다.', wy1f:'1년 6만 원 · 두 배 코스(주 2회) 10만 원',
       wy2b:'개인별 정체 감지와 보강', wy2p:'같은 유형에서 최근 두 번이 연속으로 기준 아래면 봉투 맨 위에 몸풀기 카드가 올라옵니다. 십진블록·수직선처럼 한 단계 아래 시각화로 내려갔다 다시 올라옵니다.', wy2f:'권유이지 잠금이 아닙니다',
       wy3b:'진단 → 지금 여기 → 주차별 로드맵', wy3p:'몇 문제로 유아부터 고등까지 어디서 시작할지 찾고, 그 자리가 로드맵 위에 찍힙니다. 주 1회·주 2회를 고르면 과정 전체가 주차로 나뉜 개인 계획표로 인쇄됩니다.', wy3f:'레벨은 언제든 바꿉니다',
       wy4b:'한국어 · 영어 · 중국어', wy4p:'유닛 제목과 개념 설명, 유형 이름, 문장제 본문, 학습지와 진단 화면까지 같은 데이터에서 세 언어가 나옵니다. 다문화 가정과 영어 유치원 아이가 같은 로드맵을 걷습니다.', wy4f:'세 언어 전 구간',
@@ -856,8 +856,8 @@ footer a{color:var(--sub)}
       cmKicker:'Math History · 수학사 네 컷 만화 95편', cmH2:'개념마다 <span class="accent">그 수학이 태어난 이야기</span>가 붙어 있습니다',
       cmLead:'개념 노트를 열면 산문 한 줄 대신 네 컷 만화가 나옵니다. 그중 하나 — 일곱 살 가우스의 이야기입니다. 오늘 배우는 "자리끼리 더하기"와 같은 마법이라는 데서 끝납니다.',
       cmMore:'기호가 태어난 날(−, =, √…), 0을 발견한 사람들, 미적분이 생긴 이유까지 — 95편이 각자의 개념 자리에서 기다립니다.',
-      prKicker:'Price · 월 구독', prH2:'주 1회 <span class="accent">만 원</span>, 주 2회 <span class="accent">2만 원</span>', prLead:'학습지 횟수만 다르고, 연산 게임 학습과 무제한 연산 학습은 둘 다 전부 들어 있습니다. 아이 한 명, 한 달 기준.', prBadge:'주 1회', prBadge2:'주 2회', prAmt2:'<span class="cur">₩</span>20,000<span class="unit">/월</span>', prPer2:'아이 한 명 · 한 달', pr21:'학습지 <b>주 2회</b> — 한 주에 두 장, 같은 과정을 절반씩 더 자주', pr22:'주차가 <b>9월 1-1주차, 1-2주차</b>로 나뉜 개인 로드맵', pr23:'연산 게임 학습 · 무제한 연산 학습 · 실험실 · 만화 전부 포함', pr24:'한국어·영어·중국어', prCta2:'주 2회로 시작하기 →',
-      prAmt:'<span class="cur">₩</span>10,000<span class="unit">/월</span>', prPer:'아이 한 명 · 한 달',
+      prKicker:'Price · 1년 이용권', prH2:'1년 <span class="accent">6만&nbsp;원</span>, 두&nbsp;배&nbsp;코스 <span class="accent">10만&nbsp;원</span>', prLead:'학습지 횟수만 다르고, 연산 게임 학습과 무제한 연산 학습은 둘 다 전부 들어 있습니다. 아이 한 명, 1년 기준.', prBadge:'주 1회', prBadge2:'주 2회 · 두 배 코스', prAmt2:'<span class="cur">₩</span>100,000<span class="unit">/년</span>', prPer2:'아이 한 명 · 1년 · 한 달 약 8,300원꼴', pr21:'학습지 <b>주 2회</b> — 한 주에 두 장, 같은 과정을 절반씩 더 자주', pr22:'주차가 <b>9월 1-1주차, 1-2주차</b>로 나뉜 개인 로드맵', pr23:'연산 게임 학습 · 무제한 연산 학습 · 실험실 · 만화 전부 포함', pr24:'한국어·영어·중국어', prCta2:'주 2회로 시작하기 →',
+      prAmt:'<span class="cur">₩</span>60,000<span class="unit">/년</span>', prPer:'아이 한 명 · 1년 · 한 달 5천 원꼴',
       pr1:'학습지 <b>주 1회</b> — 매주 월요일 편지함 봉투, 집에서 인쇄', pr2:'<b>연산 게임 학습</b> — 숫자 마을의 모든 배움터와 아레나·도장',
       pr3:'<b>무제한 연산 학습</b> — 교과 연산 연습 · 수의 마법 탐험 · 연산 로드맵, 횟수 제한 없음', pr4:'수학 실험실 6곳 · 수학사 만화 95편 · 한국어·영어·중국어',
       prCta:'시작하기 →', heroTrial:'체험하기', prFine:'승인번호 없이도 체험할 수 있어요 — 유치·초등·중등·고등 2개씩과 마을 건물마다 2챕터. 전체 이용은 학원 승인번호가 필요합니다.',
@@ -968,7 +968,7 @@ footer a{color:var(--sub)}
       pr6b:'Arithmetic is something done at home, every day', pr6p:'So what we provide is not a class but worksheets, a diagnosis and a plan. A short diagnosis finds where the child is now, that place unfolds into a week-by-week roadmap, and a worksheet arrives every week.',
       wyKicker:'Why · the questions parents always ask', wyH2:'A sheet every week, and the <span class="accent">place a child stalls</span> caught one child at a time',
       wyLead:'A classroom can only pause as a whole class. When the same type falls short twice in a row, that one child steps down a level and comes back up.',
-      wy1b:'A worksheet every week', wy1p:'The week\'s session of the course the diagnosis chose arrives as an envelope. Every round opens with the idea and a worked example in red, then runs column work → creative round → word problems. The elementary track adds <b>the paper tool for that week</b> (cut it out, nothing to buy); the middle and high school courses add a <b>memory hook</b> — a mnemonic teachers actually use — under the concept and again on the answer key.', wy1f:'10,000 won a week · 20,000 won for twice a week',
+      wy1b:'A worksheet every week', wy1p:'The week\'s session of the course the diagnosis chose arrives as an envelope. Every round opens with the idea and a worked example in red, then runs column work → creative round → word problems. The elementary track adds <b>the paper tool for that week</b> (cut it out, nothing to buy); the middle and high school courses add a <b>memory hook</b> — a mnemonic teachers actually use — under the concept and again on the answer key.', wy1f:'₩60,000 a year · ₩100,000 for the double course (twice a week)',
       wy2b:'Per-child stall detection and follow-up', wy2p:'When the two most recent attempts at one type both fall short, a warm-up card goes on top of the envelope. The child steps down to a lower visualisation — base-ten blocks, the number line — and climbs back.', wy2f:'A suggestion, never a lock',
       wy3b:'Diagnosis → you are here → a week-by-week roadmap', wy3p:'A few questions find where to start, anywhere from age 5 to high school, and that place is marked on the roadmap. Choose one or two sheets a week and the whole course prints as a personal plan divided into weeks.', wy3f:'The level can change any time',
       wy4b:'Korean · English · Chinese', wy4p:'Unit titles, concept notes, type names, word-problem text, the worksheet and the diagnosis screen all come from the same data in three languages. Multilingual families and English-kindergarten children walk the same roadmap.', wy4f:'Three languages throughout',
@@ -994,8 +994,8 @@ footer a{color:var(--sub)}
       cmKicker:'Math History · 95 four-panel comics', cmH2:'Every concept carries <span class="accent">the story of how that math was born</span>',
       cmLead:'Open a concept note and a four-panel comic appears instead of a line of prose. Here is one — seven-year-old Gauss. It ends by showing it is the same magic as today\'s "add the tens with the tens".',
       cmMore:'The day a symbol was born (−, =, √…), the people who found zero, why calculus exists — 95 stories wait at their own concept.',
-      prKicker:'Price · Monthly', prH2:'Once a week <span class="accent">₩10,000</span>, twice a week <span class="accent">₩20,000</span>', prLead:'Only the worksheet count differs — arithmetic game learning and unlimited practice are included in both. One child, one month.', prBadge:'ONCE A WEEK', prBadge2:'TWICE A WEEK', prAmt2:'<span class="cur">₩</span>20,000<span class="unit">/mo</span>', prPer2:'one child · per month · about $14', pr21:'Worksheet <b>twice a week</b> — two sheets, the same course in halves, more often', pr22:'A personal roadmap split into <b>Sept week 1-1, 1-2…</b>', pr23:'Arithmetic game learning · unlimited practice · labs · comics all included', pr24:'Korean, English, Chinese', prCta2:'Start twice a week →',
-      prAmt:'<span class="cur">₩</span>10,000<span class="unit">/mo</span>', prPer:'one child · per month · about $7',
+      prKicker:'Price · One year', prH2:'One year <span class="accent">₩60,000</span>, double course <span class="accent">₩100,000</span>', prLead:'Only the worksheet count differs — arithmetic game learning and unlimited practice are included in both. One child, one year.', prBadge:'ONCE A WEEK', prBadge2:'TWICE A WEEK · DOUBLE', prAmt2:'<span class="cur">₩</span>100,000<span class="unit">/yr</span>', prPer2:'one child · one year · about ₩8,300 a month', pr21:'Worksheet <b>twice a week</b> — two sheets, the same course in halves, more often', pr22:'A personal roadmap split into <b>Sept week 1-1, 1-2…</b>', pr23:'Arithmetic game learning · unlimited practice · labs · comics all included', pr24:'Korean, English, Chinese', prCta2:'Start twice a week →',
+      prAmt:'<span class="cur">₩</span>60,000<span class="unit">/yr</span>', prPer:'one child · one year · about ₩5,000 a month',
       pr1:'Worksheet <b>once a week</b> — an envelope in the mailbox every Monday, print at home', pr2:'<b>Arithmetic game learning</b> — every classroom, arena and stamp in the number village',
       pr3:'<b>Unlimited arithmetic practice</b> — curriculum practice · Number Magic exploration · course road, no limits', pr4:'6 math labs · 95 math-history comics · Korean, English, Chinese',
       prCta:'Start →', heroTrial:'Try it free', prFine:'You can try it without a code — two units from each school band, plus the first two chapters in every village building. Full access needs an academy approval code.',
@@ -1106,7 +1106,7 @@ footer a{color:var(--sub)}
       pr6b:'运算是在家里每天做的事', pr6p:'所以我们提供的不是课，而是学习单、诊断和计划。简短的诊断找到现在的位置，那个位置展开成按周的路线图，学习单每周寄到。',
       wyKicker:'Why · 家长最常问的问题', wyH2:'学习单每周寄到，<span class="accent">卡住的地方</span>按孩子一个一个抓出来',
       wyLead:'补习班只能整班停下。同一类型连续两次不达标，就只让那个孩子降一级再回来。',
-      wy1b:'每周寄到的学习单', wy1p:'诊断定下的课程，当周的课次以信封形式寄到。每一课次前面有概念和红色示范解法，然后按竖式 → 巧算 → 应用题的顺序展开。小学运算段附上<b>当周要用的纸教具</b>（剪下来就能用，不用另外买）；初高中课程则在概念下方和答案页附上真正被老师们使用的<b>记忆钩</b>。', wy1f:'每周1次1万韩元 · 每周2次2万韩元',
+      wy1b:'每周寄到的学习单', wy1p:'诊断定下的课程，当周的课次以信封形式寄到。每一课次前面有概念和红色示范解法，然后按竖式 → 巧算 → 应用题的顺序展开。小学运算段附上<b>当周要用的纸教具</b>（剪下来就能用，不用另外买）；初高中课程则在概念下方和答案页附上真正被老师们使用的<b>记忆钩</b>。', wy1f:'一年6万韩元 · 双倍课程（每周2次）10万韩元',
       wy2b:'按孩子的停滞检测与补强', wy2p:'同一类型最近两次都低于标准，信封最上面就会加一张热身卡。用十进制方块、数轴等低一级的可视化下去一趟，再爬回来。', wy2f:'是建议，不是锁',
       wy3b:'诊断 → 现在这里 → 按周路线图', wy3p:'用几道题找出从幼儿到高中该从哪里开始，那个位置会标在路线图上。选每周1次或2次，整个课程会印成按周划分的个人计划表。', wy3f:'级别随时可以改',
       wy4b:'韩语 · 英语 · 中文', wy4p:'单元标题、概念说明、类型名称、应用题正文、学习单和诊断画面，三种语言都出自同一份数据。多语家庭和英语幼儿园的孩子走同一条路线图。', wy4f:'全程三种语言',
@@ -1132,8 +1132,8 @@ footer a{color:var(--sub)}
       cmKicker:'数学史 · 四格漫画95篇', cmH2:'每个概念都带着<span class="accent">那个数学诞生的故事</span>',
       cmLead:'打开概念笔记，出现的不是一行文字，而是四格漫画。这是其中一篇——七岁的高斯。结尾告诉你，这和今天学的"同位相加"是同一种魔法。',
       cmMore:'符号诞生的那一天（−、=、√……）、发现0的人们、微积分为何存在——95个故事各自在它的概念旁等着。',
-      prKicker:'价格 · 月订阅', prH2:'每周1次<span class="accent">₩10,000</span>，每周2次<span class="accent">₩20,000</span>', prLead:'只是学习单次数不同，运算游戏学习和无限运算练习两者都全部包含。一个孩子，一个月。', prBadge:'每周1次', prBadge2:'每周2次', prAmt2:'<span class="cur">₩</span>20,000<span class="unit">/月</span>', prPer2:'一个孩子 · 每月 · 约 $14', pr21:'学习单<b>每周2次</b> —— 每周两张，同一课程一分为二、更频繁', pr22:'按<b>9月1-1周、1-2周……</b>划分的个人路线图', pr23:'运算游戏学习 · 无限运算练习 · 实验室 · 漫画全部包含', pr24:'韩语、英语、中文', prCta2:'以每周2次开始 →',
-      prAmt:'<span class="cur">₩</span>10,000<span class="unit">/月</span>', prPer:'一个孩子 · 每月 · 约 $7',
+      prKicker:'价格 · 一年', prH2:'一年<span class="accent">₩60,000</span>，双倍课程<span class="accent">₩100,000</span>', prLead:'只是学习单次数不同，运算游戏学习和无限运算练习两者都全部包含。一个孩子，一年。', prBadge:'每周1次', prBadge2:'每周2次 · 双倍课程', prAmt2:'<span class="cur">₩</span>100,000<span class="unit">/年</span>', prPer2:'一个孩子 · 一年 · 每月约₩8,300', pr21:'学习单<b>每周2次</b> —— 每周两张，同一课程一分为二、更频繁', pr22:'按<b>9月1-1周、1-2周……</b>划分的个人路线图', pr23:'运算游戏学习 · 无限运算练习 · 实验室 · 漫画全部包含', pr24:'韩语、英语、中文', prCta2:'以每周2次开始 →',
+      prAmt:'<span class="cur">₩</span>60,000<span class="unit">/年</span>', prPer:'一个孩子 · 一年 · 每月约₩5,000',
       pr1:'学习单<b>每周1次</b> —— 每周一信箱送达信封，在家打印', pr2:'<b>运算游戏学习</b> —— 数字村所有学习场所、竞技场与印章',
       pr3:'<b>无限运算练习</b> —— 教材运算练习 · 数字魔法探索 · 运算路线图，不限次数', pr4:'6个数学实验室 · 95篇数学史漫画 · 韩语、英语、中文',
       prCta:'开始 →', heroTrial:'免费体验', prFine:'无需授权码即可体验——幼儿·小学·初中·高中各2个单元，村庄每栋建筑前2章。完整使用需要学院授权码。',
