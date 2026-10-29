@@ -83,6 +83,8 @@ test("users can opt to save an answer-free AMC diagnostic and see it only on the
   assert.match(pairText, /최근 기록 · Practice B[\s\S]*식·대수: 1\/3 · 33%[\s\S]*이전 기록 · Practice A[\s\S]*식·대수: 1\/1 · 비율 비교 보류/);
   assert.doesNotMatch(pairText, /Undated practice/);
   assert.match(pairText, /정답 1 · 오답 2 · 미응답 0 · 표시 안 함 22 · 영역 분류 3\/25/);
+  assert.match(pairText, /오답 이유 2\/2 분류 · 개념 1 · 계산 1/);
+  assert.match(pairText, /오답 이유 1\/1 분류 · 조건 읽기 1/);
   assert.match(pairText, /경우의 수·확률: 미측정 · 미응답 1/);
   for (const card of await page.locator(".competition-record-pair-card").all()) {
     const label = await card.getAttribute("aria-labelledby");

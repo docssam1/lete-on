@@ -501,6 +501,9 @@
       const title = document.createElement("h5"); title.id = `competition-record-pair-card-title-${index}`; title.textContent = `${index === 0 ? "최근 기록" : "이전 기록"} · ${record.paperLabel || record.programTitle} · ${record.examDate}`;
       card.setAttribute("aria-labelledby", title.id);
       const summary = document.createElement("p"); summary.textContent = `정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}`;
+      const reasonNames = { concept: "개념", approach: "접근", calculation: "계산", reading: "조건 읽기", time: "시간" };
+      const reasonSummary = document.createElement("p"); reasonSummary.className = "competition-record-pair-reasons";
+      reasonSummary.textContent = `오답 이유 ${record.summary.reasonClassified}/${record.summary.wrong} 분류${record.reasons.length ? ` · ${record.reasons.map(function (reason) { return `${reasonNames[reason.id]} ${reason.count}`; }).join(" · ")}` : " · 미분류"}`;
       const domains = document.createElement("ul");
       record.domains.forEach(function (domain) {
         const item = document.createElement("li");
@@ -509,7 +512,7 @@
         item.textContent = `${domain.name}: ${evidence}${domain.blank ? ` · 미응답 ${domain.blank}` : ""}`;
         domains.append(item);
       });
-      card.append(title, summary, domains); pairCards.append(card);
+      card.append(title, summary, reasonSummary, domains); pairCards.append(card);
     });
     if (!evidence) return;
     setText("competition-saved-title", `${evidence.programTitle} · Grade ${evidence.grade}`);
