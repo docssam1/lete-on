@@ -71,7 +71,7 @@
       const first = Math.abs(ceils[0] + ceils[1] - floors[0] - floors[1]);
       const second = Math.abs(roundedEach[0] + roundedEach[1] - roundedTotal);
       const answer = `${number(first)}명, ${number(second)}명`;
-      const prompt = `서울시의 남자 인구는 ${number(male)}명, 여자 인구는 ${number(female)}명입니다. (1) 두 수를 각각 버림하여 만의 자리까지 나타내어 더한 값과, 각각 올림하여 만의 자리까지 나타내어 더한 값의 차를 구하세요. (2) 두 수를 각각 반올림하여 만의 자리까지 나타낸 뒤 더한 값과, 두 수의 합을 반올림하여 만의 자리까지 나타낸 값의 차를 구하세요.`;
+      const prompt = `어느 도시의 가상 인구 자료입니다. 남자 인구는 ${number(male)}명, 여자 인구는 ${number(female)}명입니다. (1) 두 수를 각각 버림하여 만의 자리까지 나타내어 더한 값과, 각각 올림하여 만의 자리까지 나타내어 더한 값의 차를 구하세요. (2) 두 수를 각각 반올림하여 만의 자리까지 나타낸 뒤 더한 값과, 두 수의 합을 반올림하여 만의 자리까지 나타낸 값의 차를 구하세요.`;
       const solution = `(1) 버림한 합은 ${equation(`${number(floors[0])} + ${number(floors[1])} = ${number(floors[0] + floors[1])}`)}이고, 올림한 합은 ${equation(`${number(ceils[0])} + ${number(ceils[1])} = ${number(ceils[0] + ceils[1])}`)}입니다. 차는 ${number(first)}명입니다. (2) 각각 반올림한 합은 ${equation(`${number(roundedEach[0])} + ${number(roundedEach[1])} = ${number(roundedEach[0] + roundedEach[1])}`)}입니다. 실제 합 ${number(actualTotal)}명을 반올림하면 ${number(roundedTotal)}명이므로 두 값의 차는 ${number(second)}명입니다.`;
       return item("rounding-sum-comparison", prompt, answer, solution, { male, female, floors, ceils, roundedEach, actualTotal, roundedTotal, first, second });
     }
