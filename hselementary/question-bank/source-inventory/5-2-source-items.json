@@ -2197,6 +2197,7 @@
       "sourceVerified": false,
       "implementationStatus": "review-locked",
       "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e3-exploration-synthetic",
       "sourceReviewCorrection20261030": "원문 확대 그림에서 왼쪽 아래가 ㄴ, 오른쪽 위가 ㄹ, 왼쪽 중간이 ㅁ, 교점이 ㅂ으로 보인다. 과거 검수에서 점을 다르게 읽고 모순으로 본 판단은 해당 라벨 해석과 양립하지 않는다. 이 대응에서 합동 이등변삼각형과 표시각을 만족하는 좌표를 재구성하면 목표각은 독립 계산상 80도다. 출판사 답안과 점 라벨을 추가 대조할 때까지 잠금 유지."
     },
     {
