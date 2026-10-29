@@ -556,6 +556,14 @@ test("Grade 7 NS.A roadmap breaks the strand into four observable checks with re
   await page.close();
 });
 
+test("Grade 7 roadmap labels saved workbook practice as local activity, never a diagnosis",async function(){
+  const page=await browser.newPage({viewport:{width:390,height:844}});
+  await page.addInitScript(function(){localStorage.setItem("gfield-unit-workbook-progress:7.NS.A:v1",JSON.stringify({schemaVersion:1,packId:"gfield-grade7-ns-a-unit-workbook-v1",correctItemIds:["g7nsa-w01"],correctByStandard:{"7.NS.A.1":1,"7.NS.A.2":0,"7.NS.A.2d":0,"7.NS.A.3":0},totalByStandard:{"7.NS.A.1":18,"7.NS.A.2":14,"7.NS.A.2d":4,"7.NS.A.3":4}}));});
+  await page.goto(`${url}?grade=7`,{waitUntil:"networkidle"});await page.getByRole("button",{name:/살펴볼 지점 1, 유리수/}).click();
+  assert.equal(await page.locator("#grade7-stage-questions .grade7-practice-progress").count(),4);assert.match(await page.locator("#grade7-stage-questions .grade7-practice-progress").nth(0).innerText(),/이 기기 연습 · 맞힌 기록 1\/18 · 진단 아님/);assert.match(await page.locator("#grade7-stage-questions .grade7-practice-progress").nth(1).innerText(),/0\/14/);
+  await page.getByRole("button",{name:/살펴볼 지점 2, 비례/}).click();assert.equal(await page.locator("#grade7-stage-questions .grade7-practice-progress").count(),0);await page.close();
+});
+
 test("map has no horizontal overflow at 390px and supports keyboard selection", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await page.goto(url, { waitUntil: "networkidle" });

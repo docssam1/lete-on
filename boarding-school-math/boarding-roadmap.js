@@ -31,6 +31,13 @@
   };
 
   function setText(id, value) { $(id).textContent = value; }
+  function savedGrade7PracticeCounts() {
+    try {
+      const saved = JSON.parse(localStorage.getItem("gfield-unit-workbook-progress:7.NS.A:v1") || "null");
+      if (!saved || saved.schemaVersion !== 1 || saved.packId !== "gfield-grade7-ns-a-unit-workbook-v1" || !saved.correctByStandard || !saved.totalByStandard) return null;
+      return { correctByStandard: saved.correctByStandard, totalByStandard: saved.totalByStandard };
+    } catch (_error) { return null; }
+  }
   function setupRoadmapShortcuts() {
     const links = Array.from(document.querySelectorAll("[data-roadmap-target]"));
     const targets = links.map(function (link) { return document.getElementById(link.dataset.roadmapTarget); }).filter(Boolean);
@@ -182,6 +189,7 @@
     if (grade7) {
       const stop = data.grade7Stops[stage];
       const checks = $("grade7-stage-questions");
+      const savedPractice = stop.clusterId === "7.NS.A" ? savedGrade7PracticeCounts() : null;
       checks.replaceChildren();
       (stop.checks || [stop.check]).filter(Boolean).forEach(function (question) {
         const item = document.createElement("li");
@@ -192,6 +200,11 @@
           standard.setAttribute("aria-label", `${question.standard} 워크북에서 연습`);
           const prompt = document.createElement("span"); prompt.className = "grade7-check-prompt"; prompt.textContent = question.prompt;
           item.append(standard, prompt);
+          const correct = savedPractice && savedPractice.correctByStandard[question.standard];
+          const total = savedPractice && savedPractice.totalByStandard[question.standard];
+          if (Number.isInteger(correct) && Number.isInteger(total) && total > 0 && correct >= 0 && correct <= total) {
+            const progress = document.createElement("small"); progress.className = "grade7-practice-progress"; progress.textContent = `이 기기 연습 · 맞힌 기록 ${correct}/${total} · 진단 아님`; item.append(progress);
+          }
         }
         checks.append(item);
       });

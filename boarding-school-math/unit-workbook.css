@@ -47,6 +47,9 @@ button, select { font:inherit; }
 .toolbar-inner select, .print-button { min-height:44px; padding:8px 11px; border:1px solid var(--control); border-radius:var(--gf-control-radius); color:var(--ink); background:#fff; }
 .progress-chip { min-width:78px; color:var(--success); font-size:.72rem; font-weight:900; text-align:center; white-space:nowrap; }
 .progress-chip[hidden] { display:none; }
+.local-progress-note { max-width:240px; color:var(--muted); font-size:.75rem; line-height:1.4; }
+.local-progress-note[hidden], .local-progress-clear[hidden] { display:none; }
+.local-progress-clear { min-height:44px; padding:8px 11px; border:1px solid var(--line); border-radius:var(--gf-control-radius); color:var(--ink); background:#fff; font-size:.72rem; font-weight:800; cursor:pointer; }
 .standard-empty { width:min(760px,calc(100% - 32px)); margin:40px auto; padding:20px; border:1px solid var(--line); border-radius:8px; color:var(--muted); background:#fff; line-height:1.6; }
 .visually-hidden { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
 .print-button { margin-left:auto; color:#fff; border-color:var(--primary); background:var(--primary); font-weight:900; cursor:pointer; }
@@ -300,6 +303,7 @@ button, select { font:inherit; }
   .toolbar-inner label { min-width:0; display:grid; gap:4px; }
   .toolbar-inner select { width:100%; }
   .progress-chip { min-height:44px; display:grid; place-items:center; border:1px solid var(--line); background:#fff; }
+  .local-progress-note, .local-progress-clear { grid-column:1 / -1; max-width:none; }
   .book-page h1 { font-size:24pt; }
 }
 @page { size:A4; margin:0; }

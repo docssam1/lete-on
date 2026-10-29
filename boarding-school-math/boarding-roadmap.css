@@ -306,6 +306,7 @@ a.grade7-standard-code { min-height: 44px; padding: 7px 10px; text-decoration: n
 a.grade7-standard-code:hover { border-color: #60418f; background: #eee8f7; }
 a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offset: 2px; }
 .grade7-check-prompt { margin-top: 2px; display: block; }
+.grade7-practice-progress { margin-top: 4px; display: block; color: #675780; font-size: .75rem; line-height: 1.45; }
 .grade7-stage-references { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px 14px; }
 .grade7-stage-references[hidden] { display: none; }
 .grade7-stage-references a { min-height: 40px; display: inline-flex; align-items: center; color: #4f347a; font-size: .78rem; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
