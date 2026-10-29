@@ -307,3 +307,7 @@ The private Grade 7 AMC-topic candidate remains locked outside Git at `/Users/do
 No recruitment, screening, learner administration, grading, score interpretation, contest readiness, grade comparison, placement, diagnostic reporting, or release is authorized. Do not copy item text, keys, solutions, rationales, or private reports into this repository. Before any participant contact, all named owner, consent, ethics/privacy, rights, content, language, measurement, and platform gates remain open. Fresh browser and A4 print inspection of the current private workbench/order is also outstanding; the older private QA artifacts do not cover the current order.
 
 Next work: inspect the current private workbench in browser and A4 print, record findings privately, then continue only through the documented human approval and feasibility gates. Local-only work; no push, merge, upload, or deployment occurred.
+
+## 2026-10-30 workbench visual-QA access note
+
+Source inspection confirms the private review workbench and R6 manifest were rebuilt on Oct 29; the HTML labels the 42-item R6 copy private/locked and contains an A4 print template. CUA refused to open the private `file://` page under its browser security policy, which prohibited alternate-surface and indirect workarounds. No current responsive interaction or rendered A4 inspection was completed. Requested user-provided desktop/390px screenshots and A4 PDF for review. This does not change the candidate lock or any approval gate.
