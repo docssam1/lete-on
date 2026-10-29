@@ -48,7 +48,7 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "reviewLockedItems": 259
+    "reviewLockedItems": 219
   },
   "units": [
     {
@@ -4407,16 +4407,21 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 51,
-      "printedPage": 53,
-      "sourceShape": "직육면체의 활용의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 55,
+      "sourceShape": "각 면에 1~6이 적힌 주사위 5개가 평면에서 ㄴ자 모양으로 이어져 있습니다. 한쪽 끝 주사위의 윗면은 2, 반대쪽 끝 주사위의 바깥 옆면은 2이며, 첫 주사위 앞면 ㉠을 구합니다.",
+      "answerContract": "single-value",
       "visualRisk": [
-        "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
-        "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
+        "다섯 주사위의 배열과 앞·위·옆 면, 보이지 않는 접촉 면을 정확히 표시해야 합니다."
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 55쪽 원문 그림과 독립 풀이, 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "sourceAuditUpdate": "2026-10-25 answer 4 and exact five-die L arrangement confirmed; responsive screen review passed at 1440/375/320px with no overflow or browser errors. Problem and solution each rendered as one A4 page. Source question connected locally; publisher key remains unchecked.",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u5-e4-mission-1",
+      "implementationEvidence": "source-5-2-cuboid-page55-mission1.js · source-5-2-cuboid-page55-mission1-audit.js · current focused source/math audit passed 2026-10-27 (answer 4); fresh browser audit passed 1440/375/320px with zero page errors or horizontal overflow; problem and solution PDFs each one-page A4 · durable source/math and visual evidence: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/; per-item screen/A4: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/mission1-screen-a4-review/ · owner-only Drive runtime crosswalk note 1zR1rI9H07IWq5YM44-GyBe8qM-wmi3ND (p.55 mapping; shared:false) · 2026-10-28 removed misleading hidden-contact overlays, rechecked 4,096 assignments, responsive screen and A4: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/mission1-solution-review-20261028/; Drive note updated",
+      "publisherKeyVerified": false,
+      "lockReason": ""
     },
     {
       "sourceItemId": "5-2-u5-e4-mission-2",
@@ -4425,16 +4430,21 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 51,
-      "printedPage": 53,
-      "sourceShape": "직육면체의 활용의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 55,
+      "sourceShape": "가·나·다·라·마·바가 적힌 주사위를 세 방향에서 본 그림을 보고, 주어진 물음의 면에 적힌 글자를 씁니다.",
+      "answerContract": "ordered-labels",
       "visualRisk": [
-        "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
-        "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
+        "각 그림의 위·앞·옆 면과 회전 방향을 정확히 보존해야 합니다."
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 55쪽 원문 그림과 독립 풀이, 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "sourceAuditUpdate": "2026-10-25 three source views confirmed as (라,나,바), (다,라,마), and (가,나,다); all 24 proper rotations yield one face assignment. Responsive screen review passed at 1440/375/320px with no page errors or overflow. Problem and solution each rendered as one A4 page; locally connected. Publisher answer key remains unchecked.",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u5-e4-mission-2",
+      "implementationEvidence": "source-5-2-cuboid-page55-mission2.js · source-5-2-cuboid-page55-mission2-audit.js · current focused source/math audit passed 2026-10-27 (answer 가→라, 나→마, 다→바); fresh browser audit passed 1440/375/320px with zero page errors or horizontal overflow; problem and solution PDFs each one-page A4 · durable source/math and visual evidence: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/; per-item screen/A4: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/mission2-screen-a4-review/ · owner-only Drive runtime crosswalk note 1zR1rI9H07IWq5YM44-GyBe8qM-wmi3ND (p.55 mapping; shared:false) · 2026-10-28 corrected top-face line and rewrote solution using neighboring faces; responsive screen and A4: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/mission2-solution-review-20261028/; Drive note updated",
+      "publisherKeyVerified": false,
+      "lockReason": ""
     },
     {
       "sourceItemId": "5-2-u5-e4-mission-3",
@@ -4443,16 +4453,21 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 51,
-      "printedPage": 53,
-      "sourceShape": "직육면체의 활용의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 55,
+      "sourceShape": "같은 전개도로 만든 직육면체 6개를 그림과 같이 쌓았을 때 뒤쪽 면에 적힌 수의 합이 22이면 빈칸 면의 수를 구합니다.",
+      "answerContract": "single-value",
       "visualRisk": [
-        "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
-        "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
+        "전개도의 숫자 배치와 6개 직육면체의 쌓는 방향, 앞·뒤 면을 정확히 표시해야 합니다."
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 55쪽 원문 그림과 독립 풀이, 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "sourceAuditUpdate": "2026-10-25 net-fold model confirms opposite pairs 1-3, 2-5, 4-6; known back-face sum 17 and total 22 yield ㉠=2. Responsive review passed at 1440/375/320px with no page errors or overflow. Problem and solution each rendered as one A4 page; locally connected. Publisher key remains unchecked.",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u5-e4-mission-3",
+      "implementationEvidence": "source-5-2-cuboid-page55-mission3.js · source-5-2-cuboid-page55-mission3-audit.js · current focused source/math audit passed 2026-10-27 (answer 2); fresh browser audit passed 1440/375/320px with zero page errors or horizontal overflow; problem and solution PDFs each one-page A4 · durable source/math and visual evidence: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/; per-item screen/A4: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/mission3-screen-a4-review/ · owner-only Drive runtime crosswalk note 1zR1rI9H07IWq5YM44-GyBe8qM-wmi3ND (p.55 mapping; shared:false) · 2026-10-28 corrected stacked-cube contacts and source terminology; focused audit and 1440/375/320 and A4 review: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/mission3-figure-review-20261028/; Drive note updated",
+      "publisherKeyVerified": false,
+      "lockReason": ""
     },
     {
       "sourceItemId": "5-2-u5-e4-mission-4",
@@ -4461,16 +4476,21 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 51,
-      "printedPage": 53,
-      "sourceShape": "직육면체의 활용의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 55,
+      "sourceShape": "주사위 4개를 벽에 쌓아 놓은 그림에서 보이지 않는 면의 눈의 합을 구합니다. 마주 보는 두 면의 눈 합은 7입니다.",
+      "answerContract": "single-value",
       "visualRisk": [
-        "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
-        "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
+        "벽·바닥·앞쪽 방향과 각 주사위의 보이는 면, 접촉 면을 정확히 표시해야 합니다."
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 55쪽 원문 그림과 독립 풀이, 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "sourceAuditUpdate": "2026-10-28 correction supersedes 2026-10-25/27: source-visible triples 1,3,5; 1,2,3; 6,2,4 total 27; 84−27=57. Both source scans support these counts. Publisher key remains unchecked.",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u5-e4-mission-4",
+      "implementationEvidence": "source-5-2-cuboid-page55-mission4.js · source-5-2-cuboid-page55-mission4-audit.js · source-5-2-cuboid-page55-mission4-browser-audit.js · 2026-10-28 source-pip correction and responsive/A4 review: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/mission4-correction-20261028/ · owner-only Drive note 1zR1rI9H07IWq5YM44-GyBe8qM-wmi3ND updated; prior 59 evidence superseded.",
+      "publisherKeyVerified": false,
+      "lockReason": ""
     },
     {
       "sourceItemId": "5-2-u5-e4-mission-5",
@@ -4479,16 +4499,21 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 51,
-      "printedPage": 53,
-      "sourceShape": "직육면체의 활용의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 55,
+      "sourceShape": "주사위를 그림의 길을 따라 90도씩 굴렸을 때 마지막 칸에 도착한 주사위의 보이는 면에 알맞은 눈을 그립니다.",
+      "answerContract": "constructed-figure",
       "visualRisk": [
-        "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
-        "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
+        "첫 주사위의 위·앞·옆 눈과 이동 경로의 방향·회전 순서를 정확히 표시해야 합니다."
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 55쪽 원문 그림과 독립 풀이, 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "sourceAuditUpdate": "2026-10-25: source-shaped start die and two-axis 90-roll path implemented. Independent simulation gives final top/front/right pips 5/6/4. Responsive review passed at 1440/375/320px, and problem/solution each rendered as one A4 page. Locally connected; publisher key remains unchecked.",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u5-e4-mission-5",
+      "implementationEvidence": "source-5-2-cuboid-page55-mission5.js · source-5-2-cuboid-page55-mission5-audit.js · current focused source/math audit passed 2026-10-27 (answer top/front/right 5/6/4 after 90 rolls); fresh browser audit passed 1440/375/320px with zero page errors or horizontal overflow; problem and solution PDFs each one-page A4 · durable source/math and visual evidence: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/; per-item screen/A4: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/mission5-screen-a4-review/ · owner-only Drive runtime crosswalk note 1zR1rI9H07IWq5YM44-GyBe8qM-wmi3ND (p.55 mapping; shared:false) · 2026-10-28 source-aligned wide/mobile path and pip geometry; 1440/375/320 and A4 review: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/mission5-path-review-20261028/; Drive note updated",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u5-e4-mission-6",
@@ -4497,16 +4522,21 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 51,
-      "printedPage": 53,
-      "sourceShape": "직육면체의 활용의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 55,
+      "sourceShape": "마주 보는 두 면의 눈 합이 7인 주사위 4개로 두 모양을 만들었을 때, 각 도형의 겉면 눈의 합이 가장 큰 경우의 두 합을 구합니다.",
+      "answerContract": "ordered-maxima",
       "visualRisk": [
-        "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
-        "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
+        "두 모양의 주사위 배열과 접촉 면, 겉면을 정확히 표시해야 합니다."
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 55쪽 원문 그림과 독립 풀이, 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "sourceAuditUpdate": "2026-10-25: exhaustive enumeration of all 48 legal die face orientations across both contact graphs gives square contact minimum 6 / outer maximum 72 and zigzag contact minimum 4 / outer maximum 76. Responsive and one-page A4 problem/solution reviews passed. Locally connected; publisher key remains unchecked.",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u5-e4-mission-6",
+      "implementationEvidence": "source-5-2-cuboid-page55-mission6.js · source-5-2-cuboid-page55-mission6-audit.js · current focused source/math audit passed 2026-10-27 (answer outer-pip maxima 72/76); fresh browser audit passed 1440/375/320px with zero page errors or horizontal overflow; problem and solution PDFs each one-page A4 · durable source/math and visual evidence: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/; per-item screen/A4: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/mission6-screen-a4-review/ · owner-only Drive runtime crosswalk note 1zR1rI9H07IWq5YM44-GyBe8qM-wmi3ND (p.55 mapping; shared:false) · 2026-10-28 removed spurious internal faces; exhaustive contact optimization and 1440/375/320, A4 review: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page55/source-review-20261025/mission6-figure-review-20261028/; Drive note updated",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e1-exploration",
@@ -4515,16 +4545,18 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 54,
-      "printedPage": 56,
-      "sourceShape": "평균의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: multi-part",
+      "printedPage": 58,
+      "sourceShape": "일곱 사람의 이름과 키(cm) 표를 읽어 평균 구하기",
+      "answerContract": "single-value: 147cm",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 58쪽 표와 원문 수치를 직접 대조하고 합 1029cm, 평균 147cm를 독립 계산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-example-1",
@@ -4533,16 +4565,18 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 54,
-      "printedPage": 56,
-      "sourceShape": "평균의 예제 1-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 58,
+      "sourceShape": "찢어진 성적표: 국어 십의 자리 9, 수학 일의 자리 4와 다른 세 점수 및 평균으로 두 점수 구하기",
+      "answerContract": "ordered-pair: 국어 98점, 수학 84점",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 58쪽 성적표의 보이는 숫자를 직접 대조하고 가능한 자릿수 100쌍을 독립 열거했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-example-2",
@@ -4551,16 +4585,18 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 54,
-      "printedPage": 56,
-      "sourceShape": "평균의 예제 1-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 58,
+      "sourceShape": "도착 순서 5명의 100m 기록에서 앞 세 명·뒤 세 명·전체 평균으로 3번 기록 구하기",
+      "answerContract": "single-value: 15.6초",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 58쪽 평균과 도착 순서를 대조하고 100분의 1초 정수 계산 및 순서를 만족하는 실례로 검산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-example-3",
@@ -4569,16 +4605,18 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 54,
-      "printedPage": 56,
-      "sourceShape": "평균의 예제 1-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 58,
+      "sourceShape": "2·4·6·8·10·12월 기온과 수온의 꺾은선그래프에서 두 평균의 차 구하기",
+      "answerContract": "single-value: 1/3℃",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 58쪽 그래프의 1℃ 눈금과 두 선의 연결을 재대조하고 6월의 점 위치를 정정했습니다. 평균의 차 1/3℃를 분수로 검산했으며 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-example-4",
@@ -4587,16 +4625,18 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 54,
-      "printedPage": 56,
-      "sourceShape": "평균의 예제 1-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 58,
+      "sourceShape": "갑·을의 5회 시험 점수표에서 평균과 두 사람의 회차별 평균 관계로 ㉢ 구하기",
+      "answerContract": "single-value: 78점",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 58쪽 표와 평균 조건을 대조하고 점수 조합을 독립 검산했습니다. 이전 장부의 두 사람 평균 관계를 정정했으며 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-1",
@@ -4605,16 +4645,18 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 55,
-      "printedPage": 57,
-      "sourceShape": "평균의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 59,
+      "sourceShape": "두 수의 평균을 나타내는 ♥ 연산 (23♥□)♥32=33에서 빈 수 구하기",
+      "answerContract": "single-value: 45",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 59쪽 원문 수식과 괄호를 대조하고 평균 연산을 역산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-2",
@@ -4623,16 +4665,18 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 55,
-      "printedPage": 57,
-      "sourceShape": "평균의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 59,
+      "sourceShape": "국어·수학·사회·과학 4과목 성적표와 평균 열, 찢어진 두 점수의 남은 자리로 두 점수 구하기",
+      "answerContract": "ordered-pair: 수학 70점, 사회 83점",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "필기 없는 원문에서 네 과목과 수학 십의 자리 7, 사회 일의 자리 3을 대조하고 가능한 자릿수를 전수 계산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-3",
@@ -4641,16 +4685,18 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 55,
-      "printedPage": 57,
-      "sourceShape": "평균의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 59,
+      "sourceShape": "앞 4일 독서량 83·74·71·64쪽과 다섯째 날이 5일 평균보다 12쪽 많은 조건으로 다섯째 날 구하기",
+      "answerContract": "single-value: 88쪽",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "필기 없는 인쇄 59쪽에서 수치와 5일 전체 평균 조건을 대조하고 산술로 계산했습니다. 다른 사본의 손글씨 85와는 일치하지 않으며 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-4",
@@ -4659,16 +4705,18 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 55,
-      "printedPage": 57,
-      "sourceShape": "평균의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 59,
+      "sourceShape": "평균 42인 자연수 10개 중 하나를 50으로 바꾸어 평균 44가 될 때 원래 수 구하기",
+      "answerContract": "single-value: 30",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 59쪽 수와 한 수만 바꾸는 조건을 대조하고 두 전체 합의 차로 계산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-5",
@@ -4677,16 +4725,18 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 55,
-      "printedPage": 57,
-      "sourceShape": "평균의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 59,
+      "sourceShape": "평균 31인 일곱 자연수를 차례로 1~7만큼 키운 뒤의 평균 구하기",
+      "answerContract": "single-value: 35",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "원문에서 1~7은 원래 수가 아니라 각 수의 증가량임을 확인하고 새 평균 35를 계산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-6",
@@ -4695,16 +4745,18 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 55,
-      "printedPage": 57,
-      "sourceShape": "평균의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 59,
+      "sourceShape": "리듬체조 6명의 심판 점수에서 각 선수별 최고·최저를 제외한 평균을 비교하기",
+      "answerContract": "winner-and-difference: 은영 0.25점",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "원문의 두 선수와 여섯 심판 점수 및 최고·최저 제외 규칙을 대조하고 평균을 독립 계산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-exploration",
@@ -4713,16 +4765,18 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 56,
-      "printedPage": 58,
-      "sourceShape": "평균의 활용의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: multi-part",
+      "printedPage": 60,
+      "sourceShape": "50명 공 넣기 득점 6~0점 학생 수 표에서 4점·0점 빈칸과 빨간 공 34개 조건의 흰 공 수 구하기",
+      "answerContract": "multipart: 4점 12명, 0점 4명; 흰 공 31개",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 60쪽 표, 색별 3·2·1점과 두 물음을 대조하고 공 조합 및 학생 수를 독립 열거했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-example-1",
@@ -4731,16 +4785,18 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 56,
-      "printedPage": 58,
-      "sourceShape": "평균의 활용의 예제 2-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 60,
+      "sourceShape": "400m² 밭을 5명 48분과 9명 40분 동안 캘 때 한 사람의 1시간 평균 작업 넓이 구하기",
+      "answerContract": "single-value: 40m²",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 60쪽 작업 인원·시간·같은 작업량 조건을 대조하고 600인·분을 시간으로 환산해 검산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-example-2",
@@ -4749,16 +4805,18 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 56,
-      "printedPage": 58,
-      "sourceShape": "평균의 활용의 예제 2-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 60,
+      "sourceShape": "5월 31일 동안 매일 50m씩 증가하고 평균 1500m인 달리기의 첫날 거리 구하기",
+      "answerContract": "single-value: 750m",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 60쪽 5월·매일 50m 증가·평균 1500m 조건을 대조하고 31일 전체 수열을 독립 검산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-example-3",
@@ -4767,16 +4825,17 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 56,
-      "printedPage": 58,
-      "sourceShape": "평균의 활용의 예제 2-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 60,
+      "sourceShape": "합격 25명·불합격 75명의 평균 점수 차 40과 전체 평균 62로 합격자 평균 구하기",
+      "answerContract": "ambiguous: 92점 또는 32점 (선발 기준 미명시)",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문은 두 평균의 차만 명시해 어느 쪽이 더 높은지 보장하지 않습니다. 점수순 선발이면 92점, 별도 기준이면 32점도 산술상 가능하므로 공개를 보류합니다.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e2-example-4",
@@ -4785,16 +4844,18 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 56,
-      "printedPage": 58,
-      "sourceShape": "평균의 활용의 예제 2-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 60,
+      "sourceShape": "어른·어린이의 성별 평균 나이와 84명 및 인원 관계로 여자 어린이 수의 남자 어린이 수에 대한 배수 구하기",
+      "answerContract": "single-value: 3배",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 60쪽 나이 기준과 모든 평균·인원 관계를 대조하고 정수 인원 조합을 독립 검사했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-1",
@@ -4803,16 +4864,18 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 57,
-      "printedPage": 59,
-      "sourceShape": "평균의 활용의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 61,
+      "sourceShape": "처음 4일 3명, 다음 7일 5명, 다음 3일 3명의 같은 하루 작업량을 처음부터 4명이 할 때 날짜 구하기",
+      "answerContract": "single-value: 14일",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 61쪽 날짜·인원·동일 하루 작업량을 대조하고 56인·일을 4명으로 나누어 검산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-2",
@@ -4821,16 +4884,18 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 57,
-      "printedPage": 59,
-      "sourceShape": "평균의 활용의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 61,
+      "sourceShape": "서로 다른 두 자리 수 6개의 평균 24에서 가장 큰 수를 2배한 후 20을 뺀 값으로 바꾸어 평균 30이 될 때 원래 최대 구하기",
+      "answerContract": "single-value: 56",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 61쪽의 평균, 가장 큰 수의 변환과 서로 다른 두 자리 수 조건을 대조하고 합의 변화와 구성 가능한 실제 예를 검산했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-3",
@@ -4839,16 +4904,18 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 57,
-      "printedPage": 59,
-      "sourceShape": "평균의 활용의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 61,
+      "sourceShape": "첫 점수 80점과 2~10회 점수 변화 표에서 1~7회 평균 및 9·10회 변화 기호 구하기",
+      "answerContract": "multipart: 평균 86점; ㉠▼·㉡▲",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 61쪽의 9개 회차별 변화와 두 물음을 대조하고 점수 재구성과 네 기호 조합을 독립 검산했습니다. 이전 기록은 다른 점수표 문항을 잘못 연결했습니다. 출판사 답안 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-4",
@@ -4857,16 +4924,17 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 57,
-      "printedPage": 59,
-      "sourceShape": "평균의 활용의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 61,
+      "sourceShape": "300명 중 200명 합격, 합격·불합격 평균 차 10.5점과 전체 평균 72점으로 합격 평균 구하기",
+      "answerContract": "ambiguous: 75.5점 또는 68.5점 (선발 기준 미명시)",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문은 평균의 차만 명시해 높은 쪽을 보장하지 않습니다. 점수순 합격이면 75.5점이지만 기준이 없으면 68.5점도 산술상 가능해 보류합니다.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-5",
@@ -4875,16 +4943,18 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 57,
-      "printedPage": 59,
-      "sourceShape": "평균의 활용의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 61,
+      "sourceShape": "8명 점수표에서 평균과 최고점·두 배 조건으로 빈 두 점수를 구하기",
+      "answerContract": "은경 41점, 효근 94점",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 61쪽 원문과 표를 대조하고 독립 전수 검사. 출판사 답안은 미확인.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-6",
@@ -4893,16 +4963,18 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 57,
-      "printedPage": 59,
-      "sourceShape": "평균의 활용의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 61,
+      "sourceShape": "40명 점수별 학생 수 표와 배점·평균·한 문제만 맞힌 인원으로 3번 정답자 수 구하기",
+      "answerContract": "25명",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 61쪽 원문과 표를 대조하고 독립 전수 검사. 출판사 답안은 미확인.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-exploration",
@@ -4911,16 +4983,18 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 58,
-      "printedPage": 60,
-      "sourceShape": "가능성의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: multi-part",
+      "printedPage": 62,
+      "sourceShape": "직육면체 인접 꼭짓점 사이 중복 방문 없는 모서리 경로",
+      "answerContract": "15가지",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 62쪽 원문과 필요한 그림을 확인하고 독립 경우의 수 열거. 출판사 답안 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-1",
@@ -4929,16 +5003,18 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 58,
-      "printedPage": 60,
-      "sourceShape": "가능성의 예제 3-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 62,
+      "sourceShape": "서로 구별되는 두 주사위 눈의 합이 3의 배수인 경우",
+      "answerContract": "12가지",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 62쪽 원문과 필요한 그림을 확인하고 독립 경우의 수 열거. 출판사 답안 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-2",
@@ -4947,16 +5023,18 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 58,
-      "printedPage": 60,
-      "sourceShape": "가능성의 예제 3-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 62,
+      "sourceShape": "4×3 격자에서 중간점을 지나는 최단 경로",
+      "answerContract": "18가지",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 62쪽 원문과 필요한 그림을 확인하고 독립 경우의 수 열거. 출판사 답안 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3",
@@ -4965,16 +5043,18 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 58,
-      "printedPage": 60,
-      "sourceShape": "가능성의 예제 3-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 62,
+      "sourceShape": "네 점을 잇는 여러 갈래 길에서 중복 방문 없는 경로",
+      "answerContract": "39가지",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 62쪽 원문과 필요한 그림을 확인하고 독립 경우의 수 열거. 출판사 답안 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-example-4",
@@ -4983,16 +5063,18 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 58,
-      "printedPage": 60,
-      "sourceShape": "가능성의 예제 3-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 62,
+      "sourceShape": "서로 다른 남학생 3명과 여학생 3명 중 남학생이 붙어 서는 경우",
+      "answerContract": "144가지",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 62쪽 원문과 필요한 그림을 확인하고 독립 경우의 수 열거. 출판사 답안 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-1",
@@ -5001,16 +5083,18 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 59,
-      "printedPage": 61,
-      "sourceShape": "가능성의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 63,
+      "sourceShape": "네 사람이 모두 자신의 지정 자리를 피하는 배치",
+      "answerContract": "9가지",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 63쪽 원문·조건과 필요한 그림을 확인하고 독립 전수 검사. 출판사 정답 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-2",
@@ -5019,16 +5103,18 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 59,
-      "printedPage": 61,
-      "sourceShape": "가능성의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 63,
+      "sourceShape": "크고 작은 주사위 눈의 곱이 18 이상인 경우",
+      "answerContract": "10가지",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 63쪽 원문·조건과 필요한 그림을 확인하고 독립 전수 검사. 출판사 정답 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-3",
@@ -5037,16 +5123,18 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 59,
-      "printedPage": 61,
-      "sourceShape": "가능성의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 63,
+      "sourceShape": "10·50·100원 동전 15개 이하로 380원 만들기",
+      "answerContract": "8가지",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 63쪽 원문·조건과 필요한 그림을 확인하고 독립 전수 검사. 출판사 정답 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-4",
@@ -5055,16 +5143,18 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 59,
-      "printedPage": 61,
-      "sourceShape": "가능성의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 63,
+      "sourceShape": "3×5 격자 A에서 B를 거쳐 C까지 최단 경로",
+      "answerContract": "24가지",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 63쪽 원문·조건과 필요한 그림을 확인하고 독립 전수 검사. 출판사 정답 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-5",
@@ -5073,16 +5163,18 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 59,
-      "printedPage": 61,
-      "sourceShape": "가능성의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 63,
+      "sourceShape": "집·편의점·공원 왕복 중 편의점을 한 번 지나는 길",
+      "answerContract": "조건부 48가지",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문에서 중간 되돌아감 제한이 명시되지 않아 경로 해석 확인 전 잠금. 일반적인 각 구간 단순 이동이면 48가지.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-6",
@@ -5091,16 +5183,18 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 59,
-      "printedPage": 61,
-      "sourceShape": "가능성의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 63,
+      "sourceShape": "서로 다른 여섯 사람 중 두 사람이 이웃하게 배열",
+      "answerContract": "240가지",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 63쪽 원문·조건과 필요한 그림을 확인하고 독립 전수 검사. 출판사 정답 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e4-exploration",
@@ -5109,16 +5203,18 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 60,
-      "printedPage": 62,
-      "sourceShape": "평균과 가능성의 활용의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: multi-part",
+      "printedPage": 64,
+      "sourceShape": "동전 두 개가 모두 앞면, 주사위 눈이 6의 약수인 가능성",
+      "answerContract": "1/6",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 64쪽 원문을 확인하고 조건의 경우를 독립 전수 검사. 출판사 정답 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e4-example-1",
@@ -5127,16 +5223,18 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 60,
-      "printedPage": 62,
-      "sourceShape": "평균과 가능성의 활용의 예제 4-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 64,
+      "sourceShape": "서로 다른 네 사람 중 A가 양 끝이 아니며 B의 오른쪽에 있을 가능성",
+      "answerContract": "1/4",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 64쪽 원문을 확인하고 조건의 경우를 독립 전수 검사. 출판사 정답 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e4-example-2",
@@ -5145,16 +5243,18 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 60,
-      "printedPage": 62,
-      "sourceShape": "평균과 가능성의 활용의 예제 4-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 64,
+      "sourceShape": "남학생 2명 여학생 3명 중 대표 2명이 모두 여학생일 가능성",
+      "answerContract": "3/10",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 64쪽 원문을 확인하고 조건의 경우를 독립 전수 검사. 출판사 정답 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e4-example-3",
@@ -5163,16 +5263,18 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 60,
-      "printedPage": 62,
-      "sourceShape": "평균과 가능성의 활용의 예제 4-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 64,
+      "sourceShape": "여러 갈래 길에서 ㄹ을 지날 가능성",
+      "answerContract": "조건부 12/13",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문에 경로 선택 방식이 없어 완성 경로 균등 선택 시에만 12/13; 해석 확인 전 잠금.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e4-example-4",
@@ -5181,16 +5283,18 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 60,
-      "printedPage": 62,
-      "sourceShape": "평균과 가능성의 활용의 예제 4-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 64,
+      "sourceShape": "두 주머니의 빨강·파랑·노랑 공에서 다른 색이 나올 가능성",
+      "answerContract": "41/60",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 64쪽 원문을 확인하고 조건의 경우를 독립 전수 검사. 출판사 정답 미대조.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e4-mission-1",

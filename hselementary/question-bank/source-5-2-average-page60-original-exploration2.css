@@ -1,0 +1,4 @@
+.source52-p60e2-table { border-collapse: collapse; width: min(100%, 620px); table-layout: fixed; margin: 1rem auto; text-align: center; }
+.source52-p60e2-table caption { font-weight: 700; margin-bottom: .4rem; }
+.source52-p60e2-table th, .source52-p60e2-table td { border: 1px solid currentColor; padding: .35rem .05rem; font-size: clamp(11px, 2.8vw, 16px); white-space: nowrap; }
+.source52-p60e2-table th:first-child { width: 18%; }

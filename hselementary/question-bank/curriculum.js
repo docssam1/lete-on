@@ -2277,6 +2277,231 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     });
   }
 
+
+  if (source52Dice) {
+    for (const [ordinal, name, generatorKey] of [
+      [1, "다섯 정육면체의 맞붙은 면으로 빈 숫자 찾기", "source52CuboidDiceChainPage55Mission1"],
+      [2, "세 방향 그림으로 마주 보는 글자 찾기", "source52CubeThreeViewsOppositesPage55Mission2"],
+      [3, "전개도로 쌓은 정육면체의 뒤쪽 수 합", "source52CuboidNetStackBackSumPage55Mission3"],
+      [4, "벽에 쌓은 주사위의 보이지 않는 눈의 합", "source52FourDiceWallHiddenPipsPage55Mission4"],
+      [5, "90번 굴린 주사위의 보이는 면", "source52CuboidDiceRollNinetiethFacePage55Mission5"],
+      [6, "붙인 주사위 겉면 눈의 합 최댓값", "source52FourDiceOuterPipsMaxPage55Mission6"]
+    ]) {
+      const id = `5-2-u5-e4-mission-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52Dice.types.push({
+        id, number: source52Dice.types.length + 1, typeNumber, name, label: name,
+        difficultyBand: 0, sourceItemId: id, sourceItemLabel: `Mission ${ordinal}`,
+        sourceSection: "mission", sourceTier: "advanced", sourcePdfPage: 51, sourcePrintedPage: 55,
+        sourceVerified: true, publisherKeyVerified: false, reviewLocked: false, generatorKey,
+        generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+        answerVisualRequired: ordinal >= 5, answerVisualStatus: ordinal === 5 ? "verified-drawing" : ordinal === 6 ? "verified-contact-witnesses" : "not-required", implementationStatus: "fixed-verified-pool"
+      });
+    }
+  }
+
+  const source52Average = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u6");
+  const source52AverageFirst = source52Average?.subunits.find(subunit => subunit.name === "평균 구하기");
+  if (source52AverageFirst) {
+    const id = "5-2-u6-e1-exploration", name = "키 표를 보고 평균 구하기";
+    const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52AverageFirst.types.push({
+      id, number: source52AverageFirst.types.length + 1, typeNumber, name, label: name,
+      difficultyBand: 0, sourceItemId: id, sourceItemLabel: "개념탐구 1", sourceSection: "exploration", sourceTier: "advanced",
+      sourcePdfPage: 54, sourcePrintedPage: 58, sourceVerified: true, publisherKeyVerified: false, reviewLocked: false,
+      generatorKey: "source52AverageOriginalPage58Exploration1", generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+      answerVisualRequired: false, answerVisualStatus: "not-required", implementationStatus: "fixed-verified-pool"
+    });
+  }
+
+  if (source52AverageFirst) {
+    const id = "5-2-u6-e1-example-1", name = "평균과 찢어진 성적표로 점수 구하기";
+    const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52AverageFirst.types.push({
+      id, number: source52AverageFirst.types.length + 1, typeNumber, name, label: name,
+      difficultyBand: 0, sourceItemId: id, sourceItemLabel: "예제 1-1", sourceSection: "example", sourceTier: "advanced",
+      sourcePdfPage: 54, sourcePrintedPage: 58, sourceVerified: true, publisherKeyVerified: false, reviewLocked: false,
+      generatorKey: "source52AverageOriginalPage58Example11", generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+      answerVisualRequired: false, answerVisualStatus: "not-required", implementationStatus: "fixed-verified-pool"
+    });
+  }
+
+  if (source52AverageFirst) {
+    const id = "5-2-u6-e1-example-2", name = "겹치는 평균으로 가운데 기록 구하기";
+    const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52AverageFirst.types.push({
+      id, number: source52AverageFirst.types.length + 1, typeNumber, name, label: name,
+      difficultyBand: 0, sourceItemId: id, sourceItemLabel: "예제 1-2", sourceSection: "example", sourceTier: "advanced",
+      sourcePdfPage: 54, sourcePrintedPage: 58, sourceVerified: true, publisherKeyVerified: false, reviewLocked: false,
+      generatorKey: "source52AverageOriginalPage58Example12", generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+      answerVisualRequired: false, answerVisualStatus: "not-required", implementationStatus: "fixed-verified-pool"
+    });
+  }
+
+  if (source52AverageFirst) {
+    const id = "5-2-u6-e1-example-3", name = "기온과 수온 그래프에서 평균의 차 구하기";
+    const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52AverageFirst.types.push({
+      id, number: source52AverageFirst.types.length + 1, typeNumber, name, label: name,
+      difficultyBand: 0, sourceItemId: id, sourceItemLabel: "예제 1-3", sourceSection: "example", sourceTier: "advanced",
+      sourcePdfPage: 54, sourcePrintedPage: 58, sourceVerified: true, publisherKeyVerified: false, reviewLocked: false,
+      generatorKey: "source52AverageOriginalPage58Example13", generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+      answerVisualRequired: false, answerVisualStatus: "not-required", implementationStatus: "fixed-verified-pool"
+    });
+  }
+
+  if (source52AverageFirst) {
+    const id = "5-2-u6-e1-example-4", name = "두 사람의 시험 평균으로 빈 점수 구하기";
+    const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52AverageFirst.types.push({
+      id, number: source52AverageFirst.types.length + 1, typeNumber, name, label: name,
+      difficultyBand: 0, sourceItemId: id, sourceItemLabel: "예제 1-4", sourceSection: "example", sourceTier: "advanced",
+      sourcePdfPage: 54, sourcePrintedPage: 58, sourceVerified: true, publisherKeyVerified: false, reviewLocked: false,
+      generatorKey: "source52AverageOriginalPage58Example14", generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+      answerVisualRequired: false, answerVisualStatus: "not-required", implementationStatus: "fixed-verified-pool"
+    });
+  }
+
+  if (source52AverageFirst) {
+    for (const [ordinal, name, generatorKey] of [
+      [1, "평균 기호의 계산식에서 빈 수 구하기", "source52AverageOriginalPage59Mission1"],
+      [2, "찢어진 성적표의 두 점수 구하기", "source52AverageOriginalPage59Mission2"]
+    ]) {
+      const id = `5-2-u6-e1-mission-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52AverageFirst.types.push({id, number:source52AverageFirst.types.length+1, typeNumber, name, label:name,
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${ordinal}`, sourceSection:"mission", sourceTier:"advanced",
+        sourcePdfPage:55, sourcePrintedPage:59, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
+        generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  if (source52AverageFirst) {
+    for (const [ordinal, name, generatorKey] of [
+      [3, "독서 평균으로 다섯째 날 구하기", "source52AverageOriginalPage59Mission3"],
+      [4, "평균 변화로 고치기 전 자연수 구하기", "source52AverageOriginalPage59Mission4"]
+    ]) {
+      const id = `5-2-u6-e1-mission-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52AverageFirst.types.push({id, number:source52AverageFirst.types.length+1, typeNumber, name, label:name,
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${ordinal}`, sourceSection:"mission", sourceTier:"advanced",
+        sourcePdfPage:55, sourcePrintedPage:59, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
+        generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  if (source52AverageFirst) {
+    for (const [ordinal, name, generatorKey] of [
+      [5, "일곱 수가 각각 커진 뒤의 평균", "source52AverageOriginalPage59Mission5"],
+      [6, "최고·최저를 뺀 심판 점수의 평균 비교", "source52AverageOriginalPage59Mission6"]
+    ]) {
+      const id = `5-2-u6-e1-mission-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52AverageFirst.types.push({id, number:source52AverageFirst.types.length+1, typeNumber, name, label:name,
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${ordinal}`, sourceSection:"mission", sourceTier:"advanced",
+        sourcePdfPage:55, sourcePrintedPage:59, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
+        generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  const source52AverageApplication = source52Average?.subunits.find(subunit => subunit.name === "평균의 활용");
+  if (source52AverageApplication) {
+    const id = "5-2-u6-e2-exploration", name = "공 넣기 점수와 평균으로 학생 수 구하기";
+    const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
+      difficultyBand:0, sourceItemId:id, sourceItemLabel:"개념탐구 2", sourceSection:"exploration", sourceTier:"advanced",
+      sourcePdfPage:56, sourcePrintedPage:60, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
+      generatorKey:"source52AverageOriginalPage60Exploration2", generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+      answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+  }
+
+  if (source52AverageApplication) {
+    for (const [ordinal, name, generatorKey] of [
+      [1, "한 사람의 시간당 작업 넓이", "source52AverageOriginalPage60Example21"],
+      [2, "평균 달리기 거리로 첫날 거리 구하기", "source52AverageOriginalPage60Example22"]
+    ]) {
+      const id = `5-2-u6-e2-example-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`예제 2-${ordinal}`, sourceSection:"example", sourceTier:"advanced",
+        sourcePdfPage:56, sourcePrintedPage:60, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
+        generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  if (source52AverageApplication) {
+    const id = "5-2-u6-e2-example-4", name = "어른·어린이의 평균 나이와 인원";
+    const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
+      difficultyBand:0, sourceItemId:id, sourceItemLabel:"예제 2-4", sourceSection:"example", sourceTier:"advanced",
+      sourcePdfPage:56, sourcePrintedPage:60, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
+      generatorKey:"source52AverageOriginalPage60Example24", generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+      answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+  }
+
+  if (source52AverageApplication) {
+    for (const [ordinal, name, generatorKey] of [
+      [1, "사람 수에 따른 일하는 날짜 구하기", "source52AverageOriginalPage61Mission1"],
+      [2, "평균 변화로 가장 큰 수 구하기", "source52AverageOriginalPage61Mission2"]
+    ]) {
+      const id = `5-2-u6-e2-mission-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${ordinal}`, sourceSection:"mission", sourceTier:"advanced",
+        sourcePdfPage:57, sourcePrintedPage:61, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
+        generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  if (source52AverageApplication) {
+    const id = "5-2-u6-e2-mission-3", name = "시험 점수 변화와 평균 구하기";
+    const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
+      difficultyBand:0, sourceItemId:id, sourceItemLabel:"Mission 3", sourceSection:"mission", sourceTier:"advanced",
+      sourcePdfPage:57, sourcePrintedPage:61, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
+      generatorKey:"source52AverageOriginalPage61Mission3", generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+      answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+  }
+
+  if (source52AverageApplication) {
+    for (const [n,name] of [[5,"여덟 명의 점수와 평균"],[6,"점수별 학생 수와 맞힌 문제"]]) {
+      const id = `5-2-u6-e2-mission-${n}`;
+      const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${n}`, sourceSection:"mission", sourceTier:"advanced",
+        sourcePdfPage:57, sourcePrintedPage:61, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
+        generatorKey:`source52AverageOriginalPage61Mission${n}`, generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  const source52Count = source52Average?.subunits.find(subunit => subunit.name === "사건의 가짓수");
+  if (source52Count) for (const [i,name] of ["직육면체 모서리의 길 세기","두 주사위 눈의 합이 3의 배수","경유점을 지나는 격자 최단 경로","여러 갈래 길의 수","남학생이 이웃하여 줄 서기"].entries()) {
+    const id = i ? `5-2-u6-e3-example-${i}` : "5-2-u6-e3-exploration";
+    const typeNumber = Math.max(0,...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,
+      sourceItemLabel:i ? `예제 3-${i}` : "개념탐구 3",sourceSection:i ? "example" : "exploration",sourceTier:"advanced",sourcePdfPage:58,sourcePrintedPage:62,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,
+      generatorKey:i ? `source52CountPage62Example${i}` : "source52CountPage62Exploration",generationMode:"fixed-verified-pool",verifiedVariantTarget:1,verifiedVariantCount:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+  }
+
+  if (source52Count) for (const [n,name] of [[1,"네 사람이 자기 자리를 피하는 방법"],[2,"두 주사위의 곱이 18 이상"],[3,"동전 15개 이하로 380원 만들기"],[4,"B를 지나는 격자 최단 경로"],[6,"두 사람이 이웃하는 줄 세우기"]]) {
+    const id = `5-2-u6-e3-mission-${n}`;
+    const typeNumber = Math.max(0,...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`Mission ${n}`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:59,sourcePrintedPage:63,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52CountPage63Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:1,verifiedVariantCount:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+  }
+
+  const source52Probability = source52Average?.subunits.find(subunit => subunit.name === "사건의 가능성");
+  if (source52Probability) for (const [n,name] of [[0,"동전과 주사위의 가능성"],[1,"줄에서 오른쪽에 있을 가능성"],[2,"대표가 모두 여학생일 가능성"],[4,"두 주머니에서 다른 색 공 뽑기"]]) {
+    const id = n ? `5-2-u6-e4-example-${n}` : "5-2-u6-e4-exploration";
+    const typeNumber = Math.max(0,...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:n?`예제 4-${n}`:"개념탐구 4",sourceSection:n?"example":"exploration",sourceTier:"advanced",sourcePdfPage:60,sourcePrintedPage:64,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:n?`source52ProbabilityPage64Example${n}`:"source52ProbabilityPage64Exploration",generationMode:"fixed-verified-pool",verifiedVariantTarget:1,verifiedVariantCount:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;

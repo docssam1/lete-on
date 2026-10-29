@@ -1,3 +1,161 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 64 Exploration 4 and Examples 4-1–4-4
+
+- Source-checked and independently enumerated Exploration 4 and Examples 4-1, 4-2, 4-4: 1/6, 1/4, 3/10, 41/60 under the usual equally likely outcome models. Example 4-1 prior ledger incorrectly required adjacency and reversed the relationship; the printed condition is A to the right of B, with A not at either end. The six valid arrangements include nonadjacent cases. Publisher answer keys remain unverified.
+- Example 4-3 remains locked: 36 of 39 simple paths pass ㄹ, so 12/13 applies if complete paths are uniformly chosen. The original does not specify a path-selection model; choosing uniformly at each available junction can yield a different probability. The distinction is recorded pending clarification.
+- Independent enumeration, 1440/375/320px browser, stacked fractions and separate one-page A4 checks, release gate and 79,380 runtime generations passed. Counts: 2,111 types, 1,323 generatable, 788 awaiting review. The broader inventory audit retains 81 existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Preserve existing work and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 63 Missions 1–6
+
+- Independently enumerated and connected Missions 1, 2, 3, 4, 6: 9 derangements, 10 distinguishable dice outcomes, 8 coin combinations, 24 shortest grid paths through B, and 240 arrangements with the two people adjacent. The source-ledger Mission 2 label incorrectly said sum; corrected to product. Publisher answer keys remain unverified.
+- Mission 5 remains locked: the commonly intended 48 requires each outward/return leg to proceed without intermediate backtracking; the original does not explicitly state that restriction. Its source description and conditional reasoning are recorded without adding a silent assumption.
+- Independent enumeration, source grid coordinates, 1440/375/320px browser and separate one-page A4 checks, release gate and 79,140 runtime generations passed. Counts: 2,107 types, 1,319 generatable, 788 awaiting review. The broader inventory audit retains 81 existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Preserve existing work and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 62 Exploration 3 and Examples 3-1–3-4
+
+- Independently enumerated the source diagrams and cases: adjacent cuboid vertices 15 edge paths (interpreting the diagram as edge paths and stating that in the learner prompt); distinguishable two dice 12; 4×3 grid via its middle point 18; multi-edge roads 39 with edge counts 3/1/2/2/4; six distinct students with the three boys adjacent 144. Publisher answer keys remain unverified. Source ledger page and descriptions corrected.
+- Exhaustive enumeration, diagram edge counts, 1440/375/320px browser checks, separate A4 problem/solution checks, release gate and 78,840 runtime generations passed. Counts: 2,102 types, 1,314 generatable, 788 awaiting review. Broader inventory audit retains 81 existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Page 61 Mission 4 remains locked pending selection criteria. Preserve existing work and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 61 Missions 5–6
+
+- Printed p.61 Mission 5: the two missing scores sum to 135; the highest score exceeds 91 and is twice another score, yielding Eungyeong 41 and Hyogeun 94. The prior review ledger incorrectly described another question. Mission 6: the 25- and 35-point groups contain 10 and 11 students, respectively; only six of the 25-point students answered question 3 alone, so 25 students answered question 3 correctly. Publisher answer keys remain unverified.
+- Independent enumeration, source table and blank-cell checks, 1440/375/320px browser checks, separate one-page A4 problem and solution PDFs, release gate and 78,540 runtime generations passed. Counts: 2,097 types, 1,309 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Mission 4 stays locked pending selection criteria. Preserve existing work and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 61 Missions 3–4
+
+- Printed p.61 Mission 3: the first seven scores total 602, giving a mean of 86. Enumerating the four sign combinations for the last three scores gives ㉠▼ and ㉡▲ as the unique combination with mean 89. The prior ledger described an unrelated score table. Publisher answer key remains unverified.
+- Mission 4 remains locked: its source gives 200 passers, 100 non-passers, overall mean 72 and a difference of 10.5 between group means, but does not explicitly state selection is in score order. Both (75.5, 65) and (68.5, 79) satisfy the arithmetic; the former follows if selection is by score. The prior ledger described an unrelated problem.
+- Source and independent enumeration, 1440/375/320px browser, separate one-page A4 checks, release gate and 78,420 runtime generations passed. Counts: 2,095 types, 1,307 generatable, 788 awaiting review. The broader inventory audit retains 81 pre-existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Preserve existing work and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 61 Missions 1–2
+
+- Printed p.61 Mission 1: the three work periods total 56 person-days, so four people take 14 days. Mission 2: replacing the largest of six two-digit numbers by twice itself minus 20 raises their sum by 36, so the original largest is 56. The distinct two-digit witness 10,11,12,13,42,56 satisfies both averages. Publisher answer keys remain unverified.
+- Source conditions, independent arithmetic and constructive witness, 1440/375/320px browser, four separate one-page A4 visual checks, release gate and 78,360 runtime generations passed. Handwriting was not used.
+- Counts: 2,094 types, 1,306 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Example 2-3 remains locked pending clarification of its selection rule; preserve dirty worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 60 Examples 2-3–2-4
+
+- Printed p.60 Example 2-4: the 20-year age boundary makes child mean lower than adult mean. Independent integer-count enumeration gives 63 male adults, 68 children, 17 boys and 51 girls; the requested ratio is 3. Publisher answer key unverified.
+- Example 2-3 stays locked: its source says only that the passed/failed means differ by 40, and does not explicitly say selection is in score order. Both (passed, failed) means (92,52) and (32,72) satisfy the printed arithmetic; 92 follows if selection is by score. Updated the ledger to preserve that distinction rather than silently add a condition. Confirm selection criteria or publisher answer before release.
+- Source conditions, independent integer and score-case enumeration, 1440/375/320px browser, separate one-page A4 visual checks, release gate and 78,240 runtime generations passed. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Counts: 2,092 types, 1,304 generatable, 788 awaiting review. Preserve dirty worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 60 Examples 2-1–2-2
+
+- Printed p.60 Example 2-1: 5×48+9×40=600 person-minutes, so one person works 10 hours and clears 40m² per hour. Example 2-2: 31 days in May, increasing 50m daily with mean 1,500m gives first day 750m. Publisher answer keys remain unverified.
+- Source conditions, independent unit conversion and full 31-day sequence, 1440/375/320px browser, four separate one-page A4 visual checks, release gate and 78,180 runtime generations passed. Shorter display names were rechecked after print inspection; handwriting was not used.
+- Counts: 2,091 types, 1,303 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Remaining Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 60 Exploration 2
+
+- Printed p.60 source asks both score-table blanks and white-ball count. For 50 students at mean 3.8, the score sum is 190: the 4-point group has 12 and the 0-point group 4. Enumerating the eight subsets of red/white/blue balls and applying 34 red balls gives 31 white balls. Both source subquestions remain one fixed question. Publisher answer key unverified.
+- Source score table and point assignments, independent subset and count enumeration, 1440/375/320px browser, separate one-page A4 visual checks, release gate and 78,060 runtime generations passed. Handwriting was not used.
+- Counts: 2,089 types, 1,301 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Remaining Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 59 Missions 5–6
+
+- Printed p.59 Mission 5 starts with seven natural numbers of mean 31; increments 1 through 7 total 28, so the new mean is 35. The prior ledger wrongly treated the increments as the original numbers. Mission 6 is a rhythmic-gymnastics judges table, not the unrelated eight-person score table in the previous ledger: discard each athlete's highest and lowest of six marks, yielding Eunyoung 6.5, Hyejeong 6.25 and a 0.25-point lead for Eunyoung. Publisher answer keys remain unverified.
+- Source text and all twelve table cells, independent sum and trimmed-mean checks, 1440/375/320px browser, four separate one-page A4 visual checks, release gate and 78,000 runtime generations passed. Handwriting was not used.
+- Counts: 2,088 types, 1,300 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Remaining Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 59 Missions 3–4
+
+- Printed p.59 Mission 3: first four reading counts are 83,74,71,64; the fifth day exceeds the five-day mean by 12, giving mean 76 and fifth day 88 pages. An annotated source copy says 85, which fails the printed condition; handwriting was not used as evidence. Mission 4: changing one of ten numbers from 30 to 50 increases the average from 42 to 44. Publisher answer keys remain unverified.
+- Source numbers and conditions, independent arithmetic and candidate checks, 1440/375/320px browser, four separate one-page A4 visual checks, release gate and 77,880 runtime generations passed. The Mission 3 display name was shortened after print inspection and the browser/A4 check rerun.
+- Counts: 2,086 types, 1,298 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Remaining Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 59 Missions 1–2
+
+- Printed p.59 Mission 1: (23♥□)♥32=33, with ♥ the mean; independently solved □=45. Mission 2: four subjects (not five), with the visible digits 7 in mathematics and 3 in social studies; the total is 328 and the unique scores are mathematics 70, social studies 83. The previous ledger miscounted the average column as a fifth subject. Both publisher answer keys are unverified; handwritten entries were not used.
+- Source equation, an unmarked original score table, independent arithmetic and digit enumeration, 1440/375/320px browser, four separate one-page A4 visual checks, release gate and 77,760 runtime generations passed.
+- Counts: 2,084 types, 1,296 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Remaining Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-4
+
+- Printed p.58 source compares the average of Eul's first two tests to Gap's fourth and fifth, not to Eul's own fourth and fifth as the prior ledger stated. Corrected the condition and result: intermediary values ㉠=85 and ㉡=95 give the requested ㉢=78. Publisher answer key unverified; handwritten entries were not used as evidence.
+- Independently checked all 1,030,301 triples of integer scores in 0–100 and found one solution. 1440/375/320px browser, separate one-page A4 visual checks, release gate and 77,640 runtime generations passed.
+- Counts: 2,082 types, 1,294 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Other Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-3
+
+- Printed p.58 graph checked against both source scans: air temperatures 4,7,11,21,16,7 sum to 66; water 7,9,10,14,16,12 sum to 68. Their exact mean difference is 1/3°C. The prior ledger's provisional 2/3°C swapped the June points; the original line connections show June air 11°C and water 10°C. The publisher answer key remains unverified.
+- Checked all twelve SVG points and both line vertices against the 1°C grid and source values. 1440/375/320px browser, separate one-page A4 visual checks, release gate and 77,580 runtime generations passed.
+- Counts: 2,081 types, 1,293 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Other Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-2
+
+- Source PDF p.54 / clean comparison PDF p.53 / printed p.58: one fixed original 100m overlapping-average question. The first three sum to 45.3 seconds, last three to 49.2 seconds, and all five to 78.9 seconds, so the repeated middle record is 15.6 seconds. The ordered witness 14.8, 14.9, 15.6, 16.7, 16.9 satisfies all conditions. Publisher answer key unverified.
+- Exact integer-hundredths calculation and source ledger checks passed. Browser checks at 1440/375/320px and separate one-page A4 problem and solution visual checks passed. Release gate and 77,520 runtime generations passed.
+- Counts: 2,080 types, 1,292 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Other Unit 6 source items remain locked; preserve the dirty source worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-1
+
+- Source PDF p.54 / clean comparison PDF p.53 / printed p.58: reconstructed one fixed original torn-score table with visible Korean tens digit 9 and mathematics units digit 4. Five-score total 430, Korean and mathematics total 182; independent digit enumeration yields Korean 98 and mathematics 84. The publisher answer key remains unverified.
+- Corrected the previously unresolved source review and its counters. Source, ledger, 1440/375/320px browser and separate one-page A4 problem and solution visual checks passed. Release gate and 77,460 runtime generations passed.
+- Counts: 2,079 types, 1,291 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Other Unit 6 source items remain locked; preserve the dirty source worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 6 Page 58 Exploration 1
+
+- Source PDF p.54 / clean comparison PDF p.53 / printed p.58: one fixed original height-table question, seven source values sum to 1,029cm and average 147cm. Original book labels and numbers are preserved; the publisher answer key is unverified. The 56th printed page is a progress log, not questions.
+- Independent integer-tenths arithmetic and ledger checks passed. Browser checks at 1440, 375 and 320px passed; separate problem and solution A4 outputs are each one page and visually checked. Release gate passed, as did 77,400 runtime generation checks.
+- Counts: 2,078 types, 1,290 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Other Unit 6 source items remain locked; preserve the dirty source worktree and student data.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 5 Page 55 Missions 5–6
+
+- Source PDF p.51 / clean comparison PDF p.50 / printed p.55. Added two fixed source questions: after 90 rolls the die shows top 5, front 6, right 4; maximum outside pip sums are 72 for the square and 76 for the zigzag. Publisher answer keys remain unverified; the source path's continuation is read as straight after its marked turn.
+- Independently checked 90 normal-vector rotations, pip geometry, contact tuples and same-die attainability. Source, ledger, 1440/375/320px browser and four one-page A4 checks passed; release gate and 77,340 runtime generations passed.
+- Counts: 2,077 types, 1,289 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Preserve the dirty source worktree and student data. Other locked source items need independent review.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 5 Page 55 Missions 3–4
+
+- Source PDF p.51 / clean comparison PDF p.50 / printed p.55. Added two fixed source questions: six-cube net stack target 2; four-die unseen pip sum 57. Publisher answer keys remain unverified.
+- Mission 3 independently folds the net and checks all six candidate values. Mission 4 independently verifies the nine visible faces sum to 27 and subtracts them from 84 total pips. The fourth die is treated as fully concealed in the source view; exact physical arrangement has not been independently verified. Source, ledger, 1440/375/320px browser and four one-page A4 checks passed; release gate and 77,220 runtime generations passed.
+- Counts: 2,075 types, 1,287 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Preserve the dirty source worktree and student data. Other locked source items need independent review.
+
+---
+
+## 2026-10-29 Grade 5-2 Unit 5 Page 55 Missions 1–2
+
+- Source PDF p.51 / clean comparison PDF p.50 / printed p.55. Added two fixed source questions: five-die contact-chain target 4 and opposite pairs 가–라, 나–마, 다–바. Publisher answer keys remain unverified; printed glyph interpretation is a source input.
+- Independently enumerated legal contact tuples and checked cube-view adjacency with a realizable rotation. Source, ledger, 1440/375/320px browser and four one-page A4 checks passed; release gate and 77,100 runtime generations passed.
+- Counts: 2,073 types, 1,285 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Preserve the dirty source worktree and student data. Other locked source items need independent review.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 5 Page 54 Exploration 4
 
 - Source PDF p.50 / clean comparison PDF p.49 / printed p.54. Added one fixed source question: the seven bottom values are 3,4,2,1,4,3,1 and sum to 18. The publisher answer key remains unverified.
