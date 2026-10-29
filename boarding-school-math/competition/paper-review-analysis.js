@@ -19,23 +19,37 @@
     const counts = { correct: 0, wrong: 0, blank: 0, unmarked: 0 };
     const domains = Object.keys(domainNames).map(function (id) { return { id: id, name: domainNames[id], attempted: 0, correct: 0, wrong: 0, blank: 0, rate: null, evidence: "미측정" }; });
     const byDomain = new Map(domains.map(function (domain) { return [domain.id, domain]; }));
+    const wrongItemNumbersByDomain = new Map(domains.map(function (domain) { return [domain.id, []]; }));
+    const blankItemNumbersByDomain = new Map(domains.map(function (domain) { return [domain.id, []]; }));
+    const reviewItems = [];
     const reasons = Object.keys(reasonNames).map(function (id) { return { id: id, name: reasonNames[id], count: 0 }; });
     const byReason = new Map(reasons.map(function (reason) { return [reason.id, reason]; }));
     let unclassified = 0;
     let domainClassified = 0;
     let reasonClassified = 0;
-    for (const entry of entries) {
+    for (let index = 0; index < entries.length; index += 1) {
+      const entry = entries[index];
       if (!entry || !statusIds.includes(entry.status) || !domainIds.includes(entry.domain) || !reasonIds.includes(entry.reason)) {
         return { valid: false, error: "문항별 표시와 영역을 확인하세요." };
       }
       counts[entry.status] += 1;
       if (entry.status === "unmarked") continue;
+      if (entry.status === "wrong" || entry.status === "blank") {
+        reviewItems.push(Object.freeze({ number: index + 1, status: entry.status, domain: entry.domain, reason: entry.reason }));
+      }
       if (entry.domain === "unclassified") { unclassified += 1; }
       else {
         domainClassified += 1;
         const domain = byDomain.get(entry.domain);
-        if (entry.status === "blank") domain.blank += 1;
-        else { domain.attempted += 1; domain[entry.status] += 1; }
+        if (entry.status === "blank") {
+          domain.blank += 1;
+          blankItemNumbersByDomain.get(entry.domain).push(index + 1);
+        }
+        else {
+          domain.attempted += 1;
+          domain[entry.status] += 1;
+          if (entry.status === "wrong") wrongItemNumbersByDomain.get(entry.domain).push(index + 1);
+        }
       }
       if (entry.status === "wrong" && entry.reason !== "none") {
         reasonClassified += 1;
@@ -49,6 +63,13 @@
       domain.evidence = domain.attempted >= 3 ? "3문제 이상" : domain.attempted ? "3문제 미만 · 비교 보류" : "미측정";
     });
     const comparable = domains.filter(function (domain) { return domain.attempted >= 3; }).sort(function (a, b) { return a.rate - b.rate; });
+    const lowestRate = comparable.length ? comparable[0].rate : null;
+    const highestRate = comparable.length ? comparable[comparable.length - 1].rate : null;
+    const lowestDomains = comparable.length >= 2 && lowestRate < highestRate
+      ? comparable.filter(function (domain) { return domain.rate === lowestRate; }).map(function (domain) {
+        return Object.freeze({ id: domain.id, name: domain.name, correct: domain.correct, attempted: domain.attempted, blank: domain.blank });
+      })
+      : [];
     let scoreEstimate = null;
     if (counts.unmarked === 0 && itemCount === 25 && program === "amc8") {
       scoreEstimate = Object.freeze({ points: counts.correct, max: itemCount, label: "AMC 8 참고 원점수" });
@@ -67,7 +88,11 @@
       reasonClassified: reasonClassified,
       domains: domains,
       reasons: reasons.filter(function (reason) { return reason.count > 0; }),
-      reviewFirst: comparable.length >= 2 && comparable[0].rate < comparable[comparable.length - 1].rate ? comparable[0].name : null,
+      lowestDomains: lowestDomains,
+      reviewItems: reviewItems,
+      domainReviewItemNumbers: Object.freeze(Object.fromEntries(domains.map(function (domain) {
+        return [domain.id, Object.freeze({ wrong: wrongItemNumbersByDomain.get(domain.id).slice(), blank: blankItemNumbersByDomain.get(domain.id).slice() })];
+      }))),
       scoreEstimate: scoreEstimate,
       officialScore: null,
       level: null

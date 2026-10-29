@@ -22,12 +22,12 @@
       ["계산 확인", "분수·소수의 답을 어림하거나 거꾸로 계산해 확인해요."], ["비율 읽기", "한 단위당 양과 백분율이 상황에서 무엇인지 말해요."], ["문장제 나타내기", "조건을 수직선·표·식으로 바꿔 보아요."], ["막힌 곳 다시 보기", "설명하기 어려운 개념부터 다시 풀어요."] ] },
     { grade: 6, title: "비율·정수·식 연결하기", source: "provided", core: "Pre-Algebra에 필요한 비율, 정수, 식, 기하, 데이터를 차근차근 익혀요.", bridge: "비와 비율 → 단위율 → 비례식 → 일차 관계", steps: [
       ["뜻부터 확인", "분수·정수·백분율과 식이 무엇을 뜻하는지 설명해요."], ["새 문제에 써 보기", "배운 개념을 처음 보는 문장제에 적용해요."], ["원할 때 도전", "준비가 되면 AMC 8 문제나 SAT형 문장제를 접해요."], ["틀린 이유 찾기", "계산, 개념, 문제 읽기 중 어디서 막혔는지 살펴봐요."] ] },
-    { grade: 7, title: "유리수에서 Algebra 1로", source: "provided", core: "유리수, 비례, 식과 방정식, 기하를 연결해 보세요. 학교 과목 순서는 실제 수업에 맞춰 확인해요.", bridge: "유리수 연산 → 비례 관계 → 식·방정식 → 기하·혼합 문제", steps: grade7Stops.map(function (stop) { return [stop.title, stop.description]; }) },
-    { grade: 8, title: "대수와 기하를 함께", source: "provided", core: "함수와 기하를 함께 공부해요. 같은 관계를 그래프·식·그림으로 설명해 봐요.", bridge: "일차 관계 → 함수로 나타내기 → 이차 관계·기하", steps: [
+    { grade: 7, title: "유리수에서 Algebra 1로", source: "provided", pathNote: "가속 학습 예시 · 학교 학년 기준 아님", core: "유리수, 비례, 식과 방정식, 기하를 연결해 보세요. 학교 과목 순서는 실제 수업에 맞춰 확인해요.", bridge: "유리수 연산 → 비례 관계 → 식·방정식 → 기하·혼합 문제", steps: grade7Stops.map(function (stop) { return [stop.title, stop.description]; }) },
+    { grade: 8, title: "대수와 기하를 함께", source: "provided", pathNote: "가속 학습 예시 · 학교 학년 기준 아님", core: "함수와 기하를 함께 공부해요. 같은 관계를 그래프·식·그림으로 설명해 봐요.", bridge: "일차 관계 → 함수로 나타내기 → 이차 관계·기하", steps: [
       ["일차식·기하 점검", "일차 관계와 도형의 기본 성질을 설명할 수 있는지 확인해요."], ["그래프·식 연결", "같은 관계를 그래프·방정식·도형으로 옮기고 무엇이 같은지 말해요."], ["준비되면 심화", "앞 개념이 익숙하고 원한다면 이차식이나 AMC 10/12 문제에 도전해요."], ["풀이 비교", "맞힌 문제도 다른 풀이와 비교하고, 틀린 문제는 막힌 지점을 적어요."] ] },
     { grade: 9, title: "함수와 기하 증명 확인", source: "inferred", core: "7·8·10학년 자료를 잇는 추정안이에요. 실제 과목 순서는 학교 수업을 먼저 확인해요.", bridge: "좌표기하·닮음 → 삼각비 → 함수 → Pre-Calculus 준비", steps: [
       ["빈 곳 메우기", "Algebra 2의 함수·방정식과 기하 증명을 다시 확인해요."], ["서로 연결하기", "좌표·닮음·삼각비를 그래프와 식으로 나타내요."], ["원할 때 도전", "준비가 되면 AMC 혼합 문제나 SAT/PSAT 영역별 문제를 풀어요."], ["다음 과목 확인", "풀이와 설명을 살펴보고 Pre-Calculus 준비를 선생님과 확인해요."] ] },
-    { grade: 10, title: "함수·삼각법과 증명", source: "provided", core: "Pre-Calculus의 함수와 삼각법을 깊이 이해해요. 경시와 SAT는 각각 필요한 만큼 준비해요.", bridge: "함수·삼각법 → 복소수·벡터 → 풀이 정당화·증명", steps: [
+    { grade: 10, title: "함수·삼각법과 증명", source: "provided", pathNote: "가속 학습 예시 · 학교 학년 기준 아님", core: "Pre-Calculus의 함수와 삼각법을 깊이 이해해요. 경시와 SAT는 각각 필요한 만큼 준비해요.", bridge: "함수·삼각법 → 복소수·벡터 → 풀이 정당화·증명", steps: [
       ["개념 설명", "함수와 삼각법의 정의를 그래프와 함께 설명해요."], ["개념 섞어 풀기", "대수·기하·정수론·조합이 함께 쓰인 문제를 풀어요."], ["필요한 실전 연습", "준비도에 따라 AMC 12/AIME 또는 SAT 문제를 시간 재고 풀어요."], ["근거 쓰기", "왜 맞는지 적고 처음 보는 문제에 다시 적용해요."] ] },
     { grade: 11, title: "학교 과목 순서에 맞춰 연결", source: "inferred", core: "11학년의 수학 과목은 학교와 학생의 이수 경로에 따라 달라요. 현재 과목과 선수 개념을 확인한 뒤 함수·모델링·자료·증명을 필요한 범위에서 연결해요.", bridge: "현재 수강 과목 확인 → 함수·모델·자료 연결 → 선택 심화", steps: [
       ["과목과 선수 개념 확인", "성적표와 학교 과목 안내에서 현재 수업, 선수 조건, 다음 선택지를 확인해요."], ["표현을 오가며 설명", "현재 배우는 내용을 식·그래프·표·말로 나타내고 서로 어떻게 이어지는지 설명해요."], ["관심 영역 선택", "수업에서 다루는 함수·모델링·자료·기하 중 필요한 연결을 골라 더 살펴봐요."], ["시험은 필요할 때만", "응시 계획과 참가 자격을 확인한 뒤 SAT 또는 해당 연도 규정에 맞는 AMC 12 연습을 선택해요."] ] },
@@ -147,6 +147,10 @@
   function getGrade(value) { return grades.find(function (entry) { return entry.grade === Number(value); }) || null; }
   function getAnnualPlan(grade) { return annualPlans[Number(grade)] || null; }
   function getRoute(id) { return routes.find(function (entry) { return entry.id === id; }) || null; }
-  function getTracks(grade) { return gradeTracks[Number(grade)] || []; }
+  function getTracks(grade) {
+    const tracks = gradeTracks[Number(grade)] || [];
+    if (tracks.some(function (track) { return /경시/.test(track[0]); })) return tracks;
+    return tracks.concat([Object.freeze(["경시 · 선택", "이 학년 계획 자료에는 별도 경시 과정이 제시되지 않았어요."])]);
+  }
   return Object.freeze({ grades: Object.freeze(grades), grade7Stops: grade7Stops, routes: Object.freeze(routes), strands: strands, conceptFlows: conceptFlows, getGrade: getGrade, getAnnualPlan: getAnnualPlan, getRoute: getRoute, getTracks: getTracks, competitionOptions: competitionOptions, analyzeCompetition: analyzeCompetition });
 });

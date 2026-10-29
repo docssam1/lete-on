@@ -11,7 +11,7 @@
   let programId = params.get("program") || "";
   const statuses = [{ id: "unmarked", title: "표시 안 함" }, { id: "correct", title: "O · 맞힘" }, { id: "wrong", title: "X · 틀림" }, { id: "blank", title: "미응답 · 답안 공란" }];
   const domains = [{ id: "unclassified", title: "영역 선택" }].concat(roadmap.strands.map(function (entry) { return { id: entry.id, title: entry.title }; }));
-  const reasons = [{ id: "none", title: "이유 선택" }, { id: "concept", title: "개념" }, { id: "approach", title: "풀이 생각" }, { id: "calculation", title: "계산" }, { id: "reading", title: "조건 읽기" }, { id: "time", title: "시간" }];
+  const reasons = [{ id: "none", title: "이유 선택" }, { id: "concept", title: "개념" }, { id: "approach", title: "접근 아이디어" }, { id: "calculation", title: "계산" }, { id: "reading", title: "조건 읽기" }, { id: "time", title: "시간" }];
   let scoreHistory = [];
   let lastDiagnostic = null;
   let lastHistoryContextKey = "";
@@ -39,8 +39,10 @@
     setText("score-estimate-note", "");
     $("report-metrics").replaceChildren();
     $("report-domains").replaceChildren();
+    $("report-review-items-list").replaceChildren();
     $("report-reasons").replaceChildren();
     $("save-diagnostic").hidden = true;
+    $("save-diagnostic").disabled = false;
     $("diagnostic-save-status").textContent = "";
     lastDiagnostic = null;
   }
@@ -215,7 +217,8 @@
       const date = document.createElement("time"); date.textContent = record.examDate || "날짜 미입력"; if (record.examDate) date.dateTime = record.examDate;
       heading.append(title, date);
       const meta = document.createElement("p");
-      meta.textContent = `${record.paperLabel ? `${record.paperLabel} · ` : ""}정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}`;
+      const completion = record.summary.unmarked ? `일부 입력 ${record.summary.itemCount - record.summary.unmarked}/${record.summary.itemCount} · ` : `전체 입력 ${record.summary.itemCount}/${record.summary.itemCount} · `;
+      meta.textContent = `${record.paperLabel ? `${record.paperLabel} · ` : ""}${completion}정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}`;
       const domainHost = document.createElement("div"); domainHost.className = "saved-diagnostic-entry-domains";
       record.domains.forEach(function (domain) {
         const item = document.createElement("div");
@@ -224,12 +227,11 @@
         const note = document.createElement("small"); note.textContent = `${domain.evidence}${domain.blank ? ` · 미응답 ${domain.blank}` : ""}`;
         item.append(label, value, note); domainHost.append(item);
       });
-      const reasons = document.createElement("p");
-      const reasonNames = { concept: "개념", approach: "접근 아이디어", calculation: "계산", reading: "조건 읽기", time: "시간" };
-      reasons.textContent = `오답 이유 분류 ${record.summary.reasonClassified}/${record.summary.wrong}${record.reasons.length ? ` · ${record.reasons.map(function (reason) { return `${reasonNames[reason.id]} ${reason.count}`; }).join(" · ")}` : ""}`;
+      const reasonSummary = document.createElement("p");
+      reasonSummary.textContent = `오답 이유 분류 ${record.summary.reasonClassified}/${record.summary.wrong}${record.reasons.length ? ` · ${record.reasons.map(function (reason) { const label = reasons.find(function (entry) { return entry.id === reason.id; }); return `${label ? label.title : "기타"} ${reason.count}`; }).join(" · ")}` : ""}`;
       const remove = document.createElement("button"); remove.type = "button"; remove.className = "saved-diagnostic-remove"; remove.dataset.removeDiagnostic = record.id; remove.textContent = "이 기록 삭제";
-      remove.setAttribute("aria-label", `${record.programTitle} Grade ${record.grade} ${record.examDate || "날짜 미입력"} 진단 요약 삭제`);
-      card.append(heading, meta, domainHost, reasons, remove); host.append(card);
+      remove.setAttribute("aria-label", `${record.programTitle} Grade ${record.grade} ${record.examDate || "날짜 미입력"} 복습 요약 삭제`);
+      card.append(heading, meta, domainHost, reasonSummary, remove); host.append(card);
     });
   }
   function clearHistoryMessages() { $("score-history-error").hidden = true; $("score-history-status").hidden = true; }
@@ -329,9 +331,9 @@
     );
     const domainHost = $("report-domains");
     domainHost.replaceChildren();
-    const heading = document.createElement("h3"); heading.textContent = `영역별 비교 · ${result.domainClassified}/${result.itemCount}문항 분류`; domainHost.append(heading);
+    const heading = document.createElement("h3"); heading.textContent = `직접 분류한 영역 · ${result.domainClassified}/${result.itemCount}문항`; domainHost.append(heading);
     const domainNote = document.createElement("p"); domainNote.className = "report-evidence-note";
-    domainNote.textContent = "영역별 수치는 풀이 영역을 표시한 문항만 포함해요. 3문제 미만은 비율 비교를 보류합니다.";
+    domainNote.textContent = "영역은 직접 고른 분류예요. 정답 비율은 표시한 풀이 문항만으로 계산하고, 미응답은 따로 보여 드려요. 3문제 미만은 비교하지 않습니다.";
     domainHost.append(domainNote);
     result.domains.forEach(function (domain) {
       const row = document.createElement("div"); row.className = "report-domain-row";
@@ -340,6 +342,17 @@
       const detail = document.createElement("small"); detail.textContent = `${domain.evidence}${domain.blank ? ` · 미응답 ${domain.blank}` : ""}`;
       row.append(title, value, detail); domainHost.append(row);
     });
+    const reviewList = $("report-review-items-list");
+    result.reviewItems.forEach(function (item) {
+      const row = document.createElement("li");
+      const domain = domains.find(function (entry) { return entry.id === item.domain; });
+      const reason = reasons.find(function (entry) { return entry.id === item.reason; });
+      const itemState = item.status === "wrong" ? "오답" : "미응답";
+      const details = [domain && item.domain !== "unclassified" ? domain.title : "영역 미분류", item.status === "wrong" && reason && item.reason !== "none" ? reason.title : ""].filter(Boolean);
+      row.textContent = `${item.number}번 · ${itemState} · ${details.join(" · ")}`;
+      reviewList.append(row);
+    });
+    $("report-review-items").hidden = result.reviewItems.length === 0;
     const reasonHost = $("report-reasons");
     reasonHost.replaceChildren();
     const reasonHeading = document.createElement("h3"); reasonHeading.textContent = `오류 이유 · ${result.reasonClassified}/${result.counts.wrong}개 오답 분류`; reasonHost.append(reasonHeading);
@@ -350,14 +363,15 @@
       const row = document.createElement("p"); row.textContent = `${reason.name} · ${reason.count}문항`; reasonHost.append(row);
     });
     else { const empty = document.createElement("p"); empty.textContent = "아직 선택된 오류 이유가 없습니다."; reasonHost.append(empty); }
-    setText("report-next", result.reviewFirst
-      ? `${result.reviewFirst} 문제의 풀이를 먼저 다시 보세요. 다음 학습은 이 결과만으로 정하지 않아요.`
-      : `어느 영역을 먼저 볼지는 아직 정할 수 없어요.${result.unclassified ? ` 영역을 고르지 않은 ${result.unclassified}문제를 선생님과 확인해 주세요.` : ""}`);
+    const lowestAreas = result.lowestDomains.map(function (entry) { return `${entry.name} ${entry.correct}/${entry.attempted}`; });
+    setText("report-next", lowestAreas.length
+      ? `표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 ${lowestAreas.join(" · ")}입니다. 적은 문항의 관찰이므로 학습 수준을 판정하지 않아요.`
+      : `두 개 이상 영역에서 각각 3문제 이상 푼 경우에만 정답 비율을 참고 비교해요.${result.unclassified ? ` 영역 미분류 ${result.unclassified}문항은 직접 확인해 주세요.` : ""}`);
     $("save-diagnostic").hidden = !localRecords;
     $("diagnostic-save-status").textContent = "";
     document.querySelector(".review-report").hidden = false;
     document.querySelector(".review-layout").classList.remove("is-empty");
-    document.querySelector(".review-report").focus();
+    $("report-title").focus();
   }
   $("review-grade").addEventListener("change", function (event) { grade = Number(event.target.value); renderSettings(); renderMarks(); $("review-paper-label").value = ""; });
   $("review-program").addEventListener("change", function (event) { programId = event.target.value; renderSettings(); renderMarks(); $("review-paper-label").value = ""; });
@@ -385,13 +399,15 @@
       domains: lastDiagnostic.domains.map(function (domain) { return { id: domain.id, attempted: domain.attempted, correct: domain.correct, wrong: domain.wrong, blank: domain.blank }; }),
       reasons: lastDiagnostic.reasons.map(function (reason) { return { id: reason.id, count: reason.count }; })
     });
-    $("diagnostic-save-status").textContent = record ? `${record.programTitle} · Grade ${record.grade} 요약을 이 기기에 저장했어요. 문항별 응답과 점수는 저장하지 않았습니다.` : "저장하지 못했어요. 입력한 학년과 문항 결과를 확인해 주세요.";
+    $("diagnostic-save-status").textContent = record ? `${record.programTitle} · Grade ${record.grade} 복습 요약을 이 기기에 저장했어요. 정답·오답·미응답 수와 영역별 합계를 저장합니다. AMC 8 참고 원점수는 정답 수로 계산할 수 있어 이 집계에서 점수 정보를 유추할 수 있어요. 문항별 답과 번호는 저장하지 않습니다.` : "저장하지 못했어요. 입력한 학년과 문항 결과를 확인해 주세요.";
+    $("save-diagnostic").disabled = Boolean(record);
     renderSavedDiagnosticHistory();
   });
   $("saved-diagnostic-list").addEventListener("click", function (event) {
     const button = event.target.closest("[data-remove-diagnostic]");
     if (!button || !localRecords) return;
     localRecords.storage.removeCompetitionDiagnostic(button.dataset.removeDiagnostic);
+    if (lastDiagnostic) $("save-diagnostic").disabled = false;
     renderSavedDiagnosticHistory();
     if (!$("saved-diagnostic-history").hidden) { $("saved-diagnostic-title").focus(); }
   });

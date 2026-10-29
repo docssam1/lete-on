@@ -63,6 +63,11 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .report-domain-row { padding: 11px 0; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 8px; border-top: 1px solid #d8dee8; font-size: .83rem; }
 .report-domain-row span { color: #2456c4; font-weight: 850; }
 .report-domain-row small { grid-column: 1 / -1; }
+.report-review-items { margin-top: 18px; padding: 14px; border: 1px solid #d8dee8; background: #fff; }
+.report-review-items h3 { margin: 0; font-size: 1rem; }
+.report-review-items p { margin: 6px 0 10px; color: #566274; font-size: .78rem; line-height: 1.5; }
+.report-review-items ol { margin: 0; padding-left: 1.5rem; display: grid; gap: 6px; font-size: .82rem; }
+.report-review-items li::marker { color: #2456c4; font-weight: 850; }
 .report-reasons p { margin: 6px 0; font-size: .83rem; }
 .report-next { margin: 22px 0 0; padding: 13px; border-left: 4px solid #2456c4; background: #eaf0ff; color: #182230 !important; font-weight: 750; }
 .report-boundary { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid #d8dee8; }

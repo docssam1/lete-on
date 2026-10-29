@@ -24,12 +24,34 @@ test("unmarked and unanswered questions are distinct from wrong attempts", funct
 test("domain comparison requires enough classified attempts in two domains", function () {
   const entries = [entry("correct", "algebra"), entry("correct", "algebra"), entry("correct", "algebra"), entry("wrong", "number", "concept"), entry("wrong", "number", "concept"), entry("correct", "number"), entry("wrong", "unclassified", "time")];
   const report = analyze(entries, entries.length);
-  assert.equal(report.reviewFirst, "수와 정수론");
+  assert.deepEqual(report.lowestDomains, [{ id: "number", name: "수와 정수론", correct: 1, attempted: 3, blank: 0 }]);
+  assert.deepEqual(report.reviewItems, [
+    { number: 4, status: "wrong", domain: "number", reason: "concept" },
+    { number: 5, status: "wrong", domain: "number", reason: "concept" },
+    { number: 7, status: "wrong", domain: "unclassified", reason: "time" }
+  ]);
+  assert.deepEqual(report.domainReviewItemNumbers.number, { wrong: [4, 5], blank: [] });
   assert.equal(report.unclassified, 1);
   assert.equal(report.domainClassified, 6);
   assert.equal(report.reasonClassified, 3);
   assert.equal(report.domains.find((domain) => domain.id === "number").rate, 33);
   assert.equal(report.domains.find((domain) => domain.id === "geometry").evidence, "미측정");
+});
+
+test("paper review shows all ties and separately includes blank responses", function () {
+  const entries = [entry("wrong", "number"), entry("correct", "number"), entry("wrong", "number"),
+    entry("correct", "algebra"), entry("correct", "algebra"), entry("correct", "algebra"), entry("blank", "number")];
+  const report = analyze(entries, entries.length);
+  assert.deepEqual(report.lowestDomains, [{ id: "number", name: "수와 정수론", correct: 1, attempted: 3, blank: 1 }]);
+  assert.deepEqual(report.domainReviewItemNumbers.number, { wrong: [1, 3], blank: [7] });
+  assert.deepEqual(report.reviewItems.at(-1), { number: 7, status: "blank", domain: "number", reason: "none" });
+  const tied = analyze([entry("wrong", "number"), entry("correct", "number"), entry("correct", "number"),
+    entry("wrong", "algebra"), entry("correct", "algebra"), entry("correct", "algebra")], 6);
+  assert.deepEqual(tied.lowestDomains, []);
+  const tiedLowest = analyze([entry("wrong", "number"), entry("correct", "number"), entry("correct", "number"),
+    entry("wrong", "algebra"), entry("correct", "algebra"), entry("correct", "algebra"),
+    entry("correct", "geometry"), entry("correct", "geometry"), entry("correct", "geometry")], 9);
+  assert.deepEqual(tiedLowest.lowestDomains.map((domain) => domain.name), ["식·대수", "수와 정수론"]);
 });
 
 test("complete AMC marks can show a cautious raw-score estimate using format-specific scoring", function () {

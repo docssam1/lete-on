@@ -25,7 +25,7 @@ test.before(async function () {
 });
 test.after(async function () { if (browser) await browser.close(); if (server) await new Promise(function (resolve) { server.close(resolve); }); });
 
-test("users can opt to save an answer-free AMC diagnostic and see it only on the matching grade map", async function () {
+test("users can opt to save an answer-free AMC review summary and see it only on the matching grade map", async function () {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
   const errors = [];
@@ -42,9 +42,12 @@ test("users can opt to save an answer-free AMC diagnostic and see it only on the
   await page.locator('[data-question="3"][data-field="domain"]').selectOption("counting");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#save-diagnostic").isVisible(), true);
+  assert.equal(await page.locator("#save-diagnostic").innerText(), "복습 요약을 기기에 저장");
   await page.locator("#save-diagnostic").click();
-  assert.match(await page.locator("#diagnostic-save-status").innerText(), /이 기기에 저장/);
+  assert.match(await page.locator("#diagnostic-save-status").innerText(), /AMC 8 참고 원점수는 정답 수로 계산할 수 있어 이 집계에서 점수 정보를 유추할 수 있어요/);
+  assert.equal(await page.locator("#save-diagnostic").isDisabled(), true);
   assert.equal(await page.locator(".saved-diagnostic-entry").count(), 1);
+  assert.match(await page.locator(".saved-diagnostic-entry").innerText(), /일부 입력 3\/25/);
   await page.locator(".saved-diagnostic-remove").click();
   assert.equal(await page.locator("#saved-diagnostic-history").isVisible(), false);
   await page.locator("#save-diagnostic").click();
@@ -128,16 +131,31 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   assert.match(await page.locator("#report-intro").innerText(), /22문제는 표시하지 않았습니다/);
   assert.match(await page.locator("#score-estimate-note").innerText(), /참고 원점수는 25문항을 모두 표시한 뒤/);
   assert.match(await page.locator("#report-metrics").innerText(), /1\/2/);
-  assert.match(await page.locator("#report-domains h3").innerText(), /2\/25문항 분류/);
+  assert.match(await page.locator("#report-domains h3").innerText(), /직접 분류한 영역 · 2\/25문항/);
   assert.match(await page.locator("#report-reasons h3").innerText(), /1\/1개 오답 분류/);
   assert.doesNotMatch(await page.locator("#report-metrics").innerText(), /50%/);
   assert.doesNotMatch(await page.locator("#report-domains").innerText(), /50%/);
-  assert.equal(await page.locator(".review-report").evaluate((node) => node === document.activeElement), true);
+  assert.equal(await page.locator("#report-title").evaluate((node) => node === document.activeElement), true);
   assert.match(await page.locator("#report-reasons").innerText(), /조건 읽기 · 1문항/);
   assert.match(await page.locator(".report-boundary").innerText(), /수상·AIME 진출.*판단하지 않습니다/);
   assert.equal(await page.locator("#score-estimate").isHidden(), true, "partial responses do not produce a score estimate");
   assert.equal(await page.evaluate(() => localStorage.length), 0);
   assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("paper review links a low-evidence area comparison to the specific wrong questions", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  for (let question = 1; question <= 6; question += 1) {
+    const domain = question <= 3 ? "number" : "algebra";
+    const status = question <= 3 ? "wrong" : "correct";
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption(status);
+    await page.locator(`[data-question="${question}"][data-field="domain"]`).selectOption(domain);
+  }
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#report-next").innerText(), /표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 수와 정수론 0\/3입니다/);
+  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 오답 · 수와 정수론[\s\S]*3번 · 오답 · 수와 정수론/);
   await page.close();
 });
 

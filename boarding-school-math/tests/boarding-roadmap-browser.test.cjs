@@ -307,7 +307,7 @@ test("grade comparison shows curriculum examples without implying measured level
   assert.equal(await comparison.inputValue(), "");
   await comparison.selectOption("9");
   assert.equal(await page.locator("#comparison-table").isVisible(), true);
-  assert.equal(await page.locator("#comparison-current-label").innerText(), "8학년");
+  assert.equal(await page.locator("#comparison-current-label").innerText(), "8학년 · 가속 학습 예시 · 학교 학년 기준 아님");
   assert.equal(await page.locator("#comparison-target-label").innerText(), "9학년 · 추정안");
   assert.match(await page.locator("#comparison-note").innerText(), /학교 과목 순서를 확인/);
   assert.match(await page.locator("#comparison-bridge-copy").innerText(), /8학년:.*9학년:/);
@@ -340,7 +340,7 @@ test("Grade 10 and Grade 12 comparison keeps inferred planning separate from lea
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(`${url}?grade=10`, { waitUntil: "networkidle" });
   await page.getByLabel("비교할 학년").selectOption("12");
-  assert.equal(await page.locator("#comparison-current-label").innerText(), "10학년");
+  assert.equal(await page.locator("#comparison-current-label").innerText(), "10학년 · 가속 학습 예시 · 학교 학년 기준 아님");
   assert.equal(await page.locator("#comparison-target-label").innerText(), "12학년 · 추정안");
   assert.match(await page.locator("#comparison-target-title").innerText(), /배운 수학을 선택 과목/);
   assert.match(await page.locator("#comparison-target-tracks").innerText(), /학교 수학 · 추정[\s\S]*졸업 요건·과목 경로/);
@@ -348,6 +348,15 @@ test("Grade 10 and Grade 12 comparison keeps inferred planning separate from lea
   assert.match(await page.locator(".comparison-boundary").innerText(), /학생의 현재 위치.*판단하지 않아요/);
   assert.match(await page.locator("#comparison-assessment-target-label").innerText(), /12학년 · 추정 계획 예시/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [1280, 1280]);
+  await page.close();
+});
+
+test("Grade 3 comparison labels the missing contest-plan source instead of implying no contest option exists", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.goto(`${url}?grade=3`, { waitUntil: "networkidle" });
+  await page.getByLabel("비교할 학년").selectOption("5");
+  assert.match(await page.locator("#comparison-current-tracks").innerText(), /경시 · 선택[\s\S]*이 학년 계획 자료에는 별도 경시 과정이 제시되지 않았어요/);
+  assert.match(await page.locator("#comparison-target-tracks").innerText(), /경시 · 선택[\s\S]*이 학년 계획 자료에는 별도 경시 과정이 제시되지 않았어요/);
   await page.close();
 });
 

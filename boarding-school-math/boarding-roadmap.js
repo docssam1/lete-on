@@ -282,7 +282,8 @@
     select.value = comparisonGrade === null ? "" : String(comparisonGrade);
   }
   function renderComparisonColumn(prefix, entry) {
-    setText(`comparison-${prefix}-label`, `${entry.grade}학년${entry.source === "inferred" ? " · 추정안" : ""}`);
+    const planLabel = entry.source === "inferred" ? "추정안" : entry.pathNote || "계획 예시";
+    setText(`comparison-${prefix}-label`, `${entry.grade}학년 · ${planLabel}`);
     setText(`comparison-${prefix}-title`, entry.title);
     setText(`comparison-${prefix}-core`, entry.core);
     const list = $(`comparison-${prefix}-tracks`);
@@ -313,7 +314,8 @@
       const cell = document.createElement("div");
       cell.className = "comparison-mobile-cell";
       const label = document.createElement("strong");
-      label.textContent = `${entry.grade}학년${entry.grade === grade ? " · 현재" : ""}${entry.source === "inferred" ? " · 추정안" : ""}`;
+      const planLabel = entry.source === "inferred" ? "추정안" : entry.pathNote || "계획 예시";
+      label.textContent = `${entry.grade}학년${entry.grade === grade ? " · 현재" : ""} · ${planLabel}`;
       const title = document.createElement("span"); title.textContent = entry.title;
       cell.append(label, title); header.append(cell);
     });

@@ -7,11 +7,13 @@ test("grade roadmap covers the Grade 3–12 map and labels inferred high-school 
   assert.deepEqual(roadmap.grades.map(function (entry) { return entry.grade; }), [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   [9, 11, 12].forEach(function (grade) { assert.equal(roadmap.getGrade(grade).source, "inferred"); });
   assert.equal(roadmap.getGrade(7).source, "provided");
+  [7, 8, 10].forEach(function (grade) { assert.match(roadmap.getGrade(grade).pathNote, /가속 학습 예시.*학교 학년 기준 아님/); });
   roadmap.grades.forEach(function (entry) { assert.equal(entry.steps.length, 4); });
 });
 
 test("school, competition, and SAT stay separate in upper-grade examples", function () {
-  assert.deepEqual(roadmap.getTracks(3).map((track) => track[0]), ["학교 수학", "문제 해결"]);
+  assert.deepEqual(roadmap.getTracks(3).map((track) => track[0]), ["학교 수학", "문제 해결", "경시 · 선택"]);
+  assert.match(roadmap.getTracks(3)[2][1], /별도 경시 과정이 제시되지 않았어요/);
   assert.deepEqual(roadmap.getTracks(7).map((track) => track[0]), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
   assert.match(roadmap.getTracks(9)[0][0], /추정/);
   assert.match(roadmap.getTracks(10)[2][1], /응시할 때/);
