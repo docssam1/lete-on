@@ -3,9 +3,9 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 const roadmap = require("../learning/boarding-grade-roadmap.js");
 
-test("grade roadmap covers provided grades and labels the inferred Grade 9 bridge", function () {
-  assert.deepEqual(roadmap.grades.map(function (entry) { return entry.grade; }), [3, 4, 5, 6, 7, 8, 9, 10]);
-  assert.equal(roadmap.getGrade(9).source, "inferred");
+test("grade roadmap covers the Grade 3–12 map and labels inferred high-school bridges", function () {
+  assert.deepEqual(roadmap.grades.map(function (entry) { return entry.grade; }), [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  [9, 11, 12].forEach(function (grade) { assert.equal(roadmap.getGrade(grade).source, "inferred"); });
   assert.equal(roadmap.getGrade(7).source, "provided");
   roadmap.grades.forEach(function (entry) { assert.equal(entry.steps.length, 4); });
 });
@@ -15,6 +15,11 @@ test("school, competition, and SAT stay separate in upper-grade examples", funct
   assert.deepEqual(roadmap.getTracks(7).map((track) => track[0]), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
   assert.match(roadmap.getTracks(9)[0][0], /추정/);
   assert.match(roadmap.getTracks(10)[2][1], /응시할 때/);
+  [11, 12].forEach(function (grade) {
+    assert.match(roadmap.getTracks(grade)[0][0], /추정/);
+    assert.match(roadmap.getTracks(grade)[0][1], /확인|목표/);
+    assert.match(roadmap.getTracks(grade)[1][1], /참가 자격 확인/);
+  });
 });
 
 test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge as inferred", function () {
@@ -30,6 +35,13 @@ test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge
   assert.deepEqual(roadmap.getAnnualPlan(9).periods.map(function (period) { return period[0].replace(" · 추정", ""); }), ["1–3개월", "4–6개월", "7–9개월", "10–12개월"]);
   assert.ok(roadmap.getAnnualPlan(9).periods.every(function (period) { return period[0].includes("추정"); }));
   assert.match(roadmap.getAnnualPlan(9).note, /추정안/);
+  [11, 12].forEach(function (grade) {
+    const plan = roadmap.getAnnualPlan(grade);
+    assert.equal(plan.source, "inferred");
+    assert.equal(plan.periods.length, 4);
+    assert.ok(plan.periods.every(function (period) { return period[0].includes("추정") && period.slice(1).every(Boolean); }));
+    assert.match(plan.note, /학교|과목/);
+  });
   [6, 7, 8, 10].forEach(function (grade) { assert.doesNotMatch(roadmap.getAnnualPlan(grade).note, /사용자|제공된 계획/); });
   [3, 4, 5].forEach(function (grade) { assert.equal(roadmap.getAnnualPlan(grade), null); });
 });
@@ -59,6 +71,11 @@ test("competition options follow grade and keep advanced AMC paths optional", fu
   assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc8"; }));
   assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc10" && entry.optional === true; }));
   assert.ok(!roadmap.competitionOptions(10).some(function (entry) { return entry.id === "amc8"; }));
+  [11, 12].forEach(function (grade) {
+    const options = roadmap.competitionOptions(grade);
+    assert.ok(!options.some(function (entry) { return entry.id === "amc10"; }));
+    assert.ok(options.some(function (entry) { return entry.id === "amc12" && entry.optional === true; }));
+  });
 });
 
 test("manual competition analysis validates counts and does not assign a level", function () {

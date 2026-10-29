@@ -39,7 +39,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#grade-map-title").innerText(), "7학년 수학 한눈에");
   assert.match(await page.locator("#grade-title").innerText(), /유리수/);
-  assert.equal(await page.locator(".grade-button").count(), 8);
+  assert.equal(await page.locator(".grade-button").count(), 10);
   assert.equal(await page.locator(".stage-button").count(), 4);
   assert.match(await page.locator(".journey-position-card").innerText(), /아직 입력한 평가 기록이 없어요/);
   assert.match(await page.locator("#journey-next-preview").innerText(), /경로 지점을 눌러/);
@@ -117,6 +117,28 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.locator('[data-strand="geometry"][data-field="correct"]').fill("1");
   await page.getByRole("button", { name: "영역별 결과 보기" }).click();
   assert.match(await page.locator("#competition-report-summary").innerText(), /기하·공간부터 다시 보세요/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("Grade 11–12 roadmap identifies inferred plans and only offers the eligible AMC 12 track", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  await page.goto(`${url}?grade=11`, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#source-chip").innerText(), /11학년 · 추정안/);
+  assert.match(await page.locator("#grade-note").innerText(), /공통 수학 범주.*추정안/);
+  assert.match(await page.locator("#annual-plan-title").innerText(), /11학년.*추정/);
+  assert.match(await page.locator("#annual-plan-note").innerText(), /과목명·순서/);
+  const grade11Options = await page.locator("#competition-select option").allTextContents();
+  assert.ok(grade11Options.some(function (label) { return /AMC 12/.test(label); }));
+  assert.ok(!grade11Options.some(function (label) { return /AMC 10/.test(label); }));
+  assert.equal(await page.locator(".grade-button").count(), 10);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await page.getByRole("button", { name: "다음 학년 →" }).click();
+  assert.match(await page.locator("#source-chip").innerText(), /12학년 · 추정안/);
+  assert.match(await page.locator("#annual-plan-title").innerText(), /12학년.*추정/);
+  assert.match(await page.locator("#grade-core").innerText(), /졸업·대학 계획/);
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -281,6 +303,21 @@ test("grade comparison shows curriculum examples without implying measured level
   await page.emulateMedia({ media: "screen" });
   await page.locator("#competition-select").selectOption("amc8");
   assert.equal(await page.locator("#competition-practice-link").isHidden(), true, "Grade 8 should not be offered the Grade 6 bridge as a grade-level practice set");
+  await page.close();
+});
+
+test("Grade 10 and Grade 12 comparison keeps inferred planning separate from learner assessment", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.goto(`${url}?grade=10`, { waitUntil: "networkidle" });
+  await page.getByLabel("비교할 학년").selectOption("12");
+  assert.equal(await page.locator("#comparison-current-label").innerText(), "10학년");
+  assert.equal(await page.locator("#comparison-target-label").innerText(), "12학년 · 추정안");
+  assert.match(await page.locator("#comparison-target-title").innerText(), /배운 수학을 선택 과목/);
+  assert.match(await page.locator("#comparison-target-tracks").innerText(), /학교 수학 · 추정[\s\S]*졸업 요건·과목 경로/);
+  assert.match(await page.locator("#comparison-note").innerText(), /추정안은 학교 과목 순서를 확인/);
+  assert.match(await page.locator(".comparison-boundary").innerText(), /학생의 현재 위치.*판단하지 않아요/);
+  assert.match(await page.locator("#comparison-assessment-target-label").innerText(), /12학년 · 추정 계획 예시/);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [1280, 1280]);
   await page.close();
 });
 

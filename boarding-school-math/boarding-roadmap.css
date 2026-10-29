@@ -23,7 +23,7 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .map-head h2 { margin: 10px 0 0; font-size: clamp(1.8rem, 3vw, 2.7rem); letter-spacing: -.04em; line-height: 1.2; }
 .map-head > p { max-width: 350px; margin: 0; color: #566274; font-size: .88rem; line-height: 1.65; }
 .grade-track { margin-top: 28px; padding: 20px 24px; border: 1px solid #d8dee8; background: #fff; }
-.grade-buttons { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; position: relative; }
+.grade-buttons { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px; position: relative; }
 .grade-buttons::before { content: ""; position: absolute; top: 22px; left: 6%; right: 6%; height: 3px; background: #d9d0e5; }
 .grade-button { min-height: 68px; padding: 12px 4px 4px; position: relative; border: 0; background: transparent; color: #566274; font: inherit; font-size: .94rem; font-weight: 900; cursor: pointer; }
 .grade-button::before { content: ""; width: 18px; height: 18px; margin: 0 auto 7px; display: block; border: 3px solid #60418f; border-radius: 50%; background: #fff; }

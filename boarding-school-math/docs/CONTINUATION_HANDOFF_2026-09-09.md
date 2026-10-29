@@ -311,3 +311,11 @@ Next work: inspect the current private workbench in browser and A4 print, record
 ## 2026-10-30 workbench visual-QA access note
 
 Source inspection confirms the private review workbench and R6 manifest were rebuilt on Oct 29; the HTML labels the 42-item R6 copy private/locked and contains an A4 print template. CUA refused to open the private `file://` page under its browser security policy, which prohibited alternate-surface and indirect workarounds. No current responsive interaction or rendered A4 inspection was completed. Requested user-provided desktop/390px screenshots and A4 PDF for review. This does not change the candidate lock or any approval gate.
+
+## 2026-10-30 Grade 11–12 roadmap extension
+
+The public roadmap now covers Grades 3–12. Grades 11–12 have four concept stages, four explicitly inferred annual checkpoints, and side-by-side grade-plan comparison. Their content starts from the actual school transcript/course catalog and prerequisites; no universal Algebra 2 → Precalculus → Calculus order is assumed. AMC 12 appears as optional for Grades 11–12, while AMC 10 is absent; current age/grade eligibility remains subject to MAA's official cycle rules. SAT remains optional and does not produce a readiness band.
+
+Basis: Common Core high-school conceptual categories organize content as Number & Quantity, Algebra, Functions, Modeling, Geometry, and Statistics & Probability and explicitly note that functions cross traditional course boundaries; these standards do not assign those topics to a single grade sequence. MAA official eligibility is grade- and age-based, so examples must not be mistaken for authorization. Public sources checked 2026-10-30: https://www.thecorestandards.org/wp-content/uploads/Math_Standards.pdf and https://maa.org/student-programs/amc/ .
+
+Verification: `boarding-grade-roadmap.test.cjs` 7/7 and `boarding-roadmap-browser.test.cjs` 15/15; includes the 390px view, Grade 10 vs. 12 plan-comparison flow, source labels, and AMC 12-only choice for Grades 11–12. Syntax and whitespace checks pass. Claude Max Opus read-only review was attempted twice against public roadmap code/diff but returned no output; do not claim independent Claude approval. Local only, no push or deployment.

@@ -619,11 +619,13 @@
     setText("grade-title", entry.title);
     setText("grade-core", entry.core);
     setText("grade-bridge", entry.bridge);
-    setText("source-chip", entry.source === "inferred" ? "9학년 · 추정안" : "학습 예시");
+    setText("source-chip", entry.source === "inferred" ? `${grade}학년 · 추정안` : "학습 예시");
     setText("grade-note", grade === 7
       ? "7.RP.A 워크북은 공개됐어요. 7.NS.A 워크북과 진단은 검수 중이에요."
-      : entry.source === "inferred"
+      : grade === 9 && entry.source === "inferred"
         ? "Grade 9는 제공된 7·8·10학년 자료로 추정했어요. 학교 과목 순서는 선생님과 확인해 주세요."
+        : entry.source === "inferred"
+          ? `${grade}학년은 제공된 학년별 자료가 없어 공통 수학 범주를 바탕으로 만든 추정안이에요. 학교 과목 순서는 실제 안내와 함께 확인해 주세요.`
         : "아직 진단 결과가 없어요. 실제 풀이를 보고 다음 단계를 정해요.");
     $("previous-grade").disabled = grade === data.grades[0].grade;
     $("next-grade").disabled = grade === data.grades[data.grades.length - 1].grade;
