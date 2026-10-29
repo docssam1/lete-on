@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 5 Page 54 Exploration 4
+
+- Source PDF p.50 / clean comparison PDF p.49 / printed p.54. Added one fixed source question: the seven bottom values are 3,4,2,1,4,3,1 and sum to 18. The publisher answer key remains unverified.
+- Compared the original net, initial face labels and seven-cell path; separately folded the net and rotated the cube in 3D. Removed a duplicated solution illustration found during A4 review, preserving the answer visual. Source, ledger, 1440/375/320px browser and two one-page A4 checks passed; release gate and 76,980 runtime generations passed.
+- Counts: 2,071 types, 1,283 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Preserve existing dirty worktree and student data. Other locked source items need independent review.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 5 Page 54 Examples 4-3 and 4-4
 
 - Source PDF p.50 / clean comparison PDF p.49 / printed p.54. Added fixed source questions: 3×2×2 dice-block exterior pip sum 116; line and bent four-die arrangements each have maximum 68 and minimum 58. Publisher answer key remains unverified.
