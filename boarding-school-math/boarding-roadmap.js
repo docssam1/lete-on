@@ -491,6 +491,26 @@
     const evidence = records && records[0];
     section.hidden = !evidence;
     host.replaceChildren();
+    const pairSection = $("competition-record-pair");
+    const pairCards = $("competition-record-pair-cards");
+    pairCards.replaceChildren();
+    const datedRecords = (records || []).filter(function (record) { return typeof record.examDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(record.examDate); });
+    pairSection.hidden = datedRecords.length < 2;
+    if (datedRecords.length >= 2) datedRecords.slice(0, 2).forEach(function (record, index) {
+      const card = document.createElement("article"); card.className = "competition-record-pair-card";
+      const title = document.createElement("h5"); title.id = `competition-record-pair-card-title-${index}`; title.textContent = `${index === 0 ? "최근 기록" : "이전 기록"} · ${record.paperLabel || record.programTitle} · ${record.examDate}`;
+      card.setAttribute("aria-labelledby", title.id);
+      const summary = document.createElement("p"); summary.textContent = `정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}`;
+      const domains = document.createElement("ul");
+      record.domains.forEach(function (domain) {
+        const item = document.createElement("li");
+        const rate = domain.rate === null ? "비율 비교 보류" : `${domain.rate}%`;
+        const evidence = domain.attempted ? `${domain.correct}/${domain.attempted} · ${rate} (${domain.evidence})` : "미측정";
+        item.textContent = `${domain.name}: ${evidence}${domain.blank ? ` · 미응답 ${domain.blank}` : ""}`;
+        domains.append(item);
+      });
+      card.append(title, summary, domains); pairCards.append(card);
+    });
     if (!evidence) return;
     setText("competition-saved-title", `${evidence.programTitle} · Grade ${evidence.grade}`);
     const date = evidence.examDate ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${evidence.examDate}T00:00:00Z`)) : "날짜 미입력";

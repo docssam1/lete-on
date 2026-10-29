@@ -445,7 +445,11 @@
       if (saved.schemaVersion !== "gfield-competition-diagnostic-history-v1" || !Array.isArray(saved.records)) return [];
       return saved.records.slice(0, MAX_COMPETITION_DIAGNOSTICS).map(sanitizedCompetitionDiagnostic).filter(function (entry) {
         return entry && (!Number.isInteger(grade) || entry.grade === grade) && (!programId || entry.programId === programId);
-      }).sort(function (a, b) { return String(b.examDate || b.savedAt).localeCompare(String(a.examDate || a.savedAt)) || String(b.savedAt).localeCompare(String(a.savedAt)); });
+      }).sort(function (a, b) {
+        const aHasDate = Boolean(a.examDate); const bHasDate = Boolean(b.examDate);
+        if (aHasDate !== bHasDate) return aHasDate ? -1 : 1;
+        return String(b.examDate || b.savedAt).localeCompare(String(a.examDate || a.savedAt)) || String(b.savedAt).localeCompare(String(a.savedAt));
+      });
     }
     function saveCompetitionDiagnostic(record) {
       const sanitized = sanitizedCompetitionDiagnostic(record);
