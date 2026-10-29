@@ -1,0 +1,24 @@
+{
+  "sh1": "triangle",
+  "sh2": "circle",
+  "c1": "#F39C12",
+  "c2": "#9B59B6",
+  "opts": [
+    [
+      "triangle",
+      "pentagon"
+    ],
+    [
+      "pentagon",
+      "circle"
+    ],
+    [
+      "triangle",
+      "circle"
+    ],
+    [
+      "cross",
+      "cross"
+    ]
+  ]
+}
