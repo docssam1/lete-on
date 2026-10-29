@@ -63,5 +63,22 @@ class VoicePreservation(unittest.TestCase):
             self.assertEqual(path.read_bytes(), b"approved")
 
 
+
+class NativeNumbers(unittest.TestCase):
+    def test_counters_read_with_native_numbers(self):
+        self.assertEqual(voice.spoken("4문제 중 3문제"), "네 문제 중 세 문제")
+        self.assertEqual(voice.spoken("4시 40분"), "네 시 사십분")
+        self.assertEqual(voice.spoken("18번째, 1번째, 20번째"), "열여덟 번째, 첫 번째, 스무 번째")
+        self.assertEqual(voice.spoken("10 묶음"), "열 묶음")
+        # 번호·달 수·활동 번호는 한자어 수 그대로
+        self.assertEqual(voice.spoken("15번 칸"), "십오번 칸")
+        self.assertEqual(voice.spoken("12개월"), "십이개월")
+        self.assertEqual(voice.spoken("활동 3 문제예요"), "활동 삼 문제예요")
+        self.assertEqual(voice.spoken("1차시"), "일차시")
+
+    def test_only_changed_lines_get_new_name(self):
+        self.assertTrue(voice.fname("a", "3개", voice.SLOW) == voice.fname("a", "3개", voice.NATIVE))
+        self.assertTrue(voice.fname("a", "3 더하기 4", voice.SLOW) != voice.fname("a", "3 더하기 4", voice.NATIVE))
+
 if __name__ == "__main__":
     unittest.main()

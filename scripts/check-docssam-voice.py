@@ -11,11 +11,13 @@ import glob, hashlib, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SL = os.path.join(ROOT, "science-lab")
-src = open(os.path.join(ROOT, "scripts", "omnivoice-docssam.py"), encoding="utf-8").read()
-V1 = re.search(r'^V1\s*=\s*"([^"]+)"', src, re.M).group(1)
-SLOW = re.search(r'^SLOW\s*=\s*"([^"]+)"', src, re.M).group(1)
+# 파일 이름은 생성기의 fname() 그대로 쓴다(고유어 수 읽기로 바뀐 줄은 docssam-clone-v3-slow 이름 — 생성기 주석 참고).
+import importlib.util
+_spec = importlib.util.spec_from_file_location("omnivoice_docssam", os.path.join(ROOT, "scripts", "omnivoice-docssam.py"))
+_gen = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_gen)
+V1, SLOW = _gen.V1, _gen.SLOW
 have = {os.path.basename(p) for p in glob.glob(os.path.join(SL, "audio", "docssam", "*.mp3"))}
-name = lambda lid, text, voice: f"{lid}-{hashlib.sha1(f'{voice}|{text}'.encode('utf-8')).hexdigest()[:10]}.mp3"
+name = _gen.fname
 
 miss = []
 for f in sorted(glob.glob(os.path.join(SL, "data", "voice", "*.voice.json")) + glob.glob(os.path.join(ROOT, "fields-classic", "question-bank", "data", "voice", "*.voice.json"))):

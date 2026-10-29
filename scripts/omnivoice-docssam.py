@@ -36,6 +36,9 @@ VOICE_DIRS = [os.path.join(SL, "data", "voice"), os.path.join(ROOT, "fields-clas
 WORK = os.path.join(ROOT, ".docssam-work")
 V1 = "docssam-clone-v1"             # 녹음 그대로의 말 빠르기(초당 약 6.5음절)
 SLOW = "docssam-clone-v2-slow"       # --speed 0.8 로 느리게 만든 것 — 공부 대사(data/voice)만
+# 같은 느린 목소리인데 「4문제·3개·4시·18번째」를 「네 문제·세 개·네 시·열여덟 번째」로 읽게 바꾼 뒤 만든 것(2026-10-29).
+# 읽기가 바뀌는 줄만 이 이름을 써서 다시 만든다 — 나머지 줄의 파일 이름은 그대로라 다시 만들지 않는다. 사이트는 manifest.voices 순서로 찾는다.
+NATIVE = "docssam-clone-v3-slow"
 VOICE = V1                           # 이번 실행에서 만드는 목소리(--speed 를 주면 SLOW)
 # 공부 대사: SLOW 파일이 있으면 그것(원래 속도로 틈), 없으면 V1 을 0.8배로 튼다.
 # 소개(광고) 대사(intro/narration.json): 언제나 V1, 원래 속도 — 광고는 살짝 빠른 게 자연스럽다(원장 결정 2026-09-28).
@@ -108,7 +111,10 @@ def lines():
 
 
 def fname(lid, text, voice=None):
-    return f"{lid}-{hashlib.sha1(f'{voice or VOICE}|{text}'.encode('utf-8')).hexdigest()[:10]}.mp3"
+    voice = voice or VOICE
+    if voice == SLOW and needs_native(text):
+        voice = NATIVE
+    return f"{lid}-{hashlib.sha1(f'{voice}|{text}'.encode('utf-8')).hexdigest()[:10]}.mp3"
 
 
 # 읽기용 글 — 로마자·숫자를 한글 발음으로(앞의 것이 먼저 적용된다)
@@ -131,9 +137,34 @@ def korean_integer(number):
     return DIG[str(n)]
 
 
+# 개수·횟수·시각·차례는 고유어 수로 읽는다(한 문제·세 개·네 시·열여덟 번째). 1~99만. 「3 문제」처럼 띄어 쓴 것은 활동 번호라 그대로(삼).
+# 「15번 칸」(칸 번호)·「12개월」은 한자어 수 그대로.
+NATIVE_ONES = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉"]
+NATIVE_TENS = ["", "열", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "아흔"]
+NATIVE_COUNTER = re.compile(r"(?<![0-9.,])([1-9][0-9]?)(?=(문제|개(?!월)|칸|명|마리|장|줄|가지|송이|사람|군데|쌍|살|시간|번째|번(?! ?칸)|시(?![간계])| 묶음|묶음))")
+
+
+def native_integer(n, counter):
+    if counter == "번째" and n == 1:
+        return "첫"
+    tens, ones = divmod(n, 10)
+    if n == 20:
+        return "스무"
+    return NATIVE_TENS[tens] + NATIVE_ONES[ones]
+
+
+def native_counters(text):
+    return NATIVE_COUNTER.sub(lambda m: native_integer(int(m.group(1)), m.group(2).strip()) + ("" if m.group(2).startswith(" ") else " "), text)
+
+
+def needs_native(text):
+    return bool(NATIVE_COUNTER.search(text))
+
+
 def spoken(text):
     for a, b in SPOKEN:
         text = re.sub(a, b, text)
+    text = native_counters(text)
     return re.sub(r"[0-9]+", lambda m: korean_integer(m.group(0)), text)
 
 
@@ -144,6 +175,7 @@ def hangul(s):
     # 받아쓰기는 숫자와 단위를 아라비아 숫자·영문 기호로 적으므로, 생성 때와 같은 한국어 읽기로 바꿔서 비교한다.
     for a, b in UNIT_WORDS:
         s = re.sub(a, b, s)
+    s = native_counters(s)   # 받아쓰기가 「4문제」로 적든 「네 문제」로 적든 같은 읽기로 맞춘다
     s = re.sub(r"[0-9]+", lambda m: korean_integer(m.group(0)), s)
     return re.sub(r"[^가-힣]", "", s)
 
@@ -211,10 +243,11 @@ def write_manifest(out):
     for i, t in study_lines():
         if fname(i, t, SLOW) in exist: valid.discard(fname(i, t, V1))
     have = sorted(f for f in os.listdir(out) if f.endswith(".mp3") and f in valid)
-    voices = ([SLOW] if any(f in slow for f in have) else []) + [V1]
+    native = {fname(i, t, SLOW) for i, t in study_lines() if needs_native(t)}
+    voices = ([NATIVE] if any(f in native for f in have) else []) + ([SLOW] if any(f in slow - native for f in have) else []) + [V1]
     # voices: 사이트가 이 순서로 찾는다. rates: 목소리마다 공부 화면 재생 속도(소개 페이지는 늘 1).
     with open(os.path.join(out, "manifest.json"), "w", encoding="utf-8") as handle:
-        json.dump({"voices": voices, "rates": {SLOW: 1, V1: 0.8}, "files": have}, handle, ensure_ascii=False, indent=1)
+        json.dump({"voices": voices, "rates": {NATIVE: 1, SLOW: 1, V1: 0.8}, "files": have}, handle, ensure_ascii=False, indent=1)
     print(f"manifest.json: {len(have)}개", flush=True)
     return have
 

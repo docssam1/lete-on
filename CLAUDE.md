@@ -803,6 +803,7 @@ HuggingFace 에서 받는다.
   **키를 하나도 안 쓰고 아무것도 안 올린다.** 쓰는 법은 `scripts/local/README.md`.
 - **Kitten TTS(KittenML/KittenTTS) 검토 → 안 씀(원장 2026-10-24: "그냥 omni보이스 하자")**: 한국어 목소리가 학습 언어 목록에 없고(영어 외 9개 언어), 모델 라이선스가 따로(Stellon Labs Community License — 매출·투자 100만 달러 기준·등록·표시 요구로 알려짐). 음성은 OmniVoice 하나로 간다.
 - **맥(애플 칩)에서도 돈다(2026-10-24)**: `scripts/local/omnivoice-*.command` + `_setup-omnivoice.sh`(uv·파이썬 3.12·MPS). 첫 실행 = 설치. 맥 실행은 아직 확인 전.
+- **숫자 읽기(2026-10-29)**: 생성기 `spoken()`이 개수·횟수·시각·차례(문제·개·칸·명·시·시간·번·번째·묶음 등, 1~99)를 고유어로 읽는다(네 문제·세 개·네 시·열여덟 번째). 차시·단원·칸 번호(「15번 칸」)·개월·분은 한자어 그대로, 띄어 쓴 「활동 3 문제」도 그대로. 읽기가 바뀌는 줄만 목소리 이름 `docssam-clone-v3-slow`로 파일 이름이 바뀌어 다시 만든다(나머지는 그대로). 검사기는 생성기의 `fname()`을 그대로 불러 쓴다.
 - **두 컴퓨터로 나눠 만들기(2026-10-28)**: 생성기 `--prefix`(줄 id 앞머리). PC = 판서 `fcb-`, 맥 = 스스로 공부 덱 대사 `fcs-`(`scripts/local/omnivoice-docssam-deck.command`, 지시서 `WORK-ORDER-docssam-voice-mac-20261028.md`). 올리기 전 `git pull` → `--manifest-only`로 목록을 다시 만들어 충돌을 피한다.
 - `scripts/omnivoice-audition.py` — 앱에 실제로 들어 있는 대사(누미 3줄 + 영·중 1줄씩)를
   캐릭터 설계안 4종으로 읽는다. `--device auto` 가 GPU 를 알아서 잡고(있으면 float16,
