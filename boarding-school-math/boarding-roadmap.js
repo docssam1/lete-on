@@ -187,6 +187,30 @@
     endNote.hidden = Boolean(next);
     if (next) $("journey-next-title").textContent = next[0];
   }
+  function renderAssessmentEvidence() {
+    const label = $("journey-evidence-label");
+    const title = $("journey-evidence-title");
+    const copy = $("journey-evidence-copy");
+    $("journey-assessment-link").href = `./assessment-entry.html?grade=${grade}`;
+    let evidence = null;
+    try {
+      const records = window.GFIELDLocalLearningRecord;
+      evidence = records && records.storage.loadAssessmentEvidence();
+    } catch (error) { evidence = null; }
+    if (!evidence || evidence.legacyEvidence || evidence.grade !== grade || !evidence.source || !evidence.currentCourse) {
+      label.textContent = "평가 기록 · " + grade + "학년";
+      title.textContent = "아직 입력한 평가 기록이 없어요";
+      copy.textContent = "시험 점수와 과정 선택은 평가 결과 비교에서 확인할 수 있어요. 이 경로는 공식 학교 배정이나 학생 등급을 뜻하지 않아요.";
+      return;
+    }
+    label.textContent = `${evidence.source.label || "사용자 입력 평가"} · ${grade}학년`;
+    title.textContent = `${evidence.currentCourse.label} → ${evidence.targetCourse ? evidence.targetCourse.label : evidence.currentCourse.label}`;
+    const date = typeof evidence.testDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(evidence.testDate)
+      ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${evidence.testDate}T00:00:00Z`))
+      : "날짜 미입력";
+    copy.textContent = `${date} 성적표와 직접 고른 현재·목표 과정이에요. 점수로 학생 등급이나 공식 과목 배정을 판정하지 않아요.`;
+    label.setAttribute("title", "이 기기에 저장된 사용자의 평가 입력");
+  }
   function renderRoutes() {
     const buttons = $("route-buttons");
     buttons.replaceChildren();
@@ -507,6 +531,7 @@
     renderComparison();
     renderAnnualPlan(entry);
     renderStages(entry);
+    renderAssessmentEvidence();
     renderLevels(entry);
     renderGradeFocus();
     renderPracticeLinks();

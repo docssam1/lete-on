@@ -10,7 +10,7 @@ Used the signed-in Claude Code CLI with the Claude Max Opus subscription for a r
 
 Verification on the bundled Mac Node runtime: grade roadmap data and browser suites passed 16/16; changed roadmap JS passed `node --check`; `git diff --check` passed. HTTP-rendered 390px and 1280px views were visually inspected, and a 320px capture confirmed the navigation links remain visible. No horizontal overflow at 320, 390, or 1280px. This UI work remains local; no push or deployment.
 
-Next: review the existing Algebra 2 report criteria and the boarding assessment/contest evidence flows before implementing internal level comparisons. Keep GFIELD instructional bands distinct from official school placement or contest qualification; do not use the locked Grade 7 screener to generate public levels.
+Assessment and contest evidence flows have now been reviewed, and the roadmap shows grade-matched user-entered course evidence. The contest link now names both item-level review and AMC cycle records. Next: define a defensible, evidence-backed learner level comparison against the Algebra 2 report experience while keeping instructional bands distinct from official school placement and contest qualification. Do not derive public levels from the locked Grade 7 screener or unvalidated AMC cross-paper comparisons.
 
 ## 2026-10-30 private R6 workbench source repair
 
@@ -98,3 +98,9 @@ Follow-through verification also passed the existing assessment-entry and learni
 The public-exposure audit was also run, but did not complete its full-history scan: the local partial clone is missing a promisor object and lazy fetch is disabled. No historical privacy-audit pass is claimed; no fetch or remote sync was initiated.
 
 Separately, Codex recorded a second blind-solve review of the private Grade 7 NS.A revision-11 candidate outside Git. All 14 auto-scored keys matched; the four teacher-scored responses were checked against their open-response requirements. The exact-rational checker and locked-state preflight pass. This is AI cross-check evidence only and does not replace human review, rights review, current pilot acceptance, or release approval. The candidate remains locked.
+
+## 2026-10-30 assessment evidence on boarding roadmap
+
+Connected the existing local external-assessment record to the roadmap's learner panel. For an exact grade match, the panel displays the user-selected assessment source, test date, and manually selected current-to-target course route. It does not repeat raw scores, derive grade bands, infer placement, or show a record from another grade. Malformed, legacy, missing, and other-grade records use the empty state. The comparison form remains the place to inspect source-specific score details. No candidate/private diagnostic data are read or sent.
+
+Mac verification passed 41/41 across roadmap, external-assessment, local-record, and grade-data unit/browser suites. A real local browser flow entered a school Placement result and Pre-Algebra → Algebra 1 route, saved it, and confirmed the Grade 7 panel display; switching to Grade 8 correctly returned to the empty state. JS syntax and CRLF-aware whitespace checks passed. The empty state was visually inspected at 390px and 1280px with no overflow. Claude Code CLI using the signed-in Claude Max Opus subscription was invoked for a read-only sanitized UI review, but returned no findings before the attempt was interrupted; no Claude review approval is claimed. Committed locally as `ab448820`; no push or deployment.

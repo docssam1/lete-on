@@ -41,8 +41,8 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#grade-title").innerText(), /유리수/);
   assert.equal(await page.locator(".grade-button").count(), 8);
   assert.equal(await page.locator(".stage-button").count(), 4);
-  assert.match(await page.locator(".journey-position-card").innerText(), /아직 확인 전/);
-  assert.match(await page.locator(".journey-position-card").innerText(), /미리보기/);
+  assert.match(await page.locator(".journey-position-card").innerText(), /아직 입력한 평가 기록이 없어요/);
+  assert.match(await page.locator("#journey-next-preview").innerText(), /경로 지점을 눌러/);
   assert.equal(await page.locator("#journey-next-stop").isHidden(), true);
   await page.locator("#stage-list button").first().click();
   assert.equal(await page.locator("#journey-next-title").innerText(), "비례 관계");
@@ -72,6 +72,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.locator("#competition-select").selectOption("amc8");
   assert.equal(await page.locator(".competition-report").isHidden(), true);
   assert.equal(await page.locator("#paper-label-field").isVisible(), true);
+  assert.equal(await page.locator("#paper-review-link").innerText(), "문항별 복습 · AMC 회차별 기록 →");
   assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=7&program=amc8/);
   assert.equal(await page.locator(".competition-submit").isVisible(), true);
   assert.equal(await page.locator("#competition-practice-link").isVisible(), true);
@@ -116,6 +117,29 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.locator('[data-strand="geometry"][data-field="correct"]').fill("1");
   await page.getByRole("button", { name: "영역별 결과 보기" }).click();
   assert.match(await page.locator("#competition-report-summary").innerText(), /기하·공간부터 다시 보세요/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("roadmap shows only user-entered assessment evidence for the selected grade", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#overall-percent").fill("82");
+  await page.locator("#current-course").selectOption("pre-algebra");
+  await page.locator("#target-course").selectOption("algebra-1");
+  await page.getByRole("button", { name: /비교 결과 보기/ }).click();
+  assert.equal(await page.locator("#result-content").isVisible(), true);
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#journey-evidence-label").innerText(), "학교 수학 Placement Test · 7학년");
+  assert.equal(await page.locator("#journey-evidence-title").innerText(), "Pre-Algebra → Algebra 1");
+  assert.match(await page.locator("#journey-evidence-copy").innerText(), /공식 과목 배정을 판정하지 않아요/);
+  assert.doesNotMatch(await page.locator(".journey-position-card").innerText(), /82%/);
+  await page.locator(".grade-track > summary").click();
+  await page.getByRole("button", { name: "Grade 8 지도 보기" }).click();
+  assert.equal(await page.locator("#journey-evidence-title").innerText(), "아직 입력한 평가 기록이 없어요");
+  assert.equal(await page.locator("#journey-assessment-link").getAttribute("href"), "./assessment-entry.html?grade=8");
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -195,7 +219,7 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.equal(await page.locator(".grade-track").evaluate(function (node) { return node.open; }), false);
   assert.ok(await page.locator(".grade7-path").evaluate(function (node) { return node.getBoundingClientRect().top < window.innerHeight; }), "Grade 7 path should start in the first phone screen");
   assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
-  assert.match(await page.locator(".journey-position-card").innerText(), /아직 확인 전/);
+  assert.match(await page.locator(".journey-position-card").innerText(), /아직 입력한 평가 기록이 없어요/);
   assert.match(await page.locator("#grade7-position").innerText(), /지점을 고르면/);
   assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /현재 위치 미확인/);
   assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /진단 후/);
@@ -221,7 +245,7 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   await page.goBack();
   assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
   assert.equal(await page.locator(".stage-detail").isHidden(), true);
-  assert.match(await page.locator(".journey-position-card").innerText(), /아직 확인 전/);
+  assert.match(await page.locator(".journey-position-card").innerText(), /아직 입력한 평가 기록이 없어요/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   await page.close();
 });
