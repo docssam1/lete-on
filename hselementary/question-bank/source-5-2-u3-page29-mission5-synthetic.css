@@ -1,0 +1,83 @@
+@font-face {
+  font-family: "Noto Serif KR";
+  src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-400-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: "Noto Serif KR";
+  src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-400-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+2000-206F, U+2070-218F;
+}
+
+.source52-p29m5-question,
+.source52-p29m5-solution {
+  color: #191511;
+  font-family: "Noto Serif KR", serif;
+  font-size: 1rem;
+  line-height: 1.58;
+}
+
+.source52-p29m5-question > p:first-child,
+.source52-p29m5-solution > p:first-child { margin: 0 0 0.7rem; }
+
+.source52-p29m5-diagram {
+  display: block;
+  width: min(100%, 34rem);
+  height: auto;
+  margin: 0.5rem auto 0.25rem;
+  overflow: visible;
+}
+
+.source52-p29m5-outline line,
+.source52-p29m5-inner line {
+  stroke: #191511;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  fill: none;
+}
+
+.source52-p29m5-marks line {
+  stroke: #655b4d;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+
+.source52-p29m5-diagram text {
+  fill: #191511;
+  font-family: "Noto Serif KR", serif;
+  font-size: 18px;
+}
+
+.source52-p29m5-diagram .source52-p29m5-target-angle,
+.source52-p29m5-diagram .source52-p29m5-answer-angle {
+  fill: none;
+  stroke: #2f6b4a;
+  stroke-width: 1.9;
+}
+
+.source52-p29m5-diagram .source52-p29m5-answer-angle { stroke: #b4512e; stroke-width: 2.2; }
+.source52-p29m5-diagram .source52-p29m5-answer-label { fill: #b4512e; font-size: 17px; font-weight: 700; }
+.source52-p29m5-diagram .source52-p29m5-target-label { font-size: 17px; font-weight: 700; }
+
+.source52-p29m5-solution ol { margin: 0.35rem 0 0.7rem; padding-left: 1.55rem; }
+.source52-p29m5-solution li { margin: 0.3rem 0; }
+.source52-p29m5-workspace { margin: 0.2rem 0 0.5rem; }
+.source52-p29m5-workspace > span { display: block; color: #7a6f5c; font-size: 0.82em; margin-bottom: 0.12rem; }
+.source52-p29m5-workspace > div { height: 1.5in; background: repeating-linear-gradient(to bottom, transparent 0, transparent 0.32in, #e2d9c6 0.325in, #e2d9c6 0.335in, transparent 0.34in); }
+
+@media (max-width: 480px) { .source52-p29m5-diagram { width: 100%; } }
+
+@media print {
+  .source52-p29m5-question,
+  .source52-p29m5-solution { font-size: 10.5pt; line-height: 1.42; }
+  .source52-p29m5-diagram { width: 20rem; max-height: 5.2in; margin-top: 0.25rem; }
+  .source52-p29m5-workspace > div { height: 1.25in; }
+  .source52-p29m5-solution li { margin: 0.2rem 0; }
+}
