@@ -5642,6 +5642,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "원문에 경로 선택 방식이 없어 완성 경로 균등 선택 시에만 12/13; 해석 확인 전 잠금.",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-example-3-equal-routes-synthetic",
       "publisherKeyVerified": false,
       "publicDecision": "locked"
     },
