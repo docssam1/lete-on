@@ -5534,6 +5534,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "원문에서 중간 되돌아감 제한이 명시되지 않아 경로 해석 확인 전 잠금. 일반적인 각 구간 단순 이동이면 48가지.",
+      "syntheticRuntimeTypeId": "5-2-u6-e3-mission-5-simple-roundtrip-synthetic",
       "publisherKeyVerified": false,
       "publicDecision": "locked"
     },
