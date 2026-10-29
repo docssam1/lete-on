@@ -104,6 +104,23 @@
 
 Drive 폴더 id는 `pipeline/folders.txt`에 있다. 5-2·6-1·6-2는 학기 폴더 id만 있으니 하위 폴더를 먼저 나열해 줄을 더한다.
 
+### 2-1. 단원별 완료 기준 (2026-10-13부터 적용)
+
+위의 `✅ 끝남`은 **2026-10-09 당시의 원문·유사문항·앱 연결·검사·main 반영 기록**이다. 아래 새 기준을 소급해서 통과했다는 뜻이 아니다. 새 단원과 다시 손대는 단원은 단원 id별 검수 기록을 남기고, 모든 필수 게이트가 통과한 뒤에만 `검수 완료`라고 쓴다. 검사 통과, 로컬 커밋, 원격 브랜치 반영, 원장 승인, `main` 반영, 실제 화면 공개는 서로 다른 상태다.
+
+| 게이트 | 통과 조건 | 남길 근거 |
+|---|---|---|
+| 원본·범위 | Drive의 **해당 시험지 PDF와 공식 정답·채점 기준**을 세트·쪽·문항 번호까지 특정한다. 실제 세트·문항 수와 받아쓰기 수가 일치하며, 없는 세트나 문항을 만들지 않는다. 인쇄 오류·판독 불가·원본과 공식 정답의 충돌은 `uncertain`으로 남겨 원문을 임의 수정하지 않는다. | 원본 파일 식별자·쪽/문항 위치, 원문 수 대조표, 미해결 목록 |
+| 원문 대조 | 지문·조건·단위·표·보기·그림 참조를 PDF 원본과 **문항별로** 대조한다. `source.js`와 `work/<us>/set<N>.json`의 차이가 있다면 이유를 기록한다. | 문항별 대조 기록과 수정 내역 |
+| 공식 답·판정 | 공식 정답/부분점수 기준과 독립 검산·교사 검토를 구분한다. `judge.js`는 공식 기준보다 엄격하지 않아야 하며, 정답·부분 정답·오답 예시와 두 번째 시도를 확인한다. 공식 자료만으로 결론이 불명확하면 자동 판정·완료를 보류한다. | 공식 기준 위치, 판정 예시 결과, 충돌·교사 확인 기록 |
+| 그림·표 | `figmap.json`과 모든 잘라 낸 그림을 원본 쪽에서 대조한다. `sheet.png`뿐 아니라 실제 학생 화면과 인쇄 화면에서 문구·눈금·방향·라벨·잘림·중복·누락을 눈으로 확인한다. | 그림 키별 원본 위치, 검토 시트와 화면/인쇄 캡처 |
+| 유사·오개념 | 원문 **1문항:유사문항 1개** 대응과 유형·난이도·정답 타당성을 확인한다. 원문 복제, 같은 변형의 중복 선택, 보기 길이 힌트, 학년 밖 용어를 막는다. 오개념 분류·처방이 실제 오답과 맞고 학생에게 정답을 먼저 누설하지 않는지 확인한다. | 원문↔유사 키 목록, 독립 풀이·오개념 검토표 |
+| `learner-fit` | 대상 학년·학기와 학습 단계, 선수 개념, 실험 감독 조건을 적고 `language`·`representations`·`prerequisites`·`reasoning-load`·`response-mode`를 검토한다. 안전 관련 문구와 그림·표의 읽기 수준도 확인한다. | 동일 학년·학기를 명시한 항목별 검토 기록 |
+| 자동 검사·실제 동작 | 감사의 원문 수가 **예상 수와 같고 0이 아니며** 유사 수·분류 키도 맞아야 한다. 테스트 실패 0만으로는 내용 검수를 대신하지 않는다. PC·태블릿 학생 화면에서 목록→문항→판정→오답→짝 유사문항, 교사용 정답표, 필요한 인쇄 화면을 실제로 열어 정답 노출·콘솔 오류·잘림을 점검한다. | 감사/테스트 명령과 출력, 기기 크기·URL·캡처·오류 기록 |
+| 승인·반영 | 미해결 `uncertain`이나 실패 게이트가 없고 독립 검토자·날짜·증거가 기록되어야 검수안을 낼 수 있다. **원장 승인 전 `main` 병합·푸시·배포 및 `검수 완료` 표시는 금지**한다. 승인 후에도 원격 SHA와 실제 공개 화면을 따로 확인한다. | 검토자/승인 기록, 브랜치·커밋·원격 SHA, 공개 확인 결과 |
+
+단원 검수 기록에는 `단원 id / 원본 식별자 / 예상·실제 문항 수 / 각 게이트의 pass·fail·pending·blocked / 근거 경로 / 미해결 사항 / 검토자와 날짜 / 승인 상태`를 남긴다. `audit`의 `원문 N > 0`과 테스트 실패 0은 **형식·연결의 필요조건**일 뿐, 원본 일치·공식 답·그림·학생 경험의 충분조건이 아니다. 이전 단원의 상태를 새 기준으로 바꾸려면 근거를 다시 확인한다.
+
 ---
 
 ## 3. 작업 지시서와 도구 (`science-lab/bank/pipeline/`)
@@ -117,7 +134,7 @@ Drive 폴더 id는 `pipeline/folders.txt`에 있다. 5-2·6-1·6-2는 학기 폴
 | `source-only-prompt.md` | **유사문항·분류가 이미 있는 단원**(s41-u01~03, s42-u01) | Supabase 옛 받아쓰기와 대조 → `importSourceOnly`로 원문·그림만 더한다 |
 | `finish.py` | 빌드 성공 뒤 | `python3 -I science-lab/bank/pipeline/finish.py <u>`: 시험 목록(`audit.test`·`judge.test`) 등록, `BANK`/`READY` 등록, 레슨 단원이면 `v2.js` 로더에 원문 연결, 감사 + 전체 테스트까지 |
 | `exam-unit-check.mjs` · `lesson-routes.mjs` | 커밋 전 | 브라우저(Playwright) 점검: 문제은행 목록, 단원평가 세트, 소단원, 레슨 화면, 콘솔 오류 |
-| `commit-unit.sh` | 마지막 | `bash science-lab/bank/pipeline/commit-unit.sh <u> <us> "<제목>" "<본문>"`: 그 단원 파일만 커밋한 뒤 브랜치와 main에 올린다 |
+| `commit-unit.sh` | **원장 승인 후에만** | 현재 스크립트는 단원 파일을 커밋한 뒤 원격 브랜치와 **`main`에 바로 푸시**한다. 검수·승인 전에는 실행하지 않는다. 스크립트의 하드코딩된 브랜치·스테이징 범위도 실행 전 확인한다. |
 
 지시서 안의 `{UNIT}` 같은 자리표시는 직접 채워서 준다. 실제로 쓴 값의 예는 `scripts/bank-science-s42u05.mjs`(레슨 단원), `s41mid.mjs`(시험), `s32u01.mjs`(한 벌짜리 탐구 단원)이다.
 
@@ -126,7 +143,7 @@ Drive 폴더 id는 `pipeline/folders.txt`에 있다. 5-2·6-1·6-2는 학기 폴
 ## 4. 단원 종류별 순서
 
 ### A. 문제은행만 있는 단원 (레슨 없음, 예: 5-2 Ⅱ~Ⅴ)
-1. `transcribe-prompt.md` × 세트 수 → 2. `figs.py`, sheet.png 확인 → 3. `builder-prompt.md`(그대로) → 4. `finish.py <u>` → 5. `exam-unit-check.mjs <u>` → 6. `commit-unit.sh`
+1. `transcribe-prompt.md` × 세트 수 → 2. `figs.py`, sheet.png 확인 → 3. `builder-prompt.md`(그대로) → 4. `finish.py <u>` → 5. `exam-unit-check.mjs <u>` → 6. §2-1 검수·원장 승인 → 7. 승인된 반영 절차. `commit-unit.sh`는 위의 `main` 푸시 주의를 먼저 확인한다.
 
 ### B. 레슨이 이미 있는 단원 (예: 5-1 Ⅱ~Ⅴ, 5-2 Ⅰ)
 A와 같다. 단 3단계에서 `builder-prompt.md`와 **`lesson-addendum.md`를 함께** 준다(「No lessonTypes…」 줄은 무시하라고 적는다).
@@ -135,7 +152,7 @@ A와 같다. 단 3단계에서 `builder-prompt.md`와 **`lesson-addendum.md`를 
 - `commit-unit.sh`가 교재 파일(`data/book/<u>.book.js`)과 `v2/v2.js`도 함께 넣는다. 판정 엔진(`v2/judge.js`)이나 시험 파일을 고쳤다면 그것도 `git add` 해 둔다.
 
 ### C. 유사문항이 이미 있는 단원 (s41-u01·u02·u03, s42-u01)
-`source-only-prompt.md` → `scripts/bank-science-<us>.mjs`(importSourceOnly) → `finish.py <u>` → 커밋.
+`source-only-prompt.md` → `scripts/bank-science-<us>.mjs`(importSourceOnly) → `finish.py <u>` → §2-1 검수·원장 승인 → 승인된 반영 절차.
 - `misc.js`·`judge.js` 끝에 `// ── 단원평가 원문(source.js) ──` 블록이 붙는다. 정상이다. 손으로 쓴 나머지 부분은 건드리지 않는다.
 - `<u>.js` 머리의 `sources.bank` 설명이 아직 「Supabase」라고 되어 있으면 source.js로 고친다.
 
@@ -186,7 +203,7 @@ A와 같다. 단 3단계에서 `builder-prompt.md`와 **`lesson-addendum.md`를 
 **검사·커밋**
 - `audit.test.mjs`는 단원마다 「원문 N개 / 유사문항 N개」 줄을 기대한다. `finish.py`가 옛 숫자(20개)를 지우고 새 줄을 넣는다.
 - 커밋 전에 `node --test science-lab/bank/*.test.mjs science-lab/v2/*.test.mjs`가 실패 0이어야 한다.
-- 브랜치 `claude/jolly-allen-w57yqh`에 커밋한 다음 같은 커밋을 main으로 fast-forward 한다(`commit-unit.sh`가 한다). force push는 하지 않는다.
+- `commit-unit.sh`는 현재 브랜치 `claude/jolly-allen-w57yqh`와 `main`으로 바로 푸시한다. **검수·원장 승인 전 사용 금지**. 다른 브랜치에서는 스크립트의 브랜치명·스테이징 범위도 맞지 않으므로 그대로 실행하지 않는다. force push는 하지 않는다.
 - 반쯤 만든 단원은 커밋하지 않는다. 검사를 통과한 단원만 올린다.
 
 **하지 않는 것**
