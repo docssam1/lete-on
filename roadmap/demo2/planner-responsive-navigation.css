@@ -1,4 +1,5 @@
-/* Shared compact shell: applies to standard/custom/study/all senior cases. */
+/* Shared compact shell: applies to standard/custom/study/all senior cases.
+ * Its canvas must override the more specific legacy standard-plan grid. */
 @media screen{
  body.roadmap-studio.integrated-planner[data-responsive-workspace]{--prn-header:48px;--prn-rail:calc(156px + env(safe-area-inset-left));overflow:hidden;height:100dvh}
  body.roadmap-studio.integrated-planner[data-responsive-workspace] .top{height:var(--prn-header);min-height:var(--prn-header);padding:2px 8px;display:flex;flex-wrap:nowrap;align-items:center;gap:6px;box-sizing:border-box;overflow:visible;z-index:30}
@@ -15,7 +16,7 @@
  .prn-global-body{position:absolute;right:0;top:48px;z-index:60;display:grid;gap:6px;width:min(290px,calc(100vw - 16px));max-height:calc(100dvh - 64px);overflow:auto;padding:10px;background:#fff;border:1px solid #c9b6d6;border-radius:14px;box-shadow:0 12px 30px #422b5826;box-sizing:border-box}
  body.roadmap-studio.integrated-planner[data-responsive-workspace] .prn-global-body button{font:inherit;display:block;width:100%;min-height:44px;margin:0;text-align:left;padding:8px 12px;border:1px solid #d8cbe1;border-radius:10px;background:#fff;color:#60436f;font-size:13px;white-space:normal}
  .prn-global-body button[hidden]{display:none!important}
- body.roadmap-studio.integrated-planner[data-responsive-workspace] main{display:block;width:100%;height:calc(100dvh - var(--prn-header) - env(safe-area-inset-bottom));min-height:0;padding:0;margin:0;gap:0;box-sizing:border-box}
+ body.roadmap-studio.integrated-planner[data-responsive-workspace] main{display:block!important;width:100%!important;height:calc(100dvh - var(--prn-header) - env(safe-area-inset-bottom))!important;min-height:0!important;padding:0!important;margin:0!important;gap:0!important;box-sizing:border-box}
  body.roadmap-studio.integrated-planner[data-responsive-workspace] #planningOverview{display:none!important}
  body.roadmap-studio.integrated-planner[data-responsive-workspace] #vmap,body.roadmap-studio.integrated-planner[data-responsive-workspace] #pathwayCoach{grid-area:auto;min-width:0;min-height:0;height:100%;max-height:none;box-sizing:border-box}
  body.roadmap-studio.integrated-planner[data-responsive-workspace] #vmap>.mapwrap{height:100%;min-height:0;padding:0}
@@ -56,7 +57,7 @@
  body.roadmap-studio.integrated-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) .prn-global{order:3}
  body.roadmap-studio.integrated-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) .prn-global>summary{min-height:44px}
  body.roadmap-studio.integrated-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) .prn-global-body{position:fixed;top:8px;left:calc(var(--prn-rail) + 8px);right:auto;width:min(290px,calc(100vw - var(--prn-rail) - 16px));max-height:calc(100dvh - 16px)}
- body.roadmap-studio.integrated-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) main{margin-left:var(--prn-rail);width:calc(100% - var(--prn-rail));height:calc(100dvh - env(safe-area-inset-bottom))}
+ body.roadmap-studio.integrated-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) main{margin-left:var(--prn-rail)!important;width:calc(100% - var(--prn-rail))!important;height:calc(100dvh - env(safe-area-inset-bottom))!important}
  body.roadmap-studio.integrated-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) .workspace-tabs{position:fixed;inset:144px auto calc(8px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left));width:140px;max-width:none;min-height:0;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:0 2px 4px!important;gap:6px!important;overflow-x:hidden;overflow-y:auto;border:0;background:#fff;z-index:31;scroll-padding-block:4px}
  body.roadmap-studio.integrated-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen) .workspace-tabs button{width:100%;min-height:44px;flex:none;padding:8px;white-space:normal;text-align:center}
  body.roadmap-studio.integrated-planner[data-responsive-workspace=landscape]:not(.atlas-is-fullscreen)[data-responsive-choice=false] .workspace-tabs{top:96px}
