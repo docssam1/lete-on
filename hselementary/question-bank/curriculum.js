@@ -2599,7 +2599,9 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52Unit2Application) for (const [suffix,name,label,section,key] of [
     ["exploration","세 분수에 곱해 자연수가 되는 가장 작은 분수","개념탐구 4 유사문항","exploration","source52U2Page20Exploration4"],
     ["example-1","부분 넓이로 직사각형 세로 구하기","예제 4-1 유사문항","example","source52U2Page20Example41"],
-    ["example-2","대각선과 분할선으로 수직선의 수 구하기","예제 4-2 유사문항","example","source52U2Page20Example42"]]) {
+    ["example-2","대각선과 분할선으로 수직선의 수 구하기","예제 4-2 유사문항","example","source52U2Page20Example42"],
+    ["example-3","기약분수 곱의 자연수 조건","예제 4-3 유사문항","example","source52U2Page20Example43"],
+    ["example-4","곱이 일정한 기약 진분수 짝의 수","예제 4-4 유사문항","example","source52U2Page20Example44"]]) {
     const id = `5-2-u2-e4-${suffix}-synthetic`, typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
     source52Unit2Application.types.push({id,number:source52Unit2Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e4-${suffix}`,sourceItemLabel:label,sourceSection:section,sourceTier:"advanced",sourcePdfPage:16,sourcePrintedPage:20,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
   }
