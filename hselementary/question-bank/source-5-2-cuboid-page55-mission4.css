@@ -1,0 +1,27 @@
+.source52-p55m4-question,
+.source52-p55m4-solution { color: #2a241c; font-family: "Noto Serif KR", "Batang", serif; font-size: 1rem; line-height: 1.62; }
+.source52-p55m4-question > p,
+.source52-p55m4-solution > p { margin: 0 0 0.55rem; }
+.source52-p55m4-diagram { display: block; width: min(100%, 19rem); height: auto; margin: 0.45rem auto 0.65rem; overflow: visible; }
+.source52-p55m4-top { fill: #fff; stroke: #2a241c; stroke-width: 1.7; stroke-linejoin: round; }
+.source52-p55m4-right { fill: #f1ece1; stroke: #2a241c; stroke-width: 1.7; stroke-linejoin: round; }
+.source52-p55m4-front { fill: #fff; stroke: #2a241c; stroke-width: 1.7; }
+.source52-p55m4-pip { fill: #191511; }
+.source52-p55m4-wall,
+.source52-p55m4-floor { fill: none; stroke: #7a6f5c; stroke-width: 2; }
+.source52-p55m4-caption { fill: #7a6f5c; font: 600 11px "Pretendard", sans-serif; }
+.source52-p55m4-solution ol { margin: 0.3rem 0 0.6rem; padding-left: 1.45rem; }
+.source52-p55m4-solution li { margin: 0.2rem 0; }
+.source52-p55m4-final-answer { color: #1e4631; font-weight: 700; }
+
+@media (max-width: 560px) {
+  .source52-p55m4-diagram { width: min(100%, 16rem); }
+}
+
+@media print {
+  .source52-p55m4-question,
+  .source52-p55m4-solution { font-size: 10.2pt; line-height: 1.42; }
+  .source52-p55m4-diagram { width: 2.65in; margin: 0.04in auto 0.08in; }
+  .source52-p55m4-solution ol { margin: 0.18rem 0 0.35rem; }
+  .source52-p55m4-solution li { margin: 0.12rem 0; }
+}

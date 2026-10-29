@@ -2281,7 +2281,9 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52Dice) {
     for (const [ordinal, name, generatorKey] of [
       [1, "다섯 정육면체의 맞붙은 면으로 빈 숫자 찾기", "source52CuboidDiceChainPage55Mission1"],
-      [2, "세 방향 그림으로 마주 보는 글자 찾기", "source52CubeThreeViewsOppositesPage55Mission2"]
+      [2, "세 방향 그림으로 마주 보는 글자 찾기", "source52CubeThreeViewsOppositesPage55Mission2"],
+      [3, "전개도로 쌓은 정육면체의 뒤쪽 수 합", "source52CuboidNetStackBackSumPage55Mission3"],
+      [4, "벽에 쌓은 주사위의 보이지 않는 눈의 합", "source52FourDiceWallHiddenPipsPage55Mission4"]
     ]) {
       const id = `5-2-u5-e4-mission-${ordinal}`;
       const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
