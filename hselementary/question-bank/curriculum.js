@@ -2144,6 +2144,24 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     type.answerVisualStatus = "locked";
   }));
 
+  // One directly reviewed source item; existing locked types remain intact.
+  const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
+  const source52CuboidProperties = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s1");
+  if (source52CuboidProperties) {
+    const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52CuboidProperties.types.push({
+      id: "5-2-u5-e1-mission-4", number: source52CuboidProperties.types.length + 1, typeNumber,
+      name: "3×3×3 쌓기나무에서 만들 수 있는 정육면체 수 세기",
+      label: "3×3×3 쌓기나무에서 만들 수 있는 정육면체 수 세기",
+      difficultyBand: 0, sourceItemId: "5-2-u5-e1-mission-4", sourceItemLabel: "Mission 4",
+      sourceSection: "mission", sourceTier: "advanced", sourcePdfPage: 45, sourcePrintedPage: 49,
+      sourceVerified: true, publisherKeyVerified: false, reviewLocked: false,
+      generatorKey: "source52Cuboid27CubesPage49Mission4", generationMode: "fixed-verified-pool",
+      verifiedVariantTarget: 1, verifiedVariantCount: 1, answerVisualRequired: true,
+      answerVisualStatus: "verified-reconstruction", implementationStatus: "fixed-verified-pool"
+    });
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
