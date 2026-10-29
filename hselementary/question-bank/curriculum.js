@@ -2791,6 +2791,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 4-4 유사문항",sourceSection:"example",sourcePdfPage:26,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 조건을 대조하고 창작 삼각형의 합동과 각도를 검증했습니다.",generatorKey:"source52EquilateralCompositeAnglesSyntheticPage30Example44",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
 
+  if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t => t.id === "5-2-u3-e4-exploration")) {
+    const id="5-2-u3-e4-exploration",name="정사각형과 보조점으로 각 찾기";
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 4 유사문항",sourceSection:"exploration",sourcePdfPage:26,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 조건을 대조하고 창작 정사각형의 보조점과 각도를 검증했습니다.",generatorKey:"source52SquareAuxiliaryAngleSyntheticPage30Exploration4",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52Application = source52Unit1?.subunits.find(subunit => subunit.name === "어림하기의 활용 · 개념탐구 3 원문 연결");
   if (source52Application) for (const [n,name] of [[1,"어림한 방법 모두 찾기"],[2,"단위로 파는 리본의 가격"]]) {
