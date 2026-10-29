@@ -650,7 +650,8 @@
       "implementationStatus": "review-locked",
       "reviewReason": "인쇄 9쪽 조건과 필요한 그림을 직접 대조했습니다. 기존 창작 유사문항과 연결하며 원문은 보호 잠금 유지, 출판사 정답 미대조.",
       "syntheticRuntimeTypeId": "5-2-u1-e3-mission-2-perimeter",
-      "publisherKeyVerified": false
+      "publisherKeyVerified": false,
+      "sourceReviewCorrection20261030": "정본의 ㄱ자 도형은 전체 가로·세로로 둘레를 구해 자연수 cm로 어림한다. 창작 풀이에서 가로 선분 전체의 합이 가로 길이와 같다고 잘못 설명한 부분을 정정했다. 위쪽과 안쪽 가로의 합이 아래쪽 전체 가로와 같고, 오른쪽과 안쪽 세로의 합이 왼쪽 전체 세로와 같다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-3",
@@ -729,7 +730,8 @@
       "implementationStatus": "review-locked",
       "reviewReason": "인쇄 9쪽 조건과 필요한 그림을 직접 대조했습니다. 기존 창작 유사문항과 연결하며 원문은 보호 잠금 유지, 출판사 정답 미대조.",
       "syntheticRuntimeTypeId": "5-2-u1-e3-mission-6-citrus-sales",
-      "publisherKeyVerified": false
+      "publisherKeyVerified": false,
+      "sourceReviewCorrection20261030": "정본은 포장한 감귤을 판매하는 금액을 묻는다. 유사문항은 완성된 상자만 판매하고 남는 감귤이 있음을 명시한다. 출판사 답안은 미대조다."
     },
     {
       "sourceItemId": "5-2-u1-e4-exploration",

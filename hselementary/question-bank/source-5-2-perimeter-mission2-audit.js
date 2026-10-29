@@ -22,6 +22,8 @@ for (let variant = 0; variant < api.pools.length; variant++) {
     assert.equal(question.answerModel.perimeterMm, perimeter);
     assert.equal(question.answerModel.roundedCm, expected);
     assert.equal(question.answer, `${expected}cm`);
+    assert.match(strip(question.solution), /위쪽과 안쪽 가로 선분을 더하면 아래쪽/);
+    assert.match(strip(question.solution), /오른쪽과 안쪽 세로 선분을 더하면 왼쪽/);
     assert.match(strip(question.solution), new RegExp(`${perimeter}mm`));
     assert.match(strip(question.solution), new RegExp(`${perimeter / 10}cm`));
     assert.match(strip(question.solution), new RegExp(`${expected}cm`));
