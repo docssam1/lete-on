@@ -1210,19 +1210,19 @@
         "이등변삼각형의 밑각 동일"
       ],
       "visualRequirement": "두 삼각형의 대응 변과 목표각 표식이 필요합니다.",
-      "independentCalculation": "70°의 밑각은 35°이고, 목표각 x=180°-65°-35°=80°입니다.",
-      "answerFormula": "x=180°-65°-(70°/2)=80°",
+      "independentCalculation": "그림 라벨을 ㄴ=왼쪽 아래, ㄹ=오른쪽 위, ㅁ=왼쪽 중간, ㅂ=교점으로 읽어 두 이등변삼각형을 대응 회전으로 재구성하면 회전각 20°, 목표각은 80°입니다. 이전 70°를 이등분하는 설명은 근거가 불명확하므로 사용하지 않습니다.",
+      "answerFormula": "rotation angle = 20°, target = (180°−20°)/2 = 80°",
       "independentAnswer": "80°",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "합동 대응과 이등변 밑각을 사용한 독립 각도 추적입니다.",
+      "singleAnswerCheck": "표시각·대응점·교점이 일치하는 좌표 구성으로 교차 검산. 원본 라벨과 출판사 답안 추가 대조 필요.",
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "reviewed",
-      "publicDecision": "public-candidate",
-      "lockReason": null
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원본 점 이름과 출판사 답안을 추가 대조하고 생성 그림·풀이를 검증하기 전까지 원문 잠금을 유지합니다."
     },
     {
       "sourceItemId": "5-2-u3-e3-example-1",
