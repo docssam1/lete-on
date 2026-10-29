@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 5-2 Unit 1 Page 8 Examples 3-3 and 3-4: Separate Practice
+
+- Source examples remain locked: the original packing conditions conflict, and the taxi increment policy is unclear. Publisher answers are unverified. Created separately identified synthetic practice with explicit maximum full boxes and explicit partial-distance charging, using different values; no original was silently repaired or unlocked.
+- Independent enumeration covers all 18 generated states; 1440/375/320px × three difficulties pass browser generation and solution checks. A4 question and solution PDFs each occupy one page. Release gate: 2,211 types, 1,432 available, 779 awaiting; runtime audit: 85,920 generations. Prior page 11 Mission 6 deployed and verified on production at three widths and difficulties. Preserve student data and the existing private source evidence.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 2 Page 15 Missions 3, 5 and 6
 
 - Rechecked the source structures and connected separately identified synthetic practice types with different values: cumulative clock delay, natural numbers producing integer products from two proper fractions, and a strict inequality with a natural-number sum. Original source blocks remain locked and publisher answer keys remain unverified. Mission 4 stays locked pending clarification of the signs of its unknowns.
