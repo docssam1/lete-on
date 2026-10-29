@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 5 Page 54 Examples 4-3 and 4-4
+
+- Source PDF p.50 / clean comparison PDF p.49 / printed p.54. Added fixed source questions: 3×2×2 dice-block exterior pip sum 116; line and bent four-die arrangements each have maximum 68 and minimum 58. Publisher answer key remains unverified.
+- Reviewed the original visible pips and equal-contact conditions. A constructive 12-die assignment validates existence; a separate axis argument proves the exterior total. Independent contact-triple enumeration and same-die rotations verify the extrema, without assuming identical dice in the source. Source, ledger, 1440/375/320px browser and four one-page A4 checks passed; release gate and 76,920 runtime generations passed.
+- Counts: 2,070 types, 1,282 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Preserve the dirty source worktree and student data. Other locked source items need independent review.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 5 Page 54 Examples 4-1 and 4-2
 
 - Source PDF p.50 / clean comparison PDF p.49 / printed p.54. Added two fixed source questions: six-die contact-chain missing face 4; opposite faces A–B, D–F, E–C. Publisher answer key remains unverified.
