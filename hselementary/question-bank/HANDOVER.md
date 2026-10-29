@@ -1,3 +1,10 @@
+## 2026-10-30 Inventory Hold-Reason Gate
+
+- Corrected the grades 5-2–6 inventory audit for 6-2 verified releases: an empty hold reason is accepted only when the relevant public source type(s) exist uniquely, correspond to the same source, are unlocked and source-verified, have a generator and a fully verified pool and answer visual. Four independently split source blocks require both public types; a compound owner is identified by its raw source ID. Locks and source records were not changed.
+- A negative-case test verifies locked/unverified rows and missing or unrelated public links still fail. The wider inventory audit now reports 38 remaining findings: 23 fixed 5-2 status expectations, 12 empty 5-2 visual-risk arrays, one verified-count expectation, and two 6-1 section-count differences. They need evidence-based review; this is not a full pass.
+
+---
+
 ## 2026-10-30 Grade 5-2 Page 8 Practice Traceability
 
 - Added links from locked source records 3-3/3-4 to their separate synthetic runtime types. The original records remain locked; the audit now checks both the inventory links and the actual generator registration.

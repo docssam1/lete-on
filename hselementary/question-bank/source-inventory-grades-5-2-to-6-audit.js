@@ -35,6 +35,30 @@ const specs = [
   }
 ];
 
+// A blank hold reason is valid only when every corresponding public type is released.
+// Four source blocks are intentionally represented by two independent runtime types.
+global.window = global.window || {};
+require("./source-inventory-grade6.js");
+const publicGrade6Items = window.HSE_SOURCE_INVENTORY_GRADE6.items;
+const splitPublicIds = {
+  "6-2-u3-e2-exploration": ["6-2-u3-e2-exploration-1", "6-2-u3-e2-exploration-2"],
+  "6-2-u3-e3-example-3": ["6-2-u3-e3-example-3-1", "6-2-u3-e3-example-3-2"],
+  "6-2-u3-e3-mission-5": ["6-2-u3-e3-mission-5-1", "6-2-u3-e3-mission-5-2"],
+  "6-2-u3-e3-mission-6": ["6-2-u3-e3-mission-6-1", "6-2-u3-e3-mission-6-2"]
+};
+function releasedPublicCounterparts(item) {
+  if (!["fixed-verified-pool", "verified-fixed-pool"].includes(item.implementationStatus) || item.sourceVerified !== true) return false;
+  const ids = splitPublicIds[item.sourceItemId] || [item.publicSourceItemId || item.sourceItemId];
+  return ids.every(id => {
+    const matches = publicGrade6Items.filter(publicItem => publicItem.sourceItemId === id);
+    return matches.length === 1 && (id === item.sourceItemId || splitPublicIds[item.sourceItemId]?.includes(id) || matches[0].rawSourceItemId === item.sourceItemId) &&
+      matches[0].reviewLocked === false && matches[0].sourceVerified === true &&
+      typeof matches[0].generatorKey === "string" && matches[0].generatorKey.length > 0 &&
+      matches[0].verifiedVariantTarget > 0 && matches[0].verifiedVariantCount === matches[0].verifiedVariantTarget &&
+      matches[0].answerVisualStatus === "verified";
+  });
+}
+
 const failures = [];
 const verified5_2Page49 = new Set([...([2, 3, 4, 5, 6].map(n => `5-2-u5-e1-mission-${n}`)), "5-2-u5-e1-example-2", "5-2-u5-e1-example-3", ...([1, 2, 3, 4].map(n => `5-2-u5-e2-example-${n}`)), ...([1, 2, 3, 4, 5, 6].map(n => `5-2-u5-e2-mission-${n}`)), ...([1, 2, 3, 4].map(n => `5-2-u5-e4-example-${n}`)), "5-2-u5-e4-exploration", "5-2-u6-e1-exploration", "5-2-u6-e1-example-1", "5-2-u6-e1-example-2", "5-2-u6-e1-example-3", "5-2-u6-e1-example-4", "5-2-u6-e1-mission-1", "5-2-u6-e1-mission-2", "5-2-u6-e1-mission-3", "5-2-u6-e1-mission-4", "5-2-u6-e1-mission-5", "5-2-u6-e1-mission-6", "5-2-u6-e2-exploration", "5-2-u6-e2-example-1", "5-2-u6-e2-example-2", "5-2-u6-e2-example-4", "5-2-u6-e2-mission-1", "5-2-u6-e2-mission-2", "5-2-u6-e2-mission-3", "5-2-u6-e2-mission-5", "5-2-u6-e2-mission-6", "5-2-u1-e3-example-1", "5-2-u1-e3-example-2", "5-2-u6-e4-exploration", ...([1,2,3,4,5,6].map(n => `5-2-u6-e4-mission-${n}`)), ...([1,2,4].map(n => `5-2-u6-e4-example-${n}`)), "5-2-u6-e3-exploration", ...([1,2,3,4,6].map(n => `5-2-u6-e3-mission-${n}`)), ...([1,2,3,4].map(n => `5-2-u6-e3-example-${n}`)), ...([1, 2, 3, 4, 5, 6].map(n => `5-2-u5-e4-mission-${n}`))]);
 const reviewed5_2Releases = new Set(["5-2-u1-e4-mission-1", "5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
@@ -112,8 +136,11 @@ for (const spec of specs) {
     if (!["exploration", "example", "mission"].includes(item.section)) fail(`${label}: section 값이 잘못되었습니다.`);
     if (!Number.isInteger(item.ordinal) || item.ordinal < 1) fail(`${label}: ordinal이 정수가 아닙니다.`);
     if (!Number.isInteger(item.pdfPage) || item.pdfPage < 1) fail(`${label}: pdfPage가 양의 정수가 아닙니다.`);
-    for (const field of ["sourceShape", "reviewReason", "visualRisk"]) {
+    for (const field of ["sourceShape", "visualRisk"]) {
       if (!isNonEmpty(item[field])) fail(`${label}: ${field}가 비어 있습니다.`);
+    }
+    if (!isNonEmpty(item.reviewReason) && !(spec.semester === "6-2" && releasedPublicCounterparts(item))) {
+      fail(`${label}: reviewReason가 비어 있으며 확인된 공개 유형 연결이 없습니다.`);
     }
     const status = item.implementationStatus;
     byStatus[status] = (byStatus[status] || 0) + 1;
