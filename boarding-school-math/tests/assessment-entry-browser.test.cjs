@@ -104,3 +104,52 @@ test("ISEE stanines stay separate instead of becoming an invented average", asyn
   assert.deepEqual(errors, []);
   await page.close();
 });
+
+test("legacy MAP summary restores only report values and asks for missing comparison context", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = errorsFor(page);
+  await page.addInitScript(function () {
+    localStorage.setItem("gmap-local-learning-record-v1:external-assessment", JSON.stringify({
+      schemaVersion: "gfield-external-math-evidence-v1",
+      source: { id: "map-growth", label: "NWEA MAP Growth Math", role: "instructional-growth" },
+      testDate: "2026-09-01", grade: 7,
+      scores: { metric: 93, metricLabel: "성취 백분위", rit: 242, percentile: 93, schoolCut: null, clearsEnteredCut: null },
+      recommendedStart: { id: "algebra-1", label: "Algebra 1", publicLearning: false },
+      targetCourse: { id: "geometry", label: "Geometry" },
+      primaryPriority: { label: "기하·측정", axis: "geometry-spatial", clusterId: "6.G.A", percent: 48 },
+      plan: { weeks: 6, studyDaysPerWeek: 3, minutesPerDay: 45, problemCountPerDay: 12 },
+      materialState: "verified-grade6-public-materials"
+    }));
+  });
+  await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#source-id").inputValue(), "map-growth");
+  assert.equal(await page.locator("#grade").inputValue(), "7");
+  assert.equal(await page.locator("#rit").inputValue(), "242");
+  assert.equal(await page.locator("#percentile").inputValue(), "93");
+  assert.equal(await page.locator("#result-content").isHidden(), true);
+  assert.match(await page.locator("#legacy-evidence-note").innerText(), /시험 시기·규준집단, 현재·목표 과정/);
+  assert.match(await page.locator("#legacy-evidence-note").innerText(), /준비도·약점 판정은 복원하지 않았습니다/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("legacy ISEE average is not restored as either reported stanine", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.addInitScript(function () {
+    localStorage.setItem("gmap-local-learning-record-v1:external-assessment", JSON.stringify({
+      schemaVersion: "gfield-external-math-evidence-v1",
+      source: { id: "isee", label: "ISEE Quantitative / Mathematics", role: "admission-support" },
+      testDate: "2026-09-01", grade: 7,
+      scores: { metric: 8.5, metricLabel: "수학 stanine", stanine: 8.5 },
+      recommendedStart: { id: "pre-algebra", label: "Pre-Algebra", publicLearning: true },
+      targetCourse: { id: "algebra-1", label: "Algebra 1" },
+      plan: { weeks: 6, studyDaysPerWeek: 3, minutesPerDay: 45, problemCountPerDay: 12 }
+    }));
+  });
+  await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#source-id").inputValue(), "isee");
+  assert.equal(await page.locator("#quant-stanine").inputValue(), "");
+  assert.equal(await page.locator("#math-stanine").inputValue(), "");
+  assert.match(await page.locator("#legacy-evidence-note").innerText(), /평균 하나로 합쳐져 있어 복원하지 않았습니다/);
+  await page.close();
+});

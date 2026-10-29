@@ -113,6 +113,28 @@
     }
     document.getElementById("result-content").scrollIntoView({ behavior: "smooth", block: "start" });
   }
+  function restoreLegacyInputs(saved) {
+    sourceSelect.value = saved.source.id;
+    updateSourceFields();
+    if (saved.grade) document.getElementById("grade").value = String(saved.grade);
+    if (saved.testDate) document.getElementById("test-date").value = saved.testDate;
+    if (saved.source.id === "school-placement") {
+      if (saved.scores.metric != null) document.getElementById("overall-percent").value = String(saved.scores.metric);
+      if (saved.scores.schoolCut != null) document.getElementById("school-cut").value = String(saved.scores.schoolCut);
+    } else if (saved.source.id === "map-growth") {
+      if (saved.scores.rit != null) document.getElementById("rit").value = String(saved.scores.rit);
+      if (saved.scores.percentile != null) document.getElementById("percentile").value = String(saved.scores.percentile);
+    } else if (saved.source.id === "ctp" || saved.source.id === "ssat") {
+      if (saved.scores.percentile != null) document.getElementById("percentile").value = String(saved.scores.percentile);
+      if (saved.scores.scaleScore != null) document.getElementById("scale-score").value = String(saved.scores.scaleScore);
+      if (saved.source.id === "ctp" && saved.scores.stanine != null) document.getElementById("stanine").value = String(saved.scores.stanine);
+    }
+    const note = document.getElementById("legacy-evidence-note");
+    note.textContent = saved.needsIseeStanines
+      ? "이전 기록을 불러왔어요. ISEE 두 영역 점수는 예전 저장 방식에서 평균 하나로 합쳐져 있어 복원하지 않았습니다. 성적표에서 Quantitative Reasoning과 Mathematics Achievement Stanine을 각각 다시 입력한 뒤, 현재·목표 과정과 비교 기준을 확인해 주세요."
+      : "이전 성적표 점수를 입력칸에 복원했어요. 시험 시기·규준집단, 현재·목표 과정, 영역 점수는 저장되지 않았으니 성적표를 보고 확인·보완한 뒤 비교 결과를 다시 만들어 주세요. 예전 준비도·약점 판정은 복원하지 않았습니다.";
+    note.hidden = false;
+  }
   form.addEventListener("submit", function (event) {
     event.preventDefault(); document.getElementById("form-error").textContent = "";
     try { const result = engine.analyze(inputRecord()); records.storage.saveAssessmentEvidence(result); render(result); }
@@ -123,5 +145,7 @@
   populateCourses(); updateTargetOptions(); updateSourceFields(); document.getElementById("test-date").value = today();
   const requestedGrade = Number(new URLSearchParams(window.location.search).get("grade"));
   if (Number.isInteger(requestedGrade) && requestedGrade >= 3 && requestedGrade <= 12) document.getElementById("grade").value = String(requestedGrade);
-  const saved = records.storage.loadAssessmentEvidence(); if (saved) render(saved);
+  const saved = records.storage.loadAssessmentEvidence();
+  if (saved && saved.legacyEvidence) restoreLegacyInputs(saved);
+  else if (saved && saved.schemaVersion === engine.SCHEMA_VERSION) render(saved);
 })();

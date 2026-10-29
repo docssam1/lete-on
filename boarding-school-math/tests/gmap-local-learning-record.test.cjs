@@ -118,6 +118,31 @@ test("external assessment evidence is reduced to an answer-safe local planning s
   assert.equal(store.loadAssessmentEvidence(), null);
 });
 
+test("legacy assessment summaries retain only source-score inputs and cannot feed the learning plan", function () {
+  const storage = memoryStorage();
+  storage.setItem("gmap-local-learning-record-v1:external-assessment", JSON.stringify({
+    schemaVersion: "gfield-external-math-evidence-v1",
+    source: { id: "map-growth", label: "NWEA MAP Growth Math", role: "instructional-growth" },
+    testDate: "2026-09-01", grade: 7, band: "advanced-evidence", confidence: "high-for-gmap-plan", placementState: "school-policy-required", officialPlacement: false,
+    scores: { metric: 93, metricLabel: "성취 백분위", rit: 242, percentile: 93, schoolCut: null, clearsEnteredCut: null },
+    recommendedStart: { id: "algebra-1", label: "Algebra 1", publicLearning: false },
+    targetCourse: { id: "geometry", label: "Geometry" },
+    primaryPriority: { label: "geometry", axis: "geometry-spatial", clusterId: "6.G.A", percent: 48 },
+    priorityDomains: [{ id: "geometry", label: "기하·측정", clusterId: "6.G.A", percent: 48 }],
+    plan: { weeks: 6, studyDaysPerWeek: 3, minutesPerDay: 45, problemCountPerDay: 12 },
+    materialState: "verified-grade6-public-materials"
+  }));
+  const store = records.create(storage);
+  const legacy = store.loadAssessmentEvidence();
+  assert.equal(legacy.legacyEvidence, true);
+  assert.equal(legacy.scores.rit, 242);
+  assert.equal(legacy.scores.percentile, 93);
+  assert.equal(legacy.band, undefined);
+  assert.equal(legacy.recommendedStart, undefined);
+  assert.equal(legacy.materialState, undefined);
+  assert.equal(legacy.primaryPriority, undefined);
+});
+
 test("verified SASMO paper evidence is stored without answers, source locators, or official-award claims", function () {
   const storage = memoryStorage();
   const store = records.create(storage);

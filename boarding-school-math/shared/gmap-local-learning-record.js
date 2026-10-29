@@ -81,7 +81,29 @@
       recordedAt: new Date().toISOString()
     };
   }
+  function sanitizedLegacyAssessment(value) {
+    if (!object(value) || !object(value.source) || !object(value.scores) || !["school-placement", "map-growth", "ctp", "ssat", "isee"].includes(value.source.id)) return null;
+    const legacyIsee = value.source.id === "isee";
+    return {
+      schemaVersion: value.schemaVersion,
+      legacyEvidence: true,
+      source: { id: String(value.source.id).slice(0, 32), label: String(value.source.label || "외부 평가").slice(0, 100), role: String(value.source.role || "").slice(0, 40) },
+      testDate: typeof value.testDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value.testDate) ? value.testDate : null,
+      grade: Number.isInteger(value.grade) && value.grade >= 3 && value.grade <= 12 ? value.grade : null,
+      scores: {
+        metric: !legacyIsee && Number.isFinite(value.scores.metric) ? value.scores.metric : null,
+        rit: Number.isFinite(value.scores.rit) ? value.scores.rit : null,
+        percentile: Number.isFinite(value.scores.percentile) ? value.scores.percentile : null,
+        scaleScore: Number.isFinite(value.scores.scaleScore) ? value.scores.scaleScore : null,
+        stanine: !legacyIsee && Number.isFinite(value.scores.stanine) ? value.scores.stanine : null,
+        schoolCut: Number.isFinite(value.scores.schoolCut) ? value.scores.schoolCut : null
+      },
+      needsIseeStanines: legacyIsee,
+      savedAt: typeof value.savedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.savedAt) ? value.savedAt : null
+    };
+  }
   function sanitizedAssessment(value) {
+    if (object(value) && value.schemaVersion === "gfield-external-math-evidence-v1") return sanitizedLegacyAssessment(value);
     if (!object(value) || value.schemaVersion !== "gfield-external-math-evidence-v2" || !object(value.source) || !object(value.currentCourse) || !object(value.recommendedStart) || !object(value.plan)) return null;
     const domains = Array.isArray(value.domainComparisons) ? value.domainComparisons.slice(0, 6).map(function (domain) {
       if (!object(domain) || typeof domain.label !== "string" || typeof domain.clusterId !== "string" || !Number.isFinite(domain.percent)) return null;
