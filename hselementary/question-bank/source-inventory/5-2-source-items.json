@@ -5398,16 +5398,18 @@
       "pdfPage": 60,
       "printedPage": 64,
       "sourceShape": "서로 다른 네 사람 중 A가 양 끝이 아니며 B의 오른쪽에 있을 가능성",
-      "answerContract": "1/4",
+      "answerContract": "candidate: exact permutation probability",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 64쪽 원문을 확인하고 조건의 경우를 독립 전수 검사. 출판사 정답 미대조.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 인원으로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e4-example-1"
     },
     {
       "sourceItemId": "5-2-u6-e4-example-2",
