@@ -1499,7 +1499,8 @@
       "visualRisk": "몫의 셋째 자리에서 반올림한다는 조건과 소수 둘째 자리의 0을 혼동하지 않아야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e3-exploration-source-review.json의 6-2-u2-e3-exploration-1 행에 원문 구조와 독립 계산 기록이 있습니다. PDF 20쪽과 원문 ID가 일치하며 공식 출판사 답안은 확인되지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e3-exploration-source-review.json#6-2-u2-e3-exploration-1",
       "independentAnswer": "6.81",
       "answerEvidence": {
         "sourcePageChecked": true,
@@ -1521,7 +1522,8 @@
       "visualRisk": "나누는 수와 몫의 소수점 자리를 바꾸어 읽지 않아야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e3-exploration-source-review.json의 6-2-u2-e3-exploration-2 행에 원문 구조와 독립 계산 기록이 있습니다. PDF 20쪽과 원문 ID가 일치하며 공식 출판사 답안은 확인되지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e3-exploration-source-review.json#6-2-u2-e3-exploration-2",
       "independentAnswer": "6.39",
       "answerEvidence": {
         "sourcePageChecked": true,
@@ -2051,7 +2053,8 @@
       "visualRisk": "거리당 연료량과 시간당 거리의 단위를 혼동하지 않고 마지막 답을 시간으로 나타내야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e5-source-review.json의 6-2-u2-e5-exploration-1 행에 원문 구조와 독립 계산 기록이 있습니다. PDF 24쪽과 원문 ID가 일치하며 공식 출판사 답안은 확인되지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e5-source-review.json#6-2-u2-e5-exploration-1",
       "independentAnswer": "3시간",
       "answerEvidence": {
         "sourcePageChecked": true,
@@ -2073,7 +2076,8 @@
       "visualRisk": "cm와 mm를 먼저 맞춘 뒤 총 분을 시간과 분으로 바꿔야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e5-source-review.json의 6-2-u2-e5-example-1 행에 원문 구조와 독립 계산 기록이 있습니다. PDF 24쪽과 원문 ID가 일치하며 공식 출판사 답안은 확인되지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e5-source-review.json#6-2-u2-e5-example-1",
       "publicSourceItemId": "6-2-u2-e5-example-1"
     },
     {
@@ -2089,7 +2093,8 @@
       "visualRisk": "거리 비율, 리터 수, 원 단위의 순서대로 계산해야 하며 가격에 소수점이 남지 않도록 검산해야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e5-source-review.json의 6-2-u2-e5-example-2 행에 원문 구조와 독립 계산 기록이 있습니다. PDF 24쪽과 원문 ID가 일치하며 공식 출판사 답안은 확인되지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e5-source-review.json#6-2-u2-e5-example-2",
       "independentAnswer": "35520원",
       "answerEvidence": {
         "sourcePageChecked": true,
@@ -2111,7 +2116,8 @@
       "visualRisk": "분과 초를 먼저 초로 바꾸고 두 수도꼭지의 초당 물의 양을 합한 뒤 답을 분과 초로 되돌려야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e5-source-review.json의 6-2-u2-e5-example-3 행에 원문 구조와 독립 계산 기록이 있습니다. PDF 24쪽과 원문 ID가 일치하며 공식 출판사 답안은 확인되지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e5-source-review.json#6-2-u2-e5-example-3",
       "independentAnswer": "8분 45초",
       "answerEvidence": {
         "sourcePageChecked": true,
@@ -2133,7 +2139,8 @@
       "visualRisk": "물살과 배의 빠르기는 같은 시간 단위로 맞추고, 거슬러 갈 때는 물살의 빠르기를 빼야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e5-source-review.json의 6-2-u2-e5-example-4 행에 원문 구조와 독립 계산 기록이 있습니다. PDF 24쪽과 원문 ID가 일치하며 공식 출판사 답안은 확인되지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e5-source-review.json#6-2-u2-e5-example-4",
       "independentAnswer": "2시간 30분",
       "answerEvidence": {
         "sourcePageChecked": true,
