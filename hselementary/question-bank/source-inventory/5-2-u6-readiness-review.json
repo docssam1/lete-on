@@ -39,7 +39,7 @@
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1~3·5·6과 62쪽 개념탐구 3·예제 3-1~3-4와 63쪽 Mission 1~4·6을 연결하고 Mission 5는 경로 해석 확인 전 보류하며 Mission 4는 선발 기준 미명시로 보류하며 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1~3·5·6과 62쪽 개념탐구 3·예제 3-1~3-4와 63쪽 Mission 1~4·6과 64쪽 개념탐구 4·예제 4-1·4-2·4-4를 연결하고 예제 4-3은 경로 선택 방식 확인 전 보류하며 Mission 5는 경로 해석 확인 전 보류하며 Mission 4는 선발 기준 미명시로 보류하며 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 30,
-    "lockedCount": 14
+    "publicCandidateCount": 34,
+    "lockedCount": 10
   },
   "items": [
     {
@@ -971,16 +971,24 @@
       "commonTypeId": "two-coins-divisor-die",
       "childFriendlyTypeLabel": "동전과 주사위의 조건이 함께 맞을 가능성",
       "originalStructure": "동전 두 개는 모두 앞면이고 주사위 눈은 6의 약수인 경우의 가능성을 구합니다.",
-      "conditions": ["동전 2개", "주사위 1개", "동전은 모두 앞면", "주사위 눈은 6의 약수"],
+      "conditions": [
+        "동전 2개",
+        "주사위 1개",
+        "동전은 모두 앞면",
+        "주사위 눈은 6의 약수"
+      ],
       "visualRequirement": "동전 앞·뒤와 주사위 1~6의 전체 경우를 구분해 보여야 합니다.",
-      "independentCalculation": "전체 4×6=24가지. 동전 모두 앞면 1가지와 주사위 1,2,3,6 네 가지를 함께 만족하므로 4가지. 4÷24=1/6",
+      "independentCalculation": "서로 구분한 동전의 앞뒤와 주사위 눈의 24가지 중 조건에 맞는 4가지이므로 1/6",
       "independentAnswer": "1/6",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "전체 경우와 조건에 맞는 경우를 전수 확인하는 화면을 검수하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherKeyVerified": false,
+      "runtimeTypeId": "5-2-u6-e4-exploration",
+      "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e4-example-4-1",
@@ -988,19 +996,26 @@
       "sourceItemLabel": "예제 4-1",
       "sourcePdfPage": 60,
       "sourcePrintedPage": 64,
-      "commonTypeId": "four-people-adjacent-right",
-      "childFriendlyTypeLabel": "한 사람 바로 오른쪽에 서는 가능성",
-      "originalStructure": "4명을 한 줄로 세울 때 A가 양 끝이 아니고 B가 A의 바로 오른쪽인 가능성을 구합니다.",
-      "conditions": ["서로 다른 4명", "A는 양 끝이 아님", "B는 A의 바로 오른쪽"],
-      "visualRequirement": "왼쪽·오른쪽과 네 자리의 방향이 분명해야 합니다.",
-      "independentCalculation": "전체 24가지. A가 2번째이면 2가지, A가 3번째이면 2가지로 조건을 만족하는 4가지. 4÷24=1/6",
-      "independentAnswer": "1/6",
+      "commonTypeId": "four-people-a-right-of-b",
+      "childFriendlyTypeLabel": "A가 B의 오른쪽에 있을 가능성",
+      "originalStructure": "서로 다른 네 사람 중 A가 양 끝이 아니면서 B의 오른쪽에 있는 가능성을 구합니다.",
+      "conditions": [
+        "서로 다른 네 사람 A B C D",
+        "A는 맨 앞과 맨 뒤가 아님",
+        "A는 B의 오른쪽이며 사이에 다른 사람이 있어도 됨"
+      ],
+      "visualRequirement": "원문에는 별도 그림이 없음. 네 자리 방향을 명확히 표현.",
+      "independentCalculation": "A가 두 번째면 B 첫 번째 2가지; A가 세 번째면 B 첫째·둘째 4가지. 전체 24가지 중 6가지이므로 1/4. 바로 옆은 원문 조건 아님",
+      "independentAnswer": "1/4",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "오른쪽 방향과 자리 순서를 문제 화면에서 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherKeyVerified": false,
+      "runtimeTypeId": "5-2-u6-e4-example-1",
+      "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e4-example-4-2",
@@ -1011,16 +1026,24 @@
       "commonTypeId": "choose-two-girls",
       "childFriendlyTypeLabel": "여학생 둘만 뽑을 가능성",
       "originalStructure": "남학생 2명과 여학생 3명 중 대표 2명을 뽑을 때 여학생만 뽑을 가능성을 구합니다.",
-      "conditions": ["남학생 2명", "여학생 3명", "대표 2명", "여학생만 뽑음"],
+      "conditions": [
+        "남학생 2명",
+        "여학생 3명",
+        "대표 2명",
+        "여학생만 뽑음"
+      ],
       "visualRequirement": "남학생·여학생 수와 뽑는 수를 분명히 표시해야 합니다.",
-      "independentCalculation": "5명 중 2명을 뽑는 전체 짝은 10가지, 여학생 3명 중 2명을 뽑는 짝은 3가지. 3÷10=3/10",
+      "independentCalculation": "다섯 사람 중 두 사람 짝 10가지 중 여학생 두 명 짝 3가지이므로 3/10",
       "independentAnswer": "3/10",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "전체 짝과 조건에 맞는 짝을 초등 표현으로 전수 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherKeyVerified": false,
+      "runtimeTypeId": "5-2-u6-e4-example-2",
+      "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e4-example-4-3",
@@ -1031,16 +1054,21 @@
       "commonTypeId": "multi-edge-path-through-vertex-probability",
       "childFriendlyTypeLabel": "여러 길 중 한 점을 지날 가능성",
       "originalStructure": "여러 선으로 이어진 그림에서 출발점에서 도착점으로 갈 때 지정한 점을 지날 가능성을 구합니다.",
-      "conditions": ["네 점과 여러 선의 연결 그림", "출발점·지정점·도착점 지정", "같은 점을 두 번 지나지 않음"],
-      "visualRequirement": "선의 개수, 점의 이름, 지정점을 원본 위치 그대로 보여야 합니다.",
-      "independentCalculation": "전체 길과 지정점을 지나는 길을 모두 점·선분 모델로 전수 열거해야 하며, 원본 그림의 연결 수를 확정하기 전에는 답을 정하지 않음",
-      "independentAnswer": null,
+      "conditions": [
+        "네 점과 여러 선의 연결 그림",
+        "출발점·지정점·도착점 지정",
+        "같은 점을 두 번 지나지 않음"
+      ],
+      "visualRequirement": "ㄱㄴ 3, ㄴㄷ 1, ㄱㄹ 2, ㄴㄹ 2, ㄹㄷ 4갈래와 네 지점 위치 확인.",
+      "independentCalculation": "출발에서 도착까지 중복 방문 없는 경로는 39개이고 ㄹ을 지나는 경로는 36개. 각 완성 경로가 균등 선택이면 36/39=12/13이나 원문에 경로 선택 방식이 명시되지 않음",
+      "independentAnswer": "조건부 12/13",
       "candidateAnswerCount": null,
       "singleAnswer": null,
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "여러 선의 연결과 지나간 점 조건을 모델링하기 전까지 잠금"
+      "lockReason": "원문에 경로 선택 방식이 없어 완성 경로가 같은 가능성인지 확인 전 잠금.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e4-example-4-4",
@@ -1051,16 +1079,23 @@
       "commonTypeId": "two-bags-different-colors",
       "childFriendlyTypeLabel": "두 주머니에서 다른 색 공이 나올 가능성",
       "originalStructure": "두 주머니에서 공을 하나씩 꺼낼 때 두 공의 색이 다를 가능성을 구합니다.",
-      "conditions": ["첫 주머니 빨강4·파랑3·노랑5", "둘째 주머니 빨강2·파랑5·노랑3", "각 주머니에서 하나씩 꺼냄"],
+      "conditions": [
+        "첫 주머니 빨강4·파랑3·노랑5",
+        "둘째 주머니 빨강2·파랑5·노랑3",
+        "각 주머니에서 하나씩 꺼냄"
+      ],
       "visualRequirement": "두 주머니의 색별 공 수를 표로 보여야 합니다.",
-      "independentCalculation": "전체 12×10=120. 같은 색은 4×2+3×5+5×3=38. 다른 색은 120-38=82, 82/120=41/60",
+      "independentCalculation": "전체 12×10=120, 같은 색 4×2+3×5+5×3=38, 다른 색 82이므로 82/120=41/60",
       "independentAnswer": "41/60",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "색별 공 수와 전체 경우를 표로 검수하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherKeyVerified": false,
+      "runtimeTypeId": "5-2-u6-e4-example-4",
+      "releaseEvidence": "인쇄 64쪽 원문 대조, 동일 가능성의 기본 모형과 전수 경우 검산. 출판사 정답 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e4-mission-1",
