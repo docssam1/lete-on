@@ -43,35 +43,47 @@ function asModel(value){return value?.id===ID&&value.selected&&value.phases?valu
 function unavailable(){return '<section class="pco-root pco-empty"><p>사례를 다시 열어 공부의 흐름을 살펴보세요.</p><button type="button" data-history-close>내 계획으로 돌아가기</button></section>';}
 function character(id){return g.PlannerCounsellingHistory?.character?.(ART[id])||'';}
 function dateLabel(date){const m=/^(\d{4})-(\d{2})$/.exec(date||'');return m?m[1]+'년 '+Number(m[2])+'월':date||'';}
-function students(m,compact=false){return '<div class="pco-students'+(compact?' pco-students-compact':'')+'" aria-label="익명 학생 세 명">'+m.students.map(s=>'<figure><span class="pco-character">'+character(s.id)+'</span><figcaption>'+esc(s.label)+'</figcaption></figure>').join('')+'</div>';}
+function students(m,compact=false){return '<div class="pco-students'+(compact?' pco-students-compact':'')+'" aria-hidden="true">'+Object.keys(ART).map(id=>'<figure><span class="pco-character">'+character(id)+'</span></figure>').join('')+'</div>';}
 function stageButton(m,index,label,attrs=''){return '<button type="button" data-history-stage="'+index+'"'+attrs+'>'+label+'</button>';}
 function phaseNav(m){return '<nav class="pco-phase-nav" aria-label="함께 살펴볼 공부의 전환">'+m.phases.map((p,i)=>stageButton(m,i,'<b>'+(i+1)+'</b><span>'+esc(PHASE_SHORT[i]||p.title)+'</span>',' aria-label="'+esc(p.title)+'" aria-pressed="'+p.selected+'"')).join('')+'</nav>';}
 function summary(value){
  const m=asModel(value);if(!m)return unavailable();
- return '<nav class="pco-root pco-travel" aria-label="프리미어 합격생 사례 이동"><div class="pco-travel-top"><button type="button" data-history-close>← 내 계획</button><span>세 학생의 공부 · '+(m.stageIndex+1)+' / '+m.phases.length+'</span></div><div class="pco-travel-steps">'+
+ return '<nav class="pco-root pco-travel" aria-label="프리미어 합격생 사례 이동"><div class="pco-travel-top"><button type="button" data-history-close>← 내 계획</button><span>합격생들의 공부 · '+(m.stageIndex+1)+' / '+m.phases.length+'</span></div><div class="pco-travel-steps">'+
   stageButton(m,Math.max(0,m.stageIndex-1),'← 이전',' data-history-step="prev"'+(m.stageIndex===0?' disabled':''))+'<strong>'+esc(m.selected.title)+'</strong>'+
   stageButton(m,Math.min(m.phases.length-1,m.stageIndex+1),'다음 →',' data-history-step="next"'+(m.stageIndex===m.phases.length-1?' disabled':''))+'</div></nav>';
 }
 function advice(m){return m.selectedChoice?'<aside class="pco-advice" aria-live="polite"><small>이 고민부터 살펴보세요</small><strong>'+esc(m.selectedChoice.title)+'</strong><p>'+esc(m.selectedChoice.advice)+'</p></aside>':'';}
 function choices(value){
  const m=asModel(value);if(!m)return unavailable();const p=m.selected;
- return '<section class="pco-root pco-coach"><small class="pco-eyebrow">2020년생 · 2026년 7세</small><h2>지금 가장 궁금한 공부는?</h2><p>세 학생이 실제로 이어간 공부에서, 우리 아이에게 필요한 질문을 골라보세요.</p>'+phaseNav(m)+
+ return '<section class="pco-root pco-coach"><small class="pco-eyebrow">7세 합격생들의 공부와 고민</small><h2>지금 가장 궁금한 공부는?</h2><p>합격생들에게 공통으로 나타난 고민에서, 우리 아이에게 필요한 질문을 골라보세요.</p>'+phaseNav(m)+
   '<div class="pco-coach-heading"><small>'+esc(p.period)+'</small><h3>'+esc(p.questions?.[0]?.q||p.title)+'</h3></div><div class="pco-choice-list" role="group" aria-label="'+esc(p.title)+' 학부모 고민">'+(p.choices||[]).map(c=>'<button type="button" data-cohort-choice="'+esc(c.id)+'" aria-pressed="'+(m.selectedChoice?.id===c.id)+'"><strong>'+esc(c.title)+'</strong><span>'+esc(c.help)+'</span></button>').join('')+'</div>'+advice(m)+'<details class="pco-coach-detail"><summary>이 시기의 공부와 운영</summary><p>'+esc(p.comment)+'</p></details></section>';
 }
-function hero(m){return '<header class="pco-hero"><div><small class="pco-eyebrow">세 학생의 실제 공부를 함께</small><h3>'+esc(m.title)+'</h3><p>'+esc(m.intro)+'</p><strong class="pco-outcome">'+esc(m.outcome)+'</strong></div>'+students(m)+'</header>';}
+function hero(m){return '<header class="pco-hero"><div><small class="pco-eyebrow">합격까지 이어진 공통 학습 흐름</small><h3>'+esc(m.title)+'</h3><p>'+esc(m.intro)+'</p><strong class="pco-outcome">'+esc(m.outcome)+'</strong></div>'+students(m)+'</header>';}
 function study(m){return '<section class="pco-study" aria-label="'+esc(m.selected.title)+'의 병행 공부"><header><small>'+esc(m.selected.period)+'</small><h3>'+esc(m.selected.title)+'</h3></header><dl>'+FIELDS.filter(([key])=>m.selected[key]).map(([key,label])=>'<div data-study-area="'+key+'"><dt>'+label+'</dt><dd>'+esc(m.selected[key])+'</dd></div>').join('')+'</dl><p class="pco-operation"><b>공부를 이어간 방법</b>'+esc(m.selected.comment)+'</p>'+advice(m)+'</section>';}
 function map(value){
  const m=asModel(value);if(!m)return unavailable();
  return '<section class="pco-root pco-map">'+hero(m)+'<ol class="pco-road" aria-label="다섯 가지 공부의 전환">'+m.phases.map((p,i)=>'<li'+(p.selected?' class="pco-active"':'')+'>'+stageButton(m,i,'<span class="pco-step">'+(i+1)+'</span><small>'+esc(p.period)+'</small><strong>'+esc(p.title)+'</strong>',' aria-pressed="'+p.selected+'"')+'</li>').join('')+'</ol>'+study(m)+'<p class="pco-note">'+GROUP_NOTE+'</p></section>';
 }
 function milestoneFields(x){return '<dl>'+FIELDS.filter(([key])=>x[key]).map(([key,label])=>'<div><dt>'+label+'</dt><dd>'+esc(x[key])+'</dd></div>').join('')+'</dl>';}
+function commonTimeline(value){
+ const m=asModel(value);if(!m)return [];
+ const byDate=new Map();
+ for(const s of m.students)for(const x of s.milestones){
+  if(!byDate.has(x.date))byDate.set(x.date,{date:x.date,school:[],deep:[],thinking:[],calc:[],notes:[]});
+  const row=byDate.get(x.date);for(const [key] of FIELDS)if(x[key]&&!row[key].includes(x[key]))row[key].push(x[key]);
+  if(x.note&&!row.notes.includes(x.note))row.notes.push(x.note);
+ }
+ return [...byDate.values()].sort((a,b)=>a.date.localeCompare(b.date));
+}
+function commonDate(m,date){const match=/^(\d{4})-(\d{2})$/.exec(date||'');return match?(7+Number(match[1])-m.ageYear)+'세 '+Number(match[2])+'월':date||'';}
+function sharedFields(row){return '<dl>'+FIELDS.filter(([key])=>row[key].length).map(([key,label])=>'<div><dt>'+label+'</dt><dd>'+row[key].map(esc).join('<br>')+'</dd></div>').join('')+'</dl>';}
 function graph(value){
- const m=asModel(value);if(!m)return unavailable();
- return '<section class="pco-root pco-paths"><header class="pco-section-title"><small>서로 다른 세 갈래의 공부</small><h3>학생별 실제 학습 흐름</h3><p>각 학생이 공부한 달과 그때의 교과·심화·사고력·연산을 나란히 살펴보세요. 카드에는 공부의 전환이 있던 달을 담았습니다.</p></header>'+m.students.map(s=>'<section class="pco-student-path"><header><span class="pco-path-character">'+character(s.id)+'</span><div><h4>'+esc(s.label)+'</h4><p>'+esc(s.theme)+'</p></div></header><div class="pco-path-scroll" tabindex="0" role="region" aria-label="'+esc(s.label)+' 월별 공부 흐름"><ol>'+s.milestones.map(x=>'<li><span class="pco-milestone-dot" aria-hidden="true"></span><time datetime="'+esc(x.date)+'">'+esc(dateLabel(x.date))+'</time>'+milestoneFields(x)+(x.note?'<p>'+esc(x.note)+'</p>':'')+'</li>').join('')+'</ol></div></section>').join('')+'<p class="pco-note">세 경로를 한 학생의 진도로 합치지 않고, 각자의 공부와 보완을 함께 살펴봅니다.</p></section>';
+ const m=asModel(value);if(!m)return unavailable();const rows=commonTimeline(m);
+ return '<section class="pco-root pco-paths"><header class="pco-section-title"><small>교과·사고력·연산을 함께</small><h3>시기별로 이어지는 공통 학습 흐름</h3><p>합격생들이 다뤘던 교재와 보완할 공부를 나이와 월에 맞춰 모았습니다. 교과를 앞서간 경우와 복습이 필요했던 경우를 함께 참고하세요.</p></header><section class="pco-student-path"><header><div><h4>기초 다지기에서 선발 준비까지</h4><p>교과와 사고력을 병행하고, 계산과 조건 읽기를 꾸준히 보완합니다.</p></div></header><div class="pco-path-scroll" tabindex="0" role="region" aria-label="합격생 공통 월별 공부 흐름"><ol>'+rows.map(x=>'<li><span class="pco-milestone-dot" aria-hidden="true"></span><time datetime="'+esc(x.date)+'">'+esc(commonDate(m,x.date))+'</time>'+sharedFields(x)+'</li>').join('')+'</ol></div></section><p class="pco-note">여러 사례에서 살펴본 학습 범위를 모았습니다. 한 학생이 같은 달에 모든 교재를 공부했다는 뜻은 아닙니다.</p></section>';
 }
 function table(value){
- const m=asModel(value);if(!m)return unavailable();
- return '<section class="pco-root pco-curriculum"><header class="pco-section-title"><small>날짜와 교재를 함께</small><h3>세 학생의 교과·심화·사고력·연산</h3><p>교과 칸에서 실제로 다룬 학년·학기를 보고, 같은 달의 다른 공부도 함께 확인하세요.</p></header>'+m.students.map((s,i)=>'<details class="pco-student-table"'+(i===0?' open':'')+'><summary><span>'+esc(s.label)+'</span><strong>'+esc(s.theme)+'</strong><small>'+s.milestones.length+'개 공부 시점</small></summary><div class="pco-table-scroll" tabindex="0" role="region" aria-label="'+esc(s.label)+' 교재와 학년·학기 표"><table><caption>'+esc(s.label)+' · 날짜별 병행 공부</caption><thead><tr><th scope="col">시점</th>'+FIELDS.map(([,label])=>'<th scope="col">'+label+'</th>').join('')+'<th scope="col">공부와 운영에서 살핀 점</th></tr></thead><tbody>'+s.milestones.map(x=>'<tr><th scope="row"><time datetime="'+esc(x.date)+'">'+esc(dateLabel(x.date))+'</time></th>'+FIELDS.map(([key])=>'<td>'+esc(x[key]||'—')+'</td>').join('')+'<td>'+esc(x.note||'—')+'</td></tr>').join('')+'</tbody></table></div></details>').join('')+'<p class="pco-note">'+GROUP_NOTE+'</p></section>';
+ const m=asModel(value);if(!m)return unavailable();const rows=commonTimeline(m);
+ return '<section class="pco-root pco-curriculum"><header class="pco-section-title"><small>시기별 병행 공부</small><h3>교과·심화·사고력·연산을 한눈에</h3><p>합격생들의 공부에서 참고할 범위를 공통 표로 모았습니다. 현재 교과 진도와 혼자 해결하는 정도에 맞춰 필요한 공부를 골라보세요.</p></header><div class="pco-student-table"><div class="pco-table-scroll" tabindex="0" role="region" aria-label="합격생 공통 교재와 학년·학기 표"><table><caption>나이·월별로 살펴보는 병행 공부</caption><thead><tr><th scope="col">시점</th>'+FIELDS.map(([,label])=>'<th scope="col">'+label+'</th>').join('')+'<th scope="col">함께 살핀 점</th></tr></thead><tbody>'+rows.map(x=>'<tr><th scope="row"><time datetime="'+esc(x.date)+'">'+esc(commonDate(m,x.date))+'</time></th>'+FIELDS.map(([key])=>'<td>'+(x[key].length?x[key].map(esc).join('<br>'):'—')+'</td>').join('')+'<td>'+x.notes.map(esc).join('<br>')+'</td></tr>').join('')+'</tbody></table></div></div><p class="pco-note">교재와 진도는 사례에서 살펴본 범위이며, 같은 시기에 모두 해야 하는 필수 과정은 아닙니다.</p></section>';
 }
 function qa(items,openFirst=false){return (items||[]).map((x,i)=>'<details'+(openFirst&&i===0?' open':'')+'><summary>'+esc(x.q)+'</summary><p>'+esc(x.a)+'</p></details>').join('');}
 function records(value){
@@ -80,8 +92,8 @@ function records(value){
 }
 function questions(value){
  const m=asModel(value);if(!m)return unavailable();
- const items=[...(m.selected.questions||[]),{q:'세 학생의 교재와 속도를 그대로 따라가야 하나요?',a:'같은 나이에도 교과·심화·사고력·연산의 현재 수행은 다릅니다. 혼자 읽고 풀 수 있는 범위, 다시 설명이 필요한 부분, 일주일의 복습 시간을 함께 살펴 필요한 공부를 고르세요.'},{q:'합격한 뒤에는 무엇을 기준으로 공부를 이어가나요?',a:'새 진도와 함께 지금 배우는 내용을 스스로 풀고 설명하는지 봅니다. 영어와 다른 수업, 과제와 휴식까지 한 주에 넣어 보고 감당할 수 있는 공부부터 이어갑니다.'}];
+ const items=[...(m.selected.questions||[]),{q:'합격생들의 교재와 속도를 그대로 따라가야 하나요?',a:'같은 나이에도 교과·심화·사고력·연산의 현재 수행은 다릅니다. 혼자 읽고 풀 수 있는 범위, 다시 설명이 필요한 부분, 일주일의 복습 시간을 함께 살펴 필요한 공부를 고르세요.'},{q:'합격한 뒤에는 무엇을 기준으로 공부를 이어가나요?',a:'새 진도와 함께 지금 배우는 내용을 스스로 풀고 설명하는지 봅니다. 영어와 다른 수업, 과제와 휴식까지 한 주에 넣어 보고 감당할 수 있는 공부부터 이어갑니다.'}];
  return '<section class="pco-root pco-questions"><h3>'+esc(m.selected.title)+' · 학부모 질문</h3>'+qa(items,true)+'</section>';
 }
-g.PlannerPremierCohort=Object.freeze({isCase,caseDefinition,empty,restore,choose,model,summary,choices,map,graph,table,records,questions});
+g.PlannerPremierCohort=Object.freeze({isCase,caseDefinition,empty,restore,choose,model,commonTimeline,summary,choices,map,graph,table,records,questions});
 })(window);

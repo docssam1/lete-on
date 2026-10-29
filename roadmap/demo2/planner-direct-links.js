@@ -9,9 +9,11 @@ const definitions=[
  ['premierfoundation','premier-foundation'],['latepremier','premier-late-start'],['premierthree','premier-three'],['dualseven','dual-selection-foundation'],
  ['dualpractice','dual-selection-practice'],['winterretry','winter-retry'],['premierkmo','premier-kmo'],
  ['publicMiddle','public-science-engineering'],['publicKsa','public-ksa-self-study'],['publicDaegu','public-daegu-science'],['publicGyeonggi','public-gyeonggi-science'],
- ['premier2020','premier-2020-cohort'],['legacy','elementary-balanced-example']
+ ['premier2020','premier-cohort'],['legacy','elementary-balanced-example']
 ];
 const byId=new Map(definitions),byAlias=new Map(definitions.map(([id,alias])=>[alias,id]));
+// Keep existing shared links working while new links omit the cohort year.
+byAlias.set('premier-2020-cohort','premier2020');
 function base(currentUrl){try{const u=new URL(String(currentUrl));if(!['http:','https:'].includes(u.protocol))return null;u.username='';u.password='';u.search='';u.hash='';return new URL('planner.html',u);}catch{return null;}}
 function available(id){return id==='legacy'||!g.PlannerCounsellingHistory?.CASES||Object.hasOwn(g.PlannerCounsellingHistory.CASES,id);}
 function libraryHref(currentUrl){const u=base(currentUrl);if(!u)return '';u.searchParams.set('view','seniors');return u.href;}
