@@ -10,7 +10,7 @@
 const ROOT = "https://fgahqumaldheqettmvqg.supabase.co/functions/v1";
 const API = `${ROOT}/fields-progress`;
 const SESSION_KEY = "gfield_fields_session";
-const NAME_KEY = "gf_n", TYPE_KEY = "gf_t";
+const NAME_KEY = "gf_n", TYPE_KEY = "gf_t", MEMBER_KEY = "gf_m";
 const PREFIX = "fields-classic-rec:";
 const localKey = (student, kind, key) => `${PREFIX}${student}:${kind}:${key}`;
 
@@ -19,15 +19,23 @@ function session() {
 }
 const stored = (key) => { try { return sessionStorage.getItem(key) || ""; } catch { return ""; } };
 // 로그인한 사람(없으면 null) — 화면 머리줄의 이름·로그아웃, 선생님 보기 판단에 쓴다(서버 확인 전 값)
+// member: 가입 회원이면 { status, open, books, trialUntil, nextOpensAt, start … }(fields-membership.js), 원장이 직접 만든 옛 승인번호면 null
 export function loggedIn() {
-  return session() ? { name: stored(NAME_KEY), type: stored(TYPE_KEY) || "student" } : null;
+  if (!session()) return null;
+  let member = null;
+  try { member = JSON.parse(stored(MEMBER_KEY) || "null"); } catch {}
+  return { name: stored(NAME_KEY), type: stored(TYPE_KEY) || "student", member };
 }
 async function auth(body, token = "") {
   const response = await fetch(`${ROOT}/fields-auth`, { method: "POST", headers: { "Content-Type": "application/json", ...(token ? { "x-fields-session": token } : {}) }, body: JSON.stringify(body), cache: "no-store" });
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok) { const error = new Error(payload.error || `request_failed_${response.status}`); error.status = response.status; throw error; }
+  if (!response.ok) { const error = new Error(payload.error || `request_failed_${response.status}`); error.status = response.status; error.member = payload.member || null; throw error; }
   return payload;
 }
+export function rememberMember(member) {
+  try { if (member) sessionStorage.setItem(MEMBER_KEY, JSON.stringify(member)); else sessionStorage.removeItem(MEMBER_KEY); } catch {}
+}
+// 체험이 끝났거나 멈춘 회원은 서버가 403으로 막는다(error.message = trial_expired | paused, error.member)
 export async function login(code, name) {
   const result = await auth({ action: "login", code: String(code || "").trim(), name: String(name || "").replace(/\s+/gu, "") });
   try {
@@ -35,21 +43,33 @@ export async function login(code, name) {
     sessionStorage.setItem(NAME_KEY, result.name);
     sessionStorage.setItem(TYPE_KEY, result.type === "admin" ? "admin" : "student");
   } catch {}
-  return { name: result.name, type: result.type === "admin" ? "admin" : "student" };
+  rememberMember(result.member);
+  return { name: result.name, type: result.type === "admin" ? "admin" : "student", member: result.member || null };
 }
-// 저장된 세션이 아직 살아 있는지 서버에 묻는다. 만료됐으면 지운다.
+// 저장된 세션이 아직 살아 있는지 서버에 묻는다. 만료됐거나(401) 체험이 끝났으면(403) 지운다.
 export async function checkSession() {
   const token = session();
   if (!token) return null;
   try {
     const result = await auth({ action: "session" }, token);
-    return { name: result.name, type: result.type === "admin" ? "admin" : "student" };
+    rememberMember(result.member);
+    return { name: result.name, type: result.type === "admin" ? "admin" : "student", member: result.member || null };
   } catch (error) {
-    if (error.status === 401) clearSession();
+    if (error.status === 401 || error.status === 403) clearSession();
     return null;
   }
 }
-function clearSession() { try { [SESSION_KEY, NAME_KEY, TYPE_KEY, "gf_c"].forEach((key) => sessionStorage.removeItem(key)); } catch {} }
+function clearSession() { try { [SESSION_KEY, NAME_KEY, TYPE_KEY, MEMBER_KEY, "gf_c"].forEach((key) => sessionStorage.removeItem(key)); } catch {} }
+// 회원 서버 함수(fields-members)를 로그인 세션으로 부른다 — status · request · start · admin-*
+export async function memberCall(body) {
+  const token = session();
+  if (!token) { const error = new Error("session_required"); error.status = 401; throw error; }
+  const response = await fetch(`${ROOT}/fields-members`, { method: "POST", headers: { "Content-Type": "application/json", "x-fields-session": token }, body: JSON.stringify(body), cache: "no-store" });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) { const error = new Error(payload.error || `request_failed_${response.status}`); error.status = response.status; throw error; }
+  if (payload.member && stored(TYPE_KEY) !== "admin") rememberMember(payload.member);
+  return payload;
+}
 export async function logout() {
   const token = session();
   clearSession();
