@@ -1,0 +1,25 @@
+/* 잠긴 권·단원 안내와 체험 띠(fields-access.js) — 따뜻한 종이 + 깊은 초록, 파랑 금지(gfield-textbook-design) */
+.fa-lock, .fa-banner, .fa-page {
+  --fa-paper: #fdfbf5; --fa-ink: #2a241c; --fa-muted: #7a6f5c; --fa-line: #e2d9c6; --fa-line-strong: #c9bda2;
+  --fa-accent: #2f6b4a; --fa-accent-ink: #1e4631; --fa-accent-soft: #e9f0e7;
+}
+.fa-page { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 24px 16px; background: #f1ece1; color: var(--fa-ink); font-family: 'FC Sans', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+.fa-wrap { display: grid; gap: 12px; width: min(100%, 480px); text-align: center; }
+.fa-lock { display: grid; gap: 10px; padding: 22px 22px 20px; border: 1px solid var(--fa-line-strong); border-radius: 14px; background: var(--fa-paper); color: var(--fa-ink); text-align: left; }
+.fa-lock h2 { margin: 0; font-size: 20px; line-height: 1.35; }
+.fa-lock p { margin: 0; line-height: 1.6; }
+.fa-lock b { color: var(--fa-accent-ink); }
+.fa-kick { color: var(--fa-muted); font-size: 12px; font-weight: 700; letter-spacing: .1em; }
+.fa-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.fa-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 16px; border: 1px solid var(--fa-line-strong); border-radius: 8px; background: var(--fa-paper); color: var(--fa-ink); font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
+.fa-btn:hover { border-color: var(--fa-ink); }
+.fa-btn.primary { border-color: var(--fa-accent); background: var(--fa-accent); color: #fff; }
+.fa-btn.primary:hover { background: var(--fa-accent-ink); }
+.fa-btn.small { min-height: 34px; padding: 4px 12px; font-size: 14px; }
+.fa-small { color: var(--fa-muted); font-size: 13px; }
+.fa-small:empty { display: none; }
+.fa-page .fa-small a { color: var(--fa-muted); }
+.fa-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 8px 14px; border: 1px solid var(--fa-line); border-radius: 10px; background: var(--fa-accent-soft); color: var(--fa-accent-ink); font-size: 14px; }
+.fa-banner > span { flex: 1 1 220px; }
+.fa-banner small { color: var(--fa-muted); }
+.fa-banner small:empty { display: none; }

@@ -1,5 +1,5 @@
 import { CURRICULUM } from "./source-data.js?v=20261028m";
-import { loadRecords, saveRecord } from "./study-progress.js?v=20261028n";
+import { loadRecords, saveRecord, loggedIn, memberCall } from "./study-progress.js?v=20261029q";
 import { sessionCount } from "./study-deck.js?v=20261029f";
 import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, changesOf, isClassDay, parseYmd, today } from "./study-plan.js?v=20261029i";
 
@@ -15,6 +15,9 @@ let records = new Map();
 const get = (kind, key) => records.get(`${kind}:${key}`)?.payload || null;
 let plan = defaultPlan(CURRICULUM);
 
+// 가입 회원이면 시작 진도를 회원 기록에도(원장 2026-10-29 「시작 진도를 학부모가 설정할 수도, 내가 설정할 수도」 — 원장은 선생님 보기에서)
+const member = () => { const me = loggedIn(); return me && me.type === "student" && me.name === student && me.member ? me.member : null; };
+function syncStart() { if (member()) memberCall({ action: "start", start: plan.from }).catch(() => null); }
 function save() {
   saveRecord(student, "plan", "main", plan);
   records.set("plan:main", { kind: "plan", key: "main", payload: plan, updatedAt: new Date().toISOString() });
@@ -92,11 +95,11 @@ const change = (fn) => { fn(); save(); render(); };
 $("startDate").addEventListener("change", (event) => event.target.value && change(() => { plan.start = event.target.value; }));
 $("days").addEventListener("click", (event) => { const button = event.target.closest("[data-day]"); if (button) change(() => { plan.days = toggle(plan.days.map(String), button.dataset.day).map(Number).sort(); }); });
 $("fromBook").addEventListener("change", (event) => change(() => {
-  plan.from = { book: event.target.value, unit: 0, part: 1 };
+  plan.from = { book: event.target.value, unit: 0, part: 1 }; syncStart();
   if (CURRICULUM.findIndex((book) => book.id === plan.toBook) < CURRICULUM.findIndex((book) => book.id === plan.from.book)) plan.toBook = plan.from.book;
 }));
-$("fromUnit").addEventListener("change", (event) => change(() => { plan.from = { ...plan.from, unit: Number(event.target.value), part: 1 }; }));
-$("fromPart").addEventListener("change", (event) => change(() => { plan.from = { ...plan.from, part: Number(event.target.value) }; }));
+$("fromUnit").addEventListener("change", (event) => change(() => { plan.from = { ...plan.from, unit: Number(event.target.value), part: 1 }; syncStart(); }));
+$("fromPart").addEventListener("change", (event) => change(() => { plan.from = { ...plan.from, part: Number(event.target.value) }; syncStart(); }));
 $("toBook").addEventListener("change", (event) => change(() => { plan.toBook = event.target.value; }));
 $("holidays").addEventListener("change", (event) => change(() => { plan.holidays = event.target.checked; }));
 $("offForm").addEventListener("submit", (event) => { event.preventDefault(); const date = $("offDate").value; if (date) change(() => { plan.off = toggle(plan.off || [], date); }); });
@@ -130,5 +133,8 @@ else {
   const match = latest?.key?.match(/^(book-\d+)-u(\d+)$/);
   if (match) plan.from = { book: match[1], unit: Number(match[2]), part: Number(latest.payload?.part) || 1 };
   if (params.get("book") && !match) plan.from = { book: bookById(params.get("book")).id, unit: 0, part: 1 };
+  // 아직 공부 기록이 없으면 가입할 때(또는 원장이) 정한 시작 진도로
+  const start = member()?.start;
+  if (!match && start?.book) plan.from = { book: bookById(start.book).id, unit: Number(start.unit) || 0, part: Number(start.part) || 1 };
 }
 render();

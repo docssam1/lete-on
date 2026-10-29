@@ -1,5 +1,5 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
-import { loadRecords, weekRate, loggedIn, logout } from "./study-progress.js?v=20261028n";
+import { loadRecords, weekRate, loggedIn, logout } from "./study-progress.js?v=20261029q";
 
 // 내 학습 상황(원장 2026-10-27 「학생이 직접 학습 상황을 볼 수 있는 것도 · 수행률 진도」)
 //   권마다: 수행률(4주 + 권별 테스트) · 진도(지금 몇 주) · 단원 평가 평균 · 권별 테스트

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fdfbf5" />
+  <title>스스로 공부 가입</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="./my-study.css?v=20261029r" />
+</head>
+<body class="ms-login-page">
+  <main class="ms-login ms-signup">
+    <p class="ms-login-kick">GIFTED MATH BANK · 스스로 공부</p>
+    <h1 id="heading">이메일로 가입하기</h1>
+    <p class="ms-login-lead" id="lead">보호자 이메일로 인증번호를 받아 확인하면 아이의 <b>승인번호</b>가 바로 나와요. 가입하면 <b>2주 동안 체험</b>하고, 그다음 정식 회원으로 이어서 공부해요.</p>
+
+    <!-- 1. 이메일 인증 -->
+    <form id="emailForm" class="ms-login-box" autocomplete="on">
+      <label>보호자 이메일<input id="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" required /></label>
+      <button type="submit" class="ms-btn primary" id="sendBtn">인증번호 받기</button>
+      <div id="otpBox" hidden>
+        <label>메일로 받은 인증번호<input id="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="10" spellcheck="false" /></label>
+        <div class="ms-login-actions"><button type="button" class="ms-btn primary" id="verifyBtn">확인</button><button type="button" class="ms-btn" id="resendBtn">다시 보내기</button></div>
+      </div>
+      <p id="emailMsg" class="ms-login-error" role="alert"></p>
+    </form>
+
+    <!-- 2. 이미 가입한 아이(이 이메일) -->
+    <section id="mine" class="ms-login-box" hidden></section>
+
+    <!-- 3. 아이 정보 -->
+    <form id="childForm" class="ms-login-box" autocomplete="off" hidden>
+      <p class="ms-signup-email" id="verifiedAs"></p>
+      <label>아이 이름<input id="child" maxlength="20" spellcheck="false" required /><small>로그인할 때 이 이름과 승인번호를 넣어요(띄어쓰기 없이).</small></label>
+      <label>보호자 전화번호<input id="guardianPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000" required /></label>
+      <label>아이 전화번호 <small>(없으면 비워 두세요)</small><input id="childPhone" type="tel" inputmode="tel" placeholder="010-0000-0000" /></label>
+      <fieldset class="ms-signup-level"><legend>지금</legend>
+        <label><input type="radio" name="level" value="kinder" /> 유치부</label>
+        <label><input type="radio" name="level" value="elementary" /> 초등학생</label>
+      </fieldset>
+      <label id="ageRow" hidden>나이<select id="age"><option value="">고르기</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></label>
+      <label id="gradeRow" hidden>학년<select id="grade"><option value="">고르기</option><option value="1">1학년</option><option value="2">2학년</option><option value="3">3학년</option><option value="4">4학년</option><option value="5">5학년</option><option value="6">6학년</option></select></label>
+      <fieldset class="ms-signup-start"><legend>시작 진도 <small>(모르면 그대로 · 나중에 바꿀 수 있어요)</small></legend>
+        <select id="startBook" aria-label="시작 권"></select>
+        <select id="startUnit" aria-label="시작 단원"><option value="0">1단원</option><option value="1">2단원</option><option value="2">3단원</option><option value="3">4단원</option></select>
+      </fieldset>
+      <div class="ms-consent">
+        <details><summary>개인정보 수집·이용 동의서 읽기</summary>
+          <dl>
+            <dt>수집·이용 목적</dt><dd>보호자 이메일 확인과 회원 관리, 아이의 승인번호 발급과 로그인, 학습 기록 저장, 체험·정식 이용 기간과 열리는 교재 관리, 문의 응대</dd>
+            <dt>수집 항목</dt><dd>보호자 이메일·전화번호, 아이 이름·전화번호(선택)·나이 또는 학년, 시작 진도, 학습 기록, 동의 내용·버전·일시</dd>
+            <dt>보유·이용 기간</dt><dd>회원 탈퇴 또는 동의 철회 시까지 보유하고, 처리가 끝나면 지체 없이 파기합니다. 체험이 끝나는 것이 탈퇴를 뜻하지는 않습니다.</dd>
+            <dt>동의 거부 권리</dt><dd>필수 동의를 거부할 수 있습니다. 거부하면 가입과 온라인 기록 저장을 이용할 수 없고, 둘러보기(1권 1단원)는 그대로 이용할 수 있습니다.</dd>
+            <dt>보호자 동의</dt><dd>만 14세 미만 아이의 정보는 법정대리인(부모 등)이 확인하고 동의해 주세요. 이메일 인증은 이메일 소유 확인이며 법정대리인 관계를 증명하지는 않습니다.</dd>
+            <dt>서비스 처리</dt><dd>이메일 인증·회원·학습 기록 저장에 Supabase를 사용합니다. 아이 기록은 공개 저장소에 게시하지 않습니다.</dd>
+            <dt>열람·정정·삭제·철회</dt><dd>운영: GFIELD. 가입한 보호자 이메일로 docssam1@gmail.com에 요청해 주세요. 본인 확인 후 처리합니다.</dd>
+          </dl>
+          <p class="ms-consent-ver">시행일 2026년 10월 29일 · fields-2026-10-29-v1</p>
+        </details>
+        <label><input type="checkbox" id="consentPrivacy" /> <span>[필수] 개인정보 수집·이용에 동의합니다.</span></label>
+        <label><input type="checkbox" id="consentGuardian" /> <span>[필수] 아이의 보호자(법정대리인)이며 아이 정보 처리에 동의합니다.</span></label>
+      </div>
+      <p id="childMsg" class="ms-login-error" role="alert"></p>
+      <button type="submit" class="ms-btn primary" id="registerBtn">가입하고 승인번호 받기</button>
+    </form>
+
+    <!-- 4. 승인번호 -->
+    <section id="done" class="ms-login-box ms-code-box" hidden></section>
+
+    <p class="ms-login-demo"><a href="./login.html">승인번호가 있으면 로그인</a> · <a href="./start.html?student=DEMO">가입 없이 둘러보기(1권 1단원)</a></p>
+  </main>
+  <script type="module" src="./signup.js?v=20261029q"></script>
+</body>
+</html>

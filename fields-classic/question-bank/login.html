@@ -6,23 +6,25 @@
   <meta name="theme-color" content="#fdfbf5" />
   <title>스스로 공부 로그인</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./my-study.css?v=20261029i" />
+  <link rel="stylesheet" href="./my-study.css?v=20261029r" />
 </head>
 <body class="ms-login-page">
   <main class="ms-login">
     <p class="ms-login-kick">GIFTED MATH BANK · 스스로 공부</p>
     <h1>로그인</h1>
-    <p class="ms-login-lead">선생님께 받은 <b>승인번호</b>와 <b>이름</b>을 넣어요. 로그인하면 공부한 기록이 저장돼서 다른 기기에서도 이어서 볼 수 있어요.</p>
+    <p class="ms-login-lead">가입할 때 받은 <b>승인번호</b>와 아이 <b>이름</b>을 넣어요. 로그인하면 공부한 기록이 저장돼서 다른 기기에서도 이어서 볼 수 있어요.</p>
     <section id="already" class="ms-login-box" hidden></section>
     <form id="form" class="ms-login-box" autocomplete="off">
       <label>승인번호<input id="code" name="code" inputmode="text" autocapitalize="characters" spellcheck="false" required /></label>
       <label>이름<input id="name" name="name" spellcheck="false" required /></label>
       <p id="error" class="ms-login-error" role="alert"></p>
       <button type="submit" class="ms-btn primary" id="submit">로그인</button>
+      <div id="ask" class="ms-login-actions" hidden><button type="button" class="ms-btn primary" id="askBtn">정규회원 승인 요청(카톡) ›</button></div>
+      <p class="ms-login-links"><a href="./signup.html">처음이면 이메일로 가입하기(2주 체험)</a><a href="./signup.html">승인번호를 잊었어요</a></p>
     </form>
     <div class="ms-login-or" aria-hidden="true"><span>또는</span></div>
-    <a class="ms-try" id="demoLink" href="./start.html?student=DEMO"><b>체험하기</b><small>로그인 없이 바로 공부해 보기 · 기록은 이 기기에만</small></a>
+    <a class="ms-try" id="demoLink" href="./start.html?student=DEMO"><b>둘러보기</b><small>가입 없이 1권 1단원(한 주 분량) · 기록은 이 기기에만</small></a>
   </main>
-  <script type="module" src="./login.js?v=20261028n"></script>
+  <script type="module" src="./login.js?v=20261029q"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#fdfbf5" />
   <title>선생님 보기</title>
   <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./my-study.css?v=20261029i" />
+  <link rel="stylesheet" href="./my-study.css?v=20261029r" />
 </head>
 <body>
   <header class="ms-header">
@@ -17,6 +17,14 @@
   <main class="ms-main">
     <p id="status" class="ms-note" role="status">불러오는 중…</p>
     <nav class="ms-books" id="books" aria-label="교재 고르기" hidden></nav>
+    <section class="ms-members" id="membersBox" hidden>
+      <h2>회원 관리 <small id="membersCount"></small></h2>
+      <div class="ms-members-filter" id="membersFilter" role="group" aria-label="회원 고르기">
+        <button type="button" data-filter="ask" class="is-on">요청 있음</button><button type="button" data-filter="trial">체험 중</button><button type="button" data-filter="ended">체험 끝</button><button type="button" data-filter="approved">정식</button><button type="button" data-filter="paused">멈춤</button><button type="button" data-filter="all">전체</button>
+      </div>
+      <div class="ms-table-wrap"><table class="ms-table ms-members-table" id="membersTable"></table></div>
+      <p class="ms-note" id="membersMsg" role="status"></p>
+    </section>
     <section class="ms-summary" id="summary" hidden></section>
     <section class="ms-class" id="classBox" hidden>
       <h2>학생별 진도 <small id="classCount"></small></h2>
@@ -24,6 +32,6 @@
     </section>
     <section class="ms-weak" id="weak" hidden></section>
   </main>
-  <script type="module" src="./teacher.js?v=20261028n"></script>
+  <script type="module" src="./teacher.js?v=20261029r"></script>
 </body>
 </html>

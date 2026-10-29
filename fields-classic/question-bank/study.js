@@ -1,7 +1,8 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261029a";
 import { PHASES, FIXED_LINES, voiceLine, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261029f";
-import { readRecord, saveRecord } from "./study-progress.js?v=20261028n";
+import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
+import { canStudy, lockPage } from "./fields-access.js?v=20261029q";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
 //  표지 → ① 개념 배우기(골든벨 개념, 덩어리마다 한 장) → ② 게임하기 → ③ 골든벨 → ④ 공부하기(본책 번호판, 묶음마다 한 장) → 끝
@@ -751,6 +752,10 @@ function startIndex() {
   if (at >= 0) return at;
   return Math.min(Math.max((Number(params.get("s")) || 1) - 1, 0), slides.length - 1);
 }
+// 열리지 않은 권·단원이면 덱 대신 안내(둘러보기 1권 1단원 · 체험 시작 권 · 정식 한 달에 1권, fields-access.js)
+const gate = canStudy(book.id, unitIndex);
+if (!gate.ok) lockPage(gate.why, { bookId: book.id, student, here: `study.html${location.search}` });
+else {
 renderHead();
 paintGuideButtons();
 show();
@@ -769,3 +774,4 @@ loadGoldenBell().then((data) => {
   show();
   say(FIXED_LINES.bellLoadFail.text, "think", FIXED_LINES.bellLoadFail.id);
 });
+}

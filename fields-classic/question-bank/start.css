@@ -234,3 +234,9 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
 .st-session .st-week li { grid-template-columns: 30px 120px minmax(0, 1fr); }
 .st-session .st-week-start { margin: 0; }
 @media (max-width: 560px) { .st-session .st-week li { grid-template-columns: 28px minmax(0, 1fr); } }
+/* 잠긴 권·단원(원장 2026-10-29 둘러보기 1권 1단원 · 체험 시작 권 · 정식 한 달에 1권) */
+.st-access { margin-bottom: 12px; }
+.st-lock-tag { justify-self: start; padding: 1px 8px; border-radius: 99px; background: var(--paper-dim, #f7f2e7); color: var(--muted, #7a6f5c); font-size: 12px; font-style: normal; font-weight: 700; }
+.st-lock-tag.is-open { background: var(--accent-soft, #e9f0e7); color: var(--accent-ink, #1e4631); }
+.st-book-list button.is-locked, .st-unit-card.is-locked { opacity: .62; }
+.st-book-list button.is-locked:hover, .st-unit-card.is-locked:hover { opacity: .85; }

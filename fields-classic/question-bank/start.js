@@ -1,6 +1,7 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261028m";
 import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261029a";
-import { readRecord, weekRate, loggedIn } from "./study-progress.js?v=20261028n";
+import { readRecord, weekRate, loggedIn, checkSession } from "./study-progress.js?v=20261029q";
+import { canStudy, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261029q";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
@@ -81,8 +82,13 @@ const gamesFor = (lesson) => gameTitles(view.bookId, lesson, goldenBell.games);
 
 // ── 권 고르기 ──
 function renderBooks() {
-  $("bookList").innerHTML = CURRICULUM.map((book) => `<button type="button" data-book="${book.id}"${book.id === view.bookId && hasBook ? ' class="was"' : ""}>
-    <b>${esc(book.label)}</b><span>${esc(book.title)}</span><i aria-hidden="true">›</i></button>`).join("");
+  // 열리지 않은 권(둘러보기·체험·정식의 범위 밖)은 「잠김」 표시 — 눌러 들어가면 단원 장에서 안내한다(fields-access.js)
+  $("bookList").innerHTML = CURRICULUM.map((book) => {
+    const gate = canStudy(book.id);
+    const mark = gate.who.kind === "preview" && gate.ok ? `<em class="st-lock-tag is-open">1단원 둘러보기</em>` : gate.ok ? "" : `<em class="st-lock-tag">잠김</em>`;
+    return `<button type="button" data-book="${book.id}" class="${[book.id === view.bookId && hasBook ? "was" : "", gate.ok ? "" : "is-locked"].filter(Boolean).join(" ")}">
+    <b>${esc(book.label)}</b><span>${esc(book.title)}</span>${mark}<i aria-hidden="true">›</i></button>`;
+  }).join("");
 }
 
 function renderDoors() {
@@ -135,14 +141,17 @@ function renderSelfUnits(book) {
     const problems = Array.from({ length: count }, (_, k) => problemCount(unit, k + 1)).reduce((a, b) => a + b, 0);
     const key = `${book.id}-u${index}`, rate = weekRate(readRecord(student, "week", key), readRecord(student, "test", key));
     const test = readRecord(student, "test", key);
-    return `<button type="button" class="st-unit-card" data-unit="${index}"><span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${index + 1}주 · ${count}차시 · 본책 ${problems}문항 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
-  }).join("")}${book.source.unitTestQuestions?.length ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
+    const locked = !canStudy(book.id, index).ok;
+    return `<button type="button" class="st-unit-card${locked ? " is-locked" : ""}" data-unit="${index}">${locked ? `<em class="st-lock-tag">잠김</em>` : ""}<span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${index + 1}주 · ${count}차시 · 본책 ${problems}문항 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
+  }).join("")}${book.source.unitTestQuestions?.length && canStudy(book.id, book.units.length - 1).ok ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
 }
 // 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」): 대단원을 누르면 차시마다 공부 순서를 보여 주고
 // 차시마다 「N차시 공부 시작하기」로 덱(study.html?part=N)을 연다.
 function renderParts() {
   const book = activeBook(), unit = book.units[view.unit];
   $("unitTitle").innerHTML = `<span>${String(view.unit + 1).padStart(2, "0")}</span>${esc(unit.label)} <small>${view.unit + 1}주</small>`;
+  const gate = view.mode === "self" ? canStudy(book.id, view.unit) : { ok: true };
+  if (!gate.ok) { $("partList").innerHTML = lockCard(gate.why, { bookId: book.id, here: "start.html" }); return; }
   const { count } = unitParts(unit);
   const bellBook = goldenBell?.books.find((entry) => entry.id === book.id);
   const all = goldenBell ? lessonsByUnit(book, bellBook).units[view.unit] : [];
@@ -293,8 +302,16 @@ $("planLink").href = link("plan.html", { book: view.bookId });
   $("loginLink").textContent = !me ? "로그인" : me.type === "admin" ? "선생님 보기" : "로그인됨";
   $("loginLink").href = !me ? "./login.html" : me.type === "admin" ? "./teacher.html" : "./login.html";
 }
+// 둘러보기·체험 띠. 세션을 서버에 다시 물어 회원 상태(열린 권·남은 날)가 바뀌었으면 다시 그린다
+function paintBanner() {
+  const html = accessBanner();
+  $("accessBanner").innerHTML = html; $("accessBanner").hidden = !html;
+}
+wireAccess(document.body);
+paintBanner();
 showStep();
 syncAddress();
+if (loggedIn()) checkSession().then(() => { paintBanner(); showStep(); });
 
 loadGoldenBell().then((data) => {
   goldenBell = data;

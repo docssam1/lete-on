@@ -1,5 +1,6 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
-import { checkSession, loadClass, loadLocalAll, logout, weekRate } from "./study-progress.js?v=20261028n";
+import { checkSession, loadClass, loadLocalAll, logout, weekRate } from "./study-progress.js?v=20261029q";
+import { initMembers } from "./teacher-members.js?v=20261029r";
 
 // 선생님 보기(원장 2026-10-27): 학생마다 권·주차 수행률, 단원 평가·권별 테스트 점수, 약점 유형. 학생 이름을 누르면 그 학생의 「내 학습 상황」.
 // 지금은 누구나 연다(원장 2026-10-27 「지금은 다 접속되는 걸로」): 로그인 없이 열면 데모 — 이 기기에 저장된 학생 기록만.
@@ -97,6 +98,7 @@ if (!me || me.type !== "admin") {
 } else {
   $("who").innerHTML = `<span>${esc(me.name)}</span><button type="button" id="logoutBtn">로그아웃</button>`;
   $("logoutBtn").addEventListener("click", async () => { await logout(); location.assign("./teacher.html"); });
+  initMembers();
   const data = await loadClass().catch(() => null);
   if (!data) $("status").textContent = "기록을 불러오지 못했어요. 새로고침해 주세요.";
   else {
