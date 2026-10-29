@@ -101,6 +101,12 @@ for (const def of source.definitions) {
         const v = { x: d.x - m.x, y: d.y - m.y };
         const angle = Math.acos((u.x*v.x+u.y*v.y)/(Math.hypot(u.x,u.y)*Math.hypot(v.x,v.y))) * 180 / Math.PI;
         assert.ok(Math.abs(angle - targetAngle) < 1e-8);
+        const g = { x: dn * Math.cos(-Math.PI / 3), y: -dn * Math.sin(-Math.PI / 3) };
+        const r = { x: dm * Math.cos((delta - 60) * Math.PI / 180), y: -dm * Math.sin((delta - 60) * Math.PI / 180) };
+        const shown = angleAt(g, r, { x: m.x, y: -m.y });
+        assert.ok(Math.abs(shown - (300 - targetAngle)) < 1e-8, "shown target angle matches the answer");
+        assert.equal(item.answer, `${300 - targetAngle}°`);
+        assert.match(item.prompt, /∠ㄱㄹㅁ/);
       } else if (def.sourceItemId.endsWith("mission-4")) {
         const { k, side, outerArea, trisectedLength, cornerArea, answer } = item.answerModel;
         const svg = item.prompt.match(/<svg[\s\S]*?<\/svg>/)?.[0];
