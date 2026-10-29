@@ -254,6 +254,7 @@ test("grade comparison displays arithmetic RIT difference only for matching MAP 
   assert.equal(await comparison.getAttribute("data-state"), "comparable-scale");
   assert.match(await comparison.innerText(), /Grade 7.*RIT 218 → Grade 8.*RIT 231 · 입력값 차이 \+13 RIT/);
   assert.match(await comparison.innerText(), /시기 미기재/);
+  assert.match(await comparison.innerText(), /같은 학생의 기록인지 성적표에서 확인/);
   assert.match(await comparison.innerText(), /예상 성장.*동학년 백분위.*모든 내용 숙달을 판정하지 않아요/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   await page.close();

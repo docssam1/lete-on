@@ -435,7 +435,7 @@
       const difference = targetMapEvidence.scores.rit - mapEvidence.scores.rit;
       const roundedDifference = Math.round((difference + Math.sign(difference || 1) * Number.EPSILON) * 10) / 10;
       const differenceText = roundedDifference > 0 ? `+${roundedDifference}` : String(roundedDifference);
-      ritComparison.textContent = `Grade ${current.grade} · ${assessmentDate(mapEvidence)} (${seasonLabel(mapEvidence.scores.season)}) RIT ${mapEvidence.scores.rit} → Grade ${target.grade} · ${assessmentDate(targetMapEvidence)} (${seasonLabel(targetMapEvidence.scores.season)}) RIT ${targetMapEvidence.scores.rit} · 입력값 차이 ${differenceText} RIT. 같은 수학 RIT 수직 척도의 산술 비교예요. 이 차이만으로 예상 성장, 동학년 백분위, 해당 학년의 모든 내용 숙달을 판정하지 않아요.`;
+      ritComparison.textContent = `Grade ${current.grade} · ${assessmentDate(mapEvidence)} (${seasonLabel(mapEvidence.scores.season)}) RIT ${mapEvidence.scores.rit} → Grade ${target.grade} · ${assessmentDate(targetMapEvidence)} (${seasonLabel(targetMapEvidence.scores.season)}) RIT ${targetMapEvidence.scores.rit} · 입력값 차이 ${differenceText} RIT. 같은 학생의 기록인지 성적표에서 확인한 뒤 참고하세요. 같은 수학 RIT 수직 척도의 산술 비교일 뿐, 이 차이만으로 예상 성장, 동학년 백분위, 해당 학년의 모든 내용 숙달을 판정하지 않아요.`;
       ritComparison.dataset.state = "comparable-scale";
     } else {
       ritComparison.textContent = "두 학년에 모두 MAP Growth 수학 RIT 기록이 있을 때만 같은 RIT 척도의 입력값을 나란히 보여줘요. MAP·학교 Placement·SSAT 등 서로 다른 시험 점수는 섞지 않아요.";
