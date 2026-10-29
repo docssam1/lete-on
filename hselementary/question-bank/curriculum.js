@@ -2458,6 +2458,16 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     }
   }
 
+  if (source52AverageApplication) {
+    const id = "5-2-u6-e2-mission-3", name = "시험 점수 변화와 평균 구하기";
+    const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
+      difficultyBand:0, sourceItemId:id, sourceItemLabel:"Mission 3", sourceSection:"mission", sourceTier:"advanced",
+      sourcePdfPage:57, sourcePrintedPage:61, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
+      generatorKey:"source52AverageOriginalPage61Mission3", generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+      answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
