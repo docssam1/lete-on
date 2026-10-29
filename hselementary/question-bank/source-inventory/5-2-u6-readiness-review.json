@@ -29,17 +29,17 @@
       "sourcePageOutOfRangeCount": 0
     },
     "answerReview": {
-      "independentCalculationOrEnumerationCount": 36,
-      "visualModelPendingCount": 8,
-      "singleAnswerConfirmedCount": 36,
-      "answerNotFinalizedCount": 8,
+      "independentCalculationOrEnumerationCount": 37,
+      "visualModelPendingCount": 7,
+      "singleAnswerConfirmedCount": 37,
+      "answerNotFinalizedCount": 7,
       "singleAnswerStatusCounts": {
-        "true": 36,
-        "null": 8
+        "true": 37,
+        "null": 7
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~4를 연결했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6을 연결했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 9,
-    "lockedCount": 35
+    "publicCandidateCount": 11,
+    "lockedCount": 33
   },
   "items": [
     {
@@ -314,19 +314,25 @@
       "sourceItemLabel": "Mission 5",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 59,
-      "commonTypeId": "average-consecutive-natural-numbers",
-      "childFriendlyTypeLabel": "차례로 커지는 자연수의 평균 구하기",
-      "originalStructure": "첫째 수가 1이고 차례로 1씩 커지는 7개의 자연수의 평균을 구합니다.",
-      "conditions": ["7개의 자연수", "첫째부터 일곱째까지 1부터 7"],
+      "commonTypeId": "average-increase-by-individual-amounts",
+      "childFriendlyTypeLabel": "각각 다른 증가량으로 바뀐 평균 구하기",
+      "originalStructure": "평균이 31인 7개 자연수가 각각 1부터 7만큼 커졌을 때 새 평균을 구합니다.",
+      "conditions": [
+        "7개의 자연수의 기존 평균 31",
+        "첫째부터 일곱째 수가 각각 1부터 7만큼 증가"
+      ],
       "visualRequirement": "차례와 수를 표로 읽을 수 있어야 합니다.",
-      "independentCalculation": "1+2+3+4+5+6+7=28, 28÷7=4",
-      "independentAnswer": "4",
+      "independentCalculation": "증가량의 합 1+2+3+4+5+6+7=28, 평균 증가량 28÷7=4, 새 평균 31+4=35. 기존 장부는 증가량을 원래 수로 잘못 기록함.",
+      "independentAnswer": "35",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "자료 나열과 평균 계산을 중앙 형식으로 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "releaseEvidence": "인쇄 59쪽에서 평균 31 및 1~7만큼 커지는 원문을 대조. 산술 검산. 공식 출판사 답안 미확인.",
+      "runtimeTypeId": "5-2-u6-e1-mission-5",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-6",
@@ -334,19 +340,27 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 55,
       "sourcePrintedPage": 59,
-      "commonTypeId": "average-two-groups-score-table",
-      "childFriendlyTypeLabel": "점수표와 평균으로 빠진 점수 구하기",
-      "originalStructure": "8명의 시험 점수 표에서 전체 평균과 가장 높은 점수 조건으로 빠진 두 점수를 구합니다.",
-      "conditions": ["8명 평균 64점", "효근의 점수가 가장 높음", "다른 한 사람의 점수가 효근보다 2점 낮음", "점수표에 두 빈칸"],
-      "visualRequirement": "이름과 점수표, 두 빈칸과 최고 점수 조건을 정확히 보여야 합니다.",
-      "independentCalculation": "전체 합 512, 알려진 점수 합 471이므로 두 빈칸의 합은 41. 표에서 빈칸의 사람 위치와 최고 점수 조건을 다시 모델링하기 전 최종 값을 보류",
-      "independentAnswer": null,
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
+      "commonTypeId": "trimmed-judge-scores-compare",
+      "childFriendlyTypeLabel": "최고·최저를 뺀 심판 점수 비교하기",
+      "originalStructure": "리듬체조 두 선수의 6명 심판 점수에서 각 선수별 최고·최저를 빼고 평균과 차를 구합니다.",
+      "conditions": [
+        "은영 심판 점수 6,7,6,4,7,8",
+        "혜정 심판 점수 7,4,6,5,9,7",
+        "각 선수별 최고 점수와 최저 점수 제외 후 4개 평균",
+        "누구의 점수가 몇 점 높은지 구하기"
+      ],
+      "visualRequirement": "선수 이름과 가~바 심판별 점수 6개를 표의 원문 순서로 표시해야 합니다.",
+      "independentCalculation": "은영 (6+7+6+7)÷4=6.5, 혜정 (7+6+5+7)÷4=6.25, 차 0.25. 기존 장부는 다른 8명 점수표 문항을 잘못 기재함.",
+      "independentAnswer": "은영이 0.25점 높음",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "점수표 빈칸 위치와 최고 점수 조건을 다시 모델링하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "releaseEvidence": "필기 없는 원문에서 가~바 심판별 두 행과 최고·최저 제외 조건 대조. 독립 정렬 및 사칙 검산. 공식 출판사 답안 미확인.",
+      "runtimeTypeId": "5-2-u6-e1-mission-6",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e2-exploration-1",
