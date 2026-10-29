@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 61 Missions 1–2
+
+- Printed p.61 Mission 1: the three work periods total 56 person-days, so four people take 14 days. Mission 2: replacing the largest of six two-digit numbers by twice itself minus 20 raises their sum by 36, so the original largest is 56. The distinct two-digit witness 10,11,12,13,42,56 satisfies both averages. Publisher answer keys remain unverified.
+- Source conditions, independent arithmetic and constructive witness, 1440/375/320px browser, four separate one-page A4 visual checks, release gate and 78,360 runtime generations passed. Handwriting was not used.
+- Counts: 2,094 types, 1,306 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Example 2-3 remains locked pending clarification of its selection rule; preserve dirty worktree and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 60 Examples 2-3–2-4
 
 - Printed p.60 Example 2-4: the 20-year age boundary makes child mean lower than adult mean. Independent integer-count enumeration gives 63 male adults, 68 children, 17 boys and 51 girls; the requested ratio is 3. Publisher answer key unverified.
