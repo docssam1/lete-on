@@ -484,29 +484,37 @@
       copy.textContent = `${current.grade}학년과 ${target.grade}학년에서 같은 대회·문항 수의 복습 기록이 있을 때 비교할 수 있어요.`;
       return;
     }
-    function newestDatedRecord(grade, itemCount) {
+    function recordsForGrade(grade, itemCount) {
       return (localRecords ? localRecords.storage.loadCompetitionDiagnosticHistory(grade, competition) : [])
         .filter(function (record) {
           return typeof record.examDate === "string"
             && /^\d{4}-\d{2}-\d{2}$/.test(record.examDate)
             && !Number.isNaN(Date.parse(record.examDate + "T00:00:00Z"))
-            && record.summary.itemCount === itemCount;
+            && record.summary.itemCount === itemCount
+            && typeof record.paperLabel === "string"
+            && record.paperLabel.trim().length > 0;
         })
-        .sort(function (a, b) { return b.examDate.localeCompare(a.examDate) || String(b.savedAt).localeCompare(String(a.savedAt)); })[0] || null;
+        .sort(function (a, b) { return b.examDate.localeCompare(a.examDate) || String(b.savedAt).localeCompare(String(a.savedAt)); });
     }
-    const currentRecord = newestDatedRecord(current.grade, currentOption.itemCount);
-    const targetRecord = newestDatedRecord(target.grade, targetOption.itemCount);
-    if (!currentRecord || !targetRecord) {
-      const missing = [!currentRecord ? `${current.grade}학년` : "", !targetRecord ? `${target.grade}학년` : ""].filter(Boolean).join(" · ");
+    const currentRecords = recordsForGrade(current.grade, currentOption.itemCount);
+    const targetRecords = recordsForGrade(target.grade, targetOption.itemCount);
+    const targetByPaper = new Map(targetRecords.map(function (record) { return [`${record.examDate}\u0000${record.paperLabel.trim()}`, record]; }));
+    const matchedPair = currentRecords.map(function (record) {
+      return { current: record, target: targetByPaper.get(`${record.examDate}\u0000${record.paperLabel.trim()}`) || null };
+    }).find(function (pair) { return pair.target; }) || null;
+    if (!matchedPair) {
+      const missing = [!currentRecords.length ? `${current.grade}학년` : "", !targetRecords.length ? `${target.grade}학년` : ""].filter(Boolean).join(" · ");
       section.dataset.state = "needs-matching-program-records";
-      copy.textContent = `${missing}의 날짜가 있는 ${currentOption.title} 복습 요약이 필요해요. 기록이 모이면 같은 문항 수의 영역별 집계를 나란히 보여줘요.`;
+      copy.textContent = missing
+        ? `${missing}의 날짜와 문제지 메모가 있는 ${currentOption.title} 복습 요약이 필요해요.`
+        : `두 학년에 같은 날짜·문제지 메모로 저장한 ${currentOption.title} 기록이 있어야 나란히 비교해요. 다른 회차는 문제 난도가 다를 수 있어 학년 비교에 쓰지 않아요.`;
       return;
     }
     section.dataset.state = "comparable-format";
-    copy.textContent = `${currentOption.title} · ${currentOption.itemCount}문항의 가장 최근 날짜 기록을 비교해요. 회차별 난도는 보정하지 않으므로 차이를 성장이나 실력 등급으로 해석하지 않아요.`;
+    copy.textContent = `${currentOption.title} · ${matchedPair.current.examDate} · “${matchedPair.current.paperLabel.trim()}” 기록을 비교해요. 날짜와 메모가 같아도 난도를 보정한 등급이나 성장 판정은 아니에요.`;
     cards.append(
-      buildCompetitionRecordCard(currentRecord, `${current.grade}학년 · ${currentRecord.paperLabel || currentRecord.programTitle}`, "competition-grade-current-record-title"),
-      buildCompetitionRecordCard(targetRecord, `${target.grade}학년 · ${targetRecord.paperLabel || targetRecord.programTitle}`, "competition-grade-target-record-title")
+      buildCompetitionRecordCard(matchedPair.current, `${current.grade}학년 · ${matchedPair.current.paperLabel}`, "competition-grade-current-record-title"),
+      buildCompetitionRecordCard(matchedPair.target, `${target.grade}학년 · ${matchedPair.target.paperLabel}`, "competition-grade-target-record-title")
     );
   }
   function renderGradeFocus() {

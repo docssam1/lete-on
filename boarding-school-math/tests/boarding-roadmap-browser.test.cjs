@@ -362,7 +362,7 @@ test("grade comparison shows curriculum examples without implying measured level
   await page.close();
 });
 
-test("grade comparison can pair dated reviews from the same contest across grades", async function () {
+test("grade comparison pairs only matching contest paper date and memo across grades", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   async function saveContestReview(grade, date, label, status) {
     await page.goto(`${url.replace("boarding-roadmap.html", "competition-paper-review.html")}?grade=${grade}&program=amc8`, { waitUntil: "networkidle" });
@@ -376,6 +376,15 @@ test("grade comparison can pair dated reviews from the same contest across grade
   }
   await saveContestReview(6, "2026-10-01", "Grade 6 practice", "correct");
   await saveContestReview(7, "2026-10-02", "Grade 7 practice", "wrong");
+  await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  await page.locator("#comparison-grade").selectOption("6");
+  assert.equal(await page.locator("#competition-grade-comparison").getAttribute("data-state"), "needs-matching-program-records");
+  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /같은 날짜·문제지 메모/);
+  assert.equal(await page.locator("#competition-grade-comparison-cards article").count(), 0);
+  await saveContestReview(6, "2026-10-03", "2025 AMC 8 Form A", "correct");
+  await saveContestReview(7, "2026-10-03", "2025 AMC 8 Form A", "wrong");
+  await saveContestReview(6, "2026-10-04", "Different AMC 8 form", "wrong");
+  await saveContestReview(7, "2026-10-05", "Another AMC 8 form", "correct");
   await page.evaluate(function () {
     window.GFIELDLocalLearningRecord.storage.saveCompetitionDiagnostic({
       schemaVersion: "gfield-competition-diagnostic-v1", id: "undated-grade6-practice", programId: "amc8", programTitle: "AMC 8",
@@ -392,10 +401,11 @@ test("grade comparison can pair dated reviews from the same contest across grade
     return [...new Set(nodes.map(function (node) { return getComputedStyle(node).fontSize; }))];
   }), ["16px"]);
   const comparisonText = await page.locator("#competition-grade-comparison-cards").innerText();
-  assert.match(comparisonText, /6학년 · Grade 6 practice · 2026-10-01/);
-  assert.match(comparisonText, /7학년 · Grade 7 practice · 2026-10-02/);
+  assert.match(comparisonText, /6학년 · 2025 AMC 8 Form A · 2026-10-03/);
+  assert.match(comparisonText, /7학년 · 2025 AMC 8 Form A · 2026-10-03/);
+  assert.doesNotMatch(comparisonText, /Different AMC 8 form|Another AMC 8 form/);
   assert.doesNotMatch(comparisonText, /Undated practice/);
-  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /난도는 보정하지 않으므로 차이를 성장이나 실력 등급으로 해석하지 않아요/);
+  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /날짜와 메모가 같아도 난도를 보정한 등급이나 성장 판정은 아니에요/);
   assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
   await page.locator("#comparison-grade").selectOption("8");
   assert.equal(await page.locator("#competition-grade-comparison").getAttribute("data-state"), "needs-matching-program-records");
