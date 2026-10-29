@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 58 Exploration 1
+
+- Source PDF p.54 / clean comparison PDF p.53 / printed p.58: one fixed original height-table question, seven source values sum to 1,029cm and average 147cm. Original book labels and numbers are preserved; the publisher answer key is unverified. The 56th printed page is a progress log, not questions.
+- Independent integer-tenths arithmetic and ledger checks passed. Browser checks at 1440, 375 and 320px passed; separate problem and solution A4 outputs are each one page and visually checked. Release gate passed, as did 77,400 runtime generation checks.
+- Counts: 2,078 types, 1,290 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Other Unit 6 source items remain locked; preserve the dirty source worktree and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 5 Page 55 Missions 5–6
 
 - Source PDF p.51 / clean comparison PDF p.50 / printed p.55. Added two fixed source questions: after 90 rolls the die shows top 5, front 6, right 4; maximum outside pip sums are 72 for the square and 76 for the zigzag. Publisher answer keys remain unverified; the source path's continuation is read as straight after its marked turn.

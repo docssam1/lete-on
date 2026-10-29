@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "source-reviewed-implementation-locked",
+  "status": "source-reviewed-partially-implemented",
   "grade": 5,
   "semester": "5-2",
   "unit": 6,
@@ -39,7 +39,7 @@
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "모든 항목은 중앙 생성기와 그림 모델 검수가 끝나지 않았으므로 release locked"
+    "releaseGate": "인쇄 58쪽 개념탐구 1만 원문 수치와 독립 계산을 연결했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 0,
-    "lockedCount": 44
+    "publicCandidateCount": 1,
+    "lockedCount": 43
   },
   "items": [
     {
@@ -74,16 +74,22 @@
       "commonTypeId": "average-from-height-table",
       "childFriendlyTypeLabel": "표를 보고 평균 구하기",
       "originalStructure": "여러 사람의 키가 표에 주어지고 키의 평균을 구합니다.",
-      "conditions": ["7명의 키가 소수 첫째 자리까지 표에 있음", "표의 모든 자료를 사용"],
+      "conditions": [
+        "7명의 이름과 키가 표에 있음 (142cm는 정수로 표시)",
+        "표의 모든 자료를 사용"
+      ],
       "visualRequirement": "이름과 키의 표, 단위 cm를 원본처럼 읽을 수 있게 보여야 합니다.",
       "independentCalculation": "152.8+140.4+148.6+142+149.2+141.8+154.2=1029, 1029÷7=147",
       "independentAnswer": "147cm",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "표 표시를 중앙 문제 형식에 연결하고 수식·단위를 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e1-exploration",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "원문 표 대조 및 독립 산술 검산: 합 1029cm, 평균 147cm. 공식 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u6-e1-example-1-1",
