@@ -1493,8 +1493,8 @@
       "sourcePdfPage": 45,
       "sourcePrintedPage": 51,
       "commonTypeId": "circle-and-strip-product-preference",
-      "childFriendlyTypeLabel": "원그래프와 띠그래프로 전체 비율 구하기",
-      "originalStructure": "남녀 학생 비율 원그래프와 여학생 상품 띠그래프로 나 상품을 좋아하는 남학생의 전체 비율을 구합니다.",
+      "childFriendlyTypeLabel": "남학생 중 특정 상표 선호 비율 구하기",
+      "originalStructure": "남녀 학생 비율 원그래프와 여학생 상품 띠그래프로 나 상품을 좋아하는 남학생이 남학생 전체에서 차지하는 비율을 구합니다.",
       "conditions": [
         "남52%, 여48%, 나 상품 남학생104명·여학생72명",
         "여학생 상품: 가34%, 나24%, 다20%, 라12%, 기타10%"

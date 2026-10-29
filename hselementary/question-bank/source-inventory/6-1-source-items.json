@@ -3817,7 +3817,7 @@
       "visualRisk": "눈금값 글자, 격자선, 범례, 그림 한 개의 단위, 띠·원그래프의 구간 경계를 모두 표시해야 함. 굵은 자료선과 얇은 보조선이 섞이면 선의 뜻을 분리하고 PC·모바일·A4에서 판독성을 검수해야 함",
       "section": "mission",
       "ordinal": 6,
-      "sourceShape": "띠그래프와 원그래프를 함께 읽어 전체와 하위 분류의 비율 또는 수를 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함",
+      "sourceShape": "남녀 학생 비율과 여학생의 상품 선호 비율을 이용해 남학생 중 특정 상표를 좋아하는 비율을 구함",
       "answerContract": "single-answer-fixed-pool",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
