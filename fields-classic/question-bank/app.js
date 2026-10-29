@@ -52,6 +52,8 @@ const studentBack = /^\.\/[\w.-]+\.html(\?[^#]*)?$/u.test(params.get("back") || 
 const studentTitle = params.get("title") || "";
 const testMode = asStudent && params.get("test") === "1";
 const printNow = params.get("print") === "1";
+// 교재로 묶어 인쇄(&week=1, 한 차시 교재의 문제은행 쪽): 문항 위에 「본책 활동 1-1번」「오늘의 과제」처럼 어디 문제인지만
+const bookMode = params.get("as") === "student" && params.get("week") === "1";
 const testId = params.get("testId") || "";
 if (testMode) document.body.classList.add("as-test");
 if (asStudent) document.body.classList.add("as-student");
@@ -119,11 +121,8 @@ if (PRINT_TEMPLATE_OPTIONS.cover.some((option) => option.id === params.get("cove
   document.body.classList.add("has-cover");   // 학생 화면은 표지를 숨기지만 인쇄에는 낸다(styles.css)
   if (PRINT_TEMPLATE_OPTIONS.ground.some((option) => option.id === params.get("ground"))) state.printTemplate.ground = params.get("ground");
 }
-// 한 주 교재(&week=1, 처음 화면 단원 장의 「한 주 교재 인쇄」): 표지 다음 목차형 단원 내지, 문항마다 어디 문제인지(「1차시 · 활동 1-1번」)
-if (asStudent && params.get("week") === "1") {
-  state.printTemplate = { ...state.printTemplate, unit: "toc" };
-  document.body.classList.add("week-book");
-}
+// 교재로 묶어 인쇄(&week=1): 문항마다 어디 문제인지 보이고 쪽 번호를 찍는다. 표지·차례는 묶는 쪽(한 차시 교재)이 맡는다.
+if (bookMode) document.body.classList.add("week-book");
 let printTemplatePanel = null;
 
 function normalizeSearchText(value) {
@@ -3439,7 +3438,7 @@ function renderWorksheet() {
       <div class="question-style-tags">${academyStyleLabels(question).map((label) => `<span>${label}</span>`).join("")}</div>
       ${question.representativeConcept && question.studyStage?.id !== "concept" ? `<div class="question-concept"><strong>대표 개념</strong><span>${question.representativeConcept.label}</span></div>` : ""}
       ${question.studyStage ? `<div class="study-stage-banner ${question.studyStage.id}"><strong>${question.studyStage.label}</strong><span>${question.studyStage.sourceLabel} · ${question.studyStage.description}</span></div>` : ""}
-      <span class="question-reference">기준 문제: ${question.reference}</span>
+      <span class="question-reference">${bookMode && question.bookRef ? question.bookRef : `기준 문제: ${question.reference}`}</span>
       ${textbookConceptTutorialMarkup(question)}
       ${question.studyStage?.id !== "concept" && question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
       <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>

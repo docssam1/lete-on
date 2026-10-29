@@ -17,6 +17,7 @@ import { book09Markup } from "./book09-renderers.js?v=20261029t";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
+import { importQuestionSheet } from "./session-book-sheet.js?v=20261029z";
 import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261028y";
 import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261029a";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
@@ -1397,7 +1398,8 @@ function printLessonPage(lesson, lessonNumber, book) {
   return vocabulary + printSourceStoryboards(lesson, lessonNumber, book) + printLessonExercises(lesson, lessonNumber, book);
 }
 
-function printBookCover(book, lessons, { includeAnswers = false, style = coverStyle, includeGames = $("printGameQR").checked } = {}) {
+// session: 한 차시 교재(?sessionbook=1)의 표지 글 — { label: "1단원 1차시", range: "…", parts: "본책 … · 오늘의 과제 · 데일리 테스트" }
+function printBookCover(book, lessons, { includeAnswers = false, style = coverStyle, includeGames = $("printGameQR").checked, session = null } = {}) {
   if (isCoverDesign(style)) return printDesignCover(book, lessons, style) + printBookCover(book, lessons, { includeAnswers, style: "plain", includeGames });
   const courseNumber = /^course-(\d+)$/u.exec(book.courseId || "")?.[1];
   const courseLabel = courseNumber ? `${Number(courseNumber)}과정` : "워밍업";
@@ -1408,11 +1410,11 @@ function printBookCover(book, lessons, { includeAnswers = false, style = coverSt
   const densityClass = lessons.length > 12 ? " is-dense is-crowded" : lessons.length > 6 ? " is-dense" : "";
   return `<article class="gold-print-page gold-print-cover cover-${style}${densityClass}${games.length ? " has-cover-games" : ""}" data-cover-style="${style}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" data-watermark="${escapeAttribute(student)} · GFIELD">
     ${style === "plain" ? "" : `<img class="gold-cover-art" src="./assets/fc-cover-${style === "simple" ? "grid" : "shapes"}.svg" alt="" aria-hidden="true" />`}
-    <header class="gold-print-cover-head"><span>WARM-UP</span><strong>${escapeAttribute(courseLabel)} · 워밍업</strong></header>
-    <section class="gold-print-cover-title"><small>${escapeAttribute(book.label)} · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}</small><h1>${escapeAttribute(book.title || "워밍업 개념 학습")}</h1><dl class="gold-print-cover-meta"><div><dt>이름</dt><dd>${student === "DEMO" ? "" : escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></section>
-    <section class="gold-print-cover-range"><h2>학습 범위</h2><p>${escapeAttribute(range)}</p><span>${includeAnswers ? "답안과 풀이 포함" : "답안 제외"}</span></section>
+    <header class="gold-print-cover-head"><span>${session ? "STUDY BOOK" : "WARM-UP"}</span><strong>${escapeAttribute(courseLabel)} · ${session ? escapeAttribute(session.label) : "워밍업"}</strong></header>
+    <section class="gold-print-cover-title"><small>${escapeAttribute(book.label)} · ${session ? `${escapeAttribute(session.label)} 교재` : lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}</small><h1>${escapeAttribute(book.title || "워밍업 개념 학습")}</h1><dl class="gold-print-cover-meta"><div><dt>이름</dt><dd>${student === "DEMO" ? "" : escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></section>
+    <section class="gold-print-cover-range"><h2>학습 범위</h2><p>${escapeAttribute(session ? session.range : range)}</p><span>${session ? escapeAttribute(session.parts) : includeAnswers ? "답안과 풀이 포함" : "답안 제외"}</span></section>
     <section class="gold-print-cover-concepts"><h2>유형과 핵심 개념</h2><ol>${conceptRows}</ol>${printCoverGamesMarkup(games)}</section>
-    <footer class="gold-print-footer">${escapeAttribute(courseLabel)} · ${escapeAttribute(book.label)} · 개념 학습 교재</footer>
+    <footer class="gold-print-footer">${escapeAttribute(courseLabel)} · ${escapeAttribute(book.label)} · ${session ? `${escapeAttribute(session.label)} 교재` : "개념 학습 교재"}</footer>
   </article>`;
 }
 
@@ -1698,6 +1700,42 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
     buttons.forEach((button) => { button.disabled = !activeBook().lessons.length; });
     updateCoverButton();
     if ($("coverDialog").open) renderCoverPreview();
+  }
+}
+
+// ── 한 차시 교재(원장 2026-10-29 「워밍업 교재 표지와 같게, 한 회차 교재 구성 전체를 묶으라고」) ──
+// ?sessionbook=1&book=&lessons=id,id&label=1단원 1차시&range=…&parts=…&sheet=<문제은행 학습지 주소>[&preview=1]
+// 표지(워밍업 교재와 같은 「도형 배경」) → 그 차시 워밍업 학습마다 개념·워밍업 쪽 → 본책 · 오늘의 과제 · 데일리 테스트(마지막 차시는 단원 평가).
+// 덱(study.html)의 차시 순서 그대로다. 정답·풀이는 넣지 않는다.
+async function printSessionBook() {
+  const book = activeBook();
+  const lessons = (params.get("lessons") || "").split(",").map((id) => book.lessons.find((lesson) => lesson.id === id)).filter(Boolean);
+  const session = { label: params.get("label") || "", range: params.get("range") || "", parts: params.get("parts") || "" };
+  const root = $("goldPrintRoot");
+  $("printStatus").textContent = "한 차시 교재를 묶고 있어요.";
+  try {
+    const cover = printBookCover(book, lessons, { includeAnswers: false, style: "concept", includeGames: false, session });
+    root.innerHTML = cover + lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("");
+    if (document.fonts?.ready) await document.fonts.ready;
+    await Promise.all([...root.querySelectorAll("img")].map((image) => image.decode().catch(() => null)));
+    compactGoldenBellPrint(root);
+    renumberPrintPages(root);
+    const sheetUrl = params.get("sheet");
+    if (sheetUrl && new URL(sheetUrl, location.href).origin === location.origin) root.append(await importQuestionSheet(sheetUrl));
+    document.body.classList.add("session-book");
+    // 워밍업 쪽은 종이 여백 11mm로, 문제은행 학습지 쪽은 여백 0으로 설계됐다 — 한 묶음에서는 종이 여백을 0으로 두고 워밍업 쪽에 11mm를 준다
+    const pageStyle = document.createElement("style");
+    pageStyle.textContent = "@media print{@page{size:A4 portrait;margin:0}.session-book .gold-print-root>.gold-print-page{box-sizing:border-box;width:210mm;min-height:296mm;margin:0;border:11mm solid #fff}.session-book .session-sheet{width:210mm}}";
+    document.head.append(pageStyle);
+    root.setAttribute("aria-hidden", "false");
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    document.documentElement.dataset.sessionBook = "ready";
+    $("printStatus").textContent = "한 차시 교재가 준비됐어요.";
+    if (params.get("preview") !== "1") window.print();
+  } catch (error) {
+    console.error("session book failed", error);
+    document.documentElement.dataset.sessionBook = "failed";
+    $("printStatus").textContent = "교재를 준비하지 못했어요. 새로고침해 주세요.";
   }
 }
 
@@ -2357,6 +2395,7 @@ render();
 const requestedPhase = params.get("phase");
 if (["original", "extension"].includes(requestedPhase)) setPhase(requestedPhase);
 ensureProtectedBook(state.bookId).then(() => render());
+if (params.get("sessionbook") === "1") printSessionBook();
 if (embed.on) {
   embedOpen({ lesson: params.get("lesson") || state.lessonId, view: params.get("view") || "concept", game: params.get("game") || "" });
   window.addEventListener("message", (event) => {
