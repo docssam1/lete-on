@@ -2241,6 +2241,26 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     }
   }
 
+
+  const source52Dice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s5");
+  if (source52Dice) {
+    for (const [ordinal, name, generatorKey] of [
+      [1, "이어 붙인 주사위의 면에 적힌 수 구하기", "source52CuboidPage54Example41"],
+      [2, "세 방향의 주사위 그림으로 마주 보는 면 찾기", "source52CuboidPage54Example42"]
+    ]) {
+      const id = `5-2-u5-e4-example-4-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52Dice.types.push({
+        id, number: source52Dice.types.length + 1, typeNumber, name, label: name,
+        difficultyBand: 0, sourceItemId: id, sourceItemLabel: `예제 4-${ordinal}`,
+        sourceSection: "example", sourceTier: "advanced", sourcePdfPage: 50, sourcePrintedPage: 54,
+        sourceVerified: true, publisherKeyVerified: false, reviewLocked: false, generatorKey,
+        generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+        answerVisualRequired: true, answerVisualStatus: "verified-reconstruction", implementationStatus: "fixed-verified-pool"
+      });
+    }
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
