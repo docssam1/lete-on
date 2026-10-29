@@ -290,11 +290,6 @@ body.has-presenter .sd-guide-img { visibility: hidden; }
   .sd-presenter { display: none; }
   body.has-presenter .sd-guide-img { visibility: visible; }
 }
-/* 손그림 판서 느낌: 줄 없는 종이 · 초록 점선 틀 · 알약 제목 */
+/* 손그림 판서 느낌: 줄 없는 종이 · 초록 점선 틀(제목줄은 원래대로 — 원장 2026-10-29 「참고하라는 거지」) */
 .look-sketch .cb-paper { background: #fbfaf6; border-color: #e6dfcf; }
 .look-sketch .cb-paper::before { inset: 12px; background: none; border: 2px dashed #3f8f61; border-radius: 14px; }
-.look-sketch .cb-top { justify-content: center; }
-.look-sketch .cb-kicker { display: none; }
-.look-sketch .cb-title { padding: 6px 20px; border-radius: 999px; background: #dcece2; color: #1f5a3a; font-size: 15px; font-weight: 700; letter-spacing: 0.12em; }
-.look-sketch .cb-step { position: absolute; right: 8px; }
-.look-sketch .cb-top { position: relative; }
