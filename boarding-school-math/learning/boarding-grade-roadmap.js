@@ -31,6 +31,39 @@
       ["개념 설명", "함수와 삼각법의 정의를 그래프와 함께 설명해요."], ["개념 섞어 풀기", "대수·기하·정수론·조합이 함께 쓰인 문제를 풀어요."], ["필요한 실전 연습", "준비도에 따라 AMC 12/AIME 또는 SAT 문제를 시간 재고 풀어요."], ["근거 쓰기", "왜 맞는지 적고 처음 보는 문제에 다시 적용해요."] ] }
   ];
 
+  const annualPlans = Object.freeze({
+    6: Object.freeze({ source: "provided", title: "Pre-Algebra에서 SAT 기초까지", note: "학습 계획 예시예요. 실제 속도와 시험 일정에 맞춰 조정해요.", periods: Object.freeze([
+      ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율·식·기하·자료를 이해하고, 풀이 이유를 말해요.", "AoPS Pre-Algebra · Khan Academy · Singapore Math Challenging Word Problems 6"],
+      ["4–6개월", "AMC 8 유형과 논리", "단원별 문제를 풀고, 한 문제를 여러 방법으로 설명해요.", "AoPS Challenge Problems · AMC 8 기출 · Beast Academy 5D"],
+      ["7–9개월", "SAT 기초 유형 맛보기", "문장제와 자료 해석을 배운 개념에 연결해요.", "Khan Academy SAT Math · College Board 공식 자료 · PWN the SAT Math Guide"],
+      ["10–12개월", "복습과 실전 연습", "오답 이유를 나누어 보고, 준비된 범위에서 시간 연습을 해요.", "AoPS 복습 · AMC 8 기출 · SAT 기초 문제"]
+    ]) }),
+    7: Object.freeze({ source: "provided", title: "Algebra 1에서 경시·SAT 기초로", note: "경시와 SAT는 학교 수학과 분리한 선택 경로예요. 먼저 현재 개념 이해를 확인해요.", periods: Object.freeze([
+      ["1–3개월", "Algebra 1 개념과 풀이", "식·방정식의 뜻을 이해하고 변형한 이유를 설명해요.", "AoPS Introduction to Algebra · 개념별 연습"],
+      ["4–6개월", "기하 기초와 AMC 입문", "기하 개념을 다지고, 준비되면 AMC 10 문제를 선택해 접근해요.", "중학교 기하 · AMC 10 유형 문제"],
+      ["7–9개월", "대수 강화와 SAT 유형", "대수·기하 문장제를 그래프·식·그림으로 연결해요.", "Digital SAT Math 영역별 기초 연습"],
+      ["10–12개월", "누적 복습과 모의 연습", "배운 개념을 섞어 풀고 막힌 이유를 기록해요.", "개념 혼합 문제 · 준비도에 맞춘 모의 문제"]
+    ]) }),
+    8: Object.freeze({ source: "provided", title: "대수·기하에서 AIME·SAT 선택까지", note: "학습 계획 예시예요. 과목 선행이나 AIME 진출을 보장하지 않아요.", periods: Object.freeze([
+      ["1–3개월", "대수 개념과 문제 해결", "함수와 대수 개념을 확인하고 풀이 선택의 이유를 설명해요.", "AoPS Intermediate Algebra · Khan Academy Algebra 2"],
+      ["4–6개월", "기하 심화와 AMC 10/12", "도형 관계를 증명하고 대수와 연결해 풀어요.", "AoPS Introduction to Geometry · Geometry Revisited · AMC 기출"],
+      ["7–9개월", "AIME형 문제와 SAT 심화", "준비된 학생은 서술형 풀이와 SAT 영역별 연습을 병행해요.", "AoPS Volume 2 · College Board 공식 SAT 자료"],
+      ["10–12개월", "실전 연습과 풀이 복습", "시간을 재서 풀고 개념·아이디어·계산 실수를 구분해요.", "AMC/AIME 기출 · SAT 모의 문제 · AoPS 복습"]
+    ]) }),
+    9: Object.freeze({ source: "inferred", title: "Algebra 2·기하를 점검하고 Pre-Calculus로", note: "9학년 월별 계획은 제공되지 않아 8·10학년 자료 사이를 잇는 추정안이에요. 학교 과목과 선수 개념을 먼저 확인해요.", periods: Object.freeze([
+      ["1–3개월 · 추정", "Algebra 2 핵심 개념 확인", "함수·다항식·방정식의 이해도를 확인하고 필요한 부분을 보완해요.", "학교 수업 자료 · 현재 교재의 단원 점검"],
+      ["4–6개월 · 추정", "기하와 대수 연결", "좌표·닮음·기하 증명을 식과 그래프로 연결해요.", "기하 복습 · 혼합 문제"],
+      ["7–9개월 · 추정", "선택 심화와 SAT 영역 확인", "관심과 준비도에 따라 AMC 혼합 문제 또는 SAT 영역을 골라요.", "AMC 선택 연습 · Digital SAT 공식 연습 자료"],
+      ["10–12개월 · 추정", "다음 과목 준비 확인", "함수·삼각비의 기초를 살펴보고 Pre-Calculus 준비를 교사와 확인해요.", "학교 과목 계획 · 선수 개념 복습"]
+    ]) }),
+    10: Object.freeze({ source: "provided", title: "Pre-Calculus에서 증명·시험 선택까지", note: "학습 목표 예시예요. AIME·USAMO·SAT 결과는 이 계획만으로 예측할 수 없어요.", periods: Object.freeze([
+      ["1–3개월", "Pre-Calculus와 AMC 12 준비", "함수와 삼각법을 그래프로 이해하고 문제에 적용해요.", "AoPS Precalculus · AoPS Volume 1 · AMC 12 기출"],
+      ["4–6개월", "AIME형 정수론·조합", "풀이를 외우기보다 어떤 개념을 왜 썼는지 설명해요.", "AoPS Intermediate Counting & Probability · Intermediate Number Theory · AIME 기출"],
+      ["7–9개월", "SAT Math 점검", "응시 계획이 있을 때 공식 형식에 맞춰 약한 영역을 확인해요.", "College Board 공식 디지털 SAT 자료 · Khan Academy SAT Math"],
+      ["10–12개월", "증명과 다음 단계", "증명 문제는 준비도와 목표에 맞춰 선택하고 풀이 근거를 써요.", "AoPS Volume 2 · 증명 연습 · 선택한 경시 문제"]
+    ]) })
+  });
+
   const routes = [
     { id: "secure", title: "지금 배우는 것 익히기", description: "같은 개념을 그림·표·식으로 설명하고 며칠 뒤 다시 풀어봐요.", check: "새 문제를 혼자 풀고 이유를 말할 수 있나요?" },
     { id: "continue", title: "다음 내용 배우기", description: "앞 개념을 이해했다면 학교 진도에 맞춰 다음 내용을 배워요.", check: "앞 개념과 학교 진도를 선생님과 확인했나요?" },
@@ -87,7 +120,8 @@
   }
 
   function getGrade(value) { return grades.find(function (entry) { return entry.grade === Number(value); }) || null; }
+  function getAnnualPlan(grade) { return annualPlans[Number(grade)] || null; }
   function getRoute(id) { return routes.find(function (entry) { return entry.id === id; }) || null; }
   function getTracks(grade) { return gradeTracks[Number(grade)] || []; }
-  return Object.freeze({ grades: Object.freeze(grades), grade7Stops: grade7Stops, routes: Object.freeze(routes), strands: strands, getGrade: getGrade, getRoute: getRoute, getTracks: getTracks, competitionOptions: competitionOptions, analyzeCompetition: analyzeCompetition });
+  return Object.freeze({ grades: Object.freeze(grades), grade7Stops: grade7Stops, routes: Object.freeze(routes), strands: strands, getGrade: getGrade, getAnnualPlan: getAnnualPlan, getRoute: getRoute, getTracks: getTracks, competitionOptions: competitionOptions, analyzeCompetition: analyzeCompetition });
 });

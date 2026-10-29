@@ -17,6 +17,23 @@ test("school, competition, and SAT stay separate in upper-grade examples", funct
   assert.match(roadmap.getTracks(10)[2][1], /응시할 때/);
 });
 
+test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge as inferred", function () {
+  [6, 7, 8, 10].forEach(function (grade) {
+    const plan = roadmap.getAnnualPlan(grade);
+    assert.equal(plan.source, "provided");
+    assert.equal(plan.periods.length, 4);
+    assert.deepEqual(plan.periods.map(function (period) { return period[0].split(" · ")[0]; }), ["1–3개월", "4–6개월", "7–9개월", "10–12개월"]);
+    assert.ok(plan.periods.every(function (period) { return period.slice(1).every(Boolean); }));
+  });
+  assert.equal(roadmap.getAnnualPlan(9).source, "inferred");
+  assert.equal(roadmap.getAnnualPlan(9).periods.length, 4);
+  assert.deepEqual(roadmap.getAnnualPlan(9).periods.map(function (period) { return period[0].replace(" · 추정", ""); }), ["1–3개월", "4–6개월", "7–9개월", "10–12개월"]);
+  assert.ok(roadmap.getAnnualPlan(9).periods.every(function (period) { return period[0].includes("추정"); }));
+  assert.match(roadmap.getAnnualPlan(9).note, /추정안/);
+  [6, 7, 8, 10].forEach(function (grade) { assert.doesNotMatch(roadmap.getAnnualPlan(grade).note, /사용자|제공된 계획/); });
+  [3, 4, 5].forEach(function (grade) { assert.equal(roadmap.getAnnualPlan(grade), null); });
+});
+
 test("Grade 7 route names checkpoints and only links available workbook previews", function () {
   assert.deepEqual(roadmap.grade7Stops.map(function (stop) { return stop.id; }), ["nsa", "rpa", "ee", "geometry"]);
   assert.deepEqual(roadmap.getGrade(7).steps.map(function (step) { return step[0]; }), roadmap.grade7Stops.map(function (stop) { return stop.title; }));

@@ -69,6 +69,38 @@
       button.setAttribute("aria-pressed", String(data.grades[index].grade === grade));
     });
   }
+  function renderAnnualPlan() {
+    const plan = data.getAnnualPlan(grade);
+    const list = $("annual-plan-periods");
+    list.replaceChildren();
+    $("annual-plan-empty").hidden = Boolean(plan);
+    list.hidden = !plan;
+    if (!plan) {
+      setText("annual-plan-title", `${grade}학년 · 개념 단계`);
+      setText("annual-plan-note", `${grade}학년 월별 계획 자료는 없어 개념 단계만 보여 드려요.`);
+      return;
+    }
+    setText("annual-plan-title", `${grade}학년 · ${plan.title}${plan.source === "inferred" ? " · 추정" : ""}`);
+    setText("annual-plan-note", plan.note);
+    plan.periods.forEach(function (period) {
+      const item = document.createElement("li");
+      const time = document.createElement("span");
+      time.className = "annual-plan-period-time";
+      time.textContent = period[0];
+      const content = document.createElement("div");
+      content.className = "annual-plan-period-content";
+      const title = document.createElement("h3");
+      title.textContent = period[1];
+      const description = document.createElement("p");
+      description.textContent = period[2];
+      const resources = document.createElement("small");
+      resources.textContent = `자료 예시 · ${period[3]}`;
+      content.append(title, description, resources);
+      item.append(time, content);
+      list.append(item);
+    });
+    list.classList.toggle("is-inferred", plan.source === "inferred");
+  }
   function renderStages(entry) {
     const list = $("stage-list");
     const grade7 = grade === 7;
@@ -367,6 +399,7 @@
     renderGradeButtons();
     renderComparisonOptions();
     renderComparison();
+    renderAnnualPlan(entry);
     renderStages(entry);
     renderLevels(entry);
     renderGradeFocus();
