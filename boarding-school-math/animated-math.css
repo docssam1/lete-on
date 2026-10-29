@@ -291,9 +291,9 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
   .signed-number-line-scene { grid-template-columns: 1fr; }
   .signed-number-line-svg, .signed-answer { grid-column: 1; }
   .signed-common { grid-template-columns: 1fr; }
-  .signed-axis-label { font-size: 30px; }
-  .signed-point-label { font-size: 32px; }
-  .signed-distance-label { font-size: 30px; }
+  .signed-axis-label { font-size: 32px; }
+  .signed-point-label { font-size: 34px; }
+  .signed-distance-label { font-size: 32px; }
   .expression-tree-scene { grid-template-columns: 1fr; }
   .expression-flow { grid-template-columns: 1fr 1fr; }
   .expression-node:nth-child(2)::after { display: none; }

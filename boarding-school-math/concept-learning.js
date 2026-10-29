@@ -116,9 +116,9 @@
     });
     if (match[1]) group.append(svgElement("text", { x: -width / 2 - 7, y: 5, "text-anchor": "middle", class: "svg-label svg-fraction-sign" }, "−"));
     group.append(
-      svgElement("text", { x: 0, y: -4, "text-anchor": "middle", class: "svg-label svg-fraction-part" }, match[2]),
-      svgElement("line", { x1: -width / 2, y1: 1, x2: width / 2, y2: 1, class: "svg-fraction-bar" }),
-      svgElement("text", { x: 0, y: 15, "text-anchor": "middle", class: "svg-label svg-fraction-part" }, match[3])
+      svgElement("text", { x: 0, y: -8, "text-anchor": "middle", class: "svg-label svg-fraction-part" }, match[2]),
+      svgElement("line", { x1: -width / 2, y1: 4, x2: width / 2, y2: 4, class: "svg-fraction-bar" }),
+      svgElement("text", { x: 0, y: 22, "text-anchor": "middle", class: "svg-label svg-fraction-part" }, match[3])
     );
     svg.append(group);
   }
