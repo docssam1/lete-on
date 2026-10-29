@@ -2178,6 +2178,23 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         implementationStatus: "fixed-verified-pool"
       });
     }
+    for (const [section, ordinal, name, generatorKey, pdfPage, printedPage, answerVisualRequired] of [
+      ["example", 2, "위·옆 그림에서 직육면체의 모서리 합", "source52CuboidViewsPage48Example12", 44, 48, false],
+      ["example", 3, "직육면체를 네 조각으로 자른 모서리 합", "source52CuboidFourPiecesPage48Example13", 44, 48, false],
+      ["mission", 5, "직육면체 8개로 만들 수 있는 서로 다른 모양", "source52CuboidEightBlocksPage49Mission5", 45, 49, true]
+    ]) {
+      const id = `5-2-u5-e1-${section}-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidProperties.types.push({
+        id, number: source52CuboidProperties.types.length + 1, typeNumber, name, label: name,
+        difficultyBand: 0, sourceItemId: id, sourceItemLabel: section === "example" ? `예제 1-${ordinal}` : `Mission ${ordinal}`,
+        sourceSection: section, sourceTier: "advanced", sourcePdfPage: pdfPage, sourcePrintedPage: printedPage,
+        sourceVerified: true, publisherKeyVerified: false, reviewLocked: false, generatorKey,
+        generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+        answerVisualRequired, answerVisualStatus: answerVisualRequired ? "verified-reconstruction" : "not-required",
+        implementationStatus: "fixed-verified-pool"
+      });
+    }
   }
 
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {

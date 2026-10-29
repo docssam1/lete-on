@@ -1,0 +1,18 @@
+.source52-p48e13-question > p,
+.source52-p48e13-solution > p { margin: 0 0 15px; line-height: 1.65; }
+.source52-p48e13-diagram { display: block; width: min(100%, 620px); height: auto; margin: 8px auto 0; overflow: visible; }
+.source52-p48e13-edge { stroke: #29251f; stroke-width: 2.1; fill: none; }
+.source52-p48e13-hidden-edge { stroke: #8e877b; stroke-width: 1.4; stroke-dasharray: 5 5; fill: none; }
+.source52-p48e13-cut-edge { stroke: #29251f; stroke-width: 2.1; fill: none; }
+.source52-p48e13-dimension-line { stroke: #71695c; stroke-width: 1.25; fill: none; }
+.source52-p48e13-arrow { fill: #71695c; stroke: none; }
+.source52-p48e13-dimension { fill: #191511; font: 17px "Pretendard", sans-serif; text-anchor: middle; }
+.source52-p48e13-final-answer { font-weight: 700; }
+@media (max-width: 680px) {
+  .source52-p48e13-question > p,
+  .source52-p48e13-solution > p { font-size: 15px; }
+  .source52-p48e13-diagram { width: 100%; }
+}
+@media print {
+  .source52-p48e13-diagram { max-height: 82mm; }
+}
