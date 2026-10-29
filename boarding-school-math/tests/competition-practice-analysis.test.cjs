@@ -35,6 +35,14 @@ test("first response drives the analysis even when a learner later solves the it
   assert.equal("misconception" in result.itemEvidence[0],false);
 });
 
+test("a solved flag without a recorded response cannot inflate solved totals",function(){
+  const attempts=new Map([["sasmo-g6-model-01",{responses:[],solved:true}]]);
+  const result=analysis.summarize(sasmo,attempts);
+  assert.equal(result.attempted,0);
+  assert.equal(result.solved,0);
+  assert.equal(result.itemEvidence[0].solved,false);
+});
+
 test("completion reports item-level evidence without inventing a diagnostic band",function(){
   const attempts=new Map();
   sasmo.forEach(function(item,index){attempts.set(item.id,{responses:[{correct:index!==0}],solved:index!==0});});

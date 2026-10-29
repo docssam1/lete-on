@@ -35,7 +35,7 @@
       const responses = normalizedResponses(record);
       const wasAttempted = responses.length > 0;
       const wasFirstCorrect = wasAttempted && responses[0].correct;
-      const wasSolved = Boolean(record && record.solved === true) || responses.some(function (response) { return response.correct; });
+      const wasSolved = wasAttempted && (Boolean(record && record.solved === true) || responses.some(function (response) { return response.correct; }));
       if (wasAttempted) {
         attempted += 1;
       }

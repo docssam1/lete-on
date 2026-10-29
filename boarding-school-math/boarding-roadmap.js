@@ -433,7 +433,8 @@
       && Number.isFinite(mapEvidence.scores && mapEvidence.scores.rit) && Number.isFinite(targetMapEvidence.scores && targetMapEvidence.scores.rit);
     if (comparableRit) {
       const difference = targetMapEvidence.scores.rit - mapEvidence.scores.rit;
-      const differenceText = difference > 0 ? `+${difference}` : String(difference);
+      const roundedDifference = Math.round((difference + Math.sign(difference || 1) * Number.EPSILON) * 10) / 10;
+      const differenceText = roundedDifference > 0 ? `+${roundedDifference}` : String(roundedDifference);
       ritComparison.textContent = `Grade ${current.grade} · ${assessmentDate(mapEvidence)} (${seasonLabel(mapEvidence.scores.season)}) RIT ${mapEvidence.scores.rit} → Grade ${target.grade} · ${assessmentDate(targetMapEvidence)} (${seasonLabel(targetMapEvidence.scores.season)}) RIT ${targetMapEvidence.scores.rit} · 입력값 차이 ${differenceText} RIT. 같은 수학 RIT 수직 척도의 산술 비교예요. 이 차이만으로 예상 성장, 동학년 백분위, 해당 학년의 모든 내용 숙달을 판정하지 않아요.`;
       ritComparison.dataset.state = "comparable-scale";
     } else {

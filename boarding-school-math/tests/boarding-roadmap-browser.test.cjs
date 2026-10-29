@@ -259,6 +259,26 @@ test("grade comparison displays arithmetic RIT difference only for matching MAP 
   await page.close();
 });
 
+test("grade comparison rounds legacy decimal RIT differences to one decimal place", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
+  await page.evaluate(function () {
+    [
+      { grade: 7, rit: 218.1 },
+      { grade: 8, rit: 231.3 }
+    ].forEach(function (entry) {
+      const record = window.GFIELDExternalMathEvidenceEngine.analyze({ sourceId: "map-growth", testDate: "2026-09-01", grade: entry.grade, currentCourseId: "pre-algebra", targetCourseId: "algebra-1", rit: entry.rit, percentile: 55, domains: [] });
+      window.GFIELDLocalLearningRecord.storage.saveAssessmentEvidence(record);
+    });
+  });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  await page.getByLabel("비교할 학년").selectOption("8");
+  const comparison = await page.locator("#rit-comparison-copy").innerText();
+  assert.match(comparison, /입력값 차이 \+13\.2 RIT/);
+  assert.doesNotMatch(comparison, /13\.199999/);
+  await page.close();
+});
+
 test("grade comparison does not calculate a difference between different assessment sources", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });

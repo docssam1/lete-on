@@ -35,6 +35,7 @@ test("entered domain values are shown descriptively and do not apply an invented
   assert.deepEqual(result.priorityDomains, []);
   assert.equal(result.domainComparisons[0].clusterId, "6.G.A");
   assert.equal(result.domainComparisons[0].percent, 61);
+  assert.equal(result.domainComparisons.find(function (domain) { return domain.id === "reasoning"; }).clusterId, null);
 });
 
 test("MAP evidence keeps RIT distinct from percentile and reflects only the selected course route", function () {

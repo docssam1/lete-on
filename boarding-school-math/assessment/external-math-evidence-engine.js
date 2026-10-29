@@ -30,7 +30,7 @@
     algebra: Object.freeze({ label: "식·방정식", axis: "patterns-algebra", clusterId: "6.EE.B" }),
     geometry: Object.freeze({ label: "기하·측정", axis: "geometry-spatial", clusterId: "6.G.A" }),
     data: Object.freeze({ label: "자료·확률", axis: "data-probability", clusterId: "6.SP.A" }),
-    reasoning: Object.freeze({ label: "문제 해결·추론", axis: "problem-solving-strategies", clusterId: "6.G.A" })
+    reasoning: Object.freeze({ label: "문제 해결·추론", axis: "problem-solving-strategies", clusterId: null })
   });
 
   function fail(code) { throw new Error(code); }
