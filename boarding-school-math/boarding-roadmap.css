@@ -297,7 +297,11 @@ body.academy-page.page-boarding-roadmap { color: #182230; background: #f5f6f8; b
 .grade7-active .stage-detail { margin-top: 8px; padding: 20px 22px; background: #fff; }
 .grade7-stage-check { margin-top: 18px; padding-top: 16px; border-top: 1px solid #d8dee8; }
 .grade7-stage-check strong { color: #60418f; font-size: .82rem; }
-.grade7-stage-check p { margin: 7px 0 0; }
+.grade7-stage-check ol { margin: 8px 0 0; padding-left: 1.35rem; display: grid; gap: 7px; color: #354255; font-size: .83rem; line-height: 1.55; }
+.grade7-stage-check li::marker { color: #60418f; font-weight: 850; }
+.grade7-stage-references { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.grade7-stage-references[hidden] { display: none; }
+.grade7-stage-references a { min-height: 40px; display: inline-flex; align-items: center; color: #4f347a; font-size: .78rem; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 .grade7-stage-resource { min-height: 44px; margin-top: 18px; padding: 9px 12px; display: inline-flex; align-items: center; border: 1px solid #60418f; color: #4f347a; font-size: .85rem; font-weight: 800; text-decoration: none; }
 .grade7-no-resource { margin-top: 16px; color: #566274; font-size: .83rem; }
 .grade7-branches { margin-top: 26px; padding-top: 22px; position: relative; border-top: 1px solid #d8dee8; }

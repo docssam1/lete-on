@@ -381,3 +381,9 @@ Verification after the roadmap link change: the full paper-review analysis, cont
 A follow-up browser test now clicks the selected Grade 9 result link and confirms the roadmap opens at `#grade-map` with the Grade 9 heading. Competition and roadmap browser suites pass 31/31; the complete five-suite set previously passed 58/58 before this additional case. Local-only, no push or deployment.
 
 The click-through check also exposed a conflicting 20px scroll margin under the 56px sticky section bar. Grade-map and route sections now reserve 72px, and the test verifies the linked heading settles below the sticky navigation. Competition and roadmap browser suites pass 31/31 after this adjustment.
+
+## 2026-10-30 Grade 7 NS.A checkpoint refinement
+
+The public Grade 7 roadmap now breaks 7.NS.A into four learner-explainable checks: rational addition/subtraction on a number line and additive inverses (7.NS.A.1), multiplication/division properties and division by nonzero values (7.NS.A.2), fraction-to-decimal terminating/repeating form (7.NS.A.2d), and contextual problems using all four operations (7.NS.A.3). The selected NS.A stop links to the official CCSS strand and FlippedMath Units 2–3; both links open safely in new tabs. Other roadmap stops do not show these references.
+
+Verification: `tests/boarding-grade-roadmap.test.cjs` and `tests/boarding-roadmap-browser.test.cjs` passed 25/25 using the bundled Node.js runtime and Playwright. Coverage includes all four checks and links, 320px vertical reachability, 390px overflow, keyboard selection, and cross-grade interactions. `git diff --check` passed. Claude Code CLI review was requested through the existing Claude Max subscription in read-only mode; no review result has been received yet, so do not claim acceptance. This refines a roadmap/checkpoint, not a scored diagnostic or grade placement. Local-only; no publish, upload, or deployment.

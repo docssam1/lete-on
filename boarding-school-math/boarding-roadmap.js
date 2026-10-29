@@ -179,7 +179,12 @@
     setText("stage-copy", entry.steps[stage][1]);
     if (grade7) {
       const stop = data.grade7Stops[stage];
-      setText("grade7-stage-question", stop.check);
+      const checks = $("grade7-stage-questions");
+      checks.replaceChildren();
+      (stop.checks || [stop.check]).filter(Boolean).forEach(function (question) {
+        const item = document.createElement("li"); item.textContent = question; checks.append(item);
+      });
+      $("grade7-stage-references").hidden = stop.id !== "nsa";
       if (stop.clusterId) {
         const link = $("grade7-stage-resource");
         link.href = `./unit-workbook.html?cluster=${encodeURIComponent(stop.clusterId)}&mode=workbook&audience=student&locale=ko`;

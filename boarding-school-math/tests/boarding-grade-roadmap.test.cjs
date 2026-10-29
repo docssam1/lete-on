@@ -64,7 +64,8 @@ test("Grade 7 route names checkpoints and only links available workbook previews
   assert.deepEqual(roadmap.getGrade(7).steps.map(function (step) { return step[0]; }), roadmap.grade7Stops.map(function (stop) { return stop.title; }));
   assert.equal(roadmap.grade7Stops[0].resourceState, "review-preview");
   assert.equal(roadmap.grade7Stops[1].resourceState, "public");
-  assert.ok(roadmap.grade7Stops.every(function (stop) { return Boolean(stop.check); }));
+  assert.ok(roadmap.grade7Stops.every(function (stop) { return Boolean(stop.check || (stop.checks && stop.checks.length)); }));
+  assert.equal(roadmap.grade7Stops[0].checks.length, 4);
   assert.ok(roadmap.grade7Stops.slice(2).every(function (stop) { return !stop.clusterId; }));
 });
 

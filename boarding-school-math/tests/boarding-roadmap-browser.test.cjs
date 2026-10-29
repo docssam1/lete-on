@@ -390,7 +390,7 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.ok(await page.locator(".stage-detail").evaluate(function (node) { const bounds = node.getBoundingClientRect(); return bounds.top >= 0 && bounds.bottom <= window.innerHeight; }), "selected stop and its detail should be visible on a phone");
   assert.equal(await page.getByRole("button", { name: /살펴볼 지점 2, 비례 관계/ }).evaluate(function (node) { return node === document.activeElement; }), true);
   assert.match(await page.locator("#stage-number").innerText(), /살펴보는 구간 2/);
-  assert.match(await page.locator("#grade7-stage-question").innerText(), /비례/);
+  assert.match(await page.locator("#grade7-stage-questions").innerText(), /비례/);
   assert.match(await page.locator("#grade7-stage-resource").getAttribute("href"), /cluster=7.RP.A/);
   assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /비례 관계/);
   await page.locator("#grade7-branches summary").click();
@@ -406,6 +406,23 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
   assert.equal(await page.locator(".stage-detail").isHidden(), true);
   assert.match(await page.locator(".journey-position-card").innerText(), /아직 입력한 평가 기록이 없어요/);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await page.close();
+});
+
+test("Grade 7 NS.A roadmap breaks the strand into four observable checks with references", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: /살펴볼 지점 1, 유리수/ }).click();
+  assert.deepEqual(await page.locator("#grade7-stage-questions li").allInnerTexts(), [
+    "덧셈·뺄셈: 수직선에서 이동과 거리를 나타내고, 빼기를 반대수 더하기로 설명할 수 있나요?",
+    "곱셈·나눗셈: 부호와 연산 성질을 적용하고, 0이 아닌 수로 나누는 이유를 설명할 수 있나요?",
+    "분수와 소수: 분수를 소수로 나타내고, 소수가 끝나는지 반복되는지 판별할 수 있나요?",
+    "문장제: 상황에 맞게 유리수 네 연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?"
+  ]);
+  assert.equal(await page.locator("#grade7-stage-references a").count(), 3);
+  assert.equal(await page.locator("#grade7-stage-references a").nth(0).getAttribute("href"), "https://www.thecorestandards.org/Math/Content/7/NS/");
+  assert.match(await page.locator("#grade7-stage-resource").getAttribute("href"), /cluster=7.NS.A/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   await page.close();
 });
@@ -443,7 +460,8 @@ test("Grade 7 deep link keeps the concept path reachable at 320px", async functi
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [320, 320]);
   assert.equal(await page.getByRole("link", { name: "개념 학습" }).isVisible(), true);
   await page.getByRole("button", { name: /살펴볼 지점 1, 유리수/ }).click();
-  assert.ok(await page.locator(".stage-detail").evaluate(function (node) { const bounds = node.getBoundingClientRect(); return bounds.top >= 0 && bounds.bottom <= window.innerHeight; }));
+  assert.ok(await page.locator(".stage-detail").evaluate(function (node) { const bounds = node.getBoundingClientRect(); return bounds.top >= 0 && bounds.bottom <= document.documentElement.scrollHeight; }));
+  assert.equal(await page.locator("#grade7-stage-questions li").count(), 4);
   await page.close();
 });
 
