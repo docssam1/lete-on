@@ -2674,7 +2674,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조와 좌표 반사를 확인했으나 공식 답안과 공개 그림 검수 전 잠금 유지합니다."
+      "reviewReason": "원문 구조와 좌표 반사를 확인했으나 공식 답안과 공개 그림 검수 전 잠금 유지합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e5-example-1-reflection-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e5-example-2",
