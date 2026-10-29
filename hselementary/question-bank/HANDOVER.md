@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 61 Missions 3–4
+
+- Printed p.61 Mission 3: the first seven scores total 602, giving a mean of 86. Enumerating the four sign combinations for the last three scores gives ㉠▼ and ㉡▲ as the unique combination with mean 89. The prior ledger described an unrelated score table. Publisher answer key remains unverified.
+- Mission 4 remains locked: its source gives 200 passers, 100 non-passers, overall mean 72 and a difference of 10.5 between group means, but does not explicitly state selection is in score order. Both (75.5, 65) and (68.5, 79) satisfy the arithmetic; the former follows if selection is by score. The prior ledger described an unrelated problem.
+- Source and independent enumeration, 1440/375/320px browser, separate one-page A4 checks, release gate and 78,420 runtime generations passed. Counts: 2,095 types, 1,307 generatable, 788 awaiting review. The broader inventory audit retains 81 pre-existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Preserve existing work and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 61 Missions 1–2
 
 - Printed p.61 Mission 1: the three work periods total 56 person-days, so four people take 14 days. Mission 2: replacing the largest of six two-digit numbers by twice itself minus 20 raises their sum by 36, so the original largest is 56. The distinct two-digit witness 10,11,12,13,42,56 satisfies both averages. Publisher answer keys remain unverified.

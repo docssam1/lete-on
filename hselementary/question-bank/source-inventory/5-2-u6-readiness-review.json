@@ -29,8 +29,8 @@
       "sourcePageOutOfRangeCount": 0
     },
     "answerReview": {
-      "independentCalculationOrEnumerationCount": 37,
-      "visualModelPendingCount": 7,
+      "independentCalculationOrEnumerationCount": 38,
+      "visualModelPendingCount": 6,
       "singleAnswerConfirmedCount": 36,
       "answerNotFinalizedCount": 8,
       "singleAnswerStatusCounts": {
@@ -39,7 +39,7 @@
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1·2를 연결하고 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1~3을 연결하고 Mission 4도 선발 기준 미명시로 보류하며 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 17,
-    "lockedCount": 27
+    "publicCandidateCount": 18,
+    "lockedCount": 26
   },
   "items": [
     {
@@ -566,18 +566,26 @@
       "sourcePdfPage": 57,
       "sourcePrintedPage": 61,
       "commonTypeId": "average-score-change-table",
-      "childFriendlyTypeLabel": "평균과 점수표로 빠진 점수 구하기",
-      "originalStructure": "8명의 시험 점수표와 평균, 가장 높은 점수, 다른 점수와의 차 조건으로 빠진 두 점수를 구합니다.",
-      "conditions": ["8명 평균 64점", "효근의 점수는 8명 중 가장 높음", "다른 7명 중 한 명의 점수는 효근보다 2점 낮음", "점수표에 두 칸이 비어 있음"],
-      "visualRequirement": "이름과 점수표, 최고 점수 조건을 정확히 표시해야 합니다.",
-      "independentCalculation": "전체 합 512. 알려진 점수 합 471이므로 빈 두 점수의 합은 41. 가장 높은 점수와 2점 낮은 점수라는 조건만으로 두 칸의 순서·값을 원본 표와 함께 다시 확인해야 함",
-      "independentAnswer": null,
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
+      "childFriendlyTypeLabel": "점수 변화 표와 평균으로 기호 구하기",
+      "originalStructure": "첫 점수와 2~10회 점수 변화표에서 1~7회 평균 및 9·10회의 증감 기호를 구합니다.",
+      "conditions": [
+        "1회 80점",
+        "2~8회 변화 ▲8, ▼4, ▼2, ▲11, ▼10, ▲9, ▼2",
+        "9회 ㉠5, 10회 ㉡7에서 기호는 ▲ 또는 ▼",
+        "1~7회 평균 및 8~10회 평균 89점 조건의 두 기호"
+      ],
+      "visualRequirement": "2회부터 10회까지의 변화와 ㉠·㉡ 위치를 원문 순서로 표시해야 합니다.",
+      "independentCalculation": "1~7회 80,88,84,82,93,83,92, 합 602이므로 평균 86. 8회 90이고 8~10회 합 267에서 9·10회 합은 177. 네 기호 조합 중 ▼5 다음 ▲7만 85+92=177.",
+      "independentAnswer": "(1) 86점 (2) ㉠▼, ㉡▲",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "표의 빈칸 위치와 최고 점수 조건을 다시 모델링하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e2-mission-3",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 61쪽 표의 아홉 변화와 두 물음 대조, 점수 재구성 및 기호 4가지 전수 검사. 이전 장부는 Mission 5 내용을 잘못 기재. 공식 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-4",
@@ -585,19 +593,24 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 57,
       "sourcePrintedPage": 61,
-      "commonTypeId": "average-replace-one-data",
-      "childFriendlyTypeLabel": "자료 하나를 바꾼 뒤의 평균으로 원래 자료 구하기",
-      "originalStructure": "자연수 10개의 평균에서 한 수를 50으로 바꾸었을 때 평균이 달라지는 조건으로 원래 수를 구합니다.",
-      "conditions": ["자연수 10개의 평균 42", "한 수를 50으로 바꾸면 평균 44", "바꾸기 전의 수를 구함"],
-      "visualRequirement": "바꾸기 전과 후의 전체 합을 두 줄로 보여야 합니다.",
-      "independentCalculation": "처음 합 420, 바꾼 뒤 합 440. 전체 합이 20 늘었으므로 50으로 바꾼 원래 수는 30",
-      "independentAnswer": "30",
-      "candidateAnswerCount": 1,
-      "singleAnswer": true,
+      "commonTypeId": "average-pass-fail-groups",
+      "childFriendlyTypeLabel": "합격·불합격 평균과 전체 평균",
+      "originalStructure": "300명 중 200명이 합격한 시험에서 합격·불합격 평균의 차와 전체 평균으로 합격 평균을 구합니다.",
+      "conditions": [
+        "전체 300명, 합격 200명, 불합격 100명",
+        "합격·불합격 평균 차 10.5점 (높은 쪽 미명시)",
+        "전체 평균 72점"
+      ],
+      "visualRequirement": "두 무리의 인원과 평균 관계를 구분해야 합니다.",
+      "independentCalculation": "200p+100f=21600 및 |p−f|=10.5이면 (p,f)=(75.5,65) 또는 (68.5,79). 점수순 합격을 가정하면 75.5이나 원문에는 기준이 명시되지 않음.",
+      "independentAnswer": "75.5점 또는 68.5점 (선발 기준에 따라 다름)",
+      "candidateAnswerCount": 2,
+      "singleAnswer": null,
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "자료 하나를 바꾸는 평균 문제의 식 표시를 검수하기 전까지 잠금"
+      "lockReason": "합격 기준이 명시되지 않아 평균이 높은 쪽을 원문만으로 확정할 수 없음. 출판사 답안·선발 기준 확인 전 잠금.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-5",
