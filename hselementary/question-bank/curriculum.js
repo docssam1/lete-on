@@ -2585,6 +2585,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Unit2Equation.types.push({id,number:source52Unit2Equation.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e3-example-${n}`,sourceItemLabel:`예제 3-${n} 유사문항`,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:14,sourcePrintedPage:18,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page18Example3${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
   }
 
+  if (source52Unit2Equation) for (const [n,name] of [[1,"둘레와 가로세로 비로 넓이 구하기"],[2,"남은 도보 거리로 교통 이동 거리 구하기"],[3,"연속해서 남은 수량으로 처음 종류 구하기"]]) {
+    const id = `5-2-u2-e3-mission-${n}-synthetic`, typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Equation.types.push({id,number:source52Unit2Equation.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e3-mission-${n}`,sourceItemLabel:`Mission ${n} 유사문항`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:15,sourcePrintedPage:19,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page19Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
