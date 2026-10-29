@@ -27,7 +27,7 @@ python scripts/check-docssam-voice.py > .docssam-work/만들-대사.txt
 
 echo
 echo "  [실행] 독쌤 목소리로 대사를 만드는 중... 처음엔 모델을 받느라 오래 걸립니다."
-shift 2>/dev/null
+shift 1 2>/dev/null || true
 if ! python scripts/omnivoice-docssam.py --ref "$REF" --device auto --speed 0.8 "$@"; then
   echo; echo "  [!] 실패했습니다. 위 메시지를 그대로 복사해 Claude 에게 주세요."; read -r; exit 1
 fi
