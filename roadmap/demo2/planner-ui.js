@@ -348,6 +348,12 @@ function academyBeamClick(b){
  academyLines=T.toggleAcademyLine(academyLines,b.dataset.academyBeam);
  PlannerStorage.setItem(academyLinesKey,JSON.stringify(academyLines));applyAcademyLines();return true;
 }
+function syncWorkspaceTabOrientation(){
+ const root=$('journeyMap'),tabs=root.querySelector('.workspace-tabs');if(!tabs)return;
+ const rail=!!root.querySelector('.pco-travel')&&!PlannerFullscreen.isOpen()&&matchMedia('(orientation:landscape) and (min-width:600px) and (max-width:1100px) and (max-height:500px)').matches;
+ tabs.setAttribute('aria-orientation',rail?'vertical':'horizontal');
+}
+window.addEventListener('resize',syncWorkspaceTabOrientation);
 function setWorkspaceView(view,focus=false){
  if(!['map','graph','table','records'].includes(view))return;
  workspaceView=view;rememberWorkspace();
@@ -355,7 +361,7 @@ function setWorkspaceView(view,focus=false){
  if(PlannerFullscreen.isOpen())$('atlasFullscreenTitle').textContent=view==='graph'?'진도와 속도 비교':view==='table'?'월별 교재와 병행 계획':'우리 아이의 공부 지도';
  for(const pane of $('journeyMap').querySelectorAll('[data-workspace-panel]'))pane.hidden=pane.dataset.workspacePanel!==view;
  for(const tab of $('journeyMap').querySelectorAll('[data-workspace-view]')){if(tab.getAttribute('role')!=='tab')continue;const on=tab.dataset.workspaceView===view;tab.setAttribute('aria-selected',String(on));tab.tabIndex=on?0:-1;}
- if(focus)$('workspace-tab-'+view)?.focus({preventScroll:true});PlannerPresentation.refresh($('journeyMap'));document.querySelectorAll('.top .nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===({map:'vmap',graph:'vrep',table:'vplan',records:'vrep'})[view]));
+ syncWorkspaceTabOrientation();if(focus){const active=$('workspace-tab-'+view);active?.focus({preventScroll:true});active?.scrollIntoView({block:'nearest',inline:'nearest'});}PlannerPresentation.refresh($('journeyMap'));document.querySelectorAll('.top .nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===({map:'vmap',graph:'vrep',table:'vplan',records:'vrep'})[view]));
 }
 function mobileWorkspace(panel){document.body.dataset.workspacePane=panel;document.querySelectorAll('[data-mobile-workspace]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mobileWorkspace===panel)));rememberWorkspace();}
 mobileWorkspace('choice');
@@ -1163,7 +1169,8 @@ $('journeyMap').addEventListener('keydown',e=>{
  const calendar=e.target.closest('.college-calendar');if(calendar&&e.target===calendar&&!e.ctrlKey&&!e.metaKey&&['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();if(e.key==='Home')calendar.scrollLeft=0;else if(e.key==='End')calendar.scrollLeft=calendar.scrollWidth;else calendar.scrollLeft+=(e.key==='ArrowRight'?1:-1)*100;return;}
  const tab=e.target.closest('[role="tab"][data-workspace-view]');if(!tab)return;
  const tabs=[...$('journeyMap').querySelectorAll('[role="tab"][data-workspace-view]')],index=tabs.indexOf(tab);let next;
- if(e.key==='ArrowRight')next=(index+1)%tabs.length;else if(e.key==='ArrowLeft')next=(index+tabs.length-1)%tabs.length;else if(e.key==='Home')next=0;else if(e.key==='End')next=tabs.length-1;else return;
+ const vertical=tab.closest('[role="tablist"]')?.getAttribute('aria-orientation')==='vertical';
+ if(e.key==='ArrowRight'||vertical&&e.key==='ArrowDown')next=(index+1)%tabs.length;else if(e.key==='ArrowLeft'||vertical&&e.key==='ArrowUp')next=(index+tabs.length-1)%tabs.length;else if(e.key==='Home')next=0;else if(e.key==='End')next=tabs.length-1;else return;
  e.preventDefault();setWorkspaceView(tabs[next].dataset.workspaceView,true);
 });
 for(const host of [$('coachQuestions'),$('intakeQuestions'),$('coachReferences')])host.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&!b.dataset.faq)flowClick(b);});
