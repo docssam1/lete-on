@@ -5007,16 +5007,18 @@
       "pdfPage": 57,
       "printedPage": 61,
       "sourceShape": "처음 4일 3명, 다음 7일 5명, 다음 3일 3명의 같은 하루 작업량을 처음부터 4명이 할 때 날짜 구하기",
-      "answerContract": "single-value: 14일",
+      "answerContract": "candidate: single-value",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 61쪽 날짜·인원·동일 하루 작업량을 대조하고 56인·일을 4명으로 나누어 검산했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-mission-1"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-2",
@@ -5027,16 +5029,18 @@
       "pdfPage": 57,
       "printedPage": 61,
       "sourceShape": "서로 다른 두 자리 수 6개의 평균 24에서 가장 큰 수를 2배한 후 20을 뺀 값으로 바꾸어 평균 30이 될 때 원래 최대 구하기",
-      "answerContract": "single-value: 56",
+      "answerContract": "candidate: single-value",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 61쪽의 평균, 가장 큰 수의 변환과 서로 다른 두 자리 수 조건을 대조하고 합의 변화와 구성 가능한 실제 예를 검산했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e2-mission-2"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-3",
