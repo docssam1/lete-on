@@ -29,17 +29,17 @@
       "sourcePageOutOfRangeCount": 0
     },
     "answerReview": {
-      "independentCalculationOrEnumerationCount": 34,
-      "visualModelPendingCount": 10,
-      "singleAnswerConfirmedCount": 34,
-      "answerNotFinalizedCount": 10,
+      "independentCalculationOrEnumerationCount": 35,
+      "visualModelPendingCount": 9,
+      "singleAnswerConfirmedCount": 35,
+      "answerNotFinalizedCount": 9,
       "singleAnswerStatusCounts": {
-        "true": 34,
-        "null": 10
+        "true": 35,
+        "null": 9
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1만 원문 수치와 독립 계산을 연결했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1을 원문 수치와 독립 계산으로 연결했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 1,
-    "lockedCount": 43
+    "publicCandidateCount": 2,
+    "lockedCount": 42
   },
   "items": [
     {
@@ -100,16 +100,23 @@
       "commonTypeId": "average-with-missing-score",
       "childFriendlyTypeLabel": "평균으로 빠진 점수 구하기",
       "originalStructure": "5과목의 평균과 일부 점수가 주어지고 표에서 빠진 두 점수를 구합니다.",
-      "conditions": ["5과목 평균 86점", "국어·수학 점수가 빠짐", "사회 78점, 과학 90점, 영어 80점"],
+      "conditions": [
+        "5과목 평균 86점",
+        "국어 십의 자리 9, 수학 일의 자리 4만 표에 보임",
+        "사회 78점, 과학 90점, 영어 80점"
+      ],
       "visualRequirement": "과목과 점수 표의 빠진 칸 위치를 정확히 표시해야 합니다.",
-      "independentCalculation": "전체 86×5=430, 빠진 두 점수의 합=430-78-90-80=182. 표의 원문 조건을 더 확인해야 각 칸을 하나씩 정할 수 있음",
-      "independentAnswer": null,
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
+      "independentCalculation": "전체 86×5=430, 국어·수학 합 430−78−90−80=182. 국어 90~99와 수학 4,14,...,94를 전수 대조하면 (98,84)만 가능.",
+      "independentAnswer": "국어 98점, 수학 84점",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "평균 조건만으로 두 빈칸의 합만 정해지는지 원본 표의 추가 조건을 다시 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e1-example-1",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "원문 찢어진 표의 9와 4를 확대 대조하고 자릿수 100쌍을 독립 열거. 공식 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u6-e1-example-1-2",

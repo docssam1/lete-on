@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-1
+
+- Source PDF p.54 / clean comparison PDF p.53 / printed p.58: reconstructed one fixed original torn-score table with visible Korean tens digit 9 and mathematics units digit 4. Five-score total 430, Korean and mathematics total 182; independent digit enumeration yields Korean 98 and mathematics 84. The publisher answer key remains unverified.
+- Corrected the previously unresolved source review and its counters. Source, ledger, 1440/375/320px browser and separate one-page A4 problem and solution visual checks passed. Release gate and 77,460 runtime generations passed.
+- Counts: 2,079 types, 1,291 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Other Unit 6 source items remain locked; preserve the dirty source worktree and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 58 Exploration 1
 
 - Source PDF p.54 / clean comparison PDF p.53 / printed p.58: one fixed original height-table question, seven source values sum to 1,029cm and average 147cm. Original book labels and numbers are preserved; the publisher answer key is unverified. The 56th printed page is a progress log, not questions.
