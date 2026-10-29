@@ -29,17 +29,17 @@
       "sourcePageOutOfRangeCount": 0
     },
     "answerReview": {
-      "independentCalculationOrEnumerationCount": 40,
-      "visualModelPendingCount": 4,
-      "singleAnswerConfirmedCount": 37,
-      "answerNotFinalizedCount": 7,
+      "independentCalculationOrEnumerationCount": 42,
+      "visualModelPendingCount": 2,
+      "singleAnswerConfirmedCount": 39,
+      "answerNotFinalizedCount": 5,
       "singleAnswerStatusCounts": {
-        "true": 37,
-        "null": 7
+        "true": 39,
+        "null": 5
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1~3·5·6을 연결하고 Mission 4는 선발 기준 미명시로 보류하며 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1~3·5·6과 62쪽 개념탐구 3·예제 3-1~3-4를 연결하고 Mission 4는 선발 기준 미명시로 보류하며 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 20,
-    "lockedCount": 24
+    "publicCandidateCount": 25,
+    "lockedCount": 19
   },
   "items": [
     {
@@ -675,16 +675,23 @@
       "commonTypeId": "cube-vertex-path-count",
       "childFriendlyTypeLabel": "정육면체 꼭짓점 사이의 길 수 세기",
       "originalStructure": "정육면체의 한 꼭짓점에서 다른 꼭짓점까지 한 번 지난 꼭짓점을 다시 지나지 않는 길의 수를 구합니다.",
-      "conditions": ["정육면체 꼭짓점 그림", "출발점과 도착점 지정", "지난 꼭짓점은 다시 지나지 않음"],
+      "conditions": [
+        "정육면체 꼭짓점 그림",
+        "출발점과 도착점 지정",
+        "지난 꼭짓점은 다시 지나지 않음"
+      ],
       "visualRequirement": "점선과 실선, 꼭짓점 이름, 출발·도착 위치를 원본과 같게 보여야 합니다.",
-      "independentCalculation": "정육면체의 8개 꼭짓점과 12개 모서리를 확인했으나 출발·도착 꼭짓점과 허용 경로를 점·선분 모델로 전수 열거하기 전에는 답을 확정하지 않음",
-      "independentAnswer": null,
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
+      "independentCalculation": "모서리를 1·3·5·7개 지나는 단순 경로 각각 1·2·8·4개로 합 15",
+      "independentAnswer": "15가지",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "정육면체의 점·선분 연결을 모델링하고 경로를 전수 열거하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e3-exploration",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조. 그림의 선을 따라가는 뜻을 명확히 모서리로 안내함."
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-1",
@@ -695,16 +702,23 @@
       "commonTypeId": "two-dice-sum-multiple-of-three",
       "childFriendlyTypeLabel": "두 주사위 눈의 합이 3의 배수일 가능성 세기",
       "originalStructure": "빨간 주사위와 파란 주사위를 동시에 던져 두 눈의 합이 3의 배수인 경우의 수를 구합니다.",
-      "conditions": ["각 주사위 눈은 1~6", "두 주사위는 빨강과 파랑으로 구분", "합이 3의 배수"],
+      "conditions": [
+        "각 주사위 눈은 1~6",
+        "두 주사위는 빨강과 파랑으로 구분",
+        "합이 3의 배수"
+      ],
       "visualRequirement": "두 주사위의 색과 눈을 구분해 보여야 합니다.",
-      "independentCalculation": "합 3, 6, 9, 12인 짝을 각각 2, 5, 4, 1개씩 세어 12개",
+      "independentCalculation": "36가지 색 구분 순서쌍 중 합 3·6·9·12는 각각 2·5·4·1개로 합 12",
       "independentAnswer": "12가지",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "주사위 눈의 전체 경우와 조건에 맞는 경우를 전수 나열하는 화면을 검수하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e3-example-1",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-2",
@@ -715,16 +729,23 @@
       "commonTypeId": "grid-shortest-path-through-point",
       "childFriendlyTypeLabel": "격자에서 한 점을 지나 가장 짧게 가는 길 세기",
       "originalStructure": "격자 선을 따라 출발점에서 도착점까지 가장 짧게 가되 지정한 점을 반드시 지나는 방법을 구합니다.",
-      "conditions": ["가로 4칸, 세로 3칸 격자", "출발점·지정점·도착점 표시", "가장 짧은 거리"],
+      "conditions": [
+        "가로 4칸, 세로 3칸 격자",
+        "출발점·지정점·도착점 표시",
+        "가장 짧은 거리"
+      ],
       "visualRequirement": "격자의 칸 수와 세 점의 좌표를 원본과 같게 표시해야 합니다.",
-      "independentCalculation": "출발점에서 지정점까지 2번 오른쪽·2번 위로 가는 순서를 세면 6가지, 지정점에서 도착점까지 2번 오른쪽·1번 위로 가는 순서는 3가지, 6×3=18",
+      "independentCalculation": "출발에서 경유점까지 오른쪽 2·위 2 순서 6가지, 이후 오른쪽 2·위 1 순서 3가지로 18",
       "independentAnswer": "18가지",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "격자 점 좌표와 방향을 원본처럼 모델링한 뒤 전수 열거하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e3-example-2",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-3",
@@ -735,16 +756,23 @@
       "commonTypeId": "multi-edge-path-count",
       "childFriendlyTypeLabel": "여러 선으로 이어진 길의 수 세기",
       "originalStructure": "여러 점이 여러 선으로 이어진 그림에서 같은 점을 다시 지나지 않고 출발점에서 도착점까지 가는 방법을 구합니다.",
-      "conditions": ["네 점과 여러 선의 연결 그림", "출발점과 도착점 지정", "지난 점은 다시 지나지 않음"],
+      "conditions": [
+        "네 점과 여러 선의 연결 그림",
+        "출발점과 도착점 지정",
+        "지난 점은 다시 지나지 않음"
+      ],
       "visualRequirement": "선의 개수와 점의 연결 위치를 원본 그대로 보여야 합니다.",
-      "independentCalculation": "그림의 다중 선 연결을 눈대중으로 확정하지 않고 점·선분 모델로 바꾸어 모든 경로를 전수 열거해야 하므로 답 보류",
-      "independentAnswer": null,
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
+      "independentCalculation": "ㄱㄴ 3, ㄴㄷ 1, ㄱㄹ 2, ㄴㄹ 2, ㄹㄷ 4개. 가능한 네 점 순서의 합 3+8+24+4=39",
+      "independentAnswer": "39가지",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "선의 개수·연결·중복 방문 금지를 모델링하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e3-example-3",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e3-example-3-4",
@@ -755,16 +783,23 @@
       "commonTypeId": "distinct-boys-girls-adjacent",
       "childFriendlyTypeLabel": "남학생끼리 이웃하게 서는 방법 세기",
       "originalStructure": "서로 다른 남학생 3명과 여학생 3명이 한 줄로 설 때 남학생끼리 이웃하는 방법을 구합니다.",
-      "conditions": ["서로 다른 남학생 3명", "서로 다른 여학생 3명", "남학생 3명이 서로 이웃"],
+      "conditions": [
+        "서로 다른 남학생 3명",
+        "서로 다른 여학생 3명",
+        "남학생 3명이 서로 이웃"
+      ],
       "visualRequirement": "6명의 자리를 한 줄로 볼 수 있어야 합니다.",
-      "independentCalculation": "남학생 묶음의 시작 자리는 4곳, 남학생 자리 바꾸기 6가지, 여학생 자리 바꾸기 6가지. 4×6×6=144",
+      "independentCalculation": "서로 다른 6명의 순열을 전수 검사하면 144; 남학생 묶음 4! × 내부 3! = 144",
       "independentAnswer": "144가지",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "서로 다른 사람을 구분하는 답 입력과 자리 배치를 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e3-example-4",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-1",

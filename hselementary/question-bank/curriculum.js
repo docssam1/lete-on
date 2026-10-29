@@ -2480,6 +2480,15 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     }
   }
 
+  const source52Count = source52Average?.subunits.find(subunit => subunit.name === "사건의 가짓수");
+  if (source52Count) for (const [i,name] of ["직육면체 모서리의 길 세기","두 주사위 눈의 합이 3의 배수","경유점을 지나는 격자 최단 경로","여러 갈래 길의 수","남학생이 이웃하여 줄 서기"].entries()) {
+    const id = i ? `5-2-u6-e3-example-${i}` : "5-2-u6-e3-exploration";
+    const typeNumber = Math.max(0,...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,
+      sourceItemLabel:i ? `예제 3-${i}` : "개념탐구 3",sourceSection:i ? "example" : "exploration",sourceTier:"advanced",sourcePdfPage:58,sourcePrintedPage:62,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,
+      generatorKey:i ? `source52CountPage62Example${i}` : "source52CountPage62Exploration",generationMode:"fixed-verified-pool",verifiedVariantTarget:1,verifiedVariantCount:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
