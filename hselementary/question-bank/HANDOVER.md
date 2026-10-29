@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 5-2 Unit 6 Equal-Route Probability Practice
+
+- Original printed p.64 Example 4-3 remains locked because its route-selection model is unspecified; publisher answer unverified. Added a separate synthetic practice with different road counts, an explicit uniform-over-complete-routes rule, and a labelled graph. Its locked source record links to the practice.
+- Independent graph traversal enumerated all routes for three variants × three difficulty states; local bank passed 1440/375/320px, and problem/solution each fit one A4 page with graph visually inspected. Structural inventory and release gates pass; runtime audit 86,040 generations: 2,213 types / 1,434 available / 779 awaiting. Previous pass/fail practice deployed and verified on production at the same widths and difficulties. These counts do not prove all source answers have been reviewed.
+
+---
+
 ## 2026-10-30 Grade 5-2 Unit 6 Pass/Fail Mean Practice
 
 - Rechecked printed page 60 Example 2-3 and page 61 Mission 4: their direction of mean difference is not specified, so both original records remain locked and publisher keys unverified. Added one shared, separately identified synthetic practice type to avoid duplicating the identical structure; it explicitly states which group has the higher mean and uses different values. Both locked source rows link to the same practice.
