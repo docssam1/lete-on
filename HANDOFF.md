@@ -85,6 +85,8 @@ Claude Max Opus reviewed a sanitized description of the public grade-comparison 
 
 The focused roadmap, paper-review, and browser suites passed 30/30. Updated scripts passed `node --check`; `git diff --check` passed. Desktop and 390px captures were visually reviewed; the mobile comparison keeps both grades visible per row, and the result screen shows the denominators and incomplete-score explanation. This work remains local; no push or deployment.
 
+Follow-through verification also passed the existing assessment-entry and learning-plan browser suites 13/13. An additional 390px browser sweep checked every ordered pair among Grades 3–10 (56 comparisons): no horizontal overflow, each row retained both grade values, and all comparison periods/categories rendered without generic fallback headings.
+
 The public-exposure audit was also run, but did not complete its full-history scan: the local partial clone is missing a promisor object and lazy fetch is disabled. No historical privacy-audit pass is claimed; no fetch or remote sync was initiated.
 
 Separately, Codex recorded a second blind-solve review of the private Grade 7 NS.A revision-11 candidate outside Git. All 14 auto-scored keys matched; the four teacher-scored responses were checked against their open-response requirements. The exact-rational checker and locked-state preflight pass. This is AI cross-check evidence only and does not replace human review, rights review, current pilot acceptance, or release approval. The candidate remains locked.
