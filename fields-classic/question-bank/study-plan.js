@@ -55,12 +55,14 @@ export function schedule(plan, sessions, { withChanges = true } = {}) {
   const rows = [];
   let next = 0;
   const cursor = parseYmd(plan.start);
-  // 보강은 시작일 전이어도 셈하지 않는다. 넉넉히 4년까지만 본다(요일을 하나도 안 고른 경우를 막는다)
+  // 보강은 수업이 없는 날(요일이 아닌 날 · 명절 · 쉬는 날)에만 한 차시를 더한다 — 정규 수업일에 넣은 보강은 수업이 하나뿐이니 세지 않는다.
+  // 시작일 전 날짜는 보지 않는다. 넉넉히 4년까지만 본다(요일을 하나도 안 고른 경우를 막는다)
   for (let guard = 0; guard < 1500 && next < sessions.length; guard += 1, cursor.setDate(cursor.getDate() + 1)) {
     const date = ymd(cursor), regular = days.has(cursor.getDay());
-    if (makeup.has(date)) { rows.push({ date, type: "makeup", session: sessions[next], index: next }); next += 1; continue; }
+    const holiday = regular && plan.holidays !== false ? holidayName(date) : "";
+    const classDay = regular && !holiday && !off.has(date);
+    if (makeup.has(date) && !classDay) { rows.push({ date, type: "makeup", session: sessions[next], index: next }); next += 1; continue; }
     if (!regular) continue;
-    const holiday = plan.holidays !== false ? holidayName(date) : "";
     if (holiday) { rows.push({ date, type: "holiday", label: holiday }); continue; }
     if (off.has(date)) { rows.push({ date, type: "off", label: "쉬는 날" }); continue; }
     if (absent.has(date)) { rows.push({ date, type: "absent", label: "결석", session: sessions[next], index: next }); continue; }
@@ -70,9 +72,14 @@ export function schedule(plan, sessions, { withChanges = true } = {}) {
   return rows;
 }
 
-// 처음 계획과 비교해 몇 차시 밀렸는지(+ 밀림, − 앞섬). 오늘까지 지난 날만 센다.
-export function delayOf(plan, upTo = today()) {
-  const absent = (plan.absent || []).filter((date) => date <= upTo && date >= plan.start).length;
-  const makeup = (plan.makeup || []).filter((date) => date <= upTo && date >= plan.start).length;
+// 그날이 정규 수업일인가(요일이고 명절·쉬는 날이 아님) — 보강은 이런 날에 넣지 않는다
+export function isClassDay(plan, date) {
+  const day = parseYmd(date).getDay();
+  return (plan.days || []).includes(day) && !(plan.holidays !== false && holidayName(date)) && !(plan.off || []).includes(date);
+}
+// 몇 차시 밀렸는지(+ 밀림, − 앞섬): 진도표에 실제로 들어간 결석·보강 날만 센다(정규 수업일에 넣은 보강, 시작 전·끝난 뒤 날짜는 빼고)
+export function changesOf(rows) {
+  const absent = rows.filter((row) => row.type === "absent").length;
+  const makeup = rows.filter((row) => row.type === "makeup").length;
   return { absent, makeup, behind: absent - makeup };
 }

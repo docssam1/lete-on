@@ -181,3 +181,4 @@ tr.is-done td { color: var(--muted); }
   body { background: #fff; }
   .pl-table tr { break-inside: avoid; }
 }
+.pl-msg { align-self: center; color: var(--terra); font-size: 13px; font-weight: 600; }

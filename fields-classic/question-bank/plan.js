@@ -1,7 +1,7 @@
 import { CURRICULUM } from "./source-data.js?v=20261028m";
 import { loadRecords, saveRecord } from "./study-progress.js?v=20261028n";
 import { sessionCount } from "./study-deck.js?v=20261029f";
-import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, parseYmd, today } from "./study-plan.js?v=20261029g";
+import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, changesOf, isClassDay, parseYmd, today } from "./study-plan.js?v=20261029i";
 
 // 학습 진도표 화면 — 계산은 study-plan.js. 계획은 학생 기록 plan/main 에 둔다(이 기기 + 로그인하면 서버).
 const $ = (id) => document.getElementById(id);
@@ -55,8 +55,7 @@ function renderPlan() {
   const classes = rows.filter((row) => row.session && row.type !== "absent");
   const done = sessions.filter(sessionDone).length;
   const endDate = classes.at(-1)?.date, baseEnd = base.filter((row) => row.session && row.type !== "absent").at(-1)?.date;
-  const { absent, makeup } = { absent: (plan.absent || []).length, makeup: (plan.makeup || []).length };
-  const behind = absent - makeup;
+  const { absent, makeup, behind } = changesOf(rows);
   const current = sessions.find((session) => !sessionDone(session));
   const todayRow = classes.find((row) => row.date >= now);
   $("summary").innerHTML = `
@@ -101,7 +100,16 @@ $("fromPart").addEventListener("change", (event) => change(() => { plan.from = {
 $("toBook").addEventListener("change", (event) => change(() => { plan.toBook = event.target.value; }));
 $("holidays").addEventListener("change", (event) => change(() => { plan.holidays = event.target.checked; }));
 $("offForm").addEventListener("submit", (event) => { event.preventDefault(); const date = $("offDate").value; if (date) change(() => { plan.off = toggle(plan.off || [], date); }); });
-$("makeupForm").addEventListener("submit", (event) => { event.preventDefault(); const date = $("makeupDate").value; if (date) change(() => { plan.makeup = toggle(plan.makeup || [], date); }); });
+// 보강은 수업이 없는 날에만(정규 수업일에 넣으면 수업은 하나인데 「앞섬」으로 세어졌다 — 2026-10-29 확인)
+$("makeupForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const date = $("makeupDate").value;
+  if (!date) return;
+  if (isClassDay(plan, date) && !(plan.makeup || []).includes(date)) { $("makeupMsg").textContent = `그날(${dayText(date)})은 원래 수업하는 날이에요. 수업이 없는 날을 골라요.`; return; }
+  if (date < plan.start) { $("makeupMsg").textContent = "시작하는 날 전에는 보강을 넣을 수 없어요."; return; }
+  $("makeupMsg").textContent = "";
+  change(() => { plan.makeup = toggle(plan.makeup || [], date); });
+});
 $("table").addEventListener("click", (event) => {
   const button = event.target.closest(".pl-act");
   if (!button) return;
