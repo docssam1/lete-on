@@ -14,6 +14,7 @@ const tested = [];
 for (let variant = 0; variant < api.pools.length; variant++) for (const difficulty of [-1, 0, 1]) {
   const item = api.getQuestion(variant, difficulty);
   assert(item, `missing ${variant}/${difficulty}`);
+  assert.match(item.prompt, /한 마트에서만 묶음으로/);
   const text = item.prompt.replace(/<[^>]*>/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ");
   const solution = item.solution.replace(/<[^>]*>/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ");
   assert.match(item.prompt, /<table class="source52-supply-cost-table">/);

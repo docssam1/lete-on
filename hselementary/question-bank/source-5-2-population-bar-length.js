@@ -9,7 +9,7 @@
 
   const sourceItemId = "5-2-u1-e3-mission-5-bar-graph-length";
   const generatorKey = "source52ApplicationMissionFivePopulationBarLength";
-  const cityNames = ["부산광역시", "인천광역시", "대전광역시"];
+  const cityNames = ["가 도시", "나 도시", "다 도시"];
   // Synthetic values preserve the source's three-city rounding-and-scale task without copying its populations.
   const pools = Object.freeze([
     Object.freeze([2341000, 1958000, 4041000]),
@@ -37,7 +37,7 @@
       ? `<p class="source52-population-bar-hint">도움말: 먼저 인구를 십만 단위로 반올림한 뒤, 십만 명의 개수에 5mm를 곱하세요.</p>` : "";
     const challenge = difficultyOffset === 1
       ? `<p class="source52-population-bar-challenge">계산할 때 반올림한 인구와 mm를 cm로 바꾸는 과정도 적으세요.</p>` : "";
-    const prompt = `<div class="source52-population-bar-question"><p>다음 표는 작년 1월 세 광역시의 인구입니다. 각 도시의 인구를 십만의 자리까지 반올림한 뒤, 10만 명을 5mm로 하여 막대그래프로 나타낼 때 각 막대의 길이는 각각 몇 cm인가요?</p><table class="source52-population-bar-table"><caption>작년 1월 도시별 인구</caption><thead><tr><th scope="col">도시</th><th scope="col">인구</th></tr></thead><tbody>${rows}</tbody></table><p class="source52-population-bar-scale">축척: 10만 명 → 5mm</p>${challenge}${hint}</div>`;
+    const prompt = `<div class="source52-population-bar-question"><p>다음 표는 세 도시의 가상 인구 자료입니다. 각 도시의 인구를 십만의 자리까지 반올림한 뒤, 10만 명을 5mm로 하여 막대그래프로 나타낼 때 각 막대의 길이는 각각 몇 cm인가요?</p><table class="source52-population-bar-table"><caption>도시별 가상 인구</caption><thead><tr><th scope="col">도시</th><th scope="col">인구</th></tr></thead><tbody>${rows}</tbody></table><p class="source52-population-bar-scale">축척: 10만 명 → 5mm</p>${challenge}${hint}</div>`;
     const solution = `<div class="source52-population-bar-solution"><ol>${cityResults.map(item => `<li>${item.city}의 인구 ${fmt(item.population)}명을 십만의 자리까지 반올림하면 ${fmt(item.roundedPopulation)}명입니다. ${fmt(item.roundedPopulation)}÷100,000=${fmt(item.hundredThousandUnits)}이므로 막대 길이는 ${fmt(item.hundredThousandUnits)}×5mm=${fmt(item.lengthMm)}mm=${fmtLength(item.lengthCm)}입니다.</li>`).join("")}</ol><p>따라서 답은 차례로 ${answer}입니다.</p></div>`;
     return Object.freeze({
       prompt: `<div data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${variant}" data-variant="${variant}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}">${prompt}</div>`,

@@ -52,7 +52,7 @@ async function prepare(page, width) {
       rows: [...element.querySelectorAll("tbody tr")].map(row => [...row.children].map(cell => cell.innerText.trim())),
       bounds: element.getBoundingClientRect().toJSON()
     }));
-    assert.equal(facts.caption, "작년 1월 도시별 인구");
+    assert.equal(facts.caption, "도시별 가상 인구");
     assert.deepEqual(facts.headers, ["도시", "인구"]);
     assert.equal(facts.rows.length, 3);
     assert(facts.bounds.width <= width - 20, `Table must fit ${width}px viewport`);
