@@ -535,6 +535,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "원문은 실생활 상황을 설명하는 열린 질문이며 기존 세 연습 유형은 어림 계산만 다룸. 원문 답안 대조 전 원문 항목은 잠금 유지.",
+      "syntheticRuntimeTypeId": "5-2-u1-e3-exploration-life-synthetic",
       "publisherKeyVerified": false,
       "publicDecision": "locked"
     },
