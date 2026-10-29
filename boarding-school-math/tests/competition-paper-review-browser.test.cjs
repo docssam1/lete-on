@@ -25,7 +25,7 @@ test.before(async function () {
 });
 test.after(async function () { if (browser) await browser.close(); if (server) await new Promise(function (resolve) { server.close(resolve); }); });
 
-test("Grade 7 paper marks yield partial learning review, never official score", async function () {
+test("Grade 7 paper marks yield partial learning review and no score estimate", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -48,9 +48,38 @@ test("Grade 7 paper marks yield partial learning review, never official score", 
   assert.doesNotMatch(await page.locator("#report-domains").innerText(), /50%/);
   assert.equal(await page.locator(".review-report").evaluate((node) => node === document.activeElement), true);
   assert.match(await page.locator("#report-reasons").innerText(), /조건 읽기 · 1문항/);
-  assert.match(await page.locator(".report-boundary").innerText(), /공식 점수/);
+  assert.match(await page.locator(".report-boundary").innerText(), /수상·AIME 진출.*판단하지 않습니다/);
+  assert.equal(await page.locator("#score-estimate").isHidden(), true, "partial responses do not produce a score estimate");
   assert.equal(await page.evaluate(() => localStorage.length), 0);
   assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("complete AMC 10 marks show the raw-score estimate without a qualification claim", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url}?grade=9&program=amc10`, { waitUntil: "networkidle" });
+  for (let question = 1; question <= 25; question += 1) {
+    const status = question <= 10 ? "correct" : question <= 15 ? "wrong" : "blank";
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption(status);
+  }
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator("#score-estimate").isVisible(), true);
+  assert.match(await page.locator("#score-estimate-value").innerText(), /AMC 10 참고 원점수 · 75 \/ 150/);
+  assert.match(await page.locator("#score-estimate").innerText(), /공식 성적표/);
+  assert.match(await page.locator(".report-boundary").innerText(), /수상·AIME 진출.*판단하지 않습니다/);
+  await page.close();
+});
+
+test("complete AMC 8 marks show a correct-count reference estimate", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  for (let question = 1; question <= 25; question += 1) {
+    const status = question <= 18 ? "correct" : question <= 21 ? "wrong" : "blank";
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption(status);
+  }
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#score-estimate-value").innerText(), /AMC 8 참고 원점수 · 18 \/ 25/);
+  assert.match(await page.locator(".report-metrics").innerText(), /미응답/);
   await page.close();
 });
 

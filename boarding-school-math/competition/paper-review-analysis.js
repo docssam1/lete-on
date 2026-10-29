@@ -1,17 +1,18 @@
-/* Manual post-paper observation. This module has no answer key, official scoring, or storage. */
+/* Manual post-paper observation. No answer key or storage; raw-score output is a cautious reference estimate, not an official score. */
 (function (root, factory) {
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.GFIELDPaperReviewAnalysis = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
+  // Reference formulas: MAA 2023 AMC 8 and 2022 AMC 10A booklets. Check the selected paper's own instructions; MAA may update rules.
   const statusIds = Object.freeze(["unmarked", "correct", "wrong", "blank"]);
   const domainIds = Object.freeze(["unclassified", "algebra", "number", "geometry", "counting"]);
   const reasonIds = Object.freeze(["none", "concept", "approach", "calculation", "reading", "time"]);
   const domainNames = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률" });
   const reasonNames = Object.freeze({ concept: "개념", approach: "접근 아이디어", calculation: "계산", reading: "조건 읽기", time: "시간" });
 
-  function analyze(entries, itemCount) {
+  function analyze(entries, itemCount, program) {
     if (!Number.isInteger(itemCount) || itemCount < 1 || itemCount > 30 || !Array.isArray(entries) || entries.length !== itemCount) {
       return { valid: false, error: "선택한 문제지의 문항 수를 확인하세요." };
     }
@@ -42,6 +43,12 @@
       domain.evidence = domain.attempted >= 3 ? "3문제 이상" : domain.attempted ? "3문제 미만 · 비교 보류" : "미측정";
     });
     const comparable = domains.filter(function (domain) { return domain.attempted >= 3; }).sort(function (a, b) { return a.rate - b.rate; });
+    let scoreEstimate = null;
+    if (counts.unmarked === 0 && itemCount === 25 && program === "amc8") {
+      scoreEstimate = Object.freeze({ points: counts.correct, max: itemCount, label: "AMC 8 참고 원점수" });
+    } else if (counts.unmarked === 0 && itemCount === 25 && (program === "amc10" || program === "amc12")) {
+      scoreEstimate = Object.freeze({ points: counts.correct * 6 + counts.blank * 1.5, max: itemCount * 6, label: `${program === "amc10" ? "AMC 10" : "AMC 12"} 참고 원점수` });
+    }
     return {
       valid: true,
       itemCount: itemCount,
@@ -53,6 +60,7 @@
       domains: domains,
       reasons: reasons.filter(function (reason) { return reason.count > 0; }),
       reviewFirst: comparable.length >= 2 && comparable[0].rate < comparable[comparable.length - 1].rate ? comparable[0].name : null,
+      scoreEstimate: scoreEstimate,
       officialScore: null,
       level: null
     };

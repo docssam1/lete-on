@@ -7,7 +7,7 @@
   const params = new URLSearchParams(location.search);
   let grade = roadmap.getGrade(params.get("grade")) ? Number(params.get("grade")) : 7;
   let programId = params.get("program") || "";
-  const statuses = [{ id: "unmarked", title: "표시 안 함" }, { id: "correct", title: "O · 맞힘" }, { id: "wrong", title: "X · 틀림" }, { id: "blank", title: "안 품" }];
+  const statuses = [{ id: "unmarked", title: "표시 안 함" }, { id: "correct", title: "O · 맞힘" }, { id: "wrong", title: "X · 틀림" }, { id: "blank", title: "미응답 · 답안 공란" }];
   const domains = [{ id: "unclassified", title: "영역 선택" }].concat(roadmap.strands.map(function (entry) { return { id: entry.id, title: entry.title }; }));
   const reasons = [{ id: "none", title: "이유 선택" }, { id: "concept", title: "개념" }, { id: "approach", title: "풀이 생각" }, { id: "calculation", title: "계산" }, { id: "reading", title: "조건 읽기" }, { id: "time", title: "시간" }];
   function setText(id, value) { $(id).textContent = value; }
@@ -28,6 +28,8 @@
     setText("report-title", message || "아직 결과가 없어요");
     setText("report-intro", "문제를 표시한 뒤 ‘결과 보기’를 누르세요. 표시하지 않은 문제는 정답률에 넣지 않아요.");
     setText("report-next", "학습 단계를 정하려면 실제 풀이를 확인해야 해요.");
+    $("score-estimate").hidden = true;
+    setText("score-estimate-value", "");
     $("report-metrics").replaceChildren();
     $("report-domains").replaceChildren();
     $("report-reasons").replaceChildren();
@@ -127,11 +129,13 @@
     const label = $("review-paper-label").value.trim();
     setText("report-title", `${selectedFormat().title} · ${result.complete ? "전체 결과" : "입력한 결과"}`);
     setText("report-intro", `${label ? `${label} · ` : ""}${result.itemCount}문제 중 ${result.counts.unmarked}문제는 표시하지 않았습니다. ${result.attempted < 3 ? "푼 문제가 3개 미만이어서 비율 비교는 보류했습니다." : `정답률은 실제로 푼 ${result.attempted}문제 기준입니다.`}`);
+    $("score-estimate").hidden = !result.scoreEstimate;
+    if (result.scoreEstimate) setText("score-estimate-value", `${result.scoreEstimate.label} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}`);
     const metrics = $("report-metrics");
     metrics.replaceChildren(
       metric("정답", String(result.counts.correct), "입력한 O"),
       metric("오답", String(result.counts.wrong), "입력한 X"),
-      metric("미응답", String(result.counts.blank), "풀지 않은 문항"),
+      metric("미응답", String(result.counts.blank), "답안 공란"),
       metric("푼 문제 정답률", result.accuracy === null ? result.attempted ? `${result.counts.correct}/${result.attempted}` : "—" : `${result.accuracy}%`, result.accuracy === null ? "3문제 미만 · 비율 보류" : "공식 점수 아님")
     );
     const domainHost = $("report-domains");
@@ -166,7 +170,7 @@
     event.preventDefault();
     const format = selectedFormat();
     if (!format) { setText("paper-error", "대회를 선택해 주세요."); $("paper-error").hidden = false; return; }
-    const result = analyzer.analyze(readMarks(), format.itemCount);
+    const result = analyzer.analyze(readMarks(), format.itemCount, format.id);
     if (!result.valid) { setText("paper-error", result.error); $("paper-error").hidden = false; return; }
     $("paper-error").hidden = true;
     renderResult(result);
