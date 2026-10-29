@@ -40,3 +40,14 @@ for j in range(4):
  results.add(edge)
 assert results=={1,3,5,7}
 print('Mission 1: all four vertex-diagonal reflection choices verified')
+
+# Mission 4: validate all reflections by vectors and compare the marked smaller angle.
+def vec(deg): return (math.cos(rad(deg)),math.sin(rad(deg)))
+def reflect_vector(p,axis):
+ u=vec(axis);projection=p[0]*u[0]+p[1]*u[1]
+ return (2*projection*u[0]-p[0],2*projection*u[1]-p[1])
+n=vec(45);g=reflect_vector(n,90);d=reflect_vector(n,60);l=reflect_vector(d,135)
+for point,expected in [(g,135),(d,75),(l,195)]:assert math.dist(point,vec(expected))<1e-12
+marked=math.degrees(math.acos(max(-1,min(1,n[0]*l[0]+n[1]*l[1]))))
+assert abs(marked-150)<1e-9
+print('Mission 4: three vector reflections and marked angle verified')
