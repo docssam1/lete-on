@@ -39,7 +39,7 @@
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1·1-2를 원문 수치와 독립 계산으로 연결했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-3을 원문 수치와 독립 계산으로 연결했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 3,
-    "lockedCount": 41
+    "publicCandidateCount": 4,
+    "lockedCount": 40
   },
   "items": [
     {
@@ -155,16 +155,24 @@
       "commonTypeId": "average-difference-from-line-graph",
       "childFriendlyTypeLabel": "꺾은선그래프에서 평균의 차 구하기",
       "originalStructure": "격자와 눈금이 있는 꺾은선그래프에서 기온과 수온의 평균을 각각 구해 차를 구합니다.",
-      "conditions": ["2·4·6·8·10·12월 자료", "기온과 수온 두 선", "세로 눈금 5도 단위"],
+      "conditions": [
+        "2·4·6·8·10·12월 자료",
+        "기온과 수온 두 선",
+        "온도는 1℃ 간격 보조 눈금과 5℃ 단위 숫자로 표시",
+        "6월 기온 11℃, 수온 10℃"
+      ],
       "visualRequirement": "얇은 선·굵은 선, 점, 월 눈금, 온도 눈금과 범례가 서로 겹치지 않아야 합니다.",
-      "independentCalculation": "그래프에서 읽은 기온 4,7,10,21,16,7의 합은 65, 수온 7,9,11,14,16,12의 합은 69. 평균 차는 69÷6-65÷6=2/3도이나 원본 좌표 모델 확인 전 잠정값",
-      "independentAnswer": "2/3℃ (좌표·눈금 모델 확인 전 잠정)",
+      "independentCalculation": "기온 4,7,11,21,16,7 합 66, 수온 7,9,10,14,16,12 합 68. 평균의 차 (68−66)÷6=1/3℃. 이전 잠정 기록은 6월 두 점을 뒤바꿨음.",
+      "independentAnswer": "1/3℃",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "그래프 점·얇은 선·굵은 선·눈금 위치를 점과 선분 모델로 다시 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e1-example-3",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 58쪽 확대본의 1℃ 눈금과 6월 전후 두 선의 연결을 확인하고 각 점과 SVG 좌표를 독립 검사. 공식 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u6-e1-example-1-4",

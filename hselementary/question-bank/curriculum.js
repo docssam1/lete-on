@@ -2338,6 +2338,18 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     });
   }
 
+  if (source52AverageFirst) {
+    const id = "5-2-u6-e1-example-3", name = "기온과 수온 그래프에서 평균의 차 구하기";
+    const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52AverageFirst.types.push({
+      id, number: source52AverageFirst.types.length + 1, typeNumber, name, label: name,
+      difficultyBand: 0, sourceItemId: id, sourceItemLabel: "예제 1-3", sourceSection: "example", sourceTier: "advanced",
+      sourcePdfPage: 54, sourcePrintedPage: 58, sourceVerified: true, publisherKeyVerified: false, reviewLocked: false,
+      generatorKey: "source52AverageOriginalPage58Example13", generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+      answerVisualRequired: false, answerVisualStatus: "not-required", implementationStatus: "fixed-verified-pool"
+    });
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;

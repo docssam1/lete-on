@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-3
+
+- Printed p.58 graph checked against both source scans: air temperatures 4,7,11,21,16,7 sum to 66; water 7,9,10,14,16,12 sum to 68. Their exact mean difference is 1/3°C. The prior ledger's provisional 2/3°C swapped the June points; the original line connections show June air 11°C and water 10°C. The publisher answer key remains unverified.
+- Checked all twelve SVG points and both line vertices against the 1°C grid and source values. 1440/375/320px browser, separate one-page A4 visual checks, release gate and 77,580 runtime generations passed.
+- Counts: 2,081 types, 1,293 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Other Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-2
 
 - Source PDF p.54 / clean comparison PDF p.53 / printed p.58: one fixed original 100m overlapping-average question. The first three sum to 45.3 seconds, last three to 49.2 seconds, and all five to 78.9 seconds, so the repeated middle record is 15.6 seconds. The ordered witness 14.8, 14.9, 15.6, 16.7, 16.9 satisfies all conditions. Publisher answer key unverified.
