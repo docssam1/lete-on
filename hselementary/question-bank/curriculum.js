@@ -2144,7 +2144,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     type.answerVisualStatus = "locked";
   }));
 
-  // One directly reviewed source item; existing locked types remain intact.
+  // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
   const source52CuboidProperties = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s1");
   if (source52CuboidProperties) {
@@ -2193,6 +2193,27 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
         answerVisualRequired, answerVisualStatus: answerVisualRequired ? "verified-reconstruction" : "not-required",
         implementationStatus: "fixed-verified-pool"
+      });
+    }
+  }
+
+  const source52CuboidNets = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s2");
+  if (source52CuboidNets) {
+    for (const [ordinal, name, generatorKey] of [
+      [1, "전개도 색칠 면에서 선분 길이 구하기", "source52CuboidNetSegmentLengthPage50Example21"],
+      [2, "정사각형 종이 전개도로 만든 직육면체의 모서리 합", "source52CuboidSquarePaperNetEdgeSumPage50Example22"],
+      [3, "정육면체 전개도로 접을 수 있는 면 고르기", "source52CubeNetCandidateFacePage50Example23"],
+      [4, "직육면체 전개도의 가장 긴 둘레와 가장 짧은 둘레", "source52CuboidNetPerimeterExtremaPage50Example24"]
+    ]) {
+      const id = `5-2-u5-e2-example-2-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidNets.types.push({
+        id, number: source52CuboidNets.types.length + 1, typeNumber, name, label: name,
+        difficultyBand: 0, sourceItemId: id, sourceItemLabel: `예제 2-${ordinal}`,
+        sourceSection: "example", sourceTier: "advanced", sourcePdfPage: 46, sourcePrintedPage: 50,
+        sourceVerified: true, publisherKeyVerified: false, reviewLocked: false, generatorKey,
+        generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+        answerVisualRequired: true, answerVisualStatus: "verified-reconstruction", implementationStatus: "fixed-verified-pool"
       });
     }
   }
