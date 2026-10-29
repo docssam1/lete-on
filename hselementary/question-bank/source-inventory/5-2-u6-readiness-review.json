@@ -848,11 +848,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e3-mission-1",
-      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조."
+      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-2",
