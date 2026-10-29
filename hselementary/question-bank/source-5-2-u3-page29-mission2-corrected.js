@@ -10,7 +10,7 @@
   const sourceItemId = "5-2-u3-e3-mission-2";
   const generatorKey = "source52UnequalSquareOverlapSyntheticPage29Mission2";
   const pools = Object.freeze([{side:8, largeSide:12, offset:5}, {side:12, largeSide:18, offset:7}, {side:16, largeSide:22, offset:9}].map(Object.freeze));
-  
+
   const round = value => Number(value.toFixed(5));
   const fmt = value => Number.isInteger(value) ? String(value) : String(Number(value.toFixed(2)));
 
