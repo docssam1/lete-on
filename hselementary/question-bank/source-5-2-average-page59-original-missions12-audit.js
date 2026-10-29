@@ -1,8 +1,2 @@
 "use strict";
-const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path");global.window={};require("./source-inventory-4-1.js");require("./source-inventory-grade6.js");require("./curriculum.js");require("./generators.js");
-const source=require("./source-5-2-average-page59-original-missions12.js");const unit=window.HSE_CURRICULUM.semesters.find(s=>s.id==="5-2").units.find(u=>u.id==="5-2-u6");
-const first=[];for(let x=-200;x<=200;x++)if((((23+x)/2)+32)/2===33)first.push(x);assert.deepEqual(first,[45]);
-const second=[];for(let a=0;a<=9;a++)for(let b=0;b<=9;b++)if((70+a)+(10*b+3)+81+94===82*4)second.push([70+a,10*b+3]);assert.deepEqual(second,[[70,83]]);
-for(let n=1;n<=2;n++){const id=`5-2-u6-e1-mission-${n}`,type=unit.subunits.flatMap(s=>s.types).find(t=>t.sourceItemId===id);assert(type&&!type.reviewLocked&&type.sourceVerified);const q=window.HSE_GENERATORS.generate(type,2,0,54,0);assert.equal(q.answer,n===1?"45":"수학 70점, 사회 83점");assert.equal(q.publisherKeyVerified,false);assert.equal(window.HSE_GENERATORS.generate(type,2,0,54,1),null);assert.equal(window.HSE_GENERATORS.generate({...type,reviewLocked:true},2,0,54,0),null);if(n===1)assert.match(q.prompt,/\(23 ♥ □\) ♥ 32 = 33/);else for(const t of [">81</text>",">7</text>",">3</text>",">94</text>",">82</text>"])assert(q.prompt.includes(t));
-for(const [file,key] of [["5-2-source-items.json","sourceItems"],["5-2-u6-readiness-review.json","items"]]){const d=JSON.parse(fs.readFileSync(path.join(__dirname,"source-inventory",file),"utf8")),row=d[key].find(x=>x.sourceItemId===id);assert(row.sourceVerified);assert.equal(row.publisherKeyVerified,false);assert.equal(row.publicDecision,"public");}}
-console.log(JSON.stringify({status:"passed",mission1:first,mission2:second,publisherKeyVerified:false}));
+require("./source-5-2-average-page59-missions12-synthetic-audit.js");

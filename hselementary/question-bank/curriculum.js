@@ -2372,7 +2372,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       source52AverageFirst.types.push({id, number:source52AverageFirst.types.length+1, typeNumber, name, label:name,
         difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${ordinal}`, sourceSection:"mission", sourceTier:"advanced",
         sourcePdfPage:55, sourcePrintedPage:59, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
-        generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        generationMode:"fixed-verified-pool", verifiedVariantTarget:3, verifiedVariantCount:3,
         answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
     }
   }

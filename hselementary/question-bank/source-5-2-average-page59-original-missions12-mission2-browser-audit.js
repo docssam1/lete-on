@@ -52,7 +52,7 @@ function startServer() {
         const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u6")?.subunits.find(x => x.name === "평균 구하기")?.types.find(x => x.sourceItemId === id);
         return type && { reviewLocked: type.reviewLocked, sourceVerified: type.sourceVerified, generationMode: type.generationMode, verifiedVariantCount: type.verifiedVariantCount, generatorKey: window.HSE_GENERATORS.generatorKey(type) };
       }, itemId);
-      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 1, generatorKey: "source52AverageOriginalPage59Mission2" });
+      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 3, generatorKey: "source52AverageOriginalPage59Mission2" });
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u6");
@@ -69,7 +69,7 @@ function startServer() {
       const prompt = await problemItem.innerText();
       assert(prompt.includes("수학과 사회"));
       assert.equal(await problemView.locator(`[data-source-answer='${itemId}']`).count(), 0);
-      assert.deepEqual(await problemItem.locator(".source52-p59m2-table text").allTextContents(), ["과목","국어","수학","사회","과학","평균","점수(점)","81","7","3","94","82"]);
+      assert.deepEqual(await problemItem.locator(".source52-p59m2-table text").allTextContents(), ["과목","국어","수학","사회","과학","평균","점수(점)","74","6","2","90","75"]);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `problem horizontal overflow ${width}px`);
       const fontStatus = await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('600 16px "Pretendard"', "성적표의 평균을 구하여라"); });
       assert.equal(fontStatus, true, `local Pretendard loaded at ${width}px`);
@@ -78,7 +78,7 @@ function startServer() {
       await page.locator("#solutionTab").click();
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
-      assert.match(solutionText.replace(/\s/g, ""), /328.*153.*70.*83/, solutionText);
+      assert.match(solutionText.replace(/\s/g, ""), /300.*136.*64.*72/, solutionText);
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);
       await page.screenshot({ path: path.join(outputDir, `mission2-solution-${width}.png`), fullPage: true });
