@@ -324,6 +324,8 @@
   function renderResult(result) {
     const label = $("review-paper-label").value.trim();
     lastDiagnostic = result;
+    $("report-roadmap-link").href = `./boarding-roadmap.html?grade=${encodeURIComponent(grade)}#grade-map`;
+    $("report-roadmap-link").textContent = `선택한 Grade ${grade} 학습 경로 보기 →`;
     setText("report-title", `${selectedFormat().title} · ${result.complete ? "전체 결과" : "입력한 결과"}`);
     setText("report-intro", `${label ? `${label} · ` : ""}${result.itemCount}문제 중 ${result.counts.unmarked}문제는 표시하지 않았습니다. ${result.attempted < 3 ? "푼 문제가 3개 미만이어서 비율 비교는 보류했습니다." : `정답률은 실제로 푼 ${result.attempted}문제 기준입니다.`}`);
     $("score-estimate").hidden = !result.scoreEstimate;

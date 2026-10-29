@@ -135,6 +135,10 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   assert.match(await page.locator("#report-metrics").innerText(), /1\/2/);
   assert.match(await page.locator("#report-domains h3").innerText(), /직접 분류한 영역 · 2\/25문항/);
   assert.match(await page.locator("#report-reasons h3").first().innerText(), /1\/1개 분류/);
+  assert.equal(await page.locator("#report-roadmap-link").getAttribute("href"), "./boarding-roadmap.html?grade=7#grade-map");
+  assert.equal(await page.locator("#report-roadmap-link").innerText(), "선택한 Grade 7 학습 경로 보기 →");
+  assert.equal(await page.locator("#report-roadmap-link").getAttribute("aria-describedby"), "report-roadmap-note");
+  assert.match(await page.locator("#report-roadmap-note").innerText(), /문항 분류와 정답률은 학년 수준을 판정하지 않습니다/);
   assert.doesNotMatch(await page.locator("#report-metrics").innerText(), /50%/);
   assert.doesNotMatch(await page.locator("#report-domains").innerText(), /50%/);
   assert.equal(await page.locator("#report-title").evaluate((node) => node === document.activeElement), true);
@@ -171,9 +175,14 @@ test("complete AMC 10 marks show the raw-score estimate without a qualification 
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#score-estimate").isVisible(), true);
   assert.match(await page.locator("#score-estimate-value").innerText(), /AMC 10 참고 원점수 · 75 \/ 150/);
+  assert.equal(await page.locator("#report-roadmap-link").getAttribute("href"), "./boarding-roadmap.html?grade=9#grade-map");
+  assert.equal(await page.locator("#report-roadmap-link").innerText(), "선택한 Grade 9 학습 경로 보기 →");
+  assert.equal(await page.locator("#report-roadmap-link").getAttribute("aria-describedby"), "report-roadmap-note");
   assert.equal(await page.locator("#score-estimate-note").isHidden(), true);
   assert.match(await page.locator("#score-estimate").innerText(), /공식 성적표/);
   assert.match(await page.locator(".report-boundary").innerText(), /수상·AIME 진출.*판단하지 않습니다/);
+  await page.locator("#review-grade").selectOption("8");
+  assert.equal(await page.locator(".review-report").isHidden(), true, "a grade change clears the prior result and its roadmap link");
   await page.close();
 });
 
