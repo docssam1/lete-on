@@ -370,14 +370,16 @@
     $("report-review-items").hidden = result.reviewItems.length === 0;
     const reasonHost = $("report-reasons");
     reasonHost.replaceChildren();
-    const reasonHeading = document.createElement("h3"); reasonHeading.textContent = `오답 이유 · ${result.reasonClassified}/${result.counts.wrong}개 분류`; reasonHost.append(reasonHeading);
-    const reasonNote = document.createElement("p"); reasonNote.className = "report-evidence-note";
-    reasonNote.textContent = "선택한 오답 이유만 모았어요. 이유를 고르지 않은 오답은 집계하지 않습니다.";
-    reasonHost.append(reasonNote);
-    if (result.reasons.length) result.reasons.forEach(function (reason) {
-      const row = document.createElement("p"); row.textContent = `${reason.name} · ${reason.count}문항`; reasonHost.append(row);
-    });
-    else { const empty = document.createElement("p"); empty.textContent = "아직 선택된 오류 이유가 없습니다."; reasonHost.append(empty); }
+    if (result.counts.wrong > 0) {
+      const reasonHeading = document.createElement("h3"); reasonHeading.textContent = `오답 이유 · ${result.reasonClassified}/${result.counts.wrong}개 분류`; reasonHost.append(reasonHeading);
+      const reasonNote = document.createElement("p"); reasonNote.className = "report-evidence-note";
+      reasonNote.textContent = "선택한 오답 이유만 모았어요. 이유를 고르지 않은 오답은 집계하지 않습니다.";
+      reasonHost.append(reasonNote);
+      if (result.reasons.length) result.reasons.forEach(function (reason) {
+        const row = document.createElement("p"); row.textContent = `${reason.name} · ${reason.count}문항`; reasonHost.append(row);
+      });
+      else { const empty = document.createElement("p"); empty.textContent = "아직 선택된 오답 이유가 없습니다."; reasonHost.append(empty); }
+    }
     if (result.counts.blank > 0) {
       const blankReasonHeading = document.createElement("h3"); blankReasonHeading.textContent = `미응답 이유 · ${result.blankReasonClassified}/${result.counts.blank}개 공란 분류`; reasonHost.append(blankReasonHeading);
       const blankReasonNote = document.createElement("p"); blankReasonNote.className = "report-evidence-note";

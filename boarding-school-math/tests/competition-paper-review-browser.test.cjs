@@ -315,7 +315,7 @@ test("blank response reason is captured separately and never shown as an answer 
   assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 미응답 · 수와 정수론 · 건너뜀/);
   assert.match(await page.locator("#report-reasons").innerText(), /미응답 이유 · 1\/1개 공란 분류/);
   assert.match(await page.locator("#report-reasons").innerText(), /건너뜀 · 1문항/);
-  assert.match(await page.locator("#report-reasons").innerText(), /오답 이유 · 0\/0개 분류/);
+  assert.doesNotMatch(await page.locator("#report-reasons").innerText(), /오답 이유/);
   await page.close();
 });
 
