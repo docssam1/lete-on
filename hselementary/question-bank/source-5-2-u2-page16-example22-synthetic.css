@@ -1,0 +1,20 @@
+.source52-p16e22-question { display: grid; gap: 6px; }
+.source52-p16e22-question p { margin: 0; }
+.source52-p16e22-question figure { margin: 4px auto; width: min(100%, 500px); }
+.source52-p16e22-diagram { display: block; width: 100%; height: auto; max-height: 320px; }
+.source52-p16e22-rect { fill: #f5f5f5; stroke: #222; stroke-width: 2.2; }
+.source52-p16e22-divider { fill: none; stroke: #222; stroke-width: 2.2; }
+.source52-p16e22-dimension { fill: none; stroke: #555; stroke-width: 1.7; stroke-dasharray: 3 4; }
+.source52-p16e22-dimension-label { fill: #222; font: 16px sans-serif; }
+.source52-p16e22-label-circle { fill: none; stroke: #222; stroke-width: 1.5; }
+.source52-p16e22-label { fill: #222; font: 16px sans-serif; font-weight: 600; }
+.source52-p16e22-answer { fill: #222; font: 16px sans-serif; font-weight: 700; }
+.source52-p16e22-stacked path { fill: none; stroke: currentColor; stroke-width: 1.2; }
+.source52-p16e22-dimension-label.source52-p16e22-stacked { color: #222; }
+.source52-p16e22-answer.source52-p16e22-stacked { color: #222; }
+.source52-p16e22-question figcaption { color: #555; font-size: .82em; text-align: center; }
+.solution-answer-visual .source52-p16e22-diagram { max-width: 440px; max-height: 300px; margin: 0 auto; }
+@media print {
+  .source52-p16e22-question figure { width: min(100%, 460px); }
+  .source52-p16e22-diagram { max-height: 320px; }
+}
