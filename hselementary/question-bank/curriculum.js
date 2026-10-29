@@ -2407,6 +2407,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     }
   }
 
+  const source52AverageApplication = source52Average?.subunits.find(subunit => subunit.name === "평균의 활용");
+  if (source52AverageApplication) {
+    const id = "5-2-u6-e2-exploration", name = "공 넣기 점수와 평균으로 학생 수 구하기";
+    const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52AverageApplication.types.push({id, number:source52AverageApplication.types.length+1, typeNumber, name, label:name,
+      difficultyBand:0, sourceItemId:id, sourceItemLabel:"개념탐구 2", sourceSection:"exploration", sourceTier:"advanced",
+      sourcePdfPage:56, sourcePrintedPage:60, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
+      generatorKey:"source52AverageOriginalPage60Exploration2", generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+      answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;

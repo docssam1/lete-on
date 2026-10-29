@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 60 Exploration 2
+
+- Printed p.60 source asks both score-table blanks and white-ball count. For 50 students at mean 3.8, the score sum is 190: the 4-point group has 12 and the 0-point group 4. Enumerating the eight subsets of red/white/blue balls and applying 34 red balls gives 31 white balls. Both source subquestions remain one fixed question. Publisher answer key unverified.
+- Source score table and point assignments, independent subset and count enumeration, 1440/375/320px browser, separate one-page A4 visual checks, release gate and 78,060 runtime generations passed. Handwriting was not used.
+- Counts: 2,089 types, 1,301 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Remaining Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 59 Missions 5–6
 
 - Printed p.59 Mission 5 starts with seven natural numbers of mean 31; increments 1 through 7 total 28, so the new mean is 35. The prior ledger wrongly treated the increments as the original numbers. Mission 6 is a rhythmic-gymnastics judges table, not the unrelated eight-person score table in the previous ledger: discard each athlete's highest and lowest of six marks, yielding Eunyoung 6.5, Hyejeong 6.25 and a 0.25-point lead for Eunyoung. Publisher answer keys remain unverified.
