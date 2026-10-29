@@ -1,3 +1,10 @@
+## 2026-10-29 Grade 5-2 Unit 2 Page 14 Examples 1-3–1-4
+
+- Rechecked the source structures and connected separate synthetic practice types with different numbers. The clock problem accumulates fast and slow errors over actual elapsed time; the fraction problem enumerates all permitted integer values under proper, irreducible fraction constraints. Original source rows remain locked, and publisher answer keys remain unverified.
+- Exact elapsed-time arithmetic, exhaustive numerator/divisor enumeration and witness checks, 1440/375/320px browser, symbolic stacked fractions, separate one-page A4 problem and solution PDFs, release gate and 80,100 runtime generations passed. Counts: 2,123 types, 1,335 generatable, 788 awaiting review. The broader inventory audit retains 81 existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Preserve existing work and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 2 Source Pages and Page 14 Examples 1-1–1-2
 
 - Rechecked the SHA-256-matched clean alternate on physical pages 9–16: printed Unit 2 pages are 14–21. Corrected the 44 block records and the unit's printed-page range in `5-2-source-items.json`, preserving canonical PDF page numbers and all existing source locks. The existing 56-item detailed review already used 14–21; updated its discrepancy note and added an audit matching each detailed item to its parent block.
