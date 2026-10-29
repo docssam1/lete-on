@@ -2774,15 +2774,15 @@
       "ordinal": 3,
       "pdfPage": 29,
       "printedPage": 33,
-      "sourceShape": "선대칭도형 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "sourceShape": "선대칭도형: 모눈 위의 다각형을 기울어진 직선에 대해 반사해 그린다.",
+      "answerContract": "candidate: constructed-figure",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 구조와 좌표 반사를 확인했으나 공식 답안과 공개용 그림 검수 전 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u3-e5-mission-4",
