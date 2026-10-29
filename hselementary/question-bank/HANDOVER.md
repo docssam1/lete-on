@@ -1,3 +1,10 @@
+## 2026-10-29 Grade 5-2 Unit 2 Page 15 Missions 3, 5 and 6
+
+- Rechecked the source structures and connected separately identified synthetic practice types with different values: cumulative clock delay, natural numbers producing integer products from two proper fractions, and a strict inequality with a natural-number sum. Original source blocks remain locked and publisher answer keys remain unverified. Mission 4 stays locked pending clarification of the signs of its unknowns.
+- Exact elapsed-time arithmetic, exhaustive proper-fraction and inequality boundary enumeration, 1440/375/320px browser, symbolic stacked fractions, separate one-page A4 problem and solution PDFs, release gate and 80,460 runtime generations passed. Counts: 2,129 types, 1,341 generatable, 788 awaiting review. The broader inventory audit retains 81 existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Preserve existing work and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 2 Concept 1 (2) and Page 15 Missions 1–2
 
 - Rechecked source structures and connected three separately identified synthetic practice types with different values: the numeric second exploration subquestion, all six calculations in Mission 1 as one multipart question, and the remaining-students fraction question. The open-ended first exploration subquestion is not claimed as implemented. Original source blocks stay locked; publisher answer keys remain unverified.
