@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 6-1 Graph Exploration Classification
+
+- Re-read source PDF pages 38, 40, 42 and 44 (printed 44, 46, 48 and 50) and page 31 (printed 36), from the SHA-256-matched original. Corrected two common-ledger descriptions: U5 E2 converts a pictograph into a table and strip graph; E3 converts given category counts into a table and circle graph. Detailed review and public type labels already describe those structures correctly; no generator, answer, release status or student data changed.
+- The four graph exploration pages each have three numbered examples. The common ledger splits some explorations while grouping others; its 27/93 expected section counts do not match its 28/92 records. Broader policy and remaining pages still need reconciliation, so neither expectation was silently changed. The wider audit continues to report 38 findings.
+
+---
+
 ## 2026-10-30 Inventory Hold-Reason Gate
 
 - Corrected the grades 5-2–6 inventory audit for 6-2 verified releases: an empty hold reason is accepted only when the relevant public source type(s) exist uniquely, correspond to the same source, are unlocked and source-verified, have a generator and a fully verified pool and answer visual. Four independently split source blocks require both public types; a compound owner is identified by its raw source ID. Locks and source records were not changed.
