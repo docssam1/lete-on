@@ -1,0 +1,7 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-mirror-path-synthetic.js');
+const source=require('./source-inventory/5-2-source-items.json').sourceItems.find(x=>x.sourceItemId==='5-2-u3-e6-exploration');assert.equal(source.implementationStatus,'review-locked');assert.equal(source.publisherKeyVerified,false);assert.equal(source.syntheticRuntimeTypeId,api.id);
+function trace(w,h){let x=0,y=h/2,dx=1,dy=1,points=[[x,y]];for(let i=0;i<30;i++){let t=Math.min(dx>0?w-x:x,dy>0?h-y:y);assert.ok(t>0);x+=dx*t;y+=dy*t;points.push([x,y]);if(x===0&&y===h/2)return points;if(x===0||x===w)dx=-dx;if(y===0||y===h)dy=-dy;}throw Error('No return');}
+function area(p){return Math.abs(p.reduce((s,[x,y],i)=>{const [u,v]=p[(i+1)%p.length];return s+x*v-u*y;},0))/2;}
+for(let i=0;i<3;i++)for(const difficulty of [-1,0,1]){const q=api.makeQuestion(i,difficulty),{w,h}=q.questionModel,path=trace(w,h),n=w/h;assert.deepEqual(path[0],path.at(-1));assert.equal(path.length,2*n+3);let total=0;for(let k=0;k<n;k++)total+=area([[k*h,h/2],[k*h+h/2,0],[(k+1)*h,h/2],[k*h+h/2,h]]);assert.equal(total,[600,800,1800][i]);assert.equal(q.answerModel.area,total);assert.equal(q.answer,`${total}cm²`);assert.equal((q.answerVisual.match(/data-mirror-diamond=/g)||[]).length,n);assert.ok(q.solution.includes(q.answer));}
+console.log('3 independent ray traces and polygon areas × 3 difficulties passed; original remains locked');
