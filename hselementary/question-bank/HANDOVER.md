@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 5 Page 55 Missions 1–2
+
+- Source PDF p.51 / clean comparison PDF p.50 / printed p.55. Added two fixed source questions: five-die contact-chain target 4 and opposite pairs 가–라, 나–마, 다–바. Publisher answer keys remain unverified; printed glyph interpretation is a source input.
+- Independently enumerated legal contact tuples and checked cube-view adjacency with a realizable rotation. Source, ledger, 1440/375/320px browser and four one-page A4 checks passed; release gate and 77,100 runtime generations passed.
+- Counts: 2,073 types, 1,285 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Preserve the dirty source worktree and student data. Other locked source items need independent review.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 5 Page 54 Exploration 4
 
 - Source PDF p.50 / clean comparison PDF p.49 / printed p.54. Added one fixed source question: the seven bottom values are 3,4,2,1,4,3,1 and sum to 18. The publisher answer key remains unverified.

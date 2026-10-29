@@ -2277,6 +2277,25 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     });
   }
 
+
+  if (source52Dice) {
+    for (const [ordinal, name, generatorKey] of [
+      [1, "다섯 정육면체의 맞붙은 면으로 빈 숫자 찾기", "source52CuboidDiceChainPage55Mission1"],
+      [2, "세 방향 그림으로 마주 보는 글자 찾기", "source52CubeThreeViewsOppositesPage55Mission2"]
+    ]) {
+      const id = `5-2-u5-e4-mission-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52Dice.types.push({
+        id, number: source52Dice.types.length + 1, typeNumber, name, label: name,
+        difficultyBand: 0, sourceItemId: id, sourceItemLabel: `Mission ${ordinal}`,
+        sourceSection: "mission", sourceTier: "advanced", sourcePdfPage: 51, sourcePrintedPage: 55,
+        sourceVerified: true, publisherKeyVerified: false, reviewLocked: false, generatorKey,
+        generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+        answerVisualRequired: false, answerVisualStatus: "not-required", implementationStatus: "fixed-verified-pool"
+      });
+    }
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
