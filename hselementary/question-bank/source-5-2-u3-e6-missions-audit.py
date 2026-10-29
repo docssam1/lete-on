@@ -53,3 +53,11 @@ lower_area=(8-6)*(22-16)
 assert upper_area==14 and lower_area==12
 assert 8*upper_area+2*lower_area==136
 print('Folded rectangle layer counts and upper trapezoid area verified')
+
+# Example 6-2: independently check trapezoid area and folded layer totals.
+upper=[(4,0),(6,0),(6,6),(4,4)]
+upper_area=abs(sum(x*v-u*y for (x,y),(u,v) in zip(upper,upper[1:]+upper[:1])))/2
+lower_area=(6-4)*(16-12)
+assert upper_area==10 and lower_area==8
+assert 8*upper_area+2*lower_area==96
+print('Example 6-2 folded strip area and layer counts verified')
