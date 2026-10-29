@@ -5,7 +5,7 @@ const esc = (value) => String(value ?? "")
   .replaceAll('"', "&quot;");
 
 const optionLabels = ["①", "②", "③", "④", "⑤"];
-const palette = ["#d9eef8", "#ffe9b6", "#dcefd9", "#f6dce8", "#e8e0f5", "#dff1ec"];
+const palette = ["#fdf3d4", "#ffe9b6", "#dcefd9", "#f6dce8", "#e8e0f5", "#dff1ec"];
 
 function gridCandidate(groups, rows, cols, values = [], markers = [], markerIcon = "★", label = "") {
   const cell = 28;
@@ -16,7 +16,7 @@ function gridCandidate(groups, rows, cols, values = [], markers = [], markerIcon
     const column = index % cols;
     const marker = markers.includes(index) ? markerIcon : "";
     const value = values[index] ?? "";
-    return `<rect x="${column * cell}" y="${row * cell}" width="${cell}" height="${cell}" fill="${palette[group % palette.length]}" stroke="#9bb0bc"/><text x="${column * cell + cell / 2}" y="${row * cell + cell / 2 + 1}">${esc(marker || value)}</text>`;
+    return `<rect x="${column * cell}" y="${row * cell}" width="${cell}" height="${cell}" fill="${palette[group % palette.length]}" stroke="#c3b394"/><text x="${column * cell + cell / 2}" y="${row * cell + cell / 2 + 1}">${esc(marker || value)}</text>`;
   }).join("");
   return `<figure><svg class="b9-grid" viewBox="0 0 ${width} ${height}" role="img" aria-label="도형 분할 보기">${cells}</svg><figcaption>${label}</figcaption></figure>`;
 }

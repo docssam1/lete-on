@@ -14,7 +14,7 @@ const SHAPES = Object.freeze({
 // 검은 도형·흰 도형은 색 규칙 문제용이라 색표를 쓰지 않는다(SHAPE_DARK·hollow).
 const SHAPE_COLORS = Object.freeze({ circle: "#e8503a", square: "#2f6fe0", triangle: "#2f9e5f", diamond: "#8e5bd8", star: "#f0b23a", heart: "#e0559a" });
 const SHAPE_EDGES = Object.freeze({ circle: "#b8321f", square: "#1f55c0", triangle: "#1f7a45", diamond: "#6b3fb3", star: "#a8741a", heart: "#b03272" });
-const SHAPE_FILL = "#cfd8dc";
+const SHAPE_FILL = "#e1d9ca";
 const SHAPE_DARK = "#222";
 const SHAPE_STROKE = "#333";
 

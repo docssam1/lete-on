@@ -3,14 +3,14 @@ import { GENERATORS } from "./generators.js?v=20261028zb";
 import { saveRecord } from "./study-progress.js?v=20261029q";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261028za";
-import { book02Markup } from "./book02-renderers.js?v=20261028c";
+import { book02Markup } from "./book02-renderers.js?v=20261029t";
 import { book03Markup } from "./book03-renderers.js?v=20261027a";
 import { book04Markup } from "./book04-renderers.js?v=20261023h";
 import { book05Markup } from "./book05-renderers.js?v=20261027p";
 import { book06Markup } from "./book06-renderers.js?v=20261027p";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
 import { book08Markup } from "./book08-renderers.js?v=20261027p";
-import { book09Markup } from "./book09-renderers.js?v=20261021d";
+import { book09Markup } from "./book09-renderers.js?v=20261029t";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
 import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261028w";
@@ -112,6 +112,13 @@ const state = {
 if (PRINT_TEMPLATE_OPTIONS.form.some((option) => option.id === params.get("form"))) state.printTemplate.form = params.get("form");
 // 학생 화면은 표지·내지 없이 문제만(저장된 인쇄 양식은 바꾸지 않는다 — 패널을 건드리지 않으면 저장되지 않는다).
 if (asStudent) state.printTemplate = { ...state.printTemplate, cover: "none", unit: "none", form: "basic", cols: "1" };
+// 학생 덱의 「인쇄해서 풀기」는 표지를 붙인다(&cover=b, 원장 2026-10-29 「표지도 만들라고」). 이 학습지에만 — 저장하지 않는다.
+// 표지 제목은 그 권 제목, 부제는 이 학습지 제목(printTemplateInfo).
+if (PRINT_TEMPLATE_OPTIONS.cover.some((option) => option.id === params.get("cover") && option.id !== "none")) {
+  state.printTemplate = { ...state.printTemplate, cover: params.get("cover") };
+  document.body.classList.add("has-cover");   // 학생 화면은 표지를 숨기지만 인쇄에는 낸다(styles.css)
+  if (PRINT_TEMPLATE_OPTIONS.ground.some((option) => option.id === params.get("ground"))) state.printTemplate.ground = params.get("ground");
+}
 let printTemplatePanel = null;
 
 function normalizeSearchText(value) {
@@ -1491,7 +1498,7 @@ function shapeMatrixRuleMarkup(visual) {
       : `<text class="matrix-missing" x="${cx}" y="${cy + 8}">㉠</text>`;
     return `<g><rect class="matrix-cell" x="${x}" y="${y}" width="110" height="110"/>${content}</g>`;
   }).join("");
-  return `<svg class="shape-matrix-svg" viewBox="0 0 360 360" role="img" aria-label="큰 도형, 작은 도형, 칠한 방법의 규칙을 찾는 3행 3열 문제"><defs><pattern id="${hatchId}" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#fff"/><line x1="0" y1="0" x2="0" y2="8" stroke="#627886" stroke-width="3"/></pattern></defs>${cells}</svg>`;
+  return `<svg class="shape-matrix-svg" viewBox="0 0 360 360" role="img" aria-label="큰 도형, 작은 도형, 칠한 방법의 규칙을 찾는 3행 3열 문제"><defs><pattern id="${hatchId}" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#fff"/><line x1="0" y1="0" x2="0" y2="8" stroke="#847864" stroke-width="3"/></pattern></defs>${cells}</svg>`;
 }
 
 function tornCalendarMarkup(visual) {
@@ -2622,7 +2629,7 @@ function foldStackMarkup(visual) {
   let parts = "";
   for (let k = 7; k >= 0; k -= 1) {
     const p = visual.pos[visual.z[k]];
-    parts += `<rect x="${ox + p.c * u}" y="${oy + p.r * u}" width="${2 * u}" height="${2 * u}" fill="#fff" stroke="#3f7f9e" stroke-width="2"/>`;
+    parts += `<rect x="${ox + p.c * u}" y="${oy + p.r * u}" width="${2 * u}" height="${2 * u}" fill="#fff" stroke="#7e735f" stroke-width="2"/>`;
   }
   visual.spots.forEach((spot, index) => {
     parts += `<text x="${ox + spot.x * u}" y="${oy + spot.y * u + 6}" text-anchor="middle" font-size="17" font-weight="700" fill="#333">${visual.order[index]}</text>`;
@@ -2710,10 +2717,10 @@ function foldCutUnfoldDrawMarkup(visual) {
   shift += size + 10;
   parts += foldStepArrowSvg(shift, top + size / 2);
   shift += 42;
-  parts += `<rect x="${shift}" y="${top}" width="${size}" height="${size}" fill="#fff" stroke="#7ba7bb" stroke-width="2"/>`;
+  parts += `<rect x="${shift}" y="${top}" width="${size}" height="${size}" fill="#fff" stroke="#a99f8d" stroke-width="2"/>`;
   for (let line = 1; line < 4; line += 1) {
-    parts += `<line x1="${shift + line * size / 4}" y1="${top}" x2="${shift + line * size / 4}" y2="${top + size}" stroke="#9fc2d2" stroke-width="1" stroke-dasharray="4 3"/>`;
-    parts += `<line x1="${shift}" y1="${top + line * size / 4}" x2="${shift + size}" y2="${top + line * size / 4}" stroke="#9fc2d2" stroke-width="1" stroke-dasharray="4 3"/>`;
+    parts += `<line x1="${shift + line * size / 4}" y1="${top}" x2="${shift + line * size / 4}" y2="${top + size}" stroke="#f9d978" stroke-width="1" stroke-dasharray="4 3"/>`;
+    parts += `<line x1="${shift}" y1="${top + line * size / 4}" x2="${shift + size}" y2="${top + line * size / 4}" stroke="#f9d978" stroke-width="1" stroke-dasharray="4 3"/>`;
   }
   return `<svg class="fold-cut-draw-svg" viewBox="0 0 ${shift + size + 8} ${size + 14}" role="img" aria-label="색종이를 접어 자른 뒤 펼친 모양 그리기">${parts}</svg>`;
 }
@@ -2916,7 +2923,7 @@ function shapeTransformGridSvg(grid, blank = false) {
     const cell = grid[index];
     const cx = x + 36;
     const cy = y + 36;
-    const shape = matrixShapeSvg(cell.shape, cx, cy, 31, cell.shape === "circle" ? "#f8e8e6" : "#fff", "#4b5d68", 2.5);
+    const shape = matrixShapeSvg(cell.shape, cx, cy, 31, cell.shape === "circle" ? "#f8e8e6" : "#fff", "#665d4d", 2.5);
     return `<rect x="${x}" y="${y}" width="72" height="72"/><g transform="rotate(${(cell.direction || 0) * 90} ${cx} ${cy})">${shape}</g>`;
   }).join("");
   return `<svg class="shape-transform-grid" viewBox="0 0 160 160" role="img" aria-label="네 칸 도형 배치"><g>${cells}</g></svg>`;
@@ -2947,7 +2954,7 @@ function alternatingPeopleMarkup(visual) {
   return `<div class="alternating-people" aria-label="남학생과 여학생이 번갈아 선 모습">${visual.line.map((kind) => `<i class="${kind}"><b>${kind === "boy" ? "남" : "여"}</b></i>`).join("")}</div>`;
 }
 
-function matrixShapeSvg(shape, cx, cy, size, fill = "none", stroke = "#596a73", width = 2) {
+function matrixShapeSvg(shape, cx, cy, size, fill = "none", stroke = "#746a58", width = 2) {
   if (shape === "circle") return `<circle cx="${cx}" cy="${cy}" r="${size / 2}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
   if (shape === "square") return `<rect x="${cx - size / 2}" y="${cy - size / 2}" width="${size}" height="${size}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
   if (shape === "diamond") return `<polygon points="${cx},${cy - size * 0.62} ${cx + size * 0.62},${cy} ${cx},${cy + size * 0.62} ${cx - size * 0.62},${cy}" fill="${fill}" stroke="${stroke}" stroke-width="${width}"/>`;
@@ -2962,7 +2969,7 @@ function shapeMatrixThreeMarkup(visual) {
     const cx = cell.column * cellSize + cellSize / 2;
     const cy = cell.row * cellSize + cellSize / 2;
     if (cell.missing && !cell.hintOuter) return "";
-    if (cell.missing) return `${matrixShapeSvg(cell.outer, cx, cy, 47, "none", "#b6c3c9", 2)}<text x="${cx}" y="${cy + 5}" text-anchor="middle" font-size="19" font-weight="800" fill="#8da0aa">?</text>`;
+    if (cell.missing) return `${matrixShapeSvg(cell.outer, cx, cy, 47, "none", "#d1c5ae", 2)}<text x="${cx}" y="${cy + 5}" text-anchor="middle" font-size="19" font-weight="800" fill="#a99f8e">?</text>`;
     const fill = cell.fill === "gray" ? "#b8bdc1" : cell.fill === "hatch" ? "url(#matrix-hatch)" : "#fff";
     return `${matrixShapeSvg(cell.outer, cx, cy, 48, "#fff")}${matrixShapeSvg(cell.inner, cx, cy, 30, fill)}`;
   }).join("");
@@ -2977,8 +2984,8 @@ function triangleCycleSvg(position = null) {
     "bottom-right": "95,85 72.5,45 50,85",
     center: "27.5,45 72.5,45 50,85"
   };
-  const fill = position ? `<polygon points="${points[position]}" fill="#8dd7ef"/>` : "";
-  return `<svg viewBox="0 0 100 90" role="img" aria-label="${position ? "한 칸이 칠해진" : "빈"} 삼각형">${fill}<path d="M50 5L5 85H95Z M27.5 45H72.5 M27.5 45L50 85 M72.5 45L50 85" fill="none" stroke="#65b6ce" stroke-width="2"/></svg>`;
+  const fill = position ? `<polygon points="${points[position]}" fill="#fadc82"/>` : "";
+  return `<svg viewBox="0 0 100 90" role="img" aria-label="${position ? "한 칸이 칠해진" : "빈"} 삼각형">${fill}<path d="M50 5L5 85H95Z M27.5 45H72.5 M27.5 45L50 85 M72.5 45L50 85" fill="none" stroke="#e3b250" stroke-width="2"/></svg>`;
 }
 
 function trianglePositionCycleMarkup(visual) {
@@ -3533,7 +3540,8 @@ function printTemplateInfo(title) {
   const middles = [...new Set(state.questions.map((question) => question.type.middle))];
   return {
     title: book ? book.title : title,
-    subtitle: book ? `사고력 수학 · ${activeTextbookStage().label}` : `${state.questions.length}문항 맞춤 학습지`,
+    // 학생 덱에서 인쇄하면 표지 부제 = 그 학습지 제목(예: 1권 1단원 · 본책 활동 1)
+    subtitle: asStudent && studentTitle ? studentTitle : book ? `사고력 수학 · ${activeTextbookStage().label}` : `${state.questions.length}문항 맞춤 학습지`,
     volume: book ? String(book.label).replace(/[^0-9]/g, "") : "",
     bookLabel: book ? book.label : "",
     footLabel: book ? `지필드 클래식 · ${book.label}` : `지필드 문제은행 · ${title}`,

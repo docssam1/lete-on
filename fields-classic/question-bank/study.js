@@ -91,7 +91,9 @@ function sheetUrl(slide, { print = false } = {}) {
   } else {
     entries = { picks: unitTestTypes(unit).map((typeId) => [typeId, "advanced", "단원 평가", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 평가`, test: "1", testId };
   }
-  return link("index.html", { ...base, ...entries, ...(print ? { print: "1" } : { embed: "1" }) });
+  // 공부하기·오늘의 과제를 인쇄하면 맨 앞에 교재 표지(B 딥 그린 · 금 라인, 원장 2026-10-29 「표지도 만들라고」)
+  const cover = print && (slide.kind === "board" || slide.kind === "homework") ? { cover: "b" } : {};
+  return link("index.html", { ...base, ...entries, ...cover, ...(print ? { print: "1" } : { embed: "1" }) });
 }
 // 오늘의 과제: 칠판에 손글씨로 할 일을 적어 준다(원장 2026-10-29 「과제는 오늘의 과제 하고 칠판 글씨처럼 써줘야지」)
 function chalkMarkup() {
