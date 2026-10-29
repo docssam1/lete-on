@@ -1,0 +1,29 @@
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-400-normal.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: swap; unicode-range: U+1100-11FF,U+3130-318F,U+AC00-D7AF; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-600-normal.woff2") format("woff2"); font-style: normal; font-weight: 600; font-display: swap; unicode-range: U+1100-11FF,U+3130-318F,U+AC00-D7AF; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-700-normal.woff2") format("woff2"); font-style: normal; font-weight: 700; font-display: swap; unicode-range: U+1100-11FF,U+3130-318F,U+AC00-D7AF; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-400-normal.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: swap; unicode-range: U+0000-00FF,U+2000-206F,U+2070-218F; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-600-normal.woff2") format("woff2"); font-style: normal; font-weight: 600; font-display: swap; unicode-range: U+0000-00FF,U+2000-206F,U+2070-218F; }
+@font-face { font-family: "Noto Serif KR"; src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-700-normal.woff2") format("woff2"); font-style: normal; font-weight: 700; font-display: swap; unicode-range: U+0000-00FF,U+2000-206F,U+2070-218F; }
+
+.source52-p49m2-question > p,
+.source52-p49m2-solution > p { margin: 0 0 14px; line-height: 1.65; }
+.source52-p49m2-views { display: block; width: min(100%, 620px); height: auto; margin: 12px auto 8px; overflow: visible; }
+.source52-p49m2-view rect,
+.source52-p49m2-result rect { fill: #fff; stroke: #191511; stroke-width: 2.2; }
+.source52-p49m2-view path,
+.source52-p49m2-result path { fill: none; stroke: #191511; stroke-width: 1.45; stroke-linecap: square; }
+.source52-p49m2-views text { fill: #191511; font-family: "Noto Serif KR", serif; font-size: 15px; }
+.source52-p49m2-views .source52-p49m2-label { font-family: "Pretendard", sans-serif; font-size: 14px; font-weight: 600; }
+.source52-p49m2-final-answer { font-weight: 700; }
+@media (max-width: 680px) {
+  .source52-p49m2-question > p,
+  .source52-p49m2-solution > p { font-size: 15px; }
+  .source52-p49m2-views { width: 100%; }
+  .source52-p49m2-solution .source52-p49m2-views text { font-size: 22px; }
+  .source52-p49m2-solution .source52-p49m2-views .source52-p49m2-label { font-size: 20px; }
+}
+@media print {
+  .source52-p49m2-question,
+  .source52-p49m2-solution { color: #191511; font-family: "Noto Serif KR", "Batang", serif; font-size: 10.5pt; line-height: 1.45; }
+  .source52-p49m2-views { max-height: 70mm; }
+}

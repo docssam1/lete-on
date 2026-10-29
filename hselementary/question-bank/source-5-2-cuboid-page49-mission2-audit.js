@@ -1,0 +1,36 @@
+"use strict";
+
+const assert = require("node:assert/strict");
+const inventory = require("./source-inventory/5-2-source-items.json");
+const readiness = require("./source-inventory/5-2-u5-readiness-review.json");
+global.window = {};
+require("./source-inventory-4-1.js");
+require("./source-inventory-grade6.js");
+require("./curriculum.js");
+require("./generators.js");
+const source = require("./source-5-2-cuboid-page49-mission2.js");
+const itemId = source.definition.sourceItemId;
+const fail = message => { console.error(`Mission 2 audit failed: ${message}`); process.exitCode = 1; };
+const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u5")?.subunits.find(x => x.name === "직육면체의 성질")?.types.find(x => x.sourceItemId === itemId);
+assert(type, "curriculum source type exists");
+assert.equal(inventory.sourceItems.find(x => x.sourceItemId === itemId)?.implementationStatus, "verified-local");
+assert.equal(readiness.items.find(x => x.sourceItemId === itemId)?.publicDecision, "public");
+assert.equal(type.reviewLocked, false);
+assert.equal(type.sourceVerified, true);
+assert.equal(window.HSE_GENERATORS.generatorKey(type), source.definition.generatorKey);
+
+const model = source.verifyModel();
+assert.deepEqual(model, { widthCm: 7, heightCm: 10, depthCm: 5, sidePerimeterCm: 30 });
+const generated = window.HSE_GENERATORS.generate(type, 2, 0, 49, 0);
+assert(generated, "one fixed verified source variant generates");
+assert.equal(window.HSE_GENERATORS.generate(type, 2, 0, 49, 1), null, "invented variants are rejected");
+assert.equal(generated.answer, "30cm");
+assert.equal(generated.answerModel.sidePerimeterCm, 30);
+assert.equal(generated.publisherKeyVerified, false);
+assert.equal(generated.handwrittenAnswerVerified, false);
+for (const phrase of ["앞과 위에서 본 모양", "몇 cm인가요?", "앞", "위"]) assert(generated.prompt.includes(phrase), `source prompt preserves ${phrase}`);
+assert.equal((generated.prompt.match(/<rect\b/g) || []).length, 2, "the problem has the two source views only");
+assert.doesNotMatch(generated.prompt, /30cm|10cm×5cm|data-source-answer/, "answer is absent from prompt");
+assert.match(generated.solution, /2×\(10\+5\)=30cm/);
+assert.equal((generated.solution.match(/<rect\b/g) || []).length, 3, "solution derives the side view separately");
+console.log(JSON.stringify({ status: "passed", sourceItemId: itemId, sourceDimensionsCm: [7, 10, 5], sidePerimeterCm: model.sidePerimeterCm, fixedVariants: 1, answerSeparated: true, publisherKeyVerified: false }));
