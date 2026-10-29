@@ -645,3 +645,23 @@ test("the same learning-world map frames every grade while phones keep the verti
   assert.deepEqual(await phone.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   await phone.close();
 });
+
+test("elementary roadmap cards use the supplied book and study-method guidance", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
+  const supplied = {
+    3: /Spectrum Math.*Math Mammoth.*하루 5문제.*맞은 문제/,
+    4: /Spectrum Word Problems.*Singapore Math Primary Mathematics.*계산 전에 표/,
+    5: /Math Mammoth.*IXL.*점수보다 풀이 이유/,
+    6: /Singapore Math Primary Mathematics.*Spectrum Test Prep.*새 진도보다 이미 배운 단원/
+  };
+  for (const [grade, expected] of Object.entries(supplied)) {
+    await page.goto(`${url}?grade=${grade}`, { waitUntil: "networkidle" });
+    assert.match(await page.locator("#grade-focus-list").innerText(), expected, `Grade ${grade} shows its supplied books and study method`);
+    assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+    if (grade === "6") {
+      assert.match(await page.locator("#annual-plan-title").innerText(), /선택 심화/);
+      assert.match(await page.locator("#annual-plan-note").innerText(), /학교 수학에서 이미 배운 단원.*별도의 선택 심화/);
+    }
+  }
+  await page.close();
+});

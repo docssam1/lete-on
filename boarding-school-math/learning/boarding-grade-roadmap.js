@@ -41,7 +41,7 @@
   ];
 
   const annualPlans = Object.freeze({
-    6: Object.freeze({ source: "provided", title: "Pre-Algebra에서 SAT 기초까지", note: "학습 계획 예시예요. 실제 속도와 시험 일정에 맞춰 조정해요.", periods: Object.freeze([
+    6: Object.freeze({ source: "provided", title: "선택 심화 · Pre-Algebra에서 SAT 기초까지", note: "학교 수학에서 이미 배운 단원을 깊게 익히는 경로와 별도의 선택 심화 예시예요. 새 주제는 이전 개념을 설명할 수 있고 가족·교사와 계획했을 때만 이어가요.", periods: Object.freeze([
       ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율·식·기하·자료를 이해하고, 풀이 이유를 말해요.", "AoPS Pre-Algebra · Khan Academy · Singapore Math Challenging Word Problems 6"],
       ["4–6개월", "AMC 8 유형과 논리", "단원별 문제를 풀고, 한 문제를 여러 방법으로 설명해요.", "AoPS Challenge Problems · AMC 8 기출 · Beast Academy 5D"],
       ["7–9개월", "SAT 기초 유형 맛보기", "문장제와 자료 해석을 배운 개념에 연결해요.", "Khan Academy SAT Math · College Board 공식 자료 · PWN the SAT Math Guide"],
@@ -99,10 +99,10 @@
   ];
 
   const gradeTracks = Object.freeze({
-    3: Object.freeze([["학교 수학", "자리값·사칙연산의 뜻"], ["문제 해결", "문장제를 읽고 그림으로 나타내기"]]),
-    4: Object.freeze([["학교 수학", "분수·단위·도형을 그림으로 설명"], ["문제 해결", "표와 그래프에서 조건 찾기"]]),
-    5: Object.freeze([["학교 수학", "분수·소수·비율을 상황에 쓰기"], ["문제 해결", "문장제 조건을 그림·표·식으로 바꾸기"]]),
-    6: Object.freeze([["학교 수학", "Pre-Algebra: 비율·정수·식·기하·자료"], ["경시 · 선택", "AMC 8 문제에서 풀이 이유 말하기"], ["SAT · 맛보기", "문장제·자료 해석만 가볍게 보기"]]),
+    3: Object.freeze([["학교 수학", "Spectrum Math · Math Mammoth. 하루 5문제를 풀고, 맞은 문제도 왜 그런지 말해요."], ["문제 해결", "문장제를 읽고 그림으로 나타내기"]]),
+    4: Object.freeze([["학교 수학", "Spectrum Word Problems · Singapore Math Primary Mathematics. 계산 전에 표·그림으로 조건을 설명해요."], ["문제 해결", "표와 그래프에서 조건 찾기"]]),
+    5: Object.freeze([["학교 수학", "Math Mammoth · IXL. 약한 단원을 보완하고 점수보다 풀이 이유를 설명해요."], ["문제 해결", "문장제 조건을 그림·표·식으로 바꾸기"]]),
+    6: Object.freeze([["학교 수학", "Singapore Math Primary Mathematics · Spectrum Test Prep. 새 진도보다 이미 배운 단원을 깊게 익혀요."], ["경시 · 선택", "준비되면 AMC 8 문제에서 풀이 이유 말하기"], ["SAT · 맛보기", "원할 때 문장제·자료 해석을 가볍게 보기"]]),
     7: Object.freeze([["학교 수학", "유리수·비례·식에서 Algebra 1로"], ["경시 · 선택", "AMC 8로 다지거나 AMC 10 입문 문제 보기"], ["SAT · 맛보기", "대수·기하 문장제를 개념과 연결하기"]]),
     8: Object.freeze([["학교 수학", "함수·기하를 배우고 준비되면 Algebra 2로"], ["경시 · 선택", "AMC 10/12 혼합 문제와 선택지 없이 풀기"], ["SAT · 선택", "대수·자료 해석 유형 점검"]]),
     9: Object.freeze([["학교 수학 · 추정", "Algebra 2·기하를 점검하고 다음 과목 정하기"], ["경시 · 선택", "AMC 혼합 문제를 풀이 과정까지 설명"], ["SAT · 선택", "학교 진도에 맞춰 필요한 영역만 보기"]]),

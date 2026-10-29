@@ -13,6 +13,10 @@ test("grade roadmap covers the Grade 3–12 map and labels inferred high-school 
 
 test("school, competition, and SAT stay separate in upper-grade examples", function () {
   assert.deepEqual(roadmap.getTracks(3).map((track) => track[0]), ["학교 수학", "문제 해결", "경시 · 선택"]);
+  assert.match(roadmap.getTracks(3)[0][1], /Spectrum Math.*Math Mammoth.*하루 5문제.*맞은 문제/);
+  assert.match(roadmap.getTracks(4)[0][1], /Spectrum Word Problems.*Singapore Math Primary Mathematics.*계산 전에 표/);
+  assert.match(roadmap.getTracks(5)[0][1], /Math Mammoth.*IXL.*점수보다 풀이 이유/);
+  assert.match(roadmap.getTracks(6)[0][1], /Singapore Math Primary Mathematics.*Spectrum Test Prep.*새 진도보다 이미 배운 단원/);
   assert.match(roadmap.getTracks(3)[2][1], /별도 경시 과정이 제시되지 않았어요/);
   assert.deepEqual(roadmap.getTracks(7).map((track) => track[0]), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
   assert.match(roadmap.getTracks(9)[0][0], /추정/);
@@ -33,6 +37,8 @@ test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge
     assert.ok(plan.periods.every(function (period) { return period.slice(1).every(Boolean); }));
   });
   assert.equal(roadmap.getAnnualPlan(9).source, "inferred");
+  assert.match(roadmap.getAnnualPlan(6).title, /^선택 심화/);
+  assert.match(roadmap.getAnnualPlan(6).note, /학교 수학에서 이미 배운 단원.*별도의 선택 심화/);
   assert.equal(roadmap.getAnnualPlan(9).periods.length, 4);
   assert.deepEqual(roadmap.getAnnualPlan(9).periods.map(function (period) { return period[0].replace(" · 추정", ""); }), ["1–3개월", "4–6개월", "7–9개월", "10–12개월"]);
   assert.ok(roadmap.getAnnualPlan(9).periods.every(function (period) { return period[0].includes("추정"); }));
