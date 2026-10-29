@@ -2615,6 +2615,14 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52DecimalDecimal.types.push({id, number:source52DecimalDecimal.types.length+1, typeNumber, name, label:name, sourceItemId:id, sourceItemLabel:"예제 2-3", sourceSection:"example", sourceTier:"advanced", sourcePdfPage:40, sourcePrintedPage:44, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52RepeatedDecimalProductDigitAndPlacesPage44Example23", generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:3, verifiedVariantTarget:3, answerVisualRequired:false, answerVisualStatus:"not-required"});
   }
 
+  if (source52DecimalDecimal) {
+    const index = source52DecimalDecimal.types.findIndex(t => t.name === "넓이 증가량으로 정사각형의 변 구하기");
+    if (index >= 0) {
+      const previous = source52DecimalDecimal.types[index], id = "5-2-u4-e2-example-4", name = "넓이 증가량으로 정사각형의 변 구하기";
+      source52DecimalDecimal.types[index] = {...previous, id, name, label:name, sourceItemId:id, sourceItemLabel:"예제 2-4", sourceSection:"example", sourcePdfPage:40, sourcePrintedPage:44, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, reviewReason:"원문 구조를 대조하고 창작 수치의 늘어난 넓이와 한 변을 검산했습니다.", generatorKey:"source52SquareAreaIncreasePage44Example24", variant:0, generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:3, verifiedVariantTarget:3, answerVisualRequired:true, answerVisualStatus:"verified-reconstruction"};
+    }
+  }
+
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52Application = source52Unit1?.subunits.find(subunit => subunit.name === "어림하기의 활용 · 개념탐구 3 원문 연결");
   if (source52Application) for (const [n,name] of [[1,"어림한 방법 모두 찾기"],[2,"단위로 파는 리본의 가격"]]) {
