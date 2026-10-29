@@ -199,6 +199,17 @@ test("complete AMC 8 marks show a correct-count reference estimate", async funct
   await page.close();
 });
 
+test("contest review opens the selected grade map from its result link", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url}?grade=9&program=amc10`, { waitUntil: "networkidle" });
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  await page.locator("#report-roadmap-link").click();
+  await page.waitForURL(/boarding-roadmap\.html\?grade=9#grade-map$/);
+  assert.match(await page.locator("#grade-map-title").innerText(), /9학년 수학/);
+  await page.close();
+});
+
 test("AMC score records stay separated by contest, export/import as a local file, and show the current-cycle reference", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(url, { waitUntil: "networkidle" });
