@@ -2745,6 +2745,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 3-1 유사문항",sourceSection:"example",sourcePdfPage:24,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 도형의 중심 회전 대칭과 넓이를 검증했습니다.",generatorKey:"source52SquareOverlapSyntheticPage28Example31",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
 
+  if (source52CongruenceApplicationOne && !source52CongruenceApplicationOne.types.some(t => t.id === "5-2-u3-e3-mission-2")) {
+    const id="5-2-u3-e3-mission-2",name="크기가 다른 정사각형의 겹친 넓이";
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 2 유사문항",sourceSection:"mission",sourcePdfPage:25,sourcePrintedPage:29,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 실제 두 정사각형의 변 길이와 겹친 넓이를 검증했습니다.",generatorKey:"source52UnequalSquareOverlapSyntheticPage29Mission2",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52Application = source52Unit1?.subunits.find(subunit => subunit.name === "어림하기의 활용 · 개념탐구 3 원문 연결");
   if (source52Application) for (const [n,name] of [[1,"어림한 방법 모두 찾기"],[2,"단위로 파는 리본의 가격"]]) {
