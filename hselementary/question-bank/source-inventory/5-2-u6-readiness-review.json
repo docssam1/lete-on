@@ -542,11 +542,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "releaseEvidence": "원문의 일주일을 7일로 환산하고 56인·일 ÷ 4명=14일 독립 검산. 공식 출판사 답안 미확인.",
       "runtimeTypeId": "5-2-u6-e2-mission-1",
-      "publisherKeyVerified": false
+      "publisherKeyVerified": false,
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-2",
@@ -569,11 +570,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "releaseEvidence": "원문 변환 순서와 두 평균 대조. 최대 56으로 유일하게 결정되며 10,11,12,13,42,56이 모든 원래 조건을 만족함을 구성해 확인. 공식 출판사 답안 미확인.",
       "runtimeTypeId": "5-2-u6-e2-mission-2",
-      "publisherKeyVerified": false
+      "publisherKeyVerified": false,
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-3",
