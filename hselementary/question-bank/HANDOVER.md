@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 60 Examples 2-1–2-2
+
+- Printed p.60 Example 2-1: 5×48+9×40=600 person-minutes, so one person works 10 hours and clears 40m² per hour. Example 2-2: 31 days in May, increasing 50m daily with mean 1,500m gives first day 750m. Publisher answer keys remain unverified.
+- Source conditions, independent unit conversion and full 31-day sequence, 1440/375/320px browser, four separate one-page A4 visual checks, release gate and 78,180 runtime generations passed. Shorter display names were rechecked after print inspection; handwriting was not used.
+- Counts: 2,091 types, 1,303 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Remaining Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 60 Exploration 2
 
 - Printed p.60 source asks both score-table blanks and white-ball count. For 50 students at mean 3.8, the score sum is 190: the 4-point group has 12 and the 0-point group 4. Enumerating the eight subsets of red/white/blue balls and applying 34 red balls gives 31 white balls. Both source subquestions remain one fixed question. Publisher answer key unverified.
