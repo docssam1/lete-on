@@ -90,6 +90,11 @@ test("users can opt to save an answer-free AMC review summary and see it only on
   assert.equal(await page.locator("#competition-saved-title").innerText(), "AMC 8 · Grade 7");
   assert.match(await page.locator("#competition-saved-meta").innerText(), /Practice B/);
   assert.match(await page.locator("#competition-saved-domains").innerText(), /식·대수[\s\S]*1\/3 · 33%/);
+  assert.equal(await page.locator("#competition-review-guidance").isVisible(), true);
+  assert.match(await page.locator("#competition-review-guidance-list").innerText(), /계산으로 표시한 오답은 중간식을 남기고 어림이나 역산/);
+  assert.match(await page.locator("#competition-review-guidance-list").innerText(), /개념으로 표시한 오답은 정의와 성질/);
+  assert.match(await page.locator("#competition-review-guidance-list").innerText(), /표시하지 않은 22문항은 이 요약과 비교에 포함되지 않아요/);
+  assert.doesNotMatch(await page.locator("#competition-review-guidance-list").innerText(), /낮았어요/);
   assert.equal(await page.locator("#competition-record-pair").isVisible(), true);
   assert.equal(await page.locator(".competition-record-pair-card").count(), 2);
   const pairText = await page.locator("#competition-record-pair-cards").innerText();
@@ -155,6 +160,31 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   assert.equal(await page.locator("#score-estimate").isHidden(), true, "partial responses do not produce a score estimate");
   assert.equal(await page.evaluate(() => localStorage.length), 0);
   assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("saved contest review suggests a domain only when two areas have enough evidence", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const record = {
+    schemaVersion: "gfield-competition-diagnostic-v1", id: "domain-guidance", programId: "amc8", programTitle: "AMC 8", grade: 7,
+    paperLabel: "Practice with area evidence", examDate: "2026-10-30", savedAt: "2026-10-30T12:00:00.000Z",
+    summary: { itemCount: 25, correct: 5, wrong: 3, blank: 0, unmarked: 17, attempted: 8, domainClassified: 8, reasonClassified: 3 },
+    domains: [
+      { id: "algebra", attempted: 4, correct: 4, wrong: 0, blank: 0 },
+      { id: "number", attempted: 0, correct: 0, wrong: 0, blank: 0 },
+      { id: "geometry", attempted: 4, correct: 1, wrong: 3, blank: 0 },
+      { id: "counting", attempted: 0, correct: 0, wrong: 0, blank: 0 }
+    ],
+    reasons: [{ id: "concept", count: 3 }]
+  };
+  await page.addInitScript(function (savedRecord) {
+    localStorage.setItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1", JSON.stringify({ schemaVersion: "gfield-competition-diagnostic-history-v1", records: [savedRecord] }));
+  }, record);
+  await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7&program=amc8#competition-diagnostic`, { waitUntil: "networkidle" });
+  const guidance = page.locator("#competition-review-guidance-list");
+  assert.match(await guidance.innerText(), /기하·공간의 정답 비율이 비교 가능한 영역에서 낮았어요 \(기하·공간 1\/4\)/);
+  assert.match(await guidance.innerText(), /개념으로 표시한 오답은 정의와 성질/);
+  assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
   await page.close();
 });
 

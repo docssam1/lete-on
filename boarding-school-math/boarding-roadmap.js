@@ -629,7 +629,45 @@
       return `${names[reason.id]} ${reason.count}문항`;
     });
     setText("competition-saved-reasons", `오류 이유 분류 ${evidence.summary.reasonClassified}/${evidence.summary.wrong}개 오답${reasons.length ? ` · ${reasons.join(" · ")}` : ""}`);
+    renderCompetitionReviewGuidance(evidence);
     $("competition-saved-remove").dataset.recordId = evidence.id;
+  }
+  function renderCompetitionReviewGuidance(evidence) {
+    const section = $("competition-review-guidance");
+    const list = $("competition-review-guidance-list");
+    list.replaceChildren();
+    const suggestions = [];
+    const supportedDomains = evidence.domains.filter(function (domain) { return domain.attempted >= 3 && Number.isFinite(domain.rate); });
+    if (supportedDomains.length >= 2) {
+      const rates = supportedDomains.map(function (domain) { return domain.rate; });
+      const lowest = Math.min.apply(null, rates);
+      const highest = Math.max.apply(null, rates);
+      if (lowest < highest) {
+        const lowestDomains = supportedDomains.filter(function (domain) { return domain.rate === lowest; });
+        const details = lowestDomains.map(function (domain) { return `${domain.name} ${domain.correct}/${domain.attempted}`; }).join(" · ");
+        const names = lowestDomains.map(function (domain) { return domain.name; }).join("·");
+        suggestions.push(`직접 분류한 영역 중 ${names}의 정답 비율이 비교 가능한 영역에서 낮았어요 (${details}). 그 영역에서 틀린 문제를 다시 풀고 풀이 이유를 말해 보세요.`);
+      }
+    }
+    const reasonActions = {
+      concept: "개념으로 표시한 오답은 정의와 성질을 말로 확인한 뒤, 수를 바꾼 새 문제에 적용해 보세요.",
+      approach: "접근 아이디어로 표시한 오답은 조건을 그림·표·식으로 바꾸고, 다른 풀이 한 가지와 비교해 보세요.",
+      calculation: "계산으로 표시한 오답은 중간식을 남기고 어림이나 역산으로 답을 확인해 보세요.",
+      reading: "조건 읽기로 표시한 오답은 주어진 값·단위·질문을 표시한 다음 식을 세워 보세요.",
+      time: "시간으로 표시한 오답은 막힌 문항을 표시하고, 먼저 풀 문제와 다시 돌아올 문제를 나누어 연습해 보세요."
+    };
+    (evidence.reasons || []).slice().sort(function (a, b) { return b.count - a.count; }).slice(0, 2).forEach(function (reason) {
+      if (reasonActions[reason.id]) suggestions.push(`${reason.count}개 · ${reasonActions[reason.id]}`);
+    });
+    const unclassifiedWrong = Math.max(0, evidence.summary.wrong - evidence.summary.reasonClassified);
+    if (unclassifiedWrong) suggestions.push(`오답 ${unclassifiedWrong}개는 이유가 아직 분류되지 않았어요. 다시 풀고 개념·접근·계산·조건 읽기 중 막힌 지점을 기록해 보세요.`);
+    if (evidence.summary.blank) suggestions.push(`미응답 ${evidence.summary.blank}개는 해설을 보기 전에 문제에서 아는 조건과 첫 풀이 단계를 적어 보세요.`);
+    if (evidence.summary.unmarked) suggestions.push(`표시하지 않은 ${evidence.summary.unmarked}문항은 이 요약과 비교에 포함되지 않아요.`);
+    if (!suggestions.length) suggestions.push("이 기록에는 오답이나 미응답이 표시되지 않았어요. 맞힌 문제에서 풀이를 고른 이유를 설명하고 다른 방법도 찾아보세요.");
+    suggestions.slice(0, 4).forEach(function (suggestion) {
+      const item = document.createElement("li"); item.textContent = suggestion; list.append(item);
+    });
+    section.hidden = false;
   }
   function resetCompetitionReport() {
     document.querySelector(".competition-layout").classList.add("is-empty");
