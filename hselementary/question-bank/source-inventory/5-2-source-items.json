@@ -4812,16 +4812,18 @@
       "pdfPage": 55,
       "printedPage": 59,
       "sourceShape": "앞 4일 독서량 83·74·71·64쪽과 다섯째 날이 5일 평균보다 12쪽 많은 조건으로 다섯째 날 구하기",
-      "answerContract": "single-value: 88쪽",
+      "answerContract": "candidate: single-value",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "필기 없는 인쇄 59쪽에서 수치와 5일 전체 평균 조건을 대조하고 산술로 계산했습니다. 다른 사본의 손글씨 85와는 일치하지 않으며 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e1-mission-3"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-4",
@@ -4832,16 +4834,18 @@
       "pdfPage": 55,
       "printedPage": 59,
       "sourceShape": "평균 42인 자연수 10개 중 하나를 50으로 바꾸어 평균 44가 될 때 원래 수 구하기",
-      "answerContract": "single-value: 30",
+      "answerContract": "candidate: single-value",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 59쪽 수와 한 수만 바꾸는 조건을 대조하고 두 전체 합의 차로 계산했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e1-mission-4"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-5",

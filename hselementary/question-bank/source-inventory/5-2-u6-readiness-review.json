@@ -284,11 +284,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "releaseEvidence": "필기 없는 원문 대조, 5일 평균을 포함하는 식과 88쪽 직접 검산. 다른 사본 손글씨 85는 조건에 맞지 않아 근거에서 제외. 공식 출판사 답안 미확인.",
       "runtimeTypeId": "5-2-u6-e1-mission-3",
-      "publisherKeyVerified": false
+      "publisherKeyVerified": false,
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-4",
@@ -310,11 +311,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "releaseEvidence": "원문 숫자·자연수·한 수 교체 조건을 대조하고 전후 합 420·440을 독립 검산. 공식 출판사 답안 미확인.",
       "runtimeTypeId": "5-2-u6-e1-mission-4",
-      "publisherKeyVerified": false
+      "publisherKeyVerified": false,
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-5",
