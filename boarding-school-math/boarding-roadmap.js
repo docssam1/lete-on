@@ -12,7 +12,7 @@
   }
   let stage = grade === 7 ? null : 0;
   let route = null;
-  let competition = null;
+  let competition = new URLSearchParams(location.search).get("program") || "";
   let comparisonGrade = null;
   const competitionSources = {
     sasmo: { href: "./sasmo.html", label: "SASMO 자료 보기 →" },
@@ -54,6 +54,8 @@
   function updateUrl(mode) {
     const url = new URL(location.href);
     url.searchParams.set("grade", String(grade));
+    if (competition) url.searchParams.set("program", competition);
+    else url.searchParams.delete("program");
     if (mode === "push") history.pushState(null, "", url);
     else if (mode === "replace") history.replaceState(null, "", url);
   }
@@ -693,18 +695,21 @@
     revealGrade7Detail();
   });
   window.addEventListener("popstate", function () {
-    const next = Number(new URLSearchParams(location.search).get("grade"));
-    if (next === grade) return;
+    const params = new URLSearchParams(location.search);
+    const next = Number(params.get("grade"));
+    const nextCompetition = params.get("program") || "";
+    if (next === grade && nextCompetition === competition) return;
     grade = data.getGrade(next) ? next : 7;
     stage = grade === 7 ? null : 0;
     route = null;
-    competition = null;
+    competition = nextCompetition;
     $("grade7-branches").querySelector("details").open = false;
     render(null);
   });
   $("competition-select").addEventListener("change", function (event) {
     competition = event.target.value;
     $("paper-label").value = "";
+    updateUrl("replace");
     updateCompetitionFields();
     resetCompetitionReport();
     renderCompetitionRows();

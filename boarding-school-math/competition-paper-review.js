@@ -6,6 +6,7 @@
   const localRecords = window.GFIELDLocalLearningRecord;
   if (!roadmap || !analyzer) return;
   const $ = function (id) { return document.getElementById(id); };
+  const alertVersions = Object.create(null);
   const params = new URLSearchParams(location.search);
   let grade = roadmap.getGrade(params.get("grade")) ? Number(params.get("grade")) : 7;
   let programId = params.get("program") || "";
@@ -15,8 +16,41 @@
   const blankReasons = [{ id: "none", title: "이유 선택" }, { id: "time", title: "시간 부족" }, { id: "skipped", title: "건너뜀" }, { id: "could-not-start", title: "시작 못 함" }];
   let scoreHistory = [];
   let lastDiagnostic = null;
+  let lastSavedDiagnosticId = null;
+  let savedDiagnosticAnnouncementVersion = 0;
+  let diagnosticSaveStatusVersion = 0;
+  let historySuccessVersion = 0;
   let lastHistoryContextKey = "";
   function setText(id, value) { $(id).textContent = value; }
+  function showAlert(id, message) {
+    const region = $(id);
+    const version = (alertVersions[id] || 0) + 1;
+    alertVersions[id] = version;
+    region.hidden = false;
+    region.textContent = "";
+    window.requestAnimationFrame(function () { if (alertVersions[id] === version) region.textContent = message; });
+  }
+  function clearAlert(id) {
+    alertVersions[id] = (alertVersions[id] || 0) + 1;
+    $(id).hidden = true;
+    $(id).textContent = "";
+  }
+  function announceSavedDiagnostic(message) {
+    const region = $("saved-diagnostic-announcement");
+    const version = ++savedDiagnosticAnnouncementVersion;
+    region.textContent = "";
+    window.requestAnimationFrame(function () {
+      if (version === savedDiagnosticAnnouncementVersion) region.textContent = message;
+    });
+  }
+  function announceDiagnosticSaveStatus(message) {
+    const region = $("diagnostic-save-status");
+    const version = ++diagnosticSaveStatusVersion;
+    region.textContent = "";
+    window.requestAnimationFrame(function () {
+      if (version === diagnosticSaveStatusVersion) region.textContent = message;
+    });
+  }
   function selectedFormat() { return roadmap.competitionOptions(grade).find(function (entry) { return entry.id === programId; }); }
   function option(value, title) { const node = document.createElement("option"); node.value = value; node.textContent = title; return node; }
   function syncReasonField(row, status) {
@@ -38,10 +72,10 @@
     if (programId) url.searchParams.set("program", programId);
     else url.searchParams.delete("program");
     history.replaceState(null, "", url);
-    $("back-to-roadmap").href = `./boarding-roadmap.html?grade=${grade}`;
+    $("back-to-roadmap").href = `./boarding-roadmap.html?grade=${grade}${programId ? `&program=${encodeURIComponent(programId)}` : ""}`;
   }
   function resetReport(message) {
-    $("paper-error").hidden = true;
+    clearAlert("paper-error");
     document.querySelector(".review-report").hidden = true;
     document.querySelector(".review-layout").classList.add("is-empty");
     setText("report-title", message || "아직 결과가 없어요");
@@ -59,6 +93,7 @@
     $("save-diagnostic").disabled = false;
     $("diagnostic-save-status").textContent = "";
     lastDiagnostic = null;
+    lastSavedDiagnosticId = null;
   }
   function renderSettings() {
     const gradeSelect = $("review-grade");
@@ -216,6 +251,7 @@
       table.append(tbody); section.append(table); host.append(section);
     });
     $("history-export").disabled = scoreHistory.length === 0;
+    $("history-clear").disabled = scoreHistory.length === 0;
   }
   function renderSavedDiagnosticHistory() {
     const section = $("saved-diagnostic-history");
@@ -248,9 +284,14 @@
       card.append(heading, meta, domainHost, reasonSummary, remove); host.append(card);
     });
   }
-  function clearHistoryMessages() { $("score-history-error").hidden = true; $("score-history-status").hidden = true; }
-  function historyError(message) { $("score-history-status").hidden = true; setText("score-history-error", message); $("score-history-error").hidden = false; }
-  function historySuccess(message) { $("score-history-error").hidden = true; setText("score-history-status", message); $("score-history-status").hidden = false; }
+  function clearHistoryMessages() { historySuccessVersion += 1; clearAlert("score-history-error"); $("score-history-status").textContent = ""; }
+  function historyError(message) { $("score-history-status").textContent = ""; showAlert("score-history-error", message); }
+  function historySuccess(message) {
+    $("score-history-error").hidden = true;
+    const version = ++historySuccessVersion;
+    setText("score-history-status", "");
+    window.requestAnimationFrame(function () { if (version === historySuccessVersion) setText("score-history-status", message); });
+  }
   function makeHistoryId() { return typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `attempt-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`; }
   if (historyEngine) {
   $("history-program").addEventListener("change", function () { clearHistoryMessages(); updateHistoryScale(); });
@@ -283,13 +324,13 @@
     const rowIndex = Array.from(row.parentElement.children).indexOf(row);
     const groupTitle = group.querySelector("h3").textContent;
     scoreHistory = scoreHistory.filter(function (record) { return record.id !== button.dataset.removeHistory; });
-    clearHistoryMessages();
     renderHistory();
     const nextGroup = Array.from($("score-history-groups").querySelectorAll(".score-history-group")).find(function (entry) { return entry.querySelector("h3").textContent === groupTitle; });
     const nextButtons = nextGroup ? nextGroup.querySelectorAll("[data-remove-history]") : [];
     if (nextButtons.length) nextButtons[Math.min(rowIndex, nextButtons.length - 1)].focus();
     else if (nextGroup) { const heading = nextGroup.querySelector("h3"); heading.tabIndex = -1; heading.focus(); }
     else $("score-history-title").focus();
+    historySuccess("회차 기록을 삭제했어요.");
   });
   $("history-export").addEventListener("click", function () {
     if (!scoreHistory.length) return;
@@ -316,7 +357,7 @@
   });
   $("history-clear").addEventListener("click", function () {
     if (!scoreHistory.length || !window.confirm("이 화면에 불러온 모든 회차 기록을 비울까요? 저장한 JSON 파일은 그대로 남습니다.")) return;
-    scoreHistory = []; renderHistory(); clearHistoryMessages(); $("history-program").focus();
+    scoreHistory = []; renderHistory(); clearHistoryMessages(); historySuccess("화면 기록을 비웠어요."); $("history-program").focus();
   });
   } else {
     document.querySelector(".score-history").hidden = true;
@@ -324,7 +365,7 @@
   function renderResult(result) {
     const label = $("review-paper-label").value.trim();
     lastDiagnostic = result;
-    $("report-roadmap-link").href = `./boarding-roadmap.html?grade=${encodeURIComponent(grade)}#grade-map`;
+    $("report-roadmap-link").href = `./boarding-roadmap.html?grade=${encodeURIComponent(grade)}&program=${encodeURIComponent(selectedFormat().id)}#grade-map`;
     $("report-roadmap-link").textContent = `선택한 Grade ${grade} 학습 경로 보기 →`;
     setText("report-title", `${selectedFormat().title} · ${result.complete ? "전체 결과" : "입력한 결과"}`);
     setText("report-intro", `${label ? `${label} · ` : ""}${result.itemCount}문제 중 ${result.counts.unmarked}문제는 표시하지 않았습니다. ${result.attempted < 3 ? "푼 문제가 3개 미만이어서 비율 비교는 보류했습니다." : `정답률은 실제로 푼 ${result.attempted}문제 기준입니다.`}`);
@@ -359,6 +400,7 @@
       row.append(title, value, detail); domainHost.append(row);
     });
     const reviewList = $("report-review-items-list");
+    reviewList.replaceChildren();
     result.reviewItems.forEach(function (item) {
       const row = document.createElement("li");
       const domain = domains.find(function (entry) { return entry.id === item.domain; });
@@ -397,7 +439,7 @@
       ? `표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 ${lowestAreas.join(" · ")}입니다. 적은 문항의 관찰이므로 학습 수준을 판정하지 않아요.`
       : `두 개 이상 영역에서 각각 3문제 이상 푼 경우에만 정답 비율을 참고 비교해요.${result.unclassified ? ` 영역 미분류 ${result.unclassified}문항은 직접 확인해 주세요.` : ""}`);
     $("save-diagnostic").hidden = !localRecords;
-    $("diagnostic-save-status").textContent = "";
+    if (!$("save-diagnostic").disabled) $("diagnostic-save-status").textContent = "";
     document.querySelector(".review-report").hidden = false;
     document.querySelector(".review-layout").classList.remove("is-empty");
     $("report-title").focus();
@@ -409,10 +451,10 @@
   $("paper-review-form").addEventListener("submit", function (event) {
     event.preventDefault();
     const format = selectedFormat();
-    if (!format) { setText("paper-error", "대회를 선택해 주세요."); $("paper-error").hidden = false; return; }
+    if (!format) { showAlert("paper-error", "대회를 선택해 주세요."); return; }
     const result = analyzer.analyze(readMarks(), format.itemCount, format.id);
-    if (!result.valid) { setText("paper-error", result.error === "문항별 표시와 영역을 확인하세요." ? "문항별 표시·영역·이유를 확인하세요." : result.error); $("paper-error").hidden = false; return; }
-    $("paper-error").hidden = true;
+    if (!result.valid) { showAlert("paper-error", result.error === "문항별 표시와 영역을 확인하세요." ? "문항별 표시·영역·이유를 확인하세요." : result.error); return; }
+    clearAlert("paper-error");
     renderResult(result);
   });
   $("save-diagnostic").addEventListener("click", function () {
@@ -428,17 +470,40 @@
       domains: lastDiagnostic.domains.map(function (domain) { return { id: domain.id, attempted: domain.attempted, correct: domain.correct, wrong: domain.wrong, blank: domain.blank }; }),
       reasons: lastDiagnostic.reasons.map(function (reason) { return { id: reason.id, count: reason.count }; })
     });
-    $("diagnostic-save-status").textContent = record ? `${record.programTitle} · Grade ${record.grade} 복습 요약을 이 기기에 저장했어요. 정답·오답·미응답 수와 영역별 합계를 저장합니다. AMC 8 참고 원점수는 정답 수로 계산할 수 있어 이 집계에서 점수 정보를 유추할 수 있어요. 문항별 답과 번호는 저장하지 않습니다.` : "저장하지 못했어요. 입력한 학년과 문항 결과를 확인해 주세요.";
+    const amcResultDisclosure = lastDiagnostic.complete && ["amc8", "amc10", "amc12"].includes(format.id)
+      ? `${format.title} 참고 원점수는 저장된 응답 수로 다시 계산할 수 있어요.`
+      : "저장한 정답·오답·미응답 수와 영역별 합계로 입력 결과 일부를 유추할 수 있어요.";
+    lastSavedDiagnosticId = record ? record.id : null;
+    $("diagnostic-save-status").textContent = record ? `${record.programTitle} · Grade ${record.grade} 복습 요약을 이 기기에 저장했어요. 정답·오답·미응답 수와 영역별 합계를 저장합니다. ${amcResultDisclosure} 문항별 답과 번호는 저장하지 않습니다.` : "저장하지 못했어요. 입력한 학년과 문항 결과를 확인해 주세요.";
     $("save-diagnostic").disabled = Boolean(record);
     renderSavedDiagnosticHistory();
   });
   $("saved-diagnostic-list").addEventListener("click", function (event) {
     const button = event.target.closest("[data-remove-diagnostic]");
     if (!button || !localRecords) return;
-    localRecords.storage.removeCompetitionDiagnostic(button.dataset.removeDiagnostic);
-    if (lastDiagnostic) $("save-diagnostic").disabled = false;
+    const removeButtons = Array.from($("saved-diagnostic-list").querySelectorAll(".saved-diagnostic-remove"));
+    const removedIndex = removeButtons.indexOf(button);
+    const removedCurrentResult = button.dataset.removeDiagnostic === lastSavedDiagnosticId;
+    if (!localRecords.storage.removeCompetitionDiagnostic(button.dataset.removeDiagnostic)) {
+      const message = "저장된 복습 요약을 지우지 못했어요. 다시 시도해 주세요.";
+      if (document.querySelector(".review-report").hidden) announceSavedDiagnostic(message);
+      else announceDiagnosticSaveStatus(message);
+      return;
+    }
+    if (removedCurrentResult) {
+      lastSavedDiagnosticId = null;
+      $("save-diagnostic").disabled = false;
+      if (document.querySelector(".review-report").hidden) announceSavedDiagnostic("저장한 복습 요약을 삭제했어요. 현재 결과를 다시 저장할 수 있어요.");
+      else announceDiagnosticSaveStatus("저장한 복습 요약을 삭제했어요. 현재 결과를 다시 저장할 수 있어요.");
+    } else {
+      const message = lastDiagnostic ? "저장된 다른 복습 요약을 삭제했어요. 현재 결과의 저장 상태는 유지돼요." : "저장된 복습 요약을 삭제했어요.";
+      if (document.querySelector(".review-report").hidden) announceSavedDiagnostic(message);
+      else announceDiagnosticSaveStatus(message);
+    }
     renderSavedDiagnosticHistory();
-    if (!$("saved-diagnostic-history").hidden) { $("saved-diagnostic-title").focus(); }
+    const nextRemoveButtons = Array.from($("saved-diagnostic-list").querySelectorAll(".saved-diagnostic-remove"));
+    if (nextRemoveButtons.length) nextRemoveButtons[Math.min(removedIndex, nextRemoveButtons.length - 1)].focus();
+    else $("review-program").focus();
   });
   renderSettings();
   renderMarks();

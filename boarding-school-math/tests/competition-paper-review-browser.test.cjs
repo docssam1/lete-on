@@ -45,12 +45,20 @@ test("users can opt to save an answer-free AMC review summary and see it only on
   assert.equal(await page.locator("#save-diagnostic").isVisible(), true);
   assert.equal(await page.locator("#save-diagnostic").innerText(), "복습 요약을 기기에 저장");
   await page.locator("#save-diagnostic").click();
-  assert.match(await page.locator("#diagnostic-save-status").innerText(), /AMC 8 참고 원점수는 정답 수로 계산할 수 있어 이 집계에서 점수 정보를 유추할 수 있어요/);
+  assert.match(await page.locator("#diagnostic-save-status").innerText(), /저장한 정답·오답·미응답 수와 영역별 합계로 입력 결과 일부를 유추할 수 있어요/);
   assert.equal(await page.locator("#save-diagnostic").isDisabled(), true);
   assert.equal(await page.locator(".saved-diagnostic-entry").count(), 1);
+  assert.equal(await page.locator("#saved-diagnostic-list").getAttribute("aria-live"), null);
   assert.match(await page.locator(".saved-diagnostic-entry").innerText(), /일부 입력 3\/25/);
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator("#save-diagnostic").isDisabled(), true);
+  assert.match(await page.locator("#diagnostic-save-status").innerText(), /복습 요약을 이 기기에 저장했어요/);
   await page.locator(".saved-diagnostic-remove").click();
-  assert.equal(await page.locator("#saved-diagnostic-history").isVisible(), false);
+  const afterRemove = await page.evaluate(function () { return { hidden: document.getElementById("saved-diagnostic-history").hidden, rows: document.querySelectorAll(".saved-diagnostic-entry").length, raw: localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1") }; });
+  assert.equal(await page.locator("#saved-diagnostic-history").isVisible(), false, JSON.stringify(afterRemove));
+  assert.equal(afterRemove.hidden, true);
+  assert.equal(afterRemove.rows, 0);
+  assert.equal(JSON.parse(afterRemove.raw).records.length, 0);
   await page.locator("#save-diagnostic").click();
   assert.equal(await page.locator(".saved-diagnostic-entry").count(), 1);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
@@ -76,8 +84,8 @@ test("users can opt to save an answer-free AMC review summary and see it only on
     history.records.push({ ...history.records[1], id: "undated-practice", examDate: null, paperLabel: "Undated practice", savedAt: "2099-01-01T00:00:00.000Z" });
     localStorage.setItem(key, JSON.stringify(history));
   });
-  await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7`, { waitUntil: "networkidle" });
-  await page.locator("#competition-select").selectOption("amc8");
+  await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#competition-select").inputValue(), "amc8");
   assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), true);
   assert.equal(await page.locator("#competition-saved-title").innerText(), "AMC 8 · Grade 7");
   assert.match(await page.locator("#competition-saved-meta").innerText(), /Practice B/);
@@ -135,7 +143,7 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   assert.match(await page.locator("#report-metrics").innerText(), /1\/2/);
   assert.match(await page.locator("#report-domains h3").innerText(), /직접 분류한 영역 · 2\/25문항/);
   assert.match(await page.locator("#report-reasons h3").first().innerText(), /1\/1개 분류/);
-  assert.equal(await page.locator("#report-roadmap-link").getAttribute("href"), "./boarding-roadmap.html?grade=7#grade-map");
+  assert.equal(await page.locator("#report-roadmap-link").getAttribute("href"), "./boarding-roadmap.html?grade=7&program=amc8#grade-map");
   assert.equal(await page.locator("#report-roadmap-link").innerText(), "선택한 Grade 7 학습 경로 보기 →");
   assert.equal(await page.locator("#report-roadmap-link").getAttribute("aria-describedby"), "report-roadmap-note");
   assert.match(await page.locator("#report-roadmap-note").innerText(), /문항 분류와 정답률은 학년 수준을 판정하지 않습니다/);
@@ -161,7 +169,11 @@ test("paper review links a low-evidence area comparison to the specific wrong qu
   }
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-next").innerText(), /표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 수와 정수론 0\/3입니다/);
-  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 오답 · 수와 정수론[\s\S]*3번 · 오답 · 수와 정수론/);
+  const reviewItems = page.locator("#report-review-items-list");
+  assert.match(await reviewItems.innerText(), /1번 · 오답 · 수와 정수론[\s\S]*3번 · 오답 · 수와 정수론/);
+  assert.equal(await reviewItems.locator("li").count(), 3);
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await reviewItems.locator("li").count(), 3, "repeated submit replaces the result list instead of duplicating it");
   await page.close();
 });
 
@@ -175,7 +187,10 @@ test("complete AMC 10 marks show the raw-score estimate without a qualification 
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#score-estimate").isVisible(), true);
   assert.match(await page.locator("#score-estimate-value").innerText(), /AMC 10 참고 원점수 · 75 \/ 150/);
-  assert.equal(await page.locator("#report-roadmap-link").getAttribute("href"), "./boarding-roadmap.html?grade=9#grade-map");
+  await page.locator("#review-exam-date").fill("2026-10-30");
+  await page.locator("#save-diagnostic").click();
+  assert.match(await page.locator("#diagnostic-save-status").innerText(), /AMC 10 참고 원점수는 저장된 응답 수로 다시 계산할 수 있어요/);
+  assert.equal(await page.locator("#report-roadmap-link").getAttribute("href"), "./boarding-roadmap.html?grade=9&program=amc10#grade-map");
   assert.equal(await page.locator("#report-roadmap-link").innerText(), "선택한 Grade 9 학습 경로 보기 →");
   assert.equal(await page.locator("#report-roadmap-link").getAttribute("aria-describedby"), "report-roadmap-note");
   assert.equal(await page.locator("#score-estimate-note").isHidden(), true);
@@ -199,19 +214,94 @@ test("complete AMC 8 marks show a correct-count reference estimate", async funct
   await page.close();
 });
 
+test("deleting an unrelated saved contest record keeps the current result marked as saved", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  const resultButton = page.getByRole("button", { name: "결과 보기" });
+  const saveButton = page.locator("#save-diagnostic");
+  await page.locator("#review-exam-date").fill("2026-10-28");
+  await page.locator("#review-paper-label").fill("Earlier practice");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
+  await resultButton.click();
+  await saveButton.click();
+  await page.locator("#review-exam-date").fill("2026-10-27");
+  await page.locator("#review-paper-label").fill("Oldest practice");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("blank");
+  await page.locator('[data-question="1"][data-field="reason"]').selectOption("skipped");
+  await resultButton.click();
+  await saveButton.click();
+  await page.locator("#review-exam-date").fill("2026-10-29");
+  await page.locator("#review-paper-label").fill("Current practice");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
+  await page.locator('[data-question="1"][data-field="reason"]').selectOption("concept");
+  await resultButton.click();
+  await saveButton.click();
+  assert.equal(await saveButton.isDisabled(), true);
+  const currentCard = page.locator(".saved-diagnostic-entry").filter({ hasText: "Current practice" });
+  assert.equal(await currentCard.count(), 1);
+  await page.locator(".saved-diagnostic-entry").filter({ hasText: "Earlier practice" }).locator(".saved-diagnostic-remove").click();
+  assert.equal(await saveButton.isDisabled(), true);
+  await page.waitForFunction(() => document.querySelector("#diagnostic-save-status").textContent.includes("현재 결과의 저장 상태는 유지돼요"));
+  assert.match(await page.locator("#diagnostic-save-status").innerText(), /현재 결과의 저장 상태는 유지돼요/);
+  assert.equal(await page.evaluate(function () { return document.activeElement.classList.contains("saved-diagnostic-remove"); }), true);
+  await page.evaluate(function () {
+    window.__deletionStatusChanges = [];
+    const status = document.getElementById("diagnostic-save-status");
+    new MutationObserver(function () { window.__deletionStatusChanges.push(status.textContent); }).observe(status, { childList: true, characterData: true, subtree: true });
+  });
+  await page.locator(".saved-diagnostic-entry").filter({ hasText: "Oldest practice" }).locator(".saved-diagnostic-remove").click();
+  await page.waitForFunction(() => window.__deletionStatusChanges.filter((message) => message === "저장된 다른 복습 요약을 삭제했어요. 현재 결과의 저장 상태는 유지돼요.").length >= 1 && window.__deletionStatusChanges.includes(""));
+  assert.equal(await saveButton.isDisabled(), true, "repeating an unrelated deletion preserves the current saved state");
+  await currentCard.locator(".saved-diagnostic-remove").click();
+  assert.equal(await saveButton.isDisabled(), false);
+  await page.waitForFunction(() => document.querySelector("#diagnostic-save-status").textContent.includes("현재 결과를 다시 저장할 수 있어요"));
+  assert.match(await page.locator("#diagnostic-save-status").innerText(), /현재 결과를 다시 저장할 수 있어요/);
+  assert.equal(await page.evaluate(function () { return document.activeElement.id; }), "review-program");
+  await page.close();
+});
+
+test("deleting the last saved contest summary without an open result returns focus to contest selection", async function () {
+  const page = await browser.newPage();
+  await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  await page.locator("#review-exam-date").fill("2026-10-29");
+  await page.locator("#review-paper-label").fill("Saved practice");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  await page.locator("#save-diagnostic").click();
+  await page.reload({ waitUntil: "networkidle" });
+  await page.locator(".saved-diagnostic-remove").click();
+  assert.equal(await page.locator("#saved-diagnostic-history").isHidden(), true);
+  assert.equal(await page.evaluate(function () { return document.activeElement.id; }), "review-program");
+  await page.waitForFunction(function () { return document.getElementById("saved-diagnostic-announcement").textContent === "저장된 복습 요약을 삭제했어요."; });
+  await page.close();
+});
+
 test("contest review opens the selected grade map from its result link", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=9&program=amc10`, { waitUntil: "networkidle" });
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
   await page.getByRole("button", { name: "결과 보기" }).click();
   await page.locator("#report-roadmap-link").click();
-  await page.waitForURL(/boarding-roadmap\.html\?grade=9#grade-map$/);
+  await page.waitForURL(/boarding-roadmap\.html\?grade=9&program=amc10#grade-map$/);
   assert.match(await page.locator("#grade-map-title").innerText(), /9학년 수학/);
+  assert.equal(await page.locator("#competition-select").inputValue(), "amc10");
   await page.waitForFunction(function () {
     const section = document.querySelector("#grade-map");
     const shortcuts = document.querySelector(".roadmap-shortcuts");
     return section.getBoundingClientRect().top >= shortcuts.getBoundingClientRect().bottom;
   });
+  await page.close();
+});
+
+test("browser back restores the selected grade and competition", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#competition-select").selectOption("amc8");
+  await page.locator("#next-grade").click();
+  await page.waitForURL(/boarding-roadmap\.html\?grade=8$/);
+  await page.goBack();
+  await page.waitForURL(/boarding-roadmap\.html\?grade=7&program=amc8$/);
+  assert.equal(await page.locator("#competition-select").inputValue(), "amc8");
   await page.close();
 });
 
@@ -233,6 +323,7 @@ test("AMC score records stay separated by contest, export/import as a local file
   await page.locator("#history-date").fill("2026-11-13");
   await page.locator("#history-score").fill("100");
   await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+  await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("추가했어요"));
   assert.equal(await page.locator(".score-history-group").count(), 1);
   assert.equal(await page.locator("#history-program").inputValue(), "amc10", "the contest selection stays ready for the next entry");
   assert.equal(await page.locator("#history-cycle").inputValue(), "2026-27");
@@ -263,23 +354,28 @@ test("AMC score records stay separated by contest, export/import as a local file
   assert.equal(exported.records.length, 2);
   assert.equal(Object.hasOwn(exported.records[0], "answers"), false);
   assert.equal(Object.hasOwn(exported.records[0], "studentName"), false);
+  page.once("dialog", (dialog) => dialog.dismiss());
+  await page.locator("#history-clear").click();
+  assert.equal(await page.locator(".score-history-group").count(), 2, "cancelling keeps existing score-history rows");
   page.once("dialog", (dialog) => dialog.accept());
   await page.locator("#history-clear").click();
   assert.equal(await page.locator(".score-history-group").count(), 0);
+  assert.equal(await page.locator("#history-clear").isDisabled(), true);
+  await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("화면 기록을 비웠어요"));
 
   const archive = { schemaVersion: "gfield-amc-score-history-v1", records: [{ id: "imported-attempt", programId: "amc8", cycle: "2025-26", form: "AMC 8", examDate: "2026-01-23", rawScore: 21, maxScore: 25 }] };
   await page.locator("#history-import").setInputFiles({ name: "history.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(archive)) });
-  await page.waitForFunction(() => !document.querySelector("#score-history-status").hidden);
+  await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("가져왔어요"));
   assert.match(await page.locator("#score-history-status").innerText(), /1개 기록을 가져왔어요/);
   assert.equal(await page.locator(".score-history-group").count(), 1);
   assert.match(await page.locator(".score-history-table").innerText(), /21 \/ 25/);
   await page.locator("#history-import").setInputFiles({ name: "history-again.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(archive)) });
-  await page.waitForFunction(() => !document.querySelector("#score-history-error").hidden);
+  await page.waitForFunction(() => document.querySelector("#score-history-error").textContent.includes("이미 있는 기록과 겹치거나"));
   assert.match(await page.locator("#score-history-error").innerText(), /이미 있는 기록과 겹치거나/);
   assert.equal(await page.locator(".score-history-group").count(), 1, "duplicate imports do not append a second copy");
   const unsafeArchive = { schemaVersion: "gfield-amc-score-history-v1", records: [{ ...archive.records[0], id: "unsafe-attempt", answers: ["A"] }] };
   await page.locator("#history-import").setInputFiles({ name: "unsafe.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(unsafeArchive)) });
-  await page.waitForFunction(() => !document.querySelector("#score-history-error").hidden && !document.querySelector("#score-history-error").classList.contains("is-success"));
+  await page.waitForFunction(() => document.querySelector("#score-history-error").textContent.includes("기록 파일을 읽지 못했어요"));
   assert.match(await page.locator("#score-history-error").innerText(), /기록 파일을 읽지 못했어요/);
   assert.equal(await page.locator(".score-history-group").count(), 1, "invalid imports do not alter the in-memory records");
   await page.reload({ waitUntil: "networkidle" });
@@ -303,6 +399,7 @@ test("direct entry waits for a contest and keeps empty results out of view", asy
   assert.equal(await page.locator(".review-related").isVisible(), true);
   assert.equal(await page.locator(".review-report").isHidden(), true);
   await page.getByRole("button", { name: "결과 보기" }).click();
+  await page.waitForFunction(() => document.querySelector("#paper-error").textContent.includes("표시한 문제가 없습니다"));
   assert.match(await page.locator("#paper-error").innerText(), /표시한 문제가 없습니다/);
   assert.equal(await page.locator(".review-report").isHidden(), true);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
@@ -390,6 +487,7 @@ test("history announcements and delete focus support keyboard and assistive tech
   await page.locator("#history-date").fill("2026-11-05");
   await page.locator("#history-score").fill("100");
   await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+  await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("추가했어요"));
   assert.equal(await page.locator("#score-history-status").getAttribute("role"), "status");
   assert.equal(await page.locator("#score-history-error").getAttribute("role"), "alert");
   assert.match(await page.locator("#score-history-status").innerText(), /추가했어요/);
@@ -397,7 +495,8 @@ test("history announcements and delete focus support keyboard and assistive tech
   assert.equal(await page.locator("#score-history-context").locator("article").count(), 1, "keystrokes do not rebuild unchanged live context");
   await page.locator(".history-remove").click();
   assert.equal(await page.locator("#score-history-title").evaluate((node) => node === document.activeElement), true, "after removing the last record, focus returns to the section title");
-  assert.equal(await page.locator("#score-history-status").isHidden(), true, "delete clears the old success announcement");
+  await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("삭제했어요"));
+  assert.match(await page.locator("#score-history-status").innerText(), /회차 기록을 삭제했어요/);
   await page.close();
 });
 

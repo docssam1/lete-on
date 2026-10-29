@@ -1,6 +1,7 @@
 :root { color-scheme: light; }
 * { box-sizing: border-box; }
 body { margin: 0; color: #172230; background: #f4f6f9; }
+.visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
 .evidence-shell { width: min(1180px, calc(100% - 48px)); margin-inline: auto; }
 .evidence-header { min-height: 70px; padding: 10px max(24px, calc((100vw - 1180px) / 2)); display: flex; align-items: center; gap: 24px; position: sticky; top: 0; z-index: 20; border-bottom: 1px solid #d8dee8; background: rgba(255,255,255,.96); }
 .evidence-header .brand { display: inline-flex; align-items: center; gap: 10px; color: #172230; text-decoration: none; white-space: nowrap; }

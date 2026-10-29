@@ -25,6 +25,23 @@
   const placementCopy = {
     "entered-cut-met-school-review-required": "입력한 컷 충족 · 학교 확인 필요", "entered-cut-not-met": "입력한 컷 미충족", "school-policy-required": "학교 정책 확인 필요", "admission-evidence-only": "입학 준비 보조 근거"
   };
+  let resultAnnouncementVersion = 0;
+  let formAlertVersion = 0;
+  function announceFormError(message) {
+    const region = document.getElementById("form-error");
+    const version = ++formAlertVersion;
+    region.textContent = "";
+    window.requestAnimationFrame(function () { if (version === formAlertVersion) region.textContent = message; });
+  }
+  function announceResult(result, restored, historyMessage) {
+    const region = document.getElementById("result-announcement");
+    const message = (restored ? "저장한 평가 결과를 불러왔어요." : "비교 결과를 계산했어요.") + " " + result.source.label + " · Grade " + result.grade + "." + (historyMessage ? " " + historyMessage : "");
+    const version = ++resultAnnouncementVersion;
+    region.textContent = "";
+    window.requestAnimationFrame(function () {
+      if (version === resultAnnouncementVersion) region.textContent = message;
+    });
+  }
 
   function today() { const value = new Date(); value.setMinutes(value.getMinutes() - value.getTimezoneOffset()); return value.toISOString().slice(0, 10); }
   function value(id) { return document.getElementById(id).value; }
@@ -70,10 +87,23 @@
     if (result.source.role === "admission-support") return `${courseCopy} ${result.source.label} 점수는 입학 준비 자료로만 기록합니다. 과정 배정을 자동으로 정하지 않습니다.`;
     return `${courseCopy} 점수 구간·준비도·학습 처방은 이 결과만으로 계산하지 않습니다.`;
   }
-  function render(result) {
+  function unlockAction(link, href, text) {
+    link.href = href;
+    link.textContent = text;
+    link.removeAttribute("aria-disabled");
+    link.removeAttribute("tabindex");
+  }
+  function lockAction(link, text) {
+    link.removeAttribute("href");
+    link.textContent = text;
+    link.setAttribute("aria-disabled", "true");
+    link.tabIndex = -1;
+  }
+  function render(result, revealResult, historyMessage) {
     document.getElementById("result-empty").hidden = true;
     document.getElementById("result-content").hidden = false;
     document.getElementById("result-state").textContent = "입력 근거 요약";
+    announceResult(result, !revealResult, historyMessage);
     document.getElementById("result-source").textContent = `${result.source.label} · Grade ${result.grade}`;
     document.getElementById("recommended-course").textContent = result.currentCourse.label;
     document.getElementById("recommendation-reason").textContent = recommendationReason(result);
@@ -90,8 +120,8 @@
     result.domainComparisons.forEach(function (domain, index) { const row = document.createElement("div"); row.className = "priority-row"; const mapping = result.grade === 6 && domain.clusterId ? `${domain.clusterId} · ` : ""; row.innerHTML = `<div><strong>${index + 1}. ${domain.label}</strong><small>${mapping}성적표 입력값</small></div><span>${domain.percent}%</span>`; priorities.append(row); });
     document.getElementById("decision-notice").textContent = result.decisionNotice;
     const material = document.getElementById("open-material");
-    if (result.materialState === "verified-grade6-public-materials" && result.domainComparisons.length) { const first = result.domainComparisons[0]; material.href = `./unit-workbook.html?cluster=${encodeURIComponent(first.clusterId)}&mode=workbook&audience=student&locale=ko&paper=A4`; material.textContent = `입력값이 가장 낮은 ${first.label} 연습 자료`; material.removeAttribute("aria-disabled"); }
-    else { material.href = "#"; material.textContent = result.materialState === "verified-grade6-public-materials" ? "영역 값을 입력하면 관련 연습 자료를 보여 줍니다" : "이 과정 자료는 검수 대기"; material.setAttribute("aria-disabled", "true"); }
+    if (result.materialState === "verified-grade6-public-materials" && result.domainComparisons.length) { const first = result.domainComparisons[0]; unlockAction(material, `./unit-workbook.html?cluster=${encodeURIComponent(first.clusterId)}&mode=workbook&audience=student&locale=ko&paper=A4`, `입력값이 가장 낮은 ${first.label} 연습 자료`); }
+    else { lockAction(material, result.materialState === "verified-grade6-public-materials" ? "영역 값을 입력하면 관련 연습 자료를 보여 줍니다" : "이 과정 자료는 검수 대기"); }
     const publishedResource = document.getElementById("published-resource");
     if (result.grade === 7) {
       publishedResource.hidden = false;
@@ -100,15 +130,11 @@
     } else publishedResource.hidden = true;
     const sendToPlan = document.getElementById("send-to-plan");
     if (result.materialState === "verified-grade6-public-materials") {
-      sendToPlan.href = "./learning-plan.html?goal=school-g6&fromAssessment=external";
-      sendToPlan.textContent = "학습 계획에서 시간·영역 정하기";
-      sendToPlan.removeAttribute("aria-disabled");
+      unlockAction(sendToPlan, "./learning-plan.html?goal=school-g6&fromAssessment=external", "학습 계획에서 시간·영역 정하기");
     } else {
-      sendToPlan.href = "#";
-      sendToPlan.textContent = "이 과정의 학습자료·계획 연결은 검수 대기";
-      sendToPlan.setAttribute("aria-disabled", "true");
+      lockAction(sendToPlan, "이 과정의 학습자료·계획 연결은 검수 대기");
     }
-    document.getElementById("result-content").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (revealResult) document.getElementById("result-content").scrollIntoView({ behavior: "smooth", block: "start" });
   }
   function historyMetric(result) {
     const scores = result.scores || {};
@@ -187,26 +213,44 @@
     });
   }
   form.addEventListener("submit", function (event) {
-    event.preventDefault(); document.getElementById("form-error").textContent = "";
-    try { const result = engine.analyze(inputRecord()); if (!records.storage.saveAssessmentEvidence(result)) throw new Error("SAVE_FAILED"); render(result); renderHistory(); }
-    catch (error) { document.getElementById("form-error").textContent = errorCopy[error.message] || "입력값을 다시 확인하세요."; }
+    event.preventDefault(); formAlertVersion += 1; document.getElementById("form-error").textContent = "";
+    try { const result = engine.analyze(inputRecord()); if (!records.storage.saveAssessmentEvidence(result)) throw new Error("SAVE_FAILED"); const historyCount = records.storage.loadAssessmentEvidenceHistory().length; render(result, true, "평가 기록 " + historyCount + "개가 이 기기에 저장되어 있어요."); renderHistory(); }
+    catch (error) { announceFormError(errorCopy[error.message] || "입력값을 다시 확인하세요."); }
   });
   sourceSelect.addEventListener("change", updateSourceFields);
   populateCourses(); updateSourceFields(); document.getElementById("test-date").value = today();
-  const requestedGrade = Number(new URLSearchParams(window.location.search).get("grade"));
-  if (Number.isInteger(requestedGrade) && requestedGrade >= 3 && requestedGrade <= 12) document.getElementById("grade").value = String(requestedGrade);
+  const requestedGradeValue = new URLSearchParams(window.location.search).get("grade");
+  const requestedGradeNumber = Number(requestedGradeValue);
+  const requestedGrade = requestedGradeValue !== null && Number.isInteger(requestedGradeNumber) && requestedGradeNumber >= 3 && requestedGradeNumber <= 12 ? requestedGradeNumber : null;
+  if (requestedGrade !== null) document.getElementById("grade").value = String(requestedGrade);
   const history = records.storage.loadAssessmentEvidenceHistory();
-  const saved = Number.isInteger(requestedGrade) ? records.storage.loadLatestAssessmentEvidence(requestedGrade) : records.storage.loadAssessmentEvidence();
-  if (saved && saved.schemaVersion === engine.SCHEMA_VERSION) { restoreSavedInputs(saved); render(saved); }
+  const saved = requestedGrade !== null ? records.storage.loadLatestAssessmentEvidence(requestedGrade) : records.storage.loadAssessmentEvidence();
+  if (saved && saved.schemaVersion === engine.SCHEMA_VERSION) { restoreSavedInputs(saved); render(saved, false); }
   else {
     const legacy = records.storage.loadAssessmentEvidence();
-    if (legacy && legacy.legacyEvidence && (!Number.isInteger(requestedGrade) || legacy.grade === requestedGrade) && history.length === 0) restoreLegacyInputs(legacy);
+    if (legacy && legacy.legacyEvidence && (requestedGrade === null || legacy.grade === requestedGrade) && history.length === 0) restoreLegacyInputs(legacy);
   }
   renderHistory();
   document.getElementById("clear-assessment-history").addEventListener("click", function () {
-    records.storage.clearAssessmentEvidence();
+    if (!window.confirm("이 기기에 저장된 모든 학년의 평가 기록을 지울까요? 삭제한 기록은 복구할 수 없습니다.")) return;
+    if (!records.storage.clearAssessmentEvidence()) {
+      const region = document.getElementById("result-announcement");
+      const version = ++resultAnnouncementVersion;
+      region.textContent = "";
+      window.requestAnimationFrame(function () {
+        if (version === resultAnnouncementVersion) region.textContent = "평가 기록을 지우지 못했어요. 브라우저 저장 상태를 확인해 주세요.";
+      });
+      return;
+    }
     document.getElementById("result-content").hidden = true;
     document.getElementById("result-empty").hidden = false;
     renderHistory();
+    const region = document.getElementById("result-announcement");
+    const version = ++resultAnnouncementVersion;
+    region.textContent = "";
+    document.getElementById("legacy-evidence-note").hidden = true;
+    window.requestAnimationFrame(function () {
+      if (version === resultAnnouncementVersion) region.textContent = "이 기기에 저장된 평가 기록을 모두 지웠어요.";
+    });
   });
 })();

@@ -33,28 +33,70 @@ test("assessment history is stored on device and only matching grade is restored
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true });
   const page = await context.newPage();
   const errors = errorsFor(page);
+  await page.addInitScript(function () {
+    window.__scrollIntoViewCalls = 0;
+    Element.prototype.scrollIntoView = function () { window.__scrollIntoViewCalls += 1; };
+  });
   await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
   await page.locator("#overall-percent").fill("82");
   await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  await page.waitForFunction(function () { return document.getElementById("result-announcement").textContent.includes("비교 결과를 계산했어요"); });
   await page.goto(`${baseUrl}assessment-entry.html?grade=8`, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#result-content").isVisible(), false);
   await page.locator("#overall-percent").fill("76");
   await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  await page.waitForFunction(function () { return document.getElementById("result-announcement").textContent.includes("평가 기록 2개가 이 기기에 저장되어 있어요"); });
   assert.equal(await page.locator(".assessment-history-item").count(), 2);
   const historyText = await page.locator("#assessment-history-list").innerText();
   assert.match(historyText, /Grade 7[\s\S]*82%/);
   assert.match(historyText, /Grade 8[\s\S]*76%/);
   await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#result-content").isVisible(), true);
+  assert.equal(await page.evaluate(function () { return window.__scrollIntoViewCalls; }), 0, "restoring saved evidence should not scroll past the page introduction");
+  assert.equal(await page.locator(".result-panel").getAttribute("aria-live"), null);
+  assert.equal(await page.locator("#result-announcement").getAttribute("role"), "status");
+  assert.match(await page.locator("#result-announcement").innerText(), /저장한 평가 결과를 불러왔어요.*Grade 7/);
   assert.equal(await page.locator("#result-source").innerText(), "학교 수학 Placement Test · Grade 7");
   assert.match(await page.locator("#metric-value").innerText(), /82%/);
+  for (const action of ["#send-to-plan", "#open-material"]) {
+    assert.equal(await page.locator(action).getAttribute("href"), null);
+    assert.equal(await page.locator(action).getAttribute("aria-disabled"), "true");
+    assert.equal(await page.locator(action).evaluate(function (node) { return node.tabIndex; }), -1);
+  }
+  assert.match(await page.locator(".evidence-roles").innerText(), /개인 진단은 아직 검수 중.*자동 배정하지 않습니다/);
+  const routeBeforeDisabledClick = page.url();
+  assert.equal(await page.locator("#open-material").evaluate(function (node) { return getComputedStyle(node).pointerEvents; }), "none");
+  await page.locator("#open-material").evaluate(function (node) { node.click(); });
+  assert.equal(page.url(), routeBeforeDisabledClick, "a gated action cannot jump to the page top");
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  page.once("dialog", function (dialog) { dialog.dismiss(); });
+  await page.locator("#clear-assessment-history").click();
+  assert.equal(await page.locator(".assessment-history-item").count(), 2, "cancel keeps all saved grade records");
+  assert.equal(await page.locator("#result-content").isVisible(), true);
+  page.once("dialog", function (dialog) { dialog.accept(); });
   await page.locator("#clear-assessment-history").click();
   assert.equal(await page.locator(".assessment-history-item").count(), 0);
+  assert.equal(await page.evaluate(function () { return [localStorage.getItem("gmap-local-learning-record-v1:external-assessment"), localStorage.getItem("gmap-local-learning-record-v1:external-assessment-history")]; }).then(function (keys) { return keys.every(function (entry) { return entry === null; }); }), true);
   assert.equal(await page.locator("#result-content").isVisible(), false);
   assert.equal(await page.locator("#assessment-history-empty").isVisible(), true);
+  await page.waitForFunction(function () { return document.getElementById("result-announcement").textContent.includes("평가 기록을 모두 지웠어요"); });
+  await page.reload({ waitUntil: "networkidle" });
+  assert.equal(await page.locator("#result-content").isVisible(), false, "cleared results do not return after reload");
   assert.deepEqual(errors, []);
   await context.close();
+});
+
+test("assessment entry restores the latest saved result when no grade is requested", async function () {
+  const page = await browser.newPage();
+  await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#overall-percent").fill("84");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  await page.goto(`${baseUrl}assessment-entry.html`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#grade").inputValue(), "7");
+  assert.equal(await page.locator("#result-content").isVisible(), true);
+  assert.match(await page.locator("#metric-value").innerText(), /84%/);
+  assert.match(await page.locator("#result-announcement").innerText(), /저장한 평가 결과를 불러왔어요.*Grade 7/);
+  await page.close();
 });
 
 test("ISEE stanines survive save, history rendering, and reload", async function () {

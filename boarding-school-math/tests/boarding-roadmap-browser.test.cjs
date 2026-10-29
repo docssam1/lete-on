@@ -40,6 +40,10 @@ test("roadmap shortcut bar stays usable and tracks the selected section on mobil
   const nav = page.getByRole("navigation", { name: "성장 지도 바로가기" });
   assert.deepEqual(await nav.getByRole("link").allInnerTexts(), ["성장 지도", "월별 계획", "학년 비교", "경시 기록"]);
   assert.equal(await nav.getByRole("link", { name: "성장 지도" }).getAttribute("aria-current"), "location");
+  await nav.getByRole("link", { name: "월별 계획" }).click();
+  await page.waitForFunction(function () { return location.hash === "#annual-plan"; });
+  assert.equal(await page.locator("#annual-plan").count(), 1);
+  await page.waitForFunction(function () { return document.querySelector('[data-roadmap-target="annual-plan"]').getAttribute("aria-current") === "location"; });
   await nav.getByRole("link", { name: "학년 비교" }).click();
   await page.waitForFunction(function () { return location.hash === "#grade-comparison"; });
   await page.waitForFunction(function () {

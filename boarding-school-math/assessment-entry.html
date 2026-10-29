@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./assessment-entry.css?v=20261030-1">
+  <link rel="stylesheet" href="./assessment-entry.css?v=20261030-2">
 </head>
 <body class="academy-page evidence-page">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -57,7 +57,7 @@
         <p class="form-error" id="form-error" role="alert"></p><button class="primary-submit" type="submit">비교 결과 보기 <span aria-hidden="true">→</span></button>
       </form>
 
-      <aside class="result-panel" aria-live="polite">
+      <aside class="result-panel">
         <div id="result-empty" class="result-empty"><span>02</span><h2>성적표와 선택한 과정을 함께 확인해요.</h2><p>입력한 시험 점수·비교 기준과 직접 고른 현재·목표 과목을 정리합니다. 학교별 과목 순서는 대신 정하지 않으며 시험 점수만으로 학년 등급이나 약점, 자동 배정을 만들지 않습니다.</p><ol><li>시험의 역할과 점수 단위를 구분합니다.</li><li>현재 과목과 비교 목표를 각각 선택합니다.</li><li>영역 점수는 성적표에 적힌 값 그대로 확인합니다.</li></ol></div>
         <div id="result-content" class="result-content" hidden>
           <div class="result-meta"><span id="result-state">입력 근거</span><b id="result-source">—</b></div>
@@ -70,20 +70,21 @@
           <div class="result-actions"><a id="send-to-plan" href="./learning-plan.html?goal=school-g6&fromAssessment=external">이 진도로 학습 계획 만들기</a><a id="open-material" href="./catalog.html?role=student&grade=6">연결 자료 확인</a><a id="published-resource" href="./catalog.html?role=student&grade=7" hidden>Grade 7 공개 자료 살펴보기</a></div>
         </div>
       </aside>
+      <p id="result-announcement" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></p>
     </section>
 
     <section class="assessment-history evidence-shell" aria-labelledby="assessment-history-title">
       <div class="assessment-history-heading"><div><p class="step-label">이 기기에 저장</p><h2 id="assessment-history-title">평가 기록</h2><p>시험·학년·날짜와 성적표에 적힌 점수를 각각 보관합니다. 서로 다른 시험의 점수를 한 줄로 비교하거나 학년 배정을 추정하지 않습니다.</p></div><button id="clear-assessment-history" class="history-clear" type="button">이 기기 평가 기록 지우기</button></div>
-      <div id="assessment-history-list" class="assessment-history-list" aria-live="polite"></div>
+      <div id="assessment-history-list" class="assessment-history-list"></div>
       <p class="assessment-history-empty" id="assessment-history-empty">아직 저장된 평가 기록이 없습니다. 비교 결과를 저장하면 여기에 보여요.</p>
       <p class="assessment-history-local-note">기록은 이 브라우저의 기기에 저장되며 계정 간 동기화되지 않습니다.</p>
     </section>
 
-    <section class="evidence-roles evidence-shell"><p class="step-label">왜 시험마다 다르게 읽나요?</p><div><article><span>수업 배정</span><h3>학교 PT · MAP · CTP</h3><p>현재 학습 위치와 영역별 강약점을 판단하는 근거입니다. 학교별 정책과 함께 사용합니다.</p></article><article><span>입학 준비</span><h3>SSAT · ISEE</h3><p>지원자 집단 안에서의 입학 준비 근거입니다. 높은 점수만으로 Algebra 1이나 Geometry 배정을 확정하지 않습니다.</p></article><article><span>G·MAP 진단</span><h3>문항별 최초 응답</h3><p>영역 점수 아래의 구체적인 오류 유형을 찾아 개념 교재와 워크북을 배정합니다.</p></article></div></section>
+    <section class="evidence-roles evidence-shell"><p class="step-label">왜 시험마다 다르게 읽나요?</p><div><article><span>수업 배정</span><h3>학교 PT · MAP · CTP</h3><p>현재 학습 위치와 영역별 강약점을 판단하는 근거입니다. 학교별 정책과 함께 사용합니다.</p></article><article><span>입학 준비</span><h3>SSAT · ISEE</h3><p>지원자 집단 안에서의 입학 준비 근거입니다. 높은 점수만으로 Algebra 1이나 Geometry 배정을 확정하지 않습니다.</p></article><article><span>학습 점검</span><h3>문항별 첫 응답</h3><p>개인 진단은 아직 검수 중입니다. 문항별 기록만으로 교재나 과목을 자동 배정하지 않습니다.</p></article></div></section>
   </main>
   <footer class="site-footer"><span>G·MAP · 학교 평가에서 오늘의 학습까지</span><span><a href="./index.html">전체 과정 지도</a> · <a href="./learning-plan.html">나의 학습 계획</a></span></footer>
   <script src="./assessment/external-math-evidence-engine.js?v=20261030-2"></script>
   <script src="./shared/gmap-local-learning-record.js?v=20261030-2"></script>
-  <script src="./assessment-entry.js?v=20261030-2"></script>
+  <script src="./assessment-entry.js?v=20261030-7"></script>
 </body>
 </html>

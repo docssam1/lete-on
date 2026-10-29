@@ -27,7 +27,8 @@
       </section>
       <aside class="review-report" aria-labelledby="report-title" tabindex="-1" hidden><p class="review-kicker">02 · 결과</p><h2 id="report-title" tabindex="-1">입력한 결과</h2><p id="report-intro"></p><div class="report-metrics" id="report-metrics"></div><p id="score-estimate" class="score-estimate" hidden><strong id="score-estimate-value"></strong><span>모든 문항을 표시한 입력값으로 계산한 참고치예요. 공식 성적표와 시험지 안내를 우선하세요.</span><a href="https://maa.org/student-programs/amc/" target="_blank" rel="noopener noreferrer">MAA 공식 안내 ↗</a></p><p id="score-estimate-note" class="score-estimate-note" hidden></p><div id="report-domains" class="report-domains"></div><section id="report-review-items" class="report-review-items" aria-labelledby="report-review-items-title"><h3 id="report-review-items-title">다시 볼 문항</h3><p>직접 표시한 오답과 미응답입니다. 문제지에서 다시 확인해 보세요.</p><ol id="report-review-items-list"></ol></section><div id="report-reasons" class="report-reasons"></div><p id="report-next" class="report-next"></p><div class="report-roadmap-cta"><a id="report-roadmap-link" aria-describedby="report-roadmap-note">선택한 학년의 학습 경로 보기 →</a><p id="report-roadmap-note">문항 분류와 정답률은 학년 수준을 판정하지 않습니다.</p></div><div class="diagnostic-save"><button id="save-diagnostic" type="button">복습 요약을 기기에 저장</button><p id="diagnostic-save-status" role="status" aria-live="polite"></p></div><p class="report-boundary">수상·AIME 진출·학교 과목 배정은 판단하지 않습니다.</p></aside>
     </div>
-    <section id="saved-diagnostic-history" class="saved-diagnostic-history review-shell" aria-labelledby="saved-diagnostic-title" hidden><div class="review-heading"><p class="review-kicker">이 기기에 저장</p><h2 id="saved-diagnostic-title" tabindex="-1">채점지 복습 요약</h2><p>응시 날짜와 선택한 학년·대회별 집계입니다. 문항별 답은 저장하지 않으며, 각 시험은 따로 읽고 난도나 점수 구간을 보정하지 않습니다.</p></div><div id="saved-diagnostic-list" class="saved-diagnostic-list" aria-live="polite"></div></section>
+    <section id="saved-diagnostic-history" class="saved-diagnostic-history review-shell" aria-labelledby="saved-diagnostic-title" hidden><div class="review-heading"><p class="review-kicker">이 기기에 저장</p><h2 id="saved-diagnostic-title" tabindex="-1">채점지 복습 요약</h2><p>응시 날짜와 선택한 학년·대회별 집계입니다. 문항별 답은 저장하지 않으며, 각 시험은 따로 읽고 난도나 점수 구간을 보정하지 않습니다.</p></div><div id="saved-diagnostic-list" class="saved-diagnostic-list"></div></section>
+    <p id="saved-diagnostic-announcement" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></p>
     <section class="score-history review-shell" aria-labelledby="score-history-title">
       <div class="review-heading"><p class="review-kicker">경시 · 회차별 기록</p><h2 id="score-history-title" tabindex="-1">AMC 결과를 회차별로 모아 보기</h2><p>성적표의 점수를 직접 입력하면 같은 대회끼리 날짜순으로 정리해요. 시험 난이도를 보정하거나 준비도·등급을 판정하지 않습니다.</p></div>
       <form id="score-history-form" class="score-history-form">
@@ -40,7 +41,7 @@
         <p class="score-history-scale" id="score-history-scale">AMC 8 · 0–25점</p>
         <div class="score-history-actions"><button type="submit" class="review-submit">비교 기록에 추가</button><button type="button" id="history-export" class="review-clear">JSON 파일로 저장</button><label class="history-import">기록 파일 가져오기<input id="history-import" type="file" accept="application/json,.json"></label><button type="button" id="history-clear" class="review-clear">화면 기록 비우기</button></div>
         <p id="score-history-error" class="paper-error" role="alert" hidden></p>
-        <p id="score-history-status" class="paper-error" role="status" aria-live="polite" hidden></p>
+        <p id="score-history-status" class="paper-error" role="status" aria-live="polite"></p>
       </form>
       <p class="score-history-privacy">이름과 문항별 답은 기록하지 않아요. 기록은 이 화면을 닫으면 사라집니다. 이어서 비교하려면 JSON 파일로 저장해 두었다가 다시 가져오세요.</p>
       <div id="score-history-context" class="score-history-context" aria-live="polite"></div>
@@ -54,6 +55,6 @@
   <script src="./shared/gmap-local-learning-record.js?v=20261030-3"></script>
   <script src="./competition/amc-score-history.js?v=20261030-3"></script>
   <script src="./competition/paper-review-analysis.js?v=20261030-3"></script>
-  <script src="./competition-paper-review.js?v=20261030-9"></script>
+  <script src="./competition-paper-review.js?v=20261030-14"></script>
 </body>
 </html>
