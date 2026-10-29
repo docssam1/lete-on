@@ -10,7 +10,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const load = (name) => import(pathToFileURL(path.join(here, "..", name)).href);
 const { CURRICULUM } = await load("source-data.js");
 const { loadGoldenBell, STUDY_GAMES } = await load("study-map.js");
-const { buildWeekSlides, slideLine, FIXED_LINES, voiceLine } = await load("study-deck.js");
+const { buildSessionSlides, sessionCount, slideLine, FIXED_LINES, voiceLine } = await load("study-deck.js");
 const bellData = await loadGoldenBell();
 const byId = new Map();
 const add = (line) => {
@@ -68,16 +68,19 @@ for (const file of GAME_FILES) for (const text of spokenLiterals(readFileSync(pa
 }
 {
   // 본책 번호를 눌러 여는 유사 문제 말(sheetLine)은 지금 덱이 그 번호판을 그리지 않아 녹음하지 않는다
-  const { weekTypes, testResultLine } = await load("study-deck.js");
-  const totals = new Set();
-  for (const book of CURRICULUM) for (const unit of book.units) totals.add(weekTypes(unit).length);
-  for (const total of totals) for (let right = 0; right <= total; right += 1) add(testResultLine(total, right));
+  // 데일리 테스트 4문제 · 단원 평가 10문제(유형을 못 만들면 그보다 적을 수 있어 1~10문제를 다)
+  const { testResultLine, UNIT_TEST_COUNT } = await load("study-deck.js");
+  for (let total = 1; total <= UNIT_TEST_COUNT; total += 1) for (let right = 0; right <= total; right += 1) add(testResultLine(total, right));
 }
 let decks = 0;
 for (const book of CURRICULUM) {
   for (let unitIndex = 0; unitIndex < book.units.length; unitIndex += 1) {
-    for (const slide of buildWeekSlides(book, unitIndex, bellData)) add(slideLine(slide, { book, unitIndex }));
-    decks += 1;
+    for (let part = 1; part <= sessionCount(book.units[unitIndex]); part += 1) {
+      const slides = buildSessionSlides(book, unitIndex, part, bellData);
+      const hasConcept = slides.some((slide) => slide.kind === "concept");
+      for (const slide of slides) add(slideLine(slide, { book, unitIndex, part, hasConcept }));
+      decks += 1;
+    }
   }
 }
 const lines = [...byId.values()].sort((a, b) => a.id.localeCompare(b.id)).map(({ id, text }) => ({ id, text }));

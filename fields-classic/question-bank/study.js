@@ -1,6 +1,6 @@
-import { CURRICULUM } from "./source-data.js?v=20261028m";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261029a";
-import { PHASES, FIXED_LINES, voiceLine, weekBlocks as unitWeekBlocks, weekTypes as unitWeekTypes, buildWeekSlides, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261029b";
+import { PHASES, FIXED_LINES, voiceLine, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261029f";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261028n";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -14,10 +14,11 @@ import { readRecord, saveRecord } from "./study-progress.js?v=20261028n";
 //    위 액자에 공부 순서(개념 · 게임 · 골든벨 · 공부하기 · 도착), 아래 액자에 독쌤과 이전/다음. 장이 바뀌면 그림이 그 섬 쪽으로 조금 옮겨 간다.
 //  · 게임하기에는 덱 안에 바로 뜨는 우리 게임(study-map.js STUDY_GAMES)을 먼저 둔다 — 지오메트리 게임의 계산·생김새를 가져와
 //    골든벨 풀이 순서대로 다시 만든 것(원장: 「링크를 가져오는 거 아냐. 우리 걸 써야 돼」).
-//  · 한 주 = 한 단원(원장 2026-10-27 「스스로 공부하기는 한 주 공부하는 흐름대로」): 차시로 나누지 않고 단원 전체를 한 덱으로 —
-//    개념 → 게임 → 골든벨 → 공부하기(본책 묶음마다 문제가 화면에: 직접 풀기 · 인쇄해서 풀기 · 유사 문제) → 과제 → 단원 평가(semi test, ○✕ 진단 · 약점 유형)
-//    → (그 권의 마지막 단원이면) 권별 테스트 → 도착. 문제는 문제은행 학생 화면(index.html?picks=…&as=student&embed=1)을 장 안에 띄운다.
-// 주소: ?book=book-01&unit=0&s=장번호&student=…   (예전 &part= 는 무시한다)
+//  · 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」, 7권 2단원·10권 1단원은 3번). 차시 덱 하나:
+//    (개념 → 게임(건너뛸 수 있다) → 워밍업)을 개념마다 → 공부하기(그 차시 본책 묶음: 직접 풀기 · 인쇄해서 풀기 · 유사 문제)
+//    → 오늘의 과제(칠판 글씨) → 앞 차시는 데일리 테스트 4문제 · 마지막 차시는 단원 평가 10문제(○✕ 진단 · 약점 유형)
+//    → (그 권의 마지막 단원 마지막 차시면) 권별 테스트 → 도착. 문제는 문제은행 학생 화면(index.html?picks=…&as=student&embed=1)을 장 안에 띄운다.
+// 주소: ?book=book-01&unit=0&part=1&s=장번호&student=…   (part 없으면 1차시)
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -26,7 +27,8 @@ const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&
 const book = CURRICULUM.find((entry) => entry.id === params.get("book")) || CURRICULUM[0];
 const unitIndex = Math.min(Math.max(Number(params.get("unit")) || 0, 0), book.units.length - 1);
 const unit = book.units[unitIndex];
-const { count: partCount } = unitParts(unit);
+const parts = sessionCount(unit);
+const part = Math.min(Math.max(Number(params.get("part")) || 1, 1), parts);
 const lastUnit = unitIndex === book.units.length - 1;
 const seenKey = `fields-classic-study-seen:${student}:${book.id}:${unitIndex}`;
 const seen = (() => { try { return new Set(JSON.parse(localStorage.getItem(seenKey) || "[]")); } catch { return new Set(); } })();
@@ -43,53 +45,74 @@ let ready = false;
 let bellData = null;
 
 // ── 장 만들기(study-deck.js) ─────────────────────────────
-const buildSlides = () => buildWeekSlides(book, unitIndex, bellData);
-const weekBlocks = () => unitWeekBlocks(unit);
-const weekTypes = () => unitWeekTypes(unit);
+const buildSlides = () => buildSessionSlides(book, unitIndex, part, bellData);
+const todayTypes = () => sessionTypes(unit, part);
+// 단원 평가는 단원마다 하나(권별 테스트 안내·내 학습 상황이 읽는다), 데일리 테스트는 차시마다
 const testId = `${book.id}-u${unitIndex}`;
+const dailyId = `${book.id}-u${unitIndex}-d${part}`;
 const testResult = (id = testId) => readRecord(student, "test", id);
-// 수행률·진도: 이 주(단원)에서 본 장을 적어 둔다(표지·도착·권별 테스트 안내는 빼고). 「내 학습 상황」(my-study.html)이 읽는다.
+// 수행률·진도: 이 단원에서 본 장을 차시를 합쳐 적어 둔다(표지·도착·권별 테스트 안내는 빼고). 「내 학습 상황」(my-study.html)·시작 화면이 읽는다.
+// 장 id = p<차시>:<종류>:<그 차시에서 몇 번째>
 const weekKey = `${book.id}-u${unitIndex}`;
 const COUNTED = (slide) => !["cover", "end", "booktest"].includes(slide.kind);
+let allSessions = null;   // 차시마다의 장(다른 차시는 수행률 분모로만)
 function recordVisit() {
   const slide = slides[index];
   if (!ready || !COUNTED(slide)) return;
+  allSessions ||= Array.from({ length: parts }, (_, k) => (k + 1 === part ? slides : buildSessionSlides(book, unitIndex, k + 1, bellData)));
   const same = slides.filter((entry) => entry.kind === slide.kind);
-  const id = `${slide.kind}:${same.indexOf(slide)}`;
+  const id = `p${part}:${slide.kind}:${same.indexOf(slide)}`;
   const week = readRecord(student, "week", weekKey) || {};
-  const seenIds = new Set(week.seen || []);
+  const seenIds = new Set((week.seen || []).filter((entry) => /^p\d+:/.test(entry)));
   const fresh = !seenIds.has(id);
   seenIds.add(id);
   const phases = {};
   for (const [kind] of PHASES) {
-    const all = slides.filter((entry) => entry.kind === kind).length;
-    if (all) phases[kind] = [[...seenIds].filter((entry) => entry.startsWith(`${kind}:`)).length, all];
+    const all = allSessions.reduce((sum, list) => sum + list.filter((entry) => entry.kind === kind).length, 0);
+    if (all) phases[kind] = [[...seenIds].filter((entry) => entry.split(":")[1] === kind).length, all];
   }
   // 같은 장을 다시 열 때는 마지막 장만 바꾼다(서버에 저장할 일이 덜 생기게)
-  if (!fresh && week.last === index + 1) return;
-  saveRecord(student, "week", weekKey, { total: slides.filter(COUNTED).length, seen: [...seenIds], phases, last: index + 1, unit: unit.label });
+  if (!fresh && week.last === index + 1 && week.part === part) return;
+  saveRecord(student, "week", weekKey, { total: allSessions.reduce((sum, list) => sum + list.filter(COUNTED).length, 0), seen: [...seenIds], phases, last: index + 1, part, parts, unit: unit.label });
 }
 // 문제은행 학생 화면 주소. 화면에서 풀 때는 embed, 인쇄할 때는 새 창에서 print=1
 function sheetUrl(slide, { print = false } = {}) {
-  const base = { mode: "curriculum", book: book.id, build: "1", as: "student" };
+  // 공부하기·오늘의 과제는 답 확인 때 정답만 손글씨로(풀이 글 없음)
+  const base = { mode: "curriculum", book: book.id, build: "1", as: "student", ...(["board", "homework"].includes(slide.kind) ? { hand: "1" } : {}) };
   let entries;
   if (slide.kind === "board") {
     const picks = slide.block.numbers.map(({ n, typeId, stage }) => [typeId, stage, refOf(slide.block, n), unitIndex].join("~")).join("|");
     entries = { picks, title: `${book.label} ${unitIndex + 1}단원 · 본책 ${slide.block.label}` };
   } else if (slide.kind === "homework") {
-    entries = { picks: weekTypes().map((typeId) => [typeId, "practice", "과제", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 과제` };
+    entries = { picks: todayTypes().map((typeId) => [typeId, "practice", "오늘의 과제", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 오늘의 과제` };
+  } else if (slide.kind === "daily") {
+    entries = { picks: dailyTypes(unit, part).map((typeId) => [typeId, "practice", "데일리 테스트", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 데일리 테스트`, test: "1", testId: dailyId };
   } else {
-    entries = { picks: weekTypes().map((typeId) => [typeId, "advanced", "단원 평가", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 평가`, test: "1", testId };
+    entries = { picks: unitTestTypes(unit).map((typeId) => [typeId, "advanced", "단원 평가", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 평가`, test: "1", testId };
   }
   return link("index.html", { ...base, ...entries, ...(print ? { print: "1" } : { embed: "1" }) });
+}
+// 오늘의 과제: 칠판에 손글씨로 할 일을 적어 준다(원장 2026-10-29 「과제는 오늘의 과제 하고 칠판 글씨처럼 써줘야지」)
+function chalkMarkup() {
+  const types = todayTypes();
+  const items = [
+    `과제 학습지 ${types.length}문제를 인쇄해요`,
+    ...types.slice(0, 4).map((typeId) => `${typeById(typeId)?.label || "같은 유형"} 문제 풀기`),
+    ...(types.length > 4 ? [`그 밖의 ${types.length - 4}가지 유형도 풀기`] : []),
+    "다 풀면 화면에서 답을 확인해요"
+  ];
+  return `<div class="sd-chalk" role="note"><h3>오늘의 과제</h3><p class="sd-chalk-date">${esc(unit.label)} · ${part}차시</p><ol>${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ol></div>`;
 }
 function workMarkup(slide) {
   const help = slide.kind === "board"
     ? `본책 <b>${esc(slide.block.label)}</b>과 같은 유형의 문제예요. 화면에서 풀어도 되고, 인쇄해서 풀어도 돼요. 어려우면 <b>유사 문제 풀기</b>.`
     : slide.kind === "homework"
-      ? "이번 주 <b>과제</b>예요. 인쇄해서 집에서 풀고, 화면에서 답을 확인해요."
-      : "이번 주 <b>단원 평가</b>예요. 다 풀고 채점하면 ○✕로 약점 유형을 알려 줘요.";
-  return `<div class="sd-work">
+      ? "칠판에 적힌 대로 <b>인쇄해서</b> 집에서 풀고, 화면에서 답을 확인해요."
+      : slide.kind === "daily"
+        ? `오늘 배운 것으로 <b>데일리 테스트 ${DAILY_COUNT}문제</b>. 다 풀고 채점하면 ○✕로 알려 줘요.`
+        : `이 단원 <b>단원 평가 ${UNIT_TEST_COUNT}문제</b>예요. 다 풀고 채점하면 ○✕로 약점 유형을 알려 줘요.`;
+  return `<div class="sd-work${slide.kind === "homework" ? " has-chalk" : ""}">
+    ${slide.kind === "homework" ? chalkMarkup() : ""}
     <div class="sd-work-bar"><p>${help}</p><a class="sd-btn" href="${esc(sheetUrl(slide, { print: true }))}" target="_blank" rel="noopener">🖨 인쇄해서 풀기</a></div>
     <iframe class="sd-work-frame" id="workFrame" title="${esc(slideTitle(slide))}" src="${esc(sheetUrl(slide))}"></iframe>
   </div>`;
@@ -308,8 +331,8 @@ addEventListener("resize", () => requestAnimationFrame(fitNative));
 
 // ── 화면 ──────────────────────────────────────────────────
 function renderHead() {
-  document.title = `${book.label} ${unitIndex + 1}단원 · ${unit.label}`;
-  $("eyebrow").textContent = `${book.label} ${unitIndex + 1}단원 · 이번 주`;
+  document.title = `${book.label} ${unitIndex + 1}단원 ${part}차시 · ${unit.label}`;
+  $("eyebrow").textContent = `${book.label} ${unitIndex + 1}단원 · ${part}차시`;
   $("unitTitle").textContent = unit.label;
   $("studentName").textContent = student;
   $("backLink").href = link("start.html", { book: book.id, unit: String(unitIndex) });
@@ -317,8 +340,10 @@ function renderHead() {
 // ── 그림 세계: 섬 다섯 개(그림 1672×941 안의 자리, %) ──
 // 그림의 다섯 터(아래 왼쪽 → 위 오른쪽). 그림을 바꾸면 이 자리를 다시 잰다.
 const ISLANDS = [[15, 78], [35.5, 55], [52, 38.5], [73.5, 33.5], [87.6, 15.5]];
-const STATIONS = [["concept", "개념 배우기"], ["game", "게임하기"], ["bell", "워밍업"], ["board", "공부하기"], ["homework", "과제"], ["test", "단원 평가"], ["booktest", "권별 테스트"], ["end", "도착"]];
-const visibleStations = () => STATIONS.filter(([kind]) => kind !== "booktest" || slides.some((slide) => slide.kind === "booktest"));
+const STATIONS = [["concept", "개념 배우기"], ["game", "게임하기"], ["bell", "워밍업"], ["board", "공부하기"], ["homework", "오늘의 과제"], ["daily", "데일리 테스트"], ["test", "단원 평가"], ["booktest", "권별 테스트"], ["end", "도착"]];
+// 데일리 테스트·단원 평가·권별 테스트는 그 차시에 있을 때만(앞 차시는 데일리, 마지막 차시는 단원 평가)
+const OPTIONAL = ["daily", "test", "booktest"];
+const visibleStations = () => STATIONS.filter(([kind]) => !OPTIONAL.includes(kind) ? true : ready ? slides.some((slide) => slide.kind === kind) : kind === (part < parts ? "daily" : "test"));
 const stationOf = (slide) => Math.max(0, visibleStations().findIndex(([kind]) => kind === slide.kind));
 function renderSigns() {
   const slide = slides[index];
@@ -328,7 +353,7 @@ function renderSigns() {
     const count = slides.filter((entry) => entry.kind === kind).length;
     const done = first >= 0 && first < index && here !== k;
     const state = here === k ? " is-on" : done ? " is-done" : "";
-    const note = !ready || ["end", "homework", "test", "booktest"].includes(kind) ? "" : first < 0 ? "준비 중" : `${count}장`;
+    const note = !ready || ["end", "homework", "daily", "test", "booktest"].includes(kind) ? "" : first < 0 ? "준비 중" : `${count}장`;
     return `<button type="button" class="sd-step${state}" data-jump="${first}" ${first < 0 ? "disabled" : ""} ${here === k ? 'aria-current="step"' : ""}><b>${done ? "✓" : k + 1}</b><span>${label}${note ? ` <small>${note}</small>` : ""}</span></button>`;
   }).join("");
 }
@@ -349,8 +374,9 @@ addEventListener("resize", () => placeWorld());
 
 function slideTitle(slide) {
   if (slide.kind === "board") return `본책 ${slide.block.label}`;
-  if (slide.kind === "homework") return `${unitIndex + 1}단원 과제 · ${weekTypes().length}문제`;
-  if (slide.kind === "test") return `${unitIndex + 1}단원 평가 · ${weekTypes().length}문제`;
+  if (slide.kind === "homework") return `${unitIndex + 1}단원 ${part}차시 · ${todayTypes().length}문제`;
+  if (slide.kind === "daily") return `${unitIndex + 1}단원 ${part}차시 · ${DAILY_COUNT}문제`;
+  if (slide.kind === "test") return `${unitIndex + 1}단원 평가 · ${UNIT_TEST_COUNT}문제`;
   if (slide.kind === "booktest") return `${book.label} 권별 테스트`;
   return slide.kind === "game" ? slide.title : slide.lesson.title;
 }
@@ -358,24 +384,29 @@ function slideHead(slide) {
   if (slide.kind === "cover" || slide.kind === "end" || slide.kind === "booktest") return "";
   const label = slide.kind === "bell" ? bellLabel(slide) : PHASES[phaseNo(slide.kind) - 1][1];
   const title = slideTitle(slide);
-  return `<p class="sd-kick"><span class="sd-kick-no">${phaseNo(slide.kind)}</span>${label}${slide.of ? ` <em>${slide.of}</em>` : ""}<span id="slidePage" class="sd-page"></span></p><h2>${esc(title)}</h2>`;
+  // 게임은 건너뛸 수 있다(원장 2026-10-29 「게임은 넘어갈 수 있고」) — 이어진 게임 장을 다 넘어 워밍업으로
+  const skip = slide.kind === "game" ? `<button type="button" class="sd-skip" data-act="skip-games">게임 건너뛰기 ›</button>` : "";
+  return `<p class="sd-kick"><span class="sd-kick-no">${stationOf(slide) + 1}</span>${label}${slide.of ? ` <em>${slide.of}</em>` : ""}<span id="slidePage" class="sd-page"></span>${skip}</p><h2>${esc(title)}</h2>`;
 }
+// 표지 공부 순서: 데일리 테스트·단원 평가·권별 테스트는 그 차시에 있는 것만
+const planPhases = (counts) => PHASES.filter(([kind]) => !OPTIONAL.includes(kind) || (ready ? counts[kind] : kind === (part < parts ? "daily" : "test")));
 function coverMarkup() {
   const counts = {
     concept: slides.filter((s) => s.kind === "concept").length,
     game: slides.filter((s) => s.kind === "game").length,
     bell: slides.filter((s) => s.kind === "bell").reduce((sum, s) => sum + s.lesson.original.items.length, 0),
     board: slides.filter((s) => s.kind === "board").reduce((sum, s) => sum + s.block.numbers.length, 0),
-    homework: slides.some((s) => s.kind === "homework") ? weekTypes().length : 0,
-    test: slides.some((s) => s.kind === "test") ? weekTypes().length : 0,
+    homework: slides.some((s) => s.kind === "homework") ? todayTypes().length : 0,
+    daily: slides.some((s) => s.kind === "daily") ? DAILY_COUNT : 0,
+    test: slides.some((s) => s.kind === "test") ? UNIT_TEST_COUNT : 0,
     booktest: slides.some((s) => s.kind === "booktest") ? book.source.unitTestQuestions.length : 0
   };
-  const note = { concept: `${counts.concept}개 개념`, game: `${counts.game}개 게임`, bell: `${counts.bell}문제`, board: `본책 ${counts.board}문제`, homework: `${counts.homework}문제`, test: `${counts.test}문제 · ○✕ 진단`, booktest: `${counts.booktest}문제` };
+  const note = { concept: `${counts.concept}개 개념`, game: `${counts.game}개 게임`, bell: `${counts.bell}문제`, board: `본책 ${counts.board}문제`, homework: `${counts.homework}문제 · 집에서`, daily: `${counts.daily}문제 · ○✕`, test: `${counts.test}문제 · ○✕ 진단`, booktest: `${counts.booktest}문제` };
   return `<div class="sd-cover">
-    <p class="sd-cover-kick">${esc(book.label)} ${unitIndex + 1}단원 · 이번 주 공부</p>
+    <p class="sd-cover-kick">${esc(book.label)} ${unitIndex + 1}단원 · ${part}차시${parts > 1 ? ` <small>(${parts}차시 중)</small>` : ""}</p>
     <h1>${esc(unit.label)}</h1>
     <p class="sd-cover-lead">섬을 따라 한 곳씩 가 봐요.</p>
-    <ol class="sd-plan" style="--n:${PHASES.filter(([kind]) => kind !== "booktest" || counts.booktest).length}">${PHASES.filter(([kind]) => kind !== "booktest" || counts.booktest).map(([kind, label], k) => `<li class="${ready && !counts[kind] ? "is-empty" : ""}"><b>${k + 1}</b><span>${label}</span><small>${ready ? counts[kind] ? note[kind] : "준비 중" : "불러오는 중…"}</small></li>`).join("")}</ol>
+    <ol class="sd-plan" style="--n:${planPhases(counts).length}">${planPhases(counts).map(([kind, label], k) => `<li class="${ready && !counts[kind] ? "is-empty" : ""}"><b>${k + 1}</b><span>${label}</span><small>${ready ? counts[kind] ? note[kind] : "준비 중" : "불러오는 중…"}</small></li>`).join("")}</ol>
     <button type="button" class="sd-btn primary sd-start" data-act="next" ${ready ? "" : "disabled"}>출발하기 →</button>
   </div>`;
 }
@@ -389,13 +420,19 @@ function boardMarkup(block) {
     <p class="sd-board-note">○ 표시는 한 번 눌러 본 번호예요. 다 풀었으면 다음으로 가요.</p>`;
 }
 function endMarkup() {
-  const result = testResult();
+  const lastPart = part >= parts;
+  const result = testResult(lastPart ? testId : dailyId);
+  const nextLink = !lastPart
+    ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex), part: String(part + 1) }))}">다음 · ${unitIndex + 1}단원 ${part + 1}차시 시작하기 ›</a>`
+    : !lastUnit
+      ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex + 1), part: "1" }))}">다음 · ${unitIndex + 2}단원 1차시 시작하기 ›</a>`
+      : `<a class="sd-btn primary" href="${esc(link("unit-test-viewer.html", { book: book.id }))}">${esc(book.label)} 권별 테스트 ›</a>`;
   return `<div class="sd-cover sd-end">
     <span class="sd-medal" aria-hidden="true">✓</span>
-    <h1>${unitIndex + 1}단원 한 주 공부를 마쳤어요!</h1>
-    <p class="sd-cover-lead">${esc(unit.label)}${result ? ` · 단원 평가 ${result.right} / ${result.total}` : ""}</p>
+    <h1>${lastPart ? `${unitIndex + 1}단원 공부를 마쳤어요!` : `${unitIndex + 1}단원 ${part}차시를 마쳤어요!`}</h1>
+    <p class="sd-cover-lead">${esc(unit.label)}${result ? ` · ${lastPart ? "단원 평가" : "데일리 테스트"} ${result.right} / ${result.total}` : ""}</p>
     <div class="sd-end-actions">
-      ${!lastUnit ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex + 1) }))}">다음 주 · ${unitIndex + 2}단원 시작하기 ›</a>` : `<a class="sd-btn primary" href="${esc(link("unit-test-viewer.html", { book: book.id }))}">${esc(book.label)} 권별 테스트 ›</a>`}
+      ${nextLink}
       <a class="sd-btn" href="${esc(link("my-study.html", { book: book.id }))}">내 학습 상황</a>
       <a class="sd-btn" href="${esc(link("start.html", { book: book.id }))}">단원 고르기</a>
       <button type="button" class="sd-btn" data-act="restart">처음부터 다시 하기</button>
@@ -403,10 +440,11 @@ function endMarkup() {
   </div>`;
 }
 // 독쌤 말 { id, text } — id가 있으면 독쌤 복제 음성(없으면 기기 음성)
-const lineFor = (slide) => slide.kind === "cover" && !ready ? FIXED_LINES.loading : slideLine(slide, { book, unitIndex });
+const lineFor = (slide) => slide.kind === "cover" && !ready ? FIXED_LINES.loading : slideLine(slide, { book, unitIndex, part, hasConcept: slides.some((entry) => entry.kind === "concept") });
 
+const WORK_KINDS = ["board", "homework", "daily", "test"];
 function show({ atEnd = false } = {}) {
-  cancelAuto(); closeSheet(false);
+  cancelAuto(); closeSheet(false); closeGate();
   const slide = slides[index];
   $("stage").dataset.kind = slide.kind;
   $("slideHead").innerHTML = slideHead(slide);
@@ -416,8 +454,8 @@ function show({ atEnd = false } = {}) {
   const framed = !native && ["concept", "game", "bell"].includes(slide.kind);
   $("frameWrap").hidden = !framed;
   $("slideBody").hidden = framed;
-  $("slideBody").innerHTML = slide.kind === "cover" ? coverMarkup() : ["board", "homework", "test"].includes(slide.kind) ? workMarkup(slide) : slide.kind === "booktest" ? bookTestMarkup() : slide.kind === "end" ? endMarkup() : native ? '<p class="sd-wait">준비하고 있어요…</p>' : "";
-  $("slideBody").classList.toggle("is-work", ["board", "homework", "test"].includes(slide.kind));
+  $("slideBody").innerHTML = slide.kind === "cover" ? coverMarkup() : WORK_KINDS.includes(slide.kind) ? workMarkup(slide) : slide.kind === "booktest" ? bookTestMarkup() : slide.kind === "end" ? endMarkup() : native ? '<p class="sd-wait">준비하고 있어요…</p>' : "";
+  $("slideBody").classList.toggle("is-work", WORK_KINDS.includes(slide.kind));
   const line = lineFor(slide);
   const intro = say(line.text, slide.kind === "end" ? "praise" : "talk", line.id);
   if (framed) openInFrame(slide, atEnd);
@@ -430,6 +468,7 @@ function show({ atEnd = false } = {}) {
   renderSigns();
   placeWorld();
   recordVisit();
+  if (ready && ["test", "booktest"].includes(slide.kind)) openGate(slide);
   const url = new URL(location.href);
   url.searchParams.set("s", String(index + 1));
   history.replaceState(null, "", url);
@@ -471,16 +510,78 @@ function openSheet(button) {
 }
 function closeSheet(talk = true) {
   if ($("sheet").hidden) return;
+  const weak = $("sheet").dataset.weak === "1";
   $("sheet").hidden = true;
+  delete $("sheet").dataset.weak;
+  $("sheetClose").textContent = "‹ 본책 번호판";
   $("sheetFrame").removeAttribute("src");
-  if (talk) say(SHEET_BACK.text, "talk", SHEET_BACK.id);
+  if (talk) { const back = weak ? FIXED_LINES.gateBack : SHEET_BACK; say(back.text, "talk", back.id); }
 }
 $("sheetClose").addEventListener("click", () => closeSheet());
+
+// ── 평가 전 팝업: 약점 유형 누적(원장 2026-10-29) ─────────────
+// 단원 평가 장: 이 단원 데일리 테스트(앞 차시들) 결과와 약점 유형. 권별 테스트 장: 이 권의 데일리·단원 평가 약점 유형을 모두.
+// 「약점 유형 먼저 공부하기」 → 유형마다 2문제(문제은행 학생 화면)를 덱 위 창에 띄운다. 닫으면 그 장에서 시작한다.
+const gateShown = new Set();
+function weakSummary(kind) {
+  const rows = [];
+  const units = kind === "booktest" ? book.units.map((_, k) => k) : [unitIndex];
+  for (const k of units) {
+    const count = sessionCount(book.units[k]);
+    for (let d = 1; d < count; d += 1) { const r = readRecord(student, "test", `${book.id}-u${k}-d${d}`); if (r?.marked) rows.push({ label: `${k + 1}단원 ${d}차시 데일리`, ...r, unit: k }); }
+    if (kind === "booktest") { const r = readRecord(student, "test", `${book.id}-u${k}`); if (r?.marked) rows.push({ label: `${k + 1}단원 평가`, ...r, unit: k }); }
+  }
+  const tally = new Map();
+  for (const row of rows) for (const typeId of row.weak || []) { const had = tally.get(typeId) || { typeId, unit: row.unit, n: 0 }; had.n += 1; tally.set(typeId, had); }
+  return { rows, weak: [...tally.values()].sort((a, b) => b.n - a.n) };
+}
+function openGate(slide) {
+  const { rows, weak } = weakSummary(slide.kind);
+  if (!rows.length || gateShown.has(index)) return;
+  gateShown.add(index);
+  const line = slide.kind === "booktest" ? FIXED_LINES.gateBook : FIXED_LINES.gateTest;
+  const what = slide.kind === "booktest" ? "권별 테스트" : "단원 평가";
+  const gate = document.createElement("div");
+  gate.className = "sd-gate"; gate.setAttribute("role", "dialog"); gate.setAttribute("aria-label", `${what} 전에`);
+  gate.innerHTML = `<div class="sd-gate-card">
+    <p class="sd-gate-kick">${what}를 보기 전에</p>
+    <h3>${weak.length ? `약점 유형 ${weak.length}가지` : "지난 테스트 결과"}</h3>
+    <ul class="sd-gate-results">${rows.map((row) => `<li><span>${esc(row.label)}</span><b>${row.right} / ${row.total}</b></li>`).join("")}</ul>
+    ${weak.length ? `<ol class="sd-gate-weak">${weak.slice(0, 8).map((row) => `<li>${esc(typeById(row.typeId)?.label || row.typeId)}${row.n > 1 ? ` <small>✕ ${row.n}번</small>` : ""}</li>`).join("")}</ol>` : `<p class="sd-gate-clear">약점 유형이 없어요. 바로 봐도 좋아요.</p>`}
+    <div class="sd-gate-actions">${weak.length ? `<button type="button" class="sd-btn primary" data-gate="study">약점 유형 먼저 공부하기 · ${Math.min(weak.length, 8) * 2}문제</button>` : ""}<button type="button" class="sd-btn" data-gate="go">${weak.length ? "바로" : ""} ${what} 보기 ›</button></div>
+  </div>`;
+  $("stage").append(gate);
+  say(line.text, "think", line.id);
+  gate.addEventListener("click", (event) => {
+    const act = event.target.closest("[data-gate]")?.dataset.gate;
+    if (!act) return;
+    gate.remove();
+    if (act === "study") openWeakSheet(weak.slice(0, 8));
+  });
+}
+function closeGate() { document.querySelectorAll(".sd-gate").forEach((gate) => gate.remove()); }
+function openWeakSheet(weak) {
+  const picks = weak.flatMap((row) => [0, 1].map(() => [row.typeId, "practice", "약점 유형", row.unit ?? ""].join("~"))).join("|");
+  $("sheetTitle").textContent = `약점 유형 다시 공부하기 · ${weak.length}유형`;
+  $("sheetClose").textContent = "‹ 다 했어요";
+  $("sheetFrame").src = link("index.html", { mode: "curriculum", book: book.id, picks, build: "1", as: "student", embed: "1", title: "약점 유형 다시 공부하기" });
+  $("sheet").hidden = false;
+  $("sheet").dataset.weak = "1";
+  $("sheetClose").focus({ preventScroll: true });
+}
 
 // ── 조작 ──────────────────────────────────────────────────
 $("nextBtn").addEventListener("click", next);
 $("prevBtn").addEventListener("click", prev);
 $("firstBtn").addEventListener("click", () => { cancelAuto(); closeSheet(false); go(0); });
+// 게임 건너뛰기: 이어진 게임 장을 모두 넘는다
+function skipGames() {
+  cancelAuto();
+  let target = index;
+  while (slides[target]?.kind === "game") target += 1;
+  go(target);
+}
+$("slideHead").addEventListener("click", (event) => { if (event.target.closest("[data-act='skip-games']")) skipGames(); });
 $("signs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-jump]");
   if (button && !button.disabled) { cancelAuto(); go(Number(button.dataset.jump)); }

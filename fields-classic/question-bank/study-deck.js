@@ -1,15 +1,19 @@
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261029a";
+import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261029a";
 
-// 한 주(한 단원) 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
+// 차시 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
+// 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」 · 본책이 개념 1·2 묶음으로 나뉜 대로, 7권 2단원·10권 1단원은 3번):
+//   표지 → (개념 ① → 게임 ①(건너뛸 수 있다) → 워밍업 ①) → (개념 ② → 게임 ② → 워밍업 ②) → 공부하기(그 차시 본책) → 오늘의 과제
+//   → 앞 차시는 데일리 테스트 4문제 · 마지막 차시는 단원 평가 10문제 → (그 권의 마지막 단원 마지막 차시면) 권별 테스트 → 도착
 // 독쌤 말 id는 글에서 나온다(`fcs-<종류>-<글의 FNV 해시>`): 같은 글이면 같은 음성 파일, 글을 고치면 새 id라 옛 음성을 틀지 않는다.
-// 점수처럼 그때그때 바뀌는 말(단원 평가 결과)은 id가 없어 기기 음성으로 읽는다.
+// 숫자가 바뀌는 말(테스트 점수·게임의 틀린 개수)은 나올 수 있는 경우를 다 펼쳐 녹음한다. 약한 유형 이름처럼 경우가 너무 많은 것만 말풍선 글에 둔다.
 
 export const PHASES = Object.freeze([
   ["concept", "개념 배우기"],
   ["game", "게임하기"],
   ["bell", "워밍업"],
   ["board", "공부하기"],
-  ["homework", "과제"],
+  ["homework", "오늘의 과제"],
+  ["daily", "데일리 테스트"],
   ["test", "단원 평가"],
   ["booktest", "권별 테스트"]
 ]);
@@ -27,7 +31,11 @@ export const FIXED_LINES = Object.freeze({
   bellDone: voiceLine("bell", "워밍업 문제를 다 풀었어요! 정말 잘했어요. 다음으로 넘어가요."),
   gameDone: voiceLine("game", "게임을 끝까지 해냈어요! 결과를 보고 다음으로 가요."),
   nativeDone: voiceLine("game", "게임을 끝까지 해냈어요! 이제 워밍업 문제로 가요."),
-  bellLoadFail: voiceLine("cover", "워밍업 학습을 불러오지 못했어요. 새로고침하면 다시 불러와요. 본책 문제는 지금도 풀 수 있어요.")
+  bellLoadFail: voiceLine("cover", "워밍업 학습을 불러오지 못했어요. 새로고침하면 다시 불러와요. 본책 문제는 지금도 풀 수 있어요."),
+  // 단원 평가·권별 테스트 전 팝업(원장 2026-10-29 「데일리 테스트 결과와 약점 유형이 누적되고 … 평가 보기 전 팝업」)
+  gateTest: voiceLine("test", "단원 평가를 보기 전에 데일리 테스트에서 틀린 약점 유형을 먼저 공부해 봐요. 바로 봐도 돼요."),
+  gateBook: voiceLine("booktest", "권별 테스트를 보기 전에 그동안 틀린 약점 유형을 먼저 공부해 봐요. 바로 봐도 돼요."),
+  gateBack: voiceLine("test", "약점 유형을 공부했어요. 이제 시작해 봐요.")
 });
 
 // 숫자가 바뀌는 말 — 경우가 정해져 있어 음성 목록(tools/export-study-voice.mjs)이 다 펼쳐 녹음한다
@@ -63,37 +71,58 @@ export function weekTypes(unit) {
   return out;
 }
 
-// 한 주 덱의 장: 표지 → 개념 → 게임 → 골든벨 → 공부하기 → 과제 → 단원 평가 → (마지막 단원) 권별 테스트 → 도착
-export function buildWeekSlides(book, unitIndex, bellData) {
-  const unit = book.units[unitIndex];
+export const DAILY_COUNT = 4, UNIT_TEST_COUNT = 10;
+// 차시 수(본책 개념 묶음 수)
+export const sessionCount = (unit) => unitParts(unit).count;
+// 단원의 워밍업 개념을 차시마다 앞에서부터 고르게 나눈다(4개면 2 · 2, 3개면 2 · 1)
+export function sessionLessons(book, unitIndex, bellData, part) {
   const bellBook = bellData?.books.find((entry) => entry.id === book.id);
-  const lessons = bellData ? lessonsByPart(unit, lessonsByUnit(book, bellBook).units[unitIndex]).flat() : [];
+  const all = bellData ? lessonsByUnit(book, bellBook).units[unitIndex] : [];
+  const count = sessionCount(book.units[unitIndex]);
+  const size = Math.ceil(all.length / count);
+  return all.slice((part - 1) * size, part * size);
+}
+// 그 차시 본책 묶음(활동 · 확인 · 연습 · 도전 — 문항의 유형이 속한 차시로)
+export const sessionBlocks = (unit, part) => partProblems(unit, part);
+// 그 차시 과제·데일리 테스트에 쓰는 유형(본책 번호판 순서, 겹치지 않게). 없으면 단원 전체
+export function sessionTypes(unit, part) {
+  const seen = new Set();
+  for (const block of sessionBlocks(unit, part)) for (const { typeId } of block.numbers) seen.add(typeId);
+  return seen.size ? [...seen] : weekTypes(unit);
+}
+// 유형 목록에서 n문제: 유형이 많으면 고르게 건너뛰며, 적으면 돌아가며 한 번 더
+export const spreadTypes = (types, n) => !types.length ? [] : Array.from({ length: n }, (_, k) => types.length >= n ? types[Math.floor((k * types.length) / n)] : types[k % types.length]);
+export const dailyTypes = (unit, part) => spreadTypes(sessionTypes(unit, part), DAILY_COUNT);
+export const unitTestTypes = (unit) => spreadTypes(weekTypes(unit), UNIT_TEST_COUNT);
+
+export function buildSessionSlides(book, unitIndex, part, bellData) {
+  const unit = book.units[unitIndex];
+  const parts = sessionCount(unit);
+  const lessons = sessionLessons(book, unitIndex, bellData, part);
   const list = [{ kind: "cover" }];
   for (const lesson of lessons) {
     const key = `${book.id}/${lesson.id}`;
-    // 손글씨 판서가 있으면 그 판서(덱 안에서 직접 그림), 없으면 골든벨 개념 화면(창)
+    // 손글씨 판서가 있으면 그 판서(덱 안에서 직접 그림), 없으면 워밍업 개념 화면(창)
     list.push(STUDY_BOARDS[key] ? { kind: "concept", lesson, native: { ...STUDY_BOARDS[key], board: key } } : { kind: "concept", lesson });
-  }
-  const replaced = new Set(), nativeIds = new Set();
-  for (const lesson of lessons) {
-    for (const game of STUDY_GAMES[`${book.id}/${lesson.id}`] || []) {
+    const nativeIds = new Set(), replaced = new Set();
+    for (const game of STUDY_GAMES[key] || []) {
       list.push({ kind: "game", lesson, native: game, title: game.title });
       nativeIds.add(game.id);
       for (const old of game.replaces || []) replaced.add(old);
     }
-  }
-  for (const lesson of lessons) {
-    const flow = bellData.games.flows[`${book.id}/${lesson.id}`];
-    // 흐름의 게임이 덱 안 게임(STUDY_GAMES — 연습 공방·디지털 숫자 공방·뒤집고 돌리기 공방)과 같은 것이면 또 붙이지 않는다
-    if (flow?.game && flow.game !== "drill" && !nativeIds.has(flow.game)) list.push({ kind: "game", lesson, game: flow.game, title: bellData.games.flowTitles[flow.game] || "게임" });
-    for (const [id, activity] of Object.entries(bellData.games.activities)) {
-      if (activity.lesson === lesson.id && bellData.games.handsOnBooks.get(id) === book.id && id !== flow?.game && !replaced.has(id)) list.push({ kind: "game", lesson, game: id, title: activity.title });
+    if (bellData) {
+      const flow = bellData.games.flows[key];
+      // 흐름의 게임이 덱 안 게임(STUDY_GAMES)과 같은 것이면 또 붙이지 않는다
+      if (flow?.game && flow.game !== "drill" && !nativeIds.has(flow.game)) list.push({ kind: "game", lesson, game: flow.game, title: bellData.games.flowTitles[flow.game] || "게임" });
+      for (const [id, activity] of Object.entries(bellData.games.activities)) {
+        if (activity.lesson === lesson.id && bellData.games.handsOnBooks.get(id) === book.id && id !== flow?.game && !replaced.has(id)) list.push({ kind: "game", lesson, game: id, title: activity.title });
+      }
     }
+    if (lesson.original?.items?.length) list.push({ kind: "bell", lesson });
   }
-  for (const lesson of lessons) if (lesson.original?.items?.length) list.push({ kind: "bell", lesson });
-  for (const block of weekBlocks(unit)) list.push({ kind: "board", block });
-  if (weekTypes(unit).length) list.push({ kind: "homework" }, { kind: "test" });
-  if (unitIndex === book.units.length - 1 && book.source.unitTestQuestions?.length) list.push({ kind: "booktest" });
+  for (const block of sessionBlocks(unit, part)) list.push({ kind: "board", block });
+  if (sessionTypes(unit, part).length) list.push({ kind: "homework" }, { kind: part < parts ? "daily" : "test" });
+  if (part === parts && unitIndex === book.units.length - 1 && book.source.unitTestQuestions?.length) list.push({ kind: "booktest" });
   list.push({ kind: "end" });
   // 같은 종류가 여러 장이면 「2 / 3」을 붙인다
   for (const [kind] of PHASES) {
@@ -107,15 +136,21 @@ export function buildWeekSlides(book, unitIndex, bellData) {
 export const bellLabel = (slide) => slide.lesson?.original?.title === "필수연산" ? "필수연산" : "워밍업";
 
 // 장마다 독쌤이 하는 말 { id, text }
-export function slideLine(slide, { book, unitIndex }) {
+export function slideLine(slide, { book, unitIndex, part = 1, hasConcept = true }) {
   const unit = book.units[unitIndex];
-  if (slide.kind === "cover") return voiceLine("cover", `이번 주는 ${unit.label}이에요. 개념을 배우고, 게임으로 익히고, 워밍업을 풀고, 본책 문제를 풀어요. 과제를 하고 단원 평가까지 봐요. 출발하기를 눌러 봐요.`);
+  const parts = sessionCount(unit), last = part >= parts;
+  const test = last ? "단원 평가" : "데일리 테스트";
+  if (slide.kind === "cover") return voiceLine("cover", hasConcept
+    ? `오늘은 ${unit.label} ${part}차시예요. 개념을 배우고, 게임과 워밍업으로 익힌 다음 본책 문제를 풀어요. 오늘의 과제를 하고 ${test}까지 봐요. 출발하기를 눌러 봐요.`
+    : `오늘은 ${unit.label} ${part}차시예요. 본책 문제를 풀고, 오늘의 과제를 하고 ${test}까지 봐요. 출발하기를 눌러 봐요.`);
   if (slide.kind === "concept") return voiceLine("concept", slide.native ? `${slide.lesson.title} 개념이에요. 칠판을 봐요.` : `${slide.lesson.title} 개념이에요. 한 장씩 천천히 보고 다음을 눌러요.`);
   if (slide.kind === "game") return voiceLine("game", `${slide.title} 게임이에요. 개념에서 본 풀이 순서대로 손으로 직접 해 봐요.`);
   if (slide.kind === "bell") return voiceLine("bell", `${bellLabel(slide)} 문제예요. 개념에서 배운 대로 한 문제씩 풀어 봐요.`);
   if (slide.kind === "board") return voiceLine("board", `본책 ${slide.block.label} 문제예요. 화면에서 풀어도 되고, 인쇄해서 풀어도 돼요. 어려우면 유사 문제를 풀어 봐요.`);
-  if (slide.kind === "homework") return voiceLine("homework", "이번 주 과제예요. 인쇄해서 집에서 풀고, 다 풀면 화면에서 답을 확인해요.");
-  if (slide.kind === "test") return voiceLine("test", "단원 평가예요. 다 풀고 채점하기를 누르면 맞은 것과 틀린 것을 표시해요. 약한 유형은 다시 공부해요.");
+  if (slide.kind === "homework") return voiceLine("homework", "오늘의 과제예요. 칠판에 적힌 대로 인쇄해서 집에서 풀고, 다 풀면 화면에서 답을 확인해요.");
+  if (slide.kind === "daily") return voiceLine("test", `데일리 테스트예요. 오늘 배운 것으로 ${DAILY_COUNT === 4 ? "네" : DAILY_COUNT} 문제를 풀어요. 다 풀고 채점하기를 누르면 맞은 것과 틀린 것을 표시해요.`);
+  if (slide.kind === "test") return voiceLine("test", "단원 평가예요. 이 단원에서 배운 것으로 열 문제를 풀어요. 다 풀고 채점하기를 누르면 맞은 것과 틀린 것을 표시해요. 약한 유형은 다시 공부해요.");
   if (slide.kind === "booktest") return voiceLine("booktest", `${book.label}을 다 공부했어요! 이제 권별 테스트를 풀어요. 채점하면 약한 유형을 알려 줘요.`);
-  return voiceLine("end", `${unitIndex + 1}단원 한 주 공부를 다 마쳤어요! 정말 잘했어요.`);
+  return voiceLine("end", last ? `${unitIndex + 1}단원 공부를 다 마쳤어요! 정말 잘했어요.` : `${unitIndex + 1}단원 ${part}차시 공부를 다 마쳤어요! 다음에는 ${part + 1}차시를 공부해요.`);
 }
+

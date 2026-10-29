@@ -127,3 +127,57 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .ms-title strong { font-size: 17px; }
   .ms-student { padding: 5px 10px; }
 }
+
+/* 학습 진도표(plan.html, 원장 2026-10-29) */
+.pl-print { min-height: 38px; white-space: nowrap; }
+.pl-setup { display: grid; gap: 12px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+.pl-setup h2, .pl-table-wrap h2 { margin: 0; font-size: 17px; }
+.pl-table-wrap h2 small { color: var(--muted); font-size: 13px; font-weight: 500; }
+.pl-fields { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: end; }
+.pl-field { display: grid; gap: 4px; }
+.pl-field > span:first-child, .pl-add label span { color: var(--muted); font-size: 12.5px; font-weight: 600; }
+.pl-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.pl-setup :is(input[type=date], select) { min-height: 40px; padding: 6px 10px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; font: inherit; color: inherit; }
+.pl-days { display: flex; gap: 4px; }
+.pl-days button { width: 40px; height: 40px; border: 1px solid var(--line-strong); border-radius: 50%; background: #fff; font-weight: 700; }
+.pl-days button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: #fff; }
+.pl-check { display: flex; align-items: center; gap: 6px; min-height: 40px; font-weight: 600; }
+.pl-check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.pl-adds { display: flex; flex-wrap: wrap; gap: 12px 24px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.pl-add { display: flex; align-items: end; gap: 8px; }
+.pl-add label { display: grid; gap: 4px; }
+.pl-behind { color: var(--terra); }
+.pl-table-wrap { display: grid; gap: 10px; }
+.pl-table { width: 100%; border-collapse: collapse; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.pl-table th, .pl-table td { padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+.pl-table thead th { background: var(--paper-dim); color: var(--muted); font-size: 12.5px; }
+.pl-table td:first-child { width: 120px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pl-table td:nth-child(3) { width: 120px; }
+.pl-table td:last-child { width: 96px; text-align: right; }
+.pl-table td a { text-decoration: none; }
+.pl-table td a span { color: var(--muted); font-size: 13px; }
+.pl-table td small { display: block; color: var(--muted); font-size: 12px; }
+.pl-month th { background: var(--accent-soft); color: var(--accent-ink); font-size: 14px; }
+.pl-rest td { color: var(--muted); background: repeating-linear-gradient(135deg, transparent 0 8px, rgba(0,0,0,0.025) 8px 16px); }
+.pl-absent td { color: var(--terra); background: #fbf0ea; }
+.pl-makeup td:first-child { color: var(--accent-ink); }
+.pl-tag { padding: 1px 6px; border-radius: 99px; background: var(--accent); color: #fff; font-size: 11px; font-style: normal; }
+tr.is-today td { box-shadow: inset 0 2px 0 var(--gold), inset 0 -2px 0 var(--gold); }
+tr.is-done td { color: var(--muted); }
+.pl-state { font-size: 13px; font-weight: 600; color: var(--muted); }
+.pl-state.is-done { color: var(--accent-ink); }
+.pl-state.is-now { color: var(--gold); }
+.pl-state.is-late { color: var(--terra); }
+.pl-act { padding: 5px 10px; border: 1px solid var(--line-strong); border-radius: 6px; background: #fff; font-size: 13px; }
+.pl-act:hover { border-color: var(--terra); color: var(--terra); }
+@media (max-width: 760px) {
+  .pl-table td:first-child { width: 86px; }
+  .pl-table td:nth-child(3) { width: auto; }
+  .pl-table th, .pl-table td { padding: 8px; font-size: 13.5px; }
+}
+@media print {
+  .ms-header .ms-back, .pl-print, .pl-setup, .pl-act, .ms-note { display: none !important; }
+  .ms-header { position: static; }
+  body { background: #fff; }
+  .pl-table tr { break-inside: avoid; }
+}

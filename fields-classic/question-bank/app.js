@@ -3351,6 +3351,8 @@ function watermarkMarkup() {
 }
 
 // 학생 화면: 답을 쓰고 「답 확인」. 처음 틀리면 다시 생각하게 하고, 두 번째에 정답과 풀이를 연다(먼저 생각하게).
+// &hand=1(스스로 공부 덱의 공부하기·오늘의 과제): 풀이 글 없이 정답만 손글씨 필기로(원장 2026-10-29 「답 확인하기 누르면 필기만」)
+const handAnswers = params.get("hand") === "1";
 function studentCheckMarkup(question, index) {
   const picture = answerVisualMarkup(question);
   const typed = !["drawing", "visual-fill"].includes(question.responseKind);
@@ -3358,7 +3360,7 @@ function studentCheckMarkup(question, index) {
     <div class="student-check-actions"><button type="button" class="student-check-button" data-student-check="${index}">${typed ? "답 확인" : "정답 보기"}</button>
       ${question.generationCase?.mode === "source" ? "" : `<button type="button" data-question-action="replace" data-question-index="${index}">유사 문제 풀기</button>`}</div>
     <p class="student-check-message" role="status"></p>
-    <div class="student-answer" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${question.answer}</div>` : `<span>${question.answer}</span>`}${question.solution ? `<p><b>풀이</b> ${question.solution}</p>` : ""}</div>
+    <div class="student-answer${handAnswers ? " is-hand" : ""}" hidden><strong>정답</strong>${picture ? `${picture}<div class="answer-text">${question.answer}</div>` : `<span>${question.answer}</span>`}${question.solution && !handAnswers ? `<p><b>풀이</b> ${question.solution}</p>` : ""}</div>
   </div>`;
 }
 

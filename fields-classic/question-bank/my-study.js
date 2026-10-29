@@ -11,7 +11,7 @@ const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const link = (page, entries) => `./${page}?${new URLSearchParams({ student, ...entries })}`;
-const PHASES = [["concept", "개념"], ["game", "게임"], ["bell", "워밍업"], ["board", "공부하기"], ["homework", "과제"], ["test", "단원 평가"]];
+const PHASES = [["concept", "개념"], ["game", "게임"], ["bell", "워밍업"], ["board", "공부하기"], ["homework", "오늘의 과제"], ["daily", "데일리"], ["test", "단원 평가"]];
 let bookId = CURRICULUM.some((book) => book.id === params.get("book")) ? params.get("book") : null;
 let records = new Map();
 let synced = false;
@@ -57,7 +57,7 @@ function renderWeeks(book, state) {
       const [seen, all] = week?.phases?.[kind] || [0, 0];
       return `<li class="${all && seen >= all ? "is-done" : seen ? "is-part" : ""}"><b>${label}</b><span>${all ? `${seen} / ${all}장` : "–"}</span></li>`;
     }).join("");
-    const go = week ? link("study.html", { book: book.id, unit: String(index), s: String(week.last || 1) }) : link("study.html", { book: book.id, unit: String(index) });
+    const go = week ? link("study.html", { book: book.id, unit: String(index), part: String(week.part || 1), s: String(week.last || 1) }) : link("study.html", { book: book.id, unit: String(index), part: "1" });
     return `<li class="ms-week${rate >= 100 ? " is-done" : week ? " is-on" : ""}">
       <div class="ms-week-head"><span class="ms-week-no">${index + 1}주</span><b>${esc(unit.label)}</b><em>${rate}%</em></div>
       <i class="ms-bar" style="--rate:${rate}%"></i>
@@ -78,6 +78,8 @@ function renderWeeks(book, state) {
 function renderWeak(book, state) {
   const sources = new Map();
   for (const week of state.weeks) for (const typeId of week.test?.weak || []) sources.set(typeId, [...(sources.get(typeId) || []), `${week.index + 1}주 단원 평가`]);
+  // 데일리 테스트(차시마다) 약점도 모은다(원장 2026-10-29 「데일리 테스트 결과와 약점 유형 누적」)
+  for (const week of state.weeks) for (let d = 1; d <= 3; d += 1) for (const typeId of get("test", `${week.key}-d${d}`)?.weak || []) sources.set(typeId, [...(sources.get(typeId) || []), `${week.index + 1}주 ${d}차시 데일리`]);
   for (const typeId of state.bookTest?.weak || []) sources.set(typeId, [...(sources.get(typeId) || []), "권별 테스트"]);
   const weak = [...sources].map(([typeId, where]) => ({ type: typeById(typeId), where })).filter((entry) => entry.type);
   if (!weak.length) {
@@ -106,6 +108,7 @@ function render() {
 }
 
 $("studentName").textContent = student;
+$("planLink").href = link("plan.html", {});
 // 머리줄: 로그인했으면 로그아웃, 아니면 로그인(승인 페이지)
 function paintWho() {
   const me = loggedIn();

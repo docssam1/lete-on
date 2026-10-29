@@ -1602,3 +1602,9 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
 .book02-visual .b2-balance-set>strong{flex-basis:100%}
 @media print{.book02-visual .b2-balance-set>.b2-scale{width:46mm}}
 .book02-visual .b2-scale-svg .stand{display:inline}
+
+/* 손글씨 정답(스스로 공부 덱 &hand=1): 선생님이 빨간 펜으로 적어 준 것처럼 */
+@font-face{font-family:'FC Hand';src:url('./assets/fonts/nm-lesson-hand.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+.student-answer.is-hand{border-left-color:#c8463a;background:#fff8ec;color:#c8463a;font-family:'FC Hand','Nanum Pen Script',cursive;font-size:26px;line-height:1.25}
+.student-answer.is-hand strong{font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:13px;color:#8a5a3a}
+.student-answer.is-hand .answer-text,.student-answer.is-hand>span{font-size:28px}

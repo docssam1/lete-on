@@ -225,3 +225,12 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
 .st-links .st-my { font-weight: 700; color: var(--accent-ink); }
 .st-login { padding: 6px 12px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink); font-size: 13px; text-decoration: none; }
 .st-login:hover { border-color: var(--accent); color: var(--accent-ink); }
+
+/* 차시(원장 2026-10-29 「1단원을 2번으로 끊어」): 차시마다 공부 순서 + 시작 단추 */
+.st-sessions { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.st-session { display: grid; grid-template-rows: auto 1fr auto; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #fbfaf7; }
+.st-session.is-on { border-color: var(--accent, #2f6b4f); box-shadow: 0 0 0 2px var(--accent-soft, #e3efe7); }
+.st-session h4 { margin: 0; font-size: 18px; }
+.st-session .st-week li { grid-template-columns: 30px 120px minmax(0, 1fr); }
+.st-session .st-week-start { margin: 0; }
+@media (max-width: 560px) { .st-session .st-week li { grid-template-columns: 28px minmax(0, 1fr); } }

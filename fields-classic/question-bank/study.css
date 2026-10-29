@@ -228,3 +228,32 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
   .sd-work-bar p { display: none; }
   .sd-work-bar .sd-btn { min-height: 34px; padding: 4px 12px; font-size: 13px; }
 }
+
+/* 오늘의 과제: 칠판 손글씨(원장 2026-10-29 「과제는 오늘의 과제 하고 칠판 글씨처럼 써줘야지」) — 판서와 같은 손글씨(FC Hand) */
+@font-face { font-family: 'FC Hand'; src: url('./assets/fonts/nm-lesson-hand.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+.sd-work.has-chalk { grid-template-rows: auto auto minmax(0, 1fr); }
+.sd-chalk { position: relative; margin: 12px 14px 10px; padding: 14px 22px 16px; border: 8px solid #a8784a; border-radius: 10px; background: radial-gradient(120% 140% at 30% 20%, #3f5f4c 0%, #2f4a3b 60%, #283f33 100%); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06), 0 6px 0 rgba(90,60,30,0.25); color: #f4f1e6; font-family: 'FC Hand', 'Nanum Pen Script', cursive; }
+.sd-chalk h3 { margin: 0; font-size: 34px; font-weight: 400; line-height: 1.1; color: #fff7c8; letter-spacing: 0.02em; }
+.sd-chalk-date { position: absolute; top: 16px; right: 22px; margin: 0; font-size: 20px; color: rgba(244,241,230,0.75); }
+.sd-chalk ol { margin: 8px 0 0; padding-left: 1.4em; font-size: 24px; line-height: 1.35; }
+.sd-chalk li::marker { color: #ffd9a0; }
+@media (max-width: 700px) {
+  .sd-chalk { margin: 8px; padding: 10px 14px 12px; border-width: 6px; }
+  .sd-chalk h3 { font-size: 26px; }
+  .sd-chalk-date { position: static; font-size: 16px; }
+  .sd-chalk ol { font-size: 19px; }
+}
+/* 게임 건너뛰기 */
+.sd-skip { margin-left: 10px; padding: 3px 12px; border: 1.5px solid var(--line-strong); border-radius: 999px; background: #fff; color: var(--ink); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.sd-skip:hover { border-color: var(--v); color: var(--v); }
+/* 평가 전 팝업: 약점 유형 누적 */
+.sd-gate { position: absolute; inset: 0; z-index: 6; display: grid; place-items: center; padding: 16px; background: rgba(43, 37, 64, 0.38); }
+.sd-gate-card { width: min(520px, 100%); max-height: 100%; overflow: auto; padding: 22px 24px; border-radius: 20px; background: #fff; box-shadow: 0 18px 50px rgba(43, 37, 64, 0.28); }
+.sd-gate-kick { margin: 0; color: var(--v); font-size: 13px; font-weight: 700; }
+.sd-gate-card h3 { margin: 4px 0 12px; font-size: 22px; }
+.sd-gate-results { display: grid; gap: 6px; margin: 0 0 12px; padding: 0; list-style: none; }
+.sd-gate-results li { display: flex; justify-content: space-between; padding: 8px 12px; border-radius: 10px; background: var(--v-soft, #f6f1fb); }
+.sd-gate-weak { margin: 0 0 14px; padding-left: 1.3em; line-height: 1.7; }
+.sd-gate-weak small { color: #c0392b; font-weight: 700; }
+.sd-gate-clear { margin: 0 0 14px; color: var(--muted); }
+.sd-gate-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }

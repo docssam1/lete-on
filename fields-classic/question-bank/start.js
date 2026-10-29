@@ -1,5 +1,5 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261028m";
-import { lessonsByUnit, lessonsByPart, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261029a";
+import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261029a";
 import { readRecord, weekRate, loggedIn } from "./study-progress.js?v=20261028n";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
 
@@ -135,34 +135,38 @@ function renderSelfUnits(book) {
     const problems = Array.from({ length: count }, (_, k) => problemCount(unit, k + 1)).reduce((a, b) => a + b, 0);
     const key = `${book.id}-u${index}`, rate = weekRate(readRecord(student, "week", key), readRecord(student, "test", key));
     const test = readRecord(student, "test", key);
-    return `<button type="button" class="st-unit-card" data-unit="${index}"><span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${index + 1}주 · 본책 ${problems}문항 · 과제 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
+    return `<button type="button" class="st-unit-card" data-unit="${index}"><span class="st-unit-no">${String(index + 1).padStart(2, "0")}</span><b>${esc(unit.label)}</b><small>${index + 1}주 · ${count}차시 · 본책 ${problems}문항 · 단원 평가</small>${rate ? `<span class="st-unit-rate" style="--rate:${rate}%"><em>수행률 ${rate}%</em>${test?.marked ? `<em>단원 평가 ${test.right}/${test.total}</em>` : ""}</span>` : ""}<i aria-hidden="true">›</i></button>`;
   }).join("")}${book.source.unitTestQuestions?.length ? `<a class="st-unit-card st-book-test" href="${esc(link("unit-test-viewer.html", { book: book.id }))}"><span class="st-unit-no">✓</span><b>${esc(book.label)} 권별 테스트</b><small>${book.units.length}단원을 마치면 · ${book.source.unitTestQuestions.length}문제 · ○✕ 진단</small><i aria-hidden="true">›</i></a>` : ""}</div>`;
 }
-// 한 주 = 한 단원(원장 2026-10-27 「스스로 공부하기는 한 주 공부하는 흐름대로」): 대단원을 누르면 그 주의 공부 순서를 보여 주고
-// 「이번 주 공부 시작하기」 하나로 덱(study.html)을 연다. 차시로 나누지 않는다.
+// 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」): 대단원을 누르면 차시마다 공부 순서를 보여 주고
+// 차시마다 「N차시 공부 시작하기」로 덱(study.html?part=N)을 연다.
 function renderParts() {
   const book = activeBook(), unit = book.units[view.unit];
   $("unitTitle").innerHTML = `<span>${String(view.unit + 1).padStart(2, "0")}</span>${esc(unit.label)} <small>${view.unit + 1}주</small>`;
   const { count } = unitParts(unit);
-  let titles = [];
-  if (goldenBell) {
-    const bellBook = goldenBell.books.find((entry) => entry.id === book.id);
-    titles = lessonsByPart(unit, lessonsByUnit(book, bellBook).units[view.unit]).flat().map((lesson) => lesson.title);
-  }
-  const problems = Array.from({ length: count }, (_, k) => problemCount(unit, k + 1)).reduce((a, b) => a + b, 0);
+  const bellBook = goldenBell?.books.find((entry) => entry.id === book.id);
+  const all = goldenBell ? lessonsByUnit(book, bellBook).units[view.unit] : [];
+  const size = Math.ceil(all.length / count);
   const last = view.unit === book.units.length - 1;
+  const week = readRecord(student, "week", `${book.id}-u${view.unit}`);
   const result = readRecord(student, "test", `${book.id}-u${view.unit}`);
-  const steps = [
-    ["개념 배우기", titles.length ? titles.join(" · ") : "워밍업 개념"],
-    ["게임하기", "풀이를 손으로 해 보기"],
-    ["워밍업", "워밍업 문항 풀기"],
-    ["공부하기", `본책 ${problems}문항 · 화면에서 · 인쇄해서 · 유사 문제`],
-    ["과제", "집에서 풀 과제"],
-    ["단원 평가", result ? `○✕ 진단 · ${result.right} / ${result.total}` : "다 풀고 ○✕ 진단 · 약점 유형 다시 공부"],
-    ...(last && book.source.unitTestQuestions?.length ? [["권별 테스트", `${book.label} ${book.source.unitTestQuestions.length}문제 · 4단원을 마치면`]] : [])
-  ];
-  $("partList").innerHTML = `<a class="st-week-start st-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(view.unit) }))}">이번 주 공부 시작하기 ›</a>
-    <ol class="st-week">${steps.map(([label, note], k) => `<li><b>${k + 1}</b><span>${esc(label)}</span><small>${esc(note)}</small></li>`).join("")}</ol>`;
+  const sessions = Array.from({ length: count }, (_, k) => {
+    const part = k + 1, lessons = all.slice(k * size, part * size);
+    const daily = readRecord(student, "test", `${book.id}-u${view.unit}-d${part}`);
+    const lastPart = part === count;
+    const steps = [
+      ...(lessons.length ? [["개념 → 게임 → 워밍업", lessons.map((lesson) => lesson.title).join(" · ")]] : []),
+      ["공부하기", `본책 ${problemCount(unit, part)}문항 · 화면에서 · 인쇄해서 · 유사 문제`],
+      ["오늘의 과제", "칠판에 적힌 과제 · 집에서"],
+      lastPart ? ["단원 평가", result ? `10문제 · ${result.right} / ${result.total}` : "10문제 · ○✕ 진단 · 약점 유형"] : ["데일리 테스트", daily ? `4문제 · ${daily.right} / ${daily.total}` : "4문제 · ○✕"],
+      ...(lastPart && last && book.source.unitTestQuestions?.length ? [["권별 테스트", `${book.label} ${book.source.unitTestQuestions.length}문제 · ${book.units.length}단원을 마치면`]] : [])
+    ];
+    const on = week?.part === part;
+    return `<section class="st-session${on ? " is-on" : ""}"><h4>${part}차시</h4>
+      <ol class="st-week">${steps.map(([label, note], i) => `<li><b>${i + 1}</b><span>${esc(label)}</span><small>${esc(note)}</small></li>`).join("")}</ol>
+      <a class="st-week-start st-btn${on || (!week && part === 1) ? " primary" : ""}" href="${esc(link("study.html", { book: book.id, unit: String(view.unit), part: String(part), ...(on ? { s: String(week.last || 1) } : {}) }))}">${part}차시 ${on ? "이어서 하기" : "공부 시작하기"} ›</a></section>`;
+  });
+  $("partList").innerHTML = `<div class="st-sessions">${sessions.join("")}</div>`;
 }
 
 function renderStudy() {
@@ -282,6 +286,7 @@ $("studentName").textContent = student;
 $("introLink").href = link("home.html", {});
 $("bankLink").href = link("index.html", {});
 $("myStudyLink").href = link("my-study.html", { book: view.bookId });
+$("planLink").href = link("plan.html", { book: view.bookId });
 // 로그인(승인 페이지): 로그인했으면 「로그인됨」, 선생님이면 선생님 보기로
 {
   const me = loggedIn();
