@@ -36,7 +36,7 @@
       ? `<p class="source52-cube-box-hint">도움말: 방의 길이를 모두 cm로 바꾼 뒤, 각 방향에서 상자 한 변 길이로 나누어 들어가는 개수를 구해 보세요.</p>` : "";
     const extra = difficultyOffset === 1
       ? `<p>각 방향에 남는 공간을 확인하고, 상자를 더 넣을 수 없는 까닭을 설명하세요.</p>` : "";
-    const prompt = `<div class="source52-cube-box-question"><p>가로 ${room[0] / 100}m, 세로 ${room[1] / 100}m, 높이 ${room[2] / 100}m인 창고 안에 가로, 세로, 높이가 모두 ${side}cm인 상자를 넣으려고 한다. 창고에는 최대 몇 개까지 상자를 넣을 수 있겠는가?</p>${diagram(room, side)}${extra}${support}</div>`;
+    const prompt = `<div class="source52-cube-box-question"><p>가로 ${room[0] / 100}m, 세로 ${room[1] / 100}m, 높이 ${room[2] / 100}m인 창고 안에 가로, 세로, 높이가 모두 ${side}cm인 상자를 넣으려고 한다. 상자의 각 모서리를 창고의 가로·세로·높이 방향과 평행하게 놓을 때, 창고에 최대 몇 개까지 넣을 수 있겠는가?</p>${diagram(room, side)}${extra}${support}</div>`;
     const solution = `<div class="source52-cube-box-solution"><ol><li>창고의 세 길이를 cm로 나타내면 ${fmt(room[0])}cm, ${fmt(room[1])}cm, ${fmt(room[2])}cm입니다.</li><li>각 방향에 들어가는 상자 수는 각각 ${fmt(room[0])}÷${side}=${fmt(counts[0])}개, ${fmt(room[1])}÷${side}=${fmt(counts[1])}개, ${fmt(room[2])}÷${side}=${fmt(counts[2])}개입니다.</li><li>남는 길이는 각 방향 ${remainders.map(value => `${value}cm`).join(", ")}이므로 같은 방향으로 상자를 더 넣을 수 없습니다.</li><li>${fmt(counts[0])}×${fmt(counts[1])}×${fmt(counts[2])}=${fmt(answer)}개입니다.</li></ol></div>`;
     return {
       prompt: `<div data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${variant}" data-variant="${variant}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}">${prompt}</div>`,

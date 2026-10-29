@@ -18,6 +18,8 @@ for (let variant = 0; variant < api.pools.length; variant++) for (const difficul
   assert.equal(item.publisherAnswerVerified, false);
   assert.equal(item.handwrittenAnswerVerified, false);
   assert.match(item.prompt, /<table class="source52-population-bar-table">/);
+  assert.match(item.prompt, /가상 인구 자료/);
+  assert.doesNotMatch(item.prompt, /부산광역시|인천광역시|대전광역시|작년 1월/);
   assert.match(item.prompt, /10만 명을 5mm/);
   const rows = [...item.prompt.matchAll(/<tr><th scope="row">([^<]+)<\/th><td>([\d,]+)명<\/td><\/tr>/g)];
   assert.equal(rows.length, 3);

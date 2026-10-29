@@ -13,6 +13,7 @@ const configurations = [];
 for (let variant = 0; variant < api.pools.length; variant++) for (const difficulty of [-1, 0, 1]) {
   const item = api.getQuestion(variant, difficulty);
   assert(item, `missing ${variant}/${difficulty}`);
+  assert.match(item.prompt, /창고의 가로·세로·높이 방향과 평행/);
   const svg = item.prompt.match(/<svg\b[\s\S]*?<\/svg>/)?.[0];
   assert(svg, "Problem must include the labeled room-and-cube diagram");
   assert.match(svg, /data-source52-cube-box="true"/);

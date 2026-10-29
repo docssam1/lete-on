@@ -669,7 +669,8 @@
       "implementationStatus": "review-locked",
       "reviewReason": "인쇄 9쪽 조건과 필요한 그림을 직접 대조했습니다. 기존 창작 유사문항과 연결하며 원문은 보호 잠금 유지, 출판사 정답 미대조.",
       "syntheticRuntimeTypeId": "5-2-u1-e3-mission-3-cube-box-count",
-      "publisherKeyVerified": false
+      "publisherKeyVerified": false,
+      "sourceReviewCorrection20261030": "원문은 창고에 정육면체 상자를 넣는 최대 개수를 묻는다. 유사문항은 풀이의 전제대로 상자 모서리를 창고의 가로·세로·높이 방향과 평행하게 놓는 조건을 명시한다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-4",
@@ -688,7 +689,8 @@
       "implementationStatus": "review-locked",
       "reviewReason": "인쇄 9쪽 조건과 필요한 그림을 직접 대조했습니다. 기존 창작 유사문항과 연결하며 원문은 보호 잠금 유지, 출판사 정답 미대조.",
       "syntheticRuntimeTypeId": "5-2-u1-e3-mission-4-mat-cost",
-      "publisherKeyVerified": false
+      "publisherKeyVerified": false,
+      "sourceReviewCorrection20261030": "원문은 두 마트의 스케치북 묶음 가격을 비교한다. 유사문항은 풀이와 같이 두 마트 중 한 곳에서만 구매함을 명시한다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-5",
@@ -707,7 +709,8 @@
       "implementationStatus": "review-locked",
       "reviewReason": "인쇄 9쪽 조건과 필요한 그림을 직접 대조했습니다. 기존 창작 유사문항과 연결하며 원문은 보호 잠금 유지, 출판사 정답 미대조.",
       "syntheticRuntimeTypeId": "5-2-u1-e3-mission-5-bar-graph-length",
-      "publisherKeyVerified": false
+      "publisherKeyVerified": false,
+      "sourceReviewCorrection20261030": "원문은 실제 광역시 인구를 제시하지만 수치를 바꾼 유사문항은 가·나·다 도시의 가상 인구 자료로 표시한다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-6",
