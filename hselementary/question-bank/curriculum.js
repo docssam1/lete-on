@@ -2775,6 +2775,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 6 유사문항",sourceSection:"mission",sourcePdfPage:25,sourcePrintedPage:29,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 조건을 대조하고 창작 도형의 길이, 합동과 교차각을 검증했습니다.",generatorKey:"source52EquilateralCrossingAnglesSyntheticPage29Mission6",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
 
+  const source52CongruenceApplicationTwo = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ②");
+  if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t => t.id === "5-2-u3-e4-example-1")) {
+    const id="5-2-u3-e4-example-1",name="원에서 같은 현과 중심각";
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 4-1 유사문항",sourceSection:"example",sourcePdfPage:26,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 도형의 현, 반지름과 중심각을 검증했습니다.",generatorKey:"source52EqualChordsCenterAnglesSyntheticPage30Example41",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52Application = source52Unit1?.subunits.find(subunit => subunit.name === "어림하기의 활용 · 개념탐구 3 원문 연결");
   if (source52Application) for (const [n,name] of [[1,"어림한 방법 모두 찾기"],[2,"단위로 파는 리본의 가격"]]) {
