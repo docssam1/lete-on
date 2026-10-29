@@ -1,0 +1,9 @@
+.source52-p21m5-question{display:grid;gap:.35rem;max-width:44rem;margin:.4rem auto}.source52-p21m5-question p{margin:.2rem 0;line-height:1.65}.source52-p21m5-numberline{display:block;width:min(620px,100%);height:auto;margin:.2rem auto;overflow:visible}.source52-p21m5-baseline{fill:#222;stroke:#222;stroke-width:2.2}.source52-p21m5-arc{fill:none;stroke:#555;stroke-width:1.5;stroke-dasharray:2.5 3.5}.source52-p21m5-division-mark{fill:none;stroke:#222;stroke-width:1.7}.source52-p21m5-tick{fill:none;stroke:#222;stroke-width:1.8}.source52-p21m5-tick.is-target{stroke:#222;stroke-width:2.6}.source52-p21m5-target-dot{fill:#fff;stroke:#222;stroke-width:2}.source52-p21m5-target-dot.is-solved{fill:#fff}.source52-p21m5-target-label{fill:#222;font-size:18px;font-weight:700}.source52-p21m5-endpoint{fill:#222;font-size:26px;font-weight:600}.source52-p21m5-result{fill:#222;font-size:22px;font-weight:700}
+
+.source52-p21m5-fraction path{fill:none;stroke:currentColor;stroke-width:1.3}.source52-p21m5-endpoint.source52-p21m5-fraction{color:#222}.source52-p21m5-result.source52-p21m5-fraction{color:#222}
+.source52-p21m5-numberline .source52-p21m5-fraction text{font-size:inherit;font-weight:inherit;fill:inherit;dominant-baseline:auto}
+.source52-p21m5-numberline .source52-p21m5-fraction text[text-anchor="end"]{text-anchor:end}
+.geometry-diagram.source52-p21m5-numberline .source52-p21m5-baseline{stroke:#222;fill:#222}
+.geometry-diagram.source52-p21m5-numberline .source52-p21m5-arc,.geometry-diagram.source52-p21m5-numberline .source52-p21m5-division-mark,.geometry-diagram.source52-p21m5-numberline .source52-p21m5-tick,.geometry-diagram.source52-p21m5-numberline .source52-p21m5-target-dot{stroke:#222}
+.geometry-diagram.source52-p21m5-numberline .source52-p21m5-target-label{fill:#222;font-size:22px;font-weight:700}
+.geometry-diagram.source52-p21m5-numberline .source52-p21m5-endpoint{fill:#222;color:#222}

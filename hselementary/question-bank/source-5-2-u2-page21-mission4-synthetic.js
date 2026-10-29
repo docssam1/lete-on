@@ -1,0 +1,27 @@
+(function(root,factory){"use strict";const api=factory();if(typeof module==="object"&&module.exports)module.exports=api;root.HSE_SOURCE_52_U2_PAGE21_MISSION4=api;api.install(root)})(typeof window!=="undefined"?window:globalThis,function(){
+  "use strict";
+  const id="5-2-u2-e4-mission-4-synthetic",key="source52U2Page21Mission4",pools=Object.freeze([
+    Object.freeze({denominator:8,fraction:[3,4],mixed:[3,5,9],upperExclusive:20}),
+    Object.freeze({denominator:9,fraction:[3,5],mixed:[3,3,4],upperExclusive:24}),
+    Object.freeze({denominator:11,fraction:[2,3],mixed:[3,3,10],upperExclusive:30})
+  ]);
+  const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a),esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  function solve(pool){
+    const a=pool?.denominator,[p,q]=pool?.fraction||[],[whole,mixedNumerator,mixedDenominator]=pool?.mixed||[],limit=pool?.upperExclusive;
+    if(!Number.isSafeInteger(a)||a<2||!Number.isSafeInteger(p)||!Number.isSafeInteger(q)||p<1||p>=q||!Number.isSafeInteger(whole)||whole<1||!Number.isSafeInteger(mixedNumerator)||mixedNumerator<1||!Number.isSafeInteger(mixedDenominator)||mixedNumerator>=mixedDenominator||!Number.isSafeInteger(limit)||limit<2)throw new Error("분수와 자연수 범위를 확인하세요.");
+    const numerator=p*(whole*mixedDenominator+mixedNumerator),denominator=a*q*mixedDenominator,g=gcd(numerator,denominator),coefficient=[numerator/g,denominator/g],values=[];
+    for(let x=1;x<limit;x++)if(((x+a)*coefficient[0])%coefficient[1]===0)values.push(x);
+    return Object.freeze({denominator:a,fraction:Object.freeze([p,q]),mixed:Object.freeze([whole,mixedNumerator,mixedDenominator]),upperExclusive:limit,coefficient:Object.freeze(coefficient),values:Object.freeze(values),sum:values.reduce((s,x)=>s+x,0)});
+  }
+  const derive=index=>solve(pools[index]);
+  function mixedText([whole,n,d]){return `${whole} ${n}/${d}`}
+  function expression(r){return `(1 + □/${r.denominator}) × ${r.fraction[0]}/${r.fraction[1]} × ${mixedText(r.mixed)}`}
+  const math=s=>`<span class="math-inline-expression">${esc(s)}</span>`,symfrac=(n,d)=>`<span class="math-fraction" role="img" aria-label="${esc(d)} 분의 ${esc(n)}"><span>${esc(n)}</span><span>${esc(d)}</span></span>`;
+  function build(index,difficulty){const r=derive(index),[a,b]=r.coefficient,values=r.values.join(", "),fracText=`${r.fraction[0]}/${r.fraction[1]}`,mixed=mixedText(r.mixed),prompt=`<div><p>계산 결과가 자연수가 되도록 빈칸에 ${r.upperExclusive}보다 작은 자연수를 넣습니다. 가능한 수를 모두 더하세요.</p><p>(1 + ${symfrac("□",r.denominator)}) × ${math(fracText)} × ${math(mixed)}</p></div>`;
+   const lines=[`대분수를 가분수로 바꾸어 계산하면 식은 ${symfrac(`${a}×(□+${r.denominator})`,b)}입니다.`, `1부터 ${r.upperExclusive-1}까지 확인하면 가능한 수는 ${values}이므로 합은 ${r.sum}입니다.`];
+   return{prompt,answer:String(r.sum),solution:`<span class="source52-u2-solution" data-source-answer="${id}">${lines.map((s,i)=>`<span class="source52-u2-step">${i+1}. ${s}</span>`).join("")}</span>`,answerVisual:"",answerModel:{values:[...r.values],sum:r.sum,unique:true},questionModel:{kind:"sum-of-natural-numbers-making-fraction-product-natural",denominator:r.denominator,fraction:[...r.fraction],mixed:[...r.mixed],upperExclusive:r.upperExclusive},sourceValuesExcluded:true}}
+
+  function generate(type,u,d,s,variant=0){if(type?.sourceItemId!==id||type?.id!==id||type?.sourceVerified!==true||type?.reviewLocked!==false||type?.generatorKey!==key)return null;if(!Number.isSafeInteger(variant)||variant<0||![-1,0,1].includes(d))throw new Error("고정 변형 또는 난이도 값이 올바르지 않습니다.");const poolIndex=variant%pools.length,r=derive(poolIndex),q=build(poolIndex,d);return Object.freeze({...q,prompt:`<div data-source-item-id="${id}" data-pool-index="${poolIndex}" data-variant="${poolIndex}" data-difficulty-offset="${d}" data-level="${d+1}">${q.prompt}</div>`,sourceItemId:id,generator:key,generationMode:"fixed-verified-pool",verifiedPoolIndex:poolIndex,verifiedVariantCount:3,verifiedVariantTarget:3,verifiedVariantId:`${id}:v${poolIndex}`,variantProvenance:"synthetic-source-structure",answerVisualRequired:false,answerVisualStatus:"not-required",difficultyDesign:["guided-mixed-number-and-bounded-substitution","standard-divisibility-condition","efficient-congruence-condition"][d+1],reasoningSteps:2,sourceStructurePreserved:true,sourceEvidenceRef:"canonical-source:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; PDF p.17 / printed p.21 Mission 4; focused source crop + Apple Vision OCR + exhaustive bounded integer check",publisherKeyVerified:false,publisherAnswerVerified:false,handwrittenAnswerVerified:false,answerVerification:"independent-exhaustive-bounded-integer-enumeration",verifiedValues:[...r.values]})}
+  function install(target){const api=target?.HSE_GENERATORS;if(!api||typeof api.generatorKey!=="function"||typeof api.generate!=="function")return false;if(api.__source52U2Page21Mission4Installed)return true;const oldKey=api.generatorKey.bind(api),oldGenerate=api.generate.bind(api);api.generatorKey=t=>t?.sourceItemId===id||t?.id===id||t?.generatorKey===key?(t.id===id&&t.sourceItemId===id&&t.generatorKey===key&&t.sourceVerified===true&&t.reviewLocked===false?key:""):oldKey(t);api.generate=(t,u,d,s,v=0)=>t?.sourceItemId===id||t?.id===id||t?.generatorKey===key?generate(t,u,d,s,v):oldGenerate(t,u,d,s,v);if(Array.isArray(api.names)&&!api.names.includes(key))api.names.push(key);Object.defineProperty(api,"__source52U2Page21Mission4Installed",{value:true});return true}
+  return Object.freeze({id,key,pools,gcd,solve,derive,expression,build,generate,install});
+});
