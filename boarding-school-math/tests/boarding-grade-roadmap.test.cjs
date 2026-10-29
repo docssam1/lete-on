@@ -29,11 +29,18 @@ test("school, competition, and SAT stay separate in upper-grade examples", funct
 });
 
 test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge as inferred", function () {
+  const suppliedStageTitles = {
+    6: ["Pre-Algebra 개념 익히기", "AMC 8 유형과 논리", "SAT 기초 유형 맛보기", "복습과 실전 연습"],
+    7: ["Algebra 1 개념과 풀이", "기하 기초와 AMC 입문", "대수 강화와 SAT 유형", "누적 복습과 모의 연습"],
+    8: ["대수 개념과 문제 해결", "기하 심화와 AMC 10/12", "AIME형 문제와 SAT 심화", "실전 연습과 풀이 복습"],
+    10: ["Pre-Calculus와 AMC 12 준비", "AIME형 정수론·조합", "SAT Math 점검", "증명과 다음 단계"]
+  };
   [6, 7, 8, 10].forEach(function (grade) {
     const plan = roadmap.getAnnualPlan(grade);
     assert.equal(plan.source, "provided");
     assert.equal(plan.periods.length, 4);
     assert.deepEqual(plan.periods.map(function (period) { return period[0].split(" · ")[0]; }), ["1–3개월", "4–6개월", "7–9개월", "10–12개월"]);
+    assert.deepEqual(plan.periods.map(function (period) { return period[1]; }), suppliedStageTitles[grade]);
     assert.ok(plan.periods.every(function (period) { return period.slice(1).every(Boolean); }));
   });
   assert.equal(roadmap.getAnnualPlan(9).source, "inferred");
