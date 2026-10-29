@@ -2333,7 +2333,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       id, number: source52AverageFirst.types.length + 1, typeNumber, name, label: name,
       difficultyBand: 0, sourceItemId: id, sourceItemLabel: "예제 1-2", sourceSection: "example", sourceTier: "advanced",
       sourcePdfPage: 54, sourcePrintedPage: 58, sourceVerified: true, publisherKeyVerified: false, reviewLocked: false,
-      generatorKey: "source52AverageOriginalPage58Example12", generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+      generatorKey: "source52AverageOriginalPage58Example12", generationMode: "fixed-verified-pool", verifiedVariantTarget: 3, verifiedVariantCount: 3,
       answerVisualRequired: false, answerVisualStatus: "not-required", implementationStatus: "fixed-verified-pool"
     });
   }
@@ -2357,7 +2357,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       id, number: source52AverageFirst.types.length + 1, typeNumber, name, label: name,
       difficultyBand: 0, sourceItemId: id, sourceItemLabel: "예제 1-4", sourceSection: "example", sourceTier: "advanced",
       sourcePdfPage: 54, sourcePrintedPage: 58, sourceVerified: true, publisherKeyVerified: false, reviewLocked: false,
-      generatorKey: "source52AverageOriginalPage58Example14", generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
+      generatorKey: "source52AverageOriginalPage58Example14", generationMode: "fixed-verified-pool", verifiedVariantTarget: 3, verifiedVariantCount: 3,
       answerVisualRequired: false, answerVisualStatus: "not-required", implementationStatus: "fixed-verified-pool"
     });
   }

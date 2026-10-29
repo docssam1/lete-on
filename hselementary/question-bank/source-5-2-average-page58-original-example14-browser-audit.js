@@ -52,7 +52,7 @@ function startServer() {
         const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u6")?.subunits.find(x => x.name === "평균 구하기")?.types.find(x => x.sourceItemId === id);
         return type && { reviewLocked: type.reviewLocked, sourceVerified: type.sourceVerified, generationMode: type.generationMode, verifiedVariantCount: type.verifiedVariantCount, generatorKey: window.HSE_GENERATORS.generatorKey(type) };
       }, itemId);
-      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 1, generatorKey: "source52AverageOriginalPage58Example14" });
+      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 3, generatorKey: "source52AverageOriginalPage58Example14" });
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u6");
@@ -67,11 +67,11 @@ function startServer() {
       const problemItem = problemView.locator(`[data-source-item-id='${itemId}']`).first();
       await problemItem.waitFor({ state: "visible" });
       const prompt = await problemItem.innerText();
-      assert(prompt.includes("을의 1회와 2회 평균 점수와 갑의 4회와 5회 평균 점수"));
-      assert(prompt.includes("㉢에 알맞은"));
+      assert(prompt.includes("을의 첫 두 점수의 평균"));
+      assert(prompt.includes("㉢을 구하세요"));
       assert.equal(await problemView.locator(`[data-source-answer='${itemId}']`).count(), 0);
       const rows = await problemItem.locator(".source52-p58ex14-table tbody tr").allTextContents();
-      assert.deepEqual(rows.map(t=>t.replace(/\s/g,"")), ["갑68점77점95점100점㉠", "을㉡90점82점㉢95점"]);
+      assert.deepEqual(rows.map(t=>t.replace(/\s/g,"")), ["갑70점80점90점96점㉠", "을㉡88점83점㉢92점"]);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `problem horizontal overflow ${width}px`);
       const fontStatus = await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('600 16px "Pretendard"', "성적표의 평균을 구하여라"); });
       assert.equal(fontStatus, true, `local Pretendard loaded at ${width}px`);
@@ -80,7 +80,7 @@ function startServer() {
       await page.locator("#solutionTab").click();
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
-      assert.match(solutionText.replace(/\s/g, ""), /85.*95.*78/, solutionText);
+      assert.match(solutionText.replace(/\s/g, ""), /84.*92.*75/, solutionText);
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);
       await page.screenshot({ path: path.join(outputDir, `example14-solution-${width}.png`), fullPage: true });

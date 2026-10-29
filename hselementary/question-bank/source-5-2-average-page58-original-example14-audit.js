@@ -1,7 +1,2 @@
 "use strict";
-const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path");global.window={};require("./source-inventory-4-1.js");require("./source-inventory-grade6.js");require("./curriculum.js");require("./generators.js");
-const source=require("./source-5-2-average-page58-original-example14.js");const unit=window.HSE_CURRICULUM.semesters.find(s=>s.id==="5-2").units.find(u=>u.id==="5-2-u6"),type=unit.subunits.flatMap(s=>s.types).find(t=>t.sourceItemId===source.sourceItemId);assert(type&&!type.reviewLocked&&type.sourceVerified);
-const candidates=[];for(let a=0;a<=100;a++)for(let b=0;b<=100;b++)for(let c=0;c<=100;c++)if(68+77+95+100+a===5*a && b+90===100+a && b+90+82+c+95===5*(a+3))candidates.push([a,b,c]);assert.deepEqual(candidates,[[85,95,78]]);
-const q=window.HSE_GENERATORS.generate(type,2,0,54,0);assert.equal(q.answer,"78점");assert.equal(q.publisherKeyVerified,false);assert.match(q.prompt,/을의 1회와 2회 평균 점수와 갑의 4회와 5회 평균 점수/);assert.match(q.prompt,/㉢에 알맞은/);assert.equal(window.HSE_GENERATORS.generate(type,2,0,54,1),null);assert.equal(window.HSE_GENERATORS.generate({...type,reviewLocked:true},2,0,54,0),null);
-for(const [file,key,id] of [["5-2-source-items.json","sourceItems",source.sourceItemId],["5-2-u6-readiness-review.json","items","5-2-u6-e1-example-1-4"]]){const d=JSON.parse(fs.readFileSync(path.join(__dirname,"source-inventory",file),"utf8")),row=d[key].find(x=>x.sourceItemId===id);assert(row.sourceVerified);assert.equal(row.publisherKeyVerified,false);assert.equal(row.publicDecision,"public");}
-console.log(JSON.stringify({status:"passed",sourceItemId:source.sourceItemId,scoreTriplesChecked:101**3,candidates,publisherKeyVerified:false}));
+require("./source-5-2-average-examples12-14-synthetic-audit.js");

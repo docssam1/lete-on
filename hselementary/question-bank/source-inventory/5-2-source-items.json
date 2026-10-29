@@ -4700,16 +4700,18 @@
       "pdfPage": 54,
       "printedPage": 58,
       "sourceShape": "도착 순서 5명의 100m 기록에서 앞 세 명·뒤 세 명·전체 평균으로 3번 기록 구하기",
-      "answerContract": "single-value: 15.6초",
+      "answerContract": "candidate: single-value",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 58쪽 평균과 도착 순서를 대조하고 100분의 1초 정수 계산 및 순서를 만족하는 실례로 검산했습니다. 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e1-example-2"
     },
     {
       "sourceItemId": "5-2-u6-e1-example-3",
@@ -4740,16 +4742,18 @@
       "pdfPage": 54,
       "printedPage": 58,
       "sourceShape": "갑·을의 5회 시험 점수표에서 평균과 두 사람의 회차별 평균 관계로 ㉢ 구하기",
-      "answerContract": "single-value: 78점",
+      "answerContract": "candidate: single-value",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 58쪽 표와 평균 조건을 대조하고 점수 조합을 독립 검산했습니다. 이전 장부의 두 사람 평균 관계를 정정했으며 출판사 답안은 미확인입니다.",
+      "reviewReason": "원문 구조를 확인했습니다. 원문은 공개 보호 잠금, 운영 유형은 창작 수치로 대체했으며 출판사 정답 미대조입니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "public"
+      "publicDecision": "locked",
+      "originalSourceReleaseStatus": "locked",
+      "syntheticRuntimeTypeId": "5-2-u6-e1-example-4"
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-1",
