@@ -5,7 +5,7 @@ import sharp from "file:///C:/Users/user/.cache/codex-runtimes/codex-primary-run
 const baseUrl = (process.env.GFIELD_BASE_URL || "http://127.0.0.1:8877").replace(/\/$/, "");
 const cases = [
   { path: "mirror-manor", bands: ["초등팩토 1", "초등팩토 1", "초등팩토 1", "1031 입문 · 입문", "1031 입문 · 입문"] },
-  { path: "geoboard", bands: ["1031 입문 · 입문", "1031 입문 · 입문", "1031 초급", "1031 초급", "1031 초급"] }
+  { path: "geoboard", bands: ["1031 입문 · 입문", "1031 입문 · 입문", "1031 초급", "1031 초급", "1031 초급", "점과 선 탐구"] }
 ];
 const viewports = [
   { name: "desktop", width: 1280, height: 900 },
@@ -28,9 +28,10 @@ try {
       await page.goto(`${baseUrl}/geometry/${item.path}/`, { waitUntil: "networkidle" });
       await page.locator(".type-card").first().waitFor({ state: "visible" });
 
-      assert.equal(await page.locator(".type-card").count(), 5, `${item.path} should expose five activity types`);
+      assert.equal(await page.locator(".type-card").count(), item.bands.length, `${item.path} activity count`);
       assert.deepEqual(await page.locator(".type-band").allTextContents(), item.bands);
       assert.equal(await page.locator('.type-card[href*="level="]').count(), 5);
+      assert.equal(await page.locator('.type-card[href*="activity=one-stroke"]').count(), item.path === "geoboard" ? 1 : 0);
 
       const layout = await page.evaluate(() => {
         const cards = [...document.querySelectorAll(".type-card")];
