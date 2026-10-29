@@ -31,6 +31,26 @@
   };
 
   function setText(id, value) { $(id).textContent = value; }
+  function setupRoadmapShortcuts() {
+    const links = Array.from(document.querySelectorAll("[data-roadmap-target]"));
+    const targets = links.map(function (link) { return document.getElementById(link.dataset.roadmapTarget); }).filter(Boolean);
+    function activate(targetId) {
+      links.forEach(function (link) {
+        if (link.dataset.roadmapTarget === targetId) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      });
+    }
+    links.forEach(function (link) {
+      link.addEventListener("click", function () { activate(link.dataset.roadmapTarget); });
+    });
+    if (!("IntersectionObserver" in window)) return;
+    const observer = new IntersectionObserver(function (entries) {
+      const visible = entries.filter(function (entry) { return entry.isIntersecting; })
+        .sort(function (a, b) { return b.intersectionRatio - a.intersectionRatio; });
+      if (visible[0]) activate(visible[0].target.id);
+    }, { rootMargin: "-72px 0px -62% 0px", threshold: [0, 0.1, 0.25, 0.5, 0.75] });
+    targets.forEach(function (target) { observer.observe(target); });
+  }
   function updateUrl(mode) {
     const url = new URL(location.href);
     url.searchParams.set("grade", String(grade));
@@ -685,4 +705,5 @@
   });
   render("replace");
   renderConceptFlows();
+  setupRoadmapShortcuts();
 })();

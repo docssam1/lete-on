@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261030-15">
+  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261030-16">
 </head>
 <body class="academy-page page-boarding-roadmap">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -23,6 +23,13 @@
       <p>학년을 고르면 배울 내용과 연습 자료를 볼 수 있어요.</p>
       <div class="boarding-intro-actions"><a href="#grade-map">학년 선택</a><a href="./learning-plan.html">학습 계획</a></div>
     </div></section>
+
+    <nav class="roadmap-shortcuts" aria-label="성장 지도 바로가기">
+      <a href="#grade-map" data-roadmap-target="grade-map" aria-current="location">성장 지도</a>
+      <a href="#annual-plan" data-roadmap-target="annual-plan">월별 계획</a>
+      <a href="#grade-comparison" data-roadmap-target="grade-comparison">학년 비교</a>
+      <a href="#competition-diagnostic" data-roadmap-target="competition-diagnostic">경시 기록</a>
+    </nav>
 
     <section class="grade-map boarding-shell" id="grade-map" aria-labelledby="grade-map-title">
       <div class="map-head"><div><p class="boarding-kicker">01 · 학년</p><h2 id="grade-map-title">7학년 수학 한눈에</h2></div><p>다른 학년도 눌러 보세요.</p></div>
@@ -76,7 +83,7 @@
       <div id="concept-flow-list" class="concept-flow-list"></div>
     </section>
 
-    <section class="grade-comparison boarding-shell" aria-labelledby="grade-comparison-title">
+    <section id="grade-comparison" class="grade-comparison boarding-shell" aria-labelledby="grade-comparison-title">
       <div class="map-head"><div><p class="boarding-kicker">학년 비교</p><h2 id="grade-comparison-title">두 학년의 배움 나란히 보기</h2></div><p>학년별 계획 예시를 비교해요. 점수나 학생 등급 비교는 아니에요.</p></div>
       <div class="grade-comparison-controls"><label for="comparison-grade">비교할 학년<select id="comparison-grade"><option value="">학년 선택</option></select></label><p id="comparison-note" aria-live="polite">현재 선택한 학년과 비교할 학년을 고르면 배움의 연결을 보여 드려요.</p></div>
       <div id="comparison-table" class="comparison-table" role="group" aria-labelledby="grade-comparison-title" hidden>
@@ -116,6 +123,6 @@
   <footer class="site-footer"><span>G·MAP · 보딩스쿨 수학 성장 지도</span><span><a href="./index.html">홈</a> · <a href="./learning-plan.html">학습 계획</a></span></footer>
   <script src="./shared/gmap-local-learning-record.js?v=20261030-2"></script>
   <script src="./learning/boarding-grade-roadmap.js?v=20261030-3"></script>
-  <script src="./boarding-roadmap.js?v=20261030-12"></script>
+  <script src="./boarding-roadmap.js?v=20261030-13"></script>
 </body>
 </html>

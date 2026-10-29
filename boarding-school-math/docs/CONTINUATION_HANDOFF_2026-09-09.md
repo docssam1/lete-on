@@ -331,3 +331,9 @@ Verification: `external-math-evidence-engine.test.cjs`, `assessment-entry-browse
 The roadmap's AMC options are age- and grade-bounded learning suggestions only; they do not evaluate official eligibility. The selected contest guidance now sends AMC users to the current MAA cycle rules (which include age requirements) and other contest users to their organizer's current rules. The manual grouped score form explains that the learner/teacher classifies items and that its descriptive rates do not determine an achievement band, eligibility, award, or qualification.
 
 Verified against the current MAA AMC overview on 2026-10-30: https://maa.org/student-programs/amc/ . `boarding-grade-roadmap.test.cjs` and `boarding-roadmap-browser.test.cjs` passed 22/22; whitespace check passed. Claude Max Opus was attempted in read-only mode with these public excerpts supplied directly, but it returned no review; don't claim Claude review approval. Local only; no upload, publication, or private-item access.
+
+### Grade roadmap quick navigation
+
+Added a sticky section shortcut bar to the public Grades 3–12 roadmap: Growth Map, Monthly Plan, Grade Comparison, and Contest Records. Links jump to their section, the visible location follows scrolling, and target scroll margins account for the sticky bar. Existing sections remain in their original single-page flow.
+
+Visual check: Grade 7 page at 1280×900 and 390×844; both fit the viewport and the new desktop/mobile top views were inspected. Existing GFIELD design rules and local UI/UX Pro Max responsive/accessibility results were applied. The separate `lete-on-voice-fcs/math-skill-map` reference repo was read-only and unchanged. Unit and browser coverage passed 23/23, including link destinations, active location, destination offset, 390px overflow, and prior grade/assessment interactions. The current local Claude Max Opus review attempt returned no output; no review approval is claimed. No publish or deployment.

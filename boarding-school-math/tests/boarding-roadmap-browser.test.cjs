@@ -32,6 +32,28 @@ test.after(async function () {
   if (server) await new Promise(function (resolve) { server.close(resolve); });
 });
 
+test("roadmap shortcut bar stays usable and tracks the selected section on mobile", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  const nav = page.getByRole("navigation", { name: "성장 지도 바로가기" });
+  assert.deepEqual(await nav.getByRole("link").allInnerTexts(), ["성장 지도", "월별 계획", "학년 비교", "경시 기록"]);
+  assert.equal(await nav.getByRole("link", { name: "성장 지도" }).getAttribute("aria-current"), "location");
+  await nav.getByRole("link", { name: "학년 비교" }).click();
+  await page.waitForFunction(function () { return location.hash === "#grade-comparison"; });
+  await page.waitForFunction(function () {
+    return document.querySelector('[data-roadmap-target="grade-comparison"]').getAttribute("aria-current") === "location"
+      && document.getElementById("grade-comparison").getBoundingClientRect().top >= 56
+      && document.getElementById("grade-comparison").getBoundingClientRect().top < 120;
+  });
+  const geometry = await page.evaluate(function () { return { targetTop: document.getElementById("grade-comparison").getBoundingClientRect().top, scrollWidth: document.documentElement.scrollWidth, viewport: window.innerWidth }; });
+  assert.ok(geometry.targetTop >= 56 && geometry.targetTop < 120, JSON.stringify(geometry));
+  assert.equal(geometry.scrollWidth, geometry.viewport);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("grade map, level comparison, and competition intake stay honest and interactive", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
