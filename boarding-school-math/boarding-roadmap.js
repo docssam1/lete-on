@@ -443,6 +443,68 @@
       ritComparison.textContent = "두 학년에 모두 MAP Growth 수학 RIT 기록이 있을 때만 같은 RIT 척도의 입력값을 나란히 보여줘요. MAP·학교 Placement·SSAT 등 서로 다른 시험 점수는 섞지 않아요.";
       ritComparison.dataset.state = "needs-matching-map-records";
     }
+    renderCompetitionGradeComparison(current, target);
+  }
+  function buildCompetitionRecordCard(record, heading, id) {
+    const card = document.createElement("article"); card.className = "competition-record-pair-card";
+    const title = document.createElement("h5"); title.id = id; title.textContent = heading;
+    card.setAttribute("aria-labelledby", title.id);
+    const summary = document.createElement("p"); summary.textContent = `정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}`;
+    const reasonNames = { concept: "개념", approach: "접근", calculation: "계산", reading: "조건 읽기", time: "시간" };
+    const reasonSummary = document.createElement("p"); reasonSummary.className = "competition-record-pair-reasons";
+    reasonSummary.textContent = `오답 이유 ${record.summary.reasonClassified}/${record.summary.wrong} 분류${record.reasons.length ? ` · ${record.reasons.map(function (reason) { return `${reasonNames[reason.id] || "기타"} ${reason.count}`; }).join(" · ")}` : " · 미분류"}`;
+    const domains = document.createElement("ul");
+    record.domains.forEach(function (domain) {
+      const item = document.createElement("li");
+      const rate = domain.rate === null ? "비율 비교 보류" : `${domain.rate}%`;
+      const evidence = domain.attempted ? `${domain.correct}/${domain.attempted} · ${rate} (${domain.evidence})` : "미측정";
+      item.textContent = `${domain.name}: ${evidence}${domain.blank ? ` · 미응답 ${domain.blank}` : ""}`;
+      domains.append(item);
+    });
+    card.append(title, summary, reasonSummary, domains);
+    return card;
+  }
+  function renderCompetitionGradeComparison(current, target) {
+    const section = $("competition-grade-comparison");
+    const copy = $("competition-grade-comparison-copy");
+    const cards = $("competition-grade-comparison-cards");
+    cards.replaceChildren();
+    if (!competition) {
+      section.dataset.state = "needs-matching-program-records";
+      copy.textContent = "아래 경시 입력에서 같은 대회를 선택하고, 두 학년에서 복습 요약을 저장하면 나란히 볼 수 있어요.";
+      return;
+    }
+    const currentOption = data.competitionOptions(current.grade).find(function (entry) { return entry.id === competition; });
+    const targetOption = data.competitionOptions(target.grade).find(function (entry) { return entry.id === competition; });
+    if (!currentOption || !targetOption || currentOption.itemCount !== targetOption.itemCount) {
+      section.dataset.state = "needs-matching-program-records";
+      copy.textContent = `${current.grade}학년과 ${target.grade}학년에서 같은 대회·문항 수의 복습 기록이 있을 때 비교할 수 있어요.`;
+      return;
+    }
+    function newestDatedRecord(grade, itemCount) {
+      return (localRecords ? localRecords.storage.loadCompetitionDiagnosticHistory(grade, competition) : [])
+        .filter(function (record) {
+          return typeof record.examDate === "string"
+            && /^\d{4}-\d{2}-\d{2}$/.test(record.examDate)
+            && !Number.isNaN(Date.parse(record.examDate + "T00:00:00Z"))
+            && record.summary.itemCount === itemCount;
+        })
+        .sort(function (a, b) { return b.examDate.localeCompare(a.examDate) || String(b.savedAt).localeCompare(String(a.savedAt)); })[0] || null;
+    }
+    const currentRecord = newestDatedRecord(current.grade, currentOption.itemCount);
+    const targetRecord = newestDatedRecord(target.grade, targetOption.itemCount);
+    if (!currentRecord || !targetRecord) {
+      const missing = [!currentRecord ? `${current.grade}학년` : "", !targetRecord ? `${target.grade}학년` : ""].filter(Boolean).join(" · ");
+      section.dataset.state = "needs-matching-program-records";
+      copy.textContent = `${missing}의 날짜가 있는 ${currentOption.title} 복습 요약이 필요해요. 기록이 모이면 같은 문항 수의 영역별 집계를 나란히 보여줘요.`;
+      return;
+    }
+    section.dataset.state = "comparable-format";
+    copy.textContent = `${currentOption.title} · ${currentOption.itemCount}문항의 가장 최근 날짜 기록을 비교해요. 회차별 난도는 보정하지 않으므로 차이를 성장이나 실력 등급으로 해석하지 않아요.`;
+    cards.append(
+      buildCompetitionRecordCard(currentRecord, `${current.grade}학년 · ${currentRecord.paperLabel || currentRecord.programTitle} · ${currentRecord.examDate}`, "competition-grade-current-record-title"),
+      buildCompetitionRecordCard(targetRecord, `${target.grade}학년 · ${targetRecord.paperLabel || targetRecord.programTitle} · ${targetRecord.examDate}`, "competition-grade-target-record-title")
+    );
   }
   function renderGradeFocus() {
     const host = $("grade-focus-list"); host.replaceChildren();
@@ -523,6 +585,7 @@
       ? `선택한 학년의 연습 경로예요. 영역별로 푼 문제 수와 정답 수를 적어 주세요. ${isAmc ? "AMC는 학년 외에도 연령 등 해당 연도 응시 조건이 있으니 MAA 공식 안내를 확인해 주세요." : "응시 자격과 회차별 규정은 대회 주관 기관 안내를 확인해 주세요."} 영역을 모르겠다면 문항별 복습에서 확인할 수 있어요.`
       : "대회를 고르면 영역별 입력칸이 나와요. 목록은 학년별 연습 경로이며 공식 응시 자격 판정이 아닙니다.");
     renderSavedCompetitionDiagnostic();
+    if (comparisonGrade !== null) renderComparison();
   }
   function renderSavedCompetitionDiagnostic() {
     const section = $("competition-saved-diagnostic");
@@ -537,22 +600,7 @@
     const datedRecords = (records || []).filter(function (record) { return typeof record.examDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(record.examDate); });
     pairSection.hidden = datedRecords.length < 2;
     if (datedRecords.length >= 2) datedRecords.slice(0, 2).forEach(function (record, index) {
-      const card = document.createElement("article"); card.className = "competition-record-pair-card";
-      const title = document.createElement("h5"); title.id = `competition-record-pair-card-title-${index}`; title.textContent = `${index === 0 ? "최근 기록" : "이전 기록"} · ${record.paperLabel || record.programTitle} · ${record.examDate}`;
-      card.setAttribute("aria-labelledby", title.id);
-      const summary = document.createElement("p"); summary.textContent = `정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}`;
-      const reasonNames = { concept: "개념", approach: "접근", calculation: "계산", reading: "조건 읽기", time: "시간" };
-      const reasonSummary = document.createElement("p"); reasonSummary.className = "competition-record-pair-reasons";
-      reasonSummary.textContent = `오답 이유 ${record.summary.reasonClassified}/${record.summary.wrong} 분류${record.reasons.length ? ` · ${record.reasons.map(function (reason) { return `${reasonNames[reason.id]} ${reason.count}`; }).join(" · ")}` : " · 미분류"}`;
-      const domains = document.createElement("ul");
-      record.domains.forEach(function (domain) {
-        const item = document.createElement("li");
-        const rate = domain.rate === null ? "비율 비교 보류" : `${domain.rate}%`;
-        const evidence = domain.attempted ? `${domain.correct}/${domain.attempted} · ${rate} (${domain.evidence})` : "미측정";
-        item.textContent = `${domain.name}: ${evidence}${domain.blank ? ` · 미응답 ${domain.blank}` : ""}`;
-        domains.append(item);
-      });
-      card.append(title, summary, reasonSummary, domains); pairCards.append(card);
+      pairCards.append(buildCompetitionRecordCard(record, `${index === 0 ? "최근 기록" : "이전 기록"} · ${record.paperLabel || record.programTitle} · ${record.examDate}`, `competition-record-pair-card-title-${index}`));
     });
     if (!evidence) return;
     setText("competition-saved-title", `${evidence.programTitle} · Grade ${evidence.grade}`);

@@ -362,6 +362,44 @@ test("grade comparison shows curriculum examples without implying measured level
   await page.close();
 });
 
+test("grade comparison can pair dated reviews from the same contest across grades", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  async function saveContestReview(grade, date, label, status) {
+    await page.goto(`${url.replace("boarding-roadmap.html", "competition-paper-review.html")}?grade=${grade}&program=amc8`, { waitUntil: "networkidle" });
+    await page.locator("#review-exam-date").fill(date);
+    await page.locator("#review-paper-label").fill(label);
+    await page.locator('[data-question="1"][data-field="status"]').selectOption(status);
+    await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
+    if (status === "wrong") await page.locator('[data-question="1"][data-field="reason"]').selectOption("concept");
+    await page.getByRole("button", { name: "결과 보기" }).click();
+    await page.locator("#save-diagnostic").click();
+  }
+  await saveContestReview(6, "2026-10-01", "Grade 6 practice", "correct");
+  await saveContestReview(7, "2026-10-02", "Grade 7 practice", "wrong");
+  await page.evaluate(function () {
+    window.GFIELDLocalLearningRecord.storage.saveCompetitionDiagnostic({
+      schemaVersion: "gfield-competition-diagnostic-v1", id: "undated-grade6-practice", programId: "amc8", programTitle: "AMC 8",
+      grade: 6, paperLabel: "Undated practice", examDate: "",
+      summary: { itemCount: 25, correct: 1, wrong: 0, blank: 0, unmarked: 24, attempted: 1, domainClassified: 1, reasonClassified: 0 },
+      domains: [{ id: "algebra", attempted: 1, correct: 1, wrong: 0, blank: 0 }], reasons: []
+    });
+  });
+  await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  await page.locator("#comparison-grade").selectOption("6");
+  assert.equal(await page.locator("#competition-grade-comparison").getAttribute("data-state"), "comparable-format");
+  assert.equal(await page.locator("#competition-grade-comparison-cards article").count(), 2);
+  const comparisonText = await page.locator("#competition-grade-comparison-cards").innerText();
+  assert.match(comparisonText, /6학년 · Grade 6 practice · 2026-10-01/);
+  assert.match(comparisonText, /7학년 · Grade 7 practice · 2026-10-02/);
+  assert.doesNotMatch(comparisonText, /Undated practice/);
+  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /난도는 보정하지 않으므로 차이를 성장이나 실력 등급으로 해석하지 않아요/);
+  assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
+  await page.locator("#comparison-grade").selectOption("8");
+  assert.equal(await page.locator("#competition-grade-comparison").getAttribute("data-state"), "needs-matching-program-records");
+  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /8학년/);
+  await page.close();
+});
+
 test("Grade 10 and Grade 12 comparison keeps inferred planning separate from learner assessment", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(`${url}?grade=10`, { waitUntil: "networkidle" });
