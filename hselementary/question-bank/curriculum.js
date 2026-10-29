@@ -2530,6 +2530,37 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e1-example-${n}`,sourceItemLabel:`예제 1-${n} 유사문항`,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:10,sourcePrintedPage:14,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page14Example${n}Synthetic`,generationMode:"fixed-verified-pool",verifiedVariantTarget:1,verifiedVariantCount:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 검산했습니다."});
   }
 
+  if (source52Unit2First) for (const [suffix,name,label,page,section,key] of [
+    ["exploration-2","분수 조건으로 두 수의 합 찾기","개념탐구 1 (2) 유사문항",14,"exploration","source52U2Concept12Synthetic"],
+    ["mission-1","분수와 자연수의 곱 여섯 식","Mission 1 유사문항",15,"mission","source52U2Mission1Synthetic"],
+    ["mission-2","분수 조건으로 남은 학생 수","Mission 2 유사문항",15,"mission","source52U2Mission2Synthetic"]]) {
+    const id = `5-2-u2-e1-${suffix}-synthetic`, parent = suffix.startsWith("exploration") ? "5-2-u2-e1-exploration" : `5-2-u2-e1-${suffix}`;
+    const typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:parent,sourceItemLabel:label,sourceSection:section,sourceTier:"advanced",sourcePdfPage:page-4,sourcePrintedPage:page,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",verifiedVariantTarget:1,verifiedVariantCount:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 검산했습니다."});
+  }
+
+  if (source52Unit2First) for (const [n,name] of [[3,"하루 시계 오차의 누적"],[5,"분수에 곱해 자연수가 되는 수"],[6,"부등식에 맞는 자연수의 합"]]) {
+    const id = `5-2-u2-e1-mission-${n}-synthetic`;
+    const typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e1-mission-${n}`,sourceItemLabel:`Mission ${n} 유사문항`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:11,sourcePrintedPage:15,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Mission${n}Synthetic`,generationMode:"fixed-verified-pool",verifiedVariantTarget:1,verifiedVariantCount:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 검산했습니다."});
+  }
+
+  const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product) for (const [suffix,name,label,section,key] of [
+    ["exploration-1","전체 용량의 분수만큼 물의 양","개념탐구 2 (1) 유사문항","exploration","source52U2Page16Exploration21"],
+    ["exploration-2","두 분수 곱의 합","개념탐구 2 (2) 유사문항","exploration","source52U2Page16Exploration22"],
+    ["example-1","연속된 분수의 곱과 약분","예제 2-1 유사문항","example","source52U2Page16Example21"]]) {
+    const id = `5-2-u2-e2-${suffix}-synthetic`, parent = section === "exploration" ? "5-2-u2-e2-exploration" : `5-2-u2-e2-${suffix}`;
+    const typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:parent,sourceItemLabel:label,sourceSection:section,sourceTier:"advanced",sourcePdfPage:12,sourcePrintedPage:16,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
+  if (source52Unit2Product) for (const [n,name,visual] of [[2,"직사각형의 두 부분 넓이 비",true],[3,"두 번째 반동까지 공의 이동 거리",false],[4,"직각이등변삼각형 속 여섯 정사각형",true]]) {
+    const id = `5-2-u2-e2-example-${n}-synthetic`;
+    const typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e2-example-${n}`,sourceItemLabel:`예제 2-${n} 유사문항`,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:12,sourcePrintedPage:16,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page16Example2${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:visual,answerVisualStatus:visual?"verified-reconstruction":"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조와 그림을 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;

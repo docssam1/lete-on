@@ -903,14 +903,16 @@
       "ordinal": 1,
       "pdfPage": 10,
       "printedPage": 14,
-      "sourceShape": "분수와 자연수의 곱셈의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "분수만큼의 관계를 설명하고 분수 조건을 만족하는 두 수의 합을 구하는 두 소문항",
       "answerContract": "candidate: multi-part",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "개념탐구는 설명형과 두 수 합을 구하는 두 소문항. 두 번째와 구조가 같은 유사문항만 검산·공개했으며 원문은 잠금, 출판사 답안 미대조.",
+      "publisherKeyVerified": false,
+      "syntheticRuntimeTypeId": "5-2-u2-e1-exploration-2-synthetic"
     },
     {
       "sourceItemId": "5-2-u2-e1-example-1",
@@ -996,14 +998,16 @@
       "ordinal": 1,
       "pdfPage": 11,
       "printedPage": 15,
-      "sourceShape": "분수와 자연수의 곱셈의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "분수와 자연수의 곱을 계산하는 여섯 소문항",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 15쪽의 여섯 식을 대조하고 다른 수치의 여섯 소문항 유사문항을 검산. 원문은 잠금, 출판사 답안 미대조.",
+      "publisherKeyVerified": false,
+      "syntheticRuntimeTypeId": "5-2-u2-e1-mission-1-synthetic"
     },
     {
       "sourceItemId": "5-2-u2-e1-mission-2",
@@ -1013,14 +1017,16 @@
       "ordinal": 2,
       "pdfPage": 11,
       "printedPage": 15,
-      "sourceShape": "분수와 자연수의 곱셈의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "전체 인원에서 두 단계의 비율로 남은 인원을 구하는 문항",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 15쪽에서 집단과 남은 비율을 대조하고 다른 수치의 유사문항을 검산. 원문은 잠금, 출판사 답안 미대조.",
+      "publisherKeyVerified": false,
+      "syntheticRuntimeTypeId": "5-2-u2-e1-mission-2-synthetic"
     },
     {
       "sourceItemId": "5-2-u2-e1-mission-3",
@@ -1030,14 +1036,16 @@
       "ordinal": 3,
       "pdfPage": 11,
       "printedPage": 15,
-      "sourceShape": "분수와 자연수의 곱셈의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "하루마다 늦어지는 시계의 여러 날 후 표시 시각",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 15쪽과 비공개 세부 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 원문 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e1-mission-3-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e1-mission-4",
@@ -1047,14 +1055,15 @@
       "ordinal": 4,
       "pdfPage": 11,
       "printedPage": 15,
-      "sourceShape": "분수와 자연수의 곱셈의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "sourceShape": "같은 곱을 이루는 세 수의 크기 순서를 찾는 문항",
+      "answerContract": "conditional order: unknown sign",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 원문에는 세 수의 양수 조건이 없으므로 동일 곱이 0이거나 음수인 경우까지 고려하면 순서를 단정할 수 없음. 조건 확인 전 잠금.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e1-mission-5",
@@ -1064,14 +1073,16 @@
       "ordinal": 5,
       "pdfPage": 11,
       "printedPage": 15,
-      "sourceShape": "분수와 자연수의 곱셈의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "두 진분수에 자연수를 곱해 모두 자연수가 되는 조건의 수 찾기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 15쪽과 비공개 세부 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 원문 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e1-mission-5-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e1-mission-6",
@@ -1081,14 +1092,16 @@
       "ordinal": 6,
       "pdfPage": 11,
       "printedPage": 15,
-      "sourceShape": "분수와 자연수의 곱셈의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "분수 곱셈의 엄격한 부등식을 만족하는 자연수의 합",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 15쪽과 비공개 세부 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 원문 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e1-mission-6-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e2-exploration",
@@ -1098,14 +1111,19 @@
       "ordinal": 1,
       "pdfPage": 12,
       "printedPage": 16,
-      "sourceShape": "분수의 곱셈의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "용량의 분수만큼 구하기와 두 분수 곱의 합으로 이루어진 개념탐구",
       "answerContract": "candidate: multi-part",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 16쪽과 비공개 세부 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "publisherKeyVerified": false,
+      "syntheticRuntimeTypeIds": [
+        "5-2-u2-e2-exploration-1-synthetic",
+        "5-2-u2-e2-exploration-2-synthetic"
+      ]
     },
     {
       "sourceItemId": "5-2-u2-e2-example-1",
@@ -1115,14 +1133,16 @@
       "ordinal": 1,
       "pdfPage": 12,
       "printedPage": 16,
-      "sourceShape": "분수의 곱셈의 예제 2-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "연속된 분수의 곱에서 같은 수를 약분하는 예제",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 16쪽과 비공개 세부 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "publisherKeyVerified": false,
+      "syntheticRuntimeTypeId": "5-2-u2-e2-example-1-synthetic"
     },
     {
       "sourceItemId": "5-2-u2-e2-example-2",
@@ -1132,14 +1152,16 @@
       "ordinal": 2,
       "pdfPage": 12,
       "printedPage": 16,
-      "sourceShape": "분수의 곱셈의 예제 2-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "직사각형을 두 부분으로 나누고 넓이 비로 한 부분 넓이 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 16쪽의 조건과 그림 및 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e2-example-2-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e2-example-3",
@@ -1149,14 +1171,16 @@
       "ordinal": 3,
       "pdfPage": 12,
       "printedPage": 16,
-      "sourceShape": "분수의 곱셈의 예제 2-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "공의 두 번째 상승까지 이동 거리 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 16쪽의 조건과 그림 및 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e2-example-3-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e2-example-4",
@@ -1166,14 +1190,16 @@
       "ordinal": 4,
       "pdfPage": 12,
       "printedPage": 16,
-      "sourceShape": "분수의 곱셈의 예제 2-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "직각이등변삼각형 속 정사각형 여섯 개의 넓이 합 구하기",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "인쇄 16쪽의 조건과 그림 및 비공개 검수표를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다. 원문 항목은 공개 보호 기준에 따라 잠금 유지, 출판사 정답 미대조.",
+      "syntheticRuntimeTypeId": "5-2-u2-e2-example-4-synthetic",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u2-e2-mission-1",

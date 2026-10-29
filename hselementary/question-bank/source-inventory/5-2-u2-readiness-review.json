@@ -14,7 +14,7 @@
     "reviewScope": "개념탐구, 예제, Mission을 페이지별로 직접 대조하고, 개념탐구 소문항과 Mission 1의 계산 소문항을 원자 문항으로 분리했습니다. 기존 44개 블록 틀은 개수 기준으로 승격하지 않았습니다.",
     "answerConvention": "분수는 가장 간단한 분수 또는 대분수로 기록했습니다. 자연수는 양의 정수입니다. 여러 답은 집합 또는 문제에서 요구한 순서 목록으로 기록했습니다. 원문 필기 답은 권위 있는 답안으로 사용하지 않고 조건에서 독립 계산했습니다.",
     "protection": "원본 PDF, 답안 자료, 로컬 원본 경로는 이 장부 밖에 보존합니다. 이 파일은 비공개 검수 장부이며 공개·배포 승인 파일이 아닙니다.",
-    "releasePolicy": "이번 작업에는 중앙 코드 연결, learner-fit 승인, 공개 승인, 배포 검증이 포함되지 않으므로 모든 문항을 locked로 유지합니다."
+    "releasePolicy": "원문 항목은 공개 보호 기준에 따라 locked를 유지합니다. 별도 수치의 검산된 유사문항 연결은 원문 공개 결정과 구분합니다."
   },
   "normalization": {
     "legacyBlockCount": 44,
@@ -43,13 +43,13 @@
     },
     {
       "id": "independent-calculation",
-      "status": "pass-with-one-blocked-visual",
-      "evidence": "독립 계산으로 33개 대표 산술·전수 조건을 검사했고, 계산 가능한 55개 원자 문항의 근거를 기록했습니다."
+      "status": "pass-with-blocked-items",
+      "evidence": "기존 독립 계산을 바탕으로 원문 조건을 재검토했습니다. 도형 치수 미명시와 미지수 부호 미명시 항목은 단일 정답을 보류합니다."
     },
     {
       "id": "answer-determinacy",
       "status": "blocked",
-      "evidence": "u2-t23은 원의 중심 간격이 글에 수치로 주어지지 않아 그림의 축척을 정답 조건으로 승격할 수 없습니다."
+      "evidence": "u2-t23은 원의 중심 간격이 글에 수치로 주어지지 않아 그림의 축척을 정답 조건으로 승격할 수 없습니다. 인쇄 15쪽 Mission 4는 미지수의 부호가 명시되지 않아 양수로 가정한 순서를 유일한 답으로 확정할 수 없습니다."
     },
     {
       "id": "learner-fit",
@@ -170,15 +170,22 @@
       "sourcePage": 11,
       "sourcePrintedPage": 15,
       "sourceBlock": "Mission 1 (1)",
-      "normalizedTypeId": "u2-t07",
-      "typeName": "두 진분수의 곱셈",
-      "keyConditions": ["5/6과 2/3을 곱함", "계산 결과를 간단히 함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
-      "independentCalculation": "5/6×2/3=10/18=5/9입니다.",
-      "independentAnswer": "5/9",
+      "normalizedTypeId": "u2-t08",
+      "typeName": "자연수와 진분수의 곱셈",
+      "keyConditions": [
+        "분수와 자연수를 곱함",
+        "계산 결과를 간단히 함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
+      "independentCalculation": "원문의 분수와 자연수의 곱을 다시 계산했으며, 이전 장부는 두 진분수의 곱으로 잘못 기재했습니다.",
+      "independentAnswer": "1 2/3",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "인쇄 15쪽 원문과 독립 계산 대조. 정확한 원문 값은 기존 비공개 원자료 참조.",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -308,15 +315,22 @@
       "sourceBlock": "Mission 4",
       "normalizedTypeId": "u2-t12",
       "typeName": "곱셈 결과가 같은 세 수의 크기 순서",
-      "keyConditions": ["①×3 5/8×12=②×6 4/5×6=③×3 4/10×9", "세 빈칸을 작은 수부터 배열"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "식의 계수 비교만 필요"},
-      "independentCalculation": "고정 곱셈값은 각각 87/2, 204/5, 153/5로 첫째가 가장 크고 셋째가 가장 작으므로 같은 곱을 만들려면 ①<②<③입니다.",
-      "independentAnswer": "①, ②, ③",
+      "keyConditions": [
+        "①×3 5/8×12=②×6 4/5×6=③×3 4/10×9",
+        "세 빈칸을 작은 수부터 배열"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "식의 계수 비교만 필요"
+      },
+      "independentCalculation": "세 수가 양수이면 계수의 역순이지만 원문에 양수 조건이 없습니다. 공통 곱이 0이면 세 수가 같고 음수이면 크기 순서가 반대입니다.",
+      "independentAnswer": "양수 조건부 순서; 원문만으로 유일한 순서 미확정",
       "answerContract": "ordered-result",
-      "singleAnswerStatus": "pass-unique-order",
+      "singleAnswerStatus": "blocked-sign-ambiguity",
       "evidence": "직접 렌더 대조 및 계수 비교: PDF p.11, 인쇄 p.15",
       "publicDecision": "locked",
-      "lockReason": "순서형 답 계약은 기록했지만 공개 승인 전입니다."
+      "lockReason": "미지수의 양수 조건이 원문에 없어 크기 순서가 유일하지 않습니다. 조건 또는 출판사 해설 확인 전 잠금."
     },
     {
       "id": "5-2-u2-e1-mission-5",
