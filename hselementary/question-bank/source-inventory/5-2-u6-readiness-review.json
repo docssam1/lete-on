@@ -512,11 +512,12 @@
       "singleAnswer": true,
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "publicDecision": "public",
-      "lockReason": "",
+      "publicDecision": "locked",
+      "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e2-example-4",
       "publisherKeyVerified": false,
-      "releaseEvidence": "20살 기준에서 어린이 평균이 어른보다 낮음을 확인. 성별 정수 인원 조합 전수 검사로 남자 어른 63, 어린이 남 17·여 51, 3배 확인. 공식 출판사 답안 미확인."
+      "releaseEvidence": "20살 기준에서 어린이 평균이 어른보다 낮음을 확인. 성별 정수 인원 조합 전수 검사로 남자 어른 63, 어린이 남 17·여 51, 3배 확인. 공식 출판사 답안 미확인.",
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-1",
