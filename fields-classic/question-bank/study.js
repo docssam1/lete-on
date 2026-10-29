@@ -77,8 +77,8 @@ function recordVisit() {
 }
 // 문제은행 학생 화면 주소. 화면에서 풀 때는 embed, 인쇄할 때는 새 창에서 print=1
 function sheetUrl(slide, { print = false } = {}) {
-  // 공부하기·오늘의 과제는 답 확인 때 정답만 손글씨로(풀이 글 없음)
-  const base = { mode: "curriculum", book: book.id, build: "1", as: "student", ...(["board", "homework"].includes(slide.kind) ? { hand: "1" } : {}) };
+  // 공부하기는 답 확인 때 정답만 손글씨로, 오늘의 과제는 손글씨 정답 + 풀이
+  const base = { mode: "curriculum", book: book.id, build: "1", as: "student", ...(slide.kind === "board" ? { hand: "1" } : slide.kind === "homework" ? { hand: "solve" } : {}) };
   let entries;
   if (slide.kind === "board") {
     const picks = slide.block.numbers.map(({ n, typeId, stage }) => [typeId, stage, refOf(slide.block, n), unitIndex].join("~")).join("|");
@@ -99,7 +99,7 @@ function chalkMarkup() {
     `과제 학습지 ${types.length}문제를 인쇄해요`,
     ...types.slice(0, 4).map((typeId) => `${typeById(typeId)?.label || "같은 유형"} 문제 풀기`),
     ...(types.length > 4 ? [`그 밖의 ${types.length - 4}가지 유형도 풀기`] : []),
-    "다 풀면 화면에서 답을 확인해요"
+    "다 풀면 화면에서 답과 풀이를 확인해요"
   ];
   return `<div class="sd-chalk" role="note"><h3>오늘의 과제</h3><p class="sd-chalk-date">${esc(unit.label)} · ${part}차시</p><ol>${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ol></div>`;
 }
@@ -107,7 +107,7 @@ function workMarkup(slide) {
   const help = slide.kind === "board"
     ? `본책 <b>${esc(slide.block.label)}</b>과 같은 유형의 문제예요. 화면에서 풀어도 되고, 인쇄해서 풀어도 돼요. 어려우면 <b>유사 문제 풀기</b>.`
     : slide.kind === "homework"
-      ? "칠판에 적힌 대로 <b>인쇄해서</b> 집에서 풀고, 화면에서 답을 확인해요."
+      ? "칠판에 적힌 대로 <b>인쇄해서</b> 집에서 풀고, 화면에서 <b>답과 풀이</b>를 확인해요."
       : slide.kind === "daily"
         ? `오늘 배운 것으로 <b>데일리 테스트 ${DAILY_COUNT}문제</b>. 다 풀고 채점하면 ○✕로 알려 줘요.`
         : `이 단원 <b>단원 평가 ${UNIT_TEST_COUNT}문제</b>예요. 다 풀고 채점하면 ○✕로 약점 유형을 알려 줘요.`;

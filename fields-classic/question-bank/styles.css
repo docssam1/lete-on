@@ -1608,3 +1608,5 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
 .student-answer.is-hand{border-left-color:#c8463a;background:#fff8ec;color:#c8463a;font-family:'FC Hand','Nanum Pen Script',cursive;font-size:26px;line-height:1.25}
 .student-answer.is-hand strong{font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:13px;color:#8a5a3a}
 .student-answer.is-hand .answer-text,.student-answer.is-hand>span{font-size:28px}
+.student-answer.is-hand p.hand-solution{margin-top:4px;color:#2c4a7a;font-family:'FC Hand','Nanum Pen Script',cursive;font-size:22px;line-height:1.35}
+.student-answer.is-hand p.hand-solution b{font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:13px;color:#8a5a3a;margin-right:4px}
