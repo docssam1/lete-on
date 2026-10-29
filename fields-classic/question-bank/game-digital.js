@@ -22,6 +22,11 @@ const OP_READ = { "mirror-left-right": "오른쪽으로 뒤집어 읽은 수", "
 const TURN = { "rotate-right": { steps: 1, label: "오른쪽으로 반의 반 바퀴", lie: "왼쪽" }, "rotate-left": { steps: 3, label: "왼쪽으로 반의 반 바퀴", lie: "오른쪽" }, "rotate-half": { steps: 2, label: "반 바퀴", lie: "거꾸로" } };
 // 판 전체를 움직일 때 자리도 움직인다: 좌우 뒤집기·반 바퀴는 자리가 바뀌고, 위아래 뒤집기는 그대로
 export const placeOf = (op, i, count) => (op === "mirror-top-bottom" ? i : count - 1 - i);
+// 개수가 들어가는 말 — 음성 목록(tools/export-study-voice.mjs)이 개수마다 펼쳐 녹음한다
+export const wrongBarsLine = (wrong) => `옮긴 막대 중 ${wrong}개의 자리가 달라요. 규칙을 보고 막대마다 다시 따라가 봐요.`;
+export const boardMissLine = (extra, missing) => extra
+  ? `${extra}개는 돌리면 똑바로 서지 않아요(표시한 숫자).${missing ? ` 빠진 숫자도 ${missing}개 있어요.` : ""}`
+  : `똑바로 서는 숫자가 ${missing}개 더 있어요.`;
 export const LEVELS = Object.freeze([
   { id: 1, title: "숫자 하나", kind: "build", problems: ["mirror-left-right", "mirror-top-bottom", "rotate-half"] },
   { id: 2, title: "두 자리 수", kind: "build", problems: ["mirror-left-right", "mirror-top-bottom", "rotate-half"] },
@@ -85,7 +90,7 @@ export function diagnoseBuild(p, built) {
     for (const swap of [false, true]) if (same(got, shape(op, swap))) return { ok: false, say: p.op === "rotate-half" && op !== "rotate-half" ? "한 방향만 뒤집었어요. 반 바퀴는 위아래도 좌우도 모두 바뀌어요." : say };
   }
   const wrong = built.filter(([j, t]) => !want[j].has(t)).length;
-  return { ok: false, wrong, say: `옮긴 막대 중 ${wrong}개의 자리가 달라요. 규칙을 보고 막대마다 다시 따라가 봐요.` };
+  return { ok: false, wrong, say: wrongBarsLine(wrong) };
 }
 
 // 7막대 숫자 그림. role: show(보기만) · source(옮길 막대 고르기) · target(놓기)
@@ -233,7 +238,7 @@ export function mountDigitalWorkshop(host, { say = () => {}, onDone = () => {} }
       render(); say("판을 돌려 보니 고른 숫자가 똑바로 섰어요. 이제 더해 봐요.", "praise"); return;
     }
     st.check = { wrong: extra };
-    miss(extra.length ? `${extra.length}개는 돌리면 똑바로 서지 않아요(표시한 숫자). ${missing.length ? `빠진 숫자도 ${missing.length}개 있어요.` : ""}` : `똑바로 서는 숫자가 ${missing.length}개 더 있어요.`);
+    miss(boardMissLine(extra.length, missing.length));
   }
   function showSolution() {
     const p = st.p;

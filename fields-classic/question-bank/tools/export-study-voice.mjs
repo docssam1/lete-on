@@ -54,6 +54,25 @@ for (const file of GAME_FILES) for (const text of spokenLiterals(readFileSync(pa
     digital.LEVELS.forEach((level, l) => level.problems.forEach((_, i) => { const p = digital.makeProblem(l, i, rand); if (p) add(voiceLine("game", digital.problemLine(p))); }));
   }
 }
+// 숫자가 바뀌는 말(원장 2026-10-29 「숫자가 바뀌는 말도 하라고」): 나올 수 있는 개수를 다 펼친다
+{
+  const shape = await load("game-shape-moves.js"), digital = await load("game-digital.js");
+  const maxCells = Math.max(...shape.LEVELS.map((level) => level.cells));
+  for (let n = 1; n <= maxCells; n += 1) add(voiceLine("game", shape.wrongCellsLine(n)));
+  for (let n = 1; n <= 14; n += 1) add(voiceLine("game", digital.wrongBarsLine(n)));   // 두 자리 × 막대 7개
+  let seed = 11; const rand = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
+  let cells = 0, targets = 0;
+  for (let k = 0; k < 500; k += 1) digital.LEVELS.forEach((level, l) => level.problems.forEach((_, i) => { const p = digital.makeProblem(l, i, rand); if (p.kind === "board") { cells = Math.max(cells, p.cells.length); targets = Math.max(targets, p.targets.length); } }));
+  for (let missing = 1; missing <= targets; missing += 1) add(voiceLine("game", digital.boardMissLine(0, missing)));
+  for (let extra = 1; extra <= cells; extra += 1) for (let missing = 0; missing <= targets; missing += 1) add(voiceLine("game", digital.boardMissLine(extra, missing)));
+}
+{
+  // 본책 번호를 눌러 여는 유사 문제 말(sheetLine)은 지금 덱이 그 번호판을 그리지 않아 녹음하지 않는다
+  const { weekTypes, testResultLine } = await load("study-deck.js");
+  const totals = new Set();
+  for (const book of CURRICULUM) for (const unit of book.units) totals.add(weekTypes(unit).length);
+  for (const total of totals) for (let right = 0; right <= total; right += 1) add(testResultLine(total, right));
+}
 let decks = 0;
 for (const book of CURRICULUM) {
   for (let unitIndex = 0; unitIndex < book.units.length; unitIndex += 1) {

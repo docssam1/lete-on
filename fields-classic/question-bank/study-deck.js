@@ -1,4 +1,4 @@
-import { unitParts, partProblems, lessonsByUnit, lessonsByPart, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261028zf";
+import { unitParts, partProblems, lessonsByUnit, lessonsByPart, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261029a";
 
 // 한 주(한 단원) 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 독쌤 말 id는 글에서 나온다(`fcs-<종류>-<글의 FNV 해시>`): 같은 글이면 같은 음성 파일, 글을 고치면 새 id라 옛 음성을 틀지 않는다.
@@ -29,6 +29,16 @@ export const FIXED_LINES = Object.freeze({
   nativeDone: voiceLine("game", "게임을 끝까지 해냈어요! 이제 워밍업 문제로 가요."),
   bellLoadFail: voiceLine("cover", "워밍업 학습을 불러오지 못했어요. 새로고침하면 다시 불러와요. 본책 문제는 지금도 풀 수 있어요.")
 });
+
+// 숫자가 바뀌는 말 — 경우가 정해져 있어 음성 목록(tools/export-study-voice.mjs)이 다 펼쳐 녹음한다
+// 본책 번호 이름: 활동 1-3번 · 연습 7번
+export const refOf = (block, n) => block.label.includes(" ") ? `${block.label}-${n}번` : `${block.label} ${n}번`;
+export const SHEET_BACK = voiceLine("board", "좋아요. 이제 본책으로 돌아가서 그 문제를 다시 풀어 봐요.");
+export const sheetLine = (ref) => voiceLine("board", `${ref}과 같은 유형의 문제예요. 이 문제를 먼저 풀고 본책 문제를 다시 풀어 봐요.`);
+// 단원 평가 결과: 점수만 말한다. 약한 유형 이름은 경우가 너무 많아 말풍선 글에만 쓴다(study.js)
+export const testResultLine = (total, right) => right >= total
+  ? voiceLine("test", `${total}문제를 모두 맞았어요! 정말 잘했어요.`)
+  : voiceLine("test", `${total}문제 중 ${right}문제 맞았어요. 약한 유형을 다시 공부하면 더 잘할 수 있어요. 약점 유형 공부하기를 눌러 다시 풀어 봐요.`);
 
 // 한 주(단원)의 본책 묶음: 차시마다 나뉜 것을 묶음 이름으로 합친다 — 활동 1 · 확인 1 · 활동 2 · 확인 2 … · 연습 · 도전
 export function weekBlocks(unit) {

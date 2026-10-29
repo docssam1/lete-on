@@ -1,6 +1,6 @@
 import { CURRICULUM } from "./source-data.js?v=20261028m";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261028zf";
-import { PHASES, FIXED_LINES, voiceLine, weekBlocks as unitWeekBlocks, weekTypes as unitWeekTypes, buildWeekSlides, slideLine, bellLabel } from "./study-deck.js?v=20261028zf";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261029a";
+import { PHASES, FIXED_LINES, voiceLine, weekBlocks as unitWeekBlocks, weekTypes as unitWeekTypes, buildWeekSlides, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261029b";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261028n";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -111,14 +111,15 @@ function bookTestMarkup() {
 // ── 독쌤 ─────────────────────────────────────────────────
 const PORTRAIT = { talk: "docssam-guide.webp", think: "docssam-thinking.webp", praise: "docssam-praise.webp" };
 let lastLine = null;
-function say(text, mood = "talk", voiceId = null) {
-  lastLine = [text, mood, voiceId];
+// spoken: 말풍선 글과 다르게 읽을 때(단원 평가 결과 — 약한 유형 이름은 말풍선에만)
+function say(text, mood = "talk", voiceId = null, spoken = text) {
+  lastLine = [spoken, mood, voiceId];
   $("guideSay").textContent = text;
   $("talk").dataset.mood = mood;
   $("walkerImg").src = `./${PORTRAIT[mood] || PORTRAIT.talk}`;
   const bubble = $("talk");
   bubble.classList.remove("new"); void bubble.offsetWidth; bubble.classList.add("new");
-  return speak(text, voiceId);
+  return speak(spoken, voiceId);
 }
 // 독쌤 복제 음성(OmniVoice, scripts/omnivoice-docssam.py 가 GPU PC에서 만들어 science-lab/audio/docssam/ 에 둔 것).
 // 파일 이름 = <줄 id>-<sha1("<목소리>|<글>") 앞 10자>.mp3 — 글이 바뀌면 이름이 바뀌어 옛 음성을 틀지 않는다. 없는 줄은 기기 음성.
@@ -222,7 +223,8 @@ window.addEventListener("message", (event) => {
   if (event.source === document.getElementById("workFrame")?.contentWindow) {
     if (event.data.event === "test-result" && event.data.marked === event.data.total) {
       const weak = event.data.weak || [];
-      say(weak.length ? `${event.data.total}문제 중 ${event.data.right}문제 맞았어요. ${weak.slice(0, 2).join(", ")}${weak.length > 2 ? ` 말고도 ${weak.length - 2}가지` : ""} 유형이 약해요. 약점 유형 공부하기를 눌러 다시 풀어 봐요.` : `${event.data.total}문제를 모두 맞았어요! 정말 잘했어요.`, weak.length ? "think" : "praise");
+      const line = testResultLine(event.data.total, weak.length ? Math.min(event.data.right, event.data.total - 1) : event.data.total);
+      say(weak.length ? `${event.data.total}문제 중 ${event.data.right}문제 맞았어요. ${weak.slice(0, 2).join(", ")}${weak.length > 2 ? ` 말고도 ${weak.length - 2}가지` : ""} 유형이 약해요. 약점 유형 공부하기를 눌러 다시 풀어 봐요.` : line.text, weak.length ? "think" : "praise", line.id, line.text);
       renderSigns();
     }
     return;
@@ -386,7 +388,6 @@ function boardMarkup(block) {
     }).join("")}</div>
     <p class="sd-board-note">○ 표시는 한 번 눌러 본 번호예요. 다 풀었으면 다음으로 가요.</p>`;
 }
-const refOf = (block, n) => block.label.includes(" ") ? `${block.label}-${n}번` : `${block.label} ${n}번`; // 활동 1-3번 · 연습 7번
 function endMarkup() {
   const result = testResult();
   return `<div class="sd-cover sd-end">
@@ -465,13 +466,14 @@ function openSheet(button) {
   $("sheetFrame").src = link("index.html", { mode: "curriculum", book: book.id, units: String(unitIndex), only: button.dataset.type, stage: button.dataset.stage, count: "1", build: "1", as: "student", embed: "1", ref: `${unitIndex + 1}단원 ${ref}` });
   $("sheet").hidden = false;
   $("sheetClose").focus({ preventScroll: true });
-  say(`${ref}과 같은 유형의 문제예요. 이 문제를 먼저 풀고 본책 문제를 다시 풀어 봐요.`, "think");
+  const line = sheetLine(ref);
+  say(line.text, "think", line.id);
 }
 function closeSheet(talk = true) {
   if ($("sheet").hidden) return;
   $("sheet").hidden = true;
   $("sheetFrame").removeAttribute("src");
-  if (talk) say("좋아요. 이제 본책으로 돌아가서 그 문제를 다시 풀어 봐요.", "talk");
+  if (talk) say(SHEET_BACK.text, "talk", SHEET_BACK.id);
 }
 $("sheetClose").addEventListener("click", () => closeSheet());
 

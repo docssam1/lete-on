@@ -30,6 +30,8 @@ const RULE = {
   "rotate-left": "맨 윗줄이 맨 왼쪽 줄이 돼요. 윗줄을 왼쪽부터 읽은 순서대로 왼쪽 줄을 아래에서부터 읽어요.",
   "rotate-half": "위아래도 좌우도 모두 바뀌어요. 맨 위 왼쪽 칸은 맨 아래 오른쪽 칸으로 가요."
 };
+// 틀린 칸 수가 들어가는 말 — 음성 목록(tools/export-study-voice.mjs)이 칸 수마다 펼쳐 녹음한다
+export const wrongCellsLine = (wrong) => `옮긴 칸 중 ${wrong}칸의 자리가 달라요. 규칙을 다시 읽고 한 칸씩 확인해 봐요.`;
 export const LEVELS = Object.freeze([
   { id: 1, title: "뒤집기", problems: [["flip-right"], ["flip-down"], ["flip-left"], ["flip-up"]], cells: 5 },
   { id: 2, title: "돌리기", problems: [["rotate-right"], ["rotate-left"], ["rotate-half"], ["rotate-left", "rotate-left"]], cells: 5 },
@@ -80,7 +82,7 @@ export function diagnose(from, built, name) {
   if (o.op === "rotate-half" && (other("rotate-left") || other("rotate-right"))) return { ok: false, say: "반의 반 바퀴만 돌렸어요. 반 바퀴는 반의 반 바퀴를 두 번 돌린 거예요." };
   if (o.kind === "turn" && (other("mirror-left-right") || other("mirror-top-bottom"))) return { ok: false, say: "뒤집은 모양을 만들었어요. 돌리기는 판을 통째로 돌려요 — 거울처럼 뒤집지 않아요." };
   const wrong = built.filter((cell) => !has(want, cell)).length;
-  return { ok: false, wrong, say: `옮긴 칸 중 ${wrong}칸의 자리가 달라요. 규칙을 다시 읽고 한 칸씩 확인해 봐요.` };
+  return { ok: false, wrong, say: wrongCellsLine(wrong) };
 }
 
 // 독쌤 말(문제마다 바뀌는 것) — 화면과 음성 목록(tools/export-study-voice.mjs)이 같이 쓴다

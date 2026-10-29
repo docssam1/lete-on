@@ -1,5 +1,5 @@
 import { CURRICULUM, TEXTBOOK_STAGES } from "./source-data.js?v=20261028m";
-import { lessonsByUnit, lessonsByPart, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261028zf";
+import { lessonsByUnit, lessonsByPart, unitParts, partProblems, gameTitles, loadGoldenBell } from "./study-map.js?v=20261029a";
 import { readRecord, weekRate, loggedIn } from "./study-progress.js?v=20261028n";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
 
