@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 5-2 Page 8 Practice Traceability
+
+- Added links from locked source records 3-3/3-4 to their separate synthetic runtime types. The original records remain locked; the audit now checks both the inventory links and the actual generator registration.
+- Source inventory audit now reports 117 failures, not the older 81 mentioned below. Its 5-2 status expectations use a fixed allowlist and reject newer `verified-local` records; some records also have empty visual-risk arrays. The remaining 6-1 section counts and 6-2 review-reason findings need individual assessment. Do not change locks or silence findings merely to make the audit green.
+
+---
+
 ## 2026-10-30 Grade 5-2 Unit 1 Page 8 Examples 3-3 and 3-4: Separate Practice
 
 - Source examples remain locked: the original packing conditions conflict, and the taxi increment policy is unclear. Publisher answers are unverified. Created separately identified synthetic practice with explicit maximum full boxes and explicit partial-distance charging, using different values; no original was silently repaired or unlocked.
