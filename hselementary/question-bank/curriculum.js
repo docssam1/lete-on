@@ -2659,6 +2659,16 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52DecimalDecimal.types.push({id, number:source52DecimalDecimal.types.length+1, typeNumber, name, label:name, sourceItemId:id, sourceItemLabel:"Mission 6", sourceSection:"mission", sourceTier:"advanced", sourcePdfPage:41, sourcePrintedPage:45, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52OneDecimalFactorAndProductRangeCountPage45Mission6", generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:3, verifiedVariantTarget:3, answerVisualRequired:false, answerVisualStatus:"not-required"});
   }
 
+  const source52CongruenceUnit = semesters.find(s => s.id === "5-2")?.units.find(u => u.id === "5-2-u3");
+  const source52CongruenceFirst = source52CongruenceUnit?.subunits.find(s => s.name === "조건에 맞는 삼각형 그리기");
+  if (source52CongruenceFirst) {
+    const index = source52CongruenceFirst.types.findIndex(t => t.id === "5-2-u3-t1");
+    if (index >= 0) {
+      const previous=source52CongruenceFirst.types[index], id="5-2-u3-e1-exploration", name="삼각형이 한 가지로 정해지는 조건";
+      source52CongruenceFirst.types[index]={...previous,id,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 1",sourceSection:"exploration",sourcePdfPage:20,sourcePrintedPage:24,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 조건을 대조하고 창작 조건의 합동 여부와 두 해를 독립 확인했습니다.",generatorKey:"source52U3Page24Exploration1",variant:0,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"};
+    }
+  }
+
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52Application = source52Unit1?.subunits.find(subunit => subunit.name === "어림하기의 활용 · 개념탐구 3 원문 연결");
   if (source52Application) for (const [n,name] of [[1,"어림한 방법 모두 찾기"],[2,"단위로 파는 리본의 가격"]]) {
