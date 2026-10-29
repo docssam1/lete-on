@@ -893,7 +893,9 @@
       ],
       "sourceVerified": false,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다.",
+      "syntheticRuntimeTypeId": "5-2-u1-e4-mission-4-rounded-seven-million-range",
+      "sourceReviewCorrection20261030": "정본은 자연수로 제한하지 않은 수의 세 어림 결과로 범위를 묻는다. 원문과 창작 연습 모두 두 끝점이 제외되는 범위이며 경계의 소수까지 독립 검산했다. 출판사 답안 미대조, 원문 잠금 유지."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-5",
@@ -910,7 +912,9 @@
       ],
       "sourceVerified": false,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다.",
+      "syntheticRuntimeTypeId": "5-2-u1-e4-mission-5-quotient-range-sum",
+      "sourceReviewCorrection20261030": "정본은 두 나눗셈 몫의 어림 조건에 맞는 자연수들의 합을 묻는다. 조건을 만족하는 자연수를 직접 열거해 합산하고 창작 연습은 다른 수치를 사용한다. 출판사 답안 미대조, 원문 잠금 유지."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-6",
