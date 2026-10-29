@@ -60,6 +60,8 @@ test("grade map, level comparison, and competition intake stay honest and intera
   page.on("pageerror", function (error) { errors.push(error.message); });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#grade-map-title").innerText(), "7학년 수학 한눈에");
+  const footerLinkStyle = await page.locator(".site-footer a").first().evaluate(function (node) { return { color: getComputedStyle(node).color, textDecoration: getComputedStyle(node).textDecorationLine }; });
+  assert.deepEqual(footerLinkStyle, { color: "rgb(86, 98, 116)", textDecoration: "none" });
   assert.match(await page.locator("#grade-title").innerText(), /유리수/);
   assert.equal(await page.locator(".grade-button").count(), 10);
   assert.equal(await page.locator(".stage-button").count(), 4);

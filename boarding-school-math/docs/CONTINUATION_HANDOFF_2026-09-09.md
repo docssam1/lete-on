@@ -332,6 +332,12 @@ The roadmap's aggregate-entry header now says that values entered on that screen
 
 Verification: focused roadmap, browser, Grade 7 workbook, screener-plan, scoring-readiness, and role-separated report tests passed 47/47; `git diff --check` passed. Browser coverage confirms aggregate entry leaves the locally stored item-review history untouched. Claude Max Opus was given the sanitized diff for read-only review but returned no response; no independent Claude sign-off is claimed. Local-only; no publication or sync.
 
+### Roadmap visual review follow-up
+
+Inspected Grade 7 roadmap, side-by-side grade comparison, and contest-record section in a 1440×1000 browser capture. The footer links retained browser-default blue underlines and broke the page's visual system. They now use the roadmap's muted ink color and show the GFIELD purple on hover. No navigation, comparison, or scoring behavior changed.
+
+Verification: `boarding-grade-roadmap.test.cjs` and `boarding-roadmap-browser.test.cjs` pass 23/23, including the footer style assertion, Grade 7 path behavior, same-source MAP comparison, and mobile/tablet layouts. No horizontal overflow at 390px or 320px. `git diff --check` passed. Local-only; no publication or sync.
+
 ### Contest practice eligibility clarification
 
 The roadmap's AMC options are age- and grade-bounded learning suggestions only; they do not evaluate official eligibility. The selected contest guidance now sends AMC users to the current MAA cycle rules (which include age requirements) and other contest users to their organizer's current rules. The manual grouped score form explains that the learner/teacher classifies items and that its descriptive rates do not determine an achievement band, eligibility, award, or qualification.
