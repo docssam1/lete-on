@@ -100,6 +100,9 @@ require("./source-5-2-u2-page20-example41-synthetic.js");
 require("./source-5-2-u2-page20-example42-synthetic.js");
 require("./source-5-2-u2-page20-example43-synthetic.js");
 require("./source-5-2-u2-page20-example44-synthetic.js");
+require("./source-5-2-u2-page21-mission1-synthetic.js");
+require("./source-5-2-u2-page21-mission2-synthetic.js");
+require("./source-5-2-u2-page21-mission3-synthetic.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
@@ -227,8 +230,8 @@ for (const semester of window.HSE_CURRICULUM.semesters) {
   }
 }
 
-if (total !== 2156) failures.push(`전체 유형 수가 2156가 아니라 ${total}입니다.`);
-if (ready !== 1368) failures.push(`원문 연결 공개 유형 수가 1368가 아니라 ${ready}입니다.`);
+if (total !== 2159) failures.push(`전체 유형 수가 2159가 아니라 ${total}입니다.`);
+if (ready !== 1371) failures.push(`원문 연결 공개 유형 수가 1371가 아니라 ${ready}입니다.`);
 if (lockedWithoutSource !== 380) failures.push(`원문 미연결 잠금 유형 수가 380이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {
