@@ -40,6 +40,17 @@ const specs = [
 global.window = global.window || {};
 require("./source-inventory-grade6.js");
 const publicGrade6Items = window.HSE_SOURCE_INVENTORY_GRADE6.items;
+require("./curriculum.js");
+const runtimeTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units).flatMap(unit => unit.subunits).flatMap(subunit => subunit.types);
+function verifiedLockedPractice(item) {
+  const matches = runtimeTypes.filter(type => type.id === item.syntheticRuntimeTypeId);
+  return item.sourceVerified === true && item.publicDecision === "locked" && item.publisherKeyVerified === false &&
+    item.syntheticRuntimeTypeId === item.sourceItemId && matches.length === 1 && matches[0].sourceItemId === item.syntheticRuntimeTypeId &&
+    matches[0].reviewLocked === false && matches[0].sourceVerified === true &&
+    typeof matches[0].generatorKey === "string" && matches[0].generatorKey.length > 0 &&
+    matches[0].verifiedVariantTarget === 3 && matches[0].verifiedVariantCount === 3;
+}
+
 const splitPublicIds = {
   "6-2-u3-e2-exploration": ["6-2-u3-e2-exploration-1", "6-2-u3-e2-exploration-2"],
   "6-2-u3-e3-example-3": ["6-2-u3-e3-example-3-1", "6-2-u3-e3-example-3-2"],
@@ -61,6 +72,12 @@ function releasedPublicCounterparts(item) {
 
 const failures = [];
 const verified5_2Page49 = new Set([...([2, 3, 4, 5, 6].map(n => `5-2-u5-e1-mission-${n}`)), "5-2-u5-e1-example-2", "5-2-u5-e1-example-3", ...([1, 2, 3, 4].map(n => `5-2-u5-e2-example-${n}`)), ...([1, 2, 3, 4, 5, 6].map(n => `5-2-u5-e2-mission-${n}`)), ...([1, 2, 3, 4].map(n => `5-2-u5-e4-example-${n}`)), "5-2-u5-e4-exploration", "5-2-u6-e1-exploration", "5-2-u6-e1-example-1", "5-2-u6-e1-example-2", "5-2-u6-e1-example-3", "5-2-u6-e1-example-4", "5-2-u6-e1-mission-1", "5-2-u6-e1-mission-2", "5-2-u6-e1-mission-3", "5-2-u6-e1-mission-4", "5-2-u6-e1-mission-5", "5-2-u6-e1-mission-6", "5-2-u6-e2-exploration", "5-2-u6-e2-example-1", "5-2-u6-e2-example-2", "5-2-u6-e2-example-4", "5-2-u6-e2-mission-1", "5-2-u6-e2-mission-2", "5-2-u6-e2-mission-3", "5-2-u6-e2-mission-5", "5-2-u6-e2-mission-6", "5-2-u1-e3-example-1", "5-2-u1-e3-example-2", "5-2-u6-e4-exploration", ...([1,2,3,4,5,6].map(n => `5-2-u6-e4-mission-${n}`)), ...([1,2,4].map(n => `5-2-u6-e4-example-${n}`)), "5-2-u6-e3-exploration", ...([1,2,3,4,6].map(n => `5-2-u6-e3-mission-${n}`)), ...([1,2,3,4].map(n => `5-2-u6-e3-example-${n}`)), ...([1, 2, 3, 4, 5, 6].map(n => `5-2-u5-e4-mission-${n}`))]);
+// These records were source-reviewed locally while their original release remains locked.
+// The registered practice must remain separately verified; this list is not a release grant.
+const verified5_2LockedPractice = new Set([
+  "5-2-u3-e1-exploration",
+  ...[1, 2].flatMap(e => [`5-2-u4-e${e}-exploration`, ...[1, 2, 3, 4].map(n => `5-2-u4-e${e}-example-${n}`), ...[1, 2, 3, 4, 5, 6].map(n => `5-2-u4-e${e}-mission-${n}`)])
+]);
 const reviewed5_2Releases = new Set(["5-2-u1-e4-mission-1", "5-2-u3-e4-example-2", "5-2-u3-e4-mission-4", "5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
 const allIds = new Set();
 const semesterCounts = {};
@@ -145,8 +162,11 @@ for (const spec of specs) {
     const status = item.implementationStatus;
     byStatus[status] = (byStatus[status] || 0) + 1;
     if (spec.semester === "5-2") {
-      const expected = verified5_2Page49.has(item.sourceItemId) ? "verified-local" : reviewed5_2Releases.has(item.sourceItemId) ? "reviewed" : "review-locked";
+      const expected = verified5_2Page49.has(item.sourceItemId) || verified5_2LockedPractice.has(item.sourceItemId) ? "verified-local" : reviewed5_2Releases.has(item.sourceItemId) ? "reviewed" : "review-locked";
       if (status !== expected) fail(`${label}: implementationStatus가 ${expected}가 아닙니다.`);
+      if (verified5_2LockedPractice.has(item.sourceItemId) && !verifiedLockedPractice(item)) {
+        fail(`${label}: 원문 잠금 또는 검증된 연습 유형 연결이 잘못되었습니다.`);
+      }
     } else if (!(status in spec.statuses)) {
       fail(`${label}: 알 수 없는 implementationStatus ${status}`);
     }
@@ -179,8 +199,8 @@ for (const spec of specs) {
     const recorded = document.integrity?.actualBySection?.[section];
     if (recorded !== undefined && recorded !== bySection[section]) fail(`${spec.semester} ${section}: 실제 항목 수와 장부에 기록한 실제 수가 다릅니다 (${bySection[section]} / ${recorded}).`);
   }
-  if (spec.semester === "5-2" && verifiedCount !== 153) {
-    fail(`5-2: sourceVerified true 항목은 153개여야 합니다 (${verifiedCount}).`);
+  if (spec.semester === "5-2" && verifiedCount !== 195) {
+    fail(`5-2: sourceVerified true 항목은 195개여야 합니다 (${verifiedCount}).`);
   }
   if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
     fail("5-2: reviewed 항목의 원문 확인 또는 명시 목록이 일치하지 않습니다.");

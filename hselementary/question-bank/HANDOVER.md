@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 5-2 Locked-Practice Inventory Gate
+
+- Updated the stale source-inventory status allowlist for 23 known locally reviewed entries. Each must retain `publicDecision: locked`, unverified publisher key, source verification and the exact registered practice mapping with three verified variants. The audit now records the current 195 sourceVerified flags as a count, not independent proof of 195 publisher answers. No source records or release decisions changed.
+- Negative tests reject unlocking, a claimed publisher key, missing source verification, wrong and missing practice links. Prior review-reason mutation checks and the release gate pass. The overall inventory audit still fails two 6-1 exploration/example count checks; source grouping policy needs independent reconciliation before changing expected totals.
+
+---
+
 ## 2026-10-30 Grade 5-2 Source Visual-Risk Records
 
 - Rechecked the SHA-256-matched original PDF pages 20 and 39–41 (printed 24 and 43–45). Twelve records had empty visual-risk arrays. Recorded the absence of printed geometry and the relevant equation, symbol, decimal-place, order and boundary distinctions for each; pencil annotations are not source figures. This records presentation evidence only and does not unlock originals or establish publisher answers.
