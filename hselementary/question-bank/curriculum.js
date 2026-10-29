@@ -2678,6 +2678,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CongruenceUnit = semesters.find(s => s.id === "5-2")?.units.find(u => u.id === "5-2-u3");
+  const source52SymmetryApplication = source52CongruenceUnit?.subunits.find(s => s.name === "선대칭의 활용");
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t => t.id === "5-2-u3-e6-example-3-palindrome-synthetic")) {
+    const id="5-2-u3-e6-example-3-palindrome-synthetic",name="자리 수별 대칭수의 개수 · 연습";
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 6-3 구조 연습",sourceSection:"example",sourcePdfPage:30,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 범위의 대칭수를 전수 검사했습니다.",generatorKey:"source52PalindromeSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
   const source52LineSymmetry = source52CongruenceUnit?.subunits.find(s => s.name === "선대칭도형");
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-exploration-grid-synthetic")) {
     const id="5-2-u3-e5-exploration-grid-synthetic",name="대칭축이 하나인 색 배열 · 연습";
