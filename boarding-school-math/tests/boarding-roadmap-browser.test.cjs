@@ -144,6 +144,9 @@ test("grade comparison shows curriculum examples without implying measured level
   assert.equal(await page.locator("#comparison-target-label").innerText(), "9학년 · 추정안");
   assert.match(await page.locator("#comparison-note").innerText(), /학교 과목 순서를 확인/);
   assert.match(await page.locator("#comparison-bridge-copy").innerText(), /8학년:.*9학년:/);
+  assert.match(await page.locator("#comparison-current-tracks").innerText(), /1–3개월[\s\S]*대수 개념과 문제 해결/);
+  assert.match(await page.locator("#comparison-current-tracks").innerText(), /4–6개월[\s\S]*기하 심화와 AMC 10\/12/);
+  assert.match(await page.locator("#comparison-target-tracks").innerText(), /10–12개월 · 추정/);
   assert.match(await page.locator(".comparison-boundary").innerText(), /학생의 현재 위치.*판단하지 않아요/);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true);
   const positions = await page.locator(".comparison-column").evaluateAll((nodes) => nodes.map((node) => ({ x: node.getBoundingClientRect().x, y: node.getBoundingClientRect().y })));

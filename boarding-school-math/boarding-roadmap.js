@@ -197,6 +197,16 @@
       const description = document.createElement("dd"); description.textContent = track[1];
       list.append(term, description);
     });
+    const annualPlan = data.getAnnualPlan(entry.grade);
+    const planTerm = document.createElement("dt"); planTerm.textContent = "연간 흐름";
+    const planDescription = document.createElement("dd");
+    planDescription.textContent = annualPlan ? annualPlan.title : "월별 계획 자료 없음";
+    list.append(planTerm, planDescription);
+    if (annualPlan) annualPlan.periods.forEach(function (period) {
+      const term = document.createElement("dt"); term.textContent = period[0];
+      const description = document.createElement("dd"); description.textContent = `${period[1]} · ${period[2]}`;
+      list.append(term, description);
+    });
     if (entry.source === "inferred") {
       const note = document.createElement("p");
       note.className = "comparison-inferred-note";
