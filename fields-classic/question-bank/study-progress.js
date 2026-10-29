@@ -2,6 +2,8 @@
 //   week      <권>-u<단원>   한 주 덱에서 본 장(수행률·진도): { total, seen: [장 열쇠], phases: { 종류: [본 장, 모든 장] }, last }
 //   test      <권>-u<단원>   단원 평가: { right, total, marked, weak: [유형 id] }
 //   book-test <권>           권별 테스트: { right, total, marked, wrong: [번호], weak: [유형 id] }
+//   test      <권>-u<단원>-d<차시>  데일리 테스트(차시마다, 단원 평가와 같은 꼴)
+//   plan      main          학습 진도표(plan.html): { start, days, from, toBook, holidays, off, absent, makeup } — 서버 fields-progress v2부터 받음
 // 늘 이 기기(localStorage)에 저장하고, 승인 페이지(login.html)로 로그인한 학생이면 서버(fields-progress → fields_study_records)에도 저장한다.
 // 로그인 없이 쓰면(데모) 이 기기에만 남는다. 문제 글·정답은 기록하지 않는다.
 // 로그인은 fields-auth(승인번호 + 이름, 12시간 세션)를 그대로 쓴다 — 관리자 DOCSSAM 은 선생님 보기(teacher.html).
