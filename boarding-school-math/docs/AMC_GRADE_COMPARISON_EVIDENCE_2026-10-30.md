@@ -7,6 +7,7 @@
 - MAA의 [AMC 공식 프로그램 안내](https://maa.org/student-programs/amc/)는 AMC 8·10·12의 참가 학년, 시험 형식·범위와 일부 현재 주기 정보를 제공한다. 공개 페이지에서 개인 점수의 학년별 백분위표, 같은 학년 순위표, 학년 규준 실력 등급표는 확인되지 않았다.
 - MAA의 [학교 관리자 안내](https://maa.org/student-programs/amc/information-for-school-administrators/)는 주최 학교가 전국 수준의 학교 순위 관련 피드백을 받을 수 있다고 설명한다. 이것은 학교 단위 피드백이며 개별 학생의 같은 학년 순위나 AMC 능력 등급을 산출할 근거가 아니다. 안내의 대회 날짜는 2024–25 주기라 최신 주기 일정 근거로 쓰지 않는다.
 - MAA의 [AMC 학생 포털 안내서](https://maa.org/wp-content/uploads/2025/06/Guide-to-the-AMC-Student-Portal.pdf)는 학생이 포털에서 연도별 성적을 확인할 수 있다고 설명한다. [AMC 교사용 안내서](https://maa.org/wp-content/uploads/2025/06/2025-26-AMC-8-Teachers-Manual.pdf)는 주최자가 포털에서 학생 성적표를 보는 흐름을 설명한다. 공개 안내만으로 학년별 비교 통계가 성적표에 포함된다고 확인할 수는 없다.
+- MAA의 [AMC 데이터 보안·개인정보 안내](https://maa.org/policies-and-procedures/)는 참가자 등록 정보와 점수가 MAA 내부 시스템에 보관되고 승인·교육을 받은 직원에게만 접근 권한이 있다고 설명한다. 이 프로젝트는 해당 비공개 데이터에 접근하지 않았다.
 - MAA의 [2026–27 AIME 안내](https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/)는 해당 주기 미국·캐나다 경로의 AMC 10/12 점수 기준을 발표한다. 이 값은 주기와 지역을 붙인 공식 점수 기준이며, 학년별 백분위·실력 등급이 아니다.
 
 따라서 공개 자료만으로 학생의 AMC 점수를 같은 학년 참가자와 비교하거나 AMC 실력 등급으로 분류하지 않는다. 주최자 포털의 접근 제한 자료를 추정하거나, 수상자 명단·선택된 학교 순위에서 모집단 분포를 역산하지 않는다. 추가 공개 데이터가 확인되면 출처, 주기, 응시집단, 분모, 학년 정의와 국제/미국·캐나다 적용 범위를 확인한 뒤 별도 검토한다.
