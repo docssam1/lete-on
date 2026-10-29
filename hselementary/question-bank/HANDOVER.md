@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 59 Missions 3–4
+
+- Printed p.59 Mission 3: first four reading counts are 83,74,71,64; the fifth day exceeds the five-day mean by 12, giving mean 76 and fifth day 88 pages. An annotated source copy says 85, which fails the printed condition; handwriting was not used as evidence. Mission 4: changing one of ten numbers from 30 to 50 increases the average from 42 to 44. Publisher answer keys remain unverified.
+- Source numbers and conditions, independent arithmetic and candidate checks, 1440/375/320px browser, four separate one-page A4 visual checks, release gate and 77,880 runtime generations passed. The Mission 3 display name was shortened after print inspection and the browser/A4 check rerun.
+- Counts: 2,086 types, 1,298 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Remaining Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 59 Missions 1–2
 
 - Printed p.59 Mission 1: (23♥□)♥32=33, with ♥ the mean; independently solved □=45. Mission 2: four subjects (not five), with the visible digits 7 in mathematics and 3 in social studies; the total is 328 and the unique scores are mathematics 70, social studies 83. The previous ledger miscounted the average column as a fifth subject. Both publisher answer keys are unverified; handwritten entries were not used.

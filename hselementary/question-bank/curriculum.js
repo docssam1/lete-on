@@ -2377,6 +2377,21 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     }
   }
 
+  if (source52AverageFirst) {
+    for (const [ordinal, name, generatorKey] of [
+      [3, "독서 평균으로 다섯째 날 구하기", "source52AverageOriginalPage59Mission3"],
+      [4, "평균 변화로 고치기 전 자연수 구하기", "source52AverageOriginalPage59Mission4"]
+    ]) {
+      const id = `5-2-u6-e1-mission-${ordinal}`;
+      const typeNumber = Math.max(0, ...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52AverageFirst.types.push({id, number:source52AverageFirst.types.length+1, typeNumber, name, label:name,
+        difficultyBand:0, sourceItemId:id, sourceItemLabel:`Mission ${ordinal}`, sourceSection:"mission", sourceTier:"advanced",
+        sourcePdfPage:55, sourcePrintedPage:59, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey,
+        generationMode:"fixed-verified-pool", verifiedVariantTarget:1, verifiedVariantCount:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
