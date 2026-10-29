@@ -39,7 +39,7 @@
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1~3·5·6과 62쪽 개념탐구 3·예제 3-1~3-4와 63쪽 Mission 1~4·6과 64쪽 개념탐구 4·예제 4-1·4-2·4-4를 연결하고 예제 4-3은 경로 선택 방식 확인 전 보류하며 Mission 5는 경로 해석 확인 전 보류하며 Mission 4는 선발 기준 미명시로 보류하며 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1~3·5·6과 62쪽 개념탐구 3·예제 3-1~3-4와 63쪽 Mission 1~4·6과 64쪽 개념탐구 4·예제 4-1·4-2·4-4와 65쪽 Mission 1~6을 연결하고 예제 4-3은 경로 선택 방식 확인 전 보류하며 Mission 5는 경로 해석 확인 전 보류하며 Mission 4는 선발 기준 미명시로 보류하며 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 34,
-    "lockedCount": 10
+    "publicCandidateCount": 40,
+    "lockedCount": 4
   },
   "items": [
     {
@@ -1105,17 +1105,24 @@
       "sourcePrintedPage": 65,
       "commonTypeId": "three-coins-same-side",
       "childFriendlyTypeLabel": "동전 세 개가 모두 같은 면일 가능성",
-      "originalStructure": "동전 세 개를 동시에 던졌을 때 모두 같은 면이 나올 가능성을 구합니다.",
-      "conditions": ["동전 3개", "각 동전은 앞면 또는 뒷면", "모두 같은 면"],
+      "originalStructure": "동전 세 개를 던져 모두 같은 면일 가능성",
+      "conditions": [
+        "동전 3개",
+        "각 동전은 앞면 또는 뒷면",
+        "모두 같은 면"
+      ],
       "visualRequirement": "동전 3개의 전체 경우를 읽기 쉽게 보여야 합니다.",
-      "independentCalculation": "전체 8가지 중 앞면 셋, 뒷면 셋 2가지. 2÷8=1/4",
+      "independentCalculation": "서로 독립이고 앞뒤가 같은 가능성이면 8가지 중 모두 같은 2가지: 1/4",
       "independentAnswer": "1/4",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "동전 전체 경우와 조건에 맞는 경우를 전수 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e4-mission-1",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e4-mission-2",
@@ -1125,17 +1132,25 @@
       "sourcePrintedPage": 65,
       "commonTypeId": "two-cards-one-multiple-of-three",
       "childFriendlyTypeLabel": "1부터 20까지 카드 두 장 중 3의 배수가 있을 가능성",
-      "originalStructure": "1부터 20까지의 카드 중 2장을 뽑을 때 적어도 한 장이 3의 배수일 가능성을 구합니다.",
-      "conditions": ["1~20 카드", "카드 2장", "뽑은 뒤 다시 넣지 않음", "적어도 한 장은 3의 배수"],
+      "originalStructure": "1~20 카드 두 장 중 적어도 하나가 3의 배수일 가능성",
+      "conditions": [
+        "1~20 카드",
+        "카드 2장",
+        "뽑은 뒤 다시 넣지 않음",
+        "적어도 한 장은 3의 배수"
+      ],
       "visualRequirement": "카드 전체와 3의 배수 카드를 구분해 보여야 합니다.",
-      "independentCalculation": "전체 짝 190가지. 3의 배수가 아닌 14장 중 2장을 뽑는 짝 91가지를 빼면 조건에 맞는 짝 99가지. 99÷190",
+      "independentCalculation": "카드 20장 중 두 장의 짝 190개. 3의 배수 아닌 14장 중 두 장인 91개 제외: 99/190",
       "independentAnswer": "99/190",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "카드 전체와 조건에 맞는 카드를 전수 확인하는 화면을 검수하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e4-mission-2",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e4-mission-3",
@@ -1145,17 +1160,24 @@
       "sourcePrintedPage": 65,
       "commonTypeId": "three-ropes-triangle",
       "childFriendlyTypeLabel": "끈 세 개로 삼각형이 만들어질 가능성",
-      "originalStructure": "1cm부터 5cm까지의 끈 중 3개를 뽑아 삼각형을 만들 수 있을 가능성을 구합니다.",
-      "conditions": ["1·2·3·4·5cm 끈", "3개를 뽑음", "뽑은 끈으로 삼각형을 만듦"],
-      "visualRequirement": "끈의 길이와 뽑는 수를 분명히 보여야 합니다.",
-      "independentCalculation": "전체 10짝 중 삼각형이 되는 (2,3,4),(2,3,5),(2,4,5),(3,4,5) 네 짝. 4÷10=2/5",
-      "independentAnswer": "2/5",
+      "originalStructure": "1~5cm 끈 중 3개로 삼각형을 만들 가능성",
+      "conditions": [
+        "1·2·3·4·5cm 끈",
+        "3개를 선택",
+        "세 변의 길이로 삼각형을 만들 수 있어야 함"
+      ],
+      "visualRequirement": "원문은 끈 길이를 문장으로 제시하며 별도 그림이 없음.",
+      "independentCalculation": "삼각형인 조합 (2,3,4), (2,4,5), (3,4,5) 3개/10개. (2,3,5)는 합이 같아 일직선이므로 제외",
+      "independentAnswer": "3/10",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "끈의 길이와 삼각형 조건을 전수 확인하는 화면을 검수하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e4-mission-3",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e4-mission-4",
@@ -1163,19 +1185,26 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 61,
       "sourcePrintedPage": 65,
-      "commonTypeId": "three-dice-at-least-two-same",
-      "childFriendlyTypeLabel": "주사위 세 개 중 적어도 두 개가 같은 눈일 가능성",
-      "originalStructure": "주사위 3개를 동시에 던질 때 적어도 두 주사위의 눈이 같은 가능성을 구합니다.",
-      "conditions": ["주사위 3개", "각 눈 1~6", "적어도 두 눈이 같음"],
-      "visualRequirement": "세 주사위의 전체 경우와 같은 눈 조건을 표로 확인할 수 있어야 합니다.",
-      "independentCalculation": "전체 6×6×6=216. 세 눈이 모두 다른 경우 6×5×4=120. 조건에 맞는 경우 216-120=96, 96/216=4/9",
-      "independentAnswer": "4/9",
+      "commonTypeId": "four-students-no-own-desk-probability",
+      "childFriendlyTypeLabel": "네 사람이 자기 책상을 피할 가능성",
+      "originalStructure": "네 사람이 모두 자기 이름이 아닌 책상에 앉을 가능성",
+      "conditions": [
+        "서로 다른 네 수험생",
+        "각자 이름이 붙은 책상 한 개씩",
+        "모두 자기 이름이 아닌 책상에 앉음"
+      ],
+      "visualRequirement": "원문은 문장제로 별도 표나 그림이 없음.",
+      "independentCalculation": "네 사람의 배치 24개 중 아무도 자기 자리 아닌 배치 9개: 9/24=3/8",
+      "independentAnswer": "3/8",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "주사위 전체 경우와 조건에 맞는 경우의 전수 검산을 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e4-mission-4",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e4-mission-5",
@@ -1185,17 +1214,25 @@
       "sourcePrintedPage": 65,
       "commonTypeId": "two-tickets-both-winning",
       "childFriendlyTypeLabel": "당첨 제비 두 장을 뽑을 가능성",
-      "originalStructure": "당첨 제비 3개가 섞인 10개의 제비 중 2개를 차례로 뽑을 때 모두 당첨일 가능성을 구합니다.",
-      "conditions": ["제비 10개", "당첨 제비 3개", "2개를 뽑고 다시 넣지 않음", "모두 당첨"],
+      "originalStructure": "당첨 제비 3개 포함 10개 중 두 개를 복원 없이 뽑아 모두 당첨일 가능성",
+      "conditions": [
+        "제비 10개",
+        "당첨 제비 3개",
+        "2개를 뽑고 다시 넣지 않음",
+        "모두 당첨"
+      ],
       "visualRequirement": "전체 제비 수와 당첨 제비 수, 뽑는 순서를 분명히 보여야 합니다.",
-      "independentCalculation": "첫 번째 당첨 가능성 3/10, 두 번째 당첨 가능성 2/9. 3/10×2/9=1/15",
+      "independentCalculation": "순서 있는 서로 다른 제비 두 개는 90개, 당첨 2개 순서는 3×2=6개: 6/90=1/15",
       "independentAnswer": "1/15",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "제비를 다시 넣지 않는 조건과 분수 수식을 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e4-mission-5",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e4-mission-6",
@@ -1205,17 +1242,24 @@
       "sourcePrintedPage": 65,
       "commonTypeId": "three-dice-at-least-two-same",
       "childFriendlyTypeLabel": "주사위 세 개 중 적어도 두 개가 같은 눈일 가능성",
-      "originalStructure": "주사위 3개를 동시에 던질 때 적어도 두 주사위의 눈이 같은 가능성을 구합니다.",
-      "conditions": ["주사위 3개", "각 눈 1~6", "적어도 두 눈이 같음"],
+      "originalStructure": "주사위 세 개 중 적어도 두 눈이 같을 가능성",
+      "conditions": [
+        "주사위 3개",
+        "각 눈 1~6",
+        "적어도 두 눈이 같음"
+      ],
       "visualRequirement": "세 주사위의 전체 경우와 같은 눈 조건을 표로 확인할 수 있어야 합니다.",
-      "independentCalculation": "전체 6×6×6=216. 세 눈이 모두 다른 경우 6×5×4=120. 조건에 맞는 경우 216-120=96, 96/216=4/9",
+      "independentCalculation": "서로 구분한 주사위 216개 결과 중 세 눈이 서로 다른 120개 제외: 96/216=4/9",
       "independentAnswer": "4/9",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "주사위 전체 경우와 조건에 맞는 경우의 전수 검산을 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e4-mission-6",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
     }
   ]
 }

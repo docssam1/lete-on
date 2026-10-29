@@ -1,3 +1,10 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 65 Missions 1–6
+
+- Source-checked and independently enumerated six original missions under the usual equally likely outcome models: 1/4, 99/190, 3/10, 3/8, 1/15 and 4/9. Mission 3's previous ledger incorrectly counted (2,3,5) as a triangle; equality makes a straight line, leaving three of ten triples. Mission 4's previous ledger duplicated the dice problem in Mission 6; corrected it to the four students and assigned desks problem. Publisher answer keys remain unverified.
+- Independent enumeration, 1440/375/320px browser, stacked fractions and separate one-page A4 checks, release gate and 79,740 runtime generations passed. Counts: 2,117 types, 1,329 generatable, 788 awaiting review. Four Unit 6 items remain locked pending interpretation (60p Example 2-3, 61p Mission 4, 63p Mission 5, 64p Example 4-3). The broader inventory audit retains 81 existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Preserve existing work and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 64 Exploration 4 and Examples 4-1–4-4
 
 - Source-checked and independently enumerated Exploration 4 and Examples 4-1, 4-2, 4-4: 1/6, 1/4, 3/10, 41/60 under the usual equally likely outcome models. Example 4-1 prior ledger incorrectly required adjacency and reversed the relationship; the printed condition is A to the right of B, with A not at either end. The six valid arrangements include nonadjacent cases. Publisher answer keys remain unverified.
