@@ -348,12 +348,6 @@ function academyBeamClick(b){
  academyLines=T.toggleAcademyLine(academyLines,b.dataset.academyBeam);
  PlannerStorage.setItem(academyLinesKey,JSON.stringify(academyLines));applyAcademyLines();return true;
 }
-function syncWorkspaceTabOrientation(){
- const root=$('journeyMap'),tabs=root.querySelector('.workspace-tabs');if(!tabs)return;
- const rail=!!root.querySelector('.pco-travel')&&!PlannerFullscreen.isOpen()&&matchMedia('(orientation:landscape) and (min-width:600px) and (max-width:1100px) and (max-height:500px)').matches;
- tabs.setAttribute('aria-orientation',rail?'vertical':'horizontal');
-}
-window.addEventListener('resize',syncWorkspaceTabOrientation);
 function setWorkspaceView(view,focus=false){
  if(!['map','graph','table','records'].includes(view))return;
  workspaceView=view;rememberWorkspace();
@@ -361,7 +355,7 @@ function setWorkspaceView(view,focus=false){
  if(PlannerFullscreen.isOpen())$('atlasFullscreenTitle').textContent=view==='graph'?'진도와 속도 비교':view==='table'?'월별 교재와 병행 계획':'우리 아이의 공부 지도';
  for(const pane of $('journeyMap').querySelectorAll('[data-workspace-panel]'))pane.hidden=pane.dataset.workspacePanel!==view;
  for(const tab of $('journeyMap').querySelectorAll('[data-workspace-view]')){if(tab.getAttribute('role')!=='tab')continue;const on=tab.dataset.workspaceView===view;tab.setAttribute('aria-selected',String(on));tab.tabIndex=on?0:-1;}
- syncWorkspaceTabOrientation();if(focus){const active=$('workspace-tab-'+view);active?.focus({preventScroll:true});active?.scrollIntoView({block:'nearest',inline:'nearest'});}PlannerPresentation.refresh($('journeyMap'));document.querySelectorAll('.top .nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===({map:'vmap',graph:'vrep',table:'vplan',records:'vrep'})[view]));
+ window.PlannerResponsiveNavigation?.syncOrientation();if(focus){const active=$('workspace-tab-'+view);active?.focus({preventScroll:true});active?.scrollIntoView({block:'nearest',inline:'nearest'});}PlannerPresentation.refresh($('journeyMap'));document.querySelectorAll('.top .nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===({map:'vmap',graph:'vrep',table:'vplan',records:'vrep'})[view]));
 }
 function mobileWorkspace(panel){document.body.dataset.workspacePane=panel;document.querySelectorAll('[data-mobile-workspace]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mobileWorkspace===panel)));rememberWorkspace();}
 mobileWorkspace('choice');
