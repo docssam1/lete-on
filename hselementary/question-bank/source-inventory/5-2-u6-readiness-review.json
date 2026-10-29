@@ -31,15 +31,15 @@
     "answerReview": {
       "independentCalculationOrEnumerationCount": 37,
       "visualModelPendingCount": 7,
-      "singleAnswerConfirmedCount": 37,
-      "answerNotFinalizedCount": 7,
+      "singleAnswerConfirmedCount": 36,
+      "answerNotFinalizedCount": 8,
       "singleAnswerStatusCounts": {
-        "true": 37,
-        "null": 7
+        "true": 36,
+        "null": 8
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2를 연결했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 14,
-    "lockedCount": 30
+    "publicCandidateCount": 15,
+    "lockedCount": 29
   },
   "items": [
     {
@@ -455,16 +455,22 @@
       "commonTypeId": "average-two-groups",
       "childFriendlyTypeLabel": "두 무리의 평균으로 한 무리의 평균 구하기",
       "originalStructure": "합격자와 불합격자의 수, 두 평균의 차, 전체 평균으로 합격자의 평균을 구합니다.",
-      "conditions": ["전체 100명", "합격 25명", "합격자 평균이 불합격자 평균보다 40점 높음", "전체 평균 62점"],
+      "conditions": [
+        "전체 100명, 합격 25명",
+        "합격자와 불합격자 평균의 차 40점 (높은 쪽은 명시되지 않음)",
+        "전체 평균 62점",
+        "합격자 평균"
+      ],
       "visualRequirement": "두 무리의 사람 수와 평균 관계를 단계별로 보여야 합니다.",
-      "independentCalculation": "합격자 평균을 x라 하면 불합격자 평균은 x-40. 25x+75(x-40)=100×62이므로 100x=9200, x=92",
-      "independentAnswer": "92점",
-      "candidateAnswerCount": 1,
-      "singleAnswer": true,
+      "independentCalculation": "25p+75f=6200 및 |p−f|=40이면 (p,f)=(92,52) 또는 (32,72). 점수순 선발로 합격자 평균이 높다는 조건을 추가하면 92점만 가능하나 원문에 명시되지 않음.",
+      "independentAnswer": "92점 또는 32점 (선발 기준에 따라 다름)",
+      "candidateAnswerCount": 2,
+      "singleAnswer": null,
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "초등 학습자가 읽을 수 있는 평균 풀이와 식 표시를 확인하기 전까지 잠금"
+      "lockReason": "합격과 점수의 선발 기준이 명시되지 않아 평균의 높은 쪽을 원문만으로 확정할 수 없음. 출판사 답안·선발 기준 확인 전 잠금.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e2-example-2-4",
@@ -475,16 +481,27 @@
       "commonTypeId": "average-adult-child-groups",
       "childFriendlyTypeLabel": "나이의 평균으로 여자 어린이 수 구하기",
       "originalStructure": "어른과 어린이, 남자와 여자의 평균 나이와 인원수 조건으로 여자 어린이 수를 구합니다.",
-      "conditions": ["어른 84명, 평균 40.25살", "남자 어른 평균 41살, 여자 어른 평균 38살", "남자 어린이 평균 13살, 여자 어린이 평균 12살", "어른과 어린이 평균의 차 28살", "어린이가 남자 어른보다 5명 많음"],
+      "conditions": [
+        "20살 이상 어른, 20살 미만 어린이",
+        "어른 84명, 평균 40.25살",
+        "남자 어른 평균 41살, 여자 어른 평균 38살",
+        "남자 어린이 평균 13살, 여자 어린이 평균 12살",
+        "어른과 어린이 평균의 차 28살",
+        "어린이가 남자 어른보다 5명 많음",
+        "여자 어린이 수가 남자 어린이 수의 몇 배인지 구함"
+      ],
       "visualRequirement": "어른·어린이와 남자·여자 구분을 표나 문장으로 겹치지 않게 보여야 합니다.",
       "independentCalculation": "남자 어른 63명, 여자 어른 21명. 어린이 68명, 어린이 평균 12.25살. 어린이 나이 합은 833이고 13×남자 어린이+12×여자 어린이=833, 두 수의 합 68이므로 남자 어린이 17명, 여자 어린이 51명",
       "independentAnswer": "3배",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "여러 무리의 평균 관계를 초등 표현으로 바꾸고 빈칸 답을 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e2-example-4",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "20살 기준에서 어린이 평균이 어른보다 낮음을 확인. 성별 정수 인원 조합 전수 검사로 남자 어른 63, 어린이 남 17·여 51, 3배 확인. 공식 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-1",

@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 60 Examples 2-3–2-4
+
+- Printed p.60 Example 2-4: the 20-year age boundary makes child mean lower than adult mean. Independent integer-count enumeration gives 63 male adults, 68 children, 17 boys and 51 girls; the requested ratio is 3. Publisher answer key unverified.
+- Example 2-3 stays locked: its source says only that the passed/failed means differ by 40, and does not explicitly say selection is in score order. Both (passed, failed) means (92,52) and (32,72) satisfy the printed arithmetic; 92 follows if selection is by score. Updated the ledger to preserve that distinction rather than silently add a condition. Confirm selection criteria or publisher answer before release.
+- Source conditions, independent integer and score-case enumeration, 1440/375/320px browser, separate one-page A4 visual checks, release gate and 78,240 runtime generations passed. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Counts: 2,092 types, 1,304 generatable, 788 awaiting review. Preserve dirty worktree and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 60 Examples 2-1–2-2
 
 - Printed p.60 Example 2-1: 5×48+9×40=600 person-minutes, so one person works 10 hours and clears 40m² per hour. Example 2-2: 31 days in May, increasing 50m daily with mean 1,500m gives first day 750m. Publisher answer keys remain unverified.

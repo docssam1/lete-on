@@ -48,7 +48,7 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "reviewLockedItems": 239
+    "reviewLockedItems": 238
   },
   "units": [
     {
@@ -4825,16 +4825,17 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 56,
-      "printedPage": 58,
-      "sourceShape": "평균의 활용의 예제 2-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 60,
+      "sourceShape": "합격 25명·불합격 75명의 평균 점수 차 40과 전체 평균 62로 합격자 평균 구하기",
+      "answerContract": "ambiguous: 92점 또는 32점 (선발 기준 미명시)",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문은 두 평균의 차만 명시해 어느 쪽이 더 높은지 보장하지 않습니다. 점수순 선발이면 92점, 별도 기준이면 32점도 산술상 가능하므로 공개를 보류합니다.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e2-example-4",
@@ -4843,16 +4844,18 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 56,
-      "printedPage": 58,
-      "sourceShape": "평균의 활용의 예제 2-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 60,
+      "sourceShape": "어른·어린이의 성별 평균 나이와 84명 및 인원 관계로 여자 어린이 수의 남자 어린이 수에 대한 배수 구하기",
+      "answerContract": "single-value: 3배",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 60쪽 나이 기준과 모든 평균·인원 관계를 대조하고 정수 인원 조합을 독립 검사했습니다. 출판사 답안은 미확인입니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-1",
