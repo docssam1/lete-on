@@ -29,10 +29,11 @@
       "mission": 144
     },
     "actualBySection": {
-      "exploration": 27,
-      "example": 93,
+      "exploration": 28,
+      "example": 92,
       "mission": 144
     },
+    "sectionCountReview": "실제 행 수를 다시 집계했습니다. 예상 27/93과 실제 28/92가 달라 원문 분류 기준 확인 전까지 차이를 유지합니다.",
     "expectedByUnit": {
       "6-1-u1": 22,
       "6-1-u2": 44,
