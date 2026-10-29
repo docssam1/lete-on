@@ -1,0 +1,11 @@
+"use strict";
+const assert=require("node:assert/strict");global.window={};require("./source-inventory-4-1.js");require("./source-inventory-grade6.js");require("./curriculum.js");require("./generators.js");
+const item=require("./source-5-2-cuboid-page51-mission3.js"),model=item.verifyModel();
+const type=window.HSE_CURRICULUM.semesters.find(s=>s.id==="5-2").units.find(u=>u.id==="5-2-u5").subunits.find(s=>s.name==="직육면체의 전개도").types.find(t=>t.sourceItemId===item.sourceItemId);
+assert(type);assert.equal(type.id,item.sourceItemId);assert.equal(type.sourceVerified,true);assert.equal(type.reviewLocked,false);assert.equal(type.publisherKeyVerified,false);assert.equal(window.HSE_GENERATORS.generatorKey(type),item.generatorKey);
+const q=window.HSE_GENERATORS.generate(type,2,0,50,0);assert(q);assert.equal(window.HSE_GENERATORS.generate(type,2,0,50,1),null);
+assert.deepEqual(model.dimensionsCm,[4,2,3]);assert.equal(model.faces,6);assert.equal(model.seams,5);assert.equal(model.seamLengthSumCm,18);assert.equal(model.totalFacePerimeterCm,72);assert.equal(model.netPerimeterCm,36);assert.equal(model.maximumPerimeterCm,48);
+assert.match(q.prompt,/세 방향에서 본 모양/);assert.match(q.prompt,/전개도의 둘레가 가장 짧은 경우/);assert.match(q.solution,/72−2×18=<strong>36\(cm\)<\/strong>/);assert.equal(q.answer,"36cm");assert.equal((q.answerVisual.match(/<rect/g)||[]).length,6);assert.equal(q.generationMode,"fixed-verified-pool");assert.equal(q.verifiedVariantCount,1);assert.equal(q.handwrittenAnswerVerified,false);
+assert.match(q.solution,/4cm인 접힘 변은 많아야 세 개/);assert.match(q.solution,/4×3\+3×2=18cm 이하/);
+assert.match(q.prompt,/>4cm<\/text>/);assert.match(q.prompt,/>2cm<\/text>/);assert.match(q.prompt,/>3cm<\/text>/);assert.doesNotMatch(q.prompt,/>4×2cm<\/text>/);
+console.log("5-2 U5 p.51 Mission 3: 4×2×3cm source views, edge-bound proof, maximum seam 18cm, minimum perimeter 36cm and public release audit passed.");

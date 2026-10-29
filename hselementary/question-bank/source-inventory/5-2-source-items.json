@@ -48,7 +48,7 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "reviewLockedItems": 270
+    "reviewLockedItems": 267
   },
   "units": [
     {
@@ -3913,16 +3913,20 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 47,
-      "printedPage": 49,
-      "sourceShape": "직육면체의 전개도의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 51,
+      "sourceShape": "가로·세로·높이가 6cm·2cm·4cm인 직육면체의 제시 전개도를 직사각형 도화지에 그릴 때 전개도 외곽 둘레를 구합니다. 네 옆면 띠와 위·아래 면의 붙는 위치를 원본 그림대로 유지합니다.",
+      "answerContract": "single-value: 52cm",
       "visualRisk": [
         "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
         "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 51쪽 원문 그림 및 독립 풀이와 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "runtimeTypeId": "5-2-u5-e2-mission-1",
+      "sourceEvidence": "canonical PDF p.47 / printed p.51 + clean PDF p.46 / printed p.51 + Apple Vision OCR + reconstructed six-face net and seam-perimeter audit; privateDriveReview:1RhXD7TAyUO_Joja77hSA3ZBNC8MGBYLU; privateDriveEvidence:1ITIIXCmaMaigm4wTVEvvVltvlVIjEqvc; evidenceZipSha256:757c8b8b7b87493be833c5eb92ea7f4e5f1fdc8cbd69b997f434b95de1fb9f1b",
+      "sourceAuditUpdate": "2026-10-26: canonical PDF p.47/printed p.51, clean p.46, Apple Vision OCR and source crop agree. Six faces mapped to the original net; seams 4,4,6,6,2cm yield 96−2×22=52cm. Focused, Unit 5 readiness, runtime, release gate, range classification, elementary-language, notation, numeric-display, screen (1440/375/320) and one-page A4 problem/solution checks passed. Owner-only Drive note https://drive.google.com/file/d/1RhXD7TAyUO_Joja77hSA3ZBNC8MGBYLU/view?usp=drivesdk; evidence ZIP https://drive.google.com/file/d/1ITIIXCmaMaigm4wTVEvvVltvlVIjEqvc/view?usp=drivesdk, 7,635,728 bytes, SHA-256 757c8b8b7b87493be833c5eb92ea7f4e5f1fdc8cbd69b997f434b95de1fb9f1b. At that review the item remained locked; it was subsequently released with user authorization. The publisher key is unverified.",
+      "implementationEvidence": "source-5-2-cuboid-page51-mission1.js · focused source/math and browser audit; source/OCR and one-page A4 problem/solution reviewed · local: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission1-runtime-review-20261026/ · owner-only Drive review 1RhXD7TAyUO_Joja77hSA3ZBNC8MGBYLU · evidence ZIP 1ITIIXCmaMaigm4wTVEvvVltvlVIjEqvc (7,635,728 bytes; SHA-256 757c8b8b7b87493be833c5eb92ea7f4e5f1fdc8cbd69b997f434b95de1fb9f1b)"
     },
     {
       "sourceItemId": "5-2-u5-e2-mission-2",
@@ -3931,16 +3935,20 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 47,
-      "printedPage": 49,
-      "sourceShape": "직육면체의 전개도의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 51,
+      "sourceShape": "한 변이 30cm인 정사각형 종이 안에 그린 직육면체 전개도를 접었을 때 모든 모서리 길이의 합을 구합니다. 원본에는 띠 높이 18cm와 면 분할이 표시되어 있습니다.",
+      "answerContract": "single-value: 132cm",
       "visualRisk": [
         "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
         "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 51쪽 원문 그림 및 독립 풀이와 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "sourceEvidence": "canonical PDF p.47 / printed p.51 + clean comparison PDF p.46 + Apple Vision OCR + reconstructed six-face 30cm-square net; privateDriveReview:1tISjhahmZFr7EwEIjO0_ePyZa6C27N5x; privateDriveEvidence:1r6e0pN2IwECYQxBUnW66lKm86Pcg4S_u; evidenceZipSha256:e1cf59d3b3e30455b58477bb3fbbdcad1e4d525873040c39b06b051400e6d9ce; evidenceZipSize:8223295",
+      "sourceAuditUpdate": "2026-10-26: 30cm square, 18cm side strip and 6cm margins reconstructed from canonical/clean scans and Apple Vision OCR; cuboid dimensions 18×9×6cm, all edge sum 132cm. Focused/runtime/release/classification/language/notation/numeric audits passed; screen widths 1440/375/320 and one-page A4 problem/solution passed. Owner-only Drive review note https://drive.google.com/file/d/1tISjhahmZFr7EwEIjO0_ePyZa6C27N5x/view?usp=drivesdk and evidence ZIP https://drive.google.com/file/d/1r6e0pN2IwECYQxBUnW66lKm86Pcg4S_u/view?usp=drivesdk; 8223295 bytes, SHA-256 e1cf59d3b3e30455b58477bb3fbbdcad1e4d525873040c39b06b051400e6d9ce. At that review the item remained locked; it was subsequently released with user authorization. The publisher key is unverified.",
+      "runtimeTypeId": "5-2-u5-e2-mission-2",
+      "implementationEvidence": "2026-10-28 correction: source-5-2-cuboid-page51-mission2.js · source-5-2-cuboid-page51-mission2-audit.js · source-5-2-cuboid-page51-mission2-browser-audit.js. Original/clean scans and OCR: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission2-runtime-review-20261026/; corrected figure browser/A4: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission2-figure-correction-20261028/. Owner-only Drive review 1tISjhahmZFr7EwEIjO0_ePyZa6C27N5x; historical pre-correction ZIP 1r6e0pN2IwECYQxBUnW66lKm86Pcg4S_u (8,223,295 bytes; SHA-256 e1cf59d3b3e30455b58477bb3fbbdcad1e4d525873040c39b06b051400e6d9ce). The former page49 Mission 2 pointer was unrelated and incorrect."
     },
     {
       "sourceItemId": "5-2-u5-e2-mission-3",
@@ -3949,16 +3957,30 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 47,
-      "printedPage": 49,
-      "sourceShape": "직육면체의 전개도의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 51,
+      "sourceShape": "위·앞·옆에서 본 치수가 각각 4×2cm, 4×3cm, 2×3cm인 직육면체의 전개도 둘레 중 가장 작은 값을 구합니다.",
+      "answerContract": "single-value: 36cm",
       "visualRisk": [
         "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
         "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 51쪽 원문 그림 및 독립 풀이와 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "evidence": {
+        "reviewNoteFileId": "1r4dNFSbfvfJXW5bQ7dMMAKQdlKpA1wiL",
+        "reviewNoteUrl": "https://drive.google.com/file/d/1r4dNFSbfvfJXW5bQ7dMMAKQdlKpA1wiL/view?usp=drivesdk",
+        "evidenceZipFileId": "1epbgJCzJNmhzHAn0sidSzoZjoTAfIwhM",
+        "evidenceZipUrl": "https://drive.google.com/file/d/1epbgJCzJNmhzHAn0sidSzoZjoTAfIwhM/view?usp=drivesdk",
+        "evidenceZipSizeBytes": 1545593,
+        "evidenceZipSha256": "4ec079c1a1a5969e0aeeb88cee294e0d93f638572da6f9e234d125e1d50edd81",
+        "localEvidenceDirectory": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission3-runtime-review-20261026/",
+        "driveFolderId": "1qp6pqg11odJc5vACAOECsvY2VHvHoRc2",
+        "sharing": "owner-only; shared:false"
+      },
+      "sourceAuditUpdate": "2026-10-26 original/clean scan + Apple Vision OCR; 4×2×3cm views; historical independent face-adjacency analysis; answer 36cm; screen/A4 passed; private Drive note and ZIP saved; subsequently released with user authorization.",
+      "runtimeTypeId": "5-2-u5-e2-mission-3",
+      "implementationEvidence": "2026-10-28 pointer correction: source-5-2-cuboid-page51-mission3.js · source-5-2-cuboid-page51-mission3-audit.js · source-5-2-cuboid-page51-mission3-browser-audit.js · canonical/clean source, OCR, unfolding enumeration and browser/A4 evidence: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission3-runtime-review-20261026/ · owner-only Drive review 1r4dNFSbfvfJXW5bQ7dMMAKQdlKpA1wiL · evidence ZIP 1epbgJCzJNmhzHAn0sidSzoZjoTAfIwhM (1,545,593 bytes; SHA-256 4ec079c1a1a5969e0aeeb88cee294e0d93f638572da6f9e234d125e1d50edd81). The former page49 Mission 3 pointer was unrelated and incorrect. 2026-10-28: student solution explains the maximum seam bound; current browser/A4 review: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission3-proof-review-20261028/. Drive review updated; ZIP remains pre-revision."
     },
     {
       "sourceItemId": "5-2-u5-e2-mission-4",

@@ -1,0 +1,12 @@
+"use strict";
+const assert=require("node:assert/strict");global.window={};require("./source-inventory-4-1.js");require("./source-inventory-grade6.js");require("./curriculum.js");require("./generators.js");
+const item=require("./source-5-2-cuboid-page51-mission2.js"),model=item.verifyModel();
+const type=window.HSE_CURRICULUM.semesters.find(s=>s.id==="5-2").units.find(u=>u.id==="5-2-u5").subunits.flatMap(s=>s.types).find(t=>t.sourceItemId===item.sourceItemId);
+assert(type);assert.equal(type.id,item.sourceItemId);assert.equal(type.sourceVerified,true);assert.equal(type.reviewLocked,false);assert.equal(type.publisherKeyVerified,false);assert.equal(window.HSE_GENERATORS.generatorKey(type),item.generatorKey);
+const q=window.HSE_GENERATORS.generate(type,2,0,50,0);assert(q);assert.equal(window.HSE_GENERATORS.generate(type,2,0,50,1),null);
+assert.deepEqual(model.paperCm,[30,30]);assert.equal(model.stripHeightCm,18);assert.equal(model.marginTopCm,6);assert.equal(model.marginBottomCm,6);assert.deepEqual(model.sideWidthsCm,[6,9,6,9]);assert.deepEqual(model.cuboidDimensionsCm,[18,9,6]);assert.equal(model.faceCount,6);assert.equal(model.netAreaCm2,648);assert.equal(model.edgeSumCm,132);
+assert.match(q.prompt,/한 변이 30cm인 정사각형 모양의 종이에 다음과 같이 직육면체의 전개도를 그렸다/);assert.match(q.prompt,/모든 모서리의 길이의 합/);assert.match(q.solution,/30−18=12cm/);assert.match(q.solution,/30÷2=15cm/);assert.match(q.solution,/15−6=9cm/);assert.match(q.solution,/4×\(18\+6\+9\)=4×33=<strong>132\(cm\)<\/strong>/);assert.equal(q.answer,"132cm");
+assert.equal((q.prompt.match(/class="source52-p51m2-net"/g)||[]).length,1);assert.equal((q.answerVisual.match(/class="source52-p51m2-net"/g)||[]).length,1);assert.equal(q.generationMode,"fixed-verified-pool");assert.equal(q.verifiedVariantCount,1);assert.equal(q.handwrittenAnswerVerified,false);
+assert.equal((q.prompt.match(/class="cut"/g)||[]).length,6);assert.equal((q.prompt.match(/class="fold"/g)||[]).length,0);assert.equal((q.answerVisual.match(/class="cut"/g)||[]).length,6);assert.equal((q.answerVisual.match(/class="fold"/g)||[]).length,5);
+const readiness=require("./source-inventory/5-2-u5-readiness-review.json").items.find(r=>r.sourceItemId===item.sourceItemId);assert.equal(readiness.implementationStatus,"verified-local");assert.equal(readiness.publicDecision,"public");
+console.log("5-2 U5 p.51 Mission 2: source 30cm-square net, 18cm side strip, six faces, dimensions 18×9×6cm, 132cm edge sum, one fixed pool, and public release audit passed.");
