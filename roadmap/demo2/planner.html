@@ -208,19 +208,19 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
   <div class="guide"><img src="../docssam.jpg" alt="독쌤"><span>독쌤과 학습 설계<small>하나씩 고르면 로드맵이 이어집니다.</small></span></div>
   <div id="flowMapPeek" class="flow-map-peek"></div>
   <button type="button" id="pathwayOverview" class="workspace-prev">전체 갈림길 보기</button><h1 id="pathwayTitle" tabindex="-1"></h1><p id="pathwaySummary"></p><div id="pathwayCoachContent"></div><div id="coachQuestions" class="coach-questions"></div><details class="coach-reference"><summary>선택 기준과 이전 갈림길</summary><div id="coachReferences"></div></details>
-  <div class="pathway-coach-actions"><button type="button" id="pathwayShowMap" class="pathway-overview">선택한 지도 보기</button></div>
+  <div class="pathway-coach-actions"><button type="button" id="pathwayShowMap" class="pathway-overview">선택한 학습 로드맵 보기</button></div>
  </section>
  <section id="conversation" class="conversation" aria-labelledby="questionTitle">
  <div class="guide"><img src="../docssam.jpg" alt="독쌤"><span>독쌤과 성장 로드맵<br><small id="questionStep"></small></span></div>
  <h1 id="questionTitle" tabindex="-1"></h1><p id="questionHelp"></p><div id="questionOptions" class="question-options"></div><div id="intakeQuestions" class="coach-questions"></div>
- <div class="question-actions"><button id="questionBack">이전</button><button type="button" id="intakeLater" hidden>다음에 생각하기 →</button><button id="previewJump" type="button">지도 보기 ↓</button><button id="useExample">예시로 바로 보기</button></div>
+ <div class="question-actions"><button id="questionBack">이전</button><button type="button" id="intakeLater" hidden>다음에 생각하기 →</button><button id="previewJump" type="button">학습 로드맵 보기 ↓</button><button id="useExample">예시로 바로 보기</button></div>
  </section>
  <div class="result-intro"><div><small>GFIELD · 학습 경로</small><h1>우리 아이의 공부 계획</h1><p id="answerSummary"></p></div><button id="detailSet" class="gear">답변 바꾸기</button></div>
  <details class="input-details"><summary>선택한 답 보기 · 답변 바꾸기</summary><div id="intakeSummary" class="intake-summary" hidden></div></details>
  <div id="warn"></div>
  <section class="view on" id="vmap"><div class="mapwrap">
-  <section id="journeyPanel" class="journey-panel" aria-labelledby="journeyTitle"><header class="journey-heading"><div><small id="journeyCount" role="status" aria-live="polite"></small><h2 id="journeyTitle" tabindex="-1">앞으로 어떤 길이 있을까요?</h2></div><div class="atlas-heading-actions"><button type="button" id="openReport" hidden>총평·인쇄</button><button type="button" id="atlasExpand" data-atlas-full="map">크게 보기</button><button type="button" id="backToQuestion">질문으로 돌아가기 ↑</button></div></header><div id="journeyMap" class="journey-map"></div><p class="journey-note">지도의 지점을 눌러 교재와 회차를 조정할 수 있습니다.</p><p id="pathwayStatus" class="pathway-status" role="status" aria-live="polite"></p></section>
-  <details id="milestoneDetails" class="milestone-details"><summary>시기별 지도 보기</summary>
+  <section id="journeyPanel" class="journey-panel" aria-labelledby="journeyTitle"><header class="journey-heading"><div><small id="journeyCount" role="status" aria-live="polite"></small><h2 id="journeyTitle" tabindex="-1">앞으로 어떤 길이 있을까요?</h2></div><div class="atlas-heading-actions"><button type="button" id="openReport" hidden>총평·인쇄</button><button type="button" id="atlasExpand" data-atlas-full="map">전체 화면 보기</button><button type="button" id="backToQuestion">질문으로 돌아가기 ↑</button></div></header><div id="journeyMap" class="journey-map"></div><p class="journey-note">지도의 지점을 눌러 교재와 회차를 조정할 수 있습니다.</p><p id="pathwayStatus" class="pathway-status" role="status" aria-live="polite"></p></section>
+  <details id="milestoneDetails" class="milestone-details"><summary>시기별 학습 로드맵 보기</summary>
   <div id="sourceProfile" hidden></div>
   <div id="routeChoices" class="route-choices"></div>
   <div class="map-heading"><div><h2>갈림길 한눈에 보기</h2><p>선택한 로드맵은 보라색 점선, 다른 길은 옅은 실선이에요.</p></div></div>
@@ -238,7 +238,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
   <div><div class="card"><p class="big"><span id="who2">우리 아이</span>의 성장 분석지</p><div id="repItems"></div></div>
   <div class="card bk-card"><h2>교재 길잡이</h2><div id="books"></div></div></div>
  </div></section>
-</main><nav class="mobile-workspace-nav" aria-label="학습 설계 화면 전환"><button type="button" data-mobile-workspace="choice" aria-pressed="true">갈림길 선택</button><button type="button" data-mobile-workspace="result" aria-pressed="false">지도·그래프·표</button></nav>
+</main><nav class="mobile-workspace-nav" aria-label="학습 설계 화면 전환"><button type="button" data-mobile-workspace="choice" aria-pressed="true">갈림길 선택</button><button type="button" data-mobile-workspace="result" aria-pressed="false">결과 보기</button></nav>
 
 <div class="dock"><span class="step cur" id="dNow">● 현재</span><span class="dots"></span><span class="step" id="dNext">⚑ 다음 과정</span><span class="dots"></span><span class="step" id="dLater">⌖ 시기 미정</span>
  <div class="vsw"><button data-v="vmap" class="on">학습 설계</button><button data-v="vplan">월별 계획</button><button data-v="vrep">학습 분석</button></div></div>
@@ -269,7 +269,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
  <p class="schedule-note">일정은 과거 자료를 참고한 계획이에요. 당해 공고 확인이 필요합니다. 과학·내신의 1~2월은 원자료의 달력 연도 기준(3월 전 학년)입니다.</p></form>
 </aside>
 
-<dialog id="atlasFullscreen" class="atlas-fullscreen" aria-labelledby="atlasFullscreenTitle"><header class="atlas-fullscreen-toolbar"><h2 id="atlasFullscreenTitle">우리 아이의 공부 지도</h2><button type="button" id="atlasFullscreenClose">갈림길로 돌아가기</button></header><div id="atlasFullscreenBody" class="atlas-fullscreen-body"></div></dialog>
+<dialog id="atlasFullscreen" class="atlas-fullscreen" aria-labelledby="atlasFullscreenTitle"><header class="atlas-fullscreen-toolbar"><h2 id="atlasFullscreenTitle">우리 아이의 학습 로드맵</h2><button type="button" id="atlasFullscreenClose">전체 화면 닫기</button></header><div id="atlasFullscreenBody" class="atlas-fullscreen-body"></div></dialog>
 <script src="planner-levels.js"></script>
 <script src="planner-standard-data.js?v=20261025-refine100"></script>
 <script src="planner.js"></script>
@@ -285,8 +285,8 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 <script src="planner-academy-data.js?v=20261029-soma-revision"></script>
 <script src="planner-transition.js?v=20261029-academy-monthly1"></script>
 <script src="planner-faq.js?v=20261025-refine100"></script>
-<script src="planner-fullscreen.js?v=20261025-refine100"></script>
-<script src="planner-workspace.js?v=20261025-refine100"></script>
+<script src="planner-fullscreen.js?v=20261030-terms1"></script>
+<script src="planner-workspace.js?v=20261030-terms1"></script>
 <script src="planner-annotations.js?v=20261028-counselling4"></script>
 <script src="planner-guide.js?v=20261025-refine100"></script>
 <script src="planner-storage.js?v=20261025-refine100"></script>
@@ -301,30 +301,30 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 <script src="planner-premier-cohort-data.js?v=20261029-cohort5"></script>
 <script src="planner-premier-cohort.js?v=20261029-mobile-menu1"></script>
 <script src="planner-counselling-updates.js?v=20261029-updates1"></script>
-<script src="planner-counselling-history.js?v=20261029-cohort5"></script>
+<script src="planner-counselling-history.js?v=20261030-terms1"></script>
 <script src="planner-direct-links.js?v=20261029-cohort5"></script>
 <script src="planner-preschool-detail.js?v=20261029-preschool1"></script>
-<script src="planner-reference-plan.js?v=20261025-refine100"></script>
+<script src="planner-reference-plan.js?v=20261030-terms1"></script>
 <script src="planner-case.js?v=20261025-refine100"></script>
 <script src="planner-case-routes.js?v=20261025-refine100"></script>
 <script src="planner-study-plan.js?v=20261029-thinking-end1"></script>
-<script src="planner-study-plan-view.js?v=20261029-thinking-end1"></script>
-<script src="planner-case-view.js?v=20261025-refine100"></script>
+<script src="planner-study-plan-view.js?v=20261030-terms1"></script>
+<script src="planner-case-view.js?v=20261030-terms1"></script>
 <script src="planner-college-data.js?v=20261026-counselling3"></script>
 <script src="planner-admissions-evidence.js?v=20261026-subject-levels1"></script>
-<script src="planner-college.js?v=20261026-subject-levels1"></script>
+<script src="planner-college.js?v=20261030-terms1"></script>
 <script src="planner-book-catalog.js?v=20261025-refine100"></script>
 <script src="planner-book-checks.js?v=20261025-refine100"></script>
-<script src="planner-student-visual.js?v=20261029-student-labels"></script>
+<script src="planner-student-visual.js?v=20261030-terms1"></script>
 <script src="planner-career.js?v=20261025-refine100"></script>
 <script src="planner-plan-navigation.js?v=20261025-refine100"></script>
 <script src="planner-reading-books-data.js?v=20261026-reader-library1"></script>
 <script src="planner-reading-library.js?v=20261026-reader-library1"></script>
-<script src="planner-language.js?v=20261026-english-transition1"></script>
-<script src="planner-report.js?v=20261028-counselling4"></script>
+<script src="planner-language.js?v=20261030-terms1"></script>
+<script src="planner-report.js?v=20261030-terms1"></script>
 <script src="planner-education-news.js?v=20261029-news1"></script>
 <script src="planner-academy-stories.js?v=20261029-stories7"></script>
-<script src="planner-responsive-navigation.js?v=20261030-common-nav1"></script>
-<script src="planner-ui.js?v=20261030-common-nav1"></script>
+<script src="planner-responsive-navigation.js?v=20261030-terms1"></script>
+<script src="planner-ui.js?v=20261030-terms1"></script>
 </body>
 </html>

@@ -15,7 +15,7 @@ function open(view='map',button){
  origin=button||document.activeElement;scroll=panel.scrollTop;pageY=global.scrollY;
  slot=document.createComment('live learning map');panel.before(slot);host.append(panel);
  dialog.dataset.view=view==='graph'?'graph':'map';
- document.getElementById('atlasFullscreenTitle').textContent=view==='graph'?'진도와 속도 비교':'우리 아이의 공부 지도';
+ document.getElementById('atlasFullscreenTitle').textContent=document.getElementById('workspace-tab-'+(view==='graph'?'graph':'map'))?.textContent.trim()||'학습 로드맵';
  document.body.classList.add('atlas-is-fullscreen');dialog.showModal();host.scrollTop=0;
  document.getElementById('atlasFullscreenClose').focus({preventScroll:true});
 }
