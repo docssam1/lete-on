@@ -19,7 +19,7 @@ const specs = [
     arrayKey: "items",
     total: 264,
     units: [22, 44, 44, 67, 43, 44],
-    sections: { exploration: 27, example: 93, mission: 144 },
+    sections: { exploration: 28, example: 92, mission: 144 },
     statuses: { "review-locked": 38, "fixed-verified-pool": 206, implemented: 20 }
   },
   {
