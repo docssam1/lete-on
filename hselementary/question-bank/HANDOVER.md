@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-2
+
+- Source PDF p.54 / clean comparison PDF p.53 / printed p.58: one fixed original 100m overlapping-average question. The first three sum to 45.3 seconds, last three to 49.2 seconds, and all five to 78.9 seconds, so the repeated middle record is 15.6 seconds. The ordered witness 14.8, 14.9, 15.6, 16.7, 16.9 satisfies all conditions. Publisher answer key unverified.
+- Exact integer-hundredths calculation and source ledger checks passed. Browser checks at 1440/375/320px and separate one-page A4 problem and solution visual checks passed. Release gate and 77,520 runtime generations passed.
+- Counts: 2,080 types, 1,292 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Other Unit 6 source items remain locked; preserve the dirty source worktree and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-1
 
 - Source PDF p.54 / clean comparison PDF p.53 / printed p.58: reconstructed one fixed original torn-score table with visible Korean tens digit 9 and mathematics units digit 4. Five-score total 430, Korean and mathematics total 182; independent digit enumeration yields Korean 98 and mathematics 84. The publisher answer key remains unverified.

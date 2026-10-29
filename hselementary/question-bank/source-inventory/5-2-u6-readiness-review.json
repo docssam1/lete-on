@@ -39,7 +39,7 @@
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1을 원문 수치와 독립 계산으로 연결했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1·1-2를 원문 수치와 독립 계산으로 연결했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 2,
-    "lockedCount": 42
+    "publicCandidateCount": 3,
+    "lockedCount": 41
   },
   "items": [
     {
@@ -127,16 +127,24 @@
       "commonTypeId": "average-from-overlapping-averages",
       "childFriendlyTypeLabel": "겹치는 평균으로 가운데 기록 구하기",
       "originalStructure": "달리기 기록의 앞쪽 평균, 뒤쪽 평균, 전체 평균이 주어지고 가운데 기록을 구합니다.",
-      "conditions": ["1번부터 3번까지 평균 15.1초", "3번부터 5번까지 평균 16.4초", "5명의 평균 15.78초"],
+      "conditions": [
+        "100m 달리기의 도착 순서대로 1번부터 5번까지 번호 지정",
+        "1번부터 3번까지 평균 15.1초",
+        "3번부터 5번까지 평균 16.4초",
+        "5명의 평균 15.78초"
+      ],
       "visualRequirement": "번호별 기록과 평균 조건을 문장으로 분리해 보여야 합니다.",
       "independentCalculation": "앞쪽 합 45.3, 뒤쪽 합 49.2, 전체 합 78.9. 두 평균 합에서 전체 합을 빼면 가운데 기록=15.6초",
       "independentAnswer": "15.6초",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "평균 수식 표시와 소수 계산을 중앙 형식으로 옮기기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e1-example-2",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "원문 조건 대조, 정수 단위 계산 및 순서 만족 예시 14.8, 14.9, 15.6, 16.7, 16.9초 검산. 공식 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u6-e1-example-1-3",
