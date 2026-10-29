@@ -1,3 +1,10 @@
+## 2026-10-30 Grade 6-1 Graphs Page 47 Missions 1–2
+
+- Re-read the SHA-256-matched source page and independently checked the class/fruit count and the difference between the two schools. The detailed ledger and public type labels incorrectly described two questions from page 51, although their conditions, arithmetic and generator variants already corresponded to page 47. Corrected the common and detailed ledger descriptions, graph metadata, public labels, type IDs and answer contracts; publisher answers remain unverified. Generation and release locks are unchanged.
+- Focused source/detailed/public/runtime crosswalk and existing 6,000-generation E2 audit passed. Actual question-bank generation and solutions passed at 1440/375/320px and three difficulties. Grade 6 public inventory and release gate passed. Broader inventory discrepancy remains open; preserve original and student data.
+
+---
+
 ## 2026-10-30 Grade 6-1 Graph Exploration Classification
 
 - Re-read source PDF pages 38, 40, 42 and 44 (printed 44, 46, 48 and 50) and page 31 (printed 36), from the SHA-256-matched original. Corrected two common-ledger descriptions: U5 E2 converts a pictograph into a table and strip graph; E3 converts given category counts into a table and circle graph. Detailed review and public type labels already describe those structures correctly; no generator, answer, release status or student data changed.

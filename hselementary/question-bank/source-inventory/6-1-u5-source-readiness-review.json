@@ -948,17 +948,17 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 41,
       "sourcePrintedPage": 47,
-      "commonTypeId": "strip-graph-replace-category",
-      "childFriendlyTypeLabel": "띠그래프에서 한 종류를 다른 종류로 바꾸기",
-      "originalStructure": "1학기 원그래프에서 소설책 절반을 위인전으로 바꾼 뒤 2학기 띠그래프를 완성합니다.",
+      "commonTypeId": "strip-graph-class-fruit-count",
+      "childFriendlyTypeLabel": "반과 과일 선호 띠그래프로 학생 수 구하기",
+      "originalStructure": "반별 학생 비율과 한 반의 과일 선호 비율을 이용해 해당 과일을 좋아하는 학생 수를 구합니다.",
       "conditions": [
         "전체200명, 반별30%,25%,25%,20%",
         "2반의 과일 선호: 바나나36%, 사과24%, 귤20%, 포도14%, 배6%"
       ],
-      "visualRequirement": "0~100% 눈금과 다섯 구간을 정확히 표시해야 합니다.",
+      "visualRequirement": "반별 비율과 한 반의 과일별 비율을 각각 표시하고 기준이 되는 전체를 구분해야 합니다.",
       "graphScale": {
-        "type": "circle-to-strip",
-        "segments": "15%,25%,35%,15%,10%"
+        "type": "class-fruit-strips",
+        "segments": "반별 비율과 해당 반의 과일별 비율"
       },
       "independentCalculation": "2반은200×25%=50명입니다. 포도는2반의14%이므로50×14%=7명입니다.",
       "independentAnswer": "2반50명, 포도7명",
@@ -970,7 +970,7 @@
       "lockReason": "",
       "calculationStatus": "checked",
       "releaseStatus": "verified",
-      "resultContract": "ordered-tuple",
+      "resultContract": "single-value",
       "publicCandidate": true,
       "rawSourceItemId": "6-1-u5-e2-mission-1"
     },
@@ -980,17 +980,17 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 41,
       "sourcePrintedPage": 47,
-      "commonTypeId": "circle-and-strip-subgroup-percent",
-      "childFriendlyTypeLabel": "전체 비율 구하기",
-      "originalStructure": "남녀 비율 원그래프와 여학생 학원 희망 띠그래프로 피아노 희망 여학생의 전체 비율을 구합니다.",
+      "commonTypeId": "strip-graph-school-grade-difference",
+      "childFriendlyTypeLabel": "두 학교의 같은 학년 학생 수 비교하기",
+      "originalStructure": "두 학교의 전체 학생 수와 학년별 띠그래프를 이용해 같은 학년 학생 수의 차를 구합니다.",
       "conditions": [
         "민정이네600명·1~6학년21%,20%,16%,15%,15%,13%",
         "소희네400명·1~6학년14%,15%,15%,17%,20%,19%"
       ],
-      "visualRequirement": "전체와 여학생 안의 두 기준을 따로 표시해야 합니다.",
+      "visualRequirement": "학교별 전체 학생 수와 학년별 비율을 각각 표시해야 합니다.",
       "graphScale": {
-        "type": "circle-and-strip",
-        "segments": "여학생38%, 그중 피아노30%"
+        "type": "paired-school-strips",
+        "segments": "각 학교의 학년별 비율"
       },
       "independentCalculation": "민정이네 6학년은600×13%=78명, 소희네는400×19%=76명입니다. 따라서 민정이네가2명 더 많습니다.",
       "independentAnswer": "민정이네 학교, 2명 더 많음",
@@ -1002,7 +1002,7 @@
       "lockReason": "",
       "calculationStatus": "checked",
       "releaseStatus": "verified",
-      "resultContract": "single-value",
+      "resultContract": "two-values",
       "publicCandidate": true,
       "rawSourceItemId": "6-1-u5-e2-mission-2"
     },
