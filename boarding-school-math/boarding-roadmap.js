@@ -190,7 +190,7 @@
   function matchingAssessmentEvidence() {
     try {
       const records = window.GFIELDLocalLearningRecord;
-      const evidence = records && records.storage.loadAssessmentEvidence();
+      const evidence = records && records.storage.loadLatestAssessmentEvidence(grade);
       return evidence && !evidence.legacyEvidence && evidence.grade === grade && evidence.source && evidence.currentCourse ? evidence : null;
     } catch (error) { return null; }
   }

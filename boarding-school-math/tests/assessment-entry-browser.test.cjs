@@ -29,6 +29,34 @@ test.before(async function () {
 });
 test.after(async function () { if (browser) await browser.close(); if (server) await new Promise(function (resolve) { server.close(resolve); }); });
 
+test("assessment history is stored on device and only matching grade is restored", async function () {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true });
+  const page = await context.newPage();
+  const errors = errorsFor(page);
+  await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#overall-percent").fill("82");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  await page.goto(`${baseUrl}assessment-entry.html?grade=8`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#result-content").isVisible(), false);
+  await page.locator("#overall-percent").fill("76");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  assert.equal(await page.locator(".assessment-history-item").count(), 2);
+  const historyText = await page.locator("#assessment-history-list").innerText();
+  assert.match(historyText, /Grade 7[\s\S]*82%/);
+  assert.match(historyText, /Grade 8[\s\S]*76%/);
+  await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#result-content").isVisible(), true);
+  assert.equal(await page.locator("#result-source").innerText(), "학교 수학 Placement Test · Grade 7");
+  assert.match(await page.locator("#metric-value").innerText(), /82%/);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await page.locator("#clear-assessment-history").click();
+  assert.equal(await page.locator(".assessment-history-item").count(), 0);
+  assert.equal(await page.locator("#result-content").isVisible(), false);
+  assert.equal(await page.locator("#assessment-history-empty").isVisible(), true);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
 test("school placement evidence remains descriptive and carries no automated weakness into today's plan", async function () {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();

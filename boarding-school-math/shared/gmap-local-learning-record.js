@@ -9,6 +9,8 @@
   const SETTINGS_KEY = `${VERSION}:plan-settings`;
   const PRACTICE_KEY = `${VERSION}:practice`;
   const ASSESSMENT_KEY = `${VERSION}:external-assessment`;
+  const ASSESSMENT_HISTORY_KEY = `${VERSION}:external-assessment-history`;
+  const MAX_ASSESSMENT_RECORDS = 30;
   const GRADE6_DIAGNOSTIC_KEY = `${VERSION}:grade6-diagnostic-evidence`;
   const COMPETITION_KEY = `${VERSION}:competition-evidence`;
   const COMPETITION_SERIES_KEY = `${VERSION}:competition-first-attempts-v2`;
@@ -376,13 +378,35 @@
       return true;
     }
     function loadAssessmentEvidence() { return sanitizedAssessment(read(ASSESSMENT_KEY)); }
+    function loadAssessmentEvidenceHistory() {
+      const raw = read(ASSESSMENT_HISTORY_KEY);
+      if (!object(raw) || raw.schemaVersion !== "gfield-external-assessment-history-v1" || !Array.isArray(raw.records)) {
+        const previous = sanitizedAssessment(read(ASSESSMENT_KEY));
+        if (previous && !previous.legacyEvidence) {
+          write(ASSESSMENT_HISTORY_KEY, { schemaVersion: "gfield-external-assessment-history-v1", records: [previous] });
+          return [previous];
+        }
+        return [];
+      }
+      return raw.records.slice(0, MAX_ASSESSMENT_RECORDS).map(sanitizedAssessment).filter(function (entry) { return entry && !entry.legacyEvidence; })
+        .sort(function (a, b) { return String(b.testDate || "").localeCompare(String(a.testDate || "")) || String(b.savedAt || "").localeCompare(String(a.savedAt || "")); });
+    }
+    function loadLatestAssessmentEvidence(grade) {
+      if (!Number.isInteger(grade)) return null;
+      return loadAssessmentEvidenceHistory().find(function (entry) { return entry.grade === grade; }) || null;
+    }
     function saveAssessmentEvidence(evidence) {
       const sanitized = sanitizedAssessment(evidence);
-      if (!sanitized) return false;
+      if (!sanitized || sanitized.legacyEvidence) return false;
+      const history = loadAssessmentEvidenceHistory();
+      const identity = [sanitized.source.id, sanitized.grade, sanitized.testDate].join(":");
+      const next = history.filter(function (entry) { return [entry.source.id, entry.grade, entry.testDate].join(":") !== identity; });
+      next.unshift(sanitized);
+      write(ASSESSMENT_HISTORY_KEY, { schemaVersion: "gfield-external-assessment-history-v1", records: next.slice(0, MAX_ASSESSMENT_RECORDS) });
       write(ASSESSMENT_KEY, sanitized);
       return true;
     }
-    function clearAssessmentEvidence() { if (!store) return false; store.removeItem(ASSESSMENT_KEY); return true; }
+    function clearAssessmentEvidence() { if (!store) return false; store.removeItem(ASSESSMENT_KEY); store.removeItem(ASSESSMENT_HISTORY_KEY); return true; }
     function loadGrade6DiagnosticEvidence() { return sanitizedGrade6DiagnosticEvidence(read(GRADE6_DIAGNOSTIC_KEY)); }
     function saveGrade6DiagnosticEvidence(evidence) {
       const sanitized = sanitizedGrade6DiagnosticEvidence(evidence);
@@ -438,7 +462,7 @@
       store.removeItem(COMPETITION_SERIES_KEY);
       return true;
     }
-    return Object.freeze({ loadPractice: loadPractice, savePractice: savePractice, clearPractice: clearPractice, loadPlanSettings: loadPlanSettings, savePlanSettings: savePlanSettings, loadAssessmentEvidence: loadAssessmentEvidence, saveAssessmentEvidence: saveAssessmentEvidence, clearAssessmentEvidence: clearAssessmentEvidence, loadGrade6DiagnosticEvidence: loadGrade6DiagnosticEvidence, saveGrade6DiagnosticEvidence: saveGrade6DiagnosticEvidence, clearGrade6DiagnosticEvidence: clearGrade6DiagnosticEvidence, loadCompetitionEvidence: loadCompetitionEvidence, saveCompetitionEvidence: saveCompetitionEvidence, loadCompetitionEvidenceSeries: loadCompetitionEvidenceSeries, saveCompetitionFirstAttempt: saveCompetitionFirstAttempt, getComparableCompetitionSeries: getComparableCompetitionSeries, clearCompetitionEvidence: clearCompetitionEvidence });
+    return Object.freeze({ loadPractice: loadPractice, savePractice: savePractice, clearPractice: clearPractice, loadPlanSettings: loadPlanSettings, savePlanSettings: savePlanSettings, loadAssessmentEvidence: loadAssessmentEvidence, loadAssessmentEvidenceHistory: loadAssessmentEvidenceHistory, loadLatestAssessmentEvidence: loadLatestAssessmentEvidence, saveAssessmentEvidence: saveAssessmentEvidence, clearAssessmentEvidence: clearAssessmentEvidence, loadGrade6DiagnosticEvidence: loadGrade6DiagnosticEvidence, saveGrade6DiagnosticEvidence: saveGrade6DiagnosticEvidence, clearGrade6DiagnosticEvidence: clearGrade6DiagnosticEvidence, loadCompetitionEvidence: loadCompetitionEvidence, saveCompetitionEvidence: saveCompetitionEvidence, loadCompetitionEvidenceSeries: loadCompetitionEvidenceSeries, saveCompetitionFirstAttempt: saveCompetitionFirstAttempt, getComparableCompetitionSeries: getComparableCompetitionSeries, clearCompetitionEvidence: clearCompetitionEvidence });
   }
   function priorityForAxis(axis) { return AXIS_PRIORITIES[axis] || null; }
   return Object.freeze({ VERSION: VERSION, AXIS_PRIORITIES: AXIS_PRIORITIES, priorityForAxis: priorityForAxis, create: create, storage: create() });

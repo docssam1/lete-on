@@ -113,6 +113,31 @@
     }
     document.getElementById("result-content").scrollIntoView({ behavior: "smooth", block: "start" });
   }
+  function historyMetric(result) {
+    const scores = result.scores || {};
+    if (result.source.id === "school-placement") return scores.metric == null ? "점수 미입력" : `${scores.metric}%`;
+    if (result.source.id === "map-growth") return [`RIT ${scores.rit}`, scores.percentile == null ? null : `${scores.percentile}th percentile`].filter(Boolean).join(" · ");
+    if (result.source.id === "isee") return `Quantitative Reasoning ${scores.quantStanine} · Mathematics Achievement ${scores.mathStanine} stanine`;
+    return [scores.percentile == null ? null : `${scores.percentile}th percentile`, scores.scaleScore == null ? null : `Scale ${scores.scaleScore}`, scores.stanine == null ? null : `Stanine ${scores.stanine}`].filter(Boolean).join(" · ") || "성적표 값";
+  }
+  function renderHistory() {
+    const list = document.getElementById("assessment-history-list");
+    const empty = document.getElementById("assessment-history-empty");
+    list.replaceChildren();
+    const history = records.storage.loadAssessmentEvidenceHistory();
+    empty.hidden = history.length > 0;
+    history.forEach(function (entry) {
+      const article = document.createElement("article"); article.className = "assessment-history-item";
+      const heading = document.createElement("div"); heading.className = "assessment-history-item-heading";
+      const title = document.createElement("h3"); title.textContent = `${entry.source.label} · Grade ${entry.grade}`;
+      const date = document.createElement("time"); date.textContent = entry.testDate || "날짜 미입력"; if (entry.testDate) date.dateTime = entry.testDate;
+      heading.append(title, date);
+      const detail = document.createElement("p"); detail.textContent = historyMetric(entry);
+      const route = document.createElement("p"); route.className = "assessment-history-route";
+      route.textContent = `${entry.currentCourse.label} → ${entry.targetCourse ? entry.targetCourse.label : entry.currentCourse.label}${entry.scores.normGroup ? ` · ${entry.scores.normGroup}` : ""}${entry.scores.season ? ` · ${entry.scores.season}` : ""}`;
+      article.append(heading, detail, route); list.append(article);
+    });
+  }
   function restoreLegacyInputs(saved) {
     sourceSelect.value = saved.source.id;
     updateSourceFields();
@@ -137,7 +162,7 @@
   }
   form.addEventListener("submit", function (event) {
     event.preventDefault(); document.getElementById("form-error").textContent = "";
-    try { const result = engine.analyze(inputRecord()); records.storage.saveAssessmentEvidence(result); render(result); }
+    try { const result = engine.analyze(inputRecord()); if (!records.storage.saveAssessmentEvidence(result)) throw new Error("SAVE_FAILED"); render(result); renderHistory(); }
     catch (error) { document.getElementById("form-error").textContent = errorCopy[error.message] || "입력값을 다시 확인하세요."; }
   });
   sourceSelect.addEventListener("change", updateSourceFields);
@@ -145,7 +170,18 @@
   populateCourses(); updateTargetOptions(); updateSourceFields(); document.getElementById("test-date").value = today();
   const requestedGrade = Number(new URLSearchParams(window.location.search).get("grade"));
   if (Number.isInteger(requestedGrade) && requestedGrade >= 3 && requestedGrade <= 12) document.getElementById("grade").value = String(requestedGrade);
-  const saved = records.storage.loadAssessmentEvidence();
-  if (saved && saved.legacyEvidence) restoreLegacyInputs(saved);
-  else if (saved && saved.schemaVersion === engine.SCHEMA_VERSION) render(saved);
+  const history = records.storage.loadAssessmentEvidenceHistory();
+  const saved = Number.isInteger(requestedGrade) ? records.storage.loadLatestAssessmentEvidence(requestedGrade) : records.storage.loadAssessmentEvidence();
+  if (saved && saved.schemaVersion === engine.SCHEMA_VERSION) render(saved);
+  else {
+    const legacy = records.storage.loadAssessmentEvidence();
+    if (legacy && legacy.legacyEvidence && (!Number.isInteger(requestedGrade) || legacy.grade === requestedGrade) && history.length === 0) restoreLegacyInputs(legacy);
+  }
+  renderHistory();
+  document.getElementById("clear-assessment-history").addEventListener("click", function () {
+    records.storage.clearAssessmentEvidence();
+    document.getElementById("result-content").hidden = true;
+    document.getElementById("result-empty").hidden = false;
+    renderHistory();
+  });
 })();

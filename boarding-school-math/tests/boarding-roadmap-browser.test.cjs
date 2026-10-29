@@ -154,6 +154,29 @@ test("roadmap shows only user-entered assessment evidence for the selected grade
   await page.close();
 });
 
+test("roadmap loads each grade's own assessment route from local history", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#overall-percent").fill("82");
+  await page.locator("#current-course").selectOption("pre-algebra");
+  await page.locator("#target-course").selectOption("algebra-1");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=8`, { waitUntil: "networkidle" });
+  await page.locator("#overall-percent").fill("76");
+  await page.locator("#current-course").selectOption("algebra-1");
+  await page.locator("#target-course").selectOption("geometry");
+  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#journey-evidence-title").innerText(), "Pre-Algebra → Algebra 1");
+  await page.locator(".grade-track > summary").click();
+  await page.getByRole("button", { name: "Grade 8 지도 보기" }).click();
+  assert.equal(await page.locator("#journey-evidence-title").innerText(), "Algebra 1 → Geometry");
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("released unit practice is reachable without exposing the private Grade 7 diagnostic", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=6`, { waitUntil: "networkidle" });

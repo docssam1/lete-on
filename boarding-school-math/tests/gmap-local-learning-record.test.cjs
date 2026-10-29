@@ -94,7 +94,8 @@ test("Grade 6 diagnostic evidence keeps only an answer-safe teacher-reviewed sum
 });
 
 test("external assessment evidence is reduced to an answer-safe local planning summary", function () {
-  const store = records.create(memoryStorage());
+  const storage = memoryStorage();
+  const store = records.create(storage);
   const saved = store.saveAssessmentEvidence({
     schemaVersion: "gfield-external-math-evidence-v2",
     source: { id: "map-growth", label: "NWEA MAP Growth Math", role: "instructional-growth" },
@@ -114,8 +115,36 @@ test("external assessment evidence is reduced to an answer-safe local planning s
   assert.equal(evidence.domainComparisons[0].clusterId, "6.G.A");
   assert.equal(evidence.band, null);
   assert.equal(evidence.officialPlacement, false);
+  storage.removeItem("gmap-local-learning-record-v1:external-assessment-history");
+  assert.equal(store.loadLatestAssessmentEvidence(6).source.id, "map-growth");
+  assert.equal(store.loadAssessmentEvidenceHistory().length, 1);
   assert.equal(store.clearAssessmentEvidence(), true);
   assert.equal(store.loadAssessmentEvidence(), null);
+});
+
+test("external assessment history keeps grade and source records separate and replaces duplicate date entries", function () {
+  const store = records.create(memoryStorage());
+  function evidence(grade, sourceId, date, label) {
+    return {
+      schemaVersion: "gfield-external-math-evidence-v2",
+      source: { id: sourceId, label, role: "instructional-growth" }, testDate: date, grade,
+      band: null, confidence: "not-calculated", placementState: "school-policy-required", officialPlacement: false,
+      currentCourse: { id: "pre-algebra", label: "Pre-Algebra", publicLearning: true },
+      recommendedStart: { id: "pre-algebra", label: "Pre-Algebra", publicLearning: true },
+      targetCourse: { id: "algebra-1", label: "Algebra 1" },
+      scores: { metric: 64, metricLabel: "입력 점수", rit: 218, percentile: 64 },
+      primaryPriority: null, priorityDomains: [], domainComparisons: [], plan: {}, materialState: null, decisionNotice: "사용자 입력"
+    };
+  }
+  assert.equal(store.saveAssessmentEvidence(evidence(7, "map-growth", "2026-09-01", "MAP")), true);
+  assert.equal(store.saveAssessmentEvidence(evidence(8, "school-placement", "2026-09-01", "Placement")), true);
+  assert.equal(store.saveAssessmentEvidence(evidence(7, "map-growth", "2026-09-01", "MAP revised")), true);
+  assert.equal(store.loadAssessmentEvidenceHistory().length, 2);
+  assert.equal(store.loadLatestAssessmentEvidence(7).source.label, "MAP revised");
+  assert.equal(store.loadLatestAssessmentEvidence(8).source.id, "school-placement");
+  assert.equal(store.loadLatestAssessmentEvidence(9), null);
+  assert.equal(store.clearAssessmentEvidence(), true);
+  assert.deepEqual(store.loadAssessmentEvidenceHistory(), []);
 });
 
 test("legacy assessment summaries retain only source-score inputs and cannot feed the learning plan", function () {
