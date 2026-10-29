@@ -748,7 +748,8 @@
       ],
       "sourceVerified": false,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다.",
+      "sourceReviewCorrection20261030": "정본 인쇄 10쪽은 한 자연수의 올림·버림·반올림 세 결과에 공통으로 맞는 자연수의 개수를 묻는다. 생성 연습은 다른 수치를 사용한다. 원문은 기존 잠금 유지, 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-1",
@@ -765,7 +766,8 @@
       ],
       "sourceVerified": false,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다.",
+      "sourceReviewCorrection20261030": "정본은 세 어림 조건을 모두 만족하는 가장 작은 자연수를 묻는다. 생성 연습은 목표 숫자를 바꾼다. 원문은 기존 잠금 유지, 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-2",
@@ -782,7 +784,8 @@
       ],
       "sourceVerified": false,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다.",
+      "sourceReviewCorrection20261030": "정본은 같은 자연수를 두 정수로 나눈 몫의 반올림 결과로 자연수의 공통 범위를 묻는다. 생성 연습은 목표 수치를 바꾼다. 원문은 기존 잠금 유지, 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-3",
@@ -799,7 +802,8 @@
       ],
       "sourceVerified": false,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다.",
+      "sourceReviewCorrection20261030": "정본은 두 수의 합과 차의 반올림 결과로 큰 수의 범위를 묻는다. 생성 연습은 목표 수치를 바꾼다. 원문은 기존 잠금 유지, 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-4",
@@ -816,7 +820,8 @@
       ],
       "sourceVerified": false,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다.",
+      "sourceReviewCorrection20261030": "정본은 남녀 인구를 서로 다른 방법으로 어림한 그래프에서 차가 큰 해를 다룬다. 생성 연습은 가상 그래프이고 그래프에 표시된 차를 기준으로 하는 해임을 명시한다. 원문은 기존 잠금 유지, 출판사 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-1",
