@@ -12,7 +12,7 @@
       Object.freeze({ standard: "7.NS.A.2", prompt: "곱셈·나눗셈: 부호와 연산 성질을 적용하고, 0이 아닌 수로 나누는 이유를 설명할 수 있나요?" }),
       Object.freeze({ standard: "7.NS.A.2d", prompt: "분수와 소수: 분수를 소수로 나타내고, 소수가 끝나는지 반복되는지 판별할 수 있나요?" }),
       Object.freeze({ standard: "7.NS.A.3", prompt: "문장제: 상황에 맞게 유리수 네 연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?" })
-    ]), clusterId: "7.NS.A", resourceState: "review-preview" }),
+    ]), clusterId: "7.NS.A", resourceState: "public" }),
     Object.freeze({ id: "rpa", title: "비례 관계", description: "단위율과 비례 관계를 표·그래프·식으로 나타내요.", check: "두 양이 비례하는지 표와 그래프를 보고 설명할 수 있나요?", clusterId: "7.RP.A", resourceState: "public" }),
     Object.freeze({ id: "ee", title: "식·방정식", description: "분배법칙으로 식을 정리하고 등식의 양쪽이 왜 같은지 확인해요.", check: "식을 바꾼 뒤에도 같은 값을 나타내는 이유를 말할 수 있나요?" }),
     Object.freeze({ id: "geometry", title: "기하·혼합 문제", description: "도형에서 찾은 관계를 그림과 식으로 나타내고 필요한 개념을 골라요.", check: "처음 보는 문제에서 쓴 개념과 다른 풀이 한 가지를 설명할 수 있나요?" })

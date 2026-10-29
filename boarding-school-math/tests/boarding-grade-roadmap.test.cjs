@@ -59,10 +59,10 @@ test("concept-flow examples connect the four user-supplied routes without learne
   assert.equal(Object.isFrozen(roadmap.conceptFlows[0].steps), true);
 });
 
-test("Grade 7 route names checkpoints and only links available workbook previews", function () {
+test("Grade 7 route names checkpoints and identifies its public workbooks", function () {
   assert.deepEqual(roadmap.grade7Stops.map(function (stop) { return stop.id; }), ["nsa", "rpa", "ee", "geometry"]);
   assert.deepEqual(roadmap.getGrade(7).steps.map(function (step) { return step[0]; }), roadmap.grade7Stops.map(function (stop) { return stop.title; }));
-  assert.equal(roadmap.grade7Stops[0].resourceState, "review-preview");
+  assert.equal(roadmap.grade7Stops[0].resourceState, "public");
   assert.equal(roadmap.grade7Stops[1].resourceState, "public");
   assert.ok(roadmap.grade7Stops.every(function (stop) { return Boolean(stop.check || (stop.checks && stop.checks.length)); }));
   assert.equal(roadmap.grade7Stops[0].checks.length, 4);

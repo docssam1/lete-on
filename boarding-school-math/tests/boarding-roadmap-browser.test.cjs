@@ -75,9 +75,9 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator("#journey-next-title").innerText(), "식·방정식");
   assert.deepEqual(await page.locator("#grade-focus-list strong").allInnerTexts(), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
   assert.match(await page.locator(".level-boundary").innerText(), /진단 결과가 없어서/);
-  assert.match(await page.locator("#grade-note").innerText(), /7.NS.A 워크북과 진단은 검수 중/);
+  assert.match(await page.locator("#grade-note").innerText(), /7.NS.A·7.RP.A 워크북은 연습용.*개인 진단은 별도 검수 중/);
   assert.equal(await page.locator("#grade-practice-links a").count(), 2);
-  assert.match(await page.locator("#grade-practice-links a").first().innerText(), /검수 시안/);
+  assert.match(await page.locator("#grade-practice-links a").first().innerText(), /36문항/);
   assert.match(await page.locator("#grade-practice-links a").first().getAttribute("href"), /cluster=7.NS.A/);
   assert.deepEqual(await page.locator(".route-button[aria-pressed='true']").allInnerTexts(), []);
   assert.equal(await page.locator(".route-explanation").isHidden(), true);
@@ -294,6 +294,7 @@ test("released unit practice is reachable without exposing the private Grade 7 d
   await page.locator("#grade-practice-links a").first().click();
   await page.waitForURL(/unit-workbook\.html\?cluster=7.NS.A/);
   assert.match(await page.locator("body").innerText(), /단원 워크북/);
+  assert.match(await page.locator("body").innerText(), /이 책만으로 배치·승급을 결정하지 않습니다/);
   assert.doesNotMatch(page.url(), /diagnostic/);
   await page.close();
 });
@@ -424,6 +425,7 @@ test("Grade 7 NS.A roadmap breaks the strand into four observable checks with re
   assert.equal(await page.locator("#grade7-stage-references a").count(), 3);
   assert.equal(await page.locator("#grade7-stage-references a").nth(0).getAttribute("href"), "https://www.thecorestandards.org/Math/Content/7/NS/");
   assert.match(await page.locator("#grade7-stage-resource").getAttribute("href"), /cluster=7.NS.A/);
+  assert.match(await page.locator("#grade7-stage-resource").innerText(), /36문항/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   await page.close();
 });
