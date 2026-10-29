@@ -2355,7 +2355,8 @@
       ],
       "sourceVerified": false,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e3-mission-4"
     },
     {
       "sourceItemId": "5-2-u3-e3-mission-5",
