@@ -1,0 +1,7 @@
+'use strict';
+const assert=require('node:assert/strict');
+global.window={};require('./source-inventory-grade6.js');require('./generators.js');
+const all=window.HSE_SOURCE_INVENTORY_GRADE6.items,common=require('./source-inventory/6-1-source-items.json').items,details=require('./source-inventory/6-1-u5-source-readiness-review.json').items;
+for(const [n,key,label,contract,layout] of [[1,'strip-graph-class-fruit-count',/반.*과일.*학생 수/,'single-value','class-fruit-strips'],[2,'strip-graph-school-grade-difference',/두 학교.*학년.*학생 수/,'two-values','paired-school-strips']]){
+ const id=`6-1-u5-e2-mission-${n}`,matches=all.filter(x=>x.sourceItemId===id),c=common.filter(x=>x.sourceItemId===id),d=details.filter(x=>x.sourceItemId===id);assert.equal(matches.length,1);assert.equal(c.length,1);assert.equal(d.length,1);const p=matches[0],r=d[0];assert.equal(c[0].pdfPage,41);assert.equal(r.sourcePdfPage,41);assert.match(p.typeLabel,label);assert.match(r.childFriendlyTypeLabel,label);assert.equal(p.commonTypeId,key);assert.equal(r.commonTypeId,key);assert.equal(p.resultContract,contract);assert.equal(r.resultContract,contract);assert.equal(r.graphScale.type,layout);assert.equal(p.reviewLocked,false);for(const offset of [-1,0,1])for(let seed=1;seed<=3;seed++){const q=window.HSE_GENERATORS.generate(p,0,offset,seed,p.variant);assert(q&&q.answer&&q.solution);assert(q.prompt.includes(layout));assert.equal(q.sourceItemId,id);}}
+console.log('PASS: 47쪽 Mission 1·2 common, detailed, public metadata and generation align');
