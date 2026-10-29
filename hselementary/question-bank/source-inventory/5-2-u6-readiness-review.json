@@ -29,17 +29,17 @@
       "sourcePageOutOfRangeCount": 0
     },
     "answerReview": {
-      "independentCalculationOrEnumerationCount": 35,
-      "visualModelPendingCount": 9,
-      "singleAnswerConfirmedCount": 35,
-      "answerNotFinalizedCount": 9,
+      "independentCalculationOrEnumerationCount": 36,
+      "visualModelPendingCount": 8,
+      "singleAnswerConfirmedCount": 36,
+      "answerNotFinalizedCount": 8,
       "singleAnswerStatusCounts": {
-        "true": 35,
-        "null": 9
+        "true": 36,
+        "null": 8
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4를 원문 수치와 독립 계산으로 연결했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1·2를 연결했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 5,
-    "lockedCount": 39
+    "publicCandidateCount": 7,
+    "lockedCount": 37
   },
   "items": [
     {
@@ -211,16 +211,22 @@
       "commonTypeId": "average-score-operation",
       "childFriendlyTypeLabel": "평균을 이용해 기호가 나타내는 수 구하기",
       "originalStructure": "두 기호가 들어간 계산식이 두 기호가 나타내는 수의 평균을 뜻할 때 빈칸을 구합니다.",
-      "conditions": ["두 기호의 평균을 나타내는 식", "23·32와 빈칸", "기호가 나타내는 수를 구함"],
+      "conditions": [
+        "㉠♥㉡은 두 수 ㉠과 ㉡의 평균",
+        "(23♥□)♥32=33"
+      ],
       "visualRequirement": "평균 기호와 빈칸의 위치를 수식으로 정확히 표시해야 합니다.",
-      "independentCalculation": "기호를 각각 x,y로 두고 (23+x)÷2=y, (y+32)÷2=33을 차례로 풀면 x=45, y=34",
+      "independentCalculation": "23♥□=33×2−32=34, □=34×2−23=45. 기호를 같은 연산으로 두 번 사용한다.",
       "independentAnswer": "45",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "평균을 나타내는 기호 수식과 빈칸 답을 중앙 수식 형식으로 검수하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "releaseEvidence": "원문의 ♥ 기호·괄호·숫자와 식 순서 대조 및 역산. 공식 출판사 답안 미확인.",
+      "runtimeTypeId": "5-2-u6-e1-mission-1",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-2",
@@ -230,17 +236,24 @@
       "sourcePrintedPage": 59,
       "commonTypeId": "average-table-missing-two-scores",
       "childFriendlyTypeLabel": "평균과 점수표로 두 점수 구하기",
-      "originalStructure": "성적표의 평균과 일부 과목 점수가 주어지고 빠진 두 점수를 구합니다.",
-      "conditions": ["5과목 평균 82점", "국어 81점, 과학 94점", "수학·사회 점수 빈칸"],
+      "originalStructure": "네 과목의 성적과 평균 열이 있는 찢어진 표에서 보이는 자릿수를 이용해 수학·사회 점수를 구합니다.",
+      "conditions": [
+        "국어·수학·사회·과학의 4과목 평균 82점",
+        "국어 81점, 과학 94점",
+        "수학 십의 자리 7, 사회 일의 자리 3"
+      ],
       "visualRequirement": "과목과 점수의 표, 빈칸 위치를 원본 순서로 표시해야 합니다.",
-      "independentCalculation": "전체 합 82×5=410, 알려진 합 81+94=175. 빈 두 점수의 합은 235이며 두 빈칸의 추가 조건을 원본 표에서 다시 확인해야 최종 값을 정할 수 있음",
-      "independentAnswer": null,
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
+      "independentCalculation": "전체 82×4=328, 수학·사회 합 328−81−94=153. 수학 70~79, 사회 일의 자리 3을 대입하면 (70,83)만 가능. 기존 기록은 평균 열을 다섯 번째 과목으로 잘못 계산함.",
+      "independentAnswer": "수학 70점, 사회 83점",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "표의 두 빈칸을 하나씩 정할 추가 조건과 원본 표시를 다시 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "releaseEvidence": "필기 없는 원문에서 수학 7과 사회 3의 위치를 확대 대조하고 100개 자릿수 조합 전수 검사. 공식 출판사 답안 미확인.",
+      "runtimeTypeId": "5-2-u6-e1-mission-2",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e1-mission-3",

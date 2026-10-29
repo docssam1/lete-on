@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 59 Missions 1–2
+
+- Printed p.59 Mission 1: (23♥□)♥32=33, with ♥ the mean; independently solved □=45. Mission 2: four subjects (not five), with the visible digits 7 in mathematics and 3 in social studies; the total is 328 and the unique scores are mathematics 70, social studies 83. The previous ledger miscounted the average column as a fifth subject. Both publisher answer keys are unverified; handwritten entries were not used.
+- Source equation, an unmarked original score table, independent arithmetic and digit enumeration, 1440/375/320px browser, four separate one-page A4 visual checks, release gate and 77,760 runtime generations passed.
+- Counts: 2,084 types, 1,296 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). Remaining Unit 6 items remain locked; preserve dirty worktree and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 58 Example 1-4
 
 - Printed p.58 source compares the average of Eul's first two tests to Gap's fourth and fifth, not to Eul's own fourth and fifth as the prior ledger stated. Corrected the condition and result: intermediary values ㉠=85 and ㉡=95 give the requested ㉢=78. Publisher answer key unverified; handwritten entries were not used as evidence.
