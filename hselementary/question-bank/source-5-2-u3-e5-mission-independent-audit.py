@@ -21,3 +21,22 @@ v=(D[0]-R[0],D[1]-R[1]);axis=((G[0]+D[0])/2-R[0],(G[1]+D[1])/2-R[1])
 angle=math.degrees(math.acos((v[0]*axis[0]+v[1]*axis[1])/(math.hypot(*v)*math.hypot(*axis))))
 assert abs(angle-50)<1e-9
 print('Mission 5 union perimeter and Mission 6 coordinate angle passed')
+
+# Reflect the two endpoints of the shaded sector across each vertex-to-vertex axis.
+points=[(math.cos(2*math.pi*k/8),math.sin(2*math.pi*k/8)) for k in range(8)]
+results=set()
+for j in range(4):
+ axis=points[j]
+ def reflected(p):
+  projection=p[0]*axis[0]+p[1]*axis[1]
+  return (2*projection*axis[0]-p[0],2*projection*axis[1]-p[1])
+ endpoints=[]
+ for point in points[:2]:
+  q=reflected(point)
+  indices=[k for k,p in enumerate(points) if math.dist(p,q)<1e-9]
+  assert len(indices)==1
+  endpoints.append(indices[0])
+ edge=next(k for k in range(8) if set(endpoints)=={k,(k+1)%8})
+ results.add(edge)
+assert results=={1,3,5,7}
+print('Mission 1: all four vertex-diagonal reflection choices verified')
