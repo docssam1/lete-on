@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261025-4">
+  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261029-1">
 </head>
 <body class="academy-page page-boarding-roadmap">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -51,6 +51,17 @@
           <div class="journey-actions"><button id="previous-grade" type="button">← 이전 학년</button><button id="next-grade" type="button">다음 학년 →</button></div>
         </aside>
       </div>
+    </section>
+
+    <section class="grade-comparison boarding-shell" aria-labelledby="grade-comparison-title">
+      <div class="map-head"><div><p class="boarding-kicker">학년 비교</p><h2 id="grade-comparison-title">두 학년의 배움 나란히 보기</h2></div><p>학년별 계획 예시를 비교해요. 점수나 학생 등급 비교는 아니에요.</p></div>
+      <div class="grade-comparison-controls"><label for="comparison-grade">비교할 학년<select id="comparison-grade"><option value="">학년 선택</option></select></label><p id="comparison-note" aria-live="polite">현재 선택한 학년과 비교할 학년을 고르면 배움의 연결을 보여 드려요.</p></div>
+      <div id="comparison-table" class="comparison-table" role="group" aria-labelledby="grade-comparison-title" hidden>
+        <article class="comparison-column"><p class="comparison-grade-label" id="comparison-current-label"></p><h3 id="comparison-current-title"></h3><p id="comparison-current-core"></p><dl id="comparison-current-tracks"></dl></article>
+        <article class="comparison-column"><p class="comparison-grade-label" id="comparison-target-label"></p><h3 id="comparison-target-title"></h3><p id="comparison-target-core"></p><dl id="comparison-target-tracks"></dl></article>
+        <p class="comparison-bridge"><strong>개념 연결</strong><span id="comparison-bridge-copy"></span></p>
+      </div>
+      <p class="comparison-boundary">학년 자료를 나란히 보여 주는 계획 예시예요. 실제 수업 순서·학생의 현재 위치·배정 과목을 판단하지 않아요.</p>
     </section>
 
     <section class="level-section boarding-shell" aria-labelledby="level-title"><div class="map-head"><div><p class="boarding-kicker">02 · 학습 기준</p><h2 id="level-title">어디서 시작할까요?</h2></div><p>학생이 푼 문제를 보고 골라요.</p></div>

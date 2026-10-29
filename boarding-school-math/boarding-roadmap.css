@@ -83,6 +83,27 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .journey-actions { margin-top: 20px; display: flex; gap: 8px; }
 .journey-actions button { flex: 1; min-height: 46px; padding: 8px; border: 1px solid #2456c4; color: #2456c4; background: #fff; font: inherit; font-size: .78rem; font-weight: 850; cursor: pointer; }
 .journey-actions button:disabled { border-color: #d8dee8; color: #687587; background: #f5f6f8; cursor: not-allowed; }
+.grade-comparison { padding-block: 42px; border-top: 1px solid #d8dee8; }
+.grade-comparison-controls { margin-top: 20px; display: grid; grid-template-columns: minmax(180px, 260px) minmax(0, 1fr); align-items: end; gap: 16px; }
+.grade-comparison-controls label { display: grid; gap: 7px; color: #354255; font-size: .83rem; font-weight: 750; }
+.grade-comparison-controls select { width: 100%; min-height: 46px; padding: 9px 12px; border: 1px solid #566274; border-radius: 4px; color: #182230; background: #fff; font: inherit; font-size: 1rem; }
+.grade-comparison-controls select:focus-visible { outline: 3px solid #2456c4; outline-offset: 2px; }
+.grade-comparison-controls > p { margin: 0; color: #566274; font-size: .88rem; line-height: 1.55; }
+.comparison-table { margin-top: 18px; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); border: 1px solid #d8dee8; background: #fff; }
+.comparison-table[hidden] { display: none; }
+.comparison-column { min-width: 0; padding: 22px 24px; }
+.comparison-column + .comparison-column { border-left: 1px solid #d8dee8; }
+.comparison-grade-label { margin: 0; color: #2456c4; font-size: .78rem; font-weight: 850; }
+.comparison-column h3 { margin: 8px 0 0; font-size: 1.15rem; line-height: 1.4; }
+.comparison-column > p:not(.comparison-grade-label) { margin: 9px 0 0; color: #354255; font-size: .88rem; line-height: 1.6; }
+.comparison-column dl { margin: 16px 0 0; display: grid; grid-template-columns: minmax(100px, .42fr) minmax(0, 1fr); border-top: 1px solid #d8dee8; }
+.comparison-column dt, .comparison-column dd { margin: 0; padding: 10px 0; border-bottom: 1px solid #d8dee8; font-size: .82rem; line-height: 1.5; }
+.comparison-column dt { padding-right: 10px; color: #2456c4; font-weight: 800; }
+.comparison-column dd { color: #354255; }
+.comparison-column .comparison-inferred-note { grid-column: 1 / -1; color: #566274; font-size: .8rem; line-height: 1.5; }
+.comparison-bridge { grid-column: 1 / -1; margin: 0; padding: 14px 20px; display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 10px; border-top: 1px solid #d8dee8; background: #f5f6f8; font-size: .86rem; line-height: 1.55; }
+.comparison-bridge strong { color: #2456c4; }
+.comparison-boundary { margin: 12px 0 0; color: #566274; font-size: .8rem; line-height: 1.5; }
 .level-section { padding-bottom: clamp(60px, 7vw, 94px); }
 .level-grid { margin-top: 26px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border: 1px solid #d8dee8; background: #fff; }
 .level-grid article { min-width: 0; padding: 25px; border-right: 1px solid #d8dee8; }
@@ -240,5 +261,7 @@ body.academy-page.page-boarding-roadmap { color: #182230; background: #f5f6f8; b
   .grade7-path .stage-button[aria-pressed="true"]::after { margin-left: auto; white-space: nowrap; }
   .grade7-branch-list { grid-template-columns: 1fr; }
 }
+@media (max-width: 600px) { .grade-comparison { padding-block: 30px; }.grade-comparison-controls { grid-template-columns: 1fr; gap: 10px; }.comparison-table { grid-template-columns: 1fr; }.comparison-column + .comparison-column { border-top: 1px solid #d8dee8; border-left: 0; }.comparison-column { padding: 18px 16px; }.comparison-bridge { grid-template-columns: 1fr; gap: 4px; padding: 12px 16px; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-@media print { .boarding-header, .boarding-intro-actions, .grade-track, .journey-actions, .route-buttons, .competition-form, .competition-links, .boarding-close, .site-footer { display: none !important; }.boarding-intro, .boarding-close { color: #182230; background: #fff; }.boarding-intro .boarding-shell { padding-block: 12px; }.boarding-intro h1, .boarding-intro h1 span { color: #182230; }.boarding-intro p:not(.boarding-kicker) { color: #566274; }.grade-map, .level-section, .route-section, .competition-section { padding-block: 12px; }.journey-layout, .route-layout, .competition-layout { display: block; }.journey-side { border: 1px solid #d8dee8; }.route-explanation { margin-top: 12px; } }
+@media print { .grade-comparison:not(.has-comparison) { display: none; } }
+@media print { .boarding-header, .boarding-intro-actions, .grade-track, .grade-comparison-controls, .journey-actions, .route-buttons, .competition-form, .competition-links, .boarding-close, .site-footer { display: none !important; }.boarding-intro, .boarding-close { color: #182230; background: #fff; }.boarding-intro .boarding-shell { padding-block: 12px; }.boarding-intro h1, .boarding-intro h1 span { color: #182230; }.boarding-intro p:not(.boarding-kicker) { color: #566274; }.grade-map, .grade-comparison, .level-section, .route-section, .competition-section { padding-block: 12px; }.journey-layout, .route-layout, .competition-layout { display: block; }.journey-side { border: 1px solid #d8dee8; }.route-explanation { margin-top: 12px; } }

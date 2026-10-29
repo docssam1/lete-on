@@ -23,7 +23,9 @@ test.before(async function () {
   });
   await new Promise(function (resolve) { server.listen(0, "127.0.0.1", resolve); });
   url = `http://127.0.0.1:${server.address().port}/boarding-school-math/boarding-roadmap.html`;
-  browser = await chromium.launch({ headless: true });
+  const launchOptions = { headless: true };
+  if (process.env.GFIELD_CHROME_EXECUTABLE) launchOptions.executablePath = process.env.GFIELD_CHROME_EXECUTABLE;
+  browser = await chromium.launch(launchOptions);
 });
 test.after(async function () {
   if (browser) await browser.close();
@@ -128,6 +130,27 @@ test("released unit practice is reachable without exposing the private Grade 7 d
   await page.waitForURL(/unit-workbook\.html\?cluster=7.NS.A/);
   assert.match(await page.locator("body").innerText(), /단원 워크북/);
   assert.doesNotMatch(page.url(), /diagnostic/);
+  await page.close();
+});
+
+test("grade comparison shows curriculum examples without implying measured level", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url}?grade=8`, { waitUntil: "networkidle" });
+  const comparison = page.getByLabel("비교할 학년");
+  assert.equal(await comparison.inputValue(), "");
+  await comparison.selectOption("9");
+  assert.equal(await page.locator("#comparison-table").isVisible(), true);
+  assert.equal(await page.locator("#comparison-current-label").innerText(), "8학년");
+  assert.equal(await page.locator("#comparison-target-label").innerText(), "9학년 · 추정안");
+  assert.match(await page.locator("#comparison-note").innerText(), /학교 과목 순서를 확인/);
+  assert.match(await page.locator("#comparison-bridge-copy").innerText(), /8학년:.*9학년:/);
+  assert.match(await page.locator(".comparison-boundary").innerText(), /학생의 현재 위치.*판단하지 않아요/);
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true);
+  const positions = await page.locator(".comparison-column").evaluateAll((nodes) => nodes.map((node) => ({ x: node.getBoundingClientRect().x, y: node.getBoundingClientRect().y })));
+  assert.ok(positions[1].y > positions[0].y, "comparison columns stack on a phone");
+  await page.emulateMedia({ media: "print" });
+  assert.equal(await page.locator("#comparison-table").isVisible(), true);
+  assert.equal(await page.locator(".grade-comparison-controls").isVisible(), false);
   await page.close();
 });
 

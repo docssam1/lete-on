@@ -12,6 +12,7 @@
   let stage = grade === 7 ? null : 0;
   let route = null;
   let competition = null;
+  let comparisonGrade = null;
   const competitionSources = {
     sasmo: { href: "./sasmo.html", label: "SASMO 자료 보기 →" },
     kangaroo: { href: "https://mathkangaroo.org/mks/faqs/about-the-test/", label: "Math Kangaroo 공식 규칙 ↗", external: true },
@@ -141,6 +142,54 @@
     setText("level-repair", `${entry.steps[0][0]}: ${entry.steps[0][1]}`);
     setText("level-secure", "배운 개념을 혼자 풀고 며칠 뒤 새 문제에서도 설명해요.");
     setText("level-extend", entry.steps[2][1]);
+  }
+  function renderComparisonOptions() {
+    const select = $("comparison-grade");
+    select.replaceChildren(new Option("학년 선택", ""));
+    data.grades.filter(function (entry) { return entry.grade !== grade; }).forEach(function (entry) {
+      select.add(new Option(`${entry.grade}학년${entry.source === "inferred" ? " · 추정안" : ""}`, String(entry.grade)));
+    });
+    if (comparisonGrade === grade || !data.getGrade(comparisonGrade)) comparisonGrade = null;
+    select.value = comparisonGrade === null ? "" : String(comparisonGrade);
+  }
+  function renderComparisonColumn(prefix, entry) {
+    setText(`comparison-${prefix}-label`, `${entry.grade}학년${entry.source === "inferred" ? " · 추정안" : ""}`);
+    setText(`comparison-${prefix}-title`, entry.title);
+    setText(`comparison-${prefix}-core`, entry.core);
+    const list = $(`comparison-${prefix}-tracks`);
+    list.replaceChildren();
+    const inferredNote = document.querySelector(`.comparison-inferred-note[data-column="${prefix}"]`);
+    if (inferredNote) inferredNote.remove();
+    data.getTracks(entry.grade).forEach(function (track) {
+      const term = document.createElement("dt"); term.textContent = track[0];
+      const description = document.createElement("dd"); description.textContent = track[1];
+      list.append(term, description);
+    });
+    if (entry.source === "inferred") {
+      const note = document.createElement("p");
+      note.className = "comparison-inferred-note";
+      note.dataset.column = prefix;
+      note.textContent = "제공된 인접 학년 자료를 잇는 추정안이에요.";
+      list.after(note);
+    }
+  }
+  function renderComparison() {
+    const current = data.getGrade(grade);
+    const target = data.getGrade(comparisonGrade);
+    const table = $("comparison-table");
+    document.querySelector(".grade-comparison").classList.toggle("has-comparison", Boolean(target));
+    table.hidden = !target;
+    if (!target) {
+      setText("comparison-note", "현재 학년과 비교할 학년을 고르면 배움의 연결을 보여 드려요.");
+      return;
+    }
+    renderComparisonColumn("current", current);
+    renderComparisonColumn("target", target);
+    setText("comparison-bridge-copy", `${current.grade}학년: ${current.bridge}  /  ${target.grade}학년: ${target.bridge}`);
+    const hasInferred = current.source === "inferred" || target.source === "inferred";
+    setText("comparison-note", hasInferred
+      ? `${current.grade}학년과 ${target.grade}학년 자료를 비교해요. 추정안은 학교 과목 순서를 확인해 주세요.`
+      : `${current.grade}학년과 ${target.grade}학년의 학습 주제와 개념 연결을 비교해요.`);
   }
   function renderGradeFocus() {
     const host = $("grade-focus-list"); host.replaceChildren();
@@ -316,6 +365,8 @@
     $("previous-grade").disabled = grade === data.grades[0].grade;
     $("next-grade").disabled = grade === data.grades[data.grades.length - 1].grade;
     renderGradeButtons();
+    renderComparisonOptions();
+    renderComparison();
     renderStages(entry);
     renderLevels(entry);
     renderGradeFocus();
@@ -345,5 +396,9 @@
     renderCompetitionRows();
   });
   $("competition-form").addEventListener("submit", analyzeCompetition);
+  $("comparison-grade").addEventListener("change", function (event) {
+    comparisonGrade = event.target.value ? Number(event.target.value) : null;
+    renderComparison();
+  });
   render("replace");
 })();
