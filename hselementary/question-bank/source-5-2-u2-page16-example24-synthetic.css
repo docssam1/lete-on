@@ -1,0 +1,15 @@
+.source52-p16e24-question { display: grid; gap: 6px; }
+.source52-p16e24-question p { margin: 0; }
+.source52-p16e24-question figure { margin: 4px auto; width: min(100%, 500px); }
+.source52-p16e24-diagram { display: block; width: 100%; height: auto; max-height: 520px; }
+.source52-p16e24-triangle { fill: none; stroke: #222; stroke-width: 2.5; }
+.source52-p16e24-square { fill: #f5f5f5; stroke: #222; stroke-width: 2.2; }
+.source52-p16e24-dimension { fill: none; stroke: #555; stroke-width: 1.7; stroke-dasharray: 3 4; }
+.source52-p16e24-dimension-label { fill: #222; font: 18px sans-serif; }
+.source52-p16e24-question figcaption { color: #555; font-size: .82em; text-align: center; }
+.solution-answer-visual .source52-p16e24-diagram { max-width: 420px; max-height: 420px; margin: 0 auto; }
+@media print {
+  .source52-p16e24-question figure { width: min(100%, 460px); }
+  .source52-p16e24-diagram { max-height: 420px; }
+  .solution-answer-visual .source52-p16e24-diagram { max-height: 360px; }
+}

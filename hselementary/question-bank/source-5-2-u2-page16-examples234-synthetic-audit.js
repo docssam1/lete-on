@@ -1,0 +1,12 @@
+"use strict";
+const assert=require('node:assert/strict');global.window={};require('./source-inventory-4-1.js');require('./source-inventory-grade6.js');require('./curriculum.js');require('./generators.js');
+const modules=[2,3,4].map(n=>require(`./source-5-2-u2-page16-example2${n}-synthetic.js`));
+const gcd=(a,b)=>b?gcd(b,a%b):a,reduce=(a,b)=>{let g=gcd(a,b);return [a/g,b/g]},add=(a,b)=>reduce(a[0]*b[1]+b[0]*a[1],a[1]*b[1]),mul=(a,b)=>reduce(a[0]*b[0],a[1]*b[1]),mix=x=>reduce(x[0]*x[2]+x[1],x[2]),fmt=([n,d])=>{const w=Math.floor(n/d),r=n%d;return r?`${w?`${w} `:''}${r}/${d}`:String(w)};
+const unit=window.HSE_CURRICULUM.semesters.find(s=>s.id==='5-2').units.find(u=>u.id==='5-2-u2'),ledger=require('./source-inventory/5-2-source-items.json');
+for(let i=0;i<3;i++){const m=modules[i],type=unit.subunits.flatMap(s=>s.types).find(t=>t.id===m.sourceItemId);assert(type&&type.sourceVerified&&!type.reviewLocked&&!type.publisherKeyVerified);const row=ledger.sourceItems.find(x=>x.sourceItemId===type.sourceParentItemId);assert(row.sourceVerified&&row.implementationStatus==='review-locked');assert.equal(row.syntheticRuntimeTypeId,type.id);assert.equal(window.HSE_GENERATORS.generate({...type,reviewLocked:true},0,0,0,0),null);
+ for(let j=0;j<3;j++)for(const level of [-1,0,1]){const q=window.HSE_GENERATORS.generate(type,0,level,1,j);let expected;
+ if(i===0){let p=m.pools[j];expected=fmt(mul(mul(mix(p.width),mix(p.height)),reduce(p.aParts,p.aParts+p.bParts)))+' cm²';const v=m.derive(p);assert(Math.abs((v.partitionTop+v.partitionBottom)/2-p.aParts/(p.aParts+p.bParts))<1e-12);assert(q.prompt.includes('source52-p16e22-divider'));}
+ if(i===1){let p=m.pools[j],h=mix(p.height),r=reduce(...p.rebound),first=mul(h,r);expected=fmt(add(add(add(h,first),first),mul(first,r)))+'m';}
+ if(i===2){let leg=m.pools[j],sum=[0,1];for(let k=1;k<=6;k++){const side=reduce(leg,2**k);sum=add(sum,mul(side,side));}expected=fmt(sum)+'cm²';assert.equal((q.prompt.match(/class="source52-p16e24-square"/g)||[]).length,6);}
+ assert.equal(q.answer,expected);assert.equal(q.verifiedPoolIndex,j);assert.equal(q.variantProvenance,'synthetic-source-structure');assert(!q.publisherKeyVerified);assert(q.solution.includes(`data-source-answer="${type.id}"`));assert(!q.prompt.includes('data-source-answer'));if(i!==1)assert(q.answerVisual.includes('<svg'));
+ }}console.log('PASS: all synthetic examples, 3 pools × 3 levels, independent exact arithmetic, diagram geometry, six squares, original source locks');
