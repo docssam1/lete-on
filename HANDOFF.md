@@ -4,6 +4,14 @@
   N-15 최초 완료 시 R0 추천 오버레이(1회성·잠금 없음, S.seenR0Banner).
 
 
+## 2026-10-30 learner roadmap presentation follow-up
+
+Used the signed-in Claude Code CLI with the Claude Max Opus subscription for a read-only review of the public roadmap UI source. This is Max-subscription use, not an Anthropic API-key call. No private assessment items or student records were provided. Claude identified that pathway selection, measured position, and next-route choice were visually separated; its suggestions were used to add a responsive SVG dotted learning path, a prominent “not yet assessed” status, and a next-concept preview/action beside the path. The selected node is explicitly a preview, not a measured level. The Grade 7 prompt now describes selecting a concept; the unmeasured status lives in the adjacent panel. Mobile navigation keeps all three links visible.
+
+Verification on the bundled Mac Node runtime: grade roadmap data and browser suites passed 16/16; changed roadmap JS passed `node --check`; `git diff --check` passed. HTTP-rendered 390px and 1280px views were visually inspected, and a 320px capture confirmed the navigation links remain visible. No horizontal overflow at 320, 390, or 1280px. This UI work remains local; no push or deployment.
+
+Next: review the existing Algebra 2 report criteria and the boarding assessment/contest evidence flows before implementing internal level comparisons. Keep GFIELD instructional bands distinct from official school placement or contest qualification; do not use the locked Grade 7 screener to generate public levels.
+
 ## 2026-10-30 private R6 workbench source repair
 
 The private R6 teacher workbench generator was updated and rebuilt locally. Source fixes cover native button-group semantics, focus visibility/clipping, disclosure markers, English language tags, mobile instruction copy, short-viewport scrolling, long-string wrapping, and print generation on `beforeprint` with clearer non-distribution marking and pagination rules. Inline JavaScript syntax check passed. The private manifest now correctly marks rendered browser and current A4 visual QA as pending; Oct 29 browser/PDF captures are stale for R6.

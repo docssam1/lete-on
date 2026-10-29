@@ -41,6 +41,14 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#grade-title").innerText(), /유리수/);
   assert.equal(await page.locator(".grade-button").count(), 8);
   assert.equal(await page.locator(".stage-button").count(), 4);
+  assert.match(await page.locator(".journey-position-card").innerText(), /아직 확인 전/);
+  assert.match(await page.locator(".journey-position-card").innerText(), /미리보기/);
+  assert.equal(await page.locator("#journey-next-stop").isHidden(), true);
+  await page.locator("#stage-list button").first().click();
+  assert.equal(await page.locator("#journey-next-title").innerText(), "비례 관계");
+  await page.locator("#journey-next-button").click();
+  assert.equal(await page.locator("#journey-selected-title").innerText(), "비례 관계");
+  assert.equal(await page.locator("#journey-next-title").innerText(), "식·방정식");
   assert.deepEqual(await page.locator("#grade-focus-list strong").allInnerTexts(), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
   assert.match(await page.locator(".level-boundary").innerText(), /진단 결과가 없어서/);
   assert.match(await page.locator("#grade-note").innerText(), /7.NS.A 워크북과 진단은 검수 중/);
@@ -187,7 +195,9 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.equal(await page.locator(".grade-track").evaluate(function (node) { return node.open; }), false);
   assert.ok(await page.locator(".grade7-path").evaluate(function (node) { return node.getBoundingClientRect().top < window.innerHeight; }), "Grade 7 path should start in the first phone screen");
   assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
-  assert.match(await page.locator("#grade7-position").innerText(), /현재 위치 미확인/);
+  assert.match(await page.locator(".journey-position-card").innerText(), /아직 확인 전/);
+  assert.match(await page.locator("#grade7-position").innerText(), /지점을 고르면/);
+  assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /현재 위치 미확인/);
   assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /진단 후/);
   assert.equal(await page.locator(".stage-detail").isHidden(), true);
   assert.deepEqual(await page.locator(".grade7-path .stage-button strong").allInnerTexts(), ["유리수", "비례 관계", "식·방정식", "기하·혼합 문제"]);
@@ -211,7 +221,7 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   await page.goBack();
   assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
   assert.equal(await page.locator(".stage-detail").isHidden(), true);
-  assert.match(await page.locator("#grade7-position").innerText(), /현재 위치 미확인/);
+  assert.match(await page.locator(".journey-position-card").innerText(), /아직 확인 전/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   await page.close();
 });
@@ -247,6 +257,7 @@ test("Grade 7 deep link keeps the concept path reachable at 320px", async functi
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   assert.ok(await page.locator(".grade7-path").evaluate(function (node) { return node.getBoundingClientRect().top < window.innerHeight; }));
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [320, 320]);
+  assert.equal(await page.getByRole("link", { name: "개념 학습" }).isVisible(), true);
   await page.getByRole("button", { name: /살펴볼 지점 1, 유리수/ }).click();
   assert.ok(await page.locator(".stage-detail").evaluate(function (node) { const bounds = node.getBoundingClientRect(); return bounds.top >= 0 && bounds.bottom <= window.innerHeight; }));
   await page.close();

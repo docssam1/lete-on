@@ -151,6 +151,7 @@
     $("grade7-stage-check").hidden = !grade7 || stage === null;
     $("grade7-stage-resource").hidden = true;
     $("grade7-no-resource").hidden = true;
+    renderJourneyPreview(entry);
     if (detail.hidden) return;
     setText("stage-number", grade7 ? `살펴보는 구간 ${stage + 1} / ${entry.steps.length}` : `단계 ${stage + 1} / ${entry.steps.length}`);
     setText("stage-title", entry.steps[stage][0]);
@@ -165,6 +166,26 @@
         link.hidden = false;
       } else $("grade7-no-resource").hidden = false;
     }
+  }
+  function renderJourneyPreview(entry) {
+    const selectedLabel = $("journey-selected-label");
+    const selectedTitle = $("journey-selected-title");
+    const nextStop = $("journey-next-stop");
+    const endNote = $("journey-route-end");
+    $("journey-assessment-link").href = `./assessment-entry.html?grade=${grade}`;
+    if (stage === null || !entry.steps[stage]) {
+      selectedLabel.textContent = "아직 선택 전";
+      selectedTitle.textContent = "경로 지점을 눌러 내용을 살펴보세요";
+      nextStop.hidden = true;
+      endNote.hidden = true;
+      return;
+    }
+    selectedLabel.textContent = "지금 살펴보는 개념";
+    selectedTitle.textContent = entry.steps[stage][0];
+    const next = entry.steps[stage + 1];
+    nextStop.hidden = !next;
+    endNote.hidden = Boolean(next);
+    if (next) $("journey-next-title").textContent = next[0];
   }
   function renderRoutes() {
     const buttons = $("route-buttons");
@@ -496,6 +517,15 @@
   }
   $("previous-grade").addEventListener("click", function () { changeGrade(grade - 1); });
   $("next-grade").addEventListener("click", function () { changeGrade(grade + 1); });
+  $("journey-next-button").addEventListener("click", function () {
+    const entry = data.getGrade(grade);
+    if (!entry || stage === null || stage >= entry.steps.length - 1) return;
+    stage += 1;
+    renderStages(entry);
+    const selected = $("stage-list").children[stage];
+    if (selected) selected.querySelector("button").focus();
+    revealGrade7Detail();
+  });
   window.addEventListener("popstate", function () {
     const next = Number(new URLSearchParams(location.search).get("grade"));
     if (next === grade) return;
