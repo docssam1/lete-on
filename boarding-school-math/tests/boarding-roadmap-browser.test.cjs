@@ -87,6 +87,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator("#route-check-block").isVisible(), true);
   assert.equal(await page.locator("#competition-select").inputValue(), "");
   assert.equal(await page.locator(".competition-report").isHidden(), true);
+  assert.match(await page.locator("#competition-diagnostic .map-head > p").innerText(), /이 화면에서 저장하지 않아요.*문항별 복습에서 저장한 요약/);
   assert.equal(await page.locator("#paper-label-field").isHidden(), true);
   assert.equal(await page.locator("#paper-review-link").isHidden(), true);
   assert.equal(await page.locator(".competition-submit").isHidden(), true);
@@ -135,6 +136,8 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.doesNotMatch(await page.locator("#competition-report-rows").innerText(), /50%/);
   assert.match(await page.locator("#competition-report-summary").innerText(), /6\/25문항 입력[\s\S]*두 영역에서 각각 3문제 이상/);
   assert.match(await page.locator(".competition-report-boundary").innerText(), /실력 등급.*응시 자격/);
+  assert.equal(await page.locator("#competition-saved-diagnostic").isHidden(), true);
+  assert.equal(await page.evaluate(function () { return localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"); }), null);
   await page.locator('[data-strand="geometry"][data-field="attempted"]').fill("4");
   await page.locator('[data-strand="geometry"][data-field="correct"]').fill("3");
   await page.getByRole("button", { name: "영역별 결과 보기" }).click();

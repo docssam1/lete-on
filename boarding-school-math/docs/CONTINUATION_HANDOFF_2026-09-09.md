@@ -326,6 +326,12 @@ The evidence-entry course chooser adds school-dependent Calculus, Statistics, an
 
 Verification: `external-math-evidence-engine.test.cjs`, `assessment-entry-browser.test.cjs`, and `gmap-local-learning-record.test.cjs` passed 30/30. Grade 12 Algebra 2→Statistics, the optional calculus/statistics choices, absence of inserted intermediate courses, Grade 6-only cluster mapping, local save, and historical behaviors pass. Current focus is still descriptive record comparison, not a standardized high-school level, readiness band, or official course-placement decision. Claude Max CLI returned no review response on two sanitized public-source attempts, so no independent review is claimed.
 
+### Contest-record storage copy clarification
+
+The roadmap's aggregate-entry header now says that values entered on that screen are not saved and distinguishes them from the locally stored summary created in item-by-item review. The saved-record panel names that source explicitly. No storage behavior changed; this corrects the copy where the two separate flows appeared contradictory.
+
+Verification: focused roadmap, browser, Grade 7 workbook, screener-plan, scoring-readiness, and role-separated report tests passed 47/47; `git diff --check` passed. Browser coverage confirms aggregate entry leaves the locally stored item-review history untouched. Claude Max Opus was given the sanitized diff for read-only review but returned no response; no independent Claude sign-off is claimed. Local-only; no publication or sync.
+
 ### Contest practice eligibility clarification
 
 The roadmap's AMC options are age- and grade-bounded learning suggestions only; they do not evaluate official eligibility. The selected contest guidance now sends AMC users to the current MAA cycle rules (which include age requirements) and other contest users to their organizer's current rules. The manual grouped score form explains that the learner/teacher classifies items and that its descriptive rates do not determine an achievement band, eligibility, award, or qualification.
