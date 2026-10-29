@@ -1615,7 +1615,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             id: "5-2-u1-e4-example-2",
             name: "두 몫을 어림한 결과로 자연수의 범위 구하기",
             sourceItemId: "5-2-u1-e4-example-2",
-            sourceItemLabel: "예제 4-2",
+            sourceItemLabel: "예제 4-2 유사문항",
             sourceSection: "example",
             sourceTier: "advanced",
             sourcePdfPage: 8,
@@ -1742,7 +1742,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               id: "5-2-u3-e4-mission-1",
               name: "정사각형 속 각도 구하기",
               sourceItemId: "5-2-u3-e4-mission-1",
-              sourceItemLabel: "Mission 1",
+              sourceItemLabel: "Mission 1 유사문항",
               sourceSection: "mission",
               sourceTier: "advanced",
               sourcePdfPage: 27,
@@ -1752,7 +1752,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               publisherKeyVerified: false,
               answerVerification: "independent-geometry-proof-user-authorized",
               reviewLocked: false,
-              reviewReason: "대각선 대칭과 보조점 구성으로 두 번의 SAS 합동을 이용한 초등 기하 풀이를 검증했습니다. 원문 각 20°·25°에서 목표각은 40°이며, 생성기는 원문과 다른 9개 각 구성만 사용합니다.",
+              reviewReason: "원문 점 ㄴ·ㄹ과 목표각을 재확인하여 독립 계산을 70°로 정정했습니다. 창작 변형은 다른 각 수치를 사용하며 그림과 합동 풀이를 검증했습니다. 출판사 정답은 확인하지 않았습니다.",
               generatorKey: "source52SquareAnglePage31Mission1",
               generationMode: "fixed-verified-pool",
               verifiedVariantTarget: 3,
@@ -1764,7 +1764,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               id: "5-2-u3-e4-mission-2",
               name: "반원 속 삼각형의 각 구하기",
               sourceItemId: "5-2-u3-e4-mission-2",
-              sourceItemLabel: "Mission 2",
+              sourceItemLabel: "Mission 2 유사문항",
               sourceSection: "mission",
               sourceTier: "advanced",
               sourcePdfPage: 27,
@@ -1774,7 +1774,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               publisherKeyVerified: false,
               answerVerification: "independent-calculation-user-authorized",
               reviewLocked: false,
-              reviewReason: "반지름·같은 현·같은 중심각·원주각을 분리해 독립 계산했고, 원문 숫자와 다른 세 고정 구성을 만들었습니다. 출판사 정답은 확인하지 않았습니다.",
+              reviewReason: "반지름과 세 변이 같은 삼각형의 합동, 이등변삼각형의 밑각으로 독립 계산했습니다. 유사문항은 원문과 다른 수치이며 출판사 정답은 확인하지 않았습니다.",
               generatorKey: "source52SemicircleAnglePage31Mission2",
               generationMode: "fixed-verified-pool",
               verifiedVariantTarget: 3,
@@ -1786,7 +1786,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               id: "5-2-u3-e4-mission-3",
               name: "정삼각형 속 회전 각 구하기",
               sourceItemId: "5-2-u3-e4-mission-3",
-              sourceItemLabel: "Mission 3",
+              sourceItemLabel: "Mission 3 유사문항",
               sourceSection: "mission",
               sourceTier: "advanced",
               sourcePdfPage: 27,
@@ -1796,7 +1796,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               publisherKeyVerified: false,
               answerVerification: "independent-calculation-user-authorized",
               reviewLocked: false,
-              reviewReason: "깨끗한 대체 원본에서 ㉠의 변과 꼭짓점을 확인했습니다. 시계 방향 60° 회전이 두 정삼각형의 대응점을 옮기며, 좌표 구성으로 입력각·교점 위치를 별도 검산했습니다. 출판사 정답은 확인하지 않았습니다.",
+              reviewReason: "원문 각 호가 ㄹㄱ과 ㄹㅁ 사이임을 재확인하고, 창작 그림과 풀이를 해당 각으로 고쳐 좌표로 검증했습니다. 원문 출판사 정답은 확인하지 않았습니다.",
               generatorKey: "source52EquilateralRotationPage31Mission3",
               generationMode: "fixed-verified-pool",
               verifiedVariantTarget: 3,
@@ -1808,7 +1808,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               id: "5-2-u3-e4-mission-4",
               name: "삼등분점을 이은 작은 정사각형의 넓이",
               sourceItemId: "5-2-u3-e4-mission-4",
-              sourceItemLabel: "Mission 4",
+              sourceItemLabel: "Mission 4 유사문항",
               sourceSection: "mission",
               sourceTier: "advanced",
               sourcePdfPage: 27,
@@ -1830,7 +1830,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               id: "5-2-u3-e4-mission-5",
               name: "합동 삼각형으로 만든 삼각형의 넓이",
               sourceItemId: "5-2-u3-e4-mission-5",
-              sourceItemLabel: "Mission 5",
+              sourceItemLabel: "Mission 5 유사문항",
               sourceSection: "mission",
               sourceTier: "advanced",
               sourcePdfPage: 27,
@@ -1852,7 +1852,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               id: "5-2-u3-e4-mission-6",
               name: "사다리꼴의 중점으로 구하는 삼각형의 넓이",
               sourceItemId: "5-2-u3-e4-mission-6",
-              sourceItemLabel: "Mission 6",
+              sourceItemLabel: "Mission 6 유사문항",
               sourceSection: "mission",
               sourceTier: "advanced",
               sourcePdfPage: 27,
@@ -1860,9 +1860,9 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               sourceEvidence: "source-drive:1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s; source-sha256:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; PDF p.27; printed p.31; sourceItemId:5-2-u3-e4-mission-6",
               sourceVerified: true,
               publisherKeyVerified: false,
-              answerVerification: "independent-trapezoid-midpoint-theorem-user-authorized",
+              answerVerification: "independent-equal-area-decomposition-user-authorized",
               reviewLocked: false,
-              reviewReason: "원본의 직각 표시, 윗변 10cm·아랫변 8cm·높이 6cm, 변 ㄴㄷ의 중점 ㅁ과 목표 △ㄱㄹㅁ을 직접 대조했습니다. 사다리꼴 중선의 길이는 9cm이므로 넓이는 6×9÷2=27cm²입니다. 9개 변형의 그림·답·풀이와 화면·A4 출력을 확인했습니다. 출판사 정답표는 확인하지 않았습니다.",
+              reviewReason: "원본의 직각 표시, 윗변 10cm·아랫변 8cm·높이 6cm, 변 ㄴㄷ의 중점 ㅁ과 목표 △ㄱㄹㅁ을 직접 대조했습니다. 같은 밑변·높이인 삼각형 넓이를 이용해 목표가 사다리꼴 넓이의 절반임을 독립 계산했습니다. 9개 변형의 그림·답·풀이와 화면·A4 출력을 확인했습니다. 출판사 정답표는 확인하지 않았습니다.",
               generatorKey: "source52TrapezoidMidpointPage31Mission6",
               generationMode: "fixed-verified-pool",
               verifiedVariantTarget: 3,
@@ -2768,6 +2768,32 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52CongruenceApplicationOne && !source52CongruenceApplicationOne.types.some(t => t.id === "5-2-u3-e3-mission-5")) {
     const id="5-2-u3-e3-mission-5",name="같은 거리로 만든 삼각형의 각";
     source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 5 유사문항",sourceSection:"mission",sourcePdfPage:25,sourcePrintedPage:29,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 도형의 같은 거리, 합동과 각도를 검증했습니다.",generatorKey:"source52EqualOffsetEquilateralSyntheticPage29Mission5",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
+  if (source52CongruenceApplicationOne && !source52CongruenceApplicationOne.types.some(t => t.id === "5-2-u3-e3-mission-6")) {
+    const id="5-2-u3-e3-mission-6",name="정삼각형에서 교차하는 선의 각";
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 6 유사문항",sourceSection:"mission",sourcePdfPage:25,sourcePrintedPage:29,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 조건을 대조하고 창작 도형의 길이, 합동과 교차각을 검증했습니다.",generatorKey:"source52EquilateralCrossingAnglesSyntheticPage29Mission6",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
+  const source52CongruenceApplicationTwo = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ②");
+  if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t => t.id === "5-2-u3-e4-example-1")) {
+    const id="5-2-u3-e4-example-1",name="원에서 같은 현과 중심각";
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 4-1 유사문항",sourceSection:"example",sourcePdfPage:26,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 도형의 현, 반지름과 중심각을 검증했습니다.",generatorKey:"source52EqualChordsCenterAnglesSyntheticPage30Example41",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
+  if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t => t.id === "5-2-u3-e4-example-3")) {
+    const id="5-2-u3-e4-example-3",name="사다리꼴의 중점과 평행선";
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 4-3 유사문항",sourceSection:"example",sourcePdfPage:26,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 조건을 대조하고 창작 도형의 평행선, 중점과 합동을 검증했습니다.",generatorKey:"source52TrapezoidMidpointSyntheticPage30Example43",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
+  if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t => t.id === "5-2-u3-e4-example-4")) {
+    const id="5-2-u3-e4-example-4",name="정삼각형과 이등변삼각형의 각";
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 4-4 유사문항",sourceSection:"example",sourcePdfPage:26,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 조건을 대조하고 창작 삼각형의 합동과 각도를 검증했습니다.",generatorKey:"source52EquilateralCompositeAnglesSyntheticPage30Example44",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
+  if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t => t.id === "5-2-u3-e4-exploration")) {
+    const id="5-2-u3-e4-exploration",name="정사각형과 보조점으로 각 찾기";
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 4 유사문항",sourceSection:"exploration",sourcePdfPage:26,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 조건을 대조하고 창작 정사각형의 보조점과 각도를 검증했습니다.",generatorKey:"source52SquareAuxiliaryAngleSyntheticPage30Exploration4",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
 
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");

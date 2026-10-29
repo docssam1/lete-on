@@ -64,7 +64,8 @@ for (const def of source.definitions) {
         const { alpha, beta, answer } = item.answerModel;
         assert.equal(alpha + beta, 45);
         assert.ok(beta > alpha && alpha < 22.5, "The fixed pool keeps B between R and S");
-        assert.equal(answer, 2 * alpha);
+        assert.equal(answer, 90 - alpha);
+        assert.match(item.prompt, /∠ㄹㅁㅂ/);
         assert.notEqual(alpha, 20);
         assert.notEqual(beta, 25);
         assert.match(item.solution, /두 변 사이의 각|두 변과 그 사이의 각/);
@@ -79,12 +80,28 @@ for (const def of source.definitions) {
         assert.ok(Math.abs(distance(n,b)-distance(n,e)) < 1e-9, "The first SAS construction transfers NB=NE");
         assert.ok(Math.abs(angleAt(b,n,m)-45) < 1e-9);
         assert.ok(Math.abs(angleAt(m,n,e)-45) < 1e-9);
-        assert.ok(Math.abs(angleAt(r,m,b)-answer) < 1e-8);
+        assert.ok(Math.abs(angleAt(n,m,b)-answer) < 1e-8, "the source target uses the upper-right vertex");
+        assert.ok(Math.abs(angleAt(r,m,b)-2*alpha) < 1e-8, "the neighboring angle is distinct");
       } else if (def.sourceItemId.endsWith("mission-2")) {
         const { vertexAngle, centralArc, equalArc, answer } = item.answerModel;
         assert.ok(Math.abs(centralArc - (180 - 2 * vertexAngle)) < 1e-9);
         assert.ok(Math.abs(3 * equalArc + centralArc - 180) < 1e-9);
         assert.ok(Math.abs(answer - (360 - centralArc - equalArc) / 2) < 1e-9);
+        const onCircle = degrees => ({ x: Math.cos(degrees * Math.PI / 180), y: Math.sin(degrees * Math.PI / 180) });
+        const d = { x: 0, y: 0 }, g = onCircle(180), r = onCircle(180-equalArc), m = onCircle(2*equalArc), b = onCircle(equalArc);
+        assert.ok(Math.abs(distance(g,r)-distance(m,b)) < 1e-9, "the given chords have equal lengths");
+        assert.ok(Math.abs(angleAt(d,r,m)-vertexAngle) < 1e-8, "the diagram's given angle");
+        assert.ok(Math.abs(angleAt(r,m,d)-vertexAngle) < 1e-8, "the first isosceles base angle");
+        assert.ok(Math.abs(angleAt(d,m,b)-(180-equalArc)/2) < 1e-8, "the second isosceles base angle");
+        assert.ok(Math.abs(angleAt(r,m,b)-answer) < 1e-8, "the target angle agrees with the answer");
+        assert.match(item.solution, /세 변의 길이가 각각 같아 합동/);
+        assert.doesNotMatch(item.solution + item.answerVisual, /원주각/);
+        assert.match(item.solution, /data-source52-figure="semicircle-angle"/);
+        const labels = [...item.prompt.matchAll(/<text class="source52-angle-label" x="([\d.]+)" y="([\d.]+)">x<\/text>/g)].map(match => ({x:Number(match[1]), y:Number(match[2])}));
+        assert.equal(labels.length, 2);
+        const labelAngle = p => Math.atan2(260-p.y,p.x-250)*180/Math.PI;
+        assert.ok(labelAngle(labels[0]) > equalArc && labelAngle(labels[0]) < 2*equalArc, "first x label is in the correct sector");
+        assert.ok(labelAngle(labels[1]) > 0 && labelAngle(labels[1]) < equalArc, "second x label is in the correct sector");
         assert.notEqual(vertexAngle, 60);
         assert.notEqual(answer, 130);
       } else if (def.sourceItemId.endsWith("mission-3")) {
@@ -101,6 +118,12 @@ for (const def of source.definitions) {
         const v = { x: d.x - m.x, y: d.y - m.y };
         const angle = Math.acos((u.x*v.x+u.y*v.y)/(Math.hypot(u.x,u.y)*Math.hypot(v.x,v.y))) * 180 / Math.PI;
         assert.ok(Math.abs(angle - targetAngle) < 1e-8);
+        const g = { x: dn * Math.cos(-Math.PI / 3), y: -dn * Math.sin(-Math.PI / 3) };
+        const r = { x: dm * Math.cos((delta - 60) * Math.PI / 180), y: -dm * Math.sin((delta - 60) * Math.PI / 180) };
+        const shown = angleAt(g, r, { x: m.x, y: -m.y });
+        assert.ok(Math.abs(shown - (300 - targetAngle)) < 1e-8, "shown target angle matches the answer");
+        assert.equal(item.answer, `${300 - targetAngle}°`);
+        assert.match(item.prompt, /∠ㄱㄹㅁ/);
       } else if (def.sourceItemId.endsWith("mission-4")) {
         const { k, side, outerArea, trisectedLength, cornerArea, answer } = item.answerModel;
         const svg = item.prompt.match(/<svg[\s\S]*?<\/svg>/)?.[0];
@@ -119,21 +142,28 @@ for (const def of source.definitions) {
           const next = polygon[(index+1)%polygon.length];
           return sum + point.x*next.y-point.y*next.x;
         },0))/2;
-        const scale = (n.x-g.x)/side;
+        const scale = (r.x-g.x)/side;
         assert.equal(readAttr("k"), k);
         assert.equal(readAttr("side-length"), side);
         assert.equal(readAttr("outer-area"), outerArea);
         assert.equal(side, 3*k);
         assert.equal(outerArea, side*side);
         assert.equal(trisectedLength, k);
-        assert.deepEqual(m, { x:g.x+2*(n.x-g.x)/3, y:g.y }, "M is two thirds along the top side");
-        assert.deepEqual(b, { x:r.x, y:g.y+(r.y-g.y)/3 }, "B is one third down the left side");
-        assert.deepEqual(s, { x:r.x+(d.x-r.x)/3, y:r.y }, "S is one third along the bottom side");
-        assert.deepEqual(o, { x:n.x, y:n.y+2*(d.y-n.y)/3 }, "O is two thirds down the right side");
+        assert.deepEqual(m, { x:g.x+2*(r.x-g.x)/3, y:g.y }, "M is two thirds along the top side");
+        assert.deepEqual(b, { x:n.x, y:g.y+(n.y-g.y)/3 }, "B is one third down the left side");
+        assert.deepEqual(s, { x:n.x+(d.x-n.x)/3, y:n.y }, "S is one third along the bottom side");
+        assert.deepEqual(o, { x:r.x, y:r.y+2*(d.y-r.y)/3 }, "O is two thirds down the right side");
         const sides = [distance(m,b), distance(b,s), distance(s,o), distance(o,m)];
         assert.ok(sides.every(value => Math.abs(value-sides[0]) < 1e-8), "inner quadrilateral is a square");
         assert.ok(Math.abs(dot(m,b,s)) < 1e-8 && Math.abs(dot(b,s,o)) < 1e-8, "adjacent inner sides are perpendicular");
-        assert.equal((svg.match(/class="source52-corner-triangle"/g) ?? []).length, 4, "four outer corner triangles are represented");
+        const corners = [...svg.matchAll(/<polygon class="source52-corner-triangle" points="([^"]+)"\/>/g)].map(match => match[1].split(" ").map(pair => { const [x,y] = pair.split(",").map(Number); return {x,y}; }));
+        assert.deepEqual(corners, [[g,m,b],[r,m,o],[d,o,s],[n,s,b]], "corner triangles use adjacent trisection points");
+        for (const [a,b,c] of corners) {
+          const area = Math.abs((b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x))/2/(scale*scale);
+          assert.ok(Math.abs(area-cornerArea) < 1e-8, "rendered corner area matches its calculation");
+        }
+        assert.match(svg, /<text x="356" y="38">ㄹ<\/text>/);
+        assert.match(svg, /<text x="48" y="342">ㄴ<\/text>/);
         assert.equal(cornerArea, k*2*k/2);
         assert.equal(answer, outerArea-4*cornerArea);
         assert.ok(Math.abs(visualArea/(scale*scale)-answer) < 1e-8, "rendered inner square area matches the answer");
@@ -150,9 +180,7 @@ for (const def of source.definitions) {
         assert.match(type.sourceEvidence, /d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463/);
         assert.match(type.sourceEvidence, /clean-alternate-sha256:6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88/);
         assert.match(type.sourceEvidence, /PDF p\.26; printed p\.31/);
-        if (variant === 1 && difficultyOffset === 0) {
-          assert.deepEqual({ k, side, outerArea, trisectedLength, cornerArea, answer }, { k:5, side:15, outerArea:225, trisectedLength:5, cornerArea:25, answer:125 }, "the verified pool includes the exact source values and independent answer");
-        }
+        assert.notEqual(outerArea, 225, "synthetic values must differ from the original source");
         trisectionPoolSignatures.add(`${k}:${outerArea}:${answer}`);
       } else if (def.sourceItemId.endsWith("mission-5")) {
         const { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer } = item.answerModel;
@@ -186,6 +214,10 @@ for (const def of source.definitions) {
         assert.notDeepEqual([height,width], [16,8], "generated values do not reproduce the source numbers");
         assert.match(item.prompt, new RegExp(`ㄱㄴ=${height}cm`));
         assert.match(item.prompt, new RegExp(`ㄹㅁ=${width}cm`));
+        assert.match(item.answerVisual, /삼각형 넓이/);
+        assert.match(item.answerVisual, /<polygon points=/);
+        assert.doesNotMatch(item.answerVisual, /㉠/);
+        assert.ok(!(height === 16 && width === 8), "synthetic dimensions differ from the original");
         assert.match(item.solution, /합동 표기 순서대로/);
         assert.match(item.solution, /직사각형/);
         assert.match(item.solution, /data-source52-figure|area-proof/);
@@ -219,16 +251,25 @@ for (const def of source.definitions) {
         assert.ok(Math.abs(dot(d,r,g))/(distance(r,d)*distance(g,r)) < 1e-8, "base RD is perpendicular to GR");
         assert.equal(midpointWidth, (top+bottom)/2);
         assert.equal(answer, height*midpointWidth/2);
-        if (variant === 0 && difficultyOffset === 0) {
-          assert.deepEqual({ top, bottom, height, midpointWidth, answer }, { top:10, bottom:8, height:6, midpointWidth:9, answer:27 }, "the source's original dimensions and answer must be present in the verified pool");
-        }
+        assert.ok(!(top === 10 && bottom === 8 && height === 6), "synthetic dimensions differ from the original");
+        const triArea = (a,b,c) => Math.abs((b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x))/2;
+        assert.ok(Math.abs(2*triArea(g,n,m)-triArea(g,n,d)) < 0.02, "midpoint divides triangle GND into equal areas");
+        assert.ok(Math.abs(triArea(g,n,d)-triArea(g,n,r)) < 0.02, "triangles on the same base and between parallel lines have equal areas");
+        assert.ok(Math.abs(2*triArea(r,m,d)-triArea(r,n,d)) < 0.02, "midpoint halves triangle RND");
+        assert.ok(Math.abs(triArea(g,r,m)-triArea(g,n,m)-triArea(r,m,d)) < 0.02, "target equals both remaining areas together");
         assert.ok(Math.abs(area / ((Math.min(14,240/top,180/height))**2) - answer) < 1e-8, "rendered target triangle matches the answer");
         assert.match(svg, new RegExp(`>${bottom}cm<\/text>`));
         assert.match(svg, new RegExp(`>${top}cm<\/text>`));
         assert.match(svg, new RegExp(`>${height}cm<\/text>`));
         assert.match(item.prompt, /삼각형 ㄱㄹㅁ의 넓이/);
         assert.match(item.prompt, /점 ㅁ은 변 ㄴㄷ의 한가운데 점/);
-        assert.match(item.solution, /사다리꼴의 중선 길이는 두 평행한 변의 길이의 평균/);
+        assert.match(item.solution, /보조선 ㄹㄴ/);
+        assert.match(item.solution, /data-construction="diagonal-rn"/);
+        assert.doesNotMatch(item.prompt, /data-construction="diagonal-rn"/);
+        assert.match(item.solution, /사다리꼴 넓이의 절반/);
+        assert.match(item.answerVisual, /삼각형 넓이/);
+        assert.match(item.answerVisual, /<polygon points=/);
+        assert.doesNotMatch(item.answerVisual, /㉠/);
         assert.match(item.solution, new RegExp(`${answer}cm²`));
         assert.equal(item.reviewLocked, false);
         assert.equal(source.isPublicReady(def.sourceItemId), true);
