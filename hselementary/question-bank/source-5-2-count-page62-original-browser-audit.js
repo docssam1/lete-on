@@ -53,7 +53,7 @@ function startServer() {
         const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u6")?.subunits.find(x => x.name === "사건의 가짓수")?.types.find(x => x.sourceItemId === id);
         return type && { reviewLocked: type.reviewLocked, sourceVerified: type.sourceVerified, generationMode: type.generationMode, verifiedVariantCount: type.verifiedVariantCount, generatorKey: window.HSE_GENERATORS.generatorKey(type) };
       }, itemId);
-      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 1, generatorKey: n ? `source52CountPage62Example${n}` : "source52CountPage62Exploration" });
+      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: n===1?3:1, generatorKey: n ? `source52CountPage62Example${n}` : "source52CountPage62Exploration" });
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u6");
@@ -68,7 +68,7 @@ function startServer() {
       const problemItem = problemView.locator(`[data-source-item-id='${itemId}']`).first();
       await problemItem.waitFor({ state: "visible" });
       const prompt = await problemItem.innerText();
-      const expectedPrompts = [["직육면체", "ㄱ", "ㄴ"],["빨간", "파란", "3의 배수"],["ㄱ", "ㄴ", "ㄷ", "짧게"],["ㄱ", "ㄷ", "지점"],["남학생", "여학생", "이웃"]];
+      const expectedPrompts = [["직육면체", "ㄱ", "ㄴ"],["흰", "초록", "2의 배수"],["ㄱ", "ㄴ", "ㄷ", "짧게"],["ㄱ", "ㄷ", "지점"],["남학생", "여학생", "이웃"]];
       for(const t of expectedPrompts[n]) assert(prompt.includes(t), `${itemId}: ${t}`);
       assert.equal(await problemView.locator(`[data-source-answer='${itemId}']`).count(), 0);
       assert.equal(await problemItem.locator("svg.source52-p62-figure").count(), [1,0,1,1,0][n]);
@@ -83,7 +83,7 @@ function startServer() {
       await page.locator("#solutionTab").click();
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
-      assert(solutionText.includes(["15가지","12가지","18가지","39가지","144가지"][n]),solutionText);
+      assert(solutionText.includes(["15가지","18가지","18가지","39가지","144가지"][n]),solutionText);
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);
       await page.screenshot({ path: path.join(outputDir, `item${n}-solution-${width}.png`), fullPage: true });
