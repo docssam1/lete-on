@@ -64,7 +64,8 @@ for (const def of source.definitions) {
         const { alpha, beta, answer } = item.answerModel;
         assert.equal(alpha + beta, 45);
         assert.ok(beta > alpha && alpha < 22.5, "The fixed pool keeps B between R and S");
-        assert.equal(answer, 2 * alpha);
+        assert.equal(answer, 90 - alpha);
+        assert.match(item.prompt, /∠ㄹㅁㅂ/);
         assert.notEqual(alpha, 20);
         assert.notEqual(beta, 25);
         assert.match(item.solution, /두 변 사이의 각|두 변과 그 사이의 각/);
@@ -79,7 +80,8 @@ for (const def of source.definitions) {
         assert.ok(Math.abs(distance(n,b)-distance(n,e)) < 1e-9, "The first SAS construction transfers NB=NE");
         assert.ok(Math.abs(angleAt(b,n,m)-45) < 1e-9);
         assert.ok(Math.abs(angleAt(m,n,e)-45) < 1e-9);
-        assert.ok(Math.abs(angleAt(r,m,b)-answer) < 1e-8);
+        assert.ok(Math.abs(angleAt(n,m,b)-answer) < 1e-8, "the source target uses the upper-right vertex");
+        assert.ok(Math.abs(angleAt(r,m,b)-2*alpha) < 1e-8, "the neighboring angle is distinct");
       } else if (def.sourceItemId.endsWith("mission-2")) {
         const { vertexAngle, centralArc, equalArc, answer } = item.answerModel;
         assert.ok(Math.abs(centralArc - (180 - 2 * vertexAngle)) < 1e-9);
