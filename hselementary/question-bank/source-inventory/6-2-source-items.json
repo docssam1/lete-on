@@ -1200,7 +1200,8 @@
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e1-readiness-review.json의 6-2-u2-e1-mission-1 행에 원문 구조와 독립 계산이 기록되어 있습니다. PDF 17쪽과 원문 ID가 일치하며 출판사 답안은 사용하지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e1-readiness-review.json#6-2-u2-e1-mission-1",
       "publicSourceItemId": "6-2-u2-e1-mission-1"
     },
     {
@@ -1216,7 +1217,8 @@
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e1-readiness-review.json의 6-2-u2-e1-mission-2 행에 원문 구조와 독립 계산이 기록되어 있습니다. PDF 17쪽과 원문 ID가 일치하며 출판사 답안은 사용하지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e1-readiness-review.json#6-2-u2-e1-mission-2",
       "publicSourceItemId": "6-2-u2-e1-mission-2"
     },
     {
@@ -1232,7 +1234,8 @@
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e1-readiness-review.json의 6-2-u2-e1-mission-3 행에 원문 구조와 독립 계산이 기록되어 있습니다. PDF 17쪽과 원문 ID가 일치하며 출판사 답안은 사용하지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e1-readiness-review.json#6-2-u2-e1-mission-3",
       "publicSourceItemId": "6-2-u2-e1-mission-3"
     },
     {
@@ -1248,7 +1251,8 @@
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e1-readiness-review.json의 6-2-u2-e1-mission-4 행에 원문 구조와 독립 계산이 기록되어 있습니다. PDF 17쪽과 원문 ID가 일치하며 출판사 답안은 사용하지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e1-readiness-review.json#6-2-u2-e1-mission-4",
       "publicSourceItemId": "6-2-u2-e1-mission-4"
     },
     {
@@ -1264,7 +1268,8 @@
       "visualRisk": "일곱 숫자 카드를 모두 보여주고 그중 여섯 장만 쓰도록 해야 함. 0.12처럼 일의 자리가 0인 소수를 허용하는지 문장과 풀이가 일치해야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e1-readiness-review.json의 6-2-u2-e1-mission-5 행에 원문 구조와 독립 계산이 기록되어 있습니다. PDF 17쪽과 원문 ID가 일치하며 출판사 답안은 사용하지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e1-readiness-review.json#6-2-u2-e1-mission-5",
       "publicSourceItemId": "6-2-u2-e1-mission-5"
     },
     {
@@ -1280,7 +1285,8 @@
       "visualRisk": "다섯 숫자 카드와 열린 부등식의 두 경계를 선명하게 보여주고 답 후보를 수의 크기 순서로 적어야 함.",
       "sourceVerified": true,
       "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "reviewReason": "기존 상세 검수표 6-2-u2-e1-readiness-review.json의 6-2-u2-e1-mission-6 행에 원문 구조와 독립 계산이 기록되어 있습니다. PDF 17쪽과 원문 ID가 일치하며 출판사 답안은 사용하지 않았습니다.",
+      "reviewEvidenceRef": "6-2-u2-e1-readiness-review.json#6-2-u2-e1-mission-6",
       "publicSourceItemId": "6-2-u2-e1-mission-6"
     },
     {
