@@ -147,6 +147,31 @@ test("external assessment history keeps grade and source records separate and re
   assert.deepEqual(store.loadAssessmentEvidenceHistory(), []);
 });
 
+test("saved competition diagnostics keep only grade-matched aggregates and can be removed", function () {
+  const storage = memoryStorage();
+  const store = records.create(storage);
+  const diagnostic = {
+    schemaVersion: "gfield-competition-diagnostic-v1", id: "diag-7-amc8-1", programId: "amc8", programTitle: "AMC 8", grade: 7,
+    paperLabel: "Practice A", examDate: "2026-10-29", responses: [{ answer: "private" }],
+    summary: { itemCount: 25, correct: 1, wrong: 1, blank: 1, unmarked: 22, attempted: 2, domainClassified: 3, reasonClassified: 1 },
+    domains: [
+      { id: "algebra", attempted: 2, correct: 1, wrong: 1, blank: 0 }, { id: "number", attempted: 0, correct: 0, wrong: 0, blank: 0 },
+      { id: "geometry", attempted: 0, correct: 0, wrong: 0, blank: 1 }, { id: "counting", attempted: 0, correct: 0, wrong: 0, blank: 0 }
+    ], reasons: [{ id: "reading", count: 1 }]
+  };
+  const saved = store.saveCompetitionDiagnostic(diagnostic);
+  assert.equal(saved.grade, 7);
+  assert.equal(saved.summary.accuracy, null);
+  assert.equal(saved.domains[0].rate, null);
+  assert.equal("responses" in saved, false);
+  assert.equal(store.loadCompetitionDiagnosticHistory(7, "amc8").length, 1);
+  assert.equal(store.loadCompetitionDiagnosticHistory(8, "amc8").length, 0);
+  const raw = storage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1");
+  assert.doesNotMatch(raw, /private|responses/);
+  assert.equal(store.removeCompetitionDiagnostic("diag-7-amc8-1"), true);
+  assert.deepEqual(store.loadCompetitionDiagnosticHistory(7, "amc8"), []);
+});
+
 test("legacy assessment summaries retain only source-score inputs and cannot feed the learning plan", function () {
   const storage = memoryStorage();
   storage.setItem("gmap-local-learning-record-v1:external-assessment", JSON.stringify({

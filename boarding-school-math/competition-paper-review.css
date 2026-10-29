@@ -24,6 +24,7 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .review-settings { margin-top: 25px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 14px; }
 .review-settings label { min-width: 0; display: grid; gap: 7px; font-size: .84rem; font-weight: 850; }
 .review-settings label:last-child { grid-column: 1 / -1; }
+.review-settings label[hidden] { display: none; }
 .review-settings select, .review-settings input, .paper-mark-row select { width: 100%; min-width: 0; min-height: 46px; padding: 8px 10px; border: 1px solid #69788c; border-radius: 4px; color: #182230; background: #fff; font: inherit; font-size: .88rem; }
 .paper-mark-row select:disabled { color: #687587; background: #f5f6f8; }
 .review-source-note { margin: 18px 0; padding: 12px 14px; border-left: 4px solid #2456c4; background: #f1f5ff; color: #354255; font-size: .8rem; line-height: 1.55; }
@@ -65,6 +66,7 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .report-reasons p { margin: 6px 0; font-size: .83rem; }
 .report-next { margin: 22px 0 0; padding: 13px; border-left: 4px solid #2456c4; background: #eaf0ff; color: #182230 !important; font-weight: 750; }
 .report-boundary { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid #d8dee8; }
+.diagnostic-save { margin-top: 18px; padding: 14px; border: 1px solid #d8dee8; background: #fff; }.diagnostic-save button { min-height: 46px; padding: 9px 13px; border: 1px solid #2456c4; border-radius: 4px; color: #fff; background: #2456c4; font: inherit; font-size: .8rem; font-weight: 850; cursor: pointer; }.diagnostic-save button[hidden] { display: none; }.diagnostic-save p { margin: 8px 0 0; color: #566274; font-size: .74rem; line-height: 1.5; }
 .review-related { margin-bottom: 64px; padding: 25px; display: flex; justify-content: space-between; gap: 24px; border: 1px solid #d8dee8; background: #fff; }
 .review-related h2 { margin: 0; font-size: 1.15rem; }
 .review-related p { max-width: 650px; margin: 8px 0 0; color: #566274; font-size: .83rem; line-height: 1.6; }

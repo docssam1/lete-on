@@ -25,6 +25,40 @@ test.before(async function () {
 });
 test.after(async function () { if (browser) await browser.close(); if (server) await new Promise(function (resolve) { server.close(resolve); }); });
 
+test("users can opt to save an answer-free AMC diagnostic and see it only on the matching grade map", async function () {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  await page.locator("#review-exam-date").fill("2026-10-29");
+  await page.locator("#review-paper-label").fill("Practice A");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
+  await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
+  await page.locator('[data-question="2"][data-field="status"]').selectOption("wrong");
+  await page.locator('[data-question="2"][data-field="domain"]').selectOption("geometry");
+  await page.locator('[data-question="2"][data-field="reason"]').selectOption("reading");
+  await page.locator('[data-question="3"][data-field="status"]').selectOption("blank");
+  await page.locator('[data-question="3"][data-field="domain"]').selectOption("counting");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator("#save-diagnostic").isVisible(), true);
+  await page.locator("#save-diagnostic").click();
+  assert.match(await page.locator("#diagnostic-save-status").innerText(), /이 기기에 저장/);
+  const raw = await page.evaluate(function () { return localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"); });
+  assert.doesNotMatch(raw, /responses|answer|correct-answer/);
+  await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#competition-select").selectOption("amc8");
+  assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), true);
+  assert.equal(await page.locator("#competition-saved-title").innerText(), "AMC 8 · Grade 7");
+  assert.match(await page.locator("#competition-saved-domains").innerText(), /식·대수[\s\S]*1\/1/);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=8`, { waitUntil: "networkidle" });
+  await page.locator("#competition-select").selectOption("amc8");
+  assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), false);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
 test("Grade 7 paper marks yield partial learning review and no score estimate", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];

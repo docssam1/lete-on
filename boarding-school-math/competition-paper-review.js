@@ -3,6 +3,7 @@
   const roadmap = window.GFIELDBoardingGradeRoadmap;
   const analyzer = window.GFIELDPaperReviewAnalysis;
   const historyEngine = window.GFIELDAMCScoreHistory;
+  const localRecords = window.GFIELDLocalLearningRecord;
   if (!roadmap || !analyzer) return;
   const $ = function (id) { return document.getElementById(id); };
   const params = new URLSearchParams(location.search);
@@ -12,6 +13,7 @@
   const domains = [{ id: "unclassified", title: "영역 선택" }].concat(roadmap.strands.map(function (entry) { return { id: entry.id, title: entry.title }; }));
   const reasons = [{ id: "none", title: "이유 선택" }, { id: "concept", title: "개념" }, { id: "approach", title: "풀이 생각" }, { id: "calculation", title: "계산" }, { id: "reading", title: "조건 읽기" }, { id: "time", title: "시간" }];
   let scoreHistory = [];
+  let lastDiagnostic = null;
   let lastHistoryContextKey = "";
   function setText(id, value) { $(id).textContent = value; }
   function selectedFormat() { return roadmap.competitionOptions(grade).find(function (entry) { return entry.id === programId; }); }
@@ -38,6 +40,9 @@
     $("report-metrics").replaceChildren();
     $("report-domains").replaceChildren();
     $("report-reasons").replaceChildren();
+    $("save-diagnostic").hidden = true;
+    $("diagnostic-save-status").textContent = "";
+    lastDiagnostic = null;
   }
   function renderSettings() {
     const gradeSelect = $("review-grade");
@@ -52,6 +57,7 @@
     programSelect.value = programId;
     const format = selectedFormat();
     $("review-paper-label-field").hidden = !format;
+    $("review-exam-date-field").hidden = !format;
     document.querySelector(".review-change-note").hidden = !format;
     $("review-amc8-practice").hidden = !(grade === 6 && programId === "amc8");
     $("review-sasmo-source").hidden = programId !== "sasmo";
@@ -270,6 +276,7 @@
   }
   function renderResult(result) {
     const label = $("review-paper-label").value.trim();
+    lastDiagnostic = result;
     setText("report-title", `${selectedFormat().title} · ${result.complete ? "전체 결과" : "입력한 결과"}`);
     setText("report-intro", `${label ? `${label} · ` : ""}${result.itemCount}문제 중 ${result.counts.unmarked}문제는 표시하지 않았습니다. ${result.attempted < 3 ? "푼 문제가 3개 미만이어서 비율 비교는 보류했습니다." : `정답률은 실제로 푼 ${result.attempted}문제 기준입니다.`}`);
     $("score-estimate").hidden = !result.scoreEstimate;
@@ -315,6 +322,8 @@
     setText("report-next", result.reviewFirst
       ? `${result.reviewFirst} 문제의 풀이를 먼저 다시 보세요. 다음 학습은 이 결과만으로 정하지 않아요.`
       : `어느 영역을 먼저 볼지는 아직 정할 수 없어요.${result.unclassified ? ` 영역을 고르지 않은 ${result.unclassified}문제를 선생님과 확인해 주세요.` : ""}`);
+    $("save-diagnostic").hidden = !localRecords;
+    $("diagnostic-save-status").textContent = "";
     document.querySelector(".review-report").hidden = false;
     document.querySelector(".review-layout").classList.remove("is-empty");
     document.querySelector(".review-report").focus();
@@ -331,6 +340,21 @@
     if (!result.valid) { setText("paper-error", result.error); $("paper-error").hidden = false; return; }
     $("paper-error").hidden = true;
     renderResult(result);
+  });
+  $("save-diagnostic").addEventListener("click", function () {
+    if (!lastDiagnostic || !localRecords) return;
+    const examDate = $("review-exam-date").value;
+    if (!examDate) { $("diagnostic-save-status").textContent = "응시 날짜를 입력한 뒤 저장해 주세요."; $("review-exam-date").focus(); return; }
+    const format = selectedFormat();
+    const record = localRecords.storage.saveCompetitionDiagnostic({
+      schemaVersion: "gfield-competition-diagnostic-v1", id: makeHistoryId(), programId: format.id, programTitle: format.title,
+      grade: grade, paperLabel: $("review-paper-label").value.trim(), examDate: examDate,
+      summary: { itemCount: lastDiagnostic.itemCount, correct: lastDiagnostic.counts.correct, wrong: lastDiagnostic.counts.wrong, blank: lastDiagnostic.counts.blank,
+        unmarked: lastDiagnostic.counts.unmarked, attempted: lastDiagnostic.attempted, domainClassified: lastDiagnostic.domainClassified, reasonClassified: lastDiagnostic.reasonClassified },
+      domains: lastDiagnostic.domains.map(function (domain) { return { id: domain.id, attempted: domain.attempted, correct: domain.correct, wrong: domain.wrong, blank: domain.blank }; }),
+      reasons: lastDiagnostic.reasons.map(function (reason) { return { id: reason.id, count: reason.count }; })
+    });
+    $("diagnostic-save-status").textContent = record ? `${record.programTitle} · Grade ${record.grade} 요약을 이 기기에 저장했어요. 문항별 응답과 점수는 저장하지 않았습니다.` : "저장하지 못했어요. 입력한 학년과 문항 결과를 확인해 주세요.";
   });
   renderSettings();
   renderMarks();

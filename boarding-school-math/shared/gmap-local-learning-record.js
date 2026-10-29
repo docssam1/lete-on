@@ -14,7 +14,11 @@
   const GRADE6_DIAGNOSTIC_KEY = `${VERSION}:grade6-diagnostic-evidence`;
   const COMPETITION_KEY = `${VERSION}:competition-evidence`;
   const COMPETITION_SERIES_KEY = `${VERSION}:competition-first-attempts-v2`;
+  const COMPETITION_DIAGNOSTIC_HISTORY_KEY = `${VERSION}:competition-diagnostic-history-v1`;
   const MAX_COMPETITION_FORMS = 8;
+  const MAX_COMPETITION_DIAGNOSTICS = 50;
+  const COMPETITION_DOMAIN_LABELS = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률" });
+  const COMPETITION_REASON_IDS = new Set(["concept", "approach", "calculation", "reading", "time"]);
   const REVIEWED_2019_G6_SOURCE_SHA256 = "a2e7191c21d29fdfb5b9f8a0d08018df6d7c1b318d0e05207dcc522696074d6b";
   const REVIEWED_2019_G6_AXIS_BY_QUESTION = Object.freeze([
     "number-operations", "data-probability", "geometry-spatial", "combinatorics-logic", "number-operations",
@@ -331,6 +335,35 @@
       recordedAt: typeof value.recordedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.recordedAt) ? value.recordedAt : new Date().toISOString()
     };
   }
+  function sanitizedCompetitionDiagnostic(value) {
+    if (!object(value) || value.schemaVersion !== "gfield-competition-diagnostic-v1" || !["amc8", "amc10", "amc12", "sasmo"].includes(value.programId) || !Number.isInteger(value.grade) || value.grade < 3 || value.grade > 12 || (value.programId === "amc8" && (value.grade < 6 || value.grade > 8)) || (value.programId === "amc10" && (value.grade < 7 || value.grade > 10)) || (value.programId === "amc12" && value.grade < 8) || !object(value.summary) || !Array.isArray(value.domains) || !Array.isArray(value.reasons)) return null;
+    const summary = value.summary;
+    if (!["itemCount", "correct", "wrong", "blank", "unmarked", "attempted", "domainClassified", "reasonClassified"].every(function (key) { return Number.isInteger(summary[key]) && summary[key] >= 0; })) return null;
+    if (summary.itemCount < 1 || summary.itemCount > 30 || summary.correct + summary.wrong + summary.blank + summary.unmarked !== summary.itemCount || summary.attempted !== summary.correct + summary.wrong || summary.domainClassified > summary.itemCount || summary.reasonClassified > summary.wrong) return null;
+    const domains = value.domains.slice(0, 4).map(function (domain) {
+      if (!object(domain) || !Object.prototype.hasOwnProperty.call(COMPETITION_DOMAIN_LABELS, domain.id) || !["attempted", "correct", "wrong", "blank"].every(function (key) { return Number.isInteger(domain[key]) && domain[key] >= 0; }) || domain.attempted !== domain.correct + domain.wrong || domain.attempted + domain.blank > summary.itemCount) return null;
+      const rate = domain.attempted >= 3 ? Math.round(domain.correct / domain.attempted * 100) : null;
+      return { id: domain.id, name: COMPETITION_DOMAIN_LABELS[domain.id], attempted: domain.attempted, correct: domain.correct, wrong: domain.wrong, blank: domain.blank, rate: rate, evidence: domain.attempted >= 3 ? "3문제 이상" : domain.attempted ? "3문제 미만 · 비교 보류" : "미측정" };
+    }).filter(Boolean);
+    const reasons = value.reasons.slice(0, 5).map(function (reason) {
+      return object(reason) && COMPETITION_REASON_IDS.has(reason.id) && Number.isInteger(reason.count) && reason.count > 0 && reason.count <= summary.wrong ? { id: reason.id, count: reason.count } : null;
+    }).filter(Boolean);
+    if (value.domains.length !== 4 || domains.length !== 4 || new Set(domains.map(function (domain) { return domain.id; })).size !== 4 || reasons.length !== value.reasons.length || new Set(reasons.map(function (reason) { return reason.id; })).size !== reasons.length) return null;
+    if (domains.reduce(function (total, domain) { return total + domain.attempted + domain.blank; }, 0) !== summary.domainClassified || domains.reduce(function (total, domain) { return total + domain.correct; }, 0) > summary.correct || domains.reduce(function (total, domain) { return total + domain.wrong; }, 0) > summary.wrong || domains.reduce(function (total, domain) { return total + domain.blank; }, 0) > summary.blank || reasons.reduce(function (total, reason) { return total + reason.count; }, 0) !== summary.reasonClassified) return null;
+    return {
+      schemaVersion: "gfield-competition-diagnostic-v1",
+      id: typeof value.id === "string" && /^[a-zA-Z0-9_-]{1,80}$/.test(value.id) ? value.id : `${value.programId}-${value.grade}-${Date.now()}`,
+      programId: value.programId,
+      programTitle: String(value.programTitle || value.programId.toUpperCase()).slice(0, 40),
+      grade: value.grade,
+      paperLabel: typeof value.paperLabel === "string" ? value.paperLabel.trim().slice(0, 80) : "",
+      examDate: typeof value.examDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value.examDate) && !Number.isNaN(Date.parse(`${value.examDate}T00:00:00Z`)) && new Date(`${value.examDate}T00:00:00Z`).toISOString().slice(0, 10) === value.examDate ? value.examDate : null,
+      summary: { itemCount: summary.itemCount, correct: summary.correct, wrong: summary.wrong, blank: summary.blank, unmarked: summary.unmarked, attempted: summary.attempted, domainClassified: summary.domainClassified, reasonClassified: summary.reasonClassified, accuracy: summary.attempted >= 3 ? Math.round(summary.correct / summary.attempted * 100) : null },
+      domains: domains,
+      reasons: reasons,
+      savedAt: typeof value.savedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.savedAt) ? value.savedAt : new Date().toISOString()
+    };
+  }
   function create(storage) {
     const store = storage || browserStorage();
     function read(key) { return store ? safeParse(store.getItem(key), {}) : {}; }
@@ -407,6 +440,30 @@
       return true;
     }
     function clearAssessmentEvidence() { if (!store) return false; store.removeItem(ASSESSMENT_KEY); store.removeItem(ASSESSMENT_HISTORY_KEY); return true; }
+    function loadCompetitionDiagnosticHistory(grade, programId) {
+      const saved = read(COMPETITION_DIAGNOSTIC_HISTORY_KEY);
+      if (saved.schemaVersion !== "gfield-competition-diagnostic-history-v1" || !Array.isArray(saved.records)) return [];
+      return saved.records.slice(0, MAX_COMPETITION_DIAGNOSTICS).map(sanitizedCompetitionDiagnostic).filter(function (entry) {
+        return entry && (!Number.isInteger(grade) || entry.grade === grade) && (!programId || entry.programId === programId);
+      }).sort(function (a, b) { return String(b.examDate || b.savedAt).localeCompare(String(a.examDate || a.savedAt)) || String(b.savedAt).localeCompare(String(a.savedAt)); });
+    }
+    function saveCompetitionDiagnostic(record) {
+      const sanitized = sanitizedCompetitionDiagnostic(record);
+      if (!sanitized) return false;
+      const records = loadCompetitionDiagnosticHistory();
+      const identity = sanitized.examDate ? [sanitized.grade, sanitized.programId, sanitized.examDate, sanitized.paperLabel].join(":") : null;
+      const next = records.filter(function (entry) { return !identity || [entry.grade, entry.programId, entry.examDate, entry.paperLabel].join(":") !== identity; });
+      next.unshift(sanitized);
+      write(COMPETITION_DIAGNOSTIC_HISTORY_KEY, { schemaVersion: "gfield-competition-diagnostic-history-v1", records: next.slice(0, MAX_COMPETITION_DIAGNOSTICS) });
+      return sanitized;
+    }
+    function removeCompetitionDiagnostic(id) {
+      if (!store || typeof id !== "string") return false;
+      const records = loadCompetitionDiagnosticHistory().filter(function (entry) { return entry.id !== id; });
+      write(COMPETITION_DIAGNOSTIC_HISTORY_KEY, { schemaVersion: "gfield-competition-diagnostic-history-v1", records: records });
+      return true;
+    }
+    function clearCompetitionDiagnosticHistory() { if (!store) return false; store.removeItem(COMPETITION_DIAGNOSTIC_HISTORY_KEY); return true; }
     function loadGrade6DiagnosticEvidence() { return sanitizedGrade6DiagnosticEvidence(read(GRADE6_DIAGNOSTIC_KEY)); }
     function saveGrade6DiagnosticEvidence(evidence) {
       const sanitized = sanitizedGrade6DiagnosticEvidence(evidence);
@@ -462,7 +519,7 @@
       store.removeItem(COMPETITION_SERIES_KEY);
       return true;
     }
-    return Object.freeze({ loadPractice: loadPractice, savePractice: savePractice, clearPractice: clearPractice, loadPlanSettings: loadPlanSettings, savePlanSettings: savePlanSettings, loadAssessmentEvidence: loadAssessmentEvidence, loadAssessmentEvidenceHistory: loadAssessmentEvidenceHistory, loadLatestAssessmentEvidence: loadLatestAssessmentEvidence, saveAssessmentEvidence: saveAssessmentEvidence, clearAssessmentEvidence: clearAssessmentEvidence, loadGrade6DiagnosticEvidence: loadGrade6DiagnosticEvidence, saveGrade6DiagnosticEvidence: saveGrade6DiagnosticEvidence, clearGrade6DiagnosticEvidence: clearGrade6DiagnosticEvidence, loadCompetitionEvidence: loadCompetitionEvidence, saveCompetitionEvidence: saveCompetitionEvidence, loadCompetitionEvidenceSeries: loadCompetitionEvidenceSeries, saveCompetitionFirstAttempt: saveCompetitionFirstAttempt, getComparableCompetitionSeries: getComparableCompetitionSeries, clearCompetitionEvidence: clearCompetitionEvidence });
+    return Object.freeze({ loadPractice: loadPractice, savePractice: savePractice, clearPractice: clearPractice, loadPlanSettings: loadPlanSettings, savePlanSettings: savePlanSettings, loadAssessmentEvidence: loadAssessmentEvidence, loadAssessmentEvidenceHistory: loadAssessmentEvidenceHistory, loadLatestAssessmentEvidence: loadLatestAssessmentEvidence, saveAssessmentEvidence: saveAssessmentEvidence, clearAssessmentEvidence: clearAssessmentEvidence, loadCompetitionDiagnosticHistory: loadCompetitionDiagnosticHistory, saveCompetitionDiagnostic: saveCompetitionDiagnostic, removeCompetitionDiagnostic: removeCompetitionDiagnostic, clearCompetitionDiagnosticHistory: clearCompetitionDiagnosticHistory, loadGrade6DiagnosticEvidence: loadGrade6DiagnosticEvidence, saveGrade6DiagnosticEvidence: saveGrade6DiagnosticEvidence, clearGrade6DiagnosticEvidence: clearGrade6DiagnosticEvidence, loadCompetitionEvidence: loadCompetitionEvidence, saveCompetitionEvidence: saveCompetitionEvidence, loadCompetitionEvidenceSeries: loadCompetitionEvidenceSeries, saveCompetitionFirstAttempt: saveCompetitionFirstAttempt, getComparableCompetitionSeries: getComparableCompetitionSeries, clearCompetitionEvidence: clearCompetitionEvidence });
   }
   function priorityForAxis(axis) { return AXIS_PRIORITIES[axis] || null; }
   return Object.freeze({ VERSION: VERSION, AXIS_PRIORITIES: AXIS_PRIORITIES, priorityForAxis: priorityForAxis, create: create, storage: create() });

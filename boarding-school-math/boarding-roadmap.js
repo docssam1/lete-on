@@ -2,6 +2,7 @@
   "use strict";
   const data = window.GFIELDBoardingGradeRoadmap;
   if (!data) return;
+  const localRecords = window.GFIELDLocalLearningRecord;
   const $ = function (id) { return document.getElementById(id); };
   const initial = Number(new URLSearchParams(location.search).get("grade"));
   let grade = data.getGrade(initial) ? initial : 7;
@@ -461,6 +462,32 @@
     setText("competition-guidance", selected
       ? "영역별로 푼 문제 수와 정답 수를 적어 주세요. 영역을 모르겠다면 문제별 복습에서 확인해요."
       : "대회를 고르면 영역별 입력칸이 나와요.");
+    renderSavedCompetitionDiagnostic();
+  }
+  function renderSavedCompetitionDiagnostic() {
+    const section = $("competition-saved-diagnostic");
+    const host = $("competition-saved-domains");
+    const records = localRecords && competition ? localRecords.storage.loadCompetitionDiagnosticHistory(grade, competition) : [];
+    const evidence = records && records[0];
+    section.hidden = !evidence;
+    host.replaceChildren();
+    if (!evidence) return;
+    setText("competition-saved-title", `${evidence.programTitle} · Grade ${evidence.grade}`);
+    const date = evidence.examDate ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${evidence.examDate}T00:00:00Z`)) : "날짜 미입력";
+    setText("competition-saved-meta", `${date}${evidence.paperLabel ? ` · ${evidence.paperLabel}` : ""} · 영역 분류 ${evidence.summary.domainClassified}/${evidence.summary.itemCount}문항`);
+    evidence.domains.forEach(function (domain) {
+      const item = document.createElement("div"); item.className = "competition-saved-domain";
+      const title = document.createElement("strong"); title.textContent = domain.name;
+      const value = document.createElement("span"); value.textContent = domain.attempted ? `${domain.correct}/${domain.attempted}${domain.rate === null ? "" : ` · ${domain.rate}%`}` : "—";
+      const detail = document.createElement("small"); detail.textContent = `${domain.evidence}${domain.blank ? ` · 미응답 ${domain.blank}` : ""}`;
+      item.append(title, value, detail); host.append(item);
+    });
+    const reasons = evidence.reasons.map(function (reason) {
+      const names = { concept: "개념", approach: "접근 아이디어", calculation: "계산", reading: "조건 읽기", time: "시간" };
+      return `${names[reason.id]} ${reason.count}문항`;
+    });
+    setText("competition-saved-reasons", `오류 이유 분류 ${evidence.summary.reasonClassified}/${evidence.summary.wrong}개 오답${reasons.length ? ` · ${reasons.join(" · ")}` : ""}`);
+    $("competition-saved-remove").dataset.recordId = evidence.id;
   }
   function resetCompetitionReport() {
     document.querySelector(".competition-layout").classList.add("is-empty");
@@ -600,6 +627,12 @@
     renderCompetitionRows();
   });
   $("competition-form").addEventListener("submit", analyzeCompetition);
+  $("competition-saved-remove").addEventListener("click", function (event) {
+    const id = event.currentTarget.dataset.recordId;
+    if (!id || !localRecords || !window.confirm("이 기기에 저장된 이 경시 진단 요약을 지울까요?")) return;
+    localRecords.storage.removeCompetitionDiagnostic(id);
+    renderSavedCompetitionDiagnostic();
+  });
   $("comparison-grade").addEventListener("change", function (event) {
     comparisonGrade = event.target.value ? Number(event.target.value) : null;
     renderComparison();
