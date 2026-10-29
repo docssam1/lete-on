@@ -48,7 +48,7 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "reviewLockedItems": 267
+    "reviewLockedItems": 264
   },
   "units": [
     {
@@ -3989,16 +3989,29 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 47,
-      "printedPage": 49,
-      "sourceShape": "직육면체의 전개도의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 51,
+      "sourceShape": "크기가 같은 두 정육면체의 전개도를 붙인 그림에서 면 나와 사를 바닥에 닿게 접었을 때 서로 겹치는 두 면을 찾습니다.",
+      "answerContract": "unordered-pair: 바와 차",
       "visualRisk": [
-        "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
-        "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
+        "두 정육면체의 전개도를 각기 다른 면 연결로 접어야 하며, 바닥 면 나·사의 방향을 고정하지 않으면 겹치는 면을 잘못 판정할 수 있음"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 51쪽 원문 및 독립 풀이와 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "evidence": {
+        "reviewNoteFileId": "12j9SG0mKysSOKTlDpt_djD0ghFTocHeY",
+        "reviewNoteUrl": "https://drive.google.com/file/d/12j9SG0mKysSOKTlDpt_djD0ghFTocHeY/view?usp=drivesdk",
+        "evidenceZipFileId": "1XlUVN6gw6bW0IqFB_yLfpXxa31x0GI7i",
+        "evidenceZipUrl": "https://drive.google.com/file/d/1XlUVN6gw6bW0IqFB_yLfpXxa31x0GI7i/view?usp=drivesdk",
+        "evidenceZipSizeBytes": 2404985,
+        "evidenceZipSha256": "1821a51e9bd8e3a6c1c1a021ad4313eee288de0d2c5ad8fcd9119bfd6f2c66b6",
+        "localEvidenceDirectory": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission4-runtime-review-20261026/",
+        "driveFolderId": "1qp6pqg11odJc5vACAOECsvY2VHvHoRc2",
+        "sharing": "owner-only; shared:false"
+      },
+      "sourceAuditUpdate": "2026-10-26 PDF p.47 / printed p.51 Mission 4: canonical/clean scan and Apple Vision OCR; two cube-net fold-orientation model confirms overlap faces 바·차; responsive 1440/375/320 and one-page problem/solution A4 reviewed. Private owner-only Drive review and evidence ZIP verified; public lock remains.",
+      "runtimeTypeId": "5-2-u5-e2-mission-4",
+      "implementationEvidence": "source-5-2-cuboid-page51-mission4.js · focused source/math and browser audit; source/OCR and one-page A4 problem/solution reviewed · local: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission4-runtime-review-20261026/ · owner-only Drive review 12j9SG0mKysSOKTlDpt_djD0ghFTocHeY · evidence ZIP 1XlUVN6gw6bW0IqFB_yLfpXxa31x0GI7i (2,404,985 bytes; SHA-256 1821a51e9bd8e3a6c1c1a021ad4313eee288de0d2c5ad8fcd9119bfd6f2c66b6) · 2026-10-28 corrected net edges and opposite-face explanation, current screen/A4 review: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission4-figure-review-20261028/; Drive note updated, ZIP predates corrections."
     },
     {
       "sourceItemId": "5-2-u5-e2-mission-5",
@@ -4007,16 +4020,30 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 47,
-      "printedPage": 49,
-      "sourceShape": "직육면체의 전개도의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 51,
+      "sourceShape": "가로 17cm, 윗부분 높이 3cm, 옆으로 나온 폭 4cm, 윗부분 아래의 길이 18cm가 표시된 T자 모양에서 불필요한 색칠 부분의 넓이를 구합니다.",
+      "answerContract": "single-value: 63cm²",
       "visualRisk": [
         "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
         "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 51쪽 원문 및 독립 풀이와 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "evidence": {
+        "reviewNoteFileId": "1Kj6g-UpI8Lld0ZI8-DJB9_MVJU3V7Msw",
+        "reviewNoteUrl": "https://drive.google.com/file/d/1Kj6g-UpI8Lld0ZI8-DJB9_MVJU3V7Msw/view?usp=drivesdk",
+        "evidenceZipFileId": "1f4EUN7QzliXDwvIP-UnPalEK0Q4DM4tQ",
+        "evidenceZipUrl": "https://drive.google.com/file/d/1f4EUN7QzliXDwvIP-UnPalEK0Q4DM4tQ/view?usp=drivesdk",
+        "evidenceZipSizeBytes": 2306603,
+        "evidenceZipSha256": "7233fed4a0260ebdcf532646d4fcd888ec3be5bd255a37a443a78cf8903df616",
+        "localEvidenceDirectory": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission5-runtime-review-20261026/",
+        "driveFolderId": "1qp6pqg11odJc5vACAOECsvY2VHvHoRc2",
+        "sharing": "owner-only; shared:false"
+      },
+      "sourceAuditUpdate": "2026-10-26 PDF p.47 / printed p.51 Mission 5: T-net, dimensions and shading verified against clean scan/OCR; 63cm² confirmed; responsive 1440/375/320 and one-page A4 review passed. Private owner-only Drive note and evidence ZIP verified; public lock remains.",
+      "runtimeTypeId": "5-2-u5-e2-mission-5",
+      "implementationEvidence": "source-5-2-cuboid-page51-mission5.js · focused source/math and browser audit; source/OCR and one-page A4 problem/solution reviewed · local: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission5-runtime-review-20261026/ · owner-only Drive review 1Kj6g-UpI8Lld0ZI8-DJB9_MVJU3V7Msw · evidence ZIP 1f4EUN7QzliXDwvIP-UnPalEK0Q4DM4tQ (2,306,603 bytes; SHA-256 7233fed4a0260ebdcf532646d4fcd888ec3be5bd255a37a443a78cf8903df616) · 2026-10-28 corrected source dimension mapping and answer-free question alt text; current browser/A4 review: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission5-dimension-correction-20261028/; Drive note updated, ZIP predates correction."
     },
     {
       "sourceItemId": "5-2-u5-e2-mission-6",
@@ -4025,16 +4052,30 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 47,
-      "printedPage": 49,
-      "sourceShape": "직육면체의 전개도의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 51,
+      "sourceShape": "둘레가 98cm인 정육면체 전개도를 접어 만든 정육면체의 모든 모서리 길이의 합을 구합니다.",
+      "answerContract": "single-value: 84cm",
       "visualRisk": [
-        "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
-        "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
+        "전개도 외곽 둘레는 여섯 정사각형의 총 둘레에서 다섯 접힘 변을 양쪽에서 센 길이만큼 빼야 함",
+        "전개도를 접은 뒤 정육면체의 실제 모서리는 12개이며 겹치는 전개도 내부선은 외곽 둘레에 포함되지 않음"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 51쪽 원문 및 독립 풀이와 화면·A4를 대조했습니다. 출판사 공식 답안은 미확인입니다.",
+      "evidence": {
+        "reviewNoteFileId": "1IuIw-TCAw_H6Lp5RVvwlgoC8jqFdydKV",
+        "reviewNoteUrl": "https://drive.google.com/file/d/1IuIw-TCAw_H6Lp5RVvwlgoC8jqFdydKV/view?usp=drivesdk",
+        "evidenceZipFileId": "1OHAESb9bMYOoVkUCGiTKwtZvrDLRMvQ4",
+        "evidenceZipUrl": "https://drive.google.com/file/d/1OHAESb9bMYOoVkUCGiTKwtZvrDLRMvQ4/view?usp=drivesdk",
+        "evidenceZipSizeBytes": 681919,
+        "evidenceZipSha256": "75ad9c50872bda8e8754172a9c28e8b0b915a218c375b9af53c3ecc473268f18",
+        "localEvidenceDirectory": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-u5-page51-mission6-current-20261027",
+        "driveFolderId": "1qp6pqg11odJc5vACAOECsvY2VHvHoRc2",
+        "sharing": "owner-only; shared:false"
+      },
+      "runtimeTypeId": "5-2-u5-e2-mission-6",
+      "sourceAuditUpdate": "2026-10-27 현재 작업본 재검수: 정본 PDF p.47/인쇄 p.51, 깨끗한 대조본 p.46, Apple Vision OCR 및 텍스트 전용 원문을 대조했습니다. 여섯 정사각형의 둘레 24a에서 내부 접힘선 다섯 개의 양쪽 길이 10a를 빼면 외곽 둘레는 14a입니다. 14a=98이므로 a=7cm, 정육면체 12개 모서리 합은 84cm입니다. focused 수학 감사 통과; 현재 연결 유형 브라우저 1440/375/320px에서 답 분리·화면 넘침·오류 검사 통과, 로컬 본문용 serif 글꼴 로드 확인. 문제/풀이 A4 각각 1쪽이며 미리보기 검수 완료. 출판사 답안표와 외부 공개 승인은 별도 미확인. 공개/배포 상태는 변경하지 않음.",
+      "implementationEvidence": "source-5-2-cuboid-page51-mission6.js · focused source/math and browser audit; source/OCR and one-page A4 problem/solution reviewed · local current follow-up: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission6-recheck-20261027/ · owner-only Drive review 1f63kxxt0v0rn0fKc9Rsts5gAdVAZ9_ci · current evidence ZIP 1-uacy9QzSAvgCp5B6UoAnjEghfNBgJGR (6,346,457 bytes; SHA-256 15ec277f70bf0a8ac7756588f40e8b18208c59a654b9a2909631465609a8e4c6) · 2026-10-28 student-facing explanation refined; current browser/A4: /Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page51/mission6-solution-review-20261028/; Drive note updated, ZIP predates change."
     },
     {
       "sourceItemId": "5-2-u5-e3-exploration",

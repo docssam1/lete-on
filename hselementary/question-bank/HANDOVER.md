@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 5 Page 51 Missions 4–6
+
+- Source PDF p.47 / clean comparison PDF p.46 / printed p.51. Enabled three fixed source questions: overlapping cube faces 바 and 차; shaded area 63cm²; total cube edge length 84cm. The publisher answer key remains unverified. Mission 6 is text-only in the source.
+- Verified the two cube-net orientations, shaded dimensions, and the six-square net perimeter argument; a separate fixed-hexomino orientation audit validates the perimeter. Source, ledger, 1440/375/320px browser and six one-page A4 checks passed; 76,680 runtime generations and the public release gate passed.
+- Counts: 2,066 types, 1,278 generatable, 788 awaiting review. The broader 5-2 through 6 inventory audit retains 81 pre-existing failures (two 6-1 section counts, 79 missing 6-2 review reasons). The dirty source worktree and student data are preserved; p.52 Exploration 3 and p.53 Mission 5 remain locked.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 5 Page 51 Missions 1–3
 
 - Source PDF p.47 / clean comparison PDF p.46 / printed p.51. Added three source-backed fixed questions: net perimeter 52cm, folded cuboid edge sum 132cm, shortest net perimeter 36cm. The publisher answer key is unverified.

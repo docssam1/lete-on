@@ -2223,7 +2223,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     for (const [ordinal, name, generatorKey] of [
       [1, "직육면체 전개도의 둘레 구하기", "source52CuboidNetPaperPerimeterPage51Mission1"],
       [2, "정사각형 종이 전개도로 만든 직육면체의 모서리 합", "source52CuboidNetPaperEdgeSumPage51Mission2"],
-      [3, "세 방향에서 본 직육면체 전개도의 가장 짧은 둘레", "source52CuboidNetMinPerimeterPage51Mission3"]
+      [3, "세 방향에서 본 직육면체 전개도의 가장 짧은 둘레", "source52CuboidNetMinPerimeterPage51Mission3"],
+      [4, "두 정육면체 전개도에서 겹치는 면 찾기", "source52TwoCubeNetsOverlapPage51Mission4"],
+      [5, "직육면체 전개도의 색칠한 부분 넓이", "source52CuboidShadedNetAreaPage51Mission5"],
+      [6, "정육면체 전개도 둘레로 모서리 합 구하기", "source52CuboidNetPerimeterPage51Mission6"]
     ]) {
       const id = `5-2-u5-e2-mission-${ordinal}`;
       const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
@@ -2233,7 +2236,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         sourceSection: "mission", sourceTier: "advanced", sourcePdfPage: 47, sourcePrintedPage: 51,
         sourceVerified: true, publisherKeyVerified: false, reviewLocked: false, generatorKey,
         generationMode: "fixed-verified-pool", verifiedVariantTarget: 1, verifiedVariantCount: 1,
-        answerVisualRequired: true, answerVisualStatus: "verified-reconstruction", implementationStatus: "fixed-verified-pool"
+        answerVisualRequired: ordinal !== 4 && ordinal !== 6, answerVisualStatus: ordinal !== 4 && ordinal !== 6 ? "verified-reconstruction" : "not-required", implementationStatus: "fixed-verified-pool"
       });
     }
   }
