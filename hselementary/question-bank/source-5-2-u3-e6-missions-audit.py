@@ -30,3 +30,18 @@ while True:
 assert len(hits)==9 and (x,y)==(12,0)
 assert math.lcm(12,10)==60
 print('Clock times, digit-containing palindromes and mirror-wall collisions verified')
+
+# The ball leaves the lower wall, reflects on the upper wall (-20 degrees),
+# then on the lower wall; at the final upper wall it must reverse direction.
+def reflected_direction(theta,axis):return (2*axis-theta)%360
+candidates=[]
+for launch in range(1,71):
+ upper=reflected_direction(launch,-20)
+ lower=reflected_direction(upper,0)
+ final=reflected_direction(lower,-20)
+ if final==(lower+180)%360:candidates.append(launch)
+assert candidates==[30]
+assert reflected_direction(30,-20)==290
+assert reflected_direction(290,0)==70
+assert reflected_direction(70,-20)==250
+print('Wedge return path independently verified: launch angle 30 degrees')
