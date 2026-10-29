@@ -297,7 +297,7 @@ function askFrame(cmd) {
   waitTimer = setTimeout(() => { if (waiting === cmd) { waiting = null; cmd === "next" ? go(index + 1) : go(index - 1, { atEnd: true }); } }, 2000);
 }
 
-// ── 판서 오른쪽 독쌤(시안, &look=sketch) ─────────────────────
+// ── 판서 오른쪽 독쌤(모든 판서에 기본, 원장 2026-10-29 「전체 판서에 기본으로 켜줘」 · 예전 모양은 &look=plain) ─────
 // 원장 2026-10-29 「필기 개념 이런 식으로 · 오른쪽에 독쌤을」「입이 더 움직이고 표정과 행동도 바뀌고 살아 있는 것처럼」.
 // 수학 독쌤 그림 10장(assets/docssam-math/, 같은 틀로 잘라 몸이 흔들리지 않는다): 입 A1 다묾 · A2 반 · A3 벌림 · A4 오 · A5 눈 감기,
 // 표정 B1 손가락(가리킴·놀람) · B2 갸웃(생각) · B3 미소(칭찬) · B4 격려 · B5 엄지 척. 움직이는 법은 사이언스 랩 독쌤(스킬 docssam-talking-guide)을 따른다:
@@ -305,7 +305,7 @@ function askFrame(cmd) {
 //  · 몸은 CSS 움직임만: 가만히 숨쉬기 · 말할 때 끄덕이며 기울기 · 칭찬 깡충 · 놀람 움찔 · 격려 끄덕 · 생각 기울기 · 가리킬 때 앞으로
 //  · 말 첫머리에 글에 맞는 몸짓을 잠깐(「봐요」 가리킴, 물음 갸웃, 「잘했어요」 깡충+엄지, 「해 봐요」 격려) 한 뒤 말하는 얼굴로
 //  · 오래 가만히 있으면 가끔 끄덕이거나 갸웃한다. 움직임 줄이기 설정이면 몸은 가만히, 얼굴만 바뀐다.
-const LOOK = params.get("look") === "sketch" ? "sketch" : "";
+const LOOK = params.get("look") === "plain" ? "" : "sketch";
 const FACE = (name) => `./assets/docssam-math/${name}.webp`;
 const FACES = { closed: "A1-mouth-closed", half: "A2-mouth-half", open: "A3-mouth-open", o: "A4-mouth-o", blink: "A5-eyes-closed", point: "B1-surprised", think: "B2-puzzled-thinking", smile: "B3-praise", cheer: "B4-encourage", thumbs: "B5-happy-thumbs-up" };
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -433,7 +433,7 @@ async function mountNative(slide, intro = Promise.resolve()) {
   const wrap = document.createElement("div");
   wrap.className = "sd-native";
   let host = wrap;
-  // 시안(&look=sketch): 판서 오른쪽에 독쌤
+  // 판서 오른쪽에 독쌤 + 손그림 판서 틀(&look=plain이면 예전 모양)
   if (LOOK && game.board) {
     wrap.classList.add("has-presenter", `look-${LOOK}`);
     host = document.createElement("div");
