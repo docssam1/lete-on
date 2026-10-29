@@ -2489,6 +2489,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       generatorKey:i ? `source52CountPage62Example${i}` : "source52CountPage62Exploration",generationMode:"fixed-verified-pool",verifiedVariantTarget:1,verifiedVariantCount:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
   }
 
+  if (source52Count) for (const [n,name] of [[1,"네 사람이 자기 자리를 피하는 방법"],[2,"두 주사위의 곱이 18 이상"],[3,"동전 15개 이하로 380원 만들기"],[4,"B를 지나는 격자 최단 경로"],[6,"두 사람이 이웃하는 줄 세우기"]]) {
+    const id = `5-2-u6-e3-mission-${n}`;
+    const typeNumber = Math.max(0,...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`Mission ${n}`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:59,sourcePrintedPage:63,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52CountPage63Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:1,verifiedVariantCount:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;

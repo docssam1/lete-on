@@ -29,17 +29,17 @@
       "sourcePageOutOfRangeCount": 0
     },
     "answerReview": {
-      "independentCalculationOrEnumerationCount": 42,
-      "visualModelPendingCount": 2,
-      "singleAnswerConfirmedCount": 39,
-      "answerNotFinalizedCount": 5,
+      "independentCalculationOrEnumerationCount": 44,
+      "visualModelPendingCount": 0,
+      "singleAnswerConfirmedCount": 40,
+      "answerNotFinalizedCount": 4,
       "singleAnswerStatusCounts": {
-        "true": 39,
-        "null": 5
+        "true": 40,
+        "null": 4
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1~3·5·6과 62쪽 개념탐구 3·예제 3-1~3-4를 연결하고 Mission 4는 선발 기준 미명시로 보류하며 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1~3·5·6과 62쪽 개념탐구 3·예제 3-1~3-4와 63쪽 Mission 1~4·6을 연결하고 Mission 5는 경로 해석 확인 전 보류하며 Mission 4는 선발 기준 미명시로 보류하며 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 25,
-    "lockedCount": 19
+    "publicCandidateCount": 30,
+    "lockedCount": 14
   },
   "items": [
     {
@@ -810,16 +810,23 @@
       "commonTypeId": "distinct-seats-no-own-seat",
       "childFriendlyTypeLabel": "지정된 자리에 앉지 않는 방법 세기",
       "originalStructure": "4명의 자리가 정해져 있을 때 아무도 자기 자리에 앉지 않는 방법의 수를 구합니다.",
-      "conditions": ["4명의 서로 다른 사람", "각자의 지정 자리", "아무도 자기 자리에 앉지 않음"],
+      "conditions": [
+        "4명의 서로 다른 사람",
+        "각자의 지정 자리",
+        "아무도 자기 자리에 앉지 않음"
+      ],
       "visualRequirement": "사람과 자리를 구분할 수 있는 표를 제공해야 합니다.",
-      "independentCalculation": "4명의 전체 자리 바꾸기는 24가지. 자기 자리를 피하는 경우를 네 사람의 자리를 전수 점검하면 9가지",
+      "independentCalculation": "4명 순열 24개 전수 검사해 자기 자리를 피하는 배치 9가지",
       "independentAnswer": "9가지",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "자리표와 전수 점검 과정을 중앙 문제 형식으로 옮기기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherKeyVerified": false,
+      "runtimeTypeId": "5-2-u6-e3-mission-1",
+      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-2",
@@ -827,19 +834,26 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 59,
       "sourcePrintedPage": 63,
-      "commonTypeId": "two-dice-sum-at-least-eighteen",
-      "childFriendlyTypeLabel": "두 주사위 눈의 합 조건에 맞는 경우 세기",
-      "originalStructure": "작은 두 주사위를 던져 두 눈의 곱이 18 이상인 경우의 수를 구합니다.",
-      "conditions": ["각 주사위 눈은 1~6", "두 주사위는 구분", "두 눈의 곱이 18 이상"],
+      "commonTypeId": "two-dice-product-at-least-eighteen",
+      "childFriendlyTypeLabel": "두 주사위 눈의 곱 조건에 맞는 경우 세기",
+      "originalStructure": "크고 작은 두 주사위 눈의 곱이 18 이상인 경우를 구합니다.",
+      "conditions": [
+        "각 주사위 눈은 1~6",
+        "두 주사위는 구분",
+        "두 눈의 곱이 18 이상"
+      ],
       "visualRequirement": "두 주사위의 전체 눈 조합을 표로 전수 확인할 수 있어야 합니다.",
-      "independentCalculation": "가능한 곱 18 이상인 순서 있는 짝을 (3,6),(4,5),(4,6),(5,4),(5,5),(5,6),(6,3),(6,4),(6,5),(6,6)으로 세어 10가지",
+      "independentCalculation": "크기로 구별하는 36가지 순서쌍을 열거하면 10가지",
       "independentAnswer": "10가지",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "주사위 눈을 빠짐없이 표로 검산하는 화면을 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherKeyVerified": false,
+      "runtimeTypeId": "5-2-u6-e3-mission-2",
+      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-3",
@@ -850,16 +864,23 @@
       "commonTypeId": "coin-combination-making-380",
       "childFriendlyTypeLabel": "동전으로 금액을 만드는 방법 세기",
       "originalStructure": "10원·50원·100원짜리 동전으로 380원을 만드는 방법을 동전 수 조건과 함께 구합니다.",
-      "conditions": ["10원·50원·100원 동전", "합계 380원", "사용한 동전 수는 15개 이하"],
-      "visualRequirement": "동전 종류와 각 개수를 표로 정리해 보여야 합니다.",
-      "independentCalculation": "10a+50b+100c=380, a+b+c≤15의 자연수 해를 모두 나열해 세어야 하며, 원문 표기와 답을 다시 전수 확인하기 전에는 최종 답을 보류",
-      "independentAnswer": null,
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
+      "conditions": [
+        "10원·50원·100원 동전",
+        "합계 380원",
+        "사용한 동전 수는 15개 이하"
+      ],
+      "visualRequirement": "원문은 문장제이며 별도 그림이 없습니다.",
+      "independentCalculation": "10a+50b+100c=380, a+b+c≤15를 전수 열거하면 8가지",
+      "independentAnswer": "8가지",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "동전 개수 조건을 빠짐없이 전수 열거하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherKeyVerified": false,
+      "runtimeTypeId": "5-2-u6-e3-mission-3",
+      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-4",
@@ -869,17 +890,24 @@
       "sourcePrintedPage": 63,
       "commonTypeId": "grid-shortest-path-count",
       "childFriendlyTypeLabel": "격자에서 가장 짧은 길의 수 세기",
-      "originalStructure": "격자에서 출발점 A에서 도착점 C까지 가장 짧게 가는 방법의 수를 구합니다.",
-      "conditions": ["가로·세로 격자", "출발점 A, 중간점 B, 도착점 C", "가장 짧은 거리"],
+      "originalStructure": "A에서 B를 반드시 거쳐 C까지 격자 선을 따라 최단 거리로 가는 방법을 구합니다.",
+      "conditions": [
+        "가로 3칸, 세로 5칸",
+        "B는 A에서 오른쪽 1칸, 위 3칸",
+        "B를 거치고 최단 거리"
+      ],
       "visualRequirement": "격자 칸 수, 점 B의 위치, 가로·세로 방향을 원본처럼 표시해야 합니다.",
-      "independentCalculation": "그림의 칸 수와 B의 정확한 좌표를 읽은 뒤 두 구간의 최단 경로를 각각 전수 열거해야 하므로 좌표 모델 확인 전 답 보류",
-      "independentAnswer": null,
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
+      "independentCalculation": "B는 A에서 오른쪽 1, 위 3. A→B 4가지, B→C 6가지, 곱 24",
+      "independentAnswer": "24가지",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "격자 좌표와 방향을 점·선분 모델로 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherKeyVerified": false,
+      "runtimeTypeId": "5-2-u6-e3-mission-4",
+      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-5",
@@ -890,16 +918,22 @@
       "commonTypeId": "home-store-park-route-once",
       "childFriendlyTypeLabel": "편의점을 한 번만 지나는 왕복 길 세기",
       "originalStructure": "집·편의점·공원 사이 여러 길을 이용해 공원에 갔다가 집으로 돌아올 때 편의점을 한 번만 지나는 방법을 구합니다.",
-      "conditions": ["집에서 편의점 3가지", "편의점에서 공원 4가지", "집에서 공원 2가지", "편의점을 정확히 한 번 지남"],
+      "conditions": [
+        "집에서 편의점 3가지",
+        "편의점에서 공원 4가지",
+        "집에서 공원 2가지",
+        "편의점을 정확히 한 번 지남"
+      ],
       "visualRequirement": "집·편의점·공원과 세 종류의 길 수를 그림에서 분명히 읽을 수 있어야 합니다.",
-      "independentCalculation": "가는 길에 편의점을 지나는 경우 3×4×2=24, 돌아오는 길에 처음 지나는 경우 2×4×3=24. 합 48",
-      "independentAnswer": "48가지",
-      "candidateAnswerCount": 1,
-      "singleAnswer": true,
+      "independentCalculation": "각 구간에서 되돌아가지 않는다면 3×4×2+2×4×3=48. 왕복 중 되돌아감 금지가 원문에 명시되지 않아 그 해석은 조건부",
+      "independentAnswer": "조건부 48가지",
+      "candidateAnswerCount": null,
+      "singleAnswer": null,
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "길의 방향과 편의점 방문 횟수를 그림 모델로 확인하기 전까지 잠금"
+      "lockReason": "원문에 중간 되돌아감 제한이 없어 경로 해석 또는 출판사 답 확인 전 잠금.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u6-e3-mission-6",
@@ -910,16 +944,23 @@
       "commonTypeId": "six-people-adjacent-pair",
       "childFriendlyTypeLabel": "두 사람이 이웃하게 서는 방법 세기",
       "originalStructure": "서로 다른 6명을 한 줄로 세울 때 지정한 두 사람이 항상 이웃하는 방법을 구합니다.",
-      "conditions": ["서로 다른 6명", "두 사람은 항상 이웃", "한 줄로 세움"],
-      "visualRequirement": "6개의 자리와 지정한 두 사람을 구분해 보여야 합니다.",
-      "independentCalculation": "두 사람을 한 묶음으로 보면 묶음과 나머지 4명을 배열하는 방법 5×4×3×2×1=120, 묶음 안의 순서 2가지, 120×2=240",
+      "conditions": [
+        "서로 다른 6명",
+        "두 사람은 항상 이웃",
+        "한 줄로 세움"
+      ],
+      "visualRequirement": "원문은 여섯 사람을 나열하며 별도 자리 그림이 없습니다.",
+      "independentCalculation": "6명 순열 전수 검사해 240가지. 두 명을 묶어 5!×2=240",
       "independentAnswer": "240가지",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "이웃 조건과 서로 다른 사람의 자리 배치를 검수하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherKeyVerified": false,
+      "runtimeTypeId": "5-2-u6-e3-mission-6",
+      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e4-exploration-1",

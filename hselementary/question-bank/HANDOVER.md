@@ -1,3 +1,11 @@
+## 2026-10-29 Grade 5-2 Unit 6 Page 63 Missions 1–6
+
+- Independently enumerated and connected Missions 1, 2, 3, 4, 6: 9 derangements, 10 distinguishable dice outcomes, 8 coin combinations, 24 shortest grid paths through B, and 240 arrangements with the two people adjacent. The source-ledger Mission 2 label incorrectly said sum; corrected to product. Publisher answer keys remain unverified.
+- Mission 5 remains locked: the commonly intended 48 requires each outward/return leg to proceed without intermediate backtracking; the original does not explicitly state that restriction. Its source description and conditional reasoning are recorded without adding a silent assumption.
+- Independent enumeration, source grid coordinates, 1440/375/320px browser and separate one-page A4 checks, release gate and 79,140 runtime generations passed. Counts: 2,107 types, 1,319 generatable, 788 awaiting review. The broader inventory audit retains 81 existing failures (two 6-1 section counts and 79 missing 6-2 review reasons). Preserve existing work and student data.
+
+---
+
 ## 2026-10-29 Grade 5-2 Unit 6 Page 62 Exploration 3 and Examples 3-1–3-4
 
 - Independently enumerated the source diagrams and cases: adjacent cuboid vertices 15 edge paths (interpreting the diagram as edge paths and stating that in the learner prompt); distinguishable two dice 12; 4×3 grid via its middle point 18; multi-edge roads 39 with edge counts 3/1/2/2/4; six distinct students with the three boys adjacent 144. Publisher answer keys remain unverified. Source ledger page and descriptions corrected.
