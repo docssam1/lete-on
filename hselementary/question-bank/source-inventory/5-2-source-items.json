@@ -48,7 +48,7 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "reviewLockedItems": 235
+    "reviewLockedItems": 233
   },
   "units": [
     {
@@ -4943,16 +4943,18 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 57,
-      "printedPage": 59,
-      "sourceShape": "평균의 활용의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 61,
+      "sourceShape": "8명 점수표에서 평균과 최고점·두 배 조건으로 빈 두 점수를 구하기",
+      "answerContract": "은경 41점, 효근 94점",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 61쪽 원문과 표를 대조하고 독립 전수 검사. 출판사 답안은 미확인.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-6",
@@ -4961,16 +4963,18 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 57,
-      "printedPage": 59,
-      "sourceShape": "평균의 활용의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "printedPage": 61,
+      "sourceShape": "40명 점수별 학생 수 표와 배점·평균·한 문제만 맞힌 인원으로 3번 정답자 수 구하기",
+      "answerContract": "25명",
       "visualRisk": [
         "표·그래프가 있으면 눈금·범례·점·선의 위치를 실제 데이터와 역산 대조해야 함",
         "눈금 사이 값은 문제에 읽는 기준이 드러날 때만 사용해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "인쇄 61쪽 원문과 표를 대조하고 독립 전수 검사. 출판사 답안은 미확인.",
+      "publisherKeyVerified": false,
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u6-e3-exploration",

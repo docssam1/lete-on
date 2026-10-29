@@ -29,17 +29,17 @@
       "sourcePageOutOfRangeCount": 0
     },
     "answerReview": {
-      "independentCalculationOrEnumerationCount": 38,
-      "visualModelPendingCount": 6,
-      "singleAnswerConfirmedCount": 36,
-      "answerNotFinalizedCount": 8,
+      "independentCalculationOrEnumerationCount": 40,
+      "visualModelPendingCount": 4,
+      "singleAnswerConfirmedCount": 37,
+      "answerNotFinalizedCount": 7,
       "singleAnswerStatusCounts": {
-        "true": 36,
-        "null": 8
+        "true": 37,
+        "null": 7
       },
       "handwritingUsedAsEvidence": false
     },
-    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1~3을 연결하고 Mission 4도 선발 기준 미명시로 보류하며 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
+    "releaseGate": "인쇄 58쪽 개념탐구 1과 예제 1-1~1-4 및 59쪽 Mission 1~6과 60쪽 개념탐구 2와 예제 2-1·2-2·2-4를 연결하고 61쪽 Mission 1~3·5·6을 연결하고 Mission 4는 선발 기준 미명시로 보류하며 2-3은 선발 기준 미명시로 보류했으며 나머지 항목은 검수 대기"
   },
   "integrity": {
     "sourceItemCount": 44,
@@ -61,8 +61,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 18,
-    "lockedCount": 26
+    "publicCandidateCount": 20,
+    "lockedCount": 24
   },
   "items": [
     {
@@ -619,18 +619,25 @@
       "sourcePdfPage": 57,
       "sourcePrintedPage": 61,
       "commonTypeId": "average-ranked-score",
-      "childFriendlyTypeLabel": "순서가 정해진 점수의 평균 구하기",
-      "originalStructure": "7개의 자연수가 일정한 차이로 커질 때 평균을 구합니다.",
-      "conditions": ["7개의 자연수", "첫째 수 1, 둘째 수 2, ... 일곱째 수 7"],
-      "visualRequirement": "순서와 수의 관계를 표나 수직선으로 분명히 보여야 합니다.",
-      "independentCalculation": "1+2+3+4+5+6+7=28, 28÷7=4",
-      "independentAnswer": "4",
+      "childFriendlyTypeLabel": "여덟 명의 점수와 평균",
+      "originalStructure": "8명 점수표에서 두 빈 점수를 구합니다.",
+      "conditions": [
+        "평균 64점, 8명, 100점 만점",
+        "효근 점수 최고이고 다른 한 사람의 2배",
+        "여섯 점수 42,91,76,47,55,66"
+      ],
+      "visualRequirement": "이름과 점수 및 빈칸 위치",
+      "independentCalculation": "총점 512, 알려진 합 377. 두 빈칸 합 135이고 최고점은 91 초과 100 이하. 모든 가능한 정수 점수와 두 배 상대를 전수 검사하면 은경 41, 효근 94.",
+      "independentAnswer": "은경 41점, 효근 94점",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "자료를 나열하는 표 표시를 확인하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e2-mission-5",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e2-mission-6",
@@ -639,18 +646,25 @@
       "sourcePdfPage": 57,
       "sourcePrintedPage": 61,
       "commonTypeId": "average-score-distribution",
-      "childFriendlyTypeLabel": "점수표와 평균으로 두 점수 구하기",
-      "originalStructure": "40명의 점수별 학생 수와 평균, 한 문제만 맞은 학생 수를 이용해 빈 점수 칸의 학생 수를 구합니다.",
-      "conditions": ["학생 40명", "3문제, 배점 10·15·25점", "전체 평균 27.75점", "한 문제만 맞은 학생 16명", "점수별 학생 수 표"],
-      "visualRequirement": "점수 0·10·15·25·35·40·50의 표와 빈 칸 위치를 정확히 표시해야 합니다.",
-      "independentCalculation": "전체 점수 합 1110, 알려진 학생 수 합 20. 빈 칸 학생 수의 합은 20이고 점수 합 조건을 함께 써야 하지만 표의 두 빈칸 위치를 모델링하기 전 최종 값은 보류",
-      "independentAnswer": null,
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
+      "childFriendlyTypeLabel": "점수표와 맞힌 문제",
+      "originalStructure": "40명 점수별 표와 문제별 배점으로 3번을 맞힌 인원 수를 구합니다.",
+      "conditions": [
+        "40명, 3문제 배점 10·15·25점",
+        "평균 27.75점, 한 문제만 맞힌 학생 16명",
+        "0·10·15·25·35·40·50점의 학생 수는 1·3·7·빈칸·빈칸·6·2명"
+      ],
+      "visualRequirement": "점수별 학생 수와 25·35점 빈칸 위치",
+      "independentCalculation": "알려진 학생 19명, 점수 합 475점. 25점과 35점 학생은 각각 10명,11명. 한 문제만 맞힌 16명 중 10·15점 학생 10명을 빼면 3번만 맞힌 학생 6명. 3번 정답자는 6+11+6+2=25명.",
+      "independentAnswer": "25명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "점수표 빈칸과 배점 조건을 같은 자료 모델로 검수하기 전까지 잠금"
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u6-e2-mission-6",
+      "publisherKeyVerified": false,
+      "releaseEvidence": "인쇄 61쪽 원문·표를 확인하고 독립 전수 검산. 출판사 정답 미대조."
     },
     {
       "sourceItemId": "5-2-u6-e3-exploration-1",

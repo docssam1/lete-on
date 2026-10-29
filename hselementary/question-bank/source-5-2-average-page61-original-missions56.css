@@ -1,0 +1,4 @@
+.source52-p61m56-table { border-collapse: collapse; width: min(100%, 620px); table-layout: fixed; margin: 1rem auto; text-align: center; }
+.source52-p61m56-table caption { font-weight: 700; margin-bottom: .4rem; }
+.source52-p61m56-table th, .source52-p61m56-table td { border: 1px solid currentColor; padding: .35rem 0; font-size: clamp(10px, 2.5vw, 16px); white-space: nowrap; }
+.source52-p61m56-table.source52-p61m56-vertical { width: min(100%, 250px); }

@@ -63,6 +63,7 @@ require("./source-5-2-average-page60-original-examples21-22.js");
 require("./source-5-2-average-page60-original-example24.js");
 require("./source-5-2-average-page61-original-missions12.js");
 require("./source-5-2-average-page61-original-mission3.js");
+require("./source-5-2-average-page61-original-missions56.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
@@ -190,8 +191,8 @@ for (const semester of window.HSE_CURRICULUM.semesters) {
   }
 }
 
-if (total !== 2095) failures.push(`전체 유형 수가 2095가 아니라 ${total}입니다.`);
-if (ready !== 1307) failures.push(`원문 연결 공개 유형 수가 1307가 아니라 ${ready}입니다.`);
+if (total !== 2097) failures.push(`전체 유형 수가 2097가 아니라 ${total}입니다.`);
+if (ready !== 1309) failures.push(`원문 연결 공개 유형 수가 1309가 아니라 ${ready}입니다.`);
 if (lockedWithoutSource !== 380) failures.push(`원문 미연결 잠금 유형 수가 380이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {
