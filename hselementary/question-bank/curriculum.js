@@ -2508,6 +2508,16 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`Mission ${n}`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:61,sourcePrintedPage:65,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52ProbabilityPage65Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
   }
 
+  const source52DecimalUnit = semesters.find(s => s.id === "5-2")?.units.find(u => u.id === "5-2-u4");
+  const source52DecimalSubunit = source52DecimalUnit?.subunits.find(s => s.name === "소수와 자연수의 곱셈");
+  if (source52DecimalSubunit) {
+    const index = source52DecimalSubunit.types.findIndex(t => t.id === "5-2-u4-t1");
+    if (index >= 0) {
+      const previous = source52DecimalSubunit.types[index];
+      source52DecimalSubunit.types[index] = {...previous, id:"5-2-u4-e1-exploration", sourceItemId:"5-2-u4-e1-exploration", sourceItemLabel:"개념탐구 1", sourceSection:"exploration", sourcePdfPage:38, sourcePrintedPage:42, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, reviewReason:"원문 구조를 대조하고 서로 다른 창작 수치로 계산을 검산했습니다.", generatorKey:"source52DecimalNaturalRepeatedAdditionPage42Exploration1", variant:0, generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:3, verifiedVariantTarget:3, answerVisualRequired:false, answerVisualStatus:"not-required"};
+    }
+  }
+
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52Application = source52Unit1?.subunits.find(subunit => subunit.name === "어림하기의 활용 · 개념탐구 3 원문 연결");
   if (source52Application) for (const [n,name] of [[1,"어림한 방법 모두 찾기"],[2,"단위로 파는 리본의 가격"]]) {
