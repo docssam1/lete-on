@@ -101,6 +101,25 @@
     });
     list.classList.toggle("is-inferred", plan.source === "inferred");
   }
+  function renderConceptFlows() {
+    const host = $("concept-flow-list");
+    host.replaceChildren();
+    data.conceptFlows.forEach(function (flow) {
+      const article = document.createElement("article");
+      article.className = "concept-flow";
+      const heading = document.createElement("h3");
+      heading.textContent = flow.title;
+      const list = document.createElement("ol");
+      list.setAttribute("aria-label", `${flow.title} 개념 순서 예시`);
+      flow.steps.forEach(function (step) {
+        const item = document.createElement("li");
+        item.textContent = step;
+        list.append(item);
+      });
+      article.append(heading, list);
+      host.append(article);
+    });
+  }
   function renderStages(entry) {
     const list = $("stage-list");
     const grade7 = grade === 7;
@@ -445,4 +464,5 @@
     renderComparison();
   });
   render("replace");
+  renderConceptFlows();
 })();

@@ -233,3 +233,23 @@ test("Grade 7 deep link keeps the concept path reachable at 320px", async functi
   assert.ok(await page.locator(".stage-detail").evaluate(function (node) { const bounds = node.getBoundingClientRect(); return bounds.top >= 0 && bounds.bottom <= window.innerHeight; }));
   await page.close();
 });
+
+test("cross-grade concept flows render as examples on phone, tablet, and desktop widths", async function () {
+  for (const width of [320, 390, 900, 1280]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 } });
+    await page.goto(`${url}?grade=9`, { waitUntil: "networkidle" });
+    assert.equal(await page.locator(".concept-flow").count(), 4);
+    assert.equal(await page.locator(".concept-flow ol").count(), 4);
+    assert.equal(await page.locator(".concept-flow ol li").count(), 20);
+    assert.deepEqual(await page.locator(".concept-flow").first().locator("li").allInnerTexts(), ["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]);
+    assert.match(await page.locator("#concept-flow-title").innerText(), /배운 개념은 이렇게 이어져요/);
+    assert.match(await page.locator(".concept-flow-intro").innerText(), /문제 풀이법을 먼저 외우기보다/);
+    assert.equal(await page.locator(".concept-flow-section .map-head").evaluate((node) => {
+      const title = node.querySelector("h2").getBoundingClientRect();
+      const note = node.querySelector(":scope > p").getBoundingClientRect();
+      return title.bottom <= note.top || note.bottom <= title.top || title.right <= note.left || note.right <= title.left;
+    }), true, `concept heading and note overlap at ${width}px`);
+    assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [width, width]);
+    await page.close();
+  }
+});

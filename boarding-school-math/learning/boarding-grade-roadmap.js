@@ -64,6 +64,13 @@
     ]) })
   });
 
+  const conceptFlows = Object.freeze([
+    Object.freeze({ id: "arithmetic-algebra", title: "연산에서 대수식으로", steps: Object.freeze(["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]) }),
+    Object.freeze({ id: "ratio-coordinate", title: "비와 비율에서 좌표기하로", steps: Object.freeze(["비·비율·속력", "단위 변환", "비례식", "일차 함수", "좌표기하"]) }),
+    Object.freeze({ id: "parity-counting", title: "짝·홀수에서 경우의 수로", steps: Object.freeze(["짝·홀수·배수", "조건별 추론", "경우의 수", "조합", "AMC/AIME 논리 문제"]) }),
+    Object.freeze({ id: "sequence-number-theory", title: "수열에서 정수론으로", steps: Object.freeze(["수열·규칙", "일반항·닫힌식", "나머지", "합동식", "AIME 정수론"]) })
+  ]);
+
   const routes = [
     { id: "secure", title: "지금 배우는 것 익히기", description: "같은 개념을 그림·표·식으로 설명하고 며칠 뒤 다시 풀어봐요.", check: "새 문제를 혼자 풀고 이유를 말할 수 있나요?" },
     { id: "continue", title: "다음 내용 배우기", description: "앞 개념을 이해했다면 학교 진도에 맞춰 다음 내용을 배워요.", check: "앞 개념과 학교 진도를 선생님과 확인했나요?" },
@@ -123,5 +130,5 @@
   function getAnnualPlan(grade) { return annualPlans[Number(grade)] || null; }
   function getRoute(id) { return routes.find(function (entry) { return entry.id === id; }) || null; }
   function getTracks(grade) { return gradeTracks[Number(grade)] || []; }
-  return Object.freeze({ grades: Object.freeze(grades), grade7Stops: grade7Stops, routes: Object.freeze(routes), strands: strands, getGrade: getGrade, getAnnualPlan: getAnnualPlan, getRoute: getRoute, getTracks: getTracks, competitionOptions: competitionOptions, analyzeCompetition: analyzeCompetition });
+  return Object.freeze({ grades: Object.freeze(grades), grade7Stops: grade7Stops, routes: Object.freeze(routes), strands: strands, conceptFlows: conceptFlows, getGrade: getGrade, getAnnualPlan: getAnnualPlan, getRoute: getRoute, getTracks: getTracks, competitionOptions: competitionOptions, analyzeCompetition: analyzeCompetition });
 });
