@@ -53,7 +53,7 @@ function startServer() {
         const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u6")?.subunits.find(x => x.name === "사건의 가능성")?.types.find(x => x.sourceItemId === id);
         return type && { reviewLocked: type.reviewLocked, sourceVerified: type.sourceVerified, generationMode: type.generationMode, verifiedVariantCount: type.verifiedVariantCount, generatorKey: window.HSE_GENERATORS.generatorKey(type) };
       }, itemId);
-      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: n<=1?3:1, generatorKey: n ? `source52ProbabilityPage64Example${n}` : "source52ProbabilityPage64Exploration" });
+      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: n<=2?3:1, generatorKey: n ? `source52ProbabilityPage64Example${n}` : "source52ProbabilityPage64Exploration" });
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u6");
@@ -79,7 +79,7 @@ function startServer() {
       await page.locator("#solutionTab").click();
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
-      const fractionLabel=({0:"8분의 1",1:"10분의 3",2:"10분의 3",4:"60분의 41"})[n];
+      const fractionLabel=({0:"8분의 1",1:"10분의 3",2:"5분의 2",4:"60분의 41"})[n];
       assert(await solutionView.locator(`.math-fraction[aria-label="${fractionLabel}"]`).count()>0,`fraction rendering ${fractionLabel}`);
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);
