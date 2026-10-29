@@ -121,7 +121,7 @@ test('초등·중등 교재 목록과 A/B/C/D 표준을 구분한다',()=>{
    const a={...answer,schoolCourse:course,deepCourse:course},q=I.questions(a,f);
    for(const [v]of q.schoolBook[2])assert.equal(I.middleBook(v),course==='mid');
    for(const [v]of q.deepBook[2])assert.equal(I.middleBook(v),course==='mid');
-   assert.match(q.schoolBook[1],new RegExp(band+' 기준'));
+   assert.ok(q.schoolBook[1].includes(I.standardBook(band,course,'school')));
   }
  }
  assert.equal(I.standardBook('A','mid','school'),'원리해설');
@@ -161,16 +161,17 @@ function storageFixture(saved){
  const values={grade:'2',mon:'10',band:'B',speed:'2',hw:'57'};
  const els=Object.fromEntries(Object.entries(values).map(([k,value])=>[k,{value,type:'select-one',options:[]} ]));
  els.hw.options=[{value:'57'}];
- let stored=JSON.stringify(saved),asked=null;
+ const storageKey='gfield.demo2.v1',stored=new Map([[storageKey,JSON.stringify(saved)]]);let asked=null;
  const c={I,console,answers:{},history:[],manualPeriods:{},pendingStatus:{},legacyDraft:null,state:{},completed:false,question:'age',draftIds:['grade','mon','band','speed','hw','comp','compLeft','calc','calcLeft'],
+  restoredRoadmapMode:null,standardPattern:null,standardAccepted:false,
   $:id=>els[id]||(els[id]={value:'',type:'select-one',options:[]}),
-  sessionStorage:{getItem:()=>stored,setItem:(_,value)=>{stored=value;}},
-  questionOrder:()=>I.order(c.answers,c.intakeFields()),storageKey:'gfield.demo2.v1',hwOptions(){},setSeg(){},draw(){},finish(){},ask(key){asked=key;},
+  PlannerStorage:{getItem:key=>stored.get(key)??null,setItem:(key,value)=>{stored.set(key,String(value));}},
+  questionOrder:()=>I.order(c.answers,c.intakeFields()),storageKey,hwOptions(){},setSeg(){},draw(){},finish(){},ask(key){asked=key;},
   intakeFields:()=>({grade:els.grade.value,mon:els.mon.value,band:els.band.value,speed:els.speed.value,pendingStatus:c.pendingStatus})};
  vm.createContext(c);
- vm.runInContext(ui.slice(ui.indexOf('function saveDraft(){'),ui.indexOf("let question='age';")),c);
+ vm.runInContext(ui.slice(ui.indexOf('function saveDraft(){'),ui.indexOf("let question='grade';")),c);
  vm.runInContext(ui.slice(ui.indexOf('function applyAnswerChanges(key){'),ui.indexOf('function ask(key){')),c);
- return {c,els,get stored(){return JSON.parse(stored);},get asked(){return asked;}};
+ return {c,els,get stored(){return JSON.parse(stored.get(storageKey));},get asked(){return asked;}};
 }
 
 test('v1 임시 저장은 원문 스냅샷과 답을 보존하고 새 교과·심화 질문을 요청한다',()=>{
@@ -210,7 +211,114 @@ test('기존 계통·대수 진도를 중등 학기나 교재명으로 바꾸지
  const a={...answer,schoolCourse:'mid',schoolBook:'개념원리',school:'advanced',schoolExact:'13',schoolStatus:'progress'};
  assert.equal(I.hasAnswer(a,fields,'schoolExact'),true);
  const text=I.summary(a,fields).find(x=>x.key==='school').text;
- assert.equal(text,'계통·대수 진행 중');
+ assert.equal(text,'초등 계통 대수심화 진행 중');
  assert.equal(I.fieldChanges(a,fields,'schoolStatus').school,'13');
  assert.match(row(a,'school').current.shortText,/계통/);
+});
+
+
+test('첫 질문은 미취학·초·중·고이며 현재 학년 선택 뒤 나이를 다시 묻지 않는다',()=>{
+ const q=I.questions({},fields).grade;
+ assert.equal(q[0],'아이는 지금 몇 학년인가요?');
+ assert.deepEqual(plain(q[2].map(x=>x[1])),['미취학','초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3']);
+ assert.equal(I.firstMissing({},fields),'grade');
+ for(let grade=1;grade<=6;grade++){
+  const a={...answer,grade:String(grade),gradeInput:'current'};
+  assert.equal(I.order(a,fields)[0],'grade');
+  assert.ok(!I.order(a,fields).includes('age'));
+  assert.equal(I.summary(a,fields)[0].text,'초'+grade);
+ }
+});
+
+test('초1~초6 직접 선택은 1·2·3·12월에도 현재 학년과 학습 좌표를 유지한다',()=>{
+ for(let grade=1;grade<=6;grade++)for(const mon of ['1','2','3','12']){
+  const a={...answer,grade:String(grade),gradeInput:'current'},f={...fields,mon},saved=JSON.stringify(a);
+  const expected=P.mOf(grade,+mon),p=I.profile(a,f);
+  assert.equal(I.age(a,f),5+Math.floor(expected/12));
+  assert.equal(I.fieldChanges(a,f,'grade').grade,String(grade));
+  assert.equal(I.options(a,f).grade,grade);
+  assert.equal(p.now,expected);
+  assert.equal(p.nowLabel,'초'+grade+' '+mon+'월');
+  assert.equal(I.milestones(a,f,p).main[0].title,'현재 · 초'+grade+' '+mon+'월');
+  assert.equal(JSON.stringify(a),saved);
+ }
+});
+
+test('미취학만 나이를 묻고 옛 초등 나이로 미취학 질문을 건너뛰지 않는다',()=>{
+ for(const value of ['4','5','6','7']){
+  const a={...answer,grade:'pre',age:value};
+  assert.equal(I.order(a,fields)[1],'age');assert.equal(I.hasAnswer(a,fields,'age'),true);
+  assert.equal(I.summary(a,fields)[0].text,'미취학 · '+value+'세');
+ }
+ assert.equal(I.firstMissing({...answer,grade:'pre'},fields),'age');
+ assert.equal(I.hasAnswer({...answer,grade:'pre',age:'older'},fields,'age'),false);
+ assert.equal(I.hasAnswer({...answer,grade:'pre',age:'8'},{...fields,mon:'1'},'age'),true);
+ assert.equal(I.hasAnswer({...answer,grade:'pre',age:'8'},fields,'age'),false);
+});
+
+test('옛 9세 저장은 화면에서 학년으로 읽되 원래 나이·교재 값을 바꾸지 않는다',()=>{
+ for(const mon of ['1','2','3','10']){
+  const f={...fields,mon},a={...answer},saved=JSON.stringify(a),grade=+mon<3?'1':'2';
+  assert.equal(I.gradeChoice(a,f),grade);
+  assert.equal(I.summary(a,f)[0].text,'초'+grade);
+  assert.equal(I.profile(a,f).nowLabel,'초'+grade+' '+mon+'월');
+  assert.equal(JSON.stringify(a),saved);assert.equal(a.age,'9');assert.equal(a.grade,undefined);
+ }
+ const saved={version:2,answers:answer,completed:true,question:'gifted',fields:{...fields,hw:'57'},history:[],state:{}};
+ const f=storageFixture(saved);assert.equal(f.c.restoreDraft(),true);f.c.saveDraft();
+ assert.deepEqual(f.stored.answers,answer);assert.equal(f.stored.answers.grade,undefined);
+});
+
+test('실제 질문 선택 핸들러도 새 학년만 저장하고 옛 나이·교재는 보존한다',()=>{
+ const f=storageFixture({version:2,answers:answer,fields:{...fields,hw:'57'},history:[],state:{}});
+ f.c.restoreDraft();f.c.question='grade';f.c.handleCollegeClick=()=>false;f.c.collegeState={enabled:false};
+ const ui=readFileSync(new URL('planner-ui.js',import.meta.url),'utf8');
+ vm.runInContext(ui.slice(ui.indexOf("$('questionOptions').onclick="),ui.indexOf("$('questionBack').onclick=")),f.c);
+ f.els.questionOptions.onclick({target:{closest:()=>({dataset:{answer:'3'}})}});
+ assert.equal(f.c.answers.grade,'3');assert.equal(f.els.grade.value,'3');
+ assert.equal(f.c.answers.age,'9');assert.equal(f.c.answers.schoolBook,answer.schoolBook);
+ assert.equal(I.age(f.c.answers,f.c.intakeFields()),10);
+ f.c.saveDraft();assert.equal(f.stored.answers.age,'9');assert.equal(f.stored.answers.grade,'3');
+});
+
+test('현재·이후 월 표시는 초등·중등 학년을 쓰고 미취학 출처 좌표는 보존한다',()=>{
+ assert.equal(I.labelMonth(D.monthOf(9,10)),'초2 10월');
+ assert.equal(I.labelMonth(P.mOf(1,1)),'초1 1월');
+ assert.equal(I.labelMonth(P.mOf(6,2)),'초6 2월');
+ assert.equal(I.labelMonth(P.mOf(7,3)),'중1 3월');
+ assert.equal(I.labelMonth(D.monthOf(4,10)),D.labelMonth(D.monthOf(4,10)));
+});
+
+
+test('옛 나이 입력에 남은 이전 학년은 직접 선택으로 간주하지 않는다',()=>{
+ const a={...answer,grade:'4'},saved=JSON.stringify(a);
+ assert.equal(I.gradeChoice(a,fields),'2');assert.equal(I.age(a,fields),9);
+ assert.equal(I.profile(a,fields).nowLabel,'초2 10월');assert.equal(JSON.stringify(a),saved);
+ const selected={...a,gradeInput:'current'};
+ assert.equal(I.gradeChoice(selected,fields),'4');assert.equal(I.age(selected,fields),11);
+ assert.equal(I.profile(selected,fields).nowLabel,'초4 10월');
+ assert.equal(I.gradeChoice({...a,age:'older'},fields),'4');
+});
+
+test('설명 연령은 확인한 학년을 따르며 선행 과정·기본 폼 학년으로 추정하지 않는다',()=>{
+ const scenarios=[
+  [{grade:'pre',age:'6'},'preschool'],
+  [{grade:'2',gradeInput:'current',schoolCourse:'mid',schoolBook:'개념원리'},'lower'],
+  [{grade:'5',gradeInput:'current'},'upper'],
+  [{},'general']
+ ];
+ for(const [a,expected]of scenarios){const saved=JSON.stringify(a);assert.equal(I.audience(a,fields),expected);I.questions(a,fields);assert.equal(JSON.stringify(a),saved);}
+ const old={age:'9',schoolCourse:'mid',schoolBook:'개념원리'};
+ assert.equal(I.audience(old,fields),'lower');assert.equal(old.grade,undefined);
+});
+
+test('어린 연령의 쉬운 질문도 초등·중등 선택값과 교재 구분을 보존한다',()=>{
+ for(const course of ['elem','mid']){
+  const young={grade:'pre',age:'6',schoolCourse:course,deepCourse:course},older={grade:'5',gradeInput:'current',schoolCourse:course,deepCourse:course};
+  const q=I.questions(young,fields),other=I.questions(older,fields);
+  assert.match(q.calc[0],/수와 계산/);assert.match(other.calc[0],/연산/);
+  assert.deepEqual(plain(q.schoolCourse[2]),plain(other.schoolCourse[2]));
+  assert.deepEqual(plain(q.schoolBook[2]),plain(other.schoolBook[2]));
+  assert.deepEqual(plain(q.deepBook[2]),plain(other.deepBook[2]));
+ }
 });

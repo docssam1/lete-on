@@ -1,0 +1,96 @@
+/* Bounded parent planning canvas. Existing curriculum and controls are retained. */
+body.roadmap-studio.integrated-planner[data-plan-workspace] main{display:grid;grid-template-columns:305px minmax(0,1fr);grid-template-rows:44px minmax(0,1fr);gap:8px 24px;height:calc(100dvh - 82px);min-height:0;padding:8px 24px 12px;align-items:stretch}
+body.roadmap-studio.integrated-planner[data-plan-workspace][data-plan-mode=standard] main{grid-template-columns:minmax(0,1fr)}
+body.integrated-planner[data-plan-workspace] #planningOverview{grid-column:1/-1;grid-row:1;position:relative;z-index:5}
+body.integrated-planner[data-plan-workspace] .plan-current-details{margin:0;position:relative;max-width:100%}
+body.integrated-planner[data-plan-workspace] .plan-current-details>summary{font-size:13px;min-height:44px;align-content:center;cursor:pointer;color:#70547e;width:fit-content;padding:6px 8px}
+body.integrated-planner[data-plan-workspace] .plan-current-popover{position:absolute;top:44px;left:0;width:min(850px,calc(100vw - 48px));max-height:calc(100dvh - 180px);overflow:auto;border:1px solid #d9cbe3;background:#fff;box-shadow:0 12px 30px #50396318;border-radius:12px;padding:16px}
+body.integrated-planner[data-plan-workspace] .current-learning-summary{margin:0;border:0;background:#fff;padding:0}
+body.roadmap-studio.integrated-planner[data-plan-workspace] #pathwayCoach{grid-column:1;grid-row:2;height:100%;max-height:none;overflow:auto;padding:8px 4px;min-height:0;scrollbar-width:thin}
+body.roadmap-studio.integrated-planner[data-plan-workspace] #vmap{grid-column:2;grid-row:2;height:100%;min-height:0;min-width:0}
+body.roadmap-studio.integrated-planner[data-plan-workspace][data-plan-mode=standard] #vmap{grid-column:1}
+body.integrated-planner[data-plan-workspace] #vmap>.mapwrap{height:100%;min-height:0}
+body.roadmap-studio.integrated-planner[data-plan-workspace] #journeyPanel{height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden;border-radius:18px}
+body.integrated-planner[data-plan-workspace] #journeyPanel>.journey-heading{padding:10px 18px;flex:none;gap:8px}
+body.integrated-planner[data-plan-workspace] #journeyTitle{font-size:18px;margin:0}body.integrated-planner[data-plan-workspace] #journeyCount{display:none}
+body.integrated-planner[data-plan-workspace] #journeyMap,body.integrated-planner[data-plan-workspace] .workspace-results{display:flex;flex-direction:column;min-height:0;flex:1;overflow:hidden}
+body.integrated-planner[data-plan-workspace] .workspace-results>.workspace-summary,body.integrated-planner[data-plan-workspace] .workspace-results>.standard-summary{flex:none;padding:6px 18px;margin:0;font-size:12px}
+body.integrated-planner[data-plan-workspace] .workspace-summary strong{font-size:16px}body.integrated-planner[data-plan-workspace] .workspace-summary-meta small{font-size:11px}
+body.integrated-planner[data-plan-workspace] .standard-patterns{padding:4px 18px;flex:none;font-size:12px;gap:8px}
+body.integrated-planner[data-plan-workspace] .standard-patterns p{margin:0;font-size:12px}
+body.integrated-planner[data-plan-workspace] .workspace-tabs{flex:none;padding:0 18px;gap:20px}
+body.integrated-planner[data-plan-workspace] .workspace-tabs button{font-size:13px;min-height:44px}
+body.integrated-planner[data-plan-workspace] .workspace-panel{min-height:0;flex:1;overflow:auto;overscroll-behavior:contain;padding:14px 18px;scrollbar-width:thin}
+body.integrated-planner[data-plan-workspace] #journeyPanel>.pathway-status{display:none}
+body.integrated-planner[data-plan-workspace] .workspace-results>.workspace-panel>.standard-roadmap{padding:0;margin:0}
+body.integrated-planner[data-plan-workspace] #pathwayCoach h1{font-size:22px;margin:12px 0}
+body.integrated-planner[data-plan-workspace] #pathwaySummary.planner-guide-bubble{font-size:14px;line-height:1.8;margin-bottom:12px}
+body.integrated-planner[data-plan-workspace] .design-progress{margin:12px 0;font-size:12px}
+body.integrated-planner[data-plan-workspace] #pathwayCoach .pathway-options>button{min-height:56px;padding:12px 30px 12px 14px;font-size:14px}
+body.integrated-planner[data-plan-workspace] #pathwayCoach .pathway-options>button strong{font-size:14px}
+.plan-travel{background:#fff;border-top:1px solid #e4dce9;padding:6px 18px 10px;flex:none;color:#60436f}
+.plan-travel-top,.plan-travel-steps{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.plan-travel-top>span{font-size:12px;line-height:1.6;text-align:center}
+.plan-travel button{font:inherit;font-size:13px;min-height:44px;border:1px solid #d5c5df;background:#f8f4fb;color:#60436f;border-radius:8px;padding:8px 12px;cursor:pointer}
+.plan-travel-top button{border-color:transparent;background:#fff;font-size:12px;padding-inline:4px}
+.plan-travel-steps button{flex:1}.plan-travel button:disabled{opacity:.45;cursor:default}
+.plan-travel .plan-design-entry{display:block;width:100%;text-align:left}
+.plan-standard-travel{display:flex;gap:12px;align-items:center}.plan-standard-travel>div{flex:1}.plan-standard-travel small,.plan-standard-travel strong{display:block}.plan-standard-travel small{font-size:11px;color:#8a7498}.plan-standard-travel strong{font-size:16px;font-weight:600}.plan-standard-travel button:last-child{background:#77538e;color:#fff;border-color:#77538e}
+.plan-map-months{border-top:1px solid #e4dce9;margin:12px 0;color:#6f557f}.plan-map-months>summary{min-height:44px;font-size:13px;align-content:center;cursor:pointer;padding:8px 12px}
+.plan-question-shortcut{position:relative;display:block;width:100%;border:1px solid #d7c8e3;background:#f5effa;color:#644976;border-radius:12px;min-height:70px;padding:14px 30px 14px 14px;text-align:left;font:inherit;cursor:pointer;margin:16px 0}
+.plan-question-shortcut small{font-size:12px;color:#8a7299;display:block}.plan-question-shortcut strong{font-size:14px;line-height:1.8;display:block;margin-top:6px;font-weight:500}.plan-question-shortcut>span{position:absolute;right:12px;bottom:18px}
+body.integrated-planner[data-plan-workspace] .atlas-fullscreen #journeyPanel{height:calc(100dvh - 84px);display:flex!important}
+@media(max-width:800px){
+ body.roadmap-studio.integrated-planner[data-plan-workspace] .top{display:flex;flex-wrap:nowrap;height:72px;min-height:72px;padding:8px 12px;gap:8px}
+ body.integrated-planner[data-plan-workspace] .top .nav,body.integrated-planner[data-plan-workspace] .top .ttl{display:none!important}
+ body.integrated-planner[data-plan-workspace] .top .logo{font-size:23px;margin-right:auto}
+ body.integrated-planner[data-plan-workspace] .top .gear{min-height:44px;margin:0;font-size:12px;padding:8px 10px}
+ body.roadmap-studio.integrated-planner[data-plan-workspace] main,body.roadmap-studio.integrated-planner[data-plan-workspace][data-plan-mode=standard] main{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:40px minmax(0,1fr);height:calc(100dvh - 140px - env(safe-area-inset-bottom));padding:0 10px 8px;gap:0;min-height:0}
+ body.roadmap-studio.integrated-planner[data-plan-workspace][data-plan-mode=standard] main{height:calc(100dvh - 72px - env(safe-area-inset-bottom))}
+ body.integrated-planner[data-plan-workspace] .plan-current-details>summary{font-size:12px;min-height:40px;padding-inline:0}
+ body.integrated-planner[data-plan-workspace] .plan-current-popover{top:40px;width:calc(100vw - 20px);padding:14px;max-height:calc(100dvh - 170px)}
+ body.roadmap-studio.integrated-planner[data-plan-workspace] #vmap,body.roadmap-studio.integrated-planner[data-plan-workspace] #pathwayCoach{grid-row:2;grid-column:1;min-height:0}
+ body.roadmap-studio.integrated-planner[data-plan-workspace] #journeyPanel>.journey-heading{padding:8px 12px}
+ body.integrated-planner[data-plan-workspace] #journeyTitle{font-size:15px;line-height:1.5}
+ body.integrated-planner[data-plan-workspace] .workspace-summary{display:none}
+ body.integrated-planner[data-plan-workspace] .standard-summary{display:none}
+ body.integrated-planner[data-plan-workspace] .workspace-tabs{padding:0 10px;gap:12px;justify-content:space-between}
+ body.integrated-planner[data-plan-workspace] .workspace-tabs button{font-size:11px;white-space:normal;line-height:1.5}
+ body.integrated-planner[data-plan-workspace] .workspace-tabs .editorial-menu-icon{display:none}
+ body.integrated-planner[data-plan-workspace] .workspace-panel{padding:10px}
+ body.integrated-planner[data-plan-workspace] #pathwayCoach{padding:8px 4px}
+ .plan-travel{padding:0 10px 8px}.plan-travel-top>span{font-size:11px}.plan-travel-top button{font-size:11px}.plan-travel button{font-size:12px}
+ body.integrated-planner[data-plan-workspace] .plan-travel-top{flex-shrink:0}
+ body.integrated-planner[data-plan-workspace] .plan-travel-top button{white-space:nowrap}
+ body.integrated-planner[data-plan-workspace] .plan-travel .plan-design-entry{flex:1;min-width:0;width:auto;text-wrap:balance}
+ .plan-standard-travel{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 10px}.plan-standard-travel>div{grid-column:1/-1}.plan-standard-travel strong{font-size:14px}.plan-standard-travel small{display:none}
+ body.integrated-planner[data-plan-workspace] .standard-landscape{height:250px}
+ body.integrated-planner[data-plan-workspace] .course-terrain{min-height:300px}
+ body.integrated-planner[data-plan-workspace] .mobile-workspace-nav{min-height:68px}
+ body.integrated-planner[data-plan-workspace][data-plan-mode=standard] .mobile-workspace-nav{display:none!important}
+}
+@media print{body.roadmap-studio.integrated-planner[data-plan-workspace] main{display:block;height:auto;padding:0}body.integrated-planner[data-plan-workspace] #journeyPanel,body.integrated-planner[data-plan-workspace] #journeyMap,body.integrated-planner[data-plan-workspace] .workspace-results{display:block;height:auto;overflow:visible}body.integrated-planner[data-plan-workspace] .workspace-panel{overflow:visible}body.integrated-planner[data-plan-workspace] .plan-travel{display:none}}
+body[data-plan-workspace] main>#warn:empty{display:none}
+.plan-current-popover>[data-plan-references]{min-height:44px;font:inherit;font-size:13px;padding:10px 14px;border:1px solid #d9cbe3;background:#fff;color:#70547e;border-radius:8px;margin-top:16px;cursor:pointer}
+.plan-reference-modal{border:1px solid #dacde3;border-radius:16px;width:min(1060px,calc(100vw - 32px));height:min(840px,calc(100dvh - 40px));padding:0;background:#fff;color:#503b60;overflow:hidden}
+.plan-reference-modal::backdrop{background:#30203965}
+.plan-reference-modal>header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;gap:12px;border-bottom:1px solid #e4dce9;height:72px}
+.plan-reference-modal h2{font-size:18px;margin:0}.plan-reference-modal>header button{min-height:44px;font:inherit;font-size:13px;border:1px solid #cbbdd4;background:#fff;color:#60436f;border-radius:8px;padding:8px 16px;cursor:pointer}
+#planReferencesBody{padding:16px 20px;height:calc(100% - 72px);overflow:auto}
+#planReferencesBody>details{display:block!important;margin:0 0 16px}#planReferencesBody>details>summary{min-height:44px;align-content:center;font-size:14px;cursor:pointer}
+/* The full-screen graph keeps its own return control and comparison tabs. */
+body.atlas-is-fullscreen #journeyPanel:has(#workspace-panel-graph:not([hidden]))>.journey-heading,
+body.atlas-is-fullscreen #journeyPanel:has(#workspace-panel-graph:not([hidden])) :is(.plan-travel,.reference-plan-context,.reference-design-fold){display:none}
+@media(min-width:801px){
+ .plan-travel:not(.plan-standard-travel){display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}
+ .plan-travel-steps button{min-width:106px;white-space:nowrap}
+ body[data-plan-workspace] .plan-travel .plan-design-entry{max-width:270px}
+ body.integrated-planner[data-plan-workspace] .workspace-panel .transition-chart-wrap svg{width:100%;height:320px;min-height:0;min-width:0;max-height:none}
+ body.integrated-planner[data-plan-workspace] .workspace-panel .transition-chart-wrap svg :is(.curve-chase-label,.curve-catch-label,.editorial-arrow-label){font-size:14px}
+ body.integrated-planner[data-plan-workspace] .workspace-level-caption{font-size:12px;margin:6px 0;line-height:1.6}
+ body.integrated-planner[data-plan-workspace] .transition-graph h4{font-size:18px;margin:2px 0}
+ body.integrated-planner[data-plan-workspace] .transition-axis-buttons{margin:6px 0}
+ body.integrated-planner[data-plan-workspace] .graph-selected-scope{margin:6px 0;font-size:12px}
+ body.integrated-planner[data-plan-workspace] .workspace-graph-result{margin:6px 0;font-size:12px;line-height:1.6;padding:8px 12px}
+ body.integrated-planner[data-plan-workspace] .atlas-fullscreen .workspace-panel .transition-chart-wrap svg{height:clamp(320px,calc(100dvh - 460px),520px)}
+}

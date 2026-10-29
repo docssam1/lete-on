@@ -5,6 +5,9 @@ const D=global.DemoContent,P=global.Planner;
 const thinking=['킨더팩토','키즈팩토','초등팩토','PRE 1031','1031 입문','1031 초급'];
 const calc=[['소마셈 K','수 가르기·모으기'],['기적의 계산법 2권','한 자리 덧셈·뺄셈'],['기적의 계산법 3권','받아올림·받아내림'],['기적의 계산법 4권','구구단'],['기적의 계산법 5권','곱셈·나눗셈'],['기적의 계산법 6권','복합 계산']];
 const schoolBooks=['디딤돌 기본+응용','디딤돌 응용','원리해설','개념원리','개념응용 · 최상위','개념응용 · 최상위라이트'];
+const highSubjects=['공통수학1','공통수학2','대수','미적분Ⅰ','확률과 통계','미적분Ⅱ','기하'];
+const highBook=v=>['개념원리 고등','수학의 정석','쎈 고등','학교 지정 교재'].includes(v);
+const bookList=(course,axis)=>course==='foreign'?['학교 지정 교재']:course==='high'?(axis==='deep'?['쎈 고등','수학의 정석','학교 지정 교재']:['개념원리 고등','수학의 정석','학교 지정 교재']):(axis==='deep'?deepBooks:schoolBooks).filter(v=>middleBook(v)===(course==='mid'));
 const deepBooks=['최상위 S','최상위 수학','개념응용 · 최상위','A급','RPM'];
 const special=v=>['none','unknown'].includes(v);
 const middleBook=v=>['원리해설','개념원리','개념응용 · 최상위라이트','A급','RPM'].includes(v);
@@ -12,45 +15,70 @@ const stageOptions=middle=>middle?P.MID.map((t,i)=>[String(i+14),t.replace(/중(
 const absent=v=>v==='none'?'아직 시작 전':v==='unknown'?'잘 모르겠어요':'미선택';
 const noThinking=a=>special(a.thinkingExperience);
 const effective=a=>({...a,schoolBook:special(a.schoolCourse)?a.schoolCourse:a.schoolBook,deepBook:special(a.deepCourse)?a.deepCourse:a.deepBook});
-const courseOptions=[['elem','초등 과정'],['mid','중등 과정'],['none','아직 시작 전'],['unknown','잘 모르겠어요']];
+const courseOptions=[['elem','초등 과정'],['mid','중등 과정'],['high','고등 과정'],['none','아직 시작 전'],['unknown','잘 모르겠어요']];
 const schoolChoice=a=>special(a.schoolBook)?a.schoolBook:a.school;
 const progress=[['progress','지금 하는 중'],['done','끝냈어요']];
-function age(a,fields){if(a.age&&a.age!=='older')return +a.age;if(a.age==='older'&&!a.grade)return 10;return 5+Math.floor(P.mOf(+(a.grade||fields.grade),+fields.mon)/12);}
+// Grade is the current school year, including its following January/February.
+// Legacy ages are read without rewriting their saved values.
+const currentGrade=a=>/^(?:[1-9]|1[0-2])$/.test(a.grade||'')&&(a.gradeInput==='current'||!a.age||a.age==='older');
+function gradeChoice(a,fields){
+ if(fields.internationalCalendar)return 'international';
+ if(a.grade==='pre'||currentGrade(a))return a.grade;
+ if(a.age&&a.age!=='older'){const g=gradeForAge(a.age,fields.mon);return g<1?'pre':g<=12?String(g):undefined;}
+ return undefined;
+}
+function age(a,fields){if(currentGrade(a))return 5+Math.floor(P.mOf(+a.grade,+fields.mon)/12);if(a.age&&a.age!=='older')return +a.age;if(a.age==='older')return 10;return 5+Math.floor(P.mOf(+fields.grade,+fields.mon)/12);}
+function labelMonth(m){if(m>=144){const n=Math.floor(m/12)-11,mo=m%12+1,g=n-(mo<3?1:0);return (g<1?'중3':g<=3?'고'+g:'고교 이후')+' '+mo+'월';}return m>=38?P.label(m):D.labelMonth(m);}
+function studentLabel(a,fields){const sp=fields.schoolContext;if(sp?.format&&sp.format!=='kr'){const f=sp.format==='grade'?'Grade':sp.format==='year'?'Year':'학교 학년';return sp.level?(sp.format==='other'||sp.format==='unknown'?({primary:'초등 단계',middle:'중등 단계',high:'고등 단계',unknown:'학교 단계 확인 전'})[sp.level]||'학교 단계 확인 전':f+' '+sp.level):'학교 학년 확인 전';}const g=gradeChoice(a,fields);return g==='pre'?(a.age&&a.age!=='older'?'미취학 · '+a.age+'세':'미취학'):g?(+g<=6?'초'+g:+g<=9?'중'+(+g-6):'고'+(+g-9)):'미선택';}
+// Wording follows the confirmed school stage, independently of course progress and L level.
+function audience(a,fields){
+ if(fields.internationalCalendar)return 'general';
+ const g=gradeChoice(a,fields);
+ return g==='pre'?'preschool':g&&+g<=3?'lower':g&&+g<=6?'upper':g&&+g<=9?'middle':g?'high':'general';
+}
+function learningLabels(a,fields){
+ const group=audience(a,fields),young=['preschool','lower'].includes(group);
+ return {grade:group==='preschool'?'나이':'학년',school:young?'교과 수학':'교과',deep:young?'심화 수학':'심화',deepBook:young?'심화 수학':'심화',thinking:young?'사고력 수학':'사고력',thinking1:young?'사고력 수학':'사고력',calc:young?'수와 계산':'연산'};
+}
 function gradeForAge(value,month){return +value-7-(+month<3?1:0);}
 function order(a,fields){a=effective(a);
- const list=['age'];if(a.age==='older')list.push('grade');
+ const list=fields.internationalCalendar?[]:['grade'];if(gradeChoice(a,fields)==='pre')list.push('age');
  list.push('thinkingExperience');
  if(!noThinking(a)){list.push('thinking');if(a.thinking==='advanced')list.push('compExact');list.push('thinkingStatus');if(a.thinking==='PRE 1031')list.push('preDone');}
- list.push('schoolCourse');if(!special(a.schoolCourse)){list.push('schoolBook');}if(!special(a.schoolCourse)&&!special(a.schoolBook)){list.push(middleBook(a.schoolBook)?'schoolExact':'school');list.push('schoolStatus');}
+ list.push('schoolCourse');if(!special(a.schoolCourse)){list.push('schoolBook');}if(!special(a.schoolCourse)&&!special(a.schoolBook)){list.push(highBook(a.schoolBook)?'schoolHigh':middleBook(a.schoolBook)?'schoolExact':'school');list.push('schoolStatus');}
  list.push('deepCourse');if(!special(a.deepCourse)){list.push('deepBook');}if(!special(a.deepCourse)&&!special(a.deepBook))list.push('deepStage','deepStatus');
- list.push('calc');if(a.calc==='advanced')list.push('calcExact');if(!special(a.calc))list.push('calcStatus');
- const y=age(a,fields);if(y>=6&&y<=9&&['A','B'].includes(fields.band))list.push('hw');list.push('gifted');return list;
+ list.push('calc');if(a.calc==='advanced')list.push('calcExact');if(a.calc==='high')list.push('calcHigh');if(!special(a.calc))list.push('calcStatus');
+ const y=age(a,fields);if(y>=6&&y<=9&&['A','B'].includes(fields.band))list.push('hw');if(+gradeChoice(a,fields)<7||gradeChoice(a,fields)==='pre'||!gradeChoice(a,fields))list.push('gifted');return list;
 }
 // Curriculum standards come from the existing four BAND rules and buildD.
 // The broader book guide is a reference list, not a replacement for those rules.
 function standardBook(band,course,axis){
+ if(course==='foreign')return '학교 지정 교재 · 현재 과목·판본 확인';
+ if(course==='high')return axis==='school'?'개념원리 고등 · 수학의 정석':'쎈 고등 · 학교 지정 교재';
  if(course==='mid')return axis==='school'?P.BAND[band].midBook:band==='C'?'RPM · 응용 반복':P.BAND[band].deep;
  return band==='D'?'개념응용 · 최상위':axis==='school'?'디딤돌 기본+응용 · 디딤돌 응용':'최상위 S';
 }
-function questions(a,fields){a=effective(a);const older=age(a,fields)>=8;return {
- age:['아이는 지금 몇 살인가요?','한국 나이 기준으로 골라 주세요.',[4,5,6,7,8,9].map(v=>[String(v),v+'세']).concat([['older','10세 이상']])],
- grade:['지금 몇 학년인가요?','현재 학년을 골라 주세요.',[1,2,3,4,5,6].filter(v=>v>=(+fields.mon<3?2:3)).map(v=>[String(v),'초등 '+v+'학년'])],
- thinkingExperience:['사고력으로 공부한 경험이 있나요?','경험이 없어도 괜찮아요.',[['yes','네, 있어요'],['none','아직 없어요'],['unknown','잘 모르겠어요']]],
+function questions(a,fields){a=effective(a);const curriculum=global.PlannerCollegeData?.CURRICULA[fields.schoolContext?.curriculum],mathOptions=fields.internationalCalendar?(curriculum?.math?.length?curriculum.math:['학교 수학 · 과목 확인 전']):highSubjects;const allMath=[...new Set([...highSubjects,...Object.values(global.PlannerCollegeData?.CURRICULA||{}).flatMap(c=>c.math)])];const retained=(base,value)=>[...new Set([...base,...(allMath.includes(value)?[value]:[])])];const schoolMath=retained(a.schoolCourse==='foreign'?mathOptions:highSubjects,a.schoolHigh),deepMath=retained(a.deepCourse==='foreign'?mathOptions:highSubjects,a.deepStage),calcMath=retained([...mathOptions,...highSubjects],a.calcHigh);const courses=fields.internationalCalendar?[['foreign','현재 학교 교육과정'],...courseOptions]:courseOptions;const older=age(a,fields)>=8,group=audience(a,fields),young=['preschool','lower'].includes(group);return {
+ age:['아이는 지금 몇 살인가요?','미취학 아동의 한국 나이를 골라 주세요.',[4,5,6,7].map(v=>[String(v),v+'세']).concat(+fields.mon<3?[['8','8세 · 입학 전']]:[])],
+ grade:['아이는 지금 몇 학년인가요?','현재 학년을 골라 주세요.',[['pre','미취학'],...Array.from({length:12},(_,i)=>[String(i+1),i<6?'초'+(i+1):i<9?'중'+(i-5):'고'+(i-8)])]],
+ thinkingExperience:['사고력 수학을 공부한 적이 있나요?',young?'규칙 찾기나 도형 문제를 생각하며 푸는 수학이에요.': '학원 수업과 집에서 공부한 경험을 모두 포함해요.',[['yes','네, 있어요'],['none','아직 없어요'],['unknown','잘 모르겠어요']]],
  thinking:['사고력은 어디까지 했나요?','가장 최근에 공부한 과정을 골라 주세요.',thinking.map(v=>[v,v]).concat(older?[['advanced','그 이후 과정']]:[])],
- thinkingStatus:[(a.thinking==='advanced'?'이 사고력 과정은':a.thinking||'이 과정은')+' 어떤 상태인가요?','완료한 과정과 진행 중인 과정을 구분해요.',progress],
- preDone:['초등팩토는 끝냈나요?','PRE 1031의 기본·심화 위치를 구분할게요.',[['1','네'],['0','아니요']]],
- schoolCourse:['교과는 어느 과정을 공부하나요?','심화 과정은 다음에 따로 골라 주세요.',courseOptions],
- schoolBook:['교과는 어떤 교재로 공부하나요?',`${a.schoolCourse==='mid'?'중등':'초등'} ${fields.band} 기준: ${standardBook(fields.band,a.schoolCourse,'school')}`,schoolBooks.filter(v=>middleBook(v)===(a.schoolCourse==='mid')).map(v=>[v,v])],
+ thinkingStatus:['이 사고력 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
+ preDone:['초등팩토는 끝냈나요?','초등팩토를 마쳤는지 함께 확인할게요.',[['1','네'],['0','아니요']]],
+ schoolCourse:[young?'교과 수학은 어느 과정을 공부하나요?':'교과는 어느 과정을 공부하나요?',group==='preschool'?'초등·중등 교과서에서 배우는 수학이에요.':young?'학교에서 배우는 수학을 말해요. 지금 공부하는 과정을 골라주세요.':'지금 공부하는 초등·중등·고등 과정을 골라주세요.',courses],
+ schoolBook:['교과는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.schoolCourse,'school')}`,bookList(a.schoolCourse,'school').map(v=>[v,v])],
  school:['교과는 어느 과정인가요?','교과 교재의 학년과 학기를 골라 주세요.',stageOptions(false)],
- schoolStatus:['이 교과 과정은 어떤 상태인가요?','선택한 교과 과정의 상태를 골라 주세요.',progress],
- deepCourse:['심화는 어느 과정을 공부하나요?','교과와 다른 과정이어도 괜찮아요.',courseOptions],
- deepBook:['심화는 어떤 교재로 공부하나요?',`${a.deepCourse==='mid'?'중등':'초등'} ${fields.band} 기준: ${standardBook(fields.band,a.deepCourse,'deep')}`,deepBooks.filter(v=>middleBook(v)===(a.deepCourse==='mid')).map(v=>[v,v==='RPM'?'RPM · 응용 반복':v])],
- deepStage:['심화는 어느 과정인가요?','심화 교재의 학년과 학기를 골라 주세요.',stageOptions(middleBook(a.deepBook))],
- deepStatus:['이 심화 과정은 어떤 상태인가요?','교과의 진행 상태와 따로 골라 주세요.',progress],
- calc:['연산은 어디까지 되나요?','도움 없이 혼자 할 수 있는 단계예요.',calc.map(([v,t])=>[v,t]).concat(older?[['advanced','그 이후 단계']]:[]).concat([['none','아직 시작 전'],['unknown','잘 모르겠어요']])],
+ schoolHigh:[fields.internationalCalendar?'현재 수학 교재의 과목은요?':'현재 고등 수학 과목은요?','과목 이수 순서는 학교 교육과정과 실제 선수학습을 확인합니다.',schoolMath.map(v=>[v,v])],
+ schoolStatus:['이 교과 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
+ deepCourse:[young?'심화 수학은 어느 과정을 공부하나요?':'심화는 어느 과정을 공부하나요?',young?'배운 내용을 써서 더 깊이 생각하는 문제를 풀어요. 아직 시작 전도 고를 수 있어요.':'아직 시작하지 않았다면 아래에서 골라주세요.',courses],
+ deepBook:['심화는 어떤 교재로 공부하나요?',`이 과정의 교재 예: ${standardBook(fields.band,a.deepCourse,'deep')}`,bookList(a.deepCourse,'deep').map(v=>[v,v==='RPM'?'RPM · 응용 반복':v])],
+ deepStage:['심화는 어느 과정인가요?','심화 교재의 학년과 학기를 골라 주세요.',highBook(a.deepBook)?deepMath.map(v=>[v,v]):stageOptions(middleBook(a.deepBook))],
+ deepStatus:['이 심화 과정은 끝냈나요?','지금 공부 중인지, 끝냈는지 골라주세요.',progress],
+ calc:[young?'수와 계산은 어디까지 공부했나요?':'연산은 어디까지 되나요?',group==='preschool'?'수를 나누고 모으기, 덧셈·뺄셈 등을 말해요.':young?'덧셈·뺄셈·곱셈·나눗셈 중 혼자 할 수 있는 것을 골라주세요.':'도움 없이 혼자 할 수 있는 단계예요.',calc.map(([v,t])=>[v,t]).concat(older?[['advanced','그 이후 단계']]:[]).concat([['high','고등 계산·식 변형 연습'],['none','아직 시작 전'],['unknown','잘 모르겠어요']])],
+ calcHigh:[fields.internationalCalendar?'계산·식 변형은 어느 과목에서 연습하나요?':'계산·식 변형은 어느 고등 과목에서 연습하나요?','현재 교과·심화와 별개로 실제 연습하는 범위를 고릅니다.',calcMath.map(v=>[v,v])],
  calcStatus:[(calc.find(c=>c[0]===a.calc)?.[1]||'이 연산')+' 단계는요?','지금 연습하는 중인지, 끝냈는지 골라 주세요.',progress],
  compExact:['지금 사고력 교재는요?','현재 과정 하나만 골라 주세요.',P.COMP.map((c,i)=>[String(i),c[0]])],
- schoolExact:['교과는 어느 과정인가요?','교과 교재의 학년과 학기를 골라 주세요.',[['13','계통 · 대수 정리'],...stageOptions(true)]],
+ schoolExact:['교과는 어느 과정인가요?','교과 교재의 학년과 학기를 골라 주세요.',[['13','초등 계통 대수심화'],...stageOptions(true)]],
  calcExact:['지금 연산 교재는요?','현재 과정 하나만 골라 주세요.',P.CALC.map((c,i)=>[String(i),c[0]])],
  hw:['생각하는 황소도 고려하고 계세요?','나중에 바꿔도 괜찮아요.',[['1','네'],['0','아니요'],['pending','아직 고민 중']]],
  gifted:['영재원도 고려하고 계세요?','나중에 바꿔도 괜찮아요.',[['1','네'],['0','아니요'],['pending','아직 고민 중']]]
@@ -63,11 +91,11 @@ function sourceInput(a,fields){a=effective(a);
   calcRadio:a.calc&&a.calc!=='advanced'&&!special(a.calc)&&a.calcStatus?a.calc+' '+(a.calcStatus==='done'?'완료':'진행 중'):undefined};
 }
 
-function sourceMode(a,fields){a=effective(a);if(!a.age)return false;return noThinking(a)||special(a.calc)||special(a.schoolBook)||(a.schoolStatus==='done'&&+a.schoolExact===19&&middleBook(a.schoolBook))||(a.calc==='advanced'&&+a.calcExact===P.CALC.length-1&&a.calcStatus==='done')||(a.thinking==='advanced'&&+a.compExact===P.COMP.length-1&&a.thinkingStatus==='done')||gradeForAge(age(a,fields),fields.mon)<1||['킨더팩토','키즈팩토'].includes(a.thinking)||schoolChoice(a)==='none'||(a.calc==='소마셈 K'&&a.calcStatus!=='done');}
+function sourceMode(a,fields){a=effective(a);if(fields.internationalCalendar)return true;if(!gradeChoice(a,fields))return false;return highBook(a.schoolBook)||+gradeChoice(a,fields)>=10||noThinking(a)||special(a.calc)||special(a.schoolBook)||(a.schoolStatus==='done'&&+a.schoolExact===19&&middleBook(a.schoolBook))||(a.calc==='advanced'&&+a.calcExact===P.CALC.length-1&&a.calcStatus==='done')||(a.thinking==='advanced'&&+a.compExact===P.COMP.length-1&&a.thinkingStatus==='done')||gradeForAge(age(a,fields),fields.mon)<1||['킨더팩토','키즈팩토'].includes(a.thinking)||schoolChoice(a)==='none'||(a.calc==='소마셈 K'&&a.calcStatus!=='done');}
 function nextComp(index,band){let n=index+1;while(band!=='A'&&n<P.COMP.length&&P.COMP[n][2]==='skip')n++;return Math.min(n,P.COMP.length-1);}
 function fieldChanges(a,fields,key){a=effective(a);
  const result={};const recalc=['band','speed'].includes(key),y=age(a,fields),g=gradeForAge(y,fields.mon);
- if(['age','grade'].includes(key)&&g>=1&&g<=6)result.grade=String(g);
+ if(['age','grade'].includes(key)&&g>=1&&g<=12)result.grade=String(g);
  if(['school','schoolExact','schoolBook','schoolCourse','schoolStatus'].includes(key)||recalc){
   const n=middleBook(a.schoolBook)?+a.schoolExact:!special(a.school)&&a.school!=='advanced'&&a.school?2*(+a.school[0]-1)+(+a.school[2]):null;
   if(!fields.pendingStatus?.schoolStatus&&!special(a.schoolBook)&&Number.isInteger(n)&&n>=1&&n<=19){
@@ -88,16 +116,16 @@ function fieldChanges(a,fields,key){a=effective(a);
  return result;
 }
 function summary(a,fields){a=effective(a);const status=k=>fields.pendingStatus?.[k]?'상태 확인 전':a[k]==='done'?'완료':a[k]==='progress'?'진행 중':'';
- return [{key:'age',label:'나이',text:a.age?age(a,fields)+'세':'미선택'},
+ return [{key:'grade',label:'학년',text:studentLabel(a,fields)},
  {key:'thinking',label:'사고력',text:noThinking(a)?(a.thinkingExperience==='none'?'공부한 경험 없음':'잘 모르겠어요'):(a.thinking==='advanced'?(P.COMP[+a.compExact]?.[0]||'이후 과정'):a.thinking||'미선택')+' '+status('thinkingStatus')},
- {key:'school',label:'교과',text:special(a.schoolBook)?absent(a.schoolBook):((a.schoolExact==='13'&&a.school==='advanced'?'':a.schoolBook||'')+' '+(middleBook(a.schoolBook)||a.school==='advanced'?(+a.schoolExact<=12?P.SEM(+a.schoolExact):a.schoolExact==='13'?'계통·대수':P.MID[+a.schoolExact-14]||'이후 과정'):a.school||'미선택')+' '+status('schoolStatus')).trim()},
- {key:'deepBook',label:'심화',text:special(a.deepBook)?absent(a.deepBook):a.deepBook?`${a.deepBook} ${middleBook(a.deepBook)?P.MID[+a.deepStage-14]||'과정 미선택':a.deepStage||'과정 미선택'} ${status('deepStatus')}`:'미선택'},
- {key:'calc',label:'연산',text:special(a.calc)?absent(a.calc):(a.calc==='advanced'?(P.CALC[+a.calcExact]?.[0]||'이후 단계'):calc.find(c=>c[0]===a.calc)?.[1]||'미선택')+' '+status('calcStatus')}];
+ {key:'school',label:'교과',text:special(a.schoolBook)?absent(a.schoolBook):[a.schoolExact==='13'&&a.school==='advanced'?'':a.schoolBook||'',highBook(a.schoolBook)?a.schoolHigh||'과목 미선택':middleBook(a.schoolBook)||a.school==='advanced'?(+a.schoolExact<=12?P.SEM(+a.schoolExact):a.schoolExact==='13'?'초등 계통 대수심화':P.MID[+a.schoolExact-14]||'이후 과정'):a.school||'미선택',status('schoolStatus')].filter(Boolean).join(' ')},
+ {key:'deepBook',label:'심화',text:special(a.deepBook)?absent(a.deepBook):a.deepBook?`${a.deepBook} ${highBook(a.deepBook)?a.deepStage||'과목 미선택':middleBook(a.deepBook)?P.MID[+a.deepStage-14]||'과정 미선택':a.deepStage||'과정 미선택'} ${status('deepStatus')}`:'미선택'},
+ {key:'calc',label:'연산',text:special(a.calc)?absent(a.calc):a.calc==='high'?(a.calcHigh||'고등 과목 확인 전')+' · 계산·식 변형 연습 '+status('calcStatus'):(a.calc==='advanced'?(P.CALC[+a.calcExact]?.[0]||'이후 단계'):calc.find(c=>c[0]===a.calc)?.[1]||'미선택')+' '+status('calcStatus')}];
 }
 // Each subject resolves independently. An original-only answer never replaces
 // the other subjects with the original demo's limited curriculum.
 function hasAnswer(a,fields,key){
- if(fields.pendingStatus?.[key])return false;const q=questions(a,fields)[key];return !!q&&q[2].some(([v])=>String(a[key])===String(v));
+ if(fields.pendingStatus?.[key])return false;const q=questions(a,fields)[key];return !!q&&q[2].some(([v])=>String(key==='grade'?gradeChoice(a,fields):a[key])===String(v));
 }
 function firstMissing(a,fields){return order(a,fields).find(k=>!hasAnswer(a,fields,k));}
 function options(a,fields,overrides={}){a=effective(a);
@@ -105,6 +133,7 @@ function options(a,fields,overrides={}){a=effective(a);
  for(const key of ['grade','mon','year','school','schoolLeft','comp','compLeft','calc','calcLeft','speed'])value[key]=+value[key];return value;
 }
 function deepRow(a,fields,now){a=effective(a);
+ if(highBook(a.deepBook))return null;
  if(!deepBooks.includes(a.deepBook)||!hasAnswer(a,fields,'deepStage')||!hasAnswer(a,fields,'deepStatus'))return null;
  const mid=middleBook(a.deepBook),first=mid?+a.deepStage:2*(+a.deepStage[0]-1)+(+a.deepStage[2]),last=mid?19:12;
  const duration=mid?P.BAND[fields.band].midLen:a.deepBook==='개념응용 · 최상위'?3:2,blocks=[];
@@ -120,6 +149,7 @@ function deepRow(a,fields,now){a=effective(a);
 }
 function buildPlan(a,fields,overrides={}){a=effective(a);
  const o=options(a,fields,overrides),plan=P.build(o);
+ if(highBook(a.schoolBook)||a.calc==='high')plan.rows=plan.rows.map(r=>(r.key==='school'&&highBook(a.schoolBook))||(r.key==='calc'&&a.calc==='high')?{...r,blocks:[]}:r);
  if(fields.band==='D'&&a.schoolBook&&!special(a.schoolBook)){const personal=P.build({...o,personalSchool:true});plan.rows=plan.rows.map(r=>r.key==='school'?personal.rows.find(x=>x.key==='school'):r);plan.mid=personal.mid;}
  if(a.schoolBook&&!special(a.schoolBook)){
   const row=plan.rows.find(r=>r.key==='school');
@@ -134,6 +164,7 @@ function buildPlan(a,fields,overrides={}){a=effective(a);
  return plan;
 }
 function profile(a,fields,overrides={}){a=effective(a);
+ if(fields.internationalCalendar){const summaries=summary(a,fields);return {ready:false,now:null,nowLabel:studentLabel(a,fields),rows:[['school','school'],['thinking1','thinking'],['deep','deepBook'],['calc','calc']].map(([key,label])=>({key,current:{shortText:summaries.find(x=>x.key===label)?.text||'확인 전',e:null},blocks:[],remaining:[],next:null})),comparison:{ready:false,levels:[],best:null}};}
  const original=D.buildProfile(sourceInput(a,fields)),now=original.now;
  if(!Number.isFinite(now))return original;
  const plan=buildPlan(a,fields,overrides),shift=now-plan.now,young=gradeForAge(age(a,fields),fields.mon)<1;
@@ -156,10 +187,10 @@ function profile(a,fields,overrides={}){a=effective(a);
    return row;
   }
   const exhausted=k==='thinking1'?a.thinking==='advanced'&&+a.compExact===P.COMP.length-1&&a.thinkingStatus==='done':k==='calc'?a.calc==='advanced'&&+a.calcExact===P.CALC.length-1&&a.calcStatus==='done':middleBook(a.schoolBook)&&+a.schoolExact===19&&a.schoolStatus==='done';
-  const resolved=fromEngine(k);if(exhausted){resolved.blocks=[];resolved.remaining=[];resolved.next=null;}return resolved;
+  const resolved=fromEngine(k);if(k==='school'&&highBook(a.schoolBook)){resolved.blocks=[];resolved.remaining=[];resolved.next=null;}if(exhausted){resolved.blocks=[];resolved.remaining=[];resolved.next=null;}return resolved;
  });
  if(Object.hasOwn(a,'deepBook'))rows.splice(2,0,fromEngine('deep'));
- return {...original,rows,comparison:Object.values(fields.pendingStatus||{}).some(Boolean)?{ready:false,levels:[],best:null}:original.comparison};
+ return {...original,nowLabel:labelMonth(now),rows,comparison:Object.values(fields.pendingStatus||{}).some(Boolean)?{ready:false,levels:[],best:null}:original.comparison};
 }
 // Explicitly chosen depth is independent of the curriculum's relative depth preset.
 function narrative(plan){
@@ -183,5 +214,5 @@ function milestones(a,fields,p){a=effective(a);
  forks.push({id:'gift',title:'영재원',m:p.now+2,selected:a.gifted==='1',pending:!['0','1'].includes(a.gifted),yes:'선발 안내 함께 확인',no:'현재 학습 이어가기',reason:a.gifted==='1'?'선발 시기와 자격은 해당 연도 공고에서 확인해요.':'지금 학습을 이어가며 나중에 바꿔도 괜찮아요.'});
  return {main,branch:[],forks};
 }
-global.PlannerIntake=Object.freeze({thinking,calc,schoolBooks,deepBooks,special,effective,middleBook,noThinking,age,gradeForAge,order,standardBook,questions,hasAnswer,firstMissing,sourceInput,options,deepRow,buildPlan,profile,narrative,sourceMode,fieldChanges,summary,milestones});
+global.PlannerIntake=Object.freeze({highSubjects,highBook,bookList,thinking,calc,schoolBooks,deepBooks,special,effective,middleBook,noThinking,age,gradeChoice,audience,learningLabels,studentLabel,labelMonth,gradeForAge,order,standardBook,questions,hasAnswer,firstMissing,sourceInput,options,deepRow,buildPlan,profile,narrative,sourceMode,fieldChanges,summary,milestones});
 })(window);

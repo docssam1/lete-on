@@ -1,0 +1,83 @@
+/* User-selected typography, served locally with accompanying OFL licenses. */
+@font-face{font-family:'GFIELD Pretendard';src:url('assets/fonts/pretendard-var.woff2') format('woff2');font-style:normal;font-weight:45 920;font-display:swap}
+@font-face{font-family:'GFIELD Source Han Serif';src:url('assets/fonts/source-han-serif-kr-vf.woff2') format('woff2');font-style:normal;font-weight:200 900;font-display:swap}
+body.roadmap-studio{--font-ui:'GFIELD Pretendard','Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;--font-reading:'GFIELD Source Han Serif','Source Han Serif K','본명조','Noto Serif KR',Batang,serif;font-family:var(--font-ui);font-optical-sizing:auto;font-synthesis:none;letter-spacing:-.018em;-webkit-font-smoothing:antialiased}
+body.roadmap-studio :is(button,input,select,textarea,table,summary,svg text){font-family:var(--font-ui)}
+body.roadmap-studio :is(.course-summary,.course-book-other,.pathway-detail p,.pathway-detail li,.study-steps p,.transition-plan-detail dd,.course-inspector .workspace-note p){font-family:var(--font-reading);font-size:15px;line-height:1.95;letter-spacing:0;word-break:keep-all;overflow-wrap:anywhere}
+body.roadmap-studio :is(h1,h2,h3,h4){letter-spacing:-.035em;font-weight:650;text-wrap:balance}
+body.roadmap-studio .top{background:#fffefe;border-bottom:1px solid #e5dfea;box-shadow:none}
+body.roadmap-studio .ttl{font-size:15px;letter-spacing:-.025em;font-weight:550}
+body.roadmap-studio .nav{gap:4px;padding:4px;background:#f3eff7;border:1px solid #e9e1ef;border-radius:28px}
+body.roadmap-studio .nav button{font-size:13px;min-height:44px;padding:10px 18px;border:1px solid transparent;border-radius:24px;color:#786d82;transition:background .15s,color .15s}
+body.roadmap-studio .nav button.on{border:1px solid #d8c9e4;color:#5e3c78;background:#fff;box-shadow:0 2px 5px #482d650c}
+body.roadmap-studio .gear{font-weight:550}
+body.roadmap-studio .journey-heading h2{font-size:22px;font-weight:650}
+body.roadmap-studio .workspace-summary strong{font-size:20px;font-weight:650}
+body.roadmap-studio .workspace-tabs{padding:8px 14px;gap:6px;background:#f8f5fb}
+body.roadmap-studio .workspace-tabs button{display:flex;justify-content:center;align-items:center;gap:8px;font-size:14px;min-height:48px;font-weight:550;padding:10px 8px;border-radius:12px;transition:background .15s,border-color .15s}
+body.roadmap-studio .workspace-tabs button[aria-selected=true]{background:#72508e;color:#fff;border-color:#72508e;box-shadow:0 4px 10px #67437e17}
+body.roadmap-studio .editorial-menu-icon{width:19px;height:19px;flex:none}
+body.roadmap-studio .pathway-coach .guide{border:0;padding:0 0 8px;gap:12px;align-items:center}
+body.roadmap-studio .pathway-coach .guide img{width:48px;height:48px;object-fit:cover;border-radius:50%;border:1px solid #e6ddec;background:#fff;box-shadow:0 3px 10px #59456609}
+body.roadmap-studio .pathway-coach .guide>span{font-size:14px;font-weight:600;color:#5f4770}
+body.roadmap-studio .pathway-coach .guide small{font-size:12px;font-weight:400;color:#82738c;margin-top:4px}
+body.roadmap-studio .pathway-coach h1{font-size:26px;line-height:1.4;margin:16px 0 18px;font-weight:680}
+body.roadmap-studio #pathwaySummary.guide-speech{position:relative;background:#fff;border:1px solid #dccde5;border-radius:4px 17px 17px 17px;padding:16px 17px 18px;margin:0 0 22px;box-shadow:0 5px 20px #5d427310;font-size:14px;line-height:1.85;color:#65556f;word-break:keep-all;overflow-wrap:anywhere}
+body.roadmap-studio .guide-speech:before{content:'';position:absolute;width:13px;height:13px;background:#fff;left:17px;top:-8px;border-left:1px solid #dccde5;border-top:1px solid #dccde5;transform:rotate(45deg)}
+body.roadmap-studio .speech-kicker{display:block;color:#8a6b9b;font-size:11px;font-weight:650;letter-spacing:.02em;margin-bottom:7px}
+body.roadmap-studio .speech-copy{display:block;font-weight:450}
+body.roadmap-studio .pathway-options>button{border-radius:13px;border-color:#d5c8df;box-shadow:none;font-size:15px;min-height:60px;transition:border-color .15s,background .15s}
+body.roadmap-studio .pathway-options>button strong{font-weight:580;font-size:15px;letter-spacing:-.02em}
+body.roadmap-studio .pathway-options>button[aria-pressed=true]{background:#f0e8f7;border-color:#9875b0;box-shadow:inset 3px 0 0 #77518f}
+body.roadmap-studio .workspace-tabs button:hover,body.roadmap-studio .pathway-options>button:hover{border-color:#a284b8}
+body.roadmap-studio .course-route path.editorial-route-wash{stroke:#d7bc86;stroke-width:18;stroke-opacity:.48;stroke-dasharray:none;filter:none}
+body.roadmap-studio .course-route path.editorial-route-ink{stroke:#825c9b;stroke-width:2.5;stroke-dasharray:5 9;filter:none}
+body.roadmap-studio .course-route .editorial-ink-arrow path{stroke:#987044;stroke-width:2;stroke-dasharray:none;filter:none}
+body.roadmap-studio .course-route .editorial-ink-arrow marker path{stroke-width:1.8}
+body.roadmap-studio .course-stop-label{border-radius:15px;background:#fffefcf7;padding:12px;box-shadow:0 6px 18px #61427713}
+body.roadmap-studio .course-stop.is-active .course-stop-label{border-color:#906ba9;background:#fff;padding:11px}
+body.roadmap-studio .course-stop-label strong{font-size:16px;font-weight:650}
+body.roadmap-studio .course-stop-label small{font-size:12px;color:#896d99}
+body.roadmap-studio .course-stop.is-active .course-stop-label strong{text-decoration:underline;text-decoration-color:#d7bc8680;text-decoration-thickness:7px;text-underline-offset:-3px;text-decoration-skip-ink:none}
+body.roadmap-studio .transition-chart-wrap .editorial-curve-wash{fill:none;stroke:#bca06b;stroke-opacity:.27;stroke-width:12;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+body.roadmap-studio .transition-chart-wrap .editorial-arrow-label{font-family:var(--font-ui);font-size:13px;fill:#8b663d;font-weight:550;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+body.roadmap-studio .editorial-ink-arrow{pointer-events:none}
+body.roadmap-studio .editorial-note{position:relative;margin:16px 0;padding:16px 20px;background:#fffdfa;border:1px solid #e6ddcf;border-radius:15px 15px 15px 4px;color:#6b5d4c;box-shadow:0 3px 12px #9c805a08;font-size:14px;line-height:1.85}
+body.roadmap-studio .editorial-note:before{content:'';position:absolute;left:27px;top:-7px;width:12px;height:12px;transform:rotate(45deg);background:#fffdfa;border-left:1px solid #e6ddcf;border-top:1px solid #e6ddcf}
+body.roadmap-studio .editorial-note-label{display:block;font-size:14px;font-weight:650;color:#80623e;margin:0 0 5px}
+body.roadmap-studio .editorial-note p{margin:0;line-height:1.85;font-size:13px}
+body.roadmap-studio .editorial-route-note{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;background:#fffdfa;border:1px solid #e6ddcf;border-radius:15px 15px 4px 15px;padding:16px 18px;margin:18px 0 0;line-height:1.85}
+body.roadmap-studio .editorial-route-note>.landscape-outcome-dot{display:none}
+body.roadmap-studio .editorial-route-note>strong{grid-column:1;color:#80623e;font-size:14px;font-weight:650}
+body.roadmap-studio .editorial-route-note>p{grid-column:1;color:#73614d;font-size:13px;min-width:0}
+body.roadmap-studio .editorial-route-note>button{grid-column:2;grid-row:1 / span 2;align-self:end;color:#8d6a40}
+body.roadmap-studio .editorial-route-note:before{content:'';position:absolute;width:12px;height:12px;top:-7px;right:28px;transform:rotate(45deg);background:#fffdfa;border-left:1px solid #e6ddcf;border-top:1px solid #e6ddcf}
+body.roadmap-studio .month-ribbon li.has-extra{background:#f4f7f2;border-color:#d9e1d1}
+body.roadmap-studio .month-ribbon li>strong{font-weight:650}
+body.roadmap-studio .month-ribbon li>small{font-size:11px}
+body.roadmap-studio .month-ribbon button{font-weight:600;line-height:1.6}
+body.roadmap-studio .faq-question-text{font-weight:580!important;letter-spacing:-.025em}
+body.roadmap-studio .faq-answer p{font-size:14px;line-height:1.95}
+body.roadmap-studio .workspace-level-caption{font-size:13px;line-height:1.85}
+body.roadmap-studio .workspace-graph-result{background:#f5f0e8;color:#80623e;border-color:#c7aa78;font-size:13px}
+@media(max-width:800px){
+ body.roadmap-studio .ttl{font-size:12px}
+ body.roadmap-studio .workspace-summary strong{font-size:18px}
+ body.roadmap-studio .workspace-tabs{padding:6px;gap:3px}
+ body.roadmap-studio .workspace-tabs button{font-size:11px;gap:5px;flex-direction:column;padding:7px 1px;min-height:64px;line-height:1.4}
+ body.roadmap-studio .editorial-menu-icon{width:18px;height:18px}
+ body.roadmap-studio .pathway-coach .guide img{width:44px;height:44px}
+ body.roadmap-studio .pathway-coach h1{font-size:24px}
+ body.roadmap-studio #pathwaySummary.guide-speech{padding:14px 15px 16px;font-size:14px}
+ body.roadmap-studio .speech-kicker{font-size:11px}
+ body.roadmap-studio .course-stop-label strong{font-size:15px}
+ body.roadmap-studio .course-stops:before{border-left-color:#ac8bbd;box-shadow:-3px 0 0 #d7bc8655}
+ body.roadmap-studio .course-stops li+li:after{content:'⌄';position:absolute;left:-21px;top:-19px;color:#987044;font-family:var(--font-ui);font-size:22px;line-height:1}
+ body.roadmap-studio .editorial-note{padding:14px 16px;font-size:13px}
+ body.roadmap-studio .editorial-route-note{padding:14px;grid-template-columns:1fr}
+ body.roadmap-studio .editorial-route-note>button{grid-column:1;grid-row:auto;justify-self:end}
+ body.roadmap-studio .workspace-level-caption{font-size:12px}
+ body.roadmap-studio :is(.course-summary,.course-book-other,.pathway-detail p,.pathway-detail li,.study-steps p,.transition-plan-detail dd,.course-inspector .workspace-note p){font-size:15px;line-height:1.95}
+}
+@media(prefers-reduced-motion:reduce){body.roadmap-studio .workspace-tabs button,body.roadmap-studio .pathway-options>button,body.roadmap-studio .nav button{transition:none}}
+@media print{body.roadmap-studio .editorial-ink-arrow{display:none}}

@@ -1,0 +1,45 @@
+/* Approved reference-inspired student illustrations; scoped to the roadmap workspace. */
+.student-pair{display:flex;align-items:flex-end;justify-content:center;width:100%;height:100%;pointer-events:none}
+.student-sprite{display:block;flex:none;width:57%;height:100%;background-image:url('assets/student-growth-atlas-20261025.png');background-repeat:no-repeat;background-position-x:var(--student-column);filter:drop-shadow(0 5px 3px #46315416)}
+.student-boy{aspect-ratio:354.8/486;background-size:500% 182.5103%;background-position-y:0}
+.student-girl{aspect-ratio:354.8/401;background-size:500% 221.197%;background-position-y:100%;height:83%;margin-left:-14%}
+.student-map-marker{display:block;position:absolute;width:132px;height:168px;z-index:4;pointer-events:none;bottom:82px;left:50%;transform:translateX(-50%)}
+.has-student-marker{position:relative}
+.career-landscape{height:440px}
+.career-landscape li:first-child{top:78%}
+.career-landscape li:first-child .student-map-marker{bottom:100%;height:154px;width:126px}
+.career-landscape li:first-child .career-scene-label{position:relative;z-index:5}
+.career-landscape .student-growth-open,.course-terrain .student-growth-open,.standard-landscape .student-growth-open{position:absolute;top:12px;right:12px;z-index:6;min-height:44px;border:1px solid #d4c5df;background:#fffdfaf2;color:#5d4075;border-radius:24px;padding:9px 14px;font-size:12px;cursor:pointer;box-shadow:0 4px 14px #40255012}
+.course-terrain .student-map-marker{bottom:95%;left:20%;height:170px}.course-terrain .student-growth-open{top:52px}
+.standard-landscape>.student-map-marker{left:13%;bottom:15px;height:200px;width:164px}
+.student-growth-dialog{box-sizing:border-box;width:min(1240px,96vw);max-height:94dvh;border:1px solid #ddd1e6;border-radius:24px;padding:0;color:#402951;background:#faf8fc;box-shadow:0 24px 100px #24113240}
+.student-growth-dialog::backdrop{background:#21112d5c;backdrop-filter:blur(6px)}
+.student-growth-dialog>header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #e4dce9;background:#fff;position:sticky;top:0;z-index:5}.student-growth-dialog>header h2{font-size:17px;margin:0}.student-growth-dialog button{font:inherit;color:#603c7a;cursor:pointer;min-height:44px;border:1px solid #d4c5df;border-radius:24px;background:#fff;padding:10px 18px}
+.student-growth-review{display:grid;grid-template-columns:1.65fr 1fr;gap:24px;padding:24px}
+.student-growth-visual{min-width:0;border:1px solid #e7dff0;border-radius:20px;padding:22px 18px;background:linear-gradient(145deg,#fbf9ff,#eee8f6)}
+.student-growth-visual header{margin-bottom:16px}.student-growth-visual h3{font-size:25px;margin:0;color:#452465}.student-growth-visual header p{font-size:13px;color:#7a638b;margin:8px 0}
+.student-growth-columns{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;align-items:stretch}
+.student-growth-stage{position:relative;min-width:0;text-align:center;padding-bottom:26px;border-radius:12px}
+.student-growth-stage>strong{display:block;padding:9px 2px;font-size:12px;background:#eae2f3;border-radius:8px;color:#52366c;white-space:nowrap}
+.student-growth-stage>.student-pair{height:224px;display:grid;grid-template-rows:1fr 1fr;justify-items:center;align-items:end;padding-top:12px;box-sizing:border-box;gap:4px}
+.student-growth-stage .student-sprite{width:100%;height:100%;margin:0;background-size:500% 182.5103%}.student-growth-stage .student-girl{background-size:500% 221.197%;height:100%}
+.student-growth-stage.is-current{background:#fff8;box-shadow:0 0 0 1px #a787c7}.student-growth-stage.is-current>strong{background:#795398;color:#fff}
+.student-now{position:absolute;bottom:4px;left:0;right:0;font-size:11px;color:#704290}
+.student-example-note{font-size:12px;line-height:1.7;color:#7f6d8c;margin:18px 0 0}
+.student-growth-summary{border:1px solid #e7dfec;border-radius:20px;padding:26px;background:#fff;min-width:0}.student-growth-summary>small{color:#8a7399;font-size:12px}.student-growth-summary h3{font-family:var(--font-serif,serif);font-size:27px;margin:10px 0 22px;color:#402154}.student-growth-summary dl{margin:0}.student-growth-summary dl>div{border-top:1px solid #e4dce9;padding:14px 0}.student-growth-summary dt{font-size:12px;color:#8b729c;margin-bottom:4px}.student-growth-summary dd{font-size:15px;color:#493453;margin:0;line-height:1.6;word-break:keep-all}.student-growth-summary p{font-size:12px;line-height:1.8;color:#7d698c}.student-growth-summary button{width:100%;margin-top:14px}
+.career-options button strong,.career-map-branches button,.career-active-choices button{word-break:keep-all;overflow-wrap:break-word;line-height:1.7}
+@media(max-width:800px){.career-landscape{height:390px}.career-landscape li:first-child{top:80%}.career-landscape li:first-child .student-map-marker{height:126px;width:102px;left:58%}.student-map-marker{width:96px;height:124px}.course-terrain .student-map-marker{height:122px;width:98px;left:45%;bottom:98%}.standard-landscape>.student-map-marker{height:142px;width:116px;bottom:10px}.career-landscape .student-growth-open,.course-terrain .student-growth-open,.standard-landscape .student-growth-open{font-size:11px;padding:8px 12px;top:8px;right:8px}.course-terrain .student-growth-open{top:44px}.student-growth-dialog{width:96vw;max-height:94dvh;border-radius:18px}.student-growth-dialog>header{padding:12px 16px}.student-growth-dialog>header h2{font-size:15px}.student-growth-review{grid-template-columns:1fr;gap:14px;padding:12px}.student-growth-visual{padding:16px 12px}.student-growth-visual h3{font-size:22px}.student-growth-stage>strong{font-size:10px;white-space:normal;min-height:34px;align-content:center;line-height:1.6}.student-growth-columns{gap:4px}.student-growth-stage>.student-pair{height:168px;gap:8px}.student-growth-summary{padding:20px}.student-growth-summary h3{font-size:24px}.student-now{font-size:9px}.student-example-note{font-size:11px}}
+@media(min-width:801px){.student-growth-stage>.student-pair{height:390px;gap:12px}.career-landscape li:first-child .student-map-marker{height:190px;width:164px}}
+.student-now{top:44px;bottom:auto}
+.career-scene-label strong{word-break:keep-all;overflow-wrap:break-word}
+body.integrated-planner .standard-landscape>.student-map-marker{left:18%;bottom:calc(37% + 55px);height:158px;width:140px}
+@media(max-width:800px){
+ body.integrated-planner[data-plan-workspace] .standard-roadmap .standard-landscape{height:390px}
+ body.integrated-planner .standard-landscape>.student-map-marker{left:20%;bottom:130px;height:132px;width:108px}
+ body.integrated-planner .standard-landscape .standard-stage{left:20%;top:80%;width:108px;max-width:32%;min-height:94px;padding:9px 10px;gap:3px;border-radius:12px}
+ body.integrated-planner .standard-landscape .standard-stage:nth-child(2){left:52%;top:53%}
+ body.integrated-planner .standard-landscape .standard-stage:nth-child(3){left:81%;top:27%}
+ body.integrated-planner .standard-landscape .standard-stage:nth-child(n+2):before{display:none}
+ body.integrated-planner .standard-landscape .standard-stage strong{font-size:13px;line-height:1.5}
+ body.integrated-planner .standard-landscape .standard-stage :is(small,span){font-size:10px;line-height:1.5}
+}

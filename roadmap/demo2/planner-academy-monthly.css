@@ -1,0 +1,39 @@
+/* Source periods remain intact; monthly columns only reveal their placement. */
+.academy-monthly-comparison{min-width:0;margin:28px 0;padding-top:20px;border-top:1px solid #ded5e5}
+.academy-monthly-comparison>header h3{font-size:19px;margin:0 0 7px;color:#4d355e}
+.academy-monthly-comparison>header p{font-size:13px;line-height:1.6;color:#766b7f;margin:0 0 18px}
+.academy-monthly-card{min-width:0;margin:22px 0 30px}
+.academy-monthly-card>h4{font-size:17px;color:var(--beam-ink);margin:0 0 12px}
+.academy-month-plan{min-width:0;max-width:100%;margin:12px 0 22px}
+.academy-month-screen{--academy-row-width:148px;container-type:inline-size;max-width:100%;overflow:auto;border:1px solid #d9d1e2;border-radius:6px;scrollbar-width:thin;scrollbar-color:#b9a7ca #f5f1f8;overscroll-behavior-x:contain}
+.academy-month-screen:focus-visible{outline:3px solid #9870b5;outline-offset:3px}
+table.academy-month-table{width:calc(148px + var(--academy-month-count)*64px);min-width:100%;max-width:none;border-collapse:separate;border-spacing:0;table-layout:fixed;margin:0;font-family:var(--font-ui);font-size:12px;line-height:1.45;color:#3e3547}
+.academy-month-row-col{width:148px}.academy-month-col{width:64px}
+.academy-month-table caption{text-align:left;padding:12px 14px;font-size:13px;font-weight:650;color:var(--beam-ink,#4d355e);background:#fff}
+.academy-month-table th,.academy-month-table td{border:0;border-right:1px solid #ddd6e4;border-bottom:1px solid #ddd6e4;padding:9px 6px;text-align:center;vertical-align:middle;overflow-wrap:anywhere;word-break:normal;box-sizing:border-box}
+.academy-month-table thead th{background:#f0eaf5;color:#5c496b;font-weight:600}
+.academy-month-table thead th small{display:block;font-size:10px;font-weight:450;margin-bottom:3px}
+.academy-month-table thead th b{font-size:12px;font-weight:650}
+.academy-month-table thead th.is-current{background:#ded0ec;box-shadow:inset 0 -3px #79508f}
+.academy-month-table th[scope=row]{position:sticky;left:0;z-index:2;background:#faf8fc;font-weight:600;box-shadow:2px 0 4px #4d355e0c}
+.academy-month-table th[rowspan]{position:sticky;left:0;z-index:3}
+.academy-month-table td{height:57px}
+.academy-month-table td strong{display:block;font-size:12px;font-weight:550;line-height:1.5}
+.academy-month-screen td strong{display:inline-block;position:sticky;left:calc(var(--academy-row-width) + 12px);right:12px;max-width:calc(100cqw - var(--academy-row-width) - 32px)}
+.academy-month-table td small{display:block;font-size:10px;margin-top:3px}
+.academy-month-table .tone-0{background:#e9e2f2}.academy-month-table .tone-1{background:#dfeee9}.academy-month-table .tone-2{background:#e0eaf4}.academy-month-table .tone-3{background:#f1e3ee}
+.academy-month-table .is-empty{background:#fcfbfd;color:#b7aebf}
+.academy-month-table .is-event strong{font-size:11px}
+.academy-month-print{display:none}
+.academy-month-empty-note{font-size:12px!important;color:#83748e!important;line-height:1.7!important}
+.pr-document .academy-month-table th:first-child{width:auto}
+@media(max-width:800px){.academy-month-screen{--academy-row-width:112px}table.academy-month-table{width:calc(112px + var(--academy-month-count)*58px)}.academy-month-row-col{width:112px}.academy-month-col{width:58px}.academy-monthly-comparison>header h3{font-size:17px}.academy-month-table th,.academy-month-table td{padding:8px 5px}.academy-month-table td strong{font-size:11px}}
+@media print{
+ .academy-month-screen{display:none!important}.academy-month-print{display:block!important}
+ .academy-month-print table.academy-month-table{width:100%;min-width:0!important;max-width:100%;font-size:8pt;line-height:1.35;margin:10pt 0 16pt;break-inside:avoid;page-break-inside:avoid}
+ .academy-month-print .academy-month-row-col{width:65pt}.academy-month-print .academy-month-col{width:auto}
+ .academy-month-print .academy-month-table th,.academy-month-print .academy-month-table td{padding:5pt 3pt;height:auto;position:static;box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .academy-month-print .academy-month-table td strong,.academy-month-print .academy-month-table thead th b{font-size:8pt}
+ .academy-month-print .academy-month-table small,.academy-month-print .academy-month-table thead th small{font-size:7pt}
+ .academy-month-print .academy-month-table caption{font-size:9pt;padding:5pt 0;break-after:avoid}
+}

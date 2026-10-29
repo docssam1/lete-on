@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GFIELD · 학습 설계 시안</title><link rel="icon" href="data:,"><link rel="preload" href="assets/fonts/pretendard-var.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="planner-design.css?v=20261024-bounded-catch12"></head>
+<body>
+<header class="app-header"><div class="brand">GFIELD<span>학습 설계</span></div><span class="design-label">구성 시안 · 초5 국제학교 예시</span><a class="integrated-link" href="planner.html">전체 로드맵에서 설계하기 <span aria-hidden="true">↗</span></a></header>
+<main>
+<header class="page-header"><div><p class="eyebrow">우리 아이의 다음 과정</p><h1>배움의 흐름을 함께 그립니다.</h1></div><p>초5 · 국제학교<span>디딤돌 응용 5-2를 공부하는 중</span></p></header>
+<div id="design-current-study"></div>
+<nav class="mobile-panes" aria-label="설계와 결과"><button type="button" data-pane="decision" aria-pressed="true">갈림길 선택</button><button type="button" data-pane="result" aria-pressed="false">내 계획 보기 <span>↗</span></button></nav>
+<div class="planning-desk">
+<section class="decision" aria-labelledby="decision-title">
+ <nav class="decision-steps" aria-label="설계 단계"><span>교재</span><i></i><span>병행</span><i></i><strong>배분</strong><i></i><span>확인</span></nav>
+ <div class="mentor"><img src="../docssam.jpg" alt="독쌤"><div><strong>독쌤과 함께 설계합니다</strong><span>현재 공부를 지키며, 다음 범위를 살펴봅니다.</span></div></div>
+ <div class="speech"><p>시간을 더 쓴 만큼 곧바로 빨라지지는 않습니다.<br>기존 복습은 남겨두고, <mark>새 진도에 조금 더 배분한 경우</mark>를 함께 비교해 보겠습니다.</p></div>
+ <p class="step-caption">지금 고를 갈림길</p><h2 id="decision-title">새 진도에 얼마나<br>더 배분해 볼까요?</h2>
+ <div class="choices" role="group" aria-label="추가 배분 목표"><button type="button" data-load="twiceWeekly" aria-pressed="false"><span class="choice-mark"></span><span><strong>매주 두 번</strong><small>주 2회 · 회당 2시간</small></span><span class="choice-arrow">↗</span></button><button type="button" data-load="weekly" aria-pressed="true"><span class="choice-mark"></span><span><strong>매주 한 번</strong><small>주 1회 · 회당 2시간</small></span><span class="choice-arrow">↗</span></button></div>
+ <p class="ramp-caption">선택한 목표까지 6개월에 걸쳐 서서히 늘립니다.</p>
+ <details class="decision-detail"><summary>처음부터 이 회차로 공부하나요?</summary><p>아닙니다. 추가 배분을 시작한 뒤 2개월에는 목표의 50%, 4개월에는 80%, 6개월에는 100%로 늘리는 비교 가정입니다. 기존 복습·심화·연산과 휴식은 유지하며, 추가 배분은 최대 6개월로 둡니다.</p></details>
+ <button class="review-plan" type="button">선택한 계획 살펴보기 <span>→</span></button>
+ <section class="parent-question" aria-labelledby="parent-question-title"><p class="eyebrow" id="parent-question-title">이 갈림길에서 자주 묻는 질문</p><button class="faq-question" type="button" aria-expanded="false"><span class="watermark" aria-hidden="true">Q</span><strong>책을 빨리 끝내면<br>상위 진도도 따라잡을 수 있나요?</strong><span>독쌤의 답변 <b>↗</b></span></button><p class="faq-answer" hidden>먼저 시작한 진도 차이와 같은 과정을 공부하는 속도는 다릅니다. 상위 예시도 공부를 이어가므로 책을 빨리 푸는 것만으로 합류가 정해지지는 않습니다. 설명·적용·오류 수정까지 확인하고 그래프의 비교 가정과 실제 부담을 함께 살펴보세요.</p></section>
+</section>
+<section class="result" aria-labelledby="result-title">
+ <header class="result-heading"><div><p class="eyebrow">선택한 공부가 이어지는 곳</p><h2 id="result-title">5-2에서 6-2까지, 한 학기씩.</h2></div><span class="selection-badge" id="selected-load">목표 주 1회 추가</span></header>
+ <div class="result-tabs" role="tablist" aria-label="같은 계획을 보는 방법"><button type="button" id="design-tab-map" role="tab" aria-controls="design-map" aria-selected="true" data-view="map">공부 지도</button><button type="button" id="design-tab-graph" role="tab" aria-controls="design-graph" aria-selected="false" data-view="graph">진도 비교</button><button type="button" id="design-tab-table" role="tab" aria-controls="design-table" aria-selected="false" data-view="table">교재·수업 계획</button></div>
+ <div class="result-content">
+ <section class="map-panel" id="design-map" role="tabpanel" aria-labelledby="design-tab-map">
+  <div class="landscape"><img class="landscape-art" src="assets/learning-landscape-20261023.png" width="1536" height="1024" alt="배움의 공간이 길로 이어지는 풍경"><div class="map-title"><span class="live-dot"></span>선택하며 만들어가는 공부 지도</div><svg class="route-graphic" viewBox="0 0 1000 590" preserveAspectRatio="none" aria-hidden="true"><defs><marker id="map-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#86629c" stroke-width="2"/></marker></defs><path class="path-wash" d="M180 385C240 420 285 280 470 303S650 200 795 170"/><path class="path-outline" d="M180 385C240 420 285 280 470 303S650 200 795 170"/><path class="path-progress" d="M180 385C240 420 285 280 470 303" marker-end="url(#map-arrow)"/><path class="map-note-arrow" d="M655 95Q705 95 751 138" marker-end="url(#map-arrow)"/><text x="520" y="88">확인한 뒤, 다음 범위로</text></svg>
+   <button class="map-stop current active" data-course="10" type="button" aria-pressed="true"><span class="stop-label"><small>현재 공부</small><strong>5-2</strong><span>개념과 적용을 충분히</span></span><span class="stop-base"><b>1</b></span></button>
+   <button class="map-stop next" data-course="11" type="button" aria-pressed="false"><span class="stop-label"><small>다음 학기</small><strong>6-1</strong><span>설명과 응용 이어가기</span></span><span class="stop-base"><b>2</b></span></button>
+   <button class="map-stop later" data-course="12" type="button" aria-pressed="false"><span class="stop-label"><small>그다음 과정</small><strong>6-2</strong><span>익힌 내용을 연결하기</span></span><span class="stop-base"><b>3</b></span></button>
+   <div class="course-popover"><div class="popover-top"><span id="course-context">살펴보는 과정 · 교과 응용</span><span class="course-number">01</span></div><h3 id="course-book">디딤돌 응용 5-2</h3><p id="course-date">선택한 계획의 비교 일정</p><div class="parallel-tags"><span id="deep-book">다음 심화 · 같은 학기 최상위 S</span><span>연산 · 계산법 6권 유지</span></div><p class="course-action" id="course-action">다른 날에도 혼자 풀고, 식을 세운 이유를 설명하는지 확인합니다.</p></div>
+  </div>
+  <div class="month-plan"><header><h3>월별로 놓아보면</h3><span>학년은 국내 학제 기준 · 교재 학기와 별도</span></header><p class="cadence-note"><span>교과 응용</span><b aria-hidden="true">→</b><span>같은 학기 심화</span><b aria-hidden="true">→</b><span>다음 학기 교과</span><small>응용 다음의 두 달은 같은 학기 심화를 공부하는 기간입니다.</small></p><div class="months-scroll"><div class="quarter-axis" id="quarter-axis"></div><div class="month-axis" id="month-axis"></div><div class="course-bars" id="course-bars"></div></div></div>
+ </section>
+ <section class="graph-panel" id="design-graph" role="tabpanel" aria-labelledby="design-tab-graph" hidden><div id="graph-slot"></div><div class="graph-explanation"><div class="pen-glyph" aria-hidden="true">↗</div><p><strong>선이 벌어지는 구간부터 차분히 보세요.</strong><span id="graph-comment">추가 배분은 서서히 시작합니다. 상위 예시도 공부를 이어가는 동안, 같은 범위의 일정이 얼마나 달라지는지 비교합니다.</span></p></div></section>
+ <section class="table-panel" id="design-table" role="tabpanel" aria-labelledby="design-tab-table" hidden><div id="table-slot"></div></section>
+ </div>
+ <footer class="result-footer"><p><span class="footer-dot"></span><strong id="footer-summary">목표 주 1회 추가</strong><span>복습·심화·연산 유지</span></p><details><summary>계산 가정과 레벨 설명</summary><p>기간은 현재 레벨표의 같은 과정에 대한 비교 가정입니다. 교재 이름별 효과나 숙달·성적·합격을 예측하지 않습니다. 추가 회차의 절반을 새 범위 진행에 반영하는 비율은 실측 효과가 아닙니다. 선택 범위 이후의 그래프는 참고 일정이며 다음 교재를 자동 배정하지 않습니다.</p><div id="level-detail"></div></details></footer>
+</section>
+</div>
+</main>
+<script src="planner-levels.js"></script>
+<script src="planner-standard-data.js"></script><script src="planner.js"></script><script src="demo-content.js"></script><script src="planner-intake.js"></script><script src="planner-progression.js"></script><script src="planner-transition.js"></script><script src="planner-workspace.js"></script><script src="planner-annotations.js"></script><script src="planner-design.js?v=20261024-bounded-catch12"></script>
+</body></html>

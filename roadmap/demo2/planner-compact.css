@@ -1,0 +1,135 @@
+/* Compact navigation reserves the viewport for the roadmap, without shrinking touch targets. */
+body.roadmap-studio.integrated-planner .top{min-height:56px;height:56px;padding:4px 24px;gap:12px;flex-wrap:nowrap}
+body.integrated-planner .top .logo{font-size:26px}.top .ttl{font-size:11px}
+body.integrated-planner .top .nav{padding:0;background:transparent}
+body.integrated-planner .top :is(.gear,.nav button){min-height:44px;padding:8px 12px}
+body.roadmap-studio.integrated-planner[data-plan-workspace] main{height:calc(100dvh - 56px);padding-top:0;gap:0 20px}
+body.roadmap-studio.integrated-planner[data-plan-workspace] #journeyPanel>.journey-heading{padding:0 14px;min-height:44px}
+body.integrated-planner[data-plan-workspace] #journeyTitle{font-size:16px;line-height:1.5}
+body.integrated-planner[data-plan-workspace] .plan-travel{padding:0 14px;min-height:44px;border-top:0;gap:8px}
+body.integrated-planner[data-plan-workspace] .plan-travel button{padding:6px 8px;font-size:12px;min-height:44px}
+body.integrated-planner[data-plan-workspace] .plan-standard-travel small{display:none}
+body.integrated-planner[data-plan-workspace] .plan-standard-travel strong{font-size:13px}
+body.integrated-planner[data-plan-workspace] .standard-patterns{display:none}
+body.integrated-planner[data-plan-workspace] .workspace-tabs{border-top:1px solid #eee7f2}
+body.integrated-planner[data-plan-workspace] .workspace-panel{padding:8px 14px}
+body.integrated-planner[data-plan-workspace] .workspace-panel>.career-roadmap:first-child{margin-top:0;padding-top:0;border-top:0}
+body.integrated-planner[data-plan-workspace] .career-roadmap>header{margin-bottom:10px}.career-roadmap h3{font-size:20px}
+body.integrated-planner .plan-current-popover :is(.workspace-summary,.standard-summary){margin:12px 0 0;padding:12px 0;border-top:1px solid #e4dce9;display:flex!important;gap:12px}
+body.integrated-planner .plan-current-popover [data-student-choice]{font:inherit;min-height:44px;border:1px solid #d4c5df;border-radius:8px;background:#fff;color:#664b78;padding:8px 14px;margin-top:12px}
+.student-choice-dialog{box-sizing:border-box;width:min(640px,94vw);max-height:92dvh;padding:0;border:1px solid #d8cbe1;border-radius:20px;color:#503363;background:#fbf9fd}
+.student-choice-dialog::backdrop{background:#25133160;backdrop-filter:blur(5px)}
+.student-choice-dialog>header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;gap:12px;border-bottom:1px solid #e6ddeb}.student-choice-dialog h2{font-size:20px;line-height:1.6;margin:0}.student-choice-dialog>header button{font:inherit;min-height:44px;padding:8px 12px;background:#fff;border:1px solid #d8cbe1;border-radius:20px;color:#664b78;cursor:pointer}
+.student-gender-options{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:24px}
+.student-gender-options>button{display:grid;justify-items:center;align-items:center;padding:14px;border:1px solid #d8cbe1;background:#fff;border-radius:16px;color:#503363;cursor:pointer;font:inherit;min-height:230px}
+.student-gender-options>button[aria-pressed=true]{border:2px solid #84629d;background:#f1eaf8}
+.student-gender-options .student-pair{height:210px;width:155px}
+.student-single .student-sprite{width:100%;height:100%;margin:0}.student-single .student-girl{background-size:500% 221.197%;height:100%;margin:0}
+.student-single .student-boy{background-size:500% 182.5103%}
+.student-growth-stage>.student-single{display:block;height:300px!important;padding:18px 0 0}
+.student-growth-stage>.student-single .student-boy{height:100%}.student-growth-stage>.student-single .student-girl{height:100%}
+.student-single{max-width:100%;margin:0 auto}.student-growth-stage .student-single .student-sprite{background-size:500% 182.5103%}
+.student-growth-stage .student-single .student-girl{background-size:500% 221.197%}
+@media(max-width:800px){
+ body.roadmap-studio.integrated-planner[data-plan-workspace] .top{height:56px;min-height:56px;padding:4px 10px;gap:6px}
+ body.integrated-planner[data-plan-workspace] .top .logo{font-size:23px}
+ body.roadmap-studio.integrated-planner[data-plan-workspace] main{height:calc(100dvh - 124px - env(safe-area-inset-bottom));padding:0 6px 4px;gap:0}
+ body.roadmap-studio.integrated-planner[data-plan-workspace][data-plan-mode=standard] main{height:calc(100dvh - 56px - env(safe-area-inset-bottom))}
+ body.roadmap-studio.integrated-planner[data-plan-workspace] #journeyPanel>.journey-heading{padding:0 10px;min-height:44px}
+ body.integrated-planner[data-plan-workspace] #journeyTitle{font-size:13px}
+ body.integrated-planner[data-plan-workspace] .plan-travel:not(.plan-standard-travel){display:flex;justify-content:space-between;padding:0 8px;gap:4px}
+ body.integrated-planner[data-plan-workspace] .plan-travel-top{gap:4px}.plan-travel-top>span{display:none}
+ body.integrated-planner[data-plan-workspace] .plan-travel-steps{gap:4px}
+ body.integrated-planner[data-plan-workspace] .plan-travel button{font-size:11px;padding:6px 4px}
+ body.integrated-planner[data-plan-workspace] .plan-standard-travel{display:flex;padding:0 8px;gap:6px}
+ body.integrated-planner[data-plan-workspace] .plan-standard-travel>div{min-width:0;flex:1}
+ body.integrated-planner[data-plan-workspace] .plan-standard-travel strong{font-size:11px;line-height:1.6}
+ body.integrated-planner[data-plan-workspace] .workspace-tabs{gap:8px;padding:0 8px}
+ body.integrated-planner[data-plan-workspace] .workspace-tabs button{font-size:11px}
+ body.integrated-planner[data-plan-workspace] .workspace-panel{padding:8px}
+ .student-choice-dialog h2{font-size:17px}.student-gender-options{padding:14px;gap:10px}.student-gender-options>button{min-height:200px;padding:10px}.student-gender-options .student-pair{height:170px;width:126px}
+ .student-growth-stage>.student-single{height:170px!important}.student-growth-stage .student-single .student-sprite{width:100%;height:100%}
+}
+@media print{.top,.plan-travel{display:none!important}}
+/* Small sculpted controls: physical edges and distinct map/book/graph symbols. */
+body.integrated-planner .workspace-tabs button,body.integrated-planner .top .nav button{border:1px solid #ddd0e7;border-bottom:3px solid #c4aed5;border-radius:13px;background:linear-gradient(155deg,#fff,#f4eef9);box-shadow:inset 0 1px 0 #fff,0 3px 6px #43205d0c;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s,box-shadow .15s}
+body.integrated-planner .workspace-tabs button[aria-selected=true],body.integrated-planner .top .nav button.on{background:linear-gradient(155deg,#eee3f8,#d8c2ec);border-color:#b89bcd;border-bottom-color:#9570b0;color:#54346e;box-shadow:inset 0 1px 0 #fff9,0 3px 5px #43205d14}
+body.integrated-planner .workspace-tabs{padding-top:4px!important;padding-bottom:5px!important;gap:10px!important}
+body.integrated-planner .workspace-tabs button:after{display:none}
+body.integrated-planner .workspace-tabs .editorial-menu-icon{display:block!important;width:23px;height:23px;flex:none;filter:drop-shadow(0 2px 1px #65477b20)}
+body.integrated-planner :is(.plan-travel-steps button,.question-options>button,.student-gender-options>button){border-bottom:4px solid #c4aed5;box-shadow:inset 0 1px 0 #fff,0 4px 9px #54356912;background:linear-gradient(155deg,#fff,#f5eff9)}
+body.integrated-planner :is(.workspace-tabs button,.plan-travel button,.question-options>button,.student-gender-options>button):active{transform:translateY(2px);box-shadow:inset 0 2px 5px #74528b18}
+body.integrated-planner.questioning .top :is(.nav,.gear,.ttl,.draft-badge),body.questioning .mobile-workspace-nav,body.questioning .dock{display:none!important}
+body.roadmap-studio.integrated-planner.questioning .top{height:50px;min-height:50px;padding:3px 24px}
+body.roadmap-studio.integrated-planner.questioning main{display:grid;grid-template-columns:320px minmax(0,1fr);height:calc(100dvh - 50px);padding:16px 24px;gap:24px;min-height:0}
+body.questioning :is(.result-intro,.input-details,#warn,#planningOverview,#pathwayCoach,#intakeQuestions,#previewJump,#useExample){display:none!important}
+body.questioning #conversation{display:flex!important;flex-direction:column;overflow:auto;min-height:0;padding:10px 4px;margin:0;background:none;border:0}
+body.questioning #questionStep{font-size:12px;margin:12px 0;color:#8a7399}
+body.questioning #questionTitle{font-size:24px;line-height:1.6;margin:14px 0;padding:18px;border:1px solid #e0d5e9;border-radius:0 18px 18px 18px;background:#fff;box-shadow:0 6px 20px #4a285210}
+body.questioning #questionHelp{font-size:13px;line-height:1.7;margin:0 0 12px}
+body.questioning #questionOptions{display:grid;gap:12px;grid-template-columns:1fr;margin:10px 0}
+body.questioning #questionOptions>button{min-height:56px;border:1px solid #d7c7e2;border-bottom:4px solid #bea3d1;border-radius:14px;font-size:15px;padding:12px 16px;text-align:left;color:#57366d}
+body.questioning .question-actions{display:flex;justify-content:space-between;gap:8px;margin-top:20px}.question-actions #intakeLater{font:inherit;font-size:13px;min-height:44px;border:1px solid #cdb8de;background:#fff;border-radius:12px;color:#77558d;padding:9px 12px}
+body.questioning #vmap{min-height:0;display:block!important;height:100%}
+body.questioning #vmap>.mapwrap,body.questioning #journeyPanel{height:100%;min-height:0}
+body.questioning #journeyPanel{display:flex;flex-direction:column;overflow:hidden;border-radius:20px}
+body.questioning #journeyPanel>.journey-heading{padding:8px 14px!important;min-height:44px}
+body.questioning #journeyTitle{font-size:15px}body.questioning #journeyCount,body.questioning #atlasExpand{display:none!important}
+body.questioning #journeyMap{flex:1;min-height:0;overflow:hidden}
+.intake-growing-map{position:relative;width:100%;height:100%;min-height:320px;overflow:hidden;background:#eee7f4;border-radius:0 0 20px 20px}
+.intake-growing-map>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.intake-growing-map ol{position:absolute;inset:0;list-style:none;margin:0;padding:0}
+.intake-growing-map li{position:absolute;transform:translate(-50%,-50%);width:160px;max-width:25%;border:1px solid #cfbada;background:#fffdfbf0;border-radius:14px;padding:10px;text-align:center;box-shadow:0 5px 0 #c1a9d5,0 9px 18px #52366518}
+.intake-growing-map li small{display:block;font-size:12px;color:#8a6a9d;margin-bottom:4px}.intake-growing-map li strong{font-size:14px;line-height:1.7;font-weight:500;color:#5a3d70;word-break:keep-all}.intake-growing-map li>span{position:absolute;bottom:-28px;left:calc(50% - 17px);width:34px;height:24px;border-radius:50%;border:2px solid #a688bf;background:#ede0f7;color:#6d4d86;box-shadow:0 4px 0 #baa0ce;font-size:11px}
+.intake-start-student .student-map-marker{left:15%;bottom:12%;height:220px;width:165px}
+.intake-map-note{position:absolute;bottom:20px;left:20px;margin:0;background:#fffdfbea;border:1px solid #d7c7e1;color:#705281;font-size:13px;border-radius:20px;padding:10px 16px}
+body.questioning .student-gender-options{padding:0;gap:12px}.student-gender-options button strong{font-size:16px}
+@media(max-width:800px){
+ body.integrated-planner .workspace-tabs .editorial-menu-icon{width:20px;height:20px}.workspace-tabs button span{font-size:10px}
+ body.integrated-planner[data-plan-workspace] .workspace-tabs{gap:6px!important;padding-inline:6px!important}
+ body.integrated-planner[data-plan-workspace] .workspace-tabs button{gap:3px;font-size:10px;padding-inline:4px;flex:1}
+ body.roadmap-studio.integrated-planner.questioning .top{height:48px;min-height:48px;padding:2px 14px}
+ body.roadmap-studio.integrated-planner.questioning main{height:calc(100dvh - 48px);padding:8px 12px;display:grid;grid-template-columns:1fr;grid-template-rows:auto minmax(180px,1fr);gap:10px;overflow:auto}
+ body.questioning #conversation{max-height:53dvh;padding:0 2px;overflow:auto}
+ body.questioning #questionTitle{font-size:19px;padding:12px;margin:10px 0}.questioning .guide{margin:0}
+ body.questioning #questionStep{margin:6px 0}.questioning #questionOptions{margin:4px 0;gap:8px}
+ body.questioning #questionOptions>button{min-height:48px;font-size:14px;padding:9px 12px}
+ body.questioning .question-actions{margin:8px 0}.questioning #vmap{grid-row:2;grid-column:1}
+ .intake-growing-map{min-height:180px}.intake-start-student .student-map-marker{height:118px;width:90px;bottom:15%}
+ .intake-growing-map li{padding:6px;width:100px}.intake-growing-map li small{font-size:10px}.intake-growing-map li strong{font-size:11px;line-height:1.5}
+ .intake-map-note{left:10px;bottom:10px;font-size:11px;padding:7px 10px}
+ body.questioning .student-gender-options .student-pair{height:115px;width:84px}.questioning .student-gender-options>button{min-height:156px}
+}
+@media(prefers-reduced-motion:reduce){body.integrated-planner button{transition:none!important}}
+body.roadmap-studio.integrated-planner.questioning main{grid-template-rows:minmax(0,1fr);overflow:hidden}
+body.roadmap-studio.integrated-planner.questioning #conversation{grid-row:1;height:100%;max-height:100%;overflow:auto;min-height:0;align-self:stretch}
+body.roadmap-studio.integrated-planner.questioning #vmap{grid-row:1;align-self:stretch}
+body.questioning #questionOptions .student-gender-options>button{grid-column:auto!important;width:100%;min-width:0;min-height:190px;height:auto;padding:10px;color:#513363!important;background:linear-gradient(150deg,#fff,#f0e7f8)!important;border:1px solid #cfbbdf;border-bottom:4px solid #b99bce;border-radius:18px;text-align:center}
+body.questioning #questionOptions .student-gender-options .student-pair{height:150px;width:110px}
+body.questioning #questionOptions:is([data-question=grade],[data-question=age]){grid-template-columns:repeat(3,minmax(0,1fr))}
+body.questioning #questionOptions:is([data-question=grade],[data-question=age])>button{padding:9px;min-height:48px;text-align:center}
+body.questioning .guide{margin:0;min-height:64px}
+body.questioning .question-actions{position:sticky;bottom:0;background:#f5f2f7;padding:6px 0}
+@media(max-width:800px){
+ body.roadmap-studio.integrated-planner.questioning main{grid-template-rows:minmax(0,1.3fr) minmax(180px,1fr)}
+ body.roadmap-studio.integrated-planner.questioning #conversation{max-height:100%;grid-row:1}
+ body.roadmap-studio.integrated-planner.questioning #vmap{grid-row:2}
+ body.questioning #questionOptions .student-gender-options>button{min-height:145px;padding:6px}
+ body.questioning #questionOptions .student-gender-options .student-pair{height:110px;width:80px}
+ body.questioning .guide{min-height:48px}
+ body.questioning #questionTitle{font-size:18px;line-height:1.5;margin:8px 0;padding:10px}
+}
+body.roadmap-studio.integrated-planner.questioning #questionHelp{background:transparent;border:0;box-shadow:none;border-radius:0;padding:0 6px;margin:0 0 10px;font-size:13px;line-height:1.7}
+body.questioning #questionHelp:before,body.questioning #questionHelp:after{display:none!important}
+@media(max-width:800px){.intake-start-student .student-map-marker{height:96px;width:72px;left:13%}}
+body.roadmap-studio.integrated-planner.questioning[data-workspace-pane] #vmap.view{display:block!important}
+body.roadmap-studio.integrated-planner.questioning[data-workspace-pane] #conversation{display:flex!important}
+body.questioning #questionOptions:is([data-question=school],[data-question=deepStage],[data-question=schoolExact],[data-question=compExact],[data-question=calcExact]){grid-template-columns:repeat(2,minmax(0,1fr))}
+body.questioning #questionOptions:is([data-question=school],[data-question=deepStage],[data-question=schoolExact],[data-question=compExact],[data-question=calcExact])>button{font-size:13px;min-height:48px;padding:9px;text-align:center}
+@media(max-width:800px){
+ body.roadmap-studio.integrated-planner.questioning[data-workspace-pane] #vmap.view{grid-column:1!important;grid-row:2!important}
+ body.roadmap-studio.integrated-planner.questioning[data-workspace-pane] #conversation{grid-column:1!important;grid-row:1!important}
+}
+body.questioning .planner-guide-toggle{display:none!important}
+body.questioning #questionOptions:is([data-question=schoolCourse],[data-question=deepCourse]){grid-template-columns:repeat(2,minmax(0,1fr))}
+body.questioning #questionOptions:is([data-question=schoolCourse],[data-question=deepCourse])>button{padding:9px;min-height:50px;text-align:center;font-size:14px}

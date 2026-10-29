@@ -456,7 +456,7 @@ function conceptRows(){
     {key:'gifted',label:'교대 영재원',blocks:[['서울교대 과학영재교육원 지원·선발<br><small>(초3 7~9월)</small>',66,68],['교대 영재원 수업 (합격 시, 초4)<br><small>합격하면 교육청 영재원은 지원 불가</small>',74,83]]}
   ];
 }
-const CONCEPT={id:'예시',cls:'l2',summary:'대치 소마 A2 → A1 정도<br>(L8~L9)<br>초2 9월 5-1부터 2개월 단위<br>→ 초3 9월 중등',rows:null};
+const CONCEPT={id:'예시',cls:'l2',summary:'강남권 소마 A 중위권<br>(L9 기준 사례)<br>초2 9월 5-1부터 2개월 단위<br>→ 초3 9월 중등',rows:null};
 function renderLevels(nowM, bestId, only, custom, from, to){
   const A0=from??AX0, A1=to??AX1;
   const n=A1-A0+1, years=axisYears(A0,A1);
