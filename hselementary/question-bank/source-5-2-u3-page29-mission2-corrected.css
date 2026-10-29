@@ -1,0 +1,113 @@
+@font-face {
+  font-family: "Noto Serif KR";
+  src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-400-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: "Noto Serif KR";
+  src: url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-400-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+2000-206F, U+2070-218F;
+}
+
+.source52-p29m2c-question,
+.source52-p29m2c-solution {
+  color: #191511;
+  font-family: "Noto Serif KR", serif;
+  font-size: 1rem;
+  line-height: 1.58;
+}
+
+.source52-p29m2c-question > p:first-child,
+.source52-p29m2c-solution > p:first-child {
+  margin: 0 0 0.7rem;
+}
+
+.source52-p29m2c-diagram {
+  display: block;
+  width: min(100%, 31rem);
+  height: auto;
+  margin: 0.25rem auto 0.5rem;
+  overflow: visible;
+}
+
+.source52-p29m2c-upright {
+  fill: none;
+  stroke: #191511;
+  stroke-width: 2.3;
+}
+
+.source52-p29m2c-tilted {
+  fill: none;
+  stroke: #191511;
+  stroke-width: 2.3;
+  stroke-linejoin: round;
+}
+
+.source52-p29m2c-diagonal {
+  stroke: #716958;
+  stroke-width: 1.65;
+  stroke-dasharray: 6 5;
+}
+
+.source52-p29m2c-dimension {
+  fill: none;
+  stroke: #8e846f;
+  stroke-width: 1.5;
+}
+
+.source52-p29m2c-diagram text {
+  fill: #191511;
+  font-family: "Noto Serif KR", serif;
+  font-size: 17px;
+}
+
+.source52-p29m2c-diagram .source52-p29m2c-measure {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.source52-p29m2c-overlap {
+  fill: #dcecdf;
+  fill-opacity: 0.82;
+  stroke: #2f6b4a;
+  stroke-width: 2;
+}
+
+.source52-p29m2c-diagram .source52-p29m2c-area-label {
+  fill: #24573d;
+  font-size: 12px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.source52-p29m2c-workspace {
+  min-height: 2.1in;
+  margin: 0.25rem 0 0.6rem;
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 0.32in, #e2d9c6 0.325in, #e2d9c6 0.335in, transparent 0.34in);
+}
+
+.source52-p29m2c-solution ol {
+  margin: 0.35rem 0 0.55rem;
+  padding-left: 1.55rem;
+}
+
+.source52-p29m2c-solution li { margin: 0.27rem 0; }
+
+@media (max-width: 480px) {
+  .source52-p29m2c-diagram { width: 100%; }
+}
+
+@media print {
+  .source52-p29m2c-question,
+  .source52-p29m2c-solution { font-size: 10.5pt; line-height: 1.42; }
+  .source52-p29m2c-diagram { width: 20rem; max-height: 4.5in; margin: 0.15rem auto; }
+  .source52-p29m2c-workspace { min-height: 2.1in; }
+  .source52-p29m2c-solution li { margin: 0.16rem 0; }
+}
