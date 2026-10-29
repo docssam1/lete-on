@@ -152,8 +152,8 @@ for (const spec of specs) {
     const recorded = document.integrity?.actualBySection?.[section];
     if (recorded !== undefined && recorded !== bySection[section]) fail(`${spec.semester} ${section}: 실제 항목 수와 장부에 기록한 실제 수가 다릅니다 (${bySection[section]} / ${recorded}).`);
   }
-  if (spec.semester === "5-2" && verifiedCount !== 104) {
-    fail(`5-2: sourceVerified true 항목은 104개여야 합니다 (${verifiedCount}).`);
+  if (spec.semester === "5-2" && verifiedCount !== 106) {
+    fail(`5-2: sourceVerified true 항목은 106개여야 합니다 (${verifiedCount}).`);
   }
   if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
     fail("5-2: reviewed 항목의 원문 확인 또는 명시 목록이 일치하지 않습니다.");
@@ -162,6 +162,11 @@ for (const spec of specs) {
     fail("5-2: 검수 완료한 인쇄 30쪽 예제 4-2와 인쇄 31쪽 Mission 4–6 원문 항목이 각각 하나여야 합니다.");
   }
   if (spec.semester === "5-2") {
+    const unit2 = document.units?.find(unit => unit.unitId === "5-2-u2");
+    const unit2Items = items.filter(item => item.unitId === "5-2-u2");
+    if (unit2?.sourcePdfContentPages?.join(",") !== "10,17" || unit2?.sourcePrintedContentPages?.join(",") !== "14,21" || unit2Items.length !== 44 || unit2Items.some(item => item.printedPage !== item.pdfPage + 4)) {
+      fail("5-2 u2: 44개 원문 항목의 PDF/인쇄 페이지는 10–17 / 14–21과 일치해야 합니다.");
+    }
     const unit3 = document.units?.find(unit => unit.unitId === "5-2-u3");
     if (unit3?.sourcePdfContentPages?.join(",") !== "20,35" || unit3?.sourcePrintedContentPages?.join(",") !== "24,39") {
       fail("5-2 u3: SHA-256 기준본의 PDF/인쇄 페이지 범위가 20–35 / 24–39가 아닙니다.");

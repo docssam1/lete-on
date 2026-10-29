@@ -10,7 +10,7 @@
     "sourceSha256": "D870F8AB03E392A5EC8BE1626AD380685D50BAB5F8E410EC2CCFB7E578266463",
     "sourcePagesDirectlyReviewed": [10, 11, 12, 13, 14, 15, 16, 17],
     "sourcePrintedPagesVisuallyRead": [14, 15, 16, 17, 18, 19, 20, 21],
-    "pageNumberNote": "PDF 논리 쪽 10-17을 직접 렌더해 확인했습니다. 페이지 하단 인쇄 표기는 14-21이며, 기존 5-2-source-items.json의 printedPage 12-19 기록과 충돌하므로 둘을 섞지 않았습니다.",
+    "pageNumberNote": "PDF 논리 쪽 10-17을 직접 렌더해 확인했습니다. 페이지 하단 인쇄 표기는 14-21입니다. 2026-10-29에 5-2-source-items.json의 해당 44개 printedPage와 단원 범위를 14-21로 바로잡았습니다.",
     "reviewScope": "개념탐구, 예제, Mission을 페이지별로 직접 대조하고, 개념탐구 소문항과 Mission 1의 계산 소문항을 원자 문항으로 분리했습니다. 기존 44개 블록 틀은 개수 기준으로 승격하지 않았습니다.",
     "answerConvention": "분수는 가장 간단한 분수 또는 대분수로 기록했습니다. 자연수는 양의 정수입니다. 여러 답은 집합 또는 문제에서 요구한 순서 목록으로 기록했습니다. 원문 필기 답은 권위 있는 답안으로 사용하지 않고 조건에서 독립 계산했습니다.",
     "protection": "원본 PDF, 답안 자료, 로컬 원본 경로는 이 장부 밖에 보존합니다. 이 파일은 비공개 검수 장부이며 공개·배포 승인 파일이 아닙니다.",
