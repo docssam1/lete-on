@@ -494,6 +494,7 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.deepEqual(await page.locator(".grade7-path .stage-button strong").allInnerTexts(), ["유리수", "비례 관계", "식·방정식", "기하·혼합 문제"]);
   assert.deepEqual(await page.locator(".grade7-path .stage-button[aria-pressed='true']").allInnerTexts(), []);
   await page.getByRole("button", { name: /살펴볼 지점 2, 비례 관계/ }).click();
+  assert.equal(await page.getByText("살펴보는 중", { exact: true }).count(), 1, "the selected-state label is real DOM text");
   assert.ok(await page.locator(".stage-detail").evaluate(function (node) { const bounds = node.getBoundingClientRect(); return bounds.top >= 0 && bounds.bottom <= window.innerHeight; }), "selected stop and its detail should be visible on a phone");
   assert.equal(await page.getByRole("button", { name: /살펴볼 지점 2, 비례 관계/ }).evaluate(function (node) { return node === document.activeElement; }), true);
   assert.match(await page.locator("#stage-number").innerText(), /살펴보는 구간 2/);

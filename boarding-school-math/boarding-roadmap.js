@@ -169,6 +169,12 @@
       const label = document.createElement("strong");
       label.textContent = step[0];
       button.append(number, label);
+      if (index === stage) {
+        const selectedNote = document.createElement("span");
+        selectedNote.className = "stage-selected-note";
+        selectedNote.textContent = "살펴보는 중";
+        button.append(selectedNote);
+      }
       button.addEventListener("click", function () { stage = index; renderStages(entry); list.querySelectorAll("button")[index].focus(); revealGrade7Detail(); });
       li.append(button);
       list.append(li);
