@@ -2735,6 +2735,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CongruenceApplicationOne = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ①");
+  if (source52CongruenceApplicationOne && !source52CongruenceApplicationOne.types.some(t => t.id === "5-2-u3-e3-example-4-synthetic")) {
+    const id="5-2-u3-e3-example-4-synthetic",name="직사각형을 두 번 접은 각";
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 3-4 유사문항",sourceSection:"example",sourcePdfPage:24,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"두 접는 선과 점의 이동을 명시한 창작 문항을 독립 검산했습니다.",generatorKey:"source52RectangleDoubleFoldPage28Example34Synthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   if (source52CongruenceApplicationOne && !source52CongruenceApplicationOne.types.some(t => t.id === "5-2-u3-e3-example-3-synthetic")) {
     const id="5-2-u3-e3-example-3-synthetic",name="빗변 위로 회전한 직각삼각형";
     source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 3-3 유사문항",sourceSection:"example",sourcePdfPage:24,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 그림의 빗변 위 점 조건을 명시한 유사문항의 회전과 각을 독립 검산했습니다.",generatorKey:"source52RightTriangleRotationPage28Example33Synthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});

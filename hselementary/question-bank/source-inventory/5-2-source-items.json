@@ -2279,6 +2279,7 @@
       "sourceVerified": false,
       "implementationStatus": "review-locked",
       "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e3-example-4-synthetic",
       "sourceReviewCorrection20261030": "원본 그림에서는 첫 접기로 ㄹ이 ㅁ으로, 두 번째 접기로 ㅁ이 ㅂ으로 이동하고, 접는 선은 각각 ㄱㄷ과 ㄴㄷ 방향으로 해석된다. 이전 반례는 첫 이동점을 ㄱ으로 가정하여 원본 접기와 다르므로 불확정의 근거에서 제외한다. 이 그림 관계를 적용한 독립 계산은 72도이나 공식 답안과 접는 선 해석을 추가 확인할 때까지 원문 잠금을 유지한다."
     },
     {
