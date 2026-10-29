@@ -199,8 +199,8 @@ for (const spec of specs) {
     const recorded = document.integrity?.actualBySection?.[section];
     if (recorded !== undefined && recorded !== bySection[section]) fail(`${spec.semester} ${section}: 실제 항목 수와 장부에 기록한 실제 수가 다릅니다 (${bySection[section]} / ${recorded}).`);
   }
-  if (spec.semester === "5-2" && verifiedCount !== 205) {
-    fail(`5-2: sourceVerified true 항목은 205개여야 합니다 (${verifiedCount}).`);
+  if (spec.semester === "5-2" && verifiedCount !== 207) {
+    fail(`5-2: sourceVerified true 항목은 207개여야 합니다 (${verifiedCount}).`);
   }
   if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
     fail("5-2: reviewed 항목의 원문 확인 또는 명시 목록이 일치하지 않습니다.");
@@ -222,7 +222,7 @@ for (const spec of specs) {
     if (unit3Items.length !== 88 || unit3Items.some(item => item.printedPage !== item.pdfPage + 4)) {
       fail("5-2 u3: 88개 항목의 인쇄 쪽이 기준 PDF의 실제 페이지 번호와 일치하지 않습니다.");
     }
-    for (const [exploration, expectedLabel] of [[4, "합동의 활용 ②"], [5, "선대칭도형"]]) {
+    for (const [exploration, expectedLabel] of [[4, "합동의 활용 ②"], [5, "선대칭도형"], [6, "선대칭의 활용"]]) {
       const explorationItems = unit3Items.filter(item => item.exploration === exploration);
       if (explorationItems.length !== 11 || explorationItems.some(item => !item.sourceShape.includes(expectedLabel))) {
         fail(`5-2 u3 e${exploration}: 원문 단원명이 ${expectedLabel}로 일치하지 않습니다.`);
