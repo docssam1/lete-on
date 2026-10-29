@@ -3,6 +3,7 @@ import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } fr
 import { readRecord, weekRate, loggedIn, checkSession } from "./study-progress.js?v=20261029q";
 import { canStudy, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261029q";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
+import { weekBookPicks } from "./study-deck.js?v=20261029x";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
 // 한 번에 한 장만 보이고, 위의 길(1권 › 01 도형 움직이기)이나 「‹」로 앞 장으로 돌아간다. 브라우저 뒤로 가기도 앞 장으로.
@@ -175,7 +176,11 @@ function renderParts() {
       <ol class="st-week">${steps.map(([label, note], i) => `<li><b>${i + 1}</b><span>${esc(label)}</span><small>${esc(note)}</small></li>`).join("")}</ol>
       <a class="st-week-start st-btn${on || (!week && part === 1) ? " primary" : ""}" href="${esc(link("study.html", { book: book.id, unit: String(view.unit), part: String(part), ...(on ? { s: String(week.last || 1) } : {}) }))}">${part}차시 ${on ? "이어서 하기" : "공부 시작하기"} ›</a></section>`;
   });
-  $("partList").innerHTML = `<div class="st-sessions">${sessions.join("")}</div>`;
+  // 한 주 교재 인쇄: 표지 + 단원 내지 + 차시마다 본책·오늘의 과제를 한 번에(원장 2026-10-29 「표지와 같이 한 주차 교재가 같이 인쇄」)
+  const weekPrint = link("index.html", { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1", cover: "b", print: "1",
+    picks: weekBookPicks(unit, view.unit), title: `${book.label} ${view.unit + 1}단원 · ${unit.label} · 한 주 교재` });
+  $("partList").innerHTML = `<div class="st-sessions">${sessions.join("")}</div>
+    <a class="st-week-print st-btn" href="${esc(weekPrint)}" target="_blank" rel="noopener"><b>🖨 한 주 교재 인쇄</b><small>표지 · 단원 차례 · ${count}차시 본책과 오늘의 과제를 한 번에</small></a>`;
 }
 
 function renderStudy() {

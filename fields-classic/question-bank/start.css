@@ -240,3 +240,8 @@ a.st-step:hover { border-color: var(--accent); color: var(--accent-ink); }
 .st-lock-tag.is-open { background: var(--accent-soft, #e9f0e7); color: var(--accent-ink, #1e4631); }
 .st-book-list button.is-locked, .st-unit-card.is-locked { opacity: .62; }
 .st-book-list button.is-locked:hover, .st-unit-card.is-locked:hover { opacity: .85; }
+/* 한 주 교재 인쇄 */
+.st-week-print { grid-column: 1 / -1; align-self: start; display: grid; gap: 2px; justify-items: start; margin-top: 14px; padding: 12px 16px; border: 1px solid var(--line-strong, #c9bda2); border-radius: 10px; background: var(--paper, #fdfbf5); text-decoration: none; }
+.st-week-print b { font-size: 16px; }
+.st-week-print small { color: var(--muted, #7a6f5c); font-size: 13px; }
+.st-week-print:hover { border-color: var(--accent, #2f6b4a); background: var(--accent-soft, #e9f0e7); }

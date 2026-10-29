@@ -119,6 +119,11 @@ if (PRINT_TEMPLATE_OPTIONS.cover.some((option) => option.id === params.get("cove
   document.body.classList.add("has-cover");   // 학생 화면은 표지를 숨기지만 인쇄에는 낸다(styles.css)
   if (PRINT_TEMPLATE_OPTIONS.ground.some((option) => option.id === params.get("ground"))) state.printTemplate.ground = params.get("ground");
 }
+// 한 주 교재(&week=1, 처음 화면 단원 장의 「한 주 교재 인쇄」): 표지 다음 목차형 단원 내지, 문항마다 어디 문제인지(「1차시 · 활동 1-1번」)
+if (asStudent && params.get("week") === "1") {
+  state.printTemplate = { ...state.printTemplate, unit: "toc" };
+  document.body.classList.add("week-book");
+}
 let printTemplatePanel = null;
 
 function normalizeSearchText(value) {

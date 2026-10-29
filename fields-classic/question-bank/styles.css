@@ -1632,3 +1632,6 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
 .masked-vertical-equation .masked-digit{border-color:#2f6fe0;background:#dde9ff}
 /* 학생 덱 「인쇄해서 풀기」의 표지(&cover=): 화면에서는 문제만, 인쇄할 때 맨 앞에 표지 */
 @media print{.as-student.has-cover .pt-lead:not(:empty){display:block!important;margin:0}}
+/* 한 주 교재: 문항이 어느 차시·본책 몇 번인지 보인다 */
+.as-student.week-book .question-reference{display:block!important;margin:0 0 4px;color:#7a6f5c;font-size:12px}
+@media print{.as-student.week-book .pt-foot{display:flex!important}}

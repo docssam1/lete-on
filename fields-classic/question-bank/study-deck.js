@@ -90,6 +90,16 @@ export function sessionTypes(unit, part) {
   for (const block of sessionBlocks(unit, part)) for (const { typeId } of block.numbers) seen.add(typeId);
   return seen.size ? [...seen] : weekTypes(unit);
 }
+// 한 주 교재(원장 2026-10-29 「표지와 같이 한 주차 교재가 같이 인쇄되었으면 좋겠어 깔끔하게」):
+// 차시마다 그 차시 본책(활동 · 확인 · 연습 · 도전) 다음에 오늘의 과제 — 문제은행 picks(유형~단계~본책 번호~단원) 한 줄로
+export function weekBookPicks(unit, unitIndex) {
+  const picks = [];
+  for (let part = 1; part <= sessionCount(unit); part += 1) {
+    for (const block of sessionBlocks(unit, part)) for (const { n, typeId, stage } of block.numbers) picks.push([typeId, stage, `${part}차시 · ${refOf(block, n)}`, unitIndex].join("~"));
+    for (const typeId of sessionTypes(unit, part)) picks.push([typeId, "practice", `${part}차시 · 오늘의 과제`, unitIndex].join("~"));
+  }
+  return picks.join("|");
+}
 // 유형 목록에서 n문제: 유형이 많으면 고르게 건너뛰며, 적으면 돌아가며 한 번 더
 export const spreadTypes = (types, n) => !types.length ? [] : Array.from({ length: n }, (_, k) => types.length >= n ? types[Math.floor((k * types.length) / n)] : types[k % types.length]);
 export const dailyTypes = (unit, part) => spreadTypes(sessionTypes(unit, part), DAILY_COUNT);
