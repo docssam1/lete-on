@@ -145,14 +145,15 @@
       "ordinal": 1,
       "pdfPage": 2,
       "printedPage": 4,
-      "sourceShape": "26보다 크고 33 이하인 자연수의 범위를 말과 수직선으로 나타내는 복합 문항.",
+      "sourceShape": "26보다 크고 33 이하인 수의 범위를 말과 수직선으로 나타내는 복합 문항. 자연수만으로 제한한다는 문구는 없다.",
       "answerContract": "candidate: multi-part",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다.",
+      "sourceReviewCorrection20261030": "정본 PDF p.2/인쇄 p.4를 재대조하여 기존 분류표의 자연수 한정을 정정했다. 원문에는 자연수 제한이 없으므로 연속된 수의 범위로 해석한다. 생성기는 별도 수치의 유사문항이며 출판사 공식 답안 대조는 미완료다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-1",
