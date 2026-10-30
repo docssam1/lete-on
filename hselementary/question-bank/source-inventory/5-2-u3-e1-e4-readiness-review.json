@@ -1846,9 +1846,10 @@
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "reviewed",
-      "publicDecision": "public-candidate",
-      "lockReason": null,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "publisherKeyVerified": false,
+      "lockReason": "원문 그림과 독립 계산은 확인했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 검증된 별도 창작 유사문항을 연결합니다.",
       "sourceEvidence": "source-drive:1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s; source-sha256:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; clean-alternate-sha256:6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88; clean-page-crop-sha256:777e928e557d76a28317267297de8f96da702e108db997fc30e8d252436e9cfd; PDF p.26; printed p.31; Apple Vision OCR + visual comparison; sourceItemId:5-2-u3-e4-mission-4"
     },
     {

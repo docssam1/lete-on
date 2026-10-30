@@ -2654,6 +2654,8 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "reviewed",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
       "reviewReason": "깨끗한 대체본의 PDF p.26(인쇄 p.31)을 확대해 원문과 그림을 대조하고 Apple Vision OCR을 눈으로 교정했습니다. 바깥 변 15cm, 삼등분 길이 5cm, 네 모서리 삼각형 각 25cm²를 독립 계산해 안쪽 넓이 125cm²를 확인했습니다. 출판사 답안표는 확인하지 않았습니다."
     },
     {
