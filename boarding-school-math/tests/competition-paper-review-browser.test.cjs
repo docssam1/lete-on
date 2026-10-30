@@ -49,6 +49,13 @@ test("users can opt to save an answer-free AMC review summary and see it only on
   assert.match(await page.locator("#diagnostic-save-status").innerText(), /저장한 정답·오답·미응답 수와 영역별 합계로 입력 결과 일부를 유추할 수 있어요/);
   assert.equal(await page.locator("#save-diagnostic").isDisabled(), true);
   assert.equal(await page.locator(".saved-diagnostic-entry").count(), 1);
+  const savedDomains = page.locator(".saved-diagnostic-entry-domains > div");
+  assert.equal(await savedDomains.count(), 5);
+  assert.match(await page.locator(".saved-diagnostic-entry-domains").innerText(), /그래프·표 해석/);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const desktopDomainRows = await savedDomains.evaluateAll((nodes) => nodes.map((node) => { const rect = node.getBoundingClientRect(); return { y: rect.y, width: rect.width }; }));
+  assert.ok(Math.max(...desktopDomainRows.map((entry) => entry.y)) - Math.min(...desktopDomainRows.map((entry) => entry.y)) < 2 && desktopDomainRows.every((entry) => entry.width >= 150), `all five saved areas share a readable desktop row: ${JSON.stringify(desktopDomainRows)}`);
+  await page.setViewportSize({ width: 390, height: 844 });
   assert.equal(await page.locator("#saved-diagnostic-list").getAttribute("aria-live"), null);
   assert.match(await page.locator(".saved-diagnostic-entry").innerText(), /일부 입력 3\/25/);
   await page.getByRole("button", { name: "결과 보기" }).click();

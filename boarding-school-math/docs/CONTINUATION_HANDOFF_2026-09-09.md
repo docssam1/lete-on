@@ -623,3 +623,9 @@ Reduced vertical scanning in the manual paper-review form: on phone widths, resp
 Read-only Claude Max/Opus review of the public CSS/test diff confirmed the state layouts and noted that the first 320px assertion caught 98px controls. Narrow-screen question-number width and column gaps were adjusted; the final browser run confirms all three visible selects remain at least 100px at 320px and no page overflow occurs.
 
 Verification: `tests/competition-paper-review-browser.test.cjs` passes 18/18. The updated phone-state browser check covers 390px and 320px widths; fresh 390px mobile and 1440px desktop captures of the review result were visually inspected. The five AMC 8 area labels remain legible. No private test items were entered or displayed; no upload, push, publication, or deployment.
+
+### 2026-10-30 saved AMC 8 domain history layout
+
+The saved contest-history card now records the number of displayed domains and gives five-domain AMC 8 summaries five equal desktop columns, so all official-scope buckets remain on one line. Four-domain AMC 10/12 and other contest records keep their existing four-column layout. Tablet and phone layouts retain their two-column and single-column forms.
+
+Verification: `tests/competition-paper-review-browser.test.cjs` passes 18/18. The save-history flow asserts all five AMC 8 labels and confirms their desktop row geometry at 1440px; the existing phone checks cover 320px and 390px without overflow. The saved AMC 8 card was visually inspected at 1440px. `git diff --check` and `node --check` for the changed renderer pass. A Claude Max/Opus read-only review was started on the public diff but remained in a sleeping state for six minutes; that process was interrupted and no Claude findings or approval are claimed. Local-only; no private candidate material, upload, push, publication, or deployment.

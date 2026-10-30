@@ -273,7 +273,7 @@
       const meta = document.createElement("p");
       const completion = record.summary.unmarked ? `일부 입력 ${record.summary.itemCount - record.summary.unmarked}/${record.summary.itemCount} · ` : `전체 입력 ${record.summary.itemCount}/${record.summary.itemCount} · `;
       meta.textContent = `${record.paperLabel ? `${record.paperLabel} · ` : ""}${completion}정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}`;
-      const domainHost = document.createElement("div"); domainHost.className = "saved-diagnostic-entry-domains";
+      const domainHost = document.createElement("div"); domainHost.className = "saved-diagnostic-entry-domains"; domainHost.dataset.domainCount = String(record.domains.length);
       record.domains.forEach(function (domain) {
         const item = document.createElement("div");
         const label = document.createElement("strong"); label.textContent = domain.name;
