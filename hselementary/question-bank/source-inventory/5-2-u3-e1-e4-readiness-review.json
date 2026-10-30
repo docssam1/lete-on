@@ -118,8 +118,8 @@
         "result": true
       },
       {
-        "checkId": "e3-example-4-fold-angle-counterexamples",
-        "expression": "rectangle H=1, W=cot24°; M=(1,0); MB slope tanθ with θ=40° or 48°; both A→M and M→B folds possible, giving ∠BOD=64° or 72°",
+        "checkId": "e3-example-4-fold-angle-conditional",
+        "expression": "When the illustrated creases are interpreted as GD and ND, reflecting R to M and M to B yields target angle 3×24°=72°; crease interpretation and publisher key remain unconfirmed.",
         "result": true
       },
       {
@@ -1928,7 +1928,7 @@
       "2026-10-24 인쇄 27쪽 Mission 6의 범위를 원문과 재대조해 합성 삼각형을 제외하고 정답을 3쌍으로 정정했습니다. 예제 2-4와는 서로 다른 삼각형 집합을 세므로 commonTypeId를 분리했습니다. Drive QA: 1UO3b2Ae_gjHhd7K-nDwkUz2I4VzSWGEj.",
       "2026-10-24 인쇄 28쪽 예제 3-2의 60° 표식과 선분 끝점을 재검수했습니다. 두 12cm 변의 끼인각으로 정삼각형이 되어 ㄱㄴ=12cm이며, 기존의 단순한 정사각형 변 대응 설명을 교정했습니다. Drive QA: 1IQrrZjrUEr4vGxZTNfBDgEu64sFWJBQj.",
       "2026-10-24 인쇄 28쪽 예제 3-3에는 예각 또는 변비가 제시되지 않아 목표각이 유일하지 않음을 반례로 확인하고 기존 30° 후보를 잠갔습니다. Drive QA: 1sT0W-X1Xk96z5XmpxOAKNevKJ7CX3zaL.",
-      "2026-10-24 인쇄 28쪽 예제 3-4의 인쇄 조건은 ㄱ→ㅁ→ㅂ과 ∠ㅂㅇㄷ이며, 72°는 필기라 제외했습니다. 24° 직사각형에서 두 접기가 모두 가능한 좌표 반례로 목표각 64°와 72°를 만들어 비유일을 확인했습니다.",
+      "2026-10-24 인쇄 28쪽 예제 3-4의 접기 시작점을 ㄱ으로 잘못 읽어 64°·72° 반례를 기록했으나, 2026-10-30 원문 재검수에서 ㄹ→ㅁ→ㅂ으로 확인해 해당 반례를 철회했습니다. 72°는 그림의 접는 선을 ㄱㄷ·ㄴㄷ으로 해석한 조건부 후보이며 공식 답안은 미확인입니다.",
       "2026-10-24 인쇄 29쪽 Mission 1의 기존 조건(65°·45° 회전)이 Mission 3에서 잘못 섞였음을 발견했습니다. 실제 조건은 합동 이등변삼각형, 66° 밑각, 교점 72°이며 각도 추적으로 원문 정답 30°를 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1zNtIYqtPweo41VVVcY4gp9UkqcXWCeKv.",
       "2026-10-24 인쇄 29쪽 Mission 3의 그림 방향(시계 방향)과 점 대응을 재확인했습니다. ㄱㄴ=ㄱㄷ과 65° 밑각으로 꼭짓각 50°를 구하고, 회전 45°를 더해 ∠ㄷㅁㅂ=95°로 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 12h10sOg4uZj0PugB1GNsebjJDtYW6BnD.",
       "2026-10-24 인쇄 29쪽 Mission 2의 왼쪽 위 기준 6cm 치수와 큰 정사각형 중심을 직접 확인해 기존 비유일 판정을 바로잡았습니다. C=(7,7), Q=(0,6), P=(6,14)에서 겹친 직각삼각형의 넓이는 25cm²입니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1nYo-dub1uoTgR5e6t40KtyKKpGvwFNcC.",
