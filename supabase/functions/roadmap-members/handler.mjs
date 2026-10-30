@@ -37,9 +37,13 @@ export function createHandler({service,url,publicKey,rateSecret,send=fetch,now=(
     const {data,error}=await service.auth.getUser(token);
     const u=data?.user;
     if(error||!u?.id||!u.email||!u.email_confirmed_at||u.is_anonymous)throw new HttpError(401,'email_required');
+    const c=claims(token);
+    if(c.sub!==u.id||!/^[a-f0-9-]{36}$/i.test(c.session_id||''))throw new HttpError(401,'email_required');
+    const {data:active}=await checked(service.rpc('roadmap_email_session_active',{p_user_id:u.id,p_session_id:c.session_id}));
+    if(active!==true)throw new HttpError(401,'email_required');
     if(fresh){
       // getUser verifies the signature first. Password sessions from other apps cannot reset this PIN.
-      const c=claims(token), seconds=now()/1000;
+      const seconds=now()/1000;
       if(c.sub!==u.id || !(c.amr||[]).some(x=>x.method==='otp'&&x.timestamp<=seconds+30&&x.timestamp>seconds-600))throw new HttpError(401,'fresh_email_required');
     }
     return {...u,email:emailOf(u.email)};

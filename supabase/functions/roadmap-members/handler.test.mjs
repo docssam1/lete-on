@@ -7,7 +7,7 @@ function harness(options={}){
  const calls=[];
  const user={id:UID,email:M.email,email_confirmed_at:'2026-10-30',app_metadata:{role:'user'},...options.user};
  const service={auth:{getUser:async token=>({data:{user:options.noUser?null:user},error:null})},
-  rpc:async(name,args)=>{calls.push({name,args});if(name==='roadmap_take_attempt')return {data:options.limited?false:true};if(name==='roadmap_verify_pin')return {data:options.badPin?null:UID};return {data:null};},
+  rpc:async(name,args)=>{calls.push({name,args});if(name==='roadmap_email_session_active')return {data:!options.revoked};if(name==='roadmap_take_attempt')return {data:options.limited?false:true};if(name==='roadmap_verify_pin')return {data:options.badPin?null:UID};return {data:null};},
   from(table){let action='select';const q={select(columns){calls.push({table,columns});return q;},eq(){return q;},gt(){return q;},lt(){return q;},order(){return q;},range(){return q;},limit(){return q;},or(){return q;},delete(){action='delete';return q;},insert(value){calls.push({table,insert:value});return q;},
    async maybeSingle(){if(table==='roadmap_sessions')return {data:options.noSession?null:{user_id:UID,session_version:options.stale?1:2}};if(table==='hs_accounts')return {data:options.admin?{role:'admin',active:true,student:'DOCSSAM'}:{role:'student',active:true,student:'X'}};return {data:options.noMember?null:M};},
    then(resolve,reject){return Promise.resolve({data:table==='roadmap_members'?[M]:[],count:1,error:null}).then(resolve,reject);}};return q;}};
@@ -15,7 +15,7 @@ function harness(options={}){
  async function request(body,headers={}){const r=await handler(new Request('https://example.invalid',{method:'POST',headers:{'content-type':'application/json',origin:'https://lete-on.gfieldacademy.net',...headers},body:JSON.stringify(body)}));return {status:r.status,data:await r.json(),headers:r.headers};}
  return {calls,request,handler};
 }
-const jwt=(method='otp',seconds=NOW/1000)=>'h.'+Buffer.from(JSON.stringify({sub:UID,amr:[{method,timestamp:seconds}]})).toString('base64url')+'.s';
+const jwt=(method='otp',seconds=NOW/1000)=>'h.'+Buffer.from(JSON.stringify({sub:UID,session_id:'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee',amr:[{method,timestamp:seconds}]})).toString('base64url')+'.s';
 const profile={studentName:' 샘플 학생 ',guardianPhone:'010-0000-0000',school:'elementary',grade:5};
 test('profile validates actual grade ranges, normalizes contact and rejects injection',()=>{
  assert.equal(cleanProfile(profile).guardianPhone,'01000000000');assert.equal(cleanProfile(profile).age,null);
@@ -41,6 +41,10 @@ test('password session cannot register or reset a roadmap PIN',async()=>{
 });
 test('OTP older than ten minutes cannot reset PIN',async()=>{
  assert.equal((await harness().request({action:'reset-pin',pin:'58294716'},{authorization:'Bearer '+jwt('otp',NOW/1000-601)})).status,401);
+});
+test('a logged-out email proof is rejected even if its JWT signature is still valid',async()=>{
+ const h=harness({revoked:true});assert.equal((await h.request({action:'reset-pin',pin:'58294716'},{authorization:'Bearer '+jwt()})).status,401);
+ assert.equal(h.calls.some(x=>x.name==='roadmap_rotate_pin'),false);
 });
 test('registration derives owner from verified identity, does not accept request owner',async()=>{
  const h=harness();const r=await h.request({action:'register',userId:'attacker',profile,pin:'58294716',consent:{version:CONSENT_VERSION,privacy:true,guardian:true}},{authorization:'Bearer '+jwt()});
