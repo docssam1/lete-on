@@ -2922,6 +2922,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e1-example-${n}`,sourceItemLabel:`예제 1-${n} 유사문항`,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:10,sourcePrintedPage:14,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page14Example${n}Synthetic`,generationMode:"fixed-verified-pool",verifiedVariantTarget:1,verifiedVariantCount:1,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 검산했습니다."});
   }
 
+  if (source52Unit2First && !source52Unit2First.types.some(type => type.id === "5-2-u2-e1-mission-4-synthetic")) {
+    const id="5-2-u2-e1-mission-4-synthetic",name="양수의 분수 곱과 크기 순서 · 연습";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(subunit=>subunit.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 4 유사문항",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:11,sourcePrintedPage:15,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52PositiveFractionOrderSynthetic",generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문은 부호 확인 전 잠금이며 양수 조건을 명시한 별도 연습을 유리수 비교로 검산했습니다."});
+  }
   if (source52Unit2First) for (const [suffix,name,label,page,section,key] of [
     ["exploration-2","분수 조건으로 두 수의 합 찾기","개념탐구 1 (2) 유사문항",14,"exploration","source52U2Concept12Synthetic"],
     ["mission-1","분수와 자연수의 곱 여섯 식","Mission 1 유사문항",15,"mission","source52U2Mission1Synthetic"],
