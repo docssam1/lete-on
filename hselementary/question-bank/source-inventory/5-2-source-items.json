@@ -3091,7 +3091,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "인쇄 35쪽 원문 구조를 대조했으나 공식 답안과 필요한 그림 검수 전 잠금 유지합니다."
+      "reviewReason": "원문의 두 벽 20°와 ㄱ→ㄴ→ㄷ→ㄹ→ㄷ→ㄴ→ㄱ 경로를 대조하고 ㄹ의 수직 반사와 처음 각을 좌표로 검산했습니다. 공식 답안과 공개용 원문 그림 미대조로 잠금 유지합니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e6-mission-3-wedge-ball-synthetic"
     },
     {
       "sourceItemId": "5-2-u3-e6-mission-4",
