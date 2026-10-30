@@ -57,8 +57,8 @@
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
     "calculationCheckedCount": 22,
-    "uniqueAnswerCount": 22,
-    "nonUniqueCount": 0,
+    "uniqueAnswerCount": 21,
+    "nonUniqueCount": 1,
     "visualItemCount": 1,
     "publicCandidateCount": 0,
     "lockedCount": 22
@@ -644,19 +644,19 @@
       "originalStructure": "2.5에 소수 한 자리 수를 곱한 결과가 3보다 크고 10보다 작은 소수 한 자리 수가 되도록 하는 수의 개수를 구합니다.",
       "conditions": ["2.5 × 한 자리 소수", "결과는 3보다 크고 10보다 작음", "결과도 소수 한 자리", "가능한 수의 개수"],
       "visualRequirement": "곱하는 수와 곱한 결과의 범위, 소수 한 자리 조건을 분리해 표시해야 합니다.",
-      "independentCalculation": "3 < 2.5x < 10이므로 1.2 < x < 4입니다. 한 자리 소수 x는 1.3부터 3.9까지로 27개입니다.",
-      "answerFormula": "3 < 2.5x < 10 ⇔ 1.2 < x < 4.0",
-      "independentAnswer": "27개",
+      "independentCalculation": "3 < 2.5x < 10이면 x는 1.3부터 3.9까지이나 곱도 소수 한 자리여야 하므로 추가로 거릅니다. 입력과 결과가 모두 정수가 아닌 소수 한 자리라는 해석에서는 x=1.4, 1.8, 2.2, 2.6, 3.4, 3.8로 6개입니다. 입력과 결과에 2.0 또는 4.0 같은 정수를 허용하는 방식에 따라 각각 7, 11, 13개가 될 수 있어 공식 답안과 정의 확인이 필요합니다.",
+      "answerFormula": "x=n/10, 12<n<40, 25n은 10의 배수; 입력·결과의 정수 허용 여부 별도 판단",
+      "independentAnswer": "6개 (입력과 결과가 모두 정수가 아닌 소수 한 자리라는 해석; 공식 답안 미대조)",
       "resultContract": "single-value",
-      "candidateAnswerCount": 1,
-      "singleAnswer": true,
-      "singleAnswerCheck": "한 자리 소수 조건과 열린 범위를 함께 적용하면 목록의 개수가 하나입니다.",
+      "candidateAnswerCount": 4,
+      "singleAnswer": false,
+      "singleAnswerCheck": "곱의 소수 한 자리 조건을 추가하여 전수 검사했습니다. 정수를 소수 한 자리로 표현한 경우의 허용 여부에 따라 개수가 달라져 공식 답안과 기준 확인이 필요합니다.",
       "sourceVerified": true,
-      "calculationStatus": "checked-unique",
+      "calculationStatus": "checked-independent-conditional",
       "visualCheckStatus": "confirmed-source-no-visual",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "소수 한 자리 조건을 화면과 답안에서 같은 기준으로 처리하기 전입니다."
+      "lockReason": "입력과 결과의 소수 한 자리 기준 및 공식 답안을 확인하기 전 원문 잠금을 유지합니다."
     }
   ],
   "summary": {
@@ -665,7 +665,7 @@
     "publicCandidateCount": 0,
     "lockedCount": 22,
     "calculationCheckedCount": 22,
-    "uniqueAnswerCount": 22,
+    "uniqueAnswerCount": 21,
     "visualItemCount": 1,
     "notes": [
       "PDF 37쪽 단원 표지에서 실제 단원명 4. 소수의 곱셈을 확인했고 PDF 38~41쪽을 직접 검토했습니다. 별도 목차 표는 확인되지 않았습니다.",
