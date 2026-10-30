@@ -1548,7 +1548,7 @@
       "visualCheckStatus": "confirmed-source-structure",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "원문 답은 독립 계산으로 확정했지만 구현 그림의 점 라벨·5cm 치수·교차 선분을 대조하기 전에는 공개 후보로 올리지 않습니다."
+      "lockReason": "원문 그림과 독립 계산은 확인했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 창작 유사문항을 연결합니다."
     },
     {
       "sourceItemId": "5-2-u3-e4-exploration-1",
