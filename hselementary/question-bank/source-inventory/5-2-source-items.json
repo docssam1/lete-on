@@ -2748,7 +2748,7 @@
       "ordinal": 2,
       "pdfPage": 28,
       "printedPage": 32,
-      "sourceShape": "선대칭도형: 사각형과 삼각형이 각각 선대칭이고 공통 도형과 직선 위 점들의 각을 구한다.",
+      "sourceShape": "선대칭도형: 사각형 ㄱㄴㄷㄹ과 삼각형 ㄱㄹㅁ이 선대칭이고 ㄹㄱ=ㄹㅁ, 그림에 48°와 68°가 있을 때 ∠ㄷㄱㅁ을 구함.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2756,7 +2756,9 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조와 독립 계산을 확인했으나 공식 답안과 공개 그림 대조가 남아 잠금 유지합니다."
+      "reviewReason": "원문 그림에서 사각형의 대칭축을 ㄱㄷ으로 읽으면 목표각 82°이나 지문은 축을 명시하지 않습니다. 조건만으로 ㄴㄹ을 축으로 하는 별도 볼록 사각형도 구성 가능하고 그 경우 목표각은 90°입니다. 그림상 축 해석과 출판사 답안 확인 전 원문 잠금을 유지합니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e5-example-3",
