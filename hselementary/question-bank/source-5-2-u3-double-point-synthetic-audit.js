@@ -1,0 +1,5 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-double-point-synthetic.js');
+for(let i=0;i<3;i++)for(const d of [-1,0,1]){const q=api.makeQuestion(i,d),{points,O,S}=q.questionModel,{first,second}=q.answerModel;assert.equal(q.automaticGrading,false);for(let j=0;j<3;j++){for(let k=0;k<2;k++){assert.equal(points[j][k]+first[j][k],2*O[k]);assert.equal(first[j][k]+second[j][k],2*S[k]);assert.equal(second[j][k]-points[j][k],2*(S[k]-O[k]));assert.ok([points[j][k],first[j][k],second[j][k]].every(v=>v>=0&&v<=(k===0?14:10)));}}assert.ok(q.answerVisual.includes('data-point-first')&&q.answerVisual.includes('data-point-second'));assert.ok(!q.prompt.includes('data-point-first'));}
+assert.equal(new Set(api.pools.map(p=>p.map(v=>v.join(',')).sort().join(';'))).size,3);
+assert.equal(require('./source-inventory/5-2-source-items.json').sourceItems.find(x=>x.sourceItemId==='5-2-u3-e8-mission-1').implementationStatus,'review-locked');console.log('3 triangles × 3 difficulties: both midpoints and composite translation validated');

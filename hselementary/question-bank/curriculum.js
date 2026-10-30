@@ -2700,6 +2700,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e8-example-2-cut-synthetic",name="격자를 합동 두 조각으로 나누기 · 연습";
     source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-example-2",sourceItemLabel:"예제 8-2 구조 연습",sourceSection:"example",sourcePdfPage:34,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 격자의 합동 조각과 방법 수를 독립 전수 검증했습니다.",generatorKey:"source52CongruentGridSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-mission-1-double-point-synthetic")) {
+    const id="5-2-u3-e8-mission-1-double-point-synthetic",name="두 점을 중심으로 차례로 점대칭 그리기 · 연습";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-mission-1",sourceItemLabel:"Mission 1 구조 연습",sourceSection:"mission",sourcePdfPage:35,sourcePrintedPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 삼각형의 두 단계 대응점을 중점과 평행이동으로 독립 검증했습니다.",generatorKey:"source52DoublePointSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   const source52LineSymmetry = source52CongruenceUnit?.subunits.find(s => s.name === "선대칭도형");
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-example-1-reflection-synthetic")) {
     const id="5-2-u3-e5-example-1-reflection-synthetic",name="기울어진 축에 사각형 반사하기 · 연습";

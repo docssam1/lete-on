@@ -3355,7 +3355,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "두 단계 좌표 대응을 독립 확인했으나 공식 답안과 공개용 그림 검수 전 잠금 유지합니다."
+      "reviewReason": "두 단계 좌표 대응을 독립 확인했으나 공식 답안과 공개용 그림 검수 전 잠금 유지합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e8-mission-1-double-point-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-2",
