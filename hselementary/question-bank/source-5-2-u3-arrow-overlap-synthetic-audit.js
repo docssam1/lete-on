@@ -1,0 +1,4 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-arrow-overlap-synthetic.js');
+for(let i=0;i<3;i++)for(const level of [-1,0,1]){const q=api.makeQuestion(i,level),m=q.answerModel,{L,h}=m,poly=[[-L,0],[-L/2,-h],[L/2,-h],[L,0],[L/2,h],[-L/2,h]];const area=Math.abs(poly.reduce((s,[x,y],j)=>{const [a,b]=poly[(j+1)%poly.length];return s+x*b-a*y},0))/2;assert.equal(area,m.answer);assert.deepEqual([36,36,48][i],area);const arrow=(x,y)=>x>=-L&&x<=0&&Math.abs(y)<=h||x>=0&&x<=L&&Math.abs(y)<=2*h*(1-x/L);const inside=(x,y)=>Math.abs(y)<=h&&Math.abs(y)<=2*h*(1-Math.abs(x)/L);for(let x=-L+.17;x<L;x+=.23)for(let y=-2*h+.11;y<2*h;y+=.19)assert.equal(inside(x,y),arrow(x,y)&&arrow(-x,-y));assert.doesNotMatch(q.prompt,/data-arrow-overlap/);assert.match(q.answerVisual,/data-arrow-overlap/);}
+console.log('화살표 감사: 세 치수·세 난이도, 회전 교집합·다각형 넓이·정답 분리 검증');
