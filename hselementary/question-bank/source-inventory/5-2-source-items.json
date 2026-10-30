@@ -3295,7 +3295,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "독립 전수검산은 6가지이나 공식 답안과 여섯 절단 그림을 대조하기 전 잠금 유지합니다."
+      "reviewReason": "독립 전수검산은 6가지이나 공식 답안과 여섯 절단 그림을 대조하기 전 잠금 유지합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e8-example-2-cut-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e8-example-3",
