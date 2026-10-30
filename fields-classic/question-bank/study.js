@@ -1,6 +1,6 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261029a";
-import { PHASES, FIXED_LINES, voiceLine, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261030a";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261030c";
+import { PHASES, FIXED_LINES, voiceLine, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261030c";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
 import { canStudy, lockPage } from "./fields-access.js?v=20261029q";
 
@@ -465,7 +465,7 @@ function disposeNative() {
 const fitObserver = new MutationObserver(() => requestAnimationFrame(fitNative));
 function fitNative() {
   const body = $("slideBody"), host = body.querySelector(":scope > .sd-native");
-  if (!host || slides[index]?.kind !== "game") return;
+  if (!host || !["game", "concept"].includes(slides[index]?.kind)) return;   // 판서(개념)도 칸보다 크면 줄인다
   host.style.zoom = "";
   const cs = getComputedStyle(body), avail = body.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
   const need = host.scrollHeight;

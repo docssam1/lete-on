@@ -300,4 +300,22 @@ async function main() {
   if (restore()) render();
   else { fresh(); say("연습 공방이에요. 개념에서 본 풀이로 실제 문제를 풀어 봐요.", "talk"); }
 }
+// 덱 창 안에서는 아래로 내리지 않고 통째로 줄여 한 화면에 넣는다(원장 2026-10-30 「아래로 스크롤을 해야 하는 경우가 있어」)
+function fitFrame() {
+  const root = document.getElementById("drill");
+  if (!root || parent === window) return;
+  root.style.zoom = "";
+  let zoom = 1;
+  for (let tries = 0; tries < 4; tries += 1) {
+    const left = document.documentElement.scrollHeight - innerHeight;
+    if (left <= 2 || zoom <= 0.55) break;
+    const own = root.getBoundingClientRect().height;
+    zoom = Math.max(0.55, Math.floor(zoom * ((own - left - 4) / own) * 100) / 100);
+    root.style.zoom = String(zoom);
+  }
+}
+if (typeof document !== "undefined" && parent !== window) {
+  addEventListener("resize", () => requestAnimationFrame(fitFrame));
+  new MutationObserver(() => requestAnimationFrame(fitFrame)).observe(document.getElementById("drill"), { subtree: true, childList: true, attributes: true, attributeFilter: ["class", "hidden"] });
+}
 if (typeof document !== "undefined") main().catch((error) => { document.getElementById("drill").innerHTML = `<p class="dr-missing">연습 공방을 열지 못했어요: ${esc(error.message)}</p>`; });

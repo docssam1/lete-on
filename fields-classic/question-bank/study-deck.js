@@ -1,4 +1,4 @@
-import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261029a";
+import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261030c";
 
 // 차시 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」 · 본책이 개념 1·2 묶음으로 나뉜 대로, 7권 2단원·10권 1단원은 3번):

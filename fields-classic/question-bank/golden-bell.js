@@ -19,7 +19,7 @@ import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay }
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
 import { importQuestionSheet } from "./session-book-sheet.js?v=20261029z";
 import { mountHandsOn, mountEmbedHandsOn } from "./golden-bell-hands-on.js?v=20261028y";
-import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261029a";
+import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep, setLessonFlowStep, lessonFlowFor } from "./golden-bell-lesson-flow.js?v=20261030c";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261023t";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023h";
 import { COVER_DESIGNS, isCoverDesign, coverDesignPage } from "./cover-designs.js?v=20261028w";
