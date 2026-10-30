@@ -3062,7 +3062,7 @@
       "ordinal": 2,
       "pdfPage": 31,
       "printedPage": 35,
-      "sourceShape": "선대칭의 활용: 시각을 이어 쓴 대칭수의 횟수.",
+      "sourceShape": "선대칭의 활용: 밤 12시부터 낮 12시까지 시와 두 자리 분을 이어 쓴 수가 대칭수인 시각의 횟수.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -3070,7 +3070,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "인쇄 35쪽 원문 구조를 대조했으나 공식 답안과 필요한 그림 검수 전 잠금 유지합니다."
+      "reviewReason": "원문의 시·분 표기와 밤 12시부터 낮 12시까지의 포함 범위를 대조하고 분 단위로 전수 검산했습니다. 공식 답안 미대조로 원문 잠금 유지합니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e6-mission-2-clock-palindrome-synthetic"
     },
     {
       "sourceItemId": "5-2-u3-e6-mission-3",
