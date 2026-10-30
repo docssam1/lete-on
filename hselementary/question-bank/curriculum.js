@@ -2729,6 +2729,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e5-example-4-circle-axis-synthetic",name="두 원을 서로 옮기는 대칭축 그리기 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 5-4 구조 연습",sourceSection:"example",sourcePdfPage:28,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"두 원의 중심과 수직이등분선을 독립 검산했습니다.",generatorKey:"source52CircleAxisSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-1-octagon-synthetic")) {
+    const id="5-2-u3-e5-mission-1-octagon-synthetic",name="정팔각형 대칭 위치 · 연습";
+    source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 1 구조 연습",sourceSection:"mission",sourcePdfPage:29,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"네 대각선에 대한 꼭짓점 반사와 보기별 정답을 독립 검산했습니다.",generatorKey:"source52OctagonReflectionSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   const source52CongruenceFirst = source52CongruenceUnit?.subunits.find(s => s.name === "조건에 맞는 삼각형 그리기");
   if (source52CongruenceFirst) {
     const index = source52CongruenceFirst.types.findIndex(t => t.id === "5-2-u3-t1");
