@@ -1,0 +1,4 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-symmetric-square-perimeter-synthetic.js');
+for(let i=0;i<3;i++){const m=api.model(i),cells=new Set();for(let y=0;y<m.side;y++)for(let x=0;x<m.side;x++){cells.add(`${x},${y}`);cells.add(`${x+m.shift},${y+m.shift}`)}let boundary=0;for(const cell of cells){const [x,y]=cell.split(',').map(Number);for(const [dx,dy] of [[0,1],[0,-1],[1,0],[-1,0]])if(!cells.has(`${x+dx},${y+dy}`))boundary++;assert.ok(cells.has(`${y},${x}`),'대각선 대칭');}assert.equal(cells.size,m.totalArea);assert.equal(boundary,m.answer);assert.equal(m.answer,[56,80,88][i]);for(const d of [-1,0,1]){const q=api.makeQuestion(i,d);assert.equal(q.answer,`${m.answer}cm`);assert.match(q.prompt,new RegExp(`${m.totalArea}cm²`));assert.doesNotMatch(q.prompt,/겹침<\/text>/);assert.match(q.answerVisual,/겹침<\/text>/);assert.match(q.solution,/네 번 빼면/);}}
+console.log('정사각형 둘레 연습 감사 통과: 세 도형·세 난이도, 독립 모눈 합집합 면적·둘레·대칭');
