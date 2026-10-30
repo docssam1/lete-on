@@ -1194,6 +1194,7 @@
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-3",
+      "commonSourceItemId": "5-2-u3-e8-mission-3",
       "sourceBlock": "Mission 3",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 3",
@@ -1211,7 +1212,7 @@
       "resultContract": "count-of-constructions",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "직선과 꺾인 단일 단순 경로를 생성해 합동과 보기 제외를 검사했습니다. 절단 경로 허용 범위와 공식 답안 대조는 남았습니다.",
+      "singleAnswerCheck": "직선과 꺾인 단일 단순 경로를 생성해 합동과 보기 제외를 검사하고, 38개 절단과 9개 조각 분류를 별도 강체 변환으로 대조했습니다. 절단 경로 허용 범위와 공식 답안 대조는 남았습니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent-conditional",
       "visualCheckStatus": "needs-implementation-check",
