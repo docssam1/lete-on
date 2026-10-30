@@ -1142,24 +1142,24 @@
       "childFriendlyTypeLabel": "복잡한 그림에서 같은 삼각형 짝 찾기",
       "originalStructure": "사각형 안에 정삼각형 두 개가 포함된 선분 그림에서 합동 도형을 찾습니다.",
       "conditions": [
-        "두 정삼각형의 변 길이 동일",
-        "교차점과 내부 선 사용",
+        "△ㄴㄷㄹ과 △ㄱㅂㄹ은 각각 정삼각형이며 서로의 크기는 주어지지 않음",
+        "ㅂ은 ㄱㄷ 위, ㅁ은 ㄱㄷ과 ㄴㄹ의 교점; 인쇄된 선에는 ㄴㅂ이 없음",
         "답은 도형 이름의 쌍"
       ],
       "visualRequirement": "교차점의 위치, 선분 연결, 꼭짓점 라벨이 모두 선명해야 합니다.",
-      "independentCalculation": null,
-      "answerFormula": null,
-      "independentAnswer": null,
+      "independentCalculation": "정삼각형의 대응 변과 60° 회전으로 △ㄱㄹㄴ과 △ㅂㄹㄷ은 항상 합동입니다. 실제 선분만으로 만든 두 도형에서 △ㄱㄴㄷ과 △ㄱㄷㄹ은 한 경우 합동이 아니고 다른 경우 합동입니다.",
+      "answerFormula": "ㄱㄹ=ㅂㄹ, ㄹㄴ=ㄹㄷ, ∠ㄱㄹㄴ=∠ㅂㄹㄷ ⇒ SAS",
+      "independentAnswer": "△ㄱㄹㄴ≅△ㅂㄹㄷ은 항상 성립; 전체 합동 도형은 주어진 조건만으로 유일하지 않음",
       "resultContract": "set-of-figures",
       "candidateAnswerCount": null,
-      "singleAnswer": null,
-      "singleAnswerCheck": "그림의 내부 선과 라벨을 확정하지 못한 상태에서 합동 쌍을 추측할 수 없습니다.",
+      "singleAnswer": false,
+      "singleAnswerCheck": "인쇄된 선만 사용한 두 볼록 도형에서 △ㄱㄴㄷ과 △ㄱㄷㄹ의 합동 여부가 달라집니다. ㄴㅂ을 가정한 이전 반례는 이 그림의 합동 도형 근거로 사용하지 않습니다.",
       "sourceVerified": true,
-      "calculationStatus": "blocked-visual",
+      "calculationStatus": "checked-nonunique",
       "visualCheckStatus": "needs-implementation-check",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "복합 도형의 합동 쌍은 그림 자산을 다시 확인하기 전까지 잠급니다."
+      "lockReason": "원문 그림에서 추가 합동 쌍의 존재가 달라져 전체 답은 잠금을 유지합니다."
     },
     {
       "sourceItemId": "5-2-u3-e2-mission-6",
