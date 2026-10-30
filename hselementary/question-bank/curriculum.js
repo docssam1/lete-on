@@ -2775,6 +2775,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 6 유사문항",sourceSection:"mission",sourcePdfPage:21,sourcePrintedPage:25,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 볼록 사각형의 유일성과 반례을 검증했습니다.",generatorKey:"source52QuadrilateralConditionsSyntheticPage25Mission6",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
 
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-e2-exploration")) {
+    const id="5-2-u3-e2-exploration",name="삼각형 결정 조건 · 연습";
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 2 유사문항",sourceSection:"exploration",sourcePdfPage:22,sourcePrintedPage:26,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 다섯 조건의 구조를 대조하고 창작 조건의 성립성과 두 교점을 독립 검산했습니다.",generatorKey:"source52TriangleDeterminacyPage26Exploration2",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+
   if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t => t.id === "5-2-u3-e2-example-1")) {
     const id="5-2-u3-e2-example-1",name="세 변을 골라 만들 수 있는 삼각형 세기";
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 2-1 유사문항",sourceSection:"example",sourcePdfPage:22,sourcePrintedPage:26,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 변형의 삼각형 부등식과 조합을 검증했습니다.",generatorKey:"source52TriangleSideTriplesSyntheticPage26Example21",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
