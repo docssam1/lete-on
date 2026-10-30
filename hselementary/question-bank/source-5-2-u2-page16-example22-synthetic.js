@@ -46,9 +46,9 @@
     const bottomX = x + width * v.partitionBottom, topX = x + width * v.partitionTop;
     const answerLabel = solution ? svgMixedLabel(v.answer, "cm²", x + width * v.ratio / 2, y + height * 0.75, "source52-p16e22-answer") : "";
     const aria = `가로 ${v.widthText}cm, 세로 ${v.heightText}cm인 직사각형을 ㉮와 ㉯로 나눈 그림${solution ? `, ㉮의 넓이는 ${v.answer}제곱센티미터` : ""}`;
-    return `<svg class="source52-p16e22-diagram" viewBox="0 0 540 430" role="img" aria-label="${esc(aria)}" xmlns="http://www.w3.org/2000/svg">
-      <path class="source52-p16e22-dimension" d="M${x} 62 Q${x + width / 2} 28 ${x + width} 62"/>${svgMixedLabel(v.widthText, "cm", x + width / 2, 42, "source52-p16e22-dimension-label")}
-      <path class="source52-p16e22-dimension" d="M${x + width + 14} ${y} Q${x + width + 38} ${y + height / 2} ${x + width + 14} ${y + height}"/>${svgMixedLabel(v.heightText, "cm", x + width + 26, y + height / 2, "source52-p16e22-dimension-label")}
+    return `<svg class="source52-p16e22-diagram" viewBox="0 0 580 430" role="img" aria-label="${esc(aria)}" xmlns="http://www.w3.org/2000/svg">
+      <path class="source52-p16e22-dimension" d="M${x} 62 Q${x + width / 2} 28 ${x + width} 62"/>${svgMixedLabel(v.widthText, "cm", x + width / 2, 20, "source52-p16e22-dimension-label")}
+      <path class="source52-p16e22-dimension" d="M${x + width + 14} ${y} Q${x + width + 38} ${y + height / 2} ${x + width + 14} ${y + height}"/>${svgMixedLabel(v.heightText, "cm", x + width + 68, y + height / 2, "source52-p16e22-dimension-label")}
       <rect class="source52-p16e22-rect" x="${x}" y="${y}" width="${width}" height="${height}" rx="0"/>
       <path class="source52-p16e22-divider" d="M${topX} ${y} L${bottomX} ${y + height}"/>
       <circle class="source52-p16e22-label-circle" cx="${x + width * v.ratio / 2}" cy="${y + height / 2}" r="17"/><text class="source52-p16e22-label" x="${x + width * v.ratio / 2}" y="${y + height / 2 + 6}" text-anchor="middle">㉮</text>
