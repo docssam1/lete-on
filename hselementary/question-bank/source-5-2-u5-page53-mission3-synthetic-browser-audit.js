@@ -35,6 +35,25 @@ const server=http.createServer((req,res)=>{
       if(width===1440)for(const mode of ["problem","solution"]){await page.locator(mode==="problem"?"#problemTab":"#solutionTab").click();await page.locator("#printMenuButton").click();await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();await page.waitForFunction(m=>document.body.dataset.printMode===m,mode);await page.pdf({path:path.join(output,`${mode}.pdf`),format:"A4",printBackground:true,preferCSSPageSize:true});}
       assert.deepEqual(errors,[]);await context.close();
     }
+    // Generate the entire fixed pool at once and check question/solution order.
+    const context=await browser.newContext({viewport:{width:1440,height:1150},serviceWorkers:"block"}),page=await context.newPage();
+    await context.route("**/*",route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
+    await page.addInitScript(()=>{window.print=()=>{};});
+    await page.goto(`${origin}/hselementary/question-bank/`,{waitUntil:"domcontentloaded",timeout:90000});
+    await page.locator("#gradeFilter [data-grade='5']").click();await page.locator("#termFilter [data-term='2']").click();await page.locator("#unitFilter").selectOption("5-2-u5");
+    await page.locator(`#typeList input[data-type-id='${id}']`).check();await page.locator("#questionCountInput").fill("3");
+    await page.locator("#difficultyFilter [data-difficulty='0']").click();await page.locator("#generateButton").click();
+    await page.waitForFunction(()=>!document.querySelector("#worksheet").hidden);
+    const problems=page.locator(`#problemView [data-source-item-id='${id}']`);
+    assert.equal(await problems.count(),3);
+    assert.deepEqual(await problems.evaluateAll(items=>items.map(item=>item.dataset.poolIndex)),["0","1","2"]);
+    assert.deepEqual(await problems.evaluateAll(items=>items.map(item=>[...item.querySelectorAll("svg text")].map(el=>el.textContent))),
+      [["3","4","5","6","7","9"],["2","5","7","8","9","11"],["3","5","7","8","10","11"]]);
+    await page.locator("#solutionTab").click();const solutions=page.locator(`#solutionView [data-source-answer='${id}']`);
+    assert.equal(await solutions.count(),3);
+    assert.deepEqual(await solutions.evaluateAll(items=>items.map(item=>item.querySelector("b")?.textContent)),["12","5","5"]);
+    for(const mode of ["problem","solution"]){await page.locator(mode==="problem"?"#problemTab":"#solutionTab").click();await page.locator("#printMenuButton").click();await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();await page.waitForFunction(m=>document.body.dataset.printMode===m,mode);await page.pdf({path:path.join(output,`three-${mode}.pdf`),format:"A4",printBackground:true,preferCSSPageSize:true});}
+    await context.close();
   }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}
-  console.log(`Grade 5-2 Mission 3 practice: desktop/mobile problem, solution and A4 exports checked in ${output}`);
+  console.log(`Grade 5-2 Mission 3 practice: desktop/mobile, all three variants and A4 exports checked in ${output}`);
 })().catch(error=>{console.error(error);server.close();process.exitCode=1;});
