@@ -2312,19 +2312,19 @@
       "ordinal": 3,
       "pdfPage": 24,
       "printedPage": 28,
-      "sourceShape": "直角三角形を直角の頂点で回転し、元の一辺と回転後の一辺が平行になる図。回転後の頂点が元の斜辺上にある位置関係を図で確認する。",
-      "answerContract": "candidate: 30 degrees when the shown vertex lies on the original hypotenuse; publisher key not checked",
+      "sourceShape": "직각삼각형의 꼭짓점 ㄷ을 고정해 회전하고 ㄴㄷ∥ㄹㅁ이 될 때 목표각을 구하는 그림. 회전점 ㄹ이 원래 빗변 ㄱㄴ 위에 놓인 위치 관계를 확인한다.",
+      "answerContract": "ㄹ이 원래 빗변 위라는 그림 해석에서 30° 후보; 공식 답안 미대조",
       "visualRisk": [
-        "回転後の頂点が元の斜辺上にある図の位置関係を保つ",
-        "直角の頂点、回転方向、平行線、目標角を区別する",
-        "点が辺上にあることを除いた反例は原図との比較が不十分"
+        "회전점 ㄹ이 원래 빗변 위에 있는 그림의 위치 관계 보존",
+        "직각 꼭짓점, 회전 방향, 평행선, 목표각 구분",
+        "점이 빗변 위인 조건을 제외한 반례는 원문 그림을 충족하지 않음"
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
       "syntheticRuntimeTypeId": "5-2-u3-e3-example-3-synthetic",
       "publisherKeyVerified": false,
-      "reviewReason": "原図では回転後の頂点が元の斜辺上にあるように示されている。これを条件に含めると独立計算では30°に定まる。以前の45°反例はこの位置条件を満たさず、原図に対する反例として不十分だった。正式答案と位置関係の追加確認、生成画面の検証までは原文を潜在的公開対象として確定せずロックを維持する。"
+      "reviewReason": "그림의 회전점 ㄹ이 빗변 위라는 위치 관계를 포함하면 30°로 검산됩니다. 이전 45° 구성은 이 위치를 만족하지 않습니다. 원문은 그림과 공식 답안의 추가 확인 전까지 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u3-e3-example-4",
