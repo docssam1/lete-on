@@ -2696,6 +2696,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e8-example-4-stone-synthetic",name="바둑돌을 왼쪽으로 옮기는 게임 · 연습";
     source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-example-4",sourceItemLabel:"예제 8-4 구조 연습",sourceSection:"example",sourcePdfPage:34,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 말판의 모든 첫 수와 승리 전략을 독립 검증했습니다.",generatorKey:"source52StoneGameSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
+  if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-example-2-cut-synthetic")) {
+    const id="5-2-u3-e8-example-2-cut-synthetic",name="격자를 합동 두 조각으로 나누기 · 연습";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-example-2",sourceItemLabel:"예제 8-2 구조 연습",sourceSection:"example",sourcePdfPage:34,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 격자의 합동 조각과 방법 수를 독립 전수 검증했습니다.",generatorKey:"source52CongruentGridSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   const source52LineSymmetry = source52CongruenceUnit?.subunits.find(s => s.name === "선대칭도형");
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-example-1-reflection-synthetic")) {
     const id="5-2-u3-e5-example-1-reflection-synthetic",name="기울어진 축에 사각형 반사하기 · 연습";
