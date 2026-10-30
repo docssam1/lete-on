@@ -706,26 +706,26 @@
       "commonTypeId": "quadrilateral-congruence-extra-elements",
       "typeLabel": "사각형 합동에 필요한 추가 요소 찾기",
       "childFriendlyTypeLabel": "사각형을 하나로 정하는 정보 고르기",
-      "originalStructure": "네 변 중 일부와 각·대각선 후보가 표시된 사각형에서 필요한 조건을 고릅니다.",
+      "originalStructure": "세 변과 80° 각이 주어진 사각형에서 합동인 도형을 그리는 데 필요한 추가 조건을 여섯 보기에서 모두 고릅니다.",
       "conditions": [
-        "세 변 길이와 한 각 표시",
-        "추가 후보는 변·각·대각선",
+        "세 변 ㄱㄴ, ㄱㄹ, ㄴㄷ의 길이와 각 ㄴㄷㄹ 80°가 주어짐",
+        "보기는 변 ㄷㄹ, 각 ㄱ·ㄴ·ㄹ, 대각선 ㄱㄷ·ㄴㄹ",
         "사각형을 두 삼각형으로 나누어 판단"
       ],
-      "visualRequirement": "6개 후보의 선분·각 이름과 사각형의 직각 표시가 필요합니다.",
+      "visualRequirement": "6개 후보의 선분·각 이름과 사각형 ㄷ에서의 80° 표시가 필요합니다.",
       "independentCalculation": null,
       "answerFormula": null,
       "independentAnswer": null,
       "resultContract": "set-of-conditions",
       "candidateAnswerCount": null,
       "singleAnswer": null,
-      "singleAnswerCheck": "후보 선분 이름과 도형 표식이 흐려 완전한 후보 집합을 확정하지 못했습니다.",
+      "singleAnswerCheck": "인쇄본에서 여섯 보기와 80°를 확인했습니다. 원문 전체 정답과 공식 출판사 답안은 별도 대조가 필요합니다.",
       "sourceVerified": true,
-      "calculationStatus": "blocked-visual",
+      "calculationStatus": "needs-answer-review",
       "visualCheckStatus": "needs-implementation-check",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "도형·선분 표식이 완전히 판독되지 않아 조건을 추측하지 않습니다."
+      "lockReason": "원문 전체 정답과 공식 출판사 답안의 대조가 필요합니다. 창작 보기형 문항은 별도로 검수합니다."
     },
     {
       "sourceItemId": "5-2-u3-e2-exploration-1",
