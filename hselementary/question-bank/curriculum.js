@@ -2800,6 +2800,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 3 유사문항",sourceSection:"mission",sourcePdfPage:23,sourcePrintedPage:27,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 일곱 각에서 양 끝각을 고르는 구조를 대조하고 창작 각의 조합을 검산했습니다.",generatorKey:"source52TriangleAnglePairsSyntheticPage27Mission3",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
 
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-e2-example-3")) {
+    const id="5-2-u3-e2-example-3",name="정삼각형의 합동 한 쌍 · 연습";
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 2-3 조건 추가 유사문항",sourceSection:"example",sourcePdfPage:22,sourcePrintedPage:26,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 그림을 대조하고 변 길이와 보기 범위를 명시한 창작 문항의 합동을 검산했습니다.",generatorKey:"source52EquilateralOnePairPage26Example23",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+
   if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-e2-example-4")) {
     const id="5-2-u3-e2-example-4",name="이등변삼각형의 합동 쌍 · 연습";
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 2-4 조건 추가 유사문항",sourceSection:"example",sourcePdfPage:22,sourcePrintedPage:26,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 합동 쌍 세기 구조에 길이와 높이를 추가한 창작 도형을 전수 검산했습니다.",generatorKey:"source52IsoscelesFanPairsPage26Example24",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
