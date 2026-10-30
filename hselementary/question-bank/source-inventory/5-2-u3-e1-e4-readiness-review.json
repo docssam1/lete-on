@@ -578,18 +578,18 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 21,
       "sourcePrintedPage": 25,
-      "commonTypeId": "quadrilateral-construction-SSS-copy",
-      "typeLabel": "사각형의 합동 복사 구성",
-      "childFriendlyTypeLabel": "같은 사각형을 다시 그리기",
-      "originalStructure": "주어진 사각형과 합동인 사각형을 자와 컴퍼스로 구성합니다.",
+      "commonTypeId": "triangle-construction-SSS-copy",
+      "typeLabel": "삼각형의 합동 복사 구성",
+      "childFriendlyTypeLabel": "같은 삼각형을 다시 그리기",
+      "originalStructure": "주어진 삼각형과 합동인 삼각형을 자와 컴퍼스만 사용해 그립니다.",
       "conditions": [
-        "네 꼭짓점의 연결 순서 유지",
-        "대각선과 변을 이용해 두 삼각형 구성"
+        "주어진 삼각형의 세 변을 옮김",
+        "두 원호의 교점으로 세 번째 꼭짓점 구성"
       ],
-      "visualRequirement": "원본 사각형의 두 대각선과 구성 호를 보존해야 합니다.",
-      "independentCalculation": "한 대각선을 공통 기준으로 삼고 두 삼각형을 SSS로 복사하면 합동 사각형 하나가 됩니다.",
-      "answerFormula": "quadrilateral = two SSS triangles",
-      "independentAnswer": "합동인 사각형 1개",
+      "visualRequirement": "원본 삼각형과 작도 공간을 보이고 풀이에 구성 호를 구분해야 합니다.",
+      "independentCalculation": "세 변을 차례로 옮기면 SSS로 주어진 삼각형과 합동입니다.",
+      "answerFormula": "triangle copy by SSS",
+      "independentAnswer": "합동인 삼각형 1개",
       "resultContract": "constructed-shape",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
@@ -599,7 +599,7 @@
       "visualCheckStatus": "needs-implementation-check",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "구성 단계와 대각선의 공개 표시 검수가 필요합니다."
+      "lockReason": "원문 보호 잠금을 유지하며 별도 연습문항 및 작도 그림 검수가 필요합니다."
     },
     {
       "sourceItemId": "5-2-u3-e1-mission-3",
@@ -608,10 +608,10 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 21,
       "sourcePrintedPage": 25,
-      "commonTypeId": "quadrilateral-construction-SAS-copy",
-      "typeLabel": "사각형 합동 복사의 두 번째 구성",
+      "commonTypeId": "quadrilateral-construction-SSS-copy",
+      "typeLabel": "사각형의 합동 복사 구성",
       "childFriendlyTypeLabel": "표시된 사각형을 같은 크기로 옮기기",
-      "originalStructure": "제시된 사각형의 변과 대각선 표시를 이용해 합동 사각형을 그립니다.",
+      "originalStructure": "주어진 사각형과 합동인 사각형을 자와 컴퍼스만 사용해 그립니다. 대각선은 풀이를 위한 보조선입니다.",
       "conditions": [
         "대각선으로 두 삼각형 분할",
         "각 삼각형의 변 길이 복사",
@@ -630,7 +630,7 @@
       "visualCheckStatus": "needs-implementation-check",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "원본의 구성선과 답을 알려 주는 표식이 섞여 있어 자산 확인 전 잠금입니다."
+      "lockReason": "원문 보호 잠금을 유지하며 별도 연습문항 및 작도 그림 검수가 필요합니다."
     },
     {
       "sourceItemId": "5-2-u3-e1-mission-4",
