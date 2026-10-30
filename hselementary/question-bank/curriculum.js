@@ -2721,6 +2721,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e5-exploration-grid-synthetic",name="대칭축이 하나인 색 배열 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 5 구조 연습",sourceSection:"exploration",sourcePdfPage:28,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 색 배열을 전수 검사했습니다.",generatorKey:"source52SymmetryGridSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-example-3-reflection-synthetic")) {
+    const id="5-2-u3-e5-example-3-reflection-synthetic",name="두 직선에 차례로 대칭시키기 · 연습";
+    source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 5-3 구조 연습",sourceSection:"example",sourcePdfPage:28,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"두 직선에 차례로 반사한 창작 도형과 목표각을 독립 검산했습니다.",generatorKey:"source52DoubleReflectionSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   const source52CongruenceFirst = source52CongruenceUnit?.subunits.find(s => s.name === "조건에 맞는 삼각형 그리기");
   if (source52CongruenceFirst) {
     const index = source52CongruenceFirst.types.findIndex(t => t.id === "5-2-u3-t1");
