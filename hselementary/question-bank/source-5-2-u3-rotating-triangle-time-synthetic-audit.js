@@ -1,0 +1,4 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-rotating-triangle-time-synthetic.js');
+for(let i=0;i<3;i++)for(const level of [-1,0,1]){const q=api.makeQuestion(i,level),m=q.answerModel;assert.equal(m.given+m.angle,90);assert.equal(m.angle*m.minutes,180);assert.deepEqual([12,9,6][i],m.minutes);for(const a of [0,m.angle]){const next=api.rotate(m.N,a+m.angle),prior=api.rotate(m.G,a);assert.ok(Math.abs(next[0]*prior[1]-next[1]*prior[0])<1e-8);assert.ok(next[0]*prior[0]+next[1]*prior[1]>0);}for(const p of [m.G,m.N]){const r=api.rotate(p,180);assert.ok(Math.abs(r[0]+p[0])<1e-8&&Math.abs(r[1]+p[1])<1e-8);}assert.doesNotMatch(q.prompt,/data-rotation-result/);assert.match(q.answerVisual,/data-rotation-result/);}
+console.log('삼각형 회전 감사: 세 각도·세 난이도, 겹친 변·반 바퀴 시간·정답 분리 검증');
