@@ -2706,7 +2706,7 @@
       "ordinal": 1,
       "pdfPage": 28,
       "printedPage": 32,
-      "sourceShape": "선대칭도형: 검은 칸과 흰 칸을 배열한 정사각형에서 대칭축이 하나인 모양을 회전·뒤집기 중복 없이 센다.",
+      "sourceShape": "선대칭도형: 검은 정사각형 4개와 흰 정사각형 5개로 3×3을 채워 대칭축이 정확히 하나인 모양을 회전·뒤집기 중복 없이 센다.",
       "answerContract": "candidate: distinct-symmetry-pattern-count",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2714,7 +2714,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조와 독립 열거를 확인했으나 공식 답안 대조 전이므로 원문은 잠금 유지합니다."
+      "reviewReason": "원문 예시와 검은 칸 4개·흰 칸 5개, 정확히 하나의 대칭축 및 회전·뒤집기 중복 규칙을 재대조했습니다. 독립 열거에서 표기 배열 40개, 중복 제거한 후보 10가지입니다. 출판사 답안 미대조로 원문 잠금 유지하고 별도 1·2·3개 검은 칸 연습을 연결합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e5-exploration-grid-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e5-example-1",
