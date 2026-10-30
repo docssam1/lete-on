@@ -52,8 +52,8 @@
     "unclassifiedItems": 0,
     "publicCandidateCount": 11,
     "reviewLockedCount": 39,
-    "uniqueAnswerPassCount": 49,
-    "uniqueAnswerReviewNeededCount": 1
+    "uniqueAnswerPassCount": 48,
+    "uniqueAnswerReviewNeededCount": 2
   },
   "units": [
     {
@@ -922,20 +922,20 @@
         "1km 미만은 3000원",
         "1km부터는 3300원",
         "그 뒤 100m를 달릴 때마다 200원",
-        "100m가 되지 않는 남은 거리도 다음 100m 구간으로 올려 계산"
+        "100m 미만의 잔여 거리를 과금하는 방식은 원문에 명시되지 않음"
       ],
       "visualRequirement": "km와 m 단위, 기본 구간과 추가 구간을 분리해 표시해야 합니다.",
-      "independentCalculation": "8475m에서 처음 1000m를 빼면 7475m입니다. 이를 100m 구간으로 올리면 75구간이므로 3300+75×200=18300원입니다.",
-      "answerFormula": "3300+ceil((8475-1000)/100)×200=18300",
-      "independentAnswer": "18300원",
+      "independentCalculation": "기본 거리 이후 7475m 중 완주한 100m는 74구간이고 남은 거리는 75m입니다. 완주한 구간에만 추가 요금을 붙이면 3300+74×200=18100원입니다. 남은 75m도 한 구간으로 세면 3300+75×200=18300원입니다. 원문은 잔여 구간의 과금 방식을 명시하지 않습니다.",
+      "answerFormula": "완주 구간만: 3300+74×200=18100; 부분 구간 포함: 3300+75×200=18300",
+      "independentAnswer": "18100원 또는 18300원 (잔여 거리 과금 방식에 따라 달라 확인 필요)",
       "resultContract": "single-value",
-      "candidateAnswerCount": 1,
-      "singleAnswer": true,
-      "singleAnswerCheck": "어림하기 활용 문맥과 원본 계산 흔적을 함께 확인하고 남은 거리 올림을 적용했습니다.",
+      "candidateAnswerCount": 2,
+      "singleAnswer": false,
+      "singleAnswerCheck": "원문에 부분 구간 요금 규정은 없고, 두 해석의 결과가 달라 출판사 해설이나 명시적 규정이 필요합니다. 손글씨는 정답 근거로 사용하지 않습니다.",
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "원문과 답 18300원은 확인했지만 중앙 생성기에서 남은 거리 올림 조건을 분명히 표시하기 전입니다."
+      "lockReason": "원문에 잔여 거리 과금 규정이 없어 두 해석의 결과가 다릅니다. 공식 해설이나 조건 확인 전 원문 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-1-box-count",
@@ -1405,11 +1405,12 @@
     "publicCandidateCount": 11,
     "lockedCount": 39,
     "visualItemCount": 43,
-    "uniqueAnswerPassCount": 49,
-    "uniqueAnswerReviewNeededCount": 1,
+    "uniqueAnswerPassCount": 48,
+    "uniqueAnswerReviewNeededCount": 2,
     "groupedSameStructureCount": 1,
     "ambiguousItems": [
-      "5-2-u1-e3-example-3"
+      "5-2-u1-e3-example-3",
+      "5-2-u1-e3-example-4"
     ],
     "notes": [
       "2026-10-30 기준 이 검수표의 50개 기록 중 11개는 출판사 답안 미대조 상태의 공개 유사문항에 연결되고, 39개는 원문 검수 잠금 기록입니다. 이 집계는 전체 문제은행 생성 가능 수와 별개입니다.",
@@ -1418,7 +1419,7 @@
       "개념탐구와 Mission의 서로 다른 풀이 구조는 별도 유형으로 나누었고, 같은 표 안에서 같은 어림을 반복하는 행만 한 유형으로 묶었습니다.",
       "그래프와 도형은 눈금·선·단위가 원문과 같은 위치로 복원될 때까지 잠금 상태를 유지합니다.",
       "예제 3-3은 4296÷20의 나머지 16을 5개씩 묶어 모두 판다는 원문 조건이 서로 맞지 않아 유일하게 잠금을 유지합니다.",
-      "확대 원본으로 두 자리 수 쌍, 소수 카드, 택시 올림, 완성 상자 판매, 꺾은선그래프 선·눈금, 7200 반올림 개수를 재확인해 여섯 항목의 단일 답을 확정했습니다.",
+      "확대 원본으로 두 자리 수 쌍, 소수 카드, 완성 상자 판매, 꺾은선그래프 선·눈금, 7200 반올림 개수를 재확인했습니다. 택시 문제의 잔여 거리 과금은 원문에서 명시되지 않아 별도 확인이 필요합니다.",
       "Mission 6(인쇄 9쪽)은 원문·계산·3개 합성 풀이 풀·화면·A4·배포·라이브 검수를 완료해 공개했습니다.",
       "개념탐구 4와 예제 4-1(인쇄 10쪽)은 원문에 그림이 없는 텍스트 문항으로 확인했습니다. 18개 합성 조합, 화면 24개 상태, A4 검수를 완료했고 PR #395 병합 및 Pages 배포 workflow 성공을 확인했습니다. 이전 HTTP 429 대기 후 2026-10-30 실제 서비스에서 PC·모바일 및 세 난이도별 생성과 풀이를 확인했습니다.",
       "예제 4-2(인쇄 10쪽)는 그림 없는 텍스트 문항입니다. 정수 나눗셈 몫을 전수 대입해 원문 답을 270 이상 300 미만으로 확인했고, PR #396 병합·Pages 배포와 1440px·375px 라이브 문항·풀이 검증까지 마쳤습니다.",
