@@ -2694,6 +2694,8 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "reviewed",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
       "reviewReason": "원본 PDF 인쇄 31쪽의 문장·꼭짓점·직각 표식·길이 10cm, 8cm, 6cm·중점 ㅁ·목표 △ㄱㄹㅁ을 직접 대조했습니다. 사다리꼴 중선 길이 (10+8)÷2=9cm이므로 넓이는 6×9÷2=27cm²입니다. 생성 그림과 풀이, 화면·A4를 검증했으며 출판사 정답표는 확인하지 않았습니다."
     },
     {
