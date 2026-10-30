@@ -207,6 +207,30 @@ test("saved competition diagnostics keep only grade-matched aggregates and can b
   assert.deepEqual(store.loadCompetitionDiagnosticHistory(7, "amc8"), []);
 });
 
+test("saved AMC 8 diagnostics accept the five official-scope groups without exposing responses", function () {
+  const store = records.create(memoryStorage());
+  const diagnostic = {
+    schemaVersion: "gfield-competition-diagnostic-v1", id: "diag-amc8-five-domains", programId: "amc8", programTitle: "AMC 8", grade: 7,
+    examDate: "2026-10-29",
+    summary: { itemCount: 25, correct: 4, wrong: 1, blank: 1, unmarked: 19, attempted: 5, domainClassified: 6, reasonClassified: 1 },
+    domains: [
+      { id: "algebra", attempted: 1, correct: 1, wrong: 0, blank: 0 }, { id: "number", attempted: 1, correct: 1, wrong: 0, blank: 0 },
+      { id: "geometry", attempted: 1, correct: 0, wrong: 1, blank: 0 }, { id: "counting", attempted: 1, correct: 1, wrong: 0, blank: 0 },
+      { id: "data", attempted: 1, correct: 1, wrong: 0, blank: 1 }
+    ], reasons: [{ id: "concept", count: 1 }]
+  };
+  const saved = store.saveCompetitionDiagnostic(diagnostic);
+  assert.equal(saved.domains.length, 5);
+  assert.equal(saved.domains[1].name, "수·비례·추정");
+  assert.equal(saved.domains[4].name, "그래프·표 해석");
+  assert.equal(store.loadCompetitionDiagnosticHistory(7, "amc8")[0].domains.length, 5);
+  const invalidOtherContest = JSON.parse(JSON.stringify(diagnostic));
+  invalidOtherContest.id = "diag-amc10-five-domains";
+  invalidOtherContest.programId = "amc10";
+  invalidOtherContest.programTitle = "AMC 10";
+  assert.equal(store.saveCompetitionDiagnostic(invalidOtherContest), false);
+});
+
 test("legacy assessment summaries retain only source-score inputs and cannot feed the learning plan", function () {
   const storage = memoryStorage();
   storage.setItem("gmap-local-learning-record-v1:external-assessment", JSON.stringify({

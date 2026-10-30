@@ -99,6 +99,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator(".competition-submit").isHidden(), true);
   assert.equal(await page.locator("#competition-source-link").isHidden(), true);
   await page.locator("#competition-select").selectOption("amc8");
+  assert.deepEqual(await page.locator("#domain-rows .domain-row strong").allInnerTexts(), ["식·대수", "수·비례·추정", "기하·공간", "경우의 수·확률", "그래프·표 해석"]);
   assert.equal(await page.locator(".competition-report").isHidden(), true);
   assert.equal(await page.locator("#paper-label-field").isVisible(), true);
   assert.equal(await page.locator("#paper-review-link").innerText(), "문항별 복습 · AMC 회차별 기록 →");
@@ -126,6 +127,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#source-chip").innerText(), /추정안/);
   assert.match(await page.locator("#grade-note").innerText(), /제공된 7·8·10학년/);
   await page.locator("#competition-select").selectOption("amc10");
+  assert.deepEqual(await page.locator("#domain-rows .domain-row strong").allInnerTexts(), ["식·대수", "수와 정수론", "기하·공간", "경우의 수·확률"]);
   assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=9&program=amc10/);
   assert.equal(await page.locator("#competition-practice-link").isHidden(), true);
   await page.locator('[data-strand="algebra"][data-field="attempted"]').fill("4");

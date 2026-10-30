@@ -816,7 +816,7 @@
     const host = $("domain-rows");
     host.replaceChildren();
     if (!competition) return;
-    data.strands.forEach(function (entry) {
+    data.competitionDomains(competition).forEach(function (entry) {
       const row = document.createElement("div");
       row.className = "domain-row";
       const title = document.createElement("strong");
@@ -845,11 +845,12 @@
       $("competition-error").hidden = false;
       return;
     }
-    const rows = data.strands.map(function (strand) {
+    const domains = data.competitionDomains(competition);
+    const rows = domains.map(function (strand) {
       return { attempted: $(`domain-rows`).querySelector(`[data-strand="${strand.id}"][data-field="attempted"]`).value,
         correct: $(`domain-rows`).querySelector(`[data-strand="${strand.id}"][data-field="correct"]`).value };
     });
-    const result = data.analyzeCompetition(rows, option.itemCount);
+    const result = data.analyzeCompetition(rows, option.itemCount, competition);
     if (!result.valid) {
       resetCompetitionReport();
       setText("competition-error", result.reason);

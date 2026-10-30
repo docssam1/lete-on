@@ -17,7 +17,7 @@
   const COMPETITION_DIAGNOSTIC_HISTORY_KEY = `${VERSION}:competition-diagnostic-history-v1`;
   const MAX_COMPETITION_FORMS = 8;
   const MAX_COMPETITION_DIAGNOSTICS = 50;
-  const COMPETITION_DOMAIN_LABELS = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률" });
+  const COMPETITION_DOMAIN_LABELS = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석" });
   const COMPETITION_REASON_IDS = new Set(["concept", "approach", "calculation", "reading", "time"]);
   const REVIEWED_2019_G6_SOURCE_SHA256 = "a2e7191c21d29fdfb5b9f8a0d08018df6d7c1b318d0e05207dcc522696074d6b";
   const REVIEWED_2019_G6_AXIS_BY_QUESTION = Object.freeze([
@@ -348,15 +348,22 @@
     const summary = value.summary;
     if (!["itemCount", "correct", "wrong", "blank", "unmarked", "attempted", "domainClassified", "reasonClassified"].every(function (key) { return Number.isInteger(summary[key]) && summary[key] >= 0; })) return null;
     if (summary.itemCount < 1 || summary.itemCount > 30 || summary.correct + summary.wrong + summary.blank + summary.unmarked !== summary.itemCount || summary.attempted !== summary.correct + summary.wrong || summary.domainClassified > summary.itemCount || summary.reasonClassified > summary.wrong) return null;
-    const domains = value.domains.slice(0, 4).map(function (domain) {
+    const legacyAmc8Domains = value.programId === "amc8" && value.domains.length === 4;
+    const domains = value.domains.slice(0, 5).map(function (domain) {
       if (!object(domain) || !Object.prototype.hasOwnProperty.call(COMPETITION_DOMAIN_LABELS, domain.id) || !["attempted", "correct", "wrong", "blank"].every(function (key) { return Number.isInteger(domain[key]) && domain[key] >= 0; }) || domain.attempted !== domain.correct + domain.wrong || domain.attempted + domain.blank > summary.itemCount) return null;
       const rate = domain.attempted >= 3 ? Math.round(domain.correct / domain.attempted * 100) : null;
-      return { id: domain.id, name: COMPETITION_DOMAIN_LABELS[domain.id], attempted: domain.attempted, correct: domain.correct, wrong: domain.wrong, blank: domain.blank, rate: rate, evidence: domain.attempted >= 3 ? "3문제 이상" : domain.attempted ? "3문제 미만 · 비교 보류" : "미측정" };
+      const name = domain.id === "number" && value.programId === "amc8" && !legacyAmc8Domains ? "수·비례·추정" : COMPETITION_DOMAIN_LABELS[domain.id];
+      return { id: domain.id, name: name, attempted: domain.attempted, correct: domain.correct, wrong: domain.wrong, blank: domain.blank, rate: rate, evidence: domain.attempted >= 3 ? "3문제 이상" : domain.attempted ? "3문제 미만 · 비교 보류" : "미측정" };
     }).filter(Boolean);
     const reasons = value.reasons.slice(0, 5).map(function (reason) {
       return object(reason) && COMPETITION_REASON_IDS.has(reason.id) && Number.isInteger(reason.count) && reason.count > 0 && reason.count <= summary.wrong ? { id: reason.id, count: reason.count } : null;
     }).filter(Boolean);
-    if (value.domains.length !== 4 || domains.length !== 4 || new Set(domains.map(function (domain) { return domain.id; })).size !== 4 || reasons.length !== value.reasons.length || new Set(reasons.map(function (reason) { return reason.id; })).size !== reasons.length) return null;
+    const domainIds = domains.map(function (domain) { return domain.id; }).sort();
+    const expectedLegacyDomainIds = ["algebra", "counting", "geometry", "number"];
+    const expectedAmc8DomainIds = expectedLegacyDomainIds.concat(["data"]).sort();
+    const validLegacyDomains = value.domains.length === 4 && domainIds.join("|") === expectedLegacyDomainIds.join("|");
+    const validAmc8Domains = value.programId === "amc8" && value.domains.length === 5 && domainIds.join("|") === expectedAmc8DomainIds.join("|");
+    if ((!validLegacyDomains && !validAmc8Domains) || domains.length !== value.domains.length || reasons.length !== value.reasons.length || new Set(domains.map(function (domain) { return domain.id; })).size !== domains.length) return null;
     if (domains.reduce(function (total, domain) { return total + domain.attempted + domain.blank; }, 0) !== summary.domainClassified || domains.reduce(function (total, domain) { return total + domain.correct; }, 0) > summary.correct || domains.reduce(function (total, domain) { return total + domain.wrong; }, 0) > summary.wrong || domains.reduce(function (total, domain) { return total + domain.blank; }, 0) > summary.blank || reasons.reduce(function (total, reason) { return total + reason.count; }, 0) !== summary.reasonClassified) return null;
     return {
       schemaVersion: "gfield-competition-diagnostic-v1",

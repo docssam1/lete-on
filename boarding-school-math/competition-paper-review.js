@@ -11,7 +11,6 @@
   let grade = roadmap.getGrade(params.get("grade")) ? Number(params.get("grade")) : 7;
   let programId = params.get("program") || "";
   const statuses = [{ id: "unmarked", title: "표시 안 함" }, { id: "correct", title: "O · 맞힘" }, { id: "wrong", title: "X · 틀림" }, { id: "blank", title: "미응답 · 답안 공란" }];
-  const domains = [{ id: "unclassified", title: "영역 선택" }].concat(roadmap.strands.map(function (entry) { return { id: entry.id, title: entry.title }; }));
   const reasons = [{ id: "none", title: "이유 선택" }, { id: "concept", title: "개념" }, { id: "approach", title: "접근 아이디어" }, { id: "calculation", title: "계산" }, { id: "reading", title: "조건 읽기" }, { id: "time", title: "시간" }];
   const blankReasons = [{ id: "none", title: "이유 선택" }, { id: "time", title: "시간 부족" }, { id: "skipped", title: "건너뜀" }, { id: "could-not-start", title: "시작 못 함" }];
   let scoreHistory = [];
@@ -127,6 +126,7 @@
     document.querySelector(".mark-head").hidden = !format;
     document.querySelector(".review-form-actions").hidden = !format;
     if (!format) { resetReport(); return; }
+    const domains = [{ id: "unclassified", title: "영역 선택" }].concat(analyzer.domainsFor(format.id));
     for (let index = 0; index < format.itemCount; index += 1) {
       const number = index + 1;
       const li = document.createElement("li");
@@ -370,6 +370,7 @@
   }
   function renderResult(result) {
     const label = $("review-paper-label").value.trim();
+    const domains = [{ id: "unclassified", title: "영역 미분류" }].concat(analyzer.domainsFor(selectedFormat().id));
     lastDiagnostic = result;
     $("report-roadmap-link").href = `./boarding-roadmap.html?grade=${encodeURIComponent(grade)}&program=${encodeURIComponent(selectedFormat().id)}#grade-map`;
     $("report-roadmap-link").textContent = `선택한 Grade ${grade} 학습 경로 보기 →`;

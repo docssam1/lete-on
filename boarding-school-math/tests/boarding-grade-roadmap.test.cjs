@@ -128,3 +128,13 @@ test("manual competition analysis validates counts and does not assign a level",
     { attempted: 0, correct: 0 }, { attempted: 0, correct: 0 }
   ], 25).valid, false);
 });
+
+test("AMC 8 manual summaries separate official data interpretation and number-proportional scope", function () {
+  assert.deepEqual(roadmap.competitionDomains("amc8").map(function (domain) { return domain.title; }), ["식·대수", "수·비례·추정", "기하·공간", "경우의 수·확률", "그래프·표 해석"]);
+  assert.equal(roadmap.competitionDomains("amc10").length, 4);
+  assert.equal(roadmap.analyzeCompetition(Array(4).fill({ attempted: 0, correct: 0 }), 25, "amc8").valid, false);
+  const result = roadmap.analyzeCompetition(Array(5).fill({ attempted: 1, correct: 1 }), 25, "amc8");
+  assert.equal(result.valid, true);
+  assert.equal(result.rows[4].title, "그래프·표 해석");
+  assert.equal("level" in result, false);
+});

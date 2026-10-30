@@ -31,6 +31,7 @@ test("users can opt to save an answer-free AMC review summary and see it only on
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  assert.deepEqual(await page.locator('[data-question="1"][data-field="domain"] option').allTextContents(), ["영역 선택", "식·대수", "수·비례·추정", "기하·공간", "경우의 수·확률", "그래프·표 해석"]);
   await page.locator("#review-exam-date").fill("2026-10-29");
   await page.locator("#review-paper-label").fill("Practice A");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
@@ -198,9 +199,9 @@ test("paper review links a low-evidence area comparison to the specific wrong qu
     await page.locator(`[data-question="${question}"][data-field="domain"]`).selectOption(domain);
   }
   await page.getByRole("button", { name: "결과 보기" }).click();
-  assert.match(await page.locator("#report-next").innerText(), /표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 수와 정수론 0\/3입니다/);
+  assert.match(await page.locator("#report-next").innerText(), /표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 수·비례·추정 0\/3입니다/);
   const reviewItems = page.locator("#report-review-items-list");
-  assert.match(await reviewItems.innerText(), /1번 · 오답 · 수와 정수론[\s\S]*3번 · 오답 · 수와 정수론/);
+  assert.match(await reviewItems.innerText(), /1번 · 오답 · 수·비례·추정[\s\S]*3번 · 오답 · 수·비례·추정/);
   assert.equal(await reviewItems.locator("li").count(), 3);
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await reviewItems.locator("li").count(), 3, "repeated submit replaces the result list instead of duplicating it");
@@ -470,7 +471,7 @@ test("blank response reason is captured separately and never shown as an answer 
   await row.locator('[data-field="domain"]').selectOption("number");
   await row.locator('[data-field="reason"]').selectOption("skipped");
   await page.getByRole("button", { name: "결과 보기" }).click();
-  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 미응답 · 수와 정수론 · 건너뜀/);
+  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 미응답 · 수·비례·추정 · 건너뜀/);
   assert.match(await page.locator("#report-reasons").innerText(), /미응답 이유 · 1\/1개 공란 분류/);
   assert.match(await page.locator("#report-reasons").innerText(), /건너뜀 · 1문항/);
   assert.doesNotMatch(await page.locator("#report-reasons").innerText(), /오답 이유/);

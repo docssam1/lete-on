@@ -7,11 +7,16 @@
   "use strict";
   // Reference formulas: MAA 2023 AMC 8 and 2022 AMC 10A booklets. Check the selected paper's own instructions; MAA may update rules.
   const statusIds = Object.freeze(["unmarked", "correct", "wrong", "blank"]);
-  const domainIds = Object.freeze(["unclassified", "algebra", "number", "geometry", "counting"]);
+  const domainIds = Object.freeze(["unclassified", "algebra", "number", "geometry", "counting", "data"]);
   const wrongReasonIds = Object.freeze(["none", "concept", "approach", "calculation", "reading", "time"]);
   const blankReasonIds = Object.freeze(["none", "time", "skipped", "could-not-start"]);
   const reasonIds = Object.freeze(Array.from(new Set(wrongReasonIds.concat(blankReasonIds))));
   const domainNames = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률" });
+  const amc8DomainNames = Object.freeze({ algebra: "식·대수", number: "수·비례·추정", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석" });
+  const domainsFor = function (program) {
+    const names = program === "amc8" ? amc8DomainNames : domainNames;
+    return Object.freeze(Object.keys(names).map(function (id) { return Object.freeze({ id: id, title: names[id] }); }));
+  };
   const reasonNames = Object.freeze({ concept: "개념", approach: "접근 아이디어", calculation: "계산", reading: "조건 읽기", time: "시간" });
   const blankReasonNames = Object.freeze({ time: "시간 부족", skipped: "건너뜀", "could-not-start": "시작 방법을 찾지 못함" });
 
@@ -20,7 +25,8 @@
       return { valid: false, error: "선택한 문제지의 문항 수를 확인하세요." };
     }
     const counts = { correct: 0, wrong: 0, blank: 0, unmarked: 0 };
-    const domains = Object.keys(domainNames).map(function (id) { return { id: id, name: domainNames[id], attempted: 0, correct: 0, wrong: 0, blank: 0, rate: null, evidence: "미측정" }; });
+    const selectedDomainNames = program === "amc8" ? amc8DomainNames : domainNames;
+    const domains = Object.keys(selectedDomainNames).map(function (id) { return { id: id, name: selectedDomainNames[id], attempted: 0, correct: 0, wrong: 0, blank: 0, rate: null, evidence: "미측정" }; });
     const byDomain = new Map(domains.map(function (domain) { return [domain.id, domain]; }));
     const wrongItemNumbersByDomain = new Map(domains.map(function (domain) { return [domain.id, []]; }));
     const blankItemNumbersByDomain = new Map(domains.map(function (domain) { return [domain.id, []]; }));
@@ -35,7 +41,7 @@
     const byBlankReason = new Map(blankReasons.map(function (reason) { return [reason.id, reason]; }));
     for (let index = 0; index < entries.length; index += 1) {
       const entry = entries[index];
-      if (!entry || !statusIds.includes(entry.status) || !domainIds.includes(entry.domain) || !reasonIds.includes(entry.reason)
+      if (!entry || !statusIds.includes(entry.status) || !(entry.domain === "unclassified" || Object.prototype.hasOwnProperty.call(selectedDomainNames, entry.domain)) || !reasonIds.includes(entry.reason)
         || (entry.status === "wrong" && !wrongReasonIds.includes(entry.reason))
         || (entry.status === "blank" && !blankReasonIds.includes(entry.reason))
         || ((entry.status === "correct" || entry.status === "unmarked") && entry.reason !== "none")) {
@@ -113,5 +119,5 @@
       level: null
     };
   }
-  return Object.freeze({ analyze: analyze, statusIds: statusIds, domainIds: domainIds, reasonIds: reasonIds, wrongReasonIds: wrongReasonIds, blankReasonIds: blankReasonIds });
+  return Object.freeze({ analyze: analyze, domainsFor: domainsFor, statusIds: statusIds, domainIds: domainIds, reasonIds: reasonIds, wrongReasonIds: wrongReasonIds, blankReasonIds: blankReasonIds });
 });

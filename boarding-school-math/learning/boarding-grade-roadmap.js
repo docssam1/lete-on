@@ -146,6 +146,18 @@
     Object.freeze({ id: "counting", title: "경우의 수·확률" })
   ]);
 
+  const amc8Strands = Object.freeze([
+    Object.freeze({ id: "algebra", title: "식·대수" }),
+    Object.freeze({ id: "number", title: "수·비례·추정" }),
+    Object.freeze({ id: "geometry", title: "기하·공간" }),
+    Object.freeze({ id: "counting", title: "경우의 수·확률" }),
+    Object.freeze({ id: "data", title: "그래프·표 해석" })
+  ]);
+
+  function competitionDomains(programId) {
+    return programId === "amc8" ? amc8Strands : strands;
+  }
+
   function competitionOptions(grade) {
     const options = [{ id: "sasmo", title: "SASMO", itemCount: 25 }];
     options.push({ id: "kangaroo", title: "Math Kangaroo", itemCount: grade <= 4 ? 24 : 30 });
@@ -155,12 +167,13 @@
     return options;
   }
 
-  function analyzeCompetition(rows, itemCount) {
-    if (!Array.isArray(rows) || rows.length !== strands.length) return { valid: false, reason: "네 영역의 입력을 확인하세요." };
+  function analyzeCompetition(rows, itemCount, programId) {
+    const domains = competitionDomains(programId);
+    if (!Array.isArray(rows) || rows.length !== domains.length) return { valid: false, reason: `${domains.length}개 영역의 입력을 확인하세요.` };
     const parsed = rows.map(function (row, index) {
       const attempted = Number(row.attempted);
       const correct = Number(row.correct);
-      return { id: strands[index].id, title: strands[index].title, attempted: attempted, correct: correct };
+      return { id: domains[index].id, title: domains[index].title, attempted: attempted, correct: correct };
     });
     if (parsed.some(function (row) { return !Number.isInteger(row.attempted) || !Number.isInteger(row.correct) || row.attempted < 0 || row.correct < 0 || row.correct > row.attempted; })) {
       return { valid: false, reason: "각 영역에서 정답 수는 푼 문항 수를 넘을 수 없습니다." };
@@ -185,5 +198,5 @@
     if (tracks.some(function (track) { return /경시/.test(track[0]); })) return tracks;
     return tracks.concat([Object.freeze(["경시 · 선택", "이 학년 계획 자료에는 별도 경시 과정이 제시되지 않았어요."])]);
   }
-  return Object.freeze({ grades: Object.freeze(grades), grade7Stops: grade7Stops, courseStageResources: courseStageResources, routes: Object.freeze(routes), strands: strands, conceptFlows: conceptFlows, getGrade: getGrade, getAnnualPlan: getAnnualPlan, getRoute: getRoute, getTracks: getTracks, competitionOptions: competitionOptions, analyzeCompetition: analyzeCompetition });
+  return Object.freeze({ grades: Object.freeze(grades), grade7Stops: grade7Stops, courseStageResources: courseStageResources, routes: Object.freeze(routes), strands: strands, conceptFlows: conceptFlows, getGrade: getGrade, getAnnualPlan: getAnnualPlan, getRoute: getRoute, getTracks: getTracks, competitionOptions: competitionOptions, competitionDomains: competitionDomains, analyzeCompetition: analyzeCompetition });
 });

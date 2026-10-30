@@ -21,6 +21,21 @@ test("unmarked and unanswered questions are distinct from wrong attempts", funct
   assert.equal(report.level, null);
 });
 
+test("AMC 8 paper review separates number/proportion/estimation and graph/table interpretation", function () {
+  const entries = Array.from({ length: 25 }, () => entry());
+  entries[0] = entry("correct", "number");
+  entries[1] = entry("wrong", "data", "reading");
+  entries[2] = entry("blank", "data", "skipped");
+  const report = analyze(entries, 25, "amc8");
+  assert.equal(report.valid, true);
+  assert.equal(report.domains.length, 5);
+  assert.equal(report.domains.find((domain) => domain.id === "number").name, "수·비례·추정");
+  assert.equal(report.domains.find((domain) => domain.id === "data").name, "그래프·표 해석");
+  assert.equal(report.domainClassified, 3);
+  assert.equal(report.lowestDomains.length, 0);
+  assert.equal(analyze([entry("correct", "data")], 1, "amc10").valid, false);
+});
+
 test("domain comparison requires enough classified attempts in two domains", function () {
   const entries = [entry("correct", "algebra"), entry("correct", "algebra"), entry("correct", "algebra"), entry("wrong", "number", "concept"), entry("wrong", "number", "concept"), entry("correct", "number"), entry("wrong", "unclassified", "time")];
   const report = analyze(entries, entries.length);
