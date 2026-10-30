@@ -1250,6 +1250,7 @@
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-5",
+      "commonSourceItemId": "5-2-u3-e8-mission-5",
       "sourceBlock": "Mission 5",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 5",
@@ -1267,7 +1268,7 @@
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "해당 회전 대응을 가정한 직접 구성과 네 자리 수 전수검사가 일치합니다. 원본 글꼴 대응과 공식 답안은 미확인입니다.",
+      "singleAnswerCheck": "원문 보기 1691에서 숫자 1이 반복됨을 확인했습니다. 해당 회전 대응과 반복 사용을 가정한 직접 구성과 네 자리 수 전수검사가 일치합니다. 원본 글꼴 대응과 공식 답안은 미확인입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent-conditional",
       "visualCheckStatus": "needs-implementation-check",
