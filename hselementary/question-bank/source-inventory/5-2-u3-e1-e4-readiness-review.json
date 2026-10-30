@@ -1593,26 +1593,27 @@
       "commonTypeId": "cyclic-equal-chords-angle",
       "typeLabel": "원 위 같은 현으로 각 구하기",
       "childFriendlyTypeLabel": "같은 길이 현이 만든 각 찾기",
-      "originalStructure": "원 위 여섯 점에서 연속한 세 현씩의 길이가 같다는 조건으로 원주각을 구합니다.",
+      "originalStructure": "원 위 ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ이 차례대로 놓이고 ㄱㄴ=ㄴㄷ=ㄷㄹ, ㄹㅁ=ㅁㅂ=ㅂㄱ일 때 ∠ㅂㄱㄴ을 구합니다.",
       "conditions": [
-        "세 현의 길이 서로 같음",
-        "나머지 세 현도 서로 같음",
-        "목표각은 원주각"
+        "ㄱㄴ=ㄴㄷ=ㄷㄹ",
+        "ㄹㅁ=ㅁㅂ=ㅂㄱ",
+        "목표각은 ∠ㅂㄱㄴ"
       ],
       "visualRequirement": "여섯 점의 순서와 현 연결을 확인해야 합니다.",
-      "independentCalculation": "동일한 세 현 묶음이 각각 같은 호를 만들므로 목표각이 보는 호는 4개 호이고, 3a+3b=360°에서 2(a+b)=240°입니다.",
-      "answerFormula": "(2/2)×(360°×2/3)=120°",
+      "independentCalculation": "중심을 O라 하고 같은 현과 두 반지름이 만드는 삼각형의 합동을 이용합니다. 첫 세 현에 대응하는 중심각을 a, 나머지 세 현에 대응하는 중심각을 b라 하면 3a+3b=360°이므로 a+b=120°입니다. ∠ㅂㄱㄴ은 각각 중심각 a와 b를 가진 이등변삼각형의 밑각 두 개의 합이므로 (180°−a)÷2+(180°−b)÷2=120°입니다.",
+      "answerFormula": "3a+3b=360° ⇒ a+b=120°; ∠ㅂㄱㄴ=(180°−a)÷2+(180°−b)÷2=120°",
       "independentAnswer": "120°",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "같은 현-같은 호와 원주각 정리를 사용했습니다.",
+      "singleAnswerCheck": "같은 현과 반지름으로 만든 합동인 삼각형 및 중심각의 합으로 ∠ㅂㄱㄴ=120°입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "reviewed",
-      "publicDecision": "public-candidate",
-      "lockReason": null
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그림과 독립 계산은 확인했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 검증된 별도 창작 유사문항을 연결합니다.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u3-e4-example-2",
