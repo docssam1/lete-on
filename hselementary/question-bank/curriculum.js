@@ -2789,6 +2789,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e5-mission-6-isosceles-axis-synthetic",name="이등변삼각형의 대칭축과 각 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e5-mission-6",sourceItemLabel:"Mission 6 구조 연습",sourceSection:"mission",sourcePdfPage:29,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 각과 구별되는 창작 삼각형의 두 이등변 조건, 축 및 목표각을 좌표로 검산했습니다.",generatorKey:"source52IsoscelesAxisAngleSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-example-1-circle-difference-synthetic")) {
+    const id="5-2-u3-e8-example-1-circle-difference-synthetic",name="원 안 두 영역의 넓이 차";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-example-1",sourceItemLabel:"예제 8-1 구조 연습",sourceSection:"example",sourcePdfPage:34,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"수직선으로 나눈 원의 영역과 넓이 차를 독립 검산한 창작 연습입니다.",generatorKey:"source52CircleDifferenceSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   const source52PointSymmetry = source52CongruenceUnit?.subunits.find(s => s.name === "점대칭도형");
   if (source52PointSymmetry && !source52PointSymmetry.types.some(t => t.id === "5-2-u3-e7-example-4-shaded-parallelogram-synthetic")) {
     const id="5-2-u3-e7-example-4-shaded-parallelogram-synthetic",name="색칠한 평행사변형의 둘레";
