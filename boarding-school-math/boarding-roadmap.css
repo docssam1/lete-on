@@ -322,11 +322,12 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
 .grade7-stage-references[hidden] { display: none; }
 .grade7-stage-references a { min-height: 44px; display: inline-flex; align-items: center; color: #4f347a; font-size: .78rem; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 .grade7-stage-resource { min-height: 44px; margin-top: 18px; padding: 9px 12px; display: inline-flex; align-items: center; border: 1px solid #60418f; color: #4f347a; font-size: .85rem; font-weight: 800; text-decoration: none; }
-.grade7-stage-external-resources { margin-top: 14px; padding: 12px 14px; border: 1px solid #d8dee8; background: #faf9fc; }
-.grade7-stage-external-resources[hidden] { display: none; }
-.grade7-stage-external-resources summary { min-height: 44px; display: flex; align-items: center; color: #4f347a; font-size: .84rem; font-weight: 800; cursor: pointer; }
-.grade7-stage-external-resources ul { margin: 8px 0 0; padding-left: 1.2rem; display: grid; gap: 5px; color: #566274; font-size: .82rem; }
-.grade7-stage-external-resources a { min-height: 44px; display: inline-flex; align-items: center; color: #4f347a; font-weight: 750; text-decoration: underline; text-underline-offset: 3px; }
+.stage-external-resources { margin-top: 14px; padding: 12px 14px; border: 1px solid #d8dee8; background: #faf9fc; }
+.stage-external-resources[hidden] { display: none; }
+.stage-external-resources summary { min-height: 44px; display: flex; align-items: center; color: #4f347a; font-size: .84rem; font-weight: 800; cursor: pointer; }
+.stage-external-resources > p { margin: 4px 0 0; color: #566274; font-size: .8rem; line-height: 1.5; }
+.stage-external-resources ul { margin: 8px 0 0; padding-left: 1.2rem; display: grid; gap: 5px; color: #566274; font-size: .82rem; }
+.stage-external-resources a { min-height: 44px; display: inline-flex; align-items: center; color: #4f347a; font-weight: 750; text-decoration: underline; text-underline-offset: 3px; }
 .grade7-no-resource { margin-top: 16px; color: #566274; font-size: .83rem; }
 .grade7-branches { margin-top: 26px; padding-top: 22px; position: relative; border-top: 1px solid #d8dee8; }
 .grade7-branches::before { content: ""; width: 3px; height: 23px; position: absolute; left: 50%; top: -23px; background: #d9d0e5; }

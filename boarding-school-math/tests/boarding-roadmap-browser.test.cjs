@@ -622,7 +622,7 @@ test("Grade 7 algebra and geometry checkpoints open matching FlippedMath referen
   ];
   for (const item of cases) {
     await page.getByRole("button", { name: item.name }).click();
-    const disclosure = page.locator("#grade7-stage-external-resources");
+    const disclosure = page.locator("#stage-external-resources");
     assert.equal(await disclosure.isVisible(), true);
     assert.deepEqual(await disclosure.locator("summary").innerText(), "FlippedMath 참고 자료");
     assert.ok((await disclosure.locator("summary").boundingBox()).height >= 44);
@@ -640,6 +640,25 @@ test("Grade 7 algebra and geometry checkpoints open matching FlippedMath referen
     if (item.name.toString().includes("기하·혼합")) assert.match(await page.locator("#stage-copy").innerText(), /닮음·각·삼각형·원·넓이·부피/);
     assert.equal(await page.locator("#grade7-no-resource").isVisible(), false);
     assert.equal(await disclosure.locator("ul").isVisible(), true);
+    assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  }
+  const upperGradeCases = [
+    { grade: 8, button: /단계 1, 일차식·기하 점검 보기/, title: "FlippedMath Geometry ↗", url: "https://geometry.flippedmath.com/" },
+    { grade: 8, button: /단계 3, 준비되면 심화 보기/, title: "FlippedMath Algebra 2 · 새 과정 제작 중 ↗", url: "https://algebra2.flippedmath.com/" },
+    { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "FlippedMath Algebra 2 · 새 과정 제작 중 ↗", url: "https://algebra2.flippedmath.com/", inferred: true },
+    { grade: 10, button: /단계 1, 개념 설명 보기/, title: "FlippedMath Pre-Calculus · Traditional ↗", url: "https://precalculus.flippedmath.com/precalc-traditional.html" }
+  ];
+  for (const item of upperGradeCases) {
+    await page.goto(`${url}?grade=${item.grade}`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: item.button }).click();
+    if (item.inferred) assert.match(await page.locator("#source-chip").innerText(), /추정안/);
+    const disclosure = page.locator("#stage-external-resources");
+    assert.equal(await disclosure.isVisible(), true, `Grade ${item.grade} stage reference is visible`);
+    await disclosure.locator("summary").click();
+    assert.deepEqual(await disclosure.locator("ul a").allInnerTexts(), [item.title]);
+    assert.equal(await disclosure.locator("ul a").getAttribute("href"), item.url);
+    assert.match(await disclosure.locator("ul a").getAttribute("aria-label"), /새 창에서 열림/);
+    if (item.inferred) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /추정 경로.*학교의 실제 과목/);
     assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   }
   await page.close();

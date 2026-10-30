@@ -27,6 +27,24 @@
     ]) })
   ]);
 
+  const algebra2Reference = Object.freeze({ title: "FlippedMath Algebra 2 · 새 과정 제작 중", url: "https://algebra2.flippedmath.com/" });
+  const geometryReference = Object.freeze({ title: "FlippedMath Geometry", url: "https://geometry.flippedmath.com/" });
+  const preCalculusReference = Object.freeze({ title: "FlippedMath Pre-Calculus · Traditional", url: "https://precalculus.flippedmath.com/precalc-traditional.html" });
+  const courseStageResources = Object.freeze({
+    8: Object.freeze({
+      0: Object.freeze([geometryReference]),
+      2: Object.freeze([algebra2Reference])
+    }),
+    9: Object.freeze({
+      note: "Grade 9는 추정 경로예요. 학교의 실제 과목과 맞는 자료만 선택해 살펴보세요.",
+      0: Object.freeze([algebra2Reference]),
+      1: Object.freeze([geometryReference])
+    }),
+    10: Object.freeze({
+      0: Object.freeze([preCalculusReference])
+    })
+  });
+
   const grades = [
     { grade: 3, title: "수를 쪼개고 다시 묶기", source: "provided", core: "자리값과 사칙연산의 뜻을 확인해요. 문장제에서는 무엇을 묻는지 먼저 읽어요.", bridge: "수 쪼개기 → 배열로 곱셈 보기 → 분배법칙", steps: [
       ["수 쪼개기", "같은 수를 여러 방법으로 나누어 그림과 말로 설명해요."], ["곱셈·나눗셈", "배열로 곱셈을 보고, 나눗셈이 무엇을 뜻하는지 비교해요."], ["문장제 읽기", "무엇을 묻는지 표시한 뒤 그림으로 나타내요."], ["말로 확인하기", "맞힌 문제도 왜 맞는지 설명해요."] ] },
@@ -167,5 +185,5 @@
     if (tracks.some(function (track) { return /경시/.test(track[0]); })) return tracks;
     return tracks.concat([Object.freeze(["경시 · 선택", "이 학년 계획 자료에는 별도 경시 과정이 제시되지 않았어요."])]);
   }
-  return Object.freeze({ grades: Object.freeze(grades), grade7Stops: grade7Stops, routes: Object.freeze(routes), strands: strands, conceptFlows: conceptFlows, getGrade: getGrade, getAnnualPlan: getAnnualPlan, getRoute: getRoute, getTracks: getTracks, competitionOptions: competitionOptions, analyzeCompetition: analyzeCompetition });
+  return Object.freeze({ grades: Object.freeze(grades), grade7Stops: grade7Stops, courseStageResources: courseStageResources, routes: Object.freeze(routes), strands: strands, conceptFlows: conceptFlows, getGrade: getGrade, getAnnualPlan: getAnnualPlan, getRoute: getRoute, getTracks: getTracks, competitionOptions: competitionOptions, analyzeCompetition: analyzeCompetition });
 });

@@ -90,6 +90,16 @@ test("Grade 7 route names checkpoints and identifies its public workbooks", func
   assert.ok(roadmap.grade7Stops.slice(2).every(function (stop) { return Object.isFrozen(stop.resources) && stop.resources.every(Object.isFrozen); }));
 });
 
+test("upper-grade course references are limited to named courses and keep Grade 9 inferred", function () {
+  assert.deepEqual(Object.keys(roadmap.courseStageResources), ["8", "9", "10"]);
+  assert.equal(roadmap.courseStageResources[8][0][0].url, "https://geometry.flippedmath.com/");
+  assert.match(roadmap.courseStageResources[8][2][0].title, /Algebra 2.*제작 중/);
+  assert.match(roadmap.courseStageResources[9].note, /추정 경로.*학교의 실제 과목/);
+  assert.equal(roadmap.courseStageResources[9][0][0].url, "https://algebra2.flippedmath.com/");
+  assert.equal(roadmap.courseStageResources[9][1][0].url, "https://geometry.flippedmath.com/");
+  assert.equal(roadmap.courseStageResources[10][0][0].url, "https://precalculus.flippedmath.com/precalc-traditional.html");
+});
+
 test("competition options follow grade and keep advanced AMC paths optional", function () {
   assert.deepEqual(roadmap.competitionOptions(3).map(function (entry) { return entry.id; }), ["sasmo", "kangaroo"]);
   assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc8"; }));

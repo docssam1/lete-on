@@ -166,11 +166,11 @@
   function renderStages(entry) {
     const list = $("stage-list");
     const grade7 = grade === 7;
-    const externalDisclosure = $("grade7-stage-external-resources");
+    const selectionDisclosure = $("stage-external-resources");
     const renderedSelection = `${grade}:${stage === null ? "none" : stage}`;
-    if (externalDisclosure.dataset.selectionKey !== renderedSelection) {
-      externalDisclosure.open = false;
-      externalDisclosure.dataset.selectionKey = renderedSelection;
+    if (selectionDisclosure.dataset.selectionKey !== renderedSelection) {
+      selectionDisclosure.open = false;
+      selectionDisclosure.dataset.selectionKey = renderedSelection;
     }
     list.classList.toggle("grade7-path", grade7);
     list.setAttribute("aria-label", grade7 ? "7학년 개념 연결 예시. 선택은 현재 위치나 학습 완료를 뜻하지 않습니다." : "선택한 학년의 학습 단계");
@@ -209,8 +209,10 @@
     const detail = document.querySelector(".stage-detail");
     detail.hidden = grade7 && stage === null;
     $("grade7-stage-check").hidden = !grade7 || stage === null;
-    $("grade7-stage-external-resources").hidden = !grade7 || stage === null;
-    $("grade7-stage-external-resource-list").replaceChildren();
+    $("stage-external-resource-list").replaceChildren();
+    $("stage-external-resource-note").hidden = true;
+    $("stage-external-resource-note").textContent = "";
+    $("stage-external-resources").hidden = true;
     $("grade7-stage-resource").hidden = true;
     $("grade7-no-resource").hidden = true;
     renderJourneyPreview(entry);
@@ -218,8 +220,29 @@
     setText("stage-number", grade7 ? `살펴보는 구간 ${stage + 1} / ${entry.steps.length}` : `단계 ${stage + 1} / ${entry.steps.length}`);
     setText("stage-title", entry.steps[stage][0]);
     setText("stage-copy", entry.steps[stage][1]);
+    const stop = grade7 ? data.grade7Stops[stage] : null;
+    const gradeResources = data.courseStageResources[grade];
+    const externalResources = grade7
+      ? (stop.resources || [])
+      : (gradeResources && gradeResources[stage]) || [];
+    const externalDisclosure = $("stage-external-resources");
+    externalDisclosure.hidden = externalResources.length === 0;
+    if (gradeResources && gradeResources.note) {
+      $("stage-external-resource-note").textContent = gradeResources.note;
+      $("stage-external-resource-note").hidden = false;
+    }
+    externalResources.forEach(function (resource) {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = resource.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.setAttribute("aria-label", `${resource.title} (새 창에서 열림)`);
+      link.textContent = `${resource.title} ↗`;
+      item.append(link);
+      $("stage-external-resource-list").append(item);
+    });
     if (grade7) {
-      const stop = data.grade7Stops[stage];
       const checks = $("grade7-stage-questions");
       const savedPractice = stop.clusterId === "7.NS.A" ? savedGrade7PracticeCounts() : null;
       checks.replaceChildren();
@@ -241,20 +264,6 @@
         checks.append(item);
       });
       $("grade7-stage-references").hidden = stop.id !== "nsa";
-      const externalResources = stop.resources || [];
-      const externalResourceDisclosure = $("grade7-stage-external-resources");
-      externalResourceDisclosure.hidden = externalResources.length === 0;
-      externalResources.forEach(function (resource) {
-        const item = document.createElement("li");
-        const link = document.createElement("a");
-        link.href = resource.url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.setAttribute("aria-label", `${resource.title} (새 창에서 열림)`);
-        link.textContent = `${resource.title} ↗`;
-        item.append(link);
-        $("grade7-stage-external-resource-list").append(item);
-      });
       if (stop.clusterId) {
         const link = $("grade7-stage-resource");
         link.href = `./unit-workbook.html?cluster=${encodeURIComponent(stop.clusterId)}&mode=workbook&audience=student&locale=ko`;
