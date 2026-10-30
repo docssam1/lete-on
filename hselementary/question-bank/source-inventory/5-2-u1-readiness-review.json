@@ -1331,6 +1331,8 @@
       "sourceVerified": true,
       "implementationStatus": "deployed-and-live-verified",
       "publicDecision": "published",
+      "sourceIndependentAudit": "source-5-2-u1-e4-mission1-independent-audit.js",
+      "sourcePublisherKeyVerified": false,
       "lockReason": "PR #398 is merged and the Pages workflow succeeded. The live runtime module hash matches main. The source answer, nine synthetic configurations, PC/mobile browser states, and one-page A4 problem/solution outputs passed review. Publisher answer-key verification remains unconfirmed."
     },
     {
@@ -1358,6 +1360,8 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
+      "sourceIndependentAudit": "source-5-2-u1-e4-missions2-4-audit.py",
+      "sourcePublisherKeyVerified": false,
       "lockReason": "출판사 답안 미대조입니다. 기존 창작 유사문항은 별도 운영 상태를 따릅니다."
     },
     {
@@ -1385,6 +1389,8 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
+      "sourceIndependentAudit": "source-5-2-u1-e4-missions2-4-audit.py",
+      "sourcePublisherKeyVerified": false,
       "lockReason": "출판사 답안 미대조입니다. 기존 창작 유사문항은 별도 운영 상태를 따릅니다."
     },
     {
@@ -1412,6 +1418,8 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
+      "sourceIndependentAudit": "source-5-2-u1-e4-missions2-4-audit.py",
+      "sourcePublisherKeyVerified": false,
       "lockReason": "출판사 답안 미대조입니다. 기존 창작 유사문항은 별도 운영 상태를 따릅니다."
     },
     {
@@ -1438,6 +1446,8 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
+      "sourceIndependentAudit": "source-5-2-u1-e4-graph-missions5-6-audit.py",
+      "sourcePublisherKeyVerified": false,
       "lockReason": "끝점과 합을 독립 검사했습니다. 출판사 답안은 미대조이며 기존 창작 유사문항은 별도 운영 상태를 따릅니다."
     },
     {
@@ -1466,6 +1476,8 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
+      "sourceIndependentAudit": "source-5-2-u1-e4-graph-missions5-6-audit.py",
+      "sourcePublisherKeyVerified": false,
       "lockReason": "반올림 자릿수 해석과 출판사 답안을 확인하기 전 원문 잠금 유지합니다."
     }
   ],
