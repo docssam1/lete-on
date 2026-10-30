@@ -27,3 +27,8 @@ test('grade5 distinguishes completed middle2-1, ongoing middle2-2, high school a
  assert.equal(high.date,'2031년 2월까지');assert.match(row(high,'school').completed,/공통수학2 쎈/);assert.equal(row(high,'school').unplanned,true);assert.equal(row(high,'science').completedAt,'2031.02');assert.match(row(high,'science').completed,/통합과학 2/);assert.doesNotMatch(row(high,'science').completed,/시작/);
  assert.equal(row(mid,'thinking').completedAt,'2027.06');assert.equal(row(high,'thinking').completedAt,'2027.06');
 });
+
+test('a course with no end date is not projected as still studying the same book at every school entry',()=>{
+ const m=R.model(sample({lanes:[{id:'school',label:'교과',blocks:[{title:'기간을 고르지 않은 책',start:0,end:null}]}]}));
+ assert.ok(m.admissions.every(e=>e.rows.length===0));
+});

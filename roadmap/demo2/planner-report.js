@@ -55,7 +55,7 @@ function admissionMilestones(c){
     item.start=Math.min(item.start,start);item.end=knownEnd===null?null:item.end===null?null:Math.max(item.end,knownEnd);
     item.partial=item.partial||Boolean(b.continues&&!finite(b.continuesTo)&&!(finite(b.sourceEnd)&&finite(l.anchor)));groups.set(key,item);
    }
-   const courses=[...groups.values()],done=courses.filter(b=>finite(b.end)&&b.end<=cutoff&&!b.partial).sort((a,b)=>a.end-b.end||a.start-b.start).at(-1),active=courses.filter(b=>b.start<cutoff&&(b.end===null||b.end>cutoff||b.partial&&b.end>=cutoff)).sort((a,b)=>a.start-b.start).at(-1);
+   const courses=[...groups.values()],done=courses.filter(b=>finite(b.end)&&b.end<=cutoff&&!b.partial).sort((a,b)=>a.end-b.end||a.start-b.start).at(-1),active=courses.filter(b=>finite(b.end)&&b.start<cutoff&&(b.end>cutoff||b.partial&&b.end>=cutoff)).sort((a,b)=>a.start-b.start).at(-1);
    return {id:l.id,label:l.label,completed:done?done.title:null,completedAt:done?compact(Math.max(0,Math.ceil(done.end)-1)):null,ongoing:active?active.title:null,ongoingUntil:active&&finite(active.end)&&!active.partial?compact(Math.ceil(active.end)-1):null,coverageEnd:coverage,unplanned:coverage<cutoff,continuing:all.some(b=>b.start<cutoff&&(b.sustained||b.repeat||b.kind==='review')&&(b.end==null||b.end>=cutoff))};
   }).filter(row=>row.completed||row.ongoing);
   const school=rows.find(row=>row.id==='school'),depth=rows.find(row=>row.id==='deep'),range=row=>row?.completed?.match(/공통수학[12]|중[1-3]-[12]|[1-6]-[12]/)?.[0]||row?.completed;
