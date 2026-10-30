@@ -1235,7 +1235,7 @@
       "conditions": [
         "6으로 나눈 몫의 십의 자리 반올림 50",
         "4로 나눈 몫의 십의 자리 반올림 70",
-        "나눗셈 몫은 자연수 나눗셈의 몫으로 해석"
+        "원문은 몫이 정수라는 제한을 명시하지 않으며 정확한 몫으로 계산"
       ],
       "visualRequirement": "원문에 그림이나 그래프가 없는 텍스트 문항입니다. 몫의 가능한 구간을 표나 식으로 정리하고 공통 범위를 구합니다.",
       "independentCalculation": "6으로 나눈 몫이 50으로 반올림되려면 45≤몫<55이므로 270≤n<330입니다. 4로 나눈 몫이 70으로 반올림되려면 65≤몫<75이므로 260≤n<300입니다. 공통 범위는 270≤n<300입니다.",
@@ -1244,7 +1244,7 @@
       "resultContract": "inclusive-exclusive-range",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "두 몫 조건을 전수 대입해도 270~299만 남습니다.",
+      "singleAnswerCheck": "정확한 몫으로 두 조건을 전수 확인하면 270~299가 남으며, 정수 몫으로 해석해도 이 문항에서는 같은 범위입니다.",
       "sourceVerified": true,
       "implementationStatus": "deployed-and-live-verified",
       "publicDecision": "published",
