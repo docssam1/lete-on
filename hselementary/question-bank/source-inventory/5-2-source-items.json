@@ -4125,8 +4125,8 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 44,
-      "printedPage": 46,
-      "sourceShape": "직육면체의 특징의 예제 1-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 48,
+      "sourceShape": "세 방향으로 묶은 직육면체의 끈 길이와 세 변의 관계로 가로를 구한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
