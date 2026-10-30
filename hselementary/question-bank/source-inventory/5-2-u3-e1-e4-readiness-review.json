@@ -1772,19 +1772,20 @@
         "목표각은 ∠ㄹㅁㅂ"
       ],
       "visualRequirement": "지름 ㄱㄷㄴ, 중심 ㄷ, 호 위 점의 순서 ㄹ·ㅁ·ㅂ, 네 반지름·현, ㄱㄹ=ㅁㅂ 표기와 두 같은 중심각, ∠ㄷㄹㅁ 및 목표각 ∠ㄹㅁㅂ을 보존합니다.",
-      "independentCalculation": "ㄷㄹ=ㄷㅁ은 반지름이고 ∠ㄷㄹㅁ=60°이므로 △ㄷㄹㅁ은 정삼각형이며 호 ㄹㅁ은 60°입니다. ∠ㅁㄷㅂ=∠ㅂㄷㄴ이므로 호 ㅁㅂ과 호 ㅂㄴ의 크기를 각각 x라 둡니다. 같은 현 ㄱㄹ=ㅁㅂ은 같은 작은 호를 subtend하므로 호 ㄱㄹ도 x입니다. 반원 호 전체는 180°이므로 x+60°+x+x=180°, 따라서 x=40°입니다. 점 ㄹ에서 ㅂ까지 ㅁ을 지나는 작은 호는 60°+40°=100°이고, ∠ㄹㅁㅂ이 바라보는 나머지 큰 호는 260°입니다. 원주각은 맞은편 호의 절반이므로 ∠ㄹㅁㅂ=130°입니다.",
-      "answerFormula": "호 ㄱㄹ=호 ㅁㅂ=호 ㅂㄴ=x, 호 ㄹㅁ=60°; 3x+60°=180° ⇒ x=40°; ∠ㄹㅁㅂ=(360°−100°)/2=130°",
+      "independentCalculation": "ㄷㄹ=ㄷㅁ은 반지름이고 ∠ㄷㄹㅁ=60°이므로 △ㄷㄹㅁ은 정삼각형입니다. ㄷㄱ·ㄷㄹ·ㄷㅁ·ㄷㅂ은 반지름이고 ㄱㄹ=ㅁㅂ이므로 △ㄷㄱㄹ≅△ㄷㅁㅂ입니다. 따라서 ∠ㄱㄷㄹ=∠ㅁㄷㅂ이며, 주어진 ∠ㅁㄷㅂ=∠ㅂㄷㄴ과 함께 세 중심각이 같습니다. 각각을 x라 하면 3x+60°=180°이므로 x=40°입니다. △ㄷㅁㅂ은 이등변삼각형이어서 ∠ㄷㅁㅂ=(180°−40°)÷2=70°이고 ∠ㄹㅁㄷ=60°이므로 ∠ㄹㅁㅂ=60°+70°=130°입니다.",
+      "answerFormula": "∠ㄹㄷㅁ=60°; 3x+60°=180° ⇒ x=40°; ∠ㄷㅁㅂ=70°; ∠ㄹㅁㅂ=60°+70°=130°",
       "independentAnswer": "130°",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "세 같은 작은 호가 반원에서 60°를 제외한 120°를 나누므로 x=40°로 하나이며, 목표 원주각은 나머지 260° 호의 절반입니다.",
+      "singleAnswerCheck": "같은 세 중심각을 합동으로 확인해 각각 40°를 구하고, 이등변삼각형의 밑각을 더해 목표각을 구합니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "reviewed",
-      "publicDecision": "public-candidate",
-      "lockReason": null
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "publisherKeyVerified": false,
+      "lockReason": "원문 그림과 독립 계산은 확인했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 창작 유사문항을 연결합니다."
     },
     {
       "sourceItemId": "5-2-u3-e4-mission-3",
