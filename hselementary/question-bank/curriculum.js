@@ -2968,6 +2968,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e2-mission-${n}`,sourceItemLabel:`Mission ${n} 유사문항`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:13,sourcePrintedPage:17,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page17Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조를 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
   }
 
+  if (source52Unit2Product) {
+    const id = "5-2-u2-e2-mission-6-spacing-synthetic", typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name:"중심 간격이 주어진 겹친 원과 직사각형",label:"중심 간격이 주어진 겹친 원과 직사각형",difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-e2-mission-6",sourceItemLabel:"Mission 6 조건을 추가한 유사문항",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:13,sourcePrintedPage:17,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2Page17Mission6Spacing",generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문의 미확정 간격을 별도 연습문항에서 명시하고 독립 검산했습니다."});
+  }
+
   const source52Unit2Equation = source52Unit2?.subunits.find(subunit => subunit.name === "식 세워 풀기");
   if (source52Unit2Equation) for (const [suffix,name,label,section,key] of [
     ["exploration","두 막대의 잠긴 길이로 깊이 구하기","개념탐구 3 유사문항","exploration","source52U2Page18Exploration3"],

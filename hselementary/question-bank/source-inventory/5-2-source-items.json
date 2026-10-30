@@ -1358,6 +1358,7 @@
       "sourceVerified": false,
       "implementationStatus": "review-locked",
       "reviewReason": "원문 이미지에서 원의 지름에 해당하는 높이는 확인했으나 원의 중심 간격이나 직사각형 가로 길이의 수치가 제시되지 않습니다. 서로 다른 간격이 조건을 만족해 넓이를 유일하게 확정할 수 없으므로 잠금 유지합니다.",
+      "syntheticRuntimeTypeId": "5-2-u2-e2-mission-6-spacing-synthetic",
       "publisherKeyVerified": false
     },
     {
