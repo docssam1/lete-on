@@ -1122,9 +1122,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "세 어림 조건을 각각 구해 겹치는 50개의 자연수만 남습니다.",
       "sourceVerified": true,
-      "implementationStatus": "deployed-live-check-throttled",
+      "implementationStatus": "deployed-and-live-verified",
       "publicDecision": "published",
-      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 공개 호스트가 HTTP 429를 반환해 라이브 화면 확인은 대기 중입니다."
+      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 2026-10-30 실제 서비스에서 1440·375·320px 및 세 난이도별 세 변형 생성·풀이·화면 넘침을 다시 확인했습니다. 출판사 답안은 미대조입니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-1",
@@ -1149,9 +1149,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "6500에서 백의 자리 버림과 반올림은 6500, 십의 자리 올림과 반올림도 6500이며, 천의 자리 반올림은 7000입니다.",
       "sourceVerified": true,
-      "implementationStatus": "deployed-live-check-throttled",
+      "implementationStatus": "deployed-and-live-verified",
       "publicDecision": "published",
-      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 공개 호스트가 HTTP 429를 반환해 라이브 화면 확인은 대기 중입니다."
+      "lockReason": "원문·Apple Vision OCR·독립 계산, 18개 합성 조합, PC·모바일 24개 상태·48개 넘침 검사, A4 문제·풀이 각 1쪽, PR #395 병합 및 Pages workflow 성공을 확인했습니다. 2026-10-30 실제 서비스에서 1440·375·320px 및 세 난이도별 세 변형 생성·풀이·화면 넘침을 다시 확인했습니다. 출판사 답안은 미대조입니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-2",
@@ -1191,16 +1191,16 @@
         "합의 반올림 결과 900",
         "차의 반올림 결과 400",
         "큰 수가 작은 수보다 큼",
-        "자연수"
+        "원문에는 두 수가 자연수라는 제한이 없음"
       ],
       "visualRequirement": "원문에 그림이나 그래프가 없는 텍스트 문항입니다. 합과 차의 어림 범위를 식으로 정리해 큰 수의 범위를 구합니다.",
-      "independentCalculation": "합의 가능한 범위는 850≤S<950, 차의 가능한 범위는 350≤D<450입니다. 큰 수는 (S+D)/2이므로 최솟값은 600이고 최댓값은 700에 도달하지 않습니다. 정수 두 수를 전수 대입하면 600~699가 모두 가능합니다.",
+      "independentCalculation": "합의 가능한 범위는 850≤S<950, 차의 가능한 범위는 350≤D<450입니다. 큰 수는 (S+D)/2이므로 최솟값은 600이고 최댓값은 700에 도달하지 않습니다. 작은 수를 250으로 잡으면 600 이상 700 미만의 모든 큰 수에 대해 두 조건을 만족합니다.",
       "answerFormula": "600≤larger<700",
       "independentAnswer": "600 이상 700 미만",
       "resultContract": "inclusive-exclusive-range",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "합과 차의 양끝을 조합하고 짝수 조건을 확인해 같은 범위가 나옵니다.",
+      "singleAnswerCheck": "합과 차의 범위를 더해 경계를 구하고 작은 수 250을 대입해 전 범위가 실제 가능함을 확인했습니다.",
       "sourceVerified": true,
       "implementationStatus": "deployed-and-live-verified",
       "publicDecision": "published",
