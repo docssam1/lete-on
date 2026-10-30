@@ -476,7 +476,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "복수 어림 결과를 한 답안에 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e2-exploration",
+      "practiceLocalCheck": "별도 수치의 유사문항 로컬 9개 구성 검산 통과",
+      "lockReason": "원문 답은 독립 계산했으나 출판사 답안 미대조로 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-example-1",
@@ -502,7 +504,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "보기 선택형 답안을 중앙 형식으로 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e2-example-2-1",
+      "practiceLocalCheck": "별도 수치의 유사문항 로컬 9개 구성 검산 통과",
+      "lockReason": "원문 답은 독립 계산했으나 출판사 답안 미대조로 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-example-2-1",
@@ -528,7 +532,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "큰 수 자리 어림 표기를 중앙 수식으로 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e2-example-2-2",
+      "practiceLocalCheck": "별도 수치의 유사문항 로컬 9개 구성 검산 통과",
+      "lockReason": "원문 답은 독립 계산했으나 출판사 답안 미대조로 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-example-2-2",
@@ -554,7 +560,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "처리 순서가 다른 어림 계산형을 중앙 생성기로 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e2-example-2-2",
+      "practiceLocalCheck": "별도 수치의 유사문항 로컬 9개 구성 검산 통과",
+      "lockReason": "원문 답은 독립 계산했으나 출판사 답안 미대조로 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-example-3",
@@ -580,7 +588,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "두 어림 조건을 함께 검사하는 선택형을 중앙 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e2-example-2-3",
+      "practiceLocalCheck": "별도 유사문항은 만족하는 수의 개수를 묻는 변형이며 로컬 9개 구성 검산 통과",
+      "lockReason": "원문 답은 독립 계산했으나 출판사 답안 미대조로 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-example-4",
