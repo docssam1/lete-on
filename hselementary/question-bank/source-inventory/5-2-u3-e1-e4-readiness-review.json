@@ -134,7 +134,7 @@
       },
       {
         "checkId": "e3-mission-2-square-overlap-area",
-        "expression": "large square [0,14]², C=(7,7); printed 6cm from upper-left fixes Q=(0,6); perpendicular adjacent edge meets bottom at P=(6,14); CQ²=CP²=50 and CQ·CP=0; overlap area=25cm²",
+        "expression": "upright square [0,10]²; C=(5,5), Q=(0,6), P=(6,10); perpendicular rays bound quadrilateral Q,(0,10),P,C; area=25cm²; tilted side 14 exceeds upright square radius",
         "result": true
       },
       {
@@ -1395,28 +1395,28 @@
       "commonTypeId": "square-overlap-area",
       "typeLabel": "서로 다른 크기 정사각형의 겹친 넓이",
       "childFriendlyTypeLabel": "두 정사각형의 겹친 부분 넓이 구하기",
-      "originalStructure": "한 변이 10cm인 작은 정사각형의 한 꼭짓점이 한 변 14cm인 큰 정사각형의 중심에 놓이도록 겹칩니다. 작은 정사각형의 변이 큰 정사각형의 왼쪽 변과 만나는 점은 왼쪽 위 모서리에서 6cm 내려온 곳이고, 겹친 부분의 넓이를 구합니다.",
+      "originalStructure": "그림에서 한 변 14cm인 큰 정사각형의 꼭짓점이 한 변 10cm인 작은 정사각형의 중심에 놓입니다. 왼쪽 위에서 큰 정사각형 변과의 교점까지는 6cm입니다.",
       "conditions": [
-        "큰 정사각형 한 변은 14cm",
-        "작은 정사각형 한 변은 10cm",
-        "작은 정사각형의 한 꼭짓점 C는 큰 정사각형의 중심",
-        "작은 정사각형의 한 변과 큰 정사각형 왼쪽 변의 교점 Q는 왼쪽 위 모서리에서 6cm 아래",
-        "작은 정사각형에서 C에 만나는 두 변은 서로 수직"
+        "바르게 놓인 작은 정사각형의 한 변은 10cm",
+        "기울어진 큰 정사각형의 한 변은 14cm",
+        "큰 정사각형의 꼭짓점 C는 작은 정사각형의 중심",
+        "큰 정사각형 변과 작은 정사각형 왼쪽 변의 교점 Q는 왼쪽 위에서 6cm 아래",
+        "C에 만나는 큰 정사각형의 두 변은 서로 수직"
       ],
-      "visualRequirement": "큰 정사각형의 두 대각선이 만나는 중심 C, 작은 정사각형의 변과 왼쪽 변의 교점 Q, 왼쪽 위 모서리부터 Q까지의 6cm 치수, 다른 작은 정사각형 변과 큰 정사각형 아래 변의 교점 P, 겹친 직각삼각형 CQP를 보존해야 합니다.",
-      "independentCalculation": "큰 정사각형을 좌표 [0,14]×[0,14]로 두고 왼쪽 위를 (0,0)으로 잡으면 중심 C=(7,7), 6cm 치수로 정해지는 왼쪽 변의 교점 Q=(0,6)입니다. 따라서 CQ=(-7,-1), CQ²=7²+1²=50입니다. C에서 작은 정사각형의 다른 변은 CQ와 수직이고 아래 변과 만나는 점은 P=(6,14)입니다. CP=(-1,7)이므로 CQ·CP=(-7)(-1)+(-1)(7)=0이고 CP²=1²+7²=50입니다. 두 길이는 √50cm로 같으며 √50<10이므로 Q와 P는 길이 10cm인 작은 정사각형의 두 변 위에 놓입니다. 겹친 부분 CQP는 직각삼각형이므로 넓이는 (1/2)×√50×√50=25cm²입니다.",
-      "answerFormula": "C=(7,7), Q=(0,6), P=(6,14); CQ²=7²+1²=50; CP²=1²+7²=50; CQ·CP=0; A_CQP=(1/2)×√50×√50=25cm²",
+      "visualRequirement": "작은 정사각형의 중심 C, 왼쪽 교점 Q와 위에서 Q까지의 6cm, 아래 교점 P와 겹친 사각형을 보존합니다.",
+      "independentCalculation": "작은 정사각형을 [0,10]²로 두면 C=(5,5), Q=(0,6)입니다. CQ=(-5,1)에 수직인 큰 정사각형 변은 (1,5) 방향이므로 아래 교점 P=(6,10)입니다. 겹친 영역은 Q, (0,10), P, C의 사각형이며 좌표 넓이는 25cm²입니다. 중심을 지나는 직각은 작은 정사각형을 회전 대칭인 네 부분으로 나누고 14cm는 중심에서 작은 정사각형의 가장 먼 점까지의 거리보다 길어 겹친 넓이는 10×10÷4=25cm²입니다.",
+      "answerFormula": "C=(5,5), Q=(0,6), P=(6,10); CQ·CP=0; quadrilateral Q,(0,10),P,C area=25cm²; 10²÷4=25cm²",
       "independentAnswer": "25cm²",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "왼쪽 위 모서리부터 교점 Q까지의 6cm가 작은 정사각형 변 방향을 고정합니다. C=(7,7), Q=(0,6), P=(6,14)에서 CQ와 CP는 수직이고 각각 √50cm이며, 두 길이 모두 작은 정사각형 한 변 10cm보다 짧습니다. 따라서 겹친 부분은 하나의 직각삼각형이고 넓이는 25cm²입니다.",
+      "singleAnswerCheck": "작은 정사각형의 중심을 지나는 큰 정사각형의 두 변이 직각을 이루므로 겹친 부분은 10cm 정사각형의 4분의 1입니다. 큰 정사각형의 한 변은 작은 정사각형 중심에서 가장 먼 점까지의 거리보다 깁니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "원문 답 25cm²는 확정했으나 공개 전 구현 그림에서 큰 정사각형의 중심 C, 왼쪽 위 기준 6cm 치수, 교점 Q·P와 겹친 직각삼각형을 대조해야 합니다."
+      "lockReason": "그림과 독립 계산에 따른 후보는 25cm²입니다. 출판사 답안 미확인 상태에서 원문 잠금을 유지합니다."
     },
     {
       "sourceItemId": "5-2-u3-e3-mission-3",
@@ -1931,7 +1931,7 @@
       "2026-10-24 인쇄 28쪽 예제 3-4의 접기 시작점을 ㄱ으로 잘못 읽어 64°·72° 반례를 기록했으나, 2026-10-30 원문 재검수에서 ㄹ→ㅁ→ㅂ으로 확인해 해당 반례를 철회했습니다. 72°는 그림의 접는 선을 ㄱㄷ·ㄴㄷ으로 해석한 조건부 후보이며 공식 답안은 미확인입니다.",
       "2026-10-24 인쇄 29쪽 Mission 1의 기존 조건(65°·45° 회전)이 Mission 3에서 잘못 섞였음을 발견했습니다. 실제 조건은 합동 이등변삼각형, 66° 밑각, 교점 72°이며 각도 추적으로 원문 정답 30°를 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1zNtIYqtPweo41VVVcY4gp9UkqcXWCeKv.",
       "2026-10-24 인쇄 29쪽 Mission 3의 그림 방향(시계 방향)과 점 대응을 재확인했습니다. ㄱㄴ=ㄱㄷ과 65° 밑각으로 꼭짓각 50°를 구하고, 회전 45°를 더해 ∠ㄷㅁㅂ=95°로 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 12h10sOg4uZj0PugB1GNsebjJDtYW6BnD.",
-      "2026-10-24 인쇄 29쪽 Mission 2의 왼쪽 위 기준 6cm 치수와 큰 정사각형 중심을 직접 확인해 기존 비유일 판정을 바로잡았습니다. C=(7,7), Q=(0,6), P=(6,14)에서 겹친 직각삼각형의 넓이는 25cm²입니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1nYo-dub1uoTgR5e6t40KtyKKpGvwFNcC.",
+      "2026-10-24 Mission 2 기록은 크기와 중심을 뒤바꾸어 2026-10-30 그림 재대조에서 교정했습니다. 작은 정사각형 중심에 큰 정사각형 꼭짓점이 있으며 겹친 부분은 사각형입니다. 독립 계산 후보 25cm²이며 공식 답안 미대조로 원문 잠금 유지. 이전 Drive QA: 1nYo-dub1uoTgR5e6t40KtyKKpGvwFNcC.",
       "2026-10-24 인쇄 29쪽 Mission 5의 같은 거리 표식과 세 점의 120° 순환 대응을 좌표 검산으로 확인했습니다. 안쪽 삼각형은 정삼각형이며 ㉠=60°입니다. Drive QA: 1rNBPO8moU-Z7i4lsHFnba14Xb17Petql.",
       "2026-10-24 인쇄 29쪽 Mission 6의 5cm 끝점과 교차 라벨을 원문에서 확인했습니다. 임의의 변 길이에 대해 회전 벡터 증명으로 ∠ㄱㅂㅁ=60°이고, 교점은 두 선분 내부입니다. 구현 그림 대조 전 잠금은 유지합니다. Drive QA: 18goPVPFZgxmFATf-w_BWzNwEt3yF-Mja.",
       "2026-10-24 인쇄 29쪽 Mission 4를 고해상도 확대해 32°의 꼭짓점이 ㅈ임을 바로잡았습니다. ∠ㄷㅈㅇ=58°까지 확인했으나 접힘의 변 대응이 미확정이라 목표각은 비워 두고 잠금을 유지합니다. Drive QA: 1osh1VOnzsLTye9PCydxk5P-z0FEPmRzx.",
