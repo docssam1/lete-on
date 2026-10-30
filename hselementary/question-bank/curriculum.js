@@ -2146,6 +2146,18 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
+  const source52CuboidViewPractice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s3");
+  if (source52CuboidViewPractice) {
+    const id = "5-2-u5-e3-mission-3-synthetic";
+    const name = "정육면체 꼭짓점의 곱과 최대공약수 · 연습";
+    const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52CuboidViewPractice.types.push({id, number:source52CuboidViewPractice.types.length+1, typeNumber, name, label:name, difficultyBand:0,
+      sourceItemId:id, sourceParentItemId:"5-2-u5-e3-mission-3", sourceItemLabel:"Mission 3 유사문항", sourceSection:"mission", sourceTier:"advanced",
+      sourcePdfPage:49, sourcePrintedPage:53, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false,
+      generatorKey:"source52U5VertexProductsPractice", generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool",
+      verifiedVariantTarget:3, verifiedVariantCount:3, answerVisualRequired:false, answerVisualStatus:"not-required",
+      reviewReason:"다른 전개도와 수로 만든 연습 세 문항을 접힘과 여덟 꼭짓점의 곱으로 검산했습니다."});
+  }
   const source52CuboidProperties = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s1");
   if (source52CuboidProperties) {
     const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;

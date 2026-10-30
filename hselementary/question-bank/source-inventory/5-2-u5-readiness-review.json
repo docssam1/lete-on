@@ -1064,6 +1064,8 @@
       "singleAnswer": true,
       "singleAnswerCheck": "전개도의 면 방향을 접어 반대 면 세 쌍을 구하고 여덟 꼭짓점의 곱을 전수했습니다. 별도 경시 교재의 같은 숫자·전개도·질문에 적힌 손글씨 16도 계산과 일치하나 작성자와 검증 상태는 불명입니다. 공식 답안과 공개용 전개도는 미대조입니다.",
       "supportingEvidence": "Drive 1Z0L7pEqLtXut2Ay3hYazd7KeypX7AkLW, PDF 49쪽 인쇄 52쪽 예제 3-3: 같은 여섯 수·전개도·질문에 손글씨 16 표시. 심화 교재에서는 인쇄 53쪽 Mission 3이며 공식 답안으로 확인되지 않음.",
+      "practiceItemId": "5-2-u5-e3-mission-3-synthetic",
+      "practiceLocalCheck": "원문과 다른 십자 전개도 및 수를 사용한 별도 유사문항 3개. 접힘으로 맞은편 면을 독립 확인하고 여덟 꼭짓점의 곱과 최대공약수를 검산했으며 PC·모바일과 A4 문제·풀이를 확인했습니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent-net-enumeration",
       "visualCheckStatus": "confirmed-source-net-needs-model",
