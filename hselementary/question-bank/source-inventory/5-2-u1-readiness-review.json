@@ -52,8 +52,8 @@
     "unclassifiedItems": 0,
     "publicCandidateCount": 11,
     "reviewLockedCount": 39,
-    "uniqueAnswerPassCount": 48,
-    "uniqueAnswerReviewNeededCount": 2
+    "uniqueAnswerPassCount": 47,
+    "uniqueAnswerReviewNeededCount": 3
   },
   "units": [
     {
@@ -187,13 +187,14 @@
         "전체 40명",
         "첫 번째 조건 33명",
         "두 번째 조건 21명",
-        "겹치는 사람 수는 각 조건의 수보다 클 수 없음"
+        "겹치는 사람 수는 각 조건의 수보다 클 수 없음",
+        "초과와 이하로 답"
       ],
       "visualRequirement": "두 집합의 겹침을 보여 주는 간단한 그림을 쓸 수 있으나 답에 필요한 조건은 글로도 제시해야 합니다.",
-      "independentCalculation": "겹침의 최솟값은 33+21-40=14, 최댓값은 21입니다.",
-      "answerFormula": "14≤n≤21",
-      "independentAnswer": "14 이상 21 이하",
-      "resultContract": "inclusive-range",
+      "independentCalculation": "겹침의 최솟값은 33+21−40=14, 최댓값은 21입니다. 회원 수는 정수이므로 요구한 초과·이하 표현은 13명 초과 21명 이하입니다.",
+      "answerFormula": "14≤n≤21 ⇔ 13<n≤21 (정수)",
+      "independentAnswer": "13명 초과 21명 이하",
+      "resultContract": "strict-inclusive-range",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "singleAnswerCheck": "전체 수와 두 부분의 수로 겹침의 양 끝이 각각 정해집니다.",
@@ -216,7 +217,7 @@
         "전체 365개를 모두 나눔"
       ],
       "visualRequirement": "none",
-      "independentCalculation": "33k≤365<43k를 만족하는 자연수 k는 9,10,11입니다.",
+      "independentCalculation": "상자마다 정수 33~42개를 담으므로 33k≤365≤42k를 만족하는 자연수 k는 9,10,11입니다.",
       "answerFormula": "8<k<12 ⇔ 9≤k≤11",
       "independentAnswer": "8 초과 12 미만",
       "resultContract": "strict-range",
@@ -394,22 +395,22 @@
       "typeLabel": "버스 대수 조건으로 학생 수 범위 찾기",
       "originalStructure": "40인승 버스가 적어도 8대, 45인승 버스가 적어도 7대 필요하다는 조건의 공통 학생 수 범위를 구합니다.",
       "conditions": [
-        "40명 정원으로 8대 이상",
-        "45명 정원으로 7대 이상",
+        "40인승은 적어도 8대, 45인승은 적어도 7대라는 원문 표현",
+        "필요 최소 대수가 정확히 8대와 7대인지 해석 확인 필요",
         "학생 수는 자연수"
       ],
       "visualRequirement": "두 버스 조건을 나란히 비교하는 표를 쓸 수 있습니다.",
-      "independentCalculation": "40×7<n≤40×8, 45×6<n≤45×7의 공통 부분은 281≤n≤315입니다.",
-      "answerFormula": "280<n≤315",
-      "independentAnswer": "280 초과 315 이하",
-      "resultContract": "strict-inclusive-range",
-      "candidateAnswerCount": 1,
-      "singleAnswer": true,
-      "singleAnswerCheck": "두 버스 조건의 공통 자연수 범위가 하나로 정해집니다.",
+      "independentCalculation": "필요한 최소 대수가 정확히 8대와 7대라는 해석에서는 40×7<n≤40×8, 45×6<n≤45×7이므로 281≤n≤315입니다. 원문이 단지 각각 8대 이상과 7대 이상 필요하다는 하한만 뜻한다면 학생 수에는 상한이 없습니다.",
+      "answerFormula": "최소 대수가 각각 정확히 8·7대인 경우: 정수 280<n<316",
+      "independentAnswer": "최소 대수가 정확히 8·7대인 경우 280 초과 316 미만; 표현 해석 확인 필요",
+      "resultContract": "strict-range",
+      "candidateAnswerCount": 2,
+      "singleAnswer": false,
+      "singleAnswerCheck": "최소 대수가 정확히 주어진 해석에서는 281~315명이지만 하한만 뜻하면 상한이 없습니다. 원문 표현과 공식 답안 해석을 확인해야 합니다.",
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "두 올림 조건의 공통 범위 생성기를 연결하기 전입니다."
+      "lockReason": "적어도라는 표현이 정확한 최소 대수인지 해석과 공식 답안 확인 전 원문 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-6-box-range",
@@ -1405,12 +1406,13 @@
     "publicCandidateCount": 11,
     "lockedCount": 39,
     "visualItemCount": 43,
-    "uniqueAnswerPassCount": 48,
-    "uniqueAnswerReviewNeededCount": 2,
+    "uniqueAnswerPassCount": 47,
+    "uniqueAnswerReviewNeededCount": 3,
     "groupedSameStructureCount": 1,
     "ambiguousItems": [
       "5-2-u1-e3-example-3",
-      "5-2-u1-e3-example-4"
+      "5-2-u1-e3-example-4",
+      "5-2-u1-e1-mission-5-bus-range"
     ],
     "notes": [
       "2026-10-30 기준 이 검수표의 50개 기록 중 11개는 출판사 답안 미대조 상태의 공개 유사문항에 연결되고, 39개는 원문 검수 잠금 기록입니다. 이 집계는 전체 문제은행 생성 가능 수와 별개입니다.",
