@@ -2923,7 +2923,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 조건과 독립 계산을 확인했으나 공식 답안과 공개 그림 검수 전 잠금 유지합니다."
+      "reviewReason": "원문의 큰 이등변삼각형과 ㄹㅁ 대칭축, 30°·목표각의 꼭짓점을 대조하고 각 분할과 좌표로 검산했습니다. 공식 답안과 공개용 원문 그림 미대조로 잠금 유지합니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e5-mission-6-isosceles-axis-synthetic"
     },
     {
       "sourceItemId": "5-2-u3-e6-exploration",
