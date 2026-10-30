@@ -1,0 +1,6 @@
+'use strict';
+const assert=require('node:assert/strict'),s=require('./source-5-2-u3-circle-axis-synthetic.js');
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1],distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
+for(let i=0;i<3;i++)for(const d of [-1,0,1]){const m=s.model(i),q=s.makeQuestion(i,d),v=sub(m.q,m.p),am=sub(m.a,m.mid),ab=sub(m.b,m.a),mp=sub(m.mid,m.p);assert.equal(dot(v,ab),0);assert.equal(mp[0]*v[1]-mp[1]*v[0],0);const ap=sub(m.a,m.p),t=dot(ap,v)/dot(v,v),project=[m.p[0]+t*v[0],m.p[1]+t*v[1]],reflected=[2*project[0]-m.a[0],2*project[1]-m.a[1]];assert.ok(distance(reflected,m.b)<1e-9);assert.ok(distance(m.a,m.b)>2*m.radius);assert.equal(q.automaticGrading,false);assert.ok(!q.prompt.includes('data-answer-axis'));assert.ok(q.answerVisual.includes('data-answer-axis'));assert.equal(q.publisherKeyVerified,false);assert.ok(distance(am,[0,0])>0);}
+const api={names:[],generatorKey:()=>'',generate:()=>null};s.install({HSE_GENERATORS:api});const type={id:s.id,sourceItemId:s.id,generatorKey:s.key,sourceVerified:true,reviewLocked:false};assert.equal(api.generate({...type,reviewLocked:true},0,0,0,0),null);assert.ok(api.generate(type,0,0,0,1));
+console.log('PASS 3 variants × 3 difficulty settings: perpendicular bisectors, reflected centers, answer separation and lock gate');
