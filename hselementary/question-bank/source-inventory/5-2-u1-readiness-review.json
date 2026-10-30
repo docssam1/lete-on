@@ -1051,6 +1051,9 @@
       "sourceVerified": true,
       "implementationStatus": "deployed-and-live-verified",
       "publicDecision": "published",
+      "sourceIndependentAudit": "source-5-2-u1-page9-missions256-source-audit.py",
+      "sourcePublisherKeyVerified": false,
+      "publicationClarification": "공개 상태는 별도 유사문항에 관한 것으로 출판사 정답 확인을 뜻하지 않습니다.",
       "lockReason": "9개 계산 구성, 12개 PC·모바일 상태, A4 문제·풀이와 라이브 배포 파일을 검증했습니다."
     },
     {
@@ -1132,6 +1135,9 @@
       "sourceVerified": true,
       "implementationStatus": "deployed-and-live-verified",
       "publicDecision": "published",
+      "sourceIndependentAudit": "source-5-2-u1-page9-missions256-source-audit.py",
+      "sourcePublisherKeyVerified": false,
+      "publicationClarification": "공개 상태는 별도 유사문항에 관한 것으로 출판사 정답 확인을 뜻하지 않습니다.",
       "lockReason": "원문에 없는 그래프 그림은 추가하지 않았습니다. 원문과 독립 계산한 9개 조합, PC·모바일 12개 상태, 24개 넘침 검사, A4 문제·풀이 검수까지 통과했습니다. 2026-10-30 실제 사이트에서 1440·375·320px, 세 난이도에 대해 생성·풀이·넘침을 확인했습니다. 출판사 답안은 미대조입니다."
     },
     {
@@ -1159,6 +1165,9 @@
       "sourceVerified": true,
       "implementationStatus": "deployed-and-live-verified",
       "publicDecision": "published",
+      "sourceIndependentAudit": "source-5-2-u1-page9-missions256-source-audit.py",
+      "sourcePublisherKeyVerified": false,
+      "publicationClarification": "공개 상태는 별도 유사문항에 관한 것으로 출판사 정답 확인을 뜻하지 않습니다.",
       "lockReason": "원문과 독립 정답, 9개 합성 구성, 12개 라이브 PC·모바일 상태, 24개 넘침 검사, A4 문제·풀이, Pages 배포, 5개 배포 자산 SHA-256 일치를 확인했습니다."
     },
     {
