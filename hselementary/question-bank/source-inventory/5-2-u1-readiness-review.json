@@ -253,7 +253,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "합쳐진 범위 개수형을 전용 생성기로 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-mission-1",
+      "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
+      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-1-intersection-sum",
@@ -279,7 +281,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "공통 범위 합산형을 전용 생성기로 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-mission-1",
+      "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
+      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-1-sum-range",
@@ -305,7 +309,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "두 범위 합의 범위형을 전용 생성기로 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-mission-1",
+      "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
+      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-2-multiple-count-endpoint",
@@ -331,7 +337,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "끝점이 포함되지 않는 배수 범위의 목록 답 계약을 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-mission-2",
+      "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
+      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-3-endpoint-pair",
@@ -357,7 +365,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "원문과 답 8쌍은 확인했지만 중앙 생성기와 순서쌍 전수 검산을 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-mission-3",
+      "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
+      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-4-card-decimal-count",
@@ -384,7 +394,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "원문과 답 48개는 확인했지만 중앙 생성기와 카드 전수 검산을 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-mission-4",
+      "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
+      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-5-bus-range",
