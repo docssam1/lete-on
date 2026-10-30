@@ -579,3 +579,9 @@ Verification: Grade 3–12 roadmap logic/browser suites pass 34/34, including ma
 Added an explicit SSAT/ISEE level field to score entry, validated it against the selected assessment source, preserved it in the local-only record, and display it next to each grade's raw score. The student-entered record distinguishes SSAT Elementary Grade 3/4, Middle, and Upper, and ISEE Primary 2/3/4, Lower, Middle, and Upper. The selector asks for the level on the report, not the admission grade. Official level references: [ERB ISEE grade and level guidance](https://www.erblearn.org/educators/isee-registration-educators/) and [EMA SSAT Candidate Handbook](https://ko.ssat.org/handbook). Since level match does not prove same form, norm cohort, or comparable testing conditions, the UI still reports no score delta or readiness band.
 
 Verification: combined assessment entry browser, external math evidence engine, local record sanitizer, and Grade 3–12 roadmap logic/browser suites pass 70/70; matching/different-level display, source validation, and local persistence are covered. The mobile cross-grade panel was visually inspected at 390px with SSAT and ISEE level changes represented on separate dated cards. The saved assessment result and history also retain the selected level after reload. No private content or remote score service is accessed. Local-only.
+
+### 2026-10-30 test-level selector correction
+
+The SSAT/ISEE level selector now rebuilds its options for the chosen test, clears any previous level when the source changes, and links to each test's official level guide. This prevents choosing a level from the wrong assessment before the form is submitted.
+
+Verification: `tests/assessment-entry-browser.test.cjs` passes 10/10, including source-specific options, required selection, source-switch reset, and saved ISEE level restoration. No remote score services or private data are involved.

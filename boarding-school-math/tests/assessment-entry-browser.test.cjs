@@ -119,6 +119,11 @@ test("ISEE stanines survive save, history rendering, and reload", async function
   assert.equal(await page.locator("#math-stanine").inputValue(), "6");
   assert.equal(await page.locator("#test-level").inputValue(), "isee-middle");
   assert.doesNotMatch(await page.locator("#assessment-history-list").innerText(), /undefined/);
+  assert.deepEqual(await page.locator("#test-level option").allTextContents(), ["성적표에서 선택", "ISEE Primary 2", "ISEE Primary 3", "ISEE Primary 4", "ISEE Lower", "ISEE Middle", "ISEE Upper"]);
+  await page.locator("#source-id").selectOption("ssat");
+  assert.deepEqual(await page.locator("#test-level option").allTextContents(), ["성적표에서 선택", "SSAT Elementary · Grade 3", "SSAT Elementary · Grade 4", "SSAT Middle", "SSAT Upper"]);
+  assert.equal(await page.locator("#test-level").inputValue(), "");
+  assert.equal(await page.locator("#test-level").getAttribute("required"), "");
   assert.deepEqual(errors, []);
   await context.close();
 });

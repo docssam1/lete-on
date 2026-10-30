@@ -8,6 +8,10 @@
   const sourceSelect = document.getElementById("source-id");
   const currentCourse = document.getElementById("current-course");
   const targetCourse = document.getElementById("target-course");
+  const testLevelOptions = {
+    ssat: [["ssat-elementary-3", "SSAT Elementary · Grade 3"], ["ssat-elementary-4", "SSAT Elementary · Grade 4"], ["ssat-middle", "SSAT Middle"], ["ssat-upper", "SSAT Upper"]],
+    isee: [["isee-primary-2", "ISEE Primary 2"], ["isee-primary-3", "ISEE Primary 3"], ["isee-primary-4", "ISEE Primary 4"], ["isee-lower", "ISEE Lower"], ["isee-middle", "ISEE Middle"], ["isee-upper", "ISEE Upper"]]
+  };
   const sourceHelp = {
     "school-placement": "학교가 직접 실시한 과정 배정 시험입니다. 정답률과 학교가 안내한 컷을 입력할 수 있습니다.",
     "map-growth": "RIT는 성장 척도이고 percentile은 같은 학년 비교 위치입니다. 서로 바꾸어 입력하지 않습니다.",
@@ -55,6 +59,9 @@
   }
   function updateSourceFields() {
     const sourceId = sourceSelect.value;
+    const levelSelect = document.getElementById("test-level");
+    levelSelect.replaceChildren(new Option("성적표에서 선택", ""));
+    (testLevelOptions[sourceId] || []).forEach(function (option) { levelSelect.add(new Option(option[1], option[0])); });
     document.getElementById("source-help").textContent = sourceHelp[sourceId];
     document.querySelectorAll(".source-field").forEach(function (field) {
       const visible = field.dataset.sources.split(" ").includes(sourceId);
