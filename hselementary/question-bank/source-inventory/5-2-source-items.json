@@ -2674,6 +2674,8 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "reviewed",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
       "reviewReason": "원본 PDF 인쇄 31쪽의 문장·꼭짓점 대응·길이·직각·음영 목표를 직접 확인했습니다. 합동 대응과 넓이를 독립 검산했으며 출판사 정답표는 확인하지 않았습니다."
     },
     {
