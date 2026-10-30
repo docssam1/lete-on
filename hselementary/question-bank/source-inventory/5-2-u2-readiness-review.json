@@ -79,6 +79,8 @@
       "singleAnswerStatus": "not-single-value-open-explanation",
       "evidence": "직접 렌더 대조: PDF p.10, 인쇄 p.14",
       "publicDecision": "locked",
+      "practiceRuntimeId": "5-2-u2-e1-exploration-1-explanation-synthetic",
+      "practiceRelation": "두 값을 계산하고 곱셈의 순서와 관계를 설명하는 별도 유사문항",
       "lockReason": "설명형 루브릭과 learner-fit 검증 전이며 공개 승인도 없습니다."
     },
     {

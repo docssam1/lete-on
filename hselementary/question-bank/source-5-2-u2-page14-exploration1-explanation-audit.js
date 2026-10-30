@@ -1,0 +1,30 @@
+"use strict";
+const assert = require("node:assert/strict");
+global.window = {};
+require("./source-inventory-4-1.js");
+require("./source-inventory-grade6.js");
+require("./curriculum.js");
+require("./generators.js");
+const practice = require("./source-5-2-u2-page14-exploration1-explanation-synthetic.js");
+const source = require("./source-inventory/5-2-source-items.json").sourceItems.find(row => row.sourceItemId === "5-2-u2-e1-exploration");
+const type = window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).find(t => t.id === practice.id);
+assert.equal(source.implementationStatus, "review-locked");
+assert.equal(source.publisherKeyVerified, false);
+assert(source.syntheticRuntimeTypeIds.includes(practice.id));
+assert(source.syntheticRuntimeTypeIds.includes(source.syntheticRuntimeTypeId));
+assert.equal(type.sourceParentItemId, source.sourceItemId);
+assert.equal(type.reviewLocked, false);
+assert.match(type.sourceItemLabel, /설명형 유사문항/);
+assert.equal(window.HSE_GENERATORS.generate({ ...type, reviewLocked: true }, 0, 0, 0, 0), null);
+for (let pool = 0; pool < 3; pool++) for (const level of [-1, 0, 1]) {
+  const q = window.HSE_GENERATORS.generate(type, 0, level, 0, pool);
+  const { count, numerator, denominator } = practice.pools[pool];
+  const repeated = Array.from({ length: count }, () => numerator).reduce((a, b) => a + b, 0);
+  assert.equal(repeated / denominator, [27, 24, 45][pool]);
+  assert.equal(q.answerModel.value, repeated / denominator);
+  assert.match(q.prompt, /두 값을 구하고.*이유와 함께 설명/);
+  assert.match(q.solution, /순서를 바꾸어도 곱은 같/);
+  assert.ok(q.solution.includes(String(q.answerModel.value)));
+  assert.equal(q.publisherKeyVerified, false);
+}
+console.log("PASS: explanation practice, nine configurations, independent repeated-addition check and original lock");

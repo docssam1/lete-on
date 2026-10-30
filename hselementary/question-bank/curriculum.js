@@ -2927,6 +2927,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(subunit=>subunit.types.map(type=>Number(type.typeNumber)||0)))+1;
     source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 4 유사문항",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:11,sourcePrintedPage:15,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52PositiveFractionOrderSynthetic",generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문은 부호 확인 전 잠금이며 양수 조건을 명시한 별도 연습을 유리수 비교로 검산했습니다."});
   }
+  if (source52Unit2First) {
+    const id = "5-2-u2-e1-exploration-1-explanation-synthetic", typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
+    source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name:"분수의 반복 덧셈과 곱셈 관계 설명",label:"분수의 반복 덧셈과 곱셈 관계 설명",difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-e1-exploration",sourceItemLabel:"개념탐구 1 (1) 설명형 유사문항",sourceSection:"exploration",sourceTier:"advanced",sourcePdfPage:10,sourcePrintedPage:14,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2Exploration1Explanation",generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"반복 덧셈과 곱셈의 관계를 설명하는 별도 연습문항을 검산했습니다."});
+  }
   if (source52Unit2First) for (const [suffix,name,label,page,section,key] of [
     ["exploration-2","분수 조건으로 두 수의 합 찾기","개념탐구 1 (2) 유사문항",14,"exploration","source52U2Concept12Synthetic"],
     ["mission-1","분수와 자연수의 곱 여섯 식","Mission 1 유사문항",15,"mission","source52U2Mission1Synthetic"],

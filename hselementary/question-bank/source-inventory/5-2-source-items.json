@@ -955,9 +955,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "개념탐구는 설명형과 두 수 합을 구하는 두 소문항. 두 번째와 구조가 같은 유사문항만 검산·공개했으며 원문은 잠금, 출판사 답안 미대조.",
+      "reviewReason": "개념탐구는 설명형과 두 수 합을 구하는 두 소문항. 각각 별도 유사문항을 검산했으며 원문은 잠금, 출판사 답안 미대조.",
       "publisherKeyVerified": false,
-      "syntheticRuntimeTypeId": "5-2-u2-e1-exploration-2-synthetic"
+      "syntheticRuntimeTypeId": "5-2-u2-e1-exploration-2-synthetic",
+      "syntheticRuntimeTypeIds": ["5-2-u2-e1-exploration-1-explanation-synthetic", "5-2-u2-e1-exploration-2-synthetic"]
     },
     {
       "sourceItemId": "5-2-u2-e1-example-1",
