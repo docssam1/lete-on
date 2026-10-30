@@ -12,6 +12,10 @@ assert min(minima)==6500
 # Compare exact quotient rounding without assuming integer division.
 q=[n for n in range(200,400) if 45<=Fraction(n,6)<55 and 65<=Fraction(n,4)<75]
 assert q==list(range(270,300))
+# Even if the quotient is interpreted as the integer quotient, both bounds
+# are integral so the permitted natural numbers coincide.
+integer_q=[n for n in range(200,400) if 45<=n//6<55 and 65<=n//4<75]
+assert integer_q==q
 # For every real x in [600,700), y=250 supplies sum in [850,950)
 # and difference in [350,450); check exact rational endpoints and samples.
 for x in (Fraction(600),Fraction(60001,100),Fraction(64999,100),Fraction(69999,100)):
