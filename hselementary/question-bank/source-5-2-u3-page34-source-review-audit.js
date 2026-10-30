@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('node:assert/strict'),review=require('./source-inventory/5-2-u3-e5-e8-readiness-review.json'),common=require('./source-inventory/5-2-source-items.json');
+function clean(p){const q=[];for(const v of p)if(!q.length||v[0]!==q.at(-1)[0]||v[1]!==q.at(-1)[1])q.push(v);if(q.length>1&&q[0][0]===q.at(-1)[0]&&q[0][1]===q.at(-1)[1])q.pop();let changed=true;while(changed&&q.length>=3){changed=false;for(let i=0;i<q.length;i++){const a=q[(i+q.length-1)%q.length],b=q[i],c=q[(i+1)%q.length];if((b[0]-a[0])*(c[1]-b[1])===(b[1]-a[1])*(c[0]-b[0])){q.splice(i,1);changed=true;break}}}return q;}
+function clip(poly,f,sign){const out=[];for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],u=f(a)*sign,v=f(b)*sign;if(u>=0)out.push(a);if((u<0&&v>0)||(u>0&&v<0)){const t=u/(u-v);out.push([a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])])}}return clean(out)}
+const area=p=>Math.abs(p.reduce((s,a,i)=>{const b=p[(i+1)%p.length];return s+a[0]*b[1]-b[0]*a[1]},0))/2;
+let polygons=[[[0,0],[1,0],[1,1],[0,1]]];for(const f of [p=>p[1]-0.25,p=>p[1]-0.75,p=>p[1]-p[0],p=>p[1]+p[0]-1])polygons=polygons.flatMap(p=>[clip(p,f,1),clip(p,f,-1)]).filter(p=>p.length>=3&&area(p)>0);
+const count=n=>polygons.filter(p=>p.length===n).length;assert.deepEqual([count(3),count(4),count(5)],[6,2,2]);assert.equal(polygons.reduce((s,p)=>s+area(p),0),1);assert.equal(count(3)*100+count(4)*10+count(5),622);
+const palindromes=Array.from({length:991},(_,i)=>i+10).filter(n=>String(n)===String(n).split('').reverse().join(''));assert.equal(palindromes.length,99);
+let x=0,y=20,dx=1,dy=1,hits=0;do{const t=Math.min(dx>0?120-x:x,dy>0?40-y:y);assert.ok(t>0);x+=dx*t;y+=dy*t;if(x===0||x===120)dx=-dx;if(y===0||y===40)dy=-dy;hits++;assert.ok(hits<20)}while(x!==0||y!==20);assert.equal(hits,8);const diamondArea=area([[0,20],[20,0],[40,20],[20,40]]);assert.equal(diamondArea*3,2400);
+for(const id of ['5-2-u3-e6-exploration','5-2-u3-e6-example-1','5-2-u3-e6-example-3']){const item=common.sourceItems.find(x=>x.sourceItemId===id);assert.equal(item.implementationStatus,'review-locked');assert.equal(item.publisherKeyVerified,false);assert.equal(item.publicDecision,'locked')}
+assert.equal(review.items.filter(x=>x.publicDecision==='locked').length,review.summary.lockedCount);assert.equal(review.items.filter(x=>x.publicDecision==='public-candidate').length,review.summary.publicCandidateCount);
+console.log('34쪽 원문 감사 통과: 거울 경로·면적, 접기 조각 독립 분할·넓이 보존, 대칭수 전수검사, 원문 잠금·장부 합계');
