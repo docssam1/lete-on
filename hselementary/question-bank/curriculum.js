@@ -2789,6 +2789,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e5-mission-6-isosceles-axis-synthetic",name="이등변삼각형의 대칭축과 각 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e5-mission-6",sourceItemLabel:"Mission 6 구조 연습",sourceSection:"mission",sourcePdfPage:29,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 각과 구별되는 창작 삼각형의 두 이등변 조건, 축 및 목표각을 좌표로 검산했습니다.",generatorKey:"source52IsoscelesAxisAngleSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  const source52PointSymmetry = source52CongruenceUnit?.subunits.find(s => s.name === "점대칭도형");
+  if (source52PointSymmetry && !source52PointSymmetry.types.some(t => t.id === "5-2-u3-e7-exploration-polyomino-synthetic")) {
+    const id="5-2-u3-e7-exploration-polyomino-synthetic",name="정사각형을 붙인 점대칭 모양 · 연습";
+    source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e7-exploration",sourceItemLabel:"개념탐구 7 구조 연습",sourceSection:"exploration",sourcePdfPage:32,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 칸 수별 연결·점대칭 모양과 회전·뒤집기 중복을 독립 열거했습니다.",generatorKey:"source52PointPolyominoSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   const source52CongruenceFirst = source52CongruenceUnit?.subunits.find(s => s.name === "조건에 맞는 삼각형 그리기");
   if (source52CongruenceFirst) {
     const index = source52CongruenceFirst.types.findIndex(t => t.id === "5-2-u3-t1");
