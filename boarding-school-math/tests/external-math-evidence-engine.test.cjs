@@ -80,6 +80,16 @@ test("SSAT and ISEE remain admissions evidence and cannot independently advance 
   assert.equal(isee.scores.metric, null);
 });
 
+test("SSAT and ISEE test levels are preserved only for their own known levels", function () {
+  const ssat = engine.analyze(base({ sourceId: "ssat", overallPercent: undefined, schoolCut: undefined, percentile: 70, testLevel: "ssat-middle", domains: [] }));
+  const isee = engine.analyze(base({ sourceId: "isee", overallPercent: undefined, schoolCut: undefined, quantStanine: 6, mathStanine: 7, testLevel: "isee-upper", domains: [] }));
+  const unrelated = engine.analyze(base({ testLevel: "isee-upper" }));
+  assert.equal(ssat.scores.testLevel, "ssat-middle");
+  assert.equal(isee.scores.testLevel, "isee-upper");
+  assert.equal(unrelated.scores.testLevel, null);
+  assert.throws(function () { engine.analyze(base({ sourceId: "ssat", overallPercent: undefined, schoolCut: undefined, percentile: 70, testLevel: "isee-middle", domains: [] })); }, /TEST_LEVEL_INVALID/);
+});
+
 test("invalid ranges are rejected while the user-selected course comparison may branch either way", function () {
   assert.throws(function () { engine.analyze(base({ grade: 1 })); }, /GRADE_INVALID/);
   assert.throws(function () { engine.analyze(base({ sourceId: "map-growth", overallPercent: undefined, schoolCut: undefined, rit: 99, percentile: 50 })); }, /RIT_INVALID/);

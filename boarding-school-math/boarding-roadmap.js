@@ -262,6 +262,9 @@
   function seasonLabel(season) {
     return ({ fall: "Fall", winter: "Winter", spring: "Spring", summer: "Summer" })[season] || "시기 미기재";
   }
+  function assessmentLevelLabel(level) {
+    return ({ "ssat-elementary-3": "SSAT Elementary · Grade 3", "ssat-elementary-4": "SSAT Elementary · Grade 4", "ssat-middle": "SSAT Middle", "ssat-upper": "SSAT Upper", "isee-primary-2": "ISEE Primary 2", "isee-primary-3": "ISEE Primary 3", "isee-primary-4": "ISEE Primary 4", "isee-lower": "ISEE Lower", "isee-middle": "ISEE Middle", "isee-upper": "ISEE Upper" })[level] || "레벨 미기재";
+  }
   function renderAssessmentEvidence() {
     const label = $("journey-evidence-label");
     const title = $("journey-evidence-title");
@@ -510,9 +513,10 @@
         gradeLabel.textContent = `${entry.grade}학년 · ${assessmentDate(entry)}`;
         article.append(gradeLabel);
         const list = document.createElement("dl");
+        const levelRow = entry.source.id === "ssat" || entry.source.id === "isee" ? [["시험 레벨", assessmentLevelLabel(entry.scores.testLevel)]] : [];
         const values = entry.source.id === "isee"
-          ? [["Quantitative Reasoning", entry.scores.quantStanine == null ? null : `Stanine ${entry.scores.quantStanine}`], ["Mathematics Achievement", entry.scores.mathStanine == null ? null : `Stanine ${entry.scores.mathStanine}`]]
-          : [[entry.source.id === "ssat" ? "Quantitative 백분위" : "성취 백분위", entry.scores.percentile == null ? null : `백분위 ${entry.scores.percentile}`], ["Scale score", entry.scores.scaleScore == null ? null : String(entry.scores.scaleScore)], ["Stanine", entry.scores.stanine == null ? null : String(entry.scores.stanine)], ["비교 집단", entry.scores.normGroup || null]];
+          ? levelRow.concat([["Quantitative Reasoning", entry.scores.quantStanine == null ? null : `Stanine ${entry.scores.quantStanine}`], ["Mathematics Achievement", entry.scores.mathStanine == null ? null : `Stanine ${entry.scores.mathStanine}`]])
+          : levelRow.concat([[entry.source.id === "ssat" ? "Quantitative 백분위" : "성취 백분위", entry.scores.percentile == null ? null : `백분위 ${entry.scores.percentile}`], ["Scale score", entry.scores.scaleScore == null ? null : String(entry.scores.scaleScore)], ["Stanine", entry.scores.stanine == null ? null : String(entry.scores.stanine)], ["비교 집단", entry.scores.normGroup || null]]);
         values.filter(function (value) { return value[1] != null; }).forEach(function (value) {
           const term = document.createElement("dt"); term.textContent = value[0];
           const description = document.createElement("dd"); description.textContent = value[1];

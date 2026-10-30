@@ -105,6 +105,7 @@ test("ISEE stanines survive save, history rendering, and reload", async function
   const errors = errorsFor(page);
   await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
   await page.locator("#source-id").selectOption("isee");
+  await page.locator("#test-level").selectOption("isee-middle");
   await page.locator("#quant-stanine").fill("7");
   await page.locator("#math-stanine").fill("6");
   await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
@@ -114,6 +115,7 @@ test("ISEE stanines survive save, history rendering, and reload", async function
   assert.match(await page.locator("#metric-value").innerText(), /Quantitative Reasoning 7 · Mathematics Achievement 6 stanine/);
   assert.equal(await page.locator("#quant-stanine").inputValue(), "7");
   assert.equal(await page.locator("#math-stanine").inputValue(), "6");
+  assert.equal(await page.locator("#test-level").inputValue(), "isee-middle");
   assert.doesNotMatch(await page.locator("#assessment-history-list").innerText(), /undefined/);
   assert.deepEqual(errors, []);
   await context.close();
@@ -239,6 +241,7 @@ test("ISEE stanines stay separate instead of becoming an invented average", asyn
   const errors = errorsFor(page);
   await page.goto(`${baseUrl}assessment-entry.html?grade=7`, { waitUntil: "networkidle" });
   await page.locator("#source-id").selectOption("isee");
+  await page.locator("#test-level").selectOption("isee-middle");
   await page.locator("#quant-stanine").fill("9");
   await page.locator("#math-stanine").fill("8");
   await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });

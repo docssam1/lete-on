@@ -70,6 +70,15 @@
     }
     return finite(input.percentile, "PERCENTILE", 1, 99, true);
   }
+  function testLevel(input, source) {
+    if (source.id !== "ssat" && source.id !== "isee") return null;
+    const value = typeof input.testLevel === "string" ? input.testLevel : "";
+    const allowed = source.id === "ssat"
+      ? ["ssat-elementary-3", "ssat-elementary-4", "ssat-middle", "ssat-upper"]
+      : ["isee-primary-2", "isee-primary-3", "isee-primary-4", "isee-lower", "isee-middle", "isee-upper"];
+    if (value && !allowed.includes(value)) fail("TEST_LEVEL_INVALID");
+    return value || null;
+  }
   function routeBetween(startId, targetId) {
     return Object.freeze([startId, targetId].filter(function (id, index, ids) { return index === 0 || id !== ids[index - 1]; }).map(function (id) {
       const row = course(id, "ROUTE_COURSE");
@@ -86,6 +95,7 @@
     const testDate = date(input.testDate);
     const domains = normalizeDomains(input.domains, grade);
     const metric = evidenceMetric(input, source);
+    const selectedTestLevel = testLevel(input, source);
     const quantStanine = source.id === "isee" ? finite(input.quantStanine, "QUANT_STANINE", 1, 9, true) : null;
     const mathStanine = source.id === "isee" ? finite(input.mathStanine, "MATH_STANINE", 1, 9, true) : null;
     const schoolCut = source.id === "school-placement" ? finite(input.schoolCut, "SCHOOL_CUT", 0, 100, false) : null;
@@ -109,7 +119,7 @@
       source,
       testDate,
       grade,
-      scores: Object.freeze({ metric, metricLabel: source.scoreLabel, rit, scaleScore, stanine, quantStanine, mathStanine, percentile: source.id !== "school-placement" && source.id !== "isee" ? metric : null, schoolCut, clearsEnteredCut, normGroup, season, normYear, instructionalWeeks }),
+      scores: Object.freeze({ metric, metricLabel: source.scoreLabel, rit, scaleScore, stanine, quantStanine, mathStanine, percentile: source.id !== "school-placement" && source.id !== "isee" ? metric : null, schoolCut, clearsEnteredCut, normGroup, testLevel: selectedTestLevel, season, normYear, instructionalWeeks }),
       band: null,
       confidence: "not-calculated",
       placementState,

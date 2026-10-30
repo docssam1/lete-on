@@ -338,11 +338,11 @@ test("same-source CTP, SSAT, and ISEE records show raw values without deriving g
   await page.evaluate(function () {
     [
       { sourceId: "ctp", grade: 7, percentile: 81, scaleScore: 224, stanine: 7, normGroup: "Independent School Norm" },
-      { sourceId: "ssat", grade: 7, percentile: 74, scaleScore: 685 },
-      { sourceId: "isee", grade: 7, quantStanine: 6, mathStanine: 8 },
+      { sourceId: "ssat", grade: 7, percentile: 74, scaleScore: 685, testLevel: "ssat-middle" },
+      { sourceId: "isee", grade: 7, quantStanine: 6, mathStanine: 8, testLevel: "isee-middle" },
       { sourceId: "ctp", grade: 8, percentile: 68, scaleScore: 231, stanine: 6, normGroup: "National Norm" },
-      { sourceId: "ssat", grade: 8, percentile: 79, scaleScore: 710 },
-      { sourceId: "isee", grade: 8, quantStanine: 7, mathStanine: 7 }
+      { sourceId: "ssat", grade: 8, percentile: 79, scaleScore: 710, testLevel: "ssat-upper" },
+      { sourceId: "isee", grade: 8, quantStanine: 7, mathStanine: 7, testLevel: "isee-upper" }
     ].forEach(function (entry, index) {
       const record = window.GFIELDExternalMathEvidenceEngine.analyze(Object.assign({ testDate: `2026-09-0${index + 1}`, currentCourseId: "pre-algebra", targetCourseId: "algebra-1", domains: [] }, entry));
       window.GFIELDLocalLearningRecord.storage.saveAssessmentEvidence(record);
@@ -359,7 +359,11 @@ test("same-source CTP, SSAT, and ISEE records show raw values without deriving g
   assert.match(text, /Independent School Norm/);
   assert.match(text, /National Norm/);
   assert.match(text, /SSAT Quantitative/);
+  assert.match(text, /SSAT Middle/);
+  assert.match(text, /SSAT Upper/);
   assert.match(text, /ISEE Quantitative \/ Mathematics/);
+  assert.match(text, /ISEE Middle/);
+  assert.match(text, /ISEE Upper/);
   assert.match(text, /Quantitative Reasoning[\s\S]*Stanine 6/);
   assert.match(text, /Mathematics Achievement[\s\S]*Stanine 8/);
   assert.doesNotMatch(text, /차이|등급|성장/);

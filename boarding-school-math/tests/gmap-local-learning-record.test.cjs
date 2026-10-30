@@ -122,6 +122,19 @@ test("external assessment evidence is reduced to an answer-safe local planning s
   assert.equal(store.loadAssessmentEvidence(), null);
 });
 
+test("admissions assessment test level survives local summary sanitization", function () {
+  const store = records.create(memoryStorage());
+  const saved = store.saveAssessmentEvidence({
+    schemaVersion: "gfield-external-math-evidence-v3", source: { id: "ssat", label: "SSAT Quantitative", role: "admission-support" },
+    testDate: "2026-09-01", grade: 7, band: null, confidence: "not-calculated", placementState: "admission-evidence-only", officialPlacement: false,
+    currentCourse: { id: "pre-algebra", label: "Pre-Algebra", publicLearning: true }, recommendedStart: { id: "pre-algebra", label: "Pre-Algebra", publicLearning: true }, targetCourse: { id: "algebra-1", label: "Algebra 1" },
+    scores: { metric: 74, metricLabel: "Quantitative 백분위", percentile: 74, testLevel: "ssat-middle" }, primaryPriority: null, priorityDomains: [], domainComparisons: [], plan: { weeks: null, studyDaysPerWeek: null, minutesPerDay: null, problemCountPerDay: null },
+    materialState: "pathway-only-content-locked", decisionNotice: "입학시험 점수는 참고자료입니다."
+  });
+  assert.equal(saved, true);
+  assert.equal(store.loadAssessmentEvidence().scores.testLevel, "ssat-middle");
+});
+
 test("external MAP norm-year reference survives safe local storage and legacy v2 rows remain readable", function () {
   const store = records.create(memoryStorage());
   const evidence = {

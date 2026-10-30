@@ -12,8 +12,8 @@
     "school-placement": "학교가 직접 실시한 과정 배정 시험입니다. 정답률과 학교가 안내한 컷을 입력할 수 있습니다.",
     "map-growth": "RIT는 성장 척도이고 percentile은 같은 학년 비교 위치입니다. 서로 바꾸어 입력하지 않습니다.",
     ctp: "Scale score, percentile, stanine과 비교 집단을 구분합니다. percentile은 정답률이 아닙니다.",
-    ssat: "입학용 Quantitative 결과입니다. 수학 과정 배정에는 보조 근거로만 사용합니다.",
-    isee: "Quantitative Reasoning과 Mathematics Achievement stanine을 각각 입력합니다."
+    ssat: "입학용 Quantitative 결과입니다. 성적표의 시험 레벨을 함께 기록하며, 수학 과정 배정에는 보조 근거로만 사용합니다.",
+    isee: "Quantitative Reasoning과 Mathematics Achievement stanine을 각각 입력하고, 성적표의 시험 레벨을 함께 기록합니다."
   };
   const errorCopy = {
     SOURCE_INVALID: "평가 종류를 다시 선택하세요.", TEST_DATE_INVALID: "시험일을 확인하세요.", GRADE_INVALID: "응시 학년을 확인하세요.",
@@ -63,6 +63,7 @@
     });
     const requiredIds = sourceId === "school-placement" ? ["overall-percent"] : sourceId === "map-growth" ? ["rit", "percentile"] : sourceId === "ctp" || sourceId === "ssat" ? ["percentile"] : ["quant-stanine", "math-stanine"];
     requiredIds.forEach(function (id) { document.getElementById(id).required = true; });
+    document.getElementById("test-level").required = sourceId === "ssat" || sourceId === "isee";
     document.getElementById("percentile-label").textContent = sourceId === "ssat" ? "Quantitative 백분위" : "성취 백분위";
     document.getElementById("scale-score-label").textContent = sourceId === "ssat" ? "Quantitative scale score" : "Scale score";
   }
@@ -72,7 +73,7 @@
   function inputRecord() {
     return {
       sourceId: sourceSelect.value, testDate: value("test-date"), grade: Number(value("grade")), currentCourseId: currentCourse.value, targetCourseId: targetCourse.value,
-      overallPercent: numberOrNull("overall-percent"), schoolCut: numberOrNull("school-cut"), rit: numberOrNull("rit"), percentile: numberOrNull("percentile"), scaleScore: numberOrNull("scale-score"), stanine: numberOrNull("stanine"), quantStanine: numberOrNull("quant-stanine"), mathStanine: numberOrNull("math-stanine"), normGroup: value("norm-group"), season: value("season"), normYear: value("norm-year"), instructionalWeeks: numberOrNull("instructional-weeks"), domains: domains()
+      overallPercent: numberOrNull("overall-percent"), schoolCut: numberOrNull("school-cut"), rit: numberOrNull("rit"), percentile: numberOrNull("percentile"), scaleScore: numberOrNull("scale-score"), stanine: numberOrNull("stanine"), quantStanine: numberOrNull("quant-stanine"), mathStanine: numberOrNull("math-stanine"), normGroup: value("norm-group"), testLevel: value("test-level"), season: value("season"), normYear: value("norm-year"), instructionalWeeks: numberOrNull("instructional-weeks"), domains: domains()
     };
   }
   function metricText(result) {
@@ -207,6 +208,7 @@
       "quant-stanine": scores.quantStanine,
       "math-stanine": scores.mathStanine,
       "norm-group": scores.normGroup,
+      "test-level": scores.testLevel,
       season: scores.season,
       "norm-year": scores.normYear,
       "instructional-weeks": scores.instructionalWeeks
