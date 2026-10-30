@@ -1644,9 +1644,10 @@
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "reviewed",
-      "publicDecision": "public-candidate",
-      "lockReason": null,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "publisherKeyVerified": false,
+      "lockReason": "원문 그림과 독립 계산은 확인했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 검증된 별도 유사문항을 연결합니다.",
       "sourceEvidence": "source-drive:1xxuHRMlch7RGsqBdnlFdOGdvxw0aUPfQ; source-sha256:6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88; clean-page-crop-sha256:527fa6ff8b5e058c58dd948c9a6493152f152e231f44084375018b1a08c59be7; canonical PDF p.26; clean alternate p.25; printed p.30; Apple Vision OCR + visual comparison; sourceItemId:5-2-u3-e4-example-2",
       "reviewEvidence": "2026-10-24: 9개 변형의 독립 각 계산·SVG 기하 감사 통과. Mac Playwright PC 1280px/모바일 375px에서 문제·풀이 분리, 답 누출, 넘침과 글자 잘림 확인. A4 문제·풀이 각각 1쪽 PDF 렌더 확인. 출판사 답안표 미확인."
     },

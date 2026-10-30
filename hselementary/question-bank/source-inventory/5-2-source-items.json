@@ -2529,6 +2529,8 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "reviewed",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
       "reviewReason": "Drive 원본 황소5-2-1심화.pdf의 SHA-256 일치본(6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88)에서 기준 PDF p.26 / 깨끗한 대체본 p.25(인쇄 p.30)를 확대 대조하고 Apple Vision OCR을 그림과 비교했습니다. △ㄱㄴㄷ, △ㄴㄹㅁ, ∠ㄱㄴㅁ=35°, ∠ㄴㄷㄹ=20°, 목표 ∠ㄴㅁㄱ을 확인했습니다. 독립 각도 계산은 125°이며 출판사 답안표는 확인하지 않았습니다. 독립 계산으로 125°를 확인했으며, 출판사 답안표는 확인하지 않았습니다. 2026-10-24: 9개 생성 조합의 정삼각형 좌표·각 표시·회전 풀이를 검산하고 PC/모바일 브라우저 및 문제·풀이 A4 1쪽 렌더를 확인했습니다. 출판사 답안표는 미확인입니다."
     },
     {
