@@ -1,0 +1,5 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-two-centers-quadrilateral-synthetic.js');
+const area=points=>Math.abs(points.reduce((s,p,i)=>{const q=points[(i+1)%points.length];return s+p[0]*q[1]-q[0]*p[1]},0))/2;
+for(let i=0;i<3;i++)for(const difficulty of [-1,0,1]){const q=api.makeQuestion(i,difficulty),{points,O,S}=q.questionModel,{first,second}=q.answerModel;assert.equal(points.length,4);assert.ok(area(points)>0);for(let j=0;j<4;j++){for(let k=0;k<2;k++){assert.equal((points[j][k]+first[j][k])/2,O[k]);assert.equal((first[j][k]+second[j][k])/2,S[k]);assert.equal(second[j][k]-points[j][k],2*(S[k]-O[k]));}for(const p of [points[j],first[j],second[j]]){assert.ok(p[0]>=0&&p[0]<=15&&p[1]>=0&&p[1]<=12);}}assert.equal(area(first),area(points));assert.equal(area(second),area(points));assert.doesNotMatch(q.prompt,/data-first|data-second/);assert.match(q.answerVisual,/data-first/);assert.match(q.answerVisual,/data-second/);assert.equal(q.automaticGrading,false);}
+console.log('두 중심 사각형 감사 통과: 세 도형·세 난이도, 각 중점·두 중심 평행이동·넓이·모눈 범위·정답 분리');
