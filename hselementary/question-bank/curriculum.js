@@ -2815,6 +2815,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 4 유사문항",sourceSection:"mission",sourcePdfPage:23,sourcePrintedPage:27,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 변형의 삼각형 부등식과 서로 다른 변 조건을 검증했습니다.",generatorKey:"source52TriangleDistinctNaturalSideSyntheticPage27Mission4",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
 
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-e2-mission-5")) {
+    const id="5-2-u3-e2-mission-5",name="정삼각형 교차 도형의 합동 · 연습";
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 5 조건 추가 유사문항",sourceSection:"mission",sourcePdfPage:23,sourcePrintedPage:27,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 선분을 대조하고 각도·길이·보기 범위를 추가한 창작 도형을 독립 검산했습니다.",generatorKey:"source52EquilateralCrossingPage27Mission5",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+
   if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t => t.id === "5-2-u3-e2-mission-6")) {
     const id="5-2-u3-e2-mission-6",name="이등변삼각형 안의 작은 삼각형 합동쌍";
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 6 유사문항",sourceSection:"mission",sourcePdfPage:23,sourcePrintedPage:27,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 변형의 작은 삼각형의 합동쌍과 집계 범위을 검증했습니다.",generatorKey:"source52IsoscelesSmallTrianglePairsSyntheticPage27Mission6",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});

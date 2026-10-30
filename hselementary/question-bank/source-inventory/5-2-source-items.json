@@ -2218,7 +2218,8 @@
       "implementationStatus": "review-locked",
       "reviewReason": "인쇄된 선으로 만든 두 반례에서 추가 합동 관계가 달라 원문 잠금을 유지합니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked"
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e2-mission-5"
     },
     {
       "sourceItemId": "5-2-u3-e2-mission-6",
