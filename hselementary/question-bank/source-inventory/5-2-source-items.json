@@ -4658,8 +4658,8 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 49,
-      "printedPage": 51,
-      "sourceShape": "직육면체의 겨냥도와 쌓기의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 53,
+      "sourceShape": "숫자 전개도를 정육면체로 접어 각 꼭짓점 세 면의 곱을 만들고 지정된 순위의 두 곱의 최대공약수를 구한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
