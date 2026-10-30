@@ -14,6 +14,10 @@ Verification on Mac: learner-plan engine + browser tests and Grade 3–12 boardi
 
 Re-ran the public Grade 7 `7.NS.A` screener plan, authoring-manifest, analysis, report-projection, and scoring-readiness suites on the current Mac branch: 27/27 pass. This verifies slot balance and official-source binding metadata, all-18 focus aggregation, student/teacher separation, trilingual generic feedback, locked score readiness until four teacher reviews, and non-placement behavior. The handoff separately reports an 18-item private `7.NS.A` draft with structural/exact-rational checks and a 42-item Grade 7 AMC 8 candidate. They are distinct assessments. No private candidate content was opened in this recheck; formal review/release for the `7.NS.A` draft and the separate AMC pilot gates remain pending, and the public screener stays locked.
 
+### 2026-10-30 Grade 7 roadmap visual and direct-link check
+
+Rendered the public Grade 7 roadmap at 390×844 and 1440×900 with the local Playwright Chromium server. Both views loaded without horizontal overflow; the Grade 7 heading, concept path, assessment-record comparison entry, study-direction cards, and manual contest-result entry were visible in their expected sections. Loading `?grade=7#grade-comparison` directly at 390px settled the comparison heading below the sticky section navigation. The Codex in-app browser's tab URL policy blocked direct inspection, so this was a separate local render of the public roadmap only; no private diagnostic workbench was opened. No UI change was needed.
+
 This file is the short restart contract for the Boarding School Math product only. Do not mix it with `hsmiddle`, high-school selection, Geometry World, Number Magic, Fields Classic, or other repositories.
 
 ## Read first
