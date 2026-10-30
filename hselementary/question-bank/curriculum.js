@@ -2687,6 +2687,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e6-example-3-palindrome-synthetic",name="자리 수별 대칭수의 개수 · 연습";
     source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 6-3 구조 연습",sourceSection:"example",sourcePdfPage:30,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 범위의 대칭수를 전수 검사했습니다.",generatorKey:"source52PalindromeSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
+  const source52PointApplication = source52CongruenceUnit?.subunits.find(s => s.name === "점대칭의 활용");
+  if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-mission-2-half-synthetic")) {
+    const id="5-2-u3-e8-mission-2-half-synthetic",name="붙인 도형의 넓이를 반으로 나누기 · 연습";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-mission-2",sourceItemLabel:"Mission 2 구조 연습",sourceSection:"mission",sourcePdfPage:35,sourcePrintedPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 도형의 두 중심을 잇는 넓이 이등분선을 독립 검증했습니다.",generatorKey:"source52CompositeHalfSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   const source52LineSymmetry = source52CongruenceUnit?.subunits.find(s => s.name === "선대칭도형");
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-example-1-reflection-synthetic")) {
     const id="5-2-u3-e5-example-1-reflection-synthetic",name="기울어진 축에 사각형 반사하기 · 연습";
