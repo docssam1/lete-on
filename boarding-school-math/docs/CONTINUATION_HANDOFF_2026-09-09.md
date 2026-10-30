@@ -18,6 +18,8 @@ Re-ran the public Grade 7 `7.NS.A` screener plan, authoring-manifest, analysis, 
 
 Rendered the public Grade 7 roadmap at 390×844 and 1440×900 with the local Playwright Chromium server. Both views loaded without horizontal overflow; the Grade 7 heading, concept path, assessment-record comparison entry, study-direction cards, and manual contest-result entry were visible in their expected sections. Loading `?grade=7#grade-comparison` directly at 390px settled the comparison heading below the sticky section navigation. The Codex in-app browser's tab URL policy blocked direct inspection, so this was a separate local render of the public roadmap only; no private diagnostic workbench was opened. No UI change was needed.
 
+Re-ran `boarding-grade-roadmap`, `boarding-roadmap-browser`, `paper-review-analysis`, and `competition-paper-review-browser` with the bundled Node and Playwright paths: 57/57 pass. This covers Grade 3–12 example routes and inferred upper-grade bridges, Grade/MAP comparison guards, Grade 7 filtered practice links, manual AMC 8/10 result review and history, local save/delete behavior, keyboard handling, and responsive widths. No private item content was used.
+
 This file is the short restart contract for the Boarding School Math product only. Do not mix it with `hsmiddle`, high-school selection, Geometry World, Number Magic, Fields Classic, or other repositories.
 
 ## Read first
