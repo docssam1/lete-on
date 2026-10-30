@@ -967,7 +967,7 @@
       "resultContract": "set-of-figures",
       "candidateAnswerCount": null,
       "singleAnswer": false,
-      "singleAnswerCheck": "일직선 위의 ㄱ·ㄷ·ㅁ은 삼각형이 아닙니다. 확인된 한 쌍 외의 합동 도형은 전체 범위와 크기 조건을 검토해야 합니다.",
+      "singleAnswerCheck": "일직선 위의 ㄱ·ㄷ·ㅁ은 삼각형이 아닙니다. 두 정삼각형의 변이 같으면 △ㄱㄴㄷ과 △ㄷㄹㅁ도 합동이므로, 확인된 한 쌍이 유일하다고 단정할 수 없습니다. 전체 범위와 크기 조건을 검토해야 합니다.",
       "sourceVerified": true,
       "calculationStatus": "partial-review",
       "visualCheckStatus": "needs-implementation-check",
