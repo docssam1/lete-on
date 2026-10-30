@@ -483,6 +483,49 @@
       percentileSection.dataset.state = "needs-matching-norms";
     }
     renderCompetitionGradeComparison(current, target);
+    renderSameSourceScoreComparison(current, target);
+  }
+  function renderSameSourceScoreComparison(current, target) {
+    const section = $("same-source-score-comparison");
+    const cards = $("same-source-score-comparison-cards");
+    cards.replaceChildren();
+    const sources = ["ctp", "ssat", "isee"];
+    const pairs = sources.map(function (sourceId) {
+      return { current: matchingAssessmentEvidence(current.grade, sourceId), target: matchingAssessmentEvidence(target.grade, sourceId) };
+    }).filter(function (pair) { return pair.current && pair.target; });
+    pairs.forEach(function (pair) {
+      const first = pair.current;
+      const second = pair.target;
+      const sourceLabel = first.source.label || "평가 출처";
+      const group = document.createElement("div");
+      group.className = "same-source-score-pair";
+      const heading = document.createElement("h5");
+      heading.textContent = sourceLabel;
+      group.append(heading);
+      const columns = document.createElement("div");
+      columns.className = "same-source-score-pair-columns";
+      [first, second].forEach(function (entry) {
+        const article = document.createElement("article");
+        const gradeLabel = document.createElement("strong");
+        gradeLabel.textContent = `${entry.grade}학년 · ${assessmentDate(entry)}`;
+        article.append(gradeLabel);
+        const list = document.createElement("dl");
+        const values = entry.source.id === "isee"
+          ? [["Quantitative Reasoning", entry.scores.quantStanine == null ? null : `Stanine ${entry.scores.quantStanine}`], ["Mathematics Achievement", entry.scores.mathStanine == null ? null : `Stanine ${entry.scores.mathStanine}`]]
+          : [[entry.source.id === "ssat" ? "Quantitative 백분위" : "성취 백분위", entry.scores.percentile == null ? null : `백분위 ${entry.scores.percentile}`], ["Scale score", entry.scores.scaleScore == null ? null : String(entry.scores.scaleScore)], ["Stanine", entry.scores.stanine == null ? null : String(entry.scores.stanine)], ["비교 집단", entry.scores.normGroup || null]];
+        values.filter(function (value) { return value[1] != null; }).forEach(function (value) {
+          const term = document.createElement("dt"); term.textContent = value[0];
+          const description = document.createElement("dd"); description.textContent = value[1];
+          list.append(term, description);
+        });
+        article.append(list);
+        columns.append(article);
+      });
+      group.append(columns);
+      cards.append(group);
+    });
+    section.hidden = pairs.length === 0;
+    section.dataset.state = pairs.length ? "same-source-values-only" : "no-matching-records";
   }
   function buildCompetitionRecordCard(record, heading, id) {
     const card = document.createElement("article"); card.className = "competition-record-pair-card";

@@ -332,6 +332,55 @@ test("grade comparison does not calculate a difference between different assessm
   await page.close();
 });
 
+test("same-source CTP, SSAT, and ISEE records show raw values without deriving grade bands", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
+  await page.evaluate(function () {
+    [
+      { sourceId: "ctp", grade: 7, percentile: 81, scaleScore: 224, stanine: 7, normGroup: "Independent School Norm" },
+      { sourceId: "ssat", grade: 7, percentile: 74, scaleScore: 685 },
+      { sourceId: "isee", grade: 7, quantStanine: 6, mathStanine: 8 },
+      { sourceId: "ctp", grade: 8, percentile: 68, scaleScore: 231, stanine: 6, normGroup: "National Norm" },
+      { sourceId: "ssat", grade: 8, percentile: 79, scaleScore: 710 },
+      { sourceId: "isee", grade: 8, quantStanine: 7, mathStanine: 7 }
+    ].forEach(function (entry, index) {
+      const record = window.GFIELDExternalMathEvidenceEngine.analyze(Object.assign({ testDate: `2026-09-0${index + 1}`, currentCourseId: "pre-algebra", targetCourseId: "algebra-1", domains: [] }, entry));
+      window.GFIELDLocalLearningRecord.storage.saveAssessmentEvidence(record);
+    });
+  });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#comparison-grade").selectOption("8");
+  const panel = page.locator("#same-source-score-comparison");
+  assert.equal(await panel.getAttribute("data-state"), "same-source-values-only");
+  assert.equal(await page.locator(".same-source-score-pair").count(), 3);
+  const text = await panel.innerText();
+  assert.match(text, /ERB CTP Mathematics/);
+  assert.match(text, /백분위 81/);
+  assert.match(text, /Independent School Norm/);
+  assert.match(text, /National Norm/);
+  assert.match(text, /SSAT Quantitative/);
+  assert.match(text, /ISEE Quantitative \/ Mathematics/);
+  assert.match(text, /Quantitative Reasoning[\s\S]*Stanine 6/);
+  assert.match(text, /Mathematics Achievement[\s\S]*Stanine 8/);
+  assert.doesNotMatch(text, /차이|등급|성장/);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await page.close();
+});
+
+test("same-source score panel stays hidden when only one grade has CTP records", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
+  await page.evaluate(function () {
+    const record = window.GFIELDExternalMathEvidenceEngine.analyze({ sourceId: "ctp", testDate: "2026-09-01", grade: 7, currentCourseId: "pre-algebra", targetCourseId: "algebra-1", percentile: 81, domains: [] });
+    window.GFIELDLocalLearningRecord.storage.saveAssessmentEvidence(record);
+  });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  await page.locator("#comparison-grade").selectOption("8");
+  assert.equal(await page.locator("#same-source-score-comparison").getAttribute("data-state"), "no-matching-records");
+  assert.equal(await page.locator("#same-source-score-comparison").isHidden(), true);
+  await page.close();
+});
+
 test("released unit practice is reachable without exposing the private Grade 7 diagnostic", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=6`, { waitUntil: "networkidle" });
