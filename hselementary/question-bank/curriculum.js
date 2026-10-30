@@ -2740,6 +2740,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 1-4",sourceSection:"example",sourcePdfPage:20,sourcePrintedPage:24,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 사각형의 유일성과 볼록 반례를 검증했습니다.",generatorKey:"source52QuadrilateralExtraConditionSyntheticPage24Example4",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
 
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-e1-example-1")) {
+    const id="5-2-u3-e1-example-1",name="삼각형 합동 작도 예제 · 연습";
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 1-1 유사문항",sourceSection:"example",sourcePdfPage:20,sourcePrintedPage:24,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 작도 구조를 대조하고 다른 창작 삼각형과 작도 풀이를 검증했습니다.",generatorKey:"source52TriangleCopySyntheticPage24Example1",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   if (source52CongruenceFirst) for (const [n,name,key] of [[2,"삼각형 합동 작도 · 연습","source52TriangleCopySyntheticPage25Mission2"],[3,"사각형 합동 작도 · 연습","source52QuadrilateralCopySyntheticPage25Mission3"]]) {
     const id=`5-2-u3-e1-mission-${n}`;
     if (!source52CongruenceFirst.types.some(t=>t.id===id)) source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:`Mission ${n} 유사문항`,sourceSection:"mission",sourcePdfPage:21,sourcePrintedPage:25,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 작도 구조를 대조하고 창작 도형과 작도 풀이를 검증했습니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
