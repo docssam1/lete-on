@@ -1,0 +1,4 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-page26-exploration2-synthetic.js');
+for(let i=0;i<3;i++)for(const d of [-1,0,1]){const p=api.derive(i),q=api.build(i,d),[base,opp,deg]=p.ssa;assert(p.badAngles[0]+p.badAngles[1]>=180);assert(p.badSides[0]+p.badSides[1]<=p.badSides[2]);assert.equal(p.aaa.reduce((a,b)=>a+b,0),180);assert(p.aas[1]+p.aas[2]<180);assert.equal(new Set(p.order).size,5);for(const t of p.roots){const x=t*Math.cos(deg*Math.PI/180),y=t*Math.sin(deg*Math.PI/180);assert(Math.abs(Math.hypot(x-base,y)-opp)<1e-9);assert(t>0)}assert(Math.abs(p.roots[1]-p.roots[0])>1e-6);assert.equal(q.answer,['①','②','③','④','⑤'][p.order.indexOf(4)]);assert(!q.prompt.includes('정답'));}
+assert.equal(api.generate({generatorKey:api.key,sourceVerified:false,reviewLocked:true},0,0,0,0),null);console.log('PASS: 9 configurations, angle and side feasibility, two SSA intersections and unique AAS answer');
