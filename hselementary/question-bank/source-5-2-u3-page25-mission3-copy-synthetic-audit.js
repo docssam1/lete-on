@@ -1,0 +1,4 @@
+"use strict";
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-page25-mission3-copy-synthetic.js'),dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),cross=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+for(let i=0;i<3;i++)for(const difficulty of [-1,0,1]){const m=api.derive(i),q=api.build(i,difficulty),[a,b,c,d]=m.points;assert(m.turns.every(x=>x>0));assert(cross(a,c,b)*cross(a,c,d)<0);for(const p of [b,d]){const r1=dist(a,p),r2=dist(c,p),diagonal=dist(a,c);assert(r1+r2>diagonal&&r1+diagonal>r2&&r2+diagonal>r1)}assert(m.triangleAreas.every(x=>x>0));assert.equal((q.answerVisual.match(/stroke-dasharray="4 3"/g)||[]).length,4);assert(q.prompt.includes('u3ex12-work'));assert(!q.prompt.includes('정답'));}
+assert.equal(api.generate({generatorKey:api.key,sourceVerified:false,reviewLocked:true},0,0,0,0),null);console.log('Three convex synthetic quadrilaterals: diagonal splits and both SSS constructions verified');
