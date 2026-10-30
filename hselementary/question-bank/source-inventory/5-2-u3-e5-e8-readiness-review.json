@@ -1138,6 +1138,7 @@
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-1",
+      "commonSourceItemId": "5-2-u3-e8-mission-1",
       "sourceBlock": "Mission 1",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 1",
