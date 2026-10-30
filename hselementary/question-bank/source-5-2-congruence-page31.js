@@ -210,7 +210,7 @@
     const midpointWidth = (top+bottom)/2;
     const answer = height*midpointWidth/2;
     const prompt = `<div class="source52-p31-question"><p>사다리꼴 ㄱㄴㄷㄹ에서 선분 ㄱㄴ과 선분 ㄷㄹ은 각각 선분 ㄱㄹ에 수직입니다. 삼각형 ㄱㄹㅁ의 넓이를 구하세요. (단, 점 ㅁ은 변 ㄴㄷ의 한가운데 점입니다.)</p>${trapezoidMidpointDiagram(top,bottom,height)}</div>`;
-    const solution = `<div class="source52-p31-solution"><ol><li>보조선 ㄹㄴ을 긋습니다. 점 ㅁ은 ㄴㄷ의 한가운데이므로 ㄴㅁ=ㅁㄷ입니다.${trapezoidMidpointDiagram(top,bottom,height,true)}</li><li>△ㄱㄴㅁ과 △ㄱㅁㄷ은 밑변 ㄴㅁ과 ㅁㄷ이 같고 ㄱ에서 이 직선까지의 높이도 같으므로 넓이가 같습니다. 따라서 △ㄱㄴㅁ은 △ㄱㄴㄷ의 절반입니다.</li><li>△ㄱㄴㄷ과 △ㄱㄴㄹ은 밑변 ㄱㄴ이 같고 ㄷ과 ㄹ이 ㄱㄴ에 평행한 선 위에 있으므로 높이도 같아 넓이가 같습니다. 따라서 △ㄱㄴㅁ은 △ㄱㄴㄹ의 절반입니다. 같은 방법으로 △ㄹㅁㄷ은 △ㄹㄴㄷ의 절반입니다.</li><li>사다리꼴에서 △ㄱㄹㅁ을 빼면 △ㄱㄴㅁ과 △ㄹㅁㄷ이 남습니다. 두 넓이의 합은 △ㄱㄴㄹ과 △ㄹㄴㄷ의 넓이 합, 즉 사다리꼴 넓이의 절반이므로 △ㄱㄹㅁ도 나머지 절반입니다.</li><li>사다리꼴의 넓이는 (${top}+${bottom})×${height}÷2=${(top+bottom)*height/2}cm²입니다. 따라서 △ㄱㄹㅁ의 넓이는 ${(top+bottom)*height/2}÷2=${answer}cm²입니다.</li></ol></div>`;
+    const solution = `<div class="source52-p31-solution"><ol><li>보조선 ㄹㄴ을 긋습니다. 점 ㅁ은 ㄴㄷ의 한가운데이므로 ㄴㅁ=ㅁㄷ입니다.${trapezoidMidpointDiagram(top,bottom,height,true)}</li><li>△ㄱㄴㅁ과 △ㄱㅁㄷ은 밑변 ㄴㅁ과 ㅁㄷ이 같고 ㄱ에서 이 직선까지의 높이도 같으므로 넓이가 같습니다. 따라서 △ㄱㄴㅁ은 △ㄱㄴㄷ의 절반입니다.</li><li>△ㄱㄴㄷ과 △ㄱㄴㄹ은 밑변 ㄱㄴ이 같고 ㄷ과 ㄹ이 ㄱㄴ에 평행한 선 위에 있으므로 높이도 같아 넓이가 같습니다. 따라서 △ㄱㄴㅁ은 △ㄱㄴㄹ의 절반입니다. 같은 방법으로 △ㄹㅁㄷ은 △ㄹㄴㄷ의 절반입니다.</li><li>사다리꼴에서 △ㄱㄹㅁ을 빼면 △ㄱㄴㅁ과 △ㄹㅁㄷ이 남습니다. 두 넓이의 합은 △ㄱㄴㄹ과 △ㄹㄴㄷ의 넓이 합의 절반, 즉 사다리꼴 넓이의 절반이므로 △ㄱㄹㅁ도 나머지 절반입니다.</li><li>사다리꼴의 넓이는 (${top}+${bottom})×${height}÷2=${(top+bottom)*height/2}cm²입니다. 따라서 △ㄱㄹㅁ의 넓이는 ${(top+bottom)*height/2}÷2=${answer}cm²입니다.</li></ol></div>`;
     return result("5-2-u3-e4-mission-6",variant,offset,prompt,`${answer}cm²`,solution,{top,bottom,height,midpointWidth,answer},false,triangleAreaAnswerVisual("삼각형 넓이",`${answer}cm²`));
   }
 
