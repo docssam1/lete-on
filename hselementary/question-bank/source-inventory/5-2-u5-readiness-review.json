@@ -1118,7 +1118,7 @@
       "singleAnswerCheck": "기준 글자마다 접힘 좌표 모델에서 회전 상태가 하나로 정해졌으나, 그림의 글자 방향 읽기와 공식 답안은 추가 확인이 필요합니다.",
       "sourceVerified": true,
       "calculationStatus": "candidate-fold-model-needs-independent-review",
-      "visualCheckStatus": "source-observed-orientation-needs-crosscheck",
+      "visualCheckStatus": "three-source-views-direction-consistent-needs-independent-review",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
       "lockReason": "입체 방향과 글자 위치를 눈대중으로 복원하지 않고 회전 상태를 전수 확인합니다."
