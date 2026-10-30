@@ -2818,7 +2818,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 그림과 독립 반사를 확인했으나 공식 답안 및 공개 그림 검수 전 잠금 유지합니다."
+      "reviewReason": "원문 정팔각형의 네 꼭짓점 대각선과 일곱 보기를 대조했습니다. 출판사 답안 미대조로 원문 잠금을 유지하고 색칠한 삼각형과 보기 순서가 다른 별도 유사문항을 연결합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e5-mission-1-octagon-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e5-mission-2",
