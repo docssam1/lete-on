@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict');
+const original=[[2,4],[2,1],[5,1],[5,2],[4,3]],center=[4,4],rotate=([x,y])=>[8-x,8-y];
+const poly=[...original,[5,3],[5,4],...original.map(rotate),[3,5],[3,4]],n=poly.length;
+assert.equal(n,14);for(let i=0;i<n/2;i++)assert.deepEqual(rotate(poly[i]),poly[i+n/2]);
+assert.ok(poly.every(([x,y])=>x>=0&&x<=10&&y>=0&&y<=8));
+const twice=Math.abs(poly.reduce((s,[x,y],i)=>{const [a,b]=poly[(i+1)%n];return s+x*b-a*y},0));assert.equal(twice,34);
+const ori=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+const on=(a,b,c)=>ori(a,b,c)===0&&c[0]>=Math.min(a[0],b[0])&&c[0]<=Math.max(a[0],b[0])&&c[1]>=Math.min(a[1],b[1])&&c[1]<=Math.max(a[1],b[1]);
+const intersects=(a,b,c,d)=>(ori(a,b,c)*ori(a,b,d)<0&&ori(c,d,a)*ori(c,d,b)<0)||on(a,b,c)||on(a,b,d)||on(c,d,a)||on(c,d,b);
+for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)if(j-i!==1&&j-i!==n-1)assert.equal(intersects(poly[i],poly[(i+1)%n],poly[j],poly[(j+1)%n]),false);
+assert.deepEqual(center,[4,4]);
+const row=require('./source-inventory/5-2-u3-e5-e8-readiness-review.json').items.find(x=>x.sourceItemId==='5-2-u3-e7-mission-4');assert.equal(row.publicDecision,'locked');assert.match(row.independentAnswer,/17cm²/);
+console.log('37쪽 Mission 4: 원문 선 포함·180° 점대칭·자기 교차 없음·넓이 17cm² 작도 후보 검증');
