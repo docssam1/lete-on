@@ -3049,7 +3049,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "인쇄 35쪽 원문 구조를 대조했으나 공식 답안과 필요한 그림 검수 전 잠금 유지합니다."
+      "reviewReason": "16cm×22cm 원문의 접기 순서와 마지막 폭의 네 등분을 대조하고 위쪽 8겹·아래 띠 2겹을 좌표로 검산했습니다. 공식 답안과 공개용 원문 그림 미대조로 잠금 유지합니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e6-mission-1-fold-fourths-synthetic"
     },
     {
       "sourceItemId": "5-2-u3-e6-mission-2",
