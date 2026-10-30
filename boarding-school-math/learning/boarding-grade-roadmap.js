@@ -14,8 +14,17 @@
       Object.freeze({ standard: "7.NS.A.3", prompt: "문장제: 상황에 맞게 유리수 네 연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?" })
     ]), clusterId: "7.NS.A", resourceState: "public" }),
     Object.freeze({ id: "rpa", title: "비례 관계", description: "단위율과 비례 관계를 표·그래프·식으로 나타내요.", check: "두 양이 비례하는지 표와 그래프를 보고 설명할 수 있나요?", clusterId: "7.RP.A", resourceState: "public" }),
-    Object.freeze({ id: "ee", title: "식·방정식", description: "분배법칙으로 식을 정리하고 등식의 양쪽이 왜 같은지 확인해요.", check: "식을 바꾼 뒤에도 같은 값을 나타내는 이유를 말할 수 있나요?" }),
-    Object.freeze({ id: "geometry", title: "기하·혼합 문제", description: "도형에서 찾은 관계를 그림과 식으로 나타내고 필요한 개념을 골라요.", check: "처음 보는 문제에서 쓴 개념과 다른 풀이 한 가지를 설명할 수 있나요?" })
+    Object.freeze({ id: "ee", title: "식·방정식", description: "분배법칙으로 식을 정리하고 방정식·부등식의 해가 조건에 맞는지 확인해요.", check: "식을 바꾼 뒤에도 같은 값을 나타내는 이유와 부등식 해의 범위를 설명할 수 있나요?", resources: Object.freeze([
+      Object.freeze({ title: "Math 7 Unit 4 · 식과 분배법칙", url: "https://math7.flippedmath.com/unit-4-expressions.html" }),
+      Object.freeze({ title: "Unit 5 · 방정식", url: "https://math7.flippedmath.com/unit-5-equations.html" }),
+      Object.freeze({ title: "Unit 6 · 여러 단계 방정식", url: "https://math7.flippedmath.com/unit-6-multiple-step-equations.html" }),
+      Object.freeze({ title: "Unit 7 · 부등식", url: "https://math7.flippedmath.com/unit-7-inequalities.html" })
+    ]) }),
+    Object.freeze({ id: "geometry", title: "기하·혼합 문제", description: "닮음·각·삼각형·원·넓이·부피를 그림과 식으로 연결해요.", check: "도형에서 찾은 관계를 식으로 나타내고 다른 풀이를 설명할 수 있나요?", resources: Object.freeze([
+      Object.freeze({ title: "Math 7 Unit 13 · 닮음과 축척", url: "https://math7.flippedmath.com/unit-13-similarity.html" }),
+      Object.freeze({ title: "Unit 14 · 각과 삼각형", url: "https://math7.flippedmath.com/unit-14-angles-and-triangles.html" }),
+      Object.freeze({ title: "Unit 15 · 원·넓이와 부피", url: "https://math7.flippedmath.com/unit-15-area-and-volume.html" })
+    ]) })
   ]);
 
   const grades = [

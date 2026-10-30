@@ -166,6 +166,12 @@
   function renderStages(entry) {
     const list = $("stage-list");
     const grade7 = grade === 7;
+    const externalDisclosure = $("grade7-stage-external-resources");
+    const renderedSelection = `${grade}:${stage === null ? "none" : stage}`;
+    if (externalDisclosure.dataset.selectionKey !== renderedSelection) {
+      externalDisclosure.open = false;
+      externalDisclosure.dataset.selectionKey = renderedSelection;
+    }
     list.classList.toggle("grade7-path", grade7);
     list.setAttribute("aria-label", grade7 ? "7학년 개념 연결 예시. 선택은 현재 위치나 학습 완료를 뜻하지 않습니다." : "선택한 학년의 학습 단계");
     list.replaceChildren();
@@ -188,7 +194,12 @@
         selectedNote.textContent = "살펴보는 중";
         button.append(selectedNote);
       }
-      button.addEventListener("click", function () { stage = index; renderStages(entry); list.querySelectorAll("button")[index].focus(); revealGrade7Detail(); });
+      button.addEventListener("click", function () {
+        stage = index;
+        renderStages(entry);
+        list.querySelectorAll("button")[index].focus();
+        revealGrade7Detail();
+      });
       li.append(button);
       list.append(li);
     });
@@ -198,6 +209,8 @@
     const detail = document.querySelector(".stage-detail");
     detail.hidden = grade7 && stage === null;
     $("grade7-stage-check").hidden = !grade7 || stage === null;
+    $("grade7-stage-external-resources").hidden = !grade7 || stage === null;
+    $("grade7-stage-external-resource-list").replaceChildren();
     $("grade7-stage-resource").hidden = true;
     $("grade7-no-resource").hidden = true;
     renderJourneyPreview(entry);
@@ -228,12 +241,26 @@
         checks.append(item);
       });
       $("grade7-stage-references").hidden = stop.id !== "nsa";
+      const externalResources = stop.resources || [];
+      const externalResourceDisclosure = $("grade7-stage-external-resources");
+      externalResourceDisclosure.hidden = externalResources.length === 0;
+      externalResources.forEach(function (resource) {
+        const item = document.createElement("li");
+        const link = document.createElement("a");
+        link.href = resource.url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.setAttribute("aria-label", `${resource.title} (새 창에서 열림)`);
+        link.textContent = `${resource.title} ↗`;
+        item.append(link);
+        $("grade7-stage-external-resource-list").append(item);
+      });
       if (stop.clusterId) {
         const link = $("grade7-stage-resource");
         link.href = `./unit-workbook.html?cluster=${encodeURIComponent(stop.clusterId)}&mode=workbook&audience=student&locale=ko`;
         link.textContent = `${stop.title} 워크북 보기 · ${stop.resourceState === "public" ? "36문항" : "검수 시안"} →`;
         link.hidden = false;
-      } else $("grade7-no-resource").hidden = false;
+      } else $("grade7-no-resource").hidden = externalResources.length > 0;
     }
   }
   function renderJourneyPreview(entry) {

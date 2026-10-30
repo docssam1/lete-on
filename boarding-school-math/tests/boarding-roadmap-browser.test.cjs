@@ -591,6 +591,7 @@ test("Grade 7 NS.A roadmap breaks the strand into four observable checks with re
   ]);
   assert.deepEqual(await page.locator("#grade7-stage-questions .grade7-standard-code").allInnerTexts(), ["7.NS.A.1", "7.NS.A.2", "7.NS.A.2d", "7.NS.A.3"]);
   assert.equal(await page.locator("#grade7-stage-references a").count(), 3);
+  assert.ok(await page.locator("#grade7-stage-references a").evaluateAll(function (nodes) { return nodes.every(function (node) { return node.getAttribute("aria-label").includes("새 창에서 열림") && parseFloat(getComputedStyle(node).minHeight) >= 44; }); }));
   assert.equal(await page.locator("#grade7-stage-references a").nth(0).getAttribute("href"), "https://www.thecorestandards.org/Math/Content/7/NS/");
   assert.match(await page.locator("#grade7-stage-resource").getAttribute("href"), /cluster=7.NS.A/);
   assert.match(await page.locator("#grade7-stage-resource").innerText(), /36문항/);
@@ -609,6 +610,38 @@ test("Grade 7 NS.A roadmap breaks the strand into four observable checks with re
   assert.equal(await page.locator(".book-problem").count(), 36);
   assert.equal(await page.locator("#progress-chip").innerText(), "18 / 36");
   assert.doesNotMatch(page.url(), /standard=/);
+  await page.close();
+});
+
+test("Grade 7 algebra and geometry checkpoints open matching FlippedMath references", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  const cases = [
+    { stage: 3, name: /살펴볼 지점 3, 식·방정식/, titles: ["Math 7 Unit 4 · 식과 분배법칙 ↗", "Unit 5 · 방정식 ↗", "Unit 6 · 여러 단계 방정식 ↗", "Unit 7 · 부등식 ↗"], urls: ["unit-4-expressions.html", "unit-5-equations.html", "unit-6-multiple-step-equations.html", "unit-7-inequalities.html"] },
+    { stage: 4, name: /살펴볼 지점 4, 기하·혼합 문제/, titles: ["Math 7 Unit 13 · 닮음과 축척 ↗", "Unit 14 · 각과 삼각형 ↗", "Unit 15 · 원·넓이와 부피 ↗"], urls: ["unit-13-similarity.html", "unit-14-angles-and-triangles.html", "unit-15-area-and-volume.html"] }
+  ];
+  for (const item of cases) {
+    await page.getByRole("button", { name: item.name }).click();
+    const disclosure = page.locator("#grade7-stage-external-resources");
+    assert.equal(await disclosure.isVisible(), true);
+    assert.deepEqual(await disclosure.locator("summary").innerText(), "FlippedMath 참고 자료");
+    assert.ok((await disclosure.locator("summary").boundingBox()).height >= 44);
+    assert.equal(await disclosure.evaluate(function (node) { return node.open; }), false);
+    await disclosure.locator("summary").click();
+    assert.equal(await disclosure.evaluate(function (node) { return node.open; }), true);
+    assert.deepEqual(await disclosure.locator("ul a").allInnerTexts(), item.titles);
+    const links = await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.map(function (node) { return { href: node.getAttribute("href"), target: node.target, rel: node.rel }; }); });
+    assert.deepEqual(links.map(function (link) { return new URL(link.href).pathname.split("/").pop(); }), item.urls);
+    assert.ok(links.every(function (link) { return link.href.startsWith("https://math7.flippedmath.com/") && link.target === "_blank" && link.rel.includes("noopener"); }));
+    const labels = await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("aria-label"); }); });
+    assert.ok(labels.every(function (label, index) { return label === `${item.titles[index].replace(" ↗", "")} (새 창에서 열림)`; }));
+    assert.ok(await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.every(function (node) { return parseFloat(getComputedStyle(node).minHeight) >= 44; }); }));
+    if (item.name.toString().includes("식·방정식")) assert.match(await page.locator("#stage-copy").innerText(), /방정식·부등식/);
+    if (item.name.toString().includes("기하·혼합")) assert.match(await page.locator("#stage-copy").innerText(), /닮음·각·삼각형·원·넓이·부피/);
+    assert.equal(await page.locator("#grade7-no-resource").isVisible(), false);
+    assert.equal(await disclosure.locator("ul").isVisible(), true);
+    assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  }
   await page.close();
 });
 

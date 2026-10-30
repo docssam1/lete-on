@@ -85,6 +85,9 @@ test("Grade 7 route names checkpoints and identifies its public workbooks", func
   assert.ok(roadmap.grade7Stops.every(function (stop) { return Boolean(stop.check || (stop.checks && stop.checks.length)); }));
   assert.equal(roadmap.grade7Stops[0].checks.length, 4);
   assert.ok(roadmap.grade7Stops.slice(2).every(function (stop) { return !stop.clusterId; }));
+  assert.deepEqual(roadmap.grade7Stops.slice(2).map(function (stop) { return stop.resources.length; }), [4, 3]);
+  assert.ok(roadmap.grade7Stops.slice(2).flatMap(function (stop) { return stop.resources; }).every(function (resource) { return resource.url.startsWith("https://math7.flippedmath.com/") && resource.title; }));
+  assert.ok(roadmap.grade7Stops.slice(2).every(function (stop) { return Object.isFrozen(stop.resources) && stop.resources.every(Object.isFrozen); }));
 });
 
 test("competition options follow grade and keep advanced AMC paths optional", function () {
