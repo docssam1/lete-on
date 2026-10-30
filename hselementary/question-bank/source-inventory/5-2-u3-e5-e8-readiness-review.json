@@ -1054,6 +1054,7 @@
     },
     {
       "sourceItemId": "5-2-u3-e8-example-8-2",
+      "commonSourceItemId": "5-2-u3-e8-example-2",
       "sourceBlock": "예제 8-2",
       "sourceSection": "example",
       "sourceItemLabel": "예제 8-2",
