@@ -2741,6 +2741,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e5-mission-3-hexagon-synthetic",name="기울어진 축에 육각형 반사하기 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e5-mission-3",sourceItemLabel:"Mission 3 구조 연습",sourceSection:"mission",sourcePdfPage:29,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 육각형의 여섯 대응점과 축 위 고정점을 독립 검산했습니다.",generatorKey:"source52HexagonReflectionSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-4-triple-reflection-synthetic")) {
+    const id="5-2-u3-e5-mission-4-triple-reflection-synthetic",name="세 번 대칭 이동해 각도 구하기 · 연습";
+    source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e5-mission-4",sourceItemLabel:"Mission 4 구조 연습",sourceSection:"mission",sourcePdfPage:29,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 반사 순서와 구별되는 창작 각도를 대조하고 좌표 반사와 각 분할로 독립 검산했습니다.",generatorKey:"source52TripleReflectionSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   const source52CongruenceFirst = source52CongruenceUnit?.subunits.find(s => s.name === "조건에 맞는 삼각형 그리기");
   if (source52CongruenceFirst) {
     const index = source52CongruenceFirst.types.findIndex(t => t.id === "5-2-u3-t1");

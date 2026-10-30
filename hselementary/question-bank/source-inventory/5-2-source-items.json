@@ -2881,7 +2881,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 조건을 확인했으나 반사 방향과 공식 답안 대조가 남아 잠금 유지합니다."
+      "reviewReason": "원문의 세 반사 순서와 15°·30° 및 목표각을 재대조하고 각 분할과 벡터 반사로 독립 검산했습니다. 출판사 공식 답안 및 공개용 원문 그림 미대조로 잠금 유지합니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e5-mission-4-triple-reflection-synthetic"
     },
     {
       "sourceItemId": "5-2-u3-e5-mission-5",
