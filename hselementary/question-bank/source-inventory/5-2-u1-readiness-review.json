@@ -633,6 +633,8 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
+      "practiceRuntimeId": "5-2-u1-e2-example-2-4-synthetic",
+      "practiceLocalCheck": "숫자를 1~9로 명시한 별도 유사문항 9개 구성 전수 검산",
       "lockReason": "0을 허용하면 ㉡이 2 또는 3이므로 출판사 답안과 의도 확인 전까지 원문 잠금을 유지합니다."
     },
     {

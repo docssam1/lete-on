@@ -2873,6 +2873,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
+  const source52Rounding = source52Unit1?.subunits.find(subunit => subunit.name === "어림하기 · 개념탐구 2 원문 분류");
+  if (source52Rounding && !source52Rounding.types.some(type => type.id === "5-2-u1-e2-example-2-4-synthetic")) {
+    const id="5-2-u1-e2-example-2-4-synthetic",name="소수의 숫자 조건과 반올림 · 연습";
+    const typeNumber=Math.max(0,...source52Unit1.subunits.flatMap(subunit=>subunit.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Rounding.types.push({id,number:source52Rounding.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"예제 2-4 유사문항",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:4,sourcePrintedPage:6,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52DecimalRoundingDigitsSynthetic",generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문은 정답 확인 전 잠금이며, 숫자 범위를 명시한 별도 연습을 전수 검산했습니다."});
+  }
   const source52RoundRange = source52Unit1?.subunits.find(subunit => subunit.name === "어림한 수의 범위 · 개념탐구 4 및 예제 4-1–4-3");
   if (source52RoundRange) for (const [id,name,key,label] of [
     ["5-2-u1-e4-mission-2-rounded-floor-range","반올림과 버림 조건의 자연수 개수","source52RoundedRangeMissionTwo","Mission 2 유사문항"],
