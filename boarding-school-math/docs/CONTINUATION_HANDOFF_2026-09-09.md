@@ -615,3 +615,11 @@ Updated manual and marked-paper AMC 8 reviews to use five descriptive buckets al
 Claude Code CLI (Claude Max/Opus subscription) reviewed only the public diff, read-only. Its actionable finding was stale cache versions for the updated roadmap module and review scripts; versions were bumped in both consuming pages. Other review prompts were checked against the current analyzer and compatibility tests. The CLI could not verify test execution from its own output, so tests were run locally after the fixes.
 
 Verification on the Mac worktree: roadmap and paper-review model/browser plus local-record suites pass 80/80; four changed JavaScript files pass `node --check`; `git -c core.whitespace=cr-at-eol diff --check` passes while preserving `learning-plan.html`'s existing CRLF format. No private diagnostic items were opened. Local-only; no API key, upload, push, publication, or deployment. The protected Grade 7 NS.A / contest screener gates and current R6/A4 visual review remain outstanding as recorded above.
+
+### 2026-10-30 phone contest-review form spacing
+
+Reduced vertical scanning in the manual paper-review form: on phone widths, response status and topic now share a row, and the reason appears beneath only for wrong or blank responses. Narrow-width columns preserve readable 100px controls at 320px; a stale 370px grid rule was reconciled with the new layout. Desktop/tablet row layout is unchanged.
+
+Read-only Claude Max/Opus review of the public CSS/test diff confirmed the state layouts and noted that the first 320px assertion caught 98px controls. Narrow-screen question-number width and column gaps were adjusted; the final browser run confirms all three visible selects remain at least 100px at 320px and no page overflow occurs.
+
+Verification: `tests/competition-paper-review-browser.test.cjs` passes 18/18. The updated phone-state browser check covers 390px and 320px widths; fresh 390px mobile and 1440px desktop captures of the review result were visually inspected. The five AMC 8 area labels remain legible. No private test items were entered or displayed; no upload, push, publication, or deployment.

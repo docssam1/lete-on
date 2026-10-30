@@ -454,9 +454,14 @@ test("phone rows show one status first, then only relevant follow-up fields", as
   assert.equal(await row.locator(".mark-reason").isHidden(), true);
   await row.locator('[data-field="status"]').selectOption("wrong");
   assert.equal(await row.locator(".mark-reason").isVisible(), true);
-  const widths = await row.locator("select:visible").evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().width));
-  assert.ok(widths[0] > widths[1] && widths[1] >= 100 && widths[2] >= 100, `mobile control widths: ${widths}`);
+  const positions = await row.locator("select:visible").evaluateAll((nodes) => nodes.map((node) => { const rect = node.getBoundingClientRect(); return { x: rect.x, y: rect.y, width: rect.width }; }));
+  assert.ok(Math.abs(positions[0].y - positions[1].y) < 2, `status and domain share a row: ${JSON.stringify(positions)}`);
+  assert.ok(positions[2].y > positions[0].y && positions.every((position) => position.width >= 100), `reason follows with usable controls: ${JSON.stringify(positions)}`);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  await page.setViewportSize({ width: 320, height: 780 });
+  const narrowWidths = await row.locator("select:visible").evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().width));
+  assert.ok(narrowWidths.every((width) => width >= 100), `320px controls remain usable: ${narrowWidths}`);
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [320, 320]);
   await page.close();
 });
 
