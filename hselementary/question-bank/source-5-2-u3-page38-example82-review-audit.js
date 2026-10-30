@@ -1,0 +1,10 @@
+'use strict';
+const assert=require('node:assert/strict');
+const cells=Array.from({length:16},(_,i)=>[i%4,Math.floor(i/4)]),key=p=>p.map(([x,y])=>`${x},${y}`).sort().join(';');
+function shape(p){const forms=[];for(const mirror of [1,-1])for(let t=0;t<4;t++){const q=p.map(([x,y])=>{x*=mirror;for(let j=0;j<t;j++)[x,y]=[-y,x];return [x,y]});const mx=Math.min(...q.map(p=>p[0])),my=Math.min(...q.map(p=>p[1]));forms.push(key(q.map(([x,y])=>[x-mx,y-my])));}return forms.sort()[0];}
+function connected(p){const set=new Set(p.map(v=>v.join(','))),seen=new Set(),todo=[p[0]];while(todo.length){const [x,y]=todo.pop(),k=`${x},${y}`;if(!set.has(k)||seen.has(k))continue;seen.add(k);todo.push([x+1,y],[x-1,y],[x,y+1],[x,y-1]);}return seen.size===p.length;}
+let placements=0;const distinct=new Set();
+for(let mask=0;mask<65536;mask++){const a=cells.filter((_,i)=>mask&(1<<i)),b=cells.filter((_,i)=>!(mask&(1<<i)));if(a.length!==8||!connected(a)||!connected(b)||shape(a)!==shape(b))continue;placements++;distinct.add(shape(a));const degree=new Map(),adj=new Map(),edge=(u,v)=>{const a=u.join(','),b=v.join(',');for(const [x,y] of [[a,b],[b,a]]){degree.set(x,(degree.get(x)||0)+1);if(!adj.has(x))adj.set(x,[]);adj.get(x).push(y);}};for(let y=0;y<4;y++)for(let x=0;x<4;x++){const current=!!(mask&(1<<(y*4+x)));if(x<3&&current!==!!(mask&(1<<(y*4+x+1))))edge([x+1,y],[x+1,y+1]);if(y<3&&current!==!!(mask&(1<<((y+1)*4+x))))edge([x,y+1],[x+1,y+1]);}assert.equal([...degree.values()].filter(v=>v===1).length,2);assert.ok([...degree.values()].every(v=>v<=2));const seen=new Set(),todo=[degree.keys().next().value];while(todo.length){const k=todo.pop();if(seen.has(k))continue;seen.add(k);todo.push(...adj.get(k));}assert.equal(seen.size,degree.size);}
+assert.equal(placements,44);assert.equal(distinct.size,6);
+const row=require('./source-inventory/5-2-u3-e5-e8-readiness-review.json').items.find(x=>x.sourceItemId==='5-2-u3-e8-example-8-2');assert.equal(row.publicDecision,'locked');assert.match(row.independentAnswer,/6가지/);
+console.log('38쪽 예제 8-2: 44배치·합동 모양 6종·각 절단 경계 끝점 검증, 공식 답안 미대조');
