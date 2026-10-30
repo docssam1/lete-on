@@ -183,6 +183,12 @@ for (const spec of specs) {
     bySection[item.section] += 1;
   }
 
+  if (spec.semester === "5-2") {
+    for (const [field, status] of [["readyItems", "reviewed"], ["verifiedLocalItems", "verified-local"], ["reviewLockedItems", "review-locked"]]) {
+      if (document.integrity?.[field] !== (byStatus[status] || 0)) fail(`5-2: ${field} count differs from ${status} rows.`);
+    }
+  }
+
   if (spec.statuses) for (const [status,expected] of Object.entries(spec.statuses)) {
     if ((byStatus[status] || 0) !== expected) fail(`${spec.semester}: ${status} 수가 ${expected}가 아닙니다 (${byStatus[status] || 0}).`);
   }
