@@ -517,27 +517,27 @@
       "sourcePrintedPage": 24,
       "commonTypeId": "quadrilateral-congruence-extra-diagonal",
       "typeLabel": "직각 표시와 세 변이 있는 사각형의 추가 조건",
-      "childFriendlyTypeLabel": "사각형을 하나로 정하는 대각선 찾기",
+      "childFriendlyTypeLabel": "사각형을 하나로 정하는 조건 찾기",
       "originalStructure": "세 변 9cm, 5cm, 8cm와 한 직각 표시가 있는 사각형에 필요한 한 조건을 찾습니다.",
       "conditions": [
         "직각은 오른쪽 아래 꼭짓점",
         "세 변과 직각만으로는 자유도가 남음",
-        "ㄱㄷ 대각선을 추가하면 두 직각삼각형이 고정"
+        "ㄱㄷ 대각선의 길이는 충분한 추가 조건 중 하나이며 다른 조건도 살펴야 함"
       ],
       "visualRequirement": "직각 위치, 세 변의 대응, ㄱㄷ 대각선의 경로를 분명히 표시해야 합니다.",
-      "independentCalculation": "ㄱㄷ를 알면 한쪽 삼각형은 9cm·5cm·ㄱㄷ, 다른 쪽은 8cm·ㄱㄷ와 직각으로 결정됩니다.",
-      "answerFormula": "one sufficient extra datum = diagonal ㄱㄷ",
-      "independentAnswer": "ㄱㄷ의 길이",
-      "resultContract": "single-extra-condition",
-      "candidateAnswerCount": 1,
-      "singleAnswer": true,
-      "singleAnswerCheck": "주어진 직각과 연결되는 대각선 하나만으로 두 삼각형을 구성할 수 있습니다.",
+      "independentCalculation": "ㄱㄷ를 알면 삼각형 ㄱㄷㄹ의 세 변과 직각삼각형 ㄴㄷㄹ이 정해집니다. 가능한 추가 조건 전체의 범위와 공식 답안은 확인이 필요합니다.",
+      "answerFormula": "diagonal ㄱㄷ is sufficient; complete set requires review",
+      "independentAnswer": "ㄱㄷ의 길이 등; 전체 조건 미확정",
+      "resultContract": "set-of-conditions",
+      "candidateAnswerCount": null,
+      "singleAnswer": false,
+      "singleAnswerCheck": "ㄱㄷ는 충분한 조건이지만 유일한 조건이라는 뜻은 아닙니다. 전체 정답 집합은 검토가 필요합니다.",
       "sourceVerified": true,
-      "calculationStatus": "checked",
+      "calculationStatus": "partial-review",
       "visualCheckStatus": "needs-implementation-check",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "대각선과 직각 표식이 공개 그림에서 답을 드러내지 않도록 자산 검수가 필요합니다."
+      "lockReason": "원문의 전체 추가 조건과 공식 답안을 확인해야 합니다. 창작 보기형 문항은 별도 검수합니다."
     },
     {
       "sourceItemId": "5-2-u3-e1-mission-1",

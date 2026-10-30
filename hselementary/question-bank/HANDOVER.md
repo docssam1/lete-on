@@ -1,3 +1,8 @@
+## 2026-10-30 — 5-2 합동과 대칭 예제 1-4 풀이 교정
+
+- 창작 보기형 유사문항에서 각 ㄱㄹㄷ에 대한 SAS 설명이 삼각형 ㄱㄴㄹ을 지칭하던 오류를 삼각형 ㄱㄹㄷ과 변 ㄱㄹ·ㄹㄷ으로 바로잡았다. 원문 기록의 대각선 유일 주장도 철회했다. 원문의 전체 추가 조건과 출판사 답안은 미확정이며 원문 잠금을 유지한다.
+- 세 창작 변형과 세 난이도의 보기 순서·반례 감사 통과. Mac의 격리 브라우저에서 1280·375px에 세 문제와 교정 풀이를 확인했고 가로 넘침과 스크립트 오류가 없었다. 학생 데이터는 변경하지 않았다.
+
 ## 2026-10-30 Grade 5-2 Unit 1 Open-Response Rounding Practice
 
 - Original printed p.8 Exploration 3 asks for real-life situations and remains locked pending source-answer review. Added separately identified synthetic practice preserving all three open-response methods, with different numbers, example responses, explicit multiple-answer guidance and no automatic grading claim. Source record links to the practice; publisher answer unverified.
