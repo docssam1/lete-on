@@ -2725,6 +2725,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e5-example-3-reflection-synthetic",name="두 직선에 차례로 대칭시키기 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 5-3 구조 연습",sourceSection:"example",sourcePdfPage:28,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"두 직선에 차례로 반사한 창작 도형과 목표각을 독립 검산했습니다.",generatorKey:"source52DoubleReflectionSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-example-4-circle-axis-synthetic")) {
+    const id="5-2-u3-e5-example-4-circle-axis-synthetic",name="두 원을 서로 옮기는 대칭축 그리기 · 연습";
+    source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 5-4 구조 연습",sourceSection:"example",sourcePdfPage:28,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"두 원의 중심과 수직이등분선을 독립 검산했습니다.",generatorKey:"source52CircleAxisSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   const source52CongruenceFirst = source52CongruenceUnit?.subunits.find(s => s.name === "조건에 맞는 삼각형 그리기");
   if (source52CongruenceFirst) {
     const index = source52CongruenceFirst.types.findIndex(t => t.id === "5-2-u3-t1");

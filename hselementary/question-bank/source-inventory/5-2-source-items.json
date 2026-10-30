@@ -2797,7 +2797,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문과 중심 위치를 확인했으나 공식 답안과 공개 그림 대조가 남아 잠금 유지합니다."
+      "reviewReason": "원문 모눈과 두 원의 중심을 대조하고 두 중심을 서로 옮기는 축이 중심 연결선의 수직이등분선임을 확인했습니다. 출판사 답안 미대조로 원문은 잠금 유지하고 별도 창작 그리기 연습을 연결합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e5-example-4-circle-axis-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e5-mission-1",
