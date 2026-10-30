@@ -331,6 +331,8 @@
       "singleAnswerStatus": "blocked-sign-ambiguity",
       "evidence": "직접 렌더 대조 및 계수 비교: PDF p.11, 인쇄 p.15",
       "publicDecision": "locked",
+      "practiceRuntimeId": "5-2-u2-e1-mission-4-synthetic",
+      "practiceRelation": "양수 조건을 명시한 별도 유사문항",
       "lockReason": "미지수의 양수 조건이 원문에 없어 크기 순서가 유일하지 않습니다. 조건 또는 출판사 해설 확인 전 잠금."
     },
     {
