@@ -34,7 +34,7 @@
   });};
   updateCooldown();
  }
- function updateCooldown(){const b=$('sendCode');if(!b)return;const left=Math.max(0,Math.ceil((cooldown-Date.now())/1000));b.disabled=busy||left>0;b.textContent=left?`다시 받기 · ${left}초 후`:$('codeForm')?.hidden?'인증번호 받기':'인증번호 다시 받기';if(!left){clearInterval(timer);timer=null;}}
+ function updateCooldown(){const b=$('sendCode'),left=Math.max(0,Math.ceil((cooldown-Date.now())/1000));if(!left){clearInterval(timer);timer=null;}if(!b)return;b.disabled=busy||left>0;b.textContent=left?`다시 받기 · ${left}초 후`:$('codeForm')?.hidden?'인증번호 받기':'인증번호 다시 받기';}
  function schoolFields(m){
   return field('studentName','학생 이름','text','autocomplete="off" maxlength="30"')+field('guardianPhone','보호자 휴대폰 번호','tel','autocomplete="tel-national" maxlength="15"')+`<div class="member-row"><label class="member-field">학교 단계<select name="school" required><option value="preschool">유치</option><option value="elementary">초등</option><option value="middle">중등</option><option value="high">고등</option></select></label><label class="member-field"><span id="levelLabel">나이</span><select name="level" required></select></label></div>`;
  }

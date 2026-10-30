@@ -5,7 +5,7 @@
  try{
   const member=await A.status();
   if(!member){location.replace(destination);return;}
-  window.RoadmapMember=Object.freeze(member);
+  window.RoadmapMember=Object.freeze({user_id:member.user_id,student_name:member.student_name,school:member.school,grade:member.grade,age:member.age});
   // Existing curriculum scripts run only after a server-verified, roadmap-specific session.
   for(const placeholder of document.querySelectorAll('script[data-member-src]')){
    await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=placeholder.dataset.memberSrc;s.async=false;s.onload=resolve;s.onerror=reject;document.body.appendChild(s);});
