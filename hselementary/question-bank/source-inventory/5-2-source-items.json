@@ -3367,7 +3367,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "두 중심을 잇는 직선은 한 가지 해이나 공식 답안과 공개용 그림 확인 전 잠금 유지합니다."
+      "reviewReason": "두 중심을 잇는 직선은 한 가지 해이나 공식 답안과 공개용 그림 확인 전 잠금 유지합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e8-mission-2-half-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-3",
