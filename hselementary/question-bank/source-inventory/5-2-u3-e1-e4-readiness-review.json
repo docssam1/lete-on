@@ -1661,26 +1661,28 @@
       "commonTypeId": "trapezoid-congruent-triangle-length",
       "typeLabel": "사다리꼴과 합동 삼각형의 길이",
       "childFriendlyTypeLabel": "사다리꼴 옆의 빠진 길이 찾기",
-      "originalStructure": "밑변 10cm, 한 변 5cm, 양 끝 60°인 사다리꼴과 연결된 합동 삼각형에서 선분 길이를 구합니다.",
+      "originalStructure": "사다리꼴 ㄱㄴㄷㄹ에서 ㄴㄷ=10cm, ㄱㄴ=5cm, 밑각 둘은 60°이고 ㄹㅂ=ㅂㄷ일 때 ㄷㅁ을 구합니다.",
       "conditions": [
-        "사다리꼴의 양 밑변은 평행",
-        "양쪽 밑각 60°",
-        "두 선분 길이가 같다는 조건"
+        "ㄱㄹ∥ㄴㄷ",
+        "ㄴㄷ=10cm, ㄱㄴ=5cm",
+        "∠ㄱㄴㄷ=∠ㄴㄷㄹ=60°",
+        "ㄹㅂ=ㅂㄷ, ㄱ·ㅂ·ㅁ은 일직선, ㄴ·ㄷ·ㅁ은 일직선"
       ],
-      "visualRequirement": "사다리꼴의 평행한 변과 외부 삼각형의 연결선을 보존해야 합니다.",
-      "independentCalculation": "60°가 양쪽에 같아 생기는 두 정삼각형 성분의 대응으로 목표 외부 선분은 5cm입니다.",
-      "answerFormula": "target segment = congruent corresponding side = 5cm",
+      "visualRequirement": "ㄱㄴ·ㄷㄹ의 연장선과 밑변, ㄹㄷ의 중점 ㅂ, ㄱ·ㅂ·ㅁ의 직선과 목표 선분 ㄷㅁ을 보존합니다.",
+      "independentCalculation": "ㄴㄱ과 ㄷㄹ을 연장해 만나는 점을 ㅅ이라 하면 △ㄴㄷㅅ은 정삼각형이므로 ㄴㅅ=ㄴㄷ=10cm입니다. ㄱㅅ=ㄴㅅ−ㄱㄴ=5cm이고 ㄱㄹ∥ㄴㄷ이므로 △ㄱㄹㅅ도 정삼각형이라 ㄱㄹ=5cm입니다. ㄹㅂ=ㅂㄷ이고 ㄱㄹ∥ㄷㅁ이며 ㄱ·ㅂ·ㅁ이 한 직선이므로 △ㄱㄹㅂ과 △ㅁㄷㅂ은 두 각과 끼인 변이 같아 합동입니다. 따라서 ㄷㅁ=ㄱㄹ=5cm입니다.",
+      "answerFormula": "ㄱㄹ=10−5=5cm; △ㄱㄹㅂ≅△ㅁㄷㅂ ⇒ ㄷㅁ=5cm",
       "independentAnswer": "5cm",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "합동 대응변과 평행선 관계를 사용했습니다.",
+      "singleAnswerCheck": "정삼각형 연장과 중점을 지나는 직선에서 생기는 두 합동 삼각형으로 목표 선분을 정합니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
-      "visualCheckStatus": "needs-implementation-check",
+      "visualCheckStatus": "confirmed-source-structure",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "목표 선분의 끝점과 합동 대응이 그림에 의존하므로 자산 재확인 전 잠급니다."
+      "lockReason": "원문 그림과 독립 계산은 확인했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 창작 유사문항을 연결합니다.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u3-e4-example-4",
