@@ -59,6 +59,11 @@ if (testMode) document.body.classList.add("as-test");
 if (asStudent) document.body.classList.add("as-student");
 // 학생 차시 덱(study.html)의 유사문제 창 안(?embed=1): 머리줄은 덱이 맡는다
 if (asStudent && params.get("embed") === "1" && parent !== window) document.body.classList.add("as-embed");
+// 덱 안(study.html의 공부하기·오늘의 과제·데일리·단원 평가, ?embed=1): 한 화면에 한 문제씩 넘긴다
+// (원장 2026-10-30 「게임이나 학습 과정에서 아래로 스크롤을 해야 하는 경우가 있어」). 그림은 왼쪽, 문제·답은 오른쪽.
+// 칸보다 크면 통째로 줄여(zoom) 넣는다. 테스트는 마지막 장이 채점 장.
+const oneUp = document.body.classList.contains("as-embed");
+let oneUpAt = 0;
 const domainIndex = Object.fromEntries(DOMAINS.map((domain, index) => [domain.id, index]));
 const EXAM_SOURCES = [...DIAGNOSTIC_EXAM_TYPES, ...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES];
 const OUR_MOCK_EXAM_GROUPS = [
@@ -3476,6 +3481,64 @@ function renderWorksheet() {
   });
   bindQuestionEditor();
   if (testMode) renderTestPanel();
+  if (oneUp) layoutOneUp();
+}
+
+// 덱 안에서 한 화면에 한 문제씩(아래 layoutOneUp)
+function layoutOneUp() {
+  const cards = [...$("questionGrid").querySelectorAll(".question-card")];
+  cards.forEach((card) => {
+    if (card.querySelector(":scope > .oneup-side")) return;
+    const figure = card.querySelector(":scope > .visual");
+    const side = document.createElement("div");
+    side.className = "oneup-side";
+    side.append(...[...card.children].filter((child) => child !== figure));
+    if (figure) {
+      const left = document.createElement("div");
+      left.className = "oneup-figure";
+      left.append(figure);
+      card.append(left);
+      card.classList.add("has-figure");
+    }
+    card.append(side);
+  });
+  const steps = cards.length + (testMode ? 1 : 0);
+  oneUpAt = Math.max(0, Math.min(oneUpAt, steps - 1));
+  let nav = $("oneUpNav");
+  if (!nav) {
+    nav = document.createElement("nav");
+    nav.id = "oneUpNav";
+    nav.className = "oneup-nav";
+    nav.setAttribute("aria-label", "문제 넘기기");
+    document.querySelector(".worksheet-actions").append(nav);
+    nav.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-oneup]");
+      if (!button || button.disabled) return;
+      const go = button.dataset.oneup;
+      oneUpAt = go === "prev" ? oneUpAt - 1 : go === "next" ? oneUpAt + 1 : Number(go);
+      layoutOneUp();
+    });
+    new ResizeObserver(() => requestAnimationFrame(fitOneUp)).observe(document.body);
+    new MutationObserver(() => requestAnimationFrame(fitOneUp)).observe($("worksheetSection"), { subtree: true, childList: true, attributes: true, attributeFilter: ["hidden", "data-result"] });
+  }
+  const atPanel = testMode && oneUpAt === cards.length;
+  const label = (i) => i === cards.length ? "채점" : String(i + 1);
+  nav.innerHTML = `<button type="button" data-oneup="prev" ${oneUpAt === 0 ? "disabled" : ""}>‹ 앞 문제</button>
+    <ol>${Array.from({ length: steps }, (_, i) => `<li><button type="button" data-oneup="${i}" class="${i === oneUpAt ? "is-on" : ""}${i === cards.length ? " is-grade" : ""}" aria-current="${i === oneUpAt ? "step" : "false"}">${label(i)}</button></li>`).join("")}</ol>
+    <button type="button" class="oneup-next" data-oneup="next" ${oneUpAt === steps - 1 ? "disabled" : ""}>${testMode && oneUpAt === cards.length - 1 ? "채점하러 가기 ›" : "다음 문제 ›"}</button>`;
+  cards.forEach((card, i) => card.classList.toggle("is-current", i === oneUpAt));
+  document.body.classList.toggle("oneup-panel", atPanel);
+  requestAnimationFrame(fitOneUp);
+}
+function fitOneUp() {
+  const panel = document.body.classList.contains("oneup-panel");
+  const box = panel ? $("testPanel") : $("questionGrid");
+  const target = panel ? box : box.querySelector(".question-card.is-current");
+  if (!target) return;
+  target.style.zoom = "";
+  const avail = innerHeight - box.getBoundingClientRect().top - 10;
+  const need = target.offsetHeight + (panel ? 0 : 24);
+  if (need > avail) target.style.zoom = String(Math.max(0.5, Math.floor((avail / need) * 100) / 100));
 }
 
 // ── 테스트(semi test·약점 확인): 다 풀고 채점 → ○✕ → 유형별 진단 → 약점 유형 유사문제 ──
@@ -3529,7 +3592,7 @@ function renderTestPanel() {
     });
     document.querySelectorAll("#questionGrid .test-answer").forEach((box) => { box.hidden = false; });
     renderTestPanel();
-    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (!oneUp) panel.scrollIntoView({ behavior: "smooth", block: "start" });
   });
   panel.querySelectorAll("[data-test-mark]").forEach((button) => button.addEventListener("click", () => {
     const index = Number(button.dataset.testMark);

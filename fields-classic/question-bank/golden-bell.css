@@ -732,3 +732,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 
 /* 덱 안·낮은 가로 화면: 위쪽 안내·번호 단추를 얇게 */
 @media (max-height:520px){.as-embed .lesson-content{padding:8px 14px 14px}.as-embed .protected-answer-notice{margin-bottom:6px;padding:4px 8px;font-size:11.5px}.as-embed .source-question-progress span{min-width:30px;height:28px;line-height:26px}.as-embed .source-question-card{padding:12px}.as-embed .source-question-card .lesson-lead{font-size:15px;line-height:1.55}}
+/* 덱 안 워밍업: 작은 문제 번호 단추(golden-bell.js embedSubItems) */
+.embed-sub-nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px}
+.embed-sub-nav button{min-width:44px;min-height:38px;padding:0 12px;border:1px solid #d8ccb4;border-radius:999px;background:#fff;color:#2a241c;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.embed-sub-nav button.is-done{border-color:#9cc2a8;background:#e9f0e7;color:#1e4631}
+.embed-sub-nav button.is-on{border-color:#2f6b4a;background:#2f6b4a;color:#fff}
+.embed-sub-nav .embed-sub-next{margin-left:auto;border-color:#2f6b4a;background:#e9f0e7;color:#1e4631}
+.embed-sub-nav button:disabled{opacity:.4;cursor:default}

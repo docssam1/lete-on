@@ -237,6 +237,15 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
 .sd-chalk-date { position: absolute; top: 16px; right: 22px; margin: 0; font-size: 20px; color: rgba(244,241,230,0.75); }
 .sd-chalk ol { margin: 8px 0 0; padding-left: 1.4em; font-size: 24px; line-height: 1.35; }
 .sd-chalk li::marker { color: #ffd9a0; }
+/* 넓은 화면: 칠판은 왼쪽, 학습지는 오른쪽(2026-10-30 — 칠판이 칸을 다 차지해 학습지를 스크롤해야 했다) */
+@media (min-width: 901px) {
+  .sd-work.has-chalk { grid-template-columns: clamp(280px, 32%, 420px) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .sd-work.has-chalk .sd-chalk { grid-row: 1 / span 2; align-self: stretch; overflow: hidden; margin: 12px 0 12px 14px; }
+  .sd-work.has-chalk .sd-chalk-date { position: static; margin-top: 2px; font-size: 18px; }
+  .sd-work.has-chalk .sd-chalk h3 { font-size: 30px; }
+  .sd-work.has-chalk .sd-chalk ol { margin-top: 12px; font-size: 21px; line-height: 1.4; }
+  .sd-work.has-chalk .sd-chalk li + li { margin-top: 6px; }
+}
 @media (max-width: 700px) {
   .sd-chalk { margin: 8px; padding: 10px 14px 12px; border-width: 6px; }
   .sd-chalk h3 { font-size: 26px; }

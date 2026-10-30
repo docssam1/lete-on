@@ -1635,3 +1635,31 @@ label[data-preview-type]{position:relative;padding-right:62px!important}
 /* 한 주 교재: 문항이 어느 차시·본책 몇 번인지 보인다 */
 .as-student.week-book .question-reference{display:block!important;margin:0 0 4px;color:#7a6f5c;font-size:12px}
 @media print{.as-student.week-book .pt-foot{display:flex!important}}
+/* 정답 칸은 「답 확인」·채점 전에는 숨긴다 — display:grid가 hidden을 덮어 미리 보이던 것(2026-10-30) */
+.student-answer[hidden],.test-answer[hidden]{display:none!important}
+/* 덱 안(as-embed): 한 화면에 한 문제(app.js layoutOneUp). 페이지는 스크롤하지 않는다 */
+html:has(body.as-embed),body.as-embed{height:100%;overflow:hidden}
+.as-embed .builder-shell{width:100%;height:100%;margin:0;padding:8px 14px 0}
+.as-embed #worksheetSection{display:flex;flex-direction:column;height:100%;margin:0}
+.as-embed .worksheet-actions{flex:none;flex-wrap:nowrap;margin:0 0 8px}
+.as-embed #watermark{display:none}
+.as-embed #questionGrid{flex:none;display:block;padding:0;border:0;background:transparent}
+.as-embed .question-page{display:contents}
+.as-embed .question-card{display:none;max-width:1180px;min-height:0;margin:0 auto;padding:16px 22px}
+.as-embed .question-card.is-current{display:block}
+.as-embed .question-card.is-current.has-figure{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:center;gap:26px}
+.as-embed .oneup-figure>.visual{margin:0}
+.as-embed .oneup-side>:first-child{margin-top:0}
+.as-embed .oneup-side .question-prompt{font-size:16px}
+.as-embed.oneup-panel #questionGrid{display:none}
+.as-embed:not(.oneup-panel) #testPanel{display:none!important}
+.as-embed #testPanel{flex:none;width:100%;max-width:900px;margin:0 auto}
+.oneup-nav{display:flex;align-items:center;gap:8px;min-width:0;margin-left:auto}
+.oneup-nav ol{display:flex;gap:4px;margin:0;padding:0;list-style:none;overflow:hidden}
+.worksheet-actions .oneup-nav button{min-height:40px;padding:0 14px;border:1px solid #d8ccb4;border-radius:999px;background:#fff;color:#2a241c;font-size:14px;font-weight:700}
+.worksheet-actions .oneup-nav ol button{min-width:40px;padding:0 10px}
+.worksheet-actions .oneup-nav ol button.is-on{border-color:#2f6b4a;background:#2f6b4a;color:#fff}
+.worksheet-actions .oneup-nav ol button.is-grade{border-style:dashed}
+.worksheet-actions .oneup-nav .oneup-next{border-color:#2f6b4a;background:#e9f0e7;color:#1e4631}
+.worksheet-actions .oneup-nav button:disabled{opacity:.4;cursor:default}
+.as-embed .worksheet-actions>div{flex:none}

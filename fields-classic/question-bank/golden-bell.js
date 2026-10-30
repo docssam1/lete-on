@@ -2185,8 +2185,65 @@ function applyEmbed() {
   embed.pages = Math.max(1, pages.length);
   embed.page = Math.min(Math.max(0, embed.page), embed.pages - 1);
   pages.forEach((page, index) => page.forEach((node) => node.classList.toggle("embed-off", index !== embed.page)));
+  if (embed.view === "bell") embedSubItems();
+  requestAnimationFrame(fitEmbed);
   const forward = $("lessonContent").querySelector('.gb-flow-forward[data-flow-go="examples"]');
   embedPost({ event: "state", view: embed.view, lesson: state.lessonId, page: embed.page, pages: embed.pages, more: Boolean(forward && embed.page === embed.pages - 1), back: flowStep(state.bookId, activeLesson()) === "examples" });
+}
+// 워밍업의 「한 그림 + 작은 문제 여럿」(1권 시계 등): 작은 문제를 한 번에 하나씩 — 맞히거나 넘기면 다음 문제로
+// (원장 2026-10-30 「아래로 스크롤을 해야 하는 경우가 있어」)
+const SUB_DONE = ["correct", "skipped", "assisted"];
+function embedSubItems() {
+  const group = $("lessonContent").querySelector(".quiz-items");
+  const items = group ? [...group.querySelectorAll(":scope > .quiz-item")] : [];
+  $("lessonContent").querySelector(".embed-sub-nav")?.remove();
+  if (items.length < 2) return;
+  const done = items.map((item) => SUB_DONE.some((name) => item.classList.contains(name)));
+  if (embed.subKey !== state.lessonId) {
+    embed.subKey = state.lessonId;
+    embed.sub = Math.max(0, done.indexOf(false));
+    embed.subDone = done;
+  }
+  // 방금 끝낸 작은 문제면 잠깐 결과를 보여 주고 다음 안 푼 문제로
+  const justDone = done[embed.sub] && !embed.subDone?.[embed.sub];
+  embed.subDone = done;
+  clearTimeout(embed.subTimer);
+  if (justDone) {
+    const next = done.findIndex((value, index) => !value && index > embed.sub);
+    const target = next >= 0 ? next : done.indexOf(false);
+    if (target >= 0) embed.subTimer = setTimeout(() => { embed.sub = target; embedSubItems(); requestAnimationFrame(fitEmbed); }, 1300);
+  }
+  embed.sub = Math.min(embed.sub, items.length - 1);
+  items.forEach((item, index) => item.classList.toggle("embed-off", index !== embed.sub));
+  const nav = document.createElement("nav");
+  nav.className = "embed-sub-nav";
+  nav.setAttribute("aria-label", "작은 문제 넘기기");
+  nav.innerHTML = items.map((_, index) => `<button type="button" data-embed-sub="${index}" class="${index === embed.sub ? "is-on" : ""}${done[index] ? " is-done" : ""}" aria-current="${index === embed.sub ? "step" : "false"}">(${index + 1})</button>`).join("")
+    + `<button type="button" class="embed-sub-next" data-embed-sub="${embed.sub + 1}" ${embed.sub === items.length - 1 ? "disabled" : ""}>다음 문제 ›</button>`;
+  nav.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-embed-sub]");
+    if (!button || button.disabled) return;
+    clearTimeout(embed.subTimer);
+    embed.sub = Number(button.dataset.embedSub);
+    embedSubItems(); requestAnimationFrame(fitEmbed);
+  });
+  group.prepend(nav);   // 안에 넣는다 — 그림+문제 나란히 놓는 CSS(.quiz-visual+.quiz-items)가 깨지지 않게
+}
+// 덱 칸보다 크면 아래로 내리지 않고 통째로 줄여 한 화면에 넣는다(게임판·워밍업 문제 모두)
+function fitEmbed() {
+  if (!embed.on) return;
+  const content = $("lessonContent");
+  content.style.zoom = "";
+  const over = document.documentElement.scrollHeight - innerHeight;
+  if (over <= 2) return;
+  let zoom = 1;
+  for (let tries = 0; tries < 4; tries += 1) {   // 줄이면 글줄이 바뀌어 높이가 다시 변할 수 있어 몇 번 더 잰다
+    const left = document.documentElement.scrollHeight - innerHeight;
+    if (left <= 2 || zoom <= 0.55) break;
+    const own = content.getBoundingClientRect().height;
+    zoom = Math.max(0.55, Math.floor(zoom * ((own - left - 4) / own) * 100) / 100);
+    content.style.zoom = String(zoom);
+  }
 }
 function embedStep(delta) {
   if (embed.view !== "concept" || state.phase !== "concept") { embedPost({ event: delta > 0 ? "end" : "start" }); return; }
@@ -2406,5 +2463,9 @@ if (embed.on) {
     else if (event.data.cmd === "next") embedStep(1);
     else if (event.data.cmd === "prev") embedStep(-1);
   });
+  addEventListener("resize", () => requestAnimationFrame(fitEmbed));
+  $("lessonContent").addEventListener("load", () => requestAnimationFrame(fitEmbed), true);   // 그림이 늦게 들어와도
+  // 게임 단계가 바뀌거나 풀이·결과가 열리면 다시 맞춘다(style 바뀜은 빼서 줄이기가 스스로를 다시 부르지 않게)
+  new MutationObserver(() => requestAnimationFrame(fitEmbed)).observe($("lessonContent"), { subtree: true, childList: true, attributes: true, attributeFilter: ["class", "hidden", "open"] });
   embedPost({ event: "ready" });
 }
