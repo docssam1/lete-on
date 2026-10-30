@@ -2936,7 +2936,7 @@
       "ordinal": 1,
       "pdfPage": 30,
       "printedPage": 34,
-      "sourceShape": "선대칭의 활용의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "선대칭의 활용: 가로 120cm·세로 40cm 거울 방의 왼쪽 벽 중점에서 45°로 시작한 빛이 돌아올 때 경로로 둘러싸인 넓이를 구한다.",
       "answerContract": "candidate: rubric-or-single-choice",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2944,7 +2944,7 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 경로와 독립 계산을 확인했으나 공식 답안과 공개 그림 검수 전 원문 잠금을 유지합니다.",
+      "reviewReason": "원문 120cm·40cm, 시작점과 45°를 재대조하고 반사 경로와 세 마름모 넓이를 검산했습니다. 공식 답안과 공개 그림 검수 전 원문 잠금을 유지합니다.",
       "syntheticRuntimeTypeId": "5-2-u3-e6-exploration-mirror-synthetic",
       "publisherKeyVerified": false,
       "publicDecision": "locked"
@@ -2957,7 +2957,7 @@
       "ordinal": 1,
       "pdfPage": 30,
       "printedPage": 34,
-      "sourceShape": "선대칭의 활용의 예제 6-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "sourceShape": "선대칭의 활용: 정사각형 종이를 반씩 두 번 접고 두 절단선을 따라 자른 뒤 펼쳐 삼각형·사각형·오각형 조각 수를 식에 넣는다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2965,7 +2965,9 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조를 확인했으나 공식 답안과 공개 그림 검수 전 원문 잠금을 유지합니다."
+      "reviewReason": "원문의 두 접기와 접힌 종이의 가로·대각 절단선을 재대조하고 펼친 조각을 독립 분할해 변 수와 넓이 보존을 검산했습니다. 공식 답안과 공개 그림 검수 전 원문 잠금을 유지합니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e6-example-2",
