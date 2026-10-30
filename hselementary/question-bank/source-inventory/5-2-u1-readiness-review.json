@@ -1267,26 +1267,26 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 9,
       "sourcePrintedPage": 11,
-      "typeLabel": "반올림과 버림 결과로 자연수 범위 쓰기",
-      "originalStructure": "백의 자리 반올림 결과와 천의 자리 버림 결과가 각각 4000과 3000이 되는 자연수 범위를 구합니다.",
+      "typeLabel": "반올림과 버림 결과를 만족하는 자연수의 개수",
+      "originalStructure": "백의 자리 반올림 결과와 천의 자리 버림 결과가 각각 4000과 3000이 되는 자연수의 개수를 구합니다.",
       "conditions": [
         "백의 자리 반올림 4000",
         "천의 자리 버림 3000",
         "자연수",
-        "이상·미만으로 표현"
+        "가능한 수의 개수"
       ],
-      "visualRequirement": "3950~4050 주변 눈금과 두 어림 구간을 정확히 표시해야 합니다.",
-      "independentCalculation": "반올림 범위는 3950~4049, 천의 자리 버림 범위는 3000~3999이므로 공통은 3950~3999입니다.",
-      "answerFormula": "3950≤n<4000",
-      "independentAnswer": "3950 이상 4000 미만",
-      "resultContract": "inclusive-exclusive-range",
+      "visualRequirement": "원문은 그림이 없는 문장형 문항입니다.",
+      "independentCalculation": "반올림 범위는 3950~4049, 천의 자리 버림 범위는 3000~3999이므로 공통은 3950~3999이며 양 끝을 포함해 50개입니다.",
+      "answerFormula": "4000−3950=50개",
+      "independentAnswer": "50개",
+      "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "두 어림 구간의 공통 끝점이 하나로 정해집니다.",
+      "singleAnswerCheck": "조건을 만족하는 자연수 3950~3999를 전수 검사해 50개를 확인했습니다.",
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "반올림 기준점과 버림 끝점을 수직선으로 독립 검산하기 전입니다."
+      "lockReason": "출판사 답안 미대조입니다. 기존 창작 유사문항은 별도 운영 상태를 따릅니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-3-notebook-range",
@@ -1294,16 +1294,16 @@
       "sourceItemLabel": "Mission 3",
       "sourcePdfPage": 9,
       "sourcePrintedPage": 11,
-      "typeLabel": "반올림한 학생 수로 남은 공책 범위 찾기",
-      "originalStructure": "학생 수를 십의 자리까지 올림한 값이 50일 때 3권씩 나누어 주고 남는 160권의 공책 범위를 구합니다.",
+      "typeLabel": "올림한 학생 수로 남은 공책 범위 찾기",
+      "originalStructure": "학생 수를 십의 자리까지 올림한 값이 50일 때 준비한 공책 160권을 학생마다 3권씩 나누어 주고 남는 공책의 범위를 구합니다.",
       "conditions": [
         "학생 수는 자연수",
         "십의 자리 올림 결과 50",
         "학생마다 공책 3권",
         "준비한 공책 160권"
       ],
-      "visualRequirement": "학생 수 범위와 남은 공책 수의 대응을 표로 보여야 합니다.",
-      "independentCalculation": "학생 수는 41~50명이고 남은 공책은 160-3n이므로 10~37권입니다.",
+      "visualRequirement": "원문은 그림이 없는 문장형 문항입니다.",
+      "independentCalculation": "학생 수는 41~50명이고 남은 공책은 160−3n이므로 최솟값 10권, 최댓값 37권입니다. 실제 가능한 값은 10부터 37까지 3씩 늘어나는 10개 값입니다.",
       "answerFormula": "41≤n≤50 ⇒ 10≤160-3n≤37",
       "independentAnswer": "10 이상 37 이하",
       "resultContract": "inclusive-range",
@@ -1313,7 +1313,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "올림한 학생 수와 남은 수의 역산 관계를 중앙에 연결하기 전입니다."
+      "lockReason": "출판사 답안 미대조입니다. 기존 창작 유사문항은 별도 운영 상태를 따릅니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-4-rounded-seven-million-range",
@@ -1321,7 +1321,7 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 9,
       "sourcePrintedPage": 11,
-      "typeLabel": "세 가지 어림 결과가 정해진 큰 자연수 범위",
+      "typeLabel": "세 가지 어림 결과가 정해진 수의 범위",
       "originalStructure": "십만의 자리까지 반올림·버림·올림한 결과가 각각 7900000,7900000,8000000이 되는 수의 범위를 구합니다.",
       "conditions": [
         "십만의 자리 반올림 7900000",
@@ -1329,7 +1329,7 @@
         "십만의 자리 올림 8000000",
         "끝점 포함 여부를 보존"
       ],
-      "visualRequirement": "백만 주변의 자리 눈금과 세 어림 구간을 겹쳐 표시해야 합니다.",
+      "visualRequirement": "원문은 그림이 없는 문장형 문항입니다.",
       "independentCalculation": "버림 조건은 n≥7900000, 올림 조건은 n>7900000, 반올림 조건은 7850000≤n<7950000이므로 공통은 7900000<n<7950000입니다.",
       "answerFormula": "7900000<n<7950000",
       "independentAnswer": "7900000 초과 7950000 미만",
@@ -1340,7 +1340,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "큰 자리의 올림 경계와 끝점 표시를 독립 검산하기 전입니다."
+      "lockReason": "출판사 답안 미대조입니다. 기존 창작 유사문항은 별도 운영 상태를 따릅니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-5-quotient-range-sum",
