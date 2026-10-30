@@ -95,7 +95,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "원문 구조와 답은 확인했지만 중앙 생성기 연결 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-exploration",
+      "practiceLocalCheck": "별도 수치 유사문항 로컬 9개 구성의 문제·풀이와 경계 검산 통과",
+      "lockReason": "원문을 독립 검산했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-exploration-range-number-line",
@@ -104,16 +106,16 @@
       "sourcePdfPage": 2,
       "sourcePrintedPage": 4,
       "typeLabel": "수의 범위를 수직선에 나타내기",
-      "originalStructure": "앞의 범위를 25부터 34까지 표시된 수직선에 점으로 나타냅니다.",
+      "originalStructure": "앞의 연속 범위를 25부터 34까지 표시된 수직선에 나타냅니다.",
       "conditions": [
         "26은 제외",
         "33은 포함",
         "수직선의 한 칸은 1"
       ],
       "visualRequirement": "25~34의 눈금, 26의 열린 점, 33의 닫힌 점을 정확히 표시해야 합니다.",
-      "independentCalculation": "26 위치는 열린 점, 33 위치는 닫힌 점으로 표시합니다.",
+      "independentCalculation": "26 위치는 열린 점, 33 위치는 닫힌 점으로 표시하고 두 점 사이를 선으로 나타냅니다.",
       "answerFormula": "(26,33]",
-      "independentAnswer": "26에 열린 점, 33에 닫힌 점",
+      "independentAnswer": "26에 열린 점, 33에 닫힌 점, 두 끝점 사이의 선",
       "resultContract": "number-line-markers",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
@@ -121,7 +123,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "수직선 자산을 원본 눈금과 같은 구조로 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-exploration",
+      "practiceLocalCheck": "별도 수치 유사문항 로컬 9개 구성의 문제·풀이와 경계 검산 통과",
+      "lockReason": "원문을 독립 검산했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-1",
@@ -129,7 +133,7 @@
       "sourceItemLabel": "예제 1-1",
       "sourcePdfPage": 2,
       "sourcePrintedPage": 4,
-      "typeLabel": "구간 안 자연수 개수로 가장 작은 끝값 찾기",
+      "typeLabel": "구간 안 자연수 개수로 작은 끝값의 최댓값 찾기",
       "originalStructure": "세 자리 자연수 두 끝값 사이에 포함되는 수가 567개일 때 작은 끝값의 최댓값을 구합니다.",
       "conditions": [
         "양 끝값 포함",
@@ -147,7 +151,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "원문 구조와 독립 계산은 확인했지만 중앙 생성기 연결 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-example-1-1",
+      "practiceLocalCheck": "별도 수치 유사문항 로컬 9개 구성의 문제·풀이와 경계 검산 통과",
+      "lockReason": "원문을 독립 검산했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-2",
@@ -173,7 +179,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "자리 수 조건을 전용 범위 생성기로 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-example-1-2",
+      "practiceLocalCheck": "별도 수치 유사문항 로컬 9개 구성의 문제·풀이와 경계 검산 통과",
+      "lockReason": "원문을 독립 검산했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-3",
@@ -201,7 +209,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "두 부분의 겹침 범위를 별도 생성기로 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-example-1-3",
+      "practiceLocalCheck": "별도 수치 유사문항 로컬 9개 구성의 문제·풀이와 경계 검산 통과",
+      "lockReason": "원문을 독립 검산했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-4",
@@ -210,7 +220,7 @@
       "sourcePdfPage": 2,
       "sourcePrintedPage": 4,
       "typeLabel": "한 상자에 담는 수 조건으로 상자 수 범위 찾기",
-      "originalStructure": "사탕 365개를 한 상자에 33개 이상 43개 미만씩 나누어 담을 때 상자 수의 범위를 구합니다.",
+      "originalStructure": "귤 365개를 한 상자에 33개 이상 43개 미만씩 나누어 담을 때 상자 수의 범위를 구합니다.",
       "conditions": [
         "한 상자당 33개 이상",
         "한 상자당 43개 미만",
@@ -227,7 +237,9 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "나누어 담는 수의 범위와 출력 형식을 전용 생성기로 연결하기 전입니다."
+      "practiceRuntimeId": "5-2-u1-e1-example-1-4",
+      "practiceLocalCheck": "별도 수치 유사문항 로컬 9개 구성의 문제·풀이와 경계 검산 통과",
+      "lockReason": "원문을 독립 검산했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-1-union-count",
