@@ -413,6 +413,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다.",
+      "syntheticRuntimeTypeId": "5-2-u1-e2-example-2-4-synthetic",
       "sourceReviewCorrection20261030": "원문의 소수 자리 숫자에 0이 허용되면 조건을 충족하는 예가 둘 이상이므로 단일 정답을 확정하지 않았다. 공식 답안과 0 허용 해석을 추가 확인할 때까지 잠금 유지."
     },
     {
