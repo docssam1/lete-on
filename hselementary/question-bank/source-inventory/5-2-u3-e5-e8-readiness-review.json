@@ -1138,6 +1138,7 @@
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-1",
+      "commonSourceItemId": "5-2-u3-e8-mission-1",
       "sourceBlock": "Mission 1",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 1",
@@ -1165,6 +1166,7 @@
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-2",
+      "commonSourceItemId": "5-2-u3-e8-mission-2",
       "sourceBlock": "Mission 2",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 2",
@@ -1182,7 +1184,7 @@
       "resultContract": "constructed-figure",
       "candidateAnswerCount": null,
       "singleAnswer": false,
-      "singleAnswerCheck": "한 가지 작도를 요구합니다. 두 중심을 잇는 직선이 유효하며 유일한 해로 가정하지 않습니다.",
+      "singleAnswerCheck": "한 가지 작도를 요구합니다. 원문 그림에서 두 중심을 잇는 선이 공통 변을 지나는 것을 대조했고, 576개 대표 도형을 별도 분할했습니다. 원문에 치수는 없으며 유일한 해로 가정하지 않습니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent-construction",
       "visualCheckStatus": "needs-implementation-check",
