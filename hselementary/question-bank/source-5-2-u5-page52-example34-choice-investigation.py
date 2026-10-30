@@ -7,7 +7,9 @@ M=lambda a,k:tuple(x*k for x in a)
 C=lambda a,b:(a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0])
 # Coordinates are doubled to preserve edge midpoints.
 cells={(0,0),(1,0),(1,1),(2,1),(2,2),(3,2)}
-f={(0,0):((0,0,0),(2,0,0),(0,2,0),(0,0,2))};q=deque(f)
+# The net coordinates run right and down on the marked side. The marked
+# side must face outwards: its normal is opposite right cross down.
+f={(0,0):((0,0,0),(2,0,0),(0,2,0),(0,0,-2))};q=deque(f)
 while q:
  x,y=q.popleft();o,r,d,n=f[x,y]
  for dx,dy,v in [(1,0,(A(o,r),N(n),d,r)),(-1,0,(S(o,n),n,d,N(r))),(0,1,(A(o,d),r,N(n),d)),(0,-1,(S(o,n),r,n,N(d)))]:
@@ -48,10 +50,10 @@ for r in rot:
   if name: visible[name]=line(name,[tr(p,r) for p in points])
  assert len(visible)==3
  sets.add((visible['T'],visible['F'],visible['R']))
-# First and second visible drawings, as currently transcribed:
-# top horizontal, front descending diagonal; right diagonal differs.
-# Treat mismatch as a review flag, not a determination about the publisher key.
-transcribed = [("H", "\\", "\\"), ("H", "\\", "/")]
+# Each tuple gives the top, front and right face lines in screen coordinates.
+transcribed = [("H", "\\", "\\"), ("H", "\\", "/"),
+               ("\\", "V", "/"), ("V", "V", "\\"),
+               ("\\", "H", "H")]
 assert len(rot) == 24
-assert all(choice not in sets for choice in transcribed)
-print("Page 52 Example 3-4: diagonal endpoints are six distinct vertices; choice 2's joined diagonals are impossible. Choice comparison conflict still needs review.")
+assert [choice in sets for choice in transcribed] == [True, False, True, True, True]
+print("Page 52 Example 3-4: outward fold and all five choices checked; only choice 2 is impossible. Official key unverified.")
