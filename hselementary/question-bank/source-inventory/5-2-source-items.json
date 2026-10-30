@@ -3154,7 +3154,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "인쇄 35쪽 원문 구조를 대조했으나 공식 답안과 필요한 그림 검수 전 잠금 유지합니다."
+      "reviewReason": "원문의 12m×10m, 45° 및 네 코너 표기와 마지막 모서리 제외 조건을 대조하고 반사 경로를 좌표로 검산했습니다. 공식 답안과 공개용 원문 그림 미대조로 잠금 유지합니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e6-mission-6-laser-corner-synthetic"
     },
     {
       "sourceItemId": "5-2-u3-e7-exploration",
