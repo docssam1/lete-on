@@ -20,6 +20,10 @@ Rendered the public Grade 7 roadmap at 390×844 and 1440×900 with the local Pla
 
 Re-ran `boarding-grade-roadmap`, `boarding-roadmap-browser`, `paper-review-analysis`, and `competition-paper-review-browser` with the bundled Node and Playwright paths: 57/57 pass. This covers Grade 3–12 example routes and inferred upper-grade bridges, Grade/MAP comparison guards, Grade 7 filtered practice links, manual AMC 8/10 result review and history, local save/delete behavior, keyboard handling, and responsive widths. No private item content was used.
 
+### 2026-10-30 MAA AMC cycle recheck
+
+Rechecked the official [MAA AMC overview](https://maa.org/student-programs/amc/) and [MAA Invitational overview](https://maa.org/maa-invitational-competitions/) for the 2026–27 cycle. MAA lists AMC 10/12 A for Nov 5, 2026, AMC 10/12 B for Nov 13, 2026, and AMC 8 during Jan 21–27, 2027. The current overview confirms AMC 8/10/12 format and grade/age limits; the Invitational page confirms 2027 AIME's 100/85 AMC score thresholds and age-13 minimum. These facts agree with the existing profile and score-history behavior, which treats the threshold as a reference and leaves full eligibility to MAA. Updated the verification date only for the current MAA overview source entries; older and non-MAA source checks retain their original dates. Profile, score-history, and contest-browser suites pass 32/32. No private question content was accessed.
+
 This file is the short restart contract for the Boarding School Math product only. Do not mix it with `hsmiddle`, high-school selection, Geometry World, Number Magic, Fields Classic, or other repositories.
 
 ## Read first

@@ -129,7 +129,9 @@ test("competition sources are HTTPS and original problem publication remains per
     profile.sources.forEach(function (source) {
       assert.match(source.url, /^https:\/\//);
       assert.ok(source.documentRevision);
-      assert.equal(source.lastVerified, "2026-08-28");
+      const currentMaaOverview = source.authority === "Mathematical Association of America" && source.url === "https://maa.org/student-programs/amc/";
+      assert.equal(source.lastVerified, currentMaaOverview ? "2026-10-30" : "2026-08-28");
+      if (currentMaaOverview) assert.match(source.documentRevision, /dates, format and age\/grade limits rechecked/);
     });
     assert.equal(profile.contentRights.originalProblems, "permission-required");
     assert.equal(profile.contentRights.publicUse, "metadata-and-links-only");

@@ -9,8 +9,8 @@
   "use strict";
 
   const verified = "2026-08-28";
-  const source = function (authority, url, documentRevision) {
-    return Object.freeze({ authority, url, documentRevision, lastVerified: verified });
+  const source = function (authority, url, documentRevision, lastVerified) {
+    return Object.freeze({ authority, url, documentRevision, lastVerified: lastVerified || verified });
   };
 
   const profiles = Object.freeze([
@@ -103,7 +103,7 @@
         ])
       }),
       sources: Object.freeze([
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle visible"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-10-30"),
         source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page"),
         source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2025/08/2026-AMC-8-Teachers-Manual.pdf", "2026 AMC 8 teacher manual")
       ]),
@@ -124,7 +124,7 @@
         excludes: Object.freeze(["trigonometry", "advanced-algebra", "advanced-geometry"])
       }),
       sources: Object.freeze([
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle visible"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-10-30"),
         source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page")
       ]),
       contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
@@ -144,7 +144,7 @@
         excludes: Object.freeze(["calculus"])
       }),
       sources: Object.freeze([
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle visible"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-10-30"),
         source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page")
       ]),
       contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
