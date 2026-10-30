@@ -1,0 +1,6 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-fold-cut-count-synthetic.js'),eps=1e-8;
+const area=p=>Math.abs(p.reduce((s,a,i)=>{const b=p[(i+1)%p.length];return s+a[0]*b[1]-b[0]*a[1]},0))/2;
+const line=(p,q,f)=>Math.abs(f(p))<eps&&Math.abs(f(q))<eps;
+for(let i=0;i<3;i++){const m=api.model(i),bounds=[p=>p[0],p=>p[0]-1,p=>p[1],p=>p[1]-1,p=>p[1]-m.c,p=>p[1]-(1-m.c),p=>p[1]-p[0],p=>p[1]+p[0]-1];assert.notEqual(m.ratio,.5);assert.equal(m.polygons.length,10);assert.deepEqual(m.counts,[6,2,2]);assert.ok(Math.abs(m.polygons.reduce((s,p)=>s+area(p),0)-1)<eps);for(const p of m.polygons){assert.ok([3,4,5].includes(p.length));for(let j=0;j<p.length;j++){const a=p[j],b=p[(j+1)%p.length];assert.ok(bounds.some(f=>line(a,b,f)),'펼친 각 변이 원래 테두리 또는 절단선 위에 있어야 함');assert.ok(a[0]>=-eps&&a[0]<=1+eps&&a[1]>=-eps&&a[1]<=1+eps)}}for(const d of [-1,0,1]){const q=api.makeQuestion(i,d);assert.equal(q.answer,['6개','2개','262'][i]);assert.match(q.prompt,/두 번 접고/);assert.doesNotMatch(q.prompt,/data-fold-cut="solution"/);assert.match(q.answerVisual,/data-fold-cut="solution"/);assert.match(q.solution,/삼각형은 6개/);}}
+console.log('접기·절단 연습 감사 통과: 세 절단 위치·세 난이도, 변 경계·조각 수·넓이 보존');

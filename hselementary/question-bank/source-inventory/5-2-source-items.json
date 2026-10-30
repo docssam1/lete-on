@@ -2967,7 +2967,8 @@
       "implementationStatus": "review-locked",
       "reviewReason": "원문의 두 접기와 접힌 종이의 가로·대각 절단선을 재대조하고 펼친 조각을 독립 분할해 변 수와 넓이 보존을 검산했습니다. 공식 답안과 공개 그림 검수 전 원문 잠금을 유지합니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked"
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e6-example-1-fold-cut-synthetic"
     },
     {
       "sourceItemId": "5-2-u3-e6-example-2",
