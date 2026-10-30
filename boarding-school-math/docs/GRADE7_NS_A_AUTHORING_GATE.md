@@ -68,3 +68,7 @@ Do not publish the local `7.NS.A` workbook route or change its catalog status un
 - No claim of SASMO, Math Kangaroo, AMC, school placement, or promotion prediction.
 - No third-party contest question, source scan, official answer key, or student record in the public workbook.
 - No automated scoring of a learner's written explanation, use of units, or number-line construction without a teacher review path.
+
+## Current private-candidate boundary — 2026-10-30
+
+The current continuation handoff records two distinct private candidates outside Git: an 18-item `7.NS.A` unit-screener draft with three calculated SVGs, and a separate 42-item Grade 7 AMC 8 assessment. The handoff reports structural preflight and an exact-rational check for the `7.NS.A` draft, but also records formal item/release reviews as pending. This public repository does not contain the private prompts, answers, rubric ledger, or assets. Keep the two assessments separate; neither structural nor exact-arithmetic checks alone constitute item approval or release.

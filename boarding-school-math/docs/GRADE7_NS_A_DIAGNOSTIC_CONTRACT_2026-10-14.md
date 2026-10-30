@@ -1,6 +1,6 @@
 # Grade 7 `7.NS.A` unit-screener contract — 2026-10-14
 
-Status: **the public plan remains locked and answer-free; no operational diagnostic, automatic prescription, placement decision, or deployment is released**. The 2026-10-14 planning candidate was preserved in local commit `306c575c` on 2026-10-17. Private draft authoring now occurs outside Git; the structural preflight cannot authorize release. See the current Mac continuation in `CONTINUATION_HANDOFF_2026-09-09.md` and the appended Mac QA record.
+Status: **the public plan remains locked and answer-free; no operational diagnostic, automatic prescription, placement decision, or deployment is released**. The 2026-10-14 planning candidate was preserved in local commit `306c575c` on 2026-10-17. The current handoff reports an 18-item private `7.NS.A` draft and a separate 42-item Grade 7 AMC 8 candidate. It records structural and exact-rational preflight for the former, but its formal review and release gates remain pending. Preflight alone cannot authorize release. See the current Mac continuation in `CONTINUATION_HANDOFF_2026-09-09.md` and the appended Mac QA record.
 
 ## Task contract
 
@@ -9,7 +9,7 @@ Status: **the public plan remains locked and answer-free; no operational diagnos
 - Learner stage: US Grade 7, approximately ages 12–13.
 - Curriculum scope: registered cluster `7.NS.A.1-3`; nine granular focus IDs from `7.NS.A.1a` through `7.NS.A.3`.
 - Prerequisites to record during item authoring: rational-number meaning, opposites and absolute value, fraction equivalence, signed number-line position, and Grade 6 fraction computation.
-- Authorized in the original public planning stage: locked metadata, slot balance, lineage checks, release gates, and tests. The 2026-10-17 continuation adds original private drafts and structural preflight outside Git, while preserving every public lock.
+- Authorized in the original public planning stage: locked metadata, slot balance, lineage checks, release gates, and tests. A separate private authoring track has produced the `7.NS.A` draft outside Git; the 42-item AMC 8 candidate is another instrument and does not add to or replace the unit screener.
 - Excluded from this public artifact: learner-facing prompts, choices, answers, solutions, rubrics, score cutoffs, strength/weakness thresholds, automatic assignment, public execution, student records, and third-party contest questions.
 - Definition of done for this planning stage: every official clause has an explicit paraphrased evidence target, every focus has two reserved observations, difficulty and response modes are balanced, the existing diagnostic validator accepts a hypothetical approved projection, and the plan remains answer-free and non-placement.
 
@@ -82,11 +82,15 @@ The local scoring-readiness layer separates fourteen automatic items from four t
 
 ## Required next implementation stages
 
-1. **SOL · 울트라:** author 18 new diagnostic items and independent answer/rubric ledgers. Implementation and verification must be separate.
-2. **SOL · 울트라:** verify uniqueness, distractors, misconception mapping, Grade 7 language, and every `learner-fit` record.
+1. **SOL · 울트라:** the current handoff reports 18 private `7.NS.A` item drafts and independent exact-rational checks. Complete formal review of the items, answer/rubric ledgers, representations, and rights; revise candidates as review requires. Keep implementation and verification separate. The 42-item Grade 7 AMC 8 candidate is a different assessment.
+2. **SOL · 울트라:** verify uniqueness, distractors, misconception mapping, Grade 7 language, and every `learner-fit` record against the reviewed immutable candidates.
 3. **Implemented locally — TERRA · 높은:** unit-screener analyzer aggregates reviewed evidence by granular focus without invoking placement, promotion, mastery, or automatic prescription logic.
 4. **Partially implemented locally — TERRA · 높은:** role-separated report DTOs, validators, and teacher-scored pending/readiness states are complete. Existing signer compatibility is verified; the 18/4 authenticated delivery adapter remains locked until immutable item releases exist.
 5. **Partially implemented locally — TERRA · 높은:** `assessment/grade7-ns-a-teacher-next-step-plan.js` accepts a validated teacher projection and caller-supplied focus IDs, but does not authenticate the caller or resolve any workbook resource. The draft marks selection provenance as unverified, omits resource IDs and URLs, and binds only to the non-identifying blueprint metadata. Insufficiently observed focuses remain unavailable. A server must authenticate the teacher, bind the report to the actual assessment attempt, verify selected focus provenance, and resolve a reviewed resource before teacher delivery. Student-ready concept or recheck routing still requires reviewed resources and an approved delivery adapter; automatic prescription remains false.
 6. **TERRA · 높은:** run regression, trilingual browser, mobile, print, privacy, signed-payload, and public-boundary audits.
 
 The immutable local plan fingerprint is `d58d1b6c07c4ddf185610b574eff0d64ec61ef27a0ef2fd0990e8915fb464a81`.
+
+## Current candidate boundary — 2026-10-30
+
+The continuation handoff separately reports 18 private `7.NS.A` item drafts and a 42-item Grade 7 AMC 8 candidate. The latter is a different assessment and cannot fill the unit-screener slots. The former has only structural/exact-rational preflight reported; formal item reviews, immutable item releases, the authenticated 18/4 delivery adapter, and release evidence remain pending. The public screener remains locked.
