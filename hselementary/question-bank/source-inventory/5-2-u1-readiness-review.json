@@ -938,6 +938,7 @@
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "singleAnswerCheck": "각 길이를 충족하는 최소 단위 수는 19와 16이며 각각 4cm와 2cm가 남습니다.",
+      "supportingEvidence": "Drive 1Z0L7pEqLtXut2Ay3hYazd7KeypX7AkLW PDF 5쪽 인쇄 8쪽의 동일한 리본 문항에 손글씨 18,320원이 표시되어 독립 계산과 일치합니다. 작성자·검증 상태 불명으로 공식 답안은 아닙니다.",
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
@@ -967,11 +968,13 @@
       "candidateAnswerCount": 0,
       "singleAnswer": false,
       "singleAnswerCheck": "모든 사과를 20개 상자와 5개 묶음으로 팔았다면 판매량은 5의 배수여야 하나 원문 수량은 5의 배수가 아닙니다. 미판매 1개를 허용하는 해석은 별도 가정입니다.",
+      "supportingEvidence": "Drive 1Z0L7pEqLtXut2Ay3hYazd7KeypX7AkLW PDF 5쪽의 같은 문항에도 손글씨 계산이 있으나 원문 수량과 전량 판매 조건의 모순을 해소하지 못하며 공식 답안으로 확인되지 않았습니다.",
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
       "practiceRuntimeId": "5-2-u1-e3-example-3-synthetic",
-      "practiceRelation": "일부가 남을 수 있음을 명시한 별도 연습",
+      "practiceRelation": "상자를 최대한 채우고 남은 수를 5개씩 모두 팔 수 있도록 수량을 정한 별도 연습",
+      "practiceLiveCheck": "2026-10-30 배포 사이트에서 이 유형의 세 변형과 택시 연습 세 변형을 함께 생성해 문제와 풀이 연결을 확인했습니다. PC 1440px, 모바일 375·320px 및 A4 여섯 문항 문제·풀이 출력도 검수했습니다.",
       "lockReason": "전량 판매 조건은 수량과 양립하지 않습니다. 원본·출판사 답안 및 한 개 미판매 가능 여부를 확인하기 전 잠금 유지합니다."
     },
     {
@@ -1001,6 +1004,7 @@
       "publicDecision": "locked",
       "practiceRuntimeId": "5-2-u1-e3-example-4-synthetic",
       "practiceRelation": "부분 구간도 과금한다고 명시한 별도 연습",
+      "practiceLiveCheck": "2026-10-30 배포 사이트에서 이 유형의 세 변형과 판매 연습 세 변형을 함께 생성해 문제와 풀이 연결을 확인했습니다. PC 1440px, 모바일 375·320px 및 A4 여섯 문항 문제·풀이 출력도 검수했습니다.",
       "lockReason": "원문에 잔여 거리 과금 규정이 없어 두 해석의 결과가 다릅니다. 공식 해설이나 조건 확인 전 원문 잠금 유지합니다."
     },
     {
