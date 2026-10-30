@@ -37,6 +37,7 @@ require("./source-5-2-u3-slanted-reflection-synthetic.js");
 require("./source-5-2-u3-composite-half-synthetic.js");
 require("./source-5-2-u3-stone-game-synthetic.js");
 require("./source-5-2-u3-congruent-grid-synthetic.js");
+require("./source-5-2-u3-double-point-synthetic.js");
 require("./source-5-2-u3-mirror-path-synthetic.js");
 require("./source-5-2-u3-palindrome-synthetic.js");
 require("./source-5-2-u3-symmetry-grid-synthetic.js");
@@ -305,8 +306,8 @@ for (const [label, pattern, expected] of [
   if (!match || Number(match[1].replaceAll(",", "")) !== expected) failures.push(`README ${label} 수치가 실제 ${expected}개와 다릅니다.`);
 }
 
-if (types.length !== 2222) failures.push(`런타임 유형은 2222개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1443) failures.push(`생성 가능 유형은 1443개여야 하나 ${ready.length}개입니다.`);
+if (types.length !== 2223) failures.push(`런타임 유형은 2223개여야 하나 ${types.length}개입니다.`);
+if (ready.length !== 1444) failures.push(`생성 가능 유형은 1444개여야 하나 ${ready.length}개입니다.`);
 if (locked.length !== 779) failures.push(`검수 대기 유형은 779개여야 하나 ${locked.length}개입니다.`);
 if (ready.some(type => !type.sourceItemId)) failures.push("원문 문항 ID가 없는 유형이 생성 가능 상태입니다.");
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);
