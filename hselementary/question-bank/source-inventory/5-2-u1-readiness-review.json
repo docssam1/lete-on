@@ -52,7 +52,7 @@
     "unclassifiedItems": 0,
     "publicCandidateCount": 11,
     "reviewLockedCount": 39,
-    "uniqueAnswerPassCount": 54,
+    "uniqueAnswerPassCount": 49,
     "uniqueAnswerReviewNeededCount": 1
   },
   "units": [
@@ -898,17 +898,17 @@
         "남은 수가 묶음으로 정확히 처리되는지 확인 필요"
       ],
       "visualRequirement": "상자와 남은 묶음의 수를 분리해 보여야 합니다.",
-      "independentCalculation": "4296을 20으로 나누면 남는 수가 16개인데 5개씩 묶으면 남김없이 처리되지 않습니다. 원문 조건만으로 총수입을 하나로 확정하지 않았습니다.",
-      "answerFormula": "4296 mod 20=16, 16 mod 5=1 → 확인 필요",
+      "independentCalculation": "20개 상자와 5개 묶음으로 판매한 사과의 총수는 항상 5의 배수이지만 4296은 5로 나눈 나머지가 1입니다. 따라서 전부를 그 단위로 팔고 낱개 판매는 하지 않았다는 문장을 그대로 적용하면 성립하지 않습니다. 214상자와 3묶음을 팔고 사과 1개를 남겼다고 추가 가정하면 6444000원이지만 원문 조건의 확정 답은 아닙니다.",
+      "answerFormula": "20x+5y=4296은 정수해가 없음; 214×30000+3×8000=6444000은 1개 미판매 가정",
       "independentAnswer": "확인 필요(남은 사과 처리 조건 충돌)",
       "resultContract": "single-value",
       "candidateAnswerCount": 0,
       "singleAnswer": false,
-      "singleAnswerCheck": "남은 16개의 판매 방법이 정해지지 않아 총수입 후보가 여러 개가 될 수 있습니다.",
+      "singleAnswerCheck": "모든 사과를 20개 상자와 5개 묶음으로 팔았다면 판매량은 5의 배수여야 하나 원문 수량은 5의 배수가 아닙니다. 미판매 1개를 허용하는 해석은 별도 가정입니다.",
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "20개 상자 뒤 남은 16개를 5개 묶음으로 모두 판다는 조건이 맞는지 원본·답안에서 재확인하기 전에는 출제하지 않습니다."
+      "lockReason": "전량 판매 조건은 수량과 양립하지 않습니다. 원본·출판사 답안 및 한 개 미판매 가능 여부를 확인하기 전 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e3-example-4",
@@ -1068,9 +1068,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "세 인구를 같은 단위로 바꾼 뒤 비례 계산하면 길이가 하나씩 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "verified-local",
-      "publicDecision": "ready-for-deploy",
-      "lockReason": "원문에 없는 그래프 그림은 추가하지 않았습니다. 원문과 독립 계산한 9개 조합, PC·모바일 12개 상태, 24개 넘침 검사, A4 문제·풀이 검수까지 통과했습니다. 실배포 검증은 대기 중입니다."
+      "implementationStatus": "deployed-and-live-verified",
+      "publicDecision": "published",
+      "lockReason": "원문에 없는 그래프 그림은 추가하지 않았습니다. 원문과 독립 계산한 9개 조합, PC·모바일 12개 상태, 24개 넘침 검사, A4 문제·풀이 검수까지 통과했습니다. 2026-10-30 실제 사이트에서 1440·375·320px, 세 난이도에 대해 생성·풀이·넘침을 확인했습니다. 출판사 답안은 미대조입니다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-6-citrus-sales",
@@ -1402,16 +1402,17 @@
     "sourceProblemCount": 44,
     "typeCount": 50,
     "directlyReviewedCount": 50,
-    "publicCandidateCount": 6,
-    "lockedCount": 44,
+    "publicCandidateCount": 11,
+    "lockedCount": 39,
     "visualItemCount": 43,
-    "uniqueAnswerPassCount": 54,
+    "uniqueAnswerPassCount": 49,
     "uniqueAnswerReviewNeededCount": 1,
     "groupedSameStructureCount": 1,
     "ambiguousItems": [
       "5-2-u1-e3-example-3"
     ],
     "notes": [
+      "2026-10-30 기준 이 검수표의 50개 기록 중 11개는 출판사 답안 미대조 상태의 공개 유사문항에 연결되고, 39개는 원문 검수 잠금 기록입니다. 이 집계는 전체 문제은행 생성 가능 수와 별개입니다.",
       "PDF 내용 쪽 2~9는 인쇄 쪽 4~11에 대응합니다.",
       "기존 5-2 전체 장부의 1단원 44개는 탐구당 고정 개수였으므로 그대로 신뢰하지 않고 원문 소문항 구조를 다시 세었습니다.",
       "개념탐구와 Mission의 서로 다른 풀이 구조는 별도 유형으로 나누었고, 같은 표 안에서 같은 어림을 반복하는 행만 한 유형으로 묶었습니다.",
@@ -1419,13 +1420,14 @@
       "예제 3-3은 4296÷20의 나머지 16을 5개씩 묶어 모두 판다는 원문 조건이 서로 맞지 않아 유일하게 잠금을 유지합니다.",
       "확대 원본으로 두 자리 수 쌍, 소수 카드, 택시 올림, 완성 상자 판매, 꺾은선그래프 선·눈금, 7200 반올림 개수를 재확인해 여섯 항목의 단일 답을 확정했습니다.",
       "Mission 6(인쇄 9쪽)은 원문·계산·3개 합성 풀이 풀·화면·A4·배포·라이브 검수를 완료해 공개했습니다.",
-      "개념탐구 4와 예제 4-1(인쇄 10쪽)은 원문에 그림이 없는 텍스트 문항으로 확인했습니다. 18개 합성 조합, 화면 24개 상태, A4 검수를 완료했고 PR #395 병합 및 Pages 배포 workflow 성공을 확인했습니다. 공개 호스트 HTTP 429로 라이브 화면 확인은 대기 중입니다.",
+      "개념탐구 4와 예제 4-1(인쇄 10쪽)은 원문에 그림이 없는 텍스트 문항으로 확인했습니다. 18개 합성 조합, 화면 24개 상태, A4 검수를 완료했고 PR #395 병합 및 Pages 배포 workflow 성공을 확인했습니다. 이전 HTTP 429 대기 후 2026-10-30 실제 서비스에서 PC·모바일 및 세 난이도별 생성과 풀이를 확인했습니다.",
       "예제 4-2(인쇄 10쪽)는 그림 없는 텍스트 문항입니다. 정수 나눗셈 몫을 전수 대입해 원문 답을 270 이상 300 미만으로 확인했고, PR #396 병합·Pages 배포와 1440px·375px 라이브 문항·풀이 검증까지 마쳤습니다.",
       "예제 4-3(인쇄 10쪽)는 원문 그림이 없는 텍스트 문항입니다. 합 850 이상 950 미만, 차 350 이상 450 미만을 독립 계산해 큰 수 범위를 600 이상 700 미만으로 확정하고, 가능한 정수 답 100개가 모두 이어지는 것을 전수 검산했습니다. PR #396 병합·Pages 배포와 1440px·375px 라이브 문항·풀이 검증까지 마쳤습니다.",
-      "예제 4-4(인쇄 10쪽)는 그래프의 축 절단, 100명 보조 눈금, 여섯 연도, 여자 실선·남자 점선을 재구성했습니다. 최대 차 연도는 2008년이며 실제 차 551~749명, 답은 550명 초과 750명 미만입니다. PR #396 병합·Pages 배포와 1440px·375px 라이브 문항·풀이 검증까지 마쳤습니다."
+      "예제 4-4(인쇄 10쪽)는 그래프의 축 절단, 100명 보조 눈금, 여섯 연도, 여자 실선·남자 점선을 재구성했습니다. 그래프상 차이가 가장 큰 해는 2008년이지만 실제로 가장 큰 해는 달라질 수 있습니다. 여섯 해를 대조해 실제 최대 차 551~749명, 답 550명 초과 750명 미만을 확인했습니다. PR #396 병합·Pages 배포와 1440px·375px 라이브 문항·풀이 검증까지 마쳤습니다."
     ]
   },
   "runtimeCrosswalk": {
+    "historicalNote": "이 교차표는 2026-10-23 당시 기록이며, 이후 배포·실제 화면 확인은 각 문항의 최신 상태를 따릅니다.",
     "asOf": "2026-10-23",
     "scope": "Page-6 E3 Exploration, page-7 Missions 1–6, and page-10 E4 Exploration 4 and Example 4-1. The 50-item source census under integrity remains unchanged.; locally verified text-only page-10 Examples 4-2–4-3 are locally verified and pending deployment.",
     "releaseStatus": "deployed-live-verification-pending-with-local-candidates",
