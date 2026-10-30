@@ -3316,7 +3316,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "독립 겹침 넓이는 48cm²이나 공식 답안과 두 변환의 공개용 그림 대조 전 잠금 유지합니다."
+      "reviewReason": "독립 겹침 넓이는 48cm²이나 공식 답안과 두 변환의 공개용 그림 대조 전 잠금 유지합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e8-example-3-overlap-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e8-example-4",

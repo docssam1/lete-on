@@ -1,0 +1,5 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-double-symmetry-overlap-synthetic.js');
+function inside(poly,x,y){let result=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const [xi,yi]=poly[i],[xj,yj]=poly[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)result=!result}return result}
+for(let i=0;i<3;i++)for(const d of [-1,0,1]){const q=api.makeQuestion(i,d),g=api.geometry(q.questionModel);let count=0;for(let x=-20;x<30;x++)for(let y=-20;y<30;y++)if(inside(g.line,x+.5,y+.5)&&inside(g.point,x+.5,y+.5))count++;assert.equal(count,q.answerModel.area);assert.equal(count,g.overlap[2]*g.overlap[3]);assert.ok(q.answerVisual.includes('data-overlap-answer'));assert.ok(!q.prompt.includes('data-overlap-answer'));assert.equal(q.publisherKeyVerified,false)}
+assert.equal(require('./source-inventory/5-2-source-items.json').sourceItems.find(x=>x.sourceItemId==='5-2-u3-e8-example-3').implementationStatus,'review-locked');console.log('3 orthogonal shapes × 3 difficulties: independent cell-centre overlap audit passed');
