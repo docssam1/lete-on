@@ -3331,7 +3331,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "독립 검산은 처음 하는 사람의 셋째 돌 4칸 이동이나 필기와 차이가 있고 공식 답안 미대조이므로 잠금 유지합니다."
+      "reviewReason": "독립 검산은 처음 하는 사람의 셋째 돌 4칸 이동이나 필기와 차이가 있고 공식 답안 미대조이므로 잠금 유지합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e8-example-4-stone-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-1",
