@@ -110,9 +110,11 @@ test("ISEE stanines survive save, history rendering, and reload", async function
   await page.locator("#math-stanine").fill("6");
   await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
   assert.match(await page.locator("#metric-value").innerText(), /Quantitative Reasoning 7 · Mathematics Achievement 6 stanine/);
-  assert.match(await page.locator("#assessment-history-list").innerText(), /Quantitative Reasoning 7 · Mathematics Achievement 6 stanine/);
+  assert.match(await page.locator("#confidence-value").innerText(), /ISEE Middle · 입학 평가 보조 근거/);
+  assert.match(await page.locator("#assessment-history-list").innerText(), /ISEE Middle.*Quantitative Reasoning 7.*Mathematics Achievement 6 stanine/);
   await page.reload({ waitUntil: "networkidle" });
   assert.match(await page.locator("#metric-value").innerText(), /Quantitative Reasoning 7 · Mathematics Achievement 6 stanine/);
+  assert.match(await page.locator("#assessment-history-list").innerText(), /ISEE Middle/);
   assert.equal(await page.locator("#quant-stanine").inputValue(), "7");
   assert.equal(await page.locator("#math-stanine").inputValue(), "6");
   assert.equal(await page.locator("#test-level").inputValue(), "isee-middle");
@@ -247,7 +249,7 @@ test("ISEE stanines stay separate instead of becoming an invented average", asyn
   await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
   assert.match(await page.locator("#metric-value").innerText(), /Quantitative Reasoning 9 · Mathematics Achievement 8 stanine/);
   assert.doesNotMatch(await page.locator("#metric-value").innerText(), /평균|8\.5/);
-  assert.equal(await page.locator("#confidence-value").innerText(), "성적표 표기 기준");
+  assert.equal(await page.locator("#confidence-value").innerText(), "ISEE Middle · 입학 평가 보조 근거");
   assert.deepEqual(errors, []);
   await page.close();
 });

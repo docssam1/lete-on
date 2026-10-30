@@ -82,10 +82,14 @@
     if (result.source.id === "isee") return `Quantitative Reasoning ${result.scores.quantStanine ?? "—"} · Mathematics Achievement ${result.scores.mathStanine ?? "—"} stanine`;
     return `${result.scores.percentile}th percentile${result.scores.scaleScore == null ? "" : ` · ${result.scores.scaleScore}`}`;
   }
+  function testLevelText(level) {
+    return ({ "ssat-elementary-3": "SSAT Elementary · Grade 3", "ssat-elementary-4": "SSAT Elementary · Grade 4", "ssat-middle": "SSAT Middle", "ssat-upper": "SSAT Upper", "isee-primary-2": "ISEE Primary 2", "isee-primary-3": "ISEE Primary 3", "isee-primary-4": "ISEE Primary 4", "isee-lower": "ISEE Lower", "isee-middle": "ISEE Middle", "isee-upper": "ISEE Upper" })[level] || "시험 레벨 미기재";
+  }
   function seasonLabel(season) { return ({ fall: "Fall", winter: "Winter", spring: "Spring", summer: "Summer" })[season] || season; }
   function referenceText(result) {
     const scores = result.scores || {};
     if (result.source.id === "map-growth") return [scores.normYear ? `${scores.normYear} norms` : null, scores.season ? seasonLabel(scores.season) : null, Number.isInteger(scores.instructionalWeeks) ? `${scores.instructionalWeeks} instructional weeks` : null].filter(Boolean).join(" · ") || "성적표 규준 정보 미기재";
+    if (result.source.id === "ssat" || result.source.id === "isee") return `${testLevelText(scores.testLevel)} · 입학 평가 보조 근거`;
     return scores.normGroup || (scores.season ? `${seasonLabel(scores.season)} · 성적표 표기 기준` : "성적표 표기 기준");
   }
   function recommendationReason(result) {
@@ -147,8 +151,8 @@
     const scores = result.scores || {};
     if (result.source.id === "school-placement") return scores.metric == null ? "점수 미입력" : `${scores.metric}%`;
     if (result.source.id === "map-growth") return [`RIT ${scores.rit}`, scores.percentile == null ? null : `${scores.percentile}th percentile`, scores.normYear ? `${scores.normYear} norms` : null, scores.season ? seasonLabel(scores.season) : null, Number.isInteger(scores.instructionalWeeks) ? `${scores.instructionalWeeks} instructional weeks` : null].filter(Boolean).join(" · ");
-    if (result.source.id === "isee") return `Quantitative Reasoning ${scores.quantStanine ?? "—"} · Mathematics Achievement ${scores.mathStanine ?? "—"} stanine`;
-    return [scores.percentile == null ? null : `${scores.percentile}th percentile`, scores.scaleScore == null ? null : `Scale ${scores.scaleScore}`, scores.stanine == null ? null : `Stanine ${scores.stanine}`].filter(Boolean).join(" · ") || "성적표 값";
+    if (result.source.id === "isee") return [`${testLevelText(scores.testLevel)}`, `Quantitative Reasoning ${scores.quantStanine ?? "—"}`, `Mathematics Achievement ${scores.mathStanine ?? "—"} stanine`].join(" · ");
+    return [scores.testLevel ? testLevelText(scores.testLevel) : null, scores.percentile == null ? null : `${scores.percentile}th percentile`, scores.scaleScore == null ? null : `Scale ${scores.scaleScore}`, scores.stanine == null ? null : `Stanine ${scores.stanine}`].filter(Boolean).join(" · ") || "성적표 값";
   }
   function renderHistory() {
     const list = document.getElementById("assessment-history-list");
