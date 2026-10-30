@@ -2986,7 +2986,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "접기 구조와 독립 계산을 확인했으나 공식 답안과 공개 그림 검수 전 잠금 유지합니다."
+      "reviewReason": "원문의 두 대각 접기와 세로 접기, 삼등분된 색칠 부분을 대조하고 위쪽 8겹·아래 띠 2겹을 좌표로 검산했습니다. 공식 답안과 공개 그림 검수 전 원문 잠금을 유지합니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e6-example-2-fold-area-synthetic"
     },
     {
       "sourceItemId": "5-2-u3-e6-example-3",

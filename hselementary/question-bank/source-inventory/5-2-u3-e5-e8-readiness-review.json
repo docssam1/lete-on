@@ -414,6 +414,7 @@
     },
     {
       "sourceItemId": "5-2-u3-e6-example-6-2",
+      "commonSourceItemId": "5-2-u3-e6-example-2",
       "sourceBlock": "예제 6-2",
       "sourceSection": "example",
       "sourceItemLabel": "예제 6-2",
@@ -425,7 +426,7 @@
       "originalStructure": "가로 12cm, 세로 16cm인 직사각형 종이를 여러 번 접고 표시된 부분을 잘라 펼쳐 생기는 도형의 넓이를 구합니다.",
       "conditions": ["12cm×16cm 직사각형", "여러 번 접음", "그림의 절단 부분", "펼친 뒤 넓이"],
       "visualRequirement": "각 접는 선과 절단 위치, 펼친 조각의 대응을 그대로 보여야 합니다.",
-      "independentCalculation": "아래 띠의 높이는 16−12=4cm입니다. 마지막 접힌 폭 6cm는 세 등분되어 색칠한 폭이 2cm이고, 아래 띠는 2겹이므로 2×4×2=16cm²입니다. 위쪽의 색칠한 사다리꼴은 평행한 두 변이 4cm와 6cm이고 폭이 2cm이며 8겹이므로 (4+6)×2÷2×8=80cm²입니다. 합은 96cm²입니다.",
+      "independentCalculation": "원문의 12cm×16cm, 정사각형 부분의 두 대각 접기, 세로 반 접기와 마지막 폭의 삼등분을 대조했습니다. 아래 띠의 높이는 16−12=4cm이고 색칠한 폭은 6÷3=2cm입니다. 아래 띠는 세로로만 접혀 2겹이므로 2×4×2=16cm²입니다. 위쪽 사다리꼴은 평행한 두 변이 4cm와 6cm이고 폭이 2cm이며 세 번 접혀 8겹이므로 (4+6)×2÷2×8=80cm²입니다. 합은 96cm²이며 접기 좌표를 독립 추적한 결과와 일치합니다.",
       "answerFormula": "2×4×2+(4+6)×2÷2×8",
       "independentAnswer": "96cm²",
       "resultContract": "single-value",
