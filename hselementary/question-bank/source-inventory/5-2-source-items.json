@@ -3133,7 +3133,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "인쇄 35쪽 원문 구조를 대조했으나 공식 답안과 필요한 그림 검수 전 잠금 유지합니다."
+      "reviewReason": "원문 범위의 양 끝과 숫자 1 포함 조건을 대조하고 자리수별 경우와 전체 범위 전수 열거를 검산했습니다. 공식 답안 미대조로 원문 잠금 유지합니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e6-mission-5-included-digit-synthetic"
     },
     {
       "sourceItemId": "5-2-u3-e6-mission-6",
