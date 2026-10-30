@@ -6,7 +6,8 @@ S=lambda a,b:tuple(x-y for x,y in zip(a,b))
 D=lambda a,b:sum(x*y for x,y in zip(a,b))
 C=lambda a,b:(a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0])
 def fold(cells,start):
- f={start:((0,0,0),(1,0,0),(0,1,0),(0,0,1))}; q=deque([start])
+ # Net coordinates run right and down; choose the outward marked-side normal.
+ f={start:((0,0,0),(1,0,0),(0,1,0),(0,0,-1))}; q=deque([start])
  while q:
   x,y=q.popleft(); o,r,d,n=f[x,y]
   for dx,dy,v in [(1,0,(A(o,r),N(n),d,r)),(-1,0,(S(o,n),n,d,N(r))),(0,1,(A(o,d),r,N(n),d)),(0,-1,(S(o,n),r,n,N(d)))]:
@@ -37,8 +38,8 @@ for rotation, observed in views:
 # The third view keeps 나 on top and turns 180 degrees, placing 다 and 마
 # opposite 가 and 바 respectively. Directions are source-image readings.
 cases = [
-    ({(0,1),(1,1),(2,1),(3,1),(2,0),(2,2)}, (2,0), (0,0,1), (-1,0,0), "right", {(1,1): ("가", "left"), (3,1): ("다", "right")}),
-    ({(0,0),(1,0),(1,1),(2,1),(2,2),(3,2)}, (2,2), (0,1,0), (0,0,1), "left", {(0,0): ("다", "left"), (2,1): ("가", "down")}),
+    ({(0,1),(1,1),(2,1),(3,1),(2,0),(2,2)}, (2,0), (0,0,1), (-1,0,0), "right", {(1,1): ("가", "right"), (3,1): ("다", "left")}),
+    ({(0,0),(1,0),(1,1),(2,1),(2,2),(3,2)}, (2,2), (0,1,0), (0,0,1), "left", {(0,0): ("가", "left"), (2,1): ("다", "down")}),
 ]
 for cells, anchor, world_normal, world_up, direction, expected in cases:
     faces = fold(cells, anchor)
