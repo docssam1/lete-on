@@ -1,0 +1,7 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-two-mirror-bounces-synthetic.js'),rad=Math.PI/180;
+const unit=(a,b)=>{const x=b[0]-a[0],y=b[1]-a[1],n=Math.hypot(x,y);return [x/n,y/n]},dot=(a,b)=>a[0]*b[0]+a[1]*b[1];
+function verify(alpha,beta,points,k,expected){assert.equal(points.length-2,expected);assert.ok(Math.hypot(points.at(-1)[0]-1,points.at(-1)[1])<1e-8);for(let j=1;j<points.length-1;j++){const p=points[j],incoming=unit(points[j-1],p),outgoing=unit(p,points[j+1]),t=j%2?[Math.cos(alpha*rad),Math.sin(alpha*rad)]:[1,0];assert.ok(p[0]>0&&p[0]<=1+1e-8);assert.ok(Math.abs(dot(incoming,t)-dot(outgoing,t))<1e-8,'접선 방향이 보존되는 반사');if(j<=k){const acute=Math.acos(Math.min(1,Math.abs(dot(incoming,t))))/rad;assert.ok(Math.abs(acute-(beta+j*alpha))<1e-7)}const opposite=points[points.length-1-j];assert.ok(Math.hypot(p[0]-opposite[0],p[1]-opposite[1])<1e-8,'되돌아오는 경로 일치');}const before=unit(points[k-1],points[k]),t=k%2?[Math.cos(alpha*rad),Math.sin(alpha*rad)]:[1,0];assert.ok(Math.abs(dot(before,t))<1e-8,'되돌아가는 지점에서 수직 입사');}
+verify(8,18,api.trace(8,18),9,17);
+for(let i=0;i<3;i++){const m=api.model(i);verify(m.alpha,m.beta,m.points,m.steps,[13,11,9][i]);for(const d of [-1,0,1]){const q=api.makeQuestion(i,d);assert.equal(q.answer,`${m.answer}번`);assert.match(q.prompt,/처음 ㄱ에서의 반사와 ㄱ에 돌아온 순간을 빼고/);assert.doesNotMatch(q.prompt,new RegExp(`${m.answer}번`));assert.match(q.solution,/수직/);assert.match(q.answerVisual,/data-two-mirrors="solution"/);}}
+console.log('두 거울 반사 감사 통과: 원문·세 변형의 각 반사법칙, 수직 충돌, 역경로와 시작점 복귀');

@@ -3028,7 +3028,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 경로와 독립 추적을 확인했으나 공식 답안과 공개 그림 검수 전 잠금 유지합니다."
+      "reviewReason": "원문 거울 사이 8°, 입사 18°와 시작점 반사 제외 조건을 대조하고 수직 반사 및 좌표 광선 추적으로 중간 횟수를 검산했습니다. 공식 답안과 공개 그림 검수 전 원문 잠금을 유지합니다.",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e6-example-4-two-mirror-synthetic"
     },
     {
       "sourceItemId": "5-2-u3-e6-mission-1",
