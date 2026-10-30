@@ -1250,6 +1250,7 @@
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-5",
+      "commonSourceItemId": "5-2-u3-e8-mission-5",
       "sourceBlock": "Mission 5",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 5",
@@ -1267,7 +1268,7 @@
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "해당 회전 대응을 가정한 직접 구성과 네 자리 수 전수검사가 일치합니다. 원본 글꼴 대응과 공식 답안은 미확인입니다.",
+      "singleAnswerCheck": "원문 보기 1691에서 숫자 1이 반복됨을 확인했습니다. 해당 회전 대응과 반복 사용을 가정한 직접 구성과 네 자리 수 전수검사가 일치합니다. 원본 글꼴 대응과 공식 답안은 미확인입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent-conditional",
       "visualCheckStatus": "needs-implementation-check",
@@ -1277,6 +1278,7 @@
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-6",
+      "commonSourceItemId": "5-2-u3-e8-mission-6",
       "sourceBlock": "Mission 6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
@@ -1294,7 +1296,7 @@
       "resultContract": "strategy-explanation",
       "candidateAnswerCount": 1,
       "singleAnswer": false,
-      "singleAnswerCheck": "원형 상태 전수검사와 양쪽 첫 수에 대한 대칭 대응을 확인했습니다. 원문 빈칸 표현이 첫 대응 예외를 설명하지 못할 가능성과 공식 답안은 추가 대조가 필요합니다.",
+      "singleAnswerCheck": "원형 상태 전수검사와 양쪽 첫 수에 대한 대칭 대응을 확인했습니다. 처음 한 잎을 떼었을 때 나중 사람의 한 잎 대응 12가지 모두 처음 사람에게 이기는 수가 남으므로, 같은 개수의 대칭 대응은 첫 대응 뒤에 적용해야 합니다. 원문 빈칸 표현과 공식 답안은 추가 대조가 필요합니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent-strategy",
       "visualCheckStatus": "confirmed-source-structure",
