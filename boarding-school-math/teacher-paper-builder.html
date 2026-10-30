@@ -46,8 +46,8 @@
           <div class="pane-heading"><h2 id="preview-title">문제 미리보기</h2><span id="preview-index">문제 선택</span></div>
           <div id="item-preview" class="item-preview"><p>목록에서 문항을 누르면 여기에 표시됩니다.</p></div>
         </div>
-        <div class="paper-settings">
-          <div class="pane-heading"><h2>담은 문제</h2><div class="selected-summary"><span id="selected-count">0문항</span><button id="clear-selected" type="button" disabled>모두 빼기</button></div></div>
+        <div class="paper-settings" id="paper-settings">
+          <div class="pane-heading"><h2 id="selected-items-heading" tabindex="-1">담은 문제</h2><div class="selected-summary"><span id="selected-count">0문항</span><button id="clear-selected" type="button" disabled>모두 빼기</button></div></div>
           <label for="paper-title">시험명<input id="paper-title" type="text" maxlength="60" value="Grade 7 비례관계 확인 평가"></label>
           <div class="setting-pair"><label for="paper-course">과정<input id="paper-course" type="text" maxlength="35" value="Grade 7 · 비례관계"></label><label for="paper-round">회차<input id="paper-round" type="number" min="1" max="99" value="1"></label></div>
           <div class="setting-pair"><label for="paper-date">날짜<input id="paper-date" type="text" maxlength="30" placeholder="예: 2026. 10. 23."></label><label for="paper-time">시험 시간<input id="paper-time" type="number" min="1" max="180" value="20"></label></div>
@@ -65,6 +65,7 @@
         </div>
       </aside>
     </div>
+    <button id="mobile-builder-action" class="mobile-builder-action" type="button" aria-controls="paper-settings" hidden>시험지 편집 · 0문항</button>
     <section id="sheet-section" class="sheet-section" aria-labelledby="sheet-heading" hidden>
       <div class="sheet-heading"><div><p>출력 미리보기</p><h2 id="sheet-heading">A4 시험지</h2></div><span id="page-count">본문 1쪽</span></div>
       <div id="paper-pages" class="paper-pages"></div>

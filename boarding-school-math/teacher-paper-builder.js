@@ -41,6 +41,7 @@
   const levelName = { foundation: "기초", core: "기본", advanced: "심화" };
   const selected = [];
   const maxItems = records.length;
+  let paperSettingsInView = false;
   let activeSource = sources.find(function (source) { return source.cluster === "7.RP.A"; });
   let strand = "all";
   let previewId = activeSource.records[0].id;
@@ -55,6 +56,13 @@
   }
   function sourceLabel(record) { return `${record.source.cluster} ${record.number}번`; }
   function message(value) { $("builder-message").textContent = value; }
+  function updateMobileBuilderAction() {
+    const mobileAction = $("mobile-builder-action");
+    mobileAction.hidden = selected.length === 0 || paperSettingsInView;
+    mobileAction.textContent = `시험지 편집 · ${selected.length}문항`;
+    mobileAction.setAttribute("aria-label", `담은 문제 ${selected.length}개 편집하기`);
+    document.body.classList.toggle("has-mobile-builder-action", !mobileAction.hidden);
+  }
   function refreshDefaultFields() {
     const chosen = [...new Set(selected.map(function (entry) { return byId.get(entry.id).source; }))];
     const source = chosen.length === 1 ? chosen[0] : activeSource;
@@ -114,6 +122,7 @@
     $("selection-status").textContent = `시험지에 담은 문제 ${selected.length}개${outside ? ` · 현재 결과 밖 ${outside}개` : ""}`;
     $("selected-count").textContent = `${selected.length}문항`;
     $("clear-selected").disabled = selected.length === 0;
+    updateMobileBuilderAction();
     if (!results.length) { const empty = document.createElement("p"); empty.className = "list-empty"; empty.textContent = "찾는 문항이 없습니다. 검색어나 필터를 바꿔 보세요."; host.append(empty); return; }
     results.forEach(function (record) {
       const item = record.item;
@@ -363,6 +372,15 @@
   document.querySelectorAll('input[name="cover-style"]').forEach(function (input) { input.addEventListener("change", renderPaper); });
   document.querySelectorAll('input[name="output-kind"]').forEach(function (input) { input.addEventListener("change", function () { renderPaper(); renderPreview(); }); });
   $("jump-to-sheet").addEventListener("click", function () { $("sheet-section").scrollIntoView({ behavior: "smooth" }); });
+  $("mobile-builder-action").addEventListener("click", function () {
+    $("paper-settings").scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    $("selected-items-heading").focus({ preventScroll: true });
+  });
+  const settingsObserver = new IntersectionObserver(function (entries) {
+    paperSettingsInView = entries[0].isIntersecting;
+    updateMobileBuilderAction();
+  }, { rootMargin: "0px 0px -88px 0px", threshold: 0.75 });
+  settingsObserver.observe($("selected-items-heading"));
   $("print-paper").addEventListener("click", async function () {
     renderPaper();
     if (!selected.length || $("print-paper").disabled) return;

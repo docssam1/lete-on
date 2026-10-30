@@ -27,6 +27,7 @@ test("teacher can find, preview, select, order, and set points on released Grade
   assert.equal(await page.evaluate(() => document.activeElement.getAttribute("aria-label")), "1번 시험지에 추가");
   await page.getByRole("checkbox", { name: "2번 시험지에 추가", exact: true }).check();
   assert.equal(await page.locator(".sheet-question").count(), 2);
+  assert.equal(await page.locator("#mobile-builder-action").isVisible(), false);
   await page.locator("#paper-title").fill("7학년 단위율 확인");
   await page.getByRole("spinbutton", { name: "7.RP.A 1번 배점", exact: true }).fill("7");
   await page.getByRole("spinbutton", { name: "7.RP.A 1번 배점", exact: true }).dispatchEvent("change");
@@ -63,6 +64,39 @@ test("public Grade 6–7 units keep selections across filters and print mixed an
   assert.match(await page.locator("#paper-title").inputValue(), /Grade 6–7 단원 확인 평가/);
   assert.match(await page.locator("#selection-status").innerText(), /현재 결과 밖 2개/);
   assert.match(await page.locator(".sheet-course-code").first().innerText(), /3개 단원/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("mobile selection keeps a fixed count and a keyboard-accessible shortcut to paper settings", async () => {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
+  const errors = []; page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(url, { waitUntil: "networkidle" });
+  const action = page.locator("#mobile-builder-action");
+  assert.equal(await action.isHidden(), true);
+  await page.getByRole("checkbox", { name: "1번 시험지에 추가", exact: true }).check();
+  assert.equal(await action.isVisible(), true);
+  assert.equal(await action.innerText(), "시험지 편집 · 1문항");
+  assert.equal(await action.getAttribute("aria-label"), "담은 문제 1개 편집하기");
+  const geometry = await action.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return { position: getComputedStyle(element).position, height: rect.height, bottom: rect.bottom, viewport: innerHeight };
+  });
+  assert.equal(geometry.position, "fixed");
+  assert.ok(geometry.height >= 44);
+  assert.ok(geometry.bottom <= geometry.viewport);
+  await action.click();
+  assert.equal(await page.evaluate(() => document.activeElement.id), "selected-items-heading");
+  assert.equal(await page.locator("#selected-items-heading").evaluate((element) => getComputedStyle(element).outlineWidth), "3px");
+  await page.waitForFunction(() => document.getElementById("mobile-builder-action").hidden);
+  const headingBounds = await page.locator("#selected-items-heading").evaluate((element) => {
+    const rect = element.getBoundingClientRect(); return { top: rect.top, bottom: rect.bottom, visibleBottom: innerHeight - 88 };
+  });
+  assert.ok(headingBounds.top >= 0 && headingBounds.bottom <= headingBounds.visibleBottom);
+  await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; window.scrollTo(0, 0); });
+  await page.waitForFunction(() => !document.getElementById("mobile-builder-action").hidden);
+  await page.getByRole("checkbox", { name: "1번 시험지에 추가", exact: true }).uncheck();
+  assert.equal(await action.isHidden(), true);
   assert.deepEqual(errors, []);
   await page.close();
 });
