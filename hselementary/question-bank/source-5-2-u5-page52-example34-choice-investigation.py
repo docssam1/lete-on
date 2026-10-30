@@ -18,6 +18,12 @@ face=[]
 for c,(o,r,d,n) in f.items():
  def p(x,y):return A(o,A(M(r,x/2),M(d,y/2)))
  face.append((tuple(int(x/2) for x in n),[p(*z) for z in patterns[c]]))
+# Three diagonal-bearing faces have six distinct cube vertices as endpoints.
+# Therefore no vertex can be an endpoint of two diagonals simultaneously.
+diagonal_cells = {(0,0), (2,1), (3,2)}
+diagonal_endpoints = [tuple(point) for cell, (_, points) in zip(f, face)
+                      if cell in diagonal_cells for point in points]
+assert len(diagonal_endpoints) == 6 and len(set(diagonal_endpoints)) == 6
 axes=[(1,0,0),(0,1,0),(0,0,1)];rot=[]
 for p in permutations(axes):
  for sign in product((-1,1),repeat=3):
@@ -48,4 +54,4 @@ for r in rot:
 transcribed = [("H", "\\", "\\"), ("H", "\\", "/")]
 assert len(rot) == 24
 assert all(choice not in sets for choice in transcribed)
-print("Page 52 Example 3-4: 24 rotations checked; transcribed choices 1 and 2 both mismatch, so source transcription/model needs review.")
+print("Page 52 Example 3-4: diagonal endpoints are six distinct vertices; choice 2's joined diagonals are impossible. Choice comparison conflict still needs review.")
