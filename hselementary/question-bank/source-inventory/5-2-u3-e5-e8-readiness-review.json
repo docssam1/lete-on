@@ -1222,6 +1222,7 @@
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-4",
+      "commonSourceItemId": "5-2-u3-e8-mission-4",
       "sourceBlock": "Mission 4",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 4",
@@ -1239,13 +1240,13 @@
       "resultContract": "count-of-constructions",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "점선 격자의 단일 단순 경로를 전수하고 두 조각의 합동과 절단선의 회전·뒤집기 분류를 각각 비교했습니다. 공식 답안 및 허용 절단 해석은 미대조입니다.",
+      "singleAnswerCheck": "원문 격자 방향과 시작 꼭짓점을 재대조하고 단일 단순 경로를 전수했습니다. 별도 강체 회전·반사 비교로 각 경로의 두 조각이 합동이고 대표 네 모양이 서로 다름을 확인했습니다. 공식 답안 및 허용 절단 해석은 미대조입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent-conditional",
       "visualCheckStatus": "needs-implementation-check",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "대각선의 방향과 단일 단순 절단선 해석, 공식 답안 및 공개용 그림을 대조하기 전 원문 잠금 유지합니다."
+      "lockReason": "단일 단순 절단선 해석, 공식 답안 및 공개용 그림을 대조하기 전 원문 잠금 유지합니다."
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-5",
