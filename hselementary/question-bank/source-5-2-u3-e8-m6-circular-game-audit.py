@@ -24,6 +24,13 @@ def mirror(mask, axis_twice):
 assert not winning(FULL)
 for first in moves(FULL):
     assert winning(FULL ^ first)
+# If the first player takes one, copying that count immediately never
+# leaves a losing position for them. Equal-count mirroring starts later.
+for axis in range(N):
+    after_one = FULL ^ (1 << axis)
+    single_replies = [take for take in moves(after_one) if bin(take).count('1') == 1]
+    assert len(single_replies) == 12
+    assert all(winning(after_one ^ take) for take in single_replies)
 # For every first choice of one petal the second player removes the opposite pair;
 # then all possible legal first-player moves have legal mirrored replies.
 checked = set()
