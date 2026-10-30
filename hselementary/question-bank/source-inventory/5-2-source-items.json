@@ -2841,7 +2841,8 @@
       "implementationStatus": "review-locked",
       "reviewReason": "원문의 모눈 꼭짓점과 세로축을 재대조하고 두 도형의 겹치지 않는 전체 넓이를 독립적으로 검산했습니다. 출판사 공식 답안 및 공개용 그림은 미대조로 원문 잠금을 유지합니다.",
       "publisherKeyVerified": false,
-      "publicDecision": "locked"
+      "publicDecision": "locked",
+      "syntheticRuntimeTypeId": "5-2-u3-e5-mission-2-reflection-area-synthetic"
     },
     {
       "sourceItemId": "5-2-u3-e5-mission-3",
