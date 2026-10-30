@@ -1,0 +1,4 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-rotated-number-synthetic.js'),mapping={'0':'0','1':'1','6':'9','8':'8','9':'6'};
+for(let i=0;i<3;i++)for(const d of [-1,0,1]){const q=api.makeQuestion(i,d),n=q.questionModel.digits;let count=0;function go(s){if(s.length===n){if([...s].reverse().map(x=>mapping[x]).join('')===s)count++;return}for(const digit of '01689')if(s.length||digit!=='0')go(s+digit)}go('');assert.equal(count,q.answerModel.count);assert.ok(q.prompt.includes('같은 숫자를 여러 번'));assert.equal(q.publisherKeyVerified,false)}
+assert.equal(require('./source-inventory/5-2-source-items.json').sourceItems.find(x=>x.sourceItemId==='5-2-u3-e8-mission-5').implementationStatus,'review-locked');console.log('2/4/6 digit variants: independent exhaustive count and repeat convention passed');

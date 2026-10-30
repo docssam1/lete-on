@@ -3436,7 +3436,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "가정한 회전 대응에서 20개이나 글꼴별 숫자 대응과 공식 답안 미대조로 잠금 유지합니다."
+      "reviewReason": "가정한 회전 대응에서 20개이나 글꼴별 숫자 대응과 공식 답안 미대조로 잠금 유지합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e8-mission-5-rotated-number-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-6",
