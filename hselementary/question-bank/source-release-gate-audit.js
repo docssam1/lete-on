@@ -57,6 +57,7 @@ require("./source-5-2-u3-wedge-ball-return-synthetic.js");
 require("./source-5-2-u3-folded-triangle-pieces-synthetic.js");
 require("./source-5-2-u3-palindrome-included-digit-synthetic.js");
 require("./source-5-2-u3-laser-corner-synthetic.js");
+require("./source-5-2-u3-dotboard-symmetric-area-synthetic.js");
 require("./source-5-2-u3-rotating-triangle-time-synthetic.js");
 require("./source-5-2-u3-parallelogram-overlap-perimeter-synthetic.js");
 require("./source-5-2-u3-arrow-overlap-synthetic.js");
@@ -340,8 +341,8 @@ for (const semester of window.HSE_CURRICULUM.semesters) {
   }
 }
 
-if (total !== 2261) failures.push(`전체 유형 수가 2261가 아니라 ${total}입니다.`);
-if (ready !== 1482) failures.push(`원문 연결 공개 유형 수가 1482가 아니라 ${ready}입니다.`);
+if (total !== 2262) failures.push(`전체 유형 수가 2262가 아니라 ${total}입니다.`);
+if (ready !== 1483) failures.push(`원문 연결 공개 유형 수가 1483가 아니라 ${ready}입니다.`);
 if (lockedWithoutSource !== 371) failures.push(`원문 미연결 잠금 유형 수가 371이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {
