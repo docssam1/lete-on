@@ -639,6 +639,8 @@
       "singleAnswerStatus": "blocked-not-determined",
       "evidence": "직접 렌더 대조: PDF p.13, 인쇄 p.17. 원의 중심 간격을 그림 축척으로만 정해야 합니다.",
       "publicDecision": "locked",
+      "practiceRuntimeId": "5-2-u2-e2-mission-6-spacing-synthetic",
+      "practiceRelation": "중심 간격과 직사각형 접촉 조건을 명시한 별도 유사문항이며 원문 조건을 확정한 것이 아닙니다.",
       "lockReason": "GFIELD 단일정답·가시성 원칙상 그림의 축척을 숨은 수치로 사용할 수 없어 잠금합니다. 중심 간격 또는 가로 길이를 명시한 원본 근거가 필요합니다."
     },
     {
