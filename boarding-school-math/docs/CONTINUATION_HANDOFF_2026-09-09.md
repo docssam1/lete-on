@@ -10,6 +10,10 @@ The 7.NS.A individual diagnostic remains explicitly “in preparation”; the Gr
 
 Verification on Mac: learner-plan engine + browser tests and Grade 3–12 boarding roadmap model/browser tests pass 47/47, including Grade 7 roadmap deep links. The 390px phone and 1440px desktop learning-plan views, student/teacher material separation, and no-fake-score state were visually inspected; generic “weakness” wording was removed from the learner-selected Grade 7 plan. UI rules consulted: local `ui-ux-pro-max` and `gfield-design-system` skills; hidden-state CSS was fixed after an initial failed browser check. A read-only Claude Max CLI review was attempted but the CLI returned “Not logged in”; no Claude API key/API call or Claude review is claimed. No private diagnostic material, Drive sync, push, publish, or deployment.
 
+### 2026-10-30 locked screener infrastructure recheck
+
+Re-ran the public Grade 7 `7.NS.A` screener plan, authoring-manifest, analysis, report-projection, and scoring-readiness suites on the current Mac branch: 27/27 pass. This verifies slot balance and official-source binding metadata, all-18 focus aggregation, student/teacher separation, trilingual generic feedback, locked score readiness until four teacher reviews, and non-placement behavior. It does not verify the external private draft's text or item-specific math, translation, rights, or layout. No draft content was opened. Remaining gate is formal review/release of the external candidate, followed by authenticated delivery and item-specific reviewed feedback; the public screener remains locked.
+
 This file is the short restart contract for the Boarding School Math product only. Do not mix it with `hsmiddle`, high-school selection, Geometry World, Number Magic, Fields Classic, or other repositories.
 
 ## Read first
