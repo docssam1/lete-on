@@ -48,7 +48,8 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "reviewLockedItems": 211
+    "verifiedLocalItems": 93,
+    "reviewLockedItems": 188
   },
   "units": [
     {
