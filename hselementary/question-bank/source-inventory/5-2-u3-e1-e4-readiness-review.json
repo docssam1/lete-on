@@ -1501,7 +1501,7 @@
         "세 점은 각 꼭짓점에서 같은 거리",
         "안쪽 삼각형의 대응 변이 같음"
       ],
-      "visualRequirement": "세 점의 위치와 안쪽 삼각형의 ① 표식이 필요합니다.",
+      "visualRequirement": "세 점의 위치, 같은 거리 표시와 안쪽 삼각형의 ㉠ 표시가 필요합니다.",
       "independentCalculation": "정삼각형의 꼭짓점을 위 A, 왼쪽 아래 B, 오른쪽 아래 C로 둡니다. A에서 AB를 따라 거리 d인 점을 ㅁ, B에서 BC를 따라 거리 d인 점을 ㅂ, C에서 CA를 따라 거리 d인 점을 ㄹ이라 합니다. 120° 회전은 A→C→B→A와 함께 ㅁ→ㄹ→ㅂ→ㅁ을 대응시키므로 안쪽 삼각형 ㅁㅂㄹ은 정삼각형입니다. 따라서 표시각 ㉠은 60°입니다.",
       "answerFormula": "A,B,C 정삼각형; common offset d; 120° rotation cycles ㅁ→ㄹ→ㅂ→ㅁ ⇒ △ㅁㅂㄹ equilateral ⇒ ∠㉠=60°",
       "independentAnswer": "60°",
@@ -1512,9 +1512,10 @@
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "reviewed",
-      "publicDecision": "public-candidate",
-      "lockReason": null
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그림과 독립 계산은 확인했으나 출판사 답안은 미대조여서 원문 잠금 유지. 검증된 별도 창작 유사문항을 연결합니다.",
+      "publisherKeyVerified": false
     },
     {
       "sourceItemId": "5-2-u3-e3-mission-6",
