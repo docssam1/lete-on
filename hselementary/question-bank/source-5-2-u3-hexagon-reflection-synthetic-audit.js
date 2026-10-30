@@ -1,0 +1,7 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-hexagon-reflection-synthetic.js');
+const cross=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+const area=p=>Math.abs(p.reduce((s,q,i)=>{const n=p[(i+1)%p.length];return s+q[0]*n[1]-q[1]*n[0]},0))/2;
+function crosses(a,b,c,d){return cross(a,b,c)*cross(a,b,d)<=0&&cross(c,d,a)*cross(c,d,b)<=0;}
+for(let i=0;i<3;i++){const m=api.model(i);assert.equal(m.points.length,6);assert.equal(new Set(m.points.map(String)).size,6);assert.equal(new Set(m.reflected.map(String)).size,6);assert.equal(m.points.filter(([x,y])=>2*x-y===11).length,1);assert(m.points.some(([x,y])=>2*x-y>11)&&m.points.some(([x,y])=>2*x-y<11));for(let j=0;j<6;j++){const [x,y]=m.points[j],[X,Y]=m.reflected[j],d=2*x-y-11;assert.equal(X,x-4*d/5);assert.equal(Y,y+2*d/5);assert.equal(2*(x+X)-(y+Y),22);assert.equal((X-x)+2*(Y-y),0);assert.ok(X>=0&&X<=15&&Y>=0&&Y<=12);assert.notEqual(cross(m.points[(j+5)%6],m.points[j],m.points[(j+1)%6]),0);for(let k=j+1;k<6;k++)if(k!==j+1&&!(j===0&&k===5))assert.equal(crosses(m.points[j],m.points[(j+1)%6],m.points[k],m.points[(k+1)%6]),false,'원도형 변이 교차하면 안 됨');}assert.equal(area(m.points),area(m.reflected));for(const d of [-1,0,1]){const q=api.makeQuestion(i,d);assert.equal(q.automaticGrading,false);assert.match(q.prompt,/육각형/);assert.doesNotMatch(q.prompt,/data-reflected="true"/);assert.match(q.answerVisual,/data-reflected="true"/);assert.match(q.solution,/원래 변의 순서/);}}
+console.log('육각형 대칭 연습 감사 통과: 세 도형·세 난이도, 꼭짓점·비교차·중점·수직·면적·정답 분리');
