@@ -61,13 +61,18 @@ test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge
   [3, 4, 5].forEach(function (grade) { assert.equal(roadmap.getAnnualPlan(grade), null); });
 });
 
-test("concept-flow examples connect the four user-supplied routes without learner placement", function () {
-  assert.equal(roadmap.conceptFlows.length, 4);
-  assert.deepEqual(roadmap.conceptFlows.map(function (flow) { return flow.steps.length; }), [5, 5, 5, 5]);
-  assert.match(roadmap.conceptFlows[0].steps.join(" → "), /곱셈 구조.*분배법칙.*다항식 전개.*식 정리.*AMC 10/);
-  assert.match(roadmap.conceptFlows[1].steps.join(" → "), /비·비율.*단위 변환.*비례식.*일차 함수.*좌표기하/);
-  assert.match(roadmap.conceptFlows[2].steps.join(" → "), /짝·홀수.*조건별.*경우의 수.*조합.*AIME/);
-  assert.match(roadmap.conceptFlows[3].steps.join(" → "), /수열.*닫힌식.*나머지.*합동식.*AIME/);
+test("concept-flow examples connect supplied routes without learner placement", function () {
+  assert.equal(roadmap.conceptFlows.length, 5);
+  assert.deepEqual(roadmap.conceptFlows.map(function (flow) { return flow.steps.length; }), [5, 5, 5, 5, 5]);
+  const flows = Object.fromEntries(roadmap.conceptFlows.map(function (flow) { return [flow.id, flow]; }));
+  assert.match(flows["arithmetic-algebra"].steps.join(" → "), /곱셈 구조.*분배법칙.*다항식 전개.*식 정리.*AMC 10/);
+  assert.match(flows["ratio-coordinate"].steps.join(" → "), /비·비율.*단위 변환.*비례식.*일차 함수.*좌표기하/);
+  assert.match(flows["parity-counting"].steps.join(" → "), /짝·홀수.*조건별.*경우의 수.*조합.*AIME/);
+  assert.match(flows["sequence-number-theory"].steps.join(" → "), /수열.*닫힌식.*나머지.*합동식.*AIME/);
+  assert.equal(flows["prealgebra-algebra1"].optional, true);
+  assert.match(flows["prealgebra-algebra1"].title, /선택형/);
+  assert.match(flows["prealgebra-algebra1"].steps.join(" → "), /변수와 식.*대입·연산 순서.*연산 성질.*분배법칙.*동류항 정리/);
+  assert.match(flows["prealgebra-algebra1"].note, /Pre-Algebra와 Algebra 1.*진단 결과가 아니에요/);
   assert.equal(Object.isFrozen(roadmap.conceptFlows), true);
   assert.equal(Object.isFrozen(roadmap.conceptFlows[0].steps), true);
 });

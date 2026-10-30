@@ -86,6 +86,7 @@
   });
 
   const conceptFlows = Object.freeze([
+    Object.freeze({ id: "prealgebra-algebra1", title: "선택형 · 변수식에서 식 정리로", optional: true, note: "Pre-Algebra와 Algebra 1을 잇는 개념 예시예요. 학년 배치나 진단 결과가 아니에요.", steps: Object.freeze(["변수와 식 읽기", "대입·연산 순서", "연산 성질", "분배법칙", "동류항 정리"]) }),
     Object.freeze({ id: "arithmetic-algebra", title: "연산에서 대수식으로", steps: Object.freeze(["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]) }),
     Object.freeze({ id: "ratio-coordinate", title: "비와 비율에서 좌표기하로", steps: Object.freeze(["비·비율·속력", "단위 변환", "비례식", "일차 함수", "좌표기하"]) }),
     Object.freeze({ id: "parity-counting", title: "짝·홀수에서 경우의 수로", steps: Object.freeze(["짝·홀수·배수", "조건별 추론", "경우의 수", "조합", "AMC/AIME 논리 문제"]) }),

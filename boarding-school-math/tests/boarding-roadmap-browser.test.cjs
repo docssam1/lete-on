@@ -662,10 +662,23 @@ test("cross-grade concept flows render as examples on phone, tablet, and desktop
   for (const width of [320, 390, 900, 1280]) {
     const page = await browser.newPage({ viewport: { width, height: 844 } });
     await page.goto(`${url}?grade=9`, { waitUntil: "networkidle" });
-    assert.equal(await page.locator(".concept-flow").count(), 4);
-    assert.equal(await page.locator(".concept-flow ol").count(), 4);
-    assert.equal(await page.locator(".concept-flow ol li").count(), 20);
-    assert.deepEqual(await page.locator(".concept-flow").first().locator("li").allInnerTexts(), ["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]);
+    assert.equal(await page.locator(".concept-flow").count(), 5);
+    assert.equal(await page.locator(".concept-flow ol").count(), 5);
+    assert.equal(await page.locator(".concept-flow ol li").count(), 25);
+    const prealgebraFlow = page.locator('.concept-flow:has(h3:text("선택형 · 변수식에서 식 정리로"))');
+    assert.equal(await page.locator(".concept-flow").first().getAttribute("aria-labelledby"), "prealgebra-algebra1-heading");
+    assert.deepEqual(await page.locator(".concept-flow").nth(1).locator("li").allInnerTexts(), ["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]);
+    assert.deepEqual(await prealgebraFlow.locator("li").allInnerTexts(), ["변수와 식 읽기", "대입·연산 순서", "연산 성질", "분배법칙", "동류항 정리"]);
+    const bridgeNote = prealgebraFlow.locator(".concept-flow-note");
+    assert.match(await bridgeNote.innerText(), /Pre-Algebra와 Algebra 1.*학년 배치나 진단 결과가 아니에요/);
+    assert.equal(await prealgebraFlow.getAttribute("aria-describedby"), await bridgeNote.getAttribute("id"));
+    assert.equal(await prealgebraFlow.evaluate(function (node) { return getComputedStyle(node).gridColumn; }), "1 / -1");
+    assert.equal(await bridgeNote.isVisible(), true);
+    const noteBox = await bridgeNote.boundingBox();
+    assert.ok(noteBox.width > 0);
+    assert.ok(noteBox.x >= 0, `concept disclaimer stays inside the left viewport edge at ${width}px`);
+    assert.ok(noteBox.x + noteBox.width <= width, `concept disclaimer stays in viewport at ${width}px`);
+    assert.ok(await prealgebraFlow.evaluate((node) => node.scrollWidth <= node.clientWidth), `optional flow has no inner overflow at ${width}px`);
     assert.match(await page.locator("#concept-flow-title").innerText(), /배운 개념은 이렇게 이어져요/);
     assert.match(await page.locator(".concept-flow-intro").innerText(), /문제 풀이법을 먼저 외우기보다/);
     assert.equal(await page.locator(".concept-flow-section .map-head").evaluate((node) => {

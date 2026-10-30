@@ -107,6 +107,8 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .concept-flow-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .concept-flow { min-width: 0; padding: 17px 18px; border: 1px solid #d8dee8; background: #fff; }
 .concept-flow h3 { margin: 0; font-size: .98rem; line-height: 1.4; }
+.concept-flow-note { margin: 6px 0 0; color: #465366; font-size: .82rem; line-height: 1.5; }
+.concept-flow--optional { grid-column: 1 / -1; }
 .concept-flow ol { margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 15px; list-style: none; }
 .concept-flow li { min-width: 0; min-height: 62px; padding: 9px; position: relative; display: flex; align-items: center; border-left: 3px solid #60418f; background: #f5f1f9; color: #354255; font-size: .78rem; font-weight: 750; line-height: 1.45; }
 .concept-flow li:not(:last-child)::after { content: "→"; position: absolute; right: -13px; color: #60418f; font-size: .9rem; font-weight: 900; }

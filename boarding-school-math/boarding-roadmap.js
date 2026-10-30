@@ -137,8 +137,21 @@
     data.conceptFlows.forEach(function (flow) {
       const article = document.createElement("article");
       article.className = "concept-flow";
+      if (flow.optional) article.classList.add("concept-flow--optional");
       const heading = document.createElement("h3");
+      heading.id = `${flow.id}-heading`;
       heading.textContent = flow.title;
+      article.setAttribute("aria-labelledby", heading.id);
+      if (flow.note) {
+        const note = document.createElement("p");
+        note.className = "concept-flow-note";
+        note.id = `${flow.id}-note`;
+        note.textContent = flow.note;
+        article.setAttribute("aria-describedby", note.id);
+        article.append(heading, note);
+      } else {
+        article.append(heading);
+      }
       const list = document.createElement("ol");
       list.setAttribute("aria-label", `${flow.title} 개념 순서 예시`);
       flow.steps.forEach(function (step) {
@@ -146,7 +159,7 @@
         item.textContent = step;
         list.append(item);
       });
-      article.append(heading, list);
+      article.append(list);
       host.append(article);
     });
   }
