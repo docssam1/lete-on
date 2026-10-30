@@ -992,19 +992,19 @@
         "작은 삼각형과 여러 구간을 합친 삼각형을 모두 고려"
       ],
       "visualRequirement": "밑변 분할 수와 꼭짓점에서 뻗은 선을 모두 확인해야 합니다.",
-      "independentCalculation": null,
-      "answerFormula": null,
-      "independentAnswer": null,
+      "independentCalculation": "원문 조건을 만족하는 두 도형을 전수 비교하면 한 경우 8쌍, 다른 경우 10쌍으로 달라집니다.",
+      "answerFormula": "삼각형 20개 중 같은 세 변을 갖는 무순서 쌍 전수 비교",
+      "independentAnswer": "원문만으로 유일하지 않음: 8쌍 또는 10쌍이 되는 반례 존재",
       "resultContract": "single-value",
       "candidateAnswerCount": null,
-      "singleAnswer": null,
-      "singleAnswerCheck": "복합 그림의 모든 내부 선과 라벨을 확정한 뒤 대칭별 전수 열거가 필요합니다.",
+      "singleAnswer": false,
+      "singleAnswerCheck": "같은 인쇄 조건에서 8쌍과 10쌍이 되는 두 도형이 가능하므로 유일한 수를 확정할 수 없습니다.",
       "sourceVerified": true,
-      "calculationStatus": "blocked-visual",
+      "calculationStatus": "checked-nonunique",
       "visualCheckStatus": "needs-implementation-check",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "내부 선과 합동 삼각형의 범위를 그림만으로 안전하게 확정하지 않습니다."
+      "lockReason": "주어진 조건을 만족하는 도형에서 답이 달라져 원문은 잠금 유지합니다. 조건을 추가한 별도 창작 연습은 독립 검수합니다."
     },
     {
       "sourceItemId": "5-2-u3-e2-mission-1",

@@ -1,0 +1,6 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-u3-page26-example24-synthetic.js');
+for(let i=0;i<3;i++)for(const d of [-1,0,1]){const p=api.derive(i),q=api.build(i,d);assert.equal(p.groups.flat().length,20);assert.equal(p.groups.reduce((n,g)=>n+g.length*(g.length-1)/2,0),8);assert.equal(p.groups.filter(g=>g.length===2).length,8);assert(p.groups.every(g=>g.length<=2));assert.equal(q.answer,'8쌍');assert.match(q.prompt,/네 등분/);assert.match(q.solution,/4\+4=8쌍/);assert.equal((q.prompt.match(/<line /g)||[]).length,7);assert(!q.prompt.includes('8쌍'));}
+assert.equal(api.generate({generatorKey:api.key,sourceVerified:false,reviewLocked:true},0,0,0,0),null);console.log('PASS: 3 × 3, 20 triangles per pool, exhaustive squared-side groups and eight congruent pairs');
+// Compare all 190 triangle pairs directly, independently of the generator's grouping.
+for(const p of api.pools){const tris=[];for(const scale of [1,p.q])for(let a=0;a<5;a++)for(let b=a+1;b<5;b++){const x=(a-2)*scale,y=(b-2)*scale,z=p.h*scale;tris.push([Math.hypot(x,z),Math.hypot(y,z),Math.abs(y-x)].sort((a,b)=>a-b))}let count=0;for(let i=0;i<tris.length;i++)for(let j=i+1;j<tris.length;j++)if(tris[i].every((x,k)=>Math.abs(x-tris[j][k])<1e-9))count++;assert.equal(count,8);}
