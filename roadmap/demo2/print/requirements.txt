@@ -1,0 +1,2 @@
+typst==0.14.8
+fonttools[woff]==4.68.0

@@ -532,13 +532,9 @@ function reportContext(){
 }
 function prepareReport(){
  if(!studyActive&&(!completed||caseActive||historyState.active))return false;
- const context=reportContext(),report=PlannerReport.model(context);
- if(studyActive){const m=SPV.model(studyState);report.front.prose=['현재 초5에서 5-2 응용을 공부하고 있고, 연산은 6-1 안팎입니다. 새 교과는 2026년 11월 6-1부터, 쎈은 이미 배운 5-2부터 이어가겠습니다.',m.overview.firstYear,m.overview.winter,m.overview.summer,m.overview.after,m.overview.high,'국어는 어휘·독해·문학·서술을 함께, 과학은 초5·6 기본과 탐구를 확인한 뒤 오투 중1-1부터 이어갑니다. 이후 중등 기본을 마치면 하이탑 통합과학 1·2의 기본 개념과 탐구로 연결합니다. 두 과목의 출발점은 현재 진도를 확인한 뒤 조정합니다.'];
-  report.front.prose.push('초등 교과는 주 '+m.classPlan.elementary.sessions+'회, 회당 '+m.classPlan.elementary.hours+'시간으로 공부합니다. 쎈 5-2를 12월에 정리한 뒤 2027년 1~6월에는 3% 올림피아드 1과정을 여섯 달 동안 병행합니다. 과학은 '+m.classPlan.science.label+'으로 배정합니다.');
-  if(m.assessment?.current?.id)report.front.prose.splice(1,0,m.assessment.current.label+'입니다. 바로 위 참고 일정은 '+m.assessment.next.map(r=>r.label+' · '+r.pace.course+' 한 학기 '+r.pace.months+'개월').join(', ')+'입니다. '+m.assessment.planPace.text);
-  report.front.priorities[1]={title:'쎈 활용·연산을 함께',text:'중등 쎈은 한 학기 뒤에서 유형과 활용을 다집니다. 공통수학의 쎈 활용은 정규 수업에 포함된 같은 공부이며 별도 과제로 중복하지 않습니다. 연산은 디딤돌 6B 뒤 기적의 중학연산으로 연결하고, 이후에는 현재 교과의 식 계산과 오답을 짧게 유지합니다.',section:'math',sectionLabel:'교재·월별 계획'};
-  report.front.priorities.push({title:'내신 준비월에는 새 선행을 멈춥니다',text:'공통수학 구간의 4·6·9·11월은 학교 시험 준비 약 3주와 배운 범위 복습으로 두었습니다. 중1에도 정기시험이 있다면 앞선 중등 계획과 공통수학의 시작·완료월도 함께 늦춥니다. 실제 학교 시험 일정은 아직 확인하지 않은 예시입니다.',section:'comparison',sectionLabel:'진도 비교'});
- }
+ const report=studyActive?SPV.reportModel(studyState):PlannerReport.model(reportContext());
+ const pdf=$('downloadTypstSample');if(pdf){const s=SP.restore(studyState);pdf.hidden=!studyActive||s.winter!=='calculation'||s.academy!=='summer'||s.scienceMode!=='academy';}
+
  $('plannerReportContent').innerHTML=PlannerReport.render(report,{prefix:'report'});
  return true;
 }

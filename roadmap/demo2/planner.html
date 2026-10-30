@@ -184,7 +184,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 <link rel="stylesheet" href="planner-school-goals.css?v=20261025-refine100"><link rel="stylesheet" href="planner-college.css?v=20261026-subject-levels1"><link rel="stylesheet" href="planner-plan-navigation.css?v=20261025-refine100"><link rel="stylesheet" href="planner-career.css?v=20261025-refine100"><link rel="stylesheet" href="planner-student-visual.css?v=20261025-refine100"><link rel="stylesheet" href="planner-compact.css?v=20261025-refine100"><link rel="stylesheet" href="planner-typography.css?v=20261025-refine100">
 <link rel="stylesheet" href="planner-language.css?v=20261026-subject-levels1">
 <link rel="stylesheet" href="planner-reading-library.css?v=20261026-reader-library1">
-<link rel="stylesheet" href="planner-report.css?v=20261028-counselling4">
+<link rel="stylesheet" href="planner-report.css?v=20261030-typst1">
 <link rel="stylesheet" href="planner-handwriting.css?v=20261029-soma-revision">
 <link rel="stylesheet" href="planner-counselling-updates.css?v=20261029-updates1">
 <link rel="stylesheet" href="planner-premier-cohort.css?v=20261030-common-nav1">
@@ -243,7 +243,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 <div class="dock"><span class="step cur" id="dNow">● 현재</span><span class="dots"></span><span class="step" id="dNext">⚑ 다음 과정</span><span class="dots"></span><span class="step" id="dLater">⌖ 시기 미정</span>
  <div class="vsw"><button data-v="vmap" class="on">학습 설계</button><button data-v="vplan">월별 계획</button><button data-v="vrep">학습 분석</button></div></div>
 
-<dialog id="plannerReportDialog" class="planner-report-dialog" aria-labelledby="plannerReportTitle"><header class="pr-toolbar"><div><small>인쇄할 순서대로 미리 보기</small><h2 id="plannerReportTitle">전체 총평과 학습 로드맵</h2></div><div><button type="button" id="reportToFront">총평으로</button><button type="button" id="printReport">인쇄 / PDF 저장</button><button type="button" id="closeReport">닫기</button></div></header><div id="plannerReportContent"></div></dialog>
+<dialog id="plannerReportDialog" class="planner-report-dialog" aria-labelledby="plannerReportTitle"><header class="pr-toolbar"><div><small>인쇄할 순서대로 미리 보기</small><h2 id="plannerReportTitle">전체 총평과 학습 로드맵</h2></div><div><button type="button" id="reportToFront">총평으로</button><a id="downloadTypstSample" class="pr-pdf-download" href="print/grade5-complete-roadmap.pdf?v=20261030-typst1" download="초5_전체학습로드맵.pdf" hidden>완성 PDF 받기</a><button type="button" id="printReport">인쇄 / PDF 저장</button><button type="button" id="closeReport">닫기</button></div></header><div id="plannerReportContent"></div></dialog>
 <dialog id="seniorLibraryDialog" class="senior-library-dialog" aria-labelledby="seniorLibraryTitle"><header><div><small>공부의 전환을 따라가며</small><h2 id="seniorLibraryTitle">선배들의 로드맵</h2></div><button type="button" id="seniorLibraryClose">닫기</button></header><div id="seniorLibraryContent"></div></dialog>
 <dialog id="studentChoiceDialog" class="student-choice-dialog" aria-labelledby="studentChoiceTitle"><header><h2 id="studentChoiceTitle">아이는 남학생인가요, 여학생인가요?</h2><button type="button" id="studentChoiceClose">닫기</button></header><div id="studentChoiceContent"></div></dialog>
 <dialog id="studentGrowthDialog" class="student-growth-dialog" aria-labelledby="studentGrowthTitle"><header><h2 id="studentGrowthTitle">우리 아이의 성장과 공부</h2><button type="button" id="studentGrowthClose">닫기</button></header><div id="studentGrowthContent"></div></dialog>
@@ -308,7 +308,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 <script src="planner-case.js?v=20261025-refine100"></script>
 <script src="planner-case-routes.js?v=20261025-refine100"></script>
 <script src="planner-study-plan.js?v=20261029-thinking-end1"></script>
-<script src="planner-study-plan-view.js?v=20261030-terms1"></script>
+<script src="planner-study-plan-view.js?v=20261030-typst1"></script>
 <script src="planner-case-view.js?v=20261030-terms1"></script>
 <script src="planner-college-data.js?v=20261026-counselling3"></script>
 <script src="planner-admissions-evidence.js?v=20261026-subject-levels1"></script>
@@ -325,6 +325,6 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 <script src="planner-education-news.js?v=20261029-news1"></script>
 <script src="planner-academy-stories.js?v=20261029-stories7"></script>
 <script src="planner-responsive-navigation.js?v=20261030-terms1"></script>
-<script src="planner-ui.js?v=20261030-terms1"></script>
+<script src="planner-ui.js?v=20261030-typst1"></script>
 </body>
 </html>

@@ -76,3 +76,9 @@
 .pr-document .pr-science-stage{border:1px solid #e5dce9;background:#fbf8fd;border-radius:12px;padding:12px 14px;margin:20px 0}
 @media(max-width:800px){.pr-document .transition-chart-wrap{overflow:auto}.pr-document .transition-chart-wrap svg{min-width:580px}.pr-document .level-comparison-card dl,.pr-document .catch-detail dl{grid-template-columns:1fr}.pr-document .transition-overview dd{font-size:11px}.pr-document .pr-science-stage{padding:10px}.pr-document .pr-table{font-size:10px}}
 @media print{.pr-document .transition-chart-wrap{overflow:visible}.pr-document .transition-chart-wrap svg{min-width:0!important;max-height:88mm!important}.pr-document .pr-graph table{font-size:8pt}.pr-document .transition-graph p{font-size:9pt}.pr-document .level-comparison-card{break-inside:avoid}.pr-document .graph-reading>summary,.pr-document .graph-reading details>summary{display:block!important}.pr-document .transition-graph>header{break-after:avoid}.pr-document .pr-science-stage{background:white}}
+
+/* The completed Typst PDF is offered only for the matching default sample. */
+.pr-pdf-download{display:inline-flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box;border:1px solid #79538e;border-radius:10px;padding:8px 13px;background:#f1eaf7;color:#60416f;font:inherit;font-size:12px;white-space:nowrap;text-decoration:none}.pr-pdf-download[hidden]{display:none!important}
+@media(max-width:800px){.pr-toolbar .pr-pdf-download{font-size:11px;flex:1.5;padding:8px 5px}.pr-toolbar>div:last-child{flex-wrap:wrap}}
+/* Let the report viewport follow the real toolbar height in every orientation. */
+@media screen{.planner-report-dialog[open]{display:grid;grid-template-rows:auto minmax(0,1fr)}#plannerReportContent{height:auto;min-height:0}}
