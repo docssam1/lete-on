@@ -68,6 +68,26 @@
 #text(size:9pt,fill:purple)[뒤에서 살펴볼 순서 · 학습 로드맵 → 진도 비교 그래프 → 월별 병행표 → 교재별 공부 방법 → 학부모 질문]
 
 #fresh()
+#section-head("01 / BEFORE ADMISSION", "이 속도라면, 입학 전 어디까지 공부할까요?",sub:"교과·쎈 활용·사고력·연산·과학을 각각의 일정으로 봅니다. 완료한 학기와 입학 때 이어갈 학기를 구분했습니다.")
+#grid(columns:(1fr,1fr),gutter:6mm,..r.admissions.map(e=>block(breakable:false,inset:3mm,radius:3mm,stroke:0.6pt+rule,fill:paper)[
+ #set par(spacing:0pt,leading:0.35em)
+ #text(size:16pt,weight:"bold",fill:purple,e.label) #v(1mm)
+ #text(size:10pt,fill:muted,e.date) #v(2mm)
+ #text(font:"Nanum Pen Script",size:15pt,e.summary) #v(2mm)
+ #for row in e.rows {
+  block(inset:(y:2mm),above:0pt,below:0pt)[
+   #text(size:10pt,weight:"bold",row.label) #v(1mm)
+   #if row.completed!=none {text(size:9.5pt)[완료 목표 · #row.completed];linebreak();text(size:8pt,fill:muted,row.completedAt)}
+   #if row.ongoing!=none {v(1mm);text(size:9.5pt)[이어서 공부 · #row.ongoing];if row.ongoingUntil!=none {linebreak();text(size:8pt,fill:muted)[전체 마무리 목표 · #row.ongoingUntil]}}
+  ]
+  line(length:100%,stroke:0.3pt+rule)
+ }
+ #v(2mm) #text(size:8pt,fill:muted)[현재 계획에 없는 다음 교재는 자동으로 더하지 않았습니다. 교과·활용의 이후 일정은 실제 이해와 내신 준비를 보며 이어서 설계합니다.]
+]))
+#v(3mm)
+#text(size:8.5pt,fill:muted)[입학 전 마무리 범위는 현재 계획에 따른 목표입니다. 수업을 들었거나 책을 끝냈다는 이유만으로 이수를 확정하지 않고, 대표 유형과 오답을 혼자 해결하는지 확인합니다.]
+
+#fresh()
 #section-head("02 / LEARNING ROADMAP", "학기마다, 공부가 이어지는 시점.",sub:"현재 5-2 응용을 마친 것으로 바꾸지 않고, 11월부터 시작할 6-1 계획을 표시했습니다.")
 #let stages = ("6-1","중1-2","중3-2","공통수학1","공통수학2")
 #let stops = stages.map(s=>{let bs=p.lanes.find(l=>l.id=="school").blocks.filter(b=>b.stage==s and b.at("advances",default:true)!=false);(stage:s,start:bs.first().start,end:bs.last().end)})

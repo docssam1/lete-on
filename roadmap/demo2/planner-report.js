@@ -30,6 +30,43 @@ function blockPeriod(c,b){
  return b.sustained?'기존 공부와 꾸준히 병행':'앞 과정과 현재 이해를 확인한 뒤 연결';
 }
 function subjectName(id){return {school:'교과',thinking:'사고력',comp:'사고력',deep:'심화',calc:'연산',english:'영어',korean:'국어'}[id]||id;}
+// Admission milestones use selected dates, never a level number as a completion record.
+function admissionMilestones(c){
+ const year=Number(c.fields?.year),month=Number(c.fields?.mon),grade=Number(c.grade),age=Number(c.age);
+ if(c.fields?.internationalCalendar||!Number.isInteger(year)||year<2020||!Number.isInteger(month)||month<1||month>12)return [];
+ const pre=c.grade==='pre';if(pre&&(!Number.isInteger(age)||age<4||age>8)||!pre&&(!Number.isInteger(grade)||grade<1||grade>12))return [];
+ const entryYear=pre?year+8-age:null,schoolYear=year-(month<3?1:0);
+ const compact=t=>dateAt(c,t).replace(/(\d{4})년[^~→]*?(\d{1,2})월/g,(_,y,m)=>y+'.'+String(m).padStart(2,'0'));
+ const lanes=list(c.lanes).filter(l=>['school','deep','thinking','comp','calc','science'].includes(l.id));
+ if(c.science&&!lanes.some(l=>l.id==='science'))lanes.push({id:'science',label:'과학',blocks:list(c.science.blocks)});
+ return [{id:'elementary',label:'초등학교 입학 전',target:1},{id:'middle',label:'중학교 입학 전',target:7},{id:'high',label:'고등학교 입학 전',target:10}].flatMap(entry=>{
+  if(!pre&&grade>=entry.target)return [];
+  const y=pre?entryYear+entry.target-1:schoolYear+entry.target-grade,cutoff=y*12+2-(year*12+month-1);
+  if(cutoff<=0)return [];
+  const rows=lanes.map(l=>{
+   const groups=new Map(),all=list(l.blocks);let coverage=0;
+   for(const b of all){
+    const start=finite(b.start)?b.start:0,knownEnd=finite(b.continuesTo)?b.continuesTo:finite(b.sourceEnd)&&finite(l.anchor)?b.sourceEnd+1-l.anchor:finite(b.end)?b.end:null;
+    if(knownEnd!==null)coverage=Math.max(coverage,knownEnd);
+    if(!hasText(b.title)||b.sustained||b.repeat||b.advances===false||b.instruction===false||b.examFocus||['exam','review','support','preparation','academy'].includes(b.kind)||['premier-prep','transition-review'].includes(b.phase)||/유지|복습|오답|점검|테스트|배운 단원|먼저 마무리|대비 집중/.test(b.title))continue;
+    const key=b.highCourseId?b.highCourseId+'-'+b.phaseId:b.scienceCourseId||b.id||b.title;
+    const title=b.title.replace(finite(b.continuesTo)?/ 시작(?= ·|$)/:/$^/,'');
+    const item=groups.get(key)||{title,start,end:knownEnd,partial:false};
+    item.start=Math.min(item.start,start);item.end=knownEnd===null?null:item.end===null?null:Math.max(item.end,knownEnd);
+    item.partial=item.partial||Boolean(b.continues&&!finite(b.continuesTo)&&!(finite(b.sourceEnd)&&finite(l.anchor)));groups.set(key,item);
+   }
+   const courses=[...groups.values()],done=courses.filter(b=>finite(b.end)&&b.end<=cutoff&&!b.partial).sort((a,b)=>a.end-b.end||a.start-b.start).at(-1),active=courses.filter(b=>b.start<cutoff&&(b.end===null||b.end>cutoff||b.partial&&b.end>=cutoff)).sort((a,b)=>a.start-b.start).at(-1);
+   return {id:l.id,label:l.label,completed:done?done.title:null,completedAt:done?compact(Math.max(0,Math.ceil(done.end)-1)):null,ongoing:active?active.title:null,ongoingUntil:active&&finite(active.end)&&!active.partial?compact(Math.ceil(active.end)-1):null,coverageEnd:coverage,unplanned:coverage<cutoff,continuing:all.some(b=>b.start<cutoff&&(b.sustained||b.repeat||b.kind==='review')&&(b.end==null||b.end>=cutoff))};
+  }).filter(row=>row.completed||row.ongoing);
+  const school=rows.find(row=>row.id==='school'),depth=rows.find(row=>row.id==='deep'),range=row=>row?.completed?.match(/공통수학[12]|중[1-3]-[12]|[1-6]-[12]/)?.[0]||row?.completed;
+  const summary=school?.completed?entry.label+'까지 교과는 '+range(school)+(depth?.completed?', 심화·활용은 '+range(depth):'')+'까지 마치는 계획입니다.':rows.length?entry.label+'까지 각 영역에서 마칠 과정과 이어서 공부할 과정을 함께 봅니다.':'현재 교재와 기간을 정하면 입학 전 목표가 연결됩니다.';
+  return [{...entry,year:y,cutoff,date:y+'년 2월까지',summary,rows,note:'지금 선택한 진도와 학습량에 따른 완료 목표입니다. 당시 실제로 마쳤다는 기록은 아니며, 입학 시점에 진행 중인 과정은 따로 표시했습니다.'}];
+ });
+}
+function renderAdmissions(items){
+ if(!items.length)return '';
+ return '<div class="pr-admissions"><h2>이 속도라면, 입학 전 어디까지 공부할까요?</h2><p class="pr-note">교과·심화·사고력·연산은 각자의 일정으로 봅니다. 아래는 현재 계획의 마무리 목표입니다.</p><div class="pr-admission-grid">'+items.map(e=>'<article class="pr-admission-card"><h3>'+esc(e.label)+'</h3><strong>'+esc(e.date)+'</strong><p class="pr-admission-summary">'+esc(e.summary)+'</p>'+e.rows.map(row=>'<div class="pr-admission-row"><b>'+esc(row.label)+'</b>'+(row.completed?'<p><span>완료 목표</span> '+esc(row.completed)+'<small>'+esc(row.completedAt)+'</small></p>':'')+(row.ongoing?'<p><span>이어서 공부</span> '+esc(row.ongoing)+(row.ongoingUntil?'<small>전체 마무리 목표 · '+esc(row.ongoingUntil)+'</small>':'')+'</p>':'')+(row.unplanned?'<small>이후 입학 전까지의 추가 과정은 아직 배정하지 않았습니다.</small>':'')+'</div>').join('')+(e.rows.length?'':'<p>현재 교재와 공부할 기간을 고르면 입학 전 마무리 범위가 여기에 연결됩니다.</p>')+'</article>').join('')+'</div></div>';
+}
 function frontAdvice(c){
  const pre=c.grade==='pre'&&!c.fields?.internationalCalendar,early=pre||[1,2].includes(Number(c.grade)),middle=Number(c.grade)>=7;
  const ordered=pre?['thinking','comp','school','deep','calc']:['school','thinking','comp','deep','calc'],key=id=>id==='comp'?'thinking':id;
@@ -111,7 +148,7 @@ function model(context={}){
  c.institute=c.institute?.selected&&c.institute.allowed!==false?c.institute:null;
  c.name=hasText(c.name)?c.name.trim():'우리 아이';c.gradeLabel=contextGrade(c);c.dateLabel=dateAt(c,0);
  c.observation=c.observation&&hasText(c.observation.method)?c.observation:null;
- c.front=frontAdvice(c);
+ c.front=frontAdvice(c);c.admissions=admissionMilestones(c);
  const sections=[{id:'overview',title:'독쌤의 전체 총평'},{id:'roadmap',title:'현재 공부와 함께 그린 로드맵'}];
  if(c.graphHtml||c.graphSvg||c.academyHtml)sections.push({id:'comparison',title:'진도·학습량과 학원별 과정 비교'});
  sections.push({id:'math',title:'교재·월별 세부 과정'});
@@ -129,7 +166,7 @@ function render(m,options={}){
  const table=(headers,rows)=>`<table class="pr-table"><thead><tr>${headers.map(h=>'<th scope="col">'+esc(h)+'</th>').join('')}</tr></thead><tbody>${rows.map(row=>'<tr>'+row.map((cell,i)=>i===0?'<th scope="row">'+cell+'</th>':'<td>'+cell+'</td>').join('')+'</tr>').join('')}</tbody></table>`;
  const chunks=(rows,size=10)=>Array.from({length:Math.ceil(rows.length/size)},(_,i)=>rows.slice(i*size,(i+1)*size));
  const facts=`<dl class="pr-current-grid">${m.current.map(x=>'<div><dt>'+esc(x.label)+'</dt><dd>'+esc(x.text)+'</dd></div>').join('')}</dl>`;
- let html=`<div class="pr-document"><section class="pr-page pr-front" id="${id('overview')}" aria-labelledby="${id('overview')}-title"><header class="pr-masthead"><strong>GFIELD</strong><span>우리 아이의 학습 로드맵</span></header><div class="pr-context"><strong>${esc(m.name)}</strong><span>${esc(m.gradeLabel)} · ${esc(m.dateLabel)} · ${m.mode==='custom'?'맞춤 계획':'표준 계획'}</span></div><div class="pr-counsellor"><span class="pr-docssam-portrait"><img src="../v31/assets/math-docssam/docssam-math-A1-mouth-closed.png" width="1024" height="1536" alt="독쌤"></span><h1 id="${id('overview')}-title">독쌤의 전체 총평</h1></div><div class="pr-front-prose">${m.front.prose.map(p=>'<p>'+ink(p)+'</p>').join('')}</div><div class="pr-priorities">${m.front.priorities.map((p,i)=>`<article class="pr-priority"><span>${String(i+1).padStart(2,'0')}</span><div><h2>${esc(p.title)}</h2><p>${ink(p.text)}</p>${ref(p)}</div></article>`).join('')}</div><div class="pr-checkpoints">${m.front.checkpoints.map(p=>`<article><small>${esc(p.title)}</small><strong>${esc(p.date)}</strong><p>${esc(p.text)}</p></article>`).join('')}</div><nav class="pr-contents" aria-label="상세 로드맵 차례"><strong>뒤에서 자세히 살펴보세요</strong>${m.sections.slice(1).map(s=>'<a href="#'+id(s.id)+'">'+esc(s.title)+'</a>').join('')}</nav><div class="pr-signature"><p>지금의 공부를 지키면서, 다음 과정을 함께 그려가겠습니다.</p></div></section>`;
+ let html=`<div class="pr-document"><section class="pr-page pr-front" id="${id('overview')}" aria-labelledby="${id('overview')}-title"><header class="pr-masthead"><strong>GFIELD</strong><span>우리 아이의 학습 로드맵</span></header><div class="pr-context"><strong>${esc(m.name)}</strong><span>${esc(m.gradeLabel)} · ${esc(m.dateLabel)} · ${m.mode==='custom'?'맞춤 계획':'표준 계획'}</span></div><div class="pr-counsellor"><span class="pr-docssam-portrait"><img src="../v31/assets/math-docssam/docssam-math-A1-mouth-closed.png" width="1024" height="1536" alt="독쌤"></span><h1 id="${id('overview')}-title">독쌤의 전체 총평</h1></div><div class="pr-front-prose">${m.front.prose.map(p=>'<p>'+ink(p)+'</p>').join('')}</div>${renderAdmissions(m.admissions||[])}<div class="pr-priorities">${m.front.priorities.map((p,i)=>`<article class="pr-priority"><span>${String(i+1).padStart(2,'0')}</span><div><h2>${esc(p.title)}</h2><p>${ink(p.text)}</p>${ref(p)}</div></article>`).join('')}</div><div class="pr-checkpoints">${m.front.checkpoints.map(p=>`<article><small>${esc(p.title)}</small><strong>${esc(p.date)}</strong><p>${esc(p.text)}</p></article>`).join('')}</div><nav class="pr-contents" aria-label="상세 로드맵 차례"><strong>뒤에서 자세히 살펴보세요</strong>${m.sections.slice(1).map(s=>'<a href="#'+id(s.id)+'">'+esc(s.title)+'</a>').join('')}</nav><div class="pr-signature"><p>지금의 공부를 지키면서, 다음 과정을 함께 그려가겠습니다.</p></div></section>`;
  const preferred=m.grade==='pre'?'thinking':'school',mapLane=m.lanes.find(l=>l.id===preferred&&l.blocks.length)||m.lanes.find(l=>l.blocks.length),stops=list(mapLane?.blocks).filter(b=>!b.completed&&(!finite(b.end)||b.end>0)).slice(0,3);
  const map=`<figure class="pr-map-scene"><img src="assets/learning-landscape-20261023.png" alt="배움의 공간을 연결한 로드맵 풍경"><figcaption>현재 공부에서 이어가는 ${esc(mapLane?.label||'선택한 과정')}</figcaption><ol class="pr-map-stops">${stops.map((b,i)=>'<li><small>'+(i===0?'현재 과정':i===1?'다음 과정':'이어갈 과정')+'</small><strong>'+esc(b.title)+'</strong><span>'+esc(blockPeriod(m,b))+'</span></li>').join('')}</ol></figure>`;
  html+=section('roadmap','pr-roadmap',`<p class="pr-lead">교과·사고력·심화·연산을 각각의 현재 범위에서 함께 봅니다.</p>${facts}${stops.length?map:'<p class="pr-unset">이어갈 범위를 선택하면 현재 공부에서 다음 과정으로 로드맵이 연결됩니다.</p>'}${m.mode==='custom'&&!m.lanes.some(l=>l.blocks.length)?'<p class="pr-note">아직 고르지 않은 맞춤 교재와 범위는 새 일정으로 채우지 않았습니다.</p>':''}`);
@@ -186,5 +223,5 @@ function render(m,options={}){
  }
  return html+'</div>';
 }
-global.PlannerReport=Object.freeze({model,render,dateAt,blockPeriod});
+global.PlannerReport=Object.freeze({model,render,dateAt,blockPeriod,admissionMilestones});
 })(window);

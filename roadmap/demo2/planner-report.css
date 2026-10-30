@@ -82,3 +82,9 @@
 @media(max-width:800px){.pr-toolbar .pr-pdf-download{font-size:11px;flex:1.5;padding:8px 5px}.pr-toolbar>div:last-child{flex-wrap:wrap}}
 /* Let the report viewport follow the real toolbar height in every orientation. */
 @media screen{.planner-report-dialog[open]{display:grid;grid-template-rows:auto minmax(0,1fr)}#plannerReportContent{height:auto;min-height:0}}
+
+/* Admission goals stay separate for school concepts, depth, thinking and calculation. */
+.pr-admissions{margin:24px 0;break-inside:avoid}.pr-admissions>h2{font-size:21px;line-height:1.4}.pr-admission-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px}.pr-admission-card{min-width:0;padding:17px;border:1px solid #d8cbe2;border-radius:14px;background:#fbf8fd;overflow-wrap:anywhere}.pr-admission-card h3{margin:0 0 5px;font-size:18px;color:#60416f}.pr-admission-card>strong{font-size:12px;color:#85738e}.pr-admission-row{padding:12px 0;border-bottom:1px solid #e9dfef}.pr-admission-row:last-child{border-bottom:0;padding-bottom:0}.pr-admission-row>b{font-size:13px}.pr-admission-row p{font-size:12px!important;line-height:1.65!important;margin:5px 0!important}.pr-admission-row p span{font-size:10px;color:#79538e}.pr-admission-row small{display:block;font-size:10px;line-height:1.6;color:#82758b}
+@media print{.pr-admissions{break-inside:auto}.pr-admission-card{break-inside:avoid}.pr-admission-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.pr-admission-summary{font-family:var(--font-hand,var(--font-ui));font-size:20px!important;line-height:1.5!important;text-decoration:underline;text-decoration-color:#d5bcdf;text-underline-offset:4px}
