@@ -10,6 +10,25 @@ async function memberOf(service: any, name: string) {
   return membershipSummary(data);
 }
 
+// 틀린 승인번호 막기(원장 2026-10-31): 같은 이름으로 15분 안에 10번 틀리면 15분 동안 그 이름의 로그인을 막는다.
+// 있는 이름만 센다(없는 이름으로 표를 채우지 않게). 표 fields_login_failures는 service_role만 쓴다.
+const MAX_FAILS = 10;
+const LOCK_MS = 15 * 60 * 1000;
+async function lockedOut(service: any, name: string) {
+  const { data } = await service.from("fields_login_failures").select("locked_until").eq("student_name", name).maybeSingle();
+  return Boolean(data?.locked_until && new Date(data.locked_until).getTime() > Date.now());
+}
+async function failedLogin(service: any, name: string) {
+  const now = Date.now();
+  const { data } = await service.from("fields_login_failures").select("fails,first_at").eq("student_name", name).maybeSingle();
+  const fresh = !data || now - new Date(data.first_at).getTime() > LOCK_MS;
+  const fails = (fresh ? 0 : data.fails) + 1;
+  const row = fails >= MAX_FAILS
+    ? { student_name: name, fails: 0, first_at: new Date(now).toISOString(), locked_until: new Date(now + LOCK_MS).toISOString() }
+    : { student_name: name, fails, first_at: fresh ? new Date(now).toISOString() : data.first_at, locked_until: null };
+  await service.from("fields_login_failures").upsert(row);
+}
+
 const ALLOWED_ORIGINS = new Set([
   "https://lete-on.gfieldacademy.net",
   "https://docssam1.github.io",
@@ -79,7 +98,8 @@ Deno.serve(async (req: Request) => {
     if (action === "login" || action === "admin-login") {
       const code = String(body?.code || "").trim().toUpperCase();
       const suppliedName = String(body?.name || "").replace(/\s+/gu, "").trim();
-      if (code.length < 6 || code.length > 64 || suppliedName.length < 1 || suppliedName.length > 30) {
+      // 네 자리 승인번호도 받는다(원장 2026-10-31) — 대신 아래 failedLogin이 같은 이름으로 거듭 틀리면 잠시 막는다
+      if (code.length < 4 || code.length > 64 || suppliedName.length < 1 || suppliedName.length > 30) {
         return json(req, { error: "credentials_invalid" }, 400);
       }
       if (isFieldsAdminName(suppliedName)) {
@@ -100,11 +120,16 @@ Deno.serve(async (req: Request) => {
       }
       if (action === "admin-login") return json(req, { error: "credentials_invalid" }, 401);
       const codeHash = await sha256(code);
+      if (await lockedOut(service, suppliedName)) return json(req, { error: "too_many_attempts" }, 429);
       const { data: account, error } = await service.from("fields_access_accounts")
         .select("student_name,code_hash,permissions,student_type,active").eq("student_name", suppliedName).maybeSingle();
       if (error) console.error("fields_access_account_query_failed", error.code, error.message);
       if (error) return json(req, { error: "account_lookup_failed" }, 503);
-      if (!account?.active || account.code_hash !== codeHash) return json(req, { error: "credentials_invalid" }, 401);
+      if (!account?.active || account.code_hash !== codeHash) {
+        if (account) await failedLogin(service, account.student_name);
+        return json(req, { error: "credentials_invalid" }, 401);
+      }
+      await service.from("fields_login_failures").delete().eq("student_name", account.student_name);
       const member = await memberOf(service, account.student_name);
       if (member && !member.open) return json(req, { error: member.reason, member }, 403);
       const token = randomToken();
