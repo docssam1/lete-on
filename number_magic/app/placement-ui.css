@@ -71,3 +71,40 @@
 .pd-ladder-result li.is-start{background:#eef3ed;color:#193b3c;font-weight:700}
 .pd-ladder-result li.is-later{color:#8a9893}
 .pd-ladder-result em{font-style:normal;font-size:12px;background:var(--pd-accent);color:#fff;border-radius:999px;padding:2px 9px}
+/* 진단 문항 한 화면 맞춤(2026-10-31 원장 「1문제씩 나오니 스크롤 안 해도 되게, 문제는 왼쪽·답 칸은 오른쪽」).
+   넓고 높은 창(가로 900px↑·세로 560px↑)에서 숫자 입력 문항만: 왼쪽 = 문제 글 + 그림, 오른쪽 = 답 칸 + 숫자판 + 버튼.
+   휴대폰·좁은 창은 예전 그대로 세로로 쌓는다. 그림만 고르는 문항(숫자판 없음)도 그대로. */
+@media (min-width:900px) and (min-height:560px){
+  .nm-placement[data-pd-view^="question"]:has(.pd-keypad){max-width:1120px;padding-top:14px;padding-bottom:18px}
+  .nm-placement[data-pd-view^="question"]:has(.pd-keypad) .pd-flow{margin-bottom:0;padding-bottom:10px}
+  .nm-placement[data-pd-view^="question"]:has(.pd-keypad) .pd-session-tools{padding:2px 0;border-bottom:0}
+  .nm-placement[data-pd-view^="question"]:has(.pd-keypad) .pd-session-tools button{min-height:32px;padding:4px 10px}
+  .nm-placement[data-pd-view^="question"]:has(.pd-keypad) .pd-question-top{padding-top:10px}
+  .nm-placement .pd-question:has(.pd-keypad){
+    display:grid;grid-template-columns:minmax(0,1fr) 340px;column-gap:56px;align-items:start;padding-top:14px;
+    grid-template-areas:"prompt answer" "scene keypad" "scene error" "scene actions" "paper paper";
+    grid-template-rows:auto auto auto 1fr auto}
+  .nm-placement .pd-question:has(.pd-keypad) h1{grid-area:prompt;margin:0 0 6px}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-scene{grid-area:scene;align-self:center;min-height:0;padding:10px 6px}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-answer-fields{grid-area:answer;margin:0;gap:12px;flex-wrap:nowrap;justify-content:stretch}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-answer-fields label{flex:1 1 0;min-width:0}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-keypad{grid-area:keypad;margin:12px 0 0;grid-template-columns:repeat(3,1fr);gap:7px;justify-content:stretch}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-keypad button{height:44px}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-error{grid-area:error;margin:4px 0;min-height:18px}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-question-actions{grid-area:actions;margin-top:6px;align-self:start}
+  .nm-placement .pd-question:has(.pd-keypad) #pdQuestionPaper{grid-area:paper;justify-self:start}
+}
+@media (min-width:900px) and (min-height:560px) and (max-height:760px){
+  .nm-placement .pd-question:has(.pd-keypad) .pd-keypad{gap:5px;margin-top:8px}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-keypad button{height:36px;font-size:19px!important}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-answer{min-height:42px;font-size:22px!important}
+  .nm-placement .pd-question:has(.pd-keypad) h1{font-size:22px}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-question-actions .pd-primary,.nm-placement .pd-question:has(.pd-keypad) .pd-question-actions .pd-secondary{min-height:42px;padding-top:8px;padding-bottom:8px}
+  .nm-placement[data-pd-view^="question"]:has(.pd-keypad){padding-top:6px;padding-bottom:8px}
+  .nm-placement[data-pd-view^="question"]:has(.pd-keypad) .pd-flow{display:none}
+  .nm-placement[data-pd-view^="question"]:has(.pd-keypad) .pd-question-top{padding-top:2px}
+  .nm-placement[data-pd-view^="question"]:has(.pd-keypad) .pd-question-top p{margin-bottom:4px}
+  .nm-placement .pd-question:has(.pd-keypad){padding-top:8px}
+  .nm-placement .pd-question:has(.pd-keypad) #pdQuestionPaper{min-height:28px;padding:2px 0}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-keypad{margin-bottom:0}
+}
