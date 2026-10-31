@@ -16,7 +16,9 @@
  function keyOf(key){
   key=String(key);
   if(!key.startsWith(prefix)||key.startsWith(saved))throw new RangeError('PlannerStorage requires a gfield.demo2 plan key');
-  return key;
+  // A verified account never reads another account's (or an unclaimed legacy) plan.
+  const owner=global.RoadmapMember?.user_id;
+  return owner?prefix+'member.'+owner+'.'+key.slice(prefix.length):key;
  }
  function localKey(key){return saved+key.slice(prefix.length);}
  function guardKey(key){return guard+key.slice(prefix.length);}
