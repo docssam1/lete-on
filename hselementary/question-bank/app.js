@@ -590,10 +590,11 @@
       const source52DicePage54 = question.sourceItemId === "5-2-u5-e4-exploration-1" || /^5-2-u5-e4-example-4-[1-4]$/.test(question.sourceItemId || "");
       const source52DicePage55 = /^5-2-u5-e4-mission-[1-6]$/.test(question.sourceItemId || "");
       const source52PackingPractice = question.sourceItemId === "5-2-u5-check108-q8-packing-synthetic";
+      const source52GridPractice = question.sourceItemId === "5-2-u5-e1-mission-1-grid-synthetic";
       const source52ArrowPractice = question.sourceItemId === "5-2-u5-check113-q43-arrow-synthetic";
       const source52TrapezoidMission = question.sourceItemId === "5-2-u3-e4-mission-6";
       const source52EquilateralExample = question.sourceItemId === "5-2-u3-e4-example-2";
-      const weight = source52RoundingMission ? 2 : ratioE2Text ? question.sourceItemId.endsWith("exploration") ? 4 : 2 : source52DicePage54 || source52DicePage55 || source52ArrowPractice || source52TrapezoidMission || source52EquilateralExample || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 || hasBorderTwoHeightTables || hasNotchedTwoStates || hasCubeAdditionClasses ? 8 : source52PackingPractice || hasColoredCutPair ? 4 : hasCompactAnswerVisual ? 2.5 : hasVisual ? 3 : 1;
+      const weight = source52RoundingMission ? 2 : ratioE2Text ? question.sourceItemId.endsWith("exploration") ? 4 : 2 : source52DicePage54 || source52DicePage55 || source52ArrowPractice || source52TrapezoidMission || source52EquilateralExample || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 || hasBorderTwoHeightTables || hasNotchedTwoStates || hasCubeAdditionClasses ? 8 : source52PackingPractice || source52GridPractice || hasColoredCutPair ? 4 : hasCompactAnswerVisual ? 2.5 : hasVisual ? 3 : 1;
       const solutionPageLimit = source52RoundingMission ? 6 : source52RoundingApplicationExploration ? 5 : 8;
       if (solutionPage.length && (solutionPage.length >= 8 || solutionWeight + weight > solutionPageLimit)) {
         solutionPages.push(solutionPage);
