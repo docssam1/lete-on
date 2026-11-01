@@ -1293,9 +1293,11 @@
       "sourceVerified": true,
       "calculationStatus": "checked-independent-net-enumeration",
       "visualCheckStatus": "confirmed-source-net-needs-model",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안과 공개용 전개도를 확인하기 전 원문 잠금을 유지합니다."
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "sourceAuditUpdate": "2026-11-02 원본과 필기 없는 사본의 전개도 및 여섯 수를 대조하고, 3차원 접힘과 여덟 꼭짓점 곱 및 최대공약수 16을 재검산했습니다. 원본 한 문항과 기존의 다른 수·다른 전개도 연습문제는 별도 유형으로 유지합니다. 출판사 공식 답안은 미확인입니다.",
+      "releaseEvidence": "원문 및 필기 없는 사본, 독립 접힘·곱 계산, 문제·해설 화면과 A4를 대조했습니다. 출판사 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u5-e3-mission-4",

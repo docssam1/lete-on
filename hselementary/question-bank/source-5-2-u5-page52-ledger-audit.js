@@ -22,5 +22,6 @@ for (let n = 1; n <= 6; n++) {
   const item = lookup(`mission-${n}`);
   assert.equal(item.pdfPage, 49);
   assert.equal(item.printedPage, 53);
+  if (n === 3) { assert.equal(item.sourceVerified, true); assert.equal(item.runtimeTypeId, "5-2-u5-e3-mission-3"); }
 }
 console.log("PASS: 52–53 source locators, verified examples 3-1 through 3-4 and remaining source locks");
