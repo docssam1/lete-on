@@ -16,6 +16,27 @@
     "resolution": "단원 표지 PDF 43쪽에서 실제 제목 5. 직육면체를 확인하고, 문항은 PDF 44~51쪽으로 확정했다. 각 페이지 아래 인쇄 번호는 48~55쪽이다.",
     "evidence": "600dpi 직접 렌더 PDF 43~51쪽과 페이지 하단 인쇄 번호"
   },
+  "additionalSourceReviews": [
+    {
+      "section": "확인학습 5단원 직육면체의 성질",
+      "sourcePdfPage": 102,
+      "alternateSourcePdfPage": 103,
+      "sourcePrintedPage": 108,
+      "scope": "108쪽 1~8번을 기존 원본과 필기 없는 별도 사본에서 그림·면·모서리까지 대조했다. 8번은 여러 방향을 섞어 놓는 배치에서 최대를 추가 검증한다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 1, "classification": "직육면체의 평행한 면·수직인 면·옆면", "candidate": "(1) ⑥ (2) ①, ②, ③, ④ (3) ③, ④, ⑤, ⑥", "visual": "직육면체의 여덟 꼭짓점 ㄱ~ㅇ과 면을 나열한 보기 여섯 개가 주어진다.", "reviewNote": "면 ㄴㅂㅁㄱ의 맞은편은 면 ㄷㅅㅇㄹ이다. 나머지 네 면은 이 면에 수직이다. 위쪽 면 ㄱㄴㄷㄹ을 밑면으로 잡으면 ③~⑥이 옆면이다. 실제 원문 글자와 면의 대응을 그림으로 재확인한다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 2, "classification": "직육면체의 대각선으로 만든 수직 단면", "candidate": "①, ②", "visual": "직육면체의 ㄱ·ㅁ·ㅅ·ㄷ을 이은 세로 방향 대각 단면에 수직인 원래의 면을 고른다.", "reviewNote": "단면 ㄱㅁㅅㄷ은 세로 모서리를 포함하는 수직 평면이므로 위쪽 면 ①과 아래쪽 면 ②에 수직이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 3, "classification": "직육면체의 앞·옆·위에서 본 길이", "candidate": "위에서 본 가로 8cm, 세로 6cm", "reviewNote": "앞에서 본 가로가 8cm, 옆에서 본 가로가 깊이 6cm이므로 위에서 보면 8cm×6cm다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 4, "classification": "직육면체의 모든 모서리 길이의 합", "candidate": "64cm", "reviewNote": "앞·옆 모습에서 가로 7cm, 세로 6cm, 높이 3cm이므로 4×(7+6+3)=64cm다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 5, "classification": "격자 모서리를 따라 찾는 크고 작은 직육면체 개수", "candidate": "900개", "visual": "한 변 1cm인 정육면체가 가로 5개, 깊이 4개, 높이 3개로 쌓여 있다.", "reviewNote": "격자에 평행한 두 경계면을 각 방향에서 고르면 6개 중 2개, 5개 중 2개, 4개 중 2개이므로 15×10×6=900개다. 정육면체도 직육면체에 포함하고 격자 모서리를 따라 찾는 해석이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 6, "classification": "정육면체 네 개로 만든 직육면체의 모서리 합", "candidate": "192cm", "reviewNote": "정육면체 한 변은 96÷12=8cm이고 이어 붙인 직육면체는 32cm×8cm×8cm다. 모서리 합은 4×(32+8+8)=192cm다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 7, "classification": "직육면체에서 같은 크기의 가장 큰 정육면체 자르기", "candidate": "6개, 한 개의 모서리 합 180cm", "reviewNote": "30cm, 45cm, 15cm의 최대공약수는 15cm다. 2×3×1=6개이고 한 정육면체의 모서리 합은 12×15=180cm다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 8, "classification": "직육면체 상자에 작은 직육면체를 넣는 최댓값", "candidate": "65개 이상 66개 이하; 정확한 최댓값 미확정", "visual": "상자 25cm×20cm×16cm에 물건 4cm×5cm×6cm를 가능한 많이 넣는다.", "reviewNote": "5cm 두께의 구역 다섯 개로 나누고 각 구역의 20cm×16cm 단면에서 4×6 직사각형 13개를 넣으면 총 65개가 가능하다. 예를 들어 높이 6cm짜리 두 줄에 각각 다섯 개, 높이 4cm짜리 한 줄에 세 개를 둔다. 전체 부피 8000cm³와 물건 부피 120cm³로 상한은 66개다. 한 방향만 쓰는 최대 64개는 혼합 방향 배치의 최댓값이 아니다. 66개 가능 여부 및 회전 배치 허용 범위를 검증하기 전 확정하지 않는다.", "status": "source-ambiguity-answer-key-pending"}
+      ]
+    }
+  ],
   "sourcePagesDirectlyReviewed": [43, 44, 45, 46, 47, 48, 49, 50, 51],
   "printedPagesDirectlyReviewed": [47, 48, 49, 50, 51, 52, 53, 54, 55],
   "reviewScope": "단원 표지의 실제 제목으로 경계를 확인하고 PDF 44~51쪽을 600dpi로 직접 렌더해 개념탐구 4개, 예제 16개, Mission 24개를 번호 단위로 기록했다. 원문 그림·조건·문항 구조는 확인했으며, 페이지의 연필·빨간 필기 답은 근거에서 제외했다.",
