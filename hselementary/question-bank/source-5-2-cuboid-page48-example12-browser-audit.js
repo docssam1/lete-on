@@ -82,6 +82,14 @@ function startServer() {
       assert.equal(await mobile.count(), 1, "mobile orthographic views exist");
       assert.equal(await mobile.locator("svg").count(), 2, "mobile presents both source views");
       assert(await problemItem.locator(width < 680 ? ".source52-p48e12-mobile" : ".source52-p48e12-desktop").isVisible(), `responsive diagram visible at ${width}px`);
+      const visibleViews = width < 680 ? mobile.locator("svg") : desktop;
+      for (let i = 0; i < await visibleViews.count(); i++) {
+        const bounds = await visibleViews.nth(i).evaluate(svg => {
+          const outer = svg.getBoundingClientRect();
+          return [...svg.querySelectorAll("text")].map(text => { const r = text.getBoundingClientRect(); return r.left >= outer.left-1 && r.right <= outer.right+1 && r.top >= outer.top-1 && r.bottom <= outer.bottom+1; });
+        });
+        assert(bounds.every(Boolean), `source dimensions remain within their diagram at ${width}px`);
+      }
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `problem horizontal overflow ${width}px`);
       await page.screenshot({ path: path.join(outputDir, `example12-problem-${width}.png`), fullPage: true });
       const problemBox = await problemItem.boundingBox();
@@ -101,6 +109,13 @@ function startServer() {
           await page.locator("#printMenuButton").click();
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(expected => document.body.dataset.printMode === expected, mode);
+          if (mode === "problem") {
+            await page.emulateMedia({media:"print"});
+            const fills = await desktop.locator(".source52-p48e12-view rect").evaluateAll(nodes => nodes.map(node => getComputedStyle(node).fill));
+            assert.equal(fills.length,2);
+            assert(fills.every(fill => fill !== "rgb(255, 255, 255)"), "both source views remain shaded in print");
+            await page.emulateMedia({media:null});
+          }
           const file = path.join(outputDir, `example12-${mode}.pdf`);
           await page.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
           assert(fs.statSync(file).size > 5000, `${mode} A4 PDF has content`);
