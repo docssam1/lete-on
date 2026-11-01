@@ -167,6 +167,72 @@
           "status": "source-reviewed-answer-key-pending"
         }
       ]
+    },
+    {
+      "section": "확인학습 2단원 분수끼리의 곱셈",
+      "sourcePdfPage": 74,
+      "sourcePrintedPage": 78,
+      "scope": "문항 25~32를 원문과 필기 없는 사본으로 대조하고 독립 계산했다. 그림은 없다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {
+          "number": 25,
+          "classification": "분수의 곱 부등식과 자연수",
+          "candidate": "1, 2, 3, 4, 5, 6, 7",
+          "reviewNote": "1/(2n)>1/15이므로 자연수 n<7.5",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 26,
+          "classification": "정의된 이항 연산",
+          "candidate": "3과 11/32",
+          "reviewNote": "16/7×7/4−7/4×3/8=107/32",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 27,
+          "classification": "제곱과 두 배 곱의 혼합 연산",
+          "candidate": "4",
+          "reviewNote": "(8/3)²−2×8/3×2/3+(2/3)²=4",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 28,
+          "classification": "세 숫자 카드로 만드는 대분수의 곱",
+          "candidate": "167과 181/320",
+          "reviewNote": "세 대분수는 3과 5/8, 5과 3/8, 8과 3/5이며 곱은 53621/320",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 29,
+          "classification": "두 숫자 카드로 만드는 진분수의 곱",
+          "candidate": "1/4",
+          "reviewNote": "4/5×4/8×5/8=1/4",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 30,
+          "classification": "규칙에 따른 두 분수 항의 곱",
+          "candidate": "6/53",
+          "reviewNote": "n번째 항 n/(3n−1)이므로 24/71×71/212=6/53",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 31,
+          "classification": "두 교대 수열의 108개 항의 곱",
+          "candidate": "1036",
+          "reviewNote": "각 54항씩 묶으면 홀수 번째 곱 111/3, 짝수 번째 곱 56/2; 곱 1036",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 32,
+          "classification": "철사의 분수 길이와 정사각형 둘레",
+          "candidate": "2/7m",
+          "reviewNote": "(64/5÷8)×5/7÷4=2/7m",
+          "status": "source-reviewed-answer-key-pending"
+        }
+      ]
     }
   ],
   "normalization": {
