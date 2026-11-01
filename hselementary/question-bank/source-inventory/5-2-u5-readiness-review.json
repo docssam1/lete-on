@@ -588,7 +588,7 @@
       "implementationStatus": "verified-local",
       "publicDecision": "public",
       "lockReason": "",
-      "sourceAuditUpdate": "원문 조건과 독립 계산을 확인했습니다. 축별 블록 수 (a,b,c)는 abc=8이고 순서 삼중항 10개, 회전·뒤집기 동치로 정렬한 결과 크기도 10개 모두 서로 다릅니다. 원문형 치수 그림, 전체 목록 풀이, PC·375px·320px와 A4 문제/풀이 각 한 쪽 통과; 공식 답안표 미확인.",
+      "sourceAuditUpdate": "원문 조건과 독립 계산을 확인했습니다. 축별 블록 수 (a,b,c)는 abc=8이고 순서 삼중항 10개, 회전·뒤집기 동치로 정렬한 결과 크기도 10개 모두 서로 다릅니다. 원문형 치수 그림, 전체 목록 풀이, PC·375px·320px와 A4 문제/풀이 각 한 쪽 통과; 공식 답안표 미확인. 2026-11-02: 원문 그림에서 누락된 앞·옆면 사이 모서리를 복원했습니다. 출력 해설에 제목만 남은 빈 쪽이 앞에 생기던 현상을 고치고, 열 가지 목록이 있는 문제와 풀이 각각 A4 한 쪽으로 출력되는 것을 확인했습니다.",
       "releaseStatus": "runtime-enabled-in-current-release",
       "publisherKeyVerified": false,
       "releaseEvidence": "원문 및 독립 계산, 화면·A4 검수 고정 문항을 현재 main 기준 문제은행에 연결했습니다. 공식 출판사 답안은 미확인입니다."
