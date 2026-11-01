@@ -39,7 +39,7 @@ assert.equal((generated.prompt.match(/<g class="source52-p49m3-knot"/g) || []).l
 assert.match(generated.prompt, /data-loop-count="3" data-wraps-per-loop="2"/);
 assert(!generated.prompt.includes("source52-p49m3-hidden"), "hidden rear edges do not cross the front face");
 assert(generated.prompt.includes('M359 329 469 249'), "depth dimension follows the receding edge");
-for (const path of ["M95 242H345L455 162M95 258H345L455 178", "M145 149H395V279M155 141H405V271", "M212 315V185L322 105M228 315V185L338 105"]) assert(generated.prompt.includes(path), "only visible tape segments are drawn");
+for (const path of ["M95 250H345L455 170", "M150 145H400V275", "M220 315V185L330 105"]) assert(generated.prompt.includes(path), "only visible tape segments are drawn");
 assert.doesNotMatch(generated.prompt, /760cm|data-source-answer/, "answer stays out of the prompt");
 for (const phrase of ["130cm", "118cm", "108cm", "712cm", "48cm", "760cm"]) assert(generated.solution.includes(phrase), `solution includes ${phrase}`);
 assert.equal((generated.solution.match(/<g class="source52-p49m3-knot"/g) || []).length, 3);
