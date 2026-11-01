@@ -14,4 +14,7 @@
   #solutionView [data-source-answer="5-2-u5-e3-mission-3-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   #problemView [data-source-item-id="5-2-u5-e1-example-1-4-synthetic"],
   #solutionView [data-source-answer="5-2-u5-e1-example-1-4-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u5-check108-q8-packing-synthetic"],
+  #solutionView [data-source-answer="5-2-u5-check108-q8-packing-synthetic"],
+  #solutionView [data-source-answer="5-2-u5-check108-q8-packing-synthetic"] p { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
 }

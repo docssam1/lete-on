@@ -2160,6 +2160,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
   const source52CuboidProperties = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s1");
   if (source52CuboidProperties) {
+    const packingId = "5-2-u5-check108-q8-packing-synthetic";
+    if (!source52CuboidProperties.types.some(type => type.id === packingId)) {
+      const packingName = "직육면체 상자에 물건 넣기 · 연습";
+      const packingNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidProperties.types.push({id:packingId, number:source52CuboidProperties.types.length+1, typeNumber:packingNumber,
+        name:packingName, label:packingName, difficultyBand:0, sourceItemId:packingId, sourceParentItemId:"5-2-u5-check108-q8",
+        sourceItemLabel:"확인학습 8번 유사문항", sourceSection:"practice", sourceTier:"advanced", sourcePdfPage:102, sourcePrintedPage:108,
+        sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52U5LayerPackingPractice",
+        generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantTarget:4, verifiedVariantCount:4,
+        answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원문과 다른 치수의 연습 네 문항을 실제 배치와 부피 상한으로 검산했습니다."});
+    }
     const practiceId = "5-2-u5-e1-example-1-4-synthetic";
     if (!source52CuboidProperties.types.some(type => type.id === practiceId)) {
       const practiceName = "세 방향으로 묶은 끈과 변의 관계 · 연습";
