@@ -1862,11 +1862,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               publisherKeyVerified: false,
               answerVerification: "independent-equal-area-decomposition-user-authorized",
               reviewLocked: false,
-              reviewReason: "원본의 직각 표시, 윗변 10cm·아랫변 8cm·높이 6cm, 변 ㄴㄷ의 중점 ㅁ과 목표 △ㄱㄹㅁ을 직접 대조했습니다. 같은 밑변·높이인 삼각형 넓이를 이용해 목표가 사다리꼴 넓이의 절반임을 독립 계산했습니다. 9개 변형의 그림·답·풀이와 화면·A4 출력을 확인했습니다. 출판사 정답표는 확인하지 않았습니다.",
+              reviewReason: "원본의 직각 표시, 윗변 10cm·아랫변 8cm·높이 6cm, 변 ㄴㄷ의 중점 ㅁ과 목표 △ㄱㄹㅁ을 직접 대조했습니다. 같은 밑변·높이인 삼각형 넓이를 이용해 목표가 사다리꼴 넓이의 절반임을 독립 계산했습니다. 12개 변형의 그림·답·풀이와 화면·A4 출력을 확인했습니다. 출판사 정답표는 확인하지 않았습니다.",
               generatorKey: "source52TrapezoidMidpointPage31Mission6",
               generationMode: "fixed-verified-pool",
-              verifiedVariantTarget: 3,
-              verifiedVariantCount: 3,
+              verifiedVariantTarget: 4,
+              verifiedVariantCount: 4,
               answerVisualRequired: true,
               answerVisualStatus: "verified-reconstruction"
             }
