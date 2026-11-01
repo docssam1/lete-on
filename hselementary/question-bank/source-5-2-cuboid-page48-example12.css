@@ -14,7 +14,10 @@
   .source52-p48e12-mobile svg { width: 100%; height: auto; }
   .source52-p48e12-mobile svg + svg { max-width: 210px; justify-self: center; }
 }
+@page source52P48ExamplesAnswer { size: A4; margin: 10mm 0; }
 @media print {
+  .answer-page:has(.source52-p48e12-solution, .source52-p48e13-solution) { page: source52P48ExamplesAnswer; }
+  .source52-p48e12-question, .source52-p48e12-solution { font-family: "Noto Serif KR", "Batang", serif; font-weight: 400; }
   .source52-p48e12-desktop { max-height: 70mm; }
   .source52-p48e12-mobile { display: none !important; }
 }
