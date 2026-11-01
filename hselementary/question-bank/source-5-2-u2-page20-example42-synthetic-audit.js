@@ -8,5 +8,6 @@ for(let i=0;i<3;i++)for(const d of [-1,0,1]){
  assert.equal(8*(an*ld-ln*ad)*rd,5*(rn*ld-ln*rd)*ad,'independent weighted interpolation');
  assert.deepEqual(q.questionModel.markedPosition,[5,8]);assert.equal((q.prompt.match(/class="source52-p20e42-grid"/g)||[]).length,9);
  assert.match(q.prompt,/class="source52-p20e42-diagonal"/);assert.match(q.prompt,/class="source52-p20e42-drop"/);assert(q.solution.includes(`data-source-answer="${m.id}"`));assert(!q.prompt.includes('data-source-answer'));assert.equal(q.publisherKeyVerified,false);
+ if(d===0){assert.match(q.solution,/가로선으로 직사각형의 높이가 8등분/);assert.doesNotMatch(q.solution,/가로 방향이 8등분/);}
 }
 console.log('page20 example42 exact interpolation, diagram and release guards passed');
