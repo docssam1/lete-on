@@ -40,7 +40,8 @@
     for (let z = 1; z < 3; z++) lines.push(edge(frontRight + z * depthX, frontTop - z * depthY, frontRight + z * depthX, frontBottom - z * depthY, "grid"));
     for (let y = 1; y < 3; y++) lines.push(edge(frontRight, frontTop + y * cell, backRight, frontTop + y * cell - 3 * depthY, "grid"));
     const outline = [
-      edge(frontLeft, frontTop, frontRight, frontTop), edge(frontRight, frontTop, backRight, backTop),
+      edge(frontLeft, frontTop, frontRight, frontTop), edge(frontRight, frontTop, frontRight, frontBottom),
+      edge(frontRight, frontTop, backRight, backTop),
       edge(backRight, backTop, backRight, backBottom), edge(backRight, backBottom, frontRight, frontBottom),
       edge(frontRight, frontBottom, frontLeft, frontBottom), edge(frontLeft, frontBottom, frontLeft, frontTop),
       edge(frontLeft, frontTop, backLeft, backTop), edge(backLeft, backTop, backRight, backTop)

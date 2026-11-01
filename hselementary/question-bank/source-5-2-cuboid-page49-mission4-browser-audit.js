@@ -54,6 +54,7 @@ function startServer() {
       await problem.waitFor({ state: "visible" });
       assert.match(await problem.innerText(), /쌓기나무 27개로 만든 정육면체/);
       assert.equal(await problem.locator("svg.source52-p49m4-diagram").count(), 1);
+      assert.equal(await problem.locator('line.source52-p49m4-outline[x1="215"][y1="68"][x2="215"][y2="233"]').count(), 1, "front and right faces have their shared visible edge");
       assert.equal(await page.locator(`#problemView [data-source-answer='${itemId}']`).count(), 0);
       const pWidth = await page.evaluate(() => document.documentElement.scrollWidth);
       assert(pWidth <= width + 1, `problem overflow at ${width}: ${pWidth}`);
