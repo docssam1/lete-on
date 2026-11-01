@@ -10,8 +10,8 @@ record=json.loads((Path(__file__).parent/'source-inventory/5-2-u3-e1-e4-readines
 r=next(x for x in record['additionalSourceReviews'] if x['sourcePrintedPage']==88)
 assert r['sourcePdfPage']==84 and r['runtimeConnection']=='not-connected' and r['publisherAnswerVerified'] is False
 assert [x['number'] for x in r['items']]==list(range(25,33))
-assert all(x['status']=='source-ambiguity-answer-key-pending' for x in r['items'] if x['number'] not in (26,27,29,32))
-assert all(next(x for x in r['items'] if x['number']==n)['status']=='source-reviewed-answer-key-pending' for n in (26,27))
+assert next(x for x in r['items'] if x['number']==28)['status']=='source-ambiguity-answer-key-pending'
+assert all(next(x for x in r['items'] if x['number']==n)['status']=='source-reviewed-answer-key-pending' for n in (25,26,27,30,31))
 assert next(x for x in r['items'] if x['number']==29)['status']=='source-reviewed-answer-key-pending'
 assert next(x for x in r['items'] if x['number']==32)['status']=='source-reviewed-answer-key-pending'
 # Coordinates use y scaled by sqrt(3), preserving exact distances via dx²+3dy².
