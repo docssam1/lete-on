@@ -305,6 +305,24 @@
         {"number": 63, "classification": "두 분수의 공통 자연수배를 만드는 최소 양의 분수", "candidate": "77/15", "reviewNote": "기약분수 분모의 최소공배수 77을 분자의 최대공약수 15로 나눔", "status": "source-reviewed-answer-key-pending"},
         {"number": 64, "classification": "세 분수의 공통 자연수배를 만드는 최소 양의 분수", "candidate": "735/8 (같은 분수를 각각 곱한다는 해석)", "reviewNote": "세 수에 동일한 분수를 곱한다면 분모 최소공배수 735와 분자 최대공약수 8에서 735/8. 문장에 같은 분수라는 말이 없어 조건 해석 확인 필요", "status": "source-ambiguity-answer-key-pending"}
       ]
+    },
+    {
+      "section": "확인학습 2단원 분수의 곱셈 응용",
+      "sourcePdfPage": 79,
+      "sourcePrintedPage": 83,
+      "scope": "문항 65~72를 원문과 필기 없는 사본으로 대조하고 독립 계산했다. 66~68번 수직선의 눈금과 간격을 직접 확인했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 65, "classification": "세 분수를 곱해 자연수가 되는 최소 양의 분수", "candidate": "84/5", "reviewNote": "곱하는 수 5/3, 10/7, 35/4의 분모 최소공배수 84, 분자 최대공약수 5", "status": "source-reviewed-answer-key-pending"},
+        {"number": 66, "classification": "네 등분된 수직선 위 세 값", "candidate": "ㄱ 2와 3/140, ㄴ 3과 31/70, ㄷ 4와 121/140", "visual": "3/5와 6과 2/7 사이를 같은 간격 4개로 나누고 내부 눈금을 차례로 ㄱ, ㄴ, ㄷ으로 표기", "reviewNote": "한 간격은 (44/7−3/5)/4=199/140", "status": "source-reviewed-answer-key-pending"},
+        {"number": 67, "classification": "다섯 등분된 수직선의 내부 값", "candidate": "4와 2/5", "visual": "3과 3/4와 4와 5/6 사이를 5등분하고 왼쪽에서 세 번째 눈금에 가 표시", "reviewNote": "15/4+(29/6−15/4)×3/5=22/5", "status": "source-reviewed-answer-key-pending"},
+        {"number": 68, "classification": "등간격 소수 수직선의 기약분수", "candidate": "5", "visual": "여섯 개 점이 등간격이고 0.125는 첫 점, 0.2는 네 번째 점, □는 여섯 번째 점", "reviewNote": "간격은 (0.2−0.125)/3=0.025, □=0.25=1/4이므로 분자와 분모의 합 5. 필기의 27로 보이는 수와 다르므로 공식 답 확인 필요", "status": "source-reviewed-answer-key-pending"},
+        {"number": 69, "classification": "등간격 행렬의 부분 거리", "candidate": "3과 3/7m", "reviewNote": "8명 사이 간격 7개가 8m, 둘째와 다섯째 사이는 3개 간격이므로 24/7m", "status": "source-reviewed-answer-key-pending"},
+        {"number": 70, "classification": "소수배를 이용한 기약분수의 분자와 분모", "candidate": "30", "reviewNote": "(6/5)÷0.36=10/3, 분자와 분모의 곱 30", "status": "source-reviewed-answer-key-pending"},
+        {"number": 71, "classification": "한 자리 수와 기약분수 곱의 자연수 조건", "candidate": "6개", "reviewNote": "ㄱ은 2와 서로소이면서 3의 배수인 3,9이고 ㄴ은 3과 서로소인 짝수 2,4,8", "status": "source-reviewed-answer-key-pending"},
+        {"number": 72, "classification": "직사각형 넓이와 가로를 이용한 기약분수", "candidate": "119", "reviewNote": "세로=(17/3)÷(7/3)=17/7, 분자와 분모의 곱 119", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "normalization": {
