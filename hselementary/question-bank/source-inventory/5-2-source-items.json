@@ -4613,14 +4613,16 @@
       "pdfPage": 48,
       "printedPage": 52,
       "sourceShape": "선이 표시된 전개도를 접었을 때 나올 수 없는 정육면체 모양을 다섯 보기에서 고릅니다.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "single-choice: ②",
       "visualRisk": [
         "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
         "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "원본 전개도와 다섯 보기를 대조하고 24가지 회전 및 대각선 끝점을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",
+      "runtimeTypeId": "5-2-u5-e3-example-3-4",
+      "implementationEvidence": "원본 그림, 독립 24회전 및 대각선 끝점 검산, 문제와 풀이의 PC·모바일 및 A4 출력 대조. 출판사 공식 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u5-e3-mission-1",
