@@ -14,5 +14,6 @@
   .source52-p48e13-diagram { width: 100%; }
 }
 @media print {
+  .source52-p48e13-question, .source52-p48e13-solution { font-family: "Noto Serif KR", "Batang", serif; font-weight: 400; }
   .source52-p48e13-diagram { max-height: 82mm; }
 }
