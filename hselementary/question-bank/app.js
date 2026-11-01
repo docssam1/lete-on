@@ -516,21 +516,8 @@
   }
 
   function paginateProblems(questions) {
-    const fourPerPageExercises = new Set([
-      "5-2-u3-e7-mission-1-rotated-addition-synthetic",
-      "5-2-u3-e7-mission-2-arrow-overlap-synthetic",
-      "5-2-u3-e7-mission-3-parallelogram-overlap-synthetic",
-      "5-2-u3-e7-mission-4-grid-construction-synthetic",
-      "5-2-u3-e7-mission-5-rotating-triangle-synthetic",
-      "5-2-u3-e7-mission-6-triangle-area-synthetic",
-      "5-2-u3-e8-exploration-staircase-half-synthetic",
-      "5-2-u3-e8-example-1-circle-difference-synthetic",
-      "5-2-u3-e8-example-2-cut-synthetic",
-      "5-2-u3-e8-example-3-overlap-synthetic",
-      "5-2-u3-e8-example-4-stone-synthetic"
-    ]);
-    if (questions.length && questions.every(question => fourPerPageExercises.has(question.sourceItemId))) {
-      return chunk(questions, 4).map(page => ({ questions: page, paired: true }));
+    if (questions.length && questions.every(question => problemWeight(question) < 3)) {
+      return chunk(questions, 4).map(page => ({ questions: page, paired: true, fourUp: true }));
     }
     const usesGeometryPairing = question => question.prompt.includes("source42-pa") || question.prompt.includes("source42-pp");
     if (!questions.some(usesGeometryPairing)) {
@@ -570,7 +557,7 @@
   }
 
   function renderProblems() {
-    $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}">
+    $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired, fourUp }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}${fourUp ? " print-page--four-up" : ""}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
