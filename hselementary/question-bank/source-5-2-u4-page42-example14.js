@@ -52,16 +52,13 @@
     const spoiledRatio = String(pool.spoiledPercent / 100);
     const profitRatio = String(pool.profitPercent / 100);
     const itemPrompt = `귤 ${comma(pool.fruitCount)}개를 ${comma(pool.purchaseCost)}원에 사 왔습니다. 이 중 전체의 ${spoiledRatio}가 상해 버렸습니다. 남은 귤을 모두 같은 가격에 팔아 귤을 산 가격의 ${profitRatio}만큼 이익을 얻으려면 귤 한 개에 얼마씩 팔아야 하는지 구하여라.`;
-    const hint = difficultyOffset < 0
-      ? `<p class="source52-u4-p42-e14-hint">도움말: 먼저 팔 수 있는 귤의 수를 구하고, 전체 구입 가격에 이익을 더한 금액을 그 수로 나누세요.</p>`
-      : "";
     const steps = [
       `상한 귤은 ${comma(pool.fruitCount)}×${spoiledRatio}=${comma(result.spoiled)}개이므로, 팔 수 있는 귤은 ${comma(pool.fruitCount)}−${comma(result.spoiled)}=${comma(result.saleable)}개입니다.`,
       `얻으려는 이익은 전체 구입 가격의 ${profitRatio}이므로 ${comma(pool.purchaseCost)}×${profitRatio}=${comma(result.desiredProfit)}원입니다.`,
       `필요한 전체 판매 금액은 구입 가격과 이익의 합인 ${comma(pool.purchaseCost)}+${comma(result.desiredProfit)}=${comma(result.targetRevenue)}원입니다.`,
       `한 개 판매값은 ${comma(result.targetRevenue)}÷${comma(result.saleable)}=${comma(result.price)}원이므로 귤 한 개에 ${comma(result.price)}원씩 팔면 됩니다.`
     ];
-    const prompt = `<div class="source52-u4-p42-e14-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>${esc(itemPrompt)}</p>${hint}</div>`;
+    const prompt = `<div class="source52-u4-p42-e14-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>${esc(itemPrompt)}</p></div>`;
     const solution = `<div class="source52-u4-p42-e14-solution" data-source-answer="${id}" data-pool-index="${poolIndex}"><ol>${steps.map(step => `<li>${esc(step)}</li>`).join("")}</ol><table class="source52-u4-p42-e14-work-table"><tbody><tr><th>팔 수 있는 귤</th><td>${comma(result.saleable)}개</td></tr><tr><th>목표 판매 금액</th><td>${comma(result.targetRevenue)}원</td></tr><tr><th>귤 한 개 값</th><td>${comma(result.price)}원</td></tr></tbody></table><p class="source52-u4-p42-e14-answer"><strong>답: ${comma(result.price)}원</strong></p></div>`;
     return Object.freeze({
       prompt, answer: `${result.price}원`, solution, sourceItemId: id, generator: key,
@@ -70,7 +67,7 @@
       verifiedVariantId: `${id}:v${poolIndex}`, variantProvenance: "synthetic-source-structure",
       difficultyOffset, difficultyLevel: difficultyOffset + 1, difficultyRank: difficultyOffset + 1,
       sourceDifficultyRank: 1,
-      difficultyDesign: ["guided-saleable-and-target-total", "separate-profit-from-cost", "full-reverse-price-reasoning"][difficultyOffset + 1],
+      difficultyDesign: "difficulty-difference-unverified",
       reasoningSteps: 4, sourceStepCount: 1, difficultyStepDelta: difficultyOffset,
       sourceStructurePreserved: true, sourcePdfPage: 38, sourcePrintedPage: 42,
       questionModel: { fruitCount: pool.fruitCount, purchaseCost: pool.purchaseCost, spoiledPercent: pool.spoiledPercent, profitPercent: pool.profitPercent },

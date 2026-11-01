@@ -67,9 +67,6 @@
 
     const expression1 = `${pool.base} × ${pool.number} × ${pool.decimals.join(" × ")}`;
     const expression2 = `${decimalTerms[0]} × ${pool.values[0]} − ${decimalTerms[1]} × ${pool.values[1]} + ${decimalTerms[2]} × ${pool.values[2]} − ${decimalTerms[3]} × ${pool.values[3]}`;
-    const hint = difficultyOffset < 0
-      ? `<p class="source52-u4-p42-e11-hint">도움말: (1) 소수 세 수의 곱부터 계산하고, (2) 네 소수가 모두 ${esc(pool.common)}의 몇 배인지 찾아 보세요.</p>`
-      : "";
     const firstExplanation = difficultyOffset < 0
       ? `${pool.decimals[0]} × ${pool.decimals[1]} × ${pool.decimals[2]} = 1/${pool.base}이고 ${pool.base} × ${pool.number} × 1/${pool.base} = ${result.first}입니다.`
       : difficultyOffset === 0
@@ -82,7 +79,7 @@
       : difficultyOffset === 0
         ? `${expression2} = ${pool.common} × (${signedTerms})입니다. 괄호 안은 ${result.bracket}이므로 ${pool.common} × ${result.bracket} = ${result.second}입니다.`
         : `${factorRelations}이므로 공통인 ${pool.common}을 묶습니다. ${pool.common} × (${signedTerms}) = ${pool.common} × ${result.bracket} = ${result.second}입니다.`;
-    const prompt = `<div class="source52-u4-p42-e11-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>다음을 계산하여라.</p><ol><li>${esc(expression1)}</li><li>${esc(expression2)}</li></ol>${hint}</div>`;
+    const prompt = `<div class="source52-u4-p42-e11-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>다음을 계산하여라.</p><ol><li>${esc(expression1)}</li><li>${esc(expression2)}</li></ol></div>`;
     const solution = `<div class="source52-u4-p42-e11-solution" data-source-answer="${id}" data-pool-index="${poolIndex}"><ol><li><span class="source52-u4-p42-e11-expression">${esc(expression1)}</span><p>${esc(firstExplanation)}</p></li><li><span class="source52-u4-p42-e11-expression">${esc(expression2)}</span><p>${esc(secondExplanation)}</p></li></ol><p class="source52-u4-p42-e11-answer"><strong>답: ${esc(result.tuple)}</strong></p></div>`;
     return Object.freeze({
       prompt, answer: result.tuple, solution, sourceItemId: id, generator: key,
@@ -91,7 +88,7 @@
       verifiedVariantId: `${id}:v${poolIndex}`, variantProvenance: "synthetic-source-structure",
       difficultyOffset, difficultyLevel: difficultyOffset + 1, difficultyRank: difficultyOffset + 1,
       sourceDifficultyRank: 1,
-      difficultyDesign: ["guided-decimal-cancellation-and-common-factor", "factor-decimal-coefficients", "exact-fraction-and-integer-factorization"][difficultyOffset + 1],
+      difficultyDesign: "difficulty-difference-unverified",
       reasoningSteps: 4, sourceStepCount: 1, difficultyStepDelta: difficultyOffset,
       sourceStructurePreserved: true, sourcePdfPage: 38, sourcePrintedPage: 42,
       questionModel: { expression1, expression2, operation: "decimal-product-and-common-factor" },
