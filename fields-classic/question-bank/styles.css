@@ -1709,8 +1709,9 @@ body.as-embed{background:#fff}
   .as-embed .question-card.is-current.has-figure{grid-template-columns:minmax(0,1.25fr) minmax(220px,1fr);gap:20px}
   .as-embed .oneup-figure{padding:14px}
   .as-embed .oneup-side .question-prompt{margin-bottom:16px;font-size:20px}
-  .as-embed .oneup-side .choice-buttons{grid-template-columns:repeat(auto-fit,minmax(54px,1fr));gap:8px}
-  .as-embed .oneup-side .choice-buttons button{min-height:56px;font-size:20px}
+  .as-embed .oneup-side .choice-buttons{grid-template-columns:repeat(auto-fit,minmax(56px,1fr));gap:8px}
+  .as-embed .oneup-side .choice-buttons:has(>:nth-child(4):last-child){grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .as-embed .oneup-side .choice-buttons button{min-width:0;min-height:56px;padding:0 2px;font-size:19px}
   .as-embed .student-check-actions{flex-wrap:wrap;gap:10px 16px}
   .as-embed .student-check-actions .student-check-button{min-width:150px;min-height:54px;font-size:19px}
 }
