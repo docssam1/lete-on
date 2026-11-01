@@ -29,10 +29,12 @@ const ROUTES={
   evidence:{title:'답의 근거를 글에서 찾기',observation:'책은 읽지만 내용과 근거를 설명하기 어려워요',method:'문장·문단의 중심 내용을 짚고, 사실과 생각을 구분하며 근거를 찾아 설명합니다.',practice:'짧은 글에서 시작해 주장의 근거와 문단 사이의 관계를 연결합니다.',transfer:'다른 주제의 글에서도 글 안의 근거와 자기 생각을 구분합니다.',check:'독서량·학원 반보다 실제로 이해하고 설명하는 모습을 봅니다.'},
   summary:{title:'읽은 내용을 구조로 정리하기',observation:'내용을 길게 말하지만 핵심을 요약하기 어려워요',method:'문단별 핵심을 짧게 적고, 원인·결과·비교 같은 관계로 전체 흐름을 정리합니다.',practice:'밑줄·그림·짧은 문장 중 편한 방법으로 정리하고 원문과 대조합니다.',transfer:'새 글을 읽고 중요한 내용과 생략할 내용을 스스로 고릅니다.',check:'분량을 줄인 것과 글의 구조를 이해한 요약을 구분합니다.'},
   writing:{title:'생각을 쓰고 다시 다듬기',observation:'말로는 설명하지만 글로 정리하기 어려워요',method:'말로 정리한 생각을 짧게 쓰고, 독자가 이해할 수 있게 한 부분씩 고칩니다.',practice:'주장과 이유, 경험과 느낌을 연결하며 피드백을 반영해 같은 글을 수정합니다.',transfer:'새 주제에서도 도움을 줄여 짧은 글을 완성합니다.',check:'글자 수나 대회 실적보다 자기 생각과 수정 과정을 확인합니다.'},
+  grammar:{title:'문법 개념을 새 문장에 적용하기',observation:'문법 용어는 외웠지만 새 예문을 구분하기 어려워요',method:'학교에서 배우는 문법 개념 하나를 예와 반례로 정리합니다.',practice:'품사·문장 성분·음운 등을 새 문장에 적용하고 왜 그렇게 나누었는지 설명합니다.',transfer:'며칠 뒤 다른 예문을 도움 없이 분류하고 틀린 이유를 고칩니다.',check:'문법 용어 암기와 실제 적용을 따로 확인합니다.'},
   literature:{title:'작품의 표현과 맥락을 연결하기',observation:'줄거리는 알지만 인물·표현의 의미가 어려워요',method:'인물의 말과 행동, 장면과 표현을 근거로 해석을 비교합니다.',practice:'낯선 배경은 짧게 보완하고 작품 속 어떤 표현이 판단을 뒷받침하는지 짚습니다.',transfer:'새 작품에서 인물과 표현을 연결해 자기 해석을 설명합니다.',check:'정해진 감상을 외우기보다 작품의 근거로 설명하는지 봅니다.'}
  }
 };
 const SOURCES={
+ ...(g.PlannerKorean?.SOURCES||{}),
  nePopular:{title:'NE능률 영역별 교재 안내',url:'https://netutor.neflow.ai/english/curriculum/popular'},
  neListening22:{title:'NE능률 중학영어 듣기 모의고사 22회 Level 1',url:'https://m.nebooks.co.kr/pages/book/view.asp?c=BB08040001'},
  neCurriculum:{title:'NE능률 예비중 영역별 교재 안내',url:'https://netutor.neflow.ai/english/curriculum/purpose/31?seq=31'},
@@ -66,12 +68,14 @@ function restore(value){
    if(Object.hasOwn(READING_METRICS,v.readingMetric))r.readingMetric=v.readingMetric;
    if(['ar','srGe'].includes(r.readingMetric)&&Object.hasOwn(READING_RANGES,v.readingRange))r.readingRange=v.readingRange;
   }
+  if(id==='korean'&&['regular','vacation','exam','transition'].includes(v.period))r.period=v.period;
   r.enabled=!!r.current&&v.enabled===true;
  }
  return s;
 }
 function stage(context={}){if(context.foreignCalendar)return 'foreign';const n=Number(context.grade);return context.grade==='pre'?'early':n>=1&&n<=2?'early':n<=4&&n>=3?'primary':n<=6&&n>=5?'upper':n<=9&&n>=7?'middle':n<=12&&n>=10?'high':'unknown';}
 const BOOKS={
+ ...(g.PlannerKorean?.BOOKS||{}),
  current:{title:'지금 쓰는 교재·읽던 책 유지',note:'새 책을 더하기 전에 아래 학습 범위를 지금 교재의 목차와 맞춰 보세요. 같은 역할의 교재를 중복해서 풀 필요는 없습니다.'},
  school:{title:'학교 교과서·수업 자료 활용',note:'학교에서 배우는 단원과 평가 범위를 먼저 확인합니다.'},
  reader:{title:'현재 읽는 책·음원 활용',note:'편하게 이해하는 길이에서 시작합니다. 책의 단계만으로 실력을 정하지 않습니다.'},
@@ -118,8 +122,14 @@ function bookOptions(id,context={},focus=null,study=null){
   if(k==='middle'&&focus==='vocabulary')keys.push('ebsMiddle');
   if(k==='middle'&&['evidence','summary'].includes(focus))keys.push('ebsReading');
  }
+ if(id==='korean'&&k==='middle'){
+  if(['evidence','summary'].includes(focus))keys.push('koreanThought','koreanSumma');
+  if(focus==='literature')keys.push('koreanLiterature');
+  if(Number(context.grade)===9&&contextualKoreanTransition(context))keys.push('koreanButterfly');
+ }
  keys.push('unknown');return keys.map(key=>({id:key,...contextualBook(key,id,row,context)}));
 }
+function contextualKoreanTransition(context){return [11,12,1,2].includes(Number(context.mon));}
 function choose(value,id,kind,key,context={}){
  const s=restore(value);if(!Object.hasOwn(SUBJECTS,id))return s;s.active=id;const row=s.subjects[id];
  if(kind==='current'&&CURRENT[id].some(([v])=>v===key)){if(row.current&&row.current!==key){row.focus=null;row.book=null;}row.current=key;row.enabled=true;
@@ -129,6 +139,7 @@ function choose(value,id,kind,key,context={}){
  if(kind==='focus'&&Object.hasOwn(ROUTES[id],key)){if(row.focus!==key)row.book=null;row.focus=key;}
  if(kind==='book'&&bookOptions(id,context,row.focus,row).some(x=>x.id===key))row.book=key;
  if(kind==='rhythm'&&['keep','extra','exam'].includes(key))row.rhythm=key;
+ if(id==='korean'&&kind==='period'&&g.PlannerKorean?.periodOptions(context).includes(key))row.period=key;
  if(id==='english'&&kind==='referenceProfile'&&(Object.hasOwn(EN_REFERENCES,key)||key==='standard')&&!(context.grade==='pre'&&key==='general'))row.referenceProfile=key==='standard'?null:key;
  if(id==='english'&&isPrimaryEnglish(context)&&kind==='readingMetric'&&Object.hasOwn(READING_METRICS,key)){if(row.readingMetric!==key)row.readingRange=null;row.readingMetric=key;}
  if(id==='english'&&isPrimaryEnglish(context)&&kind==='readingRange'&&['ar','srGe'].includes(row.readingMetric)&&Object.hasOwn(READING_RANGES,key))row.readingRange=key;
@@ -471,14 +482,14 @@ function koreanTracks(row,context){
 function model(value,id,context={}){
  if(id==='english')return englishModel(value,context);
  const s=restore(value),row=s.subjects[id],route=ROUTES[id]?.[row?.focus],name=SUBJECTS[id];if(!row)return null;
- const book=contextualBook(row.book,id,row,context),ready=!!(row.current&&route&&book&&row.rhythm),course=koreanTracks(row,context);
- const focusId=row.focus==='transfer'?'evidence':row.focus==='summary'?'evidence':row.focus==='foundation'&&id==='english'?'sentence':row.focus;
+ const book=contextualBook(row.book,id,row,context),koreanPlan=g.PlannerKorean?.build(row,context),ready=!!(row.current&&route&&book&&row.rhythm),course=koreanTracks(row,context);
+ const focusId=row.focus==='transfer'?'evidence':row.focus==='summary'?'evidence':row.focus==='grammar'?'foundation':row.focus==='foundation'&&id==='english'?'sentence':row.focus;
  const focusTrack=course.tracks.find(t=>t.id===focusId);
  course.tracks=course.tracks.map(t=>({...t,selected:t.id===focusId,material:t.id===focusId&&book&&!['current','unknown','reader','school'].includes(row.book)?book.title:t.id===focusId&&row.book==='school'?'학교 교과서·수업 자료':t.id===focusId&&row.book==='reader'?'현재 읽는 책·음원':t.material}));
  const phases=route&&focusTrack?focusTrack.items.map((title,i)=>({offset:i,title,method:i===0?route.method:i===1?route.practice:i===5?route.transfer:focusTrack.weekly+' · '+title,check:i===0?'첫 주에는 혼자 하는 부분과 도움받는 부분을 나눠 봅니다.':focusTrack.check,date:calendar(context,i),review:calendar(context,i+1),extra:row.rhythm==='extra'?(i===0?15:30):0})):[];
  const checkpoints=route?[{title:'첫 달 · 출발 범위 조정',date:calendar(context,1),text:'설명을 들은 직후만 풀리는지, 며칠 뒤 혼자 다시 해낼 수 있는지 봅니다. 어려우면 한 단계 쉬운 문장으로 연습량을 확보하세요.'},{title:'세 달 · 같은 난도에서 재확인',date:calendar(context,3),text:focusTrack?.check||route.check},{title:'여섯 달 · 다음 범위 선택',date:calendar(context,6),text:course.next}]:[];
  const later=route?[{date:calendar(context,6)+' 이후',title:'다음 6개월에 이어갈 공부',text:course.next},{date:'다음 범위에서도 계속',title:'남겨 둘 공부',text:id==='english'?'어휘 누적 복습·읽기·듣기는 계속합니다. 문법은 독해와 영작에서 다시 쓰고, 학교 시험 뒤에는 취약한 부분으로 돌아옵니다.':'독서와 어휘를 유지하며 새 글의 근거를 찾고 짧게 쓰는 공부를 이어갑니다. 글이 길어져도 문장 이해부터 확인합니다.'}]:[];
- return {id,name,row,route,book,ready,phases,course,tracks:course.tracks,checkpoints,later,current:CURRENT[id].find(([k])=>k===row.current)?.[1]||'현재 공부 확인 전',rhythm:rhythm(row.rhythm),age:ageGuide(context),review:calendar(context,6),stage:stage(context),foreign:stage(context)==='foreign'};
+ return {id,name,row,route,book,ready,koreanPlan,standardStages:koreanPlan?.standardStages||[],phases,course:koreanPlan?.ready?{...course,title:koreanPlan.title,talk:koreanPlan.talk}:course,tracks:course.tracks,checkpoints:koreanPlan?.checkpoints||checkpoints,later:koreanPlan?.later||later,current:CURRENT[id].find(([k])=>k===row.current)?.[1]||'현재 공부 확인 전',rhythm:rhythm(row.rhythm),age:ageGuide(context),review:calendar(context,6),stage:stage(context),foreign:stage(context)==='foreign'};
 }
 const button=(id,kind,value,title,selected=false,sub='')=>`<button type="button" data-language-subject="${id}" data-language-kind="${kind}" data-language-value="${value}" aria-pressed="${selected}"><span class="pathway-option-dot" aria-hidden="true"></span><strong>${esc(title)}</strong>${sub?`<span>${esc(sub)}</span>`:''}${selected?'<small>선택됨</small>':''}</button>`;
 function readingControls(row,context){
@@ -502,7 +513,7 @@ function choices(value,id,page='current',context={}){
  const m=model(value,id,context),n=navigation(value,id,page);if(!m)return '';const r=m.row;
  const options=n.page==='current'?CURRENT[id].map(([key,title])=>button(id,'current',key,title,r.current===key)).join(''):
  n.page==='standard'?`<button type="button" data-language-use-standard><strong>표준 로드맵으로 공부할게요</strong><span>교재의 역할과 학년별 과정을 그대로 이어갑니다.</span></button><button type="button" data-language-customize><strong>우리 아이에게 맞춰 조정할게요</strong><span>보완할 부분·교재·공부량만 조정합니다.</span></button>`:
- n.page==='focus'?Object.entries(ROUTES[id]).map(([key,item])=>button(id,'focus',key,item.observation,r.focus===key)).join(''):
+ n.page==='focus'?Object.entries(ROUTES[id]).filter(([key])=>key!=='grammar'||id==='korean'&&stage(context)==='middle').map(([key,item])=>button(id,'focus',key,item.observation,r.focus===key)).join(''):
  n.page==='book'?bookOptions(id,context,r.focus,r).map(b=>button(id,'book',b.id,b.title,r.book===b.id,b.note)).join(''):
  n.page==='rhythm'?[
   ['keep','현재 공부량으로 함께 이어가기','같은 교재의 어휘·읽기·쓰기를 연결하고, 주간 과제를 며칠로 나누겠습니다.'],
@@ -510,11 +521,11 @@ function choices(value,id,page='current',context={}){
   ['exam','학교 시험 준비에 비중 더 두기','교과서·수업 자료·서술형을 우선하고, 시험 뒤에는 원래 독해·어휘 계획으로 돌아갑니다.']
  ].map(([key,title,sub])=>button(id,'rhythm',key,title,r.rhythm===key,sub)).join(''):
  `<button type="button" data-language-result>${id==='english'?(r.planMode==='standard'?'표준 로드맵 확인':'조정한 로드맵 확인'):'지도·월별 계획 살펴보기'} →</button>`;
- return `<nav class="language-subjects" aria-label="과목 바꾸기">${Object.entries(SUBJECTS).map(([key,name])=>`<button type="button" data-language-open="${key}" aria-pressed="${key===id}">${name}</button>`).join('')}</nav><p class="language-step">${n.index+1} / ${n.total} · ${LABELS[n.page]}</p><div class="pathway-options language-options">${options}</div>${id==='english'&&n.page==='current'?readingControls(r,context):''}<nav class="language-actions" aria-label="학습 설계 이동"><button type="button" ${n.previous?`data-language-page="${n.previous}"`:'data-flow-overview="home"'}>← ${n.previous?'이전':'전체 갈림길'}</button>${n.next&&n.page!=='standard'?`<button type="button" data-language-page="${n.next}"${n.canNext?'':' disabled'}>다음 →</button>`:''}<button type="button" data-language-later="${id}">다음에 생각하기</button></nav><details class="language-method"><summary>학년별 강조점과 병행 방법</summary><p>${esc(m.age)}</p><p>${id==='english'?'어휘·문법·독해·쓰기·듣기를 병행하고, 말하기도 현재 수업과 연결합니다. 문법을 모두 끝내야 독해를 시작하는 순서는 아닙니다.':'어휘·문장 이해·독해·문학·쓰기를 병행하고, 읽는 즐거움과 근거를 살피는 읽기를 함께 유지합니다.'}</p></details>`;
+ return `<nav class="language-subjects" aria-label="과목 바꾸기">${Object.entries(SUBJECTS).map(([key,name])=>`<button type="button" data-language-open="${key}" aria-pressed="${key===id}">${name}</button>`).join('')}</nav><p class="language-step">${n.index+1} / ${n.total} · ${LABELS[n.page]}</p><div class="pathway-options language-options">${options}</div>${id==='english'&&n.page==='current'?readingControls(r,context):''}${id==='korean'&&n.page==='rhythm'&&g.PlannerKorean?.supported(context)?`<fieldset class="language-period-choice"><legend>지금은 어떤 시기인가요?</legend>${g.PlannerKorean.periodOptions(context).map(key=>button(id,'period',key,g.PlannerKorean.PERIODS[key],r.period===key,'')).join('')}<p class="language-caption">이번 달의 운영을 고릅니다. 선택하지 않으면 학기·방학 달력 예시를 쓰고, 시험이 끝난 뒤에는 원래 독해와 문학 공부로 돌아갑니다.</p></fieldset>`:''}<nav class="language-actions" aria-label="학습 설계 이동"><button type="button" ${n.previous?`data-language-page="${n.previous}"`:'data-flow-overview="home"'}>← ${n.previous?'이전':'전체 갈림길'}</button>${n.next&&n.page!=='standard'?`<button type="button" data-language-page="${n.next}"${n.canNext?'':' disabled'}>다음 →</button>`:''}<button type="button" data-language-later="${id}">다음에 생각하기</button></nav><details class="language-method"><summary>학년별 강조점과 병행 방법</summary><p>${esc(m.age)}</p><p>${id==='english'?'어휘·문법·독해·쓰기·듣기를 병행하고, 말하기도 현재 수업과 연결합니다. 문법을 모두 끝내야 독해를 시작하는 순서는 아닙니다.':'어휘·문장 이해·독해·문학·쓰기를 병행하고, 읽는 즐거움과 근거를 살피는 읽기를 함께 유지합니다.'}</p></details>`;
 }
 function questions(value,id,context={}){
  const m=model(value,id,context);if(!m)return [];const rows=[];
- if(m.route)rows.push({q:({foundation:'읽기 기초는 어디서 시작하면 좋을까요?',vocabulary:'외운 단어를 자꾸 잊는데 양을 늘려도 될까요?',sentence:'단어는 아는데 해석이 어색합니다. 무엇부터 볼까요?',evidence:'내용은 아는데 문제를 틀립니다. 어떻게 지도할까요?',writing:'읽기는 되는데 쓰기를 어려워하면요?',listening:'아는 단어인데 잘 안 들린다고 합니다.',transfer:'내신은 잘 보는데 낯선 지문이 어렵다면요?',summary:'읽은 내용을 길게 말하는데 요약이 안 됩니다.',literature:'줄거리 외에 무엇을 이야기하면 좋을까요?'})[m.row.focus],a:m.route.method+' '+m.route.practice+' '+m.route.check});
+ if(m.route)rows.push({q:({foundation:'읽기 기초는 어디서 시작하면 좋을까요?',vocabulary:'외운 단어를 자꾸 잊는데 양을 늘려도 될까요?',sentence:'단어는 아는데 해석이 어색합니다. 무엇부터 볼까요?',evidence:'내용은 아는데 문제를 틀립니다. 어떻게 지도할까요?',writing:'읽기는 되는데 쓰기를 어려워하면요?',listening:'아는 단어인데 잘 안 들린다고 합니다.',transfer:'내신은 잘 보는데 낯선 지문이 어렵다면요?',summary:'읽은 내용을 길게 말하는데 요약이 안 됩니다.',grammar:'문법을 외웠는데 문제에 적용하지 못하면요?',literature:'줄거리 외에 무엇을 이야기하면 좋을까요?'})[m.row.focus],a:m.route.method+' '+m.route.practice+' '+m.route.check});
  if(id==='english'){
   if(context.grade==='pre'&&!context.foreignCalendar&&m.referenceProfile==='extreme'){
    rows.push({q:'6세 5월 B, 7세 5월 C까지 꼭 맞춰야 하나요?',a:'극상위권 참고 과정에 들어 있는 목표 시점입니다. 이미 그 시기가 지났다고 끝낸 것으로 보지는 않습니다. CARS에서 글과 질문을 이해하는지 확인하고, 놓친 전략은 같은 단계 STARS로 연습한 뒤 다음 단계로 이어가겠습니다.'});
@@ -529,6 +540,12 @@ function questions(value,id,context={}){
   if(stage(context)==='middle')rows.push({q:'중2·중3이라면 고등 영어를 바로 시작해야 하나요?',a:'중등 문법을 배웠더라도 낯선 문장에 적용하는지 먼저 보겠습니다. 준비가 되면 고1 수준의 주제·목적·내용 일치부터 경험하고 순서·삽입·빈칸으로 넓힙니다. 기본 어휘나 문장이 흔들리면 그 부분을 먼저 채웁니다. 중3 마지막 학교 시험 뒤부터 입학 전까지는 부족한 영역을 다시 정리할 시간으로 잡아 주세요.'});
   if(m.course.young)rows.push({q:'아직 어린데 단어 시험과 문법책을 시작해야 하나요?',a:'지금은 소리와 글자를 연결해 혼자 읽는 힘부터 보겠습니다. 듣던 이야기에서 익숙한 표현을 읽고 말하거나 한 문장으로 써 보세요. 어려운 우리말 뜻을 외우느라 막힌다면 뜻을 쉬운 말과 예로 풀어 주세요. 긴 시험과 많은 암기량을 먼저 늘릴 필요는 없습니다.'});
  }else{
+  if(m.koreanPlan){
+   rows.push({q:'국어 강의를 전부 들어야 하나요?',a:'먼저 교재의 설명과 예제를 읽고 직접 풀어 보세요. 이해가 막히는 개념이나 해설이 필요한 문제에만 강의를 붙입니다. 지문 읽기·풀이·오답 수정 시간을 포함해 분량을 잡고, 같은 강좌를 문학 영역마다 중복해서 더하지 않겠습니다.'});
+   rows.push({q:'내신 기간에도 독해서를 똑같이 더 해야 하나요?',a:'학교 지문과 작품·문법·서술형을 우선하겠습니다. 그 주의 독해와 쓰기는 학교 범위로 대신하고 새 교재 분량을 겹쳐 더하지 않습니다. 시험 뒤에는 낯선 지문과 원래 문학 계획으로 돌아옵니다.'});
+   rows.push({q:'학년이 바뀌면 다음 권으로 넘어가나요?',a:'표의 교재 단계는 확인할 후보입니다. 새 지문의 핵심과 근거를 설명하고, 며칠 뒤 비슷한 문제에도 적용할 수 있는지 본 뒤 다음 권을 정하겠습니다. 어려우면 책 전체를 반복하기보다 막힌 개념과 유형을 골라 보완합니다.'});
+   if(Number(context.grade)===9)rows.push({q:'중3 기말 이후에는 수능 국어를 끝내야 하나요?',a:'완성을 약속하는 시기는 아닙니다. 중등 문학·독서 개념이 적용되면 고등 입문 개념과 워크북으로 연결하고, 예비 고1 기출 한 회에서 읽기와 시간 배분을 점검합니다. 기초가 부족하면 그 부분을 먼저 보완하고 내신 공부와도 이어가겠습니다.'});
+  }
   rows.push({q:'책은 많이 읽는데 지문이나 문제 조건을 놓칩니다.',a:'독서량과 문제를 정확히 읽는 습관은 따로 챙겨야 합니다. 질문을 끝까지 읽고 ‘무엇을, 몇 가지, 어떤 조건으로’ 답해야 하는지 표시해 보세요. 답을 고른 뒤 지문에서 근거를 찾고, 틀린 선택지는 어느 말 때문에 틀렸는지 고쳐 보는 연습이 좋습니다.'});
   rows.push({q:'논술 수업을 듣는데 글쓰기를 더 해야 하나요?',a:'분량부터 늘리지 마세요. 수업에서 쓴 글을 첨삭받았다면 같은 글을 한번 고쳐 쓰고, 다음 주에는 도움을 줄여 새 글을 써 보겠습니다. 글자 수나 대회 실적보다 자기 생각과 수정 과정을 확인합니다.'});
   rows.push({q:'어려운 비문학 책은 한 주에 한 권씩 읽혀야 하나요?',a:'혼자 내용을 설명하기 어렵다면 읽을 분량을 여러 주로 나누세요. 한 부분을 읽고 핵심 문장에 표시한 뒤 원인·결과나 비교 관계로 정리합니다. 그다음 짧은 다른 지문에서도 같은 방식으로 읽어 보는 게 좋습니다. 긴 책을 빨리 끝내는 것만 목표로 잡지 않겠습니다.'});
@@ -596,6 +613,7 @@ function renderEnglish(value,context={},view='map'){
 function render(value,id,context={},view='map'){
  if(id==='english')return renderEnglish(value,context,view);
  const m=model(value,id,context);if(!m?.row.enabled)return '';
+ if(m.koreanPlan)return g.PlannerKorean.render(m,view);
  const header=`<header class="language-plan-heading"><div><small>${m.name} · 여섯 달의 공부와 다음 과정</small><h3>${esc(m.course.title)}</h3></div><button type="button" data-language-open="${id}" data-language-start="current">선택 바꾸기</button></header>`;
  const current=`<p class="language-current">${esc(m.current)}${m.book?' · '+esc(m.book.title):''}</p>${id==='english'&&m.route?'<p class="language-parallel-label">어휘 · 문법/구문 · 독해 · 듣기 · 쓰기 병행 <span>달라지는 것은 집중할 부분입니다.</span></p>':''}`;
  let content='';

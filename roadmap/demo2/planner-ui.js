@@ -561,7 +561,7 @@ function openLanguage(id=languageState.active,page=null){
  if(id==='english'&&row.planMode!=='custom'&&['focus','book','rhythm'].includes(languagePage))languagePage='standard';
  PlannerStorage.setItem(languageKey,JSON.stringify(languageState));const mode=roadmapMode;flowMode='language';coach(L.heading(id,languagePage),L.help(languageState,id,languagePage,languageContext()));roadmapMode=mode;saveRoadmapMode();
  $('pathwayCoachContent').innerHTML=L.choices(languageState,id,languagePage,languageContext());
- drawJourney();rememberFlow();focusFlow();$('pathwayCoach').scrollTop=0;$('journeyPanel').scrollTop=0;
+ drawJourney();rememberFlow();mobileWorkspace('choice');focusFlow();$('pathwayCoach').scrollTop=0;$('journeyPanel').scrollTop=0;
 }
 function languageClick(b){
  if(b.hasAttribute('data-language-result')){setWorkspaceView('map');mobileWorkspace('result');$('journeyTitle').focus({preventScroll:true});return true;}
@@ -578,7 +578,7 @@ function languageClick(b){
  if(!b.dataset.languageKind)return false;
  const id=b.dataset.languageSubject,kind=b.dataset.languageKind,value=b.dataset.languageValue;
  languageState=L.choose(languageState,id,kind,value,languageContext());PlannerStorage.setItem(languageKey,JSON.stringify(languageState));
- if(['referenceProfile','readingMetric','readingRange','academy'].includes(kind)){openLanguage(id,languagePage);return true;}
+ if(['referenceProfile','readingMetric','readingRange','academy','period'].includes(kind)){openLanguage(id,languagePage);return true;}
  const next=L.navigation(languageState,id,kind).next;openLanguage(id,next||'summary');return true;
 }
 function openOverview(page='home'){
@@ -1057,11 +1057,11 @@ function drawJourney(){
  PlannerFaq.unmount($('journeyMap'));
  for(const host of [$('coachQuestions'),$('intakeQuestions')])host.replaceChildren();
  const standard=PlannerStandard.model(answers,intakeFields(),{pattern:standardPattern,calcDaysPerWeek,supplement:supplementDecision}),standardActive=completed&&roadmapMode==='standard';
- document.body.dataset.planMode=standardActive?'standard':completed?'custom':'intake';document.body.dataset.scienceFlow=String(flowMode==='science');document.body.dataset.referenceFlow=String(flowMode==='reference');
+ document.body.dataset.planMode=standardActive?'standard':completed?'custom':'intake';document.body.dataset.scienceFlow=String(flowMode==='science');document.body.dataset.referenceFlow=String(flowMode==='reference');document.body.dataset.languageFlow=String(flowMode==='language');
  $('planningOverview').hidden=!completed;
  $('planningOverview').innerHTML=completed?'<details class="plan-current-details"><summary>현재 공부·선택한 계획</summary><div class="plan-current-popover">'+PlannerWorkspace.currentSummary(answers,intakeFields())+'<button type="button" data-student-choice>남학생·여학생 선택 변경</button><button type="button" data-plan-references>전체 답변·기존 시기별 학습 로드맵 보기</button></div></details>':'';
  const board=intakeFields().internationalCalendar?'':PlannerWorkspace.render(transition,progression,answers,{...intakeFields(),supplementDecision},pathwayTrail,{course:workspaceCourse}),schedule=intakeFields().internationalCalendar?'':PlannerWorkspace.renderSchedule(transition,progression,answers,{...intakeFields(),calcDaysPerWeek,supplementDecision},pathwayTrail);
- const tabs=flowMode==='language'&&languageState.active==='english'?[['map','학습 로드맵'],['graph',intakeFields().internationalCalendar?'학교 교육과정':'학년별 학습 과정'],['table','교재·월별 계획'],['records','학부모 질문']]:[['map','학습 로드맵'],['graph','진도 비교'],['table','교재·월별 계획'],['records','학부모 질문']];
+ const tabs=flowMode==='language'?[['map','학습 로드맵'],['graph',intakeFields().internationalCalendar?'학교 교육과정':languageState.active==='korean'?'시기별 학습 과정':'학년별 학습 과정'],['table','교재·월별 계획'],['records','학부모 질문']]:[['map','학습 로드맵'],['graph','진도 비교'],['table','교재·월별 계획'],['records','학부모 질문']];
  const pane=(id,content)=>`<section id="workspace-panel-${id}" data-workspace-panel="${id}" class="workspace-panel" role="tabpanel" aria-labelledby="workspace-tab-${id}" tabindex="0"${workspaceView===id?'':' hidden'}>${content}</section>`;
  const records='<details class="workspace-current"><summary>현재 공부 · '+journeyModel.ready+'가지</summary>'+PlannerJourney.render(journeyModel,{directions:false})+'</details><details class="workspace-comparison" open><summary>레벨 뜻과 영역별 비교</summary>'+G.render(progression,answers,intakeFields(),{timeline:' '})+'</details><details class="workspace-choices"><summary>선택한 교재·범위 수정</summary>'+T.renderTrail(transition,progression,answers,intakeFields())+'</details>'+X.renderTrail(pathwayTrail,pathwayActiveId)+R.renderTrail(pathwayPlan,pathwayTrail,pathwayContext())+(flowMode==='personality'?Y.renderMap(personalityState):'');
  const routeLedger='<section class="route-ledger" aria-label="함께 선택한 공부 경로">'+X.renderTrail(pathwayTrail,pathwayActiveId)+R.renderTrail(pathwayPlan,pathwayTrail,pathwayContext())+(flowMode==='personality'?Y.renderMap(personalityState):'')+'</section>';

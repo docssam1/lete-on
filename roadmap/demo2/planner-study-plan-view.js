@@ -21,6 +21,19 @@ function model(state){
   block('sp-reading-middle2','주장·근거 읽기와 요약·의견 쓰기',28,40,'학교 작품 + 새로운 문학·비문학 지문','읽은 내용과 자신의 해석을 구분하고, 지문 근거를 붙여 짧게 씁니다. 학교 수행평가 글쓰기가 있는 주에는 그 과제로 대신하며 별도 독후감을 더하지 않습니다.'),
   block('sp-reading-middle3','낯선 글 읽기·조건에 맞는 서술',40,45,'학교 작품 + 중등 독해·고등 입문 지문','보기의 조건과 글의 근거를 연결해 답하는 연습을 합니다. 긴 글을 읽는 시간을 조금씩 늘리되 내신 기간에는 학교 작품과 서술형을 먼저 봅니다.')
  ];
+ // Reuse the same middle-school curriculum as the main language workspace.
+ // Keep elementary proposals and every mathematics/science date unchanged.
+ if(g.PlannerKorean){
+  korean.splice(3);reading.splice(1);
+  const append=(rows,b)=>{const last=rows.at(-1);if(last&&last.end===b.start&&last.title===b.title&&last.book===b.book&&last.note===b.note)last.end=b.end;else rows.push(b);};
+  for(let i=16;i<m.horizon;i++){
+   const d=m.months[i],exam=m.exams.some(e=>e.start===i),p=g.PlannerKorean.build({current:'balanced',period:exam?'exam':undefined},{grade:d.grade,year:d.year,mon:d.month})?.months[0];
+   if(!p)continue;
+   const a=p.areas,compact=t=>t.replace('EBS 중학 국어 생각독해','EBS 생각독해').replace('EBS 필독 중학 국어 문학','EBS 필독 문학').replace(' · 난도 확인 후 선택','');
+   append(korean,{...block('sp-korean-period-'+i,p.periodLabel+' · 독해·문법·학교 국어',i,i+1,[compact(a.evidence.material),a.grammar.material].join(' + '),p.talk+' '+a.evidence.method+' '+a.grammar.method+' '+p.check+' 교재 단계는 실제 이해를 확인한 뒤 정합니다.'),examFocus:exam,advances:false});
+   append(reading,{...block('sp-reading-period-'+i,p.periodLabel+' · 문학·서술',i,i+1,compact(a.literature.material)+' + 학교 서술형',a.literature.method+' '+a.writing.method+' '+a.literature.weekly+' · 학교 과제와 겹친 공부는 한 번만 합니다. 교재 단계는 실제 이해를 확인한 뒤 정합니다.'),examFocus:exam,advances:false});
+  }
+ }
  const science=[
   block('sp-science-52','초5-2 기본 확인',0,2,'오투 초등 과학 5-2 + 학교 과학 자료','현재 과학 범위는 아직 확인하지 않았습니다. 학교에서 배운 개념과 대표 탐구를 설명하는지 먼저 확인하고, 이미 익힌 단원은 처음부터 반복하지 않습니다.'),
   block('sp-science-61','초6-1 기본 개념·탐구',2,5,'오투 초등 과학 6-1',scienceStudy.label+'으로 학습합니다. 개념을 읽고 대표 탐구의 조건·관찰 결과·결론을 말한 뒤 기본 문제와 서술형을 풀어 봅니다.'),

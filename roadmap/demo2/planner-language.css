@@ -55,3 +55,15 @@
 .language-reading-choice summary:focus-visible,.language-reference-choice summary:focus-visible,.language-academy-advice summary:focus-visible,.language-reading-choice a:focus-visible,.language-academy-advice a:focus-visible{outline:3px solid var(--p);outline-offset:3px}
 @media(max-width:1000px){.language-metric-options,.language-reference-options{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.language-reading-choice,.language-reference-choice,.language-academy-advice{padding:10px 12px}.language-range-options{grid-template-columns:repeat(2,minmax(0,1fr))}.language-reading-summary p{font-size:13px}}
+
+/* Korean period choice stays compact; the detailed curriculum opens in place. */
+.language-period-choice{display:flex;flex-wrap:wrap;gap:8px;min-width:0;margin:18px 0;padding:12px;border:1px solid var(--line);border-radius:14px}
+.language-period-choice legend{font-size:14px;font-weight:700;padding:0 6px}.language-period-choice button{min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}.language-period-choice button[aria-pressed="true"]{background:var(--pl);border-color:var(--p)}.language-period-choice .language-caption{flex-basis:100%;margin:4px 0}.language-period-choice button:focus-visible{outline:3px solid var(--p);outline-offset:3px}
+.korean-period-detail{border-top:1px solid var(--line);padding:7px 0}.korean-period-detail>summary{line-height:1.7;overflow-wrap:anywhere}.korean-standard-table td,.korean-standard-table th{text-align:center;vertical-align:middle}
+@media print{[data-language-plan="korean"] details{display:block}[data-language-plan="korean"] details>summary{font-weight:700}[data-language-plan="korean"] details>*{display:block}[data-language-plan="korean"] .language-table-scroll{overflow:visible}[data-language-plan="korean"] .language-table{min-width:0;width:100%;font-size:10px}}
+
+/* Language questions sit beside an accepted math standard without switching it. */
+@media(min-width:801px){body.roadmap-studio.integrated-planner[data-plan-workspace][data-plan-mode=standard][data-language-flow=true] main{grid-template-columns:305px minmax(0,1fr)}body.roadmap-studio.integrated-planner[data-plan-workspace][data-plan-mode=standard][data-language-flow=true] #vmap{grid-column:2}}
+@media(max-width:800px){body.integrated-planner[data-plan-mode=standard][data-language-flow=true] .mobile-workspace-nav{display:flex!important}body.integrated-planner[data-plan-mode=standard][data-language-flow=true][data-workspace-pane=choice] #vmap{display:none!important}}
+
+.korean-map-books{display:block;font-size:12px;line-height:1.75;color:var(--sub);word-break:keep-all;overflow-wrap:anywhere;text-align:left;border-top:1px solid var(--line);padding-top:9px}
