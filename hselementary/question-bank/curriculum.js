@@ -2148,6 +2148,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
   const source52CuboidViewPractice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s3");
   if (source52CuboidViewPractice) {
+    const arrowId = "5-2-u5-check113-q43-arrow-synthetic";
+    if (!source52CuboidViewPractice.types.some(type => type.id === arrowId)) {
+      const arrowName = "전개도 화살표 방향 · 연습";
+      const arrowNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidViewPractice.types.push({id:arrowId, number:source52CuboidViewPractice.types.length+1, typeNumber:arrowNumber,
+        name:arrowName, label:arrowName, difficultyBand:0, sourceItemId:arrowId, sourceParentItemId:"5-2-u5-check113-q43",
+        sourceItemLabel:"확인학습 43번 유사문항", sourceSection:"practice", sourceTier:"advanced", sourcePdfPage:107, sourcePrintedPage:113,
+        sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52U5ArrowNetPractice",
+        generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantTarget:4, verifiedVariantCount:4,
+        answerVisualRequired:true, answerVisualStatus:"verified-reconstruction", reviewReason:"화살표 방향을 바꾼 연습 네 문항을 접힘과 회전으로 검산했습니다."});
+    }
     const id = "5-2-u5-e3-mission-3-synthetic";
     const name = "정육면체 꼭짓점의 곱과 최대공약수 · 연습";
     const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
