@@ -112,3 +112,10 @@ Mac의 Codex에서 기존 사본을 검토한 뒤 사용했다. gfield-design-sy
 - 정적 Pages에는 운영 API가 없으므로 login.html은 실제 로그인 폼 대신 준비 안내를 제공한다. 운영 서버의 로그인 파일은 변경하지 않는다.
 - 기존 4개 파일의 자동 검사 32/32, staging 9개 파일 목록과 HTML 내부 참조 검사 통과. 실제 배포 성공과 운영 URL 확인은 별도 후속 확인 대상으로 남긴다.
 - 배포 주소: https://lete-on.gfieldacademy.net/highschool-selection/promo/
+
+### 공개 배포 확인 결과
+
+- 소개 배포 커밋: 7e66ab311450ec6da4cc05366351b9b13c1a0843, 원본 디자인 커밋: 25f8c6f12. 최신 main의 후속 커밋 7e643ce41에도 변경이 포함돼 있음을 조상 관계와 파일 비교로 확인했다.
+- Actions 실행 41272518705의 실제 Deploy to GitHub Pages 단계는 success. 뒤이은 다른 작업의 배포가 시작돼 실행 전체는 cancelled로 표시됐다. 실패로 추정하거나 재배포를 반복하지 않았다.
+- https://lete-on.gfieldacademy.net/highschool-selection/promo/ 기본 주소 HTTP 200, 새 제목과 소개 내용 확인. 공개 산출물 9개 모두 HTTP 200이며 로컬 staging과 SHA-256이 일치했다.
+- DB·운영 서버·시험 공개 상태는 변경하지 않았다. Pages의 시험 입장은 준비 안내를 제공한다. 실제 브라우저 렌더·390px 시각 검수는 여전히 별도 확인 대상이다.
