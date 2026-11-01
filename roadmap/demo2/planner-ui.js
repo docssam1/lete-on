@@ -244,7 +244,7 @@ $('mapList').onclick=e=>{const b=e.target.closest('[data-focus]');if(!b||!lastPl
 function showWelcome(){
  leavePathway();
  question='welcome';completed=false;document.body.classList.add('questioning');$('conversation').hidden=false;
- $('questionTitle').textContent='지금의 공부에서, 다음 가능성으로.';$('questionHelp').textContent='현재 학습을 바탕으로 교재와 공부 방법을 함께 살펴봅니다. 갈림길을 고르면 오른쪽에 아이의 학습 로드맵이 이어집니다.';
+ $('questionTitle').textContent='우리 아이의 학습 로드맵 설계';$('questionHelp').textContent='현재 학습을 바탕으로 교재와 공부 방법을 함께 살펴봅니다. 갈림길을 고르면 오른쪽에 아이의 학습 로드맵이 이어집니다.';
  $('questionStep').textContent='우리 아이를 위한 학습 계획 설계';
  $('questionOptions').dataset.question='welcome';$('questionOptions').innerHTML='<button type="button" data-start="1">로드맵 만들기 →</button><button type="button" data-flow-overview="home">공부 방향 먼저 살펴보기</button><button type="button" data-college-open="school">중·고등·국제교육과정에서 대학까지 설계</button>';$('questionBack').disabled=true;
  showView('vmap');drawJourney();saveDraft();

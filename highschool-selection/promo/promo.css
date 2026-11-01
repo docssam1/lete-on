@@ -41,7 +41,12 @@
 .academy-choice h2 { position: relative; z-index: 1; margin: 10px 0 12px; font-size: clamp(30px,3.4vw,46px); font-weight: 850; letter-spacing: -.06em; line-height: 1.17; overflow-wrap: anywhere; }
 .choice-name-prefix { display: block; margin-bottom: 4px; font-size: 20px; font-weight: 700; }
 .academy-choice > p { position: relative; z-index: 1; max-width: 22ch; margin: 0; color: #26303b; font-size: 13px; line-height: 1.7; }
-.choice-art { position: relative; align-self: flex-end; flex: 0 0 auto; width: 69%; max-width: 260px; margin: 8px -16px -14px 0; z-index: 0; pointer-events: none; }
+.choice-logo { display: flex; justify-content: center; align-items: center; width: 100%; min-height: 156px; margin: 24px 0; }
+.logo-display-filters { position: absolute; pointer-events: none; }
+.choice-logo-clear img { filter: url("#logo-paper-out"); }
+.choice-logo img { display: block; width: auto; height: auto; max-width: 100%; max-height: 156px; object-fit: contain; }
+.academy-choice > p { word-break: keep-all; }
+
 .choice-bottom { position: relative; z-index: 1; display: flex; gap: 8px; align-items: center; margin-top: auto; padding-top: 0; font-size: 13px; font-weight: 700; }
 .choice-arrow { font-size: 22px; line-height: 1; }
 .independent-note { margin: 28px 0 0; text-align: center; font-size: 12px; line-height: 1.7; color: #bcbab3; }
@@ -142,7 +147,8 @@
   .choice-name-prefix { font-size: 15px; }
   .academy-choice > p { font-size: 12px; line-height: 1.65; }
   .choice-purpose,.choice-bottom { font-size: 12px; }
-  .choice-art { width: 84%; margin: 8px -8px -10px 0; }
+  .choice-logo { min-height: 112px; margin-block: 20px; }
+  .choice-logo img { max-height: 112px; }
   .choice-bottom { padding-top: 0; gap: 6px; }
   .choice-arrow { font-size: 19px; }
   .academy-intro-header { padding: 24px; border-radius: 16px; }

@@ -6,9 +6,10 @@
   <title>학원별 수학 입학·선발 대비 | 지필드</title>
   <meta name="description" content="생각하는황소·돌파·원수학·이든·깊은생각·생수수학의 지원 과정을 고르고, 과정별 모의고사와 진단·보완 수업 구성을 확인하세요.">
   <link rel="stylesheet" href="../shared/app.css">
-  <link rel="stylesheet" href="./promo.css?v=color-20261101">
+  <link rel="stylesheet" href="./promo.css?v=logos-redrawn-20261101">
 </head>
 <body class="selection-promo" data-view="home">
+  <svg class="logo-display-filters" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false"><defs><filter id="logo-paper-out" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%"><feComponentTransfer in="SourceGraphic" result="white-channels"><feFuncR type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/><feFuncG type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/><feFuncB type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/></feComponentTransfer><feColorMatrix in="white-channels" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 1 1 0 -2" result="white-mask"/><feComposite in="SourceGraphic" in2="white-mask" operator="out"/></filter></defs></svg>
   <a class="skip-link" href="#main">본문으로</a>
   <header class="site-header"><nav class="shell nav" aria-label="주 메뉴">
     <a class="brand" href="#"><span class="brand-mark">G</span><span>지필드<small>학원별 수학 대비</small></span></a>
@@ -52,18 +53,9 @@
     const courseGroups={SH:'고등 선발 · 중등·고등 편입',DP:'중1 시작 · 공통수학 · 대수',WM:'중등 기본 · 공통수학 · 듀얼',ED:'중1 시작 · 고등선행',DG:'레벨 입학 · 예비고1',SM:'공통수학1 · 공통수학2'};
     // These are interface colors, not academy logos or official brand colors.
     const cardColors={SH:'#64d5a2',DP:'#f7d447',WM:'#618df3',ED:'#f39bb9',DG:'#b5a0ee',SM:'#fa9a68'};
-    const illustrations={
-      SH:'<ellipse cx="130" cy="211" rx="76" ry="13" fill="#182230" opacity=".13"/><circle cx="126" cy="126" r="78" fill="url(#solid-SH)"/><ellipse cx="100" cy="91" rx="21" ry="13" fill="#fff" opacity=".5" transform="rotate(-35 100 91)"/><ellipse cx="126" cy="126" rx="78" ry="27" fill="none" stroke="#fff" stroke-width="2" opacity=".6" transform="rotate(-22 126 126)"/>',
-      DP:'<ellipse cx="132" cy="211" rx="77" ry="13" fill="#182230" opacity=".14"/><path d="M47 82 126 42 207 87 129 130Z" fill="#56d9d4"/><path d="M47 82 129 130 129 215 47 167Z" fill="#299eaa"/><path d="M129 130 207 87 207 169 129 215Z" fill="#1b6f89"/><path d="M47 82 129 130 207 87M129 130V215" fill="none" stroke="#b6ffed" stroke-width="2" opacity=".8"/>',
-      WM:'<ellipse cx="126" cy="208" rx="76" ry="14" fill="#182230" opacity=".15"/><path d="M127 34 42 181 200 185Z" fill="#ffcb66"/><path d="M127 34 124 216 200 185Z" fill="#e69a34"/><path d="M127 34 42 181 124 216Z" fill="#ffe29a"/><path d="M127 34 124 216M42 181 200 185" fill="none" stroke="#fff2c9" stroke-width="2"/>',
-      ED:'<ellipse cx="124" cy="211" rx="76" ry="13" fill="#182230" opacity=".12"/><path d="M54 72V171C54 223 194 223 194 171V72" fill="url(#solid-ED)"/><ellipse cx="124" cy="72" rx="70" ry="32" fill="#c0a8ff"/><ellipse cx="124" cy="72" rx="48" ry="21" fill="none" stroke="#ece0ff" stroke-width="2"/><path d="M71 91V168" stroke="#e7d8ff" stroke-width="6" opacity=".55" stroke-linecap="round"/>',
-      DG:'<ellipse cx="129" cy="210" rx="77" ry="14" fill="#182230" opacity=".12"/><path d="M129 30 48 177C48 215 207 215 207 177Z" fill="url(#solid-DG)"/><ellipse cx="127" cy="177" rx="79" ry="26" fill="#df7850"/><path d="M129 30 48 177M129 30 207 177" fill="none" stroke="#ffc9a2" stroke-width="2"/>',
-      SM:'<ellipse cx="130" cy="214" rx="76" ry="12" fill="#182230" opacity=".12"/><path d="m124 29 81 91-81 94-79-94Z" fill="#087e72"/><path d="m124 29-9 101-70-10Z" fill="#5ad9b1"/><path d="m124 29 81 91-90 10Z" fill="#a7f1c9"/><path d="m45 120 70 10 9 84Z" fill="#27ad90"/><path d="m205 120-90 10 9 84Z" fill="#167f79"/><path d="m124 29-9 101 9 84M45 120l70 10 90-10" fill="none" stroke="#ceffe3" stroke-width="2"/>'
-    };
+    const academyLogos={SH:'sh.png',DP:'dp.png',WM:'wm-transparent-v2.png',ED:'ed-transparent-v2.png',DG:'dg.webp',SM:'sm-transparent-v2.png'};
     function cardArt(code){
-      const colorPairs={SH:['#ffd56d','#ed8e28'],ED:['#aa88ed','#6951b5'],DG:['#ffd091','#f4a16b']};
-      const pair=colorPairs[code]||['#fff','#ddd'];
-      return `<svg class="choice-art" viewBox="0 0 250 250" aria-hidden="true" focusable="false"><defs><linearGradient id="solid-${code}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${pair[0]}"/><stop offset="1" stop-color="${pair[1]}"/></linearGradient></defs>${illustrations[code]}</svg>`;
+      return `<span class="choice-logo ${['DP'].includes(code)?'choice-logo-clear':''}"><img src="./assets/logos/${academyLogos[code]}" alt="" decoding="async"></span>`;
     }
     function academyName(program){
       return program.publicName.startsWith('생각하는')?`<span class="choice-name-prefix">생각하는</span>${esc(program.publicName.slice(4))}`:esc(program.publicName);
