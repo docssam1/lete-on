@@ -1,4 +1,4 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261028m";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261101b";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261030c";
 import { PHASES, FIXED_LINES, voiceLine, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261030c";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";

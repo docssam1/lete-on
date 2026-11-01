@@ -1,5 +1,5 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261028m";
-import { GENERATORS } from "./generators.js?v=20261028zb";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261101b";
+import { GENERATORS } from "./generators.js?v=20261101b";
 import { saveRecord } from "./study-progress.js?v=20261029q";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261028za";
@@ -2663,6 +2663,11 @@ function foldUnfoldChoiceMarkup(visual) {
 
   const half = clip(square, { v: (p) => 0.5 - p.x, h: (p) => 0.5 - p.y, d1: (p) => p.x - p.y, d2: (p) => 1 - p.x - p.y }[visual.directions[0]]);
   parts += `<polygon points="${half.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
+  // 한 번 접기(1권 2단원 1차시): 둘째 접기 없이 반쪽에 자를 곳만 칠한다
+  if (visual.directions.length === 1) {
+    parts += `<polygon points="${visual.cut.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#b03a5b"/>`;
+    return foldUnfoldChoiceFinish(visual, parts, x, size, square);
+  }
   const seg2 = foldLine(half, visual.directions[1]);
   if (seg2) parts += `<line x1="${(x + seg2[0].x * size).toFixed(1)}" y1="${(top + seg2[0].y * size).toFixed(1)}" x2="${(x + seg2[1].x * size).toFixed(1)}" y2="${(top + seg2[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 5"/>`;
   const arrow2 = foldArrow(half, visual.directions[1]);
@@ -2675,12 +2680,16 @@ function foldUnfoldChoiceMarkup(visual) {
   parts += `<polygon points="${quad.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
   parts += `<polygon points="${visual.cut.map((p) => `${(x + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="#b03a5b"/>`;
 
+  return foldUnfoldChoiceFinish(visual, parts, x, size, square);
+}
+function foldUnfoldChoiceFinish(visual, parts, x, size, square) {
   const stageSvg = `<svg class="fold-unfold-stage-svg" viewBox="0 0 ${x + size + 10} ${size + 16}" role="img" aria-label="색종이 접기 단계">${parts}</svg>`;
-
+  // 보기의 접은 선: 접은 방향만(한 번 접기면 한 줄)
+  const lines = new Set(visual.directions);
   const optionSvg = visual.options.map((opt, index) => {
     let optParts = `<polygon points="${square.map((p) => `${(6 + p.x * size).toFixed(1)},${(6 + p.y * size).toFixed(1)}`).join(" ")}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>`;
-    optParts += `<line x1="${6 + size / 2}" y1="6" x2="${6 + size / 2}" y2="${6 + size}" stroke="#d4756c" stroke-width="1.4" stroke-dasharray="5 4"/>`;
-    optParts += `<line x1="6" y1="${6 + size / 2}" x2="${6 + size}" y2="${6 + size / 2}" stroke="#d4756c" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+    if (lines.has("v") || lines.size > 1) optParts += `<line x1="${6 + size / 2}" y1="6" x2="${6 + size / 2}" y2="${6 + size}" stroke="#d4756c" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+    if (lines.has("h") || lines.size > 1) optParts += `<line x1="6" y1="${6 + size / 2}" x2="${6 + size}" y2="${6 + size / 2}" stroke="#d4756c" stroke-width="1.4" stroke-dasharray="5 4"/>`;
     for (const poly of opt.polygons) {
       optParts += `<polygon points="${poly.map((p) => `${(6 + p.x * size).toFixed(1)},${(6 + p.y * size).toFixed(1)}`).join(" ")}" fill="#fff"/>`;
     }

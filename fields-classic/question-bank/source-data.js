@@ -325,6 +325,9 @@ export const TYPES = [
   type("fold-punch-shape-count", "geometry", "색종이 접기", "반원·원 펀치를 펼친 모양 개수", { generator: "foldPunchShapeCount", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("fold-stack-find", "geometry", "색종이 접기", "겹친 색종이의 가장 밑·위 찾기", { generator: "foldStackFind", sourceMatched: true, sourceDerived: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
   type("fold-stack-order", "geometry", "색종이 접기", "겹친 색종이를 위에서부터 순서대로", { generator: "foldStackOrder", sourceMatched: true, sourceDerived: true, textbookSource: "더클래식 1과정 1권 35~36·44~46쪽" }),
+  // 1권 2단원 1차시는 한 번 접기, 2차시가 두 번 접기다(원장 2026-11-01 「1차시 본책에 두 번 접기가 있어」) — 1차시 활동 1·확인 1은 이 한 번 접기 유형으로
+  type("fold-cut-shape-choice-one", "geometry", "색종이 접기", "한 번 접어 자르고 펼친 모양 고르기", { generator: "foldCutShapeChoiceOne", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 활동 1·확인 1(한 번 접기)" }),
+  type("fold-number-cut-sum-one", "geometry", "색종이 접기", "번호 색종이를 한 번 접고 자른 수의 합", { generator: "foldNumberCutSumOne", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 활동 1·확인 1(한 번 접기)" }),
   type("fold-cut-shape-choice", "geometry", "색종이 접기", "접어 자르고 펼친 모양 고르기", { generator: "foldCutShapeChoice", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("fold-cut-unfold-one-draw", "geometry", "색종이 접어 자르기", "한 번 접어 자르고 펼친 모양 그리기", { generator: "foldCutUnfoldOneDraw", sourceMatched: true, textbookSource: "더클래식 1과정 4권 활동 1번·연습 2번" }),
   type("fold-cut-unfold-two-draw", "geometry", "색종이 접어 자르기", "두 번 접어 자르고 펼친 모양 그리기", { generator: "foldCutUnfoldTwoDraw", sourceMatched: true, textbookSource: "더클래식 1과정 4권 연습 1번" }),
@@ -1395,6 +1398,8 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "fold-stack-order": "마지막 접기부터 거꾸로 펼쳐 각 조각의 위아래 순서를 찾습니다.",
   "fold-punch-shape-count": "접힌 겹 수와 펀치 모양이 펼쳐질 때 생기는 짝을 함께 셉니다.",
   "fold-cut-shape-choice": "접은 선을 기준으로 잘린 모양을 뒤집어 붙여 펼친 모양을 만듭니다.",
+  "fold-cut-shape-choice-one": "접은 선에 거울을 대듯 잘린 모양을 반대쪽에 한 번 옮겨 펼친 모양을 만듭니다.",
+  "fold-number-cut-sum-one": "한 번 접은 선을 기준으로 마주 겹치는 두 칸을 찾고, 잘린 칸의 수만 더합니다.",
   "fold-cut-unfold-one-draw": "접은 선을 거울처럼 한 번 되펼쳐 잘린 부분을 대칭으로 그립니다.",
   "fold-cut-unfold-two-draw": "나중에 접은 선부터 거꾸로 두 번 되펼쳐 잘린 부분을 네 자리에 그립니다.",
   "magic-square": "가로·세로·대각선의 합이 같다는 조건으로 한 줄의 합부터 찾습니다.",
@@ -2076,13 +2081,20 @@ const BOOK01_UNIT01_REFS = Object.freeze({
 });
 
 const BOOK01_UNIT02_REFS = Object.freeze({
+  // 1차시(한 번 접기) 활동 1·확인 1 → 한 번 접기 유형. 연습은 두 개념을 다 배운 2차시에서(유형의 차시를 따른다)
+  "fold-cut-shape-choice-one": stageReferences({
+    concept: [problemNumbers("activity", 1, [1])]
+  }),
+  "fold-number-cut-sum-one": stageReferences({
+    concept: [problemNumbers("activity", 1, [2, 3])],
+    type: [problemNumbers("check", 1, [1, 2, 3])]
+  }),
   "fold-cut-shape-choice": stageReferences({
-    concept: [problemNumbers("activity", 1, [1]), problemNumbers("activity", 2, [1, 2, 3, 4])],
+    concept: [problemNumbers("activity", 2, [1, 2, 3, 4])],
     practice: [problemNumbers("practice", 1, [1, 2, 8, 9, 10, 11, 18])]
   }),
   "fold-number-cut-sum-textbook": stageReferences({
-    concept: [problemNumbers("activity", 1, [2, 3])],
-    type: [problemNumbers("check", 1, [1, 2, 3]), problemNumbers("check", 2, [1, 2, 3, 4, 5, 6])],
+    type: [problemNumbers("check", 2, [1, 2, 3, 4, 5, 6])],
     practice: [problemNumbers("practice", 1, [3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17])]
   }),
   "fold-cut-piece-count": stageReferences({
@@ -4106,6 +4118,7 @@ export const CURRICULUM = [
       "digital-flip-addition-horizontal", "digital-transform-addition"
     ], [6,4], [5,4], 4, 18, BOOK01_UNIT01_REFS),
     detailedStagedUnit("색종이 접기", [
+      "fold-cut-shape-choice-one", "fold-number-cut-sum-one",
       "fold-cut-shape-choice", "fold-number-cut-sum-textbook", "fold-cut-piece-count",
       "fold-punch-shape-count", "fold-hole-count"
     ], [3,4], [3,6], 4, 20, BOOK01_UNIT02_REFS),

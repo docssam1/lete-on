@@ -517,8 +517,38 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ]),
     misconception: "펼친 뒤에도 자른 모양을 한쪽에만 두지 않았는지 확인합니다.",
     sourceEvidence: Object.freeze([
-      evidence("색종이 접기", 1, [1]),
       evidence("색종이 접기", 2, [1, 2, 3, 4])
+    ]),
+    verificationState: "source-confirmed"
+  }),
+  // 1권 2단원 1차시(한 번 접기) — 활동 1-1번(원장 2026-11-01 「1차시 본책에 두 번 접기가 있어」)
+  "fold-cut-shape-choice-one": Object.freeze({
+    conceptId: "concept:geometry:fold-reflection-unfold",
+    scope: "global-type-id",
+    sharedByDesign: true,
+    beats: Object.freeze([
+      beat("fold-line", "접은 선을 찾아요", "종이를 한 번 접은 선이 가로인지 세로인지 먼저 표시합니다."),
+      beat("reflect-cut", "자른 자리를 비춰요", "자른 자리를 접은 선 반대쪽 같은 거리로 한 번 옮깁니다."),
+      beat("complete-unfold", "펼친 모양을 완성해요", "원래 자리와 비친 자리 두 곳을 함께 그려 전체 모양을 확인합니다.")
+    ]),
+    misconception: "펼친 뒤에도 자른 모양을 한쪽에만 두거나 접지 않은 방향으로 비추지 않았는지 확인합니다.",
+    sourceEvidence: Object.freeze([
+      evidence("색종이 접기", 1, [1])
+    ]),
+    verificationState: "source-confirmed"
+  }),
+  "fold-number-cut-sum-one": Object.freeze({
+    conceptId: "concept:geometry:folded-number-cut-sum",
+    scope: "global-type-id",
+    sharedByDesign: true,
+    beats: Object.freeze([
+      beat("trace-fold", "접는 방향을 봐요", "한 번 접은 선과 화살표를 보고 어느 쪽 칸이 어느 쪽으로 겹치는지 표시합니다."),
+      beat("map-overlap", "마주 겹친 칸을 찾아요", "자른 자리와 접은 선을 사이에 두고 마주 겹치는 원래 번호 칸을 함께 찾습니다."),
+      beat("sum-cut-cells", "잘린 칸의 수만 더해요", "잘린 칸이 빠짐없는지 다시 확인한 뒤 그 수들만 더합니다.")
+    ]),
+    misconception: "접힌 그림에서 보이는 칸만 더하고 접은 선 반대쪽의 짝 칸을 빼먹지 않았는지 확인합니다.",
+    sourceEvidence: Object.freeze([
+      evidence("색종이 접기", 1, [2, 3])
     ]),
     verificationState: "source-confirmed"
   }),
@@ -565,21 +595,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ]),
     verificationState: "source-confirmed"
   }),
-  "fold-number-cut-sum-textbook": Object.freeze({
-    conceptId: "concept:geometry:folded-number-cut-sum",
-    scope: "global-type-id",
-    sharedByDesign: true,
-    beats: Object.freeze([
-      beat("trace-folds", "접는 방향을 따라가요", "접는 선과 화살표를 차례로 보고 어느 칸이 어느 쪽으로 이동하는지 표시합니다."),
-      beat("map-overlap", "겹친 원래 칸을 찾아요", "접힌 종이에서 자른 자리와 겹치는 원래 번호 칸을 펼치는 순서의 반대로 모두 찾습니다."),
-      beat("sum-cut-cells", "잘린 칸의 수만 더해요", "표시한 번호가 빠짐없이 잘린 칸인지 다시 확인한 뒤 그 수들만 더합니다.")
-    ]),
-    misconception: "접힌 그림에서 보이는 한 칸만 보거나 잘리지 않은 이웃 칸까지 더하지 않았는지 확인합니다.",
-    sourceEvidence: Object.freeze([
-      evidence("색종이 접기", 1, [2, 3])
-    ]),
-    verificationState: "source-confirmed"
-  }),
+  // fold-number-cut-sum-textbook: 개념 단계 본책 문항(활동 1-2·3번)이 한 번 접기라 fold-number-cut-sum-one으로 옮겼다(2026-11-01). 이 유형은 2차시 확인·연습에서만 쓴다
   "cross-shape-magic-sum": Object.freeze({
     conceptId: "concept:number:cross-center-equal-sum",
     scope: "global-type-id",

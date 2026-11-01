@@ -5855,6 +5855,46 @@ function foldCutShapeChoice({ difficulty = 2 }) {
   };
 }
 
+// 1권 2단원 1차시(한 번 접기) — 위의 두 번 접기 고르기와 같은 꼴로 한 번만 접는다(원장 2026-11-01 「1차시 본책에 두 번 접기가 있어」)
+function foldCutShapeChoiceOne({ difficulty = 2 }) {
+  const direction = sample(["v", "h"]);
+  const half = direction === "v" ? { x0: 0, x1: 0.5, y0: 0, y1: 1 } : { x0: 0, x1: 1, y0: 0, y1: 0.5 };
+  const length = 0.18 + Math.random() * 0.14;
+  const corner = { x: sample([half.x0, half.x1]), y: sample([half.y0, half.y1]) };
+  const sx = corner.x === half.x0 ? 1 : -1, sy = corner.y === half.y0 ? 1 : -1;
+  const cut = [{ ...corner }, { x: corner.x + sx * length, y: corner.y }, { x: corner.x, y: corner.y + sy * length }];
+  const other = direction === "v" ? "h" : "v";
+  const correct = [cut, mirrorPolygon(cut, direction)];
+  const wrongOnly = [cut];
+  const wrongOther = [cut, mirrorPolygon(cut, other)];
+  const wrongShift = direction === "v" ? [cut, shiftPolygon(cut, 0.5, 0)] : [cut, shiftPolygon(cut, 0, 0.5)];
+  const resolution = 181;
+  const correctMask = shapeRasterMask(correct, resolution);
+  const masks = [];
+  const candidates = [wrongOnly, wrongOther, wrongShift].filter((option) => {
+    const mask = shapeRasterMask(option, resolution);
+    if (maskDifference(mask, correctMask) <= resolution * resolution * 0.01) return false;
+    if (masks.some((seen) => maskDifference(seen, mask) <= resolution * resolution * 0.01)) return false;
+    masks.push(mask);
+    return true;
+  });
+  if (candidates.length < 3) return foldCutShapeChoiceOne({ difficulty });
+  const options = shuffle([{ polygons: correct, ok: true }, ...candidates.map((polygons) => ({ polygons, ok: false }))]);
+  const answerIndex = options.findIndex((option) => option.ok);
+  return {
+    prompt: "색종이를 한 번 접은 후 칠해진 부분을 잘라내었습니다. 남은 부분을 펼쳤을 때의 그림으로 알맞은 것을 고르시오.",
+    visual: { kind: "fold-unfold-choice", directions: [direction], cut, options },
+    answer: "①②③④"[answerIndex],
+    solution: "잘린 삼각형을 접은 선에 거울을 대듯 반대쪽으로 펼치면, 한 번 접었으므로 접은 선 양쪽 두 자리에 대칭으로 나타납니다.",
+    meta: { family: "fold-unfold-choice", structure: "one-fold", directions: [direction], cut, options, answerIndex }
+  };
+}
+
+// 1권 2단원 1차시: 번호 색종이를 한 번(가로·세로 또는 대각선) 접고 자른 수의 합
+function foldNumberCutSumOne({ difficulty = 2 }) {
+  return Math.random() < 0.5 ? foldDiagonalNumberSum({ difficulty }) : BOOK04_GENERATORS.foldNumberGridOne({ difficulty: Math.min(difficulty, 2) });
+}
+
 function foldCutUnfoldDrawCore({ difficulty = 2, foldCount }) {
   const directions = foldCount === 1
     ? [sample(["v", "h", "d1", "d2"])]
@@ -6656,6 +6696,8 @@ export const GENERATORS = {
   foldStackFind,
   foldStackOrder,
   foldCutShapeChoice,
+  foldCutShapeChoiceOne,
+  foldNumberCutSumOne,
   foldCutUnfoldOneDraw,
   foldCutUnfoldTwoDraw,
   foldNumberGridTwoDiagonal,

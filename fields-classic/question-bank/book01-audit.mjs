@@ -25,8 +25,8 @@ function permutations(values) {
 const book = CURRICULUM.find((item) => item.id === "book-01");
 assert(book, "book-01 curriculum missing");
 const typeIds = book.units.flatMap((unit) => unit.typeIds);
-assert(typeIds.length === 41, `expected 41 types, got ${typeIds.length}`);
-assert(new Set(typeIds).size === 41, "duplicate type in book-01 curriculum");
+assert(typeIds.length === 43, `expected 43 types, got ${typeIds.length}`);
+assert(new Set(typeIds).size === 43, "duplicate type in book-01 curriculum");
 
 let sourceQuestionCount = 0;
 const sourceKeys = new Set();
