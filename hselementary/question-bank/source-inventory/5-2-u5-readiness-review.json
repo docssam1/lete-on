@@ -159,6 +159,20 @@
         {"number": 39, "classification": "직육면체 표면 선을 꼭짓점이 표시된 전개도로 옮기기", "candidate": "원래 그어진 ㄱㄷ 외에 ㄱㅂ, ㅂㅇ, ㄷㅇ 추가", "reviewNote": "원문 겨냥도에서 면마다 그은 선의 끝점을 읽고 전개도의 같은 꼭짓점에 옮겼다. ㄱㄷ은 이미 그어져 있고, 왼쪽 면에 ㄱㅂ, 아랫면에 ㅂㅇ, 오른쪽 면에 ㄷㅇ를 그린다.", "status": "source-reviewed-answer-key-pending"},
         {"number": 40, "classification": "전개도의 부분 선을 정육면체 겨냥도로 옮기기", "candidate": "보이는 윗면·앞면·오른쪽 면에 각각 원문 위치의 선분 하나", "reviewNote": "윗면은 앞 변 ㄴㄷ의 중간 부근에서 오른쪽 변 ㄷㄹ의 중간 부근까지, 앞면은 ㄴㄷ의 같은 위치에서 앞왼쪽 세로 모서리의 중간 부근까지 잇는다. 오른쪽 면은 ㄷㄹ의 같은 위치에서 뒤쪽 세로 모서리의 중간 부근까지 잇는다. 확대 원문과 세 면의 접힌 좌표를 대조했다. 원문 선이 흐리고 정확한 중점 조건은 명시되지 않아 좌표의 정밀 비율 및 숨은 면 표기는 추가 검수가 필요하다.", "status": "source-interpretation-answer-key-pending"}
       ]
+    },
+    {
+      "section": "확인학습 5단원 직육면체의 전개도와 겨냥도",
+      "sourcePdfPage": 107,
+      "alternateSourcePdfPage": 108,
+      "sourcePrintedPage": 113,
+      "scope": "113쪽 41, 42, 46번의 원문과 필기 없는 사본을 대조하고 면의 회전으로 반대 면을 독립 검산했다. 나머지 그림 문항은 추가 검수한다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 41, "classification": "두 전개도의 대응 면을 이용한 세 수의 곱", "candidate": "36", "reviewNote": "그림 1을 접으면 반대 면은 1↔4, 2↔5, 3↔6이다. 그림 2에서는 5↔ㄴ, 1↔ㄹ, ㄱ↔ㄷ이므로 ㄴ=2, ㄹ=4이고 ㄱ과 ㄷ은 3과 6이다. 따라서 ㄱ×ㄴ×ㄷ=3×2×6=36이다. 두 전개도를 독립적으로 접어 대응을 확인했다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 42, "classification": "한 꼭짓점에 만나는 세 면의 수의 합 최댓값", "candidate": "15", "reviewNote": "마주 보는 면은 6↔2, 3↔4, 1↔5다. 한 꼭짓점에는 각 쌍에서 하나씩 만나므로 큰 수를 고르면 6+4+5=15다. 여덟 꼭짓점 조합을 별도 검산했다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 46, "classification": "한 꼭짓점에 만나는 세 면의 수의 곱 최댓값", "candidate": "90", "reviewNote": "마주 보는 면은 4↔5, 2↔6, 1↔3이다. 한 꼭짓점에는 각 쌍에서 하나씩 만나므로 최댓값은 5×6×3=90이다. 여덟 꼭짓점 조합을 별도 검산했다.", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "sourcePagesDirectlyReviewed": [43, 44, 45, 46, 47, 48, 49, 50, 51],
