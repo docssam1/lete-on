@@ -1,1 +1,12 @@
 .source52-p62-figure { display:block; width:min(100%, 340px); height:auto; margin:1rem auto; overflow:visible; }
+
+@page source52P62Answer { size: A4; margin: 10mm 0; }
+@media print {
+  #problemView [data-source-item-id^="5-2-u6-e3-"],
+  #solutionView [data-source-answer^="5-2-u6-e3-"] { font-family: "Noto Serif KR", "Batang", serif; font-weight: 400; }
+  .print-page--four-up .source52-p62-figure text { font-size: 23px; }
+  .answer-page:has([data-source-answer^="5-2-u6-e3-"]) { page: source52P62Answer; }
+  .answer-page:has([data-source-answer^="5-2-u6-e3-"]) .solution-list { gap: 5px; margin-top: 8px; }
+  .answer-page:has([data-source-answer^="5-2-u6-e3-"]) .solution-item p { padding: 4px 9px; font-size: 10pt; line-height: 1.35; }
+  .answer-page:has([data-source-answer^="5-2-u6-e3-"]) .solution-item header > :is(span, strong) { padding: 5px 9px; }
+}
