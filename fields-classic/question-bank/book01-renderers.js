@@ -21,7 +21,8 @@ function shapeTransformMarkup(visual) {
     "rotate-left": "시계 반대 방향으로 반의 반 바퀴", "rotate-right": "시계 방향으로 반의 반 바퀴", "rotate-half": "반 바퀴"
   };
   const options = visual.options.map((option) => patternGrid(option.cells, visual.size, `${option.option}번`)).join("");
-  return `<div class="b1-transform"><div class="b1-transform-source">${patternGrid(visual.source, visual.size, "처음 모양")}<span>→</span><strong>${visual.operations.map((operation) => operationLabels[operation]).join(" → ")}</strong></div><div class="b1-option-row">${options}</div></div>`;
+  // print-draw: 학생 인쇄 교재에서는 보기 대신 빈 모눈에 직접 그린다(원장 2026-11-01 「교재에는 보기 없도록 · 원본 교재처럼 모눈이 있어야지」, styles.css)
+  return `<div class="b1-transform"><div class="b1-transform-source">${patternGrid(visual.source, visual.size, "처음 모양")}<span>→</span><strong>${visual.operations.map((operation) => operationLabels[operation]).join(" → ")}</strong></div><div class="b1-option-row">${options}</div><div class="print-draw b1-draw-answer">${patternGrid([], visual.size, "움직인 모양")}</div></div>`;
 }
 
 function partitionDrawMarkup(visual) {

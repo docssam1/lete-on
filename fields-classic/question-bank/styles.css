@@ -1686,3 +1686,19 @@ html:has(body.as-embed),body.as-embed{height:100%;overflow:hidden}
 .as-embed .oneup-figure .visual svg{max-width:100%;height:auto}
 .as-embed .drawing-answer-note{font-size:16px;color:#5b6f7e}
 .as-embed .concept-worked-solution summary{font-size:15px}
+/* 고르기 문제(app.js choiceOf): 화면 = 보기 단추, 학생 인쇄 교재 = 보기 없이 빈 모눈·빈 색종이에 그리거나 답 칸에 쓰기
+   (원장 2026-11-01 「교재에는 보기 없도록 · 원본 교재처럼 모눈이 있어야지」). 선생님 학습지 인쇄는 그대로 */
+.print-draw,.print-only{display:none}
+.choice-buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.choice-buttons button{min-width:64px;min-height:52px;padding:0 16px;border:2px solid #d7e1e8;border-radius:14px;background:#fff;color:#1d3446;font:inherit;font-size:20px;font-weight:900;box-shadow:0 3px 0 #d7e1e8;cursor:pointer}
+.choice-buttons button[aria-pressed="true"]{border-color:#2f7de1;background:#e8f1fd;color:#1b5fb8;box-shadow:0 3px 0 #2f7de1}
+.choice-buttons button:focus-visible{outline:3px solid #1d3446;outline-offset:2px}
+@media print{
+  .as-student .screen-only{display:none!important}
+  .as-student span.print-only{display:inline!important}
+  .as-student label.print-only{display:flex!important}
+  .as-student .print-draw{display:grid!important;justify-items:center;gap:4px;margin-top:10px}
+  .as-student .b1-transform .b1-option-row,.as-student .b1-digital-transform .b1-number-options,.as-student .fold-unfold-options{display:none!important}
+  .as-student .fold-draw-answer svg{width:46mm;height:auto}
+  .as-student .fold-draw-answer b,.as-student .b1-draw-answer b{font-size:9pt;color:#5c5446}
+}

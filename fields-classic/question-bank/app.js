@@ -2,7 +2,7 @@ import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?
 import { GENERATORS } from "./generators.js?v=20261101c";
 import { saveRecord } from "./study-progress.js?v=20261029q";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
-import { book01Markup } from "./book01-renderers.js?v=20261028za";
+import { book01Markup } from "./book01-renderers.js?v=20261101e";
 import { book02Markup } from "./book02-renderers.js?v=20261029t";
 import { book03Markup } from "./book03-renderers.js?v=20261027a";
 import { book04Markup } from "./book04-renderers.js?v=20261023h";
@@ -1466,6 +1466,11 @@ function bindQuestionEditor() {
     if (button.dataset.questionAction === "remove") removeQuestion(index);
   }));
   bindStudentChecks(grid);
+  grid.querySelectorAll("[data-choice]").forEach((button) => button.addEventListener("click", () => {
+    const index = Number(button.dataset.choiceIndex);
+    if (state.questions[index]) state.questions[index].responseValue = button.dataset.choice;
+    button.parentElement.querySelectorAll("[data-choice]").forEach((other) => other.setAttribute("aria-pressed", String(other === button)));
+  }));
   grid.querySelectorAll(".answer-input").forEach((input) => input.addEventListener("input", () => {
     const index = Number(input.dataset.questionIndex);
     if (state.questions[index]) state.questions[index].responseValue = input.value;
@@ -2697,7 +2702,9 @@ function foldUnfoldChoiceFinish(visual, parts, x, size, square) {
     return `<div class="fold-unfold-option"><svg viewBox="0 0 ${size + 12} ${size + 12}" role="img" aria-label="보기 ${"①②③④"[index]}">${optParts}</svg><b>${"①②③④"[index]}</b></div>`;
   }).join("");
 
-  return `<div class="fold-unfold-choice-work">${stageSvg}<div class="fold-unfold-options">${optionSvg}</div></div>`;
+  // print-draw: 학생 인쇄 교재에서는 보기 대신 접은 선만 있는 빈 색종이에 펼친 모양을 그린다(styles.css)
+  const blank = `<svg viewBox="0 0 ${size + 12} ${size + 12}" role="img" aria-label="펼친 모양을 그릴 빈 색종이"><polygon points="${square.map((p) => `${(6 + p.x * size).toFixed(1)},${(6 + p.y * size).toFixed(1)}`).join(" ")}" fill="#fff" stroke="#e8968f" stroke-width="2"/>${lines.has("v") || lines.size > 1 ? `<line x1="${6 + size / 2}" y1="6" x2="${6 + size / 2}" y2="${6 + size}" stroke="#d4756c" stroke-width="1.2" stroke-dasharray="5 4"/>` : ""}${lines.has("h") || lines.size > 1 ? `<line x1="6" y1="${6 + size / 2}" x2="${6 + size}" y2="${6 + size / 2}" stroke="#d4756c" stroke-width="1.2" stroke-dasharray="5 4"/>` : ""}</svg>`;
+  return `<div class="fold-unfold-choice-work">${stageSvg}<div class="fold-unfold-options">${optionSvg}</div><div class="print-draw fold-draw-answer">${blank}<b>펼친 모양</b></div></div>`;
 }
 
 function foldCutUnfoldDrawMarkup(visual) {
@@ -3392,11 +3399,40 @@ function studentCheckMarkup(question, index) {
   </div>`;
 }
 
+// 보기에서 고르는 문제(①~④ · 1번~4번): 화면에서는 보기 단추, 학생 인쇄 교재에서는 보기 없이 그리거나 쓴다
+// (원장 2026-11-01 「그냥 고르기로 할까? … 그러자 대신 교재에는 보기 없도록 · 원본 교재처럼 모눈이 있어야지」)
+const CIRCLED = "①②③④⑤";
+function choiceOf(question) {
+  const options = question.visual?.options;
+  if (!Array.isArray(options) || options.length < 2) return null;
+  const answer = String(question.answer || "");
+  const circled = /^[①②③④⑤]$/u.test(answer);
+  if (!circled && !/^\d번/u.test(answer)) return null;
+  const labels = options.map((_, k) => circled ? CIRCLED[k] : `${k + 1}번`);
+  const kind = question.visual.kind === "fold-unfold-choice" || question.visual.subtype === "shape-transform" ? "draw"
+    : question.visual.subtype === "digital-transform" ? "write" : "keep";
+  return { labels, kind };
+}
+// 학생 인쇄 교재 문장: 고르기 → 그리기 · 쓰기
+function printPromptOf(question, kind) {
+  const prompt = String(question.prompt || "");
+  if (kind === "draw" && question.visual.kind === "fold-unfold-choice") return prompt.replace(/그림으로 알맞은 것을 고르시오\.?$/u, "모양을 빈 색종이에 그려 넣으시오.");
+  if (kind === "draw") return prompt.replace(/알맞은 결과를 고르세요\.?$/u, "움직인 모양을 빈 모눈에 그려 넣으세요.");
+  if (kind === "write") return prompt.replace(/고르세요/u, "쓰세요");
+  return prompt;
+}
 function studentAnswerMatches(typed, answer) {
   const plain = (value) => String(value || "").replace(/<[^>]+>/gu, "").replace(/[\s,.·]/gu, "");
   const a = plain(answer);
   const t = plain(typed);
   if (!t) return null;
+  // 고르기 답(① · 3번 · 3번 (6)): 번호만 맞으면 된다 — 「③」「3」「3번」 어느 꼴로 써도
+  const pick = a.match(/^([①②③④⑤])/u)?.[1] || a.match(/^(\d)번/u)?.[1];
+  if (pick) {
+    const want = CIRCLED.includes(pick) ? String(CIRCLED.indexOf(pick) + 1) : pick;
+    const got = t.match(/^([①②③④⑤])/u)?.[1] || t.match(/^(\d)/u)?.[1];
+    if (got) return (CIRCLED.includes(got) ? String(CIRCLED.indexOf(got) + 1) : got) === want;
+  }
   if (t === a) return true;
   const numbers = a.match(/-?\d+(?:\/\d+)?/gu) || [];
   return numbers.length === 1 && t.replace(/[^\d/-]/gu, "") === numbers[0];
@@ -3411,7 +3447,7 @@ function bindStudentChecks(grid) {
     const reveal = () => { box.querySelector(".student-answer").hidden = false; button.hidden = true; };
     if (["drawing", "visual-fill"].includes(question.responseKind)) return reveal();
     const verdict = studentAnswerMatches(question.responseValue, question.answer);
-    if (verdict === null) { message.textContent = "답을 먼저 써 보세요."; return; }
+    if (verdict === null) { message.textContent = choiceOf(question) ? "보기에서 하나를 먼저 골라 보세요." : "답을 먼저 써 보세요."; return; }
     if (verdict) { message.textContent = "맞았어요!"; box.dataset.result = "right"; return reveal(); }
     if (box.dataset.tried) { message.textContent = "정답과 풀이를 보고 다시 풀어 보세요."; box.dataset.result = "wrong"; return reveal(); }
     box.dataset.tried = "1";
@@ -3438,6 +3474,7 @@ function renderWorksheet() {
   $("worksheetTitle").textContent = title;
   const questionCards = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
+    const choice = asStudent ? choiceOf(question) : null;
     const visualPolicy = question.visual?.layoutRole === "support"
       ? `support-${question.visual.compactPolicy || "keep"}`
       : "required";
@@ -3456,9 +3493,12 @@ function renderWorksheet() {
       <span class="question-reference">${bookMode && question.bookRef ? question.bookRef : `기준 문제: ${question.reference}`}</span>
       ${textbookConceptTutorialMarkup(question)}
       ${question.studyStage?.id !== "concept" && question.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${question.conceptGuide}</span></div>` : ""}
-      <p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>
+      ${choice && choice.kind !== "keep"
+        ? `<p class="question-prompt"><span class="screen-only">${question.prompt.replaceAll("\n", "<br>")}</span><span class="print-only">${printPromptOf(question, choice.kind).replaceAll("\n", "<br>")}</span></p>`
+        : `<p class="question-prompt">${question.prompt.replaceAll("\n", "<br>")}</p>`}
       ${worksheetVisualMarkup(question)}
-      ${question.responseKind === "drawing"
+      ${choice ? `<div class="choice-buttons screen-only" role="group" aria-label="${index + 1}번 보기 고르기">${choice.labels.map((label) => `<button type="button" data-choice-index="${index}" data-choice="${escapeAttribute(label)}" aria-pressed="${question.responseValue === label}">${label}</button>`).join("")}</div>${choice.kind === "write" ? `<label class="answer-line print-only">답 <input class="answer-input" aria-label="${index + 1}번 답" /></label>` : ""}`
+        : question.responseKind === "drawing"
         ? '<span class="drawing-answer-note">위 그림에 직접 그려서 답하세요.</span>'
         : question.responseKind === "visual-fill"
           ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
