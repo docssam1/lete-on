@@ -27,6 +27,7 @@ for (let a = 1; a <= 8; a++) for (let b = 1; b <= 8; b++) for (let c = 1; c <= 8
 }
 assert.deepEqual([...new Set(item.arrangements.map(row => row.canonicalDimensions))].sort(), [...independentlyEnumerated].sort(), "table includes every distinct factor allocation");
 assert.equal((generated.prompt.match(/class="source52-p49m5-diagram"/g) || []).length, 1);
+assert.match(generated.prompt, /class="source52-p49m5-outline" x1="285" y1="116" x2="285" y2="164"/, "front and right faces must share a visible edge");
 assert.equal((generated.solution.match(/class="source52-p49m5-table"/g) || []).length, 1);
 assert.equal((generated.solution.match(/<tr>/g) || []).length, 11, "header plus all ten arrangements");
 assert.match(generated.prompt, /5cm, 3cm, 1cm/);

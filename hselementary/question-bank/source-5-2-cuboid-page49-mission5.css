@@ -27,6 +27,8 @@
   .source52-p49m5-table-wrap { overflow: visible; margin: 2mm auto; }
   .source52-p49m5-table { font-size: 9pt; }
   .source52-p49m5-table th,
-  .source52-p49m5-table td { padding: 2.2mm 3mm; }
+  .source52-p49m5-table td { padding: 1mm 3mm; }
+  .source52-p49m5-solution .source52-p49m5-table-wrap { margin: 1mm auto; }
+  .answer-page:has(.source52-p49m5-solution) .source52-p49m5-diagram { max-height: 42mm; margin: 1mm auto; }
   .source52-p49m5-solution li { margin: 1mm 0; }
 }
