@@ -7,7 +7,7 @@ from pathlib import Path
 path = Path(__file__).parent / "source-inventory/5-2-u3-e1-e4-readiness-review.json"
 review = next(r for r in json.loads(path.read_text())["additionalSourceReviews"] if r["sourcePrintedPage"] == 99)
 assert review["publisherAnswerVerified"] is False and review["runtimeConnection"] == "not-connected"
-assert {i["number"] for i in review["items"]} == {108, 109, 110, 112}
+assert {i["number"] for i in review["items"]} == set(range(108, 115))
 
 # Clip a regular hexagon in four half-plane combinations, then compare colors.
 h=5*math.sqrt(3)
