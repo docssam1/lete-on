@@ -11,6 +11,9 @@ assert.doesNotMatch(q.solution,/20−4−10/, "do not assume an unlabelled 10cm 
 assert.equal((m.side-2*m.bottomOpening)/2,4,"the complementary width follows from the full side strip");
 assert.equal((q.prompt.match(/class="geometry-diagram source52-p50e22-diagram"/g)||[]).length,1);assert.equal(q.generationMode,"fixed-verified-pool");assert.equal(q.handwrittenAnswerVerified,false);
 assert.doesNotMatch(q.prompt,/source52-p50e22-fold/,"original problem does not reveal inferred fold lines");
+assert.doesNotMatch(q.prompt,/>자름<|>한 변 20cm</,"the source diagram does not repeat given conditions or cut labels");
+assert.equal((q.prompt.match(/class="source52-p50e22-cut"/g)||[]).length,3,"all three source cut regions remain visible");
+assert.match(q.prompt,/>4cm<.*>14cm</,"both measurements remain in the source diagram");
 assert.equal((q.answerVisual.match(/class="source52-p50e22-fold"/g)||[]).length,3,"answer visual shows all inferred folds");
 assert.equal(m.topOpening,6);assert.equal(m.bottomOpening,6);
 const readiness=require("./source-inventory/5-2-u5-readiness-review.json").items.find(r=>r.sourceItemId===item.sourceItemId);assert.equal(readiness.implementationStatus,"verified-local");assert.equal(readiness.publicDecision,"public");
