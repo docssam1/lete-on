@@ -1663,35 +1663,68 @@ html:has(body.as-embed),body.as-embed{height:100%;overflow:hidden}
 .worksheet-actions .oneup-nav .oneup-next{border-color:#2f6b4a;background:#e9f0e7;color:#1e4631}
 .worksheet-actions .oneup-nav button:disabled{opacity:.4;cursor:default}
 .as-embed .worksheet-actions>div{flex:none}
-/* 덱 안 학습지 = 게임과 같은 결(원장 2026-11-01 「스스로 공부하기 모드는 이 정도의 디자인」): 그림은 따뜻한 판, 문제는 큰 미션 띠, 단추는 입체 */
-.as-embed .question-card.is-current{border:0;border-radius:24px;background:#fff;box-shadow:inset 0 0 0 1px #e6ecf1,0 14px 34px rgba(29,52,70,.08);padding:20px 22px}
-.as-embed .oneup-figure{padding:18px;border-radius:22px;background:linear-gradient(180deg,#fdf5e6 0%,#f8e8cc 100%);box-shadow:inset 0 0 0 1px #efd9b4}
-.as-embed .oneup-figure>.visual{background:transparent}
-.as-embed .oneup-side .question-prompt{margin:10px 0 12px;padding:14px 18px;border-radius:16px;background:#fff;box-shadow:0 6px 18px rgba(29,52,70,.08),inset 0 0 0 1px #edf1f4;color:#1d3446;font-size:20px;line-height:1.5}
-.as-embed .oneup-side .answer-line{gap:12px;font-size:16px;color:#5b6f7e}
-.as-embed .oneup-side .answer-input{width:160px;height:52px;border:2px solid #d7e1e8;border-radius:14px;background:#fff;font-size:22px}
-.as-embed .oneup-side .answer-input:focus{border-color:#2f7de1;box-shadow:0 0 0 4px rgba(47,125,225,.15)}
-.as-embed .student-check{border-top:0}
-.as-embed .student-check-actions button{min-height:50px;border:2px solid #d7e1e8;border-radius:14px;font-size:17px;font-weight:800}
-.as-embed .student-check-actions .student-check-button{border:0;background:linear-gradient(180deg,#2fb36b,#1f9256);box-shadow:0 5px 0 #157443}
-.as-embed .student-check-actions .student-check-button:active{transform:translateY(3px);box-shadow:0 2px 0 #157443}
-.as-embed .study-stage-banner,.as-embed .question-concept,.as-embed .textbook-concept-tutorial{border-radius:14px}
-.worksheet-actions .oneup-nav ol button.is-on{border-color:#1d3446;background:#1d3446}
-.worksheet-actions .oneup-nav .oneup-next{border:0;background:linear-gradient(180deg,#2fb36b,#1f9256);color:#fff;box-shadow:0 4px 0 #157443}
-.as-embed .test-panel{border:0;border-radius:24px;box-shadow:inset 0 0 0 1px #e6ecf1,0 14px 34px rgba(29,52,70,.08)}
-.as-embed .test-grade{border-radius:14px;background:linear-gradient(180deg,#2fb36b,#1f9256);box-shadow:0 5px 0 #157443}
-/* 덱 안: 개념은 앞 장(판서)에서 배웠으니 작은 개념 상자·유형 경로·단계 띠는 빼고 문제를 크게(원장 2026-11-01 「잘 안 보여」) */
+/* 덱 안 학습지(공부하기·과제·테스트) — 2026-11-01 frontend-design 스킬로 다시 짬.
+   주인공은 「그림 판」 하나: 교재 지면 같은 따뜻한 종이 판에 그림을 판 너비만큼 키운다(app.js fitOneUp).
+   나머지는 조용히: 흰 카드 속 흰 카드·그림자·그라데이션을 걷고, 문제는 판 옆에 맨글씨로, 단추는 초록 하나만 진하게.
+   색: 종이 #fbf6ea · 판 선 #e2d5bc · 글씨 #22302a · 초록 #1f6b4a(고름·답 확인) · 진초록 #154f36 · 흐린 글씨 #6b6253 */
+body.as-embed{background:#fff}
+.as-embed #questionGrid{margin-block:auto}
+.as-embed .question-card.is-current{border:0;border-radius:0;background:transparent;box-shadow:none;padding:4px 6px 10px;overflow:visible}
+.as-embed .question-card.is-current.has-figure{grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);align-items:stretch;gap:34px;max-width:1560px}
+.as-embed .oneup-figure{display:flex;align-items:center;justify-content:center;min-width:0;padding:22px;border:1.5px solid #e2d5bc;border-radius:20px;background:#fbf6ea}
+.as-embed .oneup-figure>.visual{flex:1 1 auto;width:100%;min-width:0;margin:0;padding:0;background:transparent}
+.as-embed .oneup-figure>.visual>*{margin-inline:auto}
+.as-embed .oneup-side{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.as-embed .oneup-side .question-prompt{order:1;margin:0 0 22px;padding:0;color:#22302a;font-size:25px;font-weight:700;line-height:1.5;word-break:keep-all}
+.as-embed .oneup-side .choice-buttons,.as-embed .oneup-side .answer-line,.as-embed .oneup-side .drawing-answer-note{order:2}
+.as-embed .oneup-side .student-check,.as-embed .oneup-side .test-answer{order:3}
+.as-embed .oneup-side .concept-worked-solution{order:4;margin-top:14px;border:0;background:none}
+.as-embed .oneup-side .concept-worked-solution summary{padding:0;color:#6b6253;font-size:15px;font-weight:700;cursor:pointer}
+.as-embed .oneup-side .answer-line{gap:12px;margin:0;color:#6b6253;font-size:18px;font-weight:800}
+.as-embed .oneup-side .answer-input{width:170px;height:60px;border:2px solid #e2d5bc;border-radius:14px;background:#fff;color:#22302a;font-size:26px}
+.as-embed .oneup-side .answer-input:focus{border-color:#1f6b4a;box-shadow:0 0 0 4px rgba(31,107,74,.16)}
+.as-embed .oneup-side .wide-answer-line .answer-input{width:100%}
+.as-embed .drawing-answer-note{color:#6b6253;font-size:17px}
+.as-embed .student-check{display:grid;gap:10px;margin-top:22px;padding:0;border:0}
+.as-embed .student-check-actions{display:flex;align-items:center;gap:18px}
+.as-embed .student-check-actions button{min-height:0;padding:0;border:0;background:none;color:#1f6b4a;font-size:17px;font-weight:800;text-decoration:underline;text-underline-offset:4px;box-shadow:none}
+.as-embed .student-check-actions .student-check-button{min-width:180px;min-height:60px;padding:0 30px;border-radius:14px;background:#1f6b4a;color:#fff;font-size:21px;text-decoration:none;box-shadow:0 5px 0 #154f36}
+.as-embed .student-check-actions .student-check-button:active{transform:translateY(3px);box-shadow:0 2px 0 #154f36}
+.as-embed .student-check-message{font-size:17px}
+.as-embed .student-check-message:empty{display:none}
+.as-embed .test-panel{border:1.5px solid #e2d5bc;border-radius:20px;background:#fbf6ea;box-shadow:none}
+.as-embed .test-grade{border-radius:14px;background:#1f6b4a;box-shadow:0 5px 0 #154f36}
+/* 개념은 앞 장(판서)에서 배웠으니 작은 개념 상자·유형 경로·단계 띠는 빼고 문제를 크게(원장 2026-11-01 「잘 안 보여」) */
 .as-embed .textbook-concept-tutorial,.as-embed .question-top,.as-embed .question-concept,.as-embed .study-stage-banner,.as-embed .concept-guide{display:none!important}
-.as-embed .question-card.is-current.has-figure{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
-.as-embed .oneup-figure .visual svg{max-width:100%;height:auto}
-.as-embed .drawing-answer-note{font-size:16px;color:#5b6f7e}
-.as-embed .concept-worked-solution summary{font-size:15px}
+/* 문제 번호 줄: 덱 안에서는 번호만(넘기기는 덱 아래 「다음 문제 →」 하나 — 원장 「다음 버튼이 2개라 불편해」) */
+.as-deck .worksheet-actions>div,.as-deck .worksheet-actions>#backToBuilder{display:none}
+.as-deck .oneup-nav{margin-left:0}
+/* 세로로 긴 화면(태블릿 세로): 그림 위, 문제 아래 */
+@media(orientation:portrait){
+  .as-embed .question-card.is-current.has-figure{grid-template-columns:minmax(0,1fr)!important;gap:18px}
+  .as-embed .oneup-side .question-prompt{font-size:22px}
+}
+/* 좁은 칸(오늘의 과제 칠판 옆·태블릿 세로): 문제 글과 보기 단추를 한 단계 작게 */
+@media(max-width:820px){
+  .as-embed .question-card.is-current.has-figure{grid-template-columns:minmax(0,1.25fr) minmax(220px,1fr);gap:20px}
+  .as-embed .oneup-figure{padding:14px}
+  .as-embed .oneup-side .question-prompt{margin-bottom:16px;font-size:20px}
+  .as-embed .oneup-side .choice-buttons{grid-template-columns:repeat(auto-fit,minmax(54px,1fr));gap:8px}
+  .as-embed .oneup-side .choice-buttons button{min-height:56px;font-size:20px}
+  .as-embed .student-check-actions{flex-wrap:wrap;gap:10px 16px}
+  .as-embed .student-check-actions .student-check-button{min-width:150px;min-height:54px;font-size:19px}
+}
+.as-deck .worksheet-actions .oneup-nav ol button{min-width:34px;min-height:34px;padding:0;border:1.5px solid #e2d5bc;background:#fff;color:#6b6253;font-size:14px;font-weight:800;box-shadow:none}
+.as-deck .worksheet-actions .oneup-nav ol button.is-on{border-color:#22302a;background:#22302a;color:#fff}
 /* 고르기 문제(app.js choiceOf): 화면 = 보기 단추, 학생 인쇄 교재 = 보기 없이 빈 모눈·빈 색종이에 그리거나 답 칸에 쓰기
    (원장 2026-11-01 「교재에는 보기 없도록 · 원본 교재처럼 모눈이 있어야지」). 선생님 학습지 인쇄는 그대로 */
 .print-draw,.print-only{display:none}
 .choice-buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
 .choice-buttons button{min-width:64px;min-height:52px;padding:0 16px;border:2px solid #d7e1e8;border-radius:14px;background:#fff;color:#1d3446;font:inherit;font-size:20px;font-weight:900;box-shadow:0 3px 0 #d7e1e8;cursor:pointer}
-.choice-buttons button[aria-pressed="true"]{border-color:#2f7de1;background:#e8f1fd;color:#1b5fb8;box-shadow:0 3px 0 #2f7de1}
+.choice-buttons button[aria-pressed="true"]{border-color:#1f6b4a;background:#1f6b4a;color:#fff;box-shadow:0 3px 0 #154f36}
+.as-embed .choice-buttons{display:grid;grid-template-columns:repeat(auto-fit,minmax(68px,1fr));gap:12px;margin:0}
+.as-embed .choice-buttons button{min-height:68px;padding:0 8px;white-space:nowrap;border-color:#e2d5bc;color:#22302a;font-size:24px;box-shadow:0 4px 0 #e2d5bc}
+.as-embed .choice-buttons button[aria-pressed="true"]{border-color:#1f6b4a;background:#1f6b4a;color:#fff;box-shadow:0 4px 0 #154f36}
 .choice-buttons button:focus-visible{outline:3px solid #1d3446;outline-offset:2px}
 @media print{
   .as-student .screen-only{display:none!important}

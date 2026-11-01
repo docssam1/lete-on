@@ -63,6 +63,14 @@ if (asStudent && params.get("embed") === "1" && parent !== window) document.body
 // (원장 2026-10-30 「게임이나 학습 과정에서 아래로 스크롤을 해야 하는 경우가 있어」). 그림은 왼쪽, 문제·답은 오른쪽.
 // 칸보다 크면 통째로 줄여(zoom) 넣는다. 테스트는 마지막 장이 채점 장.
 const oneUp = document.body.classList.contains("as-embed");
+// 스스로 공부 덱의 공부하기 장(study.js sheetUrl &deck=1): 문제 넘기기는 덱 아래 「다음 문제 →」 하나로 — 여기는 번호만 보인다
+const inDeck = oneUp && params.get("deck") === "1";
+if (inDeck) document.body.classList.add("as-deck");
+if (inDeck) window.addEventListener("message", (event) => {
+  if (event.origin !== location.origin || event.source !== parent || event.data?.type !== "fc-study" || event.data.cmd !== "oneup") return;
+  oneUpAt += event.data.go === "prev" ? -1 : 1;
+  layoutOneUp();
+});
 let oneUpAt = 0;
 const domainIndex = Object.fromEntries(DOMAINS.map((domain, index) => [domain.id, index]));
 const EXAM_SOURCES = [...DIAGNOSTIC_EXAM_TYPES, ...EXAMS, ...PRACTICE_EXAM_TYPES, ...FINAL_EXAM_TYPES];
@@ -3499,7 +3507,7 @@ function renderWorksheet() {
       ${worksheetVisualMarkup(question)}
       ${choice ? `<div class="choice-buttons screen-only" role="group" aria-label="${index + 1}번 보기 고르기">${choice.labels.map((label) => `<button type="button" data-choice-index="${index}" data-choice="${escapeAttribute(label)}" aria-pressed="${question.responseValue === label}">${label}</button>`).join("")}</div>${choice.kind === "write" ? `<label class="answer-line print-only">답 <input class="answer-input" aria-label="${index + 1}번 답" /></label>` : ""}`
         : question.responseKind === "drawing"
-        ? '<span class="drawing-answer-note">위 그림에 직접 그려서 답하세요.</span>'
+        ? `<span class="drawing-answer-note">${oneUp ? "그림" : "위 그림"}에 직접 그려서 답하세요.</span>`
         : question.responseKind === "visual-fill"
           ? '<span class="drawing-answer-note">그림의 빈칸에 수를 써 넣으세요.</span>'
           : `<label class="answer-line ${question.responseKind === "list" ? "wide-answer-line" : ""}">답 <input class="answer-input" data-question-index="${index}" value="${escapeAttribute(question.responseValue)}" aria-label="${index + 1}번 답" /></label>`}
@@ -3573,13 +3581,14 @@ function layoutOneUp() {
   }
   const atPanel = testMode && oneUpAt === cards.length;
   const label = (i) => i === cards.length ? "채점" : String(i + 1);
-  nav.innerHTML = `<button type="button" data-oneup="prev" ${oneUpAt === 0 ? "disabled" : ""}>‹ 앞 문제</button>
-    <ol>${Array.from({ length: steps }, (_, i) => `<li><button type="button" data-oneup="${i}" class="${i === oneUpAt ? "is-on" : ""}${i === cards.length ? " is-grade" : ""}" aria-current="${i === oneUpAt ? "step" : "false"}">${label(i)}</button></li>`).join("")}</ol>
+  const dots = `<ol>${Array.from({ length: steps }, (_, i) => `<li><button type="button" data-oneup="${i}" class="${i === oneUpAt ? "is-on" : ""}${i === cards.length ? " is-grade" : ""}" aria-current="${i === oneUpAt ? "step" : "false"}" aria-label="${i === cards.length ? "채점" : `${i + 1}번 문제`}">${label(i)}</button></li>`).join("")}</ol>`;
+  nav.innerHTML = inDeck ? dots : `<button type="button" data-oneup="prev" ${oneUpAt === 0 ? "disabled" : ""}>‹ 앞 문제</button>
+    ${dots}
     <button type="button" class="oneup-next" data-oneup="next" ${oneUpAt === steps - 1 ? "disabled" : ""}>${testMode && oneUpAt === cards.length - 1 ? "채점하러 가기 ›" : "다음 문제 ›"}</button>`;
   cards.forEach((card, i) => card.classList.toggle("is-current", i === oneUpAt));
   document.body.classList.toggle("oneup-panel", atPanel);
   // 덱(오늘의 과제 칠판)이 지금 보이는 문제와 같은 번호·유형을 적도록 알린다
-  if (parent !== window) parent.postMessage({ type: "fc-embed", event: "oneup", index: oneUpAt, total: cards.length, label: state.questions[oneUpAt]?.type?.label || "" }, location.origin);
+  if (parent !== window) parent.postMessage({ type: "fc-embed", event: "oneup", index: oneUpAt, total: cards.length, steps, grade: testMode, label: state.questions[oneUpAt]?.type?.label || "" }, location.origin);
   requestAnimationFrame(fitOneUp);
 }
 function fitOneUp() {
@@ -3589,15 +3598,25 @@ function fitOneUp() {
   if (!target) return;
   // 칸에 꼭 맞게 — 크면 줄이고 작으면 키운다(원장 2026-11-01 「태블릿이나 PC에서 공부할 거야, 화면에 가득 차야지」)
   const fits = () => target.getBoundingClientRect().bottom <= innerHeight - 10 && document.documentElement.scrollWidth <= innerWidth + 1;
-  let lo = 0.5, hi = 1.7;
-  target.style.zoom = "";
-  if (fits()) lo = 1; else hi = 1;
-  for (let step = 0; step < 7; step += 1) {
-    const mid = (lo + hi) / 2;
-    target.style.zoom = String(mid);
-    if (fits()) lo = mid; else hi = mid;
+  const search = (el, lo, hi, ok) => {
+    el.style.zoom = "";
+    if (ok()) lo = 1; else hi = 1;
+    for (let step = 0; step < 7; step += 1) {
+      const mid = (lo + hi) / 2;
+      el.style.zoom = String(mid);
+      if (ok()) lo = mid; else hi = mid;
+    }
+    el.style.zoom = String(Math.floor(lo * 100) / 100);
+  };
+  const visual = panel ? null : target.querySelector(".oneup-figure > .visual");
+  if (visual) visual.style.zoom = "";
+  search(target, 0.5, 1.25, fits);
+  // 그다음 그림만 판 너비까지 키운다 — 그림이 이 화면의 주인공(frontend-design 「한 곳에만 힘을」)
+  if (visual) {
+    // 판 안에서 그림 조각이 서로 겹치거나 넘치면 거기서 멈춘다(보기 모눈이 좁은 칸에 눌려 겹치던 것)
+    const room = () => [visual, ...visual.querySelectorAll("*")].every((el) => !el.clientWidth || el.scrollWidth <= el.clientWidth);
+    search(visual, 0.4, 2.6, () => room() && fits());   // 좁은 칸(과제 칠판 옆)에서는 그림을 줄여서라도 겹치지 않게
   }
-  target.style.zoom = String(Math.floor(lo * 100) / 100);
 }
 
 // ── 테스트(semi test·약점 확인): 다 풀고 채점 → ○✕ → 유형별 진단 → 약점 유형 유사문제 ──

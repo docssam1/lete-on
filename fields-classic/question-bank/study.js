@@ -93,7 +93,7 @@ function sheetUrl(slide, { print = false } = {}) {
     entries = { picks: unitTestTypes(unit).map((typeId) => [typeId, "advanced", "단원 평가", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 평가`, test: "1", testId };
   }
   // 표지는 장마다 붙이지 않고 「한 주 교재 인쇄」(처음 화면 단원 장)에서 한 번에 — 원장 2026-10-29 「표지와 같이 한 주차 교재가 같이」
-  return link("index.html", { ...base, ...entries, ...(print ? { print: "1" } : { embed: "1" }) });
+  return link("index.html", { ...base, ...entries, ...(print ? { print: "1" } : { embed: "1", deck: "1" }) });
 }
 // 오늘의 과제: 칠판에 손글씨로 할 일을 적어 준다(원장 2026-10-29 「과제는 오늘의 과제 하고 칠판 글씨처럼 써줘야지」)
 // 한 번에 한 문제씩(원장 2026-10-31 「지금 과제와 내용이 안 맞아 … 하나씩 줘야겠어」): 옆 학습지가 보이는 문제와 같은 번호·유형만 적고,
@@ -104,23 +104,16 @@ function chalkTask(at = 0, label = "") {
   const name = label || typeById(types[at])?.label || "같은 유형";
   return `<p class="sd-chalk-count">${at + 1}번 문제 <small>/ ${total}문제</small></p>
     <p class="sd-chalk-task">${esc(name)}</p>
-    <ol class="sd-chalk-steps"><li>옆 학습지 ${at + 1}번을 풀어요</li><li>다 풀면 「답 확인」으로 답과 풀이를 봐요</li><li>${at + 1 < total ? "「다음 문제 ›」로 넘어가요" : "마지막 문제예요. 다 했으면 「다음 →」"}</li></ol>
+    <ol class="sd-chalk-steps"><li>옆 학습지 ${at + 1}번을 풀어요</li><li>다 풀면 「답 확인」으로 답과 풀이를 봐요</li><li>${at + 1 < total ? "「다음 문제 →」로 넘어가요" : "마지막 문제예요. 다 했으면 「다음 →」"}</li></ol>
     <p class="sd-chalk-dots" aria-hidden="true">${types.map((_, k) => `<i class="${k === at ? "on" : k < at ? "done" : ""}"></i>`).join("")}</p>`;
 }
 function chalkMarkup() {
   return `<div class="sd-chalk" role="note" aria-live="polite"><h3>오늘의 과제</h3><p class="sd-chalk-date">${esc(unit.label)} · ${part}차시 · 인쇄해서 집에서 풀어도 돼요</p><div class="sd-chalk-now" id="chalkNow">${chalkTask(0)}</div></div>`;
 }
+// 안내 글은 독쌤이 말하므로 화면에 다시 쓰지 않는다(2026-11-01 frontend-design 다시 보기 — 같은 말이 띠·말풍선에 두 번). 인쇄 단추는 장 머리(slideHead)로
 function workMarkup(slide) {
-  const help = slide.kind === "board"
-    ? `본책 <b>${esc(slide.block.label)}</b>과 같은 유형의 문제예요. 화면에서 풀어도 되고, 인쇄해서 풀어도 돼요. 어려우면 <b>유사 문제 풀기</b>.`
-    : slide.kind === "homework"
-      ? "칠판에 적힌 대로 <b>인쇄해서</b> 집에서 풀고, 화면에서 <b>답과 풀이</b>를 확인해요."
-      : slide.kind === "daily"
-        ? `지난 시간(${part - 1}차시)에 배운 것으로 <b>데일리 테스트 ${DAILY_COUNT}문제</b>. 다 풀고 채점하면 ○✕로 알려 줘요.`
-        : `이 단원 <b>단원 평가 ${UNIT_TEST_COUNT}문제</b>예요. 다 풀고 채점하면 ○✕로 약점 유형을 알려 줘요.`;
   return `<div class="sd-work${slide.kind === "homework" ? " has-chalk" : ""}">
     ${slide.kind === "homework" ? chalkMarkup() : ""}
-    <div class="sd-work-bar"><p>${help}</p><a class="sd-btn" href="${esc(sheetUrl(slide, { print: true }))}" target="_blank" rel="noopener">🖨 인쇄해서 풀기</a></div>
     <iframe class="sd-work-frame" id="workFrame" title="${esc(slideTitle(slide))}" src="${esc(sheetUrl(slide))}"></iframe>
   </div>`;
 }
@@ -259,8 +252,10 @@ window.addEventListener("message", (event) => {
   if (event.source === $("sheetFrame").contentWindow) return;
   // 단원 평가를 채점했다 → 독쌤이 결과와 약점 유형을 말해 준다
   if (event.source === document.getElementById("workFrame")?.contentWindow) {
-    if (event.data.event === "oneup" && slides[index]?.kind === "homework" && $("chalkNow")) {
-      $("chalkNow").innerHTML = chalkTask(Math.min(event.data.index, todayTypes().length - 1), event.data.label);
+    if (event.data.event === "oneup") {
+      sheetAt = { at: event.data.index, steps: event.data.steps || event.data.total };
+      setNextLabel();
+      if (slides[index]?.kind === "homework" && $("chalkNow")) $("chalkNow").innerHTML = chalkTask(Math.min(event.data.index, todayTypes().length - 1), event.data.label);
       return;
     }
     if (event.data.event === "test-result" && event.data.marked === event.data.total) {
@@ -540,7 +535,8 @@ function slideHead(slide) {
   const title = slideTitle(slide);
   // 게임은 건너뛸 수 있다(원장 2026-10-29 「게임은 넘어갈 수 있고」) — 이어진 게임 장을 다 넘어 워밍업으로
   const skip = slide.kind === "game" ? `<button type="button" class="sd-skip" data-act="skip-games">게임 건너뛰기 ›</button>` : "";
-  return `<p class="sd-kick"><span class="sd-kick-no">${stationOf(slide) + 1}</span>${label}${slide.of ? ` <em>${slide.of}</em>` : ""}<span id="slidePage" class="sd-page"></span>${skip}</p><h2>${esc(title)}</h2>`;
+  const print = WORK_KINDS.includes(slide.kind) ? `<a class="sd-skip sd-print" href="${esc(sheetUrl(slide, { print: true }))}" target="_blank" rel="noopener">인쇄해서 풀기</a>` : "";
+  return `<p class="sd-kick"><span class="sd-kick-no">${stationOf(slide) + 1}</span>${label}${slide.of ? ` <em>${slide.of}</em>` : ""}<span id="slidePage" class="sd-page"></span>${skip}</p><h2>${esc(title)}</h2>${print}`;
 }
 // 표지 공부 순서: 데일리 테스트·단원 평가·권별 테스트는 그 차시에 있는 것만
 const planPhases = (counts) => PHASES.filter(([kind]) => !OPTIONAL.includes(kind) || (ready ? counts[kind] : expectedOptional(kind)));
@@ -619,7 +615,8 @@ function show({ atEnd = false } = {}) {
   $("nextBtn").disabled = !ready || index === slides.length - 1;
   // 게임 장에서는 게임 안의 「다음 문제」 하나만(원장 2026-11-01 「다음 버튼이 2개라 불편해」) — 다 하면 다시 보인다. 그만두려면 머리줄 「게임 건너뛰기」
   $("nextBtn").hidden = slide.kind === "game" && !gamesDone.has(index);
-  $("nextBtn").querySelector(".sd-next-text").textContent = slide.kind === "cover" ? "출발하기 →" : "다음 →";
+  sheetAt = null;
+  setNextLabel();
   $("count").textContent = `${index + 1} / ${slides.length}`;
   renderSigns();
   placeWorld();
@@ -637,18 +634,30 @@ function go(target, options) {
   show(options);
   $("stage").scrollTop = 0;
 }
+// 공부하기·과제·테스트 장: 덱 아래 「다음」 하나로 학습지 문제를 넘기고, 마지막 문제 다음에 다음 장으로(원장 「다음 버튼이 2개라 불편해」)
+let sheetAt = null;
+const sheetHasNext = () => WORK_KINDS.includes(slides[index]?.kind) && sheetAt && sheetAt.at < sheetAt.steps - 1;
+const sheetHasPrev = () => WORK_KINDS.includes(slides[index]?.kind) && sheetAt && sheetAt.at > 0;
+function setNextLabel() {
+  const slide = slides[index];
+  const grade = sheetAt && ["daily", "test"].includes(slide?.kind) && sheetAt.at === sheetAt.steps - 2;
+  $("nextBtn").querySelector(".sd-next-text").textContent = slide?.kind === "cover" ? "출발하기 →" : sheetHasNext() ? (grade ? "채점하러 가기 →" : "다음 문제 →") : "다음 →";
+}
+function sheetGo(go) { document.getElementById("workFrame")?.contentWindow?.postMessage({ type: "fc-study", cmd: "oneup", go }, location.origin); }
 const gamesDone = new Set();
 function gameFinished() { gamesDone.add(index); $("nextBtn").hidden = false; }
 function next() {
   cancelAuto();
   if (slides[index]?.kind === "game" && !gamesDone.has(index)) return;   // 키보드 → 도 게임 중에는 게임 안에서
   if (!$("sheet").hidden) { closeSheet(); return; }
+  if (sheetHasNext()) { sheetGo("next"); return; }
   if (slides[index].kind === "concept" && !slides[index].native && frameReady) { askFrame("next"); return; }
   go(index + 1);
 }
 function prev() {
   cancelAuto();
   if (!$("sheet").hidden) { closeSheet(); return; }
+  if (sheetHasPrev()) { sheetGo("prev"); return; }
   if (slides[index].kind === "concept" && !slides[index].native && frameReady) { askFrame("prev"); return; }
   const target = index - 1;
   go(target, { atEnd: slides[target]?.kind === "concept" });
