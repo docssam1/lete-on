@@ -36,3 +36,12 @@
   .source52-p55m2-solution ol { margin: 0.2rem 0 0.35rem; }
   .source52-p55m2-solution li { margin: 0.12rem 0; }
 }
+
+@page source52P55MissionsAnswer { size:A4; margin:10mm 0; }
+@media print {
+  .answer-page:has(.source52-p55m1-solution, .source52-p55m2-solution, .source52-p55m3-solution, .source52-p55m4-solution, .source52-p55m5-solution, .source52-p55m6-solution) { page:source52P55MissionsAnswer; }
+  .print-page.print-page--four-up .source52-p55m2-answer-lines { grid-template-columns:1fr; gap:0; }
+  .print-page.print-page--four-up .source52-p55m5-diagram--wide { display:none; }
+  .print-page.print-page--four-up .question-prompt .source52-p55m5-diagram--mobile { display:block; max-height:250px; margin:2mm auto; }
+  .print-page.print-page--four-up .source52-p55m5-cell text { font-size:11px; }
+}
