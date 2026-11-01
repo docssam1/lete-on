@@ -16,13 +16,10 @@ function patternGrid(cells, size, label = "") {
 }
 
 function shapeTransformMarkup(visual) {
-  const operationLabels = {
-    "mirror-left-right": "좌우 뒤집기", "mirror-top-bottom": "위아래 뒤집기",
-    "rotate-left": "시계 반대 방향으로 반의 반 바퀴", "rotate-right": "시계 방향으로 반의 반 바퀴", "rotate-half": "반 바퀴"
-  };
   const options = visual.options.map((option) => patternGrid(option.cells, visual.size, `${option.option}번`)).join("");
+  // 움직이는 방법(뒤집기·돌리기)은 문제 글에 있으니 그림에 다시 쓰지 않는다(원장 2026-11-01 「이미 문제에 나왔는데 문제를 설명하는 글은 빼」)
   // print-draw: 학생 인쇄 교재에서는 보기 대신 빈 모눈에 직접 그린다(원장 2026-11-01 「교재에는 보기 없도록 · 원본 교재처럼 모눈이 있어야지」, styles.css)
-  return `<div class="b1-transform"><div class="b1-transform-source">${patternGrid(visual.source, visual.size, "처음 모양")}<span>→</span><strong>${visual.operations.map((operation) => operationLabels[operation]).join(" → ")}</strong></div><div class="b1-option-row">${options}</div><div class="print-draw b1-draw-answer">${patternGrid([], visual.size, "움직인 모양")}</div></div>`;
+  return `<div class="b1-transform"><div class="b1-transform-source">${patternGrid(visual.source, visual.size, "처음 모양")}</div><div class="b1-option-row">${options}</div><div class="print-draw b1-draw-answer">${patternGrid([], visual.size, "움직인 모양")}</div></div>`;
 }
 
 function partitionDrawMarkup(visual) {
@@ -124,13 +121,8 @@ function arithmeticListMarkup(visual) {
 }
 
 function digitalOrientationBoardMarkup(visual) {
-  const operationLabels = {
-    "rotate-right-quarter": "오른쪽으로 반의 반 바퀴",
-    "rotate-left-quarter": "왼쪽으로 반의 반 바퀴",
-    "rotate-half": "반 바퀴"
-  };
   const cells = visual.cells.map((cell) => `<span style="--turn:${cell.orientation * 90}deg">${digitalDigit(cell.digit)}</span>`).join("");
-  return `<div class="b1-digital-orientation-board"><div class="b1-digital-board-grid">${cells}</div><strong>숫자판 전체를 ${operationLabels[visual.operation]}</strong><b>똑바로 놓이는 수의 합 = ?</b></div>`;
+  return `<div class="b1-digital-orientation-board"><div class="b1-digital-board-grid">${cells}</div></div>`;   // 돌리는 방법·구할 것은 문제 글에 있다(같은 말을 그림에 다시 쓰지 않음)
 }
 
 const blankNumber = (digits, className = "") => `<span class="b1-number-blank ${className}" style="--digits:${digits}">${Array.from({ length: digits }, () => "<i></i>").join("")}</span>`;
