@@ -50,7 +50,7 @@
       `첫 정사각형의 한 변은 ${math(`${legCm}÷2=${v.sideTexts[0]}cm`)}이고, 다음 정사각형의 한 변은 앞 정사각형 한 변의 절반씩입니다.`,
       `처음 여섯 정사각형의 한 변은 ${math(`${sideSequence}cm`)}입니다.`,
       `따라서 넓이의 합은 ${math(`${areaSequence}=${totalNumerator}/${commonDenominator}cm²`)}입니다.`,
-      `기약분수로 나타내면 ${math(`${v.total.n}/${v.total.d}=${v.answer}cm²`)}입니다.`
+      `대분수로 나타내면 ${math(`${v.total.n}/${v.total.d}=${v.answer}cm²`)}입니다.`
     ] : [
       `첫 정사각형의 넓이는 ${math(`(${legCm}÷2)²=${v.areaTexts[0]}cm²`)}입니다.`,
       `정사각형 한 변이 절반씩 줄면 넓이는 앞 넓이의 1/4씩 줄어듭니다.`,
