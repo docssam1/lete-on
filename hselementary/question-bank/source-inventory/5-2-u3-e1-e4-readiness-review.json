@@ -142,14 +142,18 @@
       "section": "확인학습 3단원 선대칭도형",
       "sourcePdfPage": 88,
       "sourcePrintedPage": 92,
-      "scope": "92쪽 중 58, 60, 61, 63번의 원문 그림과 필기 없는 사본을 대조하고 독립 계산했다. 나머지 문항은 별도 검수한다.",
+      "scope": "92쪽 57~64번의 원문 그림과 필기 없는 사본을 대조하고 독립 계산했다. 그림 답안 및 도형의 성질을 추가로 확인해야 하는 문항은 보류한다.",
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
+        {"number": 57, "classification": "격자에서 대각선을 축으로 선대칭 그림 완성", "candidate": "격자 반사 작도형; 실제 그림 검증 대기", "visual": "12×12 격자에서 대각선이 왼쪽 아래에서 오른쪽 위로 지나고, 축 한쪽에 꺾인 선과 세로 선이 있다.", "reviewNote": "격자 왼쪽 위를 (0,0), 오른쪽과 아래를 양의 방향으로 두면 축은 x+y=12이다. 축 밖의 꼭짓점 (2,1), (7,3)은 각각 (11,10), (9,5)에 대응한다. 축 위의 (2,10), (10,2)를 포함해 대응점을 원래 선의 순서로 이은 결과를 실물 그림으로 검증해야 한다.", "status": "source-reviewed-drawing-pending"},
         {"number": 58, "classification": "선대칭 도형의 대응점과 성질", "candidate": "④", "visual": "직선 ㅈㅊ 양쪽에 대응하는 사각형이 있다.", "reviewNote": "점 ㄴ은 점 ㅂ에 대응한다. 점 ㅁ은 점 ㄱ의 대응점이므로 ④가 옳지 않다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 59, "classification": "정육각형 대각선에 대한 삼각형의 선대칭", "candidate": "①, ③, ⑤", "visual": "정육각형의 서로 마주 보는 꼭짓점 세 쌍을 잇는 대각선이 중심 ㅇ에서 만나고 삼각형 ㄱㄴㅇ이 색칠되어 있다.", "reviewNote": "세 대각선에 각각 반사하면 삼각형 ㄴㄷㅇ, ㄹㅁㅇ, ㅂㄱㅇ이 된다. 선대칭은 한 축에 대한 한 번의 반사로 판단한다.", "status": "source-reviewed-answer-key-pending"},
         {"number": 60, "classification": "선대칭으로 완성한 도형의 넓이", "candidate": "822cm²", "visual": "대칭축 왼쪽에 가로 18cm, 세로 6cm와 12cm, 위쪽 높이 차 5cm, 왼쪽 돌출 길이 7cm가 표시된다.", "reviewNote": "그림의 수평·수직 치수 방향을 따르면 축 왼쪽 넓이는 18×(6+12)+18×5÷2+7×12÷2=411cm². 양쪽을 합하면 822cm²다. 꼭짓점 좌표의 신발끈 공식으로도 검산했다.", "status": "source-reviewed-answer-key-pending"},
         {"number": 61, "classification": "숫자 카드의 연속 대칭", "candidate": "④", "visual": "9 모양 카드를 아래, 오른쪽, 아래, 오른쪽, 아래 순서로 인접 카드와 선대칭이 되게 놓는다.", "reviewNote": "아래로 이동할 때 위아래가, 오른쪽으로 이동할 때 좌우가 뒤집힌다. ④까지 두 방향으로 각각 두 번 뒤집혀 처음 방향과 같고 ⑤는 다시 위아래가 뒤집힌다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 63, "classification": "두 선대칭축을 이용한 정사각형 사이 거리", "candidate": "24cm", "visual": "한 변 10cm인 정사각형 가와 나가 첫 축에 대칭이고 나와 다가 두 번째 축에 대칭이다. 나와 각 축 사이 거리는 각각 6cm와 13cm다.", "reviewNote": "두 축 사이 거리는 6+10+13=29cm다. 두 축에 연속 반사하면 가의 중심이 58cm 이동하므로 가와 다의 중간 축은 가의 중심에서 29cm 떨어진다. 가의 가까운 변까지 거리는 29−5=24cm다.", "status": "source-reviewed-answer-key-pending"}
+        {"number": 62, "classification": "여섯 선대칭도형의 대칭축 수", "candidate": "22개 (그림을 마름모·정삼각형·정오각별·정사각형·정육각형·양끝이 같은 반원인 도형으로 해석)", "visual": "마름모형, 삼각형, 별, 사각형, 육각형, 둥근 막대 모양의 그림 여섯 개가 주어지나 정다각형이라는 문구는 없다.", "reviewNote": "제시된 모양을 위와 같이 해석하면 대칭축 수는 차례로 2, 3, 5, 4, 6, 2개로 합계 22개이다. 삼각형·별·육각형의 정확한 정규성 등은 그림만으로 수학적으로 확정하기 어려워 출판사 의도를 추가 확인한다.", "status": "source-ambiguity-answer-key-pending"},
+        {"number": 63, "classification": "두 선대칭축을 이용한 정사각형 사이 거리", "candidate": "24cm", "visual": "한 변 10cm인 정사각형 가와 나가 첫 축에 대칭이고 나와 다가 두 번째 축에 대칭이다. 나와 각 축 사이 거리는 각각 6cm와 13cm다.", "reviewNote": "두 축 사이 거리는 6+10+13=29cm다. 두 축에 연속 반사하면 가의 중심이 58cm 이동하므로 가와 다의 중간 축은 가의 중심에서 29cm 떨어진다. 가의 가까운 변까지 거리는 29−5=24cm다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 64, "classification": "사각형과 선대칭 상의 겹치는 넓이", "candidate": "162.5cm² (대칭축이 밑변에 수직이라는 해석)", "visual": "두 수직 변이 15cm, 20cm이고 밑변의 대칭축 양쪽 길이가 각각 5cm인 사각형; 밑변 양끝에 직각 표시가 있다.", "reviewNote": "그려진 대칭축이 밑변에 수직이면 축 위의 윗변 높이는 (15+20)/2=17.5cm다. 겹친 영역은 밑변 5cm, 평행한 양 높이 15cm와 17.5cm인 사다리꼴 두 개로 넓이는 2×5×(15+17.5)/2=162.5cm²다. 축과 밑변의 직각은 그림에 별도로 표시되어 있지 않아 그 해석을 명시하고 공식 답 확인 전 보류한다.", "status": "source-ambiguity-answer-key-pending"}
       ]
     }
   ],
