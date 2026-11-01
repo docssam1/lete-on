@@ -31,13 +31,12 @@
     if (!Number.isSafeInteger(poolIndex) || poolIndex < 0 || poolIndex >= pools.length) throw new RangeError("확인된 수치 묶음 0~2만 사용할 수 있습니다.");
     if (![-1, 0, 1].includes(difficultyOffset)) throw new RangeError("난이도 오프셋은 -1, 0, 1이어야 합니다.");
     const items = calculate(pools[poolIndex]);
-    const hint = difficultyOffset < 0 ? '<p class="source52-u4-p43-m1-hint">도움말: 소수점을 잠시 떼고 자연수의 곱을 구한 뒤, 처음 소수의 자릿수만큼 소수점을 옮기세요.</p>' : "";
     const rows = items.map((item, index) => {
       const expression = item.naturalFirst ? `${item.natural} × ${fmt(item.hundredths)}` : `${fmt(item.hundredths)} × ${item.natural}`;
       return { prompt: `<span class="source52-u4-p43-m1-index">(${index + 1})</span> ${expression}`,
         solution: `${expression} = ${item.hundredths} × ${item.natural} ÷ 100 = ${item.hundredths * item.natural} ÷ 100 = ${item.answer}` };
     });
-    const prompt = `<div class="source52-u4-p43-m1-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>다음 곱셈을 하여라.</p><ol>${rows.map(row => `<li>${row.prompt}</li>`).join("")}</ol>${hint}</div>`;
+    const prompt = `<div class="source52-u4-p43-m1-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>다음 곱셈을 하여라.</p><ol>${rows.map(row => `<li>${row.prompt}</li>`).join("")}</ol></div>`;
     const solution = `<div class="source52-u4-p43-m1-solution" data-source-answer="${id}" data-pool-index="${poolIndex}"><ol>${rows.map(row => `<li>${esc(row.solution)}</li>`).join("")}</ol><p class="source52-u4-p43-m1-answer">답: ${items.map(item => item.answer).join(", ")}</p></div>`;
     return Object.freeze({
       prompt, answer: `(${items.map(item => item.answer).join(", ")})`, solution,
@@ -45,7 +44,7 @@
       verifiedVariantCount: pools.length, verifiedVariantTarget: pools.length, verifiedVariantId: `${id}:v${poolIndex}`,
       variantProvenance: "synthetic-source-structure", difficultyOffset, difficultyLevel: difficultyOffset + 1,
       difficultyRank: difficultyOffset + 1, sourceDifficultyRank: 1,
-      difficultyDesign: ["guided-decimal-placement", "independent-hundredths-products", "four-product-fluency"][difficultyOffset + 1],
+      difficultyDesign: "difficulty-difference-unverified",
       reasoningSteps: 4, sourceStepCount: 4, difficultyStepDelta: difficultyOffset, sourceStructurePreserved: true,
       sourcePdfPage: 39, sourcePrintedPage: 43,
       questionModel: { expressions: pools[poolIndex].map(item => ({ decimal: fmt(item.hundredths), natural: item.natural, naturalFirst: item.naturalFirst })) },
