@@ -2230,14 +2230,14 @@
       "pdfPage": 23,
       "printedPage": 27,
       "sourceShape": "이등변삼각형의 밑변을 등분해 만든 삼각형의 합동쌍 세기.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "blocked-ambiguous-triangle-count-scope",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조를 대조하고 창작 조건의 작은 삼각형의 합동쌍과 집계 범위을 검증. 출판사 답안 미확인으로 원문 잠금 유지.",
+      "reviewReason": "원문에서 여섯 작은 삼각형만 셀지 그림 전체를 셀지 명확하지 않아 원문 잠금 유지. 별도 연습은 작은 삼각형으로 범위를 명시하고 검증.",
       "publisherKeyVerified": false,
       "publicDecision": "locked",
       "syntheticRuntimeTypeId": "5-2-u3-e2-mission-6"
