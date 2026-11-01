@@ -10,6 +10,14 @@ on:
       - 'fields-classic/**'
       - 'hselementary/**'
       - 'hsmiddle/**'
+      - 'highschool-selection/promo/**'
+      - 'highschool-selection/public/**'
+      - 'highschool-selection/shared/app.css'
+      - 'highschool-selection/data/public-exam-profiles.js'
+      - 'highschool-selection/data/catalog.js'
+      - 'highschool-selection/data/academy-engagement.js'
+      - 'highschool-selection/data/standard-exam-policy.js'
+      - 'highschool-selection/scripts/stage-public-intro.cjs'
       - 'geometry/**'
       - 'hyper-focus/**'
       - 'number_magic/**'
@@ -101,6 +109,7 @@ jobs:
           rm -f _site/hsmiddle/question-bank/data/source-page-fingerprints.json
           rm -f _site/hsmiddle/question-bank/data/source-pdf-bundle-verification.json
           test ! -e _site/hsmiddle/question-bank/audits
+          node highschool-selection/scripts/stage-public-intro.cjs --dest _site/highschool-selection
           cp -R geometry/. _site/geometry/
           node hyper-focus/qa/stage_public_release.cjs --source hyper-focus --dest _site/hyper-focus
           node hyper-focus/qa/validate_public_release.cjs --source hyper-focus --dest _site/hyper-focus
