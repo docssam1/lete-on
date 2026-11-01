@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('node:assert/strict');
+global.window={};require('./source-inventory-4-1.js');require('./source-inventory-grade6.js');require('./curriculum.js');require('./generators.js');
+const item=require('./source-5-2-cuboid-page53-mission3.js');
+const type=window.HSE_CURRICULUM.semesters.flatMap(s=>s.units.flatMap(u=>u.subunits.flatMap(g=>g.types))).find(t=>t.id===item.sourceItemId);
+assert(type&&type.sourceVerified&&!type.reviewLocked);assert.equal(type.publisherKeyVerified,false);
+assert.deepEqual(item.cells,[[0,0,2],[1,0,6],[1,1,8],[2,1,12],[2,2,10],[3,2,4]]);
+const q=window.HSE_GENERATORS.generate(type,0,0,0,0);
+assert.deepEqual(q.answerModel.products,[48,80,96,160,288,480,576,960]);assert.equal(q.answer,'16');assert.equal(q.publisherKeyVerified,false);
+assert.match(q.solution,/288=80×3\+48/);assert.doesNotMatch(q.prompt,/答:|最大公約数は <strong>16/);
+assert.equal(window.HSE_GENERATORS.generate(type,0,0,0,1),null);assert.equal(window.HSE_GENERATORS.generate({...type,reviewLocked:true},0,0,0,0),null);
+console.log('PASS: original net, eight products, gcd, separate source item and lock guards.');

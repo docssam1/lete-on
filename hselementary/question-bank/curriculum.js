@@ -2148,6 +2148,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
   const source52CuboidViewPractice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s3");
   if (source52CuboidViewPractice) {
+    const source52p53m3Id = "5-2-u5-e3-mission-3";
+    if (!source52CuboidViewPractice.types.some(type => type.id === source52p53m3Id)) {
+      const name = "정육면체 꼭짓점의 곱과 최대공약수";
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(group => group.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidViewPractice.types.push({id:source52p53m3Id, number:source52CuboidViewPractice.types.length+1, typeNumber,
+        name, label:name, difficultyBand:0, sourceItemId:source52p53m3Id, sourceItemLabel:"Mission 3", sourceSection:"mission",
+        sourceTier:"advanced", sourcePdfPage:49, sourcePrintedPage:53, sourceVerified:true, publisherKeyVerified:false,
+        reviewLocked:false, generatorKey:"source52CubeVertexProductsPage53Mission3", generationMode:"fixed-verified-pool",
+        implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원본 전개도와 여덟 꼭짓점 곱, 최대공약수를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+    }
     const source52p52e32Id = "5-2-u5-e3-example-3-2";
     if (!source52CuboidViewPractice.types.some(type => type.id === source52p52e32Id)) {
       const name = "기울인 물그릇에서 물이 닿은 부분 색칠하기";
