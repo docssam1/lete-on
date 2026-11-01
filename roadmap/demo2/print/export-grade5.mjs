@@ -7,7 +7,7 @@ export const root=resolve(dirname(fileURLToPath(import.meta.url)),'../../..');
 export function exportGrade5(value=null){
  const window={},sandbox=vm.createContext({window,console});
  // Match the production dependency order. No app bootstrap or saved learner is read.
- for(const file of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-transition.js','planner-study-plan.js','planner-study-plan-view.js','planner-report.js'])vm.runInContext(readFileSync(resolve(root,'roadmap/demo2',file),'utf8'),sandbox,{filename:file});
+ for(const file of ['planner-levels.js','planner.js','demo-content.js','planner-intake.js','planner-progression.js','planner-transition.js','planner-study-plan.js','planner-korean.js','planner-study-plan-view.js','planner-report.js'])vm.runInContext(readFileSync(resolve(root,'roadmap/demo2',file),'utf8'),sandbox,{filename:file});
  const state=window.PlannerStudyPlan.restore(value),plan=window.PlannerStudyPlanView.model(state),report=window.PlannerStudyPlanView.reportModel(state);
  const graph=window.PlannerStudyPlanView.graph(plan).match(/<svg\b[\s\S]*?<\/svg>/)?.[0];
  if(!graph)throw Error('The production graph is missing.');

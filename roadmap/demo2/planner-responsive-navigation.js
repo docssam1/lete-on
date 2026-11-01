@@ -56,7 +56,7 @@ function sync(){
  const active=!printing&&compact.matches&&!doc.body.classList.contains('questioning')&&view?.classList.contains('on')&&!!results?.querySelector('.workspace-tabs');
  if(!active){delete doc.body.dataset.responsiveWorkspace;closeCurrent();restoreTools();restoreGlobal();syncOrientation();return;}
  doc.body.dataset.responsiveWorkspace=landscape.matches?'landscape':'portrait';
- const canChoose=doc.body.dataset.planMode!=='standard'||doc.body.dataset.referenceFlow==='true';
+ const canChoose=doc.body.dataset.planMode!=='standard'||doc.body.dataset.referenceFlow==='true'||doc.body.dataset.languageFlow==='true';
  doc.body.dataset.responsiveChoice=String(canChoose);globalControls();toolsFor(results);
  const overview=doc.getElementById('planningOverview'),current=globalMenu.querySelector('[data-prn-current]');if(current)current.hidden=!overview||overview.hidden||!overview.textContent.trim();
  syncOrientation();
@@ -79,7 +79,7 @@ doc.addEventListener('keydown',e=>{
  e.preventDefault();menu.open=false;menu.querySelector('summary').focus();
 });
 new MutationObserver(schedule).observe(root,{childList:true});
-new MutationObserver(schedule).observe(doc.body,{attributes:true,attributeFilter:['class','data-plan-mode','data-reference-flow','data-workspace-pane']});
+new MutationObserver(schedule).observe(doc.body,{attributes:true,attributeFilter:['class','data-plan-mode','data-reference-flow','data-language-flow','data-workspace-pane']});
 compact.addEventListener('change',schedule);landscape.addEventListener('change',schedule);g.addEventListener('resize',schedule);
 g.addEventListener('beforeprint',()=>{printing=true;sync();});g.addEventListener('afterprint',()=>{printing=false;schedule();});
 g.PlannerResponsiveNavigation=Object.freeze({sync:schedule,syncOrientation});schedule();
