@@ -83,6 +83,7 @@ function startServer() {
       assert(solutionText.length > 30, `visible solution: ${itemId}`);
       assert(await solutionView.locator('.source52-u2-step').count()>=2);
       assert.equal(await solutionView.locator('.source52-u2-step').first().evaluate(e=>getComputedStyle(e).display),'block');
+      if(n===1) assert(await solutionView.locator('.source52-u2-step').evaluateAll(steps=>steps.every(step=>step.scrollWidth<=step.clientWidth+1)), 'solution text wraps within the screen');
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);
       await page.screenshot({ path: path.join(outputDir, `item${n}-solution-${width}.png`), fullPage: true });
@@ -94,6 +95,7 @@ function startServer() {
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(expected => document.body.dataset.printMode === expected, mode);
           await page.emulateMedia({ media: "print" });
+          if(n===1 && mode==='solution') assert(await solutionView.locator('.source52-u2-step').evaluateAll(steps=>steps.every(step=>step.scrollWidth<=step.clientWidth+1)), 'solution text wraps within A4');
           const serifLoaded = await page.evaluate(async () => {
             await document.fonts.load('400 16px "Noto Serif KR"', "예슬이네 모둠의 성적표의 평균을 구하여라");
             await document.fonts.ready;
