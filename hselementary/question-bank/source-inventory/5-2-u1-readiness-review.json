@@ -117,6 +117,24 @@
         {"number": 39, "classification": "요일별 추가 생산과 완전 포장 수", "candidate": "57상자", "reviewNote": "1월 1일이 일요일인 365일에는 일요일이 53번이고 알은 총 1148개다.", "status": "source-reviewed-answer-key-pending"},
         {"number": 40, "classification": "묶음권 두 종류의 최소 비용", "candidate": "2040000원", "reviewNote": "100명권 4묶음과 10명권 8묶음이며 총 480명분이다. 모든 묶음 조합을 비교했다.", "status": "source-reviewed-answer-key-pending"}
       ]
+    },
+    {
+      "section": "확인학습 1단원 어림한 수의 범위",
+      "sourcePdfPage": 69,
+      "sourcePrintedPage": 73,
+      "scope": "문항 41~48은 기존 개념탐구·예제·Mission 목록과 별도이며 원문과 필기 없는 사본을 대조해 유형과 독립 계산 후보를 기록한다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 41, "classification": "버림한 인구수의 자연수 범위", "candidate": "10289999명 초과 10300000명 미만", "reviewNote": "인구수는 정수이므로 10290000명 이상 10299999명 이하와 같다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 42, "classification": "반올림한 두 수의 합의 범위", "candidate": "140개 이상 158개 이하", "status": "source-reviewed-answer-key-pending"},
+        {"number": 43, "classification": "반올림과 버림 조건의 자연수 개수 합", "candidate": "200", "status": "source-reviewed-answer-key-pending"},
+        {"number": 44, "classification": "버림과 반올림 범위의 교집합", "candidate": "55개 이상 59개 이하", "status": "source-reviewed-answer-key-pending"},
+        {"number": 45, "classification": "올림과 반올림 조건을 만족하는 자연수 개수", "candidate": "49개", "reviewNote": "501부터 549까지다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 46, "classification": "올림·버림된 두 집단 수의 최대 차", "candidate": "108명", "reviewNote": "남자는 13901~14000명, 여자는 14000~14009명이다. 14009−13901=108이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 47, "classification": "올림·버림·반올림 조건의 자연수 교집합", "candidate": "2495, 2496, 2497, 2498, 2499", "status": "source-reviewed-answer-key-pending"},
+        {"number": 48, "classification": "만의 자리 세 어림 조건을 만족하는 개수", "candidate": "4999개", "reviewNote": "7820001부터 7824999까지이며 7820000은 올림 결과가 7830000이 아니므로 제외한다.", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "integrity": {
