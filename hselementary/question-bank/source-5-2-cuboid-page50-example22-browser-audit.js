@@ -77,6 +77,14 @@ function startServer() {
       assert(sWidth <= width + 1, `solution overflow at ${width}: ${sWidth}`);
       await page.screenshot({ path: path.join(outputDir, `solution-${width}.png`), fullPage: true });
       if (width === 1440) {
+        await page.emulateMedia({ media: "print" });
+        const printColors = await problem.locator("svg").evaluate(svg => ({
+          cut: [...svg.querySelectorAll(".source52-p50e22-cut")].map(node => getComputedStyle(node).fill),
+          paper: getComputedStyle(svg.querySelector(".source52-p50e22-net")).fill
+        }));
+        assert.equal(printColors.cut.length, 3, "all three cut regions remain visible");
+        assert(printColors.cut.every(color => color !== printColors.paper && color !== "rgb(255, 255, 255)"), "cut regions must remain shaded in print");
+        await page.emulateMedia({ media: null });
         for (const mode of ["problem", "solution"]) {
           await page.locator(mode === "problem" ? "#problemTab" : "#solutionTab").click();
           await page.locator("#printMenuButton").click();
