@@ -4579,14 +4579,16 @@
       "pdfPage": 48,
       "printedPage": 52,
       "sourceShape": "물을 담고 기울인 뚜껑 없는 직육면체 그릇을 보고 전개도에 물이 닿는 부분을 색칠합니다.",
-      "answerContract": "candidate: drawing",
+      "answerContract": "constructed-figure",
       "visualRisk": [
         "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
         "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "reviewReason": "필기 없는 사본의 물 표면을 대조하고 물이 닿는 면을 3차원 평면 교차로 검산했습니다. 출판사 공식 답안은 미확인입니다.",
+      "runtimeTypeId": "5-2-u5-e3-example-3-2",
+      "implementationEvidence": "원본 및 필기 없는 사본, 정확한 평면·면 교차 검산, 화면 및 A4 문제·답 그림 검수. 출판사 공식 답안 미확인."
     },
     {
       "sourceItemId": "5-2-u5-e3-example-3",
