@@ -1478,11 +1478,54 @@ function bindQuestionEditor() {
     const index = Number(button.dataset.choiceIndex);
     if (state.questions[index]) state.questions[index].responseValue = button.dataset.choice;
     button.parentElement.querySelectorAll("[data-choice]").forEach((other) => other.setAttribute("aria-pressed", String(other === button)));
+    syncPickTiles(button.closest(".question-card"));
   }));
+  if (oneUp) bindPickTiles(grid);
   grid.querySelectorAll(".answer-input").forEach((input) => input.addEventListener("input", () => {
     const index = Number(input.dataset.questionIndex);
     if (state.questions[index]) state.questions[index].responseValue = input.value;
   }));
+}
+
+// 덱 안: 그림 속 보기(1번~4번 그림)를 직접 눌러 고른다 — 옆에 따로 둔 번호 단추는 그림 배치와 줄이 달라 헷갈렸다
+// (원장 2026-11-01 「1, 2, 3, 4 안 맞잖아」). 그림에서 보기를 못 찾는 문제는 번호 단추 그대로.
+function pickTilesOf(card) {
+  const buttons = [...card.querySelectorAll(".choice-buttons [data-choice]")];
+  const visual = card.querySelector(".visual");
+  if (!visual || buttons.length < 2) return [];
+  const labels = buttons.map((button) => button.dataset.choice);
+  for (const box of visual.querySelectorAll("*")) {
+    if (box.closest(".print-draw") || box.children.length !== labels.length) continue;
+    const kids = [...box.children];
+    if (kids.every((kid, k) => kid.textContent.includes(labels[k]))) return kids;
+  }
+  return [];
+}
+function syncPickTiles(card) {
+  if (!card?.classList.contains("has-pick-figure")) return;
+  const picked = card.querySelector(".choice-buttons [aria-pressed=true]")?.dataset.choice || "";
+  card.querySelectorAll(".pick-tile").forEach((tile) => { const on = tile.dataset.pick === picked; tile.classList.toggle("is-picked", on); tile.setAttribute("aria-pressed", String(on)); });
+  const hint = card.querySelector(".choice-hint");
+  if (hint) { hint.textContent = picked ? `${picked}을 골랐어요` : "알맞은 그림을 눌러 고르세요"; hint.classList.toggle("is-picked", Boolean(picked)); }
+}
+function bindPickTiles(grid) {
+  grid.querySelectorAll(".question-card").forEach((card) => {
+    const tiles = pickTilesOf(card);
+    if (!tiles.length) return;
+    const buttons = [...card.querySelectorAll(".choice-buttons [data-choice]")];
+    card.classList.add("has-pick-figure");
+    card.querySelector(".choice-buttons").insertAdjacentHTML("afterend", '<p class="choice-hint screen-only" role="status"></p>');
+    tiles.forEach((tile, k) => {
+      tile.classList.add("pick-tile");
+      tile.dataset.pick = buttons[k].dataset.choice;
+      tile.setAttribute("role", "button");
+      tile.setAttribute("tabindex", "0");
+      tile.setAttribute("aria-label", `${buttons[k].dataset.choice} 고르기`);
+      tile.addEventListener("click", () => buttons[k].click());
+      tile.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); buttons[k].click(); } });
+    });
+    syncPickTiles(card);
+  });
 }
 
 function escapeAttribute(value) {

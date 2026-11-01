@@ -1699,6 +1699,14 @@ body.as-embed{background:#fff}
 /* 문제 번호 줄: 덱 안에서는 번호만(넘기기는 덱 아래 「다음 문제 →」 하나 — 원장 「다음 버튼이 2개라 불편해」) */
 .as-deck .worksheet-actions>div,.as-deck .worksheet-actions>#backToBuilder{display:none}
 .as-deck .oneup-nav{margin-left:0}
+/* 그림 속 보기를 직접 눌러 고르기(app.js bindPickTiles) — 번호 단추는 숨기고 그림에 초록 테두리 */
+.as-embed .has-pick-figure .choice-buttons{display:none!important}
+.as-embed .pick-tile{border-radius:10px;outline:3px solid transparent;outline-offset:5px;cursor:pointer;transition:outline-color .15s,background-color .15s}
+.as-embed .pick-tile:hover{outline-color:#e2d5bc}
+.as-embed .pick-tile:focus-visible{outline-color:#22302a}
+.as-embed .pick-tile.is-picked{outline-color:#1f6b4a;background-color:#e3efe7}
+.as-embed .choice-hint{order:2;margin:0;color:#6b6253;font-size:19px;font-weight:700}
+.as-embed .choice-hint.is-picked{color:#1f6b4a;font-size:22px;font-weight:800}
 /* 세로로 긴 화면(태블릿 세로): 그림 위, 문제 아래 */
 @media(orientation:portrait){
   .as-embed .question-card.is-current.has-figure{grid-template-columns:minmax(0,1fr)!important;gap:18px}
