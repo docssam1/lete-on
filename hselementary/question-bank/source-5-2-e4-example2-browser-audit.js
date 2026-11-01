@@ -15,6 +15,7 @@ async function prepare(page, width) {
   await page.setViewportSize({ width, height: 1000 });
   await page.addInitScript(() => { localStorage.clear(); sessionStorage.clear(); window.print = () => {}; });
   await page.goto(`${origin}/hselementary/question-bank/`);
+  await page.waitForSelector("#studentNameInput[data-identity-source]", { state: "attached" });
   await page.locator("#gradeFilter [data-grade='5']").click();
   await page.locator("#termFilter [data-term='2']").click();
   await page.locator("#unitFilter").selectOption("5-2-u3");
@@ -28,7 +29,7 @@ async function prepare(page, width) {
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
   let states = 0;
   const observations = [];
-  for (const width of [1280, 375]) for (const difficulty of [-1, 0, 1]) for (const variant of (width === 1280 ? [0, 1, 2] : [1])) {
+  for (const width of [1280, 375]) for (const difficulty of [-1, 0, 1]) for (const variant of (width === 1280 ? [0, 1, 2, 3] : [1])) {
     const context = await browser.newContext({ viewport: { width, height: 1000 }, serviceWorkers: "block" });
     await context.route("**/*", route => new URL(route.request().url()).origin === origin
       ? route.continue() : (blockedRequests++, route.fulfill({ status: 200, contentType: "text/plain", body: "" })));
