@@ -2148,6 +2148,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
   const source52CuboidViewPractice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s3");
   if (source52CuboidViewPractice) {
+    const source52p52e34Id = "5-2-u5-e3-example-3-4";
+    if (!source52CuboidViewPractice.types.some(type => type.id === source52p52e34Id)) {
+      const name = "전개도를 접어 만들 수 없는 모양 찾기";
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(group => group.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidViewPractice.types.push({id:source52p52e34Id, number:source52CuboidViewPractice.types.length+1, typeNumber,
+        name, label:name, difficultyBand:0, sourceItemId:source52p52e34Id, sourceItemLabel:"예제 3-4", sourceSection:"example",
+        sourceTier:"advanced", sourcePdfPage:48, sourcePrintedPage:52, sourceVerified:true, publisherKeyVerified:false,
+        reviewLocked:false, generatorKey:"source52CubeNetChoicesPage52Example34", generationMode:"fixed-verified-pool",
+        implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원본 그림과 24개 회전 및 대각선 끝점을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+    }
     const arrowId = "5-2-u5-check113-q43-arrow-synthetic";
     if (!source52CuboidViewPractice.types.some(type => type.id === arrowId)) {
       const arrowName = "전개도 화살표 방향 · 연습";
