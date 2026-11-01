@@ -642,6 +642,8 @@
       "independentCalculation": "원문에는 종이를 전개도에 꼭 맞추거나 종이 크기를 제한한다는 조건이 없습니다. 전개도가 들어가는 직사각형 종이의 한 변을 늘려도 전개도는 여전히 들어가므로 둘레를 임의로 크게 만들 수 있어 문자 그대로는 최대 둘레가 없습니다. 전개도에 꼭 맞는 종이를 뜻한다는 추가 해석을 적용하려면 면 방향과 배치 및 공식 답안을 별도로 확인해야 합니다.",
       "answerFormula": "전개도를 포함한 종이의 한 변에 t>0을 더하면 둘레는 2t만큼 증가",
       "independentAnswer": "원문 그대로는 최대 둘레가 없음; 의도한 추가 조건과 공식 답안 미확인",
+      "sourceAuditUpdate": "2026-11-02: directly rechecked fingerprint-matched PDF p.46 / printed p.50. The text gives no upper bound on paper size and does not require a tight fit. For the drawn face correspondence (strip widths 3,4,3,4; strip height 5; both 4-wide tabs extend by 3) an axis-aligned tight bounding rectangle is 14cm by 11cm, perimeter 50cm. This is one explicitly conditioned construction, not a verified answer to the source's requested extrema: a 15cm by 11cm sheet still contains the same net and has a larger perimeter, and arbitrarily larger sheets can also contain it. Publisher key and intended additional condition remain unverified.",
+      "publisherKeyVerified": false,
       "resultContract": "ordered-extrema",
       "candidateAnswerCount": null,
       "singleAnswer": null,
