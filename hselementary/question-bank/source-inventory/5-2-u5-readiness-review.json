@@ -796,7 +796,7 @@
       "implementationStatus": "verified-local",
       "publicDecision": "public",
       "lockReason": "",
-      "sourceAuditUpdate": "PDF p.46/인쇄 p.50 예제 2-4: 정본·깨끗한 대조본·Apple Vision OCR에서 6×4×3cm 직육면체와 질문 순서를 확인했습니다. 104cm인 여섯 면 둘레 합과 연결 변의 방향별 개수 제한으로 공유 변 합 17~26cm를 증명하고 양 극값의 전개도를 확인해 최댓값 70cm·최솟값 52cm를 구했습니다. 실제 화면(1440/375/320px), 문제·풀이 A4 각 1쪽을 검수했습니다. 이후 사용자의 공개 승인에 따라 공개했습니다.",
+      "sourceAuditUpdate": "PDF p.46/인쇄 p.50 예제 2-4: 정본·깨끗한 대조본·Apple Vision OCR에서 6×4×3cm 직육면체와 질문 순서를 확인했습니다. 104cm인 여섯 면 둘레 합과 연결 변의 방향별 개수 제한으로 공유 변 합 17~26cm를 증명하고 양 극값의 전개도를 확인해 최댓값 70cm·최솟값 52cm를 구했습니다. 실제 화면(1440/375/320px), 문제·풀이 A4 각 1쪽을 검수했습니다. 이후 사용자의 공개 승인에 따라 공개했습니다. 2026-11-02: independent enumeration of all 384 face-graph spanning trees gives seam bounds 17–26cm; a separate 3-D orientation trace verifies that both displayed witness nets fold to six distinct faces with congruent opposites. Original diagram and the locally rendered PC/mobile/A4 views were rechecked. Publisher answer remains unverified.",
       "releaseStatus": "runtime-enabled-in-current-release",
       "publisherKeyVerified": false,
       "releaseEvidence": "원문 그림과 독립 풀이, 화면·A4를 대조해 고정 문항으로 연결했습니다. 출판사 공식 답안은 미확인입니다."
