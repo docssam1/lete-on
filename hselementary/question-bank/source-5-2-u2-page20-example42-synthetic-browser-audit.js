@@ -87,6 +87,7 @@ function startServer() {
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
       assert(solutionText.length > 30, `visible solution: ${itemId}`);
+      assert.match(solutionText, /가로선으로 직사각형의 높이가 8등분/);
       assert(await solutionView.locator('.source52-u2-step').count()>=2);
       assert.equal(await solutionView.locator('.source52-u2-step').first().evaluate(e=>getComputedStyle(e).display),'block');
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
