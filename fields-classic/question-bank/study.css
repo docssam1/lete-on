@@ -162,6 +162,23 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
   .sd-prev, .sd-first { flex: 1; min-width: 0; padding: 8px 10px; }
   .sd-next { flex: 2; min-width: 0; }
 }
+/* 휴대폰을 가로로 들었을 때(높이 500px 이하): 위·아래 줄을 한 줄씩으로 줄여 장(판서·문제)에 높이를 준다 */
+@media (max-width: 760px) and (max-height: 500px) {
+  body.sd { grid-template-rows: 46px minmax(0, 1fr) auto; }
+  .sd-top { padding-top: 4px; }
+  .sd-pill { min-height: 34px; }
+  .sd-main { padding: 4px 12px 4px; }
+  .sd-slide-head { flex-wrap: nowrap; padding: 6px 14px 4px; }
+  .sd-slide-head h2 { flex: 1 1 auto; font-size: 15px; white-space: nowrap; }
+  .sd-slide-body { padding: 8px 12px; }
+  .sd-bar { flex-wrap: nowrap; padding: 4px 12px calc(4px + env(safe-area-inset-bottom)); }
+  .sd-guide { flex: 1 1 auto; min-width: 0; }
+  .sd-guide-img { display: none; }
+  .sd-talk p { -webkit-line-clamp: 1; }
+  .sd-prev, .sd-first { flex: none; padding: 6px 12px; }
+  .sd-next { flex: none; min-width: 110px; }
+  .sd-btn { min-height: 38px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .sd-pan { transition: none; }
   .sd-talk.new p { animation: none; }

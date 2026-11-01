@@ -1,6 +1,6 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261101b";
-import { unitParts, loadGoldenBell } from "./study-map.js?v=20261101m";
-import { PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261101m";
+import { unitParts, loadGoldenBell } from "./study-map.js?v=20261101o";
+import { PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261101o";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
 import { canStudy, lockPage } from "./fields-access.js?v=20261029q";
 
@@ -473,7 +473,7 @@ function fitNative() {
   host.style.zoom = "";
   const cs = getComputedStyle(body), avail = body.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
   const need = host.scrollHeight;
-  if (need > avail + 2) host.style.zoom = String(Math.max(0.55, Math.floor((avail / need) * 100) / 100));
+  if (need > avail + 2) host.style.zoom = String(Math.max(0.4, Math.floor((avail / need) * 100) / 100));   // 가로로 든 휴대폰은 0.55로도 넘쳤다
 }
 addEventListener("resize", () => requestAnimationFrame(fitNative));
 

@@ -1,10 +1,12 @@
+/* 판서 높이는 화면 높이에서 빼서 정하되 바닥값을 둔다 — 세로가 짧은 폰(가로로 든 폴드 등, 높이 500px 안팎)에서 0에 가까워져
+   판서가 가는 기둥처럼 줄어들던 것(원장 2026-11-01 모바일 화면). 칸보다 크면 덱이 통째로 줄인다(study.js fitNative). */
 /* 손글씨 판서(concept-board.js) — 따뜻한 종이 칠판, 손글씨는 나눔펜(OFL), 선은 펜이 그린 듯 둥근 끝. */
 @font-face { font-family: 'FC Hand'; src: url('./assets/fonts/nm-lesson-hand.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
 
-.cb { --cb-h: calc(100dvh - 424px); display: grid; grid-template-rows: auto auto auto auto; gap: 10px; min-height: 0; }
+.cb { --cb-h: max(230px, calc(100dvh - 424px)); display: grid; grid-template-rows: auto auto auto auto; gap: 10px; min-height: 0; }
 .cb-row { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; }
 /* 확인 문제가 칠판 아래에 뜨면 칠판을 그만큼 줄여 칸 안에 다 들어가게 한다(아무것도 가리지 않는다) */
-.cb:has(.cb-check:not([hidden])) { --cb-h: calc(100dvh - 560px); }
+.cb:has(.cb-check:not([hidden])) { --cb-h: max(200px, calc(100dvh - 560px)); }
 .cb:has(.cb-check:not([hidden])) .cb-cap { display: none; }   /* 물음이 곧 자막이다 */
 .cb-top { display: flex; align-items: baseline; gap: 12px; padding: 0 4px; }
 .cb-kicker { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: #7a6f5c; }
@@ -52,7 +54,7 @@
 
 /* 넓은 화면에서는 확인 문제를 칠판 옆에 둔다 — 칠판을 줄이지 않아도 된다 */
 @media (min-width: 1100px) {
-  .cb:has(.cb-check:not([hidden])) { --cb-h: calc(100dvh - 424px); }
+  .cb:has(.cb-check:not([hidden])) { --cb-h: max(230px, calc(100dvh - 424px)); }
   .cb-row:has(.cb-check:not([hidden])) { flex-direction: row; justify-content: center; align-items: center; gap: 16px; }
   .cb-row:has(.cb-check:not([hidden])) .cb-paper { max-width: calc(100% - 316px); margin: 0; }
   .cb-row:has(.cb-check:not([hidden])) .cb-check { flex: 0 0 300px; width: 300px; display: block; padding: 16px; }
