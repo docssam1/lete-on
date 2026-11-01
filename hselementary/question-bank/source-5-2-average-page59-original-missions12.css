@@ -2,3 +2,13 @@
 .source52-p59m2-figure { margin: 1rem auto; text-align: center; max-width: 600px; }
 .source52-p59m2-figure figcaption { font-weight: 700; margin-bottom: .4rem; }
 .source52-p59m2-table { display: block; width: 100%; height: auto; color: #111; }
+
+@page source52P59AverageAnswer { size: A4; margin: 10mm 0; }
+@media print {
+  #problemView :is(.source52-p59m1-question, .source52-p59m2-question, .source52-p59m3-question, .source52-p59m4-question, .source52-p59m5-question, .source52-p59m6-question),
+  #solutionView [data-source-answer^="5-2-u6-e1-mission-"] { font-family: "Noto Serif KR", "Batang", serif; font-weight: 400; }
+  .answer-page:has([data-source-answer^="5-2-u6-e1-mission-"]) { page: source52P59AverageAnswer; }
+  .answer-page:has([data-source-answer^="5-2-u6-e1-mission-"]) .solution-list { gap: 5px; margin-top: 8px; }
+  .answer-page:has([data-source-answer^="5-2-u6-e1-mission-"]) .solution-item p { padding: 4px 9px; font-size: 10pt; line-height: 1.35; }
+  .answer-page:has([data-source-answer^="5-2-u6-e1-mission-"]) .solution-item header > :is(span, strong) { padding: 5px 9px; }
+}
