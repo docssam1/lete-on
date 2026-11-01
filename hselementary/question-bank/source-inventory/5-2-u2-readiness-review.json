@@ -269,6 +269,24 @@
         {"number": 47, "classification": "두 수의 합과 차로 곱 구하기", "candidate": "240", "reviewNote": "두 수는 5/12와 1/4, 곱은 5/48이므로 분자와 분모의 곱은 240", "status": "source-reviewed-answer-key-pending"},
         {"number": 48, "classification": "가로와 세로의 증감에 따른 넓이 비", "candidate": "8/9배", "reviewNote": "가로는 4/3배, 세로는 2/3배이므로 넓이는 8/9배", "status": "source-reviewed-answer-key-pending"}
       ]
+    },
+    {
+      "section": "확인학습 2단원 식을 세워 풀기",
+      "sourcePdfPage": 77,
+      "sourcePrintedPage": 81,
+      "scope": "문항 49~56을 원문과 필기 없는 사본으로 대조하고 독립 계산했다. 52번의 삼각형과 각 변의 5등분 위치를 직접 대조했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 49, "classification": "둘레와 두 변의 비로 길이 구하기", "candidate": "가로 1과 2/7m, 세로 6/7m", "reviewNote": "두 변의 합 15/7m, 가로:세로=3:2", "status": "source-reviewed-answer-key-pending"},
+        {"number": 50, "classification": "정의된 네 수의 연산과 미지수", "candidate": "1/4", "reviewNote": "첫 항 6−3×□, 둘째 항 15/8, 합 57/8이므로 □=1/4", "status": "source-reviewed-answer-key-pending"},
+        {"number": 51, "classification": "교통수단별 거리와 남은 거리 역산", "candidate": "48km", "reviewNote": "버스 3/8, 택시 5/32, 지하철 11/32이므로 남은 1/8이 6km", "status": "source-reviewed-answer-key-pending"},
+        {"number": 52, "classification": "삼각형 각 변의 5등분과 내부 삼각형 넓이", "candidate": "150cm²", "visual": "꼭짓점 ㄱ·ㄴ·ㄷ의 각 변을 5등분하고 왼쪽 변 위에서 ㄱ부터 2/5 지점 ㄹ, 오른쪽 변 위에서 ㄱ부터 3/5 지점 ㅂ, 밑변에서 ㄴ부터 2/5 지점 ㅁ을 연결한 삼각형 ㄹㅁㅂ이 색칠됨", "reviewNote": "좌표나 모서리 세 삼각형 넓이의 합으로 색칠 부분은 전체의 7/25; 42÷(7/25)=150", "status": "source-reviewed-answer-key-pending"},
+        {"number": 53, "classification": "연속 분수 비율을 역산한 전체 인원", "candidate": "1680명", "reviewNote": "48÷(1/6×3/5×2/7)=1680", "status": "source-reviewed-answer-key-pending"},
+        {"number": 54, "classification": "세 차례 분배한 뒤 남은 개수의 역산", "candidate": "64개", "reviewNote": "남은 비율 5/8×3/5×2/3=1/4; 16÷1/4=64", "status": "source-reviewed-answer-key-pending"},
+        {"number": 55, "classification": "네 차례 분배한 뒤 남은 개수의 역산", "candidate": "120개", "reviewNote": "남은 비율 2/3×5/8×2/5×1/4=1/24; 5÷1/24=120", "status": "source-reviewed-answer-key-pending"},
+        {"number": 56, "classification": "전체의 분수와 차이를 이용한 분배", "candidate": "87개", "reviewNote": "세 사람의 비율 합은 44/45이고 상수 합은 −7, 13개가 남아 전체는 270개, 첫 사람은 270/3−3=87", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "normalization": {
