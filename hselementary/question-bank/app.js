@@ -588,7 +588,8 @@
       const source52RoundingMission = question.sourceItemId?.startsWith("5-2-u1-e2-mission-");
       const source52RoundingApplicationExploration = question.sourceItemId?.startsWith("5-2-u1-e3-exploration-");
       const source52DicePage54 = question.sourceItemId === "5-2-u5-e4-exploration-1" || /^5-2-u5-e4-example-4-[1-4]$/.test(question.sourceItemId || "");
-      const weight = source52RoundingMission ? 2 : ratioE2Text ? question.sourceItemId.endsWith("exploration") ? 4 : 2 : source52DicePage54 || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 || hasBorderTwoHeightTables || hasNotchedTwoStates || hasCubeAdditionClasses ? 8 : hasColoredCutPair ? 4 : hasCompactAnswerVisual ? 2.5 : hasVisual ? 3 : 1;
+      const source52DicePage55 = /^5-2-u5-e4-mission-[1-6]$/.test(question.sourceItemId || "");
+      const weight = source52RoundingMission ? 2 : ratioE2Text ? question.sourceItemId.endsWith("exploration") ? 4 : 2 : source52DicePage54 || source52DicePage55 || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 || hasBorderTwoHeightTables || hasNotchedTwoStates || hasCubeAdditionClasses ? 8 : hasColoredCutPair ? 4 : hasCompactAnswerVisual ? 2.5 : hasVisual ? 3 : 1;
       const solutionPageLimit = source52RoundingMission ? 6 : source52RoundingApplicationExploration ? 5 : 8;
       if (solutionPage.length && (solutionPage.length >= 8 || solutionWeight + weight > solutionPageLimit)) {
         solutionPages.push(solutionPage);
