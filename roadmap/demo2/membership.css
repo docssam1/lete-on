@@ -27,6 +27,5 @@ html.member-checking body>:not(#memberGateStatus){visibility:hidden!important}ht
 .member-reel-controls a{margin-left:auto}.member-reel-controls button:hover,.member-reel-controls a:hover{background:#eee7f3}
 @media(max-width:700px){.member-brand img{width:110px}.member-reel-controls{padding-inline:4px}.member-reel-controls button,.member-reel-controls a{font-size:11px;padding-inline:9px}}
 
-/* Actual character animation: preserve the whole portrait frame and the hands. */
-.member-reel .member-growth-video{aspect-ratio:4/5;max-height:480px;object-fit:contain}
-@media(max-width:700px){.member-reel .member-growth-video{max-height:440px}}
+/* Match the frame to the portrait film at every width; keep captions and hands visible. */
+.member-reel .member-growth-video{aspect-ratio:9/16;height:auto;max-height:none;object-fit:cover}
