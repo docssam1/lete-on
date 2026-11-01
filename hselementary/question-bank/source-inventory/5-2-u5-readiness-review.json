@@ -530,8 +530,8 @@
       "sourcePdfPage": 45,
       "sourcePrintedPage": 49,
       "commonTypeId": "cuboid-27-cubes-cut-count",
-      "typeLabel": "27개 쌓기나무로 만든 직육면체를 자른 조각 세기",
-      "childFriendlyTypeLabel": "쌓기나무 직육면체를 잘라 생기는 조각 수 세기",
+      "typeLabel": "27개 쌓기나무에서 만들 수 있는 정육면체 세기",
+      "childFriendlyTypeLabel": "쌓기나무에서 크고 작은 정육면체 찾기",
       "originalStructure": "쌓기나무 27개가 만든 3×3×3 정육면체를 절단선으로 나누어 만들 수 있는 모든 크기의 정육면체를 셉니다. 원래 전체 정육면체도 포함합니다.",
       "conditions": [
         "쌓기나무 27개",
@@ -542,6 +542,7 @@
       "visualRequirement": "3×3×3 구조와 절단선이 어느 층을 가르는지 정확히 보여야 합니다.",
       "independentCalculation": "The source says to count every cube that can be made by cutting along the grid lines and explicitly includes the uncut whole. Unit cubes: 3×3×3=27. Cubes two units long: there are 2 starting positions on each of 3 axes, so 2×2×2=8. The 3-unit whole cube contributes 1. Total: 27+8+1=36.",
       "answerFormula": "3³+2³+1³",
+      "sourceAuditUpdate": "2026-11-02: 원문의 앞면과 오른쪽 면을 가르는 세로 모서리가 기존 그림에서 빠진 것을 확인해 복원했습니다. 정육면체의 각 크기와 위치를 독립 전수 조사하면 27+8+1=36개이며, 출판사 공식 답안은 미확인입니다.",
       "independentAnswer": "36개",
       "resultContract": "single-value-count",
       "candidateAnswerCount": 1,
