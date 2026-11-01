@@ -108,3 +108,6 @@
   .nm-placement .pd-question:has(.pd-keypad) #pdQuestionPaper{min-height:28px;padding:2px 0}
   .nm-placement .pd-question:has(.pd-keypad) .pd-keypad{margin-bottom:0}
 }
+
+/* 월별 계획 표: 좁은 휴대폰(320~360px)에서 3칸이 상자보다 넓어 오른쪽이 잘리던 것 — 칸 최소 폭을 풀어 글이 줄바꿈되게(2026-11-01) */
+@media(max-width:550px){.pd-calendar th,.pd-calendar td{min-width:0;padding:10px 6px}.pd-calendar-table{max-height:none}}

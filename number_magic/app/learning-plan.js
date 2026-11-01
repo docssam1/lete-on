@@ -92,9 +92,14 @@
       const spans=segments.filter(s=>s.start<+next&&s.end>+month);
       rows.push({month:month.toISOString().slice(0,7),schoolLabel:schoolLabel(settings.entryYear,month,lang,settings.birthYear),courseKeys:spans.map(s=>s.key),courseLabels:spans.map(s=>s.kind==='middle-extension'?s.title:s.key+' · '+s.title),sessionLabels:spans.map(s=>{
         const count=s.n-s.from+1;
-        const a=Math.min(s.n,s.from+Math.floor(Math.max(0,+month-s.start)/(s.end-s.start)*count));
-        const b=Math.min(s.n,s.from-1+Math.ceil(Math.min(s.end,+next)-s.start>0?(Math.min(s.end,+next)-s.start)/(s.end-s.start)*count:1));
-        return a+'–'+Math.max(a,b)+(s.compact?(lang==='en'?' study bundles':lang==='zh'?'学习组':' 학습 묶음'):(lang==='en'?' sessions':lang==='zh'?'课次':'회차'));
+        /* 회차는 시작한 달에 한 번만 센다 — 한 회차가 두 달에 걸쳐도 이전 달 끝 번호와 다음 달 첫 번호가 겹쳐 나오지 않는다(2026-11-01).
+           x0·x1 = 이 달 첫날·마지막 날까지 지나간 회차 수. a = 이 달에 처음 시작하는 회차, b = 이 달까지 시작한 마지막 회차(과정이 끝나면 마지막 회차).
+           이 달에 새로 시작하는 회차가 없으면(아주 느린 속도) 진행 중인 회차 하나만 보인다. */
+        const span=s.end-s.start,x0=Math.max(0,+month-s.start)/span*count,x1=(Math.min(s.end,+next)-s.start)/span*count;
+        let a=Math.min(s.n,s.from+Math.ceil(x0-1e-9)),b=s.end<=+next?s.n:Math.min(s.n,s.from-1+Math.ceil(x1-1e-9));
+        if(a>b)a=b=Math.min(s.n,Math.max(s.from,a-1));
+        const unit=s.compact?(lang==='en'?' study bundles':lang==='zh'?'学习组':' 학습 묶음'):(lang==='en'?' sessions':lang==='zh'?'课次':'회차');
+        return (a===b?String(a):a+'–'+b)+unit;
       })});month=next;
     }
     return {rows,milestones:segments.map(s=>{
