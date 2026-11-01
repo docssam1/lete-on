@@ -2160,6 +2160,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
   const source52CuboidProperties = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s1");
   if (source52CuboidProperties) {
+    const practiceId = "5-2-u5-e1-example-1-4-synthetic";
+    if (!source52CuboidProperties.types.some(type => type.id === practiceId)) {
+      const practiceName = "세 방향으로 묶은 끈과 변의 관계 · 연습";
+      const practiceNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidProperties.types.push({id:practiceId, number:source52CuboidProperties.types.length+1, typeNumber:practiceNumber,
+        name:practiceName, label:practiceName, difficultyBand:0, sourceItemId:practiceId, sourceParentItemId:"5-2-u5-e1-example-1-4",
+        sourceItemLabel:"예제 1-4 유사문항", sourceSection:"example", sourceTier:"advanced", sourcePdfPage:44, sourcePrintedPage:48,
+        sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52U5ThreeLoopPractice",
+        generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantTarget:3, verifiedVariantCount:3,
+        answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"다른 조건으로 만든 연습 세 문항을 끈 길이와 세 변의 관계로 검산했습니다."});
+    }
     const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
     source52CuboidProperties.types.push({
       id: "5-2-u5-e1-mission-4", number: source52CuboidProperties.types.length + 1, typeNumber,
