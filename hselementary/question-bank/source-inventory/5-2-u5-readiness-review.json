@@ -516,6 +516,7 @@
       "publicDecision": "public",
       "lockReason": "",
       "reviewEvidence": "canonical-045 + clean-044 comparison + Apple Vision OCR + independent three-loop/twice-wrap/knot model + 1440px/375px browser review + one-page A4 problem and solution",
+      "sourceAuditUpdate": "2026-11-02: 원문 그림은 세 방향을 각각 한 줄로 나타내고 두 번 감는 조건은 문장으로 제시합니다. 그림을 원문에 맞춰 조정하고 세 변의 치수 위치·크기와 PC·모바일·A4를 재확인했습니다. 각 고리를 두 번 감고 세 매듭 길이를 더한 답은 760cm이며 출판사 답안은 미확인입니다.",
       "releaseStatus": "runtime-enabled-in-current-release",
       "publisherKeyVerified": false,
       "releaseEvidence": "원문 및 독립 계산, 화면·A4 검수를 완료한 고정 문항을 현재 main 기준 문제은행에 연결했습니다. 공식 출판사 답안은 미확인입니다."
