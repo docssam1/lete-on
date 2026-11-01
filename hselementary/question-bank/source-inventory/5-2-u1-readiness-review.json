@@ -99,6 +99,24 @@
         {"number": 31, "classification": "재료 사용량과 포장 단위 올림", "candidate": "밀가루 21봉지, 우유 6병", "status": "source-reviewed-answer-key-pending"},
         {"number": 32, "classification": "포장 단위와 매출액의 지폐 교환", "candidate": "조건부", "reviewNote": "495kg은 40kg 포대 12개와 15kg이 남는다. 남은 15kg을 13번째 포대에 넣어 같은 값으로 판다고 가정하면 120장이다. 12포대만 팔아 얻는 111장은 남은 쌀을 모두 팔았다는 조건과 맞지 않는다. 남은 쌀의 포장·판매 조건 및 공식 답안 확인 전 보류한다.", "status": "source-ambiguity-answer-key-pending"}
       ]
+    },
+    {
+      "section": "확인학습 1단원 어림하기의 활용",
+      "sourcePdfPage": 68,
+      "sourcePrintedPage": 72,
+      "scope": "문항 33~40은 기존 개념탐구·예제·Mission 목록과 별도이며 원문과 필기 없는 사본의 조건 및 도형을 대조해 독립 계산 후보를 기록한다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 33, "classification": "무게 제한과 추가 상자 최대 개수", "candidate": "3개", "status": "source-reviewed-answer-key-pending"},
+        {"number": 34, "classification": "계단형 도형 둘레와 단위 변환·반올림", "candidate": "204cm", "visual": "세 가로 구간과 세 세로 구간이 각각 전체 가로·세로와 같음", "reviewNote": "전체 둘레 2038mm는 203.8cm이며 자연수로 반올림한다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 35, "classification": "권종별 금액 합과 교환 가능한 지폐 수", "candidate": "161장", "reviewNote": "총액은 807150원이고 5000원권 161장 교환 뒤 2150원이 남는다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 36, "classification": "서로 다른 포장 단위의 구매 비용 비교", "candidate": "14000원", "reviewNote": "각 마트에서 포장된 상품을 필요한 양 이상 구매한다고 보면 각각 66000원과 80000원이다. 정확히 85kg만 판매 가능한지는 원문에서 별도 명시되지 않았다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 37, "classification": "완전 포장 단위와 소요 시간", "candidate": "336분", "reviewNote": "상자를 차례로 포장한다고 보면 42상자와 남은 27개이며 남은 사과는 포장하지 않는다. 병렬 작업 여부는 명시되지 않았다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 38, "classification": "전체 끈 길이와 구매 단위 올림", "candidate": "18400원", "reviewNote": "전체 22.86m가 필요하고 끈을 이어 구매해 필요한 길이로 자를 수 있다고 본다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 39, "classification": "요일별 추가 생산과 완전 포장 수", "candidate": "57상자", "reviewNote": "1월 1일이 일요일인 365일에는 일요일이 53번이고 알은 총 1148개다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 40, "classification": "묶음권 두 종류의 최소 비용", "candidate": "2040000원", "reviewNote": "100명권 4묶음과 10명권 8묶음이며 총 480명분이다. 모든 묶음 조합을 비교했다.", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "integrity": {
