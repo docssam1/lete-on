@@ -247,13 +247,16 @@
       "section": "확인학습 3단원 점대칭도형과 둘레",
       "sourcePdfPage": 94,
       "sourcePrintedPage": 98,
-      "scope": "98쪽 중 102~104번의 원문 그림과 필기 없는 사본을 대조하고 점대칭과 둘레를 독립 계산했다. 105~107번은 별도 검수한다.",
+      "scope": "98쪽 102~107번의 원문 그림과 필기 없는 사본을 대조하고 점대칭·둘레·격자 분할을 독립 계산했다. 분할 작도의 실제 그림은 추가 검증한다.",
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
         {"number": 102, "classification": "점대칭으로 이어 붙인 평행사변형의 둘레", "candidate": "284cm", "visual": "평행사변형의 밑변 46cm, 옆변 35cm, 밑변의 오른쪽 끝에서 대칭 중심 ㅇ까지 10cm이다.", "reviewNote": "두 평행사변형 둘레의 합은 2×2×(46+35)=324cm다. 대칭 중심 양쪽으로 10cm씩인 공유 변 20cm는 내부가 되므로 두 번 빼면 324−40=284cm다.", "status": "source-reviewed-answer-key-pending"},
         {"number": 103, "classification": "점대칭으로 이어 붙인 두 마름모의 둘레", "candidate": "100cm", "visual": "한 변이 15cm인 마름모의 한 변 위에 대칭 중심 ㅇ이 있고, ㅇ에서 그 변의 아래쪽 꼭짓점까지 10cm이다.", "reviewNote": "그 변의 나머지 부분은 15−10=5cm이고 두 마름모가 겹쳐 맞닿는 변은 중심의 양쪽 5cm씩 총 10cm다. 두 둘레의 합 2×4×15=120cm에서 공유 변을 두 번 빼면 100cm다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 104, "classification": "찢어진 점대칭 직사각형의 둘레 복원", "candidate": "52cm (찢어진 선을 중심 ㅇ을 지나는 직선으로 해석)", "visual": "점 ㅇ에 대하여 점대칭인 두 직사각형이 찢어진 선 아래에 일부 보인다. 가의 왼쪽에 보이는 높이 3cm, 나의 오른쪽에 보이는 높이 7cm, 나의 가로 16cm가 표시된다.", "reviewNote": "그림처럼 찢어진 경계가 중심 ㅇ을 지나는 직선이면 서로 대응하는 양쪽 높이는 원래 높이의 두 부분이므로 전체 높이는 3+7=10cm다. 점대칭 직사각형의 가로는 모두 16cm여서 가의 둘레는 2×(16+10)=52cm다. 찢어진 경계의 정확한 형태와 중심 통과 해석을 함께 확인한다.", "status": "source-ambiguity-answer-key-pending"}
+        {"number": 104, "classification": "찢어진 점대칭 직사각형의 둘레 복원", "candidate": "52cm (찢어진 선을 중심 ㅇ을 지나는 직선으로 해석)", "visual": "점 ㅇ에 대하여 점대칭인 두 직사각형이 찢어진 선 아래에 일부 보인다. 가의 왼쪽에 보이는 높이 3cm, 나의 오른쪽에 보이는 높이 7cm, 나의 가로 16cm가 표시된다.", "reviewNote": "그림처럼 찢어진 경계가 중심 ㅇ을 지나는 직선이면 서로 대응하는 양쪽 높이는 원래 높이의 두 부분이므로 전체 높이는 3+7=10cm다. 점대칭 직사각형의 가로는 모두 16cm여서 가의 둘레는 2×(16+10)=52cm다. 찢어진 경계의 정확한 형태와 중심 통과 해석을 함께 확인한다.", "status": "source-ambiguity-answer-key-pending"},
+        {"number": 105, "classification": "네 점을 중심으로 회전한 도형의 최대 겹침", "candidate": "ㄷ, 8cm²", "visual": "1cm 격자 위 오목 다각형과 점 ㄱ, ㄴ, ㄷ, ㄹ이 주어진다.", "reviewNote": "도형의 왼쪽 끝을 (0,3)으로 잡고 격자 꼭짓점을 (0,3),(3,1),(3,0),(8,0),(8,2),(5,2),(5,4),(3,4),(3,3)으로 읽는다. 중심 ㄱ=(5,0), ㄴ=(3,2), ㄷ=(6,1), ㄹ=(8,1)에 대한 회전상과 원래 도형의 교집합 넓이는 각각 0, 6, 8, 0cm²다. 다각형을 삼각형으로 분할해 겹친 면적을 계산했다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 106, "classification": "4×4 격자를 합동인 두 조각으로 나누기", "candidate": "서로 다른 모양의 6가지 분할 예", "visual": "4×4 격자의 점선을 따라 잘라 서로 합동인 두 조각을 만드는 서로 다른 여섯 가지 방법을 그린다.", "reviewNote": "각 행을 /로 구분하고 A·B를 두 조각으로 표시한 여섯 배치: AABB/AABB/AABB/AABB; AAAB/AABB/AABB/ABBB; AABB/AAAB/ABBB/AABB; AAAB/AAAB/ABBB/ABBB; AAAB/ABBB/AAAB/ABBB; AAAB/ABAB/ABAB/ABBB. 각 조각은 8칸이고 연결되며 회전·반사로 서로 합동이다. 서로 다른 배치의 조각 모양도 합동을 제외해 구별했다. 실제 절단선 그림 검증은 남았다.", "status": "source-reviewed-drawing-pending"},
+        {"number": 107, "classification": "4×4 격자를 합동인 네 조각으로 나누기", "candidate": "서로 다른 모양의 4가지 분할 예", "visual": "4×4 격자의 점선을 따라 잘라 서로 합동인 네 조각을 만드는 서로 다른 네 가지 방법을 그린다.", "reviewNote": "각 행을 /로 구분하고 A~D를 네 조각으로 표시한 네 배치: ABCD/ABCD/ABCD/ABCD; AACC/ABCD/ABCD/BBDD; ACCC/AACD/ABDD/BBBD; AACC/AACC/BBDD/BBDD. 각 조각은 4칸이고 연결되며 한 배치 안의 네 조각이 서로 합동이다. 네 배치의 조각 모양은 서로 다르다. 실제 절단선 그림 검증은 남았다.", "status": "source-reviewed-drawing-pending"}
       ]
     }
   ],
