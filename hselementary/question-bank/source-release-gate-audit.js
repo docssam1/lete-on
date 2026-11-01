@@ -41,6 +41,7 @@ require("./source-5-2-u3-rotated-number-synthetic.js");
 require("./source-5-2-u3-mirror-path-synthetic.js");
 require("./source-5-2-u3-palindrome-synthetic.js");
 require("./source-5-2-u3-symmetry-grid-synthetic.js");
+const symmetryKite = require("./source-5-2-u3-symmetry-kite-angle-synthetic.js");
 require("./source-5-2-u3-double-reflection-synthetic.js");
 require("./source-5-2-u3-circle-axis-synthetic.js");
 require("./source-5-2-u3-octagon-reflection-synthetic.js");
@@ -347,8 +348,20 @@ for (const semester of window.HSE_CURRICULUM.semesters) {
   }
 }
 
-if (total !== 2268) failures.push(`전체 유형 수가 2268가 아니라 ${total}입니다.`);
-if (ready !== 1489) failures.push(`원문 연결 공개 유형 수가 1489가 아니라 ${ready}입니다.`);
+const kiteTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types)))
+  .filter(type => type.id === symmetryKite.id);
+if (kiteTypes.length !== 1) failures.push(`${symmetryKite.id}: 조건 명시 연습이 한 번 등록되어야 합니다.`);
+if (kiteTypes.length === 1) {
+  const type = kiteTypes[0];
+  if (api.generatorKey(type) !== symmetryKite.key || type.reviewLocked || type.publisherKeyVerified !== false || type.sourceParentItemId !== "5-2-u3-e5-example-2") {
+    failures.push(`${symmetryKite.id}: 조건 명시 연습의 생성기·원문 연결 상태가 올바르지 않습니다.`);
+  }
+  for (const mutation of [{ reviewLocked: true }, { sourceVerified: false }, { sourceItemId: "wrong-source" }]) {
+    if (api.generatorKey({ ...type, ...mutation })) failures.push(`${symmetryKite.id}: 검수 조건 위반 문항이 생성기에 연결됩니다.`);
+  }
+}
+if (total !== 2269) failures.push(`전체 유형 수가 2269가 아니라 ${total}입니다.`);
+if (ready !== 1490) failures.push(`원문 연결 공개 유형 수가 1490가 아니라 ${ready}입니다.`);
 if (lockedWithoutSource !== 371) failures.push(`원문 미연결 잠금 유형 수가 371이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {
