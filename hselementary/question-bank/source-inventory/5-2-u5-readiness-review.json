@@ -687,7 +687,7 @@
       "implementationStatus": "verified-local",
       "publicDecision": "public",
       "lockReason": "",
-      "sourceAuditUpdate": "PDF p.46 / 인쇄 p.50 예제 2-1: 원문·깨끗한 스캔·Apple Vision OCR에서 색칠한 면 192cm², 높이 16cm, 윗면 폭 8cm와 ㄱㄹ 표시를 대조했습니다. 폭 12cm인 색칠면에서 네 옆면은 8·12·8·12cm이므로 ㄱㄹ=40cm입니다. 원문형 전개도와 화면(1440/375/320px), 문제·풀이 A4 각 1쪽을 검수했고 출판사 키는 미확인입니다.",
+      "sourceAuditUpdate": "PDF p.46 / 인쇄 p.50 예제 2-1: 원문·깨끗한 스캔·Apple Vision OCR에서 색칠한 면 192cm², 높이 16cm, 윗면 폭 8cm와 ㄱㄹ 표시를 대조했습니다. 폭 12cm인 색칠면에서 네 옆면은 8·12·8·12cm이므로 ㄱㄹ=40cm입니다. 원문형 전개도와 화면(1440/375/320px), 문제·풀이 A4 각 1쪽을 검수했고 출판사 키는 미확인입니다. 2026-11-02: 원문에 표시된 아래 꼭짓점 ㄴ·ㄷ과 색칠한 ㉮면 표기를 그림과 문제에 복원하고 PC·모바일 및 흑백 인쇄를 재검수했습니다.",
       "releaseStatus": "runtime-enabled-in-current-release",
       "publisherKeyVerified": false,
       "releaseEvidence": "원문 그림과 독립 풀이, 화면·A4를 대조해 고정 문항으로 연결했습니다. 출판사 공식 답안은 미확인입니다."
