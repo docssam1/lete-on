@@ -17,6 +17,7 @@ async function prepare(page, width) {
   await page.addInitScript(() => { localStorage.clear(); sessionStorage.clear(); window.print = () => {}; });
   await page.goto(`${origin}/hselementary/question-bank/`);
   await page.waitForFunction(() => window.HSE_GENERATORS && window.HSE_SOURCE_52_CONGRUENCE_PAGE31);
+  await page.waitForSelector("#studentNameInput[data-identity-source]");
   await page.locator("#gradeFilter [data-grade='5']").click();
   await page.waitForFunction(() => document.querySelector("#gradeFilter [data-grade='5']")?.classList.contains("is-active"));
   await page.locator("#termFilter [data-term='2']").click();
@@ -33,7 +34,7 @@ async function prepare(page, width) {
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
   let states = 0;
   const observations = [];
-  for (const width of widths) for (const difficulty of [-1, 0, 1]) for (const variant of (width === 1280 ? [0, 1, 2] : [0])) {
+  for (const width of widths) for (const difficulty of [-1, 0, 1]) for (const variant of (width === 1280 ? [0, 1, 2, 3] : [0])) {
     const context = await browser.newContext({ viewport: { width, height: 1000 }, serviceWorkers: "block" });
     await context.route("**/*", route => new URL(route.request().url()).origin === origin
       ? route.continue() : (blockedRequests++, route.fulfill({ status: 200, contentType: "text/plain", body: "" })));

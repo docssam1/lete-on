@@ -21,9 +21,9 @@
   const triangleBaseTargets = [128, 136, 152];
   const areaBaseHeights = [10, 14, 18];
   const areaBaseWidths = [6, 10, 14];
-  const trapezoidTopBases = [12, 16, 20];
-  const trapezoidBottomBases = [8, 10, 14];
-  const trapezoidBaseHeights = [6, 8, 10];
+  const trapezoidTopBases = [12, 16, 20, 24];
+  const trapezoidBottomBases = [8, 10, 14, 18];
+  const trapezoidBaseHeights = [6, 8, 10, 12];
   const difficultyDeltas = [-2, 0, 2];
   const equilateralExampleAlphas = [28, 34, 40];
   const equilateralExampleBetas = [22, 24, 26];
@@ -283,13 +283,14 @@
 
   function result(sourceItemId, variant, offset, prompt, answer, solution, answerModel, reviewLocked, answerVisual) {
     const definition = definitions.find(item => item.sourceItemId === sourceItemId);
+    const variantCount = sourceItemId === "5-2-u3-e4-mission-6" ? 4 : 3;
     return Object.freeze({
       prompt: `<div data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${variant}" data-variant="${variant}" data-difficulty-offset="${offset}" data-level="${offset+1}">${prompt}</div>`,
       answer,
       solution: `<div data-source-answer="${sourceItemId}">${solution}</div>`,
       sourceItemId, generator: definition.generatorKey,
       generationMode: "fixed-verified-pool", verifiedPoolIndex: variant,
-      verifiedVariantCount: 3, verifiedVariantTarget: 3,
+      verifiedVariantCount: variantCount, verifiedVariantTarget: variantCount,
       verifiedVariantId: `${sourceItemId}:v${variant}`, difficultyOffset: offset,
       difficultyLevel: offset + 1, difficultyRank: offset + 1,
       sourceStructurePreserved: true, answerVisualRequired: true,
@@ -303,7 +304,8 @@
   }
 
   function getQuestion(sourceItemId, variant = 0, difficultyOffset = 0) {
-    if (!Number.isSafeInteger(variant) || variant < 0 || variant > 2 || ![-1,0,1].includes(difficultyOffset)) return null;
+    const variantCount = sourceItemId === "5-2-u3-e4-mission-6" ? 4 : 3;
+    if (!Number.isSafeInteger(variant) || variant < 0 || variant >= variantCount || ![-1,0,1].includes(difficultyOffset)) return null;
     if (sourceItemId === definitions[0].sourceItemId) return buildEquilateralExample2(variant,difficultyOffset);
     if (sourceItemId === definitions[1].sourceItemId) return buildMission1(variant,difficultyOffset);
     if (sourceItemId === definitions[2].sourceItemId) return buildMission2(variant,difficultyOffset);
