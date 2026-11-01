@@ -119,3 +119,13 @@ Mac의 Codex에서 기존 사본을 검토한 뒤 사용했다. gfield-design-sy
 - Actions 실행 41272518705의 실제 Deploy to GitHub Pages 단계는 success. 뒤이은 다른 작업의 배포가 시작돼 실행 전체는 cancelled로 표시됐다. 실패로 추정하거나 재배포를 반복하지 않았다.
 - https://lete-on.gfieldacademy.net/highschool-selection/promo/ 기본 주소 HTTP 200, 새 제목과 소개 내용 확인. 공개 산출물 9개 모두 HTTP 200이며 로컬 staging과 SHA-256이 일치했다.
 - DB·운영 서버·시험 공개 상태는 변경하지 않았다. Pages의 시험 입장은 준비 안내를 제공한다. 실제 브라우저 렌더·390px 시각 검수는 여전히 별도 확인 대상이다.
+
+## 2026-11-01 - Reference color and copy correction
+
+User rejected pale blue panels and requested the supplied reference: dark background, vivid mint/yellow/blue/pink/violet/orange portrait cards, large academy names and subtle rotation. Custom SVG mathematical solids replace child mascots. Colors indicate navigation only, not official academy identities. Academy intro headers inherit each selected card color; course detail panels use neutral tones.
+
+Copy shortened: the home heading asks users to select an academy; the package heading names the lesson contents directly. No scope, round, time or release policy data changed.
+
+Writing skill review: https://github.com/blader/humanizer/tree/v3.1.0 provides fact-preserving removal of inflated claims, filler and repetition. Existing Hermes humanizer is v2.5.1. No skill installed or overwritten. archep29/im-not-ai-humanizer requires scripts and agent orchestration and was not selected for short UI labels.
+
+Checks: existing tests 32/32; VM checks cover 6 illustrated cards, 20 course routes and application restrictions. Live browser visual check follows publication.

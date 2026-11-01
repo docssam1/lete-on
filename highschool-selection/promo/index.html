@@ -6,9 +6,9 @@
   <title>학원별 수학 입학·선발 대비 | 지필드</title>
   <meta name="description" content="생각하는황소·돌파·원수학·이든·깊은생각·생수수학의 지원 과정을 고르고, 과정별 모의고사와 진단·보완 수업 구성을 확인하세요.">
   <link rel="stylesheet" href="../shared/app.css">
-  <link rel="stylesheet" href="./promo.css">
+  <link rel="stylesheet" href="./promo.css?v=color-20261101">
 </head>
-<body class="selection-promo">
+<body class="selection-promo" data-view="home">
   <a class="skip-link" href="#main">본문으로</a>
   <header class="site-header"><nav class="shell nav" aria-label="주 메뉴">
     <a class="brand" href="#"><span class="brand-mark">G</span><span>지필드<small>학원별 수학 대비</small></span></a>
@@ -17,7 +17,7 @@
   <main id="main">
     <section class="academy-home" id="academy-home" aria-labelledby="home-title">
       <div class="shell">
-        <div class="home-intro"><p class="section-kicker">학원별 입학·편입·선발 대비</p><h1 id="home-title" tabindex="-1">다음에 도전할 학원은<br>어디인가요?</h1><p>지원할 학원을 고르세요.<br>과정에 맞는 모의고사와 준비할 내용을 안내합니다.</p></div>
+        <div class="home-intro"><p class="section-kicker">학원별 모의고사 · 대비 수업</p><h1 id="home-title" tabindex="-1">학원을 선택하세요.</h1></div>
         <div class="academy-launcher" id="academy-launcher" aria-label="소개를 볼 학원 선택"></div>
         <p class="independent-note">지필드가 구성하는 독립 대비 프로그램입니다. 각 학원의 공식 신청은 해당 학원에서 진행합니다.</p>
         <noscript><p>학원 소개를 보려면 JavaScript를 켜 주세요. <a href="../login.html">내 시험 입장</a></p></noscript>
@@ -32,7 +32,7 @@
         <p class="release-note">표준 시험지 승인 전에는 신청·판매를 열지 않습니다.</p>
       </div>
     </section>
-    <section class="learning-path" id="learning-path"><div class="shell"><div class="path-heading"><h2>시험 한 번을,<br>다음 공부의 출발점으로.</h2><p>모의고사로 확인하고, 진단으로 좁히고,<br>부족한 유형을 다시 풀어봅니다.</p></div><ol><li><span>01</span><div><h3>과정에 맞춰 응시</h3><p>지원 과정의 범위와 모의고사 시간을 확인합니다.</p></div></li><li><span>02</span><div><h3>약점을 구체적으로 확인</h3><p>점수와 함께 단원·세부유형별 결과를 살펴봅니다.</p></div></li><li><span>03</span><div><h3>필요한 유형을 다시 학습</h3><p>승인된 유사문제로 풀이 과정을 점검합니다.</p></div></li></ol></div></section>
+    <section class="learning-path" id="learning-path"><div class="shell"><div class="path-heading"><h2>모의고사 후<br>오답 학습</h2><p>시험 결과를 보고<br>틀린 유형을 다시 공부합니다.</p></div><ol><li><span>01</span><div><h3>모의고사</h3><p>지원 과정의 범위와 모의고사 시간을 확인합니다.</p></div></li><li><span>02</span><div><h3>결과 확인</h3><p>점수와 함께 단원·세부유형별 결과를 살펴봅니다.</p></div></li><li><span>03</span><div><h3>오답 학습</h3><p>승인된 유사문제로 풀이 과정을 점검합니다.</p></div></li></ol></div></section>
   </main>
   <footer class="footer"><div class="shell"><span>지필드 · 학원별 수학 대비</span><a href="../login.html">배정받은 시험 입장</a></div></footer>
   <script src="../data/public-exam-profiles.js"></script>
@@ -50,7 +50,25 @@
     let selectedProgram='';
     const route=(code,course='')=>'#'+new URLSearchParams({academy:code,...(course?{course}:{})}).toString();
     const courseGroups={SH:'고등 선발 · 중등·고등 편입',DP:'중1 시작 · 공통수학 · 대수',WM:'중등 기본 · 공통수학 · 듀얼',ED:'중1 시작 · 고등선행',DG:'레벨 입학 · 예비고1',SM:'공통수학1 · 공통수학2'};
-    document.getElementById('academy-launcher').innerHTML=engagement.programs.map(program=>`<a class="academy-choice" href="${route(program.code)}" style="--academy-accent:${esc(program.accent)}"><span class="choice-purpose">입학·선발 대비</span><h2>${esc(program.publicName)}</h2><p>${esc(courseGroups[program.code])}</p><div class="choice-bottom"><span>${program.courses.length}개 과정 살펴보기</span><span class="choice-arrow" aria-hidden="true">↗</span></div></a>`).join('');
+    // These are interface colors, not academy logos or official brand colors.
+    const cardColors={SH:'#64d5a2',DP:'#f7d447',WM:'#618df3',ED:'#f39bb9',DG:'#b5a0ee',SM:'#fa9a68'};
+    const illustrations={
+      SH:'<ellipse cx="130" cy="211" rx="76" ry="13" fill="#182230" opacity=".13"/><circle cx="126" cy="126" r="78" fill="url(#solid-SH)"/><ellipse cx="100" cy="91" rx="21" ry="13" fill="#fff" opacity=".5" transform="rotate(-35 100 91)"/><ellipse cx="126" cy="126" rx="78" ry="27" fill="none" stroke="#fff" stroke-width="2" opacity=".6" transform="rotate(-22 126 126)"/>',
+      DP:'<ellipse cx="132" cy="211" rx="77" ry="13" fill="#182230" opacity=".14"/><path d="M47 82 126 42 207 87 129 130Z" fill="#56d9d4"/><path d="M47 82 129 130 129 215 47 167Z" fill="#299eaa"/><path d="M129 130 207 87 207 169 129 215Z" fill="#1b6f89"/><path d="M47 82 129 130 207 87M129 130V215" fill="none" stroke="#b6ffed" stroke-width="2" opacity=".8"/>',
+      WM:'<ellipse cx="126" cy="208" rx="76" ry="14" fill="#182230" opacity=".15"/><path d="M127 34 42 181 200 185Z" fill="#ffcb66"/><path d="M127 34 124 216 200 185Z" fill="#e69a34"/><path d="M127 34 42 181 124 216Z" fill="#ffe29a"/><path d="M127 34 124 216M42 181 200 185" fill="none" stroke="#fff2c9" stroke-width="2"/>',
+      ED:'<ellipse cx="124" cy="211" rx="76" ry="13" fill="#182230" opacity=".12"/><path d="M54 72V171C54 223 194 223 194 171V72" fill="url(#solid-ED)"/><ellipse cx="124" cy="72" rx="70" ry="32" fill="#c0a8ff"/><ellipse cx="124" cy="72" rx="48" ry="21" fill="none" stroke="#ece0ff" stroke-width="2"/><path d="M71 91V168" stroke="#e7d8ff" stroke-width="6" opacity=".55" stroke-linecap="round"/>',
+      DG:'<ellipse cx="129" cy="210" rx="77" ry="14" fill="#182230" opacity=".12"/><path d="M129 30 48 177C48 215 207 215 207 177Z" fill="url(#solid-DG)"/><ellipse cx="127" cy="177" rx="79" ry="26" fill="#df7850"/><path d="M129 30 48 177M129 30 207 177" fill="none" stroke="#ffc9a2" stroke-width="2"/>',
+      SM:'<ellipse cx="130" cy="214" rx="76" ry="12" fill="#182230" opacity=".12"/><path d="m124 29 81 91-81 94-79-94Z" fill="#087e72"/><path d="m124 29-9 101-70-10Z" fill="#5ad9b1"/><path d="m124 29 81 91-90 10Z" fill="#a7f1c9"/><path d="m45 120 70 10 9 84Z" fill="#27ad90"/><path d="m205 120-90 10 9 84Z" fill="#167f79"/><path d="m124 29-9 101 9 84M45 120l70 10 90-10" fill="none" stroke="#ceffe3" stroke-width="2"/>'
+    };
+    function cardArt(code){
+      const colorPairs={SH:['#ffd56d','#ed8e28'],ED:['#aa88ed','#6951b5'],DG:['#ffd091','#f4a16b']};
+      const pair=colorPairs[code]||['#fff','#ddd'];
+      return `<svg class="choice-art" viewBox="0 0 250 250" aria-hidden="true" focusable="false"><defs><linearGradient id="solid-${code}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${pair[0]}"/><stop offset="1" stop-color="${pair[1]}"/></linearGradient></defs>${illustrations[code]}</svg>`;
+    }
+    function academyName(program){
+      return program.publicName.startsWith('생각하는')?`<span class="choice-name-prefix">생각하는</span>${esc(program.publicName.slice(4))}`:esc(program.publicName);
+    }
+    document.getElementById('academy-launcher').innerHTML=engagement.programs.map(program=>`<a class="academy-choice" href="${route(program.code)}" style="--card-color:${cardColors[program.code]}"><span class="choice-purpose">학원별 대비</span><h2>${academyName(program)}</h2><p>${esc(courseGroups[program.code])}</p>${cardArt(program.code)}<div class="choice-bottom"><span>소개 보기</span><span class="choice-arrow" aria-hidden="true">↗</span></div></a>`).join('');
     function renderEvidence(){
     const stateLabel={verified:'확인',observed:'관찰',confirmed:'운영 확정',"needs-review":'확인 필요'};
     const grid=document.getElementById('program-grid');
@@ -66,7 +84,7 @@
 
     }
     function applicationAction(resolved){
-      if(!resolved.canApply)return '<p class="course-availability"><span class="status-dot"></span>이 과정의 모의고사를 준비하고 있습니다.</p>';
+      if(!resolved.canApply)return '<p class="course-availability"><span class="status-dot"></span>모의고사 준비 중</p>';
       const url=safeUrl(engagement.application.surveyUrl);
       return url?`<a class="button accent" href="${esc(url)}" target="_blank" rel="noopener noreferrer">이 과정 신청하기</a>`:'<p class="course-availability">신청 일정은 추후 안내합니다.</p>';
     }
@@ -76,12 +94,13 @@
       // Only a separately scoped, approved mock duration is shown as our mock time.
       const duration=exam?.durationScope==='our-sale-mock'&&Number.isFinite(exam.durationMinutes)?`${exam.durationMinutes}분`:'과정·회차 확정 후 안내';
       const count=exam?.questionCount?`${exam.questionCount}문항`:'회차 구성 후 안내';
-      return `<section class="course-detail" aria-labelledby="selected-course-title"><div class="course-detail-main"><p class="section-kicker">선택한 대비 과정</p><h3 id="selected-course-title" tabindex="-1">${esc(course.label)}</h3><p class="course-scope">${esc(course.scope)}</p><dl class="course-specs"><div><dt>모의고사 문항</dt><dd>${esc(count)}</dd></div><div><dt>우리 모의고사 시간</dt><dd>${esc(duration)}</dd></div><div><dt>제공 상태</dt><dd>${resolved.canApply?'신청 가능':'준비 중'}</dd></div></dl><p class="scope-note">실제 학원의 응시 시간·범위는 지원할 지점과 과정의 해당 회차 공지를 확인해 주세요.</p>${applicationAction(resolved)}</div><aside class="course-package"><span class="draft-label">지필드 대비 수업 구성안</span><h4>진단에서 보완까지</h4><ol><li><b>모의고사</b><span>선택한 과정의 범위로 실전 점검</span></li><li><b>진단 분석</b><span>단원·유형별 결과와 우선 학습 확인</span></li><li><b>보완 학습</b><span>승인된 유사문제로 취약 유형 연습</span></li></ol><p>수업 횟수·회당 시간·수강료는 과정별 확정 후 안내합니다.</p></aside></section>`;
+      return `<section class="course-detail" aria-labelledby="selected-course-title"><div class="course-detail-main"><p class="section-kicker">모의고사 안내</p><h3 id="selected-course-title" tabindex="-1">${esc(course.label)}</h3><p class="course-scope">${esc(course.scope)}</p><dl class="course-specs"><div><dt>모의고사 문항</dt><dd>${esc(count)}</dd></div><div><dt>모의고사 시간</dt><dd>${esc(duration)}</dd></div><div><dt>제공 상태</dt><dd>${resolved.canApply?'신청 가능':'준비 중'}</dd></div></dl><p class="scope-note">실제 학원의 응시 시간·범위는 지원할 지점과 과정의 해당 회차 공지를 확인해 주세요.</p>${applicationAction(resolved)}</div><aside class="course-package"><span class="draft-label">수업 구성안</span><h4>수업 구성</h4><ol><li><b>모의고사</b><span>과정별 모의고사 풀이</span></li><li><b>진단 분석</b><span>단원·유형별 결과 확인</span></li><li><b>보완 학습</b><span>틀린 유형의 유사문제 풀이</span></li></ol><p>수업 시간·횟수·수강료는 추후 안내합니다.</p></aside></section>`;
     }
     function render(){
       const params=new URLSearchParams(location.hash.slice(1));
       const program=engagement.programs.find(item=>item.code===params.get('academy'));
       selectedProgram=program?.code||'';
+      document.body.dataset.view=program?'academy':'home';
       document.getElementById('academy-home').hidden=Boolean(program);
       document.getElementById('academy-intro-view').hidden=!program;
       document.getElementById('learning-path').hidden=Boolean(program);
@@ -89,7 +108,7 @@
       if(!program){stage.innerHTML='';document.getElementById('program-grid').innerHTML='';document.getElementById('academy-notices').innerHTML='';return;}
       const course=program.courses.find(item=>item.id===params.get('course'));
       document.getElementById('breadcrumb-name').textContent=program.publicName;
-      stage.innerHTML=`<header class="academy-intro-header" style="--academy-accent:${esc(program.accent)}"><div><p class="section-kicker">학원별 대비 안내</p><h1 id="intro-title" tabindex="-1">${esc(program.publicName)}</h1><p>${esc(program.examNature)}</p></div><a class="back-to-academies" href="#">다른 학원 보기 <span aria-hidden="true">↗</span></a></header><div class="intro-layout"><aside class="preparation"><h2>이렇게 준비합니다</h2><ul>${program.preparation.map(item=>`<li>${esc(item)}</li>`).join('')}</ul><p>지필드의 독립 대비 안내입니다. 학원의 공식 수업·모집 안내는 원문을 확인해 주세요.</p></aside><section class="course-picker" aria-labelledby="course-heading"><div class="small-section-head"><h2 id="course-heading">어떤 과정을 준비하나요?</h2><span>${program.courses.length}개 과정</span></div><div class="course-options">${program.courses.map(item=>`<a class="course-option ${course?.id===item.id?'is-selected':''}" href="${route(program.code,item.id)}" ${course?.id===item.id?'aria-current="true"':''}><span><b>${esc(item.label)}</b><small>${esc(item.scope)}</small></span><span class="option-indicator" aria-hidden="true">${course?.id===item.id?'✓':'→'}</span></a>`).join('')}</div></section></div>${course?renderCourse(program,course):'<div class="course-placeholder"><p>위에서 지원할 과정을 선택하세요.</p><span>모의고사 구성과 대비 수업 안내가 이어집니다.</span></div>'}`;
+      stage.innerHTML=`<header class="academy-intro-header" style="--academy-accent:${cardColors[program.code]}"><div><p class="section-kicker">학원 소개</p><h1 id="intro-title" tabindex="-1">${esc(program.publicName)}</h1><p>${esc(courseGroups[program.code])}</p></div><a class="back-to-academies" href="#">다른 학원 보기 <span aria-hidden="true">↗</span></a></header><div class="intro-layout"><aside class="preparation"><h2>공부할 내용</h2><ul>${program.preparation.map(item=>`<li>${esc(item)}</li>`).join('')}</ul><p>지필드의 독립 대비 안내입니다. 학원의 공식 수업·모집 안내는 원문을 확인해 주세요.</p></aside><section class="course-picker" aria-labelledby="course-heading"><div class="small-section-head"><h2 id="course-heading">대비 과정</h2><span>${program.courses.length}개 과정</span></div><div class="course-options">${program.courses.map(item=>`<a class="course-option ${course?.id===item.id?'is-selected':''}" href="${route(program.code,item.id)}" ${course?.id===item.id?'aria-current="true"':''}><span><b>${esc(item.label)}</b><small>${esc(item.scope)}</small></span><span class="option-indicator" aria-hidden="true">${course?.id===item.id?'✓':'→'}</span></a>`).join('')}</div></section></div>${course?renderCourse(program,course):'<div class="course-placeholder"><p>대비할 과정을 선택하세요.</p><span>시험 범위·시간과 수업 구성을 볼 수 있습니다.</span></div>'}`;
       renderEvidence();
       const notices=program.updates||[];
       document.getElementById('academy-notices').innerHTML=notices.length?notices.map(item=>`<a href="${esc(safeUrl(item.url))}" target="_blank" rel="noopener noreferrer"><span>${esc(item.title)}</span><small>${esc(item.date)} · ${esc(item.sourceKind)}</small></a>`).join(''):'<p class="bulletin-empty">등록된 공지 자료가 없습니다. 해당 학원의 공식 채널에서 모집 내용을 확인해 주세요.</p>';
