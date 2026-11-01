@@ -53,7 +53,7 @@
       verifiedVariantTarget: pools.length, verifiedVariantId: `${sourceItemId}:v${poolIndex}`,
       variantProvenance: "synthetic-source-structure",
       difficultyOffset, difficultyLevel: difficultyOffset + 1, difficultyRank: difficultyOffset + 1,
-      sourceDifficultyRank: 1, difficultyDesign: ["guided-rounding-interval", "integer-boundary-range", "independent-arithmetic-series-sum"][difficultyOffset + 1],
+      sourceDifficultyRank: 1, difficultyDesign: "difficulty-difference-unverified",
       reasoningSteps: 4, sourceStepCount: 1, difficultyStepDelta: difficultyOffset,
       sourceStructurePreserved: true, sourcePdfPage: 39, sourcePrintedPage: 43,
       questionModel: result, answerModel: result, answerVisualRequired: false, answerVisualStatus: "not-required",

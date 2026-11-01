@@ -35,12 +35,7 @@
     const fractionalHours = ((result.totalSeconds % 3600) / 3600).toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
     const decimalMinutes = ((result.totalSeconds % 3600) / 60).toFixed(1).replace(/\.0$/, "");
     const fractionalMinutes = ((result.totalSeconds % 60) / 60).toFixed(1).replace(/\.0$/, "");
-    const hint = difficultyOffset < 0
-      ? '<p class="source52-u4-p43-m3-hint">도움말: 하루는 24시간입니다. 먼저 일수를 시간으로 바꾸세요.</p>'
-      : difficultyOffset > 0
-        ? '<p class="source52-u4-p43-m3-hint">시간의 소수 부분은 분으로, 분의 소수 부분은 초로 바꾸어 보세요.</p>'
-        : "";
-    const prompt = `<div class="source52-u4-p43-m3-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>${result.day}일은 몇 시간 몇 분 몇 초인가?</p>${hint}</div>`;
+    const prompt = `<div class="source52-u4-p43-m3-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>${result.day}일은 몇 시간 몇 분 몇 초인가?</p></div>`;
     const steps = [
       `1일은 24시간이므로 ${result.day}일은 ${result.day}×24=${decimalHours}시간입니다.`,
       `${decimalHours}시간은 ${result.hours}시간과 ${fractionalHours}시간입니다.`,
@@ -56,7 +51,7 @@
       verifiedVariantId: `${id}:v${poolIndex}`, variantProvenance: "synthetic-source-structure",
       difficultyOffset, difficultyLevel: difficultyOffset + 1, difficultyRank: difficultyOffset + 1,
       sourceDifficultyRank: 1,
-      difficultyDesign: ["guided-day-to-hour-conversion", "hour-minute-second-conversion", "independent-unit-conversion-check"][difficultyOffset + 1],
+      difficultyDesign: "difficulty-difference-unverified",
       reasoningSteps: 5, sourceStepCount: 1, difficultyStepDelta: difficultyOffset,
       sourceStructurePreserved: true, sourcePdfPage: 39, sourcePrintedPage: 43,
       questionModel: { ...pool, answerModel: result }, answerModel: result,

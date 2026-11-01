@@ -52,11 +52,6 @@
     const pool = pools[poolIndex];
     const result = calculate(pool);
     const itemPrompt = `가로와 세로가 각각 ${pool.length}m, ${pool.width}m인 밭의 전체 넓이 중 ${result.cabbageRate}에는 배추를 심고, 남은 넓이의 ${result.sweetPotatoRate}에는 고구마를 심었습니다. 배추밭과 고구마밭의 넓이 차를 구하여라.`;
-    const hint = difficultyOffset < 0
-      ? '<p class="source52-u4-p43-m2-hint">도움말: 먼저 밭 전체 넓이와 배추밭 넓이를 구하세요. 고구마는 배추를 심고 남은 넓이를 기준으로 계산합니다.</p>'
-      : difficultyOffset > 0
-        ? '<p class="source52-u4-p43-m2-hint">풀이할 때 “남은 넓이의 비율”이 어느 넓이를 기준으로 하는지 먼저 확인하세요.</p>'
-        : "";
     const steps = [
       `전체 넓이: ${pool.length}×${pool.width}=${result.fieldArea}m²`,
       `배추밭: ${result.fieldArea}×${result.cabbageRate}=${result.cabbageArea}m²`,
@@ -64,7 +59,7 @@
       `고구마밭(남은 땅 기준): ${result.remainingArea}×${result.sweetPotatoRate}=${result.sweetPotatoArea}m²`,
       `넓이 차: ${result.sweetPotatoTenThousandths >= result.cabbageTenThousandths ? result.sweetPotatoArea : result.cabbageArea}−${result.sweetPotatoTenThousandths >= result.cabbageTenThousandths ? result.cabbageArea : result.sweetPotatoArea}=${result.difference}m²`
     ];
-    const prompt = `<div class="source52-u4-p43-m2-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>${esc(itemPrompt)}</p>${hint}</div>`;
+    const prompt = `<div class="source52-u4-p43-m2-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>${esc(itemPrompt)}</p></div>`;
     const solution = `<div class="source52-u4-p43-m2-solution" data-source-answer="${id}" data-pool-index="${poolIndex}"><ol>${steps.map(step => `<li>${esc(step)}</li>`).join("")}</ol><table class="source52-u4-p43-m2-work-table"><tbody><tr><th>밭 전체</th><td>${result.fieldArea}m²</td></tr><tr><th>배추밭</th><td>${result.cabbageArea}m²</td></tr><tr><th>남은 넓이</th><td>${result.remainingArea}m²</td></tr><tr><th>고구마밭</th><td>${result.sweetPotatoArea}m²</td></tr></tbody></table><p class="source52-u4-p43-m2-answer"><strong>답: ${result.difference}m²</strong></p></div>`;
     return Object.freeze({
       prompt, answer: `${result.difference}m²`, solution, sourceItemId: id, generator: key,
@@ -73,7 +68,7 @@
       verifiedVariantId: `${id}:v${poolIndex}`, variantProvenance: "synthetic-source-structure",
       difficultyOffset, difficultyLevel: difficultyOffset + 1, difficultyRank: difficultyOffset + 1,
       sourceDifficultyRank: 1,
-      difficultyDesign: ["guided-remainder-share", "separate-total-and-remainder", "remainder-base-check"][difficultyOffset + 1],
+      difficultyDesign: "difficulty-difference-unverified",
       reasoningSteps: 5, sourceStepCount: 1, difficultyStepDelta: difficultyOffset,
       sourceStructurePreserved: true, sourcePdfPage: 39, sourcePrintedPage: 43,
       questionModel: { ...pool, answerModel: result }, answerModel: { ...result, answer: `${result.difference}m²` },

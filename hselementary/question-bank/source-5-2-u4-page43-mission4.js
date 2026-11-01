@@ -44,12 +44,7 @@
     const pool = pools[poolIndex];
     const result = calculate(pool);
     const displayedTerms = result.firstTerms;
-    const hint = difficultyOffset < 0
-      ? '<p class="source52-u4-p43-m4-hint">도움말: 이웃한 두 수의 차를 구한 뒤, 첫째 수에서 300번째 수까지 몇 번 더하는지 세어 보세요.</p>'
-      : difficultyOffset > 0
-        ? '<p class="source52-u4-p43-m4-hint">첫째 항부터 300번째 항까지는 공차를 몇 번 더해야 하는지 식으로 나타내 보세요.</p>'
-        : "";
-    const prompt = `<div class="source52-u4-p43-m4-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>다음과 같은 규칙으로 수를 나열할 때 ${pool.termNumber}번째 수는 얼마인가요?</p><p class="source52-u4-p43-m4-sequence">${displayedTerms.join(", ")}, …</p>${hint}</div>`;
+    const prompt = `<div class="source52-u4-p43-m4-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>다음과 같은 규칙으로 수를 나열할 때 ${pool.termNumber}번째 수는 얼마인가요?</p><p class="source52-u4-p43-m4-sequence">${displayedTerms.join(", ")}, …</p></div>`;
     const steps = [
       `이웃한 두 항의 차를 구하면 ${result.firstTerms[1]}−${result.first}=${result.difference}입니다.`,
       `첫째 항에서 ${pool.termNumber}번째 항까지는 ${pool.termNumber}−1=${result.jumps}번 커집니다.`,
@@ -64,7 +59,7 @@
       verifiedVariantId: `${id}:v${poolIndex}`, variantProvenance: "synthetic-source-structure",
       difficultyOffset, difficultyLevel: difficultyOffset + 1, difficultyRank: difficultyOffset + 1,
       sourceDifficultyRank: 1,
-      difficultyDesign: ["guided-common-difference-and-jump-count", "sequence-term-arithmetic", "independent-term-formula-check"][difficultyOffset + 1],
+      difficultyDesign: "difficulty-difference-unverified",
       reasoningSteps: 4, sourceStepCount: 1, difficultyStepDelta: difficultyOffset,
       sourceStructurePreserved: true, sourcePdfPage: 39, sourcePrintedPage: 43,
       questionModel: { ...pool, answerModel: result }, answerModel: result,
