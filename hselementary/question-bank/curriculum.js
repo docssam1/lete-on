@@ -2168,8 +2168,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         name:practiceName, label:practiceName, difficultyBand:0, sourceItemId:practiceId, sourceParentItemId:"5-2-u5-e1-example-1-4",
         sourceItemLabel:"예제 1-4 유사문항", sourceSection:"example", sourceTier:"advanced", sourcePdfPage:44, sourcePrintedPage:48,
         sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52U5ThreeLoopPractice",
-        generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantTarget:3, verifiedVariantCount:3,
-        answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"다른 조건으로 만든 연습 세 문항을 끈 길이와 세 변의 관계로 검산했습니다."});
+        generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantTarget:4, verifiedVariantCount:4,
+        answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"다른 조건으로 만든 연습 네 문항을 끈 길이와 세 변의 관계로 검산했습니다."});
     }
     const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0))) + 1;
     source52CuboidProperties.types.push({
