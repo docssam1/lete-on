@@ -385,6 +385,7 @@
       "publicDecision": "public",
       "lockReason": "",
       "reviewEvidence": "canonical and clean comparison scan + Apple Vision OCR + exact cut layout reconstruction + independent partition-edge model at three cut ratios + 1440px/375px browser review + one-page A4 problem and solution",
+      "sourceAuditUpdate": "2026-11-02: 원문 그림의 바깥 모서리와 두 절단선 및 7·5·3cm를 재대조하고 임의의 절단 위치에서 모서리 합 144cm를 재검산했습니다. 인쇄 치수의 글씨를 키우고 네 문항 혼합 A4 문제지와 풀이를 확인했습니다. 공식 답안은 미확인입니다.",
       "runtimeTypeId": "5-2-u5-e1-example-3",
       "releaseStatus": "runtime-enabled-in-current-release",
       "publisherKeyVerified": false,
