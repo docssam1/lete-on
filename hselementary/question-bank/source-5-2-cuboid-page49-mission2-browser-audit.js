@@ -101,6 +101,11 @@ function startServer() {
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(expected => document.body.dataset.printMode === expected, mode);
           await page.emulateMedia({ media: "print" });
+          if (mode === "problem") {
+            const fills = await diagram.locator(".source52-p49m2-view rect").evaluateAll(rects => rects.map(rect => getComputedStyle(rect).fill));
+            assert.equal(fills.length, 2);
+            assert(fills.every(fill => fill !== "rgb(255, 255, 255)"), "source view shading remains visible in A4 print");
+          }
           const serifLoaded = await page.evaluate(async () => {
             await document.fonts.load('400 16px "Noto Serif KR"', "직육면체와 둘레");
             await document.fonts.ready;

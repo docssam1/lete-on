@@ -480,6 +480,7 @@
       "publicDecision": "public",
       "lockReason": "",
       "reviewEvidence": "canonical-045 + clean-044 comparison + Apple Vision OCR + shared-dimension perimeter model + 1440px/375px browser review + one-page A4 problem and solution",
+      "sourceAuditUpdate": "2026-11-02: 원문과 대조해 앞·위 그림의 회색 면을 복원하고 치수 표기를 확대했습니다. 높이 10cm와 깊이 5cm에서 옆면 둘레 30cm를 재검산하고 PC·모바일 화면 및 A4 그림과 풀이를 확인했습니다. 출판사 답안은 미확인입니다.",
       "releaseStatus": "runtime-enabled-in-current-release",
       "publisherKeyVerified": false,
       "releaseEvidence": "원문 및 독립 계산, 화면·A4 검수를 완료한 고정 문항을 현재 main 기준 문제은행에 연결했습니다. 공식 출판사 답안은 미확인입니다."
