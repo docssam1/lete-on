@@ -852,7 +852,7 @@
       "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e3-mission-1",
-      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
+      "releaseEvidence": "원문은 4명의 완전순열(9가지), 연습은 3·5·6명(각 2·44·265가지)이다. 답은 전수 검사했으나 문제 규모가 달라 원문과 난이도 동등성은 미확인이다. 출판사 답안 미대조.",
       "originalSourceReleaseStatus": "locked"
     },
     {
