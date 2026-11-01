@@ -55,3 +55,9 @@ The academy identity was checked against the existing course evidence and matchi
 ## Display on colored cards (2026-11-01)
 
 At the user's request, the white paper background of DP, WM, ED and SM is made transparent at render time with a scoped SVG alpha filter. The filter preserves source RGB channels and changes alpha only; source logo files, dimensions and recorded hashes remain unchanged. SH and DG are excluded so the existing transparency and white brand lettering remain intact. The stylesheet query version is updated to prevent the previous white-backed rendering from staying cached.
+
+## User-requested redraw: WM / ED / SM (2026-11-01)
+
+The user explicitly requested these three logos to be redrawn rather than display-filtered. Built-in image generation was used in transparent background edit mode with each original logo as its reference. Outputs are saved separately as wm-transparent-v2.png, ed-transparent-v2.png and sm-transparent-v2.png; the original files remain preserved. Source identity and text were retained in the edit prompts. These are cleaned redraws, not claims of unchanged official source pixels.
+
+The three PNGs were checked for RGBA alpha, transparent corner pixels and nonempty opaque logo content. Their card images no longer use the SVG white-removal filter. The DP display filter remains in place because this redraw request named WM, ED and SM only. Public staging references the three replacement PNGs instead of the white-backed files, retaining fifteen public files.

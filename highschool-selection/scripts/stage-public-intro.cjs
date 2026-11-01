@@ -8,10 +8,10 @@ const files = [
   ['promo/promo.css', 'promo/promo.css'],
   ['promo/assets/logos/sh.png', 'promo/assets/logos/sh.png'],
   ['promo/assets/logos/dp.png', 'promo/assets/logos/dp.png'],
-  ['promo/assets/logos/wm.jpg', 'promo/assets/logos/wm.jpg'],
-  ['promo/assets/logos/ed.jpg', 'promo/assets/logos/ed.jpg'],
+  ['promo/assets/logos/wm-transparent-v2.png', 'promo/assets/logos/wm-transparent-v2.png'],
+  ['promo/assets/logos/ed-transparent-v2.png', 'promo/assets/logos/ed-transparent-v2.png'],
   ['promo/assets/logos/dg.webp', 'promo/assets/logos/dg.webp'],
-  ['promo/assets/logos/sm.png', 'promo/assets/logos/sm.png'],
+  ['promo/assets/logos/sm-transparent-v2.png', 'promo/assets/logos/sm-transparent-v2.png'],
 
   ['shared/app.css', 'shared/app.css'],
   ['data/public-exam-profiles.js', 'data/public-exam-profiles.js'],
