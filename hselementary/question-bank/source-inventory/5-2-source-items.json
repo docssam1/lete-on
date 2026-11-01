@@ -3520,7 +3520,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "단일 단순 절단 경로 해석에서 독립 결과는 8가지이나 허용 경로와 공식 답안 미대조로 잠금 유지합니다."
+      "reviewReason": "단일 단순 절단 경로 해석에서 독립 결과는 8가지이나 허용 경로와 공식 답안 미대조로 잠금 유지합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e8-mission-3-dot-cut-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u3-e8-mission-4",

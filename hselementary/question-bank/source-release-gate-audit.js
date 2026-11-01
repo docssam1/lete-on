@@ -35,6 +35,7 @@ require("./source-5-2-u3-slanted-reflection-synthetic.js");
 require("./source-5-2-u3-composite-half-synthetic.js");
 require("./source-5-2-u3-stone-game-synthetic.js");
 require("./source-5-2-u3-flower-ring-synthetic.js");
+require("./source-5-2-u3-dot-cut-synthetic.js");
 require("./source-5-2-u3-congruent-grid-synthetic.js");
 require("./source-5-2-u3-double-point-synthetic.js");
 require("./source-5-2-u3-double-symmetry-overlap-synthetic.js");
@@ -361,8 +362,8 @@ if (kiteTypes.length === 1) {
     if (api.generatorKey({ ...type, ...mutation })) failures.push(`${symmetryKite.id}: 검수 조건 위반 문항이 생성기에 연결됩니다.`);
   }
 }
-if (total !== 2270) failures.push(`전체 유형 수가 2270가 아니라 ${total}입니다.`);
-if (ready !== 1491) failures.push(`원문 연결 공개 유형 수가 1491가 아니라 ${ready}입니다.`);
+if (total !== 2271) failures.push(`전체 유형 수가 2271가 아니라 ${total}입니다.`);
+if (ready !== 1492) failures.push(`원문 연결 공개 유형 수가 1492가 아니라 ${ready}입니다.`);
 if (lockedWithoutSource !== 371) failures.push(`원문 미연결 잠금 유형 수가 371이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {
