@@ -85,28 +85,35 @@ const OPERATION_WHEN = Object.freeze({
   "rotate-left": "왼쪽으로 반의 반 바퀴 돌렸을 때", "rotate-right": "오른쪽으로 반의 반 바퀴 돌렸을 때", "rotate-half": "반 바퀴 돌렸을 때"
 });
 
+// 보기는 「모양」이 서로 달라야 한다 — 칸 위치만 다른 같은 모양이 오답으로 끼면 아이 눈에는 답이 둘이거나
+// 「제자리에 있어야 할 답이 없다」로 보인다(원장 2026-11-01 「보기에 답이 없는 것도 있어」, 뒤집기·돌리기 문제의 약 30%).
+// 그래서 같은 모양 판정은 위치를 뺀 모양(normalizePattern)으로 하고, 오답은 뒤집기·돌리기 8가지 중 정답과 다른 모양만 쓴다.
+const shapeKey = (cells) => patternKey(normalizePattern(cells));
 function distinctPatternOptions(source, correct, size) {
-  const keys = new Set([patternKey(correct)]);
-  const candidates = shuffle([
-    transformPattern(source, "mirror-left-right", size),
-    transformPattern(source, "mirror-top-bottom", size),
-    transformPattern(source, "rotate-left", size),
-    transformPattern(source, "rotate-right", size),
-    transformPattern(source, "rotate-half", size),
-    source
-  ]).filter((cells) => {
-    const key = patternKey(cells);
+  const keys = new Set([shapeKey(correct)]);
+  const symmetries = [
+    ["identity"], ["mirror-left-right"], ["mirror-top-bottom"], ["rotate-left"], ["rotate-right"], ["rotate-half"],
+    ["mirror-left-right", "rotate-right"], ["mirror-left-right", "rotate-left"]
+  ].map((ops) => ops.reduce((cells, operation) => transformPattern(cells, operation, size), source));
+  const candidates = shuffle(symmetries).filter((cells) => {
+    const key = shapeKey(cells);
     if (keys.has(key)) return false;
     keys.add(key);
     return true;
   });
-  while (candidates.length < 3) {
-    const cells = shuffle(Array.from({ length: size * size }, (_, index) => [Math.floor(index / size), index % size])).slice(0, source.length);
-    const key = patternKey(cells);
-    if (!keys.has(key)) {
-      keys.add(key);
-      candidates.push(cells);
-    }
+  // 대칭인 모양이라 8가지가 모자라면: 정답에서 한 칸을 옆 빈칸으로 옮긴 비슷한 모양
+  for (let guard = 0; candidates.length < 3 && guard < 200; guard += 1) {
+    const cells = correct.map((cell) => [...cell]);
+    const k = Math.floor(Math.random() * cells.length);
+    const taken = new Set(cells.map(pointKey));
+    const spots = cells.flatMap(([row, column]) => [[row - 1, column], [row + 1, column], [row, column - 1], [row, column + 1]])
+      .filter(([row, column]) => row >= 0 && column >= 0 && row < size && column < size && !taken.has(pointKey([row, column])));
+    if (!spots.length) continue;
+    cells[k] = spots[Math.floor(Math.random() * spots.length)];
+    const key = shapeKey(cells);
+    if (keys.has(key)) continue;
+    keys.add(key);
+    candidates.push(cells.sort((a, b) => a[0] - b[0] || a[1] - b[1]));
   }
   return shuffle([{ cells: correct, correct: true }, ...candidates.slice(0, 3).map((cells) => ({ cells, correct: false }))])
     .map((option, index) => ({ ...option, option: index + 1 }));

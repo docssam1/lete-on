@@ -7,7 +7,7 @@
 //  · 풀이를 행동으로: 「켜진 막대를 옮긴다 → 자리 순서까지 확인한다 → 읽는다」. 켜진 막대를 하나 골라 옮겨 갈 자리를 누르기를 막대마다 하고,
 //    다 옮긴 뒤 「확인」. 맞으면 만든 숫자를 읽어 쓴다. 숫자판은 똑바로 설 숫자를 먼저 고르고, 판을 돌려 확인한 뒤 합을 쓴다.
 //  · 틀리면 실수의 종류를 말하고(위아래·좌우를 바꿈, 자리 순서, 누운 방향), 두 번 틀리면 「풀이 보기」.
-import { BOOK01_INTERNALS } from "./book01-generators.js?v=20261023h";
+import { BOOK01_INTERNALS } from "./book01-generators.js?v=20261101k";
 import { jo } from "./concept-board-kit.js?v=20261026b";
 
 const { transformDigit, transformDisplay } = BOOK01_INTERNALS;

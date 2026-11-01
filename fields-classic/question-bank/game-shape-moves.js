@@ -9,7 +9,7 @@
 //  · 원장(2026-10-26): 처음 한 칸은 같이 한다. 왼쪽 판의 칸 하나가 반짝이고 「이 칸과 대칭인 자리를 눌러 볼까요?」 — 오른쪽 판에서 그 자리를 누른다.
 //    하나 맞히면 「이제 나머지도 그려 보세요」: 오른쪽 판에 나머지 칸을 바로 칠한다(왼쪽 칸을 먼저 고르지 않는다).
 //  · 생김새는 거울 저택(geometry/games/mirror-manor)의 유리 판·법랑 칸·은빛 거울선을 옮겨 온 것(game-shape-moves.css).
-import { BOOK01_INTERNALS } from "./book01-generators.js?v=20261023h";
+import { BOOK01_INTERNALS } from "./book01-generators.js?v=20261101k";
 
 const { transformPattern, patternKey } = BOOK01_INTERNALS;
 const N = 4;
