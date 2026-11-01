@@ -516,6 +516,16 @@
   }
 
   function paginateProblems(questions) {
+    const page38Exercises = new Set([
+      "5-2-u3-e8-exploration-staircase-half-synthetic",
+      "5-2-u3-e8-example-1-circle-difference-synthetic",
+      "5-2-u3-e8-example-2-cut-synthetic",
+      "5-2-u3-e8-example-3-overlap-synthetic",
+      "5-2-u3-e8-example-4-stone-synthetic"
+    ]);
+    if (questions.length && questions.every(question => page38Exercises.has(question.sourceItemId))) {
+      return chunk(questions, 4).map(page => ({ questions: page, paired: true }));
+    }
     const usesGeometryPairing = question => question.prompt.includes("source42-pa") || question.prompt.includes("source42-pp");
     if (!questions.some(usesGeometryPairing)) {
       return paginateWeightedProblems(questions).map(page => ({ questions: page, paired: false }));
