@@ -98,6 +98,8 @@
       "singleAnswerStatus": "pass-single-value",
       "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
       "publicDecision": "locked",
+      "practiceRuntimeId": "5-2-u2-e1-exploration-2-synthetic",
+      "practiceRelation": "두 수의 분수 조건에서 각각의 수를 역산하여 합하는 별도 유사문항",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
     {
@@ -115,6 +117,7 @@
       "singleAnswerStatus": "pass-single-value",
       "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
       "publicDecision": "locked",
+      "practiceRuntimeId": "5-2-u2-e1-example-1-synthetic",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
     {
@@ -132,6 +135,7 @@
       "singleAnswerStatus": "pass-single-value",
       "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
       "publicDecision": "locked",
+      "practiceRuntimeId": "5-2-u2-e1-example-2-synthetic",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
     {
@@ -149,6 +153,7 @@
       "singleAnswerStatus": "pass-single-value",
       "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
       "publicDecision": "locked",
+      "practiceRuntimeId": "5-2-u2-e1-example-3-synthetic",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
     {
@@ -158,7 +163,7 @@
       "sourceBlock": "예제 1-4",
       "normalizedTypeId": "u2-t06",
       "typeName": "기약분수 조건의 나눗셈 빈칸 전수 찾기",
-      "keyConditions": ["가/21과 다/63은 기약분수인 진분수", "나/20보다 작은 자연수", "가/21÷나=다/63", "가능한 나의 합을 구함"],
+      "keyConditions": ["가/21과 다/63은 기약분수인 진분수", "나는 20보다 작은 자연수", "가/21÷나=다/63", "가능한 나의 합을 구함"],
       "visualAssetNeeded": {"required": false, "kind": null, "reason": "분수 식만 필요"},
       "independentCalculation": "다=3가/나로 놓고 가<21, gcd(가,21)=1, 다<63, gcd(다,63)=1을 전수 확인하면 나의 가능한 값은 3, 6, 12, 15입니다.",
       "independentAnswer": "36",
@@ -166,6 +171,7 @@
       "singleAnswerStatus": "pass-unique-set",
       "evidence": "직접 렌더 대조, 유한 후보 전수 검사 및 독립 계산: PDF p.10, 인쇄 p.14",
       "publicDecision": "locked",
+      "practiceRuntimeId": "5-2-u2-e1-example-4-synthetic",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
     {
