@@ -45,7 +45,7 @@
         {"number": 13, "classification": "한 변과 한 각에 더할 변", "candidate": "(1) 변 ㄴㄷ, (2) 변 ㅁㅂ (끼인각 기준)", "visual": "(1) ㄱㄴ=4cm, 각 ㄴ=60도; (2) ㅂㄹ=6cm, 각 ㅂ=110도", "reviewNote": "각의 다른 쪽 변을 알면 SAS로 충분하다. (2)는 둔각의 맞은편 변 ㅁㄹ을 추가하는 경우도 유일성 검토가 필요하다.", "status": "source-ambiguity-answer-key-pending"},
         {"number": 14, "classification": "제시된 네 조건 중 세 개로 합동 삼각형 결정", "candidate": "③ (일반적인 SAS·ASA 합동 조건 기준)", "reviewNote": "③을 포함한 선택은 SAS 또는 두 각과 한 변으로 결정된다. ③을 뺀 두 변과 비끼인각은 일반적으로 불충분하지만 특정 값에 따라 유일할 수도 있어 문장 해석 확인 필요.", "status": "source-ambiguity-answer-key-pending"},
         {"number": 15, "classification": "두 변과 비끼인각 조건에서 가능한 두 삼각형 작도", "candidate": "작도형: 서로 합동이 아닌 두 삼각형", "visual": "ㄴㄷ=5cm, ㄷㄱ=3cm, 각 ㄱㄴㄷ=25도", "reviewNote": "ㄴ에서 25도 반직선을 긋고 ㄷ 중심 반지름 3cm인 원과 교차하는 두 점을 ㄱ으로 사용한다. 실측 작도 답안 검증은 보류.", "status": "source-reviewed-drawing-pending"},
-        {"number": 16, "classification": "세 변과 한 직각이 주어진 사각형의 추가 조건", "candidate": "보기별 유일성 검토 중", "visual": "사각형 ㄱㄴㄷㄹ에서 ㄱㄴ=9cm, ㄱㄹ=7cm, ㄷㄹ=3cm, 각 ㄱㄹㄷ=90도; 각·대각선·변 길이 여섯 보기가 주어짐", "reviewNote": "하나의 조건으로 생길 수 있는 여러 도형과 원본의 볼록성 제약을 각각 대조해야 하므로 답을 확정하지 않는다.", "status": "source-ambiguity-answer-key-pending"}
+        {"number": 16, "classification": "세 변과 한 직각이 주어진 사각형의 추가 조건", "candidate": "ㄱ, ㄷ, ㅁ, ㅂ (원본처럼 볼록한 사각형 기준)", "visual": "사각형 ㄱㄴㄷㄹ에서 ㄱㄴ=9cm, ㄱㄹ=7cm, ㄷㄹ=3cm, 각 ㄱㄹㄷ=90도; 각·대각선·변 길이 여섯 보기가 주어짐", "reviewNote": "삼각형 ㄱㄷㄹ은 이미 정해지고 대각선 ㄱㄷ=√58이므로 ㄹ은 추가 정보가 아니다. ㄱ은 길이 9인 변의 방향을, ㄷ은 삼각형 ㄱㄴㄷ의 ㄷ 각을, ㅁ과 ㅂ은 각기 두 원의 교점을 정한다. 원본처럼 볼록이면 교점의 해당 쪽이 정해진다. ㄴ의 경우 각 ㄱㄴㄷ을 55도로 고정해도 볼록 사각형 두 개가 가능함을 반례로 확인했다. 도형의 볼록성 및 출판사 답 추가 확인 전 보류한다.", "status": "source-ambiguity-answer-key-pending"}
       ]
     }
   ],
