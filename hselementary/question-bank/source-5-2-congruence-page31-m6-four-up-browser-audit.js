@@ -14,7 +14,7 @@ const ids = ["5-2-u3-e4-mission-6"];
       const page = await context.newPage(), errors = [];
       page.on("pageerror", error => errors.push(error.message));
       await page.goto(`${origin}/hselementary/question-bank/`);
-      await page.waitForSelector("#studentNameInput[data-identity-source]");
+      await page.waitForSelector("#studentNameInput[data-identity-source]", { state: "attached" });
       await page.waitForFunction(() => window.HSE_GENERATORS && window.HSE_SOURCE_52_CONGRUENCE_PAGE31);
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();

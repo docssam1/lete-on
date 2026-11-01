@@ -28,7 +28,7 @@ function construct(alpha, beta) {
 }
 
 near(construct(35, 20), 125, "original source answer");
-for (let variant = 0; variant < 3; variant++) {
+for (let variant = 0; variant < 4; variant++) {
   for (const offset of [-1, 0, 1]) {
     const item = api.getQuestion("5-2-u3-e4-example-2", variant, offset);
     const measured = construct(item.answerModel.alpha, item.answerModel.beta);
@@ -43,4 +43,4 @@ for (let variant = 0; variant < 3; variant++) {
     assert.notDeepEqual([item.answerModel.alpha,item.answerModel.beta],[35,20],"practice must differ from source values");
   }
 }
-console.log("Example 4-2 independent ray intersection passed: original and nine generated configurations.");
+console.log("Example 4-2 independent ray intersection passed: original and twelve generated configurations.");

@@ -25,8 +25,8 @@
   const trapezoidBottomBases = [8, 10, 14, 18];
   const trapezoidBaseHeights = [6, 8, 10, 12];
   const difficultyDeltas = [-2, 0, 2];
-  const equilateralExampleAlphas = [28, 34, 40];
-  const equilateralExampleBetas = [22, 24, 26];
+  const equilateralExampleAlphas = [28, 34, 40, 24];
+  const equilateralExampleBetas = [22, 24, 26, 30];
   const esc = value => String(value).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
   const point = (x, y) => `${Number(x.toFixed(2))},${Number(y.toFixed(2))}`;
   const rad = degree => degree * Math.PI / 180;
@@ -283,7 +283,7 @@
 
   function result(sourceItemId, variant, offset, prompt, answer, solution, answerModel, reviewLocked, answerVisual) {
     const definition = definitions.find(item => item.sourceItemId === sourceItemId);
-    const variantCount = sourceItemId === "5-2-u3-e4-mission-6" ? 4 : 3;
+    const variantCount = ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
     return Object.freeze({
       prompt: `<div data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${variant}" data-variant="${variant}" data-difficulty-offset="${offset}" data-level="${offset+1}">${prompt}</div>`,
       answer,
@@ -304,7 +304,7 @@
   }
 
   function getQuestion(sourceItemId, variant = 0, difficultyOffset = 0) {
-    const variantCount = sourceItemId === "5-2-u3-e4-mission-6" ? 4 : 3;
+    const variantCount = ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
     if (!Number.isSafeInteger(variant) || variant < 0 || variant >= variantCount || ![-1,0,1].includes(difficultyOffset)) return null;
     if (sourceItemId === definitions[0].sourceItemId) return buildEquilateralExample2(variant,difficultyOffset);
     if (sourceItemId === definitions[1].sourceItemId) return buildMission1(variant,difficultyOffset);
