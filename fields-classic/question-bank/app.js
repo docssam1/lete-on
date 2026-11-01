@@ -3547,10 +3547,17 @@ function fitOneUp() {
   const box = panel ? $("testPanel") : $("questionGrid");
   const target = panel ? box : box.querySelector(".question-card.is-current");
   if (!target) return;
+  // 칸에 꼭 맞게 — 크면 줄이고 작으면 키운다(원장 2026-11-01 「태블릿이나 PC에서 공부할 거야, 화면에 가득 차야지」)
+  const fits = () => target.getBoundingClientRect().bottom <= innerHeight - 10 && document.documentElement.scrollWidth <= innerWidth + 1;
+  let lo = 0.5, hi = 1.7;
   target.style.zoom = "";
-  const avail = innerHeight - box.getBoundingClientRect().top - 10;
-  const need = target.offsetHeight + (panel ? 0 : 24);
-  if (need > avail) target.style.zoom = String(Math.max(0.5, Math.floor((avail / need) * 100) / 100));
+  if (fits()) lo = 1; else hi = 1;
+  for (let step = 0; step < 7; step += 1) {
+    const mid = (lo + hi) / 2;
+    target.style.zoom = String(mid);
+    if (fits()) lo = mid; else hi = mid;
+  }
+  target.style.zoom = String(Math.floor(lo * 100) / 100);
 }
 
 // ── 테스트(semi test·약점 확인): 다 풀고 채점 → ○✕ → 유형별 진단 → 약점 유형 유사문제 ──

@@ -300,19 +300,20 @@ async function main() {
   if (restore()) render();
   else { fresh(); say("연습 공방이에요. 개념에서 본 풀이로 실제 문제를 풀어 봐요.", "talk"); }
 }
-// 덱 창 안에서는 아래로 내리지 않고 통째로 줄여 한 화면에 넣는다(원장 2026-10-30 「아래로 스크롤을 해야 하는 경우가 있어」)
+// 덱 창 안에서는 칸에 꼭 맞게 — 크면 줄이고 작으면 키운다(원장 2026-10-30 「아래로 스크롤」 · 11-01 「화면에 가득 차야지」)
 function fitFrame() {
   const root = document.getElementById("drill");
   if (!root || parent === window) return;
+  const fits = () => document.documentElement.scrollHeight <= innerHeight + 1 && document.documentElement.scrollWidth <= innerWidth + 1;
+  let lo = 0.55, hi = 1.6;
   root.style.zoom = "";
-  let zoom = 1;
-  for (let tries = 0; tries < 4; tries += 1) {
-    const left = document.documentElement.scrollHeight - innerHeight;
-    if (left <= 2 || zoom <= 0.55) break;
-    const own = root.getBoundingClientRect().height;
-    zoom = Math.max(0.55, Math.floor(zoom * ((own - left - 4) / own) * 100) / 100);
-    root.style.zoom = String(zoom);
+  if (fits()) lo = 1; else hi = 1;
+  for (let step = 0; step < 7; step += 1) {
+    const mid = (lo + hi) / 2;
+    root.style.zoom = String(mid);
+    if (fits()) lo = mid; else hi = mid;
   }
+  root.style.zoom = String(Math.floor(lo * 100) / 100);
 }
 if (typeof document !== "undefined" && parent !== window) {
   addEventListener("resize", () => requestAnimationFrame(fitFrame));

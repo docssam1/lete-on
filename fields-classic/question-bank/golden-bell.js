@@ -600,12 +600,34 @@ function scheduleTriangularAutoplay(lesson) {
   }, 650);
 }
 
+// 워밍업 시계(원장 2026-11-01 「이런 시계바늘 안 되겠지?」): 원본 슬라이드는 12·3·6·9만 있는 네모였지만,
+// 아이가 보는 진짜 시계처럼 — 둥근 테·눈금·숫자 12개(12·3·6·9는 진하게)·빨간 바늘과 가운데 핀(시계 게임과 같은 결).
+// 바늘이 처음 가리키는 수와 묻는 것은 원본 그대로다.
 function clockMarkup(value) {
-  const handAngle = ((value % 12) * Math.PI) / 6;
-  const handX = 100 + Math.sin(handAngle) * 34;
-  const handY = 74 - Math.cos(handAngle) * 34;
-  const markerId = `clock-arrow-${value}`;
-  return `<svg class="clock-svg source-clock" viewBox="0 0 200 150" role="img" aria-label="12, 3, 6, 9가 표시되고 ${value}를 가리키는 시계 바늘"><defs><marker id="${markerId}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#178bc0" /></marker></defs><rect x="44" y="18" width="112" height="112" fill="#f5f6f7" /><text class="clock-cardinal" x="100" y="30">12</text><text class="clock-cardinal" x="144" y="74">3</text><text class="clock-cardinal" x="100" y="118">6</text><text class="clock-cardinal" x="56" y="74">9</text><line class="hand" x1="100" y1="74" x2="${handX.toFixed(1)}" y2="${handY.toFixed(1)}" marker-end="url(#${markerId})" /><circle cx="100" cy="74" r="9" fill="#a6a9ac" /><circle cx="100" cy="74" r="4" fill="#d9dcde" /></svg>`;
+  const cx = 100, cy = 100, r = 84;
+  const at = (n, radius) => { const angle = ((n % 12) * Math.PI) / 6; return [cx + Math.sin(angle) * radius, cy - Math.cos(angle) * radius]; };
+  const ticks = Array.from({ length: 60 }, (_, k) => {
+    const angle = (k * Math.PI) / 30, big = k % 5 === 0;
+    const [x1, y1] = [cx + Math.sin(angle) * (r - 4), cy - Math.cos(angle) * (r - 4)];
+    const [x2, y2] = [cx + Math.sin(angle) * (r - (big ? 13 : 8)), cy - Math.cos(angle) * (r - (big ? 13 : 8))];
+    return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#3a3328" stroke-width="${big ? 2.6 : 1.1}" stroke-linecap="round"/>`;
+  }).join("");
+  const numbers = Array.from({ length: 12 }, (_, k) => {
+    const n = k + 1, [x, y] = at(n, r - 27), main = n % 3 === 0;
+    return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" style="font-size:${main ? 19 : 15}px;font-weight:${main ? 900 : 700};fill:${main ? "#1d3446" : "#5b6170"};text-anchor:middle;dominant-baseline:central">${n}</text>`;
+  }).join("");
+  const [hx, hy] = at(value, r - 52);   // 바늘 끝이 숫자에 닿지 않게
+  const [tx, ty] = at(value + 6, 12);
+  const angle = (value % 12) * 30;
+  return `<svg class="clock-svg source-clock warm-clock" viewBox="0 0 200 200" role="img" aria-label="${value}를 가리키는 시계 바늘">
+    <circle cx="${cx}" cy="${cy + 4}" r="${r + 9}" fill="rgba(120,84,30,.16)"/>
+    <circle cx="${cx}" cy="${cy}" r="${r + 9}" fill="#d9a531"/><circle cx="${cx}" cy="${cy}" r="${r + 4}" fill="#f2c55a"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#fbf4e6" stroke="#c99327" stroke-width="1.5"/>
+    ${ticks}${numbers}
+    <line x1="${tx.toFixed(1)}" y1="${ty.toFixed(1)}" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}" stroke="#d8433f" stroke-width="6" stroke-linecap="round"/>
+    <polygon points="0,-11 8,4 -8,4" fill="#d8433f" transform="translate(${hx.toFixed(1)} ${hy.toFixed(1)}) rotate(${angle})"/>
+    <circle cx="${cx}" cy="${cy}" r="8" fill="#c99327"/><circle cx="${cx}" cy="${cy}" r="3.5" fill="#fbf4e6"/>
+  </svg>`;
 }
 
 function foldNotchMarkup() {
@@ -2229,21 +2251,24 @@ function embedSubItems() {
   });
   group.prepend(nav);   // 안에 넣는다 — 그림+문제 나란히 놓는 CSS(.quiz-visual+.quiz-items)가 깨지지 않게
 }
-// 덱 칸보다 크면 아래로 내리지 않고 통째로 줄여 한 화면에 넣는다(게임판·워밍업 문제 모두)
+// 덱 칸에 꼭 맞게 — 크면 줄이고, 작으면 키운다(원장 2026-11-01 「태블릿이나 PC에서 공부할 거야, 화면에 가득 차야지」).
+// 줄이거나 키우면 글줄이 바뀌어 높이가 다시 변하므로 넘치지 않는 가장 큰 배율을 반으로 나누어 찾는다.
+const FIT_MIN = 0.55, FIT_MAX = 1.7;
 function fitEmbed() {
   if (!embed.on) return;
   const content = $("lessonContent");
+  // 학습 칸은 늘어나 창을 채우므로(높이가 늘 창과 같다) 안에 든 것의 아래 끝으로 잰다
+  const bottom = () => Math.max(0, ...[...content.children].filter((child) => child.offsetParent).map((child) => child.getBoundingClientRect().bottom));
+  const fits = () => bottom() <= innerHeight - 12 && document.documentElement.scrollHeight <= innerHeight + 1 && document.documentElement.scrollWidth <= innerWidth + 1;
+  let lo = FIT_MIN, hi = FIT_MAX;
   content.style.zoom = "";
-  const over = document.documentElement.scrollHeight - innerHeight;
-  if (over <= 2) return;
-  let zoom = 1;
-  for (let tries = 0; tries < 4; tries += 1) {   // 줄이면 글줄이 바뀌어 높이가 다시 변할 수 있어 몇 번 더 잰다
-    const left = document.documentElement.scrollHeight - innerHeight;
-    if (left <= 2 || zoom <= 0.55) break;
-    const own = content.getBoundingClientRect().height;
-    zoom = Math.max(0.55, Math.floor(zoom * ((own - left - 4) / own) * 100) / 100);
-    content.style.zoom = String(zoom);
+  if (fits()) lo = 1; else hi = 1;
+  for (let step = 0; step < 7; step += 1) {
+    const mid = (lo + hi) / 2;
+    content.style.zoom = String(mid);
+    if (fits()) lo = mid; else hi = mid;
   }
+  content.style.zoom = String(Math.floor(lo * 100) / 100);
 }
 function embedStep(delta) {
   if (embed.view !== "concept" || state.phase !== "concept") { embedPost({ event: delta > 0 ? "end" : "start" }); return; }

@@ -294,6 +294,7 @@ window.addEventListener("message", (event) => {
     return;
   }
   if (data.event === "done" && slide?.lesson?.id === data.lesson && slide.kind === data.view) {
+    if (slide.kind === "game") gameFinished();
     const done = slide.kind === "bell" ? FIXED_LINES.bellDone : FIXED_LINES.gameDone;
     say(done.text, "praise", done.id);
     auto(slide.kind === "game" ? 6000 : 2600);   // 게임은 별·결과를 볼 시간을 준다
@@ -460,7 +461,7 @@ async function mountNative(slide, intro = Promise.resolve()) {
     // 게임은 id 없이 말한다 → 글로 id를 만들어 녹음을 찾는다(목록: tools/export-study-voice.mjs). 녹음이 없으면 기기 음성
     say: async (text, mood, voiceId) => { await intro; if (slides[index] !== slide) return; return say(text, mood, voiceId || (slide.kind === "game" && text ? voiceLine("game", text).id : null)); },
     board: game.board, lesson: slide.lesson,
-    onDone: () => { if (game.doneSay !== null) { const done = game.doneSay ? voiceLine("game", game.doneSay) : FIXED_LINES.nativeDone; say(done.text, "praise", done.id); } auto(game.board ? 4000 : 2200); }
+    onDone: () => { if (slide.kind === "game") gameFinished(); if (game.doneSay !== null) { const done = game.doneSay ? voiceLine("game", game.doneSay) : FIXED_LINES.nativeDone; say(done.text, "praise", done.id); } auto(game.board ? 4000 : 2200); }
   });
   fitObserver.observe(wrap, { childList: true, subtree: true });
   requestAnimationFrame(fitNative);
@@ -616,6 +617,8 @@ function show({ atEnd = false } = {}) {
   $("prevBtn").disabled = index === 0;
   $("firstBtn").disabled = index === 0;
   $("nextBtn").disabled = !ready || index === slides.length - 1;
+  // 게임 장에서는 게임 안의 「다음 문제」 하나만(원장 2026-11-01 「다음 버튼이 2개라 불편해」) — 다 하면 다시 보인다. 그만두려면 머리줄 「게임 건너뛰기」
+  $("nextBtn").hidden = slide.kind === "game" && !gamesDone.has(index);
   $("nextBtn").querySelector(".sd-next-text").textContent = slide.kind === "cover" ? "출발하기 →" : "다음 →";
   $("count").textContent = `${index + 1} / ${slides.length}`;
   renderSigns();
@@ -634,8 +637,11 @@ function go(target, options) {
   show(options);
   $("stage").scrollTop = 0;
 }
+const gamesDone = new Set();
+function gameFinished() { gamesDone.add(index); $("nextBtn").hidden = false; }
 function next() {
   cancelAuto();
+  if (slides[index]?.kind === "game" && !gamesDone.has(index)) return;   // 키보드 → 도 게임 중에는 게임 안에서
   if (!$("sheet").hidden) { closeSheet(); return; }
   if (slides[index].kind === "concept" && !slides[index].native && frameReady) { askFrame("next"); return; }
   go(index + 1);

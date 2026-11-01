@@ -1663,3 +1663,26 @@ html:has(body.as-embed),body.as-embed{height:100%;overflow:hidden}
 .worksheet-actions .oneup-nav .oneup-next{border-color:#2f6b4a;background:#e9f0e7;color:#1e4631}
 .worksheet-actions .oneup-nav button:disabled{opacity:.4;cursor:default}
 .as-embed .worksheet-actions>div{flex:none}
+/* 덱 안 학습지 = 게임과 같은 결(원장 2026-11-01 「스스로 공부하기 모드는 이 정도의 디자인」): 그림은 따뜻한 판, 문제는 큰 미션 띠, 단추는 입체 */
+.as-embed .question-card.is-current{border:0;border-radius:24px;background:#fff;box-shadow:inset 0 0 0 1px #e6ecf1,0 14px 34px rgba(29,52,70,.08);padding:20px 22px}
+.as-embed .oneup-figure{padding:18px;border-radius:22px;background:linear-gradient(180deg,#fdf5e6 0%,#f8e8cc 100%);box-shadow:inset 0 0 0 1px #efd9b4}
+.as-embed .oneup-figure>.visual{background:transparent}
+.as-embed .oneup-side .question-prompt{margin:10px 0 12px;padding:14px 18px;border-radius:16px;background:#fff;box-shadow:0 6px 18px rgba(29,52,70,.08),inset 0 0 0 1px #edf1f4;color:#1d3446;font-size:20px;line-height:1.5}
+.as-embed .oneup-side .answer-line{gap:12px;font-size:16px;color:#5b6f7e}
+.as-embed .oneup-side .answer-input{width:160px;height:52px;border:2px solid #d7e1e8;border-radius:14px;background:#fff;font-size:22px}
+.as-embed .oneup-side .answer-input:focus{border-color:#2f7de1;box-shadow:0 0 0 4px rgba(47,125,225,.15)}
+.as-embed .student-check{border-top:0}
+.as-embed .student-check-actions button{min-height:50px;border:2px solid #d7e1e8;border-radius:14px;font-size:17px;font-weight:800}
+.as-embed .student-check-actions .student-check-button{border:0;background:linear-gradient(180deg,#2fb36b,#1f9256);box-shadow:0 5px 0 #157443}
+.as-embed .student-check-actions .student-check-button:active{transform:translateY(3px);box-shadow:0 2px 0 #157443}
+.as-embed .study-stage-banner,.as-embed .question-concept,.as-embed .textbook-concept-tutorial{border-radius:14px}
+.worksheet-actions .oneup-nav ol button.is-on{border-color:#1d3446;background:#1d3446}
+.worksheet-actions .oneup-nav .oneup-next{border:0;background:linear-gradient(180deg,#2fb36b,#1f9256);color:#fff;box-shadow:0 4px 0 #157443}
+.as-embed .test-panel{border:0;border-radius:24px;box-shadow:inset 0 0 0 1px #e6ecf1,0 14px 34px rgba(29,52,70,.08)}
+.as-embed .test-grade{border-radius:14px;background:linear-gradient(180deg,#2fb36b,#1f9256);box-shadow:0 5px 0 #157443}
+/* 덱 안: 개념은 앞 장(판서)에서 배웠으니 작은 개념 상자·유형 경로·단계 띠는 빼고 문제를 크게(원장 2026-11-01 「잘 안 보여」) */
+.as-embed .textbook-concept-tutorial,.as-embed .question-top,.as-embed .question-concept,.as-embed .study-stage-banner,.as-embed .concept-guide{display:none!important}
+.as-embed .question-card.is-current.has-figure{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+.as-embed .oneup-figure .visual svg{max-width:100%;height:auto}
+.as-embed .drawing-answer-note{font-size:16px;color:#5b6f7e}
+.as-embed .concept-worked-solution summary{font-size:15px}
