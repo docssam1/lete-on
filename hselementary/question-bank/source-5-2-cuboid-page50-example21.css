@@ -1,4 +1,4 @@
-.source52-p50e21-diagram{display:block;width:min(100%,34rem);height:auto;margin:1rem auto;color:#182b45}.source52-p50e21-net{fill:none;stroke:#253c58;stroke-width:3}.source52-p50e21-fold{stroke:#60748e;stroke-width:1.7;stroke-dasharray:5 4}.source52-p50e21-shaded{fill:#dce5f0;stroke:none}.source52-p50e21-measure{stroke:#344d69;stroke-width:1.5}.source52-p50e21-label,.source52-p50e21-endpoint{fill:#203653;font:600 15px system-ui,sans-serif}.source52-p50e21-endpoint{font-size:17px}.source52-p50e21-equation{font-weight:700}.source52-p50e21-answer{font-weight:800;color:#0d542d}
+.source52-p50e21-diagram{display:block;width:min(100%,34rem);height:auto;margin:1rem auto;color:#182b45}.source52-p50e21-net{fill:none;stroke:#253c58;stroke-width:3}.source52-p50e21-fold{stroke:#60748e;stroke-width:1.7;stroke-dasharray:5 4}.source52-p50e21-shaded{fill:#dce5f0;stroke:none}.source52-p50e21-face-circle{fill:none;stroke:#203653;stroke-width:1.5}.source52-p50e21-measure{stroke:#344d69;stroke-width:1.5}.source52-p50e21-label,.source52-p50e21-endpoint{fill:#203653;font:600 15px system-ui,sans-serif}.source52-p50e21-endpoint{font-size:17px}.source52-p50e21-equation{font-weight:700}.source52-p50e21-answer{font-weight:800;color:#0d542d}
 
 /* Shading already conveys the marked faces and the prompt explains the task. */
 .source52-p50e22-cut-label, .source52-p50e23-caption, .source52-p50e23-base text { display: none; }
@@ -17,3 +17,5 @@
   .print-page--four-up .source52-p50e23-cell text { font-size: 28px; }
   .print-page--four-up .source52-p50e23-base text { font-size: 15px; }
 }
+
+@media print{.source52-p50e21-net,.source52-p50e21-fold,.source52-p50e21-measure,.source52-p50e21-face-circle{stroke:#191511}.source52-p50e21-label,.source52-p50e21-endpoint{fill:#191511}.source52-p50e21-shaded{fill:#aaa !important}}

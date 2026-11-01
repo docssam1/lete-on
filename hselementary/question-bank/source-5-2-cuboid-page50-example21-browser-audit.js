@@ -74,6 +74,10 @@ function startServer() {
       assert(sWidth <= width + 1, `solution overflow at ${width}: ${sWidth}`);
       await page.screenshot({ path: path.join(outputDir, `solution-${width}.png`), fullPage: true });
       if (width === 1440) {
+        await page.emulateMedia({media:"print"});
+        const shaded = await diagram.locator(".source52-p50e21-shaded").evaluate(node => getComputedStyle(node).fill);
+        assert.notEqual(shaded,"rgb(255, 255, 255)","the source shaded face must remain visible on paper");
+        await page.emulateMedia({media:null});
         for (const mode of ["problem", "solution"]) {
           await page.locator(mode === "problem" ? "#problemTab" : "#solutionTab").click();
           await page.locator("#printMenuButton").click();
