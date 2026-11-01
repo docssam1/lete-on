@@ -304,6 +304,13 @@ body.has-presenter .sd-guide-img { visibility: hidden; }
   .sd-presenter { display: none; }
   body.has-presenter .sd-guide-img { visibility: visible; }
 }
+/* 세로 화면(휴대폰·태블릿 세로): 판서는 위에 붙이고, 남는 아래 공간에 독쌤을 세운다 — 판서가 가운데 떠서 위아래가 비던 것
+   (원장 2026-11-01 「세로 화면 빈 공간도 없애줘」). 아래 줄의 작은 독쌤은 큰 독쌤이 있으니 숨긴다. */
+@media (max-width: 900px) and (orientation: portrait) {
+  .sd-native.has-presenter { grid-template-rows: auto minmax(0, 1fr); align-items: start; }
+  .sd-native.has-presenter .sd-presenter { display: block; width: 100%; height: 100%; min-height: 140px; aspect-ratio: auto; align-self: stretch; }
+  body.has-presenter .sd-guide-img { visibility: hidden; }
+}
 /* 손그림 판서 느낌: 줄 없는 종이 · 초록 점선 틀(제목줄은 원래대로 — 원장 2026-10-29 「참고하라는 거지」) */
 .look-sketch .cb-paper { background: #fbfaf6; border-color: #e6dfcf; }
 .look-sketch .cb-paper::before { inset: 12px; background: none; border: 2px dashed #3f8f61; border-radius: 14px; }
