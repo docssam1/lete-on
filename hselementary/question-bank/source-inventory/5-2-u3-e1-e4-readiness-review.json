@@ -47,6 +47,24 @@
         {"number": 15, "classification": "두 변과 비끼인각 조건에서 가능한 두 삼각형 작도", "candidate": "작도형: 서로 합동이 아닌 두 삼각형", "visual": "ㄴㄷ=5cm, ㄷㄱ=3cm, 각 ㄱㄴㄷ=25도", "reviewNote": "ㄴ에서 25도 반직선을 긋고 ㄷ 중심 반지름 3cm인 원과 교차하는 두 점을 ㄱ으로 사용한다. 실측 작도 답안 검증은 보류.", "status": "source-reviewed-drawing-pending"},
         {"number": 16, "classification": "세 변과 한 직각이 주어진 사각형의 추가 조건", "candidate": "ㄱ, ㄷ, ㅁ, ㅂ (원본처럼 볼록한 사각형 기준)", "visual": "사각형 ㄱㄴㄷㄹ에서 ㄱㄴ=9cm, ㄱㄹ=7cm, ㄷㄹ=3cm, 각 ㄱㄹㄷ=90도; 각·대각선·변 길이 여섯 보기가 주어짐", "reviewNote": "삼각형 ㄱㄷㄹ은 이미 정해지고 대각선 ㄱㄷ=√58이므로 ㄹ은 추가 정보가 아니다. ㄱ은 길이 9인 변의 방향을, ㄷ은 삼각형 ㄱㄴㄷ의 ㄷ 각을, ㅁ과 ㅂ은 각기 두 원의 교점을 정한다. 원본처럼 볼록이면 교점의 해당 쪽이 정해진다. ㄴ의 경우 각 ㄱㄴㄷ을 55도로 고정해도 볼록 사각형 두 개가 가능함을 반례로 확인했다. 도형의 볼록성 및 출판사 답 추가 확인 전 보류한다.", "status": "source-ambiguity-answer-key-pending"}
       ]
+    },
+    {
+      "section": "확인학습 3단원 삼각형의 성립 조건과 합동 조건",
+      "sourcePdfPage": 83,
+      "sourcePrintedPage": 87,
+      "scope": "확인학습 17~24번을 원문과 필기 없는 사본에서 대조하고 조합과 도형의 합동 관계를 검산했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 17, "classification": "삼각형의 성립과 유일한 결정 조건", "candidate": "④, ⑤", "reviewNote": "①은 2+5<8, ②는 각만 주어져 크기 미정, ③은 각이 180도. ④는 한 변과 두 각, ⑤는 삼각형 부등식을 만족하는 세 변이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 18, "classification": "가장 긴 변이 될 수 있는 자연수의 최댓값", "candidate": "(1) 11cm, (2) 16cm", "reviewNote": "가장 긴 변은 나머지 두 변의 합보다 작아야 하므로 각각 5+7−1, 8+9−1이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 19, "classification": "다섯 변 길이 중 삼각형을 만드는 세 변 조합", "candidate": "9가지", "reviewNote": "3, 4, 5, 6, 7에서 3개를 고른 10조합 중 3+4=7인 한 조합만 제외한다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 20, "classification": "한 변 양 끝각의 선택과 삼각형 성립", "candidate": "7가지", "reviewNote": "40, 60, 70, 90, 120도 중 서로 다른 두 개를 고른 10조합에서 합이 180도 이상인 3조합을 제외한다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 21, "classification": "이등변삼각형의 네 등분선으로 생긴 합동 삼각형 쌍", "candidate": "4쌍", "visual": "이등변삼각형 ㄱㄴㄷ의 밑변 ㄴㄷ를 ㄹ, ㅁ, ㅂ으로 네 등분하고 꼭짓점 ㄱ에서 세 점을 연결", "reviewNote": "밑변의 5개 점 중 두 점을 고르는 10개 삼각형을 좌우 대칭으로 대응시키면 서로 다른 쌍이 4개이고 나머지 2개는 자기 자신과 대칭이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 22, "classification": "두 변의 길이에서 나머지 자연수 변의 개수", "candidate": "9개", "reviewNote": "|8−5|<□<8+5이므로 4부터 12까지 아홉 개다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 23, "classification": "두 변의 끼인각으로 가능한 삼각형 개수", "candidate": "5가지", "reviewNote": "72, 50, 3, 0, 162, 90도 중 0도를 제외한 다섯 각이 가능하다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 24, "classification": "여섯 선분 중 삼각형을 만드는 세 변 조합", "candidate": "10개", "reviewNote": "4, 6, 7, 8, 13, 16에서 세 변을 고르고 작은 두 변의 합이 큰 변을 초과하는 조합을 열거한다.", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "sourcePagesDirectlyReviewed": [
