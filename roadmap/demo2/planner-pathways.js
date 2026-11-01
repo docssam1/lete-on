@@ -165,7 +165,8 @@ function detail(id,context={}){
  let title=p.title,summary=p.summary;
  if(young&&id==='academic'){title='앞으로의 학교 수학';summary='기본기를 쌓아 앞으로의 중·고등학교 공부를 준비해요.';}
  if(young&&id==='high')title='앞으로의 고등학교 수학';
- return {id,title,summary,academyStory:['academy','nute','hwangsoHigh'].includes(id)?(Number(context.grade)>=7?'cumulative-middle':'cumulative-primary'):null,what:p.what,why:p.why,parallel:p.parallel,advice:p.advice,books:p.books,sections,next:p.next.map(id=>({id,title:paths[id].short,summary:paths[id].summary}))};
+ const giftedStory=['center','centerEdu','centerUni'].includes(id)?(Number(context.grade)>=7?'gifted-middle':({center:'gifted-start',centerEdu:'gifted-education',centerUni:'gifted-university'})[id]):null;
+ return {id,title,summary,giftedStory,academyStory:['academy','nute','hwangsoHigh'].includes(id)?(Number(context.grade)>=7?'cumulative-middle':'cumulative-primary'):null,what:p.what,why:p.why,parallel:p.parallel,advice:p.advice,books:p.books,sections,next:p.next.map(id=>({id,title:paths[id].short,summary:paths[id].summary}))};
 }
 function renderTrail(value,active){
  const trail=normalize(value);
