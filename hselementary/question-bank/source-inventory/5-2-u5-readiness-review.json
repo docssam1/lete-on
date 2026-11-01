@@ -1169,6 +1169,7 @@
       "candidateAnswerCount": null,
       "singleAnswer": null,
       "singleAnswerCheck": "원문 중점과 전개도에서 면의 연결을 각각 대조했습니다. 절단된 변에 중점을 복사하는 공개용 답 그림과 공식 답안은 미대조입니다.",
+      "sourceAuditUpdate": "2026-11-02 원본 PDF 48쪽을 확대해 여섯 중점과 원래 전개도를 재확인했습니다. 여섯 면의 12개 입체 모서리, 종이에서 맞닿은 다섯 변, 절단된 변의 중점 복사와 여섯 선분의 닫힌 경로를 독립 좌표 모델로 검산했습니다. 다른 판본의 손그림은 참고 자료이며 출판사 공식 답안이 아닙니다. 공개용 문제·답 그림과 공식 답안 확인 전 잠금을 유지합니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent-construction",
       "visualCheckStatus": "confirmed-source-net-needs-coordinate-model",
