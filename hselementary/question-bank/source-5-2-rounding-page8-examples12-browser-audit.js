@@ -53,7 +53,7 @@ function startServer() {
         const type = window.HSE_CURRICULUM.semesters.find(x => x.id === "5-2")?.units.find(x => x.id === "5-2-u1")?.subunits.find(x => x.name === "어림하기의 활용 · 개념탐구 3 원문 연결")?.types.find(x => x.sourceItemId === id);
         return type && { reviewLocked: type.reviewLocked, sourceVerified: type.sourceVerified, generationMode: type.generationMode, verifiedVariantCount: type.verifiedVariantCount, generatorKey: window.HSE_GENERATORS.generatorKey(type) };
       }, itemId);
-      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 1, generatorKey: `source52RoundingPage8Example${n}` });
+      assert.deepEqual(status, { reviewLocked: false, sourceVerified: true, generationMode: "fixed-verified-pool", verifiedVariantCount: 3, generatorKey: `source52RoundingPage8Example${n}` });
       await page.locator("#gradeFilter [data-grade='5']").click();
       await page.locator("#termFilter [data-term='2']").click();
       await page.locator("#unitFilter").selectOption("5-2-u1");
@@ -79,7 +79,7 @@ function startServer() {
       await page.locator("#solutionTab").click();
       const solutionView = page.locator("#solutionView");
       const solutionText = await solutionView.innerText();
-      if(n===1){ for(const t of ["버림", "백의 자리", "천의 자리", "반올림"]) assert(solutionText.includes(t)); }
+      if(n===1){ for(const t of ["버림", "백의 자리", "천의 자리", "반올림", "올림한 수는 원래 수", "십만의 자리"]) assert(solutionText.includes(t)); }
       else { for(const t of ["18", "15", "16,950"]) assert(solutionText.includes(t)); }
       assert.equal(await solutionView.locator(`[data-source-answer='${itemId}']`).count(), 1);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `solution horizontal overflow ${width}px`);

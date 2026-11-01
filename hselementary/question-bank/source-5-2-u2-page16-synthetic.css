@@ -2,3 +2,7 @@
 .source52-u2-solution { line-height: 1.65; }
 .source52-u2-step + .source52-u2-step { margin-top: 4px; }
 .source52-u2-hint { margin-top: 6px; }
+@page source52Unit2MissionAnswer { size: A4; margin: 8mm 0; }
+@media print {
+  .answer-page:has([data-source-answer^="5-2-u2-e3-mission-"]) { page: source52Unit2MissionAnswer; }
+}

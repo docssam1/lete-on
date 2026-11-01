@@ -102,7 +102,7 @@
         return { digit, candidate, down: floor(candidate, 1000), nearest: round(candidate, 1000), matches: floor(candidate, 1000) === round(candidate, 1000) };
       });
       const prompt = `다음 여섯 자리 수를 버림, 반올림하여 각각 천의 자리까지 나타낸 수는 같습니다. ${displayed}의 □ 안에 들어갈 수 있는 숫자를 모두 쓰세요.${help}`;
-      const solution = `천의 자리까지 버림한 수와 반올림한 수가 같으려면 백의 자리 아래의 수가 ${fmt(500)}보다 작아야 합니다. ${fmt(suffix)}를 고정하고 백의 자리 숫자를 0부터 9까지 확인하면 가능한 숫자는 ${answer}입니다. ${rows.filter(row => row.matches).map(row => `${row.digit}${particle(row.digit, "를", "을")} 넣으면 ${fmt(row.candidate)} → 버림 ${fmt(row.down)}, 반올림 ${fmt(row.nearest)}입니다.`).join(" ")} 5부터 9까지 넣으면 백의 자리 아래가 ${fmt(500)} 이상이 되어 반올림 결과가 버림 결과보다 커집니다. 따라서 답은 ${answer}입니다.`;
+      const solution = `천의 자리까지 버림한 수와 반올림한 수가 같으려면 천의 자리보다 작은 세 자리 부분이 ${fmt(500)}보다 작아야 합니다. ${fmt(suffix)}를 고정하고 백의 자리 숫자를 0부터 9까지 확인하면 가능한 숫자는 ${answer}입니다. ${rows.filter(row => row.matches).map(row => `${row.digit}${particle(row.digit, "를", "을")} 넣으면 ${fmt(row.candidate)} → 버림 ${fmt(row.down)}, 반올림 ${fmt(row.nearest)}입니다.`).join(" ")} 5부터 9까지 넣으면 천의 자리보다 작은 세 자리 부분이 ${fmt(500)} 이상이 되어 반올림 결과가 버림 결과보다 커집니다. 따라서 답은 ${answer}입니다.`;
       return { prompt, answer, solution, questionModel: { prefix, suffix, displayed }, answerModel: { digits: answers } };
     }
     if (index === 4) {

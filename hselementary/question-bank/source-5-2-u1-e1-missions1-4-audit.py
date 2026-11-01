@@ -14,4 +14,6 @@ cards=(0,2,3,5,7,9)
 values=[100*a+10*b+c for a,b,c in permutations(cards,3) if 320<100*a+10*b+c<=750]
 assert len(values)==len(set(values))==48
 assert [sum(v//100==d for v in values) for d in (3,5,7)]==[15,20,13]
+assert 320 not in values and 750 in values
+assert [sum(100*d+10*t <= v < 100*d+10*(t+1) for v in values) for d,t in ((3,2),(3,5),(3,7),(3,9),(7,0),(7,2),(7,3),(7,5))] == [3,4,4,4,4,4,4,1]
 print('Mission 1: 22, 98, [40,64]; Mission 2: 70,71,72; Mission 3: 8 pairs; Mission 4: 48 decimals')

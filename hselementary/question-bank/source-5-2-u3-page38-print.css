@@ -1,0 +1,9 @@
+@page source52Unit3Page38 { size:A4; margin:8mm 0; }
+@media print {
+  .print-page:has([data-source-item-id^="5-2-u3-e8-exploration-"], [data-source-item-id^="5-2-u3-e8-example-"]),
+  .answer-page:has([data-staircase-half-answer="true"], [data-circle-difference="true"], [data-cut-answers], [data-overlap-answer="true"]) { page:source52Unit3Page38; }
+  .print-page.print-page--paired:has([data-source-item-id^="5-2-u3-e7-mission-"], [data-source-item-id^="5-2-u3-e8-exploration-"], [data-source-item-id^="5-2-u3-e8-example-"]) .question-grid { grid-auto-flow:column; grid-template-rows:repeat(2, auto); }
+  .print-page.print-page--paired:has([data-source-item-id^="5-2-u3-e7-mission-"], [data-source-item-id^="5-2-u3-e8-exploration-"], [data-source-item-id^="5-2-u3-e8-example-"]) .question-item { min-height:0; padding:8px 0; }
+  .print-page.print-page--paired:has([data-source-item-id^="5-2-u3-e7-mission-"], [data-source-item-id^="5-2-u3-e8-exploration-"], [data-source-item-id^="5-2-u3-e8-example-"]) .question-prompt svg { width:auto !important; max-width:100%; max-height:150px; }
+  .print-page.print-page--paired:has([data-source-item-id^="5-2-u3-e7-mission-"], [data-source-item-id^="5-2-u3-e8-exploration-"], [data-source-item-id^="5-2-u3-e8-example-"]) .answer-line { padding-top:12px; }
+}

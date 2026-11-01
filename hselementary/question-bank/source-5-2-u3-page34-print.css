@@ -1,0 +1,5 @@
+@page source52Unit3Page34 { size:A4; margin:8mm 0; }
+@media print {
+  .print-page:has([data-source-item-id="5-2-u3-e6-exploration-mirror-synthetic"], [data-source-item-id^="5-2-u3-e6-example-"]),
+  .answer-page:has([data-source-answer="5-2-u3-e6-exploration-mirror-synthetic"], [data-source-answer^="5-2-u3-e6-example-"]) { page:source52Unit3Page34; }
+}

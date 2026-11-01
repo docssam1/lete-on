@@ -54,6 +54,16 @@ let states = 0;
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${id} problem overflow at ${width}px`);
         await page.locator("#solutionTab").click();
         assert((await page.locator("#solutionView .source52-range-solution").innerText()).trim(), `${id} solution rendered`);
+        if (id === "5-2-u1-e2-example-2-3") {
+          const observed = await page.evaluate(difficulty => {
+            const marker = document.querySelector('#problemView [data-source-item="5-2-u1-e2-example-2-3"]');
+            const q = window.HSE_SOURCE_52_ROUNDING_E2.getQuestion(marker.dataset.sourceItem, Number(marker.dataset.poolIndex), difficulty);
+            return { prompt: marker.textContent, answer: q.answer, solution: document.querySelector('#solutionView').innerText };
+          }, difficulty);
+          assert.match(observed.prompt, /두 조건을 모두 만족하는 수를 구하세요/);
+          assert(observed.solution.includes(observed.answer), "Solution shows the requested value");
+          assert.notEqual(observed.answer, "1", "Answer is the number itself, not the count");
+        }
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${id} solution overflow at ${width}px`);
         if (evidenceDir && difficulty === 0 && width === 1280) await page.screenshot({ path: path.join(evidenceDir, `${id}-solution-1280.png`), fullPage: true });
         if (evidenceDir && difficulty === 0 && width === 1280) {

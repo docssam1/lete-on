@@ -20,7 +20,7 @@
     `두 끝의 차는 ${math(`${fmt(v.right)}−${fmt(v.left)}=${fmt(v.difference)}`)}입니다. 그 ${math("5/8")}은 ${math(`${fmt(v.difference)}×5/8=${fmt(v.offset)}`)}입니다.`,
     `왼쪽 끝에 더하면 ${math(`${fmt(v.left)}+${fmt(v.offset)}=${fmt(v.answer)}`)}이므로 ㉠=${math(fmt(v.answer))}입니다.`
   ]:difficulty===0?[
-    `직사각형의 가로 방향이 8등분되어 있고, 대각선은 왼쪽 아래에서 오른쪽 위로 이어집니다. 그림의 수직선은 아래에서 다섯 번째 가로 눈금과 대각선이 만나는 곳을 나타내므로 ㉠은 왼쪽 끝에서 전체 길이의 ${math("5/8")} 지점입니다.`,
+    `가로선으로 직사각형의 높이가 8등분되어 있고, 대각선은 왼쪽 아래에서 오른쪽 위로 이어집니다. 그림의 수직선은 아래에서 다섯 번째 가로 눈금과 대각선이 만나는 곳을 나타내므로 ㉠은 왼쪽 끝에서 전체 길이의 ${math("5/8")} 지점입니다.`,
     `두 끝의 차는 ${math(`${fmt(v.right)}−${fmt(v.left)}=${fmt(v.difference)}`)}이고, 표시점까지의 길이는 ${math(`${fmt(v.difference)}×5/8=${fmt(v.offset)}`)}입니다.`,
     `따라서 ㉠=${math(`${fmt(v.left)}+${fmt(v.offset)}=${fmt(v.answer)}`)}입니다.`
   ]:[

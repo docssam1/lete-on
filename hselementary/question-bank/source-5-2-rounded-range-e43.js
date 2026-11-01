@@ -21,9 +21,10 @@
     const differenceRange = [differenceTarget - 50, differenceTarget + 50];
     const minimum = (sumRange[0] + differenceRange[0]) / 2;
     const upperExclusive = (sumRange[1] + differenceRange[1]) / 2;
+    const smallerWitness = (sumTarget - differenceTarget) / 2;
     if (!Number.isInteger(minimum) || !Number.isInteger(upperExclusive) || sumRange[0] <= differenceRange[1]) return null;
     const prompt = `두 수의 합을 반올림하여 백의 자리까지 나타내면 ${fmt(sumTarget)}이고, 두 수의 차를 반올림하여 백의 자리까지 나타내면 ${fmt(differenceTarget)}이다. 두 수 중 더 큰 수가 될 수 있는 수의 범위를 구하여라.`;
-    const solution = `<ol><li>합을 백의 자리까지 반올림해 ${fmt(sumTarget)}이 되는 합은 ${fmt(sumRange[0])} 이상 ${fmt(sumRange[1])} 미만입니다.</li><li>차를 백의 자리까지 반올림해 ${fmt(differenceTarget)}이 되는 차는 ${fmt(differenceRange[0])} 이상 ${fmt(differenceRange[1])} 미만입니다.</li><li>큰 수는 (합+차)÷2이므로 가장 작을 때는 (${fmt(sumRange[0])}+${fmt(differenceRange[0])})÷2=${fmt(minimum)}입니다.</li><li>큰 수는 (${fmt(sumRange[1])}+${fmt(differenceRange[1])})÷2보다 작으므로 ${fmt(upperExclusive)} 미만입니다. 따라서 범위는 ${fmt(minimum)} 이상 ${fmt(upperExclusive)} 미만입니다.</li></ol>`;
+    const solution = `<ol><li>합을 백의 자리까지 반올림해 ${fmt(sumTarget)}이 되는 합은 ${fmt(sumRange[0])} 이상 ${fmt(sumRange[1])} 미만입니다.</li><li>차를 백의 자리까지 반올림해 ${fmt(differenceTarget)}이 되는 차는 ${fmt(differenceRange[0])} 이상 ${fmt(differenceRange[1])} 미만입니다.</li><li>큰 수는 (합+차)÷2이므로 가장 작을 때는 (${fmt(sumRange[0])}+${fmt(differenceRange[0])})÷2=${fmt(minimum)}입니다.</li><li>큰 수는 (${fmt(sumRange[1])}+${fmt(differenceRange[1])})÷2보다 작으므로 ${fmt(upperExclusive)} 미만입니다. 따라서 범위는 ${fmt(minimum)} 이상 ${fmt(upperExclusive)} 미만입니다.</li><li>작은 수를 ${fmt(smallerWitness)}로 정하면 큰 수가 ${fmt(minimum)}보다 커지는 만큼 합과 차도 각각 ${fmt(sumRange[0])}, ${fmt(differenceRange[0])}보다 커집니다. 그 차이는 0 이상 ${fmt(upperExclusive-minimum)} 미만이므로 합과 차는 각각 위 범위에 들어갑니다. 따라서 범위 안의 수는 모두 가능합니다.</li></ol>`;
     return Object.freeze({
       prompt: `<div data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${variant}" data-variant="${variant}" data-difficulty-offset="${difficultyOffset}" data-level="${difficultyOffset + 1}"><p>${prompt}</p></div>`,
       answer: `${fmt(minimum)} 이상 ${fmt(upperExclusive)} 미만`,

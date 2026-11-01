@@ -58,6 +58,9 @@ async function prepare(page, width) {
     const solution = await page.locator("#solutionView").innerText();
     const counts = facts.room.map(length => Math.floor(length / facts.side));
     const answer = counts.reduce((product, count) => product * count, 1);
+    facts.room.forEach((length, index) => {
+      assert(solution.includes(`${length.toLocaleString("en-US")}÷${facts.side}의 몫은 ${counts[index]}, 나머지는 ${length % facts.side}입니다`));
+    });
     assert.match(solution, new RegExp(`${counts.join("×")}=${answer.toLocaleString("en-US")}개`));
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `Solution overflow ${width}/${variant}/${difficulty}`);
     if (evidenceDir && variant === 0 && difficulty === 0) {

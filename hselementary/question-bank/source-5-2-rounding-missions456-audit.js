@@ -52,6 +52,13 @@ for (const id of api.ids.slice(3)) for (let variant = 0; variant < 3; variant++)
   const actual = id.endsWith("mission-6") ? [parseNum(q.answer)] : q.answer.split(/,\s*/).map(parseNum);
   assert.deepEqual(actual, expected, `${id} v${variant} d${difficulty}: visible condition and answer`);
   assert(q.solution && strip(q.solution).length > 20, `${id}: detailed explanation required`);
+  if (id.endsWith("mission-4")) {
+    assert.match(strip(q.solution), /천의 자리보다 작은 세 자리 부분이 500보다 작아야/);
+    assert.doesNotMatch(strip(q.solution), /백의 자리 아래/);
+    const { prefix, suffix } = q.questionModel;
+    assert.equal(floor(prefix * 1000 + 400 + suffix, 1000), round(prefix * 1000 + 400 + suffix, 1000));
+    assert.notEqual(floor(prefix * 1000 + 500 + suffix, 1000), round(prefix * 1000 + 500 + suffix, 1000));
+  }
   assert.equal(q.publisherKeyVerified, false);
   assert.equal(q.answerVerification, "independent-enumeration-user-authorized");
   assert.equal(q.sourceStructurePreserved, true);

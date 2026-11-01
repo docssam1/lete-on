@@ -516,6 +516,9 @@
   }
 
   function paginateProblems(questions) {
+    if (questions.length && questions.every(question => problemWeight(question) < 3)) {
+      return chunk(questions, 4).map(page => ({ questions: page, paired: true, fourUp: true }));
+    }
     const usesGeometryPairing = question => question.prompt.includes("source42-pa") || question.prompt.includes("source42-pp");
     if (!questions.some(usesGeometryPairing)) {
       return paginateWeightedProblems(questions).map(page => ({ questions: page, paired: false }));
@@ -554,7 +557,7 @@
   }
 
   function renderProblems() {
-    $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}">
+    $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired, fourUp }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}${fourUp ? " print-page--four-up" : ""}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>

@@ -28,7 +28,9 @@ for (let variant = 0; variant < api.pools.length; variant++) for (const difficul
   assert.equal(item.answerModel.boxes, answer);
   assert.equal(item.answer, `${answer.toLocaleString("en-US")}개`);
   for (const [index, count] of counts.entries()) {
-    assert(plainSolution.includes(`${room[index].toLocaleString("en-US")}cm`) && plainSolution.includes(`${room[index].toLocaleString("en-US")}÷${side}=${count}`));
+    assert(plainSolution.includes(`${room[index].toLocaleString("en-US")}cm`));
+    assert(plainSolution.includes(`${room[index].toLocaleString("en-US")}÷${side}의 몫은 ${count.toLocaleString("en-US")}, 나머지는 ${remainders[index]}입니다`));
+    assert.equal(count * side + remainders[index], room[index]);
   }
   assert(plainSolution.includes(`${counts.join("×")}=${answer.toLocaleString("en-US")}개`));
   assert.equal(item.publisherKeyVerified, false);
