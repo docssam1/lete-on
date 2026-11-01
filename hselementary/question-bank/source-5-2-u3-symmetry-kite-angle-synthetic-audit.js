@@ -1,0 +1,6 @@
+'use strict';
+const assert=require('node:assert/strict'),m=require('./source-5-2-u3-symmetry-kite-angle-synthetic.js');
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),angle=(v,a,b)=>{const x=[a.x-v.x,a.y-v.y],y=[b.x-v.x,b.y-v.y];return Math.acos((x[0]*y[0]+x[1]*y[1])/Math.hypot(...x)/Math.hypot(...y))*180/Math.PI},near=(a,b)=>assert(Math.abs(a-b)<1e-8,`${a} != ${b}`);
+for(let i=0;i<3;i++)for(const d of [-1,0,1]){const p=m.model(i),q=m.makeQuestion(i,d);near(dist(p.D,p.N),dist(p.D,p.R));near(dist(p.G,p.N),dist(p.G,p.R));near(dist(p.R,p.G),dist(p.R,p.M));near(angle(p.N,p.D,p.R),p.a);near(angle(p.R,p.G,p.M),p.b);near(angle(p.G,p.D,p.M),p.answer);near(p.answer,p.a+p.b/2);assert.notDeepEqual([p.a,p.b],[48,68]);assert.match(q.prompt,/직선 ㄱㄷ을 대칭축/);assert.equal(q.answer,`${p.answer}°`);assert.match(q.solution,/대칭축 ㄱㄷ/);assert.doesNotMatch(q.prompt,/data-source-answer/);assert.match(q.solution,/data-source-answer/);}
+const source=require('./source-inventory/5-2-source-items.json').sourceItems.find(x=>x.sourceItemId==='5-2-u3-e5-example-2');assert.equal(source.publicDecision,'locked');assert.equal(source.publisherKeyVerified,false);assert.equal(source.syntheticRuntimeTypeId,m.id);
+console.log('PASS: 3 × 3 explicitly constrained kite variants; independent sides, angles and source lock');
