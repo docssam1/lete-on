@@ -470,6 +470,8 @@
   }
 
   function problemWeight(question) {
+    // The four short equations stack within a half-page column in print.
+    if (question.sourceItemId === "5-2-u4-e2-example-1") return 1;
     if (question.sourceItemId?.startsWith("6-2-u4-e2-")) return question.sourceItemId.endsWith("exploration") ? 3 : 1.5;
     if (question.sourceItemId?.startsWith("6-2-u4-e1-")) return question.sourceItemId.endsWith("example-4") ? 3 : 1.5;
     if (question.prompt.includes("source62-final-problem")) return 3;
