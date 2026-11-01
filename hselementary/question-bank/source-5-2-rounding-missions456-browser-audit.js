@@ -52,6 +52,10 @@ async function chooseUnit(page) {
     await page.locator("#solutionTab").click();
     const solution = await page.locator("#solutionView").innerText();
     assert(solution.length > 100, `${id} explanation rendered`);
+    if (id.endsWith("mission-4")) {
+      assert.match(solution, /천의 자리보다 작은 세 자리 부분이 500보다 작아야/);
+      assert.doesNotMatch(solution, /백의 자리 아래/);
+    }
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${id} solution overflow at ${width}px`);
     if (evidenceDir && difficulty === 0 && width === 1280) {
       await page.screenshot({ path: path.join(evidenceDir, `${id}-solution-1280.png`), fullPage: true });
