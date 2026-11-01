@@ -13,6 +13,27 @@
   },
   "reviewScope": "PDF 54~61쪽을 600dpi로 직접 렌더하여 개념탐구의 실제 소문항, 예제 각 번호, Mission 각 번호를 문제 하나 단위로 세고 분류했다. 원문 위의 연필·빨간 필기 답은 근거에서 제외했다.",
   "answerPolicy": "수치 답은 독립 계산 또는 가능한 경우를 빠짐없이 세어 확인했다. 표·그래프·길찾기 그림은 원본의 눈금·점·선 연결을 모델링하기 전까지 공개하지 않는다.",
+  "additionalSourceReviews": [
+    {
+      "section": "확인학습 6단원 평균 구하기",
+      "sourcePdfPage": 110,
+      "alternateSourcePdfPage": 111,
+      "sourcePrintedPage": 116,
+      "scope": "116쪽 1~8번의 원문과 필기 없는 사본을 대조하고 표와 평균의 조건을 독립 계산했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 1, "classification": "평균과 두 점수 차로 비어 있는 두 점수 찾기", "candidate": "4월 93점, 6월 97점", "reviewNote": "다섯 점수의 합은 94×5=470점이고 알려진 세 점수의 합은 92+88+100=280점이다. 나머지 합 190점과 차 4점에서 4월은 (190−4)÷2=93점, 6월은 97점이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 2, "classification": "겹치는 세 수의 평균으로 가운데 수 찾기", "candidate": "101", "reviewNote": "작은 세 수의 합은 89×3=267, 큰 세 수의 합은 108×3=324, 다섯 수의 합은 98×5=490이다. 두 세 수의 합에서 가운데 수가 두 번 세어지므로 267+324−490=101이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 3, "classification": "두 집단의 평균과 전체 평균으로 인원 구하기", "candidate": "남학생 180명", "reviewNote": "남학생 수를 x라 하면 84x+80.3×153=82.3(x+153)이다. 평균 차이를 비교해 1.7x=2×153이므로 x=180이다. 주어진 평균이 정확한 값이라는 원문 해석이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 4, "classification": "두 쌍의 평균과 두 수의 차로 세 수 찾기", "candidate": "가 27, 나 45, 다 33", "reviewNote": "가+나=72이고 나−가=18이므로 가=27, 나=45다. 나+다=78이므로 다=33이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 5, "classification": "가족 수 도수표의 가중평균", "candidate": "4명", "reviewNote": "표의 가구 수는 5명 14가구, 4명 18가구, 3명 10가구, 2명 2가구다. 전체 가족 수는 5×14+4×18+3×10+2×2=176명이고 44가구로 나누면 평균 4명이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 6, "classification": "목표 평균에 필요한 다음 점수", "candidate": "89점", "reviewNote": "다섯 번의 총점은 91×5=455점이어야 한다. 네 번의 합 92+92+94+88=366점을 빼면 다섯째 점수는 89점이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 7, "classification": "기존 평균에 한 수를 더한 평균", "candidate": "49", "reviewNote": "다섯 수의 합 48×5=240에 54를 더해 여섯 개로 나누면 (240+54)÷6=49다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 8, "classification": "두 평균과 점수 차로 세 번의 점수 찾기", "candidate": "1회 73점, 2회 89점, 3회 96점", "reviewNote": "첫 두 점수의 합은 81×2=162, 세 점수의 합은 86×3=258이므로 세 번째는 96점이다. 첫 번째는 96−23=73점, 두 번째는 162−73=89점이다.", "status": "source-reviewed-answer-key-pending"}
+      ]
+    }
+  ],
   "verification": {
     "renderEvidence": {
       "dpi": 600,
