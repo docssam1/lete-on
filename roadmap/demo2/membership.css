@@ -12,3 +12,9 @@ html.member-checking body>:not(#memberGateStatus){visibility:hidden!important}ht
 #memberTitle:focus{outline:none}
 
 .member-intro h1 .member-title-lead{display:block;font-size:.55em;font-weight:500;letter-spacing:-.03em;line-height:1.6;margin-bottom:8px}
+
+/* Mathematical objects are part of the illustration; no separate course-label strip. */
+.member-growth{margin:28px 0 20px;border:1px solid #e6dccd;border-radius:20px;overflow:hidden;background:#fffaf3;box-shadow:0 8px 24px #63452f08;min-width:0}
+.member-growth-image{display:block;width:100%;height:auto;aspect-ratio:2/1;object-fit:contain}
+@media(max-width:700px){.member-growth{display:block;margin:16px 0 0;border-radius:15px}}
+@media(max-height:520px) and (orientation:landscape){.member-growth{margin-top:14px}}
