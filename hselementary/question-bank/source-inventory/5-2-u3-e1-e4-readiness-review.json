@@ -258,6 +258,20 @@
         {"number": 106, "classification": "4×4 격자를 합동인 두 조각으로 나누기", "candidate": "서로 다른 모양의 6가지 분할 예", "visual": "4×4 격자의 점선을 따라 잘라 서로 합동인 두 조각을 만드는 서로 다른 여섯 가지 방법을 그린다.", "reviewNote": "각 행을 /로 구분하고 A·B를 두 조각으로 표시한 여섯 배치: AABB/AABB/AABB/AABB; AAAB/AABB/AABB/ABBB; AABB/AAAB/ABBB/AABB; AAAB/AAAB/ABBB/ABBB; AAAB/ABBB/AAAB/ABBB; AAAB/ABAB/ABAB/ABBB. 각 조각은 8칸이고 연결되며 회전·반사로 서로 합동이다. 서로 다른 배치의 조각 모양도 합동을 제외해 구별했다. 실제 절단선 그림 검증은 남았다.", "status": "source-reviewed-drawing-pending"},
         {"number": 107, "classification": "4×4 격자를 합동인 네 조각으로 나누기", "candidate": "서로 다른 모양의 4가지 분할 예", "visual": "4×4 격자의 점선을 따라 잘라 서로 합동인 네 조각을 만드는 서로 다른 네 가지 방법을 그린다.", "reviewNote": "각 행을 /로 구분하고 A~D를 네 조각으로 표시한 네 배치: ABCD/ABCD/ABCD/ABCD; AACC/ABCD/ABCD/BBDD; ACCC/AACD/ABDD/BBBD; AACC/AACC/BBDD/BBDD. 각 조각은 4칸이고 연결되며 한 배치 안의 네 조각이 서로 합동이다. 네 배치의 조각 모양은 서로 다르다. 실제 절단선 그림 검증은 남았다.", "status": "source-reviewed-drawing-pending"}
       ]
+    },
+    {
+      "section": "확인학습 3단원 점대칭의 활용",
+      "sourcePdfPage": 95,
+      "sourcePrintedPage": 99,
+      "scope": "99쪽 중 108, 109, 110, 112번의 원문과 필기 없는 사본을 대조하고 중심선·넓이·회전을 독립 검산했다. 111, 113, 114번은 별도 검수한다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 108, "classification": "붙인 두 직사각형을 넓이가 같도록 나누기", "candidate": "두 직사각형의 중심을 잇는 직선", "visual": "크기가 서로 다른 두 직사각형이 일부 변을 맞대어 이어져 있다.", "reviewNote": "각 직사각형의 대각선을 그어 중심을 찾고 두 중심을 잇는다. 중심을 지나는 직선은 각 직사각형의 넓이를 이등분하므로 두 부분의 전체 넓이도 같다. 실제 작도 및 직선의 연결 위치는 그림으로 검증한다.", "status": "source-reviewed-drawing-pending"},
+        {"number": 109, "classification": "점대칭도형을 주어진 점을 지나는 직선으로 이등분", "candidate": "점 ㄱ과 도형의 점대칭 중심을 잇는 직선", "visual": "합동인 직각이등변삼각형 두 개를 이어 붙인 점대칭도형과 변 위 점 ㄱ이 주어진다.", "reviewNote": "점대칭 중심을 통과하는 직선으로 나뉜 두 부분은 중심에 대한 180도 회전으로 서로 대응하므로 넓이가 같다. 점 ㄱ과 중심을 이은 실제 선과 교점을 그림으로 검증한다.", "status": "source-reviewed-drawing-pending"},
+        {"number": 110, "classification": "정육각형을 수직인 두 선으로 나눈 부분의 넓이 차", "candidate": "24cm²", "visual": "한 변 10cm인 정육각형 안에서 수평·수직 선이 만나고, 정육각형 중심의 수평선과 수직선에 대한 선의 이동량이 각각 3cm, 2cm이다. 마주 보는 두 영역이 색칠되어 있다.", "reviewNote": "정육각형의 중심을 지나는 두 대칭선으로 자르면 서로 마주 보는 부분의 넓이 차는 0이다. 두 선을 각각 2cm, 3cm 옮기면 대칭으로 상쇄되지 않는 차는 2×2×2×3=24cm²다. 육각형을 좌표로 구성하여 네 영역을 각각 잘라 낸 넓이로도 검산했다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 112, "classification": "정육각형과 정삼각형의 점대칭 후 회전", "candidate": "시계방향 120도", "visual": "정육각형 ㄱㄴㄷㄹㅁㅂ에서 아래쪽 삼각형 ㄷㄹㅁ을 점 ㄷ에 대하여 180도 돌린 뒤 ㄷ을 중심으로 회전해 삼각형 ㄱㄷㅇ과 겹친다.", "reviewNote": "점 ㄷ에서 본 원래 ㄷㅁ의 방향을 0도라 하면 점대칭 후 ㄷㅁ의 상은 180도, ㄷㄹ의 상은 150도 방향이다. 목표 삼각형의 ㄷㄱ과 ㄷㅇ은 각각 60도, 30도 방향이므로 두 변 모두 시계방향으로 120도 돌려 겹친다.", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "sourcePagesDirectlyReviewed": [
