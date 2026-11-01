@@ -1,4 +1,4 @@
 @page source52Unit3Page39Answer { size:A4; margin:8mm 0; }
 @media print {
-  .answer-page:has([data-point-first="true"], [data-half-answer="true"], [data-source-answer="5-2-u3-e8-mission-6-flower-ring-synthetic"]) { page:source52Unit3Page39Answer; }
+  .answer-page:has([data-point-first="true"], [data-half-answer="true"], [data-dot-cut-answers], [data-source-answer="5-2-u3-e8-mission-6-flower-ring-synthetic"]) { page:source52Unit3Page39Answer; }
 }
