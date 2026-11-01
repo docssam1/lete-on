@@ -6,9 +6,10 @@
   <title>학원별 수학 입학·선발 대비 | 지필드</title>
   <meta name="description" content="생각하는황소·돌파·원수학·이든·깊은생각·생수수학의 지원 과정을 고르고, 과정별 모의고사와 진단·보완 수업 구성을 확인하세요.">
   <link rel="stylesheet" href="../shared/app.css">
-  <link rel="stylesheet" href="./promo.css?v=logos-20261101">
+  <link rel="stylesheet" href="./promo.css?v=logos-clear-20261101">
 </head>
 <body class="selection-promo" data-view="home">
+  <svg class="logo-display-filters" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false"><defs><filter id="logo-paper-out" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -1 -1 -1 0 3"/><feComponentTransfer><feFuncA type="linear" slope="1.1" intercept="-0.1"/></feComponentTransfer></filter></defs></svg>
   <a class="skip-link" href="#main">본문으로</a>
   <header class="site-header"><nav class="shell nav" aria-label="주 메뉴">
     <a class="brand" href="#"><span class="brand-mark">G</span><span>지필드<small>학원별 수학 대비</small></span></a>
@@ -54,7 +55,7 @@
     const cardColors={SH:'#64d5a2',DP:'#f7d447',WM:'#618df3',ED:'#f39bb9',DG:'#b5a0ee',SM:'#fa9a68'};
     const academyLogos={SH:'sh.png',DP:'dp.png',WM:'wm.jpg',ED:'ed.jpg',DG:'dg.webp',SM:'sm.png'};
     function cardArt(code){
-      return `<span class="choice-logo"><img src="./assets/logos/${academyLogos[code]}" alt="" decoding="async"></span>`;
+      return `<span class="choice-logo ${['DP','WM','ED','SM'].includes(code)?'choice-logo-clear':''}"><img src="./assets/logos/${academyLogos[code]}" alt="" decoding="async"></span>`;
     }
     function academyName(program){
       return program.publicName.startsWith('생각하는')?`<span class="choice-name-prefix">생각하는</span>${esc(program.publicName.slice(4))}`:esc(program.publicName);

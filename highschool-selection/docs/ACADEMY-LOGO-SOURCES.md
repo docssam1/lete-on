@@ -51,3 +51,7 @@ Collected 2026-11-01 at the user's request. Original public logo files are used 
 - Bytes: 50153
 
 The academy identity was checked against the existing course evidence and matching Daechi academy listings. Eden blog: https://blog.naver.com/edenmath (also linked by the Daechi third-branch listing at https://academy.prompie.com/academies/detail/r2ie981/).
+
+## Display on colored cards (2026-11-01)
+
+At the user's request, the white paper background of DP, WM, ED and SM is made transparent at render time with a scoped SVG alpha filter. The filter preserves source RGB channels and changes alpha only; source logo files, dimensions and recorded hashes remain unchanged. SH and DG are excluded so the existing transparency and white brand lettering remain intact. The stylesheet query version is updated to prevent the previous white-backed rendering from staying cached.
