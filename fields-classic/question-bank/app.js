@@ -1,5 +1,5 @@
 import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261101b";
-import { GENERATORS } from "./generators.js?v=20261101m";
+import { GENERATORS } from "./generators.js?v=20261101n";
 import { saveRecord } from "./study-progress.js?v=20261029q";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261101m";
@@ -3407,7 +3407,13 @@ function visualMarkup(visual) {
   return "";
 }
 
+// 글로 다 주어진 문장제에 그 내용을 막대·표·흐름·식으로 다시 그린 그림은 학습지에 싣지 않는다 — 그림이 문제를 설명(풀이 틀)해 버린다
+// (원장 2026-11-01 「이렇게 문제를 설명하면 안 돼」). 2026-11-01 전 유형을 띄워 「그림 글의 수가 모두 문제 글에 있고 그림 자체(모눈·도형)가 없는」 것을
+// 찾아 하나씩 보고 고름. 그림을 보고 푸는 문제(조건표·저울·색종이·세로셈·「그림의」「다음」이 들어간 문제)는 남김.
+// 원문 그대로 옮긴 문항(generationCase.mode === "source")은 교재 모양대로 둔다.
+const TEXT_ONLY_TYPES = new Set(["digit-sum-enumeration", "walking-step-ratio", "route-distance-multiple", "unit-object-length", "equivalent-object-length", "object-combination-equivalent-count", "proportional-rods-common-total", "difference-unit-measure", "binary-weight-selection", "two-digit-digit-sum-rank", "two-digit-digit-difference-rank", "symbol-product-pair", "bar-ratio-total-length", "balance-ratio-book6", "balance-weight-ratio", "stride-ratio-total", "repeated-unit-length-total", "near-round-multiplication", "facing-page-number", "consecutive-numbers-from-sum", "newspaper-page-pair", "digit-occurrence-count", "digit-exclusion-count", "remove-plus-concatenation", "weekday-after-days-b7", "time-unit-conversion-b7", "reverse-linear-equation-b7", "two-score-value-assumption-b7", "two-coin-value-assumption-b7", "correct-wrong-score-assumption-b7", "shared-consumption-assumption-b7", "exchange-container-total-b7", "reverse-doubling-target-day-b7", "doubling-fraction-start-count-b7", "doubling-start-count-b7", "doubling-two-start-earlier-b7", "closed-perimeter-object-count-b7", "closed-perimeter-from-spacing-count-b7", "between-objects-subdivision-count-b7", "perimeter-capacity-b7", "between-object-perimeter-b7", "three-digit-palindrome-digit-sum-b7", "clock-time-palindrome-b7", "reversed-two-digit-difference-enumeration-b7", "reversed-two-digit-difference-extreme-b7", "reversed-digit-given-tens-b7", "palindrome-adjacent-digit-difference-b7", "total-difference-bars-b8", "future-age-sum-b8", "sum-multiple-bars-b8", "difference-multiple-bars-b8", "sum-multiple-offset-b8", "three-person-difference-b8", "transfer-to-multiple-b8", "conditional-three-share-b8", "fraction-share-difference-b8", "reverse-two-container-transfers-b8", "three-container-condition-b8", "fraction-subgroup-count-b8", "multi-count-consecutive-decomposition-b10", "consecutive-page-range-b10", "catch-up-growing-amount-b10", "catch-up-shrinking-amount-b10", "catch-up-distance-b10", "delayed-start-catch-up-b10", "digit-sum-three-digit-count-b10", "digit-sum-ranked-number-b10", "three-digit-step-count-b10", "monotone-digit-count-b10", "most-frequent-digit-b10", "digit-occurrence-range-b10", "positive-range-number-digit-count-b10"]);
 function worksheetVisualMarkup(question) {
+  if (TEXT_ONLY_TYPES.has(question.type?.id) && question.generationCase?.mode !== "source") return "";
   if (question.image) return `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />`;
   if (question.visual?.layoutRole === "support" && question.visual.compactPolicy === "omit") return "";
   if (!Array.isArray(question.parts) || question.parts.length <= 1) return visualMarkup(question.visual);

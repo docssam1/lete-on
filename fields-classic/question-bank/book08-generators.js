@@ -23,6 +23,8 @@ function fractionText(numerator, denominator) {
   return `${numerator}/${denominator}`;
 }
 
+// 글로 다 주어진 「거꾸로 풀기」 문장제는 흐름 그림(? → +5 → …)을 그리지 않는다 — 그림이 문제를 풀이 순서로 설명해 버린다
+// (원장 2026-11-01 「이렇게 문제를 설명하면 안 돼」). 그림 자료는 layoutRole support · compactPolicy omit으로 남겨 두고 학습지에는 안 나온다(app.js worksheetVisualMarkup).
 function book8Problem({ prompt, subtype, visual = {}, answer, solution, family, meta = {} }) {
   return {
     prompt,
@@ -659,7 +661,7 @@ function reverseDoubleOffsetBook8({ difficulty = 2 }) {
   const final = result + added;
   return book8Problem({
     prompt: `어떤 수에 ${numberObject(added)} 더한 수는 처음 수의 두 배보다 ${offset} 작습니다. 어떤 수를 구하세요.`,
-    subtype: "process", visual: { start: "?", steps: [`+ ${added}`], result: `처음 수×2−${offset}` },   // 끝 수를 숫자로 쓰면 답이 거의 드러난다
+    subtype: "process", visual: { layoutRole: "support", compactPolicy: "omit", start: "?", steps: [`+ ${added}`], result: `처음 수×2−${offset}` },   // 끝 수를 숫자로 쓰면 답이 거의 드러난다
     answer: result,
     solution: `처음 수를 두 번 놓은 값에서 ${numberObject(offset)} 뺀 수와 처음 수에 ${numberObject(added)} 더한 수가 같습니다. 한쪽의 처음 수를 지우면 어떤 수는 ${added}+${offset}=${result}입니다.`,
     family: "reverse-double-offset-b8", meta: { added, offset, final, result }
@@ -675,7 +677,7 @@ function reverseArithmeticChainBook8({ difficulty = 2 }) {
   if (add === subtract || [add, subtract, final].includes(start)) return reverseArithmeticChainBook8({ difficulty });
   return book8Problem({
     prompt: `${numberObject(add)} 더하고 ${numberObject(subtract)} 뺐더니 ${numberSubject(final)} 되었습니다. 처음 수를 구하세요.`,
-    subtype: "process", visual: { start: "?", steps: [`+ ${add}`, `− ${subtract}`], result: final },
+    subtype: "process", visual: { layoutRole: "support", compactPolicy: "omit", start: "?", steps: [`+ ${add}`, `− ${subtract}`], result: final },
     answer: start,
     solution: `${final}에 ${numberObject(subtract)} 더하고 ${numberObject(add)} 빼면 ${final}+${subtract}-${add}=${start}입니다.`,
     family: "reverse-arithmetic-chain-b8", meta: { start, add, subtract, final, result: start }
@@ -690,7 +692,7 @@ function reverseTransferEventsBook8({ difficulty = 2 }) {
   if (gave === received || [gave, received, final].includes(start)) return reverseTransferEventsBook8({ difficulty });
   return book8Problem({
     prompt: `친구에게 ${gave}개를 주고 다른 친구에게 ${received}개를 받았더니 ${final}개가 되었습니다. 처음 수를 구하세요.`,
-    subtype: "process", visual: { start: "?", steps: [`− ${gave}`, `+ ${received}`], result: final },
+    subtype: "process", visual: { layoutRole: "support", compactPolicy: "omit", start: "?", steps: [`− ${gave}`, `+ ${received}`], result: final },
     answer: `${start}개`,
     solution: `마지막 ${final}개에서 받은 ${received}개를 빼고 준 ${gave}개를 더하면 ${start}개입니다.`,
     family: "reverse-transfer-events-b8", meta: { start, gave, received, final, result: start }
@@ -706,7 +708,7 @@ function reverseMultiplyDivideBook8({ difficulty = 2 }) {
   if ([multiplier, added, divisor, final].includes(start)) return reverseMultiplyDivideBook8({ difficulty });
   return book8Problem({
     prompt: `어떤 수에 ${numberObject(multiplier)} 곱하고 ${numberObject(added)} 더한 뒤 ${divisor}로 나누었더니 ${numberSubject(final)} 되었습니다. 처음 수를 구하세요.`,
-    subtype: "process", visual: { start: "?", steps: [`× ${multiplier}`, `+ ${added}`, `÷ ${divisor}`], result: final },
+    subtype: "process", visual: { layoutRole: "support", compactPolicy: "omit", start: "?", steps: [`× ${multiplier}`, `+ ${added}`, `÷ ${divisor}`], result: final },
     answer: start,
     solution: `${final}×${divisor}-${added}=${start * multiplier}, ${start * multiplier}÷${multiplier}=${start}입니다.`,
     family: "reverse-multiply-divide-b8", meta: { start, multiplier, added, divisor, final, result: start }
@@ -721,7 +723,7 @@ function reverseSplitEqualBook8({ difficulty = 2 }) {
   const start = share * parts;
   return book8Problem({
     prompt: `어떤 수를 똑같이 ${parts}묶음으로 나눈 뒤 한 묶음에서 ${given}개를 주었더니 ${afterGive}개가 남았습니다. 처음 수를 구하세요.`,
-    subtype: "process", visual: { start: "?", steps: [`÷ ${parts}`, `− ${given}`], result: afterGive },
+    subtype: "process", visual: { layoutRole: "support", compactPolicy: "omit", start: "?", steps: [`÷ ${parts}`, `− ${given}`], result: afterGive },
     answer: `${start}개`,
     solution: `나누어 가진 한 묶음은 ${afterGive}+${given}=${share}개입니다. ${share}×${parts}=${start}개입니다.`,
     family: "reverse-split-equal-b8", meta: { parts, share, given, afterGive, start, result: start }
@@ -803,7 +805,7 @@ function sequentialFractionRemainsBook8({ difficulty = 2 }) {
   const final = afterFirst * (secondDenominator - secondNumerator) / secondDenominator;
   return book8Problem({
     prompt: `처음 수의 ${fractionText(firstNumerator, firstDenominator)}만큼 쓰고, 남은 것의 ${fractionText(secondNumerator, secondDenominator)}만큼 다시 썼더니 ${final}개가 남았습니다. 처음 수를 구하세요.`,
-    subtype: "fraction-process", visual: { start: "?", steps: [`${fractionText(firstNumerator, firstDenominator)} 사용`, `남은 것의 ${fractionText(secondNumerator, secondDenominator)} 사용`], result: final },
+    subtype: "fraction-process", visual: { layoutRole: "support", compactPolicy: "omit", start: "?", steps: [`${fractionText(firstNumerator, firstDenominator)} 사용`, `남은 것의 ${fractionText(secondNumerator, secondDenominator)} 사용`], result: final },
     answer: `${original}개`,
     solution: `두 번째 사용 전에는 ${final}÷${secondDenominator - secondNumerator}×${secondDenominator}=${afterFirst}개입니다. 처음에는 ${afterFirst}÷${firstDenominator - firstNumerator}×${firstDenominator}=${original}개입니다.`,
     family: "sequential-fraction-remains-b8", meta: { firstDenominator, firstNumerator, secondDenominator, secondNumerator, original, afterFirst, final, result: original }
@@ -888,7 +890,7 @@ function sequentialFractionConsumptionBook8({ difficulty = 2 }) {
   const final = afterFirst * (secondDenominator - 1) / secondDenominator;
   return book8Problem({
     prompt: `처음 수에서 ${fractionText(1, firstDenominator)}만큼 먹고, 남은 것에서 ${fractionText(1, secondDenominator)}만큼 먹었더니 ${final}개가 남았습니다. 처음 수를 구하세요.`,
-    subtype: "fraction-process", visual: { start: "?", steps: [`전체의 ${fractionText(1, firstDenominator)} 먹음`, `남은 것의 ${fractionText(1, secondDenominator)} 먹음`], result: final },
+    subtype: "fraction-process", visual: { layoutRole: "support", compactPolicy: "omit", start: "?", steps: [`전체의 ${fractionText(1, firstDenominator)} 먹음`, `남은 것의 ${fractionText(1, secondDenominator)} 먹음`], result: final },
     answer: `${original}개`,
     solution: `두 번째 전에는 ${final}÷${secondDenominator - 1}×${secondDenominator}=${afterFirst}개이고, 처음에는 ${afterFirst}÷${firstDenominator - 1}×${firstDenominator}=${original}개입니다.`,
     family: "sequential-fraction-consumption-b8", meta: { firstDenominator, secondDenominator, original, afterFirst, final, result: original }
@@ -1474,7 +1476,7 @@ function unitReverseThreeEventsBook8({ difficulty = 2 } = {}) {
   return book8Problem({
     prompt: "어떤 수에서 " + gave + "만큼 빼고 " + received + "만큼 더한 뒤 다시 " + gaveAgain + "만큼 빼었더니 최종값은 " + final + "입니다. 처음 수를 구하세요.",
     subtype: "process",
-    visual: { start: "?", steps: ["-" + gave, "+" + received, "-" + gaveAgain], result: final },
+    visual: { layoutRole: "support", compactPolicy: "omit", start: "?", steps: ["-" + gave, "+" + received, "-" + gaveAgain], result: final },
     answer: start,
     solution: "마지막 수에 마지막으로 뺀 수를 더하고, 더한 수를 빼고, 처음 뺀 수를 더합니다. " + final + "+" + gaveAgain + "-" + received + "+" + gave + "=" + start + "입니다.",
     family: "unit-q16-reverse-three-events",
