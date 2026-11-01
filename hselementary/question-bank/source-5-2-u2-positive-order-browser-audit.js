@@ -1,0 +1,56 @@
+"use strict";
+const assert = require("node:assert/strict");
+const path = require("node:path");
+const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
+const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8918";
+const id = "5-2-u2-e1-mission-4-synthetic";
+
+(async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    for (const width of [1280, 375]) {
+      const context = await browser.newContext({ viewport: { width, height: 1000 }, serviceWorkers: "block" });
+      await context.route("**/*", route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort());
+      await context.addInitScript(() => { window.print = () => {}; });
+      const page = await context.newPage(), errors = [];
+      page.on("pageerror", error => errors.push(error.message));
+      await page.goto(`${origin}/hselementary/question-bank/`);
+      await page.locator("#gradeFilter [data-grade='5']").click();
+      await page.locator("#termFilter [data-term='2']").click();
+      await page.locator("#unitFilter").selectOption("5-2-u2");
+      await page.locator(`#typeList input[data-type-id='${id}']`).check();
+      await page.locator("#questionCountInput").fill("3");
+      await page.locator("#generateButton").click();
+      await page.waitForFunction(() => !document.querySelector("#worksheet").hidden);
+      const problems = page.locator(`#problemView [data-source-item-id='${id}']`);
+      assert.equal(await problems.count(), 3);
+      for (let i = 0; i < 3; i++) {
+        const problem = problems.nth(i);
+        assert.equal(await problem.locator(".math-mixed-number").count(), 3, "Each factor is a mixed number");
+        assert.match(await problem.innerText(), /모두 양수/);
+      }
+      await page.locator("#solutionTab").click();
+      assert.equal(await page.locator(`#solutionView [data-source-answer='${id}']`).count(), 3);
+      for (let i = 0; i < 3; i++) {
+        const variant = Number(await problems.nth(i).getAttribute("data-pool-index"));
+        const answer = await page.evaluate(v => window.HSE_SOURCE_52_POSITIVE_ORDER.makeQuestion(v, 0).answer, variant);
+        const solution = await page.locator(`#solutionView [data-source-answer='${id}']`).nth(i).innerText();
+        assert(solution.replace(/\s/g, "").includes(answer.replace(/\s/g, "")), `Solution matches variant ${variant}`);
+      }
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+      if (width === 1280 && process.env.MAC_CHECK_OUTPUT) {
+        for (const mode of ["problem", "solution"]) {
+          await page.locator(mode === "problem" ? "#problemTab" : "#solutionTab").click();
+          await page.locator("#printMenuButton").click();
+          await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
+          await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
+          await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `positive-order-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+          await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
+        }
+      }
+      assert.deepEqual(errors, []);
+      await context.close();
+    }
+  } finally { await browser.close(); }
+  console.log("PASS: three mixed-number practice variants on desktop and mobile");
+})().catch(error => { console.error(error); process.exitCode = 1; });
