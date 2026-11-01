@@ -6,6 +6,11 @@ assert(type);assert.equal(type.id,item.sourceItemId);assert.equal(type.reviewLoc
 const q=window.HSE_GENERATORS.generate(type,2,0,50,0);assert(q);assert.equal(window.HSE_GENERATORS.generate(type,2,0,50,1),null);
 assert.deepEqual(m.valid,[4,8,9,10]);assert.equal(m.validCount,4);assert.deepEqual(Object.values(m.checks),["duplicate-face","overlap-cycle","duplicate-face","valid","duplicate-face","overlap-cycle","duplicate-face","valid","valid","valid"]);
 assert.equal(q.answer,"4, 8, 9, 10");assert.match(q.prompt,/색칠한 부분과 ①부터 ⑩까지/);assert.match(q.solution,/1, 3, 5, 7/);assert.match(q.solution,/4, 8, 9, 10은 여섯 면이 서로 다른 방향/);
+assert.deepEqual(item.base,[[2,1],[0,2],[1,2],[2,2],[2,3]],"source shaded-cell positions");
+assert.deepEqual(item.candidates,{1:[2,0],2:[1,1],3:[0,1],4:[-1,2],5:[0,3],6:[1,3],7:[2,4],8:[3,3],9:[3,2],10:[3,1]},"source numbered-cell positions");
+assert.equal((q.prompt.match(/<circle /g)||[]).length,10,"each source candidate number has a circle");
+assert(!q.prompt.includes(">색칠</text>"),"shading is visual, without duplicated labels");
+assert(!q.prompt.includes("번호 면 하나를 더해 접기"),"the diagram does not repeat the question");
 assert.equal((q.prompt.match(/class="geometry-diagram source52-p50e23-diagram"/g)||[]).length,1);assert.equal(q.generationMode,"fixed-verified-pool");assert.equal(q.handwrittenAnswerVerified,false);
 assert.match(q.prompt,/다음 그림에서 색칠한 부분과/);
 assert.match(q.prompt,/class="source52-p50e23-fold" d="M169 183v64 M233 183v64 M233 183h64 M233 247h64"/,"four fold seams join adjacent shaded squares");

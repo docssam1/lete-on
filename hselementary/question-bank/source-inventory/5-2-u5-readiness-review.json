@@ -759,7 +759,7 @@
       "implementationStatus": "verified-local",
       "publicDecision": "public",
       "lockReason": "",
-      "sourceAuditUpdate": "PDF p.46/인쇄 p.50 예제 2-3: 정본·깨끗한 대조본·Apple Vision OCR로 색칠한 다섯 면과 후보 1~10의 위치를 대조했습니다. 각 후보를 더한 뒤 인접 고리 및 면 접힘 방향을 검사해 4·8·9·10만 여섯 면이 서로 다른 방향을 차지함을 확인했습니다. 화면(1440/375/320px), 문제·풀이 A4 각 1쪽 검수 완료. 이후 사용자의 공개 승인에 따라 공개했습니다.",
+      "sourceAuditUpdate": "PDF p.46/인쇄 p.50 예제 2-3: 정본·깨끗한 대조본·Apple Vision OCR로 색칠한 다섯 면과 후보 1~10의 위치를 대조했습니다. 각 후보를 더한 뒤 인접 고리 및 면 접힘 방향을 검사해 4·8·9·10만 여섯 면이 서로 다른 방향을 차지함을 확인했습니다. 화면(1440/375/320px), 문제·풀이 A4 각 1쪽 검수 완료. 이후 사용자의 공개 승인에 따라 공개했습니다. 2026-11-02: 직접 원문과 대조해 색칠 칸에 중복 표시된 글자와 그림 위 안내 문구를 제거하고 원문처럼 보기 숫자에 원을 그렸습니다. 후보 위치와 정답, PC·모바일 화면 및 문제·풀이 A4를 재확인했습니다. 출판사 공식 답안은 여전히 미확인입니다.",
       "releaseStatus": "runtime-enabled-in-current-release",
       "publisherKeyVerified": false,
       "releaseEvidence": "원문 그림과 독립 풀이, 화면·A4를 대조해 고정 문항으로 연결했습니다. 출판사 공식 답안은 미확인입니다."

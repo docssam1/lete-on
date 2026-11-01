@@ -27,11 +27,11 @@
   }
   function diagram(){
     const {side=64,x0=105,y0=55}=Object.create(null),m=verifyModel();
-    const colored=m.base.map(([cx,cy])=>`<g class="source52-p50e23-cell source52-p50e23-base"><rect x="${x0+cx*side}" y="${y0+cy*side}" width="${side}" height="${side}"/><text x="${x0+(cx+.5)*side}" y="${y0+(cy+.5)*side}">색칠</text></g>`).join("");
-    const labels=Object.entries(m.candidates).map(([n,[cx,cy]])=>`<g class="source52-p50e23-cell"><rect x="${x0+cx*side}" y="${y0+cy*side}" width="${side}" height="${side}"/><text x="${x0+(cx+.5)*side}" y="${y0+(cy+.5)*side}">${n}</text></g>`).join("");
+    const colored=m.base.map(([cx,cy])=>`<g class="source52-p50e23-cell source52-p50e23-base"><rect x="${x0+cx*side}" y="${y0+cy*side}" width="${side}" height="${side}"/></g>`).join("");
+    const labels=Object.entries(m.candidates).map(([n,[cx,cy]])=>`<g class="source52-p50e23-cell"><rect x="${x0+cx*side}" y="${y0+cy*side}" width="${side}" height="${side}"/><circle cx="${x0+(cx+.5)*side}" cy="${y0+(cy+.5)*side}" r="15"/><text x="${x0+(cx+.5)*side}" y="${y0+(cy+.5)*side}">${n}</text></g>`).join("");
     const seamPath=`M${x0+side} ${y0+2*side}v${side} M${x0+2*side} ${y0+2*side}v${side} M${x0+2*side} ${y0+2*side}h${side} M${x0+2*side} ${y0+3*side}h${side}`;
     const seams=`<path class="source52-p50e23-fold-underlay" d="${seamPath}"/><path class="source52-p50e23-fold" d="${seamPath}"/>`;
-    return `<svg class="geometry-diagram source52-p50e23-diagram" viewBox="0 0 500 420" role="img" aria-label="색칠한 다섯 면과 번호 1부터 10까지 중 하나를 더해 정육면체 전개도가 되는지 확인하는 그림"><text class="source52-p50e23-caption" x="250" y="28" text-anchor="middle">번호 면 하나를 더해 접기</text>${colored}${labels}${seams}</svg>`;
+    return `<svg class="geometry-diagram source52-p50e23-diagram" viewBox="0 0 500 420" role="img" aria-label="색칠한 다섯 면과 번호 1부터 10까지 중 하나를 더해 정육면체 전개도가 되는지 확인하는 그림">${colored}${labels}${seams}</svg>`;
   }
   function build(){
     const m=verifyModel();
