@@ -195,8 +195,8 @@
     "nonUniqueCount": 8,
     "noTriangleCount": 1,
     "visualCheckNeededCount": 18,
-    "publicCandidateCount": 27,
-    "lockedCount": 26
+    "publicCandidateCount": 16,
+    "lockedCount": 37
   },
   "groupedStructures": [
     {
@@ -1171,26 +1171,26 @@
       "commonTypeId": "isosceles-six-sector-small-triangle-pairs",
       "typeLabel": "6등분 이등변삼각형의 작은 삼각형 합동 쌍",
       "childFriendlyTypeLabel": "6개의 작은 삼각형에서 같은 짝 찾기",
-      "originalStructure": "이등변삼각형 ㄱㄴㄷ의 밑변 ㄴㄷ을 6등분하고 꼭짓점 ㄱ을 각 분할점에 연결해 생긴 6개의 작은 삼각형 중 합동인 쌍의 수를 구합니다.",
+      "originalStructure": "이등변삼각형의 밑변을 6등분하고 각 분할점과 꼭짓점을 연결한 그림에서 합동인 삼각형의 쌍을 모두 셉니다.",
       "conditions": [
         "밑변 ㄴㄷ을 똑같이 6등분하여 꼭짓점 ㄱ과 각 분할점을 연결",
-        "원문이 만든 여섯 개의 작은 삼각형만 비교",
-        "이등변삼각형의 좌우 대칭으로 대응하는 작은 삼각형이 합동"
+        "원문은 여섯 개의 삼각형을 만들었다고 하나 합쳐진 삼각형을 제외한다고 명시하지 않음",
+        "이등변삼각형의 좌우 대칭으로 대응하는 삼각형이 합동"
       ],
-      "visualRequirement": "6등분 표시와 모든 연결선을 보존하고, 합성 삼각형을 추가로 세지 않아야 합니다.",
-      "independentCalculation": "여섯 개의 작은 삼각형을 왼쪽부터 T1,…,T6이라 두면 이등변삼각형의 대칭축에 대한 대응은 T1↔T6, T2↔T5, T3↔T4다. 각 대응은 반사에 의한 합동이므로 3쌍이다. 문제에서 만든 여섯 작은 삼각형만 세며, 여러 칸을 합친 큰 삼각형은 세지 않는다.",
-      "answerFormula": "(T1,T6), (T2,T5), (T3,T4) ⇒ 3쌍",
-      "independentAnswer": "3쌍",
+      "visualRequirement": "6등분 표시와 모든 연결선을 보존하고, 집계 범위를 원문과 구분하여 확인해야 합니다.",
+      "independentCalculation": "작은 여섯 삼각형만 세면 좌우 대칭 3쌍이다. 그림의 21개 삼각형 전체를 세면 같은 높이에서 넓이가 같은 삼각형만 합동일 수 있어 밑변의 칸 수별로 비교한다. 밑변이 1~6칸인 대칭 쌍 수는 각각 3, 2, 2, 1, 1, 0으로 합 9쌍이다. 같은 밑변 길이에서 꼭짓점까지 두 변의 길이가 같은 경우는 좌우 대칭뿐이다.",
+      "answerFormula": "작은 6개: 3쌍; 그림 전체 21개: 3+2+2+1+1=9쌍",
+      "independentAnswer": "작은 여섯 개로 한정하면 3쌍, 합쳐진 삼각형까지 포함하면 9쌍; 원문 집계 범위와 출판사 답안 미확인",
       "resultContract": "single-value",
-      "candidateAnswerCount": 1,
-      "singleAnswer": true,
-      "singleAnswerCheck": "원문이 명시한 여섯 개의 분할 삼각형을 대상으로 좌우 대칭 대응을 전수 확인했습니다. 연속 구간을 합친 삼각형은 문항에서 만들었다고 한 여섯 삼각형에 포함되지 않습니다.",
+      "candidateAnswerCount": 2,
+      "singleAnswer": false,
+      "singleAnswerCheck": "원문의 여섯 삼각형이라는 문구가 집계 범위를 제한하는지, 그림의 합쳐진 삼각형까지 포함하는지 확인이 필요합니다. 별도 연습은 작은 삼각형만 명시합니다.",
       "sourceVerified": true,
-      "calculationStatus": "checked",
+      "calculationStatus": "checked-scope-ambiguous",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "reviewed",
-      "publicDecision": "public-candidate",
-      "lockReason": null
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문에서 집계 범위가 명확하지 않고 출판사 답안이 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u3-e3-exploration-1",
