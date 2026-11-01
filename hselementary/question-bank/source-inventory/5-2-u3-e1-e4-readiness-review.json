@@ -101,6 +101,20 @@
         {"number": 39, "classification": "합동 사다리꼴의 겹침 둘레와 수치 일관성", "candidate": "22cm (원문 수치 충돌을 무시한 의도 추정)", "visual": "직사각형 전체 가로 14cm, 세로 5cm; 왼쪽 사다리꼴 윗변 ㄱㄹ=8cm, 아랫변 ㄴㄷ=10cm, 기울어진 변 ㄹㄷ=7cm. 두 사다리꼴의 겹침이 중앙에 색칠됨", "reviewNote": "합동 사다리꼴의 대응 변을 이용하는 의도된 계산은 겹침의 위아래 4cm씩과 기울어진 변 7cm씩을 더해 22cm이다. 그러나 직사각형에서 ㄹ과 ㄷ의 수평 차는 10−8=2cm, 높이는 5cm이므로 빗변 ㄹㄷ의 제곱은 2²+5²=29여야 한다. 제시된 7cm는 제곱이 49라 모든 조건을 동시에 만족하는 그림이 불가능하다. 의도된 답과 원문 조건 성립 여부를 구분해 원문·정오표 추가 확인 전 보류한다.", "status": "source-ambiguity-answer-key-pending"},
         {"number": 40, "classification": "직사각형을 대각선으로 접은 각도", "candidate": "30도", "visual": "대각선 ㄴㄹ=6cm, 세로 ㄹㄷ=3cm인 직사각형을 ㄴㄹ로 접고, ㄹ에서 접힌 변과 대각선 사이 각 가를 표시", "reviewNote": "직각삼각형에서 3cm 변이 6cm 빗변의 절반이므로 대각선과 가로변의 각은 30도. 접기 전후 대각선과 대응 변의 각이 같으므로 가=30도이다.", "status": "source-reviewed-answer-key-pending"}
       ]
+    },
+    {
+      "section": "확인학습 3단원 합동의 활용 ①",
+      "sourcePdfPage": 86,
+      "sourcePrintedPage": 90,
+      "scope": "90쪽의 42, 45, 47, 48번을 원문 및 필기 없는 사본의 점·선·표시와 대조했다. 41, 43, 44, 46번은 이번 묶음에 포함하지 않는다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 42, "classification": "정사각형에서 같은 길이로 정해진 두 직선의 교차각", "candidate": "90도", "visual": "정사각형 ㄱㄴㄷㄹ에서 점 ㅁ은 ㄱㄴ 위, ㅂ은 ㄴㄷ 위이며 ㄱㅁ=ㅂㄴ. ㄱㅂ과 ㅁㄹ의 교점은 ㅅ", "reviewNote": "한 변을 s, ㄱㅁ=ㅂㄴ을 t로 놓으면 ㄱㅂ 방향벡터는 (t,−s), ㅁㄹ 방향벡터는 (s,t). 내적이 0이므로 ∠ㄱㅅㅁ=90도다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 45, "classification": "겹친 두 정사각형의 회전과 각도 비", "candidate": "60도", "visual": "축에 평행한 정사각형과 한 꼭짓점을 공유하는 기울어진 합동 정사각형; ㄱ은 왼쪽 세로변과 기울어진 변 사이, ㄴ과 ㄷ은 오른쪽 아래 꼭짓점의 두 부분각", "reviewNote": "정사각형의 대응 변이 각각 수직이므로 ㄱ=ㄷ이고 ㄴ+ㄷ=90도다. ㄱ=2×ㄴ이므로 ㄴ=30도, ㄷ=60도.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 47, "classification": "서로 합동인 삼각형의 겹침과 차집합 넓이", "candidate": "80cm²", "visual": "합동 삼각형 ㄱㄴㄷ과 ㄱㄹㅁ이 겹치고 교점 ㅂ이 표시됨. ㄱㄴ=20cm, ㅂ에서 ㄱㄴ에 내린 수선 길이 8cm; 오른쪽 삼각형에서 겹치지 않은 두 부분을 색칠", "reviewNote": "두 삼각형의 전체 넓이가 같으므로 각각의 공통 부분을 빼면 색칠된 부분의 넓이는 다른 쪽 비겹침 삼각형 ㄱㄴㅂ의 넓이와 같다. 20×8÷2=80cm².", "status": "source-reviewed-answer-key-pending"},
+        {"number": 48, "classification": "밑변 수직선으로 접은 삼각형의 두 각", "candidate": "∠ㄴㅂㄹ=29도, ∠ㄴㄹㅂ=122도", "visual": "삼각형 ㄱㄴㄷ의 ∠ㄱ=114도, ∠ㄷ=37도. ㄱㄴ 위 ㄹ에서 ㄴㄷ에 내린 수선의 발 ㅁ을 접는 선으로 하여 ㄴ이 ㅂ에 겹침", "reviewNote": "∠ㄴ=180−114−37=29도. 접는 선 위 ㄹ에서 ㄴ과 상 ㅂ까지 거리가 같으므로 삼각형 ㄴㄹㅂ의 양 밑각이 29도, 꼭짓점 각이 122도다.", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "sourcePagesDirectlyReviewed": [
