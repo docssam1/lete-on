@@ -35,6 +35,72 @@
         {"number": 7, "classification": "자연수의 분수배를 구한 뒤 대분수배", "candidate": "58", "status": "source-reviewed-answer-key-pending"},
         {"number": 8, "classification": "기준 몸무게의 연속된 분수배", "candidate": "36kg", "status": "source-reviewed-answer-key-pending"}
       ]
+    },
+    {
+      "section": "확인학습 2단원 분수와 자연수의 곱셈",
+      "sourcePdfPage": 72,
+      "sourcePrintedPage": 76,
+      "scope": "문항 9~16은 원문과 필기 없는 사본을 대조하고 각 조건에서 독립 계산했다. 그림은 없다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {
+          "number": 9,
+          "classification": "남은 쪽수의 분수",
+          "candidate": "50쪽",
+          "reviewNote": "180×(1−5/12)×10/21=50",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 10,
+          "classification": "판매 후 남은 수량",
+          "candidate": "30개",
+          "reviewNote": "300×(1−2/5)×(1−5/6)=30",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 11,
+          "classification": "두 집단에서 해당하지 않는 인원",
+          "candidate": "210명",
+          "reviewNote": "여학생 140명 중 110명, 남학생 160명 중 100명으로 합 210명",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 12,
+          "classification": "여학생 중 안경을 쓴 인원",
+          "candidate": "40명",
+          "reviewNote": "225×(1−3/5)×4/9=40",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 13,
+          "classification": "남은 물의 분수",
+          "candidate": "40L",
+          "reviewNote": "480×(1−2/3)×1/4=40",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 14,
+          "classification": "두 차례 독서 후 남은 쪽수",
+          "candidate": "152쪽",
+          "reviewNote": "380×(1−2/5)×(1−1/3)=152",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 15,
+          "classification": "시간당 빠르게 가는 시계의 일주일 누적 오차",
+          "candidate": "12시 4분 12초",
+          "reviewNote": "168시간×1.5초=252초=4분 12초 빠름",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 16,
+          "classification": "하루당 늦게 가는 시계의 2주 누적 오차",
+          "candidate": "11시 35분 44초",
+          "reviewNote": "14일×1과 11/15분=24분 16초 늦음",
+          "status": "source-reviewed-answer-key-pending"
+        }
+      ]
     }
   ],
   "normalization": {
