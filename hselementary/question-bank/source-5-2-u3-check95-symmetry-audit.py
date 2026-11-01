@@ -7,12 +7,19 @@ from pathlib import Path
 path = Path(__file__).parent / "source-inventory/5-2-u3-e1-e4-readiness-review.json"
 review = next(r for r in json.loads(path.read_text())["additionalSourceReviews"] if r["sourcePrintedPage"] == 95)
 assert review["publisherAnswerVerified"] is False and review["runtimeConnection"] == "not-connected"
-assert {i["number"] for i in review["items"]} == {81, 83, 85, 88}
+assert {i["number"] for i in review["items"]} == {81, 82, 83, 84, 85, 88}
 
 next_palindrome = next(n for n in range(75848, 100000) if str(n) == str(n)[::-1])
 assert next_palindrome == 75857 and 75878 - next_palindrome == 21
 three_digit = [n for n in range(100, 1000) if str(n) == str(n)[::-1]]
 assert three_digit[69] == 797
+
+# 82: polygon area in a 3x3 folded square; all four layers have equal area.
+polygon = [(0, 2), (2, 1), (1, 3), (0, 3)]
+twice_area = abs(sum(x * v - u * y for (x, y), (u, v) in zip(polygon, polygon[1:] + polygon[:1])))
+assert twice_area == 4
+from fractions import Fraction
+assert Fraction(9 - twice_area // 2, 9) == Fraction(7, 9)
 
 # Trace intersections with y=0 and y=x*tan(10°); returning to start is not a reflection.
 slope = math.tan(math.radians(10))
