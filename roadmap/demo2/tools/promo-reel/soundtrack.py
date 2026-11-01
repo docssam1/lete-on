@@ -1,7 +1,7 @@
 """Original instrumental bed: soft plucked chords and a sparse bell melody. No samples."""
 import math, random, struct, sys, wave
-RATE, LENGTH = 32000, int(sys.argv[2]) if len(sys.argv) > 2 else 25
-samples = [0.0] * (RATE * LENGTH)
+RATE, LENGTH = 32000, float(sys.argv[2]) if len(sys.argv) > 2 else 25
+samples = [0.0] * int(RATE * LENGTH)
 rng = random.Random(31)
 
 def note(at, midi, duration, volume, bell=False):
