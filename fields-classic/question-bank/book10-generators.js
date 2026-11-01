@@ -430,7 +430,7 @@ function catchUpGrowingAmountBook10({ difficulty = 2 }) {
   if (fastStart < 0) return catchUpGrowingAmountBook10({ difficulty });
   return book10Problem({
     prompt: `민수는 처음 ${slowStart}개에서 하루에 ${slowRate}개씩, 지우는 처음 ${fastStart}개에서 하루에 ${fastRate}개씩 모읍니다. 두 사람의 수가 같아지는 것은 며칠 뒤인가요?`,
-    subtype: "catch-up-table", visual: { labels: ["민수", "지우"], starts: [slowStart, fastStart], changes: [slowRate, fastRate], unit: "개씩 늘어남" }, answer: `${days}일 뒤`,
+    subtype: "catch-up-table", visual: { labels: ["민수", "지우"], starts: [slowStart, fastStart], changes: [slowRate, fastRate], unit: "개" }, answer: `${days}일 뒤`,
     solution: `처음 차이는 ${slowStart - fastStart}개이고 하루마다 ${rateGap}개씩 줄어드므로 ${days}일 뒤에 같습니다.`,
     family: "catch-up-growing-amount-b10", meta: { difficulty, days, slowRate, fastRate, rateGap, slowStart, fastStart, result: days }
   });
@@ -447,7 +447,7 @@ function catchUpShrinkingAmountBook10({ difficulty = 2 }) {
   if (equal <= 0) return catchUpShrinkingAmountBook10({ difficulty });
   return book10Problem({
     prompt: `짧은 초는 ${shortStart}cm에서 하루에 ${slowRate}cm씩, 긴 초는 ${longStart}cm에서 하루에 ${fastRate}cm씩 짧아집니다. 길이가 같아지는 것은 며칠 뒤인가요?`,
-    subtype: "catch-up-table", visual: { labels: ["짧은 초", "긴 초"], starts: [shortStart, longStart], changes: [-slowRate, -fastRate], unit: "cm씩 짧아짐" }, answer: `${days}일 뒤`,
+    subtype: "catch-up-table", visual: { labels: ["짧은 초", "긴 초"], starts: [shortStart, longStart], changes: [-slowRate, -fastRate], unit: "cm" }, answer: `${days}일 뒤`,
     solution: `처음 차이는 ${longStart - shortStart}cm이고 하루마다 ${rateGap}cm씩 줄어드므로 ${days}일 뒤에 같습니다.`,
     family: "catch-up-shrinking-amount-b10", meta: { difficulty, days, slowRate, fastRate, rateGap, shortStart, longStart, equal, result: days }
   });

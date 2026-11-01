@@ -192,8 +192,7 @@ function lineCardBoardMarkup(visual) {
   const lines = layout.lines.map(([from, to]) => `<line x1="${layout.points[from][0]}" y1="${layout.points[from][1]}" x2="${layout.points[to][0]}" y2="${layout.points[to][1]}"/>`).join("");
   const nodes = layout.points.map(([x,y], index) => `<g class="${shown[index] == null ? "blank" : "known"}"><circle cx="${x}" cy="${y}" r="23"/><text x="${x}" y="${y + 1}">${shown[index] == null ? index + 1 : shown[index]}</text></g>`).join("");
   const cards = `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>`;
-  const footer = visual.lineSum == null ? "모든 줄의 합을 같게" : `한 줄의 합 ${visual.lineSum}`;
-  return `<div class="b1-line-card-board">${cards}<svg viewBox="0 -8 320 256" role="img" aria-label="숫자 카드를 놓아 모든 줄의 합을 같게 하는 ${visual.layout} 모양">${lines}${nodes}<text class="sum" x="160" y="236">${footer}</text></svg></div>`;
+  return `<div class="b1-line-card-board">${cards}<svg viewBox="0 -8 320 256" role="img" aria-label="숫자 카드를 놓아 모든 줄의 합을 같게 하는 ${visual.layout} 모양">${lines}${nodes}</svg></div>`;
 }
 
 function digitSumTableMarkup(visual) {
@@ -264,17 +263,17 @@ function foldNumberSumMarkup(visual) {
 
 function foldLandingMarkup(visual) {
   const labels = visual.labels.flat();
-  return `<div class="b1-fold-landing"><div class="b1-fold-landing-grid">${labels.map((label) => `<span>${label}</span>`).join("")}</div><div class="b1-fold-steps">${visual.folds.map((fold, index) => `<span><b>${index + 1}</b>${esc(fold)}</span>`).join("")}</div><div class="b1-fold-stack"><i></i><i></i><i></i><strong>?</strong></div><p>두 번 접은 뒤 가장 위에 놓이는 번호</p></div>`;
+  return `<div class="b1-fold-landing"><div class="b1-fold-landing-grid">${labels.map((label) => `<span>${label}</span>`).join("")}</div><div class="b1-fold-steps">${visual.folds.map((fold, index) => `<span><b>${index + 1}</b>${esc(fold)}</span>`).join("")}</div><div class="b1-fold-stack"><i></i><i></i><i></i><strong>?</strong></div></div>`;
 }
 
 function cardEquationMarkup(visual) {
   const cards = `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>`;
   const expression = visual.expression.map((token) => token == null ? '<span class="b1-equation-blank"></span>' : `<b>${esc(token)}</b>`).join("");
-  return `<div class="b1-card-equation">${cards}<div>${expression}</div>${visual.all ? "<strong>가능한 카드 묶음을 모두 찾으세요.</strong>" : "<strong>카드는 한 번씩만 사용할 수 있어요.</strong>"}</div>`;
+  return `<div class="b1-card-equation">${cards}<div>${expression}</div>${visual.all ? "" : "<strong>카드는 한 번씩만 사용할 수 있어요.</strong>"}</div>`;
 }
 
 function conditionCardMarkup(visual) {
-  return `<div class="b1-condition-card"><strong>${esc(visual.title)}</strong><ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol></div>`;
+  return `<div class="b1-condition-card"><strong>조건</strong><ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol></div>`;
 }
 
 function placeValueBlocksMarkup(visual) {
@@ -288,7 +287,7 @@ function placeValueBlocksMarkup(visual) {
 }
 
 function equalSplitSetMarkup(visual) {
-  return `<div class="b1-equal-split-set" role="img" aria-label="수를 같은 수로 나누는 연산"><strong>같은 ${visual.divisor}수로 나누기</strong><div>${visual.values.map((value) => `<span><b>${value}</b><i>÷ ${visual.divisor}</i><em>?</em></span>`).join("")}</div></div>`;
+  return `<div class="b1-equal-split-set" role="img" aria-label="수를 같은 수로 나누는 연산"><div>${visual.values.map((value) => `<span><b>${value}</b><i>÷ ${visual.divisor}</i><em>?</em></span>`).join("")}</div></div>`;
 }
 
 function orderLineMarkup(visual) {
@@ -308,7 +307,7 @@ function numberSequenceMarkup(visual) {
 
 function logicCluesMarkup(visual) {
   const header = visual.items.length ? `<div class="b1-logic-tags">${visual.names.map((name) => `<span>${esc(name)}</span>`).join("")}${visual.items.map((item) => `<i>${esc(item)}</i>`).join("")}</div>` : "";
-  return `<div class="b1-logic-clues">${header}<ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol><strong>${esc(visual.question)}</strong></div>`;
+  return `<div class="b1-logic-clues">${header}<ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol></div>`;
 }
 
 // ── 권별테스트(단원 테스트) 원본 구조 그림 ────────────────────────────────

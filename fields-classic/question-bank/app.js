@@ -1,21 +1,21 @@
 import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261101b";
-import { GENERATORS } from "./generators.js?v=20261101k";
+import { GENERATORS } from "./generators.js?v=20261101m";
 import { saveRecord } from "./study-progress.js?v=20261029q";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
-import { book01Markup } from "./book01-renderers.js?v=20261101l";
-import { book02Markup } from "./book02-renderers.js?v=20261029t";
-import { book03Markup } from "./book03-renderers.js?v=20261027a";
-import { book04Markup } from "./book04-renderers.js?v=20261023h";
-import { book05Markup } from "./book05-renderers.js?v=20261027p";
-import { book06Markup } from "./book06-renderers.js?v=20261027p";
+import { book01Markup } from "./book01-renderers.js?v=20261101m";
+import { book02Markup } from "./book02-renderers.js?v=20261101m";
+import { book03Markup } from "./book03-renderers.js?v=20261101m";
+import { book04Markup } from "./book04-renderers.js?v=20261101m";
+import { book05Markup } from "./book05-renderers.js?v=20261101m";
+import { book06Markup } from "./book06-renderers.js?v=20261101m";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
-import { book08Markup } from "./book08-renderers.js?v=20261027p";
+import { book08Markup } from "./book08-renderers.js?v=20261101m";
 import { book09Markup } from "./book09-renderers.js?v=20261029t";
-import { book10Markup } from "./book10-renderers.js?v=20261023a";
+import { book10Markup } from "./book10-renderers.js?v=20261101m";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
 import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261028w";
 import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, totalDifferenceBarsMarkup, balanceUnitEquationsMarkup, distinctShapeEquationsMarkup, numberSequencesMarkup, progressiveNumberTableMarkup, book2GrowthMarkup, centerNumberRuleMarkup, numberRuleGridMarkup, twoDigitComposeRuleMarkup, sudokuGridMarkup, symbolPatternSequenceMarkup } from "./book02-visuals.js?v=20261027b";
-import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261027a";
+import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261101m";
 import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup } from "./fold-visuals.js?v=20261027a";
 
 const {

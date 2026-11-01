@@ -219,7 +219,7 @@ function pyramidCryptarithmBook8({ difficulty = 2 }) {
   const result = digit;
   return book8Problem({
     prompt: "피라미드 세로셈에서 같은 별은 같은 숫자일 때 별에 알맞은 수를 구하세요.",
-    subtype: "vertical", visual: { top: "☆☆", bottom: String(addend), operator: "+", result: String(total), note: "같은 별은 같은 숫자" },
+    subtype: "vertical", visual: { top: "☆☆", bottom: String(addend), operator: "+", result: String(total) },
     answer: result,
     solution: `${repeated}+${addend}=${total}이므로 ☆가 나타내는 숫자는 ${result}입니다.`,
     family: "pyramid-cryptarithm-b8", meta: { digit, addend, repeated, total, result }
@@ -312,7 +312,7 @@ function repeatedSymbolCryptarithmBook8({ difficulty = 2 }) {
   const total = digit * 12;
   return book8Problem({
     prompt: "같은 동그라미는 같은 숫자일 때 동그라미가 나타내는 수를 구하세요.",
-    subtype: "vertical", visual: { top: "○○", bottom: "○", operator: "+", result: String(total), note: "같은 동그라미는 같은 숫자" },
+    subtype: "vertical", visual: { top: "○○", bottom: "○", operator: "+", result: String(total) },
     answer: digit,
     solution: `십의 자리 ○는 ○가 10개인 값이므로 ○○와 ○를 더하면 ○가 모두 12개입니다. ${total}÷12=${digit}입니다.`,
     family: "repeated-symbol-b8", meta: { digit, total, result: digit }
@@ -351,7 +351,7 @@ function doubledSymbolResultBook8({ difficulty = 2 }) {
   const total = digit * 22;
   return book8Problem({
     prompt: "같은 별은 같은 숫자일 때 별이 나타내는 수를 구하세요.",
-    subtype: "vertical", visual: { top: "☆☆", bottom: "☆☆", operator: "+", result: String(total), note: "같은 별은 같은 숫자" },
+    subtype: "vertical", visual: { top: "☆☆", bottom: "☆☆", operator: "+", result: String(total) },
     answer: digit,
     solution: `☆☆ 하나는 ☆가 11개인 값이므로 두 수를 더하면 ☆가 모두 22개입니다. ${total}÷22=${digit}입니다.`,
     family: "doubled-symbol-b8", meta: { digit, total, result: digit }
@@ -381,7 +381,7 @@ function repeatedNumberMultipleAnswersBook8({ difficulty = 2 }) {
   }
   return book8Problem({
     prompt: "서로 다른 도형은 서로 다른 숫자일 때 동그라미에 들어갈 수를 모두 찾으세요.",
-    subtype: "vertical", visual: { top: "○○", bottom: String(fixed * 11), operator: "+", result: "□□", note: "○와 □는 서로 다른 숫자" },
+    subtype: "vertical", visual: { top: "○○", bottom: String(fixed * 11), operator: "+", result: "□□" },
     answer: valid.join(", "),
     solution: `○에 1부터 차례로 넣어 같은 숫자 두 자리 수의 덧셈이 되는지 확인하면 ${valid.join(", ")}입니다.`,
     family: "repeated-number-list-b8", meta: { fixed, valid, result: valid }
@@ -659,7 +659,7 @@ function reverseDoubleOffsetBook8({ difficulty = 2 }) {
   const final = result + added;
   return book8Problem({
     prompt: `어떤 수에 ${numberObject(added)} 더한 수는 처음 수의 두 배보다 ${offset} 작습니다. 어떤 수를 구하세요.`,
-    subtype: "process", visual: { start: "?", steps: [`+ ${added}`], result: final, relation: `처음 수의 2배보다 ${offset} 작음` },
+    subtype: "process", visual: { start: "?", steps: [`+ ${added}`], result: `처음 수×2−${offset}` },   // 끝 수를 숫자로 쓰면 답이 거의 드러난다
     answer: result,
     solution: `처음 수를 두 번 놓은 값에서 ${numberObject(offset)} 뺀 수와 처음 수에 ${numberObject(added)} 더한 수가 같습니다. 한쪽의 처음 수를 지우면 어떤 수는 ${added}+${offset}=${result}입니다.`,
     family: "reverse-double-offset-b8", meta: { added, offset, final, result }

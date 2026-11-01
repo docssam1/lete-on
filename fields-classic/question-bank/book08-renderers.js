@@ -80,7 +80,7 @@ function transfer(visual) {
 }
 
 function process(visual) {
-  return `<div class="b8-process"><strong>${escapeHtml(visual.start)}</strong>${visual.steps.map((step) => `<i>→</i>${box(step)}`).join("")}<i>→</i><strong>${escapeHtml(visual.result)}</strong>${visual.relation ? `<small>${escapeHtml(visual.relation)}</small>` : ""}</div>`;
+  return `<div class="b8-process"><strong>${escapeHtml(visual.start)}</strong>${visual.steps.map((step) => `<i>→</i>${box(step)}`).join("")}<i>→</i><strong>${escapeHtml(visual.result)}</strong></div>`;
 }
 
 function fractionParts(denominator, numerator, className = "") {

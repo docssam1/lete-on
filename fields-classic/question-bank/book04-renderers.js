@@ -61,7 +61,7 @@ function numberGrid(grid, target = null, hideOthers = false) {
 
 function digitalGrid(visual) {
   const blank = Array.from({ length: visual.grid.length }, () => Array.from({ length: visual.grid.length }, () => ""));
-  return `<div class="b4-transform-grid"><div><small>처음</small>${numberGrid(visual.grid)}</div><div class="b4-step-arrow">${visual.operationLabels.map((label) => `<span>→</span><em>${escapeHtml(label)}</em>`).join("")}</div><div><small>움직인 뒤</small>${numberGrid(blank, visual.target, true)}</div></div>`;
+  return `<div class="b4-transform-grid"><div><small>처음</small>${numberGrid(visual.grid)}</div><div class="b4-step-arrow"><span>→</span></div><div><small>움직인 뒤</small>${numberGrid(blank, visual.target, true)}</div></div>`;
 }
 
 const OPERATION_LABELS = Object.freeze({
@@ -164,11 +164,11 @@ function cluePanel(visual, extra = "") {
 }
 
 function measurementOrder(visual) {
-  return cluePanel(visual, `<div class="b4-target-strip">${escapeHtml(visual.target)}의 키 = <b>?</b> cm</div>`);
+  return cluePanel(visual);
 }
 
 function measurementDifference(visual) {
-  return cluePanel(visual, `<div class="b4-target-strip">${escapeHtml(visual.target)} = <b>?</b></div>`);
+  return cluePanel(visual);
 }
 
 function balanceRatio(visual) {
@@ -177,7 +177,7 @@ function balanceRatio(visual) {
 
 function directionalSeat(visual) {
   const seats = Array.from({ length: visual.rows * visual.columns }, () => "<span></span>").join("");
-  return `<div class="b4-seat-layout">${cluePanel(visual)}<div><div class="b4-seat-grid" style="--columns:${visual.columns}">${seats}</div><div class="b4-target-strip">${escapeHtml(visual.target)}의 자리 = ?</div></div></div>`;
+  return `<div class="b4-seat-layout">${cluePanel(visual)}<div><div class="b4-seat-grid" style="--columns:${visual.columns}">${seats}</div></div></div>`;
 }
 
 function directionalLandmarkMap(visual) {

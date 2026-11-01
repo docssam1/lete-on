@@ -98,12 +98,12 @@ function routeGrid(visual) {
 }
 
 function digitCards(visual) {
-  const order = visual.descending ? "큰 수부터" : "작은 수부터";
-  return `<div class="b5-card-task"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><p>${visual.length}자리 수${visual.targetRank ? ` · ${order} <b>${visual.targetRank}번째</b>` : " · 모두 몇 개?"}</p></div>`;
+  // 문제 글에 이미 있는 말(구할 것·조건·방법)은 그림에 다시 쓰지 않는다(원장 2026-11-01 「이미 문제에 나왔는데 문제를 설명하는 글은 빼」)
+  return `<div class="b5-card-task"><div>${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div></div>`;
 }
 
 function digitCondition(visual) {
-  return `<div class="b5-digit-condition"><strong>${escapeHtml(visual.conditionLabel)}</strong><div><span>십의 자리</span><b>?</b><i></i><span>일의 자리</span><b>?</b></div><p>${visual.descending ? "큰" : "작은"} 수부터 ${visual.rank}번째</p></div>`;
+  return `<div class="b5-digit-condition"><strong>${escapeHtml(visual.conditionLabel)}</strong><div><span>십의 자리</span><b>?</b><i></i><span>일의 자리</span><b>?</b></div></div>`;
 }
 
 function multiplicationTable(visual) {
@@ -210,7 +210,7 @@ function squareRowPair(visual) {
   for (let row = 1; row <= 4; row += 1) {
     rows.push(`<div>${Array.from({ length: row * 2 - 1 }, () => `<span>${next++}</span>`).join("")}</div>`);
   }
-  return `<div class="b5-number-rows square">${rows.join("")}<strong>… ${visual.firstRow}번째 줄의 마지막 수 · ${visual.secondRow}번째 줄의 첫 수</strong></div>`;
+  return `<div class="b5-number-rows square">${rows.join("")}<strong>…</strong></div>`;
 }
 
 function borderStoneGrowth(visual) {
@@ -256,7 +256,7 @@ function peopleCircle(visual) {
 }
 
 function selectionItems(visual) {
-  return `<div class="b5-selection-items">${Array.from({ length: visual.count }, (_, index) => `<span>${index + 1}</span>`).join("")}<p>서로 다른 2개 고르기</p></div>`;
+  return `<div class="b5-selection-items">${Array.from({ length: visual.count }, (_, index) => `<span>${index + 1}</span>`).join("")}</div>`;
 }
 
 function pairLadder(visual) {
@@ -327,7 +327,7 @@ function numberRows(visual) {
     const length = visual.mode === "triangle" ? row : row * 2 - 1;
     rows.push(`<div>${Array.from({ length }, () => `<span>${next++}</span>`).join("")}</div>`);
   }
-  return `<div class="b5-number-rows ${visual.mode}">${rows.join("")}<strong>… ${visual.targetRow}번째 줄의 ${visual.askFirst ? "첫" : "마지막"} 수</strong></div>`;
+  return `<div class="b5-number-rows ${visual.mode}">${rows.join("")}<strong>…</strong></div>`;
 }
 
 // ── 골든벨 5권 원본 그림(교사용 슬라이드의 검정 문제 그대로, 빨강·파랑 답·풀이는 넣지 않는다) ──

@@ -252,7 +252,7 @@ function digitFocus(visual) {
 }
 
 function operatorRow(visual) {
-  return `<div class="b6-operator-row"><p>${visual.digits.map((digit, index) => `${index ? "<b>□</b>" : ""}<span>${digit}</span>`).join("")}</p><strong>= ${visual.target}</strong><em>${visual.choices.join(" · ")}</em></div>`;
+  return `<div class="b6-operator-row"><p>${visual.digits.map((digit, index) => `${index ? "<b>□</b>" : ""}<span>${digit}</span>`).join("")}</p><strong>= ${visual.target}</strong></div>`;
 }
 
 function multipartConditions(visual) {

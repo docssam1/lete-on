@@ -1,4 +1,4 @@
-import { book02Markup } from "./book02-renderers.js?v=20261029t";
+import { book02Markup } from "./book02-renderers.js?v=20261101m";
 
 const esc = (value) => String(value ?? "").replace(/[&<>\"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 

@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js?v=20261028x";
+import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js?v=20261101m";
 import { renderBook08Guided } from "./golden-bell-book08-guided.js";
 
 const TARGETS = Object.freeze([

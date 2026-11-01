@@ -1,5 +1,5 @@
 import { cubeSourceAnimation, renderCubeSourceFrame } from "./golden-bell-cube-animation.js?v=20260918a";
-import { book10SourceAnimation, renderBook10SourceFrame } from "./golden-bell-book10-animation.js?v=20260918a";
+import { book10SourceAnimation, renderBook10SourceFrame } from "./golden-bell-book10-animation.js?v=20261101m";
 
 const CONCEPT_EXAMPLES = {
   "hidden-cube-count": [

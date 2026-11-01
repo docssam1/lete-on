@@ -218,7 +218,7 @@ function digitSlots(visual) {
   const arrow = visual.direction ? `<b>${visual.direction === "increasing" ? "작은 숫자 → 큰 숫자" : "큰 숫자 → 작은 숫자"}</b>` : "";
   const fixed = visual.fixed || [];
   const counts = visual.choiceCounts || [];
-  const notes = [visual.repeat ? "같은 숫자를 여러 번 써도 돼요" : "", visual.limit ? esc(visual.limit) : "", visual.rank ? `${visual.rankFrom === "large" ? "큰" : "작은"} 수부터 ${visual.rank}번째` : ""].filter(Boolean);
+  const notes = [visual.repeat ? "같은 숫자를 여러 번 써도 돼요" : "", ].filter(Boolean);   // 범위·「작은 수부터 N번째」는 문제 글에 있다
   return `<div class="b10-digit-slots"><div class="cards">${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><div class="slots">${Array.from({ length: visual.length }, (_, index) => `<i>${fixed[index] ?? ""}${counts[index] ? `<small>${counts[index]}가지</small>` : ""}</i>`).join("")}</div>${arrow}${notes.map((note) => `<em>${note}</em>`).join("")}</div>`;
 }
 
@@ -241,14 +241,14 @@ function targetCards(visual) {
   return `<div class="b10-target-cards"><div>${visual.cards.map((card) => `<span>${card}</span>`).join("")}</div><strong>${visual.pickCount}장 합 = ${visual.target}</strong></div>`;
 }
 
-const placeValueSum = (visual) => `<div class="b10-place-sum"><span>백</span><span>십</span><span>일</span><b>숫자 합 ${visual.target}</b>${visual.examples ? `<p>${visual.examples.map((n) => `<i>${n}</i>`).join("")}</p>` : ""}${visual.rank ? `<strong>${visual.rankFrom === "large" ? "큰" : "작은"} 수부터 ${visual.rank}번째</strong>` : ""}</div>`;
+const placeValueSum = (visual) => `<div class="b10-place-sum"><span>백</span><span>십</span><span>일</span><b>숫자 합 ${visual.target}</b>${visual.examples ? `<p>${visual.examples.map((n) => `<i>${n}</i>`).join("")}</p>` : ""}</div>`;
 // 세 자리 숫자의 관계: 같은 차로 커지기(between 생략) 또는 「>」처럼 차례로 작아지기
 const stepDigits = (visual) => {
   const between = visual.between || "같은 차";
   const sign = (text) => (text.length <= 2 ? `<i class="sign">${esc(text)}</i>` : `<i>${esc(text)}</i>`);
   const limit = visual.limit ? (typeof visual.limit === "number" ? `${visual.limit} ${visual.direction ? "보다 작은 수" : "이하"}` : visual.limit) : "";
   const examples = visual.examples ? `<p>${visual.examples.map((n) => `<i>${n}</i>`).join("")}</p>` : "";
-  return `<div class="b10-step-digits"><span>백</span>${sign(between)}<span>십</span>${sign(between)}<span>일</span>${limit ? `<b>${esc(limit)}</b>` : ""}${examples}</div>`;
+  return `<div class="b10-step-digits"><span>백</span>${sign(between)}<span>십</span>${sign(between)}<span>일</span>${examples}</div>`;
 };
 
 // 갈림길: nodes가 있으면 장소를 잇는 길을, groups가 있으면 고를 거리(옷 등)를 묶음으로 그린다.

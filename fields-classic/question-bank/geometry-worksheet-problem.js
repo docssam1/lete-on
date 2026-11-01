@@ -98,11 +98,11 @@ export function geometryWorksheetMarkup(visual) {
   const figures = problem.figures;
   if (!renderer || !figures) return "";
   if (card?.renderFigures) {
-    const method = problem.methodHint ? `<p class="geometry-method">${problem.methodHint}</p>` : "";
+    // 풀이 방법 안내·문제 글과 같은 설명은 그림에 쓰지 않는다(원장 2026-11-01)
     const solveArea = problem.type === "HL"
       ? `<div class="geometry-hole-solve">${renderer.renderHoleLayers(problem, { blank: true })}</div>`
       : "";
-    return `${method}<div class="ws-figures">${card.renderFigures(problem)}</div>${solveArea}`;
+    return `<div class="ws-figures">${card.renderFigures(problem).replace(" (칸 안의 수는 쌓기나무의 개수)", "")}</div>${solveArea}`;
   }
   if (figures.kind === "sequence") {
     return `<div class="geometry-sequence">${figures.shapes.map((shape) => `

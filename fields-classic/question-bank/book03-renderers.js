@@ -123,7 +123,7 @@ function tangramCompositionMarkup(visual) {
     return `<circle class="tangram-guide-dot" cx="${x}" cy="${y}" r="3.2"/>`;
   }).join("");
   const inventory = TANGRAM_BOARD_CELLS.filter((cell) => visual.pieceIds.includes(cell.id)).map(tangramPieceIcon).join("");
-  return `<svg class="b3-svg b3-tangram-composition" viewBox="0 0 500 245" role="img" aria-label="칠교 다섯 조각으로 정사각형 완성하기"><text x="250" y="12">사용할 5조각</text><g class="tangram-inventory">${inventory}</g><text x="250" y="81">${visual.complete ? "완성 그림" : "조각 사이의 선을 그으세요"}</text><g class="tangram-target">${cells}<polygon class="tangram-target-outline" points="${pointsText(outline)}"/>${guides}</g></svg>`;
+  return `<svg class="b3-svg b3-tangram-composition" viewBox="0 0 500 245" role="img" aria-label="칠교 다섯 조각으로 정사각형 완성하기"><text x="250" y="12">사용할 5조각</text><g class="tangram-inventory">${inventory}</g><text x="250" y="81">${visual.complete ? "완성 그림" : ""}</text><g class="tangram-target">${cells}<polygon class="tangram-target-outline" points="${pointsText(outline)}"/>${guides}</g></svg>`;
 }
 
 function tangramAreaMarkup(visual) {
@@ -138,7 +138,7 @@ function tangramAreaMarkup(visual) {
     const [cx, cy] = tangramCentroid(points);
     return `<g class="tangram-board-piece piece-${cell.id}${selected ? " selected" : ""}"><polygon points="${pointsText(points)}"/><text x="${cx}" y="${cy}">${cell.id}</text></g>`;
   }).join("");
-  const boardMarkup = `<g class="tangram-board"><g class="tangram-grid">${grid}</g>${boardCells}<rect x="${boardX}" y="${boardY}" width="${4 * boardScale}" height="${4 * boardScale}"/></g><text x="${boardX + 2 * boardScale}" y="184">한 칸의 넓이 ${visual.unitArea}</text>`;
+  const boardMarkup = `<g class="tangram-board"><g class="tangram-grid">${grid}</g>${boardCells}<rect x="${boardX}" y="${boardY}" width="${4 * boardScale}" height="${4 * boardScale}"/></g>`;
 
   let questionMarkup = `<g class="tangram-area-callout"><rect x="236" y="55" width="228" height="94" rx="6"/><text x="350" y="87">${visual.selectedPieceIds[0]}번 조각</text><text x="350" y="120">넓이 = ?</text></g>`;
   if (visual.askMode !== "piece") {
@@ -154,7 +154,7 @@ function tangramAreaMarkup(visual) {
       return `<g class="tangram-composite-piece piece-${cell.id}"><polygon points="${pointsText(points)}"/><text x="${cx}" y="${cy}">${cell.id}</text></g>`;
     }).join("");
     const outline = mapTangramPoints(transformTangramPoints(composite.outline, 2, visual.rotation, visual.mirrored), targetX, targetY, targetScale);
-    questionMarkup = `<g class="tangram-composite">${cells}<polygon class="tangram-composite-outline" points="${pointsText(outline)}"/></g><text x="350" y="190">${pieceCount}조각으로 만든 정사각형</text>`;
+    questionMarkup = `<g class="tangram-composite">${cells}<polygon class="tangram-composite-outline" points="${pointsText(outline)}"/></g>`;
   }
   return `<svg class="b3-svg b3-tangram-area" viewBox="0 0 500 205" role="img" aria-label="4 곱하기 4 칠교판과 조각으로 만든 정사각형">${boardMarkup}<path class="tangram-arrow" d="M208 98H248"/>${questionMarkup}</svg>`;
 }
@@ -695,7 +695,7 @@ function simpleBook3Markup(visual) {
     return `<div class="b3-rod-comparison" style="--ratio:${visual.ratio}"><div><b>㉠</b><span class="first">${cells(1)}</span></div><div><b>㉡</b><span class="second">${cells(visual.ratio)}</span><em>㉠의 ${visual.ratio}배</em></div><strong>㉠ + ㉡ = ${visual.total}cm</strong></div>`;
   }
   if (visual.subtype === "object-measure") return `<div class="b3-object-measure"><strong>${visual.total}cm</strong>${visual.rows.map((row) => `<div><b>${row.icon}</b><span>${Array.from({length:row.count},()=>`<i>${row.icon === "성냥" ? "┃" : "▭"}</i>`).join("")}</span><em>${row.count}개</em></div>`).join("")}</div>`;
-  if (visual.subtype === "object-equation") return `<div class="b3-object-equation"><span>${visual.left.map((item) => `${item.icon} × ${item.count}`).join(" + ")}</span><b>=</b><span>${visual.right.map((item) => `${item.icon} × ${item.count}`).join(" + ")}</span><small>성냥 1개 ${visual.match}cm · ${visual.givenTarget === "log" ? "통나무" : "연필"} 1개 ${visual.givenValue}cm</small></div>`;
+  if (visual.subtype === "object-equation") return `<div class="b3-object-equation"><span>${visual.left.map((item) => `${item.icon} × ${item.count}`).join(" + ")}</span><b>=</b><span>${visual.right.map((item) => `${item.icon} × ${item.count}`).join(" + ")}</span></div>`;
   if (visual.subtype === "object-count-equivalence") return `<div class="b3-object-count"><div><b>리코더 1개</b><span>= 연필 ${visual.pencils}자루 + 성냥개비 ${visual.matches}개</span></div><div><b>연필 1자루</b><span>= 성냥개비 ${visual.pencilInMatches}개</span></div><strong>리코더 1개 = 성냥개비 ?개</strong></div>`;
   if (visual.subtype === "meeting-distance") {
     const meetingPercent = visual.faster / visual.total * 100;
@@ -913,7 +913,7 @@ function alternatingAreaMarkup(visual) {
   }).join("");
   const centers = [36, 100, 180, 296].slice(0, count);
   const figures = centers.map((cx, index) => `${stage(index + 1, cx)}<text x="${cx}" y="142">${"①②③④"[index]}</text>`).join("");
-  return `<svg class="b3-svg b3-alternating-area nested" viewBox="0 0 400 168" role="img" aria-label="정사각형과 마름모가 번갈아 바깥을 감싸며 커지는 그림">${figures}<text x="362" y="76">…</text><text x="200" y="163">${visual.target || 7}번째 바깥 도형의 넓이 = ?</text></svg>`;
+  return `<svg class="b3-svg b3-alternating-area nested" viewBox="0 0 400 168" role="img" aria-label="정사각형과 마름모가 번갈아 바깥을 감싸며 커지는 그림">${figures}<text x="362" y="76">…</text></svg>`;
 }
 
 function fractionGridMarkup(visual) {
@@ -1002,7 +1002,7 @@ function binaryStripMarkup(visual) {
   if (visual.mode === "blank") return `<div class="b3-binary-strip source">${strip(visual.cells)}</div>`;
   if (visual.mode === "examples") {
     const examples = `<div class="b3-magic-examples">${visual.examples.map((e) => `<span><b>${e.value}</b>${strip(visual.cells, e.colored, "small")}</span>`).join("")}</div>`;
-    const question = visual.pattern ? `<div class="b3-magic-question">${strip(visual.cells, visual.pattern)}<strong>= ?</strong></div>` : `<div class="b3-magic-question"><strong>${esc(visual.target)}</strong>이 되도록 색칠하세요</div><div class="b3-print-blank">${strip(visual.cells)}</div>`;
+    const question = visual.pattern ? `<div class="b3-magic-question">${strip(visual.cells, visual.pattern)}<strong>= ?</strong></div>` : `<div class="b3-print-blank">${strip(visual.cells)}</div>`;
     return `<div class="b3-binary-strip source">${examples}${question}</div>`;
   }
   const selected = new Set(visual.selected || []);
@@ -1022,7 +1022,7 @@ function starPieces(colored = [], number = "") {
 function starCodeMarkup(visual) {
   // 원본 27쪽 활동 05: 예시 별(1·5·10·7)로 조각 값을 찾고, 목표 수를 색칠한다.
   const examples = (visual.examples || []).map((e) => `<span>${starPieces(e.colored, e.value)}</span>`).join("");
-  return `<div class="b3-star-code source" role="img" aria-label="별 조각 마법카드 예시와 목표 수"><div class="b3-star-examples">${examples}</div><strong>${esc(visual.target)}이 되도록 별 조각을 색칠하세요</strong><div class="b3-print-blank">${starPieces([])}</div></div>`;
+  return `<div class="b3-star-code source" role="img" aria-label="별 조각 마법카드 예시와 목표 수"><div class="b3-star-examples">${examples}</div><div class="b3-print-blank">${starPieces([])}</div></div>`;
 }
 
 function mathExpressionMarkup(visual) {

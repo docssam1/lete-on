@@ -80,7 +80,7 @@ function expressionMarkup(expression) {
 
 function splitTreeMarkup(visual) {
   const levels = visual.levels || [[visual.value]];
-  return `<div class="b2-split-tree" role="img" aria-label="${esc(visual.value)}을 같은 수로 가르는 과정">${levels.map((level, index) => `<div class="level level-${index}">${level.map((value) => token(value, { known: index === 0 })).join("")}</div>`).join("")}<strong>${esc(visual.caption || "같은 수로 똑같이 나누어요")}</strong></div>`;
+  return `<div class="b2-split-tree" role="img" aria-label="${esc(visual.value)}을 같은 수로 가르는 과정">${levels.map((level, index) => `<div class="level level-${index}">${level.map((value) => token(value, { known: index === 0 })).join("")}</div>`).join("")}</div>`;
 }
 
 function matrixMarkup(visual) {
@@ -162,7 +162,7 @@ function sequenceMarkup(visual) {
   const rows = visual.rows || [{ label: visual.label || "", values: visual.values || [] }];
   const ordinals = visual.showOrdinals !== false;
   const labels = visual.stageLabels;
-  return `<div class="b2-sequence${ordinals || labels ? "" : " no-ordinals"}${visual.align === "bottom" ? " align-bottom" : ""}" role="img" aria-label="규칙에 따라 이어지는 수와 모양">${rows.map((row) => `<section>${row.label ? `<strong>${esc(row.label)}</strong>` : ""}<div>${(row.values || []).map((value, index) => `<span>${sequenceCell(value, visual.hollow)}${labels ? `<i>${esc(labels[index] ?? "")}</i>` : ordinals ? `<i>${index + 1}</i>` : ""}</span>`).join("")}${visual.more ? '<span class="more"><b>…</b></span>' : ""}</div></section>`).join("")}${visual.target ? `<strong>${esc(visual.target)}</strong>` : ""}</div>`;
+  return `<div class="b2-sequence${ordinals || labels ? "" : " no-ordinals"}${visual.align === "bottom" ? " align-bottom" : ""}" role="img" aria-label="규칙에 따라 이어지는 수와 모양">${rows.map((row) => `<section>${row.label ? `<strong>${esc(row.label)}</strong>` : ""}<div>${(row.values || []).map((value, index) => `<span>${sequenceCell(value, visual.hollow)}${labels ? `<i>${esc(labels[index] ?? "")}</i>` : ordinals ? `<i>${index + 1}</i>` : ""}</span>`).join("")}${visual.more ? '<span class="more"><b>…</b></span>' : ""}</div></section>`).join("")}</div>`;
 }
 
 function houseGrowthMarkup(visual) {
@@ -178,12 +178,12 @@ function houseGrowthMarkup(visual) {
     }).join("");
     return `<figure><svg viewBox="0 0 ${width} 72" aria-hidden="true">${walls}${roofs}<path d="M10 66H${10 + stage * 32}"/></svg><figcaption>${stage}번째</figcaption></figure>`;
   };
-  return `<div class="b2-house-growth" role="img" aria-label="한 변을 함께 쓰며 늘어나는 성냥개비 집">${(visual.stages || []).map(house).join("")}<strong>${esc(visual.target)}번째는?</strong></div>`;
+  return `<div class="b2-house-growth" role="img" aria-label="한 변을 함께 쓰며 늘어나는 성냥개비 집">${(visual.stages || []).map(house).join("")}</div>`;
 }
 
 function triangleGrowthMarkup(visual) {
   const stage = (size) => `<figure><div class="b2-triangle-stage">${Array.from({ length: size }, (_, row) => `<span>${Array.from({ length: row * 2 + 1 }, (_, index) => `<i class="${index % 2 ? "dark" : "light"}"></i>`).join("")}</span>`).join("")}</div><figcaption>${size}번째</figcaption></figure>`;
-  return `<div class="b2-triangle-growth" role="img" aria-label="흰 삼각형과 검은 삼각형이 한 줄씩 늘어나는 규칙">${(visual.stages || []).map(stage).join("")}<strong>${esc(visual.target)}번째의 차는?</strong></div>`;
+  return `<div class="b2-triangle-growth" role="img" aria-label="흰 삼각형과 검은 삼각형이 한 줄씩 늘어나는 규칙">${(visual.stages || []).map(stage).join("")}</div>`;
 }
 
 function foldGrowthMarkup(visual) {
@@ -320,7 +320,7 @@ function growthMarkup(visual) {
     const label = form === "paper-fold" ? (n === 0 ? "처음" : `${n}번 접기`) : circled[index];
     return `<figure>${growthStageSvg(form, n)}<figcaption>${label}</figcaption></figure>`;
   }).join("");
-  return `<div class="b2-growth drawn ${esc(form)}" role="img" aria-label="단계에 따라 늘어나는 모양"><div>${figures}<span class="more">…</span></div>${visual.target ? `<strong>${esc(visual.target)}</strong>` : ""}</div>`;
+  return `<div class="b2-growth drawn ${esc(form)}" role="img" aria-label="단계에 따라 늘어나는 모양"><div>${figures}<span class="more">…</span></div></div>`;
 }
 
 function promiseFigure(layout, positions) {
