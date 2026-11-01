@@ -782,3 +782,76 @@ html:has(body.as-embed),body.as-embed{background:#fffefb;background-image:none}
 /* 워밍업 시계(golden-bell.js clockMarkup): 덱 안에서는 판을 채우게 크게 */
 .clock-svg.warm-clock{width:min(100%,260px)}
 .as-embed .clock-svg.warm-clock{width:min(100%,50vh)}
+
+/* ── 수업 화면(?as=class, 원장 2026-11-01 「수업할 때 그림이 너무 작아서 안 보여」): 덱 안 워밍업과 같은 크기·결을 그대로 ── */
+/* 덱은 가로 화면 전용: 문제 그림은 왼쪽, 문제 글·답 칸은 오른쪽에 나란히 두어 아래로 내리지 않고 푼다 */
+@media (min-width:560px){
+.as-class .lesson-content{max-width:none}
+.as-class .source-question-card:has(>.item-quiz-visual){display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);column-gap:20px;align-content:start}
+.as-class .source-question-card:has(>.item-quiz-visual)>*{grid-column:2;min-width:0}
+.as-class .source-question-card:has(>.item-quiz-visual)>.item-quiz-visual{grid-column:1;grid-row:1/span 40;align-self:start;position:sticky;top:8px;margin:0;overflow:auto}
+.as-class .source-question-card:has(>.item-quiz-visual)>.lesson-lead{margin-top:12px}
+.as-class .source-question-card:has(>.item-quiz-visual)>.quiz-item,.as-class .source-question-card:has(>.item-quiz-visual)>.quiz-items{margin-top:12px}
+.as-class .source-question-card:has(>.item-quiz-visual) .answer-part-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+/* 한 그림에 작은 문제 여럿(1권 시계 등): 그림 왼쪽, 작은 문제들은 오른쪽에 차례로 */
+.as-class .lesson-content:has(>.quiz-visual+.quiz-items){display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,1fr);column-gap:20px;align-content:start}
+.as-class .lesson-content:has(>.quiz-visual+.quiz-items)>*{grid-column:2;min-width:0}
+.as-class .lesson-content:has(>.quiz-visual+.quiz-items)>.protected-answer-notice{grid-column:1/-1}
+.as-class .lesson-content:has(>.quiz-visual+.quiz-items)>.quiz-visual{grid-column:1;grid-row:2/span 40;align-self:start;position:sticky;top:8px;margin:0;overflow:auto}
+.as-class .lesson-content:has(>.quiz-visual+.quiz-items)>.quiz-items{margin-top:12px}
+.as-class .lesson-content:has(>.quiz-visual+.quiz-items)>.primary-action{justify-self:end}
+/* 몇 번째 문제인지는 번호 단추가, 단원 이름은 덱 머리가 이미 보여 준다 */
+.as-class .daily-quiz-head:has(+.source-question-progress){display:none}
+.as-class .source-question-progress{margin-top:0}
+.as-class .source-question-progress+.source-question-card{margin-top:10px}
+}
+
+/* 덱 안: 내용 아래 빈 곳도 흰 종이(회색 띠가 보이던 것) */
+html:has(body.as-class),body.as-class{background:#fffefb;background-image:none}
+.as-class .gold-layout,.as-class .gold-shell{background:transparent}
+/* 덱 안: 학습 칸이 창 높이만큼 늘어나 있으면 키울 때(zoom) 같이 커져 넘친다 — 내용만큼만 */
+.as-class #lessonContent{min-height:0!important}
+/* 덱 안 워밍업 글씨(원장 2026-11-01 「잘 안 보여 … 태블릿이나 PC에서 공부할 거야」): 교재 화면은 작은 글씨라 덱에서는 읽기 크기로.
+   그림은 칸 폭을 따라 커지므로 높이를 묶어 문제 글과 나눠 쓴다. 그래도 넘치면 golden-bell.js fitEmbed가 줄인다 */
+.as-class .lesson-lead,.as-class .quiz-head span{font-size:18px;line-height:1.6}
+.as-class .quiz-item>strong,.as-class .quiz-item strong{font-size:18px;line-height:1.6}
+.as-class .quiz-item label,.as-class .answer-part,.as-class .glyph-label{font-size:16px}
+.as-class .quiz-item input,.as-class .answer-part-field input,.as-class .source-question-card input{min-height:50px;font-size:22px}
+.as-class .primary-action,.as-class .secondary-action{min-height:48px;font-size:16px}
+.as-class .answer-choices button{min-height:46px;min-width:64px;font-size:17px}
+.as-class .feedback,.as-class .quiz-item-feedback,.as-class .quiz-item-assist,.as-class .quiz-item-solution{font-size:16px;line-height:1.6}
+.as-class .source-question-card>header strong{font-size:17px}
+.as-class .quiz-visual svg,.as-class .item-quiz-visual svg{max-height:56vh}
+/* 덱 안 워밍업 = 게임과 같은 결(원장 2026-11-01 「스스로 공부하기 모드는 이 정도의 디자인이 나와야 돼」 — 시계 게임 화면):
+   그림은 따뜻한 판(둥근 22px·그림자), 문제는 흰 미션 띠, 작은 문제는 흰 카드, 단추는 입체 초록 · 흰 테두리 */
+.as-class{--gx-ink:#1d3446;--gx-muted:#5b6f7e;--gx-line:#e2d6c1;--gx-good:#1f9d5c}
+.as-class .quiz-visual,.as-class .item-quiz-visual{border:0;border-radius:22px;background:linear-gradient(180deg,#fdf5e6 0%,#f8e8cc 100%);box-shadow:inset 0 0 0 1px #efd9b4,0 14px 34px rgba(120,84,30,.12);padding:22px}
+.as-class .quiz-visual>*,.as-class .item-quiz-visual>*{border-radius:16px}
+.as-class .lesson-lead{margin:0 0 4px;padding:14px 18px;border-radius:16px;background:#fff;box-shadow:0 6px 18px rgba(29,52,70,.08);color:var(--gx-ink);font-size:20px;font-weight:800;line-height:1.5}
+.as-class .quiz-head>div>span,.as-class .lesson-kicker{display:none}
+.as-class .quiz-item{border:0;border-radius:18px;background:#fff;box-shadow:inset 0 0 0 1px #e6ecf1,0 8px 22px rgba(29,52,70,.07);padding:18px 20px}
+.as-class .quiz-item.correct{box-shadow:inset 0 0 0 2px #8fd0ad,0 8px 22px rgba(31,157,92,.12);background:#f4fbf7}
+.as-class .quiz-item.incorrect{box-shadow:inset 0 0 0 2px #eaa49d,0 8px 22px rgba(216,67,63,.10);background:#fff8f6}
+.as-class .quiz-item input,.as-class .source-question-card input{border:2px solid #d7e1e8;border-radius:14px;background:#fff;color:var(--gx-ink);font-weight:800;text-align:center}
+.as-class .quiz-item input:focus,.as-class .source-question-card input:focus{outline:0;border-color:#2f7de1;box-shadow:0 0 0 4px rgba(47,125,225,.15)}
+.as-class .primary-action{border:0;border-radius:14px;background:linear-gradient(180deg,#2fb36b,#1f9256);color:#fff;font-weight:900;box-shadow:0 5px 0 #157443;cursor:pointer}
+.as-class .primary-action:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 #157443}
+.as-class .primary-action:disabled{background:#c3ccd3;box-shadow:0 5px 0 #a5b1ba;color:#fff;cursor:default}
+.as-class .secondary-action{border:2px solid #d7e1e8;border-radius:14px;background:#fff;color:var(--gx-ink);font-weight:800}
+.as-class .answer-choices button,.as-class .source-question-card .answer-choices button{border:2px solid #d7e1e8;border-radius:14px;background:#fff;color:var(--gx-ink);font-weight:800;box-shadow:0 3px 0 #d7e1e8}
+.as-class .answer-choices button.selected{border-color:#2f7de1;background:#e8f1fd;color:#1b5fb8;box-shadow:0 3px 0 #2f7de1}
+.as-class .source-question-card{border:0;background:transparent;padding:0}
+.as-class .source-question-card>header{border-bottom:0;padding-bottom:6px}
+.as-class .source-question-card>header span{border-radius:999px;padding:5px 12px;background:#1d3446}
+.as-class .source-question-progress span,.as-class .embed-sub-nav button{border-radius:999px}
+.as-class .quiz-item-solution{border-radius:14px}
+.as-class .feedback{border-radius:14px;border-left-width:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+/* 워밍업 시계(golden-bell.js clockMarkup): 덱 안에서는 판을 채우게 크게 */
+.clock-svg.warm-clock{width:min(100%,260px)}
+.as-class .clock-svg.warm-clock{width:min(100%,50vh)}
+
+.as-class .gold-shell{width:min(1600px,calc(100% - 28px));margin:10px auto 0}
+.as-class .gold-layout{grid-template-columns:minmax(0,1fr);min-height:0;border-radius:22px;overflow:hidden}
+.as-class .lesson-content{padding:20px 28px 28px}
+.as-class .stage-step{min-height:58px;font-size:12px}.as-class .stage-step strong{font-size:15px}
+.as-class .embed-off{display:none!important}

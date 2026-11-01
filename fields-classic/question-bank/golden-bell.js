@@ -28,6 +28,8 @@ const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 // 학생 차시 덱(study.html) 안에 끼워 쓰는지 — 자세한 것은 아래 embedOpen 앞 주석
 const embed = { on: params.get("embed") === "1" && parent !== window, view: "concept", game: "", handsOn: null, page: 0, pages: 1, key: "" };
+// 수업 화면(?as=class) — 아래 「수업 화면」 주석 참고
+const classMode = params.get("as") === "class" && !embed.on;
 function embedPost(message) { if (embed.on) parent.postMessage({ type: "fc-embed", ...message }, location.origin); }
 // 원본 분류 코드(GB5-S25-01 등)는 원장·선생님만 본다. 학생·학부모 화면과 학습지에는 1, 2, 3… 순번만 나온다.
 // 주소에 &codes=1을 붙이면 코드가 보인다(대조 작업용).
@@ -2156,6 +2158,7 @@ function renderContent() {
   }
   scheduleTriangularAutoplay(lesson);
   if (embed.on) applyEmbed();
+  else if (classMode) { if (state.phase === "original") embedSubItems(); requestAnimationFrame(fitEmbed); }
 }
 
 function renderSummary() {
@@ -2255,8 +2258,10 @@ function embedSubItems() {
 // 줄이거나 키우면 글줄이 바뀌어 높이가 다시 변하므로 넘치지 않는 가장 큰 배율을 반으로 나누어 찾는다.
 const FIT_MIN = 0.55, FIT_MAX = 1.7;
 function fitEmbed() {
-  if (!embed.on) return;
+  if (!embed.on && !classMode) return;
   const content = $("lessonContent");
+  // 수업 화면의 개념 쪽은 길게 이어 읽는 장이라 한 화면에 줄여 넣지 않고 크게만 보인다(넓은 화면에서 1.3배)
+  if (classMode && state.phase !== "original") { content.style.zoom = innerWidth >= 1300 ? "1.3" : ""; return; }
   // 학습 칸은 늘어나 창을 채우므로(높이가 늘 창과 같다) 안에 든 것의 아래 끝으로 잰다
   const bottom = () => Math.max(0, ...[...content.children].filter((child) => child.offsetParent).map((child) => child.getBoundingClientRect().bottom));
   const fits = () => bottom() <= innerHeight - 12 && document.documentElement.scrollHeight <= innerHeight + 1 && document.documentElement.scrollWidth <= innerWidth + 1;
@@ -2349,7 +2354,10 @@ $("courseSelect").addEventListener("change", (event) => {
 $("backLink").href = `./start.html?student=${encodeURIComponent(student)}&book=${state.bookId}`;
 // 학생 차시 화면(study.html)에서 들어오면(?as=student&back=…) 큰 제목·권 고르기·인쇄 단추·학습 목록을 접고 학습만 보인다.
 // 돌아가기는 그 차시로(같은 사이트 안의 상대 주소만 받는다).
-if (params.get("as") === "student" || embed.on) {
+// 수업 화면(?as=class, 처음 화면 「수업」에서 연다 — 원장 2026-11-01 「수업할 때 그림이 너무 작아서 안 보여」):
+// 학생 화면처럼 학습만 보이고, 덱 안과 같이 큰 글씨·게임 결·작은 문제 하나씩·화면에 맞게 키우기
+if (classMode) document.body.classList.add("as-class");
+if (params.get("as") === "student" || embed.on || classMode) {
   document.body.classList.add("as-student");
   if (embed.on) {
     document.body.classList.add("as-embed");
@@ -2480,6 +2488,11 @@ const requestedPhase = params.get("phase");
 if (["original", "extension"].includes(requestedPhase)) setPhase(requestedPhase);
 ensureProtectedBook(state.bookId).then(() => render());
 if (params.get("sessionbook") === "1") printSessionBook();
+if (classMode) {
+  addEventListener("resize", () => requestAnimationFrame(fitEmbed));
+  $("lessonContent").addEventListener("load", () => requestAnimationFrame(fitEmbed), true);
+  new MutationObserver(() => requestAnimationFrame(fitEmbed)).observe($("lessonContent"), { subtree: true, childList: true, attributes: true, attributeFilter: ["class", "hidden", "open"] });
+}
 if (embed.on) {
   embedOpen({ lesson: params.get("lesson") || state.lessonId, view: params.get("view") || "concept", game: params.get("game") || "" });
   window.addEventListener("message", (event) => {

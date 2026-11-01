@@ -35,7 +35,8 @@ function link(page, entries) {
   return `./${page}?${url}`;
 }
 const bankLink = (entries) => link("index.html", { mode: "curriculum", book: view.bookId, ...entries });
-const bellLink = (entries) => link("golden-bell.html", { book: view.bookId, ...entries });
+// 수업(선생님 화면)에서 여는 워밍업은 수업 화면(as=class: 큰 글씨·화면에 맞게)
+const bellLink = (entries) => link("golden-bell.html", { book: view.bookId, ...(view.mode === "class" ? { as: "class" } : {}), ...entries });
 const activeBook = () => CURRICULUM.find((book) => book.id === view.bookId);
 
 function syncAddress(push = false) {
