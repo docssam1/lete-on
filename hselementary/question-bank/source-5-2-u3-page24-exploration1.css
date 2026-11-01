@@ -1,3 +1,8 @@
 .source52-p24e1-question{display:grid;gap:.45rem;max-width:52rem;margin:.4rem auto}.source52-p24e1-question p{margin:.15rem 0;line-height:1.65}.source52-p24e1-question ol{margin:.1rem 0;padding-left:2.15rem;display:grid;gap:.22rem}.source52-p24e1-question li{padding-left:.18rem;line-height:1.5}
 @media(max-width:520px){.source52-p24e1-question{gap:.32rem}.source52-p24e1-question ol{padding-left:1.8rem;gap:.2rem}}
 @media print{.source52-p24e1-question{gap:.25rem}.source52-p24e1-question ol{gap:.16rem}.source52-p24e1-question li{line-height:1.35}}
+@page source52Unit3Page24 { size:A4; margin:8mm 0; }
+@media print {
+  .print-page:has([data-source-item-id="5-2-u3-e1-exploration"], [data-source-item-id^="5-2-u3-e1-example-"]),
+  .answer-page:has([data-source-answer="5-2-u3-e1-exploration"], [data-source-answer^="5-2-u3-e1-example-"]) { page:source52Unit3Page24; }
+}
