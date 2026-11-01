@@ -109,6 +109,13 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
 .sd-bar { position: relative; z-index: 2; display: flex; align-items: center; gap: 12px; padding: 0 var(--frame-x) calc(10px + env(safe-area-inset-bottom)); }
 .sd-guide { position: relative; display: flex; align-items: center; flex: 1; min-width: 0; align-self: stretch; }
 /* 독쌤은 액자 왼쪽 아래 모서리에 서서 칸 모서리에 살짝 걸친다 */
+/* 휴대폰용 동그란 얼굴(아래 말풍선 옆). 수학 독쌤 그림(475×720)에서 얼굴 자리만 보이게 옮긴다 */
+.sd-guide-face { display: none; position: relative; flex: none; width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 50% 40%, #f7f3fc, #e6dcf5); box-shadow: 0 0 0 2px #fff, 0 3px 8px rgba(40, 30, 70, .25); }
+.sd-guide-face img { position: absolute; left: -54%; top: -2%; width: 198%; height: auto; max-width: none; }
+@media (max-width: 760px), (max-width: 900px) and (orientation: portrait) {
+  .sd-guide-img { display: none !important; }
+  .sd-guide-face { display: block; }
+}
 .sd-guide-img { position: absolute; left: -34px; bottom: 0; width: 96px; height: auto; filter: drop-shadow(0 8px 8px rgba(40, 30, 70, .3)); pointer-events: none; z-index: 1; }
 .sd-talk { position: relative; display: flex; align-items: center; gap: 10px; min-width: 0; max-width: 640px; margin-left: 74px; padding: 8px 10px 8px 16px; border: 1px solid rgba(255, 255, 255, .95); border-radius: 22px; background: rgba(255, 255, 255, .94); box-shadow: 0 6px 18px rgba(70, 48, 122, .18); }
 .sd-talk::before { content: ""; position: absolute; left: -8px; top: 50%; border: 8px solid transparent; border-right-color: rgba(255, 255, 255, .94); border-left: 0; transform: translateY(-50%); }
@@ -314,8 +321,11 @@ body.has-presenter .sd-guide-img { visibility: hidden; }
 @media (max-width: 900px) and (orientation: portrait) {
   .sd-native.has-presenter { grid-template-rows: auto minmax(0, 1fr); align-items: start; }
   .sd-slide-body:has(> .sd-native.has-presenter) { padding-top: 8px; }
-  .sd-native.has-presenter .sd-presenter { display: block; width: 100%; height: 100%; min-height: 140px; aspect-ratio: auto; align-self: stretch; }
-  body.has-presenter .sd-guide-img { visibility: hidden; }
+  /* 독쌤은 몸 전체를 작게 줄이지 않고 얼굴만 크게(동그란 틀) — 원장 「사람이 작아지는 게 아니라 얼굴만 나오는 거잖아」 */
+  .sd-native.has-presenter .sd-presenter { display: block; justify-self: center; align-self: center; width: auto; height: min(58vw, 250px); max-height: 100%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 50% 40%, #f7f3fc, #e6dcf5); box-shadow: 0 0 0 4px #fff, 0 6px 18px rgba(46, 30, 90, .18); }
+  .sd-native.has-presenter .sd-pres-act { inset: auto; left: -54%; top: -2%; width: 198%; height: 300%; }
+  .sd-native.has-presenter .sd-pres-shadow { display: none; }
+  body.has-presenter .sd-guide-face { visibility: hidden; }
 }
 /* 손그림 판서 느낌: 줄 없는 종이 · 초록 점선 틀(제목줄은 원래대로 — 원장 2026-10-29 「참고하라는 거지」) */
 .look-sketch .cb-paper { background: #fbfaf6; border-color: #e6dfcf; }

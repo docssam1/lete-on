@@ -133,6 +133,8 @@ function bookTestMarkup() {
 
 // ── 독쌤 ─────────────────────────────────────────────────
 const PORTRAIT = { talk: "docssam-guide.webp", think: "docssam-thinking.webp", praise: "docssam-praise.webp" };
+// 휴대폰에서는 작은 전신 대신 동그란 얼굴(원장 2026-11-01 「사람이 작아지는 게 아니라 얼굴만 나오는 거잖아」) — 같은 틀로 자른 수학 독쌤 그림을 쓴다
+const FACE_PORTRAIT = { talk: "A1-mouth-closed.webp", think: "B2-puzzled-thinking.webp", praise: "B5-happy-thumbs-up.webp" };
 let lastLine = null;
 // spoken: 말풍선 글과 다르게 읽을 때(단원 평가 결과 — 약한 유형 이름은 말풍선에만)
 function say(text, mood = "talk", voiceId = null, spoken = text) {
@@ -140,6 +142,7 @@ function say(text, mood = "talk", voiceId = null, spoken = text) {
   $("guideSay").textContent = text;
   $("talk").dataset.mood = mood;
   $("walkerImg").src = `./${PORTRAIT[mood] || PORTRAIT.talk}`;
+  $("walkerFace").src = `./assets/docssam-math/${FACE_PORTRAIT[mood] || FACE_PORTRAIT.talk}`;
   presenter?.mood(mood);
   const bubble = $("talk");
   bubble.classList.remove("new"); void bubble.offsetWidth; bubble.classList.add("new");
