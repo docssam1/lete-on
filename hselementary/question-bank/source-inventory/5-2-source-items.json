@@ -3577,7 +3577,10 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "독립 승리 전략은 확인했으나 공식 답안 및 원문 빈칸과 첫 대응의 관계는 추가 확인이 필요합니다."
+      "reviewReason": "독립 승리 전략은 확인했으나 공식 답안 및 원문 빈칸과 첫 대응의 관계는 추가 확인이 필요합니다.",
+      "syntheticRuntimeTypeId": "5-2-u3-e8-mission-6-flower-ring-synthetic",
+      "publisherKeyVerified": false,
+      "publicDecision": "locked"
     },
     {
       "sourceItemId": "5-2-u4-e1-exploration",
