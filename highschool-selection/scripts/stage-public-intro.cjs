@@ -6,6 +6,13 @@ const source = path.resolve(__dirname, '..');
 const files = [
   ['promo/index.html', 'promo/index.html'],
   ['promo/promo.css', 'promo/promo.css'],
+  ['promo/assets/logos/sh.png', 'promo/assets/logos/sh.png'],
+  ['promo/assets/logos/dp.png', 'promo/assets/logos/dp.png'],
+  ['promo/assets/logos/wm.jpg', 'promo/assets/logos/wm.jpg'],
+  ['promo/assets/logos/ed.jpg', 'promo/assets/logos/ed.jpg'],
+  ['promo/assets/logos/dg.webp', 'promo/assets/logos/dg.webp'],
+  ['promo/assets/logos/sm.png', 'promo/assets/logos/sm.png'],
+
   ['shared/app.css', 'shared/app.css'],
   ['data/public-exam-profiles.js', 'data/public-exam-profiles.js'],
   ['data/catalog.js', 'data/catalog.js'],
