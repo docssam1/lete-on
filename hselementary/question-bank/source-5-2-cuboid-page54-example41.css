@@ -25,3 +25,12 @@
   .source52-p54e41-solution figure { margin: 0.35rem auto; }
   .source52-p54e41-solution li { margin-bottom: 0.25rem; }
 }
+
+/* The given pips and the six-die figure already convey these captions. */
+.source52-p54e41-question figcaption, .source52-p54e43-question figcaption { display:none; }
+@page source52P54DiceAnswer { size:A4; margin:10mm 0; }
+@media print {
+  .answer-page:has(.source52-p54e4-solution, .source52-p54e41-solution, .source52-p54e42-solution, .source52-p54e43-solution, .source52-p54e44-solution) { page:source52P54DiceAnswer; }
+  #problemView :is(.source52-p54e4-question, .source52-p54e41-question, .source52-p54e42-question, .source52-p54e43-question, .source52-p54e44-question),
+  #solutionView :is(.source52-p54e4-solution, .source52-p54e41-solution, .source52-p54e42-solution, .source52-p54e43-solution, .source52-p54e44-solution) { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+}

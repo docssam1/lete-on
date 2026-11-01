@@ -2,3 +2,11 @@
 .source52-p61m56-table caption { font-weight: 700; margin-bottom: .4rem; }
 .source52-p61m56-table th, .source52-p61m56-table td { border: 1px solid currentColor; padding: .35rem 0; font-size: clamp(10px, 2.5vw, 16px); white-space: nowrap; }
 .source52-p61m56-table.source52-p61m56-vertical { width: min(100%, 250px); }
+
+@media print {
+  #problemView [data-source-item-id^="5-2-u6-e2-mission-"],
+  #solutionView [data-source-answer^="5-2-u6-e2-mission-"] { font-family: "Noto Serif KR", "Batang", serif; font-weight: 400; }
+  .print-page--four-up .source52-p61m56-table.source52-p61m56-vertical { width: min(100%, 200px); margin: 4px auto; }
+  .print-page--four-up .source52-p61m56-table.source52-p61m56-vertical caption { margin-bottom: 3px; }
+  .print-page--four-up .source52-p61m56-table.source52-p61m56-vertical :is(th, td) { padding: 2px 0; font-size: 10pt; line-height: 1.1; }
+}

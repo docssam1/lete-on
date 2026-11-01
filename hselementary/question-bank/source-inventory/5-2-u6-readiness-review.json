@@ -712,7 +712,7 @@
       "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "runtimeTypeId": "5-2-u6-e3-exploration",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 62쪽 원문과 도형의 점·선 연결을 확인하고 독립적으로 경우 열거. 출판사 답안 미대조. 그림의 선을 따라가는 뜻을 명확히 모서리로 안내함.",
+      "releaseEvidence": "원문 두 점은 한 모서리로 이웃한다. 연습 0은 이웃한 점이지만 연습 1·2는 각각 같은 면의 대각 및 공간 대각으로 점 사이 관계가 다르다. 각 경우의 수는 별도로 검산했으나 원문과 난이도 동등성 및 구조 변형 승인 여부는 미확인이다. 출판사 답안 미대조.",
       "originalSourceReleaseStatus": "locked"
     },
     {
@@ -852,7 +852,7 @@
       "lockReason": "원문 보호 잠금, 창작 유사문항으로 대체",
       "publisherKeyVerified": false,
       "runtimeTypeId": "5-2-u6-e3-mission-1",
-      "releaseEvidence": "인쇄 63쪽 원문 및 조건을 대조하고 독립 전수 검사. 출판사 답안 미대조.",
+      "releaseEvidence": "원문은 4명의 완전순열(9가지), 연습은 3·5·6명(각 2·44·265가지)이다. 답은 전수 검사했으나 문제 규모가 달라 원문과 난이도 동등성은 미확인이다. 출판사 답안 미대조.",
       "originalSourceReleaseStatus": "locked"
     },
     {
@@ -1300,7 +1300,7 @@
       "runtimeTypeId": "5-2-u6-e4-mission-6",
       "originalSourceReleaseStatus": "locked",
       "publisherKeyVerified": false,
-      "releaseEvidence": "인쇄 65쪽 원문 대조와 독립 전수 검사. 기본 균등 가능성 모형을 화면에 명시. 출판사 답안 미대조."
+      "releaseEvidence": "원문은 적어도 두 눈이 같으므로 세 눈이 모두 같은 경우도 포함한다. 216개 결과 중 세 눈이 모두 다른 120개를 빼면 96개로 4/9이다. 원본 손글씨에는 11/36과 4/9가 함께 보이며 출처·검증 상태는 불명이다. 기본 균등 가능성 모형을 화면에 명시했으며 출판사 답안은 미대조다."
     }
   ]
 }

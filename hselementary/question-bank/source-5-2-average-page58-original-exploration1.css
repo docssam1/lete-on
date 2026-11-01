@@ -2,3 +2,15 @@
 .source52-p58e1-table caption { font-weight: 700; margin-bottom: .4rem; }
 .source52-p58e1-table th, .source52-p58e1-table td { border: 1px solid currentColor; padding: .2rem .75rem; }
 .source52-p58e1-solution .math-inline-expression { overflow-wrap: anywhere; }
+
+@page source52P58AverageAnswer { size:A4; margin:10mm 0; }
+@media print {
+  .answer-page:has(.source52-p58e1-solution, .source52-p58ex11-solution, .source52-p58ex12-solution, .source52-p58ex13-solution, .source52-p58ex14-solution) { page:source52P58AverageAnswer; }
+  .answer-page:has(.source52-p58e1-solution, .source52-p58ex11-solution, .source52-p58ex12-solution, .source52-p58ex13-solution, .source52-p58ex14-solution) .solution-list { gap:5px; margin-top:8px; }
+  .answer-page:has(.source52-p58e1-solution, .source52-p58ex11-solution, .source52-p58ex12-solution, .source52-p58ex13-solution, .source52-p58ex14-solution) .solution-item p { padding:4px 9px; font-size:10pt; line-height:1.35; }
+  .answer-page:has(.source52-p58e1-solution, .source52-p58ex11-solution, .source52-p58ex12-solution, .source52-p58ex13-solution, .source52-p58ex14-solution) .solution-item header > :is(span, strong) { padding:5px 9px; }
+  #problemView :is(.source52-p58e1-question, .source52-p58ex11-question, .source52-p58ex12-question, .source52-p58ex13-question, .source52-p58ex14-question),
+  #solutionView :is(.source52-p58e1-solution, .source52-p58ex11-solution, .source52-p58ex12-solution, .source52-p58ex13-solution, .source52-p58ex14-solution) { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  .print-page.print-page--four-up .question-prompt .source52-p58ex13-chart { max-height:210px; }
+  .print-page--four-up .source52-p58ex13-axis-label, .print-page--four-up .source52-p58ex13-legend { font-size:18px; }
+}

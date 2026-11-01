@@ -1,0 +1,9 @@
+@page source52P65ProbabilityAnswer { size: A4; margin: 10mm 0; }
+@media print {
+  #problemView [data-source-item-id^="5-2-u6-e4-mission-"],
+  #solutionView [data-source-answer^="5-2-u6-e4-mission-"] { font-family: "Noto Serif KR", "Batang", serif; font-weight: 400; }
+  .answer-page:has([data-source-answer^="5-2-u6-e4-mission-"]) { page: source52P65ProbabilityAnswer; }
+  .answer-page:has([data-source-answer^="5-2-u6-e4-mission-"]) .solution-list { gap: 5px; margin-top: 8px; }
+  .answer-page:has([data-source-answer^="5-2-u6-e4-mission-"]) .solution-item p { padding: 4px 9px; font-size: 10pt; line-height: 1.5; }
+  .answer-page:has([data-source-answer^="5-2-u6-e4-mission-"]) .solution-item header > :is(span, strong) { padding: 5px 9px; }
+}

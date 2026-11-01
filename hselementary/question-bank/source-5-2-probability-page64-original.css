@@ -1,0 +1,9 @@
+@page source52P64ProbabilityAnswer { size: A4; margin: 10mm 0; }
+@media print {
+  #problemView :is([data-source-item-id="5-2-u6-e4-exploration"], [data-source-item-id="5-2-u6-e4-example-1"], [data-source-item-id="5-2-u6-e4-example-2"], [data-source-item-id="5-2-u6-e4-example-4"]),
+  #solutionView :is([data-source-answer="5-2-u6-e4-exploration"], [data-source-answer="5-2-u6-e4-example-1"], [data-source-answer="5-2-u6-e4-example-2"], [data-source-answer="5-2-u6-e4-example-4"]) { font-family: "Noto Serif KR", "Batang", serif; font-weight: 400; }
+  .answer-page:has(:is([data-source-answer="5-2-u6-e4-exploration"], [data-source-answer="5-2-u6-e4-example-1"], [data-source-answer="5-2-u6-e4-example-2"], [data-source-answer="5-2-u6-e4-example-4"])) { page: source52P64ProbabilityAnswer; }
+  .answer-page:has(:is([data-source-answer="5-2-u6-e4-exploration"], [data-source-answer="5-2-u6-e4-example-1"], [data-source-answer="5-2-u6-e4-example-2"], [data-source-answer="5-2-u6-e4-example-4"])) .solution-list { gap: 5px; margin-top: 8px; }
+  .answer-page:has(:is([data-source-answer="5-2-u6-e4-exploration"], [data-source-answer="5-2-u6-e4-example-1"], [data-source-answer="5-2-u6-e4-example-2"], [data-source-answer="5-2-u6-e4-example-4"])) .solution-item p { padding: 4px 9px; font-size: 10pt; line-height: 1.5; }
+  .answer-page:has(:is([data-source-answer="5-2-u6-e4-exploration"], [data-source-answer="5-2-u6-e4-example-1"], [data-source-answer="5-2-u6-e4-example-2"], [data-source-answer="5-2-u6-e4-example-4"])) .solution-item header > :is(span, strong) { padding: 5px 9px; }
+}
