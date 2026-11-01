@@ -79,12 +79,14 @@
       const candidates = pools[index][poolIndex];
       const valid = candidates.filter(value => ceil(value, 10) !== round(value, 10) && floor(value, 100) !== round(value, 100));
       if (valid.length !== 1) throw new Error("5-2 rounding Example 2-2 pool must have exactly one answer");
-      const answer = valid.length;
+      const answer = number(valid[0]);
       const difficultyText = level === 0 ? "십의 자리 조건은 일의 자리 숫자를, 백의 자리 조건은 십의 자리 숫자를 먼저 살펴보세요." : level === 2 ? "첫째 조건을 만족하는 후보와 둘째 조건을 만족하는 후보를 각각 찾은 뒤 공통인 수를 확인하세요." : "";
-      const prompt = `다음 수 중에서 두 조건을 모두 만족하는 수는 몇 개인가요? ${candidates.map(number).join(", ")}<ol><li>올림하여 십의 자리까지 나타낸 수와 반올림하여 십의 자리까지 나타낸 수가 다릅니다.</li><li>버림하여 백의 자리까지 나타낸 수와 반올림하여 백의 자리까지 나타낸 수가 다릅니다.</li></ol>${difficultyText ? `<p class=\"source52-rounding-hint\">도움말: ${difficultyText}</p>` : ""}`;
+      const prompt = `다음 수 중에서 두 조건을 모두 만족하는 수를 구하세요. ${candidates.map(number).join(", ")}<ol><li>올림하여 십의 자리까지 나타낸 수와 반올림하여 십의 자리까지 나타낸 수가 다릅니다.</li><li>버림하여 백의 자리까지 나타낸 수와 반올림하여 백의 자리까지 나타낸 수가 다릅니다.</li></ol>${difficultyText ? `<p class=\"source52-rounding-hint\">도움말: ${difficultyText}</p>` : ""}`;
       const tests = candidates.map(value => ({ value, tens: ceil(value, 10) !== round(value, 10), hundreds: floor(value, 100) !== round(value, 100) }));
-      const solution = `각 수를 십의 자리까지 올림·반올림하고, 백의 자리까지 버림·반올림하여 비교합니다. 두 조건을 모두 만족하는 수는 ${valid.map(number).join(", ")} 하나이므로 ${answer}개입니다.`;
-      return item("rounding-condition-count", prompt, answer, solution, { candidates, tests, valid });
+      const firstMatches = tests.filter(test => test.tens).map(test => number(test.value)).join(", ");
+      const secondMatches = tests.filter(test => test.hundreds).map(test => number(test.value)).join(", ");
+      const solution = `십의 자리 조건을 만족하는 수는 ${firstMatches}이고, 백의 자리 조건을 만족하는 수는 ${secondMatches}입니다. 두 목록에 모두 있는 수는 ${answer}입니다. ${answer}의 십의 자리 올림은 ${number(ceil(valid[0], 10))}, 반올림은 ${number(round(valid[0], 10))}이고, 백의 자리 버림은 ${number(floor(valid[0], 100))}, 반올림은 ${number(round(valid[0], 100))}입니다.`;
+      return item("rounding-condition-value", prompt, answer, solution, { candidates, tests, valid });
     }
     throw new Error("Unknown Grade 5-2 rounding source item");
   }
@@ -106,7 +108,7 @@
       answerVerification: "independent-calculation-user-authorized" });
   }
 
-  const definitions = ids.map((sourceItemId, index) => Object.freeze({ sourceItemId, generatorKey: keys[index], poolCount: 3, kind: ["rounding-operations", "rounding-equal-results", "rounding-sum-comparison", "rounding-condition-count"][index] }));
+  const definitions = ids.map((sourceItemId, index) => Object.freeze({ sourceItemId, generatorKey: keys[index], poolCount: 3, kind: ["rounding-operations", "rounding-equal-results", "rounding-sum-comparison", "rounding-condition-value"][index] }));
   const byId = new Map(definitions.map(definition => [definition.sourceItemId, definition]));
   const ownedKeys = new Set(keys);
   function resolve(type) {

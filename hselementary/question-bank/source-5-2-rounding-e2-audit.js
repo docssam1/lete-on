@@ -67,7 +67,12 @@ for (let index = 0; index < api.ids.length; index += 1) {
       assert.equal(values.length, 5);
       const valid = values.filter(value => checkCeil(value, 10) !== checkRound(value, 10) && checkFloor(value, 100) !== checkRound(value, 100));
       assert.equal(valid.length, 1);
-      assert.equal(question.answer, "1");
+      assert.equal(question.answer, valid[0].toLocaleString("en-US"));
+      assert.match(prompt, /두 조건을 모두 만족하는 수를 구하세요/);
+      assert(text(question.solution).includes(question.answer));
+      for (const test of question.questionModel.tests) {
+        if (test.tens || test.hundreds) assert(text(question.solution).includes(test.value.toLocaleString("en-US")));
+      }
     }
     assert(text(question.solution).length > 20);
     configurations += 1;
