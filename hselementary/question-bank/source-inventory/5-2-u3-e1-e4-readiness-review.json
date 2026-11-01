@@ -155,6 +155,19 @@
         {"number": 63, "classification": "두 선대칭축을 이용한 정사각형 사이 거리", "candidate": "24cm", "visual": "한 변 10cm인 정사각형 가와 나가 첫 축에 대칭이고 나와 다가 두 번째 축에 대칭이다. 나와 각 축 사이 거리는 각각 6cm와 13cm다.", "reviewNote": "두 축 사이 거리는 6+10+13=29cm다. 두 축에 연속 반사하면 가의 중심이 58cm 이동하므로 가와 다의 중간 축은 가의 중심에서 29cm 떨어진다. 가의 가까운 변까지 거리는 29−5=24cm다.", "status": "source-reviewed-answer-key-pending"},
         {"number": 64, "classification": "사각형과 선대칭 상의 겹치는 넓이", "candidate": "162.5cm² (대칭축이 밑변에 수직이라는 해석)", "visual": "두 수직 변이 15cm, 20cm이고 밑변의 대칭축 양쪽 길이가 각각 5cm인 사각형; 밑변 양끝에 직각 표시가 있다.", "reviewNote": "그려진 대칭축이 밑변에 수직이면 축 위의 윗변 높이는 (15+20)/2=17.5cm다. 겹친 영역은 밑변 5cm, 평행한 양 높이 15cm와 17.5cm인 사다리꼴 두 개로 넓이는 2×5×(15+17.5)/2=162.5cm²다. 축과 밑변의 직각은 그림에 별도로 표시되어 있지 않아 그 해석을 명시하고 공식 답 확인 전 보류한다.", "status": "source-ambiguity-answer-key-pending"}
       ]
+    },
+    {
+      "section": "확인학습 3단원 선대칭도형",
+      "sourcePdfPage": 89,
+      "sourcePrintedPage": 93,
+      "scope": "93쪽 중 67, 70, 72번의 원문과 필기 없는 사본을 대조하고 반사와 각도를 독립 검산했다. 나머지 문항은 별도 검수한다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 67, "classification": "정삼각형을 축에 대칭 이동한 도형의 둘레", "candidate": "54cm (대칭축이 밑변에 수직이라는 해석)", "visual": "정삼각형의 왼쪽 변 중점을 대칭축이 지나고 밑변 왼쪽 꼭짓점에서 축까지 3cm이다.", "reviewNote": "대칭축이 밑변에 수직이면 중점의 수평거리는 밑변의 1/4이므로 한 변은 12cm. 축 오른쪽의 바깥 둘레 6+12+9=27cm를 두 배 하면 54cm다. 축과 밑변의 직각 표시는 없어 해당 해석과 출판사 의도 확인을 보류한다.", "status": "source-ambiguity-answer-key-pending"},
+        {"number": 70, "classification": "이등변삼각형 두 변에 대한 반사와 사각형 넓이", "candidate": "9cm²", "visual": "ㄱㄴ=ㄴㄷ=6cm, ∠ㄱㄴㄷ=30도, ㄱ에서 ㄴㄷ에 내린 수선 ㄱㄹ=3cm. ㄱ과 ㄷ을 각각 ㄴㄷ와 ㄱㄴ에 대칭 이동한다.", "reviewNote": "ㄴ=(0,0), ㄷ=(6,0)으로 놓으면 ㄱ=(3√3,3), 그 상 ㄱ′=(3√3,−3), ㄷ′=(3,3√3)이다. 사각형 ㄱㄷ′ㄱ′ㄷ의 신발끈 공식으로 넓이는 9cm²다. 원본 필기에는 27cm²와 27−18=9가 함께 보이므로 어느 기록이 최종 답인지 단정하지 않는다. 출판사 공식 답은 미확인이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 72, "classification": "두 이등변삼각형의 대칭축을 이용한 각도", "candidate": "92도", "visual": "삼각형 ㄱㄴㄷ은 ㄱㄹ을 축으로 대칭이고 삼각형 ㅂㄱㄴ은 ㅂㅁ을 축으로 대칭이다. ㄴ에서 밑변 ㄴㄷ와 ㄴㅂ 사이 각은 21도이다.", "reviewNote": "큰 삼각형의 밑각을 x라 하면 꼭짓각은 180−2x이다. 작은 이등변삼각형에서 ∠ㅂㄱㄴ=∠ㄱㄴㅂ=x−21이므로 180−2x=x−21, x=67도, 꼭짓각은 46도다. 구하는 ∠ㄴㅂㄷ은 작은 삼각형 ㅂ의 외각이므로 46+46=92도다.", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "sourcePagesDirectlyReviewed": [
