@@ -1,1 +1,19 @@
 .source52-p50e21-diagram{display:block;width:min(100%,34rem);height:auto;margin:1rem auto;color:#182b45}.source52-p50e21-net{fill:none;stroke:#253c58;stroke-width:3}.source52-p50e21-fold{stroke:#60748e;stroke-width:1.7;stroke-dasharray:5 4}.source52-p50e21-shaded{fill:#dce5f0;stroke:none}.source52-p50e21-measure{stroke:#344d69;stroke-width:1.5}.source52-p50e21-label,.source52-p50e21-endpoint{fill:#203653;font:600 15px system-ui,sans-serif}.source52-p50e21-endpoint{font-size:17px}.source52-p50e21-equation{font-weight:700}.source52-p50e21-answer{font-weight:800;color:#0d542d}
+
+/* Shading already conveys the marked faces and the prompt explains the task. */
+.source52-p50e22-cut-label, .source52-p50e23-caption, .source52-p50e23-base text { display: none; }
+@page source52P50ExamplesAnswer { size: A4; margin: 10mm 0; }
+@media print {
+  .answer-page:has(.source52-p50e21-solution, .source52-p50e22-solution, .source52-p50e23-solution, .source52-p50e24-solution) { page: source52P50ExamplesAnswer; }
+  .source52-p50e21-question, .source52-p50e21-solution,
+  .source52-p50e22-question, .source52-p50e22-solution,
+  .source52-p50e23-question, .source52-p50e23-solution,
+  .source52-p50e24-question, .source52-p50e24-solution { font-family: "Noto Serif KR", "Batang", serif; font-weight: 400; }
+  .print-page.print-page--four-up .question-prompt :is(.source52-p50e21-diagram, .source52-p50e22-diagram, .source52-p50e23-diagram) { max-height: 200px; }
+  .print-page--four-up .source52-p50e21-label, .print-page--four-up .source52-p50e21-endpoint { font-size: 23px; }
+  .print-page--four-up .source52-p50e22-label { font-size: 23px; }
+  /* The paper side is already stated in the question; avoid crowding 14 cm. */
+  .print-page--four-up .source52-p50e22-label:nth-of-type(3) { display: none; }
+  .print-page--four-up .source52-p50e23-cell text { font-size: 28px; }
+  .print-page--four-up .source52-p50e23-base text { font-size: 15px; }
+}

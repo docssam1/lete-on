@@ -11,3 +11,14 @@
 .source52-p51m1-solution-net{max-width:470px;margin:.65rem auto}
 @media(max-width:560px){.source52-p51m1-figures{grid-template-columns:1fr;max-width:440px;gap:.25rem}.source52-p51m1-cube{max-width:270px;margin:auto}.source52-p51m1-net{max-width:390px;margin:auto}}
 @media print{.source52-p51m1-question,.source52-p51m1-solution{font-size:10.5pt}.source52-p51m1-figures{grid-template-columns:32% 68%;gap:3mm;max-width:100%;margin:3mm auto}.source52-p51m1-net text{font-size:14px}.source52-p51m1-solution-net{max-width:115mm;margin:2mm auto}}
+
+@page source52P51MissionsAnswer { size: A4; margin: 10mm 0; }
+@media print {
+  .answer-page:has(.source52-p51m1-solution, .source52-p51m2-solution, .source52-p51m3-solution, .source52-p51m4-solution, .source52-p51m5-solution, .source52-p51m6-solution) { page: source52P51MissionsAnswer; }
+  #problemView .source52-p51m3-question, #solutionView .source52-p51m3-solution { font-family: "Noto Serif KR", "Batang", serif; font-weight: 400; }
+  .print-page.print-page--four-up .question-prompt :is(.source52-p51m2-net, .source52-p51m4-net, .source52-p51m5-net) { max-height: 210px; }
+  .print-page--four-up .source52-p51m1-cube text { font-size: 30px; }
+  .print-page--four-up .source52-p51m2-net text { font-size: 22px; }
+  .print-page--four-up .source52-p51m4-net text { font-size: 28px; }
+  .print-page--four-up .source52-p51m5-net text, .print-page--four-up .source52-p51m5-net .side-label { font-size: 27px; }
+}
