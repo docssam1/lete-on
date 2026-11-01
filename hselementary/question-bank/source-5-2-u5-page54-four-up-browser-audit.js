@@ -35,6 +35,7 @@ const ids = ["5-2-u5-e4-exploration-1", ...[1,2,3,4].map(n => `5-2-u5-e4-example
       assert.equal(data.problems.length, 5);
       assert.equal(data.solutions.length, 5);
       assert.deepEqual(await page.locator('#problemView .print-page').evaluateAll(pages => pages.map(page => page.querySelectorAll('.question-item').length)), [4, 1], 'four questions per page, except the final remainder');
+      assert.deepEqual(await page.locator('#solutionView .print-page').evaluateAll(pages => pages.map(page => page.querySelectorAll('.solution-item').length)), [1, 1, 1, 1, 1], 'long illustrated explanations need their own numbered pages');
       assert.equal(await page.locator('#problemView [data-source-answer]').count(), 0, 'answers stay out of problems');
       assert.doesNotMatch(await page.locator('#problemView').innerText(), /도움말|힌트|풀이할 때/);
       const compact = s => s.normalize("NFKC").replace(/\s/g, "");
@@ -49,7 +50,9 @@ const ids = ["5-2-u5-e4-exploration-1", ...[1,2,3,4].map(n => `5-2-u5-e4-example
           await page.locator("#printMenuButton").click();
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
-          await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+          const pdf = await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+          const physicalPages = (pdf.toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length;
+          assert.equal(physicalPages, mode === "problem" ? 2 : 5, `${mode} must fit its numbered A4 pages`);
           await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
         }
       }
