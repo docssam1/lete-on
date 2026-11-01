@@ -61,9 +61,6 @@
     const tenTimesXRange = `${result.lowerTenTimesX} ≤ 10x < ${result.upperTenTimesX}`;
     const candidateList = result.candidates.map(candidate => candidate.x).join(", ");
     const tableRows = result.candidates.map(candidate => `<tr${candidate.tenTimesX === result.answerTenths ? ' class="is-answer"' : ""}><td>${candidate.x}</td><td>${candidate.product}</td><td>${candidate.hundredthsDigit}</td></tr>`).join("");
-    const hint = difficultyOffset < 0
-      ? `<p class="source52-u4-p42-e13-hint">도움말: 두 조건의 공통 범위를 먼저 찾고, 그 안의 한 자리 소수를 하나씩 곱해 보세요.</p>`
-      : "";
     const steps = difficultyOffset < 0
       ? [
           `버림 조건에서 ${pool.truncatedTens} ≤ 10x < ${pool.truncatedTens + 10}이고, 반올림 조건에서 ${pool.roundedTens - 5} ≤ 10x < ${pool.roundedTens + 5}입니다.`,
@@ -81,7 +78,7 @@
             `x∈{${candidateList}}에 각각 ${result.multiplier}를 곱하면 표의 값과 소수 둘째 자리 숫자를 얻습니다.`,
             `조건 ${pool.targetHundredthsDigit}을 만족하는 값은 x=${result.answer} 하나뿐입니다.`
           ];
-    const prompt = `<div class="source52-u4-p42-e13-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>한 자리 소수 x에 10을 곱한 값을 버림하여 십의 자리까지 나타내면 ${pool.truncatedTens}, 반올림하여 십의 자리까지 나타내면 ${pool.roundedTens}입니다. 이 소수 한 자리 수에 ${result.multiplier}를 곱한 값의 소수 둘째 자리 숫자가 ${pool.targetHundredthsDigit}일 때, x를 구하여라.</p>${hint}</div>`;
+    const prompt = `<div class="source52-u4-p42-e13-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>한 자리 소수 x에 10을 곱한 값을 버림하여 십의 자리까지 나타내면 ${pool.truncatedTens}, 반올림하여 십의 자리까지 나타내면 ${pool.roundedTens}입니다. 이 소수 한 자리 수에 ${result.multiplier}를 곱한 값의 소수 둘째 자리 숫자가 ${pool.targetHundredthsDigit}일 때, x를 구하여라.</p></div>`;
     const solution = `<div class="source52-u4-p42-e13-solution" data-source-answer="${id}" data-pool-index="${poolIndex}"><ol>${steps.map(step => `<li>${esc(step)}</li>`).join("")}</ol><table class="source52-u4-p42-e13-candidate-table"><thead><tr><th>x</th><th>${result.multiplier}x</th><th>소수 둘째 자리 숫자</th></tr></thead><tbody>${tableRows}</tbody></table><p class="source52-u4-p42-e13-answer"><strong>답: ${result.answer}</strong></p></div>`;
     return Object.freeze({
       prompt, answer: result.answer, solution, sourceItemId: id, generator: key,
@@ -90,7 +87,7 @@
       verifiedVariantId: `${id}:v${poolIndex}`, variantProvenance: "synthetic-source-structure",
       difficultyOffset, difficultyLevel: difficultyOffset + 1, difficultyRank: difficultyOffset + 1,
       sourceDifficultyRank: 1,
-      difficultyDesign: ["guided-rounding-intersection", "candidate-enumeration", "exact-decimal-digit-filter"][difficultyOffset + 1],
+      difficultyDesign: "difficulty-difference-unverified",
       reasoningSteps: 3, sourceStepCount: 1, difficultyStepDelta: difficultyOffset,
       sourceStructurePreserved: true, sourcePdfPage: 38, sourcePrintedPage: 42,
       questionModel: { truncatedTens: pool.truncatedTens, roundedTens: pool.roundedTens, multiplier: result.multiplier, targetHundredthsDigit: pool.targetHundredthsDigit },

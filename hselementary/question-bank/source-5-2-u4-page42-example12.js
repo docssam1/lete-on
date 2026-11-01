@@ -44,15 +44,12 @@
     if (![-1, 0, 1].includes(difficultyOffset)) throw new RangeError("난이도 오프셋은 -1, 0, 1이어야 합니다.");
     const pool = pools[poolIndex];
     const result = calculate(pool);
-    const hint = difficultyOffset < 0
-      ? "도움말: 곱한 수에 소수점을 찍지 않으면 원래 값의 100배가 됩니다. 잘못 쓴 값과 원래 값의 차를 식으로 나타내 보세요."
-      : "";
     const explanation = difficultyOffset < 0
       ? [`${pool.decimal}에 자연수 n을 곱한 원래 답은 ${pool.decimal}n입니다. 소수점을 없앤 값은 100배인 ${pool.hundredths}n입니다.`, `두 값의 차는 ${pool.hundredths}n − ${pool.decimal}n = ${result.coefficient}n입니다.`, `${result.coefficient}n = ${comma(pool.difference)}이므로 n = ${comma(pool.difference)} ÷ ${result.coefficient} = ${pool.naturalNumber}입니다.`]
       : difficultyOffset === 0
         ? [`곱한 자연수를 n이라 하면 원래 곱은 ${pool.decimal}n이고, 소수점을 없앤 값은 100배인 ${pool.hundredths}n입니다.`, `차가 ${comma(pool.difference)}이므로 ${pool.hundredths}n − ${pool.decimal}n = ${result.coefficient}n = ${comma(pool.difference)}입니다.`, `n = ${comma(pool.difference)} ÷ ${result.coefficient} = ${pool.naturalNumber}입니다. 검산하면 ${pool.decimal}×${pool.naturalNumber}=${result.trueProductFixed}, 소수점을 없앤 값은 ${comma(result.omittedProduct)}이며 차는 ${comma(pool.difference)}입니다.`]
         : [`소수점을 없앤 값은 원래 곱의 100배이므로 차는 (100−1)×${pool.decimal}×n = 99×${pool.decimal}×n입니다.`, `99×${pool.decimal} = ${result.coefficient}이므로 ${result.coefficient}n = ${comma(pool.difference)}입니다.`, `n = ${comma(pool.difference)} ÷ ${result.coefficient} = ${pool.naturalNumber}. 검산: 원래 곱 ${result.trueProductFixed}, 소수점을 없앤 값 ${comma(result.omittedProduct)}, 차 ${comma(pool.difference)}입니다.`];
-    const prompt = `<div class="source52-u4-p42-e12-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>${esc(pool.decimal)}에 어떤 자연수를 곱한 후 그 답에 소수점을 안 찍어 정답보다 ${comma(pool.difference)}만큼 크게 되었다. 곱한 자연수는 얼마인가?</p><p>곱은 소수 둘째 자리까지 쓰려고 했습니다.</p>${hint ? `<p class="source52-u4-p42-e12-hint">${esc(hint)}</p>` : ""}</div>`;
+    const prompt = `<div class="source52-u4-p42-e12-question" data-source-item-id="${id}" data-pool-index="${poolIndex}" data-difficulty-offset="${difficultyOffset}"><p>${esc(pool.decimal)}에 어떤 자연수를 곱한 후 그 답에 소수점을 안 찍어 정답보다 ${comma(pool.difference)}만큼 크게 되었다. 곱한 자연수는 얼마인가?</p><p>곱은 소수 둘째 자리까지 쓰려고 했습니다.</p></div>`;
     const solution = `<div class="source52-u4-p42-e12-solution" data-source-answer="${id}" data-pool-index="${poolIndex}"><ol>${explanation.map(step => `<li>${esc(step)}</li>`).join("")}</ol><p class="source52-u4-p42-e12-answer"><strong>답: ${pool.naturalNumber}</strong></p></div>`;
     return Object.freeze({
       prompt, answer: String(pool.naturalNumber), solution, sourceItemId: id, generator: key,
@@ -61,7 +58,7 @@
       verifiedVariantId: `${id}:v${poolIndex}`, variantProvenance: "synthetic-source-structure",
       difficultyOffset, difficultyLevel: difficultyOffset + 1, difficultyRank: difficultyOffset + 1,
       sourceDifficultyRank: 1,
-      difficultyDesign: ["guided-decimal-point-place-value", "difference-equation", "generalized-times-99-equation"][difficultyOffset + 1],
+      difficultyDesign: "difficulty-difference-unverified",
       reasoningSteps: 3, sourceStepCount: 1, difficultyStepDelta: difficultyOffset,
       sourceStructurePreserved: true, sourcePdfPage: 38, sourcePrintedPage: 42,
       questionModel: { decimal: pool.decimal, difference: pool.difference, unknown: "natural-number", operation: "decimal-point-omission" },
