@@ -147,8 +147,13 @@ body.sd :is(button, a):focus-visible { outline: 3px solid var(--v); outline-offs
   .sd-slide-head { flex-wrap: wrap; gap: 2px 10px; padding: 12px 16px 8px; }
   .sd-slide-head h2 { flex: 1 0 100%; font-size: 18px; white-space: normal; }
   .sd-slide-body { padding: 16px; }
-  .sd-plan { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
-  .sd-start { min-width: 0; width: 100%; }
+  /* 휴대폰 표지: 공부 순서는 한 줄짜리 목록으로(카드 두 줄이 화면 아래로 넘쳤다), 「출발하기」는 아래 단추 하나로 */
+  .sd-plan { grid-template-columns: minmax(0, 1fr); gap: 6px; width: 100%; margin: 8px 0 0; }
+  .sd-plan li { grid-template-columns: 30px minmax(0, 1fr) auto; align-items: center; justify-items: start; gap: 10px; padding: 8px 12px; border-radius: 14px; box-shadow: 0 2px 0 var(--line); text-align: left; }
+  .sd-plan b { width: 28px; height: 28px; font-size: 13px; }
+  .sd-plan span { font-size: 15px; }
+  .sd-cover h1 { font-size: 28px; }
+  .sd-start { display: none; }
   .sd-numbers { grid-template-columns: repeat(auto-fill, 56px); gap: 9px; }
   .sd-number { width: 56px; height: 56px; font-size: 19px; }
   .sd-bar { flex-wrap: wrap; gap: 6px 8px; padding: 4px 12px calc(8px + env(safe-area-inset-bottom)); }
@@ -325,4 +330,12 @@ body.has-presenter .sd-guide-img { visibility: hidden; }
 .sd-chalk-dots i { width: 12px; height: 12px; border: 2px solid rgba(244,241,230,0.7); border-radius: 50%; }
 .sd-chalk-dots i.done { background: rgba(244,241,230,0.55); }
 .sd-chalk-dots i.on { border-color: #ffd9a0; background: #ffd9a0; }
+@media (max-width: 900px) and (orientation: portrait) {
+  .sd-work.has-chalk .sd-chalk { margin: 8px 10px 6px; padding: 8px 14px 10px; border-width: 6px; }
+  .sd-work.has-chalk .sd-chalk h3, .sd-work.has-chalk .sd-chalk-date, .sd-work.has-chalk .sd-chalk-steps { display: none; }
+  .sd-work.has-chalk .sd-chalk-now { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; }
+  .sd-work.has-chalk .sd-chalk-count { margin: 0; font-size: 18px; }
+  .sd-work.has-chalk .sd-chalk-task { margin: 0; font-size: 22px; }
+  .sd-work.has-chalk .sd-chalk-dots { flex-basis: 100%; margin: 2px 0 0; }
+}
 @media (max-width: 900px) { .sd-chalk-task { font-size: 24px; } .sd-chalk-count { font-size: 21px; } .sd-chalk ol.sd-chalk-steps { font-size: 17px; } }

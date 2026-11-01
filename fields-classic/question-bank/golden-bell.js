@@ -2256,7 +2256,7 @@ function embedSubItems() {
 }
 // 덱 칸에 꼭 맞게 — 크면 줄이고, 작으면 키운다(원장 2026-11-01 「태블릿이나 PC에서 공부할 거야, 화면에 가득 차야지」).
 // 줄이거나 키우면 글줄이 바뀌어 높이가 다시 변하므로 넘치지 않는 가장 큰 배율을 반으로 나누어 찾는다.
-const FIT_MIN = 0.55, FIT_MAX = 1.7;
+const FIT_MIN = 0.42, FIT_MAX = 1.7;   // 휴대폰 세로에서는 게임이 0.55로도 넘쳤다
 function fitEmbed() {
   if (!embed.on && !classMode) return;
   const content = $("lessonContent");

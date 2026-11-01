@@ -1708,7 +1708,7 @@ body.as-embed{background:#fff}
 .as-embed .choice-hint{order:2;margin:0;color:#6b6253;font-size:19px;font-weight:700}
 .as-embed .choice-hint.is-picked{color:#1f6b4a;font-size:22px;font-weight:800}
 /* 세로로 긴 화면(태블릿 세로): 그림 위, 문제 아래 */
-@media(orientation:portrait){
+@media(orientation:portrait),(max-width:560px){
   .as-embed .question-card.is-current.has-figure{grid-template-columns:minmax(0,1fr)!important;gap:18px}
   .as-embed .oneup-side .question-prompt{font-size:22px}
 }
