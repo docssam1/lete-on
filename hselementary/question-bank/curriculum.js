@@ -2182,6 +2182,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantTarget:4, verifiedVariantCount:4,
         answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원문과 다른 치수의 연습 네 문항을 실제 배치와 부피 상한으로 검산했습니다."});
     }
+    const gridPracticeId = "5-2-u5-e1-mission-1-grid-synthetic";
+    if (!source52CuboidProperties.types.some(type => type.id === gridPracticeId)) {
+      const name = "격자 직육면체에서 가능한 직육면체 세기 · 연습";
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(group => group.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidProperties.types.push({id:gridPracticeId, number:source52CuboidProperties.types.length+1, typeNumber,
+        name, label:name, difficultyBand:0, sourceItemId:gridPracticeId, sourceParentItemId:"5-2-u5-e1-mission-1",
+        sourceItemLabel:"Mission 1 유사문항", sourceSection:"mission", sourceTier:"advanced", sourcePdfPage:45, sourcePrintedPage:49,
+        sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52U5CuboidGridPractice",
+        generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantTarget:4, verifiedVariantCount:4,
+        answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"전체 포함을 명시한 다른 크기의 격자 네 문항을 경계면 선택과 전수 세기로 검산했습니다."});
+    }
     const practiceId = "5-2-u5-e1-example-1-4-synthetic";
     if (!source52CuboidProperties.types.some(type => type.id === practiceId)) {
       const practiceName = "세 방향으로 묶은 끈과 변의 관계 · 연습";
