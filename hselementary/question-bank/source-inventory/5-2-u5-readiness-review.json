@@ -1169,13 +1169,14 @@
       "candidateAnswerCount": null,
       "singleAnswer": null,
       "singleAnswerCheck": "원문 중점과 전개도에서 면의 연결을 각각 대조했습니다. 절단된 변에 중점을 복사하는 공개용 답 그림과 공식 답안은 미대조입니다.",
-      "sourceAuditUpdate": "2026-11-02 원본 PDF 48쪽을 확대해 여섯 중점과 원래 전개도를 재확인했습니다. 여섯 면의 12개 입체 모서리, 종이에서 맞닿은 다섯 변, 절단된 변의 중점 복사와 여섯 선분의 닫힌 경로를 독립 좌표 모델로 검산했습니다. 다른 판본의 손그림은 참고 자료이며 출판사 공식 답안이 아닙니다. 공개용 문제·답 그림과 공식 답안 확인 전 잠금을 유지합니다.",
+      "sourceAuditUpdate": "2026-11-02 원본 PDF 48쪽을 확대해 여섯 중점과 원래 전개도를 재확인했습니다. 여섯 면의 12개 입체 모서리, 종이에서 맞닿은 다섯 변, 절단된 변의 중점 복사와 여섯 선분의 닫힌 경로를 독립 좌표 모델로 검산했습니다. 다른 판본의 손그림은 참고 자료이며 출판사 공식 답안이 아닙니다. 원본 입체와 빈 전개도, 여섯 선분을 표시한 답 그림을 제작해 대조했습니다. 출판사 공식 답안은 미확인입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent-construction",
-      "visualCheckStatus": "confirmed-source-net-needs-coordinate-model",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "전개도에서 절단된 변의 중점 복사와 선분을 포함한 공개용 그림 및 공식 답안 확인 전 원문 잠금을 유지합니다."
+      "visualCheckStatus": "confirmed-source-cube-and-net-screen-a4",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "releaseEvidence": "원본 입체·빈 전개도 및 답 그림의 여섯 선분을 대조했습니다. 자동 채점 없이 직접 그리는 한 문항으로 연결했습니다. 출판사 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u5-e3-example-3-4",

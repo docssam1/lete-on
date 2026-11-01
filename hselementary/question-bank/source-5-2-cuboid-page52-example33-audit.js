@@ -1,0 +1,13 @@
+'use strict';
+const assert=require('node:assert/strict');
+global.window={};require('./source-inventory-4-1.js');require('./source-inventory-grade6.js');require('./curriculum.js');require('./generators.js');
+const item=require('./source-5-2-cuboid-page52-example33.js');
+const type=window.HSE_CURRICULUM.semesters.flatMap(s=>s.units.flatMap(u=>u.subunits.flatMap(g=>g.types))).find(t=>t.id===item.sourceItemId);
+assert(type&&type.sourceVerified&&!type.reviewLocked);assert.equal(type.publisherKeyVerified,false);
+assert.deepEqual(item.segments,[[[3,0],[4,1]],[[4,3],[3,4]],[[1,4],[0,3]],[[5,2],[4,3]],[[8,3],[7,2]],[[3,4],[2,5]]]);
+const q=window.HSE_GENERATORS.generate(type,0,0,0,0);
+assert.equal(q.automaticGrading,false);assert.equal(q.resultContract,'constructed-figure');assert.equal(q.publisherKeyVerified,false);
+assert.equal((q.answerVisual.match(/<line /g)||[]).length,6);assert.doesNotMatch(q.prompt,/<line /);
+assert.match(q.solution,/잘려 떨어진 모서리/);assert.equal(window.HSE_GENERATORS.generate(type,0,0,0,1),null);
+assert.equal(window.HSE_GENERATORS.generate({...type,reviewLocked:true},0,0,0,0),null);
+console.log('PASS: blank source net, six independently checked answer segments, manual assessment, and locked-variant guards.');

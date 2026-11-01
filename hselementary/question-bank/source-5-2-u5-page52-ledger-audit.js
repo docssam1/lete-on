@@ -10,14 +10,15 @@ for (const id of ["exploration", "example-1", "example-2", "example-3", "example
   const item = lookup(id);
   assert.equal(item.pdfPage, 48);
   assert.equal(item.printedPage, 52);
-  assert.equal(item.implementationStatus, id === "example-4" ? "verified-local" : "review-locked");
-  assert.equal(item.sourceVerified, id === "example-4");
+  assert.equal(item.implementationStatus, ["example-3", "example-4"].includes(id) ? "verified-local" : "review-locked");
+  assert.equal(item.sourceVerified, ["example-3", "example-4"].includes(id));
   if (id === "example-4") assert.equal(item.runtimeTypeId, "5-2-u5-e3-example-3-4");
-  if (id !== "example-4") assert.equal(item.answerContract, "candidate: drawing");
+  if (!["example-3", "example-4"].includes(id)) assert.equal(item.answerContract, "candidate: drawing");
+  if (id === "example-3") assert.equal(item.runtimeTypeId, "5-2-u5-e3-example-3-3");
 }
 for (let n = 1; n <= 6; n++) {
   const item = lookup(`mission-${n}`);
   assert.equal(item.pdfPage, 49);
   assert.equal(item.printedPage, 53);
 }
-console.log("PASS: 52–53 source locators, verified example 3-4 and remaining source locks");
+console.log("PASS: 52–53 source locators, verified examples 3-3 and 3-4 and remaining source locks");
