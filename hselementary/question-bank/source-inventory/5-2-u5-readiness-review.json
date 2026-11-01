@@ -621,7 +621,7 @@
       "implementationStatus": "verified-local",
       "publicDecision": "public",
       "lockReason": "",
-      "sourceAuditUpdate": "두 방향을 세 부분으로 나눈 그림과 6cm 변을 대조했습니다. 등간격 가정 없이 조각의 각 방향 길이 합으로 전체 360cm를 구합니다. 출판사 키 미확인.",
+      "sourceAuditUpdate": "두 방향을 세 부분으로 나눈 그림과 6cm 변을 대조했습니다. 등간격 가정 없이 조각의 각 방향 길이 합으로 전체 360cm를 구합니다. 출판사 키 미확인. 2026-11-02: 원본 그림에 없는 분할 설명을 제거하고 6cm 치수를 인쇄에서 읽기 좋게 조정했습니다. 원문·정답·PC/모바일·A4 문제와 풀이를 재검수했습니다.",
       "releaseStatus": "runtime-enabled-in-current-release",
       "publisherKeyVerified": false,
       "releaseEvidence": "원문 및 독립 계산, 화면·A4 검수를 완료한 고정 문항을 현재 main 기준 문제은행에 연결했습니다. 공식 출판사 답안은 미확인입니다."
