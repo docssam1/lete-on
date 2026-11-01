@@ -2,3 +2,14 @@
 .source52-p60e2-table caption { font-weight: 700; margin-bottom: .4rem; }
 .source52-p60e2-table th, .source52-p60e2-table td { border: 1px solid currentColor; padding: .35rem .05rem; font-size: clamp(11px, 2.8vw, 16px); white-space: nowrap; }
 .source52-p60e2-table th:first-child { width: 18%; }
+
+@page source52P60AverageAnswer { size: A4; margin: 10mm 0; }
+@media print {
+  .print-page--four-up .source52-p60e2-table th:first-child { font-size: 10pt; font-weight: 400; }
+  #problemView :is(.source52-p60e2-question, .source52-p60ex21-question, .source52-p60ex22-question, .source52-p60ex24-question),
+  #solutionView [data-source-answer^="5-2-u6-e2-"] { font-family: "Noto Serif KR", "Batang", serif; font-weight: 400; }
+  .answer-page:has([data-source-answer^="5-2-u6-e2-"]) { page: source52P60AverageAnswer; }
+  .answer-page:has([data-source-answer^="5-2-u6-e2-"]) .solution-list { gap: 5px; margin-top: 8px; }
+  .answer-page:has([data-source-answer^="5-2-u6-e2-"]) .solution-item p { padding: 4px 9px; font-size: 10pt; line-height: 1.35; }
+  .answer-page:has([data-source-answer^="5-2-u6-e2-"]) .solution-item header > :is(span, strong) { padding: 5px 9px; }
+}
