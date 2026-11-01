@@ -7,8 +7,8 @@ from pathlib import Path
 record=json.loads((Path(__file__).parent/'source-inventory/5-2-u3-e1-e4-readiness-review.json').read_text())
 r=next(x for x in record['additionalSourceReviews'] if x['sourcePrintedPage']==89)
 assert r['sourcePdfPage']==85 and r['runtimeConnection']=='not-connected' and not r['publisherAnswerVerified']
-assert [x['number'] for x in r['items']]==[33,39,40]
-assert r['items'][1]['status']=='source-ambiguity-answer-key-pending'
+assert [x['number'] for x in r['items']]==list(range(33,41))
+assert next(x for x in r['items'] if x['number']==39)['status']=='source-ambiguity-answer-key-pending'
 # 60° rotation with aligned image endpoints forces original height=8√3.
 h=8*math.sqrt(3)
 assert abs(h*math.cos(math.pi/3)-8*math.sin(math.pi/3))<1e-12
