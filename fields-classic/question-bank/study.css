@@ -302,3 +302,14 @@ body.has-presenter .sd-guide-img { visibility: hidden; }
 /* 손그림 판서 느낌: 줄 없는 종이 · 초록 점선 틀(제목줄은 원래대로 — 원장 2026-10-29 「참고하라는 거지」) */
 .look-sketch .cb-paper { background: #fbfaf6; border-color: #e6dfcf; }
 .look-sketch .cb-paper::before { inset: 12px; background: none; border: 2px dashed #3f8f61; border-radius: 14px; }
+/* 오늘의 과제 칠판 — 지금 푸는 한 문제(study.js chalkTask) */
+.sd-chalk-now { display: grid; gap: 8px; margin-top: 14px; }
+.sd-chalk-count { margin: 0; color: #ffd9a0; font-size: 26px; line-height: 1.1; }
+.sd-chalk-count small { color: rgba(244,241,230,0.7); font-size: 18px; }
+.sd-chalk-task { margin: 0; padding: 6px 0 10px; border-bottom: 2px dashed rgba(244,241,230,0.35); color: #fff; font-size: 30px; line-height: 1.25; }
+.sd-chalk ol.sd-chalk-steps { margin: 4px 0 0; padding-left: 1.3em; font-size: 20px; line-height: 1.4; color: rgba(244,241,230,0.92); }
+.sd-chalk-dots { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 0; }
+.sd-chalk-dots i { width: 12px; height: 12px; border: 2px solid rgba(244,241,230,0.7); border-radius: 50%; }
+.sd-chalk-dots i.done { background: rgba(244,241,230,0.55); }
+.sd-chalk-dots i.on { border-color: #ffd9a0; background: #ffd9a0; }
+@media (max-width: 900px) { .sd-chalk-task { font-size: 24px; } .sd-chalk-count { font-size: 21px; } .sd-chalk ol.sd-chalk-steps { font-size: 17px; } }

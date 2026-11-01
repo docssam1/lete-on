@@ -3528,6 +3528,8 @@ function layoutOneUp() {
     <button type="button" class="oneup-next" data-oneup="next" ${oneUpAt === steps - 1 ? "disabled" : ""}>${testMode && oneUpAt === cards.length - 1 ? "채점하러 가기 ›" : "다음 문제 ›"}</button>`;
   cards.forEach((card, i) => card.classList.toggle("is-current", i === oneUpAt));
   document.body.classList.toggle("oneup-panel", atPanel);
+  // 덱(오늘의 과제 칠판)이 지금 보이는 문제와 같은 번호·유형을 적도록 알린다
+  if (parent !== window) parent.postMessage({ type: "fc-embed", event: "oneup", index: oneUpAt, total: cards.length, label: state.questions[oneUpAt]?.type?.label || "" }, location.origin);
   requestAnimationFrame(fitOneUp);
 }
 function fitOneUp() {

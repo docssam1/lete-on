@@ -96,15 +96,19 @@ function sheetUrl(slide, { print = false } = {}) {
   return link("index.html", { ...base, ...entries, ...(print ? { print: "1" } : { embed: "1" }) });
 }
 // 오늘의 과제: 칠판에 손글씨로 할 일을 적어 준다(원장 2026-10-29 「과제는 오늘의 과제 하고 칠판 글씨처럼 써줘야지」)
-function chalkMarkup() {
+// 한 번에 한 문제씩(원장 2026-10-31 「지금 과제와 내용이 안 맞아 … 하나씩 줘야겠어」): 옆 학습지가 보이는 문제와 같은 번호·유형만 적고,
+// 학습지에서 문제를 넘기면(fc-embed oneup) 칠판도 따라 바뀐다. 목록으로 다 적으면 번호가 학습지와 한 칸씩 어긋났다.
+function chalkTask(at = 0, label = "") {
   const types = todayTypes();
-  const items = [
-    `과제 학습지 ${types.length}문제를 인쇄해요`,
-    ...types.slice(0, 4).map((typeId) => `${typeById(typeId)?.label || "같은 유형"} 문제 풀기`),
-    ...(types.length > 4 ? [`그 밖의 ${types.length - 4}가지 유형도 풀기`] : []),
-    "다 풀면 화면에서 답과 풀이를 확인해요"
-  ];
-  return `<div class="sd-chalk" role="note"><h3>오늘의 과제</h3><p class="sd-chalk-date">${esc(unit.label)} · ${part}차시</p><ol>${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ol></div>`;
+  const total = types.length;
+  const name = label || typeById(types[at])?.label || "같은 유형";
+  return `<p class="sd-chalk-count">${at + 1}번 문제 <small>/ ${total}문제</small></p>
+    <p class="sd-chalk-task">${esc(name)}</p>
+    <ol class="sd-chalk-steps"><li>옆 학습지 ${at + 1}번을 풀어요</li><li>다 풀면 「답 확인」으로 답과 풀이를 봐요</li><li>${at + 1 < total ? "「다음 문제 ›」로 넘어가요" : "마지막 문제예요. 다 했으면 「다음 →」"}</li></ol>
+    <p class="sd-chalk-dots" aria-hidden="true">${types.map((_, k) => `<i class="${k === at ? "on" : k < at ? "done" : ""}"></i>`).join("")}</p>`;
+}
+function chalkMarkup() {
+  return `<div class="sd-chalk" role="note" aria-live="polite"><h3>오늘의 과제</h3><p class="sd-chalk-date">${esc(unit.label)} · ${part}차시 · 인쇄해서 집에서 풀어도 돼요</p><div class="sd-chalk-now" id="chalkNow">${chalkTask(0)}</div></div>`;
 }
 function workMarkup(slide) {
   const help = slide.kind === "board"
@@ -255,6 +259,10 @@ window.addEventListener("message", (event) => {
   if (event.source === $("sheetFrame").contentWindow) return;
   // 단원 평가를 채점했다 → 독쌤이 결과와 약점 유형을 말해 준다
   if (event.source === document.getElementById("workFrame")?.contentWindow) {
+    if (event.data.event === "oneup" && slides[index]?.kind === "homework" && $("chalkNow")) {
+      $("chalkNow").innerHTML = chalkTask(Math.min(event.data.index, todayTypes().length - 1), event.data.label);
+      return;
+    }
     if (event.data.event === "test-result" && event.data.marked === event.data.total) {
       const weak = event.data.weak || [];
       const line = testResultLine(event.data.total, weak.length ? Math.min(event.data.right, event.data.total - 1) : event.data.total);
