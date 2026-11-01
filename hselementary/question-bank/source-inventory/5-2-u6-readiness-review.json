@@ -70,6 +70,25 @@
         {"number": 23, "classification": "두 평균과 차를 이용한 일별 쪽수", "candidate": "금요일 73쪽, 토요일 89쪽, 일요일 96쪽", "reviewNote": "금·토 합은 81×2=162쪽, 3일 합은 86×3=258쪽이다. 일요일은 96쪽, 금요일은 96−23=73쪽, 토요일은 162−73=89쪽이다.", "status": "source-reviewed-answer-key-pending"},
         {"number": 24, "classification": "역 사이 요금표와 인접 구간 평균", "candidate": "인접 구간 요금이 합산된다고 보면 ㄱ 2000원, ㄴ 2000원, ㄷ 3500원, 평균 2300원", "reviewNote": "요금이 구간별로 합산된다고 가정하면 가−나=3500−1500=2000원, 다−라=6000−1500−2500=2000원, 마−바=6000−2500=3500원이다. 다섯 인접 구간의 평균은 (2000+1500+2000+2500+3500)÷5=2300원이다. 원문은 각 구간 요금이 합산된다는 규칙을 명시하지 않으므로 실제 요금표처럼 비합산 요금을 허용하는 해석에서는 이 값들이 유일하게 정해지지 않는다. 조건 및 공식 답안을 확인하기 전 확정하지 않는다.", "status": "source-ambiguity-answer-key-pending"}
       ]
+    },
+    {
+      "section": "확인학습 6단원 평균의 활용",
+      "sourcePdfPage": 113,
+      "alternateSourcePdfPage": 114,
+      "sourcePrintedPage": 119,
+      "scope": "119쪽 25~32번의 원문과 필기 없는 사본을 대조했다. 31번은 선발 기준이 명시되지 않아 두 평균의 대소 관계를 별도로 검토했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 25, "classification": "점수 정정 전후의 평균 차로 인원 구하기", "candidate": "50명", "reviewNote": "정정으로 총점은 98−89=9점 늘고 평균은 87.44−87.26=0.18점 늘었다. 평균들이 정확한 값이면 인원은 9÷0.18=50명이다. 원문은 반올림을 지시하지 않는다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 26, "classification": "사흘 평균에서 빠진 날의 쪽수 구하기", "candidate": "42쪽", "reviewNote": "3일의 합은 40×3=120쪽이고 첫 이틀의 합은 37+41=78쪽이므로 셋째 날은 42쪽이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 27, "classification": "인원과 작업 시간을 반영한 시간당 평균 작업량", "candidate": "90m²", "reviewNote": "전체 작업 시간은 12×2+7×3=45인·시간이다. 전체 수확 면적 4050m²를 45로 나누면 한 사람의 1시간당 평균은 90m²다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 28, "classification": "새 기록 추가 전후의 평균으로 시도 횟수 구하기", "candidate": "5번", "reviewNote": "새 기록 전의 횟수를 n이라 하면 37n+57=41(n+1)이다. n=4이므로 마지막 한 번까지 포함한 전체 횟수는 5번이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 29, "classification": "등간격 세 수의 평균", "candidate": "A 58, B 76, C 94", "reviewNote": "두 이웃한 수의 차가 각각 18이므로 가운데 수 B가 평균 76과 같다. 따라서 A=76−18=58, C=76+18=94다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 30, "classification": "세 물건을 제외하기 전후의 평균으로 개수 구하기", "candidate": "8개", "reviewNote": "처음 사과 수를 n이라 하면 먹은 세 개의 합은 331+359+361=1051g이다. 357n−1051=361(n−3)을 풀면 n=8이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 31, "classification": "선발된 집단과 탈락한 집단의 평균", "candidate": "점수순 선발이면 83점; 선발 기준 미명시로 63점도 가능", "reviewNote": "뽑힌 30명의 평균을 x, 탈락한 150명의 평균을 y라 하면 30x+150y=180×73이고 |x−y|=12다. x=y+12이면 x=83, y=71이지만 x=y−12이면 x=63, y=75도 조건을 만족한다. 원문은 높은 점수 순으로 선발했다는 조건을 명시하지 않으므로 이를 확인하기 전 단일 답을 확정하지 않는다.", "status": "source-ambiguity-answer-key-pending"},
+        {"number": 32, "classification": "겹치는 과목 평균으로 특정 과목 점수 구하기", "candidate": "수학 98점", "reviewNote": "다섯 과목 합은 453점, 국어·수학·과학 합은 276점, 도덕·사회·과학 합은 267점이다. 앞 두 합을 전체 합과 비교하면 과학은 90점, 도덕+사회는 177점이다. 도덕+국어=183, 국어+사회=170이므로 도덕−사회=13, 도덕 95점, 사회 82점, 국어 88점이다. 수학은 276−88−90=98점이다.", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "verification": {
