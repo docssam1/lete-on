@@ -17,6 +17,26 @@
     "protection": "원본 PDF, 답안 자료, 로컬 원본 경로는 이 장부 밖에 보존합니다. 이 파일은 비공개 검수 장부이며 공개·배포 승인 파일이 아닙니다.",
     "releasePolicy": "원문 항목은 공개 보호 기준에 따라 locked를 유지합니다. 별도 수치의 검산된 유사문항 연결은 원문 공개 결정과 구분합니다."
   },
+  "additionalSourceReviews": [
+    {
+      "section": "확인학습 2단원 분수와 자연수의 곱셈",
+      "sourcePdfPage": 71,
+      "sourcePrintedPage": 75,
+      "scope": "문항 1~8은 기존 개념탐구·예제·Mission 목록과 별도이며 원문과 필기 없는 사본을 대조해 유형과 독립 계산 후보를 기록한다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 1, "classification": "진분수·대분수와 자연수의 곱 크기 비교", "candidate": "ㄷ, ㄴ, ㄱ, ㄹ", "status": "source-reviewed-answer-key-pending"},
+        {"number": 2, "classification": "정다각형 둘레의 분수 곱과 합", "candidate": "8m", "status": "source-reviewed-answer-key-pending"},
+        {"number": 3, "classification": "직사각형 일부의 가로 길이와 색칠 넓이", "candidate": "16과 5/7cm²", "visual": "가로 5와 3/4cm, 세로 4cm의 직사각형에서 왼쪽 가로 1과 4/7cm를 제외하고 오른쪽을 색칠", "reviewNote": "색칠한 가로 길이는 5와 3/4에서 1과 4/7을 뺀 값이며 높이는 4cm다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 4, "classification": "기준 요금의 대분수 배와 인원수", "candidate": "33000원", "status": "source-reviewed-answer-key-pending"},
+        {"number": 5, "classification": "정사각형 두 변을 각각 분수배한 직사각형 넓이", "candidate": "180cm²", "status": "source-reviewed-answer-key-pending"},
+        {"number": 6, "classification": "시간 변환과 일정한 속력의 거리", "candidate": "203km", "status": "source-reviewed-answer-key-pending"},
+        {"number": 7, "classification": "자연수의 분수배를 구한 뒤 대분수배", "candidate": "58", "status": "source-reviewed-answer-key-pending"},
+        {"number": 8, "classification": "기준 몸무게의 연속된 분수배", "candidate": "36kg", "status": "source-reviewed-answer-key-pending"}
+      ]
+    }
+  ],
   "normalization": {
     "legacyBlockCount": 44,
     "atomicProblemCount": 55,
