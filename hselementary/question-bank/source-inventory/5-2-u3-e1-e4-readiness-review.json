@@ -225,6 +225,20 @@
         {"number": 93, "classification": "문자가 든 정사각형 배열의 점대칭 완성", "candidate": "정사각형 배열과 내부 문자 모양을 중심 ㅇ에서 180도 회전한 작도형", "visual": "가로로 놓인 네 칸과 왼쪽 끝 위의 한 칸에 도형 문자가 있고 ㅇ은 오른쪽 끝 변의 가운데에 있다.", "reviewNote": "네 칸을 중심의 오른쪽에 대응시키고 위에 있던 한 칸은 반대편 맨 끝 아래에 둔다. 각 칸의 문자도 글자 자체를 180도 돌려야 한다. 실제 출력 그림은 추가 검증한다.", "status": "source-reviewed-drawing-pending"},
         {"number": 94, "classification": "육각형 배열과 점의 점대칭 완성", "candidate": "육각형 다섯 개와 내부 점들을 중심 ㅇ에서 180도 회전한 작도형", "visual": "육각형 다섯 개가 두 줄로 놓이고 그중 두 칸에 각각 점 2개와 점 1개가 있으며 중심 ㅇ은 오른쪽 끝 육각형의 오른쪽 변에 있다.", "reviewNote": "육각형 외곽뿐 아니라 각 점의 위치도 중심 ㅇ에 대해 반대 방향으로 같은 거리만큼 옮긴다. 공유 변과 점 위치가 맞는 실제 답 그림의 검증은 보류한다.", "status": "source-reviewed-drawing-pending"}
       ]
+    },
+    {
+      "section": "확인학습 3단원 점대칭도형",
+      "sourcePdfPage": 93,
+      "sourcePrintedPage": 97,
+      "scope": "97쪽 중 96, 99, 100, 101번의 원문 및 필기 없는 사본을 대조하고 대칭과 교점을 독립 검산했다. 작도형 95, 97번 및 98번은 별도 검수한다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 96, "classification": "선대칭과 점대칭을 모두 만족하는 도형", "candidate": "ㄷ, ㅁ, ㅂ, ㅇ, ㅊ", "reviewNote": "정사각형, 정육각형, 직사각형, 원, 마름모가 모두 두 성질을 갖는다. 일반적인 평행사변형은 점대칭이지만 반드시 선대칭은 아니고, 정삼각형과 정오각형은 점대칭이 아니다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 99, "classification": "점대칭으로 완성한 도형의 둘레", "candidate": "56cm", "visual": "밑변 12cm, 높이 9cm, 빗변 15cm인 직각삼각형의 밑변 위에 대칭 중심 ㅇ이 있으며 왼쪽 끝에서 중심까지 4cm이다.", "reviewNote": "두 삼각형의 둘레 합은 2×(12+9+15)=72cm다. 밑변의 겹치는 부분은 중심에서 양쪽 4cm씩 총 8cm이며 전체 도형의 내부 선이므로 두 번 빼면 72−16=56cm다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 100, "classification": "점대칭 도형의 수직인 선분과 각의 합", "candidate": "180도", "visual": "점 ㅇ 중심의 점대칭 육각형에서 ㄱㅇ=ㅁㅇ이고 두 선분은 수직이다. 위쪽 ㄱㅂ과 오른쪽 ㅂㅁ은 수직이다.", "reviewNote": "점대칭으로 ㄴㅇ과 ㅇㅁ은 같은 직선 위에 있고 ㄴㄷ은 ㅂㅁ과 평행이다. ∠ㅇㄱㅂ을 x라 두면 ㄱㅇ⊥ㅇㅁ 및 ㄱㅂ⊥ㄴㄷ을 이용해 ∠ㅇㄴㄷ=180−x이므로 합은 180도다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 101, "classification": "선대칭 삼각형과 점대칭 삼각형의 겹침", "candidate": "육각형", "visual": "격자에서 점 ㅈ은 대칭축 ㅅㅇ 위에 있고 삼각형 꼭짓점 ㄱ, ㄴ, ㄷ이 주어진다.", "reviewNote": "ㅈ을 원점으로, 오른쪽과 아래를 양의 방향으로 두면 원래 꼭짓점은 (0,−2),(−3,1),(2,2)이다. 축에 대한 반사 삼각형과 ㅈ에 대한 180도 회전 삼각형의 교집합을 선분 교점으로 계산하면 서로 다른 꼭짓점 여섯 개가 생긴다. 실제 그림의 격자·교점을 추가 출력 검증한다.", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "sourcePagesDirectlyReviewed": [
