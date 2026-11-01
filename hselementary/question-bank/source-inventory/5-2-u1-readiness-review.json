@@ -63,6 +63,24 @@
         {"number": 15, "classification": "범위와 자릿수 합으로 수 정하기", "candidate": "40909", "status": "source-reviewed-answer-key-pending"},
         {"number": 16, "classification": "두 좌석 수 조건의 인원 교집합", "candidate": "241, 242, 243, 244명", "status": "source-reviewed-answer-key-pending"}
       ]
+    },
+    {
+      "section": "확인학습 1단원 수의 범위와 어림하기",
+      "sourcePdfPage": 66,
+      "sourcePrintedPage": 70,
+      "scope": "문항 17~24는 기존 개념탐구·예제·Mission 목록과 별도이며 원문과 필기 없는 사본을 대조해 유형과 독립 계산 후보를 기록한다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "not-connected",
+      "items": [
+        {"number": 17, "classification": "최대한 구매한 정수 권수와 단가의 범위", "candidate": "4000/11원 초과 800원 이하; 원 단위 정수면 364원 이상 800원 이하", "visual": "왼쪽 끝 열린 점, 오른쪽 끝 닫힌 점", "reviewNote": "구입 후 잔돈이 남을 수 있으므로 가격 364~400원도 가능하다. 손글씨의 400원 초과는 이를 누락한다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 18, "classification": "두 집합의 겹침과 전체 인원의 범위", "candidate": "22명 이상 32명 이하", "status": "source-reviewed-answer-key-pending"},
+        {"number": 19, "classification": "상자별 수량 범위와 상자 개수", "candidate": "30개 이상 50개 미만", "reviewNote": "상자마다 담긴 수가 다를 수 있다는 해석에서 30개와 49개 모두 실제로 가능하다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 20, "classification": "두 나머지 조건과 정수 범위", "candidate": "139개", "status": "source-reviewed-answer-key-pending"},
+        {"number": 21, "classification": "자리별 올림·버림·반올림 표", "candidate": "37500,37400,37500 / 27000,26000,26000 / 480000,470000,470000", "visual": "세 행과 세 어림 방법을 유지하는 표", "status": "source-reviewed-answer-key-pending"},
+        {"number": 22, "classification": "서로 다른 자리의 올림과 버림의 차", "candidate": "900", "status": "source-reviewed-answer-key-pending"},
+        {"number": 23, "classification": "세 어림 방식의 결과가 같은 수", "candidate": "5000", "status": "source-reviewed-answer-key-pending"},
+        {"number": 24, "classification": "숫자 카드 배열의 최접근 수와 반올림", "candidate": "901000", "reviewNote": "카드를 모두 쓴 가장 가까운 수는 901245이며 천의 자리로 반올림한다.", "status": "source-reviewed-answer-key-pending"}
+      ]
     }
   ],
   "integrity": {
