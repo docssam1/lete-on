@@ -51,10 +51,10 @@ rotations = {
     "L": lambda p: (-p[2], p[1], p[0]),
     "F": lambda p: (p[0], -p[2], p[1]),
 }
-bottoms = []
-for move in "RRRFLFR":
+bottoms = [state[(0,0,-1)]]  # The starting cube covers the first of seven squares.
+for move in "RRRFFR":
     state = {rotations[move](axis): value for axis, value in state.items()}
     bottoms.append(state[(0,0,-1)])
-assert bottoms == [3,4,2,1,4,3,1] and sum(bottoms) == 18
-print("PASS: independent net fold, unique proper starting orientation, seven geometric rolls:", bottoms, "sum", sum(bottoms))
-print("LIMIT: source transcription and initial view are inputs; publisher answer key not verified.")
+assert bottoms == [6,3,4,2,1,3,6] and sum(bottoms) == 25
+print("PASS: independent net fold, unique proper starting orientation, starting square and six geometric rolls:", bottoms, "sum", sum(bottoms))
+print("LIMIT: source transcription and inclusion of the covered start square are inputs; publisher answer key not verified.")
