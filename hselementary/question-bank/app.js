@@ -516,14 +516,20 @@
   }
 
   function paginateProblems(questions) {
-    const page38Exercises = new Set([
+    const fourPerPageExercises = new Set([
+      "5-2-u3-e7-mission-1-rotated-addition-synthetic",
+      "5-2-u3-e7-mission-2-arrow-overlap-synthetic",
+      "5-2-u3-e7-mission-3-parallelogram-overlap-synthetic",
+      "5-2-u3-e7-mission-4-grid-construction-synthetic",
+      "5-2-u3-e7-mission-5-rotating-triangle-synthetic",
+      "5-2-u3-e7-mission-6-triangle-area-synthetic",
       "5-2-u3-e8-exploration-staircase-half-synthetic",
       "5-2-u3-e8-example-1-circle-difference-synthetic",
       "5-2-u3-e8-example-2-cut-synthetic",
       "5-2-u3-e8-example-3-overlap-synthetic",
       "5-2-u3-e8-example-4-stone-synthetic"
     ]);
-    if (questions.length && questions.every(question => page38Exercises.has(question.sourceItemId))) {
+    if (questions.length && questions.every(question => fourPerPageExercises.has(question.sourceItemId))) {
       return chunk(questions, 4).map(page => ({ questions: page, paired: true }));
     }
     const usesGeometryPairing = question => question.prompt.includes("source42-pa") || question.prompt.includes("source42-pp");
