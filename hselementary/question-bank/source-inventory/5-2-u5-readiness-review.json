@@ -1197,6 +1197,7 @@
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "singleAnswerCheck": "표시면이 바깥을 향한 24개 회전에서 ①·③·④·⑤는 각각 일치하는 상태가 있고 ②는 없습니다. 대각선 여섯 끝점이 서로 다르다는 별도 검사와 경시 교재 손글씨 ②도 부합합니다. 공식 답안은 미대조입니다.",
+      "sourceAuditUpdate": "2026-11-02 원본의 전개도 선 여섯 개와 다섯 보기의 선 방향을 확대 대조했습니다. 바깥쪽으로 접힌 여섯 면이 하나의 정육면체를 이루는지 확인하고 24가지 회전에서 ①·③·④·⑤ 각각의 가능한 회전 사례를 기록했습니다. ②는 두 대각선이 같은 꼭짓점에 모이지만 원본의 세 대각선 끝점은 서로 다른 여섯 꼭짓점이므로 불가능합니다. 검색한 이름 유사 답안들은 다른 교재 또는 손글씨 자료로 공식 답안이 아니며, 공개용 그림과 공식 답안 확인 전 잠금을 유지합니다.",
       "supportingEvidence": "Drive 1Z0L7pEqLtXut2Ay3hYazd7KeypX7AkLW, PDF 49쪽 인쇄 52쪽 개념탐구 3: 같은 전개도와 다섯 보기, ② 손글씨 표시. 공식 답안으로 확인되지 않음.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent-outward-fold-enumeration",
