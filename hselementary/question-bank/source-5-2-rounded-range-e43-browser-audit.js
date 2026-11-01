@@ -53,6 +53,8 @@ if (evidenceDir) fs.mkdirSync(evidenceDir, { recursive: true });
     assert.match(solution, /합을 백의 자리까지 반올림/);
     assert.match(solution, /차를 백의 자리까지 반올림/);
     assert.match(solution, /큰 수는 \(합\+차\)÷2/);
+    assert.match(solution, /작은 수를 .*로 정하면/);
+    assert.match(solution, /범위 안의 수는 모두 가능합니다/);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
     if (evidenceDir && variant === 0 && difficulty === 0) await page.screenshot({ path: path.join(evidenceDir, `example43-solution-${width}.png`), fullPage: true });
     if (evidenceDir && variant === 0 && difficulty === 0 && width === 1440) {

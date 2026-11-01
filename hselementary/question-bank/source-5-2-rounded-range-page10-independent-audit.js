@@ -8,6 +8,14 @@ for(let v=0;v<3;v++)for(const level of [-1,0,1]){
  const m=ex1.answerModel,candidates=[];for(let n=m.minimum-10;n<=m.maximum;n++)if(round(n,1000)===m.target&&down(n,100)===round(n,100)&&up(n,10)===round(n,10))candidates.push(n);assert.equal(candidates[0],m.minimum);
  const n=ex2.answerModel,nums=[];for(let x=1;x<n.upperExclusive+100;x++)if(round(x/6,10)===n.firstTarget&&round(x/4,10)===n.secondTarget)nums.push(x);assert.equal(nums[0],n.minimum);assert.equal(nums.at(-1),n.upperExclusive-1);assert.equal(nums.length,n.upperExclusive-n.minimum);
  const p=ex3.answerModel,large=[];for(let sum=p.sumRange[0];sum<p.sumRange[1];sum++)for(let diff=p.differenceRange[0];diff<p.differenceRange[1];diff++){if((sum+diff)%2===0)large.push((sum+diff)/2)}assert.equal(Math.min(...large),p.minimum);assert.equal(Math.max(...large),p.upperExclusive-1);
+ const smaller=(p.sumTarget-p.differenceTarget)/2;
+ for(let larger10=p.minimum*10;larger10<p.upperExclusive*10;larger10++){
+  const sum10=larger10+smaller*10,diff10=larger10-smaller*10;
+  assert.equal(Math.floor((sum10+500)/1000)*100,p.sumTarget);
+  assert.equal(Math.floor((diff10+500)/1000)*100,p.differenceTarget);
+ }
+ assert.equal(Math.floor(((p.upperExclusive+smaller)*10+500)/1000)*100,p.sumTarget+100);
+ assert(ex3.solution.includes(`작은 수를 ${smaller.toLocaleString('en-US')}로 정하면`));
  const model=ex4.questionModel,res=ex4.answerModel,gaps=model.male.map((x,i)=>Math.abs(x-model.female[i]));assert.equal(model.years[gaps.indexOf(Math.max(...gaps))],res.year);
  const actual=[];for(let male=res.maleShown-50;male<res.maleShown+50;male++)for(let female=res.femaleShown;female<res.femaleShown+100;female++)actual.push(Math.abs(male-female));assert.equal(Math.min(...actual),res.minimum);assert.equal(Math.max(...actual),res.maximum);assert.equal(res.lowerExclusive,res.minimum-1);assert.equal(res.upperExclusive,res.maximum+1);
  assert.match(ex4.prompt,/그래프에 표시된 남녀 인구수의 차가 가장 큰 해/);assert.match(ex4.prompt,/가상 마을/);assert.doesNotMatch(ex4.prompt,/id="e44-chart/);assert.doesNotMatch(ex4.answerVisual,/id="e44-chart/);assert.match(ex4.prompt,/aria-label=/);for(const year of model.years)assert.ok(ex4.prompt.includes(`${year}년 여자`));
