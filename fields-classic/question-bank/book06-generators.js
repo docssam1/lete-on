@@ -807,8 +807,13 @@ function commonFactorMissingTerm({ difficulty = 2 }) {
   });
 }
 
-function consecutiveNumbersFromSum({ difficulty = 2 }) {
-  const count = difficulty === 1 ? 3 : difficulty === 2 ? sample([3, 5]) : sample([4, 5, 6]);
+// countParity: 차시에 맞춘 개수(10권 1단원 2차시 = 짝수 개, 3차시 = 홀수 개 — study-deck.js PART_PICK_OPTIONS)
+const byParity = (counts, countParity) => {
+  const kept = countParity ? counts.filter((n) => (n % 2 === 0) === (countParity === "even")) : counts;
+  return kept.length ? kept : countParity === "even" ? [4, 6] : [3, 5];
+};
+function consecutiveNumbersFromSum({ difficulty = 2, countParity = "" }) {
+  const count = sample(byParity(difficulty === 1 ? [3] : difficulty === 2 ? [3, 5] : [4, 5, 6], countParity));
   const start = randomInt(1, difficulty === 3 ? 60 : 30);
   const values = Array.from({ length: count }, (_, index) => start + index);
   const total = sum(values);

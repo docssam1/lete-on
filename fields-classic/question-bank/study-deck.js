@@ -75,10 +75,33 @@ export function weekTypes(unit) {
 export const DAILY_COUNT = 4, UNIT_TEST_COUNT = 10;
 // 차시 수(본책 개념 묶음 수)
 export const sessionCount = (unit) => unitParts(unit).count;
-// 단원의 워밍업 개념을 차시마다 앞에서부터 고르게 나눈다(4개면 2 · 2, 3개면 2 · 1)
+// 단원의 워밍업 개념을 차시에 나눈다. 본책 활동·확인 내용과 맞춰 단원마다 정했다(원장 2026-11-01 「1권 2단원 말고도 다 확인했냐고」).
+// 처음엔 앞에서부터 고르게 나눴는데(4개면 2·2), 34단원 중 13단원에서 개념이 본책과 다른 차시에 붙었다
+// (4권 4단원 1차시 본책은 표로 지우기인데 개념은 동서남북·원탁 등). 표에 없는 단원만 고르게 나눈다.
+// 값 = 차시마다의 워밍업 학습 id. 빈 차시는 개념 없이 본책으로 바로 간다(그 차시 본책과 맞는 워밍업이 없을 때).
+export const SESSION_LESSONS = Object.freeze({
+  "book-01/3": [["number-inference"], ["preference-logic", "relative-order-running", "book1-equalize-transfer"]],
+  "book-02/1": [["balance-order"], ["shape-number-equations", "arithmetic-sequences"]],
+  "book-03/2": [["basic-vertical-cryptarithm", "cryptarithm-repeated", "cryptarithm-mixed"], ["cryptarithm-linked"]],
+  "book-04/0": [["polyomino-family-count"], ["digital-flip-source", "flip-rotate-source"]],
+  "book-04/3": [["order-logic-source", "table-logic-source", "row-logic-source"], ["cardinal-placement", "circle-logic-source"]],
+  "book-05/0": [["path-number-grid"], ["calendar-arithmetic-source", "calendar-weekday-source"]],
+  "book-05/1": [["shortest-route-source"], ["digit-card-ranked-number", "two-digit-condition-source"]],
+  "book-05/2": [["multiplication-table-source", "checkerboard-product-matrix"], []],
+  "book-05/3": [["triangle-number-source"], ["square-number-source", "cube-tetrahedral-growth"]],
+  "book-06/0": [["number-line-unit-distance", "equal-share-source", "number-line-ratio-source", "number-line-ratio-compare-source", "pencil-measure-source"], ["fraction-balance-source", "bar-balance-ratio-source"]],
+  "book-06/2": [["multiplication-source", "same-factor-source"], ["inclusive-range-count", "consecutive-source", "even-odd-order-source"]],
+  "book-07/2": [[], ["closed-loop-planting"]],
+  "book-07/3": [[], ["distance-line-source", "venn-overlap-all"]],
+  "book-09/0": [[], ["unit-area-and-half"]],
+  "book-09/1": [["cube-map-total", "cube-paint-source", "cube-views-source"], ["cube-min-max-source"]],
+  "book-10/0": [["napier-split-source"], ["number-count-source", "consecutive-even-source"], ["consecutive-odd-source"]]
+});
 export function sessionLessons(book, unitIndex, bellData, part) {
   const bellBook = bellData?.books.find((entry) => entry.id === book.id);
   const all = bellData ? lessonsByUnit(book, bellBook).units[unitIndex] : [];
+  const fixed = SESSION_LESSONS[`${book.id}/${unitIndex}`];
+  if (fixed) return (fixed[part - 1] || []).map((id) => all.find((lesson) => lesson.id === id)).filter(Boolean);
   const count = sessionCount(book.units[unitIndex]);
   const size = Math.ceil(all.length / count);
   return all.slice((part - 1) * size, part * size);
@@ -91,19 +114,26 @@ export function sessionTypes(unit, part) {
   for (const block of sessionBlocks(unit, part)) for (const { typeId } of block.numbers) seen.add(typeId);
   return seen.size ? [...seen] : weekTypes(unit);
 }
+// 차시에 맞춘 생성 조건(picks 5번째 칸 → 문제은행 app.js generationOptions). 같은 유형이 두 차시에 걸쳐 있을 때
+// 앞 차시에 뒤 차시 내용이 나오지 않게 한다(원장 2026-11-01 「1권 2단원 말고도 다 확인했냐고」).
+// 10권 1단원: 2차시 = 짝수 개 연속수, 3차시 = 홀수 개(3차시는 둘 다 쓰므로 조건 없음)
+export const PART_PICK_OPTIONS = Object.freeze({ "book-10/0": Object.freeze({ 2: "even" }) });
+export const partPickOption = (bookId, unitIndex, part) => PART_PICK_OPTIONS[`${bookId}/${unitIndex}`]?.[part] || "";
+export const pickOf = (typeId, stage, label, unitIndex, option = "") => [typeId, stage, label, unitIndex, ...(option ? [option] : [])].join("~");
 // 한 차시 교재(원장 2026-10-29 「워밍업 교재 표지와 같게, 한 회차 교재 구성 전체를 묶으라고」)의 문제은행 쪽:
-// 그 차시 본책(활동 · 확인 · 연습 · 도전) → 오늘의 과제 → (마지막 차시) 단원 평가 — picks(유형~단계~표시~단원) 한 줄. 데일리 테스트는 sessionDailyPicks(맨 앞)
-export function sessionBookPicks(unit, unitIndex, part) {
+// 그 차시 본책(활동 · 확인 · 연습 · 도전) → 오늘의 과제 → (마지막 차시) 단원 평가 — picks(유형~단계~표시~단원[~조건]) 한 줄. 데일리 테스트는 sessionDailyPicks(맨 앞)
+export function sessionBookPicks(unit, unitIndex, part, bookId = "") {
   const last = part === sessionCount(unit);
+  const option = partPickOption(bookId, unitIndex, part);
   const picks = [];
-  for (const block of sessionBlocks(unit, part)) for (const { n, typeId, stage } of block.numbers) picks.push([typeId, stage, `본책 ${refOf(block, n)}`, unitIndex].join("~"));
-  for (const typeId of sessionTypes(unit, part)) picks.push([typeId, "practice", "오늘의 과제", unitIndex].join("~"));
-  if (last) for (const typeId of unitTestTypes(unit)) picks.push([typeId, "advanced", "단원 평가", unitIndex].join("~"));
+  for (const block of sessionBlocks(unit, part)) for (const { n, typeId, stage } of block.numbers) picks.push(pickOf(typeId, stage, `본책 ${refOf(block, n)}`, unitIndex, option));
+  for (const typeId of sessionTypes(unit, part)) picks.push(pickOf(typeId, "practice", "오늘의 과제", unitIndex, option));
+  if (last) for (const typeId of unitTestTypes(unit)) picks.push(pickOf(typeId, "advanced", "단원 평가", unitIndex));
   return picks.join("|");
 }
 // 그 차시 맨 앞의 데일리 테스트(지난 차시에 배운 것) — 1차시는 없다
-export const sessionDailyPicks = (unit, unitIndex, part) => part > 1
-  ? dailyTypes(unit, part - 1).map((typeId) => [typeId, "practice", `${part - 1}차시 데일리 테스트`, unitIndex].join("~")).join("|") : "";
+export const sessionDailyPicks = (unit, unitIndex, part, bookId = "") => part > 1
+  ? dailyTypes(unit, part - 1).map((typeId) => pickOf(typeId, "practice", `${part - 1}차시 데일리 테스트`, unitIndex, partPickOption(bookId, unitIndex, part - 1))).join("|") : "";
 // 유형 목록에서 n문제: 유형이 많으면 고르게 건너뛰며, 적으면 돌아가며 한 번 더
 export const spreadTypes = (types, n) => !types.length ? [] : Array.from({ length: n }, (_, k) => types.length >= n ? types[Math.floor((k * types.length) / n)] : types[k % types.length]);
 export const dailyTypes = (unit, part) => spreadTypes(sessionTypes(unit, part), DAILY_COUNT);

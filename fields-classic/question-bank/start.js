@@ -3,7 +3,7 @@ import { lessonsByUnit, unitParts, partProblems, gameTitles, loadGoldenBell } fr
 import { readRecord, weekRate, loggedIn, checkSession } from "./study-progress.js?v=20261029q";
 import { canStudy, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261029q";
 import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
-import { sessionBookPicks, sessionDailyPicks } from "./study-deck.js?v=20261030c";
+import { sessionBookPicks, sessionDailyPicks } from "./study-deck.js?v=20261101c";
 
 // 시작 화면(원장 2026-10-26): 「오늘 공부할 내용은?」 — 1~10권 → 누르면 그 권의 대단원 → 누르면 옆으로 밀려 소단원(차시).
 // 한 번에 한 장만 보이고, 위의 길(1권 › 01 도형 움직이기)이나 「‹」로 앞 장으로 돌아간다. 브라우저 뒤로 가기도 앞 장으로.
@@ -177,9 +177,9 @@ function renderParts() {
     // 한 차시 교재 인쇄(원장 2026-10-29 「워밍업 교재 표지와 같게, 한 회차 교재 구성 전체를 묶으라고」):
     // 워밍업 교재 표지 → (2차시부터) 지난 차시 데일리 테스트 → 워밍업 학습마다 개념·워밍업 → 본책 → 오늘의 과제 → (마지막 차시) 단원 평가 (golden-bell.html?sessionbook=1)
     const sheet = link("index.html", { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1",
-      picks: sessionBookPicks(unit, view.unit, part), title: `${book.label} ${view.unit + 1}단원 ${part}차시 · 본책과 과제` });
+      picks: sessionBookPicks(unit, view.unit, part, view.bookId), title: `${book.label} ${view.unit + 1}단원 ${part}차시 · 본책과 과제` });
     const presheet = part > 1 ? link("index.html", { mode: "curriculum", book: book.id, build: "1", as: "student", hand: "1", week: "1",
-      picks: sessionDailyPicks(unit, view.unit, part), title: `${book.label} ${view.unit + 1}단원 ${part - 1}차시 · 데일리 테스트` }) : "";
+      picks: sessionDailyPicks(unit, view.unit, part, view.bookId), title: `${book.label} ${view.unit + 1}단원 ${part - 1}차시 · 데일리 테스트` }) : "";
     const testParts = [...(part > 1 ? [`${part - 1}차시 데일리 테스트`] : []), ...(lessons.length ? [`워밍업 ${lessons.length}`] : []), `본책 ${problemCount(unit, part)}문항`, "오늘의 과제", ...(lastPart ? ["단원 평가"] : [])];
     const bookPrint = link("golden-bell.html", { book: book.id, sessionbook: "1", lessons: lessons.map((lesson) => lesson.id).join(","),
       label: `${view.unit + 1}단원 ${part}차시`, range: `${unit.label} · ${part}차시`, parts: testParts.join(" · "), sheet, ...(presheet ? { presheet } : {}) });

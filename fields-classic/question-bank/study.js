@@ -1,6 +1,6 @@
 import { CURRICULUM, typeById } from "./source-data.js?v=20261101b";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261030c";
-import { PHASES, FIXED_LINES, voiceLine, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261030c";
+import { PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261101c";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
 import { canStudy, lockPage } from "./fields-access.js?v=20261029q";
 
@@ -83,12 +83,12 @@ function sheetUrl(slide, { print = false } = {}) {
   const base = { mode: "curriculum", book: book.id, build: "1", as: "student", ...(slide.kind === "board" ? { hand: "1" } : slide.kind === "homework" ? { hand: "solve" } : {}) };
   let entries;
   if (slide.kind === "board") {
-    const picks = slide.block.numbers.map(({ n, typeId, stage }) => [typeId, stage, refOf(slide.block, n), unitIndex].join("~")).join("|");
+    const picks = slide.block.numbers.map(({ n, typeId, stage }) => pickOf(typeId, stage, refOf(slide.block, n), unitIndex, partPickOption(book.id, unitIndex, part))).join("|");
     entries = { picks, title: `${book.label} ${unitIndex + 1}단원 · 본책 ${slide.block.label}` };
   } else if (slide.kind === "homework") {
-    entries = { picks: todayTypes().map((typeId) => [typeId, "practice", "오늘의 과제", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 오늘의 과제` };
+    entries = { picks: todayTypes().map((typeId) => pickOf(typeId, "practice", "오늘의 과제", unitIndex, partPickOption(book.id, unitIndex, part))).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part}차시 · 오늘의 과제` };
   } else if (slide.kind === "daily") {
-    entries = { picks: dailyTypes(unit, part - 1).map((typeId) => [typeId, "practice", "데일리 테스트", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트`, test: "1", testId: dailyId };
+    entries = { picks: dailyTypes(unit, part - 1).map((typeId) => pickOf(typeId, "practice", "데일리 테스트", unitIndex, partPickOption(book.id, unitIndex, part - 1))).join("|"), title: `${book.label} ${unitIndex + 1}단원 ${part - 1}차시 · 데일리 테스트`, test: "1", testId: dailyId };
   } else {
     entries = { picks: unitTestTypes(unit).map((typeId) => [typeId, "advanced", "단원 평가", unitIndex].join("~")).join("|"), title: `${book.label} ${unitIndex + 1}단원 평가`, test: "1", testId };
   }

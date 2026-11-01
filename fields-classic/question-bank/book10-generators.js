@@ -151,9 +151,11 @@ function multiCountConsecutiveDecompositionBook10({ difficulty = 2 }) {
 
 const WEEKDAYS = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
-function calendarConsecutiveSumWeekdayBook10({ difficulty = 2 }) {
+// countParity: 차시에 맞춘 개수(2차시 = 짝수 개, 3차시 = 홀수 개 — study-deck.js PART_PICK_OPTIONS)
+const parityCount = (count, countParity) => !countParity || (count % 2 === 0) === (countParity === "even") ? count : count + 1;
+function calendarConsecutiveSumWeekdayBook10({ difficulty = 2, countParity = "" }) {
   const dayOne = randomInt(0, 6);
-  const count = difficulty === 1 ? 5 : difficulty === 2 ? 6 : 7;
+  const count = parityCount(difficulty === 1 ? 5 : difficulty === 2 ? 6 : 7, countParity);
   const start = randomInt(2, 30 - count);
   const dates = range(start, start + count - 1);
   const total = sum(dates);
@@ -167,8 +169,8 @@ function calendarConsecutiveSumWeekdayBook10({ difficulty = 2 }) {
   });
 }
 
-function consecutivePageRangeBook10({ difficulty = 2 }) {
-  const count = difficulty === 1 ? randomInt(3, 4) : difficulty === 2 ? randomInt(5, 6) : randomInt(7, 9);
+function consecutivePageRangeBook10({ difficulty = 2, countParity = "" }) {
+  const count = parityCount(difficulty === 1 ? randomInt(3, 4) : difficulty === 2 ? randomInt(5, 6) : randomInt(7, 9), countParity);
   const start = randomInt(8, difficulty === 3 ? 72 : 45);
   const pages = range(start, start + count - 1);
   const total = sum(pages);

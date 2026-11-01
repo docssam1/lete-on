@@ -1,5 +1,5 @@
 import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261101b";
-import { GENERATORS } from "./generators.js?v=20261101b";
+import { GENERATORS } from "./generators.js?v=20261101c";
 import { saveRecord } from "./study-progress.js?v=20261029q";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261028za";
@@ -1119,7 +1119,8 @@ function generatedGeometryWorksheetProblem(item, sequence, reference, fixedSeed,
   return made ? { ...withProblemContext(made, item, reference, sourceClassification), generationDifficulty: intensity } : null;
 }
 
-function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null, sourceClassification = null, generationCase = null) {
+// generationOptions: 차시에 맞춘 생성 조건(picks 5번째 칸, 예: even → countParity "even" — 10권 1단원 2차시는 짝수 개 연속수만)
+function generatedProblem(item, sequence, reference, fixedSeed = null, attempt = 0, difficultyOverride = null, sourceClassification = null, generationCase = null, generationOptions = null) {
   if (item.generator && GENERATORS[item.generator]) {
     const difficulty = difficultyOverride || activeDifficulty();
     const seed = fixedSeed ? `${fixedSeed}:${difficulty}:${sequence}:${attempt}` : null;
@@ -1130,8 +1131,8 @@ function generatedProblem(item, sequence, reference, fixedSeed = null, attempt =
       // retry 0은 기존 시드 형식 그대로 — 파이널 1회 교체본처럼 이미 고정 시드로 검수된
       // 문항의 출력이 바뀌면 안 된다. 접미사는 실패로 다시 뽑을 때만 붙는다.
       const retrySeed = seed ? (retry === 0 ? seed : `${seed}:r${retry}`) : null;
-      const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty, sourceCase: generationCase }));
-      if (generated) return { ...withProblemContext(generated, item, reference, sourceClassification), generationDifficulty: difficulty, generationCase };
+      const generated = withSeed(retrySeed, () => GENERATORS[item.generator]({ max: 30, difficulty, sourceCase: generationCase, ...(generationOptions || {}) }));
+      if (generated) return { ...withProblemContext(generated, item, reference, sourceClassification), generationDifficulty: difficulty, generationCase, generationOptions };
     }
   }
   if (!item.generator && item.worksheetCode && globalThis.GW_GEN?.typeInfo(item.worksheetCode)) {
@@ -1159,7 +1160,7 @@ function makeQuestions() {
     counters.set(item.id, sequence + 1);
     let problem = null;
     for (let attempt = 0; attempt < 80; attempt += 1) {
-      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty, reference.classification, reference.generationCase);
+      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty, reference.classification, reference.generationCase, reference.generationOptions);
       if (!problem || !signatures.has(problemSignature(problem))) break;
     }
     if (problem) signatures.add(problemSignature(problem));
@@ -1271,7 +1272,7 @@ function renderEditorSummary() {
 function twinCandidates(question, level, count = 3) {
   const taken = new Set(state.questions.map(problemSignature)), out = [];
   for (let attempt = 0; attempt < 160 && out.length < count; attempt += 1) {
-    const candidate = generatedProblem(question.type, attempt + out.length * 7, question.reference, null, attempt, level ?? question.generationDifficulty, question.classification, question.generationCase);
+    const candidate = generatedProblem(question.type, attempt + out.length * 7, question.reference, null, attempt, level ?? question.generationDifficulty, question.classification, question.generationCase, question.generationOptions);
     if (!candidate) continue;
     const signature = problemSignature(candidate);
     if (taken.has(signature)) continue;
@@ -1304,7 +1305,7 @@ function addCandidates() {
 function addProblem(reference, attempt = 0) {
   const item = typeById(reference.typeId), taken = new Set(state.questions.map(problemSignature));
   for (let k = 0; k < 60; k += 1) {
-    const candidate = generatedProblem(item, attempt * 61 + k, reference.reference, null, attempt * 61 + k, reference.difficulty, reference.classification, reference.generationCase);
+    const candidate = generatedProblem(item, attempt * 61 + k, reference.reference, null, attempt * 61 + k, reference.difficulty, reference.classification, reference.generationCase, reference.generationOptions);
     if (candidate && !taken.has(problemSignature(candidate))) return candidate;
   }
   return null;
@@ -1392,7 +1393,7 @@ function replaceQuestion(index) {
   const otherSignatures = new Set(state.questions.filter((_, questionIndex) => questionIndex !== index).map(problemSignature));
   let replacement = null;
   for (let attempt = 0; attempt < 120; attempt += 1) {
-    const candidate = generatedProblem(current.type, index + attempt, current.reference, null, attempt, current.generationDifficulty, current.classification, current.generationCase);
+    const candidate = generatedProblem(current.type, index + attempt, current.reference, null, attempt, current.generationDifficulty, current.classification, current.generationCase, current.generationOptions);
     if (candidate && problemSignature(candidate) !== currentSignature && !otherSignatures.has(problemSignature(candidate))) {
       replacement = candidate;
       break;
@@ -3833,7 +3834,8 @@ setMode(params.get("mode") === "type" ? "type" : "curriculum");
     // 본책 번호마다 한 문제: 유형~단계~본책 번호(「활동 1-3번」)~단원 번호. 그 단계에서 아직 못 만들면 가까운 단계로 물러선다.
     const refs = [];
     for (const item of params.get("picks").split("|").filter(Boolean)) {
-      const [typeId, stageId, label = "", unitText = ""] = item.split("~");
+      const [typeId, stageId, label = "", unitText = "", only = ""] = item.split("~");
+      const generationOptions = only === "even" || only === "odd" ? { countParity: only } : null;
       const type = typeById(typeId);
       const unitIndex = unitText === "" ? book.units.findIndex((entry) => entry.typeIds.includes(typeId)) : Number(unitText);
       const unit = book.units[unitIndex];
@@ -3856,7 +3858,8 @@ setMode(params.get("mode") === "type" ? "type" : "curriculum");
         classification: questionClassificationForType(typeId),
         difficulty: stage.difficulty,
         studyStage: stage,
-        bookRef: label
+        bookRef: label,
+        generationOptions
       });
     }
     if (refs.length) {
