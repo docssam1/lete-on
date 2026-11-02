@@ -127,6 +127,7 @@ require("./source-5-2-u3-page27-mission4-synthetic.js");
 require("./source-5-2-range-e1.js");
 require("./source-5-2-range-page04-originals.js");
 require("./source-5-2-range-page05-originals.js");
+require("./source-5-2-rounding-page06-originals.js");
 require("./source-5-2-range-missions.js");
 require("./source-5-2-rounding-e2.js");
 require("./source-5-2-rounding-missions.js");
@@ -380,8 +381,8 @@ if (kiteTypes.length === 1) {
     if (api.generatorKey({ ...type, ...mutation })) failures.push(`${symmetryKite.id}: 검수 조건 위반 문항이 생성기에 연결됩니다.`);
   }
 }
-if (total !== 2295) failures.push(`전체 유형 수가 2295가 아니라 ${total}입니다.`);
-if (ready !== 1516) failures.push(`원문 연결 공개 유형 수가 1516가 아니라 ${ready}입니다.`);
+if (total !== 2299) failures.push(`전체 유형 수가 2299가 아니라 ${total}입니다.`);
+if (ready !== 1520) failures.push(`원문 연결 공개 유형 수가 1520가 아니라 ${ready}입니다.`);
 if (lockedWithoutSource !== 371) failures.push(`원문 미연결 잠금 유형 수가 371이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {

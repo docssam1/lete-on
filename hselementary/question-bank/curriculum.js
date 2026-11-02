@@ -2167,6 +2167,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
       automaticGrading:n>=3, answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원본 조건과 끝점을 독립 전수 검산했습니다. 공식 답안은 미확인입니다."});
   }
+  const source52RoundingGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s2");
+  if (source52RoundingGroup) for (const [suffix, name, sourceLabel, section] of [["exploration","올림·버림·반올림하여 나타내기 · 원문","개념탐구 2 원문","exploration"],["example-1","올림과 반올림 결과가 같은 수 찾기 · 원문","예제 2-1 원문","example"],["example-2","인구수를 각각 어림한 합과 실제 합 비교 · 원문","예제 2-2 원문","example"],["example-3","두 어림 조건을 모두 만족하는 수 · 원문","예제 2-3 원문","example"]]) {
+    const id = `5-2-u1-e2-${suffix}-original`;
+    if (source52RoundingGroup.types.some(type => type.id === id)) continue;
+    const typeNumber = Math.max(0, ...source52Range.subunits.flatMap(group => group.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52RoundingGroup.types.push({id, number:source52RoundingGroup.types.length+1, typeNumber, name, label:name, difficultyBand:0,
+      sourceItemId:id, sourceParentItemId:`5-2-u1-e2-${suffix}`, sourceItemLabel:sourceLabel, sourceSection:section, sourceTier:"advanced", sourcePdfPage:4, sourcePrintedPage:6,
+      sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:`source52RoundingPage06Original${suffix === "exploration" ? "Exploration" : `Example${suffix.slice(-1)}`}`,
+      generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
+      automaticGrading:suffix==="example-3", answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원본 수치와 어림 자리·방법을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
 
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
