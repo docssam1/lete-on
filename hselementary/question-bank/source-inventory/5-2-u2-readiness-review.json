@@ -381,7 +381,7 @@
         {"number": 73, "classification": "직사각형 넓이의 분수와 한 변으로 다른 변 구하기", "candidate": "120", "reviewNote": "전체 넓이=(7/4)÷(2/5)=35/8, 세로=(35/8)÷(7/3)=15/8; 분자와 분모의 곱 120", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-73-original", "publisherAnswerVerified": false},
         {"number": 74, "classification": "공통 분모를 가진 두 비의 비율", "candidate": "25/8", "reviewNote": "ㄱ/ㄴ=5/6, ㄷ/ㄴ=4/15이므로 ㄱ/ㄷ=(5/6)÷(4/15)=25/8", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-74-original", "publisherAnswerVerified": false},
         {"number": 75, "classification": "분수 곱 등식에서 두 자연수의 곱", "candidate": "45", "reviewNote": "(2/3)×(2/5)×ㄱ/6=2/ㄴ에서 2ㄱ/45=2/ㄴ, 따라서 ㄱ×ㄴ=45", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-75-original", "publisherAnswerVerified": false},
-        {"number": 76, "classification": "일정 배율로 증가하는 양을 3일 전으로 역산", "candidate": "8/27", "reviewNote": "오늘 덮인 비율을 1로 보고 3일 전 비율을 (2/3)³=8/27로 계산", "status": "source-reviewed-answer-key-pending"}
+        {"number": 76, "classification": "일정 배율로 증가하는 양을 3일 전으로 역산", "candidate": "8/27", "reviewNote": "오늘 덮인 비율을 1로 보고 3일 전 비율을 (2/3)³=8/27로 계산", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-76-original", "publisherAnswerVerified": false}
       ]
     }
   ],
