@@ -356,3 +356,11 @@ Typst 인쇄 소스 `demo2/print/classroom.typ`와 같은 모델에서 내보내
 사용자가 ‘공개 배포’로 현재 로컬 수정본 반영을 승인했다. 범위는 기존 국가대표2 반별 로드맵·공통 상담 안내의 미배포 변경과 후속 월별 비교/최상위/1031/CARS E 수정, 고입6목표·대표 공식요강6건·지원조건/실제일정 창 및 연결이다. Typst 소스와 회귀 테스트를 함께 보존하되 output의 합성 회원 데이터·미리보기·로컬 PDF·외부 원문·검수 PNG는 공개 커밋에 넣지 않는다. 인증·학생 개인정보·다른 프로젝트·문제은행 자료를 수정하지 않는다.
 
 원격 main을 갱신해 기존 공개 기준 이후 다른 프로젝트의 추가 변경을 확인했다. 공통 조상 이후 원격의 roadmap 변경은 없으므로 원격 변경을 보존하며 현재 브랜치를 재배치한다. 재배치 후82개 테스트·구문·공백·자산 연결을 점검하고 기존 GitHub Pages workflow로 배포한다. 공개 HTTP 및 파일 내용 대조 완료는 후속 기록으로 남긴다.
+
+### 국가대표2·고입 안내 공개 배포 완료 — 2026-11-02
+
+runtime 커밋 `7f6b71193f5b3a8b9dcf855b03839d14301cfb68`를 최신 원격 main 위에 충돌 없이 재배치해 반영했다. push 직전 다른 프로젝트 변경이 먼저 도착해 첫 push는 거절됐으며, 이를 fetch/rebase로 보존한 뒤 일반 fast-forward push를 완료했다. force push는 하지 않았다. 기존 GitHub Pages 실행 `41435104481`이 success로 완료됐다: https://github.com/docssam1/lete-on/actions/runs/41435104481 . 전체82개 테스트·JS구문·공백 및 planner.html의 자산참조104개가 배포 전 통과했다.
+
+공개 `https://lete-on.gfieldacademy.net/`에서 이번 runtime 변경14개와 계정화면1개, 총15파일을 받아 HTTP200·바이트·SHA-256이 로컬 승인본과 모두 일치함을 확인했다. 결과는 로컬 `output/highschool-20261102/public-release.json`이다. 고입 직접주소는 `https://lete-on.gfieldacademy.net/roadmap/demo2/planner.html?admissions=1&v=20261102-admissions1`, 국가대표2는 `https://lete-on.gfieldacademy.net/roadmap/demo2/planner.html?classroom=gfield-6-national2&v=20261102-class4`이다. 계정 인증은 기존 그대로이며 비로그인 공개 진입에서 로그인 페이지로 이동할 때 admissions와 버전이 next에 보존되는 것을 별도 확인했다. 실제 회원의 로그인 정보 입력·본인 데이터 변경·폰 실기 재검수를 한 것은 아니다.
+
+로컬 PDF·원문·합성세션·미리보기·검수 이미지는 배포하지 않았다. 이 완료 기록만 후속 문서 커밋으로 남기며 runtime은 배포 검증본을 유지한다.
