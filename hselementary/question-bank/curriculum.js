@@ -3572,6 +3572,14 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     targetGroup.types.push({id,number:targetGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:n<=8?81:n<=16?82:n>=115?96:n>=108?95:n>=102?94:n>=95?93:n>=89?92:n>=81?91:n>=73?90:n>=65?89:n>=57?88:n>=49?87:n>=41?86:n>=33?85:n>=25?84:83,sourcePrintedPage:n<=8?85:n<=16?86:n>=115?100:n>=108?99:n>=102?98:n>=95?97:n>=89?96:n>=81?95:n>=73?94:n>=65?93:n>=57?92:n>=49?91:n>=41?90:n>=33?89:n>=25?88:87,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page87Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:![6,11,9,12,15,1,5,7,8,70,88,17,18,21,25,26,30,31,27,32,28,29,33,36,37,38,34,35,40,42,43,41,45,48,49,52,50,51,56,58,59,60,61,63,65,66,71,72,73,75,77,79,81,82,83,85,91,92,96,99,100,101,102,103,105,110,112,115,116,113,114,117,90,106,107,93,94,97,108,109,57,89,95,74,78,44,46,47].includes(n),answerVisualRequired:[9,15,70,90,106,107,93,94,97,108,109,57,89,95,74,78].includes(n),answerVisualStatus:[9,15,70,90,106,107,93,94,97,108,109,57,89,95,74,78].includes(n)?"verified-reconstruction":"not-required",reviewReason:"원문 조건과 삼각형의 성립·합동 및 경우의 수를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
 
+  if (source52Probability) for (const [id,source,parent,key] of [
+    ["5-2-u6-t4","5-2-u6-practice-61-similar","5-2-u6-practice-61-original","source52U6DifferentColorSimilar"],
+    ["5-2-u6-t4-3","5-2-u6-practice-63-similar","5-2-u6-practice-63-original","source52U6OXThreeOrMoreSimilar"]
+  ]) {
+    const type=source52Probability.types.find(item=>item.id===id);
+    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:source,sourceParentItemId:parent,sourceItemLabel:"확인학습 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:117,alternateSourcePdfPage:118,sourcePrintedPage:123,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 구조를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
