@@ -673,3 +673,9 @@ Reviewed the user's private Prealgebra concept-companion PDF through Drive. Its 
 Made the supplied Grade 6 roadmap connection more explicit: the optional Prealgebra-to-Algebra 1 bridge now names substitution, exponents, and order of operations before operation properties, distribution, and combining like terms. The Grade 6 first-quarter example also names variable expressions and powers alongside its existing number, geometry, and data foundations. This remains an illustrative concept path, not a placement result or fixed pace.
 
 Verification: Grade 3–12 roadmap model/browser tests pass 38/38. The flow was visually inspected at 390px and 1280px; all five stages remain readable without clipping. Changed JS passes `node --check`; CRLF-aware `git diff --check` passes. Local-only; no push or deployment. Current private R6 visual review, independent human math/language and rights review, pilot, reporting validation, and student-use approval remain open.
+
+### 2026-11-02 roadmap preview button styling
+
+Connected the existing journey-preview button class in the roadmap markup. This restores the already-defined G·MAP plum button treatment and visible keyboard focus styling; no new palette or interaction was added. The full Grade 6 and Grade 7 roadmap pages were visually reviewed at mobile width, with the Grade 6 control also checked at 1280px. No horizontal overflow was observed.
+
+Verification: the roadmap model/browser suites pass 38/38, including the button's computed color and 42px target height. `boarding-roadmap.js` passes `node --check`; CRLF-aware `git diff --check` passes. Local-only; no push or deployment.

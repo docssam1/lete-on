@@ -74,6 +74,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator("#journey-next-stop").isHidden(), true);
   await page.locator("#stage-list button").first().click();
   assert.equal(await page.locator("#journey-next-title").innerText(), "비례 관계");
+  assert.deepEqual(await page.locator("#journey-next-button").evaluate(function (node) { const style = getComputedStyle(node); return { background: style.backgroundColor, color: style.color, minHeight: style.minHeight }; }), { background: "rgb(96, 65, 143)", color: "rgb(255, 255, 255)", minHeight: "42px" });
   await page.locator("#journey-next-button").click();
   assert.equal(await page.locator("#journey-selected-title").innerText(), "비례 관계");
   assert.equal(await page.locator("#journey-next-title").innerText(), "식·방정식");
