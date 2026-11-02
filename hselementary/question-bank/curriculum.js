@@ -2609,11 +2609,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52Average = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u6");
   const source52AverageFirst = source52Average?.subunits.find(subunit => subunit.name === "평균 구하기");
-  if (source52AverageFirst) for (const [n,name] of [[1,"평균과 두 점수 차로 비어 있는 두 점수 찾기 · 확인학습 원문"],[2,"겹치는 세 수의 평균으로 가운데 수 찾기 · 확인학습 원문"],[3,"두 집단의 평균과 전체 평균으로 인원 구하기 · 확인학습 원문"],[4,"두 쌍의 평균과 두 수의 차로 세 수 찾기 · 확인학습 원문"]]) {
+  if (source52AverageFirst) for (const [n,name] of [[5,"가족 수 도수표의 가중평균 · 확인학습 원문"],[6,"목표 평균에 필요한 다음 점수 · 확인학습 원문"],[7,"기존 평균에 한 수를 더한 평균 · 확인학습 원문"],[8,"두 평균과 점수 차로 세 번의 점수 찾기 · 확인학습 원문"],[1,"평균과 두 점수 차로 비어 있는 두 점수 찾기 · 확인학습 원문"],[2,"겹치는 세 수의 평균으로 가운데 수 찾기 · 확인학습 원문"],[3,"두 집단의 평균과 전체 평균으로 인원 구하기 · 확인학습 원문"],[4,"두 쌍의 평균과 두 수의 차로 세 수 찾기 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52AverageFirst.types.some(type=>type.id===id)) continue;
     const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
-    source52AverageFirst.types.push({id,number:source52AverageFirst.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:110,alternateSourcePdfPage:111,sourcePrintedPage:116,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U6Page116Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n===2||n===3,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 표를 대조하고 평균과 합을 독립 계산했습니다. 출판사 공식 답안은 미확인입니다."});
+    source52AverageFirst.types.push({id,number:source52AverageFirst.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:110,alternateSourcePdfPage:111,sourcePrintedPage:116,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U6Page116Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n===2||n===3||n===5||n===6||n===7,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 표를 대조하고 평균과 합을 독립 계산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
   if (source52AverageFirst) {
     const id = "5-2-u6-e1-exploration", name = "키 표를 보고 평균 구하기";
