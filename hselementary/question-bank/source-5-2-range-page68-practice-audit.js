@@ -1,0 +1,13 @@
+'use strict';
+const assert = require('node:assert/strict');
+const api = require('./source-5-2-range-page68-practice.js');
+const numbers = (start,end) => Array.from({length:end-start+1},(_,i)=>i+start);
+const a=numbers(1,100).filter(x=>numbers(1,100).filter(v=>v>25&&v<=x).length===20);
+const b=numbers(1,29).filter(x=>numbers(1,100).filter(v=>v>=x&&v<30).length===22);
+assert.deepEqual(a,[45]);assert.deepEqual(b,[8]);assert.equal(api.build(4).answer,String(a[0]+b[0]));
+const pairs=[];for(let x=10;x<=99;x++)for(let y=10;y<=99;y++)if(numbers(1,99).filter(v=>v>x&&v<y).length===42)pairs.push([x,y]);
+assert.equal(Math.max(...pairs.map(p=>p[0])),56);assert(pairs.some(([x,y])=>x===56&&y===99));assert.equal(api.build(6).answer,'56');
+for(const [v,expected] of [[59.9,false],[60,true],[110,true],[110.1,false]]) assert.equal(!(v<60||v>110),expected);
+for(const [needed,remaining] of [[4.01,.99],[4.5,.5],[5,0]])assert(Math.abs((5-needed)-remaining)<1e-9);
+assert.equal(api.build(5).automaticGrading,false);assert.equal(api.build(7).automaticGrading,false);
+console.log('PASS: original practice 4–7 independent enumeration and endpoint checks');

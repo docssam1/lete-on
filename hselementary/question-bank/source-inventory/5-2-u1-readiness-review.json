@@ -34,16 +34,69 @@
       "sourcePrintedPage": 68,
       "scope": "문항 1~8은 기존 개념탐구·예제·Mission 목록과 별도이며, 원문 및 필기 없는 사본 대조 후 유형과 독립 계산 후보만 기록한다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partial-verified-local",
       "items": [
-        {"number": 1, "classification": "수직선의 초과·이하", "candidate": "16 < x ≤ 20", "visual": "16 열린 점, 20 닫힌 점, 사이 구간", "status": "source-reviewed-answer-key-pending"},
-        {"number": 2, "classification": "두 범위의 교집합과 자연수", "candidate": "28 < x < 33; 29, 30, 31, 32", "visual": "28과 33 열린 점, 사이 구간", "status": "source-reviewed-answer-key-pending"},
-        {"number": 3, "classification": "조건의 여집합과 수직선", "candidate": "40kg 미만 또는 90kg 이상", "visual": "40 열린 점 왼쪽, 90 닫힌 점 오른쪽", "status": "source-reviewed-answer-key-pending"},
-        {"number": 4, "classification": "양 끝 포함 조건별 자연수 개수와 합", "candidate": "53", "status": "source-reviewed-answer-key-pending"},
-        {"number": 5, "classification": "위반 조건의 여집합과 속도 범위", "candidate": "시속 60km 이상 110km 이하", "status": "source-reviewed-answer-key-pending"},
-        {"number": 6, "classification": "두 자리 수 사이 자연수 개수와 최대", "candidate": "56", "reviewNote": "상한을 99로 두면 57부터 98까지 42개다. 손글씨의 54는 조건에 맞지 않는다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 7, "classification": "구매 단위와 남은 길이의 범위", "candidate": "0m 이상 1m 미만", "status": "source-reviewed-answer-key-pending"},
-        {"number": 8, "classification": "버스 대수의 하한과 인원 범위", "candidate": "135명 초과", "reviewNote": "적어도 4대라는 조건만으로는 상한이 없다. 180명 이하를 결론 내리려면 4대로 충분하다는 추가 조건이 필요하므로 출판사 의도 및 답안 확인 전 보류한다.", "status": "source-ambiguity-answer-key-pending"}
+        {
+          "number": 1,
+          "classification": "수직선의 초과·이하",
+          "candidate": "16 < x ≤ 20",
+          "visual": "16 열린 점, 20 닫힌 점, 사이 구간",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 2,
+          "classification": "두 범위의 교집합과 자연수",
+          "candidate": "28 < x < 33; 29, 30, 31, 32",
+          "visual": "28과 33 열린 점, 사이 구간",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 3,
+          "classification": "조건의 여집합과 수직선",
+          "candidate": "40kg 미만 또는 90kg 이상",
+          "visual": "40 열린 점 왼쪽, 90 닫힌 점 오른쪽",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 4,
+          "classification": "양 끝 포함 조건별 자연수 개수와 합",
+          "candidate": "53",
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-4-original",
+          "publisherAnswerVerified": false
+        },
+        {
+          "number": 5,
+          "classification": "위반 조건의 여집합과 속도 범위",
+          "candidate": "시속 60km 이상 110km 이하",
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-5-original",
+          "publisherAnswerVerified": false
+        },
+        {
+          "number": 6,
+          "classification": "두 자리 수 사이 자연수 개수와 최대",
+          "candidate": "56",
+          "reviewNote": "상한을 99로 두면 57부터 98까지 42개다. 손글씨의 54는 조건에 맞지 않는다.",
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-6-original",
+          "publisherAnswerVerified": false
+        },
+        {
+          "number": 7,
+          "classification": "구매 단위와 남은 길이의 범위",
+          "candidate": "0m 이상 1m 미만",
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-7-original",
+          "publisherAnswerVerified": false
+        },
+        {
+          "number": 8,
+          "classification": "버스 대수의 하한과 인원 범위",
+          "candidate": "135명 초과",
+          "reviewNote": "적어도 4대라는 조건만으로는 상한이 없다. 180명 이하를 결론 내리려면 4대로 충분하다는 추가 조건이 필요하므로 출판사 의도 및 답안 확인 전 보류한다.",
+          "status": "source-ambiguity-answer-key-pending"
+        }
       ]
     },
     {
@@ -54,14 +107,57 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 9, "classification": "상자와 물건 무게의 최소 개수", "candidate": "25개", "status": "source-reviewed-answer-key-pending"},
-        {"number": 10, "classification": "양수 곱과 나눗셈이 포함된 범위 역산", "candidate": "10 이상 24 미만", "status": "source-reviewed-answer-key-pending"},
-        {"number": 11, "classification": "열린 경계 사이 소수 둘째 자리 수의 개수", "candidate": "644개", "reviewNote": "소수 둘째 자리까지 표현하는 3.15부터 9.58까지를 센 결과다. 손글씨 580과 달라 공식 답안 및 소수 두 자리 표현 기준을 추가 확인한다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 12, "classification": "한 모둠 인원 제한과 모둠 수의 범위", "candidate": "6개 이상 12개 이하", "reviewNote": "모든 모둠의 인원을 같게 해야 한다는 조건은 명시되지 않았다. 범위의 양 끝은 각각 6명씩과 3명씩일 때 가능하다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 13, "classification": "동전의 지폐 교환과 금액 범위", "candidate": "해석에 따른 조건부 후보", "reviewNote": "모든 돈이 지폐로만 바뀌었다면 48000원이다. 최대한 바꾸고 잔돈이 남을 수 있다고 보면 48000원 이상 48990원 이하(10원 단위)다. 남은 동전과 최대 교환 여부가 명시되지 않아 답안·출제 의도를 확인한다.", "status": "source-ambiguity-answer-key-pending"},
-        {"number": 14, "classification": "4의 배수 개수로 자연수 상한 범위 구하기", "candidate": "168 이상 172 미만", "status": "source-reviewed-answer-key-pending"},
-        {"number": 15, "classification": "범위와 자릿수 합으로 수 정하기", "candidate": "40909", "status": "source-reviewed-answer-key-pending"},
-        {"number": 16, "classification": "두 좌석 수 조건의 인원 교집합", "candidate": "241, 242, 243, 244명", "status": "source-reviewed-answer-key-pending"}
+        {
+          "number": 9,
+          "classification": "상자와 물건 무게의 최소 개수",
+          "candidate": "25개",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 10,
+          "classification": "양수 곱과 나눗셈이 포함된 범위 역산",
+          "candidate": "10 이상 24 미만",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 11,
+          "classification": "열린 경계 사이 소수 둘째 자리 수의 개수",
+          "candidate": "644개",
+          "reviewNote": "소수 둘째 자리까지 표현하는 3.15부터 9.58까지를 센 결과다. 손글씨 580과 달라 공식 답안 및 소수 두 자리 표현 기준을 추가 확인한다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 12,
+          "classification": "한 모둠 인원 제한과 모둠 수의 범위",
+          "candidate": "6개 이상 12개 이하",
+          "reviewNote": "모든 모둠의 인원을 같게 해야 한다는 조건은 명시되지 않았다. 범위의 양 끝은 각각 6명씩과 3명씩일 때 가능하다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 13,
+          "classification": "동전의 지폐 교환과 금액 범위",
+          "candidate": "해석에 따른 조건부 후보",
+          "reviewNote": "모든 돈이 지폐로만 바뀌었다면 48000원이다. 최대한 바꾸고 잔돈이 남을 수 있다고 보면 48000원 이상 48990원 이하(10원 단위)다. 남은 동전과 최대 교환 여부가 명시되지 않아 답안·출제 의도를 확인한다.",
+          "status": "source-ambiguity-answer-key-pending"
+        },
+        {
+          "number": 14,
+          "classification": "4의 배수 개수로 자연수 상한 범위 구하기",
+          "candidate": "168 이상 172 미만",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 15,
+          "classification": "범위와 자릿수 합으로 수 정하기",
+          "candidate": "40909",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 16,
+          "classification": "두 좌석 수 조건의 인원 교집합",
+          "candidate": "241, 242, 243, 244명",
+          "status": "source-reviewed-answer-key-pending"
+        }
       ]
     },
     {
@@ -72,14 +168,59 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 17, "classification": "최대한 구매한 정수 권수와 단가의 범위", "candidate": "4000/11원 초과 800원 이하; 원 단위 정수면 364원 이상 800원 이하", "visual": "왼쪽 끝 열린 점, 오른쪽 끝 닫힌 점", "reviewNote": "구입 후 잔돈이 남을 수 있으므로 가격 364~400원도 가능하다. 손글씨의 400원 초과는 이를 누락한다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 18, "classification": "두 집합의 겹침과 전체 인원의 범위", "candidate": "22명 이상 32명 이하", "status": "source-reviewed-answer-key-pending"},
-        {"number": 19, "classification": "상자별 수량 범위와 상자 개수", "candidate": "30개 이상 50개 미만", "reviewNote": "상자마다 담긴 수가 다를 수 있다는 해석에서 30개와 49개 모두 실제로 가능하다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 20, "classification": "두 나머지 조건과 정수 범위", "candidate": "139개", "status": "source-reviewed-answer-key-pending"},
-        {"number": 21, "classification": "자리별 올림·버림·반올림 표", "candidate": "37500,37400,37500 / 27000,26000,26000 / 480000,470000,470000", "visual": "세 행과 세 어림 방법을 유지하는 표", "status": "source-reviewed-answer-key-pending"},
-        {"number": 22, "classification": "서로 다른 자리의 올림과 버림의 차", "candidate": "900", "status": "source-reviewed-answer-key-pending"},
-        {"number": 23, "classification": "세 어림 방식의 결과가 같은 수", "candidate": "5000", "status": "source-reviewed-answer-key-pending"},
-        {"number": 24, "classification": "숫자 카드 배열의 최접근 수와 반올림", "candidate": "901000", "reviewNote": "카드를 모두 쓴 가장 가까운 수는 901245이며 천의 자리로 반올림한다.", "status": "source-reviewed-answer-key-pending"}
+        {
+          "number": 17,
+          "classification": "최대한 구매한 정수 권수와 단가의 범위",
+          "candidate": "4000/11원 초과 800원 이하; 원 단위 정수면 364원 이상 800원 이하",
+          "visual": "왼쪽 끝 열린 점, 오른쪽 끝 닫힌 점",
+          "reviewNote": "구입 후 잔돈이 남을 수 있으므로 가격 364~400원도 가능하다. 손글씨의 400원 초과는 이를 누락한다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 18,
+          "classification": "두 집합의 겹침과 전체 인원의 범위",
+          "candidate": "22명 이상 32명 이하",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 19,
+          "classification": "상자별 수량 범위와 상자 개수",
+          "candidate": "30개 이상 50개 미만",
+          "reviewNote": "상자마다 담긴 수가 다를 수 있다는 해석에서 30개와 49개 모두 실제로 가능하다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 20,
+          "classification": "두 나머지 조건과 정수 범위",
+          "candidate": "139개",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 21,
+          "classification": "자리별 올림·버림·반올림 표",
+          "candidate": "37500,37400,37500 / 27000,26000,26000 / 480000,470000,470000",
+          "visual": "세 행과 세 어림 방법을 유지하는 표",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 22,
+          "classification": "서로 다른 자리의 올림과 버림의 차",
+          "candidate": "900",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 23,
+          "classification": "세 어림 방식의 결과가 같은 수",
+          "candidate": "5000",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 24,
+          "classification": "숫자 카드 배열의 최접근 수와 반올림",
+          "candidate": "901000",
+          "reviewNote": "카드를 모두 쓴 가장 가까운 수는 901245이며 천의 자리로 반올림한다.",
+          "status": "source-reviewed-answer-key-pending"
+        }
       ]
     },
     {
@@ -90,14 +231,58 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 25, "classification": "여러 자리 숫자 카드의 최대·최소 차와 반올림", "candidate": "4658000", "reviewNote": "카드 전체를 각각 한 덩어리로 이어 붙여 24개 순서를 검사했다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 26, "classification": "숫자 카드로 두 목표에 가장 가까운 수와 차", "candidate": "20000", "reviewNote": "가까운 수는 각각 51237과 71235이고 차 19998을 천의 자리로 반올림한다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 27, "classification": "숫자 배열과 반올림 결과의 개수", "candidate": "30개", "reviewNote": "4로 시작하고 다음이 5·6·7인 경우 18개와 5로 시작하고 다음이 3·4인 경우 12개다. 손글씨 36과 달라 공식 답안을 확인한다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 28, "classification": "반올림·버림 범위와 자리 관계", "candidate": "376361, 378461", "status": "source-reviewed-answer-key-pending"},
-        {"number": 29, "classification": "좌석 정원에 따른 의자 수 올림", "candidate": "123개", "status": "source-reviewed-answer-key-pending"},
-        {"number": 30, "classification": "용량과 단가로 필요한 상자 비용", "candidate": "64000원", "status": "source-reviewed-answer-key-pending"},
-        {"number": 31, "classification": "재료 사용량과 포장 단위 올림", "candidate": "밀가루 21봉지, 우유 6병", "status": "source-reviewed-answer-key-pending"},
-        {"number": 32, "classification": "포장 단위와 매출액의 지폐 교환", "candidate": "조건부", "reviewNote": "495kg은 40kg 포대 12개와 15kg이 남는다. 남은 15kg을 13번째 포대에 넣어 같은 값으로 판다고 가정하면 120장이다. 12포대만 팔아 얻는 111장은 남은 쌀을 모두 팔았다는 조건과 맞지 않는다. 남은 쌀의 포장·판매 조건 및 공식 답안 확인 전 보류한다.", "status": "source-ambiguity-answer-key-pending"}
+        {
+          "number": 25,
+          "classification": "여러 자리 숫자 카드의 최대·최소 차와 반올림",
+          "candidate": "4658000",
+          "reviewNote": "카드 전체를 각각 한 덩어리로 이어 붙여 24개 순서를 검사했다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 26,
+          "classification": "숫자 카드로 두 목표에 가장 가까운 수와 차",
+          "candidate": "20000",
+          "reviewNote": "가까운 수는 각각 51237과 71235이고 차 19998을 천의 자리로 반올림한다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 27,
+          "classification": "숫자 배열과 반올림 결과의 개수",
+          "candidate": "30개",
+          "reviewNote": "4로 시작하고 다음이 5·6·7인 경우 18개와 5로 시작하고 다음이 3·4인 경우 12개다. 손글씨 36과 달라 공식 답안을 확인한다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 28,
+          "classification": "반올림·버림 범위와 자리 관계",
+          "candidate": "376361, 378461",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 29,
+          "classification": "좌석 정원에 따른 의자 수 올림",
+          "candidate": "123개",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 30,
+          "classification": "용량과 단가로 필요한 상자 비용",
+          "candidate": "64000원",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 31,
+          "classification": "재료 사용량과 포장 단위 올림",
+          "candidate": "밀가루 21봉지, 우유 6병",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 32,
+          "classification": "포장 단위와 매출액의 지폐 교환",
+          "candidate": "조건부",
+          "reviewNote": "495kg은 40kg 포대 12개와 15kg이 남는다. 남은 15kg을 13번째 포대에 넣어 같은 값으로 판다고 가정하면 120장이다. 12포대만 팔아 얻는 111장은 남은 쌀을 모두 팔았다는 조건과 맞지 않는다. 남은 쌀의 포장·판매 조건 및 공식 답안 확인 전 보류한다.",
+          "status": "source-ambiguity-answer-key-pending"
+        }
       ]
     },
     {
@@ -108,14 +293,62 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 33, "classification": "무게 제한과 추가 상자 최대 개수", "candidate": "3개", "status": "source-reviewed-answer-key-pending"},
-        {"number": 34, "classification": "계단형 도형 둘레와 단위 변환·반올림", "candidate": "204cm", "visual": "세 가로 구간과 세 세로 구간이 각각 전체 가로·세로와 같음", "reviewNote": "전체 둘레 2038mm는 203.8cm이며 자연수로 반올림한다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 35, "classification": "권종별 금액 합과 교환 가능한 지폐 수", "candidate": "161장", "reviewNote": "총액은 807150원이고 5000원권 161장 교환 뒤 2150원이 남는다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 36, "classification": "서로 다른 포장 단위의 구매 비용 비교", "candidate": "14000원", "reviewNote": "각 마트에서 포장된 상품을 필요한 양 이상 구매한다고 보면 각각 66000원과 80000원이다. 정확히 85kg만 판매 가능한지는 원문에서 별도 명시되지 않았다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 37, "classification": "완전 포장 단위와 소요 시간", "candidate": "336분", "reviewNote": "상자를 차례로 포장한다고 보면 42상자와 남은 27개이며 남은 사과는 포장하지 않는다. 병렬 작업 여부는 명시되지 않았다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 38, "classification": "전체 끈 길이와 구매 단위 올림", "candidate": "18400원", "reviewNote": "전체 22.86m가 필요하고 끈을 이어 구매해 필요한 길이로 자를 수 있다고 본다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 39, "classification": "요일별 추가 생산과 완전 포장 수", "candidate": "57상자", "reviewNote": "1월 1일이 일요일인 365일에는 일요일이 53번이고 알은 총 1148개다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 40, "classification": "묶음권 두 종류의 최소 비용", "candidate": "2040000원", "reviewNote": "100명권 4묶음과 10명권 8묶음이며 총 480명분이다. 모든 묶음 조합을 비교했다.", "status": "source-reviewed-answer-key-pending"}
+        {
+          "number": 33,
+          "classification": "무게 제한과 추가 상자 최대 개수",
+          "candidate": "3개",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 34,
+          "classification": "계단형 도형 둘레와 단위 변환·반올림",
+          "candidate": "204cm",
+          "visual": "세 가로 구간과 세 세로 구간이 각각 전체 가로·세로와 같음",
+          "reviewNote": "전체 둘레 2038mm는 203.8cm이며 자연수로 반올림한다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 35,
+          "classification": "권종별 금액 합과 교환 가능한 지폐 수",
+          "candidate": "161장",
+          "reviewNote": "총액은 807150원이고 5000원권 161장 교환 뒤 2150원이 남는다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 36,
+          "classification": "서로 다른 포장 단위의 구매 비용 비교",
+          "candidate": "14000원",
+          "reviewNote": "각 마트에서 포장된 상품을 필요한 양 이상 구매한다고 보면 각각 66000원과 80000원이다. 정확히 85kg만 판매 가능한지는 원문에서 별도 명시되지 않았다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 37,
+          "classification": "완전 포장 단위와 소요 시간",
+          "candidate": "336분",
+          "reviewNote": "상자를 차례로 포장한다고 보면 42상자와 남은 27개이며 남은 사과는 포장하지 않는다. 병렬 작업 여부는 명시되지 않았다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 38,
+          "classification": "전체 끈 길이와 구매 단위 올림",
+          "candidate": "18400원",
+          "reviewNote": "전체 22.86m가 필요하고 끈을 이어 구매해 필요한 길이로 자를 수 있다고 본다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 39,
+          "classification": "요일별 추가 생산과 완전 포장 수",
+          "candidate": "57상자",
+          "reviewNote": "1월 1일이 일요일인 365일에는 일요일이 53번이고 알은 총 1148개다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 40,
+          "classification": "묶음권 두 종류의 최소 비용",
+          "candidate": "2040000원",
+          "reviewNote": "100명권 4묶음과 10명권 8묶음이며 총 480명분이다. 모든 묶음 조합을 비교했다.",
+          "status": "source-reviewed-answer-key-pending"
+        }
       ]
     },
     {
@@ -126,14 +359,58 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 41, "classification": "버림한 인구수의 자연수 범위", "candidate": "10289999명 초과 10300000명 미만", "reviewNote": "인구수는 정수이므로 10290000명 이상 10299999명 이하와 같다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 42, "classification": "반올림한 두 수의 합의 범위", "candidate": "140개 이상 158개 이하", "status": "source-reviewed-answer-key-pending"},
-        {"number": 43, "classification": "반올림과 버림 조건의 자연수 개수 합", "candidate": "200", "status": "source-reviewed-answer-key-pending"},
-        {"number": 44, "classification": "버림과 반올림 범위의 교집합", "candidate": "55개 이상 59개 이하", "status": "source-reviewed-answer-key-pending"},
-        {"number": 45, "classification": "올림과 반올림 조건을 만족하는 자연수 개수", "candidate": "49개", "reviewNote": "501부터 549까지다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 46, "classification": "올림·버림된 두 집단 수의 최대 차", "candidate": "108명", "reviewNote": "남자는 13901~14000명, 여자는 14000~14009명이다. 14009−13901=108이다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 47, "classification": "올림·버림·반올림 조건의 자연수 교집합", "candidate": "2495, 2496, 2497, 2498, 2499", "status": "source-reviewed-answer-key-pending"},
-        {"number": 48, "classification": "만의 자리 세 어림 조건을 만족하는 개수", "candidate": "4999개", "reviewNote": "7820001부터 7824999까지이며 7820000은 올림 결과가 7830000이 아니므로 제외한다.", "status": "source-reviewed-answer-key-pending"}
+        {
+          "number": 41,
+          "classification": "버림한 인구수의 자연수 범위",
+          "candidate": "10289999명 초과 10300000명 미만",
+          "reviewNote": "인구수는 정수이므로 10290000명 이상 10299999명 이하와 같다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 42,
+          "classification": "반올림한 두 수의 합의 범위",
+          "candidate": "140개 이상 158개 이하",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 43,
+          "classification": "반올림과 버림 조건의 자연수 개수 합",
+          "candidate": "200",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 44,
+          "classification": "버림과 반올림 범위의 교집합",
+          "candidate": "55개 이상 59개 이하",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 45,
+          "classification": "올림과 반올림 조건을 만족하는 자연수 개수",
+          "candidate": "49개",
+          "reviewNote": "501부터 549까지다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 46,
+          "classification": "올림·버림된 두 집단 수의 최대 차",
+          "candidate": "108명",
+          "reviewNote": "남자는 13901~14000명, 여자는 14000~14009명이다. 14009−13901=108이다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 47,
+          "classification": "올림·버림·반올림 조건의 자연수 교집합",
+          "candidate": "2495, 2496, 2497, 2498, 2499",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 48,
+          "classification": "만의 자리 세 어림 조건을 만족하는 개수",
+          "candidate": "4999개",
+          "reviewNote": "7820001부터 7824999까지이며 7820000은 올림 결과가 7830000이 아니므로 제외한다.",
+          "status": "source-reviewed-answer-key-pending"
+        }
       ]
     },
     {
@@ -144,14 +421,61 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 49, "classification": "반올림한 인원과 물품 최대 부족량", "candidate": "98개", "reviewNote": "인원이 최대 649명일 때 1298개가 필요하다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 50, "classification": "어림 범위 교집합과 자릿수 관계", "candidate": "1376", "status": "source-reviewed-answer-key-pending"},
-        {"number": 51, "classification": "원래 범위와 각각 올림한 합의 교집합", "candidate": "26 초과 30 이하", "status": "source-reviewed-answer-key-pending"},
-        {"number": 52, "classification": "나눗셈과 버림 조건에서 양 끝 자연수의 차", "candidate": "79", "reviewNote": "가능한 자연수는 960~1039다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 53, "classification": "곱한 수의 올림 조건을 만족하는 자연수 개수", "candidate": "111개", "reviewNote": "3223부터 3333까지다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 54, "classification": "두 나눗셈 몫의 어림 조건 교집합", "candidate": "45개", "reviewNote": "가능한 자연수는 450부터 494까지다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 55, "classification": "표의 자리 숫자와 반올림한 세 수의 합", "candidate": "5, 6, 7, 8, 9", "visual": "세 달 입장객 수가 있는 표의 가운데 수백의 자리 빈칸", "status": "source-reviewed-answer-key-pending"},
-        {"number": 56, "classification": "반올림된 인구 막대그래프와 실제 값의 최대 차", "candidate": "129999명", "visual": "만 명 단위 막대 높이 가 16, 나 26, 다 20, 라 28", "reviewNote": "라의 최대 284999명과 가의 최소 155000명의 차다. 그래프 원본 눈금과 막대 높이를 대조했다.", "status": "source-reviewed-answer-key-pending"}
+        {
+          "number": 49,
+          "classification": "반올림한 인원과 물품 최대 부족량",
+          "candidate": "98개",
+          "reviewNote": "인원이 최대 649명일 때 1298개가 필요하다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 50,
+          "classification": "어림 범위 교집합과 자릿수 관계",
+          "candidate": "1376",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 51,
+          "classification": "원래 범위와 각각 올림한 합의 교집합",
+          "candidate": "26 초과 30 이하",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 52,
+          "classification": "나눗셈과 버림 조건에서 양 끝 자연수의 차",
+          "candidate": "79",
+          "reviewNote": "가능한 자연수는 960~1039다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 53,
+          "classification": "곱한 수의 올림 조건을 만족하는 자연수 개수",
+          "candidate": "111개",
+          "reviewNote": "3223부터 3333까지다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 54,
+          "classification": "두 나눗셈 몫의 어림 조건 교집합",
+          "candidate": "45개",
+          "reviewNote": "가능한 자연수는 450부터 494까지다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 55,
+          "classification": "표의 자리 숫자와 반올림한 세 수의 합",
+          "candidate": "5, 6, 7, 8, 9",
+          "visual": "세 달 입장객 수가 있는 표의 가운데 수백의 자리 빈칸",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 56,
+          "classification": "반올림된 인구 막대그래프와 실제 값의 최대 차",
+          "candidate": "129999명",
+          "visual": "만 명 단위 막대 높이 가 16, 나 26, 다 20, 라 28",
+          "reviewNote": "라의 최대 284999명과 가의 최소 155000명의 차다. 그래프 원본 눈금과 막대 높이를 대조했다.",
+          "status": "source-reviewed-answer-key-pending"
+        }
       ]
     }
   ],
