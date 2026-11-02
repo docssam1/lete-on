@@ -41,7 +41,29 @@ function dice114(n){
   const dots=[];for(let row=0;row<2;row++)for(let col=0;col<2;col++){dots.push(pip(71.5+col*55+row*18,57.5-row*15));for(const [dx,dy] of [[14,13],[28,27],[42,41]])dots.push(pip(35+col*55+dx,67+row*55+dy));for(const [dx,dy] of [[-4,5],[4,-5]])dots.push(pip(154+row*18+dx,85+col*55-row*15+dy));}
   return `<svg style="display:block;width:100%;max-width:235px;height:auto;margin:.3em auto" viewBox="0 0 205 195" role="img" aria-label="같은 방향의 주사위 8개를 가로 세로 높이 2개씩 쌓은 정육면체. 윗면은 1, 앞면은 3, 오른쪽 면은 2"><g stroke="#191511" stroke-width="1.5" stroke-linejoin="round"><path d="M35 65 L71 35 H181 L145 65 Z" fill="#f5f5f5"/><path d="M145 65 L181 35 V145 L145 175 Z" fill="#ddd"/><path d="M35 65 H145 V175 H35 Z" fill="#eee"/><path d="M90 65 V175 M35 120 H145 M90 65 L126 35 M53 50 H163 M163 50 V160 M145 120 L181 90" fill="none"/><g stroke="none">${dots.join('')}</g></g></svg>`;
 }
+function linkedDice114(n){
+  const w=43,dx=25,dy=22,h=43;
+  const dot=(x,y)=>`<circle cx="${x}" cy="${y}" r="2.7" fill="#191511"/>`;
+  const start=n===49?30:150, py=115;
+  const cells=[[0,0],[0,1],[0,2],[1,2],[2,2],...(n===50?[[3,2]]:[])];
+  const has=(x,y)=>cells.some(([a,b])=>a===x&&b===y);
+  let shapes='',marks='';
+  for(const [i,j] of cells){
+    const x=start+i*w+j*dx,y=py-j*dy;
+    shapes+=`<path d="M${x} ${y} l${dx} -${dy} h${w} l-${dx} ${dy} Z" fill="#f5f5f5"/>`;
+    if(!has(i,j-1))shapes+=`<path d="M${x} ${y} h${w} v${h} h-${w} Z" fill="#eee"/>`;
+    if(!has(i+1,j))shapes+=`<path d="M${x+w} ${y} l${dx} -${dy} v${h} l-${dx} ${dy} Z" fill="#ddd"/>`;
+    if(i===0&&j===0){if(n===49)marks+=`<text x="${x+w/2}" y="${y+29}" text-anchor="middle" font-size="19">3</text>`;else for(const a of [11,32])for(const b of [10,21,32])marks+=dot(x+a,y+b);}
+    if(i===0&&j===2){if(n===49)marks+=`<text x="${x+34}" y="${y-6}" text-anchor="middle" font-size="18">3</text>`;else for(const [a,b] of [[20,-16],[33,-16],[26,-11],[19,-6],[32,-6]])marks+=dot(x+a,y+b);}
+    if(i===(n===49?2:3)&&j===2)marks+=`<text x="${x+w+12}" y="${y+17}" text-anchor="middle" font-size="17">${n===49?'가':'㉠'}</text>`;
+  }
+  let reference='';if(n===50)reference=`<g transform="translate(14 70)" stroke="#191511" stroke-width="1.4" stroke-linejoin="round"><path d="M0 24 L22 6 H65 L43 24 Z" fill="#f5f5f5"/><path d="M43 24 L65 6 V49 L43 67 Z" fill="#ddd"/><path d="M0 24 H43 V67 H0 Z" fill="#eee"/><g stroke="none">${dot(32,15)}${dot(11,34)}${dot(32,57)}${dot(48,28)}${dot(54,38)}${dot(60,48)}</g></g><text x="46" y="166" font-size="13" text-anchor="middle">[그림 1]</text><text x="295" y="166" font-size="13" text-anchor="middle">[그림 2]</text>`;
+  return `<svg style="display:block;width:100%;max-width:${n===49?300:430}px;height:auto;margin:.3em auto" viewBox="0 0 ${n===49?260:430} 180" role="img" aria-label="${n===49?'다섯 정육면체를 ㄱ자로 이어 붙인 그림. 맨 앞면에 3, 꺾인 정육면체의 윗면에 3, 맨 오른쪽 바깥 면에 가':'그림 1의 주사위는 윗면 1, 앞면 2, 오른쪽 면 3. 그림 2는 여섯 주사위를 ㄱ자로 이어 붙이고 맨 앞면 6, 꺾인 윗면 5, 맨 오른쪽 바깥 면 ㉠'}"><g stroke="#191511" stroke-width="1.4" stroke-linejoin="round">${shapes}<g fill="#191511" stroke="none">${marks}</g></g>${reference}</svg>`;
+}
 const data=Object.freeze([
+{n:49,name:'맞닿은 면의 수의 합이 8인 다섯 정육면체 · 확인학습 원문',answer:'4',manual:false,contract:'single-value',prompt:`<p>정육면체의 면에는 각각 1, 2, 3, 4, 5, 6의 수가 쓰여 있고, 마주 보는 면에 쓰여진 두 수의 합은 모두 7이다. 5개의 정육면체를 그림과 같이 붙였을 때 서로 맞붙여진 면의 두 수의 합이 모두 8이라면 가는 어떤 수인가?</p>${linkedDice114(49)}`,solution:'<p>맨 앞 정육면체의 보이는 면이 3이므로 그 반대쪽은 4입니다. 맞닿은 면의 합이 8이므로 다음 정육면체의 앞면은 4, 뒷면은 3이고, 꺾이는 정육면체의 앞면은 5입니다.</p><p>꺾이는 정육면체의 윗면은 3이므로 옆으로 이어지는 면은 1 또는 6입니다. 1이면 맞닿은 면에 7이 필요해 불가능하므로 6입니다. 이어지는 면은 차례로 2, 5, 3, 4이므로 <strong>가=4</strong>입니다.</p>'},
+{n:50,name:'같은 주사위 여섯 개의 맞닿은 눈의 합 · 확인학습 원문',answer:'4개',manual:false,contract:'single-value',prompt:`<p>다음 [그림 1]과 같은 주사위 6개를 [그림 2]와 같이 이어 놓았다. 서로 맞닿은 면에 있는 점의 개수의 합이 항상 6이라고 할 때, 면 ㉠에 알맞은 점의 개수는 몇 개인가? (단, 마주 보는 면의 점의 수의 합은 7이다.)</p>${linkedDice114(50)}`,solution:'<p>맨 앞 주사위의 앞면은 6이므로 뒷면은 1입니다. 맞닿은 면의 합이 6이므로 다음 주사위의 앞면은 5, 뒷면은 2이고 꺾이는 주사위의 앞면은 4입니다.</p><p>꺾이는 주사위의 윗면이 5이므로 오른쪽 면은 1 또는 6입니다. 6은 맞닿은 면에 0이 필요하므로 불가능하여 1입니다. 이어지는 면은 차례로 5, 2, 4, 3, 3, 4이고, 따라서 ㉠의 점은 <strong>4개</strong>입니다.</p>'},
+
 {n:51,name:'맞닿은 눈이 같은 네 주사위 쌓기 · 확인학습 원문',answer:'3',manual:false,contract:'single-value',prompt:`<p>왼쪽과 같은 모양의 주사위를 서로 닿는 면의 눈의 크기가 같도록 4개 쌓았다. ㉠의 눈은 얼마인가? (단, 마주 보는 면의 점의 수의 합은 7이다.)</p>${dice114(51)}`,solution:'<p>처음 주사위의 윗면은 1, 앞면은 2, 오른쪽 면은 3입니다. 앞면이 2이고 오른쪽 면이 1이 되도록 돌리면 맨 아래 주사위의 윗면은 4입니다.</p><p>닿는 두 면의 눈은 같고, 각 주사위의 위아래 면의 합은 7이므로 아래에서 위로 윗면의 눈은 4, 3, 4, 3입니다. 따라서 ㉠은 <strong>3</strong>입니다.</p>'},
 {n:52,name:'같은 방향으로 쌓은 주사위의 맞닿은 면의 눈의 합 · 확인학습 원문',answer:'84',manual:false,contract:'single-value',prompt:`<p>주사위 8개를 그림처럼 똑같은 방향으로 쌓아서 서로 붙여 큰 정육면체를 만들었다. 주사위 8개의 눈 중 맞닿아 있는 면의 눈의 수의 합은 모두 얼마인가? (단, 마주 보는 면의 눈의 수의 합은 7이다.)</p>${dice114(52)}`,solution:'<p>가로, 세로, 높이 각 방향에서 맞닿은 면은 4쌍씩이므로 모두 12쌍입니다.</p><p>모든 주사위가 같은 방향이므로 맞닿은 두 면의 눈의 합은 마주 보는 면의 합인 7입니다. 따라서 12×7=<strong>84</strong>입니다.</p>'},
 

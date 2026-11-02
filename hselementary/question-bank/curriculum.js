@@ -2544,7 +2544,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
 
   const source52Dice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s5");
-  if (source52Dice) for (const [n,name] of [[51,"맞닿은 눈이 같은 네 주사위 쌓기 · 확인학습 원문"],[52,"같은 방향으로 쌓은 주사위의 맞닿은 면의 눈의 합 · 확인학습 원문"]]) {
+  if (source52Dice) for (const [n,name] of [[49,"맞닿은 면의 수의 합이 8인 다섯 정육면체 · 확인학습 원문"],[50,"같은 주사위 여섯 개의 맞닿은 눈의 합 · 확인학습 원문"],[51,"맞닿은 눈이 같은 네 주사위 쌓기 · 확인학습 원문"],[52,"같은 방향으로 쌓은 주사위의 맞닿은 면의 눈의 합 · 확인학습 원문"]]) {
     const id=`5-2-u5-practice-${n}-original`;
     if (source52Dice.types.some(type=>type.id===id)) continue;
     const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
