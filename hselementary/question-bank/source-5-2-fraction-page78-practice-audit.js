@@ -1,0 +1,3 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-fraction-page76-practice.js');const valid=Array.from({length:100},(_,i)=>i+1).filter(n=>15>2*n);assert.deepEqual(valid,[1,2,3,4,5,6,7]);assert.equal(16*7*8*4-7*3*7*4,107*7*4);assert.equal((64-32+4)/9,4);
+const values=[3,5,8],all=[];for(const w of values)for(const n of values)for(const d of values)if(new Set([w,n,d]).size===3&&n<d)all.push([w,n,d]);assert.deepEqual(all,[[3,5,8],[5,3,8],[8,3,5]]);assert.equal(29*43*43,167*320+181);for(const n of [25,26,27,28]){const q=api.build(n);assert.equal(q.sourcePdfPage,74);assert.equal(q.sourcePrintedPage,78)}console.log('PASS: inequality, defined operations and every proper mixed number');
