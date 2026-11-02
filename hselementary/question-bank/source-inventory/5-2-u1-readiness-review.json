@@ -182,7 +182,7 @@
       "sourcePrintedPage": 70,
       "scope": "문항 17~24는 기존 개념탐구·예제·Mission 목록과 별도이며 원문과 필기 없는 사본을 대조해 유형과 독립 계산 후보를 기록한다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partial-verified-local",
       "items": [
         {
           "number": 17,
@@ -196,20 +196,26 @@
           "number": 18,
           "classification": "두 집합의 겹침과 전체 인원의 범위",
           "candidate": "22명 이상 32명 이하",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-18-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 19,
           "classification": "상자별 수량 범위와 상자 개수",
           "candidate": "30개 이상 50개 미만",
           "reviewNote": "상자마다 담긴 수가 다를 수 있다는 해석에서 30개와 49개 모두 실제로 가능하다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-19-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 20,
           "classification": "두 나머지 조건과 정수 범위",
           "candidate": "139개",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-20-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 21,
@@ -222,7 +228,9 @@
           "number": 22,
           "classification": "서로 다른 자리의 올림과 버림의 차",
           "candidate": "900",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-22-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 23,
