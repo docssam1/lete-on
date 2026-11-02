@@ -2144,6 +2144,20 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     type.answerVisualStatus = "locked";
   }));
 
+  // Original examples use distinct IDs; the existing numerical practice remains intact.
+  const source52Range = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
+  const source52RangeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s1");
+  if (source52RangeGroup) for (const [n, name] of [[1,"세 자리 수 범위의 시작 수 최댓값 · 원문"],[2,"필요한 의자 수로 학생 수 범위 구하기 · 원문"],[3,"두 조건을 모두 만족하는 회원 수 범위 · 원문"],[4,"귤을 나누어 담는 상자 수 범위 · 원문"]]) {
+    const id = `5-2-u1-e1-example-${n}`;
+    if (source52RangeGroup.types.some(type => type.id === id)) continue;
+    const typeNumber = Math.max(0, ...source52Range.subunits.flatMap(group => group.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52RangeGroup.types.push({id, number:source52RangeGroup.types.length+1, typeNumber, name, label:name, difficultyBand:0,
+      sourceItemId:id, sourceItemLabel:`예제 1-${n} 원문`, sourceSection:"example", sourceTier:"advanced", sourcePdfPage:2, sourcePrintedPage:4,
+      sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:`source52RangePage04OriginalExample${n}`,
+      generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
+      automaticGrading:n===1, answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원본 조건과 끝점을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
   const source52CuboidViewPractice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s3");

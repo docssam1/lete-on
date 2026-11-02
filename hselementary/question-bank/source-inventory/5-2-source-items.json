@@ -48,8 +48,8 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "verifiedLocalItems": 105,
-    "reviewLockedItems": 176
+    "verifiedLocalItems": 109,
+    "reviewLockedItems": 172
   },
   "units": [
     {
@@ -164,14 +164,15 @@
       "ordinal": 1,
       "pdfPage": 2,
       "printedPage": 4,
-      "sourceShape": "두 세 자리 자연수의 크기 관계와 사이 자연수의 개수 조건으로 더 큰 수의 최댓값을 구하는 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "sourceShape": "양 끝을 포함한 자연수 567개의 범위에서 세 자리인 작은 끝값의 최댓값을 구하는 문항.",
+      "answerContract": "single-value: 433",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e1-example-1",
+      "reviewReason": "원본의 끝점 포함과 567개를 대조하고 최댓값을 독립 검산했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-2",
@@ -182,13 +183,14 @@
       "pdfPage": 2,
       "printedPage": 4,
       "sourceShape": "한 줄에 앉는 학생 수가 다를 때 필요한 의자 수 조건으로 학생 수의 범위를 나타내는 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "inclusive-exclusive-range",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e1-example-2",
+      "reviewReason": "두 의자 조건과 양 끝점을 전수 검산했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-3",
@@ -199,13 +201,14 @@
       "pdfPage": 2,
       "printedPage": 4,
       "sourceShape": "전체 인원과 두 물건을 가진 인원 수가 주어졌을 때 둘 다 가진 인원 수의 범위를 나타내는 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "strict-inclusive-range",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e1-example-3",
+      "reviewReason": "원본 수치와 포함 관계, 정수 범위 끝점을 검산했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-4",
@@ -216,13 +219,14 @@
       "pdfPage": 2,
       "printedPage": 4,
       "sourceShape": "한 상자에 담는 개수의 하한과 상한으로 필요한 상자 수의 범위를 나타내는 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "strict-range",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e1-example-4",
+      "reviewReason": "원본 수치와 가능한 9·10·11상자 배분을 대조했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-1",
