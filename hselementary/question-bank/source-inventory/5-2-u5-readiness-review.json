@@ -219,15 +219,15 @@
       "sourcePrintedPage": 115,
       "scope": "115쪽 57~64번 원문과 필기 없는 사본의 면 배치와 경로를 대조했다. 주사위는 각 칸에 닿는 면을 따로 추적했다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "partially-connected-57-60",
+      "runtimeConnection": "partially-connected-57-61-63",
       "items": [
         {"number": 57, "classification": "마주 보는 면의 합이 21인 두 주사위의 접촉면", "candidate": "20", "reviewNote": "위 주사위의 윗면 11과 마주 보는 아랫면은 10이다. 아래 주사위는 앞면 12를 유지하면서 오른쪽 13이 그 반대 8로 바뀌었으므로 앞뒤 축을 기준으로 반 바퀴 돌아 윗면이 10이다. 겹친 두 면의 합은 10+10=20이다.", "runtimeTypeId": "5-2-u5-practice-57-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 58, "classification": "같은 전개도의 정육면체 여섯 개에서 뒷면의 합", "candidate": "2", "reviewNote": "전개도의 반대 쌍은 1↔4, 2↔5, 3↔6이다. 그림에서 알려진 앞면 1, 3, 5, 5, 3의 뒷면 합은 4+6+2+2+6=20이다. 전체 뒷면 합이 25이므로 미지 면의 반대는 5, 앞면은 2다.", "runtimeTypeId": "5-2-u5-practice-58-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 59, "classification": "정육면체 열여섯 개의 바닥 숫자 합", "candidate": "92", "reviewNote": "전개도를 접으면 5↔7, 8↔4, 6↔3이 마주 본다. 원문 4×4 윗면 숫자 열여섯 개에 각각 반대 면을 대응시켜 더하면 92다. 별도 코드가 16개의 윗면 숫자와 반대 면의 합을 검산한다.", "runtimeTypeId": "5-2-u5-practice-59-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 60, "classification": "여섯 정육면체의 반대편 숫자 합으로 빈칸 찾기", "candidate": "8", "reviewNote": "반대 쌍은 7↔5, 4↔9, 1↔8이다. 알려진 앞면 1, 5, 4, 9, 5의 반대 숫자 합은 8+7+9+4+7=35다. 전체가 36이므로 빈칸의 반대는 1, 빈칸은 8이다.", "runtimeTypeId": "5-2-u5-practice-60-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
-        {"number": 61, "classification": "다섯 칸 경로를 구른 주사위의 윗면", "candidate": "2", "reviewNote": "초기 위·앞·오른쪽 눈은 2·1·3이고 그림의 이동 순서는 오른쪽, 오른쪽, 앞, 오른쪽, 앞이다. 각 칸의 윗면은 4, 5, 6, 3, 2다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 61, "classification": "다섯 칸 경로를 구른 주사위의 윗면", "candidate": "2", "reviewNote": "초기 위·앞·오른쪽 눈은 2·1·3이고 그림의 이동 순서는 오른쪽, 오른쪽, 앞, 오른쪽, 앞이다. 각 칸의 윗면은 4, 5, 6, 3, 2다.", "runtimeTypeId": "5-2-u5-practice-61-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 62, "classification": "전개도로 만든 주사위가 일곱 칸에 닿는 눈의 합", "candidate": "22", "reviewNote": "전개도의 반대 쌍은 1↔6, 2↔5, 3↔4이고 시작 위·앞·오른쪽은 2·3·1이다. 그림의 경로는 오른쪽 두 번, 앞, 오른쪽 두 번, 앞, 오른쪽이다. 일곱 바닥의 수는 1, 2, 3, 6, 4, 5, 1로 합 22다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 63, "classification": "일곱 칸 경로를 구른 주사위의 윗면", "candidate": "4", "reviewNote": "초기 위·앞·오른쪽 눈은 2·3·1이다. 번호와 화살표를 따라 오른쪽 두 번, 앞, 왼쪽 두 번, 앞 두 번 굴리면 각 칸의 윗면은 6, 5, 4, 6, 3, 2, 4다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 63, "classification": "일곱 칸 경로를 구른 주사위의 윗면", "candidate": "4", "reviewNote": "초기 위·앞·오른쪽 눈은 2·3·1이다. 번호와 화살표를 따라 오른쪽 두 번, 앞, 왼쪽 두 번, 앞 두 번 굴리면 각 칸의 윗면은 6, 5, 4, 6, 3, 2, 4다.", "runtimeTypeId": "5-2-u5-practice-63-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 64, "classification": "여덟 칸의 바닥에 닿은 주사위 눈의 합", "candidate": "32", "reviewNote": "시작 위·앞·오른쪽 눈은 6·5·3이고 시작 칸을 포함한 여덟 칸 경로는 오른쪽 세 번, 앞 두 번, 왼쪽 두 번이다. 시작 칸부터 바닥 눈은 1, 3, 6, 4, 5, 3, 6, 4이며 합은 32다. 시작 칸 포함 여부를 여덟 칸이라는 원문 조건과 경로 그림으로 확인했다.", "status": "source-reviewed-answer-key-pending"}
       ]
     }
