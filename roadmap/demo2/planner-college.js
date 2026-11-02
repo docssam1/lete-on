@@ -8,7 +8,7 @@ const has=(o,k)=>Object.hasOwn(o,k),pick=(v,list)=>list.includes(v)?v:null;
 const FORMATS={kr:'국내 학년',grade:'Grade',year:'Year',other:'학교 자체 학년',unknown:'학년 체계 확인 전'};
 const SCIENCE_BOOKS={school:'학교 과학 교재',otu:'오투 · 학기별 기본',julgi:'줄기과학 · 계통별 기본',wanza:'완자',hightop:'하이탑',cepheid1:'세페이드 1F',cepheid2:'세페이드 2F',cepheid3:'세페이드 3F',other:'다른 교재 · 판본 확인',unknown:'현재 교재 확인 전'};
 const SCIENCE_RANGES=[...Array.from({length:6},(_,i)=>[(4+Math.floor(i/2))+'-'+(i%2+1),'초등 '+(4+Math.floor(i/2))+'-'+(i%2+1)]),...Array.from({length:6},(_,i)=>['중'+(1+Math.floor(i/2))+'-'+(i%2+1),'중등 '+(1+Math.floor(i/2))+'-'+(i%2+1)]),['physics','물리 분야'],['chemistry','화학 분야'],['life','생명 분야'],['earth','지구 분야'],['integrated','통합과학'],['unknown','현재 범위 확인 전']];
-const PREP_GOALS=['none','private','giftedSchool','scienceHigh','general'];
+const PREP_GOALS=['none','private','giftedSchool','scienceHigh','foreignHigh','internationalHigh','general'];
 const REVIEW_CHOICES=[['now','이번 달'],['next','다음 달'],['quarter','3개월 뒤'],['unknown','아직 미정']];
 const OBS={pending:'아직 확인 전',help:'도움을 받아 적용',independent:'혼자 설명하고 적용'};
 const RESULTS={unknown:'결과 확인 전',conditional:'조건부 합격 통지 확인',admitted:'합격 통지 확인',declined:'불합격 통지 확인',withdrawn:'지원 철회 확인',enrolled:'등록 절차 완료 확인'};
@@ -128,7 +128,7 @@ function visibleSteps(value){return applicationVisible(value)?STEPS:STEPS.slice(
 function preparationPlan(v,context={}){
  const s=restore(v),goal=prepGoal(context),scope=prepScope(s,context),saved=s.preparations[scope]||{},p=s.school;
  const stage=schoolStage(s);
- const goalNote={giftedSchool:'영재학교 목표에서는 수학·과학 심화·탐구를 이어가며 읽기·표현과 다른 교과도 함께 살핍니다.',scienceHigh:'과학고 목표에서는 학교 수학·과학과 탐구를 이어가며 과목 이수와 언어·표현을 함께 확인합니다.',private:'자사고별 개설 과목과 국내·해외 진학 지원 방식을 비교합니다. 국제트랙 유무를 학교에 확인합니다.',general:'일반고의 학교 공부를 중심에 두고 개설 과목·탐구·학교 상담으로 이어갑니다.',none:'고교 유형은 열어두고 현재 학교에서 가능한 공부와 준비를 살펴봅니다.'}[goal];
+ const goalNote={foreignHigh:'외고의 실제 개설 과목과 언어·독서·표현을 바탕으로 국내·해외 대학 경로를 각각 비교합니다.',internationalHigh:'국제고의 교육과정과 내신·탐구·언어 공부를 연결합니다. 국제학교 교육과정으로 자동 전환하지 않습니다.',giftedSchool:'영재학교 목표에서는 수학·과학 심화·탐구를 이어가며 읽기·표현과 다른 교과도 함께 살핍니다.',scienceHigh:'과학고 목표에서는 학교 수학·과학과 탐구를 이어가며 과목 이수와 언어·표현을 함께 확인합니다.',private:'자사고별 개설 과목과 국내·해외 진학 지원 방식을 비교합니다. 국제트랙 유무를 학교에 확인합니다.',general:'일반고의 학교 공부를 중심에 두고 개설 과목·탐구·학교 상담으로 이어갑니다.',none:'고교 유형은 열어두고 현재 학교에서 가능한 공부와 준비를 살펴봅니다.'}[goal];
  const countryNote=s.active==='us'?'미국은 대학별 지원 방식·교과·시험·언어·서류 요건을 각각 확인합니다.':s.active==='uk'?'영국은 지원 과정의 인정 자격·선수과목·평가·언어 요건을 먼저 비교합니다.':s.active==='kr'?'국내는 해당 연도·대학·전형의 과목과 평가·서류 요건을 비교합니다.':'먼저 비교할 국가를 고르면 준비를 따로 남길 수 있습니다.';
  const tasks=Object.entries(D.PREPARATION).map(([id,d])=>{const [action,checkpoint]=d.stages[stage],at=saved[id]?.reviewAt;return{id,title:d.title,action,checkpoint,selected:has(saved,id),reviewAt:at||null,reviewLabel:at?at.slice(0,4)+'년 '+(Math.floor((+at.slice(5)-1)/3)+1)+'분기 · '+(+at.slice(5))+'월':'점검할 달 선택'};});
  return{scope,goal,stage,goalNote,countryNote,tasks,selected:tasks.filter(x=>x.selected)};

@@ -889,7 +889,7 @@ function clearSeniorDirectUrl(){
 }
 function openSeniorLibrary(){
  PlannerFullscreen.close();
- $('seniorLibraryContent').innerHTML='<section class="sp-catalog"><h3>상담 설계 예시</h3><button type="button" data-classroom-open><strong>지필드 6세 국가대표2 로드맵</strong><small>소마 A·필즈 E1 비교 · 12월 수업 적응 · 교과·연산·영어</small></button><button type="button" data-study-open><strong>초5 남학생 · 교과·사고력·쎈·연산·국어·과학</strong><small>5-2 응용에서 공통수학 2까지 · 내신을 고려한 월별 계획</small></button></section>'+HC.catalog();
+ $('seniorLibraryContent').innerHTML='<section class="sp-catalog"><button type="button" data-admissions-open><strong>고입 지원 준비</strong><small>목표별 공부 · 학교별 지원 조건 · 원서·면접 일정</small></button><h3>상담 설계 예시</h3><button type="button" data-classroom-open><strong>지필드 6세 국가대표2 로드맵</strong><small>소마 A·필즈 E1 비교 · 12월 수업 적응 · 교과·연산·영어</small></button><button type="button" data-study-open><strong>초5 남학생 · 교과·사고력·쎈·연산·국어·과학</strong><small>5-2 응용에서 공통수학 2까지 · 내신을 고려한 월별 계획</small></button></section>'+HC.catalog();
  window.PlannerDirectLinks?.decorateLibrary($('seniorLibraryContent'),window.location?.href);
  syncSeniorDirectUrl();$('seniorLibraryDialog').showModal();
 }
@@ -1217,4 +1217,7 @@ applySeniorDirectLink(incomingSeniorDirectLink);
 // Older sessions may have paths that were never edited after durable storage was added.
 // Promote only absent durable keys; another saved plan and deletion guards stay intact.
 for(const key of [preschoolDetailKey,cohortKey,languageKey,studentKey,storageKey,pathwayKey,personalityKey,careerKey,flowKey,planKey,progressKey,transitionKey,caseKey,historyKey,referencePlanKey,scienceKey,collegeKey,bookCheckKey,'gfield.demo2.roadmap-mode.v1','gfield.demo2.workspace.v1'])PlannerStorage.promoteExisting(key);
+// Applications are an independent, account-scoped notebook, not study offsets.
+if(window.PlannerHighschool){PlannerHighschool.init({context:()=>({...goalContext(),age:answers.age??intakeFields().age,fields:intakeFields(),year:intakeFields().year})});if(new URL(location.href).searchParams.get('admissions')==='1')setTimeout(()=>PlannerHighschool.open(),0);}
+
 })();
