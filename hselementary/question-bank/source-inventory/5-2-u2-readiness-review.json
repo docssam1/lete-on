@@ -367,7 +367,7 @@
         {"number": 69, "classification": "등간격 행렬의 부분 거리", "candidate": "3과 3/7m", "reviewNote": "8명 사이 간격 7개가 8m, 둘째와 다섯째 사이는 3개 간격이므로 24/7m", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-69-original", "publisherAnswerVerified": false},
         {"number": 70, "classification": "소수배를 이용한 기약분수의 분자와 분모", "candidate": "30", "reviewNote": "(6/5)÷0.36=10/3, 분자와 분모의 곱 30", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-70-original", "publisherAnswerVerified": false},
         {"number": 71, "classification": "한 자리 수와 기약분수 곱의 자연수 조건", "candidate": "6개", "reviewNote": "ㄱ은 2와 서로소이면서 3의 배수인 3,9이고 ㄴ은 3과 서로소인 짝수 2,4,8", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-71-original", "publisherAnswerVerified": false},
-        {"number": 72, "classification": "직사각형 넓이와 가로를 이용한 기약분수", "candidate": "119", "reviewNote": "세로=(17/3)÷(7/3)=17/7, 분자와 분모의 곱 119", "status": "source-reviewed-answer-key-pending"}
+        {"number": 72, "classification": "직사각형 넓이와 가로를 이용한 기약분수", "candidate": "119", "reviewNote": "세로=(17/3)÷(7/3)=17/7, 분자와 분모의 곱 119", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-72-original", "publisherAnswerVerified": false}
       ]
     },
     {
@@ -376,11 +376,11 @@
       "sourcePrintedPage": 84,
       "scope": "문항 73~76을 원문과 필기 없는 사본으로 대조하고 독립 계산했다. 그림은 없다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partial-verified-local",
       "items": [
-        {"number": 73, "classification": "직사각형 넓이의 분수와 한 변으로 다른 변 구하기", "candidate": "120", "reviewNote": "전체 넓이=(7/4)÷(2/5)=35/8, 세로=(35/8)÷(7/3)=15/8; 분자와 분모의 곱 120", "status": "source-reviewed-answer-key-pending"},
-        {"number": 74, "classification": "공통 분모를 가진 두 비의 비율", "candidate": "25/8", "reviewNote": "ㄱ/ㄴ=5/6, ㄷ/ㄴ=4/15이므로 ㄱ/ㄷ=(5/6)÷(4/15)=25/8", "status": "source-reviewed-answer-key-pending"},
-        {"number": 75, "classification": "분수 곱 등식에서 두 자연수의 곱", "candidate": "45", "reviewNote": "(2/3)×(2/5)×ㄱ/6=2/ㄴ에서 2ㄱ/45=2/ㄴ, 따라서 ㄱ×ㄴ=45", "status": "source-reviewed-answer-key-pending"},
+        {"number": 73, "classification": "직사각형 넓이의 분수와 한 변으로 다른 변 구하기", "candidate": "120", "reviewNote": "전체 넓이=(7/4)÷(2/5)=35/8, 세로=(35/8)÷(7/3)=15/8; 분자와 분모의 곱 120", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-73-original", "publisherAnswerVerified": false},
+        {"number": 74, "classification": "공통 분모를 가진 두 비의 비율", "candidate": "25/8", "reviewNote": "ㄱ/ㄴ=5/6, ㄷ/ㄴ=4/15이므로 ㄱ/ㄷ=(5/6)÷(4/15)=25/8", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-74-original", "publisherAnswerVerified": false},
+        {"number": 75, "classification": "분수 곱 등식에서 두 자연수의 곱", "candidate": "45", "reviewNote": "(2/3)×(2/5)×ㄱ/6=2/ㄴ에서 2ㄱ/45=2/ㄴ, 따라서 ㄱ×ㄴ=45", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-75-original", "publisherAnswerVerified": false},
         {"number": 76, "classification": "일정 배율로 증가하는 양을 3일 전으로 역산", "candidate": "8/27", "reviewNote": "오늘 덮인 비율을 1로 보고 3일 전 비율을 (2/3)³=8/27로 계산", "status": "source-reviewed-answer-key-pending"}
       ]
     }
