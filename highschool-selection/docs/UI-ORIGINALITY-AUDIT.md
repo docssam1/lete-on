@@ -129,3 +129,9 @@ Copy shortened: the home heading asks users to select an academy; the package he
 Writing skill review: https://github.com/blader/humanizer/tree/v3.1.0 provides fact-preserving removal of inflated claims, filler and repetition. Existing Hermes humanizer is v2.5.1. No skill installed or overwritten. archep29/im-not-ai-humanizer requires scripts and agent orchestration and was not selected for short UI labels.
 
 Checks: existing tests 32/32; VM checks cover 6 illustrated cards, 20 course routes and application restrictions. Live browser visual check follows publication.
+
+## 2026-11-02 · Intro typography and navigation controls
+
+Mac Codex, codex/highselect-intro-release-20261101. Skills: frontend-design, ui-ux-pro-max and GFIELD shared design rules. Connected the existing repository Pretendard variable font as a promo-local asset with its OFL license; the previous font-family declaration had no font source. Headings use clearer weight and less compressed Korean tracking. Login and academy navigation have 48px controls; portrait-card links include a bordered introduction action. Academy colors, logos, routes and release gates remain unchanged.
+
+Checks: desktop and 390px browser render, six card routes, keyboard focus ring and no horizontal overflow; existing 15 policy/content UI checks pass. Public stage allowlist now includes the font and its license (17 files). Publication and final live screenshot are checked after this commit; protected exams and DB are outside this change.
