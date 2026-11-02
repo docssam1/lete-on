@@ -353,14 +353,18 @@
           "candidate": "204cm",
           "visual": "세 가로 구간과 세 세로 구간이 각각 전체 가로·세로와 같음",
           "reviewNote": "전체 둘레 2038mm는 203.8cm이며 자연수로 반올림한다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-34-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 35,
           "classification": "권종별 금액 합과 교환 가능한 지폐 수",
           "candidate": "161장",
           "reviewNote": "총액은 807150원이고 5000원권 161장 교환 뒤 2150원이 남는다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-35-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 36,
@@ -388,14 +392,18 @@
           "classification": "요일별 추가 생산과 완전 포장 수",
           "candidate": "57상자",
           "reviewNote": "1월 1일이 일요일인 365일에는 일요일이 53번이고 알은 총 1148개다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-39-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 40,
           "classification": "묶음권 두 종류의 최소 비용",
           "candidate": "2040000원",
           "reviewNote": "100명권 4묶음과 10명권 8묶음이며 총 480명분이다. 모든 묶음 조합을 비교했다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-40-original",
+          "publisherAnswerVerified": false
         }
       ]
     },
