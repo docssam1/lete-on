@@ -106,7 +106,7 @@ test("Grade 7 route names checkpoints and identifies its public workbooks", func
 test("upper-grade course references are limited to named courses and keep Grade 9 inferred", function () {
   assert.deepEqual(Object.keys(roadmap.courseStageResources), ["8", "9", "10"]);
   assert.equal(roadmap.courseStageResources[8][0][0].url, "https://geometry.flippedmath.com/");
-  assert.match(roadmap.courseStageResources[8][2][0].title, /Algebra 2.*제작 중/);
+  assert.match(roadmap.courseStageResources[8][2][0].title, /Algebra 2.*새 과정/);
   assert.match(roadmap.courseStageResources[9].note, /추정 경로.*학교의 실제 과목/);
   assert.equal(roadmap.courseStageResources[9][0][0].url, "https://algebra2.flippedmath.com/");
   assert.equal(roadmap.courseStageResources[9][1][0].url, "https://geometry.flippedmath.com/");

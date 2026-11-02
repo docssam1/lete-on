@@ -27,7 +27,7 @@
     ]) })
   ]);
 
-  const algebra2Reference = Object.freeze({ title: "FlippedMath Algebra 2 · 새 과정 제작 중", url: "https://algebra2.flippedmath.com/" });
+  const algebra2Reference = Object.freeze({ title: "FlippedMath Algebra 2 · 새 과정", url: "https://algebra2.flippedmath.com/" });
   const geometryReference = Object.freeze({ title: "FlippedMath Geometry", url: "https://geometry.flippedmath.com/" });
   const preCalculusReference = Object.freeze({ title: "FlippedMath Pre-Calculus · Traditional", url: "https://precalculus.flippedmath.com/precalc-traditional.html" });
   const courseStageResources = Object.freeze({

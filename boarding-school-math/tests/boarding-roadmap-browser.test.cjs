@@ -713,8 +713,8 @@ test("Grade 7 algebra and geometry checkpoints open matching FlippedMath referen
   }
   const upperGradeCases = [
     { grade: 8, button: /단계 1, 일차식·기하 점검 보기/, title: "FlippedMath Geometry ↗", url: "https://geometry.flippedmath.com/" },
-    { grade: 8, button: /단계 3, 준비되면 심화 보기/, title: "FlippedMath Algebra 2 · 새 과정 제작 중 ↗", url: "https://algebra2.flippedmath.com/" },
-    { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "FlippedMath Algebra 2 · 새 과정 제작 중 ↗", url: "https://algebra2.flippedmath.com/", inferred: true },
+    { grade: 8, button: /단계 3, 준비되면 심화 보기/, title: "FlippedMath Algebra 2 · 새 과정 ↗", url: "https://algebra2.flippedmath.com/" },
+    { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "FlippedMath Algebra 2 · 새 과정 ↗", url: "https://algebra2.flippedmath.com/", inferred: true },
     { grade: 10, button: /단계 1, 개념 설명 보기/, title: "FlippedMath Pre-Calculus · Traditional ↗", url: "https://precalculus.flippedmath.com/precalc-traditional.html" }
   ];
   for (const item of upperGradeCases) {

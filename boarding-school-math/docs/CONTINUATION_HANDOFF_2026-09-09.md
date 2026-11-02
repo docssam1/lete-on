@@ -35,6 +35,12 @@ Re-ran the current Grade 7 diagnostic engine, public `7.NS.A` workbook, locked p
 
 The Grade 7 roadmap was also rendered at 390px and 1280px. Its concept path, assessment record entry, and public workbook route remain reachable, with no page-width overflow. Local verification only; no remote signer, authenticated student delivery, push, publish, or deployment is claimed.
 
+### 2026-11-02 FlippedMath Algebra 2 reference label
+
+Rechecked the official [FlippedMath Algebra 2 landing page](https://algebra2.flippedmath.com/). It now labels the active material as its new Algebra 2 course and states that the former Traditional and Common Core courses are no longer maintained. Updated the Grade 8 and Grade 9 resource label from “새 과정 제작 중” to “새 과정”; both still point to the current course landing page.
+
+Verification: Grade 3–12 roadmap model/browser suites pass 39/39 after updating the source-label expectation; browser coverage checks the Grade 8 and inferred Grade 9 links. The first run exposed the stale assertion, which was corrected and retested. Local-only; no push, publication, or deployment.
+
 ### 2026-10-30 Grade 7 7.NS.A study-plan connection
 
 Added a selectable Grade 7 · 7.NS.A goal to the learner plan. The learner can choose one of four manually selected concepts (rational addition/subtraction, multiplication/division, fraction/decimal forms, or word problems); daily concept links open the embedded 7.NS.A lesson in the public student workbook. The teacher view points to the teacher edition, 36-item workbook, and 8-item recheck. The Grade 7 learning-plan CTA on the boarding roadmap now opens this goal directly.
