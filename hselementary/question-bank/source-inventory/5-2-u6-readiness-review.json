@@ -135,15 +135,15 @@
       "sourcePrintedPage": 122,
       "scope": "122쪽 49~56번의 원문과 필기 없는 사본을 대조했다. 가능성을 계산할 때 적용한 동등 가능성과 순서 해석을 기록했다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "connected-49-50-52-53",
+      "runtimeConnection": "connected-49-50-52-55",
       "items": [
         {"number": 49, "classification": "숫자 카드 한 장이 주어진 범위에 속할 가능성", "candidate": "1/3", "reviewNote": "3 미만인 카드는 1, 2 두 장이고 13 이상인 카드는 13, 14, 15 세 장이다. 15장이 같은 가능성으로 뽑힌다면 5/15=1/3이다.", "runtimeTypeId": "5-2-u6-practice-49-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 50, "classification": "동전 네 개 중 앞면이 적어도 한 개일 가능성", "candidate": "15/16", "reviewNote": "공정한 동전의 앞뒤가 서로 독립이고 같은 가능성이라면 전체 16가지 중 앞면이 하나도 없는 경우는 한 가지다. 구하는 값은 1−1/16=15/16이다.", "runtimeTypeId": "5-2-u6-practice-50-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 51, "classification": "두 명의 회장을 뽑을 때 모두 남학생일 가능성", "candidate": "두 사람을 무작위로 공평하게 선택하면 10/21; 선출 방식 미확인", "reviewNote": "일곱 후보 중 두 명을 같은 가능성으로 뽑는다면 전체 조합은 21가지, 남학생 두 명의 조합은 10가지이므로 10/21이다. 그러나 원문은 회장을 선출한다고만 하고 무작위 추첨인지 투표인지 밝히지 않는다. 선출 방식에 따라 같은 가능성이라는 전제가 성립하지 않을 수 있으므로 확인 전 확정하지 않는다.", "status": "source-ambiguity-answer-key-pending"},
         {"number": 52, "classification": "서로 다른 동전 네 개가 모두 앞면일 가능성", "candidate": "1/16", "reviewNote": "서로 다른 네 동전이 공정하고 독립이라면 각각의 앞뒤 배열 16가지가 같은 가능성이고 모두 앞면인 경우는 하나이므로 1/16이다.", "runtimeTypeId": "5-2-u6-practice-52-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 53, "classification": "주사위 세 개가 모두 짝수일 가능성", "candidate": "1/8", "reviewNote": "공정한 주사위에서 짝수는 2, 4, 6으로 확률은 1/2이다. 세 주사위가 독립이라면 (1/2)³=1/8이다.", "runtimeTypeId": "5-2-u6-practice-53-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
-        {"number": 54, "classification": "네 사람 중 지정된 사람이 맨 뒤에 설 가능성", "candidate": "1/4", "reviewNote": "네 사람의 배열 4!=24가지가 같은 가능성이라면 지정된 사람을 맨 뒤에 고정하고 나머지를 배열하는 경우는 3!=6가지다. 6/24=1/4이다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 55, "classification": "두 숫자 카드로 만든 수가 30 이상일 가능성", "candidate": "3/5", "reviewNote": "각기 다른 1~5 카드에서 십의 자리와 일의 자리를 같은 가능성으로 정한다면 전체는 5×4=20가지다. 30 이상은 십의 자리가 3, 4, 5인 3×4=12가지이므로 12/20=3/5다. 뽑은 두 카드의 자리 순서도 무작위로 정한다는 계산이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 54, "classification": "네 사람 중 지정된 사람이 맨 뒤에 설 가능성", "candidate": "1/4", "reviewNote": "네 사람의 배열 4!=24가지가 같은 가능성이라면 지정된 사람을 맨 뒤에 고정하고 나머지를 배열하는 경우는 3!=6가지다. 6/24=1/4이다.", "runtimeTypeId": "5-2-u6-practice-54-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 55, "classification": "두 숫자 카드로 만든 수가 30 이상일 가능성", "candidate": "3/5", "reviewNote": "각기 다른 1~5 카드에서 십의 자리와 일의 자리를 같은 가능성으로 정한다면 전체는 5×4=20가지다. 30 이상은 십의 자리가 3, 4, 5인 3×4=12가지이므로 12/20=3/5다. 뽑은 두 카드의 자리 순서도 무작위로 정한다는 계산이다.", "runtimeTypeId": "5-2-u6-practice-55-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 56, "classification": "키가 다른 네 사람이 키 순서로 설 가능성", "candidate": "작은 순과 큰 순을 모두 허용하면 1/12; 한 방향만 뜻하면 1/24", "reviewNote": "네 사람의 배열은 24가지다. '키 순서대로'에 작은 사람부터와 큰 사람부터를 모두 포함하면 두 배열이므로 2/24=1/12이고, 미리 정한 한 방향만 뜻한다면 1/24이다. 원문은 어느 방향을 뜻하는지 명시하지 않으므로 수업의 정의나 공식 답안을 확인하기 전 단일 답을 확정하지 않는다. 배열이 같은 가능성이라는 전제도 필요하다.", "status": "source-ambiguity-answer-key-pending"}
       ]
     },
@@ -154,10 +154,10 @@
       "sourcePrintedPage": 123,
       "scope": "두 원본 파일의 마지막 페이지인 인쇄 123쪽 57~64번의 문제와 그림을 대조하고 각 가능성을 독립 계산했다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "connected-57-58",
       "items": [
-        {"number": 57, "classification": "숫자 카드로 만든 두 자리 수가 50 이상일 가능성", "candidate": "1/3", "reviewNote": "1~6 카드 중 십의 자리를 5 또는 6으로 택하면 50 이상이다. 자리 순서를 포함한 6×5=30가지가 같은 가능성이라면 해당 경우는 2×5=10가지여서 10/30=1/3이다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 58, "classification": "공의 색이 나올 가능성으로 전체 개수 구하기", "candidate": "노란 공 5개", "reviewNote": "공이 같은 가능성으로 뽑힌다면 빨간 공 4개가 전체의 2/7이므로 전체는 4÷(2/7)=14개다. 빨강 4개와 파랑 5개를 빼면 노랑은 5개다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 57, "classification": "숫자 카드로 만든 두 자리 수가 50 이상일 가능성", "candidate": "1/3", "reviewNote": "1~6 카드 중 십의 자리를 5 또는 6으로 택하면 50 이상이다. 자리 순서를 포함한 6×5=30가지가 같은 가능성이라면 해당 경우는 2×5=10가지여서 10/30=1/3이다.", "runtimeTypeId": "5-2-u6-practice-57-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 58, "classification": "공의 색이 나올 가능성으로 전체 개수 구하기", "candidate": "노란 공 5개", "reviewNote": "공이 같은 가능성으로 뽑힌다면 빨간 공 4개가 전체의 2/7이므로 전체는 4÷(2/7)=14개다. 빨강 4개와 파랑 5개를 빼면 노랑은 5개다.", "runtimeTypeId": "5-2-u6-practice-58-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 59, "classification": "네 명이 줄 설 때 부모가 이웃하지 않을 가능성", "candidate": "1/2", "reviewNote": "네 사람의 배열 4!=24가지가 같은 가능성이라면 부모가 이웃하는 배열은 부모를 한 묶음으로 보아 3!×2=12가지다. 이웃하지 않는 경우도 12가지이므로 12/24=1/2이다.", "status": "source-reviewed-answer-key-pending"},
         {"number": 60, "classification": "두 사람의 가위바위보 승부가 결정될 가능성", "candidate": "각 선택이 독립이고 동일한 가능성이면 2/3", "reviewNote": "각 사람이 가위·바위·보를 독립적으로 같은 가능성으로 낸다면 9가지 중 비기는 세 가지를 제외한 6가지에서 승부가 결정되어 6/9=2/3이다. 실제 사람이 선택하는 방식은 원문에 제시되지 않아 이 분포 가정에 따른 값으로 기록한다.", "status": "source-interpretation-answer-key-pending"},
         {"number": 61, "classification": "두 주머니에서 서로 다른 색 공이 나올 가능성", "candidate": "11/21", "reviewNote": "각 주머니에서 각 공이 같은 가능성으로 뽑히고 두 선택이 독립이라면 A 흰색·B 검정은 (4/6)×(4/7), A 검정·B 흰색은 (2/6)×(3/7)이다. 합은 22/42=11/21이다.", "status": "source-reviewed-answer-key-pending"},
