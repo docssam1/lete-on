@@ -48,8 +48,8 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "verifiedLocalItems": 93,
-    "reviewLockedItems": 188
+    "verifiedLocalItems": 104,
+    "reviewLockedItems": 177
   },
   "units": [
     {
@@ -4134,14 +4134,15 @@
       "pdfPage": 44,
       "printedPage": 48,
       "sourceShape": "세 방향으로 묶은 직육면체의 끈 길이와 세 변의 관계로 가로를 구한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "single-value: 15cm",
       "visualRisk": [
         "보이지 않는 면·모서리·꼭짓점은 필요한 수를 추론할 수 있는 조건을 함께 제시해야 함",
         "전개도·회전 뒤 같은 모양 판정은 기준 면과 방향을 고정해야 함"
       ],
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u5-e1-example-4",
+      "reviewReason": "원본의 세 방향 끈과 세 변의 관계를 대조하고 전체 길이를 독립 검산했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u5-e1-mission-1",
