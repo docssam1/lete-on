@@ -16,6 +16,7 @@ on:
       - 'highschool-selection/data/public-exam-profiles.js'
       - 'highschool-selection/data/catalog.js'
       - 'highschool-selection/data/academy-engagement.js'
+      - 'highschool-selection/data/academy-notices.js'
       - 'highschool-selection/data/standard-exam-policy.js'
       - 'highschool-selection/scripts/stage-public-intro.cjs'
       - 'geometry/**'
