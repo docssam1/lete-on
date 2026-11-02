@@ -2202,6 +2202,18 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1, automaticGrading,
       answerVisualRequired:visual, answerVisualStatus:visual?"verified-reconstruction":"not-required", reviewReason:"원본 조건과 답을 독립 검산했습니다. 공식 답안은 미확인입니다."});
   }
+  const source52ApplicationGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s3");
+  if (source52ApplicationGroup) for (const [suffix,name,label,section,pdf,page,automaticGrading] of [["exploration","어림이 쓰이는 실생활 상황 말하기 · 원문","개념탐구 3 원문","exploration",6,8,false],["example-1","주어진 어림 결과를 만드는 방법 찾기 · 원문","예제 3-1 원문","example",6,8,false],["example-2","리본을 묶음 단위로 사는 금액 · 원문","예제 3-2 원문","example",6,8,true],["mission-1","책의 비율과 상자 수 구하기 · 원문","Mission 1 원문","mission",7,9,true]]) {
+    const id = `5-2-u1-e3-${suffix}-original`;
+    if (source52ApplicationGroup.types.some(type => type.id === id)) continue;
+    const typeNumber = Math.max(0, ...source52Range.subunits.flatMap(group => group.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    const keySuffix = suffix === "exploration" ? "Exploration" : suffix.startsWith("example") ? `Example${suffix.slice(-1)}` : "Mission1";
+    source52ApplicationGroup.types.push({id,number:source52ApplicationGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,
+      sourceItemId:id,sourceParentItemId:`5-2-u1-e3-${suffix}`,sourceItemLabel:label,sourceSection:section,sourceTier:"advanced",sourcePdfPage:pdf,sourcePrintedPage:page,
+      sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52ApplicationOriginal${keySuffix}`,
+      generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,
+      automaticGrading,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
 
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
