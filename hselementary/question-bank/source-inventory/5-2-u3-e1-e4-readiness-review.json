@@ -18,16 +18,16 @@
       "sourcePrintedPage": 85,
       "scope": "확인학습 1~8번을 원문과 필기 없는 사본으로 대조했다. 기존 개념탐구·예제·Mission과 별도이며 2~4번 작도는 그림 답안 검증이 필요하다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partially-connected",
       "items": [
-        {"number": 1, "classification": "두 변과 그 사이 직각으로 삼각형 작도 순서", "candidate": "ㄴ, ㄱ, ㄷ, ㄹ", "reviewNote": "7cm 선분을 그리고 한 끝에서 90도 방향에 3cm 점을 잡은 뒤 양 끝을 잇는다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 1, "classification": "두 변과 그 사이 직각으로 삼각형 작도 순서", "candidate": "ㄴ, ㄱ, ㄷ, ㄹ", "reviewNote": "7cm 선분을 그리고 한 끝에서 90도 방향에 3cm 점을 잡은 뒤 양 끝을 잇는다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u3-practice-1-original", "publisherAnswerVerified": false},
         {"number": 2, "classification": "자와 각도기로 원본과 합동인 삼각형 그리기", "candidate": "작도형: 원본 밑변을 재고 양 끝 각을 115도와 35도로 그려 교점 연결", "visual": "밑변 양 끝의 내각이 115도와 35도인 삼각형. 밑변의 수치는 적혀 있지 않아 원본에서 재야 한다.", "reviewNote": "답은 그림이며 실제 길이 재현과 작도 과정 검증 전 연결하지 않는다.", "status": "source-reviewed-drawing-pending"},
         {"number": 3, "classification": "자와 컴퍼스로 합동 삼각형 그리기", "candidate": "작도형: 한 변을 옮기고 양 끝에서 원래 나머지 변 길이로 호를 그어 교점 연결", "visual": "변 길이 수치나 꼭짓점 이름이 없는 삼각형 원본 그림", "reviewNote": "세 변의 실제 길이를 원본에서 옮기는 작도형 답안 검증이 필요하다.", "status": "source-reviewed-drawing-pending"},
         {"number": 4, "classification": "원본 사각형과 합동인 사각형 그리기", "candidate": "작도형: 대응하는 네 변과 한 대각선을 옮겨 두 삼각형으로 구성", "visual": "치수·꼭짓점 표기 없는 불규칙 사각형", "reviewNote": "그림의 실제 치수와 대각선을 보존한 답안 검증이 필요하다.", "status": "source-reviewed-drawing-pending"},
-        {"number": 5, "classification": "한 각이 주어진 삼각형의 합동 결정 조건", "candidate": "ㄹ", "visual": "삼각형 ㄱㄴㄷ에서 꼭짓점 ㄴ의 각 55도가 주어짐", "reviewNote": "ㄹ은 각만 제시하므로 닮음까지 결정하며 크기를 정하지 못한다. 나머지는 한 변 이상과 각 또는 끼인각 양옆의 두 변을 준다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 5, "classification": "한 각이 주어진 삼각형의 합동 결정 조건", "candidate": "ㄹ", "visual": "삼각형 ㄱㄴㄷ에서 꼭짓점 ㄴ의 각 55도가 주어짐", "reviewNote": "ㄹ은 각만 제시하므로 닮음까지 결정하며 크기를 정하지 못한다. 나머지는 한 변 이상과 각 또는 끼인각 양옆의 두 변을 준다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u3-practice-5-original", "publisherAnswerVerified": false},
         {"number": 6, "classification": "세 변을 이용한 삼각형 작도 그림 순서", "candidate": "ㄴ, ㄹ, ㄱ, ㄷ", "visual": "밑변 ㄴㄷ 5cm, ㄴㄱ 4cm, ㄷㄱ 2cm. 보기에는 밑변, 두 호를 그리는 단계, 완성 삼각형이 표시된다.", "reviewNote": "밑변을 긋고 ㄴ 중심 호, ㄷ 중심 호를 그린 다음 교점을 연결하는 그림 순서다. 호 순서를 바꾸어도 작도는 가능하므로 보기의 순서 강제 여부 추가 검토가 필요하다.", "status": "source-ambiguity-answer-key-pending"},
-        {"number": 7, "classification": "두 각과 한 변을 이용하는 합동 삼각형의 기준 변", "candidate": "변 ㄴㄷ", "visual": "ㄴㄷ=6cm, 각 ㄴ=50도, 각 ㄷ=20도", "reviewNote": "제시된 길이 6cm인 밑변을 먼저 그린 뒤 양 끝에 각을 작도하는 표준 방법이다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 8, "classification": "주어진 변과 마주 보는 각에 더할 합동 결정 조건", "candidate": "③, ④", "visual": "삼각형 ㄱㄴㄷ에서 ㄴㄷ=10cm, 각 ㄱ=40도. 이등변이라는 표시는 없다.", "reviewNote": "밑각 하나를 더 알면 두 각과 한 변이 결정된다. 변 하나를 더하는 경우 SSA는 일반적으로 두 삼각형이 가능해 항상 충분하지 않다.", "status": "source-reviewed-answer-key-pending"}
+        {"number": 7, "classification": "두 각과 한 변을 이용하는 합동 삼각형의 기준 변", "candidate": "변 ㄴㄷ", "visual": "ㄴㄷ=6cm, 각 ㄴ=50도, 각 ㄷ=20도", "reviewNote": "제시된 길이 6cm인 밑변을 먼저 그린 뒤 양 끝에 각을 작도하는 표준 방법이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u3-practice-7-original", "publisherAnswerVerified": false},
+        {"number": 8, "classification": "주어진 변과 마주 보는 각에 더할 합동 결정 조건", "candidate": "③, ④", "visual": "삼각형 ㄱㄴㄷ에서 ㄴㄷ=10cm, 각 ㄱ=40도. 이등변이라는 표시는 없다.", "reviewNote": "밑각 하나를 더 알면 두 각과 한 변이 결정된다. 변 하나를 더하는 경우 SSA는 일반적으로 두 삼각형이 가능해 항상 충분하지 않다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u3-practice-8-original", "publisherAnswerVerified": false}
       ]
     },
     {
