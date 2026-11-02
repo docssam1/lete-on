@@ -11,6 +11,7 @@ require("./generators.js");
 require("./source-5-2-u5-page48-example14-practice.js");
 require("./source-5-2-u5-cuboid-grid-practice.js");
 require("./source-5-2-u5-check108-packing-practice.js");
+require("./source-5-2-u5-page108-practice.js");
 require("./source-5-2-u5-check113-arrow-practice.js");
 require("./source-5-2-u5-page53-mission3-synthetic.js");
 require("./source-5-2-u3-dot-cut-synthetic.js");
