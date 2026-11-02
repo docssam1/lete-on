@@ -14,6 +14,10 @@
         { id: "middle-transfer", label: "중등과정 편입", scope: "지점·월·현재 진도별 확인", status: "guide" },
         { id: "high-transfer", label: "고등과정 편입", scope: "현재 반 진도와 배정 과정별 확인", status: "guide" }
       ],
+      relatedPrograms: [
+        { label: "생각하는 황소 중등대비", url: "https://lete-on.gfieldacademy.net/hsmiddle/" },
+        { label: "생각하는 황소 초등대비", url: "https://hs.gfieldacademy.net/promo/" }
+      ],
       channel: { label: "공식 홈페이지 공지", url: "https://www.thinking-bull.com/notice", status: "official" },
       updates: [
         { date: "2025-07-22", title: "고등과정 개편 안내", url: "https://www.thinking-bull.com/notice/?bmode=view&idx=166962077", sourceKind: "공식" }

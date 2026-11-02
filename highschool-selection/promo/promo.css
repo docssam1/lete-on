@@ -77,6 +77,13 @@
 .course-option.is-selected { background: var(--paper-2); box-shadow: inset 4px 0 var(--accent); }
 .option-indicator { flex-shrink: 0; color: var(--accent); font-size: 22px; }
 .selection-promo .course-option:focus-visible { outline-offset: -5px; }
+.related-programs { margin-top: 24px; }
+.related-programs h3 { margin: 0 0 12px; font-size: 15px; font-weight: 650; }
+.related-program-links { border-top: 1px solid var(--line); }
+.related-program-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.5; }
+.related-program-link > span:first-child { word-break: keep-all; }
+.related-program-link > span:last-child { flex-shrink: 0; font-size: 20px; }
+.related-program-link:hover > span:first-child { text-decoration: underline; text-underline-offset: 4px; }
 .course-placeholder { margin: 32px 0; padding: 36px; text-align: center; border: 1px dashed #9aa6b8; border-radius: 8px; }
 .course-placeholder p { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
 .course-placeholder span { font-size: 14px; color: var(--muted); }
