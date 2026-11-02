@@ -41,21 +41,27 @@
           "classification": "수직선의 초과·이하",
           "candidate": "16 < x ≤ 20",
           "visual": "16 열린 점, 20 닫힌 점, 사이 구간",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-1-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 2,
           "classification": "두 범위의 교집합과 자연수",
           "candidate": "28 < x < 33; 29, 30, 31, 32",
           "visual": "28과 33 열린 점, 사이 구간",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-2-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 3,
           "classification": "조건의 여집합과 수직선",
           "candidate": "40kg 미만 또는 90kg 이상",
           "visual": "40 열린 점 왼쪽, 90 닫힌 점 오른쪽",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-3-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 4,
@@ -105,13 +111,15 @@
       "sourcePrintedPage": 69,
       "scope": "문항 9~16은 기존 개념탐구·예제·Mission 목록과 별도이며 원문과 필기 없는 사본을 대조해 유형과 독립 계산 후보를 기록한다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partial-verified-local",
       "items": [
         {
           "number": 9,
           "classification": "상자와 물건 무게의 최소 개수",
           "candidate": "25개",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-9-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 10,
