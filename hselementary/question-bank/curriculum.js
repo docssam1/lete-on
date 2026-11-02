@@ -2147,6 +2147,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   // Original examples use distinct IDs; the existing numerical practice remains intact.
   const source52Range = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52RangeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s1");
+  // 확인학습 is separate from the original exploration/mission inventory.
+  if (source52RangeGroup) for (const [n,name] of [[4,"범위에 속하는 자연수의 개수와 합 · 확인학습 원문"],[5,"속도 단속 조건을 만족하는 범위 · 확인학습 원문"],[6,"두 자리 수 사이 자연수의 개수와 최댓값 · 확인학습 원문"],[7,"철사를 쓰고 남는 길이의 범위 · 확인학습 원문"]]) {
+    const id=`5-2-u1-practice-${n}-original`;
+    if (source52RangeGroup.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52RangeGroup.types.push({id,number:source52RangeGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,
+      sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:64,sourcePrintedPage:68,
+      sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52RangePage68Practice${n}`,
+      generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,
+      automaticGrading:n===4||n===6,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 경계를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
   if (source52RangeGroup) for (const [n, name] of [[1,"세 자리 수 범위의 시작 수 최댓값 · 원문"],[2,"필요한 의자 수로 학생 수 범위 구하기 · 원문"],[3,"두 조건을 모두 만족하는 회원 수 범위 · 원문"],[4,"귤을 나누어 담는 상자 수 범위 · 원문"]]) {
     const id = `5-2-u1-e1-example-${n}`;
     if (source52RangeGroup.types.some(type => type.id === id)) continue;
