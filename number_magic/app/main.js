@@ -798,6 +798,7 @@ function effectiveLearningSettings(weekKey){
 }
 function applyLearningSettings(patch,guidanceChoice){
   applyAdminSettings();
+  if(patch&&patch.cadence)S.roadCadenceChosen=true;
   if(S.adminPlan||!window.NM_PLAN_CONTROL||!stateStorageCurrent())return false;
   const keys=['learningPlan','learningPlanHistory','roadSpeed','roadAmount','roadCadence','roadPace','roadManual','_roadFocus','highSchedule','middleCadenceDefaultVersion','calculusCadenceDefaultVersion','middleStudyGuidanceChoices'];
   const before=Object.fromEntries(keys.map(k=>[k,{present:Object.prototype.hasOwnProperty.call(S,k),value:S[k]}]));
@@ -5348,7 +5349,7 @@ function screenPlacement(){
     chooseMethod:assessmentChooseMethod,checkHistory:()=>S.achievementChecks||[],
     onAttemptStart:()=>{assessmentChooseMethod=false;},
     onMethodChoose:phase=>{assessmentChooseMethod=false;S._diag.phase=phase;S._diag.questionStartedAt=Date.now();save();render();},
-    planSettings:{speed:S.roadSpeed||1,pace:S.roadPace||'p2',cadence:S.roadCadence||'w1'},
+    planSettings:Object.assign({speed:S.roadSpeed||1,pace:S.roadPace||'p2'},(S.roadCadenceChosen||S.adminPlan)?{cadence:S.roadCadence||'w1'}:{}), /* 직접 고르지 않았으면 과정별 기본(초등 주1·중고등 표준)을 로드맵이 정한다 */
     onProfile:profile=>{S.schoolAge={entryYear:profile.entryYear,birthYear:profile.birthYear,setAt:Date.now()};save();},
     paceManaged:!!S.adminPlan,
     onPaceApply:p=>{if(S.adminPlan||!ROAD_MULTS_LIST.includes(p.speed)||!['w1','w2'].includes(p.cadence))return false;return applyLearningSettings({speed:p.speed,cadence:p.cadence});},
