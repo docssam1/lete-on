@@ -302,19 +302,25 @@
           "number": 29,
           "classification": "좌석 정원에 따른 의자 수 올림",
           "candidate": "123개",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-29-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 30,
           "classification": "용량과 단가로 필요한 상자 비용",
           "candidate": "64000원",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-30-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 31,
           "classification": "재료 사용량과 포장 단위 올림",
           "candidate": "밀가루 21봉지, 우유 6병",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-31-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 32,
@@ -331,13 +337,15 @@
       "sourcePrintedPage": 72,
       "scope": "문항 33~40은 기존 개념탐구·예제·Mission 목록과 별도이며 원문과 필기 없는 사본의 조건 및 도형을 대조해 독립 계산 후보를 기록한다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partial-verified-local",
       "items": [
         {
           "number": 33,
           "classification": "무게 제한과 추가 상자 최대 개수",
           "candidate": "3개",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-33-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 34,
