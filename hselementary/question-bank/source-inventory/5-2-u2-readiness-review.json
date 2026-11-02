@@ -8,8 +8,26 @@
     "unitName": "분수의 곱셈",
     "source": "생각하는 황소 초등 5-2 심화 원본",
     "sourceSha256": "D870F8AB03E392A5EC8BE1626AD380685D50BAB5F8E410EC2CCFB7E578266463",
-    "sourcePagesDirectlyReviewed": [10, 11, 12, 13, 14, 15, 16, 17],
-    "sourcePrintedPagesVisuallyRead": [14, 15, 16, 17, 18, 19, 20, 21],
+    "sourcePagesDirectlyReviewed": [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "sourcePrintedPagesVisuallyRead": [
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ],
     "pageNumberNote": "PDF 논리 쪽 10-17을 직접 렌더해 확인했습니다. 페이지 하단 인쇄 표기는 14-21입니다. 2026-10-29에 5-2-source-items.json의 해당 44개 printedPage와 단원 범위를 14-21로 바로잡았습니다.",
     "page17Correction": "인쇄 17쪽 Mission 1은 다섯 소문항입니다. 기존 (6) 기록은 인쇄 15쪽 Mission 1 (6)의 중복이라 2026-10-29 제거했습니다.",
     "reviewScope": "개념탐구, 예제, Mission을 페이지별로 직접 대조하고, 개념탐구 소문항과 Mission 1의 계산 소문항을 원자 문항으로 분리했습니다. 기존 44개 블록 틀은 개수 기준으로 승격하지 않았습니다.",
@@ -26,14 +44,56 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 1, "classification": "진분수·대분수와 자연수의 곱 크기 비교", "candidate": "ㄷ, ㄴ, ㄱ, ㄹ", "status": "source-reviewed-answer-key-pending"},
-        {"number": 2, "classification": "정다각형 둘레의 분수 곱과 합", "candidate": "8m", "status": "source-reviewed-answer-key-pending"},
-        {"number": 3, "classification": "직사각형 일부의 가로 길이와 색칠 넓이", "candidate": "16과 5/7cm²", "visual": "가로 5와 3/4cm, 세로 4cm의 직사각형에서 왼쪽 가로 1과 4/7cm를 제외하고 오른쪽을 색칠", "reviewNote": "색칠한 가로 길이는 5와 3/4에서 1과 4/7을 뺀 값이며 높이는 4cm다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 4, "classification": "기준 요금의 대분수 배와 인원수", "candidate": "33000원", "status": "source-reviewed-answer-key-pending"},
-        {"number": 5, "classification": "정사각형 두 변을 각각 분수배한 직사각형 넓이", "candidate": "180cm²", "status": "source-reviewed-answer-key-pending"},
-        {"number": 6, "classification": "시간 변환과 일정한 속력의 거리", "candidate": "203km", "status": "source-reviewed-answer-key-pending"},
-        {"number": 7, "classification": "자연수의 분수배를 구한 뒤 대분수배", "candidate": "58", "status": "source-reviewed-answer-key-pending"},
-        {"number": 8, "classification": "기준 몸무게의 연속된 분수배", "candidate": "36kg", "status": "source-reviewed-answer-key-pending"}
+        {
+          "number": 1,
+          "classification": "진분수·대분수와 자연수의 곱 크기 비교",
+          "candidate": "ㄷ, ㄴ, ㄱ, ㄹ",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 2,
+          "classification": "정다각형 둘레의 분수 곱과 합",
+          "candidate": "8m",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 3,
+          "classification": "직사각형 일부의 가로 길이와 색칠 넓이",
+          "candidate": "16과 5/7cm²",
+          "visual": "가로 5와 3/4cm, 세로 4cm의 직사각형에서 왼쪽 가로 1과 4/7cm를 제외하고 오른쪽을 색칠",
+          "reviewNote": "색칠한 가로 길이는 5와 3/4에서 1과 4/7을 뺀 값이며 높이는 4cm다.",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 4,
+          "classification": "기준 요금의 대분수 배와 인원수",
+          "candidate": "33000원",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 5,
+          "classification": "정사각형 두 변을 각각 분수배한 직사각형 넓이",
+          "candidate": "180cm²",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 6,
+          "classification": "시간 변환과 일정한 속력의 거리",
+          "candidate": "203km",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 7,
+          "classification": "자연수의 분수배를 구한 뒤 대분수배",
+          "candidate": "58",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 8,
+          "classification": "기준 몸무게의 연속된 분수배",
+          "candidate": "36kg",
+          "status": "source-reviewed-answer-key-pending"
+        }
       ]
     },
     {
@@ -42,35 +102,43 @@
       "sourcePrintedPage": 76,
       "scope": "문항 9~16은 원문과 필기 없는 사본을 대조하고 각 조건에서 독립 계산했다. 그림은 없다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partial-verified-local",
       "items": [
         {
           "number": 9,
           "classification": "남은 쪽수의 분수",
           "candidate": "50쪽",
           "reviewNote": "180×(1−5/12)×10/21=50",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-9-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 10,
           "classification": "판매 후 남은 수량",
           "candidate": "30개",
           "reviewNote": "300×(1−2/5)×(1−5/6)=30",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-10-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 11,
           "classification": "두 집단에서 해당하지 않는 인원",
           "candidate": "210명",
           "reviewNote": "여학생 140명 중 110명, 남학생 160명 중 100명으로 합 210명",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-11-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 12,
           "classification": "여학생 중 안경을 쓴 인원",
           "candidate": "40명",
           "reviewNote": "225×(1−3/5)×4/9=40",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-12-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 13,
@@ -242,14 +310,62 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 33, "classification": "정사각형 둘레와 가로·세로 배율", "candidate": "45와 5/6cm²", "reviewNote": "한 변 10cm, 가로 10×1/4, 세로 10×11/6의 곱", "status": "source-reviewed-answer-key-pending"},
-        {"number": 34, "classification": "정사각형 타일 배열의 넓이", "candidate": "243cm²", "reviewNote": "(9/4)²×8×6=243", "status": "source-reviewed-answer-key-pending"},
-        {"number": 35, "classification": "두 번 중점 연결한 정사각형", "candidate": "21과 4/25cm²", "reviewNote": "바깥 변 46/5cm, 중점 연결마다 넓이 절반: (46/5)²/4", "status": "source-reviewed-answer-key-pending"},
-        {"number": 36, "classification": "정사각형 다섯 장의 겹침 넓이", "candidate": "44와 4/9cm² (그림의 겹친 부분이 각각 한 장의 1/4이라는 해석)", "reviewNote": "마름모꼴 정사각형 다섯 장과 네 겹침. 겹침을 각각 1/4로 보면 전체는 4장 넓이나 정확한 위치의 수치·중점 표기가 없어 공식 답 추가 확인 필요", "status": "source-ambiguity-answer-key-pending"},
-        {"number": 37, "classification": "남은 양에 다시 분수 적용", "candidate": "8과 1/10L", "reviewNote": "162/5×5/6×3/10=81/10", "status": "source-reviewed-answer-key-pending"},
-        {"number": 38, "classification": "두 수도꼭지의 유량과 시간", "candidate": "13과 3/10L", "reviewNote": "(9/10+6/5)×19/3=133/10", "status": "source-reviewed-answer-key-pending"},
-        {"number": 39, "classification": "전반기 승리와 후반기 패배 비율", "candidate": "7/12 (후반기 무승부가 없다는 가정)", "reviewNote": "전반기 승리는 전체의 1/3, 후반기 패배는 3/20. 후반기에 무승부가 없으면 7/12이나 무승부 유무가 명시되지 않아 단일 확정 불가", "status": "source-ambiguity-answer-key-pending"},
-        {"number": 40, "classification": "직사각형 종이의 남은 넓이", "candidate": "8과 4/45cm²", "reviewNote": "100/21×49/15×13/25=364/45", "status": "source-reviewed-answer-key-pending"}
+        {
+          "number": 33,
+          "classification": "정사각형 둘레와 가로·세로 배율",
+          "candidate": "45와 5/6cm²",
+          "reviewNote": "한 변 10cm, 가로 10×1/4, 세로 10×11/6의 곱",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 34,
+          "classification": "정사각형 타일 배열의 넓이",
+          "candidate": "243cm²",
+          "reviewNote": "(9/4)²×8×6=243",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 35,
+          "classification": "두 번 중점 연결한 정사각형",
+          "candidate": "21과 4/25cm²",
+          "reviewNote": "바깥 변 46/5cm, 중점 연결마다 넓이 절반: (46/5)²/4",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 36,
+          "classification": "정사각형 다섯 장의 겹침 넓이",
+          "candidate": "44와 4/9cm² (그림의 겹친 부분이 각각 한 장의 1/4이라는 해석)",
+          "reviewNote": "마름모꼴 정사각형 다섯 장과 네 겹침. 겹침을 각각 1/4로 보면 전체는 4장 넓이나 정확한 위치의 수치·중점 표기가 없어 공식 답 추가 확인 필요",
+          "status": "source-ambiguity-answer-key-pending"
+        },
+        {
+          "number": 37,
+          "classification": "남은 양에 다시 분수 적용",
+          "candidate": "8과 1/10L",
+          "reviewNote": "162/5×5/6×3/10=81/10",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 38,
+          "classification": "두 수도꼭지의 유량과 시간",
+          "candidate": "13과 3/10L",
+          "reviewNote": "(9/10+6/5)×19/3=133/10",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 39,
+          "classification": "전반기 승리와 후반기 패배 비율",
+          "candidate": "7/12 (후반기 무승부가 없다는 가정)",
+          "reviewNote": "전반기 승리는 전체의 1/3, 후반기 패배는 3/20. 후반기에 무승부가 없으면 7/12이나 무승부 유무가 명시되지 않아 단일 확정 불가",
+          "status": "source-ambiguity-answer-key-pending"
+        },
+        {
+          "number": 40,
+          "classification": "직사각형 종이의 남은 넓이",
+          "candidate": "8과 4/45cm²",
+          "reviewNote": "100/21×49/15×13/25=364/45",
+          "status": "source-reviewed-answer-key-pending"
+        }
       ]
     },
     {
@@ -260,14 +376,62 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 41, "classification": "반대 방향 이동 거리", "candidate": "29와 1/3km", "reviewNote": "(16/3+32/5)×5/2=88/3", "status": "source-reviewed-answer-key-pending"},
-        {"number": 42, "classification": "마주 보고 출발해 만나는 거리", "candidate": "11과 11/16km", "reviewNote": "(23/8+7/2)×11/6=187/16", "status": "source-reviewed-answer-key-pending"},
-        {"number": 43, "classification": "분속과 초 단위 이동 시간", "candidate": "44와 1/3km", "reviewNote": "(8/3+21/4)×28/5=133/3", "status": "source-reviewed-answer-key-pending"},
-        {"number": 44, "classification": "열차가 터널을 완전히 통과할 때의 속력", "candidate": "2295m", "reviewNote": "기차 머리의 통과 거리는 1000+80m, 120초 동안 1080m이므로 255초 동안 2295m", "status": "source-reviewed-answer-key-pending"},
-        {"number": 45, "classification": "전체에 대한 두 집단의 비와 인원 차", "candidate": "121명", "reviewNote": "남녀 차 2/24가 22명이므로 전체 264명, 여학생 11/24는 121명", "status": "source-reviewed-answer-key-pending"},
-        {"number": 46, "classification": "잘못 계산한 결과에서 올바른 결과 구하기", "candidate": "10과 1/16", "reviewNote": "3/8을 뺀 중간값은 135/16−7=23/16, 올바른 결과는 23/16×7=161/16", "status": "source-reviewed-answer-key-pending"},
-        {"number": 47, "classification": "두 수의 합과 차로 곱 구하기", "candidate": "240", "reviewNote": "두 수는 5/12와 1/4, 곱은 5/48이므로 분자와 분모의 곱은 240", "status": "source-reviewed-answer-key-pending"},
-        {"number": 48, "classification": "가로와 세로의 증감에 따른 넓이 비", "candidate": "8/9배", "reviewNote": "가로는 4/3배, 세로는 2/3배이므로 넓이는 8/9배", "status": "source-reviewed-answer-key-pending"}
+        {
+          "number": 41,
+          "classification": "반대 방향 이동 거리",
+          "candidate": "29와 1/3km",
+          "reviewNote": "(16/3+32/5)×5/2=88/3",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 42,
+          "classification": "마주 보고 출발해 만나는 거리",
+          "candidate": "11과 11/16km",
+          "reviewNote": "(23/8+7/2)×11/6=187/16",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 43,
+          "classification": "분속과 초 단위 이동 시간",
+          "candidate": "44와 1/3km",
+          "reviewNote": "(8/3+21/4)×28/5=133/3",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 44,
+          "classification": "열차가 터널을 완전히 통과할 때의 속력",
+          "candidate": "2295m",
+          "reviewNote": "기차 머리의 통과 거리는 1000+80m, 120초 동안 1080m이므로 255초 동안 2295m",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 45,
+          "classification": "전체에 대한 두 집단의 비와 인원 차",
+          "candidate": "121명",
+          "reviewNote": "남녀 차 2/24가 22명이므로 전체 264명, 여학생 11/24는 121명",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 46,
+          "classification": "잘못 계산한 결과에서 올바른 결과 구하기",
+          "candidate": "10과 1/16",
+          "reviewNote": "3/8을 뺀 중간값은 135/16−7=23/16, 올바른 결과는 23/16×7=161/16",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 47,
+          "classification": "두 수의 합과 차로 곱 구하기",
+          "candidate": "240",
+          "reviewNote": "두 수는 5/12와 1/4, 곱은 5/48이므로 분자와 분모의 곱은 240",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 48,
+          "classification": "가로와 세로의 증감에 따른 넓이 비",
+          "candidate": "8/9배",
+          "reviewNote": "가로는 4/3배, 세로는 2/3배이므로 넓이는 8/9배",
+          "status": "source-reviewed-answer-key-pending"
+        }
       ]
     },
     {
@@ -278,14 +442,63 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 49, "classification": "둘레와 두 변의 비로 길이 구하기", "candidate": "가로 1과 2/7m, 세로 6/7m", "reviewNote": "두 변의 합 15/7m, 가로:세로=3:2", "status": "source-reviewed-answer-key-pending"},
-        {"number": 50, "classification": "정의된 네 수의 연산과 미지수", "candidate": "1/4", "reviewNote": "첫 항 6−3×□, 둘째 항 15/8, 합 57/8이므로 □=1/4", "status": "source-reviewed-answer-key-pending"},
-        {"number": 51, "classification": "교통수단별 거리와 남은 거리 역산", "candidate": "48km", "reviewNote": "버스 3/8, 택시 5/32, 지하철 11/32이므로 남은 1/8이 6km", "status": "source-reviewed-answer-key-pending"},
-        {"number": 52, "classification": "삼각형 각 변의 5등분과 내부 삼각형 넓이", "candidate": "150cm²", "visual": "꼭짓점 ㄱ·ㄴ·ㄷ의 각 변을 5등분하고 왼쪽 변 위에서 ㄱ부터 2/5 지점 ㄹ, 오른쪽 변 위에서 ㄱ부터 3/5 지점 ㅂ, 밑변에서 ㄴ부터 2/5 지점 ㅁ을 연결한 삼각형 ㄹㅁㅂ이 색칠됨", "reviewNote": "좌표나 모서리 세 삼각형 넓이의 합으로 색칠 부분은 전체의 7/25; 42÷(7/25)=150", "status": "source-reviewed-answer-key-pending"},
-        {"number": 53, "classification": "연속 분수 비율을 역산한 전체 인원", "candidate": "1680명", "reviewNote": "48÷(1/6×3/5×2/7)=1680", "status": "source-reviewed-answer-key-pending"},
-        {"number": 54, "classification": "세 차례 분배한 뒤 남은 개수의 역산", "candidate": "64개", "reviewNote": "남은 비율 5/8×3/5×2/3=1/4; 16÷1/4=64", "status": "source-reviewed-answer-key-pending"},
-        {"number": 55, "classification": "네 차례 분배한 뒤 남은 개수의 역산", "candidate": "120개", "reviewNote": "남은 비율 2/3×5/8×2/5×1/4=1/24; 5÷1/24=120", "status": "source-reviewed-answer-key-pending"},
-        {"number": 56, "classification": "전체의 분수와 차이를 이용한 분배", "candidate": "87개", "reviewNote": "세 사람의 비율 합은 44/45이고 상수 합은 −7, 13개가 남아 전체는 270개, 첫 사람은 270/3−3=87", "status": "source-reviewed-answer-key-pending"}
+        {
+          "number": 49,
+          "classification": "둘레와 두 변의 비로 길이 구하기",
+          "candidate": "가로 1과 2/7m, 세로 6/7m",
+          "reviewNote": "두 변의 합 15/7m, 가로:세로=3:2",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 50,
+          "classification": "정의된 네 수의 연산과 미지수",
+          "candidate": "1/4",
+          "reviewNote": "첫 항 6−3×□, 둘째 항 15/8, 합 57/8이므로 □=1/4",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 51,
+          "classification": "교통수단별 거리와 남은 거리 역산",
+          "candidate": "48km",
+          "reviewNote": "버스 3/8, 택시 5/32, 지하철 11/32이므로 남은 1/8이 6km",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 52,
+          "classification": "삼각형 각 변의 5등분과 내부 삼각형 넓이",
+          "candidate": "150cm²",
+          "visual": "꼭짓점 ㄱ·ㄴ·ㄷ의 각 변을 5등분하고 왼쪽 변 위에서 ㄱ부터 2/5 지점 ㄹ, 오른쪽 변 위에서 ㄱ부터 3/5 지점 ㅂ, 밑변에서 ㄴ부터 2/5 지점 ㅁ을 연결한 삼각형 ㄹㅁㅂ이 색칠됨",
+          "reviewNote": "좌표나 모서리 세 삼각형 넓이의 합으로 색칠 부분은 전체의 7/25; 42÷(7/25)=150",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 53,
+          "classification": "연속 분수 비율을 역산한 전체 인원",
+          "candidate": "1680명",
+          "reviewNote": "48÷(1/6×3/5×2/7)=1680",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 54,
+          "classification": "세 차례 분배한 뒤 남은 개수의 역산",
+          "candidate": "64개",
+          "reviewNote": "남은 비율 5/8×3/5×2/3=1/4; 16÷1/4=64",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 55,
+          "classification": "네 차례 분배한 뒤 남은 개수의 역산",
+          "candidate": "120개",
+          "reviewNote": "남은 비율 2/3×5/8×2/5×1/4=1/24; 5÷1/24=120",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 56,
+          "classification": "전체의 분수와 차이를 이용한 분배",
+          "candidate": "87개",
+          "reviewNote": "세 사람의 비율 합은 44/45이고 상수 합은 −7, 13개가 남아 전체는 270개, 첫 사람은 270/3−3=87",
+          "status": "source-reviewed-answer-key-pending"
+        }
       ]
     },
     {
@@ -296,14 +509,63 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 57, "classification": "남녀 인원과 분수만큼의 수가 같은 조건", "candidate": "21명", "reviewNote": "남학생:여학생=3:2, 전체 35명", "status": "source-reviewed-answer-key-pending"},
-        {"number": 58, "classification": "매일 전날 키의 일정 비율만큼 자라는 양", "candidate": "30cm", "reviewNote": "첫날 키의 (6/5)³−1=91/125가 546/25cm이므로 첫날 키는 30cm", "status": "source-reviewed-answer-key-pending"},
-        {"number": 59, "classification": "이어진 선분의 거리 비와 전체 거리", "candidate": "98cm", "visual": "가, 나, 다, 라, 마가 일직선 위에 그 순서대로 표시됨", "reviewNote": "가나:나다:다라=3:4:5, 가라 60cm에서 각각 15, 20, 25cm; 가다 35cm와 다마 63cm를 합함", "status": "source-reviewed-answer-key-pending"},
-        {"number": 60, "classification": "가로 확대 전후 직사각형 둘레 차", "candidate": "2와 1/5cm", "reviewNote": "둘레 증가의 절반 (138/7−64/5)/2=121/35는 원래 가로의 11/7; 원래 가로 11/5cm. 원문 손글씨와 달라 공식 답 확인 필요", "status": "source-reviewed-answer-key-pending"},
-        {"number": 61, "classification": "두 분수의 곱이 단위분수가 되는 최대 단위분수", "candidate": "1/24", "reviewNote": "8/3과 3/8 각각에 1/n을 곱한 결과가 단위분수이려면 n은 8과 3의 공배수", "status": "source-reviewed-answer-key-pending"},
-        {"number": 62, "classification": "조건을 만족하는 기약분수 모두 구하기", "candidate": "7/15, 14/15, 28/15, 7/45, 14/45, 28/45", "reviewNote": "45/7×ㄴ/ㄱ이 자연수이고 기약이면 ㄱ은 45의 약수, ㄴ은 7의 배수. ㄱ>10 및 ㄴ<40을 적용", "status": "source-reviewed-answer-key-pending"},
-        {"number": 63, "classification": "두 분수의 공통 자연수배를 만드는 최소 양의 분수", "candidate": "77/15", "reviewNote": "기약분수 분모의 최소공배수 77을 분자의 최대공약수 15로 나눔", "status": "source-reviewed-answer-key-pending"},
-        {"number": 64, "classification": "세 분수의 공통 자연수배를 만드는 최소 양의 분수", "candidate": "735/8 (같은 분수를 각각 곱한다는 해석)", "reviewNote": "세 수에 동일한 분수를 곱한다면 분모 최소공배수 735와 분자 최대공약수 8에서 735/8. 문장에 같은 분수라는 말이 없어 조건 해석 확인 필요", "status": "source-ambiguity-answer-key-pending"}
+        {
+          "number": 57,
+          "classification": "남녀 인원과 분수만큼의 수가 같은 조건",
+          "candidate": "21명",
+          "reviewNote": "남학생:여학생=3:2, 전체 35명",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 58,
+          "classification": "매일 전날 키의 일정 비율만큼 자라는 양",
+          "candidate": "30cm",
+          "reviewNote": "첫날 키의 (6/5)³−1=91/125가 546/25cm이므로 첫날 키는 30cm",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 59,
+          "classification": "이어진 선분의 거리 비와 전체 거리",
+          "candidate": "98cm",
+          "visual": "가, 나, 다, 라, 마가 일직선 위에 그 순서대로 표시됨",
+          "reviewNote": "가나:나다:다라=3:4:5, 가라 60cm에서 각각 15, 20, 25cm; 가다 35cm와 다마 63cm를 합함",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 60,
+          "classification": "가로 확대 전후 직사각형 둘레 차",
+          "candidate": "2와 1/5cm",
+          "reviewNote": "둘레 증가의 절반 (138/7−64/5)/2=121/35는 원래 가로의 11/7; 원래 가로 11/5cm. 원문 손글씨와 달라 공식 답 확인 필요",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 61,
+          "classification": "두 분수의 곱이 단위분수가 되는 최대 단위분수",
+          "candidate": "1/24",
+          "reviewNote": "8/3과 3/8 각각에 1/n을 곱한 결과가 단위분수이려면 n은 8과 3의 공배수",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 62,
+          "classification": "조건을 만족하는 기약분수 모두 구하기",
+          "candidate": "7/15, 14/15, 28/15, 7/45, 14/45, 28/45",
+          "reviewNote": "45/7×ㄴ/ㄱ이 자연수이고 기약이면 ㄱ은 45의 약수, ㄴ은 7의 배수. ㄱ>10 및 ㄴ<40을 적용",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 63,
+          "classification": "두 분수의 공통 자연수배를 만드는 최소 양의 분수",
+          "candidate": "77/15",
+          "reviewNote": "기약분수 분모의 최소공배수 77을 분자의 최대공약수 15로 나눔",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 64,
+          "classification": "세 분수의 공통 자연수배를 만드는 최소 양의 분수",
+          "candidate": "735/8 (같은 분수를 각각 곱한다는 해석)",
+          "reviewNote": "세 수에 동일한 분수를 곱한다면 분모 최소공배수 735와 분자 최대공약수 8에서 735/8. 문장에 같은 분수라는 말이 없어 조건 해석 확인 필요",
+          "status": "source-ambiguity-answer-key-pending"
+        }
       ]
     },
     {
@@ -314,14 +576,65 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 65, "classification": "세 분수를 곱해 자연수가 되는 최소 양의 분수", "candidate": "84/5", "reviewNote": "곱하는 수 5/3, 10/7, 35/4의 분모 최소공배수 84, 분자 최대공약수 5", "status": "source-reviewed-answer-key-pending"},
-        {"number": 66, "classification": "네 등분된 수직선 위 세 값", "candidate": "ㄱ 2와 3/140, ㄴ 3과 31/70, ㄷ 4와 121/140", "visual": "3/5와 6과 2/7 사이를 같은 간격 4개로 나누고 내부 눈금을 차례로 ㄱ, ㄴ, ㄷ으로 표기", "reviewNote": "한 간격은 (44/7−3/5)/4=199/140", "status": "source-reviewed-answer-key-pending"},
-        {"number": 67, "classification": "다섯 등분된 수직선의 내부 값", "candidate": "4와 2/5", "visual": "3과 3/4와 4와 5/6 사이를 5등분하고 왼쪽에서 세 번째 눈금에 가 표시", "reviewNote": "15/4+(29/6−15/4)×3/5=22/5", "status": "source-reviewed-answer-key-pending"},
-        {"number": 68, "classification": "등간격 소수 수직선의 기약분수", "candidate": "5", "visual": "여섯 개 점이 등간격이고 0.125는 첫 점, 0.2는 네 번째 점, □는 여섯 번째 점", "reviewNote": "간격은 (0.2−0.125)/3=0.025, □=0.25=1/4이므로 분자와 분모의 합 5. 필기의 27로 보이는 수와 다르므로 공식 답 확인 필요", "status": "source-reviewed-answer-key-pending"},
-        {"number": 69, "classification": "등간격 행렬의 부분 거리", "candidate": "3과 3/7m", "reviewNote": "8명 사이 간격 7개가 8m, 둘째와 다섯째 사이는 3개 간격이므로 24/7m", "status": "source-reviewed-answer-key-pending"},
-        {"number": 70, "classification": "소수배를 이용한 기약분수의 분자와 분모", "candidate": "30", "reviewNote": "(6/5)÷0.36=10/3, 분자와 분모의 곱 30", "status": "source-reviewed-answer-key-pending"},
-        {"number": 71, "classification": "한 자리 수와 기약분수 곱의 자연수 조건", "candidate": "6개", "reviewNote": "ㄱ은 2와 서로소이면서 3의 배수인 3,9이고 ㄴ은 3과 서로소인 짝수 2,4,8", "status": "source-reviewed-answer-key-pending"},
-        {"number": 72, "classification": "직사각형 넓이와 가로를 이용한 기약분수", "candidate": "119", "reviewNote": "세로=(17/3)÷(7/3)=17/7, 분자와 분모의 곱 119", "status": "source-reviewed-answer-key-pending"}
+        {
+          "number": 65,
+          "classification": "세 분수를 곱해 자연수가 되는 최소 양의 분수",
+          "candidate": "84/5",
+          "reviewNote": "곱하는 수 5/3, 10/7, 35/4의 분모 최소공배수 84, 분자 최대공약수 5",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 66,
+          "classification": "네 등분된 수직선 위 세 값",
+          "candidate": "ㄱ 2와 3/140, ㄴ 3과 31/70, ㄷ 4와 121/140",
+          "visual": "3/5와 6과 2/7 사이를 같은 간격 4개로 나누고 내부 눈금을 차례로 ㄱ, ㄴ, ㄷ으로 표기",
+          "reviewNote": "한 간격은 (44/7−3/5)/4=199/140",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 67,
+          "classification": "다섯 등분된 수직선의 내부 값",
+          "candidate": "4와 2/5",
+          "visual": "3과 3/4와 4와 5/6 사이를 5등분하고 왼쪽에서 세 번째 눈금에 가 표시",
+          "reviewNote": "15/4+(29/6−15/4)×3/5=22/5",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 68,
+          "classification": "등간격 소수 수직선의 기약분수",
+          "candidate": "5",
+          "visual": "여섯 개 점이 등간격이고 0.125는 첫 점, 0.2는 네 번째 점, □는 여섯 번째 점",
+          "reviewNote": "간격은 (0.2−0.125)/3=0.025, □=0.25=1/4이므로 분자와 분모의 합 5. 필기의 27로 보이는 수와 다르므로 공식 답 확인 필요",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 69,
+          "classification": "등간격 행렬의 부분 거리",
+          "candidate": "3과 3/7m",
+          "reviewNote": "8명 사이 간격 7개가 8m, 둘째와 다섯째 사이는 3개 간격이므로 24/7m",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 70,
+          "classification": "소수배를 이용한 기약분수의 분자와 분모",
+          "candidate": "30",
+          "reviewNote": "(6/5)÷0.36=10/3, 분자와 분모의 곱 30",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 71,
+          "classification": "한 자리 수와 기약분수 곱의 자연수 조건",
+          "candidate": "6개",
+          "reviewNote": "ㄱ은 2와 서로소이면서 3의 배수인 3,9이고 ㄴ은 3과 서로소인 짝수 2,4,8",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 72,
+          "classification": "직사각형 넓이와 가로를 이용한 기약분수",
+          "candidate": "119",
+          "reviewNote": "세로=(17/3)÷(7/3)=17/7, 분자와 분모의 곱 119",
+          "status": "source-reviewed-answer-key-pending"
+        }
       ]
     },
     {
@@ -332,10 +645,34 @@
       "publisherAnswerVerified": false,
       "runtimeConnection": "not-connected",
       "items": [
-        {"number": 73, "classification": "직사각형 넓이의 분수와 한 변으로 다른 변 구하기", "candidate": "120", "reviewNote": "전체 넓이=(7/4)÷(2/5)=35/8, 세로=(35/8)÷(7/3)=15/8; 분자와 분모의 곱 120", "status": "source-reviewed-answer-key-pending"},
-        {"number": 74, "classification": "공통 분모를 가진 두 비의 비율", "candidate": "25/8", "reviewNote": "ㄱ/ㄴ=5/6, ㄷ/ㄴ=4/15이므로 ㄱ/ㄷ=(5/6)÷(4/15)=25/8", "status": "source-reviewed-answer-key-pending"},
-        {"number": 75, "classification": "분수 곱 등식에서 두 자연수의 곱", "candidate": "45", "reviewNote": "(2/3)×(2/5)×ㄱ/6=2/ㄴ에서 2ㄱ/45=2/ㄴ, 따라서 ㄱ×ㄴ=45", "status": "source-reviewed-answer-key-pending"},
-        {"number": 76, "classification": "일정 배율로 증가하는 양을 3일 전으로 역산", "candidate": "8/27", "reviewNote": "오늘 덮인 비율을 1로 보고 3일 전 비율을 (2/3)³=8/27로 계산", "status": "source-reviewed-answer-key-pending"}
+        {
+          "number": 73,
+          "classification": "직사각형 넓이의 분수와 한 변으로 다른 변 구하기",
+          "candidate": "120",
+          "reviewNote": "전체 넓이=(7/4)÷(2/5)=35/8, 세로=(35/8)÷(7/3)=15/8; 분자와 분모의 곱 120",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 74,
+          "classification": "공통 분모를 가진 두 비의 비율",
+          "candidate": "25/8",
+          "reviewNote": "ㄱ/ㄴ=5/6, ㄷ/ㄴ=4/15이므로 ㄱ/ㄷ=(5/6)÷(4/15)=25/8",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 75,
+          "classification": "분수 곱 등식에서 두 자연수의 곱",
+          "candidate": "45",
+          "reviewNote": "(2/3)×(2/5)×ㄱ/6=2/ㄴ에서 2ㄱ/45=2/ㄴ, 따라서 ㄱ×ㄴ=45",
+          "status": "source-reviewed-answer-key-pending"
+        },
+        {
+          "number": 76,
+          "classification": "일정 배율로 증가하는 양을 3일 전으로 역산",
+          "candidate": "8/27",
+          "reviewNote": "오늘 덮인 비율을 1로 보고 3일 전 비율을 (2/3)³=8/27로 계산",
+          "status": "source-reviewed-answer-key-pending"
+        }
       ]
     }
   ],
@@ -393,8 +730,15 @@
       "sourceBlock": "개념탐구 1 (1)",
       "normalizedTypeId": "u2-t01",
       "typeName": "분수만큼의 양과 곱셈의 관계 설명",
-      "keyConditions": ["4/7만큼을 구하는 두 표현의 관계를 말로 설명", "91과 4/7을 사용"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "식과 설명만 필요"},
+      "keyConditions": [
+        "4/7만큼을 구하는 두 표현의 관계를 말로 설명",
+        "91과 4/7을 사용"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "식과 설명만 필요"
+      },
       "independentCalculation": "91의 4/7은 91×4/7=52이고, 4/7을 91번 더한 값도 52입니다.",
       "independentAnswer": "두 표현은 모두 91×4/7을 뜻하므로 값이 같습니다. 설명형 답은 52와 곱셈 관계를 포함해야 합니다.",
       "answerContract": "explanation-rubric",
@@ -412,8 +756,16 @@
       "sourceBlock": "개념탐구 1 (2)",
       "normalizedTypeId": "u2-t02",
       "typeName": "분수 조건으로 두 수를 찾아 합하기",
-      "keyConditions": ["첫째 수의 1/4=5/6", "둘째 수의 1/6=2 3/8", "두 수의 합을 구함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "기호와 식만 필요"},
+      "keyConditions": [
+        "첫째 수의 1/4=5/6",
+        "둘째 수의 1/6=2 3/8",
+        "두 수의 합을 구함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "기호와 식만 필요"
+      },
       "independentCalculation": "첫째 수=4×5/6=10/3, 둘째 수=6×19/8=57/4, 합=10/3+57/4=211/12입니다.",
       "independentAnswer": "211/12=17 7/12",
       "answerContract": "single-value",
@@ -431,8 +783,16 @@
       "sourceBlock": "예제 1-1",
       "normalizedTypeId": "u2-t03",
       "typeName": "두 집단의 분수만큼을 합해 전체 수 구하기",
-      "keyConditions": ["전체 525명", "여학생 7/15", "여학생의 4/7과 남학생의 3/5가 피아노 가능"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "상황과 식만 필요"},
+      "keyConditions": [
+        "전체 525명",
+        "여학생 7/15",
+        "여학생의 4/7과 남학생의 3/5가 피아노 가능"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "상황과 식만 필요"
+      },
       "independentCalculation": "525×7/15×4/7=140, 남학생은 525×8/15이고 그 3/5는 168이므로 합은 308입니다.",
       "independentAnswer": "308명",
       "answerContract": "single-value",
@@ -449,8 +809,16 @@
       "sourceBlock": "예제 1-2",
       "normalizedTypeId": "u2-t04",
       "typeName": "같은 방향의 두 자동차 거리 차 구하기",
-      "keyConditions": ["속력 86km/h와 109km/h", "같은 시각 출발", "3시간 36분 동안 같은 방향으로 이동"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "이동 상황과 계산식만 필요"},
+      "keyConditions": [
+        "속력 86km/h와 109km/h",
+        "같은 시각 출발",
+        "3시간 36분 동안 같은 방향으로 이동"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "이동 상황과 계산식만 필요"
+      },
       "independentCalculation": "속력 차=23km/h, 시간=18/5시간이므로 거리 차=23×18/5=414/5km입니다.",
       "independentAnswer": "82km 800m",
       "answerContract": "single-value-with-units",
@@ -467,8 +835,16 @@
       "sourceBlock": "예제 1-3",
       "normalizedTypeId": "u2-t05",
       "typeName": "두 시계의 빠르기와 느리기 누적 차 구하기",
-      "keyConditions": ["한 시계는 시간당 1 1/4분 빠름", "다른 시계는 시간당 2 1/5분 느림", "오늘 오후 3시부터 다음 날 오전 7시까지"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "시간과 비율 계산만 필요"},
+      "keyConditions": [
+        "한 시계는 시간당 1 1/4분 빠름",
+        "다른 시계는 시간당 2 1/5분 느림",
+        "오늘 오후 3시부터 다음 날 오전 7시까지"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "시간과 비율 계산만 필요"
+      },
       "independentCalculation": "두 시계의 차이는 시간당 1 1/4+2 1/5=69/20분이고 16시간 누적하면 69/20×16=276/5분입니다.",
       "independentAnswer": "55분 12초",
       "answerContract": "single-value-with-time-units",
@@ -485,8 +861,17 @@
       "sourceBlock": "예제 1-4",
       "normalizedTypeId": "u2-t06",
       "typeName": "기약분수 조건의 나눗셈 빈칸 전수 찾기",
-      "keyConditions": ["가/21과 다/63은 기약분수인 진분수", "나는 20보다 작은 자연수", "가/21÷나=다/63", "가능한 나의 합을 구함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "분수 식만 필요"},
+      "keyConditions": [
+        "가/21과 다/63은 기약분수인 진분수",
+        "나는 20보다 작은 자연수",
+        "가/21÷나=다/63",
+        "가능한 나의 합을 구함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "분수 식만 필요"
+      },
       "independentCalculation": "다=3가/나로 놓고 가<21, gcd(가,21)=1, 다<63, gcd(다,63)=1을 전수 확인하면 나의 가능한 값은 3, 6, 12, 15입니다.",
       "independentAnswer": "36",
       "answerContract": "unique-set-then-sum",
@@ -527,8 +912,14 @@
       "sourceBlock": "Mission 1 (2)",
       "normalizedTypeId": "u2-t08",
       "typeName": "자연수와 진분수의 곱셈",
-      "keyConditions": ["56과 3/4를 곱함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
+      "keyConditions": [
+        "56과 3/4를 곱함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
       "independentCalculation": "56×3/4=14×3=42입니다.",
       "independentAnswer": "42",
       "answerContract": "single-value",
@@ -544,8 +935,14 @@
       "sourceBlock": "Mission 1 (3)",
       "normalizedTypeId": "u2-t09",
       "typeName": "자연수와 대분수의 곱셈",
-      "keyConditions": ["1 2/3과 4를 곱함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
+      "keyConditions": [
+        "1 2/3과 4를 곱함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
       "independentCalculation": "1 2/3×4=5/3×4=20/3입니다.",
       "independentAnswer": "6 2/3",
       "answerContract": "single-value",
@@ -561,8 +958,14 @@
       "sourceBlock": "Mission 1 (4)",
       "normalizedTypeId": "u2-t09",
       "typeName": "자연수와 대분수의 곱셈",
-      "keyConditions": ["40과 1 5/18을 곱함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
+      "keyConditions": [
+        "40과 1 5/18을 곱함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
       "independentCalculation": "40×1 5/18=40×23/18=460/9입니다.",
       "independentAnswer": "51 1/9",
       "answerContract": "single-value",
@@ -578,8 +981,14 @@
       "sourceBlock": "Mission 1 (5)",
       "normalizedTypeId": "u2-t08",
       "typeName": "자연수와 진분수의 곱셈",
-      "keyConditions": ["5/6과 21을 곱함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
+      "keyConditions": [
+        "5/6과 21을 곱함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
       "independentCalculation": "5/6×21=105/6=35/2입니다.",
       "independentAnswer": "17 1/2",
       "answerContract": "single-value",
@@ -595,8 +1004,14 @@
       "sourceBlock": "Mission 1 (6)",
       "normalizedTypeId": "u2-t09",
       "typeName": "자연수와 대분수의 곱셈",
-      "keyConditions": ["15와 1 4/9를 곱함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
+      "keyConditions": [
+        "15와 1 4/9를 곱함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
       "independentCalculation": "15×1 4/9=15×13/9=195/9=65/3입니다.",
       "independentAnswer": "21 2/3",
       "answerContract": "single-value",
@@ -612,8 +1027,17 @@
       "sourceBlock": "Mission 2",
       "normalizedTypeId": "u2-t10",
       "typeName": "여러 단계의 분수 적용으로 남은 사람 수 구하기",
-      "keyConditions": ["전체 345명", "남학생 8/15", "여학생의 6/7이 놀이기구를 탐", "타지 않은 여학생 수"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "상황과 식만 필요"},
+      "keyConditions": [
+        "전체 345명",
+        "남학생 8/15",
+        "여학생의 6/7이 놀이기구를 탐",
+        "타지 않은 여학생 수"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "상황과 식만 필요"
+      },
       "independentCalculation": "여학생은 345×7/15=161명이고, 타지 않은 수는 161×1/7=23명입니다.",
       "independentAnswer": "23명",
       "answerContract": "single-value",
@@ -629,8 +1053,16 @@
       "sourceBlock": "Mission 3",
       "normalizedTypeId": "u2-t11",
       "typeName": "하루 시계 오차의 여러 날 누적 계산",
-      "keyConditions": ["하루에 5 7/12분씩 늦음", "오늘 낮 12시에 맞춤", "2주일 후의 표시 시각"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "시간 계산만 필요"},
+      "keyConditions": [
+        "하루에 5 7/12분씩 늦음",
+        "오늘 낮 12시에 맞춤",
+        "2주일 후의 표시 시각"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "시간 계산만 필요"
+      },
       "independentCalculation": "하루 오차 67/12분을 14일 누적하면 469/6=78분 10초 늦으므로 12:00에서 빼면 10:41:50입니다.",
       "independentAnswer": "오전 10시 41분 50초",
       "answerContract": "single-value-with-time",
@@ -672,8 +1104,16 @@
       "sourceBlock": "Mission 5",
       "normalizedTypeId": "u2-t13",
       "typeName": "같은 수를 곱해 자연수가 되는 분수의 빈칸 찾기",
-      "keyConditions": ["가/15와 7/가는 진분수", "각각 60을 곱하면 자연수", "가에 가능한 자연수를 모두 구함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "분수 조건만 필요"},
+      "keyConditions": [
+        "가/15와 7/가는 진분수",
+        "각각 60을 곱하면 자연수",
+        "가에 가능한 자연수를 모두 구함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "분수 조건만 필요"
+      },
       "independentCalculation": "8≤가≤14이고 60×7/가가 자연수여야 하므로 420의 약수를 전수 확인하면 가=10,12,14입니다.",
       "independentAnswer": "10, 12, 14",
       "answerContract": "unique-set",
@@ -689,8 +1129,16 @@
       "sourceBlock": "Mission 6",
       "normalizedTypeId": "u2-t14",
       "typeName": "분수 곱셈의 엄격한 부등식에서 자연수 합 구하기",
-      "keyConditions": ["5 2/7×3<5/9×□<2 3/4×10", "□는 자연수", "가능한 자연수의 합"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "부등식 계산만 필요"},
+      "keyConditions": [
+        "5 2/7×3<5/9×□<2 3/4×10",
+        "□는 자연수",
+        "가능한 자연수의 합"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "부등식 계산만 필요"
+      },
       "independentCalculation": "111/7<5□/9<55/2에서 28.54...<□<49.5이므로 29부터 49까지이고 합은 819입니다.",
       "independentAnswer": "819",
       "answerContract": "single-value-after-set-sum",
@@ -706,8 +1154,15 @@
       "sourceBlock": "개념탐구 2 (1)",
       "normalizedTypeId": "u2-t15",
       "typeName": "분수만큼의 용량 구하기",
-      "keyConditions": ["물통의 전체 용량 4/7L", "그중 5/6만큼 물이 들어 있음"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "용량 식만 필요"},
+      "keyConditions": [
+        "물통의 전체 용량 4/7L",
+        "그중 5/6만큼 물이 들어 있음"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "용량 식만 필요"
+      },
       "independentCalculation": "4/7×5/6=20/42=10/21입니다.",
       "independentAnswer": "10/21L",
       "answerContract": "single-value-with-units",
@@ -723,8 +1178,16 @@
       "sourceBlock": "개념탐구 2 (2)",
       "normalizedTypeId": "u2-t16",
       "typeName": "여러 분수와 대분수의 곱셈·덧셈",
-      "keyConditions": ["5/8×7/9×6/28", "1 4/7×13/33×2 5/8", "두 곱을 더함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
+      "keyConditions": [
+        "5/8×7/9×6/28",
+        "1 4/7×13/33×2 5/8",
+        "두 곱을 더함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
       "independentCalculation": "첫째 곱은 5/48, 둘째 곱은 13/8이므로 합은 5/48+78/48=83/48입니다.",
       "independentAnswer": "1 35/48",
       "answerContract": "single-value",
@@ -740,8 +1203,15 @@
       "sourceBlock": "예제 2-1",
       "normalizedTypeId": "u2-t17",
       "typeName": "연속 곱셈의 망원경식 정리",
-      "keyConditions": ["(1+2/3)부터 (1+2/55)까지 곱함", "연속된 분수식의 약분"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "규칙식과 약분만 필요"},
+      "keyConditions": [
+        "(1+2/3)부터 (1+2/55)까지 곱함",
+        "연속된 분수식의 약분"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "규칙식과 약분만 필요"
+      },
       "independentCalculation": "각 항은 (n+2)/n이고 n=3부터 55까지이므로 5/3×6/4×...×57/55=56×57/(3×4)=266입니다.",
       "independentAnswer": "266",
       "answerContract": "single-value",
@@ -757,8 +1227,16 @@
       "sourceBlock": "예제 2-2",
       "normalizedTypeId": "u2-t18",
       "typeName": "직사각형 넓이 비로 한 부분의 넓이 구하기",
-      "keyConditions": ["직사각형 5 5/8cm×2 5/12cm", "가와 나는 두 부분", "가의 넓이=나의 넓이의 4/5"],
-      "visualAssetNeeded": {"required": true, "kind": "partitioned-rectangle", "reason": "두 부분 가·나의 배치와 전체 직사각형을 원문처럼 보여야 함"},
+      "keyConditions": [
+        "직사각형 5 5/8cm×2 5/12cm",
+        "가와 나는 두 부분",
+        "가의 넓이=나의 넓이의 4/5"
+      ],
+      "visualAssetNeeded": {
+        "required": true,
+        "kind": "partitioned-rectangle",
+        "reason": "두 부분 가·나의 배치와 전체 직사각형을 원문처럼 보여야 함"
+      },
       "independentCalculation": "전체 넓이=(45/8)×(29/12)=435/32cm²이고 가는 전체의 4/9이므로 435/32×4/9=145/24cm²입니다.",
       "independentAnswer": "6 1/24cm²",
       "answerContract": "single-value-with-units",
@@ -774,8 +1252,16 @@
       "sourceBlock": "예제 2-3",
       "normalizedTypeId": "u2-t19",
       "typeName": "튀어 오르는 공의 이동 거리 합",
-      "keyConditions": ["처음 높이 7 7/8m", "매번 떨어진 높이의 2/3만큼 상승", "두 번째 상승까지의 거리"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "움직임은 식으로 모델링 가능"},
+      "keyConditions": [
+        "처음 높이 7 7/8m",
+        "매번 떨어진 높이의 2/3만큼 상승",
+        "두 번째 상승까지의 거리"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "움직임은 식으로 모델링 가능"
+      },
       "independentCalculation": "초기 하강 H와 첫 상승·하강 2×(2H/3), 둘째 상승 4H/9를 더하면 H=63/8에서 H×25/9=175/8입니다.",
       "independentAnswer": "21 7/8m",
       "answerContract": "single-value-with-units",
@@ -791,8 +1277,16 @@
       "sourceBlock": "예제 2-4",
       "normalizedTypeId": "u2-t20",
       "typeName": "닮은 정사각형 넓이의 반복 합",
-      "keyConditions": ["한 변 12cm인 직각이등변삼각형 안", "정사각형이 차례로 6개", "각 변이 절반씩 줄어듦"],
-      "visualAssetNeeded": {"required": true, "kind": "right-isosceles-square-stair", "reason": "정사각형의 위치·6개·변 길이 감소 관계를 그림에서 보존해야 함"},
+      "keyConditions": [
+        "한 변 12cm인 직각이등변삼각형 안",
+        "정사각형이 차례로 6개",
+        "각 변이 절반씩 줄어듦"
+      ],
+      "visualAssetNeeded": {
+        "required": true,
+        "kind": "right-isosceles-square-stair",
+        "reason": "정사각형의 위치·6개·변 길이 감소 관계를 그림에서 보존해야 함"
+      },
       "independentCalculation": "넓이는 36×(1+1/4+...+1/4^5)=48×(1-1/4^6)=47+253/256cm²입니다.",
       "independentAnswer": "47 253/256cm²",
       "answerContract": "single-value-with-units",
@@ -808,8 +1302,14 @@
       "sourceBlock": "Mission 1 (1)",
       "normalizedTypeId": "u2-t07",
       "typeName": "진분수 세 개의 곱셈",
-      "keyConditions": ["7/8×5/28×4/5를 계산"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
+      "keyConditions": [
+        "7/8×5/28×4/5를 계산"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
       "independentCalculation": "7/8×5/28×4/5에서 5와 5, 7과 28을 약분하면 1/8입니다.",
       "independentAnswer": "1/8",
       "answerContract": "single-value",
@@ -825,8 +1325,14 @@
       "sourceBlock": "Mission 1 (2)",
       "normalizedTypeId": "u2-t46",
       "typeName": "대분수 두 개와 진분수의 곱셈",
-      "keyConditions": ["2 1/7×1 1/5×7/12를 계산"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
+      "keyConditions": [
+        "2 1/7×1 1/5×7/12를 계산"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
       "independentCalculation": "15/7×6/5×7/12=90/60=3/2입니다.",
       "independentAnswer": "1 1/2",
       "answerContract": "single-value",
@@ -842,8 +1348,14 @@
       "sourceBlock": "Mission 1 (3)",
       "normalizedTypeId": "u2-t47",
       "typeName": "대분수와 분수의 합의 곱셈",
-      "keyConditions": ["1 1/5×(2/3+3/8)를 계산"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
+      "keyConditions": [
+        "1 1/5×(2/3+3/8)를 계산"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
       "independentCalculation": "2/3+3/8=25/24이고 6/5×25/24=5/4입니다.",
       "independentAnswer": "1 1/4",
       "answerContract": "single-value",
@@ -859,8 +1371,14 @@
       "sourceBlock": "Mission 1 (4)",
       "normalizedTypeId": "u2-t48",
       "typeName": "대분수의 차와 진분수의 곱셈",
-      "keyConditions": ["(4 1/6-2 3/4)×6/7를 계산"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
+      "keyConditions": [
+        "(4 1/6-2 3/4)×6/7를 계산"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
       "independentCalculation": "4 1/6-2 3/4=17/12이고 17/12×6/7=17/14입니다.",
       "independentAnswer": "1 3/14",
       "answerContract": "single-value",
@@ -876,8 +1394,14 @@
       "sourceBlock": "Mission 1 (5)",
       "normalizedTypeId": "u2-t49",
       "typeName": "진분수 두 개와 대분수의 곱셈",
-      "keyConditions": ["4/15×5/6×2 4/7를 계산"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
+      "keyConditions": [
+        "4/15×5/6×2 4/7를 계산"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "계산식만 필요"
+      },
       "independentCalculation": "4/15×5/6×18/7에서 4와 6, 5와 15를 약분하면 4/7입니다.",
       "independentAnswer": "4/7",
       "answerContract": "single-value",
@@ -893,8 +1417,16 @@
       "sourceBlock": "Mission 2",
       "normalizedTypeId": "u2-t21",
       "typeName": "거리의 연속 배율로 최종 거리 구하기",
-      "keyConditions": ["집-학교 4 4/5km", "집-시청은 그 2 1/2배", "집-소방서는 시청 거리의 2 2/3배"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "거리 관계식만 필요"},
+      "keyConditions": [
+        "집-학교 4 4/5km",
+        "집-시청은 그 2 1/2배",
+        "집-소방서는 시청 거리의 2 2/3배"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "거리 관계식만 필요"
+      },
       "independentCalculation": "24/5×5/2×8/3=32입니다.",
       "independentAnswer": "32km",
       "answerContract": "single-value-with-units",
@@ -910,8 +1442,16 @@
       "sourceBlock": "Mission 3",
       "normalizedTypeId": "u2-t22",
       "typeName": "규칙적인 분수열의 특정 항 곱하기",
-      "keyConditions": ["1/2; 1/3,2/3; 1/4,2/4,3/4처럼 분수열이 이어짐", "21번째 분수", "4 2/3과의 곱"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "분수열 규칙식만 필요"},
+      "keyConditions": [
+        "1/2; 1/3,2/3; 1/4,2/4,3/4처럼 분수열이 이어짐",
+        "21번째 분수",
+        "4 2/3과의 곱"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "분수열 규칙식만 필요"
+      },
       "independentCalculation": "분모 2부터 6까지 항 수는 1+2+3+4+5=15이므로 21번째는 분모 7의 여섯째 6/7입니다. 6/7×14/3=4입니다.",
       "independentAnswer": "4",
       "answerContract": "single-value",
@@ -927,8 +1467,15 @@
       "sourceBlock": "Mission 4",
       "normalizedTypeId": "u2-t23",
       "typeName": "일정한 규칙의 분수열 첫 100항 곱",
-      "keyConditions": ["5/11, 8/14, 11/17, 14/20처럼 분자·분모가 각각 3씩 증가", "첫째부터 100번째까지 곱"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "수열식만 필요"},
+      "keyConditions": [
+        "5/11, 8/14, 11/17, 14/20처럼 분자·분모가 각각 3씩 증가",
+        "첫째부터 100번째까지 곱"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "수열식만 필요"
+      },
       "independentCalculation": "분자는 5부터 302, 분모는 11부터 308인 3 간격 곱이므로 남는 항은 5×8/(305×308)=2/4697입니다.",
       "independentAnswer": "2/4697",
       "answerContract": "single-value",
@@ -944,8 +1491,16 @@
       "sourceBlock": "Mission 5",
       "normalizedTypeId": "u2-t19",
       "typeName": "튀어 오르는 공의 이동 거리 합",
-      "keyConditions": ["처음 높이 8 4/7m", "매번 떨어진 높이의 3/4만큼 상승", "세 번째 상승까지의 거리"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "움직임은 식으로 모델링 가능"},
+      "keyConditions": [
+        "처음 높이 8 4/7m",
+        "매번 떨어진 높이의 3/4만큼 상승",
+        "세 번째 상승까지의 거리"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "움직임은 식으로 모델링 가능"
+      },
       "independentCalculation": "H=60/7, 이동 거리는 H+2(3H/4)+2(9H/16)+27H/64=3885/112=555/16입니다.",
       "independentAnswer": "34 11/16m",
       "answerContract": "single-value-with-units",
@@ -961,8 +1516,17 @@
       "sourceBlock": "Mission 6",
       "normalizedTypeId": "u2-t24",
       "typeName": "같은 원 10개의 겹침 그림에서 직사각형 넓이",
-      "keyConditions": ["직사각형 높이 2 4/5cm", "같은 크기의 원 10개", "일정한 간격으로 겹침", "직사각형 넓이를 구함"],
-      "visualAssetNeeded": {"required": true, "kind": "ten-overlapping-circles", "reason": "원 개수·중심 위치·중심 간격·직사각형 경계를 정확히 보존해야 함"},
+      "keyConditions": [
+        "직사각형 높이 2 4/5cm",
+        "같은 크기의 원 10개",
+        "일정한 간격으로 겹침",
+        "직사각형 넓이를 구함"
+      ],
+      "visualAssetNeeded": {
+        "required": true,
+        "kind": "ten-overlapping-circles",
+        "reason": "원 개수·중심 위치·중심 간격·직사각형 경계를 정확히 보존해야 함"
+      },
       "independentCalculation": "그림의 중심 간격을 지름의 1/4로 읽는 추가 가정이면 지름 H=14/5, 가로=H+9H/4=91/10, 넓이=637/25=25 12/25입니다. 그러나 간격 수치는 글에 없습니다.",
       "independentAnswer": "조건이 충분하면 25 12/25이지만, 원 중심 간격이 명시되지 않아 확정 답으로 승격하지 않음",
       "answerContract": "single-value-conditional-on-visual-geometry",
@@ -980,8 +1544,17 @@
       "sourceBlock": "개념탐구 3",
       "normalizedTypeId": "u2-t25",
       "typeName": "두 막대의 젖은 비율로 수영장 깊이 구하기",
-      "keyConditions": ["두 막대 길이 차 30cm", "긴 막대는 4/5만큼 젖음", "짧은 막대는 6/7만큼 젖음", "같은 깊이를 잼"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "막대 길이와 비율을 식으로 모델링 가능"},
+      "keyConditions": [
+        "두 막대 길이 차 30cm",
+        "긴 막대는 4/5만큼 젖음",
+        "짧은 막대는 6/7만큼 젖음",
+        "같은 깊이를 잼"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "막대 길이와 비율을 식으로 모델링 가능"
+      },
       "independentCalculation": "긴 막대 길이를 L이라 하면 4L/5=6(L-30)/7이므로 L=450, 깊이는 4L/5=360cm입니다.",
       "independentAnswer": "360cm",
       "answerContract": "single-value-with-units",
@@ -997,8 +1570,16 @@
       "sourceBlock": "예제 3-1",
       "normalizedTypeId": "u2-t26",
       "typeName": "반복 반등 높이에서 처음 높이 역산",
-      "keyConditions": ["반등 높이는 직전 낙하 높이의 2/3", "네 번째 반등 높이 64cm", "처음 높이를 구함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "반복 비율 식만 필요"},
+      "keyConditions": [
+        "반등 높이는 직전 낙하 높이의 2/3",
+        "네 번째 반등 높이 64cm",
+        "처음 높이를 구함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "반복 비율 식만 필요"
+      },
       "independentCalculation": "처음 높이 H에 (2/3)^4를 곱한 값이 64이므로 H=64×(3/2)^4=324cm입니다.",
       "independentAnswer": "324cm",
       "answerContract": "single-value-with-units",
@@ -1014,8 +1595,17 @@
       "sourceBlock": "예제 3-2",
       "normalizedTypeId": "u2-t27",
       "typeName": "전체의 분수와 부분의 분수로 전체 비율 구하기",
-      "keyConditions": ["전체의 3/20이 5학년", "5학년의 14/25가 남학생", "여학생 132명", "남학생 수상자 48명의 전체 비율"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "집합 비율 계산만 필요"},
+      "keyConditions": [
+        "전체의 3/20이 5학년",
+        "5학년의 14/25가 남학생",
+        "여학생 132명",
+        "남학생 수상자 48명의 전체 비율"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "집합 비율 계산만 필요"
+      },
       "independentCalculation": "5학년 여학생 비율은 3/20×11/25=33/500입니다. 132명이므로 전체=2000명, 48/2000=3/125입니다.",
       "independentAnswer": "3/125",
       "answerContract": "single-value",
@@ -1031,8 +1621,17 @@
       "sourceBlock": "예제 3-3",
       "normalizedTypeId": "u2-t28",
       "typeName": "남은 부분의 연속 분수로 전체 넓이 구하기",
-      "keyConditions": ["전체의 3/7은 봉숭아", "남은 부분의 3/8은 사루비아", "그 남은 부분의 2/5는 채송화", "채송화 넓이 1400m²"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "넓이 비율 식만 필요"},
+      "keyConditions": [
+        "전체의 3/7은 봉숭아",
+        "남은 부분의 3/8은 사루비아",
+        "그 남은 부분의 2/5는 채송화",
+        "채송화 넓이 1400m²"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "넓이 비율 식만 필요"
+      },
       "independentCalculation": "채송화 비율은 4/7×5/8×2/5=1/7이므로 전체 넓이는 1400×7=9800m²입니다.",
       "independentAnswer": "9800m²",
       "answerContract": "single-value-with-units",
@@ -1048,8 +1647,16 @@
       "sourceBlock": "예제 3-4",
       "normalizedTypeId": "u2-t29",
       "typeName": "분수 비로 나눈 돈 구하기",
-      "keyConditions": ["두 사람이 6900원을 나눔", "서윤 돈의 1/14=보현 돈의 1/9", "두 사람의 몫을 각각 구함"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "비례식만 필요"},
+      "keyConditions": [
+        "두 사람이 6900원을 나눔",
+        "서윤 돈의 1/14=보현 돈의 1/9",
+        "두 사람의 몫을 각각 구함"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "비례식만 필요"
+      },
       "independentCalculation": "서윤:보현=14:9이고 6900/23=300이므로 서윤 4200원, 보현 2700원입니다.",
       "independentAnswer": "서윤 4200원, 보현 2700원",
       "answerContract": "ordered-pair",
@@ -1065,8 +1672,16 @@
       "sourceBlock": "Mission 1",
       "normalizedTypeId": "u2-t30",
       "typeName": "직사각형의 둘레와 한 변의 배율로 넓이 구하기",
-      "keyConditions": ["둘레 720cm", "가로는 세로의 1 1/4배", "직사각형 넓이"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "변의 관계식만 필요"},
+      "keyConditions": [
+        "둘레 720cm",
+        "가로는 세로의 1 1/4배",
+        "직사각형 넓이"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "변의 관계식만 필요"
+      },
       "independentCalculation": "가로+세로=360, 가로=5세로/4이므로 세로=160, 가로=200, 넓이=32000cm²입니다.",
       "independentAnswer": "32000cm²",
       "answerContract": "single-value-with-units",
@@ -1082,8 +1697,17 @@
       "sourceBlock": "Mission 2",
       "normalizedTypeId": "u2-t31",
       "typeName": "여행 거리에서 여러 교통 구간의 합 구하기",
-      "keyConditions": ["전체의 4/5는 기차", "남은 거리의 2/3는 버스", "나머지 도보 3 2/5km", "기차와 버스 거리 합"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "구간 비율식만 필요"},
+      "keyConditions": [
+        "전체의 4/5는 기차",
+        "남은 거리의 2/3는 버스",
+        "나머지 도보 3 2/5km",
+        "기차와 버스 거리 합"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "구간 비율식만 필요"
+      },
       "independentCalculation": "도보는 전체의 1/15이므로 전체=17/5×15=51km, 기차+버스=51-17/5=238/5km입니다.",
       "independentAnswer": "47 3/5km",
       "answerContract": "single-value-with-units",
@@ -1099,8 +1723,18 @@
       "sourceBlock": "Mission 3",
       "normalizedTypeId": "u2-t32",
       "typeName": "연속해서 남은 사탕의 분수로 처음 수 구하기",
-      "keyConditions": ["가 사탕은 전체의 1/5", "남은 것의 5/12는 나 사탕", "그 남은 것의 3/7은 다 사탕", "라 사탕 40개", "가 사탕 수"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "분수 비율식만 필요"},
+      "keyConditions": [
+        "가 사탕은 전체의 1/5",
+        "남은 것의 5/12는 나 사탕",
+        "그 남은 것의 3/7은 다 사탕",
+        "라 사탕 40개",
+        "가 사탕 수"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "분수 비율식만 필요"
+      },
       "independentCalculation": "라 사탕은 전체의 4/5×7/12×4/7=4/15이므로 전체=150, 가 사탕=150/5=30개입니다.",
       "independentAnswer": "30개",
       "answerContract": "single-value-with-units",
@@ -1116,8 +1750,16 @@
       "sourceBlock": "Mission 4",
       "normalizedTypeId": "u2-t33",
       "typeName": "두 물건의 단가 관계로 한 개 가격 구하기",
-      "keyConditions": ["연필 3자루 가격=볼펜 1자루 가격", "볼펜은 연필 한 자루의 2 2/3배보다 120원 비쌈", "연필 가격"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "가격 관계식만 필요"},
+      "keyConditions": [
+        "연필 3자루 가격=볼펜 1자루 가격",
+        "볼펜은 연필 한 자루의 2 2/3배보다 120원 비쌈",
+        "연필 가격"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "가격 관계식만 필요"
+      },
       "independentCalculation": "연필을 x라 하면 3x=8x/3+120이므로 x/3=120, x=360원입니다.",
       "independentAnswer": "360원",
       "answerContract": "single-value-with-units",
@@ -1133,8 +1775,18 @@
       "sourceBlock": "Mission 5",
       "normalizedTypeId": "u2-t34",
       "typeName": "전체 분수에 더한 수로 세 사람의 수 구하기",
-      "keyConditions": ["가=전체의 2/5+5", "나=전체의 1/4+6", "다=전체의 2/7+7", "세 사람이 전체를 모두 땀", "다의 수"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "전체량 방정식만 필요"},
+      "keyConditions": [
+        "가=전체의 2/5+5",
+        "나=전체의 1/4+6",
+        "다=전체의 2/7+7",
+        "세 사람이 전체를 모두 땀",
+        "다의 수"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "전체량 방정식만 필요"
+      },
       "independentCalculation": "T=(2/5+1/4+2/7)T+18=131T/140+18이므로 T=280, 다=80+7=87개입니다.",
       "independentAnswer": "87개",
       "answerContract": "single-value-with-units",
@@ -1150,8 +1802,16 @@
       "sourceBlock": "Mission 6",
       "normalizedTypeId": "u2-t35",
       "typeName": "남은 양과 준 양의 배율로 남은 쌀 구하기",
-      "keyConditions": ["처음 쌀의 1/3을 형근에게 줌", "남은 쌀의 3/8을 현빈에게 줌", "남은 양은 준 양의 1 3/7배보다 10kg 적음"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "남은 양 방정식만 필요"},
+      "keyConditions": [
+        "처음 쌀의 1/3을 형근에게 줌",
+        "남은 쌀의 3/8을 현빈에게 줌",
+        "남은 양은 준 양의 1 3/7배보다 10kg 적음"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "남은 양 방정식만 필요"
+      },
       "independentCalculation": "남은 양 R=5/12T, 준 양=7/5R이고 R=(7/5R)×10/7-10=2R-10이므로 R=10kg입니다.",
       "independentAnswer": "10kg",
       "answerContract": "single-value-with-units",
@@ -1167,8 +1827,16 @@
       "sourceBlock": "개념탐구 4",
       "normalizedTypeId": "u2-t36",
       "typeName": "여러 분수에 곱해 자연수가 되는 최소 분수",
-      "keyConditions": ["21/36, 35/48, 77/90 세 수", "어느 것에 곱해도 자연수", "가장 작은 양의 분수"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "분수의 약분과 배수 조건만 필요"},
+      "keyConditions": [
+        "21/36, 35/48, 77/90 세 수",
+        "어느 것에 곱해도 자연수",
+        "가장 작은 양의 분수"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "분수의 약분과 배수 조건만 필요"
+      },
       "independentCalculation": "세 수를 기약분수로 정리한 뒤 x=p/q를 대입하면 q는 7의 약수입니다. q=7에서 p의 최소값은 lcm(12,48,90)=720이므로 x=720/7이 최소입니다.",
       "independentAnswer": "720/7=102 6/7",
       "answerContract": "single-value-minimum",
@@ -1184,8 +1852,17 @@
       "sourceBlock": "예제 4-1",
       "normalizedTypeId": "u2-t38",
       "typeName": "분수 넓이와 한 변으로 직사각형 넓이·분수 곱 구하기",
-      "keyConditions": ["가로 5 1/4m", "세로는 기약분수 가/나m", "꽃밭의 2/5가 7 1/2m²", "가×나"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "직사각형 넓이식만 필요"},
+      "keyConditions": [
+        "가로 5 1/4m",
+        "세로는 기약분수 가/나m",
+        "꽃밭의 2/5가 7 1/2m²",
+        "가×나"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "직사각형 넓이식만 필요"
+      },
       "independentCalculation": "전체 넓이는 7 1/2÷(2/5)=75/4m²이고 세로=(75/4)/(21/4)=25/7m이므로 가×나=175입니다.",
       "independentAnswer": "175",
       "answerContract": "single-value",
@@ -1201,8 +1878,16 @@
       "sourceBlock": "예제 4-2",
       "normalizedTypeId": "u2-t37",
       "typeName": "등분된 수직선에서 비례 위치 구하기",
-      "keyConditions": ["양 끝 1 7/15와 5 1/10", "직사각형 높이를 8등분", "대각선과 수직선의 교점 위치"],
-      "visualAssetNeeded": {"required": true, "kind": "number-line-grid-diagonal", "reason": "8등분 선, 대각선, 수직선의 교점 위치가 정답 조건"},
+      "keyConditions": [
+        "양 끝 1 7/15와 5 1/10",
+        "직사각형 높이를 8등분",
+        "대각선과 수직선의 교점 위치"
+      ],
+      "visualAssetNeeded": {
+        "required": true,
+        "kind": "number-line-grid-diagonal",
+        "reason": "8등분 선, 대각선, 수직선의 교점 위치가 정답 조건"
+      },
       "independentCalculation": "끝점 차는 109/30이고 그림의 교점은 5/8 위치이므로 22/15+5/8×109/30=299/80입니다.",
       "independentAnswer": "3 59/80",
       "answerContract": "single-value",
@@ -1218,8 +1903,16 @@
       "sourceBlock": "예제 4-3",
       "normalizedTypeId": "u2-t39",
       "typeName": "기약분수에 대분수를 곱해 자연수가 되는 빈칸 찾기",
-      "keyConditions": ["가/7과 33/나가 기약분수", "각각 3 9/11을 곱한 결과가 20보다 작은 자연수", "가와 나를 모두 찾음"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "분수 조건만 필요"},
+      "keyConditions": [
+        "가/7과 33/나가 기약분수",
+        "각각 3 9/11을 곱한 결과가 20보다 작은 자연수",
+        "가와 나를 모두 찾음"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "분수 조건만 필요"
+      },
       "independentCalculation": "기약 조건과 자연수 범위를 독립 전수 검산하여 기존 누락을 수정했습니다. 상세값은 비공개 Drive 검수 기록을 참조합니다.",
       "independentAnswer": "비공개 Drive 검수 기록 참조",
       "privateReviewRef": "https://drive.google.com/file/d/1zR1rI9H07IWq5YM44-GyBe8qM-wmi3ND/view",
@@ -1236,8 +1929,16 @@
       "sourceBlock": "예제 4-4",
       "normalizedTypeId": "u2-t40",
       "typeName": "기약 진분수 두 개의 곱이 1/2인 짝 세기",
-      "keyConditions": ["3,4,5,6,7,8,9 중 두 수로 진분수 작성", "기약분수 두 개의 곱이 1/2", "짝의 개수"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "수 후보 전수 열거만 필요"},
+      "keyConditions": [
+        "3,4,5,6,7,8,9 중 두 수로 진분수 작성",
+        "기약분수 두 개의 곱이 1/2",
+        "짝의 개수"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "수 후보 전수 열거만 필요"
+      },
       "independentCalculation": "3≤분자<분모≤9, 서로소인 분수 15개를 전수 열거하고 곱이 1/2인 무순서 짝을 검사하면 (3/5,5/6),(4/5,5/8),(4/7,7/8)의 3쌍입니다.",
       "independentAnswer": "3쌍",
       "answerContract": "single-value-count",
@@ -1253,8 +1954,16 @@
       "sourceBlock": "Mission 1",
       "normalizedTypeId": "u2-t41",
       "typeName": "서로 다른 분수 카드로 만든 식의 최댓값",
-      "keyConditions": ["1/5,2/5,3/5,4/5를 한 번씩 사용", "□-□×□+□의 최댓값", "곱셈을 먼저 계산"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "카드 배치를 논리적으로 비교 가능"},
+      "keyConditions": [
+        "1/5,2/5,3/5,4/5를 한 번씩 사용",
+        "□-□×□+□의 최댓값",
+        "곱셈을 먼저 계산"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "카드 배치를 논리적으로 비교 가능"
+      },
       "independentCalculation": "곱에서 1/5과 2/5를 사용하고 더하고 빼는 자리에 4/5와 3/5를 두면 4/5-2/25+3/5=33/25입니다.",
       "independentAnswer": "1 8/25",
       "answerContract": "single-value-maximum",
@@ -1270,8 +1979,17 @@
       "sourceBlock": "Mission 2",
       "normalizedTypeId": "u2-t42",
       "typeName": "기약 진분수 곱 조건의 한 자리 수 찾기",
-      "keyConditions": ["가/3, 나/7, 다/10은 기약 진분수", "세 분수의 곱=3/7", "가·나·다는 한 자리 자연수", "100가+10나+다"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "자리 수와 약분 조건만 필요"},
+      "keyConditions": [
+        "가/3, 나/7, 다/10은 기약 진분수",
+        "세 분수의 곱=3/7",
+        "가·나·다는 한 자리 자연수",
+        "100가+10나+다"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "자리 수와 약분 조건만 필요"
+      },
       "independentCalculation": "가×나×다=90이고 가/3, 나/7, 다/10이 모두 기약 진분수인 한 자리 조건을 전수 검사하면 (가,나,다)=(2,5,9)입니다.",
       "independentAnswer": "259",
       "answerContract": "single-value-after-digit-triple",
@@ -1287,8 +2005,16 @@
       "sourceBlock": "Mission 3",
       "normalizedTypeId": "u2-t43",
       "typeName": "기약분수 곱에서 두 빈칸의 합 구하기",
-      "keyConditions": ["가/39와 13/나가 기약분수인 진분수", "곱=8/15", "가와 나의 합"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "분수 조건과 약분만 필요"},
+      "keyConditions": [
+        "가/39와 13/나가 기약분수인 진분수",
+        "곱=8/15",
+        "가와 나의 합"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "분수 조건과 약분만 필요"
+      },
       "independentCalculation": "13가/(39나)=8/15에서 5가=8나. 진분수·기약 조건을 전수 검사하면 가=32, 나=20이고 합은 52입니다.",
       "independentAnswer": "52",
       "answerContract": "single-value-after-unique-pair",
@@ -1304,8 +2030,17 @@
       "sourceBlock": "Mission 4",
       "normalizedTypeId": "u2-t44",
       "typeName": "곱셈 결과가 자연수가 되는 분수 빈칸의 합",
-      "keyConditions": ["(1+□/7)×2/5×3 1/2", "결과가 자연수", "□는 20보다 작은 자연수", "가능한 값의 합"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "식의 배수 조건만 필요"},
+      "keyConditions": [
+        "(1+□/7)×2/5×3 1/2",
+        "결과가 자연수",
+        "□는 20보다 작은 자연수",
+        "가능한 값의 합"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "식의 배수 조건만 필요"
+      },
       "independentCalculation": "식은 (□+7)/5이므로 □=3,8,13,18일 때 자연수이고 합은 42입니다.",
       "independentAnswer": "42",
       "answerContract": "single-value-after-set-sum",
@@ -1321,8 +2056,16 @@
       "sourceBlock": "Mission 5",
       "normalizedTypeId": "u2-t37",
       "typeName": "등분된 수직선의 특정 위치 읽기",
-      "keyConditions": ["끝점 3/7과 7/3", "같은 간격으로 5등분", "가의 위치에 해당하는 수"],
-      "visualAssetNeeded": {"required": true, "kind": "equal-interval-number-line", "reason": "등분 수와 가의 눈금 위치를 정확히 보존해야 함"},
+      "keyConditions": [
+        "끝점 3/7과 7/3",
+        "같은 간격으로 5등분",
+        "가의 위치에 해당하는 수"
+      ],
+      "visualAssetNeeded": {
+        "required": true,
+        "kind": "equal-interval-number-line",
+        "reason": "등분 수와 가의 눈금 위치를 정확히 보존해야 함"
+      },
       "independentCalculation": "차이는 40/21이고 5등분 간격은 8/21입니다. 시작점에서 세 칸인 위치는 3/7+24/21=11/7입니다.",
       "independentAnswer": "11/7",
       "answerContract": "single-value-under-visible-division",
@@ -1338,8 +2081,16 @@
       "sourceBlock": "Mission 6",
       "normalizedTypeId": "u2-t45",
       "typeName": "세 분수를 자연수로 만드는 목표값 근처의 분수",
-      "keyConditions": ["5/6, 3 1/3, 3 3/4에 같은 분수를 곱함", "세 결과가 모두 자연수", "9에 가장 가까운 분수"],
-      "visualAssetNeeded": {"required": false, "kind": null, "reason": "공통 배수 조건만 필요"},
+      "keyConditions": [
+        "5/6, 3 1/3, 3 3/4에 같은 분수를 곱함",
+        "세 결과가 모두 자연수",
+        "9에 가장 가까운 분수"
+      ],
+      "visualAssetNeeded": {
+        "required": false,
+        "kind": null,
+        "reason": "공통 배수 조건만 필요"
+      },
       "independentCalculation": "곱할 분수를 p/q라 하면 q는 5의 약수이고 최소 조건은 p의 12배수입니다. 가능한 값은 12k/5이며 9에 가장 가까운 것은 48/5입니다.",
       "independentAnswer": "48/5",
       "answerContract": "single-value-nearest-target",
