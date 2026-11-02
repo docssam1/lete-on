@@ -93,21 +93,27 @@
           "classification": "방향별 테이프 개수를 세어 길이 구하기",
           "candidate": "224cm",
           "reviewNote": "확대한 원문 그림에서 깊이·높이 방향 한 바퀴와 가로·높이 방향 두 바퀴를 확인했다. 깊이 16cm, 가로 18cm, 높이 20cm이므로 2×(16+20)+2×2×(18+20)=224cm다. 출판사 공식 답안은 미확인이다.",
-          "status": "source-reviewed-answer-key-pending"
+          "runtimeTypeId": "5-2-u5-practice-14-original",
+          "publisherAnswerVerified": false,
+          "status": "public-independent-verification-publisher-key-pending"
         },
         {
           "number": 15,
           "classification": "테이프 길이에서 상자 가로 구하기",
           "candidate": "11cm",
           "reviewNote": "깊이 23/6cm, 높이 5cm, 가로 xcm로 놓으면 4×(23/6+5)+2×(x+23/6)=65이므로 x=11cm다.",
-          "status": "source-reviewed-answer-key-pending"
+          "runtimeTypeId": "5-2-u5-practice-15-original",
+          "publisherAnswerVerified": false,
+          "status": "public-independent-verification-publisher-key-pending"
         },
         {
           "number": 16,
           "classification": "끈 길이와 가로·깊이의 비",
           "candidate": "10cm",
           "reviewNote": "깊이 dcm, 가로 2dcm, 높이 55/8cm라 하면 4×(d+55/8)+4×(2d+55/8)=115이므로 d=5, 가로 10cm다.",
-          "status": "source-reviewed-answer-key-pending"
+          "runtimeTypeId": "5-2-u5-practice-16-original",
+          "publisherAnswerVerified": false,
+          "status": "public-independent-verification-publisher-key-pending"
         }
       ]
     },
