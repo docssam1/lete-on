@@ -77,7 +77,7 @@ The prepared R6 human-review packet and its separate temporary-ID mapping also p
 
 ## 2026-11-02 Math Kangaroo source-registry sync
 
-The official prior-year PDF exam archive is now listed both in the K–12 competition profile and the shared program catalog, with the profile source marked verified on 2026-11-02. This keeps the in-app Grade 7/8 archive link aligned with the source-of-record and preserves the existing metadata-and-links-only rights boundary. `k8-competition-profiles.test.cjs` and `competition-type-bank.test.cjs` pass 13/13; both changed JavaScript modules pass syntax checks and the CRLF-aware diff check passes. Local-only; no exam content was copied.
+The official prior-year PDF exam archive is now listed both in the K–12 competition profile and the shared program catalog, with the profile source marked verified on 2026-11-02. This keeps the in-app Grade 7/8 archive link aligned with the source-of-record and preserves the existing metadata-and-links-only rights boundary. Combined Grade 3–12 roadmap, browser, comparison, competition-profile, and question-bank suites pass 50/50; both changed JavaScript modules pass syntax checks and the CRLF-aware diff check passes. Local-only; no exam content was copied.
 
 ## 2026-10-30 AMC raw-score reference continuation
 
