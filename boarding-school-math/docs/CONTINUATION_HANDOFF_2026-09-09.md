@@ -29,6 +29,12 @@ Updated desktop and mobile comparison headings so Grades 3–5 retain their supp
 
 Verification: roadmap model/browser suites pass 39/39; the Grade 3-versus-5 comparison asserts the distinction on desktop and phone, with no phone-width overflow. `boarding-roadmap.js` syntax and `git diff --check` pass. Local-only; no push or deployment.
 
+### 2026-11-02 Grade 7 public screener contract recheck
+
+Re-ran the current Grade 7 diagnostic engine, public `7.NS.A` workbook, locked plan, authoring/release manifests, focus analysis, report projections, and score-readiness suites: 61/61 pass. The result confirms the public practice stays distinct from the locked private screener, partial teacher scoring remains score-safe, report outputs do not infer mastery/placement, and the 36+8 public practice/recheck contract remains internally consistent. All private-item state remains locked; no private candidate prompts, answers, or assets were opened for this recheck.
+
+The Grade 7 roadmap was also rendered at 390px and 1280px. Its concept path, assessment record entry, and public workbook route remain reachable, with no page-width overflow. Local verification only; no remote signer, authenticated student delivery, push, publish, or deployment is claimed.
+
 ### 2026-10-30 Grade 7 7.NS.A study-plan connection
 
 Added a selectable Grade 7 · 7.NS.A goal to the learner plan. The learner can choose one of four manually selected concepts (rational addition/subtraction, multiplication/division, fraction/decimal forms, or word problems); daily concept links open the embedded 7.NS.A lesson in the public student workbook. The teacher view points to the teacher edition, 36-item workbook, and 8-item recheck. The Grade 7 learning-plan CTA on the boarding roadmap now opens this goal directly.
