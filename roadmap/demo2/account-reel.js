@@ -5,14 +5,19 @@
   const play = document.querySelector('#reelPlay');
   const sound = document.querySelector('#reelSound');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const compact = window.matchMedia('(max-height: 520px) and (orientation: landscape)');
+  const enlarge = document.querySelector('.member-reel-controls a');
   let wanted = !reduced.matches;
   let visible = true;
   video.muted = true;
   function update() {
-    play.textContent = video.paused ? (video.ended ? '다시 보기' : '영상 재생') : '일시정지';
+    play.textContent = compact.matches ? (video.paused ? '재생' : '정지') : video.paused ? (video.ended ? '다시 보기' : '영상 재생') : '일시정지';
     play.setAttribute('aria-label', video.paused ? '소개 영상 재생' : '소개 영상 일시정지');
-    sound.textContent = video.muted ? '배경음 켜기' : '배경음 끄기';
+    sound.textContent = compact.matches ? '소리' : video.muted ? '배경음 켜기' : '배경음 끄기';
+    sound.setAttribute('aria-label',video.muted ? '소개 영상 배경음 켜기' : '소개 영상 배경음 끄기');
     sound.setAttribute('aria-pressed', String(!video.muted));
+    enlarge.textContent = compact.matches ? '확대' : '크게 보기';
+    enlarge.setAttribute('aria-label','소개 영상 크게 보기');
   }
   function start() {
     if (!wanted || !visible || document.hidden) return;
@@ -48,6 +53,7 @@
   reduced.addEventListener('change', event => {
     if (event.matches) { wanted = false; video.pause(); }
   });
+  compact.addEventListener('change',update);
   update();
   start();
 })();

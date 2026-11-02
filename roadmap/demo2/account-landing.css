@@ -1,0 +1,98 @@
+/* Account landing only: preserve shared policy, administrator and planner styles. */
+.member-landing{--account-navy:#26304e;--account-line:#dfd7e4;--account-soft:#eee6f3}
+.member-landing .member-header{max-width:none;min-height:60px;padding:8px max(20px,calc((100vw - 1160px)/2));gap:20px;background:#fff}
+.account-nav{display:flex;align-items:center;gap:24px;margin-left:auto;font-size:13px;line-height:1.3}
+.account-nav a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none}
+.account-nav a:hover,.account-text-link:hover{text-decoration:underline}
+.account-skip{position:fixed;left:12px;top:8px;z-index:10;transform:translateY(-160%);padding:10px 16px;background:white;border:2px solid var(--member-purple);border-radius:10px}
+.account-skip:focus{transform:none}
+.account-main{max-width:1160px;margin:auto;padding:0 32px}
+.account-hero{padding:24px 0 36px}
+.account-heading{display:flex;align-items:center;justify-content:space-between;gap:32px;max-width:900px;margin:0 auto 22px}
+.account-heading h1{margin:0;flex:none;font-size:34px;font-weight:680;line-height:1.35;letter-spacing:-.045em}
+.account-heading h1 span{display:block;font-size:16px;font-weight:500;letter-spacing:-.02em;margin-bottom:3px;color:#65566e}
+.account-heading p{max-width:450px;margin:0;color:var(--member-muted);font-size:14px;line-height:1.8;word-break:keep-all;overflow-wrap:anywhere}
+.account-stage{--film-height:clamp(480px,calc(100svh - 245px),560px);display:grid;grid-template-columns:calc(var(--film-height)*.5625) minmax(0,480px);justify-content:center;align-items:stretch;gap:36px}
+.account-film{min-width:0;align-self:start}
+.member-landing .member-reel{margin:0;border-radius:20px;border-color:var(--account-line);background:#fff;box-shadow:0 16px 40px #32223e08}
+.member-landing .member-reel .member-growth-video{width:100%;height:auto;aspect-ratio:9/16;object-fit:cover;background:#faf8f4}
+.member-landing .member-reel-controls{padding:0 3px;gap:0;min-height:46px;background:#fff}
+.member-landing .member-reel-controls button,.member-landing .member-reel-controls a{font-size:11px;padding-inline:8px;min-height:46px}
+.member-landing .member-card{padding:30px 32px;border-radius:20px;box-shadow:0 16px 40px #32223e08;scroll-margin-top:24px}
+.member-landing .member-card h2{font-size:25px;color:var(--account-navy)}
+.member-landing .member-lead{margin-bottom:20px}
+.account-discover{display:flex;align-items:center;justify-content:center;gap:20px;min-height:44px;width:fit-content;margin:24px auto 0;color:#705084;font-size:13px;text-decoration:none}
+.account-discover span{font-size:20px}
+.account-introduction{padding:60px 0 64px;border-top:1px solid var(--account-line);scroll-margin-top:24px}
+.account-section-heading{display:flex;align-items:end;justify-content:space-between;gap:40px;margin-bottom:28px}
+.account-main h2{font-size:30px;line-height:1.4;letter-spacing:-.04em;font-weight:650;word-break:keep-all;overflow-wrap:anywhere}
+.account-section-heading h2{margin:0;color:var(--account-navy)}
+.account-section-heading>p{font-size:15px;line-height:1.9;color:var(--member-muted);margin:0;word-break:keep-all;max-width:480px}
+.account-preview{background:white;border:1px solid var(--account-line);border-radius:22px;overflow:hidden}
+.account-preview-tabs{display:flex;gap:8px;padding:14px 20px;border-bottom:1px solid var(--account-line);background:#f5f1f8}
+.account-preview-tabs button{flex:1;min-height:48px;padding:10px 16px;border:1px solid transparent;border-radius:12px;background:transparent;color:#675773;font-size:15px;font-weight:550;line-height:1.35}
+.account-preview-tabs button[aria-selected=true]{color:#563873;background:white;border-color:#d7c7e2;box-shadow:0 3px 0 #ddcfe8}
+.account-preview-panel{padding:24px}
+.account-preview-copy{padding:0 4px 20px;min-height:92px}
+.account-preview-copy h3{font-size:20px;line-height:1.5;margin:0 0 5px;font-weight:600;letter-spacing:-.03em;word-break:keep-all}
+.account-preview-copy p{font-size:14px;color:var(--member-muted);margin:0;line-height:1.8;word-break:keep-all}
+.account-preview figure{margin:0}
+.account-preview figure img{display:block;width:100%;height:auto;border:1px solid #eee8f1;border-radius:13px}
+.account-preview figcaption{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 4px 0;font-size:12px;color:#7c6c85;line-height:1.5}
+.account-preview figcaption a{display:inline-flex;align-items:center;min-height:44px;flex:none}
+.account-seniors{display:grid;grid-template-columns:1.15fr 1fr;align-items:center;gap:48px;padding:36px 0 64px}
+.account-senior-art{min-width:0;background:#f4eff8;border-radius:28px;overflow:hidden}
+.account-senior-art img{display:block;width:100%;height:auto}
+.account-senior-copy h2{margin:0 0 20px;color:var(--account-navy)}
+.account-senior-copy p{font-size:15px;color:var(--member-muted);line-height:1.9;margin:0 0 12px;word-break:keep-all}
+.account-text-link{display:inline-flex;align-items:center;min-height:44px;margin-top:6px;font-size:14px;color:#684777;text-decoration-thickness:1px}
+.account-how{padding:48px 0;border-top:1px solid var(--account-line);border-bottom:1px solid var(--account-line)}
+.account-how h2{margin:0 0 30px;color:var(--account-navy);font-size:26px}
+.account-how ol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));list-style:none;padding:0;margin:0;gap:30px}
+.account-how li{display:flex;align-items:flex-start;gap:14px}
+.account-how li>span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;font-size:15px;color:#705084;background:#ebe2f2}
+.account-how h3{font-size:17px;font-weight:600;margin:3px 0 8px;line-height:1.4}
+.account-how p{font-size:14px;color:var(--member-muted);line-height:1.8;margin:0;word-break:keep-all}
+.account-questions{max-width:800px;margin:60px auto}
+.account-questions h2{font-size:26px;color:var(--account-navy);margin:0 0 16px}
+.account-questions details{border-bottom:1px solid var(--account-line);padding:0 4px}
+.account-questions summary{cursor:pointer;padding:18px 0;font-size:16px;font-weight:550;line-height:1.6;min-height:56px}
+.account-questions details p{font-size:14px;line-height:1.9;color:var(--member-muted);margin:0 0 22px;max-width:680px;word-break:keep-all}
+.account-start{display:flex;align-items:center;gap:24px;padding:30px;background:#eee6f3;border:1px solid #ded1e6;border-radius:22px;margin-bottom:50px}
+.account-start>img{flex:none;width:60px;height:72px;object-fit:cover;border-radius:20px}
+.account-start h2{font-size:22px;color:#4a3559;margin:0 0 6px}
+.account-start p{font-size:14px;color:#74637f;margin:0;word-break:keep-all}
+.account-start .member-primary{width:auto;flex:none;margin:0 0 0 auto;font-size:14px}
+@media(min-width:1200px){.account-stage{gap:48px}.account-heading{max-width:920px}}
+@media(max-width:900px){.account-heading{gap:24px}.account-heading h1{font-size:30px}.account-heading p{font-size:13px}.account-stage{grid-template-columns:minmax(220px,290px) minmax(0,1fr);gap:24px}.member-landing .member-card{padding:26px}.account-section-heading{gap:30px}.account-section-heading h2{font-size:27px}.account-section-heading>p{font-size:14px;max-width:350px}.account-seniors{gap:28px}.account-senior-copy h2{font-size:26px}.account-start{flex-wrap:wrap}.account-start .member-primary{margin-left:84px}}
+@media(max-width:620px) and (orientation:portrait){
+ .member-landing .member-header{min-height:54px;padding:6px 16px;gap:8px}.member-landing .member-brand img{width:100px}.account-nav{gap:16px;font-size:12px}.account-nav a:last-child{display:none}
+ .account-main{padding:0 18px}.account-hero{padding-top:22px}.account-heading{display:block;margin-bottom:20px}.account-heading h1{font-size:29px}.account-heading h1 span{font-size:14px;margin-bottom:4px}.account-heading p{font-size:13px;line-height:1.8;margin-top:12px}.account-heading p br{display:none}
+ .account-stage{display:flex;flex-direction:column;gap:26px}.account-stage .member-card{order:0;width:100%;padding:24px 22px}.account-stage .account-film{order:1;width:min(100%,300px);align-self:center}.account-stage .member-card h2{font-size:23px}.account-discover{margin-top:18px}
+ .account-introduction{padding:38px 0}.account-section-heading{display:block;margin-bottom:22px}.account-section-heading h2{font-size:27px}.account-section-heading>p{font-size:14px;line-height:1.8;margin-top:16px;max-width:none}.account-section-heading>p br{display:none}
+ .account-preview{border-radius:17px}.account-preview-tabs{padding:10px 8px;gap:4px}.account-preview-tabs button{font-size:12px;padding:8px 6px;min-height:46px;border-radius:9px}.account-preview-panel{padding:18px 12px}.account-preview-copy{min-height:125px;padding:0 4px 18px}.account-preview-copy h3{font-size:18px}.account-preview-copy p{font-size:13px}.account-preview figcaption{font-size:10px;gap:10px}.account-preview figure img{border-radius:8px}
+ .account-seniors{display:flex;flex-direction:column;align-items:stretch;gap:24px;padding:18px 0 40px}.account-senior-copy h2{font-size:26px;margin-bottom:16px}.account-senior-copy p{font-size:14px}
+ .account-how{padding:32px 0}.account-how h2{font-size:24px}.account-how ol{grid-template-columns:1fr;gap:24px}.account-how p{font-size:13px}.account-questions{margin:38px 0}.account-questions h2{font-size:24px}.account-questions summary{font-size:15px}.account-start{padding:22px 20px;gap:16px;margin-bottom:30px}.account-start>img{width:48px;height:58px;border-radius:16px}.account-start>div{flex:1;min-width:0}.account-start h2{font-size:19px}.account-start p{font-size:12px}.account-start .member-primary{width:100%;margin:0;font-size:14px}
+}
+@media(max-height:520px) and (orientation:landscape){
+ .member-landing .member-header{min-height:46px;padding-block:2px}.member-landing .member-brand img{width:100px}.member-landing .member-header>span{display:none}.account-nav{font-size:12px}.account-main{padding-inline:24px}.account-hero{padding-top:16px}.account-heading{gap:24px;margin-bottom:16px}.account-heading h1{font-size:27px}.account-heading h1 span{font-size:12px}.account-heading p{font-size:12px;max-width:360px}.account-stage{grid-template-columns:minmax(180px,245px) minmax(0,440px);gap:24px}.member-landing .member-card{padding:24px}.member-landing .member-card h2{font-size:23px}.account-introduction{padding-top:36px}.account-section-heading{display:block}.account-section-heading>p{max-width:none;margin-top:14px}.account-start .member-primary{margin-left:0}
+}
+@media(prefers-reduced-motion:no-preference){.member-landing{scroll-behavior:smooth}.account-preview-tabs button{transition:background-color .15s,border-color .15s}}
+/* A short landscape viewport keeps the fields and primary action in view. */
+@media(max-height:520px) and (orientation:landscape){
+ .account-hero{padding-top:12px}.account-heading{margin-bottom:12px}.account-heading h1{font-size:25px}.account-heading h1 span{display:inline;margin-right:14px;font-size:12px}.account-heading p{display:none}
+ .account-stage{grid-template-columns:minmax(108px,calc((100svh - 150px)*.5625)) minmax(0,480px);gap:24px}
+ .member-landing .member-card{padding:18px 22px}.member-landing .member-card h2{font-size:22px;margin-bottom:6px}.member-landing .member-lead{font-size:12px;margin-bottom:8px}
+ .member-landing #reviewForm,.member-landing #loginForm{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+ .member-landing #reviewForm .member-field,.member-landing #loginForm .member-field{font-size:12px;gap:5px;margin:8px 0}
+ .member-landing #reviewForm input,.member-landing #loginForm input{min-height:44px;padding:8px 10px}
+ .member-landing #reviewForm .member-primary,.member-landing #loginForm .member-primary{grid-column:1/-1;min-height:44px;margin-top:8px;padding:8px 14px}
+ .member-landing .member-card .member-link{min-height:36px;margin-top:6px;font-size:12px}.member-landing .member-actions{margin-top:6px;gap:4px 16px}.member-landing .member-actions button{font-size:12px;min-height:36px}.member-landing #memberStatus:empty{display:none}
+}
+@media(max-height:520px) and (orientation:landscape){
+ .member-landing .member-reel-controls button,.member-landing .member-reel-controls a{flex:1;min-width:0;margin-left:0;padding:4px 3px;font-size:10px;white-space:normal;text-align:center}
+}
+@media(max-height:360px) and (orientation:landscape){
+ .account-hero{padding-top:8px}.account-heading{margin-bottom:8px}.member-landing .member-card{padding-block:16px}
+}
+.member-landing .member-reel-controls button[aria-pressed=true]{background:#eee6f3;color:#54346b}
