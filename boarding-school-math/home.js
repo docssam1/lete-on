@@ -184,7 +184,7 @@
     if (goalId === "amc" && profile) {
       const recommended = profile.gfieldPreparationGrades.map(function (value) { return `G${value}`; }).join("–");
       return {
-        eligibility: `공식 G${profile.officialEligibility.gradeMaximum} 이하·${profile.officialEligibility.ageExclusiveMaximum}세 미만 · GFIELD 권장 ${recommended}`,
+        eligibility: `공식 G${profile.officialEligibility.gradeMaximum} 이하 · 연령 기준은 현재 MAA 안내 확인 · GFIELD 권장 ${recommended}`,
         format: `${profile.durationMinutes}분 · ${profile.questionCount}문항 · 5지선다 · 계산기 금지`
       };
     }

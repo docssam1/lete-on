@@ -45,9 +45,9 @@ test("AMC official eligibility and GFIELD prep band are distinguished", function
   const amc8 = catalog.programs.find(function (program) { return program.id === "amc-8"; });
   const amc10 = catalog.programs.find(function (program) { return program.id === "amc-10"; });
   const amc12 = catalog.programs.find(function (program) { return program.id === "amc-12"; });
-  assert.match(amc8.officialEligibility, /Grade 8 or below/);
-  assert.match(amc10.officialEligibility, /Grade 10 or below/);
-  assert.match(amc12.officialEligibility, /Grade 12 or below/);
+  assert.match(amc8.officialEligibility, /Grade 8 or below.*confirm.*age boundary/i);
+  assert.match(amc10.officialEligibility, /Grade 10 or below.*confirm.*age boundary/i);
+  assert.match(amc12.officialEligibility, /Grade 12 or below.*confirm.*age boundary/i);
   assert.equal(amc8.preparationBandNotOfficial, true);
   assert.equal(amc10.preparationBandNotOfficial, true);
   assert.equal(amc12.preparationBandNotOfficial, true);

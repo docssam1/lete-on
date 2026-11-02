@@ -81,7 +81,7 @@
     Object.freeze({
       id: "maa-amc-8",
       programId: "amc-8",
-      officialEligibility: Object.freeze({ gradeMaximum: 8, ageExclusiveMaximum: 15.5 }),
+      officialEligibility: Object.freeze({ gradeMaximum: 8, ageLimitYears: 15.5, ageBoundaryRequiresConfirmation: true }),
       gfieldPreparationGrades: Object.freeze([6, 7, 8]),
       preparationBandIsOfficial: false,
       durationMinutes: 40,
@@ -114,7 +114,7 @@
     Object.freeze({
       id: "maa-amc-10",
       programId: "amc-10",
-      officialEligibility: Object.freeze({ gradeMaximum: 10, ageExclusiveMaximum: 17.5 }),
+      officialEligibility: Object.freeze({ gradeMaximum: 10, ageLimitYears: 17.5, ageBoundaryRequiresConfirmation: true }),
       gfieldPreparationGrades: Object.freeze([9, 10]),
       preparationBandIsOfficial: false,
       durationMinutes: 75,
@@ -135,7 +135,7 @@
     Object.freeze({
       id: "maa-amc-12",
       programId: "amc-12",
-      officialEligibility: Object.freeze({ gradeMaximum: 12, ageExclusiveMaximum: 19.5 }),
+      officialEligibility: Object.freeze({ gradeMaximum: 12, ageLimitYears: 19.5, ageBoundaryRequiresConfirmation: true }),
       gfieldPreparationGrades: Object.freeze([11, 12]),
       preparationBandIsOfficial: false,
       durationMinutes: 75,

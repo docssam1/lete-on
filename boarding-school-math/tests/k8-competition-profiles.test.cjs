@@ -70,7 +70,7 @@ test("SASMO keeps K2 separate from the current grade 1-12 format and recomputes 
 
 test("AMC 8 current eligibility, format, and internal preparation band stay distinct", function () {
   const profile = data.profiles.find(function (row) { return row.programId === "amc-8"; });
-  assert.deepEqual(profile.officialEligibility, { gradeMaximum: 8, ageExclusiveMaximum: 15.5 });
+  assert.deepEqual(profile.officialEligibility, { gradeMaximum: 8, ageLimitYears: 15.5, ageBoundaryRequiresConfirmation: true });
   assert.deepEqual(profile.gfieldPreparationGrades, [6, 7, 8]);
   assert.equal(profile.preparationBandIsOfficial, false);
   assert.equal(profile.questionCount, 25);
@@ -93,8 +93,8 @@ test("AMC 8 current eligibility, format, and internal preparation band stay dist
 test("AMC 10 and AMC 12 preserve separate official eligibility and scope contracts", function () {
   const amc10 = data.profiles.find(function (row) { return row.programId === "amc-10"; });
   const amc12 = data.profiles.find(function (row) { return row.programId === "amc-12"; });
-  assert.deepEqual(amc10.officialEligibility, { gradeMaximum: 10, ageExclusiveMaximum: 17.5 });
-  assert.deepEqual(amc12.officialEligibility, { gradeMaximum: 12, ageExclusiveMaximum: 19.5 });
+  assert.deepEqual(amc10.officialEligibility, { gradeMaximum: 10, ageLimitYears: 17.5, ageBoundaryRequiresConfirmation: true });
+  assert.deepEqual(amc12.officialEligibility, { gradeMaximum: 12, ageLimitYears: 19.5, ageBoundaryRequiresConfirmation: true });
   assert.deepEqual(amc10.gfieldPreparationGrades, [9, 10]);
   assert.deepEqual(amc12.gfieldPreparationGrades, [11, 12]);
   for (const profile of [amc10, amc12]) assert.ok(profile.sources.some(function (row) {
