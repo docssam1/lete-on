@@ -112,6 +112,9 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.equal(roadmap.courseStageResources[9][1][0].url, "https://geometry.flippedmath.com/");
   assert.equal(roadmap.courseStageResources[10][0][0].url, "https://precalculus.flippedmath.com/ap-precalc.html");
   assert.equal(roadmap.courseStageResources[10][0][0].title, "FlippedMath AP Precalculus");
+  assert.equal(roadmap.courseStageResources[10][2][0].url, "https://maa.org/maa-invitational-competitions/");
+  assert.equal(roadmap.courseStageResources[10][2][0].title, "MAA 2027 AIME·USAJMO·USAMO 안내");
+  assert.match(roadmap.courseStageResources[10].stageNotes[2], /해당 연도 MAA 공식 안내/);
 });
 
 test("competition options follow grade and keep advanced AMC paths optional", function () {

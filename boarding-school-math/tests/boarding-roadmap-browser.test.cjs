@@ -699,7 +699,7 @@ test("Grade 7 NS.A roadmap breaks the strand into four observable checks with re
   await page.close();
 });
 
-test("Grade 7 algebra and geometry checkpoints open matching FlippedMath references", async function () {
+test("roadmap checkpoints open their matching course references", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   const cases = [
@@ -710,7 +710,7 @@ test("Grade 7 algebra and geometry checkpoints open matching FlippedMath referen
     await page.getByRole("button", { name: item.name }).click();
     const disclosure = page.locator("#stage-external-resources");
     assert.equal(await disclosure.isVisible(), true);
-    assert.deepEqual(await disclosure.locator("summary").innerText(), "FlippedMath 참고 자료");
+    assert.deepEqual(await disclosure.locator("summary").innerText(), "단계별 참고 자료");
     assert.ok((await disclosure.locator("summary").boundingBox()).height >= 44);
     assert.equal(await disclosure.evaluate(function (node) { return node.open; }), false);
     await disclosure.locator("summary").click();
@@ -732,7 +732,8 @@ test("Grade 7 algebra and geometry checkpoints open matching FlippedMath referen
     { grade: 8, button: /단계 1, 일차식·기하 점검 보기/, title: "FlippedMath Geometry ↗", url: "https://geometry.flippedmath.com/" },
     { grade: 8, button: /단계 3, 준비되면 심화 보기/, title: "FlippedMath Algebra 2 · 새 과정 ↗", url: "https://algebra2.flippedmath.com/" },
     { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "FlippedMath Algebra 2 · 새 과정 ↗", url: "https://algebra2.flippedmath.com/", inferred: true },
-    { grade: 10, button: /단계 1, 개념 설명 보기/, title: "FlippedMath AP Precalculus ↗", url: "https://precalculus.flippedmath.com/ap-precalc.html" }
+    { grade: 10, button: /단계 1, 개념 설명 보기/, title: "FlippedMath AP Precalculus ↗", url: "https://precalculus.flippedmath.com/ap-precalc.html" },
+    { grade: 10, button: /단계 3, 필요한 실전 연습 보기/, title: "MAA 2027 AIME·USAJMO·USAMO 안내 ↗", url: "https://maa.org/maa-invitational-competitions/", note: true }
   ];
   for (const item of upperGradeCases) {
     await page.goto(`${url}?grade=${item.grade}`, { waitUntil: "networkidle" });
@@ -745,6 +746,8 @@ test("Grade 7 algebra and geometry checkpoints open matching FlippedMath referen
     assert.equal(await disclosure.locator("ul a").getAttribute("href"), item.url);
     assert.match(await disclosure.locator("ul a").getAttribute("aria-label"), /새 창에서 열림/);
     if (item.inferred) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /추정 경로.*학교의 실제 과목/);
+    if (item.note) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /해당 연도 MAA 공식 안내/);
+    if (item.grade === 10 && !item.note) assert.equal(await page.locator("#stage-external-resource-note").isVisible(), false);
     assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   }
   await page.close();

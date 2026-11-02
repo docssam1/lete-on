@@ -30,6 +30,7 @@
   const algebra2Reference = Object.freeze({ title: "FlippedMath Algebra 2 · 새 과정", url: "https://algebra2.flippedmath.com/" });
   const geometryReference = Object.freeze({ title: "FlippedMath Geometry", url: "https://geometry.flippedmath.com/" });
   const preCalculusReference = Object.freeze({ title: "FlippedMath AP Precalculus", url: "https://precalculus.flippedmath.com/ap-precalc.html" });
+  const maaInvitationalReference = Object.freeze({ title: "MAA 2027 AIME·USAJMO·USAMO 안내", url: "https://maa.org/maa-invitational-competitions/" });
   const courseStageResources = Object.freeze({
     8: Object.freeze({
       0: Object.freeze([geometryReference]),
@@ -41,7 +42,9 @@
       1: Object.freeze([geometryReference])
     }),
     10: Object.freeze({
-      0: Object.freeze([preCalculusReference])
+      stageNotes: Object.freeze({ 2: "대회 응시 자격과 다음 단계의 선발 규정은 해당 연도 MAA 공식 안내에서 확인하세요." }),
+      0: Object.freeze([preCalculusReference]),
+      2: Object.freeze([maaInvitationalReference])
     })
   });
 

@@ -227,8 +227,9 @@
       : (gradeResources && gradeResources[stage]) || [];
     const externalDisclosure = $("stage-external-resources");
     externalDisclosure.hidden = externalResources.length === 0;
-    if (gradeResources && gradeResources.note) {
-      $("stage-external-resource-note").textContent = gradeResources.note;
+    const resourceNote = gradeResources && ((gradeResources.stageNotes && gradeResources.stageNotes[stage]) || gradeResources.note);
+    if (resourceNote) {
+      $("stage-external-resource-note").textContent = resourceNote;
       $("stage-external-resource-note").hidden = false;
     }
     externalResources.forEach(function (resource) {

@@ -764,3 +764,9 @@ Rechecked the protected Mac folder using file names and modification times only.
 ### 2026-11-02 MAA 2027 Olympiad pathway note
 
 Updated the current-cycle AMC score-history context to reflect MAA's 2027 rule: USAJMO/USAMO selection is based primarily on AIME scores, and AMC scores are no longer a qualification factor. The context retains the distinction between the AMC-to-AIME fixed score target and any later Olympiad selection, and explicitly says the history screen does not determine entry to either competition. The MAA Invitational Competitions page is the linked source. Verification: AMC score-history and competition-review browser/model suites pass 26/26; page/script/test syntax checks and `git diff --check` pass; 390px mobile context visually inspected and showed no clipping or horizontal overflow. Local-only; no private candidate or student data was accessed.
+
+### 2026-11-02 Grade 10 official Olympiad reference
+
+Added the current MAA Invitational Competitions page to Grade 10's optional timed-practice stage, with a stage-specific note to check that year's eligibility and selection rules. This makes the AMC 12/AIME-to-Olympiad transition traceable to its official source without turning the roadmap into an eligibility predictor. Renamed the stage resource disclosure from the FlippedMath-only label to the general “단계별 참고 자료,” since it now contains both course and competition references.
+
+Verification: Grade roadmap model and browser suites pass 40/40, including the Grade 10 stage link, title, note, and resource disclosure label. This is public roadmap behavior only; the private Grade 7 diagnostic remains locked and was not inspected. Local-only; no remote sync or deployment occurred.
