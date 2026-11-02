@@ -761,11 +761,12 @@ test("cross-grade concept flows render as examples on phone, tablet, and desktop
     await page.goto(`${url}?grade=9`, { waitUntil: "networkidle" });
     assert.equal(await page.locator(".concept-flow").count(), 5);
     assert.equal(await page.locator(".concept-flow ol").count(), 5);
-    assert.equal(await page.locator(".concept-flow ol li").count(), 25);
+    assert.equal(await page.locator(".concept-flow ol li").count(), 26);
     const prealgebraFlow = page.locator('.concept-flow:has(h3:text("선택형 · 변수식에서 식 정리로"))');
     assert.equal(await page.locator(".concept-flow").first().getAttribute("aria-labelledby"), "prealgebra-algebra1-heading");
     assert.deepEqual(await page.locator(".concept-flow").nth(1).locator("li").allInnerTexts(), ["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]);
-    assert.deepEqual(await prealgebraFlow.locator("li").allInnerTexts(), ["변수와 식 읽기", "대입·거듭제곱·연산 순서", "연산 성질", "분배법칙", "동류항 정리"]);
+    assert.deepEqual(await prealgebraFlow.locator("li").allInnerTexts(), ["변수와 식 읽기", "말을 식으로 나타내기", "대입·거듭제곱·연산 순서", "연산 성질", "분배법칙", "동류항 정리"]);
+    assert.equal(await prealgebraFlow.locator("ol").evaluate(function (node) { return getComputedStyle(node).gridTemplateColumns.split(" ").length; }), width <= 600 ? 1 : 6);
     const bridgeNote = prealgebraFlow.locator(".concept-flow-note");
     assert.match(await bridgeNote.innerText(), /Pre-Algebra와 Algebra 1.*학년 배치나 진단 결과가 아니에요/);
     assert.equal(await prealgebraFlow.getAttribute("aria-describedby"), await bridgeNote.getAttribute("id"));
