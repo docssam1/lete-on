@@ -738,3 +738,5 @@ Verification: Grade roadmap model and browser tests were updated to assert the c
 The Math Kangaroo roadmap link now opens the selected grade's official paired-band archive directly (for example, Grades 7–8 or 9–10), instead of requiring another grade-band selection on the archive index. The label follows the selected band. The official 7–8 and 9–10 pages were opened to confirm their current destinations. No exam content was copied.
 
 Verification: the roadmap browser flow checks both Grade 7 → Grades 7–8 and Grade 9 → Grades 9–10 destinations. The roadmap model/browser suites pass 39/39, with syntax and whitespace checks passing. Local-only; no exam content was copied.
+
+Expanded the Math Kangaroo browser check across every grade the boarding roadmap offers (Grades 3–12). All ten grades selected the correct paired official-paper archive; the focused browser test passes. The combined public roadmap/contest/comparison suites had passed 98/98 immediately before this added test, and this additional grade-band case passes 1/1.

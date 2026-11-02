@@ -168,6 +168,20 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.close();
 });
 
+test("Math Kangaroo archive link follows the official paired paper band in roadmap Grades 3–12", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  for (let grade = 3; grade <= 12; grade += 1) {
+    await page.goto(`${url}?grade=${grade}`, { waitUntil: "networkidle" });
+    await page.locator("#competition-select").selectOption("kangaroo");
+    const bandStart = Math.floor((grade - 1) / 2) * 2 + 1;
+    const bandEnd = bandStart + 1;
+    const link = page.locator("#competition-paper-source-link");
+    assert.equal(await link.getAttribute("href"), `https://mathkangaroo.org/mks/practice/grades-${bandStart}-${bandEnd}/`);
+    assert.equal(await link.innerText(), `${bandStart}–${bandEnd}학년 기출 시험지 PDF ↗`);
+  }
+  await page.close();
+});
+
 test("Grade 11–12 roadmap identifies inferred plans and only offers the eligible AMC 12 track", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
