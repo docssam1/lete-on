@@ -178,8 +178,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 41,
-    "reviewLockedCount": 9,
+    "publicCandidateCount": 45,
+    "reviewLockedCount": 5,
     "uniqueAnswerPassCount": 47,
     "uniqueAnswerReviewNeededCount": 3
   },
@@ -1556,13 +1556,15 @@
       "singleAnswer": true,
       "singleAnswerCheck": "조건을 만족하는 자연수 3950~3999를 전수 검사해 50개를 확인했습니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e4-mission-2-original",
       "sourceIndependentAudit": "source-5-2-u1-e4-missions2-4-audit.py",
       "sourcePublisherKeyVerified": false,
       "practiceRuntimeId": "5-2-u1-e4-mission-2-rounded-floor-range",
       "practiceRelation": "원문 수치를 변경한 별도 연습",
-      "lockReason": "출판사 답안 미대조입니다. 기존 창작 유사문항은 별도 운영 상태를 따릅니다."
+      "lockReason": "",
+      "releaseEvidence": "Original conditions and endpoints independently checked; publisher answer unverified."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-3-notebook-range",
@@ -1587,13 +1589,15 @@
       "singleAnswer": true,
       "singleAnswerCheck": "학생 수의 가능한 열 개 값을 전부 넣어 남은 수의 양끝을 확인합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e4-mission-3-original",
       "sourceIndependentAudit": "source-5-2-u1-e4-missions2-4-audit.py",
       "sourcePublisherKeyVerified": false,
       "practiceRuntimeId": "5-2-u1-e4-mission-3-notebook-range",
       "practiceRelation": "원문 수치를 변경한 별도 연습",
-      "lockReason": "출판사 답안 미대조입니다. 기존 창작 유사문항은 별도 운영 상태를 따릅니다."
+      "lockReason": "",
+      "releaseEvidence": "Original conditions and endpoints independently checked; publisher answer unverified."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-4-rounded-seven-million-range",
@@ -1618,13 +1622,15 @@
       "singleAnswer": true,
       "singleAnswerCheck": "정확히 7900000일 때 올림 결과가 달라지는지 확인하여 왼쪽 끝을 제외합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e4-mission-4-original",
       "sourceIndependentAudit": "source-5-2-u1-e4-missions2-4-audit.py",
       "sourcePublisherKeyVerified": false,
       "practiceRuntimeId": "5-2-u1-e4-mission-4-rounded-seven-million-range",
       "practiceRelation": "원문 수치를 변경한 별도 연습",
-      "lockReason": "출판사 답안 미대조입니다. 기존 창작 유사문항은 별도 운영 상태를 따릅니다."
+      "lockReason": "",
+      "releaseEvidence": "Original conditions and endpoints independently checked; publisher answer unverified."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-5-quotient-range-sum",
@@ -1648,13 +1654,15 @@
       "singleAnswer": true,
       "singleAnswerCheck": "두 몫 조건을 전수 대입한 범위와 등차수열 합이 일치합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e4-mission-5-original",
       "sourceIndependentAudit": "source-5-2-u1-e4-graph-missions5-6-audit.py",
       "sourcePublisherKeyVerified": false,
       "practiceRuntimeId": "5-2-u1-e4-mission-5-quotient-range-sum",
       "practiceRelation": "원문 수치를 변경한 별도 연습",
-      "lockReason": "끝점과 합을 독립 검사했습니다. 출판사 답안은 미대조이며 기존 창작 유사문항은 별도 운영 상태를 따릅니다."
+      "lockReason": "",
+      "releaseEvidence": "Original conditions and endpoints independently checked; publisher answer unverified."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-6-rounding-place-count",
@@ -1693,8 +1701,8 @@
     "sourceProblemCount": 44,
     "typeCount": 50,
     "directlyReviewedCount": 50,
-    "publicCandidateCount": 41,
-    "lockedCount": 9,
+    "publicCandidateCount": 45,
+    "lockedCount": 5,
     "visualItemCount": 43,
     "uniqueAnswerPassCount": 47,
     "uniqueAnswerReviewNeededCount": 3,
@@ -1705,6 +1713,7 @@
       "5-2-u1-e1-mission-5-bus-range"
     ],
     "notes": [
+      "2026-11-02 후속: 인쇄 11쪽 Mission 2~5 원문을 독립 검산해 연결했습니다. 50개 검수 기록 중 공개 45개·잠금 5개이며 공식 답안은 미확인입니다.",
       "2026-11-02 후속: 8쪽 개념탐구와 예제 3-1·3-2, 9쪽 Mission 1 원문을 검산해 연결했습니다. 50개 검수 기록 중 공개 41개·잠금 9개이며 공식 답안은 미확인입니다.",
       "2026-11-02 후속: 4쪽 개념탐구 1, 5쪽 Mission 6, 7쪽 Mission 5~6 원문을 독립 검산해 연결했습니다. 50개 검수 기록 중 공개 35개·잠금 15개이며 공식 답안은 미확인입니다.",
       "2026-11-02 후속: 인쇄 7쪽 Mission 1~4 원문을 독립 검산해 연결했습니다. 전체 50개 검수 기록 중 공개 30개·잠금 20개이며 공식 답안은 미확인입니다.",

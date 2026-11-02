@@ -2214,6 +2214,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,
       automaticGrading,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
   }
+  const source52RoundedGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s4");
+  if (source52RoundedGroup) for (const [n,name] of [[2,"반올림과 버림 조건을 만족하는 자연수의 개수 · 원문"],[3,"올림한 학생 수로 남은 공책 범위 찾기 · 원문"],[4,"세 어림 조건을 만족하는 수의 범위 · 원문"],[5,"나눈 몫의 어림 조건을 만족하는 자연수의 합 · 원문"]]) {
+    const id=`5-2-u1-e4-mission-${n}-original`;
+    if (source52RoundedGroup.types.some(type => type.id === id)) continue;
+    const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52RoundedGroup.types.push({id,number:source52RoundedGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,
+      sourceItemId:id,sourceParentItemId:`5-2-u1-e4-mission-${n}`,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:9,sourcePrintedPage:11,
+      sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52RoundedPage11OriginalMission${n}`,
+      generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,
+      automaticGrading:n===2||n===5,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 범위의 끝점을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
 
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
