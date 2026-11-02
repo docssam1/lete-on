@@ -308,10 +308,10 @@
       "items": [
         {"number": 41, "classification": "반대 방향 이동 거리", "candidate": "29와 1/3km", "reviewNote": "(16/3+32/5)×5/2=88/3. 원문 손글씨의 17과 3/5km와 다르며 출판사 공식 정답 미확인", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-41-original", "publisherAnswerVerified": false},
         {"number": 42, "classification": "마주 보고 출발해 만나는 거리", "candidate": "11과 11/16km", "reviewNote": "(23/8+7/2)×11/6=187/16", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-42-original", "publisherAnswerVerified": false},
-        {"number": 43, "classification": "분속과 초 단위 이동 시간", "candidate": "44와 1/3km", "reviewNote": "(8/3+21/4)×28/5=133/3", "status": "source-reviewed-answer-key-pending"},
-        {"number": 44, "classification": "열차가 터널을 완전히 통과할 때의 속력", "candidate": "2295m", "reviewNote": "기차 머리의 통과 거리는 1000+80m, 120초 동안 1080m이므로 255초 동안 2295m", "status": "source-reviewed-answer-key-pending"},
-        {"number": 45, "classification": "전체에 대한 두 집단의 비와 인원 차", "candidate": "121명", "reviewNote": "남녀 차 2/24가 22명이므로 전체 264명, 여학생 11/24는 121명", "status": "source-reviewed-answer-key-pending"},
-        {"number": 46, "classification": "잘못 계산한 결과에서 올바른 결과 구하기", "candidate": "10과 1/16", "reviewNote": "3/8을 뺀 중간값은 135/16−7=23/16, 올바른 결과는 23/16×7=161/16", "status": "source-reviewed-answer-key-pending"},
+        {"number": 43, "classification": "분속과 초 단위 이동 시간", "candidate": "44와 1/3km", "reviewNote": "(8/3+21/4)×28/5=133/3", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-43-original", "publisherAnswerVerified": false},
+        {"number": 44, "classification": "열차가 터널을 완전히 통과할 때의 속력", "candidate": "2295m", "reviewNote": "기차 머리의 통과 거리는 1000+80m, 120초 동안 1080m이므로 255초 동안 2295m", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-44-original", "publisherAnswerVerified": false},
+        {"number": 45, "classification": "전체에 대한 두 집단의 비와 인원 차", "candidate": "121명", "reviewNote": "남녀 차 2/24가 22명이므로 전체 264명, 여학생 11/24는 121명", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-45-original", "publisherAnswerVerified": false},
+        {"number": 46, "classification": "잘못 계산한 결과에서 올바른 결과 구하기", "candidate": "10과 1/16", "reviewNote": "3/8을 뺀 중간값은 135/16−7=23/16, 올바른 결과는 23/16×7=161/16", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u2-practice-46-original", "publisherAnswerVerified": false},
         {"number": 47, "classification": "두 수의 합과 차로 곱 구하기", "candidate": "240", "reviewNote": "두 수는 5/12와 1/4, 곱은 5/48이므로 분자와 분모의 곱은 240", "status": "source-reviewed-answer-key-pending"},
         {"number": 48, "classification": "가로와 세로의 증감에 따른 넓이 비", "candidate": "8/9배", "reviewNote": "가로는 4/3배, 세로는 2/3배이므로 넓이는 8/9배", "status": "source-reviewed-answer-key-pending"}
       ]
