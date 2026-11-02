@@ -733,7 +733,7 @@ test("roadmap checkpoints open their matching course references", async function
     { grade: 8, button: /단계 3, 준비되면 심화 보기/, title: "FlippedMath Algebra 2 · 새 과정 ↗", url: "https://algebra2.flippedmath.com/" },
     { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "FlippedMath Algebra 2 · 새 과정 ↗", url: "https://algebra2.flippedmath.com/", inferred: true },
     { grade: 10, button: /단계 1, 개념 설명 보기/, title: "FlippedMath AP Precalculus ↗", url: "https://precalculus.flippedmath.com/ap-precalc.html" },
-    { grade: 10, button: /단계 3, 필요한 실전 연습 보기/, title: "MAA 2027 AIME·USAJMO·USAMO 안내 ↗", url: "https://maa.org/maa-invitational-competitions/", note: true }
+    { grade: 10, button: /단계 3, 필요한 실전 연습 보기/, titles: ["MAA 2027 AIME 응시 기준 ↗", "MAA AIME·USAJMO·USAMO 안내 ↗"], urls: ["https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://maa.org/maa-invitational-competitions/"], note: true }
   ];
   for (const item of upperGradeCases) {
     await page.goto(`${url}?grade=${item.grade}`, { waitUntil: "networkidle" });
@@ -742,11 +742,11 @@ test("roadmap checkpoints open their matching course references", async function
     const disclosure = page.locator("#stage-external-resources");
     assert.equal(await disclosure.isVisible(), true, `Grade ${item.grade} stage reference is visible`);
     await disclosure.locator("summary").click();
-    assert.deepEqual(await disclosure.locator("ul a").allInnerTexts(), [item.title]);
-    assert.equal(await disclosure.locator("ul a").getAttribute("href"), item.url);
-    assert.match(await disclosure.locator("ul a").getAttribute("aria-label"), /새 창에서 열림/);
+    assert.deepEqual(await disclosure.locator("ul a").allInnerTexts(), item.titles || [item.title]);
+    assert.deepEqual(await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("href"); }); }), item.urls || [item.url]);
+    assert.ok(await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.every(function (node) { return /새 창에서 열림/.test(node.getAttribute("aria-label")); }); }));
     if (item.inferred) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /추정 경로.*학교의 실제 과목/);
-    if (item.note) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /해당 연도 MAA 공식 안내/);
+    if (item.note) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /미국·캐나다 AIME 기준.*다른 지역 규정/);
     if (item.grade === 10 && !item.note) assert.equal(await page.locator("#stage-external-resource-note").isVisible(), false);
     assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   }
