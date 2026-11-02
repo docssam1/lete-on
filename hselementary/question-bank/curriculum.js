@@ -2487,6 +2487,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CuboidNets = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s2");
+  if (source52CuboidNets) for (const [n,name] of [[17,"정육면체 전개도의 여섯째 면 고르기 · 확인학습 원문"],[18,"직육면체 전개도에서 지정된 면의 둘레 · 확인학습 원문"],[19,"종이를 잘라 만든 직육면체의 모서리 길이 합 · 확인학습 원문"],[20,"네 귀퉁이를 잘라 만든 상자의 크기 · 확인학습 원문"]]) {
+    const id=`5-2-u5-practice-${n}-original`;
+    if (source52CuboidNets.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52CuboidNets.types.push({id,number:source52CuboidNets.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:104,alternateSourcePdfPage:105,sourcePrintedPage:110,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U5Page108Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n!==17&&n!==20,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문과 전개도를 대조하고 접힌 면과 길이를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
   if (source52CuboidNets) {
     for (const [ordinal, name, generatorKey] of [
       [1, "전개도 색칠 면에서 선분 길이 구하기", "source52CuboidNetSegmentLengthPage50Example21"],
