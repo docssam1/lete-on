@@ -102,6 +102,12 @@ test("upper-grade course references are limited to named courses and keep Grade 
 
 test("competition options follow grade and keep advanced AMC paths optional", function () {
   assert.deepEqual(roadmap.competitionOptions(3).map(function (entry) { return entry.id; }), ["sasmo", "kangaroo"]);
+  [
+    [5, "grades-5-6"], [6, "grades-5-6"], [7, "grades-7-8"], [8, "grades-7-8"],
+    [9, "grades-9-10"], [10, "grades-9-10"], [11, "grades-11-12"], [12, "grades-11-12"]
+  ].forEach(function ([grade, bandId]) {
+    assert.equal(roadmap.competitionOptions(grade).find(function (entry) { return entry.id === "kangaroo"; }).paperBandId, bandId);
+  });
   assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc8"; }));
   assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc10" && entry.optional === true; }));
   assert.ok(!roadmap.competitionOptions(10).some(function (entry) { return entry.id === "amc8"; }));

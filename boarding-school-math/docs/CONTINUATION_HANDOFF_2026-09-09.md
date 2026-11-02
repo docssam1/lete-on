@@ -655,3 +655,9 @@ Added the official prior-year PDF exams archive to both the shared program catal
 Connected Math Kangaroo manual review summaries to the answer-safe local diagnostic store, which previously accepted AMC/SASMO IDs but rejected `kangaroo`. The roadmap comparison now names the official grade-specific ranking boundary while comparing only same-date, same-paper-memo raw review summaries. It does not calculate grade equivalence or growth. A browser scenario saves the same 30-question Grades 7–8 paper for both grades and verifies paired cards, denominators, the grade-specific rank note, and no mobile overflow. Official basis: https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/ .
 
 Verification: roadmap browser, local-record, competition-profile, and question-bank suites pass 60/60. All work remains local; no original contest questions or student data were added. Private R6 visual and human-review gates remain open as documented above.
+
+### 2026-11-02 Math Kangaroo official paper-band guard
+
+The official archive groups prior student papers into paired grade bands (including Grades 7–8, 9–10, and 11–12). Math Kangaroo cross-grade review now requires the selected grades to belong to the same official paper band as well as matching date and paper memo. A 7-vs-9 test with identical date and memo is rejected with an explanation; 7-vs-8 remains comparable. Official sources: https://mathkangaroo.org/mks/practice/pdf-exams/ and https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/ .
+
+Verification: Grade 3–12 roadmap model, roadmap browser, and answer-safe local-record suites pass 56/56. Mobile and desktop comparison views were visually inspected with sample records. Claude Max CLI review could not run because the local CLI session is not logged in; no Claude review is claimed. Local-only; private R6 and human-review gates remain open.

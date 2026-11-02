@@ -619,6 +619,11 @@
       copy.textContent = `${current.grade}학년과 ${target.grade}학년에서 같은 대회·문항 수의 복습 기록이 있을 때 비교할 수 있어요.`;
       return;
     }
+    if (competition === "kangaroo" && currentOption.paperBandId !== targetOption.paperBandId) {
+      section.dataset.state = "needs-matching-program-records";
+      copy.textContent = `Math Kangaroo ${current.grade}학년과 ${target.grade}학년은 공식 시험지 학년 묶음이 달라 같은 날짜·메모라도 같은 시험지 비교로 보지 않아요. 공식 순위와 백분위도 학년별로 산정돼요.`;
+      return;
+    }
     function recordsForGrade(grade, itemCount) {
       return (localRecords ? localRecords.storage.loadCompetitionDiagnosticHistory(grade, competition) : [])
         .filter(function (record) {

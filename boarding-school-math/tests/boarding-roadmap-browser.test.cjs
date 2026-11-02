@@ -532,6 +532,11 @@ test("Math Kangaroo Grade 7 and 8 diagnostics compare the same 30-question paper
   assert.match(text, /공식 순위와 백분위는 학년별로 산정/);
   assert.match(text, /난도를 보정한 등급이나 성장 판정은 아니에요/);
   assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
+  await saveKangarooReview(9, "correct");
+  await page.goto(`${url}?grade=7&program=kangaroo`, { waitUntil: "networkidle" });
+  await page.locator("#comparison-grade").selectOption("9");
+  assert.equal(await page.locator("#competition-grade-comparison").getAttribute("data-state"), "needs-matching-program-records");
+  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /공식 시험지 학년 묶음이 달라/);
   await page.close();
 });
 
