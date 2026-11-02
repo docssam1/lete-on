@@ -69,7 +69,7 @@
 
   const annualPlans = Object.freeze({
     6: Object.freeze({ source: "provided", title: "선택 심화 · Pre-Algebra에서 SAT 기초까지", note: "학교 수학에서 이미 배운 단원을 깊게 익히는 경로와 별도의 선택 심화 예시예요. 새 주제는 이전 개념을 설명할 수 있고 가족·교사와 계획했을 때만 이어가요.", periods: Object.freeze([
-      ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율·식·기하·자료를 이해하고, 풀이 이유를 말해요.", "AoPS Pre-Algebra · Khan Academy · Singapore Math Challenging Word Problems 6"],
+      ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율과 변수식, 거듭제곱·연산 순서를 익히고 기하·자료 문제의 풀이 이유를 말해요.", "AoPS Pre-Algebra · Khan Academy · Singapore Math Challenging Word Problems 6"],
       ["4–6개월", "AMC 8 유형과 논리", "단원별 문제를 풀고, 한 문제를 여러 방법으로 설명해요.", "AoPS Challenge Problems · AMC 8 기출 · Beast Academy 5D"],
       ["7–9개월", "SAT 기초 유형 맛보기", "문장제와 자료 해석을 배운 개념에 연결해요.", "Khan Academy SAT Math · College Board 공식 자료 · PWN the SAT Math Guide"],
       ["10–12개월", "복습과 실전 연습", "오답 이유를 나누어 보고, 준비된 범위에서 시간 연습을 해요.", "AoPS 복습 · AMC 8 기출 · SAT 기초 문제"]
@@ -113,7 +113,7 @@
   });
 
   const conceptFlows = Object.freeze([
-    Object.freeze({ id: "prealgebra-algebra1", title: "선택형 · 변수식에서 식 정리로", optional: true, note: "Pre-Algebra와 Algebra 1을 잇는 개념 예시예요. 학년 배치나 진단 결과가 아니에요.", steps: Object.freeze(["변수와 식 읽기", "대입·연산 순서", "연산 성질", "분배법칙", "동류항 정리"]) }),
+    Object.freeze({ id: "prealgebra-algebra1", title: "선택형 · 변수식에서 식 정리로", optional: true, note: "Pre-Algebra와 Algebra 1을 잇는 개념 예시예요. 학년 배치나 진단 결과가 아니에요.", steps: Object.freeze(["변수와 식 읽기", "대입·거듭제곱·연산 순서", "연산 성질", "분배법칙", "동류항 정리"]) }),
     Object.freeze({ id: "arithmetic-algebra", title: "연산에서 대수식으로", steps: Object.freeze(["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]) }),
     Object.freeze({ id: "ratio-coordinate", title: "비와 비율에서 좌표기하로", steps: Object.freeze(["비·비율·속력", "단위 변환", "비례식", "일차 함수", "좌표기하"]) }),
     Object.freeze({ id: "parity-counting", title: "짝·홀수에서 경우의 수로", steps: Object.freeze(["짝·홀수·배수", "조건별 추론", "경우의 수", "조합", "AMC/AIME 논리 문제"]) }),

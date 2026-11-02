@@ -46,6 +46,7 @@ test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge
   assert.equal(roadmap.getAnnualPlan(9).source, "inferred");
   assert.match(roadmap.getAnnualPlan(6).title, /^선택 심화/);
   assert.match(roadmap.getAnnualPlan(6).note, /학교 수학에서 이미 배운 단원.*별도의 선택 심화/);
+  assert.match(roadmap.getAnnualPlan(6).periods[0][2], /변수식, 거듭제곱·연산 순서/);
   assert.equal(roadmap.getAnnualPlan(9).periods.length, 4);
   assert.deepEqual(roadmap.getAnnualPlan(9).periods.map(function (period) { return period[0].replace(" · 추정", ""); }), ["1–3개월", "4–6개월", "7–9개월", "10–12개월"]);
   assert.ok(roadmap.getAnnualPlan(9).periods.every(function (period) { return period[0].includes("추정"); }));
@@ -71,7 +72,7 @@ test("concept-flow examples connect supplied routes without learner placement", 
   assert.match(flows["sequence-number-theory"].steps.join(" → "), /수열.*닫힌식.*나머지.*합동식.*AIME/);
   assert.equal(flows["prealgebra-algebra1"].optional, true);
   assert.match(flows["prealgebra-algebra1"].title, /선택형/);
-  assert.match(flows["prealgebra-algebra1"].steps.join(" → "), /변수와 식.*대입·연산 순서.*연산 성질.*분배법칙.*동류항 정리/);
+  assert.match(flows["prealgebra-algebra1"].steps.join(" → "), /변수와 식.*대입·거듭제곱·연산 순서.*연산 성질.*분배법칙.*동류항 정리/);
   assert.match(flows["prealgebra-algebra1"].note, /Pre-Algebra와 Algebra 1.*진단 결과가 아니에요/);
   assert.equal(Object.isFrozen(roadmap.conceptFlows), true);
   assert.equal(Object.isFrozen(roadmap.conceptFlows[0].steps), true);

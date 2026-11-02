@@ -204,3 +204,9 @@ Cache-busting versions were also bumped on every HTML page that loads the update
 ## 2026-11-02 user-provided Prealgebra reference check
 
 Reviewed the user's private Prealgebra concept-companion PDF through Drive. Its PDF text layer is readable and its Unit 1 concept sequence corroborates the existing optional Prealgebra-to-Algebra 1 flow. No OCR was needed; no original lesson text, exercises, answers, or Drive link were copied into the public repository. No roadmap edit was needed from this source check.
+
+### 2026-11-02 Grade 6 Prealgebra concept bridge follow-up
+
+Made the supplied Grade 6 roadmap connection more explicit: the optional Prealgebra-to-Algebra 1 bridge now names substitution, exponents, and order of operations before operation properties, distribution, and combining like terms. The Grade 6 first-quarter example also names variable expressions and powers alongside its existing number, geometry, and data foundations. This remains an illustrative concept path, not a placement result or fixed pace.
+
+Verification: Grade 3–12 roadmap model/browser tests pass 38/38. The flow was visually inspected at 390px and 1280px; all five stages remain readable without clipping. Changed JS passes `node --check`; CRLF-aware `git diff --check` passes. Local-only; no push or deployment. Current private R6 visual review, independent human math/language and rights review, pilot, reporting validation, and student-use approval remain open.
