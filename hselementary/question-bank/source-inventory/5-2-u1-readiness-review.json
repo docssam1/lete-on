@@ -413,32 +413,40 @@
       "sourcePrintedPage": 73,
       "scope": "문항 41~48은 기존 개념탐구·예제·Mission 목록과 별도이며 원문과 필기 없는 사본을 대조해 유형과 독립 계산 후보를 기록한다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partial-verified-local",
       "items": [
         {
           "number": 41,
           "classification": "버림한 인구수의 자연수 범위",
           "candidate": "10289999명 초과 10300000명 미만",
           "reviewNote": "인구수는 정수이므로 10290000명 이상 10299999명 이하와 같다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-41-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 42,
           "classification": "반올림한 두 수의 합의 범위",
           "candidate": "140개 이상 158개 이하",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-42-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 43,
           "classification": "반올림과 버림 조건의 자연수 개수 합",
           "candidate": "200",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-43-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 44,
           "classification": "버림과 반올림 범위의 교집합",
           "candidate": "55개 이상 59개 이하",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-44-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 45,
