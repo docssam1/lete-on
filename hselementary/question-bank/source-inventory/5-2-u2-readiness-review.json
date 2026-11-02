@@ -85,28 +85,36 @@
           "classification": "남은 물의 분수",
           "candidate": "40L",
           "reviewNote": "480×(1−2/3)×1/4=40",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-13-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 14,
           "classification": "두 차례 독서 후 남은 쪽수",
           "candidate": "152쪽",
           "reviewNote": "380×(1−2/5)×(1−1/3)=152",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-14-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 15,
           "classification": "시간당 빠르게 가는 시계의 일주일 누적 오차",
           "candidate": "12시 4분 12초",
           "reviewNote": "168시간×1.5초=252초=4분 12초 빠름",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-15-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 16,
           "classification": "하루당 늦게 가는 시계의 2주 누적 오차",
           "candidate": "11시 35분 44초",
-          "reviewNote": "14일×1과 11/15분=24분 16초 늦음",
-          "status": "source-reviewed-answer-key-pending"
+          "reviewNote": "14일×1과 11/15분=24분 16초 늦음. 손글씨 답과 달라 직접 계산했고 공식 답안은 미확인이다.",
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-16-original",
+          "publisherAnswerVerified": false
         }
       ]
     },
