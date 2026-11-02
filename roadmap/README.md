@@ -287,3 +287,10 @@ GitHub connector로 `docssam1/lete-on/number_magic/assets/gfield-logo.svg` 현�
 ### 디자인·문구 수정본 배포 승인 — 2026-11-02
 
 사용자가 ‘배포’로 현재 검수본의 공개 반영을 승인했다. 원격 main을 다시 읽어 기준 66c188f3 이후 추가된 변경에서 roadmap 파일 충돌이 없음을 확인했다. 이번 배포는 네이비 공통 디자인·로고·반응형 계정 메뉴와 전반 문체 수정 및 해당 회귀 테스트/캐시 연결만 포함한다. output의 합성 데이터·미리보기·잘못 만든 personality 시안은 커밋하지 않는다. 최신 main에 재배치한 뒤 기본 검사를 확인하고 기존 GitHub Pages workflow로 배포하며, 성공/공개 파일 대조 결과는 후속 기록으로 남긴다.
+
+
+### 공개 배포 확인 — 2026-11-02
+
+수정본 커밋 `2e05e1c11988505218453f939ee3015be822bf6b`를 최신 main에 충돌 없이 재배치해 반영했다. 첫 push 사이에 도착한 원격 변경도 먼저 합쳤으며 force push는 하지 않았다. GitHub Pages 실행 `41398278070`의 deploy job이 success로 완료됐다: https://github.com/docssam1/lete-on/actions/runs/41398278070 . 재배치 후 기존 테스트 62/62, 수정 JS 구문·로컬 자산 참조·공백 검사가 통과했다.
+
+공개 `https://lete-on.gfieldacademy.net/`에서 수정 runtime 31개 파일과 기존 원본 로고, 총 32개 응답의 HTTP 200·본문 바이트가 로컬 승인본과 정확히 같음을 확인했다. 결과와 SHA-256은 로컬 `output/roadmap-premium-20261102/public-deployment-check.json`에 있다. 기능 주소는 `https://lete-on.gfieldacademy.net/roadmap/demo2/planner.html?v=20261102-copy2`이며 회원 인증 체계는 기존 그대로다. 실제 회원 로그인이나 모든 폰 실기 검수를 새로 수행한 것은 아니다. 잘못 만든 personality 시안·합성 검수 데이터·output 산출물은 배포 커밋에서 제외했다. 이 완료 기록만 후속 문서 커밋으로 남기며 runtime은 변경하지 않는다.
