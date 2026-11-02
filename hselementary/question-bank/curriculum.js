@@ -2721,11 +2721,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52AverageApplication = source52Average?.subunits.find(subunit => subunit.name === "평균의 활용");
-  if (source52AverageApplication) for (const [n,name] of [[17,"걸은 거리당 평균 시간 · 확인학습 원문"],[18,"시간당 평균 생산량과 한 달 판매액 · 확인학습 원문"],[19,"두 집단의 평균으로 인원 비 구하기 · 확인학습 원문"],[20,"총점별 인원과 문항별 정답 인원 · 확인학습 원문"]]) {
+  if (source52AverageApplication) for (const [n,name] of [[21,"두 집단의 가중평균 · 확인학습 원문"],[22,"두 집단의 가중평균과 반올림 · 확인학습 원문"],[23,"두 평균과 차를 이용한 일별 쪽수 · 확인학습 원문"],[17,"걸은 거리당 평균 시간 · 확인학습 원문"],[18,"시간당 평균 생산량과 한 달 판매액 · 확인학습 원문"],[19,"두 집단의 평균으로 인원 비 구하기 · 확인학습 원문"],[20,"총점별 인원과 문항별 정답 인원 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52AverageApplication.types.some(type=>type.id===id)) continue;
     const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
-    source52AverageApplication.types.push({id,number:source52AverageApplication.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:112,alternateSourcePdfPage:113,sourcePrintedPage:118,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U6Page116Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 표를 대조하고 평균과 합을 독립 계산했습니다. 출판사 공식 답안은 미확인입니다."});
+    source52AverageApplication.types.push({id,number:source52AverageApplication.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:112,alternateSourcePdfPage:113,sourcePrintedPage:118,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U6Page116Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n!==23,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 표를 대조하고 평균과 합을 독립 계산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
 
   if (source52AverageApplication) {

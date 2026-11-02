@@ -59,15 +59,15 @@
       "sourcePrintedPage": 118,
       "scope": "118쪽 17~24번의 원문과 필기 없는 사본을 대조했다. 20번은 같은 점수를 만드는 서로 다른 정답 조합을 구분했고 24번은 구간 요금의 합산 해석을 명시했다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "partially-connected-17-20",
+      "runtimeConnection": "partially-connected-17-23",
       "items": [
         {"number": 17, "classification": "걸은 거리당 평균 시간", "candidate": "20분", "reviewNote": "총 15km를 5시간, 즉 300분 동안 걸었으므로 1km당 평균은 300÷15=20분이다.", "runtimeTypeId": "5-2-u6-practice-17-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 18, "classification": "시간당 평균 생산량과 한 달 판매액", "candidate": "64,800,000원", "reviewNote": "4월은 30일이므로 생산량은 90×8×30=21600개다. 이를 한 개에 3000원씩 모두 팔면 21600×3000=64800000원이다.", "runtimeTypeId": "5-2-u6-practice-18-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 19, "classification": "두 집단의 평균으로 인원 비 구하기", "candidate": "2배", "reviewNote": "남학생 수를 b, 여학생 수를 g라 하면 75b+72g=73(b+g)다. 따라서 2b=g이므로 여학생은 남학생의 2배다.", "runtimeTypeId": "5-2-u6-practice-19-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 20, "classification": "총점별 인원과 문항별 정답 인원", "candidate": "22명", "reviewNote": "40점과 80점 인원을 각각 x, y라 하면 x+y=9, 40x+80y=560이므로 x=4, y=5다. 40점은 1·2번을 맞힌 경우와 3번만 맞힌 경우가 있다. 2번을 맞힌 18명 중 30점 3명, 70점 8명, 80점 5명을 빼면 40점 중 1·2번을 맞힌 학생이 2명이다. 따라서 3번 정답자는 나머지 40점 2명과 50점 7명, 70점 8명, 80점 5명을 더해 22명이다.", "runtimeTypeId": "5-2-u6-practice-20-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
-        {"number": 21, "classification": "두 집단의 가중평균", "candidate": "3kg", "reviewNote": "강아지 다섯 마리가 먹는 총량은 3.3×2+2.8×3=15kg이다. 한 마리당 평균은 15÷5=3kg이다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 22, "classification": "두 집단의 가중평균과 반올림", "candidate": "37.22kg", "reviewNote": "총 몸무게는 35.4×5+39.5×4=335kg이다. 335÷9=37.222…이므로 소수 둘째 자리까지 반올림하면 37.22kg이다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 23, "classification": "두 평균과 차를 이용한 일별 쪽수", "candidate": "금요일 73쪽, 토요일 89쪽, 일요일 96쪽", "reviewNote": "금·토 합은 81×2=162쪽, 3일 합은 86×3=258쪽이다. 일요일은 96쪽, 금요일은 96−23=73쪽, 토요일은 162−73=89쪽이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 21, "classification": "두 집단의 가중평균", "candidate": "3kg", "reviewNote": "강아지 다섯 마리가 먹는 총량은 3.3×2+2.8×3=15kg이다. 한 마리당 평균은 15÷5=3kg이다.", "runtimeTypeId": "5-2-u6-practice-21-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 22, "classification": "두 집단의 가중평균과 반올림", "candidate": "37.22kg", "reviewNote": "총 몸무게는 35.4×5+39.5×4=335kg이다. 335÷9=37.222…이므로 소수 둘째 자리까지 반올림하면 37.22kg이다.", "runtimeTypeId": "5-2-u6-practice-22-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 23, "classification": "두 평균과 차를 이용한 일별 쪽수", "candidate": "금요일 73쪽, 토요일 89쪽, 일요일 96쪽", "reviewNote": "금·토 합은 81×2=162쪽, 3일 합은 86×3=258쪽이다. 일요일은 96쪽, 금요일은 96−23=73쪽, 토요일은 162−73=89쪽이다.", "runtimeTypeId": "5-2-u6-practice-23-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 24, "classification": "역 사이 요금표와 인접 구간 평균", "candidate": "인접 구간 요금이 합산된다고 보면 ㄱ 2000원, ㄴ 2000원, ㄷ 3500원, 평균 2300원", "reviewNote": "요금이 구간별로 합산된다고 가정하면 가−나=3500−1500=2000원, 다−라=6000−1500−2500=2000원, 마−바=6000−2500=3500원이다. 다섯 인접 구간의 평균은 (2000+1500+2000+2500+3500)÷5=2300원이다. 원문은 각 구간 요금이 합산된다는 규칙을 명시하지 않으므로 실제 요금표처럼 비합산 요금을 허용하는 해석에서는 이 값들이 유일하게 정해지지 않는다. 조건 및 공식 답안을 확인하기 전 확정하지 않는다.", "status": "source-ambiguity-answer-key-pending"}
       ]
     },
