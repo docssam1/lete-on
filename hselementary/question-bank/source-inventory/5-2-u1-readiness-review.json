@@ -125,7 +125,9 @@
           "number": 10,
           "classification": "양수 곱과 나눗셈이 포함된 범위 역산",
           "candidate": "10 이상 24 미만",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-10-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 11,
@@ -152,19 +154,25 @@
           "number": 14,
           "classification": "4의 배수 개수로 자연수 상한 범위 구하기",
           "candidate": "168 이상 172 미만",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-14-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 15,
           "classification": "범위와 자릿수 합으로 수 정하기",
           "candidate": "40909",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-15-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 16,
           "classification": "두 좌석 수 조건의 인원 교집합",
           "candidate": "241, 242, 243, 244명",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-16-original",
+          "publisherAnswerVerified": false
         }
       ]
     },
