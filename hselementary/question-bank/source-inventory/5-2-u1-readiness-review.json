@@ -491,33 +491,41 @@
       "sourcePrintedPage": 74,
       "scope": "문항 49~56은 기존 개념탐구·예제·Mission 목록과 별도이며 원문과 필기 없는 사본을 대조해 유형과 독립 계산 후보를 기록한다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partial-verified-local",
       "items": [
         {
           "number": 49,
           "classification": "반올림한 인원과 물품 최대 부족량",
           "candidate": "98개",
           "reviewNote": "인원이 최대 649명일 때 1298개가 필요하다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-49-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 50,
           "classification": "어림 범위 교집합과 자릿수 관계",
           "candidate": "1376",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-50-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 51,
           "classification": "원래 범위와 각각 올림한 합의 교집합",
           "candidate": "26 초과 30 이하",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-51-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 52,
           "classification": "나눗셈과 버림 조건에서 양 끝 자연수의 차",
           "candidate": "79",
           "reviewNote": "가능한 자연수는 960~1039다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-52-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 53,
