@@ -7,3 +7,5 @@
 .u2p78cards{white-space:nowrap}.u2p78card{display:inline-block;border:1px solid #191511;line-height:1.2;text-align:center;min-width:1.1em;margin:0 .09em}
 
 .u2p79-midpoint-figure{display:block;width:100%;max-width:210px;height:auto;margin:.15em auto}
+
+.u2p81-matrix{display:inline-grid;grid-template-columns:auto auto;gap:.15em .6em;align-items:center;justify-items:center;vertical-align:middle;border-left:1.5px solid;border-right:1.5px solid;padding:.15em .4em;margin:0 .1em}.u2p81-expression{white-space:normal}
