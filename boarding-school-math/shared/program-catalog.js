@@ -57,6 +57,7 @@
         profileId: "math-kangaroo-usa-k12",
         sources: [
           source("Math Kangaroo USA", "https://mathkangaroo.org/mks/faqs/about-the-test/"),
+          source("Math Kangaroo USA", "https://mathkangaroo.org/mks/practice/pdf-exams/"),
           source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-curricula/"),
           source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/")
         ],

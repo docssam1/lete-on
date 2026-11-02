@@ -36,6 +36,7 @@
       curriculumIsGeneralGuideline: true,
       sources: Object.freeze([
         source("Math Kangaroo USA", "https://mathkangaroo.org/mks/faqs/about-the-test/", "current web page; revision date not stated"),
+        source("Math Kangaroo USA", "https://mathkangaroo.org/mks/practice/pdf-exams/", "official prior-year student test PDFs grouped by grade pair", "2026-11-02"),
         source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-curricula/", "official two-grade curriculum guideline bands"),
         source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/", "current scoring page; revision date not stated")
       ]),

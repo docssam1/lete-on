@@ -29,6 +29,9 @@ test("Math Kangaroo covers grades 1-12 with paired papers but separate student-g
   assert.equal(profile.wrongAnswerPenalty, false);
   assert.equal(profile.calculatorAllowed, false);
   assert.equal(profile.curriculumIsGeneralGuideline, true);
+  assert.ok(profile.sources.some(function (row) {
+    return row.url === "https://mathkangaroo.org/mks/practice/pdf-exams/" && row.lastVerified === "2026-11-02" && /prior-year student test PDFs/.test(row.documentRevision);
+  }));
   profile.paperBands.forEach(function (band) {
     const recomputed = band.scoreTiers.reduce(function (sum, points) {
       return sum + points * band.questionsPerTier;
@@ -106,6 +109,7 @@ test("competition sources are HTTPS and original problem publication remains per
   const expectedSources = {
     "math-kangaroo-usa-k12": [
       ["Math Kangaroo USA", "https://mathkangaroo.org/mks/faqs/about-the-test/"],
+      ["Math Kangaroo USA", "https://mathkangaroo.org/mks/practice/pdf-exams/"],
       ["Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-curricula/"],
       ["Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/"]
     ],
@@ -130,7 +134,8 @@ test("competition sources are HTTPS and original problem publication remains per
       assert.match(source.url, /^https:\/\//);
       assert.ok(source.documentRevision);
       const currentMaaOverview = source.authority === "Mathematical Association of America" && source.url === "https://maa.org/student-programs/amc/";
-      assert.equal(source.lastVerified, currentMaaOverview ? "2026-10-30" : "2026-08-28");
+      const currentKangarooArchive = source.authority === "Math Kangaroo USA" && source.url === "https://mathkangaroo.org/mks/practice/pdf-exams/";
+      assert.equal(source.lastVerified, currentMaaOverview ? "2026-10-30" : currentKangarooArchive ? "2026-11-02" : "2026-08-28");
       if (currentMaaOverview) assert.match(source.documentRevision, /dates, format and age\/grade limits rechecked/);
     });
     assert.equal(profile.contentRights.originalProblems, "permission-required");

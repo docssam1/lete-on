@@ -75,6 +75,10 @@ Rechecked the private AMC candidate's nonvisual gates without changing the item 
 
 The prepared R6 human-review packet and its separate temporary-ID mapping also pass a local consistency check: 42 unique temporary IDs are represented, no permanent candidate IDs or answer/key fields occur in the packet/mapping, and the mapping order matches the R6 form order. This confirms packet readiness only; no packet was transmitted and no human review is recorded.
 
+## 2026-11-02 Math Kangaroo source-registry sync
+
+The official prior-year PDF exam archive is now listed both in the K–12 competition profile and the shared program catalog, with the profile source marked verified on 2026-11-02. This keeps the in-app Grade 7/8 archive link aligned with the source-of-record and preserves the existing metadata-and-links-only rights boundary. `k8-competition-profiles.test.cjs` and `competition-type-bank.test.cjs` pass 13/13; both changed JavaScript modules pass syntax checks and the CRLF-aware diff check passes. Local-only; no exam content was copied.
+
 ## 2026-10-30 AMC raw-score reference continuation
 
 The public manual contest-paper review now shows a clearly labeled reference raw score only when all 25 marks are entered for AMC 8/10/12. AMC 8 uses correct-count out of 25; AMC 10/12 use 6 points per correct and 1.5 per blank, with wrong answers 0. Other contests, partial inputs, and non-25-question tests do not produce this score. It is not an official score, contest level, award/AIME prediction, or school placement; the report directs users to the selected test's instructions and MAA's official contest page. The formulas are corroborated by historical MAA booklets (2023 AMC 8; 2022 AMC 10A); current 2026–27 MAA rules do not confirm that these historic scoring instructions apply to every current paper, so the selected paper remains authoritative.
