@@ -2281,6 +2281,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
   const source52CuboidProperties = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s1");
   if (source52CuboidProperties) {
+    const sourceId = "5-2-u5-e1-example-4";
+    if (!source52CuboidProperties.types.some(type => type.id === sourceId)) {
+      const name = "세 방향으로 묶은 끈으로 직육면체의 가로 구하기";
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(group => group.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidProperties.types.push({id:sourceId, number:source52CuboidProperties.types.length+1, typeNumber,
+        name, label:name, difficultyBand:0, sourceItemId:sourceId, sourceItemLabel:"예제 1-4", sourceSection:"example",
+        sourceTier:"advanced", sourcePdfPage:44, sourcePrintedPage:48, sourceVerified:true, publisherKeyVerified:false,
+        reviewLocked:false, generatorKey:"source52CuboidThreeLoopPage48Example14", generationMode:"fixed-verified-pool",
+        implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
+        answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원본의 끈 세 방향과 길이 관계를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+    }
     const packingId = "5-2-u5-check108-q8-packing-synthetic";
     if (!source52CuboidProperties.types.some(type => type.id === packingId)) {
       const packingName = "직육면체 상자에 물건 넣기 · 연습";

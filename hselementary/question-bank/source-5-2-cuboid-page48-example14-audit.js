@@ -1,0 +1,17 @@
+"use strict";
+const assert = require("node:assert/strict");
+const api = require("./source-5-2-cuboid-page48-example14.js");
+const item = api.build();
+const {width, depth, height, ropeLength} = item.answerModel;
+assert.equal(width, 3 * height);
+assert.equal(width, depth + 5);
+assert.equal(2 * (width + depth) + 2 * (width + height) + 2 * (depth + height), ropeLength);
+assert.equal(ropeLength, 120);
+assert.equal(item.answer, `${width}cm`);
+assert.equal(item.publisherKeyVerified, false);
+assert.ok(item.prompt.includes('M55 120 H275 L345 75 M90 62.5 H310 V132.5 M165 155 V85 L235 40'));
+const type = {id: api.sourceItemId, sourceItemId: api.sourceItemId, generatorKey: api.generatorKey, sourceVerified: true, reviewLocked: false};
+assert.ok(api.resolves(type));
+assert.ok(!api.resolves({...type, reviewLocked: true}));
+assert.ok(!api.resolves({...type, sourceVerified: false}));
+console.log("PASS: three rope loops, source constraints, substitution and release guard");

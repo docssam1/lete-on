@@ -414,12 +414,14 @@
       "singleAnswerCheck": "그림의 세 방향 끈 길이와 세 변의 관계를 함께 적용하면 양수인 길이가 하나로 정해집니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-unique",
-      "visualCheckStatus": "confirmed-original-three-loop-structure-needs-public-visual",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "visualCheckStatus": "confirmed-original-three-loop-and-public-visual",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
       "publisherKeyVerified": false,
       "sourceAuditUpdate": "2026-11-02: fingerprint-matched original PDF page 44 / printed page 48 directly confirms the 120cm rope, width three times height, width 5cm longer than depth, and the three perpendicular wrapping directions. Independent exact arithmetic gives height 5cm, depth 10cm and width 15cm; substituting all three loop lengths gives 120cm. A separately named answer PDF contains a different competition-edition question on printed page 48 and handwritten annotations, so it is not publisher-answer evidence for this item.",
-      "lockReason": "원문과 독립 계산은 재확인했으나 출판사 공식 답안과 원문에 충실한 공개용 그림은 미확인입니다."
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u5-e1-example-4",
+      "releaseEvidence": "원본의 세 끈과 변의 관계, 계산 및 대입을 대조했습니다. 별도 유사문항 네 개는 유지합니다. 출판사 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u5-e1-mission-1",
