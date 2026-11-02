@@ -3573,6 +3573,9 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   if (source52Average) for (const [id,source,parent,key,manual,pdf,printed] of [
+    ["5-2-u6-t1-2","5-2-u6-practice-4-similar","5-2-u6-practice-4-original","source52U6PairedMeansSimilar",false,110,116],
+    ["5-2-u6-t1-3","5-2-u6-practice-25-similar","5-2-u6-practice-25-original","source52U6ChangedScoreMeanSimilar",false,113,119],
+    ["5-2-u6-t1-5","5-2-u6-practice-2-similar","5-2-u6-practice-2-original","source52U6OverlappingMeansSimilar",false,110,116],
     ["5-2-u6-t1","5-2-u6-practice-7-similar","5-2-u6-practice-7-original","source52U6AddedScoreMeanSimilar",false,110,116],
     ["5-2-u6-t1-4","5-2-u6-practice-9-similar","5-2-u6-practice-9-original","source52U6MissingFrequencySimilar",false,111,117],
     ["5-2-u6-t2-3","5-2-u6-practice-27-similar","5-2-u6-practice-27-original","source52U6WorkRateMeanSimilar",false,113,119],
