@@ -2242,11 +2242,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
   const source52CuboidViewPractice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s3");
-  if (source52CuboidViewPractice) for (const [n,name] of [[33,"겨냥도와 전개도의 꼭짓점 대응 · 확인학습 원문"],[34,"직육면체 전개도에서 맞닿는 선분 · 확인학습 원문"],[35,"정육면체의 선을 전개도로 옮기기 · 확인학습 원문"]]) {
+  if (source52CuboidViewPractice) for (const [n,name] of [[37,"정육면체 세 면의 선을 전개도로 옮기기 · 확인학습 원문"],[39,"직육면체 표면의 선을 전개도로 옮기기 · 확인학습 원문"],[33,"겨냥도와 전개도의 꼭짓점 대응 · 확인학습 원문"],[34,"직육면체 전개도에서 맞닿는 선분 · 확인학습 원문"],[35,"정육면체의 선을 전개도로 옮기기 · 확인학습 원문"]]) {
     const id=`5-2-u5-practice-${n}-original`;
     if (source52CuboidViewPractice.types.some(type=>type.id===id)) continue;
     const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
-    source52CuboidViewPractice.types.push({id,number:source52CuboidViewPractice.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:106,alternateSourcePdfPage:107,sourcePrintedPage:112,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U5Page108Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:n===33||n===35,answerVisualStatus:n===33||n===35?"verified-reconstruction":"not-required",reviewReason:"원문과 전개도를 대조하고 접힌 꼭짓점과 선의 연결을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+    source52CuboidViewPractice.types.push({id,number:source52CuboidViewPractice.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:106,alternateSourcePdfPage:107,sourcePrintedPage:112,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U5Page108Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:n===33||n===35||n===37||n===39,answerVisualStatus:n===33||n===35||n===37||n===39?"verified-reconstruction":"not-required",reviewReason:"원문과 전개도를 대조하고 접힌 꼭짓점과 선의 연결을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
   if (source52CuboidViewPractice) {
     const source52p53m5Id = "5-2-u5-e3-mission-5";
