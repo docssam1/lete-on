@@ -373,7 +373,9 @@
           "classification": "서로 다른 포장 단위의 구매 비용 비교",
           "candidate": "14000원",
           "reviewNote": "각 마트에서 포장된 상품을 필요한 양 이상 구매한다고 보면 각각 66000원과 80000원이다. 정확히 85kg만 판매 가능한지는 원문에서 별도 명시되지 않았다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-36-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 37,
@@ -387,7 +389,9 @@
           "classification": "전체 끈 길이와 구매 단위 올림",
           "candidate": "18400원",
           "reviewNote": "전체 22.86m가 필요하고 끈을 이어 구매해 필요한 길이로 자를 수 있다고 본다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-38-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 39,
