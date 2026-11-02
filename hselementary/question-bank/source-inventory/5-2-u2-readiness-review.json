@@ -247,28 +247,36 @@
           "classification": "두 숫자 카드로 만드는 진분수의 곱",
           "candidate": "1/4",
           "reviewNote": "4/5×4/8×5/8=1/4",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-29-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 30,
           "classification": "규칙에 따른 두 분수 항의 곱",
           "candidate": "6/53",
           "reviewNote": "n번째 항 n/(3n−1)이므로 24/71×71/212=6/53",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-30-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 31,
           "classification": "두 교대 수열의 108개 항의 곱",
           "candidate": "1036",
           "reviewNote": "각 54항씩 묶으면 홀수 번째 곱 111/3, 짝수 번째 곱 56/2; 곱 1036",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-31-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 32,
           "classification": "철사의 분수 길이와 정사각형 둘레",
           "candidate": "2/7m",
           "reviewNote": "(64/5÷8)×5/7÷4=2/7m",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-32-original",
+          "publisherAnswerVerified": false
         }
       ]
     },
