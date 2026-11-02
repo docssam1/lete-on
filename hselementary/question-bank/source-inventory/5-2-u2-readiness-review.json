@@ -204,35 +204,43 @@
       "sourcePrintedPage": 78,
       "scope": "문항 25~32를 원문과 필기 없는 사본으로 대조하고 독립 계산했다. 그림은 없다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partial-verified-local",
       "items": [
         {
           "number": 25,
           "classification": "분수의 곱 부등식과 자연수",
           "candidate": "1, 2, 3, 4, 5, 6, 7",
           "reviewNote": "1/(2n)>1/15이므로 자연수 n<7.5",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-25-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 26,
           "classification": "정의된 이항 연산",
           "candidate": "3과 11/32",
           "reviewNote": "16/7×7/4−7/4×3/8=107/32",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-26-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 27,
           "classification": "제곱과 두 배 곱의 혼합 연산",
           "candidate": "4",
           "reviewNote": "(8/3)²−2×8/3×2/3+(2/3)²=4",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-27-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 28,
           "classification": "세 숫자 카드로 만드는 대분수의 곱",
           "candidate": "167과 181/320",
           "reviewNote": "세 대분수는 3과 5/8, 5과 3/8, 8과 3/5이며 곱은 53621/320",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-28-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 29,
