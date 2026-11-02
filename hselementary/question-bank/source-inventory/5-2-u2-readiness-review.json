@@ -124,21 +124,25 @@
       "sourcePrintedPage": 77,
       "scope": "문항 17~24와 22번 네 소문항을 원문과 필기 없는 사본으로 대조하고 독립 계산했다. 그림은 없다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partial-verified-local",
       "items": [
         {
           "number": 17,
           "classification": "남은 사람의 연속된 분수",
           "candidate": "287명",
           "reviewNote": "1025×4/5×7/10×1/2=287",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-17-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 18,
           "classification": "분당 속력 차와 이동 시간",
           "candidate": "55km",
           "reviewNote": "(7/3−8/5)km/분×75분=55km",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-18-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 19,
@@ -152,14 +156,18 @@
           "classification": "분수열에서 자연수배 개수",
           "candidate": "7개",
           "reviewNote": "n/7=(2/5)k 이면 5n=14k이므로 n은 14의 배수, 1~99에서 7개",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-20-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 21,
           "classification": "분수 곱의 크기 비교",
           "candidate": "ㄹ, ㄴ, ㄷ, ㄱ",
           "reviewNote": "각 값은 ㄱ 6/25, ㄴ 5/12, ㄷ 5/14, ㄹ 21/44",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-21-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 22,
