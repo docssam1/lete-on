@@ -81,9 +81,9 @@ function model(scienceModel={}){
   const source=all.filter(b=>belongs(s.id,b));
   return {...s,title:'과학 '+s.number+'단계 · '+s.name,...material(m,s,source),scope:s.id==='elementary'&&source[0]?.scope?source[0].scope:s.scope,schedule:schedule(m,source),sourceBlockIds:source.map(b=>b.id),inPlan:source.length>0,selected:s.id===selected};
  });
- const index=stages.findIndex(s=>s.id===selected),current=index<0?{id:'unknown',name:'현재 과학 공부 확인 전',title:'현재 과학 공부 확인 전',explanation:'지금 공부하는 과학 범위를 선택해 주세요. 수학 레벨이나 학년만으로 과학 단계를 정하지 않습니다.',schedule:null,sourceBlockIds:[],inPlan:false,selected:true}: {...stages[index],explanation:'지금 '+stages[index].name+' 범위를 공부 중이라고 선택했어요. 이미 마친 범위는 별도의 이수 기록과 맞춰 봅니다.'};
+ const index=stages.findIndex(s=>s.id===selected),current=index<0?{id:'unknown',name:'현재 과학 공부 확인 전',title:'현재 과학 공부 확인 전',explanation:'지금 공부하는 과학 교재나 이미 마친 범위를 골라 주세요.',schedule:null,sourceBlockIds:[],inPlan:false,selected:true}: {...stages[index],explanation:'지금 '+stages[index].name+' 범위를 공부 중이라고 선택했어요. 이미 마친 범위는 별도의 이수 기록과 맞춰 봅니다.'};
  const middle=m.curriculum?.middle===true||(Number.isFinite(m.context?.now)&&Math.floor((m.context.now-2)/12)-2>=7);
- return {selected,known:index>=0,current,next:index<0?[]:stages.slice(index+1,index+3),stages,parentComment:parentComment(m),schoolNote:middle?'중학생은 학교 과학·내신을 함께 챙기고, 별도 과학 선행은 수학 진도와 필요한 개념에 맞춥니다.':null,note:'과학 단계는 공부 범위의 구분입니다. 수학 L번호·성적 순위와 별개이며, 선택만으로 이전 과정을 완료 처리하지 않습니다.',sourceNote:SOURCE_NOTE};
+ return {selected,known:index>=0,current,next:index<0?[]:stages.slice(index+1,index+3),stages,parentComment:parentComment(m),schoolNote:middle?'중학생은 학교 과학·내신을 함께 챙기고, 별도 과학 선행은 수학 진도와 필요한 개념에 맞춥니다.':null,note:'실험탐구 → 초등교과 → 중등기본 → 중등심화 → 고등개념 순서로 살펴봅니다. 지금 공부하는 범위에서 다음에 필요한 과정을 골라 주세요.',sourceNote:SOURCE_NOTE};
 }
 function defaultButton(key,id,title,summary,on){return '<button type="button" data-science-kind="'+esc(key)+'" data-science-value="'+esc(id)+'" aria-pressed="'+!!on+'"><strong>'+esc(title)+'</strong><span>'+esc(summary)+'</span></button>';}
 function choices(scienceModel,button=defaultButton){
@@ -100,7 +100,7 @@ function render(scienceModel){
 function questions(scienceModel){
  const m=model(scienceModel);
  return [
-  {question:'수학 레벨과 과학 단계는 같은가요?',answer:m.note+' '+(m.known?'현재 선택은 '+m.current.title+'입니다.':m.current.explanation)},
+  {question:'수학 레벨과 과학 단계는 같은가요?',answer:'수학은 교과 진도와 속도를, 과학은 현재 공부한 범위를 기준으로 살펴봅니다. '+(m.known?'현재 선택은 '+m.current.title+'입니다.':m.current.explanation)},
   {question:'지금 과학 공부에서 다음에는 무엇을 하나요?',answer:!m.known?'현재 과학 교재와 배운 단원부터 확인합니다. 단계와 실제 이수 범위를 고른 뒤 다음 과정을 연결합니다.':m.next.length?m.next.map(s=>s.title+': '+s.scope+'. '+s.readiness).join(' '):'고등 개념에서 배운 분야를 설명하고 낯선 문제에 적용하는지 확인합니다. 부족한 중등 기본을 보완하고, 추가 심화는 목표와 공부 여유를 보고 정합니다.'},
   {question:'실험과학을 했으면 초등 과학도 마친 건가요?',answer:'관찰·실험 경험과 교과 개념 이수는 따로 확인합니다. 실험에서 본 현상을 용어와 개념으로 설명하고, 배우지 않은 초등 단원이 있는지 살펴봅니다.'},
   {question:'진학 목표에 따라 과학 공부가 달라지나요?',answer:m.parentComment+(m.schoolNote?' '+m.schoolNote:'')}

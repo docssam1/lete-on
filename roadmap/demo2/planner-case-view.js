@@ -15,7 +15,7 @@ function summary(m){
 const CHOICES=[
  {id:'algebra',title:'초등 계통 대수심화를 언제 연결할까요?',options:[['overlap','5~6월, 6-2와 병행','확인한 계획 · 초등 계통 대수심화는 총 6개월'],['after','6-2를 마친 뒤 시작','중등 시작과 종료가 두 달 뒤로 이동']]},
  {id:'depthBook',title:'함께 공부할 심화 교재',options:[['highestS','최상위 S 4-1','현재 사례의 교재를 유지'],['highestMath','최상위 수학 4-1','심화 교재 변경안 · 기간은 풀이를 보고 조정']]},
- {id:'gifted',title:'초3 말에 살펴볼 기회',options:[['review','교육청 영재원 지원 검토','지역·해당 연도 모집요강 확인'],['later','학습을 이어가며 나중에 검토','다음 시험 시기를 임의로 정하지 않음']]},
+ {id:'gifted',title:'초3 말에 살펴볼 기회',options:[['review','교육청 영재원 지원 검토','지역·해당 연도 모집요강 확인'],['later','학습을 이어가며 나중에 검토','다음 모집 공지를 확인하며 준비']]},
  {id:'academy',title:'학원 이동을 함께 살펴볼까요?',options:[['consider','황소·누테학원 검토','편입과 중등 전환 시점을 지도에 표시'],['defer','현재 계획을 이어가며 보류','교과·사고력·심화 일정은 유지']]}
 ];
 function choices(m){

@@ -18,10 +18,10 @@ const ROWS=Object.freeze([
  Object.freeze({key:'calc',label:'연산',method:'수 감각과 계산의 정확도를 교과와 나란히 챙기는 축입니다. 실제 연습량과 남은 분량은 아이의 현재 공부에서 따로 정합니다.'})
 ]);
 const NOTES=Object.freeze([
- '원표의 다섯 축을 함께 펼친 구성 참고입니다. 현재 학생에게 모두 해야 할 필수 과제를 배정한 표가 아닙니다.',
+ '교과·사고력·선택 준비·가정 보완·연산을 함께 놓은 예시입니다. 현재 수업에서 부족한 부분을 골라 보완해 주세요.',
  '최신 필즈 E1·소마 운영표는 별도로 살펴보세요. 이 표는 2026-10-22 자료의 배치이며, 현재 학원의 반 이름·운영 진도와 구분합니다.',
- '별도 배정 없음은 원자료에 해당 시기의 별도 교재가 표시되지 않았다는 뜻입니다. 공부를 멈추거나 쉬는 기간으로 정한 것이 아닙니다.',
- '표의 마지막 달 이후에 공부가 끝나는 것은 아닙니다. 원자료에서 확인되는 마지막 배치까지 보여주며, 이후 과정은 현재 공부와 최신 운영표에서 이어 봅니다.'
+ '‘별도 배정 없음’으로 표시된 달에도 현재 수업과 복습은 이어갑니다. 해당 항목에 추가로 지정된 교재가 없다는 뜻입니다.',
+ '표 이후의 과정은 현재 공부와 학원의 최신 운영표를 보고 이어갑니다.'
 ]);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const text=value=>String(value??'').replace(/<br\s*\/?\s*>/gi,' ').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
@@ -59,7 +59,7 @@ function explanations(m){return `<div class="ppd-explanations">${m.rows.map(row=
 function printTables(m){return m.years.map(year=>`<section class="ppd-print-chunk"><h4>${esc(m.label)} · ${year.age}세</h4>${table(m,year.start,year.end)}</section>`).join('');}
 function render(value='fast-premier',options={}){
  const m=model(value),heading=`<header class="ppd-heading"><small>${esc(m.sourceLabel)}</small><h3>유아 시기의 다섯 축을 함께 살펴보세요.</h3><p>${esc(m.notes[0])}</p></header>`;
- if(!m.ready)return `<details class="ppd-reference"><summary>유아 상세 설계 참고 보기</summary>${heading}<p>참고 자료를 불러온 뒤 원표의 교재와 월별 배치를 보여드립니다.</p></details>`;
+ if(!m.ready)return `<details class="ppd-reference"><summary>유아 상세 설계 참고 보기</summary>${heading}<p>상세 자료를 불러오면 교재와 월별 계획을 확인할 수 있습니다.</p></details>`;
  const notes=`<div class="ppd-notes">${m.notes.slice(1).map(note=>'<p>'+esc(note)+'</p>').join('')}</div>`;
  if(options.print)return `<section class="ppd-reference ppd-print-reference" aria-label="${esc(m.sourceLabel)}">${heading}${printTables(m)}${explanations(m)}${notes}</section>`;
  const buttons=`<div class="ppd-controls" role="group" aria-label="옛 유아 상세 설계 예시 선택">${m.profiles.map(profile=>`<button type="button" data-preschool-detail="${profile.id}" aria-pressed="${profile.id===m.id}">${esc(profile.label)}</button>`).join('')}</div>`;

@@ -29,7 +29,7 @@ function fromSource(rows,anchor,id,axis,options={}){
   const transitionReview=axis==='school'&&/^여유.*초등 대수 심화.*선택/.test(title);
   if(!options.all&&!known(title,axis)&&!transitionReview)return[];
   const preparation=axis==='comp'&&/프리미어 학습 집중/.test(title);
-  const block=clipped(transitionReview?'중등 진입 전 점검 · 다음 과정 선택':title,start-anchor,end+1-anchor,b.id||id+'-'+index,id,{source:'level-table',stage:b.stage||G.stage(title,axis),sourceStart:start,sourceEnd:end,...(transitionReview?{phase:'transition-review',instruction:false,method:'중등 시작 전, 배운 초등 교과의 취약 단원과 현재 심화·연산을 점검하는 여유 기간입니다. 원자료의 선택 구간을 표시한 것이며, 초등 계통 대수심화를 한 달에 끝내는 계획은 아닙니다. 대수심화를 추가할지는 풀이와 병행 부담을 보고 별도로 선택합니다.'}:{}),...(preparation?{phase:'premier-prep',method:'프리미어 대비에 집중합니다. 사고력 새 진도 대신 배운 문제의 조건·풀이 설명과 발표를 연습하고, 교과·심화·연산은 각 일정대로 병행합니다.'}:{})},options.horizon??LIMIT);
+  const block=clipped(transitionReview?'중등 진입 전 점검 · 다음 과정 선택':title,start-anchor,end+1-anchor,b.id||id+'-'+index,id,{source:'level-table',stage:b.stage||G.stage(title,axis),sourceStart:start,sourceEnd:end,...(transitionReview?{phase:'transition-review',instruction:false,method:'중등 시작 전, 배운 초등 교과의 취약 단원과 현재 심화·연산을 점검하는 여유 기간입니다. 초등 계통 대수심화를 추가하려면 별도의 공부 기간이 필요합니다. 현재 풀이와 다른 과목의 부담을 보고 선택해 주세요.'}:{}),...(preparation?{phase:'premier-prep',method:'프리미어 대비에 집중합니다. 사고력 새 진도 대신 배운 문제의 조건·풀이 설명과 발표를 연습하고, 교과·심화·연산은 각 일정대로 병행합니다.'}:{})},options.horizon??LIMIT);
   return block?[block]:[];
  });
 }
@@ -129,7 +129,7 @@ function model(answers={},fields={},options={}){
   else{const raw=source.school.find(b=>G.stage(b[0],'school')==='중2-1');if(raw&&raw[2]+1<=school.anchor)scienceAnchor=raw[2]+1-school.anchor;}
  }
  const lastSchoolEnd=Math.max(0,...school.blocks.map(b=>b.end));
- if(school.blocks.length&&lastSchoolEnd<LIMIT)school.note='표준 자료에 있는 교과 일정은 '+monthAt(fields,Math.max(0,Math.ceil(lastSchoolEnd)-1)).label+'까지입니다. 이후 교재와 기간은 맞춤 조정에서 선택합니다. 공통수학이나 다음 과정을 이수했다고 보거나 자동으로 배정하지 않습니다.';
+ if(school.blocks.length&&lastSchoolEnd<LIMIT)school.note='표준 자료에 있는 교과 일정은 '+monthAt(fields,Math.max(0,Math.ceil(lastSchoolEnd)-1)).label+'까지입니다. 이후 교재와 기간은 맞춤 조정에서 선택합니다. 공통수학 등 다음 과정은 그때의 이해도와 학습량에 맞춰 이어갑니다.';
  const actualSchool=c.axes.find(x=>x.id==='school');
  // Keep the reported current book visible, even when its name differs from the standard example.
  if(actualSchool?.ready&&!actualSchool.done&&a.schoolBook&&!I.special(a.schoolBook))school.blocks=school.blocks.map(block=>block.current&&block.stage===actualSchool.stage?{...block,title:actualSchool.stage+' '+a.schoolBook,reported:true}:block);
@@ -152,16 +152,16 @@ function model(answers={},fields={},options={}){
  const stages=(sequential?[...school.blocks,...deep.blocks.filter(b=>/^[1-6]-[12]$/.test(b.stage||''))]:school.blocks).sort((x,y)=>x.start-y.start||x.end-y.end).slice(0,3);
  const assumptions=[
   '표준표의 현재 교과 과정을 출발점으로 옮긴 24개월 계획입니다. 진행 중은 해당 과정의 중간, 완료는 해당 과정의 끝에서 시작합니다.',
-  '각 과정의 끝을 포함한 원자료 월을 화면에서는 시작 포함·끝 미포함 기간으로 바꿉니다. 예를 들어 3개월 과정의 중간에서 시작하면 1.5개월이 남습니다.',
+  '진행 중인 교재는 절반을 공부한 것으로 가정해 남은 기간을 잡았습니다. 예를 들어 전체 3개월 과정이라면 1.5개월이 남은 일정입니다. 실제 진도에 맞춰 조정해 주세요.',
   '교과·사고력·심화·연산은 각각 선택한 현재 교재에서 시작합니다. 한 영역의 진도를 바꾸어도 다른 영역의 교재·기간을 자동으로 바꾸지 않습니다.',
-  '자료가 없는 구간은 새 교재나 복습으로 채우지 않습니다. 모르는 영역은 현재 교재 확인 후 조정합니다.',
-  '월별 배치는 학습 계획 예시이며 완독·숙달·진급을 확정하는 일정이 아닙니다. 풀이를 확인하며 실제 기간을 조정합니다.'
+  '아직 정하지 않은 과정은 현재 교재와 남은 분량을 확인한 뒤 이어서 설계합니다.',
+  '매달 혼자 풀고 설명하는 모습을 확인하고, 어려운 단원에 필요한 시간을 더해 주세요.'
  ];
- if(sequential)assumptions.push('이 표준의 초등 과정은 같은 학기의 응용 3개월 뒤 심화 2개월을 이어갑니다. 교과선의 빈 두 달은 해당 심화 과정이며 임의의 휴식이나 진도 누락이 아닙니다.');
+ if(sequential)assumptions.push('응용 3개월 다음에 같은 학기의 심화 2개월을 공부합니다. 교과선이 평평한 두 달은 심화에 집중하는 기간입니다.');
  else if(detail?.elementaryMode?.id==='application-then-depth')assumptions.push(independentDepth?'이미 별도로 진행 중인 심화가 있어 교과 뒤에 표준 심화 2개월을 추가하지 않습니다. 현재 심화의 범위·기간과 사고력·연산은 각각 별도로 이어갑니다.':'교과·사고력 중심 구성에서는 교과 뒤의 별도 심화 2개월을 배정하지 않고 다음 교과를 잇습니다. 다른 영역의 현재 출발점은 그대로 유지합니다.');
- if(band==='C')assumptions.push('중등은 더 최근의 기존 엔진 기준인 개념원리·RPM 과정을 사용합니다. 이전 자료의 중등 A급을 그대로 배정하지 않습니다.');
+ if(band==='C')assumptions.push('중등 교과는 개념원리·RPM으로 개념과 유형을 공부합니다. A급 등 심화 교재는 현재 풀이를 보고 따로 선택합니다.');
  assumptions.push(calcPlan.note);
- if(supplementEligible)assumptions.push('초1·2 문장제·도형 보충은 교과 진도나 L 번호로 자동 배정하지 않습니다. 현재 수업·부교재에서 이미 배우는 내용은 이어가며, 수업 외 보완이 필요하다고 선택한 경우에만 별도 과정을 연결합니다.');
+ if(supplementEligible)assumptions.push('초1·2 문장제·도형 보충은 현재 수업에서 부족한 부분이 있을 때 추가합니다. 문제해결의 길잡이·소마 도형 중 수업과 겹치지 않는 내용을 골라 주세요.');
  if(supplementEnabled)assumptions.push('문제해결의 길잡이와 소마 도형 중 수업과 겹치지 않는 내용을 꾸준히 병행합니다. 표시 범위는 병행할 시기이며 한 권의 이수 기간이 아닙니다. 현재 단계와 풀이를 보고 조정합니다.');
  const composition=['교과',...(thinking.status==='known'||pattern==='thinking'?['사고력']:[]),...(independentDepth||pattern==='deep'?['심화']:[]),'연산'].join(' · ');
  return{ready,pattern,composition,independentDepth,scienceAnchor,level:c.best||null,levelLabel:c.best?G.levelLabel(c,c.best):'현재 학습에서 시작',band,lanes,months,stages,now:c.now,horizon:LIMIT,sequential,calcPlan,supplementEligible,supplementChoice,supplementEnabled,supplements,assumptions,partial:lanes.some(l=>!l.blocks.length),reason:ready?'':school.note||'현재 교과와 진도를 선택하면 표준 계획을 먼저 보여드립니다.'};

@@ -49,7 +49,7 @@ function renderMap(v){
 function renderQuestions(v,trail=[]){
  const r=result(v);if(!r)return '';
  const rows=methods(v).map(m=>({q:m.question,a:m.answer}));
- if(r.isMixed)rows.push({q:'두 성향이 함께 나오면 공부 방법은 어떻게 고르나요?',a:'두 방법을 동시에 모두 적용할 필요는 없어요. 같은 단원에서 하나씩 시도하고 실제 풀이·관심·부담을 비교해 봐요. 혼합형을 평균 수준이나 능력 점수로 바꾸지 않아요.'});
+ if(r.isMixed)rows.push({q:'두 성향이 함께 나오면 공부 방법은 어떻게 고르나요?',a:'두 방법을 동시에 모두 적용할 필요는 없어요. 같은 단원에서 하나씩 시도하고 실제 풀이·관심·부담을 비교해 봐요. 어떤 방법에서 더 편하게 집중하고 스스로 풀어내는지 살펴보세요.'});
  if(['boarding','international'].includes(trail[0]))rows.push({q:'이 성향이면 보딩이나 국제학교에 잘 맞는 아이인가요?',a:'성향 응답만으로 학교 적합성을 판단하지 않아요. 수업에서 질문하고 도움받는 경험, 실제 학습과 생활 부담, 아이의 관심을 함께 살펴봐요. 학교 선택이나 과목 배치는 따로 확인해요.'});
  rows.push({q:'이 결과에 맞춰 진도나 심화 수준도 바뀌나요?',a:'이 결과만으로 진도·학습 레벨·교재·학교 경로·완료 시기를 바꾸지 않아요. 실제 학습과 가능한 분량은 유지하며 먼저 공부 방법을 비교해 봐요.'});
  return `<section class="pathway-parent-questions personality-parent-questions" aria-labelledby="personalityQuestionsTitle"><h3 id="personalityQuestionsTitle">성향을 함께 살펴볼 때 궁금한 점</h3><p>이번 응답에서 나타난 모습과 현재 선택한 로드맵을 함께 살펴봐요.</p><div>${rows.map(q=>`<details><summary>${esc(q.q)}<span aria-hidden="true">+</span></summary><div class="parent-answer"><p>${esc(q.a)}</p></div></details>`).join('')}</div></section>`;

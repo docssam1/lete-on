@@ -15,6 +15,8 @@ function move(node,parent){
 }
 function restoreGlobal(){
  for(const [node,marker] of moved)if(marker.isConnected)marker.replaceWith(node);
+ // Membership can finish loading after the compact menu was created.
+ const account=globalMenu?.querySelector('.member-account-link');if(account)top.append(account);
  moved.clear();globalMenu?.remove();globalMenu=null;
 }
 function restoreTools(){
@@ -26,6 +28,8 @@ function globalControls(){
  const summary=doc.createElement('summary');summary.textContent='메뉴';summary.setAttribute('aria-label','학원가 이야기·선배 로드맵·인쇄 메뉴');
  const body=doc.createElement('div');body.className='prn-global-body';globalMenu.append(summary,body);top.append(globalMenu);
  for(const id of ['openAcademyStories','openCase','openSet','atlasExpand','openReport'])move(doc.getElementById(id),body);
+ // Keep the account link reachable without adding another row to the compact rail.
+ const account=top.querySelector('.member-account-link');if(account)move(account,body);
  const current=doc.createElement('button');current.type='button';current.dataset.prnCurrent='true';current.textContent='현재 공부 확인';body.append(current);
  const panes=doc.querySelector('.mobile-workspace-nav');move(panes,top);
  for(const button of panes?.querySelectorAll('button')||[]){

@@ -53,8 +53,8 @@ function referenceSeries(){
   }).sort((a,b)=>a.x-b.x||a.y-b.y);
   const points=raw.filter(p=>p.x>=0&&p.x<=HORIZON).map(p=>({...p}));
   const first=valueAt(raw,0),last=valueAt(raw,HORIZON);
-  if(first!==null&&!points.some(p=>p.x===0))points.unshift({x:0,y:first,label:'초2 9월 원자료 진도'});
-  if(last!==null&&!points.some(p=>p.x===HORIZON))points.push({x:HORIZON,y:last,label:'원자료 진도'});
+  if(first!==null&&!points.some(p=>p.x===0))points.unshift({x:0,y:first,label:'초2 9월의 진도'});
+  if(last!==null&&!points.some(p=>p.x===HORIZON))points.push({x:HORIZON,y:last,label:'당시 공부한 범위'});
   return points.length?[{id,title:id+' 교과 진도 예시',points,source:'PLANNER_LEVELS',note:'동일한 학년·월의 기존 교과 예시입니다. 학원 반의 석차나 합격 가능성을 뜻하지 않습니다.'}]:[];
  });
 }
@@ -86,7 +86,7 @@ function model(value){
  ];
  const assumptions=[
   '강남권 소마 A 중위권은 이 상담 사례의 설명입니다. 모든 소마 A반 학생의 레벨이나 전국 석차로 적용하지 않습니다.',
-  '초2 9월을 시작으로 학년·월을 표시합니다. 원자료의 달력 연도가 확인되지 않아 특정 연도는 붙이지 않습니다.',
+  '초2 9월부터 학년·월 순서로 공부 과정을 볼 수 있습니다.',
   '초등 교과는 학기당 2.5개월, 사고력 각 과정은 6개월, 초등 계통 대수심화는 6개월, 중등은 총 18개월이라는 상담 계획입니다.',
   '중등 여섯 학기를 각각 3개월로 나눈 것은 총 18개월을 보여주기 위한 균등 배분 가정입니다. 학기별 실제 기간과 교재는 별도로 확인합니다.',
   '6-2를 마친 뒤 남은 초등 계통 대수심화 기간에는 교과 단계가 유지됩니다. 대수 공부를 하지 않거나 학습을 쉬는 기간이 아닙니다.',
