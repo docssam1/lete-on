@@ -98,6 +98,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator("#paper-review-link").isHidden(), true);
   assert.equal(await page.locator(".competition-submit").isHidden(), true);
   assert.equal(await page.locator("#competition-source-link").isHidden(), true);
+  assert.equal(await page.locator("#competition-paper-source-link").isHidden(), true);
   await page.locator("#competition-select").selectOption("amc8");
   assert.deepEqual(await page.locator("#domain-rows .domain-row strong").allInnerTexts(), ["식·대수", "수·비례·추정", "기하·공간", "경우의 수·확률", "그래프·표 해석"]);
   assert.equal(await page.locator(".competition-report").isHidden(), true);
@@ -113,9 +114,15 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator("#paper-review-link").isHidden(), true);
   assert.equal(await page.locator(".competition-submit").isHidden(), true);
   assert.equal(await page.locator("#competition-source-link").isHidden(), true);
+  assert.equal(await page.locator("#competition-paper-source-link").isHidden(), true);
   await page.locator("#competition-select").selectOption("kangaroo");
   assert.match(await page.locator("#competition-source-link").getAttribute("href"), /mathkangaroo\.org/);
+  assert.equal(await page.locator("#competition-paper-source-link").getAttribute("href"), "https://mathkangaroo.org/mks/practice/pdf-exams/");
+  assert.equal(await page.locator("#competition-paper-source-link").isVisible(), true);
+  assert.equal(await page.locator("#competition-paper-source-link").getAttribute("target"), "_blank");
+  assert.match(await page.locator("#competition-paper-source-link").getAttribute("rel"), /noopener/);
   await page.locator("#competition-select").selectOption("amc8");
+  assert.equal(await page.locator("#competition-paper-source-link").isHidden(), true);
   await page.locator(".grade-track > summary").click();
   await page.getByRole("button", { name: "Grade 9 지도 보기" }).click();
   assert.deepEqual(await page.locator(".route-button[aria-pressed='true']").allInnerTexts(), []);

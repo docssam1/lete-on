@@ -715,6 +715,8 @@
     const source = competitionSources[competition];
     const sourceLink = $("competition-source-link");
     sourceLink.hidden = !source;
+    const paperSourceLink = $("competition-paper-source-link");
+    paperSourceLink.hidden = competition !== "kangaroo";
     if (source) {
       sourceLink.href = source.href;
       sourceLink.textContent = source.label;
