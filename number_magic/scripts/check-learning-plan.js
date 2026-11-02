@@ -34,15 +34,28 @@ console.log('LEARNING_PLAN_OK calendar/grade boundaries, partial sessions, speed
     const m=/^(\d+)(?:–(\d+))?/.exec(r.sessionLabels[i]);assert(m,'label '+r.sessionLabels[i]);
     const a=+m[1],b=+(m[2]||m[1]),n=c[k].sessions.length;
     assert(a>=1&&b>=a&&b<=n,k+' range '+a+'-'+b+' of '+n);
-    (seen[k]=seen[k]||[]).push([a,b]);
+    (seen[k]=seen[k]||[]).push([a,b,/이어서 마무리$/.test(r.sessionLabels[i])]);
   }));
   Object.keys(seen).forEach(k=>{
     const n=c[k].sessions.length,rows=seen[k];
     /* 새로 시작하는 회차는 이전 달과 겹치지 않는다. 다만 한 회차를 달 끝에 시작해 다음 달에 마무리하는 달은 그 한 회차만 되풀이된다(이어서 하는 중). */
-    for(let i=1;i<rows.length;i++){const [a,b]=rows[i],prev=rows[i-1][1];assert(a>prev||(a===b&&a===prev),k+' rows overlap: '+JSON.stringify(rows.slice(i-1,i+1)));}
+    for(let i=1;i<rows.length;i++){const [a,b]=rows[i],prev=rows[i-1][1];const carry=rows[i][2];assert(a>prev||(carry&&a===b&&a===prev),k+' rows overlap: ');assert(!carry||a===prev,k+' carry label without a carried session: '+JSON.stringify(rows.slice(i-1,i+1)));}
     if(rows[0][0]===1&&rows[rows.length-1][1]===n){
       const covered=new Set();rows.forEach(([a,b])=>{for(let x=a;x<=b;x++)covered.add(x);});
       assert.equal(covered.size,n,k+' skipped a session');
     }
   });
+})();
+
+(()=>{ /* 전 과정 · 두 횟수 · 세 속도: 지난달 번호를 다시 쓰는 달은 반드시 「이어서 마무리」로 적는다(2026-11-02 검수 C0 3월 16–19 · 4월 19) */
+  let carries=0;
+  for(const key of Object.keys(c))for(const cadence of ['w1','w2'])for(const speed of [0.7,1,1.5]){
+    const r=plan.project(c,{courseKey:key,sessionIndex:1,pace:'p2',speed,cadence,entryYear:2030,startDate:'2026-11-02'},{months:24,now:new Date('2026-11-02T00:00:00Z'),lang:'ko'});
+    const last={};
+    r.rows.forEach(row=>row.courseKeys.forEach((k,i)=>{const L=row.sessionLabels[i],m=/^(\d+)(?:–(\d+))?/.exec(L);if(!m)return;const a=+m[1],b=+(m[2]||m[1]),carry=/이어서 마무리$/.test(L);
+      if(last[k]!=null&&a<=last[k]){assert(carry&&a===b&&a===last[k],key+'/'+cadence+'/'+speed+' '+k+' '+row.month+' repeats without carry label: '+L);carries++;}
+      else assert(!carry,key+' '+k+' '+row.month+' carry label on a new session: '+L);
+      last[k]=b;}));
+  }
+  assert(carries>0,'carry case exercised');
 })();

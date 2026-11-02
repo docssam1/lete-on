@@ -79,6 +79,7 @@
   #plGo{margin-top:10px;padding:9px 16px;min-height:48px;border:0;border-radius:10px;background:#245b60;color:#fff;font-weight:800;cursor:pointer}
   #plOut{margin-top:10px;font-size:14px;line-height:1.6;scroll-margin-top:12px}.pl-reason{color:#5c6b70}
   /* 추천 결과 머리: 시작 수준 · 학습 목표 (2026-10-27) */
+  .pl-verdict{margin:6px 0;padding:8px 10px;border-radius:8px;background:#eef4ef}.pl-verdict.is-weak{background:#fbeee6}.pl-verdict.is-few{background:#f3f1ea}
   .pl-result-head{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px;margin:4px 0 12px}
   .pl-result-head>h2{grid-column:1/-1;margin:0;font-size:17px}
   .pl-card{border:1px solid #d9cfba;border-radius:10px;padding:12px 14px;background:#fbf8f1;min-width:0}
@@ -269,7 +270,7 @@
 <script src="app/study-route.js?v=20261015-records1"></script>
 <!-- 추천 보기 아래 월별 진도 로드맵 — 온라인 진단 결과와 같은 모듈(2026-10-27) -->
 <script src="data/middle-extension.js?v=20261024-middle-extension1"></script>
-<script src="app/learning-plan.js?v=20261101-plan1"></script>
+<script src="app/learning-plan.js?v=20261102-carry1"></script>
 <script src="data/diagnostic-reference.js?v=20261022-intake1"></script>
 <script src="app/diagnostic-roadmap.js?v=20261102-cad1"></script>
 <script>
@@ -637,14 +638,23 @@ function renderScorer(stage){
       else if(lvName && row.levels.indexOf(lvName) < 0)row.levels.push(lvName);
     });
     var skillText = skills.slice(0, 4).map(function(s){ return s.name + (s.levels.length ? '(' + (s.levels.length > 1 ? s.levels[0] + ' → ' + s.levels[s.levels.length - 1] : s.levels[0]) + ')' : ''); }).join(' · ');
-    var level = answered ? '<small>' + esc(T('진단으로 확인한 시작 수준','Starting level from this check','测评确认的起点水平')) + '</small><strong>' + esc((L(rec.label) && L(rec.label) !== title ? L(rec.label) + ' · ' : '') + T('과정 ','Course ','课程 ') + no + ' 「' + title + '」 ' + T(rec.session + '회차부터', 'from session ' + rec.session, '第' + rec.session + '课次起')) + '</strong>' +
-      (group ? '<p>' + esc(T('단계: ','Stage: ','阶段：') + L(group.name) + (group.band ? ' (' + L(group.band) + T(' 기준',' reference',' 参考') + ')' : '')) + '</p>' : '') +
-      (skillText ? '<p>' + esc(T('이 수준에서 확인한 연산: ','Arithmetic checked at this level: ','此水平确认的运算：') + skillText) + '</p>' : '') +
+    var cur = b.current, ratio = cur.asked ? cur.correct / cur.asked : 0, few = answered < 10, weak = !few && (cur.asked === 0 || ratio < 0.5);
+    /* 고른 범위·확인한 실력·보강 출발점을 나눠 적는다 — 고른 범위를 「확인한 수준」이라 부르지 않는다(2026-11-02 검수: 1문항만 채점하거나 다 틀려도 C17이 확인 수준으로 나옴) */
+    var verdict = lad ? '' : '<p class="pl-verdict is-' + (few ? 'few' : weak ? 'weak' : 'ok') + '"><b>' + esc(T('확인한 실력: ','What the check showed: ','测评结果：')) + '</b>' + esc(few
+      ? T('20문항 중 ' + answered + '문항만 채점했어요. 이 범위를 익혔는지는 아직 판단하지 않았어요. 나머지 문항도 ○·X를 넣으면 더 정확해져요.', 'Only ' + answered + ' of 20 marked. Whether this range is learned is not judged yet; mark the rest for a clearer result.', '20题中只批改了' + answered + '题，尚未判断是否掌握此范围。批改其余题目会更准确。')
+      : weak ? T('현재 범위 ' + cur.correct + '/' + cur.asked + ' 정답 — 이 범위를 익혔다고 보지 않아요. ' + (fix ? '아래 「먼저 보강할 곳」부터 시작하세요.' : '이 범위 첫 회차부터 천천히 다시 해요.'), 'Current range ' + cur.correct + '/' + cur.asked + ' correct — not yet learned. ' + (fix ? 'Start with “Practice first” below.' : 'Go through this range again from its first session.'), '当前范围答对' + cur.correct + '/' + cur.asked + ' — 尚未掌握。' + (fix ? '请先从下方“先补充练习”开始。' : '请从此范围第一课次起慢慢重做。'))
+      : T('현재 범위 ' + cur.correct + '/' + cur.asked + ' 정답 — 이 범위에서 연습을 시작해도 돼요.', 'Current range ' + cur.correct + '/' + cur.asked + ' correct — fine to start practising here.', '当前范围答对' + cur.correct + '/' + cur.asked + ' — 可以从此范围开始练习。')) + '</p>';
+    var level = answered ? '<small>' + esc(lad ? T('진단으로 정한 출발 단계','Starting step from this check','测评确定的起始阶段') : T('진단한 범위','Range checked','测评范围')) + '</small><strong>' + esc((L(rec.label) && L(rec.label) !== title ? L(rec.label) + ' · ' : '') + T('과정 ','Course ','课程 ') + no + ' 「' + title + '」 ' + T(rec.session + '회차부터', 'from session ' + rec.session, '第' + rec.session + '课次起')) + '</strong>' + verdict +
+      /* 단계의 band는 선행 시작 나이 참고이고 교과 학년이 아니다 — 교과 범위(aheadNote)를 따로 적는다(2026-11-02 검수: C17에 초2 말~3이 교과처럼 보임) */
+      (group ? '<p>' + esc(T('수의 마법 단계: ','Numbers of Magic stage: ','数之魔法阶段：') + L(group.name)) + '</p>' +
+        (group.aheadNote ? '<p class="pl-muted">' + esc(T('교과 범위: ','School content: ','教材范围：') + L(group.aheadNote)) + '</p>' : '') +
+        (group.band ? '<p class="pl-muted">' + esc(T('선행 시작 나이 참고: ','Typical early-start age: ','提前开始年龄参考：') + L(group.band) + T(' — 아이 학년과 맞출 필요는 없어요.',' — need not match the learner’s grade.',' — 不必与孩子的年级一致。')) + '</p>' : '') : '') +
+      (skillText ? '<p>' + esc(T('이 범위 문항이 다룬 연산: ','Arithmetic in these questions: ','这些题目涉及的运算：') + skillText) + '</p>' : '') +
       (fix ? '<p><b>' + esc(T('먼저 보강할 곳: ','Practice first: ','先补充练习：')) + '</b>' + esc(T('과정 ','Course ','课程 ') + fixNo + ' 「' + fixTitle + '」 ' + T(fix.session + '회차', 'session ' + fix.session, '第' + fix.session + '课次') + (fix.label && L(fix.label) !== fixTitle ? ' · ' + L(fix.label) : '') + T(' — 이전·현재 문항에서 틀린 곳 중 가장 이른 위치예요.',' — the earliest place among missed earlier/current items.',' — 此前与当前错题中最早的位置。')) + '</p>' : '') +
       (lad ? ladderHtml : '<p class="pl-muted">' + esc(T('현재 진도 ','Current topic ','当前进度 ') + b.current.correct + '/' + b.current.asked + T(' 정답 · 이전 ',' correct · earlier ',' 正确 · 此前 ') + b.previous.correct + '/' + b.previous.asked + T(' · 다음(미리보기) ',' · next (preview) ',' · 后续（预览）') + b.next.correct + '/' + b.next.asked) + '</p>') +
       (path.next ? '<p class="pl-muted">' + esc(T('다음에 이어질 수준: ','Next level: ','接下来的水平：') + L(path.next.label)) + '</p>' : '') +
       '<p class="pl-muted">' + esc(lad ? T('쉬운 단계부터 20문항으로 정한 연습 출발점이에요. 교재를 끝냈다는 판정은 아니에요.','A practice starting point from 20 questions climbing from easy steps, not proof of finishing the book.','从简单阶段起20题确定的练习起点，不代表完成教材。') : T('고른 범위의 20문항으로 정한 연습 출발점이에요. 과정 전체를 익혔다는 판정은 아니에요.','A practice starting point from 20 questions around the chosen range, not proof of whole-course mastery.','依据所选范围20题确定的练习起点，不代表掌握全部课程。')) + '</p>'
-      : '<small>' + esc(T('진단으로 확인한 시작 수준','Starting level from this check','测评确认的起点水平')) + '</small><strong>' + esc(T('아직 확인하지 못했어요','Not determined yet','尚未确认')) + '</strong><p>' + esc(T('○·X를 체크한 뒤 다시 「추천 보기」를 눌러 주세요. 체크한 답이 없으면 시작 수준과 로드맵을 만들지 않아요.','Mark ○ or X, then press “Show suggestion” again. Without marks, no starting level or roadmap is made.','请先勾选○或X，再点击“查看建议”。没有勾选就不生成起点和路线图。')) + '</p>';
+      : '<small>' + esc(T('진단 결과','Check result','测评结果')) + '</small><strong>' + esc(T('아직 확인하지 못했어요','Not determined yet','尚未确认')) + '</strong><p>' + esc(T('○·X를 체크한 뒤 다시 「추천 보기」를 눌러 주세요. 체크한 답이 없으면 시작 수준과 로드맵을 만들지 않아요.','Mark ○ or X, then press “Show suggestion” again. Without marks, no starting level or roadmap is made.','请先勾选○或X，再点击“查看建议”。没有勾选就不生成起点和路线图。')) + '</p>';
     var goals = window.NM_PLACEMENT_PATHS.goals, targets = window.NM_PLACEMENT_PATHS.targets;
     var goal = goals.find(function(g){ return g.id === SHEET_SEL.goal; });
     var target = goal && goal.id === 'competition' ? targets.find(function(x){ return x.id === SHEET_SEL.goalTarget; }) : null;
@@ -652,14 +662,14 @@ function renderScorer(stage){
     if(goal){
       goalHtml += '<strong>' + esc(L(goal.label)) + '</strong>' + (target ? '<p><b>' + esc(L(target.label)) + '</b> · ' + esc(T('목표 진도와 맞추는 시점은 확인이 필요해요','Timing against this target still needs checking','与该目标进度对应的时间仍需确认')) + '</p>' : '') +
         '<p>' + esc(L(goal.direction)) + '</p><p class="pl-muted">' + esc(L(goal.focus)) + '</p>' +
-        (answered ? '<p class="pl-muted">' + esc(T('아래 로드맵은 위 시작 수준에서 출발해 이 목표로 이어지는 월별 계획이에요.','The roadmap below starts at this level and continues toward this goal month by month.','下方路线图从上述起点出发，按月延续到此目标。')) + '</p>' : '') +
+        (answered ? '<p class="pl-muted">' + esc(T('아래 월별 계획은 고른 범위에서 출발하는 공통 연산 순서예요. 목표를 바꿔도 순서와 날짜는 같고, 달라지는 것은 위 안내예요.','The monthly plan below is the common arithmetic order from the checked range. Changing the goal keeps the order and dates; only the guidance above changes.','下方月度计划是从测评范围出发的共同运算顺序。更改目标时顺序和日期不变，只有上方说明不同。')) + '</p>' : '') +
         '<label>' + esc(T('목표 바꾸기','Change goal','更改目标')) + '<select data-sheet-goal>' + goals.map(function(g){ return '<option value="' + g.id + '"' + (g.id === goal.id ? ' selected' : '') + '>' + esc(L(g.label)) + '</option>'; }).join('') + '</select></label>' +
         (goal.id === 'competition' ? '<label>' + esc(T('목표 진도(선택)','Target progress (optional)','目标进度（可选）')) + '<select data-sheet-target><option value="">' + esc(T('고르지 않음','Not chosen','未选择')) + '</option>' + targets.map(function(x){ return '<option value="' + x.id + '"' + (target && x.id === target.id ? ' selected' : '') + '>' + esc(L(x.label)) + '</option>'; }).join('') + '</select></label>' : '');
     }else{
       goalHtml += '<strong>' + esc(T('아직 고르지 않았어요','Not chosen yet','尚未选择')) + '</strong><p>' + esc(T('학습 목표는 자동으로 정하지 않아요. 아이에게 맞는 목표를 골라 주세요.','The learning goal is never chosen automatically. Choose the goal that fits the learner.','学习目标不会自动设定，请选择适合孩子的目标。')) + '</p>' +
         '<div class="pl-goal-pick" role="group" aria-label="' + esc(T('학습 목표 고르기','Choose a learning goal','选择学习目标')) + '">' + goals.map(function(g){ return '<button type="button" data-goal-pick="' + g.id + '">' + esc(L(g.label)) + '</button>'; }).join('') + '</div>';
     }
-    return '<div class="pl-result-head"><h2>' + esc(T('추천 결과','Suggestion','建议结果')) + '</h2><section class="pl-card' + (answered ? '' : ' is-missing') + '" id="plLevelCard" aria-label="' + esc(T('진단으로 확인한 시작 수준','Starting level from this check','测评确认的起点水平')) + '">' + level + '</section>' +
+    return '<div class="pl-result-head"><h2>' + esc(T('추천 결과','Suggestion','建议结果')) + '</h2><section class="pl-card' + (answered ? '' : ' is-missing') + '" id="plLevelCard" aria-label="' + esc(T('진단 결과','Check result','测评结果')) + '">' + level + '</section>' +
       '<section class="pl-card' + (goal ? '' : ' is-missing') + '" id="plGoalCard" tabindex="-1" aria-label="' + esc(T('선택한 학습 목표','Selected learning goal','所选学习目标')) + '">' + goalHtml + '</section>' +
       '<p class="pl-muted" role="status" style="grid-column:1/-1;margin:0">' + esc(answered ? T('추천 결과를 새로 만들었어요.','Suggestion updated.','建议已更新。') : T('체크한 답이 없어요.','No marks yet.','尚未勾选。')) + '</p></div>';
   }
