@@ -823,6 +823,14 @@ test("cross-grade concept flows render as examples on phone, tablet, and desktop
     assert.ok(await prealgebraFlow.evaluate((node) => node.scrollWidth <= node.clientWidth), `optional flow has no inner overflow at ${width}px`);
     assert.match(await page.locator("#concept-flow-title").innerText(), /배운 개념은 이렇게 이어져요/);
     assert.match(await page.locator(".concept-flow-intro").innerText(), /문제 풀이법을 먼저 외우기보다/);
+    const studySequence = page.locator(".competition-study-sequence");
+    assert.match(await studySequence.locator("h3").innerText(), /AMC·AIME 문제를 공부하는 순서/);
+    assert.equal(await studySequence.locator("li").count(), 4);
+    assert.deepEqual(await studySequence.locator("h4").allInnerTexts(), ["개념을 설명해요", "한 단원씩 연습해요", "개념을 섞어 풀어요", "기출로 시간 연습해요"]);
+    assert.match(await studySequence.innerText(), /다른 방법도 있을까/);
+    assert.match(await studySequence.innerText(), /막히면 표시하고 다음 문제로 넘어갔다 돌아와요/);
+    assert.equal(await studySequence.evaluate(function (node) { return node.scrollWidth <= node.clientWidth; }), true, `contest study sequence has no inner overflow at ${width}px`);
+    if (width <= 390) assert.ok(await studySequence.locator("li p").first().evaluate(function (node) { return parseFloat(getComputedStyle(node).fontSize) >= 16; }));
     assert.equal(await page.locator(".concept-flow-section .map-head").evaluate((node) => {
       const title = node.querySelector("h2").getBoundingClientRect();
       const note = node.querySelector(":scope > p").getBoundingClientRect();
