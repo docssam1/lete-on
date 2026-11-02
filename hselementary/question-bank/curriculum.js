@@ -2807,6 +2807,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Count = source52Average?.subunits.find(subunit => subunit.name === "사건의 가짓수");
+  if (source52Count) for (const [n,name] of [[33,"지점 재방문이 없는 여러 경로의 수 · 확인학습 원문"],[34,"전구 다섯 개의 켜짐과 꺼짐으로 신호 만들기 · 확인학습 원문"],[35,"1~20 중 5 또는 6의 배수 찾기 · 확인학습 원문"],[36,"세 사람의 가위바위보에서 낼 수 있는 경우 · 확인학습 원문"]]) {
+    const id=`5-2-u6-practice-${n}-original`;
+    if (source52Count.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:114,alternateSourcePdfPage:115,sourcePrintedPage:120,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U6Page116Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 그림을 대조하고 가능한 경우를 독립 계산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+
   if (source52Count) for (const [i,name] of ["직육면체 모서리의 길 세기","두 주사위 눈의 합과 배수","경유점을 지나는 격자 최단 경로","여러 갈래 길의 수","한 무리가 이웃하여 줄 서기"].entries()) {
     const id = i ? `5-2-u6-e3-example-${i}` : "5-2-u6-e3-exploration";
     const typeNumber = Math.max(0,...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
