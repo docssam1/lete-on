@@ -2178,6 +2178,16 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
       automaticGrading:suffix==="example-3", answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원본 수치와 어림 자리·방법을 독립 검산했습니다. 공식 답안은 미확인입니다."});
   }
+  if (source52RoundingGroup) for (const [n, name] of [[1,"주어진 자리까지 올림한 수 표에 쓰기 · 원문"],[2,"올림한 수와 반올림한 수의 차 · 원문"],[3,"수 카드로 40만에 가장 가까운 수 만들기 · 원문"],[4,"버림과 반올림 결과가 같은 빈칸 숫자 · 원문"]]) {
+    const id = `5-2-u1-e2-mission-${n}-original`;
+    if (source52RoundingGroup.types.some(type => type.id === id)) continue;
+    const typeNumber = Math.max(0, ...source52Range.subunits.flatMap(group => group.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52RoundingGroup.types.push({id, number:source52RoundingGroup.types.length+1, typeNumber, name, label:name, difficultyBand:0,
+      sourceItemId:id, sourceParentItemId:`5-2-u1-e2-mission-${n}`, sourceItemLabel:`Mission ${n} 원문`, sourceSection:"mission", sourceTier:"advanced", sourcePdfPage:5, sourcePrintedPage:7,
+      sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:`source52RoundingPage07OriginalMission${n}`,
+      generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
+      automaticGrading:n===3, answerVisualRequired:n===1, answerVisualStatus:n===1?"verified-reconstruction":"not-required", reviewReason:"원본 수치·표·카드와 어림 조건을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
 
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");

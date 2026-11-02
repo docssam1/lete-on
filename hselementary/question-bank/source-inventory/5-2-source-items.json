@@ -48,8 +48,8 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "verifiedLocalItems": 117,
-    "reviewLockedItems": 164
+    "verifiedLocalItems": 121,
+    "reviewLockedItems": 160
   },
   "units": [
     {
@@ -438,13 +438,14 @@
       "pdfPage": 5,
       "printedPage": 7,
       "sourceShape": "표의 수를 여러 자리까지 올림하여 나타내는 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "matrix-ordered-list",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e2-mission-1-original",
+      "reviewReason": "원본 두 수와 표의 여섯 칸을 올림으로 독립 검산했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-mission-2",
@@ -455,13 +456,14 @@
       "pdfPage": 5,
       "printedPage": 7,
       "sourceShape": "올림한 값과 반올림한 값의 차를 두 수 각각에 대하여 구하는 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "ordered-tuple",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e2-mission-2-original",
+      "reviewReason": "원본 두 수의 올림과 반올림 차를 독립 검산했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-mission-3",
@@ -472,13 +474,14 @@
       "pdfPage": 5,
       "printedPage": 7,
       "sourceShape": "수 카드를 한 번씩 써서 만든 여섯 자리 수 중 기준 수에 가장 가까운 수를 지정한 자리까지 반올림하는 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "single-value: 401000",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e2-mission-3-original",
+      "reviewReason": "원본 카드 여섯 장의 배열과 40만과의 차 및 반올림을 독립 검산했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-mission-4",
@@ -489,13 +492,14 @@
       "pdfPage": 5,
       "printedPage": 7,
       "sourceShape": "버림과 반올림 결과가 같은 여섯 자리 수의 빈칸에 들어갈 숫자를 모두 쓰는 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "ascending-list",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 공식 답, 단일 정답, 생성기와 화면 검수를 아직 마치지 않았습니다."
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e2-mission-4-original",
+      "reviewReason": "원본 백의 자리 빈칸의 가능한 숫자 0~9를 전수 검산했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e2-mission-5",
