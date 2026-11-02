@@ -2,8 +2,8 @@ name: Refresh academy test and seminar notices
 
 on:
   schedule:
-    # KST 08:17, 14:17, 20:17. Public sources only; no AI API calls.
-    - cron: '17 23,5,11 * * *'
+    # KST 17:00, once daily. Public sources only; no AI API calls.
+    - cron: '0 8 * * *'
   workflow_dispatch:
   push:
     branches: [main]
