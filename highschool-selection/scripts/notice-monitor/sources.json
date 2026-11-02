@@ -1,0 +1,16 @@
+{
+  "branches": ["대치", "분당"],
+  "academyBranches": {"SH": ["대치"]},
+  "maxPostAgeDays": 120,
+  "sources": [
+    {"id":"sh-blog","academy":"SH","kind":"rss","blog":"sharpedu","branch":"대치","identity":"생각하는 황소 대치점","evidence":"Official RSS channel identifies itself as the directly operated Daechi branch.","url":"https://blog.naver.com/sharpedu"},
+    {"id":"dp-blog","academy":"DP","kind":"rss","blog":"dpmath","branch":"title","identity":"돌파수학학원","evidence":"Shared official channel. Require an explicit Daechi or Bundang title prefix; a body mention is insufficient.","url":"https://blog.naver.com/dpmath"},
+    {"id":"wm-blog","academy":"WM","kind":"rss","blog":"wonmath563","branch":"대치","identity":"원수학","evidence":"Existing verified Daechi academy channel; no same-name Bundang institute is inferred.","url":"https://blog.naver.com/wonmath563"},
+    {"id":"ed-blog","academy":"ED","kind":"rss","blog":"edenmath","branch":"대치","identity":"이든수학학원","evidence":"Existing verified Daechi academy channel, recorded in docs/ACADEMY-LOGO-SOURCES.md.","url":"https://blog.naver.com/edenmath"},
+    {"id":"sm-blog","academy":"SM","kind":"rss","blog":"won1934","branch":"대치","identity":"생수와 생크","evidence":"Official location post 223221022382 lists Daechi addresses for the academy buildings.","url":"https://blog.naver.com/won1934"},
+    {"id":"dg-daechi-tests","academy":"DG","kind":"dg-tests","branch":"대치","acCode":"master","url":"https://apply.dailystudy.com/entrance-test/info/?academy=master"},
+    {"id":"dg-bundang-tests","academy":"DG","kind":"dg-tests","branch":"분당","acCode":"bundang","url":"https://apply.dailystudy.com/entrance-test/info/?academy=bundang"},
+    {"id":"dg-daechi-seminars","academy":"DG","kind":"dg-seminars","branch":"대치","acCode":"master","url":"https://apply.dailystudy.com/parent-seminar/"},
+    {"id":"dg-bundang-seminars","academy":"DG","kind":"dg-seminars","branch":"분당","acCode":"bundang","url":"https://apply.dailystudy.com/parent-seminar/"}
+  ]
+}

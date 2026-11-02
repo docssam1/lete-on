@@ -7,7 +7,7 @@
   <meta name="description" content="생각하는황소·돌파·원수학·이든·깊은생각·생수수학의 지원 과정을 고르고, 과정별 모의고사와 진단·보완 수업 구성을 확인하세요.">
   <link rel="preload" href="./assets/fonts/pretendard-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../shared/app.css">
-  <link rel="stylesheet" href="./promo.css?v=intro-type-20261102">
+  <link rel="stylesheet" href="./promo.css?v=notice-monitor-20261102">
 </head>
 <body class="selection-promo" data-view="home">
   <svg class="logo-display-filters" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false"><defs><filter id="logo-paper-out" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%"><feComponentTransfer in="SourceGraphic" result="white-channels"><feFuncR type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/><feFuncG type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/><feFuncB type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/></feComponentTransfer><feColorMatrix in="white-channels" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 1 1 0 -2" result="white-mask"/><feComposite in="SourceGraphic" in2="white-mask" operator="out"/></filter></defs></svg>
@@ -22,6 +22,7 @@
         <div class="home-intro"><p class="section-kicker">학원별 모의고사 · 대비 수업</p><h1 id="home-title" tabindex="-1">학원을 선택하세요.</h1></div>
         <div class="academy-launcher" id="academy-launcher" aria-label="소개를 볼 학원 선택"></div>
         <p class="independent-note"><strong>고등 및 누테학원 대비를 위한 프로그램입니다.</strong></p>
+        <section class="notice-board-section" id="notices" aria-labelledby="notices-title"><div class="small-section-head"><h2 id="notices-title">테스트 일정·설명회</h2><span>대치·분당 · 황소는 대치</span></div><div id="home-notice-board"></div></section>
         <noscript><p>학원 소개를 보려면 JavaScript를 켜 주세요. <a href="../login.html">내 시험 입장</a></p></noscript>
       </div>
     </section>
@@ -30,7 +31,7 @@
         <nav class="intro-breadcrumb" aria-label="현재 위치"><a href="#">학원 선택</a><span aria-hidden="true">/</span><span id="breadcrumb-name"></span></nav>
         <div id="academy-course-stage"></div>
         <section class="evidence-section" id="programs"><details><summary>검색 결과와 원본으로 확인한 시험 유형 <span>범위·시간의 근거 보기</span></summary><p class="evidence-note">근거 표기: A 공식 원문 · B 공식 게시물 미러 · C 독립 정리 · 관찰 · 확인 필요</p><div class="profile-grid" id="program-grid"></div><p class="source-policy" id="source-policy"></p></details></section>
-        <section class="notice-section" aria-labelledby="notice-title"><div class="small-section-head"><h2 id="notice-title">학원 공지 자료</h2><span>게시일 기준 · 최신 모집 여부는 원문 확인</span></div><div class="bulletin-list" id="academy-notices"></div></section>
+        <section class="notice-section" aria-labelledby="notice-title"><div class="small-section-head"><h2 id="notice-title">테스트 일정·설명회</h2><span>대치·분당 · 황소는 대치</span></div><div id="academy-notice-board"></div></section>
         <p class="release-note">표준 시험지 승인 전에는 신청·판매를 열지 않습니다.</p>
       </div>
     </section>
@@ -39,7 +40,7 @@
   <footer class="footer"><div class="shell"><span>LETE-ON · 중고등과정 대비</span><a href="../login.html">배정받은 시험 입장</a></div></footer>
   <script src="../data/public-exam-profiles.js"></script>
   <script src="../data/catalog.js"></script>
-  <script src="../data/academy-engagement.js?v=hwangso-links-20261102"></script>
+  <script src="../data/academy-engagement.js?v=notice-monitor-20261102"></script>
   <script src="../data/standard-exam-policy.js"></script>
   <script>
     'use strict';
@@ -98,14 +99,12 @@
       document.getElementById('academy-intro-view').hidden=!program;
       document.getElementById('learning-path').hidden=Boolean(program);
       document.title=program?`${program.publicName} 대비 과정 | LETE-ON`:'중고등과정 대비 | LETE-ON';
-      if(!program){stage.innerHTML='';document.getElementById('program-grid').innerHTML='';document.getElementById('academy-notices').innerHTML='';return;}
+      if(!program){stage.innerHTML='';document.getElementById('program-grid').innerHTML='';return;}
       const course=program.courses.find(item=>item.id===params.get('course'));
       const options=program.courses.map(item=>({label:item.label,scope:item.scope,href:route(program.code,item.id),selected:course?.id===item.id})).concat((program.relatedPrograms||[]).map(item=>({label:item.label,scope:'',href:safeUrl(item.url),selected:false})).filter(item=>item.href));
       document.getElementById('breadcrumb-name').textContent=program.publicName;
       stage.innerHTML=`<header class="academy-intro-header" style="--academy-accent:${cardColors[program.code]}"><div><p class="section-kicker">학원 소개</p><h1 id="intro-title" tabindex="-1">${esc(program.publicName)}</h1><p>${esc(courseGroups[program.code])}</p></div><a class="back-to-academies" href="#">다른 학원 보기 <span aria-hidden="true">↗</span></a></header><div class="intro-layout"><section class="course-picker" aria-labelledby="course-heading"><div class="small-section-head"><h2 id="course-heading">대비 과정</h2><span>${options.length}개 과정</span></div><div class="course-options">${options.map(item=>`<a class="course-option ${item.selected?'is-selected':''}" href="${esc(item.href)}" ${item.selected?'aria-current="true"':''}><span><b>${esc(item.label)}</b>${item.scope?`<small>${esc(item.scope)}</small>`:''}</span><span class="option-indicator" aria-hidden="true">${item.selected?'✓':'→'}</span></a>`).join('')}</div></section></div>${course?renderCourse(program,course):''}`;
       renderEvidence();
-      const notices=program.updates||[];
-      document.getElementById('academy-notices').innerHTML=notices.length?notices.map(item=>`<a href="${esc(safeUrl(item.url))}" target="_blank" rel="noopener noreferrer"><span>${esc(item.title)}</span><small>${esc(item.date)} · ${esc(item.sourceKind)}</small></a>`).join(''):'<p class="bulletin-empty">등록된 공지 자료가 없습니다. 해당 학원의 공식 채널에서 모집 내용을 확인해 주세요.</p>';
     }
     window.addEventListener('hashchange',()=>{
       render();
@@ -117,5 +116,7 @@
     });
     render();
   </script>
+  <script src="../data/academy-notices.js"></script>
+  <script src="./notices.js?v=notice-monitor-20261102"></script>
 </body>
 </html>
