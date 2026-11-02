@@ -178,8 +178,8 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 11,
-    "reviewLockedCount": 39,
+    "publicCandidateCount": 21,
+    "reviewLockedCount": 29,
     "uniqueAnswerPassCount": 47,
     "uniqueAnswerReviewNeededCount": 3
   },
@@ -399,11 +399,13 @@
       "singleAnswer": true,
       "singleAnswerCheck": "합집합의 겹침을 한 번만 세어 22개로 고정됩니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e1-mission-1-original",
       "practiceRuntimeId": "5-2-u1-e1-mission-1",
       "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
-      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
+      "lockReason": "",
+      "releaseEvidence": "Original conditions independently enumerated; publisher answer unverified."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-1-intersection-sum",
@@ -427,11 +429,13 @@
       "singleAnswer": true,
       "singleAnswerCheck": "공통 범위가 하나로 정해져 합도 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e1-mission-1-original",
       "practiceRuntimeId": "5-2-u1-e1-mission-1",
       "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
-      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
+      "lockReason": "",
+      "releaseEvidence": "Original conditions independently enumerated; publisher answer unverified."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-1-sum-range",
@@ -455,11 +459,13 @@
       "singleAnswer": true,
       "singleAnswerCheck": "두 선택 범위의 최솟값과 최댓값이 각각 합의 양 끝을 정합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e1-mission-1-original",
       "practiceRuntimeId": "5-2-u1-e1-mission-1",
       "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
-      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
+      "lockReason": "",
+      "releaseEvidence": "Original conditions independently enumerated; publisher answer unverified."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-2-multiple-count-endpoint",
@@ -483,11 +489,13 @@
       "singleAnswer": true,
       "singleAnswerCheck": "끝값 70~72는 69까지 포함하고 72는 포함하지 않아 모두 같은 개수를 만듭니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e1-mission-2-original",
       "practiceRuntimeId": "5-2-u1-e1-mission-2",
       "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
-      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
+      "lockReason": "",
+      "releaseEvidence": "Original conditions independently enumerated; publisher answer unverified."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-3-endpoint-pair",
@@ -511,11 +519,13 @@
       "singleAnswer": true,
       "singleAnswerCheck": "원문은 순서쌍의 목록이 아닌 개수를 묻습니다. ㄱ·ㄴ 위치와 끝점 포함 여부를 대조하고 8쌍을 전수 확인했습니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e1-mission-3-original",
       "practiceRuntimeId": "5-2-u1-e1-mission-3",
       "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
-      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
+      "lockReason": "",
+      "releaseEvidence": "Original conditions independently enumerated; publisher answer unverified."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-4-card-decimal-count",
@@ -540,11 +550,13 @@
       "singleAnswer": true,
       "singleAnswerCheck": "확대 원본에서 소수 두 자리 수를 확인하고 서로 다른 카드 3장의 순서를 전수 열거했습니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e1-mission-4-original",
       "practiceRuntimeId": "5-2-u1-e1-mission-4",
       "practiceLiveCheck": "2026-10-30: PC·모바일 세 화면 크기와 세 난이도에서 생성 및 풀이 확인",
-      "lockReason": "원문 답을 독립 전수 검산했으나 출판사 답안 미대조이므로 원문 잠금 유지합니다. 수치를 변경한 별도 유사문항은 실제 서비스에서 확인했습니다."
+      "lockReason": "",
+      "releaseEvidence": "Original conditions independently enumerated; publisher answer unverified."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-5-bus-range",
@@ -1641,8 +1653,8 @@
     "sourceProblemCount": 44,
     "typeCount": 50,
     "directlyReviewedCount": 50,
-    "publicCandidateCount": 11,
-    "lockedCount": 39,
+    "publicCandidateCount": 21,
+    "lockedCount": 29,
     "visualItemCount": 43,
     "uniqueAnswerPassCount": 47,
     "uniqueAnswerReviewNeededCount": 3,
@@ -1653,6 +1665,7 @@
       "5-2-u1-e1-mission-5-bus-range"
     ],
     "notes": [
+      "2026-11-02: 인쇄 4쪽 예제 네 문항과 인쇄 5쪽 Mission 1의 세 소문항 및 Mission 2~4를 원문으로 연결하여 50개 검수 기록 중 공개 21개·잠금 29개입니다. 원문 8문항이며 기존 유사문항을 유지합니다. 공식 답안은 미확인입니다.",
       "2026-10-30 기준 이 검수표의 50개 기록 중 11개는 출판사 답안 미대조 상태의 공개 유사문항에 연결되고, 39개는 원문 검수 잠금 기록입니다. 이 집계는 전체 문제은행 생성 가능 수와 별개입니다.",
       "PDF 내용 쪽 2~9는 인쇄 쪽 4~11에 대응합니다.",
       "기존 5-2 전체 장부의 1단원 44개는 탐구당 고정 개수였으므로 그대로 신뢰하지 않고 원문 소문항 구조를 다시 세었습니다.",

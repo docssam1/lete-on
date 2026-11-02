@@ -48,8 +48,8 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "verifiedLocalItems": 109,
-    "reviewLockedItems": 172
+    "verifiedLocalItems": 113,
+    "reviewLockedItems": 168
   },
   "units": [
     {
@@ -237,13 +237,14 @@
       "pdfPage": 3,
       "printedPage": 5,
       "sourceShape": "두 자연수 구간의 합집합·교집합 조건으로 해당 자연수의 개수와 합을 구하는 복합 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "ordered-tuple",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 조건과 답을 독립 전수 검산했습니다. 출판사 답안은 미대조로 원문 잠금을 유지하며 별도 유사문항은 실제 서비스에서 생성과 풀이를 확인했습니다.",
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e1-mission-1-original",
+      "reviewReason": "원문의 세 물음과 구간 끝점을 독립 전수 검산했습니다. 공식 답안은 미확인입니다.",
       "sourceReviewCorrection20261030": "정본 인쇄 5쪽을 재확인했다. 원문은 두 범위의 합집합 개수와 교집합의 합 외에 각 범위에서 하나씩 고른 두 수의 합의 범위까지 세 부분을 묻는다. 생성기도 이 세 부분을 제공하며 별도 수치를 사용한다."
     },
     {
@@ -255,13 +256,14 @@
       "pdfPage": 3,
       "printedPage": 5,
       "sourceShape": "일정 구간에서 3으로 나누어떨어지는 수의 개수 조건으로 가능한 끝수를 모두 구하는 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "ascending-list",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 조건과 답을 독립 전수 검산했습니다. 출판사 답안은 미대조로 원문 잠금을 유지하며 별도 유사문항은 실제 서비스에서 생성과 풀이를 확인했습니다."
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e1-mission-2-original",
+      "reviewReason": "원문의 미만 끝점과 배수 15개를 독립 전수 검산했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-3",
@@ -272,13 +274,14 @@
       "pdfPage": 3,
       "printedPage": 5,
       "sourceShape": "두 자연수 구간의 개수가 같다는 조건과 자릿수 조건으로 가능한 두 수의 쌍 개수를 구하는 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "single-value: 8",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 조건과 답을 독립 전수 검산했습니다. 출판사 답안은 미대조로 원문 잠금을 유지하며 별도 유사문항은 실제 서비스에서 생성과 풀이를 확인했습니다."
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e1-mission-3-original",
+      "reviewReason": "원문의 양 끝 제외와 두 자리 순서쌍을 독립 전수 검산했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-4",
@@ -288,14 +291,15 @@
       "ordinal": 4,
       "pdfPage": 3,
       "printedPage": 5,
-      "sourceShape": "주어진 수 카드로 만든 소수 두 자리 수 중 열린 구간에 있는 수의 개수를 구하는 문항.",
-      "answerContract": "candidate: single-value-or-set",
+      "sourceShape": "여섯 수 카드로 만든 소수 두 자리 수 중 3.2 초과 7.5 이하인 수의 개수를 구하는 문항.",
+      "answerContract": "single-value: 48",
       "visualRisk": [
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 조건과 답을 독립 전수 검산했습니다. 출판사 답안은 미대조로 원문 잠금을 유지하며 별도 유사문항은 실제 서비스에서 생성과 풀이를 확인했습니다."
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e1-mission-4-original",
+      "reviewReason": "원본 카드와 끝점을 대조하고 자리별 15·20·13개를 전수 검산했습니다. 원본 손글씨 38은 계산과 다르며 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-5",

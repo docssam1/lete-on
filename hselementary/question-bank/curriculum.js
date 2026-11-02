@@ -2157,6 +2157,16 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
       automaticGrading:n===1, answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원본 조건과 끝점을 독립 검산했습니다. 공식 답안은 미확인입니다."});
   }
+  if (source52RangeGroup) for (const [n, name] of [[1,"두 수의 범위와 합 · 원문"],[2,"배수의 개수로 끝 수 모두 구하기 · 원문"],[3,"두 자연수 범위의 개수로 순서쌍 세기 · 원문"],[4,"수 카드로 만드는 소수의 개수 · 원문"]]) {
+    const id = `5-2-u1-e1-mission-${n}-original`;
+    if (source52RangeGroup.types.some(type => type.id === id)) continue;
+    const typeNumber = Math.max(0, ...source52Range.subunits.flatMap(group => group.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    source52RangeGroup.types.push({id, number:source52RangeGroup.types.length+1, typeNumber, name, label:name, difficultyBand:0,
+      sourceItemId:id, sourceParentItemId:`5-2-u1-e1-mission-${n}`, sourceItemLabel:`Mission ${n} 원문`, sourceSection:"mission", sourceTier:"advanced", sourcePdfPage:3, sourcePrintedPage:5,
+      sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:`source52RangePage05OriginalMission${n}`,
+      generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
+      automaticGrading:n>=3, answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원본 조건과 끝점을 독립 전수 검산했습니다. 공식 답안은 미확인입니다."});
+  }
 
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
