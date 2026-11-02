@@ -7,3 +7,5 @@
 .p68practice-table{border-collapse:collapse;width:100%;max-width:370px;margin:.4em auto;font-size:.84em;table-layout:fixed;text-align:center}.p68practice-table th,.p68practice-table td{border:1px solid #191511;padding:.22em .08em;font-weight:400;height:1.65em}.p68practice-table th:first-child{width:32%}.p68practice-cards{white-space:nowrap}.p68practice-card{display:inline-block;border:1px solid #191511;line-height:1.2;text-align:center;min-width:1.1em;margin:0 .09em}
 
 .p68practice-stair{display:block;width:100%;max-width:290px;height:auto;margin:.15em auto}
+
+.p74-zoo-table th:first-child{width:31%}.p74-city-graph{display:block;width:100%;max-width:260px;height:auto;margin:.1em auto}

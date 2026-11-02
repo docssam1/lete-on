@@ -532,21 +532,27 @@
           "classification": "곱한 수의 올림 조건을 만족하는 자연수 개수",
           "candidate": "111개",
           "reviewNote": "3223부터 3333까지다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-53-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 54,
           "classification": "두 나눗셈 몫의 어림 조건 교집합",
           "candidate": "45개",
           "reviewNote": "가능한 자연수는 450부터 494까지다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-54-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 55,
           "classification": "표의 자리 숫자와 반올림한 세 수의 합",
           "candidate": "5, 6, 7, 8, 9",
           "visual": "세 달 입장객 수가 있는 표의 가운데 수백의 자리 빈칸",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-55-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 56,
@@ -554,7 +560,9 @@
           "candidate": "129999명",
           "visual": "만 명 단위 막대 높이 가 16, 나 26, 다 20, 라 28",
           "reviewNote": "라의 최대 284999명과 가의 최소 155000명의 차다. 그래프 원본 눈금과 막대 높이를 대조했다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-56-original",
+          "publisherAnswerVerified": false
         }
       ]
     }
