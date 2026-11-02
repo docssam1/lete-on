@@ -29,6 +29,19 @@ test("school, competition, and SAT stay separate in upper-grade examples", funct
 });
 
 test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge as inferred", function () {
+  const elementaryPlanTitles = {
+    3: ["기본 연산 살펴보기", "문장제 읽기 습관", "그림과 식으로 나타내기", "섞어 풀고 설명하기"],
+    4: ["표와 그래프에서 조건 찾기", "개념을 그림으로 보기", "표부터 설명하고 계산하기", "표·그림·문장제 복습"],
+    5: ["분수·소수 개념 확인", "문장제 조건 나타내기", "필요한 단원 보완", "문장제 복습과 설명"]
+  };
+  [3, 4, 5].forEach(function (grade) {
+    const plan = roadmap.getAnnualPlan(grade);
+    assert.equal(plan.source, "inferred");
+    assert.equal(plan.periods.length, 4);
+    assert.ok(plan.periods.every(function (period) { return period[0].includes("추정") && period.slice(1).every(Boolean); }));
+    assert.deepEqual(plan.periods.map(function (period) { return period[1]; }), elementaryPlanTitles[grade]);
+    assert.match(plan.note, /제공된 초등 로드맵.*12개월 구간.*계획 예시/);
+  });
   const suppliedStageTitles = {
     6: ["Pre-Algebra 개념 익히기", "AMC 8 유형과 논리", "SAT 기초 유형 맛보기", "복습과 실전 연습"],
     7: ["Algebra 1 개념과 풀이", "기하 기초와 AMC 입문", "대수 강화와 SAT 유형", "누적 복습과 모의 연습"],
@@ -59,7 +72,6 @@ test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge
     assert.match(plan.note, /학교|과목/);
   });
   [6, 7, 8, 10].forEach(function (grade) { assert.doesNotMatch(roadmap.getAnnualPlan(grade).note, /사용자|제공된 계획/); });
-  [3, 4, 5].forEach(function (grade) { assert.equal(roadmap.getAnnualPlan(grade), null); });
 });
 
 test("concept-flow examples connect supplied routes without learner placement", function () {

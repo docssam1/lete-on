@@ -68,6 +68,24 @@
   ];
 
   const annualPlans = Object.freeze({
+    3: Object.freeze({ source: "inferred", title: "기본 연산과 문장제 읽기", note: "교재와 사용법은 제공된 초등 로드맵을 따르고, 12개월 구간은 그 내용을 나눈 계획 예시예요. 하루 학습량과 학교 진도에 맞춰 조절하고 새 단원 배정이나 진단 결과로 해석하지 않아요.", periods: Object.freeze([
+      ["1–3개월 · 추정", "기본 연산 살펴보기", "하루 5문제로 익숙한 연산을 확인해요. 맞힌 문제도 왜 그런지 말해요.", "Spectrum Math · Math Mammoth"],
+      ["4–6개월 · 추정", "문장제 읽기 습관", "문제에서 무엇을 묻는지 먼저 찾고, 계산 전에 조건을 말로 정리해요.", "Spectrum Math · Math Mammoth"],
+      ["7–9개월 · 추정", "그림과 식으로 나타내기", "문장제의 조건을 간단한 그림이나 식으로 바꾸고, 고른 연산의 이유를 설명해요.", "Spectrum Math · Math Mammoth"],
+      ["10–12개월 · 추정", "섞어 풀고 설명하기", "배운 연산과 문장제를 섞어 풀고, 맞은 문제도 풀이 이유를 말해요.", "Spectrum Math · Math Mammoth"]
+    ]) }),
+    4: Object.freeze({ source: "inferred", title: "표·그래프와 그림으로 문제 읽기", note: "교재와 사용법은 제공된 초등 로드맵을 따르고, 12개월 구간은 그 내용을 나눈 계획 예시예요. 학교 진도와 아이의 속도에 맞춰 조절하며, 새 단원 배정이나 진단 결과로 해석하지 않아요.", periods: Object.freeze([
+      ["1–3개월 · 추정", "표와 그래프에서 조건 찾기", "계산 전에 표의 행·열이나 그래프의 표시가 무엇을 뜻하는지 설명해요.", "Spectrum Word Problems · Singapore Math Primary Mathematics"],
+      ["4–6개월 · 추정", "개념을 그림으로 보기", "문제의 수와 관계를 그림으로 나타내고, 같은 뜻을 표나 말로도 설명해요.", "Singapore Math Primary Mathematics"],
+      ["7–9개월 · 추정", "표부터 설명하고 계산하기", "문제에서 필요한 정보를 표에 정리한 뒤 어떤 계산이 필요한지 말해요.", "Spectrum Word Problems · Singapore Math Primary Mathematics"],
+      ["10–12개월 · 추정", "표·그림·문장제 복습", "배운 표현을 섞어 문제를 풀고, 계산 전에 조건을 정리하는 습관을 확인해요.", "Spectrum Word Problems · Singapore Math Primary Mathematics"]
+    ]) }),
+    5: Object.freeze({ source: "inferred", title: "분수·비율 문장제와 약점 보완", note: "교재와 사용법은 제공된 초등 로드맵을 따르고, 12개월 구간은 그 내용을 나눈 계획 예시예요. IXL은 점수나 자동 배치가 아니라 선택한 단원의 연습에 쓰고, 학교 진도에 맞춰 조절해요.", periods: Object.freeze([
+      ["1–3개월 · 추정", "분수·소수 개념 확인", "Math Mammoth로 이미 배운 내용을 확인하고, 풀이 이유를 말해요.", "Math Mammoth"],
+      ["4–6개월 · 추정", "문장제 조건 나타내기", "문장제에서 주어진 것과 구할 것을 나누고, 표·그림·식으로 나타내요.", "Math Mammoth"],
+      ["7–9개월 · 추정", "필요한 단원 보완", "다시 보고 싶은 단원을 골라 IXL로 연습하되, 점수보다 풀이와 설명을 확인해요.", "Math Mammoth · IXL"],
+      ["10–12개월 · 추정", "문장제 복습과 설명", "여러 문제를 풀며 막힌 조건을 다시 보고, 사용한 개념과 풀이 이유를 설명해요.", "Math Mammoth · IXL"]
+    ]) }),
     6: Object.freeze({ source: "provided", title: "선택 심화 · Pre-Algebra에서 SAT 기초까지", note: "학교 수학에서 이미 배운 단원을 깊게 익히는 경로와 별도의 선택 심화 예시예요. 새 주제는 이전 개념을 설명할 수 있고 가족·교사와 계획했을 때만 이어가요.", periods: Object.freeze([
       ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율과 변수식, 거듭제곱·연산 순서를 익히고 기하·자료 문제의 풀이 이유를 말해요.", "AoPS Pre-Algebra · Khan Academy · Singapore Math Challenging Word Problems 6"],
       ["4–6개월", "AMC 8 유형과 논리", "단원별 문제를 풀고, 한 문제를 여러 방법으로 설명해요.", "AoPS Challenge Problems · AMC 8 기출 · Beast Academy 5D"],

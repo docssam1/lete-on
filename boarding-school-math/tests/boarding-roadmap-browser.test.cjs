@@ -618,6 +618,21 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   await page.close();
 });
 
+test("elementary plans turn the supplied book guidance into clearly labeled pacing examples", async function () {
+  for (const grade of [3, 4, 5]) {
+    for (const width of [390, 1280]) {
+      const page = await browser.newPage({ viewport: { width, height: 844 } });
+      await page.goto(`${url}?grade=${grade}#annual-plan`, { waitUntil: "networkidle" });
+      assert.match(await page.locator("#annual-plan-title").innerText(), new RegExp(`${grade}학년.*추정`));
+      assert.equal(await page.locator("#annual-plan-periods > li").count(), 4);
+      assert.ok(await page.locator("#annual-plan-periods").evaluate(function (node) { return node.classList.contains("is-inferred"); }));
+      assert.match(await page.locator("#annual-plan-note").innerText(), /제공된 초등 로드맵.*계획 예시/);
+      assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [width, width]);
+      await page.close();
+    }
+  }
+});
+
 test("each Grade 7 NS.A standard link opens a populated filtered workbook with accessible controls",async function(){
   const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true});await page.goto(`${url}?grade=7`,{waitUntil:"networkidle"});await page.getByRole("button",{name:/살펴볼 지점 1, 유리수/}).click();
   const standards=await page.locator("#grade7-stage-questions .grade7-standard-code").evaluateAll(function(nodes){return nodes.map(function(node){return{standard:node.textContent,href:node.href,height:Math.round(node.getBoundingClientRect().height),minHeight:parseFloat(getComputedStyle(node).minHeight)};});});assert.deepEqual(standards.map(function(entry){return entry.standard;}),["7.NS.A.1","7.NS.A.2","7.NS.A.2d","7.NS.A.3"]);assert.ok(standards.every(function(entry){return entry.height>=44&&entry.minHeight>=44;}));for(let index=0;index<20&&!(await page.locator("#grade7-stage-questions .grade7-standard-code:focus-visible").count());index+=1)await page.keyboard.press("Tab");assert.ok(await page.locator("#grade7-stage-questions .grade7-standard-code:focus-visible").count(),"keyboard can focus a standard link");
