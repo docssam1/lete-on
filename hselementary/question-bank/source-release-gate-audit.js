@@ -394,8 +394,8 @@ if (kiteTypes.length === 1) {
   }
 }
 if (total !== 2702) failures.push(`전체 유형 수가 2702가 아니라 ${total}입니다.`);
-if (ready !== 1940) failures.push(`원문 연결 공개 유형 수가 1940가 아니라 ${ready}입니다.`);
-if (lockedWithoutSource !== 354) failures.push(`원문 미연결 잠금 유형 수가 354이 아니라 ${lockedWithoutSource}입니다.`);
+if (ready !== 1943) failures.push(`원문 연결 공개 유형 수가 1943가 아니라 ${ready}입니다.`);
+if (lockedWithoutSource !== 351) failures.push(`원문 미연결 잠금 유형 수가 351이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {
   console.error(`원문 연결 공개 문턱 실패: ${failures.length}건`);
