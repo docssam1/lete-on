@@ -2148,15 +2148,15 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52Range = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52RangeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s1");
   // 확인학습 is separate from the original exploration/mission inventory.
-  if (source52RangeGroup) for (const [n,name] of [[10,"곱과 나눗셈으로 나타낸 수의 범위 역산 · 확인학습 원문"],[14,"4의 배수의 개수로 상한의 범위 구하기 · 확인학습 원문"],[15,"자릿수 조건을 만족하는 다섯 자리 수 · 확인학습 원문"],[16,"두 좌석 조건을 모두 만족하는 학생 수 · 확인학습 원문"],[1,"초과와 이하를 수직선에 나타내기 · 확인학습 원문"],[2,"두 범위의 공통 부분과 자연수 · 확인학습 원문"],[3,"허용 범위 밖의 몸무게를 수직선에 나타내기 · 확인학습 원문"],[9,"상자 무게를 포함해 필요한 사과 수 구하기 · 확인학습 원문"],[4,"범위에 속하는 자연수의 개수와 합 · 확인학습 원문"],[5,"속도 단속 조건을 만족하는 범위 · 확인학습 원문"],[6,"두 자리 수 사이 자연수의 개수와 최댓값 · 확인학습 원문"],[7,"철사를 쓰고 남는 길이의 범위 · 확인학습 원문"]]) {
+  if (source52RangeGroup) for (const [n,name] of [[18,"두 게임 선호와 학생 수의 범위 · 확인학습 원문"],[19,"레몬을 나누어 담을 상자 수의 범위 · 확인학습 원문"],[20,"두 포장 조건과 달걀 수 · 확인학습 원문"],[22,"올림한 수와 버림한 수의 차 · 확인학습 원문"],[10,"곱과 나눗셈으로 나타낸 수의 범위 역산 · 확인학습 원문"],[14,"4의 배수의 개수로 상한의 범위 구하기 · 확인학습 원문"],[15,"자릿수 조건을 만족하는 다섯 자리 수 · 확인학습 원문"],[16,"두 좌석 조건을 모두 만족하는 학생 수 · 확인학습 원문"],[1,"초과와 이하를 수직선에 나타내기 · 확인학습 원문"],[2,"두 범위의 공통 부분과 자연수 · 확인학습 원문"],[3,"허용 범위 밖의 몸무게를 수직선에 나타내기 · 확인학습 원문"],[9,"상자 무게를 포함해 필요한 사과 수 구하기 · 확인학습 원문"],[4,"범위에 속하는 자연수의 개수와 합 · 확인학습 원문"],[5,"속도 단속 조건을 만족하는 범위 · 확인학습 원문"],[6,"두 자리 수 사이 자연수의 개수와 최댓값 · 확인학습 원문"],[7,"철사를 쓰고 남는 길이의 범위 · 확인학습 원문"]]) {
     const id=`5-2-u1-practice-${n}-original`;
     if (source52RangeGroup.types.some(type=>type.id===id)) continue;
     const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
     source52RangeGroup.types.push({id,number:source52RangeGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,
-      sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:n>=9?65:64,sourcePrintedPage:n>=9?69:68,
+      sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:n>=17?66:n>=9?65:64,sourcePrintedPage:n>=17?70:n>=9?69:68,
       sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52RangePage68Practice${n}`,
       generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,
-      automaticGrading:n===4||n===6||n===9||n===15,answerVisualRequired:n<=3,answerVisualStatus:n<=3?"verified-reconstruction":"not-required",reviewReason:"원문 조건과 경계를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+      automaticGrading:n===4||n===6||n===9||n===15||n===20||n===22,answerVisualRequired:n<=3,answerVisualStatus:n<=3?"verified-reconstruction":"not-required",reviewReason:"원문 조건과 경계를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
   if (source52RangeGroup) for (const [n, name] of [[1,"세 자리 수 범위의 시작 수 최댓값 · 원문"],[2,"필요한 의자 수로 학생 수 범위 구하기 · 원문"],[3,"두 조건을 모두 만족하는 회원 수 범위 · 원문"],[4,"귤을 나누어 담는 상자 수 범위 · 원문"]]) {
     const id = `5-2-u1-e1-example-${n}`;
