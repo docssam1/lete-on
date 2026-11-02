@@ -133,8 +133,8 @@
           "number": 11,
           "classification": "열린 경계 사이 소수 둘째 자리 수의 개수",
           "candidate": "644개",
-          "reviewNote": "소수 둘째 자리까지 표현하는 3.15부터 9.58까지를 센 결과다. 손글씨 580과 달라 공식 답안 및 소수 두 자리 표현 기준을 추가 확인한다.",
-          "status": "source-reviewed-answer-key-pending"
+          "reviewNote": "3.15부터 9.58까지 소수 둘째 자리까지 쓴 644개 중 끝자리가 0인 64개를 제외하면 580개다. 3.20처럼 끝에 0을 쓴 수를 소수 두 자리 수에 포함하는지에 따라 달라지므로 공식 답안·표현 기준 확인 전 보류한다.",
+          "status": "source-ambiguity-answer-key-pending"
         },
         {
           "number": 12,
@@ -192,7 +192,9 @@
           "candidate": "4000/11원 초과 800원 이하; 원 단위 정수면 364원 이상 800원 이하",
           "visual": "왼쪽 끝 열린 점, 오른쪽 끝 닫힌 점",
           "reviewNote": "구입 후 잔돈이 남을 수 있으므로 가격 364~400원도 가능하다. 손글씨의 400원 초과는 이를 누락한다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-17-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 18,
