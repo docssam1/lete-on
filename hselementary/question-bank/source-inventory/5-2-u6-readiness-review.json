@@ -116,16 +116,16 @@
       "sourcePrintedPage": 121,
       "scope": "121쪽 41~48번 원문과 필기 없는 사본을 대조했다. 47번은 그림의 격자 좌표와 최단경로 중복 여부를 검산했다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "partially-connected-41-43-45",
+      "runtimeConnection": "connected-41-48",
       "items": [
         {"number": 41, "classification": "부모가 양 끝에 서는 가족사진 배열", "candidate": "48가지", "reviewNote": "양 끝에 부모를 세우는 순서는 2가지이고 가운데 네 사람을 세우는 순서는 4!=24가지이므로 2×24=48가지다.", "runtimeTypeId": "5-2-u6-practice-41-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
-        {"number": 42, "classification": "집에서 두 장소를 한 번씩 들러 돌아오는 경로", "candidate": "48가지", "reviewNote": "집에서 서점과 약국을 각각 한 번 방문하고 바로 집으로 돌아오는 순서는 서점 먼저 또는 약국 먼저의 2가지다. 각 순서에 대해 집−서점 4개, 서점−약국 3개, 약국−집 2개 중 하나씩 고르므로 2×4×3×2=48가지다. 장소 방문 순서와 이동한 길을 구분해 센다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 42, "classification": "집에서 두 장소를 한 번씩 들러 돌아오는 경로", "candidate": "48가지", "reviewNote": "집에서 서점과 약국을 각각 한 번 방문하고 바로 집으로 돌아오는 순서는 서점 먼저 또는 약국 먼저의 2가지다. 각 순서에 대해 집−서점 4개, 서점−약국 3개, 약국−집 2개 중 하나씩 고르므로 2×4×3×2=48가지다. 장소 방문 순서와 이동한 길을 구분해 센다.", "runtimeTypeId": "5-2-u6-practice-42-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 43, "classification": "바지와 셔츠를 한 벌씩 고르기", "candidate": "12가지", "reviewNote": "서로 구별되는 바지 4개 중 하나와 셔츠 3개 중 하나를 고르므로 4×3=12가지다.", "runtimeTypeId": "5-2-u6-practice-43-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 44, "classification": "다섯 숫자 카드로 만드는 세 자리 홀수", "candidate": "36개", "reviewNote": "일의 자리는 1, 3, 5 중 3가지이고 나머지 네 카드에서 백의 자리와 십의 자리를 순서 있게 고르면 4×3가지다. 따라서 3×4×3=36개다.", "runtimeTypeId": "5-2-u6-practice-44-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
         {"number": 45, "classification": "숫자 카드로 만드는 35 이상의 두 자리 수", "candidate": "17개", "reviewNote": "십의 자리가 3이면 35, 36 두 개다. 십의 자리가 4, 5, 6이면 각각 다른 다섯 카드 중 하나를 일의 자리에 놓을 수 있으므로 2+3×5=17개다.", "runtimeTypeId": "5-2-u6-practice-45-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
-        {"number": 46, "classification": "부모끼리와 자녀끼리 이웃하는 다섯 명의 배열", "candidate": "24가지", "reviewNote": "부모 두 명과 자녀 세 명을 각각 한 묶음으로 보면 두 묶음의 순서는 2가지, 부모 안의 순서는 2가지, 자녀 안의 순서는 3!=6가지다. 전체는 2×2×6=24가지다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 47, "classification": "B 또는 C를 지나는 격자 최단경로", "candidate": "24가지", "reviewNote": "격자를 A=(0,0), B=(1,3), C=(2,1), D=(3,4)로 놓는다. B를 지나는 최단경로는 4×3=12가지, C를 지나는 최단경로는 3×4=12가지다. 최단경로에서는 오른쪽과 위쪽으로만 가므로 B와 C를 모두 지나는 경로는 없다. 합은 24가지다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 48, "classification": "둘레가 7인 자연수 변의 삼각형", "candidate": "2개", "reviewNote": "변의 길이를 작은 순으로 a≤b≤c로 놓고 a+b+c=7, a+b>c를 만족하는 경우를 세면 (1,3,3), (2,2,3) 두 가지다. 변의 순서나 회전은 같은 삼각형으로 센다.", "status": "source-reviewed-answer-key-pending"}
+        {"number": 46, "classification": "부모끼리와 자녀끼리 이웃하는 다섯 명의 배열", "candidate": "24가지", "reviewNote": "부모 두 명과 자녀 세 명을 각각 한 묶음으로 보면 두 묶음의 순서는 2가지, 부모 안의 순서는 2가지, 자녀 안의 순서는 3!=6가지다. 전체는 2×2×6=24가지다.", "runtimeTypeId": "5-2-u6-practice-46-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 47, "classification": "B 또는 C를 지나는 격자 최단경로", "candidate": "24가지", "reviewNote": "격자를 A=(0,0), B=(1,3), C=(2,1), D=(3,4)로 놓는다. B를 지나는 최단경로는 4×3=12가지, C를 지나는 최단경로는 3×4=12가지다. 최단경로에서는 오른쪽과 위쪽으로만 가므로 B와 C를 모두 지나는 경로는 없다. 합은 24가지다.", "runtimeTypeId": "5-2-u6-practice-47-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 48, "classification": "둘레가 7인 자연수 변의 삼각형", "candidate": "2개", "reviewNote": "변의 길이를 작은 순으로 a≤b≤c로 놓고 a+b+c=7, a+b>c를 만족하는 경우를 세면 (1,3,3), (2,2,3) 두 가지다. 변의 순서나 회전은 같은 삼각형으로 센다.", "runtimeTypeId": "5-2-u6-practice-48-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"}
       ]
     },
     {
