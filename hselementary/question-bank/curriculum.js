@@ -2887,6 +2887,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52DecimalSubunit.types.push({id, number:source52DecimalSubunit.types.length+1, typeNumber, name, label:name, sourceItemId:id, sourceItemLabel:"Mission 5", sourceSection:"mission", sourceTier:"advanced", sourcePdfPage:39, sourcePrintedPage:43, sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:"source52ClosedTapeRingLengthPage43Mission5", generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:3, verifiedVariantTarget:3, answerVisualRequired:true, answerVisualStatus:"verified-reconstruction"});
   }
 
+  if (source52DecimalSubunit) for (const [n,name] of [[1,"곱의 크기 변화로 빈 수 구하기 · 확인학습 원문"],[2,"곱의 자연수 부분과 소수 부분을 이용한 연산 · 확인학습 원문"],[4,"소금물의 양에 비례하는 소금의 양 · 확인학습 원문"],[8,"분과 초를 이용한 이동 거리 · 확인학습 원문"]]) {
+    const id=`5-2-u4-practice-${n}-original`;
+    if (source52DecimalSubunit.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52DecimalUnit.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52DecimalSubunit.types.push({id,number:source52DecimalSubunit.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:97,sourcePrintedPage:101,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U4Page101Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 소수 계산을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
   const source52DecimalDecimal = source52DecimalUnit?.subunits.find(s => s.name === "소수와 소수의 곱셈");
   if (source52DecimalDecimal) {
     const index = source52DecimalDecimal.types.findIndex(t => t.name === "소수 곱의 빠진 숫자 찾기");

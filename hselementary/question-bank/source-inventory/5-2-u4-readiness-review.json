@@ -23,16 +23,16 @@
       "sourcePrintedPage": 101,
       "scope": "101쪽 확인학습 1~8번을 원문과 필기 없는 사본에서 대조하고 소수·단위 계산을 독립 검산했다. 기존 개념탐구와 별도이며 문제 생성에는 연결하지 않는다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partially-connected",
       "items": [
-        {"number": 1, "classification": "곱의 크기 변화로 빈 수 구하기", "candidate": "0.021", "reviewNote": "37×가×150=116.55이므로 가=116.55÷5550=0.021이다. 원래 등식의 세 인수 변화로도 검산한다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 2, "classification": "곱의 자연수 부분과 소수 부분을 이용한 중첩 연산", "candidate": "0.12", "reviewNote": "8×3.62=28.96의 자연수 부분은 28이고 17×1.37=23.29의 소수 부분은 0.29다. 28×0.29=8.12의 소수 부분은 0.12다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 1, "classification": "곱의 크기 변화로 빈 수 구하기", "candidate": "0.021", "reviewNote": "37×가×150=116.55이므로 가=116.55÷5550=0.021이다. 원래 등식의 세 인수 변화로도 검산한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-1-original", "publisherAnswerVerified": false},
+        {"number": 2, "classification": "곱의 자연수 부분과 소수 부분을 이용한 중첩 연산", "candidate": "0.12", "reviewNote": "8×3.62=28.96의 자연수 부분은 28이고 17×1.37=23.29의 소수 부분은 0.29다. 28×0.29=8.12의 소수 부분은 0.12다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-2-original", "publisherAnswerVerified": false},
         {"number": 3, "classification": "두 수의 차가 주어진 소수 곱셈의 두 해", "candidate": "2.4, 1349.2", "reviewNote": "0.6758×100=67.58이다. 두 수의 차를 큰 수에서 작은 수를 뺀 값으로 해석하면 |67.58−0.1×가|=67.34이므로 0.1×가는 0.24 또는 134.92다. 따라서 가는 2.4 또는 1349.2이며 각각 대입해 차가 67.34임을 확인한다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 4, "classification": "소금물의 양에 비례하는 소금의 양", "candidate": "0.152g", "reviewNote": "소금물 0.004kg은 1kg의 0.004배이므로 소금은 38×0.004=0.152g이다.", "status": "source-reviewed-answer-key-pending"},
+        {"number": 4, "classification": "소금물의 양에 비례하는 소금의 양", "candidate": "0.152g", "reviewNote": "소금물 0.004kg은 1kg의 0.004배이므로 소금은 38×0.004=0.152g이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-4-original", "publisherAnswerVerified": false},
         {"number": 5, "classification": "책상 제작에 필요한 합판 넓이", "candidate": "2223cm²", "reviewNote": "한 개에 필요한 85.5cm²를 26배 하면 85.5×26=2223cm²다. 단위는 현실적인 크기를 추정해 바꾸지 않고 원문 cm²를 따른다.", "status": "source-reviewed-answer-key-pending"},
         {"number": 6, "classification": "4주 중 일요일을 제외한 우유의 양", "candidate": "10.8L", "reviewNote": "4주 28일 중 일요일 4일을 빼면 24일이고 0.45×24=10.8L다.", "status": "source-reviewed-answer-key-pending"},
         {"number": 7, "classification": "주어진 환율에 따른 환전 거스름돈", "candidate": "825원", "reviewNote": "문제에서 제시한 환율을 사용하면 1186.25×60=71175원이고 72000−71175=825원이다. 환율은 원문 문제의 가상 조건이다.", "status": "source-reviewed-answer-key-pending"},
-        {"number": 8, "classification": "분당 거리와 분·초를 이용한 이동 거리", "candidate": "252m", "reviewNote": "5분 15초는 5.25분이므로 48×5.25=252m다. 5분간 240m와 15초간 12m를 더해도 같다.", "status": "source-reviewed-answer-key-pending"}
+        {"number": 8, "classification": "분당 거리와 분·초를 이용한 이동 거리", "candidate": "252m", "reviewNote": "5분 15초는 5.25분이므로 48×5.25=252m다. 5분간 240m와 15초간 12m를 더해도 같다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-8-original", "publisherAnswerVerified": false}
       ]
     },
     {
