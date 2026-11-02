@@ -2807,7 +2807,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Count = source52Average?.subunits.find(subunit => subunit.name === "사건의 가짓수");
-  if (source52Count) for (const [n,name] of [[33,"지점 재방문이 없는 여러 경로의 수 · 확인학습 원문"],[34,"전구 다섯 개의 켜짐과 꺼짐으로 신호 만들기 · 확인학습 원문"],[35,"1~20 중 5 또는 6의 배수 찾기 · 확인학습 원문"],[36,"세 사람의 가위바위보에서 낼 수 있는 경우 · 확인학습 원문"]]) {
+  if (source52Count) for (const [n,name] of [[38,"자음과 모음을 하나씩 골라 글자 만들기 · 확인학습 원문"],[39,"최우수 한 팀과 우수 두 팀 선정 · 확인학습 원문"],[40,"다섯 명이 줄 설 때 두 명이 이웃하는 경우 · 확인학습 원문"],[33,"지점 재방문이 없는 여러 경로의 수 · 확인학습 원문"],[34,"전구 다섯 개의 켜짐과 꺼짐으로 신호 만들기 · 확인학습 원문"],[35,"1~20 중 5 또는 6의 배수 찾기 · 확인학습 원문"],[36,"세 사람의 가위바위보에서 낼 수 있는 경우 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52Count.types.some(type=>type.id===id)) continue;
     const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
