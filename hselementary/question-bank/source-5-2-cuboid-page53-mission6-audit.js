@@ -1,0 +1,17 @@
+"use strict";
+const assert = require("node:assert/strict");
+const api = require("./source-5-2-cuboid-page53-mission6.js");
+const item = api.build();
+assert.deepEqual(api.cells, [[0,0],[1,0],[2,0],[2,1],[3,1],[4,1]]);
+assert.equal(item.automaticGrading, false);
+assert.equal(item.publisherKeyVerified, false);
+const given = 'class="given-lines" d="M120 57 L141 78 M99 78 L120 99"';
+assert.ok(item.prompt.includes(given));
+assert.ok(item.answerVisual.includes(given));
+assert.ok(!item.prompt.includes('class="answer-lines"'));
+assert.ok(item.answerVisual.includes('class="answer-lines" d="M36 15 V57 M78 15 V57 M120 15 V57 M141 78 H183 M183 78 L204 57 M204 99 L225 78"'));
+const type = {id: api.sourceItemId, sourceItemId: api.sourceItemId, generatorKey: api.generatorKey, sourceVerified: true, reviewLocked: false};
+assert.ok(api.resolves(type));
+assert.ok(!api.resolves({...type, reviewLocked: true}));
+assert.ok(!api.resolves({...type, sourceVerified: false}));
+console.log("PASS: source lines, independent answer diagram, manual grading and release guard");
