@@ -71,6 +71,8 @@ test("only returns the published MAA 2026-27 US/Canada fixed-score context", fun
   assert.equal(history.cycleContext("amc10", "2026-27", "maa-us-canada").threshold, 100);
   assert.equal(history.cycleContext("amc12", "2026-27", "maa-us-canada").threshold, 85);
   assert.match(history.cycleContext("amc10", "2026-27", "maa-us-canada").note, /만 13세 이상/);
+  assert.match(history.cycleContext("amc10", "2026-27", "maa-us-canada").note, /2027 USAJMO·USAMO 선발은 AIME 점수를 주로 보며 AMC 점수는 선발 요소가 아니지만/);
+  assert.match(history.cycleContext("amc10", "2026-27", "maa-us-canada").note, /어느 대회의 진출 여부도 판정하지 않습니다/);
   assert.equal(history.cycleContext("amc10", "2026-27", "international").kind, "international");
   assert.equal(history.cycleContext("amc8", "2026-27"), null);
   assert.equal(history.cycleContext("amc10", "2025-26"), null);

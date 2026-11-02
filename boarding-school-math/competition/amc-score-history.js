@@ -73,7 +73,7 @@
       threshold: programId === "amc10" ? 100 : 85,
       maxScore: 150,
       title: "2026–27 미국·캐나다 MAA AIME 점수 기준",
-      note: "공식 성적과 그 밖의 자격 조건을 확인하세요. 2027년에는 만 13세 이상 조건도 적용되며, 이 기록표는 진출 여부를 판정하지 않습니다.",
+      note: "공식 성적과 그 밖의 자격 조건을 확인하세요. 2027년에는 만 13세 이상 조건도 적용됩니다. 2027 USAJMO·USAMO 선발은 AIME 점수를 주로 보며 AMC 점수는 선발 요소가 아니지만, 이 기록표는 어느 대회의 진출 여부도 판정하지 않습니다.",
       source: CURRENT_AIME_SOURCE,
       eligibilitySource: INVITATIONAL_SOURCE
     });

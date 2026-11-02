@@ -356,6 +356,8 @@ test("AMC score records stay separated by contest, export/import as a local file
   await page.locator("#history-region").selectOption("maa-us-canada");
   assert.match(await page.locator("#score-history-context").innerText(), /100 \/ 150/);
   assert.match(await page.locator("#score-history-context").innerText(), /만 13세 이상/);
+  assert.match(await page.locator("#score-history-context").innerText(), /2027 USAJMO·USAMO 선발은 AIME 점수를 주로 보며 AMC 점수는 선발 요소가 아니지만/);
+  assert.match(await page.locator("#score-history-context").innerText(), /어느 대회의 진출 여부도 판정하지 않습니다/);
   assert.equal(await page.getByRole("link", { name: "MAA 2027 AIME 공식 공지 ↗" }).getAttribute("href"), "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/");
   assert.equal(await page.getByRole("link", { name: "MAA AIME 자격 조건 ↗" }).getAttribute("href"), "https://maa.org/maa-invitational-competitions/");
   assert.equal(await page.locator("#history-score").getAttribute("max"), "150");
