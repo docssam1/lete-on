@@ -60,12 +60,8 @@
   /* 진단하기는 위 도구줄의 주 단추(진한 초록), 인쇄는 테두리 단추(2026-11-02 원장 「진단하기 버튼 색 구분」 「노란 배너 제대로 디자인」).
      채점 상자는 진단하기를 눌렀을 때만 펼쳐 보인다 — 닫혀 있을 때 띠를 따로 그리지 않는다. */
   #plScore:not([open]){display:none}
-  .ws-bar #plDiagBtn{margin-left:auto;background:#2f6b4a;color:#fff;border:1.5px solid #2f6b4a}
-  .ws-bar #plDiagBtn:hover{background:#1e4631;border-color:#1e4631}
-  .ws-bar #plDiagBtn[aria-expanded=true]{background:#1e4631;border-color:#1e4631}
-  .ws-bar #wsPrint{margin-left:0;background:#fffdf8;color:#1e4631;border:1.5px solid #c9bda2}
-  .ws-bar #wsPrint:hover{background:#f7f2e7}
-  .ws-bar #plDiagBtn:focus-visible,.ws-bar #wsPrint:focus-visible{outline:3px solid #2f6b4a;outline-offset:2px}
+  .ws-bar #plDiagBtn{margin-left:auto}.ws-bar #wsPrint{margin-left:0}
+  .ws-bar #plDiagBtn:focus-visible,.ws-bar #wsPrint:focus-visible{outline:3px solid #27665b;outline-offset:2px}
   #plScore>summary:focus-visible{outline:3px solid #245b60;outline-offset:2px;border-radius:6px}
   #plScore[open]{padding-bottom:16px}
   .pl-sc-help{margin:0 0 8px;font-size:13px;line-height:1.6;color:#5c6b70;word-break:keep-all}
@@ -166,6 +162,30 @@
   .pl-b-previous td:nth-child(2){color:#5c6b70}.pl-b-next td:nth-child(2){color:#a3521c}
   .pl-tally{display:flex;gap:8mm;font-size:13px;margin:0 0 2mm}.pl-tally u{display:inline-block;min-width:12mm;border-bottom:1.2px solid #20343b;text-decoration:none}
   .pl-keypage .pl-sub{margin-top:1mm}
+  /* ── 게임(앱 진단 화면)과 같은 그래픽(2026-11-02 원장 「게임과 같이 그래픽 맞춰」) ──
+     값은 app/placement-ui.css 의 .nm-placement 토큰 그대로: 잉크 #193b3c · 주 단추 #27665b · 보조 #e9eee7 · 종이 #fffdf8 · 칸 #f5f6ef/#ced8d0.
+     화면 전용 — 인쇄 쪽(.nm-print-sheet 안)과 @media print 는 건드리지 않는다. */
+  body{--pl-ink:#193b3c;--pl-accent:#27665b;--pl-accent-dark:#1d5047;--pl-paper:#fffdf8;--pl-soft:#e9eee7;--pl-line:#d9dfd9}
+  .ws-bar{padding:12px 16px;gap:10px;background:rgba(255,253,248,.94);border-bottom:1px solid var(--pl-line);box-shadow:0 2px 14px rgba(25,59,60,.08);color:var(--pl-ink);font-family:Pretendard,system-ui,sans-serif}
+  .ws-bar b{font-size:16px;font-weight:800;color:var(--pl-ink)}
+  .ws-bar .ws-sub{color:#60766e}
+  .ws-bar .pl-tools select,.ws-bar .pl-tools input{min-height:42px;padding:8px 12px;border:1px solid var(--pl-line);border-radius:12px;background:#fff;color:var(--pl-ink);font-size:14px}
+  .ws-bar .pl-tools select:focus-visible,.ws-bar .pl-tools input:focus-visible{outline:3px solid var(--pl-accent);outline-offset:1px}
+  .ws-bar button{min-height:48px;padding:12px 20px;border-radius:10px;font-size:15px;font-weight:700;line-height:1.4}
+  .ws-bar #plDiagBtn{background:var(--pl-accent);border:0;color:#fff;box-shadow:0 3px 10px rgba(39,102,91,.25)}
+  .ws-bar #plDiagBtn:hover,.ws-bar #plDiagBtn[aria-expanded=true]{background:var(--pl-accent-dark)}
+  .ws-bar #wsPrint{background:var(--pl-soft);border:0;color:var(--pl-ink)}
+  .ws-bar #wsPrint:hover{background:#dde6dc}
+  #plScore{padding:4px 22px 0;background:var(--pl-paper);border:1px solid var(--pl-line);border-radius:18px;box-shadow:0 8px 28px rgba(25,59,60,.14);color:var(--pl-ink);font-family:Pretendard,system-ui,sans-serif}
+  #plScore[open]{padding-bottom:22px}
+  #plScore>summary{min-height:56px;font-size:18px;color:var(--pl-ink)}
+  .pl-sc-tools button{min-height:44px;border:0;border-radius:10px;background:var(--pl-soft);color:var(--pl-ink);font-weight:700}
+  .pl-sc-cell{border:1px solid #ced8d0;border-radius:8px;background:#f5f6ef}
+  .pl-sc-cell[data-state=o]{border:2px solid var(--pl-accent);background:#e8f2ec}
+  .pl-sc-cell[data-state=x]{border:2px solid #a8452c;background:#fbefe9}
+  #plGo{min-height:50px;padding:13px 26px;border-radius:10px;background:var(--pl-accent);font-weight:700;box-shadow:0 3px 10px rgba(39,102,91,.25)}
+  #plGo:hover{background:var(--pl-accent-dark)}
+  .pl-card{border-color:var(--pl-line);border-radius:14px;background:#fff}
 </style>
 </head>
 <body>
