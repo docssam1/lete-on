@@ -8,7 +8,7 @@ path = Path(__file__).parent / "source-inventory/5-2-u4-readiness-review.json"
 review = next(r for r in json.loads(path.read_text())["additionalSourceReviews"] if r["sourcePrintedPage"] == 104)
 assert review["sourcePdfPage"] is None and review["alternateSourcePdfPage"] == 99
 assert {i["number"] for i in review["items"]} == set(range(25,31))
-assert review["publisherAnswerVerified"] is False and review["runtimeConnection"] == "not-connected"
+assert review["publisherAnswerVerified"] is False and review["runtimeConnection"] == "partially-connected"
 
 values=[D('2.38')*D('3.14')-D('1.28')*D('.9'), D(17)*D('9.5')+D('2.1')*9,
         (D('37.5')+D('12.5'))*2*D('3.65'), 5*D('8.75')-D('1.2')*D('.46')+D('.74')*8,
