@@ -1,6 +1,6 @@
 import '../../../highschool-selection/shared/grading.js';
 const grading=globalThis.HIGHSELECT_GRADING;
-export function publicExam(exam){return {id:exam.id,title:exam.title,mode:exam.mode,version:exam.version,questionCount:exam.questions.length,pageCount:exam.pages.length,durationMinutes:exam.durationMinutes};}
+export function publicExam(exam){return {id:exam.id,title:exam.title,programId:exam.programId,scope:exam.scope,mode:exam.mode,version:exam.version,questionCount:exam.questions.length,pageCount:exam.pages.length,answerPageCount:exam.answerPages?.length||0,durationMinutes:exam.durationMinutes,responseMode:'self-check'};}
 export function publicQuestions(exam){return exam.questions.map(q=>({number:q.number,responseType:q.responseType,...(q.fields?{fields:q.fields}:{})}));}
 export function normalizeInput(raw){return String(raw??'').normalize('NFKC').replace(/\\pi\b|\bpi\b/g,'π').replace(/[−–]/g,'-').replace(/\u200b/g,'').trim();}
 function decimalFraction(value){return value.replace(/^(-?\d+)\.(\d{1,6})$/,(_,a,b)=>String(Number(a)*10**b.length+(a.startsWith('-')?-1:1)*Number(b))+'/'+10**b.length);}
@@ -28,6 +28,11 @@ export function makeReport(exam,responses){
   return {number:q.number,state:evaluateResponse(value,q),...q.classification};
  });
  return summarize(exam,rows);
+}
+export function makeSelfReport(exam,marks){
+ if(!Array.isArray(marks)||marks.length!==exam.questions.length||marks.some(x=>!['O','X',''].includes(x)))throw Error('response_invalid');
+ const rows=exam.questions.map((q,i)=>({number:q.number,state:marks[i]==='O'?'correct':marks[i]==='X'?'wrong':'blank',...q.classification}));
+ return {...summarize(exam,rows),gradingMethod:'self-reported',final:false};
 }
 function summarize(exam,rows){
  const correct=rows.filter(x=>x.state==='correct').length,wrong=rows.filter(x=>x.state==='wrong').length,blank=rows.filter(x=>x.state==='blank').length,review=rows.filter(x=>x.state==='review').length;

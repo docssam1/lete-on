@@ -8,6 +8,7 @@ const files = [
   ['promo/promo.css', 'promo/promo.css'],
   ['promo/notices.js', 'promo/notices.js'],
   ['data/academy-notices.js', 'data/academy-notices.js'],
+  ['data/available-mocks.js', 'data/available-mocks.js'],
   ['promo/assets/fonts/pretendard-var.woff2', 'promo/assets/fonts/pretendard-var.woff2'],
   ['promo/assets/fonts/OFL-Pretendard.txt', 'promo/assets/fonts/OFL-Pretendard.txt'],
   ['promo/assets/logos/sh.png', 'promo/assets/logos/sh.png'],

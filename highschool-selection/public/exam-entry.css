@@ -5,3 +5,5 @@
 
 #mobile-answers{display:none}
 @media(max-width:800px){#mobile-answers{display:inline-flex;align-items:center}.exam-workspace .response-panel{display:none}.exam-workspace[data-mobile-pane="answers"] .paper-pages{display:none}.exam-workspace[data-mobile-pane="answers"] .response-panel{display:block}}
+
+.ox-row{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;padding:8px 0;border:0;border-bottom:1px solid #d8dee8;border-radius:0;margin:0;min-width:0}.ox-row legend{padding:0;font-size:14px;font-weight:600}.ox-row label{display:flex;position:relative}.ox-row input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}.ox-row label span{display:grid;place-items:center;min-height:46px;border:1px solid #a7b1bd;border-radius:6px;width:100%;font-size:18px}.ox-row input:checked+span{color:white;background:#254e39;border-color:#254e39}.ox-row input[value="X"]:checked+span{background:#8c3838;border-color:#8c3838}.ox-row input:focus-visible+span{outline:3px solid #2456c4;outline-offset:2px}.ox-clear{padding:0 6px;min-width:44px;font-size:12px;border:0;background:transparent}
