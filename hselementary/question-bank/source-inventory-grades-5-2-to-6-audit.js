@@ -84,6 +84,9 @@ for (const n of [1, 2, 3, 4]) verified5_2Page49.add(`5-2-u1-e1-mission-${n}`);
 verified5_2Page49.add("5-2-u1-e2-exploration");
 for (const n of [1, 2, 3]) verified5_2Page49.add(`5-2-u1-e2-example-${n}`);
 for (const n of [1, 2, 3, 4]) verified5_2Page49.add(`5-2-u1-e2-mission-${n}`);
+verified5_2Page49.add("5-2-u1-e1-exploration");
+verified5_2Page49.add("5-2-u1-e1-mission-6");
+for (const n of [5, 6]) verified5_2Page49.add(`5-2-u1-e2-mission-${n}`);
 const verified5_2LockedPractice = new Set([
   "5-2-u3-e1-exploration",
   ...[1, 2].flatMap(e => [`5-2-u4-e${e}-exploration`, ...[1, 2, 3, 4].map(n => `5-2-u4-e${e}-example-${n}`), ...[1, 2, 3, 4, 5, 6].map(n => `5-2-u4-e${e}-mission-${n}`)])
