@@ -3589,6 +3589,16 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:source,sourceParentItemId:parent,sourceItemLabel:"확인학습 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:pdf,alternateSourcePdfPage:pdf+1,sourcePrintedPage:printed,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:!manual,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 구조를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
   }
 
+  const source52RangeUnit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+  if (source52RangeUnit) for (const [id,source,parent,key,manual,pdf,printed] of [
+    ["5-2-u1-t1-2","5-2-u1-practice-10-similar","5-2-u1-practice-10-original","source52U1RangeCalculationSimilar",true,65,69],
+    ["5-2-u1-t3","5-2-u1-practice-38-similar","5-2-u1-practice-38-original","source52U1RibbonCostSimilar",false,68,72],
+    ["5-2-u1-t3-2","5-2-u1-practice-38-conversion-similar","5-2-u1-practice-38-original","source52U1RibbonBundlesSimilar",false,68,72]
+  ]) {
+    const type=source52RangeUnit.subunits.flatMap(group=>group.types).find(item=>item.id===id);
+    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:source,sourceParentItemId:parent,sourceItemLabel:"확인학습 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:pdf,alternateSourcePdfPage:pdf+1,sourcePrintedPage:printed,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:!manual,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 구조를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
