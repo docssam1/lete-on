@@ -390,8 +390,8 @@ if (kiteTypes.length === 1) {
     if (api.generatorKey({ ...type, ...mutation })) failures.push(`${symmetryKite.id}: 검수 조건 위반 문항이 생성기에 연결됩니다.`);
   }
 }
-if (total !== 2643) failures.push(`전체 유형 수가 2643가 아니라 ${total}입니다.`);
-if (ready !== 1864) failures.push(`원문 연결 공개 유형 수가 1864가 아니라 ${ready}입니다.`);
+if (total !== 2645) failures.push(`전체 유형 수가 2645가 아니라 ${total}입니다.`);
+if (ready !== 1866) failures.push(`원문 연결 공개 유형 수가 1866가 아니라 ${ready}입니다.`);
 if (lockedWithoutSource !== 371) failures.push(`원문 미연결 잠금 유형 수가 371이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {
