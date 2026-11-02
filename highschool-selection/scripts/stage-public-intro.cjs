@@ -22,7 +22,9 @@ const files = [
   ['data/catalog.js', 'data/catalog.js'],
   ['data/academy-engagement.js', 'data/academy-engagement.js'],
   ['data/standard-exam-policy.js', 'data/standard-exam-policy.js'],
-  ['public/entry-pending.html', 'login.html'],
+  ['public/exam-entry.html', 'login.html'],
+  ['public/exam-entry.js', 'exams/app.js'],
+  ['public/exam-entry.css', 'exams/app.css'],
   ['public/index.html', 'index.html']
 ];
 function stagePublicIntro(dest) {
