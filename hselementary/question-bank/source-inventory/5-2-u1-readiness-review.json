@@ -261,34 +261,42 @@
       "sourcePrintedPage": 71,
       "scope": "문항 25~32는 기존 개념탐구·예제·Mission 목록과 별도이며 원문과 필기 없는 사본을 대조해 유형과 독립 계산 후보를 기록한다.",
       "publisherAnswerVerified": false,
-      "runtimeConnection": "not-connected",
+      "runtimeConnection": "partial-verified-local",
       "items": [
         {
           "number": 25,
           "classification": "여러 자리 숫자 카드의 최대·최소 차와 반올림",
           "candidate": "4658000",
           "reviewNote": "카드 전체를 각각 한 덩어리로 이어 붙여 24개 순서를 검사했다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-25-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 26,
           "classification": "숫자 카드로 두 목표에 가장 가까운 수와 차",
           "candidate": "20000",
           "reviewNote": "가까운 수는 각각 51237과 71235이고 차 19998을 천의 자리로 반올림한다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-26-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 27,
           "classification": "숫자 배열과 반올림 결과의 개수",
           "candidate": "30개",
           "reviewNote": "4로 시작하고 다음이 5·6·7인 경우 18개와 5로 시작하고 다음이 3·4인 경우 12개다. 손글씨 36과 달라 공식 답안을 확인한다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-27-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 28,
           "classification": "반올림·버림 범위와 자리 관계",
           "candidate": "376361, 378461",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-28-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 29,
