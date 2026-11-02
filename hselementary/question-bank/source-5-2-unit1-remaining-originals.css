@@ -1,0 +1,4 @@
+.u1remaining-question,.u1remaining-solution{font-family:inherit;color:#191511;line-height:1.5}
+.u1remaining-question>p,.u1remaining-solution>p{margin:0 0 .5em}.u1remaining-question ol{padding-left:1.6em;margin:.25em 0}.u1remaining-question li{margin:0 0 .25em}
+.u1remaining-line{width:min(100%,335px);height:auto;display:block;margin:5px auto}.u1remaining-line text{fill:#191511;stroke:none;text-anchor:middle;font:13px sans-serif}
+@media print{.u1remaining-question,.u1remaining-solution{font-family:'Noto Serif KR','Batang',serif;font-size:10.5pt}.u1remaining-line{max-height:18mm;margin:1mm auto}}

@@ -2188,6 +2188,20 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
       generationMode:"fixed-verified-pool", implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
       automaticGrading:n===3, answerVisualRequired:n===1, answerVisualStatus:n===1?"verified-reconstruction":"not-required", reviewReason:"원본 수치·표·카드와 어림 조건을 독립 검산했습니다. 공식 답안은 미확인입니다."});
   }
+  for (const [group,id,parent,key,name,label,section,pdf,page,visual,automaticGrading] of [
+    [source52RangeGroup,"5-2-u1-e1-exploration-original","5-2-u1-e1-exploration","source52RangeOriginalExplorationPage04","수의 범위를 말과 수직선으로 나타내기 · 원문","개념탐구 1 원문","exploration",2,4,true,false],
+    [source52RangeGroup,"5-2-u1-e1-mission-6-original","5-2-u1-e1-mission-6","source52RangeOriginalMission6Page05","토마토를 나누어 담는 상자 수 범위 · 원문","Mission 6 원문","mission",3,5,false,false],
+    [source52RoundingGroup,"5-2-u1-e2-mission-5-original","5-2-u1-e2-mission-5","source52RoundingOriginalMission5Page07","세 어림 방법의 결과가 같은 네 자리 수 · 원문","Mission 5 원문","mission",5,7,false,true],
+    [source52RoundingGroup,"5-2-u1-e2-mission-6-original","5-2-u1-e2-mission-6","source52RoundingOriginalMission6Page07","두 어림 조건을 만족하는 세 자리 수 · 원문","Mission 6 원문","mission",5,7,false,true]
+  ]) {
+    if (!group || group.types.some(type => type.id === id)) continue;
+    const typeNumber = Math.max(0, ...source52Range.subunits.flatMap(g => g.types.map(type => Number(type.typeNumber) || 0))) + 1;
+    group.types.push({id, number:group.types.length+1, typeNumber, name, label:name, difficultyBand:0,
+      sourceItemId:id, sourceParentItemId:parent, sourceItemLabel:label, sourceSection:section, sourceTier:"advanced", sourcePdfPage:pdf, sourcePrintedPage:page,
+      sourceVerified:true, publisherKeyVerified:false, reviewLocked:false, generatorKey:key, generationMode:"fixed-verified-pool",
+      implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1, automaticGrading,
+      answerVisualRequired:visual, answerVisualStatus:visual?"verified-reconstruction":"not-required", reviewReason:"원본 조건과 답을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
 
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
