@@ -10,9 +10,16 @@
  function screen(title,body){root.innerHTML=`<h2 id="memberTitle" tabindex="-1">${title}</h2>${body}`;announce();$('memberTitle').focus({preventScroll:true});}
  async function run(fn){if(busy)return;busy=true;root.querySelectorAll('button').forEach(b=>b.disabled=true);try{await fn();}catch(e){announce(A.message(e),true);}finally{busy=false;root.querySelectorAll('button').forEach(b=>b.disabled=false);updateCooldown();}}
  function login(){
-  screen('다시 만나 반갑습니다.',`<p class="member-lead">가입한 이메일과 로그인 번호로 들어오세요.</p><form id="loginForm">${field('email','보호자 이메일','email','autocomplete="username" maxlength="254"')}${field('pin','로그인 번호','password','inputmode="numeric" pattern="[0-9]{8,12}" maxlength="12" autocomplete="current-password"')}<button class="member-primary">로그인</button></form><div class="member-actions"><button data-action="signup">이메일로 가입·로그인</button><button data-action="reset">로그인 번호를 잊으셨나요?</button></div><p class="member-note">이메일 인증을 마치면 별도 승인 없이 무료로 이용합니다.</p>`);
+  screen('다시 만나 반갑습니다.',`<p class="member-lead">가입한 이메일과 로그인 번호로 들어오세요.</p><form id="loginForm">${field('email','보호자 이메일','email','autocomplete="username" maxlength="254"')}${field('pin','로그인 번호','password','inputmode="numeric" pattern="[0-9]{8,12}" maxlength="12" autocomplete="current-password"')}<button class="member-primary">로그인</button></form><div class="member-actions"><button data-action="signup">이메일로 가입·로그인</button><button data-action="reset">로그인 번호를 잊으셨나요?</button></div><p class="member-note">이메일 인증을 마치면 별도 승인 없이 무료로 이용합니다.</p><button class="member-link" data-action="review-login">검수용 로그인</button>`);
   root.querySelector('[name=email]').value=email;
   $('loginForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);run(async()=>{email=String(f.get('email')).trim().toLowerCase();member=A.accept(await A.call('login',{email,pin:f.get('pin')}));e.target.reset();profile();});};
+ }
+ function reviewLogin(){
+  screen('검수용 로그인',`<p class="member-lead">발급받은 검수 아이디와 승인번호를 입력해 주세요.</p><form id="reviewForm">${field('username','검수 아이디','text','autocomplete="username" maxlength="64" autocapitalize="none" spellcheck="false"')}${field('code','승인번호','password','inputmode="numeric" pattern="[0-9]{4,12}" minlength="4" maxlength="12" autocomplete="current-password"')}<button class="member-primary">학습 로드맵 열기</button></form><button class="member-link" data-action="login">일반 로그인으로 돌아가기</button>`);
+  $('reviewForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);run(async()=>{member=A.accept(await A.call('review-login',{username:f.get('username'),code:f.get('code')}));e.target.reset();location.assign(next);});};
+ }
+ function reviewProfile(){
+  screen('검수용 계정',`<p class="member-lead">${esc(member.username)} · 학습 로드맵 검수</p><a class="member-primary" href="${esc(next)}">학습 로드맵 이어보기 →</a><p class="member-note">이 계정으로 만든 설계는 이 기기에 따로 보관됩니다.</p><button class="member-link" data-action="logout">로그아웃</button>`);
  }
  function emailScreen(intent='signup'){
   mode=intent;
@@ -57,7 +64,7 @@
   $('pinForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('pin')!==f.get('pinAgain')){announce('로그인 번호가 서로 다릅니다.',true);return;}run(async()=>{member=A.accept(await A.call('reset-pin',{pin:f.get('pin')},proof));e.target.reset();await A.closeProof(proof);proof=null;complete('로그인 번호를 변경했습니다.');});};
  }
  function complete(title){screen(title,`<p class="member-lead">${esc(member.student_name)} 학생의 학습 로드맵을 만들어 보세요.</p><a class="member-primary" href="${esc(next)}">로드맵으로 가기 <span aria-hidden="true">→</span></a><button class="member-link" data-action="profile">내 계정 확인</button>`);}
- function profile(){email=member.email;
+ function profile(){if(member.review){reviewProfile();return;}email=member.email;
   screen('내 계정',`<p class="member-lead member-email">${esc(member.email)} <span class="member-badge">이메일 인증 완료</span></p><a class="member-primary" href="${esc(next)}">학습 로드맵 이어보기 →</a><form id="profileForm">${schoolFields(member)}<details><summary>광고성 정보 수신·이용 안내</summary>${P.marketing}</details><label class="check"><input type="checkbox" name="marketing_email"><span>[선택] 이메일로 교육·행사 안내 받기</span></label><label class="check"><input type="checkbox" name="marketing_sms"><span>[선택] 문자로 교육·행사 안내 받기</span></label><button class="member-secondary">회원 정보·수신 동의 저장</button></form><div class="member-actions"><button data-action="change-pin">로그인 번호 변경</button><button data-action="logout">로그아웃</button><button data-action="import">이 기기의 이전 설계 연결</button></div><p class="member-note">학습 설계는 계정별로 이 기기에 보관됩니다. 다른 기기와 자동 연결되지는 않습니다.</p><details class="member-withdraw"><summary>개인정보 동의 철회·회원 탈퇴</summary><p>이메일을 다시 인증한 뒤 로드맵 회원 정보를 삭제합니다. 다른 GFIELD 서비스의 가입 정보는 유지됩니다.</p><button data-action="withdraw">로드맵 회원 탈퇴</button></details>`);fillSchool(member);
   const f=$('profileForm');f.elements.marketing_email.checked=member.marketing_email;f.elements.marketing_sms.checked=member.marketing_sms;
   f.onsubmit=e=>{e.preventDefault();const d=new FormData(e.target);run(async()=>{member=(await A.call('update',{version:P.VERSION,profile:readProfile(d),marketing_email:d.get('marketing_email')==='on',marketing_sms:d.get('marketing_sms')==='on'})).member;announce('회원 정보와 수신 동의를 저장했습니다.');});};
@@ -66,6 +73,7 @@
  function withdrawConfirm(){screen('로드맵 회원에서 탈퇴할까요?',`<p class="member-lead">${esc(member.email)}의 로드맵 회원 정보·연락처·동의 내역과 이 기기의 계정별 설계를 삭제합니다.</p><p>다른 GFIELD 서비스의 계정과 기록은 삭제하지 않습니다.</p><button class="member-primary member-danger" data-action="delete">확인했습니다. 로드맵 회원 탈퇴</button><button class="member-link" data-action="profile">계정으로 돌아가기</button>`);}
  root.addEventListener('click',e=>{const action=e.target.closest('[data-action]')?.dataset.action;if(!action||busy)return;
   if(action==='login')login();if(action==='signup'||action==='reset')emailScreen(action);
+  if(action==='review-login')reviewLogin();
   if(action==='profile')profile();if(action==='set-pin')resetPin();if(action==='change-pin')emailScreen('reset');if(action==='withdraw')emailScreen('withdraw');
   if(action==='logout')run(async()=>{await A.logout();await A.closeProof(proof);proof=null;member=null;login();});
   if(action==='email-login')run(async()=>{member=A.accept(await A.call('email-login',{},proof));await A.closeProof(proof);proof=null;complete('이메일 인증을 마쳤습니다.');});
@@ -79,5 +87,6 @@
    }announce(count?'이전 설계를 계정에 연결했습니다.':'연결할 이전 설계가 없거나 이미 연결되어 있습니다.');}catch{announce('기기 저장 공간을 확인해 주세요.',true);}
   }
  });
- A.status().then(m=>{member=m;if(m)profile();else login();}).catch(e=>{login();announce(A.message(e),true);});
+ const entryLogin=()=>new URLSearchParams(location.search).get('review')==='1'?reviewLogin():login();
+ A.status().then(m=>{member=m;if(m)profile();else entryLogin();}).catch(e=>{entryLogin();announce(A.message(e),true);});
 })();

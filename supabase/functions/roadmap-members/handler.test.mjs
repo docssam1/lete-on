@@ -7,9 +7,9 @@ function harness(options={}){
  const calls=[];
  const user={id:UID,email:M.email,email_confirmed_at:'2026-10-30',app_metadata:{role:'user'},...options.user};
  const service={auth:{getUser:async token=>({data:{user:options.noUser?null:user},error:null})},
-  rpc:async(name,args)=>{calls.push({name,args});if(name==='roadmap_email_session_active')return {data:!options.revoked};if(name==='roadmap_take_attempt')return {data:options.limited?false:true};if(name==='roadmap_verify_pin')return {data:options.badPin?null:UID};return {data:null};},
+  rpc:async(name,args)=>{calls.push({name,args});if(name==='roadmap_review_verify_code')return {data:options.badReview?null:UID};if(name==='roadmap_email_session_active')return {data:!options.revoked};if(name==='roadmap_take_attempt')return {data:options.limited?false:true};if(name==='roadmap_verify_pin')return {data:options.badPin?null:UID};return {data:null};},
   from(table){let action='select';const q={select(columns){calls.push({table,columns});return q;},eq(){return q;},gt(){return q;},lt(){return q;},order(){return q;},range(){return q;},limit(){return q;},or(){return q;},delete(){action='delete';return q;},insert(value){calls.push({table,insert:value});return q;},
-   async maybeSingle(){if(table==='roadmap_sessions')return {data:options.noSession?null:{user_id:UID,session_version:options.stale?1:2}};if(table==='hs_accounts')return {data:options.admin?{role:'admin',active:true,student:'DOCSSAM'}:{role:'student',active:true,student:'X'}};return {data:options.noMember?null:M};},
+   async maybeSingle(){if(table==='roadmap_review_accounts')return {data:options.review?{user_id:UID,username:'test-review',active:!options.disabledReview,session_version:2}:null};if(table==='roadmap_review_sessions')return {data:options.review?{user_id:UID,session_version:options.stale?1:2}:null};if(table==='roadmap_sessions')return {data:options.noSession?null:{user_id:UID,session_version:options.stale?1:2}};if(table==='hs_accounts')return {data:options.admin?{role:'admin',active:true,student:'DOCSSAM'}:{role:'student',active:true,student:'X'}};return {data:options.noMember?null:M};},
    then(resolve,reject){return Promise.resolve({data:table==='roadmap_members'?[M]:[],count:1,error:null}).then(resolve,reject);}};return q;}};
  const handler=createHandler({service,url:'https://example.invalid',publicKey:'public',rateSecret:'test-secret',now:()=>NOW,send:async()=>{calls.push({mail:true});return new Response('{}');}});
  async function request(body,headers={}){const r=await handler(new Request('https://example.invalid',{method:'POST',headers:{'content-type':'application/json',origin:'https://lete-on.gfieldacademy.net',...headers},body:JSON.stringify(body)}));return {status:r.status,data:await r.json(),headers:r.headers};}
@@ -80,4 +80,26 @@ test('foreign origins, malformed JSON and oversized requests fail closed',async(
  const h=harness();assert.equal((await h.request({action:'status'},{origin:'https://evil.invalid'})).status,403);
  assert.equal((await h.handler(new Request('https://example.invalid',{method:'POST',body:'invalid'}))).status,400);
  assert.equal((await h.handler(new Request('https://example.invalid',{method:'POST',body:' '.repeat(12001)}))).status,413);
+});
+test('review login is rate limited and uses server credentials without member registration',async()=>{
+ const h=harness({review:true});const r=await h.request({action:'review-login',username:'TEST-REVIEW',code:'4829'});
+ assert.equal(r.status,200);assert.equal(r.data.member.review,true);assert.equal(r.data.member.username,'test-review');
+ assert.equal('email' in r.data.member,false);assert.equal('session_version' in r.data.member,false);
+ assert.equal(h.calls.some(x=>x.name==='roadmap_register'||x.mail),false);
+ const s=h.calls.find(x=>x.table==='roadmap_review_sessions'&&x.insert);assert.notEqual(s.insert.token_hash,r.data.token);
+ assert.equal((await harness({review:true,limited:true}).request({action:'review-login',username:'test-review',code:'4829'})).status,429);
+ assert.equal((await harness({review:true,badReview:true}).request({action:'review-login',username:'test-review',code:'4829'})).status,401);
+});
+test('review access checks active account and session version on every request',async()=>{
+ const header={'x-roadmap-session':'b'.repeat(64)};
+ assert.equal((await harness({review:true,noSession:true}).request({action:'status'},header)).data.member.review,true);
+ for(const extra of [{disabledReview:true},{stale:true}])assert.equal((await harness({review:true,noSession:true,...extra}).request({action:'status'},header)).status,401);
+});
+test('review session can logout but cannot update, withdraw or list real members',async()=>{
+ const h=harness({review:true,noSession:true}),header={'x-roadmap-session':'b'.repeat(64)};
+ assert.equal((await h.request({action:'update',profile},header)).status,403);
+ assert.equal((await h.request({action:'withdraw',confirm:true},header)).status,401);
+ assert.equal((await h.request({action:'admin-list'},header)).status,401);
+ assert.equal((await h.request({action:'logout'},header)).status,200);
+ assert.equal(h.calls.some(x=>x.name==='roadmap_update_profile'),false);
 });

@@ -364,3 +364,12 @@ runtime 커밋 `7f6b71193f5b3a8b9dcf855b03839d14301cfb68`를 최신 원격 main 
 공개 `https://lete-on.gfieldacademy.net/`에서 이번 runtime 변경14개와 계정화면1개, 총15파일을 받아 HTTP200·바이트·SHA-256이 로컬 승인본과 모두 일치함을 확인했다. 결과는 로컬 `output/highschool-20261102/public-release.json`이다. 고입 직접주소는 `https://lete-on.gfieldacademy.net/roadmap/demo2/planner.html?admissions=1&v=20261102-admissions1`, 국가대표2는 `https://lete-on.gfieldacademy.net/roadmap/demo2/planner.html?classroom=gfield-6-national2&v=20261102-class4`이다. 계정 인증은 기존 그대로이며 비로그인 공개 진입에서 로그인 페이지로 이동할 때 admissions와 버전이 next에 보존되는 것을 별도 확인했다. 실제 회원의 로그인 정보 입력·본인 데이터 변경·폰 실기 재검수를 한 것은 아니다.
 
 로컬 PDF·원문·합성세션·미리보기·검수 이미지는 배포하지 않았다. 이 완료 기록만 후속 문서 커밋으로 남기며 runtime은 배포 검증본을 유지한다.
+
+
+## 로드맵 검수용 마스터 계정 — 2026-11-03
+
+사용자 요청의 검수 아이디를 로드맵 전용으로 등록했다. 승인번호는 운영 DB의 bcrypt 해시로만 보관하며 소스·문서·커밋·공개 파일에 넣지 않는다. `/roadmap/demo2/account.html?review=1&next=planner.html`은 검수 로그인 폼을 열 뿐 인증을 건너뛰지 않는다. 일반 이메일 회원의 가입·8~12자리 로그인 번호·동의 절차는 유지한다. 기존 DOCSSAM 관리자, Fields와 Numbers of Magic 계정은 변경하지 않았다.
+
+검수 계정은 학생 개인정보/동의를 임의 등록하지 않고 별도 `roadmap_review_accounts`와 `roadmap_review_sessions`를 사용한다. RLS 활성화, anon/authenticated의 테이블·코드 검증 RPC 접근 차단, service_role만 사용한다. Edge Function은 아이디/IP별 15분 로그인 제한과 bcrypt 검증 후 8시간의 무작위 세션을 발급하며, 토큰 해시만 DB에 저장한다. 매 요청에서 활성 상태와 세션 버전을 확인한다. 비활성화/승인번호 변경 시 기존 세션을 종료할 수 있다. 학습 설계는 기존 계정별 로컬 저장 구조로 분리하며 회원 목록·연락처·회원 수정/탈퇴의 관리자 권한은 부여하지 않는다.
+
+Mac Codex 기존 `codex/roadmap-membership-20261030` 작업본에서 Supabase 스킬 적용. CLI가 생성한 마이그레이션 파일은 운영 이력 `20261102174150_roadmap_review_access`와 맞췄다. 운영 `roadmap-members` v4 배포 및 계정 등록 완료. 테스트 102개 통과. 실제 서버 로그인으로 로컬 390×844 고입 안내 진입, 잘못된 승인번호401, 회원 수정403, 회원 목록/탈퇴401, 로그아웃 후 기존 토큰401, 실행 오류0·가로 넘침0을 확인했다. 보안 검사에서 신규 두 테이블은 의도한 서비스 전용 RLS/정책 없음 INFO이며 익명·일반 회원 접근 권한을 별도로 확인했다. 공개 프런트 배포 상태는 아래 후속 기록으로 구분한다. 검수 스크린샷과 테스트 결과는 `output/review-access-20261103/`(Git 제외). Drive 업로드·정리 없음.
