@@ -5,7 +5,7 @@
   if (root) root.GFIELDPaperReviewAnalysis = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
-  // Reference formulas: MAA 2023 AMC 8 and 2022 AMC 10A booklets. Check the selected paper's own instructions; MAA may update rules.
+  // Reference formulas match MAA's 2026-27 AMC policies (updated 2026-10-30); verify the selected paper's instructions, especially outside U.S./Canada.
   const statusIds = Object.freeze(["unmarked", "correct", "wrong", "blank"]);
   const domainIds = Object.freeze(["unclassified", "algebra", "number", "geometry", "counting", "data"]);
   const wrongReasonIds = Object.freeze(["none", "concept", "approach", "calculation", "reading", "time"]);

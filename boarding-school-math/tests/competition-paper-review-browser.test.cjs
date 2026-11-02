@@ -233,6 +233,10 @@ test("complete AMC 10 marks show the raw-score estimate without a qualification 
   assert.equal(await page.locator("#report-roadmap-link").getAttribute("aria-describedby"), "report-roadmap-note");
   assert.equal(await page.locator("#score-estimate-note").isHidden(), true);
   assert.match(await page.locator("#score-estimate").innerText(), /공식 성적표/);
+  assert.equal(await page.locator("#score-estimate a").getAttribute("href"), "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf");
+  assert.equal(await page.locator("#score-estimate a").innerText(), "MAA 2026–27 공식 채점 안내 ↗");
+  assert.match(await page.locator("#score-estimate").innerText(), /미국·캐나다의 2026–27 MAA 규정 기준/);
+  assert.match(await page.locator("#score-estimate").innerText(), /국제 응시는 현지 주관기관 안내/);
   assert.match(await page.locator(".report-boundary").innerText(), /수상·AIME 진출.*판단하지 않습니다/);
   await page.locator("#review-grade").selectOption("8");
   assert.equal(await page.locator(".review-report").isHidden(), true, "a grade change clears the prior result and its roadmap link");

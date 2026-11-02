@@ -85,6 +85,9 @@ test("AMC 8 current eligibility, format, and internal preparation band stay dist
     "pythagorean-theorem", "spatial-visualization", "graphs-tables", "beginning-algebra"
   ]);
   assert.equal(Object.hasOwn(profile, "contentAvailability"), false);
+  assert.ok(profile.sources.some(function (row) {
+    return row.url === "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf" && row.lastVerified === "2026-11-02" && /official scoring/.test(row.documentRevision);
+  }));
 });
 
 test("AMC 10 and AMC 12 preserve separate official eligibility and scope contracts", function () {
@@ -94,6 +97,9 @@ test("AMC 10 and AMC 12 preserve separate official eligibility and scope contrac
   assert.deepEqual(amc12.officialEligibility, { gradeMaximum: 12, ageExclusiveMaximum: 19.5 });
   assert.deepEqual(amc10.gfieldPreparationGrades, [9, 10]);
   assert.deepEqual(amc12.gfieldPreparationGrades, [11, 12]);
+  for (const profile of [amc10, amc12]) assert.ok(profile.sources.some(function (row) {
+    return row.url === "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf" && row.lastVerified === "2026-11-02";
+  }));
   assert.deepEqual([amc10.questionCount, amc10.durationMinutes], [25, 75]);
   assert.deepEqual([amc12.questionCount, amc12.durationMinutes], [25, 75]);
   assert.equal(amc10.officialScope.excludes.includes("trigonometry"), true);
@@ -117,15 +123,18 @@ test("competition sources are HTTPS and original problem publication remains per
     "maa-amc-8": [
       ["Mathematical Association of America", "https://maa.org/student-programs/amc/"],
       ["Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"],
+      ["Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf"],
       ["Mathematical Association of America", "https://maa.org/wp-content/uploads/2025/08/2026-AMC-8-Teachers-Manual.pdf"]
     ],
     "maa-amc-10": [
       ["Mathematical Association of America", "https://maa.org/student-programs/amc/"],
-      ["Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"]
+      ["Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"],
+      ["Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf"]
     ],
     "maa-amc-12": [
       ["Mathematical Association of America", "https://maa.org/student-programs/amc/"],
-      ["Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"]
+      ["Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/"],
+      ["Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf"]
     ]
   };
   data.profiles.forEach(function (profile) {
@@ -134,14 +143,21 @@ test("competition sources are HTTPS and original problem publication remains per
       assert.match(source.url, /^https:\/\//);
       assert.ok(source.documentRevision);
       const currentMaaOverview = source.authority === "Mathematical Association of America" && source.url === "https://maa.org/student-programs/amc/";
+      const currentMaaRules = source.authority === "Mathematical Association of America" && source.url === "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf";
       const currentKangarooArchive = source.authority === "Math Kangaroo USA" && source.url === "https://mathkangaroo.org/mks/practice/pdf-exams/";
-      assert.equal(source.lastVerified, currentMaaOverview ? "2026-10-30" : currentKangarooArchive ? "2026-11-02" : "2026-08-28");
+      assert.equal(source.lastVerified, currentMaaOverview || currentMaaRules || currentKangarooArchive ? "2026-11-02" : "2026-08-28");
       if (currentMaaOverview) assert.match(source.documentRevision, /dates, format and age\/grade limits rechecked/);
+      if (currentMaaRules) assert.match(source.documentRevision, /updated 2026-10-30/);
     });
     assert.equal(profile.contentRights.originalProblems, "permission-required");
     assert.equal(profile.contentRights.publicUse, "metadata-and-links-only");
   });
   catalog.programs.filter(function (program) { return program.pathway === "competition"; }).forEach(function (program) {
     assert.deepEqual(program.sources.map(function (row) { return [row.authority, row.url]; }), expectedSources[program.profileId]);
+    if (program.profileId.startsWith("maa-amc-")) {
+      assert.ok(program.sources.some(function (row) {
+        return row.url === "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf" && row.lastVerified === "2026-11-02";
+      }));
+    }
   });
 });
