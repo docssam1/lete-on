@@ -2544,6 +2544,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
 
   const source52Dice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s5");
+  if (source52Dice) for (const [n,name] of [[51,"맞닿은 눈이 같은 네 주사위 쌓기 · 확인학습 원문"],[52,"같은 방향으로 쌓은 주사위의 맞닿은 면의 눈의 합 · 확인학습 원문"]]) {
+    const id=`5-2-u5-practice-${n}-original`;
+    if (source52Dice.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Dice.types.push({id,number:source52Dice.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:108,alternateSourcePdfPage:109,sourcePrintedPage:114,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U5Page108Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 그림과 주사위 면의 대응을 대조하고 독립 계산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
   if (source52Dice) {
     for (const [ordinal, name, generatorKey] of [
       [1, "이어 붙인 주사위의 면에 적힌 수 구하기", "source52CuboidPage54Example41"],
