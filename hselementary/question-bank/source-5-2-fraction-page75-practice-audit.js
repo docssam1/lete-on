@@ -1,0 +1,3 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-fraction-page76-practice.js');const q=[[4*15,5,'㉠'],[17*6,8,'㉡'],[5*24,9,'㉢'],[16*5,7,'㉣']];q.sort((a,b)=>b[0]*a[1]-a[0]*b[1]);assert.deepEqual(q.map(x=>x[2]),['㉢','㉡','㉠','㉣']);assert.equal(4*5/6+8*7/12,8);assert.equal(((23/4)-(11/7))*4,117/7);assert.equal(8000*11/8*3,33000);
+for(const n of [1,2,3,4]){assert.equal(api.build(n).sourcePdfPage,71);assert.equal(api.build(n).sourcePrintedPage,75)}assert(api.build(3).prompt.includes('data-shaded="true"'));console.log('PASS: fraction ordering, perimeter, shaded area, cinema cost');
