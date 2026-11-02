@@ -231,6 +231,22 @@ test("saved AMC 8 diagnostics accept the five official-scope groups without expo
   assert.equal(store.saveCompetitionDiagnostic(invalidOtherContest), false);
 });
 
+test("Math Kangaroo paper-review summaries persist for cross-grade same-paper comparison", function () {
+  const store = records.create(memoryStorage());
+  const saved = store.saveCompetitionDiagnostic({
+    schemaVersion: "gfield-competition-diagnostic-v1", id: "diag-kangaroo-grade7", programId: "kangaroo", programTitle: "Math Kangaroo", grade: 7,
+    paperLabel: "2025 Grade 7–8 official paper", examDate: "2026-03-19",
+    summary: { itemCount: 30, correct: 1, wrong: 0, blank: 0, unmarked: 29, attempted: 1, domainClassified: 1, reasonClassified: 0 },
+    domains: [
+      { id: "algebra", attempted: 1, correct: 1, wrong: 0, blank: 0 }, { id: "number", attempted: 0, correct: 0, wrong: 0, blank: 0 },
+      { id: "geometry", attempted: 0, correct: 0, wrong: 0, blank: 0 }, { id: "counting", attempted: 0, correct: 0, wrong: 0, blank: 0 }
+    ], reasons: []
+  });
+  assert.equal(saved.programId, "kangaroo");
+  assert.equal(store.loadCompetitionDiagnosticHistory(7, "kangaroo")[0].summary.itemCount, 30);
+  assert.equal(store.loadCompetitionDiagnosticHistory(8, "kangaroo").length, 0);
+});
+
 test("legacy assessment summaries retain only source-score inputs and cannot feed the learning plan", function () {
   const storage = memoryStorage();
   storage.setItem("gmap-local-learning-record-v1:external-assessment", JSON.stringify({

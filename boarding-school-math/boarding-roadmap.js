@@ -646,7 +646,8 @@
       return;
     }
     section.dataset.state = "comparable-format";
-    copy.textContent = `${currentOption.title} · ${matchedPair.current.examDate} · “${matchedPair.current.paperLabel.trim()}” 기록을 비교해요. 날짜와 메모가 같아도 난도를 보정한 등급이나 성장 판정은 아니에요.`;
+    const contestBoundary = competition === "kangaroo" ? " Math Kangaroo 공식 순위와 백분위는 학년별로 산정돼요." : "";
+    copy.textContent = `${currentOption.title} · ${matchedPair.current.examDate} · “${matchedPair.current.paperLabel.trim()}” 기록을 비교해요. 날짜와 메모가 같아도 난도를 보정한 등급이나 성장 판정은 아니에요.${contestBoundary}`;
     cards.append(
       buildCompetitionRecordCard(matchedPair.current, `${current.grade}학년 · ${matchedPair.current.paperLabel}`, "competition-grade-current-record-title"),
       buildCompetitionRecordCard(matchedPair.target, `${target.grade}학년 · ${matchedPair.target.paperLabel}`, "competition-grade-target-record-title")

@@ -186,3 +186,9 @@ The official MAA AMC overview was checked 2026-10-30 for current grade/age eligi
 The Grade 3–12 page now has a sticky, keyboard-accessible shortcut bar for Growth Map, Monthly Plan, Grade Comparison, and Contest Records. It follows the current section while scrolling and uses scroll offsets so sticky navigation does not cover the destination. The quick links preserve the existing single-page content and screen-reader structure.
 
 Visual review used the actual Grade 7 page at 1280×900 and 390×844; the shortcut bar fit both widths and page width matched the viewport. Existing GFIELD design rules and the local UI/UX Pro Max responsive/accessibility guidance were consulted. The reference `math-skill-map` research page is a separate repo and was not changed. `boarding-grade-roadmap.test.cjs` plus `boarding-roadmap-browser.test.cjs` passed 23/23, including section hash, active state, destination offset, mobile overflow, and prior navigation flows. Changed HTML/JS/CSS whitespace checks pass. Local only; no publish or deployment.
+
+## 2026-11-02 Math Kangaroo Grade 7–8 paper comparison
+
+Connected Math Kangaroo manual review summaries to the answer-safe local diagnostic store, which previously accepted AMC/SASMO IDs but rejected `kangaroo`. The roadmap comparison now names the official grade-specific ranking boundary while comparing only same-date, same-paper-memo raw review summaries. It does not calculate grade equivalence or growth. A browser scenario saves the same 30-question Grades 7–8 paper for both grades and verifies paired cards, denominators, the grade-specific rank note, and no mobile overflow. Official basis: https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/ .
+
+Verification: roadmap browser, local-record, competition-profile, and question-bank suites pass 60/60. All work remains local; no original contest questions or student data were added. Private R6 visual and human-review gates remain open in the continuation handoff.

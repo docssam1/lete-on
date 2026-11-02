@@ -649,3 +649,9 @@ Also rechecked the prepared blind-review packet against its separate R6 mapping 
 ### 2026-11-02 Math Kangaroo source registry sync
 
 Added the official prior-year PDF exams archive to both the shared program catalog and the K–12 competition profile; the profile source record carries a 2026-11-02 verification date and a source description for the two-grade paper groups. The existing link and catalog rights scope remain metadata/links only. Combined Grade 3–12 roadmap, browser, comparison, competition-profile, and question-bank suites pass 50/50; both edited JavaScript modules pass syntax checks and `git diff --check` passes. Local-only; no contest content copied.
+
+### 2026-11-02 Math Kangaroo Grade 7–8 paper comparison
+
+Connected Math Kangaroo manual review summaries to the answer-safe local diagnostic store, which previously accepted AMC/SASMO IDs but rejected `kangaroo`. The roadmap comparison now names the official grade-specific ranking boundary while comparing only same-date, same-paper-memo raw review summaries. It does not calculate grade equivalence or growth. A browser scenario saves the same 30-question Grades 7–8 paper for both grades and verifies paired cards, denominators, the grade-specific rank note, and no mobile overflow. Official basis: https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/ .
+
+Verification: roadmap browser, local-record, competition-profile, and question-bank suites pass 60/60. All work remains local; no original contest questions or student data were added. Private R6 visual and human-review gates remain open as documented above.

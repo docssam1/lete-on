@@ -344,7 +344,7 @@
     };
   }
   function sanitizedCompetitionDiagnostic(value) {
-    if (!object(value) || value.schemaVersion !== "gfield-competition-diagnostic-v1" || !["amc8", "amc10", "amc12", "sasmo"].includes(value.programId) || !Number.isInteger(value.grade) || value.grade < 3 || value.grade > 12 || (value.programId === "amc8" && (value.grade < 6 || value.grade > 8)) || (value.programId === "amc10" && (value.grade < 7 || value.grade > 10)) || (value.programId === "amc12" && value.grade < 8) || !object(value.summary) || !Array.isArray(value.domains) || !Array.isArray(value.reasons)) return null;
+    if (!object(value) || value.schemaVersion !== "gfield-competition-diagnostic-v1" || !["amc8", "amc10", "amc12", "kangaroo", "sasmo"].includes(value.programId) || !Number.isInteger(value.grade) || value.grade < 3 || value.grade > 12 || (value.programId === "amc8" && (value.grade < 6 || value.grade > 8)) || (value.programId === "amc10" && (value.grade < 7 || value.grade > 10)) || (value.programId === "amc12" && value.grade < 8) || !object(value.summary) || !Array.isArray(value.domains) || !Array.isArray(value.reasons)) return null;
     const summary = value.summary;
     if (!["itemCount", "correct", "wrong", "blank", "unmarked", "attempted", "domainClassified", "reasonClassified"].every(function (key) { return Number.isInteger(summary[key]) && summary[key] >= 0; })) return null;
     if (summary.itemCount < 1 || summary.itemCount > 30 || summary.correct + summary.wrong + summary.blank + summary.unmarked !== summary.itemCount || summary.attempted !== summary.correct + summary.wrong || summary.domainClassified > summary.itemCount || summary.reasonClassified > summary.wrong) return null;

@@ -505,6 +505,36 @@ test("grade comparison pairs only matching contest paper date and memo across gr
   await page.close();
 });
 
+test("Math Kangaroo Grade 7 and 8 diagnostics compare the same 30-question paper without implying grade rank", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  async function saveKangarooReview(grade, status) {
+    await page.goto(`${url.replace("boarding-roadmap.html", "competition-paper-review.html")}?grade=${grade}&program=kangaroo`, { waitUntil: "networkidle" });
+    assert.match(await page.locator("#review-source-note").innerText(), /30문항/);
+    await page.locator("#review-exam-date").fill("2026-03-19");
+    await page.locator("#review-paper-label").fill("2025 Grade 7–8 official paper");
+    await page.locator('[data-question="1"][data-field="status"]').selectOption(status);
+    await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
+    if (status === "wrong") await page.locator('[data-question="1"][data-field="reason"]').selectOption("concept");
+    await page.getByRole("button", { name: "결과 보기" }).click();
+    await page.locator("#save-diagnostic").click();
+  }
+  await saveKangarooReview(7, "correct");
+  await saveKangarooReview(8, "wrong");
+  await page.goto(`${url}?grade=7&program=kangaroo`, { waitUntil: "networkidle" });
+  await page.locator("#comparison-grade").selectOption("8");
+  assert.equal(await page.locator("#competition-grade-comparison").getAttribute("data-state"), "comparable-format");
+  assert.equal(await page.locator("#competition-grade-comparison-cards article").count(), 2);
+  const text = await page.locator("#competition-grade-comparison").innerText();
+  assert.match(text, /Math Kangaroo · 2026-03-19/);
+  assert.match(text, /영역 분류 1\/30/);
+  assert.match(text, /7학년 · 2025 Grade 7–8 official paper/);
+  assert.match(text, /8학년 · 2025 Grade 7–8 official paper/);
+  assert.match(text, /공식 순위와 백분위는 학년별로 산정/);
+  assert.match(text, /난도를 보정한 등급이나 성장 판정은 아니에요/);
+  assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
+  await page.close();
+});
+
 test("Grade 10 and Grade 12 comparison keeps inferred planning separate from learner assessment", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(`${url}?grade=10`, { waitUntil: "networkidle" });
