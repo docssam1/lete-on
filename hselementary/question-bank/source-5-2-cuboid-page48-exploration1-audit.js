@@ -1,0 +1,14 @@
+"use strict";
+const assert = require("node:assert/strict");
+const api = require("./source-5-2-cuboid-page48-exploration1.js");
+const item = api.build();
+assert.equal(item.automaticGrading, false);
+assert.equal(item.publisherKeyVerified, false);
+assert.equal((item.prompt.match(/<li>/g) || []).length, 6);
+assert.ok(item.prompt.includes('stroke-dasharray="4 3" d="M90 20 V125 M35 175 L90 125 H210"'));
+for (const answer of ["ㄱㄹㅇㅁ", "ㄹㄷㅅㅇ", "ㅁㅂㅅㅇ", "ㄹㅇ", "ㅇㅅ", "ㅇㅁ", "ㄱㅁㅇㄹ", "ㄱㄴㄷㄹ", "8개", "12개", "6개", "12−5=7개"]) assert.ok(item.solution.includes(answer));
+const type = {id: api.sourceItemId, sourceItemId: api.sourceItemId, generatorKey: api.generatorKey, sourceVerified: true, reviewLocked: false};
+assert.ok(api.resolves(type));
+assert.ok(!api.resolves({...type, reviewLocked: true}));
+assert.ok(!api.resolves({...type, sourceVerified: false}));
+console.log("PASS: six questions, hidden edges, source answers, manual grading and release guard");

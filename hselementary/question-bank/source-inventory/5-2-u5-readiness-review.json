@@ -281,10 +281,12 @@
       "singleAnswerCheck": "원문 꼭짓점 연결과 점선, 밑면의 반대 면 및 나머지 네 면을 재대조했습니다. 전개도에 남는 면 연결 5개와 자르는 모서리 7개를 확인했습니다. 공식 답안과 공개용 그림은 미대조입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent",
-      "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "보이지 않는 모서리와 전개도 절단선을 임의로 단순화하지 않고, 점·선분 모델 검수 후 공개해야 합니다."
+      "visualCheckStatus": "confirmed-source-vertices-and-hidden-edges",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "lockReason": "",
+      "runtimeTypeId": "5-2-u5-e1-exploration",
+      "releaseEvidence": "원본의 꼭짓점·점선·여섯 질문을 대조하고 면과 모서리 관계 및 전개도 절단 일곱 개를 독립 검산했습니다. 복합 응답을 자동 채점하지 않으며 출판사 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u5-e1-example-1-1",
