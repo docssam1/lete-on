@@ -122,7 +122,7 @@
       note: "운영 설문 URL을 등록하면 모든 학원·과정의 신청 버튼이 활성화됩니다."
     },
     noticeRefresh: {
-      cadence: "08:17 · 14:17 · 20:17 (Asia/Seoul)",
+      cadence: "17:00 daily (Asia/Seoul)",
       branchFilter: "대치·분당 (황소는 대치만)",
       publicFields: ["제목", "날짜", "원문 링크", "출처", "대상 과정"],
       rule: "공식 원문과 공식 게시물 미러를 구분하고, 본문을 복사하지 않고 원문 링크만 제공합니다.",
