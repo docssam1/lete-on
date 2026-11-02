@@ -286,7 +286,10 @@ function handleCohortChoice(button){
 const SP=PlannerStudyPlan,SPV=PlannerStudyPlanView,studyKey='gfield.demo2.study-plan-grade5.v1';
 let studyActive=false,studyState=SP.restore(null),studySaved=null,studyReturnView='map',studyReturnPane='result';
 try{studySaved=JSON.parse(PlannerStorage.getItem(studyKey));studyState=SP.restore(studySaved?.state);}catch{}
-function rememberStudy(){PlannerStorage.setItem(studyKey,JSON.stringify({version:1,active:studyActive,state:studyState,view:workspaceView,pane:document.body.dataset.workspacePane||'result',returnView:studyReturnView,returnPane:studyReturnPane}));}
+const classroomKey='gfield.demo2.classroom-national2.v1';
+let classroomActive=false,classroomState=PlannerClassroomExample.restore(null),classroomSaved=null;
+try{classroomSaved=JSON.parse(PlannerStorage.getItem(classroomKey));classroomState=PlannerClassroomExample.restore(classroomSaved?.state);}catch{}
+function rememberStudy(){PlannerStorage.setItem(classroomActive?classroomKey:studyKey,JSON.stringify({version:1,active:studyActive,state:classroomActive?classroomState:studyState,view:workspaceView,pane:document.body.dataset.workspacePane||'result',returnView:studyReturnView,returnPane:studyReturnPane}));}
 let historyState=HC.empty(),historySaved=null;
 try{historySaved=HC.restore(JSON.parse(PlannerStorage.getItem(historyKey)));historyState={...historySaved,active:false};}catch{}
 function rememberHistory(){historyState.view=workspaceView;historyState.pane=document.body.dataset.workspacePane||'result';PlannerStorage.setItem(historyKey,JSON.stringify(historyState));}
@@ -525,15 +528,15 @@ function reportContext(){
  for(const hidden of academyHost.querySelectorAll('[data-academy-beam-layer][aria-hidden="true"]'))hidden.remove();
  for(const detail of academyHost.querySelectorAll('details'))detail.open=true;
  const questionHost=document.createElement('div');questionHost.innerHTML=roadmapMode==='standard'?PlannerStandard.renderQuestions(standard)+PlannerStandard.renderSupplementQuestions(standard):PlannerWorkspace.renderQuestions(transition,progression,a,fields,paths);
- const questions=[...questionHost.querySelectorAll('details')].map(node=>({question:node.querySelector('summary')?.textContent||'',answer:[...node.querySelectorAll('p')].map(p=>p.textContent).join(' ')})).filter(q=>q.question&&q.answer);
+ const questions=[...(window.PlannerCounsellingUpdates?.commonQuestions(I.gradeChoice(answers,fields),{hwangso:answers.hw==='1'})||[]),...[...questionHost.querySelectorAll('details')].map(node=>({question:node.querySelector('summary')?.textContent||'',answer:[...node.querySelectorAll('p')].map(p=>p.textContent).join(' ')})).filter(q=>q.question&&q.answer)];
  const calcBook=a.calc==='advanced'?P.CALC[+a.calcExact]?.[0]:!I.special(a.calc)&&a.calc!=='high'?a.calc:null;
  const current=comparison.axes.map(x=>({id:x.id==='comp'?'thinking':x.id,label:x.label,text:x.id==='calc'&&calcBook&&!x.current.includes(calcBook)?calcBook+' · '+x.current:x.current}));
  return {...reportAssessment(comparison,a,fields),name:$('name')?.value.trim()||'우리 아이',grade,age:Number(a.age)||null,fields,now:standard.now,mode:roadmapMode,current,lanes,sequential:custom?custom.d.s.cadence==='sequential'&&custom.depthSlots.length>0:standard.sequential,independentDepth:custom?custom.independentLanes.some(l=>l.id==='deep')||custom.depthSlots.some(b=>b.parallel):standard.independentDepth,graphTitle:(T.AXES.find(x=>x.id===axis)?.title||'학습')+' 진도 비교',graphHtml:graphHost.innerHTML,graphSvg:graph.match(/<svg\b[\s\S]*?<\/svg>/)?.[0]||'',academyHtml:fields.internationalCalendar?'':academyHost.innerHTML+(grade==='pre'&&window.PlannerPreschoolDetail?window.PlannerPreschoolDetail.render(preschoolDetailId,{print:true}):''),observation:G.OBSERVATIONS.find(x=>x.id===observed.observation)||null,goal,science,scienceStage:science?PlannerScienceLevels.model(science):null,questions,assumptions:roadmapMode==='standard'?standard.assumptions:[T.scenarioNote(custom.d,custom.m),T.cadenceNote(custom.d.s)],scienceQuestions:science?S.questions(scienceState,sc):[],languages,languageQuestions:languageIds.flatMap(id=>L.questions(languageState,id,languageContext()).map(q=>({question:L.SUBJECTS[id]+' · '+q.q,answer:q.a}))),selectedPaths:paths.map(id=>X.paths[id]?.title||X.paths[id]?.short||id),personalityMethods:Y.methods(personalityState).map(x=>({title:x.title,method:x.method})),gender:studentProfile.gender,institute:{selected:scienceState.institute!=='none'||paths.some(id=>/^center/.test(id)),allowed:policy.allowed,label:science?.institute||'영재원 대비'},extra:custom&&custom.d.s.tempo==='gradual'?{tempo:'gradual',enabled:custom.m.enabled,adjusting:custom.m.adjusting,within:custom.within,scope:custom.range,loadTitle:custom.load,allocation:custom.d.s.allocation,meetingText:custom.meeting,followup:custom.after,catch:custom.c&&custom.m.catch?{months:custom.c.months,extraMonths:custom.c.extraMonths,target:custom.m.catch.target,course:custom.m.catch.course,dateLabel:custom.catchDate,maintenanceExtra:custom.m.catch.maintenanceExtra,baselineSessions:custom.m.catch.baselineSessions,sessionHours:custom.m.catch.sessionHours}:null}:null};
 }
 function prepareReport(){
  if(!studyActive&&(!completed||caseActive||historyState.active))return false;
- const report=studyActive?SPV.reportModel(studyState):PlannerReport.model(reportContext());
- const pdf=$('downloadTypstSample');if(pdf){const s=SP.restore(studyState);pdf.hidden=!studyActive||s.winter!=='calculation'||s.academy!=='summer'||s.scienceMode!=='academy';}
+ const report=classroomActive?PlannerClassroomExample.reportModel(classroomState):studyActive?SPV.reportModel(studyState):PlannerReport.model(reportContext());
+ const pdf=$('downloadTypstSample');if(pdf){const s=SP.restore(studyState);pdf.hidden=classroomActive||!studyActive||s.winter!=='calculation'||s.academy!=='summer'||s.scienceMode!=='academy';}
 
  $('plannerReportContent').innerHTML=PlannerReport.render(report,{prefix:'report'});
  return true;
@@ -815,7 +818,25 @@ function currentChoiceQuestions(){
  };
  const q=questions[transitionPage];return q?'<section class="pathway-parent-questions"><details><summary>'+esc(q[0])+'</summary><p>'+esc(q[1])+'</p></details></section>':'';
 }
+function showClassroom(restoring=false){
+ if(classroomActive&&!restoring)return;
+ if(studyActive)closeStudy(false);if(historyState.active)closeHistory(false);if(caseActive)closeCase(false);PlannerFullscreen.close();
+ studyReturnView=restoring&&classroomSaved?.returnView||workspaceView;studyReturnPane=restoring&&classroomSaved?.returnPane||document.body.dataset.workspacePane||'result';
+ classroomActive=true;studyActive=true;workspaceView=restoring&&['map','graph','table','records'].includes(classroomSaved?.view)?classroomSaved.view:'map';
+ showView('vmap');drawClassroomJourney();mobileWorkspace(restoring&&classroomSaved?.pane==='choice'?'choice':'result');rememberStudy();
+ const href=window.PlannerDirectLinks?.classroomHref(window.location.href);if(!restoring&&href)window.history.replaceState(null,'',href);
+}
+function drawClassroomJourney(){
+ const V=PlannerClassroomExample,m=V.model(classroomState);PlannerFaq.unmount($('journeyMap'));PlannerPresentation.unmount($('journeyMap'));
+ document.body.dataset.studyWorkspace='true';document.body.dataset.planMode='custom';document.body.dataset.scienceFlow='false';document.body.dataset.referenceFlow='false';document.body.removeAttribute('data-history-workspace');document.body.removeAttribute('data-plan-workspace');document.body.classList.remove('questioning');document.body.classList.add('exploring');PlannerPlanNavigation.references(document,false);
+ $('conversation').hidden=true;$('pathwayCoach').hidden=false;$('planningOverview').hidden=true;$('pathwayTitle').textContent='12월, 필즈 수업에 편안히 적응하도록.';$('pathwaySummary').textContent='소마 A와 필즈 E1의 본 과정·병행 교재를 함께 봅니다.';
+ $('pathwayCoachContent').innerHTML=V.choices(m);$('pathwayCoach').querySelector('.coach-reference').hidden=true;$('pathwayCoach').querySelector('.pathway-coach-actions').hidden=true;$('flowMapPeek').hidden=true;$('coachQuestions').replaceChildren();$('intakeQuestions').replaceChildren();
+ const tabs=[['map','학습 로드맵'],['graph','진도 비교'],['table','교재·월별 계획'],['records','학부모 질문']],render={map:V.map,graph:V.graph,table:V.table,records:V.records};
+ $('journeyMap').innerHTML='<div class="workspace-results">'+V.summary(m)+'<div class="workspace-tabs" role="tablist" aria-label="6세 국가대표2 로드맵 보기">'+tabs.map(([id,t])=>'<button type="button" role="tab" id="workspace-tab-'+id+'" data-workspace-view="'+id+'" aria-controls="workspace-panel-'+id+'" aria-selected="'+(workspaceView===id)+'" tabindex="'+(workspaceView===id?0:-1)+'">'+t+'</button>').join('')+'</div>'+tabs.map(([id])=>'<section id="workspace-panel-'+id+'" class="workspace-panel" data-workspace-panel="'+id+'" role="tabpanel" aria-labelledby="workspace-tab-'+id+'" tabindex="0"'+(workspaceView===id?'':' hidden')+'>'+render[id](m)+'</section>').join('')+'</div>';
+ $('journeyTitle').textContent=V.TITLE;$('journeyCount').textContent='6세 11월 → 7세 12월';$('openReport').hidden=false;$('backToQuestion').textContent='현재 공부 확인 ↑';$('pathwayStatus').textContent='이 반의 예시는 내 로드맵과 별도로 저장됩니다.';setWorkspaceView(workspaceView);PlannerGuide.mount(document);
+}
 function showStudy(restoring=false){
+ if(classroomActive)closeStudy(false);
  PlannerFullscreen.close();
  if(!studyActive){studyReturnView=restoring&&studySaved?.returnView||workspaceView;studyReturnPane=restoring&&studySaved?.returnPane||document.body.dataset.workspacePane||'result';}
  if(historyState.active)closeHistory(false);if(caseActive)closeCase(false);
@@ -824,11 +845,12 @@ function showStudy(restoring=false){
  const href=window.PlannerDirectLinks?.studyHref?.(window.location?.href);if(!restoring&&href&&window.history?.replaceState)window.history.replaceState(null,'',href);
 }
 function closeStudy(render=true){
- if(!studyActive)return;clearSeniorDirectUrl();PlannerFullscreen.close();studyActive=false;document.body.removeAttribute('data-study-workspace');rememberStudy();workspaceView=studyReturnView;
+ if(!studyActive)return;clearSeniorDirectUrl();PlannerFullscreen.close();studyActive=false;document.body.removeAttribute('data-study-workspace');rememberStudy();classroomActive=false;workspaceView=studyReturnView;
  $('pathwayCoach').querySelector('.coach-reference').hidden=false;$('pathwayCoach').querySelector('.pathway-coach-actions').hidden=false;$('flowMapPeek').hidden=false;
  if(render)resumeOwnPlan(studyReturnView,studyReturnPane);
 }
 function drawStudyJourney(){
+ if(classroomActive){drawClassroomJourney();return;}
  const m=SPV.model(studyState);PlannerFaq.unmount($('journeyMap'));PlannerPresentation.unmount($('journeyMap'));
  document.body.dataset.studyWorkspace='true';document.body.dataset.planMode='custom';document.body.dataset.scienceFlow='false';document.body.dataset.referenceFlow='false';document.body.removeAttribute('data-history-workspace');document.body.classList.remove('questioning');document.body.classList.add('exploring');
  document.body.removeAttribute('data-plan-workspace');PlannerPlanNavigation.references(document,false);
@@ -843,7 +865,10 @@ function drawStudyJourney(){
 }
 function handleStudyButton(b){
  if(!b)return false;
+ if(b.hasAttribute('data-classroom-open')){showClassroom();return true;}
  if(b.hasAttribute('data-study-open')){showStudy();return true;}
+ if(classroomActive&&b.dataset.classroomKind){classroomState=PlannerClassroomExample.choose(classroomState,b.dataset.classroomKind,b.dataset.classroomValue);rememberStudy();drawClassroomJourney();return true;}
+ if(classroomActive&&b.dataset.classroomBlock){const m=PlannerClassroomExample.model(classroomState),block=m.lanes.flatMap(l=>l.blocks).find(x=>x.id===b.dataset.classroomBlock);if(block){$('courseTitle').textContent=block.title;$('courseContent').innerHTML='<p>'+esc(PlannerClassroomExample.period(block))+'</p><p>'+esc(block.note)+'</p>';showCourseDialog();}return true;}
  if(!studyActive)return false;
  if(b.hasAttribute('data-study-close')||b.hasAttribute('data-flow-overview')){closeStudy();return true;}
  if(b.dataset.studyKind){studyState=SP.choose(studyState,b.dataset.studyKind,b.dataset.studyValue);rememberStudy();drawStudyJourney();return true;}
@@ -858,19 +883,19 @@ function syncSeniorDirectUrl(id=null){
 function clearSeniorDirectUrl(){
  if(!window.location?.href||!window.history?.replaceState)return;
  const url=new URL(window.location.href);
- if(!url.searchParams.has('senior')&&url.searchParams.get('view')!=='seniors'&&url.searchParams.get('study')!=='grade5-balanced')return;
- url.searchParams.delete('senior');if(url.searchParams.get('view')==='seniors')url.searchParams.delete('view');if(url.searchParams.get('study')==='grade5-balanced')url.searchParams.delete('study');
+ if(!url.searchParams.has('senior')&&url.searchParams.get('view')!=='seniors'&&url.searchParams.get('study')!=='grade5-balanced'&&url.searchParams.get('classroom')!==PlannerClassroomExample.ID)return;
+ url.searchParams.delete('classroom');url.searchParams.delete('senior');if(url.searchParams.get('view')==='seniors')url.searchParams.delete('view');if(url.searchParams.get('study')==='grade5-balanced')url.searchParams.delete('study');
  window.history.replaceState(null,'',url.href);
 }
 function openSeniorLibrary(){
  PlannerFullscreen.close();
- $('seniorLibraryContent').innerHTML='<section class="sp-catalog"><h3>상담 설계 예시</h3><button type="button" data-study-open><strong>초5 남학생 · 교과·사고력·쎈·연산·국어·과학</strong><small>5-2 응용에서 공통수학 2까지 · 내신을 고려한 월별 계획</small></button></section>'+HC.catalog();
+ $('seniorLibraryContent').innerHTML='<section class="sp-catalog"><h3>상담 설계 예시</h3><button type="button" data-classroom-open><strong>지필드 6세 국가대표2 로드맵</strong><small>소마 A·필즈 E1 비교 · 12월 수업 적응 · 교과·연산·영어</small></button><button type="button" data-study-open><strong>초5 남학생 · 교과·사고력·쎈·연산·국어·과학</strong><small>5-2 응용에서 공통수학 2까지 · 내신을 고려한 월별 계획</small></button></section>'+HC.catalog();
  window.PlannerDirectLinks?.decorateLibrary($('seniorLibraryContent'),window.location?.href);
  syncSeniorDirectUrl();$('seniorLibraryDialog').showModal();
 }
 function applySeniorDirectLink(url){
  const route=window.PlannerDirectLinks?.resolve(url);if(!route)return;
- if(route.kind==='library')openSeniorLibrary();else if(route.kind==='history')showHistory(route.id);else if(route.kind==='case')showCase();else if(route.kind==='study')showStudy();
+ if(route.kind==='library')openSeniorLibrary();else if(route.kind==='history')showHistory(route.id);else if(route.kind==='case')showCase();else if(route.kind==='study')showStudy();else if(route.kind==='classroom')showClassroom();
 }
 function showHistory(id,restoring=false){
  if(studyActive)closeStudy(false);
@@ -1072,7 +1097,7 @@ function drawJourney(){
 
  if(completed&&!intakeFields().internationalCalendar){
   const currentGrade=I.gradeChoice(answers,intakeFields()),stage=currentGrade==='pre'?'preschool':Number(currentGrade)<=6?'elementary':'middle';
-  if(window.PlannerCounsellingUpdates){$('workspace-panel-map').insertAdjacentHTML('afterbegin',window.PlannerCounsellingUpdates.render(stage,{compact:true}));$('workspace-panel-records').insertAdjacentHTML('beforeend',window.PlannerCounsellingUpdates.render(stage));}
+  if(window.PlannerCounsellingUpdates){$('workspace-panel-map').insertAdjacentHTML('afterbegin',window.PlannerCounsellingUpdates.render(stage,{compact:true}));$('workspace-panel-records').insertAdjacentHTML('beforeend',window.PlannerCounsellingUpdates.render(stage,{excludeCommon:true}));$('workspace-panel-records').insertAdjacentHTML('afterbegin',window.PlannerCounsellingUpdates.renderCommon(currentGrade,{hwangso:answers.hw==='1'}));}
   const academyComparison=G.comparison(answers,intakeFields());
   $('workspace-panel-table').insertAdjacentHTML('afterbegin',T.renderAcademyMonthly(T.academyReferences(academyComparison,'school',academyLines),academyComparison,intakeFields()));
   $('workspace-panel-table').insertAdjacentHTML('beforeend',preschoolDetailHtml());
@@ -1177,7 +1202,7 @@ $('planReferencesClose').onclick=()=>$('planReferences').close();
 $('planningOverview').onclick=e=>{if(e.target.closest('[data-student-choice]')){openStudentChoice();return;}if(e.target.closest('[data-plan-references]')){$('planReferences').showModal();return;}const area=e.target.closest('[data-current-area]');if(area){ask(area.dataset.currentArea);return;}if(e.target.closest('[data-roadmap-mode=standard]'))showStandard();};
 $('seniorLibraryClose').onclick=()=>$('seniorLibraryDialog').close();
 $('seniorLibraryDialog').addEventListener('close',()=>{if(window.PlannerDirectLinks?.resolve(window.location?.href)?.kind==='library')clearSeniorDirectUrl();});
-$('seniorLibraryContent').onclick=e=>{if(window.PlannerDirectLinks?.handleCopy(e))return;const filter=e.target.closest('[data-history-filter]');if(filter){const id=filter.dataset.historyFilter;for(const group of $('seniorLibraryContent').querySelectorAll('[data-case-group]'))group.hidden=id!=='all'&&group.dataset.caseGroup!==id;for(const button of $('seniorLibraryContent').querySelectorAll('[data-history-filter]'))button.setAttribute('aria-pressed',String(button===filter));return;}if(e.target.closest('[data-study-open]')){$('seniorLibraryDialog').close();showStudy();return;}if(!e.target.closest('[data-history-case]'))return;$('seniorLibraryDialog').close();handleHistoryClick(e);};
+$('seniorLibraryContent').onclick=e=>{if(window.PlannerDirectLinks?.handleCopy(e))return;const filter=e.target.closest('[data-history-filter]');if(filter){const id=filter.dataset.historyFilter;for(const group of $('seniorLibraryContent').querySelectorAll('[data-case-group]'))group.hidden=id!=='all'&&group.dataset.caseGroup!==id;for(const button of $('seniorLibraryContent').querySelectorAll('[data-history-filter]'))button.setAttribute('aria-pressed',String(button===filter));return;}if(e.target.closest('[data-classroom-open]')){$('seniorLibraryDialog').close();showClassroom();return;}if(e.target.closest('[data-study-open]')){$('seniorLibraryDialog').close();showStudy();return;}if(!e.target.closest('[data-history-case]'))return;$('seniorLibraryDialog').close();handleHistoryClick(e);};
 $('openCase').onclick=openSeniorLibrary;
 hwOptions(); applyLevel();if(!restoreDraft()){draw();if(Y.result(personalityState))openPersonality();else showWelcome();}
 if(completed&&restoredRoadmapMode?.signature===JSON.stringify(answers)&&restoredRoadmapMode.mode==='custom')roadmapMode='custom';
@@ -1187,7 +1212,7 @@ if(restoredFlow?.mode==='language')openLanguage(languageState.active,restoredFlo
 if(restoredWorkspaceView)setWorkspaceView(restoredWorkspaceView);
 if(restoredMobilePane)mobileWorkspace(restoredMobilePane);PlannerGuide.mount(document);
 const incomingSeniorDirectLink=window.location?.href;
-if(studySaved?.version===1&&studySaved.active===true)showStudy(true);else if(historySaved?.active===true)showHistory(historySaved.caseId,true);else if(caseSaved?.version===1&&caseSaved.active===true)showCase(true);
+if(classroomSaved?.version===1&&classroomSaved.active===true)showClassroom(true);else if(studySaved?.version===1&&studySaved.active===true)showStudy(true);else if(historySaved?.active===true)showHistory(historySaved.caseId,true);else if(caseSaved?.version===1&&caseSaved.active===true)showCase(true);
 applySeniorDirectLink(incomingSeniorDirectLink);
 // Older sessions may have paths that were never edited after durable storage was added.
 // Promote only absent durable keys; another saved plan and deletion guards stay intact.

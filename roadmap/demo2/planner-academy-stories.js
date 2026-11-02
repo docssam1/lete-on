@@ -25,6 +25,15 @@ const items=[
  ['high-school-fit','high','내신 · 학원 선택','누테를 잘 봐도 학교 시험 준비는 따로 해야 하나요?','누적 이해 확인과 학교 출제 범위의 역할','학원 누적시험과 학교 시험은 범위와 요구가 같지 않을 수 있습니다. 학교 진도·서술형·수행평가와 학원에서 배우는 다음 과정의 역할을 각각 놓고 봅니다.','내신 준비 기간에는 학교 범위의 빈틈과 풀이를 먼저 다지고 학원 새 진도를 조정합니다. 시험 시간을 길게 쓰는 수업이라면 오답을 고칠 시간까지 포함해 효율을 봅니다.',['학교 시험 범위와 학원 진도가 얼마나 겹치나요?','서술형 풀이와 수행평가를 어디서 준비하나요?','내신 기간에는 새 진도·숙제·누테가 어떻게 바뀌나요?']],
  ['high-review','high','내신 · 수능 병행','같은 내용을 또 배우는데 반복할 가치가 있나요?','새 책 수보다 남은 빈틈과 실전 적용','같은 과정을 반복해도 처음 보는 문제에 적용하거나 제한 시간 안에 풀어내는 공부라면 역할이 있습니다. 반대로 설명을 다시 듣기만 하고 같은 오류가 남는다면 공부 방법을 바꿀 필요가 있습니다.','학교 내신과 수능 준비를 한쪽이 끝난 뒤 시작하는 일로 나누지 말고 현재 범위와 목표에 맞춰 병행합니다. 진학하려는 대학의 실제 전형과 학교 교육과정은 해당 연도 자료로 확인합니다.',['이번 반복에서 새로 확인할 목표가 있나요?','오답을 본 뒤 혼자 다시 푸는 시간이 있나요?','내신·모의평가에서 드러난 약점이 같은가요?']]
 ].map(([id,stage,tag,title,focus,body,advice,questions])=>({id,stage,tag,title,focus,body,advice,questions}));
+// Same wording as the current-roadmap questions and print report.
+if(g.PlannerCounsellingUpdates?.commonAdvice){
+ const shared=g.PlannerCounsellingUpdates.commonAdvice;
+ const choice=items.find(x=>x.id==='soma-fields');
+ if(choice){choice.title=shared['soma-fields-choice'].question;choice.body=shared['soma-fields-choice'].answer;choice.advice='선행이 되어 있다면 소마 휴원 후 필즈가 맞는지 경험하고, 수업 적합성과 과제량을 보고 한 곳을 선택합니다.';choice.questions=shared['soma-fields-choice'].options;}
+ for(const [id,stage,tag] of [['hwangso-summer-pause','elementary','황소 · 여름방학'],['school-entry-load','preschool','초등 입학 · 학습량'],['school-entry-load-primary','elementary','초1 · 학교 적응']]){
+  const q=shared[id==='school-entry-load-primary'?'school-entry-load':id];items.push({id,stage,tag,title:q.question,focus:id.startsWith('school-entry')?'초1 3~4월 · 학교생활에 적응할 여유':'초2 8월 · 선발 대비 시간 확보',body:q.answer,advice:'현재 공부와 생활 시간을 함께 놓고 학습량을 조정합니다. 수업을 쉬더라도 교과·연산의 흐름은 이어갑니다.',questions:q.options});
+ }
+}
 items.push({id:'premier-revision',stage:'preschool',tag:'소마 · 교재 개편',title:'프리미어 초급, 이제 6권으로 이어갑니다.',focus:'현재 7세부터 · 초급 6권 → 중급 8권 → 고급 10권',body:'라이즈를 마치면 프리미어 초급으로 이어집니다. 현재 7세부터 초급은 기존 8권을 재구성한 6권 과정이며, 이후 중급 8권과 고급 10권으로 연결합니다. 권수가 줄었다고 전체 공부 기간도 같은 비율로 줄어드는 것은 아닙니다.',advice:'초급 권수가 줄었다고 교과·연산까지 일괄적으로 앞당기지는 않겠습니다. 초급과 중급을 마친 뒤 고급 5개월을 연결하고, 그동안 교과 진도와 계산이 함께 따라오는지 보겠습니다.',questions:['현재 사용하는 초급은 개편 6권 교재인가요?','고급 대수와 기하는 주당 각각 몇 회 진행하나요?','권별 수업 횟수와 복습·경시 준비 주간이 포함돼 있나요?']});
 items.push(...(g.PlannerEducationNews?.items||[]));
 items.push(...(g.PlannerGiftedGuide?.posts||[]));
