@@ -149,7 +149,9 @@
           "classification": "전체 거리와 두 이동 거리의 비",
           "candidate": "10과 4/5km",
           "reviewNote": "버스와 기차 이동거리 합을 18km로 보는 통상 해석에서 두 거리의 비 1:4, 차 18×3/5",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u2-practice-19-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 20,
