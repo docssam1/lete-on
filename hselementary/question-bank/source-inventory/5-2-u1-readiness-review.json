@@ -453,27 +453,35 @@
           "classification": "올림과 반올림 조건을 만족하는 자연수 개수",
           "candidate": "49개",
           "reviewNote": "501부터 549까지다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-45-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 46,
           "classification": "올림·버림된 두 집단 수의 최대 차",
           "candidate": "108명",
           "reviewNote": "남자는 13901~14000명, 여자는 14000~14009명이다. 14009−13901=108이다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-46-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 47,
           "classification": "올림·버림·반올림 조건의 자연수 교집합",
           "candidate": "2495, 2496, 2497, 2498, 2499",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-47-original",
+          "publisherAnswerVerified": false
         },
         {
           "number": 48,
           "classification": "만의 자리 세 어림 조건을 만족하는 개수",
           "candidate": "4999개",
           "reviewNote": "7820001부터 7824999까지이며 7820000은 올림 결과가 7830000이 아니므로 제외한다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "public-independent-verification-publisher-key-pending",
+          "runtimeTypeId": "5-2-u1-practice-48-original",
+          "publisherAnswerVerified": false
         }
       ]
     },
