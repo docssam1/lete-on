@@ -2281,6 +2281,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
   const source52CuboidProperties = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s1");
   if (source52CuboidProperties) {
+    const explorationId = "5-2-u5-e1-exploration";
+    if (!source52CuboidProperties.types.some(type => type.id === explorationId)) {
+      const name = "직육면체의 면·모서리·전개도";
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(group => group.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidProperties.types.push({id:explorationId, number:source52CuboidProperties.types.length+1, typeNumber,
+        name, label:name, difficultyBand:0, sourceItemId:explorationId, sourceItemLabel:"개념탐구 1", sourceSection:"exploration",
+        sourceTier:"advanced", sourcePdfPage:44, sourcePrintedPage:48, sourceVerified:true, publisherKeyVerified:false,
+        reviewLocked:false, generatorKey:"source52CuboidPropertiesPage48Exploration1", generationMode:"fixed-verified-pool",
+        implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1, automaticGrading:false,
+        answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원본의 꼭짓점과 점선, 여섯 질문을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+    }
     const sourceId = "5-2-u5-e1-example-4";
     if (!source52CuboidProperties.types.some(type => type.id === sourceId)) {
       const name = "세 방향으로 묶은 끈으로 직육면체의 가로 구하기";
