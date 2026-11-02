@@ -29,7 +29,7 @@
 
   const algebra2Reference = Object.freeze({ title: "FlippedMath Algebra 2 · 새 과정", url: "https://algebra2.flippedmath.com/" });
   const geometryReference = Object.freeze({ title: "FlippedMath Geometry", url: "https://geometry.flippedmath.com/" });
-  const preCalculusReference = Object.freeze({ title: "FlippedMath Pre-Calculus · Traditional", url: "https://precalculus.flippedmath.com/precalc-traditional.html" });
+  const preCalculusReference = Object.freeze({ title: "FlippedMath AP Precalculus", url: "https://precalculus.flippedmath.com/ap-precalc.html" });
   const courseStageResources = Object.freeze({
     8: Object.freeze({
       0: Object.freeze([geometryReference]),

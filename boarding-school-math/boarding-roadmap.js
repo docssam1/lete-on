@@ -730,6 +730,12 @@
     sourceLink.hidden = !source;
     const paperSourceLink = $("competition-paper-source-link");
     paperSourceLink.hidden = competition !== "kangaroo";
+    if (competition === "kangaroo") {
+      const bandStart = Math.floor((grade - 1) / 2) * 2 + 1;
+      const bandEnd = bandStart + 1;
+      paperSourceLink.href = `https://mathkangaroo.org/mks/practice/grades-${bandStart}-${bandEnd}/`;
+      paperSourceLink.textContent = `${bandStart}–${bandEnd}학년 기출 시험지 PDF ↗`;
+    }
     if (source) {
       sourceLink.href = source.href;
       sourceLink.textContent = source.label;

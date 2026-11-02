@@ -118,7 +118,8 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator("#competition-paper-source-link").isHidden(), true);
   await page.locator("#competition-select").selectOption("kangaroo");
   assert.match(await page.locator("#competition-source-link").getAttribute("href"), /mathkangaroo\.org/);
-  assert.equal(await page.locator("#competition-paper-source-link").getAttribute("href"), "https://mathkangaroo.org/mks/practice/pdf-exams/");
+  assert.equal(await page.locator("#competition-paper-source-link").getAttribute("href"), "https://mathkangaroo.org/mks/practice/grades-7-8/");
+  assert.equal(await page.locator("#competition-paper-source-link").innerText(), "7–8학년 기출 시험지 PDF ↗");
   assert.equal(await page.locator("#competition-paper-source-link").isVisible(), true);
   assert.equal(await page.locator("#competition-paper-source-link").getAttribute("target"), "_blank");
   assert.match(await page.locator("#competition-paper-source-link").getAttribute("rel"), /noopener/);
@@ -130,6 +131,8 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator(".route-explanation").isHidden(), true);
   assert.equal(await page.locator("#route-check-block").isHidden(), true);
   assert.equal(await page.locator("#competition-select").inputValue(), "");
+  await page.locator("#competition-select").selectOption("kangaroo");
+  assert.equal(await page.locator("#competition-paper-source-link").getAttribute("href"), "https://mathkangaroo.org/mks/practice/grades-9-10/");
   assert.equal(await page.locator("#grade-map-title").innerText(), "9학년 수학 한눈에");
   assert.match(await page.locator("#grade-focus-list").innerText(), /학교 수학 · 추정/);
   assert.match(await page.locator("#source-chip").innerText(), /추정안/);
@@ -715,7 +718,7 @@ test("Grade 7 algebra and geometry checkpoints open matching FlippedMath referen
     { grade: 8, button: /단계 1, 일차식·기하 점검 보기/, title: "FlippedMath Geometry ↗", url: "https://geometry.flippedmath.com/" },
     { grade: 8, button: /단계 3, 준비되면 심화 보기/, title: "FlippedMath Algebra 2 · 새 과정 ↗", url: "https://algebra2.flippedmath.com/" },
     { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "FlippedMath Algebra 2 · 새 과정 ↗", url: "https://algebra2.flippedmath.com/", inferred: true },
-    { grade: 10, button: /단계 1, 개념 설명 보기/, title: "FlippedMath Pre-Calculus · Traditional ↗", url: "https://precalculus.flippedmath.com/precalc-traditional.html" }
+    { grade: 10, button: /단계 1, 개념 설명 보기/, title: "FlippedMath AP Precalculus ↗", url: "https://precalculus.flippedmath.com/ap-precalc.html" }
   ];
   for (const item of upperGradeCases) {
     await page.goto(`${url}?grade=${item.grade}`, { waitUntil: "networkidle" });

@@ -110,7 +110,8 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.match(roadmap.courseStageResources[9].note, /추정 경로.*학교의 실제 과목/);
   assert.equal(roadmap.courseStageResources[9][0][0].url, "https://algebra2.flippedmath.com/");
   assert.equal(roadmap.courseStageResources[9][1][0].url, "https://geometry.flippedmath.com/");
-  assert.equal(roadmap.courseStageResources[10][0][0].url, "https://precalculus.flippedmath.com/precalc-traditional.html");
+  assert.equal(roadmap.courseStageResources[10][0][0].url, "https://precalculus.flippedmath.com/ap-precalc.html");
+  assert.equal(roadmap.courseStageResources[10][0][0].title, "FlippedMath AP Precalculus");
 });
 
 test("competition options follow grade and keep advanced AMC paths optional", function () {

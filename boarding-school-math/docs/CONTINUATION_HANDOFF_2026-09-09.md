@@ -728,3 +728,13 @@ Next required work remains independent formal review and release evidence for th
 ### 2026-11-02 public roadmap and contest comparison regression
 
 Re-ran the Grade 3–12 roadmap model/browser, contest paper-review model/browser, answer-safe local learning record, and official K–12 contest profile suites on the current local branch: 88/88 pass. Coverage includes same-paper Math Kangaroo comparison for paired grade bands, grade-specific official ranking boundaries, unmatched-paper suppression, domain/error summaries, local answer-free saves, and grade-plan comparisons that do not infer placement. This is public functionality verification only; it does not make a contest diagnostic valid or unlock the private `7.NS.A` screener. No private item content or student record was accessed.
+
+### 2026-11-02 FlippedMath Precalculus current course link
+
+Rechecked the official FlippedMath Pre-Calculus landing page. Grade 10's optional explanation resource previously pointed to its Traditional course page; the current AP Precalculus course is separately listed and actively maintained. Updated the Grade 10 resource to `https://precalculus.flippedmath.com/ap-precalc.html` and labelled it “FlippedMath AP Precalculus.” This is a reference to external course materials, not a placement recommendation or evidence that AP coursework is required.
+
+Verification: Grade roadmap model and browser tests were updated to assert the current title and destination. The official current course page and old landing page were checked directly. Local-only; no external content was copied.
+
+The Math Kangaroo roadmap link now opens the selected grade's official paired-band archive directly (for example, Grades 7–8 or 9–10), instead of requiring another grade-band selection on the archive index. The label follows the selected band. The official 7–8 and 9–10 pages were opened to confirm their current destinations. No exam content was copied.
+
+Verification: the roadmap browser flow checks both Grade 7 → Grades 7–8 and Grade 9 → Grades 9–10 destinations. The roadmap model/browser suites pass 39/39, with syntax and whitespace checks passing. Local-only; no exam content was copied.
