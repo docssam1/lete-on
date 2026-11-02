@@ -1,6 +1,15 @@
 # Boarding School Math continuation handoff
 
-Updated: 2026-10-30 KST (Mac continuation; older release evidence retained below)
+Updated: 2026-11-02 KST (Mac continuation; older release evidence retained below)
+
+## Current Mac status — 2026-11-02
+
+- Worktree: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`; clean before this handoff update. Recent local commits include `c97afdddb` (Grade 6 Pre-Algebra concept bridge), `a777734b4` (roadmap preview button styling), and `3791b5722` (7.NS.A contract recheck record). This handoff change is local; nothing was pushed or deployed.
+- Public practice and private diagnostic are separate. This local branch contains the original 36-item `7.NS.A` student workbook plus eight-item recheck route, with separate teacher mode and an explicit no-placement scope notice. The branch-local workbook is not evidence that the latest remote deployment contains it. The 18-slot `7.NS.A` unit screener remains a different private candidate and is locked; no score, focus analysis, placement, or prescription is operational.
+- The Grade 3–12 roadmap supports plan comparison and manually entered competition-paper summaries. Math Kangaroo comparison is limited to matching date, paper memo, item count, and official grade-paired paper band; its official rank/percentile remains grade-specific. This is descriptive comparison, not a validated cross-grade diagnostic.
+- Latest local verification: roadmap model/browser suites pass 38/38, including the styled journey-preview button; public `7.NS.A` engine, plan, manifests, analysis, projections, and scoring-readiness suites pass 50/50. Desktop/mobile roadmap captures showed no horizontal overflow. The source checks are not content approval or student-use validation.
+- Required next gate: independent formal review of the private screener and rights/similarity review, current-version desktop/mobile and A4 visual inspection through a supported route, then a consented pilot, report validation, authenticated delivery and release approval. The current Mac browser route has previously blocked the private `file://` workbench, and its earlier screenshots/PDF are stale. Current captures/PDF or an explicitly supported browser route are needed. Do not unlock or deploy the screener before all gates pass.
+- Claude CLI is installed but currently logged out (`claude auth status`: `loggedIn=false`). No Claude Max review was performed in this continuation, and no separately billed Anthropic API call was made.
 
 ### 2026-10-30 Grade 7 7.NS.A study-plan connection
 
