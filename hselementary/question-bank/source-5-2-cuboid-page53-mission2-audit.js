@@ -1,0 +1,15 @@
+"use strict";
+const assert = require("node:assert/strict");
+const api = require("./source-5-2-cuboid-page53-mission2.js");
+const item = api.build();
+assert.deepEqual(api.cells, [[0,0],[1,0],[1,1],[2,1],[2,2],[3,2]]);
+assert.equal(item.automaticGrading, false);
+assert.equal(item.publisherKeyVerified, false);
+assert.ok(!item.prompt.includes('class="answer-shading"'));
+assert.ok(item.answerVisual.includes('class="answer-shading"'));
+assert.ok(item.answerVisual.includes('M20 18 H64 V62 H20 Z M64 18 H108 V40 L64 62 Z M130 62 H152 V106 H130 Z M130 106 H152 V150 H108 Z M152 106 H196 V150 H152 Z'));
+const type = {id: api.sourceItemId, sourceItemId: api.sourceItemId, generatorKey: api.generatorKey, sourceVerified: true, reviewLocked: false};
+assert.ok(api.resolves(type));
+assert.ok(!api.resolves({...type, reviewLocked: true}));
+assert.ok(!api.resolves({...type, sourceVerified: false}));
+console.log("PASS: shading diagram, manual grading and release guard");

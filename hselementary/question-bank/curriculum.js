@@ -2148,6 +2148,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
   const source52CuboidViewPractice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s3");
   if (source52CuboidViewPractice) {
+    const source52p53m2Id = "5-2-u5-e3-mission-2";
+    if (!source52CuboidViewPractice.types.some(type => type.id === source52p53m2Id)) {
+      const name = "색칠한 정육면체를 전개도에 옮기기";
+      const typeNumber = Math.max(0, ...source52Cuboid.subunits.flatMap(group => group.types.map(type => Number(type.typeNumber) || 0))) + 1;
+      source52CuboidViewPractice.types.push({id:source52p53m2Id, number:source52CuboidViewPractice.types.length+1, typeNumber,
+        name, label:name, difficultyBand:0, sourceItemId:source52p53m2Id, sourceItemLabel:"Mission 2", sourceSection:"mission",
+        sourceTier:"advanced", sourcePdfPage:49, sourcePrintedPage:53, sourceVerified:true, publisherKeyVerified:false,
+        reviewLocked:false, generatorKey:"source52ShadedCubeNetPage53Mission2", generationMode:"fixed-verified-pool",
+        implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1, automaticGrading:false,
+        answerVisualRequired:true, answerVisualStatus:"verified-reconstruction", reviewReason:"원본의 색칠 경계와 두 중점을 여섯 면의 접힘 좌표로 대조했습니다. 공식 답안은 미확인입니다."});
+    }
     const source52p53m6Id = "5-2-u5-e3-mission-6";
     if (!source52CuboidViewPractice.types.some(type => type.id === source52p53m6Id)) {
       const name = "정육면체의 두 고무줄을 전개도에 그리기";
