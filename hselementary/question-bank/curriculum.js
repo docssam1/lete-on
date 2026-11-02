@@ -3361,6 +3361,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52Unit2 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u2");
   const source52Unit2First = source52Unit2?.subunits.find(subunit => subunit.name === "분수와 자연수의 곱셈");
+
   if (source52Unit2First) for (const [n,name] of [[1,"두 집단의 분수만큼 더하기"],[2,"같은 방향 자동차 거리 차"]]) {
     const id = `5-2-u2-e1-example-${n}-synthetic`;
     const typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
@@ -3472,6 +3473,18 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id = `5-2-u2-e4-mission-${n}-synthetic`, typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
     source52Unit2Application.types.push({id,number:source52Unit2Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e4-mission-${n}`,sourceItemLabel:`Mission ${n} 유사문항`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:17,sourcePrintedPage:21,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page21Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool",reviewReason:"원문 구조와 그림을 확인하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
   }
+
+  if (source52Unit2First) for (const [n,name] of [[9,"읽고 남은 부분의 분수 구하기 · 확인학습 원문"],[10,"두 번 판매하고 남은 귤의 수 · 확인학습 원문"],[11,"남녀 학생 중 충치가 없는 학생 수 · 확인학습 원문"],[12,"여학생 중 안경을 쓴 학생 수 · 확인학습 원문"]]) {
+    const id=`5-2-u2-practice-${n}-original`;
+    if (source52Unit2First.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,
+      sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:72,sourcePrintedPage:76,
+      sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page76Practice${n}`,
+      generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,
+      automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 분수 계산을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+
 
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
