@@ -157,3 +157,11 @@ User scope: main-page test/seminar notices, also visible within each academy. La
 ### 2026-11-02 · Notice refresh frequency correction
 
 User reduced the recurring check from three times daily to once daily at 17:00 Asia/Seoul. The workflow uses 08:00 UTC; the engagement metadata is consistent. Existing branch restrictions and publication behavior are preserved. Manual and code-change validation triggers remain available.
+
+## 2026-11-02 · Existing mock exams connected
+
+Mac Codex on `codex/highselect-intro-release-20261101`; Supabase, google-drive, pdf, frontend-design, ui-ux-pro-max and ux-writing guidance applied. Existing SH-R01 student v2 (40 questions, eight pages) and DP common-math-1 V14 (30 questions, eight pages) are preserved as page images. The new exam entry, library, answer panel and results UI uses the promo's bundled Pretendard, neutral surfaces, clear 46px+ controls and concise Korean labels. On small screens, paper/answers toggle without scrolling past all eight pages. A4 printing uses the existing page layout and opens only after all images load.
+
+SH's high-selection course links to its released online round; DP's common1-basic course links to the distinct V14 pilot. Each displays its actual 110-minute mock specification. Other catalog rounds retain their existing gates. The public frontend contains no answer key or exam-page bytes. Protected Edge-function access, per-student grants, submission persistence and teacher review are documented in SERVER-DEPLOYMENT.md. Technical QA attempts are marked is_test and excluded from normal teacher results; they do not satisfy a real learner pilot or physical printing check.
+
+Validation before publication: 7 new meaningful core checks plus 19 existing server-flow checks passed; 20 actual production API checks passed, including byte-for-byte verification of all 16 page images, two canonical submissions and denial of unauthorized access. Local browser connected to production verified both rounds, SH partial submission (one correct, 39 blank), 47 SH input slots, 30 DP inputs, 390px layout and no console errors. Existing 15 content/policy UI checks passed. The public staging allowlist has 21 files. Live Pages publication and screenshot are verified after the source commit; teacher sign-in with the user's actual password remains untested.
