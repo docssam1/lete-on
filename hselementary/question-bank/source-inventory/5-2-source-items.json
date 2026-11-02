@@ -48,8 +48,8 @@
     "sourceItemIdRule": "{unitId}-e{exploration}-{section}-{ordinal}; exploration은 ordinal 1이며 ID에서 생략",
     "duplicateSourceItemIds": 0,
     "readyItems": 5,
-    "verifiedLocalItems": 125,
-    "reviewLockedItems": 156
+    "verifiedLocalItems": 127,
+    "reviewLockedItems": 154
   },
   "units": [
     {
@@ -555,11 +555,12 @@
         "문항의 표·수직선·보기 유무를 개별 렌더에서 확인해야 함"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문은 실생활 상황을 설명하는 열린 질문이며 기존 세 연습 유형은 어림 계산만 다룸. 원문 답안 대조 전 원문 항목은 잠금 유지.",
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e3-exploration-original",
+      "reviewReason": "원본의 세 어림과 열린 질문을 대조하고 복수 가능한 실생활 예시를 검토했습니다. 공식 답안은 미확인입니다.",
       "syntheticRuntimeTypeId": "5-2-u1-e3-exploration-life-synthetic",
       "publisherKeyVerified": false,
-      "publicDecision": "locked"
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u1-e3-example-1",
@@ -576,7 +577,8 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 8쪽 원문과 어림 방법을 확인. 공개 유형은 원문과 다른 수를 사용한 유사문항이며 출판사 답안 미대조.",
+      "runtimeTypeId": "5-2-u1-e3-example-1-original",
+      "reviewReason": "인쇄 8쪽 원문과 세 어림 방법을 독립 검산해 연결하고 기존 유사문항을 유지했습니다. 출판사 답안은 미확인입니다.",
       "publisherKeyVerified": false,
       "publicDecision": "public"
     },
@@ -595,7 +597,8 @@
       ],
       "sourceVerified": true,
       "implementationStatus": "verified-local",
-      "reviewReason": "인쇄 8쪽 원문과 단위 구매 계산을 확인. 공개 유형은 원문과 다른 수를 사용한 유사문항이며 출판사 답안 미대조.",
+      "runtimeTypeId": "5-2-u1-e3-example-2-original",
+      "reviewReason": "인쇄 8쪽 원문과 리본 구매 단위를 독립 검산해 연결하고 기존 유사문항을 유지했습니다. 출판사 답안은 미확인입니다.",
       "publisherKeyVerified": false,
       "publicDecision": "public"
     },
@@ -648,13 +651,14 @@
       "pdfPage": 7,
       "printedPage": 9,
       "sourceShape": "책의 비율과 묶음 크기로 필요한 상자 수",
-      "answerContract": "candidate: single-value-or-set",
+      "answerContract": "single-value: 16",
       "visualRisk": [
         "조건과 단위를 확인; 별도 그림 없음"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "인쇄 9쪽 조건과 필요한 그림을 직접 대조했습니다. 기존 창작 유사문항과 연결하며 원문은 보호 잠금 유지, 출판사 정답 미대조.",
+      "implementationStatus": "verified-local",
+      "runtimeTypeId": "5-2-u1-e3-mission-1-original",
+      "reviewReason": "인쇄 9쪽 원본의 책 수와 분수, 필요한 최소 상자 수를 독립 검산했습니다. 출판사 답안은 미확인입니다.",
       "syntheticRuntimeTypeId": "5-2-u1-e3-mission-1-box-count",
       "publisherKeyVerified": false
     },
