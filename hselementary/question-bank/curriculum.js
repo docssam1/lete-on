@@ -2398,11 +2398,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         implementationStatus:"fixed-verified-pool", verifiedVariantCount:1, verifiedVariantTarget:1,
         answerVisualRequired:false, answerVisualStatus:"not-required", reviewReason:"원본의 끈 세 방향과 길이 관계를 독립 검산했습니다. 공식 답안은 미확인입니다."});
     }
-    for (const [n,name] of [[5,"격자에서 크고 작은 직육면체 세기 · 확인학습 원문"],[6,"정육면체 네 개를 붙인 직육면체의 모서리 합 · 확인학습 원문"],[7,"같은 크기의 가장 큰 정육면체 자르기 · 확인학습 원문"],[8,"상자에 작은 직육면체 넣는 최대 개수 · 확인학습 원문"]]) {
+    for (const [n,name] of [[1,"직육면체의 평행한 면과 수직인 면 · 확인학습 원문"],[2,"직육면체의 대각선 단면과 수직인 면 · 확인학습 원문"],[3,"직육면체를 앞·옆·위에서 본 길이 · 확인학습 원문"],[4,"앞과 옆 모습으로 직육면체의 모서리 합 구하기 · 확인학습 원문"],[5,"격자에서 크고 작은 직육면체 세기 · 확인학습 원문"],[6,"정육면체 네 개를 붙인 직육면체의 모서리 합 · 확인학습 원문"],[7,"같은 크기의 가장 큰 정육면체 자르기 · 확인학습 원문"],[8,"상자에 작은 직육면체 넣는 최대 개수 · 확인학습 원문"]]) {
       const id=`5-2-u5-practice-${n}-original`;
       if (source52CuboidProperties.types.some(type=>type.id===id)) continue;
       const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
-      source52CuboidProperties.types.push({id,number:source52CuboidProperties.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:102,alternateSourcePdfPage:103,sourcePrintedPage:108,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U5Page108Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n!==7,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문과 도형을 대조하고 계산을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+      source52CuboidProperties.types.push({id,number:source52CuboidProperties.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:102,alternateSourcePdfPage:103,sourcePrintedPage:108,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U5Page108Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n!==1&&n!==2&&n!==3&&n!==7,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문과 도형을 대조하고 계산을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
     }
     const packingId = "5-2-u5-check108-q8-packing-synthetic";
     if (!source52CuboidProperties.types.some(type => type.id === packingId)) {
