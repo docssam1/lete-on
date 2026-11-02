@@ -6,6 +6,8 @@ const source = path.resolve(__dirname, '..');
 const files = [
   ['promo/index.html', 'promo/index.html'],
   ['promo/promo.css', 'promo/promo.css'],
+  ['promo/assets/fonts/pretendard-var.woff2', 'promo/assets/fonts/pretendard-var.woff2'],
+  ['promo/assets/fonts/OFL-Pretendard.txt', 'promo/assets/fonts/OFL-Pretendard.txt'],
   ['promo/assets/logos/sh.png', 'promo/assets/logos/sh.png'],
   ['promo/assets/logos/dp.png', 'promo/assets/logos/dp.png'],
   ['promo/assets/logos/wm-transparent-v2.png', 'promo/assets/logos/wm-transparent-v2.png'],
