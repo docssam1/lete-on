@@ -4,7 +4,7 @@ Updated: 2026-11-02 KST (Mac continuation; older release evidence retained below
 
 ## Current Mac status — 2026-11-02
 
-- Worktree: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`; clean after local commit `b317d4f82` (elementary Grade 3–5 pacing examples). Recent local commits also include `bde023ea4` (Pre-Algebra concept bridge completeness), `b173c52e3` (handoff status correction), `5fa51c90d` (roadmap and contest regression), `c97afdddb` (Grade 6 Pre-Algebra concept bridge), `a777734b4` (roadmap preview button styling), and `3791b5722` (7.NS.A contract recheck record). Nothing was pushed or deployed.
+- Worktree: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`; clean at the latest local checkpoint. Recent local commits cover Grade 3–5 inferred annual pacing, the Pre-Algebra concept bridge, roadmap/contest regression, Grade 6 concept bridging, and the `7.NS.A` contract recheck. Nothing was pushed or deployed.
 - Public practice and private diagnostic are separate. This local branch contains the original 36-item `7.NS.A` student workbook plus eight-item recheck route, with separate teacher mode and an explicit no-placement scope notice. The branch-local workbook is not evidence that the latest remote deployment contains it. The 18-slot `7.NS.A` unit screener remains a different private candidate and is locked; no score, focus analysis, placement, or prescription is operational.
 - The Grade 3–12 roadmap supports plan comparison and manually entered competition-paper summaries. Math Kangaroo comparison is limited to matching date, paper memo, item count, and official grade-paired paper band; its official rank/percentile remains grade-specific. This is descriptive comparison, not a validated cross-grade diagnostic.
 - Latest local verification: combined Grade 3–12 roadmap, contest review, answer-safe local-record, and official competition-profile suites pass 88/88. The separate public `7.NS.A` engine/plan/manifest/report/readiness suites pass 50/50. Desktop/mobile roadmap captures showed no horizontal overflow. These checks are not private-item approval or student-use validation.
@@ -22,6 +22,12 @@ Verification: Grade 3–12 roadmap model/browser suites pass 38/38; the contest 
 Added four-period learning-plan examples for Grades 3–5, based only on the user-provided textbook and study-method guidance. Grade 3 keeps the five-problem daily routine and explanation habit; Grade 4 foregrounds tables, graphs, and picture models before calculating; Grade 5 uses Math Mammoth with optional IXL topic practice focused on explanation rather than a score. Because the source specifies materials and use but not a 12-month schedule, each timeline is explicitly labeled inferred, and the note says the periods are examples to adjust to school pace—not a diagnosis or new-topic assignment. Grades 3–12 now all have a visible annual pacing path.
 
 Verification: roadmap model/browser suites pass 39/39, including inferred-state labels and 390px/1280px no-overflow checks for Grades 3–5; contest paper-review analysis/browser suites pass 26/26. Captured and inspected all three elementary plans at mobile and desktop sizes. `git diff --check` and roadmap data JavaScript syntax validation pass. Local-only; no push, sync, upload, or deployment.
+
+### 2026-11-02 Grade comparison clarifies inferred elementary timelines
+
+Updated desktop and mobile comparison headings so Grades 3–5 retain their supplied grade-level learning-plan label while explicitly marking the newly structured annual pacing periods as inferred. This distinguishes the user's source material from our periodization and keeps the estimate visible when two grades are compared.
+
+Verification: roadmap model/browser suites pass 39/39; the Grade 3-versus-5 comparison asserts the distinction on desktop and phone, with no phone-width overflow. `boarding-roadmap.js` syntax and `git diff --check` pass. Local-only; no push or deployment.
 
 ### 2026-10-30 Grade 7 7.NS.A study-plan connection
 

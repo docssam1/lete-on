@@ -368,8 +368,15 @@
     if (comparisonGrade === grade || !data.getGrade(comparisonGrade)) comparisonGrade = null;
     select.value = comparisonGrade === null ? "" : String(comparisonGrade);
   }
+  function comparisonPlanLabel(entry) {
+    const label = entry.source === "inferred" ? "추정안" : entry.pathNote || "계획 예시";
+    const annualPlan = data.getAnnualPlan(entry.grade);
+    return annualPlan && annualPlan.source === "inferred" && entry.source !== "inferred"
+      ? `${label} · 연간 구간 추정`
+      : label;
+  }
   function renderComparisonColumn(prefix, entry) {
-    const planLabel = entry.source === "inferred" ? "추정안" : entry.pathNote || "계획 예시";
+    const planLabel = comparisonPlanLabel(entry);
     setText(`comparison-${prefix}-label`, `${entry.grade}학년 · ${planLabel}`);
     setText(`comparison-${prefix}-title`, entry.title);
     setText(`comparison-${prefix}-core`, entry.core);
@@ -401,7 +408,7 @@
       const cell = document.createElement("div");
       cell.className = "comparison-mobile-cell";
       const label = document.createElement("strong");
-      const planLabel = entry.source === "inferred" ? "추정안" : entry.pathNote || "계획 예시";
+      const planLabel = comparisonPlanLabel(entry);
       label.textContent = `${entry.grade}학년${entry.grade === grade ? " · 현재" : ""} · ${planLabel}`;
       const title = document.createElement("span"); title.textContent = entry.title;
       cell.append(label, title); header.append(cell);

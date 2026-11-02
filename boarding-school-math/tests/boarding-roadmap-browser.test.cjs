@@ -560,9 +560,18 @@ test("Grade 3 comparison labels the missing contest-plan source instead of imply
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(`${url}?grade=3`, { waitUntil: "networkidle" });
   await page.getByLabel("비교할 학년").selectOption("5");
+  assert.match(await page.locator("#comparison-current-label").innerText(), /3학년 · 계획 예시 · 연간 구간 추정/);
+  assert.match(await page.locator("#comparison-target-label").innerText(), /5학년 · 계획 예시 · 연간 구간 추정/);
   assert.match(await page.locator("#comparison-current-tracks").innerText(), /경시 · 선택[\s\S]*이 학년 계획 자료에는 별도 경시 과정이 제시되지 않았어요/);
   assert.match(await page.locator("#comparison-target-tracks").innerText(), /경시 · 선택[\s\S]*이 학년 계획 자료에는 별도 경시 과정이 제시되지 않았어요/);
   await page.close();
+
+  const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await phone.goto(`${url}?grade=3`, { waitUntil: "networkidle" });
+  await phone.getByLabel("비교할 학년").selectOption("5");
+  assert.match(await phone.locator(".comparison-mobile-header").innerText(), /3학년 · 현재 · 계획 예시 · 연간 구간 추정[\s\S]*5학년 · 계획 예시 · 연간 구간 추정/);
+  assert.deepEqual(await phone.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  await phone.close();
 });
 
 test("grade comparison keeps paired columns on desktop", async function () {
