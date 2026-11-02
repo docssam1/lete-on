@@ -3488,6 +3488,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
 
+  if (source52CongruenceFirst) for (const [n,name] of [[17,"삼각형이 하나로 결정되는 조건 · 확인학습 원문"],[18,"가장 긴 변의 길이가 될 수 있는 가장 큰 자연수 · 확인학습 원문"],[19,"다섯 나무 도막으로 삼각형 만들기 · 확인학습 원문"],[20,"한 변의 양 끝 각을 골라 삼각형 만들기 · 확인학습 원문"]]) {
+    const id=`5-2-u3-practice-${n}-original`;
+    if (source52CongruenceFirst.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:83,sourcePrintedPage:87,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page87Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:![17,18].includes(n),answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 삼각형의 성립·합동 및 경우의 수를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
