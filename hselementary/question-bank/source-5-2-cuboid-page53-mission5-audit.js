@@ -1,0 +1,18 @@
+"use strict";
+const assert = require("node:assert/strict");
+const api = require("./source-5-2-cuboid-page53-mission5.js");
+const item = api.build();
+assert.deepEqual(api.views, [[['나',-90],['가',-90],['바',0]],[['라',-90],['마',0],['다',-90]],[['나',90],['다',90],['마',180]]]);
+assert.equal(item.automaticGrading, false);
+assert.equal(item.publisherKeyVerified, false);
+assert.ok(!item.prompt.includes('class="answer-letter"'));
+assert.equal((item.answerVisual.match(/class="answer-letter"/g) || []).length, 4);
+assert.ok(api.net(0,true).includes('rotate(90 69 69)">다'));
+assert.ok(api.net(0,true).includes('rotate(-90 145 69)">가'));
+assert.ok(api.net(1,true).includes('rotate(90 31 31)">가'));
+assert.ok(api.net(1,true).includes('rotate(0 107 69)">다'));
+const type = {id: api.sourceItemId, sourceItemId: api.sourceItemId, generatorKey: api.generatorKey, sourceVerified: true, reviewLocked: false};
+assert.ok(api.resolves(type));
+assert.ok(!api.resolves({...type, reviewLocked: true}));
+assert.ok(!api.resolves({...type, sourceVerified: false}));
+console.log("PASS: source rotations, answer directions, manual grading and release guard");
