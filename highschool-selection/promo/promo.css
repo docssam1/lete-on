@@ -8,8 +8,8 @@
 .selection-promo .shell { width: min(1200px, calc(100% - 64px)); }
 .selection-promo .site-header { background: #ffffffed; border-color: var(--line); }
 .selection-promo .nav { min-height: 80px; }
-.selection-promo .brand { font-size: 22px; font-weight: 800; letter-spacing: -.04em; }
-.selection-promo .brand-mark { border: 0; border-radius: 8px; background: var(--accent); color: #fff; font-size: 24px; font-weight: 800; line-height: 1; }
+.selection-promo .lete-on-brand { display: grid; gap: 5px; align-items: start; letter-spacing: 0; }
+.selection-promo .brand-wordmark { display: block; font-size: 28px; font-weight: 750; letter-spacing: -.045em; line-height: 1; }
 .selection-promo .brand small { font-size: 12px; font-weight: 500; letter-spacing: 0; }
 .selection-promo .nav-links { gap: 28px; }
 .selection-promo .nav-academies { padding: 12px 0; font-size: 14px; font-weight: 650; }
@@ -22,7 +22,6 @@
 .selection-promo[data-view="home"] { background: #0b0b0b; color: #f6f3eb; }
 .selection-promo[data-view="home"] .site-header { background: #0b0b0b; border-color: transparent; }
 .selection-promo[data-view="home"] .brand small { color: #bcbab3; }
-.selection-promo[data-view="home"] .brand-mark { background: #f7d447; color: #0b0b0b; border-radius: 50% 50% 50% 12%; }
 .selection-promo[data-view="home"] .button.accent { background: #f7d447; border-color: #f7d447; color: #0b0b0b; }
 .selection-promo[data-view="home"] :is(a,button):focus-visible { outline-color: #fff; }
 .academy-home { padding: 48px 0 56px; overflow: clip; }
@@ -134,7 +133,8 @@
   .selection-promo .nav { min-height: 72px; gap: 12px; }
   .selection-promo .nav-links { gap: 12px; }
   .selection-promo .nav-academies { display: none; }
-  .selection-promo .brand { gap: 8px; font-size: 19px; }
+  .selection-promo .lete-on-brand { gap: 5px; }
+  .selection-promo .brand-wordmark { font-size: 24px; }
   .selection-promo .brand small { font-size: 11px; }
   .selection-promo .button { padding-inline: 14px; }
   .academy-home { padding-top: 32px; }
