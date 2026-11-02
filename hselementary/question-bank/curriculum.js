@@ -2835,6 +2835,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Probability = source52Average?.subunits.find(subunit => subunit.name === "사건의 가능성");
+  if (source52Probability) for (const [n,name] of [[59,"부모가 이웃하지 않을 가능성 · 확인학습 원문"],[61,"두 주머니에서 서로 다른 색의 공을 뽑을 가능성 · 확인학습 원문"],[62,"세 숫자 카드로 만든 수가 3의 배수일 가능성 · 확인학습 원문"],[63,"네 OX 문제에서 적어도 두 문제를 맞힐 가능성 · 확인학습 원문"]]) {
+    const id=`5-2-u6-practice-${n}-original`;
+    if (source52Probability.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:117,alternateSourcePdfPage:118,sourcePrintedPage:123,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U6Page116Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 그림을 대조하고 동등 가능성을 전제로 독립 계산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
   if (source52Probability) for (const [n,name] of [[54,"네 사람 중 지정된 사람이 맨 뒤에 설 가능성 · 확인학습 원문"],[55,"카드로 만든 두 자리 수가 30 이상일 가능성 · 확인학습 원문"],[57,"카드로 만든 두 자리 수가 50 이상일 가능성 · 확인학습 원문"],[58,"빨간 공의 가능성으로 노란 공 개수 구하기 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52Probability.types.some(type=>type.id===id)) continue;
