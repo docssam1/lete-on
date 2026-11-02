@@ -277,11 +277,13 @@
       "singleAnswer": true,
       "singleAnswerCheck": "큰 끝값이 가장 클 때 작은 끝값도 가장 커지고, 개수식으로 하나가 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e1-example-1",
       "practiceRuntimeId": "5-2-u1-e1-example-1-1",
       "practiceLocalCheck": "별도 수치 유사문항 로컬 9개 구성의 문제·풀이와 경계 검산 통과",
-      "lockReason": "원문을 독립 검산했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
+      "lockReason": "",
+      "releaseEvidence": "원본 수치와 양 끝 포함을 대조하고 최댓값을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-2",
@@ -305,11 +307,13 @@
       "singleAnswer": true,
       "singleAnswerCheck": "두 의자 조건의 공통 자연수는 415와 416뿐입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e1-example-2",
       "practiceRuntimeId": "5-2-u1-e1-example-1-2",
       "practiceLocalCheck": "별도 수치 유사문항 로컬 9개 구성의 문제·풀이와 경계 검산 통과",
-      "lockReason": "원문을 독립 검산했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
+      "lockReason": "",
+      "releaseEvidence": "원본의 의자 수와 이상·미만 표현을 대조하고 가능한 학생 수를 전수 확인했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-3",
@@ -335,11 +339,13 @@
       "singleAnswer": true,
       "singleAnswerCheck": "전체 수와 두 부분의 수로 겹침의 양 끝이 각각 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e1-example-3",
       "practiceRuntimeId": "5-2-u1-e1-example-1-3",
       "practiceLocalCheck": "별도 수치 유사문항 로컬 9개 구성의 문제·풀이와 경계 검산 통과",
-      "lockReason": "원문을 독립 검산했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
+      "lockReason": "",
+      "releaseEvidence": "원본의 회원 수와 초과·이하 표현을 대조하고 겹침의 양 끝을 검산했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-example-4",
@@ -363,11 +369,13 @@
       "singleAnswer": true,
       "singleAnswerCheck": "상자 수 9, 10, 11만 두 담는 양 조건을 함께 만족합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
+      "implementationStatus": "verified-local",
+      "publicDecision": "public",
+      "runtimeTypeId": "5-2-u1-e1-example-4",
       "practiceRuntimeId": "5-2-u1-e1-example-1-4",
       "practiceLocalCheck": "별도 수치 유사문항 로컬 9개 구성의 문제·풀이와 경계 검산 통과",
-      "lockReason": "원문을 독립 검산했으나 출판사 답안 미대조로 원문 잠금을 유지합니다. 별도 유사문항은 로컬 검산했습니다."
+      "lockReason": "",
+      "releaseEvidence": "원본의 귤 수와 담는 범위를 대조하고 9·10·11상자 배분을 구성했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u1-e1-mission-1-union-count",
