@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {evaluateResponse,makeReport,publicQuestions,publicExam,validGrant,fixedEqual,applyReview} from '../../supabase/functions/highselect-exams/core.mjs';
+import {evaluateResponse,makeReport,publicQuestions,publicExam,validGrant,fixedEqual,applyReview,makeSelfReport} from '../../supabase/functions/highselect-exams/core.mjs';
 const q=(spec,number=1)=>({number,responseType:spec.type||'input',classification:{domain:'기하',majorUnit:'도형',detailType:'길이'},spec});
 test('fractions, decimals, radicals, units and ratios accept equivalent notation without evaluating code',()=>{
  assert.equal(evaluateResponse('0.5',q({type:'input',mode:'fraction-equivalent',answers:['1/2']})),'correct');
@@ -42,4 +42,10 @@ test('per-exam grants and expiry are rechecked independently of session validity
 test('teacher review resolves only pending responses and recalculates score without keys',()=>{
  const e={id:'test',title:'시험',mode:'pilot',version:'v1',durationMinutes:110,pages:['private'],questions:[q({type:'input',answers:['canonical'],manualFallback:true})]};
  const before=makeReport(e,['alternate']);assert.equal(before.reviewCount,1);const after=applyReview(before,1,'correct');assert.equal(after.correctCount,1);assert.equal(after.reviewCount,0);assert.equal(after.final,true);assert.equal(after.domains[0].correct,1);assert.throws(()=>applyReview(after,1,'wrong'));assert.doesNotMatch(JSON.stringify(after),/canonical|alternate|private/);
+});
+
+test('O/X self-check rejects answers and forged states, preserves unmarked items, and labels self-report',()=>{
+ const e={id:'self',title:'시험',mode:'pilot',version:'v2',pages:['paper'],answerPages:['private-answer-page'],questions:[q({answers:['private-key']}),q({answers:['2']},2),q({answers:['3']},3)]};
+ const r=makeSelfReport(e,['O','X','']);assert.deepEqual([r.correctCount,r.wrongCount,r.blankCount],[1,1,1]);assert.equal(r.gradingMethod,'self-reported');assert.equal(r.final,false);assert.equal(r.cutlineDecision,null);assert.doesNotMatch(JSON.stringify(r),/private-answer-page|private-key/);
+ for(const marks of [['O'],['correct','X',''],['O',null,''],['O','X','<script>']])assert.throws(()=>makeSelfReport(e,marks));
 });
