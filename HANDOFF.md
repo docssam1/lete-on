@@ -69,6 +69,10 @@ Added a second official-source link to the roadmap's contest panel: after select
 
 Verification: the Grade 3–12 roadmap model/browser suites pass 37/37, including the exact archive URL, selection visibility, switching back to AMC, and external-link protections. The bundled Node runtime passed syntax checking for the changed roadmap script; `git -c core.whitespace=cr-at-eol diff --check` passed. Local-only; no upload, sync, push, publication, or deployment. The separate current R6 diagnostic screen/A4 release gate remains open as documented in the continuation handoff.
 
+## 2026-11-02 R6 structural recheck
+
+Rechecked the private AMC candidate's nonvisual gates without changing the item pack: `validate-draft.cjs` reports 42 items, seven axes with six each, 14 per intended-difficulty label, four choices, English/Korean content, and locked delivery. The current generated review workbench's one executable inline script passes syntax parsing. File metadata confirms the prior screen captures/PDF still predate the Oct 30 current workbench rebuild. This does not close responsive browser, A4 visual, screen-reader/device, independent human math/language, rights/similarity, pilot, reporting-validation, or learner-authorization gates. No candidate content was sent externally or changed; no student use, sync, publication, or deployment.
+
 ## 2026-10-30 AMC raw-score reference continuation
 
 The public manual contest-paper review now shows a clearly labeled reference raw score only when all 25 marks are entered for AMC 8/10/12. AMC 8 uses correct-count out of 25; AMC 10/12 use 6 points per correct and 1.5 per blank, with wrong answers 0. Other contests, partial inputs, and non-25-question tests do not produce this score. It is not an official score, contest level, award/AIME prediction, or school placement; the report directs users to the selected test's instructions and MAA's official contest page. The formulas are corroborated by historical MAA booklets (2023 AMC 8; 2022 AMC 10A); current 2026–27 MAA rules do not confirm that these historic scoring instructions apply to every current paper, so the selected paper remains authoritative.
