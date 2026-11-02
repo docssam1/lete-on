@@ -55,8 +55,13 @@
   .ws-bar .pl-tools{display:flex;gap:6px;flex-wrap:wrap}
   .ws-bar .pl-tools select,.ws-bar .pl-tools input{padding:7px 8px;border:1px solid #cfe0d5;border-radius:8px;font:inherit;font-size:13px;background:#fff;max-width:230px}
   /* 채점 칸 — 화면 맨 위, 접어 둔 상자. 칸 하나에 번호·정답·○X (2026-10-27) */
-  #plScore{max-width:210mm;margin:12px auto;padding:0 16px;background:#fff;border:1px solid #e6dcc8;border-radius:10px}
+  #plScore{box-sizing:border-box;width:calc(100% - 24px);max-width:210mm;margin:12px auto;padding:0 16px;background:#fff;border:1px solid #e6dcc8;border-radius:10px}
   #plScore>summary{cursor:pointer;min-height:48px;display:flex;align-items:center;font-weight:800;font-size:15px;color:#245b60}
+  /* 진단하기 = 인쇄(초록) 단추와 다른 색의 단추(2026-11-02 원장 「진단하기 버튼 색 구분해서」). 펼치면 머리말로 돌아간다 */
+  #plScore:not([open]){padding:0;border:0;background:none}
+  #plScore:not([open])>summary{justify-content:center;gap:8px;min-height:56px;padding:10px 18px;border-radius:12px;background:#d9a62e;color:#2a2210;font-size:17px;list-style:none;box-shadow:0 2px 8px rgba(120,90,20,.25)}
+  #plScore:not([open])>summary::-webkit-details-marker{display:none}
+  #plScore:not([open])>summary:hover{background:#c9951f}
   #plScore>summary:focus-visible{outline:3px solid #245b60;outline-offset:2px;border-radius:6px}
   #plScore[open]{padding-bottom:16px}
   .pl-sc-help{margin:0 0 8px;font-size:13px;line-height:1.6;color:#5c6b70;word-break:keep-all}
@@ -532,11 +537,11 @@ function keyPage(plan, stage){
       'Do not show this to the child first. Mark “?” for skipped items — it is different from wrong. The result is a practice suggestion from 20 questions, not a mastery or admission judgement.',
       '请先不要给孩子看。不会的题标“不会”，与做错不同。结果只是基于20题的练习建议，不代表掌握程度或入学判断。')) + '</p>' + sourceHtml(stage) +
     '<table class="pl-key"><thead><tr><th>#</th><th>' + esc(plan.ladder ? T('단계','Step','阶段') : T('구간','Band','区间')) + '</th><th>' + esc(T('영역','Topic','内容')) + '</th><th>' + esc(T('정답','Answer','答案')) + '</th><th>' + esc(T('채점','Mark','评分')) + '</th></tr></thead><tbody>' + rows + '</tbody></table>' +
-    (plan.ladder ? '<p class="pl-sub">' + esc(T('단계마다 2문항 이상(1문항 단계는 그 문항) 틀리거나 모르면 그 단계부터 시작해요. 화면 맨 위 ‘인쇄한 시험지 채점하기’에 ○×를 넣으면 시작 단계를 바로 볼 수 있어요(인쇄에는 나오지 않아요).',
+    (plan.ladder ? '<p class="pl-sub">' + esc(T('단계마다 2문항 이상(1문항 단계는 그 문항) 틀리거나 모르면 그 단계부터 시작해요. 화면 맨 위 ‘진단하기’ 단추를 눌러 ○×를 넣으면 시작 단계를 바로 볼 수 있어요(인쇄에는 나오지 않아요).',
       'Start at the first step with two or more wrong or unknown answers (or the single item in a one-question step). On screen, “Mark the printed sheet” at the top shows the starting step (it is not printed).',
       '从第一个错或不会两题以上（单题阶段为该题）的阶段开始。在屏幕最上方“为打印的试卷评分”填入○×即可看到起始阶段（不会打印）。')) + '</p>' :
     '<div class="pl-tally"><span>' + esc(T('이전','Earlier','之前')) + ' <u></u>/6</span><span>' + esc(T('현재','Current','现在')) + ' <u></u>/10</span><span>' + esc(T('다음','Next','之后')) + ' <u></u>/4</span><span>' + esc(T('모름','Skipped','跳过')) + ' <u></u></span></div>' +
-    '<p class="pl-sub">' + esc(T('다음 4문항은 아직 배우지 않았을 수 있는 범위예요. 다음 구간의 오답을 지금 약점으로 보지 않아요. 화면 맨 위 ‘인쇄한 시험지 채점하기’에 ○×를 넣으면 추천 시작 회차를 바로 볼 수 있어요(인쇄에는 나오지 않아요).',
+    '<p class="pl-sub">' + esc(T('다음 4문항은 아직 배우지 않았을 수 있는 범위예요. 다음 구간의 오답을 지금 약점으로 보지 않아요. 화면 맨 위 ‘진단하기’ 단추를 눌러 ○×를 넣으면 추천 시작 회차를 바로 볼 수 있어요(인쇄에는 나오지 않아요).',
       'The last 4 questions may cover content not yet taught; do not treat misses there as current weaknesses. On screen, “Mark the printed sheet” at the top shows the suggested starting session (it is not printed).',
       '最后4题可能是尚未学到的内容，这里做错不算当前弱点。在屏幕最上方“为打印的试卷评分”填入○×即可看到建议的起始课次（不会打印）。')) + '</p>');
 }
@@ -582,7 +587,7 @@ function renderScorer(stage){
   var key = document.querySelector('.pl-keypage'); if(key)key.id = 'plAnswerKey';
   var MARK_NAME = { '': T('채점 안 함','not marked','未评分'), o: T('맞음','correct','正确'), x: T('틀림','wrong','错误') };
   var shortAns = function(it){ return it.responseMode === 'count-tap' ? it.answer + T('개','','个') : ansText(it); };
-  box.innerHTML = '<summary>' + esc(T('인쇄한 시험지 채점하기 · ○×', 'Mark the printed sheet · ○×', '为打印的试卷评分 · ○×')) + '</summary>' +
+  box.innerHTML = '<summary>' + esc(T('진단하기 · 푼 시험지 ○× 체크', 'Diagnose · mark the solved sheet ○×', '开始诊断 · 为做完的试卷打○×')) + '</summary>' +
     '<p class="pl-sc-help">' + esc(T('칸을 한 번 누르면 ○, 두 번 누르면 X, 한 번 더 누르면 지워져요. 모르는 문제는 비워 두세요. 칸의 작은 글씨가 정답이에요.',
       'Tap a cell once for ○, twice for X, again to clear. Leave unknown answers blank. The small text in each cell is the answer.',
       '点一次为○，两次为X，再点一次清除。不会的题留空。格子里的小字是正确答案。')) + '</p>' +
