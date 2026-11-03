@@ -1,6 +1,7 @@
 "use strict";
 const assert = require("node:assert/strict");
 const path = require("node:path");
+const { execFileSync } = require("node:child_process");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8918";
 const ids = ["5-2-u3-e5-mission-1-octagon-synthetic", "5-2-u3-e5-mission-2-reflection-area-synthetic", "5-2-u3-e5-mission-3-hexagon-synthetic", "5-2-u3-e5-mission-4-triple-reflection-synthetic", "5-2-u3-e5-mission-5-square-perimeter-synthetic", "5-2-u3-e5-mission-6-isosceles-axis-synthetic"];
@@ -48,8 +49,23 @@ const ids = ["5-2-u3-e5-mission-1-octagon-synthetic", "5-2-u3-e5-mission-2-refle
           await page.locator("#printMenuButton").click();
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
-          await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+          await page.emulateMedia({ media: "print" });
+          if (mode === "problem") {
+            const dimensions = await page.locator("#problemView .question-item").evaluateAll(items => items.map(item => {
+              const marker = item.querySelector("[data-source-item-id]");
+              const figure = item.querySelector("svg").getBoundingClientRect();
+              const answer = item.querySelector(".answer-line").getBoundingClientRect();
+              return { id: marker.dataset.sourceItemId, width: figure.width, bottom: figure.bottom, answerTop: answer.top, font: getComputedStyle(marker).fontFamily };
+            }));
+            assert(dimensions.every(item => item.bottom <= item.answerTop + 1), "figures must not overlap answer lines");
+            assert(dimensions.every(item => /Noto Serif KR/.test(item.font)), "print problems use the serif font");
+            assert(dimensions.filter(item => item.id.includes("hexagon")).every(item => item.width >= 240), "drawing grids are large enough to use");
+          }
+          const file = path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`);
+          await page.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
+          if (mode === "problem") assert.match(execFileSync("pdfinfo", [file], { encoding: "utf8" }), /^Pages:\s+5$/m, "18 questions occupy five A4 pages without blank pages");
           await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
+          await page.emulateMedia({ media: null });
         }
       }
       assert.deepEqual(errors, []);
