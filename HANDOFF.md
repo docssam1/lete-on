@@ -2,6 +2,14 @@
 
 Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The map-stop readability and G·MAP palette updates are committed locally. No push, deployment, or Drive synchronization has occurred.
 
+### 2026-11-03 GFIELD Pre-Algebra Unit 1 and stacked fractions
+
+Added `boarding-school-math/prealgebra-workbook.html` with an original GFIELD Unit 1: six lessons and twelve practice prompts covering variable expressions and values, exponents/order of operations, translating verbal relationships, operation properties, distribution, and combining like terms. Objectives and terminology follow the Common Core 6.EE scope; the course record links 6.EE and 7.EE references. The student route now includes the new unit and a separate teacher answer/solution route. The course comparison teacher link also opens the GFIELD workbook. Pre-Algebra remains a partial course prototype, not a diagnostic or placement result.
+
+The workbook uses the existing A4 renderer and shared math formatting. Fractions such as 3/2, 9/4, and (s+12)/2 show a stacked numerator, horizontal bar, and denominator in both screen and print stylesheet structure; units, ratios, and counts are not reformatted as fractions. The request-specific six-step pathway uses curriculum terms such as “변수식으로 나타내고 식의 값 구하기,” “연산 성질,” and “동류항을 결합해 식을 정리하기.”
+
+Verification: the local Chrome student view shows the fractions stacked in the worked square-area example, and accessibility output exposes them as Korean fraction readings; teacher mode also exposes stacked forms in answers. The course object reports 1 unit, 6 lessons, and 12 practice prompts in the available Node REPL. Course contract and browser regression tests were added, but the shell test runner was unavailable in this session; no suite pass is claimed. The Pre-Algebra route AX review confirms both student and teacher links, the six ordered concept labels, and current resource counts. `git diff --check` passes. Changes are local only; no push, deployment, Drive sync, or external API call.
+
 ### 2026-11-03 course comparison cards and fraction display check
 
 The learner-selected previous/current/next course comparison now links each card directly to its GFIELD material. Algebra 1 availability matches the authored course: five units, 32 lessons, and 64 practice prompts. Grade 7 no longer shows the stale “first lesson available / next units in progress” status. This remains a learner-selected course path; the grade does not infer the course or placement.

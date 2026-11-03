@@ -69,7 +69,7 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   await page.locator("#course-path-cards article:last-child select").selectOption("geometry");
   assert.deepEqual(await page.locator("#course-path-cards h3").allInnerTexts(), ["Pre-Algebra", "Algebra 1", "Geometry"]);
   assert.deepEqual(await page.locator(".course-path-material-link").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("href"); }); }), ["./prealgebra-path.html", "./algebra1-workbook.html", "./geometry-workbook.html"]);
-  assert.match(await page.locator("#course-path-cards").innerText(), /개념 수업 10개 · 검수 공개 워크북 8종[\s\S]*5단원·32차시·64문항 공개[\s\S]*5단원·16차시·32문항 공개/);
+  assert.match(await page.locator("#course-path-cards").innerText(), /Pre-Algebra Unit 1 · 6차시·12문항 공개[\s\S]*5단원·32차시·64문항 공개[\s\S]*5단원·16차시·32문항 공개/);
   await page.locator("#annual-plan-periods a").first().click();
   await page.waitForURL(/algebra1-workbook\.html\?edition=student$/);
   assert.equal(await page.locator("#workbook-title").innerText(), "Algebra 1 단원 교재");
@@ -113,7 +113,7 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   await page.close();
 });
 
-test("Pre-Algebra route connects ten public concept lessons and eight reviewed workbooks", async function () {
+test("Pre-Algebra route connects public materials and the original six-lesson expression unit", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
@@ -124,7 +124,7 @@ test("Pre-Algebra route connects ten public concept lessons and eight reviewed w
   ]);
   assert.equal(await page.locator(".route-stage").count(), 4);
   assert.equal(await page.locator(".route-stage .resource-links a:not(.workbook-link)").count(), 10);
-  assert.equal(await page.locator(".route-stage .workbook-link").count(), 8);
+  assert.equal(await page.locator(".route-stage .workbook-link").count(), 10);
   const conceptClusters = await page.locator('.route-stage .resource-links a:not(.workbook-link)').evaluateAll(function (nodes) {
     return nodes.map(function (node) { return new URL(node.href).searchParams.get("cluster"); });
   });
@@ -132,15 +132,58 @@ test("Pre-Algebra route connects ten public concept lessons and eight reviewed w
   const workbookClusters = await page.locator(".route-stage .workbook-link").evaluateAll(function (nodes) {
     return nodes.map(function (node) { return new URL(node.href).searchParams.get("cluster"); });
   });
-  assert.deepEqual(workbookClusters, ["6.NS.A", "6.NS.B", "6.NS.C", "7.NS.A", "6.RP.A", "7.RP.A", "6.EE.A", "6.SP.A"]);
+  assert.deepEqual(workbookClusters, ["6.NS.A", "6.NS.B", "6.NS.C", "7.NS.A", "6.RP.A", "7.RP.A", "6.EE.A", null, null, "6.SP.A"]);
   for (const link of await page.locator(".route-stage a").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.href; }); })) {
     const response = await page.request.get(link);
     assert.equal(response.status(), 200, `resource link should load: ${link}`);
   }
   assert.equal(await page.locator(".course-bridge a").getAttribute("href"), "./algebra1-workbook.html");
+  assert.deepEqual(await page.locator("#expressions-and-relationships .route-concepts li").allInnerTexts(), [
+    "변수식으로 나타내고 값 구하기", "거듭제곱과 연산 순서", "문장을 변수식으로 번역하기",
+    "연산 성질로 동치식 만들기", "분배법칙으로 전개하고 묶기", "동류항을 결합해 식 정리하기"
+  ]);
+  assert.equal(await page.locator('#expressions-and-relationships a[href="./prealgebra-workbook.html?edition=student"]').count(), 1);
+  assert.equal(await page.locator('#expressions-and-relationships a[href="./prealgebra-workbook.html?edition=teacher"]').count(), 1);
   assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
   await page.setViewportSize({ width: 1280, height: 900 });
   assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("original Pre-Algebra Unit 1 renders stacked fractions in student, teacher, and A4 views", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  const workbookUrl = `${url.replace("boarding-roadmap.html", "prealgebra-workbook.html")}?edition=student`;
+  await page.goto(workbookUrl, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#workbook-status").innerText(), /1개 단원 · 6차시 · 연습 12문항 · A4/);
+  assert.equal(await page.locator(".lesson-page").count(), 6);
+  assert.equal(await page.locator(".practice-page").count(), 6);
+  assert.ok(await page.locator('.math-fraction[aria-label="2분의 3"]').count() > 0);
+  assert.ok(await page.locator('.math-fraction[aria-label="4분의 9"]').count() > 0);
+  assert.equal(await page.locator(".lesson-page,.practice-page").evaluateAll(function (pages) {
+    return pages.some(function (node) { return /\d\s*\/\s*\d/.test(node.innerText); });
+  }), false, "student workbook shows stacked fractions, not slash notation");
+  assert.ok(await page.locator(".math-fraction").evaluateAll(function (nodes) {
+    return nodes.every(function (node) {
+      return getComputedStyle(node).display === "inline-grid"
+        && getComputedStyle(node.querySelector(".math-fraction-numerator")).borderBottomWidth !== "0px";
+    });
+  }));
+  await page.emulateMedia({ media: "print" });
+  assert.equal(await page.locator(".print-page").evaluateAll(function (pages) {
+    return pages.some(function (node) { return /\d\s*\/\s*\d/.test(node.innerText); });
+  }), false, "A4 output keeps fraction formatting");
+  assert.equal(await page.locator(".print-page").evaluateAll(function (pages) {
+    return pages.filter(function (node) { return node.scrollHeight > node.clientHeight + 1; }).length;
+  }), 0);
+  await page.locator("#edition-select").selectOption("teacher");
+  assert.equal(await page.locator(".answer-page").count(), 6);
+  assert.equal(await page.locator(".answer-page").evaluateAll(function (pages) {
+    return pages.some(function (node) { return /\d\s*\/\s*\d/.test(node.innerText); });
+  }), false, "teacher edition keeps fractions stacked in the worked solutions");
+  assert.ok(await page.locator(".answer-page .math-fraction").count() > 0);
   assert.deepEqual(errors, []);
   await page.close();
 });

@@ -33,8 +33,8 @@
       nextOptions: ["algebra-1"],
       next: "Algebra 1",
       studentHref: "./prealgebra-path.html",
-      teacherHref: "./catalog.html?role=teacher&grade=6",
-      availability: "지필드 개념 수업 10개 · 검수 공개 워크북 8종 (6학년 6 · 7학년 2) · 진단·배치 별도"
+      teacherHref: "./prealgebra-workbook.html?edition=teacher",
+      availability: "지필드 자체 Pre-Algebra Unit 1 · 6차시·12문항 공개 · 개념 수업 10개·검수 워크북 8종 연결 · 진단·배치 별도"
     }),
     Object.freeze({
       id: "algebra-1",
