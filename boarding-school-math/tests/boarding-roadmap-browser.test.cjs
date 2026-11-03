@@ -1068,7 +1068,7 @@ test("Grade 6 and 7 annual plans expose stage-matched online resource links", as
   assert.deepEqual(await grade6Resources.evaluateAll(function (links) { return links.map(function (link) { return link.getAttribute("href"); }); }), [
     "./concept-learning.html", "./concept-learning.html?cluster=6.EE.A", "./unit-workbook.html?cluster=6.EE.A&mode=workbook&audience=student&locale=ko&paper=A4",
     "./competition-practice.html?program=amc8", "https://maa.org/student-programs/amc/",
-    "./concept-learning.html?cluster=6.RP.A", "https://satsuite.collegeboard.org/practice/student-question-bank/math",
+    "./sat-foundation-practice.html?grade=6", "./concept-learning.html?cluster=6.RP.A", "https://satsuite.collegeboard.org/practice/student-question-bank/math",
     "./concept-learning.html", "./competition-practice.html?program=amc8"
   ]);
   await grade6Resources.nth(1).click();

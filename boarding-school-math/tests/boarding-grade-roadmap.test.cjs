@@ -127,12 +127,11 @@ test("upper-grade course references are limited to named courses and keep Grade 
   });
   assert.deepEqual(roadmap.annualPlanResourceLinks[6][0].map(function (resource) { return resource.url; }), ["./concept-learning.html", "./concept-learning.html?cluster=6.EE.A", "./unit-workbook.html?cluster=6.EE.A&mode=workbook&audience=student&locale=ko&paper=A4"]);
   assert.deepEqual(roadmap.annualPlanResourceLinks[6][1].map(function (resource) { return resource.url; }), ["./competition-practice.html?program=amc8", "https://maa.org/student-programs/amc/"]);
-  assert.equal(roadmap.annualPlanResourceLinks[6][2][0].url, "./concept-learning.html?cluster=6.RP.A");
-  assert.equal(roadmap.annualPlanResourceLinks[6][2][1].url, "https://satsuite.collegeboard.org/practice/student-question-bank/math");
+  assert.deepEqual(roadmap.annualPlanResourceLinks[6][2].map(function (resource) { return resource.url; }), ["./sat-foundation-practice.html?grade=6", "./concept-learning.html?cluster=6.RP.A", "https://satsuite.collegeboard.org/practice/student-question-bank/math"]);
   assert.deepEqual(roadmap.annualPlanResourceLinks[6][3].map(function (resource) { return resource.url; }), ["./concept-learning.html", "./competition-practice.html?program=amc8"]);
   assert.equal(roadmap.annualPlanResourceLinks[7][0][0].url, "./algebra1-workbook.html");
   assert.deepEqual(roadmap.annualPlanResourceLinks[7][1].map(function (resource) { return resource.url; }), ["./geometry-workbook.html", "./amc10-practice.html?grade=7", "https://maa.org/student-programs/amc/"]);
-  assert.equal(roadmap.annualPlanResourceLinks[7][2][0].url, "https://www.khanacademy.org/digital-sat");
+  assert.deepEqual(roadmap.annualPlanResourceLinks[7][2].map(function (resource) { return resource.url; }), ["./sat-foundation-practice.html?grade=7", "https://www.khanacademy.org/digital-sat", "https://satsuite.collegeboard.org/practice/student-question-bank/math"]);
   assert.equal(roadmap.courseStageResources[8][0][0].url, "./geometry-workbook.html");
   assert.equal(roadmap.annualPlanResourceLinks[8][0][0].url, "./algebra2-workbook.html");
   assert.match(roadmap.annualPlanResourceLinks[8][0][0].title, /지필드 Algebra 2 원본/);
