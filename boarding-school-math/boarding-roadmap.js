@@ -306,12 +306,12 @@
       checks.replaceChildren();
       (stop.checks || [stop.check]).filter(Boolean).forEach(function (question) {
         const item = document.createElement("li");
-        if (typeof question === "string") item.textContent = question;
+        if (typeof question === "string") appendMathText(item, question);
         else {
           const standard = document.createElement("a"); standard.className = "grade7-standard-code"; standard.textContent = question.standard;
           standard.href = `./unit-workbook.html?cluster=${encodeURIComponent(stop.clusterId)}&mode=workbook&audience=student&locale=ko&standard=${encodeURIComponent(question.standard)}`;
           standard.setAttribute("aria-label", `${question.standard} 워크북에서 연습`);
-          const prompt = document.createElement("span"); prompt.className = "grade7-check-prompt"; prompt.textContent = question.prompt;
+          const prompt = document.createElement("span"); prompt.className = "grade7-check-prompt"; appendMathText(prompt, question.prompt);
           item.append(standard, prompt);
           const correct = savedPractice && savedPractice.correctByStandard[question.standard];
           const total = savedPractice && savedPractice.totalByStandard[question.standard];

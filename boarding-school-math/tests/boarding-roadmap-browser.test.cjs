@@ -80,6 +80,8 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   assert.match(await unit5.innerText(), /이차식의 곱과 표준형 연결하기[\s\S]*자료에 맞는 이차 모델 선택하기/);
   assert.deepEqual(await page.locator(".algebra1-unit-card").evaluateAll(function (cards) { return cards.map(function (card) { return getComputedStyle(card).gridColumn; }); }), ["1 / -1", "1 / -1", "1 / -1", "1 / -1", "1 / -1"]);
   assert.equal(await page.locator(".algebra1-unit-lesson").count(), 5);
+  assert.ok(await page.locator('.algebra1-session .math-fraction[aria-label="3분의 8"]').count() > 0, "Algebra 1 lesson text should render a coordinate fraction as a stacked fraction");
+  assert.ok(await page.locator('.algebra1-session .math-fraction[aria-label="3분의 14"]').count() > 0, "Algebra 1 lesson text should render both coordinate fractions as stacked fractions");
   await page.locator(".algebra1-unit-lesson").nth(2).locator("summary").click();
   assert.match(await page.locator(".algebra1-unit-lesson").nth(2).innerText(), /입장권[\s\S]*a \+ s = 28[\s\S]*a = 13, s = 15/);
   assert.doesNotMatch(await page.locator("body").innerText(), /추정안|AoPS Introduction to Algebra/);
@@ -1090,6 +1092,16 @@ test("Grade 7 deep link keeps the concept path reachable at 320px", async functi
   await page.getByRole("button", { name: /살펴볼 지점 1, 유리수/ }).click();
   assert.ok(await page.locator(".stage-detail").evaluate(function (node) { const bounds = node.getBoundingClientRect(); return bounds.top >= 0 && bounds.bottom <= document.documentElement.scrollHeight; }));
   assert.equal(await page.locator("#grade7-stage-questions li").count(), 4);
+  const stagePromptFractions = await page.evaluate(function () {
+    const target = document.createElement("span");
+    window.GFIELDMathText.append(target, "분수 3/4와 2/3을 비교해요.");
+    return {
+      count: target.querySelectorAll(".math-fraction").length,
+      labels: Array.from(target.querySelectorAll(".math-fraction"), function (node) { return node.getAttribute("aria-label"); }),
+      slashText: /\d\s*\/\s*\d/.test(target.textContent)
+    };
+  });
+  assert.deepEqual(stagePromptFractions, { count: 2, labels: ["4분의 3", "3분의 2"], slashText: false }, "the shared renderer should show a fraction bar and expose the fraction through its accessible label");
   await page.close();
 });
 

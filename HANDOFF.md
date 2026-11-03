@@ -449,3 +449,9 @@ Additional release-boundary check: competition paper-review and practice model/b
 Updated the home page, Grade 6 skill map, Pre-Algebra course card, and diagnostic QA notice to distinguish ten public concept lessons from the six reviewed public unit workbooks. The four unreleased workbook drafts are no longer counted as available materials. The diagnostic notice now distinguishes those public study resources from diagnostic-driven assignment, which remains locked. Updated the course-map test for the five Algebra 2 areas and its original workbook route, and made the browser harness use the installed Chrome override with safe cleanup after launch failure.
 
 Verification: course-path model tests pass 2/2 and the full home/SASMO browser suite passes 7/7, including Grade 6 availability copy, direct course links, accessibility, and mobile overflow. The 51/51 Grade 3–12 roadmap suite and 36/36 competition review/practice suite remain passing from the same working version. No private diagnostic item candidate was opened or changed. Local only; no push, deployment, or Drive sync.
+
+### 2026-11-03 Stack fractions in roadmap checkpoint text
+
+The shared fraction renderer was already used by the GFIELD course workbooks and roadmap's `setText` helper, but Grade 7 checkpoint prompts were inserted with `textContent`, leaving any `a/b` math as a slash. Route those checkpoint prompts through the shared renderer so the numerator and denominator stack over a fraction bar; the accessible fraction label remains available. The course workbook browser check also confirms Algebra 1's rational coordinate values render as stacked fractions.
+
+Verification: the full roadmap browser suite passes 39/39, including Algebra 1, Algebra 2, Geometry, Precalculus, Grade 7 checkpoint, and responsive layout checks. Local only; no private candidate data accessed, no push or deployment.
