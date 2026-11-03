@@ -3,7 +3,8 @@
 
   function append(target, value) {
     const text = String(value == null ? "" : value);
-    const fraction = /(^|[^\w./])([−-]?\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)(?![\d./])/g;
+    const parenthesized = "\\((?:[^()]|\\([^()]*\\))*\\)";
+    const fraction = new RegExp(`(^|[^\\w./])([−-]?\\d+(?:\\.\\d+)?|${parenthesized})\\s*\\/\\s*(\\d+(?:\\.\\d+)?|${parenthesized}|[A-Za-z]\\w*(?:${parenthesized})?)(?![\\w./])`, "g");
     let cursor = 0;
     let match;
     while ((match = fraction.exec(text))) {
@@ -12,13 +13,15 @@
       const node = document.createElement("span");
       node.className = "math-fraction";
       node.setAttribute("role", "math");
-      node.setAttribute("aria-label", `${match[3]}분의 ${match[2]}`);
+      const numeratorText = match[2].startsWith("(") ? match[2].slice(1, -1) : match[2];
+      const denominatorText = match[3].startsWith("(") ? match[3].slice(1, -1) : match[3];
+      node.setAttribute("aria-label", `${denominatorText}분의 ${numeratorText}`);
       const numerator = document.createElement("span");
       numerator.className = "math-fraction-numerator";
-      numerator.textContent = match[2];
+      numerator.textContent = numeratorText;
       const denominator = document.createElement("span");
       denominator.className = "math-fraction-denominator";
-      denominator.textContent = match[3];
+      denominator.textContent = denominatorText;
       node.append(numerator, denominator);
       target.append(node);
       cursor = fraction.lastIndex;

@@ -105,12 +105,12 @@ test("Grade 7 route names checkpoints and identifies its public workbooks", func
 
 test("upper-grade course references are limited to named courses and keep Grade 9 inferred", function () {
   assert.deepEqual(Object.keys(roadmap.courseStageResources), ["8", "9", "10"]);
-  assert.deepEqual(Object.keys(roadmap.annualPlanResourceLinks), ["6", "7"]);
-  [6, 7].forEach(function (grade) {
+  assert.deepEqual(Object.keys(roadmap.annualPlanResourceLinks), ["6", "7", "8"]);
+  [6, 7, 8].forEach(function (grade) {
     assert.deepEqual(Object.keys(roadmap.annualPlanResourceLinks[grade]), ["0", "1", "2", "3"]);
     Object.values(roadmap.annualPlanResourceLinks[grade]).flat().forEach(function (resource) {
       assert.ok(resource.title);
-      assert.match(resource.url, /^https:\/\//);
+      assert.ok(resource.url.startsWith("https://") || resource.url.startsWith("./"));
     });
   });
   assert.equal(roadmap.annualPlanResourceLinks[6][0][0].url, "https://classic.artofproblemsolving.com/store/book/prealgebra");
@@ -120,9 +120,11 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.equal(roadmap.annualPlanResourceLinks[7][1][0].url, "https://math7.flippedmath.com/unit-13-similarity.html");
   assert.equal(roadmap.annualPlanResourceLinks[7][2][0].url, "https://www.khanacademy.org/digital-sat");
   assert.equal(roadmap.courseStageResources[8][0][0].url, "https://geometry.flippedmath.com/");
-  assert.match(roadmap.courseStageResources[8][2][0].title, /Algebra 2.*새 과정/);
+  assert.equal(roadmap.annualPlanResourceLinks[8][0][0].url, "./algebra2-workbook.html");
+  assert.match(roadmap.annualPlanResourceLinks[8][0][0].title, /지필드 Algebra 2 원본/);
+  assert.match(roadmap.courseStageResources[8][2][0].title, /지필드 Algebra 2 원본/);
   assert.match(roadmap.courseStageResources[9].note, /학교마다 수강 과목과 순서/);
-  assert.equal(roadmap.courseStageResources[9][0][0].url, "https://algebra2.flippedmath.com/");
+  assert.equal(roadmap.courseStageResources[9][0][0].url, "./algebra2-workbook.html");
   assert.equal(roadmap.courseStageResources[9][1][0].url, "https://geometry.flippedmath.com/");
   assert.equal(roadmap.courseStageResources[10][0][0].url, "https://precalculus.flippedmath.com/ap-precalc.html");
   assert.equal(roadmap.courseStageResources[10][0][0].title, "FlippedMath AP Precalculus");

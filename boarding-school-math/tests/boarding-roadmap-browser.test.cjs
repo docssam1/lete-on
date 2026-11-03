@@ -108,6 +108,46 @@ test("the original Algebra 1 Unit 1 sequence remains readable and contained on a
   await page.close();
 });
 
+test("the original Algebra 2 workbook uses stacked fractions and keeps student/teacher editions separate", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  await page.goto(`${new URL(url).origin}/algebra2-workbook.html?edition=student`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("body").getAttribute("data-course-id"), "algebra-2");
+  assert.match(await page.locator("#workbook-status").innerText(), /5개 단원 · 18차시 · 연습 36문항/);
+  assert.equal(await page.locator(".unit-page").count(), 5);
+  assert.equal(await page.locator(".lesson-page").count(), 18);
+  assert.equal(await page.locator(".practice-page").count(), 18);
+  assert.equal(await page.locator(".answer-page").count(), 0);
+  assert.ok(await page.locator(".math-fraction").count() > 0);
+  assert.ok(await page.locator(".math-fraction").evaluateAll(function (nodes) { return nodes.every(function (node) {
+    return getComputedStyle(node).display === "inline-grid" && getComputedStyle(node.querySelector(".math-fraction-numerator")).borderBottomWidth !== "0px";
+  }); }));
+  assert.ok(await page.locator(".lesson-page").evaluateAll(function (pages) { return pages.some(function (node) {
+    return node.querySelector('.math-fraction[aria-label*="x − 3분의 x² − 9"]');
+  }); }));
+  assert.ok(await page.locator(".lesson-page").evaluateAll(function (pages) { return pages.some(function (node) {
+    return node.querySelector('.math-fraction[aria-label*="x(x + 2)분의 2x+2"]');
+  }); }));
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [390, 390]);
+  await page.locator("#edition-select").selectOption("teacher");
+  assert.equal(await page.locator(".answer-page").count(), 18);
+  assert.ok(await page.locator(".answer-page").evaluateAll(function (pages) { return pages.some(function (node) { return node.querySelector(".math-fraction"); }); }));
+  assert.equal(await page.locator(".answer-page").evaluateAll(function (pages) { return pages.some(function (node) { return /\d\s*\/\s*\d/.test(node.innerText); }); }), false);
+  const seriesAnswer = page.locator(".answer-page").filter({ hasText: "75" });
+  assert.equal(await seriesAnswer.count(), 1);
+  assert.ok(await seriesAnswer.locator(".math-fraction").count() > 0);
+  const workRateLesson = page.locator(".lesson-page").filter({ hasText: "시간당 작업량" });
+  assert.equal(await workRateLesson.count(), 1);
+  assert.ok(await workRateLesson.locator('.math-fraction[aria-label="x분의 1"]').count() > 0);
+  await page.setViewportSize({ width: 320, height: 740 });
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [320, 320]);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [1280, 1280]);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("roadmap shortcut bar stays usable and tracks the selected section on mobile", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
@@ -878,8 +918,8 @@ test("roadmap checkpoints open their matching course references", async function
   }
   const upperGradeCases = [
     { grade: 8, button: /단계 1, 일차식·기하 점검 보기/, title: "FlippedMath Geometry ↗", url: "https://geometry.flippedmath.com/" },
-    { grade: 8, button: /단계 3, 준비되면 심화 보기/, title: "FlippedMath Algebra 2 · 새 과정 ↗", url: "https://algebra2.flippedmath.com/" },
-    { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "FlippedMath Algebra 2 · 새 과정 ↗", url: "https://algebra2.flippedmath.com/", inferred: true },
+    { grade: 8, button: /단계 3, 준비되면 심화 보기/, title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html" },
+    { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html", inferred: true },
     { grade: 10, button: /단계 1, 개념 설명 보기/, title: "FlippedMath AP Precalculus ↗", url: "https://precalculus.flippedmath.com/ap-precalc.html" },
     { grade: 10, button: /단계 3, 필요한 실전 연습 보기/, titles: ["MAA 2027 AIME 응시 기준 ↗", "MAA AIME·USAJMO·USAMO 안내 ↗"], urls: ["https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://maa.org/maa-invitational-competitions/"], note: true }
   ];
@@ -892,7 +932,12 @@ test("roadmap checkpoints open their matching course references", async function
     await disclosure.locator("summary").click();
     assert.deepEqual(await disclosure.locator("ul a").allInnerTexts(), item.titles || [item.title]);
     assert.deepEqual(await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("href"); }); }), item.urls || [item.url]);
-    assert.ok(await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.every(function (node) { return /새 창에서 열림/.test(node.getAttribute("aria-label")); }); }));
+    assert.ok(await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.every(function (node) {
+      const external = /^https?:/.test(node.getAttribute("href"));
+      return external
+        ? node.target === "_blank" && node.rel.includes("noopener") && /새 창에서 열림/.test(node.getAttribute("aria-label"))
+        : node.target === "" && node.getAttribute("aria-label") === null;
+    }); }));
     if (item.inferred) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /학교마다 수강 과목과 순서/);
     if (item.note) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /미국·캐나다 AIME 기준.*다른 지역 규정/);
     if (item.grade === 10 && !item.note) assert.equal(await page.locator("#stage-external-resource-note").isVisible(), false);

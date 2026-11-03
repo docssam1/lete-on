@@ -290,10 +290,13 @@
       const item = document.createElement("li");
       const link = document.createElement("a");
       link.href = resource.url;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.setAttribute("aria-label", `${resource.title} (새 창에서 열림)`);
-      link.textContent = `${resource.title} ↗`;
+      const isExternal = /^https?:/.test(resource.url);
+      if (isExternal) {
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.setAttribute("aria-label", `${resource.title} (새 창에서 열림)`);
+      }
+      link.textContent = isExternal ? `${resource.title} ↗` : resource.title;
       item.append(link);
       $("stage-external-resource-list").append(item);
     });

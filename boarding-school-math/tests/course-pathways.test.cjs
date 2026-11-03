@@ -18,7 +18,7 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
     assert.match(course.studentHref, /^(\.\/|#availability$)/);
     assert.match(course.teacherHref, /^(\.\/catalog\.html\?role=teacher|#high-school-bridge$)/);
     assert.ok(course.focus.length >= 3);
-    assert.equal(course.units.length, 4);
+    assert.ok(course.units.length >= 4);
     assert.ok(Array.isArray(course.previousOptions));
     assert.ok(Array.isArray(course.nextOptions));
   });
@@ -26,8 +26,11 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
   assert.equal(preAlgebra.studentHref, "./concept-learning.html");
   assert.match(preAlgebra.availability, /6학년 개념 10개와 단원 워크북 10개 공개/);
   const algebra2 = pathways.courses.find(function (course) { return course.id === "algebra-2"; });
-  assert.equal(algebra2.studentHref, "#availability");
-  assert.equal(algebra2.teacherHref, "#high-school-bridge");
+  assert.equal(algebra2.studentHref, "./algebra2-workbook.html");
+  assert.equal(algebra2.teacherHref, "./algebra2-workbook.html?edition=teacher");
+  assert.equal(algebra2.units.length, 5);
+  assert.deepEqual(algebra2.focus, ["Polynomial structure", "Quadratic functions", "Rational expressions & functions", "Exponential & logarithmic models", "Sequences"]);
+  assert.match(algebra2.availability, /5단원·18차시·36문항/);
   const algebra1 = pathways.courses.find(function (course) { return course.id === "algebra-1"; });
   assert.deepEqual(algebra1.previousOptions, ["pre-algebra"]);
   assert.deepEqual(algebra1.nextOptions, ["geometry", "algebra-2"]);

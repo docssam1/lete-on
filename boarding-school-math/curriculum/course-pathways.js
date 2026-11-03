@@ -70,16 +70,16 @@
       id: "algebra-2",
       title: "Algebra 2",
       grades: "주로 10–11학년",
-      summary: "다항식·유리식·지수와 로그·수열·함수를 여러 표현과 모델링으로 심화합니다.",
+      summary: "다항식·이차함수·유리식·지수와 로그·수열을 식, 그래프, 상황 모델로 연결합니다.",
       prerequisites: "Algebra 1 함수와 식 조작, Geometry의 좌표·추론 근거",
-      focus: ["Polynomial & rational functions", "Exponentials & logarithms", "Sequences", "Statistics & modeling"],
-      units: ["Polynomial & rational functions", "Exponential & logarithmic functions", "Trigonometric, complex & sequence reasoning", "Statistics, probability & modeling"],
+      focus: ["Polynomial structure", "Quadratic functions", "Rational expressions & functions", "Exponential & logarithmic models", "Sequences"],
+      units: ["Polynomial structure & operations", "Quadratic functions & equations", "Rational expressions & functions", "Exponential & logarithmic models", "Sequences & optional extensions"],
       previousOptions: ["algebra-1", "geometry"],
       nextOptions: ["geometry", "precalculus"],
       next: "Precalculus / AMC 12 bridge",
-      studentHref: "#availability",
-      teacherHref: "#high-school-bridge",
-      availability: "과정 지도 공개 · 세부 교차표와 수업 자료는 검수 대기"
+      studentHref: "./algebra2-workbook.html",
+      teacherHref: "./algebra2-workbook.html?edition=teacher",
+      availability: "지필드 원본 5단원·18차시·36문항 공개 · 복소수·행렬은 준비도에 따른 선택 확장"
     }),
     Object.freeze({
       id: "precalculus",
@@ -101,7 +101,7 @@
   const ids = coursePathways.map(function (course) { return course.id; });
   if (new Set(ids).size !== ids.length) throw new Error("course pathway ids must be unique");
   coursePathways.forEach(function (course) {
-    if (!course.title || !course.grades || !course.prerequisites || !course.next || !Array.isArray(course.previousOptions) || !Array.isArray(course.nextOptions) || !Array.isArray(course.focus) || course.focus.length !== 4 || !Array.isArray(course.units) || course.units.length !== 4) {
+    if (!course.title || !course.grades || !course.prerequisites || !course.next || !Array.isArray(course.previousOptions) || !Array.isArray(course.nextOptions) || !Array.isArray(course.focus) || course.focus.length < 4 || !Array.isArray(course.units) || course.units.length < 4) {
       throw new Error(`course pathway ${course.id} is incomplete`);
     }
   });

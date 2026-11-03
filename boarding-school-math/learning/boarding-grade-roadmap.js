@@ -27,7 +27,7 @@
     ]) })
   ]);
 
-  const algebra2Reference = Object.freeze({ title: "FlippedMath Algebra 2 · 새 과정", url: "https://algebra2.flippedmath.com/" });
+  const algebra2Reference = Object.freeze({ title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html" });
   const geometryReference = Object.freeze({ title: "FlippedMath Geometry", url: "https://geometry.flippedmath.com/" });
   const preCalculusReference = Object.freeze({ title: "FlippedMath AP Precalculus", url: "https://precalculus.flippedmath.com/ap-precalc.html" });
   const maaAime2027Reference = Object.freeze({ title: "MAA 2027 AIME 응시 기준", url: "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/" });
@@ -44,6 +44,12 @@
       1: Object.freeze([Object.freeze({ title: "Math 7 기하 단원", url: "https://math7.flippedmath.com/unit-13-similarity.html" }), Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" })]),
       2: Object.freeze([Object.freeze({ title: "Khan Academy Digital SAT", url: "https://www.khanacademy.org/digital-sat" }), Object.freeze({ title: "College Board 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board SAT 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
+    }),
+    8: Object.freeze({
+      0: Object.freeze([algebra2Reference, Object.freeze({ title: "Khan Academy Algebra 2 참고", url: "https://www.khanacademy.org/math/algebra2" })]),
+      1: Object.freeze([geometryReference, Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" })]),
+      2: Object.freeze([maaInvitationalReference, Object.freeze({ title: "College Board SAT 수학 연습", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
+      3: Object.freeze([Object.freeze({ title: "MAA AMC 기출·안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board Bluebook 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
     })
   });
   const courseStageResources = Object.freeze({
@@ -117,7 +123,7 @@
       ["10–12개월", "누적 복습과 모의 연습", "준비한 범위에서 AMC·SAT형 문제를 골라 시간 연습하고 개념·아이디어·계산 중 막힌 이유를 기록해요.", "개념 혼합 문제 · 준비도에 맞춘 모의 문제"]
     ]) }),
     8: Object.freeze({ source: "provided", title: "대수·기하에서 AIME·SAT 선택까지", note: "가속 학습 예시예요. 학교 Geometry는 정규 진도에서 이어가고, 고급 대수 주제는 선수 개념과 준비도에 맞춰 선택 심화해요. 과목 선행이나 AIME 진출을 보장하지 않아요.", periods: Object.freeze([
-      ["1–3개월", "대수 개념과 문제 해결", "Algebra 2의 이차식·지수·로그와 함수 개념을 확인해요. 준비되면 복소수·수열·급수·행렬을 선택해 살펴봐요.", "AoPS Intermediate Algebra · Khan Academy Algebra 2"],
+      ["1–3개월", "대수 개념과 문제 해결", "지필드 Algebra 2의 다항식·이차식·유리식·지수·로그와 함수 개념을 익혀요. 복소수·수열·행렬은 학교 진도와 준비도에 맞춰 선택해 살펴봐요.", "지필드 Algebra 2 원본 수업 · Khan Academy Algebra 2 참고"],
       ["4–6개월", "기하 심화와 AMC 10/12", "학교 Geometry를 이어가며 삼각비·원과 타원·도형의 변환·기하 증명을 배우고 대수와 연결해요.", "AoPS Introduction to Geometry · Geometry Revisited · AMC 기출"],
       ["7–9개월", "AIME형 문제와 SAT 심화", "준비된 학생은 서술형 풀이와 SAT 영역별 연습을 병행해요.", "AoPS Volume 2 · College Board 공식 SAT 자료"],
       ["10–12개월", "실전 연습과 풀이 복습", "시간을 재서 풀고 개념·아이디어·계산 실수를 구분해요.", "AMC/AIME 기출 · SAT 모의 문제 · AoPS 복습"]

@@ -1,6 +1,6 @@
 (function () {
   "use strict";
-  const course = window.GFIELDAlgebra1Course;
+  const course = window.GFIELDMathCourse || window.GFIELDAlgebra1Course;
   const host = document.getElementById("workbook-pages");
   const unitSelect = document.getElementById("unit-select");
   const editionSelect = document.getElementById("edition-select");
@@ -27,7 +27,7 @@
   function addCover(units, edition) {
     const cover = page("cover-page");
     cover.append(node("p", "series-mark", "GFIELD MATH · 지필드 자체 과정"));
-    cover.append(node("p", "course-label", "ALGEBRA 1"));
+    cover.append(node("p", "course-label", course.shortTitle || course.title));
     cover.append(node("h1", "", units.length === 1 ? units[0].title : course.title));
     cover.append(node("p", "cover-subtitle", units.length === 1 ? units[0].question : course.scope));
     const count = units.reduce(function (sum, unit) { return sum + unit.lessons.length; }, 0);
@@ -43,7 +43,7 @@
   function addUnitPage(unit, index) {
     const sheet = page("unit-page");
     sheet.setAttribute("aria-label", "단원 " + (index + 1) + " · " + unit.title);
-    sheet.append(node("p", "running-label", "지필드 Algebra 1 · 단원 " + String(index + 1).padStart(2, "0")));
+    sheet.append(node("p", "running-label", "지필드 " + (course.shortTitle || course.title) + " · 단원 " + String(index + 1).padStart(2, "0")));
     sheet.append(node("h2", "unit-title", unit.title));
     sheet.append(node("p", "unit-question", unit.question));
     sheet.append(node("h3", "", "이 단원에서 익힐 내용"));
@@ -120,6 +120,7 @@
     const questionCount = units.reduce(function (sum, unit) { return sum + unit.lessons.reduce(function (subtotal, lesson) { return subtotal + lesson.practice.length; }, 0); }, 0);
     status.textContent = units.length + "개 단원 · " + lessonCount + "차시 · 연습 " + questionCount + "문항 · A4";
     document.body.dataset.edition = edition;
+    document.body.dataset.courseId = course.id || "algebra-1";
     const url = new URL(location.href);
     if (unitSelect.value === "all") url.searchParams.delete("unit"); else url.searchParams.set("unit", unitSelect.value);
     url.searchParams.set("edition", edition);
