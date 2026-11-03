@@ -5,12 +5,12 @@ const path = require("node:path");
 const os = require("node:os");
 const { execFileSync } = require("node:child_process");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
-const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:45699";
-const types = ["t1-2", "t1-3", "t1-7", "t2-6"];
+const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:45700";
+const typeGroups = [["t1-2", "t1-3", "t1-6", "t1-7"], ["t1-2", "t1-3", "t1-6", "t2-6"]];
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
-    for (const width of [1280, 375]) for (let attempt = 0; attempt < 3; attempt++) {
+    for (const width of [1280, 375]) for (let attempt = 0; attempt < 3; attempt++) for (const types of typeGroups) {
       const context = await browser.newContext({ viewport: { width, height: 1000 }, serviceWorkers: "block" });
       await context.route("**/*", route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort());
       await context.addInitScript(() => { window.print = () => {}; });
@@ -55,7 +55,16 @@ const types = ["t1-2", "t1-3", "t1-7", "t2-6"];
         if (item.svg) assert(item.svg.bottom <= item.answer.y + 1 && item.svg.right <= item.box.right + 1, `question ${item.number}: diagram must fit`);
       }
       for (const item of result.items) { assert(item.svg && item.svg.right - item.svg.x >= 180 && item.svg.height >= 90, "diagram must be readable"); }
-      const file = path.join(process.env.MAC_CHECK_OUTPUT || os.tmpdir(), `hse-geometry-four-${width}.pdf`);
+      const figureLabels = await page.locator('#problemView svg[data-model-kind="여러 직선에서 평행선 찾기"]').evaluate(svg => {
+        const labels = [...svg.querySelectorAll('text')].map(el => { const r = el.getBoundingClientRect(); return {text:el.textContent, left:r.left, right:r.right, top:r.top, bottom:r.bottom}; });
+        const collisions = [];
+        labels.forEach((a,i) => labels.slice(i+1).forEach(b => { if (a.left < b.right - .5 && a.right > b.left + .5 && a.top < b.bottom - .5 && a.bottom > b.top + .5) collisions.push([a.text,b.text]); }));
+        return {collisions, plates:[...svg.querySelectorAll('rect')].map(r => ({fill:getComputedStyle(r).fill, stroke:getComputedStyle(r).stroke})), valueCount:labels.filter(l=>l.text.includes('cm')).length};
+      });
+      assert.deepEqual(figureLabels.collisions, [], "diagram labels must not overlap");
+      assert.equal(figureLabels.valueCount, 6, "all given lengths must remain visible");
+      assert(figureLabels.plates.every(p=>p.fill === 'rgb(255, 255, 255)' && p.stroke === 'none'), "label backgrounds must not have distracting outlines");
+      const file = path.join(process.env.MAC_CHECK_OUTPUT || os.tmpdir(), `hse-parallel-figure-${width}.pdf`);
       await page.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
       const info = execFileSync("pdfinfo", [file], { encoding: "utf8" });
       assert.match(info, /Pages:\s+1\b/, "four questions must fit on one physical A4 page");

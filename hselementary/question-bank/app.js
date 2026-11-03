@@ -481,7 +481,7 @@
 
   function problemWeight(question) {
     // These parallel-line diagrams fit a standard four-up cell.
-    if (["4-2-u4-t1-2", "4-2-u4-t1-3", "4-2-u4-t1-7", "4-2-u4-t2-6"].includes(question.type?.id)) return 1;
+    if (["4-2-u4-t1-2", "4-2-u4-t1-3", "4-2-u4-t1-7", "4-2-u4-t2-6", "4-2-u4-t1-6"].includes(question.type?.id)) return 1;
     // These four fraction word problems fit the standard four-up cell.
     if (["4-2-u1-t1", "4-2-u1-t1-4", "4-2-u1-t3-10", "4-2-u1-t6"].includes(question.type?.id)) return 1;
     // These compact fraction prompts fit a half-page cell despite having three
