@@ -96,11 +96,11 @@
     student: {
       eyebrow: "STUDENT · LEARN",
       title: "오늘은 개념과 워크북부터 시작해요.",
-      description: "6학년 개념 10개와 단원 워크북 10개를 이용할 수 있어요. 42문항 진단과 자동 배정은 검수 중이에요.",
+      description: "6학년 개념 수업 10개와 공개 단원 워크북 6개를 이용할 수 있어요. 42문항 진단과 자동 배정은 검수 중이에요.",
       nav: ["개념 배우기", "영역 확인", "진단 상태", "경시 경로"],
       panel: [
         '<div class="mini-product-top"><span>현재 학생 공개 범위</span><b>Grade 6</b></div>',
-        '<a class="mini-task primary-task" href="./concept-learning.html"><small>지금 가능</small><strong>개념 10개 · 단원 워크북 10개</strong><span>개념과 문제를 함께 보기 →</span></a>',
+        '<a class="mini-task primary-task" href="./concept-learning.html"><small>지금 가능</small><strong>개념 10개 · 공개 워크북 6개</strong><span>개념과 문제를 함께 보기 →</span></a>',
         '<div class="mini-task"><small>검수 대기</small><strong>42문항 진단·분석</strong><span>학생 운영 잠금</span></div>',
         '<a class="mini-task" href="./sasmo.html"><small>준비 경로</small><strong>SASMO K2–G12</strong><span>공식 형식과 원문 접근 확인 →</span></a>'
       ].join("")
@@ -114,7 +114,7 @@
         '<div class="mini-product-top"><span>현재 교사 공개 범위</span><b>K–8</b></div>',
         '<a class="mini-task primary-task" href="./catalog.html?role=teacher"><small>구조 공개</small><strong>94개 클러스터·자료 계획</strong><span>학년 → 영역 → 단원 → 자료 →</span></a>',
         '<a class="mini-task" href="./diagnostic.html"><small>비공개 QA</small><strong>Grade 6 진단·분석 흐름</strong><span>42문항 독립 검수 대기 →</span></a>',
-        '<a class="mini-task" href="./concept-learning.html"><small>수업 자료</small><strong>6학년 개념·워크북·교사용 지도</strong><span>단원 워크북 10개 · 재확인 포함 →</span></a>'
+        '<a class="mini-task" href="./concept-learning.html"><small>수업 자료</small><strong>6학년 개념·워크북·교사용 지도</strong><span>공개 단원 워크북 6개 · 재확인 포함 →</span></a>'
       ].join("")
     }
   };
@@ -199,11 +199,11 @@
   }
 
   function localStatus(goalId, grade) {
-    if (goalId === "school" && String(grade) === "6") return "6학년 개념 10개와 단원 워크북 10개를 이용할 수 있어요. 42문항 진단과 자동 배정은 검수 중이에요.";
+    if (goalId === "school" && String(grade) === "6") return "6학년 개념 수업 10개와 공개 단원 워크북 6개를 이용할 수 있어요. 42문항 진단과 자동 배정은 검수 중이에요.";
     if (goalId === "school" && String(grade) === "7") return "7학년 비례 관계 워크북 1개가 공개되어 있어요. 유리수 연산 워크북은 검수 시안이며 진단은 잠겨 있어요.";
     if (goalId === "school" && (String(grade) === "K" || Number(grade) <= 8)) return "영역·클러스터 구조만 공개되었습니다. 학습 문항과 워크북은 검수 전까지 잠금입니다.";
     if (goalId === "school") return "고등 과정은 학교별 실제 과목 순서가 설정될 때까지 공식 개념 범주만 표시합니다.";
-    if (goalId === "singapore" && String(grade) === "6") return "6학년 개념 10개와 단원 워크북 10개를 순서대로 볼 수 있어요. 별도 진단과 평가는 검수 중이에요.";
+    if (goalId === "singapore" && String(grade) === "6") return "6학년 개념 수업 10개와 공개 단원 워크북 6개를 순서대로 볼 수 있어요. 별도 진단과 평가는 검수 중이에요.";
     if (goalId === "singapore" && String(grade) === "7") return "7학년 비례 관계 워크북 1개가 공개되어 있어요. 유리수 연산 워크북은 검수 시안이며 별도 진단은 잠겨 있어요.";
     if (goalId === "singapore" && Number(grade) <= 8) return "숙달 학습의 구현 경계만 확인되었습니다. 이 학년의 공개 단원·문항은 아직 없습니다.";
     if (goalId === "singapore") return "G9–12 교차표와 학교 과정 설정은 검수 대기입니다.";
@@ -471,7 +471,7 @@
     if (!boardingRoadmapLink.hidden) boardingRoadmapLink.href = `./boarding-roadmap.html?grade=${grade}`;
     renderReasoningLanes(grade);
     document.getElementById("selected-grade").textContent = gradeShort(grade);
-    document.getElementById("grade-title").textContent = publicGrade ? `${mapGradeName} · 개념 10개 · 워크북 10개` : String(grade) === "7" ? "7학년 · 워크북 1개 · 검수 시안 1개" : `${mapGradeName} · 배울 영역`;
+    document.getElementById("grade-title").textContent = publicGrade ? `${mapGradeName} · 개념 10개 · 공개 워크북 6개` : String(grade) === "7" ? "7학년 · 워크북 1개 · 검수 시안 1개" : `${mapGradeName} · 배울 영역`;
     document.getElementById("skill-rows").innerHTML = domains.map(function (domain, index) {
       const localized = spine.domainTitles[domain];
       const domainUnits = units.filter(function (unit) {
@@ -503,7 +503,7 @@
       </details>`;
     }).join("");
     document.getElementById("map-footnote").textContent = publicGrade
-      ? `${mapGradeName} · ${domains.length}개 영역 · 자체 제작 개념 10개와 단원 워크북 10개 · 진단은 검수 중`
+      ? `${mapGradeName} · ${domains.length}개 영역 · 자체 제작 개념 10개와 공개 단원 워크북 6개 · 진단은 검수 중`
       : String(grade) === "7"
         ? `7학년 · ${domains.length}개 영역 · 워크북 1개와 검수 시안 1개 · 진단은 검수 중`
       : `${mapGradeName} · ${domains.length}개 영역 · ${units.length}개 클러스터 구조 공개 · 학습 자료는 검수 대기`;
@@ -582,7 +582,7 @@
     panel.setAttribute("aria-labelledby", `course-tab-${course.id}`);
     panel.innerHTML = `<div class="course-map-top"><div><p class="micro-label">${course.grades} · SCHOOL-CONFIGURED</p><h3>${course.title}</h3><p>${course.summary}</p></div><span class="status-chip ${course.id === "pre-algebra" ? "public" : "metadata"}">${course.id === "pre-algebra" ? "일부 공개" : "과정 지도"}</span></div>
       <dl class="course-facts"><div><dt>선수개념</dt><dd>${course.prerequisites}</dd></div><div><dt>핵심 영역</dt><dd>${course.focus.join(" · ")}</dd></div><div><dt>다음 과정</dt><dd>${course.next}</dd></div><div><dt>자료 상태</dt><dd>${course.availability}</dd></div></dl>
-      <section class="course-unit-map" aria-label="${course.title} 과정 지도 항목"><p class="micro-label">COURSE MAP · 4 CONNECTED AREAS</p><div>${course.units.map(function (unit, index) { return `<article><span>${String(index + 1).padStart(2, "0")}</span><strong>${unit}</strong><small>진단·클리닉·학습 자료 연결 대기</small></article>`; }).join("")}</div></section>
+      <section class="course-unit-map" aria-label="${course.title} 과정 지도 항목"><p class="micro-label">COURSE MAP · ${course.units.length} CONNECTED AREAS</p><div>${course.units.map(function (unit, index) { return `<article><span>${String(index + 1).padStart(2, "0")}</span><strong>${unit}</strong><small>진단·클리닉·학습 자료 연결 대기</small></article>`; }).join("")}</div></section>
       <div class="course-actions"><a class="unit-action" href="${course.studentHref}">학생: ${course.id === "pre-algebra" ? "개념 학습" : course.id === "elementary-foundations" ? "학년·영역 보기" : "공개 학습 상태"}<span aria-hidden="true">→</span></a><a class="unit-action course-teacher-action" href="${course.teacherHref}">교사: ${course.id === "pre-algebra" || course.id === "elementary-foundations" ? "범위·자료 상태" : "배치 원칙 확인"}<span aria-hidden="true">→</span></a></div>`;
     const note = document.getElementById("course-sequence-note");
     if (note) note.textContent = coursePathways.sequenceNotice;

@@ -34,7 +34,7 @@
       next: "Algebra 1",
       studentHref: "./concept-learning.html",
       teacherHref: "./catalog.html?role=teacher&grade=6",
-      availability: "6학년 개념 10개와 단원 워크북 10개 공개 · 42문항 진단·자동 배정은 검수 잠금"
+      availability: "6학년 개념 수업 10개 · 공개 단원 워크북 6개 · 42문항 진단·자동 배정은 검수 잠금"
     }),
     Object.freeze({
       id: "algebra-1",

@@ -30,12 +30,14 @@ test.before(async function () {
   });
   await new Promise(function (resolve) { server.listen(0, "127.0.0.1", resolve); });
   baseUrl = `http://127.0.0.1:${server.address().port}/boarding-school-math/`;
-  browser = await chromium.launch({ headless: true });
+  const launchOptions = { headless: true };
+  if (process.env.GFIELD_CHROME_EXECUTABLE) launchOptions.executablePath = process.env.GFIELD_CHROME_EXECUTABLE;
+  browser = await chromium.launch(launchOptions);
 });
 
 test.after(async function () {
-  await browser.close();
-  await new Promise(function (resolve) { server.close(resolve); });
+  if (browser) await browser.close();
+  if (server) await new Promise(function (resolve) { server.close(resolve); });
 });
 
 function collectErrors(page) {
@@ -178,8 +180,8 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.match(await page.locator("#skill-rows .unit-row").filter({ hasText: "7.NS.A" }).locator(".unit-action").getAttribute("href"), /audience=teacher/);
   await page.locator('[data-role-target="student"]').click();
   await page.locator('[data-grade-tab="6"]').click();
-  assert.match(await page.locator("#grade-title").innerText(), /개념 10개 · 워크북 10개/);
-  assert.match(await page.locator("#map-footnote").innerText(), /단원 워크북 10개 · 진단은 검수 중/);
+  assert.match(await page.locator("#grade-title").innerText(), /개념 10개 · 공개 워크북 6개/);
+  assert.match(await page.locator("#map-footnote").innerText(), /공개 단원 워크북 6개 · 진단은 검수 중/);
   assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /10개 클리닉 공개/);
   await page.locator('[data-grade-tab="4"]').click();
   assert.equal(await page.locator("#grade-reasoning-lanes").isHidden(), true);
@@ -202,13 +204,13 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator("#course-directory").isVisible(), true);
   await page.locator('[data-course-id="pre-algebra"]').click();
   assert.equal(await page.locator('[data-course-id="pre-algebra"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*6학년 개념 10개와 단원 워크북 10개 공개/);
+  assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*6학년 개념 수업 10개 · 공개 단원 워크북 6개/);
   assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./concept-learning.html");
   await page.locator('[data-course-id="algebra-2"]').click();
   assert.match(await page.locator("#course-map-panel").innerText(), /Algebra 2[\s\S]*Precalculus/);
-  assert.equal(await page.locator("#course-map-panel .course-unit-map article").count(), 4);
-  assert.match(await page.locator("#course-map-panel .course-unit-map").innerText(), /Polynomial & rational functions[\s\S]*Statistics, probability & modeling/);
-  assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "#availability");
+  assert.equal(await page.locator("#course-map-panel .course-unit-map article").count(), 5);
+  assert.match(await page.locator("#course-map-panel .course-unit-map").innerText(), /COURSE MAP · 5 CONNECTED AREAS[\s\S]*Polynomial structure & operations[\s\S]*Sequences & optional extensions/);
+  assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./algebra2-workbook.html");
   assert.match(await page.locator("#course-sequence-note").innerText(), /학교가 설정/);
 
   assert.equal(await page.locator("#goal-capabilities li").count(), 6);
