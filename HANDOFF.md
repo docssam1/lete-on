@@ -1,6 +1,6 @@
 # Current handoff — 2026-11-03
 
-Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. Latest commit at handoff: `aa6adc1c8`; worktree was clean after the map-stop readability pass. No push, deployment, or Drive synchronization has occurred.
+Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The worktree is clean after the map-stop readability pass. No push, deployment, or Drive synchronization has occurred.
 
 ## Public roadmap and comparison work
 
