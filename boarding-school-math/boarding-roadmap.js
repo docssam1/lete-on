@@ -176,7 +176,7 @@
       if (flow.optional) article.classList.add("concept-flow--optional");
       const heading = document.createElement("h3");
       heading.id = `${flow.id}-heading`;
-      heading.textContent = flow.title;
+      appendMathText(heading, flow.title);
       article.setAttribute("aria-labelledby", heading.id);
       if (flow.note) {
         const note = document.createElement("p");
@@ -192,7 +192,7 @@
       list.setAttribute("aria-label", `${flow.title} 개념 순서 예시`);
       flow.steps.forEach(function (step) {
         const item = document.createElement("li");
-        item.textContent = step;
+        appendMathText(item, step);
         list.append(item);
       });
       article.append(list);

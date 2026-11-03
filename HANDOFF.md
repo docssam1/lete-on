@@ -485,3 +485,9 @@ Verification: teacher paper-builder browser suite passes 12/12. A print-media A4
 Cross-course A4 visual review found the shared fraction renderer splitting the Algebra 1 unit rate `달러/km` after the first denominator letter, producing a misleading stacked fragment. Restricted the optional trailing-variable case to numeric or parenthesized denominators; `3/2x` remains a stacked coefficient while unit text stays intact. Bumped all six HTML consumers to math-renderer cache version `20261103-14` and added a regression case for `달러/km`.
 
 Verification: Grade 3–12 roadmap, teacher paper builder, Algebra 1, Geometry, Algebra 2, and Precalculus model/browser suites pass 59/59. Print-media A4 samples across the four original course workbooks show stacked fractions without page overflow; a fresh Algebra 1 teacher page confirms `달러/km` stays intact and coordinates render as stacked fractions. Local-only; no private item content used, no push, deployment, or Drive sync.
+
+### 2026-11-03 Math fraction display and 2027 AIME reference
+
+Routed concept-flow headings and steps through the shared math-text renderer, so actual numeric or algebraic fractions use a stacked numerator, fraction bar, and denominator instead of slash text. Existing labels such as AMC 10/12 and stage counts remain ordinary text. The Grade 8 and Grade 10 AIME practice stage now links to the official MAA 2027 eligibility page and distinguishes AIME-style study from exam eligibility; the note is explicitly tied to the 2027 U.S./Canada rules and directs other years/regions to their organizer.
+
+Verification: Grade 3–12 roadmap model tests pass 12/12 and browser tests pass 39/39, including Grade 7 fraction checkpoints, AMC 10/12 notation, concept flows, and responsive layouts. `node --check` and CRLF-aware `git diff --check` pass. Local only; no push, deployment, or Drive sync.

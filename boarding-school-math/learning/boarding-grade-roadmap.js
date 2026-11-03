@@ -25,7 +25,7 @@
   const algebra2Reference = Object.freeze({ title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html" });
   const geometryReference = Object.freeze({ title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" });
   const preCalculusReference = Object.freeze({ title: "지필드 Precalculus 원본 수업·A4 교재", url: "./precalculus-workbook.html" });
-  const maaAime2027Reference = Object.freeze({ title: "MAA 2027 AIME 응시 기준", url: "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/" });
+  const maaAime2027Reference = Object.freeze({ title: "MAA 2027 AIME 자격·응시 안내", url: "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/" });
   const maaInvitationalReference = Object.freeze({ title: "MAA AIME·USAJMO·USAMO 안내", url: "https://maa.org/maa-invitational-competitions/" });
   const annualPlanResourceLinks = Object.freeze({
     6: Object.freeze({
@@ -43,14 +43,15 @@
     8: Object.freeze({
       0: Object.freeze([algebra2Reference, Object.freeze({ title: "Khan Academy Algebra 2 참고", url: "https://www.khanacademy.org/math/algebra2" })]),
       1: Object.freeze([geometryReference, Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" })]),
-      2: Object.freeze([maaInvitationalReference, Object.freeze({ title: "College Board SAT 수학 연습", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
+      2: Object.freeze([maaAime2027Reference, Object.freeze({ title: "College Board SAT 수학 연습", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "MAA AMC 기출·안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board Bluebook 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
     })
   });
   const courseStageResources = Object.freeze({
     8: Object.freeze({
+      stageNotes: Object.freeze({ 2: "AIME형 문제를 공부하는 것과 실제 응시는 달라요. 미국·캐나다의 2027 AIME는 만 13세 이상과 AMC 10 100점 또는 AMC 12 85점 등 자격 기준을 적용해요. 다른 연도·지역은 MAA 안내를 확인하세요." }),
       0: Object.freeze([geometryReference]),
-      2: Object.freeze([algebra2Reference])
+      2: Object.freeze([algebra2Reference, maaAime2027Reference])
     }),
     9: Object.freeze({
       note: "9학년은 학교마다 수강 과목과 순서가 달라요. 현재 과목과 선수 개념에 맞는 자료를 골라 보세요.",
@@ -58,7 +59,7 @@
       1: Object.freeze([geometryReference])
     }),
     10: Object.freeze({
-      stageNotes: Object.freeze({ 2: "미국·캐나다 AIME 기준은 해당 연도 공지에서, USAJMO·USAMO 선발과 다른 지역 규정은 MAA 안내에서 확인하세요." }),
+      stageNotes: Object.freeze({ 2: "AIME형 문제를 공부하는 것과 실제 응시는 달라요. 미국·캐나다의 2027 AIME는 만 13세 이상과 AMC 10 100점 또는 AMC 12 85점 등 자격 기준을 적용해요. USAJMO·USAMO 선발과 다른 연도·지역 규정은 MAA 안내를 확인하세요." }),
       0: Object.freeze([preCalculusReference]),
       2: Object.freeze([maaAime2027Reference, maaInvitationalReference])
     })

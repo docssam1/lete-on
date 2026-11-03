@@ -1022,11 +1022,11 @@ test("roadmap checkpoints open their matching course references", async function
   }
   const upperGradeCases = [
     { grade: 8, button: /단계 1, 일차식·기하 점검 보기/, title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" },
-    { grade: 8, button: /단계 3, 준비되면 심화 보기/, title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html" },
+    { grade: 8, button: /단계 3, 준비되면 심화 보기/, titles: ["지필드 Algebra 2 원본 수업·A4 교재", "MAA 2027 AIME 자격·응시 안내 ↗"], urls: ["./algebra2-workbook.html", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/"], note: true },
     { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html", inferred: true },
     { grade: 9, button: /단계 2, 서로 연결하기 보기/, title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html", inferred: true },
     { grade: 10, button: /단계 1, 개념 설명 보기/, title: "지필드 Precalculus 원본 수업·A4 교재", url: "./precalculus-workbook.html" },
-    { grade: 10, button: /단계 3, 필요한 실전 연습 보기/, titles: ["MAA 2027 AIME 응시 기준 ↗", "MAA AIME·USAJMO·USAMO 안내 ↗"], urls: ["https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://maa.org/maa-invitational-competitions/"], note: true }
+    { grade: 10, button: /단계 3, 필요한 실전 연습 보기/, titles: ["MAA 2027 AIME 자격·응시 안내 ↗", "MAA AIME·USAJMO·USAMO 안내 ↗"], urls: ["https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://maa.org/maa-invitational-competitions/"], note: true }
   ];
   for (const item of upperGradeCases) {
     await page.goto(`${url}?grade=${item.grade}`, { waitUntil: "networkidle" });
@@ -1048,7 +1048,7 @@ test("roadmap checkpoints open their matching course references", async function
         : node.target === "" && node.getAttribute("aria-label") === null;
     }); }));
     if (item.inferred) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /학교마다 수강 과목과 순서/);
-    if (item.note) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /미국·캐나다 AIME 기준.*다른 지역 규정/);
+    if (item.note) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /미국·캐나다의 2027 AIME.*만 13세 이상.*AMC 10 100점.*AMC 12 85점.*다른 연도·지역/);
     if (item.grade === 10 && !item.note) assert.equal(await page.locator("#stage-external-resource-note").isVisible(), false);
     assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   }
