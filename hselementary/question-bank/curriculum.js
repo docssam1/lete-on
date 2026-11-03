@@ -3758,6 +3758,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Triangle = semesters.find(semester=>semester.grade===5&&semester.term===2)?.units.find(unit=>unit.id==="5-2-u3");
+  if (source52Triangle) {
+    const type=source52Triangle.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u3-t2-3");
+    if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u3-practice-107-original",sourceItemLabel:"확인학습 107번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:94,alternateSourcePdfPage:93,sourcePrintedPage:98,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page87Practice107",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문의 4×4 격자와 네 조각 조건을 대조하고 답 그림 네 가지의 조각을 회전·뒤집기로 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
   if (source52Triangle) for (const [id,n,key] of [
     ["5-2-u3-t1-2",24,"source52U3LinkedTriangleSideChoices"],
     ["5-2-u3-t1-3",20,"source52U3LinkedTriangleAngleChoices"],
