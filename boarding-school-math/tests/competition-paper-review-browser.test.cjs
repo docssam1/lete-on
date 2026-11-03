@@ -27,15 +27,61 @@ test.before(async function () {
 });
 test.after(async function () { if (browser) await browser.close(); if (server) await new Promise(function (resolve) { server.close(resolve); }); });
 
+test("yearly AMC originals expose print, answer entry, and local self-marking", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=7&program=amc8&year=2023`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#archive-year option").count(), 41);
+  assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023");
+  assert.match(await page.locator("#archive-open-link").innerText(), /2023 AMC 8.*인쇄·응시·해설/);
+  await page.locator('[data-question="1"][data-field="answer"]').selectOption("E");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
+  await page.locator('[data-question="1"][data-field="domain"]').selectOption("number");
+  await page.locator('[data-question="1"][data-field="reason"]').selectOption("approach");
+  await page.locator("#review-exam-date").fill("2026-11-04");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 오답 · 내 답 E/);
+  await page.locator("#save-diagnostic").click();
+  const saved = await page.evaluate(() => localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"));
+  assert.doesNotMatch(saved, /answer|responses|questionNumber/i);
+  await page.locator("#review-program").selectOption("amc10");
+  await page.locator("#archive-year").selectOption("2021");
+  assert.deepEqual(await page.locator("#archive-form option").allTextContents(), ["A형", "B형", "C형", "D형"]);
+  await page.locator("#archive-form").selectOption("D");
+  assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2021D");
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("AMC 12 archive picker reaches the earliest listed year", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.goto(`${url}?grade=10&program=amc12&year=1950`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#archive-year option").count(), 76);
+  assert.equal(await page.locator("#archive-year").inputValue(), "1950");
+  assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc12/1950");
+  await page.close();
+});
+
 test("users can opt to save an answer-free AMC review summary and see it only on the matching grade map", async function () {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#official-paper-sources").isVisible(), true);
+  assert.equal(await page.locator("#archive-year option").count(), 41);
+  assert.equal(await page.locator("#archive-year").inputValue(), "2026");
+  await page.locator("#archive-year").selectOption("2023");
+  assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023");
+  assert.match(await page.locator("#archive-open-link").innerText(), /2023 AMC 8.*인쇄·응시·해설/);
+  assert.equal(await page.locator("#review-paper-label").inputValue(), "2023 AMC 8");
   assert.deepEqual(await page.locator('[data-question="1"][data-field="domain"] option').allTextContents(), ["영역 선택", "식·대수", "수·비례·추정", "기하·공간", "경우의 수·확률", "그래프·표 해석"]);
   await page.locator("#review-exam-date").fill("2026-10-29");
   await page.locator("#review-paper-label").fill("Practice A");
+  await page.locator('[data-question="1"][data-field="answer"]').selectOption("C");
+  assert.match(await page.locator("#mark-progress").innerText(), /답 입력 1문제/);
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
   await page.locator('[data-question="2"][data-field="status"]').selectOption("wrong");
@@ -142,15 +188,17 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".paper-mark-row").count(), 25);
-  assert.equal(await page.locator("#mark-progress").innerText(), "0 / 25문제 표시");
+  assert.equal(await page.locator("#mark-progress").innerText(), "0 / 25문제 채점 확인 · 답 입력 0문제");
+  assert.deepEqual(await page.locator('[data-question="1"][data-field="answer"] option').allTextContents(), ["미입력", "A", "B", "C", "D", "E"]);
   assert.equal(await page.locator('[data-field="status"]').first().inputValue(), "unmarked");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
   await page.locator('[data-question="2"][data-field="status"]').selectOption("wrong");
+  await page.locator('[data-question="2"][data-field="answer"]').selectOption("D");
   await page.locator('[data-question="2"][data-field="domain"]').selectOption("algebra");
   await page.locator('[data-question="2"][data-field="reason"]').selectOption("reading");
   await page.locator('[data-question="3"][data-field="status"]').selectOption("blank");
-  assert.equal(await page.locator("#mark-progress").innerText(), "3 / 25문제 표시");
+  assert.equal(await page.locator("#mark-progress").innerText(), "3 / 25문제 채점 확인 · 답 입력 1문제");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-title").innerText(), /입력한 결과/);
   assert.match(await page.locator("#report-intro").innerText(), /22문제는 표시하지 않았습니다/);
@@ -166,6 +214,7 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   assert.doesNotMatch(await page.locator("#report-domains").innerText(), /50%/);
   assert.equal(await page.locator("#report-title").evaluate((node) => node === document.activeElement), true);
   assert.match(await page.locator("#report-reasons").innerText(), /조건 읽기 · 1문항/);
+  assert.match(await page.locator("#report-review-items-list").innerText(), /2번 · 오답 · 내 답 D/);
   assert.match(await page.locator(".report-boundary").innerText(), /수상·AIME 진출.*판단하지 않습니다/);
   assert.equal(await page.locator("#score-estimate").isHidden(), true, "partial responses do not produce a score estimate");
   assert.equal(await page.evaluate(() => localStorage.length), 0);
@@ -179,6 +228,9 @@ test("AIME manual review accepts self-marked 15-item papers without scoring or e
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${url}?grade=8&program=aime`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".paper-mark-row").count(), 15);
+  assert.equal(await page.locator('[data-field="answer"]').count(), 0, "AIME uses numeric responses, so hide AMC A–E answer entry");
+  assert.equal(await page.locator("#answer-entry-guide").isHidden(), true);
+  assert.match(await page.locator("#review-source-note").innerText(), /공식 풀이를 확인한 뒤 맞힘·오답·미응답/);
   assert.equal(await page.locator("#aime-review-note").isVisible(), true);
   assert.match(await page.locator("#aime-review-note").innerText(), /초대·응시 자격·선발을 판단하지 않습니다/);
   assert.equal(await page.locator('#aime-review-note a').getAttribute("href"), "https://maa.org/maa-invitational-competitions/");
@@ -214,6 +266,19 @@ test("AIME manual review accepts self-marked 15-item papers without scoring or e
   assert.equal(await page.locator("#competition-grade-comparison-cards article").count(), 2);
   assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /직접 입력한 날짜와 메모로 짝지어 나란히 보여줘요/);
   assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /실제 시험지 동일성은 확인되지 않으며, 난도 조정 등급이나 성장 판정을 제공하지 않아요/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("AIME review does not show AMC multiple-choice answer controls", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=8&program=aime`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".paper-mark-row").count(), 15);
+  assert.equal(await page.locator('[data-field="answer"]').count(), 0);
+  assert.equal(await page.locator("#answer-entry-guide").isHidden(), true);
+  assert.match(await page.locator("#review-source-note").innerText(), /공식 풀이를 확인한 뒤 맞힘·오답·미응답/);
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -265,6 +330,9 @@ test("paper review links a low-evidence area comparison to the specific wrong qu
 test("complete AMC 10 marks show the raw-score estimate without a qualification claim", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=9&program=amc10`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#official-paper-sources").isVisible(), true);
+  assert.equal(await page.locator("#review-paper-label").inputValue(), "2025 AMC 10 A");
+  assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2025A");
   for (let question = 1; question <= 25; question += 1) {
     const status = question <= 10 ? "correct" : question <= 15 ? "wrong" : "blank";
     await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption(status);
@@ -272,6 +340,13 @@ test("complete AMC 10 marks show the raw-score estimate without a qualification 
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#score-estimate").isVisible(), true);
   assert.match(await page.locator("#score-estimate-value").innerText(), /AMC 10 참고 원점수 · 75 \/ 150/);
+  assert.equal(await page.locator("#paper-performance").isVisible(), true);
+  assert.match(await page.locator("#paper-performance-summary").innerText(), /AMC 10 원본 75 \/ 150점/);
+  assert.equal(await page.locator(".paper-question-band").count(), 4);
+  assert.match(await page.locator(".paper-question-band").nth(0).innerText(), /1–10번[\s\S]*10 \/ 10 정답/);
+  assert.match(await page.locator(".paper-question-band").nth(1).innerText(), /11–15번[\s\S]*0 \/ 5 정답/);
+  assert.equal(await page.locator("#report-follow-up").isVisible(), true);
+  assert.equal(await page.locator("#report-follow-up-link").getAttribute("href"), "./amc10-practice.html?grade=9");
   await page.locator("#review-exam-date").fill("2026-10-30");
   await page.locator("#save-diagnostic").click();
   assert.match(await page.locator("#diagnostic-save-status").innerText(), /AMC 10 참고 원점수는 저장된 응답 수로 다시 계산할 수 있어요/);

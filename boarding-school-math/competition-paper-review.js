@@ -3,6 +3,7 @@
   const roadmap = window.GFIELDBoardingGradeRoadmap;
   const analyzer = window.GFIELDPaperReviewAnalysis;
   const historyEngine = window.GFIELDAMCScoreHistory;
+  const paperLibrary = window.GFIELDAMCOriginalPaperLibrary;
   const localRecords = window.GFIELDLocalLearningRecord;
   if (!roadmap || !analyzer) return;
   const $ = function (id) { return document.getElementById(id); };
@@ -13,6 +14,7 @@
   const statuses = [{ id: "unmarked", title: "표시 안 함" }, { id: "correct", title: "O · 맞힘" }, { id: "wrong", title: "X · 틀림" }, { id: "blank", title: "미응답 · 답안 공란" }];
   const reasons = [{ id: "none", title: "이유 선택" }, { id: "concept", title: "개념" }, { id: "approach", title: "접근 아이디어" }, { id: "calculation", title: "계산" }, { id: "reading", title: "조건 읽기" }, { id: "time", title: "시간" }];
   const blankReasons = [{ id: "none", title: "이유 선택" }, { id: "time", title: "시간 부족" }, { id: "skipped", title: "건너뜀" }, { id: "could-not-start", title: "시작 못 함" }];
+  const answerChoices = [{ id: "", title: "미입력" }, { id: "A", title: "A" }, { id: "B", title: "B" }, { id: "C", title: "C" }, { id: "D", title: "D" }, { id: "E", title: "E" }];
   let scoreHistory = [];
   let lastDiagnostic = null;
   let lastSavedDiagnosticId = null;
@@ -52,6 +54,50 @@
   }
   function selectedFormat() { return roadmap.competitionOptions(grade).find(function (entry) { return entry.id === programId; }); }
   function option(value, title) { const node = document.createElement("option"); node.value = value; node.textContent = title; return node; }
+  function renderOfficialPaperSources(format) {
+    const section = $("official-paper-sources");
+    const picker = $("amc-archive-picker");
+    if (!paperLibrary || !format) { section.hidden = true; picker.hidden = true; return; }
+    const archive = paperLibrary.archiveFor(format.id);
+    picker.hidden = !archive;
+    if (archive) {
+      const yearSelect = $("archive-year");
+      const formSelect = $("archive-form");
+      yearSelect.replaceChildren();
+      archive.years.forEach(function (year) { yearSelect.append(option(String(year), String(year))); });
+      const requestedYear = Number(params.get("year"));
+      yearSelect.value = archive.years.includes(requestedYear) ? String(requestedYear) : String(archive.years[0]);
+      const syncArchivePaperLabel = function () {
+        const autoLabel = `${yearSelect.value} ${format.title}${format.id === "amc8" ? "" : ` ${formSelect.value}`}`;
+        const paperLabel = $("review-paper-label");
+        if (!paperLabel.value.trim() || paperLabel.value === paperLabel.dataset.archiveDefault) paperLabel.value = autoLabel;
+        paperLabel.dataset.archiveDefault = autoLabel;
+      };
+      const renderArchiveRoute = function () {
+        const year = Number(yearSelect.value);
+        const forms = format.id === "amc8" ? [""] : year === 2021 ? ["A", "B", "C", "D"] : year <= 2001 ? [""] : ["A", "B"];
+        $("archive-form-field").hidden = format.id === "amc8" || forms.length === 1;
+        formSelect.replaceChildren();
+        forms.forEach(function (form) { formSelect.append(option(form, form ? `${form}형` : "단일 시험지")); });
+        formSelect.value = forms.includes(params.get("form")) ? params.get("form") : forms[0];
+        $("archive-open-link").href = paperLibrary.archiveRoute(format.id, year, formSelect.value);
+        $("archive-open-link").textContent = `${year} ${format.title}${formSelect.value ? ` ${formSelect.value}형` : ""} · 인쇄·응시·해설 →`;
+        $("archive-route-note").textContent = "MAA 사용 허가를 받은 LIVE 아카이브에서 원본 PDF 인쇄, 시간 제한 풀이, 답안 확인, 문항별 개념·힌트·영상 및 서면 해설을 제공합니다.";
+        syncArchivePaperLabel();
+        updateUrl();
+      };
+      yearSelect.onchange = renderArchiveRoute;
+      formSelect.onchange = function () {
+        $("archive-open-link").href = paperLibrary.archiveRoute(format.id, Number(yearSelect.value), formSelect.value);
+        $("archive-open-link").textContent = `${yearSelect.value} ${format.title} ${formSelect.value}형 · 인쇄·응시·해설 →`;
+        syncArchivePaperLabel();
+        updateUrl();
+      };
+      renderArchiveRoute();
+    }
+    section.hidden = !archive;
+    if (!archive) return;
+  }
   function syncReasonField(row, status) {
     const number = row.querySelector('[data-field="status"]').dataset.question;
     const reasonSelect = row.querySelector('[data-field="reason"]');
@@ -70,6 +116,12 @@
     url.searchParams.set("grade", String(grade));
     if (programId) url.searchParams.set("program", programId);
     else url.searchParams.delete("program");
+    const archivePicker = $("amc-archive-picker");
+    if (!archivePicker.hidden && $("archive-year").value) {
+      url.searchParams.set("year", $("archive-year").value);
+      if (!$("archive-form-field").hidden && $("archive-form").value) url.searchParams.set("form", $("archive-form").value);
+      else url.searchParams.delete("form");
+    } else { url.searchParams.delete("year"); url.searchParams.delete("form"); }
     history.replaceState(null, "", url);
     $("back-to-roadmap").href = `./boarding-roadmap.html?grade=${grade}${programId ? `&program=${encodeURIComponent(programId)}` : ""}`;
   }
@@ -84,6 +136,12 @@
     setText("score-estimate-value", "");
     $("score-estimate-note").hidden = true;
     setText("score-estimate-note", "");
+    $("paper-performance").hidden = true;
+    setText("paper-performance-summary", "");
+    $("paper-question-bands").replaceChildren();
+    $("report-follow-up").hidden = true;
+    setText("report-follow-up-copy", "");
+    $("report-follow-up-link").removeAttribute("href");
     $("report-metrics").replaceChildren();
     $("report-domains").replaceChildren();
     $("report-review-items-list").replaceChildren();
@@ -106,18 +164,22 @@
     formats.forEach(function (entry) { programSelect.append(option(entry.id, `${entry.title} · ${entry.itemCount}문항`)); });
     programSelect.value = programId;
     const format = selectedFormat();
+    renderOfficialPaperSources(format);
     $("review-paper-label-field").hidden = !format;
     $("review-exam-date-field").hidden = !format;
     $("official-percentile-field").hidden = programId !== "kangaroo";
     $("official-percentile").disabled = programId !== "kangaroo";
     $("kangaroo-percentile-source").hidden = programId !== "kangaroo";
     $("aime-review-note").hidden = programId !== "aime";
+    $("answer-entry-guide").hidden = !format || !["amc8", "amc10", "amc12"].includes(format.id);
     document.querySelector(".review-change-note").hidden = !format;
     $("review-amc8-practice").hidden = !(grade === 6 && programId === "amc8");
     $("review-sasmo-source").hidden = programId !== "sasmo";
     document.querySelector(".review-related").hidden = !format;
     setText("review-source-note", format
-      ? `${format.title} · ${format.itemCount}문항. 채점한 문제지를 보며 표시하세요. 영역을 모르면 비워 두세요.`
+      ? ["amc8", "amc10", "amc12"].includes(format.id)
+        ? `${format.title} · ${format.itemCount}문항. 먼저 A–E 답을 입력하고 공식 풀이와 대조해 결과를 표시하세요. 풀이 영역을 모르면 비워 두세요.`
+        : `${format.title} · ${format.itemCount}문항. 공식 풀이를 확인한 뒤 맞힘·오답·미응답을 표시하세요. 풀이 영역을 모르면 비워 두세요.`
       : "먼저 대회를 선택하세요.");
     updateUrl();
   }
@@ -125,9 +187,13 @@
     const list = $("paper-mark-list");
     list.replaceChildren();
     const format = selectedFormat();
+    const hasChoiceAnswers = Boolean(format && ["amc8", "amc10", "amc12"].includes(format.id));
     list.hidden = !format;
+    list.dataset.choiceEntry = String(hasChoiceAnswers);
     $("mark-progress").hidden = !format;
     document.querySelector(".mark-head").hidden = !format;
+    document.querySelector(".mark-head").dataset.choiceEntry = String(hasChoiceAnswers);
+    document.querySelector(".mark-head span:nth-child(2)").hidden = !hasChoiceAnswers;
     document.querySelector(".review-form-actions").hidden = !format;
     if (!format) { resetReport(); return; }
     const domains = [{ id: "unclassified", title: "영역 선택" }].concat(analyzer.domainsFor(format.id));
@@ -135,12 +201,14 @@
       const number = index + 1;
       const li = document.createElement("li");
       li.className = "paper-mark-row";
+      li.dataset.choiceEntry = String(hasChoiceAnswers);
       li.dataset.state = "unmarked";
       const marker = document.createElement("strong");
       marker.textContent = `Q${String(number).padStart(2, "0")}`;
       li.append(marker);
       [
-        { field: "status", values: statuses, label: "표시" },
+        ...(hasChoiceAnswers ? [{ field: "answer", values: answerChoices, label: "내 답" }] : []),
+        { field: "status", values: statuses, label: "공식 풀이 대조" },
         { field: "domain", values: domains, label: "영역" },
         { field: "reason", values: reasons, label: "오답 이유" }
       ].forEach(function (config) {
@@ -161,7 +229,7 @@
             if (reasonSelect.disabled) reasonSelect.value = "none";
             if (select.value === "unmarked") li.querySelector('[data-field="domain"]').value = "unclassified";
           }
-          if (config.field === "status") updateProgress();
+          if (config.field === "status" || config.field === "answer") updateProgress();
           resetReport("내용이 바뀌었어요");
         });
         field.append(caption, select);
@@ -175,11 +243,19 @@
   function updateProgress() {
     const marked = Array.from($("paper-mark-list").querySelectorAll('[data-field="status"]')).filter(function (node) { return node.value !== "unmarked"; }).length;
     const format = selectedFormat();
-    if (format) setText("mark-progress", `${marked} / ${format.itemCount}문제 표시`);
+    if (format) {
+      const answerInputs = $("paper-mark-list").querySelectorAll('[data-field="answer"]');
+      if (answerInputs.length) {
+        const answered = Array.from(answerInputs).filter(function (node) { return node.value !== ""; }).length;
+        setText("mark-progress", `${marked} / ${format.itemCount}문제 채점 확인 · 답 입력 ${answered}문제`);
+      } else setText("mark-progress", `${marked} / ${format.itemCount}문제 채점 확인`);
+    }
   }
   function readMarks() {
     return Array.from($("paper-mark-list").children, function (li) {
-      return { status: li.querySelector('[data-field="status"]').value,
+      const answer = li.querySelector('[data-field="answer"]');
+      return { answer: answer ? answer.value : "",
+        status: li.querySelector('[data-field="status"]').value,
         domain: li.querySelector('[data-field="domain"]').value,
         reason: li.querySelector('[data-field="reason"]').value };
     });
@@ -378,6 +454,9 @@
     lastDiagnostic = result;
     $("report-roadmap-link").href = `./boarding-roadmap.html?grade=${encodeURIComponent(grade)}&program=${encodeURIComponent(selectedFormat().id)}#grade-map`;
     $("report-roadmap-link").textContent = `선택한 Grade ${grade} 학습 경로 보기 →`;
+    setText("report-roadmap-note", result.level
+      ? "원본 점수와 문항 구간은 이 시험지에서 확인한 실전 결과예요. 영역별 정답률은 직접 표시한 문항을 기준으로 읽어 주세요."
+      : "문항 분류와 정답률은 학년 수준을 판정하지 않습니다.");
     setText("report-title", `${selectedFormat().title} · ${result.complete ? "전체 결과" : "입력한 결과"}`);
     setText("report-intro", `${label ? `${label} · ` : ""}${result.itemCount}문제 중 ${result.counts.unmarked}문제는 표시하지 않았습니다. ${result.attempted < 3 ? "푼 문제가 3개 미만이어서 비율 비교는 보류했습니다." : `정답률은 실제로 푼 ${result.attempted}문제 기준입니다.`}`);
     const officialPercentile = $("official-percentile").value === "" ? null : Number($("official-percentile").value);
@@ -386,6 +465,21 @@
     officialPercentileResult.textContent = officialPercentileResult.hidden ? "" : `공식 성적표 · Grade ${grade} 전국 백분위 ${officialPercentile}% · 해당 학년 참가자 안에서의 상대 위치`;
     $("score-estimate").hidden = !result.scoreEstimate;
     if (result.scoreEstimate) setText("score-estimate-value", `${result.scoreEstimate.label} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}`);
+    const paperPerformance = $("paper-performance");
+    paperPerformance.hidden = !result.level || !result.questionBands.length;
+    if (!paperPerformance.hidden) {
+      setText("paper-performance-summary", `${selectedFormat().title} 원본 ${result.scoreEstimate.points} / ${result.scoreEstimate.max}점 · 문항 구간별 결과로 실전 풀이 범위를 확인해요.`);
+      const bands = $("paper-question-bands");
+      bands.replaceChildren();
+      result.questionBands.forEach(function (band) {
+        const item = document.createElement("div");
+        item.className = "paper-question-band";
+        const label = document.createElement("strong"); label.textContent = `${band.start}–${band.end}번`;
+        const score = document.createElement("span"); score.textContent = `${band.correct} / ${band.total} 정답`;
+        const details = document.createElement("small"); details.textContent = `오답 ${band.wrong} · 미응답 ${band.blank}`;
+        item.append(label, score, details); bands.append(item);
+      });
+    }
     const scoreNote = $("score-estimate-note");
     const isAmcRawReference = ["amc8", "amc10", "amc12"].includes(selectedFormat().id) && result.itemCount === 25;
     scoreNote.hidden = !isAmcRawReference || Boolean(result.scoreEstimate);
@@ -422,7 +516,7 @@
       const reason = reasons.find(function (entry) { return entry.id === item.reason; });
       const itemState = item.status === "wrong" ? "오답" : "미응답";
       const blankReason = blankReasons.find(function (entry) { return entry.id === item.reason; });
-      const details = [domain && item.domain !== "unclassified" ? domain.title : "영역 미분류", item.status === "wrong" && reason && item.reason !== "none" ? reason.title : "", item.status === "blank" && blankReason && item.reason !== "none" ? blankReason.title : ""].filter(Boolean);
+      const details = [item.answer ? `내 답 ${item.answer}` : "답 미입력", domain && item.domain !== "unclassified" ? domain.title : "영역 미분류", item.status === "wrong" && reason && item.reason !== "none" ? reason.title : "", item.status === "blank" && blankReason && item.reason !== "none" ? blankReason.title : ""].filter(Boolean);
       row.textContent = `${item.number}번 · ${itemState} · ${details.join(" · ")}`;
       reviewList.append(row);
     });
@@ -453,14 +547,27 @@
     setText("report-next", lowestAreas.length
       ? `표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 ${lowestAreas.join(" · ")}입니다. 적은 문항의 관찰이므로 학습 수준을 판정하지 않아요.`
       : `두 개 이상 영역에서 각각 3문제 이상 푼 경우에만 정답 비율을 참고 비교해요.${result.unclassified ? ` 영역 미분류 ${result.unclassified}문항은 직접 확인해 주세요.` : ""}`);
+    const followUpRoutes = {
+      amc8: grade === 7
+        ? { href: "./amc8-grade7-mock-exam.html", title: "지필드 AMC 8 창작 모의고사", copy: "공식 풀이를 확인한 뒤, 지필드가 별도로 만든 새 문항에서 문제 해결 영역을 연습해요." }
+        : { href: "./competition-practice.html?program=amc8", title: "지필드 AMC 8 유형 연습", copy: "공식 풀이를 확인한 뒤, 지필드가 새로 만든 AMC 8 유형 문제로 이어가요." },
+      amc10: { href: `./amc10-practice.html?grade=${grade}`, title: "지필드 AMC 10 개념 연습", copy: "공식 풀이에서 놓친 개념을 확인한 뒤, 지필드 창작 문항으로 연결해요." }
+    };
+    const followUpConfig = followUpRoutes[selectedFormat().id];
+    $("report-follow-up").hidden = !followUpConfig;
+    if (followUpConfig) {
+      setText("report-follow-up-copy", followUpConfig.copy);
+      $("report-follow-up-link").href = followUpConfig.href;
+      $("report-follow-up-link").textContent = `${followUpConfig.title} →`;
+    }
     $("save-diagnostic").hidden = !localRecords;
     if (!$("save-diagnostic").disabled) $("diagnostic-save-status").textContent = "";
     document.querySelector(".review-report").hidden = false;
     document.querySelector(".review-layout").classList.remove("is-empty");
     $("report-title").focus();
   }
-  $("review-grade").addEventListener("change", function (event) { grade = Number(event.target.value); renderSettings(); renderMarks(); $("review-paper-label").value = ""; $("official-percentile").value = ""; });
-  $("review-program").addEventListener("change", function (event) { programId = event.target.value; renderSettings(); renderMarks(); $("review-paper-label").value = ""; $("official-percentile").value = ""; });
+  $("review-grade").addEventListener("change", function (event) { grade = Number(event.target.value); $("review-paper-label").value = ""; $("review-paper-label").dataset.archiveDefault = ""; renderSettings(); renderMarks(); $("official-percentile").value = ""; });
+  $("review-program").addEventListener("change", function (event) { programId = event.target.value; $("review-paper-label").value = ""; $("review-paper-label").dataset.archiveDefault = ""; renderSettings(); renderMarks(); $("official-percentile").value = ""; });
   $("review-paper-label").addEventListener("input", function () { resetReport("내용이 바뀌었어요"); });
   $("official-percentile").addEventListener("input", function () { resetReport("내용이 바뀌었어요"); });
   $("clear-marks").addEventListener("click", function () { renderMarks(); $("review-paper-label").value = ""; });

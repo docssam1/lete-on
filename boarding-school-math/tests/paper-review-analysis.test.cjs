@@ -41,9 +41,9 @@ test("domain comparison requires enough classified attempts in two domains", fun
   const report = analyze(entries, entries.length);
   assert.deepEqual(report.lowestDomains, [{ id: "number", name: "수와 정수론", correct: 1, attempted: 3, blank: 0 }]);
   assert.deepEqual(report.reviewItems, [
-    { number: 4, status: "wrong", domain: "number", reason: "concept" },
-    { number: 5, status: "wrong", domain: "number", reason: "concept" },
-    { number: 7, status: "wrong", domain: "unclassified", reason: "time" }
+    { number: 4, status: "wrong", answer: "", domain: "number", reason: "concept" },
+    { number: 5, status: "wrong", answer: "", domain: "number", reason: "concept" },
+    { number: 7, status: "wrong", answer: "", domain: "unclassified", reason: "time" }
   ]);
   assert.deepEqual(report.domainReviewItemNumbers.number, { wrong: [4, 5], blank: [] });
   assert.equal(report.unclassified, 1);
@@ -59,7 +59,7 @@ test("paper review shows all ties and separately includes blank responses", func
   const report = analyze(entries, entries.length);
   assert.deepEqual(report.lowestDomains, [{ id: "number", name: "수와 정수론", correct: 1, attempted: 3, blank: 1 }]);
   assert.deepEqual(report.domainReviewItemNumbers.number, { wrong: [1, 3], blank: [7] });
-  assert.deepEqual(report.reviewItems.at(-1), { number: 7, status: "blank", domain: "number", reason: "none" });
+  assert.deepEqual(report.reviewItems.at(-1), { number: 7, status: "blank", answer: "", domain: "number", reason: "none" });
   const tied = analyze([entry("wrong", "number"), entry("correct", "number"), entry("correct", "number"),
     entry("wrong", "algebra"), entry("correct", "algebra"), entry("correct", "algebra")], 6);
   assert.deepEqual(tied.lowestDomains, []);
@@ -67,6 +67,16 @@ test("paper review shows all ties and separately includes blank responses", func
     entry("wrong", "algebra"), entry("correct", "algebra"), entry("correct", "algebra"),
     entry("correct", "geometry"), entry("correct", "geometry"), entry("correct", "geometry")], 9);
   assert.deepEqual(tiedLowest.lowestDomains.map((domain) => domain.name), ["식·대수", "수와 정수론"]);
+});
+
+test("selected multiple-choice responses are returned only with the learner's review items", function () {
+  const entries = [entry("wrong", "number", "concept"), entry("correct", "algebra"), entry("unmarked")];
+  entries[0].answer = "D";
+  entries[1].answer = "A";
+  const report = analyze(entries, entries.length, "amc8");
+  assert.equal(report.valid, true);
+  assert.equal(report.reviewItems[0].answer, "D");
+  assert.equal(analyze([{ ...entry("wrong", "number", "concept"), answer: "F" }], 1, "amc8").valid, false);
 });
 
 test("blank response reasons stay separate from wrong-answer reasons", function () {
@@ -92,13 +102,18 @@ test("paper review rejects reasons that do not match the selected response state
   assert.equal(analyze([entry("correct", "geometry", "time")], 1).valid, false);
 });
 
-test("complete AMC marks can show a cautious raw-score estimate using format-specific scoring", function () {
+test("complete AMC original-paper marks calculate the raw score and position by question range", function () {
   const amc8 = [entry("correct"), entry("wrong"), ...Array.from({ length: 23 }, function () { return entry("blank"); })];
   const amc10 = [...Array.from({ length: 10 }, function () { return entry("correct"); }), ...Array.from({ length: 5 }, function () { return entry("wrong"); }), ...Array.from({ length: 10 }, function () { return entry("blank"); })];
   assert.deepEqual(analyze(amc8, 25, "amc8").scoreEstimate, { points: 1, max: 25, label: "AMC 8 참고 원점수" });
+  assert.deepEqual(analyze(amc8, 25, "amc8").questionBands.map(({ start, end, correct }) => ({ start, end, correct })), [
+    { start: 1, end: 10, correct: 1 }, { start: 11, end: 15, correct: 0 }, { start: 16, end: 20, correct: 0 }, { start: 21, end: 25, correct: 0 }
+  ]);
   assert.deepEqual(analyze(amc10, 25, "amc10").scoreEstimate, { points: 75, max: 150, label: "AMC 10 참고 원점수" });
+  assert.deepEqual(analyze(amc10, 25, "amc10").level, { kind: "original-paper-performance", score: 75, max: 150, bands: analyze(amc10, 25, "amc10").questionBands });
   assert.deepEqual(analyze(amc10, 25, "amc12").scoreEstimate, { points: 75, max: 150, label: "AMC 12 참고 원점수" });
   assert.equal(analyze(amc10.slice(0, 24).concat(entry()), 25, "amc10").scoreEstimate, null);
+  assert.equal(analyze(amc10.slice(0, 24).concat(entry()), 25, "amc10").level, null);
   assert.equal(analyze(Array.from({ length: 24 }, function () { return entry("correct"); }), 24, "amc10").scoreEstimate, null);
   assert.equal(analyze(amc8, 25, "sasmo").scoreEstimate, null);
   assert.equal(analyze(amc10, 25, "amc10").officialScore, null);

@@ -10,6 +10,7 @@
   const domainIds = Object.freeze(["unclassified", "algebra", "number", "geometry", "counting", "data"]);
   const wrongReasonIds = Object.freeze(["none", "concept", "approach", "calculation", "reading", "time"]);
   const blankReasonIds = Object.freeze(["none", "time", "skipped", "could-not-start"]);
+  const answerChoiceIds = Object.freeze(["", "A", "B", "C", "D", "E"]);
   const reasonIds = Object.freeze(Array.from(new Set(wrongReasonIds.concat(blankReasonIds))));
   const domainNames = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률" });
   const amc8DomainNames = Object.freeze({ algebra: "식·대수", number: "수·비례·추정", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석" });
@@ -41,7 +42,7 @@
     const byBlankReason = new Map(blankReasons.map(function (reason) { return [reason.id, reason]; }));
     for (let index = 0; index < entries.length; index += 1) {
       const entry = entries[index];
-      if (!entry || !statusIds.includes(entry.status) || !(entry.domain === "unclassified" || Object.prototype.hasOwnProperty.call(selectedDomainNames, entry.domain)) || !reasonIds.includes(entry.reason)
+      if (!entry || !statusIds.includes(entry.status) || !(entry.answer == null || answerChoiceIds.includes(entry.answer)) || !(entry.domain === "unclassified" || Object.prototype.hasOwnProperty.call(selectedDomainNames, entry.domain)) || !reasonIds.includes(entry.reason)
         || (entry.status === "wrong" && !wrongReasonIds.includes(entry.reason))
         || (entry.status === "blank" && !blankReasonIds.includes(entry.reason))
         || ((entry.status === "correct" || entry.status === "unmarked") && entry.reason !== "none")) {
@@ -50,7 +51,7 @@
       counts[entry.status] += 1;
       if (entry.status === "unmarked") continue;
       if (entry.status === "wrong" || entry.status === "blank") {
-        reviewItems.push(Object.freeze({ number: index + 1, status: entry.status, domain: entry.domain, reason: entry.reason }));
+        reviewItems.push(Object.freeze({ number: index + 1, status: entry.status, answer: entry.answer || "", domain: entry.domain, reason: entry.reason }));
       }
       if (entry.domain === "unclassified") { unclassified += 1; }
       else {
@@ -77,6 +78,13 @@
     }
     if (counts.unmarked === itemCount) return { valid: false, error: "표시한 문제가 없습니다. 채점한 문제부터 표시하세요." };
     const attempted = counts.correct + counts.wrong;
+    const questionBands = itemCount === 25 && ["amc8", "amc10", "amc12"].includes(program)
+      ? [[1, 10], [11, 15], [16, 20], [21, 25]].map(function (range) {
+        const bandCounts = { correct: 0, wrong: 0, blank: 0, unmarked: 0 };
+        entries.slice(range[0] - 1, range[1]).forEach(function (entry) { bandCounts[entry.status] += 1; });
+        return Object.freeze({ start: range[0], end: range[1], ...bandCounts, total: range[1] - range[0] + 1 });
+      })
+      : [];
     domains.forEach(function (domain) {
       domain.rate = domain.attempted >= 3 ? Math.round(domain.correct / domain.attempted * 100) : null;
       domain.evidence = domain.attempted >= 3 ? "3문제 이상" : domain.attempted ? "3문제 미만 · 비교 보류" : "미측정";
@@ -115,8 +123,11 @@
         return [domain.id, Object.freeze({ wrong: wrongItemNumbersByDomain.get(domain.id).slice(), blank: blankItemNumbersByDomain.get(domain.id).slice() })];
       }))),
       scoreEstimate: scoreEstimate,
+      questionBands: Object.freeze(questionBands),
       officialScore: null,
-      level: null
+      level: counts.unmarked === 0 && scoreEstimate
+        ? Object.freeze({ kind: "original-paper-performance", score: scoreEstimate.points, max: scoreEstimate.max, bands: Object.freeze(questionBands) })
+        : null
     };
   }
   return Object.freeze({ analyze: analyze, domainsFor: domainsFor, statusIds: statusIds, domainIds: domainIds, reasonIds: reasonIds, wrongReasonIds: wrongReasonIds, blankReasonIds: blankReasonIds });

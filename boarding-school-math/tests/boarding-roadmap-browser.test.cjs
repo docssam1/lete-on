@@ -969,6 +969,8 @@ test("cross-grade concept flows render as examples on phone, tablet, and desktop
     assert.match(await page.locator("#concept-flow-title").innerText(), /배운 개념은 이렇게 이어져요/);
     assert.match(await page.locator(".concept-flow-intro").innerText(), /문제 풀이법을 먼저 외우기보다/);
     const studySequence = page.locator(".competition-study-sequence");
+    assert.equal(await page.locator("#competition-paper-review-route").getAttribute("href"), "./competition-paper-review.html?grade=9&program=amc8");
+    assert.match(await page.locator("#competition-paper-review-route").innerText(), /원본 결과 채점 · 실전 수준 확인/);
     assert.match(await studySequence.locator("h3").innerText(), /공식 기출로 수준을 확인하고, 지필드 모의고사로 보완/);
     assert.deepEqual(await studySequence.locator(".competition-original-papers a").evaluateAll(function (links) { return links.map(function (link) { return link.getAttribute("href"); }); }), [
       "https://maa.org/resource/sample-competition-2023-amc-8/",

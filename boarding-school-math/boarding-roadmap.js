@@ -809,6 +809,8 @@
   }
   function render(historyMode) {
     const entry = data.getGrade(grade);
+    const paperReviewProgram = data.competitionOptions(grade).some(function (item) { return item.id === competition; }) ? competition : "amc8";
+    $("competition-paper-review-route").href = `./competition-paper-review.html?grade=${grade}&program=${encodeURIComponent(paperReviewProgram)}`;
     const planHref = grade === 7 ? "./learning-plan.html?goal=school-g7-nsa" : "./learning-plan.html";
     $("boarding-learning-plan-link").href = planHref;
     $("boarding-learning-plan-link").textContent = grade === 7 ? "7학년 학습 계획" : "학습 계획";

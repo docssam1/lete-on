@@ -193,6 +193,9 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .competition-study-sequence li > span { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #60418f; font-size: .8rem; font-weight: 800; }
 .competition-study-sequence h4 { margin: 2px 0 0; color: #182230; font-size: .96rem; line-height: 1.4; }
 .competition-study-sequence li p { margin: 7px 0 0; color: #354255; font-size: .92rem; line-height: 1.6; }
+.competition-study-sequence li a { min-height: 42px; margin-top: 8px; display: inline-flex; align-items: center; color: #52377c; font-size: .84rem; font-weight: 800; text-decoration: none; }
+.competition-study-sequence li a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.competition-study-sequence li a:focus-visible { outline: 3px solid #9b7cc1; outline-offset: 2px; }
 .competition-interest-note { margin: 14px 0 0; color: #354255; font-size: .94rem; line-height: 1.65; }
 .grade-comparison { padding-block: 42px; border-top: 1px solid #d8dee8; }
 .grade-comparison-controls { margin-top: 20px; display: grid; grid-template-columns: minmax(180px, 260px) minmax(0, 1fr); align-items: end; gap: 16px; }
