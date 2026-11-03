@@ -8,8 +8,8 @@ from pathlib import Path
 record=json.loads((Path(__file__).parent/'source-inventory/5-2-u3-e1-e4-readiness-review.json').read_text())
 r=next(x for x in record['additionalSourceReviews'] if x['sourcePrintedPage']==88)
 items={x['number']:x for x in r['items']}
-assert all(items[n]['status']=='source-reviewed-answer-key-pending' for n in (25,30,31))
-assert not r['publisherAnswerVerified'] and r['runtimeConnection']=='not-connected'
+assert all(items[n]['status']=='public-independent-verification-publisher-key-pending' for n in (25,30,31))
+assert not r['publisherAnswerVerified'] and r['runtimeConnection']=='partial-verified-local'
 # y coordinates are expressed in units of √3.
 def dist2(a,b): return (a[0]-b[0])**2+3*(a[1]-b[1])**2
 def sig(*points): return sorted(dist2(a,b) for a,b in combinations(points,2))
