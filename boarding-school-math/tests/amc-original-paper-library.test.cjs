@@ -28,6 +28,14 @@ test("year and form routes cover the full authorized AMC archive", function () {
   assert.equal(library.archiveRoute("aime", 1999, ""), "https://live.poshenloh.com/past-contests/aime/1999");
   assert.equal(library.archiveRoute("aime", 1983, ""), "https://live.poshenloh.com/past-contests/aime/1983");
   assert.equal(library.archiveRoute("amc10", 2030, "A"), "https://live.poshenloh.com/past-contests");
+  assert.equal(library.problemRoute("amc8", 2023, "", 1), "https://live.poshenloh.com/past-contests/amc8/2023/problem/1");
+  assert.equal(library.problemRoute("amc10", 2021, "D", 25), "https://live.poshenloh.com/past-contests/amc10/2021D/problem/25");
+  assert.equal(library.problemRoute("amc12", 1950, "", 50), "https://live.poshenloh.com/past-contests/amc12/1950/problem/50");
+  assert.equal(library.problemRoute("aime", 2026, "II", 15), "https://live.poshenloh.com/past-contests/aime/2026II/problem/15");
+  assert.equal(library.problemRoute("amc8", 2023, "", 26), "");
+  assert.equal(library.problemRoute("aime", 2026, "III", 1), "");
+  assert.equal(library.problemRoute("amc10", 2025, "D", 1), "");
+  assert.equal(library.problemRoute("amc10", 2000, "A", 1), "");
 });
 
 test("AMC 12 yearly formats preserve historical item counts, time, and score rules", function () {

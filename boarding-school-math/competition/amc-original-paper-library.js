@@ -51,5 +51,21 @@
     return `https://live.poshenloh.com/past-contests/${archive.path}/${Number(year)}${suffix}`;
   }
 
-  return Object.freeze({ schemaVersion: "2.1.0", archives: archives, archiveFor: archiveFor, archiveRoute: archiveRoute, formatFor: formatFor });
+  function problemRoute(programId, year, form, questionNumber) {
+    const format = formatFor(programId, year);
+    const number = Number(questionNumber);
+    if (!format || !Number.isInteger(number) || number < 1 || number > format.itemCount) return "";
+    const selectedForm = String(form || "").toUpperCase();
+    const yearNumber = Number(year);
+    const allowedForms = programId === "amc8" || (programId === "amc10" || programId === "amc12") && yearNumber <= 2001 || programId === "aime" && yearNumber <= 1999
+      ? [""]
+      : yearNumber === 2021 && (programId === "amc10" || programId === "amc12")
+        ? ["A", "B", "C", "D"]
+        : programId === "aime" ? ["I", "II"] : ["A", "B"];
+    if (!allowedForms.includes(selectedForm)) return "";
+    const route = archiveRoute(programId, year, form);
+    return route && route !== "https://live.poshenloh.com/past-contests" ? `${route}/problem/${number}` : "";
+  }
+
+  return Object.freeze({ schemaVersion: "2.2.0", archives: archives, archiveFor: archiveFor, archiveRoute: archiveRoute, problemRoute: problemRoute, formatFor: formatFor });
 });

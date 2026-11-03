@@ -240,7 +240,7 @@
         { field: "domain", values: domains, label: "영역" },
         { field: "reason", values: reasons, label: "오답 이유" }
       ].forEach(function (config) {
-        const field = document.createElement("label");
+        const field = document.createElement("div");
         field.className = `mark-field mark-${config.field}`;
         const caption = document.createElement("span"); caption.textContent = config.label;
         const select = config.field === "answer" && hasIntegerAnswers ? document.createElement("input") : document.createElement("select");
@@ -268,6 +268,21 @@
           resetReport("내용이 바뀌었어요");
         });
         field.append(caption, select);
+        if (config.field === "status" && paperLibrary && ["amc8", "amc10", "amc12", "aime"].includes(format.id)) {
+          const year = Number($("archive-year").value || params.get("year"));
+          const form = $("archive-form").value || params.get("form") || "";
+          const source = paperLibrary.problemRoute(format.id, year, form, number);
+          if (source) {
+            const sourceLink = document.createElement("a");
+            sourceLink.className = "mark-source-link";
+            sourceLink.href = source;
+            sourceLink.target = "_blank";
+            sourceLink.rel = "noopener noreferrer";
+            sourceLink.textContent = "원본 풀이·개념 ↗";
+            sourceLink.setAttribute("aria-label", `${year} ${format.title} ${form ? `${form} ` : ""}${number}번 원본 풀이와 개념 열기`);
+            field.append(sourceLink);
+          }
+        }
         li.append(field);
       });
       list.append(li);

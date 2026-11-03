@@ -35,6 +35,8 @@ test("yearly AMC originals expose print, answer entry, and local self-marking", 
   assert.equal(await page.locator("#archive-year option").count(), 41);
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023");
   assert.match(await page.locator("#archive-open-link").innerText(), /2023 AMC 8.*인쇄·응시·해설/);
+  assert.equal(await page.locator(".paper-mark-row:first-child .mark-source-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/problem/1");
+  assert.equal(await page.locator(".paper-mark-row:first-child .mark-source-link").getAttribute("target"), "_blank");
   await page.locator('[data-question="1"][data-field="answer"]').selectOption("E");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("number");
@@ -62,6 +64,7 @@ test("AMC 12 archive picker reaches the earliest listed year", async function ()
   assert.equal(await page.locator("#archive-year").inputValue(), "1950");
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc12/1950");
   assert.equal(await page.locator(".paper-mark-row").count(), 50);
+  assert.equal(await page.locator(".paper-mark-row:last-child .mark-source-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc12/1950/problem/50");
   assert.match(await page.locator("#review-source-note").innerText(), /AHSME 1950 · 50문항/);
   assert.match(await page.locator("#review-source-note").innerText(), /초기 회차는 문항별 배점이 달라/);
   await page.locator("#archive-year").selectOption("1975");
