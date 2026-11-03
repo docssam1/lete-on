@@ -25,9 +25,9 @@ test("teacher can find, preview, select, order, and set points on released Grade
   const mathText = await page.evaluate(() => {
     const probe = document.createElement("p");
     window.GFIELDMathText.append(probe, "날짜 2026/11/03 · 분수 3/8 · 계수 3/2x");
-    return { labels: [...probe.querySelectorAll(".math-fraction")].map((fraction) => fraction.getAttribute("aria-label")), keepsDate: probe.innerText.includes("2026/11/03") };
+    return { labels: [...probe.querySelectorAll(".math-fraction")].map((fraction) => fraction.getAttribute("aria-label")), keepsDate: probe.innerText.includes("2026/11/03"), preservesCoefficientVariable: probe.textContent.endsWith("x") };
   });
-  assert.deepEqual(mathText, { labels: ["8분의 3", "2분의 3"], keepsDate: true });
+  assert.deepEqual(mathText, { labels: ["8분의 3", "2분의 3"], keepsDate: true, preservesCoefficientVariable: true });
   await page.locator("#item-search").fill("단위율");
   assert.equal(await page.locator(".item-row").count(), 8);
   await page.getByRole("button", { name: "2번 미리보기", exact: true }).click();
@@ -282,12 +282,9 @@ test("teacher answer key is separate from the question sheet and keeps the selec
   assert.match(await page.locator("#sheet-heading").innerText(), /정답지/);
   assert.match(await page.locator("#print-paper").innerText(), /정답지/);
   assert.equal(await page.locator(".sheet-question").first().getAttribute("data-item-id"), "7.RP.A:g7rpa-w01");
-  const expected = await page.evaluate(() => {
-    const api = window.GFIELDGrade7RPAUnitWorkbook;
-    const item = api.pack.workbookItems[0];
-    return api.solutionFor(item, "ko");
-  });
-  assert.ok((await page.locator(".key-solution").first().innerText()).includes(expected.slice(0, 15)));
+  const firstSolution = page.locator(".key-solution").first();
+  assert.deepEqual(await firstSolution.locator(".math-fraction").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("aria-label"))), ["4분의 3", "2분의 1", "2분의 3"]);
+  assert.match(await firstSolution.innerText(), /km\/h입니다\./);
   await page.getByRole("button", { name: "7.RP.A 2번 위로", exact: true }).click();
   assert.equal(await page.locator(".sheet-question").first().getAttribute("data-item-id"), "7.RP.A:g7rpa-w02");
   await page.locator('input[name="cover-style"][value="formal"]').check();
