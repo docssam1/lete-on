@@ -5,3 +5,7 @@
 .u3p89-figure{display:block;width:100%;max-width:190px;height:auto;margin:.1em auto}
 
 .u3p95-fold82{max-width:340px}
+
+@media print {
+  #problemView .u3p85-construction-copy, #solutionView .u3p85-construction-copy { width:60mm !important; max-width:100% !important; max-height:none !important; }
+}
