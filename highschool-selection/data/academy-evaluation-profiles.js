@@ -59,17 +59,18 @@
     ED: Object.freeze({
       programId: "ED",
       displayName: "이든",
-      paperStyle: "중1 시작반과 고등선행을 분리하는 학년·학기 누적형",
-      defaultDuration: "현재 공식 시간 확인 필요 · 과거 공개 사례 100분",
-      difficultyFlow: "학년별 기본 정확도에서 중등 심화·고등선행 연결로 확장",
-      reportTitle: "이든 학년·학기 누적 진단",
+      paperStyle: "공통수학1 기본반 입반은 중2·중3 전 과정의 대수 20문항·기하 10문항 서술형",
+      defaultDuration: "100분 · 공식 공통수학1 기본반 입반 공지",
+      difficultyFlow: "중등 대수·기하의 계산과 서술 과정을 함께 확인",
+      reportTitle: "이든 공통수학1 기본반 입반 진단",
       primaryAxes: Object.freeze(["학년별 정답 수", "학기별 수행률", "단원 공백", "심화 연결", "재도전 우선순위"]),
       evaluationCriteria: Object.freeze([
-        "중1 시작반은 초5·초6 선수과정을 분리 평가",
-        "고등선행은 중2-1·3-1·2-2·3-2 수행을 분리 평가",
+        "중1 시작반은 초5·초6 전 과정의 서술형 30문항·100분으로 별도 평가",
+        "공통수학1 기본반 입반은 중2·중3 전 과정, 대수 20·기하 10을 구분",
+        "공식 FAQ의 대수 기본반 범위 예시는 공통수학1·2 실력이며 현재 중등 범위 2회와 구분",
         "익명 결과의 불합격 점수는 공식 커트라인으로 추정하지 않음"
       ]),
-      decisionPolicy: "최신 공식 기준 확보 전 점수·진단만 제공"
+      decisionPolicy: "공식 공지의 서술 과정 검토·영역 균형 기준은 자동 합격 판정으로 바꾸지 않음"
     }),
     DG: Object.freeze({
       programId: "DG",
@@ -110,8 +111,8 @@
     "dp-common1-entry-202405": Object.freeze({ scope: "중2-1~중3-2", duration: "회차 확인 필요", paperVariant: "돌파 공통수학1 입학" }),
     "wm-middle21-basic-entry-r01": Object.freeze({ scope: "중1 대수 20 + 중1 기하 20 · 통계 제외", duration: "각 50분 · 전체 전형 창 120분", paperVariant: "원수학 중2-1 기본반 신입" }),
     "wm-algebra-geometry-diagnostic": Object.freeze({ scope: "중등대수 25 + 중등기하 25 목표", duration: "90분 + 20분 + 90분 공개 사례", paperVariant: "원수학 대수·기하" }),
-    "ed-middle1-entry": Object.freeze({ scope: "초5 12 + 초6 18", duration: "확인 필요", paperVariant: "이든 중1 시작" }),
-    "ed-high-advance-entry": Object.freeze({ scope: "중2·중3 학기별 누적", duration: "확인 필요", paperVariant: "이든 고등선행" }),
+    "ed-middle1-entry": Object.freeze({ scope: "초5·초6 전 과정 · 서술형 30문항", duration: "100분", paperVariant: "이든 중1 시작" }),
+    "ed-high-advance-entry": Object.freeze({ scope: "중2·중3 전 과정 · 대수 20 + 기하 10", duration: "100분", paperVariant: "이든 공통수학1 기본반 입반 대비" }),
     "sm-common1-entry": Object.freeze({ scope: "중2-2·중3-1·중3-2 · 대수 15 + 기하 15", duration: "180분", paperVariant: "생수형 공통수학1 입반 대비 추정 구성" })
   });
 
@@ -121,5 +122,5 @@
     return Object.freeze({ profile, exam: examOverrides[String(examId || "")] || null });
   }
 
-  return Object.freeze({ updatedAt: "2026-09-03", profiles, examOverrides, resolve });
+  return Object.freeze({ updatedAt: "2026-11-03", profiles, examOverrides, resolve });
 });

@@ -33,9 +33,9 @@
       id: "ED",
       name: "이든수학 입학·선행",
       shortName: "이든",
-      description: "중1 시작반과 고등선행 입학 테스트 대비",
-      scope: "중1 입학 선수과정·중등 심화",
-      levels: ["중1 시작", "중등 심화", "고등선행"],
+      description: "중1 시작반·공통수학1 기본반 등 지원 과정별 입반 테스트 대비",
+      scope: "중1 시작은 초5·초6, 공통수학1 기본반은 중2·중3 전 과정",
+      levels: ["중1 시작", "공통수학1 기본", "공통수학2 실력", "대수 기본"],
       accent: "#775c8d"
     },
     {
@@ -240,8 +240,10 @@
       title: "이든 중1 시작 진단",
       track: "중1 시작",
       curriculumVersion: "2022-revised",
-      scopeLabel: "초5 12문항 + 초6 18문항 · 총 30문항",
+      scopeLabel: "초5·초6 전 과정 · 서술형 30문항 · 100분",
       questionCount: 30,
+      durationMinutes: 100,
+      durationScope: "official-middle1-entry-2026-10",
       pageCount: null,
       sourceRole: "user-observation",
       sourceStatus: "observed_structure",
@@ -250,17 +252,23 @@
       releaseStatus: "blocked",
       assetPolicy: "signed-page-images",
       visible: true,
-      note: "익명 결과 문자에서 학년별 문항 분포만 확인했습니다. 시험 시간·원본·답안·공식 컷은 확인 필요입니다."
+      note: "공식 초등관 10월 개강 공지에서 초5·초6 전 과정, 서술형 30문항·100분을 확인했습니다. 초5 12·초6 18은 이전 관찰 분포이며 고정 규격으로 사용하지 않습니다. 원본·답안은 미확보입니다."
     },
     {
       id: "ed-high-advance-entry",
       programId: "ED",
-      title: "이든 고등선행 입학 진단",
-      track: "고등선행",
+      title: "이든 공통수학1 기본반 입반 대비",
+      track: "공통수학1 기본반",
+      courseCode: "common1-basic",
       curriculumVersion: "2022-revised",
-      scopeLabel: "중2-1·중3-1·중2-2·중3-2 누적",
+      scopeLabel: "중2·중3 전 과정 · 대수 20 + 기하 10 · 100분",
       questionCount: 30,
-      pageCount: 22,
+      durationMinutes: 100,
+      durationScope: "official-common1-basic-entry-2026-12",
+      sections: [{ id: "algebra", label: "대수", from: 1, to: 20 }, { id: "geometry", label: "기하", from: 21, to: 30 }],
+      pageCount: 10,
+      sourcePageCount: 22,
+      privateAnswerPageCount: 8,
       sourceRole: "internal-variant",
       sourceStatus: "audited",
       answerStatus: "found",
@@ -268,7 +276,7 @@
       releaseStatus: "review_pending",
       assetPolicy: "signed-page-images",
       visible: true,
-      note: "30문항 누적형 2회와 전 문항 해설을 확인했습니다. 회차 선택과 분류는 검수 대기입니다."
+      note: "공식 2026년 12월 공통수학1 기본반 입반 범위에 맞춘 2회입니다. 대수 기본반·대수 심화 대비로 사용하지 않습니다. 각 회차의 확률·통계 2문항을 기하로 교체하고 신규 4문항의 독립 풀이·해설 대조 및 그림 재검수를 마쳤습니다. 내용 검수 완료와 운영 공개 승인은 구분합니다."
     },
     {
       id: "dg-entry-common",
@@ -362,5 +370,5 @@
     }
   ];
 
-  root.HIGHSELECT_CATALOG = { programs, exams, updatedAt: "2026-08-23", writer: "T" };
+  root.HIGHSELECT_CATALOG = { programs, exams, updatedAt: "2026-11-03", writer: "T" };
 })(typeof window !== "undefined" ? window : globalThis);
