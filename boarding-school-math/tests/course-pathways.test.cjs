@@ -19,6 +19,8 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
     assert.match(course.teacherHref, /^(\.\/catalog\.html\?role=teacher|#high-school-bridge$)/);
     assert.ok(course.focus.length >= 3);
     assert.equal(course.units.length, 4);
+    assert.ok(Array.isArray(course.previousOptions));
+    assert.ok(Array.isArray(course.nextOptions));
   });
   const preAlgebra = pathways.courses.find(function (course) { return course.id === "pre-algebra"; });
   assert.equal(preAlgebra.studentHref, "./concept-learning.html");
@@ -26,4 +28,8 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
   const algebra2 = pathways.courses.find(function (course) { return course.id === "algebra-2"; });
   assert.equal(algebra2.studentHref, "#availability");
   assert.equal(algebra2.teacherHref, "#high-school-bridge");
+  const algebra1 = pathways.courses.find(function (course) { return course.id === "algebra-1"; });
+  assert.deepEqual(algebra1.previousOptions, ["pre-algebra"]);
+  assert.deepEqual(algebra1.nextOptions, ["geometry", "algebra-2"]);
+  assert.match(algebra1.availability, /지필드 과정 지도와 원본 첫 수업 공개/);
 });

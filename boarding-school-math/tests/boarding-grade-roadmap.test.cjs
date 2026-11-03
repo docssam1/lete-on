@@ -19,10 +19,10 @@ test("school, competition, and SAT stay separate in upper-grade examples", funct
   assert.match(roadmap.getTracks(6)[0][1], /Singapore Math Primary Mathematics.*Spectrum Test Prep.*새 진도보다 이미 배운 단원/);
   assert.match(roadmap.getTracks(3)[2][1], /별도 경시 과정이 제시되지 않았어요/);
   assert.deepEqual(roadmap.getTracks(7).map((track) => track[0]), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
-  assert.match(roadmap.getTracks(9)[0][0], /추정/);
+  assert.match(roadmap.getTracks(9)[0][0], /학교별 확인/);
   assert.match(roadmap.getTracks(10)[2][1], /Digital SAT Math 800은 개인 도전 목표.*응시 계획/);
   [11, 12].forEach(function (grade) {
-    assert.match(roadmap.getTracks(grade)[0][0], /추정/);
+    assert.match(roadmap.getTracks(grade)[0][0], /학교별 확인/);
     assert.match(roadmap.getTracks(grade)[0][1], /확인|목표/);
     assert.match(roadmap.getTracks(grade)[1][1], /참가 자격 확인/);
   });
@@ -38,7 +38,7 @@ test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge
     const plan = roadmap.getAnnualPlan(grade);
     assert.equal(plan.source, "inferred");
     assert.equal(plan.periods.length, 4);
-    assert.ok(plan.periods.every(function (period) { return period[0].includes("추정") && period.slice(1).every(Boolean); }));
+    assert.ok(plan.periods.every(function (period) { return !period[0].includes("추정") && period.slice(1).every(Boolean); }));
     assert.deepEqual(plan.periods.map(function (period) { return period[1]; }), elementaryPlanTitles[grade]);
     assert.match(plan.note, /제공된 초등 로드맵.*12개월 구간.*계획 예시/);
   });
@@ -61,14 +61,14 @@ test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge
   assert.match(roadmap.getAnnualPlan(6).note, /학교 수학에서 이미 배운 단원.*별도의 선택 심화/);
   assert.match(roadmap.getAnnualPlan(6).periods[0][2], /변수식, 거듭제곱·연산 순서/);
   assert.equal(roadmap.getAnnualPlan(9).periods.length, 4);
-  assert.deepEqual(roadmap.getAnnualPlan(9).periods.map(function (period) { return period[0].replace(" · 추정", ""); }), ["1–3개월", "4–6개월", "7–9개월", "10–12개월"]);
-  assert.ok(roadmap.getAnnualPlan(9).periods.every(function (period) { return period[0].includes("추정"); }));
-  assert.match(roadmap.getAnnualPlan(9).note, /추정안/);
+  assert.deepEqual(roadmap.getAnnualPlan(9).periods.map(function (period) { return period[0]; }), ["1–3개월", "4–6개월", "7–9개월", "10–12개월"]);
+  assert.ok(roadmap.getAnnualPlan(9).periods.every(function (period) { return !period[0].includes("추정") && period.slice(1).every(Boolean); }));
+  assert.match(roadmap.getAnnualPlan(9).note, /학교마다 달라요.*수강 과목/);
   [11, 12].forEach(function (grade) {
     const plan = roadmap.getAnnualPlan(grade);
     assert.equal(plan.source, "inferred");
     assert.equal(plan.periods.length, 4);
-    assert.ok(plan.periods.every(function (period) { return period[0].includes("추정") && period.slice(1).every(Boolean); }));
+    assert.ok(plan.periods.every(function (period) { return !period[0].includes("추정") && period.slice(1).every(Boolean); }));
     assert.match(plan.note, /학교|과목/);
   });
   [6, 7, 8, 10].forEach(function (grade) { assert.doesNotMatch(roadmap.getAnnualPlan(grade).note, /사용자|제공된 계획/); });
@@ -83,9 +83,9 @@ test("concept-flow examples connect supplied routes without learner placement", 
   assert.match(flows["parity-counting"].steps.join(" → "), /짝·홀수.*조건별.*경우의 수.*조합.*AIME/);
   assert.match(flows["sequence-number-theory"].steps.join(" → "), /수열.*닫힌식.*나머지.*합동식.*AIME/);
   assert.equal(flows["prealgebra-algebra1"].optional, true);
-  assert.match(flows["prealgebra-algebra1"].title, /선택형/);
-  assert.deepEqual(flows["prealgebra-algebra1"].steps, ["변수식 만들고 값 구하기", "거듭제곱·연산 순서", "문장을 식으로 나타내기", "연산 성질", "분배법칙", "동류항 정리"]);
-  assert.match(flows["prealgebra-algebra1"].note, /공유된 Prealgebra Unit 1.*학년 배치나 진단 결과가 아니에요/);
+  assert.match(flows["prealgebra-algebra1"].title, /선택 심화/);
+  assert.deepEqual(flows["prealgebra-algebra1"].steps, ["변수로 수량을 나타내고 식의 값을 구하기", "정수 지수의 의미와 연산 순서 적용하기", "문장제의 조건을 변수식으로 나타내기", "연산 성질을 이용해 동치식 쓰기", "분배법칙으로 식의 구조 바꾸기", "동류항을 모아 식 간단히 하기"]);
+  assert.match(flows["prealgebra-algebra1"].note, /변수로 양을 표현하고 연산 성질을 적용해 동치식/);
   assert.equal(Object.isFrozen(roadmap.conceptFlows), true);
   assert.equal(Object.isFrozen(roadmap.conceptFlows[0].steps), true);
 });
@@ -116,12 +116,12 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.equal(roadmap.annualPlanResourceLinks[6][0][0].url, "https://classic.artofproblemsolving.com/store/book/prealgebra");
   assert.equal(roadmap.annualPlanResourceLinks[6][1][0].url, "https://amctrainer.org/contests/amc8");
   assert.equal(roadmap.annualPlanResourceLinks[6][2][1].url, "https://satsuite.collegeboard.org/practice/student-question-bank/math");
-  assert.equal(roadmap.annualPlanResourceLinks[7][0][0].url, "https://artofproblemsolving.com/store/book/intro-algebra");
+  assert.equal(roadmap.annualPlanResourceLinks[7][0][0].url, "#algebra1-course");
   assert.equal(roadmap.annualPlanResourceLinks[7][1][0].url, "https://math7.flippedmath.com/unit-13-similarity.html");
   assert.equal(roadmap.annualPlanResourceLinks[7][2][0].url, "https://www.khanacademy.org/digital-sat");
   assert.equal(roadmap.courseStageResources[8][0][0].url, "https://geometry.flippedmath.com/");
   assert.match(roadmap.courseStageResources[8][2][0].title, /Algebra 2.*새 과정/);
-  assert.match(roadmap.courseStageResources[9].note, /추정 경로.*학교의 실제 과목/);
+  assert.match(roadmap.courseStageResources[9].note, /학교마다 수강 과목과 순서/);
   assert.equal(roadmap.courseStageResources[9][0][0].url, "https://algebra2.flippedmath.com/");
   assert.equal(roadmap.courseStageResources[9][1][0].url, "https://geometry.flippedmath.com/");
   assert.equal(roadmap.courseStageResources[10][0][0].url, "https://precalculus.flippedmath.com/ap-precalc.html");

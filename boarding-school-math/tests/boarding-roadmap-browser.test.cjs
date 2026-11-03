@@ -32,6 +32,32 @@ test.after(async function () {
   if (server) await new Promise(function (resolve) { server.close(resolve); });
 });
 
+test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD original material", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  await page.goto(`${url}?grade=7&program=kangaroo`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#current-course-select").inputValue(), "", "course selection must not be inferred from grade");
+  assert.match(await page.locator("#course-path-cards").innerText(), /지나온 과정[\s\S]*현재 과정[\s\S]*다음 과정/);
+  await page.locator("#current-course-select").selectOption("algebra-1");
+  assert.deepEqual(await page.locator("#course-path-cards h3").allInnerTexts(), ["앞선 과목을 선택해 주세요", "Algebra 1", "다음 과목을 선택해 주세요"]);
+  assert.deepEqual(await page.locator("#course-path-cards article:first-child select option").allTextContents(), ["지나온 과정 고르기", "Pre-Algebra"]);
+  assert.deepEqual(await page.locator("#course-path-cards article:last-child select option").allTextContents(), ["다음 과정 고르기", "Geometry", "Algebra 2"]);
+  await page.locator("#course-path-cards article:first-child select").selectOption("pre-algebra");
+  await page.locator("#course-path-cards article:last-child select").selectOption("geometry");
+  assert.deepEqual(await page.locator("#course-path-cards h3").allInnerTexts(), ["Pre-Algebra", "Algebra 1", "Geometry"]);
+  await page.locator("#annual-plan-periods a").first().evaluate(function (anchor) { anchor.click(); });
+  assert.equal(await page.evaluate(function () { return location.hash; }), "#algebra1-course");
+  assert.match(await page.locator("#algebra1-course").innerText(), /식의 구조와 방정식[\s\S]*지필드 원본[\s\S]*3\(2x − 1\) = 15/);
+  assert.equal(await page.locator(".algebra1-unit-card").count(), 5);
+  assert.equal(await page.locator(".algebra1-unit-lesson").count(), 5);
+  await page.locator(".algebra1-unit-lesson").nth(2).locator("summary").click();
+  assert.match(await page.locator(".algebra1-unit-lesson").nth(2).innerText(), /입장권[\s\S]*a \+ s = 28[\s\S]*13장/);
+  assert.doesNotMatch(await page.locator("body").innerText(), /추정안|AoPS Introduction to Algebra/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("roadmap shortcut bar stays usable and tracks the selected section on mobile", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
@@ -134,9 +160,9 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.locator("#competition-select").selectOption("kangaroo");
   assert.equal(await page.locator("#competition-paper-source-link").getAttribute("href"), "https://mathkangaroo.org/mks/practice/grades-9-10/");
   assert.equal(await page.locator("#grade-map-title").innerText(), "9학년 수학 한눈에");
-  assert.match(await page.locator("#grade-focus-list").innerText(), /학교 수학 · 추정/);
-  assert.match(await page.locator("#source-chip").innerText(), /추정안/);
-  assert.match(await page.locator("#grade-note").innerText(), /제공된 7·8·10학년/);
+  assert.match(await page.locator("#grade-focus-list").innerText(), /학교 수학 · 학교별 확인/);
+  assert.match(await page.locator("#source-chip").innerText(), /학교 과목 확인/);
+  assert.match(await page.locator("#grade-note").innerText(), /학교마다 수강 과목과 순서/);
   await page.locator("#competition-select").selectOption("amc10");
   assert.deepEqual(await page.locator("#domain-rows .domain-row strong").allInnerTexts(), ["식·대수", "수와 정수론", "기하·공간", "경우의 수·확률"]);
   assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=9&program=amc10/);
@@ -187,9 +213,9 @@ test("Grade 11–12 roadmap identifies inferred plans and only offers the eligib
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
   await page.goto(`${url}?grade=11`, { waitUntil: "networkidle" });
-  assert.match(await page.locator("#source-chip").innerText(), /11학년 · 추정안/);
-  assert.match(await page.locator("#grade-note").innerText(), /공통 수학 범주.*추정안/);
-  assert.match(await page.locator("#annual-plan-title").innerText(), /11학년.*추정/);
+  assert.match(await page.locator("#source-chip").innerText(), /11학년 · 학교 과목 확인/);
+  assert.match(await page.locator("#grade-note").innerText(), /학교별 과목과 선수 조건/);
+  assert.match(await page.locator("#annual-plan-title").innerText(), /11학년.*학교의 과목 경로/);
   assert.match(await page.locator("#annual-plan-note").innerText(), /과목명·순서/);
   const grade11Options = await page.locator("#competition-select option").allTextContents();
   assert.ok(grade11Options.some(function (label) { return /AMC 12/.test(label); }));
@@ -197,8 +223,8 @@ test("Grade 11–12 roadmap identifies inferred plans and only offers the eligib
   assert.equal(await page.locator(".grade-button").count(), 10);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   await page.getByRole("button", { name: "다음 학년 →" }).click();
-  assert.match(await page.locator("#source-chip").innerText(), /12학년 · 추정안/);
-  assert.match(await page.locator("#annual-plan-title").innerText(), /12학년.*추정/);
+  assert.match(await page.locator("#source-chip").innerText(), /12학년 · 학교 과목 확인/);
+  assert.match(await page.locator("#annual-plan-title").innerText(), /12학년.*이수 과목/);
   assert.match(await page.locator("#grade-core").innerText(), /졸업·대학 계획/);
   assert.deepEqual(errors, []);
   await page.close();
@@ -447,14 +473,14 @@ test("grade comparison shows curriculum examples without implying measured level
   await comparison.selectOption("9");
   assert.equal(await page.locator("#comparison-table").isVisible(), true);
   assert.equal(await page.locator("#comparison-current-label").innerText(), "8학년 · 가속 학습 예시 · 학교 학년 기준 아님");
-  assert.equal(await page.locator("#comparison-target-label").innerText(), "9학년 · 추정안");
+  assert.equal(await page.locator("#comparison-target-label").innerText(), "9학년 · 학습 계획 예시");
   assert.match(await page.locator("#comparison-note").innerText(), /학교 과목 순서를 확인/);
   assert.match(await page.locator("#comparison-bridge-copy").innerText(), /8학년:.*9학년:/);
   assert.match(await page.locator("#comparison-current-tracks").innerText(), /1–3개월[\s\S]*대수 개념과 문제 해결/);
   assert.match(await page.locator("#comparison-current-tracks").innerText(), /Geometry는 학교 과정에서 이어가요/);
   assert.match(await page.locator("#comparison-current-tracks").innerText(), /AIME형 풀이/);
   assert.match(await page.locator("#comparison-current-tracks").innerText(), /4–6개월[\s\S]*기하 심화와 AMC 10\/12/);
-  assert.match(await page.locator("#comparison-target-tracks").innerText(), /10–12개월 · 추정/);
+  assert.match(await page.locator("#comparison-target-tracks").innerText(), /10–12개월/);
   assert.match(await page.locator(".comparison-boundary").innerText(), /학생의 현재 위치.*판단하지 않아요/);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true);
   assert.equal(await page.locator("#comparison-assessment-pair").isVisible(), true);
@@ -467,7 +493,7 @@ test("grade comparison shows curriculum examples without implying measured level
   for (const row of await pairedRows.all()) assert.equal(await row.locator(".comparison-mobile-cell").count(), 2, "each mobile comparison row keeps both grade values together");
   assert.match(await page.locator("#comparison-mobile-view").innerText(), /학교 수학[\s\S]*경시 · 선택[\s\S]*SAT · 선택[\s\S]*1–3개월/);
   assert.doesNotMatch(await page.locator("#comparison-mobile-view").innerText(), /학습 주제|기간 1/);
-  assert.match(await page.locator(".comparison-mobile-note").innerText(), /인접 학년 자료를 연결한 추정안/);
+  assert.match(await page.locator(".comparison-mobile-note").innerText(), /학교의 실제 과목과 순서를 확인/);
   await page.emulateMedia({ media: "print" });
   assert.equal(await page.locator("#comparison-table").isVisible(), true);
   assert.equal(await page.locator(".grade-comparison-controls").isVisible(), false);
@@ -577,12 +603,12 @@ test("Grade 10 and Grade 12 comparison keeps inferred planning separate from lea
   assert.match(await page.locator("#annual-plan-periods").innerText(), /USAMO형 증명 문제[\s\S]*해당 연도 MAA 안내/);
   await page.getByLabel("비교할 학년").selectOption("12");
   assert.equal(await page.locator("#comparison-current-label").innerText(), "10학년 · 가속 학습 예시 · 학교 학년 기준 아님");
-  assert.equal(await page.locator("#comparison-target-label").innerText(), "12학년 · 추정안");
+  assert.equal(await page.locator("#comparison-target-label").innerText(), "12학년 · 학습 계획 예시");
   assert.match(await page.locator("#comparison-target-title").innerText(), /배운 수학을 선택 과목/);
-  assert.match(await page.locator("#comparison-target-tracks").innerText(), /학교 수학 · 추정[\s\S]*졸업 요건·과목 경로/);
-  assert.match(await page.locator("#comparison-note").innerText(), /추정안은 학교 과목 순서를 확인/);
+  assert.match(await page.locator("#comparison-target-tracks").innerText(), /학교 수학 · 학교별 확인[\s\S]*졸업 요건·과목 경로/);
+  assert.match(await page.locator("#comparison-note").innerText(), /실제 과목과 순서는 학교 안내에서 확인/);
   assert.match(await page.locator(".comparison-boundary").innerText(), /학생의 현재 위치.*판단하지 않아요/);
-  assert.match(await page.locator("#comparison-assessment-target-label").innerText(), /12학년 · 추정 계획 예시/);
+  assert.match(await page.locator("#comparison-assessment-target-label").innerText(), /12학년 · 학습 계획 예시/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [1280, 1280]);
   await page.close();
 });
@@ -591,8 +617,8 @@ test("Grade 3 comparison labels the missing contest-plan source instead of imply
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(`${url}?grade=3`, { waitUntil: "networkidle" });
   await page.getByLabel("비교할 학년").selectOption("5");
-  assert.match(await page.locator("#comparison-current-label").innerText(), /3학년 · 계획 예시 · 연간 구간 추정/);
-  assert.match(await page.locator("#comparison-target-label").innerText(), /5학년 · 계획 예시 · 연간 구간 추정/);
+  assert.equal(await page.locator("#comparison-current-label").innerText(), "3학년 · 학습 계획 예시");
+  assert.equal(await page.locator("#comparison-target-label").innerText(), "5학년 · 학습 계획 예시");
   assert.match(await page.locator("#comparison-current-tracks").innerText(), /경시 · 선택[\s\S]*이 학년 계획 자료에는 별도 경시 과정이 제시되지 않았어요/);
   assert.match(await page.locator("#comparison-target-tracks").innerText(), /경시 · 선택[\s\S]*이 학년 계획 자료에는 별도 경시 과정이 제시되지 않았어요/);
   await page.close();
@@ -600,7 +626,7 @@ test("Grade 3 comparison labels the missing contest-plan source instead of imply
   const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await phone.goto(`${url}?grade=3`, { waitUntil: "networkidle" });
   await phone.getByLabel("비교할 학년").selectOption("5");
-  assert.match(await phone.locator(".comparison-mobile-header").innerText(), /3학년 · 현재 · 계획 예시 · 연간 구간 추정[\s\S]*5학년 · 계획 예시 · 연간 구간 추정/);
+  assert.match(await phone.locator(".comparison-mobile-header").innerText(), /3학년 · 현재 · 학습 계획 예시[\s\S]*5학년 · 학습 계획 예시/);
   assert.deepEqual(await phone.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   await phone.close();
 });
@@ -721,7 +747,7 @@ test("elementary plans turn the supplied book guidance into clearly labeled paci
     for (const width of [390, 1280]) {
       const page = await browser.newPage({ viewport: { width, height: 844 } });
       await page.goto(`${url}?grade=${grade}#annual-plan`, { waitUntil: "networkidle" });
-      assert.match(await page.locator("#annual-plan-title").innerText(), new RegExp(`${grade}학년.*추정`));
+      assert.match(await page.locator("#annual-plan-title").innerText(), new RegExp(`${grade}학년 ·`));
       assert.equal(await page.locator("#annual-plan-periods > li").count(), 4);
       assert.ok(await page.locator("#annual-plan-periods").evaluate(function (node) { return node.classList.contains("is-inferred"); }));
       assert.match(await page.locator("#annual-plan-note").innerText(), /제공된 초등 로드맵.*계획 예시/);
@@ -810,14 +836,14 @@ test("roadmap checkpoints open their matching course references", async function
   for (const item of upperGradeCases) {
     await page.goto(`${url}?grade=${item.grade}`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: item.button }).click();
-    if (item.inferred) assert.match(await page.locator("#source-chip").innerText(), /추정안/);
+    if (item.inferred) assert.match(await page.locator("#source-chip").innerText(), /학교 과목 확인/);
     const disclosure = page.locator("#stage-external-resources");
     assert.equal(await disclosure.isVisible(), true, `Grade ${item.grade} stage reference is visible`);
     await disclosure.locator("summary").click();
     assert.deepEqual(await disclosure.locator("ul a").allInnerTexts(), item.titles || [item.title]);
     assert.deepEqual(await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("href"); }); }), item.urls || [item.url]);
     assert.ok(await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.every(function (node) { return /새 창에서 열림/.test(node.getAttribute("aria-label")); }); }));
-    if (item.inferred) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /추정 경로.*학교의 실제 과목/);
+    if (item.inferred) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /학교마다 수강 과목과 순서/);
     if (item.note) assert.match(await disclosure.locator("#stage-external-resource-note").innerText(), /미국·캐나다 AIME 기준.*다른 지역 규정/);
     if (item.grade === 10 && !item.note) assert.equal(await page.locator("#stage-external-resource-note").isVisible(), false);
     assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
@@ -878,13 +904,13 @@ test("cross-grade concept flows render as examples on phone, tablet, and desktop
     assert.equal(await page.locator(".concept-flow").count(), 5);
     assert.equal(await page.locator(".concept-flow ol").count(), 5);
     assert.equal(await page.locator(".concept-flow ol li").count(), 26);
-    const prealgebraFlow = page.locator('.concept-flow:has(h3:text("선택형 · 변수식에서 식 정리로"))');
+    const prealgebraFlow = page.locator('.concept-flow:has(h3:text("선택 심화 · 변수식에서 동치식으로"))');
     assert.equal(await page.locator(".concept-flow").first().getAttribute("aria-labelledby"), "prealgebra-algebra1-heading");
     assert.deepEqual(await page.locator(".concept-flow").nth(1).locator("li").allInnerTexts(), ["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]);
-    assert.deepEqual(await prealgebraFlow.locator("li").allInnerTexts(), ["변수식 만들고 값 구하기", "거듭제곱·연산 순서", "문장을 식으로 나타내기", "연산 성질", "분배법칙", "동류항 정리"]);
+    assert.deepEqual(await prealgebraFlow.locator("li").allInnerTexts(), ["변수로 수량을 나타내고 식의 값을 구하기", "정수 지수의 의미와 연산 순서 적용하기", "문장제의 조건을 변수식으로 나타내기", "연산 성질을 이용해 동치식 쓰기", "분배법칙으로 식의 구조 바꾸기", "동류항을 모아 식 간단히 하기"]);
     assert.equal(await prealgebraFlow.locator("ol").evaluate(function (node) { return getComputedStyle(node).gridTemplateColumns.split(" ").length; }), width <= 600 ? 1 : 6);
     const bridgeNote = prealgebraFlow.locator(".concept-flow-note");
-    assert.match(await bridgeNote.innerText(), /공유된 Prealgebra Unit 1.*학년 배치나 진단 결과가 아니에요/);
+    assert.match(await bridgeNote.innerText(), /변수로 양을 표현하고 연산 성질을 적용해 동치식/);
     assert.equal(await prealgebraFlow.getAttribute("aria-describedby"), await bridgeNote.getAttribute("id"));
     assert.equal(await prealgebraFlow.evaluate(function (node) { return getComputedStyle(node).gridColumn; }), "1 / -1");
     assert.equal(await bridgeNote.isVisible(), true);

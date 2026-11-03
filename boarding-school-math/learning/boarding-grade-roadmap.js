@@ -40,7 +40,7 @@
       3: Object.freeze([Object.freeze({ title: "AoPS Prealgebra", url: "https://classic.artofproblemsolving.com/store/book/prealgebra" }), Object.freeze({ title: "College Board SAT 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
     }),
     7: Object.freeze({
-      0: Object.freeze([Object.freeze({ title: "AoPS Introduction to Algebra", url: "https://artofproblemsolving.com/store/book/intro-algebra" })]),
+      0: Object.freeze([Object.freeze({ title: "지필드 Algebra 1 과정·첫 수업 보기", url: "#algebra1-course" })]),
       1: Object.freeze([Object.freeze({ title: "Math 7 기하 단원", url: "https://math7.flippedmath.com/unit-13-similarity.html" }), Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" })]),
       2: Object.freeze([Object.freeze({ title: "Khan Academy Digital SAT", url: "https://www.khanacademy.org/digital-sat" }), Object.freeze({ title: "College Board 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board SAT 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
@@ -52,7 +52,7 @@
       2: Object.freeze([algebra2Reference])
     }),
     9: Object.freeze({
-      note: "Grade 9는 추정 경로예요. 학교의 실제 과목과 맞는 자료만 선택해 살펴보세요.",
+      note: "9학년은 학교마다 수강 과목과 순서가 달라요. 현재 과목과 선수 개념에 맞는 자료를 골라 보세요.",
       0: Object.freeze([algebra2Reference]),
       1: Object.freeze([geometryReference])
     }),
@@ -75,7 +75,7 @@
     { grade: 7, title: "유리수에서 Algebra 1로", source: "provided", pathNote: "가속 학습 예시 · 학교 학년 기준 아님", core: "유리수, 비례, 식과 방정식, 기하를 연결해 보세요. 학교 과목 순서는 실제 수업에 맞춰 확인해요.", bridge: "유리수 연산 → 비례 관계 → 식·방정식 → 기하·혼합 문제", steps: grade7Stops.map(function (stop) { return [stop.title, stop.description]; }) },
     { grade: 8, title: "대수와 기하를 함께", source: "provided", pathNote: "가속 학습 예시 · 학교 학년 기준 아님", core: "함수와 기하를 함께 공부해요. 같은 관계를 그래프·식·그림으로 설명해 봐요.", bridge: "일차 관계 → 함수로 나타내기 → 이차 관계·기하", steps: [
       ["일차식·기하 점검", "일차 관계와 도형의 기본 성질을 설명할 수 있는지 확인해요."], ["그래프·식 연결", "같은 관계를 그래프·방정식·도형으로 옮기고 무엇이 같은지 말해요."], ["준비되면 심화", "앞 개념이 익숙하고 원한다면 이차식이나 AMC 10/12 문제에 도전해요."], ["풀이 비교", "맞힌 문제도 다른 풀이와 비교하고, 틀린 문제는 막힌 지점을 적어요."] ] },
-    { grade: 9, title: "함수와 기하 증명 확인", source: "inferred", core: "7·8·10학년 자료를 잇는 추정안이에요. 실제 과목 순서는 학교 수업을 먼저 확인해요.", bridge: "좌표기하·닮음 → 삼각비 → 함수 → Pre-Calculus 준비", steps: [
+    { grade: 9, title: "함수와 기하 증명 확인", source: "inferred", core: "대수·기하·함수의 연결을 살펴보는 학습 예시예요. 실제 과목 순서는 학교 수업을 먼저 확인해요.", bridge: "좌표기하·닮음 → 삼각비 → 함수 → Pre-Calculus 준비", steps: [
       ["빈 곳 메우기", "Algebra 2의 함수·방정식과 기하 증명을 다시 확인해요."], ["서로 연결하기", "좌표·닮음·삼각비를 그래프와 식으로 나타내요."], ["원할 때 도전", "준비가 되면 AMC 혼합 문제나 SAT/PSAT 영역별 문제를 풀어요."], ["다음 과목 확인", "풀이와 설명을 살펴보고 Pre-Calculus 준비를 선생님과 확인해요."] ] },
     { grade: 10, title: "함수·삼각법과 증명", source: "provided", pathNote: "가속 학습 예시 · 학교 학년 기준 아님", core: "Pre-Calculus의 함수와 삼각법을 깊이 이해해요. 경시와 SAT는 각각 필요한 만큼 준비해요.", bridge: "함수·삼각법 → 복소수·벡터 → 풀이 정당화·증명", steps: [
       ["개념 설명", "함수와 삼각법의 정의를 그래프와 함께 설명해요."], ["개념 섞어 풀기", "대수·기하·정수론·조합이 함께 쓰인 문제를 풀어요."], ["필요한 실전 연습", "준비도에 따라 AMC 12/AIME 또는 SAT 문제를 시간 재고 풀어요."], ["근거 쓰기", "왜 맞는지 적고 처음 보는 문제에 다시 적용해요."] ] },
@@ -87,22 +87,22 @@
 
   const annualPlans = Object.freeze({
     3: Object.freeze({ source: "inferred", title: "기본 연산과 문장제 읽기", note: "교재와 사용법은 제공된 초등 로드맵을 따르고, 12개월 구간은 그 내용을 나눈 계획 예시예요. 하루 학습량과 학교 진도에 맞춰 조절하고 새 단원 배정이나 진단 결과로 해석하지 않아요.", periods: Object.freeze([
-      ["1–3개월 · 추정", "기본 연산 살펴보기", "하루 5문제로 익숙한 연산을 확인해요. 맞힌 문제도 왜 그런지 말해요.", "Spectrum Math · Math Mammoth"],
-      ["4–6개월 · 추정", "문장제 읽기 습관", "문제에서 무엇을 묻는지 먼저 찾고, 계산 전에 조건을 말로 정리해요.", "Spectrum Math · Math Mammoth"],
-      ["7–9개월 · 추정", "그림과 식으로 나타내기", "문장제의 조건을 간단한 그림이나 식으로 바꾸고, 고른 연산의 이유를 설명해요.", "Spectrum Math · Math Mammoth"],
-      ["10–12개월 · 추정", "섞어 풀고 설명하기", "배운 연산과 문장제를 섞어 풀고, 맞은 문제도 풀이 이유를 말해요.", "Spectrum Math · Math Mammoth"]
+      ["1–3개월", "기본 연산 살펴보기", "하루 5문제로 익숙한 연산을 확인해요. 맞힌 문제도 왜 그런지 말해요.", "Spectrum Math · Math Mammoth"],
+      ["4–6개월", "문장제 읽기 습관", "문제에서 무엇을 묻는지 먼저 찾고, 계산 전에 조건을 말로 정리해요.", "Spectrum Math · Math Mammoth"],
+      ["7–9개월", "그림과 식으로 나타내기", "문장제의 조건을 간단한 그림이나 식으로 바꾸고, 고른 연산의 이유를 설명해요.", "Spectrum Math · Math Mammoth"],
+      ["10–12개월", "섞어 풀고 설명하기", "배운 연산과 문장제를 섞어 풀고, 맞은 문제도 풀이 이유를 말해요.", "Spectrum Math · Math Mammoth"]
     ]) }),
     4: Object.freeze({ source: "inferred", title: "표·그래프와 그림으로 문제 읽기", note: "교재와 사용법은 제공된 초등 로드맵을 따르고, 12개월 구간은 그 내용을 나눈 계획 예시예요. 학교 진도와 아이의 속도에 맞춰 조절하며, 새 단원 배정이나 진단 결과로 해석하지 않아요.", periods: Object.freeze([
-      ["1–3개월 · 추정", "표와 그래프에서 조건 찾기", "계산 전에 표의 행·열이나 그래프의 표시가 무엇을 뜻하는지 설명해요.", "Spectrum Word Problems · Singapore Math Primary Mathematics"],
-      ["4–6개월 · 추정", "개념을 그림으로 보기", "문제의 수와 관계를 그림으로 나타내고, 같은 뜻을 표나 말로도 설명해요.", "Singapore Math Primary Mathematics"],
-      ["7–9개월 · 추정", "표부터 설명하고 계산하기", "문제에서 필요한 정보를 표에 정리한 뒤 어떤 계산이 필요한지 말해요.", "Spectrum Word Problems · Singapore Math Primary Mathematics"],
-      ["10–12개월 · 추정", "표·그림·문장제 복습", "배운 표현을 섞어 문제를 풀고, 계산 전에 조건을 정리하는 습관을 확인해요.", "Spectrum Word Problems · Singapore Math Primary Mathematics"]
+      ["1–3개월", "표와 그래프에서 조건 찾기", "계산 전에 표의 행·열이나 그래프의 표시가 무엇을 뜻하는지 설명해요.", "Spectrum Word Problems · Singapore Math Primary Mathematics"],
+      ["4–6개월", "개념을 그림으로 보기", "문제의 수와 관계를 그림으로 나타내고, 같은 뜻을 표나 말로도 설명해요.", "Singapore Math Primary Mathematics"],
+      ["7–9개월", "표부터 설명하고 계산하기", "문제에서 필요한 정보를 표에 정리한 뒤 어떤 계산이 필요한지 말해요.", "Spectrum Word Problems · Singapore Math Primary Mathematics"],
+      ["10–12개월", "표·그림·문장제 복습", "배운 표현을 섞어 문제를 풀고, 계산 전에 조건을 정리하는 습관을 확인해요.", "Spectrum Word Problems · Singapore Math Primary Mathematics"]
     ]) }),
     5: Object.freeze({ source: "inferred", title: "분수·비율 문장제와 약점 보완", note: "교재와 사용법은 제공된 초등 로드맵을 따르고, 12개월 구간은 그 내용을 나눈 계획 예시예요. IXL은 점수나 자동 배치가 아니라 선택한 단원의 연습에 쓰고, 학교 진도에 맞춰 조절해요.", periods: Object.freeze([
-      ["1–3개월 · 추정", "분수·소수 개념 확인", "Math Mammoth로 이미 배운 내용을 확인하고, 풀이 이유를 말해요.", "Math Mammoth"],
-      ["4–6개월 · 추정", "문장제 조건 나타내기", "문장제에서 주어진 것과 구할 것을 나누고, 표·그림·식으로 나타내요.", "Math Mammoth"],
-      ["7–9개월 · 추정", "필요한 단원 보완", "다시 보고 싶은 단원을 골라 IXL로 연습하되, 점수보다 풀이와 설명을 확인해요.", "Math Mammoth · IXL"],
-      ["10–12개월 · 추정", "문장제 복습과 설명", "여러 문제를 풀며 막힌 조건을 다시 보고, 사용한 개념과 풀이 이유를 설명해요.", "Math Mammoth · IXL"]
+      ["1–3개월", "분수·소수 개념 확인", "Math Mammoth로 이미 배운 내용을 확인하고, 풀이 이유를 말해요.", "Math Mammoth"],
+      ["4–6개월", "문장제 조건 나타내기", "문장제에서 주어진 것과 구할 것을 나누고, 표·그림·식으로 나타내요.", "Math Mammoth"],
+      ["7–9개월", "필요한 단원 보완", "다시 보고 싶은 단원을 골라 IXL로 연습하되, 점수보다 풀이와 설명을 확인해요.", "Math Mammoth · IXL"],
+      ["10–12개월", "문장제 복습과 설명", "여러 문제를 풀며 막힌 조건을 다시 보고, 사용한 개념과 풀이 이유를 설명해요.", "Math Mammoth · IXL"]
     ]) }),
     6: Object.freeze({ source: "provided", title: "선택 심화 · Pre-Algebra에서 SAT 기초까지", note: "학교 수학에서 이미 배운 단원을 깊게 익히는 경로와 별도의 선택 심화 예시예요. 새 주제는 이전 개념을 설명할 수 있고 가족·교사와 계획했을 때만 이어가요.", periods: Object.freeze([
       ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율과 변수식, 거듭제곱·연산 순서를 익히고 기하·자료 문제의 풀이 이유를 말해요.", "AoPS Pre-Algebra · Khan Academy · Singapore Math Challenging Word Problems 6"],
@@ -111,7 +111,7 @@
       ["10–12개월", "복습과 실전 연습", "오답 이유를 나누어 보고, 준비된 범위에서 시간 연습을 해요.", "AoPS 복습 · AMC 8 기출 · SAT 기초 문제"]
     ]) }),
     7: Object.freeze({ source: "provided", title: "Algebra 1에서 경시·SAT 기초로", note: "Algebra 1은 가속 학습 예시예요. 학교 Geometry는 정규 진도에서 이어가고 AMC 10·SAT은 학교 수학과 분리한 선택 경로로 살펴봐요. 학생의 현재 수준이나 배정 과목을 판정하지 않아요.", periods: Object.freeze([
-      ["1–3개월", "Algebra 1 개념과 풀이", "변수식·일차방정식·부등식을 익히고 풀이에서 등식의 성질을 쓴 이유를 설명해요.", "AoPS Introduction to Algebra · 개념별 연습"],
+      ["1–3개월", "Algebra 1 개념과 풀이", "변수식·일차방정식·부등식을 익히고 풀이에서 등식의 성질을 쓴 이유를 설명해요.", "지필드 Algebra 1 과정 지도 · 첫 수업"],
       ["4–6개월", "기하 기초와 AMC 입문", "학교 Geometry에서 각·삼각형·닮음·넓이와 부피를 익혀요. 준비되면 AMC 10 문제를 선택해 접근해요.", "중학교 기하 · AMC 10 유형 문제"],
       ["7–9개월", "대수 강화와 SAT 유형", "배운 대수·기하를 심화 문장제와 자료 해석에 연결하고, Digital SAT Math 영역을 살펴봐요.", "Digital SAT Math 영역별 연습 · Khan Academy"],
       ["10–12개월", "누적 복습과 모의 연습", "준비한 범위에서 AMC·SAT형 문제를 골라 시간 연습하고 개념·아이디어·계산 중 막힌 이유를 기록해요.", "개념 혼합 문제 · 준비도에 맞춘 모의 문제"]
@@ -122,11 +122,11 @@
       ["7–9개월", "AIME형 문제와 SAT 심화", "준비된 학생은 서술형 풀이와 SAT 영역별 연습을 병행해요.", "AoPS Volume 2 · College Board 공식 SAT 자료"],
       ["10–12개월", "실전 연습과 풀이 복습", "시간을 재서 풀고 개념·아이디어·계산 실수를 구분해요.", "AMC/AIME 기출 · SAT 모의 문제 · AoPS 복습"]
     ]) }),
-    9: Object.freeze({ source: "inferred", title: "Algebra 2·기하를 점검하고 Pre-Calculus로", note: "9학년 월별 계획은 제공되지 않아 8·10학년 자료 사이를 잇는 추정안이에요. 학교 과목과 선수 개념을 먼저 확인해요.", periods: Object.freeze([
-      ["1–3개월 · 추정", "Algebra 2 핵심 개념 확인", "함수·다항식·방정식의 이해도를 확인하고 필요한 부분을 보완해요.", "학교 수업 자료 · 현재 교재의 단원 점검"],
-      ["4–6개월 · 추정", "기하와 대수 연결", "좌표·닮음·기하 증명을 식과 그래프로 연결해요.", "기하 복습 · 혼합 문제"],
-      ["7–9개월 · 추정", "선택 심화와 SAT 영역 확인", "관심과 준비도에 따라 AMC 혼합 문제 또는 SAT 영역을 골라요.", "AMC 선택 연습 · Digital SAT 공식 연습 자료"],
-      ["10–12개월 · 추정", "다음 과목 준비 확인", "함수·삼각비의 기초를 살펴보고 Pre-Calculus 준비를 교사와 확인해요.", "학교 과목 계획 · 선수 개념 복습"]
+    9: Object.freeze({ source: "inferred", title: "Algebra 2·기하를 점검하고 Pre-Calculus로", note: "9학년의 과목 구성과 순서는 학교마다 달라요. 실제 수강 과목과 선수 개념을 확인한 뒤 필요한 연결을 골라요.", periods: Object.freeze([
+      ["1–3개월", "현재 과목과 핵심 개념 확인", "함수·다항식·방정식 중 현재 수업에서 다루는 내용을 확인하고 필요한 부분을 보완해요.", "학교 수업 자료 · 현재 교재의 단원 점검"],
+      ["4–6개월", "기하와 대수 연결", "좌표·닮음·기하 증명을 식과 그래프로 연결해요.", "기하 복습 · 혼합 문제"],
+      ["7–9개월", "선택 심화와 SAT 영역 확인", "관심과 준비도에 따라 AMC 혼합 문제 또는 SAT 영역을 골라요.", "AMC 선택 연습 · Digital SAT 공식 연습 자료"],
+      ["10–12개월", "다음 과목 준비 확인", "함수·삼각비의 기초를 살펴보고 다음 과목의 선수 개념을 교사와 확인해요.", "학교 과목 계획 · 선수 개념 복습"]
     ]) }),
     10: Object.freeze({ source: "provided", title: "Pre-Calculus에서 증명·시험 선택까지", note: "AMC 12 130+와 Digital SAT Math 800은 선택형 도전 목표예요. 이 계획은 점수나 AIME·USAMO 진출을 예측하거나 보장하지 않아요.", periods: Object.freeze([
       ["1–3개월", "Pre-Calculus와 AMC 12 준비", "함수와 삼각법을 그래프로 이해하고 문제에 적용해요. 원한다면 AMC 12 130+를 개인 도전 목표로 기록해요.", "AoPS Precalculus · AoPS Volume 1 · AMC 12 기출"],
@@ -134,22 +134,22 @@
       ["7–9개월", "SAT Math 점검", "응시 계획이 있다면 공식 형식에 맞춰 약한 영역을 확인해요. Digital SAT Math 800은 선택한 개인 도전 목표로 기록할 수 있어요.", "College Board 공식 디지털 SAT 자료 · Khan Academy SAT Math"],
       ["10–12개월", "증명과 다음 단계", "준비도에 맞춰 USAMO형 증명 문제도 연습해요. 실제 USAMO 선발 기준은 해당 연도 MAA 안내에서 확인해요.", "AoPS Volume 2 · 증명 연습 · 선택한 경시 문제"]
     ]) }),
-    11: Object.freeze({ source: "inferred", title: "학교의 과목 경로를 확인하고 연결하기", note: "11학년 자료가 제공되지 않아 고등학교 수학의 공통 내용 범주를 바탕으로 만든 추정안이에요. 과목명·순서·시험 선택은 학교의 실제 과목 안내와 선수 조건을 먼저 확인해요.", periods: Object.freeze([
-      ["1–3개월 · 추정", "현재 수업과 선수 조건 확인", "성적표와 학교 안내에서 지금 배우는 과목, 필요한 선수 개념, 다음 선택지를 정리해요.", "학교 course catalog · 교사 상담 · 현재 수업 자료"],
-      ["4–6개월 · 추정", "함수·표현 연결", "현재 과목의 함수를 식·그래프·표로 나타내고 표현 사이의 관계를 설명해요.", "현재 과목 교재 · 함수와 그래프 복습"],
-      ["7–9개월 · 추정", "모델·자료·추론 적용", "수업과 관심 주제에 맞춰 자료를 분석하거나 수학적 모델의 가정과 한계를 설명해요.", "학교 통계·모델링·심화 선택 단원"],
-      ["10–12개월 · 추정", "다음 과목과 시험 선택", "학교의 다음 과목 선수 조건을 확인해요. 시험 응시 계획이 있으면 SAT 공식 범위 또는 AMC 12 해당 연도 자격을 별도로 살펴봐요.", "학교 과목 안내 · College Board · MAA 공식 규정"]
+    11: Object.freeze({ source: "inferred", title: "학교의 과목 경로를 확인하고 연결하기", note: "학교별 과목 안내와 선수 조건을 먼저 확인해요. 아래는 고등학교 수학의 공통 내용 범주를 활용한 학습 예시예요.", periods: Object.freeze([
+      ["1–3개월", "현재 수업과 선수 조건 확인", "성적표와 학교 안내에서 지금 배우는 과목, 필요한 선수 개념, 다음 선택지를 정리해요.", "학교 course catalog · 교사 상담 · 현재 수업 자료"],
+      ["4–6개월", "함수·표현 연결", "현재 과목의 함수를 식·그래프·표로 나타내고 표현 사이의 관계를 설명해요.", "현재 과목 교재 · 함수와 그래프 복습"],
+      ["7–9개월", "모델·자료·추론 적용", "수업과 관심 주제에 맞춰 자료를 분석하거나 수학적 모델의 가정과 한계를 설명해요.", "학교 통계·모델링·심화 선택 단원"],
+      ["10–12개월", "다음 과목과 시험 선택", "학교의 다음 과목 선수 조건을 확인해요. 시험 응시 계획이 있으면 SAT 공식 범위 또는 AMC 12 해당 연도 자격을 별도로 살펴봐요.", "학교 과목 안내 · College Board · MAA 공식 규정"]
     ]) }),
-    12: Object.freeze({ source: "inferred", title: "이수 과목과 다음 목표를 연결하기", note: "12학년 자료가 제공되지 않아 공통 고등학교 수학 범주를 바탕으로 만든 추정안이에요. 졸업 요건·대학 계획·학교 과목 순서에 따라 필요한 학습을 고르세요.", periods: Object.freeze([
-      ["1–3개월 · 추정", "이수 과목과 목표 정리", "성적표, 졸업 요건, 다음 학습 계획을 확인하고 아직 필요한 선수 개념을 정리해요.", "학교 졸업 요건 · 과목 안내 · 상담 교사"],
-      ["4–6개월 · 추정", "관심 분야에 수학 적용", "관심 주제를 표·그래프·함수나 확률 모델로 나타내고 해석의 범위를 설명해요.", "학교에서 선택 가능한 통계·모델링 단원"],
-      ["7–9개월 · 추정", "선택 심화 학습", "선수 조건을 충족하고 학교에서 제공하는 과목 중 미적분·통계·이산 수학·증명 등을 선택해요.", "학교 course catalog · 해당 과목의 공식 학습 자료"],
-      ["10–12개월 · 추정", "다음 단계로 이어가기", "대학·진로에 필요한 수학을 확인해 다음 학습 계획을 정리해요. 선택 시험은 응시 계획과 현재 자격이 확인될 때만 포함해요.", "대학·진로 요구 사항 · 해당 시험 주관 기관 안내"]
+    12: Object.freeze({ source: "inferred", title: "이수 과목과 다음 목표를 연결하기", note: "졸업 요건·대학 계획·학교 과목 순서에 따라 필요한 학습을 골라요. 아래는 선택할 수 있는 학습 흐름 예시예요.", periods: Object.freeze([
+      ["1–3개월", "이수 과목과 목표 정리", "성적표, 졸업 요건, 다음 학습 계획을 확인하고 아직 필요한 선수 개념을 정리해요.", "학교 졸업 요건 · 과목 안내 · 상담 교사"],
+      ["4–6개월", "관심 분야에 수학 적용", "관심 주제를 표·그래프·함수나 확률 모델로 나타내고 해석의 범위를 설명해요.", "학교에서 선택 가능한 통계·모델링 단원"],
+      ["7–9개월", "선택 심화 학습", "선수 조건을 충족하고 학교에서 제공하는 과목 중 미적분·통계·이산 수학·증명 등을 선택해요.", "학교 course catalog · 해당 과목의 공식 학습 자료"],
+      ["10–12개월", "다음 단계로 이어가기", "대학·진로에 필요한 수학을 확인해 다음 학습 계획을 정리해요. 선택 시험은 응시 계획과 현재 자격이 확인될 때만 포함해요.", "대학·진로 요구 사항 · 해당 시험 주관 기관 안내"]
     ]) })
   });
 
   const conceptFlows = Object.freeze([
-    Object.freeze({ id: "prealgebra-algebra1", title: "선택형 · 변수식에서 식 정리로", optional: true, note: "공유된 Prealgebra Unit 1의 개념 흐름을 참고한 예시예요. 학년 배치나 진단 결과가 아니에요.", steps: Object.freeze(["변수식 만들고 값 구하기", "거듭제곱·연산 순서", "문장을 식으로 나타내기", "연산 성질", "분배법칙", "동류항 정리"]) }),
+    Object.freeze({ id: "prealgebra-algebra1", title: "선택 심화 · 변수식에서 동치식으로", optional: true, note: "변수로 양을 표현하고 연산 성질을 적용해 동치식을 만드는 지필드 학습 흐름이에요. 수강 과목과 선수 개념을 확인한 뒤 선택해요.", steps: Object.freeze(["변수로 수량을 나타내고 식의 값을 구하기", "정수 지수의 의미와 연산 순서 적용하기", "문장제의 조건을 변수식으로 나타내기", "연산 성질을 이용해 동치식 쓰기", "분배법칙으로 식의 구조 바꾸기", "동류항을 모아 식 간단히 하기"]) }),
     Object.freeze({ id: "arithmetic-algebra", title: "연산에서 대수식으로", steps: Object.freeze(["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]) }),
     Object.freeze({ id: "ratio-coordinate", title: "비와 비율에서 좌표기하로", steps: Object.freeze(["비·비율·속력", "단위 변환", "비례식", "일차 함수", "좌표기하"]) }),
     Object.freeze({ id: "parity-counting", title: "짝·홀수에서 경우의 수로", steps: Object.freeze(["짝·홀수·배수", "조건별 추론", "경우의 수", "조합", "AMC/AIME 논리 문제"]) }),
@@ -169,10 +169,10 @@
     6: Object.freeze([["학교 수학", "Singapore Math Primary Mathematics · Spectrum Test Prep. 새 진도보다 이미 배운 단원을 깊게 익혀요."], ["경시 · 선택", "준비되면 AMC 8 문제에서 풀이 이유 말하기"], ["SAT · 맛보기", "원할 때 문장제·자료 해석을 가볍게 보기"]]),
     7: Object.freeze([["학교 수학", "Algebra 1은 가속 학습 예시, Geometry는 학교 정규 진도에서 익혀요"], ["경시 · 선택", "AMC 8로 다지거나 AMC 10을 준비도에 맞춰 시작해요"], ["SAT · 맛보기", "대수·기하 심화 문장제와 자료 해석을 선택해 살펴봐요"]]),
     8: Object.freeze([["학교 수학", "Algebra 2는 준비도에 맞춰 선택 심화하고 Geometry는 학교 과정에서 이어가요"], ["경시 · 선택", "AMC 10/12 혼합 문제와 AIME형 풀이를 선택해 연습"], ["SAT · 선택", "대수·자료 해석 유형 점검"]]),
-    9: Object.freeze([["학교 수학 · 추정", "Algebra 2·기하를 점검하고 다음 과목 정하기"], ["경시 · 선택", "AMC 혼합 문제를 풀이 과정까지 설명"], ["SAT · 선택", "학교 진도에 맞춰 필요한 영역만 보기"]]),
+    9: Object.freeze([["학교 수학", "Algebra 2·기하를 점검하고 다음 과목 정하기"], ["경시 · 선택", "AMC 혼합 문제를 풀이 과정까지 설명"], ["SAT · 선택", "학교 진도에 맞춰 필요한 영역만 보기"]]),
     10: Object.freeze([["학교 수학", "Pre-Calculus 함수·삼각법과 증명 기초"], ["경시 · 선택", "AMC 12 130+는 개인 도전 목표로 둘 수 있어요. AIME 응시와 USAMO 선발은 해당 연도 MAA 기준을 확인해요."], ["SAT · 선택", "Digital SAT Math 800은 개인 도전 목표예요. 응시 계획에 맞춰 공식 형식으로 연습해요."]]),
-    11: Object.freeze([["학교 수학 · 추정", "수강 과목과 선수 조건을 확인하고 개념 연결"], ["경시 · 선택", "AMC 12는 해당 연도 참가 자격 확인 후 선택"], ["SAT · 선택", "응시 계획이 있을 때 공식 영역을 점검"]]),
-    12: Object.freeze([["학교 수학 · 추정", "졸업 요건·과목 경로·다음 목표에 맞춰 선택"], ["경시 · 선택", "AMC 12는 해당 연도 참가 자격 확인 후 선택"], ["SAT · 선택", "응시 계획이 있을 때 공식 영역을 점검"]])
+    11: Object.freeze([["학교 수학", "수강 과목과 선수 조건을 확인하고 개념 연결"], ["경시 · 선택", "AMC 12는 해당 연도 참가 자격 확인 후 선택"], ["SAT · 선택", "응시 계획이 있을 때 공식 영역을 점검"]]),
+    12: Object.freeze([["학교 수학", "졸업 요건·과목 경로·다음 목표에 맞춰 선택"], ["경시 · 선택", "AMC 12는 해당 연도 참가 자격 확인 후 선택"], ["SAT · 선택", "응시 계획이 있을 때 공식 영역을 점검"]])
   });
 
   const strands = Object.freeze([
@@ -184,7 +184,7 @@
 
   const amc8Strands = Object.freeze([
     Object.freeze({ id: "algebra", title: "식·대수" }),
-    Object.freeze({ id: "number", title: "수·비례·추정" }),
+    Object.freeze({ id: "number", title: "수·비례·근사" }),
     Object.freeze({ id: "geometry", title: "기하·공간" }),
     Object.freeze({ id: "counting", title: "경우의 수·확률" }),
     Object.freeze({ id: "data", title: "그래프·표 해석" })

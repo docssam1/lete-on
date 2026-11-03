@@ -2,6 +2,8 @@
   "use strict";
   const data = window.GFIELDBoardingGradeRoadmap;
   if (!data) return;
+  const coursePathData = window.GFIELDMathCoursePathways;
+  const algebra1Course = window.GFIELDAlgebra1Course;
   const localRecords = window.GFIELDLocalLearningRecord;
   const $ = function (id) { return document.getElementById(id); };
   const initial = Number(new URLSearchParams(location.search).get("grade"));
@@ -14,6 +16,8 @@
   let route = null;
   let competition = new URLSearchParams(location.search).get("program") || "";
   let comparisonGrade = null;
+  let selectedPreviousCourse = "";
+  let selectedNextCourse = "";
   const competitionSources = {
     sasmo: { href: "./sasmo.html", label: "SASMO 자료 보기 →" },
     kangaroo: { href: "https://mathkangaroo.org/mks/faqs/about-the-test/", label: "Math Kangaroo 공식 규칙 ↗", external: true },
@@ -110,7 +114,7 @@
       setText("annual-plan-note", `${grade}학년 월별 계획 자료는 없어 개념 단계만 보여 드려요.`);
       return;
     }
-    setText("annual-plan-title", `${grade}학년 · ${plan.title}${plan.source === "inferred" ? " · 추정" : ""}`);
+    setText("annual-plan-title", `${grade}학년 · ${plan.title}`);
     setText("annual-plan-note", plan.note);
     plan.periods.forEach(function (period, periodIndex) {
       const item = document.createElement("li");
@@ -136,8 +140,10 @@
         links.forEach(function (resource) {
           const link = document.createElement("a");
           link.href = resource.url;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
+          if (/^https?:/.test(resource.url)) {
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+          }
           link.textContent = resource.title;
           linkList.append(link);
         });
@@ -399,21 +405,114 @@
     setText("level-secure", "배운 개념을 혼자 풀고 며칠 뒤 새 문제에서도 설명해요.");
     setText("level-extend", entry.steps[2][1]);
   }
+  function renderCoursePathway() {
+    if (!coursePathData) return;
+    const courses = coursePathData.courses;
+    const byId = new Map(courses.map(function (course) { return [course.id, course]; }));
+    const currentSelect = $("current-course-select");
+    if (!currentSelect.options.length || currentSelect.options.length === 1) {
+      courses.forEach(function (course) { currentSelect.add(new Option(course.title, course.id)); });
+    }
+    const current = byId.get(currentSelect.value);
+    const host = $("course-path-cards");
+    host.replaceChildren();
+    function optionSelect(label, options, selected, onChange, emptyText) {
+      if (!options.length) {
+        const message = document.createElement("p");
+        message.className = "course-path-empty-choice";
+        message.textContent = emptyText;
+        return message;
+      }
+      const select = document.createElement("select");
+      select.setAttribute("aria-label", label);
+      select.add(new Option(label, ""));
+      options.forEach(function (course) { select.add(new Option(course.title, course.id)); });
+      select.value = selected;
+      select.addEventListener("change", function (event) {
+        onChange(event.target.value);
+        const replacement = Array.from(host.querySelectorAll("select")).find(function (item) { return item.getAttribute("aria-label") === label; });
+        if (replacement) replacement.focus();
+      });
+      return select;
+    }
+    function addCard(kind, title, description, course, chooser, currentCard) {
+      const card = document.createElement("article");
+      card.className = `course-path-card${currentCard ? " is-current" : ""}`;
+      const label = document.createElement("span"); label.textContent = kind;
+      const heading = document.createElement("h3"); heading.textContent = course ? course.title : title;
+      const copy = document.createElement("p"); copy.textContent = course ? `${course.grades} · ${course.summary}` : description;
+      card.append(label, heading, copy);
+      if (course) {
+        const focus = document.createElement("small"); focus.textContent = `먼저 볼 내용 · ${course.prerequisites}`;
+        card.append(focus);
+      }
+      if (chooser) card.append(chooser);
+      host.append(card);
+    }
+    if (!current) {
+      addCard("지나온 과정", "과목 선택 후 표시", "앞선 과목을 직접 선택해요.", null, null, false);
+      addCard("현재 과정", "과목을 선택해 주세요", "현재 수강 중인 과목을 기준으로 이어 봐요.", null, null, true);
+      addCard("다음 과정", "과목 선택 후 표시", "학교 과정에 맞는 다음 선택지를 골라요.", null, null, false);
+      return;
+    }
+    const previous = byId.get(selectedPreviousCourse);
+    const next = byId.get(selectedNextCourse);
+    const prevChoice = optionSelect("지나온 과정 고르기", (current.previousOptions || []).map(function (id) { return byId.get(id); }).filter(Boolean), selectedPreviousCourse, function (value) { selectedPreviousCourse = value; renderCoursePathway(); }, "이 지도의 시작 과정이에요.");
+    const nextChoice = optionSelect("다음 과정 고르기", (current.nextOptions || []).map(function (id) { return byId.get(id); }).filter(Boolean), selectedNextCourse, function (value) { selectedNextCourse = value; renderCoursePathway(); }, "현재 과정의 다음 선택지가 아직 없어요.");
+    addCard("지나온 과정", previous ? "선택한 앞선 과정" : "앞선 과목을 선택해 주세요", previous ? "" : "수강 이력에 맞는 과목을 골라요.", previous, prevChoice, false);
+    addCard("현재 과정", current.title, current.availability, current, null, true);
+    addCard("다음 과정", next ? "선택한 다음 과정" : "다음 과목을 선택해 주세요", next ? "" : "학교에서 실제로 이어지는 과목을 골라요.", next, nextChoice, false);
+    setText("course-path-notice", `${coursePathData.sequenceNotice} 이 선택은 학습 기록이나 과목 배정에 저장되지 않아요.`);
+  }
+  function renderAlgebra1Course() {
+    if (!algebra1Course) return;
+    setText("algebra1-course-scope", algebra1Course.scope);
+    setText("algebra1-original-note", algebra1Course.originalContentNotice);
+    const unitHost = $("algebra1-unit-list");
+    unitHost.replaceChildren();
+    algebra1Course.units.forEach(function (unit, index) {
+      const card = document.createElement("article"); card.className = "algebra1-unit-card";
+      const number = document.createElement("span"); number.className = "algebra1-unit-number"; number.textContent = `0${index + 1}`;
+      const content = document.createElement("div");
+      const heading = document.createElement("h3"); heading.textContent = unit.title;
+      const question = document.createElement("p"); question.className = "algebra1-unit-question"; question.textContent = unit.question;
+      const goals = document.createElement("ul"); unit.goals.forEach(function (goal) { const li = document.createElement("li"); li.textContent = goal; goals.append(li); });
+      const standards = document.createElement("small"); standards.textContent = `범위 코드 · ${unit.standards.join(" · ")}`;
+      const lesson = document.createElement("details"); lesson.className = "algebra1-unit-lesson";
+      const summary = document.createElement("summary"); summary.textContent = `지필드 연습 · ${unit.lesson.title}`;
+      const prompt = document.createElement("p"); prompt.className = "algebra1-unit-prompt"; prompt.textContent = unit.lesson.prompt;
+      const solutionHeading = document.createElement("strong"); solutionHeading.textContent = "풀이 확인";
+      const solution = document.createElement("p"); solution.textContent = unit.lesson.solution;
+      const extensionHeading = document.createElement("strong"); extensionHeading.textContent = "한 걸음 더";
+      const extension = document.createElement("p"); extension.textContent = unit.lesson.extension;
+      lesson.append(summary, prompt, solutionHeading, solution, extensionHeading, extension);
+      content.append(heading, question, goals, standards, lesson); card.append(number, content); unitHost.append(card);
+    });
+    const lesson = algebra1Course.starterLesson;
+    setText("algebra1-starter-title", lesson.title);
+    setText("algebra1-starter-prompt", lesson.prompt);
+    setText("algebra1-starter-check", lesson.check);
+    setText("algebra1-starter-extension", lesson.extension);
+    const steps = $("algebra1-starter-steps"); steps.replaceChildren();
+    lesson.steps.forEach(function (step) {
+      const li = document.createElement("li");
+      const expression = document.createElement("strong"); expression.textContent = step.expression;
+      const reason = document.createElement("span"); reason.textContent = step.reason;
+      li.append(expression, reason); steps.append(li);
+    });
+    const source = $("algebra1-standard-source"); source.href = algebra1Course.source.url; source.textContent = `${algebra1Course.source.title} ↗`;
+  }
   function renderComparisonOptions() {
     const select = $("comparison-grade");
     select.replaceChildren(new Option("학년 선택", ""));
     data.grades.filter(function (entry) { return entry.grade !== grade; }).forEach(function (entry) {
-      select.add(new Option(`${entry.grade}학년${entry.source === "inferred" ? " · 추정안" : ""}`, String(entry.grade)));
+      select.add(new Option(`${entry.grade}학년`, String(entry.grade)));
     });
     if (comparisonGrade === grade || !data.getGrade(comparisonGrade)) comparisonGrade = null;
     select.value = comparisonGrade === null ? "" : String(comparisonGrade);
   }
   function comparisonPlanLabel(entry) {
-    const label = entry.source === "inferred" ? "추정안" : entry.pathNote || "계획 예시";
-    const annualPlan = data.getAnnualPlan(entry.grade);
-    return annualPlan && annualPlan.source === "inferred" && entry.source !== "inferred"
-      ? `${label} · 연간 구간 추정`
-      : label;
+    return entry.pathNote || "학습 계획 예시";
   }
   function renderComparisonColumn(prefix, entry) {
     const planLabel = comparisonPlanLabel(entry);
@@ -457,7 +556,7 @@
     if (current.source === "inferred" || target.source === "inferred") {
       const note = document.createElement("p");
       note.className = "comparison-mobile-note";
-      note.textContent = `${target.source === "inferred" ? target.grade : current.grade}학년 계획은 제공된 인접 학년 자료를 연결한 추정안이에요. 학교 과목 순서를 확인해 주세요.`;
+      note.textContent = `${target.source === "inferred" ? target.grade : current.grade}학년은 학교의 실제 과목과 순서를 확인한 뒤 학습 계획을 조정해 주세요.`;
       host.append(note);
     }
     function addPair(label, left, right) {
@@ -467,7 +566,7 @@
       [[current, left], [target, right]].forEach(function (pair) {
         const cell = document.createElement("div"); cell.className = "comparison-mobile-cell";
         const gradeLabel = document.createElement("span"); gradeLabel.className = "comparison-mobile-grade";
-        gradeLabel.textContent = `${pair[0].grade}학년${pair[0].source === "inferred" ? " · 추정" : ""}`;
+        gradeLabel.textContent = `${pair[0].grade}학년`;
         const copy = document.createElement("p"); copy.textContent = pair[1] == null ? "이 학년 자료에 별도 항목 없음" : pair[1];
         cell.append(gradeLabel, copy); values.append(cell);
       });
@@ -495,8 +594,8 @@
     const leftPeriods = currentPlan ? currentPlan.periods : [], rightPeriods = targetPlan ? targetPlan.periods : [];
     for (let index = 0; index < Math.max(leftPeriods.length, rightPeriods.length); index += 1) {
       const left = leftPeriods[index], right = rightPeriods[index];
-      const leftLabel = left ? left[0].replace(/\s*·\s*추정$/, "") : "";
-      const rightLabel = right ? right[0].replace(/\s*·\s*추정$/, "") : "";
+      const leftLabel = left ? left[0] : "";
+      const rightLabel = right ? right[0] : "";
       const label = leftLabel || rightLabel || `기간 ${index + 1}`;
       addPair(label, left ? `${left[1]} · ${left[2]}` : "월별 계획 없음", right ? `${right[1]} · ${right[2]}` : "월별 계획 없음");
     }
@@ -520,7 +619,7 @@
     setText("comparison-bridge-copy", `${current.grade}학년: ${current.bridge}  /  ${target.grade}학년: ${target.bridge}`);
     const hasInferred = current.source === "inferred" || target.source === "inferred";
     setText("comparison-note", hasInferred
-      ? `${current.grade}학년과 ${target.grade}학년 자료를 비교해요. 추정안은 학교 과목 순서를 확인해 주세요.`
+      ? `${current.grade}학년과 ${target.grade}학년의 학습 예시예요. 실제 과목과 순서는 학교 안내에서 확인해 주세요.`
       : `${current.grade}학년과 ${target.grade}학년의 학습 주제와 개념 연결을 비교해요.`);
   }
   function renderComparisonAssessment(current, target) {
@@ -539,7 +638,7 @@
     setText("comparison-assessment-current-copy", evidence
       ? `${assessmentDate(evidence)} · 성적표에서 직접 입력한 현재·목표 과정`
       : "현재 학년의 성적표와 과정을 입력하면 선택한 경로를 여기에 보여 드려요.");
-    setText("comparison-assessment-target-label", `${target.grade}학년 · ${targetEvidence ? (targetEvidence.source.label || "성적표 입력") : target.source === "inferred" ? "추정 계획 예시" : "계획 예시"}`);
+    setText("comparison-assessment-target-label", `${target.grade}학년 · ${targetEvidence ? (targetEvidence.source.label || "성적표 입력") : "학습 계획 예시"}`);
     setText("comparison-assessment-target-title", targetEvidence
       ? `${targetEvidence.currentCourse.label} → ${targetEvidence.targetCourse ? targetEvidence.targetCourse.label : targetEvidence.currentCourse.label}`
       : target.title);
@@ -969,13 +1068,13 @@
     setText("grade-title", entry.title);
     setText("grade-core", entry.core);
     setText("grade-bridge", entry.bridge);
-    setText("source-chip", entry.source === "inferred" ? `${grade}학년 · 추정안` : "학습 예시");
+    setText("source-chip", entry.source === "inferred" ? `${grade}학년 · 학교 과목 확인` : "학습 예시");
     setText("grade-note", grade === 7
       ? "7.NS.A·7.RP.A 워크북은 연습용으로 열 수 있어요. 개인 진단은 별도 검수 중이에요."
       : grade === 9 && entry.source === "inferred"
-        ? "Grade 9는 제공된 7·8·10학년 자료로 추정했어요. 학교 과목 순서는 선생님과 확인해 주세요."
+        ? "9학년은 학교마다 수강 과목과 순서가 달라요. 실제 과목을 선생님과 확인해 주세요."
         : entry.source === "inferred"
-          ? `${grade}학년은 제공된 학년별 자료가 없어 공통 수학 범주를 바탕으로 만든 추정안이에요. 학교 과목 순서는 실제 안내와 함께 확인해 주세요.`
+          ? `${grade}학년은 학교별 과목과 선수 조건을 확인한 뒤 이 학습 예시를 조정해 주세요.`
         : "아직 진단 결과가 없어요. 실제 풀이를 보고 다음 단계를 정해요.");
     $("previous-grade").disabled = grade === data.grades[0].grade;
     $("next-grade").disabled = grade === data.grades[data.grades.length - 1].grade;
@@ -1035,7 +1134,14 @@
     comparisonGrade = event.target.value ? Number(event.target.value) : null;
     renderComparison();
   });
+  $("current-course-select").addEventListener("change", function () {
+    selectedPreviousCourse = "";
+    selectedNextCourse = "";
+    renderCoursePathway();
+  });
   render("replace");
+  renderCoursePathway();
+  renderAlgebra1Course();
   renderConceptFlows();
   setupRoadmapShortcuts();
 })();
