@@ -50,8 +50,13 @@ const ids = ["5-2-u3-e5-example-2-axis-synthetic"];
           await page.locator("#printMenuButton").click();
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
+          await page.emulateMedia({ media: "print" });
+          const selector = mode === "problem" ? `[data-source-item-id="${ids[0]}"]` : `[data-source-answer="${ids[0]}"]`;
+          assert.match(await page.locator(selector).first().evaluate(el => getComputedStyle(el).fontFamily), /Noto Serif KR/, `${mode} uses the print serif font`);
+          assert(await page.evaluate(() => document.fonts.load('12px "Noto Serif KR"').then(fonts => fonts.length > 0)), "print serif font is available");
           await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
           await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
+          await page.emulateMedia({ media: null });
         }
       }
       assert.deepEqual(errors, []);
