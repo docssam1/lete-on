@@ -3759,6 +3759,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52Triangle = semesters.find(semester=>semester.grade===5&&semester.term===2)?.units.find(unit=>unit.id==="5-2-u3");
   if (source52Triangle) {
+    const type=source52Triangle.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u3-t3");
+    if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u3-practice-46-original",sourceItemLabel:"확인학습 46번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:86,alternateSourcePdfPage:85,sourcePrintedPage:90,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page87Practice46",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 두 접힌 꼭짓점과 각 표시를 대조하고 접은 선의 이등분과 30° 직각삼각형으로 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+  if (source52Triangle) {
     const type=source52Triangle.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u3-t3-2");
     if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u3-e3-exploration-synthetic",sourceItemLabel:"개념탐구 3 기반 유사문항",sourceSection:"exploration",sourceTier:"advanced",sourcePdfPage:24,alternateSourcePdfPage:23,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52CongruentIsoscelesPage28ExplorationSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,automaticGrading:true,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 구조를 대조하고 대응점과 이등변 조건을 명시한 세 유사문항의 도형과 각을 좌표로 검산했습니다. 원문 문항은 별도로 잠겨 있습니다."});
   }
