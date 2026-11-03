@@ -470,6 +470,8 @@
   }
 
   function problemWeight(question) {
+    // These four fraction word problems fit the standard four-up cell.
+    if (["4-2-u1-t1", "4-2-u1-t1-4", "4-2-u1-t3-10", "4-2-u1-t6"].includes(question.type?.id)) return 1;
     // These compact fraction prompts fit a half-page cell despite having three
     // or more fraction elements. Keep the wide fallback for longer equations.
     if (["5-2-u2-e1-example-4-synthetic", "5-2-u2-e4-mission-2-synthetic"].includes(question.sourceItemId)) return 1;
@@ -578,7 +580,7 @@
   function renderProblems() {
     $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired, fourUp }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}${fourUp ? " print-page--four-up" : ""}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
-      <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
+      <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item" data-type-id="${escapeHtml(question.type.id)}">
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
         <div class="question-prompt">${renderMathNotation(question.prompt)}</div>
         <div class="answer-line">답</div>

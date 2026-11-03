@@ -17,6 +17,10 @@
   #problemView [data-source-item-id="5-2-u3-e7-mission-4"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   #problemView [data-source-item-id="5-2-u2-e1-example-4-synthetic"],
   #problemView [data-source-item-id="5-2-u2-e4-mission-2-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView .question-item[data-type-id="4-2-u1-t1"] .question-prompt,
+  #problemView .question-item[data-type-id="4-2-u1-t1-4"] .question-prompt,
+  #problemView .question-item[data-type-id="4-2-u1-t3-10"] .question-prompt,
+  #problemView .question-item[data-type-id="4-2-u1-t6"] .question-prompt { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   .print-page.print-page--four-up .answer-line { padding-top:12px; }
 }
 
