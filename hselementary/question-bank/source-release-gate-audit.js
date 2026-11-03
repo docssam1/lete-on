@@ -155,6 +155,7 @@ require("./source-5-2-rounded-page11-originals.js");
 require("./source-5-2-fraction-page76-practice.js");
 require("./source-5-2-decimal-page101-practice.js");
 require("./source-5-2-u4-decimal-digits-similar.js");
+require("./source-5-2-u4-area-difference-similar.js");
 require("./source-5-2-range-page68-practice.js");
 require("./source-5-2-range-missions.js");
 require("./source-5-2-rounding-e2.js");
@@ -410,8 +411,8 @@ if (kiteTypes.length === 1) {
   }
 }
 if (total !== 2706) failures.push(`전체 유형 수가 2703이 아니라 ${total}입니다.`);
-if (ready !== 1978) failures.push(`원문 연결 공개 유형 수가 1978이 아니라 ${ready}입니다.`);
-if (lockedWithoutSource !== 316) failures.push(`원문 미연결 잠금 유형 수가 316이 아니라 ${lockedWithoutSource}입니다.`);
+if (ready !== 1979) failures.push(`원문 연결 공개 유형 수가 1979이 아니라 ${ready}입니다.`);
+if (lockedWithoutSource !== 315) failures.push(`원문 미연결 잠금 유형 수가 315이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {
   console.error(`원문 연결 공개 문턱 실패: ${failures.length}건`);
