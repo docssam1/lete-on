@@ -764,6 +764,8 @@ test("grade comparison shows curriculum examples without implying measured level
   assert.equal(await page.locator("#comparison-target-label").innerText(), "9학년 · 학습 계획 예시");
   assert.match(await page.locator("#comparison-note").innerText(), /실제 과목과 순서는 학교 안내에서 확인/);
   assert.match(await page.locator("#comparison-bridge-copy").innerText(), /8학년:.*9학년:/);
+  assert.match(await page.locator("#comparison-bridge-copy").innerText(), /8학년:.* · 9학년:/);
+  assert.equal(await page.locator("#comparison-bridge-copy .math-fraction").count(), 0, "the grade separator must not be interpreted as a mathematical fraction");
   assert.match(await page.locator("#comparison-current-tracks").innerText(), /1–3개월[\s\S]*대수 개념과 문제 해결/);
   assert.match(await page.locator("#comparison-current-tracks").innerText(), /Geometry는 학교 과정에서 이어가요/);
   assert.match(await page.locator("#comparison-current-tracks").innerText(), /AIME형 풀이/);

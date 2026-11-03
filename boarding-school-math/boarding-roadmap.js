@@ -672,7 +672,7 @@
     renderComparisonColumn("target", target);
     renderMobileComparison(current, target);
     renderComparisonAssessment(current, target);
-    setText("comparison-bridge-copy", `${current.grade}학년: ${current.bridge}  /  ${target.grade}학년: ${target.bridge}`);
+    setText("comparison-bridge-copy", `${current.grade}학년: ${current.bridge} · ${target.grade}학년: ${target.bridge}`);
     const hasInferred = current.source === "inferred" || target.source === "inferred";
     setText("comparison-note", hasInferred
       ? `${current.grade}학년과 ${target.grade}학년의 학습 예시예요. 실제 과목과 순서는 학교 안내에서 확인해 주세요.`
