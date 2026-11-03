@@ -3352,8 +3352,8 @@
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "주어진 선과 중심을 대조해 넓이 17cm²인 작도 후보를 검산했습니다. 공식 답안과 공개용 원문 그림은 미대조입니다."
+      "implementationStatus": "ready",
+      "reviewReason": "원문 격자와 주어진 선을 대조하고 넓이 17cm²인 작도 예의 점대칭과 비교차를 검산했습니다. 출판사 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u3-e7-mission-5",

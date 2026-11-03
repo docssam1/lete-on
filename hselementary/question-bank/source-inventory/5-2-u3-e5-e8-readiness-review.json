@@ -950,9 +950,12 @@
       "sourceVerified": true,
       "calculationStatus": "checked-independent-construction",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안과 공개용 원문 작도 그림 미대조로 원문 잠금을 유지합니다."
+      "implementationStatus": "ready",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherAnswerVerified": false,
+      "runtimeTypeId": "5-2-u3-e7-mission-4",
+      "runtimeGeneratorKey": "source52GridConstructionPage37Original"
     },
     {
       "sourceItemId": "5-2-u3-e7-mission-5",
