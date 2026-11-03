@@ -882,7 +882,7 @@ test("Grade 10 and Grade 12 comparison keeps inferred planning separate from lea
   await page.goto(`${url}?grade=10`, { waitUntil: "networkidle" });
   assert.match(await page.locator("#grade-focus-list").innerText(), /AMC 12 130\+는 개인 도전 목표[\s\S]*Digital SAT Math 800은 개인 도전 목표/);
   assert.match(await page.locator("#annual-plan-note").innerText(), /AMC 12 130\+와 Digital SAT Math 800은 선택형 도전 목표/);
-  assert.match(await page.locator("#annual-plan-periods").innerText(), /USAMO형 증명 문제[\s\S]*해당 연도 MAA 안내/);
+  assert.match(await page.locator("#annual-plan-periods").innerText(), /주장을 근거로 설명하기[\s\S]*USAMO형 증명 문제.*선택/);
   await page.getByLabel("비교할 학년").selectOption("12");
   assert.equal(await page.locator("#comparison-current-label").innerText(), "10학년 · 가속 학습 예시 · 학교 학년 기준 아님");
   assert.equal(await page.locator("#comparison-target-label").innerText(), "12학년 · 학습 계획 예시");
@@ -893,6 +893,32 @@ test("Grade 10 and Grade 12 comparison keeps inferred planning separate from lea
   assert.match(await page.locator("#comparison-assessment-target-label").innerText(), /12학년 · 학습 계획 예시/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [1280, 1280]);
   await page.close();
+});
+
+test("Grade 10 annual plan opens the original proof-writing workbook with student and teacher editions", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.goto(`${url}?grade=10`, { waitUntil: "networkidle" });
+  const proofLink = page.getByRole("link", { name: "지필드 증명 쓰기 워크북 · 자체 8문항" });
+  assert.equal(await proofLink.getAttribute("href"), "./proof-writing-workbook.html");
+  const workbookUrl = new URL("proof-writing-workbook.html", url).href;
+  await page.goto(workbookUrl, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".proof-item").count(), 8);
+  assert.equal(await page.locator(".proof-item textarea:visible").count(), 8);
+  assert.equal(await page.locator(".teacher-solution:visible").count(), 0);
+  assert.equal(await page.locator(".math-fraction").count(), 5, "coordinate midpoints and the rational-number expression use stacked fraction notation");
+  assert.doesNotMatch(await page.locator("main").innerText(), /\\frac|\\sqrt|\\\(/);
+  await page.getByLabel("자료 보기").selectOption("teacher");
+  assert.equal(new URL(page.url()).searchParams.get("edition"), "teacher");
+  assert.equal(await page.locator(".teacher-solution:visible").count(), 8);
+  assert.equal(await page.locator(".proof-item textarea:visible").count(), 0);
+  assert.match(await page.locator(".edition-note").innerText(), /풀이 예시는 가능한 설명의 한 가지 방식/);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [1280, 1280]);
+  await page.close();
+
+  const phone = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
+  await phone.goto(workbookUrl, { waitUntil: "networkidle" });
+  assert.deepEqual(await phone.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await phone.close();
 });
 
 test("Grade 3 comparison labels the missing contest-plan source instead of implying no contest option exists", async function () {

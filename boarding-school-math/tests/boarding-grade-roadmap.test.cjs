@@ -46,7 +46,7 @@ test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge
     6: ["Pre-Algebra 개념 익히기", "AMC 8 유형과 논리", "SAT 기초 유형 맛보기", "복습과 실전 연습"],
     7: ["Algebra 1 개념과 풀이", "기하 기초와 AMC 입문", "대수 강화와 SAT 유형", "누적 복습과 모의 연습"],
     8: ["대수 개념과 문제 해결", "기하 심화와 AMC 10/12", "AIME형 문제와 SAT 심화", "실전 연습과 풀이 복습"],
-    10: ["Pre-Calculus와 AMC 12 준비", "AIME형 정수론·조합", "SAT Math 점검", "증명과 다음 단계"]
+    10: ["Pre-Calculus와 AMC 12 준비", "AIME형 정수론·조합", "SAT Math 점검", "주장을 근거로 설명하기"]
   };
   [6, 7, 8, 10].forEach(function (grade) {
     const plan = roadmap.getAnnualPlan(grade);
@@ -117,7 +117,7 @@ test("Grade 7 route names checkpoints and identifies its public workbooks", func
 
 test("upper-grade course references are limited to named courses and keep Grade 9 inferred", function () {
   assert.deepEqual(Object.keys(roadmap.courseStageResources), ["8", "9", "10"]);
-  assert.deepEqual(Object.keys(roadmap.annualPlanResourceLinks), ["6", "7", "8"]);
+  assert.deepEqual(Object.keys(roadmap.annualPlanResourceLinks), ["6", "7", "8", "10"]);
   [6, 7, 8].forEach(function (grade) {
     assert.deepEqual(Object.keys(roadmap.annualPlanResourceLinks[grade]), ["0", "1", "2", "3"]);
     Object.values(roadmap.annualPlanResourceLinks[grade]).flat().forEach(function (resource) {
@@ -140,6 +140,8 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.match(roadmap.annualPlanResourceLinks[8][1][0].title, /지필드 Geometry 원본/);
   assert.deepEqual(roadmap.annualPlanResourceLinks[8][1].map(function (resource) { return resource.url; }), ["./geometry-workbook.html", "./amc10-practice.html?grade=8", "https://maa.org/student-programs/amc/"]);
   assert.deepEqual(roadmap.annualPlanResourceLinks[8][2].map(function (resource) { return resource.url; }), ["./aime-practice.html?grade=8", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://satsuite.collegeboard.org/practice/student-question-bank/math"]);
+  assert.deepEqual(roadmap.annualPlanResourceLinks[10][3].map(function (resource) { return resource.url; }), ["./proof-writing-workbook.html", "https://maa.org/maa-invitational-competitions/"]);
+  assert.equal(roadmap.annualPlanResourceLinks[10][3][0].title, "지필드 증명 쓰기 워크북 · 자체 8문항");
   assert.equal(roadmap.courseStageResources[8][1][0].url, "./amc10-practice.html?grade=8");
   assert.match(roadmap.courseStageResources[8][2][0].title, /지필드 Algebra 2 원본/);
   assert.equal(roadmap.courseStageResources[8][2][1].url, "./aime-practice.html?grade=8");
@@ -169,8 +171,8 @@ test("Grade 10 score goals are optional aspirations, with qualification kept sep
   assert.match(plan.periods[0][3], /지필드 Precalculus 원본 수업/);
   assert.doesNotMatch(plan.periods[0][3], /AoPS Precalculus|FlippedMath/);
   assert.match(plan.periods[2][2], /Digital SAT Math 800은 선택한 개인 도전 목표/);
-  assert.match(plan.periods[3][2], /USAMO형 증명 문제.*실제 USAMO 선발 기준.*해당 연도 MAA/);
-  assert.match(plan.periods[3][3], /증명 연습 · 선택한 경시 문제/);
+  assert.match(plan.periods[3][2], /정수·대수·기하의 주장.*반례와 증명 전략.*USAMO형 증명 문제/);
+  assert.match(plan.periods[3][3], /지필드 증명 쓰기 워크북 · 선택한 경시 문제/);
   assert.match(tracks.find(function (track) { return track[0] === "경시 · 선택"; })[1], /AMC 12 130\+.*AIME 응시와 USAMO 선발은 해당 연도 MAA 기준/);
   assert.match(tracks.find(function (track) { return track[0] === "SAT · 선택"; })[1], /Digital SAT Math 800은 개인 도전 목표/);
 });
