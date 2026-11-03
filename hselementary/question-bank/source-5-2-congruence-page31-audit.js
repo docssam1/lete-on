@@ -96,6 +96,9 @@ for (const def of source.definitions) {
         assert.deepEqual([item.answerModel.vertexAngle,item.answerModel.centralArc,item.answerModel.equalArc,item.answerModel.answer],[60,60,40,130]);
         assert.equal(item.answer,"130°");
         assert.doesNotMatch(item.prompt,/>x<|>㉠</);
+        assert.match(item.answerVisual, /∠ㄹㅁㅂ/);
+        assert.doesNotMatch(item.answerVisual, /㉠/);
+        assert.doesNotMatch(item.solution, />㉠</);
         assert.equal(item.publisherKeyVerified,false);
       } else if (def.sourceItemId.endsWith("mission-6-original")) {
         assert.deepEqual([item.answerModel.top, item.answerModel.bottom, item.answerModel.height], [10, 8, 6]);
