@@ -861,3 +861,10 @@ This evidence is separate from the private Grade 7 AMC 8 R6 workbench. The latte
 The map's four selectable route names were rendering at about 13px on phones. Raised them to 16px and the numbered stop labels to 14.4px so the route remains readable without changing the route copy, illustration, or learning state. Bumped the roadmap CSS cache version.
 
 Verification: the Grade 3–12 roadmap browser suite passes 31/31, including a new assertion that mobile route labels are at least 16px, all-grade branded-map coverage, keyboard selection, and small-phone/tablet/landscape reflow. In the current local preview, inspected the Grade 7 map at 390px and 320px; all four labels compute to 16px, node labels to 14.4px, and document width equals viewport content width at both sizes (375/375 and 305/305 CSS px, respectively). The visual map and current route stops remain legible. Local only; no push or deployment.
+
+
+### 2026-11-03 G·MAP map palette and phone presentation
+
+Replaced the shared route artwork with a higher-contrast G·MAP version: deep-violet path, ivory island surfaces, lavender math forms, and restrained sage trees. The image was created with the built-in image tool from the previous map composition, has no labels or logo, and is optimized as a 1983×793 WebP (186 KB). Desktop keeps route stops over the islands; phones show the panorama as a 2.5:1 strip above the vertical route. Mobile grade-comparison descriptions and contest guidance/domain labels were also enlarged.
+
+Verification: the Grade 3–12 roadmap browser suite passes 33/33, including map coverage for all grades, mobile map-strip asset/size, comparison text size, contest guidance size, and 320px/390px no-overflow. Local renders were visually reviewed at 1280px, 390px, and 320px; stop cards remain legible over the art and route names remain in vertical flow on phones. `git diff --check` passes. Code and asset were committed locally as `b3461cfb7`; no push, deployment, or Drive sync.
