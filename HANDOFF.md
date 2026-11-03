@@ -2,6 +2,12 @@
 
 Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The map-stop readability and G·MAP palette updates are committed locally. No push, deployment, or Drive synchronization has occurred.
 
+### 2026-11-03 Grade 7 learning plan opens its current GFIELD workbook
+
+The Grade 7 student's primary action now opens the released GFIELD 7.NS.A student workbook directly; the teacher view opens its teacher guide. The plan and notice say the personal diagnostic and result-based level comparison are under review; the selected study topic is explicitly learner-chosen and does not imply a weakness or grade level. Corrected the Korean topic sentence so labels ending in “빼기” do not receive the wrong subject particle. The shared workbook display was rechecked in Chrome: numeric fractions appear stacked, with zero slash-form fractions in student content.
+
+Verification: the full learning-plan browser suite passes 10/10 using bundled Node, Playwright, and installed Chrome; student and teacher CTA destinations are asserted separately. A fresh live 1280px render shows the direct student-workbook link, review-status copy, corrected selected-topic sentence, and no horizontal overflow. Existing diagnostic and level comparison remain gated. Local only; no private candidate content opened, no push, deployment, or Drive sync.
+
 ### 2026-11-03 GFIELD Pre-Algebra Unit 3 · rational-number operations
 
 Extended the original GFIELD Pre-Algebra workbook to three units: 20 lessons and 40 practice prompts. The new Grade 7 `7.NS.A.1–3` unit covers additive inverses and number-line models; rational addition, subtraction, multiplication, and division (including the zero-divisor restriction); terminating/repeating decimal representations; and signed-rational word problems. The public route links to the original student workbook and separate teacher solutions. Course counts, scope, route, README, and browser/contract expectations now match. It remains instructional material, not a diagnostic, mastery claim, or grade placement.

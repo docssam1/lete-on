@@ -71,7 +71,7 @@ test.before(async function () {
   });
   await new Promise(function (resolve) { server.listen(0, "127.0.0.1", resolve); });
   baseUrl = `http://127.0.0.1:${server.address().port}/boarding-school-math/learning-plan.html`;
-  browser = await chromium.launch({ headless: true });
+  browser = await chromium.launch({ headless: true, executablePath: process.env.GFIELD_CHROME_EXECUTABLE || undefined });
 });
 test.after(async function () {
   if (browser) await browser.close();
@@ -112,20 +112,23 @@ test("Grade 7 plan connects to the 7.NS.A workbook without inventing diagnosis o
   assert.equal(await page.locator("#grade7-priorities").isVisible(), true);
   assert.equal(await page.locator("#grade6-priorities").isVisible(), false);
   assert.match(await page.locator("#priority-legend").innerText(), /학습할 개념/);
-  assert.match(await page.locator("#plan-state").innerText(), /진단 준비 중/);
-  assert.match(await page.locator("#plan-description").innerText(), /개인 진단과 수준 비교는 아직 준비 중/);
+  assert.match(await page.locator("#plan-state").innerText(), /진단 검수 중/);
+  assert.match(await page.locator("#plan-description").innerText(), /개인 진단과 결과 기반 수준 비교는 검수 중/);
   assert.match(await page.locator("#prediction-label").innerText(), /진단 진행 상태/);
   assert.match(await page.locator("#prediction-copy").innerText(), /성적·등급·경시 수준은 추정하지 않습니다/);
   assert.equal(await page.locator(".roadmap-layout").isHidden(), true);
   assert.equal(await page.locator("#paper-ox-panel").isHidden(), true);
   assert.match(await page.locator("#loop-title").innerText(), /이유를 설명/);
-  assert.match(await page.locator("#loop-step-4-copy").innerText(), /개인 진단은 준비 중/);
+  assert.match(await page.locator("#loop-step-4-copy").innerText(), /개인 진단은 검수 중/);
+  assert.equal(await page.locator("#diagnostic-action").innerText(), "7.NS.A 학생용 워크북 열기");
+  assert.match(await page.locator("#diagnostic-action").getAttribute("href"), /unit-workbook\.html\?cluster=7\.NS\.A.*audience=student.*paper=A4/);
+  assert.match(await page.locator("#grade7-plan-notice").innerText(), /개인 진단과 결과 기반 수준 비교는 검수 중/);
   assert.doesNotMatch(await page.locator("#today-blocks").innerText(), /약점 보완/);
   const conceptHref = await page.locator("#today-blocks a").first().getAttribute("href");
   assert.match(conceptHref, /unit-workbook\.html\?cluster=7\.NS\.A.*#unit-concepts/);
   await page.locator('input[name="priority-g7"][value="rational-decimal"]').check();
   await page.locator("#plan-form").evaluate(function (form) { form.requestSubmit(); });
-  assert.match(await page.locator("#today-description").innerText(), /분수와 소수 표현은 직접 고른 학습 주제/);
+  assert.match(await page.locator("#today-description").innerText(), /선택한 학습 주제는 분수와 소수 표현입니다/);
   await page.locator("#goal-id").selectOption("school-g6");
   assert.equal(await page.locator("#grade6-priorities").isVisible(), true);
   assert.equal(await page.locator("#grade7-priorities").isVisible(), false);
@@ -252,7 +255,9 @@ test("Grade 7 teacher plan opens the teacher workbook and identifies the unrelea
   assert.match(await page.locator("#teacher-grid a").nth(0).getAttribute("href"), /audience=student.*#unit-concepts/);
   assert.match(await page.locator("#teacher-grid a").nth(1).getAttribute("href"), /audience=teacher/);
   assert.match(await page.locator("#teacher-grid a").nth(3).getAttribute("href"), /mode=recheck/);
-  assert.match(await page.locator("#plan-state").innerText(), /진단 준비 중/);
+  assert.match(await page.locator("#plan-state").innerText(), /진단 검수 중/);
+  assert.equal(await page.locator("#diagnostic-action").innerText(), "7.NS.A 교사용 지도서 열기");
+  assert.match(await page.locator("#diagnostic-action").getAttribute("href"), /unit-workbook\.html\?cluster=7\.NS\.A.*audience=teacher.*paper=A4/);
   assert.deepEqual(errors, []);
   await page.close();
 });
