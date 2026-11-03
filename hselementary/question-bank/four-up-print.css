@@ -11,6 +11,7 @@
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e6-mission-4-folded-triangle-synthetic"] svg { max-height:235px; overflow:visible; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e6-mission-1-fold-fourths-synthetic"] svg text,
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e6-mission-4-folded-triangle-synthetic"] svg text { font-size:18px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e6-mission-3-wedge-ball-synthetic"] svg { max-height:190px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-1-original"] { font-size:13px; line-height:1.4; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-1-original"] p { margin:0.3em 0; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-1-original"] svg { max-height:100px; }
