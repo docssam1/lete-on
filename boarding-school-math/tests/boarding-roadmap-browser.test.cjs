@@ -341,7 +341,7 @@ test("roadmap shortcut bar stays usable and tracks the selected section on mobil
   page.on("pageerror", function (error) { errors.push(error.message); });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   const nav = page.getByRole("navigation", { name: "성장 지도 바로가기" });
-  assert.deepEqual(await nav.getByRole("link").allInnerTexts(), ["성장 지도", "월별 계획", "학년 비교", "경시 기록"]);
+  assert.deepEqual(await nav.getByRole("link").allInnerTexts(), ["성장 지도", "월별 계획", "학년 비교", "모의고사"]);
   assert.equal(await nav.getByRole("link", { name: "성장 지도" }).getAttribute("aria-current"), "location");
   await nav.getByRole("link", { name: "월별 계획" }).click();
   await page.waitForFunction(function () { return location.hash === "#annual-plan"; });
@@ -361,7 +361,7 @@ test("roadmap shortcut bar stays usable and tracks the selected section on mobil
   await page.close();
 });
 
-test("grade map, level comparison, and competition intake stay honest and interactive", async function () {
+test("grade map, level comparison, and GFIELD mock diagnosis stay honest and interactive", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
@@ -396,41 +396,38 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator("#route-name").innerText(), "다음 내용 배우기");
   assert.equal(await page.locator("#route-check-block").isVisible(), true);
   assert.equal(await page.locator("#competition-diagnostic .map-head h2").innerText(), "지필드 모의고사 · 경시 연습");
-  assert.match(await page.locator("#competition-diagnostic .map-head > p").innerText(), /학교 성적이나 대회 성적을 입력하지 않고.*실제로 푼 문항/);
+  assert.match(await page.locator("#competition-diagnostic .map-head > p").innerText(), /지필드가 직접 만든 모의고사를 풀고.*문항별 결과와 오답 이유/);
   assert.equal(await page.locator(".competition-own-mocks article").count(), 4);
   assert.deepEqual(await page.locator(".competition-own-mocks a").evaluateAll(function (links) { return links.map(function (link) { return link.getAttribute("href"); }); }), [
     "./grade7-ns-a-mock-exam.html", "./grade7-rp-a-mock-exam.html", "./amc8-grade7-mock-exam.html", "./competition-practice.html?program=amc8"
   ]);
-  assert.equal(await page.locator("#competition-form").isVisible(), false);
-  assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), false);
-  assert.equal(await page.locator("#competition-grade-comparison").isVisible(), false);
+  assert.equal(await page.locator("#competition-form").count(), 0);
+  assert.equal(await page.locator("#competition-diagnostic input, #competition-diagnostic select, #competition-diagnostic textarea").count(), 0);
   await page.locator(".grade-track > summary").click();
   await page.getByRole("button", { name: "Grade 9 지도 보기" }).click();
   assert.deepEqual(await page.locator(".route-button[aria-pressed='true']").allInnerTexts(), []);
   assert.equal(await page.locator(".route-explanation").isHidden(), true);
   assert.equal(await page.locator("#route-check-block").isHidden(), true);
-  assert.equal(await page.locator("#competition-select").inputValue(), "");
   assert.deepEqual(errors, []);
   await page.close();
 });
 
-test("roadmap mock catalog uses GFIELD-authored routes without external score entry", async function () {
+test("roadmap mock catalog lists GFIELD-authored assessment routes", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   assert.deepEqual(await page.locator(".competition-own-mocks a").evaluateAll(function (links) { return links.map(function (link) { return link.getAttribute("href"); }); }), [
     "./grade7-ns-a-mock-exam.html", "./grade7-rp-a-mock-exam.html", "./amc8-grade7-mock-exam.html", "./competition-practice.html?program=amc8"
   ]);
-  assert.equal(await page.locator("#competition-form").isVisible(), false);
-  assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), false);
+  assert.equal(await page.locator("#competition-form").count(), 0);
   assert.equal(await page.locator("#competition-diagnostic input:visible").count(), 0);
   await page.goto(`${url}?grade=9`, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#competition-own-mocks").isVisible(), false);
   assert.equal(await page.locator("#competition-own-mocks-empty").isVisible(), true);
-  assert.match(await page.locator("#competition-own-mocks-empty").innerText(), /다른 학년의 결과를 대신 입력하거나 등급으로 바꾸지 않습니다/);
+  assert.match(await page.locator("#competition-own-mocks-empty").innerText(), /이 학년용 지필드 모의고사를 준비/);
   await page.close();
 });
 
-test("Grade 11–12 roadmap identifies inferred plans and only offers the eligible AMC 12 track", async function () {
+test("Grade 11–12 roadmap identifies inferred plans and keeps the assessment mock-only", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
@@ -439,9 +436,7 @@ test("Grade 11–12 roadmap identifies inferred plans and only offers the eligib
   assert.match(await page.locator("#grade-note").innerText(), /학교별 과목과 선수 조건/);
   assert.match(await page.locator("#annual-plan-title").innerText(), /11학년.*학교의 과목 경로/);
   assert.match(await page.locator("#annual-plan-note").innerText(), /학교별 과목 안내와 선수 조건/);
-  const grade11Options = await page.locator("#competition-select option").allTextContents();
-  assert.ok(grade11Options.some(function (label) { return /AMC 12/.test(label); }));
-  assert.ok(!grade11Options.some(function (label) { return /AMC 10/.test(label); }));
+  assert.equal(await page.locator("#competition-diagnostic input, #competition-diagnostic select, #competition-diagnostic textarea").count(), 0);
   assert.equal(await page.locator(".grade-button").count(), 10);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   await page.getByRole("button", { name: "다음 학년 →" }).click();
@@ -452,7 +447,7 @@ test("Grade 11–12 roadmap identifies inferred plans and only offers the eligib
   await page.close();
 });
 
-test("roadmap routes families to GFIELD-authored practice without requesting school results", async function () {
+test("roadmap routes families to GFIELD-authored practice by grade", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -483,9 +478,7 @@ test("released unit practice is reachable without exposing the private Grade 7 d
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=6`, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#grade-practice-links a").count(), 3);
-  assert.equal(await page.locator("#competition-practice-link").isHidden(), true);
-  await page.locator("#competition-select").selectOption("amc8");
-  assert.equal(await page.locator("#competition-practice-link").isVisible(), true);
+  assert.equal(await page.locator("#competition-diagnostic input, #competition-diagnostic select, #competition-diagnostic textarea").count(), 0);
   await page.locator("#grade-practice-more summary").click();
   assert.equal(await page.locator("#grade-practice-more-links a").count(), 7);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
@@ -540,32 +533,28 @@ test("grade comparison shows curriculum examples without implying measured level
   assert.equal(await page.locator("#comparison-table").isVisible(), true);
   assert.equal(await page.locator(".grade-comparison-controls").isVisible(), false);
   await page.emulateMedia({ media: "screen" });
-  await page.locator("#competition-select").selectOption("amc8");
-  assert.equal(await page.locator("#competition-practice-link").isHidden(), true, "Grade 8 should not be offered the Grade 6 bridge as a grade-level practice set");
+  assert.equal(await page.locator("#competition-diagnostic input, #competition-diagnostic select, #competition-diagnostic textarea").count(), 0);
   await page.close();
 });
 
-test("grade comparison pairs only matching contest paper date and memo across grades are no longer requested by the boarding roadmap", async function () {
+test("grade comparison keeps mock-result comparison separate from curriculum examples", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   await page.locator("#comparison-grade").selectOption("8");
-  assert.equal(await page.locator("#competition-grade-comparison").isVisible(), false);
-  assert.equal(await page.locator("#competition-form").isVisible(), false);
-  assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), false);
-  assert.match(await page.locator("#comparison-practice-pair").innerText(), /학교 성적 입력 없이 지필드 자체 문항으로 확인/);
+  assert.equal(await page.locator("#competition-form").count(), 0);
+  assert.match(await page.locator("#comparison-practice-pair").innerText(), /지필드가 만든 모의고사 응시 결과/);
   assert.equal(await page.locator("#comparison-practice-current-links a").count() > 0, true);
   await page.close();
 });
 
-test("Math Kangaroo Grade 7 and 8 diagnostics compare the same 30-question paper without implying grade rank are no longer requested by the boarding roadmap", async function () {
+test("grade comparison does not accept outside contest scores", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   await page.locator("#comparison-grade").selectOption("8");
-  assert.equal(await page.locator("#competition-grade-comparison").isVisible(), false);
-  assert.equal(await page.locator("#competition-form").isVisible(), false);
-  assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), false);
-  assert.match(await page.locator("#comparison-practice-pair").innerText(), /학교 성적 입력 없이 지필드 자체 문항으로 확인/);
-  assert.equal(await page.locator("#comparison-practice-current-links a").count() > 0, true);
+  assert.equal(await page.locator("#competition-form").count(), 0);
+  assert.equal(await page.locator("#competition-diagnostic input, #competition-diagnostic select, #competition-diagnostic textarea").count(), 0);
+  assert.match(await page.locator("#comparison-practice-pair").innerText(), /지필드가 만든 모의고사 응시 결과/);
+  assert.match(await page.locator("#competition-diagnostic").innerText(), /지필드가 직접 만든 모의고사/);
   await page.close();
 });
 
@@ -660,17 +649,13 @@ test("phone grade comparison keeps paired descriptions readable without page ove
   }
 });
 
-test("phone competition guidance and domain labels remain readable without overflow", async function () {
+test("competition diagnosis uses GFIELD mocks without manual score entry", async function () {
   for (const width of [390, 320]) {
     const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
     await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
-    await page.locator("#competition-select").selectOption("kangaroo");
-    for (const selector of [".competition-guidance", ".competition-input-note", ".competition-fields label", ".domain-row strong"]) {
-      const sizes = await page.locator(selector).evaluateAll((nodes) => nodes.map((node) => parseFloat(getComputedStyle(node).fontSize)));
-      assert.ok(sizes.length > 0 && sizes.every((size) => size >= 14), `${selector} remains at least 14px at ${width}px`);
-    }
-    const headerSize = await page.locator(".domain-header").evaluate((node) => parseFloat(getComputedStyle(node).fontSize));
-    assert.ok(headerSize >= 13, `contest column labels remain at least 13px at ${width}px`);
+    assert.equal(await page.locator("#competition-diagnostic input, #competition-diagnostic select, #competition-diagnostic textarea").count(), 0);
+    assert.ok(await page.locator(".competition-own-mocks a").count() >= 3);
+    assert.match(await page.locator("#comparison-practice-pair").innerText(), /지필드가 만든 모의고사 응시 결과/);
     assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [width, width]);
     await page.close();
   }
@@ -708,19 +693,10 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.equal(await page.locator("#grade7-contest-branch").getAttribute("href"), "./competition-practice.html?program=amc8");
   assert.match(await page.locator("#grade7-contest-title").innerText(), /6학년 기초 연결/);
   await page.goto(`${url}?grade=7&program=kangaroo#grade7-branches`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("#competition-select").inputValue(), "kangaroo", "the selected contest survives a direct Grade 7 link");
   assert.equal(await page.locator("#grade7-contest-branch").getAttribute("href"), "https://mathkangaroo.org/mks/practice/grades-7-8/", "a direct Math Kangaroo visit opens its matching official paper band");
   assert.match(await page.locator("#grade7-contest-title").innerText(), /Math Kangaroo · 공식 기출 시험지/);
-  await page.locator("#competition-select").selectOption("kangaroo");
-  assert.equal(await page.locator("#grade7-contest-branch").getAttribute("href"), "https://mathkangaroo.org/mks/practice/grades-7-8/");
-  assert.equal(await page.locator("#grade7-contest-branch").getAttribute("target"), "_blank");
-  assert.match(await page.locator("#grade7-contest-title").innerText(), /Math Kangaroo · 공식 기출 시험지/);
-  await page.locator("#competition-select").selectOption("amc10");
-  assert.equal(await page.locator("#grade7-contest-branch").getAttribute("href"), "./amc10-practice.html?grade=7");
-  assert.match(await page.locator("#grade7-contest-title").innerText(), /AMC 10 · 개념 연결 연습/);
-  await page.locator("#competition-select").selectOption("sasmo");
-  assert.equal(await page.locator("#grade7-contest-branch").getAttribute("href"), "./sasmo.html");
-  assert.match(await page.locator("#grade7-contest-title").innerText(), /SASMO · 대회 자료와 연습/);
+  assert.equal(await page.locator("#competition-diagnostic input, #competition-diagnostic select, #competition-diagnostic textarea").count(), 0);
+  assert.ok(await page.locator(".competition-own-mocks a").count() >= 3, "the diagnostic remains in GFIELD-authored mock routes");
   await page.locator(".grade-track > summary").focus();
   await page.keyboard.press("Enter");
   assert.equal(await page.locator(".grade-track").evaluate(function (node) { return node.open; }), true);

@@ -83,24 +83,36 @@ test("the GFIELD proportional-relationships form covers 7.RP.A with unique, keye
 });
 
 test("the original GFIELD AMC 8 style form has 25 uniquely keyed questions across five reasoning areas", function () {
-  assert.equal(amcExam.id, "gfield-grade7-amc8-style-mock-v1");
-  assert.equal(amcExam.formVersion, "2026-11-04-v1");
+  assert.equal(amcExam.id, "gfield-grade7-amc8-style-mock-v2");
+  assert.equal(amcExam.formVersion, "2026-11-04-v2");
   assert.equal(amcExam.durationMinutes, 40);
   assert.equal(amcExam.items.length, 25);
   assert.equal(new Set(amcExam.items.map(function (item) { return item.id; })).size, 25);
-  assert.deepEqual(amcExam.standards, ["수 감각·비율", "대수·규칙", "기하·좌표", "경우의 수·확률", "정수·자료 해석"]);
+  assert.deepEqual(amcExam.standards, ["수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석"]);
   assert.deepEqual(amcExam.items.reduce(function (counts, item) { counts[item.standard] = (counts[item.standard] || 0) + 1; return counts; }, {}), {
-    "수 감각·비율": 5, "대수·규칙": 5, "기하·좌표": 5, "경우의 수·확률": 5, "정수·자료 해석": 5
+    "수 감각·비율": 5, "대수·규칙": 5, "기하·공간": 5, "경우의 수·확률": 5, "정수·자료 해석": 5
   });
-  const expected = ["23자루", "21개", "30개", "12", "52마일", "16", "7", "25", "$4", "24", "35cm²", "70°", "52cm²", "7", "6", "12", "3/4", "1/3", "6", "2/5", "14", "24", "14", "30", "59"];
+  const expected = ["1,000", "47", "35cm²", "6", "26권", "7.5컵", "11", "80°", "7/8", "16점", "19", "15", "13cm", "60", "3.5점", "10", "73", "12", "3/7", "45%", "47", "12cm", "64cm²", "60", "119"];
+  const standardByItem = [];
+  const correctChoiceCounts = [0, 0, 0, 0, 0];
+  const difficultyCounts = [0, 0, 0, 0, 0];
   for (let index = 0; index < amcExam.items.length; index += 1) {
     const item = amcExam.items[index];
-    assert.equal(item.choices.length, 4, item.id);
-    assert.equal(new Set(item.choices).size, 4, item.id);
-    assert.ok(Number.isInteger(item.answer) && item.answer >= 0 && item.answer < 4, item.id);
+    assert.equal(item.choices.length, 5, item.id);
+    assert.equal(new Set(item.choices).size, 5, item.id);
+    assert.ok(Number.isInteger(item.answer) && item.answer >= 0 && item.answer < 5, item.id);
     assert.ok(item.prompt && item.solution && item.focus, item.id);
     assert.equal(item.choices[item.answer], expected[index], item.id);
+    assert.equal(item.difficultyBand, Math.floor(index / 5) + 1, item.id);
+    correctChoiceCounts[item.answer] += 1;
+    difficultyCounts[item.difficultyBand - 1] += 1;
+    standardByItem.push(item.standard);
+    if (item.dataTable) for (const row of item.dataTable.rows) assert.equal(row.length, item.dataTable.headers.length, item.id);
   }
+  assert.deepEqual(correctChoiceCounts, [5, 5, 5, 5, 5]);
+  assert.deepEqual(difficultyCounts, [5, 5, 5, 5, 5]);
+  assert.equal(new Set(standardByItem.slice(0, 5)).size, 5, "question topics should be mixed rather than grouped by domain");
+  assert.equal(amcExam.items.filter(function (item) { return item.dataTable; }).length, 3);
 });
 
 test("the GFIELD AMC 8 style mock records an answer-safe domain summary and its own review path", async function () {
@@ -114,17 +126,20 @@ test("the GFIELD AMC 8 style mock records an answer-safe domain summary and its 
   assert.equal(await page.locator("input").count(), 0);
   await page.getByRole("button", { name: "지필드 모의고사 시작" }).click();
   assert.equal(await page.locator(".mock-question").count(), 25);
-  assert.ok(await page.locator('.mock-question .math-fraction[aria-label="4분의 3"]').count() > 0, "fractions remain stacked in the mock" );
+  assert.equal(await page.locator(".mock-data-table").count(), 3);
+  assert.equal(await page.locator('.mock-question .mock-choice-mark:text-is("E")').count(), 25);
+  assert.ok(await page.locator('.mock-question .math-fraction[aria-label="8분의 7"]').count() > 0, "fractions remain stacked in the mock" );
   for (const item of amcExam.items) await page.locator(`#mock-question-${item.id} .mock-choice`).nth(item.answer).click();
   await page.getByRole("button", { name: "답안 제출" }).click();
   assert.match(await page.locator(".mock-score").innerText(), /25 \/ 25/);
   assert.deepEqual(await page.locator(".mock-standard-results article").allInnerTexts(), [
-    "수 감각·비율\n5 / 5 정답", "대수·규칙\n5 / 5 정답", "기하·좌표\n5 / 5 정답", "경우의 수·확률\n5 / 5 정답", "정수·자료 해석\n5 / 5 정답"
+    "수 감각·비율\n5 / 5 정답", "대수·규칙\n5 / 5 정답", "기하·공간\n5 / 5 정답", "경우의 수·확률\n5 / 5 정답", "정수·자료 해석\n5 / 5 정답"
   ]);
+  assert.equal(await page.locator(".mock-review .mock-data-table").count(), 3);
   assert.equal(await page.locator(".mock-next-study a[href*='competition-practice']").getAttribute("href"), "./competition-practice.html?program=amc8");
   assert.match(await page.locator(".mock-result-boundary").innerText(), /다른 회차·학년과 같은 기준으로 비교한 값이 아니며.*학년 등급을 판정하지 않아요/);
   const saved = await page.evaluate(function () { return JSON.parse(localStorage.getItem("gmap-local-learning-record-v1:gfield-mock-result-history-v1")); });
-  assert.equal(saved.records[0].examTitle, "지필드 AMC 8 스타일 모의고사");
+  assert.equal(saved.records[0].examTitle, "지필드 AMC 8 스타일 모의고사 · 2회");
   assert.equal(saved.records[0].score.total, 25);
   assert.equal(saved.records[0].standards.length, 5);
   assert.equal(saved.records[0].reviewFocuses.length, 0);

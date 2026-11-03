@@ -10,7 +10,7 @@
   const questionList = document.getElementById("mock-question-list");
   const progress = document.getElementById("mock-progress");
   const timer = document.getElementById("mock-timer");
-  const labels = "ABCD";
+  const labels = "ABCDE";
   let secondsLeft = exam.durationMinutes * 60;
   let timerId = null;
   let submitted = false;
@@ -33,6 +33,7 @@
     const prompt = document.createElement("h2");
     prompt.id = `mock-prompt-${item.id}`;
     addMath(prompt, item.prompt);
+    const dataTable = createDataTable(item.dataTable);
     const choices = document.createElement("div");
     choices.className = "mock-choices";
     choices.setAttribute("role", "group");
@@ -60,8 +61,45 @@
       });
       choices.append(button);
     });
-    card.append(header, prompt, choices);
+    card.append(header, prompt);
+    if (dataTable) card.append(dataTable);
+    card.append(choices);
     return card;
+  }
+  function createDataTable(data) {
+    if (!data || !Array.isArray(data.headers) || !Array.isArray(data.rows)) return null;
+    const wrapper = document.createElement("div");
+    wrapper.className = "mock-data-table-wrap";
+    const table = document.createElement("table");
+    table.className = "mock-data-table";
+    if (data.caption) {
+      const caption = document.createElement("caption");
+      caption.textContent = data.caption;
+      table.append(caption);
+    }
+    const head = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+    data.headers.forEach(function (value) {
+      const cell = document.createElement("th");
+      cell.scope = "col";
+      cell.textContent = String(value);
+      headerRow.append(cell);
+    });
+    head.append(headerRow);
+    const body = document.createElement("tbody");
+    data.rows.forEach(function (row) {
+      const tr = document.createElement("tr");
+      row.forEach(function (value, index) {
+        const cell = document.createElement(index === 0 ? "th" : "td");
+        if (index === 0) cell.scope = "row";
+        cell.textContent = String(value);
+        tr.append(cell);
+      });
+      body.append(tr);
+    });
+    table.append(head, body);
+    wrapper.append(table);
+    return wrapper;
   }
   function updateProgress() {
     progress.textContent = `${answers.size} / ${exam.items.length} 응답`;
@@ -160,6 +198,7 @@
       article.dataset.correct = String(correct);
       const itemTitle = document.createElement("h3");
       itemTitle.textContent = `문항 ${index + 1} · ${item.standard} · ${item.focus}`;
+      const dataTable = createDataTable(item.dataTable);
       const chosen = document.createElement("p");
       chosen.className = "mock-review-answer";
       const responseLabel = response === undefined ? "미응답" : `내 답 ${labels[response]}`;
@@ -169,7 +208,9 @@
       chosen.append(answerValue);
       const explanation = document.createElement("p");
       addMath(explanation, item.solution);
-      article.append(itemTitle, chosen, explanation);
+      article.append(itemTitle);
+      if (dataTable) article.append(dataTable);
+      article.append(chosen, explanation);
       review.append(article);
     });
     const retry = document.createElement("button");
