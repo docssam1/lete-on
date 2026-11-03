@@ -3628,6 +3628,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:source,sourceParentItemId:parent,sourceItemLabel:"확인학습 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:pdf,alternateSourcePdfPage:id==="5-2-u2-t2-3"?74:pdf+1,sourcePrintedPage:printed,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:!manual,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 구조를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
   }
 
+  const source52Triangle = semesters.find(semester=>semester.grade===5&&semester.term===2)?.units.find(unit=>unit.id==="5-2-u3");
+  if (source52Triangle) for (const [id,n,key] of [
+    ["5-2-u3-t1-2",24,"source52U3LinkedTriangleSideChoices"],
+    ["5-2-u3-t1-3",20,"source52U3LinkedTriangleAngleChoices"],
+    ["5-2-u3-t2",22,"source52U3LinkedTriangleThirdSide"],
+    ["5-2-u3-t2-2",19,"source52U3LinkedTriangleSticks"]
+  ]) {
+    const type=source52Triangle.subunits.flatMap(group=>group.types).find(item=>item.id===id);
+    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:`5-2-u3-practice-${n}-linked-similar`,sourceParentItemId:`5-2-u3-practice-${n}-original`,sourceItemLabel:`확인학습 ${n}번 기반 유사문항`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:83,alternateSourcePdfPage:82,sourcePrintedPage:87,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건을 직접 대조하고 바꾼 수치의 가능한 조합을 독립 검산했습니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
