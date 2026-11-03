@@ -8,6 +8,10 @@ Reworked the roadmap's wide map illustration to align with the GFIELD brand: dee
 
 Verification after the asset/CSS update: roadmap model and browser suites pass 34/34. Desktop 1440×960 and mobile 390×844 were rendered and visually inspected; the asset loads at both widths, the prompt stays in the open sky, and stage markers/cards remain legible. The new image transfers at about 152 KB. No learner data or assessment items were used. Local only; no push, deployment, or Drive sync.
 
+### 2026-11-03 Grade 7 NS.A wording review preparation
+
+Visually revisited the existing answer-free revision-11 mobile/A4 renders. The repeating-decimal open-response prompt remains dense, so a concise six-part response-format proposal was prepared in the private candidate workspace at `review-proposals/proposed-copy-2d-02-revision12-20261103.md`. The proposal is in Korean, English, and Simplified Chinese, and preserves the existing response evidence while making each requested part scannable. It is a review draft only; the candidate JSON was not changed and still hashes to `476dc1c201a0ac07c6d6888db986ec7c1892604885c40d59d421fe7a7420e732`. It needs independent math and language review before any candidate revision or rerender. The screener remains locked; nothing from the proposal was copied into the public repository.
+
 ## Public roadmap and comparison work
 
 The Grade 3–12 G·MAP boarding-school roadmap now contains the branded route illustration, supplied Grades 6–8 and 10 annual-plan examples, a clearly labeled inferred Grade 9 bridge, curriculum examples for grade comparison, student-entered external assessment comparison, and manual same-paper contest review. Grade 6 and Grade 7 plans link their stage-matched references. These records do not become placement decisions or unsupported cross-grade mastery bands. Public AMC/Kangaroo review remains bounded to entered marks, matching contest/date/paper, official score-report values, and descriptive evidence.
