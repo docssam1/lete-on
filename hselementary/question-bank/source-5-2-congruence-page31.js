@@ -14,7 +14,8 @@
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-3", generatorKey: "source52EquilateralRotationPage31Mission3", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-4", generatorKey: "source52SquareTrisectionAreaPage31Mission4", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-5", generatorKey: "source52CongruentTriangleAreaPage31Mission5", publicReady: true }),
-    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6", generatorKey: "source52TrapezoidMidpointPage31Mission6", publicReady: true })
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6", generatorKey: "source52TrapezoidMidpointPage31Mission6", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6-original", generatorKey: "source52TrapezoidMidpointPage31Mission6Original", publicReady: true })
   ]);
   const squareAlphas = [9, 14, 19];
   const circleBaseVertices = [48, 57, 72];
@@ -205,15 +206,15 @@
     return `<svg class="source52-p31-diagram source52-p31-trapezoid${proof ? " source52-p31-trapezoid-proof" : ""}" data-source52-figure="trapezoid-midpoint-area" data-top="${top}" data-bottom="${bottom}" data-height="${height}" data-g="${pt(g)}" data-n="${pt(n)}" data-d="${pt(d)}" data-r="${pt(r)}" data-m="${pt(m)}" data-p="${pt(p)}" viewBox="0 0 420 330" role="img" aria-label="윗변 ${top}cm, 아랫변 ${bottom}cm, 높이 ${height}cm인 사다리꼴과 옆변의 중점 ㅁ, 목표 삼각형 ㄱㄹㅁ의 넓이를 구하는 그림${proof ? " 및 보조선 ㄹㄴ" : ""}" xmlns="http://www.w3.org/2000/svg"><polygon class="source52-area-target" points="${pt(g)} ${pt(r)} ${pt(m)}"/><path d="M${pt(g)} L${pt(n)} L${pt(d)} L${pt(r)} Z"/><line x1="${g.x}" y1="${g.y}" x2="${r.x}" y2="${r.y}"/><line x1="${r.x}" y1="${r.y}" x2="${d.x}" y2="${d.y}"/><line x1="${d.x}" y1="${d.y}" x2="${m.x}" y2="${m.y}"/><line x1="${n.x}" y1="${n.y}" x2="${m.x}" y2="${m.y}"/><line x1="${g.x}" y1="${g.y}" x2="${m.x}" y2="${m.y}"/>${rightAngle(g,-1,-1)}${rightAngle(r,-1,1)}${construction}<path class="source52-measure-guide" d="M${r.x} ${y0-14} L${r.x} ${y0-5} M${d.x} ${y0-14} L${d.x} ${y0-5} M${g.x} ${g.y+16} L${g.x} ${g.y+5} M${n.x} ${n.y+16} L${n.x} ${n.y+5} M${x0-18} ${r.y} L${x0-5} ${r.y} M${x0-18} ${g.y} L${x0-5} ${g.y}"/><text x="${r.x-26}" y="${r.y-6}">ㄹ</text><text x="${d.x+7}" y="${d.y+5}">ㄷ</text><text x="${n.x+7}" y="${n.y+8}">ㄴ</text><text x="${g.x-28}" y="${g.y+8}">ㄱ</text><text x="${m.x+8}" y="${m.y+1}">ㅁ</text><text class="source52-length-label" x="${(r.x+d.x)/2-22}" y="${y0-16}">${top}cm</text><text class="source52-length-label" x="${(g.x+n.x)/2-22}" y="${g.y+36}">${bottom}cm</text><text class="source52-length-label" x="${x0-58}" y="${(g.y+r.y)/2+4}">${height}cm</text></svg>`;
   }
 
-  function buildMission6(variant, offset) {
-    const top = trapezoidTopBases[variant];
-    const bottom = trapezoidBottomBases[variant];
-    const height = trapezoidBaseHeights[variant] + 2 * offset;
+  function buildMission6(variant, offset, original = false) {
+    const top = original ? 10 : trapezoidTopBases[variant];
+    const bottom = original ? 8 : trapezoidBottomBases[variant];
+    const height = original ? 6 : trapezoidBaseHeights[variant] + 2 * offset;
     const midpointWidth = (top+bottom)/2;
     const answer = height*midpointWidth/2;
-    const prompt = `<div class="source52-p31-question"><p>사다리꼴 ㄱㄴㄷㄹ에서 선분 ㄱㄴ과 선분 ㄷㄹ은 각각 선분 ㄱㄹ에 수직입니다. 삼각형 ㄱㄹㅁ의 넓이를 구하세요. (단, 점 ㅁ은 변 ㄴㄷ의 한가운데 점입니다.)</p>${trapezoidMidpointDiagram(top,bottom,height)}</div>`;
+    const prompt = `<div class="source52-p31-question"><p>사다리꼴 ㄱㄴㄷㄹ에서 선분 ㄱㄴ과 선분 ㄷㄹ은 각각 선분 ㄱㄹ에 수직입니다. 삼각형 ㄱㄹㅁ의 넓이를 구하세요. (단, 점 ㅁ은 변 ㄴㄷ의 한가운데 점입니다.)</p>${original ? trapezoidMidpointDiagram(top,bottom,height).replace('viewBox="0 0 420 330"','viewBox="55 45 250 190"') : trapezoidMidpointDiagram(top,bottom,height)}</div>`;
     const solution = `<div class="source52-p31-solution"><ol><li>보조선 ㄹㄴ을 긋습니다. 점 ㅁ은 ㄴㄷ의 한가운데이므로 ㄴㅁ=ㅁㄷ입니다.${trapezoidMidpointDiagram(top,bottom,height,true)}</li><li>△ㄱㄴㅁ과 △ㄱㅁㄷ은 밑변 ㄴㅁ과 ㅁㄷ이 같고 ㄱ에서 이 직선까지의 높이도 같으므로 넓이가 같습니다. 따라서 △ㄱㄴㅁ은 △ㄱㄴㄷ의 절반입니다.</li><li>△ㄱㄴㄷ과 △ㄱㄴㄹ은 밑변 ㄱㄴ이 같고 ㄷ과 ㄹ이 ㄱㄴ에 평행한 선 위에 있으므로 높이도 같아 넓이가 같습니다. 따라서 △ㄱㄴㅁ은 △ㄱㄴㄹ의 절반입니다. 같은 방법으로 △ㄹㅁㄷ은 △ㄹㄴㄷ의 절반입니다.</li><li>사다리꼴에서 △ㄱㄹㅁ을 빼면 △ㄱㄴㅁ과 △ㄹㅁㄷ이 남습니다. 두 넓이의 합은 △ㄱㄴㄹ과 △ㄹㄴㄷ의 넓이 합의 절반, 즉 사다리꼴 넓이의 절반이므로 △ㄱㄹㅁ도 나머지 절반입니다.</li><li>사다리꼴의 넓이는 (${top}+${bottom})×${height}÷2=${(top+bottom)*height/2}cm²입니다. 따라서 △ㄱㄹㅁ의 넓이는 ${(top+bottom)*height/2}÷2=${answer}cm²입니다.</li></ol></div>`;
-    return result("5-2-u3-e4-mission-6",variant,offset,prompt,`${answer}cm²`,solution,{top,bottom,height,midpointWidth,answer},false,triangleAreaAnswerVisual("삼각형 넓이",`${answer}cm²`));
+    return result(original ? "5-2-u3-e4-mission-6-original" : "5-2-u3-e4-mission-6",variant,offset,prompt,`${answer}cm²`,solution,{top,bottom,height,midpointWidth,answer},false,triangleAreaAnswerVisual("삼각형 넓이",`${answer}cm²`));
   }
 
   function buildMission1(variant, offset) {
@@ -283,7 +284,7 @@
 
   function result(sourceItemId, variant, offset, prompt, answer, solution, answerModel, reviewLocked, answerVisual) {
     const definition = definitions.find(item => item.sourceItemId === sourceItemId);
-    const variantCount = ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
+    const variantCount = sourceItemId === "5-2-u3-e4-mission-6-original" ? 1 : ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
     return Object.freeze({
       prompt: `<div data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${variant}" data-variant="${variant}" data-difficulty-offset="${offset}" data-level="${offset+1}">${prompt}</div>`,
       answer,
@@ -304,7 +305,7 @@
   }
 
   function getQuestion(sourceItemId, variant = 0, difficultyOffset = 0) {
-    const variantCount = ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
+    const variantCount = sourceItemId === "5-2-u3-e4-mission-6-original" ? 1 : ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
     if (!Number.isSafeInteger(variant) || variant < 0 || variant >= variantCount || ![-1,0,1].includes(difficultyOffset)) return null;
     if (sourceItemId === definitions[0].sourceItemId) return buildEquilateralExample2(variant,difficultyOffset);
     if (sourceItemId === definitions[1].sourceItemId) return buildMission1(variant,difficultyOffset);
@@ -313,6 +314,7 @@
     if (sourceItemId === definitions[4].sourceItemId) return buildMission4(variant,difficultyOffset);
     if (sourceItemId === definitions[5].sourceItemId) return buildMission5(variant,difficultyOffset);
     if (sourceItemId === definitions[6].sourceItemId) return buildMission6(variant,difficultyOffset);
+    if (sourceItemId === definitions[7].sourceItemId) return buildMission6(0,0,true);
     return null;
   }
   const keyFor = sourceItemId => definitions.find(item => item.sourceItemId === sourceItemId)?.generatorKey || "";
