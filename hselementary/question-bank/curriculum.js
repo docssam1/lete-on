@@ -3947,6 +3947,48 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     }
   }
 
+  // 생성기에서 원문 수치 대신 창작 변형을 내는 유형을 구분한다.
+  {
+    const variantIds = new Set([
+      "5-2-u1-e3-example-1",
+      "5-2-u1-e3-example-2",
+      "5-2-u3-e1-exploration",
+      "5-2-u3-e1-example-3",
+      "5-2-u3-e1-example-4",
+      "5-2-u3-e1-example-2",
+      "5-2-u3-e1-mission-1",
+      "5-2-u4-e1-exploration",
+      "5-2-u4-e1-example-1",
+      "5-2-u4-e1-example-2",
+      "5-2-u4-e1-example-3",
+      "5-2-u4-e1-mission-4",
+      "5-2-u4-e1-example-4",
+      "5-2-u4-e1-mission-1",
+      "5-2-u4-e1-mission-2",
+      "5-2-u4-e1-mission-3",
+      "5-2-u4-e1-mission-6",
+      "5-2-u4-e1-mission-5",
+      "5-2-u4-e2-exploration",
+      "5-2-u4-e2-example-2",
+      "5-2-u4-e2-example-4",
+      "5-2-u4-e2-example-1",
+      "5-2-u4-e2-example-3",
+      "5-2-u4-e2-mission-1",
+      "5-2-u4-e2-mission-2",
+      "5-2-u4-e2-mission-3",
+      "5-2-u4-e2-mission-4",
+      "5-2-u4-e2-mission-5",
+      "5-2-u4-e2-mission-6"
+]);
+    const grade52 = semesters.find(semester=>semester.id === "5-2");
+    for (const type of grade52?.units.flatMap(unit=>unit.subunits.flatMap(group=>group.types)) || []) {
+      if (!variantIds.has(type.id)) continue;
+      if (!type.name.includes("유사문항")) type.name += " · 유사문항";
+      if (!type.label.includes("유사문항")) type.label += " · 유사문항";
+      if (type.sourceItemLabel && !type.sourceItemLabel.includes("유사문항")) type.sourceItemLabel += " 기반 유사문항";
+    }
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
