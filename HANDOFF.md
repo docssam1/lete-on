@@ -503,3 +503,7 @@ Checked Claude Code authentication after the prior review attempt: the CLI remai
 Removed the two FlippedMath lesson links from the Grade 7 `7.NS.A` checkpoint now that GFIELD's own student workbook is available. Kept the Common Core source link for standards scope; the separate student action opens the GFIELD 36-question workbook in Korean with A4 selected. The external FlippedMath lesson pages remain source examples in the handoff only and are not the learner destination.
 
 Verification: roadmap model tests pass 12/12 and browser tests pass 39/39. In a live 390×844 Chrome session, the checkpoint exposed only the official standards link plus the local GFIELD workbook action; opening it loaded all 36 questions at 390/390 document width with no page errors. `git diff --check` passes. Local only; no push, deployment, or Drive sync.
+
+### 2026-11-03 Grade 7 AMC 10 manual-diagnostic path
+
+Ran the public Grade 7 AMC 10 flow in a temporary 390px Chrome session with synthetic domain counts only. The selector exposes AMC 10, renders separate Algebra, Number Theory, Geometry, and Combinatorics rows, produces a descriptive partial result, and the item-review link opens `competition-paper-review.html?grade=7&program=amc10`. The report states that entered domain rates do not yield an official score, skill level, eligibility, qualification, or course decision. Document width stayed 390/390; no browser errors occurred. No learner record or private candidate content was used, and no input was saved.
