@@ -26,6 +26,11 @@ test("Math Kangaroo covers grades 1-12 with paired papers but separate student-g
   assert.equal(profile.responseType, "multiple-choice");
   assert.equal(profile.kindergartenMayEnterGrade1Paper, true);
   assert.equal(profile.rankingSeparatesStudentGrades, true);
+  assert.equal(profile.percentileBasis, "within-grade");
+  assert.deepEqual(profile.percentileRegions, ["state", "nationwide"]);
+  assert.ok(profile.sources.some(function (row) {
+    return row.url === "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/" && row.lastVerified === "2026-11-03" && /grade-specific state and nationwide/.test(row.documentRevision);
+  }));
   assert.equal(profile.wrongAnswerPenalty, false);
   assert.equal(profile.calculatorAllowed, false);
   assert.equal(profile.curriculumIsGeneralGuideline, true);

@@ -235,7 +235,7 @@ test("Math Kangaroo paper-review summaries persist for cross-grade same-paper co
   const store = records.create(memoryStorage());
   const saved = store.saveCompetitionDiagnostic({
     schemaVersion: "gfield-competition-diagnostic-v1", id: "diag-kangaroo-grade7", programId: "kangaroo", programTitle: "Math Kangaroo", grade: 7,
-    paperLabel: "2025 Grade 7–8 official paper", examDate: "2026-03-19",
+    paperLabel: "2025 Grade 7–8 official paper", examDate: "2026-03-19", officialPercentile: 72.5,
     summary: { itemCount: 30, correct: 1, wrong: 0, blank: 0, unmarked: 29, attempted: 1, domainClassified: 1, reasonClassified: 0 },
     domains: [
       { id: "algebra", attempted: 1, correct: 1, wrong: 0, blank: 0 }, { id: "number", attempted: 0, correct: 0, wrong: 0, blank: 0 },
@@ -243,8 +243,12 @@ test("Math Kangaroo paper-review summaries persist for cross-grade same-paper co
     ], reasons: []
   });
   assert.equal(saved.programId, "kangaroo");
+  assert.equal(saved.officialPercentile, 72.5);
   assert.equal(store.loadCompetitionDiagnosticHistory(7, "kangaroo")[0].summary.itemCount, 30);
+  assert.equal(store.loadCompetitionDiagnosticHistory(7, "kangaroo")[0].officialPercentile, 72.5);
   assert.equal(store.loadCompetitionDiagnosticHistory(8, "kangaroo").length, 0);
+  const invalidPercentile = Object.assign({}, saved, { id: "diag-kangaroo-invalid-percentile", officialPercentile: 100.1 });
+  assert.equal(store.saveCompetitionDiagnostic(invalidPercentile), false);
 });
 
 test("legacy assessment summaries retain only source-score inputs and cannot feed the learning plan", function () {

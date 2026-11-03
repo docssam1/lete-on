@@ -31,6 +31,8 @@
         Object.freeze({ grades: Object.freeze([11, 12]), questionCount: 30, scoreTiers: Object.freeze([3, 4, 5]), questionsPerTier: 10, maxScore: 120 })
       ]),
       rankingSeparatesStudentGrades: true,
+      percentileBasis: "within-grade",
+      percentileRegions: Object.freeze(["state", "nationwide"]),
       wrongAnswerPenalty: false,
       calculatorAllowed: false,
       curriculumIsGeneralGuideline: true,
@@ -38,7 +40,7 @@
         source("Math Kangaroo USA", "https://mathkangaroo.org/mks/faqs/about-the-test/", "current web page; revision date not stated"),
         source("Math Kangaroo USA", "https://mathkangaroo.org/mks/practice/pdf-exams/", "official prior-year student test PDFs grouped by grade pair", "2026-11-02"),
         source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-curricula/", "official two-grade curriculum guideline bands"),
-        source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/", "current scoring page; revision date not stated")
+        source("Math Kangaroo USA", "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/", "current scoring page; grade-specific state and nationwide rankings/percentiles, revision date not stated", "2026-11-03")
       ]),
       contentRights: Object.freeze({ originalProblems: "permission-required", publicUse: "metadata-and-links-only" })
     }),

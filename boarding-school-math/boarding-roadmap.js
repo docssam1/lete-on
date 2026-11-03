@@ -599,6 +599,8 @@
     const reasonNames = { concept: "개념", approach: "접근", calculation: "계산", reading: "조건 읽기", time: "시간" };
     const reasonSummary = document.createElement("p"); reasonSummary.className = "competition-record-pair-reasons";
     reasonSummary.textContent = `오답 이유 ${record.summary.reasonClassified}/${record.summary.wrong} 분류${record.reasons.length ? ` · ${record.reasons.map(function (reason) { return `${reasonNames[reason.id] || "기타"} ${reason.count}`; }).join(" · ")}` : " · 미분류"}`;
+    const officialRank = record.programId === "kangaroo" && record.officialPercentile != null ? document.createElement("p") : null;
+    if (officialRank) { officialRank.className = "competition-record-pair-reasons"; officialRank.textContent = `공식 성적표 전국 백분위 · Grade ${record.grade} 참가자 중 ${record.officialPercentile}%`; }
     const domains = document.createElement("ul");
     record.domains.forEach(function (domain) {
       const item = document.createElement("li");
@@ -607,7 +609,9 @@
       item.textContent = `${domain.name}: ${evidence}${domain.blank ? ` · 미응답 ${domain.blank}` : ""}`;
       domains.append(item);
     });
-    card.append(title, summary, reasonSummary, domains);
+    card.append(title, summary, reasonSummary);
+    if (officialRank) card.append(officialRank);
+    card.append(domains);
     return card;
   }
   function renderCompetitionGradeComparison(current, target) {
@@ -660,7 +664,14 @@
     }
     section.dataset.state = "comparable-format";
     const contestBoundary = competition === "kangaroo" ? " Math Kangaroo 공식 순위와 백분위는 학년별로 산정돼요." : "";
-    copy.textContent = `${currentOption.title} · ${matchedPair.current.examDate} · “${matchedPair.current.paperLabel.trim()}” 기록을 비교해요. 날짜와 메모가 같아도 난도를 보정한 등급이나 성장 판정은 아니에요.${contestBoundary}`;
+    let officialPercentileComparison = "";
+    if (competition === "kangaroo" && matchedPair.current.officialPercentile != null && matchedPair.target.officialPercentile != null) {
+      const difference = Math.round((matchedPair.target.officialPercentile - matchedPair.current.officialPercentile) * 10) / 10;
+      const formattedDifference = Number.isInteger(difference) ? String(difference) : difference.toFixed(1);
+      const signedDifference = difference > 0 ? `+${formattedDifference}` : formattedDifference;
+      officialPercentileComparison = ` 성적표 전국 백분위: Grade ${current.grade} ${matchedPair.current.officialPercentile}% → Grade ${target.grade} ${matchedPair.target.officialPercentile}% · 차이 ${signedDifference} percentile points. 각 학년 참가자 안의 상대 위치 비교이며 성장이나 수학 실력 차이를 뜻하지 않아요.`;
+    }
+    copy.textContent = `${currentOption.title} · ${matchedPair.current.examDate} · “${matchedPair.current.paperLabel.trim()}” 기록을 비교해요. 날짜와 메모가 같아도 난도를 보정한 등급이나 성장 판정은 아니에요.${contestBoundary}${officialPercentileComparison}`;
     cards.append(
       buildCompetitionRecordCard(matchedPair.current, `${current.grade}학년 · ${matchedPair.current.paperLabel}`, "competition-grade-current-record-title"),
       buildCompetitionRecordCard(matchedPair.target, `${target.grade}학년 · ${matchedPair.target.paperLabel}`, "competition-grade-target-record-title")

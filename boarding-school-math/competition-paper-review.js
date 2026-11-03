@@ -108,6 +108,9 @@
     const format = selectedFormat();
     $("review-paper-label-field").hidden = !format;
     $("review-exam-date-field").hidden = !format;
+    $("official-percentile-field").hidden = programId !== "kangaroo";
+    $("official-percentile").disabled = programId !== "kangaroo";
+    $("kangaroo-percentile-source").hidden = programId !== "kangaroo";
     document.querySelector(".review-change-note").hidden = !format;
     $("review-amc8-practice").hidden = !(grade === 6 && programId === "amc8");
     $("review-sasmo-source").hidden = programId !== "sasmo";
@@ -272,7 +275,7 @@
       heading.append(title, date);
       const meta = document.createElement("p");
       const completion = record.summary.unmarked ? `일부 입력 ${record.summary.itemCount - record.summary.unmarked}/${record.summary.itemCount} · ` : `전체 입력 ${record.summary.itemCount}/${record.summary.itemCount} · `;
-      meta.textContent = `${record.paperLabel ? `${record.paperLabel} · ` : ""}${completion}정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}`;
+      meta.textContent = `${record.paperLabel ? `${record.paperLabel} · ` : ""}${completion}정답 ${record.summary.correct} · 오답 ${record.summary.wrong} · 미응답 ${record.summary.blank} · 표시 안 함 ${record.summary.unmarked} · 영역 분류 ${record.summary.domainClassified}/${record.summary.itemCount}${record.officialPercentile == null ? "" : ` · 성적표 Grade ${record.grade} 전국 백분위 ${record.officialPercentile}%`}`;
       const domainHost = document.createElement("div"); domainHost.className = "saved-diagnostic-entry-domains"; domainHost.dataset.domainCount = String(record.domains.length);
       record.domains.forEach(function (domain) {
         const item = document.createElement("div");
@@ -376,6 +379,10 @@
     $("report-roadmap-link").textContent = `선택한 Grade ${grade} 학습 경로 보기 →`;
     setText("report-title", `${selectedFormat().title} · ${result.complete ? "전체 결과" : "입력한 결과"}`);
     setText("report-intro", `${label ? `${label} · ` : ""}${result.itemCount}문제 중 ${result.counts.unmarked}문제는 표시하지 않았습니다. ${result.attempted < 3 ? "푼 문제가 3개 미만이어서 비율 비교는 보류했습니다." : `정답률은 실제로 푼 ${result.attempted}문제 기준입니다.`}`);
+    const officialPercentile = $("official-percentile").value === "" ? null : Number($("official-percentile").value);
+    const officialPercentileResult = $("official-percentile-result");
+    officialPercentileResult.hidden = selectedFormat().id !== "kangaroo" || officialPercentile === null;
+    officialPercentileResult.textContent = officialPercentileResult.hidden ? "" : `공식 성적표 · Grade ${grade} 전국 백분위 ${officialPercentile}% · 해당 학년 참가자 안에서의 상대 위치`;
     $("score-estimate").hidden = !result.scoreEstimate;
     if (result.scoreEstimate) setText("score-estimate-value", `${result.scoreEstimate.label} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}`);
     const scoreNote = $("score-estimate-note");
@@ -451,14 +458,19 @@
     document.querySelector(".review-layout").classList.remove("is-empty");
     $("report-title").focus();
   }
-  $("review-grade").addEventListener("change", function (event) { grade = Number(event.target.value); renderSettings(); renderMarks(); $("review-paper-label").value = ""; });
-  $("review-program").addEventListener("change", function (event) { programId = event.target.value; renderSettings(); renderMarks(); $("review-paper-label").value = ""; });
+  $("review-grade").addEventListener("change", function (event) { grade = Number(event.target.value); renderSettings(); renderMarks(); $("review-paper-label").value = ""; $("official-percentile").value = ""; });
+  $("review-program").addEventListener("change", function (event) { programId = event.target.value; renderSettings(); renderMarks(); $("review-paper-label").value = ""; $("official-percentile").value = ""; });
   $("review-paper-label").addEventListener("input", function () { resetReport("내용이 바뀌었어요"); });
+  $("official-percentile").addEventListener("input", function () { resetReport("내용이 바뀌었어요"); });
   $("clear-marks").addEventListener("click", function () { renderMarks(); $("review-paper-label").value = ""; });
   $("paper-review-form").addEventListener("submit", function (event) {
     event.preventDefault();
     const format = selectedFormat();
     if (!format) { showAlert("paper-error", "대회를 선택해 주세요."); return; }
+    if (format.id === "kangaroo" && $("official-percentile").value !== "") {
+      const percentile = Number($("official-percentile").value);
+      if (!Number.isFinite(percentile) || percentile < 0 || percentile > 100) { showAlert("paper-error", "공식 성적표의 전국 백분위를 0~100 범위로 입력하세요."); $("official-percentile").focus(); return; }
+    }
     const result = analyzer.analyze(readMarks(), format.itemCount, format.id);
     if (!result.valid) { showAlert("paper-error", result.error === "문항별 표시와 영역을 확인하세요." ? "문항별 표시·영역·이유를 확인하세요." : result.error); return; }
     clearAlert("paper-error");
@@ -472,12 +484,15 @@
     const record = localRecords.storage.saveCompetitionDiagnostic({
       schemaVersion: "gfield-competition-diagnostic-v1", id: makeHistoryId(), programId: format.id, programTitle: format.title,
       grade: grade, paperLabel: $("review-paper-label").value.trim(), examDate: examDate,
+      officialPercentile: format.id === "kangaroo" && $("official-percentile").value !== "" ? Number($("official-percentile").value) : null,
       summary: { itemCount: lastDiagnostic.itemCount, correct: lastDiagnostic.counts.correct, wrong: lastDiagnostic.counts.wrong, blank: lastDiagnostic.counts.blank,
         unmarked: lastDiagnostic.counts.unmarked, attempted: lastDiagnostic.attempted, domainClassified: lastDiagnostic.domainClassified, reasonClassified: lastDiagnostic.reasonClassified },
       domains: lastDiagnostic.domains.map(function (domain) { return { id: domain.id, attempted: domain.attempted, correct: domain.correct, wrong: domain.wrong, blank: domain.blank }; }),
       reasons: lastDiagnostic.reasons.map(function (reason) { return { id: reason.id, count: reason.count }; })
     });
-    const amcResultDisclosure = lastDiagnostic.complete && ["amc8", "amc10", "amc12"].includes(format.id)
+    const amcResultDisclosure = format.id === "kangaroo" && $("official-percentile").value !== ""
+      ? "Math Kangaroo 성적표의 학년별 전국 백분위도 함께 저장했어요."
+      : lastDiagnostic.complete && ["amc8", "amc10", "amc12"].includes(format.id)
       ? `${format.title} 참고 원점수는 저장된 응답 수로 다시 계산할 수 있어요.`
       : "저장한 정답·오답·미응답 수와 영역별 합계로 입력 결과 일부를 유추할 수 있어요.";
     lastSavedDiagnosticId = record ? record.id : null;
