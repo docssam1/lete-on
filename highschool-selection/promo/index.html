@@ -14,7 +14,7 @@
   <a class="skip-link" href="#main">본문으로</a>
   <header class="site-header"><nav class="shell nav" aria-label="주 메뉴">
     <a class="brand lete-on-brand" href="#" aria-label="LETE-ON 첫 화면"><span class="brand-wordmark">LETE-ON</span><small>초중고 입학 테스트를 위한</small></a>
-    <div class="nav-links"><a class="nav-academies" href="#">학원 선택</a><a class="button accent" href="../login.html?v=eden-open-20261103">내 시험 입장</a></div>
+    <div class="nav-links"><a class="nav-academies" href="#">학원 선택</a><a class="button accent" href="../login.html?v=all-open-20261103">내 시험 입장</a></div>
   </nav></header>
   <main id="main">
     <section class="academy-home" id="academy-home" aria-labelledby="home-title">
@@ -23,7 +23,7 @@
         <div class="academy-launcher" id="academy-launcher" aria-label="소개를 볼 학원 선택"></div>
         <p class="independent-note"><strong>고등 및 누테학원 대비를 위한 프로그램입니다.</strong></p>
         <section class="notice-board-section" id="notices" aria-labelledby="notices-title"><div class="small-section-head"><h2 id="notices-title">테스트 일정·설명회</h2><span>대치·분당 · 황소는 대치</span></div><div id="home-notice-board"></div></section>
-        <noscript><p>학원 소개를 보려면 JavaScript를 켜 주세요. <a href="../login.html?v=eden-open-20261103">내 시험 입장</a></p></noscript>
+        <noscript><p>학원 소개를 보려면 JavaScript를 켜 주세요. <a href="../login.html?v=all-open-20261103">내 시험 입장</a></p></noscript>
       </div>
     </section>
     <section class="academy-intro-view" id="academy-intro-view" hidden>
@@ -37,12 +37,12 @@
     </section>
     <section class="learning-path" id="learning-path"><div class="shell"><div class="path-heading"><h2>모의고사 후<br>오답 학습</h2><p>시험 결과를 보고<br>틀린 유형을 다시 공부합니다.</p></div><ol><li><span>01</span><div><h3>모의고사</h3><p>지원 과정의 범위와 모의고사 시간을 확인합니다.</p></div></li><li><span>02</span><div><h3>결과 확인</h3><p>점수와 함께 단원·세부유형별 결과를 살펴봅니다.</p></div></li><li><span>03</span><div><h3>오답 학습</h3><p>승인된 유사문제로 풀이 과정을 점검합니다.</p></div></li></ol></div></section>
   </main>
-  <footer class="footer"><div class="shell"><span>LETE-ON · 중고등과정 대비</span><a href="../login.html?v=eden-open-20261103">배정받은 시험 입장</a></div></footer>
-  <script src="../data/public-exam-profiles.js?v=eden-open-20261103"></script>
-  <script src="../data/catalog.js?v=eden-open-20261103"></script>
-  <script src="../data/academy-engagement.js?v=eden-open-20261103"></script>
+  <footer class="footer"><div class="shell"><span>LETE-ON · 중고등과정 대비</span><a href="../login.html?v=all-open-20261103">배정받은 시험 입장</a></div></footer>
+  <script src="../data/public-exam-profiles.js?v=all-open-20261103"></script>
+  <script src="../data/catalog.js?v=all-open-20261103"></script>
+  <script src="../data/academy-engagement.js?v=all-open-20261103"></script>
   <script src="../data/standard-exam-policy.js"></script>
-  <script src="../data/available-mocks.js?v=eden-open-20261103"></script>
+  <script src="../data/available-mocks.js?v=all-open-20261103"></script>
   <script>
     'use strict';
     const data=HIGHSELECT_PUBLIC_PROFILES;
@@ -79,10 +79,10 @@
 
     }
     const mocks=HIGHSELECT_AVAILABLE_MOCKS;
-    const availableExams={SH:{'high-selection':mocks.find(e=>e.id==='sh-selection-r01')},DP:{'common1-basic':mocks.find(e=>e.id==='dp-common1-v14-pilot')},SM:{'common1-basic':mocks.find(e=>e.id==='sm-pre-middle-common1-r01')},ED:{'high-advance':mocks.find(e=>e.id==='ed-common1-basic-r01'),'common1-basic':mocks.find(e=>e.id==='ed-common1-basic-r01')}};
-    function mockList(program){const exams=mocks.filter(e=>e.programId===program.code);return exams.length?`<section class="course-picker" aria-labelledby="mock-list-title"><div class="small-section-head"><h2 id="mock-list-title">입학 대비 모의고사</h2><span>${exams.length}회</span></div><div class="course-options">${exams.map(e=>`<a class="course-option" href="../login.html?v=eden-open-20261103&exam=${encodeURIComponent(e.id)}"><span><b>${esc(e.title)}</b><small>${e.mode==='pilot'?'시범 모의고사 · ':''}${esc(e.scope)} · ${e.questionCount}문항${e.durationMinutes?' · '+e.durationMinutes+'분':''} · O/X 자가채점</small></span><span class="option-indicator" aria-hidden="true">→</span></a>`).join('')}</div></section>`:'';}
+    const availableExams={SH:{'high-selection':mocks.find(e=>e.id==='sh-selection-r01')},DP:{'common1-basic':mocks.find(e=>e.id==='dp-common1-v14-pilot')},SM:{'common1-basic':mocks.find(e=>e.id==='sm-pre-middle-common1-r01')},WM:{'middle21-basic':mocks.find(e=>e.id==='wm-middle21-basic-mixed-r01')},DG:{'pre-high1':mocks.find(e=>e.id==='dg-pre-high1-r01')},ED:{'high-advance':mocks.find(e=>e.id==='ed-common1-basic-r01'),'common1-basic':mocks.find(e=>e.id==='ed-common1-basic-r01')}};
+    function mockList(program){const exams=mocks.filter(e=>e.programId===program.code);return exams.length?`<section class="course-picker" aria-labelledby="mock-list-title"><div class="small-section-head"><h2 id="mock-list-title">입학 대비 모의고사</h2><span>${exams.length}회</span></div><div class="course-options">${exams.map(e=>`<a class="course-option" href="../login.html?v=all-open-20261103&exam=${encodeURIComponent(e.id)}"><span><b>${esc(e.title)}</b><small>${e.mode==='pilot'?'시범 모의고사 · ':''}${esc(e.scope)} · ${e.questionCount}문항${e.durationMinutes?' · '+e.durationMinutes+'분':''} · O/X 자가채점</small></span><span class="option-indicator" aria-hidden="true">→</span></a>`).join('')}</div></section>`:'';}
     function applicationAction(resolved,launch){
-      if(launch)return `<a class="button accent" href="../login.html?v=eden-open-20261103&exam=${encodeURIComponent(launch.id)}">${launch.mode==='pilot'?'시범 응시':'모의고사 응시'}</a>`;
+      if(launch)return `<a class="button accent" href="../login.html?v=all-open-20261103&exam=${encodeURIComponent(launch.id)}">${launch.mode==='pilot'?'시범 응시':'모의고사 응시'}</a>`;
       if(!resolved.canApply)return '<p class="course-availability"><span class="status-dot"></span>모의고사 준비 중</p>';
       const url=safeUrl(engagement.application.surveyUrl);
       return url?`<a class="button accent" href="${esc(url)}" target="_blank" rel="noopener noreferrer">이 과정 신청하기</a>`:'<p class="course-availability">신청 일정은 추후 안내합니다.</p>';
