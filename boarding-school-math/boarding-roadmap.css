@@ -494,3 +494,7 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
   }
   .stage-selected-note { margin-left: auto; white-space: nowrap; }
 }
+
+@media (max-width: 360px) {
+  .academy-page .boarding-header nav { gap: 5px; }
+}
