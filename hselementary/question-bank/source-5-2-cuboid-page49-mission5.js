@@ -75,7 +75,7 @@
     const previousKey = api.generatorKey.bind(api), previousGenerate = api.generate.bind(api);
     const matches = type => type && (type.id === sourceItemId || type.sourceItemId === sourceItemId || type.generatorKey === generatorKey);
     api.generatorKey = type => matches(type)
-      ? type.id === sourceItemId && type.sourceItemId === sourceItemId && type.generatorKey === generatorKey && type.reviewLocked === false && type.sourceVerified === true ? generatorKey : ""
+      ? (type.id === sourceItemId || type.id === "5-2-u5-t1-5") && type.sourceItemId === sourceItemId && type.generatorKey === generatorKey && type.reviewLocked === false && type.sourceVerified === true ? generatorKey : ""
       : previousKey(type);
     api.generate = (type, rank, difficulty, seed, variant = 0) => matches(type)
       ? api.generatorKey(type) && Number(variant) === 0 ? makeQuestion() : null
