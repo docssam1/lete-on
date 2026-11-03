@@ -816,3 +816,9 @@ Verification: Grade roadmap model suite passes 12/12; changed roadmap data synta
 The competition paper-review browser test now accepts the existing `GFIELD_CHROME_EXECUTABLE` optional override, matching the roadmap browser suite. Playwright's expected Chromium revision was absent from this Mac cache; using the already-installed Chrome executable made the suite runnable without installing a browser. Corrected one stale Grade 8 comparison assertion to match the currently rendered school Geometry copy.
 
 Verification: roadmap model/browser plus competition paper-review model/browser suites pass 69/69 in one run. Grade 7 NS.A public workbook, screener plan, authoring manifest, analysis, report projection, scoring readiness, and release manifest tests pass 61/61. Automated responsive browser checks are included; no screenshot or print review of the locked R6 candidate was performed. It remains locked pending approved current R6 evidence and independent reviews. No private item content was accessed; local only.
+
+### 2026-11-03 teacher paper builder mobile list flow
+
+Removed the phone-width nested scroll limits from the 36-item problem list and selected-question list. Both now follow the page's normal scroll; the fixed count shortcut still jumps to paper settings. The browser test accepts `GFIELD_CHROME_EXECUTABLE` as a local override when Playwright's pinned Chromium is missing.
+
+Verification: the teacher paper-builder browser suite passes 11/11, covering all 12 public unit sets, separate answer keys, A4 pagination and overflow checks, mobile/tablet widths, and the 390px full-list flow. The updated 390px page was rendered and visually inspected; all 36 items appear in order and the viewport has no horizontal overflow or clipping. No print-source change was made. This is public paper-builder QA only and does not change the private R6 diagnostic gate. No private item content was accessed; local only.

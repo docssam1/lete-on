@@ -6,7 +6,11 @@ const { pathToFileURL } = require("node:url");
 const { chromium } = require("playwright");
 const url = pathToFileURL(path.resolve(__dirname, "../teacher-paper-builder.html")).href;
 let browser;
-test.before(async () => { browser = await chromium.launch({ headless: true }); });
+test.before(async () => {
+  const launchOptions = { headless: true };
+  if (process.env.GFIELD_CHROME_EXECUTABLE) launchOptions.executablePath = process.env.GFIELD_CHROME_EXECUTABLE;
+  browser = await chromium.launch(launchOptions);
+});
 test.after(async () => { if (browser) await browser.close(); });
 
 test("teacher can find, preview, select, order, and set points on released Grade 7 questions", async () => {
@@ -72,6 +76,12 @@ test("mobile selection keeps a fixed count and a keyboard-accessible shortcut to
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   const errors = []; page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(url, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#item-list .item-row").count(), 36);
+  assert.deepEqual(await page.locator("#item-list").evaluate((element) => ({
+    heightMatchesContent: element.clientHeight === element.scrollHeight,
+    maxHeight: getComputedStyle(element).maxHeight,
+    overflowY: getComputedStyle(element).overflowY
+  })), { heightMatchesContent: true, maxHeight: "none", overflowY: "visible" });
   const action = page.locator("#mobile-builder-action");
   assert.equal(await action.isHidden(), true);
   await page.getByRole("checkbox", { name: "1번 시험지에 추가", exact: true }).check();

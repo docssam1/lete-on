@@ -270,3 +270,9 @@ Verification: Grade roadmap model suite passes 12/12; changed roadmap data synta
 Enabled the competition paper-review browser suite to use the same optional `GFIELD_CHROME_EXECUTABLE` override already supported by the roadmap suite. The Mac has Playwright's Chromium revision 1234 but this checkout requested revision 1200; the installed Chrome executable was used for this run. Updated one Grade 8 browser expectation to match the current displayed course copy (“Geometry는 학교 과정에서 이어가요”).
 
 Verification: roadmap model/browser and paper-review analysis/browser suites pass 69/69 in a single run, including grade comparisons, MAP same-scale handling, same-paper competition comparison, Math Kangaroo paired-grade links, and mobile reflow checks. Public Grade 7 NS.A workbook/screener-plan/authoring-manifest/analysis/report/scoring/release contracts pass 61/61. Changed tests pass syntax checks and `git diff --check`. This is automated public regression only; it is not a fresh screenshot or print review of private R6. Candidate remains locked; local only, no push/deployment.
+
+### 2026-11-03 teacher paper builder mobile list flow
+
+On phones, the 36-row question list and selected-question list now grow with the page instead of creating nested scroll areas. The fixed selection-count shortcut to paper settings remains available. The builder's browser test can use `GFIELD_CHROME_EXECUTABLE` when the Playwright-pinned Chromium revision is absent.
+
+Verification: teacher paper-builder browser suite passes 11/11, including all 12 public unit worksheets, answer-key separation, A4 pagination, mobile/tablet width checks, and the new assertion that all 36 rows remain in normal page flow at 390px. Rendered and inspected the current mobile page; all 36 rows appear in sequence, page width equals viewport width, and no clipping was visible. Print source was unchanged; browser A4 generation tests passed. Local only; no push or deployment.
