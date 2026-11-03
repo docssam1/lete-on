@@ -119,6 +119,11 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .course-path-empty-choice { margin-top: 14px !important; padding-top: 12px; border-top: 1px solid #e6e1ec; font-size: .8rem !important; }
 .course-path-notice { margin: 13px 0 0; color: #566274; font-size: .8rem; line-height: 1.55; }
 .algebra1-unit-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.algebra1-course-actions { margin: -6px 0 18px; display:flex; align-items:center; flex-wrap:wrap; gap:10px 14px; }
+.algebra1-workbook-link { min-height:42px; padding:10px 14px; display:inline-flex; align-items:center; border:1px solid #60418f; border-radius:8px; color:#fff; background:#60418f; font-size:.82rem; font-weight:800; text-decoration:none; }
+.algebra1-workbook-link:hover { background:#4d3278; }
+.algebra1-workbook-link:focus-visible { outline:3px solid #bda5dc; outline-offset:3px; }
+.algebra1-course-actions > span { color:#566274; font-size:.78rem; }
 .algebra1-unit-card { min-width: 0; display: grid; grid-template-columns: 42px minmax(0,1fr); gap: 13px; padding: 17px; border: 1px solid #d8dee8; border-radius: 12px; background: #fff; }
 .algebra1-unit-card { grid-column: 1 / -1; }
 .algebra1-unit-number { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #60418f; font-size: .75rem; font-weight: 900; }
