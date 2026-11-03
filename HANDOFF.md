@@ -1,3 +1,21 @@
+# Current handoff — 2026-11-03
+
+Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. Current latest commit before this handoff update: `fa44b6179`; worktree was clean. No push, deployment, or Drive synchronization has occurred.
+
+## Public roadmap and comparison work
+
+The Grade 3–12 G·MAP boarding-school roadmap now contains the branded route illustration, supplied Grades 6–8 and 10 annual-plan examples, a clearly labeled inferred Grade 9 bridge, curriculum examples for grade comparison, student-entered external assessment comparison, and manual same-paper contest review. Grade 6 and Grade 7 plans link their stage-matched references. These records do not become placement decisions or unsupported cross-grade mastery bands. Public AMC/Kangaroo review remains bounded to entered marks, matching contest/date/paper, official score-report values, and descriptive evidence.
+
+Current local regression evidence: roadmap model/browser `46/46`; contest practice, competition-source/profile, diagnostic-engine, and public Grade 7 NS.A plan/authoring/analysis/report/scoring/release/workbook tests `80/80`; competition paper-review browser `18/18`. Total `144/144`. Chrome rendered Grades 6, 7, and inferred Grade 9 at 1280px and true 390px device widths; all had four annual-plan stages, expected link/no-link behavior, G·MAP art, and no horizontal overflow. Commits `0c476d08f` (Grade 6–7 resource links), `4f0f2e424` (installed Chrome test override), and `fa44b6179` (metadata-only QA search record) are local.
+
+## Two distinct private candidate gates
+
+**Grade 7 `7.NS.A` screener:** revision-11 current answer-free visual QA artifacts already exist for Korean, English, and Simplified Chinese at 320px, 390px, A4, and Letter; the recorded pack hash matches `476dc1c201a0ac07c6d6888db986ec7c1892604885c40d59d421fe7a7420e732`. Known QA notes include horizontal pan for the initial 320px number-line view, diagram typography/print-label alignment, and dense repeating-decimal wording. These current captures/PDFs do not satisfy independent math/language/rights/accessibility review, pilot, immutable item release, or release authorization. Do not ask the user for another screenshot set for this unchanged `7.NS.A` revision.
+
+**Separate Grade 7 AMC 8 R6 candidate:** this is the 42-item contest workbench, not the 18-slot `7.NS.A` screener. Current workbench/order files are dated 2026-10-30; available desktop/390px/320px screenshots and A4 PDF are dated 2026-10-29 and stale. Drive metadata searches on 2026-11-03 found no current replacements. Its project QA rule prohibits alternate/indirect rendering routes. Current visual review needs owner-provided current screenshots/PDF or an explicitly supported browser route. Even after visual review, independent content/rights/accessibility review, pilot, report validation, and release approvals remain separate gates. Keep it locked.
+
+Continue public product work that does not require the private candidate contents. If the user supplies current AMC R6 QA artifacts or a supported route, review those specific artifacts; do not conflate that request with `7.NS.A`. No Claude review is claimed: Claude Code CLI reported `Not logged in` in the last recorded attempt.
+
 - **유아 2차 디자인 패스 + R0 배너** (9bfc0815) — 오답 소리·😅표정을 공용 shake()
   한 곳에 연결(유닛 id N-* 게이트 — young 밴드는 A-*에도 걸려 과적용 위험), 색 대비
   30화면 스캔 후 8건 토큰 보정, young 밴드 공통 UI 확대(.nm-back은 유닛 바 스코프),
