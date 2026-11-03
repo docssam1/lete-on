@@ -3582,6 +3582,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u6-practice-47-linked-similar",sourceParentItemId:"5-2-u6-practice-47-original",sourceItemLabel:"확인학습 47번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:117,alternateSourcePdfPage:116,sourcePrintedPage:121,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U6GridRouteLinkedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 격자와 두 경유점 구조를 대조하고 각 도로망의 최단 경로를 독립 열거했습니다."});
   }
 
+  if (source52Average) {
+    const type=source52Average.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u6-t2-4");
+    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u6-practice-26-harvest-similar",sourceParentItemId:"5-2-u6-practice-26-original",sourceItemLabel:"확인학습 26번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:115,alternateSourcePdfPage:114,sourcePrintedPage:119,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U6HarvestAverageLinkedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"사흘 평균과 이틀 분량으로 남은 하루를 찾는 원문 구조를 유지하고 수확량 맥락의 각 답을 독립 검산했습니다."});
+  }
+
   if (source52Average) for (const [id,source,parent,key,manual,pdf,printed] of [
     ["5-2-u6-t1-2","5-2-u6-practice-4-similar","5-2-u6-practice-4-original","source52U6PairedMeansSimilar",false,110,116],
     ["5-2-u6-t1-3","5-2-u6-practice-25-similar","5-2-u6-practice-25-original","source52U6ChangedScoreMeanSimilar",false,113,119],
