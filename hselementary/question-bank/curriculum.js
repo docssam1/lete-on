@@ -3733,6 +3733,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u5-practice-17-original",sourceItemLabel:"확인학습 17번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:104,alternateSourcePdfPage:105,sourcePrintedPage:110,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5Page108Practice17",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 그림과 선택지를 대조하고 아홉 위치의 접힘을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
 
+  if (source52Average) {
+    const type=source52Average.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u6-t1-6");
+    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u6-practice-29-equal-step-similar",sourceParentItemId:"5-2-u6-practice-29-original",sourceItemLabel:"확인학습 29번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:113,alternateSourcePdfPage:114,sourcePrintedPage:119,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U6EqualStepAverageLinkedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"세 수의 평균과 같은 간격이라는 원문 조건을 대조하고 변형별 답을 독립 검산했습니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
