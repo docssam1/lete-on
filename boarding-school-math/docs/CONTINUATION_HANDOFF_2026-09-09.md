@@ -1,15 +1,21 @@
 # Boarding School Math continuation handoff
 
-Updated: 2026-11-02 KST (Mac continuation; older release evidence retained below)
+Updated: 2026-11-03 KST (Mac continuation; older release evidence retained below)
 
-## Current Mac status — 2026-11-02
+## Current Mac status — 2026-11-03
 
-- Worktree: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`; clean at the latest local checkpoint. Recent local commits cover Grade 3–5 inferred annual pacing, the Pre-Algebra concept bridge, roadmap/contest regression, Grade 6 concept bridging, and the `7.NS.A` contract recheck. Nothing was pushed or deployed.
+- Worktree: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`; latest local commits are `8d4e8c0e` (320px roadmap navigation overflow fix) and `e99e1481` (mobile contest-review visual QA record). Worktree was clean after those commits. Nothing was pushed or deployed.
 - Public practice and private diagnostic are separate. This local branch contains the original 36-item `7.NS.A` student workbook plus eight-item recheck route, with separate teacher mode and an explicit no-placement scope notice. The branch-local workbook is not evidence that the latest remote deployment contains it. The 18-slot `7.NS.A` unit screener remains a different private candidate and is locked; no score, focus analysis, placement, or prescription is operational.
 - The Grade 3–12 roadmap supports plan comparison and manually entered competition-paper summaries. Math Kangaroo comparison is limited to matching date, paper memo, item count, and official grade-paired paper band; its official rank/percentile remains grade-specific. This is descriptive comparison, not a validated cross-grade diagnostic.
-- Latest local verification: combined Grade 3–12 roadmap, contest review, answer-safe local-record, and official competition-profile suites pass 88/88. The separate public `7.NS.A` engine/plan/manifest/report/readiness suites pass 50/50. Desktop/mobile roadmap captures showed no horizontal overflow. These checks are not private-item approval or student-use validation.
+- Latest automated regression recorded before the Nov. 3 CSS adjustment: combined Grade 3–12 roadmap, contest review, answer-safe local-record, and official competition-profile suites pass 88/88; the separate public `7.NS.A` engine/plan/manifest/report/readiness suites pass 50/50. On Nov. 3, manual browser review at 1280px, 390px, and 320px visually verified the public roadmap concept-flow and Grade 7/8 comparison. The 320px header navigation overflow was fixed; document `scrollWidth` now equals `clientWidth` at both mobile widths. The AMC 8 paper-review screen was also checked at 390px and 320px: marking a response wrong reveals domain and error-reason controls, with no horizontal page overflow. Only an unsaved synthetic mark was used. The automated suites were not rerun after the CSS-only change. None of these checks is private-item approval or student-use validation.
 - Required next gate: independent formal review of the private screener and rights/similarity review, current-version desktop/mobile and A4 visual inspection through a supported route, then a consented pilot, report validation, authenticated delivery and release approval. The current Mac browser route has previously blocked the private `file://` workbench, and its earlier screenshots/PDF are stale. Current captures/PDF or an explicitly supported browser route are needed. Do not unlock or deploy the screener before all gates pass.
 - Claude CLI is installed but currently logged out (`claude auth status`: `loggedIn=false`). No Claude Max review was performed in this continuation, and no separately billed Anthropic API call was made.
+
+### 2026-11-03 public roadmap and contest-review visual follow-up
+
+The root `HANDOFF.md` contains the full visual findings. This detailed handoff records the current checkpoint: the 320px top-navigation issue in the public Grade 3–12 roadmap was caused by a more specific gap rule in `academy-ui.css`, and the page-level CSS now narrows the gap below 360px. The Grade 7/8 plan comparison was visually reviewed at desktop and mobile sizes. The competition paper-review form was visually checked at 390px and 320px; wrong responses reveal optional domain and error-reason fields, and the test did not save any record. The test used a temporary local preview of public pages and did not open the protected candidate.
+
+The 11/2 automated regression results above remain the latest suite results; no suite was rerun after the CSS-only adjustment. `git diff --check` passed before the handoff update. Current private R6 screenshots/A4 PDF and independent human math, language, rights/similarity, pilot, report-validation, and release approvals remain pending. The private screener remains locked. No OCR, Claude review, external API, sync, push, publication, or deployment was performed.
 
 ### 2026-11-02 Pre-Algebra concept-flow completeness
 
