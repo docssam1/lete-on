@@ -456,6 +456,16 @@
     return result;
   }
 
+  function isCompactFractionProblem(question) {
+    const prompt = String(question?.prompt || "");
+    const fractions = (prompt.match(/class="math-fraction"/g) || []).length;
+    const blocks = (prompt.match(/<(?:p|li|div|br)\b/gi) || []).length;
+    const text = prompt.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    return fractions >= 3 && fractions <= 6 && blocks <= 4 && text.length <= 180
+      && !/<(?:svg|table|img|canvas|style|figure)\b/i.test(prompt)
+      && !/class="[^"]*\bequation\b/i.test(prompt);
+  }
+
   function needsWidePrint(question) {
     const prompt = String(question?.prompt || "");
     if (prompt.includes("source62-layer-cut-problem")) return true;
@@ -463,7 +473,7 @@
     const fractionCount = (prompt.match(/class="math-fraction"/g) || []).length;
     const equations = [...prompt.matchAll(/class="[^"]*equation[^"]*"[^>]*>([\s\S]*?)<\/div>/g)]
       .map(match => match[1].replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/g, " ").replace(/\s+/g, " ").trim());
-    return fractionCount >= 3 || equations.some(equation => {
+    return (fractionCount >= 3 && !isCompactFractionProblem(question)) || equations.some(equation => {
       const operatorCount = (equation.match(/[+\-×÷=<>]/g) || []).length;
       return equation.length >= 72 || operatorCount >= 5 || equation.includes("↔");
     });
@@ -580,7 +590,7 @@
   function renderProblems() {
     $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired, fourUp }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}${fourUp ? " print-page--four-up" : ""}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
-      <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item" data-type-id="${escapeHtml(question.type.id)}">
+      <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item" data-type-id="${escapeHtml(question.type.id)}"${isCompactFractionProblem(question) ? ' data-compact-fraction="true"' : ""}>
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
         <div class="question-prompt">${renderMathNotation(question.prompt)}</div>
         <div class="answer-line">답</div>
