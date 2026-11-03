@@ -34,7 +34,11 @@ test("yearly AMC originals expose print, answer entry, and local self-marking", 
   await page.goto(`${url}?grade=7&program=amc8&year=2023`, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#archive-year option").count(), 41);
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023");
-  assert.match(await page.locator("#archive-open-link").innerText(), /2023 AMC 8.*인쇄·응시·해설/);
+  assert.match(await page.locator("#archive-open-link").innerText(), /2023 AMC 8.*온라인 회차/);
+  assert.equal(await page.locator("#archive-print-link").getAttribute("href"), "https://live.poshenloh.com/images/past-contests/pdf/amc8-2023-exam.pdf");
+  assert.equal(await page.locator("#archive-answer-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/answers");
+  assert.equal(await page.locator("#archive-solutions-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/solutions");
+  assert.match(await page.locator("#archive-route-note").innerText(), /41회 중 선택한 원본/);
   assert.equal(await page.locator(".paper-mark-row:first-child .mark-source-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/problem/1");
   assert.equal(await page.locator(".paper-mark-row:first-child .mark-source-link").getAttribute("target"), "_blank");
   await page.locator('[data-question="1"][data-field="answer"]').selectOption("E");
@@ -52,6 +56,9 @@ test("yearly AMC originals expose print, answer entry, and local self-marking", 
   assert.deepEqual(await page.locator("#archive-form option").allTextContents(), ["A형", "B형", "C형", "D형"]);
   await page.locator("#archive-form").selectOption("D");
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2021D");
+  assert.equal(await page.locator("#archive-print-link").getAttribute("href"), "https://live.poshenloh.com/images/past-contests/pdf/amc10-2021D-exam.pdf");
+  assert.equal(await page.locator("#archive-answer-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2021D/answers");
+  assert.equal(await page.locator("#archive-solutions-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2021D/solutions");
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   assert.deepEqual(errors, []);
   await page.close();
@@ -338,7 +345,7 @@ test("users can save an answer-free AMC review summary without turning it into r
   assert.equal(await page.locator("#archive-year").inputValue(), "2026");
   await page.locator("#archive-year").selectOption("2023");
   assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023");
-  assert.match(await page.locator("#archive-open-link").innerText(), /2023 AMC 8.*인쇄·응시·해설/);
+  assert.match(await page.locator("#archive-open-link").innerText(), /2023 AMC 8.*온라인 회차/);
   assert.equal(await page.locator("#review-paper-label").inputValue(), "2023 AMC 8");
   assert.deepEqual(await page.locator('[data-question="1"][data-field="domain"] option').allTextContents(), ["영역 선택", "식·대수", "수·비례·추정", "기하·공간", "경우의 수·확률", "그래프·표 해석"]);
   await page.locator("#review-exam-date").fill("2026-10-29");

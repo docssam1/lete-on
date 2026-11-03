@@ -14,6 +14,20 @@
   });
   function archiveFor(programId) { return archives[programId] || null; }
 
+  function formsFor(programId, year) {
+    const archive = archiveFor(programId);
+    const selectedYear = Number(year);
+    if (!archive || !archive.years.includes(selectedYear)) return Object.freeze([]);
+    if (programId === "amc8" || programId === "aime" && selectedYear <= 1999 || (programId === "amc10" || programId === "amc12") && selectedYear <= 2001) return Object.freeze([""]);
+    if ((programId === "amc10" || programId === "amc12") && selectedYear === 2021) return Object.freeze(["A", "B", "C", "D"]);
+    return programId === "aime" ? Object.freeze(["I", "II"]) : Object.freeze(["A", "B"]);
+  }
+
+  function contestCount(programId) {
+    const archive = archiveFor(programId);
+    return archive ? archive.years.reduce(function (total, year) { return total + formsFor(programId, year).length; }, 0) : 0;
+  }
+
   function formatFor(programId, year) {
     const archive = archiveFor(programId);
     const selectedYear = Number(year);
@@ -45,10 +59,27 @@
     const archive = archiveFor(programId);
     if (!archive || !archive.years.includes(Number(year))) return archive ? archive.archiveUrl : "";
     const formId = String(form || "").toUpperCase();
-    const suffix = programId === "amc8" ? "" : programId === "aime"
-      ? `${Number(year) <= 1999 ? "" : formId}`
-      : `${Number(year) <= 2001 ? "" : formId}`;
+    if (!formsFor(programId, year).includes(formId)) return "";
+    const suffix = formId;
     return `https://live.poshenloh.com/past-contests/${archive.path}/${Number(year)}${suffix}`;
+  }
+
+  function printRoute(programId, year, form) {
+    const route = archiveRoute(programId, year, form);
+    if (!route || route === "https://live.poshenloh.com/past-contests") return "";
+    const archive = archiveFor(programId);
+    const contestId = route.slice(route.lastIndexOf("/") + 1);
+    return `https://live.poshenloh.com/images/past-contests/pdf/${archive.path}-${contestId}-exam.pdf`;
+  }
+
+  function answerRoute(programId, year, form) {
+    const route = archiveRoute(programId, year, form);
+    return route && route !== "https://live.poshenloh.com/past-contests" ? `${route}/answers` : "";
+  }
+
+  function solutionsRoute(programId, year, form) {
+    const route = archiveRoute(programId, year, form);
+    return route && route !== "https://live.poshenloh.com/past-contests" ? `${route}/solutions` : "";
   }
 
   function problemRoute(programId, year, form, questionNumber) {
@@ -56,16 +87,10 @@
     const number = Number(questionNumber);
     if (!format || !Number.isInteger(number) || number < 1 || number > format.itemCount) return "";
     const selectedForm = String(form || "").toUpperCase();
-    const yearNumber = Number(year);
-    const allowedForms = programId === "amc8" || (programId === "amc10" || programId === "amc12") && yearNumber <= 2001 || programId === "aime" && yearNumber <= 1999
-      ? [""]
-      : yearNumber === 2021 && (programId === "amc10" || programId === "amc12")
-        ? ["A", "B", "C", "D"]
-        : programId === "aime" ? ["I", "II"] : ["A", "B"];
-    if (!allowedForms.includes(selectedForm)) return "";
+    if (!formsFor(programId, year).includes(selectedForm)) return "";
     const route = archiveRoute(programId, year, form);
     return route && route !== "https://live.poshenloh.com/past-contests" ? `${route}/problem/${number}` : "";
   }
 
-  return Object.freeze({ schemaVersion: "2.2.0", archives: archives, archiveFor: archiveFor, archiveRoute: archiveRoute, problemRoute: problemRoute, formatFor: formatFor });
+  return Object.freeze({ schemaVersion: "2.4.0", archives: archives, archiveFor: archiveFor, formsFor: formsFor, contestCount: contestCount, archiveRoute: archiveRoute, printRoute: printRoute, answerRoute: answerRoute, solutionsRoute: solutionsRoute, problemRoute: problemRoute, formatFor: formatFor });
 });

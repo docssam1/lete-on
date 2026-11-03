@@ -10,9 +10,12 @@ test("year and form routes cover the full authorized AMC archive", function () {
   assert.equal(library.archiveFor("amc8").years[0], 2026);
   assert.equal(library.archiveFor("amc8").years.at(-1), 1985);
   assert.equal(library.archiveFor("amc8").years.includes(2021), false);
+  assert.equal(library.contestCount("amc8"), 41);
   assert.equal(library.archiveFor("amc10").years.length, 26);
+  assert.equal(library.contestCount("amc10"), 52);
   assert.equal(library.archiveFor("amc12").years.length, 76);
   assert.equal(library.archiveFor("amc12").years.at(-1), 1950);
+  assert.equal(library.contestCount("amc12"), 102);
   assert.equal(library.archiveFor("aime").years.length, 44);
   assert.equal(library.archiveFor("aime").years[0], 2026);
   assert.equal(library.archiveFor("aime").years.at(-1), 1983);
@@ -20,6 +23,10 @@ test("year and form routes cover the full authorized AMC archive", function () {
   assert.equal(library.archiveRoute("amc8", 2023), "https://live.poshenloh.com/past-contests/amc8/2023");
   assert.equal(library.archiveRoute("amc10", 2025, "A"), "https://live.poshenloh.com/past-contests/amc10/2025A");
   assert.equal(library.archiveRoute("amc10", 2021, "D"), "https://live.poshenloh.com/past-contests/amc10/2021D");
+  assert.deepEqual(library.formsFor("amc10", 2021), ["A", "B", "C", "D"]);
+  assert.deepEqual(library.formsFor("amc8", 2023), [""]);
+  assert.deepEqual(library.formsFor("amc10", 2000), [""]);
+  assert.deepEqual(library.formsFor("aime", 1999), [""]);
   assert.equal(library.archiveRoute("amc12", 2024, "B"), "https://live.poshenloh.com/past-contests/amc12/2024B");
   assert.equal(library.archiveRoute("amc12", 1950, ""), "https://live.poshenloh.com/past-contests/amc12/1950");
   assert.equal(library.archiveRoute("amc10", 2000, ""), "https://live.poshenloh.com/past-contests/amc10/2000");
@@ -27,6 +34,17 @@ test("year and form routes cover the full authorized AMC archive", function () {
   assert.equal(library.archiveRoute("aime", 2000, "I"), "https://live.poshenloh.com/past-contests/aime/2000I");
   assert.equal(library.archiveRoute("aime", 1999, ""), "https://live.poshenloh.com/past-contests/aime/1999");
   assert.equal(library.archiveRoute("aime", 1983, ""), "https://live.poshenloh.com/past-contests/aime/1983");
+  assert.equal(library.printRoute("amc8", 2024, ""), "https://live.poshenloh.com/images/past-contests/pdf/amc8-2024-exam.pdf");
+  assert.equal(library.printRoute("amc10", 2025, "A"), "https://live.poshenloh.com/images/past-contests/pdf/amc10-2025A-exam.pdf");
+  assert.equal(library.printRoute("amc12", 1950, ""), "https://live.poshenloh.com/images/past-contests/pdf/amc12-1950-exam.pdf");
+  assert.equal(library.printRoute("aime", 1983, ""), "https://live.poshenloh.com/images/past-contests/pdf/aime-1983-exam.pdf");
+  assert.equal(library.printRoute("aime", 2024, "I"), "https://live.poshenloh.com/images/past-contests/pdf/aime-2024I-exam.pdf");
+  assert.equal(library.answerRoute("amc10", 2021, "D"), "https://live.poshenloh.com/past-contests/amc10/2021D/answers");
+  assert.equal(library.solutionsRoute("amc12", 1950, ""), "https://live.poshenloh.com/past-contests/amc12/1950/solutions");
+  assert.equal(library.printRoute("amc10", 2030, "A"), "");
+  assert.equal(library.archiveRoute("amc10", 2025, "D"), "");
+  assert.equal(library.answerRoute("amc10", 2030, "A"), "");
+  assert.equal(library.solutionsRoute("amc10", 2030, "A"), "");
   assert.equal(library.archiveRoute("amc10", 2030, "A"), "https://live.poshenloh.com/past-contests");
   assert.equal(library.problemRoute("amc8", 2023, "", 1), "https://live.poshenloh.com/past-contests/amc8/2023/problem/1");
   assert.equal(library.problemRoute("amc10", 2021, "D", 25), "https://live.poshenloh.com/past-contests/amc10/2021D/problem/25");
@@ -36,6 +54,22 @@ test("year and form routes cover the full authorized AMC archive", function () {
   assert.equal(library.problemRoute("aime", 2026, "III", 1), "");
   assert.equal(library.problemRoute("amc10", 2025, "D", 1), "");
   assert.equal(library.problemRoute("amc10", 2000, "A", 1), "");
+
+  const contests = Object.entries(library.archives).flatMap(([programId, archive]) => archive.years.flatMap((year) => {
+    const forms = programId === "amc8" || programId === "aime" && year <= 1999 || (programId === "amc10" || programId === "amc12") && year <= 2001
+      ? [""]
+      : year === 2021 && (programId === "amc10" || programId === "amc12") ? ["A", "B", "C", "D"]
+      : programId === "aime" ? ["I", "II"] : ["A", "B"];
+    return forms.map((form) => ({ programId, year, form, route: library.archiveRoute(programId, year, form) }));
+  }));
+  assert.equal(contests.length, 266);
+  assert.equal(new Set(contests.map((contest) => contest.route)).size, 266);
+  contests.forEach(({ programId, year, form, route }) => {
+    assert.match(route, /^https:\/\/live\.poshenloh\.com\/past-contests\/(?:amc8|amc10|amc12|aime)\//);
+    assert.equal(library.printRoute(programId, year, form).endsWith("-exam.pdf"), true);
+    assert.equal(library.answerRoute(programId, year, form), `${route}/answers`);
+    assert.equal(library.solutionsRoute(programId, year, form), `${route}/solutions`);
+  });
 });
 
 test("AMC 12 yearly formats preserve historical item counts, time, and score rules", function () {
@@ -65,6 +99,9 @@ test("paper review points to the year-by-year archive without shipping contest c
   const html = fs.readFileSync(path.join(projectRoot, "competition-paper-review.html"), "utf8");
   assert.match(html, /competition\/amc-original-paper-library\.js/);
   assert.match(html, /연도별 원본 기출/);
+  assert.match(html, /archive-print-link/);
+  assert.match(html, /archive-answer-link/);
+  assert.match(html, /archive-solutions-link/);
   assert.match(html, /MAA 허가를 받은 LIVE 기출 아카이브/);
   const reviewScript = fs.readFileSync(path.join(projectRoot, "competition-paper-review.js"), "utf8");
   assert.match(reviewScript, /정수 답\(0–999\)/);

@@ -81,26 +81,36 @@
         if (!paperLabel.value.trim() || paperLabel.value === paperLabel.dataset.archiveDefault) paperLabel.value = autoLabel;
         paperLabel.dataset.archiveDefault = autoLabel;
       };
+      const syncArchiveActions = function () {
+        const year = Number(yearSelect.value);
+        const form = formSelect.value;
+        const meta = paperLibrary.formatFor(format.id, year);
+        const label = `${year} ${meta ? meta.title : format.title}${form ? ` ${form}` : ""}`;
+        $("archive-open-link").href = paperLibrary.archiveRoute(format.id, year, form);
+        $("archive-open-link").textContent = `${label} · 온라인 회차 ↗`;
+        $("archive-print-link").href = paperLibrary.printRoute(format.id, year, form);
+        $("archive-print-link").textContent = `${label} · 시험지 PDF 인쇄 ↗`;
+        $("archive-answer-link").href = paperLibrary.answerRoute(format.id, year, form);
+        $("archive-answer-link").textContent = `${label} · 정답표 ↗`;
+        $("archive-solutions-link").href = paperLibrary.solutionsRoute(format.id, year, form);
+        $("archive-solutions-link").textContent = `${label} · 전문 풀이 ↗`;
+      };
       const renderArchiveRoute = function () {
         const year = Number(yearSelect.value);
-        const forms = format.id === "amc8" ? [""] : format.id === "aime" ? year <= 1999 ? [""] : ["I", "II"] : year === 2021 ? ["A", "B", "C", "D"] : year <= 2001 ? [""] : ["A", "B"];
+        const forms = paperLibrary.formsFor(format.id, year);
         $("archive-form-field").hidden = format.id === "amc8" || forms.length === 1;
         formSelect.replaceChildren();
         forms.forEach(function (form) { formSelect.append(option(form, form ? `${form}형` : "단일 시험지")); });
         formSelect.value = forms.includes(params.get("form")) ? params.get("form") : forms[0];
-        $("archive-open-link").href = paperLibrary.archiveRoute(format.id, year, formSelect.value);
-        const selectedPaperMeta = paperLibrary.formatFor(format.id, year);
-        $("archive-open-link").textContent = `${year} ${selectedPaperMeta ? selectedPaperMeta.title : format.title}${formSelect.value ? ` ${formSelect.value}형` : ""} · 인쇄·응시·해설 →`;
-        $("archive-route-note").textContent = "MAA 사용 허가를 받은 LIVE 아카이브에서 원본 PDF 인쇄, 시간 제한 풀이, 답안 확인, 문항별 개념·힌트·영상 및 서면 해설을 제공합니다.";
+        syncArchiveActions();
+        $("archive-route-note").textContent = `LIVE 연도별 색인 ${paperLibrary.contestCount(format.id)}회 중 선택한 원본이에요. 시험지 PDF·정답표·전문 풀이를 열고, 아래 문항별 링크에서 개념과 해설을 확인하세요.`;
         syncArchivePaperLabel();
         updateReviewSourceNote(format);
         updateUrl();
       };
       yearSelect.onchange = function () { renderArchiveRoute(); renderMarks(); };
       formSelect.onchange = function () {
-        $("archive-open-link").href = paperLibrary.archiveRoute(format.id, Number(yearSelect.value), formSelect.value);
-        const selectedPaperMeta = paperLibrary.formatFor(format.id, Number(yearSelect.value));
-        $("archive-open-link").textContent = `${yearSelect.value} ${selectedPaperMeta ? selectedPaperMeta.title : format.title} ${formSelect.value}형 · 인쇄·응시·해설 →`;
+        syncArchiveActions();
         syncArchivePaperLabel();
         updateUrl();
         renderMarks();
@@ -168,10 +178,10 @@
     const paperFormat = selectedPaperFormat(format);
     setText("review-source-note", format
       ? ["amc8", "amc10", "amc12"].includes(format.id)
-        ? `${paperFormat && paperFormat.title === "AHSME" ? `${paperFormat.title} ${$("archive-year").value} · ` : `${format.title} · `}${paperFormat ? `${paperFormat.itemCount}문항${paperFormat.durationMinutes ? ` · ${paperFormat.durationMinutes}분` : ""}` : `${format.itemCount}문항`}. ${paperFormat && paperFormat.rawOnly ? `${paperFormat.formatNote} 시간은 원본 시험지 안내를 확인하세요.` : paperFormat && paperFormat.formatNote ? paperFormat.formatNote : "먼저 A–E 답을 입력하고 공식 풀이와 대조해 결과를 표시하세요."} 풀이 영역을 모르면 비워 두세요.`
+        ? `${paperFormat && paperFormat.title === "AHSME" ? `${paperFormat.title} ${$("archive-year").value} · ` : `${format.title} · `}${paperFormat ? `${paperFormat.itemCount}문항${paperFormat.durationMinutes ? ` · ${paperFormat.durationMinutes}분` : ""}` : `${format.itemCount}문항`}. ${paperFormat && paperFormat.rawOnly ? `${paperFormat.formatNote} 시간은 원본 시험지 안내를 확인하세요.` : paperFormat && paperFormat.formatNote ? paperFormat.formatNote : "먼저 A–E 답을 입력하고 공개 정답표와 대조해 결과를 표시하세요."} 풀이 영역을 모르면 비워 두세요.`
         : format.id === "aime"
-          ? `${format.title} · ${format.itemCount}문항. 공식 답안과 대조할 수 있도록 각 문항의 정수 답(0–999)을 적고, 맞힘·오답·미응답을 표시하세요.`
-        : `${format.title} · ${format.itemCount}문항. 공식 풀이를 확인한 뒤 맞힘·오답·미응답을 표시하세요. 풀이 영역을 모르면 비워 두세요.`
+          ? `${format.title} · ${format.itemCount}문항. 공개 정답표와 대조할 수 있도록 각 문항의 정수 답(0–999)을 적고, 맞힘·오답·미응답을 표시하세요.`
+        : `${format.title} · ${format.itemCount}문항. 공개 정답표를 확인한 뒤 맞힘·오답·미응답을 표시하세요. 풀이 영역을 모르면 비워 두세요.`
       : "먼저 대회를 선택하세요.");
   }
   function renderSettings() {
@@ -195,10 +205,10 @@
     $("aime-review-note").hidden = programId !== "aime";
     document.querySelector(".score-history").hidden = programId === "aime" || !historyEngine;
     $("answer-entry-guide").hidden = !format || !["amc8", "amc10", "amc12", "aime"].includes(format.id);
-    $("answer-entry-guide").querySelector("strong").textContent = programId === "aime" ? "정수 답을 적고 공식 답안과 대조해요" : "응시 후 답을 옮기고 공식 풀이와 대조해요";
+    $("answer-entry-guide").querySelector("strong").textContent = programId === "aime" ? "정수 답을 적고 정답표와 대조해요" : "응시 후 답을 옮기고 정답표와 대조해요";
     $("answer-entry-guide").querySelector("p").textContent = programId === "aime"
-      ? "각 문항에 내가 쓴 정수 답(0–999)을 입력하고, 공식 답안·풀이와 대조한 뒤 맞힘·오답·미응답을 표시하세요. 이 답은 현재 화면에서만 사용합니다."
-      : "먼저 A–E에서 내가 고른 답을 입력하고, 공식 풀이를 확인한 뒤 맞힘·오답·미응답을 표시하세요. 점수와 오답 진단은 이 확인 결과를 기준으로 계산합니다.";
+      ? "각 문항에 내가 쓴 정수 답(0–999)을 입력하고, 공개 정답표·풀이와 대조한 뒤 맞힘·오답·미응답을 표시하세요. 이 답은 현재 화면에서만 사용합니다."
+      : "먼저 A–E에서 내가 고른 답을 입력하고, 공개 정답표와 대조한 뒤 맞힘·오답·미응답을 표시하세요. 점수와 오답 진단은 이 확인 결과를 기준으로 계산합니다.";
     document.querySelector(".review-change-note").hidden = !format;
     $("review-amc8-practice").hidden = !(grade === 6 && programId === "amc8");
     $("review-sasmo-source").hidden = programId !== "sasmo";
@@ -236,7 +246,7 @@
       [
         ...(hasChoiceAnswers ? [{ field: "answer", values: answerChoices, label: "내 답" }] : []),
         ...(hasIntegerAnswers ? [{ field: "answer", label: "내 답" }] : []),
-        { field: "status", values: statuses, label: "공식 풀이 대조" },
+        { field: "status", values: statuses, label: "정답 확인" },
         { field: "domain", values: domains, label: "영역" },
         { field: "reason", values: reasons, label: "오답 이유" }
       ].forEach(function (config) {
@@ -693,7 +703,7 @@
       amc8: { href: `./amc8-grade7-mock-exam.html?${new URLSearchParams({ grade: String(grade), sourceYear: practiceParams.get("sourceYear") || "", sourceQuestions: practiceParams.get("sourceQuestions") || "" }).toString()}`, title: "지필드 AMC 8 범위 모의고사", copy: "원본 시험지 복습 뒤 25문항·40분 자체 모의고사를 풀어요. 제출하면 이번 회차에서 다시 볼 영역의 풀이 연습으로 이어갑니다." },
       amc10: { href: `./amc10-gfield-mock-exam.html?${new URLSearchParams({ grade: String(grade), domains: practiceDomains.join(","), sourceYear: practiceParams.get("sourceYear") || "", sourceForm: practiceParams.get("sourceForm") || "", sourceQuestions: practiceParams.get("sourceQuestions") || "" }).toString()}`, title: "지필드 AMC 10 범위 모의고사", copy: "원본 시험지 복습 뒤 25문항·75분 자체 모의고사를 풀어요. 제출하면 이번 회차에서 막힌 개념을 골라 해설 연습으로 이어갑니다." },
       amc12: { href: `./amc12-gfield-mock-exam.html?${new URLSearchParams({ grade: String(grade), domains: practiceDomains.join(","), sourceYear: practiceParams.get("sourceYear") || "", sourceForm: practiceParams.get("sourceForm") || "", sourceQuestions: practiceParams.get("sourceQuestions") || "" }).toString()}`, title: "지필드 AMC 12 범위 모의고사", copy: "원본 시험지 복습 뒤 25문항·75분 지필드 자체 모의고사를 풀고, 결과에서 영역별 풀이와 맞춤 개념 연습으로 이어가요." },
-      aime: { href: `./aime-practice.html?grade=${grade}${practiceDomains.length ? `&domains=${encodeURIComponent(practiceDomains.join(","))}` : ""}${practiceParams.get("sourceYear") ? `&sourceYear=${practiceParams.get("sourceYear")}` : ""}${practiceParams.get("sourceForm") ? `&sourceForm=${encodeURIComponent(practiceParams.get("sourceForm"))}` : ""}${practiceParams.get("sourceQuestions") ? `&sourceQuestions=${practiceParams.get("sourceQuestions")}` : ""}`, title: practiceDomains.length ? "지필드 창작 AIME 영역 연습" : "지필드 AIME형 풀이 연습", copy: practiceDomains.length ? `이번 원본에서 표시한 ${practiceDomains.map(function (id) { return domains.find(function (domain) { return domain.id === id; })?.title || id; }).join("·")} 영역을 지필드가 새로 만든 정수 답안 문항으로 연습해요.` : "공식 풀이를 확인한 뒤 지필드가 새로 만든 AIME형 정수 답안 문제로 이어가요." }
+      aime: { href: `./aime-practice.html?grade=${grade}${practiceDomains.length ? `&domains=${encodeURIComponent(practiceDomains.join(","))}` : ""}${practiceParams.get("sourceYear") ? `&sourceYear=${practiceParams.get("sourceYear")}` : ""}${practiceParams.get("sourceForm") ? `&sourceForm=${encodeURIComponent(practiceParams.get("sourceForm"))}` : ""}${practiceParams.get("sourceQuestions") ? `&sourceQuestions=${practiceParams.get("sourceQuestions")}` : ""}`, title: practiceDomains.length ? "지필드 창작 AIME 영역 연습" : "지필드 AIME형 풀이 연습", copy: practiceDomains.length ? `이번 원본에서 표시한 ${practiceDomains.map(function (id) { return domains.find(function (domain) { return domain.id === id; })?.title || id; }).join("·")} 영역을 지필드가 새로 만든 정수 답안 문항으로 연습해요.` : "공개 풀이를 확인한 뒤 지필드가 새로 만든 AIME형 정수 답안 문제로 이어가요." }
     };
     const followUpConfig = followUpRoutes[selectedFormat().id];
     $("report-follow-up").hidden = !followUpConfig;
