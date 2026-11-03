@@ -898,3 +898,10 @@ Next: continue constructing the AMC 10 full-form route after original-paper revi
 - The GFIELD form is a first authored practice/diagnostic draft, not an AMC equivalent, level band, grade rank, qualification predictor, or calibrated comparison. Have an educator review wording, answer validity, balance, and intended difficulty, then pilot it before adding GFIELD cross-student bands. MAA's same-year/form report remains aggregate-all-grade context, not grade-specific norms.
 
 Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10's intended difficulty progression using original-paper metadata without reproducing copyrighted questions. Only then consider GFIELD performance bands. Preserve original-paper MAA cohort thresholds as distinct from any future grade-specific pilot data.
+
+### 2026-11-04 AMC 10 C/D source-context preservation
+
+- Followed a 2021 AMC 10 D result through the full original review → GFIELD mock → targeted practice chain. The mock preserved 2021/D and original question numbers; AMC10 practice had accepted only A/B, which dropped C/D in its source note and return path.
+- The practice page now accepts A–D and exposes a direct link to that exact LIVE original paper page for the printable paper, answer key, and worked solutions. The return-to-review route preserves the selected year/form too.
+- Verification: focused Chrome chain passes 2/2 at 390px, including AMC 10 D 2021 preserved through all stages, official source URL `.../2021D`, no overflow, and no runtime errors. Local only; no remote changes.
+- MAA's currently published 2025 AMC 10 A/B reports are transcribed in `competition/amc-score-distribution-reference.js` and confirmed by web search against the report entries: A top-10 threshold 94.5/150 (31,600 students); B top-10 threshold 87/150 (25,204 students). These remain same-form, all-grade cohort references; the public report does not provide a grade filter, so no grade-specific rank is inferred. Source: [MAA K–12 score distribution](https://maa.edvistas.com/eduview/report.aspx?mode=6&r631=&view=1561).

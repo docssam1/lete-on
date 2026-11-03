@@ -125,7 +125,7 @@
   const targetedNote = document.getElementById("targeted-practice-note");
   const selected = requestedDomains.map(function (id) { return bank.domains.includes(domainIds[id]) ? domainIds[id] : ""; }).filter(Boolean);
   const sourceYear = /^\d{4}$/.test(params.get("sourceYear") || "") ? params.get("sourceYear") : "";
-  const sourceForm = /^[AB]$/.test(params.get("sourceForm") || "") ? params.get("sourceForm") : "";
+  const sourceForm = /^[ABCD]$/.test(params.get("sourceForm") || "") ? params.get("sourceForm") : "";
   const sourceQuestions = (params.get("sourceQuestions") || "").split(",").map(Number).filter(function (value) { return Number.isInteger(value) && value > 0 && value <= 25; });
   const mockWrongQuestions = (params.get("mockWrongQuestions") || "").split(",").map(Number).filter(function (value) { return Number.isInteger(value) && value > 0 && value <= 25; });
   if (mockWrongQuestions.length) {
@@ -141,6 +141,13 @@
     description.textContent = `${mockDescription}${sourceDescription}${selected.length ? `${selected.join("·")} 영역의 GFIELD 창작 문항을 모았어요.` : "영역이 분류되지 않은 문항이 있어요. 아래에서 필요한 연습 영역을 골라 보세요."}`;
     const returnLink = document.getElementById("targeted-practice-return");
     returnLink.href = `./competition-paper-review.html?grade=${grade}&program=amc10${sourceYear ? `&year=${sourceYear}` : ""}${sourceForm ? `&form=${sourceForm}` : ""}`;
+    const sourceLink = document.getElementById("targeted-source-paper");
+    if (sourceLink && sourceYear) {
+      const formPath = Number(sourceYear) < 2002 ? sourceYear : `${sourceYear}${sourceForm || "A"}`;
+      sourceLink.href = `https://live.poshenloh.com/past-contests/amc10/${formPath}`;
+      sourceLink.textContent = `${sourceYear} AMC 10${sourceForm ? ` ${sourceForm}` : ""} 원본 문제·답·풀이 ↗`;
+      sourceLink.hidden = false;
+    }
   }
   document.getElementById("reset-practice").addEventListener("click", function () {
     answered.clear();

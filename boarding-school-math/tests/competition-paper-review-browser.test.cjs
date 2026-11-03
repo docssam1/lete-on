@@ -211,7 +211,7 @@ test("AMC 10 original review leads to a full mock and practice follows the mock'
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(`${url}?grade=9&program=amc10&year=2024&form=B`, { waitUntil: "networkidle" });
+  await page.goto(`${url}?grade=9&program=amc10&year=2021&form=D`, { waitUntil: "networkidle" });
   await page.locator('[data-question="3"][data-field="status"]').selectOption("wrong");
   await page.locator('[data-question="3"][data-field="domain"]').selectOption("number");
   await page.locator('[data-question="8"][data-field="status"]').selectOption("wrong");
@@ -221,12 +221,12 @@ test("AMC 10 original review leads to a full mock and practice follows the mock'
   assert.match(href, /^\.\/amc10-gfield-mock-exam\.html\?/);
   const target = new URL(href, "http://127.0.0.1");
   assert.equal(target.searchParams.get("domains"), "number,algebra");
-  assert.equal(target.searchParams.get("sourceYear"), "2024");
-  assert.equal(target.searchParams.get("sourceForm"), "B");
+  assert.equal(target.searchParams.get("sourceYear"), "2021");
+  assert.equal(target.searchParams.get("sourceForm"), "D");
   assert.equal(target.searchParams.get("sourceQuestions"), "3,8");
   await page.goto(new URL(href, url).href, { waitUntil: "networkidle" });
-  assert.match(await page.locator("#amc10-source-paper-note").innerText(), /2024 AMC 10 B 원본/);
-  assert.match(await page.locator("#amc10-mock-back").getAttribute("href"), /program=amc10&year=2024&form=B/);
+  assert.match(await page.locator("#amc10-source-paper-note").innerText(), /2021 AMC 10 D 원본/);
+  assert.match(await page.locator("#amc10-mock-back").getAttribute("href"), /program=amc10&year=2021&form=D/);
   await page.locator("#mock-start").click();
   assert.equal(await page.locator(".mock-question").count(), 25);
   assert.equal(await page.locator("#mock-timer").innerText(), "75:00");
@@ -241,30 +241,33 @@ test("AMC 10 original review leads to a full mock and practice follows the mock'
   const next = new URL(nextStudy, "http://127.0.0.1");
   assert.equal(next.pathname, "/boarding-school-math/amc10-practice.html");
   assert.equal(next.searchParams.get("domains"), "geometry");
-  assert.equal(next.searchParams.get("sourceYear"), "2024");
-  assert.equal(next.searchParams.get("sourceForm"), "B");
+  assert.equal(next.searchParams.get("sourceYear"), "2021");
+  assert.equal(next.searchParams.get("sourceForm"), "D");
   assert.equal(next.searchParams.get("sourceQuestions"), "3,8");
   assert.equal(next.searchParams.get("mockWrongQuestions"), "13");
   await page.goto(new URL(nextStudy, url).href, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".problem-card").count(), 3);
-  assert.match(await page.locator("#targeted-practice-description").innerText(), /지필드 모의고사 13번.*2024 AMC 10 B 원본에서 표시한 3, 8번 문항 이후 기하 영역/);
-  assert.equal(await page.locator("#targeted-practice-return").getAttribute("href"), "./competition-paper-review.html?grade=9&program=amc10&year=2024&form=B");
+  assert.match(await page.locator("#targeted-practice-description").innerText(), /지필드 모의고사 13번.*2021 AMC 10 D 원본에서 표시한 3, 8번 문항 이후 기하 영역/);
+  assert.equal(await page.locator("#targeted-practice-return").getAttribute("href"), "./competition-paper-review.html?grade=9&program=amc10&year=2021&form=D");
+  assert.equal(await page.locator("#targeted-source-paper").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2021D");
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   assert.deepEqual(errors, []);
   await page.close();
 });
 
-test("AMC 10 practice still supports direct original-review filtering", async function () {
+test("AMC 10 direct filtering keeps the 2021 D paper route and links back to its solutions", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
-  await page.goto(`${url.replace("competition-paper-review.html", "amc10-practice.html")}?grade=9&domains=number,algebra&sourceYear=2024&sourceForm=B&sourceQuestions=3,8`, { waitUntil: "networkidle" });
+  await page.goto(`${url.replace("competition-paper-review.html", "amc10-practice.html")}?grade=9&domains=number,algebra&sourceYear=2021&sourceForm=D&sourceQuestions=3,8`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".problem-card").count(), 6);
   assert.equal(await page.locator("#practice-count").innerText(), "6문항");
   assert.equal(await page.locator("#practice-progress").innerText(), "0 / 6");
   assert.equal(await page.locator("#targeted-practice-note").isVisible(), true);
-  assert.match(await page.locator("#targeted-practice-description").innerText(), /2024 AMC 10 B 원본에서 표시한 3, 8번 문항 이후 정수론·대수 영역/);
-  assert.equal(await page.locator("#targeted-practice-return").getAttribute("href"), "./competition-paper-review.html?grade=9&program=amc10&year=2024&form=B");
+  assert.match(await page.locator("#targeted-practice-description").innerText(), /2021 AMC 10 D 원본에서 표시한 3, 8번 문항 이후 정수론·대수 영역/);
+  assert.equal(await page.locator("#targeted-practice-return").getAttribute("href"), "./competition-paper-review.html?grade=9&program=amc10&year=2021&form=D");
+  assert.equal(await page.locator("#targeted-source-paper").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2021D");
+  assert.equal(await page.locator("#targeted-source-paper").isVisible(), true);
   const firstNumberItem = page.locator('.problem-card[data-item-id="amc10-g7-number-01"]');
   await firstNumberItem.locator('[data-choice="3"]').click();
   assert.equal(await page.locator("#practice-progress").innerText(), "1 / 6");
