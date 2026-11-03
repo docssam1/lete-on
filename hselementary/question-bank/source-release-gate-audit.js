@@ -25,6 +25,7 @@ require("./source-5-2-u5-page108-practice.js");
 require("./source-5-2-u5-three-loop-similar.js");
 require("./source-5-2-u5-string-height-similar.js");
 require("./source-5-2-u5-cube-cut-similar.js");
+require("./source-5-2-u5-mixed-packing-similar.js");
 require("./source-5-2-u6-page116-practice.js");
 require("./source-5-2-u6-equal-step-average-linked.js");
 require("./source-5-2-u6-grid-route-linked.js");
