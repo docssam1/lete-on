@@ -1,8 +1,16 @@
+### 2026-11-04 연도별 AMC 공개 점수 통계 웹 조사 추가
+
+2017–2021 AMC 10/12 A/B별 DHR·평균·응시 인원과 2017–2020 AMC 8 HR/DHR 경계를 제3자 연도표에서 확인해 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 연도·폼 단위로 기록했다. AMC 8의 2020 HR/DHR·평균도 별도 재인용 페이지에서 찾았지만 원본 점수보고서 및 표본 세부가 없어 기존 공개 점수분포 데이터와 합치지 않았다. 2021 AMC 12 B 평균은 출처가 `7.17`이라고 표기해 전사 오류 가능성이 있으므로 채택하지 않았다. 새 값은 모두 조사 근거로만 기록했고, 검증 전 앱·등급 비교 결과에는 연결하지 않았다.
+
+이유: MAA 공개 보고서로 확인한 2018–2019 AMC 8 및 2022–2026 AMC 8·2022–2025 AMC 10/12 비교 패널과 제3자 편집 통계를 혼합하지 않기 위해서다. AIME 진출선, DHR, 평균·표본 수는 각기 다른 수치로 유지한다.
+
+검증: Think Matrix와 Think Academy의 연도별 표, AMC 10/12 진출선 표, 2020 국제 결과 자료를 웹에서 열어 연도·폼·항목을 대조했다. MAA 원본 score report 전체와 2021 AMC 12 B의 올바른 평균은 이번 조사에서 회수하지 못했다. 로컬 문서만 수정했고 UI·코드 데이터는 변경하지 않았다. 다음: MAA 작성 연례 보고서/공개 통계 보고서를 연도·폼별로 회수해 참가 범위와 점수분포를 재검증한다.
+
 ### 2026-11-04 AMC 8 2018–2019 score reports added to year-specific review
 
 Web search recovered the 2018 MAA AMC 8 Contest Score Report PDF and a 2019 MAA score-report image reproduced by IvyTrack. Added the printed top 1/5/25/50/75% cut scores and report sample statistics for both years; no top 2.5% or top 10% values were invented. The 2019 report is dated 2020-01-01 and a separate reproduction reports a slightly different participant count, so the product keeps the 94,675 count attributed to the MAA report copy and clearly labels third-party reposts. Neither row is called a grade-level norm.
 
-The AMC 8 comparison now has 2018, 2019, 2022–2026 report rows. 2022 only shows the five thresholds printed in its report image. Updated asset versions because the modified reference and UI scripts retained old cache keys. In the browser, selected 2022 and entered its LIVE answer key (25/25); the panel showed its five cut lines, 71,143 report sample, 1,759 schools, date, secondary-source note, and source link. Then selected 2019 and used LIVE's published answer key to verify the same five-boundary flow, the 94,675 / 1,869 sample values, average 9.43, SD 4.46, report date, and year-specific repost label. Reset all test marks; no diagnostic was saved. Node REPL assertions verified 2018/2019/2022 values, report samples, dates, and absent thresholds. Final diff check and commit pending.
+The AMC 8 comparison now has 2018, 2019, 2022–2026 report rows. 2022 only shows the five thresholds printed in its report image. Updated asset versions because the modified reference and UI scripts retained old cache keys. In the browser, selected 2022 and entered its LIVE answer key (25/25); the panel showed its five cut lines, 71,143 report sample, 1,759 schools, date, secondary-source note, and source link. Then selected 2019 and used LIVE's published answer key to verify the same five-boundary flow, the 94,675 / 1,869 sample values, average 9.43, SD 4.46, report date, and year-specific repost label. Reset all test marks; no diagnostic was saved. Node REPL assertions verified 2018/2019/2022 values, report samples, dates, and absent thresholds. `git diff --check` passed; committed locally as `4ff5a2cd`.
 
 Evidence and source scope: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. Next: continue web search by contest year and form; keep score-distribution report rows, grade-specific samples, and award cutoffs in distinct categories. Local only; no push, deployment, or Drive sync.
 
