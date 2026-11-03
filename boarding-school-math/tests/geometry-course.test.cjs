@@ -19,7 +19,7 @@ test("GFIELD Geometry has a standards-scoped original progression with A4-ready 
       });
   }));
   assert.match(course.scope, /지필드가 새로 작성/);
-  assert.match(course.scope, /학교의 과목 배정과 연간 순서를 대신하지 않습니다/);
+  assert.match(course.scope, /학교의 과목 배정과 연간 순서를 대신하지 않으며/);
   assert.ok(course.sources.includes("https://www.thecorestandards.org/Math/Content/HSG/CO/"));
   assert.ok(course.sources.includes("https://www.thecorestandards.org/Math/Content/HSG/SRT/"));
   assert.ok(course.sources.includes("https://www.thecorestandards.org/Math/Content/HSG/C/"));

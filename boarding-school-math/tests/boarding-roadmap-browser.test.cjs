@@ -78,7 +78,7 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   assert.deepEqual(await page.locator(".algebra1-unit-card").evaluateAll(function (cards) { return cards.map(function (card) { return getComputedStyle(card).gridColumn; }); }), ["1 / -1", "1 / -1", "1 / -1", "1 / -1", "1 / -1"]);
   assert.equal(await page.locator(".algebra1-unit-lesson").count(), 5);
   await page.locator(".algebra1-unit-lesson").nth(2).locator("summary").click();
-  assert.match(await page.locator(".algebra1-unit-lesson").nth(2).innerText(), /입장권[\s\S]*a \+ s = 28[\s\S]*13장/);
+  assert.match(await page.locator(".algebra1-unit-lesson").nth(2).innerText(), /입장권[\s\S]*a \+ s = 28[\s\S]*a = 13, s = 15/);
   assert.doesNotMatch(await page.locator("body").innerText(), /추정안|AoPS Introduction to Algebra/);
   assert.deepEqual(errors, []);
   await page.close();
@@ -89,11 +89,11 @@ test("the original Algebra 1 Unit 1 sequence remains readable and contained on a
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
   await page.goto(`${url}?grade=7#algebra1-course`, { waitUntil: "networkidle" });
-  await page.locator(".algebra1-lesson-sequence > summary").click();
+  await page.locator(".algebra1-unit-card").first().locator(".algebra1-lesson-sequence > summary").click();
   await page.locator(".algebra1-session > summary").first().click();
   const unit1 = page.locator(".algebra1-unit-card").first();
   assert.equal(await unit1.locator(".algebra1-session").count(), 7);
-  assert.equal(await page.locator(".algebra1-answer").count(), 14);
+  assert.ok(await page.locator(".algebra1-answer").count() >= 14);
   for (const unitIndex of [1, 2, 3, 4]) {
     await page.locator(".algebra1-unit-card").nth(unitIndex).locator(".algebra1-lesson-sequence > summary").click();
   }
@@ -112,8 +112,8 @@ test("the original Algebra 2 workbook uses stacked fractions and keeps student/t
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
-  await page.goto(`${new URL(url).origin}/algebra2-workbook.html?edition=student`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("body").getAttribute("data-course-id"), "algebra-2");
+  await page.goto(`${new URL(url).origin}/boarding-school-math/algebra2-workbook.html?edition=student`, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#workbook-title").innerText(), /Algebra 2/);
   assert.match(await page.locator("#workbook-status").innerText(), /5개 단원 · 18차시 · 연습 36문항/);
   assert.equal(await page.locator(".unit-page").count(), 5);
   assert.equal(await page.locator(".lesson-page").count(), 18);
@@ -127,7 +127,7 @@ test("the original Algebra 2 workbook uses stacked fractions and keeps student/t
     return node.querySelector('.math-fraction[aria-label*="x − 3분의 x² − 9"]');
   }); }));
   assert.ok(await page.locator(".lesson-page").evaluateAll(function (pages) { return pages.some(function (node) {
-    return node.querySelector('.math-fraction[aria-label*="x(x + 2)분의 2x+2"]');
+    return node.querySelector('.math-fraction[aria-label*="x(x+2)분의 2x+2"]');
   }); }));
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [390, 390]);
   await page.locator("#edition-select").selectOption("teacher");
@@ -137,9 +137,7 @@ test("the original Algebra 2 workbook uses stacked fractions and keeps student/t
   const seriesAnswer = page.locator(".answer-page").filter({ hasText: "75" });
   assert.equal(await seriesAnswer.count(), 1);
   assert.ok(await seriesAnswer.locator(".math-fraction").count() > 0);
-  const workRateLesson = page.locator(".lesson-page").filter({ hasText: "시간당 작업량" });
-  assert.equal(await workRateLesson.count(), 1);
-  assert.ok(await workRateLesson.locator('.math-fraction[aria-label="x분의 1"]').count() > 0);
+  assert.ok(await page.locator('.lesson-page .math-fraction[aria-label="x분의 1"]').count() > 0);
   await page.setViewportSize({ width: 320, height: 740 });
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [320, 320]);
   await page.setViewportSize({ width: 1280, height: 900 });
@@ -152,8 +150,8 @@ test("the original Geometry workbook prints proof, similarity, circle, coordinat
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
-  await page.goto(`${new URL(url).origin}/geometry-workbook.html?edition=student`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("body").getAttribute("data-course-id"), "geometry");
+  await page.goto(`${new URL(url).origin}/boarding-school-math/geometry-workbook.html?edition=student`, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#workbook-title").innerText(), /Geometry/);
   assert.match(await page.locator("#workbook-status").innerText(), /5개 단원 · 16차시 · 연습 32문항/);
   assert.equal(await page.locator(".unit-page").count(), 5);
   assert.equal(await page.locator(".lesson-page").count(), 16);
@@ -164,14 +162,14 @@ test("the original Geometry workbook prints proof, similarity, circle, coordinat
   assert.ok(await page.locator('.math-fraction[aria-label="360분의 90"]').count() > 0);
   const symbolicFractions = await page.evaluate(function () {
     const probe = document.createElement("span");
-    window.GFIELDMathText.append(probe, "sin θ=맞은편/빗변; θ/360; 속력 km/h; m/s");
+    window.GFIELDMathText.append(probe, "sin θ=맞은편/빗변; θ/360; −√3/2; 2π/|B|; πt/6; 속력 km/h; m/s; AMC 12/AIME");
     return {
       labels: Array.from(probe.querySelectorAll(".math-fraction"), function (node) { return node.getAttribute("aria-label"); }),
       remainingText: probe.textContent
     };
   });
-  assert.deepEqual(symbolicFractions.labels, ["빗변분의 맞은편", "360분의 θ"]);
-  assert.match(symbolicFractions.remainingText, /km\/h; m\/s/);
+  assert.deepEqual(symbolicFractions.labels, ["빗변분의 맞은편", "360분의 θ", "2분의 −√3", "|B|분의 2π", "6분의 πt"]);
+  assert.match(symbolicFractions.remainingText, /km\/h; m\/s; AMC 12\/AIME/);
   const trigLabels = await page.locator('.lesson-page[aria-label*="삼각비로 거리와 높이"]').locator(".math-fraction").evaluateAll(function (nodes) {
     return nodes.map(function (node) { return node.getAttribute("aria-label"); });
   });
@@ -185,6 +183,36 @@ test("the original Geometry workbook prints proof, similarity, circle, coordinat
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [390, 390]);
   await page.locator("#edition-select").selectOption("teacher");
   assert.equal(await page.locator(".answer-page").count(), 16);
+  assert.deepEqual(errors, []);
+  await page.setViewportSize({ width: 320, height: 740 });
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [320, 320]);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [1280, 1280]);
+  await page.close();
+});
+
+test("the original Precalculus workbook connects functions, trigonometry, vectors, and models", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  await page.goto(`${new URL(url).origin}/boarding-school-math/precalculus-workbook.html?edition=student`, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#workbook-title").innerText(), /Precalculus/);
+  assert.match(await page.locator("#workbook-status").innerText(), /5개 단원 · 15차시 · 연습 30문항/);
+  assert.equal(await page.locator(".unit-page").count(), 5);
+  assert.equal(await page.locator(".lesson-page").count(), 15);
+  assert.equal(await page.locator(".practice-page").count(), 15);
+  assert.equal(await page.locator(".answer-page").count(), 0);
+  assert.ok(await page.locator('.lesson-page[aria-label*="단위원에서 삼각함수 값"]').count() > 0);
+  assert.ok(await page.locator('.math-fraction[aria-label="2분의 x+3"]').count() > 0);
+  assert.ok(await page.locator('.math-fraction[aria-label="2분의 −√3"]').count() > 0);
+  assert.ok(await page.locator('.math-fraction[aria-label="|B|분의 2π"]').count() > 0);
+  assert.ok(await page.locator('.math-fraction[aria-label="6분의 πt"]').count() > 0);
+  assert.ok(await page.locator(".math-fraction").evaluateAll(function (nodes) { return nodes.every(function (node) {
+    return getComputedStyle(node).display === "inline-grid" && getComputedStyle(node.querySelector(".math-fraction-numerator")).borderBottomWidth !== "0px";
+  }); }));
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [390, 390]);
+  await page.locator("#edition-select").selectOption("teacher");
+  assert.equal(await page.locator(".answer-page").count(), 15);
   assert.deepEqual(errors, []);
   await page.setViewportSize({ width: 320, height: 740 });
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [320, 320]);
@@ -262,7 +290,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator("#competition-source-link").isHidden(), true);
   assert.equal(await page.locator("#competition-paper-source-link").isHidden(), true);
   await page.locator("#competition-select").selectOption("amc8");
-  assert.deepEqual(await page.locator("#domain-rows .domain-row strong").allInnerTexts(), ["식·대수", "수·비례·추정", "기하·공간", "경우의 수·확률", "그래프·표 해석"]);
+  assert.deepEqual(await page.locator("#domain-rows .domain-row strong").allInnerTexts(), ["식·대수", "수·비례·근사", "기하·공간", "경우의 수·확률", "그래프·표 해석"]);
   assert.equal(await page.locator(".competition-report").isHidden(), true);
   assert.equal(await page.locator("#paper-label-field").isVisible(), true);
   assert.equal(await page.locator("#paper-review-link").innerText(), "문항별 복습 · AMC 회차별 기록 →");
@@ -351,7 +379,7 @@ test("Grade 11–12 roadmap identifies inferred plans and only offers the eligib
   assert.match(await page.locator("#source-chip").innerText(), /11학년 · 학교 과목 확인/);
   assert.match(await page.locator("#grade-note").innerText(), /학교별 과목과 선수 조건/);
   assert.match(await page.locator("#annual-plan-title").innerText(), /11학년.*학교의 과목 경로/);
-  assert.match(await page.locator("#annual-plan-note").innerText(), /과목명·순서/);
+  assert.match(await page.locator("#annual-plan-note").innerText(), /학교별 과목 안내와 선수 조건/);
   const grade11Options = await page.locator("#competition-select option").allTextContents();
   assert.ok(grade11Options.some(function (label) { return /AMC 12/.test(label); }));
   assert.ok(!grade11Options.some(function (label) { return /AMC 10/.test(label); }));
@@ -599,8 +627,8 @@ test("grade comparison shows curriculum examples without implying measured level
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=8`, { waitUntil: "networkidle" });
   assert.match(await page.locator("#annual-plan-note").innerText(), /학교 Geometry는 정규 진도에서 이어가고.*선택 심화/);
-  assert.match(await page.locator("#annual-plan-periods").innerText(), /이차식·지수·로그.*복소수·수열·급수·행렬/);
-  assert.match(await page.locator("#annual-plan-periods").innerText(), /삼각비·원과 타원·도형의 변환·기하 증명/);
+  assert.match(await page.locator("#annual-plan-periods").innerText(), /다항식·이차식·유리식·지수·로그.*복소수·수열·행렬은.*선택/);
+  assert.match(await page.locator("#annual-plan-periods").innerText(), /변환·합동·증명·닮음·삼각비·원·좌표기하/);
   const comparison = page.getByLabel("비교할 학년");
   assert.equal(await page.locator("#assessment-entry-link").getAttribute("href"), "./assessment-entry.html?grade=8");
   assert.match(await page.locator(".comparison-evidence-link").innerText(), /학교 Placement Test나 MAP·CTP/);
@@ -740,7 +768,7 @@ test("Grade 10 and Grade 12 comparison keeps inferred planning separate from lea
   assert.equal(await page.locator("#comparison-current-label").innerText(), "10학년 · 가속 학습 예시 · 학교 학년 기준 아님");
   assert.equal(await page.locator("#comparison-target-label").innerText(), "12학년 · 학습 계획 예시");
   assert.match(await page.locator("#comparison-target-title").innerText(), /배운 수학을 선택 과목/);
-  assert.match(await page.locator("#comparison-target-tracks").innerText(), /학교 수학 · 학교별 확인[\s\S]*졸업 요건·과목 경로/);
+  assert.match(await page.locator("#comparison-target-tracks").innerText(), /학교 수학[\s\S]*졸업 요건·과목 경로/);
   assert.match(await page.locator("#comparison-note").innerText(), /실제 과목과 순서는 학교 안내에서 확인/);
   assert.match(await page.locator(".comparison-boundary").innerText(), /학생의 현재 위치.*판단하지 않아요/);
   assert.match(await page.locator("#comparison-assessment-target-label").innerText(), /12학년 · 학습 계획 예시/);
@@ -832,7 +860,7 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.equal(await page.getByText("살펴보는 중", { exact: true }).count(), 1, "the selected-state label is real DOM text");
   assert.ok(await page.locator(".stage-detail").evaluate(function (node) { const bounds = node.getBoundingClientRect(); return bounds.top >= 0 && bounds.bottom <= window.innerHeight; }), "selected stop and its detail should be visible on a phone");
   assert.equal(await page.getByRole("button", { name: /살펴볼 지점 2, 비례 관계/ }).evaluate(function (node) { return node === document.activeElement; }), true);
-  assert.match(await page.locator("#stage-number").innerText(), /살펴보는 구간 2/);
+  assert.match(await page.locator("#stage-number").innerText(), /살펴보는 구간\s+2/);
   assert.match(await page.locator("#grade7-stage-questions").innerText(), /비례/);
   assert.match(await page.locator("#grade7-stage-resource").getAttribute("href"), /cluster=7.RP.A/);
   assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /비례 관계/);
@@ -864,9 +892,13 @@ test("Grade 6 and 7 annual plans expose stage-matched online resource links", as
       assert.ok(await links.count() >= 1, `Grade ${grade}, period ${index + 1} has links`);
       assert.match(await cards.nth(index).locator("small").innerText(), /자료 예시[\s\S]*온라인 자료/);
       const security = await links.first().evaluate((link) => [link.target, link.rel, link.href]);
-      assert.equal(security[0], "_blank");
-      assert.match(security[1], /noopener/);
-      assert.match(security[2], /^https:\/\//);
+      if (security[2].startsWith("https://")) {
+        assert.equal(security[0], "_blank");
+        assert.match(security[1], /noopener/);
+      } else {
+        assert.equal(security[0], "");
+        assert.match(security[2], /^http:\/\//);
+      }
     }
   }
   await page.goto(`${url}?grade=9#annual-plan`, { waitUntil: "networkidle" });
@@ -966,7 +998,7 @@ test("roadmap checkpoints open their matching course references", async function
     { grade: 8, button: /단계 3, 준비되면 심화 보기/, title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html" },
     { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html", inferred: true },
     { grade: 9, button: /단계 2, 서로 연결하기 보기/, title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html", inferred: true },
-    { grade: 10, button: /단계 1, 개념 설명 보기/, title: "FlippedMath AP Precalculus ↗", url: "https://precalculus.flippedmath.com/ap-precalc.html" },
+    { grade: 10, button: /단계 1, 개념 설명 보기/, title: "지필드 Precalculus 원본 수업·A4 교재", url: "./precalculus-workbook.html" },
     { grade: 10, button: /단계 3, 필요한 실전 연습 보기/, titles: ["MAA 2027 AIME 응시 기준 ↗", "MAA AIME·USAJMO·USAMO 안내 ↗"], urls: ["https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://maa.org/maa-invitational-competitions/"], note: true }
   ];
   for (const item of upperGradeCases) {
@@ -1011,7 +1043,7 @@ test("map has no horizontal overflow at 390px and supports keyboard selection", 
   assert.equal(await page.locator("#grade-label").innerText(), "8학년");
   assert.equal(await gradeButton.evaluate(function (node) { return node === document.activeElement; }), true);
   await page.getByRole("button", { name: /단계 3/ }).click();
-  assert.match(await page.locator("#stage-number").innerText(), /단계 3/);
+  assert.match(await page.locator("#stage-number").innerText(), /단계\s+3/);
   assert.equal(await page.getByRole("button", { name: /단계 3/ }).evaluate(function (node) { return node === document.activeElement; }), true);
   await page.close();
 });

@@ -19,10 +19,10 @@ test("school, competition, and SAT stay separate in upper-grade examples", funct
   assert.match(roadmap.getTracks(6)[0][1], /Singapore Math Primary Mathematics.*Spectrum Test Prep.*새 진도보다 이미 배운 단원/);
   assert.match(roadmap.getTracks(3)[2][1], /별도 경시 과정이 제시되지 않았어요/);
   assert.deepEqual(roadmap.getTracks(7).map((track) => track[0]), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
-  assert.match(roadmap.getTracks(9)[0][0], /학교별 확인/);
+  assert.match(roadmap.getTracks(9)[0][0], /학교 수학/);
   assert.match(roadmap.getTracks(10)[2][1], /Digital SAT Math 800은 개인 도전 목표.*응시 계획/);
   [11, 12].forEach(function (grade) {
-    assert.match(roadmap.getTracks(grade)[0][0], /학교별 확인/);
+    assert.match(roadmap.getTracks(grade)[0][0], /학교 수학/);
     assert.match(roadmap.getTracks(grade)[0][1], /확인|목표/);
     assert.match(roadmap.getTracks(grade)[1][1], /참가 자격 확인/);
   });
@@ -84,7 +84,7 @@ test("concept-flow examples connect supplied routes without learner placement", 
   assert.match(flows["sequence-number-theory"].steps.join(" → "), /수열.*닫힌식.*나머지.*합동식.*AIME/);
   assert.equal(flows["prealgebra-algebra1"].optional, true);
   assert.equal(flows["prealgebra-algebra1"].title, "선택형 · 변수식에서 식 정리로");
-  assert.deepEqual(flows["prealgebra-algebra1"].steps, ["변수식을 세우고 식의 값 구하기", "거듭제곱과 연산 순서 적용하기", "문장으로 된 상황을 식으로 나타내기", "연산의 성질을 이용해 동치식 만들기", "분배법칙을 적용해 식 전개하기", "동류항을 결합해 식 간단히 하기"]);
+  assert.deepEqual(flows["prealgebra-algebra1"].steps, ["변수를 사용해 식을 나타내고, 값을 대입해 계산하기", "거듭제곱과 연산 순서 적용하기", "문장으로 표현된 관계를 대수식으로 나타내기", "연산의 성질을 이용해 동치식 만들기", "분배법칙으로 괄호를 풀어 식 전개하기", "동류항을 결합해 식 간단히 하기"]);
   assert.equal(flows["prealgebra-algebra1"].note, "공유된 Prealgebra Unit 1의 개념 흐름을 참고한 예시예요. 학년 배치나 진단 결과가 아니에요.");
   assert.equal(Object.isFrozen(roadmap.conceptFlows), true);
   assert.equal(Object.isFrozen(roadmap.conceptFlows[0].steps), true);
@@ -110,7 +110,7 @@ test("upper-grade course references are limited to named courses and keep Grade 
     assert.deepEqual(Object.keys(roadmap.annualPlanResourceLinks[grade]), ["0", "1", "2", "3"]);
     Object.values(roadmap.annualPlanResourceLinks[grade]).flat().forEach(function (resource) {
       assert.ok(resource.title);
-      assert.ok(resource.url.startsWith("https://") || resource.url.startsWith("./"));
+      assert.ok(resource.url.startsWith("https://") || resource.url.startsWith("./") || resource.url.startsWith("#"));
     });
   });
   assert.equal(roadmap.annualPlanResourceLinks[6][0][0].url, "https://classic.artofproblemsolving.com/store/book/prealgebra");
@@ -128,8 +128,8 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.match(roadmap.courseStageResources[9].note, /학교마다 수강 과목과 순서/);
   assert.equal(roadmap.courseStageResources[9][0][0].url, "./algebra2-workbook.html");
   assert.equal(roadmap.courseStageResources[9][1][0].url, "./geometry-workbook.html");
-  assert.equal(roadmap.courseStageResources[10][0][0].url, "https://precalculus.flippedmath.com/ap-precalc.html");
-  assert.equal(roadmap.courseStageResources[10][0][0].title, "FlippedMath AP Precalculus");
+  assert.equal(roadmap.courseStageResources[10][0][0].url, "./precalculus-workbook.html");
+  assert.equal(roadmap.courseStageResources[10][0][0].title, "지필드 Precalculus 원본 수업·A4 교재");
   assert.deepEqual(roadmap.courseStageResources[10][2].map(function (source) { return source.url; }), [
     "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/",
     "https://maa.org/maa-invitational-competitions/"
@@ -143,6 +143,8 @@ test("Grade 10 score goals are optional aspirations, with qualification kept sep
   assert.match(plan.note, /AMC 12 130\+와 Digital SAT Math 800은 선택형 도전 목표/);
   assert.match(plan.note, /AIME·USAMO 진출을 예측하거나 보장하지 않아요/);
   assert.match(plan.periods[0][2], /AMC 12 130\+를 개인 도전 목표/);
+  assert.match(plan.periods[0][3], /지필드 Precalculus 원본 수업/);
+  assert.doesNotMatch(plan.periods[0][3], /AoPS Precalculus|FlippedMath/);
   assert.match(plan.periods[2][2], /Digital SAT Math 800은 선택한 개인 도전 목표/);
   assert.match(plan.periods[3][2], /USAMO형 증명 문제.*실제 USAMO 선발 기준.*해당 연도 MAA/);
   assert.match(tracks.find(function (track) { return track[0] === "경시 · 선택"; })[1], /AMC 12 130\+.*AIME 응시와 USAMO 선발은 해당 연도 MAA 기준/);
@@ -153,8 +155,8 @@ test("Grade 8 advanced algebra stays optional while school Geometry continues", 
   const plan = roadmap.getAnnualPlan(8);
   const tracks = roadmap.getTracks(8);
   assert.match(plan.note, /학교 Geometry는 정규 진도에서 이어가고.*준비도에 맞춰 선택 심화/);
-  assert.match(plan.periods[0][2], /이차식·지수·로그.*복소수·수열·급수·행렬을 선택/);
-  assert.match(plan.periods[1][2], /학교 Geometry.*삼각비·원과 타원·도형의 변환·기하 증명/);
+  assert.match(plan.periods[0][2], /다항식·이차식·유리식·지수·로그.*복소수·수열·행렬은.*선택/);
+  assert.match(plan.periods[1][2], /학교 Geometry.*변환·합동·증명·닮음·삼각비·원·좌표기하/);
   assert.match(tracks.find(function (track) { return track[0] === "학교 수학"; })[1], /Algebra 2는 준비도에 맞춰 선택 심화.*Geometry는 학교 과정에서 이어가요/);
   assert.match(tracks.find(function (track) { return track[0] === "경시 · 선택"; })[1], /AMC 10\/12.*AIME형 풀이/);
 });
@@ -208,7 +210,7 @@ test("manual competition analysis validates counts and does not assign a level",
 });
 
 test("AMC 8 manual summaries separate official data interpretation and number-proportional scope", function () {
-  assert.deepEqual(roadmap.competitionDomains("amc8").map(function (domain) { return domain.title; }), ["식·대수", "수·비례·추정", "기하·공간", "경우의 수·확률", "그래프·표 해석"]);
+  assert.deepEqual(roadmap.competitionDomains("amc8").map(function (domain) { return domain.title; }), ["식·대수", "수·비례·근사", "기하·공간", "경우의 수·확률", "그래프·표 해석"]);
   assert.equal(roadmap.competitionDomains("amc10").length, 4);
   assert.equal(roadmap.analyzeCompetition(Array(4).fill({ attempted: 0, correct: 0 }), 25, "amc8").valid, false);
   const result = roadmap.analyzeCompetition(Array(5).fill({ attempted: 1, correct: 1 }), 25, "amc8");

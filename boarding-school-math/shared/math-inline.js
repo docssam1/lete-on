@@ -4,8 +4,10 @@
   function append(target, value) {
     const text = String(value == null ? "" : value);
     const parenthesized = "\\((?:[^()]|\\([^()]*\\))*\\)";
-    const mathToken = "(?:[−-]?(?:\\d+(?:\\.\\d+)?π?|π)|[A-Za-z]|[θΘ]|[가-힣]+)";
-    const denominator = `(?:\\d+(?:\\.\\d+)?|${parenthesized}|[A-Za-z]\\w*|[θΘ]|[가-힣]+)`;
+    const absoluteValue = "\\|[^|]+\\|";
+    const algebraicTerm = "(?:\\d+(?:\\.\\d+)?π?[A-Za-z]?|π[A-Za-z]?|[A-Za-z])";
+    const mathToken = `(?:[−-]?(?:${algebraicTerm}|√(?:\\d+(?:\\.\\d+)?|${parenthesized}))|${absoluteValue}|[θΘ]|[가-힣]+)`;
+    const denominator = `(?:\\d+(?:\\.\\d+)?|${parenthesized}|${absoluteValue}|[A-Za-z]\\([^()]*\\)|[A-Za-z](?:_\\d+)?|[θΘπΠ]|[가-힣]+)`;
     const fraction = new RegExp(`(^|[^\\w./])(${mathToken}|${parenthesized})\\s*\\/\\s*(${denominator})(?![\\w./])`, "g");
     const unitRates = new Set(["m/s", "mi/h", "ft/s"]);
     let cursor = 0;

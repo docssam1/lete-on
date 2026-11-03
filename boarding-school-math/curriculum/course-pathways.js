@@ -85,16 +85,16 @@
       id: "precalculus",
       title: "Precalculus",
       grades: "주로 11–12학년",
-      summary: "함수·삼각함수·벡터·수열과 극한 준비를 대학 수학과 심화 경시로 가교합니다.",
+      summary: "함수 변환과 다항·유리함수에서 지수·로그·수열, 단위원·삼각함수, 벡터·복소수까지 연결합니다.",
       prerequisites: "Algebra 2 함수·지수·로그·수열 근거",
-      focus: ["Function families", "Trigonometry", "Vectors & complex numbers", "Sequences & limits readiness"],
-      units: ["Function families & modeling", "Trigonometry & analytic geometry", "Vectors, matrices & complex numbers", "Sequences, limits readiness & data"],
+      focus: ["Function structure & transformations", "Polynomial & rational functions", "Exponential, logarithmic & sequence models", "Unit circle & trigonometry", "Vectors, complex numbers & modeling"],
+      units: ["Functions & transformations", "Polynomial & rational function graphs", "Exponential, logarithmic & sequence models", "Trigonometry & unit circle", "Vectors, complex numbers & model choice"],
       previousOptions: ["algebra-2"],
       nextOptions: [],
       next: "College math / AMC 12 extension",
-      studentHref: "#availability",
-      teacherHref: "#high-school-bridge",
-      availability: "과정 지도 공개 · 세부 교차표와 수업 자료는 검수 대기"
+      studentHref: "./precalculus-workbook.html",
+      teacherHref: "./precalculus-workbook.html?edition=teacher",
+      availability: "지필드 원본 5단원·15차시·30문항 공개 · 극한·미적분은 이 교재의 범위에 포함하지 않음"
     })
   ]);
 

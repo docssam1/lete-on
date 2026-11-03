@@ -10,7 +10,7 @@ The shared fraction renderer now displays numeric fractions and parenthesized al
 
 Verification: directly rendered the Algebra 2 workbook in the local browser at 320px, 390px, and 1280px with no horizontal overflow or page errors; confirmed 5 unit pages, 18 lesson pages, 18 practice pages, and 42 A4 page cards. The student edition contains no answer pages; the teacher edition contains 18 answer pages. Numeric and nested algebraic fractions show horizontal bars (including `75/8` and `(2x+2)/(x(x+2))`), while `km/h` remains slash notation. The Grade 8 route links to `./algebra2-workbook.html` in the same tab. Course data counts and representative worked answers were checked in the Node REPL. The repository test runner could not be invoked from this shell because `node` is not on PATH; targeted browser checks were performed manually, not claimed as a suite run. `git diff --check` is recorded after final edits. Changes remain local; no push, deployment, Drive sync, or API call.
 
-Next: build GFIELD-original Geometry and Precalculus course materials, keeping actual school course choice separate from inferred grade examples; then integrate standards-aligned diagnostic and course comparison evidence. Grade 7 private diagnostic and contest candidates remain behind independent review, pilot, and release gates.
+Next: continue the public roadmap's grade-to-grade course comparison and contest-diagnostic evidence review. Keep school course choice separate from inferred grade examples; do not convert contest scores into placement claims. Grade 7 private diagnostic and contest candidates remain behind independent review, pilot, and release gates.
 
 ### 2026-11-03 original Geometry course
 
@@ -403,3 +403,11 @@ The broader run exposed that `competition-practice-browser.test.cjs` did not acc
 `node --check` and scoped `git diff --check` pass. Private Grade 7 `7.NS.A` and AMC R6 item candidates remain locked; the public suites validate release boundaries and do not satisfy independent item, rights, accessibility, pilot, or release approvals. No private item content or learner records were accessed. Local only; no push/deployment.
 
 Metadata-only Google Drive recheck searched for the AMC R6 desktop/mobile captures, its current A4 review PDF, and the Grade 7 NS.A revision-11 review record; all four searches returned no results. No files were downloaded or opened. Current candidate evidence and approval state remain unchanged.
+
+### 2026-11-03 GFIELD Precalculus course and horizontal fraction rendering
+
+Added the original GFIELD Precalculus student/teacher A4 workbook and pathway entry. The course has five units, 15 lessons, and 30 original practice prompts: function structure/transformations; polynomial and rational graphs; exponential/logarithmic and sequence models; unit-circle trigonometry; vectors, complex numbers, and model selection. It is scoped to named Common Core high-school function, algebra, vector, and complex-number standards. Grade placement and sequence remain school-dependent; limits and calculus are not taught.
+
+Updated the shared inline math renderer to stack symbolic numerator and denominator content on a horizontal rule. It now handles Greek/Korean labels, π-variable products, radicals, absolute-value factors, and parenthesized products such as `x(x+2)`. It preserves rate notation (`km/h`, `m/s`) and contest names (`AMC 12/AIME`) as literal slash text. All six HTML consumers load cache version `20261103-11`.
+
+Verification: 18/18 focused course/pathway/roadmap model assertions pass. Three focused Chrome workbook checks pass for Geometry, Algebra 2, and Precalculus; these confirm horizontal-bar CSS, the `2π/|B|`, `πt/6`, `−√3/2`, Korean trig ratio, and nested algebraic denominator cases, plus student/teacher page counts. A full roadmap browser-suite attempt exposed existing stale expectations; several were refreshed, but the full suite was not rerun to completion. No print-to-PDF review was performed. No private item data was opened. Local-only; no push or deployment.

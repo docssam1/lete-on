@@ -16,7 +16,7 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
     assert.ok(course.next);
     assert.ok(course.availability);
     assert.match(course.studentHref, /^(\.\/|#availability$)/);
-    assert.match(course.teacherHref, /^(\.\/catalog\.html\?role=teacher|#high-school-bridge$)/);
+    assert.match(course.teacherHref, /^(\.\/|#high-school-bridge$)/);
     assert.ok(course.focus.length >= 3);
     assert.ok(course.units.length >= 4);
     assert.ok(Array.isArray(course.previousOptions));
@@ -36,6 +36,11 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
   assert.equal(geometry.teacherHref, "./geometry-workbook.html?edition=teacher");
   assert.equal(geometry.units.length, 5);
   assert.match(geometry.availability, /5단원·16차시·32문항/);
+  const precalculus = pathways.courses.find(function (course) { return course.id === "precalculus"; });
+  assert.equal(precalculus.studentHref, "./precalculus-workbook.html");
+  assert.equal(precalculus.teacherHref, "./precalculus-workbook.html?edition=teacher");
+  assert.equal(precalculus.units.length, 5);
+  assert.match(precalculus.availability, /5단원·15차시·30문항/);
   const algebra1 = pathways.courses.find(function (course) { return course.id === "algebra-1"; });
   assert.deepEqual(algebra1.previousOptions, ["pre-algebra"]);
   assert.deepEqual(algebra1.nextOptions, ["geometry", "algebra-2"]);

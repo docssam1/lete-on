@@ -29,7 +29,7 @@
 
   const algebra2Reference = Object.freeze({ title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html" });
   const geometryReference = Object.freeze({ title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" });
-  const preCalculusReference = Object.freeze({ title: "FlippedMath AP Precalculus", url: "https://precalculus.flippedmath.com/ap-precalc.html" });
+  const preCalculusReference = Object.freeze({ title: "지필드 Precalculus 원본 수업·A4 교재", url: "./precalculus-workbook.html" });
   const maaAime2027Reference = Object.freeze({ title: "MAA 2027 AIME 응시 기준", url: "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/" });
   const maaInvitationalReference = Object.freeze({ title: "MAA AIME·USAJMO·USAMO 안내", url: "https://maa.org/maa-invitational-competitions/" });
   const annualPlanResourceLinks = Object.freeze({
@@ -135,10 +135,10 @@
       ["10–12개월", "다음 과목 준비 확인", "함수·삼각비의 기초를 살펴보고 다음 과목의 선수 개념을 교사와 확인해요.", "학교 과목 계획 · 선수 개념 복습"]
     ]) }),
     10: Object.freeze({ source: "provided", title: "Pre-Calculus에서 증명·시험 선택까지", note: "AMC 12 130+와 Digital SAT Math 800은 선택형 도전 목표예요. 이 계획은 점수나 AIME·USAMO 진출을 예측하거나 보장하지 않아요.", periods: Object.freeze([
-      ["1–3개월", "Pre-Calculus와 AMC 12 준비", "함수와 삼각법을 그래프로 이해하고 문제에 적용해요. 원한다면 AMC 12 130+를 개인 도전 목표로 기록해요.", "AoPS Precalculus · AoPS Volume 1 · AMC 12 기출"],
-      ["4–6개월", "AIME형 정수론·조합", "풀이를 외우기보다 어떤 개념을 왜 썼는지 설명해요.", "AoPS Intermediate Counting & Probability · Intermediate Number Theory · AIME 기출"],
+      ["1–3개월", "Pre-Calculus와 AMC 12 준비", "함수와 삼각법을 그래프로 이해하고 문제에 적용해요. 원한다면 AMC 12 130+를 개인 도전 목표로 기록해요.", "지필드 Precalculus 원본 수업 · AMC 12 기출"],
+      ["4–6개월", "AIME형 정수론·조합", "풀이를 외우기보다 어떤 개념을 왜 썼는지 설명해요.", "정수론·조합 연결 연습 · AIME 기출"],
       ["7–9개월", "SAT Math 점검", "응시 계획이 있다면 공식 형식에 맞춰 약한 영역을 확인해요. Digital SAT Math 800은 선택한 개인 도전 목표로 기록할 수 있어요.", "College Board 공식 디지털 SAT 자료 · Khan Academy SAT Math"],
-      ["10–12개월", "증명과 다음 단계", "준비도에 맞춰 USAMO형 증명 문제도 연습해요. 실제 USAMO 선발 기준은 해당 연도 MAA 안내에서 확인해요.", "AoPS Volume 2 · 증명 연습 · 선택한 경시 문제"]
+      ["10–12개월", "증명과 다음 단계", "준비도에 맞춰 USAMO형 증명 문제도 연습해요. 실제 USAMO 선발 기준은 해당 연도 MAA 안내에서 확인해요.", "증명 연습 · 선택한 경시 문제"]
     ]) }),
     11: Object.freeze({ source: "inferred", title: "학교의 과목 경로를 확인하고 연결하기", note: "학교별 과목 안내와 선수 조건을 먼저 확인해요. 아래는 고등학교 수학의 공통 내용 범주를 활용한 학습 예시예요.", periods: Object.freeze([
       ["1–3개월", "현재 수업과 선수 조건 확인", "성적표와 학교 안내에서 지금 배우는 과목, 필요한 선수 개념, 다음 선택지를 정리해요.", "학교 course catalog · 교사 상담 · 현재 수업 자료"],
