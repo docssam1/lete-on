@@ -120,7 +120,7 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .course-path-notice { margin: 13px 0 0; color: #566274; font-size: .8rem; line-height: 1.55; }
 .algebra1-unit-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
 .algebra1-unit-card { min-width: 0; display: grid; grid-template-columns: 42px minmax(0,1fr); gap: 13px; padding: 17px; border: 1px solid #d8dee8; border-radius: 12px; background: #fff; }
-.algebra1-unit-card:nth-child(-n+2) { grid-column: 1 / -1; }
+.algebra1-unit-card:nth-child(-n+3) { grid-column: 1 / -1; }
 .algebra1-unit-number { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #60418f; font-size: .75rem; font-weight: 900; }
 .algebra1-unit-card h3 { margin: 2px 0 0; font-size: 1rem; line-height: 1.4; }
 .algebra1-unit-question { margin: 7px 0 0; color: #4e3b69; font-size: .85rem; font-weight: 750; line-height: 1.5; }
@@ -749,7 +749,7 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
   .course-path-cards { grid-template-columns: 1fr; }
   .course-path-card { min-height: 0; }
   .algebra1-unit-list { grid-template-columns: 1fr; }
-  .algebra1-unit-card:nth-child(-n+2) { grid-template-columns: 1fr; }
+  .algebra1-unit-card:nth-child(-n+3) { grid-template-columns: 1fr; }
   .algebra1-starter ol { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 @media (max-width: 600px) {

@@ -50,7 +50,7 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   assert.equal(await page.evaluate(function () { return location.hash; }), "#algebra1-course");
   assert.match(await page.locator("#algebra1-course").innerText(), /식의 구조와 방정식[\s\S]*지필드 원본[\s\S]*3\(2x − 1\) = 15/);
   assert.equal(await page.locator(".algebra1-unit-card").count(), 5);
-  assert.equal(await page.locator(".algebra1-lesson-sequence").count(), 2);
+  assert.equal(await page.locator(".algebra1-lesson-sequence").count(), 3);
   const unit1 = page.locator(".algebra1-unit-card").first();
   await unit1.locator(".algebra1-lesson-sequence > summary").click();
   assert.equal(await unit1.locator(".algebra1-session").count(), 7);
@@ -63,6 +63,10 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   assert.equal(await unit2.locator(".algebra1-session").count(), 6);
   assert.match(await unit2.innerText(), /함수 표기법으로 출력 구하기[\s\S]*상황에 맞는 일차함수 만들기/);
   assert.deepEqual(await page.locator(".algebra1-standard-sources a").evaluateAll(function (links) { return links.map(function (link) { return link.href; }); }), ["https://www.thecorestandards.org/Math/Content/HSA/", "https://www.thecorestandards.org/Math/Content/HSF/"]);
+  const unit3 = page.locator(".algebra1-unit-card").nth(2);
+  await unit3.locator(".algebra1-lesson-sequence > summary").click();
+  assert.equal(await unit3.locator(".algebra1-session").count(), 6);
+  assert.match(await unit3.innerText(), /연립방정식의 해와 그래프의 교점[\s\S]*연립부등식과 가능한 영역/);
   assert.equal(await page.locator(".algebra1-unit-lesson").count(), 5);
   await page.locator(".algebra1-unit-lesson").nth(2).locator("summary").click();
   assert.match(await page.locator(".algebra1-unit-lesson").nth(2).innerText(), /입장권[\s\S]*a \+ s = 28[\s\S]*13장/);
