@@ -1,10 +1,12 @@
-### 2026-11-04 연도별 AMC 공개 점수 통계 웹 조사 추가
+### 2026-11-04 AMC 웹 조사 후속 · 연도별 기준선 앱 반영
 
-2017–2021 AMC 10/12 A/B별 DHR·평균·응시 인원과 2017–2020 AMC 8 HR/DHR 경계를 제3자 연도표에서 확인해 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 연도·폼 단위로 기록했다. AMC 8의 2020 HR/DHR·평균도 별도 재인용 페이지에서 찾았지만 원본 점수보고서 및 표본 세부가 없어 기존 공개 점수분포 데이터와 합치지 않았다. 2021 AMC 12 B 평균은 출처가 `7.17`이라고 표기해 전사 오류 가능성이 있으므로 채택하지 않았다. 새 값은 모두 조사 근거로만 기록했고, 검증 전 앱·등급 비교 결과에는 연결하지 않았다.
+2012–2016 AMC 10/12 A/B 20개 회차의 평균·상위 1% 기준을 [IvyTrack 연도별 결과표](https://www.ivytrack.org/forum.php?action=printable&mod=viewthread&tid=19383)와 [Math Gold Medalist AMC 10](https://mathgoldmedalist.com/competitions/amc-10)/[AMC 12](https://mathgoldmedalist.com/competitions/amc-12) 연도표에서 교차 확인해 `amc-score-distribution-reference.js`에 연결했다. 2018 AMC 12 B는 처음 보류했으나 추가 표에서 DHR 126·Top5 99·평균 57.85가 일치해 포함했다. 서로 값이 섞인 AMC 10 B 수치는 적용하지 않았다.
 
-이유: MAA 공개 보고서로 확인한 2018–2019 AMC 8 및 2022–2026 AMC 8·2022–2025 AMC 10/12 비교 패널과 제3자 편집 통계를 혼합하지 않기 위해서다. AIME 진출선, DHR, 평균·표본 수는 각기 다른 수치로 유지한다.
+2021 가을 AMC 10/12는 출처 충돌이 있는 평균을 앱에서 제외했다. AMC 12 B DHR도 재인용 값이 130/130.5로 달라 비워 두고, 맞는 Top5 값만 표시했다. 이 2012–2021 행은 MAA 원본 결과표 파일을 직접 회수한 상태가 아니라 제3자 연도별 재인용이다. 표본·학교 수·표준편차를 만들지 않았고, 학년별 규준이나 개인 등급으로 부르지 않는다. 결과 화면에서 재인용 범위와 가능한 교차 출처 링크를 노출한다.
 
-검증: Think Matrix와 Think Academy의 연도별 표, AMC 10/12 진출선 표, 2020 국제 결과 자료를 웹에서 열어 연도·폼·항목을 대조했다. MAA 원본 score report 전체와 2021 AMC 12 B의 올바른 평균은 이번 조사에서 회수하지 못했다. 로컬 문서만 수정했고 UI·코드 데이터는 변경하지 않았다. 다음: MAA 작성 연례 보고서/공개 통계 보고서를 연도·폼별로 회수해 참가 범위와 점수분포를 재검증한다.
+검증: 번들 Node REPL에서 AMC 10/12 2012–2016 양식 각 10행, 2018 AMC 12 B, 2021 가을 충돌 필드의 부재와 67개 데이터 행의 알려진 기준점 순서를 검사했다. 모두 통과했고 `git -c core.whitespace=cr-at-eol diff --check`도 통과. 브라우저에서 2016 AMC 10 B 원본 선택을 확인해 PDF·정답표·전문 풀이·문항별 풀이 링크를 대조했다. 결과 보기 상호작용 후 통계 패널 표시는 이번 검수에서 확인되지 않아, 연도별 기준 비교의 화면 렌더 검수는 남아 있다. `raw_youtube.txt`는 미추적 상태로 보존. 다음: 2000–2011 공개 연도표와 MAA 작성 연례 보고서를 회차별로 대조해 확인된 경쟁 통계를 확장하고, 2021 가을 충돌은 MAA 원본 리포트가 확보될 때 재검토한다. AMC 원본 시험지 카탈로그는 [266회 인벤토리](boarding-school-math/competition/amc-original-source-catalog.csv)에 연도·폼·인쇄 PDF·정답표·전문 풀이 링크로 기록돼 있다.
+
+커밋·배포 상태는 아래 Git 로그/현재 상태를 확인한다. 로컬 변경만이며 push, 배포, Drive 동기화 없음.
 
 ### 2026-11-04 AMC 8 2018–2019 score reports added to year-specific review
 

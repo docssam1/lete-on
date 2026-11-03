@@ -571,8 +571,8 @@
       : null;
     amcCohortSection.hidden = !amcCohort;
     if (amcCohort) {
-      const cohortName = selectedFormat().id === "amc8" ? "AMC 8" : `${selectedFormat().title} ${selectedForm}`;
-      setText("amc-cohort-summary", `응시 학년 Grade ${grade} · ${selectedYear} ${cohortName} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}점 · 보고서 표본 기준점과 대조합니다.`);
+      const cohortName = amcCohort.displayLabel || (selectedFormat().id === "amc8" ? "AMC 8" : `${selectedFormat().title} ${selectedForm}`);
+      setText("amc-cohort-summary", `${selectedYear} ${cohortName} · Grade ${grade}로 입력한 점수 ${result.scoreEstimate.points} / ${result.scoreEstimate.max} · 공개된 해당 회차 전체 응시자 기준과 대조합니다.`);
       const cohortBands = $("amc-cohort-bands");
       cohortBands.replaceChildren();
       amcReference.bands.filter(function (band) { return Number.isFinite(amcCohort[band.id]); }).forEach(function (band) {
@@ -584,11 +584,27 @@
         const details = document.createElement("small"); details.textContent = reached ? "기준점 이상" : "기준점 미만";
         item.append(label, score, details); cohortBands.append(item);
       });
-      const reportAsOf = amcCohort.reportAsOf ? ` · 자료 기준일 ${amcCohort.reportAsOf}` : "";
-      setText("amc-cohort-stats", `MAA 보고서 표본 ${amcCohort.students.toLocaleString("en-US")}명 · 학교 ${amcCohort.schools.toLocaleString("en-US")}곳 · 평균 ${amcCohort.average.toFixed(2)} · 표준편차 ${amcCohort.standardDeviation.toFixed(2)}${reportAsOf}.`);
-      $("amc-cohort-source-note").firstChild.textContent = `${amcCohort.sourceNote || "MAA K–12 공개 보고서 표본의 같은 연도·시험지 기준점입니다. 동점자가 있을 수 있어 개인의 정확한 백분위가 아니며, 응시 학년별 순위·등급이나 공식 자격 판정이 아닙니다. 다른 연도·회차와 직접 비교하지 마세요."} `;
+      const reportAsOf = amcCohort.reportAsOf ? `자료 기준일 ${amcCohort.reportAsOf}` : "";
+      const statParts = [
+        Number.isFinite(amcCohort.students) ? `전체 응시 ${amcCohort.students.toLocaleString("en-US")}명` : "",
+        Number.isFinite(amcCohort.schools) ? `학교 ${amcCohort.schools.toLocaleString("en-US")}곳` : "",
+        Number.isFinite(amcCohort.average) ? `평균 ${amcCohort.average.toFixed(2)}` : "",
+        Number.isFinite(amcCohort.standardDeviation) ? `표준편차 ${amcCohort.standardDeviation.toFixed(2)}` : "",
+        reportAsOf
+      ].filter(Boolean);
+      setText("amc-cohort-stats", statParts.length ? `${statParts.join(" · ")}.` : "출처에서 확인한 평균·표본 수는 없습니다.");
+      const sourceNote = $("amc-cohort-source-note");
+      sourceNote.replaceChildren(document.createTextNode(`${amcCohort.sourceNote || "MAA 공개 보고서의 같은 연도·시험지 전체 응시자 기준점입니다. 동점자가 있을 수 있어 개인의 정확한 백분위가 아니며, 응시 학년별 순위·등급이나 공식 자격 판정이 아닙니다. 다른 연도·회차와 직접 비교하지 마세요."} `));
+      if (amcCohort.corroboratingSourceUrl) {
+        const corroboratingLink = document.createElement("a");
+        corroboratingLink.href = amcCohort.corroboratingSourceUrl;
+        corroboratingLink.target = "_blank";
+        corroboratingLink.rel = "noopener noreferrer";
+        corroboratingLink.textContent = "교차 확인 자료 ↗";
+        sourceNote.append(corroboratingLink);
+      }
       $("amc-cohort-source").href = amcCohort.sourceUrl;
-      $("amc-cohort-source").textContent = amcCohort.sourceNote ? `${selectedYear} MAA 보고서 재게시 출처 ↗` : "MAA 공개 점수 분포 ↗";
+      $("amc-cohort-source").textContent = amcCohort.sourceLabel || (amcCohort.sourceNote ? `${selectedYear} MAA 보고서 재게시 출처 ↗` : "MAA 공개 점수 분포 ↗");
     }
     const historicalAwardReference = window.GFIELDAMC8HistoricalAwardReference;
     const historicalAwardSection = $("amc8-historical-award-reference");

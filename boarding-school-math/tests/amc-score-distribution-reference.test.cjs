@@ -33,7 +33,7 @@ test("MAA same-form AMC references are available for the published AMC 8 seasons
 
 test("MAA AMC 10 and AMC 12 references distinguish year and A/B form", function () {
   for (const program of ["amc10", "amc12"]) {
-    assert.deepEqual(Object.keys(reference.entries[program]), ["2022A", "2022B", "2023A", "2023B", "2024A", "2024B", "2025A", "2025B"]);
+    assert.ok(Object.keys(reference.entries[program]).includes("2022A"));
     assert.notEqual(reference.referenceFor(program, 2025, "A"), reference.referenceFor(program, 2025, "B"));
     assert.equal(reference.referenceFor(program, 2025, "a").top10, reference.referenceFor(program, 2025, "A").top10);
     assert.equal(reference.referenceFor(program, 2026, "A"), null);
@@ -41,17 +41,42 @@ test("MAA AMC 10 and AMC 12 references distinguish year and A/B form", function 
   assert.equal(reference.referenceFor("amc12", 2025, "A").top10, 106.5);
   assert.equal(reference.referenceFor("amc12", 2025, "B").top10, 109.5);
   assert.equal(reference.referenceFor("amc10", 2025, "A").average, 57.12);
+  assert.equal(reference.referenceFor("amc10", 2012, "A").top1, 121.5);
+  assert.equal(reference.referenceFor("amc10", 2012, "B").average, 76.59);
+  assert.equal(reference.referenceFor("amc12", 2016, "A").top1, 111);
+  assert.equal(reference.referenceFor("amc12", 2016, "B").average, 68.65);
+  assert.match(reference.referenceFor("amc12", 2016, "B").corroboratingSourceUrl, /mathgoldmedalist\.com/);
+  assert.equal(reference.referenceFor("amc10", 2017, "A").top1, 127.5);
+  assert.equal(reference.referenceFor("amc10", 2020, "B").students, undefined);
+  assert.deepEqual(
+    [reference.referenceFor("amc12", 2018, "B").top1, reference.referenceFor("amc12", 2018, "B").top5, reference.referenceFor("amc12", 2018, "B").average],
+    [126, 99, 57.85]
+  );
+  assert.equal(reference.referenceFor("amc10", 2021, "A").displayLabel, "봄 AMC 10 A");
+  assert.equal(reference.referenceFor("amc10", 2021, "C").displayLabel, "가을 AMC 10 A");
+  assert.equal(reference.referenceFor("amc10", 2021, "D").top1, 120);
+  assert.equal(reference.referenceFor("amc10", 2021, "C").average, undefined);
+  assert.equal(reference.referenceFor("amc12", 2021, "C").top1, 130.5);
+  assert.equal(reference.referenceFor("amc12", 2021, "C").average, undefined);
+  assert.equal(reference.referenceFor("amc12", 2021, "D").top1, undefined);
+  assert.equal(reference.referenceFor("amc12", 2021, "D").top5, 103.5);
+  assert.equal(reference.referenceFor("amc12", 2021, "D").average, undefined);
+  assert.equal(reference.referenceFor("amc12", 2021, "D").students, undefined);
 });
 
-test("AMC report references contain ordered thresholds and exact source-cohort counts", function () {
+test("AMC references keep known fields, order reported cutoffs, and identify their sources", function () {
   for (const program of Object.values(reference.entries)) {
     for (const entry of Object.values(program)) {
-      const thresholds = reference.bands.map((band) => entry[band.id]);
-      assert.ok(thresholds.every(Number.isFinite));
+      const thresholds = reference.bands.map((band) => entry[band.id]).filter(Number.isFinite);
+      assert.ok(thresholds.length > 0);
       assert.ok(thresholds.every((value, index) => index === 0 || value <= thresholds[index - 1]));
-      assert.ok(entry.students > 0 && entry.schools > 0);
-      assert.ok(entry.average >= 0 && entry.standardDeviation >= 0);
-      assert.match(entry.sourceUrl, /maa\.edvistas\.com\/eduview\/report\.aspx\?mode=6/);
+      if (entry.students !== undefined) assert.ok(entry.students > 0);
+      if (entry.schools !== undefined) assert.ok(entry.schools > 0);
+      if (entry.average !== undefined) assert.ok(entry.average >= 0);
+      if (entry.standardDeviation !== undefined) assert.ok(entry.standardDeviation >= 0);
+      assert.match(entry.sourceUrl, /^https:\/\//);
+      if (entry.corroboratingSourceUrl) assert.match(entry.corroboratingSourceUrl, /^https:\/\//);
+      if (entry.sourceNote) assert.ok(entry.sourceLabel);
     }
   }
   assert.equal(reference.referenceFor("aime", 2025, "I"), null);
