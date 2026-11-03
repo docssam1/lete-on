@@ -1044,3 +1044,9 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - AMC 8 평균 참조 모듈을 CSV와 재동기화하고 2001–2002 비교 검증을 추가했다. MAA 작성 보고서의 제3자 사본이라는 상태와 모집단 범위 한계는 그대로 유지한다.
 - 학교/센터별 평균과 전국 평균 자료를 분리했다. 개별 학교 결과표는 전국 단위 비교에 사용하지 않았다. MAA 구형 학년별 점수 백분위 보고서 본문은 여전히 회차별로 회수되지 않았다.
 - 검수 완료: Python 대조에서 catalog 266행과 coverage 266행의 `(program, year, form)` 키가 전부 일치하고 중복·누락이 없음을 확인했다. 평균 원자료 146행 중 29개 회차가 manifest에서 `historical-grade-mean-staged`로 정확히 연결됐다. Node 참조 검사 5/5, `git diff --check` 통과. 로컬 AMC 8 Grade 7·2001 선택 화면에서 LIVE의 인쇄 PDF/답안/해설·문항 해설 링크와 결과 패널의 평균 9.49·표본 58,271명이 노출되는 것도 확인했다. 원본 시험·정답·풀이 파일은 복사하지 않았다. 로컬 수정만; push/배포/Drive 동기화 없음. `raw_youtube.txt`는 미추적 그대로 둔다.
+
+### 2026-11-04 · 한국 AMC 8 학년 평균 원자료 추가 조사
+
+- 웹에서 [2009 AMC 8 한국 결과표](https://www.amcstudy.net/43)와 [2011 AMC 8 한국 결과표](https://www.amcstudy.net/79)를 직접 열어 학년별 응시 수·평균을 확인했다. 각각 한국 참가집단 741명·899명이라고 보고한다. Grade 5–8 평균/인원은 `competition/historical-amc-grade/amc8-korea-grade-means-2009-2011.csv`에 모집단을 `South Korea reported cohort`로 분리해 기록했다. 2011 표의 `<=4` 구간도 따로 보존했다.
+- 2009 학년별 응시 수 합은 737/741, 2011 표시 학년별 응시 수 합은 894/899라서 학년 표에 나타나지 않은 4명/5명을 임의 배분하지 않고 각 행의 coverage note에 남겼다. 이는 전국 AMC 8 평균표와 다른 별도 한국 코호트 연구자료이며 현행 제품의 미국/전세계 학년 규준이나 성적 등급으로 연결하지 않는다.
+- 검수: 전사 CSV에서 연도별 원문 학년수 합계와 보고된 총 응시자 수 차이를 대조했다. 2011 페이지의 학년 평균 원문: Grade 5 13.16 (68명), Grade 6 11.67 (252명), Grade 7 13.92 (315명), Grade 8 14.20 (255명). 2009 원문: 각각 Grade 5 14.37 (70명), Grade 6 13.11 (158명), Grade 7 15.17 (262명), Grade 8 13.65 (247명). 개인 이름·학교·점수 기록은 옮기지 않았다. `git diff --check` 후 로컬 저장소에만 둔다.

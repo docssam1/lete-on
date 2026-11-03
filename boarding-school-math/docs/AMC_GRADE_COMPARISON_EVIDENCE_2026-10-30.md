@@ -128,7 +128,7 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - [MAA 작성 2010 AMC 10/12 연례 보고서 사본](https://www.scribd.com/doc/58090065/2010-AMC-HS-Summary) — 표 I/II 학년 평균·표본 수, AIME I/II의 학년별 점수 분포. 제3자 문서 보관소.
 - [MAA AMC Archive, Ian Calaway](https://sites.google.com/view/ian-calaway/amc-archive/) — 저자는 AMC 8 1985–2022 보고서를 디지털화했다고 설명하고, 고교 보고서는 1980–2010 및 2011–2022 디지털 결과를 안내한다. 누락 보고서가 있음을 명시한 연구자 보관소이며 MAA 공식 호스트는 아님.
 - [보존된 2022 MAA General Reports 페이지](https://web.archive.org/web/20221209122712id_/http://amc-reg.maa.org/reports/generalreports.aspx) — MAA 구형 통계 페이지의 연도 메뉴와 백분위 리포트 정의를 확인. 재생된 리포트 본문 원자료는 이번 조사에서 확보하지 못함.
-- [2011 AMC 8 한국 결과·학년 백분위표 전재](https://www.amcstudy.net/79) — 899명 한국 참가집단, 학년별 인원·평균, 점수별 학년 백분위 표. MAA가 발표한 결과라는 게시물 설명과 원자료 표의 복사본이며, MAA 공식 호스트 자체는 아님.
+- [2011 AMC 8 한국 결과·학년 백분위표 전재](https://www.amcstudy.net/79) — 899명 한국 참가집단, 학년별 평균·인원과 점수별 학년 백분위 표. MAA가 발표한 결과라는 게시물 설명과 원자료 표의 복사본이며, MAA 공식 호스트 자체는 아님. 보고된 전체 인원과 표시된 학년 표 합계가 달라 차이를 보존한다.
 - [2009 AMC 8 한국 결과·점수별 학년 분포 전재](https://www.amcstudy.net/43) — 741명 한국 참가집단, 5–8학년 점수별 인원·학년 평균·문항 정답률. MAA 결과의 재전사본으로 취급하고 원본 대조 전에는 계산 percentile을 만들지 않음.
 - [MAA 현행 EduView score distribution](https://maa.edvistas.com/eduview/report.aspx?view=1561&mode=6) — 현행 회차별 전체 응시 집단 기준. 학년 선택 필드는 페이지에 없음.
 

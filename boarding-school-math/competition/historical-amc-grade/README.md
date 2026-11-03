@@ -4,6 +4,8 @@ This folder contains historical, source-attributed aggregate data. The MAA-repor
 
 `amc8-2011-korea-grade-percentile.csv` transcribes the MAA report table reproduced by AMC Study for the 2011 AMC 8 Korea participant cohort (899 reported participants). It contains only score-by-grade-group counts and the table's reported percentile values; no names, school records, or individual results are copied.
 
+`amc8-korea-grade-means-2009-2011.csv` records the grade-level mean and participant counts printed in the 2009 and 2011 Korea AMC 8 result pages. These are Korea-reported cohorts, not US or global norms, and remain separate from MAA report-cohort averages. The 2009 listed grade counts total 737 of 741; the 2011 listed grade groups total 894 of 899. Keep those unaccounted-for grade records visible when using the table.
+
 `amc8-2009-korea-grade-score-count.csv` transcribes the score-by-grade frequency table reproduced for the 2009 AMC 8 Korea participant cohort (741 reported participants). It has grade buckets 5–8 only and no percentile values. The four grade totals sum to 737, leaving four participants with no grade recorded in the report summary.
 
 `amc8-grade-means-2001-2009.csv` stages recorded-grade participant counts and mean scores for AMC 8 years 2001–2009. The 2001–2002 cells come from an MAA-authored 2008 results report; the 2003–2009 cells come from an MAA-authored 2009 report. Both copies are hosted by third parties and still need primary-host reconciliation. Grade groups are 4–5, 6, 7, and 8.
@@ -12,6 +14,7 @@ This folder contains historical, source-attributed aggregate data. The MAA-repor
 
 - Source: https://www.amcstudy.net/79
 - 2009 source: https://www.amcstudy.net/43
+- Korea-only 2009/2011 grade means: https://www.amcstudy.net/43 and https://www.amcstudy.net/79
 - AMC 10/12 2007–2010 report mirror: https://www.scribd.com/document/51428451/2010-HS-summary
 - AMC 10/12 2011 grand-statistics copy: https://www.scribd.com/document/990470105/USA-AMC-10-2011-Statistic
 - AMC 8 2003–2009 annual report mirror: https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html
