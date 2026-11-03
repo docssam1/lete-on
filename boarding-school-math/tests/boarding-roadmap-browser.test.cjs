@@ -745,7 +745,9 @@ test("grade comparison pairs only matching contest paper date and memo across gr
   assert.match(comparisonText, /7학년 · 2025 AMC 8 Form A · 2026-10-03/);
   assert.doesNotMatch(comparisonText, /Different AMC 8 form|Another AMC 8 form/);
   assert.doesNotMatch(comparisonText, /Undated practice/);
-  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /날짜와 메모가 같아도 난도를 보정한 등급이나 성장 판정은 아니에요/);
+  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /직접 입력한 날짜와 메모로 짝지어 나란히 보여줘요/);
+  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /실제 시험지 동일성은 확인되지 않으며/);
+  assert.match(await page.locator("#competition-grade-comparison-title").innerText(), /날짜·메모 일치/);
   assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
   await page.locator("#comparison-grade").selectOption("8");
   assert.equal(await page.locator("#competition-grade-comparison").getAttribute("data-state"), "needs-matching-program-records");
@@ -785,7 +787,8 @@ test("Math Kangaroo Grade 7 and 8 diagnostics compare the same 30-question paper
   assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /Grade 7 72\.5% → Grade 8 81% · 차이 \+8\.5 percentile points/);
   assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /성장이나 수학 실력 차이를 뜻하지 않아요/);
   assert.match(text, /공식 순위와 백분위는 학년별로 산정/);
-  assert.match(text, /난도를 보정한 등급이나 성장 판정은 아니에요/);
+  assert.match(text, /실제 시험지 동일성은 확인되지 않으며/);
+  assert.match(text, /난도 조정 등급이나 성장 판정을 제공하지 않아요/);
   assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
   await saveKangarooReview(9, "correct");
   await page.goto(`${url}?grade=7&program=kangaroo`, { waitUntil: "networkidle" });

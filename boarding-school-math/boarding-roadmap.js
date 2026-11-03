@@ -815,14 +815,14 @@
     cards.replaceChildren();
     if (!competition) {
       section.dataset.state = "needs-matching-program-records";
-      copy.textContent = "아래 경시 입력에서 같은 대회를 선택하고, 두 학년에서 복습 요약을 저장하면 나란히 볼 수 있어요.";
+      copy.textContent = "같은 대회와 직접 입력한 날짜·문제지 메모가 일치한 복습 기록을 나란히 보여줘요. 실제 시험지 동일성이나 난도는 확인하지 않으며, 성장·실력 등급을 판정하지 않아요.";
       return;
     }
     const currentOption = data.competitionOptions(current.grade).find(function (entry) { return entry.id === competition; });
     const targetOption = data.competitionOptions(target.grade).find(function (entry) { return entry.id === competition; });
     if (!currentOption || !targetOption || currentOption.itemCount !== targetOption.itemCount) {
       section.dataset.state = "needs-matching-program-records";
-      copy.textContent = `${current.grade}학년과 ${target.grade}학년에서 같은 대회·문항 수의 복습 기록이 있을 때 비교할 수 있어요.`;
+      copy.textContent = `${current.grade}학년과 ${target.grade}학년에서 같은 대회·문항 수의 복습 기록이 필요해요. 짝은 직접 입력한 날짜와 문제지 메모로 찾으며, 실제 시험지 동일성이나 난도는 확인하지 않아요.`;
       return;
     }
     if (competition === "kangaroo" && currentOption.paperBandId !== targetOption.paperBandId) {
@@ -852,8 +852,8 @@
       const missing = [!currentRecords.length ? `${current.grade}학년` : "", !targetRecords.length ? `${target.grade}학년` : ""].filter(Boolean).join(" · ");
       section.dataset.state = "needs-matching-program-records";
       copy.textContent = missing
-        ? `${missing}의 날짜와 문제지 메모가 있는 ${currentOption.title} 복습 요약이 필요해요.`
-        : `두 학년에 같은 날짜·문제지 메모로 저장한 ${currentOption.title} 기록이 있어야 나란히 비교해요. 다른 회차는 문제 난도가 다를 수 있어 학년 비교에 쓰지 않아요.`;
+        ? `${missing}의 날짜와 직접 입력한 문제지 메모가 있는 ${currentOption.title} 복습 요약이 필요해요.`
+        : `두 학년에 같은 날짜·문제지 메모로 저장한 ${currentOption.title} 기록이 있어야 나란히 보여줘요. 메모 일치는 실제 같은 시험지를 확인한 것이 아니며, 다른 회차는 난도도 다를 수 있어 성장이나 학년 등급을 판정하지 않아요.`;
       return;
     }
     section.dataset.state = "comparable-format";
@@ -865,7 +865,7 @@
       const signedDifference = difference > 0 ? `+${formattedDifference}` : formattedDifference;
       officialPercentileComparison = ` 성적표 전국 백분위: Grade ${current.grade} ${matchedPair.current.officialPercentile}% → Grade ${target.grade} ${matchedPair.target.officialPercentile}% · 차이 ${signedDifference} percentile points. 각 학년 참가자 안의 상대 위치 비교이며 성장이나 수학 실력 차이를 뜻하지 않아요.`;
     }
-    copy.textContent = `${currentOption.title} · ${matchedPair.current.examDate} · “${matchedPair.current.paperLabel.trim()}” 기록을 비교해요. 날짜와 메모가 같아도 난도를 보정한 등급이나 성장 판정은 아니에요.${contestBoundary}${officialPercentileComparison}`;
+    copy.textContent = `${currentOption.title} · ${matchedPair.current.examDate} · “${matchedPair.current.paperLabel.trim()}” 기록을 직접 입력한 날짜와 메모로 짝지어 나란히 보여줘요. 실제 시험지 동일성은 확인되지 않으며, 난도 조정 등급이나 성장 판정을 제공하지 않아요.${contestBoundary}${officialPercentileComparison}`;
     cards.append(
       buildCompetitionRecordCard(matchedPair.current, `${current.grade}학년 · ${matchedPair.current.paperLabel}`, "competition-grade-current-record-title"),
       buildCompetitionRecordCard(matchedPair.target, `${target.grade}학년 · ${matchedPair.target.paperLabel}`, "competition-grade-target-record-title")
