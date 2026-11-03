@@ -721,3 +721,9 @@ Verification: the full paper-builder browser suite passes 12/12, including the m
 Aligned the contest-paper review and score-history accents with the GFIELD plum/lilac tokens: active navigation, section labels, mark numbers, source notes, actions, score estimates, domain summaries, saved review values, and keyboard focus. Correct/incorrect and success/error colors retain their meanings. The markup and diagnostic/scoring logic are unchanged.
 
 Verification: inspected Chromium renders at 1440×960 and 390×844. The `competition-paper-review-browser.test.cjs` suite passes 19/19, covering marking, result summaries, local save/history, mobile rows, keyboard focus, score-history import/export, and no horizontal overflow. `git diff --check` passes. No private item content or learner result was used; no publishing or external sync.
+
+### 2026-11-03 School assessment comparison visual alignment
+
+Aligned the external score and course comparison screen with GFIELD plum/lilac: replaced the residual blue and green kicker colors, moved the hero to deep plum, changed its oversize serif headings to the page sans-serif, and softened the form/result surfaces with rounded cards and inputs. Focus indicators and actions use the brand accent; reported-score success/error meanings remain semantic. Form fields, comparison logic, and local record behavior did not change.
+
+Verification: inspected Chromium renders at 1440×960 and 390×844; the mobile heading stays in two readable lines. The `assessment-entry-browser.test.cjs` suite passes 10/10, including saved-result handling, school-placement boundaries, high-school course selection, MAP context, ISEE reporting, mobile layout, and print restrictions. Captures `/tmp/gfield-assessment-final-desktop.png` and `/tmp/gfield-assessment-final-mobile.png` reviewed. No student record or private candidate content used; local only.
