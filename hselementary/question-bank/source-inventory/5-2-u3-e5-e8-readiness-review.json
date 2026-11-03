@@ -166,10 +166,13 @@
       "singleAnswerCheck": "점의 반사 방향을 좌표 변환으로 대조하여 90°의 작은각을 확인했습니다. 공식 답안은 미대조입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent",
-      "visualCheckStatus": "needs-implementation-check",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안 및 공개용 그림 검수 전 원문 잠금을 유지합니다."
+      "visualCheckStatus": "confirmed-source-structure",
+      "implementationStatus": "ready",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherAnswerVerified": false,
+      "runtimeTypeId": "5-2-u3-t5-2",
+      "runtimeGeneratorKey": "source52DoubleReflectionPage32Original"
     },
     {
       "sourceItemId": "5-2-u3-e5-example-5-4",

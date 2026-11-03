@@ -7,8 +7,10 @@
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e4-mission-6"] svg { max-height:190px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e4-example-2"] svg { max-height:190px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e7-mission-5"] svg { max-height:180px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-3"] svg { max-height:190px; }
   #problemView [data-source-item-id="5-2-u3-e7-mission-5"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   #problemView [data-source-item-id="5-2-u3-e5-exploration"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u3-e5-example-3"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   .print-page.print-page--four-up .answer-line { padding-top:12px; }
 }
 
