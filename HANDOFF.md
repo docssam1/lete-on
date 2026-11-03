@@ -978,3 +978,10 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - `8f6712b68 Keep boarding roadmap diagnostics GFIELD mock only`에서 의도적으로 제거된 옛 학년 지도 대회 선택기·원본 성적 비교 UI를 기대하던 브라우저 테스트를 현재 동작에 맞췄다. 저장된 원본 답안 복습 요약은 시험 검토 화면 안에 유지하고, 학년 지도에서 지필드 모의고사 진단으로 오인하거나 서로 다른 원본 시험 성적을 학년별 등급으로 비교하지 않는 경계를 검증한다. Grade 선택/뒤로가기 테스트는 실제 `grade`·`program` URL 복원과 검토 화면 링크를 확인한다. 누락된 기능은 되살리지 않았다.
 - 현재 문구와 표시값에 맞춰 부분 채점 안내, 입력하지 않은 답을 포함한 오답 문항, AMC 8 원점수 라벨, AIME 정수 답안 요약의 테스트 기대값도 정리했다.
 - 검증: 전체 `competition-paper-review-browser.test.cjs` + `amc-score-distribution-reference.test.cjs` 32/32 통과. `git diff --check` 통과. 코드 기능 변경은 없으며, 2026-11-04 커밋 `ec93604e` 이후의 테스트 기준만 갱신했다. `raw_youtube.txt` 미추적 파일은 그대로 보존한다.
+
+### 2026-11-04 · 웹 검색으로 원본 기출·비교 근거 재확인
+
+- 사용자가 요청한 실제 연도별 AMC 자료를 웹에서 다시 확인했다. MAA 학생 자료 페이지의 “Sample Competition”은 일부 예시 회차다. 전체 연도별 원본은 MAA가 공식 법적 허가를 명시한 LIVE 공개 색인을 사용한다. 색인은 AMC 8 41회, AMC 10 52회, AMC 12 102회, AIME 71회(총 266회; 77년)를 제공하고, 회차별 인쇄 PDF·답안·전문 풀이로 연결한다. [LIVE 연도별 전체 색인](https://live.poshenloh.com/past-contests), [MAA K–12 자료 페이지](https://maa.org/audience/students-k-12/).
+- MAA가 직접 공개한 [2022 AMC 10 A 원본 PDF](https://maa.org/wp-content/uploads/2024/08/2022_AMC10A-Problems.pdf)로 원본 시험의 25문항·75분 형식, 점수 규칙 및 종료 전 문제 공개 제한을 확인했다. 이 자료를 시험 종료 뒤 학습·복습에 쓰고, 원문·답안·해설은 LIVE 원본 호스트에서 열도록 하는 기존 구조를 유지한다.
+- 점수 비교는 MAA 공개 EduView의 같은 연도·폼 전체 응시자 기준점으로 제한한다. 공개 보고서는 AMC 8 2023–2026 및 AMC 10/12 2022–2025 A/B를 제공하지만, 학년 필터 규준은 확인되지 않았다. 따라서 선택 Grade 맥락과 cohort 기준은 함께 볼 수 있어도 동학년 순위나 학년 능력 등급을 주장하지 않는다.
+- 근거 문서 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 출처·연도별 범위·비교 한계를 정리했다. 코드 동작 변경은 없고, 미추적 `raw_youtube.txt`는 그대로 둔다. 검수와 커밋은 이번 문서 갱신 범위 확인 뒤 진행한다.
