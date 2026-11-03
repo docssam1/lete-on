@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./unit-workbook.css?v=20261023-1">
-  <link rel="stylesheet" href="./teacher-paper-builder.css?v=20261103-1">
+  <link rel="stylesheet" href="./teacher-paper-builder.css?v=20261103-2">
   <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-2">
 </head>
 <body class="gfield-ui page-paper-builder">
@@ -28,12 +28,14 @@
         <h2 id="filter-title">문제 찾기</h2><p id="inventory-count">공개 워크북 432문항 · Algebra 1 64문항</p>
         <label for="grade-filter">학년<select id="grade-filter"><option value="6">Grade 6</option><option value="7" selected>Grade 7</option></select></label>
         <label for="unit-filter">단원<select id="unit-filter"></select></label>
-        <h3>세부 주제</h3>
-        <div id="strand-filters" class="strand-filters" role="group" aria-label="세부 단원"></div>
+        <details id="strand-filter-disclosure" class="strand-filter-disclosure" open>
+          <summary><span>세부 주제</span><span id="strand-filter-current"></span></summary>
+          <div id="strand-filters" class="strand-filters" role="group" aria-label="세부 단원"></div>
+        </details>
         <div id="source-note" class="filter-note">공개 단원 워크북 문항입니다. 7.NS.A는 검수 시안이며, 비공개 진단 문항은 포함하지 않아요.</div>
       </aside>
       <section class="list-pane" aria-labelledby="list-title">
-        <div class="list-toolbar"><div><h2 id="list-title">문제 목록</h2><span id="result-count" role="status" aria-live="polite"></span></div><button id="select-visible" type="button">현재 목록 모두 담기</button></div>
+        <div class="list-toolbar"><div><h2 id="list-title" tabindex="-1">문제 목록</h2><span id="result-count" role="status" aria-live="polite"></span></div><button id="select-visible" type="button">현재 목록 모두 담기</button></div>
         <div class="search-controls">
           <label for="item-search">이 단원에서 검색<input id="item-search" type="search" placeholder="예: 단위율, 그래프, 퍼센트" autocomplete="off"></label>
           <label for="level-filter">수준<select id="level-filter"><option value="all">전체</option><option value="foundation">기초</option><option value="core">기본</option><option value="advanced">심화</option></select></label>
@@ -106,6 +108,6 @@
   <script src="./learning/grade7-ns-a-unit-workbook.js?v=20261014-1"></script>
   <script src="./curriculum/algebra-1-course.js?v=20261103-1"></script>
   <script src="./shared/math-inline.js?v=20261103-17"></script>
-  <script src="./teacher-paper-builder.js?v=20261103-4"></script>
+  <script src="./teacher-paper-builder.js?v=20261103-5"></script>
 </body>
 </html>

@@ -143,13 +143,21 @@
     const options = [["all", "전체", activeSource.records.length]].concat(Object.entries(activeSource.pack.strands).map(function ([id, title]) {
       return [id, title.ko.replace(/^\d+ · /, ""), activeSource.records.filter(function (record) { return record.item.strand === id; }).length];
     }));
+    const current = options.find(function ([id]) { return id === strand; }) || options[0];
+    $("strand-filter-current").textContent = `${current[1]} · ${current[2]}문항`;
     options.forEach(function ([id, name, count]) {
       const button = document.createElement("button"); button.type = "button";
       button.textContent = `${name}  ${count}`;
       button.setAttribute("aria-pressed", String(strand === id));
       button.addEventListener("click", function () {
         strand = id; renderStrands(); renderList();
-        [...host.querySelectorAll("button")].find(function (entry) { return entry.getAttribute("aria-pressed") === "true"; }).focus();
+        if (window.matchMedia("(max-width: 760px)").matches) {
+          $("strand-filter-disclosure").open = false;
+          $("list-title").focus({ preventScroll: true });
+          $("list-title").scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+        } else {
+          [...host.querySelectorAll("button")].find(function (entry) { return entry.getAttribute("aria-pressed") === "true"; }).focus();
+        }
       });
       host.append(button);
     });
@@ -433,6 +441,10 @@
     $("print-status").textContent = "";
     window.print();
   });
+  const strandFilterDisclosure = $("strand-filter-disclosure");
+  const compactBuilderLayout = window.matchMedia("(max-width: 760px)");
+  strandFilterDisclosure.open = !compactBuilderLayout.matches;
+  compactBuilderLayout.addEventListener("change", function (event) { strandFilterDisclosure.open = !event.matches; });
   window.addEventListener("resize", fitPages);
   renderUnits(); renderStrands(); renderAll(); renderPreview();
 })();

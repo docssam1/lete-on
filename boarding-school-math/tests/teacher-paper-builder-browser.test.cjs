@@ -17,6 +17,8 @@ test("teacher can find, preview, select, order, and set points on released Grade
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const errors = []; page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(url, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("body").evaluate((node) => getComputedStyle(node).getPropertyValue("--primary").trim()), "#60418f", "the teacher tool follows the GFIELD plum palette");
+  assert.equal(await page.locator("#strand-filter-disclosure").evaluate((node) => node.open), true, "desktop keeps the full topic filter visible");
   assert.equal(await page.locator("#sheet-section").isHidden(), true);
   assert.equal(await page.locator("#jump-to-sheet").isDisabled(), true);
   assert.equal(await page.locator(".item-row").count(), 36);
@@ -86,6 +88,18 @@ test("mobile selection keeps a fixed count and a keyboard-accessible shortcut to
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   const errors = []; page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(url, { waitUntil: "networkidle" });
+  const strandFilters = page.locator("#strand-filter-disclosure");
+  assert.equal(await strandFilters.evaluate((node) => node.open), false, "mobile starts with the topic list collapsed to keep question search close");
+  assert.equal(await page.locator("#strand-filter-current").innerText(), "전체 · 36문항");
+  await strandFilters.locator("summary").click();
+  await page.getByRole("button", { name: "분수의 비율과 단위율 8", exact: true }).click();
+  assert.equal(await strandFilters.evaluate((node) => node.open), false);
+  assert.equal(await page.locator("#result-count").innerText(), "8문항");
+  assert.equal(await page.evaluate(() => document.activeElement.id), "list-title", "after applying a mobile topic filter, focus moves to the results");
+  assert.equal(await page.locator("#strand-filter-current").innerText(), "분수의 비율과 단위율 · 8문항");
+  await strandFilters.locator("summary").click();
+  await page.getByRole("button", { name: "전체 36", exact: true }).click();
+  assert.equal(await page.locator("#result-count").innerText(), "36문항");
   assert.equal(await page.locator("#item-list .item-row").count(), 36);
   assert.deepEqual(await page.locator("#item-list").evaluate((element) => ({
     heightMatchesContent: element.clientHeight === element.scrollHeight,
