@@ -70,7 +70,7 @@ function rotationalPartitionMarkup(visual) {
   }).join("");
   const centerX = padding + visual.columns * cell / 2;
   const centerY = padding + visual.rows * cell / 2;
-  return `<div class="b1-partition-draw b1-rotational-partition"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${visual.pieceCount}조각 회전 분할선">${cells}<path d="${border}" class="b1-rotation-border"/>${lineMarkup}<circle cx="${centerX}" cy="${centerY}" r="7" class="b1-rotation-pivot"/></svg><strong>${visual.completedPaths ? "완성된 분할선" : "빨간 선을 돌려 이어 그리세요"}</strong></div>`;
+  return `<div class="b1-partition-draw b1-rotational-partition"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${visual.pieceCount}조각 회전 분할선">${cells}<path d="${border}" class="b1-rotation-border"/>${lineMarkup}<circle cx="${centerX}" cy="${centerY}" r="7" class="b1-rotation-pivot"/></svg>${visual.completedPaths ? "<strong>완성된 분할선</strong>" : ""}</div>`;
 }
 
 const SEGMENT_PATHS = Object.freeze({
