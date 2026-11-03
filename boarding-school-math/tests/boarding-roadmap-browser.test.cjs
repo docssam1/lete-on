@@ -537,7 +537,7 @@ test("Math Kangaroo Grade 7 and 8 diagnostics compare the same 30-question paper
     assert.match(await page.locator("#kangaroo-percentile-source").innerText(), /공식 채점·백분위 안내/);
     await page.locator("#review-exam-date").fill("2026-03-19");
     await page.locator("#review-paper-label").fill("2025 Grade 7–8 official paper");
-    await page.locator("#official-percentile").fill(String(percentile));
+    if (percentile != null) await page.locator("#official-percentile").fill(String(percentile));
     await page.locator('[data-question="1"][data-field="status"]').selectOption(status);
     await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
     if (status === "wrong") await page.locator('[data-question="1"][data-field="reason"]').selectOption("concept");
