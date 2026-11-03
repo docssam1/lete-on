@@ -2510,6 +2510,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   if (source52Cuboid) {
+    const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u5-t1-5");
+    if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u5-e1-mission-5",sourceItemLabel:"Mission 5 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:45,alternateSourcePdfPage:44,sourcePrintedPage:49,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52CuboidEightBlocksPage49Mission5",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문의 같은 크기 면끼리 접하는 조건과 회전 동치를 대조하고 8개 조각으로 만드는 크기를 독립 열거했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+
+  if (source52Cuboid) {
     const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u5-t1-3");
     if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u5-e1-example-3",sourceItemLabel:"예제 1-3 원문",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:44,alternateSourcePdfPage:43,sourcePrintedPage:48,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52CuboidFourPiecesPage48Example13",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 두 방향 절단과 네 조각 그림을 대조하고 절단 위치와 관계없는 모서리 길이 합을 독립 계산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
