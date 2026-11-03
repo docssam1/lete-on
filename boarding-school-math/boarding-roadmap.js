@@ -23,7 +23,8 @@
     kangaroo: { href: "https://mathkangaroo.org/mks/faqs/about-the-test/", label: "Math Kangaroo 공식 규칙 ↗", external: true },
     amc8: { href: "https://maa.org/student-programs/amc/", label: "MAA AMC 공식 안내 ↗", external: true },
     amc10: { href: "https://maa.org/student-programs/amc/", label: "MAA AMC 공식 안내 ↗", external: true },
-    amc12: { href: "https://maa.org/student-programs/amc/", label: "MAA AMC 공식 안내 ↗", external: true }
+    amc12: { href: "https://maa.org/student-programs/amc/", label: "MAA AMC 공식 안내 ↗", external: true },
+    aime: { href: "https://maa.org/maa-invitational-competitions/", label: "MAA AIME 공식 형식·응시 안내 ↗", external: true }
   };
   const publicPractice = {
     6: [
@@ -951,8 +952,9 @@
       }
     }
     const isAmc = ["amc8", "amc10", "amc12"].includes(competition);
+    const isAimeReview = competition === "aime";
     setText("competition-guidance", selected
-      ? `선택한 학년의 연습 경로예요. 영역별로 푼 문제 수와 정답 수를 적어 주세요. ${isAmc ? "AMC는 학년 외에도 연령 등 해당 연도 응시 조건이 있으니 MAA 공식 안내를 확인해 주세요." : "응시 자격과 회차별 규정은 대회 주관 기관 안내를 확인해 주세요."} 영역을 모르겠다면 문항별 복습에서 확인할 수 있어요.`
+      ? `${isAimeReview ? "채점한 AIME 또는 개인 연습 세트를 문항별로 복습하는 경로예요. 초대·응시 자격·선발은 판단하지 않아요." : "선택한 학년의 연습 경로예요."} 영역별로 푼 문제 수와 정답 수를 적어 주세요. ${isAmc ? "AMC는 학년 외에도 연령 등 해당 연도 응시 조건이 있으니 MAA 공식 안내를 확인해 주세요." : isAimeReview ? "AIME의 형식과 해당 연도·지역의 응시 조건은 MAA 공식 안내에서 확인해 주세요." : "응시 자격과 회차별 규정은 대회 주관 기관 안내를 확인해 주세요."} 영역을 모르겠다면 문항별 복습에서 확인할 수 있어요.`
       : "대회를 고르면 영역별 입력칸이 나와요. 목록은 학년별 연습 경로이며 공식 응시 자격 판정이 아닙니다.");
     renderSavedCompetitionDiagnostic();
     if (comparisonGrade !== null) renderComparison();

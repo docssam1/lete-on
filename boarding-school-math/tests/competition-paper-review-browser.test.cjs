@@ -173,6 +173,50 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   await page.close();
 });
 
+test("AIME manual review accepts self-marked 15-item papers without scoring or eligibility claims", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=8&program=aime`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".paper-mark-row").count(), 15);
+  assert.equal(await page.locator("#aime-review-note").isVisible(), true);
+  assert.match(await page.locator("#aime-review-note").innerText(), /초대·응시 자격·선발을 판단하지 않습니다/);
+  assert.equal(await page.locator('#aime-review-note a').getAttribute("href"), "https://maa.org/maa-invitational-competitions/");
+  await page.locator("#review-paper-label").fill("2026 개인 연습 세트");
+  await page.locator("#review-exam-date").fill("2026-11-03");
+  for (let question = 1; question <= 15; question += 1) {
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("correct");
+    await page.locator(`[data-question="${question}"][data-field="domain"]`).selectOption("algebra");
+  }
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator(".review-report").isVisible(), true, await page.locator("#paper-error").innerText());
+  assert.equal(await page.locator("#score-estimate").isHidden(), true);
+  assert.equal(await page.locator("#score-estimate-note").isHidden(), true);
+  await page.locator("#save-diagnostic").click();
+  assert.equal(await page.locator(".saved-diagnostic-entry").count(), 1);
+  const saved = await page.evaluate(function () { return localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"); });
+  assert.match(saved, /\"programId\":\"aime\"/);
+  assert.doesNotMatch(saved, /responses|questionNumber|answerKey/);
+  await page.goto(`${url}?grade=9&program=aime`, { waitUntil: "networkidle" });
+  await page.locator("#review-paper-label").fill("2026 개인 연습 세트");
+  await page.locator("#review-exam-date").fill("2026-11-03");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
+  await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  await page.locator("#save-diagnostic").click();
+  await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=8&program=aime#competition-diagnostic`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#competition-select").inputValue(), "aime");
+  assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), true);
+  assert.match(await page.locator("#competition-guidance").innerText(), /초대·응시 자격·선발은 판단하지 않아요/);
+  assert.equal(await page.locator("#competition-source-link").getAttribute("href"), "https://maa.org/maa-invitational-competitions/");
+  await page.locator("#comparison-grade").selectOption("9");
+  assert.equal(await page.locator("#competition-grade-comparison").getAttribute("data-state"), "comparable-format");
+  assert.equal(await page.locator("#competition-grade-comparison-cards article").count(), 2);
+  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /날짜와 메모가 같아도 난도를 보정한 등급이나 성장 판정은 아니에요/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("saved contest review suggests a domain only when two areas have enough evidence", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const record = {

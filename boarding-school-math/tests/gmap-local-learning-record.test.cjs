@@ -231,6 +231,29 @@ test("saved AMC 8 diagnostics accept the five official-scope groups without expo
   assert.equal(store.saveCompetitionDiagnostic(invalidOtherContest), false);
 });
 
+test("AIME review saves aggregate-only evidence for grade 8+ and rejects lower grades", function () {
+  const storage = memoryStorage();
+  const store = records.create(storage);
+  const diagnostic = {
+    schemaVersion: "gfield-competition-diagnostic-v1", id: "diag-aime-grade8", programId: "aime", programTitle: "AIME 문항 복습", grade: 8,
+    paperLabel: "2026 개인 연습 세트", examDate: "2026-11-03", responses: [{ answer: "do not store" }],
+    summary: { itemCount: 15, correct: 1, wrong: 0, blank: 0, unmarked: 14, attempted: 1, domainClassified: 1, reasonClassified: 0 },
+    domains: [
+      { id: "algebra", attempted: 1, correct: 1, wrong: 0, blank: 0 }, { id: "number", attempted: 0, correct: 0, wrong: 0, blank: 0 },
+      { id: "geometry", attempted: 0, correct: 0, wrong: 0, blank: 0 }, { id: "counting", attempted: 0, correct: 0, wrong: 0, blank: 0 }
+    ], reasons: []
+  };
+  const saved = store.saveCompetitionDiagnostic(diagnostic);
+  assert.equal(saved.programId, "aime");
+  assert.equal(saved.summary.itemCount, 15);
+  assert.equal("responses" in saved, false);
+  assert.equal(store.loadCompetitionDiagnosticHistory(8, "aime").length, 1);
+  const raw = storage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1");
+  assert.doesNotMatch(raw, /do not store|responses/);
+  const invalidGrade = { ...diagnostic, id: "diag-aime-grade7", grade: 7 };
+  assert.equal(store.saveCompetitionDiagnostic(invalidGrade), false);
+});
+
 test("Math Kangaroo paper-review summaries persist for cross-grade same-paper comparison", function () {
   const store = records.create(memoryStorage());
   const saved = store.saveCompetitionDiagnostic({

@@ -111,6 +111,7 @@
     $("official-percentile-field").hidden = programId !== "kangaroo";
     $("official-percentile").disabled = programId !== "kangaroo";
     $("kangaroo-percentile-source").hidden = programId !== "kangaroo";
+    $("aime-review-note").hidden = programId !== "aime";
     document.querySelector(".review-change-note").hidden = !format;
     $("review-amc8-practice").hidden = !(grade === 6 && programId === "amc8");
     $("review-sasmo-source").hidden = programId !== "sasmo";

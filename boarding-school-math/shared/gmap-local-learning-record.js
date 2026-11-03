@@ -344,7 +344,7 @@
     };
   }
   function sanitizedCompetitionDiagnostic(value) {
-    if (!object(value) || value.schemaVersion !== "gfield-competition-diagnostic-v1" || !["amc8", "amc10", "amc12", "kangaroo", "sasmo"].includes(value.programId) || !Number.isInteger(value.grade) || value.grade < 3 || value.grade > 12 || (value.programId === "amc8" && (value.grade < 6 || value.grade > 8)) || (value.programId === "amc10" && (value.grade < 7 || value.grade > 10)) || (value.programId === "amc12" && value.grade < 8) || !object(value.summary) || !Array.isArray(value.domains) || !Array.isArray(value.reasons)) return null;
+    if (!object(value) || value.schemaVersion !== "gfield-competition-diagnostic-v1" || !["amc8", "amc10", "amc12", "aime", "kangaroo", "sasmo"].includes(value.programId) || !Number.isInteger(value.grade) || value.grade < 3 || value.grade > 12 || (value.programId === "amc8" && (value.grade < 6 || value.grade > 8)) || (value.programId === "amc10" && (value.grade < 7 || value.grade > 10)) || (value.programId === "amc12" && value.grade < 8) || (value.programId === "aime" && value.grade < 8) || !object(value.summary) || !Array.isArray(value.domains) || !Array.isArray(value.reasons)) return null;
     const summary = value.summary;
     if (value.officialPercentile != null && (value.programId !== "kangaroo" || !Number.isFinite(value.officialPercentile) || value.officialPercentile < 0 || value.officialPercentile > 100)) return null;
     if (!["itemCount", "correct", "wrong", "blank", "unmarked", "attempted", "domainClassified", "reasonClassified"].every(function (key) { return Number.isInteger(summary[key]) && summary[key] >= 0; })) return null;

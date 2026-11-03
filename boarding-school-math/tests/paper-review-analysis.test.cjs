@@ -104,6 +104,17 @@ test("complete AMC marks can show a cautious raw-score estimate using format-spe
   assert.equal(analyze(amc10, 25, "amc10").officialScore, null);
 });
 
+test("AIME manual review summarizes 15 marked items without an AIME score estimate", function () {
+  const entries = Array.from({ length: 15 }, function () { return entry("correct", "algebra"); });
+  const report = analyze(entries, 15, "aime");
+  assert.equal(report.valid, true);
+  assert.equal(report.itemCount, 15);
+  assert.equal(report.counts.correct, 15);
+  assert.equal(report.scoreEstimate, null);
+  assert.equal(report.officialScore, null);
+  assert.equal(report.level, null);
+});
+
 test("rejects mismatched paper size and unknown marks", function () {
   assert.equal(analyze([entry()], 25).valid, false);
   assert.equal(analyze([entry("invented")], 1).valid, false);

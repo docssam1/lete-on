@@ -533,3 +533,9 @@ Verification: tested all four grade contexts, related links, and return labels. 
 The AIME practice page loaded the shared math-text renderer but omitted its stylesheet, so fractions did not receive the stacked numerator, bar, and denominator presentation. Added the shared fraction CSS and browser assertions for both inline-grid stacking and a visible numerator border.
 
 Verification: the AIME practice browser test passes 1/1, including actual rendered fraction styles, answer validation, filters, explanations, and responsive layout. `git diff --check` passes. Local only; no push, deployment, or Drive sync.
+
+### 2026-11-03 Add manual AIME paper review and same-paper grade comparison
+
+Added an optional 15-item AIME review choice to Grade 8+ contest diagnostics, based on the current MAA question/response format. The entry is for a user-marked AIME or personal practice set; the interface links the official MAA page and explicitly does not decide invitation, eligibility, or selection. It uses the existing four-area review taxonomy, stores only aggregate marks, and produces no AIME score or level. Grade comparisons require same date and paper memo and remain unadjusted descriptive summaries. Local-record validation accepts AIME only for Grade 8+ and retains no response-level data.
+
+Verification: roadmap, paper-review analysis, and local-record model tests pass 40/40. Competition paper-review browser suite passes 19/19, including Grade 8/9 same-date/same-paper comparison, no AIME score estimate, MAA source visibility, and answer-free saved summaries. Official format reference checked at https://maa.org/maa-invitational-competitions/ on 2026-11-03. No private diagnostic items or learner records were used. Local only; no push, deployment, or Drive sync.
