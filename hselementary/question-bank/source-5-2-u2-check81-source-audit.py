@@ -5,9 +5,13 @@ from fractions import Fraction as F
 from pathlib import Path
 
 r = next(x for x in json.loads((Path(__file__).parent / 'source-inventory/5-2-u2-readiness-review.json').read_text())['additionalSourceReviews'] if x['sourcePrintedPage'] == 81)
-assert r['sourcePdfPage'] == 77 and r['runtimeConnection'] == 'not-connected'
+assert r['sourcePdfPage'] == 77 and r['runtimeConnection'] == 'partial-verified-local'
 assert r['publisherAnswerVerified'] is False
 assert [x['number'] for x in r['items']] == list(range(49,57))
+for item in r['items']:
+    assert item['status'] == 'public-independent-verification-publisher-key-pending'
+    assert item['runtimeTypeId'] == f"5-2-u2-practice-{item['number']}-original"
+    assert item['publisherAnswerVerified'] is False
 width, height = F(9,7), F(6,7)
 assert 2*(width+height)==F(30,7) and height==width*F(2,3)
 assert F(11,8)*F(48,11)-3*F(1,4)+F(3,4)*F(11,2)-F(6,7)*F(21,8)==F(57,8)
@@ -22,4 +26,4 @@ assert F(5,1)/(F(2,3)*F(5,8)*F(2,5)*F(1,4))==120
 total=F(6,1)/(1-F(1,3)-F(1,5)-F(4,9))
 assert total==270 and total/3-3==87
 assert [x['candidate'] for x in r['items']] == ['가로 1과 2/7m, 세로 6/7m','1/4','48km','150cm²','1680명','64개','120개','87개']
-print('PASS: page 81 arithmetic and triangle-area cross product; source remains unconnected')
+print('PASS: page 81 arithmetic, triangle-area cross product and source connections; publisher key pending')
