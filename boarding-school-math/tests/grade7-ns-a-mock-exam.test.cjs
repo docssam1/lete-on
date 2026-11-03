@@ -7,6 +7,8 @@ const test = require("node:test");
 const { chromium } = require("playwright");
 require("../grade7-ns-a-mock-bank.js");
 const exam = globalThis.GFIELDGrade7NSAExam;
+require("../grade7-rp-a-mock-bank.js");
+const rpExam = globalThis.GFIELDGrade7UnitMock;
 const root = path.resolve(__dirname, "..", "..");
 let server;
 let browser;
@@ -57,6 +59,53 @@ test("the original mock covers the declared Grade 7 rational-number standards wi
     "ns-a-m13": "1/8L", "ns-a-m14": "−$8.00"
   };
   for (const item of exam.items) assert.equal(item.choices[item.answer], expected[item.id], item.id);
+});
+
+test("the GFIELD proportional-relationships form covers 7.RP.A with unique, keyed original items", function () {
+  assert.equal(rpExam.id, "gfield-grade7-rp-a-mock-v1");
+  assert.equal(rpExam.formVersion, "2026-11-04-v1");
+  assert.equal(rpExam.durationMinutes, 40);
+  assert.equal(rpExam.clusterId, "7.RP.A");
+  assert.equal(rpExam.items.length, 14);
+  assert.deepEqual(rpExam.standards, ["7.RP.A.1", "7.RP.A.2", "7.RP.A.3"]);
+  assert.deepEqual(rpExam.items.reduce(function (counts, item) { counts[item.standard] = (counts[item.standard] || 0) + 1; return counts; }, {}), {
+    "7.RP.A.1": 4, "7.RP.A.2": 5, "7.RP.A.3": 5
+  });
+  assert.equal(new Set(rpExam.items.map(function (item) { return item.id; })).size, 14);
+  for (const item of rpExam.items) {
+    assert.equal(item.choices.length, 4, item.id);
+    assert.ok(Number.isInteger(item.answer) && item.answer >= 0 && item.answer < 4, item.id);
+    assert.equal(new Set(item.choices).size, 4, item.id);
+  }
+  assert.deepEqual(rpExam.items.map(function (item) { return item.choices[item.answer]; }), ["52마일", "$2.55", "27쪽", "1/10컵", "3.5", "x: 2, 4, 6 · y: 5, 10, 15", "y = 3.60x", "(0, 0)", "x가 1일 때 y는 4.5이다", "$90", "$127.20", "16km", "$55.20", "25%"]);
+});
+
+test("the Grade 7 proportional mock shows stacked fractions, stores its aggregate, and reaches its workbook and roadmap", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  const rpUrl = new URL("grade7-rp-a-mock-exam.html", url).href;
+  await page.goto(rpUrl, { waitUntil: "networkidle" });
+  assert.match(await page.locator("h1").innerText(), /비와 비례 관계[\s\S]*단원 모의고사/);
+  assert.equal(await page.locator("input").count(), 0);
+  await page.getByRole("button", { name: "모의고사 시작" }).click();
+  assert.equal(await page.locator(".mock-question").count(), 14);
+  assert.ok(await page.locator('.mock-question .math-fraction[aria-label="3분의 2"]').count() > 0, "fractions stay typeset as stacked math");
+  for (const item of rpExam.items) await page.locator(`#mock-question-${item.id} .mock-choice`).nth(item.answer).click();
+  await page.getByRole("button", { name: "답안 제출" }).click();
+  assert.match(await page.locator(".mock-score").innerText(), /14 \/ 14/);
+  assert.deepEqual(await page.locator(".mock-standard-results article").allInnerTexts(), ["7.RP.A.1\n4 / 4 정답", "7.RP.A.2\n5 / 5 정답", "7.RP.A.3\n5 / 5 정답"]);
+  assert.equal(await page.locator(".mock-next-study a[href*='unit-workbook']").getAttribute("href"), "./unit-workbook.html?cluster=7.RP.A&mode=workbook&audience=student&locale=ko&paper=A4");
+  const history = await page.evaluate(function () { return JSON.parse(localStorage.getItem("gmap-local-learning-record-v1:gfield-mock-result-history-v1")); });
+  assert.equal(history.records[0].examTitle, "7.RP.A 비와 비례 관계");
+  assert.equal(history.records[0].score.correct, 14);
+  assert.doesNotMatch(JSON.stringify(history), /"(?:responses|answer|studentName|schoolScore)"\s*:/);
+  await page.goto(new URL("boarding-roadmap.html?grade=7", url).href, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#journey-mock-history").isVisible(), true);
+  assert.match(await page.locator("#journey-mock-history").innerText(), /7\.RP\.A 비와 비례 관계[\s\S]*14 \/ 14 정답/);
+  assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
+  assert.deepEqual(errors, []);
+  await page.close();
 });
 
 test("the mock hides answers until submission and returns only this attempt's item and standard results", async function () {

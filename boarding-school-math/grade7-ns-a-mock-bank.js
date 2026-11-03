@@ -18,9 +18,13 @@
   ];
   root.GFIELDGrade7NSAExam = Object.freeze({
     id: "gfield-grade7-ns-a-mock-v1",
+    formVersion: "2026-11-03-v1",
+    grade: 7,
+    clusterId: "7.NS.A",
     title: "7.NS.A 유리수 연산 단원 모의고사 · 1회",
     durationMinutes: 40,
     standards: ["7.NS.A.1", "7.NS.A.2", "7.NS.A.3"],
     items: Object.freeze(items.map(function (item) { return Object.freeze(item); }))
   });
+  root.GFIELDGrade7UnitMock = root.GFIELDGrade7NSAExam;
 })(typeof window === "undefined" ? globalThis : window);

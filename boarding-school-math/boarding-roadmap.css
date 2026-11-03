@@ -270,6 +270,16 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .route-explanation > div p { margin: 8px 0 0; line-height: 1.5; }
 .route-explanation > small { margin-top: 28px; display: block; color: #566274; font-size: .8rem; line-height: 1.6; }
 .competition-section { padding-block: clamp(60px, 7vw, 94px); border-top: 1px solid #d8dee8; }
+.competition-own-mocks { margin-top: 26px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.competition-own-mocks[hidden], .competition-own-mocks-empty[hidden] { display: none; }
+.competition-own-mocks article { min-width: 0; padding: clamp(18px,2.5vw,26px); border: 1px solid #d8dee8; border-top: 3px solid #7152a4; background: #fff; }
+.competition-own-mocks article > span { color: #60418f; font-size: .7rem; font-weight: 900; letter-spacing: .04em; }
+.competition-own-mocks h3 { margin: 10px 0 0; color: #182230; font-size: 1.1rem; line-height: 1.4; }
+.competition-own-mocks p { min-height: 3.2em; margin: 8px 0 14px; color: #566274; font-size: .8rem; line-height: 1.6; }
+.competition-own-mocks a { min-height: 44px; display: inline-flex; align-items: center; color: #60418f; font-size: .84rem; font-weight: 850; text-decoration: none; }
+.competition-own-mocks a:focus-visible { outline: 3px solid #b79ce2; outline-offset: 3px; }
+.competition-own-mocks-empty { margin-top: 26px; padding: 18px 20px; border-left: 3px solid #7152a4; background: #f7f3fc; color: #44355e; font-size: .88rem; line-height: 1.6; }
+.competition-layout[hidden], .rit-comparison[hidden] { display: none; }
 .competition-layout { margin-top: 26px; display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr); border: 1px solid #d8dee8; background: #fff; }
 .competition-layout.is-empty { grid-template-columns: minmax(0, 1fr); }
 .competition-form, .competition-report { min-width: 0; padding: clamp(20px,3vw,34px); }
@@ -298,6 +308,7 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .report-row strong { font-size: .84rem; }.report-row span { color: #60418f; font-size: .84rem; font-weight: 900; }.report-row small { grid-column: 1 / -1; color: #566274; font-size: .72rem; }
 .competition-report-boundary { margin-top: 20px; padding-top: 15px; border-top: 1px solid #d8dee8; }
 .competition-links { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
+.competition-links[hidden] { display: none; }
 .competition-links a { min-height: 44px; padding: 10px 14px; display: inline-flex; align-items: center; border: 1px solid #60418f; color: #60418f; background: #fff; font-size: .82rem; font-weight: 850; text-decoration: none; }
 .competition-links a[hidden] { display: none; }
 .competition-saved-diagnostic { margin-top: 14px; padding: clamp(18px,3vw,28px); border: 1px solid #d8dee8; background: #fff; }.competition-saved-diagnostic[hidden] { display: none; }.saved-diagnostic-heading { display: flex; justify-content: space-between; align-items: start; gap: 16px; }.saved-diagnostic-heading span { color: #60418f; font-size: .72rem; font-weight: 850; }.saved-diagnostic-heading h3 { margin: 6px 0 0; font-size: 1.1rem; }.saved-diagnostic-heading p { margin: 5px 0 0; color: #566274; font-size: .75rem; }.saved-diagnostic-heading button { min-height: 40px; padding: 8px 11px; border: 1px solid #9aa5b4; color: #465264; background: #fff; font: inherit; font-size: .72rem; font-weight: 800; cursor: pointer; }.competition-saved-domains { margin-top: 16px; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); border: 1px solid #d8dee8; }.competition-saved-domain { min-width: 0; padding: 12px; border-right: 1px solid #d8dee8; }.competition-saved-domain:last-child { border-right: 0; }.competition-saved-domain strong,.competition-saved-domain span,.competition-saved-domain small { display: block; }.competition-saved-domain strong { font-size: .76rem; }.competition-saved-domain span { margin-top: 6px; color: #60418f; font-size: .9rem; font-weight: 900; }.competition-saved-domain small { margin-top: 4px; color: #687587; font-size: .65rem; line-height: 1.4; }.competition-saved-reasons,.competition-saved-boundary { margin: 12px 0 0; color: #566274; font-size: .73rem; line-height: 1.55; }.competition-saved-boundary { padding-top: 10px; border-top: 1px solid #d8dee8; }
@@ -431,6 +442,7 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
   .grade7-branch-list { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) { .grade-comparison { padding-block: 30px; }.grade-comparison-controls { grid-template-columns: 1fr; gap: 10px; }.comparison-table { display: block; }.comparison-desktop-view { display: none; }.comparison-mobile-view { display: block; }.comparison-mobile-row { padding: 16px; border-bottom: 1px solid #d8dee8; }.comparison-mobile-header { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; background: #f8fafc; }.comparison-mobile-cell { min-width: 0; }.comparison-mobile-cell strong, .comparison-mobile-cell > span { display: block; color: #60418f; font-size: .78rem; font-weight: 850; line-height: 1.4; }.comparison-mobile-header .comparison-mobile-cell > span { margin-top: 5px; color: #182230; font-size: .92rem; }.comparison-mobile-row h3 { margin: 0 0 10px; font-size: .86rem; }.comparison-mobile-values { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }.comparison-mobile-cell p { margin: 5px 0 0; color: #354255; font-size: .82rem; line-height: 1.55; overflow-wrap: anywhere; }.comparison-mobile-grade { color: #60418f; font-size: .74rem; font-weight: 800; }.comparison-mobile-note { margin: 0; padding: 12px 16px; color: #354255; background: #f5f1f9; border-bottom: 1px solid #d8dee8; font-size: .8rem; line-height: 1.5; }.comparison-bridge { grid-template-columns: 1fr; gap: 4px; padding: 12px 16px; }.comparison-practice-pair { padding: 16px; }.comparison-pair-columns { grid-template-columns: 1fr; }.comparison-pair-columns article + article { border-top: 1px solid #d8dee8; border-left: 0; }.same-source-score-pair-columns { grid-template-columns: 1fr; }.competition-saved-domains { grid-template-columns: 1fr; }.competition-saved-domain { border-right: 0; border-top: 1px solid #d8dee8; }.competition-saved-domain:first-child { border-top: 0; }.saved-diagnostic-heading { flex-direction: column; }.saved-diagnostic-heading button { width: 100%; } }
+@media (max-width: 760px) { .competition-own-mocks { grid-template-columns: 1fr; }.competition-own-mocks p { min-height: 0; } }
 @media (max-width: 600px) { .competition-record-pair-cards { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 /* A clear route map: selectable curriculum stops, not inferred learner progress. */
@@ -470,6 +482,7 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
 .journey-mock-history { margin-top: 10px; padding: 16px; border: 1px solid #e1d9eb; border-radius: 14px; background: #fff; }
 .journey-mock-history-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; color: #60418f; font-size: .84rem; }
 .journey-mock-history-heading time { color: #6a6670; font-size: .74rem; }
+.journey-mock-history .journey-mock-exam-title { margin: 8px 0 0; color: #60418f; font-size: .83rem; font-weight: 800; }
 .journey-mock-history .journey-mock-score { margin: 8px 0 0; color: #262132; font-weight: 850; font-size: 1rem; }
 .journey-side .journey-mock-standards { margin: 10px 0 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; list-style: none; }
 .journey-side .journey-mock-standards li { padding: 7px 5px; display: block; border: 1px solid #eee9f3; border-radius: 8px; color: #55515e; text-align: center; font-size: .7rem; }

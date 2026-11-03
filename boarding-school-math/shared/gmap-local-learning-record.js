@@ -19,6 +19,10 @@
   const MAX_COMPETITION_FORMS = 8;
   const MAX_COMPETITION_DIAGNOSTICS = 50;
   const MAX_GFIELD_MOCK_RESULTS = 20;
+  const GFIELD_MOCK_RESULT_RULES = Object.freeze({
+    "gfield-grade7-ns-a-mock-v1": Object.freeze({ formVersion: "2026-11-03-v1", title: "7.NS.A 유리수 연산", clusterId: "7.NS.A", prefix: "ns-a-m", standards: ["7.NS.A.1", "7.NS.A.2", "7.NS.A.3"], itemsPerStandard: [5, 5, 4] }),
+    "gfield-grade7-rp-a-mock-v1": Object.freeze({ formVersion: "2026-11-04-v1", title: "7.RP.A 비와 비례 관계", clusterId: "7.RP.A", prefix: "rp-a-m", standards: ["7.RP.A.1", "7.RP.A.2", "7.RP.A.3"], itemsPerStandard: [4, 5, 5] })
+  });
   const COMPETITION_DOMAIN_LABELS = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석" });
   const COMPETITION_REASON_IDS = new Set(["concept", "approach", "calculation", "reading", "time"]);
   const REVIEWED_2019_G6_SOURCE_SHA256 = "a2e7191c21d29fdfb5b9f8a0d08018df6d7c1b318d0e05207dcc522696074d6b";
@@ -183,22 +187,30 @@
     };
   }
   function sanitizedGfieldMockResult(value) {
-    if (!object(value) || value.schemaVersion !== "gfield-mock-result-v1" || value.examId !== "gfield-grade7-ns-a-mock-v1" || value.formVersion !== "2026-11-03-v1" || value.grade !== 7 || !object(value.score) || !Array.isArray(value.standards) || !Array.isArray(value.reviewFocuses)) return null;
-    const standards = value.standards.slice(0, 3).map(function (entry) {
-      if (!object(entry) || !/^7\.NS\.A\.[1-3]$/.test(entry.id) || !Number.isInteger(entry.correct) || !Number.isInteger(entry.total) || entry.total < 1 || entry.correct < 0 || entry.correct > entry.total) return null;
+    if (!object(value) || value.schemaVersion !== "gfield-mock-result-v1" || value.grade !== 7 || !object(value.score) || !Array.isArray(value.standards) || !Array.isArray(value.reviewFocuses)) return null;
+    const rules = GFIELD_MOCK_RESULT_RULES[value.examId];
+    if (!rules || value.formVersion !== rules.formVersion) return null;
+    const itemCount = rules.itemsPerStandard.reduce(function (sum, count) { return sum + count; }, 0);
+    const standards = value.standards.slice(0, rules.standards.length).map(function (entry, index) {
+      if (!object(entry) || entry.id !== rules.standards[index] || !Number.isInteger(entry.correct) || !Number.isInteger(entry.total) || entry.total !== rules.itemsPerStandard[index] || entry.correct < 0 || entry.correct > entry.total) return null;
       return { id: entry.id, correct: entry.correct, total: entry.total };
     }).filter(Boolean);
-    if (standards.length !== 3 || new Set(standards.map(function (entry) { return entry.id; })).size !== 3 || standards.reduce(function (sum, entry) { return sum + entry.total; }, 0) !== 14) return null;
-    if (!Number.isInteger(value.score.correct) || value.score.correct < 0 || value.score.correct > 14 || !Number.isInteger(value.score.answered) || value.score.answered < 0 || value.score.answered > 14 || value.score.answered < value.score.correct || standards.reduce(function (sum, entry) { return sum + entry.correct; }, 0) !== value.score.correct) return null;
-    const reviewFocuses = value.reviewFocuses.slice(0, 14).map(function (focus) {
-      if (!object(focus) || !/^ns-a-m(?:0[1-9]|1[0-4])$/.test(focus.itemId) || !/^7\.NS\.A\.[1-3]$/.test(focus.standard) || typeof focus.label !== "string" || !focus.label.trim() || focus.label.length > 100) return null;
+    if (standards.length !== rules.standards.length || standards.reduce(function (sum, entry) { return sum + entry.total; }, 0) !== itemCount) return null;
+    if (!Number.isInteger(value.score.correct) || value.score.correct < 0 || value.score.correct > itemCount || !Number.isInteger(value.score.answered) || value.score.answered < 0 || value.score.answered > itemCount || value.score.answered < value.score.correct || standards.reduce(function (sum, entry) { return sum + entry.correct; }, 0) !== value.score.correct) return null;
+    const focusIds = new Set();
+    const reviewFocuses = value.reviewFocuses.slice(0, itemCount).map(function (focus) {
+      if (!object(focus) || typeof focus.itemId !== "string" || typeof focus.standard !== "string" || typeof focus.label !== "string" || !focus.label.trim() || focus.label.length > 100) return null;
+      const match = new RegExp("^" + rules.prefix + "(\\d{2})$").exec(focus.itemId);
+      const index = match ? Number(match[1]) - 1 : -1;
+      if (index < 0 || index >= itemCount || focus.standard !== rules.standards.find(function (standard, standardIndex) { return index >= rules.itemsPerStandard.slice(0, standardIndex).reduce(function (sum, count) { return sum + count; }, 0) && index < rules.itemsPerStandard.slice(0, standardIndex + 1).reduce(function (sum, count) { return sum + count; }, 0); }) || focusIds.has(focus.itemId)) return null;
+      focusIds.add(focus.itemId);
       return { itemId: focus.itemId, standard: focus.standard, label: focus.label.trim() };
     }).filter(Boolean);
     if (reviewFocuses.length !== value.reviewFocuses.length) return null;
     return {
       schemaVersion: "gfield-mock-result-v1", id: typeof value.id === "string" && /^mock-[a-z0-9-]{8,48}$/.test(value.id) ? value.id : `mock-${Date.now().toString(16)}-${Math.random().toString(16).slice(2, 10)}`,
-      examId: value.examId, formVersion: value.formVersion, grade: 7,
-      score: { correct: value.score.correct, answered: value.score.answered, total: 14 },
+      examId: value.examId, examTitle: rules.title, clusterId: rules.clusterId, formVersion: value.formVersion, grade: 7,
+      score: { correct: value.score.correct, answered: value.score.answered, total: itemCount },
       standards: standards,
       reviewFocuses: reviewFocuses,
       completedAt: typeof value.completedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.completedAt) ? value.completedAt : new Date().toISOString()

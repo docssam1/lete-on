@@ -98,6 +98,28 @@ test("GFIELD mock results keep local aggregate evidence only, in newest-first or
   assert.equal(store.saveGfieldMockResult({ ...result, id: "bad-result", score: { correct: 15, answered: 15 } }), false);
 });
 
+test("GFIELD stores the second Grade 7 unit form under its own reviewed scope", function () {
+  const storage = memoryStorage();
+  const store = records.create(storage);
+  const saved = store.saveGfieldMockResult({
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-rpa12345", examId: "gfield-grade7-rp-a-mock-v1", formVersion: "2026-11-04-v1", grade: 7,
+    score: { correct: 10, answered: 13 },
+    standards: [{ id: "7.RP.A.1", correct: 3, total: 4 }, { id: "7.RP.A.2", correct: 4, total: 5 }, { id: "7.RP.A.3", correct: 3, total: 5 }],
+    reviewFocuses: [{ itemId: "rp-a-m03", standard: "7.RP.A.1", label: "분수 시간의 단위율" }], completedAt: "2026-11-04T02:00:00.000Z",
+    responses: [{ answer: "not stored" }], studentName: "not stored"
+  });
+  assert.equal(saved.examTitle, "7.RP.A 비와 비례 관계");
+  assert.equal(saved.clusterId, "7.RP.A");
+  assert.equal(saved.score.total, 14);
+  assert.equal(store.loadGfieldMockResultHistory("gfield-grade7-rp-a-mock-v1").length, 1);
+  assert.equal(store.loadGfieldMockResultHistory("gfield-grade7-ns-a-mock-v1").length, 0);
+  assert.doesNotMatch(storage.getItem("gmap-local-learning-record-v1:gfield-mock-result-history-v1"), /not stored|responses|studentName/);
+  assert.equal(store.saveGfieldMockResult({
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-rpa12346", examId: "gfield-grade7-rp-a-mock-v1", formVersion: "wrong-form", grade: 7,
+    score: { correct: 14, answered: 14 }, standards: [{ id: "7.RP.A.1", correct: 4, total: 4 }, { id: "7.RP.A.2", correct: 5, total: 5 }, { id: "7.RP.A.3", correct: 5, total: 5 }], reviewFocuses: []
+  }), false);
+});
+
 test("Grade 6 diagnostic evidence keeps only an answer-safe teacher-reviewed summary", function () {
   const store = records.create(memoryStorage());
   assert.equal(store.saveGrade6DiagnosticEvidence({

@@ -1,8 +1,8 @@
 (function () {
   "use strict";
-  const exam = window.GFIELDGrade7NSAExam;
+  const exam = window.GFIELDGrade7UnitMock || window.GFIELDGrade7NSAExam;
   const localRecords = window.GFIELDLocalLearningRecord;
-  if (!exam || !Array.isArray(exam.items) || exam.items.length !== 14) return;
+  if (!exam || !Array.isArray(exam.items) || !exam.items.length || !Array.isArray(exam.standards)) return;
   const answers = new Map();
   const startPanel = document.getElementById("mock-start-panel");
   const examPanel = document.getElementById("mock-exam-panel");
@@ -86,7 +86,7 @@
     const reviewFocuses = exam.items.filter(function (item) { return answers.get(item.id) !== item.answer; }).map(function (item) { return { itemId: item.id, standard: item.standard, label: item.focus }; });
     const savedResult = localRecords && localRecords.storage.saveGfieldMockResult({
       schemaVersion: "gfield-mock-result-v1", id: `mock-${Date.now().toString(16)}-${Math.random().toString(16).slice(2, 10)}`,
-      examId: exam.id, formVersion: "2026-11-03-v1", grade: 7,
+      examId: exam.id, formVersion: exam.formVersion, grade: exam.grade,
       score: { correct: correctCount, answered: answers.size }, standards: standardResults, reviewFocuses: reviewFocuses,
       completedAt: new Date().toISOString()
     });
@@ -140,8 +140,8 @@
       resultContent.push(focusList);
     }
     const nextStudyLink = document.createElement("a");
-    nextStudyLink.href = "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4";
-    nextStudyLink.textContent = "7.NS.A 단원 워크북으로 이어서 풀기 →";
+    nextStudyLink.href = `./unit-workbook.html?cluster=${encodeURIComponent(exam.clusterId)}&mode=workbook&audience=student&locale=ko&paper=A4`;
+    nextStudyLink.textContent = `${exam.clusterId} 단원 워크북으로 이어서 풀기 →`;
     resultContent.push(nextStudyLink);
     if (savedResult) {
       const roadmapLink = document.createElement("a");

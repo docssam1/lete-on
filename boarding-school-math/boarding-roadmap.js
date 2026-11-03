@@ -336,7 +336,10 @@
   }
   function ownPracticeResources(selectedGrade) {
     const resources = [];
-    if (selectedGrade === 7) resources.push({ title: "지필드 7.NS.A 유리수 연산 단원 모의고사 · 1회", url: "./grade7-ns-a-mock-exam.html" });
+    if (selectedGrade === 7) resources.push(
+      { title: "지필드 7.NS.A 유리수 연산 단원 모의고사 · 1회", url: "./grade7-ns-a-mock-exam.html" },
+      { title: "지필드 7.RP.A 비와 비례 관계 단원 모의고사 · 1회", url: "./grade7-rp-a-mock-exam.html" }
+    );
     if (selectedGrade === 6) resources.push({ title: "지필드 6.NS.A 분수 나눗셈 단원 워크북", url: "./unit-workbook.html?cluster=6.NS.A&mode=workbook&audience=student&locale=ko&paper=A4" });
     if (selectedGrade === 7) ["7.NS.A", "7.RP.A"].forEach(function (clusterId) {
       const label = clusterId === "7.NS.A" ? "유리수 연산" : "비례 관계";
@@ -351,7 +354,7 @@
       if (seen.has(resource.url)) return false;
       seen.add(resource.url);
       return true;
-    }).slice(0, 5);
+    }).slice(0, 6);
   }
   function renderOwnPracticeEntry() {
     const resources = ownPracticeResources(grade);
@@ -376,28 +379,29 @@
     link.href = resources[0].url;
     link.hidden = false;
     if (grade === 7 && historyPanel && localRecords && localRecords.storage) {
-      const history = localRecords.storage.loadGfieldMockResultHistory("gfield-grade7-ns-a-mock-v1");
+      const history = localRecords.storage.loadGfieldMockResultHistory();
       if (history.length) {
         const latest = history[0];
         const header = document.createElement("div"); header.className = "journey-mock-history-heading";
         const heading = document.createElement("strong"); heading.textContent = "최근 지필드 모의고사";
         const date = document.createElement("time"); date.dateTime = latest.completedAt; date.textContent = new Date(latest.completedAt).toLocaleDateString("ko-KR");
         header.append(heading, date);
+        const examTitle = document.createElement("p"); examTitle.className = "journey-mock-exam-title"; examTitle.textContent = latest.examTitle;
         const score = document.createElement("p"); score.className = "journey-mock-score"; score.textContent = `${latest.score.correct} / ${latest.score.total} 정답 · ${latest.score.answered}문항 응답`;
         const standards = document.createElement("ul"); standards.className = "journey-mock-standards";
         latest.standards.forEach(function (entry) { const row = document.createElement("li"); row.textContent = `${entry.id} · ${entry.correct}/${entry.total}`; standards.append(row); });
-        historyPanel.append(header, score, standards);
+        historyPanel.append(header, examTitle, score, standards);
         if (latest.reviewFocuses.length) {
           const label = document.createElement("span"); label.className = "journey-mock-review-label"; label.textContent = "다시 볼 개념";
           const focusList = document.createElement("ul"); focusList.className = "journey-mock-focuses";
           latest.reviewFocuses.slice(0, 3).forEach(function (focus) { const row = document.createElement("li"); row.textContent = focus.label; focusList.append(row); });
           historyPanel.append(label, focusList);
         }
-        if (history.length > 1) {
-          const prior = history[1];
+        const prior = history.find(function (entry) { return entry.examId === latest.examId && entry.formVersion === latest.formVersion && entry.id !== latest.id; });
+        if (prior) {
           const delta = latest.score.correct - prior.score.correct;
           const trend = document.createElement("p"); trend.className = "journey-mock-trend";
-          trend.textContent = `같은 회차 이전 풀이 ${prior.score.correct}/${prior.score.total} → 최근 ${latest.score.correct}/${latest.score.total} · ${delta > 0 ? `+${delta}` : delta}문항`;
+          trend.textContent = `같은 시험 이전 풀이 ${prior.score.correct}/${prior.score.total} → 최근 ${latest.score.correct}/${latest.score.total} · ${delta > 0 ? `+${delta}` : delta}문항`;
           historyPanel.append(trend);
           const caveat = document.createElement("small"); caveat.textContent = "같은 문제를 다시 푼 변화예요. 문항 기억의 영향이 있어 학년 등급이나 숙달 판정으로 보지 않습니다."; historyPanel.append(caveat);
         }
@@ -876,6 +880,11 @@
     updateCompetitionFields();
     resetCompetitionReport();
   }
+  function renderCompetitionMockCatalog() {
+    const gradeSeven = grade === 7;
+    $("competition-own-mocks").hidden = !gradeSeven;
+    $("competition-own-mocks-empty").hidden = gradeSeven;
+  }
   function updateCompetitionFields() {
     const option = data.competitionOptions(grade).find(function (entry) { return entry.id === competition; });
     const selected = Boolean(option);
@@ -1141,6 +1150,7 @@
     renderGradeFocus();
     renderPracticeLinks();
     renderRoutes();
+    renderCompetitionMockCatalog();
     renderCompetitionOptions();
     renderGrade7ContestBranch();
     renderCompetitionRows();
