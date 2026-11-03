@@ -491,3 +491,9 @@ Verification: Grade 3–12 roadmap, teacher paper builder, Algebra 1, Geometry, 
 Routed concept-flow headings and steps through the shared math-text renderer, so actual numeric or algebraic fractions use a stacked numerator, fraction bar, and denominator instead of slash text. Existing labels such as AMC 10/12 and stage counts remain ordinary text. The Grade 8 and Grade 10 AIME practice stage now links to the official MAA 2027 eligibility page and distinguishes AIME-style study from exam eligibility; the note is explicitly tied to the 2027 U.S./Canada rules and directs other years/regions to their organizer.
 
 Verification: Grade 3–12 roadmap model tests pass 12/12 and browser tests pass 39/39, including Grade 7 fraction checkpoints, AMC 10/12 notation, concept flows, and responsive layouts. `node --check` and CRLF-aware `git diff --check` pass. Local only; no push, deployment, or Drive sync.
+
+### 2026-11-03 live Grade 7 fraction and Grade 9 route check
+
+Opened the current local Grade 7 `7.NS.A` student workbook in Chrome at 390×844. The page rendered MathML fractions with stacked numerator and denominator (`mfrac` elements present), preserved the progress count as `0 / 36`, reported no page errors, and stayed at 390/390 document width. Opened the inferred Grade 9 route at 1280×900 and 390×844: both sizes retained the “학교 과목 확인” label and school-sequence note, with no horizontal overflow or page errors. This is a live screen render, not a saved-PDF review.
+
+Checked Claude Code authentication after the prior review attempt: the CLI remains logged out. No candidate content was sent. The Grade 7 private diagnostic and AMC R6 independent-review gates remain open.
