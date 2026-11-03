@@ -316,3 +316,9 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - 두 해 모두 제3자 재게시를 출처로 표시하며, 보고서 표본을 현재 전체 응시 규준·학년 규준이나 다른 출처의 참가자 총수와 혼합하지 않는다. 상위 2.5%·10% 점수선을 채워 넣지 않는다.
 - `amc-score-distribution-reference.js`에 두 해를 연결했다. 동일 연도 원본을 끝까지 입력했을 때 기록된 경계만 나란히 표시한다. Grade 7은 학생이 입력한 학년 맥락일 뿐, 점수 기준은 전체 보고 표본 기준이며 학년별 순위·등급으로 표시하지 않는다.
 - 대조 근거: [2018 MAA PDF 재게시본](https://www.mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf), [2019 MAA 보고서 재게시](https://www.ivytrack.com/forum.php?mod=viewthread&tid=19238), [2019 점수 요약 교차 확인](https://bj.xdf.cn/zixun/beimei/97334.html). 2019의 교차 확인 페이지 또한 MAA 보고 이미지를 재인용한다.
+
+### 2026-11-04 · AMC 10A Grade 7 과거 평균 웹 자료 추가
+
+- [Archimedean Schools의 2019 AMC 10A 게시물](https://www.archimedean.org/amc-grade-7-student-sailalitha-kodukula-makes-history/)은 AMC 10A에 응시한 Grade 7 참가자 1,982명의 평균을 59.72점으로 보고한다. 페이지에는 MAA 작성 원자료 파일이 연결되어 있지 않아, 학교가 공개한 전국 학년 통계의 2차 보고로 분류했다.
+- 이 값은 AMC 10A · 2019 · Grade 7과 정확히 일치할 때만 결과 비교에 나타난다. 참가자 수와 평균만 제시하며 백분위·학업 등급·현재 규준으로 바꾸지 않는다. UI에 2차 출처 안내와 원문 링크를 보인다. 원자료는 `competition/historical-amc-grade/amc10-2019a-grade7-mean.csv`, 참조 항목은 `competition/amc-historical-grade-reference.js`, 회차별 수집 상태는 coverage manifest에 기록했다.
+- 출처 본문에서 해당 수치와 표본을 다시 대조했다. 수동 브라우저 검수에서 2019 AMC 10 A Grade 7 선택, LIVE 정답표 대조 후 결과 패널의 59.72 평균·1,982명 표본·2차 출처 설명과 링크를 확인했다. 검수용 응답은 저장하지 않고 페이지 새로고침으로 초기화했다. 이 값 하나로 다른 연도나 시험형을 채우지 않는다.

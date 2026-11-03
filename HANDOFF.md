@@ -1177,3 +1177,11 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 ### 2026-11-04 · AMC 8 benchmark web search follow-up
 
 Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. Search results reconfirmed the existing 2018 whole-contest report row, and the 2023–2026 all-participant report figures already staged from MAA score reports. No new publicly accessible MAA overall grade-by-score table was recovered. The 2020 Bard Math Circle result is a participating circle's local summary (e.g., one grade average), not a national cohort; excluded it from the comparison dataset. Keep the existing same-year/matching-cohort rules and do not convert contest marks into a school grade equivalent. Web search sources reviewed: https://mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf ; https://www.bardmathcircle.org/p/2020-amc-8 .
+
+### 2026-11-04 · AMC 10A Grade 7 연도별 통계 보충
+
+- 사용자가 요청한 웹 검색으로 [Archimedean Schools 2019 AMC 10A 게시물](https://www.archimedean.org/amc-grade-7-student-sailalitha-kodukula-makes-history/)을 확인했다. 해당 페이지는 Grade 7 참가자 1,982명, 평균 59.72/150을 보고한다. MAA 원본 통계 PDF는 회수하지 못했으므로 학교가 공개한 2차 보고로 분류했다.
+- 정확히 AMC 10A · 2019 · Grade 7에서만 결과에 노출하도록 통계 CSV/참조 모듈/coverage manifest를 연결했다. 화면에서 출처의 2차 성격과 제한을 명시한다. 백분위·현재 능력 등급·타 연도 비교로 확장하지 않는다.
+- 구현 파일: `boarding-school-math/competition-paper-review.html`, `boarding-school-math/competition-paper-review.js`, `boarding-school-math/competition/amc-historical-grade-reference.js`, `boarding-school-math/competition/historical-amc-grade/` 하위 CSV/README; 근거 기록은 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`.
+- 수동 브라우저 확인: AMC 10 A 2019, Grade 7에서 LIVE 정답표 대조 후 결과에 기록 학년 참가자 1,982명·평균 59.72/150·학교 2차 출처 안내 및 링크가 표시된다. 인쇄/PDF 링크와 25개 문항의 답안·원본 풀이 링크가 선택되는 상태도 확인했다. 검수용 입력은 저장하지 않고 새로고침으로 초기화했다. CSV coverage 266행 및 신규 원자료 1행 확인, `git diff --check` 통과.
+- 다음 작업: 다른 AMC 연도·학년의 공개 학년 통계와 보고서를 웹에서 더 찾아 회차/폼/모집단이 검증된 원문만 같은 방식으로 추가한다. 현재 2019 A/Grade 7 외의 연도/폼에 이 평균을 확대하지 않는다. `raw_youtube.txt`는 미추적 원본이며 이번 변경에서 제외한다. 원격 push·배포·Drive 동기화 없음.
