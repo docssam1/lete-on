@@ -837,3 +837,9 @@ Metadata-only check on 2026-11-03 confirms the AMC candidate's desktop, 390px an
 ### 2026-11-03 Math Kangaroo comparison regression follow-up
 
 Fixed the stale source-freshness assertion after verifying the official scoring page on 2026-11-03. The Grade 7/8 browser helper now omits the official-percentile input for Grade 9 records, which may legitimately lack the optional reported value. Verification on this branch: public Grade 3–12 roadmap, competition-review analysis, answer-safe local-record, and profile model suites pass 36/36; public Grade 7 NS.A/workbook contract suites pass 81/81; Grade roadmap and competition-review browser suites pass 49/49. The browser suite used Playwright 1.62.1 restored temporarily in `/tmp` from lockfile-pinned package tarballs after SHA-512 integrity checks, plus the already-installed Chrome binary. No project dependency or lockfile changed. `git diff --check` and changed-test syntax checks pass. No private item or learner record accessed; local only.
+
+### 2026-11-03 G·MAP branded learning map refresh
+
+Generated a branded wide illustration from the existing learning-world art, preserving its connected study islands and math landmarks while matching G·MAP's violet/lavender and warm cream palette. Saved the optimized 1800×720 image as `assets/roadmap/mathematics-learning-world-gmap.webp`; the previous asset remains intact. The Grade 7 guidance prompt now sits inside the desktop map and clears every route stop. Phones retain the text-first vertical path.
+
+Verification: the Grade roadmap browser suite passes 31/31, including branded artwork for Grades 3–12, prompt placement and overlap checks, and 320px/390px/tablet responsive layout. Rendered and visually inspected the 1280px local preview. `git diff --check` passes. No private items or learner data accessed; local only, no push or deployment.

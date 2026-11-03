@@ -864,7 +864,20 @@ test("the same learning-world map frames every grade while phones keep the verti
     await desktop.goto(`${url}?grade=${grade}`, { waitUntil: "networkidle" });
     assert.equal(await desktop.locator("#stage-list button").count(), 4, `Grade ${grade} has four named route stops`);
     assert.ok(await desktop.locator("#stage-list button strong").allTextContents().then((labels) => labels.every((label) => label.trim())), `Grade ${grade} route labels are HTML text`);
-    assert.match(await desktop.locator(".stage-map").evaluate((node) => getComputedStyle(node).backgroundImage), /mathematics-learning-world\.webp/, `Grade ${grade} uses the shared map scene`);
+    assert.match(await desktop.locator(".stage-map").evaluate((node) => getComputedStyle(node).backgroundImage), /mathematics-learning-world-gmap\.webp/, `Grade ${grade} uses the shared branded map scene`);
+    if (grade === 7) {
+      const intro = desktop.locator("#grade7-road-intro");
+      const mapBox = await desktop.locator(".stage-map").boundingBox();
+      const introBox = await intro.boundingBox();
+      assert.equal(await intro.isVisible(), true);
+      assert.ok(introBox.y >= mapBox.y && introBox.y + introBox.height <= mapBox.y + mapBox.height, "Grade 7 prompt sits inside the map scene");
+      assert.ok(Math.abs(introBox.x - mapBox.x) < 40, "Grade 7 prompt aligns to the map's left edge");
+      const stopBoxes = await desktop.locator("#stage-list .stage-button").evaluateAll((nodes) => nodes.map((node) => {
+        const box = node.getBoundingClientRect();
+        return { x: box.x, y: box.y, right: box.right, bottom: box.bottom };
+      }));
+      assert.ok(stopBoxes.every((box) => box.x >= introBox.x + introBox.width || box.right <= introBox.x || box.y >= introBox.y + introBox.height || box.bottom <= introBox.y), "Grade 7 prompt does not cover route stops");
+    }
     await desktop.locator("#stage-list button").nth(1).click();
     assert.equal(await desktop.getByText("살펴보는 중", { exact: true }).count(), 1, `Grade ${grade} selected state is real DOM text`);
     assert.deepEqual(await desktop.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [1280, 1280], `Grade ${grade} has no horizontal overflow`);
@@ -873,7 +886,7 @@ test("the same learning-world map frames every grade while phones keep the verti
 
   const phone = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await phone.goto(`${url}?grade=8`, { waitUntil: "networkidle" });
-  assert.doesNotMatch(await phone.locator(".stage-map").evaluate((node) => getComputedStyle(node).backgroundImage), /mathematics-learning-world\.webp/);
+  assert.doesNotMatch(await phone.locator(".stage-map").evaluate((node) => getComputedStyle(node).backgroundImage), /mathematics-learning-world-gmap\.webp/);
   assert.equal(await phone.locator("#stage-list").evaluate((node) => getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).length), 1);
   await phone.locator("#stage-list button").nth(1).click();
   assert.equal(await phone.getByText("살펴보는 중", { exact: true }).count(), 1);

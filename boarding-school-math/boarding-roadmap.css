@@ -434,7 +434,7 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
   padding: 20px 0 8px;
   border-color: #e3dced;
   background-color: #f3eef7;
-  background-image: linear-gradient(180deg,rgba(250,248,252,.12),rgba(250,248,252,.24)),url("./assets/roadmap/mathematics-learning-world.webp");
+  background-image: linear-gradient(180deg,rgba(250,248,252,.12),rgba(250,248,252,.24)),url("./assets/roadmap/mathematics-learning-world-gmap.webp");
   background-position: center;
   background-size: cover;
 }
@@ -464,6 +464,27 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
 .stage-button[aria-pressed="true"]::after,
 .stage-list .stage-button[aria-pressed="true"]::after { content: none; }
 .stage-selected-note { color: #60418f; font-size: .72rem; font-weight: 850; line-height: 1.25; }
+@media (min-width: 601px) {
+  .journey-main.grade7-active .stage-map { min-height: 324px; padding-top: 124px; }
+  .journey-main.grade7-active .grade7-road-intro {
+    width: min(440px, calc(100% - 36px));
+    margin: 0;
+    padding: 12px 16px;
+    position: absolute;
+    z-index: 2;
+    top: 16px;
+    left: 18px;
+    border-color: rgba(255,255,255,.82);
+    border-radius: 16px;
+    background: rgba(255,255,255,.94);
+    box-shadow: 0 8px 26px rgba(41,31,54,.13);
+    backdrop-filter: blur(8px);
+  }
+  .journey-main.grade7-active .grade7-road-intro h4 { margin-top: 3px; font-size: 1rem; }
+  .journey-main.grade7-active .grade7-road-intro p { max-width: 190px; font-size: .78rem; }
+  .journey-main.grade7-active .stage-list { min-height: 220px; margin-top: 0; }
+  .journey-main.grade7-active .stage-list li:nth-child(2) { transform: translateY(0); }
+}
 @media (max-width: 600px) {
   .journey-main .stage-map {
     min-height: 0;

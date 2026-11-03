@@ -298,3 +298,9 @@ Verification: public browser flow on a local preview saved synthetic Grade 7 (72
 Found and fixed a stale source-freshness assertion that still expected every Math Kangaroo source to use the older general verification date. The scoring-page reference is now explicitly accepted at its 2026-11-03 verification date, while the prior-paper archive and MAA entries retain their separate dates.
 
 Verification: Grade 3–12 roadmap, contest review analysis, local diagnostic storage, and competition-profile model suites pass 36/36. Public Grade 7 NS.A/workbook contracts pass 81/81. A first browser run found an optional-percentile helper passing `undefined` for Grade 9; the helper now skips that optional input. The full roadmap and contest-review browser suites pass 49/49 with Playwright 1.62.1 restored under `/tmp` from the lockfile using verified package integrity and the already-installed Chrome executable. `git diff --check` and changed-test syntax checks pass. No project dependencies or lockfiles changed. Private candidate state remains locked and untouched; local only.
+
+### 2026-11-03 G·MAP branded learning map refresh
+
+Recolored the shared learning-world illustration to G·MAP's violet/lavender and cream palette while preserving the connected study islands and math landmarks. Added an optimized 1800×720 version at `boarding-school-math/assets/roadmap/mathematics-learning-world-gmap.webp`; the original remains available. The Grade 7 guidance prompt now sits inside the illustrated map without obscuring route stops. Phone layouts retain their text-first vertical path.
+
+Verification: the Grade roadmap browser suite passes 31/31, including branded map use across Grades 3–12, Grade 7 prompt placement and overlap checks, and responsive widths. Rendered and inspected the 1280px desktop preview; `git diff --check` passes. No private candidate content or learner data accessed; local only, no push or deployment.
