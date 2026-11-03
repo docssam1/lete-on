@@ -57,16 +57,19 @@
 
 ### 연례 보고서에서 직접 확인 가능한 학년별 수치
 
-2026-11-04 웹 대조 결과를 아래 조사 CSV로 전사했다. CSV는 화면 노출용 규준표가 아니라 연도·시험형·학년군 단위 근거 보관본이다. AMC 8 2003–2009 값은 MAA 작성 2009 보고서의 표 2와 직접 대조했으며, AMC 10/12 2007–2010과 2011 값은 MAA 작성 연례 통계 사본의 해당 표/Grand Statistics 항목과 대조했다. AMC 10/12 사본은 제3자 호스트에 있으므로 primary-host capture 상태를 별도로 남겼다.
+2026-11-04 웹 대조 결과를 아래 조사 CSV로 전사했다. CSV는 화면 노출용 규준표가 아니라 연도·시험형·학년군 단위 근거 보관본이다. AMC 8 2001–2002 값은 MAA 작성 2008 보고서 표 2, 2003–2009 값은 MAA 작성 2009 보고서 표 2와 대조했다. AMC 10/12 2007–2010과 2011 값은 MAA 작성 연례 통계 사본의 해당 표/Grand Statistics 항목과 대조했다. 보고서 사본은 제3자 호스트에 있으므로 primary-host capture 상태를 별도로 남겼다.
 
-- `../competition/historical-amc-grade/amc8-grade-means-2003-2009.csv` — AMC 8 recorded grades 4–5, 6, 7, 8; participant counts and means.
+- `../competition/historical-amc-grade/amc8-grade-means-2001-2009.csv` — AMC 8 recorded grades 4–5, 6, 7, 8; participant counts and means.
 - `../competition/historical-amc-grade/amc10-12-grade-means-2007-2011.csv` — AMC 10 and AMC 12 A/B form, grade-group counts and means (110 rows).
-- 두 파일은 연도/시험/폼이 다르면 수치를 합치거나 서로 환산하지 않는다. 수치 표본은 현재 시험을 대표하지 않고, score-to-grade placement, ability level, percentile, AMC qualification을 의미하지 않는다.
+- `../competition/historical-amc-grade/amc-grade-reference-coverage-by-paper.csv` — one status row for each of the 266 year/form original-paper records, separating recovered grade-mean tables from uncollected coverage.
+- 두 평균 파일은 연도/시험/폼이 다르면 수치를 합치거나 서로 환산하지 않는다. 회차 coverage manifest는 현재 원본 카탈로그와의 대응표이지 성적 데이터가 아니다. 수치 표본은 현재 시험을 대표하지 않고, score-to-grade placement, ability level, percentile, AMC qualification을 의미하지 않는다.
 
-MAA 작성 AMC 8 `Summary of Results and Awards`의 2009년판은 해당 회차와 직전 회차들의 **기록된 학년군별 응시자 수 및 평균 점수**를 함께 싣는다. 표는 `4 & 5`, `6`, `7`, `8`학년을 사용한다. 아래 값은 각 셀을 보고서 표와 대조해 옮겼다.
+MAA 작성 AMC 8 `Summary of Results and Awards`의 2008·2009년판은 해당 회차와 직전 회차들의 **기록된 학년군별 응시자 수 및 평균 점수**를 함께 싣는다. 표는 `4 & 5`, `6`, `7`, `8`학년을 사용한다. 아래 값은 각 셀을 보고서 표와 대조해 옮겼다.
 
 | 시험 연도 | 4–5학년 n / 평균 | 6학년 n / 평균 | 7학년 n / 평균 | 8학년 n / 평균 |
 |---:|---:|---:|---:|---:|
+| 2001 | 1,736 / 6.73 | 14,710 / 8.28 | 58,271 / 9.49 | 93,090 / 10.66 |
+| 2002 | 1,560 / 7.76 | 14,707 / 9.31 | 53,804 / 10.59 | 85,351 / 11.79 |
 | 2003 | 1,553 / 7.62 | 15,414 / 8.58 | 53,170 / 9.77 | 86,542 / 10.93 |
 | 2004 | 1,496 / 8.15 | 15,248 / 8.51 | 51,679 / 9.55 | 84,399 / 10.48 |
 | 2005 | 2,014 / 8.05 | 14,268 / 8.16 | 48,418 / 9.37 | 76,877 / 10.52 |
@@ -76,6 +79,8 @@ MAA 작성 AMC 8 `Summary of Results and Awards`의 2009년판은 해당 회차�
 | 2009 | 3,874 / 9.45 | 20,688 / 9.17 | 50,218 / 10.08 | 73,220 / 10.82 |
 
 보고서는 `recorded`가 답안지에서 스캔된 학년 정보에 한정되며 학년 누락은 표에서 빠진다고 정의한다. 이 데이터는 해당 연도 AMC 8 점수의 설명 통계이지 학년별 백분위나 진단 등급은 아니다. 보고서는 AMC 8에 확립된 규준이 없고 교실 평가나 배치 시험과 비교할 수 없다고 직접 경고한다.
+
+2001–2002년 표는 [2008 MAA AMC 8 Results & Awards 사본](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america)의 표 2에서 확인했다. 이 사본도 제3자 호스트의 MAA 작성 보고서다. 원본 MAA 저장소와의 대조가 끝날 때까지 같은 미확인 표시를 유지한다.
 
 MAA 작성 2010 AMC 10/12 연례 보고서의 AMC 10 표에는 2007–2010 학년별 평균과 응시자 수가 A/B 폼별로 있다. 학년군은 10학년, 9학년, 8학년 이하, 학년 미기입으로 나뉜다.
 
@@ -134,4 +139,4 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - Stanford 연구자 Ian Calaway의 [AMC Archive](https://sites.google.com/view/ian-calaway/amc-archive/)는 중학교 AMC 8 요약 책자 1985–2022 디지털 보관이 완료됐고, 고교 요약은 1980–2010 원본 책자와 2011–2022 디지털 결과를 모았다고 설명한다. MAA 공식 저장소는 아니며 자료별 원본 표·연도·정의·접근 조건을 검수한 데이터셋이 아니므로, 다음 연도 확장 시 먼저 회차별 보고서를 확인할 후보 출처로 기록한다.
 - 검색에서 확인된 2013·2016 AMC 8 결과 PDF와 Bard Math Circle 연례 결과 페이지는 `Average score for grade ...`를 포함하지만 개별 학교/수업 집단 보고다. 국가·전체 응시 집단으로 오인하지 않도록 학년 기준치로 사용하지 않는다. 예: [2013 AMC 8 Bard 결과](https://www.bardmathcircle.org/p/2013-amc-8), [2016 AMC 8 Bard 결과](https://www.bardmathcircle.org/p/2016-amc-8-results-are-in). 이 보고서에는 학생 결과표도 실릴 수 있어 본 데이터셋에는 집계 원자료만 필요하다.
 - 2016년 사용자 게시물은 구 MAA `GeneralReports.aspx`에서 `Contest Score Grade Report with Percentile` 메뉴를 선택할 수 있었다고 회고하지만, 구동하는 연도별 리포트 본문은 현재 공개 페이지에서 재생되지 않았다. 이 검색 결과는 과거 메뉴의 존재에 대한 단서일 뿐, percentile 데이터 원본으로 쓰지 않는다.
-- 따라서 현재 학생 화면의 연도별 학년 평균 적용 범위는 검수 완료된 AMC 8 2003–2009, AMC 10/12 2007–2011 A/B에서 멈춘다. 더 넓은 1980–2022 자료는 보고서 원문과 회차/폼/학년 모집단이 확인될 때만 추가하고, 학교 단위 결과나 수상자 목록으로 빈 연도를 채우지 않는다.
+- 따라서 현재 학생 화면의 연도별 학년 평균 적용 범위는 검수 완료된 AMC 8 2001–2009, AMC 10/12 2007–2011 A/B에서 멈춘다. 더 넓은 1980–2022 자료는 보고서 원문과 회차/폼/학년 모집단이 확인될 때만 추가하고, 학교 단위 결과나 수상자 목록으로 빈 연도를 채우지 않는다.

@@ -8,6 +8,10 @@ test("AMC 8 returns only the matching recorded grade and exact contest year", fu
   assert.equal(result.mean, 10.08);
   assert.equal(result.participants, 50218);
   assert.equal(result.max, 25);
+  const earlierYear = reference.referenceFor("amc8", 2001, "", 7);
+  assert.equal(earlierYear.mean, 9.49);
+  assert.equal(earlierYear.participants, 58271);
+  assert.equal(reference.referenceFor("amc8", 2002, "", 8).mean, 11.79);
   assert.equal(reference.referenceFor("amc8", 2010, "", 7), null);
   assert.equal(reference.referenceFor("amc8", 2009, "", 5), null);
 });
