@@ -1,0 +1,15 @@
+(function(root,factory){'use strict';const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.HSE_SOURCE52_U1_TAXI_LINKED=api;api.install(root);})(typeof window!=='undefined'?window:globalThis,function(){
+'use strict';
+const typeId='5-2-u1-t3-3',source='5-2-u1-e3-example-4-linked-similar',key='source52U1TaxiLinkedSimilar';
+const cases=Object.freeze([
+ {distance:6375,short:2800,base:3100,step:100,price:180},
+ {distance:7300,short:3000,base:3400,step:100,price:150},
+ {distance:5421,short:2900,base:3200,step:100,price:190},
+ {distance:6750,short:2600,base:3000,step:100,price:200}
+].map(Object.freeze));
+const fmt=n=>n.toLocaleString('en-US');
+function build(index){if(!Number.isInteger(index)||index<0||index>=cases.length)return null;const p=cases[index],extra=p.distance-1000,steps=Math.ceil(extra/p.step),answer=p.base+steps*p.price;
+return Object.freeze({prompt:`<div class="p08original-question" data-source-item-id="${source}" data-pool-index="${index}"><p>택시 요금은 1km 미만까지 ${fmt(p.short)}원이고, 1km부터 ${fmt(p.base)}원입니다. 그 후에는 ${p.step}m마다 ${fmt(p.price)}원이 추가되며, ${p.step}m를 채우지 못해도 한 구간으로 계산합니다. 택시로 ${fmt(p.distance)}m를 갔을 때 요금은 얼마인가요?</p></div>`,solution:`<div class="p08original-solution" data-source-answer="${source}"><p>1km를 지난 거리는 ${fmt(p.distance)}−1,000=${fmt(extra)}m입니다. ${p.step}m씩 ${steps}구간이므로 추가 요금은 ${steps}×${fmt(p.price)}=${fmt(steps*p.price)}원입니다.</p><p>1km부터 적용되는 요금에 더하면 ${fmt(p.base)}+${fmt(steps*p.price)}=<strong>${fmt(answer)}원</strong>입니다.</p></div>`,answer:`${fmt(answer)}원`,automaticGrading:true,resultContract:'single-value',sourceItemId:source,sourceParentItemId:'5-2-u1-e3-example-4',generator:key,variant:index,variantIndex:index,poolIndex:index,verifiedPoolIndex:index,verifiedVariantId:`${source}:${index}`,generationMode:'fixed-verified-pool',verifiedVariantCount:4,verifiedVariantTarget:4,difficultyOffset:0,difficultyLevel:2,difficultyRank:2,sourceStructurePreserved:true,variantProvenance:'synthetic-explicit-conditions',sourcePdfPage:4,alternateSourcePdfPage:3,sourcePrintedPage:8,publisherKeyVerified:false,publisherAnswerVerified:false,answerVisualRequired:false,answerVisualStatus:'not-required'});}
+function install(root){const bank=root?.HSE_GENERATORS;if(!bank||typeof bank.generate!=='function')return false;if(bank.__source52U1TaxiLinkedInstalled)return true;const oldKey=bank.generatorKey.bind(bank),oldGenerate=bank.generate.bind(bank);const match=t=>t&&(t.id===typeId||t.sourceItemId===source||t.generatorKey===key);const resolves=t=>t&&t.id===typeId&&t.sourceItemId===source&&t.generatorKey===key&&t.sourceVerified===true&&t.reviewLocked===false;bank.generatorKey=t=>match(t)?(resolves(t)?key:''):oldKey(t);bank.generate=(t,rank,difficulty,seed,index=0)=>match(t)?(resolves(t)?build(Number(index)):null):oldGenerate(t,rank,difficulty,seed,index);if(Array.isArray(bank.names)&&!bank.names.includes(key))bank.names.push(key);Object.defineProperty(bank,'__source52U1TaxiLinkedInstalled',{value:true});return true;}
+return Object.freeze({typeId,source,key,cases,build,install});
+});
