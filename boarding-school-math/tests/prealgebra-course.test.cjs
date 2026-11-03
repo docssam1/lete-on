@@ -15,7 +15,7 @@ test("GFIELD Pre-Algebra Unit 1 follows the six requested expression concepts in
   assert.deepEqual(unit.lessons.map(function (lesson) { return lesson.title; }), [
     "변수식으로 나타내고 식의 값 구하기",
     "거듭제곱과 연산 순서 적용하기",
-    "문장을 변수식으로 번역하기",
+    "문장으로 제시된 상황을 대수식으로 나타내기",
     "연산 성질로 식을 바꾸고 확인하기",
     "분배법칙으로 전개하고 묶기",
     "동류항을 결합해 식을 정리하기"

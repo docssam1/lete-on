@@ -142,7 +142,7 @@ test("Pre-Algebra route connects public materials and the original six-lesson ex
   }
   assert.equal(await page.locator(".course-bridge a").getAttribute("href"), "./algebra1-workbook.html");
   assert.deepEqual(await page.locator("#expressions-and-relationships .route-concepts li").allInnerTexts(), [
-    "변수식으로 나타내고 값 구하기", "거듭제곱과 연산 순서", "문장을 변수식으로 번역하기",
+    "변수식으로 나타내고 값 구하기", "거듭제곱과 연산 순서", "문장으로 제시된 상황을 대수식으로 나타내기",
     "연산 성질로 동치식 만들기", "분배법칙으로 전개하고 묶기", "동류항을 결합해 식 정리하기"
   ]);
   assert.equal(await page.locator('#expressions-and-relationships a[href="./prealgebra-workbook.html?edition=student"]').count(), 1);

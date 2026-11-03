@@ -701,3 +701,9 @@ Aligned the AMC 10 and AIME practice screens with the GFIELD growth-map plum/lil
 The user's fraction-format request was verified against the rendered Grade 7 AMC practice: mathematical fractions use stacked numerator, horizontal bar, and denominator; a mobile viewport capture confirms the fraction form. Progress values such as `0 / 12` remain count notation. The existing shared renderers also cover the GFIELD Algebra 1, Pre-Algebra, Algebra 2, Geometry, Precalculus, workbook, and A4 views.
 
 Verification: the targeted Grade 7 AMC browser test and AIME browser test pass 2/2, including fraction-bar, palette, focus, route, answer, and mobile layout assertions. Captures `/tmp/gfield-amc10-fraction-inline.png`, `/tmp/gfield-amc10-mobile-toolbar.png`, and `/tmp/gfield-amc10-desktop.png` reviewed. `git diff --check` passes. No private assessment item content or learner data was used. Local only; no push, deployment, Drive sync, or external API use.
+
+### 2026-11-03 Pre-Algebra expression wording
+
+Replaced the Unit 1 lesson label “문장을 변수식으로 번역하기” with “문장으로 제시된 상황을 대수식으로 나타내기” in the GFIELD course, Grade 6–7 pathway, and roadmap flow. The new label describes the student action in the Common Core 6.EE.A.2/.2.a wording: read/write expressions and record operations with numbers and variables. The task examples still ask learners to identify the quantities and relationship, write the expression, and evaluate it; no item scope or answer changed. Source: https://www.thecorestandards.org/Math/Content/6/EE/ .
+
+Verification: Pre-Algebra course plus Grade 3–12 roadmap model tests pass 17/17. The mobile Pre-Algebra route browser test passes 1/1, including the synchronized six-step labels, resource links, no horizontal overflow, and no browser errors. No private diagnostic content or learner data was accessed. Local only; no push, deployment, Drive sync, or external API use.
