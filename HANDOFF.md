@@ -1,6 +1,6 @@
 # Current handoff — 2026-11-03
 
-Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. Current latest commit before this handoff update: `fa44b6179`; worktree was clean. No push, deployment, or Drive synchronization has occurred.
+Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. Latest commit at handoff: `bad094b5c`; worktree was clean before the current map-stop readability pass. No push, deployment, or Drive synchronization has occurred.
 
 ## Public roadmap and comparison work
 
@@ -20,6 +20,10 @@ Continue public product work that does not require the private candidate content
   한 곳에 연결(유닛 id N-* 게이트 — young 밴드는 A-*에도 걸려 과적용 위험), 색 대비
   30화면 스캔 후 8건 토큰 보정, young 밴드 공통 UI 확대(.nm-back은 유닛 바 스코프),
   N-15 최초 완료 시 R0 추천 오버레이(1회성·잠금 없음, S.seenR0Banner).
+
+### 2026-11-03 G·MAP route stop readability
+
+Kept the existing G·MAP violet, lavender, and ivory map artwork. Reduced the desktop route-stop card footprint and removed the heavy blur so the illustrated math islands and connected path remain visible; the selected stop still has a clear violet outline. The phone layout continues to show the panorama above the vertical stage list.
 
 
 ## 2026-10-30 learner roadmap presentation follow-up
