@@ -132,7 +132,7 @@ test("Pre-Algebra route connects public materials and the original six-lesson ex
   const workbookClusters = await page.locator(".route-stage .workbook-link").evaluateAll(function (nodes) {
     return nodes.map(function (node) { return new URL(node.href).searchParams.get("cluster"); });
   });
-  assert.deepEqual(workbookClusters, [null, null, "6.NS.A", "6.NS.B", "6.NS.C", "7.NS.A", "6.RP.A", "7.RP.A", "6.EE.A", null, null, "6.SP.A"]);
+  assert.deepEqual(workbookClusters, [null, null, "6.NS.A", "6.NS.B", "6.NS.C", "7.NS.A", null, null, "6.RP.A", "7.RP.A", "6.EE.A", null, null, "6.SP.A"]);
   assert.deepEqual(await page.locator('#number-system a[href^="./prealgebra-workbook.html"]').evaluateAll(function (nodes) {
     return nodes.map(function (node) { return new URL(node.href).searchParams.get("unit") + ":" + new URL(node.href).searchParams.get("edition"); });
   }), ["rational-number-operations:student", "rational-number-operations:teacher"]);
@@ -161,8 +161,8 @@ test("original Pre-Algebra units render stacked fractions in student, teacher, a
   const workbookUrl = `${url.replace("boarding-roadmap.html", "prealgebra-workbook.html")}?edition=student`;
   await page.goto(workbookUrl, { waitUntil: "networkidle" });
   assert.match(await page.locator("#workbook-status").innerText(), /4개 단원 · 27차시 · 연습 54문항 · A4/);
-  assert.equal(await page.locator(".lesson-page").count(), 20);
-  assert.equal(await page.locator(".practice-page").count(), 20);
+  assert.equal(await page.locator(".lesson-page").count(), 27);
+  assert.equal(await page.locator(".practice-page").count(), 27);
   assert.ok(await page.locator('.math-fraction[aria-label="2분의 3"]').count() > 0);
   assert.ok(await page.locator('.math-fraction[aria-label="4분의 9"]').count() > 0);
   assert.equal(await page.locator(".lesson-page,.practice-page").evaluateAll(function (pages) {
@@ -181,8 +181,9 @@ test("original Pre-Algebra units render stacked fractions in student, teacher, a
   assert.equal(await page.locator(".print-page").evaluateAll(function (pages) {
     return pages.filter(function (node) { return node.scrollHeight > node.clientHeight + 1; }).length;
   }), 0);
+  await page.emulateMedia({ media: "screen" });
   await page.locator("#edition-select").selectOption("teacher");
-  assert.equal(await page.locator(".answer-page").count(), 20);
+  assert.equal(await page.locator(".answer-page").count(), 27);
   assert.equal(await page.locator(".answer-page").evaluateAll(function (pages) {
     return pages.some(function (node) { return /\d\s*\/\s*\d/.test(node.innerText); });
   }), false, "teacher edition keeps fractions stacked in the worked solutions");

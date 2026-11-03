@@ -6,6 +6,12 @@ Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, bra
 
 Connected the roadmap’s remaining learner-facing lesson, annual-plan, course-comparison, and algebra example text to the shared math-text renderer. Numeric fractions now use a stacked numerator and denominator with a horizontal rule instead of slash notation wherever those strings are rendered. A live local Chrome check of the Grade 7 roadmap’s Algebra 1 content found two stacked fractions (`8/3` and `14/3`) and no remaining numeric slash-fraction text in that section. A separate renderer spot check confirmed `1/2` and `3/4` render as inline grids while unit rates (`km/h`, `달러/회`) and `AMC 10/12` remain unchanged. No browser errors. Local only; no push, deployment, or Drive sync.
 
+### 2026-11-03 roadmap and Pre-Algebra regression follow-up
+
+Updated the roadmap browser assertions to match the current four-unit Pre-Algebra route: 14 student/teacher workbook links, 27 lessons and practice pages, and 27 teacher answer pages. The A4 check now restores screen media before changing the edition selector, because that control is correctly hidden in print media. This is test maintenance only; curriculum and item data did not change.
+
+Verification: the selected grade-roadmap model/browser, Pre-Algebra course/pathway, and teacher-paper suites pass 75/75 using bundled Mac Node, Playwright, and Chrome. The browser coverage includes cross-grade comparisons, MAP norm-matched percentile rules, same-date/same-paper contest comparisons, Math Kangaroo's grade-band restriction, Grade 7 checkpoint/workbook routes, mobile widths, stacked fractions, A4 page fit, and separate teacher answers. `git diff --check` passes. Local only; no private candidate content opened, no push, deployment, or Drive sync.
+
 ### 2026-11-03 Grade 7 learning plan opens its current GFIELD workbook
 
 The Grade 7 student's primary action now opens the released GFIELD 7.NS.A student workbook directly; the teacher view opens its teacher guide. The plan and notice say the personal diagnostic and result-based level comparison are under review; the selected study topic is explicitly learner-chosen and does not imply a weakness or grade level. Corrected the Korean topic sentence so labels ending in “빼기” do not receive the wrong subject particle. The shared workbook display was rechecked in Chrome: numeric fractions appear stacked, with zero slash-form fractions in student content.
