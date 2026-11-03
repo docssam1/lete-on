@@ -3950,6 +3950,18 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   // 생성기에서 원문 수치 대신 창작 변형을 내는 유형을 구분한다.
   {
     const variantIds = new Set([
+      "5-2-u1-e3-mission-1-box-count",
+      "5-2-u1-e3-mission-2-perimeter",
+      "5-2-u1-e3-mission-3-cube-box-count",
+      "5-2-u1-e3-mission-4-mat-cost",
+      "5-2-u1-e3-mission-5-bar-graph-length",
+      "5-2-u1-e3-mission-6-citrus-sales",
+      "5-2-u1-e4-exploration-rounded-range",
+      "5-2-u1-e4-example-1",
+      "5-2-u1-e4-example-2",
+      "5-2-u1-e4-example-3",
+      "5-2-u1-e4-example-4",
+      "5-2-u1-e4-mission-1-rounded-count",
       "5-2-u1-e3-example-1",
       "5-2-u1-e3-example-2",
       "5-2-u3-e1-exploration",
