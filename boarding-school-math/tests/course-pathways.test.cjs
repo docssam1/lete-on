@@ -1,6 +1,9 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const pathways = require("../curriculum/course-pathways.js");
+const algebra1Course = require("../curriculum/algebra-1-course.js");
 
 test("course pathway exposes the complete school-configured progression", function () {
   assert.equal(pathways.sequenceState, "school-configured");
@@ -44,5 +47,20 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
   const algebra1 = pathways.courses.find(function (course) { return course.id === "algebra-1"; });
   assert.deepEqual(algebra1.previousOptions, ["pre-algebra"]);
   assert.deepEqual(algebra1.nextOptions, ["geometry", "algebra-2"]);
-  assert.match(algebra1.availability, /지필드 과정 지도와 원본 첫 수업 공개/);
+  assert.equal(algebra1.studentHref, "./algebra1-workbook.html");
+  assert.equal(algebra1.teacherHref, "./algebra1-workbook.html?edition=teacher");
+  assert.match(algebra1.availability, /5단원·32차시·64문항 공개/);
+});
+
+test("every course comparison card points to existing GFIELD student and teacher material", function () {
+  pathways.courses.forEach(function (course) {
+    [course.studentHref, course.teacherHref].forEach(function (href) {
+      const file = href.split(/[?#]/, 1)[0];
+      assert.ok(fs.existsSync(path.resolve(__dirname, "..", file)), course.id + " material is missing: " + href);
+    });
+  });
+  const algebra1Lessons = algebra1Course.units.flatMap(function (unit) { return unit.lessons; });
+  assert.equal(algebra1Course.units.length, 5);
+  assert.equal(algebra1Lessons.length, 32);
+  assert.equal(algebra1Lessons.reduce(function (sum, lesson) { return sum + lesson.practice.length; }, 0), 64);
 });

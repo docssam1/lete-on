@@ -114,6 +114,9 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .course-path-card h3 { margin: 10px 0 0; font-size: 1.05rem; line-height: 1.4; }
 .course-path-card p { margin: 8px 0 0; color: #566274; font-size: .84rem; line-height: 1.55; }
 .course-path-card small { margin-top: 11px; display: block; color: #566274; font-size: .75rem; line-height: 1.5; }
+.course-path-card .course-path-availability { padding-top: 9px; border-top: 1px solid #e6e1ec; color: #354255; }
+.course-path-material-link { min-height: 44px; margin-top: 8px; display: inline-flex; align-items: center; color: #60418f; font-size: .82rem; font-weight: 800; text-underline-offset: 3px; }
+.course-path-material-link:focus-visible { outline: 3px solid #8a62c6; outline-offset: 3px; border-radius: 2px; }
 .course-path-card select { margin-top: 13px; }
 .course-path-card.is-current { border-color: #8561b0; background: #f5f0fa; box-shadow: inset 0 3px #60418f; }
 .course-path-empty-choice { margin-top: 14px !important; padding-top: 12px; border-top: 1px solid #e6e1ec; font-size: .8rem !important; }

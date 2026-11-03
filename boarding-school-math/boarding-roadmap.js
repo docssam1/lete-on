@@ -460,7 +460,9 @@
       card.append(label, heading, copy);
       if (course) {
         const focus = document.createElement("small"); focus.textContent = `먼저 볼 내용 · ${course.prerequisites}`;
-        card.append(focus);
+        const availability = document.createElement("small"); availability.className = "course-path-availability"; availability.textContent = course.availability;
+        const material = document.createElement("a"); material.className = "course-path-material-link"; material.href = course.studentHref; material.textContent = "지필드 자료 보기 →";
+        card.append(focus, availability, material);
       }
       if (chooser) card.append(chooser);
       host.append(card);

@@ -2,6 +2,12 @@
 
 Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The map-stop readability and G·MAP palette updates are committed locally. No push, deployment, or Drive synchronization has occurred.
 
+### 2026-11-03 course comparison cards and fraction display check
+
+The learner-selected previous/current/next course comparison now links each card directly to its GFIELD material. Algebra 1 availability matches the authored course: five units, 32 lessons, and 64 practice prompts. Grade 7 no longer shows the stale “first lesson available / next units in progress” status. This remains a learner-selected course path; the grade does not infer the course or placement.
+
+Checked the requested fraction presentation against the rendered materials: workbook math uses stacked numerator/bar/denominator output, and the Grade 7 AMC 10 practice browser check confirms stacked fractions. Slash notation is retained for units and rates. The course pathway and roadmap browser suites pass 44/44, including course links and mobile layout. A separate broader workbook run was not clean: the checkout's Playwright default headless browser binary is missing, so no claim is made for those extra tests. `git diff --check` passes. Changes remain local; no push, deployment, Drive sync, or API call.
+
 ### 2026-11-03 Precalculus polar-coordinate enrichment and fraction display
 
 Added a GFIELD-authored optional lesson that converts polar coordinates to Cartesian coordinates and back, with a worked example and two practice prompts. It is explicitly labeled 선택 심화 because school sequencing varies; the course summary and A4 workbook metadata now report five units, 16 lessons, and 32 practice prompts. Fractions in the new example and practice are rendered with a visible numerator, horizontal bar, and denominator in both student and teacher workbook views; the displayed math does not leave slash-form fractions. The current AMC 10 practice route was also checked and already renders its simple numeric fractions as stacked fractions.

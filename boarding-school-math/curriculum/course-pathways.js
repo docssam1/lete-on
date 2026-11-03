@@ -47,9 +47,9 @@
       previousOptions: ["pre-algebra"],
       nextOptions: ["geometry", "algebra-2"],
       next: "Geometry / Algebra 2 · 학교 순서에 따라 선택",
-      studentHref: "#availability",
-      teacherHref: "#high-school-bridge",
-      availability: "지필드 과정 지도와 원본 첫 수업 공개 · 다음 단원은 순서대로 제작 중"
+      studentHref: "./algebra1-workbook.html",
+      teacherHref: "./algebra1-workbook.html?edition=teacher",
+      availability: "지필드 원본 5단원·32차시·64문항 공개 · 학교 과목 순서에 맞춰 선택"
     }),
     Object.freeze({
       id: "geometry",

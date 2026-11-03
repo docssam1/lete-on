@@ -68,6 +68,8 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   await page.locator("#course-path-cards article:first-child select").selectOption("pre-algebra");
   await page.locator("#course-path-cards article:last-child select").selectOption("geometry");
   assert.deepEqual(await page.locator("#course-path-cards h3").allInnerTexts(), ["Pre-Algebra", "Algebra 1", "Geometry"]);
+  assert.deepEqual(await page.locator(".course-path-material-link").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("href"); }); }), ["./concept-learning.html", "./algebra1-workbook.html", "./geometry-workbook.html"]);
+  assert.match(await page.locator("#course-path-cards").innerText(), /6학년 개념 수업 10개[\s\S]*5단원·32차시·64문항 공개[\s\S]*5단원·16차시·32문항 공개/);
   await page.locator("#annual-plan-periods a").first().click();
   await page.waitForURL(/algebra1-workbook\.html\?edition=student$/);
   assert.equal(await page.locator("#workbook-title").innerText(), "Algebra 1 단원 교재");
