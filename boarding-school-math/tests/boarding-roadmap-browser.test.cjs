@@ -904,13 +904,13 @@ test("cross-grade concept flows render as examples on phone, tablet, and desktop
     assert.equal(await page.locator(".concept-flow").count(), 5);
     assert.equal(await page.locator(".concept-flow ol").count(), 5);
     assert.equal(await page.locator(".concept-flow ol li").count(), 26);
-    const prealgebraFlow = page.locator('.concept-flow:has(h3:text("선택 심화 · 변수식에서 동치식으로"))');
+    const prealgebraFlow = page.locator('.concept-flow:has(h3:text("선택형 · 변수식에서 식 정리로"))');
     assert.equal(await page.locator(".concept-flow").first().getAttribute("aria-labelledby"), "prealgebra-algebra1-heading");
     assert.deepEqual(await page.locator(".concept-flow").nth(1).locator("li").allInnerTexts(), ["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]);
-    assert.deepEqual(await prealgebraFlow.locator("li").allInnerTexts(), ["변수로 수량을 나타내고 식의 값을 구하기", "정수 지수의 의미와 연산 순서 적용하기", "문장제의 조건을 변수식으로 나타내기", "연산 성질을 이용해 동치식 쓰기", "분배법칙으로 식의 구조 바꾸기", "동류항을 모아 식 간단히 하기"]);
+    assert.deepEqual(await prealgebraFlow.locator("li").allInnerTexts(), ["변수를 사용해 식을 쓰고 식의 값 구하기", "거듭제곱의 의미와 연산 순서 이해하기", "말로 주어진 관계를 변수식으로 나타내기", "연산의 성질로 동치인 식 만들기", "분배법칙을 적용해 괄호가 있는 식 전개하기", "동류항을 결합해 식 간단히 하기"]);
     assert.equal(await prealgebraFlow.locator("ol").evaluate(function (node) { return getComputedStyle(node).gridTemplateColumns.split(" ").length; }), width <= 600 ? 1 : 6);
     const bridgeNote = prealgebraFlow.locator(".concept-flow-note");
-    assert.match(await bridgeNote.innerText(), /변수로 양을 표현하고 연산 성질을 적용해 동치식/);
+    assert.equal(await bridgeNote.innerText(), "공유된 Prealgebra Unit 1의 개념 흐름을 참고한 예시예요. 학년 배치나 진단 결과가 아니에요.");
     assert.equal(await prealgebraFlow.getAttribute("aria-describedby"), await bridgeNote.getAttribute("id"));
     assert.equal(await prealgebraFlow.evaluate(function (node) { return getComputedStyle(node).gridColumn; }), "1 / -1");
     assert.equal(await bridgeNote.isVisible(), true);
