@@ -16,7 +16,8 @@
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-5", generatorKey: "source52CongruentTriangleAreaPage31Mission5", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6", generatorKey: "source52TrapezoidMidpointPage31Mission6", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6-original", generatorKey: "source52TrapezoidMidpointPage31Mission6Original", publicReady: true }),
-    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-3-original", generatorKey: "source52EquilateralRotationPage31Mission3Original", publicReady: true })
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-3-original", generatorKey: "source52EquilateralRotationPage31Mission3Original", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-4-original", generatorKey: "source52SquareTrisectionAreaPage31Mission4Original", publicReady: true })
   ]);
   const squareAlphas = [9, 14, 19];
   const circleBaseVertices = [48, 57, 72];
@@ -282,8 +283,8 @@
     return `<svg class="source52-p31-diagram source52-p31-square-trisection" data-source52-figure="square-trisection-inner-area" data-k="${k}" data-side-length="${3*k}" data-outer-area="${outerArea}" data-g="${coords(g)}" data-n="${coords(n)}" data-d="${coords(d)}" data-r="${coords(r)}" data-m="${coords(m)}" data-b="${coords(b)}" data-s="${coords(s)}" data-o="${coords(o)}" viewBox="0 0 420 365" role="img" aria-label="넓이가 ${outerArea}제곱센티미터인 정사각형의 각 변을 삼등분한 점을 이어 만든 작은 정사각형의 넓이 그림" xmlns="http://www.w3.org/2000/svg">${triangle([g,m,b])}${triangle([r,m,o])}${triangle([d,o,s])}${triangle([n,s,b])}<polygon class="source52-area-target" points="${polygon}"/><path d="M${coords(g)} L${coords(r)} L${coords(d)} L${coords(n)} Z"/><path d="M${coords(m)} L${coords(b)} L${coords(s)} L${coords(o)} Z"/><text x="48" y="38">ㄱ</text><text x="356" y="38">ㄹ</text><text x="356" y="342">ㄷ</text><text x="48" y="342">ㄴ</text><text x="245" y="28">ㅁ</text><text x="54" y="140">ㅂ</text><text x="154" y="352">ㅅ</text><text x="356" y="232">ㅇ</text></svg>`;
   }
 
-  function buildMission4(variant, offset) {
-    const k = [8, 11, 14][variant] + offset;
+  function buildMission4(variant, offset, original = false) {
+    const k = original ? 5 : [8, 11, 14][variant] + offset;
     const side = 3 * k;
     const outerArea = side * side;
     const trisectedLength = k;
@@ -291,7 +292,7 @@
     const answer = outerArea - 4 * cornerArea;
     const prompt = `<div class="source52-p31-question"><p>넓이가 ${outerArea}cm²인 정사각형 ㄱㄴㄷㄹ의 각 변의 삼등분점을 이어 작은 정사각형 ㅁㅂㅅㅇ을 그렸습니다. 작은 정사각형 ㅁㅂㅅㅇ의 넓이를 구하세요.</p>${trisectionSquareDiagram(k, outerArea, answer)}</div>`;
     const solution = `<div class="source52-p31-solution"><ol><li>바깥 정사각형의 넓이는 ${outerArea}cm²=${side}cm×${side}cm이므로 한 변은 ${side}cm입니다. 한 변을 3등분한 길이는 ${side}÷3=${trisectedLength}cm이므로, 각 모서리의 삼각형 두 변은 ${trisectedLength}cm와 ${2*trisectedLength}cm입니다.</li><li>모서리의 직각삼각형 하나의 넓이는 ${trisectedLength}×${2*trisectedLength}÷2=${cornerArea}cm²입니다. 이런 삼각형은 네 개이므로 넓이의 합은 ${cornerArea}×4=${4*cornerArea}cm²입니다.</li><li>작은 정사각형의 넓이는 바깥 정사각형에서 네 삼각형의 넓이를 뺀 값입니다.<br>${outerArea}−${4*cornerArea}=${answer}cm²</li></ol></div>`;
-    return result("5-2-u3-e4-mission-4", variant, offset, prompt, `${answer}cm²`, solution, { k, side, outerArea, trisectedLength, cornerArea, answer }, false, areaAnswerVisual("작은 정사각형 넓이", `${answer}cm²`));
+    return result(original ? "5-2-u3-e4-mission-4-original" : "5-2-u3-e4-mission-4", variant, offset, prompt, `${answer}cm²`, solution, { k, side, outerArea, trisectedLength, cornerArea, answer }, false, areaAnswerVisual("작은 정사각형 넓이", `${answer}cm²`));
   }
 
   function answerVisual(label, answer, marker = "㉠") {
@@ -340,6 +341,7 @@
     if (sourceItemId === definitions[6].sourceItemId) return buildMission6(variant,difficultyOffset);
     if (sourceItemId === definitions[7].sourceItemId) return buildMission6(0,0,true);
     if (sourceItemId === definitions[8].sourceItemId) return buildMission3Original();
+    if (sourceItemId === definitions[9].sourceItemId) return buildMission4(0,0,true);
     return null;
   }
   const keyFor = sourceItemId => definitions.find(item => item.sourceItemId === sourceItemId)?.generatorKey || "";
