@@ -1,3 +1,9 @@
+### 2026-11-04 AMC 8 2011 MAA 보고서 경로 재검색
+
+재검색한 MAA 보존 페이지 제목은 `2011 General Statistics`이며, report/location 선택 메뉴에 Overall, Grade and Gender Average, Contest Score Grade Report with Percentile가 있었다. 다만 Internet Archive CDX에서 2011 `statestatistics` 산출물 경로를 전체 검색한 결과, 보존된 Overall 파일은 Achievement Roll과 School Honor Roll뿐이었고 Grade and Gender Average 및 score-by-grade-percentile PDF는 회수되지 않았다. 그래서 AMC 8 2011 전국/글로벌 평균이나 학년 percentile을 만들지 않고 coverage 상태 `no-grade-table-recovered`를 유지한다. 검색에 나타난 개별 학교 성적표는 n=50 등 학교 표본이라 전체 학년 비교에 합치지 않는다. 메뉴의 navigation text에는 `2010 Statistics`도 남아 있으나 본문 `2011 General Statistics`와 구별한다.
+
+근거 페이지: [MAA 2011 통계 페이지 보존본](https://web.archive.org/web/20130204052822/http://amc.maa.org/amc8/2011/stats/2011-amc8stats.shtml). 이어서 회수 가능한 MAA global report 또는 전체 보고 집단 score-by-grade 자료를 연도별 검색한다. 로컬 문서 기록만; 통계 데이터 추가 없음. `raw_youtube.txt` 보존.
+
 ### 2026-11-04 AMC 8 2010 MAA 학년 평균 연결
 
 Internet Archive의 MAA 원래 호스트 보존본에서 2010 AMC 8 `General Statistics` 페이지의 전체 평균(9.98), 응시자 153,211명, 결과 제출 학교 2,342곳과 5–8학년 평균·인원을 확인했다. 4개 학년 표본 수는 150,616명이고 2,595명은 표의 학년 구간에 배정되지 않는다. 네 행을 `amc8-grade-means-2010.csv`와 `amc-historical-grade-reference.js`에 연결해 원본 점수 입력 후 같은 시험연도·기록 학년의 평균 비교를 열 수 있게 했다. 이 자료는 학년별 평균이지 점수별 분포나 백분위표가 아니다. AMC 8 2011 글로벌 학년 기준 자료는 아직 회수되지 않았다.
