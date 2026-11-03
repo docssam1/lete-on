@@ -770,11 +770,13 @@
     const reviewList = $("report-review-items-list");
     reviewList.replaceChildren();
     const itemResponseReference = window.GFIELDAMC8ItemResponseReference;
-    const show2010ItemResponses = selectedFormat().id === "amc8" && selectedYear === 2010 && itemResponseReference;
-    $("report-review-items-note").textContent = show2010ItemResponses
-      ? "직접 표시한 오답과 미응답이에요. 2010년 AMC 8 응시자 153,211명의 문항별 응답 비율을 함께 볼 수 있어요. 이 비율은 당시 전체 집계이며 학년별 비교나 현재 기준은 아닙니다."
+    const showItemResponses = selectedFormat().id === "amc8" && [2009, 2010, 2011].includes(selectedYear) && itemResponseReference;
+    const cohortForYear = showItemResponses ? itemResponseReference.responseFor(selectedYear, 1, "") : null;
+    $("report-review-items-note").textContent = showItemResponses
+      ? `직접 표시한 오답과 미응답입니다. ${cohortForYear.population}의 문항별 응답 비율을 참고로 보여 줍니다. 당시 해당 집단의 기록이며 학년별 비교나 현재 기준은 아닙니다.`
       : "직접 표시한 오답과 미응답입니다. 각 문항의 원본 개념·힌트·해설을 확인한 뒤 지필드 유사 유형으로 이어갈 수 있어요.";
     result.reviewItems.forEach(function (item) {
+      const itemReference = showItemResponses ? itemResponseReference.responseFor(selectedYear, item.number, item.answer) : null;
       const row = document.createElement("li");
       const domain = domains.find(function (entry) { return entry.id === item.domain; });
       const reason = reasons.find(function (entry) { return entry.id === item.reason; });
@@ -784,17 +786,15 @@
       const summary = document.createElement("span");
       summary.textContent = `${item.number}번 · ${itemState} · ${details.join(" · ")}`;
       row.append(summary);
-      if (show2010ItemResponses) {
-        const itemReference = itemResponseReference.responseFor(selectedYear, item.number, item.answer);
-        if (itemReference) {
-          const population = document.createElement("small");
-          population.className = "report-item-response-reference";
-          const commonDistractor = itemReference.mostCommonDistractor;
-          population.textContent = item.answer
-            ? `2010 응답 집계 · 정답률 ${itemReference.correctResponsePercent.toFixed(2)}% · ${item.answer} 선택 ${itemReference.selectedResponsePercent.toFixed(2)}%`
-            : `2010 응답 집계 · 정답 ${itemReference.correctAnswer} · 정답률 ${itemReference.correctResponsePercent.toFixed(2)}% · 최다 오답 ${commonDistractor.answer} ${commonDistractor.percent.toFixed(2)}%`;
-          row.append(population);
-        }
+      if (itemReference) {
+        const population = document.createElement("small");
+        population.className = "report-item-response-reference";
+        const commonDistractor = itemReference.mostCommonDistractor;
+        const acceptedAnswerNote = itemReference.acceptedAnswers.length > 1 ? ` · 인정 답 ${itemReference.acceptedAnswers.join("·")}` : "";
+        population.textContent = item.answer
+            ? `${selectedYear} 응답 집계 · 정답률 ${itemReference.correctResponsePercent.toFixed(2)}% · ${item.answer} 선택 ${itemReference.selectedResponsePercent.toFixed(2)}%${acceptedAnswerNote}`
+            : `${selectedYear} 응답 집계 · 정답 ${itemReference.acceptedAnswers.join("·")} · 정답률 ${itemReference.correctResponsePercent.toFixed(2)}% · 최다 오답 ${commonDistractor.answer} ${commonDistractor.percent.toFixed(2)}%`;
+        row.append(population);
       }
       if (paperLibrary && ["amc8", "amc10", "amc12", "aime"].includes(selectedFormat().id)) {
         const year = Number($("archive-year").value || params.get("year"));
@@ -811,14 +811,14 @@
           row.append(sourceLink);
         }
       }
-      if (show2010ItemResponses) {
+      if (itemReference) {
         const sourceLink = document.createElement("a");
         sourceLink.className = "report-review-source-link";
-        sourceLink.href = itemResponseReference.sourceUrl;
+        sourceLink.href = itemReference.sourceUrl;
         sourceLink.target = "_blank";
         sourceLink.rel = "noopener noreferrer";
         sourceLink.textContent = "문항 응답 집계 출처 ↗";
-        sourceLink.setAttribute("aria-label", `2010 AMC 8 ${item.number}번 문항 응답 집계 출처 열기`);
+        sourceLink.setAttribute("aria-label", `${selectedYear} AMC 8 ${item.number}번 문항 응답 집계 출처 열기`);
         row.append(sourceLink);
       }
       reviewList.append(row);

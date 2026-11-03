@@ -1078,3 +1078,11 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - 웹에서 [2009 AMC 8 한국 결과표](https://www.amcstudy.net/43)와 [2011 AMC 8 한국 결과표](https://www.amcstudy.net/79)를 직접 열어 학년별 응시 수·평균을 확인했다. 각각 한국 참가집단 741명·899명이라고 보고한다. Grade 5–8 평균/인원은 `competition/historical-amc-grade/amc8-korea-grade-means-2009-2011.csv`에 모집단을 `South Korea reported cohort`로 분리해 기록했다. 2011 표의 `<=4` 구간도 따로 보존했다.
 - 2009 학년별 응시 수 합은 737/741, 2011 표시 학년별 응시 수 합은 894/899라서 학년 표에 나타나지 않은 4명/5명을 임의 배분하지 않고 각 행의 coverage note에 남겼다. 이는 전국 AMC 8 평균표와 다른 별도 한국 코호트 연구자료이며 현행 제품의 미국/전세계 학년 규준이나 성적 등급으로 연결하지 않는다.
 - 검수: 전사 CSV에서 연도별 원문 학년수 합계와 보고된 총 응시자 수 차이를 대조했다. 2011 페이지의 학년 평균 원문: Grade 5 13.16 (68명), Grade 6 11.67 (252명), Grade 7 13.92 (315명), Grade 8 14.20 (255명). 2009 원문: 각각 Grade 5 14.37 (70명), Grade 6 13.11 (158명), Grade 7 15.17 (262명), Grade 8 13.65 (247명). 개인 이름·학교·점수 기록은 옮기지 않았다. `git diff --check` 후 로컬 저장소에만 둔다.
+
+### 2026-11-04 · AMC 8 연도별 문항 응답 집계 연결
+
+- 웹에서 2009 AMC 8 한국 결과표(741명), 2010 MAA 보고 응답표(153,211명), 2011 AMC 8 한국 결과표(899명)를 확인했다. 2009·2011은 한국 참가자 집단이고 2010은 MAA 표의 별도 전체 응답 집단이므로 코호트를 합치거나 Grade 기준선으로 해석하지 않는다. 출처: [2009 AMC 8 결과·문항표](https://www.amcstudy.net/43), [2010 AMC 8 문항표](https://www.amcstudy.net/71), [2011 AMC 8 결과·문항표](https://www.amcstudy.net/79).
+- AMC 8 응답 참조에 2009·2011년 25문항씩을 추가하고, 결과의 다시 볼 문항에 그 회차·문항 응답 분포와 원문 출처를 표시한다. 2009년 12번은 LIVE 정답표가 D로 안내하지만 AMC Study의 MAA 응답 표에서는 D와 E 모두 Correct Response 별표가 있어, 문제별 답 키는 D로 유지하고 집단 응답률 계산에는 D+E(65.18%)를 합산한다. 출처 대조: [LIVE 2009 정답표](https://live.poshenloh.com/past-contests/amc8/2009/answers).
+- 응답 출처 링크 버그를 수정한 뒤 브라우저 검수를 다시 완료했다. 2009 Q3 A 오답에서 한국 741명 집단·정답률 90.28%·A 선택 7.42%와 원본 풀이/응답 출처 링크, 2011 Q4 A 오답에서 899명 집단·정답률 59.96%·A 선택 14.57%와 출처 링크를 확인했다. 한 문항 제출에서는 전체 시험 비율을 보류한다.
+- 검증: AMC 응답 참조 단위 테스트(2009·2010·2011 총 75개 문항 합계/정답률 포함), `node --check`, `git diff --check`. 미추적 `raw_youtube.txt`는 제외한다. 로컬 변경만; push·배포·Drive 동기화 없음.
+- 추가 웹 검색으로 2013 AMC 8 MAA 학교별 결과 PDF를 찾았다. Mathematics Ed Clinic의 Grade 7 응시자 63명 문항 응답표가 있지만 단일 학교 코호트이므로 전국 비교와 분리한다. 공개된 대규모 또는 전국 단위 응답표는 현재 2009–2011 외에 추가 확인하지 못했다. 이후 연도별 MAA 결과 보고서와 응시 코호트 정의를 계속 찾아 출처가 확인된 자료만 분리해 추가한다. 응답표가 없는 연도는 비워 두고 샘플·자체 예측 점수를 전국 통계로 대체하지 않는다. 출처: [2013 AMC 8 Mathematics Ed Clinic 학교 결과 PDF](https://asiamathsalliance.com/amc8/results/MEC.pdf).

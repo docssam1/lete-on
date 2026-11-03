@@ -187,3 +187,12 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - 표 이미지의 값은 Apple Vision OCR로 전사한 뒤 원본 이미지를 눈으로 대조했다. 정답 열은 [2010 AMC 8 공개 답안](https://live.poshenloh.com/past-contests/amc8/2010/answers)과 문항별로 일치하는지 확인했다. 빨간색으로 칠한 AMC Study 자체 예상 문항과 적중률 주장은 데이터로 옮기지 않았다.
 - 응답 비율은 [`amc8-2010-item-response-percent.csv`](../competition/historical-amc-grade/amc8-2010-item-response-percent.csv)로 보존하고 `amc8-item-response-reference.js`에서 2010 AMC 8에만 조회한다. 답을 입력한 오답에는 당시 전체 응답자의 정답률과 해당 선택지 비율을, 답 입력이 없는 오답·공란에는 정답률 및 가장 많이 선택한 오답을 보여 준다. 이는 전체 응시자 표본의 문항 통계로서 학년별 점수 비교, 현재 규준, 개인 능력 등급으로 설명하지 않는다.
 - 개별 문항 응답 비율은 학년 점수표가 발견됐다는 의미가 아니다. 2010 AMC 8 전 세계 학년별 점수 빈도표는 이번 검색에서 완전한 검증본을 찾지 못했다. 2011 초기 통계 조각, 중국 지역 표, 특정 학교 결과는 전체 집단의 학년 규준으로 전환하지 않았다.
+
+## 2026-11-04 웹 검색 추가: 2009·2011 AMC 8 문항 응답 분포
+
+- 검색으로 [2009 AMC 8 결과](https://www.amcstudy.net/43)와 [2011 AMC 8 결과](https://www.amcstudy.net/79)에 실린 MAA 응답 분포 표를 확인했다. 각 표본은 해당 페이지의 한국 AMC 8 참가 코호트(2009년 741명, 2011년 899명)다. 표의 웹 텍스트를 전사했고 이미지 OCR은 필요하지 않았다. 2009 정답 키는 [LIVE 2009 answer key](https://live.poshenloh.com/past-contests/amc8/2009/answers), 2011 정답 키는 [LIVE 2011 answer key](https://live.poshenloh.com/past-contests/amc8/2011/answers)와 문항별 대조했다.
+- 2009년 12번은 LIVE 정답표의 답 D와 응답표의 Correct Response 별표(D, E)를 구분한다. 앱 정답 키는 D로 두고 집단 정답 응답률은 D+E 65.18%를 표시한다. 2009년과 2011년 각 25문항의 A–E·공란·판독 불가 비율 합계가 반올림 허용 범위 안에서 100%인지 확인한다.
+- 원자료를 [`amc8-2010-item-response-percent.csv`](../competition/historical-amc-grade/amc8-2010-item-response-percent.csv)에 추가하고 결과 화면의 문항 응답 맥락을 연도별로 확장했다. 각 연도에 오답/미응답 문항만 표시하며, 선택한 실제 응시 코호트와 데이터 출처를 밝혀 2009/2011 한국 참가집단과 2010 MAA 전체 응답 집단을 섞지 않는다. 이는 학년 비교, 현재 규준, 개인 능력 등급이 아니다.
+- 2008년 MAA 출력 형식의 자료도 발견했지만 특정 학교의 51명 등 소표본이므로 제품 기준에는 포함하지 않았다. 게시물에 있는 학생 이름·수상자 목록은 복사하지 않는다. AMC Study 재게시에는 CC BY-NC-ND 안내가 표시되어 있어 데이터에 귀속과 원출처 링크를 남기고, 해당 기관의 예측표와 자체 적중률 주장은 제외한다.
+- 통계 전사와 lookup 검증, 수정 후 브라우저 UI 검수를 완료했다. 2009 Q3에 A 오답을 표시해 한국 741명 코호트, 90.28% 정답률, A 선택 7.42%, 원본 풀이·응답 출처 링크가 함께 보이는 것을 확인했다. 2011 Q4에서도 899명 코호트와 59.96% 정답률, A 선택 14.57% 및 출처 링크를 확인했다. Local only; no push, deployment, or Drive sync.
+- 웹 검색에서 2013 AMC 8 학교별 MAA 결과 PDF도 회수했다. Mathematics Ed Clinic Grade 7은 63명으로, 공개 문항 응답 비율은 있지만 단일 학교 집단이다. 전국/현재 Grade 7 기준으로 사용하지 않으며, 화면에서 모집단을 명확히 구분할 수 있을 때만 별도 코호트로 검토한다. 출처: https://asiamathsalliance.com/amc8/results/MEC.pdf
