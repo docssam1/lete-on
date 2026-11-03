@@ -3759,6 +3759,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52Triangle = semesters.find(semester=>semester.grade===5&&semester.term===2)?.units.find(unit=>unit.id==="5-2-u3");
   if (source52Triangle) {
+    const type=source52Triangle.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u3-t4");
+    if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u3-practice-47-original",sourceItemLabel:"확인학습 47번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:86,alternateSourcePdfPage:85,sourcePrintedPage:90,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page87Practice47",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 두 합동 삼각형과 색칠·수선 표시를 대조하고 겹친 부분을 빼는 넓이 관계를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+  if (source52Triangle) {
     const type=source52Triangle.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u3-t3");
     if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u3-practice-46-original",sourceItemLabel:"확인학습 46번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:86,alternateSourcePdfPage:85,sourcePrintedPage:90,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page87Practice46",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 두 접힌 꼭짓점과 각 표시를 대조하고 접은 선의 이등분과 30° 직각삼각형으로 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
