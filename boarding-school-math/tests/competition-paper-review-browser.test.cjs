@@ -88,7 +88,7 @@ test("complete AMC papers compare only with the matching MAA year and form cohor
   }
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#amc-cohort-reference").isVisible(), true);
-  assert.match(await page.locator("#amc-cohort-summary").innerText(), /2025 AMC 12 B · 114 \/ 150점/);
+  assert.match(await page.locator("#amc-cohort-summary").innerText(), /응시 학년 Grade 10 · 2025 AMC 12 B · 114 \/ 150점 · MAA 전체 응시자 기준/);
   const bands = page.locator("#amc-cohort-bands .paper-question-band");
   assert.equal(await bands.count(), 7);
   assert.match(await bands.nth(3).innerText(), /상위 10% 기준[\s\S]*109\.5 \/ 150[\s\S]*기준점 이상/);
@@ -111,7 +111,7 @@ test("Grade 9 AMC 10 review shows the matching 2025 A cohort and rejects grade-r
   }
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#amc-cohort-reference").isVisible(), true);
-  assert.match(await page.locator("#amc-cohort-summary").innerText(), /2025 AMC 10 A · 150 \/ 150점/);
+  assert.match(await page.locator("#amc-cohort-summary").innerText(), /응시 학년 Grade 9 · 2025 AMC 10 A · 150 \/ 150점 · MAA 전체 응시자 기준/);
   assert.match(await page.locator("#amc-cohort-bands").innerText(), /상위 1% 기준[\s\S]*150 \/ 150[\s\S]*기준점 이상/);
   assert.match(await page.locator("#amc-cohort-stats").innerText(), /MAA 보고서 표본 31,600명 · 학교 1,956곳/);
   assert.match(await page.locator("#amc-cohort-reference").innerText(), /응시 학년별 순위·등급/);

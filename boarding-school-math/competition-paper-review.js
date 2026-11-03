@@ -525,7 +525,7 @@
     amcCohortSection.hidden = !amcCohort;
     if (amcCohort) {
       const cohortName = selectedFormat().id === "amc8" ? "AMC 8" : `${selectedFormat().title} ${selectedForm}`;
-      setText("amc-cohort-summary", `${selectedYear} ${cohortName} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}점 · 같은 연도·시험지 기준점을 확인합니다.`);
+      setText("amc-cohort-summary", `응시 학년 Grade ${grade} · ${selectedYear} ${cohortName} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}점 · MAA 전체 응시자 기준과 대조합니다.`);
       const cohortBands = $("amc-cohort-bands");
       cohortBands.replaceChildren();
       amcReference.bands.forEach(function (band) {

@@ -964,3 +964,11 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - 검증: AMC10/12 은행·저장·검토표 테스트 30/30, AMC10 원본→mock→기하 약점 연습과 AMC12 원본→mock→약점 연습 브라우저 2/2, 변경 파일 문법 및 `git diff --check` 통과. local only; no push, publication, Drive sync, or deployment. `raw_youtube.txt` unchanged/untracked.
 - 오답 선택지별로 관찰 가능한 오류 가설을 50문항 검토표에 덧붙였다. 이는 교사의 풀이 확인을 돕는 검토 가설이며 선택지만으로 학생 오개념을 진단하지 않는다. 문항별 실응답 지표는 파일럿 전까지 비워 둔다.
 - 다음: 교사 검토 결과와 파일럿 자료를 회차·폼 버전이 연결된 검토 기록으로 수집할 절차를 설계한다. 현재 결과는 영역·문항 focus·풀이·해당 영역 GFIELD 창작 연습으로 이어지지만, GFIELD 점수는 AMC 등급이 아니다. 실제 점수 비교는 원본 AMC의 동일 연도·회차 MAA 분포만 쓴다.
+
+### 2026-11-04 · 웹에서 AMC 연도별 원본·학년 비교 자료 확인
+
+- MAA가 실제 AMC 원본 사용을 허가했다고 밝힌 LIVE 자료실에서 전체 연도·회차 색인을 확인했다. 현재 공개 자료는 AMC 8 41회(1985–2026, 2021 제외), AMC 10 52개(2000–2025, 2021 A–D 및 2000/2001 단일형), AMC 12 102개(1950–2025, 2021 A–D 및 2000/2001 단일형)이며, 시험지마다 인쇄 PDF·답안·풀이가 연결된다. 2026 AMC 10/12는 MAA의 2026–27 일정상 11월 5일/13일 시행 예정이므로 과거 기록으로 취급하지 않는다. 출처: https://live.poshenloh.com/past-contests, https://maa.org/student-programs/amc/.
+- 2026–27 MAA 공식 정책(PDF, 2026-10-30 개정)에서 현재 형식·응시 학년/나이·채점을 재확인했다. AMC 8은 Grade 8 이하/25문항/40분, AMC 10은 Grade 10 이하/25문항/75분, AMC 12는 Grade 12 이하/25문항/75분이다. 출처: https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf.
+- MAA 공개 K–12 EduView 점수분포의 AMC 10 A 2025 보고서는 Top 1%, Top 2.5%, Top 5%, Top 10%, Top 25%, Top 50%, Top 75%, 평균, 표준편차, 표본 학생/학교 수를 제공하지만 학년 필터는 보이지 않는다. 따라서 현재는 선택한 Grade와 같은 연도·폼의 전체 응시자 기준을 함께 표시하고, Grade별 순위·백분위·등급으로 오해하지 않도록 문구를 바꿨다. 출처: https://maa.edvistas.com/eduview/report.aspx?mode=6&r832=&view=1561.
+- 연도별 원본에는 원문/답/풀이 파일을 복사하지 않는다. 기존 연도 선택에서 LIVE 원본으로 연결하고, 사용자가 표시한 원본 답안의 점수·오답·개념을 로컬에서 진단한 뒤 GFIELD 창작 모의고사와 후속 연습으로 연결한다. MAA 공개 점수분포가 없는 연도는 비교 패널을 표시하지 않는다.
+- 검증: `competition-paper-review-browser.test.cjs` 및 `amc-score-distribution-reference.test.cjs` 통과. AMC 8/10/12 연도 색인, 1950 AHSME 단일 시험, 2021 AMC10 D, 원본 점수 입력, AMC 9학년/10학년과 전체 응시자 MAA 기준의 분리 표시를 확인했다. 로컬 작업만; push/배포/Drive 동기화 없음. `raw_youtube.txt` 미추적 파일은 그대로 둔다.
