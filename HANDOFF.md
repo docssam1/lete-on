@@ -455,3 +455,9 @@ Verification: course-path model tests pass 2/2 and the full home/SASMO browser s
 The shared fraction renderer was already used by the GFIELD course workbooks and roadmap's `setText` helper, but Grade 7 checkpoint prompts were inserted with `textContent`, leaving any `a/b` math as a slash. Route those checkpoint prompts through the shared renderer so the numerator and denominator stack over a fraction bar; the accessible fraction label remains available. The course workbook browser check also confirms Algebra 1's rational coordinate values render as stacked fractions.
 
 Verification: the full roadmap browser suite passes 39/39, including Algebra 1, Algebra 2, Geometry, Precalculus, Grade 7 checkpoint, and responsive layout checks. Local only; no private candidate data accessed, no push or deployment.
+
+### 2026-11-03 Prealgebra Unit 1 Korean learning objectives
+
+Aligned the optional Prealgebra Unit 1 flow with curriculum wording: “문자를 사용해 대수식을 나타내고,” “식의 값,” “동치인 식,” “대수식 전개,” and “동류항을 결합.” This keeps the six supplied concept steps while making the student-facing labels explicit about the mathematical action and object.
+
+Verification: Grade 3–12 roadmap model suite passes 12/12; the four-viewport (320, 390, 900, 1280px) concept-flow browser check passes 1/1. No placement or diagnostic claim added. Local only; no push, deployment, or Drive sync.
