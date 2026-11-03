@@ -2510,6 +2510,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   if (source52Cuboid) {
+    const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u5-t1-3");
+    if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u5-e1-example-3",sourceItemLabel:"예제 1-3 원문",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:44,alternateSourcePdfPage:43,sourcePrintedPage:48,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52CuboidFourPiecesPage48Example13",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 두 방향 절단과 네 조각 그림을 대조하고 절단 위치와 관계없는 모서리 길이 합을 독립 계산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+
+  if (source52Cuboid) {
     const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u5-t2-2");
     if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u5-practice-19-original",sourceItemLabel:"확인학습 19번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:104,alternateSourcePdfPage:105,sourcePrintedPage:110,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5Page108Practice19",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문에서 잘라낸 세 부분과 전개도 치수를 대조하고 세 모서리의 길이와 합을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
