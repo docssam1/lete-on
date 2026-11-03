@@ -37,3 +37,12 @@
 ## 자료의 범위
 
 이번 확인은 MAA 공개 페이지와 공개된 학생/교사용 안내서에 한정된다. 주최자 계정에 보이는 실제 보고서 내용은 접근하거나 확인하지 않았고, 학년별 참가자 분포 데이터가 공개되지 않는다고 단정하지 않는다. 현재 제품에서 사용할 만큼 검증된 공개 학년 규준을 찾지 못했다는 결론이다.
+
+## 2026-11-04 추가 웹 확인
+
+- LIVE의 현행 공개 색인을 다시 확인했다. 페이지는 MAA의 공식 법적 허가를 받아 실제 AMC 시험지를 게시한다고 명시하고, 각 회차의 무료 인쇄용 PDF와 온라인 문항 풀이를 제공한다. 색인에 표시된 현황은 총 266회·6,500문항·77년이며 AMC 8 41회(1985–2026, 2021 제외), AMC 10 52회(2000–2025), AMC 12 102회(1950–2025), AIME는 나머지 71회다. 이 수치는 LIVE 색인의 현재 공개 범위이지 MAA가 보증한 통계 규준은 아니다. GFIELD는 연도·폼·문항 경로만 보관하고 원문은 LIVE에서 열도록 한다.
+- MAA의 [Student Awards 페이지](https://maa.org/student-programs/youth-program-awards-winners/)는 2026 Young Women in Mathematics Awards & Certificates 수상자와 일부 허가된 이름을 공개한다. MAA는 상을 각 대회 최고 점수 참가자, 인증서를 각 MAA Section의 최고 점수 참가자에게 준다고 설명하지만, 공개 명단은 게시 동의를 한 이름만 포함한다. 명단에 점수, 전체 응시자 수, 같은 학년 전체 분포가 없으므로 이를 개인의 학년별 순위나 AMC 점수 등급으로 사용할 수 없다.
+- MAA의 [현행 대회 정책 페이지](https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/)는 정책·수상 조건이 변경될 수 있고 공식 사이트에서 현재 기준을 확인해야 한다고 명시한다. 따라서 예전 자료에 등장하는 Achievement Roll/Honor Roll 명칭이나 제3자 점수표는, 해당 시즌의 MAA 공식 기준과 모집단이 확인되기 전까지 제품의 현재 등급 기준으로 채택하지 않는다.
+- 비교 기능에 지금 반영할 수 있는 것은 공개된 동일 시험지 전체 응시자 점수 분포가 있는 회차의 기준과, 주기가 명시된 AIME 진입 점수 기준뿐이다. Grade는 응시 당시 학생의 기록 맥락으로 보이고, MAA의 공식 학년별 등급·백분위는 아니다.
+
+확인 출처: [LIVE 실제 AMC/AIME 시험지 색인](https://live.poshenloh.com/past-contests), [MAA Student Awards](https://maa.org/student-programs/youth-program-awards-winners/), [MAA 현행 정책](https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/). 확인일: 2026-11-04 KST.

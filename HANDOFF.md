@@ -994,3 +994,11 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - MAA 전체 응시자 분포가 공개된 연도만 AMC 회차별 기록에 연결했다. AMC 8 기록은 학년도 시작+1년의 1월 시험, AMC 10/12는 시작 연도의 11월 시험으로 매핑하고, AMC 10/12 A·B형을 각각 다른 분포에 연결한다. 공개 분포가 없는 회차는 cohort 값을 만들지 않는다.
 - 기록에는 “전체 응시자 기준 · 상위 경계점 이상”과 원점수 경계를 표시하고 해당 MAA EduView 보고서로 링크한다. 사용자 Grade는 함께 유지하지만 같은 학년 백분위·등급으로 변환하지 않는다. 회차별 분포 없는 미래 시험도 빈 기준/가짜 점수로 채우지 않는다.
 - 검증: MAA AMC history, score distribution, paper review 브라우저 묶음 41/41 통과. 추가로 AMC 10 A/B 및 AMC 8 연도 대응을 포함한 새 경로 모바일 폭 390px 테스트 1/1 통과. 새 UI/날짜 매핑 회귀 검수를 마친 뒤 커밋한다. 원문·점수 응답은 서버나 로컬 저장에 추가하지 않는다.
+
+### 2026-11-04 · MAA 수상자 명단과 학년 비교 경계 재검증
+
+- MAA의 현행 Student Awards 페이지와 AMC policy 페이지를 웹에서 확인했다. YWMAC 안내는 대회별 최고 점수 참가자와 MAA Section별 상위 참가자를 기리는 별도 수상 프로그램이며, 이름 공개는 동의한 사람만 포함한다. 공개 명단에는 전체 응시자의 점수·분모·학년별 분포가 없으므로 AMC 학년별 등급, 순위, 백분위의 자료로 쓰지 않는다. 오래된 Achievement Roll/Honor Roll 요약이나 제3자 컷 점수도 시즌별 현행 MAA 기준이 직접 확인되기 전에는 제품 기준으로 넣지 않는다.
+- 같은 날짜 LIVE 색인의 현황을 대조했다: AMC 8 41회, AMC 10 52회, AMC 12 102회, AIME 71회(총 266회/6,500문항/77년). 연도별 원본·인쇄 PDF·정답·전문 풀이 링크는 LIVE에서 열고, GFIELD에는 회차 metadata와 source routes만 둔다.
+- 수상 명단과 전체 응시자 코호트 비교의 차이 및 원본 연도 범위 근거를 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 추가했다. 시험 점수의 MAA 전체 응시자 기준과 현재 GFIELD 학년별 모의고사 원점수 진단은 별도다.
+- 출처: [MAA Student Awards](https://maa.org/student-programs/youth-program-awards-winners/), [MAA current AMC policies](https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/), [LIVE complete yearly archive](https://live.poshenloh.com/past-contests).
+- 검증: AMC 원본 라이브러리·MAA 동회차 점수표·원본 검토 브라우저 테스트 36/36 통과, 문서 출처 링크 직접 열람, `git diff --check` 통과. 원본 문제·답안·해설은 복사하지 않는다.
