@@ -2,4 +2,11 @@
 @media print {
   .print-page:has([data-source-item-id^="5-2-u3-e5-mission-"]),
   .answer-page:has([data-source-answer^="5-2-u3-e5-mission-"]) { page:source52Unit3Page33; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-mission-3-hexagon-synthetic"] svg { max-height:210px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-mission-4-triple-reflection-synthetic"] svg { max-height:200px; }
+  #problemView .print-page--four-up .question-item:has([data-source-item-id="5-2-u3-e5-mission-1-octagon-synthetic"]) .question-prompt { font-size:13px; line-height:1.4; }
+  #problemView [data-source-item-id^="5-2-u3-e5-mission-"],
+  #solutionView [data-source-answer^="5-2-u3-e5-mission-"],
+  #solutionView [data-source-answer^="5-2-u3-e5-mission-"] p,
+  #solutionView [data-source-answer^="5-2-u3-e5-mission-"] li { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
 }
