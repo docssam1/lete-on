@@ -3929,6 +3929,24 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u4-practice-25-part5-distribution-similar",sourceParentItemId:"5-2-u4-practice-25-original",sourceItemLabel:"확인학습 25번 (5) 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:null,alternateSourcePdfPage:99,sourcePrintedPage:104,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U4DecimalDistributionSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 25번 (5)의 세 항과 1·2·3배 공통인 수 구조를 대조하고 변형별 답을 독립 계산했습니다."});
   }
 
+  // 이 생성기들은 원문을 재현하지 않고 조건을 바꾼 유사문항을 만든다.
+  if (source52Average) {
+    const syntheticIds = new Set([
+      "5-2-u6-e1-exploration", ...[1,2,3,4].map(n=>`5-2-u6-e1-example-${n}`),
+      ...[1,2,3,4,5,6].map(n=>`5-2-u6-e1-mission-${n}`),
+      "5-2-u6-e2-exploration", ...[1,2,4].map(n=>`5-2-u6-e2-example-${n}`),
+      ...[1,2,3,5,6].map(n=>`5-2-u6-e2-mission-${n}`),
+      "5-2-u6-e4-exploration", ...[1,2,4].map(n=>`5-2-u6-e4-example-${n}`),
+      ...[1,2,3,4,5,6].map(n=>`5-2-u6-e4-mission-${n}`)
+    ]);
+    for (const type of source52Average.subunits.flatMap(group=>group.types)) {
+      if (!syntheticIds.has(type.id)) continue;
+      if (!type.name.includes("유사문항")) type.name += " · 유사문항";
+      if (!type.label.includes("유사문항")) type.label += " · 유사문항";
+      if (!type.sourceItemLabel.includes("유사문항")) type.sourceItemLabel += " 기반 유사문항";
+    }
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
