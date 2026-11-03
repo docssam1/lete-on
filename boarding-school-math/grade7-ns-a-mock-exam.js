@@ -182,7 +182,7 @@
     if (["gfield-amc12-concept-mock-v1", "gfield-amc10-concept-mock-v1", "gfield-grade7-amc8-style-mock-v2"].includes(exam.id)) {
       const nextStudyUrl = new URL(nextStudyLink.href, window.location.href);
       const attemptParams = new URLSearchParams(window.location.search);
-      ["sourceYear", "sourceForm", "sourceQuestions"].forEach(function (key) {
+      ["sourceYear", "sourceForm", "sourceQuestions", "sourceConcepts"].forEach(function (key) {
         const value = attemptParams.get(key);
         if (value) nextStudyUrl.searchParams.set(key, value);
       });

@@ -1,10 +1,10 @@
 # Boarding School Math continuation handoff
 
-Updated: 2026-11-03 KST (Mac continuation; older release evidence retained below)
+Updated: 2026-11-04 KST (Mac continuation; older release evidence retained below)
 
-## Current Mac status — 2026-11-03
+## Current Mac status — 2026-11-04
 
-- Verified worktree: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`, latest application commit `1ed7204b` (`Guard fraction rendering in dates and document QA`); subsequent local commits on this branch update only this handoff. Worktree clean. Earlier relevant implementation is `d64946adb` (`Render fractions and add Algebra 1 to paper builder`), alongside the Grade 7 plan, contest-comparison, G·MAP artwork, and GFIELD Algebra 1 authoring work recorded below. Local only; nothing was pushed or deployed.
+- Verified worktree: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`, latest committed application change `8c4506b5` (`Add year-indexed AMC answer-key grading`). This continuation has uncommitted edits that connect AMC 10 wrong/unanswered source-concept tags to GFIELD-authored practice; see the 2026-11-04 entry below. `raw_youtube.txt` remains untracked and untouched. Earlier relevant implementation is `d64946adb` (`Render fractions and add Algebra 1 to paper builder`), alongside the Grade 7 plan, contest-comparison, G·MAP artwork, and GFIELD Algebra 1 authoring work recorded below. Local only; nothing was pushed or deployed.
 - The teacher paper builder now exposes 432 items from 12 public Grade 6–7 workbooks plus 64 original Algebra 1 practice items across five units. Shared numeric-fraction rendering is used in the roadmap, A4 workbook, and builder. In a local browser, the `(8/3, 14/3)` answer displayed with horizontal fraction bars in the roadmap lesson and A4 teacher key; Grade 7 ratio choices and Algebra 1 exercises also rendered. Node/Playwright are unavailable on the shell PATH, so repository browser assertions were updated but not run. A bundled Playwright runtime was used for direct local-browser verification; `git diff --check` passed before commit and the worktree is clean.
 - Public practice and private diagnostic remain separate. This branch contains the original 36-item `7.NS.A` student workbook plus eight-item recheck route, separate teacher mode, and a no-placement scope notice. That local code does not prove the remote deployment contains it. The separate 18-slot `7.NS.A` candidate remains locked; no score, focus analysis, placement, or prescription is operational.
 - The Grade 3–12 roadmap supports plan comparison and manually entered competition-paper summaries. Math Kangaroo comparison is limited to matching date, paper memo, item count, and official grade-paired paper band; official rank/percentile remains grade-specific. This is descriptive evidence, not a validated cross-grade diagnostic.
@@ -982,3 +982,12 @@ Verification: In the local browser at `http://localhost:8765`, visually checked 
 ### 2026-11-03 Fraction display sweep across public learning pages
 
 During the fraction-display sweep, checked the existing Grade 7 `7.NS.A` student workbook and Grade 6 `6.NS.C` concept lesson, which already render their fractions with MathML. At both 390px and 1280px, the 36-item Grade 7 workbook rendered 258 MathML fraction bars and the concept lesson rendered 32; mathematical content showed no slash-form fractions in the checked view. Both pages had matching client/scroll widths, no page errors, and no horizontal overflow under screen and print media. The Grade 7 workbook's response/count navigation still uses slash separators intentionally as progress notation. This was direct local-browser inspection, not a test-suite or saved-PDF run. No private content was accessed; local only.
+### 2026-11-04 LIVE 원본 자료 웹 검색 확인 및 AMC 10 개념 연계
+
+사용자 요청에 따라 연도별 AMC/AIME 원본 자료를 웹에서 다시 확인했다. LIVE의 공식 연도 색인은 MAA의 법적 사용 허가를 명시하고 266개 회차·6,500문항·256개 개념을 표시한다. 로컬 연도별 문항·정답 목록도 266개 회차와 6,500문항으로 일치한다. AMC 8 2026, AMC 10 B 2025 정답표, AMC 12 1950, AIME 1983 전문 풀이, AIME 2026 I 페이지를 열어 인쇄 PDF/정답/전문 풀이/문항별 풀이 링크가 제공되는 것을 확인했다. MAA 공식 2022 AMC 10A 해설 PDF는 교육 목적 공유와 출처 표시를 허용하지만 영리 목적 복제·배포에는 서면 허가가 필요하다고 밝힌다. 이에 따라 시험지·문항·원문 해설을 GFIELD로 복사하지 않고 허가된 원본 제공처 링크를 사용한다.
+
+AMC 10 원본 결과에서 오답·미응답 문항의 LIVE 개념 태그를 뽑아 GFIELD 자체 25문항 모의고사로 전달하고, 그 모의고사 이후에도 개념 태그가 유지되도록 연결했다. AMC 10 자체 개념 연습 12문항에 출처 태그와 편집 검토 crosswalk를 추가해 태그가 일치하는 문항을 우선 표시한다. 연결 문항이 없으면 선택된 넓은 영역 연습을 보여 준다. 이는 원본 풀이 태그와 GFIELD 창작 문항의 편집상 연결이며 검증된 진단 또는 난도 동등화가 아니다. AMC 8/12/AIME의 원본 개념에서 자체 문항까지 잇는 개념별 crosswalk와 연습은행 확장은 남아 있다.
+
+확인: 현지 브라우저에서 2025 AMC 10 A의 인쇄 PDF, 정답표, 전문 풀이, 문항별 출처 링크를 보았고 공개 답안 대조가 25문항을 채점했다. 오답·미응답 결과에서 LIVE 개념이 연결되었으며, 후속 URL에 연도·시험형·문항·개념 태그가 포함되는 것을 확인했다. AMC 10 개념 연습에 `linear-equation,casework`를 전달했을 때 3개의 관련 GFIELD 창작 문항만 표시됐다. 추가 자동화 테스트는 실행하지 않았다. 외부 자료는 열람만 했고 로컬 저장소에 복사하지 않았다. 변경은 Mac 로컬 브랜치 `codex/boarding-g7-nsa-mac-20261017`에서 진행 중이며 아직 커밋·푸시하지 않았다. `raw_youtube.txt`는 수정하지 않았다.
+
+출처: [LIVE AMC/AIME 연도별 원본 색인](https://live.poshenloh.com/past-contests), [2025 AMC 10 B 공개 정답표](https://live.poshenloh.com/past-contests/amc10/2025B/answers), [MAA 공식 2022 AMC 10A 해설 PDF](https://maa.org/wp-content/uploads/2024/08/2022-AMC-10A-solutions.pdf).

@@ -31,7 +31,13 @@
   const standards = Object.freeze(["대수", "정수론", "기하", "경우의 수", "확률"]);
   const gradeValue = Number(new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("grade"));
   const grade = Number.isInteger(gradeValue) && gradeValue >= 7 && gradeValue <= 10 ? gradeValue : 7;
+  const attemptParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+  const nextStudyParams = new URLSearchParams({ grade: String(grade) });
+  ["domains", "sourceYear", "sourceForm", "sourceQuestions", "sourceConcepts"].forEach(function (key) {
+    const value = attemptParams.get(key);
+    if (value) nextStudyParams.set(key, value);
+  });
   root.GFIELDAMC10Mock = Object.freeze({ id:"gfield-amc10-concept-mock-v1", formVersion:"2026-11-04-v4", grade, title:"지필드 AMC 10 범위 모의고사 · 1회", durationMinutes:75, standards,
-    nextStudyHref:`./amc10-practice.html?grade=${grade}`, nextStudyLabel:"지필드 AMC 10 개념 연습으로 이어가기 →",
+    nextStudyHref:`./amc10-practice.html?${nextStudyParams.toString()}`, nextStudyLabel:"지필드 AMC 10 개념 연습으로 이어가기 →",
     items:Object.freeze(items.map(item => Object.freeze(item))) });
 })(typeof window === "undefined" ? globalThis : window);

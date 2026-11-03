@@ -992,9 +992,16 @@
     practiceParams.set("sourceYear", $("archive-year").value || params.get("year") || "");
     practiceParams.set("sourceForm", $("archive-form").value || params.get("form") || "");
     practiceParams.set("sourceQuestions", result.reviewItems.map(function (item) { return item.number; }).join(","));
+    if (itemConceptReference && ["amc8", "amc10", "amc12", "aime"].includes(selectedFormat().id)) {
+      const sourceConcepts = Array.from(new Set(result.reviewItems.flatMap(function (item) {
+        const reference = itemConceptReference.referenceFor(selectedFormat().id, Number(practiceParams.get("sourceYear")), practiceParams.get("sourceForm"), item.number);
+        return reference ? reference.sourceConcepts : [];
+      })));
+      if (sourceConcepts.length) practiceParams.set("sourceConcepts", sourceConcepts.join(","));
+    }
     const followUpRoutes = {
       amc8: { href: `./amc8-grade7-mock-exam.html?${new URLSearchParams({ grade: String(grade), sourceYear: practiceParams.get("sourceYear") || "", sourceQuestions: practiceParams.get("sourceQuestions") || "" }).toString()}`, title: "지필드 AMC 8 범위 모의고사", copy: "원본 시험지 복습 뒤 25문항·40분 자체 모의고사를 풀어요. 제출하면 이번 회차에서 다시 볼 영역의 풀이 연습으로 이어갑니다." },
-      amc10: { href: `./amc10-gfield-mock-exam.html?${new URLSearchParams({ grade: String(grade), domains: practiceDomains.join(","), sourceYear: practiceParams.get("sourceYear") || "", sourceForm: practiceParams.get("sourceForm") || "", sourceQuestions: practiceParams.get("sourceQuestions") || "" }).toString()}`, title: "지필드 AMC 10 범위 모의고사", copy: "원본 시험지 복습 뒤 25문항·75분 자체 모의고사를 풀어요. 제출하면 이번 회차에서 막힌 개념을 골라 해설 연습으로 이어갑니다." },
+      amc10: { href: `./amc10-gfield-mock-exam.html?${new URLSearchParams({ grade: String(grade), domains: practiceDomains.join(","), sourceYear: practiceParams.get("sourceYear") || "", sourceForm: practiceParams.get("sourceForm") || "", sourceQuestions: practiceParams.get("sourceQuestions") || "", sourceConcepts: practiceParams.get("sourceConcepts") || "" }).toString()}`, title: "지필드 AMC 10 범위 모의고사", copy: "원본에서 틀리거나 비워 둔 문항의 개념을 지필드 자체 모의고사와 연결해 연습합니다. 연결 문항이 없는 개념은 영역 연습으로 이어집니다." },
       amc12: { href: `./amc12-gfield-mock-exam.html?${new URLSearchParams({ grade: String(grade), domains: practiceDomains.join(","), sourceYear: practiceParams.get("sourceYear") || "", sourceForm: practiceParams.get("sourceForm") || "", sourceQuestions: practiceParams.get("sourceQuestions") || "" }).toString()}`, title: "지필드 AMC 12 범위 모의고사", copy: "원본 시험지 복습 뒤 25문항·75분 지필드 자체 모의고사를 풀고, 결과에서 영역별 풀이와 맞춤 개념 연습으로 이어가요." },
       aime: { href: `./aime-practice.html?grade=${grade}${practiceDomains.length ? `&domains=${encodeURIComponent(practiceDomains.join(","))}` : ""}${practiceParams.get("sourceYear") ? `&sourceYear=${practiceParams.get("sourceYear")}` : ""}${practiceParams.get("sourceForm") ? `&sourceForm=${encodeURIComponent(practiceParams.get("sourceForm"))}` : ""}${practiceParams.get("sourceQuestions") ? `&sourceQuestions=${practiceParams.get("sourceQuestions")}` : ""}`, title: practiceDomains.length ? "지필드 창작 AIME 영역 연습" : "지필드 AIME형 풀이 연습", copy: practiceDomains.length ? `이번 원본에서 표시한 ${practiceDomains.map(function (id) { return domains.find(function (domain) { return domain.id === id; })?.title || id; }).join("·")} 영역을 지필드가 새로 만든 정수 답안 문항으로 연습해요.` : "공개 풀이를 확인한 뒤 지필드가 새로 만든 AIME형 정수 답안 문제로 이어가요." }
     };
