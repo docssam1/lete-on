@@ -3316,8 +3316,8 @@
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "화살표 치수와 반 바퀴 회전, 겹친 넓이를 독립 계산했습니다. 공식 답안과 공개용 원문 그림은 미대조입니다."
+      "implementationStatus": "ready",
+      "reviewReason": "원문 화살표와 치수, 겹친 넓이를 대조하고 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u3-e7-mission-3",
