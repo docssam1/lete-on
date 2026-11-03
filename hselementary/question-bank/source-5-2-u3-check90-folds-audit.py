@@ -7,7 +7,7 @@ from pathlib import Path
 
 record=json.loads((Path(__file__).parent/'source-inventory/5-2-u3-e1-e4-readiness-review.json').read_text())
 r=next(x for x in record['additionalSourceReviews'] if x['sourcePrintedPage']==90)
-assert r['sourcePdfPage']==86 and r['runtimeConnection']=='not-connected' and not r['publisherAnswerVerified']
+assert r['sourcePdfPage']==86 and r['runtimeConnection']=='partial-verified-local' and not r['publisherAnswerVerified']
 assert [x['number'] for x in r['items']]==list(range(41,49))
 # #41: 12-16-20 right triangle. Projection from ㅁ to the foot below ㅂ.
 assert 12**2+16**2==20**2

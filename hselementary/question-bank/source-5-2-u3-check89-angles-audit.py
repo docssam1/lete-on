@@ -6,7 +6,7 @@ from pathlib import Path
 
 record=json.loads((Path(__file__).parent/'source-inventory/5-2-u3-e1-e4-readiness-review.json').read_text())
 r=next(x for x in record['additionalSourceReviews'] if x['sourcePrintedPage']==89)
-assert r['sourcePdfPage']==85 and r['runtimeConnection']=='not-connected' and not r['publisherAnswerVerified']
+assert r['sourcePdfPage']==85 and r['runtimeConnection']=='partial-verified-local' and not r['publisherAnswerVerified']
 by_number={x['number']:x for x in r['items']}
 assert [by_number[n]['candidate'] for n in range(34,39)]==['30도','80도','120도','33도','30도']
 # #34: let the first triangle's angle at ㄷ vary; its congruent counterpart has that angle at ㄱ.

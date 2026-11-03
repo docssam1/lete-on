@@ -7,7 +7,11 @@ from pathlib import Path
 path = Path(__file__).parent / "source-inventory/5-2-u4-readiness-review.json"
 review = next(r for r in json.loads(path.read_text())["additionalSourceReviews"] if r["sourcePrintedPage"] == 101)
 assert {i["number"] for i in review["items"]} == set(range(1,9))
-assert review["publisherAnswerVerified"] is False and review["runtimeConnection"] == "not-connected"
+assert review["publisherAnswerVerified"] is False
+assert review["runtimeConnection"] == "partially-connected"
+assert all(item["status"] == "public-independent-verification-publisher-key-pending"
+           and item["runtimeTypeId"] == f"5-2-u4-practice-{item['number']}-original"
+           for item in review["items"])
 
 assert D(37)*D('0.021')*150 == D('116.55')
 natural = int(D(8)*D('3.62'))
