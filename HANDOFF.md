@@ -1,6 +1,12 @@
 # Current handoff — 2026-11-03
 
-Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The worktree is clean after the map-stop readability pass. No push, deployment, or Drive synchronization has occurred.
+Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The map-stop readability and G·MAP palette updates are committed locally. No push, deployment, or Drive synchronization has occurred.
+
+### 2026-11-03 G·MAP illustration palette update
+
+Reworked the roadmap's wide map illustration to align with the GFIELD brand: deep plum `#482378`, violet `#7545D9`, lilac `#C7A5FF`, pale lavender `#EDE4FB`, and warm ivory `#FFF9F2`. Preserved the four floating-island learning sequence and winding route, reduced cyan/green, and left interface text/markers out of the artwork. The new optimized asset is `boarding-school-math/assets/roadmap/mathematics-learning-world-gmap-v2.webp` (1983×793, about 148 KB); the prior image remains untouched. The page and mobile layout now load v2 with updated cache keys. Generated with the built-in image tool from the existing local map image; prompt summary: recolor/refine the wide four-island G·MAP route into the stated GFIELD palette, keep the route composition and marker space, and omit text, logo, interface, people, and markers.
+
+Verification after the asset/CSS update: roadmap model and browser suites pass 34/34. Desktop 1440×960 and mobile 390×844 were rendered and visually inspected; the asset loads at both widths, the prompt stays in the open sky, and stage markers/cards remain legible. The new image transfers at about 152 KB. No learner data or assessment items were used. Local only; no push, deployment, or Drive sync.
 
 ## Public roadmap and comparison work
 

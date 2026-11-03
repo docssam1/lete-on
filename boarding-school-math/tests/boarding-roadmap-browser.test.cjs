@@ -919,7 +919,7 @@ test("the branded learning-world map frames every grade and phones keep the vert
     await desktop.goto(`${url}?grade=${grade}`, { waitUntil: "networkidle" });
     assert.equal(await desktop.locator("#stage-list button").count(), 4, `Grade ${grade} has four named route stops`);
     assert.ok(await desktop.locator("#stage-list button strong").allTextContents().then((labels) => labels.every((label) => label.trim())), `Grade ${grade} route labels are HTML text`);
-    assert.match(await desktop.locator(".stage-map-scene").evaluate((node) => getComputedStyle(node).backgroundImage), /mathematics-learning-world-gmap\.webp/, `Grade ${grade} uses the shared branded map scene`);
+    assert.match(await desktop.locator(".stage-map-scene").evaluate((node) => getComputedStyle(node).backgroundImage), /mathematics-learning-world-gmap-v2\.webp/, `Grade ${grade} uses the shared branded map scene`);
     assert.equal(await desktop.locator("#stage-map-markers button").count(), 4, `Grade ${grade} exposes four matching map markers`);
     const sceneBottom = await desktop.locator(".stage-map-scene").evaluate((node) => node.getBoundingClientRect().bottom);
     const cardsTop = await desktop.locator("#stage-list").evaluate((node) => node.getBoundingClientRect().top);
@@ -953,7 +953,7 @@ test("the branded learning-world map frames every grade and phones keep the vert
   const phone = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await phone.goto(`${url}?grade=8`, { waitUntil: "networkidle" });
   const mobileArt = await phone.locator(".stage-map-scene").evaluate((node) => ({ image: getComputedStyle(node).backgroundImage, height: node.getBoundingClientRect().height }));
-  assert.match(mobileArt.image, /mathematics-learning-world-gmap\.webp\?v=20261103-2/);
+  assert.match(mobileArt.image, /mathematics-learning-world-gmap-v2\.webp\?v=20261103-3/);
   assert.ok(mobileArt.height >= 150, "phone gives the branded route illustration enough height above the vertical route");
   assert.equal(await phone.locator("#stage-list").evaluate((node) => getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).length), 1);
   const routeLabelSizes = await phone.locator("#stage-list button strong").evaluateAll((nodes) => nodes.map((node) => parseFloat(getComputedStyle(node).fontSize)));

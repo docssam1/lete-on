@@ -437,7 +437,7 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
   padding: 20px 0 8px;
   border-color: #e3dced;
   background-color: #f3eef7;
-  background-image: linear-gradient(180deg,rgba(250,248,252,.12),rgba(250,248,252,.24)),url("./assets/roadmap/mathematics-learning-world-gmap.webp?v=20261103-2");
+  background-image: linear-gradient(180deg,rgba(250,248,252,.12),rgba(250,248,252,.24)),url("./assets/roadmap/mathematics-learning-world-gmap-v2.webp?v=20261103-3");
   background-position: center;
   background-size: cover;
 }
@@ -519,7 +519,7 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
     border: 1px solid #e3dced;
     border-radius: 12px;
     box-shadow: none;
-    background: url("./assets/roadmap/mathematics-learning-world-gmap.webp?v=20261103-2") center / cover no-repeat;
+    background: url("./assets/roadmap/mathematics-learning-world-gmap-v2.webp?v=20261103-3") center / cover no-repeat;
   }
   .journey-main .stage-list { min-height: 0; }
   .journey-main .stage-list li:nth-child(1),
@@ -570,7 +570,7 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
   overflow: hidden;
   border: 1px solid #e5dced;
   border-radius: 20px;
-  background: #f4eff8 url("./assets/roadmap/mathematics-learning-world-gmap.webp?v=20261103-2") center / cover no-repeat;
+  background: #f4eff8 url("./assets/roadmap/mathematics-learning-world-gmap-v2.webp?v=20261103-3") center / cover no-repeat;
 }
 .journey-main .grade7-road-intro {
   width: min(420px, calc(100% - 36px));
