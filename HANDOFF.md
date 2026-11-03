@@ -905,3 +905,8 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - The practice page now accepts A–D and exposes a direct link to that exact LIVE original paper page for the printable paper, answer key, and worked solutions. The return-to-review route preserves the selected year/form too.
 - Verification: focused Chrome chain passes 2/2 at 390px, including AMC 10 D 2021 preserved through all stages, official source URL `.../2021D`, no overflow, and no runtime errors. Local only; no remote changes.
 - MAA's currently published 2025 AMC 10 A/B reports are transcribed in `competition/amc-score-distribution-reference.js` and confirmed by web search against the report entries: A top-10 threshold 94.5/150 (31,600 students); B top-10 threshold 87/150 (25,204 students). These remain same-form, all-grade cohort references; the public report does not provide a grade filter, so no grade-specific rank is inferred. Source: [MAA K–12 score distribution](https://maa.edvistas.com/eduview/report.aspx?mode=6&r631=&view=1561).
+
+### AMC 10 same-form score comparison UI regression
+
+- Added a Grade 9 browser check against the MAA 2025 AMC 10 A report: completed 150/150 result displays the matching top-1% threshold, 31,600-student / 1,956-school sample and direct MAA report link. The interface explicitly states this does not give grade-specific rank or grade-level classification.
+- Verification: focused mobile Chrome run passes 1/1, with 390px width and no runtime errors. This confirms the cohort comparison belongs to the original AMC paper review; it is not a GFIELD mock score band.

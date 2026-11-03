@@ -101,6 +101,26 @@ test("complete AMC papers compare only with the matching MAA year and form cohor
   await page.close();
 });
 
+test("Grade 9 AMC 10 review shows the matching 2025 A cohort and rejects grade-rank interpretation", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto(`${url}?grade=9&program=amc10&year=2025&form=A`, { waitUntil: "networkidle" });
+  for (let question = 1; question <= 25; question += 1) {
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("correct");
+  }
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator("#amc-cohort-reference").isVisible(), true);
+  assert.match(await page.locator("#amc-cohort-summary").innerText(), /2025 AMC 10 A · 150 \/ 150점/);
+  assert.match(await page.locator("#amc-cohort-bands").innerText(), /상위 1% 기준[\s\S]*150 \/ 150[\s\S]*기준점 이상/);
+  assert.match(await page.locator("#amc-cohort-stats").innerText(), /MAA 보고서 표본 31,600명 · 학교 1,956곳/);
+  assert.match(await page.locator("#amc-cohort-reference").innerText(), /응시 학년별 순위·등급/);
+  assert.equal(await page.locator("#amc-cohort-source").getAttribute("href"), "https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561&schoolyear=2026&amccomp=81054&viewClicked=true");
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("AMC cohort reference stays hidden for incomplete or unavailable paper-year records", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(`${url}?grade=7&program=amc8&year=2026`, { waitUntil: "networkidle" });
