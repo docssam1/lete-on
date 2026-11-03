@@ -1,6 +1,7 @@
 "use strict";
 const assert = require("node:assert/strict");
 const path = require("node:path");
+const { execFileSync } = require("node:child_process");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8918";
 const ids = ["5-2-u3-e6-exploration-mirror-synthetic", "5-2-u3-e6-example-1-fold-cut-synthetic", "5-2-u3-e6-example-2-fold-area-synthetic", "5-2-u3-e6-example-3-palindrome-synthetic", "5-2-u3-e6-example-4-two-mirror-synthetic"];
@@ -48,8 +49,23 @@ const ids = ["5-2-u3-e6-exploration-mirror-synthetic", "5-2-u3-e6-example-1-fold
           await page.locator("#printMenuButton").click();
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
-          await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+          await page.emulateMedia({ media: "print" });
+          if (mode === "problem") {
+            await page.evaluate(() => document.fonts.ready);
+            const figures = await page.locator('#problemView [data-fold-rectangle="problem"]').evaluateAll(nodes => nodes.map(svg => {
+              const box = svg.getBoundingClientRect(), answer = svg.closest('.question-item').querySelector('.answer-line').getBoundingClientRect();
+              const labels = [...svg.querySelectorAll('text')].map(text => { const b = text.getBBox(); return { left:b.x, right:b.x+b.width, top:b.y, bottom:b.y+b.height }; });
+              return { width:box.width, bottom:box.bottom, answerTop:answer.top, labels };
+            }));
+            assert.equal(figures.length, 3);
+            assert(figures.every(f => f.width >= 235 && f.bottom <= f.answerTop + 1), "fold figures remain legible and inside their cells");
+            assert(figures.every(f => f.labels.every(b => b.left >= 0 && b.right <= 450 && b.top >= 0 && b.bottom <= 430)), "fold labels fit inside the SVG");
+          }
+          const file = path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`);
+          await page.pdf({ path:file, format:"A4", printBackground:true, preferCSSPageSize:true });
+          if (mode === "problem") assert.match(execFileSync("pdfinfo", [file], {encoding:"utf8"}), /^Pages:\s+4$/m, "15 questions fit four A4 pages without blanks");
           await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
+          await page.emulateMedia({ media: null });
         }
       }
       assert.deepEqual(errors, []);
