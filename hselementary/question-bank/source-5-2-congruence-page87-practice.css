@@ -11,7 +11,7 @@
 }
 @media print {
   /* Keep the page padding when this answer sheet flows onto a second page. */
-  .answer-page:has([data-source-answer="5-2-u3-practice-10-original"], [data-source-answer="5-2-u3-practice-13-original"]) {
+  .answer-page:has([data-source-answer="5-2-u3-practice-10-original"], [data-source-answer="5-2-u3-practice-13-original"], [data-source-answer="5-2-u3-practice-14-guarantee-similar"]) {
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
   }
