@@ -1,3 +1,7 @@
+### 2026-11-04 AMC 8 2010 문항 응답 통계 검색·진단 연결
+
+웹에서 AMC Study의 2010 AMC 8 난도표 게시물을 확인했다. 표가 MAA 공개 자료라고 명시하고 153,211명 응답의 A–E 선택·공란·판독불가·정답률을 제시한다. Apple Vision OCR 후 원본 이미지와 대조하고 LIVE 공개 정답 키의 25개 답을 교차 검증했다. `amc8-2010-item-response-percent.csv`와 `amc8-item-response-reference.js`를 추가했으며, 2010 AMC 8에서만 복습 목록의 오답/미응답 옆에 해당 집단 정답률과 학생이 입력한 오답 선택지의 집단 비율 또는 최다 오답을 표시한다. 표의 빨간 예측 표시와 사교육 기관의 적중 주장 데이터는 가져오지 않았다. 출처는 MAA 원본이 아닌 제3자 재게시이며, 전체 응시자 문항 통계이지 학년별 비교·현재 규준·학생 등급이 아니다. 연구 근거와 제한: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. 검수: 번들 Node REPL에서 25개 CSV/lookup 행 일치, 응답 비율 합계(반올림 오차 ±0.12% 이내), 2010 외 연도·26번 경계 거부, Q3의 오답 B 20.97% 및 정답률 64.41%를 확인했다. 로컬 브라우저에서 실제 Q3 답 B·오답 처리 후 결과 화면에 집계와 원본 풀이 링크가 함께 뜨는 것을 확인했고, 테스트 입력은 새로고침해 지웠다. `git diff --check` 통과. 전체 Playwright suite는 이 작업에서 실행하지 않았다. Local only; no push, deployment, or Drive sync.
+
 # Current handoff — 2026-11-04
 
 ### 2026-11-04 web-recovered 2009 AMC 8 global grade score distribution
