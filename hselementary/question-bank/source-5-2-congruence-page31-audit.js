@@ -81,6 +81,22 @@ for (const def of source.definitions) {
         assert.deepEqual([item.answerModel.height,item.answerModel.width,item.answerModel.answer],[16,8,160]);
         assert.equal(item.answer,"160cm²");
         assert.equal(item.publisherKeyVerified,false);
+      } else if (def.sourceItemId.endsWith("mission-1-original")) {
+        const g={x:0,y:1},n={x:1,y:1},d={x:1,y:0},r={x:0,y:0};
+        const m={x:0,y:1-Math.tan(20*Math.PI/180)},b={x:1-Math.tan(25*Math.PI/180),y:0};
+        assert(Math.abs(angleAt(n,m,b)-70)<1e-8);
+        assert.deepEqual([item.answerModel.alpha,item.answerModel.beta,item.answerModel.answer],[20,25,70]);
+        assert.equal(item.answer,"70°");
+        assert.equal(item.publisherKeyVerified,false);
+      } else if (def.sourceItemId.endsWith("mission-2-original")) {
+        const onCircle=degree=>({x:Math.cos(degree*Math.PI/180),y:Math.sin(degree*Math.PI/180)});
+        const d={x:0,y:0},r=onCircle(140),m=onCircle(80),b=onCircle(40);
+        assert(Math.abs(angleAt(d,r,m)-60)<1e-8);
+        assert(Math.abs(angleAt(r,m,b)-130)<1e-8);
+        assert.deepEqual([item.answerModel.vertexAngle,item.answerModel.centralArc,item.answerModel.equalArc,item.answerModel.answer],[60,60,40,130]);
+        assert.equal(item.answer,"130°");
+        assert.doesNotMatch(item.prompt,/>x<|>㉠</);
+        assert.equal(item.publisherKeyVerified,false);
       } else if (def.sourceItemId.endsWith("mission-6-original")) {
         assert.deepEqual([item.answerModel.top, item.answerModel.bottom, item.answerModel.height], [10, 8, 6]);
         assert.equal(item.answer, "27cm²");
