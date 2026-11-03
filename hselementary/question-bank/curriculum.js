@@ -2147,6 +2147,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   // Original examples use distinct IDs; the existing numerical practice remains intact.
   const source52Range = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52RangeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s1");
+  const source52PackingPracticeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s3");
+  if (source52PackingPracticeGroup && !source52PackingPracticeGroup.types.some(t=>t.id==="5-2-u1-practice-37-packing-time-similar")) {
+    const id="5-2-u1-practice-37-packing-time-similar",name="사과를 포장하는 데 걸리는 시간 · 유사문항";
+    const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52PackingPracticeGroup.types.push({id,number:source52PackingPracticeGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u1-practice-37-original",sourceItemLabel:"확인학습 37번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:67,sourcePrintedPage:72,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U1P72Q37PackingTimeSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"한 사람이 차례로 포장한다는 조건을 명시하고 수치를 바꾼 별도 유사문항입니다. 원문 정답 확정과 구분합니다."});
+  }
   if (source52RangeGroup && !source52RangeGroup.types.some(t=>t.id==="5-2-u1-practice-8-bus-range-similar")) {
     const id="5-2-u1-practice-8-bus-range-similar",name="버스 대수로 회원 수의 범위 구하기 · 유사문항";
     const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;

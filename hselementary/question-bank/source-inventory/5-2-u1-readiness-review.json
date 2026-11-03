@@ -384,7 +384,9 @@
           "classification": "완전 포장 단위와 소요 시간",
           "candidate": "336분",
           "reviewNote": "상자를 차례로 포장한다고 보면 42상자와 남은 27개이며 남은 사과는 포장하지 않는다. 병렬 작업 여부는 명시되지 않았다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "source-reviewed-answer-key-pending",
+          "similarRuntimeTypeId": "5-2-u1-practice-37-packing-time-similar",
+          "similarNote": "한 사람이 차례로 포장한다는 조건을 명시하고 수치를 바꾼 별도 유사문항이다. 원문과 구분한다."
         },
         {
           "number": 38,
