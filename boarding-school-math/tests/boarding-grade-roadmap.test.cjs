@@ -166,7 +166,14 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.equal(roadmap.courseStageResources[9][3][0].url, "./precalculus-workbook.html");
   assert.match(roadmap.courseStageResources[9][3][0].title, /선수 조건 확인 후 선택/);
   assert.equal(roadmap.courseStageResources[10][0][0].url, "./precalculus-workbook.html");
-  assert.equal(roadmap.courseStageResources[10][1][0].url, "./aime-practice.html?grade=10");
+  assert.deepEqual(roadmap.courseStageResources[10][1].map(function (source) { return source.url; }), [
+    "./aime-practice.html?grade=10",
+    "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/",
+    "https://maa.org/maa-invitational-competitions/"
+  ]);
+  assert.deepEqual(roadmap.courseStageResources[8][1].map(function (source) { return source.url; }), [
+    "./amc10-practice.html?grade=8", "https://maa.org/student-programs/amc/"
+  ]);
   assert.match(roadmap.courseStageResources[10].stageNotes[2], /2027 AIME.*만 13세 이상.*AMC 10 100점.*AMC 12 85점/);
   assert.equal(roadmap.courseStageResources[10][0][0].title, "지필드 Precalculus 원본 수업·A4 교재");
   assert.deepEqual(roadmap.courseStageResources[10][2].map(function (source) { return source.url; }), [

@@ -1194,10 +1194,11 @@ test("roadmap checkpoints open their matching course references", async function
   const upperGradeCases = [
     { grade: 8, button: /단계 1, 일차식·기하 점검 보기/, title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" },
     { grade: 8, button: /단계 3, 준비되면 심화 보기/, titles: ["지필드 Algebra 2 원본 수업·A4 교재", "지필드 AIME형 풀이 연습 · 자체 12문항", "MAA 2027 AIME 자격·응시 안내 ↗"], urls: ["./algebra2-workbook.html", "./aime-practice.html?grade=8", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/"], note: true },
+    { grade: 8, button: /단계 2, 그래프·식 연결 보기/, titles: ["지필드 AMC 10 개념 연결 연습 · 자체 12문항", "MAA AMC 공식 범위·형식 ↗"], urls: ["./amc10-practice.html?grade=8", "https://maa.org/student-programs/amc/"] },
     { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html", inferred: true },
     { grade: 9, button: /단계 2, 서로 연결하기 보기/, title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html", inferred: true },
     { grade: 10, button: /단계 1, 개념 설명 보기/, title: "지필드 Precalculus 원본 수업·A4 교재", url: "./precalculus-workbook.html" },
-    { grade: 10, button: /단계 2, 개념 섞어 풀기 보기/, title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=10" },
+    { grade: 10, button: /단계 2, 개념 섞어 풀기 보기/, titles: ["지필드 AIME형 풀이 연습 · 자체 12문항", "MAA 2027 AIME 자격·응시 안내 ↗", "MAA AIME·USAJMO·USAMO 안내 ↗"], urls: ["./aime-practice.html?grade=10", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://maa.org/maa-invitational-competitions/"] },
     { grade: 10, button: /단계 3, 필요한 실전 연습 보기/, titles: ["지필드 SAT Math 네 영역 기초 복습 · 자체 20문항", "지필드 Precalculus 원본 수업·A4 교재", "Khan Academy Digital SAT Math ↗", "College Board Bluebook 실전 연습 ↗", "College Board SAT 수학 문제은행 ↗", "MAA 2027 AIME 자격·응시 안내 ↗", "MAA AIME·USAJMO·USAMO 안내 ↗"], urls: ["./sat-foundation-practice.html?grade=10", "./precalculus-workbook.html", "https://www.khanacademy.org/digital-sat", "https://satsuite.collegeboard.org/practice/practice-tests/bluebook", "https://satsuite.collegeboard.org/practice/student-question-bank/math", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://maa.org/maa-invitational-competitions/"], note: true }
   ];
   for (const item of upperGradeCases) {
