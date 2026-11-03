@@ -120,6 +120,27 @@ test("GFIELD stores the second Grade 7 unit form under its own reviewed scope", 
   }), false);
 });
 
+test("GFIELD stores its original AMC 8 style mock as five aggregate domains only", function () {
+  const storage = memoryStorage();
+  const store = records.create(storage);
+  const standards = ["수 감각·비율", "대수·규칙", "기하·좌표", "경우의 수·확률", "정수·자료 해석"].map(function (id) { return { id, correct: 4, total: 5 }; });
+  const result = store.saveGfieldMockResult({
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc81234", examId: "gfield-grade7-amc8-style-mock-v1", formVersion: "2026-11-04-v1", grade: 7,
+    score: { correct: 20, answered: 23 }, standards, reviewFocuses: [{ itemId: "amc8-g7-m25", standard: "정수·자료 해석", label: "최소공배수와 나머지" }],
+    completedAt: "2026-11-04T03:00:00.000Z", responses: [{ answer: "private" }], schoolScore: 100
+  });
+  assert.equal(result.examTitle, "지필드 AMC 8 스타일 모의고사");
+  assert.equal(result.clusterId, "AMC8");
+  assert.equal(result.score.total, 25);
+  assert.equal(result.standards.length, 5);
+  assert.equal(result.reviewFocuses.length, 1);
+  assert.doesNotMatch(storage.getItem("gmap-local-learning-record-v1:gfield-mock-result-history-v1"), /private|schoolScore|responses/);
+  assert.equal(store.saveGfieldMockResult({
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc81235", examId: "gfield-grade7-amc8-style-mock-v1", formVersion: "wrong-form", grade: 7,
+    score: { correct: 25, answered: 25 }, standards: standards.map(function (entry) { return { ...entry, correct: 5 }; }), reviewFocuses: []
+  }), false);
+});
+
 test("Grade 6 diagnostic evidence keeps only an answer-safe teacher-reviewed summary", function () {
   const store = records.create(memoryStorage());
   assert.equal(store.saveGrade6DiagnosticEvidence({

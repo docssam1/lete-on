@@ -9,6 +9,8 @@ require("../grade7-ns-a-mock-bank.js");
 const exam = globalThis.GFIELDGrade7NSAExam;
 require("../grade7-rp-a-mock-bank.js");
 const rpExam = globalThis.GFIELDGrade7UnitMock;
+require("../amc8-grade7-mock-bank.js");
+const amcExam = globalThis.GFIELDGrade7UnitMock;
 const root = path.resolve(__dirname, "..", "..");
 let server;
 let browser;
@@ -80,6 +82,59 @@ test("the GFIELD proportional-relationships form covers 7.RP.A with unique, keye
   assert.deepEqual(rpExam.items.map(function (item) { return item.choices[item.answer]; }), ["52마일", "$2.55", "27쪽", "1/10컵", "3.5", "x: 2, 4, 6 · y: 5, 10, 15", "y = 3.60x", "(0, 0)", "x가 1일 때 y는 4.5이다", "$90", "$127.20", "16km", "$55.20", "25%"]);
 });
 
+test("the original GFIELD AMC 8 style form has 25 uniquely keyed questions across five reasoning areas", function () {
+  assert.equal(amcExam.id, "gfield-grade7-amc8-style-mock-v1");
+  assert.equal(amcExam.formVersion, "2026-11-04-v1");
+  assert.equal(amcExam.durationMinutes, 40);
+  assert.equal(amcExam.items.length, 25);
+  assert.equal(new Set(amcExam.items.map(function (item) { return item.id; })).size, 25);
+  assert.deepEqual(amcExam.standards, ["수 감각·비율", "대수·규칙", "기하·좌표", "경우의 수·확률", "정수·자료 해석"]);
+  assert.deepEqual(amcExam.items.reduce(function (counts, item) { counts[item.standard] = (counts[item.standard] || 0) + 1; return counts; }, {}), {
+    "수 감각·비율": 5, "대수·규칙": 5, "기하·좌표": 5, "경우의 수·확률": 5, "정수·자료 해석": 5
+  });
+  const expected = ["23자루", "21개", "30개", "12", "52마일", "16", "7", "25", "$4", "24", "35cm²", "70°", "52cm²", "7", "6", "12", "3/4", "1/3", "6", "2/5", "14", "24", "14", "30", "59"];
+  for (let index = 0; index < amcExam.items.length; index += 1) {
+    const item = amcExam.items[index];
+    assert.equal(item.choices.length, 4, item.id);
+    assert.equal(new Set(item.choices).size, 4, item.id);
+    assert.ok(Number.isInteger(item.answer) && item.answer >= 0 && item.answer < 4, item.id);
+    assert.ok(item.prompt && item.solution && item.focus, item.id);
+    assert.equal(item.choices[item.answer], expected[index], item.id);
+  }
+});
+
+test("the GFIELD AMC 8 style mock records an answer-safe domain summary and its own review path", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  const amcUrl = new URL("amc8-grade7-mock-exam.html", url).href;
+  await page.goto(amcUrl, { waitUntil: "networkidle" });
+  assert.match(await page.locator("h1").innerText(), /문제를 읽고 연결하는[\s\S]*지필드 경시 모의고사/);
+  assert.match(await page.locator("#mock-start-panel").innerText(), /학교·대회 성적을 입력하지 않아요/);
+  assert.equal(await page.locator("input").count(), 0);
+  await page.getByRole("button", { name: "지필드 모의고사 시작" }).click();
+  assert.equal(await page.locator(".mock-question").count(), 25);
+  assert.ok(await page.locator('.mock-question .math-fraction[aria-label="4분의 3"]').count() > 0, "fractions remain stacked in the mock" );
+  for (const item of amcExam.items) await page.locator(`#mock-question-${item.id} .mock-choice`).nth(item.answer).click();
+  await page.getByRole("button", { name: "답안 제출" }).click();
+  assert.match(await page.locator(".mock-score").innerText(), /25 \/ 25/);
+  assert.deepEqual(await page.locator(".mock-standard-results article").allInnerTexts(), [
+    "수 감각·비율\n5 / 5 정답", "대수·규칙\n5 / 5 정답", "기하·좌표\n5 / 5 정답", "경우의 수·확률\n5 / 5 정답", "정수·자료 해석\n5 / 5 정답"
+  ]);
+  assert.equal(await page.locator(".mock-next-study a[href*='competition-practice']").getAttribute("href"), "./competition-practice.html?program=amc8");
+  assert.match(await page.locator(".mock-result-boundary").innerText(), /다른 회차·학년과 같은 기준으로 비교한 값이 아니며.*학년 등급을 판정하지 않아요/);
+  const saved = await page.evaluate(function () { return JSON.parse(localStorage.getItem("gmap-local-learning-record-v1:gfield-mock-result-history-v1")); });
+  assert.equal(saved.records[0].examTitle, "지필드 AMC 8 스타일 모의고사");
+  assert.equal(saved.records[0].score.total, 25);
+  assert.equal(saved.records[0].standards.length, 5);
+  assert.equal(saved.records[0].reviewFocuses.length, 0);
+  assert.doesNotMatch(JSON.stringify(saved), /"(?:responses|answer|studentName|schoolScore)"\s*:/);
+  await page.goto(new URL("boarding-roadmap.html?grade=7", url).href, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#journey-mock-history").innerText(), /지필드 AMC 8 스타일 모의고사[\s\S]*25 \/ 25 정답/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("the Grade 7 proportional mock shows stacked fractions, stores its aggregate, and reaches its workbook and roadmap", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
@@ -132,7 +187,7 @@ test("the mock hides answers until submission and returns only this attempt's it
   assert.deepEqual(await page.locator(".mock-standard-results article").allInnerTexts(), [
     "7.NS.A.1\n5 / 5 정답", "7.NS.A.2\n5 / 5 정답", "7.NS.A.3\n4 / 4 정답"
   ]);
-  assert.match(await page.locator(".mock-next-study").innerText(), /모든 문항을 맞혔어요.*전체 단원 숙달/);
+  assert.match(await page.locator(".mock-next-study").innerText(), /모든 문항을 맞혔어요.*전체 영역의 숙달을 판단하지 않고/);
   assert.equal(await page.locator(".mock-next-study a[href*='unit-workbook']").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4");
   assert.equal(await page.locator(".mock-review article[data-correct='true']").count(), 14);
   assert.ok(await page.locator('.mock-review .math-fraction[aria-label="12분의 1"]').count() > 0);

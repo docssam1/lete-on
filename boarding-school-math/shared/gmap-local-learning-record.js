@@ -21,7 +21,8 @@
   const MAX_GFIELD_MOCK_RESULTS = 20;
   const GFIELD_MOCK_RESULT_RULES = Object.freeze({
     "gfield-grade7-ns-a-mock-v1": Object.freeze({ formVersion: "2026-11-03-v1", title: "7.NS.A 유리수 연산", clusterId: "7.NS.A", prefix: "ns-a-m", standards: ["7.NS.A.1", "7.NS.A.2", "7.NS.A.3"], itemsPerStandard: [5, 5, 4] }),
-    "gfield-grade7-rp-a-mock-v1": Object.freeze({ formVersion: "2026-11-04-v1", title: "7.RP.A 비와 비례 관계", clusterId: "7.RP.A", prefix: "rp-a-m", standards: ["7.RP.A.1", "7.RP.A.2", "7.RP.A.3"], itemsPerStandard: [4, 5, 5] })
+    "gfield-grade7-rp-a-mock-v1": Object.freeze({ formVersion: "2026-11-04-v1", title: "7.RP.A 비와 비례 관계", clusterId: "7.RP.A", prefix: "rp-a-m", standards: ["7.RP.A.1", "7.RP.A.2", "7.RP.A.3"], itemsPerStandard: [4, 5, 5] }),
+    "gfield-grade7-amc8-style-mock-v1": Object.freeze({ formVersion: "2026-11-04-v1", title: "지필드 AMC 8 스타일 모의고사", clusterId: "AMC8", prefix: "amc8-g7-m", standards: ["수 감각·비율", "대수·규칙", "기하·좌표", "경우의 수·확률", "정수·자료 해석"], itemsPerStandard: [5, 5, 5, 5, 5] })
   });
   const COMPETITION_DOMAIN_LABELS = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석" });
   const COMPETITION_REASON_IDS = new Set(["concept", "approach", "calculation", "reading", "time"]);

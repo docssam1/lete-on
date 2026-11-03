@@ -127,7 +127,7 @@
     const nextStudyCopy = document.createElement("p");
     nextStudyCopy.textContent = needsReview
       ? "틀렸거나 비워 둔 문항은 복습할 문제를 찾는 표시예요. 점수로 실력이나 등급을 정하지 않고, 같은 범위의 단원 연습으로 이어갑니다."
-      : "이번 회차의 모든 문항을 맞혔어요. 이번 결과만으로 전체 단원 숙달을 정하지 않고, 풀이 설명과 추가 문제로 연결합니다.";
+      : exam.allCorrectCopy || "이번 회차의 모든 문항을 맞혔어요. 이 결과만으로 전체 영역의 숙달을 판단하지 않고, 풀이 설명과 새로운 문제로 이어갑니다.";
     const resultContent = [nextStudyHeading, nextStudyCopy];
     if (reviewFocuses.length) {
       const focusList = document.createElement("ul");
@@ -140,8 +140,8 @@
       resultContent.push(focusList);
     }
     const nextStudyLink = document.createElement("a");
-    nextStudyLink.href = `./unit-workbook.html?cluster=${encodeURIComponent(exam.clusterId)}&mode=workbook&audience=student&locale=ko&paper=A4`;
-    nextStudyLink.textContent = `${exam.clusterId} 단원 워크북으로 이어서 풀기 →`;
+    nextStudyLink.href = exam.nextStudyHref || `./unit-workbook.html?cluster=${encodeURIComponent(exam.clusterId)}&mode=workbook&audience=student&locale=ko&paper=A4`;
+    nextStudyLink.textContent = exam.nextStudyLabel || `${exam.clusterId} 단원 워크북으로 이어서 풀기 →`;
     resultContent.push(nextStudyLink);
     if (savedResult) {
       const roadmapLink = document.createElement("a");

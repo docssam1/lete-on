@@ -270,7 +270,7 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .route-explanation > div p { margin: 8px 0 0; line-height: 1.5; }
 .route-explanation > small { margin-top: 28px; display: block; color: #566274; font-size: .8rem; line-height: 1.6; }
 .competition-section { padding-block: clamp(60px, 7vw, 94px); border-top: 1px solid #d8dee8; }
-.competition-own-mocks { margin-top: 26px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.competition-own-mocks { margin-top: 26px; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
 .competition-own-mocks[hidden], .competition-own-mocks-empty[hidden] { display: none; }
 .competition-own-mocks article { min-width: 0; padding: clamp(18px,2.5vw,26px); border: 1px solid #d8dee8; border-top: 3px solid #7152a4; background: #fff; }
 .competition-own-mocks article > span { color: #60418f; font-size: .7rem; font-weight: 900; letter-spacing: .04em; }

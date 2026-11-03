@@ -397,9 +397,9 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator("#route-check-block").isVisible(), true);
   assert.equal(await page.locator("#competition-diagnostic .map-head h2").innerText(), "지필드 모의고사 · 경시 연습");
   assert.match(await page.locator("#competition-diagnostic .map-head > p").innerText(), /학교 성적이나 대회 성적을 입력하지 않고.*실제로 푼 문항/);
-  assert.equal(await page.locator(".competition-own-mocks article").count(), 3);
+  assert.equal(await page.locator(".competition-own-mocks article").count(), 4);
   assert.deepEqual(await page.locator(".competition-own-mocks a").evaluateAll(function (links) { return links.map(function (link) { return link.getAttribute("href"); }); }), [
-    "./grade7-ns-a-mock-exam.html", "./grade7-rp-a-mock-exam.html", "./competition-practice.html?program=amc8"
+    "./grade7-ns-a-mock-exam.html", "./grade7-rp-a-mock-exam.html", "./amc8-grade7-mock-exam.html", "./competition-practice.html?program=amc8"
   ]);
   assert.equal(await page.locator("#competition-form").isVisible(), false);
   assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), false);
@@ -418,7 +418,7 @@ test("roadmap mock catalog uses GFIELD-authored routes without external score en
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   assert.deepEqual(await page.locator(".competition-own-mocks a").evaluateAll(function (links) { return links.map(function (link) { return link.getAttribute("href"); }); }), [
-    "./grade7-ns-a-mock-exam.html", "./grade7-rp-a-mock-exam.html", "./competition-practice.html?program=amc8"
+    "./grade7-ns-a-mock-exam.html", "./grade7-rp-a-mock-exam.html", "./amc8-grade7-mock-exam.html", "./competition-practice.html?program=amc8"
   ]);
   assert.equal(await page.locator("#competition-form").isVisible(), false);
   assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), false);
