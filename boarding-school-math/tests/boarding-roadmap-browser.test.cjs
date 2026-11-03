@@ -50,10 +50,33 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   assert.equal(await page.evaluate(function () { return location.hash; }), "#algebra1-course");
   assert.match(await page.locator("#algebra1-course").innerText(), /식의 구조와 방정식[\s\S]*지필드 원본[\s\S]*3\(2x − 1\) = 15/);
   assert.equal(await page.locator(".algebra1-unit-card").count(), 5);
+  assert.equal(await page.locator(".algebra1-lesson-sequence").count(), 1);
+  await page.locator(".algebra1-lesson-sequence > summary").click();
+  assert.equal(await page.locator(".algebra1-session").count(), 7);
+  await page.locator(".algebra1-session > summary").first().click();
+  assert.match(await page.locator(".algebra1-session").first().innerText(), /변수로 상황을 식으로 나타내기[\s\S]*C = 7 \+ 4x[\s\S]*직접 풀어 보기/);
+  await page.locator(".algebra1-session").first().locator(".algebra1-answer > summary").first().click();
+  assert.match(await page.locator(".algebra1-session").first().innerText(), /17달러/);
   assert.equal(await page.locator(".algebra1-unit-lesson").count(), 5);
   await page.locator(".algebra1-unit-lesson").nth(2).locator("summary").click();
   assert.match(await page.locator(".algebra1-unit-lesson").nth(2).innerText(), /입장권[\s\S]*a \+ s = 28[\s\S]*13장/);
   assert.doesNotMatch(await page.locator("body").innerText(), /추정안|AoPS Introduction to Algebra/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("the original Algebra 1 Unit 1 sequence remains readable and contained on a phone", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  await page.goto(`${url}?grade=7#algebra1-course`, { waitUntil: "networkidle" });
+  await page.locator(".algebra1-lesson-sequence > summary").click();
+  await page.locator(".algebra1-session > summary").first().click();
+  assert.equal(await page.locator(".algebra1-session").count(), 7);
+  assert.equal(await page.locator(".algebra1-answer").count(), 14);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [390, 390]);
+  assert.equal(await page.locator(".algebra1-unit-card").first().evaluate(function (node) { return getComputedStyle(node).gridColumn; }), "1 / -1");
+  assert.ok(await page.locator(".algebra1-lesson-sequence").evaluate(function (node) { return node.getBoundingClientRect().width > 300; }));
   assert.deepEqual(errors, []);
   await page.close();
 });

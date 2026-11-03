@@ -478,6 +478,37 @@
       const question = document.createElement("p"); question.className = "algebra1-unit-question"; question.textContent = unit.question;
       const goals = document.createElement("ul"); unit.goals.forEach(function (goal) { const li = document.createElement("li"); li.textContent = goal; goals.append(li); });
       const standards = document.createElement("small"); standards.textContent = `범위 코드 · ${unit.standards.join(" · ")}`;
+      let sequence = null;
+      if (unit.lessons && unit.lessons.length) {
+        sequence = document.createElement("details"); sequence.className = "algebra1-lesson-sequence";
+        const sequenceSummary = document.createElement("summary"); sequenceSummary.textContent = `수업 순서 · ${unit.lessons.length}차시`;
+        const lessonList = document.createElement("ol"); lessonList.className = "algebra1-lesson-list";
+        unit.lessons.forEach(function (session, lessonIndex) {
+          const sessionItem = document.createElement("li");
+          const sessionDetails = document.createElement("details"); sessionDetails.className = "algebra1-session";
+          const sessionSummary = document.createElement("summary"); sessionSummary.textContent = `${String(lessonIndex + 1).padStart(2, "0")} · ${session.title}`;
+          const objective = document.createElement("p"); objective.className = "algebra1-session-objective"; objective.textContent = `이번 차시 목표 · ${session.objective}`;
+          const idea = document.createElement("p"); idea.className = "algebra1-session-idea"; idea.textContent = session.idea;
+          const exampleLabel = document.createElement("strong"); exampleLabel.textContent = "예제와 풀이";
+          const examplePrompt = document.createElement("p"); examplePrompt.className = "algebra1-session-prompt"; examplePrompt.textContent = session.example.prompt;
+          const exampleSolution = document.createElement("p"); exampleSolution.textContent = session.example.solution;
+          const practiceLabel = document.createElement("strong"); practiceLabel.textContent = "직접 풀어 보기";
+          const practiceList = document.createElement("ol"); practiceList.className = "algebra1-practice-list";
+          session.practice.forEach(function (exercise, exerciseIndex) {
+            const exerciseItem = document.createElement("li");
+            const exercisePrompt = document.createElement("p"); exercisePrompt.textContent = exercise.prompt;
+            const answerDetails = document.createElement("details"); answerDetails.className = "algebra1-answer";
+            const answerSummary = document.createElement("summary"); answerSummary.textContent = `문항 ${exerciseIndex + 1} 풀이 확인`;
+            const answer = document.createElement("p"); answer.textContent = exercise.answer;
+            const feedback = document.createElement("p"); feedback.textContent = exercise.feedback;
+            answerDetails.append(answerSummary, answer, feedback);
+            exerciseItem.append(exercisePrompt, answerDetails); practiceList.append(exerciseItem);
+          });
+          sessionDetails.append(sessionSummary, objective, idea, exampleLabel, examplePrompt, exampleSolution, practiceLabel, practiceList);
+          sessionItem.append(sessionDetails); lessonList.append(sessionItem);
+        });
+        sequence.append(sequenceSummary, lessonList);
+      }
       const lesson = document.createElement("details"); lesson.className = "algebra1-unit-lesson";
       const summary = document.createElement("summary"); summary.textContent = `지필드 연습 · ${unit.lesson.title}`;
       const prompt = document.createElement("p"); prompt.className = "algebra1-unit-prompt"; prompt.textContent = unit.lesson.prompt;
@@ -486,7 +517,9 @@
       const extensionHeading = document.createElement("strong"); extensionHeading.textContent = "한 걸음 더";
       const extension = document.createElement("p"); extension.textContent = unit.lesson.extension;
       lesson.append(summary, prompt, solutionHeading, solution, extensionHeading, extension);
-      content.append(heading, question, goals, standards, lesson); card.append(number, content); unitHost.append(card);
+      content.append(heading, question, goals, standards);
+      if (sequence) content.append(sequence);
+      content.append(lesson); card.append(number, content); unitHost.append(card);
     });
     const lesson = algebra1Course.starterLesson;
     setText("algebra1-starter-title", lesson.title);

@@ -5,8 +5,17 @@ const course = require("../curriculum/algebra-1-course.js");
 
 test("GFIELD Algebra 1 has an original, standards-scoped five-unit course map", function () {
   assert.equal(course.id, "gfield-algebra-1-v1");
-  assert.equal(course.status, "first-original-lesson-published");
+  assert.equal(course.status, "unit-1-sequence-published");
   assert.equal(course.units.length, 5);
+  assert.equal(course.units[0].lessons.length, 7);
+  assert.deepEqual(course.units[0].lessons.map(function (lesson) { return lesson.practice.length; }), [2, 2, 2, 2, 2, 2, 2]);
+  assert.ok(course.units[0].lessons.every(function (lesson) {
+    return lesson.title && lesson.objective && lesson.idea && lesson.example.prompt && lesson.example.solution
+      && lesson.practice.every(function (exercise) { return exercise.prompt && exercise.answer && exercise.feedback; });
+  }));
+  assert.match(course.units[0].lessons[0].practice[0].answer, /17달러/);
+  assert.match(course.units[0].lessons[3].practice[1].answer, /8b − 6/);
+  assert.match(course.units[0].lessons[6].practice[1].answer, /p ≤ 6/);
   assert.ok(course.units.every(function (unit) {
     return unit.title && unit.question && unit.goals.length >= 3 && unit.standards.length
       && unit.lesson && unit.lesson.title && unit.lesson.prompt && unit.lesson.solution && unit.lesson.extension;
