@@ -148,6 +148,34 @@ test("GFIELD stores the revised AMC 8 style mock as five aggregate domains only 
   assert.equal(oldResult.examTitle, "지필드 AMC 8 스타일 모의고사 · 1회");
 });
 
+test("competition mock result storage preserves only grades allowed by each exam route", function () {
+  const store = records.create(memoryStorage());
+  const amc8Standards = ["수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석"].map((id) => ({ id, correct: 4, total: 5 }));
+  for (const grade of [6, 8]) {
+    const saved = store.saveGfieldMockResult({
+      schemaVersion: "gfield-mock-result-v1", id: `mock-20261104-g${grade}amc8`, examId: "gfield-grade7-amc8-style-mock-v2", formVersion: "2026-11-04-v2", grade,
+      score: { correct: 20, answered: 25 }, standards: amc8Standards, reviewFocuses: []
+    });
+    assert.equal(saved.grade, grade);
+  }
+  const amc10Standards = ["대수", "정수론", "기하", "경우의 수", "확률"].map((id) => ({ id, correct: 0, total: 5 }));
+  const amc10 = store.saveGfieldMockResult({
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc10g9", examId: "gfield-amc10-concept-mock-v1", formVersion: "2026-11-04-v2", grade: 9,
+    score: { correct: 0, answered: 0 }, standards: amc10Standards, reviewFocuses: []
+  });
+  assert.equal(amc10.grade, 9);
+  const amc12Standards = ["대수", "함수·삼각함수", "정수론", "기하", "경우의 수"].map((id) => ({ id, correct: 0, total: 5 }));
+  const amc12 = store.saveGfieldMockResult({
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc12g10", examId: "gfield-amc12-concept-mock-v1", formVersion: "2026-11-04-v1", grade: 10,
+    score: { correct: 0, answered: 0 }, standards: amc12Standards, reviewFocuses: []
+  });
+  assert.equal(amc12.grade, 10);
+  assert.equal(store.saveGfieldMockResult({
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc10g6", examId: "gfield-amc10-concept-mock-v1", formVersion: "2026-11-04-v2", grade: 6,
+    score: { correct: 0, answered: 0 }, standards: amc10Standards, reviewFocuses: []
+  }), false);
+});
+
 test("Grade 6 diagnostic evidence keeps only an answer-safe teacher-reviewed summary", function () {
   const store = records.create(memoryStorage());
   assert.equal(store.saveGrade6DiagnosticEvidence({

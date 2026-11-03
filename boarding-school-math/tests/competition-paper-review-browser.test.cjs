@@ -170,6 +170,9 @@ test("AMC 12 original review routes into the complete GFIELD mock and then match
   assert.equal(await page.locator("#mock-progress").innerText(), "25 / 25 응답");
   await page.locator("#mock-submit").click();
   assert.match(await page.locator("#mock-results .mock-score").innerText(), /24 \/ 25/);
+  const savedMock12 = await page.evaluate(() => JSON.parse(localStorage.getItem("gmap-local-learning-record-v1:gfield-mock-result-history-v1")));
+  assert.equal(savedMock12.records[0].grade, 10);
+  assert.equal(savedMock12.records[0].clusterId, "AMC12");
   assert.equal(await page.locator("#mock-results .mock-standard-results article").count(), 5);
   const nextStudy = await page.locator("#mock-results .mock-next-study a").first().getAttribute("href");
   assert.match(nextStudy, /amc12-practice\.html/);
@@ -277,6 +280,9 @@ test("AMC 10 original review leads to a full mock and practice follows the mock'
   }
   await page.locator("#mock-submit").click();
   assert.match(await page.locator("#mock-results .mock-score").innerText(), /24 \/ 25/);
+  const savedMock10 = await page.evaluate(() => JSON.parse(localStorage.getItem("gmap-local-learning-record-v1:gfield-mock-result-history-v1")));
+  assert.equal(savedMock10.records[0].grade, 9);
+  assert.equal(savedMock10.records[0].clusterId, "AMC10");
   const nextStudy = await page.locator("#mock-results .mock-next-study a").first().getAttribute("href");
   const next = new URL(nextStudy, "http://127.0.0.1");
   assert.equal(next.pathname, "/boarding-school-math/amc10-practice.html");

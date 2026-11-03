@@ -23,7 +23,9 @@
     "gfield-grade7-ns-a-mock-v1": Object.freeze({ formVersion: "2026-11-03-v1", title: "7.NS.A 유리수 연산", clusterId: "7.NS.A", prefix: "ns-a-m", standards: ["7.NS.A.1", "7.NS.A.2", "7.NS.A.3"], itemsPerStandard: [5, 5, 4] }),
     "gfield-grade7-rp-a-mock-v1": Object.freeze({ formVersion: "2026-11-04-v1", title: "7.RP.A 비와 비례 관계", clusterId: "7.RP.A", prefix: "rp-a-m", standards: ["7.RP.A.1", "7.RP.A.2", "7.RP.A.3"], itemsPerStandard: [4, 5, 5] }),
     "gfield-grade7-amc8-style-mock-v1": Object.freeze({ formVersion: "2026-11-04-v1", title: "지필드 AMC 8 스타일 모의고사 · 1회", clusterId: "AMC8", prefix: "amc8-g7-m", standards: ["수 감각·비율", "대수·규칙", "기하·좌표", "경우의 수·확률", "정수·자료 해석"], itemsPerStandard: [5, 5, 5, 5, 5] }),
-    "gfield-grade7-amc8-style-mock-v2": Object.freeze({ formVersion: "2026-11-04-v2", title: "지필드 AMC 8 스타일 모의고사 · 2회", clusterId: "AMC8", prefix: "amc8-g7-v2-m", standards: ["수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석"], itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석"] })
+    "gfield-grade7-amc8-style-mock-v2": Object.freeze({ formVersion: "2026-11-04-v2", title: "지필드 AMC 8 스타일 모의고사 · 2회", clusterId: "AMC8", prefix: "amc8-g7-v2-m", gradeRange: Object.freeze({ min: 6, max: 8 }), standards: ["수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석"], itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석"] }),
+    "gfield-amc10-concept-mock-v1": Object.freeze({ formVersion: "2026-11-04-v2", title: "지필드 AMC 10 범위 모의고사 · 1회", clusterId: "AMC10", prefix: "amc10-m", gradeRange: Object.freeze({ min: 7, max: 10 }), standards: ["대수", "정수론", "기하", "경우의 수", "확률"], itemsPerStandard: [5, 5, 5, 5, 5] }),
+    "gfield-amc12-concept-mock-v1": Object.freeze({ formVersion: "2026-11-04-v1", title: "지필드 AMC 12 범위 개념 모의고사 · 1회", clusterId: "AMC12", prefix: "amc12-gfield-m", gradeRange: Object.freeze({ min: 7, max: 12 }), standards: ["대수", "함수·삼각함수", "정수론", "기하", "경우의 수"], itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수"] })
   });
   const COMPETITION_DOMAIN_LABELS = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석" });
   const COMPETITION_REASON_IDS = new Set(["concept", "approach", "calculation", "reading", "time"]);
@@ -189,9 +191,10 @@
     };
   }
   function sanitizedGfieldMockResult(value) {
-    if (!object(value) || value.schemaVersion !== "gfield-mock-result-v1" || value.grade !== 7 || !object(value.score) || !Array.isArray(value.standards) || !Array.isArray(value.reviewFocuses)) return null;
+    if (!object(value) || value.schemaVersion !== "gfield-mock-result-v1" || !Number.isInteger(value.grade) || !object(value.score) || !Array.isArray(value.standards) || !Array.isArray(value.reviewFocuses)) return null;
     const rules = GFIELD_MOCK_RESULT_RULES[value.examId];
     if (!rules || value.formVersion !== rules.formVersion) return null;
+    if (rules.gradeRange ? value.grade < rules.gradeRange.min || value.grade > rules.gradeRange.max : value.grade !== 7) return null;
     const itemCount = rules.itemsPerStandard.reduce(function (sum, count) { return sum + count; }, 0);
     const standards = value.standards.slice(0, rules.standards.length).map(function (entry, index) {
       if (!object(entry) || entry.id !== rules.standards[index] || !Number.isInteger(entry.correct) || !Number.isInteger(entry.total) || entry.total !== rules.itemsPerStandard[index] || entry.correct < 0 || entry.correct > entry.total) return null;
@@ -214,7 +217,7 @@
     if (reviewFocuses.length !== value.reviewFocuses.length) return null;
     return {
       schemaVersion: "gfield-mock-result-v1", id: typeof value.id === "string" && /^mock-[a-z0-9-]{8,48}$/.test(value.id) ? value.id : `mock-${Date.now().toString(16)}-${Math.random().toString(16).slice(2, 10)}`,
-      examId: value.examId, examTitle: rules.title, clusterId: rules.clusterId, formVersion: value.formVersion, grade: 7,
+      examId: value.examId, examTitle: rules.title, clusterId: rules.clusterId, formVersion: value.formVersion, grade: value.grade,
       score: { correct: value.score.correct, answered: value.score.answered, total: itemCount },
       standards: standards,
       reviewFocuses: reviewFocuses,

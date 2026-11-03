@@ -153,6 +153,24 @@ test("the GFIELD AMC 8 style mock records an answer-safe domain summary and its 
   await page.close();
 });
 
+test("AMC 8 mock keeps Grade 6 and Grade 8 route context through saved results and follow-up", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  for (const { grade, year } of [{ grade: 6, year: 2024 }, { grade: 8, year: 2025 }]) {
+    await page.goto(new URL(`amc8-grade7-mock-exam.html?grade=${grade}&sourceYear=${year}`, url).href, { waitUntil: "networkidle" });
+    assert.match(await page.locator("#amc8-source-paper-note").innerText(), new RegExp(`${year} AMC 8 원본과 별도로`));
+    assert.match(await page.locator("#mock-back-link").getAttribute("href"), new RegExp(`competition-paper-review\\.html\\?grade=${grade}&program=amc8&year=${year}$`));
+    await page.getByRole("button", { name: "지필드 모의고사 시작" }).click();
+    for (const item of amcExam.items) await page.locator(`#mock-question-${item.id} .mock-choice`).nth(item.answer).click();
+    await page.getByRole("button", { name: "답안 제출" }).click();
+    const saved = await page.evaluate(function () { return JSON.parse(localStorage.getItem("gmap-local-learning-record-v1:gfield-mock-result-history-v1")); });
+    assert.equal(saved.records[0].grade, grade);
+    const nextPractice = new URL(await page.locator(".mock-next-study a[href*='amc8-topic-practice']").getAttribute("href"));
+    assert.equal(nextPractice.searchParams.get("grade"), String(grade));
+    assert.equal(nextPractice.searchParams.get("sourceYear"), String(year));
+  }
+  await page.close();
+});
+
 test("the Grade 7 proportional mock shows stacked fractions, stores its aggregate, and reaches its workbook and roadmap", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];

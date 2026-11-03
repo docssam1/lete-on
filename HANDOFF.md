@@ -931,3 +931,11 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - Independently checked every AMC 10 and AMC 12 keyed answer against its prompt and worked solution. Found and corrected an AMC 10 sequence item that asked for the position of 100 in `4, 9, 14, 19, ...`; 100 is not a term. It now asks for 99, which is the 20th term, and the explanation shows the calculation. Bumped the internal AMC 10 form version to `2026-11-04-v2` and the page's bank cache key so prior attempts stay distinguishable.
 - Verification: AMC 10 and AMC 12 bank/answer/form unit suites pass 8/8. Exact focused Chromium checks for the AMC 10 and AMC 12 original-review→mock→practice routes pass 2/2. An earlier invocation with a nonmatching test-name pattern stalled before executing assertions; it was replaced by these exact-name checks. `node --check` and CRLF-aware `git diff --check` pass.
 - Review is a direct mathematical pass only. AMC 10/12 forms still need a separate educator review and pilot before any GFIELD-only performance band or level comparison.
+
+### 2026-11-04 · AMC 학년별 모의고사 결과 저장 보완
+
+- 웹에서 LIVE의 MAA 허가 연도별 자료실을 재확인했다. 현재 목록은 AMC 8 41회(1985–2026, 2021 제외), AMC 10 52개 시험지(2000–2025, 2021 A–D 포함), AMC 12 102개 시험지(1950–2025, 최근 A/B 및 2021 A–D 포함)다. 각 원본은 LIVE에서 인쇄·응시·정답·풀이를 제공한다. 지필드는 연도/회차 링크와 자체 제작 문항만 사용한다. 출처: [LIVE annual archive](https://live.poshenloh.com/past-contests), [MAA AMC format and scope](https://maa.org/student-programs/amc/).
+- 저장 검증기가 모든 GFIELD 모의고사 결과를 7학년으로 고정해, AMC 8 6·8학년과 AMC 10 9학년, AMC 12 10학년의 완료 기록을 버리는 문제를 수정했다. 각 AMC 프로그램에 허용 학년 범위를 지정하고 제출 학년을 그대로 기록하며, 기존 7.NS.A·7.RP.A 학년 제한은 유지한다. AMC 12는 영역별 5문항씩이지만 실제 문항 순서는 영역이 섞여 있어 25개 문항의 영역 순서를 명시했다.
+- 관련 HTML의 공용 저장 모듈 캐시 키를 `20261104-4`로 올렸다. `raw_youtube.txt`는 변경·추적하지 않았다.
+- 검증: 로컬 기록 테스트 23/23, AMC 8 6·8학년 브라우저 기록 경로 1/1, AMC 10 9학년 및 AMC 12 10학년 기록 경로 2/2 통과. `node --check`와 CRLF-aware `git diff --check`도 통과. 이 범위는 로컬 수정만이며, 학년별 등급/백분위나 모의고사 간 등급 비교를 추가하지 않았다.
+- 다음: 전체 관련 AMC 연도별 선택·복습 브라우저 테스트와 기존 7학년 단원 회귀를 함께 실행하고, 통과 확인 후 변경 파일만 커밋한다. 원본 연도별 시험지 페이지는 LIVE를 열고, GFIELD 안에는 원문/정답/풀이 PDF를 복사하지 않는다.
