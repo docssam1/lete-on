@@ -3718,6 +3718,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u3-practice-88-linked-similar",sourceParentItemId:"5-2-u3-practice-88-original",sourceItemLabel:"확인학습 88번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:91,alternateSourcePdfPage:90,sourcePrintedPage:95,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3LinkedMirrorReflections",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 반사 경로와 되돌아오는 조건을 대조하고 변경한 각도에서 반사 횟수를 독립 추적했습니다."});
   }
 
+  if (source52CuboidNets) {
+    const type=source52CuboidNets.types.find(item=>item.id==="5-2-u5-t2-5");
+    if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u5-practice-17-original",sourceItemLabel:"확인학습 17번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:104,alternateSourcePdfPage:105,sourcePrintedPage:110,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5Page108Practice17",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 그림과 선택지를 대조하고 아홉 위치의 접힘을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
