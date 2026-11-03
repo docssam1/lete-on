@@ -8,8 +8,9 @@ function makeQuestion(i=0,difficulty=0){if(!Number.isSafeInteger(i)||i<0||![-1,0
 const originalId='5-2-u3-e7-mission-6',originalKey='source52TwoCentersTrianglePage37Original';
 function makeOriginal(){
  const G=[7,2],O=[4,5],S=[6,4],N=reflect(G,O),D=reflect(G,S),m={G,O,S,N,D};
- const answerFigure=figure(m,true).replace('fill="#e9f0e7"','fill="#e9f0e7" fill-opacity=".45"').replace('</svg>','<path d="M216 83 V239 H60" fill="none" stroke="#566e80" stroke-width="1.5" stroke-dasharray="5 3"/><text x="222" y="255" font-size="15" fill="#191511">ㅈ</text></svg>');
- const prompt=`<div data-source-item-id="${originalId}" data-pool-index="0"><p>점 ㅇ을 대칭의 중심으로 하여 점 ㄱ과 점대칭의 위치에 있는 점을 ㄴ, 점 ㅅ을 대칭의 중심으로 하여 점 ㄱ과 점대칭의 위치에 있는 점을 ㄷ이라 할 때, 삼각형 ㄱㄴㄷ의 넓이를 구하세요. 모눈 한 칸의 가로와 세로는 각각 1cm입니다.</p>${figure(m,false)}</div>`;
+ const originalFigure=solved=>figure(m,solved).replace('대칭 중심 O, ㅅ','대칭 중심 ㅇ, ㅅ').replace('>O</text>','>ㅇ</text>');
+ const answerFigure=originalFigure(true).replace('fill="#e9f0e7"','fill="#e9f0e7" fill-opacity=".45"').replace('</svg>','<path d="M216 83 V239 H60" fill="none" stroke="#566e80" stroke-width="1.5" stroke-dasharray="5 3"/><text x="222" y="255" font-size="15" fill="#191511">ㅈ</text></svg>');
+ const prompt=`<div data-source-item-id="${originalId}" data-pool-index="0"><p>점 ㅇ을 대칭의 중심으로 하여 점 ㄱ과 점대칭의 위치에 있는 점을 ㄴ, 점 ㅅ을 대칭의 중심으로 하여 점 ㄱ과 점대칭의 위치에 있는 점을 ㄷ이라 할 때, 삼각형 ㄱㄴㄷ의 넓이를 구하세요. 모눈 한 칸의 가로와 세로는 각각 1cm입니다.</p>${originalFigure(false)}</div>`;
  const solution=`<div data-source-answer="${originalId}"><p>ㄱ에서 ㅇ을 지나 같은 거리만큼 가면 ㄴ, ㄱ에서 ㅅ을 지나 같은 거리만큼 가면 ㄷ입니다. 그림의 점 ㅈ은 ㄱ에서 아래로, ㄴ에서 오른쪽으로 그은 선이 만나는 점입니다.</p><p>직각삼각형 ㄱㄴㅈ의 넓이는 6×6÷2=18cm²입니다. 삼각형 ㄱㄷㅈ은 밑변 ㄱㅈ이 6cm이고 높이가 2cm이며, 삼각형 ㄴㄷㅈ은 밑변 ㄴㅈ이 6cm이고 높이가 2cm입니다. 두 삼각형의 넓이를 각각 6×2÷2=6cm²씩 빼면 됩니다.</p><p>따라서 삼각형 ㄱㄴㄷ의 넓이는 18−6−6=<b>6cm²</b>입니다.</p></div>`;
  return {prompt,solution,answer:'6cm²',answerVisual:answerFigure,answerVisualRequired:true,answerVisualStatus:'verified-reconstruction',sourceItemId:originalId,generator:originalKey,generationMode:'fixed-verified-pool',verifiedPoolIndex:0,verifiedVariantCount:1,verifiedVariantTarget:1,difficultyOffset:0,difficultyLevel:2,difficultyRank:2,sourceStructurePreserved:true,publisherKeyVerified:false,publisherAnswerVerified:false,answerVerification:'independent-reflection-and-triangle-area'};
 }
