@@ -190,6 +190,11 @@
       const wrongItems = exam.items.map(function (item, index) { return { item: item, number: index + 1 }; }).filter(function (entry) {
         return answers.get(entry.item.id) !== entry.item.answer;
       });
+      if (exam.id === "gfield-grade7-amc8-style-mock-v2") {
+        const mockConcepts = new Set();
+        wrongItems.forEach(function (entry) { (entry.item.sourceConcepts || []).forEach(function (concept) { mockConcepts.add(concept); }); });
+        if (mockConcepts.size) nextStudyUrl.searchParams.set("mockConcepts", Array.from(mockConcepts).join(","));
+      }
       const mockDomains = Array.from(new Set(wrongItems.map(function (entry) {
         if (exam.id === "gfield-grade7-amc8-style-mock-v2" && entry.item.standard === "정수·자료 해석") return /나머지|배수|최소공배수/.test(entry.item.focus) ? "number" : "data";
         return practiceDomainIds[entry.item.standard];

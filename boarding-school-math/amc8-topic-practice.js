@@ -18,6 +18,10 @@
   const sourceForm = /^[ABCD]$/.test(params.get("sourceForm") || "") ? params.get("sourceForm") : "";
   const sourceQuestions = (params.get("sourceQuestions") || "").split(",").map(Number).filter(function (value) { return Number.isInteger(value) && value > 0 && value <= 25; });
   const mockWrongQuestions = (params.get("mockWrongQuestions") || "").split(",").map(Number).filter(function (value) { return Number.isInteger(value) && value > 0 && value <= 25; });
+  const requestedConcepts = Array.from(new Set((params.get("sourceConcepts") || "").split(",").filter(function (id) { return /^[a-z0-9-]{1,64}$/.test(id); })));
+  const requestedMockConcepts = Array.from(new Set((params.get("mockConcepts") || "").split(",").filter(function (id) { return /^[a-z0-9-]{1,64}$/.test(id); })));
+  const practiceConcepts = Array.from(new Set(requestedConcepts.concat(requestedMockConcepts)));
+  const conceptLabels = window.GFIELDAMC8ConceptLabels || {};
   const state = { activeDomains: new Set(requestedDomains), solved: new Set() };
   const $ = function (id) { return document.getElementById(id); };
 
@@ -28,6 +32,28 @@
     if (item.standard === "수 감각·비율") return "number";
     if (item.standard === "정수·자료 해석") return /나머지|배수|최소공배수/.test(item.focus) ? "number" : "data";
     return "number";
+  }
+  const sourceConceptItems = bank.items.filter(function (item) {
+    return (state.activeDomains.size === 0 || state.activeDomains.has(itemDomain(item)))
+      && requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); });
+  });
+  const mockConceptItems = bank.items.filter(function (item) {
+    return (state.activeDomains.size === 0 || state.activeDomains.has(itemDomain(item)))
+      && requestedMockConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); });
+  });
+  const matchedPracticeItems = Array.from(new Set(sourceConceptItems.concat(mockConceptItems)));
+  const hasPracticeConceptMatches = matchedPracticeItems.length > 0;
+  function conceptNames(ids) {
+    return ids.map(function (id) { return conceptLabels[id] || "관련 개념"; });
+  }
+  function compactConceptNames(ids) {
+    const names = Array.from(new Set(conceptNames(ids)));
+    const shown = names.slice(0, 4);
+    return shown.join("·") + (names.length > shown.length ? ` 외 ${names.length - shown.length}개` : "");
+  }
+  function questionLabel(numbers) {
+    if (numbers.length > 4) return `문항 ${numbers.length}개`;
+    return `문항 ${numbers.join(", ")}번`;
   }
   function mathNode(value, className) {
     const node = document.createElement("span");
@@ -50,7 +76,10 @@
     table.append(body); host.append(table);
   }
   function visibleItems() {
-    return bank.items.filter(function (item) { return state.activeDomains.size === 0 || state.activeDomains.has(itemDomain(item)); });
+    return bank.items.filter(function (item) {
+      return (state.activeDomains.size === 0 || state.activeDomains.has(itemDomain(item)))
+        && (!hasPracticeConceptMatches || practiceConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); }));
+    });
   }
   function renderFilters() {
     const host = $("topic-filters");
@@ -140,9 +169,30 @@
   if (sourceYear) {
     const originalRoute = `https://live.poshenloh.com/past-contests/amc8/${sourceYear}`;
     $("topic-source-paper-link").href = originalRoute;
-    $("topic-source-summary").textContent = `${sourceYear} AMC 8 · ${mockWrongQuestions.length ? `지필드 모의고사 ${mockWrongQuestions.join(", ")}번에서 다시 볼 개념` : sourceQuestions.length ? `다시 표시한 문항 ${sourceQuestions.join(", ")}번` : "원본 시험 복습에서 이어진 연습"}. 원문과 해설은 원본 제공처에서 확인해 주세요.`;
+    const originalConceptNames = compactConceptNames(requestedConcepts);
+    const mockConceptNames = compactConceptNames(requestedMockConcepts);
+    const conceptText = [
+      requestedConcepts.length ? `원본 풀이 개념: ${originalConceptNames}` : "",
+      requestedMockConcepts.length ? `지필드 모의고사 복습 개념: ${mockConceptNames}` : ""
+    ].filter(Boolean).join(". ");
+    const conceptSummary = hasPracticeConceptMatches
+      ? `${conceptText}. 연결된 지필드 창작 연습 ${matchedPracticeItems.length}문항을 먼저 모았어요.`
+      : practiceConcepts.length
+        ? "직접 연결되는 창작 문항이 없어 표시한 영역의 지필드 연습을 보여 줍니다."
+        : "표시한 영역을 지필드 창작 문항으로 연습합니다.";
+    $("topic-source-summary").textContent = `${sourceYear} AMC 8 · ${mockWrongQuestions.length ? `지필드 모의고사 다시 보기: ${questionLabel(mockWrongQuestions)}` : sourceQuestions.length ? `원본 다시 보기: ${questionLabel(sourceQuestions)}` : "원본 시험 복습에서 이어진 연습"}. ${conceptSummary} 원문·정답·해설은 원본 제공처에서 확인해 주세요.`;
   }
   const chosenNames = requestedDomains.map(function (id) { return domainNames[id]; });
-  if (chosenNames.length) $("topic-intro-copy").textContent = `${mockWrongQuestions.length ? `지필드 모의고사 ${mockWrongQuestions.join(", ")}번에서 틀리거나 비워 둔 영역을 골랐어요. ` : ""}${sourceYear ? `${sourceYear} AMC 8 원본 복습에서 이어서, ` : ""}${chosenNames.join("·")} 영역의 지필드 창작 문제만 모았어요. 문제를 풀고 풀이를 확인하며 개념을 다시 연결해요.`;
+  if (chosenNames.length || requestedConcepts.length) {
+    const originalConceptNames = compactConceptNames(requestedConcepts);
+    const mockConceptNames = compactConceptNames(requestedMockConcepts);
+    const conceptIntro = [
+      requestedConcepts.length ? `원본 풀이 개념: ${originalConceptNames}` : "",
+      requestedMockConcepts.length ? `모의고사 복습 개념: ${mockConceptNames}` : ""
+    ].filter(Boolean).join(". ");
+    const conceptCopy = hasPracticeConceptMatches ? `${conceptIntro}. 연결된 창작 연습 ${matchedPracticeItems.length}문항을 먼저 보여 줍니다. ` : practiceConcepts.length ? "직접 연결 문항이 없어 선택 영역 연습을 보여 줍니다. " : "";
+    const domainIntro = chosenNames.length ? `${chosenNames.join("·")} 영역의 창작 문제도 함께 살펴볼 수 있어요.` : "문제를 풀고 풀이에서 개념이 연결되는 지점을 확인해요.";
+    $("topic-intro-copy").textContent = `${mockWrongQuestions.length ? `지필드 모의고사 오답·미응답: ${questionLabel(mockWrongQuestions)}. ` : ""}${sourceYear ? `${sourceYear} AMC 8 원본 복습에서 이어서. ` : ""}${conceptCopy}${domainIntro}`;
+  }
   renderFilters(); renderItems();
 })();

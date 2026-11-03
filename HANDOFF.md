@@ -1165,3 +1165,15 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - 수동 브라우저 검수: 2025 AMC 10 원본 답안 대조에서 Q1 오답을 잡고 정답표, 풀이, 출처 개념을 표시했으며, 후속에 지필드 창작 문항 3개가 연결됐다. AMC 12 직접 개념 링크는 일치하는 창작 문항 1개를 보였다. 2025 AIME I Q1·2 선택 흐름은 나머지/경우 나누기 개념에 맞는 창작 문항 3개를 표시했다. 연도/폼/문항 메타데이터 전달은 코드 경로를 확인했다.
 - `git diff --check` 통과. 이 셸에서 `node`, `bun`, `deno` 실행 파일을 찾지 못해 JS 구문 CLI 검사는 미실행; 별도 브라우저에서 페이지를 열고 기능을 확인했다. `raw_youtube.txt`는 미추적 원본으로 그대로 제외한다. 로컬 전용; push/배포/Drive 동기화 없음.
 - 다음 진행: AMC 8 태그별 창작 연습에도 같은 연결 UX를 적용한 뒤, 911개 교차표 태그 중 자동 분류로 생성된 태그를 교사 검토 큐로 나누고 정리한다. 원본 자료의 연도별 인쇄/답안/해설 경로는 전 회차 연결된 상태다.
+
+### 2026-11-04 · AMC 8 연도별 원본 → 지필드 창작 학습 연결 마감
+
+- 추가 웹 검색으로 [LIVE의 MAA 허가 연도별 AMC 원본 아카이브](https://live.poshenloh.com/past-contests), [문항 개념 색인](https://live.poshenloh.com/past-contests/concepts), [MAA AMC 공식 안내](https://maa.org/student-programs/amc/)를 재확인했다. 전체 연도별 원본은 인쇄용 PDF·답안·해설로 연결하고, GFIELD는 실제 시험 문구를 복제하지 않는다. 기존 로컬 색인은 AMC 8/10/12/AIME 266회·6,500문항이며 시험 연도별 원본 경로를 이미 포함한다.
+- AMC 8 복습의 오답/미응답 개념을 자체 모의고사까지 전달하고, 모의고사 결과는 원본 출처 개념과 분리한 `mockConcepts`로 후속 연습에 넘긴다. 25개 지필드 창작 연습 문항에는 각 문항의 실제 풀이 개념 태그를 부여했다. 후속 학습은 원본 또는 모의고사 오답 개념과 일치하는 지필드 창작 문항을 먼저 골라 보여 주고, 개념을 연결하지 못할 때만 선택한 영역 전체로 넓힌다. 원문 출처는 연도·폼·문항을 유지한다.
+- AMC 8 태그 175개의 한국어 표시 이름을 crosswalk에서 로드하고, 개념 표시는 4개 뒤 `외 N개`로 접는다. 문항 선택 수가 길게 나열되지 않게 요약하며, 원본/모의고사 태그가 같은 창작 문항을 두 번 세지 않는다. 긴 AMC 8 오답 목록을 전달한 수동 브라우저 점검에서 한국어 문구·25개 연결 연습 렌더·연도별 원본/결과 돌아가기 링크 및 콘솔 오류 없음 확인.
+- `git diff --check` 통과. 별도 자동 테스트는 추가하거나 실행하지 않았다. AMC 8 전체 미응답 QA 흐름은 이전 수동 점검 중 로컬 집계형 지필드 모의고사 결과 요약 1건을 이 기기에 생성했다(개별 답안·이름·학교 기록 없음). 이 기록은 다른 사용자 데이터와 분리 확인할 방법이 없어 지우지 않았다. `raw_youtube.txt`는 원본 미추적 파일로 보존·스테이징 제외.
+- 변경은 Mac 로컬 저장소에만 있다. push·배포·Drive 동기화 없음. 후속으로 원본 개념 매핑 중 LIVE 자동 제안을 교사 검토 대상으로 나누고, 대회 원본의 연도별 학년/집단 비교는 회수 가능한 해당 연도 출처에 한해서 확장한다. 보유한 전체 참가자 점수분포와 학년별 평균/분포를 혼동하지 않는다.
+
+### 2026-11-04 · AMC 8 benchmark web search follow-up
+
+Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. Search results reconfirmed the existing 2018 whole-contest report row, and the 2023–2026 all-participant report figures already staged from MAA score reports. No new publicly accessible MAA overall grade-by-score table was recovered. The 2020 Bard Math Circle result is a participating circle's local summary (e.g., one grade average), not a national cohort; excluded it from the comparison dataset. Keep the existing same-year/matching-cohort rules and do not convert contest marks into a school grade equivalent. Web search sources reviewed: https://mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf ; https://www.bardmathcircle.org/p/2020-amc-8 .
