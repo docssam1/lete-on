@@ -1,5 +1,11 @@
 # Current handoff — 2026-11-03
 
+### 2026-11-04 historical AMC grade data retrieved from web sources
+
+Corrected the prior blanket wording about historical grade comparisons. MAA-authored annual reports contain actual grade-specific results: the 2009 AMC 8 summary gives participant counts and mean scores for recorded Grades 4–5, 6, 7, and 8 across contest years 2003–2009; the 2010 AMC 10/12 summary gives 2010 AMC 10 A/B grade-specific mean/counts and AIME I/II grade score distributions. MAA's archived legacy statistics page also defines a per-score grade report with grade counts and percentile ranks, with contest selectors shown in a 2022 snapshot. The interactive legacy report bodies have not yet been recovered row by row, so this is not a complete grade-percentile dataset. Full tables, values, provenance and usage limits are in `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`.
+
+Next: build an exact year/form inventory for each official original paper and separately record the status of each historic statistics source (`grade mean/count`, `grade score distribution/percentile`, `all-participant distribution`). Do not derive or display student grade bands from AMC 8 annual means. For same-grade AMC percentile comparisons, first recover each complete legacy per-contest grade report and confirm its scope/denominator. Original AMC problem material remains linked to the LIVE archive; do not copy its questions/solutions into GFIELD.
+
 Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The map-stop readability and G·MAP palette updates are committed locally. No push, deployment, or Drive synchronization has occurred.
 
 ### 2026-11-03 Grade 9 annual resource-route verification
