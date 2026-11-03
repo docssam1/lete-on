@@ -283,7 +283,7 @@
     const header = title => `<header><div>${title}</div><button type="button" class="type-preview-close" data-close-type-preview aria-label="미리보기 닫기">×</button></header>`;
     const commonType = commonQuestionType(type);
     if (commonType?.generator && !commonType.reviewLocked) {
-      const generated = generatorApi.generate(commonType, currentLevel().rank, state.difficulty, hash(`preview:${commonType.id}`), type.commonPublicVariant ?? commonType.variant ?? 0);
+      const generated = generatorApi.generate(commonType, currentLevel().rank, state.difficulty, hash(`preview:${commonType.id}`), type.commonPublicVariant ?? (commonType.generationMode === "fixed-verified-pool" ? 0 : commonType.variant ?? 0));
       if (!generated) return;
       const compound = type.sourceRelationship === "same-source-compound-skill" && sourceQuestionType(type) === commonType;
       const commonSourceLine = `<div class="type-preview-source"><b>공통 유형 예시</b><small>${source} · ${compound ? "단면 그리기와 개수 구하기가 한 문제에 포함됩니다." : `${escapeHtml(commonType.sourceItemLabel || "공통 유형")}과 같은 풀이 방법`}</small></div>`;
@@ -292,7 +292,7 @@
       const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
       popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<footer>검수 대기 · ${escapeHtml(reviewReason)}</footer>`;
     } else {
-      const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
+      const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.generationMode === "fixed-verified-pool" ? 0 : type.variant ?? 0);
       if (!generated) return;
       popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} · 고정된 유형 예시</footer>`;
     }
