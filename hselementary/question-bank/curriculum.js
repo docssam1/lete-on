@@ -2499,6 +2499,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
     source52CuboidNets.types.push({id,number:source52CuboidNets.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:n<=24?104:105,alternateSourcePdfPage:n<=24?105:106,sourcePrintedPage:n<=24?110:111,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U5Page108Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n!==17&&n!==20&&n!==22&&n!==31,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문과 전개도를 대조하고 접힌 면과 길이를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
+  if (source52Cuboid) for (const [typeId,n,manual] of [["5-2-u5-t1-2",7,true],["5-2-u5-t4-3",8,false]]) {
+    const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id===typeId);
+    if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:`5-2-u5-practice-${n}-original`,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:102,alternateSourcePdfPage:103,sourcePrintedPage:108,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U5Page108Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:!manual,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 그림을 직접 대조하고 최대값과 실제 구성 가능성을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+
   if (source52CuboidNets) {
     for (const [ordinal, name, generatorKey] of [
       [1, "전개도 색칠 면에서 선분 길이 구하기", "source52CuboidNetSegmentLengthPage50Example21"],
