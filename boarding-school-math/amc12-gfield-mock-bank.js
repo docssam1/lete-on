@@ -32,10 +32,16 @@
   const standards = Object.freeze(["대수", "함수·삼각함수", "정수론", "기하", "경우의 수"]);
   const requestedGrade = Number(new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("grade"));
   const grade = Number.isInteger(requestedGrade) && requestedGrade >= 7 && requestedGrade <= 12 ? requestedGrade : 10;
+  const attemptParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+  const nextStudyParams = new URLSearchParams({ grade: String(grade) });
+  ["domains", "sourceYear", "sourceForm", "sourceQuestions", "sourceConcepts"].forEach(function (key) {
+    const value = attemptParams.get(key);
+    if (value) nextStudyParams.set(key, value);
+  });
   root.GFIELDAMC12Mock = Object.freeze({
     id: "gfield-amc12-concept-mock-v1", formVersion: "2026-11-04-v2", grade: grade,
     title: "지필드 AMC 12 범위 개념 모의고사 · 1회", durationMinutes: 75,
-    standards: standards, nextStudyHref: `./amc12-practice.html?grade=${grade}`,
+    standards: standards, nextStudyHref: `./amc12-practice.html?${nextStudyParams.toString()}`,
     nextStudyLabel: "지필드 AMC 12 개념 연습으로 이어가기 →",
     items: Object.freeze(items.map(function (item) { return Object.freeze(item); }))
   });

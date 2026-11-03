@@ -26,7 +26,11 @@
   const answered = new Set();
   const domainIds = { algebra: "대수", functions: "함수·삼각함수", number: "정수론", geometry: "기하", counting: "경우의 수" };
   const requestedDomains = (params.get("domains") || "").split(",").filter(function (id, index, values) { return Object.prototype.hasOwnProperty.call(domainIds, id) && values.indexOf(id) === index; });
+  const requestedConcepts = Array.from(new Set((params.get("sourceConcepts") || "").split(",").filter(function (id) { return /^[a-z0-9-]{1,64}$/.test(id); })));
+  const conceptLabels = { "vietas-formulas": "근과 계수의 관계", quadratic: "이차방정식", "rational-expression": "유리식", "algebraic-manipulation": "대수식 정리", factoring: "인수분해", "system-of-equations": "연립방정식", "coefficient-comparison": "계수 비교", polynomial: "다항식", "completing-the-square": "완전제곱식", optimization: "최댓값·최솟값", exponent: "거듭제곱", "exponential-equation": "지수 방정식", trigonometry: "삼각함수", "greatest-common-divisor": "최대공약수", "least-common-multiple": "최소공배수", "prime-factorization": "소인수분해", "modular-arithmetic": "나머지", "chinese-remainder-theorem": "중국인의 나머지 정리", factorial: "계승", "trailing-zeros": "끝에 붙는 0", "right-triangle": "직각삼각형", circumcircle: "외접원", chord: "원의 현", circle: "원", "circle-area": "원의 넓이", "square-geometry": "정사각형", "area-ratio": "넓이의 비", parity: "홀짝", combinations: "조합", permutations: "순열", digits: "숫자와 자릿수", "inclusion-exclusion": "포함·배제", "basic-probability": "기본 확률" };
   let activeDomains = new Set(requestedDomains.map(function (id) { return domainIds[id]; }));
+  const sourceConceptItems = bank.items.filter(function (item) { return (activeDomains.size === 0 || activeDomains.has(item.domain)) && requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); }); });
+  const hasSourceConceptMatches = sourceConceptItems.length > 0;
 
   function escapeHtml(value) {
     return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
@@ -55,7 +59,7 @@
     });
   }
   function renderItems() {
-    const visible = bank.items.filter(function (item) { return activeDomains.size === 0 || activeDomains.has(item.domain); });
+    const visible = bank.items.filter(function (item) { return (activeDomains.size === 0 || activeDomains.has(item.domain)) && (!hasSourceConceptMatches || requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); })); });
     list.replaceChildren();
     document.getElementById("practice-count").textContent = `${visible.length}문항`;
     progress.textContent = `${visible.filter(function (item) { return answered.has(item.id); }).length} / ${visible.length}`;
@@ -128,19 +132,25 @@
   const sourceForm = /^[ABCD]$/.test(params.get("sourceForm") || "") ? params.get("sourceForm") : "";
   const sourceQuestions = (params.get("sourceQuestions") || "").split(",").map(Number).filter(function (value) { return Number.isInteger(value) && value > 0 && value <= 25; });
   const mockWrongQuestions = (params.get("mockWrongQuestions") || "").split(",").map(Number).filter(function (value, index, values) { return Number.isInteger(value) && value > 0 && value <= 25 && values.indexOf(value) === index; });
-  if (selected.length || sourceYear || sourceQuestions.length || mockWrongQuestions.length) {
+  if (selected.length || sourceYear || sourceQuestions.length || mockWrongQuestions.length || requestedConcepts.length) {
     if (selected.length) activeDomains = new Set(selected);
     targetedNote.hidden = false;
     const description = document.getElementById("targeted-practice-description");
     const sourceDescription = sourceYear ? `${sourceYear} AMC 12${sourceForm ? ` ${sourceForm}` : ""} 원본에서 표시한 ${sourceQuestions.length ? `${sourceQuestions.join(", ")}번 문항 이후 ` : ""}` : "";
     const mockDescription = mockWrongQuestions.length ? `지필드 모의고사에서 틀리거나 비워 둔 ${mockWrongQuestions.join(", ")}번 문항 · ` : "";
-    description.textContent = `${mockDescription}${sourceDescription}${selected.length ? `${selected.join("·")} 영역의 GFIELD 창작 문항을 모았어요.` : "영역이 분류되지 않은 문항이 있어요. 아래에서 필요한 연습 영역을 골라 보세요."}`;
+    const conceptDescription = hasSourceConceptMatches
+      ? `원본 풀이 개념 ${requestedConcepts.map(function (id) { return conceptLabels[id] || id; }).join("·")}과 연결된 GFIELD 창작 문항 ${sourceConceptItems.length}개를 먼저 모았어요.`
+      : requestedConcepts.length
+        ? "원본 풀이 개념과 직접 연결된 연습 문항은 아직 없어, 표시한 영역의 GFIELD 창작 문항을 보여 줍니다."
+        : "";
+    const domainDescription = selected.length ? `${selected.join("·")} 영역의 GFIELD 창작 문항을 모았어요.` : "영역이 분류되지 않은 문항이 있어요. 아래에서 필요한 연습 영역을 골라 보세요.";
+    description.textContent = `${mockDescription}${sourceDescription}${conceptDescription || domainDescription}`;
     const returnLink = document.getElementById("targeted-practice-return");
     returnLink.href = `./competition-paper-review.html?grade=${grade}&program=amc12${sourceYear ? `&year=${sourceYear}` : ""}${sourceForm ? `&form=${sourceForm}` : ""}`;
   }
   document.getElementById("reset-practice").addEventListener("click", function () {
     answered.clear();
-    const visibleCount = bank.items.filter(function (item) { return activeDomains.size === 0 || activeDomains.has(item.domain); }).length;
+    const visibleCount = bank.items.filter(function (item) { return (activeDomains.size === 0 || activeDomains.has(item.domain)) && (!hasSourceConceptMatches || requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); })); }).length;
     progress.textContent = `0 / ${visibleCount}`;
     renderItems();
   });

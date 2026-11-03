@@ -28,6 +28,22 @@
   const domainNamesById = { algebra: "대수", number: "정수론", geometry: "기하", counting: "경우의 수" };
   let activeDomain = domainIds.size === 1 ? domainNamesById[Array.from(domainIds)[0]] || "전체" : domainIds.size > 1 ? "원본 영역" : "전체";
   let activeStage = "전체";
+  const requestedConcepts = Array.from(new Set((query.get("sourceConcepts") || "").split(",").filter(function (id) { return /^[a-z0-9-]{1,64}$/.test(id); })));
+  const conceptLabels = { "vietas-formulas": "근과 계수의 관계", "algebraic-manipulation": "대수식 정리", modular: "나머지", "modular-arithmetic": "나머지", "chinese-remainder-theorem": "중국인의 나머지 정리", polynomial: "다항식", factoring: "인수분해", "triangle-area": "삼각형의 넓이", "heron-formula": "헤론의 공식", divisibility: "배수와 약수", "prime-factorization": "소인수분해", "divisor-count": "약수의 개수", digits: "숫자와 자릿수", casework: "경우 나누기", "stars-and-bars": "별과 막대", combinations: "조합", factorial: "계승", exponent: "거듭제곱", "modular-exponentiation": "거듭제곱의 나머지", "inclusion-exclusion": "포함·배제", "absolute-value": "절댓값", "square-geometry": "정사각형", "area-decomposition": "넓이 분할" };
+
+  function matchesActiveDomain(item) {
+    return activeDomain === "전체" || (activeDomain === "원본 영역"
+      ? domainIds.has(Object.keys(domainNamesById).find(function (id) { return domainNamesById[id] === item.domain; }))
+      : item.domain === activeDomain);
+  }
+  const sourceConceptItems = bank.items.filter(function (item) { return matchesActiveDomain(item) && requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); }); });
+  const hasSourceConceptMatches = sourceConceptItems.length > 0;
+  function visibleItems() {
+    return bank.items.filter(function (item) {
+      return matchesActiveDomain(item) && (activeStage === "전체" || item.stage === activeStage)
+        && (!hasSourceConceptMatches || requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); }));
+    });
+  }
 
   const sourceYear = query.get("sourceYear");
   const sourceForm = query.get("sourceForm") || "";
@@ -36,7 +52,12 @@
     const sourceContext = document.getElementById("source-paper-context");
     const formSuffix = Number(sourceYear) <= 1999 ? "" : sourceForm;
     sourceContext.hidden = false;
-    document.getElementById("source-paper-summary").textContent = `${sourceYear}${formSuffix ? ` ${formSuffix}` : ""} AIME 원본${sourceQuestions.length ? ` Q${sourceQuestions.join("·")}에서 표시한 항목` : ""}${domainIds.size ? ` (${Array.from(domainIds).map(function (id) { return domainNamesById[id] || id; }).join("·")})` : ""}과 연결한 지필드 자체 연습입니다. 원본과 별도로 만든 문항이며 원본 진단 점수에는 더해지지 않습니다.`;
+    const conceptSummary = hasSourceConceptMatches
+      ? `원본 풀이 개념 ${requestedConcepts.map(function (id) { return conceptLabels[id] || id; }).join("·")}과 연결된 지필드 창작 문항 ${sourceConceptItems.length}개를 먼저 모았어요.`
+      : requestedConcepts.length
+        ? "원본 풀이 개념과 직접 연결된 문항은 아직 없어, 선택 영역의 지필드 창작 문항을 보여 줍니다."
+        : "원본에서 선택한 영역과 연결한 지필드 창작 연습입니다.";
+    document.getElementById("source-paper-summary").textContent = `${sourceYear}${formSuffix ? ` ${formSuffix}` : ""} AIME 원본${sourceQuestions.length ? ` Q${sourceQuestions.join("·")}에서 표시한 항목` : ""}. ${conceptSummary} 원본과 별도로 만든 문항이며 원본 진단 점수에는 더해지지 않습니다.`;
     document.getElementById("source-paper-link").href = `https://live.poshenloh.com/past-contests/aime/${sourceYear}${formSuffix}`;
     document.getElementById("source-review-link").href = `./competition-paper-review.html?grade=${grade}&program=aime&year=${sourceYear}${sourceForm ? `&form=${encodeURIComponent(sourceForm)}` : ""}`;
   }
@@ -67,16 +88,12 @@
     renderFilterGroup(stageFilters, bank.stages, function () { return activeStage; }, function (value) { activeStage = value; }, "풀이 단계");
   }
   function updateProgress() {
-    const visible = bank.items.filter(function (item) {
-      return (activeDomain === "전체" || (activeDomain === "원본 영역" ? domainIds.has(Object.keys(domainNamesById).find(function (id) { return domainNamesById[id] === item.domain; })) : item.domain === activeDomain)) && (activeStage === "전체" || item.stage === activeStage);
-    });
+    const visible = visibleItems();
     progress.textContent = `${visible.filter(function (item) { return attempts.has(item.id); }).length} / ${visible.length}`;
     document.getElementById("practice-count").textContent = `${visible.length}문항`;
   }
   function renderItems() {
-    const visible = bank.items.filter(function (item) {
-      return (activeDomain === "전체" || (activeDomain === "원본 영역" ? domainIds.has(Object.keys(domainNamesById).find(function (id) { return domainNamesById[id] === item.domain; })) : item.domain === activeDomain)) && (activeStage === "전체" || item.stage === activeStage);
-    });
+    const visible = visibleItems();
     list.replaceChildren();
     visible.forEach(function (item) {
       const card = document.createElement("article");

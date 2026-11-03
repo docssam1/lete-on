@@ -1156,3 +1156,12 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - 검증: LIVE 메타데이터 재생성 후 6,500문항/266폼/911 태그/256 현행 분류 집계 확인. `amc-original-item-concept-reference`와 `paper-review-analysis` 검사 17/17 통과, JS 구문 3개 및 Python `py_compile`, `git diff --check` 통과. IAB에서 2025 AMC 10 A 원본 PDF·정답표·전문 풀이·문항별 출처 링크, 25개 답안/영역 입력 필드를 확인했다. 결과 제출 패널의 최신 화면 렌더와 655개 태그 교사 검수는 남아 있다. Playwright는 이번 추가분에서 실행하지 않았다.
 - 로컬 커밋 `Index year-by-year AMC and AIME source concepts`에 포함. 카탈로그의 266개 인쇄 PDF 링크를 모두 HEAD 확인해 사용 가능 응답을 받았다. Push/배포/Drive 동기화 없음. `raw_youtube.txt` 미추적 원본은 스테이징·커밋하지 않았다. 655개 현행 색인 밖 태그의 자동 분류는 실제 문제의 교사별 개념 검토가 아니다.
 - 후속 교차표 검수에서 태그 부분 문자열 충돌(예: `derangements`의 `range`)을 찾아 전체 911 태그를 LIVE 원분류 우선으로 재분류했다. AMC 8/전체 크로스워크와 6,500개 모듈을 다시 생성했고, 해당 충돌 사례 회귀검사를 추가했다. 재검증 17/17 통과. 보정분까지 포함해 커밋은 로컬에만 보관한다.
+
+### 2026-11-04 · AMC 10/12/AIME 원본 오답에서 개념별 GFIELD 창작 연습 연결
+
+- 웹 조사에서 [LIVE AMC/AIME 연도별 아카이브](https://live.poshenloh.com/past-contests)가 MAA 허가를 밝히고 266개 시험지·6,500문항의 인쇄본, 답안, 풀이, 문항별 개념/난이도 링크를 제공하는 것을 확인했다. 대표 경로: [2026 AMC 8](https://live.poshenloh.com/past-contests/amc8/2026), [2025 AMC 10 B 정답](https://live.poshenloh.com/past-contests/amc10/2025B/answers), [1950 AMC 12](https://live.poshenloh.com/past-contests/amc12/1950), [1983 AIME 풀이](https://live.poshenloh.com/past-contests/aime/1983/solutions). MAA의 [AMC 10A 공식 풀이 PDF](https://maa.org/wp-content/uploads/2024/08/2022-AMC-10A-solutions.pdf)는 교육 목적 공유와 수익 목적 복제를 구분하므로, 앱은 원문을 복사하지 않고 허가 아카이브의 직접 링크를 유지한다.
+- 이미 연결된 AMC 10에 이어 AMC 12와 AIME 복습에서 오답/미응답 원본 문항의 개념 태그를 지필드 자체 모의고사 및 개념 연습으로 전달한다. 직접 태그가 일치하는 GFIELD 창작 문항을 먼저 보여 주고, 해당 개념 연습이 없는 경우 선택 영역 문항으로 넓힌다. 원본 연도·폼·문항과 진단 맥락을 후속 화면까지 보존한다. 지필드 문제은행의 실제 문제와 풀이를 사용하며 AoPS 등 외부 교재로 보내지 않는다.
+- AMC 12 창작 연습 15문항 및 AIME 창작 연습 12문항에 각 문항이 실제 다루는 개념 태그를 부여했다. UI는 LIVE 개념 태그를 원문 풀이에서 발견한 신호로 표시하며, 공식 정답/등급/학년 예측 또는 동등 난도 증거라고 주장하지 않는다. 시험 성적과 원본 개념 분류는 별도 유지된다.
+- 수동 브라우저 검수: 2025 AMC 10 원본 답안 대조에서 Q1 오답을 잡고 정답표, 풀이, 출처 개념을 표시했으며, 후속에 지필드 창작 문항 3개가 연결됐다. AMC 12 직접 개념 링크는 일치하는 창작 문항 1개를 보였다. 2025 AIME I Q1·2 선택 흐름은 나머지/경우 나누기 개념에 맞는 창작 문항 3개를 표시했다. 연도/폼/문항 메타데이터 전달은 코드 경로를 확인했다.
+- `git diff --check` 통과. 이 셸에서 `node`, `bun`, `deno` 실행 파일을 찾지 못해 JS 구문 CLI 검사는 미실행; 별도 브라우저에서 페이지를 열고 기능을 확인했다. `raw_youtube.txt`는 미추적 원본으로 그대로 제외한다. 로컬 전용; push/배포/Drive 동기화 없음.
+- 다음 진행: AMC 8 태그별 창작 연습에도 같은 연결 UX를 적용한 뒤, 911개 교차표 태그 중 자동 분류로 생성된 태그를 교사 검토 큐로 나누고 정리한다. 원본 자료의 연도별 인쇄/답안/해설 경로는 전 회차 연결된 상태다.

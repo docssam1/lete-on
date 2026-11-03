@@ -3,7 +3,7 @@
 
   const items = [
     {
-      id: "aime-g8-algebra-01", domain: "대수", stage: "개념", title: "합과 곱으로 식의 값 구하기",
+      id: "aime-g8-algebra-01", sourceConcepts: ["vietas-formulas", "algebraic-manipulation"], domain: "대수", stage: "개념", title: "합과 곱으로 식의 값 구하기",
       prompt: "실수 x, y에 대하여 x + y = 17, xy = 60입니다. (x − 2)(y − 2)의 값은 얼마인가요?",
       answer: 30,
       hint: "두 괄호를 전개한 다음 x + y와 xy를 찾아 넣어요.",
@@ -11,7 +11,7 @@
       connection: "x와 y를 각각 구하지 않아도 된 이유를 식의 구조로 설명해 보세요."
     },
     {
-      id: "aime-g8-number-01", domain: "정수론", stage: "개념", title: "두 나머지 조건을 함께 만족하기",
+      id: "aime-g8-number-01", sourceConcepts: ["modular-arithmetic", "chinese-remainder-theorem"], domain: "정수론", stage: "개념", title: "두 나머지 조건을 함께 만족하기",
       prompt: "양의 정수 n을 5로 나누면 나머지가 2이고, 7로 나누면 나머지가 3입니다. 이런 조건을 만족하는 가장 작은 n은 얼마인가요?",
       answer: 17,
       hint: "5로 나누어 나머지가 2인 수를 작은 것부터 적어요.",
@@ -19,7 +19,7 @@
       connection: "첫 조건을 만족하는 후보가 일정한 간격으로 나타나는 까닭을 말해 보세요."
     },
     {
-      id: "aime-g8-algebra-02", domain: "대수", stage: "개념", title: "다항식의 영점을 이용하기",
+      id: "aime-g8-algebra-02", sourceConcepts: ["polynomial", "factoring"], domain: "대수", stage: "개념", title: "다항식의 영점을 이용하기",
       prompt: "최고차항의 차수가 2 이하인 다항식 P가 P(1) = P(2) = 0, P(3) = 2를 만족합니다. P(4)의 값은 얼마인가요?",
       answer: 6,
       hint: "P는 (x − 1)(x − 2)의 상수배로 나타낼 수 있어요.",
@@ -27,7 +27,7 @@
       connection: "다항식의 차수 조건이 없으면 P(1), P(2), P(3)만으로 P(4)를 정할 수 있을까요?"
     },
     {
-      id: "aime-g8-geometry-01", domain: "기하", stage: "개념", title: "세 변의 길이로 삼각형 넓이 구하기",
+      id: "aime-g8-geometry-01", sourceConcepts: ["triangle-area", "heron-formula"], domain: "기하", stage: "개념", title: "세 변의 길이로 삼각형 넓이 구하기",
       prompt: "세 변의 길이가 13, 14, 15인 삼각형의 넓이는 얼마인가요?",
       answer: 84,
       hint: "헤론의 공식에서 먼저 반둘레를 구해요.",
@@ -35,7 +35,7 @@
       connection: "높이를 직접 그려 구하는 방법과 헤론의 공식은 어떤 정보가 다르게 필요한가요?"
     },
     {
-      id: "aime-g8-number-02", domain: "정수론", stage: "유형", title: "약수의 개수 조건으로 최소 정수 찾기",
+      id: "aime-g8-number-02", sourceConcepts: ["divisibility", "prime-factorization", "divisor-count"], domain: "정수론", stage: "유형", title: "약수의 개수 조건으로 최소 정수 찾기",
       prompt: "18의 배수 중 양의 약수가 정확히 12개인 가장 작은 정수는 얼마인가요?",
       answer: 72,
       hint: "소인수분해의 지수에 1을 더한 수들의 곱이 12가 되어야 해요.",
@@ -43,7 +43,7 @@
       connection: "약수의 개수를 유지하면서 소인수를 하나 더 넣으면 최소값이 왜 커지는지 설명해 보세요."
     },
     {
-      id: "aime-g8-counting-01", domain: "경우의 수", stage: "유형", title: "자리 조건을 나누어 세기",
+      id: "aime-g8-counting-01", sourceConcepts: ["digits", "casework"], domain: "경우의 수", stage: "유형", title: "자리 조건을 나누어 세기",
       prompt: "0, 1, 2, 3, 4, 5 중 서로 다른 네 숫자를 골라 네 자리 수를 만듭니다. 3000보다 크고 5의 배수인 수는 모두 몇 개인가요?",
       answer: 60,
       hint: "마지막 자리가 0인 경우와 5인 경우를 나누고, 천의 자리부터 정해요.",
@@ -51,7 +51,7 @@
       connection: "끝자리를 먼저 정하면 어떤 조건을 바로 처리할 수 있나요?"
     },
     {
-      id: "aime-g8-counting-02", domain: "경우의 수", stage: "유형", title: "합이 정해진 정수해 세기",
+      id: "aime-g8-counting-02", sourceConcepts: ["stars-and-bars", "combinations"], domain: "경우의 수", stage: "유형", title: "합이 정해진 정수해 세기",
       prompt: "0 이상의 정수 a, b, c가 a + b + c = 20을 만족합니다. a ≤ 4인 순서 있는 세 쌍 (a, b, c)는 몇 개 있나요?",
       answer: 95,
       hint: "전체 해에서 a가 5 이상인 해를 빼요.",
@@ -59,7 +59,7 @@
       connection: "변수 하나의 범위 제한을 전체 경우에서 빼는 방식으로 바꾸면 어떤 점이 편해지나요?"
     },
     {
-      id: "aime-g8-number-03", domain: "정수론", stage: "유형", title: "팩토리얼에서 소인수의 지수 세기",
+      id: "aime-g8-number-03", sourceConcepts: ["factorial", "prime-factorization"], domain: "정수론", stage: "유형", title: "팩토리얼에서 소인수의 지수 세기",
       prompt: "1부터 100까지의 정수 중 n!이 2^8로 나누어떨어지는 n은 몇 개인가요?",
       answer: 91,
       hint: "n!에 들어 있는 2의 개수를 10 근처에서 확인해요.",
@@ -67,7 +67,7 @@
       connection: "n이 2의 배수일 때마다 2의 지수가 한 번씩 늘어나는 이유를 설명해 보세요."
     },
     {
-      id: "aime-g8-number-04", domain: "정수론", stage: "연결", title: "거듭제곱의 나머지 주기 찾기",
+      id: "aime-g8-number-04", sourceConcepts: ["exponent", "modular-exponentiation"], domain: "정수론", stage: "연결", title: "거듭제곱의 나머지 주기 찾기",
       prompt: "7^2026을 100으로 나눌 때 나머지는 얼마인가요?",
       answer: 49,
       hint: "7^20을 100으로 나눈 나머지와 2026을 20으로 나눈 나머지를 살펴봐요.",
@@ -75,7 +75,7 @@
       connection: "지수가 2027로 바뀌면 같은 주기에서 어느 나머지를 확인해야 하나요?"
     },
     {
-      id: "aime-g8-number-05", domain: "정수론", stage: "연결", title: "배수의 합을 겹침 없이 계산하기",
+      id: "aime-g8-number-05", sourceConcepts: ["inclusion-exclusion", "divisibility"], domain: "정수론", stage: "연결", title: "배수의 합을 겹침 없이 계산하기",
       prompt: "1부터 100까지의 정수 중 3 또는 5로 나누어떨어지는 수의 합은 얼마인가요?",
       answer: 2418,
       hint: "3의 배수 합과 5의 배수 합을 더한 뒤, 15의 배수 합을 한 번 빼요.",
@@ -83,7 +83,7 @@
       connection: "두 조건을 모두 만족하는 수를 빼지 않으면 어떤 수들이 중복되나요?"
     },
     {
-      id: "aime-g8-counting-03", domain: "경우의 수", stage: "연결", title: "절댓값 조건을 네 영역으로 나누기",
+      id: "aime-g8-counting-03", sourceConcepts: ["absolute-value", "casework"], domain: "경우의 수", stage: "연결", title: "절댓값 조건을 네 영역으로 나누기",
       prompt: "정수 순서쌍 (x, y) 중 |x| + |y| = 12를 만족하는 것은 몇 개인가요?",
       answer: 48,
       hint: "x축이나 y축 위의 해와 네 사분면의 해를 따로 세어요.",
@@ -91,7 +91,7 @@
       connection: "x나 y가 0인 축 위의 해를 사분면의 해에 포함하면 왜 중복 계산이 되나요?"
     },
     {
-      id: "aime-g8-geometry-02", domain: "기하", stage: "연결", title: "정사각형 안의 삼각형 넓이 구하기",
+      id: "aime-g8-geometry-02", sourceConcepts: ["square-geometry", "triangle-area", "area-decomposition"], domain: "기하", stage: "연결", title: "정사각형 안의 삼각형 넓이 구하기",
       prompt: "정사각형 ABCD의 한 변은 10입니다. A(0, 0), B(10, 0), C(10, 10), D(0, 10)으로 놓고, AB 위에 AP = 2인 점 P, BC 위에 BQ = 3인 점 Q를 잡습니다. 삼각형 DPQ의 넓이는 얼마인가요?",
       answer: 43,
       hint: "D를 꼭짓점으로 하는 두 변의 좌표 차를 이용해 넓이를 구할 수 있어요.",
