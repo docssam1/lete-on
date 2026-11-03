@@ -1185,3 +1185,10 @@ Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. S
 - 구현 파일: `boarding-school-math/competition-paper-review.html`, `boarding-school-math/competition-paper-review.js`, `boarding-school-math/competition/amc-historical-grade-reference.js`, `boarding-school-math/competition/historical-amc-grade/` 하위 CSV/README; 근거 기록은 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`.
 - 수동 브라우저 확인: AMC 10 A 2019, Grade 7에서 LIVE 정답표 대조 후 결과에 기록 학년 참가자 1,982명·평균 59.72/150·학교 2차 출처 안내 및 링크가 표시된다. 인쇄/PDF 링크와 25개 문항의 답안·원본 풀이 링크가 선택되는 상태도 확인했다. 검수용 입력은 저장하지 않고 새로고침으로 초기화했다. CSV coverage 266행 및 신규 원자료 1행 확인, `git diff --check` 통과.
 - 다음 작업: 다른 AMC 연도·학년의 공개 학년 통계와 보고서를 웹에서 더 찾아 회차/폼/모집단이 검증된 원문만 같은 방식으로 추가한다. 현재 2019 A/Grade 7 외의 연도/폼에 이 평균을 확대하지 않는다. `raw_youtube.txt`는 미추적 원본이며 이번 변경에서 제외한다. 원격 push·배포·Drive 동기화 없음.
+
+### 2026-11-04 · MAA 연도별 Grade Report 메뉴 인덱스 추가
+
+- MAA의 2022-02-04 Internet Archive 페이지 정적 HTML에서 39개 AMC 8/10/12 통계 메뉴 ID를 회수했다. 목록은 AMC 8 2010–2020, AMC 10/12 2009–2020 및 2021 봄·가을 A/B이며, MAA 메뉴가 Grade Average와 점수별 Grade Report를 설명한다. `maa-historical-report-menu-2022-02-04.csv`에 ID·날짜·레이블을 기록했다.
+- 266행 coverage CSV에 보존 메뉴 ID·레이블·캡처 URL·본문 회수 상태 열을 추가했다. 67개 AMC8/10/12 원본 항목에 ID가 대응하지만 Internet Archive의 ReportViewer 본문은 보존되지 않았다. 이 ID 매핑은 연도별 원자료 회수 인덱스이며 통계값은 아니다. 2013 AMC 10A 미국 위치 Grade 7–10 표와 2019 AMC 10A Grade 7 전국 학년 평균 외에 새 수치는 추가하지 않았다.
+- 검증: coverage 행 266개 유지, CSV 파싱 overflow 0, MAA 메뉴 ID 39개 고유, 2021 A/B vs C/D가 각각 88/89 및 93/94로 정확히 분리됨. 다음 단계는 이 보고서 ID로 원본/동시대 사본의 실제 본문·점수표를 회수하는 것이다.
+- 현재 브랜치 `codex/boarding-g7-nsa-mac-20261017`; 이전 데이터/UI 커밋 `beb6e8b4`, 검색·인수인계 커밋 `82d8c517`; 이번 메뉴 인덱스 작업은 아직 미커밋. `raw_youtube.txt`는 미추적 사용자 파일로 보존한다. push·배포·Drive 동기화 없음.

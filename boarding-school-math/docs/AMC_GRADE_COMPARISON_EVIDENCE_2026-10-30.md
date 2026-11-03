@@ -338,3 +338,10 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - 자료 파일 [`amc10-2013a-us-grade-means.csv`](../competition/historical-amc-grade/amc10-2013a-us-grade-means.csv)는 전사된 학년 행과 범위를 보존한다. 결과 패널 요약에 `미국 위치 기준`, 출처 설명에 포럼 전사본·원본 미회수·백분위/능력등급이 아님을 표시한다. 원자료를 확보하지 못했으므로 재전사 자료 상태는 명시적으로 남긴다.
 - 이는 AMC 10A 2013 미국 위치 보고표의 과거 평균 비교뿐이다. 전국 전체의 정규화, 현재 실력 등급, AMC 10B 또는 다른 연도 환산으로 쓰지 않는다.
 - 2014–2017 연도별 학년 평균을 다시 검색했으나, 회수된 추가 PDF는 [Williston School의 2014 AMC 10B/12B 결과](https://willistonblogs.com/math/files/2014/05/Williston_AMC10-12_Results.pdf)로 학교 응시자 9명의 Grade 10 평균을 보고하는 학교 집단 자료였다. 학교 표본은 전국 학년 규준과 다르므로 앱 기준에는 합치지 않았다. 같은 검색에서 확인한 대회 전체 평균·상위권 경계는 이미 별도 패널에서 관리하며, 학년 평균을 대신하지 않는다.
+
+### 2026-11-04 · MAA 연도별 통계 메뉴 ID 목록 회수
+
+- [MAA Historical Statistics 페이지의 2022-02-04 Internet Archive 보존본](https://web.archive.org/web/20220204191809/http://amc-reg.maa.org/reports/generalreports.aspx)에서 정적 HTML 원문을 회수했다. 선택 목록에는 39개의 AMC 8 및 AMC 10/12 항목이 남아 있다: AMC 8 2010–2020, AMC 10/12 A/B 2009–2020, 2021년 2월 A/B 및 11월 A/B. 2021년 2월은 ID 88/89, 11월은 ID 93/94로 구분된다.
+- 페이지의 보고서 설명은 AMC 8/10/12 모두 `Contest Score Grade Report with Percentile`을 점수별·학년별 인원과 누적 백분위가 있는 표로, `Grade and Gender Average`를 학년·성별 요약표로 명시한다. 따라서 해당 연도별 보고서 선택 경로가 보존된 것은 확인했으나, 값 자체는 아직 회수한 것이 아니다.
+- [`maa-historical-report-menu-2022-02-04.csv`](../competition/historical-amc-grade/maa-historical-report-menu-2022-02-04.csv)에 보고서 ID·레이블·날짜·해당 앱 회차를 정리했다. 266개 원본 회차 coverage manifest에는 보관 메뉴 ID와 본문 상태를 추가했다. 이 정적 캡처에서는 SQL ReportViewer 보고서 본문이 불러와지지 않아 67개 연결 원본의 본문 상태를 모두 `menu-entry-preserved; ReportViewer body not preserved`로 표시한다. 메뉴 ID는 조사 경로이지 학년 통계 근거가 아니며, 수치·학년 규준·백분위로 노출하지 않는다.
+- 다음 조사 방향: 보존 메뉴 ID를 이용해 MAA 원본 보고서/PDF나 다른 동시대 MAA 보고서 사본을 연도·회차 단위로 찾는다. 원본 보고서 본문이나 독립 대조 가능한 전체 전사가 확인되는 경우에만 점수별 빈도/학년 평균 CSV를 추가한다.
