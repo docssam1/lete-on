@@ -15,7 +15,8 @@
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-4", generatorKey: "source52SquareTrisectionAreaPage31Mission4", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-5", generatorKey: "source52CongruentTriangleAreaPage31Mission5", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6", generatorKey: "source52TrapezoidMidpointPage31Mission6", publicReady: true }),
-    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6-original", generatorKey: "source52TrapezoidMidpointPage31Mission6Original", publicReady: true })
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6-original", generatorKey: "source52TrapezoidMidpointPage31Mission6Original", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-3-original", generatorKey: "source52EquilateralRotationPage31Mission3Original", publicReady: true })
   ]);
   const squareAlphas = [9, 14, 19];
   const circleBaseVertices = [48, 57, 72];
@@ -118,6 +119,26 @@
     const givenMark = angleMark(m,n,d,18);
     const targetMark = angleMark(r,g,m,18);
     return `<svg class="source52-p31-diagram source52-p31-equilateral" data-source52-figure="equilateral-rotation" data-target-angle="${target}" viewBox="0 0 360 390" role="img" aria-label="공통 꼭짓점 ㄷ을 둔 두 정삼각형, 주어진 각과 목표각 ㄱㄹㅁ 그림" xmlns="http://www.w3.org/2000/svg">${a(d,n)}${a(n,g)}${a(g,d)}${a(d,m)}${a(m,r)}${a(r,d)}${a(m,n)}${a(r,g)}<path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text class="source52-angle-label" style="paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round" x="${(givenMark.label.x-20).toFixed(2)}" y="${(givenMark.label.y+4).toFixed(2)}">${target}°</text>${text(g,"ㄱ",-20,0)}${text(n,"ㄴ",8,-10)}${text(d,"ㄷ",-18,18)}${text(r,"ㄹ",18,-2)}${text(m,"ㅁ",8,-9)}</svg>`;
+  }
+
+  // 원문의 방향과 각 ㉮ 표시를 유지한다. 길이는 각도 조건을 만족하도록 재구성한다.
+  function equilateralMission3OriginalDiagram() {
+    const d = {x: 300, y: 300}, dm = 75, delta = 25;
+    const dn = dm * Math.sin(rad(140)) / Math.sin(rad(140 + delta));
+    const n = {x: d.x-dn, y:d.y};
+    const g = {x:d.x-dn*Math.cos(rad(-60)), y:d.y+dn*Math.sin(rad(-60))};
+    const m = {x:d.x-dm*Math.cos(rad(delta)), y:d.y+dm*Math.sin(rad(delta))};
+    const r = {x:d.x-dm*Math.cos(rad(delta-60)), y:d.y+dm*Math.sin(rad(delta-60))};
+    const line = (a,b) => `<line x1="${a.x.toFixed(2)}" y1="${a.y.toFixed(2)}" x2="${b.x.toFixed(2)}" y2="${b.y.toFixed(2)}"/>`;
+    const label = (p,t,dx,dy) => `<text x="${(p.x+dx).toFixed(2)}" y="${(p.y+dy).toFixed(2)}">${t}</text>`;
+    const mark = angleMark(r,g,m,18);
+    return `<svg class="source52-p31-diagram source52-p31-equilateral" data-source52-figure="equilateral-rotation-original" data-g="${point(g.x,g.y)}" data-n="${point(n.x,n.y)}" data-d="${point(d.x,d.y)}" data-r="${point(r.x,r.y)}" data-m="${point(m.x,m.y)}" viewBox="65 90 260 255" role="img" aria-label="원문의 두 정삼각형과 각 ㉮" xmlns="http://www.w3.org/2000/svg">${line(g,n)}${line(n,d)}${line(d,g)}${line(d,r)}${line(r,m)}${line(m,d)}${line(n,m)}${line(g,r)}<path class="source52-angle-mark" d="${mark.d}"/><text class="source52-target-label" x="${(mark.label.x-12).toFixed(2)}" y="${(mark.label.y+4).toFixed(2)}">㉮</text>${label(g,"ㄱ",-8,-10)}${label(n,"ㄴ",-20,10)}${label(d,"ㄷ",8,10)}${label(r,"ㄹ",8,-5)}${label(m,"ㅁ",-8,24)}</svg>`;
+  }
+
+  function buildMission3Original() {
+    const prompt = `<div class="source52-p31-question"><p>다음 삼각형 ㄱㄴㄷ과 삼각형 ㄷㄹㅁ은 정삼각형이고 각 ㄴㅁㄷ이 140°일 때, 각 ㉮의 크기를 구하여라.</p>${equilateralMission3OriginalDiagram()}</div>`;
+    const solution = `<div class="source52-p31-solution"><ol><li>점 ㄷ을 중심으로 60° 회전하면 ㄴ은 ㄱ으로, ㅁ은 ㄹ로 옮겨집니다. 따라서 ∠ㄱㄹㄷ=∠ㄴㅁㄷ=140°입니다.</li><li>정삼각형 ㄷㄹㅁ에서 ∠ㄷㄹㅁ=60°입니다. 점 ㄹ 둘레의 각의 합은 360°이므로 각 ㉮는 360°−140°−60°=<b>160°</b>입니다.</li></ol></div>`;
+    return result("5-2-u3-e4-mission-3-original",0,0,prompt,"160°",solution,{targetAngle:140,rotationDegrees:60,answer:160},false,answerVisual("각 ㉮","160°","∠ㄱㄹㅁ"));
   }
 
   function equilateralExampleDiagram(alpha, beta, showCorrespondingAngle = false) {
@@ -284,7 +305,7 @@
 
   function result(sourceItemId, variant, offset, prompt, answer, solution, answerModel, reviewLocked, answerVisual) {
     const definition = definitions.find(item => item.sourceItemId === sourceItemId);
-    const variantCount = sourceItemId === "5-2-u3-e4-mission-6-original" ? 1 : ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
+    const variantCount = sourceItemId.endsWith("-original") ? 1 : ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
     return Object.freeze({
       prompt: `<div data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${variant}" data-variant="${variant}" data-difficulty-offset="${offset}" data-level="${offset+1}">${prompt}</div>`,
       answer,
@@ -305,7 +326,7 @@
   }
 
   function getQuestion(sourceItemId, variant = 0, difficultyOffset = 0) {
-    const variantCount = sourceItemId === "5-2-u3-e4-mission-6-original" ? 1 : ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
+    const variantCount = sourceItemId.endsWith("-original") ? 1 : ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
     if (!Number.isSafeInteger(variant) || variant < 0 || variant >= variantCount || ![-1,0,1].includes(difficultyOffset)) return null;
     if (sourceItemId === definitions[0].sourceItemId) return buildEquilateralExample2(variant,difficultyOffset);
     if (sourceItemId === definitions[1].sourceItemId) return buildMission1(variant,difficultyOffset);
@@ -315,6 +336,7 @@
     if (sourceItemId === definitions[5].sourceItemId) return buildMission5(variant,difficultyOffset);
     if (sourceItemId === definitions[6].sourceItemId) return buildMission6(variant,difficultyOffset);
     if (sourceItemId === definitions[7].sourceItemId) return buildMission6(0,0,true);
+    if (sourceItemId === definitions[8].sourceItemId) return buildMission3Original();
     return null;
   }
   const keyFor = sourceItemId => definitions.find(item => item.sourceItemId === sourceItemId)?.generatorKey || "";
