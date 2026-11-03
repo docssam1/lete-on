@@ -123,6 +123,7 @@ test("the GFIELD AMC 8 style mock records an answer-safe domain summary and its 
   await page.goto(amcUrl, { waitUntil: "networkidle" });
   assert.match(await page.locator("h1").innerText(), /문제를 읽고 연결하는[\s\S]*지필드 경시 모의고사/);
   assert.match(await page.locator("#mock-start-panel").innerText(), /학교·대회 성적을 입력하지 않아요/);
+  assert.match(await page.locator("#mock-start-panel").innerText(), /40분 동안 계산기 없이/);
   assert.equal(await page.locator("input").count(), 0);
   await page.getByRole("button", { name: "지필드 모의고사 시작" }).click();
   assert.equal(await page.locator(".mock-question").count(), 25);
