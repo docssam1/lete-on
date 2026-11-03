@@ -324,7 +324,7 @@ test("AMC 10 direct filtering keeps the 2021 D paper route and links back to its
   await page.close();
 });
 
-test("users can opt to save an answer-free AMC review summary and see it only on the matching grade map", async function () {
+test("users can save an answer-free AMC review summary without turning it into roadmap diagnosis", async function () {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
   const errors = [];
@@ -401,43 +401,20 @@ test("users can opt to save an answer-free AMC review summary and see it only on
     localStorage.setItem(key, JSON.stringify(history));
   });
   await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7&program=amc8`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("#competition-select").inputValue(), "amc8");
-  assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), true);
-  assert.equal(await page.locator("#competition-saved-title").innerText(), "AMC 8 · Grade 7");
-  assert.match(await page.locator("#competition-saved-meta").innerText(), /Practice B/);
-  assert.match(await page.locator("#competition-saved-domains").innerText(), /식·대수[\s\S]*1\/3 · 33%/);
-  assert.equal(await page.locator("#competition-review-guidance").isVisible(), true);
-  assert.match(await page.locator("#competition-review-guidance-list").innerText(), /계산으로 표시한 오답은 중간식을 남기고 어림이나 역산/);
-  assert.match(await page.locator("#competition-review-guidance-list").innerText(), /개념으로 표시한 오답은 정의와 성질/);
-  assert.match(await page.locator("#competition-review-guidance-list").innerText(), /표시하지 않은 22문항은 이 요약과 비교에 포함되지 않아요/);
-  assert.doesNotMatch(await page.locator("#competition-review-guidance-list").innerText(), /낮았어요/);
-  assert.equal(await page.locator("#competition-record-pair").isVisible(), true);
-  assert.equal(await page.locator(".competition-record-pair-card").count(), 2);
-  const pairText = await page.locator("#competition-record-pair-cards").innerText();
-  assert.match(pairText, /최근 기록 · Practice B[\s\S]*식·대수: 1\/3 · 33%[\s\S]*이전 기록 · Practice A[\s\S]*식·대수: 1\/1 · 비율 비교 보류/);
-  assert.doesNotMatch(pairText, /Undated practice/);
-  assert.match(pairText, /정답 1 · 오답 2 · 미응답 0 · 표시 안 함 22 · 영역 분류 3\/25/);
-  assert.match(pairText, /오답 이유 2\/2 분류 · 개념 1 · 계산 1/);
-  assert.match(pairText, /오답 이유 1\/1 분류 · 조건 읽기 1/);
-  assert.match(pairText, /경우의 수·확률: 미측정 · 미응답 1/);
-  for (const card of await page.locator(".competition-record-pair-card").all()) {
-    const label = await card.getAttribute("aria-labelledby");
-    assert.ok(label);
-    assert.equal(await card.locator(`#${label}`).count(), 1);
-  }
-  assert.match(await page.locator(".competition-record-pair-note").innerText(), /난도는 보정하지 않으므로 차이를 성장이나 실력 등급으로 해석하지 않습니다/);
+  assert.equal(new URL(page.url()).searchParams.get("grade"), "7");
+  assert.equal(new URL(page.url()).searchParams.get("program"), "amc8");
+  assert.equal(await page.locator("#competition-paper-review-route").getAttribute("href"), "./competition-paper-review.html?grade=7&program=amc8");
+  assert.equal(await page.locator("#competition-saved-diagnostic").count(), 0, "original-paper summaries stay in paper review and are not presented as roadmap diagnosis");
+  assert.equal(await page.locator("#competition-record-pair").count(), 0, "different contest-paper records are not compared as grade-level results");
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
-  assert.equal(await page.locator("#competition-record-pair-cards").evaluate(function (node) { return getComputedStyle(node).gridTemplateColumns.split(" ").length; }), 1);
   await page.setViewportSize({ width: 1280, height: 900 });
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [1280, 1280]);
-  assert.equal(await page.locator("#competition-record-pair-cards").evaluate(function (node) { return getComputedStyle(node).gridTemplateColumns.split(" ").length; }), 2);
   await page.setViewportSize({ width: 768, height: 900 });
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [768, 768]);
-  assert.equal(await page.locator("#competition-record-pair-cards").evaluate(function (node) { return getComputedStyle(node).gridTemplateColumns.split(" ").length; }), 2);
   await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=8`, { waitUntil: "networkidle" });
-  await page.locator("#competition-select").selectOption("amc8");
-  assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), false);
-  assert.equal(await page.locator("#competition-record-pair").isVisible(), false);
+  assert.equal(await page.locator("#competition-paper-review-route").getAttribute("href"), "./competition-paper-review.html?grade=8&program=amc8");
+  assert.equal(await page.locator("#competition-saved-diagnostic").count(), 0);
+  assert.equal(await page.locator("#competition-record-pair").count(), 0);
   assert.deepEqual(errors, []);
   await context.close();
 });
@@ -462,7 +439,7 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-title").innerText(), /입력한 결과/);
   assert.match(await page.locator("#report-intro").innerText(), /22문제는 표시하지 않았습니다/);
-  assert.match(await page.locator("#score-estimate-note").innerText(), /참고 원점수는 25문항을 모두 표시한 뒤/);
+  assert.match(await page.locator("#score-estimate-note").innerText(), /원본 점수는 모든 문항을 표시한 뒤 계산해요/);
   assert.match(await page.locator("#report-metrics").innerText(), /1\/2/);
   assert.match(await page.locator("#report-domains h3").innerText(), /직접 분류한 영역 · 2\/25문항/);
   assert.match(await page.locator("#report-reasons h3").first().innerText(), /1\/1개 분류/);
@@ -482,7 +459,7 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   await page.close();
 });
 
-test("AIME review opens year/form archive, captures integer answers, and routes errors to matching GFIELD practice", async function () {
+test("AIME review opens year/form archive, captures integer answers, and stays separate from roadmap diagnosis", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -536,15 +513,14 @@ test("AIME review opens year/form archive, captures integer answers, and routes 
   await page.getByRole("button", { name: "결과 보기" }).click();
   await page.locator("#save-diagnostic").click();
   await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=8&program=aime#competition-diagnostic`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("#competition-select").inputValue(), "aime");
-  assert.equal(await page.locator("#competition-saved-diagnostic").isVisible(), true);
-  assert.match(await page.locator("#competition-guidance").innerText(), /초대·응시 자격·선발은 판단하지 않아요/);
-  assert.equal(await page.locator("#competition-source-link").getAttribute("href"), "https://maa.org/maa-invitational-competitions/");
+  assert.equal(new URL(page.url()).searchParams.get("grade"), "8");
+  assert.equal(new URL(page.url()).searchParams.get("program"), "aime");
+  assert.equal(await page.locator("#competition-paper-review-route").getAttribute("href"), "./competition-paper-review.html?grade=8&program=aime");
+  assert.equal(await page.locator("#competition-saved-diagnostic").count(), 0);
   await page.locator("#comparison-grade").selectOption("9");
-  assert.equal(await page.locator("#competition-grade-comparison").getAttribute("data-state"), "comparable-format");
-  assert.equal(await page.locator("#competition-grade-comparison-cards article").count(), 2);
-  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /직접 입력한 날짜와 메모로 짝지어 나란히 보여줘요/);
-  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /실제 시험지 동일성은 확인되지 않으며, 난도 조정 등급이나 성장 판정을 제공하지 않아요/);
+  assert.equal(await page.locator("#comparison-table").isVisible(), true);
+  assert.match(await page.locator("#comparison-current-label").innerText(), /8학년/);
+  assert.match(await page.locator("#comparison-target-label").innerText(), /9학년/);
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -563,7 +539,7 @@ test("AIME review uses integer answer fields instead of AMC multiple-choice cont
   await page.close();
 });
 
-test("saved contest review suggests a domain only when two areas have enough evidence", async function () {
+test("roadmap keeps saved original-paper reviews out of grade diagnosis", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const record = {
     schemaVersion: "gfield-competition-diagnostic-v1", id: "domain-guidance", programId: "amc8", programTitle: "AMC 8", grade: 7,
@@ -581,9 +557,9 @@ test("saved contest review suggests a domain only when two areas have enough evi
     localStorage.setItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1", JSON.stringify({ schemaVersion: "gfield-competition-diagnostic-history-v1", records: [savedRecord] }));
   }, record);
   await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7&program=amc8#competition-diagnostic`, { waitUntil: "networkidle" });
-  const guidance = page.locator("#competition-review-guidance-list");
-  assert.match(await guidance.innerText(), /기하·공간의 정답 비율이 비교 가능한 영역에서 낮았어요 \(기하·공간 1\/4\)/);
-  assert.match(await guidance.innerText(), /개념으로 표시한 오답은 정의와 성질/);
+  assert.equal(await page.locator("#competition-saved-diagnostic").count(), 0);
+  assert.equal(await page.locator("#competition-review-guidance-list").count(), 0);
+  assert.equal(await page.locator("#competition-paper-review-route").getAttribute("href"), "./competition-paper-review.html?grade=7&program=amc8");
   assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
   await page.close();
 });
@@ -600,7 +576,7 @@ test("paper review links a low-evidence area comparison to the specific wrong qu
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-next").innerText(), /표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 수·비례·추정 0\/3입니다/);
   const reviewItems = page.locator("#report-review-items-list");
-  assert.match(await reviewItems.innerText(), /1번 · 오답 · 수·비례·추정[\s\S]*3번 · 오답 · 수·비례·추정/);
+  assert.match(await reviewItems.innerText(), /1번 · 오답 · 답 미입력 · 수·비례·추정[\s\S]*3번 · 오답 · 답 미입력 · 수·비례·추정/);
   assert.equal(await reviewItems.locator("li").count(), 3);
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await reviewItems.locator("li").count(), 3, "repeated submit replaces the result list instead of duplicating it");
@@ -656,7 +632,7 @@ test("complete AMC 8 marks show a correct-count reference estimate", async funct
     await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption(status);
   }
   await page.getByRole("button", { name: "결과 보기" }).click();
-  assert.match(await page.locator("#score-estimate-value").innerText(), /AMC 8 참고 원점수 · 18 \/ 25/);
+  assert.match(await page.locator("#score-estimate-value").innerText(), /AMC 8 정답 수 · 18 \/ 25/);
   assert.match(await page.locator(".report-metrics").innerText(), /미응답/);
   await page.close();
 });
@@ -731,7 +707,7 @@ test("contest review opens the selected grade map from its result link", async f
   await page.locator("#report-roadmap-link").click();
   await page.waitForURL(/boarding-roadmap\.html\?grade=9&program=amc10#grade-map$/);
   assert.match(await page.locator("#grade-map-title").innerText(), /9학년 수학/);
-  assert.equal(await page.locator("#competition-select").inputValue(), "amc10");
+  assert.equal(await page.locator("#competition-paper-review-route").getAttribute("href"), "./competition-paper-review.html?grade=9&program=amc10");
   await page.waitForFunction(function () {
     const section = document.querySelector("#grade-map");
     const shortcuts = document.querySelector(".roadmap-shortcuts");
@@ -742,13 +718,13 @@ test("contest review opens the selected grade map from its result link", async f
 
 test("browser back restores the selected grade and competition", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-  await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7`, { waitUntil: "networkidle" });
-  await page.locator("#competition-select").selectOption("amc8");
+  await page.goto(`${url.replace("competition-paper-review.html", "boarding-roadmap.html")}?grade=7&program=amc8`, { waitUntil: "networkidle" });
   await page.locator("#next-grade").click();
   await page.waitForURL(/boarding-roadmap\.html\?grade=8$/);
   await page.goBack();
   await page.waitForURL(/boarding-roadmap\.html\?grade=7&program=amc8$/);
-  assert.equal(await page.locator("#competition-select").inputValue(), "amc8");
+  assert.equal(await page.locator("#competition-paper-review-route").getAttribute("href"), "./competition-paper-review.html?grade=7&program=amc8");
+  assert.match(await page.locator("#grade-map-title").innerText(), /7학년 수학/);
   await page.close();
 });
 
@@ -894,7 +870,7 @@ test("blank response reason is captured separately and never shown as an answer 
   await row.locator('[data-field="domain"]').selectOption("number");
   await row.locator('[data-field="reason"]').selectOption("skipped");
   await page.getByRole("button", { name: "결과 보기" }).click();
-  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 미응답 · 수·비례·추정 · 건너뜀/);
+  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 미응답 · 답 미입력 · 수·비례·추정 · 건너뜀/);
   assert.match(await page.locator("#report-reasons").innerText(), /미응답 이유 · 1\/1개 공란 분류/);
   assert.match(await page.locator("#report-reasons").innerText(), /건너뜀 · 1문항/);
   assert.doesNotMatch(await page.locator("#report-reasons").innerText(), /오답 이유/);

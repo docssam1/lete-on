@@ -972,3 +972,9 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - MAA 공개 K–12 EduView 점수분포의 AMC 10 A 2025 보고서는 Top 1%, Top 2.5%, Top 5%, Top 10%, Top 25%, Top 50%, Top 75%, 평균, 표준편차, 표본 학생/학교 수를 제공하지만 학년 필터는 보이지 않는다. 따라서 현재는 선택한 Grade와 같은 연도·폼의 전체 응시자 기준을 함께 표시하고, Grade별 순위·백분위·등급으로 오해하지 않도록 문구를 바꿨다. 출처: https://maa.edvistas.com/eduview/report.aspx?mode=6&r832=&view=1561.
 - 연도별 원본에는 원문/답/풀이 파일을 복사하지 않는다. 기존 연도 선택에서 LIVE 원본으로 연결하고, 사용자가 표시한 원본 답안의 점수·오답·개념을 로컬에서 진단한 뒤 GFIELD 창작 모의고사와 후속 연습으로 연결한다. MAA 공개 점수분포가 없는 연도는 비교 패널을 표시하지 않는다.
 - 검증: `competition-paper-review-browser.test.cjs` 및 `amc-score-distribution-reference.test.cjs` 통과. AMC 8/10/12 연도 색인, 1950 AHSME 단일 시험, 2021 AMC10 D, 원본 점수 입력, AMC 9학년/10학년과 전체 응시자 MAA 기준의 분리 표시를 확인했다. 로컬 작업만; push/배포/Drive 동기화 없음. `raw_youtube.txt` 미추적 파일은 그대로 둔다.
+
+### 2026-11-04 · AMC 원본 검토 브라우저 회귀 기준 갱신
+
+- `8f6712b68 Keep boarding roadmap diagnostics GFIELD mock only`에서 의도적으로 제거된 옛 학년 지도 대회 선택기·원본 성적 비교 UI를 기대하던 브라우저 테스트를 현재 동작에 맞췄다. 저장된 원본 답안 복습 요약은 시험 검토 화면 안에 유지하고, 학년 지도에서 지필드 모의고사 진단으로 오인하거나 서로 다른 원본 시험 성적을 학년별 등급으로 비교하지 않는 경계를 검증한다. Grade 선택/뒤로가기 테스트는 실제 `grade`·`program` URL 복원과 검토 화면 링크를 확인한다. 누락된 기능은 되살리지 않았다.
+- 현재 문구와 표시값에 맞춰 부분 채점 안내, 입력하지 않은 답을 포함한 오답 문항, AMC 8 원점수 라벨, AIME 정수 답안 요약의 테스트 기대값도 정리했다.
+- 검증: 전체 `competition-paper-review-browser.test.cjs` + `amc-score-distribution-reference.test.cjs` 32/32 통과. `git diff --check` 통과. 코드 기능 변경은 없으며, 2026-11-04 커밋 `ec93604e` 이후의 테스트 기준만 갱신했다. `raw_youtube.txt` 미추적 파일은 그대로 보존한다.
