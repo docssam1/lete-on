@@ -5,7 +5,7 @@
     { id:"amc10-m01", standard:"대수", focus:"일차식과 비율", prompt:"두 수의 합은 34이고 큰 수는 작은 수의 3배보다 2만큼 작습니다. 큰 수는 얼마인가요?", choices:[24,25,26,27,28], answer:1, solution:"작은 수를 x라 하면 큰 수는 3x−2입니다. x+(3x−2)=34이므로 x=9, 큰 수는 3·9−2=25입니다." },
     { id:"amc10-m02", standard:"대수", focus:"연립 조건 모델링", prompt:"성인 입장권은 12달러, 학생 입장권은 7달러입니다. 18장을 팔아 161달러를 받았습니다. 성인권은 몇 장 팔았나요?", choices:[5,6,7,8,9], answer:2, solution:"성인권을 a장이라 하면 12a+7(18−a)=161입니다. 5a=35이므로 a=7입니다." },
     { id:"amc10-m03", standard:"대수", focus:"대칭식", prompt:"a+b=11, ab=24일 때 (a−2)(b−2)는 얼마인가요?", choices:[2,4,6,8,10], answer:2, solution:"(a−2)(b−2)=ab−2(a+b)+4=24−22+4=6입니다." },
-    { id:"amc10-m04", standard:"대수", focus:"수열의 규칙", prompt:"수열 4, 9, 14, 19, …에서 100은 몇 번째 항인가요?", choices:[18,19,20,21,22], answer:2, solution:"n번째 항은 4+5(n−1)입니다. 4+5(n−1)=100에서 n=20입니다." },
+    { id:"amc10-m04", standard:"대수", focus:"수열의 규칙", prompt:"수열 4, 9, 14, 19, …에서 99는 몇 번째 항인가요?", choices:[18,19,20,21,22], answer:2, solution:"n번째 항은 4+5(n−1)입니다. 4+5(n−1)=99에서 5(n−1)=95이므로 n=20입니다." },
     { id:"amc10-m05", standard:"대수", focus:"정수 계수 방정식", prompt:"정수 x가 (x−3)(x+2)=0을 만족합니다. 가능한 x의 합은 얼마인가요?", choices:[-2,0,1,3,5], answer:2, solution:"곱이 0이므로 x=3 또는 x=−2입니다. 합은 1입니다." },
     { id:"amc10-m06", standard:"정수론", focus:"나머지 조건", prompt:"양의 정수 n은 4로 나누면 1이 남고 7로 나누면 4가 남습니다. 가장 작은 n은 얼마인가요?", choices:[17,21,25,29,33], answer:2, solution:"4로 나누어 1이 남는 수는 1, 5, 9, 13, 17, 21, 25, …입니다. 이 중 7로 나누어 4가 남는 가장 작은 수는 25입니다." },
     { id:"amc10-m07", standard:"정수론", focus:"소인수 지수와 약수", prompt:"360의 양의 약수 중 홀수인 것은 몇 개인가요?", choices:[4,6,8,10,12], answer:1, solution:"360=2³·3²·5입니다. 홀수 약수에는 2가 들어가지 않으므로 3의 지수 0~2와 5의 지수 0~1을 고릅니다. 3·2=6개입니다." },
@@ -31,7 +31,7 @@
   const standards = Object.freeze(["대수", "정수론", "기하", "경우의 수", "확률"]);
   const gradeValue = Number(new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("grade"));
   const grade = Number.isInteger(gradeValue) && gradeValue >= 7 && gradeValue <= 10 ? gradeValue : 7;
-  root.GFIELDAMC10Mock = Object.freeze({ id:"gfield-amc10-concept-mock-v1", formVersion:"2026-11-04-v1", grade, title:"지필드 AMC 10 범위 모의고사 · 1회", durationMinutes:75, standards,
+  root.GFIELDAMC10Mock = Object.freeze({ id:"gfield-amc10-concept-mock-v1", formVersion:"2026-11-04-v2", grade, title:"지필드 AMC 10 범위 모의고사 · 1회", durationMinutes:75, standards,
     nextStudyHref:`./amc10-practice.html?grade=${grade}`, nextStudyLabel:"지필드 AMC 10 개념 연습으로 이어가기 →",
     items:Object.freeze(items.map(item => Object.freeze(item))) });
 })(typeof window === "undefined" ? globalThis : window);

@@ -5,6 +5,7 @@ const exam = globalThis.GFIELDAMC10Mock;
 
 test("GFIELD AMC 10 mock is a complete 25-item, five-domain 75-minute form", () => {
   assert.equal(exam.id, "gfield-amc10-concept-mock-v1");
+  assert.equal(exam.formVersion, "2026-11-04-v2");
   assert.equal(exam.items.length, 25);
   assert.equal(exam.durationMinutes, 75);
   assert.deepEqual(exam.standards, ["대수", "정수론", "기하", "경우의 수", "확률"]);
@@ -18,6 +19,8 @@ test("all authored answers match independently calculated values and choices are
   const expected = ["25", "7", "6", "20", "1", "25", "6", "50", "3", "36", "90", "31.5", "15", "10π", "120", "12", "12", "12", "10", "18", "1/3", "3/10", "1/6", "3/10", "1/2"];
   exam.items.forEach((item, index) => assert.equal(String(item.choices[item.answer]), expected[index], item.id));
   exam.items.forEach((item) => assert.equal(new Set(item.choices.map(String)).size, 5, item.id));
+  assert.match(exam.items[3].prompt, /99는 몇 번째 항/);
+  assert.match(exam.items[3].solution, /5\(n−1\)=95.*n=20/);
 });
 
 test("AMC 10 exam page distinguishes its authored mock from official score claims", () => {
