@@ -2,6 +2,12 @@
 
 Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The map-stop readability and G·MAP palette updates are committed locally. No push, deployment, or Drive synchronization has occurred.
 
+### 2026-11-03 GFIELD Pre-Algebra Unit 3 · rational-number operations
+
+Extended the original GFIELD Pre-Algebra workbook to three units: 20 lessons and 40 practice prompts. The new Grade 7 `7.NS.A.1–3` unit covers additive inverses and number-line models; rational addition, subtraction, multiplication, and division (including the zero-divisor restriction); terminating/repeating decimal representations; and signed-rational word problems. The public route links to the original student workbook and separate teacher solutions. Course counts, scope, route, README, and browser/contract expectations now match. It remains instructional material, not a diagnostic, mastery claim, or grade placement.
+
+During answer review, corrected a subtraction practice key: the distance from −3 to −8 is 5, not 8. Added a regression assertion for the corrected key. The focused Node REPL contract run passes 8/8 across the Pre-Algebra course, course pathway, and shared fraction renderer. Local Chrome shows the 20 lesson and 20 practice pages in student edition, 20 answer pages in teacher edition, and zero overflowing A4 page cards. Student pages show stacked numerator/fraction-bar/denominator forms, no slash-form numeric fractions, and zero visible numeric-fraction matches in text pages. A student A4 screenshot was reviewed; a physical PDF export was not generated. No push, deployment, Drive sync, or external transmission.
+
 ### 2026-11-03 GFIELD Pre-Algebra Unit 2 · equations and inequalities
 
 Extended the original Pre-Algebra workbook from one to two authored units: 12 lessons and 24 practice prompts. Unit 2 sequences substitution to check equation/inequality solutions, one-step addition and multiplication equations in the nonnegative-rational Grade 6 scope, contextual equations, inequality constraints on number lines, and explicitly labeled Grade 7 multi-step equation/inequality connections. References are CCSS 6.EE.B.5–8 and 7.EE.B.4. Updated the route, course comparison counts, workbook counts, tests, cache versions, and README. The path now reports two GFIELD units/12 lessons; it still states that the course is not complete and does not diagnose or place a learner.
