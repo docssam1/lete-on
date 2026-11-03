@@ -3388,8 +3388,8 @@
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "모눈 세 점과 두 대칭점, 삼각형 넓이를 검산했습니다. 공식 답안과 공개용 원문 그림은 미대조입니다."
+      "implementationStatus": "ready",
+      "reviewReason": "원문 격자 세 점과 두 대칭점, 삼각형 넓이를 독립 검산하고 그림과 함께 연결했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u3-e8-exploration",
