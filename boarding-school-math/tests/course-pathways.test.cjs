@@ -26,8 +26,8 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
     assert.ok(Array.isArray(course.nextOptions));
   });
   const preAlgebra = pathways.courses.find(function (course) { return course.id === "pre-algebra"; });
-  assert.equal(preAlgebra.studentHref, "./concept-learning.html");
-  assert.match(preAlgebra.availability, /6학년 개념 수업 10개 · 공개 단원 워크북 6개/);
+  assert.equal(preAlgebra.studentHref, "./prealgebra-path.html");
+  assert.match(preAlgebra.availability, /개념 수업 10개 · 검수 공개 워크북 8종 \(6학년 6 · 7학년 2\)/);
   const algebra2 = pathways.courses.find(function (course) { return course.id === "algebra-2"; });
   assert.equal(algebra2.studentHref, "./algebra2-workbook.html");
   assert.equal(algebra2.teacherHref, "./algebra2-workbook.html?edition=teacher");

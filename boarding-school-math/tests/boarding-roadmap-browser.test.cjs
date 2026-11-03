@@ -68,8 +68,8 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   await page.locator("#course-path-cards article:first-child select").selectOption("pre-algebra");
   await page.locator("#course-path-cards article:last-child select").selectOption("geometry");
   assert.deepEqual(await page.locator("#course-path-cards h3").allInnerTexts(), ["Pre-Algebra", "Algebra 1", "Geometry"]);
-  assert.deepEqual(await page.locator(".course-path-material-link").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("href"); }); }), ["./concept-learning.html", "./algebra1-workbook.html", "./geometry-workbook.html"]);
-  assert.match(await page.locator("#course-path-cards").innerText(), /6학년 개념 수업 10개[\s\S]*5단원·32차시·64문항 공개[\s\S]*5단원·16차시·32문항 공개/);
+  assert.deepEqual(await page.locator(".course-path-material-link").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("href"); }); }), ["./prealgebra-path.html", "./algebra1-workbook.html", "./geometry-workbook.html"]);
+  assert.match(await page.locator("#course-path-cards").innerText(), /개념 수업 10개 · 검수 공개 워크북 8종[\s\S]*5단원·32차시·64문항 공개[\s\S]*5단원·16차시·32문항 공개/);
   await page.locator("#annual-plan-periods a").first().click();
   await page.waitForURL(/algebra1-workbook\.html\?edition=student$/);
   assert.equal(await page.locator("#workbook-title").innerText(), "Algebra 1 단원 교재");
@@ -109,6 +109,38 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   await page.locator(".algebra1-unit-lesson").nth(2).locator("summary").click();
   assert.match(await page.locator(".algebra1-unit-lesson").nth(2).innerText(), /입장권[\s\S]*a \+ s = 28[\s\S]*a = 13, s = 15/);
   assert.doesNotMatch(await page.locator("body").innerText(), /추정안|AoPS Introduction to Algebra/);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("Pre-Algebra route connects ten public concept lessons and eight reviewed workbooks", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  await page.goto(`${url.replace("boarding-roadmap.html", "prealgebra-path.html")}`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("h1").innerText(), "Pre-Algebra로\n이어지는 수학 경로");
+  assert.deepEqual(await page.locator(".route-stage h2").allInnerTexts(), [
+    "수 감각에서 유리수 연산으로", "같은 비에서 비례 관계로", "변수로 관계를 나타내고 식을 정리해요", "그림·표·그래프로 생각을 보여줘요"
+  ]);
+  assert.equal(await page.locator(".route-stage").count(), 4);
+  assert.equal(await page.locator(".route-stage .resource-links a:not(.workbook-link)").count(), 10);
+  assert.equal(await page.locator(".route-stage .workbook-link").count(), 8);
+  const conceptClusters = await page.locator('.route-stage .resource-links a:not(.workbook-link)').evaluateAll(function (nodes) {
+    return nodes.map(function (node) { return new URL(node.href).searchParams.get("cluster"); });
+  });
+  assert.deepEqual(new Set(conceptClusters), new Set(["6.NS.A", "6.NS.B", "6.NS.C", "6.RP.A", "6.EE.A", "6.EE.B", "6.EE.C", "6.G.A", "6.SP.A", "6.SP.B"]));
+  const workbookClusters = await page.locator(".route-stage .workbook-link").evaluateAll(function (nodes) {
+    return nodes.map(function (node) { return new URL(node.href).searchParams.get("cluster"); });
+  });
+  assert.deepEqual(workbookClusters, ["6.NS.A", "6.NS.B", "6.NS.C", "7.NS.A", "6.RP.A", "7.RP.A", "6.EE.A", "6.SP.A"]);
+  for (const link of await page.locator(".route-stage a").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.href; }); })) {
+    const response = await page.request.get(link);
+    assert.equal(response.status(), 200, `resource link should load: ${link}`);
+  }
+  assert.equal(await page.locator(".course-bridge a").getAttribute("href"), "./algebra1-workbook.html");
+  assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
   assert.deepEqual(errors, []);
   await page.close();
 });
