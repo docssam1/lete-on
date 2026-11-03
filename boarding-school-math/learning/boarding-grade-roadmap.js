@@ -29,10 +29,10 @@
   const maaInvitationalReference = Object.freeze({ title: "MAA AIME·USAJMO·USAMO 안내", url: "https://maa.org/maa-invitational-competitions/" });
   const annualPlanResourceLinks = Object.freeze({
     6: Object.freeze({
-      0: Object.freeze([Object.freeze({ title: "AoPS Prealgebra", url: "https://classic.artofproblemsolving.com/store/book/prealgebra" }), Object.freeze({ title: "Khan Academy Pre-algebra", url: "https://www.khanacademy.org/math/algebra/order-of-operations" })]),
-      1: Object.freeze([Object.freeze({ title: "AMC 8 문제 연습", url: "https://amctrainer.org/contests/amc8" }), Object.freeze({ title: "Beast Academy 5D", url: "https://beastacademy.com/books/5D" })]),
-      2: Object.freeze([Object.freeze({ title: "Khan Academy Digital SAT", url: "https://www.khanacademy.org/digital-sat" }), Object.freeze({ title: "College Board 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
-      3: Object.freeze([Object.freeze({ title: "AoPS Prealgebra", url: "https://classic.artofproblemsolving.com/store/book/prealgebra" }), Object.freeze({ title: "College Board SAT 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
+      0: Object.freeze([Object.freeze({ title: "지필드 Grade 6 개념 학습 · 10개 주제", url: "./concept-learning.html" }), Object.freeze({ title: "변수식·거듭제곱·연산 순서", url: "./concept-learning.html?cluster=6.EE.A" })]),
+      1: Object.freeze([Object.freeze({ title: "지필드 AMC 8 유형 연습 · 자체 10문항", url: "./competition-practice.html?program=amc8" }), Object.freeze({ title: "MAA AMC 공식 안내", url: "https://maa.org/student-programs/amc/" })]),
+      2: Object.freeze([Object.freeze({ title: "비례·문장제 개념 연결", url: "./concept-learning.html?cluster=6.RP.A" }), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
+      3: Object.freeze([Object.freeze({ title: "지필드 Grade 6 개념 복습", url: "./concept-learning.html" }), Object.freeze({ title: "지필드 AMC 8 유형 다시 풀기", url: "./competition-practice.html?program=amc8" })])
     }),
     7: Object.freeze({
       0: Object.freeze([Object.freeze({ title: "지필드 Algebra 1 원본 수업·A4 교재", url: "./algebra1-workbook.html" })]),
@@ -106,10 +106,10 @@
       ["10–12개월", "문장제 복습과 설명", "여러 문제를 풀며 막힌 조건을 다시 보고, 사용한 개념과 풀이 이유를 설명해요.", "Math Mammoth · IXL"]
     ]) }),
     6: Object.freeze({ source: "provided", title: "선택 심화 · Pre-Algebra에서 SAT 기초까지", note: "학교 수학에서 이미 배운 단원을 깊게 익히는 경로와 별도의 선택 심화 예시예요. 새 주제는 이전 개념을 설명할 수 있고 가족·교사와 계획했을 때만 이어가요.", periods: Object.freeze([
-      ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율과 변수식, 거듭제곱·연산 순서를 익히고 기하·자료 문제의 풀이 이유를 말해요.", "AoPS Pre-Algebra · Khan Academy · Singapore Math Challenging Word Problems 6"],
-      ["4–6개월", "AMC 8 유형과 논리", "단원별 문제를 풀고, 한 문제를 여러 방법으로 설명해요.", "AoPS Challenge Problems · AMC 8 기출 · Beast Academy 5D"],
-      ["7–9개월", "SAT 기초 유형 맛보기", "문장제와 자료 해석을 배운 개념에 연결해요.", "Khan Academy SAT Math · College Board 공식 자료 · PWN the SAT Math Guide"],
-      ["10–12개월", "복습과 실전 연습", "오답 이유를 나누어 보고, 준비된 범위에서 시간 연습을 해요.", "AoPS 복습 · AMC 8 기출 · SAT 기초 문제"]
+      ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율과 변수식, 거듭제곱·연산 순서를 익히고 기하·자료 문제의 풀이 이유를 말해요.", "지필드 Grade 6 개념 학습 10개 · 단원 워크북 10개"],
+      ["4–6개월", "AMC 8 유형과 논리", "단원별 문제를 풀고, 한 문제를 여러 방법으로 설명해요.", "지필드 AMC 8 유형 연습 10문항 · MAA 공식 출제 범위 안내"],
+      ["7–9개월", "SAT 기초 유형 맛보기", "문장제와 자료 해석을 배운 개념에 연결해요.", "지필드 비례·문장제 개념 · College Board 공식 SAT 수학 문제은행"],
+      ["10–12개월", "복습과 실전 연습", "오답 이유를 나누어 보고, 준비된 범위에서 시간 연습을 해요.", "지필드 개념 복습 · AMC 8 자체 유형 연습 · SAT 공식 연습"]
     ]) }),
     7: Object.freeze({ source: "provided", title: "Algebra 1에서 경시·SAT 기초로", note: "Algebra 1은 가속 학습 예시예요. 학교 Geometry는 정규 진도에서 이어가고 AMC 10·SAT은 학교 수학과 분리한 선택 경로로 살펴봐요. 학생의 현재 수준이나 배정 과목을 판정하지 않아요.", periods: Object.freeze([
       ["1–3개월", "Algebra 1 개념과 풀이", "변수식·일차방정식·부등식을 익히고 풀이에서 등식의 성질을 쓴 이유를 설명해요.", "지필드 Algebra 1 과정 지도 · 첫 수업"],
@@ -121,7 +121,7 @@
       ["1–3개월", "대수 개념과 문제 해결", "지필드 Algebra 2의 다항식·이차식·유리식·지수·로그와 함수 개념을 익혀요. 복소수·수열·행렬은 학교 진도와 준비도에 맞춰 선택해 살펴봐요.", "지필드 Algebra 2 원본 수업 · Khan Academy Algebra 2 참고"],
       ["4–6개월", "기하 심화와 AMC 10/12", "학교 Geometry를 이어가며 지필드 Geometry의 변환·합동·증명·닮음·삼각비·원·좌표기하를 학교 진도에 맞춰 연결해요.", "지필드 Geometry 원본 수업 · MAA AMC 안내"],
       ["7–9개월", "AIME형 문제와 SAT 심화", "준비된 학생은 서술형 풀이와 SAT 영역별 연습을 병행해요.", "MAA Invitational 안내 · College Board 공식 SAT 자료"],
-      ["10–12개월", "실전 연습과 풀이 복습", "시간을 재서 풀고 개념·아이디어·계산 실수를 구분해요.", "AMC/AIME 기출 · SAT 모의 문제 · AoPS 복습"]
+      ["10–12개월", "실전 연습과 풀이 복습", "시간을 재서 풀고 개념·아이디어·계산 실수를 구분해요.", "지필드 Algebra 2·Precalculus 복습 · AMC/AIME 기출 · College Board SAT 연습"]
     ]) }),
     9: Object.freeze({ source: "inferred", title: "Algebra 2·기하를 점검하고 Pre-Calculus로", note: "9학년의 과목 구성과 순서는 학교마다 달라요. 실제 수강 과목과 선수 개념을 확인한 뒤 필요한 연결을 골라요.", periods: Object.freeze([
       ["1–3개월", "현재 과목과 핵심 개념 확인", "함수·다항식·방정식 중 현재 수업에서 다루는 내용을 확인하고 필요한 부분을 보완해요.", "학교 수업 자료 · 현재 교재의 단원 점검"],

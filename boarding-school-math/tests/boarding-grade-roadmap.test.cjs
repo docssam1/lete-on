@@ -60,6 +60,9 @@ test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge
   assert.match(roadmap.getAnnualPlan(6).title, /^선택 심화/);
   assert.match(roadmap.getAnnualPlan(6).note, /학교 수학에서 이미 배운 단원.*별도의 선택 심화/);
   assert.match(roadmap.getAnnualPlan(6).periods[0][2], /변수식, 거듭제곱·연산 순서/);
+  assert.match(roadmap.getAnnualPlan(6).periods[0][3], /지필드 Grade 6 개념 학습 10개.*단원 워크북 10개/);
+  assert.match(roadmap.getAnnualPlan(6).periods[1][3], /지필드 AMC 8 유형 연습 10문항.*MAA 공식/);
+  assert.doesNotMatch(roadmap.getAnnualPlan(6).periods.flat().join(" "), /AoPS|Beast Academy|PWN the SAT/);
   assert.equal(roadmap.getAnnualPlan(9).periods.length, 4);
   assert.deepEqual(roadmap.getAnnualPlan(9).periods.map(function (period) { return period[0]; }), ["1–3개월", "4–6개월", "7–9개월", "10–12개월"]);
   assert.ok(roadmap.getAnnualPlan(9).periods.every(function (period) { return !period[0].includes("추정") && period.slice(1).every(Boolean); }));
@@ -114,9 +117,11 @@ test("upper-grade course references are limited to named courses and keep Grade 
       assert.ok(resource.url.startsWith("https://") || resource.url.startsWith("./") || resource.url.startsWith("#"));
     });
   });
-  assert.equal(roadmap.annualPlanResourceLinks[6][0][0].url, "https://classic.artofproblemsolving.com/store/book/prealgebra");
-  assert.equal(roadmap.annualPlanResourceLinks[6][1][0].url, "https://amctrainer.org/contests/amc8");
+  assert.deepEqual(roadmap.annualPlanResourceLinks[6][0].map(function (resource) { return resource.url; }), ["./concept-learning.html", "./concept-learning.html?cluster=6.EE.A"]);
+  assert.deepEqual(roadmap.annualPlanResourceLinks[6][1].map(function (resource) { return resource.url; }), ["./competition-practice.html?program=amc8", "https://maa.org/student-programs/amc/"]);
+  assert.equal(roadmap.annualPlanResourceLinks[6][2][0].url, "./concept-learning.html?cluster=6.RP.A");
   assert.equal(roadmap.annualPlanResourceLinks[6][2][1].url, "https://satsuite.collegeboard.org/practice/student-question-bank/math");
+  assert.deepEqual(roadmap.annualPlanResourceLinks[6][3].map(function (resource) { return resource.url; }), ["./concept-learning.html", "./competition-practice.html?program=amc8"]);
   assert.equal(roadmap.annualPlanResourceLinks[7][0][0].url, "./algebra1-workbook.html");
   assert.equal(roadmap.annualPlanResourceLinks[7][1][0].url, "./geometry-workbook.html");
   assert.equal(roadmap.annualPlanResourceLinks[7][2][0].url, "https://www.khanacademy.org/digital-sat");
@@ -148,6 +153,7 @@ test("Grade 10 score goals are optional aspirations, with qualification kept sep
   assert.doesNotMatch(plan.periods[0][3], /AoPS Precalculus|FlippedMath/);
   assert.match(plan.periods[2][2], /Digital SAT Math 800은 선택한 개인 도전 목표/);
   assert.match(plan.periods[3][2], /USAMO형 증명 문제.*실제 USAMO 선발 기준.*해당 연도 MAA/);
+  assert.match(plan.periods[3][3], /증명 연습 · 선택한 경시 문제/);
   assert.match(tracks.find(function (track) { return track[0] === "경시 · 선택"; })[1], /AMC 12 130\+.*AIME 응시와 USAMO 선발은 해당 연도 MAA 기준/);
   assert.match(tracks.find(function (track) { return track[0] === "SAT · 선택"; })[1], /Digital SAT Math 800은 개인 도전 목표/);
 });

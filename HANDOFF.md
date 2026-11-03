@@ -417,3 +417,9 @@ Verification: 18/18 focused course/pathway/roadmap model assertions pass. Three 
 Replaced the Grade 7 Algebra 1 and Geometry checkpoint materials that previously linked to external course pages with the matching GFIELD-original A4 workbooks. The annual-plan references now point to these same courses. Common Core standard references and MAA competition guidance remain separate source links; no course order or grade placement is inferred.
 
 Verification: Grade 3–12 roadmap model tests pass 12/12; focused Chrome checks for the Grade 7 checkpoint links and Grade 6–7 annual-resource links pass 2/2. Internal course links open in the same tab and use the existing keyboard-visible link treatment. No private item data was opened; local only, no push or deployment.
+
+### 2026-11-03 Grade 6 Pre-Algebra path uses GFIELD learning material
+
+Updated the optional Grade 6 annual example to lead with the existing GFIELD-original 10 concept lessons, 10 Grade 6 topic workbooks, and the separate 10-question GFIELD AMC 8 practice set. The SAT foundation stage links to GFIELD ratio/problem-solving concepts and the College Board's official Math question bank. MAA and College Board references remain labeled as sources, not GFIELD-authored material. Replaced displayed AoPS/Beast Academy/PWN labels in the Grade 6 example; the optional enrichment plan stays separate from school placement. Grade 10's final stage still uses the existing generic “proof practice · selected contest problems” resource description; it has not been replaced by a GFIELD workbook claim.
+
+Verification: Grade 3–12 roadmap model tests pass 12/12, including assertions that Grade 6 resources resolve to GFIELD concepts/workbooks and original AMC 8 practice. A focused Chrome annual-plan check passes 1/1; it follows the 6.EE.A concept link and AMC 8 practice link to their actual pages. Local-only; no push, deployment, or Drive sync.

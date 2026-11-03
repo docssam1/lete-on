@@ -891,6 +891,7 @@ test("Grade 6 and 7 annual plans expose stage-matched online resource links", as
       const links = cards.nth(index).locator(".annual-plan-resource-links a");
       assert.ok(await links.count() >= 1, `Grade ${grade}, period ${index + 1} has links`);
       assert.match(await cards.nth(index).locator("small").innerText(), /자료 예시[\s\S]*온라인 자료/);
+      if (grade === 6) assert.match(await cards.nth(index).locator("small").innerText(), /지필드/);
       const security = await links.first().evaluate((link) => [link.target, link.rel, link.href]);
       if (security[2].startsWith("https://")) {
         assert.equal(security[0], "_blank");
@@ -901,6 +902,21 @@ test("Grade 6 and 7 annual plans expose stage-matched online resource links", as
       }
     }
   }
+  await page.goto(`${url}?grade=6#annual-plan`, { waitUntil: "networkidle" });
+  const grade6Resources = page.locator("#annual-plan-periods > li .annual-plan-resource-links a");
+  assert.deepEqual(await grade6Resources.evaluateAll(function (links) { return links.map(function (link) { return link.getAttribute("href"); }); }), [
+    "./concept-learning.html", "./concept-learning.html?cluster=6.EE.A",
+    "./competition-practice.html?program=amc8", "https://maa.org/student-programs/amc/",
+    "./concept-learning.html?cluster=6.RP.A", "https://satsuite.collegeboard.org/practice/student-question-bank/math",
+    "./concept-learning.html", "./competition-practice.html?program=amc8"
+  ]);
+  await grade6Resources.nth(1).click();
+  await page.waitForURL(/concept-learning\.html\?cluster=6\.EE\.A/);
+  assert.match(await page.locator("#lesson").innerText(), /연산 순서와 분배법칙/);
+  await page.goto(`${url}?grade=6#annual-plan`, { waitUntil: "networkidle" });
+  await page.locator("#annual-plan-periods > li").nth(1).locator('a[href*="competition-practice.html"]').click();
+  await page.waitForURL(/competition-practice\.html\?program=amc8/);
+  assert.equal(await page.locator("#program-title").innerText(), "AMC 8 Bridge");
   await page.goto(`${url}?grade=9#annual-plan`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".annual-plan-resource-links").count(), 0, "no unsourced links are added to the inferred Grade 9 plan");
   await page.setViewportSize({ width: 390, height: 844 });
