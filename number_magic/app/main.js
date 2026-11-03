@@ -798,9 +798,8 @@ function effectiveLearningSettings(weekKey){
 }
 function applyLearningSettings(patch,guidanceChoice){
   applyAdminSettings();
-  if(patch&&patch.cadence)S.roadCadenceChosen=true;
   if(S.adminPlan||!window.NM_PLAN_CONTROL||!stateStorageCurrent())return false;
-  const keys=['learningPlan','learningPlanHistory','roadSpeed','roadAmount','roadCadence','roadPace','roadManual','_roadFocus','highSchedule','middleCadenceDefaultVersion','calculusCadenceDefaultVersion','middleStudyGuidanceChoices'];
+  const keys=['learningPlan','learningPlanHistory','roadSpeed','roadAmount','roadCadence','roadCadenceChosen','roadPace','roadManual','_roadFocus','highSchedule','middleCadenceDefaultVersion','calculusCadenceDefaultVersion','middleStudyGuidanceChoices'];
   const before=Object.fromEntries(keys.map(k=>[k,{present:Object.prototype.hasOwnProperty.call(S,k),value:S[k]}]));
   try{
     const weekKey=weekKeyFor(new Date()),current=effectiveLearningSettings();
@@ -808,6 +807,7 @@ function applyLearningSettings(patch,guidanceChoice){
     S.learningPlanHistory=NM_PLAN_CONTROL.record(S.learningPlanHistory,{...current,legacy:!S.learningPlan},next,weekKey);
     S.learningPlan=next;S.roadSpeed=next.speed;S.roadAmount=next.amount;
     S.roadCadence=next.cadence;S.roadPace=next.pace;S.roadManual=true;S._roadFocus=next.courseKey;
+    if(patch&&patch.cadence)S.roadCadenceChosen=true; /* 직접 고른 횟수만 진단 로드맵에 넘긴다(2026-11-02) — 저장이 실패하면 위 keys 복원으로 되돌아간다 */
     if(guidanceChoice)S.middleStudyGuidanceChoices={...S.middleStudyGuidanceChoices,[guidanceChoice.key]:guidanceChoice.value};
     if(!save())throw new Error('plan_save_failed');
     syncAmount();return true;
