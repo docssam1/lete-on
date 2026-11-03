@@ -516,6 +516,30 @@
       scorePolicyLink.textContent = isHistoricalAhsm ? "AHSME 시험 형식의 역사 · AMS/MAA ↗" : "MAA 2026–27 공식 채점 안내 ↗";
     }
     if (result.scoreEstimate) setText("score-estimate-value", `${result.scoreEstimate.label} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}`);
+    const amcReference = window.GFIELDAMCScoreDistributionReference;
+    const amcCohortSection = $("amc-cohort-reference");
+    const selectedForm = $("archive-form").value || params.get("form") || "";
+    const amcCohort = ["amc8", "amc10", "amc12"].includes(selectedFormat().id) && result.complete && result.scoreEstimate && amcReference
+      ? amcReference.referenceFor(selectedFormat().id, selectedYear, selectedForm)
+      : null;
+    amcCohortSection.hidden = !amcCohort;
+    if (amcCohort) {
+      const cohortName = selectedFormat().id === "amc8" ? "AMC 8" : `${selectedFormat().title} ${selectedForm}`;
+      setText("amc-cohort-summary", `${selectedYear} ${cohortName} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}점 · 같은 연도·시험지 기준점을 확인합니다.`);
+      const cohortBands = $("amc-cohort-bands");
+      cohortBands.replaceChildren();
+      amcReference.bands.forEach(function (band) {
+        const item = document.createElement("div");
+        const reached = result.scoreEstimate.points >= amcCohort[band.id];
+        item.className = "paper-question-band aime-cohort-band" + (reached ? " is-reached" : "");
+        const label = document.createElement("strong"); label.textContent = band.label;
+        const score = document.createElement("span"); score.textContent = `${Number.isInteger(amcCohort[band.id]) ? amcCohort[band.id] : amcCohort[band.id].toFixed(1)} / ${result.scoreEstimate.max}`;
+        const details = document.createElement("small"); details.textContent = reached ? "기준점 이상" : "기준점 미만";
+        item.append(label, score, details); cohortBands.append(item);
+      });
+      setText("amc-cohort-stats", `MAA 보고서 표본 ${amcCohort.students.toLocaleString("en-US")}명 · 학교 ${amcCohort.schools.toLocaleString("en-US")}곳 · 평균 ${amcCohort.average.toFixed(2)} · 표준편차 ${amcCohort.standardDeviation.toFixed(2)}.`);
+      $("amc-cohort-source").href = amcCohort.sourceUrl;
+    }
     const aimeReference = window.GFIELDAimeScoreDistributionReference;
     const aimeCohort = $("aime-cohort-reference");
     const aimeKeyYear = Number($("archive-year").value || params.get("year"));

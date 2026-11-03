@@ -77,6 +77,52 @@ test("AMC 12 archive picker reaches the earliest listed year", async function ()
   await page.close();
 });
 
+test("complete AMC papers compare only with the matching MAA year and form cohort", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=10&program=amc12&year=2025&form=B`, { waitUntil: "networkidle" });
+  for (let question = 1; question <= 25; question += 1) {
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption(question <= 19 ? "correct" : "wrong");
+    if (question > 19) await page.locator(`[data-question="${question}"][data-field="reason"]`).selectOption("concept");
+  }
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator("#amc-cohort-reference").isVisible(), true);
+  assert.match(await page.locator("#amc-cohort-summary").innerText(), /2025 AMC 12 B · 114 \/ 150점/);
+  const bands = page.locator("#amc-cohort-bands .paper-question-band");
+  assert.equal(await bands.count(), 7);
+  assert.match(await bands.nth(3).innerText(), /상위 10% 기준[\s\S]*109\.5 \/ 150[\s\S]*기준점 이상/);
+  assert.match(await bands.nth(2).innerText(), /상위 5% 기준[\s\S]*127\.5 \/ 150[\s\S]*기준점 미만/);
+  assert.match(await page.locator("#amc-cohort-stats").innerText(), /MAA 보고서 표본 16,432명/);
+  assert.equal(await page.locator("#amc-cohort-source").getAttribute("href"), "https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561&schoolyear=2026&amccomp=81058&viewClicked=true");
+  assert.match(await page.locator("#amc-cohort-reference").innerText(), /학년별 순위·등급/);
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("AMC cohort reference stays hidden for incomplete or unavailable paper-year records", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.goto(`${url}?grade=7&program=amc8&year=2026`, { waitUntil: "networkidle" });
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator("#amc-cohort-reference").isHidden(), true);
+  for (let question = 1; question <= 25; question += 1) {
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("correct");
+  }
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator("#amc-cohort-reference").isVisible(), true);
+  assert.match(await page.locator("#amc-cohort-summary").innerText(), /2026 AMC 8 · 25 \/ 25점/);
+  await page.locator("#archive-year").selectOption("2022");
+  for (let question = 1; question <= 25; question += 1) {
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("correct");
+  }
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator("#amc-cohort-reference").isHidden(), true);
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [1280, 1280]);
+  await page.close();
+});
+
 test("AMC 12 functions/trigonometry errors open the dedicated matching practice bank", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
