@@ -27,6 +27,54 @@ test.before(async function () {
 });
 test.after(async function () { if (browser) await browser.close(); if (server) await new Promise(function (resolve) { server.close(resolve); }); });
 
+test("AMC original answer-key comparison is explicit, source-linked, and preserves manual review", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto(`${url}?grade=9&program=amc10&year=2025&form=A`, { waitUntil: "networkidle" });
+  const button = page.locator("#apply-answer-key");
+  assert.equal(await button.isVisible(), true);
+  assert.equal(await button.isDisabled(), false);
+  await page.locator('[data-question="1"][data-field="answer"]').selectOption("E");
+  await page.locator('[data-question="2"][data-field="answer"]').selectOption("B");
+  await page.locator('[data-question="3"][data-field="answer"]').selectOption("A");
+  await button.click();
+  assert.match(await page.locator("#answer-key-action-status").innerText(), /정답 2 · 오답 1 · 미응답 22/);
+  assert.equal(await page.locator('[data-question="1"][data-field="status"]').inputValue(), "correct");
+  assert.equal(await page.locator('[data-question="3"][data-field="status"]').inputValue(), "wrong");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#answer-key-result-note").innerText(), /LIVE 공개 정답표로 25문항을 대조/);
+  assert.equal(await page.locator("#answer-key-result-note a").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc10/2025A/answers");
+  assert.match(await page.locator("#report-review-items-list").innerText(), /3번 · 오답 · 내 답 A · 정답 D/);
+  assert.deepEqual(errors, []);
+  await page.close();
+
+  const manualPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await manualPage.goto(`${url}?grade=7&program=amc8&year=2023`, { waitUntil: "networkidle" });
+  await manualPage.locator('[data-question="1"][data-field="answer"]').selectOption("E");
+  await manualPage.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
+  await manualPage.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await manualPage.locator("#answer-key-result-note").isVisible(), false);
+  assert.match(await manualPage.locator("#report-review-items-list").innerText(), /1번 · 오답 · 내 답 E/);
+  await manualPage.close();
+});
+
+test("AIME integer answer key comparison accepts only 0–999 integer entries", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto(`${url}?grade=10&program=aime&year=2025&form=I`, { waitUntil: "networkidle" });
+  await page.locator('[data-question="1"][data-field="answer"]').fill("70");
+  await page.locator('[data-question="2"][data-field="answer"]').fill("999");
+  await page.locator("#apply-answer-key").click();
+  assert.match(await page.locator("#answer-key-action-status").innerText(), /정답 1 · 오답 1 · 미응답 13/);
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#report-review-items-list").innerText(), /2번 · 오답 · 내 답 999 · 정답 588/);
+  assert.equal(await page.locator("#answer-key-result-note a").getAttribute("href"), "https://live.poshenloh.com/past-contests/aime/2025I/answers");
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("yearly AMC originals expose print, answer entry, and local self-marking", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
