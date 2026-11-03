@@ -4,7 +4,10 @@ This folder contains historical, source-attributed aggregate data for future rev
 
 `amc8-2011-korea-grade-percentile.csv` transcribes the MAA report table reproduced by AMC Study for the 2011 AMC 8 Korea participant cohort (899 reported participants). It contains only score-by-grade-group counts and the table's reported percentile values; no names, school records, or individual results are copied.
 
+`amc8-2009-korea-grade-score-count.csv` transcribes the score-by-grade frequency table reproduced for the 2009 AMC 8 Korea participant cohort (741 reported participants). It has grade buckets 5–8 only and no percentile values. The four grade totals sum to 737, leaving four participants with no grade recorded in the report summary.
+
 - Source: https://www.amcstudy.net/79
+- 2009 source: https://www.amcstudy.net/43
 - Population: Korea (as described by the source page), not the US national cohort.
 - Grade buckets: `<=5`, `6`, `7`, `8`, plus unknown in the source. The CSV includes the four named grade buckets only; the unknown and overall columns are omitted.
 - Source status: secondary transcription of a report attributed to MAA; original MAA report capture and exact percentile formula have not yet been verified.
