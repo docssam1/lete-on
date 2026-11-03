@@ -461,9 +461,9 @@
     const fractions = (prompt.match(/class="math-fraction"/g) || []).length;
     const blocks = (prompt.match(/<(?:p|li|div|br)\b/gi) || []).length;
     const text = prompt.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-    return fractions >= 3 && fractions <= 6 && blocks <= 4 && text.length <= 180
-      && !/<(?:svg|table|img|canvas|style|figure)\b/i.test(prompt)
-      && !/class="[^"]*\bequation\b/i.test(prompt);
+    const eligibleFractionCount = fractions >= 3 || question?.type?.id === "4-2-u1-t6-2";
+    return eligibleFractionCount && fractions <= 6 && blocks <= 4 && text.length <= 180
+      && !/<(?:svg|table|img|canvas|style|figure)\b/i.test(prompt);
   }
 
   function needsWidePrint(question) {
