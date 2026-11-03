@@ -96,3 +96,38 @@
  .account-hero{padding-top:8px}.account-heading{margin-bottom:8px}.member-landing .member-card{padding-block:16px}
 }
 .member-landing .member-reel-controls button[aria-pressed=true]{background:#eee6f3;color:#54346b}
+/* One anonymous senior example is readable before sign-in. */
+.account-senior-section{padding:28px 0 60px;scroll-margin-top:24px}
+.account-senior-example{border:1px solid #d9d3e5;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 18px 44px #25315509}
+.account-senior-header{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:30px 34px;background:linear-gradient(125deg,#26365f,#414772);color:#f5f6ff}
+.account-case-type{font-size:12px;color:#c7d3ef}
+.account-senior-header h3{font-size:26px;font-weight:650;line-height:1.45;letter-spacing:-.035em;margin:10px 0 8px;word-break:keep-all}
+.account-senior-header p{font-size:15px;color:#d9e4ff;margin:0;line-height:1.7}
+.account-senior-header>img{flex:none;width:88px;height:88px;filter:drop-shadow(0 8px 10px #0d16353d)}
+.account-senior-milestones{list-style:none;padding:30px 34px 20px;margin:0}
+.account-senior-milestones li{display:grid;grid-template-columns:92px minmax(0,1.1fr) minmax(0,1fr);gap:16px;padding:0 0 18px 20px;position:relative;border-left:1px solid #d1c4de;margin-left:5px}
+.account-senior-milestones li::before{content:"";position:absolute;left:-5px;top:17px;width:9px;height:9px;border:2px solid white;border-radius:50%;background:#8b70a3;box-shadow:0 0 0 1px #b5a2c7}
+.account-senior-milestones li:last-child{padding-bottom:0;border-left-color:transparent}
+.account-senior-when{font-size:14px;font-weight:650;line-height:1.7;padding-top:9px;color:#564064}
+.account-senior-lane{padding:14px 18px;border:1px solid #e1daeb;border-radius:12px;min-width:0}
+.account-senior-lane.lane-school{background:#f4f0f8}
+.account-senior-lane.lane-thinking{background:#eef4f3;border-color:#dce7e3}
+.account-senior-lane h4{font-size:12px;line-height:1.5;font-weight:600;margin:0 0 6px;color:#78618b}
+.account-senior-lane.lane-thinking h4{color:#58776d}
+.account-senior-lane p{font-size:15px;font-weight:550;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere;margin:0;color:#373047}
+.account-senior-lane small{display:block;font-size:12px;line-height:1.7;word-break:keep-all;overflow-wrap:anywhere;margin-top:5px;color:#706777}
+.account-senior-concern{margin:8px 34px 28px;padding:18px 22px;border-left:3px solid #a38bb7;background:#faf8fc;border-radius:0 10px 10px 0}
+.account-senior-concern h4{font-size:15px;line-height:1.6;font-weight:600;margin:0 0 6px;color:#5c456d}
+.account-senior-concern p{font-size:14px;line-height:1.85;word-break:keep-all;margin:0;color:#75697d}
+.account-senior-later{display:flex;align-items:center;justify-content:space-between;gap:18px;border-top:1px solid #e4ddec;background:#f7f5fa;padding:24px 34px}
+.account-senior-later>div{min-width:0}.account-senior-later small{display:block;font-size:12px;line-height:1.6;color:#81718d;margin-bottom:6px}.account-senior-later strong{font-size:16px;line-height:1.5;font-weight:600;color:#564064;word-break:keep-all}.account-senior-later>span{font-size:19px;color:#b3a5bf}
+.account-senior-more{display:flex;align-items:center;justify-content:space-between;gap:30px;margin-top:24px;padding:24px 0 0}
+.account-senior-more h3{font-size:19px;font-weight:600;line-height:1.6;letter-spacing:-.025em;margin:0 0 6px;color:#463352;word-break:keep-all}
+.account-senior-more p{font-size:14px;line-height:1.8;color:var(--member-muted);margin:0;max-width:570px;word-break:keep-all}
+.account-senior-more .member-primary{width:auto;flex:none;font-size:14px;margin:0;padding-inline:22px}
+@media(max-width:900px){.account-senior-milestones{padding-inline:22px}.account-senior-milestones li{grid-template-columns:74px minmax(0,1fr) minmax(0,1fr);gap:12px;padding-left:16px}.account-senior-lane{padding:12px}.account-senior-concern{margin-inline:22px}.account-senior-more{align-items:flex-start;flex-direction:column;gap:18px}}
+@media(max-width:620px) and (orientation:portrait){
+ .member-landing .account-nav{gap:12px}.account-senior-section{padding:20px 0 40px}.account-senior-example{border-radius:18px}.account-senior-header{padding:24px 20px;gap:12px}.account-senior-header h3{font-size:22px;margin-top:8px}.account-senior-header p{font-size:13px}.account-case-type{font-size:11px}.account-senior-header>img{width:50px;height:50px}
+ .account-senior-milestones{padding:24px 18px 14px}.account-senior-milestones li{grid-template-columns:1fr;gap:9px;padding:0 0 24px 18px;margin-left:3px}.account-senior-milestones li::before{top:10px}.account-senior-when{padding-top:0;font-size:14px;margin-bottom:3px}.account-senior-lane{padding:12px 14px}.account-senior-lane h4{font-size:12px;margin-bottom:4px}.account-senior-lane p{font-size:14px}.account-senior-lane small{font-size:12px;margin-top:3px}.account-senior-concern{margin:10px 18px 22px;padding:16px}.account-senior-concern h4{font-size:14px}.account-senior-concern p{font-size:13px}
+ .account-senior-later{align-items:flex-start;flex-direction:column;gap:12px;padding:22px}.account-senior-later>span{display:none}.account-senior-later>div{display:grid;grid-template-columns:115px 1fr;gap:12px;width:100%}.account-senior-later small{font-size:11px;margin:0;padding-top:2px}.account-senior-later strong{font-size:14px}.account-senior-more{margin-top:8px;padding-top:20px;gap:16px}.account-senior-more h3{font-size:18px}.account-senior-more p{font-size:13px}.account-senior-more .member-primary{width:100%;font-size:13px;padding:12px 14px}
+}
