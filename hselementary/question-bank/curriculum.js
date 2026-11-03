@@ -3607,6 +3607,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:source,sourceParentItemId:parent,sourceItemLabel:"확인학습 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:pdf,alternateSourcePdfPage:pdf+1,sourcePrintedPage:printed,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:!manual,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 구조를 대조하고 수치를 바꾼 유사문항을 독립 검산했습니다."});
   }
 
+  if (source52Unit2) {
+    const type=source52Unit2.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u2-t2-2");
+    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u2-e2-example-3-linked-similar",sourceParentItemId:"5-2-u2-e2-example-3",sourceItemLabel:"예제 2-3 원문 기반 유사문항",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:12,alternateSourcePdfPage:11,sourcePrintedPage:16,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2LinkedBouncingDistanceSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 예제 2-3의 낙하·두 번의 반동과 이동 거리 조건을 대조하고 바뀐 수치의 답을 독립 검산했습니다."});
+  }
+
   if (source52Unit2) for (const [id,source,parent,key,manual,pdf,printed] of [
     ["5-2-u2-t1-2","5-2-u2-practice-6-similar","5-2-u2-practice-6-original","source52U2TimeFractionDistanceSimilar",true,71,75],
     ["5-2-u2-t4","5-2-u2-practice-63-similar","5-2-u2-practice-63-original","source52U2SmallestFractionSimilar",true,78,82],
