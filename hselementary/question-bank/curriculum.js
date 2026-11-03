@@ -4001,6 +4001,16 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     }
   }
 
+  // 출처에 유사문항으로 분류된 유형은 인쇄 제목에도 그 구분이 보여야 한다.
+  {
+    const grade52 = semesters.find(semester=>semester.id === "5-2");
+    for (const type of grade52?.units.flatMap(unit=>unit.subunits.flatMap(group=>group.types)) || []) {
+      if (!type.sourceVerified || type.reviewLocked || !type.sourceItemLabel?.includes("유사문항")) continue;
+      if (!/유사문항|연습/.test(type.name)) type.name += " · 유사문항";
+      if (type.label && !/유사문항|연습/.test(type.label)) type.label += " · 유사문항";
+    }
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
