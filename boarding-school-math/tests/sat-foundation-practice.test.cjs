@@ -133,6 +133,20 @@ test("Grade 6, 7, 8, and 10 roadmaps link to the GFIELD foundation set before of
     const satPeriod = page.locator("#annual-plan-periods > li").nth(2);
     const ownLink = satPeriod.locator('a[href^="./sat-foundation-practice.html"]');
     assert.equal(await ownLink.innerText(), grade <= 7 ? "지필드 SAT Math 기초 연결 연습 · 자체 20문항" : "지필드 SAT Math 네 영역 기초 복습 · 자체 20문항");
+    if (grade === 10) {
+      assert.deepEqual(await page.locator("#annual-plan-periods > li").nth(1).locator("a").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("href"); }); }), [
+        "./aime-practice.html?grade=10",
+        "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/",
+        "https://maa.org/maa-invitational-competitions/"
+      ]);
+      assert.deepEqual(await satPeriod.locator("a").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("href"); }); }), [
+        "./sat-foundation-practice.html?grade=10",
+        "./precalculus-workbook.html",
+        "https://www.khanacademy.org/digital-sat",
+        "https://satsuite.collegeboard.org/practice/practice-tests/bluebook",
+        "https://satsuite.collegeboard.org/practice/student-question-bank/math"
+      ]);
+    }
     assert.match(await ownLink.getAttribute("href"), new RegExp(`grade=${grade}$`));
     await ownLink.click();
     await page.waitForURL(new RegExp(`sat-foundation-practice\\.html\\?grade=${grade}$`));

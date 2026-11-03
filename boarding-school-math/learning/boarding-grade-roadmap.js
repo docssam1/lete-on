@@ -50,8 +50,8 @@
     }),
     10: Object.freeze({
       0: Object.freeze([preCalculusReference]),
-      1: Object.freeze([Object.freeze({ title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=10" })]),
-      2: Object.freeze([satFoundationReview(10), preCalculusReference, Object.freeze({ title: "College Board Bluebook 실전 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" }), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
+      1: Object.freeze([Object.freeze({ title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=10" }), maaAime2027Reference, maaInvitationalReference]),
+      2: Object.freeze([satFoundationReview(10), preCalculusReference, Object.freeze({ title: "Khan Academy Digital SAT Math", url: "https://www.khanacademy.org/digital-sat" }), Object.freeze({ title: "College Board Bluebook 실전 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" }), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([proofWritingReference, maaInvitationalReference])
     })
   });
