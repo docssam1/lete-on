@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261103-47">
+  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261103-48">
   <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-2">
 </head>
 <body class="academy-page page-boarding-roadmap">
@@ -66,7 +66,7 @@
         </article>
         <aside class="journey-side" aria-labelledby="check-title">
           <p class="boarding-kicker">내 학습 경로</p><h3 id="check-title">어디쯤인지 함께 확인해요</h3>
-          <div class="journey-position-card"><span id="journey-evidence-label">평가 기록</span><strong id="journey-evidence-title">아직 입력한 평가 기록이 없어요</strong><p id="journey-evidence-copy">시험 점수와 과정 선택은 평가 결과 비교에서 확인할 수 있어요. 이 경로는 공식 학교 배정이나 학생 등급을 뜻하지 않아요.</p><a id="journey-assessment-link" href="./assessment-entry.html?grade=7">평가 결과 비교하기 <span aria-hidden="true">→</span></a></div>
+          <div class="journey-position-card"><span id="journey-practice-label">지필드 자체 모의고사</span><strong id="journey-practice-title">우리 모의고사를 풀어 봐요</strong><p id="journey-practice-copy">학교 성적 입력 없이 지필드 모의고사를 풀고 이번 시험의 결과를 확인해요.</p><a id="journey-practice-link" href="./grade7-ns-a-mock-exam.html">모의고사 시작 <span aria-hidden="true">→</span></a></div>
           <div id="journey-next-preview" class="journey-next-preview" aria-live="polite">
             <span id="journey-selected-label">지도에서 선택</span><strong id="journey-selected-title">개념 지점을 눌러 보세요</strong>
             <div class="journey-next-stop" id="journey-next-stop" hidden><span>다음으로 볼 개념</span><strong id="journey-next-title"></strong><button id="journey-next-button" class="journey-next-button" type="button">이 구간 미리보기 →</button></div>
@@ -132,10 +132,10 @@
           <article class="comparison-column"><p class="comparison-grade-label" id="comparison-target-label"></p><h3 id="comparison-target-title"></h3><p id="comparison-target-core"></p><dl id="comparison-target-tracks"></dl></article>
           <p class="comparison-bridge"><strong>개념 연결</strong><span id="comparison-bridge-copy"></span></p></div>
         <div id="comparison-mobile-view" class="comparison-mobile-view"></div>
-      <section id="comparison-assessment-pair" class="comparison-assessment-pair" aria-labelledby="comparison-assessment-heading"><div class="comparison-pair-heading"><p class="boarding-kicker">평가 기록 · 학년 계획 예시</p><h3 id="comparison-assessment-heading">선택한 학년의 학습 경로를 비교해요</h3></div><div class="comparison-pair-columns"><article><span id="comparison-assessment-current-label"></span><h4 id="comparison-assessment-current-title"></h4><p id="comparison-assessment-current-copy"></p><a id="comparison-assessment-link" href="./assessment-entry.html?grade=7">평가 기록 입력 →</a></article><article><span id="comparison-assessment-target-label"></span><h4 id="comparison-assessment-target-title"></h4><p id="comparison-assessment-target-copy"></p><a id="comparison-assessment-target-link" href="./assessment-entry.html?grade=8" hidden>이 학년 평가 기록 입력 →</a></article></div><section class="rit-comparison" aria-labelledby="rit-comparison-title"><h4 id="rit-comparison-title">MAP Growth 수학 RIT</h4><p id="rit-comparison-copy">두 학년에 모두 MAP Growth 수학 기록이 있을 때만 같은 RIT 척도의 입력값을 나란히 보여줘요.</p></section><section id="map-percentile-comparison" class="rit-comparison" aria-labelledby="map-percentile-comparison-title" data-state="needs-matching-norms"><h4 id="map-percentile-comparison-title">MAP Growth · 학년별 규준 백분위</h4><p id="map-percentile-comparison-copy">규준 연도·시험 시기·시험 전 수업 주차가 두 기록에서 모두 같을 때만 학년별 백분위를 비교해요.</p></section><section id="same-source-score-comparison" class="rit-comparison" aria-labelledby="same-source-score-comparison-title" data-state="no-matching-records" hidden><h4 id="same-source-score-comparison-title">같은 시험 출처 · 성적표 입력값</h4><p id="same-source-score-comparison-note">같은 출처의 원기록을 나란히 표시합니다. 시험 레벨·형식·규준이 다른지 확인하고 해석하세요.</p><div id="same-source-score-comparison-cards" class="same-source-score-pair-cards"></div></section><section id="competition-grade-comparison" class="rit-comparison" aria-labelledby="competition-grade-comparison-title" data-state="needs-matching-program-records"><h4 id="competition-grade-comparison-title">경시 복습 · 날짜·메모 일치</h4><p id="competition-grade-comparison-copy">같은 대회와 직접 입력한 날짜·문제지 메모가 일치한 복습 기록을 나란히 보여줘요. 실제 시험지 동일성이나 난도는 확인하지 않으며, 성장·실력 등급을 판정하지 않아요.</p><div id="competition-grade-comparison-cards" class="competition-record-pair-cards"></div></section><p class="comparison-pair-note">평가 기록은 각 학년의 출처·날짜·직접 고른 과정 경로를 나란히 보여줘요. 서로 다른 시험의 값은 비교하지 않으며, 성적표 점수로 학년 등급이나 공식 배정을 판정하지 않아요.</p></section>
+      <section id="comparison-practice-pair" class="comparison-practice-pair" aria-labelledby="comparison-practice-heading"><div class="comparison-pair-heading"><p class="boarding-kicker">지필드 자체 문항</p><h3 id="comparison-practice-heading">학년별 모의고사와 학습 자료</h3><p>학교 성적 입력 없이 지필드 자체 문항으로 확인해요. 같은 범위·같은 기준으로 검토된 모의고사끼리만 결과 비교를 연결합니다.</p></div><div class="comparison-pair-columns own-practice-columns"><article><span id="comparison-practice-current-label"></span><h4 id="comparison-practice-current-title"></h4><ul id="comparison-practice-current-links" class="own-practice-links"></ul></article><article><span id="comparison-practice-target-label"></span><h4 id="comparison-practice-target-title"></h4><ul id="comparison-practice-target-links" class="own-practice-links"></ul></article></div><p class="comparison-pair-note">자료 종류·범위가 다른 점수는 나란히 등급처럼 비교하지 않아요. 학년 간 비교는 검토된 공통 기준이 마련된 뒤 결과 화면에 연결합니다.</p></section>
+      <section id="competition-grade-comparison" class="rit-comparison" aria-labelledby="competition-grade-comparison-title" data-state="needs-matching-program-records"><h4 id="competition-grade-comparison-title">경시 복습 · 날짜·메모 일치</h4><p id="competition-grade-comparison-copy">같은 대회와 직접 입력한 날짜·문제지 메모가 일치한 복습 기록을 나란히 보여줘요. 실제 시험지 동일성이나 난도는 확인하지 않으며, 성장·실력 등급을 판정하지 않아요.</p><div id="competition-grade-comparison-cards" class="competition-record-pair-cards"></div></section>
       </div>
       <p class="comparison-boundary">학년 자료를 나란히 보여 주는 계획 예시예요. 실제 수업 순서·학생의 현재 위치·배정 과목을 판단하지 않아요.</p>
-      <div class="comparison-evidence-link"><div><strong>실제 결과로 학습 위치 확인</strong><p>학교 Placement Test나 MAP·CTP 성적표가 있다면 현재 과정과 목표 과정을 입력해 비교할 수 있어요.</p><small>경로 제안은 학교의 공식 과목 배정을 대신하지 않습니다.</small></div><a id="assessment-entry-link" href="./assessment-entry.html?grade=7">평가 결과 비교하기 →</a></div>
     </section>
 
     <section class="level-section boarding-shell" aria-labelledby="level-title"><div class="map-head"><div><p class="boarding-kicker">02 · 학습 기준</p><h2 id="level-title">어디서 시작할까요?</h2></div><p>학생이 푼 문제를 보고 골라요.</p></div>
@@ -167,6 +167,6 @@
   <script src="./curriculum/course-pathways.js?v=20261103-13"></script>
   <script src="./curriculum/algebra-1-course.js?v=20261103-8"></script>
   <script src="./shared/math-inline.js?v=20261103-17"></script>
-  <script src="./boarding-roadmap.js?v=20261103-18"></script>
+  <script src="./boarding-roadmap.js?v=20261103-20"></script>
 </body>
 </html>

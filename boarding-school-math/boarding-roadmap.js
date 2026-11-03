@@ -334,12 +334,72 @@
       } else $("grade7-no-resource").hidden = externalResources.length > 0;
     }
   }
+  function ownPracticeResources(selectedGrade) {
+    const resources = [];
+    if (selectedGrade === 7) resources.push({ title: "지필드 7.NS.A 유리수 연산 단원 모의고사 · 1회", url: "./grade7-ns-a-mock-exam.html" });
+    if (selectedGrade === 6) resources.push({ title: "지필드 6.NS.A 분수 나눗셈 단원 워크북", url: "./unit-workbook.html?cluster=6.NS.A&mode=workbook&audience=student&locale=ko&paper=A4" });
+    if (selectedGrade === 7) ["7.NS.A", "7.RP.A"].forEach(function (clusterId) {
+      const label = clusterId === "7.NS.A" ? "유리수 연산" : "비례 관계";
+      resources.push({ title: `지필드 ${clusterId} ${label} 단원 워크북`, url: `./unit-workbook.html?cluster=${clusterId}&mode=workbook&audience=student&locale=ko&paper=A4` });
+    });
+    const stageLinks = data.annualPlanResourceLinks && data.annualPlanResourceLinks[selectedGrade];
+    Object.values(stageLinks || {}).flat().forEach(function (resource) {
+      if (resource && resource.url.startsWith("./") && resource.title.startsWith("지필드")) resources.push(resource);
+    });
+    const seen = new Set();
+    return resources.filter(function (resource) {
+      if (seen.has(resource.url)) return false;
+      seen.add(resource.url);
+      return true;
+    }).slice(0, 5);
+  }
+  function renderOwnPracticeEntry() {
+    const resources = ownPracticeResources(grade);
+    const label = $("journey-practice-label");
+    const title = $("journey-practice-title");
+    const copy = $("journey-practice-copy");
+    const link = $("journey-practice-link");
+    if (!resources.length) {
+      label.textContent = `${grade}학년 · 자체 문항`;
+      title.textContent = "이 학년 자료를 준비하고 있어요";
+      copy.textContent = "학교 성적 입력은 필요하지 않아요. 지필드 자체 문항이 준비되면 이 자리에서 바로 풀 수 있어요.";
+      link.hidden = true;
+      return;
+    }
+    label.textContent = `지필드 자체 문항 · ${grade}학년`;
+    title.textContent = resources[0].title;
+    copy.textContent = grade === 7
+      ? "학교 점수 입력 없이 7.NS.A 모의고사를 풀고, 이번 시험의 문항별 결과를 확인해요."
+      : "학교 점수 입력 없이 공개된 지필드 학습 자료를 직접 풀어 봐요.";
+    link.href = resources[0].url;
+    link.hidden = false;
+  }
+  function appendOwnPracticeLinks(gradeEntry, labelId, titleId, listId) {
+    const resources = ownPracticeResources(gradeEntry.grade);
+    setText(labelId, `${gradeEntry.grade}학년 · 자체 문항`);
+    setText(titleId, resources.length ? `${resources.length}개 지필드 학습 자료` : "자체 문항 준비 중");
+    const list = $(listId);
+    list.replaceChildren();
+    if (!resources.length) {
+      const item = document.createElement("li");
+      item.textContent = "이 학년의 자체 문항은 준비 중이에요.";
+      list.append(item);
+      return;
+    }
+    resources.forEach(function (resource) {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = resource.url;
+      link.textContent = resource.title;
+      item.append(link);
+      list.append(item);
+    });
+  }
   function renderJourneyPreview(entry) {
     const selectedLabel = $("journey-selected-label");
     const selectedTitle = $("journey-selected-title");
     const nextStop = $("journey-next-stop");
     const endNote = $("journey-route-end");
-    $("journey-assessment-link").href = `./assessment-entry.html?grade=${grade}`;
     if (stage === null || !entry.steps[stage]) {
       selectedLabel.textContent = "아직 선택 전";
       selectedTitle.textContent = "경로 지점을 눌러 내용을 살펴보세요";
@@ -353,45 +413,6 @@
     nextStop.hidden = !next;
     endNote.hidden = Boolean(next);
     if (next) setText("journey-next-title", next[0]);
-  }
-  function matchingAssessmentEvidence(selectedGrade, sourceId) {
-    const gradeToMatch = Number.isInteger(selectedGrade) ? selectedGrade : grade;
-    try {
-      const records = window.GFIELDLocalLearningRecord;
-      if (!records) return null;
-      const evidence = sourceId
-        ? records.storage.loadAssessmentEvidenceHistory().find(function (entry) { return entry.grade === gradeToMatch && entry.source && entry.source.id === sourceId; })
-        : records.storage.loadLatestAssessmentEvidence(gradeToMatch);
-      return evidence && !evidence.legacyEvidence && evidence.grade === gradeToMatch && evidence.source && evidence.currentCourse ? evidence : null;
-    } catch (error) { return null; }
-  }
-  function assessmentDate(evidence) {
-    return typeof evidence.testDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(evidence.testDate)
-      ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${evidence.testDate}T00:00:00Z`))
-      : "날짜 미입력";
-  }
-  function seasonLabel(season) {
-    return ({ fall: "Fall", winter: "Winter", spring: "Spring", summer: "Summer" })[season] || "시기 미기재";
-  }
-  function assessmentLevelLabel(level) {
-    return ({ "ssat-elementary-3": "SSAT Elementary · Grade 3", "ssat-elementary-4": "SSAT Elementary · Grade 4", "ssat-middle": "SSAT Middle", "ssat-upper": "SSAT Upper", "isee-primary-2": "ISEE Primary 2", "isee-primary-3": "ISEE Primary 3", "isee-primary-4": "ISEE Primary 4", "isee-lower": "ISEE Lower", "isee-middle": "ISEE Middle", "isee-upper": "ISEE Upper" })[level] || "레벨 미기재";
-  }
-  function renderAssessmentEvidence() {
-    const label = $("journey-evidence-label");
-    const title = $("journey-evidence-title");
-    const copy = $("journey-evidence-copy");
-    $("journey-assessment-link").href = `./assessment-entry.html?grade=${grade}`;
-    const evidence = matchingAssessmentEvidence();
-    if (!evidence) {
-      label.textContent = "평가 기록 · " + grade + "학년";
-      title.textContent = "아직 입력한 평가 기록이 없어요";
-      copy.textContent = "시험 점수와 과정 선택은 평가 결과 비교에서 확인할 수 있어요. 이 경로는 공식 학교 배정이나 학생 등급을 뜻하지 않아요.";
-      return;
-    }
-    label.textContent = `${evidence.source.label || "사용자 입력 평가"} · ${grade}학년`;
-    title.textContent = `${evidence.currentCourse.label} → ${evidence.targetCourse ? evidence.targetCourse.label : evidence.currentCourse.label}`;
-    copy.textContent = `${assessmentDate(evidence)} 성적표와 직접 고른 현재·목표 과정이에요. 점수로 학생 등급이나 공식 과목 배정을 판정하지 않아요.`;
-    label.setAttribute("title", "이 기기에 저장된 사용자의 평가 입력");
   }
   function renderRoutes() {
     const buttons = $("route-buttons");
@@ -660,7 +681,6 @@
   function renderComparison() {
     const current = data.getGrade(grade);
     const target = data.getGrade(comparisonGrade);
-    $("assessment-entry-link").href = `./assessment-entry.html?grade=${grade}`;
     const table = $("comparison-table");
     document.querySelector(".grade-comparison").classList.toggle("has-comparison", Boolean(target));
     table.hidden = !target;
@@ -671,116 +691,14 @@
     renderComparisonColumn("current", current);
     renderComparisonColumn("target", target);
     renderMobileComparison(current, target);
-    renderComparisonAssessment(current, target);
+    appendOwnPracticeLinks(current, "comparison-practice-current-label", "comparison-practice-current-title", "comparison-practice-current-links");
+    appendOwnPracticeLinks(target, "comparison-practice-target-label", "comparison-practice-target-title", "comparison-practice-target-links");
+    renderCompetitionGradeComparison(current, target);
     setText("comparison-bridge-copy", `${current.grade}학년: ${current.bridge} · ${target.grade}학년: ${target.bridge}`);
     const hasInferred = current.source === "inferred" || target.source === "inferred";
     setText("comparison-note", hasInferred
       ? `${current.grade}학년과 ${target.grade}학년의 학습 예시예요. 실제 과목과 순서는 학교 안내에서 확인해 주세요.`
       : `${current.grade}학년과 ${target.grade}학년의 학습 주제와 개념 연결을 비교해요.`);
-  }
-  function renderComparisonAssessment(current, target) {
-    const evidence = matchingAssessmentEvidence(current.grade);
-    const targetEvidence = matchingAssessmentEvidence(target.grade);
-    $("comparison-assessment-link").href = `./assessment-entry.html?grade=${current.grade}`;
-    setText("comparison-assessment-link", evidence ? "평가 결과 확인·수정 →" : "평가 기록 입력 →");
-    const targetLink = $("comparison-assessment-target-link");
-    targetLink.href = `./assessment-entry.html?grade=${target.grade}`;
-    targetLink.hidden = Boolean(targetEvidence);
-    $("comparison-assessment-heading").textContent = evidence && targetEvidence ? "학년별 평가 기록 경로를 나란히 비교해요" : "선택한 학년의 학습 경로를 비교해요";
-    setText("comparison-assessment-current-label", `${current.grade}학년 · ${evidence ? (evidence.source.label || "성적표 입력") : "평가 기록"}`);
-    setText("comparison-assessment-current-title", evidence
-      ? `${evidence.currentCourse.label} → ${evidence.targetCourse ? evidence.targetCourse.label : evidence.currentCourse.label}`
-      : "선택한 과정 경로가 없어요");
-    setText("comparison-assessment-current-copy", evidence
-      ? `${assessmentDate(evidence)} · 성적표에서 직접 입력한 현재·목표 과정`
-      : "현재 학년의 성적표와 과정을 입력하면 선택한 경로를 여기에 보여 드려요.");
-    setText("comparison-assessment-target-label", `${target.grade}학년 · ${targetEvidence ? (targetEvidence.source.label || "성적표 입력") : "학습 계획 예시"}`);
-    setText("comparison-assessment-target-title", targetEvidence
-      ? `${targetEvidence.currentCourse.label} → ${targetEvidence.targetCourse ? targetEvidence.targetCourse.label : targetEvidence.currentCourse.label}`
-      : target.title);
-    setText("comparison-assessment-target-copy", targetEvidence
-      ? `${assessmentDate(targetEvidence)} · 성적표에서 직접 입력한 현재·목표 과정`
-      : target.core);
-    const ritComparison = $("rit-comparison-copy");
-    const mapEvidence = matchingAssessmentEvidence(current.grade, "map-growth");
-    const targetMapEvidence = matchingAssessmentEvidence(target.grade, "map-growth");
-    const comparableRit = mapEvidence && targetMapEvidence
-      && Number.isFinite(mapEvidence.scores && mapEvidence.scores.rit) && Number.isFinite(targetMapEvidence.scores && targetMapEvidence.scores.rit);
-    if (comparableRit) {
-      const difference = targetMapEvidence.scores.rit - mapEvidence.scores.rit;
-      const roundedDifference = Math.round((difference + Math.sign(difference || 1) * Number.EPSILON) * 10) / 10;
-      const differenceText = roundedDifference > 0 ? `+${roundedDifference}` : String(roundedDifference);
-      ritComparison.textContent = `Grade ${current.grade} · ${assessmentDate(mapEvidence)} (${seasonLabel(mapEvidence.scores.season)}) RIT ${mapEvidence.scores.rit} → Grade ${target.grade} · ${assessmentDate(targetMapEvidence)} (${seasonLabel(targetMapEvidence.scores.season)}) RIT ${targetMapEvidence.scores.rit} · 입력값 차이 ${differenceText} RIT. 같은 학생의 기록인지 성적표에서 확인한 뒤 참고하세요. 같은 수학 RIT 수직 척도의 산술 비교일 뿐, 이 차이만으로 예상 성장, 동학년 백분위, 해당 학년의 모든 내용 숙달을 판정하지 않아요.`;
-      ritComparison.dataset.state = "comparable-scale";
-    } else {
-      ritComparison.textContent = "두 학년에 모두 MAP Growth 수학 RIT 기록이 있을 때만 같은 RIT 척도의 입력값을 나란히 보여줘요. MAP·학교 Placement·SSAT 등 서로 다른 시험 점수는 섞지 않아요.";
-      ritComparison.dataset.state = "needs-matching-map-records";
-    }
-    const percentileSection = $("map-percentile-comparison");
-    const percentileCopy = $("map-percentile-comparison-copy");
-    const sameNormReference = comparableRit
-      && mapEvidence.scores.percentile != null && targetMapEvidence.scores.percentile != null
-      && ["2020", "2025"].includes(mapEvidence.scores.normYear)
-      && mapEvidence.scores.normYear === targetMapEvidence.scores.normYear
-      && ["fall", "winter", "spring"].includes(mapEvidence.scores.season)
-      && mapEvidence.scores.season === targetMapEvidence.scores.season;
-    const matchingInstructionWindow = sameNormReference
-      && Number.isInteger(mapEvidence.scores.instructionalWeeks)
-      && mapEvidence.scores.instructionalWeeks === targetMapEvidence.scores.instructionalWeeks;
-    if (matchingInstructionWindow) {
-      const pointDifference = targetMapEvidence.scores.percentile - mapEvidence.scores.percentile;
-      const pointText = pointDifference > 0 ? `+${pointDifference}` : String(pointDifference);
-      percentileCopy.textContent = `Grade ${current.grade} 백분위 ${mapEvidence.scores.percentile} → Grade ${target.grade} 백분위 ${targetMapEvidence.scores.percentile} · 차이 ${pointText} percentile points (${mapEvidence.scores.normYear} norms · ${seasonLabel(mapEvidence.scores.season)}). 같은 학생의 기록인지 확인하세요. 각 학년 규준에서의 상대 위치를 보여 주며, 성장량·수학 내용 숙달·과목 배정을 판정하지 않습니다.`;
-      percentileSection.dataset.state = "comparable-grade-norms";
-    } else {
-      percentileCopy.textContent = "MAP Growth percentile은 규준 연도·Fall/Winter/Spring 시기·시험 전 수업 주차가 두 기록에서 모두 확인되고 같을 때만 비교해요. 확인되지 않으면 숫자를 계산하지 않습니다.";
-      percentileSection.dataset.state = "needs-matching-norms";
-    }
-    renderCompetitionGradeComparison(current, target);
-    renderSameSourceScoreComparison(current, target);
-  }
-  function renderSameSourceScoreComparison(current, target) {
-    const section = $("same-source-score-comparison");
-    const cards = $("same-source-score-comparison-cards");
-    cards.replaceChildren();
-    const sources = ["ctp", "ssat", "isee"];
-    const pairs = sources.map(function (sourceId) {
-      return { current: matchingAssessmentEvidence(current.grade, sourceId), target: matchingAssessmentEvidence(target.grade, sourceId) };
-    }).filter(function (pair) { return pair.current && pair.target; });
-    pairs.forEach(function (pair) {
-      const first = pair.current;
-      const second = pair.target;
-      const sourceLabel = first.source.label || "평가 출처";
-      const group = document.createElement("div");
-      group.className = "same-source-score-pair";
-      const heading = document.createElement("h5");
-      heading.textContent = sourceLabel;
-      group.append(heading);
-      const columns = document.createElement("div");
-      columns.className = "same-source-score-pair-columns";
-      [first, second].forEach(function (entry) {
-        const article = document.createElement("article");
-        const gradeLabel = document.createElement("strong");
-        gradeLabel.textContent = `${entry.grade}학년 · ${assessmentDate(entry)}`;
-        article.append(gradeLabel);
-        const list = document.createElement("dl");
-        const levelRow = entry.source.id === "ssat" || entry.source.id === "isee" ? [["시험 레벨", assessmentLevelLabel(entry.scores.testLevel)]] : [];
-        const values = entry.source.id === "isee"
-          ? levelRow.concat([["Quantitative Reasoning", entry.scores.quantStanine == null ? null : `Stanine ${entry.scores.quantStanine}`], ["Mathematics Achievement", entry.scores.mathStanine == null ? null : `Stanine ${entry.scores.mathStanine}`]])
-          : levelRow.concat([[entry.source.id === "ssat" ? "Quantitative 백분위" : "성취 백분위", entry.scores.percentile == null ? null : `백분위 ${entry.scores.percentile}`], ["Scale score", entry.scores.scaleScore == null ? null : String(entry.scores.scaleScore)], ["Stanine", entry.scores.stanine == null ? null : String(entry.scores.stanine)], ["비교 집단", entry.scores.normGroup || null]]);
-        values.filter(function (value) { return value[1] != null; }).forEach(function (value) {
-          const term = document.createElement("dt"); term.textContent = value[0];
-          const description = document.createElement("dd"); description.textContent = value[1];
-          list.append(term, description);
-        });
-        article.append(list);
-        columns.append(article);
-      });
-      group.append(columns);
-      cards.append(group);
-    });
-    section.hidden = pairs.length === 0;
-    section.dataset.state = pairs.length ? "same-source-values-only" : "no-matching-records";
   }
   function buildCompetitionRecordCard(record, heading, id) {
     const card = document.createElement("article"); card.className = "competition-record-pair-card";
@@ -1181,7 +1099,7 @@
     renderComparison();
     renderAnnualPlan(entry);
     renderStages(entry);
-    renderAssessmentEvidence();
+    renderOwnPracticeEntry();
     renderLevels(entry);
     renderGradeFocus();
     renderPracticeLinks();

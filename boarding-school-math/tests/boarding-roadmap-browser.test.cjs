@@ -372,7 +372,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#grade-title").innerText(), /유리수/);
   assert.equal(await page.locator(".grade-button").count(), 10);
   assert.equal(await page.locator(".stage-button").count(), 4);
-  assert.match(await page.locator(".journey-position-card").innerText(), /아직 입력한 평가 기록이 없어요/);
+  assert.match(await page.locator(".journey-position-card").innerText(), /지필드 7\.NS\.A 유리수 연산 단원 모의고사/);
   assert.match(await page.locator("#journey-next-preview").innerText(), /경로 지점을 눌러/);
   assert.equal(await page.locator("#journey-next-stop").isHidden(), true);
   await page.locator("#stage-list button").first().click();
@@ -518,211 +518,29 @@ test("Grade 11–12 roadmap identifies inferred plans and only offers the eligib
   await page.close();
 });
 
-test("roadmap shows only user-entered assessment evidence for the selected grade", async function () {
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+test("roadmap routes families to GFIELD-authored practice without requesting school results", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
-  await page.locator("#overall-percent").fill("82");
-  await page.locator("#current-course").selectOption("pre-algebra");
-  await page.locator("#target-course").selectOption("algebra-1");
-  await page.getByRole("button", { name: /비교 결과 보기/ }).click();
-  assert.equal(await page.locator("#result-content").isVisible(), true);
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("#journey-evidence-label").innerText(), "학교 수학 Placement Test · 7학년");
-  assert.equal(await page.locator("#journey-evidence-title").innerText(), "Pre-Algebra → Algebra 1");
-  assert.match(await page.locator("#journey-evidence-copy").innerText(), /공식 과목 배정을 판정하지 않아요/);
-  assert.doesNotMatch(await page.locator(".journey-position-card").innerText(), /82%/);
+  assert.match(await page.locator("#journey-practice-title").innerText(), /7\.NS\.A.*유리수 연산.*모의고사/);
+  assert.equal(await page.locator("#journey-practice-link").getAttribute("href"), "./grade7-ns-a-mock-exam.html");
+  assert.match(await page.locator("#journey-practice-copy").innerText(), /학교 점수 입력 없이.*모의고사/);
   await page.getByLabel("비교할 학년").selectOption("8");
-  assert.equal(await page.locator("#comparison-assessment-current-title").innerText(), "Pre-Algebra → Algebra 1");
-  assert.equal(await page.locator("#comparison-assessment-link").innerText(), "평가 결과 확인·수정 →");
-  assert.equal(await page.locator("#comparison-assessment-target-title").innerText(), "대수와 기하를 함께");
-  assert.match(await page.locator("#comparison-assessment-target-copy").innerText(), /함수와 기하/);
-  assert.match(await page.locator("#comparison-pair-note, .comparison-pair-note").innerText(), /공식 배정을 판정하지 않아요/);
-  await page.locator(".grade-track > summary").click();
-  await page.getByRole("button", { name: "Grade 8 지도 보기" }).click();
-  assert.equal(await page.locator("#journey-evidence-title").innerText(), "아직 입력한 평가 기록이 없어요");
-  assert.equal(await page.locator("#journey-assessment-link").getAttribute("href"), "./assessment-entry.html?grade=8");
-  await page.getByLabel("비교할 학년").selectOption("7");
-  assert.equal(await page.locator("#comparison-assessment-current-title").innerText(), "선택한 과정 경로가 없어요");
-  assert.equal(await page.locator("#comparison-assessment-link").innerText(), "평가 기록 입력 →");
-  assert.equal(await page.locator("#comparison-assessment-link").getAttribute("href"), "./assessment-entry.html?grade=8");
+  assert.equal(await page.locator("#comparison-practice-pair").isVisible(), true);
+  assert.deepEqual(await page.locator("#comparison-practice-current-links a").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href"))), [
+    "./grade7-ns-a-mock-exam.html",
+    "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4",
+    "./unit-workbook.html?cluster=7.RP.A&mode=workbook&audience=student&locale=ko&paper=A4",
+    "./algebra1-workbook.html",
+    "./geometry-workbook.html"
+  ]);
+  assert.ok(await page.locator("#comparison-practice-target-links a").count() > 0);
+  assert.equal(await page.locator('#grade-comparison a[href*="assessment-entry.html"]').count(), 0);
+  assert.doesNotMatch(await page.locator("#grade-comparison").innerText(), /MAP Growth|학교 Placement Test|성적표 입력/);
+  await page.getByLabel("비교할 학년").selectOption("3");
+  assert.match(await page.locator("#comparison-practice-target-title").innerText(), /자체 문항 준비 중/);
   assert.deepEqual(errors, []);
-  await page.close();
-});
-
-test("roadmap loads each grade's own assessment route from local history", async function () {
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-  const errors = [];
-  page.on("pageerror", function (error) { errors.push(error.message); });
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
-  await page.locator("#overall-percent").fill("82");
-  await page.locator("#current-course").selectOption("pre-algebra");
-  await page.locator("#target-course").selectOption("algebra-1");
-  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=8`, { waitUntil: "networkidle" });
-  await page.locator("#overall-percent").fill("76");
-  await page.locator("#current-course").selectOption("algebra-1");
-  await page.locator("#target-course").selectOption("geometry");
-  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
-  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
-  await page.getByLabel("비교할 학년").selectOption("8");
-  assert.equal(await page.locator("#journey-evidence-title").innerText(), "Pre-Algebra → Algebra 1");
-  assert.equal(await page.locator("#comparison-assessment-current-title").innerText(), "Pre-Algebra → Algebra 1");
-  assert.equal(await page.locator("#comparison-assessment-target-title").innerText(), "Algebra 1 → Geometry");
-  assert.match(await page.locator("#comparison-assessment-target-copy").innerText(), /성적표에서 직접 입력한 현재·목표 과정/);
-  assert.equal(await page.locator("#comparison-assessment-target-link").isVisible(), false);
-  await page.locator(".grade-track > summary").click();
-  await page.getByRole("button", { name: "Grade 8 지도 보기" }).click();
-  assert.equal(await page.locator("#journey-evidence-title").innerText(), "Algebra 1 → Geometry");
-  assert.deepEqual(errors, []);
-  await page.close();
-});
-
-test("grade comparison displays arithmetic RIT difference only for matching MAP records", async function () {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
-  await page.locator("#source-id").selectOption("map-growth");
-  await page.locator("#rit").fill("218");
-  await page.locator("#percentile").fill("55");
-  await page.locator("#season").selectOption("fall");
-  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=8`, { waitUntil: "networkidle" });
-  await page.locator("#source-id").selectOption("map-growth");
-  await page.locator("#rit").fill("231");
-  await page.locator("#percentile").fill("62");
-  await page.locator("#season").selectOption("");
-  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
-  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
-  await page.getByLabel("비교할 학년").selectOption("8");
-  const comparison = page.locator("#rit-comparison-copy");
-  assert.equal(await comparison.getAttribute("data-state"), "comparable-scale");
-  assert.match(await comparison.innerText(), /Grade 7.*RIT 218 → Grade 8.*RIT 231 · 입력값 차이 \+13 RIT/);
-  assert.match(await comparison.innerText(), /시기 미기재/);
-  assert.match(await comparison.innerText(), /같은 학생의 기록인지 성적표에서 확인/);
-  assert.match(await comparison.innerText(), /예상 성장.*동학년 백분위.*모든 내용 숙달을 판정하지 않아요/);
-  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
-  await page.close();
-});
-
-test("grade comparison rounds legacy decimal RIT differences to one decimal place", async function () {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
-  await page.evaluate(function () {
-    [
-      { grade: 7, rit: 218.1 },
-      { grade: 8, rit: 231.3 }
-    ].forEach(function (entry) {
-      const record = window.GFIELDExternalMathEvidenceEngine.analyze({ sourceId: "map-growth", testDate: "2026-09-01", grade: entry.grade, currentCourseId: "pre-algebra", targetCourseId: "algebra-1", rit: entry.rit, percentile: 55, domains: [] });
-      window.GFIELDLocalLearningRecord.storage.saveAssessmentEvidence(record);
-    });
-  });
-  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
-  await page.getByLabel("비교할 학년").selectOption("8");
-  const comparison = await page.locator("#rit-comparison-copy").innerText();
-  assert.match(comparison, /입력값 차이 \+13\.2 RIT/);
-  assert.doesNotMatch(comparison, /13\.199999/);
-  await page.close();
-});
-
-test("MAP grade percentiles compare only when norm year, season, and instruction week match", async function () {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
-  await page.evaluate(function () {
-    [
-      { grade: 7, rit: 218, percentile: 55, normYear: "2025", season: "fall", instructionalWeeks: 4 },
-      { grade: 8, rit: 224, percentile: 63, normYear: "2025", season: "fall", instructionalWeeks: 4 }
-    ].forEach(function (entry) {
-      const record = window.GFIELDExternalMathEvidenceEngine.analyze({ sourceId: "map-growth", testDate: "2026-09-01", grade: entry.grade, currentCourseId: "pre-algebra", targetCourseId: "algebra-1", rit: entry.rit, percentile: entry.percentile, normYear: entry.normYear, season: entry.season, instructionalWeeks: entry.instructionalWeeks, domains: [] });
-      window.GFIELDLocalLearningRecord.storage.saveAssessmentEvidence(record);
-    });
-  });
-  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
-  await page.locator("#comparison-grade").selectOption("8");
-  const percentile = page.locator("#map-percentile-comparison-copy");
-  assert.equal(await page.locator("#map-percentile-comparison").getAttribute("data-state"), "comparable-grade-norms");
-  assert.match(await percentile.innerText(), /Grade 7 백분위 55 → Grade 8 백분위 63 · 차이 \+8 percentile points \(2025 norms · Fall\)/);
-  assert.match(await percentile.innerText(), /같은 학생의 기록인지 확인/);
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=8`, { waitUntil: "networkidle" });
-  await page.evaluate(function () {
-    const record = window.GFIELDExternalMathEvidenceEngine.analyze({ sourceId: "map-growth", testDate: "2026-09-01", grade: 8, currentCourseId: "pre-algebra", targetCourseId: "algebra-1", rit: 224, percentile: 63, normYear: "2025", season: "fall", instructionalWeeks: 5, domains: [] });
-    window.GFIELDLocalLearningRecord.storage.saveAssessmentEvidence(record);
-  });
-  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
-  await page.locator("#comparison-grade").selectOption("8");
-  assert.equal(await page.locator("#map-percentile-comparison").getAttribute("data-state"), "needs-matching-norms");
-  assert.doesNotMatch(await page.locator("#map-percentile-comparison-copy").innerText(), /차이 \+/);
-  await page.close();
-});
-
-test("grade comparison does not calculate a difference between different assessment sources", async function () {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
-  await page.locator("#source-id").selectOption("map-growth");
-  await page.locator("#rit").fill("218");
-  await page.locator("#percentile").fill("55");
-  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=8`, { waitUntil: "networkidle" });
-  await page.locator("#overall-percent").fill("82");
-  await page.locator("#evidence-form").evaluate(function (form) { form.requestSubmit(); });
-  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
-  await page.getByLabel("비교할 학년").selectOption("8");
-  assert.equal(await page.locator("#rit-comparison-copy").getAttribute("data-state"), "needs-matching-map-records");
-  assert.doesNotMatch(await page.locator("#rit-comparison-copy").innerText(), /RIT 218.*→.*82%|입력값 차이 \+/);
-  assert.match(await page.locator("#rit-comparison-copy").innerText(), /서로 다른 시험 점수는 섞지 않아요/);
-  await page.close();
-});
-
-test("same-source CTP, SSAT, and ISEE records show raw values without deriving grade bands", async function () {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
-  await page.evaluate(function () {
-    [
-      { sourceId: "ctp", grade: 7, percentile: 81, scaleScore: 224, stanine: 7, normGroup: "Independent School Norm" },
-      { sourceId: "ssat", grade: 7, percentile: 74, scaleScore: 685, testLevel: "ssat-middle" },
-      { sourceId: "isee", grade: 7, quantStanine: 6, mathStanine: 8, testLevel: "isee-middle" },
-      { sourceId: "ctp", grade: 8, percentile: 68, scaleScore: 231, stanine: 6, normGroup: "National Norm" },
-      { sourceId: "ssat", grade: 8, percentile: 79, scaleScore: 710, testLevel: "ssat-upper" },
-      { sourceId: "isee", grade: 8, quantStanine: 7, mathStanine: 7, testLevel: "isee-upper" }
-    ].forEach(function (entry, index) {
-      const record = window.GFIELDExternalMathEvidenceEngine.analyze(Object.assign({ testDate: `2026-09-0${index + 1}`, currentCourseId: "pre-algebra", targetCourseId: "algebra-1", domains: [] }, entry));
-      window.GFIELDLocalLearningRecord.storage.saveAssessmentEvidence(record);
-    });
-  });
-  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
-  await page.locator("#comparison-grade").selectOption("8");
-  const panel = page.locator("#same-source-score-comparison");
-  assert.equal(await panel.getAttribute("data-state"), "same-source-values-only");
-  assert.equal(await page.locator(".same-source-score-pair").count(), 3);
-  const text = await panel.innerText();
-  assert.match(text, /ERB CTP Mathematics/);
-  assert.match(text, /백분위 81/);
-  assert.match(text, /Independent School Norm/);
-  assert.match(text, /National Norm/);
-  assert.match(text, /SSAT Quantitative/);
-  assert.match(text, /SSAT Middle/);
-  assert.match(text, /SSAT Upper/);
-  assert.match(text, /ISEE Quantitative \/ Mathematics/);
-  assert.match(text, /ISEE Middle/);
-  assert.match(text, /ISEE Upper/);
-  assert.match(text, /Quantitative Reasoning[\s\S]*Stanine 6/);
-  assert.match(text, /Mathematics Achievement[\s\S]*Stanine 8/);
-  assert.doesNotMatch(text, /차이|등급|성장/);
-  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
-  await page.close();
-});
-
-test("same-source score panel stays hidden when only one grade has CTP records", async function () {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(`${url.replace("boarding-roadmap.html", "assessment-entry.html")}?grade=7`, { waitUntil: "networkidle" });
-  await page.evaluate(function () {
-    const record = window.GFIELDExternalMathEvidenceEngine.analyze({ sourceId: "ctp", testDate: "2026-09-01", grade: 7, currentCourseId: "pre-algebra", targetCourseId: "algebra-1", percentile: 81, domains: [] });
-    window.GFIELDLocalLearningRecord.storage.saveAssessmentEvidence(record);
-  });
-  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
-  await page.locator("#comparison-grade").selectOption("8");
-  assert.equal(await page.locator("#same-source-score-comparison").getAttribute("data-state"), "no-matching-records");
-  assert.equal(await page.locator("#same-source-score-comparison").isHidden(), true);
   await page.close();
 });
 
@@ -755,8 +573,7 @@ test("grade comparison shows curriculum examples without implying measured level
   assert.match(await page.locator("#annual-plan-periods").innerText(), /다항식·이차식·유리식·지수·로그.*복소수·수열·행렬은.*선택/);
   assert.match(await page.locator("#annual-plan-periods").innerText(), /변환·합동·증명·닮음·삼각비·원·좌표기하/);
   const comparison = page.getByLabel("비교할 학년");
-  assert.equal(await page.locator("#assessment-entry-link").getAttribute("href"), "./assessment-entry.html?grade=8");
-  assert.match(await page.locator(".comparison-evidence-link").innerText(), /학교 Placement Test나 MAP·CTP/);
+  assert.equal(await page.locator('#grade-comparison a[href*="assessment-entry.html"]').count(), 0);
   assert.equal(await comparison.inputValue(), "");
   await comparison.selectOption("9");
   assert.equal(await page.locator("#comparison-table").isVisible(), true);
@@ -773,7 +590,7 @@ test("grade comparison shows curriculum examples without implying measured level
   assert.match(await page.locator("#comparison-target-tracks").innerText(), /10–12개월/);
   assert.match(await page.locator(".comparison-boundary").innerText(), /학생의 현재 위치.*판단하지 않아요/);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true);
-  assert.equal(await page.locator("#comparison-assessment-pair").isVisible(), true);
+  assert.equal(await page.locator("#comparison-practice-pair").isVisible(), true);
   assert.equal(await page.locator(".comparison-pair-columns article").count(), 2);
   assert.equal(await page.locator(".comparison-pair-columns").evaluate((node) => getComputedStyle(node).gridTemplateColumns.split(" ").length), 1);
   assert.equal(await page.locator(".comparison-desktop-view").isVisible(), false);
@@ -902,7 +719,7 @@ test("Grade 10 and Grade 12 comparison keeps inferred planning separate from lea
   assert.match(await page.locator("#comparison-target-tracks").innerText(), /학교 수학[\s\S]*졸업 요건·과목 경로/);
   assert.match(await page.locator("#comparison-note").innerText(), /실제 과목과 순서는 학교 안내에서 확인/);
   assert.match(await page.locator(".comparison-boundary").innerText(), /학생의 현재 위치.*판단하지 않아요/);
-  assert.match(await page.locator("#comparison-assessment-target-label").innerText(), /12학년 · 학습 계획 예시/);
+  assert.match(await page.locator("#comparison-practice-target-label").innerText(), /12학년 · 자체 문항/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [1280, 1280]);
   await page.close();
 });
@@ -1008,7 +825,7 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
   assert.match(await page.locator("#boarding-learning-plan-link").getAttribute("href"), /learning-plan\.html\?goal=school-g7-nsa/);
   assert.match(await page.locator("#boarding-learning-plan-link-bottom").getAttribute("href"), /learning-plan\.html\?goal=school-g7-nsa/);
-  assert.match(await page.locator(".journey-position-card").innerText(), /아직 입력한 평가 기록이 없어요/);
+  assert.match(await page.locator(".journey-position-card").innerText(), /지필드 7\.NS\.A 유리수 연산 단원 모의고사/);
   assert.match(await page.locator("#grade7-position").innerText(), /지점을 고르면/);
   assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /현재 위치 미확인/);
   assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /진단 후/);
@@ -1049,7 +866,7 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   await page.goBack();
   assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
   assert.equal(await page.locator(".stage-detail").isHidden(), true);
-  assert.match(await page.locator(".journey-position-card").innerText(), /아직 입력한 평가 기록이 없어요/);
+  assert.match(await page.locator(".journey-position-card").innerText(), /지필드 7\.NS\.A 유리수 연산 단원 모의고사/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   await page.close();
 });
