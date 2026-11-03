@@ -136,7 +136,9 @@ test("the GFIELD AMC 8 style mock records an answer-safe domain summary and its 
     "수 감각·비율\n5 / 5 정답", "대수·규칙\n5 / 5 정답", "기하·공간\n5 / 5 정답", "경우의 수·확률\n5 / 5 정답", "정수·자료 해석\n5 / 5 정답"
   ]);
   assert.equal(await page.locator(".mock-review .mock-data-table").count(), 3);
-  assert.equal(await page.locator(".mock-next-study a[href*='competition-practice']").getAttribute("href"), "./competition-practice.html?program=amc8");
+  const nextPractice = new URL(await page.locator(".mock-next-study a[href*='amc8-topic-practice']").getAttribute("href"));
+  assert.equal(nextPractice.pathname, "/boarding-school-math/amc8-topic-practice.html");
+  assert.equal(nextPractice.searchParams.get("grade"), "7");
   assert.match(await page.locator(".mock-result-boundary").innerText(), /다른 회차·학년과 같은 기준으로 비교한 값이 아니며.*학년 등급을 판정하지 않아요/);
   const saved = await page.evaluate(function () { return JSON.parse(localStorage.getItem("gmap-local-learning-record-v1:gfield-mock-result-history-v1")); });
   assert.equal(saved.records[0].examTitle, "지필드 AMC 8 스타일 모의고사 · 2회");

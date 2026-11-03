@@ -765,10 +765,13 @@
     const gradeSeven = grade === 7;
     const gradeTen = grade === 10;
     const gradeNine = grade === 9;
+    const gradeAMC8Route = grade === 6 || grade === 8;
     $("competition-own-mocks").hidden = !gradeSeven;
     $("competition-amc12-mock-route").hidden = !gradeTen;
     $("competition-amc10-mock-route").hidden = !gradeNine;
-    $("competition-own-mocks-empty").hidden = gradeSeven || gradeTen || gradeNine;
+    $("competition-amc8-mock-route").hidden = !gradeAMC8Route;
+    if (gradeAMC8Route) $("competition-amc8-mock-route").querySelector("a").href = `./amc8-grade7-mock-exam.html?grade=${grade}`;
+    $("competition-own-mocks-empty").hidden = gradeSeven || gradeTen || gradeNine || gradeAMC8Route;
   }
   function renderGrade7ContestBranch() {
     const link = $("grade7-contest-branch");

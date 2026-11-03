@@ -431,6 +431,12 @@ test("roadmap mock catalog lists GFIELD-authored assessment routes", async funct
   assert.equal(await page.locator("#competition-amc12-mock-route").isVisible(), true);
   assert.equal(await page.locator("#competition-amc12-mock-route a").getAttribute("href"), "./amc12-gfield-mock-exam.html");
   assert.match(await page.locator("#competition-amc12-mock-route").innerText(), /25문항 · 75분/);
+  for (const grade of [6, 8]) {
+    await page.goto(`${url}?grade=${grade}`, { waitUntil: "networkidle" });
+    assert.equal(await page.locator("#competition-amc8-mock-route").isVisible(), true);
+    assert.equal(await page.locator("#competition-amc8-mock-route a").getAttribute("href"), `./amc8-grade7-mock-exam.html?grade=${grade}`);
+    assert.equal(await page.locator("#competition-own-mocks-empty").isVisible(), false);
+  }
   await page.close();
 });
 

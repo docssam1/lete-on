@@ -27,11 +27,13 @@
     { id: "amc8-g7-v2-m24", standard: "경우의 수·확률", difficultyBand: 5, focus: "격자에서 직사각형 세기", prompt: "단위 정사각형 3행 4열로 된 격자에서 격자선을 변으로 하는 직사각형은 모두 몇 개인가요? 정사각형도 포함합니다.", choices: ["40", "48", "60", "54", "72"], answer: 2, solution: "세로 격자선 5개 중 2개를 고르는 방법은 10가지, 가로 격자선 4개 중 2개를 고르는 방법은 6가지입니다. 10×6=60개의 직사각형입니다." },
     { id: "amc8-g7-v2-m25", standard: "정수·자료 해석", difficultyBand: 5, focus: "최소공배수와 나머지 연결하기", prompt: "2, 3, 4, 5로 각각 나누면 나머지가 그 수보다 1 작고, 7의 배수인 가장 작은 양의 정수는 무엇인가요?", choices: ["119", "59", "89", "179", "239"], answer: 0, solution: "찾는 수에 1을 더하면 2, 3, 4, 5의 공배수이므로 60의 배수에서 1을 뺀 수입니다. 59는 7의 배수가 아니고, 다음 후보 119=7×17이므로 답은 119입니다." }
   ];
+  const requestedGrade = Number(new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("grade"));
+  const grade = Number.isInteger(requestedGrade) && requestedGrade >= 6 && requestedGrade <= 8 ? requestedGrade : 7;
   const exam = Object.freeze({
-    id: "gfield-grade7-amc8-style-mock-v2", formVersion: "2026-11-04-v2", grade: 7, clusterId: "AMC8",
+    id: "gfield-grade7-amc8-style-mock-v2", formVersion: "2026-11-04-v2", grade: grade, clusterId: "AMC8",
     title: "지필드 AMC 8 스타일 모의고사 · 2회", durationMinutes: 40,
     standards: Object.freeze(["수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석"]),
-    nextStudyHref: "./competition-practice.html?program=amc8", nextStudyLabel: "지필드 경시 유형 연습으로 이어가기 →",
+    nextStudyHref: `./amc8-topic-practice.html?grade=${grade}`, nextStudyLabel: "지필드 AMC 8 개념 연습으로 이어가기 →",
     items: Object.freeze(items.map(function (item) { return Object.freeze(item); }))
   });
   root.GFIELDGrade7UnitMock = exam;

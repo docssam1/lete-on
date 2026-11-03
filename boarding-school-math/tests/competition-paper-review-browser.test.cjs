@@ -195,7 +195,7 @@ test("AMC 12 original review routes into the complete GFIELD mock and then match
   await page.close();
 });
 
-test("AMC 8 review sends classified errors to matching GFIELD-authored topic practice", async function () {
+test("AMC 8 yearly original review flows through a full mock into diagnosed GFIELD topic practice", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -206,15 +206,35 @@ test("AMC 8 review sends classified errors to matching GFIELD-authored topic pra
   await page.locator('[data-question="7"][data-field="domain"]').selectOption("data");
   await page.getByRole("button", { name: "결과 보기" }).click();
   const href = await page.locator("#report-follow-up-link").getAttribute("href");
-  assert.match(href, /^\.\/amc8-topic-practice\.html\?/);
+  assert.match(href, /^\.\/amc8-grade7-mock-exam\.html\?/);
   const target = new URL(href, "http://127.0.0.1");
-  assert.equal(target.searchParams.get("domains"), "number,data");
+  assert.equal(target.searchParams.get("grade"), "7");
   assert.equal(target.searchParams.get("sourceYear"), "2023");
   assert.equal(target.searchParams.get("sourceQuestions"), "4,7");
   await page.goto(new URL(href, url).href, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#amc8-source-paper-note").innerText(), /2023 AMC 8 원본과 별도로/);
+  assert.match(await page.locator("#mock-back-link").getAttribute("href"), /\/competition-paper-review\.html\?grade=7&program=amc8&year=2023$/);
+  await page.getByRole("button", { name: "지필드 모의고사 시작" }).click();
+  const mockItems = await page.evaluate(() => window.GFIELDGrade7UnitMock.items.map(({ id, answer, choices }) => ({ id, answer, choiceCount: choices.length })));
+  for (let index = 0; index < mockItems.length; index += 1) {
+    const item = mockItems[index];
+    const choiceIndex = index === 4 || index === 15 ? (item.answer + 1) % item.choiceCount : item.answer;
+    await page.locator(`#mock-question-${item.id} .mock-choice`).nth(choiceIndex).click();
+  }
+  await page.getByRole("button", { name: "답안 제출" }).click();
+  assert.match(await page.locator(".mock-score").innerText(), /23 \/ 25/);
+  const followUp = await page.locator(".mock-next-study a[href*='amc8-topic-practice']").getAttribute("href");
+  assert.match(followUp, /\/amc8-topic-practice\.html\?/);
+  const followUpUrl = new URL(followUp, "http://127.0.0.1");
+  assert.equal(followUpUrl.searchParams.get("grade"), "7");
+  assert.equal(followUpUrl.searchParams.get("domains"), "data,number");
+  assert.equal(followUpUrl.searchParams.get("sourceYear"), "2023");
+  assert.equal(followUpUrl.searchParams.get("sourceQuestions"), "4,7");
+  assert.equal(followUpUrl.searchParams.get("mockWrongQuestions"), "5,16");
+  await page.goto(new URL(followUp, url).href, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".problem-card").count(), 10);
-  assert.match(await page.locator("#topic-intro-copy").innerText(), /2023 AMC 8 원본 복습.*수·비례·추정·그래프·표 해석/);
-  assert.match(await page.locator("#topic-source-summary").innerText(), /2023 AMC 8.*4, 7번/);
+  assert.match(await page.locator("#topic-intro-copy").innerText(), /지필드 모의고사 5, 16번.*2023 AMC 8 원본 복습.*그래프·표 해석·수·비례·추정/);
+  assert.match(await page.locator("#topic-source-summary").innerText(), /2023 AMC 8.*지필드 모의고사 5, 16번/);
   assert.equal(await page.locator("#topic-source-paper-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023");
   assert.equal(await page.locator("#topic-return-link").getAttribute("href"), "./competition-paper-review.html?grade=7&program=amc8&year=2023");
   const firstTopicItem = page.locator('.problem-card[data-item-id="amc8-g7-v2-m01"]');

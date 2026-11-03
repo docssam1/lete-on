@@ -3,6 +3,8 @@
   const bank = window.GFIELDGrade7UnitMock;
   if (!bank) return;
   const params = new URLSearchParams(location.search);
+  const requestedGrade = Number(params.get("grade"));
+  const grade = Number.isInteger(requestedGrade) && requestedGrade >= 6 && requestedGrade <= 8 ? requestedGrade : 7;
   const domainNames = Object.freeze({
     algebra: "식·대수",
     number: "수·비례·추정",
@@ -15,6 +17,7 @@
   const sourceYear = /^\d{4}$/.test(params.get("sourceYear") || "") ? params.get("sourceYear") : "";
   const sourceForm = /^[ABCD]$/.test(params.get("sourceForm") || "") ? params.get("sourceForm") : "";
   const sourceQuestions = (params.get("sourceQuestions") || "").split(",").map(Number).filter(function (value) { return Number.isInteger(value) && value > 0 && value <= 25; });
+  const mockWrongQuestions = (params.get("mockWrongQuestions") || "").split(",").map(Number).filter(function (value) { return Number.isInteger(value) && value > 0 && value <= 25; });
   const state = { activeDomains: new Set(requestedDomains), solved: new Set() };
   const $ = function (id) { return document.getElementById(id); };
 
@@ -122,18 +125,24 @@
   }
 
   const query = new URLSearchParams();
-  query.set("grade", "7"); query.set("program", "amc8");
+  query.set("grade", String(grade)); query.set("program", "amc8");
   if (sourceYear) query.set("year", sourceYear);
   if (sourceForm) query.set("form", sourceForm);
   const reviewHref = `./competition-paper-review.html?${query.toString()}`;
+  const roadmapHref = `./boarding-roadmap.html?grade=${grade}#competition-diagnostic`;
+  $("topic-brand-route").href = roadmapHref;
+  $("topic-nav-route").href = roadmapHref;
+  $("topic-nav-route").textContent = `${grade}학년 성장 지도`;
+  $("topic-footer-route").href = roadmapHref;
+  $("topic-footer-route").textContent = `${grade}학년 학습 경로로 돌아가기`;
   $("topic-review-link").href = reviewHref;
   $("topic-return-link").href = reviewHref;
   if (sourceYear) {
     const originalRoute = `https://live.poshenloh.com/past-contests/amc8/${sourceYear}`;
     $("topic-source-paper-link").href = originalRoute;
-    $("topic-source-summary").textContent = `${sourceYear} AMC 8 · ${sourceQuestions.length ? `다시 표시한 문항 ${sourceQuestions.join(", ")}번` : "원본 시험 복습에서 이어진 연습"}. 원문과 해설은 원본 제공처에서 확인해 주세요.`;
+    $("topic-source-summary").textContent = `${sourceYear} AMC 8 · ${mockWrongQuestions.length ? `지필드 모의고사 ${mockWrongQuestions.join(", ")}번에서 다시 볼 개념` : sourceQuestions.length ? `다시 표시한 문항 ${sourceQuestions.join(", ")}번` : "원본 시험 복습에서 이어진 연습"}. 원문과 해설은 원본 제공처에서 확인해 주세요.`;
   }
   const chosenNames = requestedDomains.map(function (id) { return domainNames[id]; });
-  if (chosenNames.length) $("topic-intro-copy").textContent = `${sourceYear ? `${sourceYear} AMC 8 원본 복습에서 이어서, ` : ""}${chosenNames.join("·")} 영역의 지필드 창작 문제만 모았어요. 문제를 풀고 풀이를 확인하며 개념을 다시 연결해요.`;
+  if (chosenNames.length) $("topic-intro-copy").textContent = `${mockWrongQuestions.length ? `지필드 모의고사 ${mockWrongQuestions.join(", ")}번에서 틀리거나 비워 둔 영역을 골랐어요. ` : ""}${sourceYear ? `${sourceYear} AMC 8 원본 복습에서 이어서, ` : ""}${chosenNames.join("·")} 영역의 지필드 창작 문제만 모았어요. 문제를 풀고 풀이를 확인하며 개념을 다시 연결해요.`;
   renderFilters(); renderItems();
 })();

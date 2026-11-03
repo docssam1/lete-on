@@ -1,0 +1,21 @@
+(function () {
+  "use strict";
+  const params = new URLSearchParams(window.location.search);
+  const gradeValue = Number(params.get("grade"));
+  const grade = Number.isInteger(gradeValue) && gradeValue >= 6 && gradeValue <= 8 ? gradeValue : 7;
+  const year = /^\d{4}$/.test(params.get("sourceYear") || "") ? params.get("sourceYear") : "";
+  const note = document.getElementById("amc8-source-paper-note");
+  document.querySelectorAll(".mock-brand, footer a").forEach(link => { link.href = `./boarding-roadmap.html?grade=${grade}#competition-diagnostic`; });
+  const back = document.getElementById("mock-back-link");
+  back.href = `./boarding-roadmap.html?grade=${grade}#competition-diagnostic`;
+  back.textContent = `${grade}학년 로드맵으로`;
+  if (!year || !note) return;
+  note.hidden = false;
+  note.textContent = `앞서 복습한 ${year} AMC 8 원본과 별도로 풀어보는 지필드 자체 모의고사입니다.`;
+  const review = new URL("./competition-paper-review.html", window.location.href);
+  review.searchParams.set("grade", String(grade));
+  review.searchParams.set("program", "amc8");
+  review.searchParams.set("year", year);
+  back.href = review.href;
+  back.textContent = `${year} AMC 8 원본 복습으로`;
+})();

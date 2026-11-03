@@ -179,18 +179,21 @@
     }
     const nextStudyLink = document.createElement("a");
     nextStudyLink.href = exam.nextStudyHref || `./unit-workbook.html?cluster=${encodeURIComponent(exam.clusterId)}&mode=workbook&audience=student&locale=ko&paper=A4`;
-    if (["gfield-amc12-concept-mock-v1", "gfield-amc10-concept-mock-v1"].includes(exam.id)) {
+    if (["gfield-amc12-concept-mock-v1", "gfield-amc10-concept-mock-v1", "gfield-grade7-amc8-style-mock-v2"].includes(exam.id)) {
       const nextStudyUrl = new URL(nextStudyLink.href, window.location.href);
       const attemptParams = new URLSearchParams(window.location.search);
       ["sourceYear", "sourceForm", "sourceQuestions"].forEach(function (key) {
         const value = attemptParams.get(key);
         if (value) nextStudyUrl.searchParams.set(key, value);
       });
-      const practiceDomainIds = { "대수": "algebra", "함수·삼각함수": "functions", "정수론": "number", "기하": "geometry", "경우의 수": "counting", "확률": "probability" };
+      const practiceDomainIds = { "대수": "algebra", "대수·규칙": "algebra", "함수·삼각함수": "functions", "정수론": "number", "기하": "geometry", "기하·공간": "geometry", "경우의 수": "counting", "경우의 수·확률": "counting", "확률": "probability", "수 감각·비율": "number" };
       const wrongItems = exam.items.map(function (item, index) { return { item: item, number: index + 1 }; }).filter(function (entry) {
         return answers.get(entry.item.id) !== entry.item.answer;
       });
-      const mockDomains = Array.from(new Set(wrongItems.map(function (entry) { return practiceDomainIds[entry.item.standard]; }).filter(Boolean)));
+      const mockDomains = Array.from(new Set(wrongItems.map(function (entry) {
+        if (exam.id === "gfield-grade7-amc8-style-mock-v2" && entry.item.standard === "정수·자료 해석") return /나머지|배수|최소공배수/.test(entry.item.focus) ? "number" : "data";
+        return practiceDomainIds[entry.item.standard];
+      }).filter(Boolean)));
       if (mockDomains.length) nextStudyUrl.searchParams.set("domains", mockDomains.join(","));
       else if (attemptParams.get("domains")) nextStudyUrl.searchParams.set("domains", attemptParams.get("domains"));
       nextStudyUrl.searchParams.set("mockWrongQuestions", wrongItems.map(function (entry) { return entry.number; }).join(","));
@@ -201,7 +204,7 @@
     if (savedResult) {
       const roadmapLink = document.createElement("a");
       roadmapLink.className = "mock-roadmap-result-link";
-      const roadmapSection = ["gfield-amc12-concept-mock-v1", "gfield-amc10-concept-mock-v1"].includes(exam.id) || exam.clusterId === "AMC8" ? "competition-diagnostic" : "grade-practice";
+      const roadmapSection = ["gfield-amc12-concept-mock-v1", "gfield-amc10-concept-mock-v1", "gfield-grade7-amc8-style-mock-v2"].includes(exam.id) || exam.clusterId === "AMC8" ? "competition-diagnostic" : "grade-practice";
       roadmapLink.href = `./boarding-roadmap.html?grade=${encodeURIComponent(exam.grade || 7)}#${roadmapSection}`;
       roadmapLink.textContent = "로드맵에서 내 모의고사 기록 보기 →";
       resultContent.push(roadmapLink);
