@@ -3591,6 +3591,8 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52RangeUnit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
   if (source52RangeUnit) for (const [id,source,parent,key,manual,pdf,printed] of [
+    ["5-2-u1-t1-3","5-2-u1-practice-19-similar","5-2-u1-practice-19-original","source52U1PackingRangeSimilar",true,66,70],
+    ["5-2-u1-t4","5-2-u1-practice-47-similar","5-2-u1-practice-47-original","source52U1ThreeRoundingRangesSimilar",true,69,73],
     ["5-2-u1-t1","5-2-u1-practice-2-similar","5-2-u1-practice-2-original","source52U1RangeUnionSimilar",true,64,68],
     ["5-2-u1-t2-3","5-2-u1-practice-24-similar","5-2-u1-practice-24-original","source52U1DigitCardsRoundingSimilar",false,66,70],
     ["5-2-u1-t4-2","5-2-u1-practice-52-similar","5-2-u1-practice-52-original","source52U1RoundedMultipleSimilar",true,70,74],
