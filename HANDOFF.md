@@ -702,6 +702,8 @@ The user's fraction-format request was verified against the rendered Grade 7 AMC
 
 Verification: the targeted Grade 7 AMC browser test and AIME browser test pass 2/2, including fraction-bar, palette, focus, route, answer, and mobile layout assertions. Captures `/tmp/gfield-amc10-fraction-inline.png`, `/tmp/gfield-amc10-mobile-toolbar.png`, and `/tmp/gfield-amc10-desktop.png` reviewed. `git diff --check` passes. No private assessment item content or learner data was used. Local only; no push, deployment, Drive sync, or external API use.
 
+Follow-up: connected AMC 10's item, answer-choice, hint, and explanation text to the shared math-text renderer. Mathematical fractions keep a stacked numerator, fraction bar, and denominator, with a Korean accessible label; question-progress counts retain slash count notation. The fallback remains escaped text if the shared renderer is unavailable. No item content changed.
+
 ### 2026-11-03 Pre-Algebra expression wording
 
 Replaced the Unit 1 lesson label “문장을 변수식으로 번역하기” with “문장으로 제시된 상황을 대수식으로 나타내기” in the GFIELD course, Grade 6–7 pathway, and roadmap flow. The new label describes the student action in the Common Core 6.EE.A.2/.2.a wording: read/write expressions and record operations with numbers and variables. The task examples still ask learners to identify the quantities and relationship, write the expression, and evaluate it; no item scope or answer changed. Source: https://www.thecorestandards.org/Math/Content/6/EE/ .

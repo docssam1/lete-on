@@ -29,10 +29,10 @@
     return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
   function mathHtml(value) {
-    return escapeHtml(value).replace(/([−-]?)(\d+)\/(\d+)/g, function (_match, sign, numerator, denominator) {
-      const label = `${sign ? "음의 " : ""}${denominator}분의 ${numerator}`;
-      return `<span class="math-fraction" role="math" aria-label="${label}"><span aria-hidden="true">${sign ? "−" : ""}${numerator}</span><span aria-hidden="true">${denominator}</span></span>`;
-    });
+    const rendered = document.createElement("span");
+    if (window.GFIELDMathText) window.GFIELDMathText.append(rendered, value);
+    else rendered.textContent = String(value == null ? "" : value);
+    return rendered.innerHTML || escapeHtml(value);
   }
   function renderFilters() {
     filters.replaceChildren();
