@@ -25,6 +25,10 @@ The Grade 10 annual plan and visible focus tracks now include the supplied AMC 1
 
 The Grade 8 annual example now names the supplied Algebra 2 topics—quadratics and exponential/logarithmic functions, with complex numbers, sequences/series, and matrices as readiness-based optional extensions. It names trigonometry, circles/ellipses, transformations, and proof in the Geometry stage, and explicitly keeps the school Geometry course in sequence. The existing accelerated-example and readiness language remains. Roadmap model tests pass 11/11; changed data and model/browser tests pass syntax checks; `git diff --check` passes. The mobile browser assertions were added but not run, so rendered layout remains unverified. No private diagnostic material was opened.
 
+### 2026-11-03 Grade 7 annual plan specificity
+
+The Grade 7 annual example now explicitly distinguishes Algebra 1 acceleration from the school's Geometry course, names expressions/equations/inequalities and geometry foundations, and connects prepared algebra/geometry concepts to SAT word problems and data interpretation. AMC 10 remains an optional, readiness-based introduction. Model suite: 12/12 pass. The changed data and model/browser tests pass syntax checks, and `git diff --check` passes. Mobile browser assertions were added but not run; screen layout remains unverified. No private diagnostic items were accessed.
+
 ### 2026-11-03 public roadmap and contest-review visual follow-up
 
 The root `HANDOFF.md` contains the full visual findings. This detailed handoff records the current checkpoint: the 320px top-navigation issue in the public Grade 3–12 roadmap was caused by a more specific gap rule in `academy-ui.css`, and the page-level CSS now narrows the gap below 360px. The Grade 7/8 plan comparison was visually reviewed at desktop and mobile sizes. The competition paper-review form was visually checked at 390px and 320px; wrong responses reveal optional domain and error-reason fields, and the test did not save any record. The test used a temporary local preview of public pages and did not open the protected candidate.

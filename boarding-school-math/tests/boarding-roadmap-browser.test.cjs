@@ -614,6 +614,9 @@ test("grade comparison keeps paired columns on desktop", async function () {
 test("Grade 7 path previews checkpoints without claiming a measured position", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#annual-plan-note").innerText(), /Algebra 1은 가속 학습 예시.*학교 Geometry는 정규 진도/);
+  assert.match(await page.locator("#annual-plan-periods").innerText(), /변수식·일차방정식·부등식.*등식의 성질/);
+  assert.match(await page.locator("#annual-plan-periods").innerText(), /대수·기하.*심화 문장제와 자료 해석.*Digital SAT Math/);
   assert.equal(await page.locator(".boarding-intro").isHidden(), true);
   assert.equal(await page.locator(".grade-track").evaluate(function (node) { return node.open; }), false);
   assert.ok(await page.locator(".grade7-path").evaluate(function (node) { return node.getBoundingClientRect().top < window.innerHeight; }), "Grade 7 path should start in the first phone screen");

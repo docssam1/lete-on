@@ -252,3 +252,9 @@ Verification: Grade roadmap model suite passes 10/10; changed roadmap data and t
 Expanded the provided Grade 8 annual example to name Algebra 2 topics from the supplied roadmap: quadratics, exponential/logarithmic functions, and optional complex numbers, sequences/series, and matrices. The Geometry stage now explicitly keeps the school course in sequence and names trigonometry, circles/ellipses, transformations, and proof. The focus track keeps AMC 10/12 and AIME-style work optional; Algebra 2 extension is conditioned on readiness. This preserves the source's content without implying these topics are required for every Grade 8 student.
 
 Verification: roadmap model suite passes 11/11; roadmap data and both test files pass Node syntax checks; `git diff --check` passes. Mobile browser assertions were updated but not run; visual layout for this longer copy remains unverified. Local only; no push or deployment.
+
+### 2026-11-03 Grade 7 annual plan specificity
+
+The Grade 7 year plan now makes the supplied tracks concrete: Algebra 1 names variable expressions, linear equations, inequalities, and explaining equality properties; school Geometry remains on the regular course path; AMC 10 is introduced as a readiness-based option; and SAT practice connects advanced algebra/geometry word problems with data interpretation. The final period asks learners to time only prepared-scope AMC/SAT-style practice and record whether a concept, idea, or calculation caused difficulty. It remains a learning example, not a placement result.
+
+Verification: roadmap model suite passes 12/12; changed roadmap data and both test files pass Node syntax checks; `git diff --check` passes. Mobile assertions were added but not executed, so rendered layout remains unverified. Local only; no push or deployment.

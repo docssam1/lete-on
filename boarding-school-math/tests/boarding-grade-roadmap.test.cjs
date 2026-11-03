@@ -141,6 +141,18 @@ test("Grade 8 advanced algebra stays optional while school Geometry continues", 
   assert.match(tracks.find(function (track) { return track[0] === "경시 · 선택"; })[1], /AMC 10\/12.*AIME형 풀이/);
 });
 
+test("Grade 7 plan keeps Algebra 1 acceleration separate from school Geometry, AMC, and SAT", function () {
+  const plan = roadmap.getAnnualPlan(7);
+  const tracks = roadmap.getTracks(7);
+  assert.match(plan.note, /Algebra 1은 가속 학습 예시.*학교 Geometry는 정규 진도에서 이어가고.*선택 경로/);
+  assert.match(plan.periods[0][2], /변수식·일차방정식·부등식.*등식의 성질/);
+  assert.match(plan.periods[1][2], /학교 Geometry에서 각·삼각형·닮음·넓이와 부피/);
+  assert.match(plan.periods[2][2], /대수·기하.*심화 문장제와 자료 해석.*Digital SAT Math/);
+  assert.match(plan.periods[3][2], /AMC·SAT형 문제.*시간 연습.*개념·아이디어·계산/);
+  assert.match(tracks[0][1], /Algebra 1은 가속 학습 예시.*Geometry는 학교 정규 진도/);
+  assert.match(tracks[2][1], /대수·기하 심화 문장제와 자료 해석/);
+});
+
 test("competition options follow grade and keep advanced AMC paths optional", function () {
   assert.deepEqual(roadmap.competitionOptions(3).map(function (entry) { return entry.id; }), ["sasmo", "kangaroo"]);
   [
