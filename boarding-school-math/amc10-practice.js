@@ -2,6 +2,7 @@
   "use strict";
   const requestedGrade = Number(new URLSearchParams(window.location.search).get("grade"));
   const grade = [7, 8, 9].includes(requestedGrade) ? requestedGrade : 7;
+  const params = new URLSearchParams(window.location.search);
   const roadmapHref = `./boarding-roadmap.html?grade=${grade}`;
   const reviewHref = `./competition-paper-review.html?grade=${grade}&program=amc10`;
   const gradeLabel = `${grade}학년`;
@@ -23,7 +24,9 @@
   const filters = document.getElementById("domain-filters");
   const progress = document.getElementById("practice-progress");
   const answered = new Set();
-  let activeDomain = "전체";
+  const domainIds = { algebra: "대수", number: "정수론", geometry: "기하", counting: "경우의 수", probability: "확률" };
+  const requestedDomains = (params.get("domains") || "").split(",").filter(function (id, index, values) { return Object.prototype.hasOwnProperty.call(domainIds, id) && values.indexOf(id) === index; });
+  let activeDomains = new Set(requestedDomains.map(function (id) { return domainIds[id]; }));
 
   function escapeHtml(value) {
     return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
@@ -41,14 +44,21 @@
       button.type = "button";
       button.className = "domain-filter";
       button.textContent = domain;
-      button.setAttribute("aria-pressed", String(domain === activeDomain));
-      button.addEventListener("click", function () { activeDomain = domain; renderFilters(); renderItems(); });
+      button.setAttribute("aria-pressed", String(domain === "전체" ? activeDomains.size === 0 : activeDomains.has(domain)));
+      button.addEventListener("click", function () {
+        if (domain === "전체") activeDomains.clear();
+        else if (activeDomains.has(domain)) activeDomains.delete(domain);
+        else activeDomains.add(domain);
+        renderFilters(); renderItems();
+      });
       filters.append(button);
     });
   }
   function renderItems() {
-    const visible = bank.items.filter(function (item) { return activeDomain === "전체" || item.domain === activeDomain; });
+    const visible = bank.items.filter(function (item) { return activeDomains.size === 0 || activeDomains.has(item.domain); });
     list.replaceChildren();
+    document.getElementById("practice-count").textContent = `${visible.length}문항`;
+    progress.textContent = `${visible.filter(function (item) { return answered.has(item.id); }).length} / ${visible.length}`;
     visible.forEach(function (item) {
       const card = document.createElement("article");
       card.className = "problem-card";
@@ -87,7 +97,7 @@
             card.dataset.answered = "true";
             card.querySelectorAll(".choice").forEach(function (option) { option.disabled = true; });
             answered.add(item.id);
-            progress.textContent = `${answered.size} / ${bank.items.length}`;
+            progress.textContent = `${visible.filter(function (entry) { return answered.has(entry.id); }).length} / ${visible.length}`;
           } else {
             button.disabled = true;
           }
@@ -112,9 +122,24 @@
       list.append(card);
     });
   }
+  const targetedNote = document.getElementById("targeted-practice-note");
+  const selected = requestedDomains.map(function (id) { return bank.domains.includes(domainIds[id]) ? domainIds[id] : ""; }).filter(Boolean);
+  const sourceYear = /^\d{4}$/.test(params.get("sourceYear") || "") ? params.get("sourceYear") : "";
+  const sourceForm = /^[AB]$/.test(params.get("sourceForm") || "") ? params.get("sourceForm") : "";
+  const sourceQuestions = (params.get("sourceQuestions") || "").split(",").map(Number).filter(function (value) { return Number.isInteger(value) && value > 0 && value <= 25; });
+  if (selected.length || sourceYear || sourceQuestions.length) {
+    if (selected.length) activeDomains = new Set(selected);
+    targetedNote.hidden = false;
+    const description = document.getElementById("targeted-practice-description");
+    const sourceDescription = sourceYear ? `${sourceYear} AMC 10${sourceForm ? ` ${sourceForm}` : ""} 원본에서 표시한 ${sourceQuestions.length ? `${sourceQuestions.join(", ")}번 문항 이후 ` : ""}` : "";
+    description.textContent = `${sourceDescription}${selected.length ? `${selected.join("·")} 영역의 GFIELD 창작 문항을 모았어요.` : "영역이 분류되지 않은 문항이 있어요. 아래에서 필요한 연습 영역을 골라 보세요."}`;
+    const returnLink = document.getElementById("targeted-practice-return");
+    returnLink.href = `./competition-paper-review.html?grade=${grade}&program=amc10${sourceYear ? `&year=${sourceYear}` : ""}${sourceForm ? `&form=${sourceForm}` : ""}`;
+  }
   document.getElementById("reset-practice").addEventListener("click", function () {
     answered.clear();
-    progress.textContent = `0 / ${bank.items.length}`;
+    const visibleCount = bank.items.filter(function (item) { return activeDomains.size === 0 || activeDomains.has(item.domain); }).length;
+    progress.textContent = `0 / ${visibleCount}`;
     renderItems();
   });
   renderFilters();

@@ -547,11 +547,17 @@
     setText("report-next", lowestAreas.length
       ? `표시한 풀이 문항 중 정답 비율이 가장 낮게 나온 영역은 ${lowestAreas.join(" · ")}입니다. 적은 문항의 관찰이므로 학습 수준을 판정하지 않아요.`
       : `두 개 이상 영역에서 각각 3문제 이상 푼 경우에만 정답 비율을 참고 비교해요.${result.unclassified ? ` 영역 미분류 ${result.unclassified}문항은 직접 확인해 주세요.` : ""}`);
+    const practiceDomains = Array.from(new Set(result.reviewItems.map(function (item) { return item.domain; }).filter(function (domain) { return domain !== "unclassified"; })));
+    const practiceParams = new URLSearchParams();
+    if (practiceDomains.length) practiceParams.set("domains", practiceDomains.join(","));
+    practiceParams.set("sourceYear", $("archive-year").value || params.get("year") || "");
+    practiceParams.set("sourceForm", $("archive-form").value || params.get("form") || "");
+    practiceParams.set("sourceQuestions", result.reviewItems.map(function (item) { return item.number; }).join(","));
     const followUpRoutes = {
       amc8: grade === 7
-        ? { href: "./amc8-grade7-mock-exam.html", title: "지필드 AMC 8 창작 모의고사", copy: "공식 풀이를 확인한 뒤, 지필드가 별도로 만든 새 문항에서 문제 해결 영역을 연습해요." }
+        ? { href: `./amc8-topic-practice.html?${practiceParams.toString()}`, title: practiceDomains.length ? "지필드 창작 유사 영역 연습" : "지필드 창작 유형 연습", copy: practiceDomains.length ? `이번 원본에서 표시한 ${practiceDomains.map(function (id) { return domains.find(function (domain) { return domain.id === id; })?.title || id; }).join("·")} 영역의 지필드 창작 문제만 이어서 풀어요.` : "지필드가 새로 만든 AMC 8 주제 문제를 골라 연습해요." }
         : { href: "./competition-practice.html?program=amc8", title: "지필드 AMC 8 유형 연습", copy: "공식 풀이를 확인한 뒤, 지필드가 새로 만든 AMC 8 유형 문제로 이어가요." },
-      amc10: { href: `./amc10-practice.html?grade=${grade}`, title: "지필드 AMC 10 개념 연습", copy: "공식 풀이에서 놓친 개념을 확인한 뒤, 지필드 창작 문항으로 연결해요." }
+      amc10: { href: `./amc10-practice.html?grade=${grade}${practiceDomains.length ? `&domains=${encodeURIComponent(practiceDomains.join(","))}` : ""}${practiceParams.get("sourceYear") ? `&sourceYear=${practiceParams.get("sourceYear")}` : ""}${practiceParams.get("sourceForm") ? `&sourceForm=${practiceParams.get("sourceForm")}` : ""}${practiceParams.get("sourceQuestions") ? `&sourceQuestions=${practiceParams.get("sourceQuestions")}` : ""}`, title: practiceDomains.length ? "지필드 창작 유사 영역 연습" : "지필드 AMC 10 개념 연습", copy: practiceDomains.length ? `이번 원본에서 표시한 ${practiceDomains.map(function (id) { return domains.find(function (domain) { return domain.id === id; })?.title || id; }).join("·")} 영역의 지필드 창작 문제로 이어가요.` : "지필드 창작 문항 중 필요한 개념을 골라 연습해요." }
     };
     const followUpConfig = followUpRoutes[selectedFormat().id];
     $("report-follow-up").hidden = !followUpConfig;

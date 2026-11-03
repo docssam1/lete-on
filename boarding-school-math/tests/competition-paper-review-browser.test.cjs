@@ -64,6 +64,71 @@ test("AMC 12 archive picker reaches the earliest listed year", async function ()
   await page.close();
 });
 
+test("AMC 8 review sends classified errors to matching GFIELD-authored topic practice", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=7&program=amc8&year=2023`, { waitUntil: "networkidle" });
+  await page.locator('[data-question="4"][data-field="status"]').selectOption("wrong");
+  await page.locator('[data-question="4"][data-field="domain"]').selectOption("number");
+  await page.locator('[data-question="7"][data-field="status"]').selectOption("blank");
+  await page.locator('[data-question="7"][data-field="domain"]').selectOption("data");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  const href = await page.locator("#report-follow-up-link").getAttribute("href");
+  assert.match(href, /^\.\/amc8-topic-practice\.html\?/);
+  const target = new URL(href, "http://127.0.0.1");
+  assert.equal(target.searchParams.get("domains"), "number,data");
+  assert.equal(target.searchParams.get("sourceYear"), "2023");
+  assert.equal(target.searchParams.get("sourceQuestions"), "4,7");
+  await page.goto(new URL(href, url).href, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".problem-card").count(), 10);
+  assert.match(await page.locator("#topic-intro-copy").innerText(), /2023 AMC 8 원본 복습.*수·비례·추정·그래프·표 해석/);
+  assert.match(await page.locator("#topic-source-summary").innerText(), /2023 AMC 8.*4, 7번/);
+  assert.equal(await page.locator("#topic-source-paper-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023");
+  assert.equal(await page.locator("#topic-return-link").getAttribute("href"), "./competition-paper-review.html?grade=7&program=amc8&year=2023");
+  const firstTopicItem = page.locator('.problem-card[data-item-id="amc8-g7-v2-m01"]');
+  await firstTopicItem.locator('[data-choice="0"]').click();
+  assert.equal(await firstTopicItem.getAttribute("data-solved"), "true");
+  await firstTopicItem.locator(".worked-solution summary").click();
+  assert.match(await firstTopicItem.locator(".worked-solution").innerText(), /1,000/);
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("AMC 10 review filters GFIELD practice by all marked error domains", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=9&program=amc10&year=2024&form=B`, { waitUntil: "networkidle" });
+  await page.locator('[data-question="3"][data-field="status"]').selectOption("wrong");
+  await page.locator('[data-question="3"][data-field="domain"]').selectOption("number");
+  await page.locator('[data-question="8"][data-field="status"]').selectOption("wrong");
+  await page.locator('[data-question="8"][data-field="domain"]').selectOption("algebra");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  const href = await page.locator("#report-follow-up-link").getAttribute("href");
+  assert.match(href, /amc10-practice\.html/);
+  const target = new URL(href, "http://127.0.0.1");
+  assert.equal(target.searchParams.get("domains"), "number,algebra");
+  assert.equal(target.searchParams.get("sourceYear"), "2024");
+  assert.equal(target.searchParams.get("sourceForm"), "B");
+  await page.goto(new URL(href, url).href, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".problem-card").count(), 6);
+  assert.equal(await page.locator("#practice-count").innerText(), "6문항");
+  assert.equal(await page.locator("#practice-progress").innerText(), "0 / 6");
+  assert.equal(await page.locator("#targeted-practice-note").isVisible(), true);
+  assert.match(await page.locator("#targeted-practice-description").innerText(), /2024 AMC 10 B 원본에서 표시한 3, 8번 문항 이후 정수론·대수 영역/);
+  assert.equal(await page.locator("#targeted-practice-return").getAttribute("href"), "./competition-paper-review.html?grade=9&program=amc10&year=2024&form=B");
+  const firstNumberItem = page.locator('.problem-card[data-item-id="amc10-g7-number-01"]');
+  await firstNumberItem.locator('[data-choice="3"]').click();
+  assert.equal(await page.locator("#practice-progress").innerText(), "1 / 6");
+  await page.getByRole("button", { name: "선택 지우기" }).click();
+  assert.equal(await page.locator("#practice-progress").innerText(), "0 / 6");
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("users can opt to save an answer-free AMC review summary and see it only on the matching grade map", async function () {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
