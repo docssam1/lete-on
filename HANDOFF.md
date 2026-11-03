@@ -473,3 +473,9 @@ Verification: all 39 roadmap browser checks pass, including the 320/390/900/1280
 The teacher paper-builder regression check revealed that the shared renderer rejected `3/2x` in a coefficient context because it treated the following variable as part of a word boundary. It now renders the unambiguous trailing single-variable form as a stacked `3/2` followed by `x`; explicit compound denominators still use parentheses. Updated the answer-key browser assertion to check accessible fraction readings and preserved units instead of the source slash string, which is no longer visible after formatting. All six shared-renderer consumers now load cache version `20261103-13`.
 
 Verification: teacher paper-builder browser suite passes 12/12, including question search/selection, actual stacked answer choices, separate answer-key fractions, A4 page fitting, and mobile/tablet overflow. No diagnostic candidate content or learner records were used. Local only; no push or deployment.
+
+### 2026-11-03 Stack fractions in Grade 7 rate diagrams
+
+Extended the fraction-bar treatment into the Grade 7 `7.RP.A.1` unit-rate diagram. Its distance and time quantities now use stacked numerator/denominator markup, matching the prompt and answer choices; the `km/h` unit label remains conventional slash notation. Updated the public workbook cache keys and added a browser regression assertion for the printed question diagram.
+
+Verification: teacher paper-builder browser suite passes 12/12. A print-media A4 render of the public `g7rpa-w01` item visually confirms both diagram fractions are stacked and legible without clipping. Local only; no private diagnostic content used, no push, deployment, or Drive sync.

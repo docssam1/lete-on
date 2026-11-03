@@ -35,6 +35,8 @@ test("teacher can find, preview, select, order, and set points on released Grade
   assert.equal(await page.evaluate(() => document.activeElement.getAttribute("aria-label")), "2번 미리보기");
   await page.getByRole("checkbox", { name: "1번 시험지에 추가", exact: true }).check();
   assert.equal(await page.locator("#sheet-section").isVisible(), true);
+  assert.deepEqual(await page.locator(".sheet-question .g7rpa-rate-model .math-fraction").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("aria-label"))), ["4분의 3", "2분의 1"]);
+  assert.equal(await page.locator(".sheet-question .g7rpa-rate-model .g7rpa-quantity strong").evaluateAll((nodes) => nodes.some((node) => node.innerText.includes("/"))), false);
   assert.equal(await page.locator("#jump-to-sheet").isEnabled(), true);
   assert.equal(await page.evaluate(() => document.activeElement.getAttribute("aria-label")), "1번 시험지에 추가");
   await page.getByRole("checkbox", { name: "2번 시험지에 추가", exact: true }).check();
