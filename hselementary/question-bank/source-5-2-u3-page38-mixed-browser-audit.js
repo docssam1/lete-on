@@ -63,6 +63,12 @@ const ids = ["5-2-u3-e8-exploration-staircase-half-synthetic", "5-2-u3-e8-exampl
             const boards=await page.locator('#problemView [data-source-item-id="5-2-u3-e8-example-4-stone-synthetic"]').evaluateAll(items=>items.map(item=>({variant:item.dataset.poolIndex,labels:[...item.querySelectorAll('[data-stone-label]')].map(el=>({text:el.textContent,height:el.getBoundingClientRect().height})),direction:item.querySelector('[data-move-direction]')?.textContent,font:getComputedStyle(item).fontFamily})));
             assert.equal(boards.length,3);
             for(const board of boards){assert.deepEqual(board.labels.map(label=>label.text),['ㄱ','ㄴ','ㄷ']);assert(board.labels.every(label=>label.height>=10),`바둑돌 이름이 너무 작습니다: ${board.variant}`);assert.match(board.direction,/←/);assert.match(board.font,/Noto Serif KR/);}
+            const circleText=await page.locator('#problemView [data-source-item-id="5-2-u3-e8-example-1-circle-difference-synthetic"] p').evaluateAll(items=>items.map(item=>({font:getComputedStyle(item).fontFamily,weight:getComputedStyle(item).fontWeight})));
+            assert.equal(circleText.length,6);
+            for(const text of circleText){assert.match(text.font,/Noto Serif KR/);assert.equal(text.weight,'400');}
+            const staircaseText=await page.locator('#problemView [data-source-item-id="5-2-u3-e8-exploration-staircase-half-synthetic"]').evaluateAll(items=>items.map(item=>({font:getComputedStyle(item).fontFamily,weight:getComputedStyle(item).fontWeight})));
+            assert.equal(staircaseText.length,3);
+            for(const text of staircaseText){assert.match(text.font,/Noto Serif KR/);assert.equal(text.weight,'400');}
           }
           const pdfPath=path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`);
           await page.pdf({ path:pdfPath, format: "A4", printBackground: true, preferCSSPageSize: true });
