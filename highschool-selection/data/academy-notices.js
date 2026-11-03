@@ -258,7 +258,7 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "publishedAt": "2026-10-16",
       "eventDate": null,
       "scheduleText": "",
-      "revision": "aa229965253b2662"
+      "revision": "346258adb55926cc"
     },
     {
       "id": "wm-blog-224443076138-대치",
