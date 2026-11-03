@@ -1015,6 +1015,10 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   assert.match(await page.locator("#grade7-branches details p").innerText(), /정식 SAT 진단/);
   assert.equal(await page.locator("#grade7-contest-branch").getAttribute("href"), "./competition-practice.html?program=amc8");
   assert.match(await page.locator("#grade7-contest-title").innerText(), /6학년 기초 연결/);
+  await page.goto(`${url}?grade=7&program=kangaroo#grade7-branches`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#competition-select").inputValue(), "kangaroo", "the selected contest survives a direct Grade 7 link");
+  assert.equal(await page.locator("#grade7-contest-branch").getAttribute("href"), "https://mathkangaroo.org/mks/practice/grades-7-8/", "a direct Math Kangaroo visit opens its matching official paper band");
+  assert.match(await page.locator("#grade7-contest-title").innerText(), /Math Kangaroo · 공식 기출 시험지/);
   await page.locator("#competition-select").selectOption("kangaroo");
   assert.equal(await page.locator("#grade7-contest-branch").getAttribute("href"), "https://mathkangaroo.org/mks/practice/grades-7-8/");
   assert.equal(await page.locator("#grade7-contest-branch").getAttribute("target"), "_blank");
