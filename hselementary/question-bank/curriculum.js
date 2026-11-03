@@ -3415,6 +3415,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   ]) if (!source52RoundRange.types.some(t => t.id === id)) {
     source52RoundRange.types.push({id,number:source52RoundRange.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:label,sourceSection:"mission",sourcePdfPage:9,sourcePrintedPage:11,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조와 다른 수치의 창작 문항을 독립 열거로 검산했습니다. 출판사 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
+  if (source52Unit1) {
+    const type=source52Unit1.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u1-t3-3");
+    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u1-e3-example-4-linked-similar",sourceParentItemId:"5-2-u1-e3-example-4",sourceItemLabel:"예제 3-4 원문 기반 유사문항",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:4,alternateSourcePdfPage:3,sourcePrintedPage:8,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U1TaxiLinkedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 기본·추가 요금 구조를 대조하고 미완성 구간 처리 조건을 명시한 유사문항을 검산했습니다."});
+  }
+
   const source52Application = source52Unit1?.subunits.find(subunit => subunit.name === "어림하기의 활용 · 개념탐구 3 원문 연결");
   if (source52Application) for (const [n,name] of [[1,"어림한 방법 모두 찾기"],[2,"단위로 파는 리본의 가격"]]) {
     const id = `5-2-u1-e3-example-${n}`;
