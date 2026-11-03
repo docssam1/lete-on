@@ -4,7 +4,7 @@ const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8932";
-const ids = ["5-2-u5-practice-10-original","5-2-u5-t4-4","5-2-u5-practice-12-original","5-2-u5-practice-14-original"];
+const ids = ["5-2-u5-practice-10-original","5-2-u5-practice-11-original","5-2-u5-practice-12-original","5-2-u5-practice-14-original"];
 (async () => {
   const browser = await chromium.launch({headless:true});
   try {
@@ -18,7 +18,7 @@ const ids = ["5-2-u5-practice-10-original","5-2-u5-t4-4","5-2-u5-practice-12-ori
       await page.waitForFunction(()=>window.HSE_GENERATORS && window.HSE_CURRICULUM);
       const values=await page.evaluate(()=>{
         const types=window.HSE_CURRICULUM.semesters.flatMap(s=>s.units.flatMap(u=>u.subunits.flatMap(g=>g.types)));
-        return [["5-2-u5-practice-10-original",10],["5-2-u5-t4-4",11]].map(([id,n])=>{
+        return [["5-2-u5-practice-10-original",10],["5-2-u5-practice-11-original",11]].map(([id,n])=>{
           const type=types.find(t=>t.id===id), original=types.find(t=>t.id===`5-2-u5-practice-${n}-original`);
           const generate=(t,v=0)=>window.HSE_GENERATORS.generate(t,0,0,0,v);
           const linked=generate(type), source=generate(original);
