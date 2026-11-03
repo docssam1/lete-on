@@ -4,11 +4,15 @@
   function append(target, value) {
     const text = String(value == null ? "" : value);
     const parenthesized = "\\((?:[^()]|\\([^()]*\\))*\\)";
-    const fraction = new RegExp(`(^|[^\\w./])([−-]?\\d+(?:\\.\\d+)?|${parenthesized})\\s*\\/\\s*(\\d+(?:\\.\\d+)?|${parenthesized}|[A-Za-z]\\w*(?:${parenthesized})?)(?![\\w./])`, "g");
+    const mathToken = "(?:[−-]?(?:\\d+(?:\\.\\d+)?π?|π)|[A-Za-z]|[θΘ]|[가-힣]+)";
+    const denominator = `(?:\\d+(?:\\.\\d+)?|${parenthesized}|[A-Za-z]\\w*|[θΘ]|[가-힣]+)`;
+    const fraction = new RegExp(`(^|[^\\w./])(${mathToken}|${parenthesized})\\s*\\/\\s*(${denominator})(?![\\w./])`, "g");
+    const unitRates = new Set(["m/s", "mi/h", "ft/s"]);
     let cursor = 0;
     let match;
     while ((match = fraction.exec(text))) {
       const start = match.index + match[1].length;
+      if (unitRates.has(`${match[2]}/${match[3]}`.toLowerCase())) continue;
       if (start > cursor) target.append(document.createTextNode(text.slice(cursor, start)));
       const node = document.createElement("span");
       node.className = "math-fraction";

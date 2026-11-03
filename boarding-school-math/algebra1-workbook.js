@@ -6,7 +6,7 @@
   const editionSelect = document.getElementById("edition-select");
   const printButton = document.getElementById("print-workbook");
   const status = document.getElementById("workbook-status");
-  if (!course || !host) throw new Error("GFIELD_ALGEBRA1_WORKBOOK_SOURCE_MISSING");
+  if (!course || !host) throw new Error("GFIELD_MATH_WORKBOOK_SOURCE_MISSING");
   const query = new URLSearchParams(location.search);
 
   function node(tag, className, content) {

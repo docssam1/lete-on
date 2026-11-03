@@ -55,16 +55,16 @@
       id: "geometry",
       title: "Geometry",
       grades: "주로 9–10학년",
-      summary: "도형의 관계, 닮음·합동, 증명과 좌표·변환을 논리적 추론으로 연결합니다.",
+      summary: "변환·합동·증명, 닮음과 삼각비, 원, 좌표기하, 측정과 모델링을 관계와 근거로 연결합니다.",
       prerequisites: "대수식 조작, 좌표·비례 관계에 대한 이해",
-      focus: ["Congruence & similarity", "Proof & reasoning", "Coordinate geometry", "Measurement"],
-      units: ["Transformations, congruence & proof", "Similarity, right triangles & trigonometry", "Coordinate geometry & circles", "Measurement, volume & modeling"],
+      focus: ["Transformations & congruence", "Similarity & trigonometry", "Circles", "Coordinate geometry", "Measurement & modeling"],
+      units: ["Transformations, congruence & proof", "Similarity, right triangles & trigonometry", "Circle relationships & sectors", "Coordinate geometry & circles", "Measurement, volume & modeling"],
       previousOptions: ["algebra-1"],
       nextOptions: ["algebra-2"],
       next: "Algebra 2",
-      studentHref: "#availability",
-      teacherHref: "#high-school-bridge",
-      availability: "과정 지도 공개 · 세부 교차표와 수업 자료는 검수 대기"
+      studentHref: "./geometry-workbook.html",
+      teacherHref: "./geometry-workbook.html?edition=teacher",
+      availability: "지필드 원본 5단원·16차시·32문항 공개 · 학교 과목 순서에 맞춰 선택"
     }),
     Object.freeze({
       id: "algebra-2",

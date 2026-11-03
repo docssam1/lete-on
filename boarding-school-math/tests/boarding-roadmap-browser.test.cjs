@@ -148,6 +148,51 @@ test("the original Algebra 2 workbook uses stacked fractions and keeps student/t
   await page.close();
 });
 
+test("the original Geometry workbook prints proof, similarity, circle, coordinate, and modeling lessons", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  await page.goto(`${new URL(url).origin}/geometry-workbook.html?edition=student`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("body").getAttribute("data-course-id"), "geometry");
+  assert.match(await page.locator("#workbook-status").innerText(), /5개 단원 · 16차시 · 연습 32문항/);
+  assert.equal(await page.locator(".unit-page").count(), 5);
+  assert.equal(await page.locator(".lesson-page").count(), 16);
+  assert.equal(await page.locator(".practice-page").count(), 16);
+  assert.equal(await page.locator(".answer-page").count(), 0);
+  assert.ok(await page.locator('.lesson-page[aria-label*="컴퍼스·자 작도"]').count() > 0);
+  assert.ok(await page.locator('.lesson-page[aria-label*="삼각비로 거리와 높이"]').count() > 0);
+  assert.ok(await page.locator('.math-fraction[aria-label="360분의 90"]').count() > 0);
+  const symbolicFractions = await page.evaluate(function () {
+    const probe = document.createElement("span");
+    window.GFIELDMathText.append(probe, "sin θ=맞은편/빗변; θ/360; 속력 km/h; m/s");
+    return {
+      labels: Array.from(probe.querySelectorAll(".math-fraction"), function (node) { return node.getAttribute("aria-label"); }),
+      remainingText: probe.textContent
+    };
+  });
+  assert.deepEqual(symbolicFractions.labels, ["빗변분의 맞은편", "360분의 θ"]);
+  assert.match(symbolicFractions.remainingText, /km\/h; m\/s/);
+  const trigLabels = await page.locator('.lesson-page[aria-label*="삼각비로 거리와 높이"]').locator(".math-fraction").evaluateAll(function (nodes) {
+    return nodes.map(function (node) { return node.getAttribute("aria-label"); });
+  });
+  assert.ok(trigLabels.includes("빗변분의 맞은편"));
+  assert.ok(trigLabels.includes("빗변분의 이웃변"));
+  assert.ok(trigLabels.includes("이웃변분의 맞은편"));
+  assert.equal(trigLabels.some(function (label) { return /이에요|입니다|이므로/.test(label); }), false);
+  assert.ok(await page.locator(".math-fraction").evaluateAll(function (nodes) { return nodes.every(function (node) {
+    return getComputedStyle(node).display === "inline-grid" && getComputedStyle(node.querySelector(".math-fraction-numerator")).borderBottomWidth !== "0px";
+  }); }));
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [390, 390]);
+  await page.locator("#edition-select").selectOption("teacher");
+  assert.equal(await page.locator(".answer-page").count(), 16);
+  assert.deepEqual(errors, []);
+  await page.setViewportSize({ width: 320, height: 740 });
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [320, 320]);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [1280, 1280]);
+  await page.close();
+});
+
 test("roadmap shortcut bar stays usable and tracks the selected section on mobile", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
@@ -917,9 +962,10 @@ test("roadmap checkpoints open their matching course references", async function
     assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   }
   const upperGradeCases = [
-    { grade: 8, button: /단계 1, 일차식·기하 점검 보기/, title: "FlippedMath Geometry ↗", url: "https://geometry.flippedmath.com/" },
+    { grade: 8, button: /단계 1, 일차식·기하 점검 보기/, title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" },
     { grade: 8, button: /단계 3, 준비되면 심화 보기/, title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html" },
     { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html", inferred: true },
+    { grade: 9, button: /단계 2, 서로 연결하기 보기/, title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html", inferred: true },
     { grade: 10, button: /단계 1, 개념 설명 보기/, title: "FlippedMath AP Precalculus ↗", url: "https://precalculus.flippedmath.com/ap-precalc.html" },
     { grade: 10, button: /단계 3, 필요한 실전 연습 보기/, titles: ["MAA 2027 AIME 응시 기준 ↗", "MAA AIME·USAJMO·USAMO 안내 ↗"], urls: ["https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://maa.org/maa-invitational-competitions/"], note: true }
   ];

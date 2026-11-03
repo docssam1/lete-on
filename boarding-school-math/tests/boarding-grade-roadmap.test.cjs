@@ -119,13 +119,15 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.equal(roadmap.annualPlanResourceLinks[7][0][0].url, "#algebra1-course");
   assert.equal(roadmap.annualPlanResourceLinks[7][1][0].url, "https://math7.flippedmath.com/unit-13-similarity.html");
   assert.equal(roadmap.annualPlanResourceLinks[7][2][0].url, "https://www.khanacademy.org/digital-sat");
-  assert.equal(roadmap.courseStageResources[8][0][0].url, "https://geometry.flippedmath.com/");
+  assert.equal(roadmap.courseStageResources[8][0][0].url, "./geometry-workbook.html");
   assert.equal(roadmap.annualPlanResourceLinks[8][0][0].url, "./algebra2-workbook.html");
   assert.match(roadmap.annualPlanResourceLinks[8][0][0].title, /지필드 Algebra 2 원본/);
+  assert.equal(roadmap.annualPlanResourceLinks[8][1][0].url, "./geometry-workbook.html");
+  assert.match(roadmap.annualPlanResourceLinks[8][1][0].title, /지필드 Geometry 원본/);
   assert.match(roadmap.courseStageResources[8][2][0].title, /지필드 Algebra 2 원본/);
   assert.match(roadmap.courseStageResources[9].note, /학교마다 수강 과목과 순서/);
   assert.equal(roadmap.courseStageResources[9][0][0].url, "./algebra2-workbook.html");
-  assert.equal(roadmap.courseStageResources[9][1][0].url, "https://geometry.flippedmath.com/");
+  assert.equal(roadmap.courseStageResources[9][1][0].url, "./geometry-workbook.html");
   assert.equal(roadmap.courseStageResources[10][0][0].url, "https://precalculus.flippedmath.com/ap-precalc.html");
   assert.equal(roadmap.courseStageResources[10][0][0].title, "FlippedMath AP Precalculus");
   assert.deepEqual(roadmap.courseStageResources[10][2].map(function (source) { return source.url; }), [

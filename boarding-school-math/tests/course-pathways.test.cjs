@@ -31,6 +31,11 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
   assert.equal(algebra2.units.length, 5);
   assert.deepEqual(algebra2.focus, ["Polynomial structure", "Quadratic functions", "Rational expressions & functions", "Exponential & logarithmic models", "Sequences"]);
   assert.match(algebra2.availability, /5단원·18차시·36문항/);
+  const geometry = pathways.courses.find(function (course) { return course.id === "geometry"; });
+  assert.equal(geometry.studentHref, "./geometry-workbook.html");
+  assert.equal(geometry.teacherHref, "./geometry-workbook.html?edition=teacher");
+  assert.equal(geometry.units.length, 5);
+  assert.match(geometry.availability, /5단원·16차시·32문항/);
   const algebra1 = pathways.courses.find(function (course) { return course.id === "algebra-1"; });
   assert.deepEqual(algebra1.previousOptions, ["pre-algebra"]);
   assert.deepEqual(algebra1.nextOptions, ["geometry", "algebra-2"]);
