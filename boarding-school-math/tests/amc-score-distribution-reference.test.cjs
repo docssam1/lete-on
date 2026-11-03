@@ -45,6 +45,15 @@ test("MAA AMC 10 and AMC 12 references distinguish year and A/B form", function 
   assert.equal(reference.referenceFor("amc10", 2012, "B").average, 76.59);
   assert.deepEqual([reference.referenceFor("amc10", 2000, "").average, reference.referenceFor("amc10", 2001, "").average], [64.2, 67.8]);
   assert.deepEqual([reference.referenceFor("amc12", 2000, "").average, reference.referenceFor("amc12", 2001, "").average], [64.9, 56.6]);
+  assert.deepEqual(
+    [reference.referenceFor("amc10", 2011, "A").average, reference.referenceFor("amc10", 2011, "B").average, reference.referenceFor("amc12", 2011, "A").average, reference.referenceFor("amc12", 2011, "B").average],
+    [67.7, 72.2, 66.8, 64.9]
+  );
+  assert.deepEqual(
+    [reference.referenceFor("amc10", 2011, "A").students, reference.referenceFor("amc10", 2011, "B").students, reference.referenceFor("amc12", 2011, "A").students, reference.referenceFor("amc12", 2011, "B").students],
+    [70919, 33723, 74665, 30846]
+  );
+  assert.match(reference.referenceFor("amc10", 2011, "A").sourceUrl, /web\.archive\.org\/web\/20130124025158/);
   assert.match(reference.referenceFor("amc10", 2001, "").sourceLabel, /2차 자료/);
   assert.match(reference.referenceFor("amc12", 2000, "").sourceNote, /독립 대조하지 못했다고/);
   assert.equal(reference.referenceFor("amc10", 2001, "").top1, undefined);

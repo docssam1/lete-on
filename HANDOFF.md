@@ -1,3 +1,9 @@
+### 2026-11-04 · 2011 AMC 10/12 MAA 원본 통계 회수
+
+- 웹 검색에서 당시 MAA 경로의 [2011 AMC 10/12 Grand Statistics PDF](https://web.archive.org/web/20130124025158/http://amc.maa.org/amc1012/2011/stats/11AMC1012-grandstats.pdf)를 찾아 원본 호스트의 Internet Archive 보존 여부를 확인했다. 내려받은 2쪽 PDF에서 Apple PDFKit 텍스트 추출로 전체 평균·공식 응시자 수·학년별 평균과 표본 수를 확인하고, 기존 Scribd 사본의 4개 시험형 22개 행과 대조했다.
+- 2011 AMC 10 A/B 평균은 67.7/72.2, AMC 12 A/B는 66.8/64.9. 공식 응시자 수는 각각 70,919 / 33,723 / 74,665 / 30,846명이며 보고서의 비공식 응시자는 합산하지 않았다. 기존 같은 연도 학년별 평균 22행의 출처를 MAA 원본 호스트 보존본으로 갱신했고, 결과 참조에 전체 평균 4개 행도 추가했다. 새로 확인한 자료는 시험연도 통계뿐이므로 학년별 점수 등급이나 백분위로 바꾸지 않는다.
+- 검수는 PDF 추출 텍스트와 CSV·참조 모듈을 대조하는 범위로 수행한다. AMC 8 2010–2011 글로벌 점수×학년 상세표는 이번 검색으로 확보하지 못했다. 2010 일부 행이나 초기 집계는 전국/최종 결과표로 승격하지 않았다. 기존 `raw_youtube.txt`는 보존한다. 로컬 변경만; push, 배포, Drive 동기화 없음.
+
 ### 2026-11-04 AMC 웹 조사 후속 · 연도별 기준선 앱 반영
 
 2012–2016 AMC 10/12 A/B 20개 회차의 평균·상위 1% 기준을 [IvyTrack 연도별 결과표](https://www.ivytrack.org/forum.php?action=printable&mod=viewthread&tid=19383)와 [Math Gold Medalist AMC 10](https://mathgoldmedalist.com/competitions/amc-10)/[AMC 12](https://mathgoldmedalist.com/competitions/amc-12) 연도표에서 교차 확인해 `amc-score-distribution-reference.js`에 연결했다. 2018 AMC 12 B는 처음 보류했으나 추가 표에서 DHR 126·Top5 99·평균 57.85가 일치해 포함했다. 서로 값이 섞인 AMC 10 B 수치는 적용하지 않았다.
