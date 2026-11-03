@@ -8,9 +8,9 @@ record=json.loads((Path(__file__).parent/'source-inventory/5-2-u3-e1-e4-readines
 r=next(x for x in record['additionalSourceReviews'] if x['sourcePrintedPage']==86)
 assert r['sourcePdfPage']==82 and r['runtimeConnection']=='partially-connected' and r['publisherAnswerVerified'] is False
 assert [x['number'] for x in r['items']]==list(range(9,17))
-assert all(r['items'][i]['status']=='source-ambiguity-answer-key-pending' for i in [4,5,7])
+assert all(r['items'][i]['status']=='source-ambiguity-answer-key-pending' for i in [5,7])
 for item in r['items']:
-    if item['number'] in (9,10,11,12,15):
+    if item['number'] in (9,10,11,12,13,15):
         assert item['status']=='public-independent-verification-publisher-key-pending'
         assert item['runtimeTypeId']==f"5-2-u3-practice-{item['number']}-original"
         assert item['publisherAnswerVerified'] is False
@@ -20,6 +20,17 @@ for degrees in range(180):
     roots=[6*math.cos(theta)+sign*math.sqrt(64-36*math.sin(theta)**2) for sign in (-1,1)]
     assert roots[0] < 0 < roots[1]
 assert r['items'][1]['candidate']=='각 ㄴㄷㄱ 또는 각 ㄷㄱㄴ'
+# In (1), the opposite side alone can leave two possible triangles.
+disc = 3.8**2 - (4 * math.sin(math.radians(60)))**2
+roots = [4 * math.cos(math.radians(60)) + sign * math.sqrt(disc) for sign in (-1,1)]
+assert 0 < roots[0] < roots[1]
+# In (2), the side opposite 110° is longer than the known side 6 cm;
+# therefore the ray's two circle-intersection roots have opposite signs.
+for radius in (6.01, 7, 10, 20):
+    theta = math.radians(110)
+    roots = [6 * math.cos(theta) + sign * math.sqrt(radius**2 - 36 * math.sin(theta)**2) for sign in (-1,1)]
+    assert roots[0] < 0 < roots[1]
+assert r['items'][4]['candidate'] == '(1) 변 ㄴㄷ, (2) 변 ㅁㅂ 또는 변 ㅁㄹ'
 # A circle centered 5 cm from the ray origin intersects the 25° ray twice at radius 3 cm.
 theta=math.radians(25)
 disc=9-25*math.sin(theta)**2
