@@ -961,6 +961,47 @@
     renderSavedCompetitionDiagnostic();
     if (comparisonGrade !== null) renderComparison();
   }
+  function renderGrade7ContestBranch() {
+    const link = $("grade7-contest-branch");
+    if (!link) return;
+    const options = data.competitionOptions(grade);
+    const selected = options.find(function (entry) { return entry.id === competition; });
+    const program = selected ? selected.id : "amc8";
+    const branches = {
+      sasmo: {
+        href: "./sasmo.html",
+        title: "SASMO · 대회 자료와 연습",
+        copy: "SASMO 안내와 지필드 연습 자료를 살펴봐요. 공식 대회 결과나 등급 판정은 아니에요."
+      },
+      kangaroo: {
+        href: `https://mathkangaroo.org/mks/practice/grades-${Math.floor((grade - 1) / 2) * 2 + 1}-${Math.floor((grade - 1) / 2) * 2 + 2}/`,
+        title: "Math Kangaroo · 공식 기출 시험지",
+        copy: `${Math.floor((grade - 1) / 2) * 2 + 1}–${Math.floor((grade - 1) / 2) * 2 + 2}학년용 공식 기출 PDF를 열어요. 대회 점수 진단은 평가 결과 비교에서 따로 입력해요.`,
+        external: true
+      },
+      amc8: {
+        href: "./competition-practice.html?program=amc8",
+        title: "6학년 기초 연결 · AMC 8 유형 연습",
+        copy: "GFIELD 자체 10문항으로 유형을 살펴봐요. 공식 점수 진단은 아니에요."
+      },
+      amc10: {
+        href: `./amc10-practice.html?grade=${grade}`,
+        title: "AMC 10 · 개념 연결 연습 · 자체 12문항",
+        copy: "지필드 자체 주제 연습이에요. 공식 AMC 10 점수나 대회 준비 수준을 판정하지 않아요."
+      }
+    };
+    const branch = branches[program] || branches.amc8;
+    link.href = branch.href;
+    if (branch.external) {
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+    } else {
+      link.removeAttribute("target");
+      link.removeAttribute("rel");
+    }
+    $("grade7-contest-title").textContent = branch.title;
+    $("grade7-contest-copy").textContent = branch.copy;
+  }
   function renderSavedCompetitionDiagnostic() {
     const section = $("competition-saved-diagnostic");
     const host = $("competition-saved-domains");
@@ -1146,6 +1187,7 @@
     renderPracticeLinks();
     renderRoutes();
     renderCompetitionOptions();
+    renderGrade7ContestBranch();
     renderCompetitionRows();
     updateUrl(historyMode);
   }
@@ -1177,6 +1219,7 @@
     $("paper-label").value = "";
     updateUrl("replace");
     updateCompetitionFields();
+    renderGrade7ContestBranch();
     resetCompetitionReport();
     renderCompetitionRows();
   });

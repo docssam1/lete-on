@@ -2,6 +2,12 @@
 
 Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The map-stop readability and G·MAP palette updates are committed locally. No push, deployment, or Drive synchronization has occurred.
 
+### 2026-11-03 Grade 7 contest branch follows the selected program
+
+Replaced the fixed AMC 8 optional card with a program-aware card. Grade 7 selection now routes Math Kangaroo to its official Grade 7–8 practice PDFs, AMC 8 to the existing GFIELD 10-item practice, AMC 10 to the original GFIELD 12-item topic practice, and SASMO to its materials page. Changing the competition selector updates the card immediately. Each destination is labeled as official source material or GFIELD-authored practice, without treating it as a score diagnosis or level placement. The shared math renderer on the roadmap and workbooks continues to show numeric fractions as a stacked numerator, fraction bar, and denominator; `/` remains for unit rates and program labels such as AMC 10/12.
+
+Verification: bundled Mac Node syntax checks pass. The Grade 7–12 roadmap browser suite passes 44/44, including the Grade 7 program-switch behavior and existing stacked-fraction rendering; the grade roadmap model passes 12/12; `git diff --check` passes. Local only; no private candidate material opened, no push, deployment, Drive sync, or external API call.
+
 ### 2026-11-03 roadmap fraction typography
 
 Connected the roadmap’s remaining learner-facing lesson, annual-plan, course-comparison, and algebra example text to the shared math-text renderer. Numeric fractions now use a stacked numerator and denominator with a horizontal rule instead of slash notation wherever those strings are rendered. A live local Chrome check of the Grade 7 roadmap’s Algebra 1 content found two stacked fractions (`8/3` and `14/3`) and no remaining numeric slash-fraction text in that section. A separate renderer spot check confirmed `1/2` and `3/4` render as inline grids while unit rates (`km/h`, `달러/회`) and `AMC 10/12` remain unchanged. No browser errors. Local only; no push, deployment, or Drive sync.
