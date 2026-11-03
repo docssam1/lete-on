@@ -612,6 +612,31 @@
       });
       $("amc8-historical-award-source").href = historicalAward.sourceUrl;
     }
+    const aimeCutoffReference = window.GFIELDAMCAIMECutoffReference;
+    const aimeCutoffSection = $("amc-aime-cutoff-reference");
+    const aimeCutoff = ["amc10", "amc12"].includes(selectedFormat().id) && result.complete && result.scoreEstimate && aimeCutoffReference
+      ? aimeCutoffReference.referenceFor(selectedFormat().id, selectedYear, selectedForm)
+      : null;
+    aimeCutoffSection.hidden = !aimeCutoff;
+    if (aimeCutoff) {
+      const contestLabel = selectedFormat().id === "amc10" ? "AMC 10" : "AMC 12";
+      const administrationLabel = aimeCutoff.administration === "spring" ? "봄" : aimeCutoff.administration === "fall" ? "가을" : "";
+      const originalForm = selectedForm === "C" ? "A" : selectedForm === "D" ? "B" : selectedForm;
+      const paperLabel = `${selectedYear}${administrationLabel ? ` ${administrationLabel}` : ""} ${contestLabel}${originalForm ? ` ${originalForm}` : ""}`;
+      const score = result.scoreEstimate.points;
+      const difference = score - aimeCutoff.cutoff;
+      setText("amc-aime-cutoff-summary", `${paperLabel} · 응시 점수 ${score} / 150점 · 당시 진출선 ${aimeCutoff.cutoff}점`);
+      const bands = $("amc-aime-cutoff-bands");
+      bands.replaceChildren();
+      const item = document.createElement("div");
+      item.className = "paper-question-band aime-cohort-band" + (difference >= 0 ? " is-reached" : "");
+      const label = document.createElement("strong"); label.textContent = "당시 AIME 진출 점수선";
+      const cutoff = document.createElement("span"); cutoff.textContent = `${aimeCutoff.cutoff} / 150`;
+      const comparison = document.createElement("small"); comparison.textContent = difference >= 0 ? `입력 점수가 ${difference}점 위` : `점수선까지 ${Math.abs(difference)}점`;
+      item.append(label, cutoff, comparison); bands.append(item);
+      $("amc-aime-cutoff-source").href = aimeCutoff.sourceUrl;
+      $("amc-aime-cutoff-source").textContent = aimeCutoff.year === 2025 ? "MAA 공식 발표와 대조한 점수선 ↗" : "연도별 AIME 점수선 자료 ↗";
+    }
     const historicalGradeReference = window.GFIELDAMCHistoricalGradeReference;
     const gradeReferenceSection = $("amc-grade-reference");
     const gradeReference = ["amc8", "amc10", "amc12"].includes(selectedFormat().id) && result.complete && result.scoreEstimate && historicalGradeReference

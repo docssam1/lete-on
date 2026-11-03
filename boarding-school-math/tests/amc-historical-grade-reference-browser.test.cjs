@@ -89,3 +89,22 @@ test("grade comparison stays hidden for grouped grades and unavailable years", a
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   await page.close();
 });
+
+test("AMC 10/12 result shows the matching historical AIME score line", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=8&program=amc12&year=2024&form=A`, { waitUntil: "networkidle" });
+  for (let question = 1; question <= 25; question += 1) await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption(question <= 10 ? "correct" : "blank");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator("#amc-aime-cutoff-reference").isVisible(), true);
+  assert.match(await page.locator("#amc-aime-cutoff-summary").innerText(), /2024 AMC 12 A · 응시 점수 82\.5 \/ 150점 · 당시 진출선 76\.5점/);
+  assert.match(await page.locator("#amc-aime-cutoff-bands").innerText(), /당시 AIME 진출 점수선\s+76\.5 \/ 150\s+입력 점수가 6점 위/);
+  await page.goto(`${url}?grade=8&program=amc10&year=2021&form=D`, { waitUntil: "networkidle" });
+  for (let question = 1; question <= 25; question += 1) await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption(question <= 8 ? "correct" : "blank");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#amc-aime-cutoff-summary").innerText(), /2021 가을 AMC 10 B .*당시 진출선 96점/);
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
