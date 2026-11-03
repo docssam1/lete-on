@@ -533,7 +533,12 @@
       const reason = document.createElement("span"); reason.textContent = step.reason;
       li.append(expression, reason); steps.append(li);
     });
-    const source = $("algebra1-standard-source"); source.href = algebra1Course.source.url; source.textContent = `${algebra1Course.source.title} ↗`;
+    algebra1Course.sources.forEach(function (source) {
+      const link = $(`algebra1-standard-source-${source.id}`);
+      if (!link) return;
+      link.href = source.url;
+      link.textContent = `${source.shortTitle} ↗`;
+    });
   }
   function renderComparisonOptions() {
     const select = $("comparison-grade");

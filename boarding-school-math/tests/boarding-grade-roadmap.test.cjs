@@ -84,7 +84,7 @@ test("concept-flow examples connect supplied routes without learner placement", 
   assert.match(flows["sequence-number-theory"].steps.join(" → "), /수열.*닫힌식.*나머지.*합동식.*AIME/);
   assert.equal(flows["prealgebra-algebra1"].optional, true);
   assert.equal(flows["prealgebra-algebra1"].title, "선택형 · 변수식에서 식 정리로");
-  assert.deepEqual(flows["prealgebra-algebra1"].steps, ["변수를 사용해 식을 쓰고 식의 값 구하기", "거듭제곱의 의미와 연산 순서 이해하기", "말로 주어진 관계를 변수식으로 나타내기", "연산의 성질로 동치인 식 만들기", "분배법칙을 적용해 괄호가 있는 식 전개하기", "동류항을 결합해 식 간단히 하기"]);
+  assert.deepEqual(flows["prealgebra-algebra1"].steps, ["변수식을 세우고 식의 값 구하기", "거듭제곱과 연산 순서 적용하기", "문장으로 된 상황을 식으로 나타내기", "연산의 성질을 이용해 동치식 만들기", "분배법칙을 적용해 식 전개하기", "동류항을 결합해 식 간단히 하기"]);
   assert.equal(flows["prealgebra-algebra1"].note, "공유된 Prealgebra Unit 1의 개념 흐름을 참고한 예시예요. 학년 배치나 진단 결과가 아니에요.");
   assert.equal(Object.isFrozen(roadmap.conceptFlows), true);
   assert.equal(Object.isFrozen(roadmap.conceptFlows[0].steps), true);

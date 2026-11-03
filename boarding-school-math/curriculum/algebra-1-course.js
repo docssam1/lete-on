@@ -91,9 +91,71 @@
       id: "linear-functions",
       title: "일차 관계와 함수",
       question: "표·그래프·식은 같은 관계를 어떻게 다르게 보여줄까요?",
-      goals: ["기울기와 시작값을 상황의 단위로 해석한다", "함수 규칙을 표·그래프·식으로 바꾸어 읽는다", "두 일차 관계의 교점과 해의 의미를 설명한다"],
-      standards: ["HSA-CED.A.2", "HSF-IF.A.1", "HSF-IF.B.4", "HSF-IF.C.7", "HSF-LE.A.1"],
-      lesson: Object.freeze({ title: "기본 요금과 이용 횟수", prompt: "체험 교실은 등록비 7달러와 수업 한 번당 2.50달러를 받아요. x번 참여할 때 비용 C를 식으로 나타내고, 6번 참여한 비용을 구하세요. 기울기와 시작값이 각각 무엇을 뜻하는지도 적으세요.", solution: "C(x) = 2.5x + 7이고 C(6) = 22달러예요. 기울기 2.5는 수업 한 번마다 늘어나는 비용(달러/회), 시작값 7은 수업 전 등록비예요.", extension: "표에서 x = 0, 1, 2, 6일 때 비용을 채우고, 네 점이 한 직선 위에 놓이는 이유를 말해 보세요." })
+      goals: ["함수 표기법으로 입력에 따른 출력을 구한다", "일차 관계의 기울기와 시작값을 상황의 단위로 해석한다", "식을 표·그래프로 나타내고 입력 범위와 교점의 의미를 설명한다"],
+      standards: ["HSA-CED.A.2", "HSF-IF.A.1", "HSF-IF.A.2", "HSF-IF.B.4", "HSF-IF.B.5", "HSF-IF.B.6", "HSF-IF.C.7", "HSF-IF.C.9", "HSF-LE.B.5"],
+      lesson: Object.freeze({ title: "기본 요금과 이용 횟수", prompt: "체험 교실은 등록비 7달러와 수업 한 번당 2.50달러를 받아요. x번 참여할 때 비용 C를 식으로 나타내고, 6번 참여한 비용을 구하세요. 기울기와 시작값이 각각 무엇을 뜻하는지도 적으세요.", solution: "C(x) = 2.5x + 7이고 C(6) = 22달러예요. 기울기 2.5는 수업 한 번마다 늘어나는 비용(달러/회), 시작값 7은 수업 전 등록비예요.", extension: "표에서 x = 0, 1, 2, 6일 때 비용을 채우고, 네 점이 한 직선 위에 놓이는 이유를 말해 보세요." }),
+      lessons: Object.freeze([
+        Object.freeze({
+          title: "함수 표기법으로 출력 구하기",
+          objective: "함수가 각 입력에 하나의 출력을 대응시킨다는 뜻을 설명하고, 함수 표기법으로 출력값을 계산한다.",
+          idea: "f(3)은 f에 3을 곱한다는 뜻이 아니에요. 입력 x가 3일 때 함수가 내놓는 출력값을 뜻해요.",
+          example: Object.freeze({ prompt: "f(x) = 3x + 2일 때 f(4)를 구하고, 식의 각 수가 무엇을 하는지 설명하세요.", solution: "x에 4를 넣으면 f(4) = 3 × 4 + 2 = 14예요. 입력 4를 세 배 하고 2를 더해 출력을 만들어요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "g(x) = 3x + 1일 때 g(5)를 구하세요.", answer: "g(5) = 16", feedback: "입력 x 자리에 5를 넣어 3 × 5 + 1을 계산해요." }),
+            Object.freeze({ prompt: "h(t) = 20 − 4t일 때 h(3)을 구하고 문장으로 설명하세요.", answer: "h(3) = 8", feedback: "입력이 3일 때 출력은 20에서 4를 세 번 뺀 값이에요." })
+          ])
+        }),
+        Object.freeze({
+          title: "상황에 맞는 입력과 출력 범위 정하기",
+          objective: "표와 상황에서 함수의 입력값·출력값을 구하고, 문제 맥락에 맞는 정의역을 정한다.",
+          idea: "식에 대입할 수 있는 모든 수가 상황에서 가능한 입력인 것은 아니에요. 횟수는 보통 음이 아닌 정수이고, 시간은 상황에 따라 연속된 값이 될 수 있어요.",
+          example: Object.freeze({ prompt: "인쇄소는 기본료 12달러와 포스터 한 장당 3달러를 받아요. P(n) = 12 + 3n일 때 n이 0, 1, 2, 3이면 비용은 각각 얼마인가요? 입력 n의 범위도 말하세요.", solution: "비용은 차례로 12, 15, 18, 21달러예요. 포스터 수 n은 0 이상의 정수이므로 정의역은 0, 1, 2, 3, …이고 출력은 그에 맞는 총비용이에요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "같은 규칙 P(n) = 12 + 3n에서 포스터가 0~3장일 때 정의역과 치역을 쓰세요.", answer: "정의역 {0, 1, 2, 3}, 치역 {12, 15, 18, 21}달러", feedback: "입력은 가능한 포스터 장수이고, 치역은 그 입력에 대응하는 비용이에요." }),
+            Object.freeze({ prompt: "물통에 물 24L가 있고 한 시간마다 3L씩 빠져나가요. W(t) = 24 − 3t일 때 물이 바닥나기 전까지 가능한 정수 시간 t와 W(8)을 구하세요.", answer: "t = 0, 1, …, 8; W(8) = 0L", feedback: "시간은 0부터 시작하고 물의 양이 음수가 되지 않는 동안만 이 모형을 사용해요." })
+          ])
+        }),
+        Object.freeze({
+          title: "기울기와 시작값을 상황의 단위로 읽기",
+          objective: "y = mx + b에서 기울기 m과 시작값 b를 찾아 각 값의 단위와 상황적 의미를 설명한다.",
+          idea: "기울기는 입력이 한 단위 늘 때 출력이 얼마나 변하는지 나타내요. 시작값은 입력이 0일 때의 출력이에요.",
+          example: Object.freeze({ prompt: "택시 요금 T(m) = 6 + 1.5m에서 6과 1.5가 각각 뜻하는 바를 말하고, 4분 이동한 요금을 구하세요.", solution: "시작값 6은 처음 요금 6달러이고, 기울기 1.5는 분당 1.5달러예요. T(4) = 6 + 1.5 × 4 = 12달러예요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "복사 비용 C(x) = 10 + 2.5x에서 기본료와 한 장당 비용을 찾아 x = 4일 때 전체 비용을 구하세요.", answer: "기본료 10달러, 장당 2.50달러, C(4) = 20달러", feedback: "상수항은 시작 비용이고 x의 계수는 복사 한 장이 더해질 때 증가하는 비용이에요." }),
+            Object.freeze({ prompt: "주간 저축액 S(w) = 20 + 4w에서 시작값과 매주 증가량을 말하세요.", answer: "시작값 20달러, 매주 4달러 증가", feedback: "w의 계수 4는 주당 저축액의 변화량이고, 상수항 20은 w = 0일 때 금액이에요." })
+          ])
+        }),
+        Object.freeze({
+          title: "표·식·그래프 연결하기",
+          objective: "표의 일정한 변화량에서 일차함수의 규칙을 찾고, 입력·출력 쌍을 좌표와 그래프의 점으로 나타낸다.",
+          idea: "표에서 입력이 같은 만큼 늘 때 출력도 같은 양만큼 늘면 일차 관계일 수 있어요. x = 0의 출력은 세로축과 만나는 점을 알려 줘요.",
+          example: Object.freeze({ prompt: "x가 0, 1, 2, 3일 때 y가 2, 5, 8, 11인 표를 보고 함수식을 찾으세요. 좌표평면에 처음 두 점을 쓴다면 어떤 점인가요?", solution: "x가 1 늘 때 y는 3씩 늘고 x = 0일 때 y = 2예요. 따라서 y = 3x + 2이고, 처음 두 점은 (0, 2), (1, 5)예요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "x가 0, 1, 2, 3일 때 y가 −1, 2, 5, 8이에요. 변화량과 시작값을 이용해 식을 쓰세요.", answer: "y = 3x − 1", feedback: "y는 x가 1 늘 때 3씩 증가하고, x = 0일 때 −1이에요." }),
+            Object.freeze({ prompt: "x가 0, 2, 4일 때 y가 5, 11, 17이에요. 기울기와 시작값, 함수식을 구하세요.", answer: "기울기 3, 시작값 5, y = 3x + 5", feedback: "x가 2 늘 때 y가 6 늘므로 한 단위당 변화량은 6 ÷ 2 = 3이에요." })
+          ])
+        }),
+        Object.freeze({
+          title: "두 일차 관계 비교하고 만나는 지점 해석하기",
+          objective: "두 함수를 표·식으로 비교하고, 교점의 입력과 출력이 상황에서 뜻하는 바를 설명한다.",
+          idea: "두 그래프가 만나는 점에서는 같은 입력에 대한 출력이 같아요. 교점 전후에는 어느 함수의 출력이 더 큰지 비교할 수 있어요.",
+          example: Object.freeze({ prompt: "체험 A의 비용은 A(w) = 15 + 3w, 체험 B는 B(w) = 7 + 4w예요. 비용이 같아지는 이용 횟수와 그때의 비용을 구하세요.", solution: "15 + 3w = 7 + 4w를 풀면 w = 8이에요. 비용은 15 + 3 × 8 = 39달러예요. 8회 전에는 B가 더 저렴하고, 8회 뒤에는 A가 더 저렴해요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "A(n) = 9 + 2n, B(n) = 3 + 3n일 때 두 비용이 같아지는 n과 비용을 구하세요.", answer: "n = 6, 두 비용은 각각 21달러", feedback: "9 + 2n = 3 + 3n을 풀어 n = 6을 얻고 두 식에 넣어 확인해요." }),
+            Object.freeze({ prompt: "P(x) = 10 + 5x, Q(x) = 22 + 2x일 때 두 함수가 같은 값을 갖는 입력과 출력을 구하세요.", answer: "x = 4일 때 출력은 30", feedback: "10 + 5x = 22 + 2x의 해를 구한 뒤 두 함수에 대입해 출력이 같은지 확인해요." })
+          ])
+        }),
+        Object.freeze({
+          title: "상황에 맞는 일차함수 만들기",
+          objective: "두 양 사이의 일정한 변화율을 함수식으로 나타내고 입력 범위와 결과의 단위를 함께 해석한다.",
+          idea: "선형 모형은 같은 입력 간격에서 출력이 같은 양만큼 변하는 관계를 나타내요. 모델을 쓰기 전에 입력과 출력의 단위를 확인해요.",
+          example: Object.freeze({ prompt: "자전거가 일정한 속력 48km/h로 이동해요. 출발 후 t시간의 이동거리 d를 나타내고, 1.5시간 뒤 거리와 4시간 동안 사용할 때의 입력 범위를 설명하세요.", solution: "d(t) = 48t예요. d(1.5) = 72km이고, 4시간 이동을 나타낼 때 시간의 범위는 0 ≤ t ≤ 4예요. 입력은 시간, 출력은 이동거리예요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "입장료 14달러와 시간당 2달러를 내는 공간을 3.5시간 이용했어요. 비용 함수를 쓰고 전체 비용을 구하세요.", answer: "C(t) = 14 + 2t; C(3.5) = 21달러", feedback: "기본료를 시작값으로, 시간당 요금을 기울기로 두어요." }),
+            Object.freeze({ prompt: "호출료 3달러와 거리 1km마다 1.80달러를 받는 이동 서비스에서 5km 이동한 비용을 구하고 기울기의 단위를 쓰세요.", answer: "12달러, 기울기 단위는 달러/km", feedback: "비용식은 C(d) = 3 + 1.8d이고 기울기는 거리 1km당 늘어나는 비용이에요." })
+          ])
+        })
+      ])
     }),
     Object.freeze({
       id: "systems-inequalities",
@@ -137,11 +199,14 @@
   return Object.freeze({
     id: "gfield-algebra-1-v1",
     title: "지필드 Algebra 1",
-    status: "unit-1-sequence-published",
+    status: "units-1-2-sequences-published",
     scope: "미국 고등학교 공통 기준의 대수·함수 영역을 참고해 만든 지필드 학습 순서예요. 학교별 단원 순서와 깊이는 교사가 조정해요.",
     units: units,
     starterLesson: starterLesson,
-    source: Object.freeze({ title: "Common Core State Standards · High School Algebra", url: "https://www.thecorestandards.org/Math/Content/HSA/" }),
+    sources: Object.freeze([
+      Object.freeze({ id: "algebra", shortTitle: "공통 기준 · 대수", title: "Common Core State Standards · High School Algebra", url: "https://www.thecorestandards.org/Math/Content/HSA/" }),
+      Object.freeze({ id: "functions", shortTitle: "공통 기준 · 함수", title: "Common Core State Standards · High School Functions", url: "https://www.thecorestandards.org/Math/Content/HSF/" })
+    ]),
     originalContentNotice: "이 설명과 연습 문제는 지필드가 새로 작성했어요. 공개 기준의 코드만 범위 확인에 사용했어요."
   });
 });
