@@ -308,3 +308,7 @@ Recolored the shared learning-world illustration to G·MAP's violet/lavender and
 Verification: the Grade roadmap browser suite passes 31/31, including branded map use across Grades 3–12, Grade 7 prompt placement and overlap checks, and responsive widths. Rendered and inspected the 1280px desktop preview; `git diff --check` passes. No private candidate content or learner data accessed; local only, no push or deployment.
 
 The next map pass placed each grade's scenic route before the curriculum-detail cards, so the new branded artwork appears earlier on desktop. The Grade 8 desktop preview now shows the map before the school/contest/SAT detail and concept bridge; this does not change any grade content or learner-status claims. The same 31/31 browser suite now asserts this ordering across Grades 3–6 and 8–12, alongside the existing mobile and map checks.
+
+### 2026-11-03 mobile map-label readability
+
+Raised selectable route labels to 16px and stop numbers to 14.4px on phone layouts. The Grade 3–12 roadmap browser suite passes 31/31, including the mobile type-size assertion, keyboard selection, all-grade branded-map use, and responsive layout. Inspected Grade 7 at 390px and 320px; labels are 16px and the document has no horizontal overflow at either width. Local only; no push or deployment.

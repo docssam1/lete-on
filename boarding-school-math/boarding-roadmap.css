@@ -513,6 +513,8 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
     background: rgba(255,255,255,.92);
     box-shadow: 0 5px 16px rgba(51,35,77,.10);
   }
+  .journey-main .stage-list .stage-button strong { font-size: 1rem; }
+  .journey-main .stage-list .stage-node { font-size: .9rem; }
   .stage-selected-note { margin-left: auto; white-space: nowrap; }
 }
 

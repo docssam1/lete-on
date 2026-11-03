@@ -893,6 +893,8 @@ test("the same learning-world map frames every grade while phones keep the verti
   await phone.goto(`${url}?grade=8`, { waitUntil: "networkidle" });
   assert.doesNotMatch(await phone.locator(".stage-map").evaluate((node) => getComputedStyle(node).backgroundImage), /mathematics-learning-world-gmap\.webp/);
   assert.equal(await phone.locator("#stage-list").evaluate((node) => getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).length), 1);
+  const routeLabelSizes = await phone.locator("#stage-list button strong").evaluateAll((nodes) => nodes.map((node) => parseFloat(getComputedStyle(node).fontSize)));
+  assert.ok(routeLabelSizes.every((size) => size >= 16), "phone route labels remain at least 16px");
   await phone.locator("#stage-list button").nth(1).click();
   assert.equal(await phone.getByText("살펴보는 중", { exact: true }).count(), 1);
   assert.deepEqual(await phone.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
