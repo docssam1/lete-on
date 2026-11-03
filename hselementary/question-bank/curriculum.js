@@ -2504,6 +2504,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:`5-2-u5-practice-${n}-original`,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:102,alternateSourcePdfPage:103,sourcePrintedPage:108,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U5Page108Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:!manual,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건과 그림을 직접 대조하고 최대값과 실제 구성 가능성을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
 
+  if (source52Cuboid) for (const [typeId,n] of [["5-2-u5-t4-2",10],["5-2-u5-t4-4",11]]) {
+    const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id===typeId);
+    if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:`5-2-u5-practice-${n}-original`,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:103,alternateSourcePdfPage:104,sourcePrintedPage:109,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U5Page108Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 그림의 감은 방향과 매듭 조건을 대조하고 각 길이를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+
   if (source52CuboidNets) {
     for (const [ordinal, name, generatorKey] of [
       [1, "전개도 색칠 면에서 선분 길이 구하기", "source52CuboidNetSegmentLengthPage50Example21"],
