@@ -52,8 +52,20 @@ const ids = [1, 2, 3, 4, 5, 6].map(n => `5-2-u4-e1-mission-${n}`);
           await page.locator("#printMenuButton").click();
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
+          if (mode === "problem") {
+            await page.emulateMedia({ media: "print" });
+            await page.setViewportSize({ width: 794, height: 1123 });
+            const labels = await page.locator('#problemView .source52-u4-p43-m5-question .source52-u4-p43-m5-label, #problemView .source52-u4-p43-m5-question .source52-u4-p43-m5-overlap-label').evaluateAll(nodes => nodes.map(node => {
+              const r = node.getBoundingClientRect(), svg = node.closest('svg').getBoundingClientRect();
+              return { height: r.height, inside: r.left >= svg.left - 1 && r.right <= svg.right + 1 && r.top >= svg.top - 1 && r.bottom <= svg.bottom + 1 };
+            }));
+            assert.equal(labels.length, 9);
+            assert(labels.every(label => label.height >= 10 && label.inside), 'A4 tape labels must be readable and fit in the figure');
+          }
           await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
           await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
+          await page.emulateMedia({ media: "screen" });
+          await page.setViewportSize({ width, height: 1000 });
         }
       }
       assert.deepEqual(errors, []);
