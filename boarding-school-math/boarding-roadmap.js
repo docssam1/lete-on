@@ -137,12 +137,12 @@
       const content = document.createElement("div");
       content.className = "annual-plan-period-content";
       const title = document.createElement("h3");
-      title.textContent = period[1];
+      appendMathText(title, period[1]);
       const description = document.createElement("p");
-      description.textContent = period[2];
+      appendMathText(description, period[2]);
       const resources = document.createElement("small");
       const labels = document.createElement("span");
-      labels.textContent = `자료 예시 · ${period[3]}`;
+      appendMathText(labels, `자료 예시 · ${period[3]}`);
       resources.append(labels);
       const links = data.annualPlanResourceLinks[grade] && data.annualPlanResourceLinks[grade][periodIndex] || [];
       if (links.length) {
@@ -183,7 +183,7 @@
         const note = document.createElement("p");
         note.className = "concept-flow-note";
         note.id = `${flow.id}-note`;
-        note.textContent = flow.note;
+        appendMathText(note, flow.note);
         article.setAttribute("aria-describedby", note.id);
         article.append(heading, note);
       } else {
@@ -227,7 +227,7 @@
       number.className = "stage-node";
       number.textContent = String(index + 1).padStart(2, "0");
       const label = document.createElement("strong");
-      label.textContent = step[0];
+      appendMathText(label, step[0]);
       button.append(number, label);
       const marker = document.createElement("button");
       marker.type = "button";
@@ -348,11 +348,11 @@
       return;
     }
     selectedLabel.textContent = "지금 살펴보는 개념";
-    selectedTitle.textContent = entry.steps[stage][0];
+    setText("journey-selected-title", entry.steps[stage][0]);
     const next = entry.steps[stage + 1];
     nextStop.hidden = !next;
     endNote.hidden = Boolean(next);
-    if (next) $("journey-next-title").textContent = next[0];
+    if (next) setText("journey-next-title", next[0]);
   }
   function matchingAssessmentEvidence(selectedGrade, sourceId) {
     const gradeToMatch = Number.isInteger(selectedGrade) ? selectedGrade : grade;
@@ -456,10 +456,10 @@
       card.className = `course-path-card${currentCard ? " is-current" : ""}`;
       const label = document.createElement("span"); label.textContent = kind;
       const heading = document.createElement("h3"); heading.textContent = course ? course.title : title;
-      const copy = document.createElement("p"); copy.textContent = course ? `${course.grades} · ${course.summary}` : description;
+      const copy = document.createElement("p"); appendMathText(copy, course ? `${course.grades} · ${course.summary}` : description);
       card.append(label, heading, copy);
       if (course) {
-        const focus = document.createElement("small"); focus.textContent = `먼저 볼 내용 · ${course.prerequisites}`;
+        const focus = document.createElement("small"); appendMathText(focus, `먼저 볼 내용 · ${course.prerequisites}`);
         const availability = document.createElement("small"); availability.className = "course-path-availability"; availability.textContent = course.availability;
         const material = document.createElement("a"); material.className = "course-path-material-link"; material.href = course.studentHref; material.textContent = "지필드 자료 보기 →";
         card.append(focus, availability, material);
@@ -492,9 +492,9 @@
       const card = document.createElement("article"); card.className = "algebra1-unit-card";
       const number = document.createElement("span"); number.className = "algebra1-unit-number"; number.textContent = `0${index + 1}`;
       const content = document.createElement("div");
-      const heading = document.createElement("h3"); heading.textContent = unit.title;
+      const heading = document.createElement("h3"); appendMathText(heading, unit.title);
       const question = document.createElement("p"); question.className = "algebra1-unit-question"; appendMathText(question, unit.question);
-      const goals = document.createElement("ul"); unit.goals.forEach(function (goal) { const li = document.createElement("li"); li.textContent = goal; goals.append(li); });
+      const goals = document.createElement("ul"); unit.goals.forEach(function (goal) { const li = document.createElement("li"); appendMathText(li, goal); goals.append(li); });
       const standards = document.createElement("small"); standards.textContent = `범위 코드 · ${unit.standards.join(" · ")}`;
       let sequence = null;
       if (unit.lessons && unit.lessons.length) {
@@ -504,7 +504,7 @@
         unit.lessons.forEach(function (session, lessonIndex) {
           const sessionItem = document.createElement("li");
           const sessionDetails = document.createElement("details"); sessionDetails.className = "algebra1-session";
-          const sessionSummary = document.createElement("summary"); sessionSummary.textContent = `${String(lessonIndex + 1).padStart(2, "0")} · ${session.title}`;
+          const sessionSummary = document.createElement("summary"); appendMathText(sessionSummary, `${String(lessonIndex + 1).padStart(2, "0")} · ${session.title}`);
           const objective = document.createElement("p"); objective.className = "algebra1-session-objective"; appendMathText(objective, `이번 차시 목표 · ${session.objective}`);
           const idea = document.createElement("p"); idea.className = "algebra1-session-idea"; appendMathText(idea, session.idea);
           const exampleLabel = document.createElement("strong"); exampleLabel.textContent = "예제와 풀이";
@@ -528,7 +528,7 @@
         sequence.append(sequenceSummary, lessonList);
       }
       const lesson = document.createElement("details"); lesson.className = "algebra1-unit-lesson";
-      const summary = document.createElement("summary"); summary.textContent = `지필드 연습 · ${unit.lesson.title}`;
+      const summary = document.createElement("summary"); appendMathText(summary, `지필드 연습 · ${unit.lesson.title}`);
       const prompt = document.createElement("p"); prompt.className = "algebra1-unit-prompt"; appendMathText(prompt, unit.lesson.prompt);
       const solutionHeading = document.createElement("strong"); solutionHeading.textContent = "풀이 확인";
       const solution = document.createElement("p"); appendMathText(solution, unit.lesson.solution);
@@ -547,8 +547,8 @@
     const steps = $("algebra1-starter-steps"); steps.replaceChildren();
     lesson.steps.forEach(function (step) {
       const li = document.createElement("li");
-      const expression = document.createElement("strong"); expression.textContent = step.expression;
-      const reason = document.createElement("span"); reason.textContent = step.reason;
+      const expression = document.createElement("strong"); appendMathText(expression, step.expression);
+      const reason = document.createElement("span"); appendMathText(reason, step.reason);
       li.append(expression, reason); steps.append(li);
     });
     algebra1Course.sources.forEach(function (source) {
@@ -579,17 +579,17 @@
     list.replaceChildren();
     data.getTracks(entry.grade).forEach(function (track) {
       const term = document.createElement("dt"); term.textContent = track[0];
-      const description = document.createElement("dd"); description.textContent = track[1];
+      const description = document.createElement("dd"); appendMathText(description, track[1]);
       list.append(term, description);
     });
     const annualPlan = data.getAnnualPlan(entry.grade);
     const planTerm = document.createElement("dt"); planTerm.textContent = "연간 흐름";
     const planDescription = document.createElement("dd");
-    planDescription.textContent = annualPlan ? annualPlan.title : "월별 계획 자료 없음";
+    appendMathText(planDescription, annualPlan ? annualPlan.title : "월별 계획 자료 없음");
     list.append(planTerm, planDescription);
     if (annualPlan) annualPlan.periods.forEach(function (period) {
       const term = document.createElement("dt"); term.textContent = period[0];
-      const description = document.createElement("dd"); description.textContent = `${period[1]} · ${period[2]}`;
+      const description = document.createElement("dd"); appendMathText(description, `${period[1]} · ${period[2]}`);
       list.append(term, description);
     });
   }
@@ -604,7 +604,7 @@
       cell.className = "comparison-mobile-cell";
       const label = document.createElement("strong");
       const planLabel = comparisonPlanLabel(entry);
-      label.textContent = `${entry.grade}학년${entry.grade === grade ? " · 현재" : ""} · ${planLabel}`;
+      appendMathText(label, `${entry.grade}학년${entry.grade === grade ? " · 현재" : ""} · ${planLabel}`);
       const title = document.createElement("span"); title.textContent = entry.title;
       cell.append(label, title); header.append(cell);
     });
@@ -612,7 +612,7 @@
     if (current.source === "inferred" || target.source === "inferred") {
       const note = document.createElement("p");
       note.className = "comparison-mobile-note";
-      note.textContent = `${target.source === "inferred" ? target.grade : current.grade}학년은 학교의 실제 과목과 순서를 확인한 뒤 학습 계획을 조정해 주세요.`;
+      appendMathText(note, `${target.source === "inferred" ? target.grade : current.grade}학년은 학교의 실제 과목과 순서를 확인한 뒤 학습 계획을 조정해 주세요.`);
       host.append(note);
     }
     function addPair(label, left, right) {
@@ -623,7 +623,7 @@
         const cell = document.createElement("div"); cell.className = "comparison-mobile-cell";
         const gradeLabel = document.createElement("span"); gradeLabel.className = "comparison-mobile-grade";
         gradeLabel.textContent = `${pair[0].grade}학년`;
-        const copy = document.createElement("p"); copy.textContent = pair[1] == null ? "이 학년 자료에 별도 항목 없음" : pair[1];
+        const copy = document.createElement("p"); appendMathText(copy, pair[1] == null ? "이 학년 자료에 별도 항목 없음" : pair[1]);
         cell.append(gradeLabel, copy); values.append(cell);
       });
       row.append(heading, values); host.append(row);

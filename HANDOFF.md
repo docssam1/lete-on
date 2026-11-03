@@ -2,6 +2,10 @@
 
 Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The map-stop readability and G·MAP palette updates are committed locally. No push, deployment, or Drive synchronization has occurred.
 
+### 2026-11-03 roadmap fraction typography
+
+Connected the roadmap’s remaining learner-facing lesson, annual-plan, course-comparison, and algebra example text to the shared math-text renderer. Numeric fractions now use a stacked numerator and denominator with a horizontal rule instead of slash notation wherever those strings are rendered. A live local Chrome check of the Grade 7 roadmap’s Algebra 1 content found two stacked fractions (`8/3` and `14/3`) and no remaining numeric slash-fraction text in that section. A separate renderer spot check confirmed `1/2` and `3/4` render as inline grids while unit rates (`km/h`, `달러/회`) and `AMC 10/12` remain unchanged. No browser errors. Local only; no push, deployment, or Drive sync.
+
 ### 2026-11-03 Grade 7 learning plan opens its current GFIELD workbook
 
 The Grade 7 student's primary action now opens the released GFIELD 7.NS.A student workbook directly; the teacher view opens its teacher guide. The plan and notice say the personal diagnostic and result-based level comparison are under review; the selected study topic is explicitly learner-chosen and does not imply a weakness or grade level. Corrected the Korean topic sentence so labels ending in “빼기” do not receive the wrong subject particle. The shared workbook display was rechecked in Chrome: numeric fractions appear stacked, with zero slash-form fractions in student content.

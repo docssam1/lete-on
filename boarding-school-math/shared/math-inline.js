@@ -9,7 +9,7 @@
     const mathToken = `(?:[−-]?(?:${algebraicTerm}|√(?:\\d+(?:\\.\\d+)?|${parenthesized}))|${absoluteValue}|[θΘ]|[가-힣]+)`;
     const denominator = `(?:\\d+(?:\\.\\d+)?|${parenthesized}|${absoluteValue}|[A-Za-z]\\([^()]*\\)|[A-Za-z](?:_\\d+)?|[θΘπΠ]|[가-힣]+)`;
     const fraction = new RegExp(`(^|[^\\w./가-힣])(${mathToken}|${parenthesized})\\s*\\/\\s*(${denominator})(?:(?![\\w/]|\\.(?=\\d))|(?<=[0-9)])(?=[A-Za-z]\\b))`, "g");
-    const unitRates = new Set(["m/s", "mi/h", "ft/s"]);
+    const unitRates = new Set(["m/s", "km/h", "mi/h", "ft/s", "km/시간", "마일/시간", "달러/회", "달러/km"]);
     let cursor = 0;
     let match;
     while ((match = fraction.exec(text))) {
