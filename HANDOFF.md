@@ -693,3 +693,11 @@ Follow-up: added the GFIELD Algebra 2 workbook as an optional “필요한 단�
 Added an optional “풀이 뒤에 한 번 더 생각하기” panel to the GFIELD AMC 10 and AIME-style practice pages, using the supplied coaching prompts about choice of method, alternate approaches, changing a condition, and changing the numbers. The panel is closed by default and does not record responses. It complements the existing item-specific connection questions and keeps “개념 → 유형 → 연결 → 실전” visible.
 
 Verification: the targeted AMC 10 roadmap/practice test and AIME browser test pass 2/2, including prompt contents, disclosure behavior, stacked fractions, answers, and 390px no-overflow. Fresh mobile captures of both opened reflection panels show legible single-column prompts and no page errors. Local only; no private candidate content, push, deployment, or external API use.
+
+### 2026-11-03 Contest-practice visual alignment and fraction check
+
+Aligned the AMC 10 and AIME practice screens with the GFIELD growth-map plum/lilac palette. Styled the roadmap return link as a clear button, added matching keyboard-focus and selected-state colors, and corrected the AMC mobile intro so the title and source note use a single column. Korean text now wraps at word boundaries on narrow screens, and the AMC answered-count stays on one line. Kept green/red feedback colors for answer status.
+
+The user's fraction-format request was verified against the rendered Grade 7 AMC practice: mathematical fractions use stacked numerator, horizontal bar, and denominator; a mobile viewport capture confirms the fraction form. Progress values such as `0 / 12` remain count notation. The existing shared renderers also cover the GFIELD Algebra 1, Pre-Algebra, Algebra 2, Geometry, Precalculus, workbook, and A4 views.
+
+Verification: the targeted Grade 7 AMC browser test and AIME browser test pass 2/2, including fraction-bar, palette, focus, route, answer, and mobile layout assertions. Captures `/tmp/gfield-amc10-fraction-inline.png`, `/tmp/gfield-amc10-mobile-toolbar.png`, and `/tmp/gfield-amc10-desktop.png` reviewed. `git diff --check` passes. No private assessment item content or learner data was used. Local only; no push, deployment, Drive sync, or external API use.

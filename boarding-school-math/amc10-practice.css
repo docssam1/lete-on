@@ -1,3 +1,5 @@
+.amc10-practice-page{--blue:#60418f;--blue-soft:#f0ebf7;--line:#d9d0e5;word-break:keep-all;overflow-wrap:break-word}
+.amc10-practice-page .back-link{min-height:44px;margin-left:auto;padding:8px 12px;display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:6px;background:var(--blue-soft);color:var(--blue);font-weight:800;text-decoration:none;white-space:nowrap}
 .amc10-practice-page .practice-intro{grid-template-columns:minmax(0,1fr) minmax(280px,370px)}
 .amc10-practice-page .release-note a{display:inline-block;margin-top:12px;color:var(--blue);font-size:13px;font-weight:800}
 .practice-method{margin:28px 0 8px;padding:20px 24px;border:1px solid var(--line);background:#fff}
@@ -9,6 +11,8 @@
 .practice-method p a{color:var(--blue);font-weight:800}
 .practice-reflection{margin-top:12px;border-top:1px solid var(--line)}.practice-reflection summary{min-height:42px;display:flex;align-items:center;cursor:pointer;color:var(--blue);font-size:14px;font-weight:850}.practice-reflection ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;list-style:none;margin:8px 0 0;padding:0}.practice-reflection li{padding:8px 10px;border-left:2px solid var(--blue);background:var(--blue-soft);font-size:13px;font-weight:700}
 .amc10-practice-page .bank-toolbar{margin-bottom:0}
+.amc10-practice-page .bank-toolbar>div:first-child{word-break:keep-all;overflow-wrap:break-word}
+.amc10-practice-page .progress-summary{flex:0 0 auto;min-width:max-content}.amc10-practice-page .progress-summary strong{white-space:nowrap;font-size:20px}
 .amc10-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:36px;padding-top:30px}
 .domain-sidebar{align-self:start;position:sticky;top:96px}
 .domain-sidebar h2,.amc10-workspace h2{margin:0;font-size:24px}
@@ -33,10 +37,12 @@
 .worked-solution summary{width:max-content;max-width:100%;cursor:pointer;color:var(--blue);font-size:14px;font-weight:850}
 .worked-solution ol{margin:12px 0;padding-left:24px}
 .worked-solution li{margin:5px 0;font-family:var(--serif);line-height:1.6}
-.connection-question{margin:10px 0 0;padding:12px 14px;border-left:3px solid #d17c52;background:#fff7f2;font-size:14px}
-.practice-boundary{display:grid;gap:5px;margin:32px 0 0;padding:18px 20px;border:1px solid #c9d6ec;background:#fff;color:var(--muted);font-size:13px}
+.connection-question{margin:10px 0 0;padding:12px 14px;border-left:3px solid #60418f;background:#f0ebf7;font-size:14px}
+.practice-boundary{display:grid;gap:5px;margin:32px 0 0;padding:18px 20px;border:1px solid #d9d0e5;border-left:4px solid #60418f;background:#fff;color:var(--muted);font-size:13px}
 .practice-boundary strong{color:var(--ink);font-size:14px}
+.amc10-practice-page button:focus-visible,.amc10-practice-page a:focus-visible{outline-color:#60418f}.amc10-practice-page .problem-card::after{color:#60418f0b}.amc10-practice-page .practice-next a:hover{background:#523878}
 .amc10-practice-page .math-fraction{font-size:1.03em;min-width:1.55em}
+@media(max-width:900px){.amc10-practice-page .practice-intro{grid-template-columns:minmax(0,1fr);gap:20px;padding-top:48px}}
 @media(max-width:850px){.amc10-layout{grid-template-columns:1fr;gap:12px}.domain-sidebar{position:static}.domain-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.scope-note{margin-bottom:12px}}
 @media(max-width:560px){.practice-method{padding:16px}.practice-method ol{grid-template-columns:1fr 1fr}.practice-method li+li{padding-left:0;border-left:0}.practice-reflection ul{grid-template-columns:1fr}.domain-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.amc10-workspace .choices{grid-template-columns:1fr}.amc10-workspace .choice{grid-template-columns:32px minmax(0,1fr)}.amc10-workspace .choice-value{justify-content:start;text-align:left}}
 @page{size:A4;margin:14mm}

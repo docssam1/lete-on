@@ -40,6 +40,10 @@ test("AIME-style practice validates integer answers, filters, explanations, and 
   await page.goto(url, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".problem-card").count(), 12);
   assert.equal(await page.locator(".answer-entry input").count(), 12);
+  assert.equal(await page.locator("#aime-back-route").evaluate(function (node) { return getComputedStyle(node).textDecorationLine; }), "none", "roadmap navigation is styled as a GFIELD action instead of default underlined link text");
+  assert.equal(await page.locator("#aime-back-route").evaluate(function (node) { return getComputedStyle(node).color; }), "rgb(96, 65, 143)");
+  assert.equal(await page.locator("body").evaluate(function (node) { return getComputedStyle(node).getPropertyValue("--blue").trim(); }), "#60418f", "AIME practice uses the roadmap plum accent");
+  assert.equal(await page.locator("body").evaluate(function (node) { return getComputedStyle(node).getPropertyValue("--blue-soft").trim(); }), "#f0ebf7", "selected practice states use the roadmap lilac wash");
   assert.deepEqual(await page.evaluate(function () { return window.GFIELDAimeConceptPractice.items.map(function (item) { return item.answer; }); }), [30, 17, 6, 84, 72, 60, 95, 91, 49, 2418, 48, 43]);
   assert.match(await page.locator(".practice-boundary").innerText(), /실력·학년·과목 배치나 AIME 응시 자격을 판정하지 않습니다/);
   assert.ok(await page.locator('.math-fraction[aria-label="2분의 1"]').count() >= 2, "actual one-half values should render as stacked fractions");
@@ -79,6 +83,7 @@ test("AIME-style practice validates integer answers, filters, explanations, and 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(100);
   assert.equal(await page.locator("body").evaluate(function (node) { return node.scrollWidth <= node.clientWidth; }), true);
+  assert.equal(await page.locator("body").evaluate(function (node) { return getComputedStyle(node).wordBreak; }), "keep-all", "Korean text breaks between words on mobile");
   assert.deepEqual(errors, []);
   await page.close();
 });

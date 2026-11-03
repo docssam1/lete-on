@@ -1416,6 +1416,11 @@ test("Grade 7 roadmap opens original AMC 10 concept practice with topic filters 
   assert.equal(await reflection.evaluate(function (node) { return node.open; }), true);
   assert.equal(await page.locator(".amc10-workspace .problem-card").count(), 12);
   assert.equal(await page.locator(".amc10-workspace .choice").count(), 60);
+  assert.equal(await page.locator("#amc10-back-route").evaluate(function (node) { return getComputedStyle(node).textDecorationLine; }), "none", "roadmap navigation is styled as a GFIELD action instead of default underlined link text");
+  assert.equal(await page.locator("#amc10-back-route").evaluate(function (node) { return getComputedStyle(node).color; }), "rgb(96, 65, 143)");
+  assert.equal(await page.locator("#practice-progress").evaluate(function (node) { return getComputedStyle(node).whiteSpace; }), "nowrap", "progress count stays on one line on narrow screens");
+  assert.equal(await page.locator("body").evaluate(function (node) { return getComputedStyle(node).getPropertyValue("--blue").trim(); }), "#60418f", "AMC practice uses the roadmap plum accent");
+  assert.equal(await page.locator("body").evaluate(function (node) { return getComputedStyle(node).getPropertyValue("--blue-soft").trim(); }), "#f0ebf7", "selected practice states use the roadmap lilac wash");
   assert.equal(await page.locator(".math-fraction").count(), 7);
   assert.ok(await page.locator(".math-fraction").evaluateAll(function (nodes) {
     return nodes.every(function (node) {
@@ -1442,8 +1447,13 @@ test("Grade 7 roadmap opens original AMC 10 concept practice with topic filters 
   await page.locator('[data-item-id="amc10-g7-probability-01"] [data-choice="3"]').click();
   assert.equal(await page.locator("#practice-progress").innerText(), "2 / 12");
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [1280, 1280]);
+  await page.locator(".domain-filter").first().focus();
+  assert.equal(await page.locator(".domain-filter").first().evaluate(function (node) { return getComputedStyle(node).outlineColor; }), "rgb(96, 65, 143)", "keyboard focus uses the roadmap accent");
   await page.setViewportSize({ width: 390, height: 844 });
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  assert.equal(await page.locator("body").evaluate(function (node) { return getComputedStyle(node).wordBreak; }), "keep-all", "Korean title and guidance break between words on mobile");
+  assert.ok((await page.locator(".practice-intro h1").boundingBox()).width >= 320, "AMC heading keeps a full mobile column instead of collapsing beside the release note");
+  assert.equal(await page.locator(".practice-intro").evaluate(function (node) { return getComputedStyle(node).gridTemplateColumns.split(" ").length; }), 1, "mobile introduction stacks the title and source note");
   await page.goto(`${url.replace("boarding-roadmap.html", "amc10-practice.html")}?grade=9`, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#amc10-nav-route").innerText(), "9학년 성장 지도");
   assert.equal(await page.locator("#amc10-back-route").getAttribute("href"), "./boarding-roadmap.html?grade=9#annual-plan");
