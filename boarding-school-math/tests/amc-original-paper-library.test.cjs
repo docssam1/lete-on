@@ -13,12 +13,20 @@ test("year and form routes cover the full authorized AMC archive", function () {
   assert.equal(library.archiveFor("amc10").years.length, 26);
   assert.equal(library.archiveFor("amc12").years.length, 76);
   assert.equal(library.archiveFor("amc12").years.at(-1), 1950);
+  assert.equal(library.archiveFor("aime").years.length, 44);
+  assert.equal(library.archiveFor("aime").years[0], 2026);
+  assert.equal(library.archiveFor("aime").years.at(-1), 1983);
+  assert.equal(library.archiveFor("aime").years.filter((year) => year >= 2000).length * 2 + library.archiveFor("aime").years.filter((year) => year <= 1999).length, 71);
   assert.equal(library.archiveRoute("amc8", 2023), "https://live.poshenloh.com/past-contests/amc8/2023");
   assert.equal(library.archiveRoute("amc10", 2025, "A"), "https://live.poshenloh.com/past-contests/amc10/2025A");
   assert.equal(library.archiveRoute("amc10", 2021, "D"), "https://live.poshenloh.com/past-contests/amc10/2021D");
   assert.equal(library.archiveRoute("amc12", 2024, "B"), "https://live.poshenloh.com/past-contests/amc12/2024B");
   assert.equal(library.archiveRoute("amc12", 1950, ""), "https://live.poshenloh.com/past-contests/amc12/1950");
   assert.equal(library.archiveRoute("amc10", 2000, ""), "https://live.poshenloh.com/past-contests/amc10/2000");
+  assert.equal(library.archiveRoute("aime", 2026, "II"), "https://live.poshenloh.com/past-contests/aime/2026II");
+  assert.equal(library.archiveRoute("aime", 2000, "I"), "https://live.poshenloh.com/past-contests/aime/2000I");
+  assert.equal(library.archiveRoute("aime", 1999, ""), "https://live.poshenloh.com/past-contests/aime/1999");
+  assert.equal(library.archiveRoute("aime", 1983, ""), "https://live.poshenloh.com/past-contests/aime/1983");
   assert.equal(library.archiveRoute("amc10", 2030, "A"), "https://live.poshenloh.com/past-contests");
 });
 
@@ -28,6 +36,8 @@ test("paper review points to the year-by-year archive without shipping contest c
   assert.match(html, /competition\/amc-original-paper-library\.js/);
   assert.match(html, /연도별 원본 기출/);
   assert.match(html, /MAA 허가를 받은 LIVE 기출 아카이브/);
+  const reviewScript = fs.readFileSync(path.join(projectRoot, "competition-paper-review.js"), "utf8");
+  assert.match(reviewScript, /정수 답\(0–999\)/);
   assert.match(html, /G·MAP은 파일이나 기출 문항을 복사해 배포하지 않습니다/);
   assert.doesNotMatch(html, /<(?:iframe|embed|object)\b/iu);
   const files = fs.readdirSync(path.join(projectRoot, "competition"));

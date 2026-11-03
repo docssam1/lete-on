@@ -75,7 +75,7 @@
       };
       const renderArchiveRoute = function () {
         const year = Number(yearSelect.value);
-        const forms = format.id === "amc8" ? [""] : year === 2021 ? ["A", "B", "C", "D"] : year <= 2001 ? [""] : ["A", "B"];
+        const forms = format.id === "amc8" ? [""] : format.id === "aime" ? year <= 1999 ? [""] : ["I", "II"] : year === 2021 ? ["A", "B", "C", "D"] : year <= 2001 ? [""] : ["A", "B"];
         $("archive-form-field").hidden = format.id === "amc8" || forms.length === 1;
         formSelect.replaceChildren();
         forms.forEach(function (form) { formSelect.append(option(form, form ? `${form}형` : "단일 시험지")); });
@@ -171,7 +171,12 @@
     $("official-percentile").disabled = programId !== "kangaroo";
     $("kangaroo-percentile-source").hidden = programId !== "kangaroo";
     $("aime-review-note").hidden = programId !== "aime";
-    $("answer-entry-guide").hidden = !format || !["amc8", "amc10", "amc12"].includes(format.id);
+    document.querySelector(".score-history").hidden = programId === "aime" || !historyEngine;
+    $("answer-entry-guide").hidden = !format || !["amc8", "amc10", "amc12", "aime"].includes(format.id);
+    $("answer-entry-guide").querySelector("strong").textContent = programId === "aime" ? "정수 답을 적고 공식 답안과 대조해요" : "응시 후 답을 옮기고 공식 풀이와 대조해요";
+    $("answer-entry-guide").querySelector("p").textContent = programId === "aime"
+      ? "각 문항에 내가 쓴 정수 답(0–999)을 입력하고, 공식 답안·풀이와 대조한 뒤 맞힘·오답·미응답을 표시하세요. 이 답은 현재 화면에서만 사용합니다."
+      : "먼저 A–E에서 내가 고른 답을 입력하고, 공식 풀이를 확인한 뒤 맞힘·오답·미응답을 표시하세요. 점수와 오답 진단은 이 확인 결과를 기준으로 계산합니다.";
     document.querySelector(".review-change-note").hidden = !format;
     $("review-amc8-practice").hidden = !(grade === 6 && programId === "amc8");
     $("review-sasmo-source").hidden = programId !== "sasmo";
@@ -179,6 +184,8 @@
     setText("review-source-note", format
       ? ["amc8", "amc10", "amc12"].includes(format.id)
         ? `${format.title} · ${format.itemCount}문항. 먼저 A–E 답을 입력하고 공식 풀이와 대조해 결과를 표시하세요. 풀이 영역을 모르면 비워 두세요.`
+        : format.id === "aime"
+          ? `${format.title} · ${format.itemCount}문항. 공식 답안과 대조할 수 있도록 각 문항의 정수 답(0–999)을 적고, 맞힘·오답·미응답을 표시하세요.`
         : `${format.title} · ${format.itemCount}문항. 공식 풀이를 확인한 뒤 맞힘·오답·미응답을 표시하세요. 풀이 영역을 모르면 비워 두세요.`
       : "먼저 대회를 선택하세요.");
     updateUrl();
@@ -188,12 +195,14 @@
     list.replaceChildren();
     const format = selectedFormat();
     const hasChoiceAnswers = Boolean(format && ["amc8", "amc10", "amc12"].includes(format.id));
+    const hasIntegerAnswers = Boolean(format && format.id === "aime");
+    const hasAnswerEntry = hasChoiceAnswers || hasIntegerAnswers;
     list.hidden = !format;
-    list.dataset.choiceEntry = String(hasChoiceAnswers);
+    list.dataset.choiceEntry = String(hasAnswerEntry);
     $("mark-progress").hidden = !format;
     document.querySelector(".mark-head").hidden = !format;
-    document.querySelector(".mark-head").dataset.choiceEntry = String(hasChoiceAnswers);
-    document.querySelector(".mark-head span:nth-child(2)").hidden = !hasChoiceAnswers;
+    document.querySelector(".mark-head").dataset.choiceEntry = String(hasAnswerEntry);
+    document.querySelector(".mark-head span:nth-child(2)").hidden = !hasAnswerEntry;
     document.querySelector(".review-form-actions").hidden = !format;
     if (!format) { resetReport(); return; }
     const domains = [{ id: "unclassified", title: "영역 선택" }].concat(analyzer.domainsFor(format.id));
@@ -201,13 +210,14 @@
       const number = index + 1;
       const li = document.createElement("li");
       li.className = "paper-mark-row";
-      li.dataset.choiceEntry = String(hasChoiceAnswers);
+      li.dataset.choiceEntry = String(hasAnswerEntry);
       li.dataset.state = "unmarked";
       const marker = document.createElement("strong");
       marker.textContent = `Q${String(number).padStart(2, "0")}`;
       li.append(marker);
       [
         ...(hasChoiceAnswers ? [{ field: "answer", values: answerChoices, label: "내 답" }] : []),
+        ...(hasIntegerAnswers ? [{ field: "answer", label: "내 답" }] : []),
         { field: "status", values: statuses, label: "공식 풀이 대조" },
         { field: "domain", values: domains, label: "영역" },
         { field: "reason", values: reasons, label: "오답 이유" }
@@ -215,11 +225,18 @@
         const field = document.createElement("label");
         field.className = `mark-field mark-${config.field}`;
         const caption = document.createElement("span"); caption.textContent = config.label;
-        const select = document.createElement("select");
+        const select = config.field === "answer" && hasIntegerAnswers ? document.createElement("input") : document.createElement("select");
         select.dataset.field = config.field;
         select.dataset.question = String(number);
         select.setAttribute("aria-label", `${number}번 ${config.label}`);
-        config.values.forEach(function (entry) { select.append(option(entry.id, entry.title)); });
+        if (config.field === "answer" && hasIntegerAnswers) {
+          select.type = "text";
+          select.inputMode = "numeric";
+          select.maxLength = 3;
+          select.pattern = "[0-9]{1,3}";
+          select.placeholder = "0–999";
+          select.autocomplete = "off";
+        } else (config.values || []).forEach(function (entry) { select.append(option(entry.id, entry.title)); });
         if (config.field === "reason") select.disabled = true;
         select.addEventListener("change", function () {
           if (config.field === "status") {
@@ -455,7 +472,7 @@
     $("report-roadmap-link").href = `./boarding-roadmap.html?grade=${encodeURIComponent(grade)}&program=${encodeURIComponent(selectedFormat().id)}#grade-map`;
     $("report-roadmap-link").textContent = `선택한 Grade ${grade} 학습 경로 보기 →`;
     setText("report-roadmap-note", result.level
-      ? "원본 점수와 문항 구간은 이 시험지에서 확인한 실전 결과예요. 영역별 정답률은 직접 표시한 문항을 기준으로 읽어 주세요."
+      ? selectedFormat().id === "aime" ? "AIME 원본의 정답 수만 보여 줍니다. 학년별 순위·등급이나 AIME 자격 판단은 제공하지 않아요." : "원본 점수와 문항 구간은 이 시험지에서 확인한 실전 결과예요. 영역별 정답률은 직접 표시한 문항을 기준으로 읽어 주세요."
       : "문항 분류와 정답률은 학년 수준을 판정하지 않습니다.");
     setText("report-title", `${selectedFormat().title} · ${result.complete ? "전체 결과" : "입력한 결과"}`);
     setText("report-intro", `${label ? `${label} · ` : ""}${result.itemCount}문제 중 ${result.counts.unmarked}문제는 표시하지 않았습니다. ${result.attempted < 3 ? "푼 문제가 3개 미만이어서 비율 비교는 보류했습니다." : `정답률은 실제로 푼 ${result.attempted}문제 기준입니다.`}`);
@@ -464,7 +481,31 @@
     officialPercentileResult.hidden = selectedFormat().id !== "kangaroo" || officialPercentile === null;
     officialPercentileResult.textContent = officialPercentileResult.hidden ? "" : `공식 성적표 · Grade ${grade} 전국 백분위 ${officialPercentile}% · 해당 학년 참가자 안에서의 상대 위치`;
     $("score-estimate").hidden = !result.scoreEstimate;
+    const scorePolicyLink = $("score-estimate").querySelector("a");
+    if (scorePolicyLink) scorePolicyLink.hidden = selectedFormat().id === "aime";
     if (result.scoreEstimate) setText("score-estimate-value", `${result.scoreEstimate.label} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}`);
+    const aimeReference = window.GFIELDAimeScoreDistributionReference;
+    const aimeCohort = $("aime-cohort-reference");
+    const aimeKeyYear = Number($("archive-year").value || params.get("year"));
+    const aimeKeyForm = $("archive-form").value || params.get("form") || "";
+    const cohort = selectedFormat().id === "aime" && result.complete && result.scoreEstimate && aimeReference
+      ? aimeReference.referenceFor(aimeKeyYear, aimeKeyForm)
+      : null;
+    aimeCohort.hidden = !cohort;
+    if (cohort) {
+      setText("aime-cohort-summary", `${aimeKeyYear} AIME ${aimeKeyForm} · ${result.scoreEstimate.points}/15 정답 · 같은 시험지 응시자 분포 기준점과 비교합니다.`);
+      const cohortBands = $("aime-cohort-bands");
+      cohortBands.replaceChildren();
+      aimeReference.bands.forEach(function (band) {
+        const item = document.createElement("div");
+        item.className = "paper-question-band aime-cohort-band" + (result.scoreEstimate.points >= cohort[band.id] ? " is-reached" : "");
+        const label = document.createElement("strong"); label.textContent = band.label;
+        const score = document.createElement("span"); score.textContent = `${cohort[band.id]} / 15`;
+        const details = document.createElement("small"); details.textContent = result.scoreEstimate.points >= cohort[band.id] ? "기준점 이상" : "기준점 미만";
+        item.append(label, score, details); cohortBands.append(item);
+      });
+      setText("aime-cohort-stats", `참가자 ${cohort.students.toLocaleString("en-US")}명 · 학교 ${cohort.schools.toLocaleString("en-US")}곳 · 평균 ${cohort.average.toFixed(2)} · 표준편차 ${cohort.standardDeviation.toFixed(2)}. MAA 공개 분포 보고서의 해당 연도·회차 값입니다.`);
+    }
     const paperPerformance = $("paper-performance");
     paperPerformance.hidden = !result.level || !result.questionBands.length;
     if (!paperPerformance.hidden) {
@@ -557,7 +598,8 @@
       amc8: grade === 7
         ? { href: `./amc8-topic-practice.html?${practiceParams.toString()}`, title: practiceDomains.length ? "지필드 창작 유사 영역 연습" : "지필드 창작 유형 연습", copy: practiceDomains.length ? `이번 원본에서 표시한 ${practiceDomains.map(function (id) { return domains.find(function (domain) { return domain.id === id; })?.title || id; }).join("·")} 영역의 지필드 창작 문제만 이어서 풀어요.` : "지필드가 새로 만든 AMC 8 주제 문제를 골라 연습해요." }
         : { href: "./competition-practice.html?program=amc8", title: "지필드 AMC 8 유형 연습", copy: "공식 풀이를 확인한 뒤, 지필드가 새로 만든 AMC 8 유형 문제로 이어가요." },
-      amc10: { href: `./amc10-practice.html?grade=${grade}${practiceDomains.length ? `&domains=${encodeURIComponent(practiceDomains.join(","))}` : ""}${practiceParams.get("sourceYear") ? `&sourceYear=${practiceParams.get("sourceYear")}` : ""}${practiceParams.get("sourceForm") ? `&sourceForm=${practiceParams.get("sourceForm")}` : ""}${practiceParams.get("sourceQuestions") ? `&sourceQuestions=${practiceParams.get("sourceQuestions")}` : ""}`, title: practiceDomains.length ? "지필드 창작 유사 영역 연습" : "지필드 AMC 10 개념 연습", copy: practiceDomains.length ? `이번 원본에서 표시한 ${practiceDomains.map(function (id) { return domains.find(function (domain) { return domain.id === id; })?.title || id; }).join("·")} 영역의 지필드 창작 문제로 이어가요.` : "지필드 창작 문항 중 필요한 개념을 골라 연습해요." }
+      amc10: { href: `./amc10-practice.html?grade=${grade}${practiceDomains.length ? `&domains=${encodeURIComponent(practiceDomains.join(","))}` : ""}${practiceParams.get("sourceYear") ? `&sourceYear=${practiceParams.get("sourceYear")}` : ""}${practiceParams.get("sourceForm") ? `&sourceForm=${practiceParams.get("sourceForm")}` : ""}${practiceParams.get("sourceQuestions") ? `&sourceQuestions=${practiceParams.get("sourceQuestions")}` : ""}`, title: practiceDomains.length ? "지필드 창작 유사 영역 연습" : "지필드 AMC 10 개념 연습", copy: practiceDomains.length ? `이번 원본에서 표시한 ${practiceDomains.map(function (id) { return domains.find(function (domain) { return domain.id === id; })?.title || id; }).join("·")} 영역의 지필드 창작 문제로 이어가요.` : "지필드 창작 문항 중 필요한 개념을 골라 연습해요." },
+      aime: { href: `./aime-practice.html?grade=${grade}${practiceDomains.length ? `&domains=${encodeURIComponent(practiceDomains.join(","))}` : ""}${practiceParams.get("sourceYear") ? `&sourceYear=${practiceParams.get("sourceYear")}` : ""}${practiceParams.get("sourceForm") ? `&sourceForm=${encodeURIComponent(practiceParams.get("sourceForm"))}` : ""}${practiceParams.get("sourceQuestions") ? `&sourceQuestions=${practiceParams.get("sourceQuestions")}` : ""}`, title: practiceDomains.length ? "지필드 창작 AIME 영역 연습" : "지필드 AIME형 풀이 연습", copy: practiceDomains.length ? `이번 원본에서 표시한 ${practiceDomains.map(function (id) { return domains.find(function (domain) { return domain.id === id; })?.title || id; }).join("·")} 영역을 지필드가 새로 만든 정수 답안 문항으로 연습해요.` : "공식 풀이를 확인한 뒤 지필드가 새로 만든 AIME형 정수 답안 문제로 이어가요." }
     };
     const followUpConfig = followUpRoutes[selectedFormat().id];
     $("report-follow-up").hidden = !followUpConfig;

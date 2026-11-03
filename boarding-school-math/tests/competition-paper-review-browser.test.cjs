@@ -287,33 +287,52 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   await page.close();
 });
 
-test("AIME manual review accepts self-marked 15-item papers without scoring or eligibility claims", async function () {
+test("AIME review opens year/form archive, captures integer answers, and routes errors to matching GFIELD practice", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(`${url}?grade=8&program=aime`, { waitUntil: "networkidle" });
+  await page.goto(`${url}?grade=8&program=aime&year=2026&form=II`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".paper-mark-row").count(), 15);
-  assert.equal(await page.locator('[data-field="answer"]').count(), 0, "AIME uses numeric responses, so hide AMC A–E answer entry");
-  assert.equal(await page.locator("#answer-entry-guide").isHidden(), true);
-  assert.match(await page.locator("#review-source-note").innerText(), /공식 풀이를 확인한 뒤 맞힘·오답·미응답/);
+  assert.equal(await page.locator('[data-field="answer"]').count(), 15);
+  assert.equal(await page.locator('[data-question="1"][data-field="answer"]').getAttribute("inputmode"), "numeric");
+  assert.equal(await page.locator("#answer-entry-guide").isVisible(), true);
+  assert.equal(await page.locator(".score-history").isHidden(), true, "AMC score-history tools should not appear in AIME paper review");
+  assert.match(await page.locator("#review-source-note").innerText(), /정수 답\(0–999\)/);
+  assert.equal(await page.locator("#archive-year").inputValue(), "2026");
+  assert.equal(await page.locator("#archive-form").inputValue(), "II");
+  assert.equal(await page.locator("#archive-open-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/aime/2026II");
   assert.equal(await page.locator("#aime-review-note").isVisible(), true);
   assert.match(await page.locator("#aime-review-note").innerText(), /초대·응시 자격·선발을 판단하지 않습니다/);
   assert.equal(await page.locator('#aime-review-note a').getAttribute("href"), "https://maa.org/maa-invitational-competitions/");
-  await page.locator("#review-paper-label").fill("2026 개인 연습 세트");
+  await page.locator("#review-paper-label").fill("2026 AIME II");
   await page.locator("#review-exam-date").fill("2026-11-03");
   for (let question = 1; question <= 15; question += 1) {
     await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("correct");
     await page.locator(`[data-question="${question}"][data-field="domain"]`).selectOption("algebra");
   }
+  await page.locator('[data-question="1"][data-field="answer"]').fill("999");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
+  await page.locator('[data-question="1"][data-field="reason"]').selectOption("concept");
+  await page.locator('[data-question="2"][data-field="answer"]').fill("0");
+  await page.locator('[data-question="2"][data-field="status"]').selectOption("blank");
+  await page.locator('[data-question="2"][data-field="domain"]').selectOption("number");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator(".review-report").isVisible(), true, await page.locator("#paper-error").innerText());
-  assert.equal(await page.locator("#score-estimate").isHidden(), true);
-  assert.equal(await page.locator("#score-estimate-note").isHidden(), true);
+  assert.match(await page.locator("#score-estimate-value").innerText(), /AIME 원본 정답 수 · 13 \/ 15/);
+  assert.equal(await page.locator("#report-review-items-list li").count(), 2);
+  assert.match(await page.locator("#report-roadmap-note").innerText(), /학년별 순위·등급이나 AIME 자격 판단은 제공하지 않아요/);
+  assert.match(await page.locator("#report-follow-up-link").getAttribute("href"), /aime-practice\.html.*domains=algebra%2Cnumber.*sourceYear=2026.*sourceForm=II/s);
   await page.locator("#save-diagnostic").click();
   assert.equal(await page.locator(".saved-diagnostic-entry").count(), 1);
   const saved = await page.evaluate(function () { return localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"); });
   assert.match(saved, /\"programId\":\"aime\"/);
-  assert.doesNotMatch(saved, /responses|questionNumber|answerKey/);
+  assert.doesNotMatch(saved, /responses|questionNumber|answerKey|999|sourceQuestions/);
+  const followUpHref = await page.locator("#report-follow-up-link").getAttribute("href");
+  await page.goto(new URL(followUpHref, url).href, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#source-paper-context").isVisible(), true);
+  assert.equal(await page.locator("#source-paper-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/aime/2026II");
+  assert.equal(await page.locator(".problem-card").count(), 7);
+  assert.equal(await page.locator("#practice-count").innerText(), "7문항");
   await page.goto(`${url}?grade=9&program=aime`, { waitUntil: "networkidle" });
   await page.locator("#review-paper-label").fill("2026 개인 연습 세트");
   await page.locator("#review-exam-date").fill("2026-11-03");
@@ -335,15 +354,16 @@ test("AIME manual review accepts self-marked 15-item papers without scoring or e
   await page.close();
 });
 
-test("AIME review does not show AMC multiple-choice answer controls", async function () {
+test("AIME review uses integer answer fields instead of AMC multiple-choice controls", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${url}?grade=8&program=aime`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".paper-mark-row").count(), 15);
-  assert.equal(await page.locator('[data-field="answer"]').count(), 0);
-  assert.equal(await page.locator("#answer-entry-guide").isHidden(), true);
-  assert.match(await page.locator("#review-source-note").innerText(), /공식 풀이를 확인한 뒤 맞힘·오답·미응답/);
+  assert.equal(await page.locator('[data-field="answer"]').count(), 15);
+  assert.equal(await page.locator('[data-field="answer"]:not(input)').count(), 0);
+  assert.equal(await page.locator("#answer-entry-guide").isVisible(), true);
+  assert.equal(await page.locator(".score-history").isHidden(), true);
   assert.deepEqual(errors, []);
   await page.close();
 });

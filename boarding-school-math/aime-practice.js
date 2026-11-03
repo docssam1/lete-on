@@ -23,8 +23,23 @@
   const stageFilters = document.getElementById("stage-filters");
   const progress = document.getElementById("practice-progress");
   const attempts = new Map();
-  let activeDomain = "전체";
+  const query = new URLSearchParams(window.location.search);
+  const domainIds = new Set((query.get("domains") || "").split(",").filter(Boolean));
+  const domainNamesById = { algebra: "대수", number: "정수론", geometry: "기하", counting: "경우의 수" };
+  let activeDomain = domainIds.size === 1 ? domainNamesById[Array.from(domainIds)[0]] || "전체" : domainIds.size > 1 ? "원본 영역" : "전체";
   let activeStage = "전체";
+
+  const sourceYear = query.get("sourceYear");
+  const sourceForm = query.get("sourceForm") || "";
+  const sourceQuestions = (query.get("sourceQuestions") || "").split(",").filter(function (value) { return /^[1-9]\d?$/.test(value) && Number(value) <= 15; });
+  if (/^\d{4}$/u.test(sourceYear || "")) {
+    const sourceContext = document.getElementById("source-paper-context");
+    const formSuffix = Number(sourceYear) <= 1999 ? "" : sourceForm;
+    sourceContext.hidden = false;
+    document.getElementById("source-paper-summary").textContent = `${sourceYear}${formSuffix ? ` ${formSuffix}` : ""} AIME 원본${sourceQuestions.length ? ` Q${sourceQuestions.join("·")}에서 표시한 항목` : ""}${domainIds.size ? ` (${Array.from(domainIds).map(function (id) { return domainNamesById[id] || id; }).join("·")})` : ""}과 연결한 지필드 자체 연습입니다. 원본과 별도로 만든 문항이며 원본 진단 점수에는 더해지지 않습니다.`;
+    document.getElementById("source-paper-link").href = `https://live.poshenloh.com/past-contests/aime/${sourceYear}${formSuffix}`;
+    document.getElementById("source-review-link").href = `./competition-paper-review.html?grade=${grade}&program=aime&year=${sourceYear}${sourceForm ? `&form=${encodeURIComponent(sourceForm)}` : ""}`;
+  }
 
   function appendText(target, value) {
     if (window.GFIELDMathText && typeof window.GFIELDMathText.append === "function") window.GFIELDMathText.append(target, value);
@@ -32,7 +47,7 @@
   }
   function renderFilterGroup(target, values, getValue, setValue, label) {
     target.replaceChildren();
-    ["전체"].concat(values).forEach(function (value) {
+    ["전체"].concat(domainIds.size > 1 && label === "수학 영역" ? ["원본 영역"] : []).concat(values).forEach(function (value) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "domain-filter";
@@ -52,11 +67,15 @@
     renderFilterGroup(stageFilters, bank.stages, function () { return activeStage; }, function (value) { activeStage = value; }, "풀이 단계");
   }
   function updateProgress() {
-    progress.textContent = `${attempts.size} / ${bank.items.length}`;
+    const visible = bank.items.filter(function (item) {
+      return (activeDomain === "전체" || (activeDomain === "원본 영역" ? domainIds.has(Object.keys(domainNamesById).find(function (id) { return domainNamesById[id] === item.domain; })) : item.domain === activeDomain)) && (activeStage === "전체" || item.stage === activeStage);
+    });
+    progress.textContent = `${visible.filter(function (item) { return attempts.has(item.id); }).length} / ${visible.length}`;
+    document.getElementById("practice-count").textContent = `${visible.length}문항`;
   }
   function renderItems() {
     const visible = bank.items.filter(function (item) {
-      return (activeDomain === "전체" || item.domain === activeDomain) && (activeStage === "전체" || item.stage === activeStage);
+      return (activeDomain === "전체" || (activeDomain === "원본 영역" ? domainIds.has(Object.keys(domainNamesById).find(function (id) { return domainNamesById[id] === item.domain; })) : item.domain === activeDomain)) && (activeStage === "전체" || item.stage === activeStage);
     });
     list.replaceChildren();
     visible.forEach(function (item) {
@@ -176,6 +195,7 @@
       card.append(meta, heading, prompt, form, feedback, hint, solution);
       list.append(card);
     });
+    updateProgress();
   }
   document.getElementById("reset-practice").addEventListener("click", function () {
     attempts.clear();
@@ -183,5 +203,11 @@
     renderItems();
   });
   renderFilters();
+  if (domainIds.size > 1) {
+    const note = document.createElement("p");
+    note.className = "scope-note";
+    note.textContent = `원본에서 표시한 ${Array.from(domainIds).map(function (id) { return domainNamesById[id] || id; }).join("·")} 영역을 먼저 모았어요. 영역 버튼으로 바꿀 수 있습니다.`;
+    domainFilters.before(note);
+  }
   renderItems();
 })();

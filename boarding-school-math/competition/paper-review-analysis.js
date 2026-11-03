@@ -42,7 +42,8 @@
     const byBlankReason = new Map(blankReasons.map(function (reason) { return [reason.id, reason]; }));
     for (let index = 0; index < entries.length; index += 1) {
       const entry = entries[index];
-      if (!entry || !statusIds.includes(entry.status) || !(entry.answer == null || answerChoiceIds.includes(entry.answer)) || !(entry.domain === "unclassified" || Object.prototype.hasOwnProperty.call(selectedDomainNames, entry.domain)) || !reasonIds.includes(entry.reason)
+      const validAnswer = entry && (entry.answer == null || answerChoiceIds.includes(entry.answer) || (program === "aime" && /^(?:[0-9]|[1-9][0-9]{1,2})$/.test(entry.answer)));
+      if (!entry || !statusIds.includes(entry.status) || !validAnswer || !(entry.domain === "unclassified" || Object.prototype.hasOwnProperty.call(selectedDomainNames, entry.domain)) || !reasonIds.includes(entry.reason)
         || (entry.status === "wrong" && !wrongReasonIds.includes(entry.reason))
         || (entry.status === "blank" && !blankReasonIds.includes(entry.reason))
         || ((entry.status === "correct" || entry.status === "unmarked") && entry.reason !== "none")) {
@@ -102,6 +103,8 @@
       scoreEstimate = Object.freeze({ points: counts.correct, max: itemCount, label: "AMC 8 참고 원점수" });
     } else if (counts.unmarked === 0 && itemCount === 25 && (program === "amc10" || program === "amc12")) {
       scoreEstimate = Object.freeze({ points: counts.correct * 6 + counts.blank * 1.5, max: itemCount * 6, label: `${program === "amc10" ? "AMC 10" : "AMC 12"} 참고 원점수` });
+    } else if (counts.unmarked === 0 && itemCount === 15 && program === "aime") {
+      scoreEstimate = Object.freeze({ points: counts.correct, max: itemCount, label: "AIME 원본 정답 수" });
     }
     return {
       valid: true,

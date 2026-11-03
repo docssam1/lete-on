@@ -119,15 +119,19 @@ test("complete AMC original-paper marks calculate the raw score and position by 
   assert.equal(analyze(amc10, 25, "amc10").officialScore, null);
 });
 
-test("AIME manual review summarizes 15 marked items without an AIME score estimate", function () {
+test("AIME manual review reports only the raw number correct and validates integer responses", function () {
   const entries = Array.from({ length: 15 }, function () { return entry("correct", "algebra"); });
+  entries[0].answer = "0";
+  entries[1].answer = "999";
   const report = analyze(entries, 15, "aime");
   assert.equal(report.valid, true);
   assert.equal(report.itemCount, 15);
   assert.equal(report.counts.correct, 15);
-  assert.equal(report.scoreEstimate, null);
+  assert.deepEqual(report.scoreEstimate, { points: 15, max: 15, label: "AIME 원본 정답 수" });
   assert.equal(report.officialScore, null);
-  assert.equal(report.level, null);
+  assert.equal(report.level.kind, "original-paper-performance");
+  assert.equal(analyze([{ ...entry("wrong", "algebra", "concept"), answer: "1000" }], 1, "aime").valid, false);
+  assert.equal(analyze([{ ...entry("wrong", "algebra", "concept"), answer: "12.5" }], 1, "aime").valid, false);
 });
 
 test("rejects mismatched paper size and unknown marks", function () {
