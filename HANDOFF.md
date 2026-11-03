@@ -423,3 +423,9 @@ Verification: Grade 3–12 roadmap model tests pass 12/12; focused Chrome checks
 Updated the optional Grade 6 annual example to lead with the existing GFIELD-original 10 concept lessons, 10 Grade 6 topic workbooks, and the separate 10-question GFIELD AMC 8 practice set. The SAT foundation stage links to GFIELD ratio/problem-solving concepts and the College Board's official Math question bank. MAA and College Board references remain labeled as sources, not GFIELD-authored material. Replaced displayed AoPS/Beast Academy/PWN labels in the Grade 6 example; the optional enrichment plan stays separate from school placement. Grade 10's final stage still uses the existing generic “proof practice · selected contest problems” resource description; it has not been replaced by a GFIELD workbook claim.
 
 Verification: Grade 3–12 roadmap model tests pass 12/12, including assertions that Grade 6 resources resolve to GFIELD concepts/workbooks and original AMC 8 practice. A focused Chrome annual-plan check passes 1/1; it follows the 6.EE.A concept link and AMC 8 practice link to their actual pages. Local-only; no push, deployment, or Drive sync.
+
+### 2026-11-03 Roadmap grade and contest comparisons rechecked
+
+Rechecked grade-route comparison, manual AMC 10 domain-entry diagnosis, same-paper/same-date contest-record comparison, Math Kangaroo Grade 7–8 paired-paper comparison, upper-grade planning boundaries, and mobile contest labels. Updated two stale browser assertions so they match the current Grade 9 roadmap wording and browser-rendered line breaks; no private diagnostic content was opened.
+
+Verification: focused Chrome checks pass 5/5; roadmap model tests pass 12/12. This verifies the current comparison and manual-diagnostic flows, not a calibrated readiness/placement score. Local-only; no push, deployment, or Drive sync.

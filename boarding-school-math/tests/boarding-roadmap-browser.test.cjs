@@ -323,7 +323,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.locator("#competition-select").selectOption("kangaroo");
   assert.equal(await page.locator("#competition-paper-source-link").getAttribute("href"), "https://mathkangaroo.org/mks/practice/grades-9-10/");
   assert.equal(await page.locator("#grade-map-title").innerText(), "9학년 수학 한눈에");
-  assert.match(await page.locator("#grade-focus-list").innerText(), /학교 수학 · 학교별 확인/);
+  assert.match(await page.locator("#grade-focus-list").innerText(), /학교 수학[\s\S]*Algebra 2·기하를 점검하고 다음 과목 정하기/);
   assert.match(await page.locator("#source-chip").innerText(), /학교 과목 확인/);
   assert.match(await page.locator("#grade-note").innerText(), /학교마다 수강 과목과 순서/);
   await page.locator("#competition-select").selectOption("amc10");
@@ -342,7 +342,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.doesNotMatch(await page.locator("#competition-report-rows").innerText(), /입력 없음/);
   assert.match(await page.locator("#competition-report-rows").innerText(), /3문제 미만/);
   assert.doesNotMatch(await page.locator("#competition-report-rows").innerText(), /50%/);
-  assert.match(await page.locator("#competition-report-summary").innerText(), /6\/25문항 입력[\s\S]*두 영역에서 각각 3문제 이상/);
+  assert.match(await page.locator("#competition-report-summary").innerText(), /6[\s\S]*25[\s\S]*문항 입력[\s\S]*두 영역에서 각각 3문제 이상/);
   assert.match(await page.locator(".competition-report-boundary").innerText(), /실력 등급.*응시 자격/);
   assert.equal(await page.locator("#competition-saved-diagnostic").isHidden(), true);
   assert.equal(await page.evaluate(function () { return localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"); }), null);
