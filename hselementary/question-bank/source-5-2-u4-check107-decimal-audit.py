@@ -9,7 +9,11 @@ path=Path(__file__).parent/'source-inventory/5-2-u4-readiness-review.json'
 review=next(r for r in json.loads(path.read_text())['additionalSourceReviews'] if r['sourcePrintedPage']==107)
 assert review['sourcePdfPage']==101 and review['alternateSourcePdfPage']==102
 assert {i['number'] for i in review['items']}==set(range(47,55))
-assert review['publisherAnswerVerified'] is False and review['runtimeConnection']=='not-connected'
+assert review['publisherAnswerVerified'] is False
+assert review['runtimeConnection'] == 'partially-connected'
+assert all(item['status'] == 'public-independent-verification-publisher-key-pending'
+           and item['runtimeTypeId'] == f"5-2-u4-practice-{item['number']}-original"
+           for item in review['items'])
 products=[]
 for a,b,c,d,e in permutations((2,4,5,7,8)):
     products.append(((100*a+10*b+c)*(10*d+e),(a,b,c,d,e)))
