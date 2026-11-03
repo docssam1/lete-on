@@ -6,13 +6,15 @@
 .u3p89-figure.u3p91-fan55{max-width:240px}
 
 .u3p95-fold82{max-width:340px}
+.u3p95-fold87{display:block;width:100%;max-width:360px;height:auto;margin:.2em auto}
+#solutionView .u3p95-fold87-answers{display:block;width:min(620px,100%);height:auto;max-height:none;margin:auto}
 
 @media print {
   #problemView .u3p85-construction-copy, #solutionView .u3p85-construction-copy { width:60mm !important; max-width:100% !important; max-height:none !important; }
 }
 @media print {
   /* Keep the page padding when this answer sheet flows onto a second page. */
-  .answer-page:has([data-source-answer="5-2-u3-practice-10-original"], [data-source-answer="5-2-u3-practice-13-original"], [data-source-answer="5-2-u3-practice-14-guarantee-similar"], [data-source-answer="5-2-u3-practice-55-original"]) {
+  .answer-page:has([data-source-answer="5-2-u3-practice-10-original"], [data-source-answer="5-2-u3-practice-13-original"], [data-source-answer="5-2-u3-practice-14-guarantee-similar"], [data-source-answer="5-2-u3-practice-55-original"], [data-source-answer="5-2-u3-practice-87-original"]) {
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
   }

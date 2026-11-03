@@ -6,7 +6,7 @@ from pathlib import Path
 
 path = Path(__file__).parent / "source-inventory/5-2-u3-e1-e4-readiness-review.json"
 review = next(r for r in json.loads(path.read_text())["additionalSourceReviews"] if r["sourcePrintedPage"] == 95)
-assert review["publisherAnswerVerified"] is False and review["runtimeConnection"] == "not-connected"
+assert review["publisherAnswerVerified"] is False and review["runtimeConnection"] == "partially-connected"
 assert {i["number"] for i in review["items"]} == set(range(81, 89))
 
 next_palindrome = next(n for n in range(75848, 100000) if str(n) == str(n)[::-1])
