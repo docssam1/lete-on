@@ -2,6 +2,8 @@
 @media print {
   .print-page.print-page--four-up { page:hseFourUp; }
   .print-page.print-page--four-up .question-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-flow:column; grid-template-rows:repeat(2,minmax(auto,1fr)); min-height:235mm; }
+  #problemView .print-page.print-page--four-up:has(.question-item .graph-figure + .graph-figure) .question-grid { display:grid; }
+  #problemView .print-page.print-page--four-up:has(.question-item .graph-figure + .graph-figure) .question-item+.question-item { break-before:auto; page-break-before:auto; }
   .print-page.print-page--four-up .question-item { min-height:0; padding:8px 0; }
   #problemView [data-source-item-id="5-2-u1-practice-8-bus-range-similar"],
   #solutionView [data-source-answer="5-2-u1-practice-8-bus-range-similar"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
@@ -10,6 +12,13 @@
   #problemView .print-page--four-up .question-item[data-compact-fraction="true"] .question-prompt { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   #problemView .print-page--four-up .question-item[data-compact-fraction="true"] .equation:not(:has(br)) { white-space:normal; overflow:visible; background:transparent; border-color:#888; }
   .print-page.print-page--four-up .question-prompt svg { width:auto !important; max-width:100%; max-height:150px; }
+  #problemView .print-page--four-up .question-graph-pair { display:flex; gap:14px; margin-top:8px; padding:0 8px 0 12px; }
+  #problemView .print-page--four-up .question-graph-pair .graph-figure { flex:1; min-width:0; margin:0; }
+  #problemView .print-page--four-up .question-graph-pair .graph-scale-note { min-height:36px; margin:0 0 4px; font-size:9px; line-height:12px; }
+  #problemView .print-page--four-up .question-graph-pair svg { width:100% !important; height:auto; max-height:130px; overflow:visible; }
+  #problemView .print-page--four-up .question-graph-pair svg text { font-size:12px; font-weight:700; }
+  #problemView .print-page--four-up .question-graph-pair .paired-dense-hidden { display:none; }
+  #problemView .print-page--four-up .question-item:is([data-type-id="4-2-u5-t1-4"],[data-type-id="4-2-u5-t1-7"],[data-type-id="4-2-u5-t1-8"]) .graph-figure svg .chart-unit { font-size:8px; transform:translateY(-7px); }
   #problemView .print-page--four-up .question-item:is([data-type-id="4-2-u5-t1-2"],[data-type-id="4-2-u5-t1-3"],[data-type-id="4-2-u5-t1-6"],[data-type-id="4-2-u5-t1-9"],[data-type-id="4-2-u5-t1-5"],[data-type-id="4-2-u5-t1-10"],[data-type-id="4-2-u5-t2-2"],[data-type-id="4-2-u5-t2-6"],[data-type-id="4-2-u5-t2-3"],[data-type-id="4-2-u5-t2-4"],[data-type-id="4-2-u5-t2-7"],[data-type-id="4-2-u5-t2-8"],[data-type-id="4-2-u5-t1"],[data-type-id="4-2-u5-t2-9"],[data-type-id="4-2-u5-t2-10"]) .graph-figure svg { max-height:175px; overflow:visible; }
   #problemView .print-page--four-up .question-item:is([data-type-id="4-2-u5-t1-2"],[data-type-id="4-2-u5-t1-3"],[data-type-id="4-2-u5-t1-6"],[data-type-id="4-2-u5-t1-9"],[data-type-id="4-2-u5-t1-5"],[data-type-id="4-2-u5-t1-10"],[data-type-id="4-2-u5-t2-2"],[data-type-id="4-2-u5-t2-6"],[data-type-id="4-2-u5-t2-3"],[data-type-id="4-2-u5-t2-4"],[data-type-id="4-2-u5-t2-7"],[data-type-id="4-2-u5-t2-8"],[data-type-id="4-2-u5-t1"],[data-type-id="4-2-u5-t2-9"],[data-type-id="4-2-u5-t2-10"]) .graph-figure svg text { font-size:11px; font-weight:700; }
   #problemView .print-page--four-up .question-item:is([data-type-id="4-2-u5-t1-2"],[data-type-id="4-2-u5-t1-3"],[data-type-id="4-2-u5-t1-6"],[data-type-id="4-2-u5-t1-9"],[data-type-id="4-2-u5-t1-5"],[data-type-id="4-2-u5-t1-10"],[data-type-id="4-2-u5-t2-2"],[data-type-id="4-2-u5-t2-6"],[data-type-id="4-2-u5-t2-3"],[data-type-id="4-2-u5-t2-4"],[data-type-id="4-2-u5-t2-7"],[data-type-id="4-2-u5-t2-8"],[data-type-id="4-2-u5-t1"],[data-type-id="4-2-u5-t2-9"],[data-type-id="4-2-u5-t2-10"]) .graph-figure svg .chart-unit { font-size:7px; transform:translateY(-7px); }

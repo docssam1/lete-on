@@ -489,7 +489,7 @@
     if (["5-2-u2-practice-71-original", "5-2-u2-practice-71-count-similar"].includes(question.sourceItemId)) return 1; // Four short inline fractions fit the standard column.
     if (question.sourceItemId === "5-2-u2-practice-74-original") return 1; // The three short symbolic fractions fit the standard column.
     if (question.sourceItemId === "5-2-u4-e2-example-1") return 1;
-    if (["4-2-u5-t1-2", "4-2-u5-t1-3", "4-2-u5-t1-6", "4-2-u5-t1-9", "4-2-u5-t1-5", "4-2-u5-t1-10", "4-2-u5-t2-2", "4-2-u5-t2-6", "4-2-u5-t2-3", "4-2-u5-t2-4", "4-2-u5-t2-7", "4-2-u5-t2-8", "4-2-u5-t1", "4-2-u5-t2-9", "4-2-u5-t2-10"].includes(question.type?.id)) return 1;
+    if (["4-2-u5-t1-2", "4-2-u5-t1-3", "4-2-u5-t1-6", "4-2-u5-t1-9", "4-2-u5-t1-5", "4-2-u5-t1-10", "4-2-u5-t2-2", "4-2-u5-t2-6", "4-2-u5-t2-3", "4-2-u5-t2-4", "4-2-u5-t2-7", "4-2-u5-t2-8", "4-2-u5-t1", "4-2-u5-t2-9", "4-2-u5-t2-10", "4-2-u5-t1-4", "4-2-u5-t1-7", "4-2-u5-t1-8"].includes(question.type?.id)) return 1;
     if (question.sourceItemId?.startsWith("6-2-u4-e2-")) return question.sourceItemId.endsWith("exploration") ? 3 : 1.5;
     if (question.sourceItemId?.startsWith("6-2-u4-e1-")) return question.sourceItemId.endsWith("example-4") ? 3 : 1.5;
     if (question.prompt.includes("source62-final-problem")) return 3;
@@ -588,12 +588,32 @@
     return pages;
   }
 
+  function problemPromptHtml(question) {
+    const html = renderMathNotation(question.prompt);
+    if (!["4-2-u5-t1-4", "4-2-u5-t1-7", "4-2-u5-t1-8"].includes(question.type?.id)) return html;
+    const container = document.createElement("div");
+    container.innerHTML = html;
+    const graphs = [...container.children].filter(element => element.classList.contains("graph-figure"));
+    if (graphs.length !== 2) return html;
+    for (const graph of graphs) {
+      const ticks = [...graph.querySelectorAll(".chart-tick")];
+      if (ticks.length > 8) ticks.forEach((tick, index) => {
+        if ((index % 2 === 1 && index !== ticks.length - 1) || (ticks.length % 2 === 0 && index === ticks.length - 2)) tick.classList.add("paired-dense-hidden");
+      });
+    }
+    const pair = document.createElement("div");
+    pair.className = "question-graph-pair";
+    graphs[0].before(pair);
+    pair.append(...graphs);
+    return container.innerHTML;
+  }
+
   function renderProblems() {
     $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired, fourUp }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}${fourUp ? " print-page--four-up" : ""}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item" data-type-id="${escapeHtml(question.type.id)}"${isCompactFractionProblem(question) ? ' data-compact-fraction="true"' : ""}>
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
-        <div class="question-prompt">${renderMathNotation(question.prompt)}</div>
+        <div class="question-prompt">${problemPromptHtml(question)}</div>
         <div class="answer-line">답</div>
       </article>`).join("")}</div>${watermark()}
     </section>`).join("");
