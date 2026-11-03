@@ -43,6 +43,8 @@ test("MAA AMC 10 and AMC 12 references distinguish year and A/B form", function 
   assert.equal(reference.referenceFor("amc10", 2025, "A").average, 57.12);
   assert.equal(reference.referenceFor("amc10", 2012, "A").top1, 121.5);
   assert.equal(reference.referenceFor("amc10", 2012, "B").average, 76.59);
+  assert.deepEqual([reference.referenceFor("amc10", 2007, "A").average, reference.referenceFor("amc10", 2007, "B").average], [67.9, 61.5]);
+  assert.deepEqual([reference.referenceFor("amc12", 2010, "A").average, reference.referenceFor("amc12", 2010, "B").average], [62.5, 59.8]);
   assert.equal(reference.referenceFor("amc12", 2016, "A").top1, 111);
   assert.equal(reference.referenceFor("amc12", 2016, "B").average, 68.65);
   assert.match(reference.referenceFor("amc12", 2016, "B").corroboratingSourceUrl, /mathgoldmedalist\.com/);
@@ -68,7 +70,7 @@ test("AMC references keep known fields, order reported cutoffs, and identify the
   for (const program of Object.values(reference.entries)) {
     for (const entry of Object.values(program)) {
       const thresholds = reference.bands.map((band) => entry[band.id]).filter(Number.isFinite);
-      assert.ok(thresholds.length > 0);
+      assert.ok(thresholds.length > 0 || Number.isFinite(entry.average));
       assert.ok(thresholds.every((value, index) => index === 0 || value <= thresholds[index - 1]));
       if (entry.students !== undefined) assert.ok(entry.students > 0);
       if (entry.schools !== undefined) assert.ok(entry.schools > 0);
