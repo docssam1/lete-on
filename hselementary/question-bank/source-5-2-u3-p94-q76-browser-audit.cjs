@@ -62,6 +62,9 @@ const numbers = [73, 75, 76, 77];
       assert(explanation.includes('③') && explanation.includes('8개'));
       const circles = await q76.locator('svg.u3p94-fold76 circle').count();
       assert.equal(circles, 31, 'one punched hole and the four source choices');
+      const punch = q76.locator('svg.u3p94-fold76 circle').first();
+      assert.equal(await punch.getAttribute('cx'), '294');
+      assert.equal(await punch.getAttribute('cy'), '23'); // maps to (45,5) before the reverse folds
       const answerCircles = await page.locator('#solutionView .solution-item:has([data-source-answer="5-2-u3-practice-76-original"]) svg circle').evaluateAll(es=>es.map(e=>[Number(e.getAttribute('cx')),Number(e.getAttribute('cy'))]));
       assert.equal(answerCircles.length, 8);
       const expected = [[45,5],[55,5],[95,45],[95,55],[55,95],[45,95],[5,55],[5,45]].map(([x,y])=>`${20+x*1.2},${20+y*1.2}`).sort();
