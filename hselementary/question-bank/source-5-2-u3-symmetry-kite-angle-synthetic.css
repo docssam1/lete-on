@@ -1,3 +1,10 @@
 .s52-kite-angle { display:block; width:min(100%, 420px); height:auto; margin:8px auto; }
 .s52-kite-angle .axis { stroke:#2f6b4a; stroke-dasharray:5 4; }
-@media print { .s52-kite-angle { width:min(100%, 240px); max-height:70mm; margin:4px auto; } }
+@media print {
+  #problemView [data-source-item-id="5-2-u3-e5-example-2-axis-synthetic"],
+  #solutionView [data-source-answer="5-2-u3-e5-example-2-axis-synthetic"] {
+    font-family:"Noto Serif KR", "Batang", serif;
+    font-weight:400;
+  }
+  .s52-kite-angle { width:min(100%, 240px); max-height:70mm; margin:4px auto; }
+}
