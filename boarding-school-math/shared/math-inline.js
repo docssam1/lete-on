@@ -3,7 +3,7 @@
 
   function append(target, value) {
     const text = String(value == null ? "" : value);
-    const fraction = /(^|[^\w.])([−-]?\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)(?![\d./])/g;
+    const fraction = /(^|[^\w./])([−-]?\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)(?![\d./])/g;
     let cursor = 0;
     let match;
     while ((match = fraction.exec(text))) {

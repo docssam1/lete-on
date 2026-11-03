@@ -22,6 +22,12 @@ test("teacher can find, preview, select, order, and set points on released Grade
   assert.equal(await page.locator(".item-row").count(), 36);
   assert.equal(await page.locator(".item-preview .question-choices .math-fraction").count(), 4);
   assert.equal((await page.locator(".item-preview .question-choices").innerText()).includes("3/8"), false);
+  const mathText = await page.evaluate(() => {
+    const probe = document.createElement("p");
+    window.GFIELDMathText.append(probe, "날짜 2026/11/03 · 분수 3/8 · 계수 3/2x");
+    return { labels: [...probe.querySelectorAll(".math-fraction")].map((fraction) => fraction.getAttribute("aria-label")), keepsDate: probe.innerText.includes("2026/11/03") };
+  });
+  assert.deepEqual(mathText, { labels: ["8분의 3", "2분의 3"], keepsDate: true });
   await page.locator("#item-search").fill("단위율");
   assert.equal(await page.locator(".item-row").count(), 8);
   await page.getByRole("button", { name: "2번 미리보기", exact: true }).click();
