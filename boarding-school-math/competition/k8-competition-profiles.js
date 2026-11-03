@@ -106,7 +106,7 @@
         ])
       }),
       sources: Object.freeze([
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-11-02"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-11-03"),
         source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page"),
         source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf", "2026–27 official scoring and eligibility policies; updated 2026-10-30", "2026-11-02"),
         source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2025/08/2026-AMC-8-Teachers-Manual.pdf", "2026 AMC 8 teacher manual")
@@ -128,7 +128,7 @@
         excludes: Object.freeze(["trigonometry", "advanced-algebra", "advanced-geometry"])
       }),
       sources: Object.freeze([
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-11-02"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-11-03"),
         source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page"),
         source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf", "2026–27 official scoring and eligibility policies; updated 2026-10-30", "2026-11-02")
       ]),
@@ -149,7 +149,7 @@
         excludes: Object.freeze(["calculus"])
       }),
       sources: Object.freeze([
-        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-11-02"),
+        source("Mathematical Association of America", "https://maa.org/student-programs/amc/", "current AMC overview; 2026–27 cycle, dates, format and age/grade limits rechecked", "2026-11-03"),
         source("Mathematical Association of America", "https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/", "2026–27 official policies landing page"),
         source("Mathematical Association of America", "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf", "2026–27 official scoring and eligibility policies; updated 2026-10-30", "2026-11-02")
       ]),

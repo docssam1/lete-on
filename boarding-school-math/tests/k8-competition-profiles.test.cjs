@@ -151,7 +151,7 @@ test("competition sources are HTTPS and original problem publication remains per
       const currentMaaRules = source.authority === "Mathematical Association of America" && source.url === "https://maa.org/wp-content/uploads/2026/10/2026-2027-AMC-8-10-12-Policies.pdf";
       const currentKangarooArchive = source.authority === "Math Kangaroo USA" && source.url === "https://mathkangaroo.org/mks/practice/pdf-exams/";
       const currentKangarooScoring = source.authority === "Math Kangaroo USA" && source.url === "https://mathkangaroo.org/mks/resources/math-kangaroo-scoring/";
-      assert.equal(source.lastVerified, currentKangarooScoring ? "2026-11-03" : currentMaaOverview || currentMaaRules || currentKangarooArchive ? "2026-11-02" : "2026-08-28");
+      assert.equal(source.lastVerified, currentKangarooScoring || currentMaaOverview ? "2026-11-03" : currentMaaRules || currentKangarooArchive ? "2026-11-02" : "2026-08-28");
       if (currentMaaOverview) assert.match(source.documentRevision, /dates, format and age\/grade limits rechecked/);
       if (currentMaaRules) assert.match(source.documentRevision, /updated 2026-10-30/);
     });
