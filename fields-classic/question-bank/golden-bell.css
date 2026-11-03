@@ -750,6 +750,9 @@ html:has(body.as-embed),body.as-embed{background:#fffefb;background-image:none}
 .as-embed .quiz-item>strong,.as-embed .quiz-item strong{font-size:18px;line-height:1.6}
 .as-embed .quiz-item label,.as-embed .answer-part,.as-embed .glyph-label{font-size:16px}
 .as-embed .quiz-item input,.as-embed .answer-part-field input,.as-embed .source-question-card input{min-height:50px;font-size:22px}
+/* 답 칸이 여러 개면 두 줄(2열)로 — 휴대폰 세로에서 한 줄씩 쌓여 「답 내기」가 화면 밖으로 밀리던 것(원장 2026-11-03 「답칸 두 줄」) */
+.as-embed .answer-part-grid:has(> .answer-part:nth-child(3)){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.as-class .answer-part-grid:has(> .answer-part:nth-child(3)){grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .as-embed .primary-action,.as-embed .secondary-action{min-height:48px;font-size:16px}
 .as-embed .answer-choices button{min-height:46px;min-width:64px;font-size:17px}
 .as-embed .feedback,.as-embed .quiz-item-feedback,.as-embed .quiz-item-assist,.as-embed .quiz-item-solution{font-size:16px;line-height:1.6}
