@@ -38,6 +38,13 @@ const ids = ["5-2-u2-practice-63-original", "5-2-u2-practice-65-original", "5-2-
       for(const id of [ids[2],ids[3]])assert.equal(await page.locator(`#problemView [data-source-item-id="${id}"] svg`).count(),1);
       assert.deepEqual(await page.locator('#problemView [data-source-item-id="5-2-u2-practice-66-original"] svg [data-endpoint]').evaluateAll(es=>es.map(e=>e.dataset.endpoint)),[' 3/5','6 2/7']);
       assert.deepEqual(await page.locator('#problemView [data-source-item-id="5-2-u2-practice-67-original"] svg [data-endpoint]').evaluateAll(es=>es.map(e=>e.dataset.endpoint)),['3 3/4','4 5/6']);
+      assert.equal(await page.locator('#problemView [data-source-item-id="5-2-u2-practice-66-original"] [data-equal-interval]').count(),4, 'four equal interval marks match the source');
+      assert.equal(await page.locator('#problemView [data-source-item-id="5-2-u2-practice-66-original"] [data-numberline-arrows="both"]').count(),1, 'number line has arrows at both ends');
+      assert.equal(await page.locator('#problemView [data-source-item-id="5-2-u2-practice-67-original"] [data-equal-interval]').count(),5, 'five equal interval marks match the source');
+      const paths66=await page.locator('#problemView [data-source-item-id="5-2-u2-practice-66-original"] [data-equal-interval]').evaluateAll(es=>es.map(e=>e.getAttribute('d')));
+      const paths67=await page.locator('#problemView [data-source-item-id="5-2-u2-practice-67-original"] [data-equal-interval]').evaluateAll(es=>es.map(e=>e.getAttribute('d')));
+      assert(paths66.every(d=>(d.match(/M/g)||[]).length===2), '66 uses double marks');
+      assert(paths67.every(d=>(d.match(/M/g)||[]).length===1), '67 uses single marks');
       assert.deepEqual(await page.locator('#problemView .print-page').evaluateAll(pages => pages.map(page => page.querySelectorAll('.question-item').length)), [4], 'four questions per page, except the final remainder');
       assert.equal(await page.locator('#problemView [data-source-answer]').count(), 0, 'answers stay out of problems');
       assert.doesNotMatch(await page.locator('#problemView').innerText(), /도움말|힌트|풀이할 때/);
