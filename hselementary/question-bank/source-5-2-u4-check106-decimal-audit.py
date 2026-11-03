@@ -8,7 +8,11 @@ path=Path(__file__).parent/'source-inventory/5-2-u4-readiness-review.json'
 review=next(r for r in json.loads(path.read_text())['additionalSourceReviews'] if r['sourcePrintedPage']==106)
 assert review['sourcePdfPage']==100 and review['alternateSourcePdfPage']==101
 assert {i['number'] for i in review['items']}==set(range(39,47))
-assert review['publisherAnswerVerified'] is False and review['runtimeConnection']=='not-connected'
+assert review['publisherAnswerVerified'] is False
+assert review['runtimeConnection'] == 'partially-connected'
+assert all(item['status'] == 'public-independent-verification-publisher-key-pending'
+           and item['runtimeTypeId'] == f"5-2-u4-practice-{item['number']}-original"
+           for item in review['items'])
 assert (D(5)-4*D('.1'))*(D(8)-3*D('.1'))==D('35.42')
 assert D('68.5')*D('2.4')+80*D('3.6')==D('452.4')
 assert (D('4.8')+D('3.6'))*D('1.5')==D('12.6')
