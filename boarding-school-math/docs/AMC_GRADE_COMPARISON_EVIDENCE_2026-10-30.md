@@ -163,3 +163,12 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - 검색에서 확인된 2013·2016 AMC 8 결과 PDF와 Bard Math Circle 연례 결과 페이지는 `Average score for grade ...`를 포함하지만 개별 학교/수업 집단 보고다. 국가·전체 응시 집단으로 오인하지 않도록 학년 기준치로 사용하지 않는다. 예: [2013 AMC 8 Bard 결과](https://www.bardmathcircle.org/p/2013-amc-8), [2016 AMC 8 Bard 결과](https://www.bardmathcircle.org/p/2016-amc-8-results-are-in). 이 보고서에는 학생 결과표도 실릴 수 있어 본 데이터셋에는 집계 원자료만 필요하다.
 - 2016년 사용자 게시물은 구 MAA `GeneralReports.aspx`에서 `Contest Score Grade Report with Percentile` 메뉴를 선택할 수 있었다고 회고하지만, 구동하는 연도별 리포트 본문은 현재 공개 페이지에서 재생되지 않았다. 이 검색 결과는 과거 메뉴의 존재에 대한 단서일 뿐, percentile 데이터 원본으로 쓰지 않는다.
 - 따라서 현재 학생 화면의 연도별 학년 평균 적용 범위는 검수 완료된 AMC 8 2001–2009, AMC 10/12 2007–2011 A/B에서 멈춘다. 더 넓은 1980–2022 자료는 보고서 원문과 회차/폼/학년 모집단이 확인될 때만 추가하고, 학교 단위 결과나 수상자 목록으로 빈 연도를 채우지 않는다.
+
+## 2026-11-04 웹 검색 추가: 2010–2011 AMC 8 집계
+
+- 실제 연도별 문제 자료도 검색으로 교차 확인했다. MAA의 [2010 AMC 8 원본 PDF](https://f.hubspotusercontent30.net/hubfs/981338/Math%20Competition%20Problems_PDFS/2010%20AMC8.pdf)는 2010년 11월 16일 시행, 25문항·40분, 계산기 미사용 조건을 명시한다. 프로젝트의 연도별 문제지는 이처럼 샘플 대신 회차별 공개 원본으로 연결하고, 문항 내용을 로컬 저장소에 복제하지 않는다.
+- 2011 AMC 8의 과거 MAA 통계 페이지 경로를 확인했다: `http://amc.maa.org/amc8/2011/stats/2011-amc8stats.shtml`. 검색 결과가 가리키는 시험 당시 통계 소개는 약 1,300개 학교·84,000명 규모의 초기 집계로 설명한다. 이 분모는 [당시 공개 통계를 인용한 포럼 게시물](https://ww123.net/archiver/tid-4720219-page-3.html)에 남아 있다. MAA 호스트는 현재 403을 반환하고, 보존본의 연결 파일을 이 검색 세션에서 완전히 회수하지 못했으므로 이를 최종 국가 전체 규준이나 점수×학년 표로 전사하지 않았다.
+- 해당 회차의 [MAA Grade and Gender Average PDF 경로](http://amc.maa.org/amc8/2011/stats/statestatistics/_Overall/Grade_and_Gender_Average.pdf)는 당시 공개된 자료에 대한 별도 링크로 확인된다. 이 보고서는 점수 분포표가 아니라 학년·성별 요약 통계다. PDF 본문과 모집단 정의를 직접 검수하기 전에는 화면용 수치로 쓰지 않는다.
+- [AMC Study의 2011 한국 결과 재현](https://www.amcstudy.net/79)은 한국 참가자 899명의 학년별 평균·참가자 수를 제공한다(초등 이하 4명, 5학년 68명, 6학년 252명, 7학년 315명, 8학년 255명). 이는 이미 `amc8-korea-grade-means-2009-2011.csv`에 별도 한국 표본으로 보존되어 있다. 등급 비교는 한국 코호트와 MAA의 글로벌/미국 통계를 서로 합치지 않는다. 게시물의 개인별 수상자 목록은 연구 데이터로 복사하지 않았다.
+- 2010 AMC 8에서는 당시 포럼에 MAA `Details Report`의 점수별 일부 학년 셀(25점·24점 등)과 한국 응시자 전용 표가 함께 인용되어 있다. 일부 행만으로 완전한 점수×학년 분포를 재구성할 수 없고, 한국 표본과 전체 표본이 섞일 위험이 있어 새 기준치로 추가하지 않았다. [2010 AMC 8 결과 인용 페이지](https://www.321ww.org/archiver/tid-4605419.html).
+- 조사 결과, 커버리지 CSV에서 AMC 8 2010·2011을 `no-grade-table-recovered`로 둔 상태는 유지한다. 이는 해당 연도 자료가 전혀 존재하지 않는다는 뜻이 아니라, 학년·점수·모집단이 함께 확인된 완전한 표를 아직 검수·등록하지 않았다는 뜻이다.
