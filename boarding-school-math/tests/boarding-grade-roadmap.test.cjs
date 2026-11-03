@@ -20,7 +20,7 @@ test("school, competition, and SAT stay separate in upper-grade examples", funct
   assert.match(roadmap.getTracks(3)[2][1], /별도 경시 과정이 제시되지 않았어요/);
   assert.deepEqual(roadmap.getTracks(7).map((track) => track[0]), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
   assert.match(roadmap.getTracks(9)[0][0], /추정/);
-  assert.match(roadmap.getTracks(10)[2][1], /응시할 때/);
+  assert.match(roadmap.getTracks(10)[2][1], /Digital SAT Math 800은 개인 도전 목표.*응시 계획/);
   [11, 12].forEach(function (grade) {
     assert.match(roadmap.getTracks(grade)[0][0], /추정/);
     assert.match(roadmap.getTracks(grade)[0][1], /확인|목표/);
@@ -117,6 +117,18 @@ test("upper-grade course references are limited to named courses and keep Grade 
     "https://maa.org/maa-invitational-competitions/"
   ]);
   assert.match(roadmap.courseStageResources[10].stageNotes[2], /미국·캐나다 AIME 기준.*다른 지역 규정/);
+});
+
+test("Grade 10 score goals are optional aspirations, with qualification kept separate", function () {
+  const plan = roadmap.getAnnualPlan(10);
+  const tracks = roadmap.getTracks(10);
+  assert.match(plan.note, /AMC 12 130\+와 Digital SAT Math 800은 선택형 도전 목표/);
+  assert.match(plan.note, /AIME·USAMO 진출을 예측하거나 보장하지 않아요/);
+  assert.match(plan.periods[0][2], /AMC 12 130\+를 개인 도전 목표/);
+  assert.match(plan.periods[2][2], /Digital SAT Math 800은 선택한 개인 도전 목표/);
+  assert.match(plan.periods[3][2], /USAMO형 증명 문제.*실제 USAMO 선발 기준.*해당 연도 MAA/);
+  assert.match(tracks.find(function (track) { return track[0] === "경시 · 선택"; })[1], /AMC 12 130\+.*AIME 응시와 USAMO 선발은 해당 연도 MAA 기준/);
+  assert.match(tracks.find(function (track) { return track[0] === "SAT · 선택"; })[1], /Digital SAT Math 800은 개인 도전 목표/);
 });
 
 test("competition options follow grade and keep advanced AMC paths optional", function () {

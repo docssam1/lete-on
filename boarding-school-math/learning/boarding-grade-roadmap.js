@@ -114,11 +114,11 @@
       ["7–9개월 · 추정", "선택 심화와 SAT 영역 확인", "관심과 준비도에 따라 AMC 혼합 문제 또는 SAT 영역을 골라요.", "AMC 선택 연습 · Digital SAT 공식 연습 자료"],
       ["10–12개월 · 추정", "다음 과목 준비 확인", "함수·삼각비의 기초를 살펴보고 Pre-Calculus 준비를 교사와 확인해요.", "학교 과목 계획 · 선수 개념 복습"]
     ]) }),
-    10: Object.freeze({ source: "provided", title: "Pre-Calculus에서 증명·시험 선택까지", note: "학습 목표 예시예요. AIME·USAMO·SAT 결과는 이 계획만으로 예측할 수 없어요.", periods: Object.freeze([
-      ["1–3개월", "Pre-Calculus와 AMC 12 준비", "함수와 삼각법을 그래프로 이해하고 문제에 적용해요.", "AoPS Precalculus · AoPS Volume 1 · AMC 12 기출"],
+    10: Object.freeze({ source: "provided", title: "Pre-Calculus에서 증명·시험 선택까지", note: "AMC 12 130+와 Digital SAT Math 800은 선택형 도전 목표예요. 이 계획은 점수나 AIME·USAMO 진출을 예측하거나 보장하지 않아요.", periods: Object.freeze([
+      ["1–3개월", "Pre-Calculus와 AMC 12 준비", "함수와 삼각법을 그래프로 이해하고 문제에 적용해요. 원한다면 AMC 12 130+를 개인 도전 목표로 기록해요.", "AoPS Precalculus · AoPS Volume 1 · AMC 12 기출"],
       ["4–6개월", "AIME형 정수론·조합", "풀이를 외우기보다 어떤 개념을 왜 썼는지 설명해요.", "AoPS Intermediate Counting & Probability · Intermediate Number Theory · AIME 기출"],
-      ["7–9개월", "SAT Math 점검", "응시 계획이 있을 때 공식 형식에 맞춰 약한 영역을 확인해요.", "College Board 공식 디지털 SAT 자료 · Khan Academy SAT Math"],
-      ["10–12개월", "증명과 다음 단계", "증명 문제는 준비도와 목표에 맞춰 선택하고 풀이 근거를 써요.", "AoPS Volume 2 · 증명 연습 · 선택한 경시 문제"]
+      ["7–9개월", "SAT Math 점검", "응시 계획이 있다면 공식 형식에 맞춰 약한 영역을 확인해요. Digital SAT Math 800은 선택한 개인 도전 목표로 기록할 수 있어요.", "College Board 공식 디지털 SAT 자료 · Khan Academy SAT Math"],
+      ["10–12개월", "증명과 다음 단계", "준비도에 맞춰 USAMO형 증명 문제도 연습해요. 실제 USAMO 선발 기준은 해당 연도 MAA 안내에서 확인해요.", "AoPS Volume 2 · 증명 연습 · 선택한 경시 문제"]
     ]) }),
     11: Object.freeze({ source: "inferred", title: "학교의 과목 경로를 확인하고 연결하기", note: "11학년 자료가 제공되지 않아 고등학교 수학의 공통 내용 범주를 바탕으로 만든 추정안이에요. 과목명·순서·시험 선택은 학교의 실제 과목 안내와 선수 조건을 먼저 확인해요.", periods: Object.freeze([
       ["1–3개월 · 추정", "현재 수업과 선수 조건 확인", "성적표와 학교 안내에서 지금 배우는 과목, 필요한 선수 개념, 다음 선택지를 정리해요.", "학교 course catalog · 교사 상담 · 현재 수업 자료"],
@@ -156,7 +156,7 @@
     7: Object.freeze([["학교 수학", "유리수·비례·식에서 Algebra 1로"], ["경시 · 선택", "AMC 8로 다지거나 AMC 10 입문 문제 보기"], ["SAT · 맛보기", "대수·기하 문장제를 개념과 연결하기"]]),
     8: Object.freeze([["학교 수학", "함수·기하를 배우고 준비되면 Algebra 2로"], ["경시 · 선택", "AMC 10/12 혼합 문제와 선택지 없이 풀기"], ["SAT · 선택", "대수·자료 해석 유형 점검"]]),
     9: Object.freeze([["학교 수학 · 추정", "Algebra 2·기하를 점검하고 다음 과목 정하기"], ["경시 · 선택", "AMC 혼합 문제를 풀이 과정까지 설명"], ["SAT · 선택", "학교 진도에 맞춰 필요한 영역만 보기"]]),
-    10: Object.freeze([["학교 수학", "Pre-Calculus 함수·삼각법과 증명 기초"], ["경시 · 선택", "AMC 12·AIME와 증명 문제를 따로 연습"], ["SAT · 선택", "응시할 때 공식 디지털 SAT로 점검"]]),
+    10: Object.freeze([["학교 수학", "Pre-Calculus 함수·삼각법과 증명 기초"], ["경시 · 선택", "AMC 12 130+는 개인 도전 목표로 둘 수 있어요. AIME 응시와 USAMO 선발은 해당 연도 MAA 기준을 확인해요."], ["SAT · 선택", "Digital SAT Math 800은 개인 도전 목표예요. 응시 계획에 맞춰 공식 형식으로 연습해요."]]),
     11: Object.freeze([["학교 수학 · 추정", "수강 과목과 선수 조건을 확인하고 개념 연결"], ["경시 · 선택", "AMC 12는 해당 연도 참가 자격 확인 후 선택"], ["SAT · 선택", "응시 계획이 있을 때 공식 영역을 점검"]]),
     12: Object.freeze([["학교 수학 · 추정", "졸업 요건·과목 경로·다음 목표에 맞춰 선택"], ["경시 · 선택", "AMC 12는 해당 연도 참가 자격 확인 후 선택"], ["SAT · 선택", "응시 계획이 있을 때 공식 영역을 점검"]])
   });

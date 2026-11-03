@@ -561,6 +561,9 @@ test("Math Kangaroo Grade 7 and 8 diagnostics compare the same 30-question paper
 test("Grade 10 and Grade 12 comparison keeps inferred planning separate from learner assessment", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(`${url}?grade=10`, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#grade-focus-list").innerText(), /AMC 12 130\+는 개인 도전 목표[\s\S]*Digital SAT Math 800은 개인 도전 목표/);
+  assert.match(await page.locator("#annual-plan-note").innerText(), /AMC 12 130\+와 Digital SAT Math 800은 선택형 도전 목표/);
+  assert.match(await page.locator("#annual-plan-periods").innerText(), /USAMO형 증명 문제[\s\S]*해당 연도 MAA 안내/);
   await page.getByLabel("비교할 학년").selectOption("12");
   assert.equal(await page.locator("#comparison-current-label").innerText(), "10학년 · 가속 학습 예시 · 학교 학년 기준 아님");
   assert.equal(await page.locator("#comparison-target-label").innerText(), "12학년 · 추정안");
