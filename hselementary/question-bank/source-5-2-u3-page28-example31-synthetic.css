@@ -108,6 +108,8 @@
   .source52-p28e31-question,
   .source52-p28e31-solution { font-size: 10.5pt; line-height: 1.42; }
   .source52-p28e31-diagram { width: 20rem; max-height: 4.5in; margin: 0.15rem auto; }
-  .source52-p28e31-workspace { min-height: 2.1in; }
+  /* The worksheet supplies shared writing space; avoid an extra fixed block
+     that forces otherwise balanced four-question pages to split. */
+  .source52-p28e31-workspace { display: none; }
   .source52-p28e31-solution li { margin: 0.16rem 0; }
 }
