@@ -699,6 +699,17 @@
       });
       setText("aime-cohort-stats", `참가자 ${cohort.students.toLocaleString("en-US")}명 · 학교 ${cohort.schools.toLocaleString("en-US")}곳 · 평균 ${cohort.average.toFixed(2)} · 표준편차 ${cohort.standardDeviation.toFixed(2)}. MAA 공개 분포 보고서의 해당 연도·회차 값입니다.`);
     }
+    const aimeGradeReference = window.GFIELDAIMEHistoricalGradeDistributionReference;
+    const aimeGradeSection = $("aime-historical-grade-reference");
+    const aimeGradeResult = selectedFormat().id === "aime" && result.complete && result.scoreEstimate && aimeGradeReference
+      ? aimeGradeReference.referenceFor(aimeKeyYear, aimeKeyForm, grade, result.scoreEstimate.points)
+      : null;
+    aimeGradeSection.hidden = !aimeGradeResult;
+    if (aimeGradeResult) {
+      setText("aime-historical-grade-summary", `${aimeGradeResult.year} AIME ${aimeGradeResult.form} · Grade ${aimeGradeResult.grade} · 학년 표본 ${aimeGradeResult.participants.toLocaleString("en-US")}명 · ${aimeGradeResult.score}/15점`);
+      setText("aime-historical-grade-result", `이 점수보다 낮은 응시자 ${aimeGradeResult.studentsBelowScore.toLocaleString("en-US")}명 / ${aimeGradeResult.participants.toLocaleString("en-US")}명 · ${aimeGradeResult.lowerScorePercent.toFixed(2)}% · 같은 점수 ${aimeGradeResult.studentsAtScore.toLocaleString("en-US")}명`);
+      $("aime-historical-grade-source").href = aimeGradeResult.sourceUrl;
+    }
     const paperPerformance = $("paper-performance");
     paperPerformance.hidden = !result.level || !result.questionBands.length;
     if (!paperPerformance.hidden) {

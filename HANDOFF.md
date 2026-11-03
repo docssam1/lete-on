@@ -1,4 +1,8 @@
-# Current handoff — 2026-11-03
+# Current handoff — 2026-11-04
+
+### 2026-11-04 retrieved 2010 AIME grade score distributions
+
+Web search recovered the MAA-authored 2010 AMC 10/12 annual summary copy. Table XIII gives 0–15 score counts by grade for AIME I and II. Added a separate exact-grade lookup for Grade 8–13, checked every grade-column total against the report participant totals (3,618 for I; 2,904 for II), and connected a same-year/form/grade historic comparison to completed AIME paper review. The displayed derived value is only the share with a strictly lower score; ties are shown separately and it is not labeled a reported percentile, present-day norm, ability rank, or qualification. Grouped `≤7` is not split into invented exact grades. Source and boundaries: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. Unit checks pass 3/3; the full contest review browser suite passes 31/31. Coverage manifest retains 266 paper rows. `git diff --check` passes. The report copy is hosted at Scribd, not verified on a primary MAA host. Local only; no push, deployment, or Drive sync.
 
 ### 2026-11-04 AMC original-paper result-to-explanation link
 

@@ -471,6 +471,24 @@ test("Grade 7 paper marks yield partial learning review and no score estimate", 
   await page.close();
 });
 
+test("2010 AIME review compares a completed paper with the matching historical grade distribution", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=8&program=aime&year=2010&form=I`, { waitUntil: "networkidle" });
+  for (let question = 1; question <= 15; question += 1) {
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption(question <= 8 ? "correct" : "wrong");
+  }
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#score-estimate-value").innerText(), /8 \/ 15/);
+  assert.equal(await page.locator("#aime-historical-grade-reference").isVisible(), true);
+  assert.match(await page.locator("#aime-historical-grade-summary").innerText(), /2010 AIME I · Grade 8 · 학년 표본 136명 · 8\/15점/);
+  assert.match(await page.locator("#aime-historical-grade-result").innerText(), /104명 \/ 136명 · 76\.47% · 같은 점수 15명/);
+  assert.equal(await page.locator("#aime-historical-grade-source").getAttribute("href"), "https://www.scribd.com/document/51428451/2010-HS-summary");
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("AIME review opens year/form archive, captures integer answers, and stays separate from roadmap diagnosis", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];

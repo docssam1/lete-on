@@ -61,8 +61,15 @@
 
 - `../competition/historical-amc-grade/amc8-grade-means-2001-2009.csv` — AMC 8 recorded grades 4–5, 6, 7, 8; participant counts and means.
 - `../competition/historical-amc-grade/amc10-12-grade-means-2007-2011.csv` — AMC 10 and AMC 12 A/B form, grade-group counts and means (110 rows).
-- `../competition/historical-amc-grade/amc-grade-reference-coverage-by-paper.csv` — one status row for each of the 266 year/form original-paper records, separating recovered grade-mean tables from uncollected coverage.
+- `../competition/historical-amc-grade/amc-grade-reference-coverage-by-paper.csv` — one status row for each of the 266 year/form original-paper records, separating recovered grade-mean tables, grade-score distributions, and uncollected coverage.
 - 두 평균 파일은 연도/시험/폼이 다르면 수치를 합치거나 서로 환산하지 않는다. 회차 coverage manifest는 현재 원본 카탈로그와의 대응표이지 성적 데이터가 아니다. 수치 표본은 현재 시험을 대표하지 않고, score-to-grade placement, ability level, percentile, AMC qualification을 의미하지 않는다.
+
+### 2010 AIME I/II 학년별 점수 빈도 추가
+
+- [MAA 작성 2010 AMC 10/12 Summary of Results and Awards 사본](https://www.scribd.com/document/51428451/2010-HS-summary)의 Table XIII (인쇄 페이지 201–202)에 AIME I·II 점수 0–15점별 학년 인원수가 있다. 사본은 Scribd에 있는 제3자 사본이다. 총계는 I 3,618명, II 2,904명이며, 각 학년군 열의 점수 합이 보고서의 참가자 총계와 일치하는지 검증했다. 학년 열은 unknown, ≤7, 8, 9, 10, 11, 12, 13이다.
+- 원점수별 빈도는 `../competition/aime-historical-grade-distribution-reference.js`에 그대로 분리 저장했다. 특정 학년·점수 비교에서 계산하는 값은 `해당 점수보다 낮은 점수를 받은 인원 ÷ 해당 학년 표본 × 100`뿐이다. 동점은 제외한다. 이 계산값을 보고서가 발표한 percentile rank나 현재 학년 규준으로 부르지 않는다.
+- 원본 AIME 2010 I/II 답안을 모두 채점하면 같은 연도·회차·선택 학년 표본을 나란히 보여준다. AMC 8/10/12 학년 평균, AIME 전체 회차 분포 및 진출 기준과는 다른 보고서 유형으로 분리했다. exact Grade 8–13만 사용할 수 있고 `≤7` 묶음에서는 개별 학년 비교를 만들지 않는다.
+- 제품 검증 예시: 2010 AIME I Grade 8 표본은 136명이다. 8/15점은 해당 표본 중 104명이 더 낮은 점수를 받았고 15명이 동점으로 기록되어, strict lower-score share는 76.47%다. 이는 같은 시기 보고서의 역사 표본 설명이지 현재의 순위·자격·실력 등급이 아니다.
 
 MAA 작성 AMC 8 `Summary of Results and Awards`의 2008·2009년판은 해당 회차와 직전 회차들의 **기록된 학년군별 응시자 수 및 평균 점수**를 함께 싣는다. 표는 `4 & 5`, `6`, `7`, `8`학년을 사용한다. 아래 값은 각 셀을 보고서 표와 대조해 옮겼다.
 
