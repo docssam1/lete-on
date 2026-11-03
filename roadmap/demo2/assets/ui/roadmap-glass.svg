@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" fill="none">
+<defs><linearGradient id="top" x1="12" y1="20" x2="79" y2="72" gradientUnits="userSpaceOnUse"><stop stop-color="#E9F7FF"/><stop offset="1" stop-color="#9AB7FF"/></linearGradient><linearGradient id="side" x1="20" y1="54" x2="76" y2="92"><stop stop-color="#6F9AEF"/><stop offset="1" stop-color="#4B3EAC"/></linearGradient><linearGradient id="pin" x1="48" y1="8" x2="72" y2="42"><stop stop-color="#B7EAFF"/><stop offset=".5" stop-color="#72B6FF"/><stop offset="1" stop-color="#6F65D9"/></linearGradient></defs>
+<ellipse cx="48" cy="82" rx="34" ry="8" fill="#080F39" opacity=".25"/>
+<path d="M12 53 46 35 84 53V67L50 87 12 67Z" fill="url(#side)" stroke="#D5DEFF" stroke-opacity=".5"/>
+<path d="m12 53 34-19 38 19-34 20Z" fill="url(#top)" stroke="#EDF9FF"/>
+<path d="M50 73v13M13 56l36 19" stroke="#EBF5FF" stroke-opacity=".7"/>
+<path d="m25 55 13 7 13-7-10-6 15-9" stroke="#7774CA" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M73 23c0 11-14 25-14 25S45 34 45 23a14 14 0 0 1 28 0Z" fill="url(#pin)" stroke="#E6F4FF"/>
+<circle cx="59" cy="23" r="5" fill="#F0FAFF"/>
+<path d="M49 20c1-5 5-8 10-8M19 51l25-14" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+<circle cx="27" cy="54" r="4" fill="#FEFDFF" stroke="#9A8BE8"/>
+</svg>
