@@ -4,12 +4,12 @@
  const STORE='gfield.roadmap.member.session.v1';
  let session=null;
  try{const s=JSON.parse(g.sessionStorage.getItem(STORE)||'null');if(s?.token&&Date.parse(s.expiresAt)>Date.now())session=s;}catch{}
- async function request(path,body,headers={}){
-  const r=await fetch(SB_URL+path,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json',...headers},body:JSON.stringify(body),cache:'no-store',signal:AbortSignal.timeout(25000)});
+ async function request(path,body,headers={},options={}){
+  const r=await fetch(SB_URL+path,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json',...headers},body:JSON.stringify(body),cache:'no-store',signal:AbortSignal.timeout(options.timeoutMs||25000)});
   const data=await r.json().catch(()=>({}));
   if(!r.ok){const e=new Error(data.error||data.error_code||'request_failed');e.status=r.status;throw e;}return data;
  }
- async function call(action,body={},proof){return request('/functions/v1/roadmap-members',{action,...body},proof?{Authorization:'Bearer '+proof}:session?{'x-roadmap-session':session.token}:{});}
+ async function call(action,body={},proof,options={}){return request('/functions/v1/roadmap-members',{action,...body},proof?{Authorization:'Bearer '+proof}:session?{'x-roadmap-session':session.token}:{},options);}
  function clear(){session=null;try{g.sessionStorage.removeItem(STORE);}catch{}}
  function accept(data){
   if(!/^[a-f0-9]{64}$/.test(data.token||'')||!data.member?.user_id)throw new Error('session_invalid');

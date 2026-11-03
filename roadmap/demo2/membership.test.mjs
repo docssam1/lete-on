@@ -45,7 +45,7 @@ test('legacy unclaimed plan is preserved but never silently given to another mem
 });
 test('all main planner scripts are deferred until verified membership',()=>{
  const html=read('planner.html'),scripts=[...html.matchAll(/<script\b([^>]*)>/g)].map(x=>x[1]);
- const actual=scripts.filter(x=>/\ssrc=/.test(x));assert.equal(actual.length,2);assert(actual.every(x=>/membership-(?:api|gate)\.js/.test(x)));
+ const actual=scripts.filter(x=>/\ssrc=/.test(x));assert.equal(actual.length,3);assert(actual.every(x=>/membership-(?:api|cloud|gate)\.js/.test(x)));
  assert(scripts.filter(x=>x.includes('data-member-src')).length>40);assert.match(html,/class="member-checking"/);
 });
 test('privacy and marketing checkboxes are separate and never prechecked',()=>{

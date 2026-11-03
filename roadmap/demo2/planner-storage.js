@@ -1,7 +1,7 @@
 /*
  * Preserve existing tab keys; keep durable copies only in gfield.demo2.saved.*.
  * Values remain strings: parsing, schema validation and migration belong to the
- * existing planner modules. No global clear(), storage enumeration, or network.
+ * existing planner modules. No global clear(), unscoped storage enumeration. Account continuation receives only logical plan keys.
  * status() reports durable / session / memory; write failures never lose the
  * current in-memory value. A failing durable write invalidates only that key.
  * If every persistent write AND removal is blocked, no client can invalidate a
@@ -65,6 +65,7 @@
    durableFailures.add(key);remove('localStorage',localKey(key));
    write('sessionStorage',guardKey(key),'local-stale');
   }
+  global.RoadmapCloud?.changed(String(input),text);
  }
 
  function removeItem(input){
@@ -75,6 +76,7 @@
   if(durable)durableFailures.delete(key);else durableFailures.add(key);
   // A targeted tombstone blocks stale fallback after a failed removal/reload.
   const guarded=write('sessionStorage',guardKey(key),durable?'removed':'removed-local-stale');
+  global.RoadmapCloud?.changed(String(input),null);
   if(session&&guarded)overrides.delete(key);
  }
 

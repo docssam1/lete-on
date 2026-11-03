@@ -27,3 +27,8 @@ test('children see study foundations and future year, not a forced application s
 test('dates distinguish completed, current and future calendar days without moving them',()=>{
  assert.equal(A.phase({start:'2026-09-02',end:'2026-10-30'},'2026-11-02'),'past');assert.equal(A.phase({start:'2026-11-02',end:'2026-11-04'},'2026-11-02'),'active');assert.equal(A.phase({start:'2026-11-06',end:'2026-11-06'},'2026-11-02'),'upcoming');
 });
+test('expanded guides keep school-specific deadlines and freshness checks without shifting year',()=>{
+ assert.equal(D.schools.length,10);for(const id of ['gs','sangsan','hana','dongtan'])assert.equal(D.schools.find(s=>s.id===id).checked,'2026-11-03');
+ const gs=D.schools.find(s=>s.id==='gs'),ss=D.schools.find(s=>s.id==='sangsan');assert.equal(gs.goal,'giftedSchool');assert.equal(gs.events.find(e=>e.id==='record').start,'2026-11-16');assert.match(ss.events.find(e=>e.id==='apply').time,/13:00/);assert.match(ss.events.find(e=>e.id==='mail').time,/16:00/);
+ assert.equal(A.freshness(gs,'2026-11-03').due,false);assert.equal(A.freshness(gs,'2026-11-10').due,true);assert.equal(A.freshness(gs,'2026-12-20').due,true);assert.equal(A.calendar({year:2028,schools:['gs','sangsan','hana','dongtan']}).length,0);
+});

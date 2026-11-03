@@ -44,7 +44,7 @@ function gradeForAge(value,month){return +value-7-(+month<3?1:0);}
 function order(a,fields){a=effective(a);
  const list=fields.internationalCalendar?[]:['grade'];if(gradeChoice(a,fields)==='pre')list.push('age');
  list.push('thinkingExperience');
- if(!noThinking(a)){list.push('thinking');if(a.thinking==='advanced')list.push('compExact');list.push('thinkingStatus');if(a.thinking==='PRE 1031')list.push('preDone');}
+ if(!noThinking(a)){list.push('thinking');if(a.thinking==='advanced')list.push('compExact');if(a.thinking==='PRE 1031')list.push('preDone');list.push('thinkingStatus');}
  list.push('schoolCourse');if(!special(a.schoolCourse)){list.push('schoolBook');}if(!special(a.schoolCourse)&&!special(a.schoolBook)){list.push(highBook(a.schoolBook)?'schoolHigh':middleBook(a.schoolBook)?'schoolExact':'school');list.push('schoolStatus');}
  list.push('deepCourse');if(!special(a.deepCourse)){list.push('deepBook');}if(!special(a.deepCourse)&&!special(a.deepBook))list.push('deepStage','deepStatus');
  list.push('calc');if(a.calc==='advanced')list.push('calcExact');if(a.calc==='high')list.push('calcHigh');if(!special(a.calc))list.push('calcStatus');
@@ -86,13 +86,19 @@ function questions(a,fields){a=effective(a);const curriculum=global.PlannerColle
 function sourceInput(a,fields){a=effective(a);
  const thinkingValues=[];
  if(!noThinking(a)&&thinking.includes(a.thinking)&&a.thinkingStatus&&!fields.pendingStatus?.thinkingStatus){thinkingValues.push(a.thinking+' '+(a.thinkingStatus==='done'?'완료':'진행 중'));if(a.thinking==='PRE 1031'&&a.preDone==='1')thinkingValues.push('초등팩토 완료');}
- return {age:age(a,fields),month:+fields.mon,thinking:thinkingValues,
+ return {age:age(a,fields),month:+fields.mon,thinking:thinkingValues,progress:Object.fromEntries([['school','schoolStatus'],['thinking1','thinkingStatus'],['calc','calcStatus']].flatMap(([key,status])=>{const v=progressValue(a,status);return a[status]==='progress'&&v?[[key,v.done/v.total]]:[];})),
   school:schoolChoice(a)&&!middleBook(a.schoolBook)&&schoolChoice(a)!=='advanced'&&!['unknown'].includes(schoolChoice(a))?(schoolChoice(a)==='none'?'교과 진행 안 함':a.school+' 진행 중'):undefined,
   calcRadio:a.calc&&a.calc!=='advanced'&&!special(a.calc)&&a.calcStatus?a.calc+' '+(a.calcStatus==='done'?'완료':'진행 중'):undefined};
 }
 
 function sourceMode(a,fields){a=effective(a);if(fields.internationalCalendar)return true;if(!gradeChoice(a,fields))return false;return highBook(a.schoolBook)||+gradeChoice(a,fields)>=10||noThinking(a)||special(a.calc)||special(a.schoolBook)||(a.schoolStatus==='done'&&+a.schoolExact===19&&middleBook(a.schoolBook))||(a.calc==='advanced'&&+a.calcExact===P.CALC.length-1&&a.calcStatus==='done')||(a.thinking==='advanced'&&+a.compExact===P.COMP.length-1&&a.thinkingStatus==='done')||gradeForAge(age(a,fields),fields.mon)<1||['킨더팩토','키즈팩토'].includes(a.thinking)||schoolChoice(a)==='none'||(a.calc==='소마셈 K'&&a.calcStatus!=='done');}
 function nextComp(index,band){let n=index+1;while(band!=='A'&&n<P.COMP.length&&P.COMP[n][2]==='skip')n++;return Math.min(n,P.COMP.length-1);}
+// Progress is tied to a particular book/course. Calendar rows use whole months.
+function progressKey(status){return status.replace(/Status$/,'Progress');}
+function progressCourse(a,status){const keys={schoolStatus:['schoolCourse','schoolBook','school','schoolExact','schoolHigh'],deepStatus:['deepCourse','deepBook','deepStage'],thinkingStatus:['thinking','compExact','preDone'],calcStatus:['calc','calcExact','calcHigh']}[status]||[];return keys.map(k=>a[k]||'').join('|');}
+function progressValue(a,status){const v=a[progressKey(status)];return v&&v.course===progressCourse(a,status)&&Number.isFinite(v.done)&&Number.isFinite(v.total)&&v.total>0&&v.done>=0&&v.done<v.total?v:null;}
+function remainingMonths(a,status,full){const v=progressValue(a,status);return Math.max(1,Math.ceil(full*(v?1-v.done/v.total:.5)));}
+function progressText(a,status){const v=progressValue(a,status);return v?(v.estimated?'남은 범위 확인 전':v.total+' '+(v.unit==='session'?'회':v.unit==='page'?'쪽':'단원')+' 중 '+v.done+' 완료'):'';}
 function fieldChanges(a,fields,key){a=effective(a);
  const result={};const recalc=['band','speed'].includes(key),y=age(a,fields),g=gradeForAge(y,fields.mon);
  if(['age','grade'].includes(key)&&g>=1&&g<=12)result.grade=String(g);
@@ -101,21 +107,21 @@ function fieldChanges(a,fields,key){a=effective(a);
   if(!fields.pendingStatus?.schoolStatus&&!special(a.schoolBook)&&Number.isInteger(n)&&n>=1&&n<=19){
    const len=n===13?4:n>=14?P.BAND[fields.band].midLen:fields.band==='C'?3:+fields.speed||2;
    const next=a.schoolStatus==='done'?Math.min(19,n+1):n;
-   result.school=String(next);result.schoolLeft=String(a.schoolStatus==='done'?next===13?4:next>=14?P.BAND[fields.band].midLen:len:Math.ceil(len/2));
+   result.school=String(next);result.schoolLeft=String(a.schoolStatus==='done'?next===13?4:next>=14?P.BAND[fields.band].midLen:len:remainingMonths(a,'schoolStatus',len));
   }
  }
 
  if((['thinking','thinkingStatus','preDone','compExact'].includes(key)||recalc)&&!noThinking(a)&&a.thinkingStatus&&!fields.pendingStatus?.thinkingStatus){
    let n=a.thinking==='advanced'?+a.compExact:({'초등팩토':0,'PRE 1031':a.preDone==='1'?1:0,'1031 입문':2,'1031 초급':4})[a.thinking];
-   if(Number.isInteger(n)){if(a.thinkingStatus==='done')n=nextComp(n,fields.band);result.comp=String(n);result.compLeft=String(a.thinkingStatus==='done'?P.COMP[n][1]:Math.max(1,Math.ceil(P.COMP[n][1]/2)));}
+   if(Number.isInteger(n)){if(a.thinkingStatus==='done')n=nextComp(n,fields.band);result.comp=String(n);result.compLeft=String(a.thinkingStatus==='done'?P.COMP[n][1]:remainingMonths(a,'thinkingStatus',P.COMP[n][1]));}
  }
  if((['calc','calcStatus','calcExact'].includes(key)||recalc)&&!special(a.calc)&&a.calcStatus&&!fields.pendingStatus?.calcStatus){
    let n=a.calc==='advanced'?+a.calcExact:a.calc==='소마셈 K'?(a.calcStatus==='done'?1:null):parseInt(a.calc.match(/(\d+)권/)?.[1]||'',10)-1;
-   if(Number.isInteger(n)){if(a.calcStatus==='done'&&a.calc!=='소마셈 K')n=Math.min(n+1,P.CALC.length-1);result.calc=String(n);result.calcLeft=String(a.calcStatus==='done'?(P.CALC[n][1]||(fields.band==='C'?5:+fields.speed||2)):Math.max(1,Math.ceil((P.CALC[n][1]||(fields.band==='C'?5:+fields.speed||2))/2)));}
+   if(Number.isInteger(n)){if(a.calcStatus==='done'&&a.calc!=='소마셈 K')n=Math.min(n+1,P.CALC.length-1);result.calc=String(n);result.calcLeft=String(a.calcStatus==='done'?(P.CALC[n][1]||(fields.band==='C'?5:+fields.speed||2)):remainingMonths(a,'calcStatus',P.CALC[n][1]||(fields.band==='C'?5:+fields.speed||2)));}
  }
  return result;
 }
-function summary(a,fields){a=effective(a);const status=k=>fields.pendingStatus?.[k]?'상태 확인 전':a[k]==='done'?'완료':a[k]==='progress'?'진행 중':'';
+function summary(a,fields){a=effective(a);const status=k=>fields.pendingStatus?.[k]?'상태 확인 전':a[k]==='done'?'완료':a[k]==='progress'?['진행 중',progressText(a,k)].filter(Boolean).join(' · '):'';
  return [{key:'grade',label:'학년',text:studentLabel(a,fields)},
  {key:'thinking',label:'사고력',text:noThinking(a)?(a.thinkingExperience==='none'?'공부한 경험 없음':'잘 모르겠어요'):(a.thinking==='advanced'?(P.COMP[+a.compExact]?.[0]||'이후 과정'):a.thinking||'미선택')+' '+status('thinkingStatus')},
  {key:'school',label:'교과',text:special(a.schoolBook)?absent(a.schoolBook):[a.schoolExact==='13'&&a.school==='advanced'?'':a.schoolBook||'',highBook(a.schoolBook)?a.schoolHigh||'과목 미선택':middleBook(a.schoolBook)||a.school==='advanced'?(+a.schoolExact<=12?P.SEM(+a.schoolExact):a.schoolExact==='13'?'초등 계통 대수심화':P.MID[+a.schoolExact-14]||'이후 과정'):a.school||'미선택',status('schoolStatus')].filter(Boolean).join(' ')},
@@ -140,7 +146,7 @@ function deepRow(a,fields,now){a=effective(a);
  let t=now;
  for(let n=first;n<=last;n++){
   if(n===first&&a.deepStatus==='done')continue;
-  const count=n===first?Math.ceil(duration/2):duration;
+  const count=n===first?remainingMonths(a,'deepStatus',duration):duration;
   blocks.push([`${mid?P.MID[n-14]:P.SEM(n)} ${a.deepBook}`,t,t+count-1,duration]);t+=count;
   // Preserve the reported current book in C, without recommending an excluded course.
   if(fields.band==='C'&&a.deepBook==='A급')break;
@@ -184,6 +190,14 @@ function profile(a,fields,overrides={}){a=effective(a);
   const row=original.rows.find(r=>r.key===k);
   if(source&&row){
    if(k==='school'&&a.schoolStatus==='done')return D.learningRow(k,{key:row.current.choiceKey,pos:'end'},now);
+   const st=({school:'schoolStatus',thinking1:'thinkingStatus',calc:'calcStatus'})[k],v=progressValue(a,st);
+   if(v&&status[k]!=='done'){
+    const current=row.current,full=current.e-current.s+1,remain=remainingMonths(a,st,full),delta=now+remain-1-current.e;
+    const blocks=row.blocks.map((b,i)=>i<current.index?b:{...b,s:i===current.index?now:b.s+delta,e:b.e+delta});
+    const updated={...current,...blocks[current.index],shortText:summaries.find(it=>it.key===answerKey(k))?.text||current.shortText};
+    const remaining=blocks.slice(current.index).map((b,i)=>({...b,remainingStart:i===0?now:b.s,sourceCurrent:i===0}));
+    return {...row,current:updated,blocks,remaining,next:blocks[current.index+1]||null};
+   }
    return row;
   }
   const exhausted=k==='thinking1'?a.thinking==='advanced'&&+a.compExact===P.COMP.length-1&&a.thinkingStatus==='done':k==='calc'?a.calc==='advanced'&&+a.calcExact===P.CALC.length-1&&a.calcStatus==='done':middleBook(a.schoolBook)&&+a.schoolExact===19&&a.schoolStatus==='done';
@@ -214,5 +228,5 @@ function milestones(a,fields,p){a=effective(a);
  forks.push({id:'gift',title:'영재원',m:p.now+2,selected:a.gifted==='1',pending:!['0','1'].includes(a.gifted),yes:'선발 안내 함께 확인',no:'현재 학습 이어가기',reason:a.gifted==='1'?'선발 시기와 자격은 해당 연도 공고에서 확인해요.':'지금 학습을 이어가며 나중에 바꿔도 괜찮아요.'});
  return {main,branch:[],forks};
 }
-global.PlannerIntake=Object.freeze({highSubjects,highBook,bookList,thinking,calc,schoolBooks,deepBooks,special,effective,middleBook,noThinking,age,gradeChoice,audience,learningLabels,studentLabel,labelMonth,gradeForAge,order,standardBook,questions,hasAnswer,firstMissing,sourceInput,options,deepRow,buildPlan,profile,narrative,sourceMode,fieldChanges,summary,milestones});
+global.PlannerIntake=Object.freeze({progressKey,progressCourse,progressValue,remainingMonths,progressText,highSubjects,highBook,bookList,thinking,calc,schoolBooks,deepBooks,special,effective,middleBook,noThinking,age,gradeChoice,audience,learningLabels,studentLabel,labelMonth,gradeForAge,order,standardBook,questions,hasAnswer,firstMissing,sourceInput,options,deepRow,buildPlan,profile,narrative,sourceMode,fieldChanges,summary,milestones});
 })(window);

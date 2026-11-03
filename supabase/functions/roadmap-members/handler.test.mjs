@@ -103,3 +103,14 @@ test('review session can logout but cannot update, withdraw or list real members
  assert.equal((await h.request({action:'logout'},header)).status,200);
  assert.equal(h.calls.some(x=>x.name==='roadmap_update_profile'),false);
 });
+
+test('plan payloads exclude credentials and derive owner from the verified session',async()=>{
+ const h=harness();const headers={'x-roadmap-session':'a'.repeat(64)};
+ await h.request({action:'plan-save',userId:'someone-else',revision:0,storageConsent:true,document:{'gfield.demo2.v1':'{}'}},headers);
+ const rpc=h.calls.find(x=>x.name==='roadmap_save_plan');assert.equal(rpc.args.p_owner,UID);assert.equal(rpc.args.p_consent,true);
+ for(const document of [{'gfield.roadmap.member.session.v1':'secret'},{'gfield.demo2.member.other.v1':'x'},{'gfield.demo2.v1':{}},['x']]){
+  const r=await h.request({action:'plan-save',revision:0,document},headers);assert.equal(r.status,400);
+ }
+ assert.equal((await h.request({action:'plan-save',revision:-1,document:{}},headers)).status,400);
+ assert.equal((await harness({noSession:true}).request({action:'plan-get'},headers)).status,401);
+});

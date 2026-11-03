@@ -322,3 +322,21 @@ test('어린 연령의 쉬운 질문도 초등·중등 선택값과 교재 구�
   assert.deepEqual(plain(q.deepBook[2]),plain(other.deepBook[2]));
  }
 });
+
+test('completed units change remaining months only for that course, including preschool source rows',()=>{
+ const precise={...answer,schoolProgress:{done:1,total:4,unit:'unit',course:I.progressCourse(answer,'schoolStatus')}};
+ assert.equal(I.fieldChanges(precise,{...fields,speed:'4'},'schoolStatus').schoolLeft,'3');
+ assert.equal(I.fieldChanges({...precise,school:'3-1'},{...fields,speed:'4'},'schoolStatus').schoolLeft,'2');
+ assert.deepEqual(plain(row(precise,'calc')),plain(row(answer,'calc')));
+ assert.match(I.summary(precise,fields).find(x=>x.key==='school').text,/4 단원 중 1 완료/);
+ const young={...answer,grade:'pre',age:'6',thinking:'1031 입문',thinkingStatus:'progress',school:'2-1'};
+ young.thinkingProgress={done:0,total:10,unit:'session',course:I.progressCourse(young,'thinkingStatus')};
+ const before=row({...young,thinkingProgress:undefined},'thinking1'),after=row(young,'thinking1');
+ assert.ok(after.current.e>=before.current.e);assert.equal(after.remaining[0].remainingStart,I.profile(young,fields).now);assert.ok(Number.isInteger(after.current.e));
+});
+test('unknown progress keeps a full course and completion does not reuse the fraction',()=>{
+ const a={...answer,schoolProgress:{done:0,total:1,estimated:true,course:I.progressCourse(answer,'schoolStatus')}};
+ assert.equal(I.fieldChanges(a,{...fields,speed:'4'},'schoolStatus').schoolLeft,'4');
+ assert.equal(I.fieldChanges({...a,schoolStatus:'done'},{...fields,speed:'4'},'schoolStatus').schoolLeft,'4');
+ assert.equal(I.progressValue({...a,schoolBook:'디딤돌 기본+응용'},'schoolStatus'),null);
+});

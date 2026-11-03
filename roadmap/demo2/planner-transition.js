@@ -207,7 +207,7 @@ function timeline(value,progress,answers,fields){
  const references=uppers.map(l=>({id:l.id,points:sourcePoints(l,axis)})),profile=LOADS.find(x=>x.id===d.s.load)||null;
  const bs=base?.[axis]||[],start=actual?.ready?bs.findIndex(b=>G.stage(b[0],axis)===actual.stage):-1,ord=start>=0?ordinal(bs[start][0],axis):-1;
  if(!Number.isFinite(now)||start<0||ord<0)return {axis,now,horizon,base:base?.id||null,references,keep:[],gradual:[],segments:[],parallelDepth:[],cadenceUnscheduled:[],cadence:{id:d.s.cadence||'unknown',title:cadenceLabel(d.s),source:d.s.cadenceSource,changed:d.cadenceChanged,state:'unavailable'},profile,reason:'현재 과정에 대응하는 기간 자료가 없어 아이의 진행 예시는 표시하지 않았습니다.'};
- const fraction=actual.done?1:.5,keep=[{x:now,y:ord+fraction}],gradual=[{x:now,y:ord+fraction}],segments=[],parallelDepth=[];let kt=now,gt=now,extraStart=null,caught=null;
+ const fraction=actual.done?1:actual.fraction??.5,keep=[{x:now,y:ord+fraction}],gradual=[{x:now,y:ord+fraction}],segments=[],parallelDepth=[];let kt=now,gt=now,extraStart=null,caught=null;
  const upper=uppers[0],hold=d.s.checkpoint==='practice'?2:1,checked=d.s.checkpoint==='observed'||d.s.checkpoint==='practice',enabled=checked&&!!d.s.allocation&&(d.s.allocation!=='advance'||!!profile),adjusting=enabled&&d.s.allocation==='advance'&&axis==='school';
  const last=bs.findLastIndex(b=>ordinal(b[0],axis)>=0);let seen=0;
  for(let i=start;i<=last;i++){

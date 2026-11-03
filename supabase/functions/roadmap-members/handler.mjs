@@ -21,6 +21,13 @@ export function cleanConsent(raw={}) {
   if(raw.version!==CONSENT_VERSION || raw.privacy!==true || raw.guardian!==true) throw new HttpError(400,'consent_required');
   return {version:CONSENT_VERSION,privacy:true,guardian:true,marketing_email:raw.marketing_email===true,marketing_sms:raw.marketing_sms===true};
 }
+export function cleanPlan(raw){
+ if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).length>80)throw new HttpError(400,'plan_invalid');
+ const out={};for(const [key,value]of Object.entries(raw)){
+  if(!/^gfield\.demo2\.(?!(?:member|saved|guard)\.)[a-z0-9][a-z0-9._-]{0,100}$/.test(key)||typeof value!=='string'||value.length>200000)throw new HttpError(400,'plan_invalid');out[key]=value;
+ }
+ if(new TextEncoder().encode(JSON.stringify(out)).length>260000)throw new HttpError(413,'request_too_large');return out;
+}
 export function validPin(value){return typeof value==='string' && /^\d{8,12}$/.test(value) && !/^(\d)\1+$/.test(value) && !['12345678','87654321','01234567'].includes(value);}
 const emailOf = value => String(value||'').trim().toLowerCase();
 const emailOK = value => value.length<=254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -102,9 +109,10 @@ export function createHandler({service,url,publicKey,rateSecret,send=fetch,now=(
     if(req.method==='OPTIONS')return new Response(null,{status:204,headers:h});
     if(req.method!=='POST')return reply({error:'method_not_allowed'},405);
     try{
-      const text=await req.text();if(text.length>12000)throw new HttpError(413,'request_too_large');
-      let b;try{b=JSON.parse(text);}catch{throw new HttpError(400,'request_invalid');}
+      const text=await req.text();if(text.length>280000)throw new HttpError(413,'request_too_large');
+      let b;try{b=JSON.parse(text);}catch{throw new HttpError(text.length>12000?413:400,text.length>12000?'request_too_large':'request_invalid');}
       if(!b||typeof b!=='object'||Array.isArray(b))throw new HttpError(400,'request_invalid');
+      if(b.action!=='plan-save'&&text.length>12000)throw new HttpError(413,'request_too_large');
       if(b.action==='send-code'){
         const email=emailOf(b.email);if(!emailOK(email))throw new HttpError(400,'email_invalid');
         if(b.emailConsent!==true)throw new HttpError(400,'email_consent_required');
@@ -183,6 +191,18 @@ export function createHandler({service,url,publicKey,rateSecret,send=fetch,now=(
       if(b.action==='logout'){
         await checked(service.from(m.review?'roadmap_review_sessions':'roadmap_sessions').delete().eq('token_hash',await hash(req.headers.get('x-roadmap-session'))));
         return reply({signedOut:true});
+      }
+      if(b.action==='plan-get'){
+        const {data:p}=await checked(service.from('roadmap_plan_saves').select('document,revision,updated_at').eq('owner_id',m.user_id).maybeSingle());
+        return reply({plan:p?{document:p.document,revision:p.revision,updatedAt:p.updated_at}:null});
+      }
+      if(b.action==='plan-save'){
+        const document=cleanPlan(b.document),revision=b.revision;
+        if(!Number.isSafeInteger(revision)||revision<0)throw new HttpError(400,'plan_invalid');
+        const {data:allowed}=await checked(service.rpc('roadmap_take_attempt',{p_bucket:'plan:'+await keyed(m.user_id,rateSecret),p_limit:100}));
+        if(!allowed)throw new HttpError(429,'too_many_attempts');
+        const {data}=await checked(service.rpc('roadmap_save_plan',{p_owner:m.user_id,p_revision:revision,p_document:document,p_consent:b.storageConsent===true}));
+        return reply(data);
       }
       if(m.review)throw new HttpError(403,'review_only');
       if(b.action==='update'){

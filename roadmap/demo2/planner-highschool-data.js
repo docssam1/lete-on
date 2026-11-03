@@ -4,6 +4,10 @@
  */
 (function(g){'use strict';
 const sources={
+ gs:{title:'경기과학고 2027 입학전형 요항',url:'https://gs-h.goesw.kr/dext5editordata/2026/04/20260402_151825822_26726.pdf',pages:'PDF 1~5쪽 · 일정은 3쪽'},
+ sangsan:{title:'상산고 2027 신입생 입학전형 요강',url:'https://school.jbedu.kr/sangsan/M010403/view/6870211.do',document:'https://school.jbedu.kr/_cmm/fileDownload/sangsan/M010403/d07b8c8ba333c02a86136c918ae18076.do',pages:'요강 1~8쪽 · 전형 일정 1쪽'},
+ hana:{title:'하나고 2027 신입생 입학전형 요강',url:'https://www.hana.hs.kr/assets/brochure/2027학년도_하나고등학교_신입생_입학전형_요강.pdf',pages:'PDF 4·13~16쪽 · 일정은 13쪽'},
+ dongtan:{title:'동탄국제고 2027 신입생 전형요강',url:'https://www.dtg.hs.kr/sys/data/file/020203/1794815826_tXkKfjEO_2027ED9599EB8584EB8F84_EC8BA0EC9E85EC839D_EC9E85ED9599ECA084ED9895_EC9A94EAB095_202609031033_70.pdf',pages:'요강 5·8·10~12·17~18쪽'},
  sshs:{title:'서울과학고 2027 모집요강·전형 공지',url:'https://admission-sshs.info/notification',pages:'모집요강 2~6쪽 · 3단계/합격예정자 후속 공지'},
  hansung:{title:'한성과학고 2027 모집요강',url:'https://www.hischool.go.kr/school/view.do?idx=1637',document:'https://www.hischool.go.kr/FileDown.do?atchFileId=FILE_000000000044321&fileSn=0',pages:'요강 1~5쪽'},
  hafs:{title:'외대부고 2027 신입학 전형요항',url:'https://admission.hafs.hs.kr/?act=board.read&code=1415&id=85',pages:'요항 2~8쪽 · 내신 산출 부록'},
@@ -14,6 +18,19 @@ const sources={
 };
 const event=(id,title,start,end,time,note='')=>({id,title,start,end:end||start,time:time||'',note});
 const schools=[
+ {id:'gs',name:'경기과학고',type:'영재학교',goal:'giftedSchool',region:'전국',year:2027,source:'gs',checked:'2026-11-03',
+ eligibility:'중학교 재학생·졸업생 등 동등 자격자로 수학·과학·정보 분야 잠재력과 학교장 또는 지도교사 추천이 필요합니다.',regional:'전국 모집. 지역인재는 2026년 3월 1일 기준 동일 지역 학교의 2년 연속 재학 조건 등이 있습니다.',grades:'학생부·자기소개서·추천서를 종합 평가합니다. 일반전형과 SW-AI 추천관찰전형의 평가 방식이 다릅니다.',attendance:'원서 제출 학생부는 4월 30일, 합격예정자 학생부는 11월 13일 출결 마감 기준입니다.',documents:'원서·동의서·서약서·자기소개서·교원 3인 추천서·학생부Ⅱ. 서명 후 PDF 업로드와 중학교 공문 제출을 구분합니다.',interview:'일반전형은 서류 → 영재성검사Ⅰ·Ⅱ → 영재성캠프. 추천관찰은 관찰평가를 포함합니다.',duplicates:'영재학교 1개교에만 지원합니다. 일반·추천관찰·사회통합 중 한 전형만 선택합니다.',caution:'의약학 계열 지원 금지 서약을 확인합니다. 최종합격예정과 11월 후속 학생부·등록 절차는 별개입니다.',
+ events:[event('apply','입학원서 온라인 접수','2026-05-20','2026-05-22','09:00 시작 · 마감 17:00'),event('essay','자기소개서·추천서·PDF 제출','2026-05-20','2026-05-27','마감 17:00'),event('stage2-result','2단계 대상자 발표','2026-06-26',null,'17:00'),event('stage2','2단계 평가','2026-07-05'),event('stage3-result','3단계 대상자 발표','2026-07-31',null,'17:00'),event('stage3','영재성캠프','2026-08-08'),event('provisional','최종합격예정자 발표','2026-08-21',null,'17:00'),event('record','합격예정자 학생부 제출','2026-11-16','2026-11-18'),event('result','최종합격 발표·자동등록','2026-11-30',null,'예정 · 등록포기자는 별도 제출')],undated:[]},
+ {id:'sangsan',name:'상산고',type:'자사고',goal:'private',region:'전국·전북 지역인재',year:2027,source:'sangsan',checked:'2026-11-03',
+ eligibility:'중학교 졸업(예정)자 등 요강의 학력 조건을 갖춘 학생. 학교생활우수자·지역인재 등 지원 영역을 구분합니다.',regional:'전국 지원과 전북 지역인재의 자격·모집 구분을 각각 확인합니다.',grades:'중2-1 20%, 중2-2 30%, 중3-1 50%. 수학·국어·영어·과학·사회 5개 교과를 반영합니다.',attendance:'11월 27일까지의 중학교 재학 기간을 기준으로 미인정 출결을 산출하고 교과 총점에서 감점합니다.',documents:'온라인 원서와 학생부 등 영역별 서류. 우편은 12월 7일 16시 도착, 방문은 12월 7일 당일만 가능합니다.',interview:'창의융합·인성독서 면접. 1단계 교과 320점에서 출결 감점, 2단계 면접 80점을 합산합니다.',duplicates:'후기 자사고입니다. 전기·후기 이중지원 제한과 불합격 시 일반고 배정 절차를 거주 교육청 기준으로 확인합니다.',caution:'온라인 원서 13시와 서류 도착 16시 마감을 구분합니다. 합격자 소집·등록도 별도로 챙깁니다.',
+ events:[event('apply','온라인 입학지원서 접수','2026-12-02','2026-12-07','마감 13:00'),event('mail','우편 서류 제출','2026-12-02','2026-12-07','마감일 16:00 도착'),event('visit','방문 서류 제출','2026-12-07',null,'09:00~16:00 · 당일만'),event('stage1-result','1단계 합격 발표','2026-12-11',null,'17:00'),event('interview','2단계 면접','2026-12-17','2026-12-18'),event('result','최종 합격 발표','2026-12-29',null,'17:00'),event('gather','합격자 소집','2027-01-02'),event('register','합격자 등록','2027-01-18','2027-01-20','마감 17:00')],undated:[]},
+ {id:'hana',name:'하나고',type:'자사고',goal:'private',region:'서울·일부 전국 예외',year:2027,source:'hana',checked:'2026-11-03',
+ eligibility:'서울 중학교 졸업예정자 등 공통 자격을 확인합니다. 졸업자·동등학력자 등은 전 가족 서울 실거주 조건이 있습니다.',regional:'서울 중심 모집. 사회통합 중 다문화가족·군인 자녀는 전국 지원 예외가 있습니다.',grades:'중2·3의 4개 학기 국어·사회/역사·수학·과학·영어. 교과 40점·출결 감점과 서류·면접을 반영합니다.',attendance:'11월 13일까지 재학 기간 기준. 미인정 결석 1일당 0.1점 감점, 지각·조퇴·결과 3회를 결석 1일로 봅니다.',documents:'1차 원서·학생부 등 전형별 증빙, 면접 대상자의 2차 온라인 자기소개서. 우편은 도착 마감입니다.',interview:'서류 20점·면접 40점과 체력검사 감점. 자기주도학습·인성 경험을 준비합니다.',duplicates:'전형료 결제 후 다른 외고·국제고·자사고 등에 지원하면 이중지원으로 불합격 처리됩니다.',caution:'온라인 원서 13시·서류 15시 마감. 자기소개서 제출과 체력검사를 면접과 함께 챙깁니다.',
+ events:[event('apply','온라인 원서·전형료 결제','2026-12-03','2026-12-07','00:00 시작 · 마감 13:00'),event('docs','1차 서류 제출','2026-12-03','2026-12-07','마감 15:00 · 주말 제외'),event('stage1-result','1단계 합격 발표','2026-12-10',null,'17:00'),event('essay','자기소개서 제출','2026-12-10','2026-12-14','17:00 시작 · 마감 10:00'),event('interview','면접·체력검사','2026-12-21','2026-12-22','시간·장소 학교 후속 공지'),event('result','최종 합격 발표','2026-12-30'),event('gather','입학 신고·예비 소집','2027-01-09'),event('register','등록금 납부','2027-01-20','2027-01-22')],undated:[]},
+ {id:'dongtan',name:'동탄국제고',type:'국제고',goal:'internationalHigh',region:'경기·국제고 없는 시도 등',year:2027,source:'dongtan',checked:'2026-11-03',
+ eligibility:'경기 중학교 졸업예정자·국제고 없는 시도 졸업예정자 등 공통 자격. 경기 거주가 필요한 유형을 구분합니다.',regional:'지역우수자는 2026년 3월 3일 이전부터 화성 소재 중학교에 재학한 졸업예정자 등 요건을 확인합니다.',grades:'중2·3 영어 4개 학기 160점. 1단계 2배수, 2단계는 면접 40점을 더합니다. 동점자 국어·사회 반영도 확인합니다.',attendance:'전 학년 미인정 출결을 내신에서 감점하며 출결 감점은 최대 0.5점입니다. 산출 마감은 요강 11쪽에서 확인합니다.',documents:'원서·학생부Ⅱ 2부·등본·동의서와 해당자 증빙. 1단계 합격 후 온라인 자기소개서를 제출합니다.',interview:'자기주도학습 25점·인성 15점. 자기소개서·학생부와 면접을 함께 평가합니다.',duplicates:'전기고 합격자는 지원 불가. 평준화 일반고 동시 지원은 가능하며, 전형 구분 간 중복지원은 금지합니다.',caution:'서류 우편은 마감 시각 도착 기준. 사회통합·특례 등 증빙 확인이 필요한 경우 방문 접수가 원칙입니다.',
+ events:[event('apply','온라인 원서 접수','2026-12-04','2026-12-10'),event('docs','출력 원서·서류 제출','2026-12-04','2026-12-10','방문 09:00~17:00 · 우편 도착 기준'),event('stage1-result','1단계 합격 발표','2026-12-14'),event('essay','자기소개서 제출','2026-12-15','2026-12-16','마감 17:00'),event('interview','면접','2026-12-24'),event('result','최종 합격 발표','2026-12-29')],undated:[]},
+
  {id:'sshs',name:'서울과학고',type:'영재학교',goal:'giftedSchool',region:'전국',year:2027,source:'sshs',
  eligibility:'중학교 재학생·이수자 또는 동등 학력으로, 수학·과학 재능과 잠재력이 있고 적합한 추천을 받은 학생. 중1·2 합격자는 상급학교 조기입학 자격이 필요합니다.',
  regional:'전국 지원. 지역인재 우선선발은 별도의 재학기간 조건을 확인합니다.',
@@ -49,5 +66,6 @@ const schools=[
  documents:'고등학교 입학원서와 해당자 증빙을 출신 중학교 등 지정 접수처에 제출합니다.',interview:'교육감 선발 일반고 배정에는 별도 학교별 입학 면접을 일괄 추가하지 않습니다.',duplicates:'외고·국제고·자사고와 동시 지원 시 서울 일반고 2단계 지원 등 예외 절차를 확인합니다. 전기고 합격·미등록 상태도 담임과 대조합니다.',caution:'1월 6일은 배정대상자 발표, 1월 28일은 배정학교 발표입니다. 학교장 선발 일반고는 이 일정과 다를 수 있습니다.',
  events:[event('apply','일반고 원서 제출','2026-12-03','2026-12-07','출신 중학교 등 지정 접수처'),event('eligible','배정대상자 발표','2027-01-06'),event('assignment','배정학교 발표','2027-01-28'),event('register','입학 등록','2027-01-28','2027-01-29')],undated:[]}
 ];
-g.PlannerHighschoolData=Object.freeze({checked:'2026-11-02',year:2027,sources,schools});
+for(const s of schools){s.checked=s.checked||'2026-11-02';s.revision=s.year+'-'+s.checked;}
+g.PlannerHighschoolData=Object.freeze({checked:'2026-11-03',year:2027,sources,schools});
 })(window);
