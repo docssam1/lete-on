@@ -84,7 +84,7 @@
       stageNotes: Object.freeze({ 2: "AIME형 문제를 공부하는 것과 실제 응시는 달라요. 미국·캐나다의 2027 AIME는 만 13세 이상과 AMC 10 100점 또는 AMC 12 85점 등 자격 기준을 적용해요. USAJMO·USAMO 선발과 다른 연도·지역 규정은 MAA 안내를 확인하세요." }),
       0: Object.freeze([preCalculusReference]),
       1: Object.freeze([Object.freeze({ title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=10" })]),
-      2: Object.freeze([maaAime2027Reference, maaInvitationalReference])
+      2: Object.freeze([...annualPlanResourceLinks[10][2], maaAime2027Reference, maaInvitationalReference])
     })
   });
 

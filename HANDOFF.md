@@ -677,3 +677,9 @@ Verification: Grade roadmap model tests pass 12/12 and the full Grade 3–12 bro
 Follow-up math review: made the nonzero-divisor condition explicit in the divisibility claim and model proof (“0이 아닌 정수 d”). Grade roadmap model tests still pass 12/12 and the focused student/teacher workbook browser test passes 1/1.
 
 Open project gates remain unchanged: the private Grade 7 7.NS.A diagnostic is locked pending independent review, pilot, immutable release, and release authorization; the private Grade 7 AMC 8 R6 candidate remains locked pending its independent-review path. Continue public roadmap and original learning-resource work without opening or sending private candidate text.
+
+### 2026-11-03 Grade 10 growth-map SAT links and Grade 7 fraction display
+
+Connected the Grade 10 growth-map stage “필요한 실전 연습” to the same SAT resources shown in the Grade 10 annual plan: GFIELD SAT foundation practice, the original Precalculus workbook, Khan Academy Digital SAT, College Board Bluebook, and the College Board question bank. Kept the MAA AIME and invitational references and the eligibility note in that stage. Added model and browser regressions for matching destinations and mobile overflow. Confirmed the opened Grade 7 roadmap already displays its two mathematical fractions as stacked numerator/bar/denominator; count text such as `0 / 36` remains count notation.
+
+Verification: Grade roadmap model/browser suites pass 56/56. A 390px Chrome render of Grade 10 stage 3 shows all seven references and the AIME eligibility note without page overflow or browser errors. The current Grade 7 `?grade=7&program=kangaroo` screen has no visible slash-form numeric fractions; its fraction nodes are stacked, and the fraction suite passes. JavaScript syntax and CRLF-aware `git diff --check` pass. Local only; no private diagnostic content accessed, no push, deployment, Drive sync, or external API call.

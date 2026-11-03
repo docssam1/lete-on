@@ -170,6 +170,11 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.match(roadmap.courseStageResources[10].stageNotes[2], /2027 AIME.*만 13세 이상.*AMC 10 100점.*AMC 12 85점/);
   assert.equal(roadmap.courseStageResources[10][0][0].title, "지필드 Precalculus 원본 수업·A4 교재");
   assert.deepEqual(roadmap.courseStageResources[10][2].map(function (source) { return source.url; }), [
+    "./sat-foundation-practice.html?grade=10",
+    "./precalculus-workbook.html",
+    "https://www.khanacademy.org/digital-sat",
+    "https://satsuite.collegeboard.org/practice/practice-tests/bluebook",
+    "https://satsuite.collegeboard.org/practice/student-question-bank/math",
     "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/",
     "https://maa.org/maa-invitational-competitions/"
   ]);
