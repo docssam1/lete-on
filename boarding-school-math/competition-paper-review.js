@@ -359,6 +359,21 @@
     host.replaceChildren();
     if (context) host.append(buildHistoryContext(context));
   }
+  function scoreHistoryCohortReference(record) {
+    const distribution = window.GFIELDAMCScoreDistributionReference;
+    if (!distribution) return null;
+    const cycle = /^(\d{4})-\d{2}$/.exec(record.cycle);
+    if (!cycle) return null;
+    const contestYear = Number(cycle[1]) + (record.programId === "amc8" ? 1 : 0);
+    const form = record.programId === "amc8" ? "" : record.form;
+    const reference = distribution.referenceFor(record.programId, contestYear, form);
+    if (!reference) return null;
+    const reached = distribution.bands.find(function (band) { return record.rawScore >= reference[band.id]; });
+    const match = reached
+      ? `${reached.label} · ${reference[reached.id]} / ${record.maxScore}점 이상`
+      : `상위 75% 기준 미만 · ${reference.top75} / ${record.maxScore}점`;
+    return Object.freeze({ contestYear: contestYear, reference: reference, match: match });
+  }
   function renderHistory() {
     const host = $("score-history-groups");
     host.replaceChildren();
@@ -381,6 +396,13 @@
         const scoreCell = document.createElement("td"); scoreCell.textContent = `${record.rawScore} / ${record.maxScore}`;
         const progress = historyEngine.qualificationProgress(record);
         if (progress) { const note = document.createElement("small"); note.className = `score-history-benchmark${progress.reached ? " is-reached" : ""}`; note.textContent = progress.label; scoreCell.append(document.createElement("br"), note); }
+        const cohort = scoreHistoryCohortReference(record);
+        if (cohort) {
+          const note = document.createElement("small"); note.className = "score-history-cohort"; note.textContent = `MAA 전체 응시자 기준 · ${cohort.match}`;
+          const link = document.createElement("a"); link.href = cohort.reference.sourceUrl; link.target = "_blank"; link.rel = "noopener noreferrer"; link.textContent = "같은 시험지 분포 ↗";
+          link.setAttribute("aria-label", `${cohort.contestYear} ${group.title}${record.programId === "amc8" ? "" : ` ${record.form}`} MAA 전체 응시자 점수 분포 보기`);
+          scoreCell.append(document.createElement("br"), note, document.createElement("br"), link);
+        }
         row.append(scoreCell);
         const actionCell = document.createElement("td"); const remove = document.createElement("button"); remove.type = "button"; remove.className = "history-remove"; remove.dataset.removeHistory = record.id; remove.setAttribute("aria-label", `${record.cycle} ${group.title} ${record.form} 기록 삭제`); remove.textContent = "삭제"; actionCell.append(remove); row.append(actionCell); tbody.append(row);
       });

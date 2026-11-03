@@ -988,3 +988,9 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - `competition/amc-original-paper-library.js`에 원본 문항 링크 생성 함수를 추가하고, 각 AMC/AIME 답안 행의 “원본 풀이·개념” 링크가 외부 원문 페이지에서 정답·개념·해설을 열도록 했다. 저장소는 문제·답·풀이 콘텐츠를 저장하지 않는다.
 - 웹에서 2023 AMC 8 Q1, 2025 AMC 10 A Q1, 2026 AIME I Q1, 1950 AHSME Q1의 실제 LIVE 문항별 URL을 열어 경로 규칙을 검증했다. MAA 사용 허가 표기와 각 페이지에 제공되는 개념 태그, LIVE 난도 rating 및 해설도 확인했다.
 - 검증: `amc-original-paper-library.test.cjs` + `competition-paper-review-browser.test.cjs` 32/32 통과. 390px 모바일, 2021 AMC 10 D, AHSME 1950 50번 경계, AIME I/II, 잘못된 폼·문항 번호, 저장 데이터에 원문 응답이 포함되지 않는 경로를 확인했다. `git diff --check` 완료 후 현재 변경을 커밋한다. 사용자 미추적 `raw_youtube.txt`는 그대로 둔다.
+
+### 2026-11-04 · AMC 성적 기록에 공개 동회차 기준 연결
+
+- MAA 전체 응시자 분포가 공개된 연도만 AMC 회차별 기록에 연결했다. AMC 8 기록은 학년도 시작+1년의 1월 시험, AMC 10/12는 시작 연도의 11월 시험으로 매핑하고, AMC 10/12 A·B형을 각각 다른 분포에 연결한다. 공개 분포가 없는 회차는 cohort 값을 만들지 않는다.
+- 기록에는 “전체 응시자 기준 · 상위 경계점 이상”과 원점수 경계를 표시하고 해당 MAA EduView 보고서로 링크한다. 사용자 Grade는 함께 유지하지만 같은 학년 백분위·등급으로 변환하지 않는다. 회차별 분포 없는 미래 시험도 빈 기준/가짜 점수로 채우지 않는다.
+- 검증: MAA AMC history, score distribution, paper review 브라우저 묶음 41/41 통과. 추가로 AMC 10 A/B 및 AMC 8 연도 대응을 포함한 새 경로 모바일 폭 390px 테스트 1/1 통과. 새 UI/날짜 매핑 회귀 검수를 마친 뒤 커밋한다. 원문·점수 응답은 서버나 로컬 저장에 추가하지 않는다.

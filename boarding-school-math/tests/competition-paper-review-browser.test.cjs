@@ -755,6 +755,7 @@ test("AMC score records stay separated by contest, export/import as a local file
   await page.waitForFunction(() => document.querySelector("#score-history-status").textContent.includes("추가했어요"));
   assert.equal(await page.locator(".score-history-group").count(), 1);
   assert.match(await page.locator(".score-history-table").innerText(), /점수 기준 이상 · 나이와 기타 자격 확인/);
+  assert.doesNotMatch(await page.locator(".score-history-table").innerText(), /MAA 전체 응시자 기준/, "unpublished future forms do not receive cohort references");
   assert.match(await page.locator(".score-history-table").innerText(), /Grade 7/);
   assert.equal(await page.locator("#history-program").inputValue(), "amc10", "the contest selection stays ready for the next entry");
   assert.equal(await page.locator("#history-cycle").inputValue(), "2026-27");
@@ -815,6 +816,39 @@ test("AMC score records stay separated by contest, export/import as a local file
   await page.reload({ waitUntil: "networkidle" });
   assert.equal(await page.locator(".score-history-group").count(), 0, "records are session-only until exported and imported");
   assert.equal(await page.evaluate(() => localStorage.length), 0);
+  await page.close();
+});
+
+test("score history uses only the matching year and AMC form cohort reference", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(url, { waitUntil: "networkidle" });
+  await page.locator("#history-program").selectOption("amc10");
+  await page.locator("#history-cycle").fill("2025-26");
+  await page.locator("#history-grade").selectOption("7");
+  await page.locator("#history-form").selectOption("A");
+  await page.locator("#history-date").fill("2025-11-05");
+  await page.locator("#history-score").fill("100");
+  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+  await page.locator("#history-form").selectOption("B");
+  await page.locator("#history-date").fill("2025-11-13");
+  await page.locator("#history-score").fill("100");
+  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+  const rows = page.locator(".score-history-table tbody tr");
+  assert.equal(await rows.count(), 2);
+  assert.match(await rows.nth(0).innerText(), /Grade 7[\s\S]*MAA 전체 응시자 기준 · 상위 10% 기준 · 94\.5 \/ 150점 이상/);
+  assert.match(await rows.nth(1).innerText(), /Grade 7[\s\S]*MAA 전체 응시자 기준 · 상위 10% 기준 · 87 \/ 150점 이상/);
+  assert.equal(await page.getByRole("link", { name: "2025 AMC 10 A MAA 전체 응시자 점수 분포 보기" }).getAttribute("href"), "https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561&schoolyear=2026&amccomp=81054&viewClicked=true");
+  await page.locator("#history-program").selectOption("amc8");
+  await page.locator("#history-cycle").fill("2025-26");
+  await page.locator("#history-form").selectOption("AMC 8");
+  await page.locator("#history-date").fill("2026-01-22");
+  await page.locator("#history-score").fill("19");
+  await page.getByRole("button", { name: "비교 기록에 추가" }).click();
+  const amc8Row = page.locator(".score-history-table").first().locator("tbody tr").first();
+  assert.match(await amc8Row.innerText(), /Grade 7[\s\S]*MAA 전체 응시자 기준 · 상위 10% 기준 · 19 \/ 25점 이상/);
+  assert.equal(await page.getByRole("link", { name: "2026 AMC 8 MAA 전체 응시자 점수 분포 보기" }).getAttribute("href"), "https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561&schoolyear=2026&amccomp=81060&viewClicked=true");
+  assert.match(await page.locator(".score-history-boundary").innerText(), /동학년 순위나 학년별 AMC 능력 등급이 아닙니다/);
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   await page.close();
 });
 
