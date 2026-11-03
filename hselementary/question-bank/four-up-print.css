@@ -10,7 +10,8 @@
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e4-example-2"] svg { max-height:190px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e7-mission-5"] svg { max-height:180px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e7-mission-6"] svg { max-height:200px; }
-  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e8-example-3-overlap-synthetic"] svg { max-height:180px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e8-example-3-overlap-synthetic"] svg { max-height:150px; }
+  #problemView .print-page--four-up .question-item:has([data-source-item-id="5-2-u3-e8-example-3-overlap-synthetic"]) .question-prompt { font-size:13px; line-height:1.45; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e8-example-2-cut-synthetic"] svg { max-height:200px; }
   #problemView [data-source-item-id="5-2-u3-e8-example-3-overlap-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   #problemView [data-source-item-id="5-2-u3-e8-example-2-cut-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
