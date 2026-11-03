@@ -9,6 +9,13 @@
   #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-1-original"] { font-size:13px; line-height:1.4; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-1-original"] p { margin:0.3em 0; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-1-original"] svg { max-height:100px; }
+  /* Place the two figures side by side so labels remain legible in a half-page cell. */
+  #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-37-original"],
+  #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-39-original"] { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:center; font-size:13px; line-height:1.4; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-37-original"] p,
+  #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-39-original"] p { grid-column:1 / -1; margin:0.3em 0; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-37-original"] svg,
+  #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-39-original"] svg { max-height:150px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-1-reflection-synthetic"] svg { max-height:230px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-4-circle-axis-synthetic"] svg { max-height:230px; }
   #problemView [data-source-item-id="5-2-u3-e5-example-4-circle-axis-synthetic"],
