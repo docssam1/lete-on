@@ -117,8 +117,8 @@ test("Grade 7 route names checkpoints and identifies its public workbooks", func
 
 test("upper-grade course references are limited to named courses and keep Grade 9 inferred", function () {
   assert.deepEqual(Object.keys(roadmap.courseStageResources), ["8", "9", "10"]);
-  assert.deepEqual(Object.keys(roadmap.annualPlanResourceLinks), ["6", "7", "8", "10"]);
-  [6, 7, 8].forEach(function (grade) {
+  assert.deepEqual(Object.keys(roadmap.annualPlanResourceLinks), ["6", "7", "8", "9", "10"]);
+  [6, 7, 8, 9, 10].forEach(function (grade) {
     assert.deepEqual(Object.keys(roadmap.annualPlanResourceLinks[grade]), ["0", "1", "2", "3"]);
     Object.values(roadmap.annualPlanResourceLinks[grade]).flat().forEach(function (resource) {
       assert.ok(resource.title);
@@ -139,6 +139,12 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.match(roadmap.annualPlanResourceLinks[8][1][0].title, /지필드 Geometry 원본/);
   assert.deepEqual(roadmap.annualPlanResourceLinks[8][1].map(function (resource) { return resource.url; }), ["./geometry-workbook.html", "./amc10-practice.html?grade=8", "https://maa.org/student-programs/amc/"]);
   assert.deepEqual(roadmap.annualPlanResourceLinks[8][2].map(function (resource) { return resource.url; }), ["./aime-practice.html?grade=8", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "./sat-foundation-practice.html?grade=8", "https://satsuite.collegeboard.org/practice/student-question-bank/math"]);
+  assert.deepEqual(roadmap.annualPlanResourceLinks[9][0].map(function (resource) { return resource.url; }), ["./algebra2-workbook.html"]);
+  assert.match(roadmap.annualPlanResourceLinks[9][0][0].title, /현재 과목일 때 선택/);
+  assert.deepEqual(roadmap.annualPlanResourceLinks[9][1].map(function (resource) { return resource.url; }), ["./geometry-workbook.html", "./algebra2-workbook.html"]);
+  assert.deepEqual(roadmap.annualPlanResourceLinks[9][2].map(function (resource) { return resource.url; }), ["./amc10-practice.html?grade=9", "./sat-foundation-practice.html?grade=9", "https://satsuite.collegeboard.org/practice/student-question-bank/math"]);
+  assert.deepEqual(roadmap.annualPlanResourceLinks[9][3].map(function (resource) { return resource.url; }), ["./precalculus-workbook.html"]);
+  assert.match(roadmap.annualPlanResourceLinks[9][3][0].title, /선수 조건 확인 후 선택/);
   assert.deepEqual(roadmap.annualPlanResourceLinks[10][1].map(function (resource) { return resource.url; }), ["./aime-practice.html?grade=10", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://maa.org/maa-invitational-competitions/"]);
   assert.deepEqual(roadmap.annualPlanResourceLinks[10][2].map(function (resource) { return resource.url; }), ["./sat-foundation-practice.html?grade=10", "./precalculus-workbook.html", "https://www.khanacademy.org/digital-sat", "https://satsuite.collegeboard.org/practice/practice-tests/bluebook", "https://satsuite.collegeboard.org/practice/student-question-bank/math"]);
   assert.match(roadmap.annualPlanResourceLinks[10][2][0].title, /SAT Math 네 영역 기초 복습/);

@@ -3,7 +3,7 @@
 ## Need and audience
 
 - **Learning need:** Grade 6–10 learners need an optional way to revisit foundational rates, percentages, algebraic relationships, geometry, and data interpretation before choosing broader official SAT practice.
-- **Audience and motivation:** Optional, self-selected review for Grades 6, 7, 8, and 10. Grades 6–7 use it as a bridge; Grades 8 and 10 can revisit foundational ideas before official SAT-format practice. Advanced Algebra items are explicitly marked as optional extension.
+- **Audience and motivation:** Optional, self-selected review for Grades 6–10 whose annual plans are supplied or explicitly labeled as inferred. Grades 6–7 use it as a bridge; Grades 8–10 can revisit foundational ideas before official SAT-format practice. Advanced Algebra items are explicitly marked as optional extension.
 - **Delivery:** Standalone, responsive GFIELD page linked from the Grade 6 and Grade 7 roadmap stages; no LMS tracking or server-side learner records.
 
 ## Observable outcomes

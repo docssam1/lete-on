@@ -48,6 +48,12 @@
       2: Object.freeze([Object.freeze({ title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=8" }), maaAime2027Reference, satFoundationReview(8), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "MAA AMC 기출·안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board Bluebook 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
     }),
+    9: Object.freeze({
+      0: Object.freeze([Object.freeze({ title: "지필드 Algebra 2 개념 복습 · 현재 과목일 때 선택", url: "./algebra2-workbook.html" })]),
+      1: Object.freeze([Object.freeze({ title: "지필드 Geometry 개념 연결 · 현재 과목일 때 선택", url: "./geometry-workbook.html" }), Object.freeze({ title: "지필드 Algebra 2 개념 복습 · 필요한 단원 선택", url: "./algebra2-workbook.html" })]),
+      2: Object.freeze([Object.freeze({ title: "지필드 AMC 10 개념 연결 연습 · 자체 12문항", url: "./amc10-practice.html?grade=9" }), satFoundationReview(9), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
+      3: Object.freeze([Object.freeze({ title: "지필드 Precalculus 원본 수업 · 선수 조건 확인 후 선택", url: "./precalculus-workbook.html" })])
+    }),
     10: Object.freeze({
       0: Object.freeze([preCalculusReference]),
       1: Object.freeze([Object.freeze({ title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=10" }), maaAime2027Reference, maaInvitationalReference]),

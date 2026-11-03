@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   const requestedGrade = Number(new URLSearchParams(window.location.search).get("grade"));
-  const grade = requestedGrade === 8 ? 8 : 7;
+  const grade = [7, 8, 9].includes(requestedGrade) ? requestedGrade : 7;
   const roadmapHref = `./boarding-roadmap.html?grade=${grade}`;
   const reviewHref = `./competition-paper-review.html?grade=${grade}&program=amc10`;
   const gradeLabel = `${grade}학년`;

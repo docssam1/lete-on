@@ -1083,7 +1083,13 @@ test("Grade 6 and 7 annual plans expose stage-matched online resource links", as
   await page.waitForURL(/competition-practice\.html\?program=amc8/);
   assert.equal(await page.locator("#program-title").innerText(), "AMC 8 Bridge");
   await page.goto(`${url}?grade=9#annual-plan`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator(".annual-plan-resource-links").count(), 0, "no unsourced links are added to the inferred Grade 9 plan");
+  assert.match(await page.locator("#annual-plan-note").innerText(), /학교마다 달라요[\s\S]*실제 수강 과목과 선수 개념/);
+  assert.deepEqual(await page.locator("#annual-plan-periods > li .annual-plan-resource-links a").evaluateAll(function (links) { return links.map(function (link) { return link.getAttribute("href"); }); }), [
+    "./algebra2-workbook.html",
+    "./geometry-workbook.html", "./algebra2-workbook.html",
+    "./amc10-practice.html?grade=9", "./sat-foundation-practice.html?grade=9", "https://satsuite.collegeboard.org/practice/student-question-bank/math",
+    "./precalculus-workbook.html"
+  ]);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${url}?grade=7#annual-plan`, { waitUntil: "networkidle" });
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
@@ -1421,6 +1427,10 @@ test("Grade 7 roadmap opens original AMC 10 concept practice with topic filters 
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [1280, 1280]);
   await page.setViewportSize({ width: 390, height: 844 });
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await page.goto(`${url.replace("boarding-roadmap.html", "amc10-practice.html")}?grade=9`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#amc10-nav-route").innerText(), "9학년 성장 지도");
+  assert.equal(await page.locator("#amc10-back-route").getAttribute("href"), "./boarding-roadmap.html?grade=9#annual-plan");
+  assert.equal(await page.locator("#amc10-review-route").getAttribute("href"), "./competition-paper-review.html?grade=9&program=amc10");
   assert.deepEqual(errors, []);
   await page.close();
 });

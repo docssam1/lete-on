@@ -73,11 +73,11 @@ test("original SAT foundation bank has complete answer and explanation coverage"
   assert.match(bank.scope, /optional extensions/);
 });
 
-test("Grade 6, 7, 8, and 10 SAT review routes preserve the selected grade and display fractions vertically", async function () {
+test("Grade 6–10 SAT review routes preserve supported grade context and display fractions vertically", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
-  for (const grade of [6, 7, 8, 10]) {
+  for (const grade of [6, 7, 8, 9, 10]) {
     await page.goto(`${url}?grade=${grade}`, { waitUntil: "networkidle" });
     assert.equal(await page.locator("#sat-nav-route").innerText(), `${grade}학년 성장 지도`);
     assert.equal(await page.locator("#sat-back-route").getAttribute("href"), `./boarding-roadmap.html?grade=${grade}#annual-plan`);
@@ -125,9 +125,9 @@ test("Grade 6, 7, 8, and 10 SAT review routes preserve the selected grade and di
   await page.close();
 });
 
-test("Grade 6, 7, 8, and 10 roadmaps link to the GFIELD foundation set before official SAT resources", async function () {
+test("Grade 6–10 selected roadmaps link to GFIELD foundation review before official SAT resources", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-  for (const grade of [6, 7, 8, 10]) {
+  for (const grade of [6, 7, 8, 9, 10]) {
     const roadmap = `${url.replace("sat-foundation-practice.html", "boarding-roadmap.html")}?grade=${grade}#annual-plan`;
     await page.goto(roadmap, { waitUntil: "networkidle" });
     const satPeriod = page.locator("#annual-plan-periods > li").nth(2);
