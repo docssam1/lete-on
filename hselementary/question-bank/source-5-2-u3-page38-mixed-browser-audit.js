@@ -60,6 +60,9 @@ const ids = ["5-2-u3-e8-exploration-staircase-half-synthetic", "5-2-u3-e8-exampl
             const gridCells=await page.locator('#problemView [data-source-item-id="5-2-u3-e8-example-2-cut-synthetic"]').evaluateAll(items=>items.map(item=>({variant:item.dataset.poolIndex,width:item.querySelector('svg rect').getBoundingClientRect().width,font:getComputedStyle(item).fontFamily})));
             assert.equal(gridCells.length,3);
             for(const cell of gridCells){assert(cell.width>=26,`격자 변형 ${cell.variant}의 칸이 너무 작습니다.`);assert.match(cell.font,/Noto Serif KR/);}
+            const boards=await page.locator('#problemView [data-source-item-id="5-2-u3-e8-example-4-stone-synthetic"]').evaluateAll(items=>items.map(item=>({variant:item.dataset.poolIndex,labels:[...item.querySelectorAll('[data-stone-label]')].map(el=>({text:el.textContent,height:el.getBoundingClientRect().height})),direction:item.querySelector('[data-move-direction]')?.textContent,font:getComputedStyle(item).fontFamily})));
+            assert.equal(boards.length,3);
+            for(const board of boards){assert.deepEqual(board.labels.map(label=>label.text),['ㄱ','ㄴ','ㄷ']);assert(board.labels.every(label=>label.height>=10),`바둑돌 이름이 너무 작습니다: ${board.variant}`);assert.match(board.direction,/←/);assert.match(board.font,/Noto Serif KR/);}
           }
           const pdfPath=path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`);
           await page.pdf({ path:pdfPath, format: "A4", printBackground: true, preferCSSPageSize: true });
