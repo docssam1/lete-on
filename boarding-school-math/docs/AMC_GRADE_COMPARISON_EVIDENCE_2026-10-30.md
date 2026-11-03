@@ -128,3 +128,10 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - [MAA 현행 EduView score distribution](https://maa.edvistas.com/eduview/report.aspx?view=1561&mode=6) — 현행 회차별 전체 응시 집단 기준. 학년 선택 필드는 페이지에 없음.
 
 확인일: 2026-11-04 KST. 과거 표는 역사적 기술통계이며, 현재 학생의 AMC 등급·학년 백분위·배치 판정에 바로 쓰지 않는다.
+
+## 2026-11-04 후속 검색: 더 넓은 과거 통계 경로
+
+- Stanford 연구자 Ian Calaway의 [AMC Archive](https://sites.google.com/view/ian-calaway/amc-archive/)는 중학교 AMC 8 요약 책자 1985–2022 디지털 보관이 완료됐고, 고교 요약은 1980–2010 원본 책자와 2011–2022 디지털 결과를 모았다고 설명한다. MAA 공식 저장소는 아니며 자료별 원본 표·연도·정의·접근 조건을 검수한 데이터셋이 아니므로, 다음 연도 확장 시 먼저 회차별 보고서를 확인할 후보 출처로 기록한다.
+- 검색에서 확인된 2013·2016 AMC 8 결과 PDF와 Bard Math Circle 연례 결과 페이지는 `Average score for grade ...`를 포함하지만 개별 학교/수업 집단 보고다. 국가·전체 응시 집단으로 오인하지 않도록 학년 기준치로 사용하지 않는다. 예: [2013 AMC 8 Bard 결과](https://www.bardmathcircle.org/p/2013-amc-8), [2016 AMC 8 Bard 결과](https://www.bardmathcircle.org/p/2016-amc-8-results-are-in). 이 보고서에는 학생 결과표도 실릴 수 있어 본 데이터셋에는 집계 원자료만 필요하다.
+- 2016년 사용자 게시물은 구 MAA `GeneralReports.aspx`에서 `Contest Score Grade Report with Percentile` 메뉴를 선택할 수 있었다고 회고하지만, 구동하는 연도별 리포트 본문은 현재 공개 페이지에서 재생되지 않았다. 이 검색 결과는 과거 메뉴의 존재에 대한 단서일 뿐, percentile 데이터 원본으로 쓰지 않는다.
+- 따라서 현재 학생 화면의 연도별 학년 평균 적용 범위는 검수 완료된 AMC 8 2003–2009, AMC 10/12 2007–2011 A/B에서 멈춘다. 더 넓은 1980–2022 자료는 보고서 원문과 회차/폼/학년 모집단이 확인될 때만 추가하고, 학교 단위 결과나 수상자 목록으로 빈 연도를 채우지 않는다.
