@@ -37,6 +37,9 @@
     const byReason = new Map(reasons.map(function (reason) { return [reason.id, reason]; }));
     let unclassified = 0;
     let domainClassified = 0;
+    let sourceMappedCount = 0;
+    let sourceConceptReferenceCount = 0;
+    let manualDomainCount = 0;
     let reasonClassified = 0;
     let blankReasonClassified = 0;
     const blankReasons = Object.keys(blankReasonNames).map(function (id) { return { id: id, name: blankReasonNames[id], count: 0 }; });
@@ -51,13 +54,18 @@
         return { valid: false, error: "문항별 표시와 영역을 확인하세요." };
       }
       counts[entry.status] += 1;
+      if (entry.sourceConceptLabel) sourceConceptReferenceCount += 1;
       if (entry.status === "unmarked") continue;
       if (entry.status === "wrong" || entry.status === "blank") {
-        reviewItems.push(Object.freeze({ number: index + 1, status: entry.status, answer: entry.answer || "", domain: entry.domain, reason: entry.reason }));
+        const reviewItem = { number: index + 1, status: entry.status, answer: entry.answer || "", domain: entry.domain, reason: entry.reason };
+        if (entry.sourceConceptLabel) Object.assign(reviewItem, { suggestedDomain: entry.suggestedDomain || "unclassified", sourceConceptLabel: entry.sourceConceptLabel, domainOrigin: entry.domainOrigin || "manual" });
+        reviewItems.push(Object.freeze(reviewItem));
       }
       if (entry.domain === "unclassified") { unclassified += 1; }
       else {
         domainClassified += 1;
+        if (entry.domainOrigin === "source-mapped" && entry.domain === entry.suggestedDomain && entry.sourceConceptLabel) sourceMappedCount += 1;
+        else manualDomainCount += 1;
         const domain = byDomain.get(entry.domain);
         if (entry.status === "blank") {
           domain.blank += 1;
@@ -122,6 +130,9 @@
       complete: counts.unmarked === 0,
       unclassified: unclassified,
       domainClassified: domainClassified,
+      sourceMappedCount: sourceMappedCount,
+      sourceConceptReferenceCount: sourceConceptReferenceCount,
+      manualDomainCount: manualDomainCount,
       reasonClassified: reasonClassified,
       blankReasonClassified: blankReasonClassified,
       domains: domains,

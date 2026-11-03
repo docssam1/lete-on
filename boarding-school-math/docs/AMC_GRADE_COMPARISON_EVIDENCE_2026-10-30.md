@@ -2,6 +2,14 @@
 
 확인일: 2026-10-30 (KST)
 
+## 원본 문항 개념 출처 연결 (2026-11-04)
+
+LIVE by Po-Shen Loh의 [2010 AMC 8 전문 풀이](https://live.poshenloh.com/past-contests/amc8/2010/solutions)는 문항별 Concepts와 숫자형 difficulty rating을 제공하며, 해당 페이지는 문제를 MAA의 공식 법적 허가로 사용한다고 밝힌다. 25개 문항의 태그·rating과 각 문항 경로를 CSV로 기록했다. [`amc8-2010-item-concepts.csv`](../competition/historical-amc-grade/amc8-2010-item-concepts.csv).
+
+같은 구조를 LIVE의 AMC 8 전체 연도 페이지에서 확인해 [`amc8-item-concept-source-inventory.csv`](../competition/historical-amc-grade/amc8-item-concept-source-inventory.csv)에 1985–2026(2021 제외) 41회 × 25문항, 총 1,025행을 수집했다. 문항 태그와 원본 rating은 각 연도의 LIVE 출처에서 그대로 기록했다. 2010 외 연도는 GFIELD 다섯 영역 매핑을 아직 검토하지 않아 학생 진단에 연결하지 않는다.
+
+GFIELD의 다섯 진단 영역(식·대수, 수·정수론, 기하·공간, 경우의 수·확률, 그래프·표 해석)은 원본 태그를 바탕으로 한 분류 제안이다. 학습자가 영역을 바꿀 수 있고, 진단 결과는 LIVE의 rating으로 산정하지 않는다. 매칭된 항목에는 태그 기반 주제와 해당 원본 문항 출처를 제공한다. 아직 2010 AMC 8에만 적용했으며 다른 연도·대회는 원본 아카이브 경로만 연결되어 있다. 미검토 회차의 태그·영역·난도는 만들어 넣지 않는다.
+
 ## 공개 근거
 
 - MAA의 [AMC 공식 프로그램 안내](https://maa.org/student-programs/amc/)는 AMC 8·10·12의 참가 학년, 시험 형식·범위와 일부 현재 주기 정보를 제공한다. 공개 페이지에서 개인 점수의 학년별 백분위표, 같은 학년 순위표, 학년 규준 실력 등급표는 확인되지 않았다.

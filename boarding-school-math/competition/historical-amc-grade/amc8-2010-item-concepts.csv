@@ -1,0 +1,26 @@
+program,year,form,question,source_concepts,gfield_domain,gfield_topic_label,source_difficulty_rating,source_url,mapping_status
+amc8,2010,,1,basic counting,counting,덧셈으로 세기,370,https://live.poshenloh.com/past-contests/amc8/2010/problem/1,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,2,custom operation;fraction,algebra,정의한 연산·분수,610,https://live.poshenloh.com/past-contests/amc8/2010/problem/2,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,3,data and graph interpretation;percentage,data,그래프 해석·백분율,790,https://live.poshenloh.com/past-contests/amc8/2010/problem/3,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,4,mean;median (data);mode,data,평균·중앙값·최빈값,720,https://live.poshenloh.com/past-contests/amc8/2010/problem/4,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,5,unit conversion,number,단위 변환,770,https://live.poshenloh.com/past-contests/amc8/2010/problem/5,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,6,transformation;symmetry,geometry,대칭·도형의 변환,560,https://live.poshenloh.com/past-contests/amc8/2010/problem/6,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,7,money;optimization,number,화폐 단위·최적화,1350,https://live.poshenloh.com/past-contests/amc8/2010/problem/7,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,8,relative speed;distance rate and time;unit conversion,number,속력·거리·시간·단위 변환,1100,https://live.poshenloh.com/past-contests/amc8/2010/problem/8,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,9,percentage,number,백분율,960,https://live.poshenloh.com/past-contests/amc8/2010/problem/9,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,10,"circle area;area ratio;power scaling of length, area, and volume",geometry,원의 넓이·넓이비·축척,1030,https://live.poshenloh.com/past-contests/amc8/2010/problem/10,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,11,ratio and proportion;linear equation,algebra,비례식·일차방정식,900,https://live.poshenloh.com/past-contests/amc8/2010/problem/11,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,12,percentage,number,백분율,1120,https://live.poshenloh.com/past-contests/amc8/2010/problem/12,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,13,perimeter;linear equation;percentage,algebra,둘레·일차방정식·백분율,1060,https://live.poshenloh.com/past-contests/amc8/2010/problem/13,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,14,prime factorization,number,소인수분해,960,https://live.poshenloh.com/past-contests/amc8/2010/problem/14,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,15,percentage,number,백분율·비례,1200,https://live.poshenloh.com/past-contests/amc8/2010/problem/15,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,16,circle area;square (geometry),geometry,원·정사각형의 넓이,1000,https://live.poshenloh.com/past-contests/amc8/2010/problem/16,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,17,area decomposition;triangle area,geometry,넓이 분할·삼각형의 넓이,1670,https://live.poshenloh.com/past-contests/amc8/2010/problem/17,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,18,circle area;rectangle;area ratio,geometry,원·직사각형의 넓이비,1240,https://live.poshenloh.com/past-contests/amc8/2010/problem/18,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,19,circle area;chord;Pythagorean Theorem,geometry,원·현·피타고라스 정리,1390,https://live.poshenloh.com/past-contests/amc8/2010/problem/19,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,20,inclusion-exclusion;least common multiple,counting,포함배제·최소공배수,1610,https://live.poshenloh.com/past-contests/amc8/2010/problem/20,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,21,fraction;work backwards,algebra,분수·역으로 풀기,1520,https://live.poshenloh.com/past-contests/amc8/2010/problem/21,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,22,place value;digits,number,자릿값·숫자,1260,https://live.poshenloh.com/past-contests/amc8/2010/problem/22,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,23,circle area;Pythagorean Theorem;area ratio,geometry,원의 넓이·피타고라스 정리·넓이비,1540,https://live.poshenloh.com/past-contests/amc8/2010/problem/23,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,24,exponent,algebra,거듭제곱 비교,1480,https://live.poshenloh.com/past-contests/amc8/2010/problem/24,LIVE concept tags mapped to GFIELD diagnostic domains
+amc8,2010,,25,partitions and compositions;recursive counting,counting,경우의 분할·점화적 세기,1540,https://live.poshenloh.com/past-contests/amc8/2010/problem/25,LIVE concept tags mapped to GFIELD diagnostic domains

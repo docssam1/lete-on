@@ -1137,3 +1137,12 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - 자료 링크는 MAA 저작물의 제3자 보관본이다. 전체 응시 평균만 기록하고, 연도별 상위 백분위나 학년 규준은 생성하지 않았다. 2010 보고서의 학교 우승자 평균 역사표는 혼합하지 않았다.
 - 검수 범위: 참조 테스트에 2006 A/B, 2005 A/B, 2002 AMC 12 A/B 및 2002 AMC 10 B 미연결을 추가했다. 브라우저 결과 화면 렌더 QA는 아직 미완료다. `raw_youtube.txt`는 미추적 상태로 보존한다. 로컬 변경만, 원격 동기화/배포 없음.
 - 후속 웹 검색에서 AMC 10 2000/2001 평균 64.2/67.8과 AMC 12 2000/2001 평균 64.9/56.6을 찾았다. Math Gold Medalist가 MAA 역사 통계를 출처로 들지만 일부 항목은 원보고서와 독립 검증하지 못했다고 밝혀, 평균 한정·2차 출처로 저장하고 percentile·학년 기준은 추가하지 않았다. 2001 AMC 10 공식 문제지·풀이와 AMC 12 공식 풀이 PDF는 MAA 호스팅 링크를 확인했다. 시험지 텍스트는 복제하지 않고 LIVE 허가 아카이브를 계속 사용한다. 출처 필수값 테스트가 기존 AMC 8 보고서 사본 3행의 누락 라벨도 발견해 채웠고, 참조 테스트 3개 통과·`git diff --check` 완료. 브라우저 화면 렌더 검수는 별도다.
+
+### 2026-11-04 · LIVE 원본의 AMC 8 문항 개념 태그 연결
+
+- LIVE 2010 AMC 8 solutions를 웹에서 열어 25문항 전체의 Concepts, difficulty rating, 문제별 해설 경로를 확인했다. 페이지는 문제를 MAA의 공식 법적 허가로 사용한다고 명시한다. [전체 풀이](https://live.poshenloh.com/past-contests/amc8/2010/solutions) · [Q20 개별 개념·풀이](https://live.poshenloh.com/past-contests/amc8/2010/problem/20).
+- 원본 태그·rating·문항 경로를 `competition/historical-amc-grade/amc8-2010-item-concepts.csv`에 전사하고, GFIELD 다섯 진단 영역과 한국어 개념 설명을 `competition/amc-original-item-concept-reference.js`에 연결했다. 화면에서 추천 영역을 직접 바꿀 수 있으며 결과가 원본 태그 분류/수동 수정으로 나뉜다. LIVE difficulty rating은 가져왔지만 지필드 학년/등급/진단점수로 쓰지 않는다. 원문·정답·힌트·해설은 저장하지 않는다.
+- 회귀검사: source-reference·연도별 1,025행 inventory·paper-review-analysis 단위 검사 16/16 통과, JS 구문 검사 및 `git diff --check` 통과. Playwright 브라우저 자동 테스트는 bundled Node에서 `MODULE_NOT_FOUND`로 미실행이며, IAB에서 2010 AMC8 화면의 25/25 개념 추천/문항 출처 링크 및 인쇄 PDF·답안·전문 풀이 링크 렌더를 확인했다. 결과 제출 UI 상호작용은 미확인.
+- 같은 형식의 LIVE AMC 8 모든 연도 페이지를 직접 조회해 1985–2026(2021 제외) 41회, 1,025문항의 개념 태그·rating·문항 URL을 `competition/historical-amc-grade/amc8-item-concept-source-inventory.csv`에 수집했다. 브라우저의 현재 2010 화면에서 25/25 문항 개념 제안, source link, 기존 PDF·답안·전문풀이 경로를 확인했다. 다른 연도 문항은 원본 태그를 보존했지만 GFIELD 영역 진단에는 아직 미연결.
+- 다음: 175개 LIVE 태그를 지필드 학습 개념/진단 영역에 연도별 근거와 함께 분류하고, 모호하거나 복합 태그인 문항은 교사 수동 분류로 남긴다. 이후 AMC 10/12·AIME의 전체 회차/폼 개념 인벤토리를 같은 방식으로 확장한다. 원문·답·풀이 미복사. `raw_youtube.txt` 미추적 파일 보존.
+- 로컬 전용, 원격 반영·배포·Drive 동기화 없음.

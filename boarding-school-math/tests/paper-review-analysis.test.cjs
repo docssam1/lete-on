@@ -37,6 +37,27 @@ test("AMC 8 paper review separates number/proportion/estimation and graph/table 
   assert.equal(analyze([entry("correct", "data")], 1, "amc10").valid, false);
 });
 
+test("source-mapped AMC concepts remain distinct from a learner's manual domain overrides", function () {
+  const entries = [
+    { ...entry("wrong", "counting", "concept"), suggestedDomain: "counting", domainOrigin: "source-mapped", sourceConceptLabel: "포함배제·최소공배수" },
+    { ...entry("correct", "number"), suggestedDomain: "geometry", domainOrigin: "manual", sourceConceptLabel: "원의 넓이·넓이비·축척" },
+    { ...entry("blank", "unclassified"), suggestedDomain: "geometry", domainOrigin: "unclassified", sourceConceptLabel: "원·현·피타고라스 정리" }
+  ];
+  const report = analyze(entries, entries.length, "amc8");
+  assert.equal(report.valid, true);
+  assert.equal(report.sourceMappedCount, 1);
+  assert.equal(report.sourceConceptReferenceCount, 3);
+  assert.equal(report.manualDomainCount, 1);
+  assert.deepEqual(report.reviewItems[0], {
+    number: 1, status: "wrong", answer: "", domain: "counting", reason: "concept",
+    suggestedDomain: "counting", sourceConceptLabel: "포함배제·최소공배수", domainOrigin: "source-mapped"
+  });
+  assert.deepEqual(report.reviewItems[1], {
+    number: 3, status: "blank", answer: "", domain: "unclassified", reason: "none",
+    suggestedDomain: "geometry", sourceConceptLabel: "원·현·피타고라스 정리", domainOrigin: "unclassified"
+  });
+});
+
 test("domain comparison requires enough classified attempts in two domains", function () {
   const entries = [entry("correct", "algebra"), entry("correct", "algebra"), entry("correct", "algebra"), entry("wrong", "number", "concept"), entry("wrong", "number", "concept"), entry("correct", "number"), entry("wrong", "unclassified", "time")];
   const report = analyze(entries, entries.length);

@@ -4,6 +4,7 @@
   const analyzer = window.GFIELDPaperReviewAnalysis;
   const historyEngine = window.GFIELDAMCScoreHistory;
   const paperLibrary = window.GFIELDAMCOriginalPaperLibrary;
+  const itemConceptReference = window.GFIELDAMCOriginalItemConceptReference;
   const localRecords = window.GFIELDLocalLearningRecord;
   if (!roadmap || !analyzer) return;
   const $ = function (id) { return document.getElementById(id); };
@@ -234,12 +235,17 @@
     const paperFormat = selectedPaperFormat(format);
     const itemCount = paperFormat ? paperFormat.itemCount : format.itemCount;
     const domains = [{ id: "unclassified", title: "영역 선택" }].concat(analyzer.domainsFor(format.id));
+    const selectedYear = Number($("archive-year").value || params.get("year"));
+    const selectedForm = $("archive-form").value || params.get("form") || "";
     for (let index = 0; index < itemCount; index += 1) {
       const number = index + 1;
       const li = document.createElement("li");
       li.className = "paper-mark-row";
       li.dataset.choiceEntry = String(hasAnswerEntry);
       li.dataset.state = "unmarked";
+      const concept = itemConceptReference ? itemConceptReference.referenceFor(format.id, selectedYear, selectedForm, index + 1) : null;
+      li.dataset.suggestedDomain = concept ? concept.domain : "unclassified";
+      li.dataset.domainOrigin = concept ? "source-mapped" : "unclassified";
       const marker = document.createElement("strong");
       marker.textContent = `Q${String(number).padStart(2, "0")}`;
       li.append(marker);
@@ -266,18 +272,40 @@
           select.autocomplete = "off";
         } else (config.values || []).forEach(function (entry) { select.append(option(entry.id, entry.title)); });
         if (config.field === "reason") select.disabled = true;
+        if (config.field === "domain" && concept) select.value = concept.domain;
         select.addEventListener("change", function () {
           if (config.field === "status") {
             li.dataset.state = select.value;
             syncReasonField(li, select.value);
             const reasonSelect = li.querySelector('[data-field="reason"]');
             if (reasonSelect.disabled) reasonSelect.value = "none";
-            if (select.value === "unmarked") li.querySelector('[data-field="domain"]').value = "unclassified";
+            if (select.value === "unmarked") {
+              li.querySelector('[data-field="domain"]').value = "unclassified";
+              li.dataset.domainOrigin = "unclassified";
+            } else if (li.dataset.domainOrigin === "unclassified" && concept) {
+              li.querySelector('[data-field="domain"]').value = concept.domain;
+              li.dataset.domainOrigin = "source-mapped";
+            }
           }
+          if (config.field === "domain") li.dataset.domainOrigin = concept && select.value === concept.domain ? "source-mapped" : select.value === "unclassified" ? "unclassified" : "manual";
           if (config.field === "status" || config.field === "answer") updateProgress();
           resetReport("내용이 바뀌었어요");
         });
         field.append(caption, select);
+        if (config.field === "domain" && concept) {
+          const suggestion = document.createElement("small");
+          suggestion.className = "mark-concept-suggestion";
+          suggestion.append(document.createTextNode(`개념 ${concept.topicLabel} · 영역 제안 · `));
+          const sourceLink = document.createElement("a");
+          sourceLink.href = concept.sourceUrl;
+          sourceLink.target = "_blank";
+          sourceLink.rel = "noopener noreferrer";
+          sourceLink.textContent = "LIVE 출처";
+          sourceLink.setAttribute("aria-label", `${number}번 문항 개념 분류 출처 열기`);
+          suggestion.append(sourceLink);
+          suggestion.dataset.sourceConcepts = concept.sourceConcepts.join(";");
+          field.append(suggestion);
+        }
         if (config.field === "status" && paperLibrary && ["amc8", "amc10", "amc12", "aime"].includes(format.id)) {
           const year = Number($("archive-year").value || params.get("year"));
           const form = $("archive-form").value || params.get("form") || "";
@@ -319,8 +347,17 @@
       return { answer: answer ? answer.value : "",
         status: li.querySelector('[data-field="status"]').value,
         domain: li.querySelector('[data-field="domain"]').value,
+        suggestedDomain: li.dataset.suggestedDomain || "unclassified",
+        domainOrigin: li.dataset.domainOrigin || "unclassified",
+        sourceConceptLabel: conceptLabelFor(li),
         reason: li.querySelector('[data-field="reason"]').value };
     });
+  }
+
+  function conceptLabelFor(li) {
+    const suggestion = li.querySelector(".mark-concept-suggestion");
+    if (!suggestion) return "";
+    return suggestion.firstChild ? suggestion.firstChild.textContent.replace(/^개념 /, "").replace(/ · 영역 제안 · $/, "") : "";
   }
   function metric(label, value, note) {
     const node = document.createElement("div");
@@ -778,9 +815,10 @@
     );
     const domainHost = $("report-domains");
     domainHost.replaceChildren();
-    const heading = document.createElement("h3"); heading.textContent = `직접 분류한 영역 · ${result.domainClassified}/${result.itemCount}문항`; domainHost.append(heading);
+    const heading = document.createElement("h3"); heading.textContent = `풀이 영역 · ${result.domainClassified}/${result.itemCount}문항`; domainHost.append(heading);
     const domainNote = document.createElement("p"); domainNote.className = "report-evidence-note";
-    domainNote.textContent = "영역은 직접 고른 분류예요. 정답 비율은 표시한 풀이 문항만으로 계산하고, 미응답은 따로 보여 드려요. 3문제 미만은 비교하지 않습니다.";
+    const mappingNote = result.sourceConceptReferenceCount ? ` LIVE 문항 개념 자료 ${result.sourceConceptReferenceCount}개가 연결되어 있어요. 이 중 ${result.sourceMappedCount}문항은 제안 영역을 사용했고 ${result.manualDomainCount}문항은 직접 분류했어요. 영역은 문항마다 바꿀 수 있습니다.` : " 원본 풀이의 문항별 개념 태그 연결 자료가 없는 회차는 직접 분류한 영역만 사용합니다.";
+    domainNote.textContent = `정답률은 표시한 풀이 문항만으로 계산하고, 미응답은 따로 보여 드려요.${mappingNote} 3문제 미만은 비교하지 않습니다.`;
     domainHost.append(domainNote);
     result.domains.forEach(function (domain) {
       const row = document.createElement("div"); row.className = "report-domain-row";
@@ -807,7 +845,7 @@
       const reason = reasons.find(function (entry) { return entry.id === item.reason; });
       const itemState = item.status === "wrong" ? "오답" : "미응답";
       const blankReason = blankReasons.find(function (entry) { return entry.id === item.reason; });
-      const details = [item.answer ? `내 답 ${item.answer}` : "답 미입력", domain && item.domain !== "unclassified" ? domain.title : "영역 미분류", item.status === "wrong" && reason && item.reason !== "none" ? reason.title : "", item.status === "blank" && blankReason && item.reason !== "none" ? blankReason.title : ""].filter(Boolean);
+      const details = [item.answer ? `내 답 ${item.answer}` : "답 미입력", item.sourceConceptLabel, domain && item.domain !== "unclassified" ? domain.title : "영역 미분류", item.status === "wrong" && reason && item.reason !== "none" ? reason.title : "", item.status === "blank" && blankReason && item.reason !== "none" ? blankReason.title : ""].filter(Boolean);
       const summary = document.createElement("span");
       summary.textContent = `${item.number}번 · ${itemState} · ${details.join(" · ")}`;
       row.append(summary);

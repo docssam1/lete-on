@@ -66,6 +66,27 @@ test("yearly AMC originals expose print, answer entry, and local self-marking", 
   await page.close();
 });
 
+test("2010 AMC 8 shows linked source concepts, permits domain overrides, and reports provenance", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=7&program=amc8&year=2010`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".mark-concept-suggestion").count(), 25);
+  assert.equal(await page.locator('[data-question="20"] .mark-concept-suggestion').innerText(), "개념 포함배제·최소공배수 · 영역 제안 · LIVE 출처");
+  assert.equal(await page.locator('[data-question="20"] .mark-concept-suggestion a').getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2010/problem/20");
+  assert.equal(await page.locator('[data-question="20"][data-field="domain"]').inputValue(), "counting");
+  await page.locator('[data-question="20"][data-field="status"]').selectOption("wrong");
+  await page.locator('[data-question="20"][data-field="reason"]').selectOption("concept");
+  await page.locator('[data-question="23"][data-field="status"]').selectOption("correct");
+  await page.locator('[data-question="23"][data-field="domain"]').selectOption("number");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#report-domains").innerText(), /LIVE 문항 개념 자료 25개가 연결되어 있어요\. 이 중 1문항은 제안 영역을 사용했고 1문항은 직접 분류/);
+  assert.match(await page.locator("#report-review-items-list").innerText(), /20번 · 오답 · 답 미입력 · 포함배제·최소공배수 · 경우의 수·확률 · 개념/);
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("AMC 12 archive picker reaches the earliest listed year", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(`${url}?grade=10&program=amc12&year=1950`, { waitUntil: "networkidle" });
