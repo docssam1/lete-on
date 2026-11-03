@@ -24,7 +24,15 @@
     "gfield-grade7-rp-a-mock-v1": Object.freeze({ formVersion: "2026-11-04-v1", title: "7.RP.A 비와 비례 관계", clusterId: "7.RP.A", prefix: "rp-a-m", standards: ["7.RP.A.1", "7.RP.A.2", "7.RP.A.3"], itemsPerStandard: [4, 5, 5] }),
     "gfield-grade7-amc8-style-mock-v1": Object.freeze({ formVersion: "2026-11-04-v1", title: "지필드 AMC 8 스타일 모의고사 · 1회", clusterId: "AMC8", prefix: "amc8-g7-m", standards: ["수 감각·비율", "대수·규칙", "기하·좌표", "경우의 수·확률", "정수·자료 해석"], itemsPerStandard: [5, 5, 5, 5, 5] }),
     "gfield-grade7-amc8-style-mock-v2": Object.freeze({ formVersion: "2026-11-04-v2", title: "지필드 AMC 8 스타일 모의고사 · 2회", clusterId: "AMC8", prefix: "amc8-g7-v2-m", gradeRange: Object.freeze({ min: 6, max: 8 }), standards: ["수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석"], itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석", "수 감각·비율", "대수·규칙", "기하·공간", "경우의 수·확률", "정수·자료 해석"] }),
-    "gfield-amc10-concept-mock-v1": Object.freeze({ formVersion: "2026-11-04-v3", previousFormVersions: ["2026-11-04-v2"], title: "지필드 AMC 10 범위 모의고사 · 1회", clusterId: "AMC10", prefix: "amc10-m", gradeRange: Object.freeze({ min: 7, max: 10 }), standards: ["대수", "정수론", "기하", "경우의 수", "확률"], itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률"] }),
+    "gfield-amc10-concept-mock-v1": Object.freeze({
+      formVersion: "2026-11-04-v4", title: "지필드 AMC 10 범위 모의고사 · 1회", clusterId: "AMC10", prefix: "amc10-m", gradeRange: Object.freeze({ min: 7, max: 10 }),
+      standards: ["대수", "정수론", "기하", "경우의 수", "확률"],
+      formVersions: Object.freeze({
+        "2026-11-04-v4": Object.freeze({ itemsPerStandard: [5, 4, 6, 5, 5], itemStandards: ["대수", "기하", "기하", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률"] }),
+        "2026-11-04-v3": Object.freeze({ itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률", "대수", "기하", "정수론", "경우의 수", "확률"] }),
+        "2026-11-04-v2": Object.freeze({ itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["대수", "대수", "대수", "대수", "대수", "정수론", "정수론", "정수론", "정수론", "정수론", "기하", "기하", "기하", "기하", "기하", "경우의 수", "경우의 수", "경우의 수", "경우의 수", "경우의 수", "확률", "확률", "확률", "확률", "확률"] })
+      })
+    }),
     "gfield-amc12-concept-mock-v1": Object.freeze({ formVersion: "2026-11-04-v2", previousFormVersions: ["2026-11-04-v1"], title: "지필드 AMC 12 범위 개념 모의고사 · 1회", clusterId: "AMC12", prefix: "amc12-gfield-m", gradeRange: Object.freeze({ min: 7, max: 12 }), standards: ["대수", "함수·삼각함수", "정수론", "기하", "경우의 수"], itemsPerStandard: [5, 5, 5, 5, 5], itemStandards: ["대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수", "대수", "함수·삼각함수", "정수론", "기하", "경우의 수"] })
   });
   const COMPETITION_DOMAIN_LABELS = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석" });
@@ -193,11 +201,15 @@
   function sanitizedGfieldMockResult(value) {
     if (!object(value) || value.schemaVersion !== "gfield-mock-result-v1" || !Number.isInteger(value.grade) || !object(value.score) || !Array.isArray(value.standards) || !Array.isArray(value.reviewFocuses)) return null;
     const rules = GFIELD_MOCK_RESULT_RULES[value.examId];
-    if (!rules || value.formVersion !== rules.formVersion && !(rules.previousFormVersions || []).includes(value.formVersion)) return null;
+    if (!rules) return null;
+    const versionRules = rules.formVersions ? rules.formVersions[value.formVersion] : value.formVersion === rules.formVersion || (rules.previousFormVersions || []).includes(value.formVersion) ? rules : null;
+    if (!versionRules) return null;
     if (rules.gradeRange ? value.grade < rules.gradeRange.min || value.grade > rules.gradeRange.max : value.grade !== 7) return null;
-    const itemCount = rules.itemsPerStandard.reduce(function (sum, count) { return sum + count; }, 0);
+    const itemsPerStandard = versionRules.itemsPerStandard || rules.itemsPerStandard;
+    const itemStandards = versionRules.itemStandards || rules.itemStandards;
+    const itemCount = itemsPerStandard.reduce(function (sum, count) { return sum + count; }, 0);
     const standards = value.standards.slice(0, rules.standards.length).map(function (entry, index) {
-      if (!object(entry) || entry.id !== rules.standards[index] || !Number.isInteger(entry.correct) || !Number.isInteger(entry.total) || entry.total !== rules.itemsPerStandard[index] || entry.correct < 0 || entry.correct > entry.total) return null;
+      if (!object(entry) || entry.id !== rules.standards[index] || !Number.isInteger(entry.correct) || !Number.isInteger(entry.total) || entry.total !== itemsPerStandard[index] || entry.correct < 0 || entry.correct > entry.total) return null;
       return { id: entry.id, correct: entry.correct, total: entry.total };
     }).filter(Boolean);
     if (standards.length !== rules.standards.length || standards.reduce(function (sum, entry) { return sum + entry.total; }, 0) !== itemCount) return null;
@@ -208,7 +220,7 @@
       const match = new RegExp("^" + rules.prefix + "(\\d{2})$").exec(focus.itemId);
       const index = match ? Number(match[1]) - 1 : -1;
       const expectedStandard = index >= 0 && index < itemCount
-        ? rules.itemStandards ? rules.itemStandards[index] : rules.standards.find(function (standard, standardIndex) { return index >= rules.itemsPerStandard.slice(0, standardIndex).reduce(function (sum, count) { return sum + count; }, 0) && index < rules.itemsPerStandard.slice(0, standardIndex + 1).reduce(function (sum, count) { return sum + count; }, 0); })
+        ? itemStandards ? itemStandards[index] : rules.standards.find(function (standard, standardIndex) { return index >= itemsPerStandard.slice(0, standardIndex).reduce(function (sum, count) { return sum + count; }, 0) && index < itemsPerStandard.slice(0, standardIndex + 1).reduce(function (sum, count) { return sum + count; }, 0); })
         : null;
       if (index < 0 || index >= itemCount || focus.standard !== expectedStandard || focusIds.has(focus.itemId)) return null;
       focusIds.add(focus.itemId);

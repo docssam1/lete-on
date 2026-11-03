@@ -158,17 +158,25 @@ test("competition mock result storage preserves only grades allowed by each exam
     });
     assert.equal(saved.grade, grade);
   }
-  const amc10Standards = ["대수", "정수론", "기하", "경우의 수", "확률"].map((id) => ({ id, correct: 0, total: 5 }));
+  const amc10Standards = ["대수", "정수론", "기하", "경우의 수", "확률"].map((id, index) => ({ id, correct: 0, total: [5, 4, 6, 5, 5][index] }));
+  const amc10LegacyStandards = ["대수", "정수론", "기하", "경우의 수", "확률"].map((id) => ({ id, correct: 0, total: 5 }));
   const amc10 = store.saveGfieldMockResult({
-    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc10g9", examId: "gfield-amc10-concept-mock-v1", formVersion: "2026-11-04-v3", grade: 9,
-    score: { correct: 0, answered: 0 }, standards: amc10Standards, reviewFocuses: []
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc10g9", examId: "gfield-amc10-concept-mock-v1", formVersion: "2026-11-04-v4", grade: 9,
+    score: { correct: 0, answered: 0 }, standards: amc10Standards, reviewFocuses: [{ itemId: "amc10-m03", standard: "기하", label: "삼각형 부등식과 정수 경우 나누기" }]
   });
   assert.equal(amc10.grade, 9);
+  assert.equal(amc10.reviewFocuses[0].standard, "기하");
   const olderAmc10 = store.saveGfieldMockResult({
-    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc10old", examId: "gfield-amc10-concept-mock-v1", formVersion: "2026-11-04-v2", grade: 9,
-    score: { correct: 0, answered: 0 }, standards: amc10Standards, reviewFocuses: []
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc10old", examId: "gfield-amc10-concept-mock-v1", formVersion: "2026-11-04-v3", grade: 9,
+    score: { correct: 0, answered: 0 }, standards: amc10LegacyStandards, reviewFocuses: [{ itemId: "amc10-m03", standard: "정수론", label: "삼각형 부등식과 경우 나누기" }]
   });
-  assert.equal(olderAmc10.formVersion, "2026-11-04-v2");
+  assert.equal(olderAmc10.formVersion, "2026-11-04-v3");
+  assert.equal(olderAmc10.reviewFocuses[0].standard, "정수론");
+  const preInterleaveAmc10 = store.saveGfieldMockResult({
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc10older", examId: "gfield-amc10-concept-mock-v1", formVersion: "2026-11-04-v2", grade: 9,
+    score: { correct: 0, answered: 0 }, standards: amc10LegacyStandards, reviewFocuses: [{ itemId: "amc10-m06", standard: "정수론", label: "옛 문항 분류 확인" }]
+  });
+  assert.equal(preInterleaveAmc10.formVersion, "2026-11-04-v2");
   const amc12Standards = ["대수", "함수·삼각함수", "정수론", "기하", "경우의 수"].map((id) => ({ id, correct: 0, total: 5 }));
   const amc12 = store.saveGfieldMockResult({
     schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc12g10", examId: "gfield-amc12-concept-mock-v1", formVersion: "2026-11-04-v2", grade: 10,
@@ -181,7 +189,7 @@ test("competition mock result storage preserves only grades allowed by each exam
   });
   assert.equal(olderAmc12.formVersion, "2026-11-04-v1");
   assert.equal(store.saveGfieldMockResult({
-    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc10g6", examId: "gfield-amc10-concept-mock-v1", formVersion: "2026-11-04-v3", grade: 6,
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc10g6", examId: "gfield-amc10-concept-mock-v1", formVersion: "2026-11-04-v4", grade: 6,
     score: { correct: 0, answered: 0 }, standards: amc10Standards, reviewFocuses: []
   }), false);
 });

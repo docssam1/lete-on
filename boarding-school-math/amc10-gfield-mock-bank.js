@@ -4,7 +4,7 @@
   const items = [
     { id:"amc10-m01", standard:"대수", focus:"관계식 세우기", prompt:"두 수의 합은 34이고 큰 수는 작은 수의 3배보다 2만큼 작습니다. 큰 수는 얼마인가요?", choices:[24,25,26,27,28], answer:1, solution:"작은 수를 x라 하면 큰 수는 3x−2입니다. x+(3x−2)=34이므로 x=9, 큰 수는 3·9−2=25입니다." },
     { id:"amc10-m02", standard:"기하", focus:"밑변과 높이의 넓이 비", prompt:"밑변이 같은 두 삼각형의 높이가 4와 7입니다. 작은 삼각형의 넓이가 18이면 큰 삼각형의 넓이는 얼마인가요?", choices:[24,28,30,31.5,36], answer:3, solution:"밑변이 같으면 삼각형의 넓이는 높이에 비례합니다. 큰 넓이는 18×7/4=31.5입니다." },
-    { id:"amc10-m03", standard:"정수론", focus:"삼각형 부등식과 경우 나누기", prompt:"양의 정수 변을 가진 이등변삼각형의 가장 긴 변의 길이가 20입니다. 넓이가 0보다 큰 삼각형은 모두 몇 개인가요?", choices:[20,28,29,30,39], answer:2, solution:"두 긴 변이 모두 20인 경우 세 번째 변은 1부터 20까지라 20개입니다. 20이 유일한 가장 긴 변이면 같은 두 변의 길이 s는 11부터 19까지여야 하므로 9개입니다. 합은 29개입니다." },
+    { id:"amc10-m03", standard:"기하", focus:"삼각형 부등식과 정수 경우 나누기", prompt:"양의 정수 변을 가진 이등변삼각형의 가장 긴 변의 길이가 20입니다. 넓이가 0보다 큰 삼각형은 모두 몇 개인가요?", choices:[20,28,29,30,39], answer:2, solution:"삼각형의 성립 조건과 이등변 조건으로 나눕니다. 두 긴 변이 모두 20인 경우 세 번째 변은 1부터 20까지라 20개입니다. 20이 유일한 가장 긴 변이면 같은 두 변의 길이 s는 11부터 19까지여야 하므로 9개입니다. 합은 29개입니다." },
     { id:"amc10-m04", standard:"경우의 수", focus:"끝자리 조건과 순열", prompt:"숫자 1, 2, 3, 4, 5를 중복 없이 사용해 네 자리 짝수를 만들려고 합니다. 만들 수 있는 수는 몇 개인가요?", choices:[36,40,48,54,60], answer:2, solution:"끝자리는 2 또는 4로 2가지입니다. 앞의 세 자리는 남은 네 숫자 중 세 개를 순서 있게 고르므로 4×3×2가지입니다. 모두 2×4×3×2=48개입니다." },
     { id:"amc10-m05", standard:"확률", focus:"두 주사위의 합", prompt:"공정한 주사위 두 개를 던집니다. 눈의 합이 9일 확률은 얼마인가요?", choices:["1/12","1/9","1/8","1/6","1/4"], answer:1, solution:"가능한 순서쌍은 36가지입니다. 합이 9인 경우는 (3,6),(4,5),(5,4),(6,3)의 4가지이므로 확률은 4/36=1/9입니다." },
     { id:"amc10-m06", standard:"대수", focus:"백분율 혼합 모델", prompt:"12리터의 음료는 농축액이 25%입니다. 농축액만 더해 농축액 비율을 40%로 만들려면 농축액을 몇 리터 더 넣어야 하나요?", choices:[1,2,3,4,6], answer:2, solution:"처음 농축액은 12×0.25=3리터입니다. x리터를 더하면 (3+x)/(12+x)=0.4입니다. 3+x=4.8+0.4x이므로 x=3입니다." },
@@ -31,7 +31,7 @@
   const standards = Object.freeze(["대수", "정수론", "기하", "경우의 수", "확률"]);
   const gradeValue = Number(new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("grade"));
   const grade = Number.isInteger(gradeValue) && gradeValue >= 7 && gradeValue <= 10 ? gradeValue : 7;
-  root.GFIELDAMC10Mock = Object.freeze({ id:"gfield-amc10-concept-mock-v1", formVersion:"2026-11-04-v3", grade, title:"지필드 AMC 10 범위 모의고사 · 1회", durationMinutes:75, standards,
+  root.GFIELDAMC10Mock = Object.freeze({ id:"gfield-amc10-concept-mock-v1", formVersion:"2026-11-04-v4", grade, title:"지필드 AMC 10 범위 모의고사 · 1회", durationMinutes:75, standards,
     nextStudyHref:`./amc10-practice.html?grade=${grade}`, nextStudyLabel:"지필드 AMC 10 개념 연습으로 이어가기 →",
     items:Object.freeze(items.map(item => Object.freeze(item))) });
 })(typeof window === "undefined" ? globalThis : window);
