@@ -1,6 +1,7 @@
 "use strict";
 const assert = require("node:assert/strict");
 const path = require("node:path");
+const { execFileSync } = require("node:child_process");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8918";
 const ids = ["5-2-u3-e8-exploration-staircase-half-synthetic", "5-2-u3-e8-example-1-circle-difference-synthetic", "5-2-u3-e8-example-2-cut-synthetic", "5-2-u3-e8-example-3-overlap-synthetic", "5-2-u3-e8-example-4-stone-synthetic"];
@@ -51,7 +52,16 @@ const ids = ["5-2-u3-e8-exploration-staircase-half-synthetic", "5-2-u3-e8-exampl
           await page.locator("#printMenuButton").click();
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
-          await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+          if (mode === "problem") {
+            await page.emulateMedia({media:"print"});
+            await page.setViewportSize({width:794,height:1123});
+            const conflicts=await page.locator('#problemView .question-item').evaluateAll(items=>items.map(item=>({number:item.querySelector('header b').textContent,prompt:item.querySelector('.question-prompt').getBoundingClientRect().bottom,answer:item.querySelector('.answer-line').getBoundingClientRect().top})).filter(item=>item.prompt>item.answer+1));
+            assert.deepEqual(conflicts,[],"문제 내용과 답란이 겹치지 않아야 합니다.");
+          }
+          const pdfPath=path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`);
+          await page.pdf({ path:pdfPath, format: "A4", printBackground: true, preferCSSPageSize: true });
+          if(mode === "problem")assert.match(execFileSync('pdfinfo',[pdfPath],{encoding:'utf8'}),/^Pages:\s+4$/m,'15 problems need four physical pages');
+          await page.emulateMedia({media:null});
           await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
         }
       }
