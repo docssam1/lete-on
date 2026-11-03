@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   const requestedGrade = Number(new URLSearchParams(window.location.search).get("grade"));
-  const grade = requestedGrade === 6 ? 6 : 7;
+  const grade = [6, 7, 8, 10].includes(requestedGrade) ? requestedGrade : 7;
   const route = `./boarding-roadmap.html?grade=${grade}`;
   ["sat-brand-route", "sat-nav-route", "sat-back-route", "sat-footer-route"].forEach(function (id) {
     const link = document.getElementById(id);

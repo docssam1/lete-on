@@ -138,7 +138,9 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.equal(roadmap.annualPlanResourceLinks[8][1][0].url, "./geometry-workbook.html");
   assert.match(roadmap.annualPlanResourceLinks[8][1][0].title, /지필드 Geometry 원본/);
   assert.deepEqual(roadmap.annualPlanResourceLinks[8][1].map(function (resource) { return resource.url; }), ["./geometry-workbook.html", "./amc10-practice.html?grade=8", "https://maa.org/student-programs/amc/"]);
-  assert.deepEqual(roadmap.annualPlanResourceLinks[8][2].map(function (resource) { return resource.url; }), ["./aime-practice.html?grade=8", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://satsuite.collegeboard.org/practice/student-question-bank/math"]);
+  assert.deepEqual(roadmap.annualPlanResourceLinks[8][2].map(function (resource) { return resource.url; }), ["./aime-practice.html?grade=8", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "./sat-foundation-practice.html?grade=8", "https://satsuite.collegeboard.org/practice/student-question-bank/math"]);
+  assert.deepEqual(roadmap.annualPlanResourceLinks[10][2].map(function (resource) { return resource.url; }), ["./sat-foundation-practice.html?grade=10", "./precalculus-workbook.html", "https://satsuite.collegeboard.org/practice/practice-tests/bluebook", "https://satsuite.collegeboard.org/practice/student-question-bank/math"]);
+  assert.match(roadmap.annualPlanResourceLinks[10][2][0].title, /SAT Math 네 영역 기초 복습/);
   assert.deepEqual(roadmap.annualPlanResourceLinks[10][3].map(function (resource) { return resource.url; }), ["./proof-writing-workbook.html", "https://maa.org/maa-invitational-competitions/"]);
   assert.equal(roadmap.annualPlanResourceLinks[10][3][0].title, "지필드 증명 쓰기 워크북 · 자체 8문항");
   assert.equal(roadmap.courseStageResources[8][1][0].url, "./amc10-practice.html?grade=8");

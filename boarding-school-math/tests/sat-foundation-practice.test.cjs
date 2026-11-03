@@ -73,11 +73,11 @@ test("original SAT foundation bank has complete answer and explanation coverage"
   assert.match(bank.scope, /optional extensions/);
 });
 
-test("Grade 6 and 7 SAT foundation routes link the original work and display fractions vertically", async function () {
+test("Grade 6, 7, 8, and 10 SAT review routes preserve the selected grade and display fractions vertically", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
-  for (const grade of [6, 7]) {
+  for (const grade of [6, 7, 8, 10]) {
     await page.goto(`${url}?grade=${grade}`, { waitUntil: "networkidle" });
     assert.equal(await page.locator("#sat-nav-route").innerText(), `${grade}학년 성장 지도`);
     assert.equal(await page.locator("#sat-back-route").getAttribute("href"), `./boarding-roadmap.html?grade=${grade}#annual-plan`);
@@ -125,14 +125,14 @@ test("Grade 6 and 7 SAT foundation routes link the original work and display fra
   await page.close();
 });
 
-test("Grade 6 and Grade 7 roadmaps link to the GFIELD foundation set before official SAT resources", async function () {
+test("Grade 6, 7, 8, and 10 roadmaps link to the GFIELD foundation set before official SAT resources", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-  for (const grade of [6, 7]) {
+  for (const grade of [6, 7, 8, 10]) {
     const roadmap = `${url.replace("sat-foundation-practice.html", "boarding-roadmap.html")}?grade=${grade}#annual-plan`;
     await page.goto(roadmap, { waitUntil: "networkidle" });
     const satPeriod = page.locator("#annual-plan-periods > li").nth(2);
     const ownLink = satPeriod.locator('a[href^="./sat-foundation-practice.html"]');
-    assert.equal(await ownLink.innerText(), "지필드 SAT Math 기초 연결 연습 · 자체 20문항");
+    assert.equal(await ownLink.innerText(), grade <= 7 ? "지필드 SAT Math 기초 연결 연습 · 자체 20문항" : "지필드 SAT Math 네 영역 기초 복습 · 자체 20문항");
     assert.match(await ownLink.getAttribute("href"), new RegExp(`grade=${grade}$`));
     await ownLink.click();
     await page.waitForURL(new RegExp(`sat-foundation-practice\\.html\\?grade=${grade}$`));

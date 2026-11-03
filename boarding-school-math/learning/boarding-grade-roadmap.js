@@ -25,6 +25,7 @@
   const algebra2Reference = Object.freeze({ title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html" });
   const geometryReference = Object.freeze({ title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" });
   const preCalculusReference = Object.freeze({ title: "지필드 Precalculus 원본 수업·A4 교재", url: "./precalculus-workbook.html" });
+  const satFoundationReview = function (grade) { return Object.freeze({ title: "지필드 SAT Math 네 영역 기초 복습 · 자체 20문항", url: `./sat-foundation-practice.html?grade=${grade}` }); };
   const proofWritingReference = Object.freeze({ title: "지필드 증명 쓰기 워크북 · 자체 8문항", url: "./proof-writing-workbook.html" });
   const maaAime2027Reference = Object.freeze({ title: "MAA 2027 AIME 자격·응시 안내", url: "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/" });
   const maaInvitationalReference = Object.freeze({ title: "MAA AIME·USAJMO·USAMO 안내", url: "https://maa.org/maa-invitational-competitions/" });
@@ -44,13 +45,13 @@
     8: Object.freeze({
       0: Object.freeze([algebra2Reference, Object.freeze({ title: "Khan Academy Algebra 2 참고", url: "https://www.khanacademy.org/math/algebra2" })]),
       1: Object.freeze([geometryReference, Object.freeze({ title: "지필드 AMC 10 개념 연결 연습 · 자체 12문항", url: "./amc10-practice.html?grade=8" }), Object.freeze({ title: "MAA AMC 공식 범위·형식", url: "https://maa.org/student-programs/amc/" })]),
-      2: Object.freeze([Object.freeze({ title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=8" }), maaAime2027Reference, Object.freeze({ title: "College Board SAT 수학 연습", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
+      2: Object.freeze([Object.freeze({ title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=8" }), maaAime2027Reference, satFoundationReview(8), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "MAA AMC 기출·안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board Bluebook 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
     }),
     10: Object.freeze({
       0: Object.freeze([preCalculusReference]),
       1: Object.freeze([Object.freeze({ title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=10" })]),
-      2: Object.freeze([maaAime2027Reference, maaInvitationalReference]),
+      2: Object.freeze([satFoundationReview(10), preCalculusReference, Object.freeze({ title: "College Board Bluebook 실전 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" }), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([proofWritingReference, maaInvitationalReference])
     })
   });
