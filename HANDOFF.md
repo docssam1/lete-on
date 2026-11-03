@@ -479,3 +479,9 @@ Verification: teacher paper-builder browser suite passes 12/12, including questi
 Extended the fraction-bar treatment into the Grade 7 `7.RP.A.1` unit-rate diagram. Its distance and time quantities now use stacked numerator/denominator markup, matching the prompt and answer choices; the `km/h` unit label remains conventional slash notation. Updated the public workbook cache keys and added a browser regression assertion for the printed question diagram.
 
 Verification: teacher paper-builder browser suite passes 12/12. A print-media A4 render of the public `g7rpa-w01` item visually confirms both diagram fractions are stacked and legible without clipping. Local only; no private diagnostic content used, no push, deployment, or Drive sync.
+
+### 2026-11-03 Preserve multi-character units in shared fraction rendering
+
+Cross-course A4 visual review found the shared fraction renderer splitting the Algebra 1 unit rate `달러/km` after the first denominator letter, producing a misleading stacked fragment. Restricted the optional trailing-variable case to numeric or parenthesized denominators; `3/2x` remains a stacked coefficient while unit text stays intact. Bumped all six HTML consumers to math-renderer cache version `20261103-14` and added a regression case for `달러/km`.
+
+Verification: Grade 3–12 roadmap, teacher paper builder, Algebra 1, Geometry, Algebra 2, and Precalculus model/browser suites pass 59/59. Print-media A4 samples across the four original course workbooks show stacked fractions without page overflow; a fresh Algebra 1 teacher page confirms `달러/km` stays intact and coordinates render as stacked fractions. Local-only; no private item content used, no push, deployment, or Drive sync.

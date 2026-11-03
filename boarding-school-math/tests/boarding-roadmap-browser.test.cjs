@@ -167,14 +167,14 @@ test("the original Geometry workbook prints proof, similarity, circle, coordinat
   assert.ok(await page.locator('.math-fraction[aria-label="360분의 90"]').count() > 0);
   const symbolicFractions = await page.evaluate(function () {
     const probe = document.createElement("span");
-    window.GFIELDMathText.append(probe, "sin θ=맞은편/빗변; θ/360; −√3/2; 2π/|B|; πt/6; 속력 km/h; m/s; AMC 10/12; AMC 12/AIME");
+    window.GFIELDMathText.append(probe, "sin θ=맞은편/빗변; θ/360; −√3/2; 2π/|B|; πt/6; 속력 km/h; m/s; 기울기 단위 달러/km; AMC 10/12; AMC 12/AIME");
     return {
       labels: Array.from(probe.querySelectorAll(".math-fraction"), function (node) { return node.getAttribute("aria-label"); }),
       remainingText: probe.textContent
     };
   });
   assert.deepEqual(symbolicFractions.labels, ["빗변분의 맞은편", "360분의 θ", "2분의 −√3", "|B|분의 2π", "6분의 πt"]);
-  assert.match(symbolicFractions.remainingText, /km\/h; m\/s; AMC 10\/12; AMC 12\/AIME/);
+  assert.match(symbolicFractions.remainingText, /km\/h; m\/s; 기울기 단위 달러\/km; AMC 10\/12; AMC 12\/AIME/);
   const trigLabels = await page.locator('.lesson-page[aria-label*="삼각비로 거리와 높이"]').locator(".math-fraction").evaluateAll(function (nodes) {
     return nodes.map(function (node) { return node.getAttribute("aria-label"); });
   });
