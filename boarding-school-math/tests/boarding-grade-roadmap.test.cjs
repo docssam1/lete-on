@@ -145,6 +145,7 @@ test("Grade 7 plan keeps Algebra 1 acceleration separate from school Geometry, A
   const plan = roadmap.getAnnualPlan(7);
   const tracks = roadmap.getTracks(7);
   assert.match(plan.note, /Algebra 1은 가속 학습 예시.*학교 Geometry는 정규 진도에서 이어가고.*선택 경로/);
+  assert.match(plan.note, /학생의 현재 수준이나 배정 과목을 판정하지 않아요/);
   assert.match(plan.periods[0][2], /변수식·일차방정식·부등식.*등식의 성질/);
   assert.match(plan.periods[1][2], /학교 Geometry에서 각·삼각형·닮음·넓이와 부피/);
   assert.match(plan.periods[2][2], /대수·기하.*심화 문장제와 자료 해석.*Digital SAT Math/);

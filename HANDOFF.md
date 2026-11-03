@@ -258,3 +258,9 @@ Verification: roadmap model suite passes 11/11; roadmap data and both test files
 The Grade 7 year plan now makes the supplied tracks concrete: Algebra 1 names variable expressions, linear equations, inequalities, and explaining equality properties; school Geometry remains on the regular course path; AMC 10 is introduced as a readiness-based option; and SAT practice connects advanced algebra/geometry word problems with data interpretation. The final period asks learners to time only prepared-scope AMC/SAT-style practice and record whether a concept, idea, or calculation caused difficulty. It remains a learning example, not a placement result.
 
 Verification: roadmap model suite passes 12/12; changed roadmap data and both test files pass Node syntax checks; `git diff --check` passes. Mobile assertions were added but not executed, so rendered layout remains unverified. Local only; no push or deployment.
+
+### 2026-11-03 Grade 7 plan boundary clarification
+
+Clarified that the Grade 7 annual-plan example does not assess a learner's current level or assigned course. The note now explicitly separates the roadmap example from diagnostic placement.
+
+Verification: Grade roadmap model suite passes 12/12; changed roadmap data syntax check and `git diff --check` pass. Browser/visual and print checks were not run. The private R6 current captures/A4 request refers to evidence needed for visual review of the locked workbench; none was supplied, so that review remains open. This entry's commit contains the implementation and handoff update; local only, no push or deployment.

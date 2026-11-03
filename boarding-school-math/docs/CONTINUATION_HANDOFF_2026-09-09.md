@@ -804,3 +804,9 @@ Verification: Grade roadmap model/browser suites pass 40/40. Browser coverage ch
 ### 2026-11-02 public contract regression recheck
 
 On the current local branch, reran the public 7.NS.A screener plan, authoring/release manifests, analysis, report projections, scoring readiness, and public workbook contracts together with AMC/contest review analysis and browser flows and the teacher paper-builder/A4 browser flows: 76/76 pass. This confirms the public workbook and local paper review still work while the separate 7.NS.A diagnostic remains answer-free and locked. These tests do not inspect or approve private candidate items, provide visual approval for the private R6 workbench, replace the pending screenshot/A4 review, or satisfy human review, pilot, and release gates. No private item content was accessed.
+
+### 2026-11-03 Grade 7 plan boundary clarification
+
+Clarified in the public Grade 7 annual-plan example that it does not assess the learner's current level or assigned course. This is a copy-level boundary and does not change the separate private 7.NS.A screener or its release state.
+
+Verification: Grade roadmap model suite passes 12/12; changed roadmap data syntax check and `git diff --check` pass. Browser, current R6 visual, and A4 print checks were not run. The requested desktop/mobile captures and PDF would be current QA evidence for the locked R6 workbench; none was supplied, so that review remains open. No private candidate content was accessed; local only.

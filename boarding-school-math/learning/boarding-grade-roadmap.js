@@ -96,7 +96,7 @@
       ["7–9개월", "SAT 기초 유형 맛보기", "문장제와 자료 해석을 배운 개념에 연결해요.", "Khan Academy SAT Math · College Board 공식 자료 · PWN the SAT Math Guide"],
       ["10–12개월", "복습과 실전 연습", "오답 이유를 나누어 보고, 준비된 범위에서 시간 연습을 해요.", "AoPS 복습 · AMC 8 기출 · SAT 기초 문제"]
     ]) }),
-    7: Object.freeze({ source: "provided", title: "Algebra 1에서 경시·SAT 기초로", note: "Algebra 1은 가속 학습 예시예요. 학교 Geometry는 정규 진도에서 이어가고 AMC 10·SAT은 학교 수학과 분리한 선택 경로로 살펴봐요.", periods: Object.freeze([
+    7: Object.freeze({ source: "provided", title: "Algebra 1에서 경시·SAT 기초로", note: "Algebra 1은 가속 학습 예시예요. 학교 Geometry는 정규 진도에서 이어가고 AMC 10·SAT은 학교 수학과 분리한 선택 경로로 살펴봐요. 학생의 현재 수준이나 배정 과목을 판정하지 않아요.", periods: Object.freeze([
       ["1–3개월", "Algebra 1 개념과 풀이", "변수식·일차방정식·부등식을 익히고 풀이에서 등식의 성질을 쓴 이유를 설명해요.", "AoPS Introduction to Algebra · 개념별 연습"],
       ["4–6개월", "기하 기초와 AMC 입문", "학교 Geometry에서 각·삼각형·닮음·넓이와 부피를 익혀요. 준비되면 AMC 10 문제를 선택해 접근해요.", "중학교 기하 · AMC 10 유형 문제"],
       ["7–9개월", "대수 강화와 SAT 유형", "배운 대수·기하를 심화 문장제와 자료 해석에 연결하고, Digital SAT Math 영역을 살펴봐요.", "Digital SAT Math 영역별 연습 · Khan Academy"],
