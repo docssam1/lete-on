@@ -36,7 +36,7 @@
 
 ## 자료의 범위
 
-이번 확인은 MAA 공개 페이지와 공개된 학생/교사용 안내서에 한정된다. 주최자 계정에 보이는 실제 보고서 내용은 접근하거나 확인하지 않았고, 학년별 참가자 분포 데이터가 공개되지 않는다고 단정하지 않는다. 현재 제품에서 사용할 만큼 검증된 공개 학년 규준을 찾지 못했다는 결론이다.
+현행 비교 확인은 MAA 공개 페이지와 공개된 학생/교사용 안내서에 한정된다. 주최자 계정에 보이는 최신 보고서는 접근하지 않았다. 학년별 데이터가 전혀 공개된 적 없다고 단정하지 않는다. 과거 일부 AMC 8 보고서에는 학년별 평균·응시자 수가 있으나, 최신 동학년 규준이나 배치 기준으로 검증된 자료는 별도로 확인되지 않았다.
 
 ## 2026-11-04 추가 웹 확인
 
@@ -44,5 +44,7 @@
 - MAA의 [Student Awards 페이지](https://maa.org/student-programs/youth-program-awards-winners/)는 2026 Young Women in Mathematics Awards & Certificates 수상자와 일부 허가된 이름을 공개한다. MAA는 상을 각 대회 최고 점수 참가자, 인증서를 각 MAA Section의 최고 점수 참가자에게 준다고 설명하지만, 공개 명단은 게시 동의를 한 이름만 포함한다. 명단에 점수, 전체 응시자 수, 같은 학년 전체 분포가 없으므로 이를 개인의 학년별 순위나 AMC 점수 등급으로 사용할 수 없다.
 - MAA의 [현행 대회 정책 페이지](https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/)는 정책·수상 조건이 변경될 수 있고 공식 사이트에서 현재 기준을 확인해야 한다고 명시한다. 따라서 예전 자료에 등장하는 Achievement Roll/Honor Roll 명칭이나 제3자 점수표는, 해당 시즌의 MAA 공식 기준과 모집단이 확인되기 전까지 제품의 현재 등급 기준으로 채택하지 않는다.
 - 비교 기능에 지금 반영할 수 있는 것은 공개된 동일 시험지 전체 응시자 점수 분포가 있는 회차의 기준과, 주기가 명시된 AIME 진입 점수 기준뿐이다. Grade는 응시 당시 학생의 기록 맥락으로 보이고, MAA의 공식 학년별 등급·백분위는 아니다.
+- 역사자료 탐색 중 2008 MAA AMC 8 `Summary of Results and Awards` 보고서의 원문 텍스트 사본을 확인했다. 보고서에는 2002–2008 학년별 평균 및 recorded grade 응시자 수 표가 있다. 예를 들어 2008년에는 학년군 4–5, 6, 7, 8의 표본 수가 각각 2,698 / 19,726 / 48,889 / 75,002명, 평균이 10.75 / 9.88 / 11.18 / 12.07점이다. 이 보고서는 표의 분류가 학생이 답안지에 실제 표시한 학년에 기반하고 미기입 자료를 제외한다고 설명한다. 또 AMC 8에 “확립된 규준”이 없고 학교 수업·배치 시험과 비교할 수 없다고 명시한다. 따라서 이 값은 **과거 회차의 기술통계 사례**로만 보관하고 현재 학생 레벨, 백분위, placement에 쓰지 않는다.
+- 자료 접근 경로는 [Stanford 연구자의 AMC 연례 보고서 아카이브](https://sites.google.com/view/ian-calaway/amc-archive/)와 그 페이지에 연결된 공개 MAA 작성 보고서 텍스트 사본이다. 아카이브 운영자는 1985–2022 중학교 요약집을 디지털화했다고 설명하지만, MAA 공식 호스트가 아닌 제3자 보관소이고 일부 누락 가능성을 직접 고지한다. 제품 기준에 쓰기 전에는 각 연도 원본 PDF와 표, 정의를 개별 대조해야 한다. 확인 예: [2008 MAA AMC 8 Results & Awards](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america).
 
 확인 출처: [LIVE 실제 AMC/AIME 시험지 색인](https://live.poshenloh.com/past-contests), [MAA Student Awards](https://maa.org/student-programs/youth-program-awards-winners/), [MAA 현행 정책](https://maa.org/student-programs/amc/maa-american-mathematics-competitions-policies/). 확인일: 2026-11-04 KST.
