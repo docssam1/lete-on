@@ -17,7 +17,8 @@
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6", generatorKey: "source52TrapezoidMidpointPage31Mission6", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6-original", generatorKey: "source52TrapezoidMidpointPage31Mission6Original", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-3-original", generatorKey: "source52EquilateralRotationPage31Mission3Original", publicReady: true }),
-    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-4-original", generatorKey: "source52SquareTrisectionAreaPage31Mission4Original", publicReady: true })
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-4-original", generatorKey: "source52SquareTrisectionAreaPage31Mission4Original", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-5-original", generatorKey: "source52CongruentTriangleAreaPage31Mission5Original", publicReady: true })
   ]);
   const squareAlphas = [9, 14, 19];
   const circleBaseVertices = [48, 57, 72];
@@ -200,9 +201,9 @@
     return `<svg class="source52-p31-diagram source52-p31-area-proof" viewBox="0 0 500 370" role="img" aria-label="점 ㅂ을 더해 직사각형을 만들고 삼각형 ㄱㄷㅁ을 남긴 넓이 풀이 그림" xmlns="http://www.w3.org/2000/svg"><polygon class="source52-area-target" points="${pointString(g)} ${pointString(d)} ${pointString(m)}"/><rect class="source52-construction-line" x="${n.x}" y="${g.y}" width="${total*scale}" height="${height*scale}"/><line x1="${n.x}" y1="${n.y}" x2="${g.x}" y2="${g.y}"/><line x1="${n.x}" y1="${n.y}" x2="${d.x}" y2="${d.y}"/><line x1="${d.x}" y1="${d.y}" x2="${g.x}" y2="${g.y}"/><line x1="${d.x}" y1="${d.y}" x2="${r.x}" y2="${r.y}"/><line x1="${r.x}" y1="${r.y}" x2="${m.x}" y2="${m.y}"/><line x1="${d.x}" y1="${d.y}" x2="${m.x}" y2="${m.y}"/><text x="${g.x-25}" y="${g.y-4}">ㄱ</text><text x="${n.x-26}" y="${n.y+24}">ㄴ</text><text x="${d.x-10}" y="${d.y+24}">ㄷ</text><text x="${r.x+8}" y="${r.y+24}">ㄹ</text><text x="${m.x+8}" y="${m.y+3}">ㅁ</text><text x="${r.x+8}" y="${g.y+4}">ㅂ</text></svg>`;
   }
 
-  function buildMission5(variant, offset) {
-    const height = areaBaseHeights[variant] + 2 * offset;
-    const width = areaBaseWidths[variant];
+  function buildMission5(variant, offset, original = false) {
+    const height = original ? 16 : areaBaseHeights[variant] + 2 * offset;
+    const width = original ? 8 : areaBaseWidths[variant];
     const totalWidth = height + width;
     const topGap = height - width;
     const leftCorner = height * width / 2;
@@ -212,7 +213,7 @@
     const answer = rectangleArea - leftCorner - rightCorner - topCorner;
     const prompt = `<div class="source52-p31-question"><p>삼각형 ㄱㄴㄷ과 삼각형 ㄷㄹㅁ은 서로 합동입니다. ㄱㄴ=${height}cm, ㄹㅁ=${width}cm일 때 삼각형 ㄱㄷㅁ의 넓이를 구하세요.</p>${congruentTriangleAreaDiagram(height,width)}</div>`;
     const solution = `<div class="source52-p31-solution"><ol><li>합동 표기 순서대로 대응점을 맞추면 ㄱ↔ㄷ, ㄴ↔ㄹ, ㄷ↔ㅁ입니다.<br>따라서 ㄴㄷ=ㄹㅁ=${width}cm, ㄷㄹ=ㄱㄴ=${height}cm입니다.</li><li>ㄱ과 같은 높이의 점 ㅂ을 ㄹ 위에 잡아 직사각형 ㄱㄴㄹㅂ을 만듭니다.${congruentTriangleAreaProofDiagram(height,width)}직사각형의 가로는 ${totalWidth}cm, 세로는 ${height}cm이므로 넓이는 ${height}×${totalWidth}=${rectangleArea}cm²입니다.</li><li>직사각형에서 삼각형 ㄱㄷㅁ을 제외한 세 부분을 뺍니다. 왼쪽 아래와 오른쪽 아래 삼각형은 각각 ${height}×${width}÷2=${leftCorner}cm²이고, 위쪽 삼각형은 ${totalWidth}×(${height}−${width})÷2=${topCorner}cm²입니다.</li><li>따라서 삼각형 ㄱㄷㅁ의 넓이는 ${rectangleArea}−${leftCorner}−${rightCorner}−${topCorner}=${answer}cm²입니다.</li></ol></div>`;
-    return result("5-2-u3-e4-mission-5", variant, offset, prompt, `${answer}cm²`, solution, { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer }, false, triangleAreaAnswerVisual("삼각형 넓이", `${answer}cm²`));
+    return result(original ? "5-2-u3-e4-mission-5-original" : "5-2-u3-e4-mission-5", variant, offset, prompt, `${answer}cm²`, solution, { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer }, false, triangleAreaAnswerVisual("삼각형 넓이", `${answer}cm²`));
   }
 
   function trapezoidMidpointDiagram(top, bottom, height, proof = false) {
@@ -342,6 +343,7 @@
     if (sourceItemId === definitions[7].sourceItemId) return buildMission6(0,0,true);
     if (sourceItemId === definitions[8].sourceItemId) return buildMission3Original();
     if (sourceItemId === definitions[9].sourceItemId) return buildMission4(0,0,true);
+    if (sourceItemId === definitions[10].sourceItemId) return buildMission5(0,0,true);
     return null;
   }
   const keyFor = sourceItemId => definitions.find(item => item.sourceItemId === sourceItemId)?.generatorKey || "";

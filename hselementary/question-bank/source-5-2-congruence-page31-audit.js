@@ -69,6 +69,18 @@ for (const def of source.definitions) {
         assert.deepEqual([item.answerModel.k,item.answerModel.outerArea,item.answerModel.answer],[5,225,125]);
         assert.equal(item.answer,"125cm²");
         assert.equal(item.publisherKeyVerified,false);
+      } else if (def.sourceItemId.endsWith("mission-5-original")) {
+        const svg=item.prompt.match(/<svg[\s\S]*?<\/svg>/)[0];
+        const pt=name=>{const [x,y]=svg.match(new RegExp(`data-${name}="([^"]+)"`))[1].split(",").map(Number);return {x,y}};
+        const g=pt("g"), n=pt("n"), d=pt("d"), r=pt("r"), m=pt("m");
+        const area=(a,b,c)=>Math.abs((b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x))/2;
+        const scale=distance(g,n)/16;
+        assert(Math.abs(area(g,d,m)/(scale*scale)-160)<.03);
+        assert(Math.abs(distance(g,n)-distance(d,r))<.03);
+        assert(Math.abs(distance(n,d)-distance(r,m))<.03);
+        assert.deepEqual([item.answerModel.height,item.answerModel.width,item.answerModel.answer],[16,8,160]);
+        assert.equal(item.answer,"160cm²");
+        assert.equal(item.publisherKeyVerified,false);
       } else if (def.sourceItemId.endsWith("mission-6-original")) {
         assert.deepEqual([item.answerModel.top, item.answerModel.bottom, item.answerModel.height], [10, 8, 6]);
         assert.equal(item.answer, "27cm²");
