@@ -3644,6 +3644,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u3-practice-83-linked-similar",sourceParentItemId:"5-2-u3-practice-83-original",sourceItemLabel:"확인학습 83번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:91,alternateSourcePdfPage:90,sourcePrintedPage:95,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3LinkedPalindromeOrdinal",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 대칭수 순서 조건을 직접 대조하고 가능한 세 자리 수를 독립 열거했습니다."});
   }
 
+  if (source52Triangle) {
+    const type=source52Triangle.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u3-t6-2");
+    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u3-practice-82-linked-similar",sourceParentItemId:"5-2-u3-practice-82-original",sourceItemLabel:"확인학습 82번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:91,alternateSourcePdfPage:90,sourcePrintedPage:95,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3LinkedFoldRemainingArea",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 접기 순서와 절단 구조를 직접 대조하고 변경한 격자와 색칠 영역을 독립 검산했습니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
