@@ -9,3 +9,10 @@
 @media print {
   #problemView .u3p85-construction-copy, #solutionView .u3p85-construction-copy { width:60mm !important; max-width:100% !important; max-height:none !important; }
 }
+@media print {
+  /* Keep the page padding when this answer sheet flows onto a second page. */
+  .answer-page:has([data-source-answer="5-2-u3-practice-10-original"], [data-source-answer="5-2-u3-practice-13-original"]) {
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+}
