@@ -33,7 +33,7 @@ const areaPoolSignatures = new Set();
 const midpointPoolSignatures = new Set();
 const trisectionPoolSignatures = new Set();
 for (const def of source.definitions) {
-  const variantCount = def.sourceItemId.endsWith("mission-6-original") ? 1 : /(?:mission-6|example-2)$/.test(def.sourceItemId) ? 4 : 3;
+  const variantCount = def.sourceItemId.endsWith("-original") ? 1 : /(?:mission-6|example-2)$/.test(def.sourceItemId) ? 4 : 3;
   for (let variant = 0; variant < variantCount; variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
       const item = source.getQuestion(def.sourceItemId, variant, difficultyOffset);
@@ -41,14 +41,24 @@ for (const def of source.definitions) {
       assert.equal(item.sourceItemId, def.sourceItemId);
       assert.equal(item.verifiedVariantCount, variantCount);
       assert.equal(item.verifiedPoolIndex, variant);
-      assert.equal(item.difficultyOffset, def.sourceItemId.endsWith("mission-6-original") ? 0 : difficultyOffset);
+      assert.equal(item.difficultyOffset, def.sourceItemId.endsWith("-original") ? 0 : difficultyOffset);
       assert.equal(item.answerVisualStatus, "verified-reconstruction");
       assert.match(item.answerVisual, /<svg[\s\S]*<\/svg>/);
       assert.match(item.prompt, /<svg[\s\S]*<\/svg>/);
       assert.doesNotMatch(item.prompt, /data-source-answer|정답은|답은/);
       assert.match(item.solution, /data-source-answer/);
 
-      if (def.sourceItemId.endsWith("mission-6-original")) {
+      if (def.sourceItemId.endsWith("mission-3-original")) {
+        const svg = item.prompt.match(/<svg[\s\S]*?<\/svg>/)[0];
+        const pt = name => { const [x,y] = svg.match(new RegExp(`data-${name}="([^"]+)"`))[1].split(",").map(Number); return {x,y}; };
+        const g=pt("g"), n=pt("n"), d=pt("d"), r=pt("r"), m=pt("m");
+        for (const [a,b,c] of [[g,n,d],[d,r,m]]) assert(Math.abs(distance(a,b)-distance(b,c))<.03 && Math.abs(distance(b,c)-distance(c,a))<.03);
+        assert(Math.abs(angleAt(n,m,d)-140)<.02);
+        assert(Math.abs(angleAt(g,r,m)-160)<.02);
+        assert.equal(item.answer,"160°");
+        assert.match(item.prompt,/㉮/);
+        assert.equal(item.publisherKeyVerified,false);
+      } else if (def.sourceItemId.endsWith("mission-6-original")) {
         assert.deepEqual([item.answerModel.top, item.answerModel.bottom, item.answerModel.height], [10, 8, 6]);
         assert.equal(item.answer, "27cm²");
         assert.match(item.solution, /넓이 합의 절반/);
@@ -303,7 +313,7 @@ for (const type of sourceTypes) {
     continue;
   }
   assert.equal(window.HSE_GENERATORS.generatorKey(type), type.generatorKey);
-  for (let variant = 0; variant < (type.sourceItemId.endsWith("mission-6-original") ? 1 : /(?:mission-6|example-2)$/.test(type.sourceItemId) ? 4 : 3); variant += 1) {
+  for (let variant = 0; variant < (type.sourceItemId.endsWith("-original") ? 1 : /(?:mission-6|example-2)$/.test(type.sourceItemId) ? 4 : 3); variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
       const generated = window.HSE_GENERATORS.generate(type, 1, difficultyOffset, "audit", variant);
       assert.ok(generated, `HSE_GENERATORS rejected ${type.id}`);
