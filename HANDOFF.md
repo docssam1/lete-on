@@ -702,7 +702,7 @@ The user's fraction-format request was verified against the rendered Grade 7 AMC
 
 Verification: the targeted Grade 7 AMC browser test and AIME browser test pass 2/2, including fraction-bar, palette, focus, route, answer, and mobile layout assertions. Captures `/tmp/gfield-amc10-fraction-inline.png`, `/tmp/gfield-amc10-mobile-toolbar.png`, and `/tmp/gfield-amc10-desktop.png` reviewed. `git diff --check` passes. No private assessment item content or learner data was used. Local only; no push, deployment, Drive sync, or external API use.
 
-Follow-up: connected AMC 10's item, answer-choice, hint, and explanation text to the shared math-text renderer. Mathematical fractions keep a stacked numerator, fraction bar, and denominator, with a Korean accessible label; question-progress counts retain slash count notation. The fallback remains escaped text if the shared renderer is unavailable. No item content changed.
+Follow-up: connected AMC 10's item, answer-choice, hint, and explanation text to the shared math-text renderer. Mathematical fractions keep a stacked numerator, fraction bar, and denominator, with a Korean accessible label; question-progress counts retain slash count notation. The fallback remains escaped text if the shared renderer is unavailable. No item content changed. Verification on this refactor: the Grade 7 roadmap-to-AMC practice browser test passes 1/1; `/tmp/gfield-amc10-fraction-current.png` shows all five probability choices as actual stacked fractions in Chrome. Local code syntax and diff checks pass; no private content was used.
 
 ### 2026-11-03 Pre-Algebra expression wording
 
