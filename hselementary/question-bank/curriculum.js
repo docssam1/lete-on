@@ -3764,6 +3764,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52Triangle = semesters.find(semester=>semester.grade===5&&semester.term===2)?.units.find(unit=>unit.id==="5-2-u3");
   if (source52Triangle) {
+    const type=source52Triangle.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u3-t5-2");
+    if (type) Object.assign(type,{name:"두 대칭축에 차례로 반사한 점의 각 · 원문",label:"두 대칭축에 차례로 반사한 점의 각 · 원문",sourceItemId:"5-2-u3-e5-example-3",sourceItemLabel:"예제 5-3 원문",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:28,alternateSourcePdfPage:27,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52DoubleReflectionPage32Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문의 두 대칭축과 45°·20° 표시를 대조하고 두 번의 점 반사와 목표각을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+  if (source52Triangle) {
     const type=source52Triangle.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u3-t8");
     if (type) Object.assign(type,{name:"회전하는 삼각형이 점대칭 위치에 이르는 시간 · 원문",label:"회전하는 삼각형이 점대칭 위치에 이르는 시간 · 원문",sourceItemId:"5-2-u3-e7-mission-5",sourceItemLabel:"Mission 5 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:33,alternateSourcePdfPage:32,sourcePrintedPage:37,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52RotatingTrianglePage37Mission5Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문의 65°와 회전 위치를 대조하고 1분당 회전각과 분·초 변환을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }

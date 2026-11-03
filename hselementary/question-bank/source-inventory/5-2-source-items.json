@@ -2804,11 +2804,11 @@
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 그림의 두 축과 점의 반사 순서를 대조했습니다. 출판사 답안 미대조로 원문 잠금을 유지하고, 각도가 다른 별도 창작 유사문항을 연결합니다.",
+      "implementationStatus": "ready",
+      "reviewReason": "원문 두 축과 45도·20도 표시를 대조하고 반사와 각을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",
       "syntheticRuntimeTypeId": "5-2-u3-e5-example-3-reflection-synthetic",
       "publisherKeyVerified": false,
-      "publicDecision": "locked"
+      "publicDecision": "public"
     },
     {
       "sourceItemId": "5-2-u3-e5-example-4",
