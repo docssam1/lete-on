@@ -3640,7 +3640,14 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-20-original",sourceItemLabel:"확인학습 20번 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:73,alternateSourcePdfPage:72,sourcePrintedPage:77,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2FractionNaturalMultiplesSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문이 묻는 자연수배 조건을 보존하고 변형별 개수를 독립 검산했습니다."});
   }
 
+  if (source52Unit2Application && !source52Unit2Application.types.some(type=>type.id==="5-2-u2-practice-71-count-similar")) {
+    const id="5-2-u2-practice-71-count-similar",name="기약분수의 곱이 자연수인 식의 개수 · 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Application.types.push({id,number:source52Unit2Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-71-original",sourceItemLabel:"확인학습 71번 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:79,alternateSourcePdfPage:78,sourcePrintedPage:83,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2CoprimeCountSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문과 같은 기약분수·자연수 곱 조건에서 식의 개수를 묻고 변형별 가능한 값을 독립 열거했습니다."});
+  }
+
   if (source52Unit2) for (const [id,reason] of [
+    ["5-2-u2-t4-2","연결한 83쪽 71번 원문은 식의 개수를 묻지만 현재 유형은 순서쌍을 모두 묻습니다. 같은 답 계약의 원문을 확인할 때까지 검수 대기합니다."],
     ["5-2-u2-t1-3","연결한 77쪽 20번 원문은 주어진 분수의 자연수배를 묻지만 현재 유형은 곱의 결과가 자연수인 수를 묻습니다. 해당 유형에 맞는 원문을 확인할 때까지 검수 대기합니다."],
     ["5-2-u2-t1-2","연결한 75쪽 6번 원문은 이동 거리를 묻지만 현재 연습은 시간만 묻습니다. 같은 유형의 원문과 답 계약을 다시 확인할 때까지 검수 대기합니다."],
     ["5-2-u2-t3-3","연결한 80쪽 45번 원문은 여학생 수를 묻지만 현재 유형은 전체 인원을 묻습니다. 유형과 원문 답 계약을 다시 확인할 때까지 검수 대기합니다."]

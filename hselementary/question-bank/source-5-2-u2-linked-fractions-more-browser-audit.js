@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const path = require("node:path");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8918";
-const ids = ["5-2-u2-t1", "5-2-u2-t4", "5-2-u2-t4-2", "5-2-u2-practice-63-original"];
+const ids = ["5-2-u2-t1", "5-2-u2-t4", "5-2-u2-practice-71-count-similar", "5-2-u2-practice-63-original"];
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
@@ -34,8 +34,8 @@ const ids = ["5-2-u2-t1", "5-2-u2-t4", "5-2-u2-t4-2", "5-2-u2-practice-63-origin
       }, ids);
       assert.equal(data.problems.length, 4);
       assert.equal(data.solutions.length, 4);
-      const symbolic = page.locator('#problemView [data-source-item-id="5-2-u2-practice-71-similar"]');
-      assert.equal(await symbolic.locator('.math-fraction').count(), 2, 'symbolic fractions render vertically');
+      const symbolic = page.locator('#problemView [data-source-item-id="5-2-u2-practice-71-count-similar"]');
+      assert.equal(await symbolic.locator('.math-fraction').count(), 4, 'symbolic fractions render vertically');
       assert.doesNotMatch(await symbolic.innerText(), /[㉠㉡]\s*\//, 'no slash-form symbolic fractions');
       assert.equal(data.problems.find(p => p.id === '5-2-u2-practice-10-similar').automaticGrading, true, 'remaining fruit response uses automatic grading');
       assert.deepEqual(await page.locator('#problemView .print-page').evaluateAll(pages => pages.map(page => page.querySelectorAll('.question-item').length)), [4], 'four questions per page, except the final remainder');

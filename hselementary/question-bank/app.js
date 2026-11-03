@@ -471,7 +471,7 @@
 
   function problemWeight(question) {
     // The four short equations stack within a half-page column in print.
-    if (question.sourceItemId === "5-2-u2-practice-71-original") return 1; // Four short inline fractions fit the standard column.
+    if (["5-2-u2-practice-71-original", "5-2-u2-practice-71-count-similar"].includes(question.sourceItemId)) return 1; // Four short inline fractions fit the standard column.
     if (question.sourceItemId === "5-2-u2-practice-74-original") return 1; // The three short symbolic fractions fit the standard column.
     if (question.sourceItemId === "5-2-u4-e2-example-1") return 1;
     if (question.sourceItemId?.startsWith("6-2-u4-e2-")) return question.sourceItemId.endsWith("exploration") ? 3 : 1.5;
