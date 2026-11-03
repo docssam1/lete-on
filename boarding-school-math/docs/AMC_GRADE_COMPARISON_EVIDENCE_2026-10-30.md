@@ -97,6 +97,10 @@ Internet Archive가 보존한 2022년 MAA `General Reports` 페이지는 MAA의 
 
 MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percentile`가 점수를 내림차순으로 나열하고, 각 점수에서 학년별 응시자 수와 대응 백분위를 제공한다고 정의한다. AMC 8의 경우 최대 점수 기준이 25, AMC 10의 경우 150으로 설명되어 있다. 2013 AMC 10 A 평균·응시자 수의 학년별 사례도 구형 보고서 수치와 대조된다. 하지만 이번 조사에서는 아카이브된 ASP.NET 페이지의 선택 메뉴와 설명은 확보했어도, 인터랙티브 리포트 본문 전체를 폼별로 재생해 원본 파일로 회수하지 못했다. 그러므로 구형 백분위표를 제품에 넣거나 특정 연도 전체를 완료했다고 표시하지 않는다.
 
+추가 검색으로 **2011 AMC 8 한국 응시집단의 구형 `Contest Score Grade Report with Percentile` 전체 표**가 당시 MAA 결과를 전재한 자료에서 회수됐다. 게시물은 한국 참가자 899명 결과라고 명시한다. 표의 학년 구분은 `<=5`, `6`, `7`, `8`, `unknown`이고 점수별 인원 수 및 해당 집단 백분위가 있다. 원자료 표 전체는 [`historical-amc-grade/`](historical-amc-grade/) 아래의 전사 CSV에 저장했다. 이름·학교가 노출된 수상자 목록은 수집하지 않았다.
+
+이것은 **미국 전체 통계가 아닌 2011년 한국 MAA 참가 집단 자료**이며, 현재 학생과 현재 시험 회차의 규준으로 대체할 수 없다. 출처가 MAA 운영 학원 사이트의 보고서 전재이므로, 원본 MAA 화면·지역 필터의 보존본과 직접 대조하기 전까지 데이터 상태를 `secondary transcription; primary capture pending`으로 유지한다. MAA 구형 리포트의 컬럼 설명과 행 구조는 일치하지만, 퍼센타일 정의가 `≤ 점수`인지 `< 점수`인지 등 계산 경계도 재검증할 항목으로 남긴다.
+
 ### 다음 수집 단위와 제품 반영 기준
 
 1. AMC 8 1985–2022, AMC 10/12 2009–2021, AIME 2009–2022를 회차·폼별 행으로 만들고 `paper availability`, `grade count/mean`, `grade score distribution/percentile`을 서로 다른 자료 상태로 관리한다. 현재는 모든 연도의 `paper availability`가 LIVE 색인에서 확인 가능하지만, 학년별 분포는 회차마다 원자료가 확인되어야 한다.
@@ -109,6 +113,7 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - [MAA 작성 2010 AMC 10/12 연례 보고서 사본](https://www.scribd.com/doc/58090065/2010-AMC-HS-Summary) — 표 I/II 학년 평균·표본 수, AIME I/II의 학년별 점수 분포. 제3자 문서 보관소.
 - [MAA AMC Archive, Ian Calaway](https://sites.google.com/view/ian-calaway/amc-archive/) — 저자는 AMC 8 1985–2022 보고서를 디지털화했다고 설명하고, 고교 보고서는 1980–2010 및 2011–2022 디지털 결과를 안내한다. 누락 보고서가 있음을 명시한 연구자 보관소이며 MAA 공식 호스트는 아님.
 - [보존된 2022 MAA General Reports 페이지](https://web.archive.org/web/20221209122712id_/http://amc-reg.maa.org/reports/generalreports.aspx) — MAA 구형 통계 페이지의 연도 메뉴와 백분위 리포트 정의를 확인. 재생된 리포트 본문 원자료는 이번 조사에서 확보하지 못함.
+- [2011 AMC 8 한국 결과·학년 백분위표 전재](https://www.amcstudy.net/79) — 899명 한국 참가집단, 학년별 인원·평균, 점수별 학년 백분위 표. MAA가 발표한 결과라는 게시물 설명과 원자료 표의 복사본이며, MAA 공식 호스트 자체는 아님.
 - [MAA 현행 EduView score distribution](https://maa.edvistas.com/eduview/report.aspx?view=1561&mode=6) — 현행 회차별 전체 응시 집단 기준. 학년 선택 필드는 페이지에 없음.
 
 확인일: 2026-11-04 KST. 과거 표는 역사적 기술통계이며, 현재 학생의 AMC 등급·학년 백분위·배치 판정에 바로 쓰지 않는다.
