@@ -159,6 +159,12 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.match(roadmap.courseStageResources[9].note, /학교마다 수강 과목과 순서/);
   assert.equal(roadmap.courseStageResources[9][0][0].url, "./algebra2-workbook.html");
   assert.equal(roadmap.courseStageResources[9][1][0].url, "./geometry-workbook.html");
+  assert.deepEqual(roadmap.courseStageResources[9][2].map(function (resource) { return resource.url; }), [
+    "./amc10-practice.html?grade=9", "./sat-foundation-practice.html?grade=9",
+    "https://maa.org/student-programs/amc/", "https://satsuite.collegeboard.org/practice/student-question-bank/math"
+  ]);
+  assert.equal(roadmap.courseStageResources[9][3][0].url, "./precalculus-workbook.html");
+  assert.match(roadmap.courseStageResources[9][3][0].title, /선수 조건 확인 후 선택/);
   assert.equal(roadmap.courseStageResources[10][0][0].url, "./precalculus-workbook.html");
   assert.equal(roadmap.courseStageResources[10][1][0].url, "./aime-practice.html?grade=10");
   assert.match(roadmap.courseStageResources[10].stageNotes[2], /2027 AIME.*만 13세 이상.*AMC 10 100점.*AMC 12 85점/);

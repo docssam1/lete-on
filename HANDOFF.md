@@ -10,6 +10,8 @@ Verification: the Grade 3–12 roadmap/model, roadmap browser, SAT foundation, a
 
 Follow-up: from the 390px Grade 9 AMC 10 practice view, clicking the visible in-content “별도 복습 경로” opens manual paper review with Grade 9 and AMC 10 selected. The Grade 9 back-to-roadmap route is preserved. The browser assertion also documents why this uses the in-content link: the mobile header hides the desktop review link.
 
+Follow-up: the Grade 9 growth-map stages now link the same original AMC 10/SAT resources as its annual plan, plus the current official MAA/College Board references. The final “next course” stage opens GFIELD Precalculus with a prerequisite check. Model/browser assertions and direct Chrome renders at 1440px/390px confirm all links, the school-course caveat, no page overflow, and no browser errors. The mobile view wraps every link inside the stage card.
+
 ### 2026-11-03 Grade 7 `7.NS.A` public contract regression
 
 Revalidated only the public diagnostic/workbook contracts after the roadmap updates; private candidate content was excluded. The diagnostic remains answer-free, locked, non-placement, and dependent on four bound teacher reviews before a score projection. The public student workbook continues to provide its separate 36-item practice plus eight-item recheck.

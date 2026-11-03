@@ -71,7 +71,14 @@
     9: Object.freeze({
       note: "9학년은 학교마다 수강 과목과 순서가 달라요. 현재 과목과 선수 개념에 맞는 자료를 골라 보세요.",
       0: Object.freeze([algebra2Reference]),
-      1: Object.freeze([geometryReference])
+      1: Object.freeze([geometryReference]),
+      2: Object.freeze([
+        Object.freeze({ title: "지필드 AMC 10 개념 연결 연습 · 자체 12문항", url: "./amc10-practice.html?grade=9" }),
+        satFoundationReview(9),
+        Object.freeze({ title: "MAA AMC 공식 범위·형식", url: "https://maa.org/student-programs/amc/" }),
+        Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })
+      ]),
+      3: Object.freeze([Object.freeze({ title: "지필드 Precalculus 원본 수업 · 선수 조건 확인 후 선택", url: "./precalculus-workbook.html" })])
     }),
     10: Object.freeze({
       stageNotes: Object.freeze({ 2: "AIME형 문제를 공부하는 것과 실제 응시는 달라요. 미국·캐나다의 2027 AIME는 만 13세 이상과 AMC 10 100점 또는 AMC 12 85점 등 자격 기준을 적용해요. USAJMO·USAMO 선발과 다른 연도·지역 규정은 MAA 안내를 확인하세요." }),

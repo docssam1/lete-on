@@ -440,6 +440,16 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#grade-focus-list").innerText(), /학교 수학[\s\S]*Algebra 2·기하를 점검하고 다음 과목 정하기/);
   assert.match(await page.locator("#source-chip").innerText(), /학교 과목 확인/);
   assert.match(await page.locator("#grade-note").innerText(), /학교마다 수강 과목과 순서/);
+  await page.getByRole("button", { name: "단계 3, 원할 때 도전 보기" }).click();
+  await page.locator("#stage-external-resources summary").click();
+  assert.deepEqual(await page.locator("#stage-external-resource-list a").evaluateAll(function (links) { return links.map(function (link) { return link.getAttribute("href"); }); }), [
+    "./amc10-practice.html?grade=9", "./sat-foundation-practice.html?grade=9",
+    "https://maa.org/student-programs/amc/", "https://satsuite.collegeboard.org/practice/student-question-bank/math"
+  ]);
+  await page.getByRole("button", { name: "단계 4, 다음 과목 확인 보기" }).click();
+  await page.locator("#stage-external-resources summary").click();
+  assert.equal(await page.locator("#stage-external-resource-list a").getAttribute("href"), "./precalculus-workbook.html");
+  assert.match(await page.locator("#stage-external-resource-list").innerText(), /선수 조건 확인 후 선택/);
   await page.locator("#competition-select").selectOption("amc10");
   assert.deepEqual(await page.locator("#domain-rows .domain-row strong").allInnerTexts(), ["식·대수", "수와 정수론", "기하·공간", "경우의 수·확률"]);
   assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=9&program=amc10/);
