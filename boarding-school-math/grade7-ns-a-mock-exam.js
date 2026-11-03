@@ -1,6 +1,6 @@
 (function () {
   "use strict";
-  const exam = window.GFIELDGrade7UnitMock || window.GFIELDGrade7NSAExam || window.GFIELDAMC12Mock;
+  const exam = window.GFIELDGrade7UnitMock || window.GFIELDGrade7NSAExam || window.GFIELDAMC10Mock || window.GFIELDAMC12Mock;
   const localRecords = window.GFIELDLocalLearningRecord;
   if (!exam || !Array.isArray(exam.items) || !exam.items.length || !Array.isArray(exam.standards)) return;
   const answers = new Map();
@@ -179,14 +179,14 @@
     }
     const nextStudyLink = document.createElement("a");
     nextStudyLink.href = exam.nextStudyHref || `./unit-workbook.html?cluster=${encodeURIComponent(exam.clusterId)}&mode=workbook&audience=student&locale=ko&paper=A4`;
-    if (exam.id === "gfield-amc12-concept-mock-v1") {
+    if (["gfield-amc12-concept-mock-v1", "gfield-amc10-concept-mock-v1"].includes(exam.id)) {
       const nextStudyUrl = new URL(nextStudyLink.href, window.location.href);
       const attemptParams = new URLSearchParams(window.location.search);
       ["sourceYear", "sourceForm", "sourceQuestions"].forEach(function (key) {
         const value = attemptParams.get(key);
         if (value) nextStudyUrl.searchParams.set(key, value);
       });
-      const practiceDomainIds = { "대수": "algebra", "함수·삼각함수": "functions", "정수론": "number", "기하": "geometry", "경우의 수": "counting" };
+      const practiceDomainIds = { "대수": "algebra", "함수·삼각함수": "functions", "정수론": "number", "기하": "geometry", "경우의 수": "counting", "확률": "probability" };
       const wrongItems = exam.items.map(function (item, index) { return { item: item, number: index + 1 }; }).filter(function (entry) {
         return answers.get(entry.item.id) !== entry.item.answer;
       });
@@ -201,7 +201,7 @@
     if (savedResult) {
       const roadmapLink = document.createElement("a");
       roadmapLink.className = "mock-roadmap-result-link";
-      const roadmapSection = exam.id === "gfield-amc12-concept-mock-v1" || exam.clusterId === "AMC8" ? "competition-diagnostic" : "grade-practice";
+      const roadmapSection = ["gfield-amc12-concept-mock-v1", "gfield-amc10-concept-mock-v1"].includes(exam.id) || exam.clusterId === "AMC8" ? "competition-diagnostic" : "grade-practice";
       roadmapLink.href = `./boarding-roadmap.html?grade=${encodeURIComponent(exam.grade || 7)}#${roadmapSection}`;
       roadmapLink.textContent = "로드맵에서 내 모의고사 기록 보기 →";
       resultContent.push(roadmapLink);
