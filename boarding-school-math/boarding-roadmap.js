@@ -183,6 +183,7 @@
   }
   function renderStages(entry) {
     const list = $("stage-list");
+    const markerHost = $("stage-map-markers");
     const grade7 = grade === 7;
     const selectionDisclosure = $("stage-external-resources");
     const renderedSelection = `${grade}:${stage === null ? "none" : stage}`;
@@ -193,6 +194,9 @@
     list.classList.toggle("grade7-path", grade7);
     list.setAttribute("aria-label", grade7 ? "7학년 개념 연결 예시. 선택은 현재 위치나 학습 완료를 뜻하지 않습니다." : "선택한 학년의 학습 단계");
     list.replaceChildren();
+    markerHost.replaceChildren();
+    markerHost.dataset.selectedIndex = stage === null ? "none" : String(stage);
+    const markerPositions = [[12, 67], [37, 55], [63, 70], [88, 57]];
     entry.steps.forEach(function (step, index) {
       const li = document.createElement("li");
       const button = document.createElement("button");
@@ -206,6 +210,23 @@
       const label = document.createElement("strong");
       label.textContent = step[0];
       button.append(number, label);
+      const marker = document.createElement("button");
+      marker.type = "button";
+      marker.className = "stage-map-marker";
+      marker.dataset.stageIndex = String(index);
+      marker.style.setProperty("--marker-x", `${markerPositions[index][0]}%`);
+      marker.style.setProperty("--marker-y", `${markerPositions[index][1]}%`);
+      marker.setAttribute("aria-pressed", String(index === stage));
+      marker.setAttribute("aria-label", grade7 ? `지도 지점 ${index + 1}, ${step[0]} 살펴보기` : `지도에서 ${index + 1}단계 ${step[0]} 보기`);
+      marker.textContent = String(index + 1).padStart(2, "0");
+      marker.addEventListener("click", function () {
+        stage = index;
+        renderStages(entry);
+        const selected = list.querySelectorAll("button")[index];
+        selected.focus();
+        revealGrade7Detail();
+      });
+      markerHost.append(marker);
       if (index === stage) {
         const selectedNote = document.createElement("span");
         selectedNote.className = "stage-selected-note";

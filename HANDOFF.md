@@ -23,7 +23,11 @@ Continue public product work that does not require the private candidate content
 
 ### 2026-11-03 G·MAP route stop readability
 
-Kept the existing G·MAP violet, lavender, and ivory map artwork. Reduced the desktop route-stop card footprint and removed the heavy blur so the illustrated math islands and connected path remain visible; the selected stop still has a clear violet outline. The phone layout continues to show the panorama above the vertical stage list.
+Kept the existing G·MAP violet, lavender, and ivory map artwork. Put selectable stage cards in a cream band below the panorama and left only neutral numbered markers over the illustrated route. Selecting a marker moves focus to the matching card; all stages keep equal visual weight, and selection does not imply completion or learner position. On phones the taller panorama remains above the text-first vertical stage list; the compact Grade 7 prompt stays clear of the markers.
+
+Claude Max Opus 5.5 gave a read-only critique from a generic description of the artwork and layout; no source code, screenshots, assessment content, or learner data were sent. The Code workspace's whole-repository trust prompt was declined, and Claude reviewed only the supplied non-confidential design summary. Its key recommendation—move cards off the illustration and use linked, neutral markers—was implemented.
+
+Rendered and inspected the Grade 7 page at 1440px and 390px. Verification covers the full Grade 3–12 roadmap browser/model suites after the layout update, plus `node --check boarding-roadmap.js` and `git diff --check`. Local only; no push, deployment, or Drive sync.
 
 
 ## 2026-10-30 learner roadmap presentation follow-up
