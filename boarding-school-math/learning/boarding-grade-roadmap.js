@@ -71,7 +71,7 @@
     9: Object.freeze({
       note: "9학년은 학교마다 수강 과목과 순서가 달라요. 현재 과목과 선수 개념에 맞는 자료를 골라 보세요.",
       0: Object.freeze([algebra2Reference]),
-      1: Object.freeze([geometryReference]),
+      1: Object.freeze([geometryReference, annualPlanResourceLinks[9][1][1]]),
       2: Object.freeze([
         Object.freeze({ title: "지필드 AMC 10 개념 연결 연습 · 자체 12문항", url: "./amc10-practice.html?grade=9" }),
         satFoundationReview(9),
