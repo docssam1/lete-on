@@ -53,7 +53,7 @@
     const stage=document.getElementById('academy-course-stage');
     let selectedProgram='';
     const route=(code,course='')=>'#'+new URLSearchParams({academy:code,...(course?{course}:{})}).toString();
-    const courseGroups={SH:'고등 선발 · 중등·고등 편입',DP:'중1 시작 · 공통수학 · 대수',WM:'중등 기본 · 공통수학 · 듀얼',ED:'중1 시작 · 고등선행',DG:'레벨 입학 · 예비고1',SM:'공통수학1 · 공통수학2'};
+    const courseGroups={SH:'고등 선발 · 중등·고등 편입',DP:'중1 시작 · 공통수학 · 대수',WM:'중등 기본 · 공통수학 · 듀얼',ED:'중1 시작 · 공통수학1 기본반',DG:'레벨 입학 · 예비고1',SM:'공통수학1 · 공통수학2'};
     // These are interface colors, not academy logos or official brand colors.
     const cardColors={SH:'#64d5a2',DP:'#f7d447',WM:'#618df3',ED:'#f39bb9',DG:'#b5a0ee',SM:'#fa9a68'};
     const academyLogos={SH:'sh.png',DP:'dp.png',WM:'wm-transparent-v2.png',ED:'ed-transparent-v2.png',DG:'dg.webp',SM:'sm-transparent-v2.png'};

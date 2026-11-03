@@ -116,12 +116,12 @@
       evidenceRefs: ["OBSERVATION:ED-MIDDLE-ENTRY"]
     },
     {
-      id: "ED:high-advance",
+      id: "ED:common-math-entry",
       programCode: "ED",
-      trackId: "high-advance",
+      trackId: "common-math-entry",
       scopeKey: "middle-semester-cumulative",
-      scopeLabel: "중등 학기별 누적",
-      evidenceStatus: "observed",
+      scopeLabel: "공통수학1 기본반 입반 · 중2·중3 전 과정 · 대수 20 + 기하 10",
+      evidenceStatus: "verified",
       evidenceRefs: ["EXAM:ed-high-advance-entry"]
     },
     {
@@ -155,7 +155,7 @@
     { examId: "wm-middle21-basic-entry-r01", programCode: "WM", trackId: "middle-entry" },
     { examId: "wm-algebra-geometry-diagnostic", programCode: "WM", trackId: "common-math-entry" },
     { examId: "ed-middle1-entry", programCode: "ED", trackId: "middle-entry" },
-    { examId: "ed-high-advance-entry", programCode: "ED", trackId: "high-advance" },
+    { examId: "ed-high-advance-entry", programCode: "ED", trackId: "common-math-entry" },
     { examId: "dg-entry-common", programCode: "DG", trackId: "high-advance" },
     {
       examId: "sm-common1-entry",
@@ -201,7 +201,7 @@
 
   const api = {
     schemaVersion: 1,
-    updatedAt: "2026-08-24",
+    updatedAt: "2026-11-03",
     evidenceStatuses: ["verified", "observed", "needs-review"],
     trackDefinitions,
     programTrackBindings,
