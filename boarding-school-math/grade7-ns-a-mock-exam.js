@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   const exam = window.GFIELDGrade7NSAExam;
-  if (!exam || !Array.isArray(exam.items) || exam.items.length !== 12) return;
+  if (!exam || !Array.isArray(exam.items) || exam.items.length !== 14) return;
   const answers = new Map();
   const startPanel = document.getElementById("mock-start-panel");
   const examPanel = document.getElementById("mock-exam-panel");

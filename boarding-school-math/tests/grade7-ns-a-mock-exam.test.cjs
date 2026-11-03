@@ -37,12 +37,12 @@ test.after(async function () {
 
 test("the original mock covers the declared Grade 7 rational-number standards with unique, keyed items", function () {
   assert.equal(exam.id, "gfield-grade7-ns-a-mock-v1");
-  assert.equal(exam.durationMinutes, 35);
-  assert.equal(exam.items.length, 12);
+  assert.equal(exam.durationMinutes, 40);
+  assert.equal(exam.items.length, 14);
   assert.equal(new Set(exam.items.map(function (item) { return item.id; })).size, exam.items.length);
   assert.deepEqual(exam.standards, ["7.NS.A.1", "7.NS.A.2", "7.NS.A.3"]);
   assert.deepEqual(exam.items.reduce(function (counts, item) { counts[item.standard] = (counts[item.standard] || 0) + 1; return counts; }, {}), {
-    "7.NS.A.1": 4, "7.NS.A.2": 4, "7.NS.A.3": 4
+    "7.NS.A.1": 5, "7.NS.A.2": 5, "7.NS.A.3": 4
   });
   for (const item of exam.items) {
     assert.equal(item.choices.length, 4, item.id);
@@ -52,8 +52,9 @@ test("the original mock covers the declared Grade 7 rational-number standards wi
   }
   const expected = {
     "ns-a-m01": "1/12", "ns-a-m02": "11/10", "ns-a-m03": "0.55", "ns-a-m04": "2.75°C",
-    "ns-a-m05": "−2/3", "ns-a-m06": "−15/16", "ns-a-m07": "3/2", "ns-a-m08": "−6",
-    "ns-a-m09": "4/3", "ns-a-m10": "−30m", "ns-a-m11": "1/8L", "ns-a-m12": "−$8.00"
+    "ns-a-m05": "−5/4", "ns-a-m06": "−2/3", "ns-a-m07": "−15/16", "ns-a-m08": "3/2",
+    "ns-a-m09": "−6", "ns-a-m10": "0.58333…", "ns-a-m11": "4/3", "ns-a-m12": "−30m",
+    "ns-a-m13": "1/8L", "ns-a-m14": "−$8.00"
   };
   for (const item of exam.items) assert.equal(item.choices[item.answer], expected[item.id], item.id);
 });
@@ -67,24 +68,24 @@ test("the mock hides answers until submission and returns only this attempt's it
   assert.match(await page.locator("#mock-start-panel").innerText(), /학교 성적은 입력하지 않아요/);
   assert.equal(await page.locator("input").count(), 0, "the mock must not request school scores or personal identifiers");
   await page.getByRole("button", { name: "모의고사 시작" }).click();
-  assert.equal(await page.locator(".mock-question").count(), 12);
-  assert.equal(await page.locator("#mock-timer").innerText(), "35:00");
+  assert.equal(await page.locator(".mock-question").count(), 14);
+  assert.equal(await page.locator("#mock-timer").innerText(), "40:00");
   assert.ok(await page.locator('.mock-question .math-fraction[aria-label="12분의 1"]').count() > 0, "fraction notation is displayed as a stacked fraction");
   assert.equal(await page.locator(".mock-review").count(), 0, "answers and worked solutions remain hidden before submission");
   const items = exam.items;
   for (let index = 0; index < items.length; index += 1) {
     await page.locator(`#mock-question-${items[index].id} .mock-choice`).nth(items[index].answer).click();
   }
-  assert.equal(await page.locator("#mock-progress").innerText(), "12 / 12 응답");
+  assert.equal(await page.locator("#mock-progress").innerText(), "14 / 14 응답");
   await page.getByRole("button", { name: "답안 제출" }).click();
   assert.equal(await page.locator("#mock-results").isVisible(), true);
-  assert.match(await page.locator(".mock-score").innerText(), /12 \/ 12[\s\S]*12문항 응답/);
+  assert.match(await page.locator(".mock-score").innerText(), /14 \/ 14[\s\S]*14문항 응답/);
   assert.deepEqual(await page.locator(".mock-standard-results article").allInnerTexts(), [
-    "7.NS.A.1\n4 / 4 정답", "7.NS.A.2\n4 / 4 정답", "7.NS.A.3\n4 / 4 정답"
+    "7.NS.A.1\n5 / 5 정답", "7.NS.A.2\n5 / 5 정답", "7.NS.A.3\n4 / 4 정답"
   ]);
   assert.match(await page.locator(".mock-next-study").innerText(), /모든 문항을 맞혔어요.*전체 단원 숙달/);
   assert.equal(await page.locator(".mock-next-study a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4");
-  assert.equal(await page.locator(".mock-review article[data-correct='true']").count(), 12);
+  assert.equal(await page.locator(".mock-review article[data-correct='true']").count(), 14);
   assert.ok(await page.locator('.mock-review .math-fraction[aria-label="12분의 1"]').count() > 0);
   assert.match(await page.locator(".mock-result-boundary").innerText(), /다른 회차나 학년의 점수와.*비교한 결과가 아닙니다/);
   assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
@@ -101,7 +102,7 @@ test("mobile mock answers can be corrected before submitting an incomplete respo
   await firstQuestion.locator(".mock-choice").nth(exam.items[0].answer).click();
   assert.equal(await firstQuestion.locator('.mock-choice[aria-pressed="true"]').count(), 1);
   await page.getByRole("button", { name: "답안 제출" }).click();
-  assert.match(await page.locator(".mock-score").innerText(), /1 \/ 12[\s\S]*1문항 응답/);
+  assert.match(await page.locator(".mock-score").innerText(), /1 \/ 14[\s\S]*1문항 응답/);
   assert.match(await page.locator(".mock-next-study").innerText(), /복습할 문제.*등급을 정하지 않고/);
   assert.match(await page.locator(".mock-review article").first().innerText(), new RegExp(`정답 ${"ABCD"[exam.items[0].answer]}`));
   assert.match(await page.locator(".mock-review article").nth(1).innerText(), /미응답/);
