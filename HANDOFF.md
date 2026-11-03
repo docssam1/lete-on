@@ -1086,3 +1086,10 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 - 응답 출처 링크 버그를 수정한 뒤 브라우저 검수를 다시 완료했다. 2009 Q3 A 오답에서 한국 741명 집단·정답률 90.28%·A 선택 7.42%와 원본 풀이/응답 출처 링크, 2011 Q4 A 오답에서 899명 집단·정답률 59.96%·A 선택 14.57%와 출처 링크를 확인했다. 한 문항 제출에서는 전체 시험 비율을 보류한다.
 - 검증: AMC 응답 참조 단위 테스트(2009·2010·2011 총 75개 문항 합계/정답률 포함), `node --check`, `git diff --check`. 미추적 `raw_youtube.txt`는 제외한다. 로컬 변경만; push·배포·Drive 동기화 없음.
 - 추가 웹 검색으로 2013 MAA 생성 학교 성적표 Grade 7(n=63)·Grade 8(n=55), 2015 싱가포르 학교 성적표 Grade 7(n=10)의 문항 응답표를 찾았다. 두 CSV에는 각각 50행·25행의 선택지/공란/판독불가 비율을 보존한다. LIVE 공식 답안과 대조했고, 결과 화면은 연도·Grade가 정확히 일치할 때만 표시하며 전국 기준이 아닌 특정 학교 집단이라고 고지한다. 2015 Q8에서 답 C 오답 예시로 정답 응답 60%, C 선택 30% 및 표본 고지의 화면 출력을 확인했다. 단위 검사(2009–2011, 2013, 2015)와 2015 CSV↔모듈 25행 대조, `git diff --check` 완료. 후속은 AMC 연도별 MAA 전체/Grade 성적표 검색과 확보 범위 확장이다. 없는 학년·연도 값은 채우지 않는다.
+
+### 2026-11-04 웹 검색 추가: 2019 AMC 8 MAA Overall 학년별 점수 분포
+
+- Beijing XDF의 2019 성적 분석 페이지에서 MAA `Location: Overall` Grade Report의 이미지 3장을 찾았다. Apple Vision OCR 및 시각 대조로 점수 0–25 × 5개 그룹(≤5, 6, 7, 8, unknown) 130 빈도 셀을 [`amc8-2019-global-grade-score-counts.csv`](boarding-school-math/competition/historical-amc-grade/amc8-2019-global-grade-score-counts.csv)에 전사했다. `unknown`은 csv에 보존하지만 학생의 학년 비교에 사용하지 않는다.
+- 전체 학년 그룹 수 합계 94,620이 이미지 요약 총계와 맞는다. 보고서 반올림 평균도 ≤5 8.48, Grade 6 8.50, 7 9.35, 8 10.06, unknown 8.09로 맞는다. 단, XDF 기사 본문은 전체 응시 수를 94,675로 달리 적어 내장 MAA 보고 이미지 기준을 썼고 이 불일치를 근거 문서에 기록했다.
+- AMC 8 2019 복습 결과에서 Grade 6–8, 5학년 이하 그룹만 같은 표본 점수 위치에 연결했다. Grade 4/5를 나누지 않았고, 엄격히 낮은 점수 비율은 빈도표에서 계산해 공식 percentile·현재 규준·능력 등급으로 부르지 않는다. 특정 연도만 조회된다.
+- `amc8-global-grade-score-reference.test.cjs`에 총계·평균·점수 구간·차단 연도 검증을 추가했다. 번들 Node REPL 산술 검증 130셀 통과, 2009 기존 경로 회귀 및 2018 차단 확인. browser UI에서 2019 AMC 8 Grade 7·24/25 예시와 99.65% strict-lower 출력 및 표본/출처 라벨 확인 후 임시 답안을 지웠다. 추가 검색으로 2018 AMC 8 전체 점수 보고서(평균/전체 컷)는 확인했지만 학년별 분포는 없어 연도별 학년 비교에 넣지 않았다. `git diff --check` 완료; node:test 실행은 REPL 하위 프로세스가 결과를 반환하지 않아 미확인. Local only; no push, deployment, Drive sync. 다음 검색은 2010–2020에서 같은 형태의 MAA Overall grade table을 더 찾고, 표본·회차·누적 정의가 대조되는 경우만 추가한다.

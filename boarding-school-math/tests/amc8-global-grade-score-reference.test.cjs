@@ -10,9 +10,13 @@ const rows = fs.readFileSync(csvPath, "utf8").trim().split(/\r?\n/).slice(1).map
   const [year, , gradeGroup, score, participantsAtScore, gradeParticipants] = line.split(",");
   return { year: Number(year), gradeGroup, score: Number(score), participantsAtScore: Number(participantsAtScore), gradeParticipants: Number(gradeParticipants) };
 });
+const rows2019 = fs.readFileSync(path.join(__dirname, "../competition/historical-amc-grade/amc8-2019-global-grade-score-counts.csv"), "utf8").trim().split(/\r?\n/).slice(1).map(function (line) {
+  const [year, , gradeGroup, score, participantsAtScore, gradeParticipants] = line.split(",");
+  return { year: Number(year), gradeGroup, score: Number(score), participantsAtScore: Number(participantsAtScore), gradeParticipants: Number(gradeParticipants) };
+});
 
 test("2009 AMC 8 global grade counts reconcile to the annual report totals and means", function () {
-  const expected = { "4-5": [3874, 9.45], "6": [20688, 9.17], "7": [50218, 10.08], "8": [73220, 10.82] };
+  const expected = { "4-5": [3874, "9.45"], "6": [20688, "9.17"], "7": [50218, "10.08"], "8": [73220, "10.82"] };
   Object.entries(expected).forEach(function ([gradeGroup, [participants, mean]]) {
     const gradeRows = rows.filter(function (row) { return row.gradeGroup === gradeGroup; });
     assert.equal(gradeRows.length, 26, `${gradeGroup} must include scores 0–25`);
@@ -39,12 +43,35 @@ test("the same-grade score location reports a strict lower-score share, not a pe
   assert.equal(reference.referenceFor(2009, 7, 26), null);
 });
 
+test("2019 MAA overall grade distributions reconcile to the report image summary", function () {
+  const expected = { "<=5": [4396, "8.48"], "6": [18245, "8.50"], "7": [30327, "9.35"], "8": [40167, "10.06"], "unknown": [1485, "8.09"] };
+  Object.entries(expected).forEach(function ([gradeGroup, [participants, mean]]) {
+    const gradeRows = rows2019.filter(function (row) { return row.gradeGroup === gradeGroup; });
+    assert.equal(gradeRows.length, 26, `${gradeGroup} must include scores 0–25`);
+    assert.equal(gradeRows.reduce(function (sum, row) { return sum + row.participantsAtScore; }, 0), participants);
+    assert.ok(gradeRows.every(function (row) { return row.gradeParticipants === participants; }));
+    const weightedMean = gradeRows.reduce(function (sum, row) { return sum + row.score * row.participantsAtScore; }, 0) / participants;
+    assert.equal(weightedMean.toFixed(2), mean);
+  });
+  assert.equal(rows2019.length, 130);
+  assert.equal(rows2019.reduce(function (sum, row) { return sum + row.participantsAtScore; }, 0), 94620);
+  const grade7 = reference.referenceFor(2019, 7, 20);
+  assert.equal(grade7.gradeLabel, "7학년");
+  assert.equal(grade7.gradeParticipants, 30327);
+  assert.equal(grade7.strictlyLowerCount, 29542);
+  assert.equal(grade7.strictlyLowerShare.toFixed(2), "97.41");
+  assert.equal(reference.referenceFor(2019, 5, 20).gradeLabel, "5학년 이하");
+  assert.equal(reference.referenceFor(2019, 3, 20), null);
+  assert.equal(reference.referenceFor(2018, 7, 20), null);
+});
+
 test("review results keep the 2009 all-school distribution separate from the Korea cohort", function () {
   const html = fs.readFileSync(path.join(__dirname, "../competition-paper-review.html"), "utf8");
   const script = fs.readFileSync(path.join(__dirname, "../competition-paper-review.js"), "utf8");
   assert.match(html, /amc8-global-grade-score-reference\.js/);
-  assert.match(html, /2009 AMC 8 전체 응시 기록 · 같은 학년 점수 위치/);
+  assert.match(html, /AMC 8 전체 응시 기록 · 같은 학년 점수 위치/);
   assert.match(html, /공식 percentile이나 현재 기준·실력 등급은 아닙니다/);
   assert.match(script, /GFIELDAMC8GlobalGradeScoreReference/);
   assert.match(script, /strictlyLowerShare/);
+  assert.match(script, /2019 MAA Overall 성적 보고서 이미지/);
 });

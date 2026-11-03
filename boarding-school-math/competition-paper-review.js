@@ -684,8 +684,11 @@
       : null;
     globalGradeScoreSection.hidden = !globalGradeScore;
     if (globalGradeScore) {
-      setText("amc8-global-grade-score-summary", `2009 AMC 8 · ${globalGradeScore.gradeLabel} · ${globalGradeScore.score}/25점 · 해당 점수 ${globalGradeScore.participantsAtScore.toLocaleString("en-US")}명 · 학년 표본 ${globalGradeScore.gradeParticipants.toLocaleString("en-US")}명`);
+      setText("amc8-global-grade-score-summary", `${globalGradeScore.year} AMC 8 · ${globalGradeScore.gradeLabel} · ${globalGradeScore.score}/25점 · 해당 점수 ${globalGradeScore.participantsAtScore.toLocaleString("en-US")}명 · 학년 표본 ${globalGradeScore.gradeParticipants.toLocaleString("en-US")}명`);
       setText("amc8-global-grade-score-value", `점수보다 낮은 응시자 ${globalGradeScore.strictlyLowerShare.toFixed(2)}% · ${globalGradeScore.strictlyLowerCount.toLocaleString("en-US")}/${globalGradeScore.gradeParticipants.toLocaleString("en-US")}명`);
+      setText("amc8-global-grade-score-note", globalGradeScore.year === 2019
+        ? "2019 MAA Overall 성적 보고서 이미지의 학년별 점수 빈도입니다. Grade 5 이하는 원자료에서 한 그룹으로 묶인 표본이며, Grade 6–8은 각각 따로 보고됐습니다. 학년 미기록 표본은 학년 비교에서 제외했으며, 그룹별 표본 수와 가중 평균을 보고서 요약과 대조했습니다."
+        : "2009년 MAA 연례 보고서에 제시된 전체 응시학교의 기록 학년별 점수 분포입니다. 4–5학년은 원자료의 묶음입니다.");
       $("amc8-global-grade-score-source").href = globalGradeScore.sourceUrl;
       $("amc8-global-grade-report-source").href = globalGradeScore.reportUrl;
     }

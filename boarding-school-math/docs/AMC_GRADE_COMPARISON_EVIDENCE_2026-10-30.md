@@ -210,3 +210,12 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - [2015 AMC 8 MAA 학교 결과 PDF](https://asiamathsalliance.com/2015/amc8/03057F.pdf)에서 싱가포르 한 학교의 Grade 7 응시자 10명에 대한 25문항 선택지 응답 비율을 확인했다. [`amc8-2015-school-grade7-item-response.csv`](../competition/historical-amc-grade/amc8-2015-school-grade7-item-response.csv)에 집단 집계만 옮겼다. 원본 보고서의 별표 정답은 [LIVE 2015 AMC 8 공식 답안표](https://live.poshenloh.com/past-contests/amc8/2015/answers)와 대조했다.
 - 복습 화면은 2015 AMC 8 Grade 7에서만 해당 표본을 연결하고, 특정 학교 집단이며 전국 학년 기준이 아니라고 표시한다. 단일 학교·10명 표본이므로 2013 보고서나 전국 학년 평균과 합치지 않는다. 원본 PDF의 학생 이름/개인 점수는 CSV에 복사하지 않았다.
 - 참조 검사에서 2013 Grade 7/8 50문항과 2015 Grade 7 25문항의 표본 수, 정답키, 선택지·공란·판독불가 합계 및 지원 학년 범위를 확인했다. CSV 25행과 화면 참조 모듈의 선택지별 비율도 전부 대조했다. 브라우저에서 2015 Q8 답 C 오답 예시를 넣어 60% 정답 응답률, 30% C 선택, 전국 규준이 아닌 학교 표본 안내를 확인했다.
+
+## 2026-11-04 웹 검색 추가: 2019 AMC 8 MAA Overall 학년별 점수 분포
+
+- [北京新东方의 2019 AMC 8 성적 분석](https://bj.xdf.cn/zixun/beimei/97334.html)에서 MAA가 발표한 2019 score report 이미지 3개와 설명을 확인했다. Grade score report는 `Location: Overall`로 표시되며, 별도 보고서 요약은 학년별 표본 수와 평균을 싣는다. 점수×학년 퍼센타일 표는 25점부터 0점까지 점수별 인원과 학년별 누적 위치를 제공한다. 기사 설명에서 전체 응시 수·상위 경계·평균을 확인했고, embedded report 요약 이미지의 전체 표본은 94,620명이다.
+- 이미지 표는 Apple Vision OCR로 읽고 원본 이미지를 직접 확인해 전사했다. Grade 6/7/8, `<=5`, 학년 미기록 그룹 각각의 점수 0–25 빈도(총 130 셀)를 [`amc8-2019-global-grade-score-counts.csv`](../competition/historical-amc-grade/amc8-2019-global-grade-score-counts.csv)에 넣었다. 상위 5학년 이하 버킷을 Grade 4, 5 등으로 나누지 않았다. 학년 미기록 그룹은 원본 보존과 표본 총계 검증에만 쓰고 학년별 비교에서 제외했다.
+- 독립 대조: 각 행에서 그룹별 빈도를 합산하면 보고서 수(4,396; 18,245; 30,327; 40,167; 학년 미기록 1,485명)와 일치한다. 점수 가중 평균은 각각 8.48, 8.50, 9.35, 10.06, 8.09로 반올림되어 보고서 요약(Grade ≤4 896명 평균 8.40, Grade 5 3,500명 평균 8.50, Grade 6/7/8, 미기록, 전체 9.43)에 맞는다. `<=5`의 평균 8.48은 Grade ≤4와 Grade 5 보고 행을 합친 계산값이다. 모든 그룹 수 합 94,620이 내장 보고서의 총계와 일치한다.
+- AMC 8 복습 결과는 2019 회차에서만 정확 Grade 6–8 또는 원자료의 `5학년 이하` 버킷과 맞춰 점수보다 낮은 점수의 응시 비율을 보여준다. 이는 원자료 표의 누적 비율을 그대로 옮기지 않고 점수별 빈도에서 재계산한 엄격한 lower-share이며, 공식 개인 percentile·현재 규준·수상 판정·능력 등급으로 해석하지 않는다. 기사 설명은 2019 평균/전체 응시를 9.43/94,675라고 서술하지만 보고서 이미지 요약과 score×grade 표는 9.43/94,620이다. 구조적 대조가 가능한 내장 보고서 이미지의 표본 총계 94,620을 기준으로 하고, 기사 본문 수치 불일치는 이 출처 제한으로 남긴다.
+- 근거 범위 manifest에서 AMC 8 2019를 완전한 학년 점수 분포 staged로 표시했다. MAA 원본 링크가 아니라 MAA 보고서를 재게시한 제3자 페이지이므로 secondary-host 제한을 유지한다.
+- 후속 검색에서 [2018 AMC 8 Contest Score Report PDF 재게시본](https://www.mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf)을 확인했다. 여기에는 전체 응시자 기준 상위 1·5·25·50·75% 점수선, 평균 8.51, 표준편차 3.68, 응시자 98,448명이 있지만 학년별 분포는 없다. 따라서 기존의 2018 학년 비교 미수록 상태를 유지한다.
