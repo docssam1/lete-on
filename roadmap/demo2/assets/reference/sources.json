@@ -1,5 +1,5 @@
 {
-  "checkedOn": "2026-11-03",
+  "checkedOn": "2026-11-04",
   "academies": {
     "soma": {
       "site": "https://soma1.somai.co.kr/customer/notice",
@@ -163,20 +163,24 @@
   },
   "books": [
     {
-      "id": "kids-facto",
-      "edition": "창의사고력 수학 키즈 팩토 원리 B",
-      "source": "https://www.yes24.com/product/goods/84806791",
-      "imageSource": "https://image.yes24.com/goods/84806791/L",
-      "cover": "assets/reference/book-kids-facto.jpg",
-      "isbn": "9788928646401"
-    },
-    {
       "id": "kinder-facto",
       "edition": "창의사고력 수학 킨더팩토 A 측정·수",
       "source": "https://www.yes24.com/product/goods/128120335",
       "imageSource": "https://image.yes24.com/goods/128120335/L",
       "cover": "assets/reference/book-kinder-facto.jpg",
-      "isbn": "9791193794272"
+      "isbn": "9791193794272",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.mathtian.com/"
+    },
+    {
+      "id": "kids-facto",
+      "edition": "창의사고력 수학 키즈 팩토 원리 B",
+      "source": "https://www.yes24.com/product/goods/84806791",
+      "imageSource": "https://image.yes24.com/goods/84806791/L",
+      "cover": "assets/reference/book-kids-facto.jpg",
+      "isbn": "9788928646401",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.mathtian.com/"
     },
     {
       "id": "soma-calc",
@@ -184,7 +188,9 @@
       "source": "https://www.yes24.com/product/goods/75531408",
       "imageSource": "https://image.yes24.com/goods/75531408/L",
       "cover": "assets/reference/book-soma-calc.jpg",
-      "isbn": "9791158850951"
+      "isbn": "9791158850951",
+      "checkedOn": "2026-11-03",
+      "official": "https://soma1.somai.co.kr/"
     },
     {
       "id": "miracle-calc",
@@ -192,7 +198,9 @@
       "source": "https://www.yes24.com/product/goods/198961703",
       "imageSource": "https://image.yes24.com/goods/198961703/L",
       "cover": "assets/reference/book-miracle-calc.jpg",
-      "isbn": "9791174672803"
+      "isbn": "9791174672803",
+      "checkedOn": "2026-11-03",
+      "official": "https://school.gilbut.co.kr/"
     },
     {
       "id": "didimdol-calc",
@@ -200,7 +208,9 @@
       "source": "https://www.yes24.com/product/goods/126580986",
       "imageSource": "https://image.yes24.com/goods/126580986/L",
       "cover": "assets/reference/book-didimdol-calc.jpg",
-      "isbn": "9788926163566"
+      "isbn": "9788926163566",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.didimdol.co.kr/qr_code/mathTest/main2.asp?chk=2"
     },
     {
       "id": "1031-intro",
@@ -208,7 +218,9 @@
       "source": "https://www.yes24.com/product/goods/117876379",
       "imageSource": "https://image.yes24.com/goods/117876379/L",
       "cover": "assets/reference/book-1031-intro.jpg",
-      "isbn": "9791134702953"
+      "isbn": "9791134702953",
+      "checkedOn": "2026-11-03",
+      "official": "https://cmath.co.kr/"
     },
     {
       "id": "1031-basic",
@@ -216,7 +228,9 @@
       "source": "https://www.yes24.com/product/goods/117876398",
       "imageSource": "https://image.yes24.com/goods/117876398/L",
       "cover": "assets/reference/book-1031-basic.jpg",
-      "isbn": "9791134702793"
+      "isbn": "9791134702793",
+      "checkedOn": "2026-11-03",
+      "official": "https://cmath.co.kr/"
     },
     {
       "id": "1031-middle",
@@ -224,7 +238,9 @@
       "source": "https://www.yes24.com/product/goods/117876489",
       "imageSource": "https://image.yes24.com/goods/117876489/L",
       "cover": "assets/reference/book-1031-middle.jpg",
-      "isbn": "9791134702830"
+      "isbn": "9791134702830",
+      "checkedOn": "2026-11-03",
+      "official": "https://cmath.co.kr/"
     },
     {
       "id": "1031-high",
@@ -232,15 +248,19 @@
       "source": "https://www.yes24.com/product/goods/117876603",
       "imageSource": "https://image.yes24.com/goods/117876603/L",
       "cover": "assets/reference/book-1031-high.jpg",
-      "isbn": "9791134702878"
+      "isbn": "9791134702878",
+      "checkedOn": "2026-11-03",
+      "official": "https://cmath.co.kr/"
     },
     {
       "id": "facto-primary",
-      "edition": "초등 창의사고력 수학 팩토 1 레벨 원리 세트",
-      "source": "https://www.yes24.com/product/goods/85157222",
-      "imageSource": "https://image.yes24.com/goods/85157222/L",
-      "cover": "assets/reference/book-facto-primary.jpg",
-      "isbn": "9788928646319"
+      "edition": "초등 창의사고력 수학 팩토 Lv.1 기본 A · 개정판",
+      "source": "https://www.yes24.com/product/goods/128121500",
+      "imageSource": "https://image.yes24.com/goods/128121500/L",
+      "cover": "assets/reference/book-facto-lv1-current.jpg",
+      "isbn": "9791193794371",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.mathtian.com/book/book_main.aspx"
     },
     {
       "id": "didimdol-concept",
@@ -248,7 +268,9 @@
       "source": "https://www.yes24.com/product/goods/152354045",
       "imageSource": "https://image.yes24.com/goods/152354045/L",
       "cover": "assets/reference/book-didimdol-concept.jpg",
-      "isbn": "9788926166710"
+      "isbn": "9788926166710",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.didimdol.co.kr/qr_code/mathTest/main2.asp?chk=2"
     },
     {
       "id": "didimdol-combined",
@@ -256,7 +278,9 @@
       "source": "https://www.yes24.com/product/goods/151759089",
       "imageSource": "https://image.yes24.com/goods/151759089/L",
       "cover": "assets/reference/book-didimdol-combined.jpg",
-      "isbn": "9788926166857"
+      "isbn": "9788926166857",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.didimdol.co.kr/qr_code/mathTest/main2.asp?chk=2"
     },
     {
       "id": "ssen-elementary",
@@ -264,7 +288,9 @@
       "source": "https://www.yes24.com/product/goods/152441725",
       "imageSource": "https://image.yes24.com/goods/152441725/L",
       "cover": "assets/reference/book-ssen-elementary.jpg",
-      "isbn": "9788928348114"
+      "isbn": "9788928348114",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.sinsago.co.kr/"
     },
     {
       "id": "didimdol-applied",
@@ -272,7 +298,9 @@
       "source": "https://www.yes24.com/product/goods/153911045",
       "imageSource": "https://image.yes24.com/goods/153911045/L",
       "cover": "assets/reference/book-didimdol-applied.jpg",
-      "isbn": "9788926166758"
+      "isbn": "9788926166758",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.didimdol.co.kr/qr_code/mathTest/main2.asp?chk=2"
     },
     {
       "id": "top-s",
@@ -280,7 +308,9 @@
       "source": "https://www.yes24.com/product/goods/155511249",
       "imageSource": "https://image.yes24.com/goods/155511249/L",
       "cover": "assets/reference/book-top-s.jpg",
-      "isbn": "9788926166932"
+      "isbn": "9788926166932",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.didimdol.co.kr/qr_code/mathTest/main2.asp?chk=2"
     },
     {
       "id": "top-elementary",
@@ -288,7 +318,9 @@
       "source": "https://www.yes24.com/product/goods/154821859",
       "imageSource": "https://image.yes24.com/goods/154821859/L",
       "cover": "assets/reference/book-top-elementary.jpg",
-      "isbn": "9788926166956"
+      "isbn": "9788926166956",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.didimdol.co.kr/qr_code/mathTest/main2.asp?chk=2"
     },
     {
       "id": "highest-elementary",
@@ -296,7 +328,9 @@
       "source": "https://www.yes24.com/product/goods/155309249",
       "imageSource": "https://image.yes24.com/goods/155309249/L",
       "cover": "assets/reference/book-highest-elementary.jpg",
-      "isbn": "9791125985105"
+      "isbn": "9791125985105",
+      "checkedOn": "2026-11-03",
+      "official": "https://book.chunjae.co.kr/"
     },
     {
       "id": "miracle-middle",
@@ -304,7 +338,9 @@
       "source": "https://www.yes24.com/product/goods/67485934",
       "imageSource": "https://image.yes24.com/goods/67485934/L",
       "cover": "assets/reference/book-miracle-middle.jpg",
-      "isbn": "9791188991792"
+      "isbn": "9791188991792",
+      "checkedOn": "2026-11-03",
+      "official": "https://school.gilbut.co.kr/"
     },
     {
       "id": "power-calc",
@@ -312,7 +348,9 @@
       "source": "https://www.yes24.com/product/goods/127045342",
       "imageSource": "https://image.yes24.com/goods/127045342/L",
       "cover": "assets/reference/book-power-calc.jpg",
-      "isbn": "9791162406113"
+      "isbn": "9791162406113",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.book-sk.co.kr/"
     },
     {
       "id": "ssen-calc",
@@ -320,7 +358,9 @@
       "source": "https://www.yes24.com/product/goods/167384429",
       "imageSource": "https://image.yes24.com/goods/167384429/L",
       "cover": "assets/reference/book-ssen-calc.jpg",
-      "isbn": "9788928350476"
+      "isbn": "9788928350476",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.sinsago.co.kr/"
     },
     {
       "id": "ebs-neuron",
@@ -328,7 +368,9 @@
       "source": "https://www.yes24.com/product/goods/128761244",
       "imageSource": "https://image.yes24.com/goods/128761244/L",
       "cover": "assets/reference/book-ebs-neuron.jpg",
-      "isbn": "9788954785815"
+      "isbn": "9788954785815",
+      "checkedOn": "2026-11-03",
+      "official": "https://mid.ebs.co.kr/book/middle/index"
     },
     {
       "id": "basic-ssen",
@@ -336,7 +378,9 @@
       "source": "https://www.yes24.com/product/goods/150117425",
       "imageSource": "https://image.yes24.com/goods/150117425/L",
       "cover": "assets/reference/book-basic-ssen.jpg",
-      "isbn": "9788928334919"
+      "isbn": "9788928334919",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.sinsago.co.kr/"
     },
     {
       "id": "imath-middle",
@@ -344,7 +388,9 @@
       "source": "https://www.yes24.com/product/goods/121827017",
       "imageSource": "https://image.yes24.com/goods/121827017/L",
       "cover": "assets/reference/book-imath-middle.jpg",
-      "isbn": "9788961339858"
+      "isbn": "9788961339858",
+      "checkedOn": "2026-11-03",
+      "official": "https://imath.tv/"
     },
     {
       "id": "cv-light",
@@ -352,7 +398,9 @@
       "source": "https://www.yes24.com/product/goods/152363493",
       "imageSource": "https://image.yes24.com/goods/152363493/L",
       "cover": "assets/reference/book-cv-light.jpg",
-      "isbn": "9791173166921"
+      "isbn": "9791173166921",
+      "checkedOn": "2026-11-03",
+      "official": "https://book.visang.com/search?keyword=개념플러스유형"
     },
     {
       "id": "principle-middle",
@@ -360,7 +408,9 @@
       "source": "https://www.yes24.com/product/goods/135209528",
       "imageSource": "https://image.yes24.com/goods/135209528/L",
       "cover": "assets/reference/book-principle-middle.jpg",
-      "isbn": "9788967700898"
+      "isbn": "9788967700898",
+      "checkedOn": "2026-11-03",
+      "official": "http://www.aclassmath.com/"
     },
     {
       "id": "light-ssen",
@@ -368,7 +418,9 @@
       "source": "https://www.yes24.com/product/goods/167384478",
       "imageSource": "https://image.yes24.com/goods/167384478/L",
       "cover": "assets/reference/book-light-ssen.jpg",
-      "isbn": "9788928350469"
+      "isbn": "9788928350469",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.sinsago.co.kr/"
     },
     {
       "id": "rpm-middle",
@@ -376,7 +428,9 @@
       "source": "https://www.yes24.com/product/goods/122494286",
       "imageSource": "https://image.yes24.com/goods/122494286/L",
       "cover": "assets/reference/book-rpm-middle.jpg",
-      "isbn": "9788961335904"
+      "isbn": "9788961335904",
+      "checkedOn": "2026-11-03",
+      "official": "https://imath.tv/"
     },
     {
       "id": "ssen-middle",
@@ -384,7 +438,9 @@
       "source": "https://www.yes24.com/product/goods/161362446",
       "imageSource": "https://image.yes24.com/goods/161362446/L",
       "cover": "assets/reference/book-ssen-middle.jpg",
-      "isbn": "9788928334858"
+      "isbn": "9788928334858",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.sinsago.co.kr/"
     },
     {
       "id": "ilpum-middle",
@@ -392,7 +448,9 @@
       "source": "https://www.yes24.com/product/goods/145056498",
       "imageSource": "https://image.yes24.com/goods/145056498/L",
       "cover": "assets/reference/book-ilpum-middle.jpg",
-      "isbn": "9788928347360"
+      "isbn": "9788928347360",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.sinsago.co.kr/"
     },
     {
       "id": "black-middle",
@@ -400,7 +458,9 @@
       "source": "https://www.yes24.com/product/goods/129979202",
       "imageSource": "https://image.yes24.com/goods/129979202/L",
       "cover": "assets/reference/book-black-middle.jpg",
-      "isbn": "9788960765207"
+      "isbn": "9788960765207",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.jinhak.com/"
     },
     {
       "id": "top-middle",
@@ -408,7 +468,9 @@
       "source": "https://www.yes24.com/product/goods/123156207",
       "imageSource": "https://image.yes24.com/goods/123156207/L",
       "cover": "assets/reference/book-top-middle.jpg",
-      "isbn": "9788926162910"
+      "isbn": "9788926162910",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.didimdol.co.kr/qr_code/mathTest/main2.asp?chk=2"
     },
     {
       "id": "aclass-middle",
@@ -416,7 +478,9 @@
       "source": "https://www.yes24.com/product/goods/128636951",
       "imageSource": "https://image.yes24.com/goods/128636951/L",
       "cover": "assets/reference/book-aclass-middle.jpg",
-      "isbn": "9788967700843"
+      "isbn": "9788967700843",
+      "checkedOn": "2026-11-03",
+      "official": "http://www.aclassmath.com/"
     },
     {
       "id": "base-jungsuk",
@@ -424,7 +488,9 @@
       "source": "https://www.yes24.com/product/goods/124862915",
       "imageSource": "https://image.yes24.com/goods/124862915/L",
       "cover": "assets/reference/book-base-jungsuk.jpg",
-      "isbn": "9791156200413"
+      "isbn": "9791156200413",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.sungji.com/"
     },
     {
       "id": "imath-high",
@@ -432,7 +498,9 @@
       "source": "https://www.yes24.com/product/goods/122532307",
       "imageSource": "https://image.yes24.com/goods/122532307/L",
       "cover": "assets/reference/book-imath-high.jpg",
-      "isbn": "9788961334839"
+      "isbn": "9788961334839",
+      "checkedOn": "2026-11-03",
+      "official": "https://imath.tv/"
     },
     {
       "id": "rpm-high",
@@ -440,7 +508,9 @@
       "source": "https://www.yes24.com/product/goods/122957065",
       "imageSource": "https://image.yes24.com/goods/122957065/L",
       "cover": "assets/reference/book-rpm-high.jpg",
-      "isbn": "9788961334884"
+      "isbn": "9788961334884",
+      "checkedOn": "2026-11-03",
+      "official": "https://imath.tv/"
     },
     {
       "id": "ssen-high",
@@ -448,7 +518,9 @@
       "source": "https://www.yes24.com/product/goods/143336245",
       "imageSource": "https://image.yes24.com/goods/143336245/L",
       "cover": "assets/reference/book-ssen-high.jpg",
-      "isbn": "9788928347919"
+      "isbn": "9788928347919",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.sinsago.co.kr/"
     },
     {
       "id": "skill-jungsuk",
@@ -456,7 +528,9 @@
       "source": "https://www.yes24.com/product/goods/124862907",
       "imageSource": "https://image.yes24.com/goods/124862907/L",
       "cover": "assets/reference/book-skill-jungsuk.jpg",
-      "isbn": "9791156200420"
+      "isbn": "9791156200420",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.sungji.com/"
     },
     {
       "id": "ilpum-high",
@@ -464,7 +538,9 @@
       "source": "https://www.yes24.com/product/goods/143336283",
       "imageSource": "https://image.yes24.com/goods/143336283/L",
       "cover": "assets/reference/book-ilpum-high.jpg",
-      "isbn": "9788928347926"
+      "isbn": "9788928347926",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.sinsago.co.kr/"
     },
     {
       "id": "black-high",
@@ -472,7 +548,290 @@
       "source": "https://www.yes24.com/product/goods/132968066",
       "imageSource": "https://image.yes24.com/goods/132968066/L",
       "cover": "assets/reference/book-black-high.jpg",
-      "isbn": "9788960765221"
+      "isbn": "9788960765221",
+      "checkedOn": "2026-11-03",
+      "official": "https://www.jinhak.com/"
+    },
+    {
+      "id": "jump-top",
+      "edition": "점프왕수학 최상위 5-1 (2026년) · 2022 개정",
+      "source": "https://www.yes24.com/product/goods/150709953",
+      "imageSource": "https://image.yes24.com/goods/150709953/L",
+      "cover": "assets/reference/book-jump-top.jpg",
+      "isbn": "9788925927831",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.eduwang.com/order/book1.asp",
+      "referenceLinks": [
+        {
+          "label": "교재 구성 안내",
+          "url": "https://junior.mbest.co.kr/lecture/lecture_detail/view_book_info.asp?gmkey=1181240"
+        }
+      ]
+    },
+    {
+      "id": "ubo",
+      "edition": "교과심화 그 이상 우보수학 5-1",
+      "source": "https://www.yes24.com/product/goods/162300431",
+      "imageSource": "https://image.yes24.com/goods/162300431/L",
+      "cover": "assets/reference/book-ubo.jpg",
+      "isbn": "9791162293775",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.learningshop.co.kr/goods/goods_list.php?cateCd=023001010",
+      "referenceLinks": [
+        {
+          "label": "황소 부교재 변경 공지",
+          "url": "https://www.thinking-bull.com/notice/?bmode=view&idx=168504240"
+        }
+      ]
+    },
+    {
+      "id": "top-competition-old",
+      "edition": "최상위 초등수학 5-1 경시대비 (2018년용) · 2009 개정",
+      "source": "https://www.yes24.com/product/goods/15657800",
+      "imageSource": "https://image.yes24.com/goods/15657800/L",
+      "cover": "assets/reference/book-top-competition-old.jpg",
+      "isbn": "9788926144619",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.didimdol.co.kr/",
+      "availability": "out-of-print"
+    },
+    {
+      "id": "1031-pre",
+      "edition": "영재사고력수학 1031 Pre A",
+      "source": "https://www.yes24.com/product/goods/117876358",
+      "imageSource": "https://image.yes24.com/goods/117876358/L",
+      "cover": "assets/reference/book-1031-pre.jpg",
+      "isbn": "9791134702915",
+      "checkedOn": "2026-11-04",
+      "official": "https://cmath.co.kr/"
+    },
+    {
+      "id": "fields-kinder",
+      "edition": "영재 사고력수학 필즈 킨더 (상)",
+      "source": "https://www.yes24.com/product/goods/105314237",
+      "imageSource": "https://image.yes24.com/goods/105314237/L",
+      "cover": "assets/reference/book-fields-kinder.jpg",
+      "isbn": "9791162293423",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.learningshop.co.kr/goods/goods_list.php?cateCd=023001001"
+    },
+    {
+      "id": "fields-basic",
+      "edition": "영재 사고력수학 필즈 베이직 (상)",
+      "source": "https://www.yes24.com/product/goods/105314195",
+      "imageSource": "https://image.yes24.com/goods/105314195/L",
+      "cover": "assets/reference/book-fields-basic.jpg",
+      "isbn": "9791162292297",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.learningshop.co.kr/goods/goods_list.php?cateCd=023001001"
+    },
+    {
+      "id": "fields-intro",
+      "edition": "영재 사고력수학 필즈 입문 (상)",
+      "source": "https://www.yes24.com/product/goods/91868931",
+      "imageSource": "https://image.yes24.com/goods/91868931/L",
+      "cover": "assets/reference/book-fields-intro.jpg",
+      "isbn": "9791162292259",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.learningshop.co.kr/goods/goods_list.php?cateCd=023001001"
+    },
+    {
+      "id": "fields-beginner",
+      "edition": "필즈수학 초급 (상)",
+      "source": "https://www.yes24.com/product/goods/8769461",
+      "imageSource": "https://image.yes24.com/goods/8769461/L",
+      "cover": "assets/reference/book-fields-beginner.jpg",
+      "isbn": "9791195020508",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.learningshop.co.kr/goods/goods_list.php?cateCd=023001001"
+    },
+    {
+      "id": "fields-middle",
+      "edition": "필즈수학 중급 (상)",
+      "source": "https://www.yes24.com/product/goods/9120631",
+      "imageSource": "https://image.yes24.com/goods/9120631/L",
+      "cover": "assets/reference/book-fields-middle.jpg",
+      "isbn": "9791155170038",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.learningshop.co.kr/goods/goods_list.php?cateCd=023001001"
+    },
+    {
+      "id": "fields-high",
+      "edition": "필즈수학 고급 (상)",
+      "source": "https://www.yes24.com/product/goods/9120638",
+      "imageSource": "https://image.yes24.com/goods/9120638/L",
+      "cover": "assets/reference/book-fields-high.jpg",
+      "isbn": "9791155170052",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.learningshop.co.kr/goods/goods_list.php?cateCd=023001001"
+    },
+    {
+      "id": "pangse-p",
+      "edition": "팡세 P-1 패턴",
+      "source": "https://www.yes24.com/product/goods/96665122",
+      "imageSource": "https://image.yes24.com/goods/96665122/L",
+      "cover": "assets/reference/book-pangse-p.jpg",
+      "isbn": "9791162292556",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.learningshop.co.kr/"
+    },
+    {
+      "id": "facto-lv2",
+      "edition": "초등 창의사고력 수학 팩토 Lv.2 기본 A",
+      "source": "https://www.yes24.com/product/goods/128121618",
+      "imageSource": "https://image.yes24.com/goods/128121618/L",
+      "cover": "assets/reference/book-facto-lv2.jpg",
+      "isbn": "9791193794432",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.mathtian.com/book/book_main.aspx"
+    },
+    {
+      "id": "facto-lv3",
+      "edition": "초등 창의사고력 수학 팩토 Lv.3 기본 A",
+      "source": "https://www.yes24.com/product/goods/128121892",
+      "imageSource": "https://image.yes24.com/goods/128121892/L",
+      "cover": "assets/reference/book-facto-lv3.jpg",
+      "isbn": "9791193794494",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.mathtian.com/book/book_main.aspx"
+    },
+    {
+      "id": "ans-steam",
+      "edition": "안쌤의 STEAM+창의사고력 수학 100제 초등 3학년",
+      "source": "https://www.yes24.com/product/goods/143754227",
+      "imageSource": "https://image.yes24.com/goods/143754227/L",
+      "cover": "assets/reference/book-ans-steam.jpg",
+      "isbn": "9791138389693",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.sdedu.co.kr/book/item.php?it_id=1739768036"
+    },
+    {
+      "id": "ans-gifted",
+      "edition": "안쌤의 맛있는 영재수학 초등 3학년",
+      "source": "https://www.yes24.com/product/goods/189119157",
+      "imageSource": "https://image.yes24.com/goods/189119157/L",
+      "cover": "assets/reference/book-ans-gifted.jpg",
+      "isbn": "9791190553049",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.anssamedu.com/"
+    },
+    {
+      "id": "ans-mock",
+      "edition": "안쌤의 맛있는 영재 모의고사 초등 3학년",
+      "source": "https://www.yes24.com/product/goods/189119138",
+      "imageSource": "https://image.yes24.com/goods/189119138/L",
+      "cover": "assets/reference/book-ans-mock.jpg",
+      "isbn": "9791190553209",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.anssamedu.com/"
+    },
+    {
+      "id": "olympiad-1",
+      "edition": "3% 디딤돌 초등수학 올림피아드 1과정",
+      "source": "https://www.yes24.com/product/goods/97571838",
+      "imageSource": "https://image.yes24.com/goods/97571838/L",
+      "cover": "assets/reference/book-olympiad-1.jpg",
+      "isbn": "9788926159873",
+      "checkedOn": "2026-11-04",
+      "official": "https://www.didimdol.co.kr/"
+    }
+  ],
+  "parentReviews": [
+    {
+      "bookId": "1031-middle",
+      "reviews": [
+        {
+          "title": "1031·필즈와 교과 진도 병행 경험",
+          "date": "2022.08.31",
+          "url": "https://onlygoodmemories.tistory.com/671",
+          "summary": "학원 진도와 연산에 밀려 사고력 공부를 이어가기 어려웠던 경험을 적었습니다. 필요한 교과를 마치지 않은 상태에서 심화로 넘어가면 어려울 수 있어, 진도와 실제 공부 시간을 함께 살펴볼 때 참고할 수 있습니다.",
+          "context": "한 가정의 경험입니다. 3% 1과정의 지필드 배치는 원장님이 정한 5-2 심화 후 6개월을 따릅니다."
+        }
+      ]
+    },
+    {
+      "bookId": "jump-top",
+      "reviews": [
+        {
+          "title": "점프왕수학을 후행 심화로 쓴 후기",
+          "date": "확인 2026.11.04",
+          "url": "https://m.yes24.com/Goods/Review/135725882",
+          "summary": "쎈으로 앞 진도를 배우고 현행 학기의 왕문제·왕중왕문제를 골라 푼 사례와, 선행 일정 때문에 심화 분량을 충분히 소화하지 못했다는 사례가 함께 있습니다. 난도보다 쓸 목적과 시간을 먼저 정할 필요가 있습니다.",
+          "context": "4-1 사용 후기입니다. 대표 표지 5-1의 모든 문항 난도를 평가한 자료는 아닙니다."
+        }
+      ]
+    },
+    {
+      "bookId": "1031-pre",
+      "reviews": [
+        {
+          "title": "가정에서 사고력 교재를 골라 쓴 경험",
+          "date": "2023.07.28",
+          "url": "https://daechijang.tistory.com/30",
+          "summary": "한 아이는 초1에 Pre로 시작해 1031 중심으로 이어갔고, 다른 아이는 팩토부터 진행한 경험을 적었습니다. 교과와 학원 과제가 늘어나면 모든 사고력 책을 거칠 시간이 부족하다는 점도 짚습니다.",
+          "context": "당시 구판의 권장 나이·시험 대비 내용은 현재의 공통 진입 기준으로 사용하지 않습니다."
+        }
+      ]
+    },
+    {
+      "bookId": "fields-kinder",
+      "reviews": [
+        {
+          "title": "필즈 킨더·베이직 사용 경험",
+          "date": "2023.03.09",
+          "url": "https://livelovelaugh.tistory.com/3",
+          "summary": "이 가정은 팩토보다 필즈 킨더가 아이에게 잘 맞았고, Pre를 경험한 뒤 베이직의 비슷한 유형을 더 수월하게 이해했다고 적었습니다. 책의 고정 순위보다 이미 경험한 발상과 아이의 반응을 함께 보게 하는 사례입니다.",
+          "context": "구판 사용 경험만 참고했습니다. 당시 입학시험 이야기는 현재 모집 기준에 적용하지 않습니다."
+        }
+      ]
+    },
+    {
+      "bookId": "fields-basic",
+      "reviews": [
+        {
+          "title": "필즈 킨더·베이직 사용 경험",
+          "date": "2023.03.09",
+          "url": "https://livelovelaugh.tistory.com/3",
+          "summary": "이 가정은 팩토보다 필즈 킨더가 아이에게 잘 맞았고, Pre를 경험한 뒤 베이직의 비슷한 유형을 더 수월하게 이해했다고 적었습니다. 책의 고정 순위보다 이미 경험한 발상과 아이의 반응을 함께 보게 하는 사례입니다.",
+          "context": "구판 사용 경험만 참고했습니다. 당시 입학시험 이야기는 현재 모집 기준에 적용하지 않습니다."
+        }
+      ]
+    },
+    {
+      "bookId": "fields-beginner",
+      "reviews": [
+        {
+          "title": "1031·필즈와 교과 진도 병행 경험",
+          "date": "2022.08.31",
+          "url": "https://onlygoodmemories.tistory.com/671",
+          "summary": "학원 진도와 연산에 밀려 사고력 공부를 이어가기 어려웠던 경험을 적었습니다. 필요한 교과를 마치지 않은 상태에서 심화로 넘어가면 어려울 수 있어, 진도와 실제 공부 시간을 함께 살펴볼 때 참고할 수 있습니다.",
+          "context": "한 가정의 경험입니다. 3% 1과정의 지필드 배치는 원장님이 정한 5-2 심화 후 6개월을 따릅니다."
+        }
+      ]
+    },
+    {
+      "bookId": "fields-middle",
+      "reviews": [
+        {
+          "title": "1031·필즈와 교과 진도 병행 경험",
+          "date": "2022.08.31",
+          "url": "https://onlygoodmemories.tistory.com/671",
+          "summary": "학원 진도와 연산에 밀려 사고력 공부를 이어가기 어려웠던 경험을 적었습니다. 필요한 교과를 마치지 않은 상태에서 심화로 넘어가면 어려울 수 있어, 진도와 실제 공부 시간을 함께 살펴볼 때 참고할 수 있습니다.",
+          "context": "한 가정의 경험입니다. 3% 1과정의 지필드 배치는 원장님이 정한 5-2 심화 후 6개월을 따릅니다."
+        }
+      ]
+    },
+    {
+      "bookId": "olympiad-1",
+      "reviews": [
+        {
+          "title": "1031·필즈와 교과 진도 병행 경험",
+          "date": "2022.08.31",
+          "url": "https://onlygoodmemories.tistory.com/671",
+          "summary": "학원 진도와 연산에 밀려 사고력 공부를 이어가기 어려웠던 경험을 적었습니다. 필요한 교과를 마치지 않은 상태에서 심화로 넘어가면 어려울 수 있어, 진도와 실제 공부 시간을 함께 살펴볼 때 참고할 수 있습니다.",
+          "context": "한 가정의 경험입니다. 3% 1과정의 지필드 배치는 원장님이 정한 5-2 심화 후 6개월을 따릅니다."
+        }
+      ]
     }
   ]
 }

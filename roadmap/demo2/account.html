@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="robots" content="noindex">
 <title>학습 로드맵 설계 · GFIELD</title>
 <link rel="stylesheet" href="membership.css?v=20261101-fill1">
-<link rel="stylesheet" href="account-landing.css?v=20261104-books1">
+<link rel="stylesheet" href="account-landing.css?v=20261104-mint1">
 </head>
 <body class="member-page member-landing">
 <a class="account-skip" href="#accountEntry">로그인으로 바로가기</a>
@@ -22,34 +22,33 @@
   <div class="account-stage">
    <aside class="account-film" aria-label="학습 로드맵 소개 영상">
     <figure class="member-growth member-reel">
+     <canvas id="reelAmbience" class="account-film-ambience" width="480" height="240" aria-hidden="true"></canvas>
+     <figcaption class="member-reel-controls"><button id="reelPlay" type="button" aria-controls="growthReel">영상 재생</button><button id="reelSound" type="button" aria-controls="growthReel" aria-pressed="false">배경음 켜기</button><a href="assets/roadmap-growth-journey-v2-20261101.mp4" target="_blank" rel="noopener">크게 보기</a></figcaption>
+     <p id="reelAudioHint" class="account-audio-hint" aria-live="polite" hidden>화면을 터치하면 배경음이 함께 나와요.</p>
      <video id="growthReel" class="member-growth-video" width="720" height="1280" muted playsinline preload="metadata" poster="assets/roadmap-growth-journey-v2-poster-20261101.jpg" aria-label="어린 시절의 독서와 고민부터 갈림길 선택, 고등학생의 학습까지 이어지는 37초 소개 영상. 학습 로드맵·월별 계획·진도 비교 화면을 자막과 배경음으로 소개합니다.">
       <source src="assets/roadmap-growth-journey-v2-20261101.mp4" type="video/mp4">
      </video>
      <img src="assets/learning-growth-symbols-20261101.webp" width="1774" height="887" alt="유아부터 고등까지 공부하며 성장하는 학생들" class="member-growth-image member-reel-fallback" hidden>
-     <figcaption class="member-reel-controls"><button id="reelPlay" type="button" aria-controls="growthReel">영상 재생</button><button id="reelSound" type="button" aria-controls="growthReel" aria-pressed="false">배경음 켜기</button><a href="assets/roadmap-growth-journey-v2-20261101.mp4" target="_blank" rel="noopener">크게 보기</a></figcaption>
      <noscript><p class="member-note"><a href="assets/roadmap-growth-journey-v2-20261101.mp4">소개 영상 보기</a></p></noscript>
     </figure>
    </aside>
+  </div>
+  <nav class="account-quicklinks" aria-label="로드맵 둘러보기">
+   <a href="#introduction"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 32V17l13-9 13 9v15M4 34h32M15 34V23h10v11M10 18h20M17 14h6"/></svg><span>로드맵 소개</span></a>
+   <a href="#seniorExample"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="11" r="4"/><circle cx="9" cy="27" r="4"/><circle cx="31" cy="27" r="4"/><path d="M18 15l-7 8m11-8 7 8M13 29h14M15 35h10"/></svg><span>선배들의 로드맵</span></a>
+   <a href="planner.html?books=math"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 9h10q4 0 4 4v22q0-4-5-4H6ZM34 9H24q-4 0-4 4v22q0-4 5-4h9ZM11 15h4m-4 5h4m10-5h4m-4 5h4"/></svg><span>교재 난이도 지도</span></a>
+   <a href="#accountEntry"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="9" y="17" width="22" height="17" rx="2"/><path d="M14 17v-5a6 6 0 0 1 12 0v5m-6 6v5"/></svg><span>로그인 · 시작하기</span></a>
+  </nav>
+  <div class="account-welcome">
+   <div class="account-welcome-copy"><h2>우리 아이의 공부를<br>차근차근 계획해 보세요.</h2><p>지금 배우는 교과와 연산, 함께 다질 응용과 사고력.<br>교재와 공부할 시간을 바탕으로 다음 과정을 정리합니다.</p><a class="account-text-link" href="#seniorExample">선배의 공부 과정부터 살펴보기</a></div>
    <section id="accountEntry" class="member-card" aria-labelledby="memberTitle">
     <div id="memberContent"><h2 id="memberTitle" tabindex="-1">계정을 확인하고 있습니다.</h2></div>
     <p id="memberStatus" role="status" aria-live="polite"></p>
    </section>
   </div>
-  <a class="account-discover" href="#introduction">어떤 로드맵을 만들 수 있나요? <span aria-hidden="true">↓</span></a>
  </section>
  <section id="introduction" class="account-introduction" aria-labelledby="introHeading">
   <div class="account-section-heading"><h2 id="introHeading">지금 진도와 남은 공부,<br>함께 놓고 계획합니다.</h2><p>“교과는 앞서가는데 심화는 언제 할까요?”<br>현재 교재와 마친 분량, 공부할 시간을 알려주세요. 새로 배울 과정과 함께 다질 공부를 나눠 월별 계획으로 정리합니다.</p></div>
-  <article class="account-input-example" aria-labelledby="inputExampleHeading">
-   <header><span>이렇게 입력하면 시작할 수 있어요</span><h3 id="inputExampleHeading">초5, 5-2 응용을 공부하고 있다면</h3><p>현재 진도를 입력하는 예시입니다. 아이의 실제 교재와 마친 분량에 맞춰 바꿔 주세요.</p></header>
-   <dl><div><dt>교과</dt><dd>디딤돌 기본+응용 5-2</dd></div><div><dt>응용·심화</dt><dd>쎈 수학 5-1</dd></div><div><dt>연산</dt><dd>초등 6-1 과정</dd></div><div><dt>공부할 시간</dt><dd>주 2회 · 회당 2시간</dd></div></dl>
-   <div class="account-example-answer"><h4>계획에서 함께 확인할 것</h4><ul><li><strong>다음 교과</strong> 6-1부터 중1-1·1-2까지 언제 이어갈지</li><li><strong>병행할 공부</strong> 새 진도를 배우며 어느 학기의 응용을 다질지</li><li><strong>준비할 연산</strong> 분수·소수를 정리하고 중등 연산을 언제 시작할지</li><li><strong>일정 조정</strong> 방학 특강과 중등 내신 준비에 필요한 시간을 어떻게 남길지</li></ul></div>
-  </article>
-  <div class="account-lanes" aria-label="함께 계획하는 네 가지 수학 공부">
-   <article><span>01 · 교과</span><h3>새 개념을 배우는 진도</h3><p>학기와 단원을 확인해 다음 교재로 이어갑니다. 마친 분량을 입력하면 남은 공부부터 잡습니다.</p></article>
-   <article><span>02 · 응용·심화</span><h3>배운 내용을 쓰는 힘</h3><p>교과보다 뒤에서 쎈·일품·최상위 등을 병행할 수 있습니다. 모든 학생에게 같은 심화서를 배정하지 않습니다.</p></article>
-   <article><span>03 · 사고력</span><h3>조건을 읽고 끝까지 풀기</h3><p>소마·필즈·1031 등 현재 과정을 확인합니다. 선발 준비가 겹칠 때에는 수업과 과제의 양도 함께 봅니다.</p></article>
-   <article><span>04 · 연산</span><h3>다음 과정에 필요한 계산</h3><p>교과와 연산의 학기가 다를 수 있습니다. 지금 하는 계산과 다음 수학에서 필요한 계산을 연결합니다.</p></article>
-  </div>
   <div class="account-preview">
    <div class="account-preview-tabs" role="tablist" aria-label="프로그램 화면 미리보기">
     <button id="previewMap" type="button" role="tab" aria-selected="true" aria-controls="previewMapPanel">학습 로드맵</button>
@@ -69,11 +68,22 @@
     <figure><img src="assets/roadmap-program-table-20261101.png" width="809" height="559" loading="lazy" alt="교과, 응용·심화, 연산과 사고력 교재를 월별로 색을 나누어 배치한 계획표 예시"><figcaption>프로그램 화면 · 월별 병행표 예시 <a href="assets/roadmap-program-table-20261101.png" target="_blank" rel="noopener">이미지 크게 보기</a></figcaption></figure>
    </div>
   </div>
+  <article class="account-input-example" aria-labelledby="inputExampleHeading">
+   <header><span>이렇게 입력하면 시작할 수 있어요</span><h3 id="inputExampleHeading">초5, 5-2 응용을 공부하고 있다면</h3><p>현재 진도를 입력하는 예시입니다. 아이의 실제 교재와 마친 분량에 맞춰 바꿔 주세요.</p></header>
+   <dl><div><dt>교과</dt><dd>디딤돌 기본+응용 5-2</dd></div><div><dt>응용·심화</dt><dd>쎈 수학 5-1</dd></div><div><dt>연산</dt><dd>초등 6-1 과정</dd></div><div><dt>공부할 시간</dt><dd>주 2회 · 회당 2시간</dd></div></dl>
+   <div class="account-example-answer"><h4>계획에서 함께 확인할 것</h4><ul><li><strong>다음 교과</strong> 6-1부터 중1-1·1-2까지 언제 이어갈지</li><li><strong>병행할 공부</strong> 새 진도를 배우며 어느 학기의 응용을 다질지</li><li><strong>준비할 연산</strong> 분수·소수를 정리하고 중등 연산을 언제 시작할지</li><li><strong>일정 조정</strong> 방학 특강과 중등 내신 준비에 필요한 시간을 어떻게 남길지</li></ul></div>
+  </article>
+  <div class="account-lanes" aria-label="함께 계획하는 네 가지 수학 공부">
+   <article><span>교과</span><h3>새 개념을 배우는 진도</h3><p>학기와 단원을 확인해 다음 교재로 이어갑니다. 마친 분량을 입력하면 남은 공부부터 잡습니다.</p></article>
+   <article><span>응용·심화</span><h3>배운 내용을 쓰는 힘</h3><p>교과보다 뒤에서 쎈·일품·최상위 등을 병행할 수 있습니다. 모든 학생에게 같은 심화서를 배정하지 않습니다.</p></article>
+   <article><span>사고력</span><h3>조건을 읽고 끝까지 풀기</h3><p>소마·필즈·1031 등 현재 과정을 확인합니다. 선발 준비가 겹칠 때에는 수업과 과제의 양도 함께 봅니다.</p></article>
+   <article><span>연산</span><h3>다음 과정에 필요한 계산</h3><p>교과와 연산의 학기가 다를 수 있습니다. 지금 하는 계산과 다음 수학에서 필요한 계산을 연결합니다.</p></article>
+  </div>
  </section>
  <section id="seniorExample" class="account-senior-section" aria-labelledby="seniorHeading">
   <div class="account-section-heading"><h2 id="seniorHeading">선배들의 로드맵,<br>한 사례를 먼저 살펴보세요.</h2><p>그때 어떤 교과와 사고력 과정을 함께 공부했을까요?<br> 초등 시기의 주요 전환을 모아봤습니다.</p></div>
   <article class="account-senior-example" aria-labelledby="seniorCaseTitle">
-   <header class="account-senior-header"><div><span class="account-case-type">선배들의 로드맵 · 공개 예시</span><h3 id="seniorCaseTitle">서울과학고 합격 학생의 로드맵</h3><p>서울과학고 졸업 후 MIT 진학</p></div><img src="assets/ui/roadmap-glass.svg?v=20261103-cards2" width="96" height="96" loading="lazy" alt="" aria-hidden="true"></header>
+   <header class="account-senior-header"><div><span class="account-case-type">선배들의 로드맵 · 공개 예시</span><h3 id="seniorCaseTitle">서울과학고 합격 학생의 로드맵</h3><p>서울과학고 졸업 후 MIT 진학</p></div></header>
    <ol class="account-senior-milestones" aria-label="초등 시기의 교과와 사고력 병행 과정">
     <li><strong class="account-senior-when">초3 7월</strong><div class="account-senior-lane lane-school"><h4>교과·심화</h4><p>초등 6-2 최상위와 중1-1 병행</p><small>중1-1 원리해설·최상위</small></div><div class="account-senior-lane lane-thinking"><h4>사고력·경시</h4><p>1031 중급 A＋3% 1과정</p><small>어려운 원리는 다시 설명받으며 보완</small></div></li>
     <li><strong class="account-senior-when">초3 11월</strong><div class="account-senior-lane lane-school"><h4>교과·심화</h4><p>중1-1 완료 → 중1-2 준비</p><small>원리해설·최상위 병행</small></div><div class="account-senior-lane lane-thinking"><h4>사고력·경시</h4><p>3% 1과정 병행</p><small>문제의 조건을 읽고 풀이 설명하기</small></div></li>
@@ -97,7 +107,7 @@
  <section class="account-library" aria-labelledby="libraryHeading">
   <div class="account-section-heading"><h2 id="libraryHeading">고민이 생기는 시점에<br>함께 읽을 자료도 있습니다.</h2><p>로그인하면 학원가 이야기와 선배 사례를 더 볼 수 있습니다. 학원 선택과 공부 계획을 함께 비교해 보세요.</p></div>
   <div class="account-library-grid">
-   <article><span>수학 교재 난이도 지도</span><h3>쎈 다음에는 무엇을 공부할까요?</h3><div class="account-math-sample" aria-label="중등 유형과 심화 교재 예시"><figure><img src="assets/reference/book-ssen-middle.jpg" width="60" height="84" loading="lazy" alt="쎈 중등 수학 1-1 표지"><figcaption>유형</figcaption></figure><figure><img src="assets/reference/book-ilpum-middle.jpg" width="60" height="84" loading="lazy" alt="일품 중등 수학 1-1 표지"><figcaption>준심화</figcaption></figure><figure><img src="assets/reference/book-black-middle.jpg" width="60" height="84" loading="lazy" alt="블랙라벨 중학 수학 1-1 표지"><figcaption>심화 선택</figcaption></figure></div><p>유아·초등·중등·고등 교재 39종을 표지와 함께 살펴봅니다. 개념·유형·준심화·심화를 비교하고 연산과 사고력을 따로 봅니다. 교재를 누르면 특징과 먼저 확인할 공부, 다음 연결을 볼 수 있습니다.</p><a href="planner.html?books=math">로그인하고 교재 난이도 지도 보기 <span aria-hidden="true">↗</span></a></article>
+   <article><span>수학 교재 난이도 지도</span><h3>쎈 다음에는 무엇을 공부할까요?</h3><div class="account-math-sample" aria-label="중등 유형과 심화 교재 예시"><figure><img src="assets/reference/book-ssen-middle.jpg" width="60" height="84" loading="lazy" alt="쎈 중등 수학 1-1 표지"><figcaption>유형</figcaption></figure><figure><img src="assets/reference/book-ilpum-middle.jpg" width="60" height="84" loading="lazy" alt="일품 중등 수학 1-1 표지"><figcaption>준심화</figcaption></figure><figure><img src="assets/reference/book-black-middle.jpg" width="60" height="84" loading="lazy" alt="블랙라벨 중학 수학 1-1 표지"><figcaption>심화 선택</figcaption></figure></div><p>유아·초등·중등·고등 교재 56종을 표지와 함께 살펴봅니다. 개념·유형·준심화·심화를 비교하고 사고력·연산·영재원 대비는 별도 영역에서 봅니다. 교재를 누르면 특징과 먼저 확인할 공부, 다음 연결을 볼 수 있습니다.</p><a href="planner.html?books=math">로그인하고 교재 난이도 지도 보기 <span aria-hidden="true">↗</span></a></article>
    <article><span>학원가 이야기</span><h3>지니·MSC·기파랑은 어떻게 다를까요?</h3><p>소마·필즈·황소와 누테학원, 국어·영어 학원을 이름별로 찾아봅니다. 공부 내용, 과제 부담, 상담할 질문과 공식 홈페이지·블로그를 함께 정리했습니다. 시험·접수·설명회 공지도 한 게시판에서 볼 수 있습니다.</p><a href="planner.html?academy=schools">로그인하고 학원별 안내 보기 <span aria-hidden="true">↗</span></a><a href="planner.html?academy=notices">학원 공지·일정 보기 <span aria-hidden="true">↗</span></a></article>
    <article><span>시기별 조언</span><h3>두 학원을 계속 병행해야 할까요?</h3><p>입반 적응, 초등 입학, 선발 준비와 내신 시기에 맞춰 읽을 조언을 모았습니다. 기존 학습과 수면을 지킬 수 있는지 함께 봅니다.</p><a href="planner.html?academy=soma-fields">로그인하고 병행 조언 보기 <span aria-hidden="true">↗</span></a></article>
    <article><span>분석지·인쇄</span><h3>전체 계획을 한 번에 살펴보세요.</h3><p>총평에서 현재 수준과 다음 공부를 먼저 보고, 뒤에서 그래프와 월별 교재 계획을 확인합니다. 인쇄하거나 PDF로 보관할 수 있습니다.</p><a href="#accountEntry">로그인하고 내 로드맵 만들기 <span aria-hidden="true">↗</span></a></article>
@@ -119,5 +129,5 @@
  <section class="account-start" aria-labelledby="startHeading"><img src="../docssam.jpg" width="72" height="84" loading="lazy" alt="독쌤"><div><h2 id="startHeading">우리 아이의 현재 진도부터 정리해 보세요.</h2><p>이메일 인증 후 무료로 학습 로드맵을 만들 수 있습니다.</p></div><a class="member-primary" href="#accountEntry">학습 로드맵 시작하기</a></section>
 </main>
 <footer class="member-footer">GFIELD · <a href="privacy.html">개인정보 수집·이용</a> · <a href="mailto:docssam1@gmail.com">이용 문의</a></footer>
-<script src="account-reel.js?v=20261103-layout1"></script><script src="account-landing.js?v=20261103-layout1"></script><script src="membership-policy.js?v=20261103-sync1"></script><script src="membership-api.js?v=20261103-login2"></script><script src="account.js?v=20261103-sync1"></script>
+<script src="account-reel.js?v=20261104-mint1"></script><script src="account-landing.js?v=20261104-mint1"></script><script src="membership-policy.js?v=20261103-sync1"></script><script src="membership-api.js?v=20261103-login2"></script><script src="account.js?v=20261103-sync1"></script>
 </body></html>

@@ -6,3 +6,9 @@
 .u5p112-figure-pair { display: flex; align-items: center; justify-content: center; gap: .3em; }
 .u5p112-figure-pair svg { width: 48% !important; min-width: 0; }
 @media print { .u5p112-figure-pair svg { max-height: 38mm; } }
+
+/* 112쪽 39번: 원문처럼 겨냥도와 전개도를 함께 비교한다. */
+.u5p112-q39-figure-pair { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: .2em; }
+.u5p112-q39-figure-pair svg { width: 44% !important; min-width: 0; }
+.u5p112-q39-arrow { flex: none; font-size: 1em; }
+@media print { .u5p112-q39-figure-pair svg { max-height: 48mm; } }

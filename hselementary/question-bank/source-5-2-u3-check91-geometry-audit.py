@@ -7,10 +7,11 @@ from pathlib import Path
 
 record=json.loads((Path(__file__).parent/'source-inventory/5-2-u3-e1-e4-readiness-review.json').read_text())
 r=next(x for x in record['additionalSourceReviews'] if x['sourcePrintedPage']==91)
-assert r['sourcePdfPage']==87 and r['runtimeConnection']=='not-connected' and not r['publisherAnswerVerified']
+assert r['sourcePdfPage']==87 and r['runtimeConnection']=='partially-connected' and not r['publisherAnswerVerified']
 assert [x['number'] for x in r['items']]==list(range(49,57))
 by_number={x['number']:x for x in r['items']}
-assert by_number[53]['status']==by_number[55]['status']=='source-ambiguity-answer-key-pending'
+assert by_number[53]['status']=='source-ambiguity-answer-key-pending'
+assert by_number[55]['status']=='public-independent-verification-publisher-key-pending'
 assert 5**2+2**2==29
 # Two regular dodecagons with different radii admit an interior point P at distance 10
 # from both adjacent vertices. Thus that isosceles condition alone does not fix the area.
@@ -27,4 +28,4 @@ assert 4+4==8
 height=F(2*24,8)
 assert height==6 and height*F(8,24)==2
 assert [by_number[n]['candidate'] for n in (49,53,54,56)]==['29cm²','300cm² (ㅍ이 정십이각형의 중심이라는 가정)','8cm','2cm']
-print('PASS: page 91 #49/#54/#56 and two noncongruent #53 constructions; source remains unconnected')
+print('PASS: page 91 #49/#54/#56 and two noncongruent #53 constructions; #53 remains unconnected')
