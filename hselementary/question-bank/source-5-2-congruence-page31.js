@@ -118,7 +118,10 @@
     const text = (p,label,dx,dy) => `<text x="${(p.x+dx).toFixed(2)}" y="${(p.y+dy).toFixed(2)}">${label}</text>`;
     const givenMark = angleMark(m,n,d,18);
     const targetMark = angleMark(r,g,m,18);
-    return `<svg class="source52-p31-diagram source52-p31-equilateral" data-source52-figure="equilateral-rotation" data-target-angle="${target}" viewBox="0 0 360 390" role="img" aria-label="공통 꼭짓점 ㄷ을 둔 두 정삼각형, 주어진 각과 목표각 ㄱㄹㅁ 그림" xmlns="http://www.w3.org/2000/svg">${a(d,n)}${a(n,g)}${a(g,d)}${a(d,m)}${a(m,r)}${a(r,d)}${a(m,n)}${a(r,g)}<path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text class="source52-angle-label" style="paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round" x="${(givenMark.label.x-20).toFixed(2)}" y="${(givenMark.label.y+4).toFixed(2)}">${target}°</text>${text(g,"ㄱ",-20,0)}${text(n,"ㄴ",8,-10)}${text(d,"ㄷ",-18,18)}${text(r,"ㄹ",18,-2)}${text(m,"ㅁ",8,-9)}</svg>`;
+    const points = [d,n,g,m,r,givenMark.label,targetMark.label];
+    const left = Math.floor(Math.min(...points.map(p=>p.x))-38), top = Math.floor(Math.min(...points.map(p=>p.y))-38);
+    const right = Math.ceil(Math.max(...points.map(p=>p.x))+38), bottom = Math.ceil(Math.max(...points.map(p=>p.y))+38);
+    return `<svg class="source52-p31-diagram source52-p31-equilateral" data-source52-figure="equilateral-rotation" data-target-angle="${target}" viewBox="${left} ${top} ${right-left} ${bottom-top}" role="img" aria-label="공통 꼭짓점 ㄷ을 둔 두 정삼각형, 주어진 각과 목표각 ㄱㄹㅁ 그림" xmlns="http://www.w3.org/2000/svg">${a(d,n)}${a(n,g)}${a(g,d)}${a(d,m)}${a(m,r)}${a(r,d)}${a(m,n)}${a(r,g)}<path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text class="source52-angle-label" style="paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round" x="${(givenMark.label.x-20).toFixed(2)}" y="${(givenMark.label.y+4).toFixed(2)}">${target}°</text>${text(g,"ㄱ",-20,0)}${text(n,"ㄴ",8,-10)}${text(d,"ㄷ",-18,18)}${text(r,"ㄹ",18,-2)}${text(m,"ㅁ",8,-9)}</svg>`;
   }
 
   // 원문의 방향과 각 ㉮ 표시를 유지한다. 길이는 각도 조건을 만족하도록 재구성한다.

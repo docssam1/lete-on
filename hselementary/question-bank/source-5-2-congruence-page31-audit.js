@@ -137,6 +137,15 @@ for (const def of source.definitions) {
         const r = { x: dm * Math.cos((delta - 60) * Math.PI / 180), y: -dm * Math.sin((delta - 60) * Math.PI / 180) };
         const shown = angleAt(g, r, { x: m.x, y: -m.y });
         assert.ok(Math.abs(shown - (300 - targetAngle)) < 1e-8, "shown target angle matches the answer");
+        const svg = item.prompt.match(/<svg[\s\S]*?<\/svg>/)[0];
+        const [vx,vy,vw,vh] = svg.match(/viewBox="([^"]+)"/)[1].split(/\s+/).map(Number);
+        const scale = 146, origin = {x:80,y:175};
+        for (const p of [d,n,g,r,{x:m.x,y:-m.y}]) {
+          const x=origin.x+p.x*scale, y=origin.y+p.y*scale;
+          assert(x >= vx+20 && x <= vx+vw-20 && y >= vy+20 && y <= vy+vh-20, "diagram vertices have room for labels");
+        }
+        assert(vw < 360 && vh < 390, "diagram viewBox should not contain excessive empty space");
+
         assert.equal(item.answer, `${300 - targetAngle}°`);
         assert.match(item.prompt, /∠ㄱㄹㅁ/);
       } else if (def.sourceItemId.endsWith("mission-4")) {
