@@ -1,5 +1,13 @@
 # Current handoff — 2026-11-03
 
+### 2026-11-04 AMC original-paper result-to-explanation link
+
+The year/form catalog continues to point to the MAA-authorized LIVE archive for printable original papers, answer keys, and professional solutions. A reviewed AMC 8 2024 paper page exposes question-level concepts, hints, and written/video solutions. The review form already linked each numbered response to its source question; the result's wrong/blank list now repeats a direct source link for each missed question, so the learner can move from diagnosis to the original explanation without searching for the number again. It preserves the year/form/question route and then retains the GFIELD-authored similar-practice action. No original prompt or solution is stored locally.
+
+Web-search audit for grade comparison: MAA-authored summary copies already staged contain national/combined cohort grade means for AMC 8 2001–2009 and AMC 10/12 2007–2011. Search results for 2013–2015 AMC 8 grade means surfaced individual school/Math Circle reports, including records with student names; those are not national grade norms and were not imported. The national AMC 8 grade-mean gap after 2009 remains open. Keep exact-year competition score references, grade means, Korean participant cohorts, and individual school samples separate. Sources reviewed: [LIVE AMC 8 2024](https://live.poshenloh.com/past-contests/amc8/2024), [MAA AMC 8 2009 annual report copy](https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html), [2015 AMC 8 school report example](https://asiamathsalliance.com/2015/amc8/03057F.pdf), [Bard Math Circle 2014 result](https://www.bardmathcircle.org/p/2014-amc-8).
+
+Verification: the targeted Chromium test `yearly AMC originals expose print, answer entry, and local self-marking` passes 1/1 and now asserts the missed Q1 result links to the matching 2023 AMC 8 original explanation route. `git diff --check` passes. No student answer is saved with these links. Local only; no push, deployment, or Drive sync.
+
 ### 2026-11-04 web-researched AMC year-by-year original-source catalog
 
 The LIVE by Po-Shen Loh archive was searched and reconciled against the app's route builder. Added `boarding-school-math/competition/amc-original-source-catalog.csv` with 266 individual contest routes and companion URLs for each original exam PDF, answer page, and solutions page: AMC 8 41, AMC 10 52, AMC 12 102, and AIME 71. The matching scope, route exceptions, product flow, and citations are in `boarding-school-math/docs/AMC_YEARLY_SOURCE_CATALOG.md`.

@@ -691,7 +691,24 @@
       const itemState = item.status === "wrong" ? "오답" : "미응답";
       const blankReason = blankReasons.find(function (entry) { return entry.id === item.reason; });
       const details = [item.answer ? `내 답 ${item.answer}` : "답 미입력", domain && item.domain !== "unclassified" ? domain.title : "영역 미분류", item.status === "wrong" && reason && item.reason !== "none" ? reason.title : "", item.status === "blank" && blankReason && item.reason !== "none" ? blankReason.title : ""].filter(Boolean);
-      row.textContent = `${item.number}번 · ${itemState} · ${details.join(" · ")}`;
+      const summary = document.createElement("span");
+      summary.textContent = `${item.number}번 · ${itemState} · ${details.join(" · ")}`;
+      row.append(summary);
+      if (paperLibrary && ["amc8", "amc10", "amc12", "aime"].includes(selectedFormat().id)) {
+        const year = Number($("archive-year").value || params.get("year"));
+        const form = $("archive-form").value || params.get("form") || "";
+        const source = paperLibrary.problemRoute(selectedFormat().id, year, form, item.number);
+        if (source) {
+          const sourceLink = document.createElement("a");
+          sourceLink.className = "report-review-source-link";
+          sourceLink.href = source;
+          sourceLink.target = "_blank";
+          sourceLink.rel = "noopener noreferrer";
+          sourceLink.textContent = "원본 문항·개념·해설 ↗";
+          sourceLink.setAttribute("aria-label", `${year} ${selectedFormat().title} ${form ? `${form} ` : ""}${item.number}번 원본 문항, 개념, 해설 열기`);
+          row.append(sourceLink);
+        }
+      }
       reviewList.append(row);
     });
     $("report-review-items").hidden = result.reviewItems.length === 0;

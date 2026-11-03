@@ -95,6 +95,8 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .report-review-items p { margin: 6px 0 10px; color: #566274; font-size: .78rem; line-height: 1.5; }
 .report-review-items ol { margin: 0; padding-left: 1.5rem; display: grid; gap: 6px; font-size: .82rem; }
 .report-review-items li::marker { color: var(--review-accent); font-weight: 850; }
+.report-review-source-link { min-height: 40px; margin-top: 2px; display: inline-flex; align-items: center; color: var(--review-accent-strong); font-size: .76rem; font-weight: 800; text-decoration: none; }
+.report-review-source-link:hover { text-decoration: underline; }
 .report-reasons p { margin: 6px 0; font-size: .83rem; }
 .report-next { margin: 22px 0 0; padding: 13px; border-left: 4px solid var(--review-accent); background: var(--review-accent-tint); color: #182230 !important; font-weight: 750; }
 .report-follow-up { margin-top: 12px; padding: 15px; border-left: 4px solid var(--review-accent); background: #fff; }

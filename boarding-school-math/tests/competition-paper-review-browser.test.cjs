@@ -48,6 +48,8 @@ test("yearly AMC originals expose print, answer entry, and local self-marking", 
   await page.locator("#review-exam-date").fill("2026-11-04");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 오답 · 내 답 E/);
+  assert.equal(await page.locator("#report-review-items-list .report-review-source-link").getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2023/problem/1");
+  assert.match(await page.locator("#report-review-items-list .report-review-source-link").innerText(), /원본 문항·개념·해설/);
   await page.locator("#save-diagnostic").click();
   const saved = await page.evaluate(() => localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"));
   assert.doesNotMatch(saved, /answer|responses|questionNumber/i);
