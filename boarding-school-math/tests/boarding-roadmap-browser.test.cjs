@@ -904,12 +904,14 @@ test("Grade 10 annual plan opens the original proof-writing workbook with studen
   await page.goto(workbookUrl, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".proof-item").count(), 8);
   assert.equal(await page.locator(".proof-item textarea:visible").count(), 8);
+  assert.match(await page.locator(".proof-item").nth(3).locator(".claim").innerText(), /0이 아닌 정수 d/);
   assert.equal(await page.locator(".teacher-solution:visible").count(), 0);
   assert.equal(await page.locator(".math-fraction").count(), 5, "coordinate midpoints and the rational-number expression use stacked fraction notation");
   assert.doesNotMatch(await page.locator("main").innerText(), /\\frac|\\sqrt|\\\(/);
   await page.getByLabel("자료 보기").selectOption("teacher");
   assert.equal(new URL(page.url()).searchParams.get("edition"), "teacher");
   assert.equal(await page.locator(".teacher-solution:visible").count(), 8);
+  assert.match(await page.locator(".proof-item").nth(3).locator(".teacher-solution").innerText(), /0이 아닌 정수 d/);
   assert.equal(await page.locator(".proof-item textarea:visible").count(), 0);
   assert.match(await page.locator(".edition-note").innerText(), /풀이 예시는 가능한 설명의 한 가지 방식/);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [1280, 1280]);
