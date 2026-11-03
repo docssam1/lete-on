@@ -127,12 +127,14 @@
   const sourceYear = /^\d{4}$/.test(params.get("sourceYear") || "") ? params.get("sourceYear") : "";
   const sourceForm = /^[ABCD]$/.test(params.get("sourceForm") || "") ? params.get("sourceForm") : "";
   const sourceQuestions = (params.get("sourceQuestions") || "").split(",").map(Number).filter(function (value) { return Number.isInteger(value) && value > 0 && value <= 25; });
-  if (selected.length || sourceYear || sourceQuestions.length) {
+  const mockWrongQuestions = (params.get("mockWrongQuestions") || "").split(",").map(Number).filter(function (value, index, values) { return Number.isInteger(value) && value > 0 && value <= 25 && values.indexOf(value) === index; });
+  if (selected.length || sourceYear || sourceQuestions.length || mockWrongQuestions.length) {
     if (selected.length) activeDomains = new Set(selected);
     targetedNote.hidden = false;
     const description = document.getElementById("targeted-practice-description");
     const sourceDescription = sourceYear ? `${sourceYear} AMC 12${sourceForm ? ` ${sourceForm}` : ""} 원본에서 표시한 ${sourceQuestions.length ? `${sourceQuestions.join(", ")}번 문항 이후 ` : ""}` : "";
-    description.textContent = `${sourceDescription}${selected.length ? `${selected.join("·")} 영역의 GFIELD 창작 문항을 모았어요.` : "영역이 분류되지 않은 문항이 있어요. 아래에서 필요한 연습 영역을 골라 보세요."}`;
+    const mockDescription = mockWrongQuestions.length ? `지필드 모의고사에서 틀리거나 비워 둔 ${mockWrongQuestions.join(", ")}번 문항 · ` : "";
+    description.textContent = `${mockDescription}${sourceDescription}${selected.length ? `${selected.join("·")} 영역의 GFIELD 창작 문항을 모았어요.` : "영역이 분류되지 않은 문항이 있어요. 아래에서 필요한 연습 영역을 골라 보세요."}`;
     const returnLink = document.getElementById("targeted-practice-return");
     returnLink.href = `./competition-paper-review.html?grade=${grade}&program=amc12${sourceYear ? `&year=${sourceYear}` : ""}${sourceForm ? `&form=${sourceForm}` : ""}`;
   }

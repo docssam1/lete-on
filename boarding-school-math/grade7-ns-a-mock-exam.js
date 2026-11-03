@@ -182,10 +182,18 @@
     if (exam.id === "gfield-amc12-concept-mock-v1") {
       const nextStudyUrl = new URL(nextStudyLink.href, window.location.href);
       const attemptParams = new URLSearchParams(window.location.search);
-      ["domains", "sourceYear", "sourceForm", "sourceQuestions"].forEach(function (key) {
+      ["sourceYear", "sourceForm", "sourceQuestions"].forEach(function (key) {
         const value = attemptParams.get(key);
         if (value) nextStudyUrl.searchParams.set(key, value);
       });
+      const practiceDomainIds = { "대수": "algebra", "함수·삼각함수": "functions", "정수론": "number", "기하": "geometry", "경우의 수": "counting" };
+      const wrongItems = exam.items.map(function (item, index) { return { item: item, number: index + 1 }; }).filter(function (entry) {
+        return answers.get(entry.item.id) !== entry.item.answer;
+      });
+      const mockDomains = Array.from(new Set(wrongItems.map(function (entry) { return practiceDomainIds[entry.item.standard]; }).filter(Boolean)));
+      if (mockDomains.length) nextStudyUrl.searchParams.set("domains", mockDomains.join(","));
+      else if (attemptParams.get("domains")) nextStudyUrl.searchParams.set("domains", attemptParams.get("domains"));
+      nextStudyUrl.searchParams.set("mockWrongQuestions", wrongItems.map(function (entry) { return entry.number; }).join(","));
       nextStudyLink.href = nextStudyUrl.href;
     }
     nextStudyLink.textContent = exam.nextStudyLabel || `${exam.clusterId} 단원 워크북으로 이어서 풀기 →`;
@@ -193,7 +201,8 @@
     if (savedResult) {
       const roadmapLink = document.createElement("a");
       roadmapLink.className = "mock-roadmap-result-link";
-      roadmapLink.href = `./boarding-roadmap.html?grade=${encodeURIComponent(exam.grade || 7)}#competition-diagnostic`;
+      const roadmapSection = exam.id === "gfield-amc12-concept-mock-v1" || exam.clusterId === "AMC8" ? "competition-diagnostic" : "grade-practice";
+      roadmapLink.href = `./boarding-roadmap.html?grade=${encodeURIComponent(exam.grade || 7)}#${roadmapSection}`;
       roadmapLink.textContent = "로드맵에서 내 모의고사 기록 보기 →";
       resultContent.push(roadmapLink);
     }

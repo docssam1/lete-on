@@ -15,8 +15,9 @@ test("GFIELD AMC 12 range mock is a complete, five-domain 25-question form", () 
 });
 
 test("answers agree with independent calculations for all 25 original questions", () => {
-  const expected = ["527", "4", "24", "16", "48", "17", "5", "32", "7", "35", "29", "4/5", "24", "10", "15/16", "13", "31", "12", "75", "60", "3", "9", "4", "50°", "15"];
+  const expected = ["527", "4", "60", "16", "48", "17", "5", "32", "24√3", "220", "29", "3√6/8", "32", "65/8", "5/9", "123", "26", "24", "32π", "200", "2", "4", "27", "9", "10"];
   exam.items.forEach((item, index) => assert.equal(String(item.choices[item.answer]), expected[index], item.id));
+  exam.items.forEach((item) => assert.equal(new Set(item.choices.map(String)).size, 5, `${item.id} choices must be distinct`));
 });
 
 test("form identifies itself as GFIELD-created and keeps score interpretation descriptive", () => {
