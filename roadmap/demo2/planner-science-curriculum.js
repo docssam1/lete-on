@@ -2,7 +2,8 @@
  * Level numbers rank reference plans, not measured science attainment.
  * L0-L6: subject systems; L7+: semester books. Middle school: school + advance.
  * Basic-field durations follow the supplied Hangwayeon standard example.
- * The selected bridge is SIX MONTHS TOTAL; repeat study has no invented end.
+ * The selected bridge is SIX MONTHS TOTAL, including High Top review.
+ * Do not append an unbounded second pass after this scheduled bridge.
  */
 (function(global){
 'use strict';
@@ -54,8 +55,8 @@ function apply(m){
  m.continuation=[];
  if(bridge){
   const start=end,finish=Number.isFinite(start)?start+6:null;
-  m.continuation.push({id:'scienceBridge',title:'중등 과학 · 심화 브릿지',material:m.state.bridgeBook==='highTop'?'하이탑 · 중등 해당 분야':'최상위 줄기과학 · 해당 분야',courseMethod:'심화 브릿지',scope:'기본을 공부한 분야의 심화·자료 해석·서술',months:6,start,end:finish,completed:false,continuation:true,bridge:true});
-  m.continuation.push({id:'highTopRepeat',title:'중등 과학 · 하이탑 심화 반복',material:'하이탑 · 중등 해당 분야·단원',courseMethod:'심화 반복',scope:'분야별 개념 설명·응용·다시 풀기 · 반복 횟수는 학습 후 조정',start:finish,end:null,completed:false,continuation:true,repeat:true});
+  m.continuation.push({id:'scienceBridge',title:'중등 과학 · 심화 브릿지',material:m.state.bridgeBook==='highTop'?'하이탑 · 중등 해당 분야':'최상위 줄기과학 · 해당 분야',courseMethod:'심화 브릿지',scope:'기본을 공부한 분야의 심화·자료 해석·서술 · 하이탑 대표 문제와 오답 복습 포함',months:6,start,end:finish,completed:false,continuation:true,bridge:true});
+  m.bridgeCheckpoint={at:finish,title:'심화 점검 후 다음 과학 과정 선택'};
  }
  // Cepheid/high-school work remains a separate, explicitly selected extension.
  if(m.state.extension==='foundation'&&['giftedSchool','scienceHigh'].includes(m.state.schoolGoal))m.continuation.push({id:'cepheid1',title:'중등 물리·화학 · 세페이드 1F 선택 보완',start:null,end:null,completed:false,continuation:true});
@@ -63,7 +64,7 @@ function apply(m){
   m.continuation.push({id:'cepheid2',title:'중등 과학 · 세페이드 2F 선택 심화',start:null,end:null,completed:false,continuation:true});
  }
  if(m.state.highDeep==='3F'&&(['giftedSchool','scienceHigh'].includes(m.state.schoolGoal)||m.state.physicsGoal==='consider'))m.continuation.push({id:'cepheid3',title:'고등 개념 이후 · 세페이드 3F 선택 심화',start:null,end:null,completed:false,continuation:true,parallel:true});
- const last=Math.max(24,...m.continuation.filter(b=>Number.isFinite(b.start)).map(b=>b.start+(b.repeat?12:6)),...dated.map(b=>b.end));
+ const last=Math.max(24,...m.continuation.filter(b=>Number.isFinite(b.end)).map(b=>b.end),...dated.map(b=>b.end));
  m.from=0;m.to=Math.ceil(last);
  m.schoolTerms=[];
  if(Number.isFinite(m.context.now)){
@@ -81,39 +82,39 @@ function apply(m){
  }
  m.blocks=[...m.phases,...m.next,...m.terms,...m.continuation,...m.schoolTerms];
  m.months=Number.isFinite(m.context.now)?Array.from({length:m.to},(_,offset)=>({offset,...global.PlannerScience.date(m.context,offset)})):[];
- m.goalPlan.targets=m.goalPlan.targets.map(t=>['giftedSchool','scienceHigh'].includes(t.id)?{...t,steps:['중등 기본 개념·탐구 확인','심화 브릿지 전체 6개월 · 필요한 분야','중등 하이탑 심화 반복','추가 심화·고등 과학은 이후 별도 선택'],note:'선행한 양만으로 진학 준비가 끝나지 않습니다. 기본 개념과 자료 해석·서술을 먼저 다지고 필요한 추가 심화를 고릅니다. 학교·학년도별 전형 준비는 별도로 확인합니다.'}:t);
- m.orderLabel=p.middle?'학교 과학·내신 대비 + 수학 선행에 맞춘 과학 선행':system?'계통별 기본 · '+m.next.filter(b=>FIELDS[b.id]).map(b=>FIELDS[b.id]).join(' → ')+' → 심화 브릿지 6개월 → 하이탑 반복':'학기별 기본 · 오투 중1-1부터 선택한 범위 순서대로';
+ m.goalPlan.targets=m.goalPlan.targets.map(t=>['giftedSchool','scienceHigh'].includes(t.id)?{...t,steps:['중등 기본 개념·탐구 확인','심화 브릿지 전체 6개월 · 필요한 분야','하이탑 개념·대표 문제·오답은 브릿지 안에서 복습','추가 심화·고등 과학은 이후 별도 선택'],note:'선행한 양만으로 진학 준비가 끝나지 않습니다. 기본 개념과 자료 해석·서술을 먼저 다지고 필요한 추가 심화를 고릅니다. 학교·학년도별 전형 준비는 별도로 확인합니다.'}:t);
+ m.orderLabel=p.middle?'학교 과학·내신 대비 + 수학 선행에 맞춘 과학 선행':system?'계통별 기본 · '+m.next.filter(b=>FIELDS[b.id]).map(b=>FIELDS[b.id]).join(' → ')+' → 심화·하이탑 복습 6개월 → 다음 과정 선택':'학기별 기본 · 오투 중1-1부터 선택한 범위 순서대로';
  return m;
 }
-function rows(m){return [['실험과학',m.phases.filter(b=>b.id==='experiment')],['초등 기본',m.phases.filter(b=>b.id==='elementary'||b.review)],['과학 선행',m.terms.length?m.terms:m.next],['심화 브릿지',m.continuation.filter(b=>b.bridge)],['하이탑 반복',m.continuation.filter(b=>b.repeat)],['학교·내신',m.schoolTerms]];}
+function rows(m){return [['실험과학',m.phases.filter(b=>b.id==='experiment')],['초등 기본',m.phases.filter(b=>b.id==='elementary'||b.review)],['과학 선행',m.terms.length?m.terms:m.next],['심화 브릿지',m.continuation.filter(b=>b.bridge)],['학교·내신',m.schoolTerms]];}
 function label(m){
  const p=m.curriculum,system=m.route!=='otu';
  const selected=system?'현재 선택은 계통별 과정입니다. 줄기과학으로 분야별 기본 개념과 탐구를 공부합니다.':'현재 선택은 학기별 과정입니다. 오투로 선택한 학년·학기의 개념과 탐구를 차례로 공부합니다.';
- const bridge=m.continuation.some(b=>b.bridge)?' 기본 이후에는 심화 브릿지 전체 6개월과 하이탑 반복을 이어갑니다.':'';
+ const bridge=m.continuation.some(b=>b.bridge)?' 기본 이후 심화 브릿지를 전체 6개월로 잡고, 그 안에서 하이탑의 대표 문제와 오답을 복습합니다.':'';
  if(p.middle)return '중학생부터는 학교 과학과 내신 대비를 먼저 챙깁니다. '+selected+bridge+' 별도 과학 선행은 수학 진도와 필요한 식·비례·그래프 개념에 맞춰 조정합니다.';
  const standard=p.level===null?' 현재 과학 이수 범위를 확인하며 다음 범위를 정합니다.':' 초등 L'+p.level+'의 표준 추천은 '+(p.system?'계통별':'학기별')+' 과정입니다.';
  return selected+bridge+standard;
 }
 function guidance(m,b){
  if(!b.material)return null;
- const method=b.scopeCheck?'이미 공부한 초5·6 과학은 유지합니다. 앞 학년의 개념·탐구 중 빠진 내용만 찾아 보완해 주세요.':b.id==='experiment'?'실험 전에는 결과를 예상하고, 실험 뒤에는 바뀐 조건과 관찰한 결과를 연결해 말해 보세요. 교과 진도와 별도로 병행하며, 실험 수업만으로 교과 개념을 모두 배웠다고 보지는 않습니다.':b.schoolStudy?'학교에서 배우는 단원과 평가 범위를 먼저 챙깁니다. 과학 선행 때문에 내신 대비가 빠지지 않도록 별도 행으로 계획합니다.':b.bridge?'이미 배운 기본 개념을 낯선 자료와 서술 문제에 적용하는 6개월입니다. 선택한 분야·단원 전체에 배정한 기간이며, 물리·화학·생명·지구를 각각 6개월씩 하는 뜻은 아닙니다.':b.repeat?'하이탑을 한 번 끝내고 바로 다음 단계로 넘어가지 않습니다. 같은 분야를 다시 공부하며 개념을 설명하고 문제에 적용하는 힘을 다집니다. 오답뿐 아니라 대표 문제와 단원 연결도 다시 봅니다. 반복 횟수와 완료 월은 미리 고정하지 않습니다.':b.schoolTerm?'학년·학기별로 개념, 대표 탐구, 자료 해석과 문제 적용을 함께 공부합니다. 학교 진도와 이해도를 보며 어려운 단원에 필요한 시간을 더해 주세요.':b.id==='elementary'?(m.state.elementaryScope==='all'?'초등 과학 전체의':'초5·6의')+' 용어·개념·탐구를 해당 학기 순서로 확인합니다. 이미 공부한 범위는 건너뛰고, 실험과학은 별도로 필요할 때 선택합니다.':'분야별 기본 개념과 대표 탐구를 먼저 공부합니다. 물리는 수학 중2-1의 식·비례·그래프를 실제 현상에 적용할 수 있는지 함께 봅니다. 심화 교재가 기본 공부를 대신하지 않습니다.';
+ const method=b.scopeCheck?'이미 공부한 초5·6 과학은 유지합니다. 앞 학년의 개념·탐구 중 빠진 내용만 찾아 보완해 주세요.':b.id==='experiment'?'실험 전에는 결과를 예상하고, 실험 뒤에는 바뀐 조건과 관찰한 결과를 연결해 말해 보세요. 교과 진도와 별도로 병행하며, 실험 수업만으로 교과 개념을 모두 배웠다고 보지는 않습니다.':b.schoolStudy?'학교에서 배우는 단원과 평가 범위를 먼저 챙깁니다. 과학 선행 때문에 내신 대비가 빠지지 않도록 별도 행으로 계획합니다.':b.bridge?'이미 배운 기본 개념을 낯선 자료와 서술 문제에 적용하는 전체 6개월입니다. 하이탑의 대표 문제와 오답을 다시 푸는 시간도 이 기간에 포함합니다. 6개월을 마치면 개념 설명과 서술 풀이를 점검하고, 부족한 단원을 보완한 뒤 다음 과정을 정합니다.':b.repeat?'하이탑을 한 번 끝내고 바로 다음 단계로 넘어가지 않습니다. 같은 분야를 다시 공부하며 개념을 설명하고 문제에 적용하는 힘을 다집니다. 오답뿐 아니라 대표 문제와 단원 연결도 다시 봅니다. 반복 횟수와 완료 월은 미리 고정하지 않습니다.':b.schoolTerm?'학년·학기별로 개념, 대표 탐구, 자료 해석과 문제 적용을 함께 공부합니다. 학교 진도와 이해도를 보며 어려운 단원에 필요한 시간을 더해 주세요.':b.id==='elementary'?(m.state.elementaryScope==='all'?'초등 과학 전체의':'초5·6의')+' 용어·개념·탐구를 해당 학기 순서로 확인합니다. 이미 공부한 범위는 건너뛰고, 실험과학은 별도로 필요할 때 선택합니다.':'분야별 기본 개념과 대표 탐구를 먼저 공부합니다. 물리는 수학 중2-1의 식·비례·그래프를 실제 현상에 적용할 수 있는지 함께 봅니다. 심화 교재가 기본 공부를 대신하지 않습니다.';
  const timing=b.completed?'기존 이수 범위 · 새 일정 배정 없음':global.PlannerScience.date(m.context,b.start).label+(Number.isFinite(b.end)?' → '+global.PlannerScience.date(m.context,b.end-1).label:b.repeat?' 시작 · 완료 월은 학습 후 조정':'');
  return {title:b.title,html:'<div class="science-detail"><p>'+esc(b.courseMethod)+'</p><h3>'+esc(b.title)+'</h3><p><strong>'+esc(b.material)+'</strong></p><p>'+esc(b.scope)+'</p><p>'+esc(method)+'</p><p>'+esc(timing)+'</p></div>'};
 }
 function choices(m,button){
  const hasBridge=m.continuation.some(b=>b.bridge);
- return '<p class="science-note">'+esc(label(m))+'</p><p class="science-note">초등 L1~L6은 계통별, L7부터는 학기별을 표준으로 둡니다. 중학생부터는 학교 과학·내신 대비와 과학 선행을 나란히 계획합니다. 기존에 따로 선택한 경로와 실제 이수 기록은 유지합니다.</p><h4>심화 브릿지 · 전체 6개월</h4>'+(hasBridge?'<div class="science-options">'+button('bridgeBook','julgi','최상위 줄기과학으로 연결','기본을 공부한 분야의 심화·자료 해석',m.state.bridgeBook==='julgi')+button('bridgeBook','highTop','하이탑 수준으로 연결','중등 해당 분야·단원부터 · 이후 하이탑 심화 반복',m.state.bridgeBook==='highTop')+'</div>':'<p>현재는 학기별 기본 과정입니다. 심화를 더하려면 아래에서 브릿지를 추가해 주세요.</p>'+button('extension','bridge','심화 브릿지 6개월 추가','중등 기본 이후 · 하이탑 반복으로 연결',false));
+ return '<p class="science-note">'+esc(label(m))+'</p><p class="science-note">초등 L1~L6은 계통별, L7부터는 학기별을 표준으로 둡니다. 중학생부터는 학교 과학·내신 대비와 과학 선행을 나란히 계획합니다. 기존에 따로 선택한 경로와 실제 이수 기록은 유지합니다.</p><h4>심화 브릿지 · 전체 6개월</h4>'+(hasBridge?'<div class="science-options">'+button('bridgeBook','julgi','최상위 줄기과학으로 연결','기본을 공부한 분야의 심화·자료 해석',m.state.bridgeBook==='julgi')+button('bridgeBook','highTop','하이탑 수준으로 연결','중등 해당 분야·단원 · 6개월 안에 복습 포함',m.state.bridgeBook==='highTop')+'</div>':'<p>현재는 학기별 기본 과정입니다. 심화를 더하려면 아래에서 브릿지를 추가해 주세요.</p>'+button('extension','bridge','심화 브릿지 6개월 추가','중등 기본 이후 · 하이탑 복습까지 6개월',false));
 }
 function questions(m){return [
  {question:m.curriculum.middle?'중학생인데 과학 선행과 내신은 어떻게 나누나요?':'과학은 계통별과 학기별 중 어느 쪽으로 공부하나요?',answer:label(m)+' 레벨은 과학 이수 사실을 뜻하지 않으므로 현재 공부한 과학 범위는 별도로 확인합니다.'},
- {question:'심화 브릿지 6개월에는 무엇을 하나요?',answer:'중등 기본을 공부한 분야에서 최상위 줄기과학이나 하이탑 수준의 자료 해석·응용·서술을 연결합니다. 여러 분야를 묶은 전체 6개월이며 과목마다 6개월을 배정하지 않습니다. 이후 하이탑을 반복하며 부족한 개념과 적용을 다집니다.'},
- {question:'하이탑을 끝내면 바로 고등 과학으로 넘어가나요?',answer:'교재를 끝낸 것만으로 넘어가지 않습니다. 같은 분야의 개념을 설명하고 낯선 문제에 적용하는지 반복해서 확인합니다. 중학생은 학교 과학·내신 대비를 유지하며 수학 선행과 필요한 과학 개념에 맞춰 다음 범위를 고릅니다.'}
+ {question:'심화 브릿지 6개월에는 무엇을 하나요?',answer:'중등 기본을 공부한 분야에서 최상위 줄기과학이나 하이탑 수준의 자료 해석·응용·서술을 연결합니다. 여러 분야를 묶은 전체 6개월이며 과목마다 6개월을 배정하지 않습니다. 하이탑의 개념·대표 문제·오답 복습도 이 6개월 안에 포함합니다. 기간이 끝나면 필요한 단원만 보완하거나 다음 과학 과정을 선택합니다.'},
+ {question:'하이탑을 끝내면 바로 고등 과학으로 넘어가나요?',answer:'브릿지 6개월 안에서 같은 분야의 개념을 설명하고 낯선 문제에 적용하는지 확인합니다. 부족한 단원이 남으면 그 단원만 보완하고, 준비가 되면 다음 과정으로 넘어갑니다. 중학생은 학교 과학·내신 대비를 유지하며 수학 선행과 필요한 과학 개념에 맞춰 다음 범위를 고릅니다.'}
  ];}
 function graph(m){
  const lanes=rows(m).filter(([,b])=>b.length),n=m.to-m.from,x=v=>190+v/n*780,height=80+lanes.length*70;
  const chart=lanes.map(([name,blocks],i)=>'<text x="12" y="'+(51+i*70)+'">'+esc(name)+'</text>'+blocks.filter(b=>!b.completed&&Number.isFinite(b.start)).map((b,j)=>'<g><title>'+esc(b.title+' · '+(b.material||'현재 과학 교재')+' · '+global.PlannerScience.date(m.context,b.start).label+(b.repeat?' 시작 · 완료 월 미정':' → '+global.PlannerScience.date(m.context,b.end-1).label))+'</title><rect x="'+x(b.start)+'" y="'+(25+i*70)+'" width="'+((b.end??m.to)-b.start)/n*780+'" height="44" rx="6" fill="'+(i%2?'#e9dff2':'#dcebe3')+'" stroke="#b7a9c0"'+(b.repeat?' stroke-dasharray="4 4"':'')+'/>'+(b.end-b.start>=3||b.repeat?'<text x="'+(x(b.start)+7)+'" y="'+(52+i*70)+'">'+esc(b.bridge?'브릿지 6개월':b.repeat?'하이탑 반복':b.schoolStudy?b.title.split(' ')[0]:b.title.replace('중등 ','').split(' · ')[0].replace('생명과학','생명').replace('지구과학','지구'))+'</text>':'')+'</g>').join('')).join('');
  const ticks=Array.from({length:Math.floor(n/6)+1},(_,i)=>i*6).map(v=>'<text x="'+x(v)+'" y="'+(height-10)+'" text-anchor="middle">'+esc(global.PlannerScience.date(m.context,v).label)+'</text>').join('');
- return '<div class="science-chart" tabindex="0" role="region" aria-label="과학 기본·심화·학교 내신 일정 비교"><svg viewBox="0 0 1000 '+height+'" role="img" aria-label="과학 계통별 또는 학기별 기본과 브릿지 6개월·하이탑 반복·학교 과학 비교">'+chart+ticks+'</svg></div><p class="science-note">실선은 선택한 범위의 예상 일정입니다. 하이탑 반복의 점선 구간은 계속 점검할 과정이며, 그래프 끝을 완료일로 정한 뜻은 아닙니다.</p>';
+ return '<div class="science-chart" tabindex="0" role="region" aria-label="과학 기본·심화·학교 내신 일정 비교"><svg viewBox="0 0 1000 '+height+'" role="img" aria-label="과학 계통별 또는 학기별 기본과 복습을 포함한 브릿지 6개월·학교 과학 비교">'+chart+ticks+'</svg></div><p class="science-note">실선은 선택한 범위의 예상 일정입니다. 심화 브릿지 6개월에는 하이탑 개념·대표 문제·오답 복습이 포함됩니다. 같은 범위의 무기한 반복을 뒤에 추가하지 않습니다.</p>';
 }
 global.PlannerScienceCurriculum=Object.freeze({policy,route,apply,rows,label,guidance,choices,questions,graph});
 })(window);
