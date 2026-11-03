@@ -107,6 +107,19 @@
       article.append(label, count);
       standards.append(article);
     });
+    const needsReview = exam.items.some(function (item) { return answers.get(item.id) !== item.answer; });
+    const nextStudy = document.createElement("section");
+    nextStudy.className = "mock-next-study";
+    const nextStudyHeading = document.createElement("h3");
+    nextStudyHeading.textContent = needsReview ? "다시 확인할 개념 이어서 풀기" : "풀이를 설명하고 한 걸음 더 풀기";
+    const nextStudyCopy = document.createElement("p");
+    nextStudyCopy.textContent = needsReview
+      ? "틀렸거나 비워 둔 문항은 복습할 문제를 찾는 표시예요. 점수로 실력이나 등급을 정하지 않고, 같은 범위의 단원 연습으로 이어갑니다."
+      : "이번 회차의 모든 문항을 맞혔어요. 이번 결과만으로 전체 단원 숙달을 정하지 않고, 풀이 설명과 추가 문제로 연결합니다.";
+    const nextStudyLink = document.createElement("a");
+    nextStudyLink.href = "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4";
+    nextStudyLink.textContent = "7.NS.A 단원 워크북으로 이어서 풀기 →";
+    nextStudy.append(nextStudyHeading, nextStudyCopy, nextStudyLink);
     const review = document.createElement("div");
     review.className = "mock-review";
     exam.items.forEach(function (item, index) {
@@ -133,7 +146,7 @@
     retry.className = "primary-action";
     retry.textContent = "한 번 더 풀기";
     retry.addEventListener("click", function () { window.location.reload(); });
-    resultPanel.replaceChildren(heading, title, score, boundary, standards, review, retry);
+    resultPanel.replaceChildren(heading, title, score, boundary, standards, nextStudy, review, retry);
     resultPanel.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   document.getElementById("mock-start").addEventListener("click", function () {

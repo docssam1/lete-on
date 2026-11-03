@@ -82,6 +82,8 @@ test("the mock hides answers until submission and returns only this attempt's it
   assert.deepEqual(await page.locator(".mock-standard-results article").allInnerTexts(), [
     "7.NS.A.1\n4 / 4 정답", "7.NS.A.2\n4 / 4 정답", "7.NS.A.3\n4 / 4 정답"
   ]);
+  assert.match(await page.locator(".mock-next-study").innerText(), /모든 문항을 맞혔어요.*전체 단원 숙달/);
+  assert.equal(await page.locator(".mock-next-study a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4");
   assert.equal(await page.locator(".mock-review article[data-correct='true']").count(), 12);
   assert.ok(await page.locator('.mock-review .math-fraction[aria-label="12분의 1"]').count() > 0);
   assert.match(await page.locator(".mock-result-boundary").innerText(), /다른 회차나 학년의 점수와.*비교한 결과가 아닙니다/);
@@ -100,6 +102,7 @@ test("mobile mock answers can be corrected before submitting an incomplete respo
   assert.equal(await firstQuestion.locator('.mock-choice[aria-pressed="true"]').count(), 1);
   await page.getByRole("button", { name: "답안 제출" }).click();
   assert.match(await page.locator(".mock-score").innerText(), /1 \/ 12[\s\S]*1문항 응답/);
+  assert.match(await page.locator(".mock-next-study").innerText(), /복습할 문제.*등급을 정하지 않고/);
   assert.match(await page.locator(".mock-review article").first().innerText(), new RegExp(`정답 ${"ABCD"[exam.items[0].answer]}`));
   assert.match(await page.locator(".mock-review article").nth(1).innerText(), /미응답/);
   assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
