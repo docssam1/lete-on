@@ -1,0 +1,6 @@
+@media print {
+  .answer-page:has([data-source-answer="5-2-u4-practice-29-part2-consistent-similar"]) {
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+}
