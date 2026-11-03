@@ -10,12 +10,17 @@ For a completed 2011 AMC 8 attempt, the paper-review screen can show a matching 
 
 `amc8-2009-korea-grade-score-count.csv` transcribes the score-by-grade frequency table reproduced for the 2009 AMC 8 Korea participant cohort (741 reported participants). It has grade buckets 5–8 only and no percentile values. The four grade totals sum to 737, leaving four participants with no grade recorded in the report summary.
 
+`amc8-award-cutoffs-2003-2022.csv` holds published AMC 8 whole-cohort Honor Roll (top 5%) and Distinguished Honor Roll (top 1%) minimum scores from the historical-results table for 2003–2020 and 2022. The paper-review screen shows the same-year reference after a complete manual score entry. This is a whole-cohort award cutoff, not a grade-level percentile or actual award decision. No 2021 row is added because there was no 2021 AMC 8 contest; 2023 onward uses the existing MAA EduView score-distribution reference. The old table is a secondary transcription attributed to MAA historical reports; cutoff semantics are preserved as the listed minimum score. Cross-checks include the Think Matrix table for 2013–2023 and the archived 2018 contest score report. The 2012/2013 boundary can appear as `>17` in one source, equivalent to a minimum qualifying score of 18; the staged file uses 18.
+
 `amc8-grade-means-2001-2009.csv` stages recorded-grade participant counts and mean scores for AMC 8 years 2001–2009. The 2001–2002 cells come from an MAA-authored 2008 results report; the 2003–2009 cells come from an MAA-authored 2009 report. Both copies are hosted by third parties and still need primary-host reconciliation. Grade groups are 4–5, 6, 7, and 8.
 
 `amc10-12-grade-means-2007-2011.csv` stages 110 historical AMC 10/12 records from MAA-authored national statistical reports: grade-group mean and participant count, separated by contest, year, and A/B form. The 2007–2010 values are from the 2010 annual report; 2011 values are from a copy of the posted grand-statistics report. Grade groups preserve the report wording (`8 and below` vs exact `8`, and `unknown`). These are historical descriptive means, not percentile ranks, cut scores, or level labels.
 
 - Source: https://www.amcstudy.net/79
 - 2009 source: https://www.amcstudy.net/43
+- Whole-cohort AMC 8 historical award cutoffs, 2003–2022: https://ivyleaguecenter.org/2016/10/12/amc-8-historical-results-from-2011-to-2015/
+- Cutoff cross-check: https://www.think-matrix.com/math_planet/awards_setting_and_historical_result/
+- 2018 score report cross-check: https://mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf
 - Korea-only 2009/2011 grade means: https://www.amcstudy.net/43 and https://www.amcstudy.net/79
 - AMC 10/12 2007–2010 report mirror: https://www.scribd.com/document/51428451/2010-HS-summary
 - AMC 10/12 2011 grand-statistics copy: https://www.scribd.com/document/990470105/USA-AMC-10-2011-Statistic

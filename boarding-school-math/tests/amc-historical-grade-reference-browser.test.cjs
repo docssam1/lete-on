@@ -63,6 +63,10 @@ test("2011 AMC 8 shows the transcribed Korea grade percentile with its cohort sc
   assert.match(await page.locator("#amc8-korea-percentile-summary").innerText(), /2011 AMC 8 · Grade 7학년 · 21\/25점 · 점수 16명 · 학년 표본 315명/);
   assert.match(await page.locator("#amc8-korea-percentile-value").innerText(), /^원자료 기록 백분위 88\.25%/);
   assert.equal(await page.locator("#amc8-korea-percentile-source").getAttribute("href"), "https://www.amcstudy.net/79");
+  assert.equal(await page.locator("#amc8-historical-award-reference").isVisible(), true);
+  assert.match(await page.locator("#amc8-historical-award-summary").innerText(), /2011 AMC 8 · 입력 학년 Grade 7 · 21\/25점 · 전체 응시자 기준선/);
+  assert.match(await page.locator("#amc8-historical-award-bands").innerText(), /Honor Roll · 상위 약 5%\s+17 \/ 25\s+기준점보다 4점 위/);
+  assert.match(await page.locator("#amc8-historical-award-bands").innerText(), /Distinguished Honor Roll · 상위 약 1%\s+22 \/ 25\s+기준점까지 1점/);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   assert.deepEqual(errors, []);
   await page.close();

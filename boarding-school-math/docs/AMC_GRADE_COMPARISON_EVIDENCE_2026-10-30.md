@@ -143,6 +143,13 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - 전체 점수표의 비어 있는 백분위 및 score 1 미수록은 빈 값으로 남겼다. 출처에 없는 percentile이나 score 1행을 보간·생성하지 않는다.
 - 검증: 2009/2011 전사 CSV의 모든 점수·학년 셀과 화면 lookup 데이터를 대조했고, 브라우저에서 2011 Grade 7의 21점 `88.25%` (보고서 값)와 2009 Grade 7의 21점 `84.73%` (명시 계산)을 각각 확인했다. 2011 표본 315명, 2009 표본 262명, 2009 Grade 7의 10점 표시, 다른 연도·학년 숨김 동작도 확인했다.
 
+## 2003–2022 AMC 8 수상 기준선 추가 조사
+
+- [Ivy League Education Center의 역사표](https://ivyleaguecenter.org/2016/10/12/amc-8-historical-results-from-2011-to-2015/)에서 2003–2024 AMC 8의 Honor Roll 및 Distinguished Honor Roll 점수를 확인했다. 데이터는 MAA 구형 `GeneralReports`를 출처로 밝힌 2차 정리다. 2003–2022 중 실제 회차가 있는 19개 연도만 `amc8-award-cutoffs-2003-2022.csv`에 보존했다. 2021 대회는 열리지 않아 행을 만들지 않았다.
+- [Think Matrix 과거 수상표](https://www.think-matrix.com/math_planet/awards_setting_and_historical_result/)의 2013–2023 중첩 연도와 대조했고, 2018년은 [해당 회차 점수분포 보고서](https://mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf)에서도 Honor Roll 15, DHR 19를 확인했다. 2012·2013 일부 사이트가 `>17`로 쓰는 경계는 최소 자격 점수 18과 같은 의미로 정규화했다.
+- 과거 회차 응시 결과를 모두 표시한 뒤 같은 연도 전체 응시자 HR/DHR 기준선을 같이 볼 수 있도록 결과 패널을 연결했다. 2023년 이후에는 이미 있는 MAA EduView 상세 분포를 사용한다. 과거 패널은 입력 학년과 무관한 전체 응시자 기준이고, 학생의 공식 수상 여부나 학년 백분위로 해석하지 않도록 분리 표기한다.
+- 검증: CSV 19행 모두 lookup 모듈 값 및 출처 URL과 일치하는지 검사했고, 2021과 2023이 이 구형 자료 모듈에서 반환되지 않는 것을 확인했다. 2011 Grade 7의 21점 입력 화면에서 HR 17, DHR 22 기준과 점수 차이가 표시되는 브라우저 확인을 포함해 총 8개 단위·브라우저 검사를 통과했다.
+
 ## 2026-11-04 후속 검색: 더 넓은 과거 통계 경로
 
 - Stanford 연구자 Ian Calaway의 [AMC Archive](https://sites.google.com/view/ian-calaway/amc-archive/)는 중학교 AMC 8 요약 책자 1985–2022 디지털 보관이 완료됐고, 고교 요약은 1980–2010 원본 책자와 2011–2022 디지털 결과를 모았다고 설명한다. MAA 공식 저장소는 아니며 자료별 원본 표·연도·정의·접근 조건을 검수한 데이터셋이 아니므로, 다음 연도 확장 시 먼저 회차별 보고서를 확인할 후보 출처로 기록한다.

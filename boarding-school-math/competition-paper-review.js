@@ -587,6 +587,31 @@
       setText("amc-cohort-stats", `MAA 보고서 표본 ${amcCohort.students.toLocaleString("en-US")}명 · 학교 ${amcCohort.schools.toLocaleString("en-US")}곳 · 평균 ${amcCohort.average.toFixed(2)} · 표준편차 ${amcCohort.standardDeviation.toFixed(2)}.`);
       $("amc-cohort-source").href = amcCohort.sourceUrl;
     }
+    const historicalAwardReference = window.GFIELDAMC8HistoricalAwardReference;
+    const historicalAwardSection = $("amc8-historical-award-reference");
+    const historicalAward = selectedFormat().id === "amc8" && result.complete && result.scoreEstimate && historicalAwardReference
+      ? historicalAwardReference.referenceFor(selectedYear)
+      : null;
+    historicalAwardSection.hidden = !historicalAward;
+    if (historicalAward) {
+      setText("amc8-historical-award-summary", `${historicalAward.year} AMC 8 · 입력 학년 Grade ${grade} · ${result.scoreEstimate.points}/25점 · 전체 응시자 기준선`);
+      const historicalAwardBands = $("amc8-historical-award-bands");
+      historicalAwardBands.replaceChildren();
+      [
+        { label: "Honor Roll · 상위 약 5%", cutoff: historicalAward.honorRollTop5 },
+        { label: "Distinguished Honor Roll · 상위 약 1%", cutoff: historicalAward.distinguishedHonorRollTop1 }
+      ].forEach(function (datum) {
+        const item = document.createElement("div");
+        const reached = result.scoreEstimate.points >= datum.cutoff;
+        item.className = "paper-question-band aime-cohort-band" + (reached ? " is-reached" : "");
+        const label = document.createElement("strong"); label.textContent = datum.label;
+        const score = document.createElement("span"); score.textContent = `${datum.cutoff} / 25`;
+        const distance = result.scoreEstimate.points - datum.cutoff;
+        const details = document.createElement("small"); details.textContent = distance >= 0 ? `기준점보다 ${distance}점 위` : `기준점까지 ${Math.abs(distance)}점`;
+        item.append(label, score, details); historicalAwardBands.append(item);
+      });
+      $("amc8-historical-award-source").href = historicalAward.sourceUrl;
+    }
     const historicalGradeReference = window.GFIELDAMCHistoricalGradeReference;
     const gradeReferenceSection = $("amc-grade-reference");
     const gradeReference = ["amc8", "amc10", "amc12"].includes(selectedFormat().id) && result.complete && result.scoreEstimate && historicalGradeReference
