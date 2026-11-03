@@ -55,6 +55,12 @@
 
 ### 연례 보고서에서 직접 확인 가능한 학년별 수치
 
+2026-11-04 웹 대조 결과를 아래 조사 CSV로 전사했다. CSV는 화면 노출용 규준표가 아니라 연도·시험형·학년군 단위 근거 보관본이다. AMC 8 2003–2009 값은 MAA 작성 2009 보고서의 표 2와 직접 대조했으며, AMC 10/12 2007–2010과 2011 값은 MAA 작성 연례 통계 사본의 해당 표/Grand Statistics 항목과 대조했다. AMC 10/12 사본은 제3자 호스트에 있으므로 primary-host capture 상태를 별도로 남겼다.
+
+- `../competition/historical-amc-grade/amc8-grade-means-2003-2009.csv` — AMC 8 recorded grades 4–5, 6, 7, 8; participant counts and means.
+- `../competition/historical-amc-grade/amc10-12-grade-means-2007-2011.csv` — AMC 10 and AMC 12 A/B form, grade-group counts and means (110 rows).
+- 두 파일은 연도/시험/폼이 다르면 수치를 합치거나 서로 환산하지 않는다. 수치 표본은 현재 시험을 대표하지 않고, score-to-grade placement, ability level, percentile, AMC qualification을 의미하지 않는다.
+
 MAA 작성 AMC 8 `Summary of Results and Awards`의 2009년판은 해당 회차와 직전 회차들의 **기록된 학년군별 응시자 수 및 평균 점수**를 함께 싣는다. 표는 `4 & 5`, `6`, `7`, `8`학년을 사용한다. 아래 값은 각 셀을 보고서 표와 대조해 옮겼다.
 
 | 시험 연도 | 4–5학년 n / 평균 | 6학년 n / 평균 | 7학년 n / 평균 | 8학년 n / 평균 |
