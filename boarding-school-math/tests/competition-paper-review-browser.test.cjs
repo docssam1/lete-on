@@ -212,7 +212,8 @@ test("AIME manual review accepts self-marked 15-item papers without scoring or e
   await page.locator("#comparison-grade").selectOption("9");
   assert.equal(await page.locator("#competition-grade-comparison").getAttribute("data-state"), "comparable-format");
   assert.equal(await page.locator("#competition-grade-comparison-cards article").count(), 2);
-  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /날짜와 메모가 같아도 난도를 보정한 등급이나 성장 판정은 아니에요/);
+  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /직접 입력한 날짜와 메모로 짝지어 나란히 보여줘요/);
+  assert.match(await page.locator("#competition-grade-comparison-copy").innerText(), /실제 시험지 동일성은 확인되지 않으며, 난도 조정 등급이나 성장 판정을 제공하지 않아요/);
   assert.deepEqual(errors, []);
   await page.close();
 });
