@@ -476,3 +476,8 @@ Mac Codex 기존 roadmap-membership 작업본. frontend-design/UX writing 기준
 과학은 기본 이후 심화 브릿지6개월 안에 하이탑 대표문제·오답복습을 포함했다. 이후 자동으로 붙던 종료일 없는 `highTopRepeat` 블록을 제거하고 다음 과정 선택/부족단원 보완 시점으로 바꿨다. 기본 분야별 기간과 기존 이수기록·오투 선택은 유지한다. 세페이드/고등심화는 명시적 선택으로 남긴다. 메뉴·제목·사례 화면·탐색경로는 ‘과학 진도’로 통일했다.
 
 검증: Node126개, 새 수집기 Python7개, 기존 공유 수집기7개 통과. 합성 회원의 격리 브라우저에서320×640·390×844·844×390·1440×1000 가로넘침0/실행오류0, 필터·슬라이드·돌아가기·접수마감 표기 확인. 과학6개월 블록 뒤 무기한 반복0 확인. 로컬 결과는 `output/academy-notice-board-20261103/`(Git 제외). 공개 배포/자동수집 실제 실행 여부는 아래 후속 기록과 구분한다.
+
+
+공개 반영·자동수집 완료: 구현 `e0a364a180a03539f908aafdbbac9c64bbbb2d3b`(로컬 tree와 API 업로드 tree 동일 검증). 기존 로컬 Git 인증이 없어 연결된 GitHub 도구로 blob/tree/commit과 expected SHA를 확인한 정상 ref 갱신을 사용했으며 강제푸시는 하지 않았다. [공지 자동갱신41647428983](https://github.com/docssam1/lete-on/actions/runs/41647428983) 성공, 새/기존 Python 검증과 실제 양쪽 수집·생성피드 커밋·Pages 실행 모두 완료. 생성 피드 `2330a631`,2026-11-03 22:47:35 KST,37글/17수집처/8성공/9확인지연. [최종Pages41647597319](https://github.com/docssam1/lete-on/actions/runs/41647597319) 성공. 첫 구현 Pages 실행은 더 최신 생성피드 배포로 교체 취소됐으며 실패가 아니다.
+
+공개 브라우저 재검수 요청은 GitHub Pages의 ‘Rate limit exceeded / Please wait a few minutes’ 응답으로 막혀, 공개 UI 정상확인을 완료했다고 기록하지 않는다. 이전 로컬 합성회원 검수와 현재 공개배포 성공은 구분한다. 실제 회원/학생/DB 변경 없음. 주소 `https://lete-on.gfieldacademy.net/roadmap/demo2/planner.html?academy=notices&v=20261103-notices1`.
