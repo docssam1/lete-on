@@ -12,5 +12,5 @@ const poly=[[2,0],[14,0],[14,.5],[2,.5]].map(toXY);
 const area=Math.abs(poly.reduce((s,[x,y],i)=>{const [a,b]=poly[(i+1)%poly.length];return s+x*b-a*y},0))/2;
 const perimeter=poly.reduce((s,[x,y],i)=>{const [a,b]=poly[(i+1)%poly.length];return s+Math.hypot(a-x,b-y)},0);
 assert.ok(Math.abs(area-48)<1e-9);assert.ok(Math.abs(perimeter-34)<1e-9);
-const row=require('./source-inventory/5-2-u3-e5-e8-readiness-review.json').items.find(x=>x.sourceItemId==='5-2-u3-e7-mission-3');assert.equal(row.independentAnswer,'34cm');assert.equal(row.publicDecision,'locked');
+const row=require('./source-inventory/5-2-u3-e5-e8-readiness-review.json').items.find(x=>x.sourceItemId==='5-2-u3-e7-mission-3');assert.equal(row.independentAnswer,'34cm');assert.equal(row.publicDecision,'public');assert.equal(row.publisherAnswerVerified,false);
 console.log('37쪽 Mission 3 검수: 겹친 넓이 48cm²·높이 4cm·둘레 후보 34cm 및 독립 좌표');

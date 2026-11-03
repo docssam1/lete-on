@@ -3218,6 +3218,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-example-1",sourceItemLabel:"예제 8-1 구조 연습",sourceSection:"example",sourcePdfPage:34,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"수직선으로 나눈 원의 영역과 넓이 차를 독립 검산한 창작 연습입니다.",generatorKey:"source52CircleDifferenceSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   const source52PointSymmetry = source52CongruenceUnit?.subunits.find(s => s.name === "점대칭도형");
+  if (source52PointSymmetry && !source52PointSymmetry.types.some(t=>t.id==="5-2-u3-e7-mission-3")) {
+    const id="5-2-u3-e7-mission-3",name="점대칭 평행사변형의 겹친 둘레 · 원문";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceTier:"advanced",sourceItemId:id,sourceItemLabel:"Mission 3 원문",sourceSection:"mission",sourcePdfPage:33,alternateSourcePdfPage:32,sourcePrintedPage:37,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52ParallelogramOverlapPage37Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문의 치수와 전체 넓이를 대조하고 점대칭 도형의 겹친 영역과 둘레를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
   if (source52PointSymmetry && !source52PointSymmetry.types.some(t=>t.id==="5-2-u3-e7-mission-2")) {
     const id="5-2-u3-e7-mission-2",name="점대칭 화살표의 겹친 넓이 · 원문";
     const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
