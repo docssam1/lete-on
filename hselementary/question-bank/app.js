@@ -523,6 +523,18 @@
     if (questions.length && questions.every(question => problemWeight(question) < 3)) {
       return chunk(questions, 4).map(page => ({ questions: page, paired: true, fourUp: true }));
     }
+    // A large question must not disable four-up layout for every other page.
+    // Keep the existing larger-question layout, while grouping adjacent short
+    // questions into their own four-up pages in the original order.
+    if (questions.some(question => problemWeight(question) < 3)) {
+      const runs = [];
+      for (const question of questions) {
+        const short = problemWeight(question) < 3;
+        if (!runs.length || runs[runs.length - 1].short !== short) runs.push({ short, questions: [] });
+        runs[runs.length - 1].questions.push(question);
+      }
+      return runs.flatMap(run => paginateProblems(run.questions));
+    }
     const usesGeometryPairing = question => question.prompt.includes("source42-pa") || question.prompt.includes("source42-pp");
     if (!questions.some(usesGeometryPairing)) {
       return paginateWeightedProblems(questions).map(page => ({ questions: page, paired: false }));
