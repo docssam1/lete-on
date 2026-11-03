@@ -1,5 +1,22 @@
 (function () {
   "use strict";
+  const requestedGrade = Number(new URLSearchParams(window.location.search).get("grade"));
+  const grade = requestedGrade === 8 ? 8 : 7;
+  const roadmapHref = `./boarding-roadmap.html?grade=${grade}`;
+  const reviewHref = `./competition-paper-review.html?grade=${grade}&program=amc10`;
+  const gradeLabel = `${grade}학년`;
+  ["amc10-brand-route", "amc10-nav-route", "amc10-back-route", "amc10-footer-route"].forEach(function (id) {
+    const link = document.getElementById(id);
+    if (link) link.href = id === "amc10-back-route" ? `${roadmapHref}#annual-plan` : roadmapHref;
+  });
+  const navRoute = document.getElementById("amc10-nav-route");
+  if (navRoute) navRoute.textContent = `${gradeLabel} 성장 지도`;
+  const footerRoute = document.getElementById("amc10-footer-route");
+  if (footerRoute) footerRoute.textContent = `${gradeLabel} 로드맵으로 돌아가기`;
+  ["amc10-review-route", "amc10-method-review-route"].forEach(function (id) {
+    const link = document.getElementById(id);
+    if (link) link.href = reviewHref;
+  });
   const bank = window.GFIELDAMC10ConceptPractice;
   if (!bank) return;
   const list = document.getElementById("amc10-items");

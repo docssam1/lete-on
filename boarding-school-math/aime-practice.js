@@ -1,5 +1,21 @@
 (function () {
   "use strict";
+  const requestedGrade = Number(new URLSearchParams(window.location.search).get("grade"));
+  const grade = requestedGrade === 10 ? 10 : 8;
+  const roadmapHref = `./boarding-roadmap.html?grade=${grade}`;
+  ["aime-brand-route", "aime-nav-route", "aime-footer-route", "aime-back-route"].forEach(function (id) {
+    const link = document.getElementById(id);
+    if (link) link.href = id === "aime-back-route" ? `${roadmapHref}#annual-plan` : roadmapHref;
+  });
+  const navRoute = document.getElementById("aime-nav-route");
+  if (navRoute) navRoute.textContent = `${grade}학년 성장 지도`;
+  const footerRoute = document.getElementById("aime-footer-route");
+  if (footerRoute) footerRoute.textContent = `${grade}학년 로드맵으로 돌아가기`;
+  const amcRoute = document.getElementById("aime-amc-route");
+  if (amcRoute) {
+    amcRoute.href = grade === 8 ? "./amc10-practice.html?grade=8" : "./competition-paper-review.html?grade=10&program=amc12";
+    amcRoute.textContent = grade === 8 ? "AMC 10 개념 연습" : "AMC 12 문항별 복습";
+  }
   const bank = window.GFIELDAimeConceptPractice;
   if (!bank) return;
   const list = document.getElementById("aime-items");

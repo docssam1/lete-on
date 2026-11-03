@@ -32,6 +32,28 @@ test.after(async function () {
   if (server) await new Promise(function (resolve) { server.close(resolve); });
 });
 
+test("original AMC and AIME practice routes return to the learner's selected grade", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  for (const grade of [7, 8]) {
+    await page.goto(`${url.replace("boarding-roadmap.html", "amc10-practice.html")}?grade=${grade}`, { waitUntil: "networkidle" });
+    assert.equal(await page.locator("#amc10-nav-route").innerText(), `${grade}학년 성장 지도`);
+    assert.equal(await page.locator("#amc10-brand-route").getAttribute("href"), `./boarding-roadmap.html?grade=${grade}`);
+    assert.equal(await page.locator("#amc10-back-route").getAttribute("href"), `./boarding-roadmap.html?grade=${grade}#annual-plan`);
+    assert.equal(await page.locator("#amc10-footer-route").innerText(), `${grade}학년 로드맵으로 돌아가기`);
+    assert.equal(await page.locator("#amc10-review-route").getAttribute("href"), `./competition-paper-review.html?grade=${grade}&program=amc10`);
+  }
+  for (const grade of [8, 10]) {
+    await page.goto(`${url.replace("boarding-roadmap.html", "aime-practice.html")}?grade=${grade}`, { waitUntil: "networkidle" });
+    assert.equal(await page.locator("#aime-nav-route").innerText(), `${grade}학년 성장 지도`);
+    assert.equal(await page.locator("#aime-brand-route").getAttribute("href"), `./boarding-roadmap.html?grade=${grade}`);
+    assert.equal(await page.locator("#aime-back-route").getAttribute("href"), `./boarding-roadmap.html?grade=${grade}#annual-plan`);
+    assert.equal(await page.locator("#aime-footer-route").innerText(), `${grade}학년 로드맵으로 돌아가기`);
+    assert.equal(await page.locator("#aime-amc-route").getAttribute("href"), grade === 8 ? "./amc10-practice.html?grade=8" : "./competition-paper-review.html?grade=10&program=amc12");
+    assert.equal(await page.locator("#aime-amc-route").innerText(), grade === 8 ? "AMC 10 개념 연습" : "AMC 12 문항별 복습");
+  }
+  await page.close();
+});
+
 test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD original material", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
@@ -1023,11 +1045,11 @@ test("roadmap checkpoints open their matching course references", async function
   }
   const upperGradeCases = [
     { grade: 8, button: /단계 1, 일차식·기하 점검 보기/, title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" },
-    { grade: 8, button: /단계 3, 준비되면 심화 보기/, titles: ["지필드 Algebra 2 원본 수업·A4 교재", "지필드 AIME형 풀이 연습 · 자체 12문항", "MAA 2027 AIME 자격·응시 안내 ↗"], urls: ["./algebra2-workbook.html", "./aime-practice.html", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/"], note: true },
+    { grade: 8, button: /단계 3, 준비되면 심화 보기/, titles: ["지필드 Algebra 2 원본 수업·A4 교재", "지필드 AIME형 풀이 연습 · 자체 12문항", "MAA 2027 AIME 자격·응시 안내 ↗"], urls: ["./algebra2-workbook.html", "./aime-practice.html?grade=8", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/"], note: true },
     { grade: 9, button: /단계 1, 빈 곳 메우기 보기/, title: "지필드 Algebra 2 원본 수업·A4 교재", url: "./algebra2-workbook.html", inferred: true },
     { grade: 9, button: /단계 2, 서로 연결하기 보기/, title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html", inferred: true },
     { grade: 10, button: /단계 1, 개념 설명 보기/, title: "지필드 Precalculus 원본 수업·A4 교재", url: "./precalculus-workbook.html" },
-    { grade: 10, button: /단계 2, 개념 섞어 풀기 보기/, title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html" },
+    { grade: 10, button: /단계 2, 개념 섞어 풀기 보기/, title: "지필드 AIME형 풀이 연습 · 자체 12문항", url: "./aime-practice.html?grade=10" },
     { grade: 10, button: /단계 3, 필요한 실전 연습 보기/, titles: ["MAA 2027 AIME 자격·응시 안내 ↗", "MAA AIME·USAJMO·USAMO 안내 ↗"], urls: ["https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://maa.org/maa-invitational-competitions/"], note: true }
   ];
   for (const item of upperGradeCases) {
@@ -1233,10 +1255,10 @@ test("Grade 7 roadmap opens original AMC 10 concept practice with topic filters 
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
   await page.goto(`${url}?grade=7#annual-plan`, { waitUntil: "networkidle" });
-  const amcLink = page.locator('#annual-plan-periods a[href="./amc10-practice.html"]');
+  const amcLink = page.locator('#annual-plan-periods a[href="./amc10-practice.html?grade=7"]');
   assert.equal(await amcLink.innerText(), "지필드 AMC 10 개념 연결 연습 · 자체 12문항");
   await amcLink.click();
-  await page.waitForURL(/amc10-practice\.html$/);
+  await page.waitForURL(/amc10-practice\.html\?grade=7$/);
   assert.equal(await page.locator(".amc10-workspace .problem-card").count(), 12);
   assert.equal(await page.locator(".amc10-workspace .choice").count(), 60);
   assert.equal(await page.locator(".math-fraction").count(), 7);
