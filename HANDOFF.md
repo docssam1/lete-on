@@ -497,3 +497,9 @@ Verification: Grade 3–12 roadmap model tests pass 12/12 and browser tests pass
 Opened the current local Grade 7 `7.NS.A` student workbook in Chrome at 390×844. The page rendered MathML fractions with stacked numerator and denominator (`mfrac` elements present), preserved the progress count as `0 / 36`, reported no page errors, and stayed at 390/390 document width. Opened the inferred Grade 9 route at 1280×900 and 390×844: both sizes retained the “학교 과목 확인” label and school-sequence note, with no horizontal overflow or page errors. This is a live screen render, not a saved-PDF review.
 
 Checked Claude Code authentication after the prior review attempt: the CLI remains logged out. No candidate content was sent. The Grade 7 private diagnostic and AMC R6 independent-review gates remain open.
+
+### 2026-11-03 Grade 7 NS.A roadmap now opens GFIELD material
+
+Removed the two FlippedMath lesson links from the Grade 7 `7.NS.A` checkpoint now that GFIELD's own student workbook is available. Kept the Common Core source link for standards scope; the separate student action opens the GFIELD 36-question workbook in Korean with A4 selected. The external FlippedMath lesson pages remain source examples in the handoff only and are not the learner destination.
+
+Verification: roadmap model tests pass 12/12 and browser tests pass 39/39. In a live 390×844 Chrome session, the checkpoint exposed only the official standards link plus the local GFIELD workbook action; opening it loaded all 36 questions at 390/390 document width with no page errors. `git diff --check` passes. Local only; no push, deployment, or Drive sync.

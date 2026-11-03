@@ -968,11 +968,12 @@ test("Grade 7 NS.A roadmap breaks the strand into four observable checks with re
     "문장제: 상황에 맞게 유리수 네 연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?"
   ]);
   assert.deepEqual(await page.locator("#grade7-stage-questions .grade7-standard-code").allInnerTexts(), ["7.NS.A.1", "7.NS.A.2", "7.NS.A.2d", "7.NS.A.3"]);
-  assert.equal(await page.locator("#grade7-stage-references a").count(), 3);
+  assert.equal(await page.locator("#grade7-stage-references a").count(), 1, "the standards source stays separate from the GFIELD-authored lesson material");
   assert.ok(await page.locator("#grade7-stage-references a").evaluateAll(function (nodes) { return nodes.every(function (node) { return node.getAttribute("aria-label").includes("새 창에서 열림") && parseFloat(getComputedStyle(node).minHeight) >= 44; }); }));
   assert.equal(await page.locator("#grade7-stage-references a").nth(0).getAttribute("href"), "https://www.thecorestandards.org/Math/Content/7/NS/");
-  assert.match(await page.locator("#grade7-stage-resource").getAttribute("href"), /cluster=7.NS.A/);
+  assert.match(await page.locator("#grade7-stage-resource").getAttribute("href"), /cluster=7.NS.A.*paper=A4/);
   assert.match(await page.locator("#grade7-stage-resource").innerText(), /36문항/);
+  assert.equal(await page.locator("#grade7-stage-references a[href*='flippedmath.com']").count(), 0);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
   await page.getByRole("link", { name: "7.NS.A.1 워크북에서 연습" }).click();
   await page.waitForURL(/unit-workbook\.html\?cluster=7\.NS\.A.*standard=7\.NS\.A\.1/);

@@ -327,7 +327,7 @@
       $("grade7-stage-references").hidden = stop.id !== "nsa";
       if (stop.clusterId) {
         const link = $("grade7-stage-resource");
-        link.href = `./unit-workbook.html?cluster=${encodeURIComponent(stop.clusterId)}&mode=workbook&audience=student&locale=ko`;
+        link.href = `./unit-workbook.html?cluster=${encodeURIComponent(stop.clusterId)}&mode=workbook&audience=student&locale=ko&paper=A4`;
         link.textContent = `${stop.title} 워크북 보기 · ${stop.resourceState === "public" ? "36문항" : "검수 시안"} →`;
         link.hidden = false;
       } else $("grade7-no-resource").hidden = externalResources.length > 0;
