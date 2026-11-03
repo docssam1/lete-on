@@ -424,6 +424,11 @@ test("roadmap mock catalog lists GFIELD-authored assessment routes", async funct
   assert.equal(await page.locator("#competition-own-mocks").isVisible(), false);
   assert.equal(await page.locator("#competition-own-mocks-empty").isVisible(), true);
   assert.match(await page.locator("#competition-own-mocks-empty").innerText(), /이 학년용 지필드 모의고사를 준비/);
+  await page.goto(`${url}?grade=10`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#competition-own-mocks").isVisible(), false);
+  assert.equal(await page.locator("#competition-amc12-mock-route").isVisible(), true);
+  assert.equal(await page.locator("#competition-amc12-mock-route a").getAttribute("href"), "./amc12-gfield-mock-exam.html");
+  assert.match(await page.locator("#competition-amc12-mock-route").innerText(), /25문항 · 75분/);
   await page.close();
 });
 

@@ -125,7 +125,7 @@
   const targetedNote = document.getElementById("targeted-practice-note");
   const selected = requestedDomains.map(function (id) { return bank.domains.includes(domainIds[id]) ? domainIds[id] : ""; }).filter(Boolean);
   const sourceYear = /^\d{4}$/.test(params.get("sourceYear") || "") ? params.get("sourceYear") : "";
-  const sourceForm = /^[AB]$/.test(params.get("sourceForm") || "") ? params.get("sourceForm") : "";
+  const sourceForm = /^[ABCD]$/.test(params.get("sourceForm") || "") ? params.get("sourceForm") : "";
   const sourceQuestions = (params.get("sourceQuestions") || "").split(",").map(Number).filter(function (value) { return Number.isInteger(value) && value > 0 && value <= 25; });
   if (selected.length || sourceYear || sourceQuestions.length) {
     if (selected.length) activeDomains = new Set(selected);

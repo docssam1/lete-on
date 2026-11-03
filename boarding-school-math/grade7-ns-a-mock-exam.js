@@ -1,6 +1,6 @@
 (function () {
   "use strict";
-  const exam = window.GFIELDGrade7UnitMock || window.GFIELDGrade7NSAExam;
+  const exam = window.GFIELDGrade7UnitMock || window.GFIELDGrade7NSAExam || window.GFIELDAMC12Mock;
   const localRecords = window.GFIELDLocalLearningRecord;
   if (!exam || !Array.isArray(exam.items) || !exam.items.length || !Array.isArray(exam.standards)) return;
   const answers = new Map();
@@ -179,12 +179,21 @@
     }
     const nextStudyLink = document.createElement("a");
     nextStudyLink.href = exam.nextStudyHref || `./unit-workbook.html?cluster=${encodeURIComponent(exam.clusterId)}&mode=workbook&audience=student&locale=ko&paper=A4`;
+    if (exam.id === "gfield-amc12-concept-mock-v1") {
+      const nextStudyUrl = new URL(nextStudyLink.href, window.location.href);
+      const attemptParams = new URLSearchParams(window.location.search);
+      ["domains", "sourceYear", "sourceForm", "sourceQuestions"].forEach(function (key) {
+        const value = attemptParams.get(key);
+        if (value) nextStudyUrl.searchParams.set(key, value);
+      });
+      nextStudyLink.href = nextStudyUrl.href;
+    }
     nextStudyLink.textContent = exam.nextStudyLabel || `${exam.clusterId} 단원 워크북으로 이어서 풀기 →`;
     resultContent.push(nextStudyLink);
     if (savedResult) {
       const roadmapLink = document.createElement("a");
       roadmapLink.className = "mock-roadmap-result-link";
-      roadmapLink.href = "./boarding-roadmap.html?grade=7#grade-practice";
+      roadmapLink.href = `./boarding-roadmap.html?grade=${encodeURIComponent(exam.grade || 7)}#competition-diagnostic`;
       roadmapLink.textContent = "로드맵에서 내 모의고사 기록 보기 →";
       resultContent.push(roadmapLink);
     }

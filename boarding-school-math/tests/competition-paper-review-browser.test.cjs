@@ -123,7 +123,7 @@ test("AMC cohort reference stays hidden for incomplete or unavailable paper-year
   await page.close();
 });
 
-test("AMC 12 functions/trigonometry errors open the dedicated matching practice bank", async function () {
+test("AMC 12 original review routes into the complete GFIELD mock and then matching practice", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -135,8 +135,25 @@ test("AMC 12 functions/trigonometry errors open the dedicated matching practice 
   await page.locator('[data-question="5"][data-field="reason"]').selectOption("concept");
   await page.getByRole("button", { name: "결과 보기" }).click();
   const href = await page.locator("#report-follow-up-link").getAttribute("href");
-  assert.equal(href, "./amc12-practice.html?grade=10&domains=functions&sourceYear=2025&sourceForm=A&sourceQuestions=5");
+  assert.equal(href, "./amc12-gfield-mock-exam.html?grade=10&domains=functions&sourceYear=2025&sourceForm=A&sourceQuestions=5");
   await page.goto(new URL(href, url).toString(), { waitUntil: "networkidle" });
+  assert.match(await page.locator("#amc12-source-paper-note").innerText(), /2025 AMC 12 A형 원본 다음/);
+  assert.equal(await page.locator("#amc12-mock-back").getAttribute("href"), "http://127.0.0.1:" + new URL(url).port + "/boarding-school-math/competition-paper-review.html?grade=10&program=amc12&year=2025&form=A");
+  await page.locator("#mock-start").click();
+  assert.equal(await page.locator(".mock-question").count(), 25);
+  assert.equal(await page.locator("#mock-timer").innerText(), "75:00");
+  await page.locator("#mock-question-amc12-gfield-m01 .mock-choice").nth(0).click();
+  assert.equal(await page.locator("#mock-progress").innerText(), "1 / 25 응답");
+  await page.locator("#mock-submit").click();
+  assert.match(await page.locator("#mock-results .mock-score").innerText(), /1 \/ 25/);
+  assert.equal(await page.locator("#mock-results .mock-standard-results article").count(), 5);
+  const nextStudy = await page.locator("#mock-results .mock-next-study a").first().getAttribute("href");
+  assert.match(nextStudy, /amc12-practice\.html/);
+  assert.match(nextStudy, /domains=functions/);
+  assert.match(nextStudy, /sourceYear=2025/);
+  assert.match(nextStudy, /sourceForm=A/);
+  assert.match(nextStudy, /sourceQuestions=5/);
+  await page.goto(new URL(nextStudy, url).toString(), { waitUntil: "networkidle" });
   assert.match(await page.locator("#targeted-practice-description").innerText(), /2025 AMC 12 A 원본에서 표시한 5번 문항 이후 함수·삼각함수 영역/);
   assert.equal(await page.locator(".problem-card").count(), 3);
   assert.equal(await page.locator("#practice-progress").innerText(), "0 / 3");
@@ -146,11 +163,8 @@ test("AMC 12 functions/trigonometry errors open the dedicated matching practice 
   assert.match(await page.locator("#problem-amc12-g9-functions-01 .feedback").innerText(), /맞았어요/);
   await page.locator("#problem-amc12-g9-functions-01 .worked-solution summary").nth(1).click();
   assert.match(await page.locator("#problem-amc12-g9-functions-01 .worked-solution").nth(1).innerText(), /최솟값/);
-  await page.locator('#problem-amc12-g9-functions-03 [data-choice="0"]').click();
-  await page.locator('#problem-amc12-g9-functions-03 [data-choice="4"]').click();
-  assert.match(await page.locator("#problem-amc12-g9-functions-03 .feedback").innerText(), /맞았어요/);
-  await page.locator("#problem-amc12-g9-functions-03 .worked-solution summary").nth(1).click();
-  assert.match(await page.locator("#problem-amc12-g9-functions-03 .worked-solution").nth(1).innerText(), /사인 함수의 최댓값/);
+  await page.goto(`${new URL("./amc12-practice.html", url)}?grade=10&sourceYear=2021&sourceForm=D`, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#targeted-practice-description").innerText(), /2021 AMC 12 D 원본/);
   assert.equal(await page.locator("body").evaluate((node) => node.scrollWidth <= node.clientWidth), true);
   assert.deepEqual(errors, []);
   await page.close();

@@ -282,6 +282,13 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .competition-own-mocks { margin-top: 26px; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
 .competition-own-mocks[hidden], .competition-own-mocks-empty[hidden] { display: none; }
 .competition-own-mocks article { min-width: 0; padding: clamp(18px,2.5vw,26px); border: 1px solid #d8dee8; border-top: 3px solid #7152a4; background: #fff; }
+.competition-own-mock-feature { margin-top: 26px; padding: clamp(18px,2.5vw,26px); border: 1px solid #d8dee8; border-top: 3px solid #7152a4; background: #fff; }
+.competition-own-mock-feature[hidden] { display: none; }
+.competition-own-mock-feature > span { color: #60418f; font-size: .7rem; font-weight: 900; letter-spacing: .04em; }
+.competition-own-mock-feature h3 { margin: 10px 0 0; color: #182230; font-size: 1.1rem; line-height: 1.4; }
+.competition-own-mock-feature p { margin: 8px 0 14px; color: #566274; font-size: .8rem; line-height: 1.6; }
+.competition-own-mock-feature a { min-height: 44px; display: inline-flex; align-items: center; color: #60418f; font-size: .84rem; font-weight: 850; text-decoration: none; }
+.competition-own-mock-feature a:focus-visible { outline: 3px solid #b79ce2; outline-offset: 3px; }
 .competition-own-mocks article > span { color: #60418f; font-size: .7rem; font-weight: 900; letter-spacing: .04em; }
 .competition-own-mocks h3 { margin: 10px 0 0; color: #182230; font-size: 1.1rem; line-height: 1.4; }
 .competition-own-mocks p { min-height: 3.2em; margin: 8px 0 14px; color: #566274; font-size: .8rem; line-height: 1.6; }

@@ -763,8 +763,10 @@
   }
   function renderCompetitionMockCatalog() {
     const gradeSeven = grade === 7;
+    const gradeTen = grade === 10;
     $("competition-own-mocks").hidden = !gradeSeven;
-    $("competition-own-mocks-empty").hidden = gradeSeven;
+    $("competition-amc12-mock-route").hidden = !gradeTen;
+    $("competition-own-mocks-empty").hidden = gradeSeven || gradeTen;
   }
   function renderGrade7ContestBranch() {
     const link = $("grade7-contest-branch");
