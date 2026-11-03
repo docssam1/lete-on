@@ -6,6 +6,9 @@
   #problemView .print-page--four-up .question-item[data-compact-fraction="true"] .question-prompt { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   #problemView .print-page--four-up .question-item[data-compact-fraction="true"] .equation:not(:has(br)) { white-space:normal; overflow:visible; background:transparent; border-color:#888; }
   .print-page.print-page--four-up .question-prompt svg { width:auto !important; max-width:100%; max-height:150px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-1-reflection-synthetic"] svg { max-height:230px; }
+  #problemView [data-source-item-id="5-2-u3-e5-example-1-reflection-synthetic"],
+  #solutionView [data-source-answer="5-2-u3-e5-example-1-reflection-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-78-original"] svg { max-height:220px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e4-mission-6"] svg { max-height:190px; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e4-example-2"] svg { max-height:190px; }
