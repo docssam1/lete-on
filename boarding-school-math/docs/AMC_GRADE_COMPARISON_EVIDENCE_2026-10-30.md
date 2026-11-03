@@ -196,3 +196,17 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - 2008년 MAA 출력 형식의 자료도 발견했지만 특정 학교의 51명 등 소표본이므로 제품 기준에는 포함하지 않았다. 게시물에 있는 학생 이름·수상자 목록은 복사하지 않는다. AMC Study 재게시에는 CC BY-NC-ND 안내가 표시되어 있어 데이터에 귀속과 원출처 링크를 남기고, 해당 기관의 예측표와 자체 적중률 주장은 제외한다.
 - 통계 전사와 lookup 검증, 수정 후 브라우저 UI 검수를 완료했다. 2009 Q3에 A 오답을 표시해 한국 741명 코호트, 90.28% 정답률, A 선택 7.42%, 원본 풀이·응답 출처 링크가 함께 보이는 것을 확인했다. 2011 Q4에서도 899명 코호트와 59.96% 정답률, A 선택 14.57% 및 출처 링크를 확인했다. Local only; no push, deployment, or Drive sync.
 - 웹 검색에서 2013 AMC 8 학교별 MAA 결과 PDF도 회수했다. Mathematics Ed Clinic Grade 7은 63명으로, 공개 문항 응답 비율은 있지만 단일 학교 집단이다. 전국/현재 Grade 7 기준으로 사용하지 않으며, 화면에서 모집단을 명확히 구분할 수 있을 때만 별도 코호트로 검토한다. 출처: https://asiamathsalliance.com/amc8/results/MEC.pdf
+
+
+## 2026-11-04 웹 검색 추가: 2013 AMC 8 학년별 학교 문항 응답표
+
+- [MAA 생성 Mathematics Ed Clinic 2013 AMC 8 성적표 사본](https://asiamathsalliance.com/amc8/results/MEC.pdf)에서 Grade 7 63명, Grade 8 55명의 각 25문항 응답 비율을 확인했다. 응답 표에는 A–E, 공란, 판독불가, 정답 선택 비율이 함께 있다. 개별 학생 이름·점수는 가져오지 않았다.
+- Grade 7·8의 50개 문항 집계 행을 [`amc8-2013-school-grade-item-response.csv`](../competition/historical-amc-grade/amc8-2013-school-grade-item-response.csv)에 전사하고, 문항 답을 [LIVE 2013 AMC 8 공식 답안표](https://live.poshenloh.com/past-contests/amc8/2013/answers) 25개와 전부 대조했다. 공식 MAA 콘텐츠 사용 허가를 안내하는 [LIVE 원본 시험 페이지](https://live.poshenloh.com/past-contests/amc8/2013)에는 인쇄 PDF·정답표·전문 풀이 링크가 연결되어 있다.
+- 복습 화면은 시험연도와 응시 당시 학년이 2013 Grade 7 또는 Grade 8로 일치할 때만 해당 코호트의 문항 응답 비율을 보여 준다. 표본이 각각 63명·55명인 특정 학교 기록이므로 전국 등급 비교·백분위·능력 판정으로 표시하지 않는다. 다른 학년은 표시하지 않는다.
+- 전체 25문항의 선택지·공란·판독불가 비율 합계를 전사값에서 확인하는 참조 검사를 추가했다. 기존 연도 참조(2009–2011) 동작도 그대로 검사한다.
+
+## 2026-11-04 웹 검색 추가: 2015 AMC 8 Grade 7 학교 문항 응답표
+
+- [2015 AMC 8 MAA 학교 결과 PDF](https://asiamathsalliance.com/2015/amc8/03057F.pdf)에서 싱가포르 한 학교의 Grade 7 응시자 10명에 대한 25문항 선택지 응답 비율을 확인했다. [`amc8-2015-school-grade7-item-response.csv`](../competition/historical-amc-grade/amc8-2015-school-grade7-item-response.csv)에 집단 집계만 옮겼다. 원본 보고서의 별표 정답은 [LIVE 2015 AMC 8 공식 답안표](https://live.poshenloh.com/past-contests/amc8/2015/answers)와 대조했다.
+- 복습 화면은 2015 AMC 8 Grade 7에서만 해당 표본을 연결하고, 특정 학교 집단이며 전국 학년 기준이 아니라고 표시한다. 단일 학교·10명 표본이므로 2013 보고서나 전국 학년 평균과 합치지 않는다. 원본 PDF의 학생 이름/개인 점수는 CSV에 복사하지 않았다.
+- 참조 검사에서 2013 Grade 7/8 50문항과 2015 Grade 7 25문항의 표본 수, 정답키, 선택지·공란·판독불가 합계 및 지원 학년 범위를 확인했다. CSV 25행과 화면 참조 모듈의 선택지별 비율도 전부 대조했다. 브라우저에서 2015 Q8 답 C 오답 예시를 넣어 60% 정답 응답률, 30% C 선택, 전국 규준이 아닌 학교 표본 안내를 확인했다.

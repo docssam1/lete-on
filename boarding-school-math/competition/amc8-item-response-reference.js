@@ -89,10 +89,98 @@
 23,D,13.57,21.25,23.03,19.69,16.24,6.23,0.00
 24,A,29.81,16.91,16.69,22.02,8.34,6.23,0.00
 25,A,40.04,12.90,17.69,13.90,9.79,5.67,0.00`.trim();
+  // MAA-generated school report, Mathematics Ed Clinic, 2013 AMC 8.
+  // Preserve the report's two exact-grade cohorts separately; these are not national norms.
+  const raw2013Grade7 = `
+1,A,88.89,1.59,4.76,1.59,0.00,3.17,0.00
+2,D,23.81,0.00,3.17,73.02,0.00,0.00,0.00
+3,E,0.00,3.17,0.00,20.63,76.19,0.00,0.00
+4,C,6.35,0.00,88.89,1.59,1.59,1.59,0.00
+5,E,1.59,7.94,7.94,1.59,79.37,1.59,0.00
+6,C,0.00,0.00,100.00,0.00,0.00,0.00,0.00
+7,C,4.76,14.29,71.43,4.76,1.59,3.17,0.00
+8,C,4.76,20.63,30.16,26.98,15.87,1.59,0.00
+9,C,1.59,17.46,69.84,7.94,1.59,1.59,0.00
+10,C,15.87,12.70,52.38,9.52,1.59,7.94,0.00
+11,D,6.35,9.52,7.94,57.14,7.94,11.11,0.00
+12,B,1.59,47.62,9.52,9.52,26.98,4.76,0.00
+13,A,44.44,11.11,17.46,9.52,4.76,12.70,0.00
+14,C,11.11,17.46,33.33,15.87,19.05,3.17,0.00
+15,B,3.17,88.89,3.17,3.17,1.59,0.00,0.00
+16,E,1.59,7.94,4.76,14.29,65.08,6.35,0.00
+17,B,4.76,77.78,9.52,4.76,1.59,1.59,0.00
+18,B,11.11,26.98,28.57,15.87,14.29,3.17,0.00
+19,D,20.63,12.70,6.35,49.21,4.76,6.35,0.00
+20,C,41.27,12.70,28.57,4.76,3.17,9.52,0.00
+21,E,12.70,17.46,11.11,26.98,20.63,11.11,0.00
+22,E,22.22,9.52,9.52,22.22,34.92,1.59,0.00
+23,B,6.35,36.51,19.05,7.94,14.29,15.87,0.00
+24,C,1.59,1.59,66.67,7.94,14.29,7.94,0.00
+25,A,23.81,42.86,4.76,11.11,1.59,15.87,0.00`.trim();
+  const raw2013Grade8 = `
+1,A,78.18,0.00,16.36,0.00,3.64,1.82,0.00
+2,D,25.45,7.27,0.00,67.27,0.00,0.00,0.00
+3,E,1.82,5.45,1.82,12.73,78.18,0.00,0.00
+4,C,5.45,7.27,74.55,7.27,3.64,1.82,0.00
+5,E,12.73,14.55,7.27,7.27,58.18,0.00,0.00
+6,C,1.82,0.00,98.18,0.00,0.00,0.00,0.00
+7,C,10.91,9.09,67.27,10.91,0.00,1.82,0.00
+8,C,5.45,18.18,36.36,18.18,20.00,1.82,0.00
+9,C,9.09,14.55,54.55,14.55,7.27,0.00,0.00
+10,C,10.91,12.73,63.64,5.45,5.45,1.82,0.00
+11,D,9.09,10.91,9.09,63.64,5.45,1.82,0.00
+12,B,5.45,54.55,7.27,7.27,23.64,1.82,0.00
+13,A,41.82,12.73,14.55,16.36,12.73,1.82,0.00
+14,C,10.91,18.18,34.55,20.00,14.55,1.82,0.00
+15,B,5.45,87.27,0.00,3.64,3.64,0.00,0.00
+16,E,3.64,20.00,12.73,9.09,50.91,3.64,0.00
+17,B,10.91,78.18,5.45,1.82,1.82,1.82,0.00
+18,B,12.73,32.73,30.91,14.55,9.09,0.00,0.00
+19,D,30.91,14.55,20.00,29.09,5.45,0.00,0.00
+20,C,34.55,12.73,41.82,9.09,1.82,0.00,0.00
+21,E,18.18,27.27,14.55,27.27,12.73,0.00,0.00
+22,E,25.45,12.73,0.00,14.55,43.64,1.82,1.82
+23,B,10.91,45.45,14.55,16.36,12.73,0.00,0.00
+24,C,7.27,7.27,69.09,9.09,7.27,0.00,0.00
+25,A,14.55,63.64,1.82,10.91,5.45,3.64,0.00`.trim();
+  // MAA-generated 2015 school report for one Singapore school; exact Grade 7 cohort.
+  const raw2015Grade7 = `
+1,A,60.00,20.00,10.00,0.00,10.00,0.00,0.00
+2,D,0.00,0.00,0.00,100.00,0.00,0.00,0.00
+3,D,10.00,20.00,0.00,70.00,0.00,0.00,0.00
+4,E,10.00,0.00,10.00,10.00,70.00,0.00,0.00
+5,A,70.00,0.00,10.00,10.00,10.00,0.00,0.00
+6,B,0.00,70.00,0.00,30.00,0.00,0.00,0.00
+7,E,0.00,0.00,10.00,0.00,90.00,0.00,0.00
+8,D,0.00,10.00,30.00,60.00,0.00,0.00,0.00
+9,D,10.00,0.00,10.00,80.00,0.00,0.00,0.00
+10,B,0.00,90.00,0.00,0.00,10.00,0.00,0.00
+11,B,20.00,50.00,10.00,10.00,10.00,0.00,0.00
+12,C,0.00,10.00,30.00,20.00,40.00,0.00,0.00
+13,D,10.00,10.00,10.00,70.00,0.00,0.00,0.00
+14,D,20.00,0.00,20.00,50.00,10.00,0.00,0.00
+15,D,20.00,10.00,10.00,60.00,0.00,0.00,0.00
+16,B,0.00,50.00,20.00,10.00,20.00,0.00,0.00
+17,D,10.00,0.00,10.00,80.00,0.00,0.00,0.00
+18,B,10.00,90.00,0.00,0.00,0.00,0.00,0.00
+19,A,60.00,30.00,0.00,0.00,10.00,0.00,0.00
+20,D,10.00,0.00,30.00,40.00,20.00,0.00,0.00
+21,C,20.00,0.00,40.00,40.00,0.00,0.00,0.00
+22,C,0.00,10.00,30.00,10.00,50.00,0.00,0.00
+23,D,0.00,0.00,20.00,40.00,20.00,20.00,0.00
+24,B,10.00,50.00,0.00,20.00,0.00,20.00,0.00
+25,C,60.00,10.00,10.00,0.00,0.00,20.00,0.00`.trim();
   const sources = Object.freeze({
     2009: Object.freeze({ raw: raw2009, respondentCount: 741, population: "2009 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/43", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),
     2010: Object.freeze({ raw: raw2010, respondentCount: 153211, population: "2010 AMC 8 MAA-reported student response cohort", sourceUrl: "https://www.amcstudy.net/71", sourceStatus: "secondary-image-transcription-apple-vision-reviewed" }),
-    2011: Object.freeze({ raw: raw2011, respondentCount: 899, population: "2011 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/79", sourceStatus: "secondary-html-transcription-of-MAA-result-table" })
+    2011: Object.freeze({ raw: raw2011, respondentCount: 899, population: "2011 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/79", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),
+    2013: Object.freeze({ byGrade: Object.freeze({
+      7: Object.freeze({ raw: raw2013Grade7, respondentCount: 63, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 7 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" }),
+      8: Object.freeze({ raw: raw2013Grade8, respondentCount: 55, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 8 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" })
+    }) }),
+    2015: Object.freeze({ byGrade: Object.freeze({
+      7: Object.freeze({ raw: raw2015Grade7, respondentCount: 10, population: "2015 AMC 8 Singapore school reported Grade 7 cohort", sourceUrl: "https://asiamathsalliance.com/2015/amc8/03057F.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; one Singapore school cohort, not national norm" })
+    }) })
   });
   function parseQuestions(raw, respondentCount) {
     return Object.freeze(raw.split("\n").map(function (line) {
@@ -113,14 +201,18 @@
       });
     }));
   }
-  const questionsByYear = Object.freeze(Object.fromEntries(Object.entries(sources).map(function (entry) {
+  const questionsByYear = Object.freeze(Object.fromEntries(Object.entries(sources).filter(function (entry) {
+    return entry[1].raw;
+  }).map(function (entry) {
     return [entry[0], parseQuestions(entry[1].raw, entry[1].respondentCount)];
   })));
 
-  function responseFor(year, question, answer) {
+  function responseFor(year, question, answer, grade) {
     const selectedYear = Number(year);
-    const source = sources[selectedYear];
-    const questions = questionsByYear[selectedYear];
+    const yearSource = sources[selectedYear];
+    const source = yearSource && yearSource.byGrade ? yearSource.byGrade[Number(grade)] : yearSource;
+    if (!source || !source.raw) return null;
+    const questions = source && source.raw ? parseQuestions(source.raw, source.respondentCount) : questionsByYear[selectedYear];
     if (!source || !Number.isInteger(Number(question)) || Number(question) < 1 || Number(question) > questions.length) return null;
     const item = questions[Number(question) - 1];
     const choice = answer == null || answer === "" ? "" : String(answer).toUpperCase();
@@ -134,6 +226,9 @@
       answer: choice,
       correctAnswer: item.correctAnswer,
       acceptedAnswers: item.acceptedAnswers,
+      responsePercent: item.responsePercent,
+      omittedPercent: item.omittedPercent,
+      unreadablePercent: item.unreadablePercent,
       selectedResponsePercent: choice ? item.responsePercent[choice] : null,
       correctResponsePercent: item.correctResponsePercent,
       mostCommonDistractor: mostCommonDistractor,

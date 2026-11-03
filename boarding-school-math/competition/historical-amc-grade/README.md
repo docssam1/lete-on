@@ -47,3 +47,8 @@ For a completed 2011 AMC 8 attempt, the paper-review screen can show a matching 
 - Current fixed AIME score thresholds and eligibility overview: https://maa.org/maa-invitational-competitions/
 
 Web search also recovered 2013 AMC 8 MAA school result PDFs with item-response tables, including Mathematics Ed Clinic Grade 7 (63 students). This is a single-school cohort, not a national or representative comparison; keep it in research staging until the UI can identify the cohort prominently and year/grade matching is implemented. Do not merge it into the 2009–2011 cohort display.
+
+
+`amc8-2013-school-grade-item-response.csv` transcribes the Grade 7 (n=63) and Grade 8 (n=55) answer-choice tables from a 2013 MAA-generated Mathematics Ed Clinic school report reproduced by Asia Maths Alliance. The review screen uses a row only when AMC 8 year 2013 and the selected grade (7 or 8) match. It labels the school cohort and links the report. These small, single-school groups are not national grade norms or achievement levels. Other grades remain without a response comparison.
+
+`amc8-2015-school-grade7-item-response.csv` records the 25 answer-choice rows for Grade 7 (n=10) from a 2015 MAA-generated report for one Singapore school. The review screen matches only AMC 8 2015 Grade 7. This is a small school cohort, not a national grade norm; it must not be pooled with other schools or years. The source report also lists school and student-level information; only the aggregate grade response table is transcribed here.
