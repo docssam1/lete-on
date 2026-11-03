@@ -822,3 +822,7 @@ Verification: roadmap model/browser plus competition paper-review model/browser 
 Removed the phone-width nested scroll limits from the 36-item problem list and selected-question list. Both now follow the page's normal scroll; the fixed count shortcut still jumps to paper settings. The browser test accepts `GFIELD_CHROME_EXECUTABLE` as a local override when Playwright's pinned Chromium is missing.
 
 Verification: the teacher paper-builder browser suite passes 11/11, covering all 12 public unit sets, separate answer keys, A4 pagination and overflow checks, mobile/tablet widths, and the 390px full-list flow. The updated 390px page was rendered and visually inspected; all 36 items appear in order and the viewport has no horizontal overflow or clipping. No print-source change was made. This is public paper-builder QA only and does not change the private R6 diagnostic gate. No private item content was accessed; local only.
+
+### 2026-11-03 A4 print sample visual review
+
+Generated and inspected a temporary A4 student paper from three public Grade 7 workbook items with the formal cover. The three pages are one cover plus two numbered question pages. Titles, metadata, calculated visuals, choices, answer space, watermark, and folios are readable without overlap, clipping, blank pages, or missing glyphs. Temporary PDF and page renders are removed after QA. This verifies the public teacher paper builder only; the private `7.NS.A` R6 workbench still requires its own current captures/PDF and remaining independent gates. No private candidate content was accessed.

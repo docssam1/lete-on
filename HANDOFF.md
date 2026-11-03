@@ -276,3 +276,7 @@ Verification: roadmap model/browser and paper-review analysis/browser suites pas
 On phones, the 36-row question list and selected-question list now grow with the page instead of creating nested scroll areas. The fixed selection-count shortcut to paper settings remains available. The builder's browser test can use `GFIELD_CHROME_EXECUTABLE` when the Playwright-pinned Chromium revision is absent.
 
 Verification: teacher paper-builder browser suite passes 11/11, including all 12 public unit worksheets, answer-key separation, A4 pagination, mobile/tablet width checks, and the new assertion that all 36 rows remain in normal page flow at 390px. Rendered and inspected the current mobile page; all 36 rows appear in sequence, page width equals viewport width, and no clipping was visible. Print source was unchanged; browser A4 generation tests passed. Local only; no push or deployment.
+
+### 2026-11-03 A4 print sample visual review
+
+Generated a temporary A4 student-paper sample from three selected public Grade 7 workbook items with the formal cover. The PDF contains one cover and two numbered question pages. Rendered and inspected every page: title, date/time/points, question visuals, choices, margins, watermark, and page numbers are legible; no overlap, clipping, blank page, or missing glyph was observed. The temporary PDF and page renders are removed after QA. This validates the public paper builder's print route only; it does not provide visual evidence for the private Grade 7 NS.A diagnostic R6 candidate.
