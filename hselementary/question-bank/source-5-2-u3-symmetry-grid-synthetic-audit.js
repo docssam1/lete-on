@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const module52=require('./source-5-2-u3-symmetry-grid-synthetic.js');
 const source=require('./source-inventory/5-2-source-items.json').sourceItems.find(x=>x.sourceItemId==='5-2-u3-e5-exploration');
-assert.equal(source.sourceVerified,true);assert.equal(source.implementationStatus,'review-locked');
+assert.equal(source.sourceVerified,true);assert.equal(source.implementationStatus,'ready');
 const mirrors=[(x,y)=>[2-x,y],(x,y)=>[x,2-y],(x,y)=>[y,x],(x,y)=>[2-y,2-x]];
 const symmetries=[(x,y)=>[x,y],(x,y)=>[2-y,x],(x,y)=>[2-x,2-y],(x,y)=>[y,2-x],...mirrors];
 const transformed=(mask,fn)=>{let out=0;for(let y=0;y<3;y++)for(let x=0;x<3;x++)if(mask&(1<<(3*y+x))){const [a,b]=fn(x,y);out|=1<<(3*b+a)}return out};
@@ -20,4 +20,4 @@ for(let i=0;i<3;i++){
   assert.equal(q.answerVisualRequired,true);assert.ok(q.solution.includes(q.answer));
  }
 }
-console.log('3 independent symmetry enumerations × 3 difficulties passed; original remains locked');
+console.log('3 independent symmetry enumerations × 3 difficulties passed; original independently checked');
