@@ -489,6 +489,7 @@
     if (["5-2-u2-practice-71-original", "5-2-u2-practice-71-count-similar"].includes(question.sourceItemId)) return 1; // Four short inline fractions fit the standard column.
     if (question.sourceItemId === "5-2-u2-practice-74-original") return 1; // The three short symbolic fractions fit the standard column.
     if (question.sourceItemId === "5-2-u4-e2-example-1") return 1;
+    if (["4-2-u5-t1-2", "4-2-u5-t1-3", "4-2-u5-t1-6", "4-2-u5-t1-9"].includes(question.type?.id)) return 1;
     if (question.sourceItemId?.startsWith("6-2-u4-e2-")) return question.sourceItemId.endsWith("exploration") ? 3 : 1.5;
     if (question.sourceItemId?.startsWith("6-2-u4-e1-")) return question.sourceItemId.endsWith("example-4") ? 3 : 1.5;
     if (question.prompt.includes("source62-final-problem")) return 3;
