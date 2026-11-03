@@ -2510,6 +2510,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   if (source52Cuboid) {
+    const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u5-t5-4");
+    if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u5-practice-49-original",sourceItemLabel:"확인학습 49번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:108,alternateSourcePdfPage:109,sourcePrintedPage:114,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5Page108Practice49",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 다섯 주사위 배치와 마주 보는 면·맞닿은 면의 합을 대조하고 가능한 면의 수를 독립 열거했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+
+  if (source52Cuboid) {
     const type=source52Cuboid.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u5-t3-3");
     if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u5-practice-46-original",sourceItemLabel:"확인학습 46번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:107,alternateSourcePdfPage:108,sourcePrintedPage:113,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U5Page108Practice46",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 전개도의 여섯 숫자를 대조하고 서로 마주 보는 면과 여덟 꼭짓점의 곱을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
