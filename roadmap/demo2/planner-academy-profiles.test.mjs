@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 const read=f=>readFileSync(new URL(f,import.meta.url),'utf8');
 const w={},c=vm.createContext({window:w});
-for(const f of ['planner-counselling-updates.js','planner-nute-guide.js','planner-academy-profiles.js','planner-academy-stories.js'])vm.runInContext(read(f),c,{filename:f});
+for(const f of ['planner-counselling-updates.js','planner-nute-guide.js','planner-fields-admission.js','planner-academy-profiles.js','planner-academy-stories.js'])vm.runInContext(read(f),c,{filename:f});
 const P=w.PlannerAcademyProfiles,S=w.PlannerAcademyStories;
 
 test('학원별 목록은 고민별 목록과 분리하며 여러 학년에서 같은 안내를 연다',()=>{
