@@ -527,3 +527,9 @@ The answer sum for multiples of 3 or 5 was caught during solution review and cor
 The AMC 10 original practice route now carries the learner's selected Grade 7 or 8 context into its roadmap and item-review links. The shared AIME-style practice page carries Grade 8 or 10 context and switches its related AMC link to AMC 10 topic practice or Grade 10 AMC 12 paper review accordingly. Annual and stage links now pass the selected grade explicitly; the practice bank remains shared across grades without implying placement or readiness.
 
 Verification: tested all four grade contexts, related links, and return labels. A stale browser expectation for the Grade 7 query string was corrected. The full Grade 3–12 roadmap model/browser plus AIME page browser suite passes 54/54. `node --check` and `git diff --check` pass. Local only; no push, deployment, or Drive sync.
+
+### 2026-11-03 Show AIME practice fractions with a fraction bar
+
+The AIME practice page loaded the shared math-text renderer but omitted its stylesheet, so fractions did not receive the stacked numerator, bar, and denominator presentation. Added the shared fraction CSS and browser assertions for both inline-grid stacking and a visible numerator border.
+
+Verification: the AIME practice browser test passes 1/1, including actual rendered fraction styles, answer validation, filters, explanations, and responsive layout. `git diff --check` passes. Local only; no push, deployment, or Drive sync.

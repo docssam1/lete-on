@@ -43,6 +43,8 @@ test("AIME-style practice validates integer answers, filters, explanations, and 
   assert.deepEqual(await page.evaluate(function () { return window.GFIELDAimeConceptPractice.items.map(function (item) { return item.answer; }); }), [30, 17, 6, 84, 72, 60, 95, 91, 49, 2418, 48, 43]);
   assert.match(await page.locator(".practice-boundary").innerText(), /실력·학년·과목 배치나 AIME 응시 자격을 판정하지 않습니다/);
   assert.ok(await page.locator('.math-fraction[aria-label="2분의 1"]').count() >= 2, "actual one-half values should render as stacked fractions");
+  assert.equal(await page.locator(".math-fraction").first().evaluate(function (node) { return getComputedStyle(node).display; }), "inline-grid", "fraction numerator and denominator should be visually stacked");
+  assert.notEqual(await page.locator(".math-fraction-numerator").first().evaluate(function (node) { return getComputedStyle(node).borderBottomStyle; }), "none", "stacked fraction should show a fraction bar");
   assert.equal(await page.locator(".domain-filter[aria-label='수학 영역: 정수론']").count(), 1);
 
   const firstCard = page.locator(".problem-card").first();
