@@ -57,6 +57,9 @@ const ids = ["5-2-u3-e8-exploration-staircase-half-synthetic", "5-2-u3-e8-exampl
             await page.setViewportSize({width:794,height:1123});
             const conflicts=await page.locator('#problemView .question-item').evaluateAll(items=>items.map(item=>({number:item.querySelector('header b').textContent,prompt:item.querySelector('.question-prompt').getBoundingClientRect().bottom,answer:item.querySelector('.answer-line').getBoundingClientRect().top})).filter(item=>item.prompt>item.answer+1));
             assert.deepEqual(conflicts,[],"문제 내용과 답란이 겹치지 않아야 합니다.");
+            const gridCells=await page.locator('#problemView [data-source-item-id="5-2-u3-e8-example-2-cut-synthetic"]').evaluateAll(items=>items.map(item=>({variant:item.dataset.poolIndex,width:item.querySelector('svg rect').getBoundingClientRect().width,font:getComputedStyle(item).fontFamily})));
+            assert.equal(gridCells.length,3);
+            for(const cell of gridCells){assert(cell.width>=26,`격자 변형 ${cell.variant}의 칸이 너무 작습니다.`);assert.match(cell.font,/Noto Serif KR/);}
           }
           const pdfPath=path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`);
           await page.pdf({ path:pdfPath, format: "A4", printBackground: true, preferCSSPageSize: true });
