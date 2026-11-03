@@ -85,16 +85,16 @@
       id: "precalculus",
       title: "Precalculus",
       grades: "주로 11–12학년",
-      summary: "함수 변환과 다항·유리함수에서 지수·로그·수열, 단위원·삼각함수, 벡터·복소수까지 연결합니다.",
+      summary: "함수 변환과 다항·유리함수에서 지수·로그·수열, 단위원·삼각함수, 벡터·복소수까지 연결하고 극좌표 표현은 선택 심화로 다룹니다.",
       prerequisites: "Algebra 2 함수·지수·로그·수열 근거",
-      focus: ["Function structure & transformations", "Polynomial & rational functions", "Exponential, logarithmic & sequence models", "Unit circle & trigonometry", "Vectors, complex numbers & modeling"],
-      units: ["Functions & transformations", "Polynomial & rational function graphs", "Exponential, logarithmic & sequence models", "Trigonometry & unit circle", "Vectors, complex numbers & model choice"],
+      focus: ["Function structure & transformations", "Polynomial & rational functions", "Exponential, logarithmic & sequence models", "Unit circle & trigonometry", "Vectors, complex numbers, polar coordinates & modeling"],
+      units: ["Functions & transformations", "Polynomial & rational function graphs", "Exponential, logarithmic & sequence models", "Trigonometry & unit circle", "Vectors, complex numbers, polar coordinates & model choice"],
       previousOptions: ["algebra-2"],
       nextOptions: [],
       next: "College math / AMC 12 extension",
       studentHref: "./precalculus-workbook.html",
       teacherHref: "./precalculus-workbook.html?edition=teacher",
-      availability: "지필드 원본 5단원·15차시·30문항 공개 · 극한·미적분은 이 교재의 범위에 포함하지 않음"
+      availability: "지필드 원본 5단원·16차시·32문항 공개 · 극좌표는 선택 심화 · 극한·미적분은 범위에 포함하지 않음"
     })
   ]);
 

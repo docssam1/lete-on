@@ -2,6 +2,12 @@
 
 Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The map-stop readability and G·MAP palette updates are committed locally. No push, deployment, or Drive synchronization has occurred.
 
+### 2026-11-03 Precalculus polar-coordinate enrichment and fraction display
+
+Added a GFIELD-authored optional lesson that converts polar coordinates to Cartesian coordinates and back, with a worked example and two practice prompts. It is explicitly labeled 선택 심화 because school sequencing varies; the course summary and A4 workbook metadata now report five units, 16 lessons, and 32 practice prompts. Fractions in the new example and practice are rendered with a visible numerator, horizontal bar, and denominator in both student and teacher workbook views; the displayed math does not leave slash-form fractions. The current AMC 10 practice route was also checked and already renders its simple numeric fractions as stacked fractions.
+
+Verification: Precalculus workbook browser check confirms the new lesson/practice pages, stacked `3π/2` and `π/3`, zero visible slash-form fractions in the polar practice page, teacher answer pages, and responsive 320/390/1280px widths. The complete focused course-pathway/Precalculus/roadmap browser suite passes 45/45. `git diff --check` passes. Local only; no push, deployment, Drive sync, or API call.
+
 ### 2026-11-03 original Algebra 2 course + fraction notation
 
 Added the GFIELD-authored Algebra 2 workbook at `boarding-school-math/algebra2-workbook.html`, reusing the existing student/teacher A4 workbook renderer. It contains five units, 18 lessons, and 36 original practice prompts with examples, explanations, answers, and feedback. Its scope is polynomial structure, quadratics, rational expressions/functions, exponential/logarithmic models, and sequences. Complex numbers and matrices are marked as optional extensions; it does not replace a school's Geometry course or establish a Grade 8/9 placement. Grade 8 optional enrichment and the inferred Grade 9 bridge now link to this local GFIELD workbook; external AoPS/FlippedMath Algebra 2 links were removed from those stages. Course metadata and resource counts now match the authored material.

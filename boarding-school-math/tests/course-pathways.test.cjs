@@ -40,7 +40,7 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
   assert.equal(precalculus.studentHref, "./precalculus-workbook.html");
   assert.equal(precalculus.teacherHref, "./precalculus-workbook.html?edition=teacher");
   assert.equal(precalculus.units.length, 5);
-  assert.match(precalculus.availability, /5단원·15차시·30문항/);
+  assert.match(precalculus.availability, /5단원·16차시·32문항.*극좌표는 선택 심화/);
   const algebra1 = pathways.courses.find(function (course) { return course.id === "algebra-1"; });
   assert.deepEqual(algebra1.previousOptions, ["pre-algebra"]);
   assert.deepEqual(algebra1.nextOptions, ["geometry", "algebra-2"]);
