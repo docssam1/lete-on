@@ -420,7 +420,7 @@ Verification: Grade 3–12 roadmap model tests pass 12/12; focused Chrome checks
 
 ### 2026-11-03 Grade 6 Pre-Algebra path uses GFIELD learning material
 
-Updated the optional Grade 6 annual example to lead with the existing GFIELD-original 10 concept lessons, 10 Grade 6 topic workbooks, and the separate 10-question GFIELD AMC 8 practice set. The SAT foundation stage links to GFIELD ratio/problem-solving concepts and the College Board's official Math question bank. MAA and College Board references remain labeled as sources, not GFIELD-authored material. Replaced displayed AoPS/Beast Academy/PWN labels in the Grade 6 example; the optional enrichment plan stays separate from school placement. Grade 10's final stage still uses the existing generic “proof practice · selected contest problems” resource description; it has not been replaced by a GFIELD workbook claim.
+Updated the optional Grade 6 annual example to lead with GFIELD's 10 original concept lessons, six reviewed public Grade 6 unit-workbook topics, and the separate 10-question GFIELD AMC 8 practice set. The remaining four Grade 6 workbook drafts are still pending independent review and are not linked as public resources. The SAT foundation stage links to GFIELD ratio/problem-solving concepts and the College Board's official Math question bank. MAA and College Board references remain labeled as sources, not GFIELD-authored material. Replaced displayed AoPS/Beast Academy/PWN labels in the Grade 6 example; the optional enrichment plan stays separate from school placement. Grade 10's final stage still uses the existing generic “proof practice · selected contest problems” resource description; it has not been replaced by a GFIELD workbook claim.
 
 Verification: Grade 3–12 roadmap model tests pass 12/12, including assertions that Grade 6 resources resolve to GFIELD concepts/workbooks and original AMC 8 practice. A focused Chrome annual-plan check passes 1/1; it follows the 6.EE.A concept link and AMC 8 practice link to their actual pages. Local-only; no push, deployment, or Drive sync.
 
@@ -429,3 +429,9 @@ Verification: Grade 3–12 roadmap model tests pass 12/12, including assertions 
 Rechecked grade-route comparison, manual AMC 10 domain-entry diagnosis, same-paper/same-date contest-record comparison, Math Kangaroo Grade 7–8 paired-paper comparison, upper-grade planning boundaries, and mobile contest labels. Updated two stale browser assertions so they match the current Grade 9 roadmap wording and browser-rendered line breaks; no private diagnostic content was opened.
 
 Verification: focused Chrome checks pass 5/5; roadmap model tests pass 12/12. This verifies the current comparison and manual-diagnostic flows, not a calibrated readiness/placement score. Local-only; no push, deployment, or Drive sync.
+
+### 2026-11-03 Correct Grade 6 public-workbook count and route
+
+Audited the Grade 6 annual-plan wording against the current release inventory. The earlier “10 topic workbooks” label counted private drafts as public resources. Replaced it with the ten public concept lessons and the reviewed public `6.EE.A` workbook (36 items), and linked the lesson and workbook separately. The four unreleased Grade 6 workbook drafts remain pending review and are not offered as public material. Updated the README to state this boundary.
+
+Verification: Grade 3–12 roadmap model tests pass 12/12. Focused Chrome annual-resource check passes 1/1; it follows the 6.EE.A concept link to its lesson, the workbook link to the public unit workbook, and the AMC 8 practice link to its page. `node --check` and CRLF-aware `git diff --check` pass. Local only; no private item data opened, no push, deployment, or Drive sync.

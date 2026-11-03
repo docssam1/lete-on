@@ -60,7 +60,8 @@ test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge
   assert.match(roadmap.getAnnualPlan(6).title, /^선택 심화/);
   assert.match(roadmap.getAnnualPlan(6).note, /학교 수학에서 이미 배운 단원.*별도의 선택 심화/);
   assert.match(roadmap.getAnnualPlan(6).periods[0][2], /변수식, 거듭제곱·연산 순서/);
-  assert.match(roadmap.getAnnualPlan(6).periods[0][3], /지필드 Grade 6 개념 학습 10개.*단원 워크북 10개/);
+  assert.match(roadmap.getAnnualPlan(6).periods[0][3], /지필드 개념 학습 10개.*공개 6\.EE\.A 단원 워크북 36문항/);
+  assert.doesNotMatch(roadmap.getAnnualPlan(6).periods[0][3], /단원 워크북 10개/);
   assert.match(roadmap.getAnnualPlan(6).periods[1][3], /지필드 AMC 8 유형 연습 10문항.*MAA 공식/);
   assert.doesNotMatch(roadmap.getAnnualPlan(6).periods.flat().join(" "), /AoPS|Beast Academy|PWN the SAT/);
   assert.equal(roadmap.getAnnualPlan(9).periods.length, 4);
@@ -117,7 +118,7 @@ test("upper-grade course references are limited to named courses and keep Grade 
       assert.ok(resource.url.startsWith("https://") || resource.url.startsWith("./") || resource.url.startsWith("#"));
     });
   });
-  assert.deepEqual(roadmap.annualPlanResourceLinks[6][0].map(function (resource) { return resource.url; }), ["./concept-learning.html", "./concept-learning.html?cluster=6.EE.A"]);
+  assert.deepEqual(roadmap.annualPlanResourceLinks[6][0].map(function (resource) { return resource.url; }), ["./concept-learning.html", "./concept-learning.html?cluster=6.EE.A", "./unit-workbook.html?cluster=6.EE.A&mode=workbook&audience=student&locale=ko&paper=A4"]);
   assert.deepEqual(roadmap.annualPlanResourceLinks[6][1].map(function (resource) { return resource.url; }), ["./competition-practice.html?program=amc8", "https://maa.org/student-programs/amc/"]);
   assert.equal(roadmap.annualPlanResourceLinks[6][2][0].url, "./concept-learning.html?cluster=6.RP.A");
   assert.equal(roadmap.annualPlanResourceLinks[6][2][1].url, "https://satsuite.collegeboard.org/practice/student-question-bank/math");

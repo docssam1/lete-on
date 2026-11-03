@@ -905,7 +905,7 @@ test("Grade 6 and 7 annual plans expose stage-matched online resource links", as
   await page.goto(`${url}?grade=6#annual-plan`, { waitUntil: "networkidle" });
   const grade6Resources = page.locator("#annual-plan-periods > li .annual-plan-resource-links a");
   assert.deepEqual(await grade6Resources.evaluateAll(function (links) { return links.map(function (link) { return link.getAttribute("href"); }); }), [
-    "./concept-learning.html", "./concept-learning.html?cluster=6.EE.A",
+    "./concept-learning.html", "./concept-learning.html?cluster=6.EE.A", "./unit-workbook.html?cluster=6.EE.A&mode=workbook&audience=student&locale=ko&paper=A4",
     "./competition-practice.html?program=amc8", "https://maa.org/student-programs/amc/",
     "./concept-learning.html?cluster=6.RP.A", "https://satsuite.collegeboard.org/practice/student-question-bank/math",
     "./concept-learning.html", "./competition-practice.html?program=amc8"
@@ -913,6 +913,10 @@ test("Grade 6 and 7 annual plans expose stage-matched online resource links", as
   await grade6Resources.nth(1).click();
   await page.waitForURL(/concept-learning\.html\?cluster=6\.EE\.A/);
   assert.match(await page.locator("#lesson").innerText(), /연산 순서와 분배법칙/);
+  await page.goto(`${url}?grade=6#annual-plan`, { waitUntil: "networkidle" });
+  await page.locator('#annual-plan-periods > li a[href*="unit-workbook.html"]').click();
+  await page.waitForURL(/unit-workbook\.html\?cluster=6\.EE\.A/);
+  assert.match(await page.locator("#book-content").innerText(), /6\.EE\.A/);
   await page.goto(`${url}?grade=6#annual-plan`, { waitUntil: "networkidle" });
   await page.locator("#annual-plan-periods > li").nth(1).locator('a[href*="competition-practice.html"]').click();
   await page.waitForURL(/competition-practice\.html\?program=amc8/);

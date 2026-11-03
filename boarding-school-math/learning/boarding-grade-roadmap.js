@@ -29,7 +29,7 @@
   const maaInvitationalReference = Object.freeze({ title: "MAA AIME·USAJMO·USAMO 안내", url: "https://maa.org/maa-invitational-competitions/" });
   const annualPlanResourceLinks = Object.freeze({
     6: Object.freeze({
-      0: Object.freeze([Object.freeze({ title: "지필드 Grade 6 개념 학습 · 10개 주제", url: "./concept-learning.html" }), Object.freeze({ title: "변수식·거듭제곱·연산 순서", url: "./concept-learning.html?cluster=6.EE.A" })]),
+      0: Object.freeze([Object.freeze({ title: "지필드 Grade 6 개념 학습 · 10개 주제", url: "./concept-learning.html" }), Object.freeze({ title: "변수로 식을 나타내고 계산하기", url: "./concept-learning.html?cluster=6.EE.A" }), Object.freeze({ title: "지필드 6.EE.A 단원 워크북 · 36문항", url: "./unit-workbook.html?cluster=6.EE.A&mode=workbook&audience=student&locale=ko&paper=A4" })]),
       1: Object.freeze([Object.freeze({ title: "지필드 AMC 8 유형 연습 · 자체 10문항", url: "./competition-practice.html?program=amc8" }), Object.freeze({ title: "MAA AMC 공식 안내", url: "https://maa.org/student-programs/amc/" })]),
       2: Object.freeze([Object.freeze({ title: "비례·문장제 개념 연결", url: "./concept-learning.html?cluster=6.RP.A" }), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "지필드 Grade 6 개념 복습", url: "./concept-learning.html" }), Object.freeze({ title: "지필드 AMC 8 유형 다시 풀기", url: "./competition-practice.html?program=amc8" })])
@@ -106,7 +106,7 @@
       ["10–12개월", "문장제 복습과 설명", "여러 문제를 풀며 막힌 조건을 다시 보고, 사용한 개념과 풀이 이유를 설명해요.", "Math Mammoth · IXL"]
     ]) }),
     6: Object.freeze({ source: "provided", title: "선택 심화 · Pre-Algebra에서 SAT 기초까지", note: "학교 수학에서 이미 배운 단원을 깊게 익히는 경로와 별도의 선택 심화 예시예요. 새 주제는 이전 개념을 설명할 수 있고 가족·교사와 계획했을 때만 이어가요.", periods: Object.freeze([
-      ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율과 변수식, 거듭제곱·연산 순서를 익히고 기하·자료 문제의 풀이 이유를 말해요.", "지필드 Grade 6 개념 학습 10개 · 단원 워크북 10개"],
+      ["1–3개월", "Pre-Algebra 개념 익히기", "분수·소수·정수·비율과 변수식, 거듭제곱·연산 순서를 익히고 기하·자료 문제의 풀이 이유를 말해요.", "지필드 개념 학습 10개 · 공개 6.EE.A 단원 워크북 36문항"],
       ["4–6개월", "AMC 8 유형과 논리", "단원별 문제를 풀고, 한 문제를 여러 방법으로 설명해요.", "지필드 AMC 8 유형 연습 10문항 · MAA 공식 출제 범위 안내"],
       ["7–9개월", "SAT 기초 유형 맛보기", "문장제와 자료 해석을 배운 개념에 연결해요.", "지필드 비례·문장제 개념 · College Board 공식 SAT 수학 문제은행"],
       ["10–12개월", "복습과 실전 연습", "오답 이유를 나누어 보고, 준비된 범위에서 시간 연습을 해요.", "지필드 개념 복습 · AMC 8 자체 유형 연습 · SAT 공식 연습"]
