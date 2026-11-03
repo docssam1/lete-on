@@ -36,9 +36,9 @@ const origin = process.env.HSE_AUDIT_ORIGIN || 'http://127.0.0.1:8932';
       for (const type of types) for (const seed of [0, 69173, 92741]) {
         try {
           const q=HSE_GENERATORS.generate(type,0,0,seed,0);
-          if (!q || !__compactAudit.isCompactFractionProblem(q)) continue;
+          if (!q) continue;
           const item={...q, type:{...type,grade:Number(type.id.split('-')[0])||5,term:Number(type.id.split('-')[1])||1,unitName:type.__auditUnitName},level:{},difficulty:'심화 기준',sourceItemId:q.sourceItemId||type.sourceItemId||type.id};
-          if (__compactAudit.problemWeight(item)<3) candidates.push(item);
+          if (__compactAudit.isCompactFractionProblem(item) && __compactAudit.problemWeight(item)<3) candidates.push(item);
         } catch (_) { /* Some generators do not support this seed. */ }
       }
       const failures=[];
@@ -60,8 +60,8 @@ const origin = process.env.HSE_AUDIT_ORIGIN || 'http://127.0.0.1:8932';
       }
       return {cases:candidates.length,types:new Set(candidates.map(q=>q.type.id)).size,failures,longWeight};
     });
-    assert(result.longWeight >= 3, 'long unbreakable equations retain the wide layout');
-    assert(result.types>=50, `expected broad coverage, got ${result.types} types`);
+    assert(result.longWeight < 3, 'fraction equation uses the wrapped four-up layout');
+    assert(result.types>=65, `expected broad coverage, got ${result.types} types`);
     assert.deepEqual(result.failures,[]);
     assert.deepEqual(errors,[]);
     console.log(`PASS: ${result.cases} generated compact fraction cases across ${result.types} types fit four-up columns`);
