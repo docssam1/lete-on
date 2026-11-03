@@ -692,6 +692,30 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   await page.close();
 });
 
+test("Grade 6 and 7 annual plans expose stage-matched online resource links", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  for (const grade of [6, 7]) {
+    await page.goto(`${url}?grade=${grade}#annual-plan`, { waitUntil: "networkidle" });
+    const cards = page.locator("#annual-plan-periods > li");
+    assert.equal(await cards.count(), 4);
+    for (let index = 0; index < 4; index += 1) {
+      const links = cards.nth(index).locator(".annual-plan-resource-links a");
+      assert.ok(await links.count() >= 1, `Grade ${grade}, period ${index + 1} has links`);
+      assert.match(await cards.nth(index).locator("small").innerText(), /자료 예시[\s\S]*온라인 자료/);
+      const security = await links.first().evaluate((link) => [link.target, link.rel, link.href]);
+      assert.equal(security[0], "_blank");
+      assert.match(security[1], /noopener/);
+      assert.match(security[2], /^https:\/\//);
+    }
+  }
+  await page.goto(`${url}?grade=9#annual-plan`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".annual-plan-resource-links").count(), 0, "no unsourced links are added to the inferred Grade 9 plan");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${url}?grade=7#annual-plan`, { waitUntil: "networkidle" });
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  await page.close();
+});
+
 test("elementary plans turn the supplied book guidance into clearly labeled pacing examples", async function () {
   for (const grade of [3, 4, 5]) {
     for (const width of [390, 1280]) {

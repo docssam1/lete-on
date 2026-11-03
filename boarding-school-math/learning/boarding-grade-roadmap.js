@@ -32,6 +32,20 @@
   const preCalculusReference = Object.freeze({ title: "FlippedMath AP Precalculus", url: "https://precalculus.flippedmath.com/ap-precalc.html" });
   const maaAime2027Reference = Object.freeze({ title: "MAA 2027 AIME 응시 기준", url: "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/" });
   const maaInvitationalReference = Object.freeze({ title: "MAA AIME·USAJMO·USAMO 안내", url: "https://maa.org/maa-invitational-competitions/" });
+  const annualPlanResourceLinks = Object.freeze({
+    6: Object.freeze({
+      0: Object.freeze([Object.freeze({ title: "AoPS Prealgebra", url: "https://classic.artofproblemsolving.com/store/book/prealgebra" }), Object.freeze({ title: "Khan Academy Pre-algebra", url: "https://www.khanacademy.org/math/algebra/order-of-operations" })]),
+      1: Object.freeze([Object.freeze({ title: "AMC 8 문제 연습", url: "https://amctrainer.org/contests/amc8" }), Object.freeze({ title: "Beast Academy 5D", url: "https://beastacademy.com/books/5D" })]),
+      2: Object.freeze([Object.freeze({ title: "Khan Academy Digital SAT", url: "https://www.khanacademy.org/digital-sat" }), Object.freeze({ title: "College Board 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
+      3: Object.freeze([Object.freeze({ title: "AoPS Prealgebra", url: "https://classic.artofproblemsolving.com/store/book/prealgebra" }), Object.freeze({ title: "College Board SAT 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
+    }),
+    7: Object.freeze({
+      0: Object.freeze([Object.freeze({ title: "AoPS Introduction to Algebra", url: "https://artofproblemsolving.com/store/book/intro-algebra" })]),
+      1: Object.freeze([Object.freeze({ title: "Math 7 기하 단원", url: "https://math7.flippedmath.com/unit-13-similarity.html" }), Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" })]),
+      2: Object.freeze([Object.freeze({ title: "Khan Academy Digital SAT", url: "https://www.khanacademy.org/digital-sat" }), Object.freeze({ title: "College Board 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
+      3: Object.freeze([Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board SAT 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
+    })
+  });
   const courseStageResources = Object.freeze({
     8: Object.freeze({
       0: Object.freeze([geometryReference]),
@@ -221,5 +235,5 @@
     if (tracks.some(function (track) { return /경시/.test(track[0]); })) return tracks;
     return tracks.concat([Object.freeze(["경시 · 선택", "이 학년 계획 자료에는 별도 경시 과정이 제시되지 않았어요."])]);
   }
-  return Object.freeze({ grades: Object.freeze(grades), grade7Stops: grade7Stops, courseStageResources: courseStageResources, routes: Object.freeze(routes), strands: strands, conceptFlows: conceptFlows, getGrade: getGrade, getAnnualPlan: getAnnualPlan, getRoute: getRoute, getTracks: getTracks, competitionOptions: competitionOptions, competitionDomains: competitionDomains, analyzeCompetition: analyzeCompetition });
+  return Object.freeze({ grades: Object.freeze(grades), grade7Stops: grade7Stops, courseStageResources: courseStageResources, annualPlanResourceLinks: annualPlanResourceLinks, routes: Object.freeze(routes), strands: strands, conceptFlows: conceptFlows, getGrade: getGrade, getAnnualPlan: getAnnualPlan, getRoute: getRoute, getTracks: getTracks, competitionOptions: competitionOptions, competitionDomains: competitionDomains, analyzeCompetition: analyzeCompetition });
 });

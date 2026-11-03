@@ -112,7 +112,7 @@
     }
     setText("annual-plan-title", `${grade}학년 · ${plan.title}${plan.source === "inferred" ? " · 추정" : ""}`);
     setText("annual-plan-note", plan.note);
-    plan.periods.forEach(function (period) {
+    plan.periods.forEach(function (period, periodIndex) {
       const item = document.createElement("li");
       const time = document.createElement("span");
       time.className = "annual-plan-period-time";
@@ -124,7 +124,25 @@
       const description = document.createElement("p");
       description.textContent = period[2];
       const resources = document.createElement("small");
-      resources.textContent = `자료 예시 · ${period[3]}`;
+      const labels = document.createElement("span");
+      labels.textContent = `자료 예시 · ${period[3]}`;
+      resources.append(labels);
+      const links = data.annualPlanResourceLinks[grade] && data.annualPlanResourceLinks[grade][periodIndex] || [];
+      if (links.length) {
+        const linkLabel = document.createElement("span");
+        linkLabel.textContent = "온라인 자료";
+        const linkList = document.createElement("span");
+        linkList.className = "annual-plan-resource-links";
+        links.forEach(function (resource) {
+          const link = document.createElement("a");
+          link.href = resource.url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = resource.title;
+          linkList.append(link);
+        });
+        resources.append(linkLabel, linkList);
+      }
       content.append(title, description, resources);
       item.append(time, content);
       list.append(item);

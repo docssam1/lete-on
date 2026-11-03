@@ -99,6 +99,9 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .annual-plan-period-content h3 { margin: 9px 0 0; font-size: 1rem; line-height: 1.4; }
 .annual-plan-period-content p { margin: 9px 0 0; color: #354255; font-size: .86rem; line-height: 1.6; }
 .annual-plan-period-content small { margin-top: 14px; padding-top: 12px; display: block; border-top: 1px solid #d8dee8; color: #566274; font-size: .77rem; line-height: 1.55; }
+.annual-plan-resource-links { display: flex; flex-wrap: wrap; gap: 7px 12px; margin-top: 8px; }
+.annual-plan-resource-links a { color: #60418f; font-size: .8rem; font-weight: 750; text-underline-offset: 3px; }
+.annual-plan-resource-links a:focus-visible { outline: 3px solid #8a62c6; outline-offset: 3px; border-radius: 2px; }
 .annual-plan-periods.is-inferred { border-style: dashed; }
 .annual-plan-empty { margin: 20px 0 0; padding: 16px 18px; border-left: 3px solid #566274; background: #fff; color: #566274; font-size: .87rem; line-height: 1.6; }
 .annual-plan-empty[hidden] { display: none; }
