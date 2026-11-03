@@ -44,6 +44,13 @@ test("MAA AMC 10 and AMC 12 references distinguish year and A/B form", function 
   assert.equal(reference.referenceFor("amc10", 2012, "A").top1, 121.5);
   assert.equal(reference.referenceFor("amc10", 2012, "B").average, 76.59);
   assert.deepEqual([reference.referenceFor("amc10", 2007, "A").average, reference.referenceFor("amc10", 2007, "B").average], [67.9, 61.5]);
+  assert.deepEqual([reference.referenceFor("amc10", 2006, "A").average, reference.referenceFor("amc10", 2006, "B").average], [79, 68.5]);
+  assert.deepEqual([reference.referenceFor("amc10", 2005, "A").average, reference.referenceFor("amc10", 2005, "B").average], [74.7, 77.9]);
+  assert.equal(reference.referenceFor("amc10", 2002, "B"), null);
+  assert.deepEqual([reference.referenceFor("amc12", 2006, "A").average, reference.referenceFor("amc12", 2006, "B").average], [85.7, 85.5]);
+  assert.deepEqual([reference.referenceFor("amc12", 2002, "A").average, reference.referenceFor("amc12", 2002, "B").average], [72.7, 80.8]);
+  assert.match(reference.referenceFor("amc12", 2006, "A").sourceUrl, /2008-high-school-summary/);
+  assert.equal(reference.referenceFor("amc12", 2006, "A").top1, undefined);
   assert.deepEqual([reference.referenceFor("amc12", 2010, "A").average, reference.referenceFor("amc12", 2010, "B").average], [62.5, 59.8]);
   assert.equal(reference.referenceFor("amc12", 2016, "A").top1, 111);
   assert.equal(reference.referenceFor("amc12", 2016, "B").average, 68.65);
