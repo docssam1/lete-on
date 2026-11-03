@@ -72,7 +72,7 @@ test("2010 AMC 8 shows linked source concepts, permits domain overrides, and rep
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${url}?grade=7&program=amc8&year=2010`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".mark-concept-suggestion").count(), 25);
-  assert.equal(await page.locator('[data-question="20"] .mark-concept-suggestion').innerText(), "개념 포함배제·최소공배수 · 영역 제안 · LIVE 출처");
+  assert.equal(await page.locator('[data-question="20"] .mark-concept-suggestion').innerText(), "개념 포함배제·최소공배수 · 교사 검토 분류 · LIVE 출처");
   assert.equal(await page.locator('[data-question="20"] .mark-concept-suggestion a').getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2010/problem/20");
   assert.equal(await page.locator('[data-question="20"][data-field="domain"]').inputValue(), "counting");
   await page.locator('[data-question="20"][data-field="status"]').selectOption("wrong");
@@ -82,6 +82,28 @@ test("2010 AMC 8 shows linked source concepts, permits domain overrides, and rep
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-domains").innerText(), /LIVE 문항 개념 자료 25개가 연결되어 있어요\. 이 중 1문항은 제안 영역을 사용했고 1문항은 직접 분류/);
   assert.match(await page.locator("#report-review-items-list").innerText(), /20번 · 오답 · 답 미입력 · 포함배제·최소공배수 · 경우의 수·확률 · 개념/);
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("early and current AMC 8 years both load item-level concepts and source routes", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=7&program=amc8&year=1985`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".mark-concept-suggestion").count(), 25);
+  assert.equal(await page.locator('[data-question="1"] .mark-concept-suggestion').innerText(), "개념 분수 · 원본 태그 기반 영역 제안 · LIVE 출처");
+  assert.equal(await page.locator('[data-question="1"][data-field="domain"]').inputValue(), "number");
+  await page.locator('[data-question="1"][data-field="status"]').selectOption("wrong");
+  await page.locator('[data-question="1"][data-field="reason"]').selectOption("concept");
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#report-domains").innerText(), /LIVE 문항 개념 자료 25개가 연결되어 있어요\. 이 중 1문항은 제안 영역을 사용했고 0문항은 직접 분류/);
+  assert.match(await page.locator("#report-review-items-list").innerText(), /1번 · 오답 · 답 미입력 · 분수 · 수·비례·추정 · 개념/);
+  await page.goto(`${url}?grade=7&program=amc8&year=2026`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".mark-concept-suggestion").count(), 25);
+  assert.equal(await page.locator('[data-question="25"] .mark-concept-suggestion a').getAttribute("href"), "https://live.poshenloh.com/past-contests/amc8/2026/problem/25");
+  assert.equal(await page.locator('[data-question="25"][data-field="domain"]').inputValue(), "counting");
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   assert.deepEqual(errors, []);
   await page.close();

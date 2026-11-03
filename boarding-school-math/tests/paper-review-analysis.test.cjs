@@ -29,12 +29,12 @@ test("AMC 8 paper review separates number/proportion/estimation and graph/table 
   entries[2] = entry("blank", "data", "skipped");
   const report = analyze(entries, 25, "amc8");
   assert.equal(report.valid, true);
-  assert.equal(report.domains.length, 5);
-  assert.equal(report.domains.find((domain) => domain.id === "number").name, "수·비례·추정");
-  assert.equal(report.domains.find((domain) => domain.id === "data").name, "그래프·표 해석");
+  assert.equal(report.domains.length, 6);
+  assert.equal(report.domains.find((domain) => domain.id === "number").name, "수와 정수의 성질");
+  assert.equal(report.domains.find((domain) => domain.id === "data").name, "자료와 통계");
   assert.equal(report.domainClassified, 3);
   assert.equal(report.lowestDomains.length, 0);
-  assert.equal(analyze([entry("correct", "data")], 1, "amc10").valid, false);
+  assert.equal(analyze([entry("correct", "data")], 1, "amc10").valid, true);
 });
 
 test("source-mapped AMC concepts remain distinct from a learner's manual domain overrides", function () {
@@ -61,7 +61,7 @@ test("source-mapped AMC concepts remain distinct from a learner's manual domain 
 test("domain comparison requires enough classified attempts in two domains", function () {
   const entries = [entry("correct", "algebra"), entry("correct", "algebra"), entry("correct", "algebra"), entry("wrong", "number", "concept"), entry("wrong", "number", "concept"), entry("correct", "number"), entry("wrong", "unclassified", "time")];
   const report = analyze(entries, entries.length);
-  assert.deepEqual(report.lowestDomains, [{ id: "number", name: "수와 정수론", correct: 1, attempted: 3, blank: 0 }]);
+  assert.deepEqual(report.lowestDomains, [{ id: "number", name: "수와 정수의 성질", correct: 1, attempted: 3, blank: 0 }]);
   assert.deepEqual(report.reviewItems, [
     { number: 4, status: "wrong", answer: "", domain: "number", reason: "concept" },
     { number: 5, status: "wrong", answer: "", domain: "number", reason: "concept" },
@@ -79,7 +79,7 @@ test("paper review shows all ties and separately includes blank responses", func
   const entries = [entry("wrong", "number"), entry("correct", "number"), entry("wrong", "number"),
     entry("correct", "algebra"), entry("correct", "algebra"), entry("correct", "algebra"), entry("blank", "number")];
   const report = analyze(entries, entries.length);
-  assert.deepEqual(report.lowestDomains, [{ id: "number", name: "수와 정수론", correct: 1, attempted: 3, blank: 1 }]);
+  assert.deepEqual(report.lowestDomains, [{ id: "number", name: "수와 정수의 성질", correct: 1, attempted: 3, blank: 1 }]);
   assert.deepEqual(report.domainReviewItemNumbers.number, { wrong: [1, 3], blank: [7] });
   assert.deepEqual(report.reviewItems.at(-1), { number: 7, status: "blank", answer: "", domain: "number", reason: "none" });
   const tied = analyze([entry("wrong", "number"), entry("correct", "number"), entry("correct", "number"),
@@ -88,7 +88,7 @@ test("paper review shows all ties and separately includes blank responses", func
   const tiedLowest = analyze([entry("wrong", "number"), entry("correct", "number"), entry("correct", "number"),
     entry("wrong", "algebra"), entry("correct", "algebra"), entry("correct", "algebra"),
     entry("correct", "geometry"), entry("correct", "geometry"), entry("correct", "geometry")], 9);
-  assert.deepEqual(tiedLowest.lowestDomains.map((domain) => domain.name), ["식·대수", "수와 정수론"]);
+  assert.deepEqual(tiedLowest.lowestDomains.map((domain) => domain.name), ["식과 대수 관계", "수와 정수의 성질"]);
 });
 
 test("selected multiple-choice responses are returned only with the learner's review items", function () {
@@ -156,9 +156,12 @@ test("AIME manual review reports only the raw number correct and validates integ
   assert.equal(analyze([{ ...entry("wrong", "algebra", "concept"), answer: "12.5" }], 1, "aime").valid, false);
 });
 
-test("AMC 12 diagnostic includes functions and trigonometry as a distinct review domain", function () {
-  assert.ok(domainsFor("amc12").some(function (domain) { return domain.id === "functions" && /삼각함수/.test(domain.title); }));
-  assert.equal(domainsFor("amc10").some(function (domain) { return domain.id === "functions"; }), false);
+test("all AMC/AIME diagnostics include data and functions as distinct review domains", function () {
+  ["amc8", "amc10", "amc12", "aime"].forEach(function (program) {
+    assert.ok(domainsFor(program).some(function (domain) { return domain.id === "data"; }));
+    assert.ok(domainsFor(program).some(function (domain) { return domain.id === "functions"; }));
+  });
+  assert.ok(domainsFor("amc12").some(function (domain) { return domain.id === "functions" && /함수/.test(domain.title); }));
   const marks = Array.from({ length: 25 }, function () { return { status: "unmarked", answer: "", domain: "unclassified", reason: "none" }; });
   marks[4] = { status: "wrong", answer: "A", domain: "functions", reason: "concept" };
   const result = analyze(marks, 25, "amc12");

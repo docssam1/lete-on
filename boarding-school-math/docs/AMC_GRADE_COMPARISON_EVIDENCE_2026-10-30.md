@@ -6,9 +6,15 @@
 
 LIVE by Po-Shen Loh의 [2010 AMC 8 전문 풀이](https://live.poshenloh.com/past-contests/amc8/2010/solutions)는 문항별 Concepts와 숫자형 difficulty rating을 제공하며, 해당 페이지는 문제를 MAA의 공식 법적 허가로 사용한다고 밝힌다. 25개 문항의 태그·rating과 각 문항 경로를 CSV로 기록했다. [`amc8-2010-item-concepts.csv`](../competition/historical-amc-grade/amc8-2010-item-concepts.csv).
 
-같은 구조를 LIVE의 AMC 8 전체 연도 페이지에서 확인해 [`amc8-item-concept-source-inventory.csv`](../competition/historical-amc-grade/amc8-item-concept-source-inventory.csv)에 1985–2026(2021 제외) 41회 × 25문항, 총 1,025행을 수집했다. 문항 태그와 원본 rating은 각 연도의 LIVE 출처에서 그대로 기록했다. 2010 외 연도는 GFIELD 다섯 영역 매핑을 아직 검토하지 않아 학생 진단에 연결하지 않는다.
+같은 구조를 LIVE의 AMC 8 전체 연도 페이지에서 확인해 [`amc8-item-concept-source-inventory.csv`](../competition/historical-amc-grade/amc8-item-concept-source-inventory.csv)에 1985–2026(2021 제외) 41회 × 25문항, 총 1,025행을 수집했다. 문항 태그와 원본 rating은 각 연도의 LIVE 출처에서 그대로 기록했다. [`amc8-gfield-concept-crosswalk.csv`](../competition/historical-amc-grade/amc8-gfield-concept-crosswalk.csv)는 그 175개 고유 태그를 GFIELD의 다섯 넓은 복습 영역에 제안 분류한다. 2010 회차는 문항별로 확인한 분류를 쓰고, 나머지 AMC 8 회차는 태그 기반의 수정 가능한 제안 영역을 사용한다. 이 태그 교차표는 학년 배치·숙달도·문항 난이도 검증이 아니다. 실제 진단은 학습자가 기록한 정오·미응답과 직접 선택/수정한 영역으로 제한한다.
 
-GFIELD의 다섯 진단 영역(식·대수, 수·정수론, 기하·공간, 경우의 수·확률, 그래프·표 해석)은 원본 태그를 바탕으로 한 분류 제안이다. 학습자가 영역을 바꿀 수 있고, 진단 결과는 LIVE의 rating으로 산정하지 않는다. 매칭된 항목에는 태그 기반 주제와 해당 원본 문항 출처를 제공한다. 아직 2010 AMC 8에만 적용했으며 다른 연도·대회는 원본 아카이브 경로만 연결되어 있다. 미검토 회차의 태그·영역·난도는 만들어 넣지 않는다.
+GFIELD 진단은 원본 태그를 바탕으로 한 수정 가능한 여섯 영역(식과 대수 관계, 수와 정수의 성질, 기하 도형과 측정, 경우의 수와 확률, 자료와 통계, 함수와 그래프)을 제안한다. 학습자가 영역을 바꿀 수 있고, 진단 결과는 LIVE의 rating으로 산정하지 않는다. 모든 AMC 8/10/12 및 AIME 원본 회차의 문제별 원본 개념 출처에 연결되어 있다. LIVE의 256개 현행 개념 분류에 없는 655개 태그는 이름 기반 자동 제안으로 표시해 교사 검토가 필요하다. 문항 난도·학년 배치·숙달도 검증으로 사용하지 않는다.
+
+### 2026-11-04 · 연도·시험형별 AMC/AIME 개념 메타데이터 수집
+
+LIVE의 [원본 아카이브](https://live.poshenloh.com/past-contests)는 AMC 8 41회, AMC 10 52회, AMC 12 102회, AIME 71회 등 266개 시험지 페이지와 문항별 개념·해설 링크를 제공한다. [개념 목록](https://live.poshenloh.com/past-contests/concepts)은 8개 출처 분류 아래 256개 이름을 공개하며, LIVE는 문제를 MAA의 공식 법적 허가로 사용한다고 명시한다. 각 회차의 해설 페이지를 웹에서 읽어 문항 번호·원본 태그·공개 difficulty rating·개별 문제/해설 URL만 보관했다.
+
+[`amc-item-concept-source-inventory.csv`](../competition/amc-item-concept-source-inventory.csv)는 6,500개 문항 메타데이터(AMC 8 1,025, AMC 10 1,300, AMC 12 3,110, AIME 1,065)를 연도·시험형·문항 번호로 정리한다. [`amc-live-concept-taxonomy.csv`](../competition/amc-live-concept-taxonomy.csv)는 현행 256개 개념과 LIVE 분류를 보관한다. [`amc-gfield-concept-crosswalk-all.csv`](../competition/amc-gfield-concept-crosswalk-all.csv)는 911개 고유 태그를 GFIELD 여섯 영역으로 제안 대응한다. 현행 목록에서 못 찾은 655개 태그는 자동 이름 분석 제안이며 검토 필요 상태를 명시한다. 문항별 영역은 수정할 수 있다. 이 데이터는 답안 기반 복습·원본 출처 탐색을 돕는 메타데이터이며, LIVE 난도 점수나 자동 영역 제안을 GFIELD 학년 등급·숙달도로 해석하지 않는다. 원문 문제, 선택지, 정답, 힌트, 풀이 문장을 복사하지 않았다.
 
 ## 공개 근거
 

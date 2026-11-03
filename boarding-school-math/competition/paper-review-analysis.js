@@ -12,12 +12,9 @@
   const blankReasonIds = Object.freeze(["none", "time", "skipped", "could-not-start"]);
   const answerChoiceIds = Object.freeze(["", "A", "B", "C", "D", "E"]);
   const reasonIds = Object.freeze(Array.from(new Set(wrongReasonIds.concat(blankReasonIds))));
-  const domainNames = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률" });
-  const amc12DomainNames = Object.freeze(Object.assign({}, domainNames, { functions: "함수·삼각함수" }));
-  const amc8DomainNames = Object.freeze({ algebra: "식·대수", number: "수·비례·추정", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석" });
+  const domainNames = Object.freeze({ algebra: "식과 대수 관계", number: "수와 정수의 성질", geometry: "기하 도형과 측정", counting: "경우의 수와 확률", data: "자료와 통계", functions: "함수와 그래프" });
   const domainsFor = function (program) {
-    const names = program === "amc8" ? amc8DomainNames : program === "amc12" ? amc12DomainNames : domainNames;
-    return Object.freeze(Object.keys(names).map(function (id) { return Object.freeze({ id: id, title: names[id] }); }));
+    return Object.freeze(Object.keys(domainNames).map(function (id) { return Object.freeze({ id: id, title: domainNames[id] }); }));
   };
   const reasonNames = Object.freeze({ concept: "개념", approach: "접근 아이디어", calculation: "계산", reading: "조건 읽기", time: "시간" });
   const blankReasonNames = Object.freeze({ time: "시간 부족", skipped: "건너뜀", "could-not-start": "시작 방법을 찾지 못함" });
@@ -27,7 +24,7 @@
       return { valid: false, error: "선택한 문제지의 문항 수를 확인하세요." };
     }
     const counts = { correct: 0, wrong: 0, blank: 0, unmarked: 0 };
-    const selectedDomainNames = program === "amc8" ? amc8DomainNames : program === "amc12" ? amc12DomainNames : domainNames;
+    const selectedDomainNames = domainNames;
     const domains = Object.keys(selectedDomainNames).map(function (id) { return { id: id, name: selectedDomainNames[id], attempted: 0, correct: 0, wrong: 0, blank: 0, rate: null, evidence: "미측정" }; });
     const byDomain = new Map(domains.map(function (domain) { return [domain.id, domain]; }));
     const wrongItemNumbersByDomain = new Map(domains.map(function (domain) { return [domain.id, []]; }));

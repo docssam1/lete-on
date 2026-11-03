@@ -295,7 +295,12 @@
         if (config.field === "domain" && concept) {
           const suggestion = document.createElement("small");
           suggestion.className = "mark-concept-suggestion";
-          suggestion.append(document.createTextNode(`개념 ${concept.topicLabel} · 영역 제안 · `));
+          const mappingCopy = concept.mappingStatus === "teacher-review-override"
+            ? "교사 검토 분류"
+            : concept.mappingStatus === "source-tag-crosswalk-suggestion"
+              ? "원본 태그 기반 영역 제안"
+              : "자동 영역 제안 · 교사 검토 필요";
+          suggestion.append(document.createTextNode(`개념 ${concept.topicLabel} · ${mappingCopy} · `));
           const sourceLink = document.createElement("a");
           sourceLink.href = concept.sourceUrl;
           sourceLink.target = "_blank";
@@ -357,7 +362,7 @@
   function conceptLabelFor(li) {
     const suggestion = li.querySelector(".mark-concept-suggestion");
     if (!suggestion) return "";
-    return suggestion.firstChild ? suggestion.firstChild.textContent.replace(/^개념 /, "").replace(/ · 영역 제안 · $/, "") : "";
+    return suggestion.firstChild ? suggestion.firstChild.textContent.replace(/^개념 /, "").replace(/ · (?:영역 제안|원본 태그 기반 영역 제안|자동 영역 제안 · 교사 검토 필요|교사 검토 분류) · $/, "") : "";
   }
   function metric(label, value, note) {
     const node = document.createElement("div");
