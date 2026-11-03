@@ -4,7 +4,7 @@ const test = require("node:test");
 const reference = require("../competition/amc-score-distribution-reference.js");
 
 test("MAA same-form AMC references are available for the published AMC 8 seasons", function () {
-  assert.deepEqual(Object.keys(reference.entries.amc8), ["2018", "2019", "2022", "2023", "2024", "2025", "2026"]);
+  assert.deepEqual(Object.keys(reference.entries.amc8), ["2010", "2018", "2019", "2022", "2023", "2024", "2025", "2026"]);
   assert.deepEqual(
     [2018, 2019].map(function (year) {
       const row = reference.referenceFor("amc8", year, "");
@@ -17,6 +17,12 @@ test("MAA same-form AMC references are available for the published AMC 8 seasons
   assert.equal(reference.referenceFor("amc8", 2019, "").reportAsOf, "2020-01-01");
   assert.equal(reference.referenceFor("amc8", 2018, "").top2_5, undefined);
   assert.equal(reference.referenceFor("amc8", 2019, "").top10, undefined);
+  assert.equal(reference.referenceFor("amc8", 2010, "").average, 9.98);
+  assert.equal(reference.referenceFor("amc8", 2010, "").students, 153211);
+  assert.equal(reference.referenceFor("amc8", 2010, "").schools, 2342);
+  assert.equal(reference.referenceFor("amc8", 2010, "").top1, 22);
+  assert.equal(reference.referenceFor("amc8", 2010, "").top5, 17);
+  assert.match(reference.referenceFor("amc8", 2010, "").sourceUrl, /web\.archive\.org\/web\/20130707194038/);
   assert.equal(reference.referenceFor("amc8", 2022, "").top1, 22);
   assert.equal(reference.referenceFor("amc8", 2022, "").top5, 19);
   assert.equal(reference.referenceFor("amc8", 2022, "").top25, 13);

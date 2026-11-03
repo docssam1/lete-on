@@ -664,7 +664,7 @@
     gradeReferenceSection.hidden = !gradeReference;
     if (gradeReference) {
       const formatLabel = selectedFormat().id === "amc8" ? "AMC 8" : `${selectedFormat().title} ${selectedForm}`;
-      setText("amc-grade-reference-summary", `Grade ${grade} · ${selectedYear} ${formatLabel} · 기록된 학년 참가자 ${gradeReference.participants.toLocaleString("en-US")}명`);
+      setText("amc-grade-reference-summary", `Grade ${grade} · ${selectedYear} ${formatLabel} · 기록된 학년 참가자 ${gradeReference.participants.toLocaleString("en-US")}명${gradeReference.note ? ` · ${gradeReference.note}` : ""}`);
       const plot = $("amc-grade-reference-plot");
       plot.replaceChildren();
       plot.setAttribute("aria-label", `응시 점수 ${result.scoreEstimate.points}점과 해당 학년 평균 ${gradeReference.mean}점 비교`);

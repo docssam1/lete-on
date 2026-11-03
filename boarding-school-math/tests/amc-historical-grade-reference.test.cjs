@@ -12,7 +12,14 @@ test("AMC 8 returns only the matching recorded grade and exact contest year", fu
   assert.equal(earlierYear.mean, 9.49);
   assert.equal(earlierYear.participants, 58271);
   assert.equal(reference.referenceFor("amc8", 2002, "", 8).mean, 11.79);
-  assert.equal(reference.referenceFor("amc8", 2010, "", 7), null);
+  const recovered2010 = [5, 6, 7, 8].map((grade) => reference.referenceFor("amc8", 2010, "", grade));
+  assert.deepEqual(recovered2010.map((entry) => [entry.participants, entry.mean]), [[3945, 8.79], [20715, 8.61], [50749, 9.74], [75207, 10.6]]);
+  assert.equal(recovered2010.reduce((sum, entry) => sum + entry.participants, 0), 150616);
+  assert.ok(recovered2010.every((entry) => entry.sourceStatus === "MAA-original-host-preserved-by-Internet-Archive"));
+  assert.match(recovered2010[0].sourceUrl, /web\.archive\.org\/web\/20130707194038/);
+  assert.match(recovered2010[0].note, /2,595/);
+  assert.equal(reference.referenceFor("amc8", 2010, "", 4), null);
+  assert.equal(reference.referenceFor("amc8", 2010, "", 9), null);
   assert.equal(reference.referenceFor("amc8", 2009, "", 5), null);
 });
 

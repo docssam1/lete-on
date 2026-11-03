@@ -1,3 +1,9 @@
+### 2026-11-04 AMC 8 2010 MAA 학년 평균 연결
+
+Internet Archive의 MAA 원래 호스트 보존본에서 2010 AMC 8 `General Statistics` 페이지의 전체 평균(9.98), 응시자 153,211명, 결과 제출 학교 2,342곳과 5–8학년 평균·인원을 확인했다. 4개 학년 표본 수는 150,616명이고 2,595명은 표의 학년 구간에 배정되지 않는다. 네 행을 `amc8-grade-means-2010.csv`와 `amc-historical-grade-reference.js`에 연결해 원본 점수 입력 후 같은 시험연도·기록 학년의 평균 비교를 열 수 있게 했다. 이 자료는 학년별 평균이지 점수별 분포나 백분위표가 아니다. AMC 8 2011 글로벌 학년 기준 자료는 아직 회수되지 않았다.
+
+자료 출처: [MAA 2010 AMC 8 통계 페이지 보존본](https://web.archive.org/web/20130707194038/http://amc.maa.org/amc8/2010/stats/2010-amc8stats.shtml). Focused Node 검증 6/6 통과: 2010 exact-grade 조회, 참가자 합계, 2010 전체 요약 및 source URL. 2010 결과 패널의 브라우저 테스트는 추가했으나, 현재 셸의 Node 환경에 Playwright 모듈이 없어 실행하지 못했다. localhost에서 2010 원본 연도 선택과 답안 입력 화면은 열리는 것을 확인했지만, 결과 패널의 실제 렌더 검수는 남아 있다. `raw_youtube.txt`는 보존한다. Local only; no push, deployment, or Drive sync.
+
 ### 2026-11-04 · 2011 AMC 10/12 MAA 원본 통계 회수
 
 - 웹 검색에서 당시 MAA 경로의 [2011 AMC 10/12 Grand Statistics PDF](https://web.archive.org/web/20130124025158/http://amc.maa.org/amc1012/2011/stats/11AMC1012-grandstats.pdf)를 찾아 원본 호스트의 Internet Archive 보존 여부를 확인했다. 내려받은 2쪽 PDF에서 Apple PDFKit 텍스트 추출로 전체 평균·공식 응시자 수·학년별 평균과 표본 수를 확인하고, 기존 Scribd 사본의 4개 시험형 22개 행과 대조했다.

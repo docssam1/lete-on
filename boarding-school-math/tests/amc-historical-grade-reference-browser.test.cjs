@@ -50,6 +50,25 @@ test("complete same-year AMC 8 result shows the exact historical grade mean", as
   await page.close();
 });
 
+test("2010 AMC 8 shows the archived MAA grade mean and unassigned sample note", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${url}?grade=7&program=amc8&year=2010`, { waitUntil: "networkidle" });
+  for (let question = 1; question <= 25; question += 1) {
+    await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption(question <= 10 ? "correct" : "blank");
+  }
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.equal(await page.locator("#amc-grade-reference").isVisible(), true);
+  assert.match(await page.locator("#amc-grade-reference-summary").innerText(), /Grade 7 · 2010 AMC 8 · 기록된 학년 참가자 50,749명/);
+  assert.match(await page.locator("#amc-grade-reference-summary").innerText(), /학년별 표에 포함되지 않은 참가자 2,595명 \(전체 153,211명\)/);
+  assert.match(await page.locator("#amc-grade-reference-plot").innerText(), /이번 원본\s+10 \/ 25\s+해당 학년 평균\s+9\.74 \/ 25/);
+  assert.equal(await page.locator("#amc-grade-reference-source").getAttribute("href"), "https://web.archive.org/web/20130707194038/http://amc.maa.org/amc8/2010/stats/2010-amc8stats.shtml");
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("2011 AMC 8 shows the transcribed Korea grade percentile with its cohort scope", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
