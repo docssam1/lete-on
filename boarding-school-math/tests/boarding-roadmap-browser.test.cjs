@@ -50,7 +50,7 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   assert.equal(await page.evaluate(function () { return location.hash; }), "#algebra1-course");
   assert.match(await page.locator("#algebra1-course").innerText(), /식의 구조와 방정식[\s\S]*지필드 원본[\s\S]*3\(2x − 1\) = 15/);
   assert.equal(await page.locator(".algebra1-unit-card").count(), 5);
-  assert.equal(await page.locator(".algebra1-lesson-sequence").count(), 3);
+  assert.equal(await page.locator(".algebra1-lesson-sequence").count(), 5);
   const unit1 = page.locator(".algebra1-unit-card").first();
   await unit1.locator(".algebra1-lesson-sequence > summary").click();
   assert.equal(await unit1.locator(".algebra1-session").count(), 7);
@@ -67,6 +67,15 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   await unit3.locator(".algebra1-lesson-sequence > summary").click();
   assert.equal(await unit3.locator(".algebra1-session").count(), 6);
   assert.match(await unit3.innerText(), /연립방정식의 해와 그래프의 교점[\s\S]*연립부등식과 가능한 영역/);
+  const unit4 = page.locator(".algebra1-unit-card").nth(3);
+  await unit4.locator(".algebra1-lesson-sequence > summary").click();
+  assert.equal(await unit4.locator(".algebra1-session").count(), 6);
+  assert.match(await unit4.innerText(), /거듭제곱의 성질 적용하기[\s\S]*지수함수의 시작값과 변화율 해석하기/);
+  const unit5 = page.locator(".algebra1-unit-card").nth(4);
+  await unit5.locator(".algebra1-lesson-sequence > summary").click();
+  assert.equal(await unit5.locator(".algebra1-session").count(), 7);
+  assert.match(await unit5.innerText(), /이차식의 곱과 표준형 연결하기[\s\S]*이차함수로 상황 모델링하기/);
+  assert.deepEqual(await page.locator(".algebra1-unit-card").evaluateAll(function (cards) { return cards.map(function (card) { return getComputedStyle(card).gridColumn; }); }), ["1 / -1", "1 / -1", "1 / -1", "1 / -1", "1 / -1"]);
   assert.equal(await page.locator(".algebra1-unit-lesson").count(), 5);
   await page.locator(".algebra1-unit-lesson").nth(2).locator("summary").click();
   assert.match(await page.locator(".algebra1-unit-lesson").nth(2).innerText(), /입장권[\s\S]*a \+ s = 28[\s\S]*13장/);
@@ -85,9 +94,16 @@ test("the original Algebra 1 Unit 1 sequence remains readable and contained on a
   const unit1 = page.locator(".algebra1-unit-card").first();
   assert.equal(await unit1.locator(".algebra1-session").count(), 7);
   assert.equal(await page.locator(".algebra1-answer").count(), 14);
+  for (const unitIndex of [1, 2, 3, 4]) {
+    await page.locator(".algebra1-unit-card").nth(unitIndex).locator(".algebra1-lesson-sequence > summary").click();
+  }
+  assert.deepEqual(await page.locator(".algebra1-unit-card").evaluateAll(function (cards) {
+    return cards.map(function (card) { return card.querySelectorAll(".algebra1-session").length; });
+  }), [7, 6, 6, 6, 7]);
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [390, 390]);
-  assert.equal(await page.locator(".algebra1-unit-card").first().evaluate(function (node) { return getComputedStyle(node).gridColumn; }), "1 / -1");
+  assert.deepEqual(await page.locator(".algebra1-unit-card").evaluateAll(function (cards) { return cards.map(function (node) { return getComputedStyle(node).gridColumn; }); }), ["1 / -1", "1 / -1", "1 / -1", "1 / -1", "1 / -1"]);
   assert.ok(await unit1.locator(".algebra1-lesson-sequence").evaluate(function (node) { return node.getBoundingClientRect().width > 300; }));
+  assert.ok(Number.parseFloat(await page.locator(".algebra1-unit-card:nth-child(5) .algebra1-session > summary").first().evaluate(function (node) { return getComputedStyle(node).fontSize; })) >= 14);
   assert.deepEqual(errors, []);
   await page.close();
 });

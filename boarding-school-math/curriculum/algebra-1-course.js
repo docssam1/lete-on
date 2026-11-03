@@ -233,7 +233,69 @@
       question: "반복되는 곱셈과 식의 모양은 어떤 규칙을 드러낼까요?",
       goals: ["정수 지수의 성질을 근거로 식을 간단히 한다", "다항식의 연산과 인수분해를 구조로 설명한다", "지수 관계를 표·그래프로 비교하고 변화 양상을 해석한다"],
       standards: ["HSA-SSE.B.3", "HSA-APR.A.1", "HSF-LE.A.1", "HSF-LE.B.5"],
-      lesson: Object.freeze({ title: "두 배씩 늘어나는 수량", prompt: "처음에 6개인 수량이 한 단계마다 두 배가 돼요. 단계 수를 n이라 할 때 수량 N을 식으로 나타내고, 4단계 뒤의 수량을 계산하세요. 덧셈으로 늘어나는 규칙과 무엇이 다른지도 설명하세요.", solution: "N(n) = 6 × 2ⁿ이고 N(4) = 6 × 16 = 96개예요. 매 단계 2개씩 더하는 것이 아니라 현재 수량에 2를 곱하므로 지수 관계로 나타내요.", extension: "같은 시작값에서 단계마다 6개씩 더하는 규칙과 표를 만들어 비교해 보세요." })
+      lesson: Object.freeze({ title: "두 배씩 늘어나는 수량", prompt: "처음에 6개인 수량이 한 단계마다 두 배가 돼요. 단계 수를 n이라 할 때 수량 N을 식으로 나타내고, 4단계 뒤의 수량을 계산하세요. 덧셈으로 늘어나는 규칙과 무엇이 다른지도 설명하세요.", solution: "N(n) = 6 × 2ⁿ이고 N(4) = 6 × 16 = 96개예요. 매 단계 2개씩 더하는 것이 아니라 현재 수량에 2를 곱하므로 지수 관계로 나타내요.", extension: "같은 시작값에서 단계마다 6개씩 더하는 규칙과 표를 만들어 비교해 보세요." }),
+      lessons: Object.freeze([
+        Object.freeze({
+          title: "거듭제곱의 성질 적용하기",
+          objective: "같은 밑의 거듭제곱을 곱하거나 나눌 때 지수 법칙을 적용하고 그 이유를 반복되는 곱셈으로 설명한다.",
+          idea: "같은 밑의 거듭제곱을 곱하면 지수를 더하고, 나누면 공통 인수를 약분해 지수를 빼요. 0이 아닌 같은 밑을 나눌 때 이 성질을 써요.",
+          example: Object.freeze({ prompt: "2³ × 2²와 x⁵ ÷ x²을 각각 간단히 하세요. 단, x ≠ 0이에요.", solution: "2³ × 2² = (2 × 2 × 2)(2 × 2) = 2⁵ = 32예요. x⁵ ÷ x²은 공통 인수 x²을 약분해 x³이에요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "5² × 5를 계산하세요.", answer: "125", feedback: "5² × 5¹ = 5³이고, 5 × 5 × 5를 계산해요." }),
+            Object.freeze({ prompt: "a⁷ ÷ a⁴을 간단히 쓰세요. 단, a ≠ 0이에요.", answer: "a³", feedback: "같은 밑의 거듭제곱을 나누면 공통 인수를 약분해 지수를 빼요." })
+          ])
+        }),
+        Object.freeze({
+          title: "다항식의 항과 차수 읽기",
+          objective: "다항식의 항·계수·차수를 구분하고 같은 차수의 항을 정리해 표준형으로 쓴다.",
+          idea: "다항식은 항의 합이에요. 문자의 지수가 같은 항만 동류항이므로 계수끼리 더하거나 빼요.",
+          example: Object.freeze({ prompt: "(3x² + 2x − 5) + (x² − 4x + 7)을 표준형으로 정리하고 차수를 말하세요.", solution: "동류항을 결합하면 4x² − 2x + 2예요. 가장 큰 지수가 2이므로 이 다항식의 차수는 2예요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "(5y² − 3y + 1) + (2y² + y − 6)을 간단히 하세요.", answer: "7y² − 2y − 5", feedback: "y²항, y항, 상수항끼리 각각 모아요." }),
+            Object.freeze({ prompt: "(4a² + 3a − 2) − (a² − 5a + 6)을 간단히 하세요.", answer: "3a² + 8a − 8", feedback: "둘째 괄호 앞의 빼기 부호를 각 항에 적용한 다음 동류항을 결합해요." })
+          ])
+        }),
+        Object.freeze({
+          title: "분배법칙으로 다항식 곱하기",
+          objective: "단항식을 다항식에 곱하거나 두 이항식을 곱해 동치인 다항식으로 전개한다.",
+          idea: "한 인수를 다른 인수의 모든 항에 곱해요. 각 곱을 쓴 뒤 동류항이 있으면 정리해요.",
+          example: Object.freeze({ prompt: "(x + 3)(x + 2)를 전개하세요.", solution: "x(x + 2) + 3(x + 2) = x² + 2x + 3x + 6 = x² + 5x + 6이에요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "4x(2x − 3)을 전개하세요.", answer: "8x² − 12x", feedback: "4x를 괄호 안의 두 항에 각각 곱해요." }),
+            Object.freeze({ prompt: "(x + 5)(x − 2)를 전개하세요.", answer: "x² + 3x − 10", feedback: "각 항의 곱을 모두 쓴 뒤 5x와 −2x를 결합해요." })
+          ])
+        }),
+        Object.freeze({
+          title: "공통인수로 다항식 인수분해하기",
+          objective: "분배법칙을 거꾸로 적용해 항들의 최대 공통인수를 찾아 다항식을 인수분해한다.",
+          idea: "전개는 곱을 합으로 바꾸고, 인수분해는 합을 곱으로 바꿔요. 두 표현이 같은 값을 나타내는지 다시 전개해 확인할 수 있어요.",
+          example: Object.freeze({ prompt: "6x² + 9x를 공통인수로 인수분해하고 확인하세요.", solution: "두 항의 최대 공통인수는 3x이므로 6x² + 9x = 3x(2x + 3)이에요. 다시 전개하면 6x² + 9x가 돼요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "8y² − 12y를 공통인수로 인수분해하세요.", answer: "4y(2y − 3)", feedback: "두 항에 공통으로 들어 있는 가장 큰 인수 4y를 괄호 밖으로 묶어요." }),
+            Object.freeze({ prompt: "15a³ + 10a²를 최대 공통인수로 인수분해하세요.", answer: "5a²(3a + 2)", feedback: "계수의 최대공약수와 두 항에 공통으로 있는 가장 작은 a의 거듭제곱을 묶어요." })
+          ])
+        }),
+        Object.freeze({
+          title: "선형 증가와 지수 증가 비교하기",
+          objective: "표와 식에서 일정한 차이와 일정한 비율을 구별해 선형 관계와 지수 관계를 판별한다.",
+          idea: "선형 관계는 입력 간격이 같을 때 출력의 차이가 일정하고, 지수 관계는 출력의 비율이 일정해요.",
+          example: Object.freeze({ prompt: "첫째 표의 출력은 4, 7, 10, 13이고 둘째 표는 4, 8, 16, 32예요. 각 표의 규칙을 식으로 나타내세요. 첫 입력은 n = 0이에요.", solution: "첫째 표는 매번 3씩 늘어 선형식 L(n) = 3n + 4예요. 둘째 표는 매번 2배가 되어 지수식 E(n) = 4 × 2ⁿ이에요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "입력 n이 0, 1, 2, 3일 때 출력이 2, 5, 8, 11인 관계를 분류하고 식을 쓰세요.", answer: "선형 관계, y = 3n + 2", feedback: "출력의 차이가 3으로 일정하고 시작값이 2예요." }),
+            Object.freeze({ prompt: "입력 n이 0, 1, 2, 3일 때 출력이 3, 6, 12, 24인 관계를 분류하고 식을 쓰세요.", answer: "지수 관계, y = 3 × 2ⁿ", feedback: "출력의 비율이 매번 2이고 n = 0일 때 시작값은 3이에요." })
+          ])
+        }),
+        Object.freeze({
+          title: "지수함수의 시작값과 변화율 해석하기",
+          objective: "지수함수 y = a·bˣ에서 초기값 a와 성장·감소 인자 b를 해석하고 상황을 식으로 모델링한다.",
+          idea: "입력이 0일 때 출력은 a예요. b가 1보다 크면 일정한 비율로 성장하고, 0과 1 사이면 일정한 비율로 감소해요.",
+          example: Object.freeze({ prompt: "처음 50개인 수량이 매 단계 20%씩 늘어요. 단계 수 t에 따른 수량을 식으로 쓰고 2단계 뒤 값을 구하세요.", solution: "매 단계의 성장 인자는 1 + 0.20 = 1.2예요. 따라서 N(t) = 50(1.2)ᵗ이고 N(2) = 50 × 1.44 = 72개예요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "처음 100L인 물이 매 시간 10%씩 줄어요. t시간 뒤 양을 나타내는 식을 쓰세요.", answer: "W(t) = 100(0.9)ᵗ", feedback: "10% 감소 후 남는 비율은 90%, 즉 0.9예요." }),
+            Object.freeze({ prompt: "P(t) = 8(1.5)ᵗ에서 시작값과 매 단계의 변화율을 말하세요.", answer: "시작값 8, 매 단계 50% 증가", feedback: "초기값은 계수 8이고 성장 인자 1.5는 1 + 0.5를 뜻해요." })
+          ])
+        })
+      ])
     }),
     Object.freeze({
       id: "quadratic-models",
@@ -241,7 +303,79 @@
       question: "직선으로 설명되지 않는 변화는 어떻게 나타낼까요?",
       goals: ["이차식의 인수분해·표·그래프를 연결한다", "영점과 꼭짓점이 상황에서 뜻하는 바를 읽는다", "자료에 맞는 선형·지수·이차 모델을 고르고 한계를 말한다"],
       standards: ["HSA-SSE.B.3", "HSA-REI.B.4", "HSF-IF.C.8", "HSF-LE.A.2", "HSA-CED.A.1"],
-      lesson: Object.freeze({ title: "직사각형 화단의 넓이 비교", prompt: "길이 18m의 울타리로 직사각형 화단의 네 변을 모두 둘러요. 한 변의 길이를 x m라 하면 다른 변은 얼마인지 쓰고 넓이 A(x)를 나타내세요. 가능한 직사각형 중 넓이가 가장 클 때를 찾아보세요.", solution: "2x + 2y = 18이므로 y = 9 − x예요. 넓이는 A(x) = x(9 − x) = −(x − 4.5)² + 20.25예요. 두 변이 4.5m일 때 넓이가 가장 크고, 최대 넓이는 20.25m²예요.", extension: "x = 3, 4, 4.5, 5, 6일 때 넓이를 표에 적어 꼭짓점과 대칭을 찾아보세요." })
+      lesson: Object.freeze({ title: "직사각형 화단의 넓이 비교", prompt: "길이 18m의 울타리로 직사각형 화단의 네 변을 모두 둘러요. 한 변의 길이를 x m라 하면 다른 변은 얼마인지 쓰고 넓이 A(x)를 나타내세요. 가능한 직사각형 중 넓이가 가장 클 때를 찾아보세요.", solution: "2x + 2y = 18이므로 y = 9 − x예요. 넓이는 A(x) = x(9 − x) = −(x − 4.5)² + 20.25예요. 두 변이 4.5m일 때 넓이가 가장 크고, 최대 넓이는 20.25m²예요.", extension: "x = 3, 4, 4.5, 5, 6일 때 넓이를 표에 적어 꼭짓점과 대칭을 찾아보세요." }),
+      lessons: Object.freeze([
+        Object.freeze({
+          title: "이차식의 곱과 표준형 연결하기",
+          objective: "두 일차식의 곱을 전개해 이차식의 표준형 ax² + bx + c로 나타내고 각 항의 역할을 설명한다.",
+          idea: "두 일차식의 곱에는 x²항, x항, 상수항이 생겨요. 전개한 뒤 동류항을 정리하면 표준형이 돼요.",
+          example: Object.freeze({ prompt: "가로가 x + 2, 세로가 x + 5인 직사각형의 넓이를 전개해 표준형으로 쓰세요.", solution: "넓이는 (x + 2)(x + 5)예요. 전개하면 x² + 5x + 2x + 10 = x² + 7x + 10이에요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "(x + 3)(x + 6)을 표준형으로 전개하세요.", answer: "x² + 9x + 18", feedback: "두 괄호의 각 항을 곱하고 x항을 결합해요." }),
+            Object.freeze({ prompt: "넓이가 (w + 4)(w − 1)인 직사각형의 넓이식을 전개하세요.", answer: "w² + 3w − 4", feedback: "w², −w, 4w, −4를 모두 쓴 뒤 동류항을 정리해요." })
+          ])
+        }),
+        Object.freeze({
+          title: "이차식 인수분해하기",
+          objective: "x² + bx + c 꼴의 이차식을 곱셈으로 나타낼 두 수를 찾아 인수분해하고 전개로 확인한다.",
+          idea: "두 수의 곱이 c이고 합이 b가 되면 x² + bx + c = (x + r)(x + s)로 쓸 수 있어요.",
+          example: Object.freeze({ prompt: "x² + 7x + 12를 인수분해하고 확인하세요.", solution: "곱이 12이고 합이 7인 두 수는 3과 4예요. 따라서 (x + 3)(x + 4)이고 전개하면 원래 식이 돼요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "x² + 9x + 20을 인수분해하세요.", answer: "(x + 4)(x + 5)", feedback: "곱이 20이고 합이 9인 두 수를 찾아요." }),
+            Object.freeze({ prompt: "x² − x − 12를 인수분해하세요.", answer: "(x − 4)(x + 3)", feedback: "곱이 −12이고 합이 −1인 두 수는 −4와 3이에요." })
+          ])
+        }),
+        Object.freeze({
+          title: "인수분해로 이차방정식 풀기",
+          objective: "이차방정식을 한쪽이 0인 꼴로 정리하고 곱이 0인 성질을 이용해 해를 구한 뒤 검산한다.",
+          idea: "곱이 0이면 인수 중 적어도 하나가 0이에요. 각 인수를 0으로 두어 해를 찾고 원래 방정식에 대입해요.",
+          example: Object.freeze({ prompt: "x² + 5x + 6 = 0을 풀고 확인하세요.", solution: "(x + 2)(x + 3) = 0이므로 x = −2 또는 x = −3이에요. 각각 대입하면 왼쪽이 0이 돼요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "x² + 7x + 10 = 0을 풀어 보세요.", answer: "x = −5 또는 x = −2", feedback: "왼쪽을 (x + 5)(x + 2)로 인수분해하고 각 인수를 0으로 놓아요." }),
+            Object.freeze({ prompt: "x² − 4x − 12 = 0의 해를 구하세요.", answer: "x = 6 또는 x = −2", feedback: "곱이 −12이고 합이 −4인 두 수를 이용해 인수분해해요." })
+          ])
+        }),
+        Object.freeze({
+          title: "근의 공식으로 이차방정식 풀기",
+          objective: "인수분해가 쉽지 않은 ax² + bx + c = 0을 근의 공식으로 풀고 정확한 해를 제시한다.",
+          idea: "a ≠ 0일 때 해는 x = (−b ± √(b² − 4ac)) ÷ 2a예요. 루트 안의 값으로 실근의 개수도 확인할 수 있어요.",
+          example: Object.freeze({ prompt: "x² − 2x − 1 = 0을 근의 공식으로 풀어 보세요.", solution: "a = 1, b = −2, c = −1이에요. 판별식은 b² − 4ac = 4 + 4 = 8이고, x = (2 ± √8) ÷ 2 = 1 ± √2예요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "x² + 4x + 1 = 0을 근의 공식으로 푸세요.", answer: "x = −2 ± √3", feedback: "판별식은 16 − 4 = 12예요. 근의 공식에 넣고 √12 = 2√3으로 정리해요." }),
+            Object.freeze({ prompt: "x² − 3x − 1 = 0을 근의 공식으로 푸세요.", answer: "x = (3 ± √13) ÷ 2", feedback: "판별식은 9 + 4 = 13이므로 두 해를 정확한 근호로 나타내요." })
+          ])
+        }),
+        Object.freeze({
+          title: "그래프에서 영점과 대칭축 읽기",
+          objective: "이차함수의 그래프에서 x절편, 대칭축, 꼭짓점을 찾고 식의 해와 연결한다.",
+          idea: "x절편은 함수값이 0인 입력이에요. 대칭축을 기준으로 그래프의 양쪽 모양이 서로 거울처럼 대응해요.",
+          example: Object.freeze({ prompt: "y = x² − 4x + 3의 x절편, 대칭축, 꼭짓점을 구하세요.", solution: "y = (x − 1)(x − 3)이므로 x절편은 (1, 0), (3, 0)이에요. 두 근의 중간인 대칭축은 x = 2이고, y(2) = −1이므로 꼭짓점은 (2, −1)이에요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "y = x² − 6x + 8의 x절편과 대칭축을 구하세요.", answer: "x절편 (2, 0), (4, 0); 대칭축 x = 3", feedback: "이차식을 인수분해해 영점을 찾고, 두 영점의 중간을 대칭축으로 확인해요." }),
+            Object.freeze({ prompt: "y = (x − 1)² − 4의 꼭짓점과 y절편을 구하세요.", answer: "꼭짓점 (1, −4), y절편 (0, −3)", feedback: "꼭짓점형에서 꼭짓점을 바로 읽고 x = 0을 대입해 y절편을 구해요." })
+          ])
+        }),
+        Object.freeze({
+          title: "꼭짓점으로 최댓값과 최솟값 해석하기",
+          objective: "꼭짓점형 이차함수의 꼭짓점과 개구 방향을 이용해 최댓값 또는 최솟값을 찾고 상황의 단위로 설명한다.",
+          idea: "포물선이 아래로 열리면 꼭짓점의 y값이 최댓값이고, 위로 열리면 최솟값이에요. 상황에서 입력 범위도 함께 살펴야 해요.",
+          example: Object.freeze({ prompt: "공의 높이가 h(t) = −(t − 3)² + 16로 주어져요. 가장 높은 높이와 그때의 시간을 구하세요.", solution: "꼭짓점은 (3, 16)이고 그래프가 아래로 열려요. 따라서 3초일 때 가장 높으며 높이는 16m예요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "R(x) = −(x − 4)² + 20에서 최댓값과 그때의 x를 구하세요.", answer: "최댓값 20, x = 4", feedback: "아래로 열리는 포물선의 꼭짓점이 최댓값을 줘요." }),
+            Object.freeze({ prompt: "A(x) = (x + 2)² + 3의 최솟값과 그때의 x를 구하세요.", answer: "최솟값 3, x = −2", feedback: "위로 열리는 포물선이므로 꼭짓점의 y값이 최솟값이에요." })
+          ])
+        }),
+        Object.freeze({
+          title: "이차함수로 상황 모델링하기",
+          objective: "상황의 양을 이차함수로 나타내고 영점·꼭짓점·정의역을 맥락에 맞게 해석한다.",
+          idea: "식의 그래프 특징은 상황에서 가능한 입력 범위와 함께 해석해야 해요. 계산 결과가 모형의 범위 밖이면 실제 답으로 쓰지 않아요.",
+          example: Object.freeze({ prompt: "높이가 h(t) = −t² + 6t + 7m인 공이 있어요. 최고 높이와 땅에 닿는 양의 시간을 구하세요.", solution: "h(t) = −(t − 3)² + 16이므로 최고 높이는 16m이고 t = 3초예요. h(t) = 0을 풀면 (t − 7)(t + 1) = 0이므로 양의 시간 t = 7초에 땅에 닿아요." }),
+          practice: Object.freeze([
+            Object.freeze({ prompt: "R(x) = −x² + 8x로 나타낸 수익 모형의 최댓값과 그때의 x를 구하세요.", answer: "최댓값 16, x = 4", feedback: "식을 −(x − 4)² + 16으로 바꾸면 꼭짓점에서 최댓값을 읽을 수 있어요." }),
+            Object.freeze({ prompt: "직사각형의 넓이가 A(x) = x(10 − x)일 때 가능한 x의 범위와 최대 넓이를 구하세요.", answer: "0 < x < 10, 최대 넓이 25이며 x = 5일 때", feedback: "두 변의 길이가 모두 양수여야 하고 A(x) = −(x − 5)² + 25로 고쳐 꼭짓점을 읽어요." })
+          ])
+        })
+      ])
     })
   ]);
 
@@ -261,7 +395,7 @@
   return Object.freeze({
     id: "gfield-algebra-1-v1",
     title: "지필드 Algebra 1",
-    status: "units-1-3-sequences-published",
+    status: "units-1-5-sequences-published",
     scope: "미국 고등학교 공통 기준의 대수·함수 영역을 참고해 만든 지필드 학습 순서예요. 학교별 단원 순서와 깊이는 교사가 조정해요.",
     units: units,
     starterLesson: starterLesson,

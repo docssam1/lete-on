@@ -5,17 +5,22 @@ const course = require("../curriculum/algebra-1-course.js");
 
 test("GFIELD Algebra 1 has an original, standards-scoped five-unit course map", function () {
   assert.equal(course.id, "gfield-algebra-1-v1");
-  assert.equal(course.status, "units-1-3-sequences-published");
+  assert.equal(course.status, "units-1-5-sequences-published");
   assert.equal(course.units.length, 5);
   assert.equal(course.units[0].lessons.length, 7);
   assert.equal(course.units[1].lessons.length, 6);
   assert.equal(course.units[2].lessons.length, 6);
+  assert.equal(course.units[3].lessons.length, 6);
+  assert.equal(course.units[4].lessons.length, 7);
   assert.deepEqual(course.units[0].lessons.map(function (lesson) { return lesson.practice.length; }), [2, 2, 2, 2, 2, 2, 2]);
   assert.deepEqual(course.units[1].lessons.map(function (lesson) { return lesson.practice.length; }), [2, 2, 2, 2, 2, 2]);
   assert.deepEqual(course.units[2].lessons.map(function (lesson) { return lesson.practice.length; }), [2, 2, 2, 2, 2, 2]);
-  assert.ok(course.units[0].lessons.every(function (lesson) {
+  assert.deepEqual(course.units[3].lessons.map(function (lesson) { return lesson.practice.length; }), [2, 2, 2, 2, 2, 2]);
+  assert.deepEqual(course.units[4].lessons.map(function (lesson) { return lesson.practice.length; }), [2, 2, 2, 2, 2, 2, 2]);
+  assert.ok(course.units.every(function (unit) { return unit.lessons.every(function (lesson) {
     return lesson.title && lesson.objective && lesson.idea && lesson.example.prompt && lesson.example.solution
       && lesson.practice.every(function (exercise) { return exercise.prompt && exercise.answer && exercise.feedback; });
+  });
   }));
   assert.match(course.units[0].lessons[0].practice[0].answer, /17달러/);
   assert.match(course.units[0].lessons[3].practice[1].answer, /8b − 6/);
@@ -24,6 +29,9 @@ test("GFIELD Algebra 1 has an original, standards-scoped five-unit course map", 
   assert.match(course.units[1].lessons[4].practice[1].answer, /x = 4/);
   assert.match(course.units[2].lessons[2].example.solution, /\(4, 2\)/);
   assert.match(course.units[2].lessons[4].practice[0].answer, /−2 < x ≤ 3/);
+  assert.match(course.units[3].lessons[5].example.solution, /72개/);
+  assert.match(course.units[4].lessons[2].practice[0].answer, /x = −5 또는 x = −2/);
+  assert.match(course.units[4].lessons[3].practice[0].answer, /−2 ± √3/);
   assert.ok(course.units.every(function (unit) {
     return unit.title && unit.question && unit.goals.length >= 3 && unit.standards.length
       && unit.lesson && unit.lesson.title && unit.lesson.prompt && unit.lesson.solution && unit.lesson.extension;
