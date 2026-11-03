@@ -27,6 +27,7 @@ require("./source-5-2-u6-grid-route-linked.js");
 require("./source-5-2-u6-harvest-average-linked.js");
 require("./source-5-2-u6-group-average-linked.js");
 require("./source-5-2-u6-daily-average-linked.js");
+require("./source-5-2-u6-score-frequency-linked.js");
 require("./source-5-2-u6-probability-linked-practice.js");
 require("./source-5-2-u1-linked-practice.js");
 require("./source-5-2-u1-taxi-linked.js");
@@ -402,8 +403,8 @@ if (kiteTypes.length === 1) {
   }
 }
 if (total !== 2706) failures.push(`전체 유형 수가 2703이 아니라 ${total}입니다.`);
-if (ready !== 1968) failures.push(`원문 연결 공개 유형 수가 1968가 아니라 ${ready}입니다.`);
-if (lockedWithoutSource !== 326) failures.push(`원문 미연결 잠금 유형 수가 326이 아니라 ${lockedWithoutSource}입니다.`);
+if (ready !== 1969) failures.push(`원문 연결 공개 유형 수가 1969가 아니라 ${ready}입니다.`);
+if (lockedWithoutSource !== 325) failures.push(`원문 미연결 잠금 유형 수가 325이 아니라 ${lockedWithoutSource}입니다.`);
 
 if (failures.length) {
   console.error(`원문 연결 공개 문턱 실패: ${failures.length}건`);
