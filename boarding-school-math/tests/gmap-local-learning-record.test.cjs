@@ -71,6 +71,33 @@ test("only mapped axes can change a learner-plan priority and records can be cle
   assert.deepEqual(store.loadPractice("sasmo-g6"), { attempts: {}, summary: null });
 });
 
+test("GFIELD mock results keep local aggregate evidence only, in newest-first order, and can be cleared", function () {
+  const storage = memoryStorage();
+  const store = records.create(storage);
+  const result = {
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261103-a1b2c3d4", examId: "gfield-grade7-ns-a-mock-v1", formVersion: "2026-11-03-v1", grade: 7,
+    score: { correct: 9, answered: 12 },
+    standards: [{ id: "7.NS.A.1", correct: 4, total: 5 }, { id: "7.NS.A.2", correct: 3, total: 5 }, { id: "7.NS.A.3", correct: 2, total: 4 }],
+    reviewFocuses: [{ itemId: "ns-a-m03", standard: "7.NS.A.1", label: "소수의 덧셈" }], completedAt: "2026-11-03T02:00:00.000Z",
+    studentName: "private name", schoolScore: 100, responses: [{ answer: "private answer" }]
+  };
+  const first = store.saveGfieldMockResult(result);
+  assert.equal(first.score.correct, 9);
+  assert.equal("studentName" in first, false);
+  assert.equal("schoolScore" in first, false);
+  assert.equal("responses" in first, false);
+  const second = store.saveGfieldMockResult({ ...result, id: "mock-20261103-e5f6g7h8", completedAt: "2026-11-03T03:00:00.000Z", score: { correct: 10, answered: 14 }, standards: [{ id: "7.NS.A.1", correct: 5, total: 5 }, { id: "7.NS.A.2", correct: 3, total: 5 }, { id: "7.NS.A.3", correct: 2, total: 4 }] });
+  assert.equal(second.score.correct, 10);
+  assert.equal(store.loadGfieldMockResultHistory("gfield-grade7-ns-a-mock-v1").length, 2);
+  assert.equal(store.loadGfieldMockResultHistory()[0].id, second.id);
+  assert.doesNotMatch(storage.getItem("gmap-local-learning-record-v1:gfield-mock-result-history-v1"), /private name|private answer|schoolScore|responses|studentName/);
+  assert.equal(store.removeGfieldMockResult(first.id), true);
+  assert.equal(store.loadGfieldMockResultHistory().length, 1);
+  assert.equal(store.clearGfieldMockResultHistory(), true);
+  assert.deepEqual(store.loadGfieldMockResultHistory(), []);
+  assert.equal(store.saveGfieldMockResult({ ...result, id: "bad-result", score: { correct: 15, answered: 15 } }), false);
+});
+
 test("Grade 6 diagnostic evidence keeps only an answer-safe teacher-reviewed summary", function () {
   const store = records.create(memoryStorage());
   assert.equal(store.saveGrade6DiagnosticEvidence({

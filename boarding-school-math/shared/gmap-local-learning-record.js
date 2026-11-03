@@ -15,8 +15,10 @@
   const COMPETITION_KEY = `${VERSION}:competition-evidence`;
   const COMPETITION_SERIES_KEY = `${VERSION}:competition-first-attempts-v2`;
   const COMPETITION_DIAGNOSTIC_HISTORY_KEY = `${VERSION}:competition-diagnostic-history-v1`;
+  const GFIELD_MOCK_RESULT_HISTORY_KEY = `${VERSION}:gfield-mock-result-history-v1`;
   const MAX_COMPETITION_FORMS = 8;
   const MAX_COMPETITION_DIAGNOSTICS = 50;
+  const MAX_GFIELD_MOCK_RESULTS = 20;
   const COMPETITION_DOMAIN_LABELS = Object.freeze({ algebra: "식·대수", number: "수와 정수론", geometry: "기하·공간", counting: "경우의 수·확률", data: "그래프·표 해석" });
   const COMPETITION_REASON_IDS = new Set(["concept", "approach", "calculation", "reading", "time"]);
   const REVIEWED_2019_G6_SOURCE_SHA256 = "a2e7191c21d29fdfb5b9f8a0d08018df6d7c1b318d0e05207dcc522696074d6b";
@@ -178,6 +180,28 @@
       },
       priorities: priorities,
       recordedAt: typeof value.recordedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.recordedAt) ? value.recordedAt : new Date().toISOString()
+    };
+  }
+  function sanitizedGfieldMockResult(value) {
+    if (!object(value) || value.schemaVersion !== "gfield-mock-result-v1" || value.examId !== "gfield-grade7-ns-a-mock-v1" || value.formVersion !== "2026-11-03-v1" || value.grade !== 7 || !object(value.score) || !Array.isArray(value.standards) || !Array.isArray(value.reviewFocuses)) return null;
+    const standards = value.standards.slice(0, 3).map(function (entry) {
+      if (!object(entry) || !/^7\.NS\.A\.[1-3]$/.test(entry.id) || !Number.isInteger(entry.correct) || !Number.isInteger(entry.total) || entry.total < 1 || entry.correct < 0 || entry.correct > entry.total) return null;
+      return { id: entry.id, correct: entry.correct, total: entry.total };
+    }).filter(Boolean);
+    if (standards.length !== 3 || new Set(standards.map(function (entry) { return entry.id; })).size !== 3 || standards.reduce(function (sum, entry) { return sum + entry.total; }, 0) !== 14) return null;
+    if (!Number.isInteger(value.score.correct) || value.score.correct < 0 || value.score.correct > 14 || !Number.isInteger(value.score.answered) || value.score.answered < 0 || value.score.answered > 14 || value.score.answered < value.score.correct || standards.reduce(function (sum, entry) { return sum + entry.correct; }, 0) !== value.score.correct) return null;
+    const reviewFocuses = value.reviewFocuses.slice(0, 14).map(function (focus) {
+      if (!object(focus) || !/^ns-a-m(?:0[1-9]|1[0-4])$/.test(focus.itemId) || !/^7\.NS\.A\.[1-3]$/.test(focus.standard) || typeof focus.label !== "string" || !focus.label.trim() || focus.label.length > 100) return null;
+      return { itemId: focus.itemId, standard: focus.standard, label: focus.label.trim() };
+    }).filter(Boolean);
+    if (reviewFocuses.length !== value.reviewFocuses.length) return null;
+    return {
+      schemaVersion: "gfield-mock-result-v1", id: typeof value.id === "string" && /^mock-[a-z0-9-]{8,48}$/.test(value.id) ? value.id : `mock-${Date.now().toString(16)}-${Math.random().toString(16).slice(2, 10)}`,
+      examId: value.examId, formVersion: value.formVersion, grade: 7,
+      score: { correct: value.score.correct, answered: value.score.answered, total: 14 },
+      standards: standards,
+      reviewFocuses: reviewFocuses,
+      completedAt: typeof value.completedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.completedAt) ? value.completedAt : new Date().toISOString()
     };
   }
   function sanitizedCompetitionEvidence(value) {
@@ -457,6 +481,26 @@
       return true;
     }
     function clearAssessmentEvidence() { if (!store) return false; store.removeItem(ASSESSMENT_KEY); store.removeItem(ASSESSMENT_HISTORY_KEY); return true; }
+    function loadGfieldMockResultHistory(examId) {
+      const saved = read(GFIELD_MOCK_RESULT_HISTORY_KEY);
+      if (saved.schemaVersion !== "gfield-mock-result-history-v1" || !Array.isArray(saved.records)) return [];
+      return saved.records.slice(0, MAX_GFIELD_MOCK_RESULTS).map(sanitizedGfieldMockResult).filter(function (entry) { return entry && (!examId || entry.examId === examId); }).sort(function (a, b) { return String(b.completedAt).localeCompare(String(a.completedAt)); });
+    }
+    function saveGfieldMockResult(result) {
+      const sanitized = sanitizedGfieldMockResult(result);
+      if (!store || !sanitized) return false;
+      const records = loadGfieldMockResultHistory().filter(function (entry) { return entry.id !== sanitized.id; });
+      records.unshift(sanitized);
+      write(GFIELD_MOCK_RESULT_HISTORY_KEY, { schemaVersion: "gfield-mock-result-history-v1", records: records.slice(0, MAX_GFIELD_MOCK_RESULTS) });
+      return sanitized;
+    }
+    function removeGfieldMockResult(id) {
+      if (!store || typeof id !== "string") return false;
+      const records = loadGfieldMockResultHistory().filter(function (entry) { return entry.id !== id; });
+      write(GFIELD_MOCK_RESULT_HISTORY_KEY, { schemaVersion: "gfield-mock-result-history-v1", records: records });
+      return true;
+    }
+    function clearGfieldMockResultHistory() { if (!store) return false; store.removeItem(GFIELD_MOCK_RESULT_HISTORY_KEY); return true; }
     function loadCompetitionDiagnosticHistory(grade, programId) {
       const saved = read(COMPETITION_DIAGNOSTIC_HISTORY_KEY);
       if (saved.schemaVersion !== "gfield-competition-diagnostic-history-v1" || !Array.isArray(saved.records)) return [];
@@ -540,7 +584,7 @@
       store.removeItem(COMPETITION_SERIES_KEY);
       return true;
     }
-    return Object.freeze({ loadPractice: loadPractice, savePractice: savePractice, clearPractice: clearPractice, loadPlanSettings: loadPlanSettings, savePlanSettings: savePlanSettings, loadAssessmentEvidence: loadAssessmentEvidence, loadAssessmentEvidenceHistory: loadAssessmentEvidenceHistory, loadLatestAssessmentEvidence: loadLatestAssessmentEvidence, saveAssessmentEvidence: saveAssessmentEvidence, clearAssessmentEvidence: clearAssessmentEvidence, loadCompetitionDiagnosticHistory: loadCompetitionDiagnosticHistory, saveCompetitionDiagnostic: saveCompetitionDiagnostic, removeCompetitionDiagnostic: removeCompetitionDiagnostic, clearCompetitionDiagnosticHistory: clearCompetitionDiagnosticHistory, loadGrade6DiagnosticEvidence: loadGrade6DiagnosticEvidence, saveGrade6DiagnosticEvidence: saveGrade6DiagnosticEvidence, clearGrade6DiagnosticEvidence: clearGrade6DiagnosticEvidence, loadCompetitionEvidence: loadCompetitionEvidence, saveCompetitionEvidence: saveCompetitionEvidence, loadCompetitionEvidenceSeries: loadCompetitionEvidenceSeries, saveCompetitionFirstAttempt: saveCompetitionFirstAttempt, getComparableCompetitionSeries: getComparableCompetitionSeries, clearCompetitionEvidence: clearCompetitionEvidence });
+    return Object.freeze({ loadPractice: loadPractice, savePractice: savePractice, clearPractice: clearPractice, loadPlanSettings: loadPlanSettings, savePlanSettings: savePlanSettings, loadAssessmentEvidence: loadAssessmentEvidence, loadAssessmentEvidenceHistory: loadAssessmentEvidenceHistory, loadLatestAssessmentEvidence: loadLatestAssessmentEvidence, saveAssessmentEvidence: saveAssessmentEvidence, clearAssessmentEvidence: clearAssessmentEvidence, loadGfieldMockResultHistory: loadGfieldMockResultHistory, saveGfieldMockResult: saveGfieldMockResult, removeGfieldMockResult: removeGfieldMockResult, clearGfieldMockResultHistory: clearGfieldMockResultHistory, loadCompetitionDiagnosticHistory: loadCompetitionDiagnosticHistory, saveCompetitionDiagnostic: saveCompetitionDiagnostic, removeCompetitionDiagnostic: removeCompetitionDiagnostic, clearCompetitionDiagnosticHistory: clearCompetitionDiagnosticHistory, loadGrade6DiagnosticEvidence: loadGrade6DiagnosticEvidence, saveGrade6DiagnosticEvidence: saveGrade6DiagnosticEvidence, clearGrade6DiagnosticEvidence: clearGrade6DiagnosticEvidence, loadCompetitionEvidence: loadCompetitionEvidence, saveCompetitionEvidence: saveCompetitionEvidence, loadCompetitionEvidenceSeries: loadCompetitionEvidenceSeries, saveCompetitionFirstAttempt: saveCompetitionFirstAttempt, getComparableCompetitionSeries: getComparableCompetitionSeries, clearCompetitionEvidence: clearCompetitionEvidence });
   }
   function priorityForAxis(axis) { return AXIS_PRIORITIES[axis] || null; }
   return Object.freeze({ VERSION: VERSION, AXIS_PRIORITIES: AXIS_PRIORITIES, priorityForAxis: priorityForAxis, create: create, storage: create() });

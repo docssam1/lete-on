@@ -827,9 +827,9 @@
     const startLabel = document.getElementById("start-actions-label");
     const teacherMode = state.roleId === "teacher";
     if (startLabel) startLabel.textContent = teacherMode ? "강사 수업 설계 시작" : "학생 학습 시작";
-    if (assessmentTitle) assessmentTitle.textContent = teacherMode ? "학생 학교·입학시험 결과 입력" : "학교·입학시험 결과 입력";
-    if (assessmentNote) assessmentNote.textContent = teacherMode ? "학생 근거를 불러와 진도와 수업 자료 설계" : "Placement · MAP · CTP · SSAT · ISEE";
-    if (assessment) assessment.href = `./assessment-entry.html?grade=${numericGrade === 0 ? 3 : numericGrade}`;
+    if (assessmentTitle) assessmentTitle.textContent = numericGrade === 7 ? "지필드 모의고사 풀기" : "지필드 학습 자료 보기";
+    if (assessmentNote) assessmentNote.textContent = numericGrade === 7 ? "7.NS.A 유리수 연산 · 14문항" : "학년 지도에서 바로 풀 수 있는 자료 확인";
+    if (assessment) assessment.href = numericGrade === 7 ? "./grade7-ns-a-mock-exam.html" : `./boarding-roadmap.html?grade=${numericGrade === 0 ? 3 : numericGrade}`;
     if (numericGrade === 6) {
       plan.href = teacherMode ? "./learning-plan.html?goal=school-g6&audience=teacher#teacher-pack" : "./learning-plan.html?goal=school-g6";
       planTitle.textContent = teacherMode ? "학생 수업 계획 설계하기" : "나의 학습 계획 만들기";

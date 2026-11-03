@@ -62,8 +62,13 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator('[data-role-preview="parent"], [data-role="parent"]').count(), 0);
   assert.equal(await page.locator("#quick-start-grade").inputValue(), "6");
   assert.equal(await page.locator("#quick-plan").getAttribute("href"), "./learning-plan.html?goal=school-g6");
-  assert.equal(await page.locator("#quick-assessment").getAttribute("href"), "./assessment-entry.html?grade=6");
-  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./learning-plan.html?goal=sasmo-primary6");
+  assert.equal(await page.locator("#quick-assessment").getAttribute("href"), "./boarding-roadmap.html?grade=6");
+  assert.match(await page.locator("#quick-assessment").innerText(), /지필드 학습 자료 보기/);
+  await page.locator("#quick-start-grade").selectOption("7");
+  assert.equal(await page.locator("#quick-assessment").getAttribute("href"), "./grade7-ns-a-mock-exam.html");
+  assert.match(await page.locator("#quick-assessment").innerText(), /지필드 모의고사 풀기/);
+  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=7#past-papers");
+
   await page.locator("#quick-start-grade").selectOption("1");
   assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=1#past-papers");
   assert.match(await page.locator("#quick-sasmo small").textContent(), /Grade 1 준비 범위/);
@@ -204,8 +209,8 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator("#course-directory").isVisible(), true);
   await page.locator('[data-course-id="pre-algebra"]').click();
   assert.equal(await page.locator('[data-course-id="pre-algebra"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*6학년 개념 수업 10개 · 공개 단원 워크북 6개/);
-  assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./concept-learning.html");
+  assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*개념 수업 10개·검수 워크북 8종 연결/);
+  assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./prealgebra-path.html");
   await page.locator('[data-course-id="algebra-2"]').click();
   assert.match(await page.locator("#course-map-panel").innerText(), /Algebra 2[\s\S]*Precalculus/);
   assert.equal(await page.locator("#course-map-panel .course-unit-map article").count(), 5);

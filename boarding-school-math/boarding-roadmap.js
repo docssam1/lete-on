@@ -359,6 +359,8 @@
     const title = $("journey-practice-title");
     const copy = $("journey-practice-copy");
     const link = $("journey-practice-link");
+    const historyPanel = $("journey-mock-history");
+    if (historyPanel) { historyPanel.replaceChildren(); historyPanel.hidden = true; }
     if (!resources.length) {
       label.textContent = `${grade}학년 · 자체 문항`;
       title.textContent = "이 학년 자료를 준비하고 있어요";
@@ -369,10 +371,45 @@
     label.textContent = `지필드 자체 문항 · ${grade}학년`;
     title.textContent = resources[0].title;
     copy.textContent = grade === 7
-      ? "학교 점수 입력 없이 7.NS.A 모의고사를 풀고, 이번 시험의 문항별 결과를 확인해요."
-      : "학교 점수 입력 없이 공개된 지필드 학습 자료를 직접 풀어 봐요.";
+      ? "7.NS.A 모의고사를 풀고, 문항별 결과를 다음 복습에 연결해요."
+      : "공개된 지필드 학습 자료를 직접 풀어 봐요.";
     link.href = resources[0].url;
     link.hidden = false;
+    if (grade === 7 && historyPanel && localRecords && localRecords.storage) {
+      const history = localRecords.storage.loadGfieldMockResultHistory("gfield-grade7-ns-a-mock-v1");
+      if (history.length) {
+        const latest = history[0];
+        const header = document.createElement("div"); header.className = "journey-mock-history-heading";
+        const heading = document.createElement("strong"); heading.textContent = "최근 지필드 모의고사";
+        const date = document.createElement("time"); date.dateTime = latest.completedAt; date.textContent = new Date(latest.completedAt).toLocaleDateString("ko-KR");
+        header.append(heading, date);
+        const score = document.createElement("p"); score.className = "journey-mock-score"; score.textContent = `${latest.score.correct} / ${latest.score.total} 정답 · ${latest.score.answered}문항 응답`;
+        const standards = document.createElement("ul"); standards.className = "journey-mock-standards";
+        latest.standards.forEach(function (entry) { const row = document.createElement("li"); row.textContent = `${entry.id} · ${entry.correct}/${entry.total}`; standards.append(row); });
+        historyPanel.append(header, score, standards);
+        if (latest.reviewFocuses.length) {
+          const label = document.createElement("span"); label.className = "journey-mock-review-label"; label.textContent = "다시 볼 개념";
+          const focusList = document.createElement("ul"); focusList.className = "journey-mock-focuses";
+          latest.reviewFocuses.slice(0, 3).forEach(function (focus) { const row = document.createElement("li"); row.textContent = focus.label; focusList.append(row); });
+          historyPanel.append(label, focusList);
+        }
+        if (history.length > 1) {
+          const prior = history[1];
+          const delta = latest.score.correct - prior.score.correct;
+          const trend = document.createElement("p"); trend.className = "journey-mock-trend";
+          trend.textContent = `같은 회차 이전 풀이 ${prior.score.correct}/${prior.score.total} → 최근 ${latest.score.correct}/${latest.score.total} · ${delta > 0 ? `+${delta}` : delta}문항`;
+          historyPanel.append(trend);
+          const caveat = document.createElement("small"); caveat.textContent = "같은 문제를 다시 푼 변화예요. 문항 기억의 영향이 있어 학년 등급이나 숙달 판정으로 보지 않습니다."; historyPanel.append(caveat);
+        }
+        const remove = document.createElement("button"); remove.type = "button"; remove.className = "journey-mock-remove"; remove.textContent = "이 기기의 모의고사 기록 지우기";
+        remove.addEventListener("click", function () {
+          if (!window.confirm("이 기기에 저장된 지필드 모의고사 기록을 모두 지울까요?")) return;
+          localRecords.storage.clearGfieldMockResultHistory();
+          renderOwnPracticeEntry();
+        });
+        historyPanel.append(remove); historyPanel.hidden = false;
+      }
+    }
   }
   function appendOwnPracticeLinks(gradeEntry, labelId, titleId, listId) {
     const resources = ownPracticeResources(gradeEntry.grade);
@@ -894,7 +931,7 @@
       kangaroo: {
         href: `https://mathkangaroo.org/mks/practice/grades-${Math.floor((grade - 1) / 2) * 2 + 1}-${Math.floor((grade - 1) / 2) * 2 + 2}/`,
         title: "Math Kangaroo · 공식 기출 시험지",
-        copy: `${Math.floor((grade - 1) / 2) * 2 + 1}–${Math.floor((grade - 1) / 2) * 2 + 2}학년용 공식 기출 PDF를 열어요. 대회 점수 진단은 평가 결과 비교에서 따로 입력해요.`,
+        copy: `${Math.floor((grade - 1) / 2) * 2 + 1}–${Math.floor((grade - 1) / 2) * 2 + 2}학년용 공식 기출 PDF를 열어요. 지필드 자체 문항과 결과 확인은 G·MAP 안에서 이어갑니다.`,
         external: true
       },
       amc8: {

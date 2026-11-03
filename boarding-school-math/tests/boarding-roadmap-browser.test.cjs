@@ -525,7 +525,7 @@ test("roadmap routes families to GFIELD-authored practice without requesting sch
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   assert.match(await page.locator("#journey-practice-title").innerText(), /7\.NS\.A.*유리수 연산.*모의고사/);
   assert.equal(await page.locator("#journey-practice-link").getAttribute("href"), "./grade7-ns-a-mock-exam.html");
-  assert.match(await page.locator("#journey-practice-copy").innerText(), /학교 점수 입력 없이.*모의고사/);
+  assert.match(await page.locator("#journey-practice-copy").innerText(), /7\.NS\.A 모의고사.*다음 복습/);
   await page.getByLabel("비교할 학년").selectOption("8");
   assert.equal(await page.locator("#comparison-practice-pair").isVisible(), true);
   assert.deepEqual(await page.locator("#comparison-practice-current-links a").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href"))), [

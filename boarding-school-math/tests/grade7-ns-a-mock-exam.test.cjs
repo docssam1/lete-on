@@ -65,7 +65,7 @@ test("the mock hides answers until submission and returns only this attempt's it
   page.on("pageerror", function (error) { errors.push(error.message); });
   await page.goto(url, { waitUntil: "networkidle" });
   assert.match(await page.locator("h1").innerText(), /유리수 연산[\s\S]*단원 모의고사/);
-  assert.match(await page.locator("#mock-start-panel").innerText(), /학교 성적은 입력하지 않아요/);
+  assert.match(await page.locator("#mock-start-panel").innerText(), /이름이나 외부 성적을 입력하지 않아요/);
   assert.equal(await page.locator("input").count(), 0, "the mock must not request school scores or personal identifiers");
   await page.getByRole("button", { name: "모의고사 시작" }).click();
   assert.equal(await page.locator(".mock-question").count(), 14);
@@ -84,12 +84,32 @@ test("the mock hides answers until submission and returns only this attempt's it
     "7.NS.A.1\n5 / 5 정답", "7.NS.A.2\n5 / 5 정답", "7.NS.A.3\n4 / 4 정답"
   ]);
   assert.match(await page.locator(".mock-next-study").innerText(), /모든 문항을 맞혔어요.*전체 단원 숙달/);
-  assert.equal(await page.locator(".mock-next-study a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4");
+  assert.equal(await page.locator(".mock-next-study a[href*='unit-workbook']").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4");
   assert.equal(await page.locator(".mock-review article[data-correct='true']").count(), 14);
   assert.ok(await page.locator('.mock-review .math-fraction[aria-label="12분의 1"]').count() > 0);
-  assert.match(await page.locator(".mock-result-boundary").innerText(), /다른 회차나 학년의 점수와.*비교한 결과가 아닙니다/);
+  assert.match(await page.locator(".mock-result-boundary").innerText(), /다른 회차·학년과 같은 기준으로 비교한 값이 아니며.*학년 등급을 판정하지 않아요/);
+  const saved = await page.evaluate(function () { return JSON.parse(localStorage.getItem("gmap-local-learning-record-v1:gfield-mock-result-history-v1")); });
+  assert.equal(saved.records[0].score.correct, 14);
+  assert.equal(saved.records[0].standards.length, 3);
+  assert.equal(saved.records[0].reviewFocuses.length, 0);
+  assert.doesNotMatch(JSON.stringify(saved), /"(?:responses|answer|studentName|schoolScore)"\s*:/);
+  assert.equal(await page.locator(".mock-roadmap-result-link").getAttribute("href"), "./boarding-roadmap.html?grade=7#grade-practice");
   assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
   assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("saved mock summary appears in the Grade 7 roadmap without exposing item answers", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(url, { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "모의고사 시작" }).click();
+  for (const item of exam.items) await page.locator(`#mock-question-${item.id} .mock-choice`).nth(item.answer).click();
+  await page.getByRole("button", { name: "답안 제출" }).click();
+  await page.goto(new URL("boarding-roadmap.html?grade=7", url).href, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#journey-mock-history").isVisible(), true);
+  assert.match(await page.locator("#journey-mock-history").innerText(), /최근 지필드 모의고사[\s\S]*14 \/ 14 정답[\s\S]*7\.NS\.A\.1 · 5\/5/);
+  assert.equal(await page.locator("#journey-mock-history input").count(), 0);
+  assert.equal(await page.evaluate(function () { return document.documentElement.scrollWidth === document.documentElement.clientWidth; }), true);
   await page.close();
 });
 

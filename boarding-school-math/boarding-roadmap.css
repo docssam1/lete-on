@@ -467,6 +467,30 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
 .journey-position-card p, .journey-next-preview > p { margin: 8px 0 0; color: #55515e; font-size: .82rem; line-height: 1.6; }
 .journey-position-card a { min-height: 42px; margin-top: 12px; display: inline-flex; align-items: center; gap: 8px; color: #513476; font-size: .82rem; font-weight: 850; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .journey-position-card a:focus-visible, .journey-next-button:focus-visible { outline: 3px solid #60418f; outline-offset: 2px; }
+.journey-mock-history { margin-top: 10px; padding: 16px; border: 1px solid #e1d9eb; border-radius: 14px; background: #fff; }
+.journey-mock-history-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; color: #60418f; font-size: .84rem; }
+.journey-mock-history-heading time { color: #6a6670; font-size: .74rem; }
+.journey-mock-history .journey-mock-score { margin: 8px 0 0; color: #262132; font-weight: 850; font-size: 1rem; }
+.journey-side .journey-mock-standards { margin: 10px 0 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; list-style: none; }
+.journey-side .journey-mock-standards li { padding: 7px 5px; display: block; border: 1px solid #eee9f3; border-radius: 8px; color: #55515e; text-align: center; font-size: .7rem; }
+.journey-mock-review-label { margin-top: 12px; display: block; color: #635675; font-size: .76rem; font-weight: 800; }
+.journey-side .journey-mock-focuses { margin: 3px 0 0; display: grid; gap: 2px; color: #4c4853; font-size: .79rem; }
+.journey-side .journey-mock-focuses li { padding: 3px 0; border: 0; }
+.journey-mock-trend { margin: 12px 0 0; color: #60418f; font-size: .78rem; font-weight: 800; }
+.journey-mock-history > small { margin-top: 4px; display: block; color: #706b77; font-size: .72rem; line-height: 1.5; }
+.journey-mock-remove { margin-top: 10px; padding: 5px 0; border: 0; color: #6a6670; background: transparent; font-size: .72rem; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.journey-mock-history { margin-top: 10px; padding: 16px; border: 1px solid #e1d9eb; border-radius: 14px; background: #fff; }
+.journey-mock-history-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; color: #60418f; font-size: .84rem; }
+.journey-mock-history-heading time { color: #6a6670; font-size: .74rem; }
+.journey-mock-history .journey-mock-score { margin: 8px 0 0; color: #262132; font-weight: 850; font-size: 1rem; }
+.journey-side .journey-mock-standards { margin: 10px 0 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; list-style: none; }
+.journey-side .journey-mock-standards li { padding: 7px 5px; display: block; border: 1px solid #eee9f3; border-radius: 8px; color: #55515e; text-align: center; font-size: .7rem; }
+.journey-mock-review-label { margin-top: 12px; display: block; color: #635675; font-size: .76rem; font-weight: 800; }
+.journey-side .journey-mock-focuses { margin: 3px 0 0; display: grid; gap: 2px; color: #4c4853; font-size: .79rem; }
+.journey-side .journey-mock-focuses li { padding: 3px 0; border: 0; }
+.journey-mock-trend { margin: 12px 0 0; color: #60418f; font-size: .78rem; font-weight: 800; }
+.journey-mock-history > small { margin-top: 4px; display: block; color: #706b77; font-size: .72rem; line-height: 1.5; }
+.journey-mock-remove { margin-top: 10px; padding: 5px 0; border: 0; color: #6a6670; background: transparent; font-size: .72rem; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .journey-next-preview { margin-top: 18px; padding-top: 18px; border-top: 1px solid #ddd8e5; }
 .journey-next-preview > strong { margin-top: 6px; display: block; color: #2c2636; font-size: 1rem; line-height: 1.45; }
 .journey-next-stop { margin-top: 16px; padding: 14px; border-radius: 13px; background: #f0ebf7; }

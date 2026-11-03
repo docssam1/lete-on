@@ -1,6 +1,7 @@
 (function () {
   "use strict";
   const exam = window.GFIELDGrade7NSAExam;
+  const localRecords = window.GFIELDLocalLearningRecord;
   if (!exam || !Array.isArray(exam.items) || exam.items.length !== 14) return;
   const answers = new Map();
   const startPanel = document.getElementById("mock-start-panel");
@@ -78,6 +79,17 @@
     const correctCount = exam.items.reduce(function (total, item) {
       return total + (answers.get(item.id) === item.answer ? 1 : 0);
     }, 0);
+    const standardResults = exam.standards.map(function (standard) {
+      const scoped = exam.items.filter(function (item) { return item.standard === standard; });
+      return { id: standard, correct: scoped.filter(function (item) { return answers.get(item.id) === item.answer; }).length, total: scoped.length };
+    });
+    const reviewFocuses = exam.items.filter(function (item) { return answers.get(item.id) !== item.answer; }).map(function (item) { return { itemId: item.id, standard: item.standard, label: item.focus }; });
+    const savedResult = localRecords && localRecords.storage.saveGfieldMockResult({
+      schemaVersion: "gfield-mock-result-v1", id: `mock-${Date.now().toString(16)}-${Math.random().toString(16).slice(2, 10)}`,
+      examId: exam.id, formVersion: "2026-11-03-v1", grade: 7,
+      score: { correct: correctCount, answered: answers.size }, standards: standardResults, reviewFocuses: reviewFocuses,
+      completedAt: new Date().toISOString()
+    });
     const heading = document.createElement("p");
     heading.className = "mock-kicker";
     heading.textContent = timeExpired ? "제한 시간 종료 · 결과" : "제출 완료 · 결과";
@@ -93,17 +105,17 @@
     score.append(scoreNumber, scoreCaption);
     const boundary = document.createElement("p");
     boundary.className = "mock-result-boundary";
-    boundary.textContent = "이 점수는 이번 지필드 모의고사 문항에 대한 정답 수입니다. 다른 회차나 학년의 점수와 같은 기준으로 비교한 결과가 아닙니다.";
+    boundary.textContent = savedResult
+      ? "이번 지필드 모의고사의 결과 요약을 이 기기에 저장했어요. 이름·학교 성적·문항별 답은 저장하지 않습니다. 이 점수는 다른 회차·학년과 같은 기준으로 비교한 값이 아니며, 학년 등급을 판정하지 않아요."
+      : "이번 지필드 모의고사 문항에 대한 정답 수입니다. 저장 기능을 사용할 수 없어 새로고침하면 사라질 수 있어요. 다른 회차·학년과 같은 기준으로 비교한 점수나 학년 등급은 아닙니다.";
     const standards = document.createElement("div");
     standards.className = "mock-standard-results";
-    exam.standards.forEach(function (standard) {
-      const scoped = exam.items.filter(function (item) { return item.standard === standard; });
-      const correct = scoped.filter(function (item) { return answers.get(item.id) === item.answer; }).length;
+    standardResults.forEach(function (standard) {
       const article = document.createElement("article");
       const label = document.createElement("strong");
-      label.textContent = standard;
+      label.textContent = standard.id;
       const count = document.createElement("span");
-      count.textContent = `${correct} / ${scoped.length} 정답`;
+      count.textContent = `${standard.correct} / ${standard.total} 정답`;
       article.append(label, count);
       standards.append(article);
     });
@@ -116,10 +128,29 @@
     nextStudyCopy.textContent = needsReview
       ? "틀렸거나 비워 둔 문항은 복습할 문제를 찾는 표시예요. 점수로 실력이나 등급을 정하지 않고, 같은 범위의 단원 연습으로 이어갑니다."
       : "이번 회차의 모든 문항을 맞혔어요. 이번 결과만으로 전체 단원 숙달을 정하지 않고, 풀이 설명과 추가 문제로 연결합니다.";
+    const resultContent = [nextStudyHeading, nextStudyCopy];
+    if (reviewFocuses.length) {
+      const focusList = document.createElement("ul");
+      focusList.className = "mock-review-focus-list";
+      reviewFocuses.forEach(function (focus) {
+        const entry = document.createElement("li");
+        entry.textContent = `${focus.standard} · ${focus.label}`;
+        focusList.append(entry);
+      });
+      resultContent.push(focusList);
+    }
     const nextStudyLink = document.createElement("a");
     nextStudyLink.href = "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4";
     nextStudyLink.textContent = "7.NS.A 단원 워크북으로 이어서 풀기 →";
-    nextStudy.append(nextStudyHeading, nextStudyCopy, nextStudyLink);
+    resultContent.push(nextStudyLink);
+    if (savedResult) {
+      const roadmapLink = document.createElement("a");
+      roadmapLink.className = "mock-roadmap-result-link";
+      roadmapLink.href = "./boarding-roadmap.html?grade=7#grade-practice";
+      roadmapLink.textContent = "로드맵에서 내 모의고사 기록 보기 →";
+      resultContent.push(roadmapLink);
+    }
+    nextStudy.append(...resultContent);
     const review = document.createElement("div");
     review.className = "mock-review";
     exam.items.forEach(function (item, index) {
