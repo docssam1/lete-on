@@ -48,7 +48,7 @@
       const meta = document.createElement("div");
       meta.className = "problem-meta";
       const domain = document.createElement("b"); domain.textContent = `${item.domain} · ${item.stage}`;
-      const label = document.createElement("span"); label.textContent = "GFIELD 자체 연습";
+      const label = document.createElement("span"); label.textContent = item.stage === "선택 확장" ? "준비되면 선택" : "GFIELD 자체 연습";
       meta.append(domain, label);
       const heading = document.createElement("h3"); heading.textContent = `${String(index + 1).padStart(2, "0")} · ${item.title}`;
       const prompt = document.createElement("p"); prompt.className = "problem-prompt"; addMath(prompt, item.prompt);

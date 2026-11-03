@@ -32,13 +32,13 @@
     6: Object.freeze({
       0: Object.freeze([Object.freeze({ title: "지필드 Grade 6 개념 학습 · 10개 주제", url: "./concept-learning.html" }), Object.freeze({ title: "변수로 식을 나타내고 계산하기", url: "./concept-learning.html?cluster=6.EE.A" }), Object.freeze({ title: "지필드 6.EE.A 단원 워크북 · 36문항", url: "./unit-workbook.html?cluster=6.EE.A&mode=workbook&audience=student&locale=ko&paper=A4" })]),
       1: Object.freeze([Object.freeze({ title: "지필드 AMC 8 유형 연습 · 자체 10문항", url: "./competition-practice.html?program=amc8" }), Object.freeze({ title: "MAA AMC 공식 안내", url: "https://maa.org/student-programs/amc/" })]),
-      2: Object.freeze([Object.freeze({ title: "지필드 SAT Math 기초 연결 연습 · 자체 12문항", url: "./sat-foundation-practice.html?grade=6" }), Object.freeze({ title: "비례·문장제 개념 연결", url: "./concept-learning.html?cluster=6.RP.A" }), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
+      2: Object.freeze([Object.freeze({ title: "지필드 SAT Math 기초 연결 연습 · 자체 20문항", url: "./sat-foundation-practice.html?grade=6" }), Object.freeze({ title: "비례·문장제 개념 연결", url: "./concept-learning.html?cluster=6.RP.A" }), Object.freeze({ title: "College Board SAT 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "지필드 Grade 6 개념 복습", url: "./concept-learning.html" }), Object.freeze({ title: "지필드 AMC 8 유형 다시 풀기", url: "./competition-practice.html?program=amc8" })])
     }),
     7: Object.freeze({
       0: Object.freeze([Object.freeze({ title: "지필드 Algebra 1 원본 수업·A4 교재", url: "./algebra1-workbook.html" })]),
       1: Object.freeze([Object.freeze({ title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" }), Object.freeze({ title: "지필드 AMC 10 개념 연결 연습 · 자체 12문항", url: "./amc10-practice.html?grade=7" }), Object.freeze({ title: "MAA AMC 공식 범위·형식", url: "https://maa.org/student-programs/amc/" })]),
-      2: Object.freeze([Object.freeze({ title: "지필드 SAT Math 기초 연결 연습 · 자체 12문항", url: "./sat-foundation-practice.html?grade=7" }), Object.freeze({ title: "Khan Academy Digital SAT", url: "https://www.khanacademy.org/digital-sat" }), Object.freeze({ title: "College Board 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
+      2: Object.freeze([Object.freeze({ title: "지필드 SAT Math 기초 연결 연습 · 자체 20문항", url: "./sat-foundation-practice.html?grade=7" }), Object.freeze({ title: "Khan Academy Digital SAT", url: "https://www.khanacademy.org/digital-sat" }), Object.freeze({ title: "College Board 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board SAT 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
     }),
     8: Object.freeze({

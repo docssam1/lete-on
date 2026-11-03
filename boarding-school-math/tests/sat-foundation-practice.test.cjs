@@ -36,11 +36,11 @@ test.after(async function () {
 });
 
 test("original SAT foundation bank has complete answer and explanation coverage", function () {
-  assert.equal(bank.items.length, 12);
+  assert.equal(bank.items.length, 20);
   const items = bank.items;
-  assert.deepEqual(Array.from(new Set(items.map(function (item) { return item.domain; }))), bank.domains);
+  assert.deepEqual(Array.from(new Set(items.map(function (item) { return item.domain; }))).sort(), bank.domains.slice().sort());
   assert.deepEqual(items.reduce(function (counts, item) { counts[item.domain] = (counts[item.domain] || 0) + 1; return counts; }, {}), {
-    "비율·단위율": 2, "백분율": 2, "대수·선형 관계": 4, "자료·확률": 4
+    "대수": 4, "고급 대수": 4, "문제 해결·자료 분석": 8, "기하·삼각법": 4
   });
   assert.equal(new Set(items.map(function (item) { return item.id; })).size, items.length);
   for (const item of items) {
@@ -61,7 +61,16 @@ test("original SAT foundation bank has complete answer and explanation coverage"
   assert.equal(answers["sat-foundation-data-03"], "1/2");
   assert.equal(answers["sat-foundation-data-04"], "응답한 수학 동아리 학생 중 75%가 체스를 골랐습니다.");
   assert.equal(answers["sat-foundation-algebra-04"], "6회");
-  assert.match(bank.scope, /Not a SAT form or diagnostic/);
+  assert.equal(answers["sat-foundation-advanced-01"], "5x + 12");
+  assert.equal(answers["sat-foundation-advanced-02"], "9");
+  assert.equal(answers["sat-foundation-advanced-03"], "−7과 7");
+  assert.equal(answers["sat-foundation-advanced-04"], "48개");
+  assert.equal(answers["sat-foundation-geometry-01"], "65°");
+  assert.equal(answers["sat-foundation-geometry-02"], "9πcm²");
+  assert.equal(answers["sat-foundation-geometry-03"], "40cm²");
+  assert.equal(answers["sat-foundation-geometry-04"], "5cm");
+  assert.match(bank.scope, /Not a SAT form/);
+  assert.match(bank.scope, /optional extensions/);
 });
 
 test("Grade 6 and 7 SAT foundation routes link the original work and display fractions vertically", async function () {
@@ -72,8 +81,8 @@ test("Grade 6 and 7 SAT foundation routes link the original work and display fra
     await page.goto(`${url}?grade=${grade}`, { waitUntil: "networkidle" });
     assert.equal(await page.locator("#sat-nav-route").innerText(), `${grade}학년 성장 지도`);
     assert.equal(await page.locator("#sat-back-route").getAttribute("href"), `./boarding-roadmap.html?grade=${grade}#annual-plan`);
-    assert.equal(await page.locator(".sat-workspace .problem-card").count(), 12);
-    assert.equal(await page.locator("#sat-progress").innerText(), "0 / 12");
+    assert.equal(await page.locator(".sat-workspace .problem-card").count(), 20);
+    assert.equal(await page.locator("#sat-progress").innerText(), "0 / 20");
     assert.equal(await page.locator(".sat-workspace .math-fraction").count() >= 3, true);
     assert.ok(await page.locator('.sat-workspace .math-fraction[aria-label="4분의 3"]').count() > 0);
     assert.ok(await page.locator(".sat-workspace .math-fraction").evaluateAll(function (nodes) {
@@ -85,20 +94,25 @@ test("Grade 6 and 7 SAT foundation routes link the original work and display fra
   }
   const first = page.locator('[data-item-id="sat-foundation-rate-01"]');
   await first.locator('[data-choice="0"]').click();
-  assert.equal(await page.locator("#sat-progress").innerText(), "0 / 12");
+  assert.equal(await page.locator("#sat-progress").innerText(), "0 / 20");
   await first.locator('[data-choice="1"]').click();
-  assert.equal(await page.locator("#sat-progress").innerText(), "1 / 12");
+  assert.equal(await page.locator("#sat-progress").innerText(), "1 / 20");
   await first.locator(".hint-panel summary").click();
   await first.locator(".worked-solution:not(.hint-panel) summary").click();
   assert.ok(await first.locator('.worked-solution:not(.hint-panel) .math-fraction[aria-label="16분의 20"]').count() > 0);
   assert.ok(await first.locator('.worked-solution:not(.hint-panel) .math-fraction[aria-label="4분의 5"]').count() > 0);
-  await page.locator("#sat-domain-filters").getByRole("button", { name: "자료·확률" }).click();
-  assert.equal(await page.locator(".sat-workspace .problem-card").count(), 4);
+  await page.locator("#sat-domain-filters").getByRole("button", { name: "문제 해결·자료 분석" }).click();
+  assert.equal(await page.locator(".sat-workspace .problem-card").count(), 8);
   const sampling = page.locator('[data-item-id="sat-foundation-data-04"]');
   await sampling.locator(".worked-solution:not(.hint-panel) summary").click();
   assert.match(await sampling.locator(".worked-solution:not(.hint-panel)").innerText(), /대표성 있는 표본/);
+  await page.locator("#sat-domain-filters").getByRole("button", { name: "고급 대수" }).click();
+  assert.equal(await page.locator(".sat-workspace .problem-card").count(), 4);
+  assert.equal(await page.locator('[data-item-id="sat-foundation-advanced-01"] .problem-meta span').innerText(), "준비되면 선택");
+  await page.locator("#sat-domain-filters").getByRole("button", { name: "기하·삼각법" }).click();
+  assert.equal(await page.locator(".sat-workspace .problem-card").count(), 4);
   await page.locator("#sat-reset-practice").click();
-  assert.equal(await page.locator("#sat-progress").innerText(), "0 / 12");
+  assert.equal(await page.locator("#sat-progress").innerText(), "0 / 20");
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [1280, 1280]);
   await page.setViewportSize({ width: 390, height: 844 });
   assert.deepEqual(await page.evaluate(function () { return [document.documentElement.clientWidth, document.documentElement.scrollWidth]; }), [390, 390]);
@@ -118,7 +132,7 @@ test("Grade 6 and Grade 7 roadmaps link to the GFIELD foundation set before offi
     await page.goto(roadmap, { waitUntil: "networkidle" });
     const satPeriod = page.locator("#annual-plan-periods > li").nth(2);
     const ownLink = satPeriod.locator('a[href^="./sat-foundation-practice.html"]');
-    assert.equal(await ownLink.innerText(), "지필드 SAT Math 기초 연결 연습 · 자체 12문항");
+    assert.equal(await ownLink.innerText(), "지필드 SAT Math 기초 연결 연습 · 자체 20문항");
     assert.match(await ownLink.getAttribute("href"), new RegExp(`grade=${grade}$`));
     await ownLink.click();
     await page.waitForURL(new RegExp(`sat-foundation-practice\\.html\\?grade=${grade}$`));
@@ -126,6 +140,8 @@ test("Grade 6 and Grade 7 roadmaps link to the GFIELD foundation set before offi
   }
   await page.goto(`${url.replace("sat-foundation-practice.html", "boarding-roadmap.html")}?grade=7`, { waitUntil: "networkidle" });
   await page.locator("#grade7-branches summary").click();
+  assert.match(await page.locator("#grade7-branches summary").innerText(), /대수·기하·자료 해석/);
   assert.equal(await page.locator(".grade7-sat-foundation-link").getAttribute("href"), "./sat-foundation-practice.html?grade=7");
+  assert.equal(await page.locator(".grade7-sat-foundation-link").innerText(), "지필드 SAT Math 네 영역 기초 연습 · 20문항 →");
   await page.close();
 });
