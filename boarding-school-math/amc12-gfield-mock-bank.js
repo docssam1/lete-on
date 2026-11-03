@@ -23,17 +23,17 @@
     { id: "amc12-gfield-m18", standard: "정수론", focus: "팩토리얼의 소인수 지수", prompt: "100!을 십진법으로 썼을 때 끝에 연속으로 붙는 0의 개수는 얼마인가요?", choices: ["20", "22", "24", "25", "30"], answer: 2, solution: "끝자리 0의 수는 100!에 들어 있는 소인수 5의 지수입니다. 5의 배수에서 20개, 25의 배수에서 추가 4개를 얻고 125의 배수는 없으므로 24개입니다." },
     { id: "amc12-gfield-m19", standard: "기하", focus: "정사각형과 외접원", prompt: "한 변의 길이가 8인 정사각형의 네 꼭짓점을 모두 지나는 원의 넓이는 얼마인가요?", choices: ["16π", "24π", "32π", "48π", "64π"], answer: 2, solution: "정사각형의 대각선은 원의 지름입니다. 대각선 길이는 8√2이므로 반지름은 4√2입니다. 원의 넓이는 π(4√2)²=32π입니다." },
     { id: "amc12-gfield-m20", standard: "경우의 수", focus: "포함·배제와 배수", prompt: "1부터 1000까지의 정수 중 6 또는 10의 배수이면서 15의 배수는 아닌 수는 몇 개인가요?", choices: ["166", "180", "200", "233", "267"], answer: 2, solution: "6의 배수는 166개, 10의 배수는 100개, 두 조건의 공배수인 30의 배수는 33개입니다. 6 또는 10의 배수는 166+100−33=233개입니다. 이 가운데 15의 배수인 수는 정확히 30의 배수 33개이므로 233−33=200개입니다." },
-    { id: "amc12-gfield-m21", standard: "대수", focus: "절댓값과 구간 분석", prompt: "실수 x에 대해 |x−1|+|x−4|=5를 만족하는 x는 몇 개 있나요?", choices: ["0", "1", "2", "3", "무한히 많음"], answer: 2, solution: "x≤1이면 식은 5−2x이고 x=0입니다. 1≤x≤4에서는 합이 3이므로 해가 없습니다. x≥4이면 식은 2x−5이고 x=5입니다. 따라서 해는 2개입니다." },
-    { id: "amc12-gfield-m22", standard: "함수·삼각함수", focus: "로그의 정의역과 곱", prompt: "log₂x + log₂(x−2)=3을 만족하는 실수 x는 얼마인가요?", choices: ["−2", "2", "3", "4", "8"], answer: 3, solution: "정의역은 x>2입니다. 로그의 합을 곱으로 바꾸면 log₂(x(x−2))=3이므로 x²−2x=8입니다. (x−4)(x+2)=0이고 정의역을 만족하는 해는 x=4입니다." },
-    { id: "amc12-gfield-m23", standard: "정수론", focus: "거듭제곱의 나머지와 중국인의 나머지 정리", prompt: "2¹⁰⁰+3¹⁰⁰을 35로 나눈 나머지는 얼마인가요?", choices: ["16", "22", "25", "27", "32"], answer: 3, solution: "법 5에서 두 거듭제곱은 모두 1이므로 합은 2입니다. 법 7에서는 2¹⁰⁰≡2, 3¹⁰⁰≡4이므로 합은 6입니다. 따라서 나머지 r은 r≡2 (mod 5), r≡6 (mod 7)을 만족하고 35보다 작은 값은 27입니다." },
-    { id: "amc12-gfield-m24", standard: "기하", focus: "원의 멱", prompt: "원 밖의 한 점에서 그은 두 할선에서 한쪽의 외부 부분 길이가 3, 전체 길이가 12입니다. 다른 할선의 외부 부분 길이가 4일 때 전체 길이는 얼마인가요?", choices: ["8", "9", "10", "12", "16"], answer: 1, solution: "원의 멱 정리에 따라 외부 부분×전체 길이가 두 할선에서 같습니다. 3×12=4×L이므로 L=9입니다." },
-    { id: "amc12-gfield-m25", standard: "경우의 수", focus: "제약이 있는 격자 경로", prompt: "오른쪽 4번, 위쪽 2번 움직이는 최단 격자 경로 중 위쪽 움직임 두 번이 서로 이웃하지 않는 경로는 몇 가지인가요?", choices: ["6", "8", "9", "10", "12"], answer: 3, solution: "위쪽 움직임 2번을 6개의 자리 중 고르되 서로 이웃하지 않게 놓습니다. 6자리에서 이웃하지 않는 두 자리를 고르는 수는 (6−1)C2=10입니다." }
+    { id: "amc12-gfield-m21", standard: "대수", focus: "치환과 실근 개수", prompt: "실수 x가 x²+1/x²=3을 만족합니다. 가능한 x의 개수는 몇 개인가요?", choices: ["0", "2", "4", "6", "8"], answer: 2, solution: "x≠0이고 양변에 x²을 곱하면 x⁴−3x²+1=0입니다. y=x²로 두면 y²−3y+1=0의 두 근은 모두 양수입니다. 각 y에 대해 x=±√y가 가능하므로 실근은 모두 4개입니다." },
+    { id: "amc12-gfield-m22", standard: "함수·삼각함수", focus: "삼각방정식과 해의 합", prompt: "0≤x<2π에서 sin 2x=cos x를 만족하는 모든 x의 합은 얼마인가요?", choices: ["2π", "5π/2", "3π", "7π/2", "4π"], answer: 2, solution: "sin 2x=2sin x cos x이므로 cos x(2sin x−1)=0입니다. 범위 안의 해는 π/2, 3π/2, π/6, 5π/6입니다. 합은 3π입니다." },
+    { id: "amc12-gfield-m23", standard: "정수론", focus: "거듭제곱 주기와 나머지", prompt: "7²⁰²⁵을 1000으로 나눈 나머지는 얼마인가요?", choices: ["207", "407", "607", "807", "907"], answer: 3, solution: "계산하면 7⁵=16807이므로 7⁵≡807 (mod 1000)입니다. 또 7²⁰≡1 (mod 1000)입니다. 2025=20×101+5이므로 7²⁰²⁵≡(7²⁰)¹⁰¹×7⁵≡807 (mod 1000)입니다." },
+    { id: "amc12-gfield-m24", standard: "기하", focus: "두 원의 공통현", prompt: "반지름이 13과 15인 두 원의 중심 사이 거리는 14입니다. 두 원의 공통현 길이는 얼마인가요?", choices: ["18", "20", "24", "26", "28"], answer: 2, solution: "두 중심을 잇는 선은 공통현을 수직이등분합니다. 반지름 13인 원의 중심에서 현까지의 거리를 d라 하면 d=(13²+14²−15²)/(2×14)=5입니다. 현의 반쪽 길이는 √(13²−5²)=12이므로 전체 길이는 24입니다." },
+    { id: "amc12-gfield-m25", standard: "경우의 수", focus: "원에 내접한 삼각형과 호", prompt: "정12각형의 꼭짓점 중 3개를 균등하게 골라 삼각형을 만듭니다. 예각삼각형일 확률은 얼마인가요?", choices: ["1/6", "2/11", "1/5", "3/11", "1/3"], answer: 1, solution: "전체 삼각형은 C(12,3)=220개입니다. 둔각 또는 직각삼각형에는 꼭짓점 사이의 호 중 적어도 6칸인 호가 하나 있습니다. 그 호의 시작 꼭짓점은 12가지이고, 호 길이가 6, 7, 8, 9, 10칸일 때 세 번째 꼭짓점은 각각 5, 4, 3, 2, 1가지라 비예각삼각형은 12(5+4+3+2+1)=180개입니다. 예각삼각형은 40개이므로 확률은 40/220=2/11입니다." }
   ];
   const standards = Object.freeze(["대수", "함수·삼각함수", "정수론", "기하", "경우의 수"]);
   const requestedGrade = Number(new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("grade"));
   const grade = Number.isInteger(requestedGrade) && requestedGrade >= 7 && requestedGrade <= 12 ? requestedGrade : 10;
   root.GFIELDAMC12Mock = Object.freeze({
-    id: "gfield-amc12-concept-mock-v1", formVersion: "2026-11-04-v1", grade: grade,
+    id: "gfield-amc12-concept-mock-v1", formVersion: "2026-11-04-v2", grade: grade,
     title: "지필드 AMC 12 범위 개념 모의고사 · 1회", durationMinutes: 75,
     standards: standards, nextStudyHref: `./amc12-practice.html?grade=${grade}`,
     nextStudyLabel: "지필드 AMC 12 개념 연습으로 이어가기 →",

@@ -171,10 +171,15 @@ test("competition mock result storage preserves only grades allowed by each exam
   assert.equal(olderAmc10.formVersion, "2026-11-04-v2");
   const amc12Standards = ["대수", "함수·삼각함수", "정수론", "기하", "경우의 수"].map((id) => ({ id, correct: 0, total: 5 }));
   const amc12 = store.saveGfieldMockResult({
-    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc12g10", examId: "gfield-amc12-concept-mock-v1", formVersion: "2026-11-04-v1", grade: 10,
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc12g10", examId: "gfield-amc12-concept-mock-v1", formVersion: "2026-11-04-v2", grade: 10,
     score: { correct: 0, answered: 0 }, standards: amc12Standards, reviewFocuses: []
   });
   assert.equal(amc12.grade, 10);
+  const olderAmc12 = store.saveGfieldMockResult({
+    schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc12old", examId: "gfield-amc12-concept-mock-v1", formVersion: "2026-11-04-v1", grade: 10,
+    score: { correct: 0, answered: 0 }, standards: amc12Standards, reviewFocuses: []
+  });
+  assert.equal(olderAmc12.formVersion, "2026-11-04-v1");
   assert.equal(store.saveGfieldMockResult({
     schemaVersion: "gfield-mock-result-v1", id: "mock-20261104-amc10g6", examId: "gfield-amc10-concept-mock-v1", formVersion: "2026-11-04-v3", grade: 6,
     score: { correct: 0, answered: 0 }, standards: amc10Standards, reviewFocuses: []
