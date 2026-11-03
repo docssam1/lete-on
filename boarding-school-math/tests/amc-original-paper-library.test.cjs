@@ -30,6 +30,28 @@ test("year and form routes cover the full authorized AMC archive", function () {
   assert.equal(library.archiveRoute("amc10", 2030, "A"), "https://live.poshenloh.com/past-contests");
 });
 
+test("AMC 12 yearly formats preserve historical item counts, time, and score rules", function () {
+  const format = library.formatFor;
+  assert.deepEqual([1955, 1965, 1970, 1975, 1977, 1985, 1986, 1999, 2000, 2002, 2007, 2025].map((year) => {
+    const value = format("amc12", year);
+    return [value.title, value.itemCount, value.durationMinutes, value.rawOnly, value.scoring && value.scoring.correct, value.scoring && value.scoring.blank, value.scoring && value.scoring.base];
+  }), [
+    ["AHSME", 50, null, true, null, null, null],
+    ["AHSME", 40, null, true, null, null, null],
+    ["AHSME", 35, null, true, null, null, null],
+    ["AHSME", 30, 80, false, 5, 0, undefined],
+    ["AHSME", 30, 90, false, 4, 0, 30],
+    ["AHSME", 30, 90, false, 4, 0, 30],
+    ["AHSME", 30, 90, false, 5, 2, undefined],
+    ["AHSME", 30, 90, false, 5, 2, undefined],
+    ["AMC 12", 25, 75, false, 6, 2, undefined],
+    ["AMC 12", 25, 75, false, 6, 2.5, undefined],
+    ["AMC 12", 25, 75, false, 6, 1.5, undefined],
+    ["AMC 12", 25, 75, false, 6, 1.5, undefined]
+  ]);
+  assert.equal(format("amc12", 1949), null);
+});
+
 test("paper review points to the year-by-year archive without shipping contest content", function () {
   const projectRoot = path.resolve(__dirname, "..");
   const html = fs.readFileSync(path.join(projectRoot, "competition-paper-review.html"), "utf8");

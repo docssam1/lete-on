@@ -14,6 +14,33 @@
   });
   function archiveFor(programId) { return archives[programId] || null; }
 
+  function formatFor(programId, year) {
+    const archive = archiveFor(programId);
+    const selectedYear = Number(year);
+    if (!archive || !archive.years.includes(selectedYear)) return null;
+    if (programId === "amc12" && selectedYear < 2000) {
+      const itemCount = selectedYear < 1960 ? 50 : selectedYear < 1968 ? 40 : selectedYear < 1974 ? 35 : 30;
+      const durationMinutes = selectedYear < 1974 ? null : selectedYear < 1977 ? 80 : 90;
+      const scoring = selectedYear < 1974 ? null : selectedYear < 1977
+        ? Object.freeze({ correct: 5, wrong: -1, blank: 0, max: 150, label: "AHSME 원본 점수" })
+        : selectedYear < 1986
+          ? Object.freeze({ base: 30, correct: 4, wrong: -1, blank: 0, max: 150, label: "AHSME 원본 점수" })
+          : Object.freeze({ correct: 5, wrong: 0, blank: 2, max: 150, label: "AHSME 원본 점수" });
+      return Object.freeze({ title: selectedYear < 2000 ? "AHSME" : "AMC 12", itemCount: itemCount, durationMinutes: durationMinutes, scoring: scoring, rawOnly: selectedYear < 1974, formatNote: selectedYear < 1974 ? "초기 회차는 문항별 배점이 달라 정답 개수만 집계합니다." : "해당 연도 AHSME 배점 기준으로 계산합니다." });
+    }
+    if (programId === "amc12" || programId === "amc10") {
+      const scoring = selectedYear < 2002
+        ? Object.freeze({ correct: 6, wrong: 0, blank: 2, max: 150, label: `${archive.title} 원본 점수` })
+        : selectedYear < 2007
+          ? Object.freeze({ correct: 6, wrong: 0, blank: 2.5, max: 150, label: `${archive.title} 원본 점수` })
+          : Object.freeze({ correct: 6, wrong: 0, blank: 1.5, max: 150, label: `${archive.title} 원본 점수` });
+      return Object.freeze({ title: archive.title, itemCount: 25, durationMinutes: 75, scoring: scoring, rawOnly: false, formatNote: "해당 연도 공식 배점으로 계산합니다." });
+    }
+    if (programId === "amc8") return Object.freeze({ title: archive.title, itemCount: 25, durationMinutes: 40, scoring: Object.freeze({ correct: 1, wrong: 0, blank: 0, max: 25, label: "AMC 8 정답 수" }), rawOnly: false, formatNote: "정답 수로 표시합니다." });
+    if (programId === "aime") return Object.freeze({ title: archive.title, itemCount: 15, durationMinutes: 180, scoring: Object.freeze({ correct: 1, wrong: 0, blank: 0, max: 15, label: "AIME 원본 정답 수" }), rawOnly: false, formatNote: "정답 수로 표시합니다." });
+    return null;
+  }
+
   function archiveRoute(programId, year, form) {
     const archive = archiveFor(programId);
     if (!archive || !archive.years.includes(Number(year))) return archive ? archive.archiveUrl : "";
@@ -24,5 +51,5 @@
     return `https://live.poshenloh.com/past-contests/${archive.path}/${Number(year)}${suffix}`;
   }
 
-  return Object.freeze({ schemaVersion: "2.0.0", archives: archives, archiveFor: archiveFor, archiveRoute: archiveRoute });
+  return Object.freeze({ schemaVersion: "2.1.0", archives: archives, archiveFor: archiveFor, archiveRoute: archiveRoute, formatFor: formatFor });
 });

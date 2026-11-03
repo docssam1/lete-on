@@ -1,7 +1,8 @@
 "use strict";
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const { analyze } = require("../competition/paper-review-analysis.js");
+const { analyze, domainsFor } = require("../competition/paper-review-analysis.js");
+const paperLibrary = require("../competition/amc-original-paper-library.js");
 
 function entry(status = "unmarked", domain = "unclassified", reason = "none") { return { status, domain, reason }; }
 
@@ -105,7 +106,7 @@ test("paper review rejects reasons that do not match the selected response state
 test("complete AMC original-paper marks calculate the raw score and position by question range", function () {
   const amc8 = [entry("correct"), entry("wrong"), ...Array.from({ length: 23 }, function () { return entry("blank"); })];
   const amc10 = [...Array.from({ length: 10 }, function () { return entry("correct"); }), ...Array.from({ length: 5 }, function () { return entry("wrong"); }), ...Array.from({ length: 10 }, function () { return entry("blank"); })];
-  assert.deepEqual(analyze(amc8, 25, "amc8").scoreEstimate, { points: 1, max: 25, label: "AMC 8 참고 원점수" });
+  assert.deepEqual(analyze(amc8, 25, "amc8").scoreEstimate, { points: 1, max: 25, label: "AMC 8 정답 수" });
   assert.deepEqual(analyze(amc8, 25, "amc8").questionBands.map(({ start, end, correct }) => ({ start, end, correct })), [
     { start: 1, end: 10, correct: 1 }, { start: 11, end: 15, correct: 0 }, { start: 16, end: 20, correct: 0 }, { start: 21, end: 25, correct: 0 }
   ]);
@@ -134,9 +135,39 @@ test("AIME manual review reports only the raw number correct and validates integ
   assert.equal(analyze([{ ...entry("wrong", "algebra", "concept"), answer: "12.5" }], 1, "aime").valid, false);
 });
 
+test("AMC 12 diagnostic includes functions and trigonometry as a distinct review domain", function () {
+  assert.ok(domainsFor("amc12").some(function (domain) { return domain.id === "functions" && /삼각함수/.test(domain.title); }));
+  assert.equal(domainsFor("amc10").some(function (domain) { return domain.id === "functions"; }), false);
+  const marks = Array.from({ length: 25 }, function () { return { status: "unmarked", answer: "", domain: "unclassified", reason: "none" }; });
+  marks[4] = { status: "wrong", answer: "A", domain: "functions", reason: "concept" };
+  const result = analyze(marks, 25, "amc12");
+  assert.equal(result.valid, true);
+  assert.deepEqual(result.reviewItems.map(function (item) { return [item.number, item.domain]; }), [[5, "functions"]]);
+});
+
+test("AMC 12 scores respect the selected historical paper format", function () {
+  const old = Array.from({ length: 50 }, function () { return entry("correct", "algebra"); });
+  const oldResult = analyze(old, 50, "amc12", paperLibrary.formatFor("amc12", 1955));
+  assert.equal(oldResult.scoreEstimate, null);
+  assert.equal(oldResult.level, null);
+  assert.equal(oldResult.counts.correct, 50);
+
+  const ahsme1975 = Array.from({ length: 30 }, function () { return entry("blank"); });
+  ahsme1975[0] = entry("correct");
+  ahsme1975[1] = entry("wrong");
+  assert.deepEqual(analyze(ahsme1975, 30, "amc12", paperLibrary.formatFor("amc12", 1975)).scoreEstimate,
+    { points: 4, max: 150, label: "AHSME 원본 점수" });
+
+  const ahsme1977 = Array.from({ length: 30 }, function () { return entry("blank"); });
+  ahsme1977[0] = entry("correct");
+  ahsme1977[1] = entry("wrong");
+  assert.deepEqual(analyze(ahsme1977, 30, "amc12", paperLibrary.formatFor("amc12", 1977)).scoreEstimate,
+    { points: 33, max: 150, label: "AHSME 원본 점수" });
+});
+
 test("rejects mismatched paper size and unknown marks", function () {
   assert.equal(analyze([entry()], 25).valid, false);
   assert.equal(analyze([entry("invented")], 1).valid, false);
-  assert.equal(analyze([entry()], 31).valid, false);
+  assert.equal(analyze([entry()], 51).valid, false);
   assert.match(analyze([entry(), entry()], 2).error, /표시한 문제가 없습니다/);
 });
