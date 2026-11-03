@@ -15,15 +15,10 @@
     ]), clusterId: "7.NS.A", resourceState: "public" }),
     Object.freeze({ id: "rpa", title: "비례 관계", description: "단위율과 비례 관계를 표·그래프·식으로 나타내요.", check: "두 양이 비례하는지 표와 그래프를 보고 설명할 수 있나요?", clusterId: "7.RP.A", resourceState: "public" }),
     Object.freeze({ id: "ee", title: "식·방정식", description: "분배법칙으로 식을 정리하고 방정식·부등식의 해가 조건에 맞는지 확인해요.", check: "식을 바꾼 뒤에도 같은 값을 나타내는 이유와 부등식 해의 범위를 설명할 수 있나요?", resources: Object.freeze([
-      Object.freeze({ title: "Math 7 Unit 4 · 식과 분배법칙", url: "https://math7.flippedmath.com/unit-4-expressions.html" }),
-      Object.freeze({ title: "Unit 5 · 방정식", url: "https://math7.flippedmath.com/unit-5-equations.html" }),
-      Object.freeze({ title: "Unit 6 · 여러 단계 방정식", url: "https://math7.flippedmath.com/unit-6-multiple-step-equations.html" }),
-      Object.freeze({ title: "Unit 7 · 부등식", url: "https://math7.flippedmath.com/unit-7-inequalities.html" })
+      Object.freeze({ title: "지필드 Algebra 1 원본 수업·A4 교재", url: "./algebra1-workbook.html" })
     ]) }),
     Object.freeze({ id: "geometry", title: "기하·혼합 문제", description: "닮음·각·삼각형·원·넓이·부피를 그림과 식으로 연결해요.", check: "도형에서 찾은 관계를 식으로 나타내고 다른 풀이를 설명할 수 있나요?", resources: Object.freeze([
-      Object.freeze({ title: "Math 7 Unit 13 · 닮음과 축척", url: "https://math7.flippedmath.com/unit-13-similarity.html" }),
-      Object.freeze({ title: "Unit 14 · 각과 삼각형", url: "https://math7.flippedmath.com/unit-14-angles-and-triangles.html" }),
-      Object.freeze({ title: "Unit 15 · 원·넓이와 부피", url: "https://math7.flippedmath.com/unit-15-area-and-volume.html" })
+      Object.freeze({ title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" })
     ]) })
   ]);
 
@@ -40,8 +35,8 @@
       3: Object.freeze([Object.freeze({ title: "AoPS Prealgebra", url: "https://classic.artofproblemsolving.com/store/book/prealgebra" }), Object.freeze({ title: "College Board SAT 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
     }),
     7: Object.freeze({
-      0: Object.freeze([Object.freeze({ title: "지필드 Algebra 1 과정·첫 수업 보기", url: "#algebra1-course" })]),
-      1: Object.freeze([Object.freeze({ title: "Math 7 기하 단원", url: "https://math7.flippedmath.com/unit-13-similarity.html" }), Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" })]),
+      0: Object.freeze([Object.freeze({ title: "지필드 Algebra 1 원본 수업·A4 교재", url: "./algebra1-workbook.html" })]),
+      1: Object.freeze([Object.freeze({ title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" }), Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" })]),
       2: Object.freeze([Object.freeze({ title: "Khan Academy Digital SAT", url: "https://www.khanacademy.org/digital-sat" }), Object.freeze({ title: "College Board 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board SAT 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
     }),

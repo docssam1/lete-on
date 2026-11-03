@@ -98,8 +98,9 @@ test("Grade 7 route names checkpoints and identifies its public workbooks", func
   assert.ok(roadmap.grade7Stops.every(function (stop) { return Boolean(stop.check || (stop.checks && stop.checks.length)); }));
   assert.equal(roadmap.grade7Stops[0].checks.length, 4);
   assert.ok(roadmap.grade7Stops.slice(2).every(function (stop) { return !stop.clusterId; }));
-  assert.deepEqual(roadmap.grade7Stops.slice(2).map(function (stop) { return stop.resources.length; }), [4, 3]);
-  assert.ok(roadmap.grade7Stops.slice(2).flatMap(function (stop) { return stop.resources; }).every(function (resource) { return resource.url.startsWith("https://math7.flippedmath.com/") && resource.title; }));
+  assert.deepEqual(roadmap.grade7Stops.slice(2).map(function (stop) { return stop.resources.length; }), [1, 1]);
+  assert.deepEqual(roadmap.grade7Stops.slice(2).flatMap(function (stop) { return stop.resources.map(function (resource) { return resource.url; }); }), ["./algebra1-workbook.html", "./geometry-workbook.html"]);
+  assert.ok(roadmap.grade7Stops.slice(2).flatMap(function (stop) { return stop.resources; }).every(function (resource) { return /지필드/.test(resource.title); }));
   assert.ok(roadmap.grade7Stops.slice(2).every(function (stop) { return Object.isFrozen(stop.resources) && stop.resources.every(Object.isFrozen); }));
 });
 
@@ -116,8 +117,8 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.equal(roadmap.annualPlanResourceLinks[6][0][0].url, "https://classic.artofproblemsolving.com/store/book/prealgebra");
   assert.equal(roadmap.annualPlanResourceLinks[6][1][0].url, "https://amctrainer.org/contests/amc8");
   assert.equal(roadmap.annualPlanResourceLinks[6][2][1].url, "https://satsuite.collegeboard.org/practice/student-question-bank/math");
-  assert.equal(roadmap.annualPlanResourceLinks[7][0][0].url, "#algebra1-course");
-  assert.equal(roadmap.annualPlanResourceLinks[7][1][0].url, "https://math7.flippedmath.com/unit-13-similarity.html");
+  assert.equal(roadmap.annualPlanResourceLinks[7][0][0].url, "./algebra1-workbook.html");
+  assert.equal(roadmap.annualPlanResourceLinks[7][1][0].url, "./geometry-workbook.html");
   assert.equal(roadmap.annualPlanResourceLinks[7][2][0].url, "https://www.khanacademy.org/digital-sat");
   assert.equal(roadmap.courseStageResources[8][0][0].url, "./geometry-workbook.html");
   assert.equal(roadmap.annualPlanResourceLinks[8][0][0].url, "./algebra2-workbook.html");

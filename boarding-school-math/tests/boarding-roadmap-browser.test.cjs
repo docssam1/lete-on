@@ -968,8 +968,8 @@ test("roadmap checkpoints open their matching course references", async function
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
   const cases = [
-    { stage: 3, name: /살펴볼 지점 3, 식·방정식/, titles: ["Math 7 Unit 4 · 식과 분배법칙 ↗", "Unit 5 · 방정식 ↗", "Unit 6 · 여러 단계 방정식 ↗", "Unit 7 · 부등식 ↗"], urls: ["unit-4-expressions.html", "unit-5-equations.html", "unit-6-multiple-step-equations.html", "unit-7-inequalities.html"] },
-    { stage: 4, name: /살펴볼 지점 4, 기하·혼합 문제/, titles: ["Math 7 Unit 13 · 닮음과 축척 ↗", "Unit 14 · 각과 삼각형 ↗", "Unit 15 · 원·넓이와 부피 ↗"], urls: ["unit-13-similarity.html", "unit-14-angles-and-triangles.html", "unit-15-area-and-volume.html"] }
+    { stage: 3, name: /살펴볼 지점 3, 식·방정식/, titles: ["지필드 Algebra 1 원본 수업·A4 교재"], urls: ["./algebra1-workbook.html"] },
+    { stage: 4, name: /살펴볼 지점 4, 기하·혼합 문제/, titles: ["지필드 Geometry 원본 수업·A4 교재"], urls: ["./geometry-workbook.html"] }
   ];
   for (const item of cases) {
     await page.getByRole("button", { name: item.name }).click();
@@ -982,10 +982,10 @@ test("roadmap checkpoints open their matching course references", async function
     assert.equal(await disclosure.evaluate(function (node) { return node.open; }), true);
     assert.deepEqual(await disclosure.locator("ul a").allInnerTexts(), item.titles);
     const links = await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.map(function (node) { return { href: node.getAttribute("href"), target: node.target, rel: node.rel }; }); });
-    assert.deepEqual(links.map(function (link) { return new URL(link.href).pathname.split("/").pop(); }), item.urls);
-    assert.ok(links.every(function (link) { return link.href.startsWith("https://math7.flippedmath.com/") && link.target === "_blank" && link.rel.includes("noopener"); }));
+    assert.deepEqual(links.map(function (link) { return link.href; }), item.urls);
+    assert.ok(links.every(function (link) { return link.href.startsWith("./") && link.target === "" && link.rel === ""; }));
     const labels = await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("aria-label"); }); });
-    assert.ok(labels.every(function (label, index) { return label === `${item.titles[index].replace(" ↗", "")} (새 창에서 열림)`; }));
+    assert.deepEqual(labels, item.titles.map(function () { return null; }));
     assert.ok(await disclosure.locator("ul a").evaluateAll(function (nodes) { return nodes.every(function (node) { return parseFloat(getComputedStyle(node).minHeight) >= 44; }); }));
     if (item.name.toString().includes("식·방정식")) assert.match(await page.locator("#stage-copy").innerText(), /방정식·부등식/);
     if (item.name.toString().includes("기하·혼합")) assert.match(await page.locator("#stage-copy").innerText(), /닮음·각·삼각형·원·넓이·부피/);

@@ -411,3 +411,9 @@ Added the original GFIELD Precalculus student/teacher A4 workbook and pathway en
 Updated the shared inline math renderer to stack symbolic numerator and denominator content on a horizontal rule. It now handles Greek/Korean labels, π-variable products, radicals, absolute-value factors, and parenthesized products such as `x(x+2)`. It preserves rate notation (`km/h`, `m/s`) and contest names (`AMC 12/AIME`) as literal slash text. All six HTML consumers load cache version `20261103-11`.
 
 Verification: 18/18 focused course/pathway/roadmap model assertions pass. Three focused Chrome workbook checks pass for Geometry, Algebra 2, and Precalculus; these confirm horizontal-bar CSS, the `2π/|B|`, `πt/6`, `−√3/2`, Korean trig ratio, and nested algebraic denominator cases, plus student/teacher page counts. A separate 11/11 focused roadmap browser check passes for grade comparison, same-paper Math Kangaroo records, high-school route comparison, and course links. The full roadmap browser suite was not rerun to completion. No print-to-PDF review was performed. No private item data was opened. Local-only; no push or deployment.
+
+### 2026-11-03 Grade 7 course links use GFIELD originals
+
+Replaced the Grade 7 Algebra 1 and Geometry checkpoint materials that previously linked to external course pages with the matching GFIELD-original A4 workbooks. The annual-plan references now point to these same courses. Common Core standard references and MAA competition guidance remain separate source links; no course order or grade placement is inferred.
+
+Verification: Grade 3–12 roadmap model tests pass 12/12; focused Chrome checks for the Grade 7 checkpoint links and Grade 6–7 annual-resource links pass 2/2. Internal course links open in the same tab and use the existing keyboard-visible link treatment. No private item data was opened; local only, no push or deployment.
