@@ -1023,8 +1023,9 @@ Next: educator review/pilot both AMC 10 and AMC 12 authored forms; improve AMC10
 
 ### 2026-11-04 · 웹 조사 AMC 학년별 연례 통계 원자료 스테이징
 
-- 사용자의 “웹 검색으로 가져와” 요청에 따라 AMC 연도별 학년 비교 근거를 검색하고 수치 원문을 대조했다. MAA 작성 2009 AMC 8 annual report의 표 2에서 2003–2009 기록 학년군별 참여 수·평균 28행을 대조했다. 보고서는 참여·학년 정보가 기록된 결과만 집계하며, AMC 8에 확립된 규준이 없고 교실/배치 평가와 비교할 수 없다고 명시한다. 출처 사본: https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html.
+- 사용자의 “웹 검색으로 가져와” 요청에 따라 AMC 연도별 학년 비교 근거를 검색하고 수치 원문을 대조했다. MAA 작성 2009 AMC 8 annual report의 표 2에서 2003–2009 기록 학년군별 참여 수·평균 28행을 대조했다. 보고서는 참여·학년 정보가 기록된 결과만 집계하며, 이 표에서 국내/국제 포함 범위를 따로 나누지 않는다. AMC 8에 확립된 규준이 없고 교실/배치 평가와 비교할 수 없다고 명시한다. 출처 사본: https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html.
 - MAA 작성 2010 AMC 10/12 annual report의 2007–2010 표 I/II와 2011 AMC 10/12 Grand Statistics 표 사본을 열어 폼 A/B와 학년군별 평균·참여 수를 회수했다. 2007–2011 AMC 10 40행과 AMC 12 70행, 총 110행을 `boarding-school-math/competition/historical-amc-grade/amc10-12-grade-means-2007-2011.csv`에 전사했다. 2010 annual report mirror: https://www.scribd.com/document/51428451/2010-HS-summary. 2011 Grand Statistics copy: https://www.scribd.com/document/990470105/USA-AMC-10-2011-Statistic. 이 문서들은 MAA 작성 통계의 제3자 호스팅 사본이므로 원본 MAA 호스트 회수는 미완료 상태로 기록했다.
-- 자료 README와 `AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 출처·시험연도·폼·학년 정의·모집단·한계를 연결했다. 앞서 조사한 한국 AMC 8 표와 미국/국제 참여 보고 통계는 섞지 않는다. 역사 평균은 현재 점수 등급, 백분위, qualification 또는 학교 배치로 바꾸지 않고 연구 스테이징에만 둔다.
-- CSV 무결성 검사: AMC 8 28행, AMC 10/12 110행; 키 중복·누락 URL·0 이하 표본을 확인했고 기대된 프로그램별 행수와 시험연도(AMC8 2003–09, AMC10/12 2007–11)를 통과했다. `git -c core.whitespace=cr-at-eol diff --check` 통과. 이 변경은 화면 기능/UI 테스트가 아니며, 학생용 학년 비교에 연결하지 않았다.
-- 다음: AMC 8/10/12의 나머지 회차별 원본 MAA grade report/score-grade percentile을 연도·폼별로 계속 수집하되 primary-host 또는 재생 가능한 원자료를 분리해 기록한다. 기초 평균 데이터만으로 현재 능력 등급을 생성하지 않는다. 로컬 전용이며 push/배포/Drive 동기화 없음. `raw_youtube.txt`는 그대로 미추적 보존.
+- 자료 README와 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 출처·시험연도·폼·학년 정의·모집단·한계를 연결했다. 한국 AMC 8 결과와 보고서 사본의 미국/MAA 참여 통계는 섞지 않는다. 회차별 원본 문제는 266개 연도·시험형 경로를 연결하고 원문·정답·풀이 파일을 복사하지 않는다.
+- 이번 변경에서 검수된 과거 학년 평균을 시험 복습 화면에 연결했다. AMC 8 2003–2009, AMC 10/12 2007–2011 A/B 중 시험연도·대회·시험형·정확한 Grade가 일치하고 모든 답을 채점 확인한 경우에만 과거 응시 집단 평균, 표본 수, 원자료 보고서를 보여준다. `4–5`, `8학년 이하`, 미기입 등 합산 학년군은 개별 학년과 매칭하지 않는다. 과거 평균을 현재 능력 등급·백분위·AIME 진출·학교 배치로 해석하지 않는다.
+- 검수: 375px 모바일 뷰포트에서 AMC 10 2011 A Grade 9 비교 표시(24,410명, 평균 62.40)와 가로 넘침 없음 확인; 같은 시험의 Grade 7은 학년 묶음 자료만 있어 숨김. AMC 8 2009 Grade 7 표시(50,218명, 평균 10.08)는 앞선 UI 점검에서 확인. 모듈 검증에서 AMC 10/12 A/B 폼별 일치, 미지원 연도, 학년군 매칭 차단을 확인했다. `git diff --check` 통과.
+- 다음 수집: 연도별 원본 MAA 학년 보고서/점수-학년 백분위가 더 회수되는 범위를 조사하되, 출처 호스트와 모집단이 확정되기 전에는 이번 비교 데이터에 추가하지 않는다. 로컬 전용이며 push/배포/Drive 동기화 없음. `raw_youtube.txt`는 그대로 미추적 보존.

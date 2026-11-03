@@ -1,6 +1,6 @@
 # Historical AMC grade-level results — source staging
 
-This folder contains historical, source-attributed aggregate data for future review. These files are not currently wired into student-facing grade comparisons or diagnostic bands.
+This folder contains historical, source-attributed aggregate data. The MAA-report grade means are connected to the AMC paper review as a narrowly matched historical reference: the paper year, contest, and an exact grade must all match. The reference appears only after every answer has been marked. It is labeled as a past cohort mean, never as a current norm, student level, percentile, or placement result. Korea-only score distributions remain research data and are not mixed into the national historical means.
 
 `amc8-2011-korea-grade-percentile.csv` transcribes the MAA report table reproduced by AMC Study for the 2011 AMC 8 Korea participant cohort (899 reported participants). It contains only score-by-grade-group counts and the table's reported percentile values; no names, school records, or individual results are copied.
 
@@ -19,6 +19,8 @@ This folder contains historical, source-attributed aggregate data for future rev
 - Grade buckets: `<=5`, `6`, `7`, `8`, plus unknown in the source. The CSV includes the four named grade buckets only; the unknown and overall columns are omitted.
 - Source status: secondary transcription of a report attributed to MAA; original MAA report capture and exact percentile formula have not yet been verified.
 - Intended use: research staging only. Do not use for US/national inference, current-year norms, placement, skill mastery, or student-facing score labels before primary-source reconciliation and product review.
-- The AMC8 grade means and AMC10/12 means above are also research staging only. Their third-party mirrors contain MAA-authored reports, but the original report host/copy was not independently recovered in this pass. Keep source status and population visible; never merge a US report with Korea-only data.
+- The AMC8 grade means and AMC10/12 means above come from MAA-authored reports preserved on third-party mirrors; the original MAA-hosted report files were not recovered in this pass. The screen links the exact report copy and displays the cohort count. Keep this source status and population visible; never merge a US report with Korea-only data.
+- Exact-grade historical mean coverage: AMC 8 2003–2009 (one contest per year; grade buckets 4–5, 6, 7, 8); AMC 10 and AMC 12 2007–2011 A/B (AMC 10 buckets 8 and below, 9, 10; AMC 12 has exact grades 8–13 where reported). Grouped buckets do not match an individual grade in the review screen. Missing year/form/grade means the comparison stays hidden.
+- The 2011 AMC 8 Korea percentile table and 2009 Korea score-by-grade counts cover Korea-reported cohorts only. They are not shown against a learner without a matching population selection and a validated percentile definition.
 - Rows with a blank percentile correspond to source cells that had no numeric value because no participant was listed for that score/group.
 - Source omitted score 1 because no score-1 row was present; it is deliberately not synthesized here.

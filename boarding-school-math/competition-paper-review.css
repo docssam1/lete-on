@@ -182,3 +182,17 @@ body.academy-page.page-paper-review { color: #182230; background: #f5f6f8; backg
 .aime-cohort-reference { margin-top: 1rem; }
 .aime-cohort-band.is-reached { border-color: var(--gfield-accent, #6b4eff); background: rgba(107, 78, 255, .08); }
 .aime-cohort-reference .paper-performance-note { line-height: 1.55; }
+.amc-grade-reference { border-left: 3px solid var(--review-accent); }
+.amc-grade-reference-plot { margin-top: 12px; display: grid; gap: 12px; }
+.amc-grade-reference-row { display: grid; grid-template-columns: minmax(82px, .7fr) auto minmax(90px, 2fr); align-items: center; gap: 10px; }
+.amc-grade-reference-row > span { color: #566274; font-size: .75rem; font-weight: 750; }
+.amc-grade-reference-row > strong { color: #182230; font-size: .86rem; font-variant-numeric: tabular-nums; }
+.amc-grade-reference-track { height: 9px; overflow: hidden; background: #e6e9ef; }
+.amc-grade-reference-track > span { height: 100%; display: block; background: var(--review-accent); }
+.amc-grade-reference-row.is-mean .amc-grade-reference-track > span { background: #8792a2; }
+.amc-grade-reference-delta { margin: 12px 0 0 !important; color: var(--review-accent-strong) !important; font-size: .8rem !important; font-weight: 800; }
+.amc-grade-reference .paper-performance-note { line-height: 1.55; }
+@media (max-width: 600px) {
+  .amc-grade-reference-row { grid-template-columns: minmax(82px, 1fr) auto; gap: 6px 9px; }
+  .amc-grade-reference-track { grid-column: 1 / -1; }
+}

@@ -587,6 +587,34 @@
       setText("amc-cohort-stats", `MAA 보고서 표본 ${amcCohort.students.toLocaleString("en-US")}명 · 학교 ${amcCohort.schools.toLocaleString("en-US")}곳 · 평균 ${amcCohort.average.toFixed(2)} · 표준편차 ${amcCohort.standardDeviation.toFixed(2)}.`);
       $("amc-cohort-source").href = amcCohort.sourceUrl;
     }
+    const historicalGradeReference = window.GFIELDAMCHistoricalGradeReference;
+    const gradeReferenceSection = $("amc-grade-reference");
+    const gradeReference = ["amc8", "amc10", "amc12"].includes(selectedFormat().id) && result.complete && result.scoreEstimate && historicalGradeReference
+      ? historicalGradeReference.referenceFor(selectedFormat().id, selectedYear, selectedForm, grade)
+      : null;
+    gradeReferenceSection.hidden = !gradeReference;
+    if (gradeReference) {
+      const formatLabel = selectedFormat().id === "amc8" ? "AMC 8" : `${selectedFormat().title} ${selectedForm}`;
+      setText("amc-grade-reference-summary", `Grade ${grade} · ${selectedYear} ${formatLabel} · 기록된 학년 참가자 ${gradeReference.participants.toLocaleString("en-US")}명`);
+      const plot = $("amc-grade-reference-plot");
+      plot.replaceChildren();
+      plot.setAttribute("aria-label", `응시 점수 ${result.scoreEstimate.points}점과 해당 학년 평균 ${gradeReference.mean}점 비교`);
+      [
+        { label: "이번 원본", value: result.scoreEstimate.points, kind: "learner" },
+        { label: "해당 학년 평균", value: gradeReference.mean, kind: "mean" }
+      ].forEach(function (datum) {
+        const row = document.createElement("div"); row.className = `amc-grade-reference-row is-${datum.kind}`;
+        const label = document.createElement("span"); label.textContent = datum.label;
+        const value = document.createElement("strong"); value.textContent = `${Number.isInteger(datum.value) ? datum.value : datum.value.toFixed(2)} / ${gradeReference.max}`;
+        const track = document.createElement("div"); track.className = "amc-grade-reference-track"; track.setAttribute("aria-hidden", "true");
+        const fill = document.createElement("span"); fill.style.width = `${Math.max(0, Math.min(100, datum.value / gradeReference.max * 100))}%`;
+        track.append(fill); row.append(label, value, track); plot.append(row);
+      });
+      const difference = result.scoreEstimate.points - gradeReference.mean;
+      const differenceLabel = difference === 0 ? "평균과 같은 점수" : `${Math.abs(difference).toFixed(2)}점 ${difference > 0 ? "위" : "아래"}`;
+      setText("amc-grade-reference-delta", `해당 회차 평균보다 ${differenceLabel}`);
+      $("amc-grade-reference-source").href = gradeReference.sourceUrl;
+    }
     const aimeReference = window.GFIELDAimeScoreDistributionReference;
     const aimeCohort = $("aime-cohort-reference");
     const aimeKeyYear = Number($("archive-year").value || params.get("year"));
