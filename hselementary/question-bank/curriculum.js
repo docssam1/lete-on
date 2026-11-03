@@ -3758,6 +3758,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u6-practice-29-equal-step-similar",sourceParentItemId:"5-2-u6-practice-29-original",sourceItemLabel:"확인학습 29번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:113,alternateSourcePdfPage:114,sourcePrintedPage:119,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U6EqualStepAverageLinkedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"세 수의 평균과 같은 간격이라는 원문 조건을 대조하고 변형별 답을 독립 검산했습니다."});
   }
 
+  if (source52DecimalUnit) {
+    const type=source52DecimalUnit.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u4-t1-9");
+    if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u4-practice-43-tunnel-time-similar",sourceParentItemId:"5-2-u4-practice-43-original",sourceItemLabel:"확인학습 43번 원문 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:100,alternateSourcePdfPage:101,sourcePrintedPage:106,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U4TunnelTimeSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 속력·완전 통과 시간·기차 길이 조건을 대조하고 단위와 각 답을 독립 검산했습니다."});
+  }
+
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
     if (type.sourceItemId) return;
     type.sourceVerified = false;
