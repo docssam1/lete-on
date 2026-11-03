@@ -43,6 +43,10 @@ const ids = ["5-2-u5-t2-5", ...[18, 20, 24].map(n => `5-2-u5-practice-${n}-origi
       assert.equal(await linked.count(),1);
       assert.equal(await linked.locator("svg").count(),1);
       assert.equal(await page.locator("#problemView [data-source-answer]").count(),0);
+      const net18 = page.locator("#problemView [data-source-item-id='5-2-u5-practice-18-original'] svg");
+      const label = await net18.getAttribute("aria-label");
+      assert.match(label,/24cm.*48cm.*54cm/);
+      assert.doesNotMatch(label,/12cm/);
       await page.locator("#solutionTab").click();
       await page.locator("#solutionView [data-source-answer='5-2-u5-practice-17-original']").waitFor({state:"visible"});
       assert.match(await page.locator("#solutionView [data-source-answer='5-2-u5-practice-17-original']").innerText(),/②, ③, ⑧, ⑨/);
@@ -53,10 +57,18 @@ const ids = ["5-2-u5-t2-5", ...[18, 20, 24].map(n => `5-2-u5-practice-${n}-origi
           await page.locator("#printMenuButton").click();
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(mode => document.body.dataset.printMode === mode,mode);
+          if (mode === "problem") {
+            await page.emulateMedia({media:"print"});
+            const measurement = await net18.locator("text").filter({hasText:"48cm"}).boundingBox();
+            const vertices = await net18.locator("text").filter({hasText:/^[ㅌㅋ]$/}).evaluateAll(nodes => nodes.map(node => {const r=node.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right};}));
+            assert.equal(vertices.length,2);
+            for (const vertex of vertices) assert(measurement.y + measurement.height <= vertex.top || measurement.x + measurement.width <= vertex.left || measurement.x >= vertex.right, "length label must not overlap a vertex label");
+          }
           const file = path.join(process.env.MAC_CHECK_OUTPUT,`net17-${mode}.pdf`);
           await page.pdf({path:file,format:"A4",printBackground:true,preferCSSPageSize:true});
           if (mode === "problem") assert.match(execFileSync("pdfinfo",[file],{encoding:"utf8"}),/Pages:\s+1\b/);
           await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
+          await page.emulateMedia({media:"screen"});
         }
       }
       assert.deepEqual(errors,[]);
