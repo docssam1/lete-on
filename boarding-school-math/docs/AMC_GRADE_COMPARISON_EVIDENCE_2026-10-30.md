@@ -267,6 +267,14 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 
 이 기준선은 모든 점수 구간 분포가 아니라 재인용 자료에서 확인한 평균과 상위 1% 경계 두 항목만 제공합니다. 따라서 평균보다 낮은 점수를 받은 비율이나 Top 5/10/25%를 추정하지 않았고, 이 값만으로 학년 위치를 산출하지 않는다.
 
+## 2026-11-04 후속 검색: AMC 10 학년별 원자료 회수 상태
+
+- [MAA 역사 통계 페이지의 2022년 Internet Archive 캡처](https://web.archive.org/web/20220204191809/http://amc-reg.maa.org/reports/generalreports.aspx)에서 2009–2021년 contest report 목록과 `Contest Score Grade Report with Percentile` 항목을 확인했다. 이 목록은 AMC 10/12의 A/B, 2021 봄·가을 회차를 나눠 보여준다. 현재 MAA 호스트는 브라우저에서 521 오류를 반환했다. Internet Archive 캡처에서 2021 AMC 10A를 선택해 봤지만 보고서 본문이 보존되어 있지 않아 학년별 점수표를 회수하지 못했다.
+- [2010 MAA High School Summary 재게시본](https://www.scribd.com/document/51428451/2010-HS-summary)은 2007–2010 AMC 10/12 폼별 Grade 10, Grade 9, `Grade 8 and below`, 학년 미기록의 참가 인원과 평균을 싣는다. 이 자료에서 Grade 7을 따로 분리할 수 없으며, 해당 2007–2010 집계는 기존 [`amc10-12-grade-means-2007-2011.csv`](../competition/historical-amc-grade/amc10-12-grade-means-2007-2011.csv)에 이미 포함돼 있다. 2011은 앞서 기록한 Internet Archive 보존 MAA 보고서다.
+- [2019 AMC 10A Grade 7 전국 평균 59.72 (1,982명)](https://www.archimedean.org/amc-grade-7-student-sailalitha-kodukula-makes-history/)가 현재 AMC 10 전국 기준선에서 사용할 수 있는 정확 학년·폼 일치 자료다. 학교가 MAA 통계를 인용한 2차 출처이며, 앱에서 오직 2019 AMC 10A · Grade 7에 한해 평균과 표본 수를 보여준다.
+- 2021 Grade 7 점수 경계 수치는 검색에서 교육자 포럼 게시물로만 재발견했다. MAA 보고서 본문을 회수하지 못했고 포럼은 원자료가 아니므로 수치·백분율·상위권 인원은 제품 데이터에 추가하지 않았다. AMC 10/12의 2007–2011 학년별 평균, 2012–2021 전체 응시자 평균·상위 경계는 학년별 결과와 별개로 취급한다.
+- 따라서 이번 검색으로 새 전국 학년별 행은 추가하지 않았다. 근거가 있는 현행 데이터만 유지하고, 이후 MAA 연도별 Grade Report 본문 또는 원본 보고서를 확보할 때 연도·폼·학년·표본 수를 확인해 차례로 보강한다.
+
 | 시험 연도 | 구분 | A | B | 출처에 실린 항목 |
 |---|---|---|---|---|
 | 2017 | AMC 8 | — | — | DHR 20, HR 17 |
