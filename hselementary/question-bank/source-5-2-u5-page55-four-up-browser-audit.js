@@ -50,10 +50,21 @@ const ids = [1,2,3,4,5,6].map(n => `5-2-u5-e4-mission-${n}`);
           await page.locator("#printMenuButton").click();
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
+          if (mode === "problem") {
+            await page.emulateMedia({ media: "print" });
+            await page.setViewportSize({ width: 794, height: 1123 });
+            const figure = await page.locator('#problemView .source52-p55m4-diagram').evaluate(svg => {
+              const image = svg.getBoundingClientRect(), answer = svg.closest('.question-item').querySelector('.answer-line').getBoundingClientRect();
+              return { height: image.height, bottom: image.bottom, answerTop: answer.top };
+            });
+            assert(figure.height >= 200 && figure.bottom <= figure.answerTop, 'dice remain large enough to count and clear of the answer line');
+          }
           const pdf = await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
           const physicalPages = (pdf.toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length;
           assert.equal(physicalPages, mode === "problem" ? 2 : 6, `${mode} must fit its numbered A4 pages`);
           await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
+          await page.emulateMedia({ media: "screen" });
+          await page.setViewportSize({ width, height: 1000 });
         }
       }
       assert.deepEqual(errors, []);
