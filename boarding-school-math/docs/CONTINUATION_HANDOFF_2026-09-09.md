@@ -810,3 +810,9 @@ On the current local branch, reran the public 7.NS.A screener plan, authoring/re
 Clarified in the public Grade 7 annual-plan example that it does not assess the learner's current level or assigned course. This is a copy-level boundary and does not change the separate private 7.NS.A screener or its release state.
 
 Verification: Grade roadmap model suite passes 12/12; changed roadmap data syntax check and `git diff --check` pass. Browser, current R6 visual, and A4 print checks were not run. The requested desktop/mobile captures and PDF would be current QA evidence for the locked R6 workbench; none was supplied, so that review remains open. No private candidate content was accessed; local only.
+
+### 2026-11-03 roadmap and contest diagnostic browser regression
+
+The competition paper-review browser test now accepts the existing `GFIELD_CHROME_EXECUTABLE` optional override, matching the roadmap browser suite. Playwright's expected Chromium revision was absent from this Mac cache; using the already-installed Chrome executable made the suite runnable without installing a browser. Corrected one stale Grade 8 comparison assertion to match the currently rendered school Geometry copy.
+
+Verification: roadmap model/browser plus competition paper-review model/browser suites pass 69/69 in one run. Grade 7 NS.A public workbook, screener plan, authoring manifest, analysis, report projection, scoring readiness, and release manifest tests pass 61/61. Automated responsive browser checks are included; no screenshot or print review of the locked R6 candidate was performed. It remains locked pending approved current R6 evidence and independent reviews. No private item content was accessed; local only.

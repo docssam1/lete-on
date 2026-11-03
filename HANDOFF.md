@@ -264,3 +264,9 @@ Verification: roadmap model suite passes 12/12; changed roadmap data and both te
 Clarified that the Grade 7 annual-plan example does not assess a learner's current level or assigned course. The note now explicitly separates the roadmap example from diagnostic placement.
 
 Verification: Grade roadmap model suite passes 12/12; changed roadmap data syntax check and `git diff --check` pass. Browser/visual and print checks were not run. The private R6 current captures/A4 request refers to evidence needed for visual review of the locked workbench; none was supplied, so that review remains open. This entry's commit contains the implementation and handoff update; local only, no push or deployment.
+
+### 2026-11-03 roadmap and contest diagnostic browser regression
+
+Enabled the competition paper-review browser suite to use the same optional `GFIELD_CHROME_EXECUTABLE` override already supported by the roadmap suite. The Mac has Playwright's Chromium revision 1234 but this checkout requested revision 1200; the installed Chrome executable was used for this run. Updated one Grade 8 browser expectation to match the current displayed course copy (“Geometry는 학교 과정에서 이어가요”).
+
+Verification: roadmap model/browser and paper-review analysis/browser suites pass 69/69 in a single run, including grade comparisons, MAP same-scale handling, same-paper competition comparison, Math Kangaroo paired-grade links, and mobile reflow checks. Public Grade 7 NS.A workbook/screener-plan/authoring-manifest/analysis/report/scoring/release contracts pass 61/61. Changed tests pass syntax checks and `git diff --check`. This is automated public regression only; it is not a fresh screenshot or print review of private R6. Candidate remains locked; local only, no push/deployment.

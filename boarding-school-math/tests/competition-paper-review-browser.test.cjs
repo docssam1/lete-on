@@ -21,7 +21,9 @@ test.before(async function () {
   });
   await new Promise(function (resolve) { server.listen(0, "127.0.0.1", resolve); });
   url = `http://127.0.0.1:${server.address().port}/boarding-school-math/competition-paper-review.html`;
-  browser = await chromium.launch({ headless: true });
+  const launchOptions = { headless: true };
+  if (process.env.GFIELD_CHROME_EXECUTABLE) launchOptions.executablePath = process.env.GFIELD_CHROME_EXECUTABLE;
+  browser = await chromium.launch(launchOptions);
 });
 test.after(async function () { if (browser) await browser.close(); if (server) await new Promise(function (resolve) { server.close(resolve); }); });
 
