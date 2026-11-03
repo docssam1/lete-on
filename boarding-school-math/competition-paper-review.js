@@ -572,10 +572,10 @@
     amcCohortSection.hidden = !amcCohort;
     if (amcCohort) {
       const cohortName = selectedFormat().id === "amc8" ? "AMC 8" : `${selectedFormat().title} ${selectedForm}`;
-      setText("amc-cohort-summary", `응시 학년 Grade ${grade} · ${selectedYear} ${cohortName} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}점 · MAA 전체 응시자 기준과 대조합니다.`);
+      setText("amc-cohort-summary", `응시 학년 Grade ${grade} · ${selectedYear} ${cohortName} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}점 · 보고서 표본 기준점과 대조합니다.`);
       const cohortBands = $("amc-cohort-bands");
       cohortBands.replaceChildren();
-      amcReference.bands.forEach(function (band) {
+      amcReference.bands.filter(function (band) { return Number.isFinite(amcCohort[band.id]); }).forEach(function (band) {
         const item = document.createElement("div");
         const reached = result.scoreEstimate.points >= amcCohort[band.id];
         item.className = "paper-question-band aime-cohort-band" + (reached ? " is-reached" : "");
@@ -584,8 +584,11 @@
         const details = document.createElement("small"); details.textContent = reached ? "기준점 이상" : "기준점 미만";
         item.append(label, score, details); cohortBands.append(item);
       });
-      setText("amc-cohort-stats", `MAA 보고서 표본 ${amcCohort.students.toLocaleString("en-US")}명 · 학교 ${amcCohort.schools.toLocaleString("en-US")}곳 · 평균 ${amcCohort.average.toFixed(2)} · 표준편차 ${amcCohort.standardDeviation.toFixed(2)}.`);
+      const reportAsOf = amcCohort.reportAsOf ? ` · 자료 기준일 ${amcCohort.reportAsOf}` : "";
+      setText("amc-cohort-stats", `MAA 보고서 표본 ${amcCohort.students.toLocaleString("en-US")}명 · 학교 ${amcCohort.schools.toLocaleString("en-US")}곳 · 평균 ${amcCohort.average.toFixed(2)} · 표준편차 ${amcCohort.standardDeviation.toFixed(2)}${reportAsOf}.`);
+      $("amc-cohort-source-note").firstChild.textContent = `${amcCohort.sourceNote || "MAA K–12 공개 보고서 표본의 같은 연도·시험지 기준점입니다. 동점자가 있을 수 있어 개인의 정확한 백분위가 아니며, 응시 학년별 순위·등급이나 공식 자격 판정이 아닙니다. 다른 연도·회차와 직접 비교하지 마세요."} `;
       $("amc-cohort-source").href = amcCohort.sourceUrl;
+      $("amc-cohort-source").textContent = amcCohort.sourceNote ? `${selectedYear} MAA 보고서 재게시 출처 ↗` : "MAA 공개 점수 분포 ↗";
     }
     const historicalAwardReference = window.GFIELDAMC8HistoricalAwardReference;
     const historicalAwardSection = $("amc8-historical-award-reference");

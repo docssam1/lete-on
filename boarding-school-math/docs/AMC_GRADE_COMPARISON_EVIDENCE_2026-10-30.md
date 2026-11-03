@@ -220,3 +220,19 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - 근거 범위 manifest에서 AMC 8 2019를 완전한 학년 점수 분포 staged로 표시했다. MAA 원본 링크가 아니라 MAA 보고서를 재게시한 제3자 페이지이므로 secondary-host 제한을 유지한다.
 - 후속 검색에서 [2018 AMC 8 Contest Score Report PDF 재게시본](https://www.mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf)을 확인했다. 여기에는 전체 응시자 기준 상위 1·5·25·50·75% 점수선, 평균 8.51, 표준편차 3.68, 응시자 98,448명이 있지만 학년별 분포는 없다. 따라서 기존의 2018 학년 비교 미수록 상태를 유지한다.
 - [Think Matrix의 AMC 8 2022 결과 페이지](https://www.think-matrix.com/math_planet/awards_setting_and_historical_result)에서 “Contest Score Grade Report” 이미지와 해당 표를 설명하는 문구를 확인했다. 연결된 Shimo 이미지의 서명 URL은 만료되어 표 내용을 회수하지 못했다. 점수별 학년 수치를 만들지 않고 커버리지에서 `grade-report-image-unavailable`로 구분한다. 같은 해의 전체 점수 요약(평균·컷)은 별도 표로 확인되지만 학년 분포를 대체하지 않는다.
+
+## 2026-11-04 추가 웹 확인: 2022 AMC 8 전체 점수 보고서
+
+- 검색에서 [2022 AMC 8 MAA Contest Score Report 이미지](https://p8.itc.cn/q_70/images03/20230706/2c9a1bf35856404c9fc1caddfcb8e0d5.png)가 포함된 재게시 페이지를 찾았다. 이미지 머리말은 `Contest Score Report - AMC 8 2022`, 자료 기준일은 `2/25/2023`이다. Apple Vision OCR 전사 후 이미지와 표를 눈으로 대조했다.
+- 보고서에 표시된 자료: 상위 1% 22점, 상위 5% 19점, 상위 25% 13점, 상위 50% 9점, 상위 75% 6점, 최고점 25, 만점자 131명, 평균 9.69, 표준편차 4.84, 표본 71,143명, 학교 1,759곳. 보고서 이미지에는 상위 2.5%와 10% 열이 없다. 빈 구간을 다른 연도에서 채우거나 보간하지 않는다.
+- 보고서는 제3자 페이지에 재게시되어 있고 원본 이미지에는 참가 모집단의 지역·포함 기준이 적혀 있지 않다. 별도 보도 자료에는 더 큰 세계 참가 통계(263,295명)가 있어 표본 범위가 서로 맞지 않을 수 있다. 따라서 제품은 이 값들을 `2022 MAA 보고서 이미지 표본`으로만 제시하고 세계/미국/전국 전체 응시자 기준이라고 쓰지 않는다. 해당 행을 전체 인원 263,295명 통계와 합치지 않는다.
+- 2022행을 [`amc-score-distribution-reference.js`](../competition/amc-score-distribution-reference.js)에 연결해 2022 원본 시험을 모두 채점한 뒤 보고서에 실린 다섯 점수 경계만 비교할 수 있게 했다. 미수록 상위 2.5%·10% 경계는 숨기고, 자료 기준일과 표본·출처 범위 경고를 함께 표시한다. 연도별 원시험·PDF 인쇄·정답표·전문 풀이는 기존 LIVE 원본 연도 선택 경로에서 이어진다.
+- 확인 근거: [MAA 점수 보고서 이미지 재게시 페이지](https://www.sohu.com/a/695186451_121124027), [2022 AMC 8 전체 점수 분포 보고서 언급](https://www.think-matrix.com/math_planet/awards_setting_and_historical_result), [2022 AMC 8 외부 참가통계 설명](https://ivyleaguecenter.org/2022/03/09/2022-amc-8-results-just-announced-ten-students-received-perfect-scores/). 서로 다른 표본 설명의 충돌 때문에 원본 이미지의 71,143명만 해당 보고서 표본값으로 보존한다.
+
+## 2026-11-04 추가 웹 확인: 2018·2019 AMC 8 전체 점수 보고서
+
+- 2018 [MAA Contest Score Report PDF 재게시본](https://www.mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf): 상위 1·5·25·50·75% 점수선 19·15·11·8·6, 평균 8.51, 표준편차 3.68, 보고 표본 98,448명·학교 1,844곳. PDF 표에 상위 2.5%와 10% 값은 없다.
+- 2019 [MAA AMC 8 Contest Score Report 재게시 페이지](https://www.ivytrack.com/forum.php?mod=viewthread&tid=19238): 자료 기준일 2020-01-01, 상위 1·5·25·50·75% 점수선 23·19·12·9·6, 만점자 151명, 평균 9.43, 표준편차 4.46, 보고 표본 94,675명·학교 1,869곳. 별도 2019 AMC 자료는 94,634명을 보고해 수치가 다르므로 이 행은 MAA 보고 이미지의 표본값으로만 둔다.
+- 두 해 모두 제3자 재게시를 출처로 표시하며, 보고서 표본을 현재 전체 응시 규준·학년 규준이나 다른 출처의 참가자 총수와 혼합하지 않는다. 상위 2.5%·10% 점수선을 채워 넣지 않는다.
+- `amc-score-distribution-reference.js`에 두 해를 연결했다. 동일 연도 원본을 끝까지 입력했을 때 기록된 경계만 나란히 표시한다. Grade 7은 학생이 입력한 학년 맥락일 뿐, 점수 기준은 전체 보고 표본 기준이며 학년별 순위·등급으로 표시하지 않는다.
+- 대조 근거: [2018 MAA PDF 재게시본](https://www.mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf), [2019 MAA 보고서 재게시](https://www.ivytrack.com/forum.php?mod=viewthread&tid=19238), [2019 점수 요약 교차 확인](https://bj.xdf.cn/zixun/beimei/97334.html). 2019의 교차 확인 페이지 또한 MAA 보고 이미지를 재인용한다.

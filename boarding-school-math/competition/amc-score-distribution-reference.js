@@ -10,11 +10,18 @@
   const base = "https://maa.edvistas.com/eduview/report.aspx?mode=6&r500=&view=1561";
   const entry = function (values) {
     const record = Object.assign({}, values);
-    record.sourceUrl = `${base}&schoolyear=${record.schoolYear}&amccomp=${record.contestId}&viewClicked=true`;
+    record.sourceUrl = record.sourceUrl || `${base}&schoolyear=${record.schoolYear}&amccomp=${record.contestId}&viewClicked=true`;
     return Object.freeze(record);
   };
   const entries = Object.freeze({
     amc8: Object.freeze({
+      // Older MAA report rows survive as third-party mirrors; preserve the values printed there.
+      // Neither year includes the 2.5% or 10% columns, so those cut lines remain unavailable.
+      "2018": entry({ top1: 19, top5: 15, top25: 11, top50: 8, top75: 6, average: 8.51, standardDeviation: 3.68, students: 98448, schools: 1844, sourceNote: "MAA Contest Score Report PDF의 제3자 재게시본입니다. 보고서 표본의 지역·포함 범위는 확인하지 못해, 인쇄된 수치만 옮겼습니다. 현재 규준이나 학년별 기준은 아닙니다.", sourceUrl: "https://www.mathcontest.org/sites/default/files/AMC8-2018-Score-Distribution.pdf" }),
+      "2019": entry({ top1: 23, top5: 19, top25: 12, top50: 9, top75: 6, average: 9.43, standardDeviation: 4.46, students: 94675, schools: 1869, reportAsOf: "2020-01-01", sourceNote: "MAA AMC 8 Contest Score Report 이미지의 제3자 재게시본입니다. 별도 재인용 자료와 응시자 수가 다르므로 이 보고서 표본 수치만 보존합니다. 현재 규준이나 학년별 기준은 아닙니다.", sourceUrl: "https://www.ivytrack.com/forum.php?mod=viewthread&tid=19238" }),
+      // 2022 report image is a secondary-hosted copy of an MAA report, data as of 2023-02-25.
+      // It omits the 2.5% and 10% columns; leave those thresholds unavailable.
+      "2022": entry({ top1: 22, top5: 19, top25: 13, top50: 9, top75: 6, average: 9.69, standardDeviation: 4.84, students: 71143, schools: 1759, reportAsOf: "2023-02-25", sourceNote: "MAA 점수 보고서 이미지는 제3자 페이지에 재게시된 자료예요. 원자료에 응시 모집단 설명이 없어, 표본 범위를 다른 전체 응시 통계와 합치지 않습니다.", sourceUrl: "https://www.sohu.com/a/695186451_121124027" }),
       "2023": entry({ top1: 21, top2_5: 19, top5: 17, top10: 15, top25: 13, top50: 10, top75: 7, average: 10.26, standardDeviation: 3.92, students: 74380, schools: 1909, schoolYear: 2023, contestId: 31265 }),
       "2024": entry({ top1: 22, top2_5: 20, top5: 18, top10: 16, top25: 13, top50: 10, top75: 8, average: 10.75, standardDeviation: 4.13, students: 80725, schools: 2053, schoolYear: 2024, contestId: 37433 }),
       "2025": entry({ top1: 23, top2_5: 21, top5: 19, top10: 17, top25: 14, top50: 11, top75: 9, average: 11.74, standardDeviation: 4.29, students: 79524, schools: 2027, schoolYear: 2025, contestId: 53956 }),
