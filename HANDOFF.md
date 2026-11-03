@@ -8,6 +8,8 @@ Commit `296bb8a56` adds Grade 9 links for GFIELD Algebra 2, Geometry, AMC 10, SA
 
 Verification: the Grade 3–12 roadmap/model, roadmap browser, SAT foundation, and workbook browser suites pass 109/109 on bundled Mac Node, Playwright, and Chrome. Direct local Chrome renders at 1440px and 390px show the four annual stages, all seven linked resources, the school-course caveat, no horizontal overflow, and no page errors. Screenshots are in `/tmp/gfield-grade9-desktop.png` and `/tmp/gfield-grade9-mobile.png`. The shared renderer presents mathematical fractions as stacked numerator, bar, and denominator; slash notation remains for rates and units. No private candidate content was opened. Local only; no push, deployment, or Drive sync.
 
+Follow-up: from the 390px Grade 9 AMC 10 practice view, clicking the visible in-content “별도 복습 경로” opens manual paper review with Grade 9 and AMC 10 selected. The Grade 9 back-to-roadmap route is preserved. The browser assertion also documents why this uses the in-content link: the mobile header hides the desktop review link.
+
 ### 2026-11-03 Grade 7 `7.NS.A` public contract regression
 
 Revalidated only the public diagnostic/workbook contracts after the roadmap updates; private candidate content was excluded. The diagnostic remains answer-free, locked, non-placement, and dependent on four bound teacher reviews before a score projection. The public student workbook continues to provide its separate 36-item practice plus eight-item recheck.

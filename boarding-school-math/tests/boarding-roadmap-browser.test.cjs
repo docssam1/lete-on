@@ -1431,6 +1431,10 @@ test("Grade 7 roadmap opens original AMC 10 concept practice with topic filters 
   assert.equal(await page.locator("#amc10-nav-route").innerText(), "9학년 성장 지도");
   assert.equal(await page.locator("#amc10-back-route").getAttribute("href"), "./boarding-roadmap.html?grade=9#annual-plan");
   assert.equal(await page.locator("#amc10-review-route").getAttribute("href"), "./competition-paper-review.html?grade=9&program=amc10");
+  await page.locator("#amc10-method-review-route").click();
+  await page.waitForURL(/competition-paper-review\.html\?grade=9&program=amc10/);
+  assert.equal(await page.locator("#review-grade").inputValue(), "9");
+  assert.equal(await page.locator("#review-program").inputValue(), "amc10");
   assert.deepEqual(errors, []);
   await page.close();
 });
