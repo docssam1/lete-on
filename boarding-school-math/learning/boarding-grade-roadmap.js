@@ -36,7 +36,7 @@
     }),
     7: Object.freeze({
       0: Object.freeze([Object.freeze({ title: "지필드 Algebra 1 원본 수업·A4 교재", url: "./algebra1-workbook.html" })]),
-      1: Object.freeze([Object.freeze({ title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" }), Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" })]),
+      1: Object.freeze([Object.freeze({ title: "지필드 Geometry 원본 수업·A4 교재", url: "./geometry-workbook.html" }), Object.freeze({ title: "지필드 AMC 10 개념 연결 연습 · 자체 12문항", url: "./amc10-practice.html" }), Object.freeze({ title: "MAA AMC 공식 범위·형식", url: "https://maa.org/student-programs/amc/" })]),
       2: Object.freeze([Object.freeze({ title: "Khan Academy Digital SAT", url: "https://www.khanacademy.org/digital-sat" }), Object.freeze({ title: "College Board 수학 문제은행", url: "https://satsuite.collegeboard.org/practice/student-question-bank/math" })]),
       3: Object.freeze([Object.freeze({ title: "MAA AMC 안내", url: "https://maa.org/student-programs/amc/" }), Object.freeze({ title: "College Board SAT 연습", url: "https://satsuite.collegeboard.org/practice/practice-tests/bluebook" })])
     }),

@@ -131,7 +131,7 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.equal(roadmap.annualPlanResourceLinks[6][2][1].url, "https://satsuite.collegeboard.org/practice/student-question-bank/math");
   assert.deepEqual(roadmap.annualPlanResourceLinks[6][3].map(function (resource) { return resource.url; }), ["./concept-learning.html", "./competition-practice.html?program=amc8"]);
   assert.equal(roadmap.annualPlanResourceLinks[7][0][0].url, "./algebra1-workbook.html");
-  assert.equal(roadmap.annualPlanResourceLinks[7][1][0].url, "./geometry-workbook.html");
+  assert.deepEqual(roadmap.annualPlanResourceLinks[7][1].map(function (resource) { return resource.url; }), ["./geometry-workbook.html", "./amc10-practice.html", "https://maa.org/student-programs/amc/"]);
   assert.equal(roadmap.annualPlanResourceLinks[7][2][0].url, "https://www.khanacademy.org/digital-sat");
   assert.equal(roadmap.courseStageResources[8][0][0].url, "./geometry-workbook.html");
   assert.equal(roadmap.annualPlanResourceLinks[8][0][0].url, "./algebra2-workbook.html");

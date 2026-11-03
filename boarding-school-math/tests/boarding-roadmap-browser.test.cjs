@@ -1226,3 +1226,46 @@ test("elementary roadmap cards use the supplied book and study-method guidance",
   }
   await page.close();
 });
+
+test("Grade 7 roadmap opens original AMC 10 concept practice with topic filters and stacked fractions", async function () {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = [];
+  page.on("pageerror", function (error) { errors.push(error.message); });
+  await page.goto(`${url}?grade=7#annual-plan`, { waitUntil: "networkidle" });
+  const amcLink = page.locator('#annual-plan-periods a[href="./amc10-practice.html"]');
+  assert.equal(await amcLink.innerText(), "지필드 AMC 10 개념 연결 연습 · 자체 12문항");
+  await amcLink.click();
+  await page.waitForURL(/amc10-practice\.html$/);
+  assert.equal(await page.locator(".amc10-workspace .problem-card").count(), 12);
+  assert.equal(await page.locator(".amc10-workspace .choice").count(), 60);
+  assert.equal(await page.locator(".math-fraction").count(), 7);
+  assert.ok(await page.locator(".math-fraction").evaluateAll(function (nodes) {
+    return nodes.every(function (node) {
+      const numerator = node.children[0];
+      return ["grid", "inline-grid"].includes(getComputedStyle(node).display)
+        && numerator
+        && getComputedStyle(numerator).borderBottomWidth !== "0px";
+    });
+  }), "actual fractions must show a numerator, fraction bar, and denominator");
+  assert.match(await page.locator(".practice-boundary").innerText(), /학생의 실력이나 다음 과목을 판정하지 않습니다/);
+  const first = page.locator('[data-item-id="amc10-g7-algebra-01"]');
+  await first.locator('[data-choice="1"]').click();
+  assert.equal(await first.locator(".feedback.wrong").count(), 1);
+  assert.equal(await page.locator("#practice-progress").innerText(), "0 / 12");
+  await first.locator(".hint-panel summary").click();
+  assert.equal(await first.locator(".hint-panel").evaluate(function (node) { return node.open; }), true);
+  await first.locator('[data-choice="0"]').click();
+  assert.equal(await page.locator("#practice-progress").innerText(), "1 / 12");
+  await page.locator("#domain-filters").getByRole("button", { name: "확률" }).click();
+  assert.equal(await page.locator(".amc10-workspace .problem-card").count(), 1);
+  await page.locator("#domain-filters").getByRole("button", { name: "전체" }).click();
+  assert.equal(await page.locator('[data-item-id="amc10-g7-algebra-01"] .choice.correct').count(), 1);
+  assert.equal(await page.locator('[data-item-id="amc10-g7-algebra-01"] .choice:enabled').count(), 0);
+  await page.locator('[data-item-id="amc10-g7-probability-01"] [data-choice="3"]').click();
+  assert.equal(await page.locator("#practice-progress").innerText(), "2 / 12");
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [1280, 1280]);
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
