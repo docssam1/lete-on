@@ -30,6 +30,8 @@
   .source52-u4-p43-m5-solution { color: #191511; }
   .source52-u4-p43-m5-diagram { width: min(118mm, 100%); max-height: 37mm; margin: 1mm auto; }
   .answer-page:has(.source52-u4-p43-m5-solution) .solution-answer-visual .source52-u4-p43-m5-diagram { width: min(100mm, 100%); max-height: 25mm; }
+  .source52-u4-p43-m5-question .source52-u4-p43-m5-label,
+  .source52-u4-p43-m5-question .source52-u4-p43-m5-overlap-label { font-size: 18px; }
   .source52-u4-p43-m5-question > p:first-child,
   .source52-u4-p43-m5-solution li { font-size: 9.5pt; line-height: 1.25; }
   .source52-u4-p43-m5-solution li { margin-bottom: .5mm; }
