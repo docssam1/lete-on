@@ -1,0 +1,478 @@
+{
+  "checkedOn": "2026-11-03",
+  "academies": {
+    "soma": {
+      "site": "https://soma1.somai.co.kr/customer/notice",
+      "logo": "assets/reference/academy-soma.png",
+      "logoSource": "http://soma1.somai.co.kr/ariimg/2022/08/31/60527a80-7e73-474c-898d-d686791b5280.png",
+      "checkedOn": "2026-11-04"
+    },
+    "fields": {
+      "site": "https://www.fieldsgood.co.kr/bbs/board.php?bo_table=notice",
+      "blog": "",
+      "logo": "assets/reference/academy-fields.svg",
+      "logoSource": "https://www.fieldsgood.co.kr/theme/basic/img/main/logo_new.svg",
+      "checkedOn": "2026-11-03"
+    },
+    "hwangso": {
+      "site": "",
+      "blog": "https://blog.naver.com/sharpedu",
+      "logo": "assets/reference/academy-hwangso.jpg",
+      "logoSource": "http://blogpfthumb.phinf.naver.net/MjAxNzEwMTBfMTM2/MDAxNTA3NjE4ODg5NDg5.b57bL0BXGwj-3INc22ubY0QR91WAyxL0lXDTxw31R7gg.cBVKwmpaO2BV535jtQ1KMDhLNnstfvbXT0WJg9XJCmEg.JPEG.sharpedu/%25C8%25B2%25BC%25D2%25B7%25CE%25B0%25ED.jpg?type=m2",
+      "checkedOn": "2026-11-03"
+    },
+    "dolpa": {
+      "site": "",
+      "blog": "https://blog.naver.com/dpmath",
+      "logo": "assets/reference/academy-dolpa.png",
+      "logoSource": "http://blogpfthumb.phinf.naver.net/MjAyNDEwMTlfNjQg/MDAxNzI5MzMwNDg0MTk3.DhVjOoKwihbA4qE6YsvIXmxcgkWJ6-1372Ltjy8u8Wcg.xWz3xKaOGrXYoSTsO_t43WJXn_VyZF6Be6cLSV6c9SUg.PNG/1.png/1.png?type=m2",
+      "checkedOn": "2026-11-03"
+    },
+    "won": {
+      "site": "",
+      "blog": "https://blog.naver.com/wonmath563",
+      "logo": "assets/reference/academy-won.jpg",
+      "logoSource": "http://blogpfthumb.phinf.naver.net/MjAyNTEwMjdfNyAg/MDAxNzYxNTYzNTgyODY1.oTIdIbiS0QZyKxgA65MYNt6PRuEe6EzXLIs3rUIj21sg.DY5FrwbqzFN4ZOqt-r-IEqpXa1jt_CTlXd-FNDkw0lsg.JPEG/%EC%9B%90%EC%88%98%ED%95%99%EB%A1%9C%EA%B3%A02.jpg/%25EC%259B%2590%25EC%2588%2598%25ED%2595%2599%25EB%25A1%259C%25EA%25B3%25A02.jpg?type=m2",
+      "checkedOn": "2026-11-03"
+    },
+    "eden": {
+      "site": "",
+      "blog": "https://blog.naver.com/edenmath",
+      "logo": "assets/reference/academy-eden.jpg",
+      "logoSource": "http://blogpfthumb.phinf.naver.net/MjAyMDEyMDdfOSAg/MDAxNjA3MzM2MjA4NDg3.prf7qdIKXpV_t4fWxCKp93y_VGt7iU14w5GIljc29Uog.EmgnQDpynMgEivRwKGpB6QpM9mjpMTEljNMF7l9-xCIg.JPEG.edenmath/%25EB%25A1%259C%25EA%25B3%25A0.jpg?type=m2",
+      "checkedOn": "2026-11-03"
+    },
+    "kiparang": {
+      "site": "https://www.kiparang.co.kr/main/sub.html?Mode=list&boardID=www8",
+      "blog": "",
+      "logo": "assets/reference/academy-kiparang.png",
+      "logoSource": "https://headquater.kiparang.co.kr/data/branch/ki_logo.png",
+      "checkedOn": "2026-11-04"
+    },
+    "thousand": {
+      "site": "https://nonsul4us.com/SEDO/main.asp",
+      "blog": "",
+      "logo": "assets/reference/academy-thousand.png",
+      "logoSource": "https://nonsul4us.com/SEDO/img/main/logo.png",
+      "checkedOn": "2026-11-03"
+    },
+    "jini": {
+      "site": "",
+      "blog": ""
+    },
+    "msc": {
+      "site": "https://www.imsc21.com/",
+      "blog": "",
+      "logo": "assets/reference/academy-msc.png",
+      "logoSource": "https://www.imsc21.com/assets/logo-DTuutpvf.png",
+      "checkedOn": "2026-11-03"
+    },
+    "cna": {
+      "site": "",
+      "blog": "https://blog.naver.com/cnaedu",
+      "logo": "assets/reference/academy-cna.png",
+      "logoSource": "http://blogpfthumb.phinf.naver.net/MjAyMzA3MjdfMjQ3/MDAxNjkwNDMxNzIzNTE0.rfLhJ5KwRzvw2BS8B3fMGCKGMaYJWwY52dWMODltsfcg.nEhbQ5_UoXKrRq9i28SiQwI8orMn-Bp86UM3BFZ4_GUg.PNG.cnaedu/%EC%97%85%EB%AC%B4%EC%9A%A9%EB%85%BC%EC%88%A02%ED%81%B0.png/%25EC%2597%2585%25EB%25AC%25B4%25EC%259A%25A9%25EB%2585%25BC%25EC%2588%25A02%25ED%2581%25B0.png?type=m2",
+      "checkedOn": "2026-11-03"
+    },
+    "hwarang": {
+      "site": "https://www.dmy.co.kr/",
+      "blog": "",
+      "logo": "assets/reference/academy-hwarang.png",
+      "logoSource": "https://www.dmy.co.kr/inc/img/img_home/logo_ns.png",
+      "checkedOn": "2026-11-04"
+    },
+    "kimyoungjun": {
+      "site": "",
+      "blog": ""
+    },
+    "anbora": {
+      "site": "https://anboraedu.co.kr/main/index.asp",
+      "blog": "",
+      "community": "https://cafe.naver.com/anbora"
+    },
+    "ensight": {
+      "site": "http://ensight-academy.com/SU43/main.asp",
+      "blog": "",
+      "logo": "assets/reference/academy-ensight.png",
+      "logoSource": "http://ensight-academy.com/SU43/SU43T.png",
+      "checkedOn": "2026-11-04"
+    },
+    "thinkeng": {
+      "site": "http://thinkeng.co/SE5A/main.asp",
+      "blog": "https://blog.naver.com/think-eng",
+      "logo": "assets/reference/academy-thinkeng.png",
+      "logoSource": "http://thinkeng.co/SE5A/SE5AT.png",
+      "checkedOn": "2026-11-04"
+    },
+    "peak": {
+      "site": "https://peakacademy.kr/",
+      "blog": "",
+      "logo": "assets/reference/academy-peak.png",
+      "logoSource": "https://peakacademy.kr/SUU8/img/common/logo_b.png",
+      "checkedOn": "2026-11-03"
+    },
+    "groton": {
+      "site": "",
+      "blog": "https://blog.naver.com/groton_academy",
+      "logo": "assets/reference/academy-groton.png",
+      "logoSource": "http://blogpfthumb.phinf.naver.net/MjAyMjA3MTJfMjk0/MDAxNjU3NTk3OTIxMTYw.gLxnEl65BGe5R1J8MNXWqPgWNhRpt1dDyqea4rJxu2wg.nZ4aXMG7etbFGWW4cs4H7q6ZGa0mw-JRVwUlkllMx60g.PNG.groton_academy/groton_logo.png/groton%2Blogo.png?type=m2",
+      "checkedOn": "2026-11-03"
+    },
+    "proud7": {
+      "site": "http://proud7.com/",
+      "blog": "",
+      "logo": "assets/reference/academy-proud7.png",
+      "logoSource": "http://proud7.com/images/new/logo.png",
+      "checkedOn": "2026-11-04"
+    },
+    "edisen": {
+      "site": "http://edisen.co.kr/main.asp",
+      "blog": "",
+      "logo": "assets/reference/academy-edisen.png",
+      "logoSource": "http://edisen.co.kr/Images/common/logo_header2022.png",
+      "checkedOn": "2026-11-04"
+    },
+    "mi": {
+      "site": "https://miedu.co.kr/web/intro.php",
+      "blog": "",
+      "logo": "assets/reference/academy-mi.png",
+      "logoSource": "https://miedu.co.kr/images/contents/new_intro_logon.png",
+      "checkedOn": "2026-11-04"
+    },
+    "jprep": {
+      "site": "http://jprep.co.kr/",
+      "blog": "",
+      "logo": "assets/reference/academy-jprep.png",
+      "logoSource": "http://jprep.co.kr/img/logo.png",
+      "checkedOn": "2026-11-04"
+    },
+    "twinkle": {
+      "site": "https://twinkledaechi.com/",
+      "blog": "",
+      "logo": "assets/reference/academy-twinkle.png",
+      "logoSource": "https://static.wixstatic.com/media/d51535_8cba2442053b4c95905187010965fb94~mv2.png/v1/crop/x_0,y_30,w_6176,h_2069/fill/w_200,h_67,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/biglogo%20(hi%20resolution)%20(1).png",
+      "checkedOn": "2026-11-03"
+    },
+    "peai": {
+      "site": "https://www.peai-dc.co.kr/SEEO/main.asp",
+      "blog": "",
+      "logo": "assets/reference/academy-peai.png",
+      "logoSource": "https://www.peai-dc.co.kr/SEEO/img/common/logo.png",
+      "checkedOn": "2026-11-04"
+    }
+  },
+  "books": [
+    {
+      "id": "kids-facto",
+      "edition": "창의사고력 수학 키즈 팩토 원리 B",
+      "source": "https://www.yes24.com/product/goods/84806791",
+      "imageSource": "https://image.yes24.com/goods/84806791/L",
+      "cover": "assets/reference/book-kids-facto.jpg",
+      "isbn": "9788928646401"
+    },
+    {
+      "id": "kinder-facto",
+      "edition": "창의사고력 수학 킨더팩토 A 측정·수",
+      "source": "https://www.yes24.com/product/goods/128120335",
+      "imageSource": "https://image.yes24.com/goods/128120335/L",
+      "cover": "assets/reference/book-kinder-facto.jpg",
+      "isbn": "9791193794272"
+    },
+    {
+      "id": "soma-calc",
+      "edition": "소마셈 A1 1학년",
+      "source": "https://www.yes24.com/product/goods/75531408",
+      "imageSource": "https://image.yes24.com/goods/75531408/L",
+      "cover": "assets/reference/book-soma-calc.jpg",
+      "isbn": "9791158850951"
+    },
+    {
+      "id": "miracle-calc",
+      "edition": "기적의 계산법 3학년 세트",
+      "source": "https://www.yes24.com/product/goods/198961703",
+      "imageSource": "https://image.yes24.com/goods/198961703/L",
+      "cover": "assets/reference/book-miracle-calc.jpg",
+      "isbn": "9791174672803"
+    },
+    {
+      "id": "didimdol-calc",
+      "edition": "초등 디딤돌연산 6B",
+      "source": "https://www.yes24.com/product/goods/126580986",
+      "imageSource": "https://image.yes24.com/goods/126580986/L",
+      "cover": "assets/reference/book-didimdol-calc.jpg",
+      "isbn": "9788926163566"
+    },
+    {
+      "id": "1031-intro",
+      "edition": "영재사고력수학 1031 입문 A",
+      "source": "https://www.yes24.com/product/goods/117876379",
+      "imageSource": "https://image.yes24.com/goods/117876379/L",
+      "cover": "assets/reference/book-1031-intro.jpg",
+      "isbn": "9791134702953"
+    },
+    {
+      "id": "1031-basic",
+      "edition": "영재사고력수학 1031 초급 A",
+      "source": "https://www.yes24.com/product/goods/117876398",
+      "imageSource": "https://image.yes24.com/goods/117876398/L",
+      "cover": "assets/reference/book-1031-basic.jpg",
+      "isbn": "9791134702793"
+    },
+    {
+      "id": "1031-middle",
+      "edition": "영재사고력수학 1031 중급 A",
+      "source": "https://www.yes24.com/product/goods/117876489",
+      "imageSource": "https://image.yes24.com/goods/117876489/L",
+      "cover": "assets/reference/book-1031-middle.jpg",
+      "isbn": "9791134702830"
+    },
+    {
+      "id": "1031-high",
+      "edition": "영재사고력수학 1031 고급 A",
+      "source": "https://www.yes24.com/product/goods/117876603",
+      "imageSource": "https://image.yes24.com/goods/117876603/L",
+      "cover": "assets/reference/book-1031-high.jpg",
+      "isbn": "9791134702878"
+    },
+    {
+      "id": "facto-primary",
+      "edition": "초등 창의사고력 수학 팩토 1 레벨 원리 세트",
+      "source": "https://www.yes24.com/product/goods/85157222",
+      "imageSource": "https://image.yes24.com/goods/85157222/L",
+      "cover": "assets/reference/book-facto-primary.jpg",
+      "isbn": "9788928646319"
+    },
+    {
+      "id": "didimdol-concept",
+      "edition": "디딤돌 초등수학 기본편 5-1 (2026년)",
+      "source": "https://www.yes24.com/product/goods/152354045",
+      "imageSource": "https://image.yes24.com/goods/152354045/L",
+      "cover": "assets/reference/book-didimdol-concept.jpg",
+      "isbn": "9788926166710"
+    },
+    {
+      "id": "didimdol-combined",
+      "edition": "디딤돌 초등수학 기본+응용 5-1 (2026년)",
+      "source": "https://www.yes24.com/product/goods/151759089",
+      "imageSource": "https://image.yes24.com/goods/151759089/L",
+      "cover": "assets/reference/book-didimdol-combined.jpg",
+      "isbn": "9788926166857"
+    },
+    {
+      "id": "ssen-elementary",
+      "edition": "신사고 쎈 초등 수학 5-1 (2026년)",
+      "source": "https://www.yes24.com/product/goods/152441725",
+      "imageSource": "https://image.yes24.com/goods/152441725/L",
+      "cover": "assets/reference/book-ssen-elementary.jpg",
+      "isbn": "9788928348114"
+    },
+    {
+      "id": "didimdol-applied",
+      "edition": "디딤돌 초등수학 응용편 5-1 (2026년)",
+      "source": "https://www.yes24.com/product/goods/153911045",
+      "imageSource": "https://image.yes24.com/goods/153911045/L",
+      "cover": "assets/reference/book-didimdol-applied.jpg",
+      "isbn": "9788926166758"
+    },
+    {
+      "id": "top-s",
+      "edition": "최상위 초등수학S 5-1 (2026년)",
+      "source": "https://www.yes24.com/product/goods/155511249",
+      "imageSource": "https://image.yes24.com/goods/155511249/L",
+      "cover": "assets/reference/book-top-s.jpg",
+      "isbn": "9788926166932"
+    },
+    {
+      "id": "top-elementary",
+      "edition": "최상위 초등수학 5-1 (2026년)",
+      "source": "https://www.yes24.com/product/goods/154821859",
+      "imageSource": "https://image.yes24.com/goods/154821859/L",
+      "cover": "assets/reference/book-top-elementary.jpg",
+      "isbn": "9788926166956"
+    },
+    {
+      "id": "highest-elementary",
+      "edition": "최고수준 초등수학 5-1 (2027년용)",
+      "source": "https://www.yes24.com/product/goods/155309249",
+      "imageSource": "https://image.yes24.com/goods/155309249/L",
+      "cover": "assets/reference/book-highest-elementary.jpg",
+      "isbn": "9791125985105"
+    },
+    {
+      "id": "miracle-middle",
+      "edition": "기적의 중학연산 1A",
+      "source": "https://www.yes24.com/product/goods/67485934",
+      "imageSource": "https://image.yes24.com/goods/67485934/L",
+      "cover": "assets/reference/book-miracle-middle.jpg",
+      "isbn": "9791188991792"
+    },
+    {
+      "id": "power-calc",
+      "edition": "수력충전 중등 수학 1-1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/127045342",
+      "imageSource": "https://image.yes24.com/goods/127045342/L",
+      "cover": "assets/reference/book-power-calc.jpg",
+      "isbn": "9791162406113"
+    },
+    {
+      "id": "ssen-calc",
+      "edition": "쎈개념연산 중등 수학 1-1 (2026년)",
+      "source": "https://www.yes24.com/product/goods/167384429",
+      "imageSource": "https://image.yes24.com/goods/167384429/L",
+      "cover": "assets/reference/book-ssen-calc.jpg",
+      "isbn": "9788928350476"
+    },
+    {
+      "id": "ebs-neuron",
+      "edition": "EBS 중학 뉴런 수학 1 (상) (2026년용)",
+      "source": "https://www.yes24.com/product/goods/128761244",
+      "imageSource": "https://image.yes24.com/goods/128761244/L",
+      "cover": "assets/reference/book-ebs-neuron.jpg",
+      "isbn": "9788954785815"
+    },
+    {
+      "id": "basic-ssen",
+      "edition": "베이직쎈 중등 수학 1-1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/150117425",
+      "imageSource": "https://image.yes24.com/goods/150117425/L",
+      "cover": "assets/reference/book-basic-ssen.jpg",
+      "isbn": "9788928334919"
+    },
+    {
+      "id": "imath-middle",
+      "edition": "개념원리 중학 수학 1-1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/121827017",
+      "imageSource": "https://image.yes24.com/goods/121827017/L",
+      "cover": "assets/reference/book-imath-middle.jpg",
+      "isbn": "9788961339858"
+    },
+    {
+      "id": "cv-light",
+      "edition": "개념+유형 기초탄탄 라이트 중학 수학 1-1 (2026년)",
+      "source": "https://www.yes24.com/product/goods/152363493",
+      "imageSource": "https://image.yes24.com/goods/152363493/L",
+      "cover": "assets/reference/book-cv-light.jpg",
+      "isbn": "9791173166921"
+    },
+    {
+      "id": "principle-middle",
+      "edition": "에이급 원리해설 수학 중등 1-1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/135209528",
+      "imageSource": "https://image.yes24.com/goods/135209528/L",
+      "cover": "assets/reference/book-principle-middle.jpg",
+      "isbn": "9788967700898"
+    },
+    {
+      "id": "light-ssen",
+      "edition": "라이트쎈 중등 수학 1-1 (2026년)",
+      "source": "https://www.yes24.com/product/goods/167384478",
+      "imageSource": "https://image.yes24.com/goods/167384478/L",
+      "cover": "assets/reference/book-light-ssen.jpg",
+      "isbn": "9788928350469"
+    },
+    {
+      "id": "rpm-middle",
+      "edition": "개념원리 RPM 알피엠 중학 수학 1-1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/122494286",
+      "imageSource": "https://image.yes24.com/goods/122494286/L",
+      "cover": "assets/reference/book-rpm-middle.jpg",
+      "isbn": "9788961335904"
+    },
+    {
+      "id": "ssen-middle",
+      "edition": "쎈 중등 수학 1-1 (2026년)",
+      "source": "https://www.yes24.com/product/goods/161362446",
+      "imageSource": "https://image.yes24.com/goods/161362446/L",
+      "cover": "assets/reference/book-ssen-middle.jpg",
+      "isbn": "9788928334858"
+    },
+    {
+      "id": "ilpum-middle",
+      "edition": "일품 중등 수학 1-1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/145056498",
+      "imageSource": "https://image.yes24.com/goods/145056498/L",
+      "cover": "assets/reference/book-ilpum-middle.jpg",
+      "isbn": "9788928347360"
+    },
+    {
+      "id": "black-middle",
+      "edition": "블랙라벨 중학 수학 1-1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/129979202",
+      "imageSource": "https://image.yes24.com/goods/129979202/L",
+      "cover": "assets/reference/book-black-middle.jpg",
+      "isbn": "9788960765207"
+    },
+    {
+      "id": "top-middle",
+      "edition": "최상위수학 중 1-1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/123156207",
+      "imageSource": "https://image.yes24.com/goods/123156207/L",
+      "cover": "assets/reference/book-top-middle.jpg",
+      "isbn": "9788926162910"
+    },
+    {
+      "id": "aclass-middle",
+      "edition": "에이급 수학 중등 1-1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/128636951",
+      "imageSource": "https://image.yes24.com/goods/128636951/L",
+      "cover": "assets/reference/book-aclass-middle.jpg",
+      "isbn": "9788967700843"
+    },
+    {
+      "id": "base-jungsuk",
+      "edition": "기본 수학의 정석 공통수학1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/124862915",
+      "imageSource": "https://image.yes24.com/goods/124862915/L",
+      "cover": "assets/reference/book-base-jungsuk.jpg",
+      "isbn": "9791156200413"
+    },
+    {
+      "id": "imath-high",
+      "edition": "개념원리 공통수학 1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/122532307",
+      "imageSource": "https://image.yes24.com/goods/122532307/L",
+      "cover": "assets/reference/book-imath-high.jpg",
+      "isbn": "9788961334839"
+    },
+    {
+      "id": "rpm-high",
+      "edition": "개념원리 RPM 고등 공통수학1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/122957065",
+      "imageSource": "https://image.yes24.com/goods/122957065/L",
+      "cover": "assets/reference/book-rpm-high.jpg",
+      "isbn": "9788961334884"
+    },
+    {
+      "id": "ssen-high",
+      "edition": "쎈 고등 공통수학1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/143336245",
+      "imageSource": "https://image.yes24.com/goods/143336245/L",
+      "cover": "assets/reference/book-ssen-high.jpg",
+      "isbn": "9788928347919"
+    },
+    {
+      "id": "skill-jungsuk",
+      "edition": "실력 수학의 정석 공통수학1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/124862907",
+      "imageSource": "https://image.yes24.com/goods/124862907/L",
+      "cover": "assets/reference/book-skill-jungsuk.jpg",
+      "isbn": "9791156200420"
+    },
+    {
+      "id": "ilpum-high",
+      "edition": "일품 고등 공통수학1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/143336283",
+      "imageSource": "https://image.yes24.com/goods/143336283/L",
+      "cover": "assets/reference/book-ilpum-high.jpg",
+      "isbn": "9788928347926"
+    },
+    {
+      "id": "black-high",
+      "edition": "BLACKLABEL 블랙라벨 공통수학1 (2026년용)",
+      "source": "https://www.yes24.com/product/goods/132968066",
+      "imageSource": "https://image.yes24.com/goods/132968066/L",
+      "cover": "assets/reference/book-black-high.jpg",
+      "isbn": "9788960765221"
+    }
+  ]
+}
