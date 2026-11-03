@@ -677,6 +677,18 @@
       setText("amc8-korea-percentile-value", `${percentileLabel} ${koreaPercentile.reportedPercentile.toFixed(2)}% · ${koreaPercentile.percentileMethod}`);
       $("amc8-korea-percentile-source").href = koreaPercentile.sourceUrl;
     }
+    const globalGradeScoreReference = window.GFIELDAMC8GlobalGradeScoreReference;
+    const globalGradeScoreSection = $("amc8-global-grade-score-reference");
+    const globalGradeScore = selectedFormat().id === "amc8" && result.complete && result.scoreEstimate && globalGradeScoreReference
+      ? globalGradeScoreReference.referenceFor(selectedYear, grade, result.scoreEstimate.points)
+      : null;
+    globalGradeScoreSection.hidden = !globalGradeScore;
+    if (globalGradeScore) {
+      setText("amc8-global-grade-score-summary", `2009 AMC 8 · ${globalGradeScore.gradeLabel} · ${globalGradeScore.score}/25점 · 해당 점수 ${globalGradeScore.participantsAtScore.toLocaleString("en-US")}명 · 학년 표본 ${globalGradeScore.gradeParticipants.toLocaleString("en-US")}명`);
+      setText("amc8-global-grade-score-value", `점수보다 낮은 응시자 ${globalGradeScore.strictlyLowerShare.toFixed(2)}% · ${globalGradeScore.strictlyLowerCount.toLocaleString("en-US")}/${globalGradeScore.gradeParticipants.toLocaleString("en-US")}명`);
+      $("amc8-global-grade-score-source").href = globalGradeScore.sourceUrl;
+      $("amc8-global-grade-report-source").href = globalGradeScore.reportUrl;
+    }
     const aimeReference = window.GFIELDAimeScoreDistributionReference;
     const aimeCohort = $("aime-cohort-reference");
     const aimeKeyYear = Number($("archive-year").value || params.get("year"));
