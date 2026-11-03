@@ -969,11 +969,19 @@ test("cross-grade concept flows render as examples on phone, tablet, and desktop
     assert.match(await page.locator("#concept-flow-title").innerText(), /배운 개념은 이렇게 이어져요/);
     assert.match(await page.locator(".concept-flow-intro").innerText(), /문제 풀이법을 먼저 외우기보다/);
     const studySequence = page.locator(".competition-study-sequence");
-    assert.match(await studySequence.locator("h3").innerText(), /AMC·AIME 문제를 공부하는 순서/);
+    assert.match(await studySequence.locator("h3").innerText(), /공식 기출로 수준을 확인하고, 지필드 모의고사로 보완/);
+    assert.deepEqual(await studySequence.locator(".competition-original-papers a").evaluateAll(function (links) { return links.map(function (link) { return link.getAttribute("href"); }); }), [
+      "https://maa.org/resource/sample-competition-2023-amc-8/",
+      "https://maa.org/resource/sample-competition-2022-amc-10-a/",
+      "https://maa.org/student-programs/amc/",
+      "https://maa.org/maa-invitational-competitions/",
+      "https://mathkangaroo.org/mks/practice/grades-7-8/"
+    ]);
     assert.equal(await studySequence.locator("li").count(), 4);
-    assert.deepEqual(await studySequence.locator("h4").allInnerTexts(), ["개념을 설명해요", "한 단원씩 연습해요", "개념을 섞어 풀어요", "기출로 시간 연습해요"]);
-    assert.match(await studySequence.innerText(), /다른 방법도 있을까/);
-    assert.match(await studySequence.innerText(), /막히면 표시하고 다음 문제로 넘어갔다 돌아와요/);
+    assert.deepEqual(await studySequence.locator("h4").allInnerTexts(), ["목표 대회 원본을 풀어요", "공식 해설로 풀이를 분석해요", "지필드 모의고사로 약점을 찾아요", "개념을 보완하고 새 문제로 확인해요"]);
+    assert.ok(await studySequence.evaluate(function (node) { return node.innerText.indexOf("공식 원본") < node.innerText.indexOf("지필드 모의고사로 약점을 찾아요"); }), "official source practice comes before the GFIELD mock diagnostic");
+    assert.match(await studySequence.innerText(), /해당 연도 공식 기준/);
+    assert.match(await studySequence.innerText(), /풀이가 어디서 길어졌는지/);
     assert.equal(await studySequence.evaluate(function (node) { return node.scrollWidth <= node.clientWidth; }), true, `contest study sequence has no inner overflow at ${width}px`);
     if (width <= 390) assert.ok(await studySequence.locator("li p").first().evaluate(function (node) { return parseFloat(getComputedStyle(node).fontSize) >= 16; }));
     assert.equal(await page.locator(".concept-flow-section .map-head").evaluate((node) => {
