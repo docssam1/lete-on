@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const path = require("node:path");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8918";
-const ids = ["5-2-u2-t1-2", "5-2-u2-t4", "5-2-u2-t4-2", "5-2-u2-practice-63-original"];
+const ids = ["5-2-u2-t1", "5-2-u2-t4", "5-2-u2-t4-2", "5-2-u2-practice-63-original"];
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
@@ -37,7 +37,7 @@ const ids = ["5-2-u2-t1-2", "5-2-u2-t4", "5-2-u2-t4-2", "5-2-u2-practice-63-orig
       const symbolic = page.locator('#problemView [data-source-item-id="5-2-u2-practice-71-similar"]');
       assert.equal(await symbolic.locator('.math-fraction').count(), 2, 'symbolic fractions render vertically');
       assert.doesNotMatch(await symbolic.innerText(), /[㉠㉡]\s*\//, 'no slash-form symbolic fractions');
-      assert.equal(data.problems.find(p => p.id === '5-2-u2-practice-6-similar').automaticGrading, false, 'time response uses manual grading');
+      assert.equal(data.problems.find(p => p.id === '5-2-u2-practice-10-similar').automaticGrading, true, 'remaining fruit response uses automatic grading');
       assert.deepEqual(await page.locator('#problemView .print-page').evaluateAll(pages => pages.map(page => page.querySelectorAll('.question-item').length)), [4], 'four questions per page, except the final remainder');
       assert.equal(await page.locator('#problemView [data-source-answer]').count(), 0, 'answers stay out of problems');
       assert.doesNotMatch(await page.locator('#problemView').innerText(), /도움말|힌트|풀이할 때/);
@@ -46,7 +46,7 @@ const ids = ["5-2-u2-t1-2", "5-2-u2-t4", "5-2-u2-t4-2", "5-2-u2-practice-63-orig
         assert(p.answer && (p.id.includes("practice-7-") ? p.answer.split(", ").every(a => compact(data.solutions[i].text).includes(compact(a))) : compact(data.solutions[i].text).includes(compact(p.answer).replace(/\//g, ""))), `answer ${i + 1} matches ${p.id}`);
       });
       await page.emulateMedia({ media: "print" });
-      for (const id of ["5-2-u2-practice-6-similar"]) {
+      for (const id of ["5-2-u2-practice-10-similar"]) {
         const family = await page.locator(`[data-source-item-id="${id}"]`).first().evaluate(el => getComputedStyle(el).fontFamily);
         assert.match(family, /Noto Serif KR/);
       }
