@@ -687,3 +687,9 @@ Verification: Grade roadmap model/browser suites pass 56/56. A 390px Chrome rend
 Follow-up: aligned the Grade 8 AMC 10 map step with the MAA's official AMC scope page, and the Grade 10 AIME map step with the same AIME eligibility and invitational references used in its annual plan. The mobile reference test verifies the labels, destinations, external-link handling, and no-overflow behavior. Grade roadmap model tests pass 12/12 and the targeted map browser test passes 1/1. Local only; no push or deployment.
 
 Follow-up: added the GFIELD Algebra 2 workbook as an optional “필요한 단원 선택” resource beside Geometry in the inferred Grade 9 map, matching the annual-plan links while keeping the school-course-order note. Grade roadmap model tests pass 12/12 and the targeted mobile map browser test passes 1/1. Local only; no push or deployment.
+
+### 2026-11-03 AMC reflection prompts
+
+Added an optional “풀이 뒤에 한 번 더 생각하기” panel to the GFIELD AMC 10 and AIME-style practice pages, using the supplied coaching prompts about choice of method, alternate approaches, changing a condition, and changing the numbers. The panel is closed by default and does not record responses. It complements the existing item-specific connection questions and keeps “개념 → 유형 → 연결 → 실전” visible.
+
+Verification: the targeted AMC 10 roadmap/practice test and AIME browser test pass 2/2, including prompt contents, disclosure behavior, stacked fractions, answers, and 390px no-overflow. Fresh mobile captures of both opened reflection panels show legible single-column prompts and no page errors. Local only; no private candidate content, push, deployment, or external API use.

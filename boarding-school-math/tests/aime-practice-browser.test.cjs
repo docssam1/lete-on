@@ -46,6 +46,10 @@ test("AIME-style practice validates integer answers, filters, explanations, and 
   assert.equal(await page.locator(".math-fraction").first().evaluate(function (node) { return getComputedStyle(node).display; }), "inline-grid", "fraction numerator and denominator should be visually stacked");
   assert.notEqual(await page.locator(".math-fraction-numerator").first().evaluate(function (node) { return getComputedStyle(node).borderBottomStyle; }), "none", "stacked fraction should show a fraction bar");
   assert.equal(await page.locator(".domain-filter[aria-label='수학 영역: 정수론']").count(), 1);
+  const reflection = page.locator(".practice-reflection");
+  assert.deepEqual(await reflection.locator("li").allTextContents(), ["왜 이 방법을 골랐나요?", "다른 방법으로도 풀 수 있나요?", "조건 하나를 바꾸면 무엇이 달라지나요?", "숫자가 바뀌어도 같은 생각이 통하나요?"]);
+  await reflection.locator("summary").click();
+  assert.equal(await reflection.evaluate(function (node) { return node.open; }), true);
 
   const firstCard = page.locator(".problem-card").first();
   const firstInput = firstCard.locator("input");

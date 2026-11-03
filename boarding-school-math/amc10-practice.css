@@ -7,6 +7,7 @@
 .practice-method li+li{padding-left:22px;border-left:1px solid var(--line)}
 .practice-method p{margin:12px 0 0;color:var(--muted);font-size:13px}
 .practice-method p a{color:var(--blue);font-weight:800}
+.practice-reflection{margin-top:12px;border-top:1px solid var(--line)}.practice-reflection summary{min-height:42px;display:flex;align-items:center;cursor:pointer;color:var(--blue);font-size:14px;font-weight:850}.practice-reflection ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;list-style:none;margin:8px 0 0;padding:0}.practice-reflection li{padding:8px 10px;border-left:2px solid var(--blue);background:var(--blue-soft);font-size:13px;font-weight:700}
 .amc10-practice-page .bank-toolbar{margin-bottom:0}
 .amc10-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:36px;padding-top:30px}
 .domain-sidebar{align-self:start;position:sticky;top:96px}
@@ -37,6 +38,6 @@
 .practice-boundary strong{color:var(--ink);font-size:14px}
 .amc10-practice-page .math-fraction{font-size:1.03em;min-width:1.55em}
 @media(max-width:850px){.amc10-layout{grid-template-columns:1fr;gap:12px}.domain-sidebar{position:static}.domain-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.scope-note{margin-bottom:12px}}
-@media(max-width:560px){.practice-method{padding:16px}.practice-method ol{grid-template-columns:1fr 1fr}.practice-method li+li{padding-left:0;border-left:0}.domain-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.amc10-workspace .choices{grid-template-columns:1fr}.amc10-workspace .choice{grid-template-columns:32px minmax(0,1fr)}.amc10-workspace .choice-value{justify-content:start;text-align:left}}
+@media(max-width:560px){.practice-method{padding:16px}.practice-method ol{grid-template-columns:1fr 1fr}.practice-method li+li{padding-left:0;border-left:0}.practice-reflection ul{grid-template-columns:1fr}.domain-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.amc10-workspace .choices{grid-template-columns:1fr}.amc10-workspace .choice{grid-template-columns:32px minmax(0,1fr)}.amc10-workspace .choice-value{justify-content:start;text-align:left}}
 @page{size:A4;margin:14mm}
 @media print{.amc10-practice-page{background:#fff}.amc10-practice-page .site-header,.practice-method,.bank-toolbar,.domain-sidebar,.amc10-workspace .workspace-heading button,footer{display:none!important}.amc10-practice-page main{max-width:none;padding:0}.amc10-practice-page .practice-intro{display:block;padding:0 0 8mm;border:0}.amc10-practice-page .practice-intro h1{font-size:25pt}.amc10-practice-page .practice-intro>div>p:last-child{font-size:10pt}.amc10-practice-page .release-note{margin-top:4mm;padding:4mm}.amc10-layout{display:block;padding:0}.amc10-workspace .workspace-heading{padding:0 0 5mm}.amc10-workspace .problem-card{break-inside:avoid;page-break-inside:avoid;padding:5mm}.amc10-workspace .problem-list{display:block}.amc10-workspace .choices{grid-template-columns:repeat(5,minmax(0,1fr))}.practice-boundary{break-inside:avoid}}

@@ -1408,6 +1408,12 @@ test("Grade 7 roadmap opens original AMC 10 concept practice with topic filters 
   assert.equal(await amcLink.innerText(), "지필드 AMC 10 개념 연결 연습 · 자체 12문항");
   await amcLink.click();
   await page.waitForURL(/amc10-practice\.html\?grade=7$/);
+  const reflection = page.locator(".practice-reflection");
+  assert.equal(await reflection.locator("summary").innerText(), "풀이 뒤에 한 번 더 생각하기");
+  assert.deepEqual(await reflection.locator("li").allTextContents(), ["왜 이 방법을 골랐나요?", "다른 방법으로도 풀 수 있나요?", "조건 하나를 바꾸면 무엇이 달라지나요?", "숫자가 바뀌어도 같은 생각이 통하나요?"]);
+  assert.equal(await reflection.evaluate(function (node) { return node.open; }), false, "reflection prompt stays optional");
+  await reflection.locator("summary").click();
+  assert.equal(await reflection.evaluate(function (node) { return node.open; }), true);
   assert.equal(await page.locator(".amc10-workspace .problem-card").count(), 12);
   assert.equal(await page.locator(".amc10-workspace .choice").count(), 60);
   assert.equal(await page.locator(".math-fraction").count(), 7);
