@@ -1,6 +1,11 @@
 (function () {
   "use strict";
   const $ = function (id) { return document.getElementById(id); };
+  function setMathText(target, value) {
+    target.replaceChildren();
+    if (window.GFIELDMathText) window.GFIELDMathText.append(target, value);
+    else target.textContent = value;
+  }
   const apis = [
     window.GFIELDGrade6RPAUnitWorkbook, window.GFIELDGrade6NSAUnitWorkbook,
     window.GFIELDGrade6NSBUnitWorkbook, window.GFIELDGrade6NSCUnitWorkbook,
@@ -29,16 +34,37 @@
   if (!apis.every(eligibleSource)) { $("builder-message").textContent = "워크북 문항을 확인할 수 없습니다. 자료를 다시 불러오세요."; return; }
   const sources = apis.map(function (api) {
     const pack = api.pack;
-    const source = { api: api, pack: pack, cluster: pack.clusterId, grade: Number(pack.clusterId.split(".")[0]) };
+    const source = { api: api, pack: pack, cluster: pack.clusterId, grade: Number(pack.clusterId.split(".")[0]), kind: "workbook" };
     source.label = pack.title.ko.replace(new RegExp(`^${pack.clusterId.replaceAll(".", "\\.")}\\s*`), "").replace(/ 단원 워크북$/, "");
     source.records = pack.workbookItems.map(function (item, index) {
       return { id: `${pack.clusterId}:${item.id}`, item: item, source: source, number: index + 1 };
     });
     return source;
   });
+  const algebraCourse = window.GFIELDAlgebra1Course;
+  if (algebraCourse && Array.isArray(algebraCourse.units)) {
+    algebraCourse.units.forEach(function (unit, unitIndex) {
+      const strands = Object.create(null);
+      const workbookItems = [];
+      (unit.lessons || []).forEach(function (lesson, lessonIndex) {
+        const strandId = `lesson-${lessonIndex + 1}`;
+        strands[strandId] = { ko: lesson.title };
+        (lesson.practice || []).forEach(function (practice, practiceIndex) {
+          workbookItems.push({ id: `${unit.id}-${lessonIndex + 1}-${practiceIndex + 1}`, prompt: { ko: practice.prompt }, question: { ko: lesson.title }, standardIds: [], strand: strandId, level: "lesson", answer: practice.answer, explanation: practice.feedback });
+        });
+      });
+      const pack = { clusterId: `GFIELD-A1-U${unitIndex + 1}`, title: { ko: `Algebra 1 · ${unit.title}` }, strands: strands, workbookItems: workbookItems };
+      const api = { pack: pack, renderVisual: function () { return ""; }, formatResult: function (item) { return item.answer; }, solutionFor: function (item) { return item.explanation; } };
+      const source = { api: api, pack: pack, cluster: pack.clusterId, grade: 7, kind: "algebra1", label: unit.title, unitIndex: unitIndex + 1 };
+      source.records = workbookItems.map(function (item, index) { return { id: `${pack.clusterId}:${item.id}`, item: item, source: source, number: index + 1 }; });
+      sources.push(source);
+    });
+  }
   const records = sources.flatMap(function (source) { return source.records; });
+  const publicWorkbookCount = sources.filter(function (source) { return source.kind === "workbook"; }).reduce(function (sum, source) { return sum + source.records.length; }, 0);
+  const algebra1Count = sources.filter(function (source) { return source.kind === "algebra1"; }).reduce(function (sum, source) { return sum + source.records.length; }, 0);
   const byId = new Map(records.map(function (record) { return [record.id, record]; }));
-  const levelName = { foundation: "기초", core: "기본", advanced: "심화" };
+  const levelName = { foundation: "기초", core: "기본", advanced: "심화", lesson: "수업 연습" };
   const selected = [];
   const maxItems = records.length;
   let paperSettingsInView = false;
@@ -54,7 +80,9 @@
     const label = record.source.pack.strands[record.item.strand];
     return (label ? label.ko : record.item.strand).replace(/^\d+ · /, "");
   }
-  function sourceLabel(record) { return `${record.source.cluster} ${record.number}번`; }
+  function sourceLabel(record) { return record.source.kind === "algebra1" ? `Algebra 1 ${record.source.unitIndex}.${record.number}` : `${record.source.cluster} ${record.number}번`; }
+  function paperSourceLabel(source) { return source.kind === "algebra1" ? `GFIELD Algebra 1 · 단원 ${String(source.unitIndex).padStart(2, "0")}` : source.cluster; }
+  function itemContextLabel(record) { return record.source.kind === "algebra1" ? `${record.source.label} · ${strandName(record)} · 지필드 수업 연습` : `${record.item.standardIds.join(", ")} · ${strandName(record)}`; }
   function message(value) { $("builder-message").textContent = value; }
   function updateMobileBuilderAction() {
     const mobileAction = $("mobile-builder-action");
@@ -67,8 +95,8 @@
     const chosen = [...new Set(selected.map(function (entry) { return byId.get(entry.id).source; }))];
     const source = chosen.length === 1 ? chosen[0] : activeSource;
     const gradeLabel = [...new Set(chosen.map(function (entry) { return entry.grade; }))].sort().join("–");
-    const title = chosen.length > 1 ? `Grade ${gradeLabel} 단원 확인 평가` : `Grade ${source.grade} ${source.label} 확인 평가`;
-    const course = chosen.length > 1 ? `Grade ${gradeLabel} · ${chosen.length}개 단원` : `Grade ${source.grade} · ${source.label}`;
+    const title = chosen.length > 1 ? `Grade ${gradeLabel} 단원 확인 평가` : source.kind === "algebra1" ? `Algebra 1 · ${source.label} 확인 평가` : `Grade ${source.grade} ${source.label} 확인 평가`;
+    const course = chosen.length > 1 ? `Grade ${gradeLabel} · ${chosen.length}개 단원` : source.kind === "algebra1" ? `GFIELD Algebra 1 · ${source.label}` : `Grade ${source.grade} · ${source.label}`;
     if ($("paper-title").value === defaultTitle) $("paper-title").value = title;
     if ($("paper-course").value === defaultCourse) $("paper-course").value = course;
     defaultTitle = title; defaultCourse = course;
@@ -86,10 +114,21 @@
     const host = $("unit-filter"); host.replaceChildren();
     sources.filter(function (source) { return source.grade === Number($("grade-filter").value); }).forEach(function (source) {
       const option = document.createElement("option"); option.value = source.cluster;
-      option.textContent = `${source.cluster} · ${source.label}${source.cluster === "7.NS.A" ? " · 검수 시안" : ""}`;
+      option.textContent = source.kind === "algebra1" ? `GFIELD Algebra 1 · ${source.unitIndex}. ${source.label}` : `${source.cluster} · ${source.label}${source.cluster === "7.NS.A" ? " · 검수 시안" : ""}`;
       host.append(option);
     });
     host.value = activeSource.cluster;
+    const levelLabel = document.querySelector('label[for="level-filter"]');
+    const levelSelect = $("level-filter");
+    if (activeSource.kind === "algebra1") {
+      levelLabel.firstChild.textContent = "자료 유형";
+      levelSelect.replaceChildren(new Option("전체", "all"), new Option("수업 연습", "lesson"));
+    } else {
+      levelLabel.firstChild.textContent = "수준";
+      levelSelect.replaceChildren(new Option("전체", "all"), new Option("기초", "foundation"), new Option("기본", "core"), new Option("심화", "advanced"));
+    }
+    $("inventory-count").textContent = activeSource.kind === "algebra1" ? `이 단원 ${activeSource.records.length}문항 · 전체 자체 제작 ${algebra1Count}문항` : `공개 워크북 ${publicWorkbookCount}문항 · Algebra 1 ${algebra1Count}문항`;
+    $("source-note").textContent = activeSource.kind === "algebra1" ? "지필드 Algebra 1 수업에서 만든 연습 문제입니다. 문제지와 정답지는 따로 구성해요." : "공개 단원 워크북 문항입니다. 7.NS.A는 검수 시안이며, 비공개 진단 문항은 포함하지 않아요.";
   }
   function selectSource(cluster) {
     const next = sources.find(function (source) { return source.cluster === cluster; });
@@ -136,8 +175,8 @@
       label.append(check);
       const button = document.createElement("button"); button.type = "button"; button.className = "item-open";
       button.setAttribute("aria-label", `${itemNumber(record)}번 미리보기`);
-      const title = document.createElement("strong"); title.textContent = `${String(itemNumber(record)).padStart(2, "0")} · ${item.question?.ko ? `${item.question.ko} — ` : ""}${item.prompt.ko}`;
-      const trail = document.createElement("small"); trail.textContent = `${item.standardIds.join(", ")} · ${strandName(record)}`;
+      const title = document.createElement("strong"); setMathText(title, `${String(itemNumber(record)).padStart(2, "0")} · ${item.question?.ko ? `${item.question.ko} — ` : ""}${item.prompt.ko}`);
+      const trail = document.createElement("small"); trail.textContent = itemContextLabel(record);
       button.append(title, trail);
       button.addEventListener("click", function () { previewId = record.id; renderPreview(); renderList({ id: record.id, kind: "preview" }); });
       const level = document.createElement("span"); level.className = "item-level"; level.textContent = levelName[item.level];
@@ -152,7 +191,7 @@
     const item = record.item;
     const wrapper = document.createElement("div"); wrapper.className = "question-content";
     const prompt = document.createElement("p"); prompt.className = "question-prompt";
-    prompt.textContent = `${questionNumber ? `${questionNumber}. ` : ""}${item.prompt.ko}`;
+    setMathText(prompt, `${questionNumber ? `${questionNumber}. ` : ""}${item.prompt.ko}`);
     wrapper.append(prompt);
     const visual = document.createElement("div"); visual.className = "question-visual";
     visual.innerHTML = record.source.api.renderVisual(item, "ko", "student");
@@ -161,7 +200,7 @@
       const choices = document.createElement("ol"); choices.className = "question-choices";
       if (item.choices.some(function (choice) { return choice.label.ko.length > 35; })) choices.classList.add("is-long");
       item.choices.forEach(function (entry, index) {
-        const li = document.createElement("li"); li.textContent = `${String.fromCharCode(65 + index)}. ${entry.label.ko}`; choices.append(li);
+        const li = document.createElement("li"); setMathText(li, `${String.fromCharCode(65 + index)}. ${entry.label.ko}`); choices.append(li);
       });
       wrapper.append(choices);
     } else {
@@ -227,8 +266,8 @@
     });
   }
   function paperInfo() {
-    const chosen = [...new Set(selected.map(function (entry) { return byId.get(entry.id).source.cluster; }))];
-    const sourceText = chosen.length === 1 ? chosen[0] : chosen.length > 1 ? `${chosen.length}개 단원` : activeSource.cluster;
+    const chosen = [...new Set(selected.map(function (entry) { return byId.get(entry.id).source; }))];
+    const sourceText = chosen.length === 1 ? paperSourceLabel(chosen[0]) : chosen.length > 1 ? `${chosen.length}개 단원` : paperSourceLabel(activeSource);
     return {
       title: $("paper-title").value.trim() || "제목 없는 시험지",
       course: $("paper-course").value.trim() || defaultCourse,
@@ -277,7 +316,7 @@
     const record = byId.get(entry.id), item = record.item, article = document.createElement("article");
     article.className = "sheet-question"; article.dataset.itemId = record.id;
     const meta = document.createElement("div"); meta.className = "sheet-question-meta";
-    const source = document.createElement("span"); source.textContent = `${sourceLabel(record)} · ${item.standardIds.join(", ")}`;
+    const source = document.createElement("span"); source.textContent = `${sourceLabel(record)} · ${itemContextLabel(record)}`;
     const points = document.createElement("strong"); points.textContent = `${entry.points}점`;
     meta.append(source, points); article.append(meta, content(record, index + 1));
     const answerSpace = document.createElement("div"); answerSpace.className = "answer-space";
@@ -288,10 +327,10 @@
     const record = byId.get(entry.id), item = record.item, api = record.source.api;
     const article = document.createElement("article"); article.className = "sheet-question key-question"; article.dataset.itemId = record.id;
     const meta = document.createElement("div"); meta.className = "sheet-question-meta";
-    const source = document.createElement("span"); source.textContent = `${sourceLabel(record)} · ${item.standardIds.join(", ")}`;
+    const source = document.createElement("span"); source.textContent = `${sourceLabel(record)} · ${itemContextLabel(record)}`;
     const points = document.createElement("strong"); points.textContent = `${entry.points}점`;
     meta.append(source, points); article.append(meta);
-    const prompt = document.createElement("p"); prompt.className = "key-prompt"; prompt.textContent = `${index + 1}. ${item.prompt.ko}`;
+    const prompt = document.createElement("p"); prompt.className = "key-prompt"; setMathText(prompt, `${index + 1}. ${item.prompt.ko}`);
     article.append(prompt);
     let answerText;
     if (Array.isArray(item.choices)) {
@@ -304,10 +343,12 @@
     }
     const answer = document.createElement("p"); answer.className = "key-answer";
     const answerLabel = document.createElement("strong"); answerLabel.textContent = "정답";
-    answer.append(answerLabel, document.createTextNode(answerText));
+    answer.append(answerLabel);
+    const answerContent = document.createElement("span"); setMathText(answerContent, answerText); answer.append(answerContent);
     const solution = document.createElement("p"); solution.className = "key-solution";
     const solutionLabel = document.createElement("strong"); solutionLabel.textContent = "풀이";
-    solution.append(solutionLabel, document.createTextNode(api.solutionFor(item, "ko")));
+    solution.append(solutionLabel);
+    const solutionContent = document.createElement("span"); setMathText(solutionContent, api.solutionFor(item, "ko")); solution.append(solutionContent);
     article.append(answer, solution); return article;
   }
   function fitsPage(article, page) {

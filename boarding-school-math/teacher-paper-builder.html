@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./unit-workbook.css?v=20261023-1">
   <link rel="stylesheet" href="./teacher-paper-builder.css?v=20261103-1">
+  <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-2">
 </head>
 <body class="gfield-ui page-paper-builder">
   <a class="skip-link" href="#builder-main">본문으로 바로가기</a>
@@ -19,17 +20,17 @@
   </header>
   <main id="builder-main">
     <div class="builder-title">
-      <div><p>6–7학년 · 단원 워크북</p><h1>시험지 만들기</h1><span>단원을 고르고 문제를 담으세요. A4로 인쇄할 수 있어요.</span></div>
+      <div><p>6–7학년 · 자체 제작 학습 자료</p><h1>문제 찾고 시험지 만들기</h1><span>공개 워크북이나 지필드 Algebra 1에서 골라 A4 시험지를 만들어요.</span></div>
       <button id="jump-to-sheet" type="button" disabled>출력 미리보기</button>
     </div>
     <div class="builder-layout">
       <aside class="filter-pane" aria-labelledby="filter-title">
-        <h2 id="filter-title">문제 찾기</h2><p>12개 단원 · 432문항</p>
+        <h2 id="filter-title">문제 찾기</h2><p id="inventory-count">공개 워크북 432문항 · Algebra 1 64문항</p>
         <label for="grade-filter">학년<select id="grade-filter"><option value="6">Grade 6</option><option value="7" selected>Grade 7</option></select></label>
         <label for="unit-filter">단원<select id="unit-filter"></select></label>
         <h3>세부 주제</h3>
         <div id="strand-filters" class="strand-filters" role="group" aria-label="세부 단원"></div>
-        <div class="filter-note">단원 워크북 문항만 표시합니다. 7.NS.A는 검수 시안이며, 진단·경시 기출은 없습니다.</div>
+        <div id="source-note" class="filter-note">공개 단원 워크북 문항입니다. 7.NS.A는 검수 시안이며, 비공개 진단 문항은 포함하지 않아요.</div>
       </aside>
       <section class="list-pane" aria-labelledby="list-title">
         <div class="list-toolbar"><div><h2 id="list-title">문제 목록</h2><span id="result-count" role="status" aria-live="polite"></span></div><button id="select-visible" type="button">현재 목록 모두 담기</button></div>
@@ -103,6 +104,8 @@
   <script src="./learning/grade6-sp-b-unit-workbook.js?v=20261003-1"></script>
   <script src="./learning/grade7-rp-a-unit-workbook.js?v=20260911-1"></script>
   <script src="./learning/grade7-ns-a-unit-workbook.js?v=20261014-1"></script>
-  <script src="./teacher-paper-builder.js?v=20261024-2"></script>
+  <script src="./curriculum/algebra-1-course.js?v=20261103-1"></script>
+  <script src="./shared/math-inline.js?v=20261103-2"></script>
+  <script src="./teacher-paper-builder.js?v=20261103-4"></script>
 </body>
 </html>

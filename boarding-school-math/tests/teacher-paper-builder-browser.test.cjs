@@ -20,6 +20,8 @@ test("teacher can find, preview, select, order, and set points on released Grade
   assert.equal(await page.locator("#sheet-section").isHidden(), true);
   assert.equal(await page.locator("#jump-to-sheet").isDisabled(), true);
   assert.equal(await page.locator(".item-row").count(), 36);
+  assert.equal(await page.locator(".item-preview .question-choices .math-fraction").count(), 4);
+  assert.equal((await page.locator(".item-preview .question-choices").innerText()).includes("3/8"), false);
   await page.locator("#item-search").fill("단위율");
   assert.equal(await page.locator(".item-row").count(), 8);
   await page.getByRole("button", { name: "2번 미리보기", exact: true }).click();
@@ -53,7 +55,7 @@ test("public Grade 6–7 units keep selections across filters and print mixed an
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const errors = []; page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(url, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("#unit-filter option").count(), 2);
+  assert.equal(await page.locator("#unit-filter option").count(), 7);
   await page.getByRole("checkbox", { name: "1번 시험지에 추가", exact: true }).check();
   await page.locator("#unit-filter").selectOption("7.NS.A");
   assert.equal(await page.locator(".item-row").count(), 36);
@@ -111,7 +113,7 @@ test("mobile selection keeps a fixed count and a keyboard-accessible shortcut to
   await page.close();
 });
 
-test("all 432 eligible workbook items load without private diagnostics", async () => {
+test("all 432 public workbook items load without private diagnostics", async () => {
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "networkidle" });
   const inventory = await page.evaluate(() => {
@@ -131,6 +133,45 @@ test("all 432 eligible workbook items load without private diagnostics", async (
         api.pack.rights?.containsThirdPartyAssets === false) };
   });
   assert.deepEqual(inventory, { sources: 12, items: 432, errors: [], publicOnly: true });
+  await page.close();
+});
+
+test("original Algebra 1 practice joins the teacher bank with a separate answer key", async () => {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const errors = []; page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(url, { waitUntil: "networkidle" });
+  await page.locator("#unit-filter").selectOption("GFIELD-A1-U1");
+  assert.equal(await page.locator("#item-list .item-row").count(), 14);
+  assert.equal(await page.locator("#inventory-count").innerText(), "이 단원 14문항 · 전체 자체 제작 64문항");
+  assert.match(await page.locator('label[for="level-filter"]').innerText(), /^자료 유형/);
+  assert.match(await page.locator("#source-note").innerText(), /지필드 Algebra 1 수업에서 만든 연습 문제/);
+  await page.getByRole("button", { name: "1번 미리보기", exact: true }).click();
+  assert.match(await page.locator("#preview-index").innerText(), /Algebra 1 1\.1 · 수업 연습/);
+  await page.getByRole("checkbox", { name: "1번 시험지에 추가", exact: true }).check();
+  assert.equal(await page.locator(".key-answer").count(), 0);
+  assert.match(await page.locator(".sheet-question").innerText(), /지필드 수업 연습/);
+  await page.locator('input[name="output-kind"][value="answers"]').check();
+  assert.match(await page.locator(".key-answer").innerText(), /7 \+ 2r; r = 5이면 17달러/);
+  assert.match(await page.locator(".key-solution").innerText(), /입장료는 고정되어/);
+  assert.match(await page.locator(".sheet-course-code").innerText(), /GFIELD Algebra 1/);
+  await page.locator("#clear-selected").click();
+  await page.locator("#unit-filter").selectOption("GFIELD-A1-U3");
+  await page.locator("#item-search").fill("교점 좌표");
+  await page.getByRole("checkbox", { name: "1번 시험지에 추가", exact: true }).check();
+  assert.equal(await page.locator(".key-answer .math-fraction").count(), 2);
+  assert.deepEqual(await page.locator(".key-answer .math-fraction").evaluateAll((fractions) => fractions.map((fraction) => fraction.getAttribute("aria-label"))), ["3분의 8", "3분의 14"]);
+  assert.equal((await page.locator(".key-answer").innerText()).includes("8/3"), false);
+  const unitCounts = [];
+  for (let unit = 1; unit <= 5; unit += 1) {
+    await page.locator("#clear-selected").click();
+    await page.locator("#unit-filter").selectOption(`GFIELD-A1-U${unit}`);
+    await page.locator("#select-visible").click();
+    unitCounts.push(await page.locator(".sheet-question").count());
+    assert.equal(await page.locator(".key-solution").count(), unitCounts.at(-1));
+    assert.equal(await page.locator(".is-overflow").count(), 0);
+  }
+  assert.deepEqual(unitCounts, [14, 12, 12, 12, 14]);
+  assert.deepEqual(errors, []);
   await page.close();
 });
 
@@ -162,6 +203,7 @@ test("each eligible unit can make a full A4 question sheet", async () => {
     await page.locator("#grade-filter").selectOption(grade);
     const units = await page.locator("#unit-filter option").evaluateAll((options) => options.map((option) => option.value));
     for (const unit of units) {
+      if (unit.startsWith("GFIELD-A1-")) continue;
       await page.locator("#unit-filter").selectOption(unit);
       await page.locator("#select-visible").click();
       assert.equal(await page.locator(".sheet-question").count(), 36, unit);
@@ -262,6 +304,7 @@ test("every public unit can paginate a full teacher key", async () => {
     await page.locator("#grade-filter").selectOption(grade);
     const units = await page.locator("#unit-filter option").evaluateAll((options) => options.map((option) => option.value));
     for (const unit of units) {
+      if (unit.startsWith("GFIELD-A1-")) continue;
       await page.locator("#unit-filter").selectOption(unit);
       await page.locator("#select-visible").click();
       assert.equal(await page.locator(".key-answer").count(), 36, unit);

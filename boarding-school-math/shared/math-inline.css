@@ -1,0 +1,17 @@
+.math-fraction {
+  display: inline-grid;
+  grid-template-rows: auto auto;
+  min-width: 1.1em;
+  margin: 0 .12em;
+  vertical-align: -.42em;
+  font-family: Cambria Math, "Times New Roman", serif;
+  font-size: .94em;
+  line-height: 1.02;
+  text-align: center;
+  white-space: nowrap;
+}
+.math-fraction-numerator {
+  padding: 0 .12em .07em;
+  border-bottom: .07em solid currentColor;
+}
+.math-fraction-denominator { padding: .06em .12em 0; }

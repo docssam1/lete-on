@@ -34,7 +34,16 @@
     7: [["7.NS.A", "유리수 연산"], ["7.RP.A", "비례 관계"]]
   };
 
-  function setText(id, value) { $(id).textContent = value; }
+  function setText(id, value) {
+    const target = $(id);
+    target.replaceChildren();
+    if (window.GFIELDMathText) window.GFIELDMathText.append(target, value);
+    else target.textContent = value;
+  }
+  function appendMathText(target, value) {
+    if (window.GFIELDMathText) window.GFIELDMathText.append(target, value);
+    else target.textContent = value;
+  }
   function savedGrade7PracticeCounts() {
     try {
       const saved = JSON.parse(localStorage.getItem("gfield-unit-workbook-progress:7.NS.A:v1") || "null");
@@ -475,7 +484,7 @@
       const number = document.createElement("span"); number.className = "algebra1-unit-number"; number.textContent = `0${index + 1}`;
       const content = document.createElement("div");
       const heading = document.createElement("h3"); heading.textContent = unit.title;
-      const question = document.createElement("p"); question.className = "algebra1-unit-question"; question.textContent = unit.question;
+      const question = document.createElement("p"); question.className = "algebra1-unit-question"; appendMathText(question, unit.question);
       const goals = document.createElement("ul"); unit.goals.forEach(function (goal) { const li = document.createElement("li"); li.textContent = goal; goals.append(li); });
       const standards = document.createElement("small"); standards.textContent = `범위 코드 · ${unit.standards.join(" · ")}`;
       let sequence = null;
@@ -487,20 +496,20 @@
           const sessionItem = document.createElement("li");
           const sessionDetails = document.createElement("details"); sessionDetails.className = "algebra1-session";
           const sessionSummary = document.createElement("summary"); sessionSummary.textContent = `${String(lessonIndex + 1).padStart(2, "0")} · ${session.title}`;
-          const objective = document.createElement("p"); objective.className = "algebra1-session-objective"; objective.textContent = `이번 차시 목표 · ${session.objective}`;
-          const idea = document.createElement("p"); idea.className = "algebra1-session-idea"; idea.textContent = session.idea;
+          const objective = document.createElement("p"); objective.className = "algebra1-session-objective"; appendMathText(objective, `이번 차시 목표 · ${session.objective}`);
+          const idea = document.createElement("p"); idea.className = "algebra1-session-idea"; appendMathText(idea, session.idea);
           const exampleLabel = document.createElement("strong"); exampleLabel.textContent = "예제와 풀이";
-          const examplePrompt = document.createElement("p"); examplePrompt.className = "algebra1-session-prompt"; examplePrompt.textContent = session.example.prompt;
-          const exampleSolution = document.createElement("p"); exampleSolution.textContent = session.example.solution;
+          const examplePrompt = document.createElement("p"); examplePrompt.className = "algebra1-session-prompt"; appendMathText(examplePrompt, session.example.prompt);
+          const exampleSolution = document.createElement("p"); appendMathText(exampleSolution, session.example.solution);
           const practiceLabel = document.createElement("strong"); practiceLabel.textContent = "직접 풀어 보기";
           const practiceList = document.createElement("ol"); practiceList.className = "algebra1-practice-list";
           session.practice.forEach(function (exercise, exerciseIndex) {
             const exerciseItem = document.createElement("li");
-            const exercisePrompt = document.createElement("p"); exercisePrompt.textContent = exercise.prompt;
+            const exercisePrompt = document.createElement("p"); appendMathText(exercisePrompt, exercise.prompt);
             const answerDetails = document.createElement("details"); answerDetails.className = "algebra1-answer";
             const answerSummary = document.createElement("summary"); answerSummary.textContent = `문항 ${exerciseIndex + 1} 풀이 확인`;
-            const answer = document.createElement("p"); answer.textContent = exercise.answer;
-            const feedback = document.createElement("p"); feedback.textContent = exercise.feedback;
+            const answer = document.createElement("p"); appendMathText(answer, exercise.answer);
+            const feedback = document.createElement("p"); appendMathText(feedback, exercise.feedback);
             answerDetails.append(answerSummary, answer, feedback);
             exerciseItem.append(exercisePrompt, answerDetails); practiceList.append(exerciseItem);
           });
@@ -511,11 +520,11 @@
       }
       const lesson = document.createElement("details"); lesson.className = "algebra1-unit-lesson";
       const summary = document.createElement("summary"); summary.textContent = `지필드 연습 · ${unit.lesson.title}`;
-      const prompt = document.createElement("p"); prompt.className = "algebra1-unit-prompt"; prompt.textContent = unit.lesson.prompt;
+      const prompt = document.createElement("p"); prompt.className = "algebra1-unit-prompt"; appendMathText(prompt, unit.lesson.prompt);
       const solutionHeading = document.createElement("strong"); solutionHeading.textContent = "풀이 확인";
-      const solution = document.createElement("p"); solution.textContent = unit.lesson.solution;
+      const solution = document.createElement("p"); appendMathText(solution, unit.lesson.solution);
       const extensionHeading = document.createElement("strong"); extensionHeading.textContent = "한 걸음 더";
-      const extension = document.createElement("p"); extension.textContent = unit.lesson.extension;
+      const extension = document.createElement("p"); appendMathText(extension, unit.lesson.extension);
       lesson.append(summary, prompt, solutionHeading, solution, extensionHeading, extension);
       content.append(heading, question, goals, standards);
       if (sequence) content.append(sequence);

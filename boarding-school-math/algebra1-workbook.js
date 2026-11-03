@@ -12,7 +12,10 @@
   function node(tag, className, content) {
     const element = document.createElement(tag);
     if (className) element.className = className;
-    if (content != null) element.textContent = content;
+    if (content != null) {
+      if (window.GFIELDMathText) window.GFIELDMathText.append(element, content);
+      else element.textContent = content;
+    }
     return element;
   }
   function page(className) {
