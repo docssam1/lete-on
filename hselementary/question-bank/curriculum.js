@@ -3759,6 +3759,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52Triangle = semesters.find(semester=>semester.grade===5&&semester.term===2)?.units.find(unit=>unit.id==="5-2-u3");
   if (source52Triangle) {
+    const type=source52Triangle.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u3-t7");
+    if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u3-practice-90-original",sourceItemLabel:"확인학습 90번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:92,alternateSourcePdfPage:91,sourcePrintedPage:96,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page87Practice90",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 격자와 꼭짓점을 대조하고 답 그림의 모든 꼭짓점이 중심에 대해 점대칭인지 검산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+  if (source52Triangle) {
     const type=source52Triangle.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u3-t4");
     if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u3-practice-47-original",sourceItemLabel:"확인학습 47번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:86,alternateSourcePdfPage:85,sourcePrintedPage:90,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page87Practice47",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 두 합동 삼각형과 색칠·수선 표시를 대조하고 겹친 부분을 빼는 넓이 관계를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
