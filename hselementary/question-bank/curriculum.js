@@ -3769,6 +3769,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   if (source52DecimalUnit) {
+    const type=source52DecimalUnit.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u4-t1-5");
+    if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u4-practice-22-original",sourceItemLabel:"확인학습 22번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:99,alternateSourcePdfPage:98,sourcePrintedPage:103,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U4Page101Practice22",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 분수와 반올림 조건을 대조하고 가능한 자연수 쌍을 독립 열거했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+
+  if (source52DecimalUnit) {
     const type=source52DecimalUnit.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u4-t2-10");
     if (type) Object.assign(type,{name:`${type.name} · 원문`,label:`${type.label} · 원문`,sourceItemId:"5-2-u4-practice-54-original",sourceItemLabel:"확인학습 54번 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:101,alternateSourcePdfPage:102,sourcePrintedPage:107,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U4Page101Practice54",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 세로셈의 부분곱과 서로 다른 숫자 조건을 대조하고 유일한 답을 독립 열거했습니다. 출판사 공식 답안은 미확인입니다."});
   }
