@@ -6,10 +6,14 @@ from pathlib import Path
 
 record=json.loads((Path(__file__).parent/'source-inventory/5-2-u3-e1-e4-readiness-review.json').read_text())
 r=next(x for x in record['additionalSourceReviews'] if x['sourcePrintedPage']==85)
-assert r['sourcePdfPage']==81 and r['runtimeConnection']=='not-connected' and r['publisherAnswerVerified'] is False
+assert r['sourcePdfPage']==81 and r['runtimeConnection']=='partially-connected' and r['publisherAnswerVerified'] is False
 assert [i['number'] for i in r['items']]==list(range(1,9))
 assert all(r['items'][i]['status']=='source-reviewed-drawing-pending' for i in [1,2,3])
-assert r['items'][5]['status']=='source-ambiguity-answer-key-pending'
+for item in r['items']:
+    if item['number'] not in (2,3,4):
+        assert item['status']=='public-independent-verification-publisher-key-pending'
+        assert item['runtimeTypeId']==f"5-2-u3-practice-{item['number']}-original"
+        assert item['publisherAnswerVerified'] is False
 assert 180-115-35==30 and 4+2>5
 # With angle A=40°, opposite side a=10 and side b=12, SSA gives two valid B angles.
 angle_a=40

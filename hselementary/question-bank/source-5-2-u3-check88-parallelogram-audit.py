@@ -7,8 +7,8 @@ record=json.loads((Path(__file__).parent/'source-inventory/5-2-u3-e1-e4-readines
 r=next(x for x in record['additionalSourceReviews'] if x['sourcePrintedPage']==88)
 item=next(x for x in r['items'] if x['number']==32)
 assert item['candidate']=='삼각형 ㅁㄱㄹ; ①, ②, ③'
-assert item['status']=='source-reviewed-answer-key-pending' and not r['publisherAnswerVerified']
-assert r['runtimeConnection']=='not-connected'
+assert item['status']=='public-independent-verification-publisher-key-pending' and not r['publisherAnswerVerified']
+assert r['runtimeConnection']=='partial-verified-local'
 def dist2(a,b): return (a[0]-b[0])**2+(a[1]-b[1])**2
 def dot(a,b): return a[0]*b[0]+a[1]*b[1]
 def sub(a,b): return (a[0]-b[0],a[1]-b[1])

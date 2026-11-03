@@ -8,8 +8,8 @@ from pathlib import Path
 record=json.loads((Path(__file__).parent/'source-inventory/5-2-u3-e1-e4-readiness-review.json').read_text())
 r=next(x for x in record['additionalSourceReviews'] if x['sourcePrintedPage']==88)
 for n in (26,27):
-    assert next(x for x in r['items'] if x['number']==n)['status']=='source-reviewed-answer-key-pending'
-assert not r['publisherAnswerVerified'] and r['runtimeConnection']=='not-connected'
+    assert next(x for x in r['items'] if x['number']==n)['status']=='public-independent-verification-publisher-key-pending'
+assert not r['publisherAnswerVerified'] and r['runtimeConnection']=='partial-verified-local'
 def ds(a,b): return (a[0]-b[0])**2+(a[1]-b[1])**2
 def signature(*pts): return sorted(ds(a,b) for a,b in combinations(pts,2))
 def intersection(a,b,c,d):

@@ -6,7 +6,7 @@ from pathlib import Path
 record=json.loads((Path(__file__).parent/'source-inventory/5-2-u3-e1-e4-readiness-review.json').read_text())
 r=next(x for x in record['additionalSourceReviews'] if x['sourcePrintedPage']==88)
 item=next(x for x in r['items'] if x['number']==29)
-assert item['candidate']=='3쌍' and r['publisherAnswerVerified'] is False and r['runtimeConnection']=='not-connected'
+assert item['candidate']=='3쌍' and r['publisherAnswerVerified'] is False and r['runtimeConnection']=='partial-verified-local'
 v={k:(math.cos(math.radians(a)),math.sin(math.radians(a))) for k,a in zip('ABCDE',[90,18,-54,-126,162])}
 def cross(a,b,c):return (b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0])
 a,d,e,b=[v[x] for x in 'ADEB'];t=cross(e,b,a)/(cross(e,b,a)-cross(e,b,d));v['X']=(a[0]+t*(d[0]-a[0]),a[1]+t*(d[1]-a[1]))
@@ -30,4 +30,4 @@ for n in range(3,7):
 assert sum(map(len,groups.values()))==9
 assert sorted(len(x) for x in groups.values())==[1,1,1,2,2,2]
 assert sum(len(x)*(len(x)-1)//2 for x in groups.values())==3
-print('PASS: page 88 #29 nine convex polygons, three congruent pairs; source remains unconnected')
+print('PASS: page 88 #29 nine convex polygons, three congruent pairs; publisher key pending')
