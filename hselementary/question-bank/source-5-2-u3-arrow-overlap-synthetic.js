@@ -6,7 +6,12 @@ function makeQuestion(i=0,difficulty=0){if(!Number.isSafeInteger(i)||i<0||![-1,0
 const originalId='5-2-u3-e7-mission-2',originalKey='source52ArrowOverlapPage37Original';
 function makeOriginal(){
  const m={L:4,h:2};
- const diagram=solved=>solved?figure(m,true):figure(m,false).replace('</svg>','<line x1="120" y1="100" x2="260" y2="100" stroke="#6e6e6e" stroke-width="1" stroke-dasharray="3 3"/><g font-family="serif" font-size="14" fill="#191511"><text x="142" y="58">4cm</text><text x="85" y="88">2cm</text><text x="219" y="126">4cm</text><text x="151" y="159">2cm</text></g></svg>');
+ const diagram=solved=>{
+  const base=figure(m,solved).replace('중심 O','중심 ㅇ').replace('<text x="197" y="117" font-size="15" fill="#191511">O</text>','<text x="184" y="120" font-size="15" fill="#191511">ㅇ</text>');
+  if(solved)return base;
+  return base.replace('<line x1="190" y1="30" x2="190" y2="170" stroke="#7a6f5c" stroke-width="1" stroke-dasharray="3 3"/>','<line data-source-axis="vertical" x1="190" y1="65" x2="190" y2="100" stroke="#7a6f5c" stroke-width="1" stroke-dasharray="3 3"/>')
+   .replace('</svg>','<line data-source-axis="horizontal" x1="120" y1="100" x2="260" y2="100" stroke="#6e6e6e" stroke-width="1" stroke-dasharray="3 3"/><path data-arrow-right-angle="center" d="M190 90 H200 V100" fill="none" stroke="#191511" stroke-width="1.3"/><path data-arrow-right-angle="body" d="M120 125 H130 V135" fill="none" stroke="#191511" stroke-width="1.3"/><g font-family="serif" font-size="14" fill="#191511"><text x="142" y="58">4cm</text><text x="85" y="88">2cm</text><text data-dimension="center-to-tip" x="205" y="120">4cm</text><text x="151" y="159">2cm</text></g></svg>');
+ };
  const prompt=`<div data-source-item-id="${originalId}" data-pool-index="0"><p>다음 선대칭도형과 점 ㅇ을 대칭의 중심으로 하여 점대칭의 위치에 있는 도형을 그릴 때, 두 도형이 서로 겹치는 부분의 넓이를 구하세요.</p>${diagram(false)}</div>`;
  const solution=`<div data-source-answer="${originalId}"><p>점 ㅇ을 중심으로 화살표를 반 바퀴 돌리면 위 그림의 점선 모양이 됩니다. 겹치는 부분은 가운데 직사각형과 양쪽의 합동인 삼각형 두 개로 나눌 수 있습니다.</p><p>직사각형은 가로 4cm, 세로 2+2=4cm이므로 넓이가 16cm²입니다. 각 삼각형은 밑변 4cm, 높이 2cm이므로 넓이가 4cm²입니다.</p><p>겹친 넓이는 16+4+4=<b>24cm²</b>입니다.</p></div>`;
  return {prompt,solution,answer:'24cm²',answerVisual:diagram(true),answerVisualRequired:true,answerVisualStatus:'verified-reconstruction',sourceItemId:originalId,generator:originalKey,generationMode:'fixed-verified-pool',verifiedPoolIndex:0,verifiedVariantCount:1,verifiedVariantTarget:1,difficultyOffset:0,difficultyLevel:2,difficultyRank:2,sourceStructurePreserved:true,publisherKeyVerified:false,publisherAnswerVerified:false,answerVerification:'independent-rotation-and-overlap-area'};
