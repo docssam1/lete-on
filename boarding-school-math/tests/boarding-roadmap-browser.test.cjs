@@ -74,7 +74,7 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   const unit5 = page.locator(".algebra1-unit-card").nth(4);
   await unit5.locator(".algebra1-lesson-sequence > summary").click();
   assert.equal(await unit5.locator(".algebra1-session").count(), 7);
-  assert.match(await unit5.innerText(), /이차식의 곱과 표준형 연결하기[\s\S]*이차함수로 상황 모델링하기/);
+  assert.match(await unit5.innerText(), /이차식의 곱과 표준형 연결하기[\s\S]*자료에 맞는 이차 모델 선택하기/);
   assert.deepEqual(await page.locator(".algebra1-unit-card").evaluateAll(function (cards) { return cards.map(function (card) { return getComputedStyle(card).gridColumn; }); }), ["1 / -1", "1 / -1", "1 / -1", "1 / -1", "1 / -1"]);
   assert.equal(await page.locator(".algebra1-unit-lesson").count(), 5);
   await page.locator(".algebra1-unit-lesson").nth(2).locator("summary").click();
