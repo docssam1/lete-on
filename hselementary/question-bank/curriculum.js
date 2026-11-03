@@ -3471,6 +3471,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CongruenceApplicationTwo = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ②");
+  if (source52CongruenceApplicationTwo) {
+    const id="5-2-u3-e4-mission-6-original", name="사다리꼴 중점 삼각형의 넓이 · 원문";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 6 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:27,alternateSourcePdfPage:26,sourcePrintedPage:31,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 윗변 10cm, 아랫변 8cm, 높이 6cm와 중점을 대조했습니다. 색칠 삼각형은 사다리꼴의 절반이므로 독립 계산한 넓이는 27cm²입니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52TrapezoidMidpointPage31Mission6Original",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",implementationStatus:"fixed-verified-pool"});
+  }
+
   if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t => t.id === "5-2-u3-e4-example-1")) {
     const id="5-2-u3-e4-example-1",name="원에서 같은 현과 중심각";
     source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 4-1 유사문항",sourceSection:"example",sourcePdfPage:26,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 도형의 현, 반지름과 중심각을 검증했습니다.",generatorKey:"source52EqualChordsCenterAnglesSyntheticPage30Example41",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});

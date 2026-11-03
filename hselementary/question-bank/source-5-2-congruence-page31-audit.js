@@ -33,7 +33,7 @@ const areaPoolSignatures = new Set();
 const midpointPoolSignatures = new Set();
 const trisectionPoolSignatures = new Set();
 for (const def of source.definitions) {
-  const variantCount = /(?:mission-6|example-2)$/.test(def.sourceItemId) ? 4 : 3;
+  const variantCount = def.sourceItemId.endsWith("mission-6-original") ? 1 : /(?:mission-6|example-2)$/.test(def.sourceItemId) ? 4 : 3;
   for (let variant = 0; variant < variantCount; variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
       const item = source.getQuestion(def.sourceItemId, variant, difficultyOffset);
@@ -41,14 +41,18 @@ for (const def of source.definitions) {
       assert.equal(item.sourceItemId, def.sourceItemId);
       assert.equal(item.verifiedVariantCount, variantCount);
       assert.equal(item.verifiedPoolIndex, variant);
-      assert.equal(item.difficultyOffset, difficultyOffset);
+      assert.equal(item.difficultyOffset, def.sourceItemId.endsWith("mission-6-original") ? 0 : difficultyOffset);
       assert.equal(item.answerVisualStatus, "verified-reconstruction");
       assert.match(item.answerVisual, /<svg[\s\S]*<\/svg>/);
       assert.match(item.prompt, /<svg[\s\S]*<\/svg>/);
       assert.doesNotMatch(item.prompt, /data-source-answer|정답은|답은/);
       assert.match(item.solution, /data-source-answer/);
 
-      if (def.sourceItemId.endsWith("example-2")) {
+      if (def.sourceItemId.endsWith("mission-6-original")) {
+        assert.deepEqual([item.answerModel.top, item.answerModel.bottom, item.answerModel.height], [10, 8, 6]);
+        assert.equal(item.answer, "27cm²");
+        assert.match(item.solution, /넓이 합의 절반/);
+      } else if (def.sourceItemId.endsWith("example-2")) {
         const { alpha, beta, firstAtN, secondAtN, target, rotationDegrees } = item.answerModel;
         assert.equal(firstAtN, 60-alpha);
         assert.equal(secondAtN, alpha);
@@ -299,7 +303,7 @@ for (const type of sourceTypes) {
     continue;
   }
   assert.equal(window.HSE_GENERATORS.generatorKey(type), type.generatorKey);
-  for (let variant = 0; variant < (/(?:mission-6|example-2)$/.test(type.sourceItemId) ? 4 : 3); variant += 1) {
+  for (let variant = 0; variant < (type.sourceItemId.endsWith("mission-6-original") ? 1 : /(?:mission-6|example-2)$/.test(type.sourceItemId) ? 4 : 3); variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
       const generated = window.HSE_GENERATORS.generate(type, 1, difficultyOffset, "audit", variant);
       assert.ok(generated, `HSE_GENERATORS rejected ${type.id}`);
