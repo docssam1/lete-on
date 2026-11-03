@@ -7,8 +7,8 @@ test("GFIELD Pre-Algebra Unit 1 follows the six requested expression concepts in
   assert.equal(course.id, "pre-algebra");
   assert.equal(course.title, "GFIELD Pre-Algebra");
   assert.equal(course.shortTitle, "PRE-ALGEBRA");
-  assert.equal(course.units.length, 3);
-  assert.match(course.scope, /세 단원/);
+  assert.equal(course.units.length, 4);
+  assert.match(course.scope, /네 단원/);
   const unit = course.units[0];
   assert.equal(unit.id, "expressions-and-equivalence");
   assert.deepEqual(unit.standards, ["6.EE.A.1", "6.EE.A.2", "6.EE.A.3", "6.EE.A.4"]);
@@ -31,7 +31,8 @@ test("GFIELD Pre-Algebra Unit 1 follows the six requested expression concepts in
   assert.deepEqual(course.sources, [
     "https://www.thecorestandards.org/Math/Content/6/EE/",
     "https://www.thecorestandards.org/Math/Content/7/EE/",
-    "https://www.thecorestandards.org/Math/Content/7/NS/"
+    "https://www.thecorestandards.org/Math/Content/7/NS/",
+    "https://www.thecorestandards.org/Math/Content/7/RP/"
   ]);
 });
 
@@ -43,7 +44,7 @@ test("fraction examples use plain source notation for the shared stacked-fractio
 });
 
 test("GFIELD Pre-Algebra Unit 2 separates Grade 6 foundations from Grade 7 equation connections", function () {
-  assert.equal(course.units.length, 3);
+  assert.equal(course.units.length, 4);
   const unit = course.units[1];
   assert.equal(unit.id, "equations-and-inequalities");
   assert.deepEqual(unit.standards, ["6.EE.B.5", "6.EE.B.6", "6.EE.B.7", "6.EE.B.8", "7.EE.B.4"]);
@@ -69,10 +70,10 @@ test("GFIELD Pre-Algebra Unit 2 separates Grade 6 foundations from Grade 7 equat
   assert.match(unit.lessons[3].example.solution, /n=5/);
   assert.match(unit.lessons[4].example.solution, /h>125.*열린 점/);
   assert.match(unit.lessons[5].example.solution, /s≥50\/3.*17건/);
-  assert.equal(course.units.reduce(function (sum, item) { return sum + item.lessons.length; }, 0), 20);
+  assert.equal(course.units.reduce(function (sum, item) { return sum + item.lessons.length; }, 0), 27);
   assert.equal(course.units.reduce(function (sum, item) {
     return sum + item.lessons.reduce(function (lessonSum, lesson) { return lessonSum + lesson.practice.length; }, 0);
-  }, 0), 40);
+  }, 0), 54);
 });
 
 test("GFIELD Pre-Algebra Unit 3 covers the Grade 7 rational-number operation standards", function () {
@@ -102,4 +103,30 @@ test("GFIELD Pre-Algebra Unit 3 covers the Grade 7 rational-number operation sta
   assert.match(unit.lessons[6].example.prompt, /1\/8.*1\/6/);
   assert.match(unit.lessons[6].example.solution, /1÷8.*0\.125.*1÷6.*0\.1666/);
   assert.match(unit.lessons[7].example.solution, /0\.75달러/);
+});
+
+test("GFIELD Pre-Algebra Unit 4 connects ratios, unit rates, proportional relationships, and percent", function () {
+  const unit = course.units[3];
+  assert.equal(unit.id, "ratio-proportional-relationships");
+  assert.deepEqual(unit.standards, ["7.RP.A.1", "7.RP.A.2", "7.RP.A.3"]);
+  assert.deepEqual(unit.lessons.map(function (lesson) { return lesson.title; }), [
+    "비를 순서와 단위가 있는 곱셈 비교로 나타내기",
+    "비례표에서 동치인 비 찾기",
+    "단위율로 속도와 가격 비교하기",
+    "단위율로 측정 단위 바꾸기",
+    "식과 그래프로 비례 관계 설명하기",
+    "백분율을 비로 해석해 문장제 해결하기",
+    "비례 관계인지 판별하고 상황을 모델링하기"
+  ]);
+  assert.ok(unit.lessons.every(function (lesson) {
+    return lesson.objective && lesson.idea && lesson.example.prompt && lesson.example.solution
+      && lesson.practice.length === 2
+      && lesson.practice.every(function (item) { return item.prompt && item.answer && item.feedback; });
+  }));
+  assert.equal(unit.lessons.length, 7);
+  assert.equal(unit.lessons.reduce(function (sum, lesson) { return sum + lesson.practice.length; }, 0), 14);
+  assert.match(unit.lesson.solution, /2\.20<2\.50/);
+  assert.match(unit.lessons[4].example.solution, /y=3\.5x.*\(0,0\)/);
+  assert.match(unit.lessons[5].example.solution, /40×15\/100=6.*34달러/);
+  assert.match(unit.lessons[6].practice[1].answer, /C=6\+2n.*비례 관계가 아닙니다/);
 });

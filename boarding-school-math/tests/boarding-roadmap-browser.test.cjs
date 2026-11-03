@@ -69,7 +69,7 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   await page.locator("#course-path-cards article:last-child select").selectOption("geometry");
   assert.deepEqual(await page.locator("#course-path-cards h3").allInnerTexts(), ["Pre-Algebra", "Algebra 1", "Geometry"]);
   assert.deepEqual(await page.locator(".course-path-material-link").evaluateAll(function (nodes) { return nodes.map(function (node) { return node.getAttribute("href"); }); }), ["./prealgebra-path.html", "./algebra1-workbook.html", "./geometry-workbook.html"]);
-  assert.match(await page.locator("#course-path-cards").innerText(), /Pre-Algebra 3단원·20차시·40문항 공개[\s\S]*5단원·32차시·64문항 공개[\s\S]*5단원·16차시·32문항 공개/);
+  assert.match(await page.locator("#course-path-cards").innerText(), /Pre-Algebra 4단원·27차시·54문항 공개[\s\S]*5단원·32차시·64문항 공개[\s\S]*5단원·16차시·32문항 공개/);
   await page.locator("#annual-plan-periods a").first().click();
   await page.waitForURL(/algebra1-workbook\.html\?edition=student$/);
   assert.equal(await page.locator("#workbook-title").innerText(), "Algebra 1 단원 교재");
@@ -124,7 +124,7 @@ test("Pre-Algebra route connects public materials and the original six-lesson ex
   ]);
   assert.equal(await page.locator(".route-stage").count(), 4);
   assert.equal(await page.locator(".route-stage .resource-links a:not(.workbook-link)").count(), 10);
-  assert.equal(await page.locator(".route-stage .workbook-link").count(), 12);
+  assert.equal(await page.locator(".route-stage .workbook-link").count(), 14);
   const conceptClusters = await page.locator('.route-stage .resource-links a:not(.workbook-link)').evaluateAll(function (nodes) {
     return nodes.map(function (node) { return new URL(node.href).searchParams.get("cluster"); });
   });
@@ -160,7 +160,7 @@ test("original Pre-Algebra units render stacked fractions in student, teacher, a
   page.on("pageerror", function (error) { errors.push(error.message); });
   const workbookUrl = `${url.replace("boarding-roadmap.html", "prealgebra-workbook.html")}?edition=student`;
   await page.goto(workbookUrl, { waitUntil: "networkidle" });
-  assert.match(await page.locator("#workbook-status").innerText(), /3개 단원 · 20차시 · 연습 40문항 · A4/);
+  assert.match(await page.locator("#workbook-status").innerText(), /4개 단원 · 27차시 · 연습 54문항 · A4/);
   assert.equal(await page.locator(".lesson-page").count(), 20);
   assert.equal(await page.locator(".practice-page").count(), 20);
   assert.ok(await page.locator('.math-fraction[aria-label="2분의 3"]').count() > 0);
