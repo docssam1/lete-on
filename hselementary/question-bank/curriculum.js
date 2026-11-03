@@ -3608,6 +3608,9 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   if (source52Unit2) for (const [id,source,parent,key,manual,pdf,printed] of [
+    ["5-2-u2-t3","5-2-u2-practice-54-similar","5-2-u2-practice-54-original","source52U2FindOriginalAmountSimilar",false,77,81],
+    ["5-2-u2-t3-2","5-2-u2-practice-19-similar","5-2-u2-practice-19-original","source52U2TwoDistancesSimilar",false,73,77],
+    ["5-2-u2-t3-3","5-2-u2-practice-45-similar","5-2-u2-practice-45-original","source52U2FractionDifferenceTotalSimilar",false,76,80],
     ["5-2-u2-t1","5-2-u2-practice-10-similar","5-2-u2-practice-10-original","source52U2RemainingFractionsSimilar",false,72,76],
     ["5-2-u2-t1-3","5-2-u2-practice-20-similar","5-2-u2-practice-20-original","source52U2FractionMultipleCountSimilar",false,73,77],
     ["5-2-u2-t2","5-2-u2-practice-24-similar","5-2-u2-practice-24-original","source52U2TelescopingFractionsSimilar",true,74,78]
