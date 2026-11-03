@@ -437,6 +437,9 @@ test("released unit practice is reachable without exposing the private Grade 7 d
 test("grade comparison shows curriculum examples without implying measured level", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=8`, { waitUntil: "networkidle" });
+  assert.match(await page.locator("#annual-plan-note").innerText(), /학교 Geometry는 정규 진도에서 이어가고.*선택 심화/);
+  assert.match(await page.locator("#annual-plan-periods").innerText(), /이차식·지수·로그.*복소수·수열·급수·행렬/);
+  assert.match(await page.locator("#annual-plan-periods").innerText(), /삼각비·원과 타원·도형의 변환·기하 증명/);
   const comparison = page.getByLabel("비교할 학년");
   assert.equal(await page.locator("#assessment-entry-link").getAttribute("href"), "./assessment-entry.html?grade=8");
   assert.match(await page.locator(".comparison-evidence-link").innerText(), /학교 Placement Test나 MAP·CTP/);
@@ -448,6 +451,8 @@ test("grade comparison shows curriculum examples without implying measured level
   assert.match(await page.locator("#comparison-note").innerText(), /학교 과목 순서를 확인/);
   assert.match(await page.locator("#comparison-bridge-copy").innerText(), /8학년:.*9학년:/);
   assert.match(await page.locator("#comparison-current-tracks").innerText(), /1–3개월[\s\S]*대수 개념과 문제 해결/);
+  assert.match(await page.locator("#comparison-current-tracks").innerText(), /학교 Geometry는 학교 과정에서 이어가요/);
+  assert.match(await page.locator("#comparison-current-tracks").innerText(), /AIME형 풀이/);
   assert.match(await page.locator("#comparison-current-tracks").innerText(), /4–6개월[\s\S]*기하 심화와 AMC 10\/12/);
   assert.match(await page.locator("#comparison-target-tracks").innerText(), /10–12개월 · 추정/);
   assert.match(await page.locator(".comparison-boundary").innerText(), /학생의 현재 위치.*판단하지 않아요/);

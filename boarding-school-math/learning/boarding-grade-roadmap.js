@@ -102,9 +102,9 @@
       ["7–9개월", "대수 강화와 SAT 유형", "대수·기하 문장제를 그래프·식·그림으로 연결해요.", "Digital SAT Math 영역별 기초 연습"],
       ["10–12개월", "누적 복습과 모의 연습", "배운 개념을 섞어 풀고 막힌 이유를 기록해요.", "개념 혼합 문제 · 준비도에 맞춘 모의 문제"]
     ]) }),
-    8: Object.freeze({ source: "provided", title: "대수·기하에서 AIME·SAT 선택까지", note: "학습 계획 예시예요. 과목 선행이나 AIME 진출을 보장하지 않아요.", periods: Object.freeze([
-      ["1–3개월", "대수 개념과 문제 해결", "함수와 대수 개념을 확인하고 풀이 선택의 이유를 설명해요.", "AoPS Intermediate Algebra · Khan Academy Algebra 2"],
-      ["4–6개월", "기하 심화와 AMC 10/12", "도형 관계를 증명하고 대수와 연결해 풀어요.", "AoPS Introduction to Geometry · Geometry Revisited · AMC 기출"],
+    8: Object.freeze({ source: "provided", title: "대수·기하에서 AIME·SAT 선택까지", note: "가속 학습 예시예요. 학교 Geometry는 정규 진도에서 이어가고, 고급 대수 주제는 선수 개념과 준비도에 맞춰 선택 심화해요. 과목 선행이나 AIME 진출을 보장하지 않아요.", periods: Object.freeze([
+      ["1–3개월", "대수 개념과 문제 해결", "Algebra 2의 이차식·지수·로그와 함수 개념을 확인해요. 준비되면 복소수·수열·급수·행렬을 선택해 살펴봐요.", "AoPS Intermediate Algebra · Khan Academy Algebra 2"],
+      ["4–6개월", "기하 심화와 AMC 10/12", "학교 Geometry를 이어가며 삼각비·원과 타원·도형의 변환·기하 증명을 배우고 대수와 연결해요.", "AoPS Introduction to Geometry · Geometry Revisited · AMC 기출"],
       ["7–9개월", "AIME형 문제와 SAT 심화", "준비된 학생은 서술형 풀이와 SAT 영역별 연습을 병행해요.", "AoPS Volume 2 · College Board 공식 SAT 자료"],
       ["10–12개월", "실전 연습과 풀이 복습", "시간을 재서 풀고 개념·아이디어·계산 실수를 구분해요.", "AMC/AIME 기출 · SAT 모의 문제 · AoPS 복습"]
     ]) }),
@@ -154,7 +154,7 @@
     5: Object.freeze([["학교 수학", "Math Mammoth · IXL. 약한 단원을 보완하고 점수보다 풀이 이유를 설명해요."], ["문제 해결", "문장제 조건을 그림·표·식으로 바꾸기"]]),
     6: Object.freeze([["학교 수학", "Singapore Math Primary Mathematics · Spectrum Test Prep. 새 진도보다 이미 배운 단원을 깊게 익혀요."], ["경시 · 선택", "준비되면 AMC 8 문제에서 풀이 이유 말하기"], ["SAT · 맛보기", "원할 때 문장제·자료 해석을 가볍게 보기"]]),
     7: Object.freeze([["학교 수학", "유리수·비례·식에서 Algebra 1로"], ["경시 · 선택", "AMC 8로 다지거나 AMC 10 입문 문제 보기"], ["SAT · 맛보기", "대수·기하 문장제를 개념과 연결하기"]]),
-    8: Object.freeze([["학교 수학", "함수·기하를 배우고 준비되면 Algebra 2로"], ["경시 · 선택", "AMC 10/12 혼합 문제와 선택지 없이 풀기"], ["SAT · 선택", "대수·자료 해석 유형 점검"]]),
+    8: Object.freeze([["학교 수학", "Algebra 2는 준비도에 맞춰 선택 심화하고 Geometry는 학교 과정에서 이어가요"], ["경시 · 선택", "AMC 10/12 혼합 문제와 AIME형 풀이를 선택해 연습"], ["SAT · 선택", "대수·자료 해석 유형 점검"]]),
     9: Object.freeze([["학교 수학 · 추정", "Algebra 2·기하를 점검하고 다음 과목 정하기"], ["경시 · 선택", "AMC 혼합 문제를 풀이 과정까지 설명"], ["SAT · 선택", "학교 진도에 맞춰 필요한 영역만 보기"]]),
     10: Object.freeze([["학교 수학", "Pre-Calculus 함수·삼각법과 증명 기초"], ["경시 · 선택", "AMC 12 130+는 개인 도전 목표로 둘 수 있어요. AIME 응시와 USAMO 선발은 해당 연도 MAA 기준을 확인해요."], ["SAT · 선택", "Digital SAT Math 800은 개인 도전 목표예요. 응시 계획에 맞춰 공식 형식으로 연습해요."]]),
     11: Object.freeze([["학교 수학 · 추정", "수강 과목과 선수 조건을 확인하고 개념 연결"], ["경시 · 선택", "AMC 12는 해당 연도 참가 자격 확인 후 선택"], ["SAT · 선택", "응시 계획이 있을 때 공식 영역을 점검"]]),

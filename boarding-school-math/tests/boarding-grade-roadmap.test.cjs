@@ -131,6 +131,16 @@ test("Grade 10 score goals are optional aspirations, with qualification kept sep
   assert.match(tracks.find(function (track) { return track[0] === "SAT · 선택"; })[1], /Digital SAT Math 800은 개인 도전 목표/);
 });
 
+test("Grade 8 advanced algebra stays optional while school Geometry continues", function () {
+  const plan = roadmap.getAnnualPlan(8);
+  const tracks = roadmap.getTracks(8);
+  assert.match(plan.note, /학교 Geometry는 정규 진도에서 이어가고.*준비도에 맞춰 선택 심화/);
+  assert.match(plan.periods[0][2], /이차식·지수·로그.*복소수·수열·급수·행렬을 선택/);
+  assert.match(plan.periods[1][2], /학교 Geometry.*삼각비·원과 타원·도형의 변환·기하 증명/);
+  assert.match(tracks.find(function (track) { return track[0] === "학교 수학"; })[1], /Algebra 2는 준비도에 맞춰 선택 심화.*Geometry는 학교 과정에서 이어가요/);
+  assert.match(tracks.find(function (track) { return track[0] === "경시 · 선택"; })[1], /AMC 10\/12.*AIME형 풀이/);
+});
+
 test("competition options follow grade and keep advanced AMC paths optional", function () {
   assert.deepEqual(roadmap.competitionOptions(3).map(function (entry) { return entry.id; }), ["sasmo", "kangaroo"]);
   [
