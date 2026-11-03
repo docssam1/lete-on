@@ -175,8 +175,13 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 
 - [MAA 작성 2005 AMC 10/12 연례 보고서 사본](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions)의 Table I에서 2002–2005 AMC 10/12 전체 응시 평균을 회차별로 확인했다. [MAA 작성 2008 AMC 고교 연례 보고서 사본](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions)의 Table I·II에서는 2006 AMC 12 A/B와 AMC 10 A/B 전체 응시 평균을 확인했다. 두 보고서는 MAA 저작물이지만 현재 접근 가능한 파일은 제3자 호스팅 사본이다.
 - AMC 10은 2002A 68.5, 2003 A/B 74.4/79.6, 2004 A/B 69.1/80.4, 2005 A/B 74.7/77.9, 2006 A/B 79.0/68.5; AMC 12는 2002 A/B 72.7/80.8, 2003 77.8/76.6, 2004 73.9/84.5, 2005 78.7/83.4, 2006 85.7/85.5로 전사했다. 2002 AMC 10 B는 MAA 보고서의 텍스트 전사에서 해당 평균 셀이 `68.5`로 추출되지만 공개 연도표는 `74.9`로 달라 값 연결을 보류했다. 2002 AMC 10 B 행은 원문 표의 시각 검증 전까지 만들지 않는다.
-- 추가한 값은 평균만 표시한다. 역사적 Top 1%·Top 5% 경계나 학년 규준을 만들어 붙이지 않는다. 2000–2001 AMC 10/12 전체 평균은 이번에 접근한 MAA 표에서 충분히 확인하지 못해 미수록으로 남겼다. 2010 보고서의 `School Winner Scores` 역사표는 학교별 우승자 평균이므로 전체 참가자 평균으로 재사용하지 않았다.
+- 추가한 값은 평균만 표시한다. 역사적 Top 1%·Top 5% 경계나 학년 규준을 만들어 붙이지 않는다. 2000–2001 전체 평균은 이 시점에는 미수록으로 남겼고, 이후 2차 통계표에서 확인한 값은 아래 절에 출처 등급을 별도로 명시해 추가했다. 2010 보고서의 `School Winner Scores` 역사표는 학교별 우승자 평균이므로 전체 참가자 평균으로 재사용하지 않았다.
 - 검수: AMC 10/12 2006 값은 두 공개 연도표와 MAA 보고서 표가 일치하는 값만 채택했다. 연례 보고서 Table I/II의 모집단 정의와 2010의 학교 우승자 별도 표를 구분했다. 코드 참조 테스트에 2002–2006 회차·폼, 미확인 2002 AMC 10 B 차단, Top 1% 미생성 확인을 추가했다.
+
+## 2026-11-04 웹 검색 추가: 2000–2001 AMC 평균 및 원본 풀이
+
+- [AMC 10 연도별 통계표](https://mathgoldmedalist.com/competitions/amc-10)는 2000 평균 64.2, 2001 평균 67.8을, [AMC 12 연도별 통계표](https://mathgoldmedalist.com/competitions/amc-12)는 2000 평균 64.9, 2001 평균 56.6을 기재한다. 이 페이지는 MAA 역사 보고서를 출처로 안내하지만, 제공 통계 파일을 전사했으며 일부 값을 MAA 원보고서와 독립 검증하지 못했다고 명시한다. 따라서 네 값은 2차 자료 참고값으로 평균만 화면에 표시하고 백분위·학년 규준·공식 자격으로 확장하지 않는다. [MAA K–12 공개 결과 화면](https://maa.edvistas.com/eduview/report.aspx?view=1561&mode=6)은 교차 확인 경로로 연결했다.
+- [2001 AMC 10 원본 시험 PDF](https://f.hubspotusercontent30.net/hubfs/981338/Math%20Competition%20Problems_PDFS/2001AMC10.pdf), [2001 AMC 10 공식 풀이 PDF](https://f.hubspotusercontent30.net/hubfs/981338/Math%20Competition%20Problems_PDFS/2001AMC10-solutions.pdf), [2001 AMC 12 공식 풀이 PDF](https://f.hubspotusercontent30.net/hubfs/981338/Math%20Competition%20Problems_PDFS/2001AMC12-solutions.pdf)를 확인했다. 원본들은 MAA 저작권 표기를 포함한다. 시험지 내용은 저장소에 복제하지 않고, 허가를 명시한 LIVE 연도별 아카이브의 인쇄·온라인 응시·정답·풀이 경로를 이용한다.
 
 ## 2026-11-04 웹 검색 추가: 2010–2011 AMC 8 집계
 
