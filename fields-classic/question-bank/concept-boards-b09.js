@@ -16,6 +16,52 @@ const view = (x0, base, hs, s = 36, fill = "#cfe0f5") => hs.flatMap((h, i) => Ar
   { kind: "fill", x: x0 + i * s + 2, y: base - (k + 1) * s + 2, w: s - 4, h: s - 4, fill }, { kind: "box", x: x0 + i * s, y: base - (k + 1) * s, w: s, h: s, color: "ink" }]).flat());
 
 export const BOARDS_B09 = {
+  // 1단원 1차시(원장 2026-11-03 「9권 만들어」): 9권 워밍업 자료에 도형 나누기 차시가 없어 덱 전용 학습(study-deck.js DECK_LESSONS)으로 만든 판서.
+  // 모눈 도형은 본책·골든벨 문항과 같은 판이 되지 않게 새로 짰다(4×3 직사각형 2조각 · 4×4 정사각형 4조각).
+  "book-09/partition-congruent": (() => {
+    const A = { x: 90, y: 160, cell: 56, cols: 4, rows: 3 }, aCut = [[1, 0], [1, 1], [2, 1], [2, 1.5]];
+    const aTurn = aCut.map(([c, r]) => [4 - c, 3 - r]).reverse(), aLine = [...aCut, ...aTurn.slice(1)];
+    const aLeft = [[0, 0], ...aLine, [0, 3]], aRight = [[4, 0], [4, 3], ...[...aLine].reverse().slice(0, -1), [1, 0]];
+    const B = { x: 560, y: 150, cell: 54, cols: 4, rows: 4 }, cw = ([c, r]) => [2 - (r - 2), 2 + (c - 2)];
+    const bCut = [[1, 0], [1, 1], [2, 1], [2, 2]];
+    const turns = [bCut, bCut.map(cw), bCut.map(cw).map(cw), bCut.map(cw).map(cw).map(cw)];
+    const bPiece0 = [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2], [1, 2], [1, 3], [0, 3]];
+    const pieces = [bPiece0, bPiece0.map(cw), bPiece0.map(cw).map(cw), bPiece0.map(cw).map(cw).map(cw)];
+    const fills = ["#cfe0f5", "#f6e1a8", "#d7ecd9", "#f6dcd3"], strokes = ["blue", "gold", "green", "red"];
+    const line = (G, pts, stroke = "red", width = 6, dash) => ({ kind: "path", d: `M ${pts.map(([c, r]) => `${G.x + c * G.cell} ${G.y + r * G.cell}`).join(" L ")}`, stroke, width, dash });
+    const dot = (G, c, r) => ({ kind: "node", cx: G.x + c * G.cell, cy: G.y + r * G.cell, r: 7, color: "ink", bg: "ink", width: 2 });
+    const CHK = 10;
+    return {
+      title: "모양과 크기가 같게 나눠요 — 가운데 점으로 돌려서",
+      kicker: "9권 1단원 · 손글씨 개념",
+      beats: [
+        { say: "도형을 모양과 크기가 같은 조각으로 나눠 볼 거예요. 비결은 가운데 점이에요. 한 조각의 선을 그리고, 그 선을 가운데 점으로 돌려서 똑같이 이어 그려요.",
+          items: [title("모양과 크기가 같게 나누기")] },
+        { say: "가로 네 칸, 세로 세 칸 직사각형이에요. 가운데 점을 찍어요. 이 점을 중심으로 반 바퀴 돌리면 직사각형이 제자리에 꼭 겹쳐요.",
+          items: [gridOf(A), poly(A, [[0, 0], [4, 0], [4, 3], [0, 3]], "ink", null, false, 4), dot(A, 2, 1.5)] },
+        { say: "위에서 가운데 점까지 빨간 선을 먼저 그려요. 칸의 선을 따라 아래로, 옆으로, 다시 아래로요.",
+          items: [line(A, aCut)] },
+        { say: "이 빨간 선을 가운데 점으로 반 바퀴 돌려요. 돌린 선을 가운데 점에서 이어 그리면 아래쪽까지 닿아요.",
+          items: [line(A, aTurn, "red", 6, true)] },
+        { say: "두 조각이 생겼어요. 한 조각을 반 바퀴 돌리면 다른 조각과 꼭 겹쳐요. 칸을 세어 봐요. 열두 칸이 여섯 칸, 여섯 칸으로 나뉘었어요.",
+          items: [poly(A, aLeft, "blue", fills[0]), poly(A, aRight, "gold", fills[1]), line(A, aLine, "red", 5), T(A.x, 400, "12칸 → 6칸 + 6칸", "blue", 28)] },
+        { say: "이번엔 네 조각이에요. 가로 네 칸, 세로 네 칸 정사각형은 반의 반 바퀴 돌려도 제자리에 겹쳐요. 그래서 빨간 선을 반의 반 바퀴씩 세 번 돌려 이어 그려요.",
+          items: [gridOf(B), poly(B, [[0, 0], [4, 0], [4, 4], [0, 4]], "ink", null, false, 4), dot(B, 2, 2), line(B, turns[0])] },
+        { say: "반의 반 바퀴, 또 반의 반 바퀴, 한 번 더. 선 네 개가 가운데 점에서 만나요.",
+          items: turns.slice(1).map((t) => line(B, t, "red", 6, true)) },
+        { say: "네 조각이 모두 네 칸씩이에요. 한 조각을 반의 반 바퀴씩 돌리면 다음 조각과 꼭 겹쳐요. 모양도 크기도 같아요.",
+          items: [...pieces.map((pc, k) => poly(B, pc, strokes[k], fills[k])), ...turns.map((t) => line(B, t, "red", 5)), T(B.x, 400, "16칸 → 4칸씩 4조각", "green", 28)] },
+        { say: "정리해요. 먼저 전체 칸 수를 조각 수로 나눠 한 조각이 몇 칸인지 알아요. 그다음 가운데 점까지 선을 그리고, 그 선을 돌려 이어 그려요.", mood: "praise",
+          items: [T(60, 470, "① 한 조각 = 전체 칸 ÷ 조각 수", "gold", 26), T(60, 515, "② 가운데 점까지 선 → 돌려서 이어 그리기", "gold", 26)] },
+        { say: `한 문제 풀어 봐요. ${KO[CHK]} 칸짜리 도형을 가운데 점으로 반 바퀴 돌려 모양과 크기가 같은 두 조각으로 나누면, 한 조각은 몇 칸일까요?`, mood: "think",
+          items: [],
+          check: { question: `${CHK}칸짜리 도형을 모양과 크기가 같은 2조각으로 나누면 한 조각은 몇 칸?`,
+            options: [String(CHK / 2 - 1), String(CHK / 2), String(CHK)], answer: 1,
+            hint: "전체 칸 수를 조각 수로 나눠요.", sayHint: `${CHK} 칸을 두 조각으로 똑같이 나눠요. ${CHK} 나누기 2예요.`,
+            right: `맞았어요! ${CHK} ÷ 2 = ${CHK / 2}칸.`, sayRight: `맞았어요! 한 조각은 ${KO[CHK / 2]} 칸이에요. 이제 게임으로 가요.` } }
+      ]
+    };
+  })(),
   "book-09/unit-area-and-half": (() => {
     const A = { x: 70, y: 135, cell: 36, cols: 7, rows: 5 }, rect = [[1, 1], [6, 1], [6, 4], [1, 4]], aW = 5, aH = 3;
     const B = { x: 70, y: 350, cell: 36, cols: 8, rows: 5 }, bRect = [[1, 1], [7, 1], [7, 4], [1, 4]], bTri = [[1, 1], [7, 4], [1, 4]], bW = 6, bH = 3;

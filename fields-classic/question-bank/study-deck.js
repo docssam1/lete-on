@@ -1,4 +1,4 @@
-import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261101q";
+import { unitParts, partProblems, lessonsByUnit, STUDY_GAMES, STUDY_BOARDS } from "./study-map.js?v=20261103d";
 
 // 차시 덱의 장과 독쌤 말 — study.js(화면)와 tools/export-study-voice.mjs(음성 목록)가 같이 쓴다.
 // 한 단원 = 차시 2번(원장 2026-10-29 「1단원을 2번으로 끊어 줘야 하고」 · 본책이 개념 1·2 묶음으로 나뉜 대로, 7권 2단원·10권 1단원은 3번):
@@ -93,15 +93,20 @@ export const SESSION_LESSONS = Object.freeze({
   "book-06/2": [["multiplication-source", "same-factor-source"], ["inclusive-range-count", "consecutive-source", "even-odd-order-source"]],
   "book-07/2": [[], ["closed-loop-planting"]],
   "book-07/3": [[], ["distance-line-source", "venn-overlap-all"]],
-  "book-09/0": [[], ["unit-area-and-half"]],
+  "book-09/0": [["partition-congruent"], ["unit-area-and-half"]],
   "book-09/1": [["cube-map-total", "cube-paint-source", "cube-views-source"], ["cube-min-max-source"]],
   "book-10/0": [["napier-split-source"], ["number-count-source", "consecutive-even-source"], ["consecutive-odd-source"]]
+});
+// 덱 전용 학습: 워밍업(골든벨) 자료에 그 차시 내용이 없을 때 판서(STUDY_BOARDS)와 연습 공방(DRILL_RECIPES)만 둔다.
+// 워밍업 문항은 골든벨 원본에서만 오므로(CLAUDE.md) 여기에는 없다 — original.items가 비어 워밍업 장이 생기지 않는다.
+export const DECK_LESSONS = Object.freeze({
+  "book-09/partition-congruent": Object.freeze({ id: "partition-congruent", title: "모양과 크기가 같게 나눠요", deckOnly: true, original: Object.freeze({ items: [] }) })
 });
 export function sessionLessons(book, unitIndex, bellData, part) {
   const bellBook = bellData?.books.find((entry) => entry.id === book.id);
   const all = bellData ? lessonsByUnit(book, bellBook).units[unitIndex] : [];
   const fixed = SESSION_LESSONS[`${book.id}/${unitIndex}`];
-  if (fixed) return (fixed[part - 1] || []).map((id) => all.find((lesson) => lesson.id === id)).filter(Boolean);
+  if (fixed) return (fixed[part - 1] || []).map((id) => all.find((lesson) => lesson.id === id) || DECK_LESSONS[`${book.id}/${id}`]).filter(Boolean);
   const count = sessionCount(book.units[unitIndex]);
   const size = Math.ceil(all.length / count);
   return all.slice((part - 1) * size, part * size);

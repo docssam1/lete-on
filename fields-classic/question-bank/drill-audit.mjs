@@ -29,6 +29,8 @@ for (const cur of CURRICULUM.filter((b) => /^book-\d\d$/.test(b.id))) {
   const bell = GOLDEN_BELL_BOOKS.find((b) => b.id === cur.id);
   if (bell) for (const ls of lessonsByUnit(cur, bell).units) for (const l of ls) lessonKeys.add(`${cur.id}/${l.id}`);
 }
+// 덱 전용 학습(워밍업 자료가 없는 차시, study-deck.js DECK_LESSONS)도 덱에 있다
+for (const key of Object.keys((await import("./study-deck.js")).DECK_LESSONS)) lessonKeys.add(key);
 let checked = 0;
 for (const [key, types] of Object.entries(DRILL_RECIPES)) {
   if (!lessonKeys.has(key)) fails.push(`${key}: 학생 덱에 없는 차시`);

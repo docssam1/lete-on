@@ -7,7 +7,7 @@
 import { typeById } from "./source-data.js?v=20261101b";
 import { GENERATORS } from "./generators.js?v=20261101n";
 import { DRILL_TYPES } from "./drill-generators.js?v=20261027a";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261027m";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261103d";
 import { jo } from "./concept-board-kit.js?v=20261026b";
 import * as B2 from "./book02-visuals.js?v=20261027b";
 import * as FOLD from "./fold-visuals.js?v=20261027a";
@@ -83,6 +83,11 @@ function symbolChoice(p) {
 export function choiceShape(p) {
   const a = plain(p.answer), v = p.visual || {}, m = p.meta || {};
   if (v.kind === "symbol-pattern-sequence" && v.target) return symbolChoice(p);
+  // 보기 그림 ①~④에서 고르기(9권 나누기 고르기 등): 번호 단추로 고른다
+  if (/^[①②③④⑤]$/u.test(a) && Array.isArray(v.options) && v.options.length >= 2 && v.options.length <= 5) {
+    const options = "①②③④⑤".slice(0, v.options.length).split("");
+    return { kind: "choice", options, values: [options.indexOf(a)] };
+  }
   if (!a || /\d/.test(a)) return null;
   const ring = Array.isArray(m.order) && m.order.every((x) => typeof x === "string") ? [...m.order].sort((x, y) => x.localeCompare(y, "ko")) : null;
   const options = [v.items, v.names, v.places, v.columnLabels, v.rowLabels, m.items, m.names, m.places, seatLabels(v), ring].find((g) => Array.isArray(g) && g.includes(a));

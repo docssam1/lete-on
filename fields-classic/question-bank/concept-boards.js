@@ -11,7 +11,7 @@ import { BOARDS_B05 } from "./concept-boards-b05.js?v=20261027c";
 import { BOARDS_B06 } from "./concept-boards-b06.js?v=20261027c";
 import { BOARDS_B07 } from "./concept-boards-b07.js?v=20261027c";
 import { BOARDS_B08 } from "./concept-boards-b08.js?v=20261027c";
-import { BOARDS_B09 } from "./concept-boards-b09.js?v=20261027c";
+import { BOARDS_B09 } from "./concept-boards-b09.js?v=20261103d";
 import { BOARDS_B10 } from "./concept-boards-b10.js?v=20261027c";
 export { jo, landing, mirrorLR, mirrorTB, turnHalf, DIGIT_SEGMENTS, SEGMENT_MAPS, moveSegs, readDigit, transformDigit, segGeom, segMid };
 

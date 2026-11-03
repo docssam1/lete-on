@@ -123,6 +123,8 @@ export const DRILL_RECIPES = Object.freeze({
   "book-09/cube-map-total": ["cube-count-solid", "cube-fill-box"],
   "book-09/cube-views-source": ["cube-three-views"],
   "book-09/cube-paint-source": ["cube-painted-cube-count"],
+  // 9권 1단원 1차시(덱 전용 학습 partition-congruent): 그리기 문제는 공방에서 답을 맞출 수 없어 고르기·수로 답하는 나누기 유형만
+  "book-09/partition-congruent": ["latin-square-congruent-partition-b9", "triangle-equal-subdivision-b9", "equal-sum-congruent-partition-b9", "hexagon-equal-subdivision-b9"],
   "book-09/unit-area-and-half": ["unit-grid-area", "parallelogram-grid-area-b9", "shaded-composite-grid-area-b9"],
   "book-09/magic-arrangement-source": ["triangle-edge-extreme-six-b9", "circle-chain-equal-sum-b9", "triangle-edge-extreme-nine-b9"],
   // 10권 — 연속수의 합 (수의 개수는 6권의 같은 유형을 빌려 쓴다)
