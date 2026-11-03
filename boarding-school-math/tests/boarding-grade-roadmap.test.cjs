@@ -138,14 +138,19 @@ test("upper-grade course references are limited to named courses and keep Grade 
   assert.match(roadmap.annualPlanResourceLinks[8][0][0].title, /지필드 Algebra 2 원본/);
   assert.equal(roadmap.annualPlanResourceLinks[8][1][0].url, "./geometry-workbook.html");
   assert.match(roadmap.annualPlanResourceLinks[8][1][0].title, /지필드 Geometry 원본/);
+  assert.deepEqual(roadmap.annualPlanResourceLinks[8][1].map(function (resource) { return resource.url; }), ["./geometry-workbook.html", "./amc10-practice.html", "https://maa.org/student-programs/amc/"]);
+  assert.deepEqual(roadmap.annualPlanResourceLinks[8][2].map(function (resource) { return resource.url; }), ["./aime-practice.html", "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/", "https://satsuite.collegeboard.org/practice/student-question-bank/math"]);
+  assert.equal(roadmap.courseStageResources[8][1][0].url, "./amc10-practice.html");
   assert.match(roadmap.courseStageResources[8][2][0].title, /지필드 Algebra 2 원본/);
-  assert.match(roadmap.courseStageResources[8][2][1].title, /MAA 2027 AIME 자격·응시 안내/);
-  assert.equal(roadmap.courseStageResources[8][2][1].url, "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/");
+  assert.equal(roadmap.courseStageResources[8][2][1].url, "./aime-practice.html");
+  assert.match(roadmap.courseStageResources[8][2][2].title, /MAA 2027 AIME 자격·응시 안내/);
+  assert.equal(roadmap.courseStageResources[8][2][2].url, "https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/");
   assert.match(roadmap.courseStageResources[8].stageNotes[2], /2027 AIME.*만 13세 이상.*AMC 10 100점.*AMC 12 85점/);
   assert.match(roadmap.courseStageResources[9].note, /학교마다 수강 과목과 순서/);
   assert.equal(roadmap.courseStageResources[9][0][0].url, "./algebra2-workbook.html");
   assert.equal(roadmap.courseStageResources[9][1][0].url, "./geometry-workbook.html");
   assert.equal(roadmap.courseStageResources[10][0][0].url, "./precalculus-workbook.html");
+  assert.equal(roadmap.courseStageResources[10][1][0].url, "./aime-practice.html");
   assert.match(roadmap.courseStageResources[10].stageNotes[2], /2027 AIME.*만 13세 이상.*AMC 10 100점.*AMC 12 85점/);
   assert.equal(roadmap.courseStageResources[10][0][0].title, "지필드 Precalculus 원본 수업·A4 교재");
   assert.deepEqual(roadmap.courseStageResources[10][2].map(function (source) { return source.url; }), [

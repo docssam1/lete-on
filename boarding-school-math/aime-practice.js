@@ -1,0 +1,171 @@
+(function () {
+  "use strict";
+  const bank = window.GFIELDAimeConceptPractice;
+  if (!bank) return;
+  const list = document.getElementById("aime-items");
+  const domainFilters = document.getElementById("domain-filters");
+  const stageFilters = document.getElementById("stage-filters");
+  const progress = document.getElementById("practice-progress");
+  const attempts = new Map();
+  let activeDomain = "전체";
+  let activeStage = "전체";
+
+  function appendText(target, value) {
+    if (window.GFIELDMathText && typeof window.GFIELDMathText.append === "function") window.GFIELDMathText.append(target, value);
+    else target.textContent = String(value == null ? "" : value);
+  }
+  function renderFilterGroup(target, values, getValue, setValue, label) {
+    target.replaceChildren();
+    ["전체"].concat(values).forEach(function (value) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "domain-filter";
+      button.textContent = value;
+      button.setAttribute("aria-pressed", String(value === getValue()));
+      button.setAttribute("aria-label", `${label}: ${value}`);
+      button.addEventListener("click", function () {
+        setValue(value);
+        renderFilters();
+        renderItems();
+      });
+      target.append(button);
+    });
+  }
+  function renderFilters() {
+    renderFilterGroup(domainFilters, bank.domains, function () { return activeDomain; }, function (value) { activeDomain = value; }, "수학 영역");
+    renderFilterGroup(stageFilters, bank.stages, function () { return activeStage; }, function (value) { activeStage = value; }, "풀이 단계");
+  }
+  function updateProgress() {
+    progress.textContent = `${attempts.size} / ${bank.items.length}`;
+  }
+  function renderItems() {
+    const visible = bank.items.filter(function (item) {
+      return (activeDomain === "전체" || item.domain === activeDomain) && (activeStage === "전체" || item.stage === activeStage);
+    });
+    list.replaceChildren();
+    visible.forEach(function (item) {
+      const card = document.createElement("article");
+      const record = attempts.get(item.id) || { value: "", solved: false, wrong: false };
+      card.className = `problem-card${record.solved ? " solved" : ""}`;
+      card.id = `problem-${item.id}`;
+      card.dataset.itemId = item.id;
+      card.dataset.domain = item.domain;
+      card.dataset.stage = item.stage;
+      card.dataset.solved = String(record.solved);
+
+      const meta = document.createElement("div");
+      meta.className = "problem-meta";
+      const tag = document.createElement("b");
+      tag.textContent = `${item.domain} · ${item.stage}`;
+      const label = document.createElement("span");
+      label.textContent = "지필드 자체 연습";
+      meta.append(tag, label);
+
+      const heading = document.createElement("h3");
+      heading.textContent = `${String(bank.items.indexOf(item) + 1).padStart(2, "0")} · ${item.title}`;
+      const prompt = document.createElement("p");
+      prompt.className = "problem-prompt";
+      appendText(prompt, item.prompt);
+
+      const form = document.createElement("form");
+      form.className = "answer-entry";
+      form.noValidate = true;
+      const answerLabel = document.createElement("label");
+      answerLabel.htmlFor = `answer-${item.id}`;
+      answerLabel.textContent = "정수 답 입력 (0–999)";
+      const input = document.createElement("input");
+      input.id = `answer-${item.id}`;
+      input.name = "answer";
+      input.type = "text";
+      input.inputMode = "numeric";
+      input.autocomplete = "off";
+      input.maxLength = 4;
+      input.pattern = "[0-9]{1,3}";
+      input.placeholder = "예: 84";
+      input.value = record.value;
+      input.setAttribute("aria-describedby", `feedback-${item.id}`);
+      input.disabled = record.solved;
+      const submit = document.createElement("button");
+      submit.type = "submit";
+      submit.textContent = record.solved ? "확인 완료" : "답 확인";
+      submit.disabled = record.solved;
+      answerLabel.append(input);
+      form.append(answerLabel, submit);
+
+      const feedback = document.createElement("p");
+      feedback.id = `feedback-${item.id}`;
+      feedback.className = "feedback";
+      feedback.setAttribute("aria-live", "polite");
+      if (record.solved) {
+        feedback.classList.add("correct");
+        feedback.textContent = "정답이에요. 풀이에서 사용한 개념과 연결을 확인해 보세요.";
+      } else if (record.wrong) {
+        feedback.classList.add("wrong");
+        feedback.textContent = "아직 정답이 아니에요. 힌트를 보고 다시 풀어 보세요.";
+      }
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const raw = input.value.trim();
+        if (!/^[0-9]{1,3}$/.test(raw) || Number(raw) > 999) {
+          feedback.className = "feedback wrong";
+          feedback.textContent = "0부터 999까지의 정수로 입력해 주세요.";
+          input.focus();
+          return;
+        }
+        const correct = Number(raw) === item.answer;
+        const next = { value: raw, solved: correct, wrong: !correct };
+        attempts.set(item.id, next);
+        if (correct) {
+          card.classList.add("solved");
+          card.dataset.solved = "true";
+          input.disabled = true;
+          submit.disabled = true;
+          submit.textContent = "확인 완료";
+          feedback.className = "feedback correct";
+          feedback.textContent = "정답이에요. 풀이에서 사용한 개념과 연결을 확인해 보세요.";
+        } else {
+          feedback.className = "feedback wrong";
+          feedback.textContent = "아직 정답이 아니에요. 힌트를 보고 다시 풀어 보세요.";
+        }
+        updateProgress();
+      });
+
+      const hint = document.createElement("details");
+      hint.className = "worked-solution hint-panel";
+      const hintTitle = document.createElement("summary");
+      hintTitle.textContent = "한 단계 힌트 보기";
+      const hintText = document.createElement("p");
+      appendText(hintText, item.hint);
+      hint.append(hintTitle, hintText);
+
+      const solution = document.createElement("details");
+      solution.className = "worked-solution";
+      const solutionTitle = document.createElement("summary");
+      solutionTitle.textContent = "풀이와 개념 연결 질문 보기";
+      const steps = document.createElement("ol");
+      item.solution.forEach(function (text) {
+        const step = document.createElement("li");
+        appendText(step, text);
+        steps.append(step);
+      });
+      const connection = document.createElement("p");
+      connection.className = "connection-question";
+      const connectionTitle = document.createElement("strong");
+      connectionTitle.textContent = "개념 연결 질문";
+      connection.append(connectionTitle, document.createElement("br"));
+      appendText(connection, item.connection);
+      solution.append(solutionTitle, steps, connection);
+
+      card.append(meta, heading, prompt, form, feedback, hint, solution);
+      list.append(card);
+    });
+  }
+  document.getElementById("reset-practice").addEventListener("click", function () {
+    attempts.clear();
+    updateProgress();
+    renderItems();
+  });
+  renderFilters();
+  renderItems();
+})();
