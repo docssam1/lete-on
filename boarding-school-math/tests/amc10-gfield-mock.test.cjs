@@ -5,22 +5,24 @@ const exam = globalThis.GFIELDAMC10Mock;
 
 test("GFIELD AMC 10 mock is a complete 25-item, five-domain 75-minute form", () => {
   assert.equal(exam.id, "gfield-amc10-concept-mock-v1");
-  assert.equal(exam.formVersion, "2026-11-04-v2");
+  assert.equal(exam.formVersion, "2026-11-04-v3");
   assert.equal(exam.items.length, 25);
   assert.equal(exam.durationMinutes, 75);
   assert.deepEqual(exam.standards, ["대수", "정수론", "기하", "경우의 수", "확률"]);
   assert.deepEqual(exam.standards.map((domain) => exam.items.filter((item) => item.standard === domain).length), [5, 5, 5, 5, 5]);
+  for (let start = 0; start < 25; start += 5) assert.deepEqual(exam.items.slice(start, start + 5).map((item) => item.standard), ["대수", "기하", "정수론", "경우의 수", "확률"]);
   assert.equal(new Set(exam.items.map((item) => item.id)).size, 25);
   assert.ok(exam.items.every((item) => item.choices.length === 5 && item.solution && item.focus));
   assert.match(exam.nextStudyHref, /amc10-practice\.html/);
 });
 
 test("all authored answers match independently calculated values and choices are distinct", () => {
-  const expected = ["25", "7", "6", "20", "1", "25", "6", "50", "3", "36", "90", "31.5", "15", "10π", "120", "12", "12", "12", "10", "18", "1/3", "3/10", "1/6", "3/10", "1/2"];
+  const expected = ["25", "31.5", "29", "48", "1/9", "3", "6", "52", "156", "18/35", "6", "24", "12", "26", "4/7", "47", "84", "67", "72", "5/14", "4", "60", "33", "56", "133/500"];
   exam.items.forEach((item, index) => assert.equal(String(item.choices[item.answer]), expected[index], item.id));
   exam.items.forEach((item) => assert.equal(new Set(item.choices.map(String)).size, 5, item.id));
-  assert.match(exam.items[3].prompt, /99는 몇 번째 항/);
-  assert.match(exam.items[3].solution, /5\(n−1\)=95.*n=20/);
+  assert.match(exam.items[2].prompt, /가장 긴 변의 길이가 20/);
+  assert.match(exam.items[13].solution, /56−30=26/);
+  assert.match(exam.items[24].solution, /133\/500/);
 });
 
 test("AMC 10 exam page distinguishes its authored mock from official score claims", () => {
