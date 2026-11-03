@@ -40,6 +40,9 @@
     if (window.GFIELDMathText) window.GFIELDMathText.append(target, value);
     else target.textContent = value;
   }
+  function setPlainText(id, value) {
+    $(id).textContent = String(value == null ? "" : value);
+  }
   function appendMathText(target, value) {
     if (window.GFIELDMathText) window.GFIELDMathText.append(target, value);
     else target.textContent = value;
@@ -271,7 +274,7 @@
     $("grade7-no-resource").hidden = true;
     renderJourneyPreview(entry);
     if (detail.hidden) return;
-    setText("stage-number", grade7 ? `살펴보는 구간 ${stage + 1} / ${entry.steps.length}` : `단계 ${stage + 1} / ${entry.steps.length}`);
+    setPlainText("stage-number", grade7 ? `살펴보는 구간 ${stage + 1} / ${entry.steps.length}` : `단계 ${stage + 1} / ${entry.steps.length}`);
     setText("stage-title", entry.steps[stage][0]);
     setText("stage-copy", entry.steps[stage][1]);
     const stop = grade7 ? data.grade7Stops[stage] : null;
@@ -972,7 +975,7 @@
     if (!evidence) return;
     setText("competition-saved-title", `${evidence.programTitle} · Grade ${evidence.grade}`);
     const date = evidence.examDate ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${evidence.examDate}T00:00:00Z`)) : "날짜 미입력";
-    setText("competition-saved-meta", `${date}${evidence.paperLabel ? ` · ${evidence.paperLabel}` : ""} · 영역 분류 ${evidence.summary.domainClassified}/${evidence.summary.itemCount}문항`);
+    setPlainText("competition-saved-meta", `${date}${evidence.paperLabel ? ` · ${evidence.paperLabel}` : ""} · 영역 분류 ${evidence.summary.domainClassified}/${evidence.summary.itemCount}문항`);
     evidence.domains.forEach(function (domain) {
       const item = document.createElement("div"); item.className = "competition-saved-domain";
       const title = document.createElement("strong"); title.textContent = domain.name;
@@ -984,7 +987,7 @@
       const names = { concept: "개념", approach: "접근 아이디어", calculation: "계산", reading: "조건 읽기", time: "시간" };
       return `${names[reason.id]} ${reason.count}문항`;
     });
-    setText("competition-saved-reasons", `오류 이유 분류 ${evidence.summary.reasonClassified}/${evidence.summary.wrong}개 오답${reasons.length ? ` · ${reasons.join(" · ")}` : ""}`);
+    setPlainText("competition-saved-reasons", `오류 이유 분류 ${evidence.summary.reasonClassified}/${evidence.summary.wrong}개 오답${reasons.length ? ` · ${reasons.join(" · ")}` : ""}`);
     renderCompetitionReviewGuidance(evidence);
     $("competition-saved-remove").dataset.recordId = evidence.id;
   }
@@ -1088,7 +1091,7 @@
     const next = result.reviewFirst ? `${result.reviewFirst}부터 다시 보세요.` : comparableCount < 2
       ? "영역을 비교하려면 두 영역에서 각각 3문제 이상 풀어야 해요."
       : "영역별 정답률이 같아요. 틀린 문제부터 다시 보세요.";
-    setText("competition-report-summary", `${paperLabel ? `${paperLabel} · ` : ""}${result.attempted}/${option.itemCount}문항 입력. ${next}${hasSmallSample ? " 3문제 미만인 영역은 정답률을 표시하지 않아요." : ""}`);
+    setPlainText("competition-report-summary", `${paperLabel ? `${paperLabel} · ` : ""}${result.attempted}/${option.itemCount}문항 입력. ${next}${hasSmallSample ? " 3문제 미만인 영역은 정답률을 표시하지 않아요." : ""}`);
     const host = $("competition-report-rows");
     host.replaceChildren();
     result.rows.filter(function (entry) { return entry.attempted > 0; }).forEach(function (entry) {

@@ -461,3 +461,9 @@ Verification: the full roadmap browser suite passes 39/39, including Algebra 1, 
 Aligned the optional Prealgebra Unit 1 flow with curriculum wording: “문자를 사용해 대수식을 나타내고,” “식의 값,” “동치인 식,” “대수식 전개,” and “동류항을 결합.” This keeps the six supplied concept steps while making the student-facing labels explicit about the mathematical action and object.
 
 Verification: Grade 3–12 roadmap model suite passes 12/12; the four-viewport (320, 390, 900, 1280px) concept-flow browser check passes 1/1. No placement or diagnostic claim added. Local only; no push, deployment, or Drive sync.
+
+### 2026-11-03 Keep mathematical fractions distinct from counts
+
+Visual review of the full Grade 9 roadmap exposed that the shared math formatter was turning stage progress `1 / 4` into a stacked fraction. Keep stage progress and competition classified/attempted summaries as ordinary count text. Preserve the contest label `AMC 10/12` as slash notation while retaining stacked rendering for actual fractions. Bumped the shared renderer and roadmap script cache keys on all six consumers so open browser tabs fetch the updated code.
+
+Verification: all 39 roadmap browser checks pass, including the 320/390/900/1280px concept flow, stage count, competition count summaries, AMC 10/12 label, and stacked fractions in Algebra 1/2, Geometry, and Precalculus. The roadmap checkpoint routing check passes 1/1 after the new AMC-label assertion. A local 390px Chrome render confirms stage text `단계 1 / 4`, zero fraction nodes in that label, and no horizontal overflow. No private item content was used. Local only; no push or deployment.

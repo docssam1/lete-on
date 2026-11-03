@@ -15,6 +15,7 @@
     while ((match = fraction.exec(text))) {
       const start = match.index + match[1].length;
       if (unitRates.has(`${match[2]}/${match[3]}`.toLowerCase())) continue;
+      if (/\bAMC\s*$/i.test(text.slice(0, start)) && match[2] === "10" && match[3] === "12") continue;
       if (start > cursor) target.append(document.createTextNode(text.slice(cursor, start)));
       const node = document.createElement("span");
       node.className = "math-fraction";

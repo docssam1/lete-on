@@ -167,14 +167,14 @@ test("the original Geometry workbook prints proof, similarity, circle, coordinat
   assert.ok(await page.locator('.math-fraction[aria-label="360분의 90"]').count() > 0);
   const symbolicFractions = await page.evaluate(function () {
     const probe = document.createElement("span");
-    window.GFIELDMathText.append(probe, "sin θ=맞은편/빗변; θ/360; −√3/2; 2π/|B|; πt/6; 속력 km/h; m/s; AMC 12/AIME");
+    window.GFIELDMathText.append(probe, "sin θ=맞은편/빗변; θ/360; −√3/2; 2π/|B|; πt/6; 속력 km/h; m/s; AMC 10/12; AMC 12/AIME");
     return {
       labels: Array.from(probe.querySelectorAll(".math-fraction"), function (node) { return node.getAttribute("aria-label"); }),
       remainingText: probe.textContent
     };
   });
   assert.deepEqual(symbolicFractions.labels, ["빗변분의 맞은편", "360분의 θ", "2분의 −√3", "|B|분의 2π", "6분의 πt"]);
-  assert.match(symbolicFractions.remainingText, /km\/h; m\/s; AMC 12\/AIME/);
+  assert.match(symbolicFractions.remainingText, /km\/h; m\/s; AMC 10\/12; AMC 12\/AIME/);
   const trigLabels = await page.locator('.lesson-page[aria-label*="삼각비로 거리와 높이"]').locator(".math-fraction").evaluateAll(function (nodes) {
     return nodes.map(function (node) { return node.getAttribute("aria-label"); });
   });
@@ -348,6 +348,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#competition-report-rows").innerText(), /3문제 미만/);
   assert.doesNotMatch(await page.locator("#competition-report-rows").innerText(), /50%/);
   assert.match(await page.locator("#competition-report-summary").innerText(), /6[\s\S]*25[\s\S]*문항 입력[\s\S]*두 영역에서 각각 3문제 이상/);
+  assert.equal(await page.locator("#competition-report-summary .math-fraction").count(), 0, "attempted/total is a question count, not a mathematical fraction");
   assert.match(await page.locator(".competition-report-boundary").innerText(), /실력 등급.*응시 자격/);
   assert.equal(await page.locator("#competition-saved-diagnostic").isHidden(), true);
   assert.equal(await page.evaluate(function () { return localStorage.getItem("gmap-local-learning-record-v1:competition-diagnostic-history-v1"); }), null);
@@ -747,6 +748,7 @@ test("Math Kangaroo Grade 7 and 8 diagnostics compare the same 30-question paper
   const text = await page.locator("#competition-grade-comparison").innerText();
   assert.match(text, /Math Kangaroo · 2026-03-19/);
   assert.match(text, /영역 분류 1\/30/);
+  assert.equal(await page.locator("#competition-saved-meta .math-fraction").count(), 0, "classified/total is a count, not a mathematical fraction");
   assert.match(text, /7학년 · 2025 Grade 7–8 official paper/);
   assert.match(text, /8학년 · 2025 Grade 7–8 official paper/);
   assert.match(text, /공식 성적표 전국 백분위 · Grade 7 참가자 중 72.5%/);
@@ -1029,6 +1031,10 @@ test("roadmap checkpoints open their matching course references", async function
   for (const item of upperGradeCases) {
     await page.goto(`${url}?grade=${item.grade}`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: item.button }).click();
+    if (item.grade === 8 && item.button.toString().includes("심화")) {
+      assert.match(await page.locator("#stage-copy").innerText(), /AMC 10\/12/);
+      assert.equal(await page.locator("#stage-copy .math-fraction").count(), 0, "AMC 10/12 is a contest name, not a fraction");
+    }
     if (item.inferred) assert.match(await page.locator("#source-chip").innerText(), /학교 과목 확인/);
     const disclosure = page.locator("#stage-external-resources");
     assert.equal(await disclosure.isVisible(), true, `Grade ${item.grade} stage reference is visible`);
@@ -1109,6 +1115,8 @@ test("cross-grade concept flows render as examples on phone, tablet, and desktop
   for (const width of [320, 390, 900, 1280]) {
     const page = await browser.newPage({ viewport: { width, height: 844 } });
     await page.goto(`${url}?grade=9`, { waitUntil: "networkidle" });
+    assert.equal(await page.locator("#stage-number").innerText(), "단계 1 / 4");
+    assert.equal(await page.locator("#stage-number .math-fraction").count(), 0, "stage progress is a count, not a mathematical fraction");
     assert.equal(await page.locator(".concept-flow").count(), 5);
     assert.equal(await page.locator(".concept-flow ol").count(), 5);
     assert.equal(await page.locator(".concept-flow ol li").count(), 26);
