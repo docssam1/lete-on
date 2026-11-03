@@ -3008,6 +3008,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52DecimalDecimal.types.push({id,number:source52DecimalDecimal.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:n>=47?101:n>=39?100:null,alternateSourcePdfPage:n>=31&&n<=38?100:n>=25&&n<=30?99:null,sourcePrintedPage:n>=47?107:n>=39?106:n>=31?105:104,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U4Page101Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n!==30&&n!==25&&n!==28&&n!==46&&n!==48&&n!==53,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:n>=25&&n<=38?"필기 없는 교재 사본과 계산을 대조했습니다. 기존 PDF의 해당 쪽과 출판사 공식 답안은 미확인입니다.":"원문 조건과 시간·단위 변환을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
 
+  if (source52DecimalDecimal && !source52DecimalDecimal.types.some(t=>t.id==="5-2-u4-practice-29-part1-original")) {
+    const id="5-2-u4-practice-29-part1-original",name="직사각형의 홈을 뺀 도형의 넓이 · 확인학습 29번 (1) 원문";
+    const typeNumber=Math.max(0,...source52DecimalUnit.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52DecimalDecimal.types.push({id,number:source52DecimalDecimal.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u4-practice-29-original",sourceItemLabel:"확인학습 29번 (1) 원문",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:null,alternateSourcePdfPage:99,sourcePrintedPage:104,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U4Page104Practice29Part1",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"필기 없는 원본 29번 (1)의 그림과 치수를 대조하고 두 방법으로 검산했습니다. (2)는 별도 검수 중이며 출판사 공식 답안은 미확인입니다."});
+  }
+
   if (source52DecimalDecimal) {
     const index = source52DecimalDecimal.types.findIndex(t => t.name === "소수 곱의 빠진 숫자 찾기");
     if (index >= 0) {
