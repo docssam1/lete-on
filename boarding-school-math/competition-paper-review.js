@@ -615,6 +615,18 @@
       setText("amc-grade-reference-delta", `해당 회차 평균보다 ${differenceLabel}`);
       $("amc-grade-reference-source").href = gradeReference.sourceUrl;
     }
+    const koreaPercentileReference = window.GFIELDAMC8KoreaPercentileReference;
+    const koreaPercentileSection = $("amc8-korea-percentile-reference");
+    const koreaPercentile = selectedFormat().id === "amc8" && result.complete && result.scoreEstimate && koreaPercentileReference
+      ? koreaPercentileReference.referenceFor(selectedYear, grade, result.scoreEstimate.points)
+      : null;
+    koreaPercentileSection.hidden = !koreaPercentile;
+    if (koreaPercentile) {
+      setText("amc8-korea-percentile-summary", `${koreaPercentile.year} AMC 8 · Grade ${koreaPercentile.sourceGradeLabel} · ${koreaPercentile.score}/25점 · 점수 ${koreaPercentile.studentsAtScore}명 · 학년 표본 ${koreaPercentile.gradeParticipants}명`);
+      const percentileLabel = koreaPercentile.percentileType === "reported-in-source-table" ? "원자료 기록 백분위" : "학년별 점수 분포 계산 백분위";
+      setText("amc8-korea-percentile-value", `${percentileLabel} ${koreaPercentile.reportedPercentile.toFixed(2)}% · ${koreaPercentile.percentileMethod}`);
+      $("amc8-korea-percentile-source").href = koreaPercentile.sourceUrl;
+    }
     const aimeReference = window.GFIELDAimeScoreDistributionReference;
     const aimeCohort = $("aime-cohort-reference");
     const aimeKeyYear = Number($("archive-year").value || params.get("year"));
