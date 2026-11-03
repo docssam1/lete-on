@@ -843,3 +843,9 @@ Fixed the stale source-freshness assertion after verifying the official scoring 
 Generated a branded wide illustration from the existing learning-world art, preserving its connected study islands and math landmarks while matching G·MAP's violet/lavender and warm cream palette. Saved the optimized 1800×720 image as `assets/roadmap/mathematics-learning-world-gmap.webp`; the previous asset remains intact. The Grade 7 guidance prompt now sits inside the desktop map and clears every route stop. Phones retain the text-first vertical path.
 
 Verification: the Grade roadmap browser suite passes 31/31, including branded artwork for Grades 3–12, prompt placement and overlap checks, and 320px/390px/tablet responsive layout. Rendered and visually inspected the 1280px local preview. `git diff --check` passes. No private items or learner data accessed; local only, no push or deployment.
+
+### 2026-11-03 map-first grade route ordering
+
+Moved the shared route map ahead of the school/contest/SAT detail cards and concept bridge. This lets the branded G·MAP scene appear earlier for Grades 3–6 and 8–12 while keeping every grade's content, selected state, route labels, and interpretation boundary intact. Grade 7 keeps its map-specific prompt and hidden curriculum cards.
+
+Verification: the 31/31 roadmap browser suite passes with new desktop-order assertions for every non-Grade-7 route; it also retains branded-asset checks for all grades, Grade 7 prompt bounds/no overlap, and 320px/390px/tablet responsive checks. Visually inspected the 1280px Grade 8 preview. Local only; no private item access, push, or deployment.

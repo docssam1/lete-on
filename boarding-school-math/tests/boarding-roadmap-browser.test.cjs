@@ -865,6 +865,11 @@ test("the same learning-world map frames every grade while phones keep the verti
     assert.equal(await desktop.locator("#stage-list button").count(), 4, `Grade ${grade} has four named route stops`);
     assert.ok(await desktop.locator("#stage-list button strong").allTextContents().then((labels) => labels.every((label) => label.trim())), `Grade ${grade} route labels are HTML text`);
     assert.match(await desktop.locator(".stage-map").evaluate((node) => getComputedStyle(node).backgroundImage), /mathematics-learning-world-gmap\.webp/, `Grade ${grade} uses the shared branded map scene`);
+    if (grade !== 7) {
+      const mapTop = await desktop.locator(".stage-map").evaluate((node) => node.getBoundingClientRect().top);
+      const focusTop = await desktop.locator(".grade-focus").evaluate((node) => node.getBoundingClientRect().top);
+      assert.ok(mapTop < focusTop, `Grade ${grade} shows the route map before the curriculum detail cards`);
+    }
     if (grade === 7) {
       const intro = desktop.locator("#grade7-road-intro");
       const mapBox = await desktop.locator(".stage-map").boundingBox();
