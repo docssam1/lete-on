@@ -3370,8 +3370,8 @@
         "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
       ],
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "삼각형 회전 위치와 시간 후보를 독립 계산했습니다. 공식 답안과 공개용 원문 그림은 미대조입니다."
+      "implementationStatus": "ready",
+      "reviewReason": "원문 그림의 회전 위치와 65도를 대조하고 분·초 답을 독립 계산해 해당 유형에 연결했습니다. 공식 답안은 미확인입니다."
     },
     {
       "sourceItemId": "5-2-u3-e7-mission-6",

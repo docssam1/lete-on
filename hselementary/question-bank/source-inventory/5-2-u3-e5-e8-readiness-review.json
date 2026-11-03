@@ -966,9 +966,12 @@
       "sourceVerified": true,
       "calculationStatus": "checked-independent-calculation",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안과 공개용 원문 그림 미대조로 원문 잠금을 유지합니다."
+      "implementationStatus": "ready",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherAnswerVerified": false,
+      "runtimeTypeId": "5-2-u3-t8",
+      "runtimeGeneratorKey": "source52RotatingTrianglePage37Mission5Original"
     },
     {
       "sourceItemId": "5-2-u3-e7-mission-6",
