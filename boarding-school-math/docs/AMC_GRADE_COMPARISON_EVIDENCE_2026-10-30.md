@@ -330,3 +330,10 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - [Archimedean Schools의 2019 AMC 10A 게시물](https://www.archimedean.org/amc-grade-7-student-sailalitha-kodukula-makes-history/)은 AMC 10A에 응시한 Grade 7 참가자 1,982명의 평균을 59.72점으로 보고한다. 페이지에는 MAA 작성 원자료 파일이 연결되어 있지 않아, 학교가 공개한 전국 학년 통계의 2차 보고로 분류했다.
 - 이 값은 AMC 10A · 2019 · Grade 7과 정확히 일치할 때만 결과 비교에 나타난다. 참가자 수와 평균만 제시하며 백분위·학업 등급·현재 규준으로 바꾸지 않는다. UI에 2차 출처 안내와 원문 링크를 보인다. 원자료는 `competition/historical-amc-grade/amc10-2019a-grade7-mean.csv`, 참조 항목은 `competition/amc-historical-grade-reference.js`, 회차별 수집 상태는 coverage manifest에 기록했다.
 - 출처 본문에서 해당 수치와 표본을 다시 대조했다. 수동 브라우저 검수에서 2019 AMC 10 A Grade 7 선택, LIVE 정답표 대조 후 결과 패널의 59.72 평균·1,982명 표본·2차 출처 설명과 링크를 확인했다. 검수용 응답은 저장하지 않고 페이지 새로고침으로 초기화했다. 이 값 하나로 다른 연도나 시험형을 채우지 않는다.
+
+### 2026-11-04 · AMC 10A 2013 미국 학년별 평균표 전사 자료
+
+- [Gifted Issues 토론의 2013 MAA Grade Average 표 전사](https://giftedissues.davidsongifted.org/bb/ubbthreads.php/printthread/Board/13/main/13750/type/thread.html)에서 `Grade Average 10 A 2013`, `Location: United States` 표를 확인했다. 표는 Grade 7 78.9점/1,730명, Grade 8 79.3점/3,332명, Grade 9 69.5점/23,236명, Grade 10 71.6점/26,286명이다. `06`은 6학년 이하 795명 묶음이므로 정확한 Grade 6 비교로 취급하지 않는다.
+- 표의 `unknown` 1,337명 평균 68.4와 `all` 56,717명 평균 71.4도 전사되어 있으나, 표시 학년별 인원 합은 56,716명으로 `all`보다 1명 적다. 표의 소집단 가중 평균은 약 71.42점이다. 이 내부 차이와 다른 자료의 2013 전체 평균 수치를 해소할 MAA 원본 보고서는 회수하지 못했다. 앱에는 전체 행·전체 평균을 넣지 않고, 정확한 Grade 7–10 평균만 미국 위치 집단이라고 밝혀 제한적으로 연결했다.
+- 자료 파일 [`amc10-2013a-us-grade-means.csv`](../competition/historical-amc-grade/amc10-2013a-us-grade-means.csv)는 전사된 학년 행과 범위를 보존한다. 결과 패널 요약에 `미국 위치 기준`, 출처 설명에 포럼 전사본·원본 미회수·백분위/능력등급이 아님을 표시한다. 원자료를 확보하지 못했으므로 재전사 자료 상태는 명시적으로 남긴다.
+- 이는 AMC 10A 2013 미국 위치 보고표의 과거 평균 비교뿐이다. 전국 전체의 정규화, 현재 실력 등급, AMC 10B 또는 다른 연도 환산으로 쓰지 않는다.

@@ -772,7 +772,8 @@
     gradeReferenceSection.hidden = !gradeReference;
     if (gradeReference) {
       const formatLabel = selectedFormat().id === "amc8" ? "AMC 8" : `${selectedFormat().title} ${selectedForm}`;
-      setText("amc-grade-reference-summary", `Grade ${grade} · ${selectedYear} ${formatLabel} · 기록된 학년 참가자 ${gradeReference.participants.toLocaleString("en-US")}명${gradeReference.note ? ` · ${gradeReference.note}` : ""}`);
+      const isUsForumTranscription = gradeReference.sourceStatus === "secondary-forum-transcription-of-MAA-us-grade-report";
+      setText("amc-grade-reference-summary", `Grade ${grade} · ${selectedYear} ${formatLabel} · 기록된 학년 참가자 ${gradeReference.participants.toLocaleString("en-US")}명${isUsForumTranscription ? " · 미국 위치 기준" : ""}${gradeReference.note ? ` · ${gradeReference.note}` : ""}`);
       const plot = $("amc-grade-reference-plot");
       plot.replaceChildren();
       plot.setAttribute("aria-label", `응시 점수 ${result.scoreEstimate.points}점과 해당 학년 평균 ${gradeReference.mean}점 비교`);
@@ -793,10 +794,13 @@
       const gradeReferenceSource = $("amc-grade-reference-source");
       gradeReferenceSource.href = gradeReference.sourceUrl;
       const secondarySource = gradeReference.sourceStatus === "secondary-school-publication-reporting-national-grade-statistic";
-      gradeReferenceSource.textContent = secondarySource ? "학교 공개 통계 원문 ↗" : "원자료 보고서 ↗";
+      const forumTranscription = gradeReference.sourceStatus === "secondary-forum-transcription-of-MAA-us-grade-report";
+      gradeReferenceSource.textContent = secondarySource ? "학교 공개 통계 원문 ↗" : forumTranscription ? "MAA 표 전사 원문 ↗" : "원자료 보고서 ↗";
       setText("amc-grade-reference-source-note", secondarySource
         ? "학교가 공개한 전국 학년별 통계의 재인용입니다. MAA 원본 보고서 파일을 확보하지 못했습니다. 이 표본 평균은 현재 기준점·백분위·능력 등급이 아닙니다. "
-        : "같은 연도·시험형·기록 학년이 확인되는 과거 응시 집단 평균입니다. 현재 기준점이나 능력 등급이 아니며, 다른 연도·시험형으로 비교하지 않습니다. 표본과 범위는 연결된 출처 기준입니다. ");
+        : forumTranscription
+          ? "포럼에 전사된 MAA 학년 평균표입니다. 표의 Location은 United States이며 MAA 원본 보고서는 회수하지 못했습니다. 미국 응시집단의 당시 평균 비교이며 전국 전체·백분위·현재 능력 등급이 아닙니다. "
+          : "같은 연도·시험형·기록 학년이 확인되는 과거 응시 집단 평균입니다. 현재 기준점이나 능력 등급이 아니며, 다른 연도·시험형으로 비교하지 않습니다. 표본과 범위는 연결된 출처 기준입니다. ");
     }
     const koreaPercentileReference = window.GFIELDAMC8KoreaPercentileReference;
     const koreaPercentileSection = $("amc8-korea-percentile-reference");
