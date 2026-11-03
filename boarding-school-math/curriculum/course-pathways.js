@@ -34,7 +34,7 @@
       next: "Algebra 1",
       studentHref: "./prealgebra-path.html",
       teacherHref: "./prealgebra-workbook.html?edition=teacher",
-      availability: "지필드 자체 Pre-Algebra Unit 1 · 6차시·12문항 공개 · 개념 수업 10개·검수 워크북 8종 연결 · 진단·배치 별도"
+      availability: "지필드 자체 Pre-Algebra 2단원·12차시·24문항 공개 · 개념 수업 10개·검수 워크북 8종 연결 · 진단·배치 별도"
     }),
     Object.freeze({
       id: "algebra-1",

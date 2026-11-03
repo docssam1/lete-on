@@ -2,6 +2,12 @@
 
 Repository: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`. The map-stop readability and G·MAP palette updates are committed locally. No push, deployment, or Drive synchronization has occurred.
 
+### 2026-11-03 GFIELD Pre-Algebra Unit 2 · equations and inequalities
+
+Extended the original Pre-Algebra workbook from one to two authored units: 12 lessons and 24 practice prompts. Unit 2 sequences substitution to check equation/inequality solutions, one-step addition and multiplication equations in the nonnegative-rational Grade 6 scope, contextual equations, inequality constraints on number lines, and explicitly labeled Grade 7 multi-step equation/inequality connections. References are CCSS 6.EE.B.5–8 and 7.EE.B.4. Updated the route, course comparison counts, workbook counts, tests, cache versions, and README. The path now reports two GFIELD units/12 lessons; it still states that the course is not complete and does not diagnose or place a learner.
+
+Checked examples and answer keys manually; corrected a contradictory practice answer before verification. The Node REPL test runner passes the Pre-Algebra contract (3), course-pathway contract (3), and shared fraction-renderer contract (1): 7/7. A live local browser check now shows both units and 12 lesson/12 exercise pages in student mode and 12 answer pages in teacher mode. The student view has 12 stacked fractions and no slash-form numeric fractions; the teacher view has 17 stacked fractions and no slash-form numeric fractions, including the sentence-final `p=11/3.` case. Computed styles show inline-grid numerator/denominator and a visible 1px fraction bar. Actual PDF export was not generated; the pages use the existing A4 print renderer. No release, push, deployment, Drive sync, or external transmission.
+
 ### 2026-11-03 GFIELD Pre-Algebra Unit 1 and stacked fractions
 
 Added `boarding-school-math/prealgebra-workbook.html` with an original GFIELD Unit 1: six lessons and twelve practice prompts covering variable expressions and values, exponents/order of operations, translating verbal relationships, operation properties, distribution, and combining like terms. Objectives and terminology follow the Common Core 6.EE scope; the course record links 6.EE and 7.EE references. The student route now includes the new unit and a separate teacher answer/solution route. The course comparison teacher link also opens the GFIELD workbook. Pre-Algebra remains a partial course prototype, not a diagnostic or placement result.
