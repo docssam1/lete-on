@@ -5,7 +5,7 @@ const path = require("node:path");
 const os = require("node:os");
 const { execFileSync } = require("node:child_process");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
-const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:45702";
+const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:45703";
 const numbers = [47, 48, 53, 54];
 (async () => {
   const browser = await chromium.launch({ headless: true });
@@ -55,10 +55,12 @@ const numbers = [47, 48, 53, 54];
         if (item.svg) assert(item.svg.bottom <= item.answer.y + 1 && item.svg.right <= item.box.right + 1, `question ${item.number}: diagram must fit`);
       }
       assert.equal(await page.locator('#problemView svg').count(),4);
+      const firstColumns = await page.locator('#problemView .u4p107-q53').evaluate(svg => Object.fromEntries(['factor','multiplier','result'].map(row => [row,[...svg.querySelectorAll(`[data-row="${row}"]`)].map(e=>[Number(e.getAttribute('data-column')),e.textContent])])));
+      assert.deepEqual(firstColumns, {factor:[[140,'㉠'],[162,'㉡'],[184,'㉢']], multiplier:[[140,'1'],[162,'0'],[184,'3']], result:[[96,'㉠'],[118,'㉠'],[140,'㉡'],[162,'4'],[184,'5']]});
       const columns = await page.locator('#problemView .u4p107-q54').evaluate(svg => Object.fromEntries(['factor','multiplier','partial-one','partial-two','result'].map(row => [row,[...svg.querySelectorAll(`[data-row="${row}"]`)].map(e=>[Number(e.getAttribute('data-column')),e.textContent])])));
       assert.deepEqual(columns, {factor:[[140,'㉠'],[162,'㉡'],[184,'㉢']],multiplier:[[140,'㉣'],[162,'㉤'],[184,'7']], 'partial-one':[[118,'1'],[140,'㉤'],[162,'㉠'],[184,'㉢']], 'partial-two':[[96,'㉡'],[118,'㉣'],[140,'㉢']],result:[[96,'㉡'],[118,'㉡'],[140,'㉢'],[162,'㉠'],[184,'㉢']]});
       assert.match(await page.locator('#solutionView').textContent(), /1\+4\+5\+3\+0/);
-      const file = path.join(process.env.MAC_CHECK_OUTPUT || os.tmpdir(), `hse-p107-aligned-${width}.pdf`);
+      const file = path.join(process.env.MAC_CHECK_OUTPUT || os.tmpdir(), `hse-p107-both-${width}.pdf`);
       await page.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
       const info = execFileSync("pdfinfo", [file], { encoding: "utf8" });
       assert.match(info, /Pages:\s+1\b/, "four questions must fit on one physical A4 page");
@@ -68,5 +70,5 @@ const numbers = [47, 48, 53, 54];
       await context.close();
     }
   } finally { await browser.close(); }
-  console.log("PASS: page 107 written-multiplication columns and balanced four-up A4 spacing from desktop and mobile");
+  console.log("PASS: page 107 questions 53 and 54 multiplication columns and balanced four-up A4 spacing from desktop and mobile");
 })().catch(error => { console.error(error); process.exitCode = 1; });
