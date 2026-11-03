@@ -14,8 +14,12 @@
 }
 @media print {
   /* Keep the page padding when this answer sheet flows onto a second page. */
-  .answer-page:has([data-source-answer="5-2-u3-practice-10-original"], [data-source-answer="5-2-u3-practice-13-original"], [data-source-answer="5-2-u3-practice-14-guarantee-similar"], [data-source-answer="5-2-u3-practice-55-original"], [data-source-answer="5-2-u3-practice-87-original"]) {
+  .answer-page:has([data-source-answer="5-2-u3-practice-10-original"], [data-source-answer="5-2-u3-practice-13-original"], [data-source-answer="5-2-u3-practice-14-guarantee-similar"], [data-source-answer="5-2-u3-practice-55-original"], [data-source-answer="5-2-u3-practice-87-original"], [data-source-answer="5-2-u3-practice-86-original"]) {
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
   }
 }
+
+.u3p95-fold86{display:block;width:100%;max-width:340px;height:auto;margin:.2em auto}
+#solutionView .u3p95-fold86-answer{display:block;width:min(275px,100%);height:auto;margin:auto}
+@media print { .u3p95-fold86{max-height:70mm} }
