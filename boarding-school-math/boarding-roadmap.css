@@ -434,7 +434,7 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
   padding: 20px 0 8px;
   border-color: #e3dced;
   background-color: #f3eef7;
-  background-image: linear-gradient(180deg,rgba(250,248,252,.12),rgba(250,248,252,.24)),url("./assets/roadmap/mathematics-learning-world-gmap.webp");
+  background-image: linear-gradient(180deg,rgba(250,248,252,.12),rgba(250,248,252,.24)),url("./assets/roadmap/mathematics-learning-world-gmap.webp?v=20261103-2");
   background-position: center;
   background-size: cover;
 }
@@ -464,6 +464,17 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
 .stage-button[aria-pressed="true"]::after,
 .stage-list .stage-button[aria-pressed="true"]::after { content: none; }
 .stage-selected-note { color: #60418f; font-size: .72rem; font-weight: 850; line-height: 1.25; }
+@media (max-width: 600px) {
+  .comparison-mobile-row h3 { font-size: .9375rem; }
+  .comparison-mobile-cell p { font-size: .875rem; line-height: 1.55; }
+  .comparison-mobile-grade { font-size: .8rem; }
+  .comparison-mobile-note, .comparison-pair-note { font-size: .875rem; }
+  .competition-fields label { font-size: .9rem; }
+  .competition-guidance, .competition-input-note { font-size: .875rem; line-height: 1.55; }
+  .domain-header { font-size: .8125rem; }
+  .domain-row strong { font-size: .9rem; }
+  .competition-report > p { font-size: .875rem; }
+}
 @media (min-width: 601px) {
   .journey-main.grade7-active .stage-map { min-height: 324px; padding-top: 124px; }
   .journey-main.grade7-active .grade7-road-intro {
@@ -490,6 +501,20 @@ a.grade7-standard-code:focus-visible { outline: 3px solid #60418f; outline-offse
     min-height: 0;
     padding: 14px 12px;
     background-image: radial-gradient(ellipse at 12% 90%, rgba(203,224,206,.44), transparent 36%),radial-gradient(ellipse at 88% 8%, rgba(226,216,245,.52), transparent 36%),linear-gradient(#faf9fc,#faf9fc);
+  }
+  .journey-main .stage-map::before {
+    content: "";
+    position: relative;
+    inset: auto;
+    width: 100%;
+    aspect-ratio: 2.5;
+    height: auto;
+    margin-bottom: 12px;
+    display: block;
+    border: 1px solid #e3dced;
+    border-radius: 12px;
+    box-shadow: none;
+    background: url("./assets/roadmap/mathematics-learning-world-gmap.webp?v=20261103-2") center / cover no-repeat;
   }
   .journey-main .stage-list { min-height: 0; }
   .journey-main .stage-list li:nth-child(1),

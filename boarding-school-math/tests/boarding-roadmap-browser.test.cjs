@@ -617,6 +617,37 @@ test("grade comparison keeps paired columns on desktop", async function () {
   await page.close();
 });
 
+test("phone grade comparison keeps paired descriptions readable without page overflow", async function () {
+  for (const width of [390, 320]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
+    await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+    await page.getByLabel("비교할 학년").selectOption("8");
+    assert.equal(await page.locator(".comparison-mobile-view").isVisible(), true);
+    const sizes = await page.locator(".comparison-mobile-cell p").evaluateAll((nodes) => nodes.map((node) => parseFloat(getComputedStyle(node).fontSize)));
+    assert.ok(sizes.length > 0 && sizes.every((size) => size >= 14), `Grade comparison text is at least 14px at ${width}px`);
+    const headingSizes = await page.locator(".comparison-mobile-row h3").evaluateAll((nodes) => nodes.map((node) => parseFloat(getComputedStyle(node).fontSize)));
+    assert.ok(headingSizes.length > 0 && headingSizes.every((size) => size >= 15), `Grade comparison item headings are at least 15px at ${width}px`);
+    assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [width, width]);
+    await page.close();
+  }
+});
+
+test("phone competition guidance and domain labels remain readable without overflow", async function () {
+  for (const width of [390, 320]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
+    await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+    await page.locator("#competition-select").selectOption("kangaroo");
+    for (const selector of [".competition-guidance", ".competition-input-note", ".competition-fields label", ".domain-row strong"]) {
+      const sizes = await page.locator(selector).evaluateAll((nodes) => nodes.map((node) => parseFloat(getComputedStyle(node).fontSize)));
+      assert.ok(sizes.length > 0 && sizes.every((size) => size >= 14), `${selector} remains at least 14px at ${width}px`);
+    }
+    const headerSize = await page.locator(".domain-header").evaluate((node) => parseFloat(getComputedStyle(node).fontSize));
+    assert.ok(headerSize >= 13, `contest column labels remain at least 13px at ${width}px`);
+    assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [width, width]);
+    await page.close();
+  }
+});
+
 test("Grade 7 path previews checkpoints without claiming a measured position", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
@@ -858,7 +889,7 @@ test("cross-grade concept flows render as examples on phone, tablet, and desktop
   }
 });
 
-test("the same learning-world map frames every grade while phones keep the vertical path", async function () {
+test("the branded learning-world map frames every grade and phones keep the vertical path", async function () {
   const desktop = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   for (const grade of [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) {
     await desktop.goto(`${url}?grade=${grade}`, { waitUntil: "networkidle" });
@@ -892,6 +923,12 @@ test("the same learning-world map frames every grade while phones keep the verti
   const phone = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await phone.goto(`${url}?grade=8`, { waitUntil: "networkidle" });
   assert.doesNotMatch(await phone.locator(".stage-map").evaluate((node) => getComputedStyle(node).backgroundImage), /mathematics-learning-world-gmap\.webp/);
+  const mobileArt = await phone.locator(".stage-map").evaluate((node) => {
+    const art = getComputedStyle(node, "::before");
+    return { image: art.backgroundImage, height: parseFloat(art.height) };
+  });
+  assert.match(mobileArt.image, /mathematics-learning-world-gmap\.webp\?v=20261103-2/);
+  assert.ok(mobileArt.height >= 90, "phone shows a full-width branded map strip above the vertical route");
   assert.equal(await phone.locator("#stage-list").evaluate((node) => getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).length), 1);
   const routeLabelSizes = await phone.locator("#stage-list button strong").evaluateAll((nodes) => nodes.map((node) => parseFloat(getComputedStyle(node).fontSize)));
   assert.ok(routeLabelSizes.every((size) => size >= 16), "phone route labels remain at least 16px");
