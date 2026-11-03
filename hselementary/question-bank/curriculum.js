@@ -3008,6 +3008,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52DecimalDecimal.types.push({id,number:source52DecimalDecimal.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:n>=47?101:n>=39?100:null,alternateSourcePdfPage:n>=31&&n<=38?100:n>=25&&n<=30?99:null,sourcePrintedPage:n>=47?107:n>=39?106:n>=31?105:104,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U4Page101Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n!==30&&n!==25&&n!==28&&n!==46&&n!==48&&n!==53,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:n>=25&&n<=38?"필기 없는 교재 사본과 계산을 대조했습니다. 기존 PDF의 해당 쪽과 출판사 공식 답안은 미확인입니다.":"원문 조건과 시간·단위 변환을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
 
+  if (source52DecimalDecimal && !source52DecimalDecimal.types.some(t=>t.id==="5-2-u4-practice-29-part2-consistent-similar")) {
+    const id="5-2-u4-practice-29-part2-consistent-similar",name="사다리꼴과 직각삼각형으로 나누는 넓이 · 유사문항";
+    const typeNumber=Math.max(0,...source52DecimalUnit.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52DecimalDecimal.types.push({id,number:source52DecimalDecimal.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u4-practice-29-original",sourceItemLabel:"확인학습 29번 (2) 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:null,alternateSourcePdfPage:99,sourcePrintedPage:104,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U4P104Q29Part2ConsistentSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문의 사다리꼴과 직각삼각형 구조를 따르되 서로 일치하는 길이로 구성한 별도 유사문항입니다. 원문 (2)는 조건 충돌 확인 전 보류합니다."});
+  }
+
   if (source52DecimalDecimal && !source52DecimalDecimal.types.some(t=>t.id==="5-2-u4-practice-29-part1-original")) {
     const id="5-2-u4-practice-29-part1-original",name="직사각형의 홈을 뺀 도형의 넓이 · 확인학습 29번 (1) 원문";
     const typeNumber=Math.max(0,...source52DecimalUnit.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
