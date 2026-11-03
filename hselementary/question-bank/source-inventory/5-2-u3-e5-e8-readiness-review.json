@@ -82,9 +82,12 @@
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안 미대조로 원문 잠금을 유지하며 별도 창작 연습만 연결합니다."
+      "implementationStatus": "ready",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherAnswerVerified": false,
+      "runtimeTypeId": "5-2-u3-e5-exploration",
+      "runtimeGeneratorKey": "source52SymmetryGridPage32Original"
     },
     {
       "sourceItemId": "5-2-u3-e5-example-5-1",
@@ -163,10 +166,13 @@
       "singleAnswerCheck": "점의 반사 방향을 좌표 변환으로 대조하여 90°의 작은각을 확인했습니다. 공식 답안은 미대조입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent",
-      "visualCheckStatus": "needs-implementation-check",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안 및 공개용 그림 검수 전 원문 잠금을 유지합니다."
+      "visualCheckStatus": "confirmed-source-structure",
+      "implementationStatus": "ready",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherAnswerVerified": false,
+      "runtimeTypeId": "5-2-u3-t5-2",
+      "runtimeGeneratorKey": "source52DoubleReflectionPage32Original"
     },
     {
       "sourceItemId": "5-2-u3-e5-example-5-4",
@@ -882,9 +888,12 @@
       "sourceVerified": true,
       "calculationStatus": "checked-independent-calculation",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안과 공개용 원문 그림 미대조로 원문 잠금을 유지합니다."
+      "implementationStatus": "ready",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherAnswerVerified": false,
+      "runtimeTypeId": "5-2-u3-e7-mission-2",
+      "runtimeGeneratorKey": "source52ArrowOverlapPage37Original"
     },
     {
       "sourceItemId": "5-2-u3-e7-mission-3",
@@ -910,9 +919,12 @@
       "sourceVerified": true,
       "calculationStatus": "checked-independent-calculation",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안과 공개용 원문 그림 미대조로 원문 잠금을 유지합니다."
+      "implementationStatus": "ready",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherAnswerVerified": false,
+      "runtimeTypeId": "5-2-u3-e7-mission-3",
+      "runtimeGeneratorKey": "source52ParallelogramOverlapPage37Original"
     },
     {
       "sourceItemId": "5-2-u3-e7-mission-4",
@@ -926,21 +938,24 @@
       "typeLabel": "선분을 이용한 넓이 17cm² 점대칭 작도",
       "childFriendlyTypeLabel": "주어진 선분으로 넓이가 17cm²인 점대칭도형 그리기",
       "originalStructure": "모눈의 주어진 선분을 이용해 넓이가 17cm²인 점대칭도형을 그립니다.",
-      "conditions": ["주어진 선분", "점대칭 중심 표시", "모눈 한 칸 1cm²", "넓이 17cm²"],
-      "visualRequirement": "주어진 선분·중심·모눈을 고정하고 완성 도형의 점대칭과 넓이를 검수해야 합니다.",
-      "independentCalculation": "왼쪽 위 모눈 교점을 (0,0)으로 두면 점대칭 중심은 (4,4), 원문 선분 경로는 (2,4)→(2,1)→(5,1)→(5,2)→(4,3)입니다. 한 작도 후보의 외곽선은 이 경로 다음에 (5,3),(5,4)를 거쳐 원문 경로를 중심에 대해 회전한 (6,4),(6,7),(3,7),(3,6),(4,5)를 잇고 (3,5),(3,4)를 거쳐 처음으로 돌아옵니다. 대응 꼭짓점의 중점이 모두 중심이고 교차하지 않으며 다각형 넓이는 17cm²입니다. 이것은 가능한 작도 한 가지이며 유일하다는 뜻은 아닙니다.",
-      "answerFormula": "중심 (4,4)에 대한 대응점 (8−x,8−y); 외곽선 넓이 17cm²",
+      "conditions": ["주어진 선분", "그림에 표시된 점(대칭의 중심이라고 명시되지 않음)", "모눈 한 칸 1cm²", "넓이 17cm²"],
+      "visualRequirement": "주어진 선분·표시된 점·모눈을 고정하고 완성 도형의 점대칭과 넓이를 검수해야 합니다.",
+      "independentCalculation": "왼쪽 위 모눈 교점을 (0,0)으로 두면 표시된 점은 (4,4), 원문 선분 경로는 (2,4)→(2,1)→(5,1)→(5,2)→(4,3)입니다. 이 점을 중심으로 잡은 한 작도 후보의 외곽선은 이 경로 다음에 (5,3),(5,4)를 거쳐 원문 경로를 중심에 대해 회전한 (6,4),(6,7),(3,7),(3,6),(4,5)를 잇고 (3,5),(3,4)를 거쳐 처음으로 돌아옵니다. 대응 꼭짓점의 중점이 모두 중심이고 교차하지 않으며 다각형 넓이는 17cm²입니다. 이것은 가능한 작도 한 가지이며 유일하다는 뜻은 아닙니다.",
+      "answerFormula": "한 가지 예: 중심 (4,4)에 대한 대응점 (8−x,8−y); 외곽선 넓이 17cm²",
       "independentAnswer": "주어진 선을 포함하는 점대칭 넓이 17cm² 작도 후보 한 가지",
       "resultContract": "constructed-figure",
       "candidateAnswerCount": null,
       "singleAnswer": null,
-      "singleAnswerCheck": "작도 후보 한 가지의 대칭·비교차·넓이를 검산했습니다. 다른 작도 가능성과 공식 답안은 미대조입니다.",
+      "singleAnswerCheck": "표시된 점을 중심으로 한 예와 다른 중심 (4,3.5)을 가진 예의 대칭·비교차·넓이를 검산했습니다. 출판사 공식 답안은 미대조입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked-independent-construction",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안과 공개용 원문 작도 그림 미대조로 원문 잠금을 유지합니다."
+      "implementationStatus": "ready",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherAnswerVerified": false,
+      "runtimeTypeId": "5-2-u3-e7-mission-4",
+      "runtimeGeneratorKey": "source52GridConstructionPage37Original"
     },
     {
       "sourceItemId": "5-2-u3-e7-mission-5",
@@ -966,9 +981,12 @@
       "sourceVerified": true,
       "calculationStatus": "checked-independent-calculation",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안과 공개용 원문 그림 미대조로 원문 잠금을 유지합니다."
+      "implementationStatus": "ready",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherAnswerVerified": false,
+      "runtimeTypeId": "5-2-u3-t8",
+      "runtimeGeneratorKey": "source52RotatingTrianglePage37Mission5Original"
     },
     {
       "sourceItemId": "5-2-u3-e7-mission-6",
@@ -994,9 +1012,12 @@
       "sourceVerified": true,
       "calculationStatus": "checked-independent-calculation",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "공식 답안과 공개용 원문 그림 미대조로 원문 잠금을 유지합니다."
+      "implementationStatus": "ready",
+      "publicDecision": "public",
+      "lockReason": "",
+      "publisherAnswerVerified": false,
+      "runtimeTypeId": "5-2-u3-e7-mission-6",
+      "runtimeGeneratorKey": "source52TwoCentersTrianglePage37Original"
     },
     {
       "sourceItemId": "5-2-u3-e8-exploration-8",

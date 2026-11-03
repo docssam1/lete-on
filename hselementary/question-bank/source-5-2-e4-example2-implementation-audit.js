@@ -31,7 +31,7 @@ const point = (svg,key) => {
 };
 
 const signatures=new Set();
-for(let variant=0;variant<3;variant+=1) for(const offset of [-1,0,1]) {
+for(let variant=0;variant<4;variant+=1) for(const offset of [-1,0,1]) {
   const item=api.getQuestion(sourceId,variant,offset);
   assert.ok(item,`variant ${variant}, difficulty ${offset} exists`);
   assert.equal(item.reviewLocked,false,"reviewed generated items are unlocked");
@@ -41,7 +41,7 @@ for(let variant=0;variant<3;variant+=1) for(const offset of [-1,0,1]) {
   assert.equal(target,180-alpha-beta);
   assert.equal(rotationDegrees,60);
   assert.equal(item.answer,`${target}°`);
-  assert.equal(item.verifiedVariantCount,3);
+  assert.equal(item.verifiedVariantCount,4);
   assert.match(item.prompt,/정삼각형 ㄱㄴㄷ과 정삼각형 ㄴㄹㅁ/);
   assert.match(item.prompt,/∠ㄱㄴㅁ=.*∠ㄴㄷㄹ=.*∠ㄴㅁㄱ/);
   assert.match(item.solution,/시계 방향 60° 회전/);
@@ -69,5 +69,5 @@ for(let variant=0;variant<3;variant+=1) for(const offset of [-1,0,1]) {
   assert.notDeepEqual([alpha,beta],[35,20],"generated values do not reproduce the source values");
   signatures.add(`${alpha}:${beta}`);
 }
-assert.equal(signatures.size,9,"all three variants across three difficulty levels are distinct");
-console.log("Grade 5-2 E4 Example 4-2 implementation audit passed: 9 distinct values, equilateral geometry, given/target angles, rotation solution, and public runtime registration.");
+assert.equal(signatures.size,12,"all four variants across three difficulty levels are distinct");
+console.log("Grade 5-2 E4 Example 4-2 implementation audit passed: 12 distinct values, equilateral geometry, given/target angles, rotation solution, and public runtime registration.");

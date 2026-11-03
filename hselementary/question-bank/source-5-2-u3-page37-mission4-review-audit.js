@@ -10,5 +10,12 @@ const on=(a,b,c)=>ori(a,b,c)===0&&c[0]>=Math.min(a[0],b[0])&&c[0]<=Math.max(a[0]
 const intersects=(a,b,c,d)=>(ori(a,b,c)*ori(a,b,d)<0&&ori(c,d,a)*ori(c,d,b)<0)||on(a,b,c)||on(a,b,d)||on(c,d,a)||on(c,d,b);
 for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)if(j-i!==1&&j-i!==n-1)assert.equal(intersects(poly[i],poly[(i+1)%n],poly[j],poly[(j+1)%n]),false);
 assert.deepEqual(center,[4,4]);
-const row=require('./source-inventory/5-2-u3-e5-e8-readiness-review.json').items.find(x=>x.sourceItemId==='5-2-u3-e7-mission-4');assert.equal(row.publicDecision,'locked');assert.match(row.independentAnswer,/17cm²/);
+// A different center also works: the unlabelled dot is not a required center.
+const alternate=[[2,4],[2,1],[5,1],[5,2],[4,3],[5,3],[6,1],[6,3],[6,6],[3,6],[3,5],[4,4],[3,4],[2,6]];
+assert.deepEqual(alternate.slice(0,5),original);
+for(let i=0;i<n/2;i++)assert.deepEqual(alternate[i+7],[8-alternate[i][0],7-alternate[i][1]]);
+assert.ok(alternate.every(([x,y])=>x>=0&&x<=10&&y>=0&&y<=8));
+assert.equal(Math.abs(alternate.reduce((s,[x,y],i)=>{const [a,b]=alternate[(i+1)%n];return s+x*b-a*y},0)),34);
+for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)if(j-i!==1&&j-i!==n-1)assert.equal(intersects(alternate[i],alternate[(i+1)%n],alternate[j],alternate[(j+1)%n]),false);
+const row=require('./source-inventory/5-2-u3-e5-e8-readiness-review.json').items.find(x=>x.sourceItemId==='5-2-u3-e7-mission-4');assert.equal(row.publicDecision,'public');assert.equal(row.publisherAnswerVerified,false);assert.match(row.independentAnswer,/17cm²/);
 console.log('37쪽 Mission 4: 원문 선 포함·180° 점대칭·자기 교차 없음·넓이 17cm² 작도 후보 검증');

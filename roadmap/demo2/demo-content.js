@@ -183,7 +183,7 @@ function levelStdMonth(shift, rowKey, meta){
   const b=ROAD_L0[rowKey].map(x=>({...x,s:(FIXED_ROWS.includes(rowKey)?x.s:x.s+shift),e:(FIXED_ROWS.includes(rowKey)?x.e:x.e+shift)}))
     .find(x=>stripTag(x.text).includes(meta.key));
   if(!b) return null;
-  return meta.pos==='end'?b.e:Math.floor((b.s+b.e)/2);
+  return meta.pos==='end'?b.e:Number.isFinite(meta.fraction)?Math.min(b.e,Math.floor(b.s+(b.e-b.s+1)*meta.fraction)):Math.floor((b.s+b.e)/2);
 }
 function levelFriendly(id){return {
   L0:'대치 프리미어 선행이 빠른 학생 기준입니다.',
@@ -245,6 +245,7 @@ function resolveSelections(input={}){
   if(!input.calcRadio)pending.push('calcRadio');
   else if(!CALC_RADIO.some(r=>r[0]===input.calcRadio))invalid.push('calcRadio');
   else positions.calc=calcToBlock(input.calcRadio);
+  for(const [key,value]of Object.entries(input.progress||{}))if(positions[key]&&Number.isFinite(value)&&value>=0&&value<1)positions[key]={...positions[key],fraction:value};
   return {positions,pending,invalid,ready:!pending.length&&!invalid.length};
 }
 function compareLevels(positions,now){

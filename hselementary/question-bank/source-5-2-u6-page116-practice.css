@@ -1,0 +1,5 @@
+@media print {
+  .u6p116-question, .u6p116-solution { font-family: "Noto Serif KR", "Batang", serif; font-size: 10.5pt; font-weight: 400; }
+}
+
+.u6-linked-frequency th,.u6-linked-frequency td { border:1px solid #222; padding:4px; font-weight:400; }

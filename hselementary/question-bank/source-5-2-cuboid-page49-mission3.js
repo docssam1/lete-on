@@ -35,24 +35,22 @@
 
   function diagram({ solution = false } = {}) {
     const model = verifyModel();
-    return `<svg class="source52-p49m3-diagram" viewBox="40 10 500 360" role="img" aria-label="가로 30cm, 세로 24cm, 높이 35cm인 상자에 세 방향으로 각각 두 겹씩 감긴 테이프와 세 개의 매듭${solution ? "; 각 고리 둘레 130cm, 118cm, 108cm" : ""}" xmlns="http://www.w3.org/2000/svg">
+    return `<svg class="source52-p49m3-diagram" viewBox="20 10 530 375" role="img" aria-label="가로 30cm, 세로 24cm, 높이 35cm인 상자에 세 방향으로 각 방향의 테이프와 세 개의 매듭, 각 테이프는 두 번 감음${solution ? "; 각 고리 둘레 130cm, 118cm, 108cm" : ""}" xmlns="http://www.w3.org/2000/svg">
       <g class="source52-p49m3-cuboid">
         <path d="M95 185H345L455 105H205Z M95 185V315H345V185 M345 185 455 105V235L345 315"/>
       </g>
       <g class="source52-p49m3-wraps" data-loop-count="${model.loops.length}" data-wraps-per-loop="${model.wrapsPerLoop}">
-        <!-- One horizontal loop around width and depth, drawn as two parallel wraps. -->
-        <path d="M95 242H345L455 162M95 258H345L455 178"/>
-        <!-- One loop around width and height, drawn as two parallel wraps. -->
-        <path d="M145 149H395V279M155 141H405V271"/>
-        <!-- One loop around depth and height, drawn as two parallel wraps. -->
-        <path d="M212 315V185L322 105M228 315V185L338 105"/>
+        <!-- The source illustrates one line per direction; the text specifies two wraps. -->
+        <path d="M95 250H345L455 170"/>
+        <path d="M150 145H400V275"/>
+        <path d="M220 315V185L330 105"/>
       </g>
       ${knot(150, 145, 0)}${knot(220, 195, 0)}${knot(400, 210, 35)}
       <g class="source52-p49m3-dimensions">
-        <path d="M95 337v10m250-10v10M95 343h250M355 325l8 8m102-88 8 8M359 329 469 249M84 185h-9m9 130h-9M79 185v130"/>
+        <path d="M95 337v10m250-10v10M95 343h250M355 325l8 8m102-88 8 8M359 329 469 249M465 105h10m-10 130h10M470 105v130"/>
         <text x="220" y="365" text-anchor="middle">30cm</text>
         <text x="453" y="313" text-anchor="middle">24cm</text>
-        <text x="61" y="250" text-anchor="middle" transform="rotate(-90 61 250)">35cm</text>
+        <text x="490" y="170" text-anchor="middle" transform="rotate(90 490 170)">35cm</text>
       </g>
     </svg>`;
   }

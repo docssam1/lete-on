@@ -13,6 +13,160 @@
   },
   "reviewScope": "PDF 54~61쪽을 600dpi로 직접 렌더하여 개념탐구의 실제 소문항, 예제 각 번호, Mission 각 번호를 문제 하나 단위로 세고 분류했다. 원문 위의 연필·빨간 필기 답은 근거에서 제외했다.",
   "answerPolicy": "수치 답은 독립 계산 또는 가능한 경우를 빠짐없이 세어 확인했다. 표·그래프·길찾기 그림은 원본의 눈금·점·선 연결을 모델링하기 전까지 공개하지 않는다.",
+  "additionalSourceReviews": [
+    {
+      "section": "확인학습 6단원 평균 구하기",
+      "sourcePdfPage": 110,
+      "alternateSourcePdfPage": 111,
+      "sourcePrintedPage": 116,
+      "scope": "116쪽 1~8번의 원문과 필기 없는 사본을 대조하고 표와 평균의 조건을 독립 계산했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "connected-1-8",
+      "items": [
+        {"number": 1, "classification": "평균과 두 점수 차로 비어 있는 두 점수 찾기", "candidate": "4월 93점, 6월 97점", "reviewNote": "다섯 점수의 합은 94×5=470점이고 알려진 세 점수의 합은 92+88+100=280점이다. 나머지 합 190점과 차 4점에서 4월은 (190−4)÷2=93점, 6월은 97점이다.", "runtimeTypeId": "5-2-u6-practice-1-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 2, "classification": "겹치는 세 수의 평균으로 가운데 수 찾기", "candidate": "101", "reviewNote": "작은 세 수의 합은 89×3=267, 큰 세 수의 합은 108×3=324, 다섯 수의 합은 98×5=490이다. 두 세 수의 합에서 가운데 수가 두 번 세어지므로 267+324−490=101이다.", "runtimeTypeId": "5-2-u6-practice-2-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 3, "classification": "두 집단의 평균과 전체 평균으로 인원 구하기", "candidate": "남학생 180명", "reviewNote": "남학생 수를 x라 하면 84x+80.3×153=82.3(x+153)이다. 평균 차이를 비교해 1.7x=2×153이므로 x=180이다. 주어진 평균이 정확한 값이라는 원문 해석이다.", "runtimeTypeId": "5-2-u6-practice-3-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 4, "classification": "두 쌍의 평균과 두 수의 차로 세 수 찾기", "candidate": "가 27, 나 45, 다 33", "reviewNote": "가+나=72이고 나−가=18이므로 가=27, 나=45다. 나+다=78이므로 다=33이다.", "runtimeTypeId": "5-2-u6-practice-4-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 5, "classification": "가족 수 도수표의 가중평균", "candidate": "4명", "reviewNote": "표의 가구 수는 5명 14가구, 4명 18가구, 3명 10가구, 2명 2가구다. 전체 가족 수는 5×14+4×18+3×10+2×2=176명이고 44가구로 나누면 평균 4명이다.", "runtimeTypeId": "5-2-u6-practice-5-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 6, "classification": "목표 평균에 필요한 다음 점수", "candidate": "89점", "reviewNote": "다섯 번의 총점은 91×5=455점이어야 한다. 네 번의 합 92+92+94+88=366점을 빼면 다섯째 점수는 89점이다.", "runtimeTypeId": "5-2-u6-practice-6-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 7, "classification": "기존 평균에 한 수를 더한 평균", "candidate": "49", "reviewNote": "다섯 수의 합 48×5=240에 54를 더해 여섯 개로 나누면 (240+54)÷6=49다.", "runtimeTypeId": "5-2-u6-practice-7-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 8, "classification": "두 평균과 점수 차로 세 번의 점수 찾기", "candidate": "1회 73점, 2회 89점, 3회 96점", "reviewNote": "첫 두 점수의 합은 81×2=162, 세 점수의 합은 86×3=258이므로 세 번째는 96점이다. 첫 번째는 96−23=73점, 두 번째는 162−73=89점이다.", "runtimeTypeId": "5-2-u6-practice-8-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"}
+      ]
+    },
+    {
+      "section": "확인학습 6단원 평균 구하기",
+      "sourcePdfPage": 111,
+      "alternateSourcePdfPage": 112,
+      "sourcePrintedPage": 117,
+      "scope": "117쪽 9~16번의 원문과 필기 없는 사본을 대조했다. 15번은 직원 유지와 나이 증가에 관한 해석 조건을 별도로 기록했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "partially-connected-9-14-16",
+      "items": [
+        {"number": 9, "classification": "도수표와 평균으로 빠진 인원 구하기", "candidate": "80점 8명", "reviewNote": "표에서 알려진 인원은 30명이고 20점과 80점 인원의 합은 10명이다. 전체 점수 합은 64.5×40=2580점이고 알려진 점수 합은 1900점이다. 20점 인원을 x, 80점 인원을 y라 하면 x+y=10, 20x+80y=680이므로 y=8이다.", "runtimeTypeId": "5-2-u6-practice-9-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 10, "classification": "평균 키와 한 명이 더해진 뒤의 키", "candidate": "(1) 150.4cm (2) 166.9cm", "reviewNote": "표의 키 열 개 합은 1504cm이므로 평균은 150.4cm다. 한 명이 더해진 뒤 평균은 151.9cm이므로 새 학생의 키는 151.9×11−1504=166.9cm다.", "runtimeTypeId": "5-2-u6-practice-10-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 11, "classification": "목표 평균 이상이 되기 위한 한 기록의 최솟값", "candidate": "163cm 이상", "reviewNote": "평균이 175cm 이상이 되려면 총합이 875cm 이상이어야 한다. 다시 뛸 학생을 제외한 네 기록의 합은 190+172+167+183=712cm이므로 새 기록은 875−712=163cm 이상이다.", "runtimeTypeId": "5-2-u6-practice-11-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 12, "classification": "네 점수의 평균과 두 점수 차", "candidate": "3회 90점, 4회 96점", "reviewNote": "네 점수 합 91×4=364에서 처음 두 점수 86+92=178을 빼면 나머지 합은 186이다. 차가 6이므로 세 번째는 (186−6)÷2=90점, 네 번째는 96점이다.", "runtimeTypeId": "5-2-u6-practice-12-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 13, "classification": "세 쌍의 평균으로 세 수의 평균 구하기", "candidate": "32", "reviewNote": "세 쌍의 합은 각각 66, 70, 56이며 이를 더하면 세 수의 합이 두 번 세어진다. 따라서 세 수의 합은 (66+70+56)÷2=96이고 평균은 96÷3=32다.", "runtimeTypeId": "5-2-u6-practice-13-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 14, "classification": "마지막 점수 추가 전후 평균으로 시험 횟수 구하기", "candidate": "15회", "reviewNote": "전체 횟수를 n이라 하면 79(n−1)+94=80n이므로 n=15다. 처음 14회의 합은 1106점이고 마지막 94점을 더한 1200점의 평균은 80점이다.", "runtimeTypeId": "5-2-u6-practice-14-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 15, "classification": "작년 직원과 신규 직원의 평균 나이", "candidate": "기존 60명이 모두 남고 한 살씩 증가했다면 25세; 원문 조건만으로는 미확정", "reviewNote": "기존 직원 60명이 올해도 모두 남고 각자의 나이를 한 살 더한 것으로 보면 72×35−60×37=300, 신규 12명 평균은 25세다. 원문은 기존 직원의 퇴사 여부를 명시하지 않는다. 예를 들어 작년 직원이 모두 36세이고 그중 한 명이 떠나 나머지 59명이 37세가 되었다면, 신규 12명의 나이 합 302와 총 71명의 평균 35세도 조건에 맞아 신규 평균이 25와 1/6세가 된다. 기준일과 나이 계산 방식도 확인이 필요하므로 단일 정답을 확정하지 않는다.", "status": "source-ambiguity-answer-key-pending"},
+        {"number": 16, "classification": "두 집단과 전체 평균으로 인원 구하기", "candidate": "30명", "reviewNote": "80점 이상 인원을 x라 하면 84x+72(40−x)=81×40이다. 12x=360이므로 x=30명이다.", "runtimeTypeId": "5-2-u6-practice-16-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"}
+      ]
+    },
+    {
+      "section": "확인학습 6단원 평균의 활용",
+      "sourcePdfPage": 112,
+      "alternateSourcePdfPage": 113,
+      "sourcePrintedPage": 118,
+      "scope": "118쪽 17~24번의 원문과 필기 없는 사본을 대조했다. 20번은 같은 점수를 만드는 서로 다른 정답 조합을 구분했고 24번은 구간 요금의 합산 해석을 명시했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "partially-connected-17-23",
+      "items": [
+        {"number": 17, "classification": "걸은 거리당 평균 시간", "candidate": "20분", "reviewNote": "총 15km를 5시간, 즉 300분 동안 걸었으므로 1km당 평균은 300÷15=20분이다.", "runtimeTypeId": "5-2-u6-practice-17-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 18, "classification": "시간당 평균 생산량과 한 달 판매액", "candidate": "64,800,000원", "reviewNote": "4월은 30일이므로 생산량은 90×8×30=21600개다. 이를 한 개에 3000원씩 모두 팔면 21600×3000=64800000원이다.", "runtimeTypeId": "5-2-u6-practice-18-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 19, "classification": "두 집단의 평균으로 인원 비 구하기", "candidate": "2배", "reviewNote": "남학생 수를 b, 여학생 수를 g라 하면 75b+72g=73(b+g)다. 따라서 2b=g이므로 여학생은 남학생의 2배다.", "runtimeTypeId": "5-2-u6-practice-19-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 20, "classification": "총점별 인원과 문항별 정답 인원", "candidate": "22명", "reviewNote": "40점과 80점 인원을 각각 x, y라 하면 x+y=9, 40x+80y=560이므로 x=4, y=5다. 40점은 1·2번을 맞힌 경우와 3번만 맞힌 경우가 있다. 2번을 맞힌 18명 중 30점 3명, 70점 8명, 80점 5명을 빼면 40점 중 1·2번을 맞힌 학생이 2명이다. 따라서 3번 정답자는 나머지 40점 2명과 50점 7명, 70점 8명, 80점 5명을 더해 22명이다.", "runtimeTypeId": "5-2-u6-practice-20-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 21, "classification": "두 집단의 가중평균", "candidate": "3kg", "reviewNote": "강아지 다섯 마리가 먹는 총량은 3.3×2+2.8×3=15kg이다. 한 마리당 평균은 15÷5=3kg이다.", "runtimeTypeId": "5-2-u6-practice-21-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 22, "classification": "두 집단의 가중평균과 반올림", "candidate": "37.22kg", "reviewNote": "총 몸무게는 35.4×5+39.5×4=335kg이다. 335÷9=37.222…이므로 소수 둘째 자리까지 반올림하면 37.22kg이다.", "runtimeTypeId": "5-2-u6-practice-22-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 23, "classification": "두 평균과 차를 이용한 일별 쪽수", "candidate": "금요일 73쪽, 토요일 89쪽, 일요일 96쪽", "reviewNote": "금·토 합은 81×2=162쪽, 3일 합은 86×3=258쪽이다. 일요일은 96쪽, 금요일은 96−23=73쪽, 토요일은 162−73=89쪽이다.", "runtimeTypeId": "5-2-u6-practice-23-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 24, "classification": "역 사이 요금표와 인접 구간 평균", "candidate": "인접 구간 요금이 합산된다고 보면 ㄱ 2000원, ㄴ 2000원, ㄷ 3500원, 평균 2300원", "reviewNote": "요금이 구간별로 합산된다고 가정하면 가−나=3500−1500=2000원, 다−라=6000−1500−2500=2000원, 마−바=6000−2500=3500원이다. 다섯 인접 구간의 평균은 (2000+1500+2000+2500+3500)÷5=2300원이다. 원문은 각 구간 요금이 합산된다는 규칙을 명시하지 않으므로 실제 요금표처럼 비합산 요금을 허용하는 해석에서는 이 값들이 유일하게 정해지지 않는다. 조건 및 공식 답안을 확인하기 전 확정하지 않는다.", "status": "source-ambiguity-answer-key-pending"}
+      ]
+    },
+    {
+      "section": "확인학습 6단원 평균의 활용",
+      "sourcePdfPage": 113,
+      "alternateSourcePdfPage": 114,
+      "sourcePrintedPage": 119,
+      "scope": "119쪽 25~32번의 원문과 필기 없는 사본을 대조했다. 31번은 선발 기준이 명시되지 않아 두 평균의 대소 관계를 별도로 검토했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "partially-connected-25-30-32",
+      "items": [
+        {"number": 25, "classification": "점수 정정 전후의 평균 차로 인원 구하기", "candidate": "50명", "reviewNote": "정정으로 총점은 98−89=9점 늘고 평균은 87.44−87.26=0.18점 늘었다. 평균들이 정확한 값이면 인원은 9÷0.18=50명이다. 원문은 반올림을 지시하지 않는다.", "runtimeTypeId": "5-2-u6-practice-25-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 26, "classification": "사흘 평균에서 빠진 날의 쪽수 구하기", "candidate": "42쪽", "reviewNote": "3일의 합은 40×3=120쪽이고 첫 이틀의 합은 37+41=78쪽이므로 셋째 날은 42쪽이다.", "runtimeTypeId": "5-2-u6-practice-26-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 27, "classification": "인원과 작업 시간을 반영한 시간당 평균 작업량", "candidate": "90m²", "reviewNote": "전체 작업 시간은 12×2+7×3=45인·시간이다. 전체 수확 면적 4050m²를 45로 나누면 한 사람의 1시간당 평균은 90m²다.", "runtimeTypeId": "5-2-u6-practice-27-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 28, "classification": "새 기록 추가 전후의 평균으로 시도 횟수 구하기", "candidate": "5번", "reviewNote": "새 기록 전의 횟수를 n이라 하면 37n+57=41(n+1)이다. n=4이므로 마지막 한 번까지 포함한 전체 횟수는 5번이다.", "runtimeTypeId": "5-2-u6-practice-28-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 29, "classification": "등간격 세 수의 평균", "candidate": "A 58, B 76, C 94", "reviewNote": "두 이웃한 수의 차가 각각 18이므로 가운데 수 B가 평균 76과 같다. 따라서 A=76−18=58, C=76+18=94다.", "runtimeTypeId": "5-2-u6-practice-29-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 30, "classification": "세 물건을 제외하기 전후의 평균으로 개수 구하기", "candidate": "8개", "reviewNote": "처음 사과 수를 n이라 하면 먹은 세 개의 합은 331+359+361=1051g이다. 357n−1051=361(n−3)을 풀면 n=8이다.", "runtimeTypeId": "5-2-u6-practice-30-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 31, "classification": "선발된 집단과 탈락한 집단의 평균", "candidate": "점수순 선발이면 83점; 선발 기준 미명시로 63점도 가능", "reviewNote": "뽑힌 30명의 평균을 x, 탈락한 150명의 평균을 y라 하면 30x+150y=180×73이고 |x−y|=12다. x=y+12이면 x=83, y=71이지만 x=y−12이면 x=63, y=75도 조건을 만족한다. 원문은 높은 점수 순으로 선발했다는 조건을 명시하지 않으므로 이를 확인하기 전 단일 답을 확정하지 않는다.", "status": "source-ambiguity-answer-key-pending"},
+        {"number": 32, "classification": "겹치는 과목 평균으로 특정 과목 점수 구하기", "candidate": "수학 98점", "reviewNote": "다섯 과목 합은 453점, 국어·수학·과학 합은 276점, 도덕·사회·과학 합은 267점이다. 앞 두 합을 전체 합과 비교하면 과학은 90점, 도덕+사회는 177점이다. 도덕+국어=183, 국어+사회=170이므로 도덕−사회=13, 도덕 95점, 사회 82점, 국어 88점이다. 수학은 276−88−90=98점이다.", "runtimeTypeId": "5-2-u6-practice-32-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"}
+      ]
+    },
+    {
+      "section": "확인학습 6단원 사건의 가짓수",
+      "sourcePdfPage": 114,
+      "alternateSourcePdfPage": 115,
+      "sourcePrintedPage": 120,
+      "scope": "120쪽 33~40번의 원문과 필기 없는 사본을 대조했다. 길 찾기 문항은 그림의 지점 사이 선 개수와 재방문 조건을 구분했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "partially-connected-33-36-38-40",
+      "items": [
+        {"number": 33, "classification": "지점 재방문이 없는 여러 경로의 수", "candidate": "37가지", "reviewNote": "그림에서 A−C는 3개, A−B는 2개, B−C는 2개, C−D는 3개, B−D는 2개다. 같은 지점을 다시 지나지 않으므로 지점 순서는 A−C−D, A−B−D, A−C−B−D, A−B−C−D의 네 가지다. 각각 9, 4, 12, 12가지여서 합은 37이다.", "runtimeTypeId": "5-2-u6-practice-33-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 34, "classification": "전구 다섯 개의 켜짐과 꺼짐으로 신호 만들기", "candidate": "31가지", "reviewNote": "위치가 구별되는 다섯 전구의 켜짐·꺼짐은 2⁵=32가지다. 모두 꺼진 한 가지는 신호가 아니므로 31가지다.", "runtimeTypeId": "5-2-u6-practice-34-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 35, "classification": "1~20 중 5 또는 6의 배수 찾기", "candidate": "7가지", "reviewNote": "5의 배수는 5, 10, 15, 20이고 6의 배수는 6, 12, 18이다. 이 범위에서 공통 배수가 없으므로 모두 7가지다.", "runtimeTypeId": "5-2-u6-practice-35-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 36, "classification": "세 사람의 가위바위보에서 낼 수 있는 경우", "candidate": "27가지", "reviewNote": "사람마다 가위·바위·보 세 가지 중 하나를 내므로 사람별 선택을 구분하면 3×3×3=27가지다. 승패 결과만 세는 것이 아니라 각 사람이 낸 모양을 세는 해석이다.", "runtimeTypeId": "5-2-u6-practice-36-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 37, "classification": "세 도시 사이 여러 길의 가짓수", "candidate": "도시를 되풀이하지 않는 경로라면 9가지", "reviewNote": "A−B 길은 4개, B−C 길은 2개, A−C 직접 가는 길은 1개다. 같은 도시를 다시 방문하지 않는 경로로 세면 4×2+1=9가지다. 다만 원문에는 33번과 달리 지점이나 길의 재방문 금지가 명시되지 않는다. 왕복과 반복을 서로 다른 이동으로 허용하면 유한한 9가지로 한정되지 않으므로 경로 해석과 공식 답안을 확인하기 전 확정하지 않는다.", "status": "source-ambiguity-answer-key-pending"},
+        {"number": 38, "classification": "자음과 모음을 하나씩 골라 글자 만들기", "candidate": "8가지", "reviewNote": "확대한 그림에는 자음 ㄱ, ㄹ, ㅁ, ㅍ 네 장과 모음 ㅗ, ㅓ 두 장이 있다. 마지막 카드는 모음 ㅛ가 아닌 자음 ㅍ이다. 각각 한 장씩 고르면 4×2=8가지다.", "runtimeTypeId": "5-2-u6-practice-38-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 39, "classification": "최우수 한 팀과 우수 두 팀 선정", "candidate": "60가지", "reviewNote": "최우수 한 팀을 6가지로 고른 뒤 남은 5팀 중 순서가 없는 우수 2팀을 5×4÷2=10가지로 고른다. 따라서 6×10=60가지다.", "runtimeTypeId": "5-2-u6-practice-39-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 40, "classification": "다섯 명이 줄 설 때 두 명이 이웃하는 경우", "candidate": "48가지", "reviewNote": "A와 E를 한 묶음으로 보면 다른 세 사람과 합해 네 대상을 4!=24가지로 배열한다. 묶음 안의 순서는 AE, EA 두 가지이므로 24×2=48가지다.", "runtimeTypeId": "5-2-u6-practice-40-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"}
+      ]
+    },
+    {
+      "section": "확인학습 6단원 사건의 가짓수",
+      "sourcePdfPage": 115,
+      "alternateSourcePdfPage": 116,
+      "sourcePrintedPage": 121,
+      "scope": "121쪽 41~48번 원문과 필기 없는 사본을 대조했다. 47번은 그림의 격자 좌표와 최단경로 중복 여부를 검산했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "connected-41-48",
+      "items": [
+        {"number": 41, "classification": "부모가 양 끝에 서는 가족사진 배열", "candidate": "48가지", "reviewNote": "양 끝에 부모를 세우는 순서는 2가지이고 가운데 네 사람을 세우는 순서는 4!=24가지이므로 2×24=48가지다.", "runtimeTypeId": "5-2-u6-practice-41-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 42, "classification": "집에서 두 장소를 한 번씩 들러 돌아오는 경로", "candidate": "48가지", "reviewNote": "집에서 서점과 약국을 각각 한 번 방문하고 바로 집으로 돌아오는 순서는 서점 먼저 또는 약국 먼저의 2가지다. 각 순서에 대해 집−서점 4개, 서점−약국 3개, 약국−집 2개 중 하나씩 고르므로 2×4×3×2=48가지다. 장소 방문 순서와 이동한 길을 구분해 센다.", "runtimeTypeId": "5-2-u6-practice-42-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 43, "classification": "바지와 셔츠를 한 벌씩 고르기", "candidate": "12가지", "reviewNote": "서로 구별되는 바지 4개 중 하나와 셔츠 3개 중 하나를 고르므로 4×3=12가지다.", "runtimeTypeId": "5-2-u6-practice-43-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 44, "classification": "다섯 숫자 카드로 만드는 세 자리 홀수", "candidate": "36개", "reviewNote": "일의 자리는 1, 3, 5 중 3가지이고 나머지 네 카드에서 백의 자리와 십의 자리를 순서 있게 고르면 4×3가지다. 따라서 3×4×3=36개다.", "runtimeTypeId": "5-2-u6-practice-44-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 45, "classification": "숫자 카드로 만드는 35 이상의 두 자리 수", "candidate": "17개", "reviewNote": "십의 자리가 3이면 35, 36 두 개다. 십의 자리가 4, 5, 6이면 각각 다른 다섯 카드 중 하나를 일의 자리에 놓을 수 있으므로 2+3×5=17개다.", "runtimeTypeId": "5-2-u6-practice-45-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 46, "classification": "부모끼리와 자녀끼리 이웃하는 다섯 명의 배열", "candidate": "24가지", "reviewNote": "부모 두 명과 자녀 세 명을 각각 한 묶음으로 보면 두 묶음의 순서는 2가지, 부모 안의 순서는 2가지, 자녀 안의 순서는 3!=6가지다. 전체는 2×2×6=24가지다.", "runtimeTypeId": "5-2-u6-practice-46-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 47, "classification": "B 또는 C를 지나는 격자 최단경로", "candidate": "24가지", "reviewNote": "격자를 A=(0,0), B=(1,3), C=(2,1), D=(3,4)로 놓는다. B를 지나는 최단경로는 4×3=12가지, C를 지나는 최단경로는 3×4=12가지다. 최단경로에서는 오른쪽과 위쪽으로만 가므로 B와 C를 모두 지나는 경로는 없다. 합은 24가지다.", "runtimeTypeId": "5-2-u6-practice-47-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 48, "classification": "둘레가 7인 자연수 변의 삼각형", "candidate": "2개", "reviewNote": "변의 길이를 작은 순으로 a≤b≤c로 놓고 a+b+c=7, a+b>c를 만족하는 경우를 세면 (1,3,3), (2,2,3) 두 가지다. 변의 순서나 회전은 같은 삼각형으로 센다.", "runtimeTypeId": "5-2-u6-practice-48-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"}
+      ]
+    },
+    {
+      "section": "확인학습 6단원 사건의 가능성",
+      "sourcePdfPage": 116,
+      "alternateSourcePdfPage": 117,
+      "sourcePrintedPage": 122,
+      "scope": "122쪽 49~56번의 원문과 필기 없는 사본을 대조했다. 가능성을 계산할 때 적용한 동등 가능성과 순서 해석을 기록했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "connected-49-50-52-55",
+      "items": [
+        {"number": 49, "classification": "숫자 카드 한 장이 주어진 범위에 속할 가능성", "candidate": "1/3", "reviewNote": "3 미만인 카드는 1, 2 두 장이고 13 이상인 카드는 13, 14, 15 세 장이다. 15장이 같은 가능성으로 뽑힌다면 5/15=1/3이다.", "runtimeTypeId": "5-2-u6-practice-49-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 50, "classification": "동전 네 개 중 앞면이 적어도 한 개일 가능성", "candidate": "15/16", "reviewNote": "공정한 동전의 앞뒤가 서로 독립이고 같은 가능성이라면 전체 16가지 중 앞면이 하나도 없는 경우는 한 가지다. 구하는 값은 1−1/16=15/16이다.", "runtimeTypeId": "5-2-u6-practice-50-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 51, "classification": "두 명의 회장을 뽑을 때 모두 남학생일 가능성", "candidate": "두 사람을 무작위로 공평하게 선택하면 10/21; 선출 방식 미확인", "reviewNote": "일곱 후보 중 두 명을 같은 가능성으로 뽑는다면 전체 조합은 21가지, 남학생 두 명의 조합은 10가지이므로 10/21이다. 그러나 원문은 회장을 선출한다고만 하고 무작위 추첨인지 투표인지 밝히지 않는다. 선출 방식에 따라 같은 가능성이라는 전제가 성립하지 않을 수 있으므로 확인 전 확정하지 않는다.", "status": "source-ambiguity-answer-key-pending"},
+        {"number": 52, "classification": "서로 다른 동전 네 개가 모두 앞면일 가능성", "candidate": "1/16", "reviewNote": "서로 다른 네 동전이 공정하고 독립이라면 각각의 앞뒤 배열 16가지가 같은 가능성이고 모두 앞면인 경우는 하나이므로 1/16이다.", "runtimeTypeId": "5-2-u6-practice-52-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 53, "classification": "주사위 세 개가 모두 짝수일 가능성", "candidate": "1/8", "reviewNote": "공정한 주사위에서 짝수는 2, 4, 6으로 확률은 1/2이다. 세 주사위가 독립이라면 (1/2)³=1/8이다.", "runtimeTypeId": "5-2-u6-practice-53-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 54, "classification": "네 사람 중 지정된 사람이 맨 뒤에 설 가능성", "candidate": "1/4", "reviewNote": "네 사람의 배열 4!=24가지가 같은 가능성이라면 지정된 사람을 맨 뒤에 고정하고 나머지를 배열하는 경우는 3!=6가지다. 6/24=1/4이다.", "runtimeTypeId": "5-2-u6-practice-54-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 55, "classification": "두 숫자 카드로 만든 수가 30 이상일 가능성", "candidate": "3/5", "reviewNote": "각기 다른 1~5 카드에서 십의 자리와 일의 자리를 같은 가능성으로 정한다면 전체는 5×4=20가지다. 30 이상은 십의 자리가 3, 4, 5인 3×4=12가지이므로 12/20=3/5다. 뽑은 두 카드의 자리 순서도 무작위로 정한다는 계산이다.", "runtimeTypeId": "5-2-u6-practice-55-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 56, "classification": "키가 다른 네 사람이 키 순서로 설 가능성", "candidate": "작은 순과 큰 순을 모두 허용하면 1/12; 한 방향만 뜻하면 1/24", "reviewNote": "네 사람의 배열은 24가지다. '키 순서대로'에 작은 사람부터와 큰 사람부터를 모두 포함하면 두 배열이므로 2/24=1/12이고, 미리 정한 한 방향만 뜻한다면 1/24이다. 원문은 어느 방향을 뜻하는지 명시하지 않으므로 수업의 정의나 공식 답안을 확인하기 전 단일 답을 확정하지 않는다. 배열이 같은 가능성이라는 전제도 필요하다.", "status": "source-ambiguity-answer-key-pending"}
+      ]
+    },
+    {
+      "section": "확인학습 6단원 사건의 가능성",
+      "sourcePdfPage": 117,
+      "alternateSourcePdfPage": 118,
+      "sourcePrintedPage": 123,
+      "scope": "두 원본 파일의 마지막 페이지인 인쇄 123쪽 57~64번의 문제와 그림을 대조하고 각 가능성을 독립 계산했다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "connected-57-59-61-63",
+      "items": [
+        {"number": 57, "classification": "숫자 카드로 만든 두 자리 수가 50 이상일 가능성", "candidate": "1/3", "reviewNote": "1~6 카드 중 십의 자리를 5 또는 6으로 택하면 50 이상이다. 자리 순서를 포함한 6×5=30가지가 같은 가능성이라면 해당 경우는 2×5=10가지여서 10/30=1/3이다.", "runtimeTypeId": "5-2-u6-practice-57-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 58, "classification": "공의 색이 나올 가능성으로 전체 개수 구하기", "candidate": "노란 공 5개", "reviewNote": "공이 같은 가능성으로 뽑힌다면 빨간 공 4개가 전체의 2/7이므로 전체는 4÷(2/7)=14개다. 빨강 4개와 파랑 5개를 빼면 노랑은 5개다.", "runtimeTypeId": "5-2-u6-practice-58-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 59, "classification": "네 명이 줄 설 때 부모가 이웃하지 않을 가능성", "candidate": "1/2", "reviewNote": "네 사람의 배열 4!=24가지가 같은 가능성이라면 부모가 이웃하는 배열은 부모를 한 묶음으로 보아 3!×2=12가지다. 이웃하지 않는 경우도 12가지이므로 12/24=1/2이다.", "runtimeTypeId": "5-2-u6-practice-59-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 60, "classification": "두 사람의 가위바위보 승부가 결정될 가능성", "candidate": "각 선택이 독립이고 동일한 가능성이면 2/3", "reviewNote": "각 사람이 가위·바위·보를 독립적으로 같은 가능성으로 낸다면 9가지 중 비기는 세 가지를 제외한 6가지에서 승부가 결정되어 6/9=2/3이다. 실제 사람이 선택하는 방식은 원문에 제시되지 않아 이 분포 가정에 따른 값으로 기록한다.", "status": "source-interpretation-answer-key-pending"},
+        {"number": 61, "classification": "두 주머니에서 서로 다른 색 공이 나올 가능성", "candidate": "11/21", "reviewNote": "각 주머니에서 각 공이 같은 가능성으로 뽑히고 두 선택이 독립이라면 A 흰색·B 검정은 (4/6)×(4/7), A 검정·B 흰색은 (2/6)×(3/7)이다. 합은 22/42=11/21이다.", "runtimeTypeId": "5-2-u6-practice-61-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 62, "classification": "세 숫자 카드로 만든 수가 3의 배수일 가능성", "candidate": "1/2", "reviewNote": "세 장을 순서 있게 고르는 4×3×2=24가지가 같은 가능성이라면 숫자의 합이 3의 배수인 카드 집합은 {1,2,3}, {2,3,4}다. 각각 3!=6개씩이어서 12/24=1/2이다.", "runtimeTypeId": "5-2-u6-practice-62-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 63, "classification": "네 OX 문제에서 적어도 두 문제를 맞힐 가능성", "candidate": "11/16", "reviewNote": "각 문항에 O와 X를 독립적으로 같은 가능성으로 표시한다면 정오 배열 16가지가 같다. 정답이 0개 또는 1개인 1+4=5가지를 빼면 11가지이므로 11/16이다.", "runtimeTypeId": "5-2-u6-practice-63-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 64, "classification": "4×3 격자 선을 따라 그린 사각형이 정사각형일 가능성", "candidate": "각 사각형을 같은 가능성으로 고르면 1/3; 선택 방법 미확인", "reviewNote": "격자선을 따라 그리는 직사각형은 세로 경계 5개 중 2개와 가로 경계 4개 중 2개를 골라 10×6=60개다. 격자 칸이 정사각형이면 정사각형은 1칸 12개, 2칸 6개, 3칸 2개로 20개이므로 균등 선택 시 20/60=1/3이다. 원문은 사각형을 어떤 방식으로 선택하는지 명시하지 않아 모든 사각형의 선택 가능성이 같다는 점은 확인이 필요하다.", "status": "source-interpretation-answer-key-pending"}
+      ]
+    }
+  ],
   "verification": {
     "renderEvidence": {
       "dpi": 600,

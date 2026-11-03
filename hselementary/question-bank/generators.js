@@ -12558,6 +12558,9 @@
       if (kind === 2) {
         const denominator = fractionDenominator();
         const names = [["선주", "민주"], ["민서", "준호"], ["유진", "도윤"]][tier];
+        const hasFinalConsonant = name => (name.charCodeAt(name.length - 1) - 0xac00) % 28 !== 0;
+        const topicName = name => `${name}${hasFinalConsonant(name) ? "은" : "는"}`;
+        const subjectName = name => `${name}${hasFinalConsonant(name) ? "이" : "가"}`;
         const sideOne = denominator * int(rng, 2, 3 + tier) + fractionRemainder(denominator);
         const sideTwo = denominator * int(rng, 2, 3 + tier) + fractionRemainder(denominator);
         const leftOne = denominator * int(rng, 1, 2 + tier) + fractionRemainder(denominator);
@@ -12567,9 +12570,9 @@
         const wireTwo = sideTwo * 4 + leftTwo;
         const longerIndex = leftOne > leftTwo ? 0 : 1;
         const difference = Math.abs(leftOne - leftTwo);
-        const answer = `${names[longerIndex]}가 ${mixedFraction(difference, denominator)}m`;
+        const answer = `${subjectName(names[longerIndex])} ${mixedFraction(difference, denominator)}m`;
         const evidence = fraction42Evidence("fraction-3-example-2", [leftOne, leftTwo, denominator, tier * 2 + longerIndex], answer);
-        return result(`${names[0]}는 길이 ${mixedFractionMarkup(wireOne, denominator)}m의 철사로 한 변의 길이가 ${mixedFractionMarkup(sideOne, denominator)}m인 정사각형을 만들었습니다. ${names[1]}는 길이 ${mixedFractionMarkup(wireTwo, denominator)}m의 철사로 한 변의 길이가 ${mixedFractionMarkup(sideTwo, denominator)}m인 정사각형을 만들었습니다. 남은 철사의 길이는 누가 몇 m 더 긴지 구하세요.${evidence}`, answer, `${names[0]}는 ${mixedFractionMarkup(wireOne, denominator)} - 4 × ${mixedFractionMarkup(sideOne, denominator)} = ${mixedFractionMarkup(leftOne, denominator)}m, ${names[1]}는 ${mixedFractionMarkup(wireTwo, denominator)} - 4 × ${mixedFractionMarkup(sideTwo, denominator)} = ${mixedFractionMarkup(leftTwo, denominator)}m가 남습니다. 따라서 ${names[longerIndex]}가 ${mixedFractionMarkup(difference, denominator)}m 더 깁니다.`);
+        return result(`${topicName(names[0])} 길이 ${mixedFractionMarkup(wireOne, denominator)}m의 철사로 한 변의 길이가 ${mixedFractionMarkup(sideOne, denominator)}m인 정사각형을 만들었습니다. ${topicName(names[1])} 길이 ${mixedFractionMarkup(wireTwo, denominator)}m의 철사로 한 변의 길이가 ${mixedFractionMarkup(sideTwo, denominator)}m인 정사각형을 만들었습니다. 남은 철사의 길이는 누가 몇 m 더 긴지 구하세요.${evidence}`, answer, `${topicName(names[0])} ${mixedFractionMarkup(wireOne, denominator)} - 4 × ${mixedFractionMarkup(sideOne, denominator)} = ${mixedFractionMarkup(leftOne, denominator)}m, ${topicName(names[1])} ${mixedFractionMarkup(wireTwo, denominator)} - 4 × ${mixedFractionMarkup(sideTwo, denominator)} = ${mixedFractionMarkup(leftTwo, denominator)}m가 남습니다. 따라서 ${subjectName(names[longerIndex])} ${mixedFractionMarkup(difference, denominator)}m 더 깁니다.`);
       }
       if (kind === 3) {
         const denominator = fractionDenominator();

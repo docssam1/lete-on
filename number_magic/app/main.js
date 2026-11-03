@@ -798,6 +798,7 @@ function effectiveLearningSettings(weekKey){
 }
 function applyLearningSettings(patch,guidanceChoice){
   applyAdminSettings();
+  if(patch&&patch.cadence)S.roadCadenceChosen=true;
   if(S.adminPlan||!window.NM_PLAN_CONTROL||!stateStorageCurrent())return false;
   const keys=['learningPlan','learningPlanHistory','roadSpeed','roadAmount','roadCadence','roadPace','roadManual','_roadFocus','highSchedule','middleCadenceDefaultVersion','calculusCadenceDefaultVersion','middleStudyGuidanceChoices'];
   const before=Object.fromEntries(keys.map(k=>[k,{present:Object.prototype.hasOwnProperty.call(S,k),value:S[k]}]));
@@ -2645,7 +2646,10 @@ function screenGradeCourse(){
 /* ISO-8601 주차: 월요일 시작, 그 주의 목요일이 속한 연도가 기준 연도.
    표준 알고리즘(문서 없이도 재현 가능하도록 직접 구현) — 서버 호출 없음. */
 function isoWeekInfo(date){
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  /* 서울 날짜 기준 — 학습 계획(learning-plan.js)이 서울 날짜로 주를 세므로 기기 시간대와 상관없이 같은 주가 되게 한다.
+     한국 밖(예: UTC)에서 월요일 새벽에 열면 주차가 일주일 어긋나 학습 계획 시작 주와 달라지던 것을 고침(2026-11-01). */
+  const k = new Date(date.getTime() + 9*3600000);
+  const d = new Date(Date.UTC(k.getUTCFullYear(), k.getUTCMonth(), k.getUTCDate()));
   const dayNum = (d.getUTCDay() + 6) % 7; // Mon=0..Sun=6
   d.setUTCDate(d.getUTCDate() - dayNum + 3); // 그 주의 목요일
   const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
@@ -5345,7 +5349,7 @@ function screenPlacement(){
     chooseMethod:assessmentChooseMethod,checkHistory:()=>S.achievementChecks||[],
     onAttemptStart:()=>{assessmentChooseMethod=false;},
     onMethodChoose:phase=>{assessmentChooseMethod=false;S._diag.phase=phase;S._diag.questionStartedAt=Date.now();save();render();},
-    planSettings:{speed:S.roadSpeed||1,pace:S.roadPace||'p2',cadence:S.roadCadence||'w1'},
+    planSettings:Object.assign({speed:S.roadSpeed||1,pace:S.roadPace||'p2'},(S.roadCadenceChosen||S.adminPlan)?{cadence:S.roadCadence||'w1'}:{}), /* 직접 고르지 않았으면 과정별 기본(초등 주1·중고등 표준)을 로드맵이 정한다 */
     onProfile:profile=>{S.schoolAge={entryYear:profile.entryYear,birthYear:profile.birthYear,setAt:Date.now()};save();},
     paceManaged:!!S.adminPlan,
     onPaceApply:p=>{if(S.adminPlan||!ROAD_MULTS_LIST.includes(p.speed)||!['w1','w2'].includes(p.cadence))return false;return applyLearningSettings({speed:p.speed,cadence:p.cadence});},

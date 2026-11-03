@@ -1,0 +1,8 @@
+@media print {
+  .u5p108-question, .u5p108-solution { font-family: "Noto Serif KR", "Batang", serif; font-size: 10.5pt; }
+  .u5p108-question svg { max-height: 48mm; }
+}
+
+.u5p112-figure-pair { display: flex; align-items: center; justify-content: center; gap: .3em; }
+.u5p112-figure-pair svg { width: 48% !important; min-width: 0; }
+@media print { .u5p112-figure-pair svg { max-height: 38mm; } }

@@ -15,6 +15,13 @@ while q:
  for dx,dy,v in [(1,0,(A(o,r),N(n),d,r)),(-1,0,(S(o,n),n,d,N(r))),(0,1,(A(o,d),r,N(n),d)),(0,-1,(S(o,n),r,n,N(d)))]:
   k=x+dx,y+dy
   if k in cells and k not in f:f[k]=v;q.append(k)
+# The reconstructed marked faces must form the six boundary planes of one cube.
+assert len(f) == 6
+assert {n for _,_,_,n in f.values()} == {(2,0,0),(-2,0,0),(0,2,0),(0,-2,0),(0,0,2),(0,0,-2)}
+for o,r,d,n in f.values():
+ corners = [o,A(o,r),A(o,d),A(A(o,r),d)]
+ assert all(all(c in (0,2) for c in point) for point in corners)
+ assert C(r,d) == N(M(n,2)), 'the printed side must face outward'
 patterns={(0,0):((0,2),(2,0)),(1,0):((0,1),(2,1)),(1,1):((1,0),(1,2)),(2,1):((0,0),(2,2)),(2,2):((0,1),(2,1)),(3,2):((0,2),(2,0))}
 face=[]
 for c,(o,r,d,n) in f.items():
@@ -42,6 +49,7 @@ def line(face_name,pts):
  if dx==0:return 'V'
  return '\\' if dx*dy>0 else '/'
 sets=set()
+witnesses={}
 for r in rot:
  visible={}
  for normal,points in face:
@@ -49,11 +57,23 @@ for r in rot:
   name={(0,0,1):'F',(1,0,0):'R',(0,1,0):'T'}.get(n)
   if name: visible[name]=line(name,[tr(p,r) for p in points])
  assert len(visible)==3
- sets.add((visible['T'],visible['F'],visible['R']))
+ configuration=(visible['T'],visible['F'],visible['R'])
+ sets.add(configuration)
+ witnesses.setdefault(configuration,r)
 # Each tuple gives the top, front and right face lines in screen coordinates.
 transcribed = [("H", "\\", "\\"), ("H", "\\", "/"),
                ("\\", "V", "/"), ("V", "V", "\\"),
                ("\\", "H", "H")]
 assert len(rot) == 24
 assert [choice in sets for choice in transcribed] == [True, False, True, True, True]
+# Retain an actual rotation witness for each possible original option.
+for number,choice in enumerate(transcribed,1):
+ if number == 2:
+  assert choice not in witnesses
+ else:
+  rotation = witnesses[choice]
+  assert len({tuple(axis) for axis in rotation}) == 3
+  print(f'option {number}: possible, rotation basis {rotation}')
+print('option 2: impossible; two diagonals meet at a cube vertex, but all six net diagonal endpoints are distinct')
+print('Publisher answer unverified; this is a mathematical source check, not release approval.')
 print("Page 52 Example 3-4: outward fold and all five choices checked; only choice 2 is impossible. Official key unverified.")

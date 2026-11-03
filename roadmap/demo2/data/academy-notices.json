@@ -1,0 +1,1234 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-03T22:47:35+09:00",
+  "academies": [
+    {
+      "id": "soma",
+      "name": "소마",
+      "subject": "수학학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://soma1.somai.co.kr/customer/notice"
+    },
+    {
+      "id": "fields",
+      "name": "필즈더클래식",
+      "subject": "수학학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://www.fieldsgood.co.kr/bbs/board.php?bo_table=notice"
+    },
+    {
+      "id": "hwangso",
+      "name": "황소수학",
+      "subject": "수학학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://blog.naver.com/sharpedu"
+    },
+    {
+      "id": "dolpa",
+      "name": "돌파수학",
+      "subject": "수학학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://blog.naver.com/dpmath"
+    },
+    {
+      "id": "won",
+      "name": "원수학",
+      "subject": "수학학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://blog.naver.com/wonmath563"
+    },
+    {
+      "id": "eden",
+      "name": "이든수학",
+      "subject": "수학학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://blog.naver.com/edenmath"
+    },
+    {
+      "id": "kiparang",
+      "name": "기파랑문해원",
+      "subject": "국어학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://www.kiparang.co.kr/main/sub.html?Mode=list&boardID=www8"
+    },
+    {
+      "id": "thousand",
+      "name": "천개의고원",
+      "subject": "국어학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": ""
+    },
+    {
+      "id": "jini",
+      "name": "지니국어",
+      "subject": "국어학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": ""
+    },
+    {
+      "id": "msc",
+      "name": "MSC",
+      "subject": "국어학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://www.imsc21.com/"
+    },
+    {
+      "id": "cna",
+      "name": "C&A 논술",
+      "subject": "국어학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": ""
+    },
+    {
+      "id": "hwarang",
+      "name": "논술화랑",
+      "subject": "국어학원",
+      "stages": [
+        "elementary"
+      ],
+      "url": ""
+    },
+    {
+      "id": "kimyoungjun",
+      "name": "김영준국어",
+      "subject": "국어학원",
+      "stages": [
+        "middle"
+      ],
+      "url": ""
+    },
+    {
+      "id": "anbora",
+      "name": "안보라국어",
+      "subject": "국어학원",
+      "stages": [
+        "middle"
+      ],
+      "url": ""
+    },
+    {
+      "id": "ensight",
+      "name": "인사이트 ENSIGHT",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://ensight-academy.com/"
+    },
+    {
+      "id": "thinkeng",
+      "name": "띵킹",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://thinkeng.co/"
+    },
+    {
+      "id": "peak",
+      "name": "PEAK",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://peakacademy.kr/"
+    },
+    {
+      "id": "groton",
+      "name": "그로튼",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://blog.naver.com/groton_academy"
+    },
+    {
+      "id": "proud7",
+      "name": "프라우드7",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://proud7.com/"
+    },
+    {
+      "id": "edisen",
+      "name": "에디센",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://edisen.co.kr/"
+    },
+    {
+      "id": "mi",
+      "name": "MI",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://miedu.co.kr/"
+    },
+    {
+      "id": "jprep",
+      "name": "제이프랩",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://jprep.co.kr/"
+    },
+    {
+      "id": "twinkle",
+      "name": "트윈클",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://twinkledaechi.com/"
+    },
+    {
+      "id": "peai",
+      "name": "피아이 PEAI",
+      "subject": "영어학원",
+      "stages": [
+        "elementary"
+      ],
+      "url": ""
+    }
+  ],
+  "sources": [
+    {
+      "id": "sh-blog",
+      "academy": "hwangso",
+      "url": "https://blog.naver.com/sharpedu",
+      "branch": "대치",
+      "checkedAt": "2026-11-03",
+      "lastSuccessAt": "2026-11-03",
+      "status": "ok"
+    },
+    {
+      "id": "dp-blog",
+      "academy": "dolpa",
+      "url": "https://blog.naver.com/dpmath",
+      "branch": "title",
+      "checkedAt": "2026-11-03",
+      "lastSuccessAt": "2026-11-03",
+      "status": "ok"
+    },
+    {
+      "id": "wm-blog",
+      "academy": "won",
+      "url": "https://blog.naver.com/wonmath563",
+      "branch": "대치",
+      "checkedAt": "2026-11-03",
+      "lastSuccessAt": "2026-11-03",
+      "status": "ok"
+    },
+    {
+      "id": "ed-blog",
+      "academy": "eden",
+      "url": "https://blog.naver.com/edenmath",
+      "branch": "대치",
+      "checkedAt": "2026-11-03",
+      "lastSuccessAt": "2026-11-03",
+      "status": "ok"
+    },
+    {
+      "id": "soma-official",
+      "academy": "soma",
+      "url": "https://soma1.somai.co.kr/customer/notice",
+      "branch": "대치",
+      "checkedAt": "2026-11-03",
+      "status": "ok",
+      "lastSuccessAt": "2026-11-03"
+    },
+    {
+      "id": "fields-official",
+      "academy": "fields",
+      "url": "https://www.fieldsgood.co.kr/bbs/board.php?bo_table=notice",
+      "branch": "대치",
+      "checkedAt": "2026-11-03",
+      "status": "ok",
+      "lastSuccessAt": "2026-11-03"
+    },
+    {
+      "id": "kiparang-official",
+      "academy": "kiparang",
+      "url": "https://www.kiparang.co.kr/main/sub.html?Mode=list&boardID=www8",
+      "branch": "공지별 지점 확인",
+      "checkedAt": "2026-11-03",
+      "status": "ok",
+      "lastSuccessAt": "2026-11-03"
+    },
+    {
+      "id": "msc-official",
+      "academy": "msc",
+      "url": "https://www.imsc21.com/",
+      "branch": "공지별 지점 확인",
+      "checkedAt": "2026-11-03",
+      "status": "delayed",
+      "lastSuccessAt": null
+    },
+    {
+      "id": "ensight-official",
+      "academy": "ensight",
+      "url": "https://ensight-academy.com/",
+      "branch": "공지별 지점 확인",
+      "checkedAt": "2026-11-03",
+      "status": "delayed",
+      "lastSuccessAt": null
+    },
+    {
+      "id": "thinkeng-official",
+      "academy": "thinkeng",
+      "url": "https://thinkeng.co/",
+      "branch": "공지별 지점 확인",
+      "checkedAt": "2026-11-03",
+      "status": "delayed",
+      "lastSuccessAt": null
+    },
+    {
+      "id": "peak-official",
+      "academy": "peak",
+      "url": "https://peakacademy.kr/",
+      "branch": "공지별 지점 확인",
+      "checkedAt": "2026-11-03",
+      "status": "delayed",
+      "lastSuccessAt": null
+    },
+    {
+      "id": "groton-official",
+      "academy": "groton",
+      "url": "https://blog.naver.com/groton_academy",
+      "branch": "공식 블로그",
+      "checkedAt": "2026-11-03",
+      "status": "ok",
+      "lastSuccessAt": "2026-11-03"
+    },
+    {
+      "id": "proud7-official",
+      "academy": "proud7",
+      "url": "https://proud7.com/",
+      "branch": "공지별 지점 확인",
+      "checkedAt": "2026-11-03",
+      "status": "delayed",
+      "lastSuccessAt": null
+    },
+    {
+      "id": "edisen-official",
+      "academy": "edisen",
+      "url": "https://edisen.co.kr/",
+      "branch": "공지별 지점 확인",
+      "checkedAt": "2026-11-03",
+      "status": "delayed",
+      "lastSuccessAt": null
+    },
+    {
+      "id": "mi-official",
+      "academy": "mi",
+      "url": "https://miedu.co.kr/",
+      "branch": "공지별 지점 확인",
+      "checkedAt": "2026-11-03",
+      "status": "delayed",
+      "lastSuccessAt": null
+    },
+    {
+      "id": "jprep-official",
+      "academy": "jprep",
+      "url": "https://jprep.co.kr/",
+      "branch": "공지별 지점 확인",
+      "checkedAt": "2026-11-03",
+      "status": "delayed",
+      "lastSuccessAt": null
+    },
+    {
+      "id": "twinkle-official",
+      "academy": "twinkle",
+      "url": "https://twinkledaechi.com/",
+      "branch": "공지별 지점 확인",
+      "checkedAt": "2026-11-03",
+      "status": "delayed",
+      "lastSuccessAt": null
+    }
+  ],
+  "items": [
+    {
+      "id": "shared-sh-blog-224446751287-대치",
+      "academy": "hwangso",
+      "branch": "대치",
+      "sourceId": "sh-blog",
+      "kind": "test",
+      "title": "응시 예약 방법 및 주의 사항",
+      "url": "https://blog.naver.com/sharpedu/224446751287",
+      "publishedAt": "2026-10-19",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-sh-blog-224439024904-대치",
+      "academy": "hwangso",
+      "branch": "대치",
+      "sourceId": "sh-blog",
+      "kind": "test",
+      "title": "2026년 12월 신입생 입학시험 안내(대치)",
+      "url": "https://blog.naver.com/sharpedu/224439024904",
+      "publishedAt": "2026-10-12",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "2026/10/31(토) 1교시 10:30~12:20, 2교시 13:30~15:20 (110분)",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-sh-blog-224425059273-대치",
+      "academy": "hwangso",
+      "branch": "대치",
+      "sourceId": "sh-blog",
+      "kind": "test",
+      "title": "[10월 편입시험 예약 페이지 관련 공지]",
+      "url": "https://blog.naver.com/sharpedu/224425059273",
+      "publishedAt": "2026-09-28",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "10/17(토) · 예약기간 : 10/02(금) 오후 4시 ~ 10/16(금) 오후 4시 (이후 결원있을 경우 전화예약 가능)",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-dp-blog-224407474293-대치",
+      "academy": "dolpa",
+      "branch": "대치",
+      "sourceId": "dp-blog",
+      "kind": "admission",
+      "title": "[대치 중등관] 초6, 12월 개강안내",
+      "url": "https://blog.naver.com/dpmath/224407474293",
+      "publishedAt": "2026-10-16",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-dp-blog-224408399028-대치",
+      "academy": "dolpa",
+      "branch": "대치",
+      "sourceId": "dp-blog",
+      "kind": "test",
+      "title": "[대치 중등관] 정규반 진도표(9/19~)",
+      "url": "https://blog.naver.com/dpmath/224408399028",
+      "publishedAt": "2026-09-18",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-dp-blog-224416048124-분당",
+      "academy": "dolpa",
+      "branch": "분당",
+      "sourceId": "dp-blog",
+      "kind": "test",
+      "title": "[분당관] 정규반 진도 및 신규 개강 안내(9/19~)",
+      "url": "https://blog.naver.com/dpmath/224416048124",
+      "publishedAt": "2026-09-18",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-dp-blog-224377663832-대치",
+      "academy": "dolpa",
+      "branch": "대치",
+      "sourceId": "dp-blog",
+      "kind": "test",
+      "title": "[대치 제로관]10월 개강시간표 안내",
+      "url": "https://blog.naver.com/dpmath/224377663832",
+      "publishedAt": "2026-09-05",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-dp-blog-224377668864-대치",
+      "academy": "dolpa",
+      "branch": "대치",
+      "sourceId": "dp-blog",
+      "kind": "test",
+      "title": "[대치 초등관]10월 개강시간표 안내",
+      "url": "https://blog.naver.com/dpmath/224377668864",
+      "publishedAt": "2026-09-05",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-wm-blog-224440523829-대치",
+      "academy": "won",
+      "branch": "대치",
+      "sourceId": "wm-blog",
+      "kind": "test",
+      "title": "[고등/정규반] 11월(초등),12월(중1) \"대수 기본반/실력직행반\" 개강안내",
+      "url": "https://blog.naver.com/wonmath563/224440523829",
+      "publishedAt": "2026-10-13",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-wm-blog-224397883830-대치",
+      "academy": "won",
+      "branch": "대치",
+      "sourceId": "wm-blog",
+      "kind": "test",
+      "title": "[중등/정규반] 10월, '중3-1기본반' 편입테스트 안내 (수정)",
+      "url": "https://blog.naver.com/wonmath563/224397883830",
+      "publishedAt": "2026-09-01",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-wm-blog-224393421982-대치",
+      "academy": "won",
+      "branch": "대치",
+      "sourceId": "wm-blog",
+      "kind": "test",
+      "title": "[중등/신규반] 10월, '중2-1 기본반' 신입생 입학테스트 안내",
+      "url": "https://blog.naver.com/wonmath563/224393421982",
+      "publishedAt": "2026-08-28",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "9/30(수) 오후 4:00 ~ 6:40",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-wm-blog-224392477146-대치",
+      "academy": "won",
+      "branch": "대치",
+      "sourceId": "wm-blog",
+      "kind": "test",
+      "title": "[고등/정규반] 10월, '실력공수 듀얼반' 편입테스트 안내",
+      "url": "https://blog.naver.com/wonmath563/224392477146",
+      "publishedAt": "2026-08-27",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "10/5(월) 오전 9:30 ~ 14:00",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-wm-blog-224390323062-대치",
+      "academy": "won",
+      "branch": "대치",
+      "sourceId": "wm-blog",
+      "kind": "admission",
+      "title": "[고등/새진도] 9,10,11월 새진도 개강일정",
+      "url": "https://blog.naver.com/wonmath563/224390323062",
+      "publishedAt": "2026-08-26",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-wm-blog-224391221213-대치",
+      "academy": "won",
+      "branch": "대치",
+      "sourceId": "wm-blog",
+      "kind": "test",
+      "title": "[고등/정규반] 10월, '공수2 기본반' 편입시험 안내",
+      "url": "https://blog.naver.com/wonmath563/224391221213",
+      "publishedAt": "2026-08-26",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "10/5(월) 오전 9:30~14:00",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-wm-blog-224364373777-대치",
+      "academy": "won",
+      "branch": "대치",
+      "sourceId": "wm-blog",
+      "kind": "test",
+      "title": "[중등/정규반] 9월, '중2-2기본반' 편입테스트 안내 (수정)",
+      "url": "https://blog.naver.com/wonmath563/224364373777",
+      "publishedAt": "2026-08-01",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-wm-blog-224349522703-대치",
+      "academy": "won",
+      "branch": "대치",
+      "sourceId": "wm-blog",
+      "kind": "test",
+      "title": "[고등/정규반] 8월, 「대수, 기본반/실력직행반」 편입테스트(초6, 중1)_수정",
+      "url": "https://blog.naver.com/wonmath563/224349522703",
+      "publishedAt": "2026-07-17",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-ed-blog-224459090480-대치",
+      "academy": "eden",
+      "branch": "대치",
+      "sourceId": "ed-blog",
+      "kind": "admission",
+      "title": "[중등관] 중,고등과정 Bridge 특강반 개강 안내",
+      "url": "https://blog.naver.com/edenmath/224459090480",
+      "publishedAt": "2026-10-30",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-ed-blog-224448947060-대치",
+      "academy": "eden",
+      "branch": "대치",
+      "sourceId": "ed-blog",
+      "kind": "admission",
+      "title": "[초등관] 중등함수 REPAIR반 개강 안내",
+      "url": "https://blog.naver.com/edenmath/224448947060",
+      "publishedAt": "2026-10-21",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "shared-ed-blog-224434054175-대치",
+      "academy": "eden",
+      "branch": "대치",
+      "sourceId": "ed-blog",
+      "kind": "admission",
+      "title": "[초5/초6] 공통수학1 기본반(12월개강) 안내",
+      "url": "https://blog.naver.com/edenmath/224434054175",
+      "publishedAt": "2026-10-07",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "shared-monitor"
+    },
+    {
+      "id": "auto-640aa157a801e8371a",
+      "academy": "soma",
+      "branch": "대치",
+      "sourceId": "soma-official",
+      "kind": "notice",
+      "title": "소마 새로운 시작",
+      "url": "https://soma1.somai.co.kr/customer/notice/detail?board_seq=2638191",
+      "publishedAt": "2026-07-22",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "official-list"
+    },
+    {
+      "id": "auto-0574931ed08601a7ee",
+      "academy": "fields",
+      "branch": "대치",
+      "sourceId": "fields-official",
+      "kind": "test",
+      "title": "입학테스트 온라인 예약 재개 공지",
+      "url": "https://www.fieldsgood.co.kr/bbs/board.php?bo_table=notice&wr_id=129",
+      "publishedAt": "2026-08-10",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "official-list"
+    },
+    {
+      "id": "auto-65beeadb6237911b06",
+      "academy": "fields",
+      "branch": "대치",
+      "sourceId": "fields-official",
+      "kind": "test",
+      "title": "온라인 입학테스트 예약 임시중단 공지",
+      "url": "https://www.fieldsgood.co.kr/bbs/board.php?bo_table=notice&wr_id=126",
+      "publishedAt": "2026-08-04",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "official-list"
+    },
+    {
+      "id": "auto-4eeb79d854830322e3",
+      "academy": "kiparang",
+      "branch": "공지별 지점 확인",
+      "sourceId": "kiparang-official",
+      "kind": "test",
+      "title": "기파랑문해원 입학테스트 노쇼(No-Show) 규정 안내",
+      "url": "https://www.kiparang.co.kr/main/sub.html?Mode=view&boardID=www8&num=219",
+      "publishedAt": "2026-08-10",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "official-list"
+    },
+    {
+      "id": "auto-f05339b162be8aa23e",
+      "academy": "groton",
+      "branch": "공식 블로그",
+      "sourceId": "groton-official",
+      "kind": "admission",
+      "title": "2027학년도 예비초1 입학 전형 안내 | 그로튼 프리미어",
+      "url": "https://blog.naver.com/groton_academy/224430498401",
+      "publishedAt": "2026-10-03",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "official-list"
+    },
+    {
+      "id": "auto-ddb82257203ab406fb",
+      "academy": "groton",
+      "branch": "공식 블로그",
+      "sourceId": "groton-official",
+      "kind": "seminar",
+      "title": "GROTON PREMIER 예비초1 설명회 (마감)",
+      "url": "https://blog.naver.com/groton_academy/224426285193",
+      "publishedAt": "2026-09-29",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "official-list"
+    },
+    {
+      "id": "auto-c6c71ddce2079c8daa",
+      "academy": "groton",
+      "branch": "공식 블로그",
+      "sourceId": "groton-official",
+      "kind": "seminar",
+      "title": "[그로튼 프리미어] 2027학년도 예비초 1학년 입학설명회 안내",
+      "url": "https://blog.naver.com/groton_academy/224406070804",
+      "publishedAt": "2026-09-09",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "official-list"
+    },
+    {
+      "id": "auto-6a29dc44896b449cd4",
+      "academy": "groton",
+      "branch": "공식 블로그",
+      "sourceId": "groton-official",
+      "kind": "seminar",
+      "title": "★2027학년도 예비초 1학년 입학설명회 정보 신청 안내★",
+      "url": "https://blog.naver.com/groton_academy/224386540863",
+      "publishedAt": "2026-08-22",
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "events": [],
+      "scheduleText": "",
+      "dateStatus": "unconfirmed",
+      "origin": "official-list"
+    },
+    {
+      "id": "fields-2027-admission",
+      "academy": "fields",
+      "branch": "대치",
+      "sourceId": "fields-official",
+      "kind": "admission",
+      "title": "2027 예비7세 입학 · 접수·설문·상담 안내",
+      "url": "https://fieldsgood.co.kr/etc/2027_7year_Guide.pdf",
+      "publishedAt": null,
+      "checkedAt": "2026-11-03",
+      "stages": [
+        "preschool"
+      ],
+      "dateStatus": "confirmed",
+      "scheduleText": "2021년생 대상 · 별도 입학 테스트 없음. 홈페이지 접수 후 문자 설문을 작성하고 상담으로 시간표·반을 정합니다.",
+      "registration": {
+        "start": "2026-11-02",
+        "end": "2026-12-11"
+      },
+      "events": [
+        {
+          "label": "접수",
+          "date": "2026-11-02",
+          "through": "2026-12-11"
+        },
+        {
+          "label": "개별 상담 연락",
+          "date": "2026-12-14"
+        },
+        {
+          "label": "수업 시작",
+          "date": "2027-01-04"
+        }
+      ],
+      "related": "fields-2027-entry",
+      "origin": "reviewed",
+      "scheduleCheckedAt": "2026-11-03",
+      "sourceState": "unchanged"
+    },
+    {
+      "id": "reviewed-224449134778",
+      "academy": "hwangso",
+      "branch": "대치",
+      "sourceId": "sh-blog",
+      "kind": "test",
+      "title": "11월 편입시험 · 과정별 예약 기간 확인",
+      "url": "https://blog.naver.com/sharpedu/224449134778",
+      "publishedAt": "2026-10-21",
+      "checkedAt": "2026-11-03",
+      "dateStatus": "confirmed",
+      "scheduleText": "대치센터 공지입니다. 과정 이름을 학생의 재학 학년으로 바꾸지 않습니다. 예약은 원문이 연결하는 구글폼을 확인하세요. 결원이 있을 때만 전화 예약이 가능하다는 안내가 있습니다.",
+      "events": [
+        {
+          "label": "일품 초등6과정 시험",
+          "date": "2026-11-07",
+          "note": "예약: 10/23 16시~11/6 16시"
+        },
+        {
+          "label": "일품 초등5-2과정 시험",
+          "date": "2026-11-14",
+          "note": "예약: 10/30 16시~11/13 16시"
+        },
+        {
+          "label": "중2과정 시험",
+          "date": "2026-11-14",
+          "note": "예약: 10/30 16시~11/13 16시"
+        }
+      ],
+      "origin": "reviewed",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "scheduleCheckedAt": "2026-11-03",
+      "sourceState": "unchanged"
+    },
+    {
+      "id": "reviewed-224443076138",
+      "academy": "won",
+      "branch": "대치",
+      "sourceId": "wm-blog",
+      "kind": "test",
+      "title": "12월 공통수학1 기본 시작반 · 11월 입학시험",
+      "url": "https://blog.naver.com/wonmath563/224443076138",
+      "publishedAt": "2026-10-15",
+      "checkedAt": "2026-11-03",
+      "dateStatus": "confirmed",
+      "scheduleText": "고등과정을 처음 배우는 시작반의 모집입니다. 시험 준비 범위와 재학 학년은 별도로 확인하세요.",
+      "events": [
+        {
+          "label": "시험",
+          "date": "2026-11-14",
+          "note": "09:30~12:50"
+        },
+        {
+          "label": "시험",
+          "date": "2026-11-15",
+          "note": "09:30~12:50 / 13:40~17:00"
+        },
+        {
+          "label": "화목반 개강",
+          "date": "2026-12-03"
+        },
+        {
+          "label": "월금반 개강",
+          "date": "2026-12-04"
+        }
+      ],
+      "registration": {
+        "start": "2026-11-04T23:00:00+09:00",
+        "end": "2026-11-07T00:00:00+09:00",
+        "endExclusive": true,
+        "label": "11/4 23시~11/6 24시(11/7 0시)"
+      },
+      "origin": "reviewed",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "scheduleCheckedAt": "2026-11-03",
+      "sourceState": "unchanged"
+    },
+    {
+      "id": "reviewed-224429755520",
+      "academy": "won",
+      "branch": "대치",
+      "sourceId": "wm-blog",
+      "kind": "test",
+      "title": "11월 중2 심화듀얼반 · 편입시험과 개강",
+      "url": "https://blog.naver.com/wonmath563/224429755520",
+      "publishedAt": "2026-10-02",
+      "checkedAt": "2026-11-03",
+      "dateStatus": "confirmed",
+      "scheduleText": "시험 예약은 마감된 일정입니다. 결원과 실제 응시 가능 여부는 원문·상담실에서 확인하세요.",
+      "events": [
+        {
+          "label": "편입시험",
+          "date": "2026-11-04",
+          "note": "원문 표기 4:00~6:40 · 오전/오후는 원문 확인"
+        },
+        {
+          "label": "개강",
+          "date": "2026-11-12"
+        }
+      ],
+      "registration": {
+        "start": "2026-10-26T23:00:00+09:00",
+        "end": "2026-10-29T00:00:00+09:00",
+        "endExclusive": true,
+        "label": "10/26 23시~10/28 24시"
+      },
+      "origin": "reviewed",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "scheduleCheckedAt": "2026-11-03",
+      "sourceState": "unchanged"
+    },
+    {
+      "id": "kiparang-2027-220",
+      "academy": "kiparang",
+      "branch": "대치",
+      "sourceId": "kiparang-official",
+      "kind": "seminar",
+      "title": "기파랑 대치 · 2027 신규모집 초중등 설명회",
+      "url": "https://www.kiparang.co.kr/main/sub.html?Mode=view&boardID=www8&num=220",
+      "publishedAt": "2026-09-15",
+      "checkedAt": "2026-11-03",
+      "dateStatus": "confirmed",
+      "scheduleText": "초3 이상 초중등 학부모 대상입니다. 2027 모집이라는 제목과 실제 2026년 설명회 날짜를 구분합니다. 장소·접수 가능 여부는 지점의 공식 원문을 확인하세요.",
+      "events": [
+        {
+          "label": "초등 설명회",
+          "date": "2026-10-21",
+          "note": "10:30 · 대치2문화센터 3층 강당"
+        },
+        {
+          "label": "중등 설명회",
+          "date": "2026-10-22",
+          "note": "10:30 · 대치2문화센터 3층 강당"
+        }
+      ],
+      "origin": "reviewed",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "scheduleCheckedAt": null,
+      "sourceState": null
+    },
+    {
+      "id": "kiparang-2027-222",
+      "academy": "kiparang",
+      "branch": "송파",
+      "sourceId": "kiparang-official",
+      "kind": "seminar",
+      "title": "기파랑 송파 · 2027 신규모집 초중등 설명회",
+      "url": "https://www.kiparang.co.kr/main/sub.html?Mode=view&boardID=www8&num=222",
+      "publishedAt": "2026-09-21",
+      "checkedAt": "2026-11-03",
+      "dateStatus": "confirmed",
+      "scheduleText": "초3 이상 초중등 학부모 대상입니다. 2027 모집이라는 제목과 실제 2026년 설명회 날짜를 구분합니다. 장소·접수 가능 여부는 지점의 공식 원문을 확인하세요.",
+      "events": [
+        {
+          "label": "초중등 설명회",
+          "date": "2026-10-30",
+          "note": "10:30 · 한국광고문화회관 2층 그랜드볼룸"
+        }
+      ],
+      "origin": "reviewed",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "scheduleCheckedAt": null,
+      "sourceState": null
+    },
+    {
+      "id": "kiparang-2027-221",
+      "academy": "kiparang",
+      "branch": "일산",
+      "sourceId": "kiparang-official",
+      "kind": "seminar",
+      "title": "기파랑 일산 · 2027 신규모집 초중등 설명회",
+      "url": "https://www.kiparang.co.kr/main/sub.html?Mode=view&boardID=www8&num=221",
+      "publishedAt": "2026-09-21",
+      "checkedAt": "2026-11-03",
+      "dateStatus": "confirmed",
+      "scheduleText": "초3 이상 초중등 학부모 대상입니다. 2027 모집이라는 제목과 실제 2026년 설명회 날짜를 구분합니다. 장소·접수 가능 여부는 지점의 공식 원문을 확인하세요.",
+      "events": [
+        {
+          "label": "초중등 설명회",
+          "date": "2026-10-27",
+          "note": "10:30 · 킨텍스 제2전시장 303호"
+        }
+      ],
+      "origin": "reviewed",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "scheduleCheckedAt": null,
+      "sourceState": null
+    },
+    {
+      "id": "kiparang-2027-228",
+      "academy": "kiparang",
+      "branch": "목동",
+      "sourceId": "kiparang-official",
+      "kind": "seminar",
+      "title": "기파랑 목동 · 2027 신규모집 초중등 설명회",
+      "url": "https://www.kiparang.co.kr/main/sub.html?Mode=view&boardID=www8&num=228",
+      "publishedAt": "2026-10-06",
+      "checkedAt": "2026-11-03",
+      "dateStatus": "confirmed",
+      "scheduleText": "초3 이상 초중등 학부모 대상입니다. 2027 모집이라는 제목과 실제 2026년 설명회 날짜를 구분합니다. 장소·접수 가능 여부는 지점의 공식 원문을 확인하세요.",
+      "events": [
+        {
+          "label": "초중등 설명회",
+          "date": "2026-11-03",
+          "note": "10:30 · 시립목동청소년센터"
+        }
+      ],
+      "origin": "reviewed",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "scheduleCheckedAt": null,
+      "sourceState": null
+    },
+    {
+      "id": "reviewed-224455796072",
+      "academy": "hwangso",
+      "branch": "대치",
+      "sourceId": "sh-blog",
+      "kind": "test",
+      "title": "중등과정 입학시험 응시생 안내",
+      "url": "https://blog.naver.com/sharpedu/224455796072",
+      "publishedAt": "2026-10-27",
+      "checkedAt": "2026-11-03",
+      "dateStatus": "confirmed",
+      "scheduleText": "2026년 정시 입학시험의 지난 응시 안내입니다. 다음 모집 날짜는 새 공식 공지로 확인합니다.",
+      "events": [
+        {
+          "label": "시험일",
+          "date": "2026-10-31"
+        }
+      ],
+      "origin": "reviewed",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "scheduleCheckedAt": "2026-11-03",
+      "sourceState": "unchanged"
+    },
+    {
+      "id": "reviewed-224455804205",
+      "academy": "hwangso",
+      "branch": "대치",
+      "sourceId": "sh-blog",
+      "kind": "test",
+      "title": "초등과정 입학시험 응시생 안내",
+      "url": "https://blog.naver.com/sharpedu/224455804205",
+      "publishedAt": "2026-10-27",
+      "checkedAt": "2026-11-03",
+      "dateStatus": "confirmed",
+      "scheduleText": "2026년 정시 입학시험의 지난 응시 안내입니다. 다음 모집 날짜는 새 공식 공지로 확인합니다.",
+      "events": [
+        {
+          "label": "시험일",
+          "date": "2026-11-01"
+        }
+      ],
+      "origin": "reviewed",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "scheduleCheckedAt": "2026-11-03",
+      "sourceState": "unchanged"
+    }
+  ]
+}

@@ -33,12 +33,13 @@ const areaPoolSignatures = new Set();
 const midpointPoolSignatures = new Set();
 const trisectionPoolSignatures = new Set();
 for (const def of source.definitions) {
-  for (let variant = 0; variant < 3; variant += 1) {
+  const variantCount = /(?:mission-6|example-2)$/.test(def.sourceItemId) ? 4 : 3;
+  for (let variant = 0; variant < variantCount; variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
       const item = source.getQuestion(def.sourceItemId, variant, difficultyOffset);
       assert.ok(item, `no question ${def.sourceItemId} / ${variant} / ${difficultyOffset}`);
       assert.equal(item.sourceItemId, def.sourceItemId);
-      assert.equal(item.verifiedVariantCount, 3);
+      assert.equal(item.verifiedVariantCount, variantCount);
       assert.equal(item.verifiedPoolIndex, variant);
       assert.equal(item.difficultyOffset, difficultyOffset);
       assert.equal(item.answerVisualStatus, "verified-reconstruction");
@@ -58,8 +59,8 @@ for (const def of source.definitions) {
         assert.match(item.solution, /회전은 각의 크기를 보존/);
         assert.equal(item.reviewLocked, false);
         assert.equal(source.isPublicReady(def.sourceItemId), true);
-        assert.equal(alpha, [28,34,40][variant]);
-        assert.equal(beta, [22,24,26][variant] + [-2,0,2][difficultyOffset+1]);
+        assert.equal(alpha, [28,34,40,24][variant]);
+        assert.equal(beta, [22,24,26,30][variant] + [-2,0,2][difficultyOffset+1]);
       } else if (def.sourceItemId.endsWith("mission-1")) {
         const { alpha, beta, answer } = item.answerModel;
         assert.equal(alpha + beta, 45);
@@ -285,10 +286,11 @@ for (const def of source.definitions) {
 }
 
 assert.equal(source.getQuestion("unknown", 0, 0), null);
-assert.equal(source.getQuestion(source.definitions[0].sourceItemId, 3, 0), null);
+assert.equal(source.getQuestion(source.definitions[0].sourceItemId, 4, 0), null);
+assert.equal(source.getQuestion("5-2-u3-e4-mission-6", 4, 0), null);
 assert.equal(source.getQuestion(source.definitions[0].sourceItemId, 0, 2), null);
 assert.equal(areaPoolSignatures.size, 9, "all three variants at all difficulty levels must be distinct");
-assert.equal(midpointPoolSignatures.size, 9, "all Mission 6 pools and difficulty levels must be distinct");
+assert.equal(midpointPoolSignatures.size, 12, "all Mission 6 pools and difficulty levels must be distinct");
 assert.equal(trisectionPoolSignatures.size, 9, "all Mission 4 pools and difficulty levels must be distinct");
 for (const type of sourceTypes) {
   if (type.reviewLocked) {
@@ -297,7 +299,7 @@ for (const type of sourceTypes) {
     continue;
   }
   assert.equal(window.HSE_GENERATORS.generatorKey(type), type.generatorKey);
-  for (let variant = 0; variant < 3; variant += 1) {
+  for (let variant = 0; variant < (/(?:mission-6|example-2)$/.test(type.sourceItemId) ? 4 : 3); variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
       const generated = window.HSE_GENERATORS.generate(type, 1, difficultyOffset, "audit", variant);
       assert.ok(generated, `HSE_GENERATORS rejected ${type.id}`);

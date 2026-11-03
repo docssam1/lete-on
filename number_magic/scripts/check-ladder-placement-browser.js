@@ -63,7 +63,7 @@ const overflow=page=>page.evaluate(()=>document.documentElement.scrollWidth>inne
   await page.goto(base+'/number_magic/placement-sheet.html?ladder=a7&l=ko&seed=check');await page.waitForFunction(()=>window.NM_WS_READY===true,null,{timeout:90000});
   assert.equal(await page.locator('.pl-q').count(),20);
   assert(await page.evaluate(()=>!!(document.getElementById('plScore').compareDocumentPosition(document.querySelector('.nm-print-sheet'))&Node.DOCUMENT_POSITION_FOLLOWING)),'marking box precedes the printed pages');
-  await page.click('#plScore>summary');const cells=await page.locator('.pl-sc-cell').count();assert.equal(cells,20);
+  await page.click('#plDiagBtn');const cells=await page.locator('.pl-sc-cell').count();assert.equal(cells,20);
   const answers=await page.evaluate(()=>NM_PLACEMENT_PLAN.buildLadder('a7','check').items.map(x=>String(Array.isArray(x.answer)?x.answer.join(', '):x.answer)));
   const shown=await page.locator('.pl-sc-ans').allInnerTexts();assert(shown.every((s,i)=>s.includes(answers[i])||/개|←|→|왼|오/.test(s)),'each cell shows its answer');
   await page.click('[data-mark-all="o"]');await page.click('#plGo');assert.equal(await page.locator('.pl-ladder li.is-start').count(),0,'all ○ → next book');

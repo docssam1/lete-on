@@ -108,3 +108,22 @@
   .nm-placement .pd-question:has(.pd-keypad) #pdQuestionPaper{min-height:28px;padding:2px 0}
   .nm-placement .pd-question:has(.pd-keypad) .pd-keypad{margin-bottom:0}
 }
+
+/* 낮은 창(높이 760px 이하): 제출·모르겠어요 버튼과 인쇄 링크를 왼쪽 빈 곳 아래로 내려 숫자판 아래가 잘리지 않게 (2026-11-02 검수: 900×560에서 제출 버튼이 잘림) */
+@media (min-width:900px) and (min-height:560px) and (max-height:820px){
+  .nm-placement .pd-question:has(.pd-keypad){
+    grid-template-areas:"prompt answer" "scene keypad" "actions keypad" "paper error";grid-template-rows:auto 1fr auto auto}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-question-actions{align-self:end;margin-top:0}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-error{margin:2px 0;min-height:0;align-self:center}
+  .nm-placement .pd-question:has(.pd-keypad) #pdQuestionPaper{justify-self:start;align-self:center}
+}
+@media (min-width:900px) and (min-height:560px) and (max-height:640px){
+  .nm-placement .pd-question:has(.pd-keypad) .pd-keypad{gap:4px;margin-top:6px}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-keypad button{height:30px;font-size:17px!important}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-answer{min-height:36px;font-size:20px!important}
+  .nm-placement .pd-question:has(.pd-keypad) h1{font-size:20px;margin-bottom:2px}
+  .nm-placement .pd-question:has(.pd-keypad) .pd-question-actions .pd-primary,.nm-placement .pd-question:has(.pd-keypad) .pd-question-actions .pd-secondary{min-height:38px}
+}
+
+/* 월별 계획 표: 좁은 휴대폰(320~360px)에서 3칸이 상자보다 넓어 오른쪽이 잘리던 것 — 칸 최소 폭을 풀어 글이 줄바꿈되게(2026-11-01) */
+@media(max-width:550px){.pd-calendar th,.pd-calendar td{min-width:0;padding:10px 6px}.pd-calendar-table{max-height:none}}

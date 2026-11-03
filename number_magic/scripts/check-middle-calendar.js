@@ -110,7 +110,7 @@ for(let from = 29; from <= 37; from++){
     }
     assert.equal(weekOf(find(p, 'C' + gradeEnd)), lastAssigned['C' + gradeEnd], 'partial standard date follows the first remaining bundle');
     assert.equal(seenSources[0], courseKey + '-S' + (source - 1), 'partial baseline starts at the exact saved source session');
-    assert(p.rows[0].sessionLabels[0].startsWith((H.lessonIndex(courses[courseKey], source) + 1) + '–'), 'monthly labels start with the current bundle');
+    assert(new RegExp('^' + (H.lessonIndex(courses[courseKey], source) + 1) + '(–|\\D)').test(p.rows[0].sessionLabels[0]), 'monthly labels start with the current bundle');
     assert.equal(JSON.stringify(input), inputSnapshot, 'baseline does not rewrite saved settings');
     partialStarts++;
   }

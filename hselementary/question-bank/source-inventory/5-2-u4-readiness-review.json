@@ -16,6 +16,138 @@
     "resolution": "이번 원본 직접 검토에서 PDF 37쪽의 4. 소수의 곱셈 표지를 확인하고, 실제 개념탐구·예제·Mission 범위는 PDF 38-41쪽(인쇄 쪽 42-45쪽)으로 확정했습니다. 이전 페이지 표기는 이 원장에서는 stale로 취급합니다.",
     "evidence": "600dpi 직접 렌더 PDF 38-41쪽과 단원 표지 PDF 37쪽"
   },
+  "additionalSourceReviews": [
+    {
+      "section": "확인학습 4단원 소수와 자연수의 곱셈",
+      "sourcePdfPage": 97,
+      "sourcePrintedPage": 101,
+      "scope": "101쪽 확인학습 1~8번을 원문과 필기 없는 사본에서 대조하고 소수·단위 계산을 독립 검산했다. 기존 개념탐구와 별도이며 문제 생성에는 연결하지 않는다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "partially-connected",
+      "items": [
+        {"number": 1, "classification": "곱의 크기 변화로 빈 수 구하기", "candidate": "0.021", "reviewNote": "37×가×150=116.55이므로 가=116.55÷5550=0.021이다. 원래 등식의 세 인수 변화로도 검산한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-1-original", "publisherAnswerVerified": false},
+        {"number": 2, "classification": "곱의 자연수 부분과 소수 부분을 이용한 중첩 연산", "candidate": "0.12", "reviewNote": "8×3.62=28.96의 자연수 부분은 28이고 17×1.37=23.29의 소수 부분은 0.29다. 28×0.29=8.12의 소수 부분은 0.12다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-2-original", "publisherAnswerVerified": false},
+        {"number": 3, "classification": "두 수의 차가 주어진 소수 곱셈의 두 해", "candidate": "2.4, 1349.2", "reviewNote": "0.6758×100=67.58이다. 두 수의 차를 큰 수에서 작은 수를 뺀 값으로 해석하면 |67.58−0.1×가|=67.34이므로 0.1×가는 0.24 또는 134.92다. 따라서 가는 2.4 또는 1349.2이며 각각 대입해 차가 67.34임을 확인한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-3-original", "publisherAnswerVerified": false},
+        {"number": 4, "classification": "소금물의 양에 비례하는 소금의 양", "candidate": "0.152g", "reviewNote": "소금물 0.004kg은 1kg의 0.004배이므로 소금은 38×0.004=0.152g이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-4-original", "publisherAnswerVerified": false},
+        {"number": 5, "classification": "책상 제작에 필요한 합판 넓이", "candidate": "2223cm²", "reviewNote": "한 개에 필요한 85.5cm²를 26배 하면 85.5×26=2223cm²다. 단위는 현실적인 크기를 추정해 바꾸지 않고 원문 cm²를 따른다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-5-original", "publisherAnswerVerified": false},
+        {"number": 6, "classification": "4주 중 일요일을 제외한 우유의 양", "candidate": "10.8L", "reviewNote": "4주 28일 중 일요일 4일을 빼면 24일이고 0.45×24=10.8L다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-6-original", "publisherAnswerVerified": false},
+        {"number": 7, "classification": "주어진 환율에 따른 환전 거스름돈", "candidate": "825원", "reviewNote": "문제에서 제시한 환율을 사용하면 1186.25×60=71175원이고 72000−71175=825원이다. 환율은 원문 문제의 가상 조건이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-7-original", "publisherAnswerVerified": false},
+        {"number": 8, "classification": "분당 거리와 분·초를 이용한 이동 거리", "candidate": "252m", "reviewNote": "5분 15초는 5.25분이므로 48×5.25=252m다. 5분간 240m와 15초간 12m를 더해도 같다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-8-original", "publisherAnswerVerified": false}
+      ]
+    },
+    {
+      "section": "확인학습 4단원 소수와 자연수의 곱셈",
+      "sourcePdfPage": 98,
+      "sourcePrintedPage": 102,
+      "scope": "102쪽 확인학습 9~16번을 원문과 필기 없는 사본에서 대조하고 그림·단위·소수 계산을 독립 검산했다. 기존 개념탐구와 별도이며 문제 생성에는 연결하지 않는다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "partially-connected",
+      "items": [
+        {"number": 9, "classification": "직사각형과 ㄱ자 도형의 넓이", "candidate": "(1) 160.2m², (2) 39.9m²", "visual": "(1)은 17.8m×9m 직사각형, (2)는 밑변 11m·낮은 높이 2.5m 및 오른쪽 너비 4m·추가 높이 3.1m이다.", "reviewNote": "(1) 17.8×9=160.2. (2) 아래 직사각형과 위 오른쪽 직사각형으로 나누면 11×2.5+4×3.1=39.9m²다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-9-original", "publisherAnswerVerified": false},
+        {"number": 10, "classification": "축척 1/500인 도형의 실제 색칠 넓이", "candidate": "2475m²", "visual": "축소 그림의 바깥 직사각형 9cm×15cm에서 안쪽 4.5cm×8cm를 뺀 색칠 영역이다.", "reviewNote": "도면의 색칠 넓이는 9×15−4.5×8=99cm²다. 실제 길이는 500배이므로 넓이는 500²배이고 m²로 바꾸면 99×250000÷10000=2475m²다. 도면 1cm가 실제 5m이므로 99×25=2475m²로도 검산된다. 원본 손글씨는 4.95m²로 보이지만 판독과 작성자·공식 여부는 미확인이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-10-original", "publisherAnswerVerified": false},
+        {"number": 11, "classification": "마름모의 높이와 한 대각선으로 다른 대각선 구하기", "candidate": "24cm", "visual": "마름모의 한 변 15cm, 마주 보는 변 사이 거리 14.4cm, 대각선 ㄱㄷ 18cm이다.", "reviewNote": "넓이 15×14.4=216cm²이고 두 대각선의 곱의 절반이므로 나머지 대각선은 216×2÷18=24cm다. 반대각선 9cm와 12cm는 9²+12²=15²도 만족한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-11-original", "publisherAnswerVerified": false},
+        {"number": 12, "classification": "수영장 바깥쪽 길의 넓이", "candidate": "197.5m²", "visual": "12m×22.5m 수영장 바깥 둘레에 너비 2.5m인 길을 만든다.", "reviewNote": "바깥 가로·세로는 22.5+5=27.5m, 12+5=17m다. 27.5×17−22.5×12=197.5m²다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-12-original", "publisherAnswerVerified": false},
+        {"number": 13, "classification": "가로·세로로 자른 띠의 겹침을 고려한 길이 차", "candidate": "2.5cm", "visual": "20cm×10cm 종이를 너비 2cm로 세로 또는 가로로 잘라 띠를 0.5cm씩 겹쳐 일렬로 붙인다.", "reviewNote": "세로 절단은 길이 10cm의 띠 10개와 연결 9곳이므로 100−4.5=95.5cm다. 가로 절단은 길이 20cm의 띠 5개와 연결 4곳이므로 100−2=98cm다. 차는 2.5cm다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-13-original", "publisherAnswerVerified": false},
+        {"number": 14, "classification": "전체와 나머지의 비율로 나눈 귤의 양", "candidate": "5.6kg", "reviewNote": "가에는 35×0.4=14kg, 나머지는 21kg이다. 다에는 21×(1−0.6)=8.4kg이므로 차는 14−8.4=5.6kg이다. 원본에는 다른 필기도 있어 공식 답과 구분한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-14-original", "publisherAnswerVerified": false},
+        {"number": 15, "classification": "기온에 따른 소리의 1초 이동 거리", "candidate": "347.8m", "reviewNote": "기온 차는 28−15=13도이고 증가량은 13×0.6=7.8m다. 문제의 조건에서 1초에 340+7.8=347.8m를 간다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-15-original", "publisherAnswerVerified": false},
+        {"number": 16, "classification": "공차가 0.03인 소수 등차수열의 합", "candidate": "161.46", "reviewNote": "항의 수는 (3.36−1.32)÷0.03+1=69개, 첫 항과 끝 항의 평균은 2.34다. 따라서 합은 69×2.34=161.46이다. 항을 직접 생성해 합산하여 재확인한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-16-original", "publisherAnswerVerified": false}
+      ]
+    },
+    {
+      "section": "확인학습 4단원 소수와 자연수의 곱셈",
+      "sourcePdfPage": 99,
+      "sourcePrintedPage": 103,
+      "scope": "103쪽 확인학습 17~24번을 원문 및 필기 없는 사본에서 대조하고 소수 계산·반올림 범위·가능한 자연수를 독립 검산했다. 문제 생성에는 연결하지 않는다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "partially-connected",
+      "items": [
+        {"number": 17, "classification": "달마다 배율이 다른 세 달의 저금액 합", "candidate": "15770원", "reviewNote": "4월 3800원, 5월 3800×1.75=6650원, 6월 6650×0.8=5320원이므로 합은 15770원이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-17-original", "publisherAnswerVerified": false},
+        {"number": 18, "classification": "걸음 폭과 분당 걸음 수에 따른 거리", "candidate": "1012.5m", "reviewNote": "15분 동안 90×15=1350걸음이고 0.75×1350=1012.5m다. 분당 거리 67.5m에 15분을 곱해도 같다. 원본의 손글씨는 1021.5로도 보이므로 필기 판독과 공식 답을 구분한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-18-original", "publisherAnswerVerified": false},
+        {"number": 19, "classification": "터널 완전 통과 시간으로 기차 길이 구하기", "candidate": "120m", "reviewNote": "2분 15초는 2.25분이고 기차 앞부분의 이동 거리는 720×2.25=1620m다. 터널 1500m를 빼면 기차 길이는 120m다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-19-original", "publisherAnswerVerified": false},
+        {"number": 20, "classification": "학생 수의 비율에서 특정 집단 수 구하기", "candidate": "36명", "reviewNote": "여학생은 150×0.6=90명, 전체는 240명이다. 수학을 좋아하는 전체는 240×0.4=96명, 남학생은 150×0.4=60명이므로 여학생은 36명이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-20-original", "publisherAnswerVerified": false},
+        {"number": 21, "classification": "종이를 반복해 자르고 겹친 두께", "candidate": "15.36cm", "reviewNote": "한 번 자르고 겹칠 때마다 겹수가 두 배가 되므로 8회 후 2⁸=256겹이다. 0.06×256=15.36cm다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-21-original", "publisherAnswerVerified": false},
+        {"number": 22, "classification": "반올림 범위를 만족하는 두 자연수", "candidate": "가=1, 나=3", "reviewNote": "소수 첫째 자리로 반올림해 0.6이 되는 범위는 0.55≤가/5+나/8<0.65다. 양의 자연수 쌍을 가능한 범위에서 열거하면 (1,3)만 남고 값은 0.575다. 상한 0.65는 0.7로 반올림되므로 제외한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-22-original", "publisherAnswerVerified": false},
+        {"number": 23, "classification": "곱의 소수점을 누락했을 때의 차", "candidate": "23716.8", "reviewNote": "12.2와 자연수의 곱을 소수 첫째 자리까지 계산한 뒤 소수점을 빼면 10배가 된다. 올바른 값은 26352÷10=2635.2이고 차는 26352−2635.2=23716.8이다. 원래 자연수는 216이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-23-original", "publisherAnswerVerified": false},
+        {"number": 24, "classification": "소수점 누락으로 생긴 차에서 자연수 구하기", "candidate": "12", "reviewNote": "한 자리 소수의 곱에서 소수점을 빼면 올바른 값의 10배이므로 차는 올바른 값의 9배다. 올바른 값은 2505.6÷9=278.4이고 278.4÷23.2=12다. 2784−278.4=2505.6으로 검산한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-24-original", "publisherAnswerVerified": false}
+      ]
+    },
+    {
+      "section": "확인학습 4단원 소수와 소수의 곱셈",
+      "sourcePdfPage": null,
+      "alternateSourcePdfPage": 99,
+      "alternateSourceFingerprint": "6c3fde0d51b7e277eee7427de4db174a42f11ef5113b25a1050aad2fcbe0ce88",
+      "sourcePrintedPage": 104,
+      "scope": "기존 원본 PDF는 인쇄 103쪽 다음이 106쪽이어서 104쪽이 없다. 동일 해시의 필기 없는 별도 사본 PDF 99쪽에서 25~30번을 읽어 분류했으며, 기존 원본과 출판사 정답은 미대조다. 다른 경로의 같은 해시 파일은 독립 사본으로 세지 않는다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "partially-connected",
+      "items": [
+        {"number": 25, "classification": "소수 곱셈이 포함된 혼합 계산", "candidate": "(1) 6.3212, (2) 180.4, (3) 365, (4) 49.118, (5) 1.3, (6) 6.048", "reviewNote": "여섯 식의 곱셈을 먼저 계산한 뒤 덧셈·뺄셈을 수행했다. 3번은 공통 인수로 묶어 (37.5+12.5)×2×3.65=365로도 검산한다.", "runtimeTypeId": "5-2-u4-practice-25-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 26, "classification": "세 식에서 구한 수의 곱", "candidate": "171.9", "reviewNote": "가=12.4÷1240=0.01, 나=3.82×4.5=17.19, 다=(12.5×4.2−44.5)÷0.008=1000이다. 곱은 0.01×17.19×1000=171.9다.", "runtimeTypeId": "5-2-u4-practice-26-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 27, "classification": "직사각형 밭 넓이의 소수 배", "candidate": "73.71m²", "reviewNote": "13.5×8.4×0.65=73.71m²다.", "runtimeTypeId": "5-2-u4-practice-27-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 28, "classification": "평행사변형과 ㄱ자 도형의 넓이", "candidate": "(1) 13.208cm², (2) 94.22cm²", "visual": "(1) 밑변 5.08cm·높이 2.6cm, (2) 전체 직사각형 15.4cm×7.3cm에서 오른쪽 위 7cm×2.6cm를 뺀다.", "reviewNote": "(1) 5.08×2.6=13.208. (2) 15.4×7.3−7×2.6=94.22cm²다.", "runtimeTypeId": "5-2-u4-practice-28-original", "publisherAnswerVerified": false, "status": "public-independent-verification-publisher-key-pending"},
+        {"number": 29, "classification": "직사각형 일부를 뺀 도형과 직각 표시가 있는 오각형 넓이", "candidate": "(1) 39.933cm², (2) 조건 충돌 확인 필요", "visual": "(1) 6.21cm×7.3cm에서 가로 3cm의 홈을 뺀다. (2) 위·아래 변 7.2cm와 4.8cm, 높이 10.5cm, 오른쪽 두 변 6cm·8cm 및 꼭짓점 직각으로 보이는 표시가 있다.", "reviewNote": "(1) 6.21×7.3−3×(7.3−4−1.5)=39.933cm²다. (2) 양 왼쪽 모서리 직각을 따르면 오른쪽 두 변의 다른 끝 사이 거리 제곱은 (7.2−4.8)²+10.5²=116.01이다. 오른쪽 꼭짓점이 직각이면 같은 거리 제곱이 6²+8²=100이어야 하므로 모두 동시에 성립하지 않는다. 흐린 직각 표시와 수치의 원문·정오표를 추가 확인한다.", "status": "source-ambiguity-answer-key-pending"},
+        {"number": 30, "classification": "곱과 차가 주어진 두 수", "candidate": "0.2와 0.7 (양수 범위)", "reviewNote": "0.2×0.7=0.14이고 차는 0.5다. 작은 양수를 x라 두면 x(x+0.5)=0.14이므로 양수해는 0.2다. 실수 전체를 허용하면 −0.7과 −0.2도 조건을 만족하므로 초등 소수 단원의 양수 범위를 명시한다.", "status": "source-ambiguity-answer-key-pending"}
+      ]
+    },
+    {
+      "section": "확인학습 4단원 소수와 소수의 곱셈",
+      "sourcePdfPage": null,
+      "alternateSourcePdfPage": 100,
+      "alternateSourceFingerprint": "6c3fde0d51b7e277eee7427de4db174a42f11ef5113b25a1050aad2fcbe0ce88",
+      "sourcePrintedPage": 105,
+      "scope": "기존 원본 PDF에서 빠진 인쇄 105쪽을 필기 없는 별도 사본 PDF 100쪽에서 확인해 31~38번을 분류했다. 기존 원본과 출판사 답은 미대조이며 문제 생성에는 연결하지 않는다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "partially-connected",
+      "items": [
+        {"number": 31, "classification": "시간을 분에서 시간으로 바꿔 거리 구하기", "candidate": "12.95km", "reviewNote": "210분=3.5시간이고 3.7×3.5=12.95km다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-31-original", "publisherAnswerVerified": false},
+        {"number": 32, "classification": "분당 물의 양과 분·초 단위 변환", "candidate": "20.6L", "reviewNote": "25분 45초=25.75분이고 0.8×25.75=20.6L다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-32-original", "publisherAnswerVerified": false},
+        {"number": 33, "classification": "10초당 호흡량으로 5.7분간 공기량 구하기", "candidate": "28.386L", "reviewNote": "5.7분=342초이고 10초 구간은 34.2개다. 0.83×34.2=28.386L다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-33-original", "publisherAnswerVerified": false},
+        {"number": 34, "classification": "시간당 거리와 하루 운행 시간·2주", "candidate": "5277.44km", "reviewNote": "4시간 45분=4.75시간이고 2주=14일이다. 79.36×4.75×14=5277.44km다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-34-original", "publisherAnswerVerified": false},
+        {"number": 35, "classification": "100g당 지방량으로 750g의 지방 구하기", "candidate": "145.2g", "reviewNote": "750g은 100g의 7.5배이므로 지방은 19.36×7.5=145.2g이다. 단백질 수치는 이 계산에 필요하지 않다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-35-original", "publisherAnswerVerified": false},
+        {"number": 36, "classification": "배율과 차가 있는 몸무게 계산", "candidate": "62.79kg", "reviewNote": "태민이는 75×0.8−11.7=48.3kg이고 어머니는 48.3×1.3=62.79kg이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-36-original", "publisherAnswerVerified": false},
+        {"number": 37, "classification": "세 단계 배율의 곱", "candidate": "2.058배", "reviewNote": "가/라=(가/나)×(나/다)×(다/라)=0.7×1.4×2.1=2.058이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-37-original", "publisherAnswerVerified": false},
+        {"number": 38, "classification": "직사각형의 대각선이 지나는 교점과 색칠 넓이", "candidate": "28cm²", "visual": "직사각형의 왼쪽 아래와 오른쪽 위를 잇는 대각선이 안쪽 수직·수평선의 교점 ㅈ을 지나며, 오른쪽 너비 8.75cm와 아래 높이 3.2cm가 주어진다. 왼쪽 위 직사각형이 색칠되어 있다.", "reviewNote": "대각선 위 교점을 기준으로 왼쪽 아래와 오른쪽 위의 직각삼각형이 닮았으므로 왼쪽 너비×위쪽 높이=오른쪽 너비×아래 높이다. 따라서 색칠 넓이는 8.75×3.2=28cm²다. 실제 그림 판독과 공식 답은 추가 확인한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-38-original", "publisherAnswerVerified": false}
+      ]
+    },
+    {
+      "section": "확인학습 4단원 소수와 소수의 곱셈",
+      "sourcePdfPage": 100,
+      "alternateSourcePdfPage": 101,
+      "sourcePrintedPage": 106,
+      "scope": "인쇄 106쪽 확인학습 39~46번을 기존 원본 PDF 100쪽과 필기 없는 별도 사본 PDF 101쪽에서 대조하고 단위·경우·반올림 경계를 검산했다. 원본 PDF의 앞쪽 104~105쪽은 누락되어 인쇄 쪽과 PDF 쪽의 차이가 바뀐다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "partially-connected",
+      "items": [
+        {"number": 39, "classification": "겹쳐 붙인 종이가 덮는 벽의 넓이", "candidate": "35.42m²", "visual": "가로 1m, 세로 2m의 종이를 가로 5장씩 4줄로 배열하고 10cm씩 겹친다.", "reviewNote": "가로는 5−4×0.1=4.6m, 세로는 8−3×0.1=7.7m다. 덮인 넓이는 4.6×7.7=35.42m²다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-39-original", "publisherAnswerVerified": false},
+        {"number": 40, "classification": "두 구간의 속력과 시간을 이용한 이동 거리", "candidate": "452.4km", "reviewNote": "2시간 24분=2.4시간, 3시간 36분=3.6시간이다. 68.5×2.4+80×3.6=164.4+288=452.4km다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-40-original", "publisherAnswerVerified": false},
+        {"number": 41, "classification": "서로 마주 걸어 만나는 두 사람의 거리", "candidate": "12.6km", "reviewNote": "합친 속력은 시간당 4.8+3.6=8.4km이고 1시간 30분은 1.5시간이므로 8.4×1.5=12.6km다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-41-original", "publisherAnswerVerified": false},
+        {"number": 42, "classification": "단위 시간이 다른 두 수도꼭지의 물 양", "candidate": "59.4L", "reviewNote": "가의 분당 양은 48÷10=4.8L, 나의 분당 양은 1.4×6=8.4L다. 4분 30초는 4.5분이므로 (4.8+8.4)×4.5=59.4L다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-42-original", "publisherAnswerVerified": false},
+        {"number": 43, "classification": "기차가 터널을 통과하는 시간과 길이", "candidate": "2.16km", "reviewNote": "분당 속력은 15.4÷10=1.54km이고 1.5분 이동 거리는 2.31km다. 기차 길이 150m=0.15km를 빼면 터널은 2.16km다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-43-original", "publisherAnswerVerified": false},
+        {"number": 44, "classification": "자동차 이동 거리와 연료 사용량", "candidate": "49L", "reviewNote": "2시간 48분=2.8시간이고 이동 거리는 87.5×2.8=245km다. 245×0.2=49L다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-44-original", "publisherAnswerVerified": false},
+        {"number": 45, "classification": "0.8의 150제곱에서 소수 150번째 자리", "candidate": "4", "reviewNote": "0.8¹⁵⁰=8¹⁵⁰/10¹⁵⁰이므로 소수 150번째 자리는 8¹⁵⁰의 일의 자리다. 8의 거듭제곱 일의 자리는 8,4,2,6의 네 항 주기이고 150을 4로 나눈 나머지가 2이므로 4다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-45-original", "publisherAnswerVerified": false},
+        {"number": 46, "classification": "반올림된 두 양수의 곱의 범위", "candidate": "164.6875 이상 167.5975 미만", "reviewNote": "21.25≤가<21.35, 7.75≤나<7.85다. 모두 양수이므로 하한은 21.25×7.75=164.6875를 포함하고 상한은 21.35×7.85=167.5975보다 작다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-46-original", "publisherAnswerVerified": false}
+      ]
+    },
+    {
+      "section": "확인학습 4단원 소수와 소수의 곱셈",
+      "sourcePdfPage": 101,
+      "alternateSourcePdfPage": 102,
+      "sourcePrintedPage": 107,
+      "scope": "107쪽 47~54번의 원문과 필기 없는 사본을 대조하고 숫자 카드·반올림·자리 계산을 독립 검산했다. 문제 생성에는 연결하지 않는다.",
+      "publisherAnswerVerified": false,
+      "runtimeConnection": "partially-connected",
+      "items": [
+        {"number": 47, "classification": "다섯 숫자를 한 번씩 쓴 두 소수의 곱의 최댓값과 최솟값", "candidate": "0.51218", "reviewNote": "2,4,5,7,8의 모든 배치를 열거하면 최댓값은 0.752×0.84=0.63168, 최솟값은 0.478×0.25=0.11950이므로 차는 0.51218이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-47-original", "publisherAnswerVerified": false},
+        {"number": 48, "classification": "여섯 숫자를 한 번씩 쓴 두 소수의 곱의 최댓값", "candidate": "0.752×0.840 (또는 교환)", "reviewNote": "0,2,4,5,7,8의 모든 배치를 열거하면 최댓값은 0.631680이며 배치는 0.752×0.840 또는 그 교환이다. 원문은 소수점 아래 세 칸을 직접 채우고 0을 한 번 쓰도록 하며 끝자리 0 금지 조건이 없어 0.840을 세 칸 표기로 사용한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-48-original", "publisherAnswerVerified": false},
+        {"number": 49, "classification": "나눈 몫을 반올림했을 때 조건을 만족하는 한 자리 소수 개수", "candidate": "39개", "reviewNote": "몫의 범위가 9.5 이상 10.5 미만이므로 원래 수는 37.05 이상 40.95 미만이다. 소수 첫째 자리까지 표현한 수는 37.1부터 40.9까지 39개다. 원본 손글씨의 개수와 달라 공식 답을 확인한다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-49-original", "publisherAnswerVerified": false},
+        {"number": 50, "classification": "소수 곱의 합에서 소수 둘째 자리", "candidate": "4", "reviewNote": "3.1×3.2부터 9.3×9.4까지 첫 인수가 0.2씩 증가하는 항을 모두 더하면 1359.04이므로 소수 둘째 자리 숫자는 4다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-50-original", "publisherAnswerVerified": false},
+        {"number": 51, "classification": "정사각형의 두 변을 늘린 넓이 차", "candidate": "8cm", "reviewNote": "한 변을 x라 하면 (x+5.5)(x+2.5)−x²=8x+13.75=77.75다. x=8cm다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-51-original", "publisherAnswerVerified": false},
+        {"number": 52, "classification": "합과 차가 주어진 두 수에서 소수점을 각각 뺀 곱", "candidate": "835.2", "reviewNote": "두 수는 (7.24+4.36)/2=5.8, (7.24−4.36)/2=1.44다. 5.8의 소수점을 빼면 58×1.44=83.52로 소수 둘째 자리까지이고, 다른 수 1.44의 소수점을 빼면 5.8×144=835.2다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-52-original", "publisherAnswerVerified": false},
+        {"number": 53, "classification": "세 자리 기호가 있는 소수 곱셈", "candidate": "ㄱ=2, ㄴ=1, ㄷ=5", "reviewNote": "서로 다른 0~9의 숫자를 열거하면 2.15×10.3=22.145를 만족하는 기호 배정은 (2,1,5)뿐이다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-53-original", "publisherAnswerVerified": false},
+        {"number": 54, "classification": "부분곱이 주어진 소수 곱셈의 서로 다른 숫자", "candidate": "13", "visual": "ㄱ.ㄴㄷ×ㄹ.ㅁ7의 필기 곱셈에서 첫 부분곱 1ㅁㄱㄷ, 다음 부분곱 ㄴㄹㄷ, 전체 ㄴ.ㄴㄷㄱㄷ이 표시된다.", "reviewNote": "부분곱과 전체 곱을 함께 만족하는 서로 다른 숫자를 열거하면 ㄱ=1, ㄴ=4, ㄷ=5, ㄹ=3, ㅁ=0이다. 1.45×3.07=4.4515이며 합은 13이다. 가운데 자리 0의 부분곱 생략을 반영했다.", "status": "public-independent-verification-publisher-key-pending", "runtimeTypeId": "5-2-u4-practice-54-original", "publisherAnswerVerified": false}
+      ]
+    }
+  ],
   "sourcePagesDirectlyReviewed": [38, 39, 40, 41],
   "printedPagesDirectlyReviewed": [42, 43, 44, 45],
   "reviewScope": "PDF 37쪽 단원 표지의 실제 제목으로 4단원 경계를 확인하고 PDF 38~41쪽을 600dpi로 직접 렌더했습니다. 개념탐구와 각 예제·Mission의 번호 단위를 하나의 세부 유형으로 기록했으며, 필기 흔적은 답 근거에서 제외했습니다.",
@@ -155,11 +287,11 @@
       "commonTypeId": "decimal-rounding-and-truncation-overlap",
       "typeLabel": "버림과 반올림 조건을 함께 만족하는 소수 찾기",
       "childFriendlyTypeLabel": "버림과 반올림 결과로 소수 찾기",
-      "originalStructure": "한 자리 소수를 10배한 수의 버림·반올림 결과와 168을 곱한 값의 소수 첫째 자리 숫자를 이용해 그 수를 구합니다.",
-      "conditions": ["한 자리 소수", "10배한 수", "버림 결과 450", "반올림 결과 460", "168을 곱한 값의 소수 첫째 자리 숫자는 6"],
+      "originalStructure": "소수 한 자리 수를 10배한 수의 버림·반올림 결과와 16.8을 곱한 값의 소수 둘째 자리 숫자를 이용해 그 수를 구합니다.",
+      "conditions": ["한 자리 소수", "10배한 수", "버림 결과 450", "반올림 결과 460", "16.8을 곱한 값의 소수 둘째 자리 숫자는 6"],
       "visualRequirement": "none",
-      "independentCalculation": "버림과 반올림으로 후보는 45.5, 45.6, 45.7, 45.8, 45.9입니다. 각각 168을 곱하면 7644.0, 7660.8, 7677.6, 7694.4, 7711.2이므로 소수 첫째 자리 숫자가 6인 수는 45.7입니다. 공식 답안은 미대조입니다.",
-      "answerFormula": "455 ≤ 10x < 460 및 168x의 소수 첫째 자리 숫자 6",
+      "independentCalculation": "버림과 반올림으로 후보는 45.5, 45.6, 45.7, 45.8, 45.9입니다. 각각 16.8을 곱하면 764.40, 766.08, 767.76, 769.44, 771.12이므로 소수 둘째 자리 숫자가 6인 수는 45.7입니다. 공식 답안은 미대조입니다.",
+      "answerFormula": "455 ≤ 10x < 460 및 16.8x의 소수 둘째 자리 숫자 6",
       "independentAnswer": "45.7 (독립 계산; 공식 답안 미대조)",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,

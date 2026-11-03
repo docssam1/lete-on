@@ -1,9 +1,49 @@
 @page hseFourUp { size:A4; margin:8mm 0; }
 @media print {
   .print-page.print-page--four-up { page:hseFourUp; }
-  .print-page.print-page--four-up .question-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-flow:column; grid-template-rows:repeat(2,auto); }
+  .print-page.print-page--four-up .question-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-flow:column; grid-template-rows:repeat(2,minmax(auto,1fr)); min-height:235mm; }
   .print-page.print-page--four-up .question-item { min-height:0; padding:8px 0; }
+  #problemView .print-page--four-up .question-item[data-compact-fraction="true"] .question-prompt { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView .print-page--four-up .question-item[data-compact-fraction="true"] .equation:not(:has(br)) { white-space:normal; overflow:visible; background:transparent; border-color:#888; }
   .print-page.print-page--four-up .question-prompt svg { width:auto !important; max-width:100%; max-height:150px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-1-original"] { font-size:13px; line-height:1.4; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-1-original"] p { margin:0.3em 0; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u5-practice-1-original"] svg { max-height:100px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-1-reflection-synthetic"] svg { max-height:230px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-4-circle-axis-synthetic"] svg { max-height:230px; }
+  #problemView [data-source-item-id="5-2-u3-e5-example-4-circle-axis-synthetic"],
+  #solutionView [data-source-answer="5-2-u3-e5-example-4-circle-axis-synthetic"],
+  #solutionView [data-source-answer="5-2-u3-e5-example-3"],
+  #solutionView [data-source-answer="5-2-u3-e5-example-3"] p,
+  #problemView [data-source-item-id="5-2-u3-e5-example-1-reflection-synthetic"],
+  #solutionView [data-source-answer="5-2-u3-e5-example-1-reflection-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-78-original"] svg { max-height:220px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e4-mission-6"] svg { max-height:190px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e4-example-2"] svg { max-height:190px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e7-mission-5"] svg { max-height:180px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e7-mission-6"] svg { max-height:200px; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e8-example-3-overlap-synthetic"] svg { max-height:150px; }
+  #problemView .print-page--four-up .question-item:has([data-source-item-id="5-2-u3-e8-example-3-overlap-synthetic"]) .question-prompt { font-size:13px; line-height:1.45; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e8-example-2-cut-synthetic"] svg { max-height:200px; }
+  #problemView [data-source-item-id="5-2-u3-e8-example-3-overlap-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u3-e8-example-2-cut-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u3-e8-example-4-stone-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u3-e8-example-1-circle-difference-synthetic"],
+  #problemView [data-source-item-id="5-2-u3-e8-exploration-staircase-half-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-3"] svg { max-height:190px; }
+  #problemView [data-source-item-id="5-2-u3-e7-mission-5"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u3-e5-exploration"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u3-e5-example-3"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u3-e7-mission-6"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u3-e7-mission-2"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u3-e7-mission-3"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u3-e7-mission-4"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u2-e1-example-4-synthetic"],
+  #problemView [data-source-item-id="5-2-u2-e4-mission-2-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView .question-item[data-type-id="4-2-u1-t1"] .question-prompt,
+  #problemView .question-item[data-type-id="4-2-u1-t1-4"] .question-prompt,
+  #problemView .question-item[data-type-id="4-2-u1-t3-10"] .question-prompt,
+  #problemView .question-item[data-type-id="4-2-u1-t6"] .question-prompt { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   .print-page.print-page--four-up .answer-line { padding-top:12px; }
 }
 
@@ -12,4 +52,15 @@
   .answer-page:has([data-source-answer="5-2-u5-e3-mission-3-synthetic"]) { page:hseU5P53PracticeAnswer; }
   #problemView [data-source-item-id="5-2-u5-e3-mission-3-synthetic"],
   #solutionView [data-source-answer="5-2-u5-e3-mission-3-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u5-e1-mission-1-grid-synthetic"],
+  #solutionView [data-source-answer="5-2-u5-e1-mission-1-grid-synthetic"],
+  #solutionView [data-source-answer="5-2-u5-e1-mission-1-grid-synthetic"] p { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u5-e1-example-1-4-synthetic"],
+  #solutionView [data-source-answer="5-2-u5-e1-example-1-4-synthetic"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u5-check108-q8-packing-synthetic"],
+  #solutionView [data-source-answer="5-2-u5-check108-q8-packing-synthetic"],
+  #solutionView [data-source-answer="5-2-u5-check108-q8-packing-synthetic"] p { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView [data-source-item-id="5-2-u5-check113-q43-arrow-synthetic"],
+  #solutionView [data-source-answer="5-2-u5-check113-q43-arrow-synthetic"],
+  #solutionView [data-source-answer="5-2-u5-check113-q43-arrow-synthetic"] p { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
 }

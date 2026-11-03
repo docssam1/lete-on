@@ -1,0 +1,86 @@
+/* Screen material only. Keep learning decisions, reports and print unchanged. */
+@media screen {
+ body.roadmap-studio.integrated-planner.premium-planner :is(#conversation,#pathwayCoach){
+  container:roadmap-question / inline-size;
+  background:radial-gradient(ellipse at 0% 75%,#56b5ff16,transparent 65%),linear-gradient(145deg,#d4e3ff12,#889af108);
+  border-color:#d1e5ff45;box-shadow:inset 0 1px 0 #ffffff30,inset 0 -1px 0 #314f8655,0 20px 44px #020b3338;
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+ }
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions,
+ body.roadmap-studio.integrated-planner.premium-planner #pathwayCoach .pathway-options{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:stretch;
+ }
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions>button,
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions .student-gender-options>button,
+ body.roadmap-studio.integrated-planner.premium-planner #pathwayCoach .pathway-options>button{
+  position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  grid-column:auto;min-width:0;min-height:100px;padding:18px 14px;text-align:center;text-wrap:pretty;word-break:keep-all;overflow-wrap:anywhere;
+  color:#f1f6ff;background:linear-gradient(145deg,#edf6ff21,#dae8ff09 62%,#a6b8ff15);
+  border:1px solid #c9e1ff70;border-bottom:3px solid #7187c37d;border-radius:20px;
+  box-shadow:inset 0 1px 1px #ffffff70,inset 1px 0 0 #ffffff1a,inset 0 -8px 20px #19254c1a,0 5px 0 #0a17414d,0 12px 22px #020d3429;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  font-size:15px;line-height:1.55;font-weight:550;transition:background .16s,border-color .16s,box-shadow .16s,transform .16s;
+ }
+ body.roadmap-studio.integrated-planner.premium-planner :is(#questionOptions,#pathwayCoach .pathway-options,.student-gender-options)>button::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(125deg,#ffffff22,transparent 47%),linear-gradient(180deg,#ffffff15,transparent 42%);
+  clip-path:polygon(0 0,100% 0,100% 25%,0 60%);
+ }
+ body.roadmap-studio.integrated-planner.premium-planner :is(#questionOptions,#pathwayCoach .pathway-options,.student-gender-options)>button::after{display:none}
+ body.roadmap-studio.integrated-planner.premium-planner :is(#questionOptions,#pathwayCoach .pathway-options,.student-gender-options)>button:hover{
+  color:#fff;background:linear-gradient(145deg,#edf6ff30,#c8dfff12 62%,#a6b8ff22);border-color:#dcf0ffba;
+  box-shadow:inset 0 1px 1px #ffffff90,inset 1px 0 0 #ffffff30,0 6px 0 #0a174159,0 16px 26px #020d3438;transform:translateY(-2px);
+ }
+ body.roadmap-studio.integrated-planner.premium-planner :is(#questionOptions,#pathwayCoach .pathway-options,.student-gender-options)>button:active{transform:translateY(2px);box-shadow:inset 0 1px 1px #ffffff60,0 2px 0 #0a17414d,0 5px 12px #020d3429}
+ body.roadmap-studio.integrated-planner.premium-planner :is(#questionOptions,#pathwayCoach .pathway-options,.student-gender-options)>button:focus-visible{outline:3px solid #94dcff;outline-offset:4px}
+ body.roadmap-studio.integrated-planner.premium-planner :is(#questionOptions,#pathwayCoach .pathway-options,.student-gender-options)>button[aria-pressed=true]{
+  color:#fff;background:linear-gradient(145deg,#4f85ccad,#6578d45c);border-color:#a5deff;box-shadow:inset 0 1px 1px #ffffff70,0 0 0 2px #8dcfff35,0 5px 0 #0a17414d,0 12px 22px #020d3429;
+ }
+ body.roadmap-studio.integrated-planner.premium-planner :is(#questionOptions,#pathwayCoach .pathway-options,.student-gender-options)>button[aria-pressed=true]::after{display:block;content:"✓";position:absolute;top:7px;right:10px;font-size:15px;color:#ddf7ff}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome]{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;gap:14px;margin-block:22px 16px}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome]>.welcome-choice{grid-column:auto;min-height:148px;padding:18px 12px;gap:9px}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome]>button.welcome-choice-primary{
+  grid-row:span 2;color:#fff;background:linear-gradient(145deg,#638ddd61,#586bcd26 65%,#8a77db38);border-color:#b0d5ff9c;
+  box-shadow:inset 0 1px 1px #f4faffb3,inset 1px 0 1px #c6e8ff33,0 6px 0 #0d19465e,0 18px 28px #020d3433;
+ }
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome]>button.welcome-choice-primary:hover{background:linear-gradient(145deg,#7ba9ed78,#6478d63d 65%,#9c85e34d)}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions .choice-art{display:block;width:58px;height:58px;flex:none;object-fit:contain;filter:drop-shadow(0 5px 5px #080f3929)}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions .welcome-choice-primary .choice-art{width:96px;height:96px;margin-bottom:6px}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions .choice-title{display:block;color:inherit;font-size:15px;font-weight:650;line-height:1.5}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions .welcome-choice-primary .choice-title{font-size:19px}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions .choice-caption{display:none;color:#d7e5ff;font-size:12px;line-height:1.7;font-weight:400}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions .welcome-choice-primary .choice-caption{display:block}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions .choice-enter{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;border:1px solid #d4eaff70;background:#eff8ff13;box-shadow:inset 0 1px 0 #ffffff40;margin-top:8px;font-size:18px}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions:is([data-question=grade],[data-question=age]){grid-template-columns:repeat(3,minmax(0,1fr))}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions:is([data-question=grade],[data-question=age])>button{min-height:80px;padding:14px 10px}
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions:has(.student-gender-options){grid-template-columns:1fr}
+ @container roadmap-question (min-width:520px){
+  body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome]{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome]>.welcome-choice{min-height:224px;padding:24px 18px;gap:12px}
+  body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome]>button.welcome-choice-primary{grid-row:auto}
+  body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome] .choice-art{width:84px;height:84px;margin:0}
+  body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome] .choice-title{font-size:19px}
+  body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome] .choice-caption{display:block;font-size:13px}
+  body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome] .choice-enter{position:absolute;right:14px;bottom:14px;width:28px;height:28px;font-size:16px}
+ }
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions .student-gender-options>button{
+  min-height:180px;color:#f1f6ff!important;background:linear-gradient(145deg,#edf6ff21,#dae8ff09 62%,#a6b8ff15)!important;border-color:#c9e1ff70;
+  box-shadow:inset 0 1px 1px #ffffff70,0 5px 0 #0a17414d,0 12px 22px #020d3429;
+ }
+ body.roadmap-studio.integrated-planner.premium-planner #questionOptions .student-gender-options>button strong{color:#f1f6ff!important}
+ @media(max-width:380px){
+  body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome]{gap:10px}
+  body.roadmap-studio.integrated-planner.premium-planner #questionOptions[data-question=welcome]>.welcome-choice{padding:14px 9px;min-height:140px}
+  body.roadmap-studio.integrated-planner.premium-planner #questionOptions .choice-title{font-size:14px}
+  body.roadmap-studio.integrated-planner.premium-planner #questionOptions .welcome-choice-primary .choice-title{font-size:17px}
+ }
+ body.roadmap-studio.integrated-planner.premium-planner.questioning #conversation .question-actions{position:static;flex:none;margin-top:12px}
+ @media(prefers-reduced-motion:reduce){
+  body.roadmap-studio.integrated-planner.premium-planner :is(#questionOptions,#pathwayCoach .pathway-options,.student-gender-options)>button{transition:none;transform:none}
+ }
+}
+
+.intake-progress{grid-column:1/-1;min-width:0;border:1px solid #a7b5e0;border-radius:18px;padding:16px;background:rgba(255,255,255,.08)}
+.intake-progress legend{font-weight:700}.intake-progress p,.intake-progress small{font-size:13px;line-height:1.6}.intake-progress>div{display:flex;gap:10px}.intake-progress label{flex:1;min-width:0;font-size:13px}.intake-progress input,.intake-progress select{display:block;width:100%;min-height:44px;box-sizing:border-box;border:1px solid #aeb9d2;border-radius:10px;background:#fff;color:#202946;padding:9px;font:inherit}.intake-progress [role=alert]{color:#fa9dad;margin:0}
+
+body.roadmap-studio #questionOptions .intake-progress p,body.roadmap-studio #questionOptions .intake-progress small{color:#e0eaff}body.roadmap-studio #questionOptions .intake-progress #progressError{color:#ffc4d2}#questionTitle{scroll-margin-top:72px}

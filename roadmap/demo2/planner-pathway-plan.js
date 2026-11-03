@@ -24,9 +24,9 @@ function books(trail,active,context={}){
 function parallelPlan(context={}){
  const current=context.currentStudy||{},known=t=>t&&!/미선택|잘 모르|시작 전|경험 없음|확인 전|확인 필요/.test(t);
  return [
-  {axis:'school',label:'교과',current:current.school||context.currentBooks||'학교 단원 확인 전',method:'현재 학교의 단원·과제·평가를 중심에 둡니다. 학교 학년과 교재 학기는 구분하며 Grade·Year를 한국 학년으로 자동 환산하지 않습니다.'},
-  ...(Object.hasOwn(current,'thinking')?[{axis:'thinking',label:'사고력',current:current.thinking||'현재 사고력 범위 확인 전',method:'현재 사고력 교재에서 조건 정리·첫 시도·풀이 설명을 이어갑니다. 교과나 심화 진도에 맞춰 단계를 자동으로 올리지 않습니다.'}]:[]),
-  {axis:'deep',label:'심화',current:current.deep||'현재 심화 범위 확인 전',method:known(current.deep)?'선택한 심화 범위를 독립적으로 이어갑니다. 새 교과와 같은 학기로 맞추거나 다음 권으로 자동 이동하지 않고 조건을 바꾼 적용과 풀이 설명을 확인합니다.':'교과의 개념·대표 유형과 풀이 설명부터 확인합니다. 심화 추가 여부와 범위는 갈림길에서 따로 고르며 학년만으로 어려운 교재를 배정하지 않습니다.'},
+  {axis:'school',label:'교과',current:current.school||context.currentBooks||'학교 단원 확인 전',method:'현재 학교의 단원·과제·평가를 중심으로 공부합니다. 해외 학교는 해당 학교의 Grade·Year와 교육과정을 기준으로 살펴봅니다.'},
+  ...(Object.hasOwn(current,'thinking')?[{axis:'thinking',label:'사고력',current:current.thinking||'현재 사고력 범위 확인 전',method:'현재 사고력 교재에서 조건을 정리하고 스스로 풀어본 뒤, 풀이를 설명하는 연습을 이어갑니다.'}]:[]),
+  {axis:'deep',label:'심화',current:current.deep||'현재 심화 범위 확인 전',method:known(current.deep)?'선택한 심화 범위를 꾸준히 공부합니다. 교과 진도와 달라도 괜찮습니다. 조건을 바꾼 문제에 적용하고 풀이를 설명할 수 있는지 확인해 주세요.':'교과의 개념·대표 유형과 풀이 설명부터 확인합니다. 심화 추가 여부와 범위는 갈림길에서 따로 고르며 학년만으로 어려운 교재를 배정하지 않습니다.'},
   {axis:'calc',label:'연산',current:current.calc||'현재 연산 범위 확인 전',method:known(current.calc)?'현재 연산 범위의 원리·정확성·오류 재풀이를 확인하며 별도 흐름으로 이어갑니다. 새 교과 학기마다 연산 전권을 다시 반복하거나 권수·시간을 두 배로 늘리지 않습니다.':'학교·교과 문제에서 막힌 계산의 원리를 먼저 보완합니다. 연산 교재·범위를 확인하기 전에는 새 권수나 완료 시기를 정하지 않습니다.'}
  ];
 }

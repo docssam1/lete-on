@@ -1,0 +1,5 @@
+.p06original-question,.p06original-solution{font-family:inherit;color:#191511;line-height:1.5}
+.p06original-question>p,.p06original-solution>p{margin:0 0 .5em}
+.p06original-question ol{padding-left:1.6em;margin:.25em 0}.p06original-question li{margin:0 0 .25em}
+.p06original-conditions{border:1px solid #191511;padding:.3em .6em;margin:.3em 0}
+@media print{.p06original-question,.p06original-solution{font-family:'Noto Serif KR','Batang',serif;font-size:10.5pt}}

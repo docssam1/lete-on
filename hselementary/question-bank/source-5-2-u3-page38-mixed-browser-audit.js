@@ -1,6 +1,7 @@
 "use strict";
 const assert = require("node:assert/strict");
 const path = require("node:path");
+const { execFileSync } = require("node:child_process");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8918";
 const ids = ["5-2-u3-e8-exploration-staircase-half-synthetic", "5-2-u3-e8-example-1-circle-difference-synthetic", "5-2-u3-e8-example-2-cut-synthetic", "5-2-u3-e8-example-3-overlap-synthetic", "5-2-u3-e8-example-4-stone-synthetic"];
@@ -51,7 +52,28 @@ const ids = ["5-2-u3-e8-exploration-staircase-half-synthetic", "5-2-u3-e8-exampl
           await page.locator("#printMenuButton").click();
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
-          await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+          if (mode === "problem") {
+            await page.emulateMedia({media:"print"});
+            await page.setViewportSize({width:794,height:1123});
+            const conflicts=await page.locator('#problemView .question-item').evaluateAll(items=>items.map(item=>({number:item.querySelector('header b').textContent,prompt:item.querySelector('.question-prompt').getBoundingClientRect().bottom,answer:item.querySelector('.answer-line').getBoundingClientRect().top})).filter(item=>item.prompt>item.answer+1));
+            assert.deepEqual(conflicts,[],"문제 내용과 답란이 겹치지 않아야 합니다.");
+            const gridCells=await page.locator('#problemView [data-source-item-id="5-2-u3-e8-example-2-cut-synthetic"]').evaluateAll(items=>items.map(item=>({variant:item.dataset.poolIndex,width:item.querySelector('svg rect').getBoundingClientRect().width,font:getComputedStyle(item).fontFamily})));
+            assert.equal(gridCells.length,3);
+            for(const cell of gridCells){assert(cell.width>=26,`격자 변형 ${cell.variant}의 칸이 너무 작습니다.`);assert.match(cell.font,/Noto Serif KR/);}
+            const boards=await page.locator('#problemView [data-source-item-id="5-2-u3-e8-example-4-stone-synthetic"]').evaluateAll(items=>items.map(item=>({variant:item.dataset.poolIndex,labels:[...item.querySelectorAll('[data-stone-label]')].map(el=>({text:el.textContent,height:el.getBoundingClientRect().height})),direction:item.querySelector('[data-move-direction]')?.textContent,font:getComputedStyle(item).fontFamily})));
+            assert.equal(boards.length,3);
+            for(const board of boards){assert.deepEqual(board.labels.map(label=>label.text),['ㄱ','ㄴ','ㄷ']);assert(board.labels.every(label=>label.height>=10),`바둑돌 이름이 너무 작습니다: ${board.variant}`);assert.match(board.direction,/←/);assert.match(board.font,/Noto Serif KR/);}
+            const circleText=await page.locator('#problemView [data-source-item-id="5-2-u3-e8-example-1-circle-difference-synthetic"] p').evaluateAll(items=>items.map(item=>({font:getComputedStyle(item).fontFamily,weight:getComputedStyle(item).fontWeight})));
+            assert.equal(circleText.length,6);
+            for(const text of circleText){assert.match(text.font,/Noto Serif KR/);assert.equal(text.weight,'400');}
+            const staircaseText=await page.locator('#problemView [data-source-item-id="5-2-u3-e8-exploration-staircase-half-synthetic"]').evaluateAll(items=>items.map(item=>({font:getComputedStyle(item).fontFamily,weight:getComputedStyle(item).fontWeight})));
+            assert.equal(staircaseText.length,3);
+            for(const text of staircaseText){assert.match(text.font,/Noto Serif KR/);assert.equal(text.weight,'400');}
+          }
+          const pdfPath=path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`);
+          await page.pdf({ path:pdfPath, format: "A4", printBackground: true, preferCSSPageSize: true });
+          if(mode === "problem")assert.match(execFileSync('pdfinfo',[pdfPath],{encoding:'utf8'}),/^Pages:\s+4$/m,'15 problems need four physical pages');
+          await page.emulateMedia({media:null});
           await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
         }
       }

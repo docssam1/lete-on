@@ -61,13 +61,13 @@
       host.innerHTML='<h2>'+t('월별 계획에 필요한 나이·학년','Age / grade for the monthly plan','月度计划所需年龄/年级')+'</h2><p>'+t('이전 진단 답은 그대로 보관해요. 지금 나이나 학년만 골라 주세요.','Your previous answers are preserved. Just choose the current age or grade.','保留此前答案，只需选择目前年龄或年级。')+'</p><label>'+t('나이·학년','Age / grade','年龄/年级')+'<select id="pdResultLevel"><option value="">—</option>'+levelOptions(t).map(([v,l])=>'<option value="'+v+'"'+(toLevel(s,opts.now)===v?' selected':'')+'>'+E(l)+'</option>').join('')+'</select></label><button type="button" class="pd-secondary" id="pdResultProfile">'+t('월별 계획 보기','Show monthly plan','查看月度计划')+'</button><p role="alert" class="pd-error"></p>';
       host.querySelector('#pdResultProfile').onclick=()=>{const p=fromLevel(host.querySelector('#pdResultLevel').value,opts.now);if(!p||!profile(p,opts.now)){host.querySelector('.pd-error').textContent=t('나이나 학년을 골라 주세요.','Choose an age or grade.','请选择年龄或年级。');return;}Object.assign(s,p);s.gradeInferred=false;opts.onProfile?.(p);opts.save?.();mount(host,opts);};return;
     }
-    const now=day(opts.now),base=Object.assign({courseKey:opts.course,sessionIndex:opts.session,pace:'p2',speed:1,cadence:s.cadence||'w2'},opts.settings,{courseKey:opts.course,sessionIndex:opts.session,entryYear:actual.entryYear,birthYear:actual.birthYear,startDate:now.toISOString().slice(0,10)});
+    const defaultCadence=Number(String(opts.course).slice(1))>=29?'w2':'w1',now=day(opts.now),base=Object.assign({courseKey:opts.course,sessionIndex:opts.session,pace:'p2',speed:1,cadence:s.cadence||defaultCadence},opts.settings,{courseKey:opts.course,sessionIndex:opts.session,entryYear:actual.entryYear,birthYear:actual.birthYear,startDate:now.toISOString().slice(0,10)});
     let speed=Number(s.previewSpeed)||base.speed,cad=s.previewCadence||base.cadence,months=Number(s.previewMonths)||12,reference=s.previewReference||'';
     const ref=root.NM_DIAGNOSTIC_REFERENCE,rows=ref?.rows||[];
     const courseNo=Number(opts.course.slice(1)),section=courseNo>=38?'S4':courseNo>=29?'S3':Number(actual.age)<8?'S1':'S2';
     if(!rows.some(r=>r.id===reference))reference=(rows.find(r=>r.section===section)||rows[0])?.id||'';
     const isMiddle=courseNo>=29&&courseNo<=37,isCalculus=courseNo>=70&&courseNo<=73;
-    const standard=P.standard?P.standard(root.NM_COURSES,base,{lang,months,now:opts.now||new Date()}):P.project(root.NM_COURSES,{...base,speed:1,cadence:'w2'},{lang,months,now:opts.now||new Date()});
+    const standard=P.standard?P.standard(root.NM_COURSES,base,{lang,months,now:opts.now||new Date()}):P.project(root.NM_COURSES,{...base,speed:1,cadence:'w1'},{lang,months,now:opts.now||new Date()});
     const speedName=v=>t(({0.7:'1단계 · 천천히',0.85:'2단계 · 여유 있게',1:'3단계 · 표준',1.25:'4단계 · 빠르게',1.5:'5단계 · 더 빠르게'})[v],({0.7:'1 · Slow',0.85:'2 · Steady',1:'3 · Standard',1.25:'4 · Fast',1.5:'5 · Faster'})[v],({0.7:'1 · 慢速',0.85:'2 · 从容',1:'3 · 标准',1.25:'4 · 快速',1.5:'5 · 更快'})[v]);
     const draw=()=>{
       const settings={...base,speed,cadence:cad},result=P.project(root.NM_COURSES,settings,{lang,months,now:opts.now||new Date()});

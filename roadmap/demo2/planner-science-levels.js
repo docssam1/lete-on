@@ -11,7 +11,7 @@ const STAGES=[
  {id:'experiment',number:1,name:'실험탐구',choice:'관찰·실험부터 하고 있어요',summary:'실험과학 · 관찰하고 기록하기',scope:'관찰·비교·간단한 실험과 결과 기록',books:['실험과학'],readiness:'무엇을 바꿨고 어떤 결과가 나왔는지 자기 말로 설명해 봅니다. 실험 경험과 교과 개념 공부를 따로 확인합니다.'},
  {id:'elementary',number:2,name:'초등교과',choice:'초등 과학 개념을 공부해요',summary:'줄기과학·오투 · 초등 해당 범위',scope:'초등 과학의 용어·개념·탐구를 학년·학기 순서로 연결',books:['줄기과학 또는 오투 초등 과학 · 해당 범위'],readiness:'배운 용어와 대표 탐구를 설명하고, 관찰한 결과를 개념과 연결할 수 있는지 확인합니다.'},
  {id:'middle',number:3,name:'중등기본',choice:'중등 과학 기본을 공부해요',summary:'줄기과학 계통별 또는 오투 학기별',scope:'중등 물리·화학·생명과학·지구과학의 기본 개념과 대표 탐구',books:['줄기과학 · 계통별 기본','오투 중학 과학 · 학기별 기본'],readiness:'초등 기본을 먼저 확인합니다. 중등 물리는 수학 중2-1의 식·비례·그래프를 실제 현상에 적용할 수 있는지 함께 봅니다.'},
- {id:'depth',number:4,name:'중등심화',choice:'중등 과학 심화를 공부해요',summary:'심화 브릿지·하이탑 반복 · 세페이드는 선택',scope:'중등 기본 다음의 심화·자료 해석·서술과 필요한 분야 반복',books:['최상위 줄기과학 또는 하이탑 · 심화 브릿지','하이탑 · 중등 해당 분야 반복'],readiness:'중등 기본을 먼저 공부합니다. 브릿지는 전체 6개월이고, 이후 하이탑을 반복해 설명·적용을 확인합니다. 세페이드는 필요한 분야만 선택합니다.'},
+ {id:'depth',number:4,name:'중등심화',choice:'중등 과학 심화를 공부해요',summary:'심화·하이탑 복습 6개월 · 세페이드는 선택',scope:'중등 기본 다음의 심화·자료 해석·서술과 필요한 분야 반복',books:['최상위 줄기과학 또는 하이탑 · 심화 브릿지','하이탑 · 중등 해당 분야 반복'],readiness:'중등 기본을 먼저 공부합니다. 브릿지는 하이탑 복습을 포함해 전체 6개월입니다. 설명·적용을 확인한 뒤 다음 범위를 고릅니다. 세페이드는 필요한 분야만 선택합니다.'},
  {id:'high',number:5,name:'고등개념',choice:'고등 과학 개념을 공부해요',summary:'하이탑 · 필요한 고등 분야부터',scope:'필요한 고등 과학 분야의 개념을 수학 도구와 연결',books:['하이탑 · 고등 해당 분야'],readiness:'중등 기본·심화에서 빈 부분을 확인하고, 필요한 수학 도구와 과학 개념을 연결합니다. 고등 심화는 목표와 실제 풀이를 보고 따로 정합니다.'}
 ];
 const SOURCE_NOTE='제공한 구형 MSG 초등과학 로드맵의 실험·초등 기본·중등 기본·심화 흐름을 참고했습니다. 교재와 기간은 2026년 10월 26일 확인한 현재 기준을 우선하며, 옛 학년별 예시를 아이의 이수 기록으로 옮기지 않습니다.';
@@ -81,9 +81,9 @@ function model(scienceModel={}){
   const source=all.filter(b=>belongs(s.id,b));
   return {...s,title:'과학 '+s.number+'단계 · '+s.name,...material(m,s,source),scope:s.id==='elementary'&&source[0]?.scope?source[0].scope:s.scope,schedule:schedule(m,source),sourceBlockIds:source.map(b=>b.id),inPlan:source.length>0,selected:s.id===selected};
  });
- const index=stages.findIndex(s=>s.id===selected),current=index<0?{id:'unknown',name:'현재 과학 공부 확인 전',title:'현재 과학 공부 확인 전',explanation:'지금 공부하는 과학 범위를 선택해 주세요. 수학 레벨이나 학년만으로 과학 단계를 정하지 않습니다.',schedule:null,sourceBlockIds:[],inPlan:false,selected:true}: {...stages[index],explanation:'지금 '+stages[index].name+' 범위를 공부 중이라고 선택했어요. 이미 마친 범위는 별도의 이수 기록과 맞춰 봅니다.'};
+ const index=stages.findIndex(s=>s.id===selected),current=index<0?{id:'unknown',name:'현재 과학 공부 확인 전',title:'현재 과학 공부 확인 전',explanation:'지금 공부하는 과학 교재나 이미 마친 범위를 골라 주세요.',schedule:null,sourceBlockIds:[],inPlan:false,selected:true}: {...stages[index],explanation:'지금 '+stages[index].name+' 범위를 공부 중이라고 선택했어요. 이미 마친 범위는 별도의 이수 기록과 맞춰 봅니다.'};
  const middle=m.curriculum?.middle===true||(Number.isFinite(m.context?.now)&&Math.floor((m.context.now-2)/12)-2>=7);
- return {selected,known:index>=0,current,next:index<0?[]:stages.slice(index+1,index+3),stages,parentComment:parentComment(m),schoolNote:middle?'중학생은 학교 과학·내신을 함께 챙기고, 별도 과학 선행은 수학 진도와 필요한 개념에 맞춥니다.':null,note:'과학 단계는 공부 범위의 구분입니다. 수학 L번호·성적 순위와 별개이며, 선택만으로 이전 과정을 완료 처리하지 않습니다.',sourceNote:SOURCE_NOTE};
+ return {selected,known:index>=0,current,next:index<0?[]:stages.slice(index+1,index+3),stages,parentComment:parentComment(m),schoolNote:middle?'중학생은 학교 과학·내신을 함께 챙기고, 별도 과학 선행은 수학 진도와 필요한 개념에 맞춥니다.':null,note:'실험탐구 → 초등교과 → 중등기본 → 중등심화 → 고등개념 순서로 살펴봅니다. 지금 공부하는 범위에서 다음에 필요한 과정을 골라 주세요.',sourceNote:SOURCE_NOTE};
 }
 function defaultButton(key,id,title,summary,on){return '<button type="button" data-science-kind="'+esc(key)+'" data-science-value="'+esc(id)+'" aria-pressed="'+!!on+'"><strong>'+esc(title)+'</strong><span>'+esc(summary)+'</span></button>';}
 function choices(scienceModel,button=defaultButton){
@@ -100,7 +100,7 @@ function render(scienceModel){
 function questions(scienceModel){
  const m=model(scienceModel);
  return [
-  {question:'수학 레벨과 과학 단계는 같은가요?',answer:m.note+' '+(m.known?'현재 선택은 '+m.current.title+'입니다.':m.current.explanation)},
+  {question:'수학 레벨과 과학 단계는 같은가요?',answer:'수학은 교과 진도와 속도를, 과학은 현재 공부한 범위를 기준으로 살펴봅니다. '+(m.known?'현재 선택은 '+m.current.title+'입니다.':m.current.explanation)},
   {question:'지금 과학 공부에서 다음에는 무엇을 하나요?',answer:!m.known?'현재 과학 교재와 배운 단원부터 확인합니다. 단계와 실제 이수 범위를 고른 뒤 다음 과정을 연결합니다.':m.next.length?m.next.map(s=>s.title+': '+s.scope+'. '+s.readiness).join(' '):'고등 개념에서 배운 분야를 설명하고 낯선 문제에 적용하는지 확인합니다. 부족한 중등 기본을 보완하고, 추가 심화는 목표와 공부 여유를 보고 정합니다.'},
   {question:'실험과학을 했으면 초등 과학도 마친 건가요?',answer:'관찰·실험 경험과 교과 개념 이수는 따로 확인합니다. 실험에서 본 현상을 용어와 개념으로 설명하고, 배우지 않은 초등 단원이 있는지 살펴봅니다.'},
   {question:'진학 목표에 따라 과학 공부가 달라지나요?',answer:m.parentComment+(m.schoolNote?' '+m.schoolNote:'')}

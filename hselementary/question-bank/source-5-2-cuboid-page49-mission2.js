@@ -22,7 +22,7 @@
 
   function viewsDiagram(includeSide = false) {
     const model = verifyModel();
-    return `<svg class="source52-p49m2-views" viewBox="0 0 ${includeSide ? 600 : 410} 240" role="img" aria-label="${includeSide ? "앞에서 본 7cm와 10cm, 위에서 본 7cm와 5cm, 옆면의 높이 10cm와 깊이 5cm" : "앞에서 본 직사각형은 가로 7cm 세로 10cm, 위에서 본 직사각형은 가로 7cm 세로 5cm"}" xmlns="http://www.w3.org/2000/svg">
+    return `<svg class="source52-p49m2-views" viewBox="-8 -10 ${includeSide ? 616 : 426} 260" role="img" aria-label="${includeSide ? "앞에서 본 7cm와 10cm, 위에서 본 7cm와 5cm, 옆면의 높이 10cm와 깊이 5cm" : "앞에서 본 직사각형은 가로 7cm 세로 10cm, 위에서 본 직사각형은 가로 7cm 세로 5cm"}" xmlns="http://www.w3.org/2000/svg">
       <g class="source52-p49m2-view">
         <rect x="72" y="36" width="112" height="160" />
         <path d="M72 28v-8m112 8v-8M72 22h112M64 36h-8m8 160h-8M60 36v160" />

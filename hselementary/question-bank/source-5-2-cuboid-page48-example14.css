@@ -1,0 +1,4 @@
+.p48e14-question,.p48e14-solution{font-family:inherit;color:#191511;line-height:1.6}
+.p48e14-question>p,.p48e14-solution>p{margin:0 0 .7em}
+.p48e14-diagram{display:block;width:min(100%,330px);height:auto;margin:8px auto}
+@media print{.p48e14-question,.p48e14-solution{font-family:'Noto Serif KR','Batang',serif;font-size:10.5pt}.p48e14-diagram{max-height:48mm;margin:1mm auto}}

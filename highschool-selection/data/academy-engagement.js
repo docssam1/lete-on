@@ -14,6 +14,10 @@
         { id: "middle-transfer", label: "중등과정 편입", scope: "지점·월·현재 진도별 확인", status: "guide" },
         { id: "high-transfer", label: "고등과정 편입", scope: "현재 반 진도와 배정 과정별 확인", status: "guide" }
       ],
+      relatedPrograms: [
+        { label: "생각하는 황소 중등대비", url: "https://lete-on.gfieldacademy.net/hsmiddle/" },
+        { label: "생각하는 황소 초등대비", url: "https://hs.gfieldacademy.net/promo/" }
+      ],
       channel: { label: "공식 홈페이지 공지", url: "https://www.thinking-bull.com/notice", status: "official" },
       updates: [
         { date: "2025-07-22", title: "고등과정 개편 안내", url: "https://www.thinking-bull.com/notice/?bmode=view&idx=166962077", sourceKind: "공식" }
@@ -66,14 +70,16 @@
       shortName: "이든",
       publicName: "이든수학",
       accent: "#775c8d",
-      examNature: "지원 과정에 따라 학년·학기별 누적 상태를 확인하고 오답 반복과 클리닉 연결을 중시하는 누적형",
+      examNature: "중1 시작은 초5·초6, 공통수학1 기본반은 중2·중3 전 과정의 서술형 입반 테스트",
       preparation: ["지원 과정의 학기별 범위를 나눠 점검", "오답을 다시 풀고 설명할 수 있을 때까지 반복", "긴 시험에서 학기별 시간 편차를 기록", "시작반·편입반의 현재 진도와 과제·클리닉 운영을 별도로 확인"],
       courses: [
-        { id: "middle1", label: "중1 시작", scope: "초등 선수과정 누적", status: "guide" },
-        { id: "high-advance", label: "고등선행", scope: "중등 학기별 누적", status: "guide" }
+        { id: "middle1", label: "중1 시작", scope: "초5·초6 전 과정 · 30문항 · 100분", status: "guide" },
+        { id: "high-advance", courseCode: "common1-basic", label: "공통수학1 기본반", scope: "중2·중3 전 과정 · 대수 20 + 기하 10 · 100분", status: "guide" },
+        { id: "common2-skill", label: "공통수학2 실력반", scope: "공통수학1 실력 + 공통수학2 기본 · 공식 FAQ 범위 예시", status: "guide" },
+        { id: "algebra-basic", label: "대수 기본반", scope: "공통수학1·2 실력 · 공식 FAQ 범위 예시", status: "guide" }
       ],
-      channel: { label: "공식 블로그 주소 확인 중", url: "", status: "pending" },
-      updates: []
+      channel: { label: "이든수학 공식 블로그", url: "https://blog.naver.com/edenmath", status: "verified" },
+      updates: [{ date: "2026-10-07", title: "공통수학1 기본반 12월 개강·입반 테스트", url: "https://blog.naver.com/edenmath/224434054175", sourceKind: "공식 블로그" }]
     },
     {
       code: "DG",
@@ -84,7 +90,7 @@
       preparation: ["단원별 풀이보다 개념 사이 연결을 설명", "함수 그래프와 부등식 조건을 함께 해석", "한 문제 안에서 여러 경우를 끝까지 검토"],
       courses: [
         { id: "level-entry", label: "레벨 입학", scope: "중3 심화·공통수학 연결", status: "guide" },
-        { id: "pre-high1", label: "예비고1 입학", scope: "중3-1·공통수학1·공통수학2 일부 공개 사례", status: "guide" }
+        { id: "pre-high1", label: "예비고1 입학", scope: "공통수학1·공통수학2 도형의 방정식", status: "guide" }
       ],
       channel: { label: "공식 블로그 주소 확인 중", url: "", status: "pending" },
       updates: []
@@ -106,7 +112,7 @@
   ];
 
   root.HIGHSELECT_ACADEMY_ENGAGEMENT = {
-    updatedAt: "2026-09-03",
+    updatedAt: "2026-11-03",
     standardExamPolicy: {
       required: true,
       rule: "모든 대비과정은 승인된 표준 시험지 한 회 이상이 있어야 신청과 판매를 열 수 있습니다.",
@@ -118,12 +124,12 @@
       note: "운영 설문 URL을 등록하면 모든 학원·과정의 신청 버튼이 활성화됩니다."
     },
     noticeRefresh: {
-      cadence: "daily",
-      branchFilter: "대치",
+      cadence: "17:00 daily (Asia/Seoul)",
+      branchFilter: "대치·분당 (황소는 대치만)",
       publicFields: ["제목", "날짜", "원문 링크", "출처", "대상 과정"],
       rule: "공식 원문과 공식 게시물 미러를 구분하고, 본문을 복사하지 않고 원문 링크만 제공합니다.",
-      lastCheckedAt: null,
-      status: "backend-schedule-pending"
+      feed: "data/academy-notices.js",
+      status: "github-actions-scheduled"
     },
     educationNews: {
       label: "교육 뉴스",

@@ -1,0 +1,343 @@
+{
+  "schemaVersion": 1,
+  "academies": [
+    {
+      "id": "soma",
+      "name": "소마",
+      "subject": "수학학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://soma1.somai.co.kr/customer/notice"
+    },
+    {
+      "id": "fields",
+      "name": "필즈더클래식",
+      "subject": "수학학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://www.fieldsgood.co.kr/bbs/board.php?bo_table=notice"
+    },
+    {
+      "id": "hwangso",
+      "name": "황소수학",
+      "subject": "수학학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://blog.naver.com/sharpedu"
+    },
+    {
+      "id": "dolpa",
+      "name": "돌파수학",
+      "subject": "수학학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://blog.naver.com/dpmath"
+    },
+    {
+      "id": "won",
+      "name": "원수학",
+      "subject": "수학학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://blog.naver.com/wonmath563"
+    },
+    {
+      "id": "eden",
+      "name": "이든수학",
+      "subject": "수학학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://blog.naver.com/edenmath"
+    },
+    {
+      "id": "kiparang",
+      "name": "기파랑문해원",
+      "subject": "국어학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://www.kiparang.co.kr/main/sub.html?Mode=list&boardID=www8"
+    },
+    {
+      "id": "thousand",
+      "name": "천개의고원",
+      "subject": "국어학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": ""
+    },
+    {
+      "id": "jini",
+      "name": "지니국어",
+      "subject": "국어학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": ""
+    },
+    {
+      "id": "msc",
+      "name": "MSC",
+      "subject": "국어학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": "https://www.imsc21.com/"
+    },
+    {
+      "id": "cna",
+      "name": "C&A 논술",
+      "subject": "국어학원",
+      "stages": [
+        "elementary",
+        "middle"
+      ],
+      "url": ""
+    },
+    {
+      "id": "hwarang",
+      "name": "논술화랑",
+      "subject": "국어학원",
+      "stages": [
+        "elementary"
+      ],
+      "url": ""
+    },
+    {
+      "id": "kimyoungjun",
+      "name": "김영준국어",
+      "subject": "국어학원",
+      "stages": [
+        "middle"
+      ],
+      "url": ""
+    },
+    {
+      "id": "anbora",
+      "name": "안보라국어",
+      "subject": "국어학원",
+      "stages": [
+        "middle"
+      ],
+      "url": ""
+    },
+    {
+      "id": "ensight",
+      "name": "인사이트 ENSIGHT",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://ensight-academy.com/"
+    },
+    {
+      "id": "thinkeng",
+      "name": "띵킹",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://thinkeng.co/"
+    },
+    {
+      "id": "peak",
+      "name": "PEAK",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://peakacademy.kr/"
+    },
+    {
+      "id": "groton",
+      "name": "그로튼",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://blog.naver.com/groton_academy"
+    },
+    {
+      "id": "proud7",
+      "name": "프라우드7",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://proud7.com/"
+    },
+    {
+      "id": "edisen",
+      "name": "에디센",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://edisen.co.kr/"
+    },
+    {
+      "id": "mi",
+      "name": "MI",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://miedu.co.kr/"
+    },
+    {
+      "id": "jprep",
+      "name": "제이프랩",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://jprep.co.kr/"
+    },
+    {
+      "id": "twinkle",
+      "name": "트윈클",
+      "subject": "영어학원",
+      "stages": [
+        "preschool",
+        "elementary"
+      ],
+      "url": "https://twinkledaechi.com/"
+    },
+    {
+      "id": "peai",
+      "name": "피아이 PEAI",
+      "subject": "영어학원",
+      "stages": [
+        "elementary"
+      ],
+      "url": ""
+    }
+  ],
+  "sources": [
+    {
+      "id": "soma-official",
+      "academy": "soma",
+      "url": "https://soma1.somai.co.kr/customer/notice",
+      "kind": "soma",
+      "branch": "대치"
+    },
+    {
+      "id": "fields-official",
+      "academy": "fields",
+      "url": "https://www.fieldsgood.co.kr/bbs/board.php?bo_table=notice",
+      "kind": "html",
+      "branch": "대치"
+    },
+    {
+      "id": "kiparang-official",
+      "academy": "kiparang",
+      "url": "https://www.kiparang.co.kr/main/sub.html?Mode=list&boardID=www8",
+      "kind": "html",
+      "branch": "공지별 지점 확인"
+    },
+    {
+      "id": "msc-official",
+      "academy": "msc",
+      "url": "https://www.imsc21.com/",
+      "kind": "html",
+      "branch": "공지별 지점 확인"
+    },
+    {
+      "id": "ensight-official",
+      "academy": "ensight",
+      "url": "https://ensight-academy.com/",
+      "kind": "html",
+      "branch": "공지별 지점 확인"
+    },
+    {
+      "id": "thinkeng-official",
+      "academy": "thinkeng",
+      "url": "https://thinkeng.co/",
+      "kind": "html",
+      "branch": "공지별 지점 확인"
+    },
+    {
+      "id": "peak-official",
+      "academy": "peak",
+      "url": "https://peakacademy.kr/",
+      "kind": "html",
+      "branch": "공지별 지점 확인"
+    },
+    {
+      "id": "groton-official",
+      "academy": "groton",
+      "url": "https://blog.naver.com/groton_academy",
+      "kind": "rss",
+      "branch": "공식 블로그",
+      "blog": "groton_academy",
+      "identity": "그로튼"
+    },
+    {
+      "id": "proud7-official",
+      "academy": "proud7",
+      "url": "https://proud7.com/",
+      "kind": "html",
+      "branch": "공지별 지점 확인"
+    },
+    {
+      "id": "edisen-official",
+      "academy": "edisen",
+      "url": "https://edisen.co.kr/",
+      "kind": "html",
+      "branch": "공지별 지점 확인"
+    },
+    {
+      "id": "mi-official",
+      "academy": "mi",
+      "url": "https://miedu.co.kr/",
+      "kind": "html",
+      "branch": "공지별 지점 확인"
+    },
+    {
+      "id": "jprep-official",
+      "academy": "jprep",
+      "url": "https://jprep.co.kr/",
+      "kind": "html",
+      "branch": "공지별 지점 확인"
+    },
+    {
+      "id": "twinkle-official",
+      "academy": "twinkle",
+      "url": "https://twinkledaechi.com/",
+      "kind": "html",
+      "branch": "공지별 지점 확인"
+    }
+  ],
+  "sharedMap": {
+    "SH": "hwangso",
+    "DP": "dolpa",
+    "WM": "won",
+    "ED": "eden"
+  },
+  "maxAgeDays": 120
+}

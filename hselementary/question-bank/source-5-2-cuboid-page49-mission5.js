@@ -41,7 +41,7 @@
     const line = (x1, y1, x2, y2, cls = "outline") => `<line class="source52-p49m5-${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
     const left = 75, top = 116, frontW = 210, frontH = 48, depthX = 105, depthY = -70;
     const right = left + frontW, bottom = top + frontH, backLeft = left + depthX, backRight = right + depthX, backTop = top + depthY, backBottom = bottom + depthY;
-    const outline = [line(left, top, right, top), line(right, top, backRight, backTop), line(backRight, backTop, backRight, backBottom),
+    const outline = [line(left, top, right, top), line(right, top, right, bottom), line(right, top, backRight, backTop), line(backRight, backTop, backRight, backBottom),
       line(backRight, backBottom, right, bottom), line(right, bottom, left, bottom), line(left, bottom, left, top),
       line(left, top, backLeft, backTop), line(backLeft, backTop, backRight, backTop)].join("");
     const dimensions = `<g class="source52-p49m5-dimensions">
@@ -75,7 +75,7 @@
     const previousKey = api.generatorKey.bind(api), previousGenerate = api.generate.bind(api);
     const matches = type => type && (type.id === sourceItemId || type.sourceItemId === sourceItemId || type.generatorKey === generatorKey);
     api.generatorKey = type => matches(type)
-      ? type.id === sourceItemId && type.sourceItemId === sourceItemId && type.generatorKey === generatorKey && type.reviewLocked === false && type.sourceVerified === true ? generatorKey : ""
+      ? (type.id === sourceItemId || type.id === "5-2-u5-t1-5") && type.sourceItemId === sourceItemId && type.generatorKey === generatorKey && type.reviewLocked === false && type.sourceVerified === true ? generatorKey : ""
       : previousKey(type);
     api.generate = (type, rank, difficulty, seed, variant = 0) => matches(type)
       ? api.generatorKey(type) && Number(variant) === 0 ? makeQuestion() : null

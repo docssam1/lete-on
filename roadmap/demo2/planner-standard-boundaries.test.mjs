@@ -13,8 +13,8 @@ test('the optional pre-middle month stays visible without assigning a one-month 
  const before=JSON.stringify(w.PLANNER_LEVELS),m=w.PlannerStandard.model(a,f),school=row(m,'school').blocks;
  const end=school.find(b=>b.stage==='6-2'),review=school.find(b=>b.phase==='transition-review'),middle=school.find(b=>b.stage==='중1-1');
  assert.ok(end&&review&&middle);near(end.end,8.5);near(review.start,8.5);near(review.end,9.5);near(middle.start,9.5);
- assert.equal(review.instruction,false);assert.equal(review.stage,null);assert.match(review.method,/한 달에 끝내는 계획은 아닙니다/);
- assert.match(review.method,/별도로 선택/);
+ assert.equal(review.instruction,false);assert.equal(review.stage,null);assert.match(review.method,/별도.*공부 기간/);
+ assert.match(review.method,/선택/);
  for(const view of ['map','table'])assert.ok(w.PlannerStandard.render(m,{view}).includes(review.title));
  assert.equal(JSON.stringify(w.PLANNER_LEVELS),before,'source curriculum and all later source dates stay untouched');
 });

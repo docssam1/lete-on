@@ -17,12 +17,14 @@ byAlias.set('premier-2020-cohort','premier2020');
 function base(currentUrl){try{const u=new URL(String(currentUrl));if(!['http:','https:'].includes(u.protocol))return null;u.username='';u.password='';u.search='';u.hash='';return new URL('planner.html',u);}catch{return null;}}
 function available(id){return id==='legacy'||!g.PlannerCounsellingHistory?.CASES||Object.hasOwn(g.PlannerCounsellingHistory.CASES,id);}
 function libraryHref(currentUrl){const u=base(currentUrl);if(!u)return '';u.searchParams.set('view','seniors');return u.href;}
+function classroomHref(currentUrl){const u=base(currentUrl);if(!u)return '';u.searchParams.set('classroom','gfield-6-national2');return u.href;}
 function studyHref(currentUrl){const u=base(currentUrl);if(!u)return '';u.searchParams.set('study','grade5-balanced');return u.href;}
 function historyHref(currentUrl,id){if(typeof id!=='string'||!byId.has(id)||!available(id))return '';const u=base(currentUrl);if(!u)return '';u.searchParams.set('senior',byId.get(id));return u.href;}
 function resolve(currentUrl){
  const clean=base(currentUrl);if(!clean)return null;
  let u;try{u=new URL(String(currentUrl));}catch{return null;}
- const senior=u.searchParams.getAll('senior'),view=u.searchParams.getAll('view'),study=u.searchParams.getAll('study');
+ const senior=u.searchParams.getAll('senior'),view=u.searchParams.getAll('view'),study=u.searchParams.getAll('study'),classroom=u.searchParams.getAll('classroom');
+ if(classroom.length)return classroom.length===1&&classroom[0]==='gfield-6-national2'&&!study.length&&!senior.length&&!view.length?{kind:'classroom',id:'gfield-6-national2'}:null;
  if(study.length)return study.length===1&&study[0]==='grade5-balanced'&&!senior.length&&!view.length?{kind:'study',id:'grade5'}:null;
  if(senior.length){if(senior.length!==1||view.length)return null;const id=byAlias.get(senior[0]);return id&&available(id)?{kind:id==='legacy'?'case':'history',id}:null;}
  return view.length===1&&view[0]==='seniors'?{kind:'library'}:null;
@@ -53,5 +55,5 @@ function handleCopy(event){
  return true;
 }
 function routes(){return definitions.filter(([id])=>available(id)).map(([id,alias])=>({id,alias,kind:id==='legacy'?'case':'history'}));}
-g.PlannerDirectLinks=Object.freeze({libraryHref,studyHref,historyHref,resolve,renderLibraryLink,renderCaseLink,decorateLibrary,handleCopy,routes});
+g.PlannerDirectLinks=Object.freeze({libraryHref,classroomHref,studyHref,historyHref,resolve,renderLibraryLink,renderCaseLink,decorateLibrary,handleCopy,routes});
 })(window);

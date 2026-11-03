@@ -1,0 +1,65 @@
+name: Refresh academy test and seminar notices
+
+on:
+  schedule:
+    # KST 17:00, once daily. Public sources only; no AI API calls.
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refresh-academy-notices.yml'
+      - 'highschool-selection/scripts/notice-monitor/**'
+      - 'roadmap/tools/academy-notices/**'
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: academy-notice-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify branch rules and outage behavior
+        run: python3 -m unittest discover -s highschool-selection/scripts/notice-monitor -p 'test_*.py'
+      - name: Verify roadmap schedules and failure retention
+        run: python3 -m unittest discover -s roadmap/tools/academy-notices -p 'test_*.py'
+      - name: Collect approved public notices
+        run: python3 highschool-selection/scripts/notice-monitor/refresh.py
+      - name: Build the combined roadmap notice board
+        run: python3 roadmap/tools/academy-notices/refresh.py
+      - name: Publish only the generated notice feeds
+        id: publish
+        run: |
+          if git diff --quiet -- highschool-selection/data/academy-notices.js roadmap/demo2/data/academy-notices.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- highschool-selection/data/academy-notices.js roadmap/demo2/data/academy-notices.json
+          git commit -m "chore: refresh academy notices and roadmap schedules"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then break; fi
+            if [ "$attempt" = 3 ]; then exit 1; fi
+          done
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      # Bot pushes do not trigger push workflows. Explicit dispatch triggers the existing Pages release.
+      - name: Deploy updated notice feed
+        if: steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy-pages.yml --repo "$GITHUB_REPOSITORY" --ref main

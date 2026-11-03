@@ -1,0 +1,13 @@
+.p53m6-question,.p53m6-solution{font-family:inherit;color:#191511;line-height:1.6}
+.p53m6-question>p,.p53m6-solution>p{margin:0 0 .7em}
+.p53m6-figures{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:8px;align-items:center;max-width:660px;margin:10px auto}
+.p53m6-figures figure{margin:0;min-width:0}.p53m6-figures figcaption{text-align:center;font-size:12px;margin:2px 0}
+.p53m6-cube,.p53m6-net{width:100%;height:auto;display:block}
+.p53m6-answer-figure{width:min(100%,380px);margin:2mm auto}
+.p53m6-cube .faces{fill:#fff;stroke:#191511;stroke-width:1.5;stroke-linejoin:round}
+.p53m6-cube .hidden,.p53m6-cube .bands,.p53m6-net .net-outline,.p53m6-net .net-folds,.p53m6-net .given-lines,.p53m6-net .answer-lines{fill:none;stroke:#191511;stroke-width:1.5;stroke-linejoin:round}
+.p53m6-cube .bands,.p53m6-net .given-lines,.p53m6-net .answer-lines{stroke-width:2.3}
+.p53m6-cube .hidden,.p53m6-net .net-folds{stroke-dasharray:4 3}
+.p53m6-net .net-squares{fill:#fff;stroke:none}
+@media(max-width:480px){.p53m6-figures{grid-template-columns:1fr;max-width:255px;gap:3px}}
+@media print{.p53m6-question,.p53m6-solution{font-family:'Noto Serif KR','Batang',serif;font-size:10.5pt}.p53m6-figures{margin:1mm auto;max-height:70mm}.p53m6-figures svg{max-height:62mm}.p53m6-answer-figure svg{max-height:55mm}}

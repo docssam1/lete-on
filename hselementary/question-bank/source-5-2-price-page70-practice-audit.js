@@ -1,0 +1,4 @@
+'use strict';
+const assert=require('node:assert/strict'),api=require('./source-5-2-range-page68-practice.js');const valid=p=>{const n=Math.floor(4000/p);return n>=5&&n<11};const won=Array.from({length:1000},(_,i)=>i+1).filter(valid);assert.equal(won[0],364);assert.equal(won.at(-1),800);assert.equal(won.length,437);assert.equal(valid(400),true);assert.equal(valid(363),false);assert.equal(valid(801),false);assert.equal(valid(4000/11),false);assert.equal(valid(4000/11+0.001),true);
+const hundredths=Array.from({length:959-315},(_,i)=>315+i);assert.equal(hundredths.length,644);assert.equal(hundredths.filter(n=>n%10!==0).length,580);
+const q=api.build(17);assert.equal(q.sourcePrintedPage,70);assert.equal(q.automaticGrading,false);assert(!q.prompt.includes('data-price-answer'));assert(q.answerVisual.includes('data-price-answer'));console.log('PASS: purchase thresholds, number-line separation and decimal ambiguity');

@@ -120,7 +120,7 @@ const evidenceAnswer = (kind, values) => {
     return answers.join(", ");
   }
   if (kind === "fraction-3-example-1") return mixed(values[0] + values[1] - values[2], values[3]);
-  if (kind === "fraction-3-example-2") return `${["선주", "민주", "민서", "준호", "유진", "도윤"][values[3] === 0 ? 0 : values[3] === 1 ? 1 : values[3] === 2 ? 2 : values[3] === 3 ? 3 : values[3] === 4 ? 4 : 5]}가 ${mixed(Math.abs(values[1] - values[0]), values[2])}m`;
+  if (kind === "fraction-3-example-2") return `${["선주가", "민주가", "민서가", "준호가", "유진이", "도윤이"][values[3]]} ${mixed(Math.abs(values[1] - values[0]), values[2])}m`;
   if (kind === "fraction-3-example-3") {
     const [first, second, third, base, denominator] = values;
     const g = first - second - third;
@@ -774,6 +774,14 @@ for (const type of types) {
       check(independentlyCalculated !== null, `${context}: 알 수 없는 검산 유형 ${kind}입니다.`);
       check(String(independentlyCalculated) === declared, `${context}: 내부 정답 ${declared}과 독립 계산 ${independentlyCalculated}이 다릅니다.`);
       check(String(generated.answer) === declared, `${context}: 표시 정답 ${generated.answer}과 검산 정답 ${declared}이 다릅니다.`);
+      if (kind === "fraction-3-example-2") {
+        const topics = [["선주는", "민주는"], ["민서는", "준호는"], ["유진은", "도윤은"]][Math.floor(values[3] / 2)];
+        for (const topic of topics) {
+          check(generated.prompt.includes(topic), `${context}: 문제 속 이름 조사가 잘못됐습니다: ${topic}`);
+          check(generated.solution.includes(topic), `${context}: 풀이 속 이름 조사가 잘못됐습니다: ${topic}`);
+        }
+        check(!/유진(?:는|가)|도윤(?:는|가)/.test(`${generated.prompt}${generated.answer}${generated.solution}`), `${context}: 받침 뒤 조사가 잘못됐습니다.`);
+      }
       if (kind === "fraction-2-mission-5") {
         const [denominator, firstStep, secondStep, first] = values;
         const candidates = [];

@@ -1,0 +1,13 @@
+'use strict';
+const assert=require('node:assert/strict');
+global.window={};require('./source-inventory-4-1.js');require('./source-inventory-grade6.js');require('./curriculum.js');require('./generators.js');
+const item=require('./source-5-2-cuboid-page52-example31.js');
+const type=window.HSE_CURRICULUM.semesters.flatMap(s=>s.units.flatMap(u=>u.subunits.flatMap(g=>g.types))).find(t=>t.id===item.sourceItemId);
+assert(type&&type.sourceVerified&&!type.reviewLocked);assert.equal(type.publisherKeyVerified,false);
+assert.deepEqual(item.segments,[[[0,2],[2,4]],[[0,6],[2,4]],[[6,4],[8,2]]]);
+const q=window.HSE_GENERATORS.generate(type,0,0,0,0);
+assert.equal(q.automaticGrading,false);assert.equal(q.resultContract,'constructed-figure');assert.equal(q.publisherKeyVerified,false);
+assert.equal((q.answerVisual.match(/<line /g)||[]).length,3);assert.doesNotMatch(q.prompt,/<line /);
+assert.match(q.solution,/맨 오른쪽 칸/);assert.equal(window.HSE_GENERATORS.generate(type,0,0,0,1),null);
+assert.equal(window.HSE_GENERATORS.generate({...type,reviewLocked:true},0,0,0,0),null);
+console.log('PASS: blank source net, three independently checked answer segments, manual assessment, and lock guards.');

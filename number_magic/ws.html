@@ -41,12 +41,14 @@
      zoom 은 레이아웃에 반영되는 축소라 아래로 스크롤이 정상 동작한다(transform:scale 은 빈 공간이 남는다). */
   body>.nm-print-sheet{display:block!important;margin:12px auto;width:210mm;max-width:210mm;background:#fff;
     box-shadow:0 2px 12px rgba(0,0,0,.08);zoom:var(--ws-zoom,1)}
+  /* 화면에서도 인쇄 여백(@page 10mm)만큼 안쪽 여백 — 글이 종이 왼쪽 끝에 붙어 보이던 것(2026-11-02). 폭은 그대로 210mm라 인쇄 미리보기와 같다 */
+  body>.nm-print-sheet{box-sizing:border-box;padding:10mm}
   /* 쪽 경계 — 화면에서 몇 쪽짜리인지 보이게 */
   body>.nm-print-sheet .nm-w2-page,
   body>.nm-print-sheet .nm-print-cover,
   body>.nm-print-sheet .nm-print-answer-key{border-bottom:1px dashed #d8cdb5}
   @media print{ .ws-bar,.ws-err,#wsBody{display:none!important} body{background:#fff}
-    body>.nm-print-sheet{margin:0;box-shadow:none;max-width:none;width:auto;zoom:1}
+    body>.nm-print-sheet{margin:0;box-shadow:none;max-width:none;width:auto;zoom:1;padding:0}
     body>.nm-print-sheet .nm-w2-page,body>.nm-print-sheet .nm-print-cover,
     body>.nm-print-sheet .nm-print-answer-key{border-bottom:0} }
 </style>
@@ -121,7 +123,7 @@
 <script src="data/courses.js?v=20261026-middle3-sequence"></script>
 <script src="data/high-pacing.js?v=20261026-middle3-sequence"></script>
 <script src="data/middle-extension.js?v=20261024-middle-extension1"></script>
-<script src="app/learning-plan.js?v=20261024-middle-extension1"></script>
+<script src="app/learning-plan.js?v=20261102-carry1"></script>
 <script src="app/plan-control.js?v=20261024-middle-extension1"></script>
 <script src="data/delivery-courses-v1.js?v=22d782b1"></script>
 <script src="app/delivery-plan.js?v=20261026-personal2"></script>
@@ -154,8 +156,8 @@
 <script src="app/g1/7-9.print.js?v=20261025-elementary-review1"></script>
 <script src="app/g1/10-12.print.js?v=20261025-elementary-review1"></script>
 <script src="app/g1/13-15.print.js?v=20261025-elementary-review1"></script>
-<link rel="stylesheet" href="app/worksheet-series.css?v=20261024-monthly-series2">
-<script src="app/worksheet-series.js?v=20261028-standard2"></script>
+<link rel="stylesheet" href="app/worksheet-series.css?v=20261103-cover1">
+<script src="app/worksheet-series.js?v=20261103-cover2"></script>
 <script src="app/paper-examples.js?v=20261026-c0-cognitive1"></script>
 <script src="engine/c0-cognitive.js?v=20261026-review5"></script>
 <script src="app/c0-paper.js?v=20261026-c0-writing2"></script>

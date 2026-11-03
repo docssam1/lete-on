@@ -456,6 +456,16 @@
     return result;
   }
 
+  function isCompactFractionProblem(question) {
+    const prompt = String(question?.prompt || "");
+    const fractions = (prompt.match(/class="math-fraction"/g) || []).length;
+    const blocks = (prompt.match(/<(?:p|li|div|br)\b/gi) || []).length;
+    const text = prompt.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    const eligibleFractionCount = fractions >= 3 || question?.type?.id === "4-2-u1-t6-2";
+    return eligibleFractionCount && fractions <= 6 && blocks <= 4 && text.length <= 180
+      && !/<(?:svg|table|img|canvas|style|figure)\b/i.test(prompt);
+  }
+
   function needsWidePrint(question) {
     const prompt = String(question?.prompt || "");
     if (prompt.includes("source62-layer-cut-problem")) return true;
@@ -463,14 +473,21 @@
     const fractionCount = (prompt.match(/class="math-fraction"/g) || []).length;
     const equations = [...prompt.matchAll(/class="[^"]*equation[^"]*"[^>]*>([\s\S]*?)<\/div>/g)]
       .map(match => match[1].replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/g, " ").replace(/\s+/g, " ").trim());
-    return fractionCount >= 3 || equations.some(equation => {
+    return (fractionCount >= 3 && !isCompactFractionProblem(question)) || equations.some(equation => {
       const operatorCount = (equation.match(/[+\-×÷=<>]/g) || []).length;
       return equation.length >= 72 || operatorCount >= 5 || equation.includes("↔");
     });
   }
 
   function problemWeight(question) {
+    // These four fraction word problems fit the standard four-up cell.
+    if (["4-2-u1-t1", "4-2-u1-t1-4", "4-2-u1-t3-10", "4-2-u1-t6"].includes(question.type?.id)) return 1;
+    // These compact fraction prompts fit a half-page cell despite having three
+    // or more fraction elements. Keep the wide fallback for longer equations.
+    if (["5-2-u2-e1-example-4-synthetic", "5-2-u2-e4-mission-2-synthetic"].includes(question.sourceItemId)) return 1;
     // The four short equations stack within a half-page column in print.
+    if (["5-2-u2-practice-71-original", "5-2-u2-practice-71-count-similar"].includes(question.sourceItemId)) return 1; // Four short inline fractions fit the standard column.
+    if (question.sourceItemId === "5-2-u2-practice-74-original") return 1; // The three short symbolic fractions fit the standard column.
     if (question.sourceItemId === "5-2-u4-e2-example-1") return 1;
     if (question.sourceItemId?.startsWith("6-2-u4-e2-")) return question.sourceItemId.endsWith("exploration") ? 3 : 1.5;
     if (question.sourceItemId?.startsWith("6-2-u4-e1-")) return question.sourceItemId.endsWith("example-4") ? 3 : 1.5;
@@ -521,6 +538,18 @@
     if (questions.length && questions.every(question => problemWeight(question) < 3)) {
       return chunk(questions, 4).map(page => ({ questions: page, paired: true, fourUp: true }));
     }
+    // A large question must not disable four-up layout for every other page.
+    // Keep the existing larger-question layout, while grouping adjacent short
+    // questions into their own four-up pages in the original order.
+    if (questions.some(question => problemWeight(question) < 3)) {
+      const runs = [];
+      for (const question of questions) {
+        const short = problemWeight(question) < 3;
+        if (!runs.length || runs[runs.length - 1].short !== short) runs.push({ short, questions: [] });
+        runs[runs.length - 1].questions.push(question);
+      }
+      return runs.flatMap(run => paginateProblems(run.questions));
+    }
     const usesGeometryPairing = question => question.prompt.includes("source42-pa") || question.prompt.includes("source42-pp");
     if (!questions.some(usesGeometryPairing)) {
       return paginateWeightedProblems(questions).map(page => ({ questions: page, paired: false }));
@@ -561,7 +590,7 @@
   function renderProblems() {
     $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired, fourUp }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}${fourUp ? " print-page--four-up" : ""}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
-      <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
+      <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item" data-type-id="${escapeHtml(question.type.id)}"${isCompactFractionProblem(question) ? ' data-compact-fraction="true"' : ""}>
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
         <div class="question-prompt">${renderMathNotation(question.prompt)}</div>
         <div class="answer-line">답</div>
@@ -587,7 +616,14 @@
       const ratioE2Text = question.sourceItemId?.startsWith("6-2-u4-e2-") && !question.answerKeyVisual;
       const source52RoundingMission = question.sourceItemId?.startsWith("5-2-u1-e2-mission-");
       const source52RoundingApplicationExploration = question.sourceItemId?.startsWith("5-2-u1-e3-exploration-");
-      const weight = source52RoundingMission ? 2 : ratioE2Text ? question.sourceItemId.endsWith("exploration") ? 4 : 2 : hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 || hasBorderTwoHeightTables || hasNotchedTwoStates || hasCubeAdditionClasses ? 8 : hasColoredCutPair ? 4 : hasCompactAnswerVisual ? 2.5 : hasVisual ? 3 : 1;
+      const source52DicePage54 = question.sourceItemId === "5-2-u5-e4-exploration-1" || /^5-2-u5-e4-example-4-[1-4]$/.test(question.sourceItemId || "");
+      const source52DicePage55 = /^5-2-u5-e4-mission-[1-6]$/.test(question.sourceItemId || "");
+      const source52PackingPractice = question.sourceItemId === "5-2-u5-check108-q8-packing-synthetic";
+      const source52GridPractice = question.sourceItemId === "5-2-u5-e1-mission-1-grid-synthetic";
+      const source52ArrowPractice = question.sourceItemId === "5-2-u5-check113-q43-arrow-synthetic";
+      const source52TrapezoidMission = question.sourceItemId === "5-2-u3-e4-mission-6";
+      const source52EquilateralExample = question.sourceItemId === "5-2-u3-e4-example-2";
+      const weight = source52RoundingMission ? 2 : ratioE2Text ? question.sourceItemId.endsWith("exploration") ? 4 : 2 : source52DicePage54 || source52DicePage55 || source52ArrowPractice || source52TrapezoidMission || source52EquilateralExample || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 || hasBorderTwoHeightTables || hasNotchedTwoStates || hasCubeAdditionClasses ? 8 : source52PackingPractice || source52GridPractice || hasColoredCutPair ? 4 : hasCompactAnswerVisual ? 2.5 : hasVisual ? 3 : 1;
       const solutionPageLimit = source52RoundingMission ? 6 : source52RoundingApplicationExploration ? 5 : 8;
       if (solutionPage.length && (solutionPage.length >= 8 || solutionWeight + weight > solutionPageLimit)) {
         solutionPages.push(solutionPage);

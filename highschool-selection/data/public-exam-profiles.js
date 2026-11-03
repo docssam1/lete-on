@@ -2,6 +2,27 @@
   "use strict";
 
   const sources = {
+    "ED-CM1-BASIC-OFFICIAL-2026-12": {
+      title: "이든수학 공식 공통수학1 기본반 12월 개강·입반시험 안내",
+      url: "https://blog.naver.com/edenmath/224434054175",
+      grade: "A",
+      publishedAt: "2026-10-07",
+      checkedAt: "2026-11-03"
+    },
+    "ED-MIDDLE1-OFFICIAL-2026-10": {
+      title: "이든수학 공식 초등관 10월 이후 정규반·중1 시작반 테스트 안내",
+      url: "https://blog.naver.com/edenmath/224367798692",
+      grade: "A",
+      publishedAt: "2026-08-04",
+      checkedAt: "2026-11-03"
+    },
+    "ED-FAQ-OFFICIAL": {
+      title: "이든수학 공식 교육철학 및 FAQ · 과정별 입학시험 범위 예시",
+      url: "https://blog.naver.com/edenmath/223377125157",
+      grade: "A",
+      publishedAt: "2024-03-08",
+      checkedAt: "2026-11-03"
+    },
     "SH-CURRICULUM-OFFICIAL": {
       title: "생각하는황소 고등과정",
       url: "https://www.thinking-bull.com/curriculum3",
@@ -257,11 +278,15 @@
     {
       code: "ED",
       publicName: "이든수학 입학테스트 대비",
-      eyebrow: "학년·학기 누적형",
-      summary: "중1 시작반과 고등선행 지원 과정에 맞춰 학년·학기별 누적 상태를 분리 진단합니다.",
+      eyebrow: "과정별 입반 테스트",
+      summary: "현재 제작 2회는 공통수학1 기본반 입반 대비입니다. 중2·중3 전 과정을 대수 20문항과 기하 10문항으로 나눕니다.",
       facts: [
+        { label: "공통수학1 기본반 입반 범위", value: "중2·중3 전 과정", state: "verified", sourceIds: ["ED-CM1-BASIC-OFFICIAL-2026-12"] },
+        { label: "공통수학1 기본반 시험 구성", value: "대수 20 + 기하 10 · 서술형 30문항 · 100분", state: "verified", sourceIds: ["ED-CM1-BASIC-OFFICIAL-2026-12"] },
+        { label: "중1 시작반 입반 범위", value: "초5·초6 전 과정 · 서술형 30문항 · 100분", state: "verified", sourceIds: ["ED-MIDDLE1-OFFICIAL-2026-10"] },
+        { label: "공통수학2 실력반 범위 예시", value: "공통수학1 실력 + 공통수학2 기본", state: "verified", sourceIds: ["ED-FAQ-OFFICIAL"] },
+        { label: "대수 기본반 범위 예시", value: "공통수학1·2 실력", state: "verified", sourceIds: ["ED-FAQ-OFFICIAL"] },
         { label: "중1 시작 관찰 사례", value: "초5 12 + 초6 18, 총 30문항", state: "observed", sourceIds: [] },
-        { label: "고등선행 관찰 사례", value: "2-1·3-1·2-2·3-2, 총 30문항", state: "observed", sourceIds: [] },
         { label: "공개 과거 운영 사례", value: "서술형 30문항 · 100분", state: "observed", sourceIds: ["ED-2025-INDEPENDENT"] },
         { label: "고등 수업 후기 사례", value: "주2회 4시간 + 토요일 의무 클리닉 2시간", state: "observed", sourceIds: ["ED-HIGH-REVIEW-YT"] },
         { label: "누적·총괄평가 후기", value: "매시간 누적 20문항 · 실력과정 총괄 3회(각 20점)", state: "observed", sourceIds: ["ED-HIGH-REVIEW-YT"] },
@@ -278,8 +303,8 @@
         round: null,
         sourceIds: []
       },
-      style: "문항 수가 다른 학기끼리는 정답 개수가 아니라 분모를 포함한 수행률로 비교합니다.",
-      caveat: "익명 결과 문자는 시험 분포 근거일 뿐 일반 커트라인 근거가 아닙니다. 42점·14점 기준은 개인 후기에서 설명한 재원 중 실력과정 총괄평가 기준이며 입학 커트라인이나 현행 공식 규정으로 사용하지 않습니다."
+      style: "공통수학1 기본반 대비 2회는 대수 1~20번·기하 21~30번으로 구분하고 풀이 과정도 확인합니다.",
+      caveat: "공통수학1 기본반 범위는 2026년 12월 개강 공지에 해당합니다. 대수 기본반·공통수학2 실력반은 FAQ의 범위 예시이며 다른 반에 임의 적용하지 않습니다. 공식 공지의 21문항 이상 기준도 서술 과정과 대수·기하 균형을 검토하므로 자동 판정하지 않습니다. 42점·14점 후기 수치는 입학 커트라인이나 현행 공식 규정으로 사용하지 않습니다."
     },
     {
       code: "DG",
@@ -329,7 +354,7 @@
   ];
 
   root.HIGHSELECT_PUBLIC_PROFILES = {
-    updatedAt: "2026-08-31",
+    updatedAt: "2026-11-03",
     evidencePolicy: "A=공식 원문, B=공식 게시물 미러, C=독립 정리, 관찰=사용자 제공 원본/익명 결과, 운영 확정=우리 모의고사 설정. 외부 수치는 해당 회차에만 적용.",
     sources,
     profiles

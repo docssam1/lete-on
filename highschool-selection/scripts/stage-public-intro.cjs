@@ -6,6 +6,11 @@ const source = path.resolve(__dirname, '..');
 const files = [
   ['promo/index.html', 'promo/index.html'],
   ['promo/promo.css', 'promo/promo.css'],
+  ['promo/notices.js', 'promo/notices.js'],
+  ['data/academy-notices.js', 'data/academy-notices.js'],
+  ['data/available-mocks.js', 'data/available-mocks.js'],
+  ['promo/assets/fonts/pretendard-var.woff2', 'promo/assets/fonts/pretendard-var.woff2'],
+  ['promo/assets/fonts/OFL-Pretendard.txt', 'promo/assets/fonts/OFL-Pretendard.txt'],
   ['promo/assets/logos/sh.png', 'promo/assets/logos/sh.png'],
   ['promo/assets/logos/dp.png', 'promo/assets/logos/dp.png'],
   ['promo/assets/logos/wm-transparent-v2.png', 'promo/assets/logos/wm-transparent-v2.png'],
@@ -18,7 +23,9 @@ const files = [
   ['data/catalog.js', 'data/catalog.js'],
   ['data/academy-engagement.js', 'data/academy-engagement.js'],
   ['data/standard-exam-policy.js', 'data/standard-exam-policy.js'],
-  ['public/entry-pending.html', 'login.html'],
+  ['public/exam-entry.html', 'login.html'],
+  ['public/exam-entry.js', 'exams/app.js'],
+  ['public/exam-entry.css', 'exams/app.css'],
   ['public/index.html', 'index.html']
 ];
 function stagePublicIntro(dest) {

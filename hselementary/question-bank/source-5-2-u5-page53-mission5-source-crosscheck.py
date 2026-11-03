@@ -21,13 +21,13 @@ for p in permutations(axes):
   if C(v[0],v[1])==v[2]:rot.append(v)
 def transform(v,r):return tuple(sum(v[k]*r[k][i] for k in range(3)) for i in range(3))
 labels={(0,0,1):'나',(0,0,-1):'라',(1,0,0):'가',(-1,0,0):'다',(0,1,0):'바',(0,-1,0):'마'}
-ups = {"나": (-1,0,0), "라": (0,1,0), "가": (0,1,0), "마": (0,0,-1), "바": (0,0,1), "다": (0,1,0)}
+ups = {"나": (1,0,0), "라": (0,-1,0), "가": (0,-1,0), "마": (0,0,-1), "바": (0,0,1), "다": (0,-1,0)}
 # Each image is read in its own camera coordinates: top +Z, left +X,
 # right +Y. These rotations put all three source views in the first frame.
 views = [
-    (((1,0,0),(0,1,0),(0,0,1)), [((0,0,1),(-1,0,0),"나"), ((1,0,0),(0,1,0),"가"), ((0,1,0),(0,0,1),"바")]),
-    (((0,-1,0),(-1,0,0),(0,0,-1)), [((0,0,1),(-1,0,0),"라"), ((1,0,0),(0,0,1),"마"), ((0,1,0),(-1,0,0),"다")]),
-    (((-1,0,0),(0,-1,0),(0,0,1)), [((0,0,1),(1,0,0),"나"), ((1,0,0),(0,-1,0),"다"), ((0,1,0),(0,0,-1),"마")]),
+    (((1,0,0),(0,1,0),(0,0,1)), [((0,0,1),(1,0,0),"나"), ((1,0,0),(0,-1,0),"가"), ((0,1,0),(0,0,1),"바")]),
+    (((0,-1,0),(-1,0,0),(0,0,-1)), [((0,0,1),(1,0,0),"라"), ((1,0,0),(0,0,1),"마"), ((0,1,0),(1,0,0),"다")]),
+    (((-1,0,0),(0,-1,0),(0,0,1)), [((0,0,1),(-1,0,0),"나"), ((1,0,0),(0,1,0),"다"), ((0,1,0),(0,0,-1),"마")]),
 ]
 for rotation, observed in views:
     assert list(rotation) in rot
@@ -36,10 +36,12 @@ for rotation, observed in views:
         assert transform(up,rotation) == ups[label]
 # Coordinates: first view has 가 on +X, 바 on +Y and 나 on +Z.
 # The third view keeps 나 on top and turns 180 degrees, placing 다 and 마
-# opposite 가 and 바 respectively. Directions are source-image readings.
+# opposite 가 and 바 respectively. The direction readings were corrected after
+# rectifying each source face: a letter turned 90 degrees counterclockwise has
+# its top toward the left of the rectified face, not the right.
 cases = [
-    ({(0,1),(1,1),(2,1),(3,1),(2,0),(2,2)}, (2,0), (0,0,1), (-1,0,0), "right", {(1,1): ("가", "right"), (3,1): ("다", "left")}),
-    ({(0,0),(1,0),(1,1),(2,1),(2,2),(3,2)}, (2,2), (0,1,0), (0,0,1), "left", {(0,0): ("가", "left"), (2,1): ("다", "down")}),
+    ({(0,1),(1,1),(2,1),(3,1),(2,0),(2,2)}, (2,0), (0,0,1), (1,0,0), "right", {(1,1): ("다", "right"), (3,1): ("가", "left")}),
+    ({(0,0),(1,0),(1,1),(2,1),(2,2),(3,2)}, (2,2), (0,1,0), (0,0,1), "left", {(0,0): ("가", "right"), (2,1): ("다", "up")}),
 ]
 for cells, anchor, world_normal, world_up, direction, expected in cases:
     faces = fold(cells, anchor)

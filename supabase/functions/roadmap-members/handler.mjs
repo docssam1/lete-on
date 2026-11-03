@@ -1,6 +1,7 @@
 export const CONSENT_VERSION = 'roadmap-2026-10-30-v1';
 const ORIGINS = new Set(['https://lete-on.gfieldacademy.net','https://docssam1.github.io',
-  'http://localhost:57608','http://127.0.0.1:57608','http://localhost:57615','http://127.0.0.1:57615']);
+  'http://localhost:57608','http://127.0.0.1:57608','http://localhost:57615','http://127.0.0.1:57615',
+  'http://localhost:57616','http://127.0.0.1:57616']);
 // Never select pin_hash, session token/hash or rate-limit buckets for presentation.
 const MEMBER_COLUMNS = 'user_id,email,student_name,guardian_phone,school,age,grade,privacy_version,privacy_agreed_at,guardian_agreed_at,email_verified_at,marketing_email,marketing_sms,created_at,updated_at,session_version';
 class HttpError extends Error { constructor(status,code){super(code);this.status=status;} }
@@ -19,6 +20,13 @@ export function cleanProfile(raw={}) {
 export function cleanConsent(raw={}) {
   if(raw.version!==CONSENT_VERSION || raw.privacy!==true || raw.guardian!==true) throw new HttpError(400,'consent_required');
   return {version:CONSENT_VERSION,privacy:true,guardian:true,marketing_email:raw.marketing_email===true,marketing_sms:raw.marketing_sms===true};
+}
+export function cleanPlan(raw){
+ if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).length>80)throw new HttpError(400,'plan_invalid');
+ const out={};for(const [key,value]of Object.entries(raw)){
+  if(!/^gfield\.demo2\.(?!(?:member|saved|guard)\.)[a-z0-9][a-z0-9._-]{0,100}$/.test(key)||typeof value!=='string'||value.length>200000)throw new HttpError(400,'plan_invalid');out[key]=value;
+ }
+ if(new TextEncoder().encode(JSON.stringify(out)).length>260000)throw new HttpError(413,'request_too_large');return out;
 }
 export function validPin(value){return typeof value==='string' && /^\d{8,12}$/.test(value) && !/^(\d)\1+$/.test(value) && !['12345678','87654321','01234567'].includes(value);}
 const emailOf = value => String(value||'').trim().toLowerCase();
@@ -49,11 +57,22 @@ export function createHandler({service,url,publicKey,rateSecret,send=fetch,now=(
     return {...u,email:emailOf(u.email)};
   }
   async function member(id){const {data}=await checked(service.from('roadmap_members').select(MEMBER_COLUMNS).eq('user_id',id).maybeSingle());return data;}
+  async function reviewer(id){
+    const {data:a}=await checked(service.from('roadmap_review_accounts').select('user_id,username,active,session_version').eq('user_id',id).maybeSingle());
+    return a?.active?a:null;
+  }
+  const reviewView=a=>({user_id:a.user_id,username:a.username,student_name:'',school:null,age:null,grade:null,review:true});
   async function authenticate(req){
     const token=req.headers.get('x-roadmap-session')||'';
     if(!/^[a-f0-9]{64}$/.test(token))throw new HttpError(401,'login_required');
     const {data:s}=await checked(service.from('roadmap_sessions').select('user_id,session_version,expires_at').eq('token_hash',await hash(token)).gt('expires_at',new Date(now()).toISOString()).maybeSingle());
-    if(!s)throw new HttpError(401,'login_required');
+    if(!s){
+      const {data:r}=await checked(service.from('roadmap_review_sessions').select('user_id,session_version,expires_at').eq('token_hash',await hash(token)).gt('expires_at',new Date(now()).toISOString()).maybeSingle());
+      if(!r)throw new HttpError(401,'login_required');
+      const a=await reviewer(r.user_id);
+      if(!a||a.session_version!==r.session_version)throw new HttpError(401,'login_required');
+      return reviewView(a);
+    }
     const m=await member(s.user_id);
     if(!m||m.session_version!==s.session_version)throw new HttpError(401,'login_required');
     return m;
@@ -90,9 +109,10 @@ export function createHandler({service,url,publicKey,rateSecret,send=fetch,now=(
     if(req.method==='OPTIONS')return new Response(null,{status:204,headers:h});
     if(req.method!=='POST')return reply({error:'method_not_allowed'},405);
     try{
-      const text=await req.text();if(text.length>12000)throw new HttpError(413,'request_too_large');
-      let b;try{b=JSON.parse(text);}catch{throw new HttpError(400,'request_invalid');}
+      const text=await req.text();if(text.length>280000)throw new HttpError(413,'request_too_large');
+      let b;try{b=JSON.parse(text);}catch{throw new HttpError(text.length>12000?413:400,text.length>12000?'request_too_large':'request_invalid');}
       if(!b||typeof b!=='object'||Array.isArray(b))throw new HttpError(400,'request_invalid');
+      if(b.action!=='plan-save'&&text.length>12000)throw new HttpError(413,'request_too_large');
       if(b.action==='send-code'){
         const email=emailOf(b.email);if(!emailOK(email))throw new HttpError(400,'email_invalid');
         if(b.emailConsent!==true)throw new HttpError(400,'email_consent_required');
@@ -109,6 +129,18 @@ export function createHandler({service,url,publicKey,rateSecret,send=fetch,now=(
         if(!id)throw new HttpError(401,'credentials_invalid');
         const m=await member(id);if(!m)throw new HttpError(401,'credentials_invalid');
         return reply(await issue(m));
+      }
+      if(b.action==='review-login'){
+        const username=String(b.username||'').trim().toLowerCase(),code=String(b.code||'').trim();
+        if(!/^[a-z0-9_.-]{1,64}$/.test(username)||!/^\d{4,12}$/.test(code))throw new HttpError(401,'review_credentials_invalid');
+        await attempts(req,username,'review');
+        const {data:id}=await checked(service.rpc('roadmap_review_verify_code',{p_username:username,p_code:code}));
+        const a=id?await reviewer(id):null;
+        if(!a)throw new HttpError(401,'review_credentials_invalid');
+        const token=hex(crypto.getRandomValues(new Uint8Array(32))),expiresAt=new Date(now()+8*3600000).toISOString();
+        await checked(service.from('roadmap_review_sessions').delete().lt('expires_at',new Date(now()).toISOString()));
+        await checked(service.from('roadmap_review_sessions').insert({token_hash:await hash(token),user_id:a.user_id,session_version:a.session_version,expires_at:expiresAt}));
+        return reply({token,expiresAt,member:reviewView(a)});
       }
       if(b.action==='email-status'){
         const u=await verified(req,{fresh:true});
@@ -156,14 +188,27 @@ export function createHandler({service,url,publicKey,rateSecret,send=fetch,now=(
       }
       const m=await authenticate(req);
       if(b.action==='status')return reply({member:memberView(m)});
+      if(b.action==='logout'){
+        await checked(service.from(m.review?'roadmap_review_sessions':'roadmap_sessions').delete().eq('token_hash',await hash(req.headers.get('x-roadmap-session'))));
+        return reply({signedOut:true});
+      }
+      if(b.action==='plan-get'){
+        const {data:p}=await checked(service.from('roadmap_plan_saves').select('document,revision,updated_at').eq('owner_id',m.user_id).maybeSingle());
+        return reply({plan:p?{document:p.document,revision:p.revision,updatedAt:p.updated_at}:null});
+      }
+      if(b.action==='plan-save'){
+        const document=cleanPlan(b.document),revision=b.revision;
+        if(!Number.isSafeInteger(revision)||revision<0)throw new HttpError(400,'plan_invalid');
+        const {data:allowed}=await checked(service.rpc('roadmap_take_attempt',{p_bucket:'plan:'+await keyed(m.user_id,rateSecret),p_limit:100}));
+        if(!allowed)throw new HttpError(429,'too_many_attempts');
+        const {data}=await checked(service.rpc('roadmap_save_plan',{p_owner:m.user_id,p_revision:revision,p_document:document,p_consent:b.storageConsent===true}));
+        return reply(data);
+      }
+      if(m.review)throw new HttpError(403,'review_only');
       if(b.action==='update'){
         if(b.version!==CONSENT_VERSION)throw new HttpError(400,'consent_required');
         await checked(service.rpc('roadmap_update_profile',{p_user_id:m.user_id,p_profile:cleanProfile(b.profile),p_marketing:{marketing_email:b.marketing_email===true,marketing_sms:b.marketing_sms===true}}));
         return reply({member:memberView(await member(m.user_id))});
-      }
-      if(b.action==='logout'){
-        await checked(service.from('roadmap_sessions').delete().eq('token_hash',await hash(req.headers.get('x-roadmap-session'))));
-        return reply({signedOut:true});
       }
       throw new HttpError(400,'action_invalid');
     }catch(e){

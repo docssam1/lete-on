@@ -129,3 +129,46 @@ Copy shortened: the home heading asks users to select an academy; the package he
 Writing skill review: https://github.com/blader/humanizer/tree/v3.1.0 provides fact-preserving removal of inflated claims, filler and repetition. Existing Hermes humanizer is v2.5.1. No skill installed or overwritten. archep29/im-not-ai-humanizer requires scripts and agent orchestration and was not selected for short UI labels.
 
 Checks: existing tests 32/32; VM checks cover 6 illustrated cards, 20 course routes and application restrictions. Live browser visual check follows publication.
+
+## 2026-11-02 · Intro typography and navigation controls
+
+Mac Codex, codex/highselect-intro-release-20261101. Skills: frontend-design, ui-ux-pro-max and GFIELD shared design rules. Connected the existing repository Pretendard variable font as a promo-local asset with its OFL license; the previous font-family declaration had no font source. Headings use clearer weight and less compressed Korean tracking. Login and academy navigation have 48px controls; portrait-card links include a bordered introduction action. Academy colors, logos, routes and release gates remain unchanged.
+
+Checks: desktop and 390px browser render, six card routes, keyboard focus ring and no horizontal overflow; existing 15 policy/content UI checks pass. Public stage allowlist now includes the font and its license (17 files). Publication and final live screenshot are checked after this commit; protected exams and DB are outside this change.
+
+## 2026-11-02 · Automated academy notices
+
+User scope: main-page test/seminar notices, also visible within each academy. Latest correction permits Daechi and Bundang, with Hwangso strictly Daechi only. No same-name academy in Bundang is inferred from a directory search. Mac Codex on codex/highselect-intro-release-20261101; frontend-design, ui-ux-pro-max and ux-writing rules reused.
+
+- Registry: scripts/notice-monitor/sources.json. Five existing official blog RSS feeds (sharpedu, dpmath, wonmath563, edenmath, won1934), plus official DailyStudy public test/seminar endpoints for master=Daechi and bundang=Bundang. The shared Dolpa channel requires branch identification in the title; Seocho/Songpa/etc. posts are excluded even when the body mentions Daechi. Identity evidence and branch restrictions travel with each source.
+- Collection: Python standard library; no model calls, API keys, paid external extraction or browser sessions. Only titles, publication dates, original links, branch labels and brief explicit schedule facts are published. Image-only dates, implicit years and conflicting correction dates are not guessed. Older than 120 days and past structured event dates are omitted. Post dates remain labelled as publication dates, not event dates. A short RSS excerpt may omit later details; the original link is authoritative.
+- UI: main and academy pages use data/academy-notices.js via promo/notices.js. Filters by academy, branch and notice type; eight rows initially with more on demand. Original channels are linked, including channels with no current public dates. No available slot/notice is not treated as a fetch failure.
+- Schedule: .github/workflows/refresh-academy-notices.yml, KST 17:00 once daily (updated at the user's request on 2026-11-02). Only generated data may be committed. A bot push explicitly dispatches the existing Pages workflow, because GITHUB_TOKEN pushes do not trigger normal push workflows. On unchanged data there is no same-day commit or deploy. Push races fail safely without force. All-source failures preserve the feed and fail the run; partial failures preserve the affected source's prior records and last successful date. GitHub Actions may delay scheduled runs; check run results rather than promising an exact publication minute.
+- Initial live collection: 9/9 source groups succeeded, 35 notices, repeat run reported changed=false. Bundang currently contributes the verified Dolpa channel; DailyStudy Bundang had no displayed available dates/sessions at collection time. Unverified Bundang counterparts of Won/Eden/Thinking Math remain unconnected.
+- Checks: seven collector tests cover branch mix-ups, Hwangso exception, dates, malicious URLs, source identity, partial/all failures, closed dates/slots, and exact academy queries. Existing 15 policy/UI tests pass. Browser checked desktop, 390px, branch/category filtering, empty results, retained button focus, original links and academy-route integration. Live automation and deployment are verified after main publication. Public stage allowlist has 19 files; the collector, workflow, tests and registry are not copied into the Pages program directory. Protected exams, release policy and DB are unchanged.
+
+### Notice monitor publication receipt
+
+- Main feature commit: 311dc1f86b118406e12913cda8d9313a5897636d (local counterpart b0f12545f).
+- Automatic collector run 41398202972 succeeded on GitHub, including branch/outage tests and all public sources; unchanged data correctly skipped a new commit/deploy.
+- Pages run 41398278070 succeeded after concurrent main updates superseded earlier deployment attempts. Current HTML, notice renderer and scheduled workflow remained unchanged through those updates.
+- Live URL https://lete-on.gfieldacademy.net/highschool-selection/promo/?v=notice-monitor-20261102 verified the main notice board and four upcoming seminar rows, branch policy labels, original links and no browser errors. Desktop and 390px preview checks passed; screenshot retained in the current Codex conversation.
+
+### 2026-11-02 · Notice refresh frequency correction
+
+User reduced the recurring check from three times daily to once daily at 17:00 Asia/Seoul. The workflow uses 08:00 UTC; the engagement metadata is consistent. Existing branch restrictions and publication behavior are preserved. Manual and code-change validation triggers remain available.
+
+## 2026-11-02 · Existing mock exams connected
+
+Mac Codex on `codex/highselect-intro-release-20261101`; Supabase, google-drive, pdf, frontend-design, ui-ux-pro-max and ux-writing guidance applied. Existing SH-R01 student v2 (40 questions, eight pages) and DP common-math-1 V14 (30 questions, eight pages) are preserved as page images. The new exam entry, library, answer panel and results UI uses the promo's bundled Pretendard, neutral surfaces, clear 46px+ controls and concise Korean labels. On small screens, paper/answers toggle without scrolling past all eight pages. A4 printing uses the existing page layout and opens only after all images load.
+
+SH's high-selection course links to its released online round; DP's common1-basic course links to the distinct V14 pilot. Each displays its actual 110-minute mock specification. Other catalog rounds retain their existing gates. The public frontend contains no answer key or exam-page bytes. Protected Edge-function access, per-student grants, submission persistence and teacher review are documented in SERVER-DEPLOYMENT.md. Technical QA attempts are marked is_test and excluded from normal teacher results; they do not satisfy a real learner pilot or physical printing check.
+
+Validation before publication: 7 new meaningful core checks plus 19 existing server-flow checks passed; 20 actual production API checks passed, including byte-for-byte verification of all 16 page images, two canonical submissions and denial of unauthorized access. Local browser connected to production verified both rounds, SH partial submission (one correct, 39 blank), 47 SH input slots, 30 DP inputs, 390px layout and no console errors. Existing 15 content/policy UI checks passed. The public staging allowlist has 21 files. Live Pages publication and screenshot are verified after the source commit; teacher sign-in with the user's actual password remains untested.
+
+### Exam entry publication receipt
+
+- Source main commit: `d41b02eee4cdc529ffc0355c1c03674fa90b6ef3` (local counterpart `caf262f91`). Pages run `41406314053` succeeded on descendant `b3eb93e71db2b537fe88d2fe10eefa35a92f0ffe`; the concurrent update touched only unrelated hselementary files.
+- Live `https://lete-on.gfieldacademy.net/highschool-selection/login.html?v=exams-open-20261102`: student entry, two assigned exams, all 16 image pages, 47 SH slots and 30 DP slots verified. Live academy links select the proper exam; DP shows pilot and the actual V14 specification. Browser warnings/errors: none. Screenshot retained in this Codex conversation.
+- Both technical accounts were disabled and five technical sessions expired; their old token returns 401. Technical attempts remain marked is_test, excluded from teacher lists and do not count as a pupil pilot. The owned local preview server was stopped and temporary mobile viewport reset.
+- Private recovery package: Drive file `1IfRvQOnLarslonsnssxk_xPzTjUAIW-2`, in the existing project artifacts folder. Contains the private deployed bank, builder, metadata and technical receipt, with no account approval codes or bearer tokens. Download verified at 1,504,400 bytes and SHA-256 `cb1a4e5779db78c326a182578db305e3dfe071bf01ac456c80f936eab1311a74`. Original SH PDFs remain at their existing Drive IDs. This is a backup receipt, not evidence a Windows worker has read it.

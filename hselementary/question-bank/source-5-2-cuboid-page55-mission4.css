@@ -22,6 +22,7 @@
   .source52-p55m4-question,
   .source52-p55m4-solution { font-size: 10.2pt; line-height: 1.42; }
   .source52-p55m4-diagram { width: 2.65in; margin: 0.04in auto 0.08in; }
+  #problemView .print-page--four-up .question-prompt svg.source52-p55m4-diagram { max-height: 210px; }
   .source52-p55m4-solution ol { margin: 0.18rem 0 0.35rem; }
   .source52-p55m4-solution li { margin: 0.12rem 0; }
 }

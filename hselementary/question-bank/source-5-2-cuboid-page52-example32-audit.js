@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('node:assert/strict');
+global.window={};require('./source-inventory-4-1.js');require('./source-inventory-grade6.js');require('./curriculum.js');require('./generators.js');
+const item=require('./source-5-2-cuboid-page52-example32.js');
+const type=window.HSE_CURRICULUM.semesters.flatMap(s=>s.units.flatMap(u=>u.subunits.flatMap(g=>g.types))).find(t=>t.id===item.sourceItemId);
+assert(type&&type.sourceVerified&&!type.reviewLocked);assert.equal(type.publisherKeyVerified,false);
+const q=window.HSE_GENERATORS.generate(type,0,0,0,0);
+assert.equal(q.automaticGrading,false);assert.equal(q.resultContract,'constructed-figure');assert.equal(q.publisherKeyVerified,false);
+assert.match(q.prompt,/class="water"/);assert.doesNotMatch(q.prompt,/class="wet-areas"/);
+assert.match(q.answerVisual,/M60 60 H180 L60 240 Z/);assert.match(q.answerVisual,/M60 60 L60 20 L180 60 Z/);assert.match(q.answerVisual,/M60 60 L20 60 L60 240 Z/);
+assert.equal(window.HSE_GENERATORS.generate(type,0,0,0,1),null);assert.equal(window.HSE_GENERATORS.generate({...type,reviewLocked:true},0,0,0,0),null);
+console.log('PASS: clean-source water triangle, blank source net, three independently checked wet regions and manual assessment.');

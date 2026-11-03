@@ -174,7 +174,7 @@ try{
    }
    await page.goto(completedBookSheetHref?base+'/number_magic/'+completedBookSheetHref:base+'/number_magic/placement-sheet.html?b=f-count5&seed=browser-observe&l='+lang);await page.waitForFunction(()=>window.NM_WS_READY);
    if(completedBookSheetHref){const source=(await page.locator('.pl-source').allInnerTexts()).join(' ');assert(source.includes('완료한 교재')&&source.includes('Level 3')&&source.includes('교재 과정 17')&&source.includes('소마셈 P'),'printed sheet names both completed books');assert.equal(await page.locator('.pl-sc-cell').count(),20);}
-   await page.click('#plScore>summary');await page.click('#plGo');assert.match(await page.locator('#plOut').innerText(),lang==='ko'?/아직 확인하지 못했어요/:lang==='en'?/Not determined yet/:/尚未确认/,'no marks → no start level');assert(await page.locator('#plRoadmap').isHidden(),'no roadmap without marks');
+   await page.click('#plDiagBtn');await page.click('#plGo');assert.match(await page.locator('#plOut').innerText(),lang==='ko'?/아직 확인하지 못했어요/:lang==='en'?/Not determined yet/:/尚未确认/,'no marks → no start level');assert(await page.locator('#plRoadmap').isHidden(),'no roadmap without marks');
    // ○·X buttons per question (placement-sheet.html): the last pick wins and is shown as pressed.
    // One cell per question at the top of the page: tap → ○, again → X, again → blank (placement-sheet.html).
    const cell=i=>'[data-mark-cell="'+i+'"]',mark=async(i,m)=>{for(let k=0;k<(m==='o'?1:m==='x'?2:0);k++)await page.click(cell(i));};
@@ -205,7 +205,7 @@ try{
    await page.addLocatorHandler(page.locator('#nmUnlockOverlayClose'),async el=>el.click(),{noWaitAfter:true});
    page.on('console',m=>{if(m.text().startsWith('[study-route]'))console.log(m.text());});
    await page.goto(base+'/number_magic/placement-sheet.html?b=c1&seed=branches&l=ko');await page.waitForFunction(()=>window.NM_WS_READY);
-   await page.click('#plScore>summary');await page.click('[data-mark-all="o"]');await page.click('#plGo');
+   await page.click('#plDiagBtn');await page.click('[data-mark-all="o"]');await page.click('#plGo');
    await page.locator('.pd-route-planner summary').click();
    for(const [name,value] of Object.entries({startDate:'2026-10-15',targetDate:'2026-12-10',frequency:'2',minutes:'20',observedWeeks:'2',observedVisits:'4',completedSessions:'4',observedMinutes:'80',reviewSessions:'2'}))await page.locator('[name="'+name+'"]').fill(value);
    await page.locator('[name="reviewed"]').check();const state=await page.evaluate(()=>localStorage.getItem('nm_preview_state_v1'));await page.locator('.pd-projection-form button[type="submit"]').click();

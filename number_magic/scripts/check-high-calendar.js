@@ -45,7 +45,7 @@ for(const [courseKey,subjectEnd]of [['C38','C48'],['C49','C57'],['C58','C69']]){
 }
 for(const course of Object.values(c).filter(course=>course.studyPlan))for(let i=1;i<=course.sessions.length;i++){
   const p=project(c,{courseKey:'C'+course.order,sessionIndex:i,startDate,cadence:'w2',speed:1,pace:'p2'},{now:startDate,months:1});
-  assert(p.rows[0].sessionLabels[0].startsWith((H.lessonIndex(course,i)+1)+'–'));
+  assert(new RegExp('^'+(H.lessonIndex(course,i)+1)+'(–|\\D)').test(p.rows[0].sessionLabels[0]));
   cases++;
 }
 // Ordinary courses retain their existing per-course rounding behavior.

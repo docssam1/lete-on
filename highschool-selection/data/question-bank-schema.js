@@ -102,7 +102,7 @@
       { id: "SH", label: "황소 고등형", rule: "고등과정 선발·중등 누적 심화" },
       { id: "DP", label: "돌파형", rule: "중1 과정, 공통수학1·2 기본/실력, 대수 기본과 중간 편입을 지원 과정별로 분리" },
       { id: "WM", label: "원수학형", rule: "기본/실력 승급형·전범위 누적" },
-      { id: "ED", label: "이든형", rule: "중1 시작 초등 누적과 고등선행 중등 누적 분리" },
+      { id: "ED", label: "이든형", rule: "중1 시작의 초등 누적과 공통수학1 기본반 입반의 중2·중3 누적 분리" },
       { id: "DG", label: "깊생형", rule: "이차함수-부등식 연결·심화 수준" },
       { id: "SM", label: "생수형", rule: "공통수학1 입반 범위와 구판 참고 샘플의 현행 난도 보정 구조" }
     ],
@@ -242,9 +242,9 @@
       {
         id: "ED",
         reportModel: "entry-advance",
-        targets: [{ id: "middle-entry", courseCode: "middle1", scopeKey: "elementary-cumulative", state: "observed", label: "중1 시작" }, { id: "high-advance", courseCode: "high-advance", scopeKey: "middle-semester-cumulative", state: "audited", label: "고등선행" }],
+        targets: [{ id: "middle-entry", courseCode: "middle1", scopeKey: "elementary-cumulative", state: "observed", label: "중1 시작" }, { id: "high-advance", courseCode: "common1-basic", scopeKey: "middle-semester-cumulative", state: "audited", label: "공통수학1 기본반 입반" }],
         reportAxes: ["문항 O/X", "학년·학기", "단원", "세부유형", "난이도", "취약 우선순위"],
-        typeEmphasis: ["학년별 누적", "중등 심화", "고등선행 연결"],
+        typeEmphasis: ["중2·중3 누적", "대수 20·기하 10", "서술 과정"],
         scorePolicy: "관찰된 결과 문자는 컷으로 추정하지 않음"
       },
       {

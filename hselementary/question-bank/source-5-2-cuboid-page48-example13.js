@@ -73,7 +73,7 @@
     const arrows = [
       `<path d="M110 307l8-4v8zM460 307l-8-4v8zM485 270l8-1-4-6zM585 170l-8 1 4 6zM600 20l-4 8h8zM600 170l-4-8h8z" class="source52-p48e13-arrow"/>`
     ].join("");
-    return `<svg class="source52-p48e13-diagram" viewBox="65 -2 570 344" role="img" aria-label="가로 7cm, 세로 5cm, 높이 3cm인 직육면체를 밑면의 두 방향으로 잘라 네 개의 직육면체로 나눈 그림" xmlns="http://www.w3.org/2000/svg"><g class="source52-p48e13-solid">${outer}${cuts}</g><g class="source52-p48e13-dimensions">${dimensionLines}${arrows}${label(285,338,"7cm")}${label(558,262,"5cm")}${label(627,100,"3cm")}</g></svg>`;
+    return `<svg class="source52-p48e13-diagram" viewBox="65 -2 600 350" role="img" aria-label="가로 7cm, 세로 5cm, 높이 3cm인 직육면체를 밑면의 두 방향으로 잘라 네 개의 직육면체로 나눈 그림" xmlns="http://www.w3.org/2000/svg"><g class="source52-p48e13-solid">${outer}${cuts}</g><g class="source52-p48e13-dimensions">${dimensionLines}${arrows}${label(285,338,"7cm")}${label(558,262,"5cm")}${label(627,100,"3cm")}</g></svg>`;
   }
 
   function makeQuestion() {
@@ -94,7 +94,7 @@
     const previousKey = api.generatorKey.bind(api), previousGenerate = api.generate.bind(api);
     const matches = type => type && (type.id === sourceItemId || type.sourceItemId === sourceItemId || type.generatorKey === generatorKey);
     api.generatorKey = type => matches(type)
-      ? type.id === sourceItemId && type.sourceItemId === sourceItemId && type.generatorKey === generatorKey && type.reviewLocked === false && type.sourceVerified === true ? generatorKey : ""
+      ? (type.id === sourceItemId || type.id === "5-2-u5-t1-3") && type.sourceItemId === sourceItemId && type.generatorKey === generatorKey && type.reviewLocked === false && type.sourceVerified === true ? generatorKey : ""
       : previousKey(type);
     api.generate = (type, rank, difficulty, seed, variant = 0) => matches(type)
       ? api.generatorKey(type) && Number(variant) === 0 ? makeQuestion() : null
