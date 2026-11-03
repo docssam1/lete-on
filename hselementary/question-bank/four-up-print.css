@@ -96,3 +96,7 @@
   #solutionView [data-source-answer="5-2-u5-check113-q43-arrow-synthetic"],
   #solutionView [data-source-answer="5-2-u5-check113-q43-arrow-synthetic"] p { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
 }
+
+@media print {
+  #problemView .print-page--four-up .question-prompt .u4p106-wall { max-height: 205px; }
+}
