@@ -58,6 +58,17 @@ for (const def of source.definitions) {
         assert.equal(item.answer,"160°");
         assert.match(item.prompt,/㉮/);
         assert.equal(item.publisherKeyVerified,false);
+      } else if (def.sourceItemId.endsWith("mission-4-original")) {
+        const svg=item.prompt.match(/<svg[\s\S]*?<\/svg>/)[0];
+        const pt = name => { const [x,y] = svg.match(new RegExp(`data-${name}="([^"]+)"`))[1].split(",").map(Number); return {x,y}; };
+        const g=pt("g"),n=pt("n"),d=pt("d"),r=pt("r"), inner=["m","b","s","o"].map(pt);
+        const area = polygon => Math.abs(polygon.reduce((sum,p,i)=>{const q=polygon[(i+1)%polygon.length];return sum+p.x*q.y-p.y*q.x},0))/2;
+        const outer=area([g,n,d,r]), inside=area(inner);
+        assert(Math.abs(inside/outer-5/9)<1e-9);
+        assert(inner.every((p,i)=>Math.abs(distance(p,inner[(i+1)%4])-distance(inner[(i+1)%4],inner[(i+2)%4]))<1e-9));
+        assert.deepEqual([item.answerModel.k,item.answerModel.outerArea,item.answerModel.answer],[5,225,125]);
+        assert.equal(item.answer,"125cm²");
+        assert.equal(item.publisherKeyVerified,false);
       } else if (def.sourceItemId.endsWith("mission-6-original")) {
         assert.deepEqual([item.answerModel.top, item.answerModel.bottom, item.answerModel.height], [10, 8, 6]);
         assert.equal(item.answer, "27cm²");
