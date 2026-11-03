@@ -90,7 +90,7 @@
       preparation: ["단원별 풀이보다 개념 사이 연결을 설명", "함수 그래프와 부등식 조건을 함께 해석", "한 문제 안에서 여러 경우를 끝까지 검토"],
       courses: [
         { id: "level-entry", label: "레벨 입학", scope: "중3 심화·공통수학 연결", status: "guide" },
-        { id: "pre-high1", label: "예비고1 입학", scope: "중3-1·공통수학1·공통수학2 일부 공개 사례", status: "guide" }
+        { id: "pre-high1", label: "예비고1 입학", scope: "공통수학1·공통수학2 도형의 방정식", status: "guide" }
       ],
       channel: { label: "공식 블로그 주소 확인 중", url: "", status: "pending" },
       updates: []
