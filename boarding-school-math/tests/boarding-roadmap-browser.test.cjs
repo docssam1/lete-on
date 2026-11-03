@@ -46,8 +46,11 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   await page.locator("#course-path-cards article:first-child select").selectOption("pre-algebra");
   await page.locator("#course-path-cards article:last-child select").selectOption("geometry");
   assert.deepEqual(await page.locator("#course-path-cards h3").allInnerTexts(), ["Pre-Algebra", "Algebra 1", "Geometry"]);
-  await page.locator("#annual-plan-periods a").first().evaluate(function (anchor) { anchor.click(); });
-  assert.equal(await page.evaluate(function () { return location.hash; }), "#algebra1-course");
+  await page.locator("#annual-plan-periods a").first().click();
+  await page.waitForURL(/algebra1-workbook\.html\?edition=student$/);
+  assert.equal(await page.locator("#workbook-title").innerText(), "Algebra 1 단원 교재");
+  assert.match(await page.locator("#workbook-status").innerText(), /5개 단원 · .*차시 · 연습 .*문항 · A4/);
+  await page.goto(`${url}?grade=7#algebra1-course`, { waitUntil: "networkidle" });
   assert.match(await page.locator("#algebra1-course").innerText(), /식의 구조와 방정식[\s\S]*지필드 원본[\s\S]*3\(2x − 1\) = 15/);
   assert.equal(await page.locator(".algebra1-unit-card").count(), 5);
   assert.equal(await page.locator(".algebra1-lesson-sequence").count(), 5);

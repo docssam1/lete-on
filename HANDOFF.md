@@ -435,3 +435,9 @@ Verification: focused Chrome checks pass 5/5; roadmap model tests pass 12/12. Th
 Audited the Grade 6 annual-plan wording against the current release inventory. The earlier “10 topic workbooks” label counted private drafts as public resources. Replaced it with the ten public concept lessons and the reviewed public `6.EE.A` workbook (36 items), and linked the lesson and workbook separately. The four unreleased Grade 6 workbook drafts remain pending review and are not offered as public material. Updated the README to state this boundary.
 
 Verification: Grade 3–12 roadmap model tests pass 12/12. Focused Chrome annual-resource check passes 1/1; it follows the 6.EE.A concept link to its lesson, the workbook link to the public unit workbook, and the AMC 8 practice link to its page. `node --check` and CRLF-aware `git diff --check` pass. Local only; no private item data opened, no push, deployment, or Drive sync.
+
+### 2026-11-03 Recheck full roadmap browser suite
+
+The full Grade 3–12 roadmap browser suite exposed one stale course-link test: it expected the Grade 7 Algebra 1 annual-plan link to navigate to the roadmap's inline course section, while the current link correctly opens the standalone GFIELD A4 workbook. Updated the test to verify the actual workbook page and then separately verify the inline course overview. No application behavior changed.
+
+Verification: the full Grade 3–12 model and browser suites pass 51/51. This includes Grade 6 released-material links, Grade 7 Algebra 1/Geometry original workbooks, grade/contest comparisons, contest-record boundaries, mobile layouts, and the 7.NS.A public workbook route. No private diagnostic candidate was opened or modified. Local only; no push, deployment, or Drive sync.
