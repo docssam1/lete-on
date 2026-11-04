@@ -2778,6 +2778,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52AverageApplication = source52Average?.subunits.find(subunit => subunit.name === "평균의 활용");
+  if (source52AverageApplication && !source52AverageApplication.types.some(t=>t.id==="5-2-u6-practice-24-clarified-similar")) {
+    const id="5-2-u6-practice-24-clarified-similar",name="구간 요금을 합산하는 요금표와 평균 · 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52AverageApplication.types.push({id,number:source52AverageApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-24-original",sourceItemLabel:"확인학습 24번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:112,alternateSourcePdfPage:113,sourcePrintedPage:118,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 구간 요금의 합산 규칙이 명시되지 않아 보류합니다. 별도 유사문항은 합산 규칙을 명시하고 표의 요금과 평균을 독립 검산했습니다.",generatorKey:"source52U6P118Q24ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   if (source52AverageApplication) for (const [n,name] of [[29,"등간격 세 수의 평균 · 확인학습 원문"],[30,"세 물건을 제외하기 전후의 평균으로 개수 구하기 · 확인학습 원문"],[32,"겹치는 과목 평균으로 특정 과목 점수 구하기 · 확인학습 원문"],[25,"점수 정정 전후의 평균 차로 인원 구하기 · 확인학습 원문"],[26,"사흘 평균에서 빠진 날의 쪽수 구하기 · 확인학습 원문"],[27,"인원과 작업 시간을 반영한 시간당 평균 작업량 · 확인학습 원문"],[28,"새 기록 추가 전후의 평균으로 시도 횟수 구하기 · 확인학습 원문"],[21,"두 집단의 가중평균 · 확인학습 원문"],[22,"두 집단의 가중평균과 반올림 · 확인학습 원문"],[23,"두 평균과 차를 이용한 일별 쪽수 · 확인학습 원문"],[17,"걸은 거리당 평균 시간 · 확인학습 원문"],[18,"시간당 평균 생산량과 한 달 판매액 · 확인학습 원문"],[19,"두 집단의 평균으로 인원 비 구하기 · 확인학습 원문"],[20,"총점별 인원과 문항별 정답 인원 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52AverageApplication.types.some(type=>type.id===id)) continue;
