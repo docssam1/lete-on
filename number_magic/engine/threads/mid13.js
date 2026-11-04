@@ -48,7 +48,7 @@ NM_TGEN.md84_center=function(params,rng){
   }
   if(!v){v=[2,5,8,8,8,12,13];s=v.slice();ans=[8,8,8];}
   const sum=v.reduce(function(a,b){return a+b;},0);
-  const p=base(mode,v,ans,list(v)+'\\quad(\\text{평균},\\;\\text{중앙값},\\;\\text{최빈값})=\\left('+boxes(3)+'\\right)',[{tex:'\\text{평균}=\\dfrac{'+sum+'}{7}=\\square',blank:ans[0]},{tex:'\\text{크기순 한가운데}=\\square',blank:ans[1]},{tex:'\\text{가장 많이 나타난 값}=\\square',blank:ans[2]},{tex:'(\\text{평균},\\;\\text{중앙값},\\;\\text{최빈값})=\\left('+boxes(3)+'\\right)',blank:ans.slice()}]);p.stats.ordered=s;p.stats.sum=sum;p.stats.modes=[ans[2]];return p;
+  const p=base(mode,v,ans,list(v)+'\\\\(\\text{평균},\\;\\text{중앙값},\\;\\text{최빈값})=\\left('+boxes(3)+'\\right)' /* 두 줄 — 한 줄이면 A4 폭을 10px 넘친다(2026-11-04 C33-B06) */,[{tex:'\\text{평균}=\\dfrac{'+sum+'}{7}=\\square',blank:ans[0]},{tex:'\\text{크기순 한가운데}=\\square',blank:ans[1]},{tex:'\\text{가장 많이 나타난 값}=\\square',blank:ans[2]},{tex:'(\\text{평균},\\;\\text{중앙값},\\;\\text{최빈값})=\\left('+boxes(3)+'\\right)',blank:ans.slice()}]);p.stats.ordered=s;p.stats.sum=sum;p.stats.modes=[ans[2]];return p;
 };
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_TGEN;
 })();

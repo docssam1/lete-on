@@ -34,3 +34,13 @@
 ## 핵심 아님·환경·낡은 검사
 - 마을·옷장·홍보·음성·3D(town-navigation·visual-map·character/closet·promo-*·voice·magic-book·manipulative·lesson-lettering·g1315·journey·no-legacy-3d-flash·road-timing·amount-sheets 600초 초과): 헤드리스 WebGL 시간 초과나 단정 실패, 원인 미확인.
 - 낡은 검사: level-test·wp-word-problems·wp4-unique(없는 모듈 `g1/1-3-threads.js`), c0-concrete·astra-concept-gaps(없는 커밋 `037f5086`, 얕은 클론), flow-review-regression(없는 함수), dot-handoff-gates·journey-viewport(윈도우 E: 드라이브 전용), worksheet-series(옛 커밋 기준 문항 비교), weekly-sheets(외부 글꼴 차단).
+
+## 2026-11-04 반영 (원장 「네 추천으로 진행 · 전화번호 넣도록」)
+| ★ | 한 것 | 확인 |
+|---|---|---|
+| ① 회차 한도 | `app/delivery-plan.js SOURCE_LIMITS`·`CURRICULUM_REVISION 20261104-curriculum3`, `supabase/functions/nm-membership/course-limits.json`·`handler.mjs DELIVERY_SOURCE_COUNTS`·`schema.sql limits` 모두 실제 과정 회차 수로 재생성(C29 10·C30 7·C31 12·C32 10). 서버 번들 `delivery-runtime.mjs` 재생성 | `check-personal-worksheet`·`check-delivery-versions`·`check-planned-envelope`·`check-plan-control`·`delivery.test.mjs` 통과, `handler.test.mjs` 43·44 통과(나머지 7건 실패는 전부터) |
+| ② 과정 끝 | `weekly-notify` v19: 표준 링크 회차가 과정 마지막을 지나면 **다음 과정 1회차부터** 이어 간다(C73은 마지막 회차에서 멈춤). 번들이 과정 회차표 `courseTable()`를 내보낸다 | `check-notify-delivery` 넘김 7건 추가 통과. **서버 배포는 `deploy-edge-function.yml`(weekly-notify·nm-membership)로 — 저장소 코드만 바꾼 상태면 아직 옛 동작** |
+| ③ 전화번호 | 로그인한 보호자가 휴대폰 미등록·문자 미동의면 맨 위 띠 「휴대폰 등록 / 문자 동의」 → 옷장 보호자 패널(#nmGuardPhone, 회원 연락처 → 서버가 nm_contacts에 같이 적음). 「나중에」 7일. 동의 갱신 띠가 있으면 그것이 먼저 | 브라우저 모의 로그인에서 띠 표시 → 누르면 전화 칸으로 이동 확인 |
+| ④ MD87 | 산점도 직접 찍기는 그림을 눌러 답하는 유형(채점 `NM_SCATTER_ANSWER.matches`)이라 글자 입력 검사 대상이 아니었다 → `check-answerable`가 이 유형을 건너뛰도록 | `check-answerable` 1,327유형 통과 |
+| ⑤ 인쇄 | C33-B06(평균·중앙값·최빈값)·C37-B05(이차함수 세 점)는 식을 두 줄로(`mid13.js`·`mid10.js`), C0는 가르기 그림 11개 이상 금지(`nl.js`)·예시 칸 10.5mm·가르기/이야기 문항 여백·「예시를 포함해…」 문장 마침표(쪽 안내로 끌어올림) | `check-middle-bundles-browser` 60묶음 통과, `check-c0-cognitive` 19주 통과 |
+- **아직**: DB 함수 `nm_private.canonical_delivery_plan`의 회차 한도 상수는 저장소 `schema.sql`만 고쳤고 DB에는 적용 못 함(함수 정의 읽기가 거부됨) — 원장 승인 뒤 `schema.sql` 266~ 절을 DB에 적용해야 서버 쪽 한도가 같아진다. 실제 번호 시험 발송은 원장 번호로 해야 한다.

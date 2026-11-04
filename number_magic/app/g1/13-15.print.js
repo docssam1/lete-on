@@ -343,7 +343,7 @@
         K.nlAnsBox(K.lk('가지', 'ways', '种')));
     },
     label: function (p, K) { return p.pairs.map(function (q) { return q[0] + '·' + q[1]; }).join(', ') + ' → ' + p.k + K.lk('가지', ' ways', '种'); },
-    ask: function (p, K) { return K.pickL(p.prompt) + K.lk((p.minPart===0?' 빈 접시도 가능해요.':' 각 접시에 한 개 이상씩 나눠요.')+' 예시를 포함해 방법을 쓰고, 모두 몇 가지인지 써요', (p.minPart===0?' An empty plate is allowed.':' Put at least one on each plate.')+' Include the example and write the other ways, then the total number of ways', (p.minPart===0?' 盘子可以是空的。':' 每个盘子至少一个。')+'算上例子，写出其他分法，再写一共几种'); }
+    ask: function (p, K) { return K.pickL(p.prompt) + K.lk((p.minPart===0?' 빈 접시도 가능해요.':' 각 접시에 한 개 이상씩 나눠요.')+' 예시를 포함해 방법을 쓰고, 모두 몇 가지인지 써요.', /* 마침표까지 같아야 c0-paper가 쪽 안내로 끌어올린다(2026-11-04 C0 12주차 넘침) */ (p.minPart===0?' An empty plate is allowed.':' Put at least one on each plate.')+' Include the example and write the other ways, then the total number of ways', (p.minPart===0?' 盘子可以是空的。':' 每个盘子至少一个。')+'算上例子，写出其他分法，再写一共几种'); }
   };
 
   P.seqGap = {

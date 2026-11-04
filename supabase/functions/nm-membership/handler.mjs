@@ -27,7 +27,7 @@ const DELIVERY_PLAN_VERSION = "20261024-personal1";
 const MIDDLE_EXTENSION_VERSION = "20261024-middle-extension1";
 // Canonical source sessions, not the compact bundle count. Keep in sync with
 // course-limits.json and NM_DELIVERY_PLAN.SOURCE_LIMITS (verified offline).
-const DELIVERY_SOURCE_COUNTS = [19,6,6,8,9,8,8,4,9,11,6,8,6,4,4,4,5,9,5,4,7,6,4,7,7,4,8,12,12,11,9,11,8,7,9,8,10,13,8,9,7,8,8,6,6,7,8,5,4,7,7,8,5,8,7,9,8,8,8,10,10,9,8,8,4,7,8,8,7,5,5,4,6,5];
+const DELIVERY_SOURCE_COUNTS = [19,6,6,8,9,8,8,4,9,11,6,8,6,4,4,4,5,9,5,4,7,6,4,7,7,4,8,12,12,10,7,12,10,7,9,8,10,13,8,9,7,8,8,6,6,7,8,5,4,7,7,8,5,8,7,9,8,8,8,10,10,9,8,8,4,7,8,8,7,5,5,4,6,5];
 const INVALID = Symbol("invalid");
 const DENY_KEYS = new Set(["phone", "tokenhash", "token_hash", "code_hash", "trigger_key", "service_role", "password", "secret", "authorization", "hash"]);
 const OK_STATUS = new Set([400, 401, 403, 404, 409, 410, 429, 503]);

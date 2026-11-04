@@ -567,7 +567,7 @@ if(guardianAuth){
       const details=$('.nm-closet-settings');if(details)details.open=true;
     }
     renderIdCard();renderNotifyCard();
-    refreshEntryContinue();renderConsentBanner();
+    refreshEntryContinue();renderConsentBanner();renderNotifyBanner();
   };
   /* ready()가 늦게 끝나 한 번 더 그릴 때, 이미 입력 중인 이메일·인증번호·비밀번호 칸을 지우지 않는다.
      (인증 성공·로그아웃 같은 실제 변화는 onChange가 따로 그린다.) */
@@ -585,7 +585,7 @@ if(membership&&guardianAuth){
     const changed=applyAdminSettings();
     if(changed){persistState();syncAmount();}
     renderIdCard();renderAccountCard();renderNotifyCard();
-    refreshEntryContinue();renderConsentBanner();
+    refreshEntryContinue();renderConsentBanner();renderNotifyBanner();
     if(S.view==='courseroad')renderPersonalPlan();
   });
 }
@@ -610,6 +610,36 @@ function renderConsentBanner(){
     const details=$('.nm-closet-settings');if(details)details.open=true;
     $('#nm-guardian-slot')?.scrollIntoView({block:'start'});
   };
+}
+/* 학부모 휴대폰 등록 안내(2026-11-04 원장 「전화번호 넣도록 해야지」) — 로그인한 보호자가 아직 휴대폰을 등록하지 않았거나
+   문자 수신에 동의하지 않았으면 맨 위 띠로 안내한다. 등록 칸은 옷장 설정의 보호자 패널(#nmGuardPhone, 회원 연락처 →
+   서버가 nm_contacts에 같이 적는다). 옛 알림 카드(S.notifyReg)로 등록한 경우도 등록으로 본다. 「나중에」는 7일 숨김.
+   동의 갱신 띠가 떠 있으면 그것이 먼저다(두 띠를 겹치지 않는다). */
+function renderNotifyBanner(){
+  const old=document.getElementById('nmNotifyBanner');
+  const later=Number(S.notifyBannerLater)||0;
+  const contact=membership&&membership.snapshot&&membership.snapshot().contact;
+  const registered=!!S.notifyReg||!!(contact&&contact.registered&&contact.smsConsent);
+  const need=!REVIEW&&booted&&!!membership&&!!guardianAuth?.peek()&&!(guardianAuth.requiresPassword&&guardianAuth.requiresPassword())
+    &&!registered&&!guardianEntry&&S.view!=='closet'&&!document.getElementById('nmConsentBanner')&&(Date.now()-later>7*86400000);
+  if(!need){if(old){old.remove();if(!document.getElementById('nmConsentBanner'))document.documentElement.style.removeProperty('--nm-consent-h');}return;}
+  const lk=(k,e,z)=>S.lang==='ko'?k:S.lang==='en'?e:z;
+  const hasPhone=!!(contact&&contact.registered);
+  const bar=old||document.createElement('div');
+  bar.id='nmNotifyBanner';bar.className='nm-consent-banner nm-notify-banner';bar.setAttribute('role','region');
+  bar.setAttribute('aria-label',lk('학부모 휴대폰 등록 안내','Parent phone registration','家长手机号登记提示'));
+  bar.innerHTML=`<p>📱 ${hasPhone
+    ?lk('문자 수신에 동의하면 매주 학습지 링크를 문자로 보내 드려요.','Allow texts to get the weekly worksheet link by message.','同意接收短信后，每周会以短信发送学习单链接。')
+    :lk('보호자 휴대폰을 등록하면 매주 학습지 링크를 문자로 보내 드려요.','Register a parent phone to get the weekly worksheet link by text.','登记家长手机号后，每周会以短信发送学习单链接。')}</p><button type="button" class="nm-btn" id="nmNotifyBannerGo">${hasPhone?lk('문자 동의','Allow texts','同意短信'):lk('휴대폰 등록','Register phone','登记手机号')}</button><button type="button" class="nm-btn ghost" id="nmNotifyBannerLater">${lk('나중에','Later','以后再说')}</button>`;
+  if(!old)document.body.appendChild(bar);
+  document.documentElement.style.setProperty('--nm-consent-h',(bar.offsetHeight+12)+'px');
+  bar.querySelector('#nmNotifyBannerGo').onclick=()=>{
+    guardianContactEditing=true;S.view='closet';save();render();
+    const details=$('.nm-closet-settings');if(details)details.open=true;
+    $('#nm-guardian-slot')?.scrollIntoView({block:'start'});
+    $('#nmGuardPhone')?.focus();
+  };
+  bar.querySelector('#nmNotifyBannerLater').onclick=()=>{S.notifyBannerLater=Date.now();save();renderNotifyBanner();};
 }
 function applyAdminSettings(){
   const record=membership&&membership.snapshot();const p=record&&record.settings;
@@ -1285,7 +1315,7 @@ function render(){
   window.NM_CURRENT_UNIT=S.unit||null;                    // widgets.js가 "N-* 유닛인가"를 판정할 때 씀(오답 소리·표정 등, 유아 전용 반응)
   if(townCleanup){townCleanup();townCleanup=null;}
   window.NM_MAGIC_NOTE_PLAYER?.close();
-  renderConsentBanner();
+  renderConsentBanner();renderNotifyBanner();
   if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
   if(wsHelperId&&!guardianEntry){
     app.innerHTML='<div id="screen"></div>';
@@ -8617,6 +8647,7 @@ function renderNotifyCard(){
       if(r.ok||r.status===409){ /* 409=이미 등록(같은 프로필·번호) — 성공 취급 */
         S.notifyReg=raw.slice(0,3)+'-****-'+raw.slice(-4);
         save();
+        renderNotifyBanner();
         if(div.parentNode)div.parentNode.removeChild(div);
         renderNotifyCard();
       }else{

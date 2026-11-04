@@ -3658,3 +3658,4 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 ## 2026-11-03 정식 서비스 준비 점검 (진도·난이도·배차) — `docs/service-readiness-20261103/README.md`
 - 검사 187개 전부 실행: 통과 129 / 실패 58, 실패는 전부 10-31 기준에서도 실패(원래 있던 것). 이번 작업이 만든 실패 1건(`check-progress-speed-browser`, `roadCadenceChosen`이 저장 실패 때 안 되돌아감)은 `main.js`에서 고쳐 통과.
 - 학습 핵심 계산 검사(진도·난이도 순서·배차·진단)는 통과. 서비스 전 할 것 ★5: ①`delivery-plan.js SOURCE_LIMITS` C29~C32 실제 회차 수로 정정(리비전 결정) ②실제 번호 시험 발송 ③C33-B06·C0 7주 인쇄 넘침 ④MD87 L1 화면 채점 ⑤과정 끝에서 문자 회차가 멈추는 정책(비회원). 상세·근거는 위 문서와 `check-results.txt`.
+- **2026-11-04 반영(원장 「네 추천으로 진행 · 전화번호 넣도록」)**: ①회차 한도 4곳(delivery-plan·course-limits.json·handler.mjs·schema.sql) 실제 과정 수로 재생성 + 리비전 `20261104-curriculum3` ②weekly-notify v19 과정 끝 → 다음 과정 1회차(번들 `courseTable()`) ③휴대폰 등록 안내 띠(`renderNotifyBanner`, 보호자 패널로) ④check-answerable 산점도 찍기 건너뜀 ⑤C33-B06·C37-B05·C0 7/12/13주 인쇄 넘침. 상세 `docs/service-readiness-20261103/README.md`. **서버 배포(deploy-edge-function.yml weekly-notify·nm-membership)와 DB 함수 한도 상수 적용은 따로**.

@@ -31,14 +31,17 @@ function style(){
   .nm-print-c0 .nm-w2-instr{font-size:16px;line-height:1.55;font-weight:600}
   .nm-print-c0 .nm-c0-verbal{white-space:normal;line-height:1.6;font-size:1em;font-family:inherit}
   .nm-print-c0 .nm-print-ask{font-size:16px!important;line-height:1.5!important}
-  .nm-print-c0 .nm-c0-draw .nm-nl-stage{font-size:1.35em}
+  .nm-print-c0 .nm-c0-draw .nm-nl-stage{font-size:1.2em;padding:4px 2.5mm}
+  .nm-print-c0 .nm-c0-draw .nm-nl-g1315-lines{margin-top:1px}
+  .nm-print-c0 .nm-w2-item .nm-nl-stage:has(.nm-nl-g1315-story){padding:3px 2.5mm}
+  .nm-print-c0 .nm-w2-item .nm-nl-g1315-story+.nm-nl-g1315-pouch{margin-top:0} /* 이야기 주머니 문항이 인쇄 칸을 6px 넘치던 것(2026-11-04 C0 13주차) */
   /* Real writing areas: enlarge the scored task, keeping compact worked examples intact. */
   .nm-print-c0 .nm-w2-item .nm-nl-ansbox,
   .nm-print-c0 .nm-w2-item .nm-w2-abox{width:22mm;height:18mm;min-width:22mm;min-height:18mm;box-sizing:border-box}
   .nm-print-c0 .nm-w2-item .nm-nl-seq{gap:.35mm}
   .nm-print-c0 .nm-w2-item .nm-nl-seq .nm-nl-arrow{font-size:14px;padding:0}
   .nm-print-c0 .nm-w2-item .nm-nl-cell-blank{width:16mm;height:16mm;min-width:16mm;min-height:16mm;flex-shrink:0}
-  .nm-print-c0 .nm-c0-draw .nm-nl-cell:not(.nm-nl-cell-blank){width:12.5mm;height:12.5mm}
+  .nm-print-c0 .nm-c0-draw .nm-nl-cell:not(.nm-nl-cell-blank){width:10.5mm;height:10.5mm} /* 예시 칸은 작게 — 가르기 세 줄(6개)이 인쇄 칸을 14px 넘치던 것(2026-11-04 C0 12주차). 쓰는 칸(blank)은 16mm 유지(검사 기준 15.8mm) */
   .nm-print-c0 .nm-w2-item .nm-nl-g1315-nb.nm-nl-g1315-blank,
   .nm-print-c0 .nm-w2-item .nm-nl-g1315-wt.nm-nl-g1315-blank,
   .nm-print-c0 .nm-w2-item .nm-nl-g1315-qbox,

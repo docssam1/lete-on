@@ -1,4 +1,4 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v18
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v19 (과정 끝 → 다음 과정 1회차, 2026-11-04)
 // 트리거: POST { trigger_key, dry?, test_phone?, probe?, force? }  — pg_cron(매시 정각) 또는 수동 curl.
 //   발송 요일·시각(v13, 원장 "요일 지정"): nm_notify_settings(send_dow 0=일…6=토, send_hour 0~23, KST)이 전역 기본,
 //   nm_contacts.send_dow 가 학부모별 덮어쓰기. 매시 깨어나 KST 요일·시각이 맞는 연락처만 보낸다. force:true 면 무시(수동).
@@ -33,7 +33,9 @@
 // 발송 이력은 nm_notify_log(주 1회 상한, (phone,week_key,kind) unique)로 중복 방지.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { personalDeliveryState } from "./delivery-runtime.mjs";
+import { personalDeliveryState, courseTable } from "./delivery-runtime.mjs";
+// 과정 회차표(과정마다 회차 수·다음 과정) — 표준 링크가 과정 끝에서 다음 과정 1회차로 넘어가게(2026-11-04 원장 결정)
+const COURSE_TABLE = courseTable();
 
 const SB_URL = Deno.env.get("SUPABASE_URL")!;
 const SB_SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -78,7 +80,7 @@ function shortLink(wk: string, part: string): string {
 // ① 표준 학습지 /w/?YYWW.과정.회차[L] — 앱이 저장한 회차(weeklyDigest.round·roundAt)를 이번 주까지 나아가게 셈한다(standardPart)
 // ② 옛 앱이라 회차가 없으면 과정 링크 /w/?YYWW.과정 ③ 없음. 학생별 PDF(nm_weekly_pdf)는 더 만들지 않는다.
 function worksheetLink(wk: string, digest: any, k = 1, cadence = "w1"): { url: string; kind: "standard" | "web" | "" } {
-  const part = standardPart(digest, wk, k, cadence);
+  const part = standardPart(digest, wk, k, cadence, COURSE_TABLE);
   if (part) return { url: shortLink(wk, part), kind: "standard" };
   if (digest && digest.courseKey) return { url: shortLink(wk, String(digest.courseKey) + (k > 1 ? `-${k}` : "")), kind: "web" };
   return { url: "", kind: "" };
@@ -182,14 +184,23 @@ function weekIndex(wk: string): number | null {
 // 표준 학습지 짧은 링크의 뒷부분 「과정.회차[L]」. 앱이 저장한 회차(round, 그 주 roundAt)에서 주마다 한 회차
 // (주 2회면 두 회차, 두 번째 문자는 +1) 나아가고, 과정의 마지막 회차(rounds)에서 멈춘다. L = 양 늘린 판(1.25배).
 // 회차 정보가 없거나 모양이 틀리면 "" (호출하는 쪽이 옛 과정 링크로 넘어간다).
-function standardPart(digest: any, wk: string, k: number, cadence: string): string {
+function standardPart(digest: any, wk: string, k: number, cadence: string, table?: Record<string, { rounds: number; next: string | null }>): string {
   if (!digest || !/^C\d{1,3}$/.test(String(digest.courseKey || ""))) return "";
-  const rounds = Number(digest.rounds), base = Number(digest.round);
+  let key = String(digest.courseKey), rounds = Number(digest.rounds);
+  const base = Number(digest.round);
   const at = weekIndex(digest.roundAt), now = weekIndex(wk);
   if (!Number.isInteger(rounds) || rounds < 1 || rounds > 999 || !Number.isInteger(base) || base < 1 || at === null || now === null) return "";
   const per = cadence === "w2" ? 2 : 1;
-  const round = Math.min(rounds, Math.max(1, base + Math.max(0, now - at) * per + (k > 1 ? 1 : 0)));
-  return `${digest.courseKey}.${round}${Number(digest.amount) > 1 ? "L" : ""}`;
+  let round = Math.max(1, base + Math.max(0, now - at) * per + (k > 1 ? 1 : 0));
+  // 과정 끝을 지나면 다음 과정 1회차부터 이어 간다(회차표가 있고 다음 과정이 있을 때). 마지막 과정(C73)이나 표가 없으면 마지막 회차에서 멈춘다.
+  // 앱이 열리면 updateWeeklyDigest가 같은 규칙(과정이 바뀌면 그 주부터 1회차)으로 digest를 다시 쓴다.
+  for (let guard = 0; guard < 100 && round > rounds; guard++) {
+    const row = table && table[key], nextRow = row && row.next ? table[row.next] : null;
+    if (!row || !row.next || !nextRow || !Number.isInteger(nextRow.rounds) || nextRow.rounds < 1) break;
+    round -= rounds; key = row.next; rounds = nextRow.rounds;
+  }
+  round = Math.min(rounds, round);
+  return `${key}.${round}${Number(digest.amount) > 1 ? "L" : ""}`;
 }
 // 자동 발송 중복 방지 kind: weekly[-2]-<SHA-256(profile_name) 앞 16 hex>. 학생 이름은 kind 에 넣지 않는다.
 // 같은 보호자 번호의 형제 계정이 (phone,week_key,kind) unique 에 서로 막히지 않게 한다.

@@ -10,7 +10,7 @@ on:
       function:
         description: "배포할 함수"
         type: choice
-        options: [weekly-notify]
+        options: [weekly-notify, nm-membership]
         default: weekly-notify
 
 permissions:
@@ -43,6 +43,10 @@ jobs:
           node scripts/build-nm-delivery-runtime.cjs --check
           node number_magic/scripts/check-notify-delivery.js
           node --test supabase/functions/weekly-notify/delivery.test.mjs
+      - name: 배포 전 검사(nm-membership — 회차 한도표가 과정과 같은지 · 처리기 모의 테스트)
+        if: inputs.function == 'nm-membership'
+        run: |
+          node --test supabase/functions/nm-membership/handler.test.mjs
       - uses: supabase/setup-cli@v1
         with:
           version: 2.122.0

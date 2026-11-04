@@ -821,8 +821,10 @@
       const [emA, koA, enA, zhA] = pair[0];
       const [emB, koB, enB, zhB] = pair[1];
       const cap = lv === 'practice' ? 4 : 6;
-      const nA = R(rng, 2, cap);
-      const nB = R(rng, 2, cap);
+      let nA = R(rng, 2, cap);
+      let nB = R(rng, 2, cap);
+      /* 그림 상자는 한 줄 5개·두 줄까지 — 11개 이상이면 세 줄이 되어 인쇄 칸을 넘친다(2026-11-04 C0 7주차) */
+      while (nA + nB > 10) { if (nA >= nB) nA--; else nB--; }
       const items = [];
       for (let i = 0; i < nA; i++) items.push({ e: emA, type: 'A' });
       for (let i = 0; i < nB; i++) items.push({ e: emB, type: 'B' });
@@ -967,8 +969,10 @@
     }
 
     /* ---- sort: 특정 종류의 개수 세기(N-15와 같은 위젯, 새 소재) ---- */
-    const nA = R(rng, 2, cap);
-    const nB = R(rng, 2, cap);
+    let nA = R(rng, 2, cap);
+    let nB = R(rng, 2, cap);
+    /* 그림 상자는 한 줄 5개·두 줄까지 — 11개 이상이면 세 줄이 되어 인쇄 칸을 넘친다(2026-11-04 C0 7주차) */
+    while (nA + nB > 10) { if (nA >= nB) nA--; else nB--; }
     const items = [];
     for (let i = 0; i < nA; i++) items.push({ e: emA, type: 'A' });
     for (let i = 0; i < nB; i++) items.push({ e: emB, type: 'B' });

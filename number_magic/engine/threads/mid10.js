@@ -924,7 +924,7 @@ NM_TGEN['md78_quadBasic'] = function (params, rng) {
       prompt: { ko: `점의 좌표를 y=ax²에 넣으면 a만 남습니다 — x를 제곱한 값으로 y를 나눕니다`,
         en: `Substituting the point into y=ax² leaves only a — divide y by x squared`,
         zh: `把点的坐标代入y=ax²只剩下a——用y除以x的平方` },
-      tex: `y = ax^2 \\text{가 } \\left(${x},\\, ${y}\\right) \\text{를 지남} \\quad\\Rightarrow\\quad a = \\square`,
+      tex: `y = ax^2 \\text{가 } \\left(${x},\\, ${y}\\right) \\text{를 지남} \\\\ \\Rightarrow\\; a = \\square`, /* 두 줄 — 점 세 개를 한 줄에 쓰면 중등 묶음 A4 칸을 넘친다(2026-11-04 C37-B05) */
       answer: a, answerType: 'number', widget: 'numpad', negative: a < 0,
       solution: [
         { tex: `${y} = a \\times ${x}^2` },
@@ -1137,7 +1137,7 @@ NM_TGEN['md81_quadFind'] = function (params, rng) {
       prompt: { ko: `x축과 만나는 두 점을 알면 y=a(x−p)(x−q) 꼴로 쓸 수 있습니다 — 나머지 한 점으로 a를 구합니다`,
         en: `Knowing the two x-intercepts lets you write y=a(x−p)(x−q) — the remaining point gives a`,
         zh: `知道与x轴的两个交点就能写成y=a(x−p)(x−q)——再用另一个点求出a` },
-      tex: `\\text{x축과 } \\left(${r1},\\, 0\\right), \\left(${r2},\\, 0\\right), \\quad \\left(${x0},\\, ${y0}\\right) \\text{를 지남} \\quad\\Rightarrow\\quad a = \\square`,
+      tex: `\\text{x축과 } \\left(${r1},\\, 0\\right), \\left(${r2},\\, 0\\right), \\quad \\left(${x0},\\, ${y0}\\right) \\text{를 지남} \\\\ \\Rightarrow\\; a = \\square`, /* 두 줄 — 점 세 개를 한 줄에 쓰면 중등 묶음 A4 칸을 넘친다(2026-11-04 C37-B05) */
       answer: a, answerType: 'number', widget: 'numpad', negative: a < 0,
       solution: [
         { tex: `y = a(x ${wrapPlus(-r1)})(x ${wrapPlus(-r2)})` },
@@ -1178,7 +1178,7 @@ NM_TGEN['md81_quadFind'] = function (params, rng) {
     prompt: { ko: `꼭짓점을 알면 y=a(x−p)²+q까지 쓸 수 있습니다 — 남은 a는 지나는 점 하나로 구합니다`,
       en: `Knowing the vertex gets you as far as y=a(x−p)²+q — one more point gives a`,
       zh: `知道顶点就能写到y=a(x−p)²+q——剩下的a用图象上的一点求出` },
-    tex: `\\text{꼭짓점} \\left(${p},\\, ${q}\\right), \\; \\left(${x0},\\, ${y0}\\right) \\text{를 지남} \\quad\\Rightarrow\\quad a = \\square`,
+    tex: `\\text{꼭짓점} \\left(${p},\\, ${q}\\right), \\; \\left(${x0},\\, ${y0}\\right) \\text{를 지남} \\\\ \\Rightarrow\\; a = \\square`, /* 두 줄 — 점 세 개를 한 줄에 쓰면 중등 묶음 A4 칸을 넘친다(2026-11-04 C37-B05) */
     answer: a, answerType: 'number', widget: 'numpad', negative: a < 0,
     solution: [
       { tex: `y = a(x ${wrapPlus(-p)})^2 ${wrapPlus(q)}` },
