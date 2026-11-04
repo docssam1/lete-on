@@ -7,7 +7,7 @@
 
 ### 2026-11-04 · 웹 검색 후속: 2016/2020 AMC 8 원자료 대조
 
-구 MAA 보고서 ID 63(2016), 87(2020)을 현행 EduView endpoint에 직접 대입했으나, 옛 연도/회차가 현재 선택지에 없어 두 링크 모두 기본 n=673, 평균 6.55, 최고 15 표본을 돌려줬다. 이는 해당 AMC 8 연도 자료가 아니므로 저장하지 않는다. 웹 검색으로 별도 회수한 2020 U.S. 수상 컷 21/18과 수상 인원(Top 1% 664, Top 5% 1,942, Achievement Roll 1,671, 만점 53)은 Ivy League Education Center의 2차 요약에 한정한다. 평균 10.00은 Think Academy의 반올림 2차 자료이며, MAA Wisconsin Section의 기존 10.01과 별도로 둔다. Bard Math Circle Grade 7 평균 12.3은 35명 현장 표본이어서 전국 학년 규준에서 제외한다. Rootmaths의 2016 이미지 경로는 회수 실패; 정확한 점수 빈도표는 여전히 미확인이다. 자세한 링크와 근거는 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 기록했다.
+구 MAA 보고서 ID 63(2016), 87(2020)을 현행 EduView endpoint에 직접 대입했으나, 옛 연도/회차가 현재 선택지에 없어 두 링크 모두 기본 n=673, 평균 6.55, 최고 15 표본을 돌려줬다. 이는 해당 AMC 8 연도 자료가 아니므로 저장하지 않는다. 웹 검색으로 별도 회수한 2020 U.S. 수상 컷 21/18과 수상 인원(Top 1% 664, Top 5% 1,942, Achievement Roll 1,671, 만점 53)은 Ivy League Education Center의 2차 요약에 한정한다. 같은 기관의 별도 페이지는 worldwide Top 1% 714, Top 5% 2,099, 완벽 점수 57을 보고하므로 지역 범위를 분리해 둔다. 평균 10.00은 Think Academy의 반올림 2차 자료이며, MAA Wisconsin Section의 기존 10.01과 별도로 둔다. Bard Math Circle Grade 7 평균 12.3은 35명 현장 표본이어서 전국 학년 규준에서 제외한다. Rootmaths의 2016 이미지 경로는 회수 실패; 정확한 점수 빈도표는 여전히 미확인이다. 자세한 링크와 근거는 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 기록했다.
 
 원본 AMC/AJHSME 시험지·정답·전문 해설은 기존 연도/폼별 LIVE 카탈로그에 연결되어 있다. 이번 검색에는 점수빈도 데이터 행 추가 없음. `raw_youtube.txt` 미수정. 로컬 문서만 갱신했으며 push·배포·Drive 동기화 없음.
 
