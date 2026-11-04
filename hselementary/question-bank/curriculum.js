@@ -2153,6 +2153,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
     source52PackingPracticeGroup.types.push({id,number:source52PackingPracticeGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u1-practice-37-original",sourceItemLabel:"확인학습 37번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:67,sourcePrintedPage:72,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U1P72Q37PackingTimeSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"한 사람이 차례로 포장한다는 조건을 명시하고 수치를 바꾼 별도 유사문항입니다. 원문 정답 확정과 구분합니다."});
   }
+  if (source52RangeGroup && !source52RangeGroup.types.some(t=>t.id==="5-2-u1-practice-11-clarified-similar")) {
+    const id="5-2-u1-practice-11-clarified-similar",name="소수 둘째 자리까지 쓴 수의 개수 · 조건 명시 유사문항";
+    const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52RangeGroup.types.push({id,number:source52RangeGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u1-practice-11-original",sourceItemLabel:"확인학습 11번 조건 명시 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:64,alternateSourcePdfPage:65,sourcePrintedPage:69,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U1P69Q11ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 소수 자릿수 해석은 보류합니다. 별도 유사문항은 둘째 자리 0 포함을 명시하고 독립 열거했습니다."});
+  }
   if (source52RangeGroup && !source52RangeGroup.types.some(t=>t.id==="5-2-u1-practice-8-bus-range-similar")) {
     const id="5-2-u1-practice-8-bus-range-similar",name="버스 대수로 회원 수의 범위 구하기 · 유사문항";
     const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
