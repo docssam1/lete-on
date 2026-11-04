@@ -1260,3 +1260,10 @@ Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. S
 - 웹에서 AMC Summary of Results and Awards 인쇄 아카이브의 2010 종점과 MAA Historical Statistics 온라인 ID 63/87을 교차 확인했다. 상세 `Contest Score Grade Report with Percentile`을 선택할 수 있었으나 2022년 보존본에는 실제 보고 표가 없다.
 - 2016·2020 전국 학년별 점수표는 미회수 상태로 유지했다. MAA 지역 뉴스레터의 2016 평균도 확인했으나 참가수 108,295가 99CEF 분석의 108,227과 달라 별도 보고값으로 보존한다. 2020 Wisconsin 보고는 미국 전체 평균 10.01만 제공하고 학년/분모는 없다.
 - 자료 상태 및 경로를 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 기록. 다음은 ID 63/87 report body 복구를 계속하거나, 학년별 점수표가 실제 공개된 다른 회차/지역 보고서의 모집단을 분리 추가한다. `raw_youtube.txt`는 제외.
+
+
+### 2026-11-04 · 웹 검색 회수: 2020 AMC 8 학년 평균표
+
+- TestDaily에 재게시된 MAA `Grade and Gender Average AMC 8 2020 · Location: Overall` 이미지를 웹에서 직접 회수했다. Apple Vision OCR과 이미지 셀 대조로 Grade 5–8 응시 인원/평균을 확인하고 연도별 자료 CSV·비교 lookup·coverage에 등록했다. `<=4`와 `UNK`는 그룹 상태로 보존한다.
+- MAA 보고 이미지의 `All`은 n=56,099·평균 10.00이다. MAA Wisconsin Section의 미국 평균 10.01과 모집단/보고값이 달라 합치지 않는다. 2016 Grade Report는 아직 미회수. 근거: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`.
+- `raw_youtube.txt`는 미추적 사용자 파일로 보존·제외.

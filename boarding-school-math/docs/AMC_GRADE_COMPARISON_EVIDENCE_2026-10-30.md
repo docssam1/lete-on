@@ -434,9 +434,9 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 ## 2026-11-04 · AMC 8 2016·2020 연례 보고서 경로 교차 확인
 
 - 검색 결과에서 독립 연구자가 모은 [MAA Summary of Results and Awards 아카이브](https://sites.google.com/view/ian-calaway/amc-archive)를 확인했다. 이 연례 소책자는 2010년까지 발행·배포됐고, 2011년부터는 온라인 인식 및 보고 흐름으로 이동했다는 설명이다. 따라서 2016·2020 학년표는 인쇄 연례 소책자 검색보다 MAA Historical Statistics의 web report ID/body 복구가 맞는 경로다.
-- 이미 보존한 MAA Historical Statistics 목록은 2016 AMC 8 ID 63과 2020 AMC 8 ID 87을 남기며, `Contest Score Grade Report with Percentile` 선택 항목을 안내한다. 보존본에는 메뉴만 있고 선택 후 생성되는 표 본문은 없다. 2016·2020 전국 학년별 점수표는 이번 검색에서도 회수되지 않았다.
-- 2016 전체집단 수치(n=108,227, 평균 9.36)는 99CEF 분석 보고서와 MAA Michigan Section 뉴스레터(n=108,295, 평균 9.36)의 서로 다른 모집단 수를 병기한다. 어느 한쪽으로 임의 통일하지 않는다. [Michigan Section–MAA Spring 2017](https://sections.maa.org/michigan/newsletters/Vol43no2_Spring_2017.pdf). 2020은 Wisconsin Section이 미국 평균 10.01을 보고하나 표본 수와 학년 분포가 없다. [Wisconsin Section–MAA Fall 2021](https://sections.maa.org/wisconsin/news/MAAWINewsFall21v2.pdf).
-- 결과: 새 점수 행은 추가하지 않았다. coverage의 `no-grade-table-recovered` 상태를 유지하고, 다음 검색은 두 ID의 MAA 원본 report body 및 외부에 남은 비식별 집계 보고서로 한정한다. 지역 행사·학교·준비반 결과는 전국 학년 비교에 넣지 않는다.
+- 이미 보존한 MAA Historical Statistics 목록은 2016 AMC 8 ID 63과 2020 AMC 8 ID 87을 남기며, `Contest Score Grade Report with Percentile` 선택 항목을 안내한다. 보존본에는 메뉴만 있고 선택 후 생성되는 표 본문은 없다. 2016 학년별 점수표는 아직 회수되지 않았다. (2020 MAA Overall 표는 후속 검색에서 별도로 회수·전사했다.)
+- 2016 전체집단 수치(n=108,227, 평균 9.36)는 99CEF 분석 보고서와 MAA Michigan Section 뉴스레터(n=108,295, 평균 9.36)의 서로 다른 모집단 수를 병기한다. 어느 한쪽으로 임의 통일하지 않는다. [Michigan Section–MAA Spring 2017](https://sections.maa.org/michigan/newsletters/Vol43no2_Spring_2017.pdf). 2020은 Wisconsin Section이 미국 평균 10.01을 보고한다. 후속으로 MAA `Location: Overall` 학년 평균 이미지(표본 n=56,099; 평균 10.00)를 2차 보존본에서 회수했으며, 두 보고의 차이는 그대로 보존한다. [Wisconsin Section–MAA Fall 2021](https://sections.maa.org/wisconsin/news/MAAWINewsFall21v2.pdf).
+- 결과: 2016은 `no-grade-table-recovered`로 유지하고, 2020은 확인된 Grade 5–8 평균·인원을 추가했다. MAA 원본 ReportViewer 본문은 계속 미회수이므로 2차 재게시라는 출처 경계를 표시한다. 다음 검색은 2016 report body 및 다른 연도의 비식별 집계 보고서로 이어간다. 지역 행사·학교·준비반 결과는 전국 학년 비교에 넣지 않는다.
 
 ## 2026-11-04 · AMC 8 2011 전국 학년표 및 참가집단 재검색
 
@@ -484,5 +484,13 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 ### 2026-11-04 웹 검색: AMC 8 2016·2020 학년 자료 재확인
 
 - 2016년은 2022-02-04 MAA 메뉴 보존본에 AMC 8 결과 항목 ID 63이 남아 있으나 결과 본문은 보존되지 않았다. 99CEF가 재현한 미국·캐나다 응시 통계(108,227명, 평균 9.36)는 전체집단 평균으로 기록했다. MAA Michigan Section Newsletter는 같은 해 108,295명·평균 9.36을 보고해 응시자 수가 68명 다르다. 두 보고값을 따로 보존하고 원인을 추측하지 않는다. Bard Math Circle의 35명과 Ivy League Education Center 준비반 통계는 별도 지역·준비반 표본이며 전국 학년 비교에 넣지 않았다. 학년별 표본 수와 전국 학년 평균은 아직 회수되지 않았다. 자료: [99CEF 2019 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf), [MAA Michigan Section Spring 2017 Newsletter](https://sections.maa.org/michigan/newsletters/Vol43no2_Spring_2017.pdf), [Bard 2016 AMC 8 결과](https://www.bardmathcircle.org/p/2016-amc-8-results-are-in), [Ivy League Education Center의 2016 결과 게시](https://ivyleaguecenter.org/2016/12/01/2016-amc-8-winners-for-the-u-s-ivy-league-education-center/).
-- 2020 검색에서 MAA Wisconsin Section의 보고서는 미국 전체 평균 10.01을 명시하지만 참가자 수와 학년별 평균표는 제공하지 않는다. Bard Math Circle의 학년 평균은 지역 표본만 설명하므로 전국 수치로 사용하지 않는다. 별도의 제3자 표도 평균과 수상 컷을 재인용할 뿐 완전한 전국 학년 성적표는 아니다. 따라서 전체 응시자 평균만 제한적으로 추가하고 2020 학년 비교는 비워 둔다. 자료: [MAA Wisconsin Section Fall 2021 Newsletter](https://sections.maa.org/wisconsin/news/MAAWINewsFall21v2.pdf), [Bard 2020 AMC 8 결과](https://www.bardmathcircle.org/p/2020-amc-8), [Think Academy AMC 8 FAQ 통계표](https://www.thethinkacademy.com/blog/amc-8-faqs-the-ultimate-guide-for-first-time-test-takers/).
+- 첫 검색에서 회수한 MAA Wisconsin Section 뉴스레터는 미국 전체 평균 10.01만 보고해, 당시에는 학년표를 비워 두었다. 후속 웹 검색에서 2차 재게시된 MAA 2020 Overall 학년표를 회수해 Grade 5–8 평균을 추가했다(아래 회수 기록 참고). Bard Math Circle의 학년 평균은 지역 행사 표본이므로 전국 비교에 넣지 않는다. 자료: [MAA Wisconsin Section Fall 2021 Newsletter](https://sections.maa.org/wisconsin/news/MAAWINewsFall21v2.pdf), [Bard 2020 AMC 8 결과](https://www.bardmathcircle.org/p/2020-amc-8), [MAA 표 재게시 원문과 이미지](https://www.testdaily.cn/52247/).
 - 2016 AMC 8 문제·답은 [LIVE MAA-authorized archive](https://live.poshenloh.com/past-contests/amc8/2016/answers)에서 다시 확인했다. 이는 이미 연도별 원본 인벤토리에 등록된 회차의 검수 링크이며, 전국 학년 점수 규준을 대신하지 않는다.
+
+
+## 2026-11-04 웹 검색 회수: 2020 AMC 8 MAA Overall 학년 평균표
+
+- [TestDaily의 2020 AMC 8 분석 페이지](https://www.testdaily.cn/52247/)는 그래프를 MAA 공식 통계의 `Grade and Gender Average AMC 8 2020`으로 설명한다. 첨부된 표 이미지는 `Location: Overall`로 표시되고, Grade, Students, Avg Score 열을 포함한다. 그래프 이미지 파일은 [이 링크](https://testdaily-static.oss-cn-beijing.aliyuncs.com/f/2024-09-29/20240929203745824184e8bb.jpg)다. MAA 호스트 원문이 아닌 2차 재게시 이미지라 출처 상태를 그대로 표시한다.
+- 표의 Grade/Students/Avg Score는 `<=4: 762 / 9.35`, `5: 2,782 / 9.31`, `6: 12,242 / 9.08`, `7: 18,378 / 10.02`, `8: 21,829 / 10.63`, `UNK: 106 / 7.42`, `All: 56,099 / 10.00`이다. 숫자는 Apple Vision OCR을 실행하고 각 셀을 원 이미지와 육안 대조했다. 명시된 학년 행 합계는 56,099명으로 표의 All 인원과 맞는다. `<=4`는 묶음 그대로, `UNK`는 학년 미기록으로 보존한다.
+- Grade 5–8 평균·인원은 [`amc8-grade-means-2020-maa-overall.csv`](../competition/historical-amc-grade/amc8-grade-means-2020-maa-overall.csv)에 추가하고, 연도·회차별 coverage와 과거 학년 평균 결과 조회에 연결했다. 현재 학년 등급·백분위·대회 자격을 계산하지 않는다.
+- [MAA Wisconsin Section 뉴스레터](https://sections.maa.org/wisconsin/news/MAAWINewsFall21v2.pdf)는 2020 AMC 8 미국 전체 평균을 10.01로 보고한다. MAA 그래프의 `Overall` 표본 56,099명/평균 10.00과 분모 및 평균이 달라 두 출처 값을 별도 상태로 유지하고 차이를 추측으로 조정하지 않는다.
