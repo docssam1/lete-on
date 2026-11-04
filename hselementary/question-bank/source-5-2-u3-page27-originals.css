@@ -1,3 +1,9 @@
 .p27original-choices p { margin:.12em 0; }
 .p27original-values { text-align:center; margin:.8em 0; }
 @media print { .p27original-question,.p27original-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10.5pt; } }
+
+.p27m5-figure { display:block; width:100%; max-width:270px; height:auto; margin:.2em auto; }
+@media print { #problemView .print-page--four-up .question-prompt svg.p27m5-figure { width:auto !important; max-height:46mm; } }
+
+.p27m6-figure { display:block; width:100%; max-width:270px; height:auto; margin:.2em auto; }
+@media print { #problemView .print-page--four-up .question-prompt svg.p27m6-figure { width:auto !important; max-height:43mm; } }
