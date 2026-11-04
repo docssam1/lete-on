@@ -2,6 +2,7 @@ import { CURRICULUM, typeById } from "./source-data.js?v=20261101b";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261103d";
 import { PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261103d";
 import { readRecord, saveRecord } from "./study-progress.js?v=20261029q";
+import { playCover, playEnd, enterSlide, bindPress, ringMarkup } from "./study-motion.js?v=20261104a";
 import { canStudy, lockPage } from "./fields-access.js?v=20261029q";
 
 // 학생용 단원 공부 — 사이언스 랩 「스스로 공부하기」처럼 한 장씩 넘기는 덱이다(원장 2026-10-24: 「아래로 내려가며 공부하는 게 아니라」).
@@ -42,6 +43,7 @@ const phaseNo = (kind) => PHASES.findIndex(([id]) => id === kind) + 1;
 
 let slides = [{ kind: "cover" }];
 let index = 0;
+let shownIndex = 0, coverPlayed = false;   // 장 넘김 방향·표지 움직임은 한 번만(study-motion.js)
 let ready = false;
 let bellData = null;
 
@@ -572,6 +574,17 @@ function boardMarkup(block) {
     }).join("")}</div>
     <p class="sd-board-note">○ 표시는 한 번 눌러 본 번호예요. 다 풀었으면 다음으로 가요.</p>`;
 }
+// 도착 장: 오늘 한 공부를 수로(0부터 올라간다 — study-motion.js playEnd), 시험 결과는 점수 고리로
+function tallyMarkup(result, lastPart) {
+  const n = (kind) => slides.filter((s) => s.kind === kind).length;
+  const items = [
+    ["개념", n("concept"), "개"], ["게임", n("game"), "판"],
+    ["워밍업", slides.filter((s) => s.kind === "bell").reduce((sum, s) => sum + s.lesson.original.items.length, 0), "문제"],
+    ["본책", slides.filter((s) => s.kind === "board").reduce((sum, s) => sum + s.block.numbers.length, 0), "문제"]
+  ].filter(([, v]) => v);
+  return `<div class="sd-tally">${result ? `<figure class="sd-tally-ring">${ringMarkup(result.right, result.total)}<figcaption>${lastPart ? "단원 평가" : "데일리 테스트"}</figcaption></figure>` : ""}
+    <dl>${items.map(([label, v, u]) => `<div><dt>${label}</dt><dd><b data-count="${v}">${v}</b>${u}</dd></div>`).join("")}</dl></div>`;
+}
 function endMarkup() {
   const lastPart = part >= parts;
   const result = lastPart ? testResult(testId) : null;
@@ -581,9 +594,10 @@ function endMarkup() {
       ? `<a class="sd-btn primary" href="${esc(link("study.html", { book: book.id, unit: String(unitIndex + 1), part: "1" }))}">다음 · ${unitIndex + 2}단원 1차시 시작하기 ›</a>`
       : `<a class="sd-btn primary" href="${esc(link("unit-test-viewer.html", { book: book.id }))}">${esc(book.label)} 권별 테스트 ›</a>`;
   return `<div class="sd-cover sd-end">
-    <span class="sd-medal" aria-hidden="true">✓</span>
+    <span class="sd-medal" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16" /></svg></span>
     <h1>${lastPart ? `${unitIndex + 1}단원 공부를 마쳤어요!` : `${unitIndex + 1}단원 ${part}차시를 마쳤어요!`}</h1>
-    <p class="sd-cover-lead">${esc(unit.label)}${result ? ` · ${lastPart ? "단원 평가" : "데일리 테스트"} ${result.right} / ${result.total}` : ""}</p>
+    <p class="sd-cover-lead">${esc(unit.label)}</p>
+    ${tallyMarkup(result, lastPart)}
     <div class="sd-end-actions">
       ${nextLink}
       <a class="sd-btn" href="${esc(link("my-study.html", { book: book.id }))}">내 학습 상황</a>
@@ -612,6 +626,12 @@ function show({ atEnd = false } = {}) {
   const line = lineFor(slide);
   const intro = say(line.text, slide.kind === "end" ? "praise" : "talk", line.id);
   if (framed) openInFrame(slide, atEnd);
+  // 움직임(study-motion.js): 장 넘김은 누른 방향에서, 표지·도착은 한 번 짜인 순서로
+  const dir = Math.sign(index - shownIndex);
+  if (shownIndex !== index) enterSlide(framed ? $("frameWrap") : $("slideBody"), dir);
+  if (slide.kind === "cover" && ready && !coverPlayed) { coverPlayed = true; playCover($("slideBody").querySelector(".sd-cover")); }
+  if (slide.kind === "end") playEnd($("slideBody").querySelector(".sd-end"));
+  shownIndex = index;
   if (native) mountNative(slide, intro).catch(() => { $("slideBody").innerHTML = '<p class="sd-wait">불러오지 못했어요. 새로고침해 주세요.</p>'; });
   $("prevBtn").disabled = index === 0;
   $("firstBtn").disabled = index === 0;
@@ -743,6 +763,8 @@ function openWeakSheet(weak) {
 
 // ── 조작 ──────────────────────────────────────────────────
 $("nextBtn").addEventListener("click", next);
+bindPress();
+addEventListener("load", bindPress);   // Motion(전역)은 따로 불러오므로 다 불러온 뒤에 한 번 더
 $("prevBtn").addEventListener("click", prev);
 $("firstBtn").addEventListener("click", () => { cancelAuto(); closeSheet(false); go(0); });
 // 게임 건너뛰기: 이어진 게임 장을 모두 넘는다
