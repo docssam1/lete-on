@@ -9,6 +9,18 @@
   // Totals and rounded means reconcile to the corresponding report tables.
   // These historical cohorts are not presented as current norms or validated ability levels.
   const distributions = Object.freeze({
+    2006: Object.freeze({
+      reportUrl: "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary",
+      sourceUrl: "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary",
+      sourceStatus: "secondary-transcription-of-MAA-annual-report-grade-score-table-reconciled-to-counts-and-means",
+      population: "2006 AMC 8 MAA annual-report recorded-grade participants; international schools are included in the report cohort",
+      gradeGroups: Object.freeze({
+        "4-5": Object.freeze({ participants: 1853, mean: 8.21, counts: Object.freeze([7,12,42,76,148,200,216,248,193,190,126,84,73,46,41,31,20,20,18,9,16,9,11,8,5,4]) }),
+        "6": Object.freeze({ participants: 16639, mean: 8.51, counts: Object.freeze([30,33,151,341,822,1376,1962,2247,2263,2019,1604,1194,834,555,343,240,172,117,87,62,60,35,37,28,15,12]) }),
+        "7": Object.freeze({ participants: 48479, mean: 9.82, counts: Object.freeze([119,40,173,610,1402,2533,3887,5150,5935,5734,5347,4275,3449,2526,1846,1382,1044,711,599,464,349,284,229,187,129,75]) }),
+        "8": Object.freeze({ participants: 78038, mean: 10.75, counts: Object.freeze([134,48,188,574,1380,2811,4542,6537,7929,8721,8562,7796,6704,5363,4134,3153,2370,1840,1326,1033,787,652,521,431,304,198]) })
+      })
+    }),
     2007: Object.freeze({
       reportUrl: "https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards",
       sourceUrl: "https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards",

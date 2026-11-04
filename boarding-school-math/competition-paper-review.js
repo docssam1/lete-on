@@ -903,6 +903,7 @@
       setText("amc8-global-grade-score-summary", `${globalGradeScore.year} AMC 8 · ${globalGradeScore.gradeLabel} · ${globalGradeScore.score}/25점 · 해당 점수 ${globalGradeScore.participantsAtScore.toLocaleString("en-US")}명 · 학년 표본 ${globalGradeScore.gradeParticipants.toLocaleString("en-US")}명`);
       setText("amc8-global-grade-score-value", `점수보다 낮은 응시자 ${globalGradeScore.strictlyLowerShare.toFixed(2)}% · ${globalGradeScore.strictlyLowerCount.toLocaleString("en-US")}/${globalGradeScore.gradeParticipants.toLocaleString("en-US")}명`);
       const globalScoreNote = {
+        2006: "2006 MAA AMC 8 보고서 Table 5의 학년별 점수 빈도입니다. 4–5학년은 원자료의 묶음이며, 국제 학교 참가자도 보고서 모집단에 포함됩니다. 원문은 제3자 보관 사본에서 확인했고 0점의 시도/미시도 구간은 합산했습니다.",
         2007: "2007 MAA 연례 보고서 Table 7의 기록 학년별 점수 분포입니다. 4–5학년은 원자료의 묶음입니다. MAA 원본 보고서의 웹 보관 사본에서 전사했으며 현재 규준이 아닙니다.",
         2008: "2008 MAA 연례 보고서 Table 7의 기록 학년별 점수 분포입니다. 4–5학년은 원자료의 묶음입니다. MAA 원본 보고서의 웹 보관 사본에서 전사했으며 현재 규준이 아닙니다.",
         2009: "2009년 MAA 연례 보고서에 제시된 전체 응시학교의 기록 학년별 점수 분포입니다. 4–5학년은 원자료의 묶음입니다.",

@@ -5,6 +5,10 @@ const path = require("node:path");
 const test = require("node:test");
 const reference = require("../competition/amc8-global-grade-score-reference.js");
 
+const rows2006 = fs.readFileSync(path.join(__dirname, "../competition/historical-amc-grade/amc8-2006-global-grade-score-counts.csv"), "utf8").trim().split(/\r?\n/).slice(1).map(function (line) {
+  const [year, , gradeGroup, score, participantsAtScore, gradeParticipants] = line.split(",");
+  return { year: Number(year), gradeGroup, score: Number(score), participantsAtScore: Number(participantsAtScore), gradeParticipants: Number(gradeParticipants) };
+});
 const csvPath = path.join(__dirname, "../competition/historical-amc-grade/amc8-2009-global-grade-score-counts.csv");
 const rows = fs.readFileSync(csvPath, "utf8").trim().split(/\r?\n/).slice(1).map(function (line) {
   const [year, , gradeGroup, score, participantsAtScore, gradeParticipants] = line.split(",");
@@ -21,6 +25,22 @@ const rows2019 = fs.readFileSync(path.join(__dirname, "../competition/historical
 const rows2022 = fs.readFileSync(path.join(__dirname, "../competition/historical-amc-grade/amc8-2022-global-grade-score-counts.csv"), "utf8").trim().split(/\r?\n/).slice(1).map(function (line) {
   const [year, , gradeGroup, score, participantsAtScore, gradeParticipants] = line.split(",");
   return { year: Number(year), gradeGroup, score: Number(score), participantsAtScore: Number(participantsAtScore), gradeParticipants: Number(gradeParticipants) };
+});
+
+test("2006 AMC 8 grade counts reconcile to MAA report totals and grade means", function () {
+  const expected = { "4-5": [1853, "8.21"], "6": [16639, "8.51"], "7": [48479, "9.82"], "8": [78038, "10.75"] };
+  Object.entries(expected).forEach(function ([gradeGroup, [participants, mean]]) {
+    const gradeRows = rows2006.filter(function (row) { return row.gradeGroup === gradeGroup; });
+    assert.equal(gradeRows.length, 26, `${gradeGroup} must include scores 0–25`);
+    assert.equal(gradeRows.reduce(function (sum, row) { return sum + row.participantsAtScore; }, 0), participants);
+    assert.ok(gradeRows.every(function (row) { return row.gradeParticipants === participants; }));
+    const weightedMean = gradeRows.reduce(function (sum, row) { return sum + row.score * row.participantsAtScore; }, 0) / participants;
+    assert.equal(weightedMean.toFixed(2), mean);
+    const lookup = reference.referenceFor(2006, gradeGroup === "4-5" ? 5 : Number(gradeGroup), 20);
+    assert.equal(lookup.gradeParticipants, participants);
+    assert.equal(lookup.reportedMean.toFixed(2), mean);
+  });
+  assert.equal(rows2006.length, 104);
 });
 
 test("2009 AMC 8 global grade counts reconcile to the annual report totals and means", function () {
@@ -80,6 +100,11 @@ test("cross-grade comparison uses only the selected year's reported grade groups
   assert.equal(comparison2009.rows[2].strictlyLowerCount, 49598);
   assert.equal(comparison2009.rows[2].gradeParticipants, 50218);
   assert.equal(comparison2009.rows.some(function (row) { return row.gradeLabel === "unknown"; }), false);
+
+  const comparison2006 = reference.comparisonFor(2006, 7, 20);
+  assert.deepEqual(comparison2006.rows.map(function (row) { return row.gradeLabel; }), ["4–5학년", "6학년", "7학년", "8학년"]);
+  assert.equal(comparison2006.rows[2].gradeParticipants, 48479);
+  assert.equal(comparison2006.rows[2].strictlyLowerCount, 47226);
 
   const comparison2007 = reference.comparisonFor(2007, 7, 20);
   assert.deepEqual(comparison2007.rows.map(function (row) { return row.gradeLabel; }), ["4–5학년", "6학년", "7학년", "8학년"]);

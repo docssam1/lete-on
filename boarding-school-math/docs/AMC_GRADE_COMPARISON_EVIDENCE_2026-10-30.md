@@ -661,6 +661,12 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 각 연도 4개 그룹의 26개 점수 구간 합계와 가중평균을 보고서의 Grade Level Score Averages 표와 대조했다. 2007 그룹 표본/평균은 3,170/8.48, 18,687/8.19, 49,594/9.51, 76,907/10.60; 2008은 2,698/10.75, 19,726/9.88, 48,889/11.18, 75,002/12.07로 일치한다. 해당 표에는 전체 응시자 수와 다른 학년 미기록 응시자가 있으므로 개별 학년 분포를 전체 참가자로 표현하지 않는다.
 - `amc8-global-grade-score-reference.js`와 `amc8-2007-2008-global-grade-score-counts.csv`에 연결했다. 사용 화면은 해당 연도 원자료 학년 그룹 내 엄격히 낮은 점수 비율을 계산하며, 이를 공식 percentile·현재 규준·능력 등급으로 부르지 않는다. 4·5학년은 원자료 버킷이 결합돼 있어 그대로 표시한다.
 - 출처: [2007 MAA 연례 보고서 사본, Table 7](https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards), [2008 MAA 연례 보고서 사본, Table 7](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america). 둘 다 MAA 저작물의 제3자 보관 사본이므로 원호스트 검증 상태를 과장하지 않는다.
+
+## 2026-11-04 웹 검색: 2006 AMC 8 학년별 점수 분포
+
+- MAA 작성 2006 AMC 8 `Summary of Results and Awards`의 Table 5 `Results by Grade Level`에서 4–5, 6, 7, 8학년의 0–25점 빈도표를 확인했다. [보고서 웹 보관 사본](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary)에서 기록된 빈도를 옮겼으며, MAA의 2006 보고서 Table 2와 Table 5 Grade Level Score Averages로 표본 수와 평균을 대조했다.
+- 각 그룹의 26개 빈도 합은 1,853 / 16,639 / 48,479 / 78,038명이고 계산 평균은 각각 8.21 / 8.51 / 9.82 / 10.75로 보고서 표기와 일치한다. Table 5는 0(@) 일부 문항 풀이와 0($) 미시도 학생을 따로 집계하므로 점수 입력과 비교하기 위해 0점에서 합쳤다. 이 표의 보고서 코호트는 국제 학교 참가자를 포함한다.
+- `amc8-2006-global-grade-score-counts.csv` 및 `amc8-global-grade-score-reference.js`에 추가했다. 화면은 동일 보고서 학년 그룹별로 입력 점수보다 낮은 점수를 받은 비율을 계산한다. 해당 비율을 공식 percentile, 현재 규준, 개인 능력 등급으로 해석하지 않는다. 보고서는 제3자 호스트의 재게시본이다.
 - 검수는 데이터 모듈의 9개 핵심 assertion(그룹 순서/표기, 입력 그룹, 세 연도 계산값, 유효하지 않은 연도·학년·점수 차단)을 node_repl에서 수행했다. 시스템 쉘에 Node 실행기가 없어 `node --test` 브라우저 테스트는 실행하지 못했다. CUA의 브라우저 탭 접근이 URL 정책에 차단되어 결과 화면 수동 검수도 하지 못했다. HTML/JS/CSS 정적 연결, 캐시 버전, 표의 접근 가능한 행/열 제목 및 `git diff --check`를 추가 확인한다.
 
 ## 2026-11-04 AMC 8/10/12 같은 회차 학년 평균 비교

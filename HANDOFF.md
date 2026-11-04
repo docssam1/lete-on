@@ -1622,4 +1622,11 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 연례 보고서 웹 검색 결과 2007/2008 MAA `Summary of Results and Awards`의 Table 7에는 4–5, 6, 7, 8학년별 점수 0–25의 빈도가 있다. 이를 GFIELD의 과거 AMC 8 학년 비교기에 연결해 2007/2008 점수 입력 시 같은 연도·학년 그룹 비교가 가능하도록 했다. 0점의 attempted/unattempted 구간은 답안 기록 모델상 합산했다.
 - 8개 연도/학년그룹 분포 각각의 26개 빈도를 원문 요약 표본 수와 대조했고, 가중평균도 보고된 평균과 소수 둘째 자리까지 일치함을 확인했다. 데이터 파일은 `boarding-school-math/competition/historical-amc-grade/amc8-2007-2008-global-grade-score-counts.csv`; 런타임 lookup은 `boarding-school-math/competition/amc8-global-grade-score-reference.js`.
 - 이 자료는 당시 MAA 보고서에 기록된 학년 코호트로, 현재 기준·공식 개인 percentile·능력 등급이 아니다. 4–5학년은 원자료 묶음 유지. 보고서 사본은 제3자 호스팅이라 그 제한을 근거 문서에 남겼다. 출처: [2007 report](https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards), [2008 report](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america).
-- 다음: 문제 풀이 경로에서 이 새 연도를 실제 선택해 결과 UI의 범위 문구와 cross-grade 표를 브라우저로 확인하고, AMC 8 연도별 grade evidence를 계속 확장한다. `raw_youtube.txt` unchanged; no push/deployment/Drive sync.
+- 다음: 문제 풀이 경로에서 새 연도를 실제 선택해 결과 UI의 범위 문구와 cross-grade 표를 브라우저로 확인하고, AMC 8 연도별 grade evidence를 계속 확장한다. `raw_youtube.txt` unchanged; no push/deployment/Drive sync.
+
+## 2026-11-04 웹 검색: 2006 AMC 8 학년별 분포 연결
+
+- MAA 작성 2006 AMC 8 연례 보고서 Table 5에서 4–5, 6, 7, 8학년 점수 0–25 빈도를 추가했다. 표본 수 및 평균이 보고서의 기록 학년 요약과 일치한다. 0점 attempted/unattempted는 입력 점수와 맞추기 위해 합쳤고, 4–5학년과 모집단 범위는 보고서 원형대로 설명한다.
+- 데이터: `boarding-school-math/competition/historical-amc-grade/amc8-2006-global-grade-score-counts.csv`; 조회 모듈: `boarding-school-math/competition/amc8-global-grade-score-reference.js`; UI note/cache/test도 연결했다.
+- 출처: [2006 MAA 보고서 사본, Table 5](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary). 제3자 보관 사본이며 현재 규준/공식 percentile/능력 등급이 아니다.
+- 검수: CSV 104개 행, 네 그룹 모두 표본 합계와 가중 평균 일치, 비교 함수의 2006년 교차 그룹 결과를 node_repl contract assertion으로 확인했고 `git diff --check` 통과. CUA는 `file:` URL 정책으로 막혀 브라우저 화면 검수는 하지 않았다(정책상 우회 금지). `raw_youtube.txt` untouched; no push/deployment/Drive sync.
