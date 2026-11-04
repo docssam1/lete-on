@@ -1499,3 +1499,9 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - 2017·2019 AMC10A/12A 99CEF 분석 PDF와 2017 GEMT AMC10B/12B 보고서를 연도·파일명·학년 통계 키워드로 검색했으나 원문을 회수하지 못했다. 검색 결과의 2018 PDF 링크를 열자 2016 본문으로 리다이렉트되는 사례도 있어 파일명/snippet만 믿지 않도록 기록했다.
 - 2017 MAA General Reports 메뉴 ID 64/65는 보존돼도 ReportViewer 본문은 없다. 2019 AMC10A Grade 7 n=1,982·평균 59.72는 학교 게시 페이지에 인용된 단일 secondary 행이며, 원 MAA 표와 다른 학년 행은 찾지 못했다. 2019 AMC12A/B와 이를 전국 학년 비교표로 확장하지 않았다.
 - 상세 출처/검색 결과는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 남겼다. 다음 단계는 MAA ReportViewer 본문 경로 또는 공식 운영기관 연례 PDF의 원문 회수다. `raw_youtube.txt` unchanged; local only; no push/deploy/Drive sync.
+
+## 2026-11-04 MAA 보존 보고서 본문 재확인
+
+- MAA Wayback `generalreports.aspx`에서 2017 AMC10/12 A·B 메뉴 ID 64/65는 확인되지만 ReportViewer의 저장 HTML은 `ReportAreaContent.None`으로 비어 있다. 구형 MAA 호스트는 HTTP 404/521이라 동적 보고서 선택을 다시 요청할 수 없었다. 이는 보존된 메뉴가 수치 데이터 본문을 보존하지 않았다는 확인이며, 보고서 부재를 뜻하지 않는다.
+- 이번 검색에 다시 나온 99CEF 2020 A형 미국·캐나다 학년별 표는 기존 CSV/화면에 이미 수록되어 중복 추가하지 않았다. 전체 cohort 점수분포와 학년 표본은 계속 별도 표시한다.
+- 다음 검색은 원문 PDF가 남아 있는 운영기관 연도별 분석 자료 중심으로 이어간다. `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 상세 근거를 추가했다. `git diff --check` 통과; 로컬 문서 수정만, no push/deploy/Drive sync. `raw_youtube.txt` untouched.

@@ -589,3 +589,10 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - MAA의 보존된 General Reports 메뉴에서는 2017 A/B 통계 항목(ID 64/65)이 확인되지만, 이미 coverage manifest에 기록된 대로 해당 ReportViewer 본문은 보존되지 않았다. 메뉴 존재는 학년표 회수가 아니다. [MAA 보존 메뉴](https://web.archive.org/web/20220204191809/http://amc-reg.maa.org/reports/generalreports.aspx)
 - 2019 AMC10A Grade 7 행은 기존에 학교 발행 페이지가 전국 참가자 통계로 보고한 단일 기록(n=1,982, 평균 59.72)만 들어 있다. [학교 발행 페이지](https://www.archimedean.org/amc-grade-7-student-sailalitha-kodukula-makes-history/). 이번 검색으로 그 값의 원 MAA 보고서나 Grade 8–10 표본 행을 회수하지 못해 전체 학년 비교표로 확장하거나 출처 상태를 올리지 않았다. AMC12A/B 2019 행도 추가하지 않았다.
 - 다음 근거가 될 수 있는 것은 MAA의 2017 ReportViewer 본문 회수 또는 연도·폼·지역·학년별 행이 모두 포함된 99CEF/GEMT 원 분석 PDF다. 그때까지 2017·2019의 기존 `no-grade-table-recovered` 상태와 2019 Grade 7 단일 secondary row를 분리해서 유지한다.
+
+## 2026-11-04 후속 확인: MAA 2017 보존 보고서 본문 경로
+
+- Internet Archive에 보존된 MAA `generalreports.aspx`의 2017 A/B 항목(ID 64/65)을 다시 열어 보고서 선택 메뉴와 ReportViewer 본문을 분리 확인했다. 저장 HTML에는 2017 선택 항목은 있으나 ReportViewer 영역은 `ReportAreaContent.None`으로 비어 있고, 보고서 렌더링을 요청하는 서버 왕복 결과도 보존돼 있지 않다. 현재 MAA 구형 호스트는 404/521로 응답해 과거 선택 동작을 직접 재현할 수 없었다.
+- 이 확인은 보고서가 당시 없었다는 뜻이 아니다. 보존된 메뉴만으로는 점수×학년 표를 회수할 수 없다는 한계를 구체화한다. 따라서 2017 ID 64/65는 출처 탐색 경로로만 남기고 학년 수치로 전사하지 않는다.
+- 새로 검색된 [99CEF 2020 AMC10A/12A 분석 보고서](https://www.99cef.org.tw/userfiles/2020AMC10A12AReport.pdf)의 미국·캐나다 학년별 표는 기존 `amc10-12-grade-means-2020-99cef.csv`와 화면 연결에 이미 반영되어 있어 중복 행을 추가하지 않았다. [MAA EduView 현재 점수분포](https://maa.edvistas.com/eduview/report.aspx?mode=6&view=1561)는 전체 코호트 표로, 2017의 학년표를 대신하지 않는다.
+- 다음 검색은 MAA 동적 ReportViewer 경로 반복 대신 원문 PDF를 실제로 제공하는 연도·폼별 시험 운영기관 분석 자료에 집중한다. 운영기관 표의 모집단(미국·캐나다, Taiwan, global 등)은 반드시 분리하고, 학교·학원 표본을 전국 기준으로 쓰지 않는다.
