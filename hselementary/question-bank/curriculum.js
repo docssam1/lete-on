@@ -2876,6 +2876,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Count = source52Average?.subunits.find(subunit => subunit.name === "사건의 가짓수");
+  if (source52Count && !source52Count.types.some(t=>t.id==="5-2-u6-practice-37-clarified-similar")) {
+    const id="5-2-u6-practice-37-clarified-similar",name="도시를 다시 지나지 않는 경로 수 · 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-37-original",sourceItemLabel:"확인학습 37번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:114,alternateSourcePdfPage:115,sourcePrintedPage:120,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 도시 재방문 여부가 명시되지 않아 보류합니다. 별도 유사문항은 재방문을 금지하고 경로를 독립 열거했습니다.",generatorKey:"source52U6P120Q37ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+
   if (source52Count) for (const [n,name] of [[42,"집에서 두 장소를 한 번씩 들러 돌아오는 경로 · 확인학습 원문"],[46,"부모끼리와 자녀끼리 이웃하는 다섯 명의 배열 · 확인학습 원문"],[47,"B 또는 C를 지나는 격자 최단경로 · 확인학습 원문"],[48,"둘레가 7인 자연수 변의 삼각형 · 확인학습 원문"],[41,"부모가 양 끝에 서는 가족사진 배열 · 확인학습 원문"],[43,"바지와 셔츠를 한 벌씩 고르기 · 확인학습 원문"],[44,"다섯 숫자 카드로 만드는 세 자리 홀수 · 확인학습 원문"],[45,"숫자 카드로 만드는 35 이상의 두 자리 수 · 확인학습 원문"],[38,"자음과 모음을 하나씩 골라 글자 만들기 · 확인학습 원문"],[39,"최우수 한 팀과 우수 두 팀 선정 · 확인학습 원문"],[40,"다섯 명이 줄 설 때 두 명이 이웃하는 경우 · 확인학습 원문"],[33,"지점 재방문이 없는 여러 경로의 수 · 확인학습 원문"],[34,"전구 다섯 개의 켜짐과 꺼짐으로 신호 만들기 · 확인학습 원문"],[35,"1~20 중 5 또는 6의 배수 찾기 · 확인학습 원문"],[36,"세 사람의 가위바위보에서 낼 수 있는 경우 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52Count.types.some(type=>type.id===id)) continue;
