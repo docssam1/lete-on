@@ -1,0 +1,5 @@
+.p24copy-figure { display:block; width:50mm; max-width:100%; height:auto; margin:.4em auto; }
+.p24copy-answer-figure { display:block; width:105.263mm; max-width:100%; height:auto; margin:.4em auto; }
+@media print { .p24copy-question,.p24copy-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10.5pt; } .p24copy-figure { width:50mm !important; max-height:none; } .p24copy-answer-figure { width:105.263mm; } }
+.solution-answer-visual > svg.p24copy-answer-figure { width:105.263mm; max-width:100%; max-height:none; }
+@media print { #problemView .print-page--four-up .question-prompt svg.p24copy-figure { width:50mm !important; max-height:none; } }
