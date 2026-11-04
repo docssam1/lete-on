@@ -3529,7 +3529,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CongruenceApplicationTwo = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ②");
-  if (source52CongruenceApplicationTwo) for (const [n,name] of [[1,"같은 현이 있는 원의 각 · 원문 그림 재구성"],[3,"사다리꼴의 중점과 선분의 길이 · 원문 그림 재구성"]]) {
+  if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t=>t.id==="5-2-u3-e4-exploration-original")) {
+    const id="5-2-u3-e4-exploration-original",name="정사각형 속 두 각 · 원문 그림 재구성";
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e4-exploration",sourceItemLabel:"개념탐구 4 원문 그림 재구성",sourceSection:"exploration",sourcePdfPage:26,alternateSourcePdfPage:25,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page30OriginalExploration",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 그림과 각도를 대조하고 정사각형의 합동을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+  if (source52CongruenceApplicationTwo) for (const [n,name] of [[1,"같은 현이 있는 원의 각 · 원문 그림 재구성"],[3,"사다리꼴의 중점과 선분의 길이 · 원문 그림 재구성"],[4,"두 정삼각형과 이등변삼각형의 각 · 원문 그림 재구성"]]) {
     const id=`5-2-u3-e4-example-${n}-original`;
     if (source52CongruenceApplicationTwo.types.some(t=>t.id===id)) continue;
     source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e4-example-${n}`,sourceItemLabel:`예제 4-${n} 원문 그림 재구성`,sourceSection:"example",sourcePdfPage:26,alternateSourcePdfPage:25,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page30OriginalExample${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 그림과 수치를 대조하고 같은 현 및 사다리꼴의 합동을 독립 검산했습니다. 공식 답안은 미확인입니다."});
