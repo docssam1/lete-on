@@ -1539,7 +1539,7 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 ### 2026-11-04 웹 검색: 2009 AMC 8 전국표 자료 충돌 메모
 
 - MAA 작성 2009 AMC 8 연례 보고서 사본의 Table 8은 문항 응답 표본을 151,367명으로 적지만, 같은 보고서의 Table 1/score summary는 answer forms received / number of participants를 150,733명으로 적는다. [PDFCoffee 재게시본의 Table 8](https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html)과 [MAA 통계 재인용](https://www.scribd.com/doc/58090065/2010-AMC-HS-Summary)을 찾았다.
-- 기존 2009 AMC Study 표본은 한국 참가자 741명이며 또 다른 모집단이다. 세 수치/표를 서로 대체하거나 합치지 않는다. 전국 Table 8의 모집단 차이와 추출된 몇몇 셀의 분리·소수점 표기를 원본 표 페이지 이미지로 확인하기 전에는 새 전국 응답률을 제품 자료에 넣지 않는다.
+- 기존 2009 AMC Study 표본은 한국 참가자 741명이며 또 다른 모집단이다. 세 수치/표를 서로 대체하거나 합치지 않는다. 전국 Table 8의 모집단 차이는 원본 보고서 안의 충돌로 유지한다. 재게시 PDF 뷰어 사본은 열리지 않아 표 이미지를 Vision OCR로 교차확인할 수 없었다. 그래서 추출본의 숫자 흐름이 끊기거나 열 수가 맞지 않는 Q3·4·9·12·17은 보류하고, 나머지 20문항만 별도 CSV와 선택 가능한 대체 모집단 조회에 추가했다. 현재 UI 기본값은 한국 741명 자료이며 전국 코호트를 한국값과 섞지 않는다.
 
 ### 2026-11-04 웹 검색: AMC 8 2007 전국 문항 응답률 추가
 
@@ -1557,3 +1557,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 출처: [MAA 2008 연례 보고서 Table 5 재게시본](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america), [LIVE 2008 정답표](https://live.poshenloh.com/past-contests/amc8/2008/answers), [LIVE 2008 시험지·해설](https://live.poshenloh.com/past-contests/amc8/2008).
 
 출처: [MAA 2007 연례 보고서 Table 5 재게시본](https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards), [LIVE 2007 정답표](https://live.poshenloh.com/past-contests/amc8/2007/answers), [LIVE 2007 시험지·해설](https://live.poshenloh.com/past-contests/amc8/2007).
+
+### 2026-11-04 웹 검색: 2009 AMC 8 MAA 전국 문항 응답률 추가
+
+- [MAA 25th Annual AMC 8 Summary 재게시본](https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html)의 검색 색인에 Table 8 전체 항목 응답 텍스트가 잡힌다. Table 8은 151,367명을 적지만, 같은 보고서 Table 1은 answer forms received 150,733명을 적는다. 불일치를 그대로 보존했고 어느 쪽도 임의로 정정하지 않았다.
+- 보고서 PDF viewer는 손상/유효하지 않은 PDF 오류로 열리지 않았다. Apple Vision OCR 시각 대조는 진행할 수 없었으므로 추출 셀 배열이 깨진 3, 4, 9, 12, 17번을 제품 조회에서 제외했다. 나머지 20문항을 `amc8-2009-maa-national-item-response-percent.csv`에 기록하고 LIVE 2009 답안표와 대조했다.
+- 런타임은 `responseFor(2009, question, answer, grade, "maa-national")`로 이 MAA 전국 코호트를 명시적으로 선택할 수 있다. 기존 2009 기본 조회는 한국 n=741 그대로다. UI에는 아직 모집단 선택 컨트롤이 연결되지 않아 새 MAA 전국표는 API 대체 조회 자료로 추가된 상태다.
+- 검수: 20개 CSV 행의 퍼센트 합계(0.15%p 허용), 정답 비율, 연도별 25개 질문 인덱스, 제외 문항 null 응답, 한국 기본값 보존을 확인했다. 기존 전체 CJS 테스트 실행기는 이 쉘에 없어서 전체 contract 파일 실행은 못했고, 핵심 lookup 검증은 node_repl에서 별도로 돌렸다. `git diff --check` 통과.

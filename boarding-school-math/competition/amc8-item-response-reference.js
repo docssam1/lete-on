@@ -146,6 +146,32 @@
 23,B,9.58,39.68,14.98,19.16,9.31,7.29,0.00
 24,E,10.66,9.58,18.35,11.88,41.43,8.10,0.00
 25,E,9.99,13.90,21.86,18.22,26.05,9.99,0.00`.trim();
+  const raw2009MAANational = `
+1,E,0.15,0.24,2.64,2.03,94.76,0.18,0.01
+2,D,2.58,3.33,3.47,87.50,2.59,0.51,0.01
+3,C,,,,,,,
+4,B,,,,,,,
+5,D,5.64,14.17,16.12,58.18,4.09,1.78,0.04
+6,A,68.34,8.54,7.78,5.39,8.48,1.42,0.04
+7,C,2.52,8.80,39.33,19.54,27.33,2.40,0.08
+8,B,26.99,27.22,35.27,3.88,5.34,1.25,0.05
+9,B,,,,,,,
+10,D,3.62,25.94,13.68,47.92,7.57,1.23,0.04
+11,D,6.16,15.46,23.64,33.21,16.56,4.91,0.06
+12,D,,,,,,,
+13,B,6.97,74.82,5.43,8.20,2.84,1.68,0.06
+14,B,5.47,12.89,70.17,5.19,3.46,2.77,0.05
+15,D,15.75,13.22,16.26,32.38,17.79,4.50,0.10
+16,D,32.06,15.96,18.65,14.57,13.69,4.98,0.08
+17,B,,,,,,,
+18,C,21.62,11.02,39.88,12.41,9.32,5.62,0.12
+19,D,12.01,15.27,18.58,22.96,23.54,7.39,0.25
+20,D,18.74,29.19,13.00,18.86,12.33,7.77,0.10
+21,D,14.63,36.64,17.27,14.00,6.73,10.60,0.12
+22,D,11.19,13.87,18.83,22.52,23.59,9.77,0.24
+23,B,11.98,27.59,17.23,20.96,10.31,11.75,0.17
+24,E,16.72,18.58,20.92,15.50,15.41,12.73,0.14
+25,E,13.12,16.39,19.02,16.40,20.24,14.72,0.11`.trim();
   const raw2011 = `
 1,E,1.45,0.56,0.89,1.11,95.66,0.33,0.00
 2,E,2.67,0.78,5.90,1.56,88.88,0.22,0.00
@@ -446,7 +472,7 @@
     2008: Object.freeze({ raw: raw2008, respondentCount: 148731, population: "2008 AMC 8 MAA-reported national response cohort", sourceUrl: "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america", sourceStatus: "MAA-authored annual report Table 5 in secondary-hosted copy; extracted D/E block verified against LIVE key and source stars" }),
     2007: Object.freeze({ raw: raw2007, respondentCount: 150618, population: "2007 AMC 8 MAA-reported national response cohort", sourceUrl: "https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards", sourceStatus: "MAA-authored annual report Table 5 in secondary-hosted copy; answer key cross-checked with LIVE" }),
     2006: Object.freeze({ raw: raw2006, respondentCount: 147210, population: "2006 AMC 8 reported MAA response cohort", sourceUrl: "https://www.judymlevine.com/uploads/5/4/6/7/5467082/2006_amc_8_ws-25.pdf", sourceStatus: "MAA-authored item-response table in secondary-hosted report; non-reconciling rows suppressed; rows 18–19 have multiple marked keys", excludedQuestions: Object.freeze([18, 19]) }),
-    2009: Object.freeze({ raw: raw2009, respondentCount: 741, population: "2009 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/43", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),
+    2009: Object.freeze({ raw: raw2009, respondentCount: 741, population: "2009 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/43", sourceStatus: "secondary-html-transcription-of-MAA-result-table", alternatePopulations: Object.freeze({ "maa-national": Object.freeze({ raw: raw2009MAANational, respondentCount: 151367, population: "2009 AMC 8 MAA annual report item-response cohort", sourceUrl: "https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html", sourceStatus: "MAA annual summary Table 8 as web-indexed text; PDF scan viewer failed; 20 complete rows retained; questions 3, 4, 9, 12, and 17 suppressed because cell extraction is incomplete or ambiguous; Table 1 reports 150,733 answer forms received, discrepant from Table 8 count" }) }) }),
     2010: Object.freeze({ raw: raw2010, respondentCount: 153211, population: "2010 AMC 8 MAA-reported student response cohort", sourceUrl: "https://www.amcstudy.net/71", sourceStatus: "secondary-image-transcription-apple-vision-reviewed" }),
     2011: Object.freeze({ raw: raw2011, respondentCount: 899, population: "2011 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/79", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),
     2012: Object.freeze({ raw: raw2012, respondentCount: 151117, population: "2012 AMC 8 global participant response cohort", sourceUrl: "https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; Global response cohort" }),
@@ -464,7 +490,7 @@
     return Object.freeze(raw.split("\n").map(function (line) {
       const values = line.split(",");
       const percentages = Object.freeze(Object.fromEntries(letters.map(function (letter, index) {
-        return [letter, Number(values[index + 2])];
+        return [letter, values[index + 2] === "" ? null : Number(values[index + 2])];
       })));
       const acceptedAnswers = Object.freeze(values[1].split(""));
       return Object.freeze({
@@ -474,7 +500,7 @@
         responsePercent: percentages,
         omittedPercent: Number(values[7]),
         unreadablePercent: values[8] === "" ? null : Number(values[8]),
-        correctResponsePercent: acceptedAnswers.reduce(function (sum, answer) { return sum + percentages[answer]; }, 0),
+        correctResponsePercent: acceptedAnswers.reduce(function (sum, answer) { return sum + (percentages[answer] == null ? 0 : percentages[answer]); }, 0),
         respondentCount: respondentCount
       });
     }));
@@ -485,15 +511,16 @@
     return [entry[0], parseQuestions(entry[1].raw, entry[1].respondentCount)];
   })));
 
-  function responseFor(year, question, answer, grade) {
+  function responseFor(year, question, answer, grade, populationId) {
     const selectedYear = Number(year);
     const yearSource = sources[selectedYear];
-    const source = yearSource && yearSource.byGrade && yearSource.byGrade[Number(grade)] || yearSource;
+    const source = populationId && yearSource && yearSource.alternatePopulations && yearSource.alternatePopulations[populationId] || yearSource && yearSource.byGrade && yearSource.byGrade[Number(grade)] || yearSource;
     if (!source || !source.raw) return null;
     const questions = source && source.raw ? parseQuestions(source.raw, source.respondentCount) : questionsByYear[selectedYear];
     if (!source || !Number.isInteger(Number(question)) || Number(question) < 1 || Number(question) > questions.length) return null;
     const item = questions[Number(question) - 1];
     if (yearSource.excludedQuestions && yearSource.excludedQuestions.includes(item.number)) return null;
+    if (Object.values(item.responsePercent).some(function (value) { return value == null; })) return null;
     const responseTotal = Object.values(item.responsePercent).reduce(function (sum, value) { return sum + value; }, item.omittedPercent + item.unreadablePercent);
     // Do not display a response-rate row that fails its source's 100% reconciliation.
     if (Math.abs(responseTotal - 100) >= 0.15) return null;
