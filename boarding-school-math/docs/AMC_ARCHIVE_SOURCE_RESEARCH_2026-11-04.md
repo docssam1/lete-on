@@ -36,3 +36,14 @@ MAA의 [2023 AMC 8 공개 페이지](https://maa.org/resource/sample-competition
 - 2016 AMC 8 관련 검색에서 99CEF의 2019년 회고 보고서 기반 미국·캐나다 전체 평균 9.36 (n=108,227)과 Michigan Section–MAA 뉴스레터의 9.36 (n=108,295)을 각각 확인했다. 참가자 수가 달라 두 출처 행을 합치지 않는다. Bard Math Circle이 공개한 학년 평균은 현장 35명 지역 표본이며 학년별 표본 수도 없어 전국 비교표에서는 제외한다.
 - MAA 통계 보고서 검색, 2023–2024 99CEF 보고서 검색에서도 공개된 전국 학년별 점수표는 회수되지 않았다. 이는 검색 범위 내 미회수 상태이며 보고서 부재를 단정하지 않는다.
 - [99CEF AMC 안내/FAQ](https://www.99cef.org.tw/maa-amc/)는 개인 성적표에 Taiwan 지역의 앞표준·평균·뒤표준·점수 구간 통계가 실린다고 안내한다. 이를 이용하려면 해당 지역 응시자의 실제 성적표 값과 연도가 필요하다. 지역 코호트 통계는 미국·캐나다 또는 전체 글로벌 코호트의 Grade 7 규준과 분리해야 한다.
+
+
+## AMC 8 연도별 전체 점수 분포 원자료 확장 (2026-11-04)
+
+웹 검색에서 [99CEF 2013 AMC 8 보고서](https://www.99cef.org.tw/userfiles/2013AMC8Report.pdf)와 [2014 AMC 8 보고서](https://www.99cef.org.tw/userfiles/2014AMC8Summary.pdf)의 공개 점수 빈도표를 확인했다. 2013 Global 표는 n=149,709, 가중평균 10.6975(보고서 10.70), 만점 369, 20점 이상 6,531로 연례 요약과 일치하며, Taiwan 표는 n=9,811이다. 이 자료를 점수 0–25 CSV 및 같은 회차 결과 비교기에 연결했다.
+
+2014 보고서 p.7의 Global 점수별 빈도는 144,177명으로 합산되지만 p.6 전체 통계와 p.13 연례 요약은 144,737명이라고 적는다. Taiwan 빈도는 9,199명으로 일치한다. Global 점수표 자체의 가중평균은 11.4620인 반면 보고서 요약 평균은 11.44다. 빈도표는 원문 그대로 보존하고 비교 비율의 분모는 144,177명으로 계산한다. 화면에서도 전체 요약 참가자 수와 점수표 분모 차이를 명시한다. 점수표의 상단 누적 백분율 p.9 및 분포 그래프는 참고 대조 자료이며, 불일치를 보정하는 근거로 사용하지 않았다. 99CEF의 두 보고서는 Taiwan 교육재단이 발행한 국제/지역 보고서이지 MAA가 주최·호스팅한 데이터가 아니며, Global과 Taiwan 코호트는 섞지 않는다. OCR은 사용하지 않았다.
+
+다음 검색: 연례 보고서에서 동일한 score-frequency table이 제공되는 다른 연도를 찾아 연도별로 기록한다. 이미 보고된 전체 평균·수상 컷·학년 평균은 점수 빈도표와 별개 필드로 유지하고, 표본 정의나 합계가 다르면 해소된 것처럼 합치지 않는다.
+
+2015 follow-up: [99CEF 2015 AMC 8 report](https://www.99cef.org.tw/userfiles/2015AMC8Report.pdf), pp.8–11, exposes full Global and Taiwan score-frequency tables. The 26 Global counts sum to 149,844 and weighted mean 8.5545 (reported 8.55); 20+ count 2,669 and perfect count 94 reconcile with the annual summary. This year is added alongside 2013 and 2014 without mixing populations.

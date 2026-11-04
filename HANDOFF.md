@@ -1,3 +1,9 @@
+### 2026-11-04 · AMC 8 2013–2015 원점수 분포 웹 검색 연결
+
+웹 검색으로 99CEF의 [2013 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2013AMC8Report.pdf), [2014 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2014AMC8Summary.pdf), [2015 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2015AMC8Report.pdf)에서 연도별 Global/Taiwan 0–25점 인원표를 확인했다. 2013 두 모집단 합계는 각각 보고서 n(149,709 / 9,811)과 일치하며 Global 가중평균 10.70, 만점 369, 20점 이상 6,531도 보고서 요약과 일치한다. 2014 Taiwan 빈도는 n=9,199로 맞지만 Global 점수 빈도 합계는 144,177, 보고서 전체 참가자는 144,737이고 560명 차이가 난다. 2014 분포 빈도 가중평균은 11.4620, 보고서 요약은 11.44다. 원표를 보정하지 않고 결과 화면은 2014 score-frequency 분모 144,177로 엄격히 낮은 점수 비율을 계산하며 두 분모 차이를 고지한다. 2015는 Global n=149,844와 가중평균 8.5545(보고 8.55), Taiwan n=9,017 모두 빈도와 요약이 일치한다.
+
+`amc8-2013-global-taiwan-score-counts.csv`, `amc8-2014-global-taiwan-score-counts.csv`, `amc8-2015-global-taiwan-score-counts.csv`, 전체 코호트 lookup, 검수 화면 문구, README 및 `AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`를 갱신했다. 다음 단계는 다른 연례 보고서의 score-frequency 표를 이어서 찾아 연도별 CSV로 누적하는 것. OCR은 쓰지 않았다. `raw_youtube.txt`는 수정/staging하지 않는다.
+
 ### 2026-11-04 · AMC10B 2013 글로벌 학년표 회수 및 AMC12B 출처 검수
 
 Internet Archive에서 2013 GEMT AMC10B/AMC12B 보고서 PDF를 회수했다. 현재 게시 URL은 2014년 파일로 이동하므로 2013 보존본을 출처로 쓴다. Apple Vision OCR과 시각 대조로 AMC10B p.4 및 AMC12B p.13 표를 확인했다. 신규 AMC10B Grade 7/8/9/10: n=1,342/2,593/11,239/17,726, 평균 75.93/81.63/67.23/73.74. 학년 그룹 합은 34,738, 보고서 전체는 34,740으로 차이 2명을 그대로 기록한다. 대만 자료는 분리했다.
