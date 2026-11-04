@@ -3106,6 +3106,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52CongruenceUnit = semesters.find(s => s.id === "5-2")?.units.find(u => u.id === "5-2-u3");
   const source52SymmetryApplication = source52CongruenceUnit?.subunits.find(s => s.name === "선대칭의 활용");
 
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t=>t.id==="5-2-u3-practice-80-clarified-similar")) {
+    const id="5-2-u3-practice-80-clarified-similar",name="겹치지 않는 구멍의 수 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-80-original",sourceItemLabel:"확인학습 80번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:90,alternateSourcePdfPage:89,sourcePrintedPage:94,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 구멍의 겹침 여부가 명시되지 않아 보류합니다. 별도 유사문항에서 겹치지 않는 조건과 변형 접기 횟수를 밝히고 매번 생기는 구멍 수를 독립 계산했습니다.",generatorKey:"source52U3P94Q80ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+
+
   if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t=>t.id==="5-2-u3-practice-62-clarified-similar")) {
     const id="5-2-u3-practice-62-clarified-similar",name="도형의 성질을 밝힌 대칭축 개수 · 유사문항";
     const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
