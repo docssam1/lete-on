@@ -83,7 +83,7 @@
       "2023B": entry({ top1: 135, top2_5: 123, top5: 112.5, top10: 100.5, top25: 82.5, top50: 60, top75: 42, average: 64.12, standardDeviation: 26.78, students: 22912, schools: 1572, schoolYear: 2024, contestId: 37435 }),
       "2024A": entry({ top1: 132, top2_5: 118.5, top5: 105, top10: 88.5, top25: 69, top50: 54, top75: 42, average: 58.01, standardDeviation: 23.10, students: 30545, schools: 1877, schoolYear: 2025, contestId: 53664 }),
       "2024B": entry({ top1: 138, top2_5: 126, top5: 114, top10: 99, top25: 76.5, top50: 57, top75: 42, average: 61.78, standardDeviation: 26.48, students: 23372, schools: 1557, schoolYear: 2025, contestId: 53951 }),
-      "2025A": entry({ top1: 150, top2_5: 141, top5: 124.5, top10: 94.5, top25: 69, top50: 51, top75: 39, average: 57.12, standardDeviation: 25.86, students: 31600, schools: 1956, schoolYear: 2026, contestId: 81054 }),
+      "2025A": entry({ top1: 136.5, top2_5: 124.5, top5: 112.5, top10: 94.5, top25: 69, top50: 51, top75: 39, average: 57.12, standardDeviation: 25.86, students: 31600, schools: 1956, schoolYear: 2026, contestId: 81054 }),
       "2025B": entry({ top1: 133.5, top2_5: 120, top5: 105, top10: 87, top25: 66, top50: 51, top75: 42, average: 56.99, standardDeviation: 22.69, students: 25204, schools: 1715, schoolYear: 2026, contestId: 81055 })
     }),
     amc12: Object.freeze({

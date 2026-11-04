@@ -485,9 +485,14 @@
     const reference = distribution.referenceFor(record.programId, contestYear, form);
     if (!reference) return null;
     const reached = distribution.bands.find(function (band) { return record.rawScore >= reference[band.id]; });
+    const lowerBand = distribution.bands.slice().reverse().find(function (band) {
+      return band.id !== "dhr" && Number.isFinite(reference[band.id]);
+    });
     const match = reached
       ? `${reached.label} · ${reference[reached.id]} / ${record.maxScore}점 이상`
-      : `상위 75% 기준 미만 · ${reference.top75} / ${record.maxScore}점`;
+      : lowerBand
+        ? `${lowerBand.label} 미만 · ${reference[lowerBand.id]} / ${record.maxScore}점`
+        : "비교 기준 자료 없음";
     return Object.freeze({ contestYear: contestYear, reference: reference, match: match });
   }
   function renderHistory() {
