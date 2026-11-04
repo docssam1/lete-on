@@ -11,7 +11,8 @@
     2002: ["Global", 157778, 126, null, 11.09, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"],
     2003: ["Global", 158309, 92, null, 10.27, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"],
     2004: ["Global", 154590, 501, null, 9.94, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"],
-    2005: ["Global", 143428, 77, 2548, 9.835, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"], 2006: ["Global", 147210, 289, 4428, 10.14],
+    2005: ["Global", 143428, 77, 2548, 9.835, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"],
+    2006: ["Global", 147210, 289, 4428, 10.14, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"],
     2007: ["Global", 150618, 129, 3593, 9.87, "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america"],
     2008: ["Global", 148731, 334, 8575, 11.45, "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america"],
     2009: ["Global", 150733, 163, 3452, 10.28, "https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html"], 2010: ["Global", 153211, 499, 5849, 9.98],
@@ -28,6 +29,9 @@
   // differs from Table 1's reported 9.835, so expose count-based position with a visible caveat.
   const amc8_2005_score_counts = Object.freeze([385,425,1341,3112,5511,8123,11017,12938,13915,14519,13907,13103,11080,9085,7168,5357,3847,2762,1926,1359,959,657,414,257,184,77]);
   const amc8_2005_source_url = "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary";
+  // Table 4 records 0(@) attempted-some and 0($) attempted-none separately; combine only for score lookup.
+  const amc8_2006_score_counts = Object.freeze([322,138,569,1630,3826,7038,10772,14390,16567,16925,15879,13547,11211,8615,6447,4874,3656,2725,2052,1599,1227,994,804,661,453,289]);
+  const amc8_2006_source_url = "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary";
   // MAA's 2008 report Table 8 lists 2007 and 2008 score counts high-to-low.
   // In 2008, add the 253 explicitly reported no-attempt participants to score 0.
   const amc8_2007_score_counts = Object.freeze([445,556,1509,3309,5830,8507,11387,13619,15047,15643,14906,13338,11020,8849,6870,5061,3969,3068,2371,1721,1263,967,618,391,225,129]);
@@ -73,6 +77,7 @@
     if (!values || !Number.isInteger(points) || points < 0 || points > 25) return null;
     const selectedYear = Number(year);
     const scoreCountData = selectedYear === 2005 ? amc8_2005_score_counts
+      : selectedYear === 2006 ? amc8_2006_score_counts
       : selectedYear === 2007 ? amc8_2007_score_counts
       : selectedYear === 2008 ? amc8_2008_score_counts
       : selectedYear === 2009 ? amc8_2009_score_counts
@@ -94,6 +99,7 @@
       scoreAtLeast20: values[3], meanScore: values[4], learnerScore: points, differenceFromMean: points - values[4],
       strictlyLowerShare: strictlyLowerShare, distributionParticipants: distributionParticipants, scoreAtLearner: scoreCountData ? scoreCountData[points] : null,
       sourceUrl: selectedYear === 2005 ? amc8_2005_source_url
+        : selectedYear === 2006 ? amc8_2006_source_url
         : selectedYear === 2007 || selectedYear === 2008 ? amc8_2007_2008_source_url
         : selectedYear === 2009 ? amc8_2009_source_url
         : selectedYear === 2010 ? amc8_2010_source_url

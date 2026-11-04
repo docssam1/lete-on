@@ -883,6 +883,8 @@
         setText("amc8-overall-cohort-note", `${overallCohort.year}년 자료는 MAA 2006 연례 보고서 Table 1의 전체 응시 인원·평균·만점자 수입니다. 해당 표에는 전체 점수별 빈도표가 없어 백분위나 점수 위치는 계산하지 않습니다. MAA는 이 시험에 확립된 규준이 없으며 학교 수업·배치시험과 비교할 수 없다고 안내합니다. 따라서 이 값은 같은 해 전체 응시 집단 평균과의 참고 비교이며 현재 능력 등급이나 학년 배치가 아닙니다. `);
       } else if (overallCohort.year === 2005) {
         setText("amc8-overall-cohort-note", `2005년은 MAA 2006 연례 보고서 Table 6의 점수별 빈도표를 연결했습니다. 빈도 합계는 Table 1 참가자 수 ${overallCohort.participants.toLocaleString("en-US")}명과 일치합니다. 다만 이 빈도로 계산한 평균은 9.845점이고, Table 1에 적힌 평균은 9.835점으로 약 0.01점 차이가 있습니다. 그래서 점수 위치는 표의 빈도 합계 기준으로, 평균 비교는 보고서 기재 평균 기준으로 따로 표시합니다. 역사적 전체 응시자 비교이며 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. `);
+      } else if (overallCohort.year === 2006) {
+        setText("amc8-overall-cohort-note", "2006년 MAA 2006 연례 보고서 Table 4의 전체 점수 빈도를 사용합니다. 보고서는 0점을 일부 문항을 시도한 23명과 미시도 299명으로 구분했으며, 점수 위치를 계산할 때만 합쳐 총 147,210명으로 대조합니다. 보고 평균 10.14점, 20점 이상 4,428명, 만점 289명과 표본 합계가 보고서 요약과 일치합니다. 점수 위치는 과거 전체 응시자 분포에서 계산한 참고값이며 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. ");
       } else if (overallCohort.year === 2007) {
         setText("amc8-overall-cohort-note", "2007년은 MAA 2008 연례 보고서 Table 8의 점수별 빈도표를 사용합니다. 26개 점수 빈도의 합과 가중평균이 Table 1의 참가자 수·평균에 맞습니다. 전체 응시 코호트의 과거 점수 위치이며 공식 percentile·학년 순위·현재 규준·실력 등급은 아닙니다. ");
       } else if (overallCohort.year === 2008) {
