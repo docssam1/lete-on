@@ -171,3 +171,7 @@
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-mission-1-original"] svg { max-height:160px; margin:2px auto; }
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-mission-1-original"] .p33-octagon-choices { font-size:9pt; line-height:1.25; }
 }
+
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-mission-3-original"] svg { max-height:220px; }
+}
