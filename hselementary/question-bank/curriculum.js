@@ -3853,6 +3853,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52Unit1 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52Rounding = source52Unit1?.subunits.find(subunit => subunit.name === "어림하기 · 개념탐구 2 원문 분류");
+  if (source52Rounding && !source52Rounding.types.some(type=>type.id==="5-2-u1-e2-example-4-all-digits-practice")) {
+    const id="5-2-u1-e2-example-4-all-digits-practice",name="0을 포함한 자리 숫자와 반올림 · 조건 명시 연습";
+    const typeNumber=Math.max(0,...source52Unit1.subunits.flatMap(subunit=>subunit.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Rounding.types.push({id,number:source52Rounding.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u1-e2-example-4",sourceItemLabel:"반올림 숫자 조건 명시 연습",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:4,sourcePrintedPage:6,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U1RoundingAllDigitsPractice",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문의 숫자 조건을 바탕으로 0을 허용하고 가능한 답을 모두 묻는 별도 연습입니다. 두 답을 독립 열거했습니다."});
+  }
+
   if (source52Rounding && !source52Rounding.types.some(type => type.id === "5-2-u1-e2-example-2-4-synthetic")) {
     const id="5-2-u1-e2-example-2-4-synthetic",name="소수의 숫자 조건과 반올림 · 연습";
     const typeNumber=Math.max(0,...source52Unit1.subunits.flatMap(subunit=>subunit.types.map(type=>Number(type.typeNumber)||0)))+1;
