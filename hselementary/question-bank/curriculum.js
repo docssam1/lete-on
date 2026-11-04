@@ -3446,6 +3446,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CongruenceApplicationOne = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ①");
+  if (source52CongruenceApplicationOne) for (const [n,name] of [[1,"겹친 정사각형의 넓이 · 원문 그림 재구성"],[2,"겹친 정사각형에서 선분의 길이 · 원문 그림 재구성"]]) {
+    const id=`5-2-u3-e3-example-${n}-original`;
+    if (source52CongruenceApplicationOne.types.some(t=>t.id===id)) continue;
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e3-example-${n}`,sourceItemLabel:`예제 3-${n} 원문 그림 재구성`,sourceSection:"example",sourcePdfPage:24,alternateSourcePdfPage:23,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page28OriginalExample${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 정사각형 그림과 수치를 대조하고 넓이 및 정삼각형을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+
   if (source52CongruenceApplicationOne && !source52CongruenceApplicationOne.types.some(t => t.id === "5-2-u3-e3-exploration-synthetic")) {
     const id="5-2-u3-e3-exploration-synthetic",name="합동 이등변삼각형과 교차각";
     source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 3 유사문항",sourceSection:"exploration",sourcePdfPage:24,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"대응점과 이등변 조건을 명시한 창작 문항을 독립 검산했습니다.",generatorKey:"source52CongruentIsoscelesPage28ExplorationSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
