@@ -116,6 +116,59 @@
 23,C,14.48,10.10,25.56,22.81,14.55,12.24,0.24
 24,A,32.04,12.54,22.47,11.74,8.61,12.44,0.14
 25,C,12.30,24.39,21.31,12.71,16.42,12.73,0.12`.trim();
+  // 2013 and 2014 99CEF reports, Global response tables; keys checked against LIVE.
+  const raw2013 = `
+1,A,88.77,0.85,3.22,2.66,4.13,0.35,0.02
+2,D,2.54,0.69,63.00,1.18,32.11,0.42,0.03
+3,E,4.05,11.17,10.83,24.34,47.20,2.30,0.08
+4,C,6.84,6.85,69.53,4.51,11.03,1.19,0.05
+5,E,3.86,8.62,8.07,5.23,72.44,1.61,0.15
+6,C,2.41,1.07,90.59,1.40,4.11,0.38,0.02
+7,C,6.67,7.02,68.32,7.82,9.08,1.00,0.05
+8,C,12.75,29.06,24.36,23.09,9.04,1.58,0.07
+9,C,10.84,20.48,50.25,12.84,4.26,1.25,0.05
+10,C,14.99,20.96,36.99,12.59,8.42,5.99,0.05
+11,D,10.08,15.68,12.52,45.17,12.95,3.49,0.09
+12,B,7.33,34.65,12.39,11.85,30.98,2.62,0.15
+13,A,35.33,14.04,16.68,12.80,14.78,6.24,0.12
+14,C,13.54,15.86,36.00,14.80,16.79,2.84,0.15
+15,B,13.73,48.81,11.06,11.78,9.19,5.32,0.11
+16,E,14.89,21.02,18.75,10.69,27.61,6.88,0.12
+17,B,11.11,48.40,12.40,11.14,10.57,6.23,0.13
+18,B,12.34,23.24,18.52,17.85,20.94,6.93,0.16
+19,D,21.15,16.57,13.48,33.24,9.21,6.15,0.17
+20,C,34.04,20.07,18.59,11.97,4.81,10.00,0.11
+21,E,17.10,24.55,22.22,15.55,8.86,11.55,0.13
+22,E,38.04,9.26,11.87,11.41,19.44,9.66,0.26
+23,B,10.13,26.88,20.89,17.43,10.34,14.10,0.18
+24,C,7.57,13.02,39.30,13.89,12.10,13.98,0.12
+25,A,12.38,37.22,13.88,12.46,9.15,14.80,0.08`.trim();
+  const raw2014 = `
+1,A,81.81,1.53,3.53,0.74,12.10,0.28,0.01
+2,E,1.44,3.51,4.99,7.18,82.08,0.70,0.10
+3,B,4.74,90.03,2.44,1.48,0.89,0.39,0.03
+4,E,7.98,3.89,12.34,15.74,55.83,4.13,0.08
+5,C,0.62,2.19,92.57,0.82,3.43,0.34,0.02
+6,D,9.13,3.41,5.66,76.73,3.55,1.49,0.03
+7,B,8.94,71.20,4.71,10.94,3.08,1.07,0.04
+8,D,3.12,4.36,10.45,78.50,2.66,0.86,0.05
+9,D,7.15,19.15,20.71,44.76,5.48,2.71,0.04
+10,A,26.70,65.37,3.46,1.74,1.93,0.77,0.03
+11,A,46.84,13.80,19.08,9.76,7.32,3.18,0.03
+12,B,41.39,26.42,2.95,25.36,2.55,1.27,0.06
+13,D,6.72,11.03,7.28,41.89,31.38,1.51,0.20
+14,B,21.66,42.86,12.42,14.33,6.05,2.62,0.05
+15,C,10.29,12.71,50.65,14.96,6.71,4.62,0.05
+16,B,14.64,26.82,19.85,21.89,12.89,3.87,0.05
+17,B,36.22,38.77,6.56,7.19,6.97,4.20,0.09
+18,D,0.94,1.25,39.42,10.06,45.21,2.90,0.22
+19,A,19.15,19.86,23.47,23.71,7.46,6.26,0.09
+20,B,15.68,27.10,22.03,15.90,11.58,7.62,0.09
+21,A,28.79,13.50,28.18,12.56,9.03,7.79,0.16
+22,E,13.06,15.95,15.36,12.79,32.86,9.77,0.21
+23,A,20.61,21.24,22.48,14.74,9.88,10.92,0.13
+24,C,33.65,18.53,16.49,14.74,5.97,10.49,0.12
+25,B,8.63,16.74,20.75,27.69,13.69,12.35,0.07`.trim();
   // 2015 99CEF report, Global response table; LIVE answer key checked.
   const raw2015 = `
 1,A,42.56,37.70,12.15,5.16,2.00,0.43,0.01
@@ -314,10 +367,11 @@
     2017: Object.freeze({ raw: raw2017, respondentCount: 81386, population: "2017 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20180324183042id_/http://www.99cef.org.tw/userfiles/2017AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
     2018: Object.freeze({ raw: raw2018, respondentCount: 98389, population: "2018 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20210121195421id_/https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
     2019: Object.freeze({ raw: raw2019, respondentCount: 94634, population: "2019 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20210121214419id_/https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
-    2013: Object.freeze({ byGrade: Object.freeze({
+    2013: Object.freeze({ raw: raw2013, respondentCount: 149709, population: "2013 AMC 8 global participant response cohort", sourceUrl: "https://www.99cef.org.tw/userfiles/2013AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; Global response cohort", schoolCohorts: Object.freeze({
       7: Object.freeze({ raw: raw2013Grade7, respondentCount: 63, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 7 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" }),
       8: Object.freeze({ raw: raw2013Grade8, respondentCount: 55, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 8 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" })
     }) }),
+    2014: Object.freeze({ raw: raw2014, respondentCount: 144737, population: "2014 AMC 8 global participant response cohort", sourceUrl: "https://www.99cef.org.tw/userfiles/2014AMC8Summary.pdf", sourceStatus: "99CEF AMC 8 analysis report; Global response cohort" }),
     2015: Object.freeze({ raw: raw2015, respondentCount: 149844, population: "2015 AMC 8 global participant response cohort", sourceUrl: "https://www.99cef.org.tw/userfiles/2015AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; Global response cohort" })
   });
   function parseQuestions(raw, respondentCount) {
@@ -353,6 +407,9 @@
     const questions = source && source.raw ? parseQuestions(source.raw, source.respondentCount) : questionsByYear[selectedYear];
     if (!source || !Number.isInteger(Number(question)) || Number(question) < 1 || Number(question) > questions.length) return null;
     const item = questions[Number(question) - 1];
+    const responseTotal = Object.values(item.responsePercent).reduce(function (sum, value) { return sum + value; }, item.omittedPercent + item.unreadablePercent);
+    // Do not display a response-rate row that fails its source's 100% reconciliation.
+    if (Math.abs(responseTotal - 100) >= 0.15) return null;
     const choice = answer == null || answer === "" ? "" : String(answer).toUpperCase();
     if (choice && !letters.includes(choice)) return null;
     const mostCommonDistractor = letters.filter(function (letter) { return !item.acceptedAnswers.includes(letter); })

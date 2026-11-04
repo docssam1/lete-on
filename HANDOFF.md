@@ -1234,3 +1234,11 @@ Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. S
 - 2012 상세 보고서 전체(151,117/평균10.64)와 별도 연도표(150,360/10.66)는 서로 다른 보고 수치라 구분해 남겼다. coverage/근거 문서에 차이를 명시했다. 2016 검색에서 확인한 Bard 행사 표본(35명)은 전국 기준에 사용하지 않았다.
 - 검수: Node REPL에서 AMC 8 2012/2015 Grade 5–8 reference 8개를 로드하고 2012 Global, 2015 Grade 6/7 모두 Global 반응표을 확인했다. 2012/2015 Global 25개 answer key가 LIVE와 일치한다. 반응률 총합은 2012 Global과 2015 Global/Taiwan에서 100%±0.06 안에 든다. 2012 Taiwan Q12 text extraction은 95.01%로 합계 불일치해 미검증 표시했고 앱은 Global만 쓴다. `git -c core.whitespace=cr-at-eol diff --check` 통과. 웹 화면 브라우저는 현재 checkout을 제공하는 localhost 경로를 확인하지 못했으므로 UI 검수를 주장하지 않는다.
 - 작업 위치: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`, parent commit `ee14f04f4`. 로컬 변경 미커밋. `raw_youtube.txt` 사용자 원본 제외. push/deploy/Drive sync 없음. 다음은 정적 검수 후 추가 연도별 원문 검색(AMC 8 2016, 2011 및 MAA legacy report body)이다.
+
+
+### 2026-11-04 · AMC 8 2013·2014 전체 응답률 웹 자료 추가
+
+- 사용자 요청에 따라 웹 검색에서 99CEF AMC 8 2013·2014 원 보고서의 Global 및 Taiwan 문항별 선택·공란·판독불가 비율을 확보했다. 전체 인원은 각 모집단 2013 Global 149,709/Taiwan 9,811, 2014 Global 144,737/Taiwan 9,199이다. 정답 표식은 LIVE의 각 연도 키와 확인했다. 자료는 `amc8-2013-global-taiwan-item-response.csv`, `amc8-2014-global-taiwan-item-response.csv`에 50행씩 들어간다.
+- 런타임은 2013·2014 Global 전체집단 분포를 모든 선택 학년에 공통으로 보여준다. 2013 MEC 63명/55명 학년별 학교 표본은 provenance로만 두어 Global 응답 테이블을 덮지 않게 했다. 2015 단일 학교 표본도 기존에 Global 우선 처리되어 있다. cache query `20261104-10`으로 갱신했다.
+- 기존 Node 회귀 검사 파일의 2013/2015 학교 표본 기대값을 Global runtime에 맞춰 변경했다. bundled Node REPL에서 수정 모듈을 불러 2012–2015 연도별 25문항, 2013/14 50개 키, 표본수, 연도별 런타임 참조 및 2013 Global Q20 자동 제외를 확인했고 이상 없음. Node CLI는 이 셸에 없어 `.cjs` 전체 테스트는 직접 실행하지 못했다. CSV 100행은 각 모집단에서 25개씩 확인했고 비율 합계는 2013 Global Q20만 99.59%로 불일치, Taiwan Q25는 원 보고서 B 선택 52.17%로 교정 후 합계 허용오차 통과; Q20은 원자료 보존 및 runtime 제외. `git -c core.whitespace=cr-at-eol diff --check` 통과. 2013/14 원 PDF 링크는 웹 도구로 본문 확인했으나 terminal HTTP는 404를 반환했고 UI 검수는 아직 하지 않았다.
+- 다음: 검증 후 이 추가분을 커밋. 이어 AMC 8 2016 및 MAA legacy report body를 웹에서 계속 찾는다. `raw_youtube.txt` 미추적 파일은 건드리거나 스테이징하지 않는다. push/deploy/Drive sync 없음.

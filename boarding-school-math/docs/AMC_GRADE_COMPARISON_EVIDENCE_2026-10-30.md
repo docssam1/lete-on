@@ -458,3 +458,11 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - The same report's Global 25-item answer-choice table is connected to the review lookup, and both Global/Taiwan tables are preserved in `amc8-2012-global-taiwan-item-response.csv`. Its 25 answer markers were checked against the [LIVE 2012 answer key](https://live.poshenloh.com/past-contests/amc8/2012/answers). The screen uses only the Global cohort. Taiwan Q12 in text extraction totals 95.01%; the source PDF URL currently returns 404, so that cell is flagged and excluded from app lookup rather than silently adjusted.
 - The 2019 report's retrospective annual-comparison table prints 2012 overall n=150,360 and mean 10.66, unlike the 2012 detailed report's own total (151,117/10.64). The grade and response lookup uses the detailed report only; the two report-specific figures are preserved separately and not merged or silently corrected.
 - Search results for 2016 included a Bard Math Circle report for 35 test takers. This local-event cohort was excluded from national comparisons. Continue searching for a complete 2016 report.
+
+
+### 2026-11-04 웹 검색: 2013·2014 AMC 8 전체 응답률표
+
+- 99CEF 원 보고서의 Global/Taiwan 문항별 답안 선택률, 공란, 판독 불가율을 각 25문항씩 회수했다. 보고서 전체 인원은 2013 Global 149,709·Taiwan 9,811, 2014 Global 144,737·Taiwan 9,199이다. 근거: [2013 분석 보고서](https://www.99cef.org.tw/userfiles/2013AMC8Report.pdf) 10–11쪽, [2014 분석 보고서](https://www.99cef.org.tw/userfiles/2014AMC8Summary.pdf) 11–12쪽.
+- 2013 Global Q20 보고서 행은 응답률 총합이 99.59%여서 원자료 수치를 유지하고 런타임 조회에서만 제외한다. 2013 Taiwan Q25의 B 선택률은 보고서 표의 52.17%로 바로잡아 합계를 재확인했다. 각 보고서 정답 표식은 [LIVE 2013 정답표](https://live.poshenloh.com/past-contests/amc8/2013/answers), [LIVE 2014 정답표](https://live.poshenloh.com/past-contests/amc8/2014/answers)와 대조했다. Global 정답키 25개씩 모두 일치한다.
+- 응답 자료는 `amc8-2013-global-taiwan-item-response.csv`, `amc8-2014-global-taiwan-item-response.csv`에 총 100행으로 저장했고, 런타임은 전 학년 공통 whole-Global 분포를 사용한다. 2013년 Mathematics Ed Clinic의 63명 Grade 7/55명 Grade 8 학교 표본은 출처 추적용으로 남기되 앱의 전체 집단 응답률을 덮어쓰지 않는다. 이 분포는 과거 참가자 집단의 문항별 응답 맥락이며 개인 등급·현재 학년 규준으로 해석하지 않는다.
+- 소스 리포트 PDF 직접 URL은 이 환경의 HTTP 요청에서 404였지만 웹 검색 도구가 PDF 페이지 본문을 읽었고, 보고서/답안 출처 링크는 CSV에 그대로 남겼다. 2013·2014 추가분의 웹 브라우저 화면 검수는 미실시.
