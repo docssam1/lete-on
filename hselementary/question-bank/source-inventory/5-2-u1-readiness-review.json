@@ -331,7 +331,9 @@
           "classification": "포장 단위와 매출액의 지폐 교환",
           "candidate": "조건부",
           "reviewNote": "495kg은 40kg 포대 12개와 15kg이 남는다. 남은 15kg을 13번째 포대에 넣어 같은 값으로 판다고 가정하면 120장이다. 12포대만 팔아 얻는 111장은 남은 쌀을 모두 팔았다는 조건과 맞지 않는다. 남은 쌀의 포장·판매 조건 및 공식 답안 확인 전 보류한다.",
-          "status": "source-ambiguity-answer-key-pending"
+          "status": "source-ambiguity-answer-key-pending",
+          "similarRuntimeTypeId": "5-2-u1-practice-32-clarified-similar",
+          "similarNote": "남은 쌀도 별도 포대로 같은 가격에 판매함을 명시한 별도 유사문항이다. 원문 정답 확정과 구분한다."
         }
       ]
     },
