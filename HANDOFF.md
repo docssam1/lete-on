@@ -1801,3 +1801,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 99CEF의 [2011 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2011AMC8Summary.pdf)에서 27회 대회의 세계·대만 점수 분포표를 찾았다. Internet Archive 보존 PDF의 인쇄 p.6을 렌더링해 Apple Vision OCR과 육안으로 숫자를 대조했다.
 - 세계 점수별 26개 빈도 합은 152,745명, 가중평균 10.7565→10.76, 20점 이상 6,709명, 만점 284명으로 보고서 요약과 모두 맞는다. 대만 빈도는 별도 모집단으로 두고 GFIELD 세계 응시자 비교에는 연결하지 않았다.
 - `amc8-2011-overall-score-counts.csv`와 전체코호트 lookup/결과 안내를 갱신했다. 결과의 점수 위치는 점수보다 낮은 세계 응시자의 과거 비율이며 공식 percentile·학년 순위·현재 규준·능력 등급이 아니다.
+
+## 2026-11-05 웹 검색: 2003–2004 AMC 8 만점자 수 정정
+
+- MAA 작성 2006 AMC 8 연례 보고서의 Table 1에서 연도별 perfect papers 값 `293 79 50 192 126`이 인접 연도 열과 웹 텍스트에서 합쳐져 `50192126`으로 추출됐다. 이전에는 이를 잘못 2004=501, 2003=92로 입력했다. 표의 열 순서(2006→2002)를 따라 2004=50, 2003=192, 2002=126으로 바로잡았다.
+- 2004=50은 MAA 작성 2005 연례 보고서의 `Table III: 2004 AMC 8 National Statistics`에서 154,590개 답안지·평균 9.94와 함께 직접 교차 확인한다. 2002–2004 전체 점수 빈도는 이번 검색에서도 회수되지 않아 점수 백분위/분포 진단은 만들지 않는다.
+- 수정 파일: `boarding-school-math/competition/historical-amc-grade/amc8-overall-cohort-summary-2002-2020.csv`, `boarding-school-math/competition/amc8-overall-cohort-reference.js`, `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. 출처: [MAA 2006 AMC 8 report, Table 1](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary), [MAA 2005 annual report, 2004 AMC 8 Table III](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions).
+- 검수: Python으로 CSV와 런타임의 2002–2004 perfect-paper 값 일치(126/192/50)를 확인했고 `git diff --check` 통과. `raw_youtube.txt` untouched; no push/deployment/Drive sync. 다음: AMC 8 2002–04의 전체 점수 빈도와 미회수 연도 통계를 계속 검색하고, 공개 자료로 확인되지 않은 값은 제품에 추정 입력하지 않는다.
