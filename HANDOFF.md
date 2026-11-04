@@ -1905,3 +1905,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - AMC 8 후속 연습에 정육면체 전개도와 체스판 도미노 타일링 불변량 문항을 추가했다. 저장소는 원본 시험 텍스트를 복제하지 않고 회차별 원문/인쇄/정답/해설 출처를 연결하며, 이 두 문항은 지필드가 새로 쓴 후속 연습이다.
 - 현재 후속 bank는 AMC 8 45, AMC 10 37, AMC 12 43, AIME 38문항이다. 최소 한 원본 개념 태그가 연결되는 원본 문항은 각각 983/1,025 (95.9%), 1,186/1,300 (91.2%), 2,552/3,110 (82.1%), 978/1,065 (91.8%)다. 태그 일치만 잰 수치로 난이도 동등성이나 학년 판정은 뜻하지 않는다. 두 새 문항의 답과 설명을 직접 점검했고 `git diff --check`를 실행했다. 테스트는 실행하지 않았다.
 - `raw_youtube.txt`는 보존한다. 로컬 커밋만 가능하며 푸시·배포·Drive 동기화는 하지 않았다. 다음 작업은 가장 자주 남은 원본 개념 태그에 맞춰 새 문제를 보완하고, 실제 회차 페이지의 선택·답 입력·해설·연습 연결 흐름을 이어 검토한다.
+
+### 2026-11-05 · AMC 10/12 및 AIME 원본 개념 후속 연습 보완
+
+- 원본 개념 빈도 상위에서 AMC 10 정다각형·직사각형, AMC 12 제곱차·자릿값·각도 추적, AIME 진법·공통 내접선을 골라 지필드 창작 문항 7개를 추가했다. 문항마다 힌트, 단계별 풀이, 생각을 확장하는 연결 질문을 넣었다. 모든 `sourceConcepts`는 해당 대회 원본 인벤토리에 존재하는 태그인지 확인했다.
+- 갱신한 원본 문항-후속 bank 태그 겹침은 AMC 8 983/1,025 (95.9%), AMC 10 1,192/1,300 (91.7%), AMC 12 2,599/3,110 (83.6%), AIME 986/1,065 (92.6%)다. 은행 수는 AMC 8 45, AMC 10 39, AMC 12 46, AIME 40이다. 겹침률은 원본 한 문항에서 bank 태그 하나 이상이 맞는지 센 값이며 난이도나 학년을 판정하지 않는다.
+- 다음 태그 공백은 AMC 8 counting-integers-in-a-range / circumference / transformation; AMC 10 cube-geometry / prime / systematic-listing / dice-probability; AMC 12 angle-chasing / distance-formula / volume / logical-deduction; AIME distance-formula / incircle-incenter-and-inradius / complementary-counting / volume 순으로 남아 있다. 이어서 빈도 상위부터 보완한다.
+- 수정: AMC 10/12/AIME bank, 세 연습 페이지 캐시 키, historical AMC README, 이 인수인계. 원본 인벤토리 6,500행을 기준으로 태그 중첩을 재집계하고 새 문항의 답과 풀이를 직접 계산해 대조했다. `git diff --check` 실행; 테스트는 실행하지 않는다. `raw_youtube.txt` 보호; 로컬 커밋만 허용, push·배포·Drive 동기화 없음.
