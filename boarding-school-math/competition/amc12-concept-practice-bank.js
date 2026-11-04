@@ -370,6 +370,22 @@
       hint: "먼저 ∠DBC를 구한 다음, 삼각형 BDC의 세 각의 합을 이용해요.",
       solution: ["∠DBC = ∠ABC − ∠ABD = 60° − 20° = 40°입니다.", "삼각형 ABC에서 ∠C = 180° − 40° − 60° = 80°입니다. D가 AC 위에 있으므로 ∠BCD=80°입니다.", "삼각형 BDC에서 ∠BDC = 180° − 40° − 80° = 60°입니다."],
       connection: "∠ABD가 20°가 아니라 25°이면 ∠BDC는 어떻게 바뀌나요?"
+    },
+    {
+      id: "amc12-gap-angle-bisector-01", sourceConcepts: ["angle-bisector", "triangle-angle-sum", "angle-chasing"], domain: "기하", stage: "유형", title: "각의 이등분선과 삼각형 각의 합 연결하기",
+      prompt: "삼각형 ABC에서 ∠A=30°, ∠B=70°입니다. AD는 ∠A의 이등분선이고 D는 BC 위에 있습니다. ∠ADB는 몇 도인가요?",
+      choices: ["75°", "80°", "85°", "90°", "95°"], answer: 4,
+      hint: "각의 이등분선이 만드는 삼각형 ABD에서 A의 각은 30°의 절반이에요.",
+      solution: ["AD가 ∠A를 이등분하므로 ∠BAD=15°입니다.", "D가 BC 위에 있으므로 ∠ABD=∠ABC=70°입니다.", "삼각형 ABD에서 ∠ADB=180°−15°−70°=95°입니다."],
+      connection: "∠B를 80°로 바꾸면 ∠ADB는 어떻게 변하나요?"
+    },
+    {
+      id: "amc12-gap-coordinate-distance-01", sourceConcepts: ["distance-formula", "coordinate-geometry", "pythagorean-theorem"], domain: "기하", stage: "연결", title: "같은 거리에 있는 점의 좌표 구하기",
+      prompt: "점 P는 y축 위에 있고 A=(1,2), B=(5,6)에서 같은 거리에 있습니다. P의 y좌표는 얼마인가요?",
+      choices: ["5", "6", "7", "8", "9"], answer: 2,
+      hint: "P=(0,y)라 두고 PA²=PB²를 세우면 제곱근을 계산하지 않아도 돼요.",
+      solution: ["P=(0,y)라고 놓으면 PA²=1+(y−2)²이고 PB²=25+(y−6)²입니다.", "두 거리가 같으므로 1+(y−2)²=25+(y−6)²입니다.", "전개해 정리하면 8y=56이므로 y=7입니다."],
+      connection: "P가 y축 대신 x축 위에 있을 때는 어떤 좌표를 미지수로 두나요?"
     }
   ];
 

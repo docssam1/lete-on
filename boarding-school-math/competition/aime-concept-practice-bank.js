@@ -27,7 +27,7 @@
       connection: "다항식의 차수 조건이 없으면 P(1), P(2), P(3)만으로 P(4)를 정할 수 있을까요?"
     },
     {
-      id: "aime-g8-geometry-01", sourceConcepts: ["triangle-area", "heron-formula"], domain: "기하", stage: "개념", title: "세 변의 길이로 삼각형 넓이 구하기",
+      id: "aime-g8-geometry-01", sourceConcepts: ["triangle-area"], domain: "기하", stage: "개념", title: "세 변의 길이로 삼각형 넓이 구하기",
       prompt: "세 변의 길이가 13, 14, 15인 삼각형의 넓이는 얼마인가요?",
       answer: 84,
       hint: "헤론의 공식에서 먼저 반둘레를 구해요.",
@@ -35,7 +35,7 @@
       connection: "높이를 직접 그려 구하는 방법과 헤론의 공식은 어떤 정보가 다르게 필요한가요?"
     },
     {
-      id: "aime-g8-number-02", sourceConcepts: ["divisibility", "prime-factorization", "divisor-count"], domain: "정수론", stage: "유형", title: "약수의 개수 조건으로 최소 정수 찾기",
+      id: "aime-g8-number-02", sourceConcepts: ["divisibility", "prime-factorization", "factor-counting"], domain: "정수론", stage: "유형", title: "약수의 개수 조건으로 최소 정수 찾기",
       prompt: "18의 배수 중 양의 약수가 정확히 12개인 가장 작은 정수는 얼마인가요?",
       answer: 72,
       hint: "소인수분해의 지수에 1을 더한 수들의 곱이 12가 되어야 해요.",
@@ -97,6 +97,22 @@
       hint: "D를 꼭짓점으로 하는 두 변의 좌표 차를 이용해 넓이를 구할 수 있어요.",
       solution: ["좌표는 P = (2, 0), Q = (10, 3), D = (0, 10)입니다.", "D를 기준으로 한 두 벡터는 (2, −10), (10, −7)이고, 행렬식의 절댓값은 |2 × (−7) − (−10) × 10| = 86입니다.", "삼각형 넓이는 1/2 × 86 = 43입니다."],
       connection: "같은 넓이를 정사각형에서 바깥의 직각삼각형 넓이를 빼는 방법으로도 구해 보세요."
+    },
+    {
+      id: "aime-gap-lattice-circle-01", sourceConcepts: ["distance-formula", "pythagorean-theorem", "circle"], domain: "기하", stage: "연결", title: "원 위의 격자점 세기",
+      prompt: "x²+y²=65를 만족하는 정수 순서쌍 (x,y)는 몇 개 있나요?",
+      answer: 16,
+      hint: "65를 두 정수 제곱의 합으로 나타내고, 좌표의 부호와 순서를 세어요.",
+      solution: ["65=1²+8²=4²+7²입니다.", "서로 다른 양의 정수 제곱수 쌍은 (1,8)과 (4,7) 두 가지입니다.", "각 쌍은 좌표 순서를 바꾸는 2가지와 두 좌표의 부호를 정하는 4가지가 있어 모두 2×2×4=16개입니다."],
+      connection: "x²+y²=25에서는 좌표가 0인 해를 부호와 순서 세기에 어떻게 반영해야 하나요?"
+    },
+    {
+      id: "aime-gap-incircle-13-14-15-01", sourceConcepts: ["incircle-incenter-and-inradius", "triangle-area", "pythagorean-theorem"], domain: "기하", stage: "유형", title: "삼각형의 넓이와 반둘레로 내접원 반지름 구하기",
+      prompt: "변의 길이가 13, 14, 15인 삼각형의 내접원 반지름을 구하세요.",
+      answer: 4,
+      hint: "길이 14인 변을 밑변으로 잡고 높이를 피타고라스 정리로 구한 뒤, 넓이와 반둘레의 관계를 이용해요.",
+      solution: ["길이 14인 변에 꼭짓점에서 수선을 내립니다. 밑변의 한쪽 조각을 x라 하면 x²+h²=13², (14−x)²+h²=15²입니다.", "두 식을 빼면 196−28x=56이므로 x=5이고, h=12입니다. 삼각형 넓이는 14×12÷2=84입니다.", "반둘레는 (13+14+15)÷2=21입니다. 넓이=내접원 반지름×반둘레이므로 반지름은 84÷21=4입니다."],
+      connection: "삼각형의 넓이와 반둘레가 주어졌을 때 내접원 반지름을 바로 구할 수 있는 이유를 그림으로 설명해 보세요."
     }
   ];
 

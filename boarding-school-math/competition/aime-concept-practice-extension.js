@@ -98,7 +98,7 @@
       connection: "n²이 72의 배수가 되도록 조건을 바꾸면 n은 어떤 수의 배수여야 하나요?"
     },
     {
-      id: "aime-gap-difference-squares-01", sourceConcepts: ["difference-of-squares", "factorization", "counting-integers-in-a-range"], domain: "정수론", stage: "유형", title: "두 제곱수의 차를 인수쌍으로 바꾸기",
+      id: "aime-gap-difference-squares-01", sourceConcepts: ["difference-of-squares", "factoring", "counting-integers-in-a-range"], domain: "정수론", stage: "유형", title: "두 제곱수의 차를 인수쌍으로 바꾸기",
       prompt: "양의 정수 x > y가 x² − y² = 45를 만족합니다. 가능한 순서쌍 (x, y)는 몇 개인가요?", answer: 3,
       hint: "x² − y²를 두 인수의 곱으로 나타내고 45의 인수쌍을 찾아요.",
       solution: ["(x − y)(x + y) = 45입니다. 두 인수는 홀수이고 첫 인수가 둘째 인수보다 작습니다.", "가능한 양의 홀수 인수쌍은 (1,45), (3,15), (5,9)입니다.", "각 쌍에서 x와 y는 양의 정수로 정해지므로 가능한 순서쌍은 3개입니다."],

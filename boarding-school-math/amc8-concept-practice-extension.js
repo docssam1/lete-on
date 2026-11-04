@@ -108,7 +108,7 @@
       connection: "세 길이를 모두 2배로 늘리면 부피가 몇 배가 되는지 곱셈으로 설명해 보세요."
     },
     {
-      id: "amc8-g7-practice-date-time-01", domain: "data", sourceConcepts: ["date-and-time", "modular-arithmetic", "elapsed-time"], standard: "수 감각·비율", focus: "경과한 날짜의 요일 구하기", stage: "유형",
+      id: "amc8-g7-practice-date-time-01", domain: "data", sourceConcepts: ["date-and-time", "modular-arithmetic"], standard: "수 감각·비율", focus: "경과한 날짜의 요일 구하기", stage: "유형",
       prompt: "어느 달의 1일이 월요일입니다. 100일 뒤는 무슨 요일인가요?",
       choices: ["월요일", "화요일", "수요일", "목요일", "금요일"], answer: 2,
       hint: "한 주가 7일마다 반복되므로 100을 7로 나눈 나머지를 살펴보세요.",
@@ -226,6 +226,22 @@
       hint: "체스판의 두 색 칸 수를 세고, 도미노 하나가 각 색 칸을 몇 개씩 덮는지 확인해요.",
       solution: ["대각선으로 마주 보는 두 모서리는 체스판에서 같은 색입니다.", "두 칸을 제거하면 한 색은 30칸, 다른 색은 32칸 남습니다.", "도미노 하나는 각 색 칸을 한 칸씩 덮으므로 두 색의 수가 같아야 합니다. 따라서 이 판은 덮을 수 없습니다."],
       connection: "서로 다른 색의 모서리 칸 두 개를 제거하면 이 색칠 논증으로는 어떤 결론까지 내릴 수 있나요?"
+    },
+    {
+      id: "amc8-g7-practice-count-integer-range-01", domain: "counting", sourceConcepts: ["counting-integers-in-a-range", "divisibility"], standard: "수 감각·경우의 수", focus: "음수를 포함한 범위에서 배수 세기", stage: "유형",
+      prompt: "−8 이상 15 미만인 정수 중 4의 배수는 몇 개 있나요?",
+      choices: ["4개", "5개", "6개", "7개", "8개"], answer: 2,
+      hint: "범위의 양 끝에 가까운 4의 배수를 수직선에 차례로 적어요.",
+      solution: ["조건을 만족하는 4의 배수는 −8, −4, 0, 4, 8, 12입니다.", "15는 포함하지 않으며, 16은 범위 밖입니다.", "따라서 모두 6개입니다."],
+      connection: "범위를 −8 이상 16 이하로 바꾸면 몇 개가 더 포함되나요?"
+    },
+    {
+      id: "amc8-g7-practice-circumference-ratio-01", domain: "geometry", sourceConcepts: ["circumference", "circle", "ratio-and-proportion"], standard: "기하·공간", focus: "원의 반지름과 둘레의 비례 관계", stage: "개념 연결",
+      prompt: "반지름이 4cm인 원과 반지름이 7cm인 원의 둘레의 차는 얼마인가요?",
+      choices: ["3πcm", "6πcm", "8πcm", "11πcm", "22πcm"], answer: 1,
+      hint: "두 원의 둘레를 각각 2πr로 나타내고 큰 쪽에서 작은 쪽을 빼요.",
+      solution: ["반지름 7cm인 원의 둘레는 2π × 7 = 14πcm입니다.", "반지름 4cm인 원의 둘레는 2π × 4 = 8πcm입니다.", "둘레의 차는 14π − 8π = 6πcm입니다."],
+      connection: "두 원의 반지름이 모두 3배가 되면 둘레의 차는 몇 배가 되나요?"
     }
   ];
 

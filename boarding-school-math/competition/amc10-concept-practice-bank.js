@@ -51,7 +51,7 @@
       connection: "지수가 2026 대신 2027이라면 주기의 어느 자리를 사용하나요?"
     },
     {
-      id: "amc10-g7-geometry-01", domain: "기하", sourceConcepts: ["optimization", "rectangle-area", "area"], stage: "개념", title: "둘레가 정해진 직사각형의 넓이 비교",
+      id: "amc10-g7-geometry-01", domain: "기하", sourceConcepts: ["optimization", "rectangle", "area"], stage: "개념", title: "둘레가 정해진 직사각형의 넓이 비교",
       prompt: "둘레가 40인 직사각형 중 넓이가 가장 큰 도형의 넓이는 얼마인가요? 변의 길이는 양의 실수입니다.",
       choices: [80, 96, 99, 100, 120], answer: 3,
       hint: "가로와 세로의 합은 20입니다. 합이 같은 두 수의 곱은 두 수가 같을 때 가장 커요.",
@@ -313,6 +313,22 @@
       hint: "가로와 세로의 합과 두 변으로 만든 직각삼각형의 빗변을 이용해요.",
       solution: ["가로를 a, 세로를 b라 하면 a + b = 17이고 a² + b² = 13² = 169입니다.", "(a + b)² = a² + 2ab + b²이므로 289 = 169 + 2ab입니다.", "따라서 ab = 60이고, 직사각형의 넓이는 60cm²입니다."],
       connection: "둘레를 그대로 두고 대각선이 더 길어지면 직사각형의 넓이는 어떻게 변할까요?"
+    },
+    {
+      id: "amc10-gap-cube-space-diagonal-01", domain: "기하", sourceConcepts: ["cube-geometry", "3d-geometry", "pythagorean-theorem"], stage: "유형", title: "정육면체의 공간 대각선 구하기",
+      prompt: "한 모서리의 길이가 8cm인 정육면체에서 서로 마주 보는 꼭짓점 사이의 거리는 얼마인가요?",
+      choices: ["8√2cm", "8√3cm", "12cm", "16cm", "16√2cm"], answer: 1,
+      hint: "먼저 한 면의 대각선을 구한 뒤, 그 대각선과 높이로 직각삼각형을 만들어요.",
+      solution: ["정사각형 한 면의 대각선 길이는 √(8²+8²)=8√2cm입니다.", "공간 대각선 d는 d²=(8√2)²+8²=128+64=192를 만족합니다.", "따라서 d=√192=8√3cm입니다."],
+      connection: "모서리 길이를 두 배로 늘리면 공간 대각선은 몇 배가 되나요?"
+    },
+    {
+      id: "amc10-gap-prime-factor-divisors-01", domain: "정수론", sourceConcepts: ["prime", "factor-counting", "divisibility"], stage: "연결", title: "소인수 지수로 약수의 개수 세기",
+      prompt: "360의 양의 약수 중 6의 배수인 것은 몇 개 있나요?",
+      choices: [6, 8, 10, 12, 16], answer: 3,
+      hint: "360을 소인수분해한 다음, 약수가 6의 배수가 되기 위해 필요한 지수를 따져요.",
+      solution: ["360=2³×3²×5입니다. 약수는 2^a×3^b×5^c 꼴이며 0≤a≤3, 0≤b≤2, 0≤c≤1입니다.", "6의 배수가 되려면 a≥1, b≥1이어야 합니다. a는 1,2,3의 3가지, b는 1,2의 2가지입니다.", "c는 0 또는 1이라 2가지이므로 약수는 3×2×2=12개입니다."],
+      connection: "12의 배수인 약수만 세려면 a와 b의 조건이 어떻게 달라지나요?"
     }
   ];
 

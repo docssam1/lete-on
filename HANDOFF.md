@@ -1912,3 +1912,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 갱신한 원본 문항-후속 bank 태그 겹침은 AMC 8 983/1,025 (95.9%), AMC 10 1,192/1,300 (91.7%), AMC 12 2,599/3,110 (83.6%), AIME 986/1,065 (92.6%)다. 은행 수는 AMC 8 45, AMC 10 39, AMC 12 46, AIME 40이다. 겹침률은 원본 한 문항에서 bank 태그 하나 이상이 맞는지 센 값이며 난이도나 학년을 판정하지 않는다.
 - 다음 태그 공백은 AMC 8 counting-integers-in-a-range / circumference / transformation; AMC 10 cube-geometry / prime / systematic-listing / dice-probability; AMC 12 angle-chasing / distance-formula / volume / logical-deduction; AIME distance-formula / incircle-incenter-and-inradius / complementary-counting / volume 순으로 남아 있다. 이어서 빈도 상위부터 보완한다.
 - 수정: AMC 10/12/AIME bank, 세 연습 페이지 캐시 키, historical AMC README, 이 인수인계. 원본 인벤토리 6,500행을 기준으로 태그 중첩을 재집계하고 새 문항의 답과 풀이를 직접 계산해 대조했다. `git diff --check` 실행; 테스트는 실행하지 않는다. `raw_youtube.txt` 보호; 로컬 커밋만 허용, push·배포·Drive 동기화 없음.
+
+### 2026-11-05 · 다음 원본 개념 공백 보완
+
+- AMC 8에 정수 범위의 배수 개수·원둘레, AMC 10에 정육면체 공간 대각선·약수의 소인수 세기, AMC 12에 각 이등분·등거리 좌표, AIME에 원 위 격자점·13-14-15 삼각형 내접원 반지름을 추가했다. 전부 지필드가 작성한 연습 문항이며 원본 문항 본문은 포함하지 않는다.
+- 커버리지 집계: AMC 8 987/1,025 (96.3%), AMC 10 1,205/1,300 (92.7%), AMC 12 2,633/3,110 (84.7%), AIME 995/1,065 (93.4%). bank 문항 수는 각각 47, 41, 48, 42개다. 한 원본 문항의 공개 개념 태그 중 하나 이상이 bank와 겹치는지를 센 수치다.
+- 이어서 남는 높은 빈도 태그: AMC 8 transformation·permutations·telescoping; AMC 10 systematic-listing·dice-probability·difference-of-squares·recursion; AMC 12 volume·logical-deduction·tangent-line·perfect-square; AIME complementary-counting·volume·tangent-line·greatest-common-divisor. 해당 개념으로 계속 확장한다.
+- 수정: AMC 8 extension과 페이지 캐시 키, AMC 10/12/AIME bank, historical AMC README, 이 인수인계. 새 태그를 원본 인벤토리와 대조하고 풀이·정답을 직접 검산했다. `git diff --check` 실행; 테스트는 실행하지 않는다. `raw_youtube.txt` 보호; 로컬 커밋만, push·배포·Drive 동기화 없음.
