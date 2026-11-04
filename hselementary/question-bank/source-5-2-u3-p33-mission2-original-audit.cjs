@@ -3,6 +3,8 @@ const assert = require("node:assert/strict");
 const path = require("node:path");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
 const {model:m,reflect}=require("./source-5-2-u3-p33-mission2-original.js");
+const {execFileSync}=require("node:child_process");
+assert.match(execFileSync("python3",[path.join(__dirname,"source-5-2-u3-p33-mission2-geometry-audit.py")],{encoding:"utf8"}),/cm²: 496/,"independent exact intersection check");
 const area=ps=>Math.abs(ps.reduce((sum,p,i)=>{const q=ps[(i+1)%ps.length];return sum+p[0]*q[1]-q[0]*p[1]},0))/2;
 assert.equal(area(m.points),22.5);assert.equal(area(m.points.map(reflect)),22.5);assert.equal(area(m.overlap),7);
 assert.equal((area(m.points)-area(m.overlap))*2*m.side**2,496);
