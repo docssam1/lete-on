@@ -581,3 +581,11 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 2024년 점수분포는 [2024-02-28 당시 MAA EduView 링크를 포함한 결과 논의](https://www.dcurbanmom.com/jforum/posts/review/15/1151558.page)에 Top 1% 22, Top 5% 18, 평균 10.75, 표준편차 4.13, 총 80,685명으로 인용되어 있다. [Think Academy의 연도별 표](https://www.thethinkacademy.com/blog/amc-8-faqs-the-ultimate-guide-for-first-time-test-takers/)는 같은 컷오프·평균이지만 80,725명으로 적는다. 원 MAA EduView 링크는 날짜가 포함된 세션 주소이며 현재 재조회에서 동일 회차 보고서 본문을 고정 보존하지 못했다. 참가자 수 차이를 해결하기 전 수치를 앱의 공식 기록으로 추가하지 않았다.
 - 재확인한 [현 MAA EduView score distribution](https://maa.edvistas.com/eduview/report.aspx?mode=6&view=1561)은 전체 cohort의 점수 구간·상위 백분율·평균·표준편차·응시자/학교 수를 출력한다. 학년 breakdown은 표시하지 않는다. 그러므로 이 자료는 향후 연도별 대회 컷오프 참고에는 쓸 수 있지만, Grade 7의 과거 또래 비교나 학년 수준 판정에는 쓸 수 없다.
 - 다음 검색 대상은 MAA EduView의 과거 회차별 정식 보고서 식별자/내보내기 경로와 2023–2025 학년별 보고서 원본이다. 그 경로가 검수될 때까지 exact-grade 역사 비교와 전체 cohort 컷오프 패널은 별도 유지한다.
+
+## 2026-11-04 후속 웹 검색: AMC 10/12 2017·2019 학년별 통계 원본 경로
+
+- 99CEF의 2017·2019 AMC10A/12A 보고서를 찾기 위해 연도별 파일명, 학년 평균 표기, Global/grade 통계 문구를 각각 검색했다. `2017AMC10A12AReport.pdf`와 `2019AMC10A12AReport.pdf`라는 추정 경로는 웹 검색에서 원문으로 확인되지 않았다. GEMT의 2017 AMC10B/12B 분석 파일도 이 검색에서는 발견하지 못했다.
+- 이름이 비슷한 99CEF PDF의 검색 결과도 URL만 믿지 않고 본문을 열어 확인했다. 검색 결과의 `2018AMC10A12AReport.pdf`는 열기 과정에서 2016 AMC10A/12A 보고서로 리다이렉트됐다. 따라서 보고서 파일명·검색 snippet만으로 연도별 통계를 전사하면 안 된다는 점을 확인했다.
+- MAA의 보존된 General Reports 메뉴에서는 2017 A/B 통계 항목(ID 64/65)이 확인되지만, 이미 coverage manifest에 기록된 대로 해당 ReportViewer 본문은 보존되지 않았다. 메뉴 존재는 학년표 회수가 아니다. [MAA 보존 메뉴](https://web.archive.org/web/20220204191809/http://amc-reg.maa.org/reports/generalreports.aspx)
+- 2019 AMC10A Grade 7 행은 기존에 학교 발행 페이지가 전국 참가자 통계로 보고한 단일 기록(n=1,982, 평균 59.72)만 들어 있다. [학교 발행 페이지](https://www.archimedean.org/amc-grade-7-student-sailalitha-kodukula-makes-history/). 이번 검색으로 그 값의 원 MAA 보고서나 Grade 8–10 표본 행을 회수하지 못해 전체 학년 비교표로 확장하거나 출처 상태를 올리지 않았다. AMC12A/B 2019 행도 추가하지 않았다.
+- 다음 근거가 될 수 있는 것은 MAA의 2017 ReportViewer 본문 회수 또는 연도·폼·지역·학년별 행이 모두 포함된 99CEF/GEMT 원 분석 PDF다. 그때까지 2017·2019의 기존 `no-grade-table-recovered` 상태와 2019 Grade 7 단일 secondary row를 분리해서 유지한다.

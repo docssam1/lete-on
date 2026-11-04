@@ -1493,3 +1493,9 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - 2025: 보고서 사본은 Top 1%=23, Top 5%=19, 평균 11.74를 기록한다. 참가자 수는 사본 79,511과 별도 MAA표 재게시 79,524가 13명 차이다. 2024도 컷오프/평균은 같지만 참가자 수가 한 출처는 80,685, 다른 출처는 80,725로 차이 난다. 차이를 해결하지 못해 신규 CSV나 공식 기록에 넣지 않았다.
 - 공개 MAA EduView는 전체 cohort 통계만 노출한다. 연도별 학년 benchmark를 보강하려면 과거 회차 보고서 식별자와 정확 학년 원표 회수가 남았다. 상세 검색 기록과 직접 출처는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 추가했다.
 - 이번 작업은 문서만 수정했으며 데이터·앱 로직은 변경하지 않았다. `raw_youtube.txt` untouched; local only; no push, deployment, or Drive sync.
+
+## 2026-11-04 후속 웹 검색: AMC10/12 2017·2019 학년표 원본 경로
+
+- 2017·2019 AMC10A/12A 99CEF 분석 PDF와 2017 GEMT AMC10B/12B 보고서를 연도·파일명·학년 통계 키워드로 검색했으나 원문을 회수하지 못했다. 검색 결과의 2018 PDF 링크를 열자 2016 본문으로 리다이렉트되는 사례도 있어 파일명/snippet만 믿지 않도록 기록했다.
+- 2017 MAA General Reports 메뉴 ID 64/65는 보존돼도 ReportViewer 본문은 없다. 2019 AMC10A Grade 7 n=1,982·평균 59.72는 학교 게시 페이지에 인용된 단일 secondary 행이며, 원 MAA 표와 다른 학년 행은 찾지 못했다. 2019 AMC12A/B와 이를 전국 학년 비교표로 확장하지 않았다.
+- 상세 출처/검색 결과는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 남겼다. 다음 단계는 MAA ReportViewer 본문 경로 또는 공식 운영기관 연례 PDF의 원문 회수다. `raw_youtube.txt` unchanged; local only; no push/deploy/Drive sync.
