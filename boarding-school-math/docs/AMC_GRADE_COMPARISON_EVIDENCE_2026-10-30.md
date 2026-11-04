@@ -541,3 +541,9 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 각 문항 집단 응답 분모는 보고서 p.4 점수 분포 총계 41,682로 기록했다. 보고서 p.3 요약 통계의 전체인원 42,032와는 차이가 있어 grade mean 데이터와 마찬가지로 수치를 보정하지 않았다. 백분율은 각 질문별 반올림 값이므로 100%와 약간 다를 수 있다.
 - 기존 AMC10/12 item response lookup에 2014 AMC10B Global 행을 추가했다. 결과 화면은 자기 오답 선택 비율 또는 가장 많이 선택된 오답 비율을 그 과거 집단 응답과 함께 보여 준다. 이는 정답률/선택 분포 맥락이며 학생의 오개념을 판정하거나 학년·백분위·현재 규준을 뜻하지 않는다. 원본 문항 해설 링크와 함께 사용한다.
 - 데이터: [`amc10b-2014-item-response-percent.csv`](../competition/historical-amc-grade/amc10b-2014-item-response-percent.csv). 출처: [GEMT 2014 report](https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf), [LIVE 2014 AMC10B answer key](https://live.poshenloh.com/past-contests/amc10/2014B/answers).
+
+## 2026-11-04 · 2016 AMC10A/AMC12A Global 문항별 선택 비율
+
+- 웹에서 99CEF의 [2016 AMC10A/12A 분석 보고서](https://www.99cef.org.tw/userfiles/2016AMC10A12AReport.pdf)를 찾아 Global 모집단 답변표를 회수했다. AMC10A는 인쇄 p.11, AMC12A는 p.22에 A–E 선택·무응답·판독불가 비율이 있다. Global 총 인원은 각각 65,999명과 55,279명이다. Taiwan 표는 혼합하지 않았다.
+- 25개 정답 별표는 [LIVE 2016 AMC10A](https://live.poshenloh.com/past-contests/amc10/2016A) 및 [LIVE 2016 AMC12A](https://live.poshenloh.com/past-contests/amc12/2016A)와 대조했다. 마지막 판독불가 비율은 검색 텍스트에서 행이 복제·깨져 보여 이어진 깨끗한 중복 값(AMC10A Q25 0.01%, AMC12A Q25 0.02%)을 CSV에 기록하고 전사 주석을 붙였다.
+- CSV 2개와 기존 AMC10/12 응답 lookup에 반영했다. 이는 과거 전체 Global 응답률이며 Grade 7 비교 기준, 현재 규준, 개인의 오개념 판정이 아니다. PDF는 검색 인덱스 텍스트에서 전사했으며 로컬 렌더·Vision 대조는 아직 하지 않았다.
