@@ -815,8 +815,11 @@
       : null;
     overallCohortSection.hidden = !overallCohort;
     if (overallCohort) {
-      const populationLabel = overallCohort.population === "Global" ? "세계 응시자" : "미국·캐나다 응시자";
-      setText("amc8-overall-cohort-summary", `${overallCohort.year} AMC 8 · Grade ${grade} · 입력 점수 ${overallCohort.learnerScore}/25점 · ${populationLabel} ${overallCohort.participants.toLocaleString("en-US")}명 · 평균 ${overallCohort.meanScore.toFixed(2)}점 · 만점 ${overallCohort.perfectScores.toLocaleString("en-US")}명 · 20점 이상 ${overallCohort.scoreAtLeast20.toLocaleString("en-US")}명`);
+      const populationLabel = overallCohort.population === "Global" ? "세계 응시자" : overallCohort.population === "United States" ? "미국 응시자" : "미국·캐나다 응시자";
+      const cohortDetails = overallCohort.participants === null
+        ? `${populationLabel} 평균 ${overallCohort.meanScore.toFixed(2)}점`
+        : `${populationLabel} ${overallCohort.participants.toLocaleString("en-US")}명 · 평균 ${overallCohort.meanScore.toFixed(2)}점 · 만점 ${overallCohort.perfectScores.toLocaleString("en-US")}명 · 20점 이상 ${overallCohort.scoreAtLeast20.toLocaleString("en-US")}명`;
+      setText("amc8-overall-cohort-summary", `${overallCohort.year} AMC 8 · 입력 점수 ${overallCohort.learnerScore}/25점 · ${cohortDetails}`);
       const difference = overallCohort.differenceFromMean;
       setText("amc8-overall-cohort-result", difference === 0 ? "전체 응시자 평균과 같은 점수" : `전체 응시자 평균보다 ${Math.abs(difference).toFixed(2)}점 ${difference > 0 ? "높아요" : "낮아요"}`);
       $("amc8-overall-cohort-source").href = overallCohort.sourceUrl;
