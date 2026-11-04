@@ -1432,3 +1432,11 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - 개념 태그가 하나라도 일치하는 원본은 1,065개 중 528개에서 906개로 늘었다(85.1%). 이 교차표 수치는 검색·후속연습 연결 범위이지 진단 정확도나 수학적 분류 검증이 아니다.
 - 브라우저에서 2025 I 원본 복습 조건을 넣고 기존 영역 필터와 함께 확인했다. 태그에 맞는 창작 문항이 선택 영역에 따라 필터링되고, 0–999 정수 입력과 힌트·풀이가 표시된다. 분수는 세로 분수 형태로 렌더링된다.
 - 변경: `boarding-school-math/competition/aime-concept-practice-extension.js`, `boarding-school-math/aime-practice.js`, `boarding-school-math/aime-practice.html`, 본 인수인계. `raw_youtube.txt`는 수정·스테이징하지 않는다. Local only; no push, deployment, or Drive sync.
+
+## 2026-11-04 AMC 8 연도별 원본 웹 자료 확인 및 개념 연습 확장
+
+- 웹 검색으로 LIVE by Po-Shen Loh의 연도별 실제 AMC/AIME 자료를 확인했다. LIVE 아카이브는 MAA의 공식 사용 허가를 명시하고, 인쇄 가능한 원본 시험지·정답·전문 풀이를 연도별로 제공한다. 예: [2025 AMC 8 원본](https://live.poshenloh.com/past-contests/amc8/2025), [전체 AMC/AIME 과거 시험 아카이브](https://live.poshenloh.com/past-contests). MAA는 AMC 8·10·12의 공식 안내·범위를 별도로 제공한다: https://maa.org/student-programs/amc/.
+- 기존 `competition/amc-original-paper-library.js`가 위 호스트의 원본 링크를 프로그램·연도·폼별로 이미 연결한다(AMC 8 1985–2026 중 2021 제외, AMC 10/12 A/B, AIME I/II). 원문을 로컬에 중복 복사하지 않고 기존 인쇄·답안·풀이 URL 생성 경로를 유지한다.
+- 이전 AMC 8 창작 연습 9문항에 10개를 더했다: 체계적 나열, 중점 정사각형 넓이, 할인 후 세금, 평균과 중앙값, 약수 개수, 소수 곱, 역순 풀이, 정육면체 겉넓이, 완전제곱수, 짝짓기 합. 전체 연습 연결은 AMC 8 원본 개념 인벤토리 1,025문항 중 843개에서 917개로 늘었다. 이 값은 LIVE 태그 교차 범위이지 분류 정확도나 진단 성능이 아니다.
+- 신규 10문항의 태그는 원본 175개 태그 사전에 모두 존재한다. 정답·보기·필수 필드·고유 ID를 확인했다. localhost에 2025 AMC 8 Q1 복습 조건을 열어 신규 10개 전부가 표시되는 것과 연도·문항 원본 링크, 선택지 응답, 정답 피드백, 풀이 표시를 확인했다.
+- 변경: `amc8-concept-practice-extension.js`, `amc8-topic-practice.js`, `amc8-topic-practice.html`, 본 인수인계. 고정 AMC 8 모의 25문항과 원본 시험 데이터는 수정하지 않았다. `raw_youtube.txt`는 사용자 파일로 보존·제외. Local only; no push, deployment, or Drive sync.

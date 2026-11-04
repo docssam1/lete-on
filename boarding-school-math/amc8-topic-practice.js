@@ -3,7 +3,10 @@
   const bank = window.GFIELDGrade7UnitMock;
   if (!bank) return;
   const authoredPractice = window.GFIELDAMC8ConceptPractice;
-  const practiceItems = bank.items.concat(authoredPractice && Array.isArray(authoredPractice.items) ? authoredPractice.items : []);
+  const extensionPractice = window.GFIELDAMC8ConceptPracticeExtension;
+  const practiceItems = bank.items
+    .concat(authoredPractice && Array.isArray(authoredPractice.items) ? authoredPractice.items : [])
+    .concat(extensionPractice && Array.isArray(extensionPractice.items) ? extensionPractice.items : []);
   const params = new URLSearchParams(location.search);
   const requestedGrade = Number(params.get("grade"));
   const grade = Number.isInteger(requestedGrade) && requestedGrade >= 6 && requestedGrade <= 8 ? requestedGrade : 7;
