@@ -3624,6 +3624,14 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product) for (const [suffix,name] of [["exploration-1","물통에 들어 있는 물의 양 · 원문"],["exploration-2","두 분수 곱의 합 계산 · 원문"],["example-1","연속된 분수의 곱과 약분 · 원문"],["example-2","넓이의 비로 나눈 직사각형 · 원문"],["example-3","두 번째로 튀어 오를 때까지 움직인 거리 · 원문"],["example-4","직각이등변삼각형 속 정사각형 여섯 개 · 원문"]]) {
+    const id=`5-2-u2-e2-${suffix}-original`;
+    if (source52Unit2Product.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    const exploration=suffix.startsWith("exploration"), n=suffix.slice(-1);
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:exploration?"5-2-u2-e2-exploration":`5-2-u2-e2-${suffix}`,sourceItemLabel:exploration?`개념탐구 2 (${n}) 원문`:`예제 2-${n} 원문`,sourceSection:exploration?"exploration":"example",sourceTier:"advanced",sourcePdfPage:12,alternateSourcePdfPage:11,sourcePrintedPage:16,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page16Original${exploration?"Exploration":"Example"}${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:suffix==="example-1",answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 수치와 그림 및 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
   if (source52Unit2Product) for (const [suffix,name,label,section,key] of [
     ["exploration-1","전체 용량의 분수만큼 물의 양","개념탐구 2 (1) 유사문항","exploration","source52U2Page16Exploration21"],
     ["exploration-2","두 분수 곱의 합","개념탐구 2 (2) 유사문항","exploration","source52U2Page16Exploration22"],
