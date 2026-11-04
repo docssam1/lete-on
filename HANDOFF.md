@@ -1,3 +1,9 @@
+### 2026-11-04 · 2012 AMC10A Global Grade Means
+
+웹 검색에서 99CEF 2012 AMC10A/12A 분석 보고서의 전체(Global) 학년별 점수와 표본 수를 회수했다. Grade 7 1,810명/78.83, Grade 8 3,948명/81.72, Grade 9 25,498명/69.16, Grade 10 36,206명/74.25. 전체 Global 학년 묶음은 73,703명으로 보고서 참가자 수와 일치한다. 대만 열은 별도 모집단이고 `<=6`, unknown은 exact grade 비교에 사용하지 않는다.
+
+신규 CSV `boarding-school-math/competition/historical-amc-grade/amc10a-grade-means-2012-global.csv`, 화면 조회 `boarding-school-math/competition/amc-historical-grade-reference.js`, coverage manifest, README와 증거 노트를 갱신했다. 조회 모듈에서 Grade 7–10의 네 매칭과 참가자 수를 확인했다. MAA의 2012 archived ReportViewer 본문은 회수되지 않았으며, 학년 비교는 99CEF 국제 참가자 보고서에 한정된다. `raw_youtube.txt`는 미추적 상태로 보존한다.
+
 ### 2026-11-04 · 웹 검색: AMC 8 2016 공개 통계 출처 재확인
 
 2016 AMC 8 전국 학년 평균/점수표와 전국 문항응답 보고서를 MAA 보고서명·Item Difficulty 문구로 다시 검색했으나 검수 가능한 전국 원표는 찾지 못했다. 2015 MAA Teacher Manual 사본은 참가 학교별 Item Difficulty 표를 제공한다고 설명한다. 이는 학교 코호트 결과 기능이지, 전국 표본은 아니다. 2016년 상태를 `no-grade-table-recovered`로 유지하고 학교 통계를 전국 비교에 섞지 않는다. 근거: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`.

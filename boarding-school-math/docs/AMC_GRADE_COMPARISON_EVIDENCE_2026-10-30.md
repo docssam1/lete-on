@@ -694,3 +694,10 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - [99CEF 2011 AMC 8 summary PDF](https://www.99cef.org.tw/userfiles/2011AMC8Summary.pdf)의 `27th AMC8 2011` 세계 통계표에서 <=4학년 n=938, 평균 8.31; 5학년 3,456, 9.30; 6학년 22,879, 9.33; 7학년 50,176, 10.66; 8학년 72,230, 11.45를 확인했다. 이 보고서는 MAA 원본 호스트가 아닌 99CEF 국제 주관자/분석기관의 PDF이며 데이터 상태는 web-indexed PDF table text로 표시했다.
 - 학년이 기재된 다섯 그룹은 149,679명으로 보고서 전체 152,745명보다 3,066명 적다. 이 차이를 특정 학년에 배분하지 않았다. 전체 평균 10.76과 학년별 평균은 모집단 범위가 각각 보존된 별도 보고값이며, 학년별 점수 빈도표/백분위는 이 자료에서 회수하지 않았다. 한국 2011 응시집단(n=899) 결과와도 합치지 않는다.
 - CSV `competition/historical-amc-grade/amc8-grade-means-2011-99cef.csv`와 `amc-historical-grade-reference.js`에 5–8학년 평균을 추가했다. <=4 그룹은 정확 Grade에 자동 연결하지 않는다. AMC 8 2011 Grade 7 입력은 같은 연도 Grade 7 평균 및 표본을 보여 줄 수 있다.
+
+### 2026-11-04 · 2012 AMC 10A Global 학년표 추가
+
+- 웹 검색에서 [99CEF의 2012 AMC10A/12A 연례 분석 보고서](https://www.99cef.org.tw/userfiles/2012AMC10A%2612ASummary.pdf) 본문과 통계표를 찾았다. 현재 원본 경로는 접근이 불안정하고 2016 보고서로 대체되기도 하지만, Internet Archive의 [2021 PDF 저장본](https://web.archive.org/web/20210121210429id_/https://www.99cef.org.tw/userfiles/2012AMC10A&12ASummary.pdf)은 기존 2012 AMC12A 학년 자료에도 쓰이는 보존본이다.
+- 보고서 p.5의 AMC10A Global 학년별 값은 Grade 10 36,206명/74.25점, Grade 9 25,498명/69.16점, Grade 8 3,948명/81.72점, Grade 7 1,810명/78.83점이다. 원문 그룹 합계는 전체 73,703명과 일치한다. `<=6`(978명/74.90점)과 학년 미기재(5,263명/67.21점)도 CSV에 보존하되 학년별 화면 비교에서는 제외했다.
+- 같은 표의 Taiwan 행은 Global 집계와 별도다. 앱은 Global Grade 7–10 값만 같은 연도·폼·학년이 일치할 때 표시한다. 이를 백분위, 현재 학년 등급, 대회 진출 가능성으로 해석하지 않는다.
+- 원자료는 `competition/historical-amc-grade/amc10a-grade-means-2012-global.csv`, 화면 참조는 `competition/amc-historical-grade-reference.js`, 회차 범위는 coverage manifest에 반영했다. MAA의 2012 ReportViewer 본문은 보존 캡처에서 열리지 않았고 99CEF 보고서는 국제 주최기관의 별도 집계이므로, 출처 유형과 모집단을 데이터에 남긴다.
