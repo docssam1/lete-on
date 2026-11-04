@@ -41,7 +41,7 @@ const DETAILS={
 const TOPICS=C.AREAS.flatMap(a=>a.groups.flatMap((group,j)=>(DETAILS[a.id]?.[j]||group.items).map((title,i)=>({id:a.id+'-'+j+'-'+i,area:a.id,areaTitle:a.title,group:group.title,tier:group.tier,title}))));
 const ids=new Set(TOPICS.map(t=>t.id));
 function restore(v){
- const s={version:1,concepts:{},work:{},workMonth:null,reviewMonths:1};if(v?.version!==1)return s;
+ const s={version:1,concepts:{},work:{},workMonth:null,reviewMonths:1,mock:g.PlannerMockEvidence?.restore(v?.version===1?v.mock:null)||{version:1,records:[]}};if(v?.version!==1)return s;
  if(/^(20\d\d|2100)-(0[1-9]|1[0-2])$/.test(v.workMonth||''))s.workMonth=v.workMonth;
  if(Number.isFinite(+v.reviewMonths)&&+v.reviewMonths>=.5&&+v.reviewMonths<=6)s.reviewMonths=+v.reviewMonths;
  for(const [id,status]of Object.entries(v.concepts||{}))if(ids.has(id)&&Object.hasOwn(STATUSES,status))s.concepts[id]=status;
@@ -69,7 +69,7 @@ function renderWork(v,courses,month){
  return `<section class="learning-evidence"><h3>월별 학습 수행률</h3><p>정한 분량 중 실제 마친 분량을 기록합니다. 같은 단위끼리 계산하며, 단원·회차·쪽수를 섞어 평균내지 않습니다.</p>${groups.map(r=>`<p><strong>${UNITS[r.unit]} 기준 ${r.percent}%</strong> · 계획 ${r.planned}${UNITS[r.unit]} / 완료 ${r.completed}${UNITS[r.unit]}</p>`).join('')||'<p>이 달의 수행 기록이 없습니다.</p>'}<form data-learning-work class="curriculum-form"><label>교재·과정<select name="course">${courses.map(c=>`<option>${esc(c)}</option>`).join('')}</select></label><label>기록할 월<input name="month" data-learning-work-month type="month" value="${month}" required></label><div class="curriculum-fields"><label>단위<select name="unit">${Object.entries(UNITS).map(([id,t])=>`<option value="${id}">${t}</option>`).join('')}</select></label><label>계획<input name="planned" type="number" min="1" max="9999" required></label><label>완료<input name="completed" type="number" min="0" max="99999" required></label></div><p role="alert" data-learning-error></p><button type="submit">수행 분량 기록</button></form>${records.length?`<details><summary>이번 달 기록 ${records.length}개</summary><ul>${records.map(([key,r])=>{const [course,,unit]=JSON.parse(key);return `<li>${esc(course)} · ${r.completed}/${r.planned}${UNITS[unit]} · <button type="button" data-work-remove="${esc(key)}">기록 삭제</button></li>`;}).join('')}</ul></details>`:''}<aside><h4>교과·사고력 권별 테스트 · 연동 준비 중</h4><p>현재는 수행 분량을 직접 기록합니다. 별도로 개발 중인 권별 테스트가 연결되면 응시 여부·결과·보완 범위와 학습 수행 기록을 함께 확인할 계획입니다. 아직 자동 테스트 결과를 가져오거나 점수를 계산하지 않습니다.</p></aside></section>`;
 }
 function attachReviews(m,v,months=null){
- const s=restore(v),topics=TOPICS.filter(t=>s.concepts[t.id]==='review');if(!topics.length)return m;
+ const s=restore(v),topics=TOPICS.filter(t=>s.concepts[t.id]==='review');m=g.PlannerMockEvidence?.attach(m,s.mock)||m;if(!topics.length)return m;
  const n=months!==null&&Number.isFinite(+months)&&+months>0?+months:s.reviewMonths;
  const blocks=C.AREAS.filter(a=>topics.some(t=>t.area===a.id)).map(a=>({id:'concept-review-'+a.id,title:a.title+' · 체크한 개념 복습',start:0,end:n,full:n,guide:'intro',tasks:topics.filter(t=>t.area===a.id).map(t=>t.title).join(' / ')}));
  return{...m,lanes:[...m.lanes,{id:'conceptReview',title:'경시 개념 복습',current:topics.length+'개 복습 필요',blocks}],horizon:Math.max(m.horizon,n)};
