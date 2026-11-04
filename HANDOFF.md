@@ -2027,3 +2027,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - Web search surfaced the 2008 MAA *High School Results & Awards Summary* and its published Table I/II. Cross-checked the previously staged 2008 grade-group rows against the four report-wide official-participant totals and means: AMC 10A 68,101 / 58.1; 10B 34,803 / 66.6; AMC 12A 78,560 / 65.6; 12B 41,609 / 68.9. Each grade-group count sum and count-weighted mean (using the published one-decimal grade means) reconciles to the report-wide values.
 - The 2008 report's item-difficulty tables are confirmed at printed pp. 252–255, but searchable copies expose their titles/contents page rather than legible option-response rows. StudyLib's direct page presents a Cloudflare verification screen; do not work around it or transcribe guessed values. The four item-response coverage rows remain `not-found` pending a readable public copy/page image.
 - Sources: [2008 MAA-authored report mirror](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions); [2010 MAA-authored report mirror with 2008 four-year comparison tables](https://www.scribd.com/document/51428451/2010-HS-summary). Exact check is recorded in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`.
+### 2026-11-05 · 2014 AMC 12B 원문 응답률 추가
+
+- 공개 GEMT 2014 AMC10B/12B 보고서에서 AMC12B Global 전 문항 선택률을 가져와 `amc10-12-item-response-reference.js`와 문항 응답 커버리지 표에 추가했다. 25개 정답은 LIVE 답안표와 일치하고, 표본은 Global n=33,247로 한정했다. 대만 1,886명 표는 섞지 않았다. 복습 화면 데이터 스크립트의 캐시 버전도 올렸다.
+- 기존 2014 AMC12B 학년별 집계의 Global 표(인쇄 p.13)와도 대조했다. Grade 11의 PDF 텍스트 표기 `17.303`은 학년별 합계 33,247명과 일치하는 17,303으로 유지했다. 원보고서 총 평균은 68.08이다.
+- 응답률 표는 웹에서 읽은 PDF 텍스트에서 전사했으며 로컬 이미지/OCR 확인은 하지 않았다. README와 연구 기록에 이 한계, 출처, 응답 통계의 해석 범위를 적었다. 이어서 연도별 AMC 10/12 원자료의 빈 구간을 웹에서 찾아 수집한다.
+- `raw_youtube.txt`는 사용자 소유 파일로 그대로 두고 미스테이지 상태를 유지한다. 로컬 변경만 한다. push·배포·Drive 동기화는 하지 않는다.

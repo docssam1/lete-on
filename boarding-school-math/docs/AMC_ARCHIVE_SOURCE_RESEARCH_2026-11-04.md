@@ -1,5 +1,11 @@
 # AMC 원본 연도별 자료 출처 확인 · 2026-11-04
 
+## 2026-11-05 · 2014 AMC 12B 문항 응답률을 웹 원자료에서 추가
+
+GEMT의 2014 AMC10B/12B 분석 보고서에서 AMC12B Global 응답표(인쇄 p.18)를 회수해 `competition/amc10-12-item-response-reference.js`에 연결했다. 25문항의 A–E 선택 비율, 미응답률, 판독 불가 비율을 원문 값 그대로 옮겼다. 별도 LIVE 답안표의 25개 정답과 보고서 별표가 모두 일치한다. 보고서의 Global 응시자는 33,247명이며, 같은 보고서의 Taiwan 표본 1,886명은 혼합하지 않았다. 2014 AMC12B의 기존 학년별 Global 통계(인쇄 p.13)도 동일 보고서에 있어 2014 Grade 11의 `17.303` 표기를 총원과 대조해 17,303으로 정규화한 기존 값과 일치함을 다시 확인했다. 모집단 합계는 33,247명이다.
+
+이 보고서는 GEMT가 편집한 2차 자료이며 웹 PDF 텍스트를 직접 읽을 수 있었지만 로컬 페이지 이미지/OCR 대조는 되지 않았다. 따라서 화면/출처 상태는 웹 텍스트 전사로 유지한다. 이 통계는 해당 연도 전 참가자의 선택 분포를 보여 주는 복습 참고치로, 학년별 문항 통계나 현재 규준, 개인의 오개념 판정으로 사용하지 않는다. [GEMT 원 보고서](https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf) · [LIVE 2014 AMC12B 정답](https://live.poshenloh.com/past-contests/amc12/2014B/answers).
+
 ## 2026-11-05 · MAA EduView 최근 AMC 8 코호트 값 재대조
 
 MAA 공개 EduView의 `Score Distribution` 보고서를 열어 AMC 8 학년도 2022/23–2025/26을 회차별로 다시 확인했다. 표에는 상위 1%, 2.5%, 5%, 10%, 25%, 50%, 75% 점수선, 최고점, 평균, 표준편차, 점수 보고 학생 수, 학교 수가 나온다. 각 학년도의 12개 값은 [`amc8-score-distribution-2023-2026-maa.csv`](../competition/historical-amc-grade/amc8-score-distribution-2023-2026-maa.csv)와 모두 일치한다(보고 화면의 정수 점수 표기 `.00`은 숫자로 비교). 회차별 보고서 주소는 CSV에 보존했다.
