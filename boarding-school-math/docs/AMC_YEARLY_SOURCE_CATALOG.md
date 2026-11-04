@@ -45,3 +45,9 @@ MAA는 현재 AMC 8을 8학년 이하 대상 25문항·40분의 중학교 수학
 ### 원본 링크 전체 확인
 
 2026-11-04에 연도별 CSV 266행의 네 링크(온라인 회차·인쇄 PDF·정답표·전문 풀이)를 모두 HEAD 요청으로 확인했습니다. 총 1,064개 링크가 모두 HTTP 2xx였고, 대회별로 AMC 8 41회/164링크, AMC 10 52회/208링크, AMC 12/AHSME 102회/408링크, AIME 71회/284링크가 열렸습니다. 이는 해당 날짜의 URL 접근 확인이며 PDF를 내려받아 전 페이지의 인쇄 품질까지 검수한 것은 아닙니다.
+
+## 2026–27 AIME 현행 기준은 과거 회차 컷과 분리
+
+[MAA의 2027 AIME 안내](https://maa.org/maa-invitational-competitions/)와 [공식 변경 공지](https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/)를 다시 확인했습니다. 미국·캐나다 응시자는 AMC 10 100점 이상 또는 AMC 12 85점 이상이면 AIME 등록 대상 점수 기준을 충족하며, 별도 연령·학년 등 자격도 확인해야 합니다. 2027 AIME는 2월 5–6일 Pearson 시험장에서 시행하고, 13세 미만은 응시할 수 없습니다. MAA는 2027 USAJMO/USAMO 선발에서 AMC 점수를 더 이상 요소로 쓰지 않고 AIME 점수를 주로 활용한다고 안내합니다.
+
+이 현행 기준은 연도·시험형별 과거 AIME 컷 기록과 별도입니다. 원본 회차 결과 화면에서는 선택한 같은 연도·폼의 당시 기준을 역사 자료로 표시하고, 2026–27 안내는 해당 주기·미국/캐나다 자격 문맥에서만 보여 줍니다. 어느 표시도 GFIELD 모의고사 점수나 다른 국가의 응시자에게 공식 초대·자격을 판정하지 않습니다. 국제 응시자는 각 지역 International Group Leader의 안내를 따릅니다.

@@ -20,3 +20,7 @@ MAA 공식 풀이 PDF는 교사의 교육 목적 공유를 허용하는 안내�
 ## 진단 자료로 쓰는 범위
 
 원본 문제지와 답·풀이는 시험 연도별로 학습하고, GFIELD의 응답 기록은 문항별 정오와 영역별 누적으로 진단한다. 등급 비교에는 이와 별도로 같은 연도·같은 시험의 출처가 확인된 학년 통계만 연결한다. 전체 응시 평균이나 단일 학년 행을 전체 학년 규준처럼 해석하지 않는다.
+
+## 2026–27 현행 AIME 안내 재확인
+
+2026-11-04 웹 검색에서 [MAA AIME 안내](https://maa.org/maa-invitational-competitions/)와 [2027 시험장 변경 공지](https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/)를 확인했다. 미국·캐나다의 2026–27 점수 기준은 AMC 10 100점, AMC 12 85점이며, 나이 등 별도 자격을 충족해야 한다. 2027년부터 AIME는 Pearson 시험장에서 시행하고 13세 미만 학생은 응시할 수 없다. MAA는 2027 USAJMO/USAMO 선발이 주로 AIME 점수를 기반으로 하며 AMC 점수는 선발 요소가 아니라고 안내한다. 이 새 기준은 과거 연도별 AIME 컷과 다른 시기·용도다. 국제 응시자는 국가·지역의 International Group Leader 안내를 확인해야 한다.
