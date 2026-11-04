@@ -2057,3 +2057,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 2012 MAA 교사용 안내서는 2011 결과 요약이 온라인에 있다고 안내한다. 동시대 연구 논문은 옛 MAA 통계 페이지를 인용하며 10B #13 및 12B #14 등 네 문항의 정답률/무응답률을 수록한다. 하지만 전체 선택지 분포·응답 인원·오답 선택지를 제공하지 않으므로 진단 표에 옮기지 않았다.
 - 연구자 AMC archive는 2011–2022 디지털 결과를 모았다고 설명하지만, 페이지의 유일한 Full Text 링크는 1968년 파일을 연다. 다음은 전체 2011 Results Summary 또는 `11-HS-StateStats.shtml` 자산을 읽을 수 있는 공개 경로로 찾고, 모든 정답 표시와 분모를 LIVE 형식별 정답키·MAA Grand Statistics와 대조하는 일이다.
 - 근거/검색 범위: `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. 수치 데이터 변경 없음; `raw_youtube.txt` 보존; 로컬 문서만, push·배포·Drive 동기화 없음.
+### 2026-11-05 · 웹 검색: 2012 AMC 10B 일부 문항 응답 분포 연결
+
+- Illustrative Mathematics/OpenCurriculum의 AMC 적응 수업 자료에서 2012 AMC 10B #3, #5–8, #12–13, #16, #19–20의 문항별 A–E 선택·공란률을 회수했다. 페이지들은 해당 시험의 전체 응시자 n=35,086을 표시한다. 각 별표 정답을 LIVE 연도/폼 정답키와 대조했다.
+- `amc10b-2012-global-item-response-partial.csv`와 응답 reference에 10문항을 추가하고 coverage에 `partial`/10을 기록했다. 일부 퍼센트는 정수 반올림이며 unreadable 응답률을 따로 보고하지 않아 미상으로 저장한다. 문항별 출처 URL을 원자료 표에 보존했다. 2012 AMC 10B 15문항 및 12B는 아직 미확인이다.
+- 미검증: 점수 분포 또는 exact-grade Grade 7 비교는 이번 검색에서 추가로 발견되지 않았다. 전역 문항 응답 분포를 학생의 학년 등급·개념 결손으로 해석하지 않는다. 원본 인쇄·정답·풀이 링크는 기존 연도/폼 카탈로그 그대로다.
+- 관련 문서: `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`; source/data coverage 및 README 갱신. 다음은 2012 AMC 12B와 나머지 2012 10B 문항의 연례 보고서/결과 통계를 찾는다. No push, deployment, or Drive sync.

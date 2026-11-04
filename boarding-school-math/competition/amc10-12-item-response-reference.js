@@ -527,6 +527,32 @@
 23,C,2.87,4.15,5.50,3.21,2.67,81.59,0.02
 24,D,2.84,4.26,4.90,4.11,1.66,82.23,0.01
 25,D,4.56,2.85,6.52,6.80,1.82,77.45,0.01`.trim(), respondentCount: 33247, population: "2014 AMC 12B global response cohort", sourceUrl: "https://www.gemt.org.tw/wp-content/uploads/2013/10/2014AMC10B12B%E5%88%86%E6%9E%90%E5%A0%B1%E5%91%8A0415.pdf", sourceStatus: "GEMT 2014 analysis report; printed p.18 Global item-response table transcribed from web-indexed PDF text; all 25 marked answers cross-checked with LIVE; Taiwan table excluded; percentages preserved as printed" }),
+    "amc10-2012-B": Object.freeze({ raw: `
+,,
+,,
+3,B,2.39,76.28,3.00,5.38,1.80,11.13,,https://tasks.illustrativemathematics.org/content-standards/tasks/995
+,,
+5,D,1.86,4.05,13.42,69.66,4.27,6.73,,https://opencurriculum.org/6217/6eerp-7eerp-anna-in-dc/
+6,A,65,8,12,2,3,10,,https://tasks.illustrativemathematics.org/content-standards/tasks/998
+7,D,1,8,2,81,1,7,,https://tasks.illustrativemathematics.org/content-standards/tasks/999
+8,B,4.72,38.01,38.40,3.55,2.66,12.65,,https://tasks.illustrativemathematics.org/content-standards/tasks/1000
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+12,B,8.76,55.82,5.29,5.24,3.32,21.55,,https://tasks.illustrativemathematics.org/content-standards/tasks/1002
+13,B,24.62,42.60,12.12,4.81,1.02,14.81,,https://opencurriculum.org/6314/a-ced-clea-on-an-escalator/
+,,,,,,,,,
+,,,,,,,,,
+16,A,42.79,3.55,28.84,1.44,1.41,21.95,,https://tasks.illustrativemathematics.org/content-standards/tasks/1006
+,,
+,,
+19,C,3.01,4.26,37.32,5.84,3.94,45.60,,https://tasks.illustrativemathematics.org/content-standards/tasks/1009
+20,A,21.93,8.74,10.69,7.99,6.99,43.63,,https://tasks.illustrativemathematics.org/content-standards/tasks/1010
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,`.trim(), respondentCount: 35086, population: "2012 AMC 10B global reported response cohort", sourceUrl: "https://tasks.illustrativemathematics.org/content-standards/tasks/995", sourceStatus: "Illustrative Mathematics tasks individually reproduce response distributions for AMC 10B items 3, 5–8, 12–13, 16, 19–20 (cohort n=35,086); each row carries its direct task URL; correct answers checked against LIVE; percentages are rounded at source precision; unreadable-response share was not reported" }),
     "amc10-2013-B": Object.freeze({ raw: `
 1,C,5.08,1.01,91.48,0.64,0.16,1.60,0.01
 2,A,86.59,1.35,0.53,8.47,0.69,2.37,0.01
@@ -640,12 +666,13 @@
     if (!source || !Number.isInteger(Number(question)) || Number(question) < 1 || Number(question) > 25) return null;
     if (source.excludedQuestions && source.excludedQuestions.includes(Number(question))) return null;
     const values = source.raw.split("\n")[Number(question) - 1].split(",");
+    if (!values[1] || values.length < 9) return null;
     const responsePercent = Object.freeze(Object.fromEntries(letters.map(function (letter, index) { return [letter, Number(values[index + 2])]; })));
     const correctAnswer = values[1];
     const choice = answer == null || answer === "" ? "" : String(answer).toUpperCase();
     if (choice && !letters.includes(choice)) return null;
     const distractor = letters.filter(function (letter) { return letter !== correctAnswer; }).map(function (letter) { return { answer: letter, percent: responsePercent[letter] }; }).sort(function (a, b) { return b.percent - a.percent; })[0];
-    return Object.freeze({ program: selectedProgram, year: selectedYear, form: selectedForm, question: Number(question), answer: choice, correctAnswer: correctAnswer, acceptedAnswers: Object.freeze([correctAnswer]), responsePercent: responsePercent, omittedPercent: Number(values[7]), unreadablePercent: Number(values[8]), selectedResponsePercent: choice ? responsePercent[choice] : null, correctResponsePercent: responsePercent[correctAnswer], mostCommonDistractor: Object.freeze(distractor), respondentCount: source.respondentCount, population: source.population, sourceStatus: source.sourceStatus || "99CEF 2020 analysis report; printed US/Canada item-response table; correct answers checked against LIVE answer key", sourceUrl: source.sourceUrl || defaultSourceUrl });
+    return Object.freeze({ program: selectedProgram, year: selectedYear, form: selectedForm, question: Number(question), answer: choice, correctAnswer: correctAnswer, acceptedAnswers: Object.freeze([correctAnswer]), responsePercent: responsePercent, omittedPercent: Number(values[7]), unreadablePercent: values[8] === "" ? null : Number(values[8]), selectedResponsePercent: choice ? responsePercent[choice] : null, correctResponsePercent: responsePercent[correctAnswer], mostCommonDistractor: Object.freeze(distractor), respondentCount: source.respondentCount, availableQuestionCount: source.raw.split("\n").filter(function (row) { return Boolean(row.split(",")[1]); }).length, population: source.population, sourceStatus: source.sourceStatus || "99CEF 2020 analysis report; printed US/Canada item-response table; correct answers checked against LIVE answer key", sourceUrl: values[9] || source.sourceUrl || defaultSourceUrl });
   }
   return Object.freeze({ sources: sources, responseFor: responseFor });
 });
