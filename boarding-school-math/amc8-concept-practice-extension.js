@@ -258,6 +258,22 @@
       hint: "첫째 자리는 4가지, 둘째 자리는 남은 3가지, 셋째 자리는 남은 2가지예요.",
       solution: ["첫째 자리에 올 글자는 4가지입니다.", "둘째 자리는 남은 글자 중 3가지, 셋째 자리는 남은 글자 중 2가지입니다.", "곱의 법칙으로 4 × 3 × 2 = 24가지입니다."],
       connection: "순서를 무시하고 세 글자만 고른다면 왜 같은 세 글자를 여러 번 세게 되나요?"
+    },
+    {
+      id: "amc8-g7-practice-cryptarithm-01", domain: "number", sourceConcepts: ["cryptarithm", "digits", "place-value"], standard: "수 감각·대수", focus: "두 자리 수와 자리 바꾼 수를 식으로 나타내기", stage: "연결",
+      prompt: "서로 다른 0이 아닌 숫자 A와 B로 만든 두 자리 수 AB와 BA가 있습니다. AB+BA=99이고 AB−BA=27일 때 AB는 얼마인가요?",
+      choices: ["36", "45", "54", "63", "72"], answer: 3,
+      hint: "AB를 10A+B로, BA를 10B+A로 나타내 두 식을 각각 정리해요.",
+      solution: ["합 조건은 11(A+B)=99이므로 A+B=9입니다.", "차 조건은 9(A−B)=27이므로 A−B=3입니다.", "두 식을 더해 2A=12이므로 A=6, B=3입니다. 따라서 AB=63입니다."],
+      connection: "합은 그대로 두고 차가 45라면 숫자 A와 B는 어떻게 바뀌나요?"
+    },
+    {
+      id: "amc8-g7-practice-arc-length-01", domain: "geometry", sourceConcepts: ["arc", "circle", "ratio-and-proportion"], standard: "기하·공간", focus: "원의 일부에 해당하는 호의 길이 구하기", stage: "유형",
+      prompt: "반지름이 9cm인 원에서 한 호의 길이가 원둘레의 1/3입니다. 그 호의 길이는 얼마인가요?",
+      choices: ["3πcm", "6πcm", "9πcm", "12πcm", "18πcm"], answer: 1,
+      hint: "먼저 원 전체의 둘레를 구한 뒤 그 1/3을 계산해요.",
+      solution: ["원둘레는 2π×9=18πcm입니다.", "호의 길이는 원둘레의 1/3이므로 18π÷3입니다.", "따라서 호의 길이는 6πcm입니다."],
+      connection: "같은 원에서 호가 원둘레의 1/6이면 길이는 얼마인가요?"
     }
   ];
 

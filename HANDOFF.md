@@ -1926,3 +1926,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 커버리지: AMC 8 990/1,025 (96.6%), AMC 10 1,217/1,300 (93.6%), AMC 12 2,681/3,110 (86.2%), AIME 1,006/1,065 (94.5%). bank 49/43/50/44문항. 전체 사용 태그가 해당 대회의 원본 문항 태그 인벤토리에 존재하는 것도 확인했다.
 - 다음 고빈도 공백: AMC 8 telescoping·cryptarithm·dice-probability; AMC 10 difference-of-squares·recursion·right-triangle; AMC 12 tangent-line·perfect-square·money; AIME volume·tangent-line·equilateral-triangle·chord. 계속 보완한다.
 - 수정: AMC 8/10/12/AIME 연습 bank, AMC 8·10·12·AIME 연습 페이지 캐시 키, historical AMC README, 인수인계. `git diff --check`와 원본 태그/문항 중첩 재집계 실행; 별도 테스트는 실행하지 않는다. 새 문항 답과 풀이를 직접 계산해 확인했다. `raw_youtube.txt` 보호; 로컬 커밋만, push·배포·Drive 동기화 없음.
+
+### 2026-11-05 · 빈도 상위 개념 연습 추가
+
+- AMC 8에는 암호식과 호의 길이, AMC 10에는 제곱차와 점화식, AMC 12에는 접선으로 만든 사각형의 넓이와 완전제곱 배수, AIME에는 원기둥·원뿔 부피와 원의 접선 방정식 문항을 넣었다. 연습 문항은 지필드가 새로 작성했다.
+- 원본 한 문항당 태그가 하나라도 맞는 연습 은행 문항은 AMC 8 991/1,025 (96.7%), AMC 10 1,226/1,300 (94.3%), AMC 12 2,687/3,110 (86.4%), AIME 1,012/1,065 (95.0%)다. bank 크기는 51/45/52/46. 모든 bank 태그는 해당 대회 원본 태그 인벤토리에서 확인했다. 이 지표는 교집합만 세며 실력·학년·난도 판정값이 아니다.
+- 다음 우선 공백은 AMC 8 망원합·주사위확률·길이/넓이/부피 배율, AMC 10 직각삼각형·계승·이등변삼각형, AMC 12 화폐 문제·이등변삼각형·코사인 법칙, AIME 정삼각형·현·극값 논증이다. 이 태그별 문항 연결을 계속 확장한다.
+- 수정: AMC 8/10/12/AIME bank, 네 연습 페이지 캐시 키, historical AMC README, 인수인계. 새 문항의 정답·풀이를 직접 계산했고 원본 태그 인벤토리 및 전체 중첩을 재집계했다. `git diff --check` 실행; 별도 테스트는 실행하지 않았다. `raw_youtube.txt` 보존; 로컬 커밋만, push·배포·Drive 동기화 없음.
