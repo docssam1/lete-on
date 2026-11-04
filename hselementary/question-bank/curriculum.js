@@ -3670,6 +3670,14 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Equation = source52Unit2?.subunits.find(subunit => subunit.name === "식 세워 풀기");
+  if (source52Unit2Equation) for (const [suffix,name] of [["exploration","두 막대로 수영장 깊이 구하기 · 원문"],["example-1","네 번 튀어 오른 높이로 처음 높이 구하기 · 원문"],["example-2","5학년 수상 남학생이 전체에서 차지하는 분수 · 원문"],["example-3","꽃을 심은 넓이로 전체 꽃밭 넓이 구하기 · 원문"],["example-4","같은 분수값과 합으로 두 금액 구하기 · 원문"]]) {
+    const id=`5-2-u2-e3-${suffix}-original`;
+    if (source52Unit2Equation.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    const exploration=suffix==="exploration";
+    source52Unit2Equation.types.push({id,number:source52Unit2Equation.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e3-${suffix}`,sourceItemLabel:exploration?"개념탐구 3 원문":`예제 3-${suffix.slice(-1)} 원문`,sourceSection:exploration?"exploration":"example",sourceTier:"advanced",sourcePdfPage:14,alternateSourcePdfPage:13,sourcePrintedPage:18,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page18Original${exploration?"Exploration":`Example${suffix.slice(-1)}`}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:!['example-2','example-4'].includes(suffix),answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
   if (source52Unit2Equation) for (const [suffix,name,label,section,key] of [
     ["exploration","두 막대의 잠긴 길이로 깊이 구하기","개념탐구 3 유사문항","exploration","source52U2Page18Exploration3"],
     ["example-1","반동 높이에서 처음 높이 역산","예제 3-1 유사문항","example","source52U2Page18Example31"],
