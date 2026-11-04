@@ -2,6 +2,12 @@
 
 확인일: 2026-10-30 (KST)
 
+## 2026-11-04 웹 검색 추가: AMC 8 연도별 전체 응시 요약
+
+99CEF의 [2019 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf) 안에 2005–2019 연도 비교표가 있어 전체 참가자 수, 만점 수, 20점 이상 수, 평균 점수를 회차별로 정리했다. 2005–2015 행은 원문의 “Global”, 2016–2019 행은 “United States and Canada” 열이다. 지역 집계가 바뀌는 2016년 경계에서 두 묶음을 하나의 연속 추세로 비교하지 않는다.
+
+[`amc8-overall-cohort-summary-2005-2019.csv`](../competition/historical-amc-grade/amc8-overall-cohort-summary-2005-2019.csv)가 수치 전사본이고, [`amc8-overall-cohort-reference.js`](../competition/amc8-overall-cohort-reference.js)는 완성된 AMC 8 원본 답안 점수와 동일 연도 전체 평균을 대조한다. 이 전체 응시 평균은 학년 평균·백분위·실력 등급이 아니며, 이미 있는 정확한 학년 평균 비교와 별도 표시한다. 99CEF는 대회 통계를 공표한 공식 대만 운영기관이지만 PDF 자체는 MAA 호스팅이 아니므로 출처 상태를 그대로 밝힌다. 해당 보고서 표의 별도 모집단·보고값은 각 열 그대로 보존했고, MAA의 2019 점수별 학년 분포(94,620행) 및 별도 재게시 요약(94,675명)과 결합하지 않았다.
+
 ## 원본 문항 개념 출처 연결 (2026-11-04)
 
 LIVE by Po-Shen Loh의 [2010 AMC 8 전문 풀이](https://live.poshenloh.com/past-contests/amc8/2010/solutions)는 문항별 Concepts와 숫자형 difficulty rating을 제공하며, 해당 페이지는 문제를 MAA의 공식 법적 허가로 사용한다고 밝힌다. 25개 문항의 태그·rating과 각 문항 경로를 CSV로 기록했다. [`amc8-2010-item-concepts.csv`](../competition/historical-amc-grade/amc8-2010-item-concepts.csv).

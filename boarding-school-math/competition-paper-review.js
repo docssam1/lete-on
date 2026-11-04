@@ -808,6 +808,19 @@
           ? "포럼에 전사된 MAA 학년 평균표입니다. 표의 Location은 United States이며 MAA 원본 보고서는 회수하지 못했습니다. 미국 응시집단의 당시 평균 비교이며 전국 전체·백분위·현재 능력 등급이 아닙니다. "
           : "같은 연도·시험형·기록 학년이 확인되는 과거 응시 집단 평균입니다. 현재 기준점이나 능력 등급이 아니며, 다른 연도·시험형으로 비교하지 않습니다. 표본과 범위는 연결된 출처 기준입니다. ");
     }
+    const overallCohortReference = window.GFIELDAMC8OverallCohortReference;
+    const overallCohortSection = $("amc8-overall-cohort-reference");
+    const overallCohort = selectedFormat().id === "amc8" && result.complete && result.scoreEstimate && overallCohortReference
+      ? overallCohortReference.referenceFor(selectedYear, result.scoreEstimate.points)
+      : null;
+    overallCohortSection.hidden = !overallCohort;
+    if (overallCohort) {
+      const populationLabel = overallCohort.population === "Global" ? "세계 응시자" : "미국·캐나다 응시자";
+      setText("amc8-overall-cohort-summary", `${overallCohort.year} AMC 8 · Grade ${grade} · 입력 점수 ${overallCohort.learnerScore}/25점 · ${populationLabel} ${overallCohort.participants.toLocaleString("en-US")}명 · 평균 ${overallCohort.meanScore.toFixed(2)}점 · 만점 ${overallCohort.perfectScores.toLocaleString("en-US")}명 · 20점 이상 ${overallCohort.scoreAtLeast20.toLocaleString("en-US")}명`);
+      const difference = overallCohort.differenceFromMean;
+      setText("amc8-overall-cohort-result", difference === 0 ? "전체 응시자 평균과 같은 점수" : `전체 응시자 평균보다 ${Math.abs(difference).toFixed(2)}점 ${difference > 0 ? "높아요" : "낮아요"}`);
+      $("amc8-overall-cohort-source").href = overallCohort.sourceUrl;
+    }
     const koreaPercentileReference = window.GFIELDAMC8KoreaPercentileReference;
     const koreaPercentileSection = $("amc8-korea-percentile-reference");
     const koreaPercentile = selectedFormat().id === "amc8" && result.complete && result.scoreEstimate && koreaPercentileReference
