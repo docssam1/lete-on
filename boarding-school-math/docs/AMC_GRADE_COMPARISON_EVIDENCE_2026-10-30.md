@@ -2,6 +2,12 @@
 
 확인일: 2026-10-30 (KST)
 
+## 2026-11-04 웹 재검색: AMC 8 2016 보고서와 2022 부분 학년 자료
+
+- 2016 MAA General Reports 보존본에서 AMC 8 보고서 항목(ID 63)은 확인했지만, Internet Archive 캡처의 ReportViewer 본문은 로드되지 않는다. 99CEF의 2019 AMC 8 연도 요약과 MAA Michigan Section 2016 뉴스레터는 전체 응시 평균만 제공하고 학년 행은 싣지 않는다. 두 출처의 전체 응시자 수(108,227 / 108,295)도 다르므로 별도 유지한다. Bard Math Circle의 2016 학년 평균은 행사 표본(n=35)이라 제외한다. 따라서 2016은 현재도 `no-grade-table-recovered`이며, 보고서 항목이 있었다는 사실을 본문 회수로 간주하지 않는다.
+- 2022 자료 검색에서는 四川日报 산하 川观新闻의 재게시 기사에서 AMC 8 학년·성별 평균 차트 설명과 Grade 5 값(3,231명, 평균 8.98)을 찾았다. 이 기사는 원 출처 데이터 파일이나 차트 이미지를 제공하지 않고 표본의 지리 범위도 명시하지 않아, 수치는 검색 근거 메모에만 기록하고 제품의 역사적 기준선 CSV에는 아직 넣지 않았다. 다른 학년 값도 이 한 행에서 유추하지 않는다. [川观新闻 재게시 기사](https://cbgc.scol.com.cn/news/5801694)
+- 이 조사에서 확인한 자료: [MAA 2016 연도별 통계 메뉴 보존본](https://web.archive.org/web/20220204191809/http://amc-reg.maa.org/reports/generalreports.aspx), [99CEF 2019 AMC 8 연도 요약 PDF](https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf), [MAA Michigan Section 2016 뉴스레터](https://sections.maa.org/michigan/newsletters/Vol43no2_Spring_2017.pdf), [Bard Math Circle 2016 지역 결과](https://www.bardmathcircle.org/p/2016-amc-8-results-are-in). 전국 또는 전체 응시 집단의 완전한 2016 학년별 표가 회수되기 전에는 비교 가능한 규준 데이터로 승격하지 않는다.
+
 ## 2026-11-04 웹 검색 추가: AMC 8 연도별 전체 응시 요약
 
 99CEF의 [2019 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf) 안에 2005–2019 연도 비교표가 있어 전체 참가자 수, 만점 수, 20점 이상 수, 평균 점수를 회차별로 정리했다. 2005–2015 행은 원문의 “Global”, 2016–2019 행은 “United States and Canada” 열이다. 지역 집계가 바뀌는 2016년 경계에서 두 묶음을 하나의 연속 추세로 비교하지 않는다.
