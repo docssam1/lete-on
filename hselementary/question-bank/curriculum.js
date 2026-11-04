@@ -4202,6 +4202,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-20-original",sourceItemLabel:"확인학습 20번 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:73,alternateSourcePdfPage:72,sourcePrintedPage:77,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2FractionNaturalMultiplesSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문이 묻는 자연수배 조건을 보존하고 변형별 개수를 독립 검산했습니다."});
   }
 
+  if (source52Unit2Product && !source52Unit2Product.types.some(type=>type.id==="5-2-u2-practice-36-clarified-similar")) {
+    const id="5-2-u2-practice-36-clarified-similar",name="겹쳐 붙인 다섯 정사각형의 넓이 · 조건 명시 유사문항";
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-practice-36-original",sourceItemLabel:"확인학습 36번 조건 명시 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:74,alternateSourcePdfPage:75,sourcePrintedPage:79,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U2P79Q36ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 그림의 겹침 크기 해석을 보류하고 별도 유사문항은 겹친 넓이를 명시했습니다."});
+  }
+
   if (source52Unit2Product && !source52Unit2Product.types.some(type=>type.id==="5-2-u2-practice-39-clarified-similar")) {
     const id="5-2-u2-practice-39-clarified-similar",name="전반기와 후반기의 승리 비율 · 조건 명시 유사문항";
     const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
