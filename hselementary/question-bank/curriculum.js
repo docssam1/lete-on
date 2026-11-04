@@ -4046,6 +4046,16 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     }
   }
 
+  {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+    const group=unit?.subunits.find(g=>g.name==="어림한 수의 범위 · 개념탐구 4 및 예제 4-1–4-3");
+    const id="5-2-u1-e4-example-4-original", name="남녀 인구 그래프와 실제 인구 차 · 원문";
+    if (group && !group.types.some(t=>t.id===id)) {
+      const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"예제 4-4 원문",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:8,alternateSourcePdfPage:5,sourcePrintedPage:10,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 그래프의 두 선과 연도별 점을 대조하고 모든 해의 가능한 실제 인구 차를 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52RoundedRangeExample44Original",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
   // 생성기에서 원문 수치 대신 창작 변형을 내는 유형을 구분한다.
   {
     const variantIds = new Set([

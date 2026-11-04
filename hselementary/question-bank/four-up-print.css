@@ -125,3 +125,20 @@
   #problemView [data-source-item-id="5-2-u1-e4-example-2"],
   #problemView [data-source-item-id="5-2-u1-e4-example-3"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
 }
+
+@media print {
+  #problemView [data-source-item-id="5-2-u1-e4-example-4-original"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView .print-page--four-up [data-source-item-id="5-2-u1-e4-example-4-original"] .source52-e44-graph { max-height:210px !important; margin:4px auto; }
+  #problemView [data-source-item-id="5-2-u1-e4-example-4-original"] .source52-e44-graph .tick,
+  #problemView [data-source-item-id="5-2-u1-e4-example-4-original"] .source52-e44-graph .year { font-size:17px; }
+  #problemView [data-source-item-id="5-2-u1-e4-example-4-original"] .source52-e44-graph .axis-unit,
+  #problemView [data-source-item-id="5-2-u1-e4-example-4-original"] .source52-e44-graph .series-label { font-size:16px; }
+}
+
+@media print {
+  #solutionView [data-source-answer="5-2-u1-e4-example-4-original"] { color:#191511; font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+  #problemView .source52-e44-graph .female-line, #problemView .source52-e44-graph .male-line,
+  #solutionView .source52-e44-graph .female-line, #solutionView .source52-e44-graph .male-line { stroke:#191511; }
+  #problemView .source52-e44-graph .female-point, #problemView .source52-e44-graph .male-point,
+  #solutionView .source52-e44-graph .female-point, #solutionView .source52-e44-graph .male-point { fill:#191511; }
+}
