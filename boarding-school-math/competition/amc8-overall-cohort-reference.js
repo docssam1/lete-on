@@ -36,8 +36,10 @@
   const amc8_2017_source_url = "https://www.99cef.org.tw/userfiles/2017AMC8Report.pdf";
   const amc8_2018_global_score_counts = Object.freeze([397,571,1603,3250,5898,8402,10440,11599,11465,10355,8826,7126,5377,3888,2808,1949,1464,972,663,470,283,215,157,96,70,45]);
   const amc8_2018_source_url = "https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf";
-  const amc8_2019_global_score_counts = Object.freeze([405,364,1219,2839,4998,7423,9175,9778,9762,8719,7450,6273,5232,4352,3639,2923,2425,1993,1543,1150,918,698,523,395,273,151]);
-  const amc8_2019_source_url = "https://bj.xdf.cn/zixun/beimei/97334.html";
+  // 99CEF's 2019 report prints the exact U.S./Canada 0–25 counts (n=94,634).
+  // The separate MAA grade-group transcription remains in its own file (n=94,620).
+  const amc8_2019_global_score_counts = Object.freeze([406,364,1219,2839,4999,7424,9178,9778,9765,8719,7453,6273,5233,4352,3641,2923,2425,1992,1543,1150,918,698,523,395,273,151]);
+  const amc8_2019_source_url = "https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf";
   const amc8_2022_overall_score_counts = Object.freeze([2528,484,965,1863,3116,4232,5156,5982,6300,6130,5887,5274,4544,3946,3198,2669,2186,1760,1315,1078,790,599,401,290,193,131]);
   const amc8_2022_source_url = "https://yach-doc-shimo.zhiyinlou.com/uploader/f/Ua2Ju3KZtSXEM7uP.png";
 
