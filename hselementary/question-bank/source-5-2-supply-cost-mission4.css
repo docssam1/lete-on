@@ -13,3 +13,14 @@
   .source52-supply-cost-table td { padding: 8px 5px; }
 }
 @media print { .source52-supply-cost-table { break-inside: avoid; } }
+@media print {
+  .source52-supply-cost-question, .source52-supply-cost-solution { color:#191511; font-family:"Noto Serif KR", "Batang", serif; }
+  .source52-supply-cost-table th, .source52-supply-cost-table td { color:#191511; border-color:#777; }
+  .source52-supply-cost-table thead th, .source52-supply-cost-table tbody th { background:#f2f2f2; }
+}
+@media print {
+  .source52-supply-cost-question { font-size:10.5pt; line-height:1.45; }
+  .source52-supply-cost-table { margin:6px auto 8px; font-size:10pt; }
+  .source52-supply-cost-table caption { margin-bottom:3px; }
+  .source52-supply-cost-table th, .source52-supply-cost-table td { padding:5px 6px; }
+}

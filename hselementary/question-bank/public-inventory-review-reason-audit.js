@@ -24,7 +24,7 @@ for (const [catalogName, items] of catalogs) {
 
 // These source-linked types may show public review metadata; keep licensed values and answers out.
 const protected52 = window.HSE_CURRICULUM.semesters.find(s => s.id === "5-2").units.find(u => u.id === "5-2-u1").subunits.flatMap(s => s.types).filter(t => /^5-2-u1-e3-mission-[1-6]-/.test(t.id) || /^5-2-u1-e4-(exploration-rounded-range|example-[1-4]|mission-1-rounded-count)$/.test(t.id));
-if (protected52.length !== 14) failures.push(`5-2 보호 메타데이터 유형 수가 다릅니다: ${protected52.length}`);
+if (protected52.length !== 15) failures.push(`5-2 보호 메타데이터 유형 수가 다릅니다: ${protected52.length}`);
 for (const item of protected52) if (/\d/.test(item.reviewReason || "")) failures.push(`${item.id}: 공개 설명에 원문 수치 또는 답이 포함될 수 있습니다.`);
 
 if (failures.length) {
