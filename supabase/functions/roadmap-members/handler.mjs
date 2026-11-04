@@ -1,5 +1,5 @@
 export const CONSENT_VERSION = 'roadmap-2026-10-30-v1';
-const ORIGINS = new Set(['https://lete-on.gfieldacademy.net','https://docssam1.github.io',
+const ORIGINS = new Set(['https://lete-on.gfieldacademy.net','https://roadmap.gfieldacademy.net','https://docssam1.github.io',
   'http://localhost:57608','http://127.0.0.1:57608','http://localhost:57615','http://127.0.0.1:57615',
   'http://localhost:57616','http://127.0.0.1:57616']);
 // Never select pin_hash, session token/hash or rate-limit buckets for presentation.

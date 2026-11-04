@@ -591,3 +591,16 @@ Mac Codex / 기존 `codex/roadmap-membership-20261030` 작업본. 사용자 요�
 공개 검증 완료: 핵심 구현 `0a88b04c198c0aa15e9ba77b93c51dd7a466da0d` / tree `5269da0d4a92cd2d540067df9a8fb7376afb250f`, 표시 보완 `f11d03d463dcd6a68d0b25d660fbc34c63ee3d72` / tree `3d355cea79239f925d41052be9851c260331d729`. [최종 Pages41807145775](https://github.com/docssam1/lete-on/actions/runs/41807145775) 및 job126496885802 전 단계 성공. 선행 핵심 배포41806428842도 성공했다. 최종 배포 완료 후 공개 HTML/JS/CSS/새 SVG11개가 작업본과 바이트 일치했다. 공개 PC·세로·가로 모바일3화면에서 의대→영재학교→과학고→영재학교 전환, 목표별 단계/기간과 공유 과학 진도 보존, 지도/표/팝업/총평,75% 수행 기록/개념 복습과 새로고침 복원을 확인했다. 인트로는320폭 포함4크기에서 그림 로딩·영상1개 유지·페이지 가로넘침0·실행오류0. 공개 회원 요청은 격리 status/plan-get 가상 응답뿐이며 실회원 기록을 쓰지 않았다. 공개 검수 파일은 `output/goals-evidence-20261104/public/`이다. 공개 사이트의 직렬 스크립트 로딩 때문에 최초10초 대기는 부족했고60초 이내 대기로 전 검사를 통과했다. 의대에서 입학 이후 기간/영과고의 의대 전용 추가수학 설정을 숨기는 마지막 CSS도 배포했다.
 
 직접 확인: `https://lete-on.gfieldacademy.net/roadmap/demo2/account.html?v=20261104-goals2#seniorExample` (공개 인트로의 사례 그림), `https://lete-on.gfieldacademy.net/roadmap/demo2/planner.html?goal=medicine&v=20261104-goals2` (회원 확인 후 의대 현재 진도 설계).
+
+
+### 전용 도메인 연결·천개의고원 국어 안내 보강 — 2026-11-04
+
+사용자가 기존 `/roadmap/` 진입 대신 `roadmap.gfieldacademy.net`으로 분리를 요청했다. 기존 lete-on CNAME·다른 DNS/메일 레코드·기존 로드맵 원본은 변경하지 않는다. Cloudflare에 로그인한 사용자가 연결을 맡긴 범위에서 진행했다. Worker 편집기 외부 프레임이403/로딩 상태라 공식 Pages Direct Upload의 `_worker.js` 지원으로 전환했다. 별도 API 키나 OAuth 권한을 만들지 않았다. 임시로 만든 `gfield-roadmap.inki-math.workers.dev` Hello World는 실제 새 도메인의 연결 대상이 아니며 아래 최종 기록에서 상태를 구분한다.
+
+`roadmap/hosting/worker.mjs`는 공개 정적 원본 `lete-on.gfieldacademy.net`만 읽는 주소 연결기다. `/`에서 새 인트로를 표시하고 base 경로를 넣어 상대 CSS/JS/영상과 로그인·계정 링크가 이어지게 한다. 공용 자산은 기존 경로를 유지하고 짧은 planner/account 주소는 새 도메인의 앱 경로로 연결한다. GET/HEAD만 허용하고 Cookie/Authorization/회원 세션 헤더를 원본에 보내지 않는다. 원본의 리디렉션도 같은 새 호스트로 바꾼다. `bundle.py`는 창작 연결 코드와 실패 시 기존 주소 안내만 담은2파일 ZIP을 `output/roadmap-domain.zip`에 생성한다. 원자료나 회원 데이터·API 키를 포함하지 않는다. 앱 수정은 기존 Pages 원본 배포에 따라 새 주소에도 반영된다. Cloudflare 연결 코드 자체를 고칠 때는 이 ZIP을 다시 업로드한다.
+
+새 주소의 회원 확인·저장을 위해 Supabase 스킬을 적용했다. 현재 배포함수v5의 index.ts/handler.mjs가 Git 작업본과 동일함을 비교한 뒤 정확한 새 origin1개만 추가해 `roadmap-members` v6 배포 완료. 기존 자체 인증/세션·비율 제한·verify_jwt=false 설정은 그대로다. 실제 OPTIONS로 새/기존 주소204와 정확한 Allow-Origin, 유사 외부주소403을 확인했다. DB·회원 기록·메일 발송 변경 없음. Supabase changelog의2026.10.12 TLS 공지와 CORS 공식문서를 확인했으며 관련SDK 변경을 도입한 작업은 아니다.
+
+천개의고원은 기존에도 국어8곳 중 하나였고, 이전 인수인계에 같은 주제의 대화 반영 기록이 있다. 제공 대화를 독립 증거로 중복 집계하지 않고 천고의 독서·문법·원고지 글쓰기·중등 내신·과제 부담과 입학 대기 확인점을 보강했다. 공식 홈페이지의 초4·5·6 독서탐구반과 중등 독서국어/독서심화반을2026.11.04에 확인한 내용과 학부모 경험을 별도 구획으로 표시한다. 특정 반의 내신4~5주는 경험이며 공통 규정으로 쓰지 않는다. 성적 향상, 모든 학생의 동일 과제량,1월1일 접수, 무기명20문항/14개·합산30개 기준을 학원 규정으로 만들지 않는다. 개인 이름/닉네임·채팅 원문·성적 사연·소문은 공개하지 않는다. 기파랑·지니·MSC도 제공 대화의 목적/부담 차이만 익명 요약했고 정해진 학원 이동 순서를 만들지 않았다. 인트로/비교 글에 천개의고원 이름을 드러냈다. 공식 출처 `https://nonsul4us.com/SEDO/main.asp`, 중등 안내 `https://nonsul4us.com/SEDO/homepage/pageview/pageview.asp?CateCode=INTRO27`.
+
+로컬 전체171검사(학원 분류/경험과 공식 구분, 주소 연결·헤더/범위 요청/리디렉션/차단, 새 origin·인증 유지 포함) 통과. 학원 상세는1440×1000/390×844/844×390에서 직접 주소→초·중등 국어 필터→공식/경험 내용→비교 글→Escape 초점 복귀 확인, 페이지/본문 가로넘침0·실행오류0. 격리 status/plan-get 응답만 사용했다. 비공개 검수는 `output/thousand-20261104/`. 공개 배포와 전용 도메인 실제 응답 검증은 후속 기록에서 확정한다.
