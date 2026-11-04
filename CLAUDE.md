@@ -42,6 +42,7 @@ GitHub Pages 배포: `docssam1/lete-on` 저장소 → `/reading-world/` 경로.
 - **골든벨 그림을 그리거나 색·문구를 고칠 때는 스킬 `.claude/skills/golden-bell-figure-style/SKILL.md`부터 읽는다.** 풀컬러 색표, 각도·분수 말 대신 아이 말(「반 바퀴」), 회사 이름(FC·필즈) 금지. 끝나면 `node fields-classic/question-bank/golden-bell-style-audit.mjs`.
 - **문제은행 화면·학습지·미리보기·분수/거듭제곱 표기를 손댈 때는 스킬 `.claude/skills/gfield-question-bank-build/SKILL.md`(제작 기법: 3단계 흐름·화면 가득·출처 구분·미리보기는 문제만·MathML 공통 수식·칠판 분수·그림 채움·캐시 꼬리표·검사기)도 읽는다.** 분수는 빗금(3/5)으로 쓰지 않는다 — `math-markup.js`만 부른다.
 - **새 화면을 디자인할 때는 `.claude/skills/frontend-design/SKILL.md`(Anthropic 공개 스킬, 2026-11-01 들여옴)도 참고한다** — 단, 원장 결정과 우리 스킬(아래 gfield-textbook-design 등)이 먼저다. 구성 계획을 먼저 세우고 화면을 찍어 보며 고치는 방법·글씨 크기 단계·움직임 절제에 쓴다.
+- **화면에 움직임·숫자 애니메이션·그래프·3D·유리/그라데이션 효과를 넣거나 새 웹 UI 라이브러리를 들이자는 말이 나오면 `.claude/skills/web-ui-library-picks/SKILL.md`부터 읽는다**(원장이 보낸 7개 판정: Anime.js·Motion은 씀(vendor에 넣음) · Bklit UI는 React 전용이라 생각만 · react-three-fiber·liquid-glass-js·shadergradient·liquid-logo는 안 씀, 2026-11-04).
 - **교재 표지·단원 내지·시험지/학습지·문제은행 화면을 만들거나 고칠 때는 스킬 `.claude/skills/gfield-textbook-design/SKILL.md`부터 읽는다.** 파랑 배색·두꺼운 글씨·그림책 장면 표지는 원장이 거른 것(2026-10-23). 시안은 `fields-classic/question-bank/design-draft/`.
 
 ---
