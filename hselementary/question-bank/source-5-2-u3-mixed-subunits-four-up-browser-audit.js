@@ -51,7 +51,23 @@ const ids = ["5-2-u3-e6-mission-1-fold-fourths-synthetic", "5-2-u3-e6-mission-2-
           await page.locator("#printMenuButton").click();
           await page.locator(`#printMenuList [data-print-mode='${mode}']`).click();
           await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
+          if (mode === "problem") {
+            await page.emulateMedia({ media: "print" });
+            const failures = await page.evaluate(() => [...document.querySelectorAll('#problemView [data-fold-rectangle="problem"], #problemView [data-fold-triangle="problem"], #problemView [data-wedge-ball="problem"]')].flatMap(svg => {
+              const item = svg.closest('.question-item').getBoundingClientRect();
+              const answer = svg.closest('.question-item').querySelector('.answer-line').getBoundingClientRect();
+              const figure = svg.getBoundingClientRect();
+              const badText = [...svg.querySelectorAll('text')].some(text => {
+                const b = text.getBoundingClientRect();
+                return b.left < item.left - 1 || b.right > item.right + 1 || b.bottom > answer.top + 1;
+              });
+              const minimumHeight = svg.hasAttribute('data-wedge-ball') ? 170 : 210;
+              return figure.height < minimumHeight || figure.bottom > answer.top + 1 || badText ? ['figure must be legible and fit inside its question'] : [];
+            }));
+            assert.deepEqual(failures, []);
+          }
           await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+          await page.emulateMedia({ media: "screen" });
           await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
         }
       }

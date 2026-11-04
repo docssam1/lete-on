@@ -218,6 +218,15 @@ const mk = (name, ph = "01012345678") => ({ profile_name: name, phone: ph, send_
     assert.equal(standardPart(dg, "2026-W43", 1, "w2"), "C4.8");
     assert.equal(standardPart(dg, "2026-W43", 2, "w2"), "C4.9");
     assert.equal(standardPart(dg, "2026-W52", 1, "w1"), "C4.9", "stops at the last round");
+    /* 과정 회차표가 있으면 과정 끝을 지나 다음 과정 1회차부터(2026-11-04). C4 9회차 → C5 1회차 … 마지막 과정은 마지막 회차에서 멈춘다 */
+    const table = { C4: { rounds: 9, next: "C5" }, C5: { rounds: 8, next: "C6" }, C6: { rounds: 8, next: null } };
+    assert.equal(standardPart(dg, "2026-W47", 1, "w1", table), "C4.9", "last round of the course");
+    assert.equal(standardPart(dg, "2026-W48", 1, "w1", table), "C5.1", "rolls into the next course");
+    assert.equal(standardPart(dg, "2026-W52", 1, "w1", table), "C5.5", "keeps counting in the next course");
+    assert.equal(standardPart(dg, "2026-W47", 1, "w2", table), "C5.7", "two a week: 2 + 7×2 = 16 → C4 9 → C5 7");
+    assert.equal(standardPart(dg, "2026-W48", 1, "w2", table), "C6.1", "two a week crosses two courses");
+    assert.equal(standardPart(dg, "2027-W20", 1, "w1", table), "C6.8", "stops at the last course");
+    assert.equal(standardPart({ ...dg, amount: 1.25 }, "2026-W48", 1, "w1", table), "C5.1L", "amount flag survives the rollover");
     assert.equal(standardPart({ ...dg, roundAt: "2025-W52" }, "2026-W01", 1, "w1"), "C4.3", "crosses the year");
     assert.equal(standardPart(dg, "2026-W38", 1, "w1"), "C4.2", "never goes back");
     assert.equal(standardPart({ ...dg, amount: 1.25 }, "2026-W40", 1, "w1"), "C4.2L");

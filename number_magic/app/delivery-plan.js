@@ -3,8 +3,8 @@
  * account access; it only reproduces a saved worksheet without current state. */
 (function(root){
   'use strict';
-  const VERSION='20261026-personal2',LEGACY_VERSION='20261024-personal1',CURRICULUM_REVISION='20261026-curriculum2',EXTENSION_VERSION='20261024-middle-extension1';
-  const SOURCE_LIMITS={"C0":19,"C1":6,"C2":6,"C3":8,"C4":9,"C5":8,"C6":8,"C7":4,"C8":9,"C9":11,"C10":6,"C11":8,"C12":6,"C13":4,"C14":4,"C15":4,"C16":5,"C17":9,"C18":5,"C19":4,"C20":7,"C21":6,"C22":4,"C23":7,"C24":7,"C25":4,"C26":8,"C27":12,"C28":12,"C29":11,"C30":9,"C31":11,"C32":8,"C33":7,"C34":9,"C35":8,"C36":10,"C37":13,"C38":8,"C39":9,"C40":7,"C41":8,"C42":8,"C43":6,"C44":6,"C45":7,"C46":8,"C47":5,"C48":4,"C49":7,"C50":7,"C51":8,"C52":5,"C53":8,"C54":7,"C55":9,"C56":8,"C57":8,"C58":8,"C59":10,"C60":10,"C61":9,"C62":8,"C63":8,"C64":4,"C65":7,"C66":8,"C67":8,"C68":7,"C69":5,"C70":5,"C71":4,"C72":6,"C73":5};
+  const VERSION='20261026-personal2',LEGACY_VERSION='20261024-personal1',CURRICULUM_REVISION='20261104-curriculum3',EXTENSION_VERSION='20261024-middle-extension1';
+  const SOURCE_LIMITS={"C0":19,"C1":6,"C2":6,"C3":8,"C4":9,"C5":8,"C6":8,"C7":4,"C8":9,"C9":11,"C10":6,"C11":8,"C12":6,"C13":4,"C14":4,"C15":4,"C16":5,"C17":9,"C18":5,"C19":4,"C20":7,"C21":6,"C22":4,"C23":7,"C24":7,"C25":4,"C26":8,"C27":12,"C28":12,"C29":10,"C30":7,"C31":12,"C32":10,"C33":7,"C34":9,"C35":8,"C36":10,"C37":13,"C38":8,"C39":9,"C40":7,"C41":8,"C42":8,"C43":6,"C44":6,"C45":7,"C46":8,"C47":5,"C48":4,"C49":7,"C50":7,"C51":8,"C52":5,"C53":8,"C54":7,"C55":9,"C56":8,"C57":8,"C58":8,"C59":10,"C60":10,"C61":9,"C62":8,"C63":8,"C64":4,"C65":7,"C66":8,"C67":8,"C68":7,"C69":5,"C70":5,"C71":4,"C72":6,"C73":5};
   const MULTS=[0.7,0.85,1,1.25,1.5],DAY=86400000;
   const own=(v,k)=>Object.prototype.hasOwnProperty.call(v,k);
   const obj=v=>!!v&&typeof v==='object'&&!Array.isArray(v);

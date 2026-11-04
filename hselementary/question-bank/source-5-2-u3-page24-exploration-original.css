@@ -1,0 +1,8 @@
+.p24original-question ol { padding-left:1.6em; margin:.3em 0; }
+.p24original-question li { margin:.2em 0; }
+.p24original-answer-figure { display:block; width:100%; max-width:630px; height:auto; margin:.5em auto; }
+@media print { .p24original-question, .p24original-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10pt; } .p24original-question li { margin:.1em 0; line-height:1.3; } }
+@media print {
+  #problemView .print-page--four-up:has([data-source-item-id="5-2-u3-e1-exploration-original"]) :is(.u3ex11-work,.u3ex12-work) { min-height:110px; }
+  #problemView .print-page--four-up:has([data-source-item-id="5-2-u3-e1-exploration-original"]) .u3ex13 ol { line-height:1.25; }
+}

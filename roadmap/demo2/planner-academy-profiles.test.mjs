@@ -52,6 +52,18 @@ test('새 학원 자료는 회원 확인 뒤 불러오며 공개 소개에는 �
  assert.ok(html.indexOf(name)<html.indexOf('data-member-src="planner-academy-stories.js'));
  const account=read('account.html');
  assert.ok(!account.includes(name));assert.equal((account.match(/class="account-senior-example"/g)||[]).length,1);
- for(const label of ['지니·MSC·기파랑','planner.html?academy=schools','초등 6-1 과정','계정에 저장','학교마다 시험일과 준비 기간이 다르므로'])assert.ok(account.includes(label),label);
+ for(const label of ['천개의고원·기파랑·지니·MSC','planner.html?academy=schools','초등 6-1 과정','계정에 저장','학교마다 시험일과 준비 기간이 다르므로'])assert.ok(account.includes(label),label);
  for(const f of ['account.html','planner-academy-profiles.js'])assert.doesNotMatch(read(f),/KakaoTalk_|닉네임|오후 6:14|최현수|송윤하/);
+});
+
+
+test('천개의고원은 국어로 분류하고 공식 과정·개인 경험·미확인 접수를 구분한다',()=>{
+ const x=P.profiles.find(x=>x.id==='academy-thousand');assert.equal(x.subject,'국어학원');
+ for(const stage of ['elementary','middle'])assert.ok(S.data(stage,'academies').some(x=>x.id==='academy-thousand'));
+ const html=S.detail(x.id);
+ for(const t of ['초4·5·6 독서탐구반','공식 안내에서 확인한 내용','학부모 경험 · 제공 대화 요약','원고지','약 4~5주','모든 지점·반의 공통 규정','대기 신청일·방법','성적 향상 보장이 아닙니다'])assert.ok(html.includes(t),t);
+ assert.ok(!html.includes('1월 1일'));assert.match(html,/https:\/\/nonsul4us\.com/);
+ assert.ok(Object.isFrozen(x.experience.items));assert.ok(Object.isFrozen(x.verified.links));
+ assert.match(S.detail('korean-academy-choice'),/정해진 학원 이동 순서가 있는 것은 아닙니다/);
+ const unsafe={...x,experience:{label:'<script>',items:[{title:'<img>',text:'<script>'}],note:'<iframe>'}};assert.ok(!P.render(unsafe).includes('<script>'));
 });

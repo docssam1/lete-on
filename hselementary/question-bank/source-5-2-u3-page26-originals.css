@@ -1,0 +1,6 @@
+.p26original-choices p { margin:.16em 0; }
+.p26original-values { text-align:center; margin:.8em 0; }
+@media print { .p26original-question,.p26original-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10.5pt; } }
+
+.p26e23-figure { display:block; width:100%; max-width:340px; height:auto; margin:.3em auto; }
+@media print { #problemView .print-page--four-up .question-prompt svg.p26e23-figure { width:auto !important; max-height:46mm; } }

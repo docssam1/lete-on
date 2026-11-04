@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict'),path=require('node:path'),os=require('node:os'),{execFileSync}=require('node:child_process');
+const api=require('./source-5-2-u1-p68-q8-similar.js');
+const feasible=Array.from({length:250},(_,i)=>i).filter(n=>Math.ceil(n/36)===5);
+assert.equal(feasible.length,36);assert.equal(feasible[0],145);assert.equal(feasible.at(-1),180);
+assert.deepEqual(feasible,Array.from({length:36},(_,i)=>145+i));
+assert.match(api.build(0).answer,/144명 초과 181명 미만/);assert.equal(api.build(1),null);
+const {chromium}=require(process.env.HSE_PLAYWRIGHT_PATH||'playwright');
+const origin=process.env.HSE_AUDIT_ORIGIN||'http://127.0.0.1:45683';
+(async()=>{const browser=await chromium.launch({headless:true});try{for(const width of [1280,375]){
+ const context=await browser.newContext({viewport:{width,height:1000},serviceWorkers:'block'});await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());await context.addInitScript(()=>{window.print=()=>{}});const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(`${origin}/hselementary/question-bank/`);await page.waitForFunction(()=>window.HSE_GENERATORS&&window.HSE_SOURCE52_U1_P68_Q8_SIMILAR);await page.locator("#gradeFilter [data-grade='5']").click();await page.locator("#termFilter [data-term='2']").click();await page.locator('#unitFilter').selectOption('5-2-u1');
+ for(const id of ['1-original','4-original','6-original','8-bus-range-similar'])await page.locator(`#typeList input[data-type-id="5-2-u1-practice-${id}"]`).check();await page.locator('#questionCountInput').fill('4');await page.locator("#difficultyFilter [data-difficulty='0']").click();await page.locator('#generateButton').click();await page.waitForFunction(()=>!document.querySelector('#worksheet').hidden);
+ const question=page.locator(`#problemView [data-source-item-id="${api.source}"]`);assert.equal(await question.count(),1);assert.match(await question.innerText(),/5대면 모두 탈 수 있다/);assert.match(await page.locator('#problemView').innerText(),/유사문항/);assert.match(await page.locator(`#solutionView [data-source-answer="${api.source}"]`).innerText(),/144명 초과 181명 미만/);
+ await page.locator('#printMenuButton').click();await page.locator('#printMenuList [data-print-mode="problem"]').click();await page.waitForFunction(()=>document.body.dataset.printMode==='problem');await page.emulateMedia({media:'print'});const file=path.join(process.env.MAC_CHECK_OUTPUT||os.tmpdir(),`p68-q8-similar-${width}.pdf`);await page.pdf({path:file,format:'A4',preferCSSPageSize:true,printBackground:true});assert.match(execFileSync('pdfinfo',[file],{encoding:'utf8'}),/Pages:\s+1\b/);assert.equal(await page.locator('#problemView .question-item').count(),4);assert.deepEqual(errors,[]);await context.close();
+ }}finally{await browser.close()}console.log('PASS: independent bus boundaries, similar label, desktop/mobile and four-up A4');})().catch(e=>{console.error(e);process.exitCode=1});

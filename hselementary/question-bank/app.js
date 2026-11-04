@@ -283,7 +283,7 @@
     const header = title => `<header><div>${title}</div><button type="button" class="type-preview-close" data-close-type-preview aria-label="미리보기 닫기">×</button></header>`;
     const commonType = commonQuestionType(type);
     if (commonType?.generator && !commonType.reviewLocked) {
-      const generated = generatorApi.generate(commonType, currentLevel().rank, state.difficulty, hash(`preview:${commonType.id}`), type.commonPublicVariant ?? commonType.variant ?? 0);
+      const generated = generatorApi.generate(commonType, currentLevel().rank, state.difficulty, hash(`preview:${commonType.id}`), type.commonPublicVariant ?? (commonType.generationMode === "fixed-verified-pool" ? 0 : commonType.variant ?? 0));
       if (!generated) return;
       const compound = type.sourceRelationship === "same-source-compound-skill" && sourceQuestionType(type) === commonType;
       const commonSourceLine = `<div class="type-preview-source"><b>공통 유형 예시</b><small>${source} · ${compound ? "단면 그리기와 개수 구하기가 한 문제에 포함됩니다." : `${escapeHtml(commonType.sourceItemLabel || "공통 유형")}과 같은 풀이 방법`}</small></div>`;
@@ -292,7 +292,7 @@
       const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
       popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<footer>검수 대기 · ${escapeHtml(reviewReason)}</footer>`;
     } else {
-      const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
+      const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.generationMode === "fixed-verified-pool" ? 0 : type.variant ?? 0);
       if (!generated) return;
       popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} · 고정된 유형 예시</footer>`;
     }
@@ -480,15 +480,20 @@
   }
 
   function problemWeight(question) {
+    // These parallel-line diagrams fit a standard four-up cell.
+    if (["4-2-u4-t1-2", "4-2-u4-t1-3", "4-2-u4-t1-7", "4-2-u4-t2-6", "4-2-u4-t1-6"].includes(question.type?.id)) return 1;
     // These four fraction word problems fit the standard four-up cell.
     if (["4-2-u1-t1", "4-2-u1-t1-4", "4-2-u1-t3-10", "4-2-u1-t6"].includes(question.type?.id)) return 1;
     // These compact fraction prompts fit a half-page cell despite having three
     // or more fraction elements. Keep the wide fallback for longer equations.
     if (["5-2-u2-e1-example-4-synthetic", "5-2-u2-e4-mission-2-synthetic"].includes(question.sourceItemId)) return 1;
+    // Verified page 17 fraction missions fit the standard four-up cell.
+    if (/^5-2-u2-e2-mission-[1-5]-original$/.test(question.sourceItemId || "")) return 1;
     // The four short equations stack within a half-page column in print.
     if (["5-2-u2-practice-71-original", "5-2-u2-practice-71-count-similar"].includes(question.sourceItemId)) return 1; // Four short inline fractions fit the standard column.
     if (question.sourceItemId === "5-2-u2-practice-74-original") return 1; // The three short symbolic fractions fit the standard column.
     if (question.sourceItemId === "5-2-u4-e2-example-1") return 1;
+    if (["4-2-u5-t1-2", "4-2-u5-t1-3", "4-2-u5-t1-6", "4-2-u5-t1-9", "4-2-u5-t1-5", "4-2-u5-t1-10", "4-2-u5-t2-2", "4-2-u5-t2-6", "4-2-u5-t2-3", "4-2-u5-t2-4", "4-2-u5-t2-7", "4-2-u5-t2-8", "4-2-u5-t1", "4-2-u5-t2-9", "4-2-u5-t2-10", "4-2-u5-t1-4", "4-2-u5-t1-7", "4-2-u5-t1-8"].includes(question.type?.id)) return 1;
     if (question.sourceItemId?.startsWith("6-2-u4-e2-")) return question.sourceItemId.endsWith("exploration") ? 3 : 1.5;
     if (question.sourceItemId?.startsWith("6-2-u4-e1-")) return question.sourceItemId.endsWith("example-4") ? 3 : 1.5;
     if (question.prompt.includes("source62-final-problem")) return 3;
@@ -587,12 +592,32 @@
     return pages;
   }
 
+  function problemPromptHtml(question) {
+    const html = renderMathNotation(question.prompt);
+    if (!["4-2-u5-t1-4", "4-2-u5-t1-7", "4-2-u5-t1-8"].includes(question.type?.id)) return html;
+    const container = document.createElement("div");
+    container.innerHTML = html;
+    const graphs = [...container.children].filter(element => element.classList.contains("graph-figure"));
+    if (graphs.length !== 2) return html;
+    for (const graph of graphs) {
+      const ticks = [...graph.querySelectorAll(".chart-tick")];
+      if (ticks.length > 8) ticks.forEach((tick, index) => {
+        if ((index % 2 === 1 && index !== ticks.length - 1) || (ticks.length % 2 === 0 && index === ticks.length - 2)) tick.classList.add("paired-dense-hidden");
+      });
+    }
+    const pair = document.createElement("div");
+    pair.className = "question-graph-pair";
+    graphs[0].before(pair);
+    pair.append(...graphs);
+    return container.innerHTML;
+  }
+
   function renderProblems() {
     $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired, fourUp }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}${fourUp ? " print-page--four-up" : ""}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item" data-type-id="${escapeHtml(question.type.id)}"${isCompactFractionProblem(question) ? ' data-compact-fraction="true"' : ""}>
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
-        <div class="question-prompt">${renderMathNotation(question.prompt)}</div>
+        <div class="question-prompt">${problemPromptHtml(question)}</div>
         <div class="answer-line">답</div>
       </article>`).join("")}</div>${watermark()}
     </section>`).join("");

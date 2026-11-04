@@ -1,0 +1,4 @@
+.p29scope-question .source52-p29m1-angle-label,.p29scope-question .source52-p29m4-angle-label { font-size:25px; font-weight:700; }
+@media print { .p29scope-question,.p29scope-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10.5pt; } #problemView .print-page--four-up .p29scope-question svg { width:auto !important; max-width:100%; max-height:53mm; } }
+
+.p29scope-question .source52-p29m4-diagram .source52-p29m4-angle-label { font-size:25px !important; font-weight:700; }

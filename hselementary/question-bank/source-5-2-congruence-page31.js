@@ -14,7 +14,13 @@
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-3", generatorKey: "source52EquilateralRotationPage31Mission3", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-4", generatorKey: "source52SquareTrisectionAreaPage31Mission4", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-5", generatorKey: "source52CongruentTriangleAreaPage31Mission5", publicReady: true }),
-    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6", generatorKey: "source52TrapezoidMidpointPage31Mission6", publicReady: true })
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6", generatorKey: "source52TrapezoidMidpointPage31Mission6", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-6-original", generatorKey: "source52TrapezoidMidpointPage31Mission6Original", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-3-original", generatorKey: "source52EquilateralRotationPage31Mission3Original", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-4-original", generatorKey: "source52SquareTrisectionAreaPage31Mission4Original", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-5-original", generatorKey: "source52CongruentTriangleAreaPage31Mission5Original", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-1-original", generatorKey: "source52SquareAnglePage31Mission1Original", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-2-original", generatorKey: "source52SemicircleAnglePage31Mission2Original", publicReady: true })
   ]);
   const squareAlphas = [9, 14, 19];
   const circleBaseVertices = [48, 57, 72];
@@ -92,7 +98,7 @@
   function circlePoint(cx, cy, radius, angle) {
     return { x: cx + radius * Math.cos(rad(angle)), y: cy - radius * Math.sin(rad(angle)) };
   }
-  function semicircleDiagram(baseVertexAngle, x, centralArc) {
+  function semicircleDiagram(baseVertexAngle, x, centralArc, showHints = true, showMarker = showHints) {
     const cx = 250, cy = 260, r = 190;
     const g = circlePoint(cx,cy,r,180), rr = circlePoint(cx,cy,r,180-x), m = circlePoint(cx,cy,r,2*x), b = circlePoint(cx,cy,r,x), n = circlePoint(cx,cy,r,0);
     const labels = (p, text, dx, dy) => `<text x="${Number((p.x+dx).toFixed(2))}" y="${Number((p.y+dy).toFixed(2))}">${text}</text>`;
@@ -101,7 +107,7 @@
     const firstEqual = `<line class="source52-equal-mark" x1="${g.x}" y1="${g.y}" x2="${rr.x}" y2="${rr.y}"/>`;
     const xOne = { x: cx + 45*Math.cos(rad(1.5*x)), y: cy - 45*Math.sin(rad(1.5*x)) };
     const xTwo = { x: cx + 68*Math.cos(rad(x/2)), y: cy - 68*Math.sin(rad(x/2)) };
-    return `<svg class="source52-p31-diagram source52-p31-circle" data-source52-figure="semicircle-angle" data-central-arc="${centralArc}" viewBox="0 0 500 330" role="img" aria-label="지름 ㄱㄷㄴ, 같은 현 ㄱㄹ과 ㅁㅂ, 같은 중심각, 목표각 ㉠을 표시한 반원" xmlns="http://www.w3.org/2000/svg"><path class="source52-circle-arc" d="M${point(g.x,g.y)} A${r} ${r} 0 0 1 ${point(n.x,n.y)}"/><line x1="${g.x}" y1="${g.y}" x2="${n.x}" y2="${n.y}"/><line x1="${cx}" y1="${cy}" x2="${rr.x}" y2="${rr.y}"/><line x1="${cx}" y1="${cy}" x2="${m.x}" y2="${m.y}"/><line x1="${cx}" y1="${cy}" x2="${b.x}" y2="${b.y}"/><line x1="${g.x}" y1="${g.y}" x2="${rr.x}" y2="${rr.y}"/><line x1="${rr.x}" y1="${rr.y}" x2="${m.x}" y2="${m.y}"/><line x1="${m.x}" y1="${m.y}" x2="${b.x}" y2="${b.y}"/><line x1="${b.x}" y1="${b.y}" x2="${n.x}" y2="${n.y}"/>${equalTick(g,rr)}${equalTick(m,b)}<circle cx="${cx}" cy="${cy}" r="4"/><path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text x="${cx+8}" y="${cy+18}">ㄷ</text>${labels(g,"ㄱ",-20,18)}${labels(rr,"ㄹ",-14,-10)}${labels(m,"ㅁ",-4,-12)}${labels(b,"ㅂ",-1,-12)}${labels(n,"ㄴ",8,18)}<text class="source52-angle-label" x="${Number((givenMark.label.x-16).toFixed(1))}" y="${Number((givenMark.label.y+4).toFixed(1))}">${baseVertexAngle}°</text><text class="source52-angle-label" x="${Number(xOne.x.toFixed(1))}" y="${Number(xOne.y.toFixed(1))}">x</text><text class="source52-angle-label" x="${Number(xTwo.x.toFixed(1))}" y="${Number(xTwo.y.toFixed(1))}">x</text><text class="source52-target-label" x="${Number((targetMark.label.x-8).toFixed(1))}" y="${Number((targetMark.label.y+4).toFixed(1))}">㉠</text></svg>`;
+    return `<svg class="source52-p31-diagram source52-p31-circle" data-source52-figure="semicircle-angle" data-central-arc="${centralArc}" viewBox="0 0 500 330" role="img" aria-label="지름 ㄱㄷㄴ, 같은 현 ㄱㄹ과 ㅁㅂ, 같은 중심각, 목표각 ${showMarker ? "㉠" : "ㄹㅁㅂ"}을 표시한 반원" xmlns="http://www.w3.org/2000/svg"><path class="source52-circle-arc" d="M${point(g.x,g.y)} A${r} ${r} 0 0 1 ${point(n.x,n.y)}"/><line x1="${g.x}" y1="${g.y}" x2="${n.x}" y2="${n.y}"/><line x1="${cx}" y1="${cy}" x2="${rr.x}" y2="${rr.y}"/><line x1="${cx}" y1="${cy}" x2="${m.x}" y2="${m.y}"/><line x1="${cx}" y1="${cy}" x2="${b.x}" y2="${b.y}"/><line x1="${g.x}" y1="${g.y}" x2="${rr.x}" y2="${rr.y}"/><line x1="${rr.x}" y1="${rr.y}" x2="${m.x}" y2="${m.y}"/><line x1="${m.x}" y1="${m.y}" x2="${b.x}" y2="${b.y}"/><line x1="${b.x}" y1="${b.y}" x2="${n.x}" y2="${n.y}"/>${equalTick(g,rr)}${equalTick(m,b)}<circle cx="${cx}" cy="${cy}" r="4"/><path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text x="${cx+8}" y="${cy+18}">ㄷ</text>${labels(g,"ㄱ",-20,18)}${labels(rr,"ㄹ",-14,-10)}${labels(m,"ㅁ",-4,-12)}${labels(b,"ㅂ",-1,-12)}${labels(n,"ㄴ",8,18)}<text class="source52-angle-label" x="${Number((givenMark.label.x-16).toFixed(1))}" y="${Number((givenMark.label.y+4).toFixed(1))}">${baseVertexAngle}°</text>${showHints ? `<text class="source52-angle-label" x="${Number(xOne.x.toFixed(1))}" y="${Number(xOne.y.toFixed(1))}">x</text><text class="source52-angle-label" x="${Number(xTwo.x.toFixed(1))}" y="${Number(xTwo.y.toFixed(1))}">x</text>` : ""}${showMarker ? `<text class="source52-target-label" x="${Number((targetMark.label.x-8).toFixed(1))}" y="${Number((targetMark.label.y+4).toFixed(1))}">㉠</text>` : ""}</svg>`;
   }
 
   function equilateralDiagram(target, delta) {
@@ -116,7 +122,30 @@
     const text = (p,label,dx,dy) => `<text x="${(p.x+dx).toFixed(2)}" y="${(p.y+dy).toFixed(2)}">${label}</text>`;
     const givenMark = angleMark(m,n,d,18);
     const targetMark = angleMark(r,g,m,18);
-    return `<svg class="source52-p31-diagram source52-p31-equilateral" data-source52-figure="equilateral-rotation" data-target-angle="${target}" viewBox="0 0 360 390" role="img" aria-label="공통 꼭짓점 ㄷ을 둔 두 정삼각형, 주어진 각과 목표각 ㄱㄹㅁ 그림" xmlns="http://www.w3.org/2000/svg">${a(d,n)}${a(n,g)}${a(g,d)}${a(d,m)}${a(m,r)}${a(r,d)}${a(m,n)}${a(r,g)}<path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text class="source52-angle-label" style="paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round" x="${(givenMark.label.x-20).toFixed(2)}" y="${(givenMark.label.y+4).toFixed(2)}">${target}°</text>${text(g,"ㄱ",-20,0)}${text(n,"ㄴ",8,-10)}${text(d,"ㄷ",-18,18)}${text(r,"ㄹ",18,-2)}${text(m,"ㅁ",8,-9)}</svg>`;
+    const points = [d,n,g,m,r,givenMark.label,targetMark.label];
+    const left = Math.floor(Math.min(...points.map(p=>p.x))-38), top = Math.floor(Math.min(...points.map(p=>p.y))-38);
+    const right = Math.ceil(Math.max(...points.map(p=>p.x))+38), bottom = Math.ceil(Math.max(...points.map(p=>p.y))+38);
+    return `<svg class="source52-p31-diagram source52-p31-equilateral" data-source52-figure="equilateral-rotation" data-target-angle="${target}" viewBox="${left} ${top} ${right-left} ${bottom-top}" role="img" aria-label="공통 꼭짓점 ㄷ을 둔 두 정삼각형, 주어진 각과 목표각 ㄱㄹㅁ 그림" xmlns="http://www.w3.org/2000/svg">${a(d,n)}${a(n,g)}${a(g,d)}${a(d,m)}${a(m,r)}${a(r,d)}${a(m,n)}${a(r,g)}<path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text class="source52-angle-label" style="paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round" x="${(givenMark.label.x-20).toFixed(2)}" y="${(givenMark.label.y+4).toFixed(2)}">${target}°</text>${text(g,"ㄱ",-20,0)}${text(n,"ㄴ",8,-10)}${text(d,"ㄷ",-18,18)}${text(r,"ㄹ",18,-2)}${text(m,"ㅁ",8,-9)}</svg>`;
+  }
+
+  // 원문의 방향과 각 ㉮ 표시를 유지한다. 길이는 각도 조건을 만족하도록 재구성한다.
+  function equilateralMission3OriginalDiagram() {
+    const d = {x: 300, y: 300}, dm = 75, delta = 25;
+    const dn = dm * Math.sin(rad(140)) / Math.sin(rad(140 + delta));
+    const n = {x: d.x-dn, y:d.y};
+    const g = {x:d.x-dn*Math.cos(rad(-60)), y:d.y+dn*Math.sin(rad(-60))};
+    const m = {x:d.x-dm*Math.cos(rad(delta)), y:d.y+dm*Math.sin(rad(delta))};
+    const r = {x:d.x-dm*Math.cos(rad(delta-60)), y:d.y+dm*Math.sin(rad(delta-60))};
+    const line = (a,b) => `<line x1="${a.x.toFixed(2)}" y1="${a.y.toFixed(2)}" x2="${b.x.toFixed(2)}" y2="${b.y.toFixed(2)}"/>`;
+    const label = (p,t,dx,dy) => `<text x="${(p.x+dx).toFixed(2)}" y="${(p.y+dy).toFixed(2)}">${t}</text>`;
+    const mark = angleMark(r,g,m,18);
+    return `<svg class="source52-p31-diagram source52-p31-equilateral" data-source52-figure="equilateral-rotation-original" data-g="${point(g.x,g.y)}" data-n="${point(n.x,n.y)}" data-d="${point(d.x,d.y)}" data-r="${point(r.x,r.y)}" data-m="${point(m.x,m.y)}" viewBox="65 90 260 255" role="img" aria-label="원문의 두 정삼각형과 각 ㉮" xmlns="http://www.w3.org/2000/svg">${line(g,n)}${line(n,d)}${line(d,g)}${line(d,r)}${line(r,m)}${line(m,d)}${line(n,m)}${line(g,r)}<path class="source52-angle-mark" d="${mark.d}"/><text class="source52-target-label" x="${(mark.label.x-12).toFixed(2)}" y="${(mark.label.y+4).toFixed(2)}">㉮</text>${label(g,"ㄱ",-8,-10)}${label(n,"ㄴ",-20,10)}${label(d,"ㄷ",8,10)}${label(r,"ㄹ",8,-5)}${label(m,"ㅁ",-8,24)}</svg>`;
+  }
+
+  function buildMission3Original() {
+    const prompt = `<div class="source52-p31-question"><p>다음 삼각형 ㄱㄴㄷ과 삼각형 ㄷㄹㅁ은 정삼각형이고 각 ㄴㅁㄷ이 140°일 때, 각 ㉮의 크기를 구하여라.</p>${equilateralMission3OriginalDiagram()}</div>`;
+    const solution = `<div class="source52-p31-solution"><ol><li>점 ㄷ을 중심으로 60° 회전하면 ㄴ은 ㄱ으로, ㅁ은 ㄹ로 옮겨집니다. 따라서 ∠ㄱㄹㄷ=∠ㄴㅁㄷ=140°입니다.</li><li>정삼각형 ㄷㄹㅁ에서 ∠ㄷㄹㅁ=60°입니다. 점 ㄹ 둘레의 각의 합은 360°이므로 각 ㉮는 360°−140°−60°=<b>160°</b>입니다.</li></ol></div>`;
+    return result("5-2-u3-e4-mission-3-original",0,0,prompt,"160°",solution,{targetAngle:140,rotationDegrees:60,answer:160},false,answerVisual("각 ㉮","160°","∠ㄱㄹㅁ"));
   }
 
   function equilateralExampleDiagram(alpha, beta, showCorrespondingAngle = false) {
@@ -174,9 +203,9 @@
     return `<svg class="source52-p31-diagram source52-p31-area-proof" viewBox="0 0 500 370" role="img" aria-label="점 ㅂ을 더해 직사각형을 만들고 삼각형 ㄱㄷㅁ을 남긴 넓이 풀이 그림" xmlns="http://www.w3.org/2000/svg"><polygon class="source52-area-target" points="${pointString(g)} ${pointString(d)} ${pointString(m)}"/><rect class="source52-construction-line" x="${n.x}" y="${g.y}" width="${total*scale}" height="${height*scale}"/><line x1="${n.x}" y1="${n.y}" x2="${g.x}" y2="${g.y}"/><line x1="${n.x}" y1="${n.y}" x2="${d.x}" y2="${d.y}"/><line x1="${d.x}" y1="${d.y}" x2="${g.x}" y2="${g.y}"/><line x1="${d.x}" y1="${d.y}" x2="${r.x}" y2="${r.y}"/><line x1="${r.x}" y1="${r.y}" x2="${m.x}" y2="${m.y}"/><line x1="${d.x}" y1="${d.y}" x2="${m.x}" y2="${m.y}"/><text x="${g.x-25}" y="${g.y-4}">ㄱ</text><text x="${n.x-26}" y="${n.y+24}">ㄴ</text><text x="${d.x-10}" y="${d.y+24}">ㄷ</text><text x="${r.x+8}" y="${r.y+24}">ㄹ</text><text x="${m.x+8}" y="${m.y+3}">ㅁ</text><text x="${r.x+8}" y="${g.y+4}">ㅂ</text></svg>`;
   }
 
-  function buildMission5(variant, offset) {
-    const height = areaBaseHeights[variant] + 2 * offset;
-    const width = areaBaseWidths[variant];
+  function buildMission5(variant, offset, original = false) {
+    const height = original ? 16 : areaBaseHeights[variant] + 2 * offset;
+    const width = original ? 8 : areaBaseWidths[variant];
     const totalWidth = height + width;
     const topGap = height - width;
     const leftCorner = height * width / 2;
@@ -186,7 +215,7 @@
     const answer = rectangleArea - leftCorner - rightCorner - topCorner;
     const prompt = `<div class="source52-p31-question"><p>삼각형 ㄱㄴㄷ과 삼각형 ㄷㄹㅁ은 서로 합동입니다. ㄱㄴ=${height}cm, ㄹㅁ=${width}cm일 때 삼각형 ㄱㄷㅁ의 넓이를 구하세요.</p>${congruentTriangleAreaDiagram(height,width)}</div>`;
     const solution = `<div class="source52-p31-solution"><ol><li>합동 표기 순서대로 대응점을 맞추면 ㄱ↔ㄷ, ㄴ↔ㄹ, ㄷ↔ㅁ입니다.<br>따라서 ㄴㄷ=ㄹㅁ=${width}cm, ㄷㄹ=ㄱㄴ=${height}cm입니다.</li><li>ㄱ과 같은 높이의 점 ㅂ을 ㄹ 위에 잡아 직사각형 ㄱㄴㄹㅂ을 만듭니다.${congruentTriangleAreaProofDiagram(height,width)}직사각형의 가로는 ${totalWidth}cm, 세로는 ${height}cm이므로 넓이는 ${height}×${totalWidth}=${rectangleArea}cm²입니다.</li><li>직사각형에서 삼각형 ㄱㄷㅁ을 제외한 세 부분을 뺍니다. 왼쪽 아래와 오른쪽 아래 삼각형은 각각 ${height}×${width}÷2=${leftCorner}cm²이고, 위쪽 삼각형은 ${totalWidth}×(${height}−${width})÷2=${topCorner}cm²입니다.</li><li>따라서 삼각형 ㄱㄷㅁ의 넓이는 ${rectangleArea}−${leftCorner}−${rightCorner}−${topCorner}=${answer}cm²입니다.</li></ol></div>`;
-    return result("5-2-u3-e4-mission-5", variant, offset, prompt, `${answer}cm²`, solution, { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer }, false, triangleAreaAnswerVisual("삼각형 넓이", `${answer}cm²`));
+    return result(original ? "5-2-u3-e4-mission-5-original" : "5-2-u3-e4-mission-5", variant, offset, prompt, `${answer}cm²`, solution, { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer }, false, triangleAreaAnswerVisual("삼각형 넓이", `${answer}cm²`));
   }
 
   function trapezoidMidpointDiagram(top, bottom, height, proof = false) {
@@ -205,35 +234,35 @@
     return `<svg class="source52-p31-diagram source52-p31-trapezoid${proof ? " source52-p31-trapezoid-proof" : ""}" data-source52-figure="trapezoid-midpoint-area" data-top="${top}" data-bottom="${bottom}" data-height="${height}" data-g="${pt(g)}" data-n="${pt(n)}" data-d="${pt(d)}" data-r="${pt(r)}" data-m="${pt(m)}" data-p="${pt(p)}" viewBox="0 0 420 330" role="img" aria-label="윗변 ${top}cm, 아랫변 ${bottom}cm, 높이 ${height}cm인 사다리꼴과 옆변의 중점 ㅁ, 목표 삼각형 ㄱㄹㅁ의 넓이를 구하는 그림${proof ? " 및 보조선 ㄹㄴ" : ""}" xmlns="http://www.w3.org/2000/svg"><polygon class="source52-area-target" points="${pt(g)} ${pt(r)} ${pt(m)}"/><path d="M${pt(g)} L${pt(n)} L${pt(d)} L${pt(r)} Z"/><line x1="${g.x}" y1="${g.y}" x2="${r.x}" y2="${r.y}"/><line x1="${r.x}" y1="${r.y}" x2="${d.x}" y2="${d.y}"/><line x1="${d.x}" y1="${d.y}" x2="${m.x}" y2="${m.y}"/><line x1="${n.x}" y1="${n.y}" x2="${m.x}" y2="${m.y}"/><line x1="${g.x}" y1="${g.y}" x2="${m.x}" y2="${m.y}"/>${rightAngle(g,-1,-1)}${rightAngle(r,-1,1)}${construction}<path class="source52-measure-guide" d="M${r.x} ${y0-14} L${r.x} ${y0-5} M${d.x} ${y0-14} L${d.x} ${y0-5} M${g.x} ${g.y+16} L${g.x} ${g.y+5} M${n.x} ${n.y+16} L${n.x} ${n.y+5} M${x0-18} ${r.y} L${x0-5} ${r.y} M${x0-18} ${g.y} L${x0-5} ${g.y}"/><text x="${r.x-26}" y="${r.y-6}">ㄹ</text><text x="${d.x+7}" y="${d.y+5}">ㄷ</text><text x="${n.x+7}" y="${n.y+8}">ㄴ</text><text x="${g.x-28}" y="${g.y+8}">ㄱ</text><text x="${m.x+8}" y="${m.y+1}">ㅁ</text><text class="source52-length-label" x="${(r.x+d.x)/2-22}" y="${y0-16}">${top}cm</text><text class="source52-length-label" x="${(g.x+n.x)/2-22}" y="${g.y+36}">${bottom}cm</text><text class="source52-length-label" x="${x0-58}" y="${(g.y+r.y)/2+4}">${height}cm</text></svg>`;
   }
 
-  function buildMission6(variant, offset) {
-    const top = trapezoidTopBases[variant];
-    const bottom = trapezoidBottomBases[variant];
-    const height = trapezoidBaseHeights[variant] + 2 * offset;
+  function buildMission6(variant, offset, original = false) {
+    const top = original ? 10 : trapezoidTopBases[variant];
+    const bottom = original ? 8 : trapezoidBottomBases[variant];
+    const height = original ? 6 : trapezoidBaseHeights[variant] + 2 * offset;
     const midpointWidth = (top+bottom)/2;
     const answer = height*midpointWidth/2;
-    const prompt = `<div class="source52-p31-question"><p>사다리꼴 ㄱㄴㄷㄹ에서 선분 ㄱㄴ과 선분 ㄷㄹ은 각각 선분 ㄱㄹ에 수직입니다. 삼각형 ㄱㄹㅁ의 넓이를 구하세요. (단, 점 ㅁ은 변 ㄴㄷ의 한가운데 점입니다.)</p>${trapezoidMidpointDiagram(top,bottom,height)}</div>`;
+    const prompt = `<div class="source52-p31-question"><p>사다리꼴 ㄱㄴㄷㄹ에서 선분 ㄱㄴ과 선분 ㄷㄹ은 각각 선분 ㄱㄹ에 수직입니다. 삼각형 ㄱㄹㅁ의 넓이를 구하세요. (단, 점 ㅁ은 변 ㄴㄷ의 한가운데 점입니다.)</p>${original ? trapezoidMidpointDiagram(top,bottom,height).replace('viewBox="0 0 420 330"','viewBox="55 45 250 190"') : trapezoidMidpointDiagram(top,bottom,height)}</div>`;
     const solution = `<div class="source52-p31-solution"><ol><li>보조선 ㄹㄴ을 긋습니다. 점 ㅁ은 ㄴㄷ의 한가운데이므로 ㄴㅁ=ㅁㄷ입니다.${trapezoidMidpointDiagram(top,bottom,height,true)}</li><li>△ㄱㄴㅁ과 △ㄱㅁㄷ은 밑변 ㄴㅁ과 ㅁㄷ이 같고 ㄱ에서 이 직선까지의 높이도 같으므로 넓이가 같습니다. 따라서 △ㄱㄴㅁ은 △ㄱㄴㄷ의 절반입니다.</li><li>△ㄱㄴㄷ과 △ㄱㄴㄹ은 밑변 ㄱㄴ이 같고 ㄷ과 ㄹ이 ㄱㄴ에 평행한 선 위에 있으므로 높이도 같아 넓이가 같습니다. 따라서 △ㄱㄴㅁ은 △ㄱㄴㄹ의 절반입니다. 같은 방법으로 △ㄹㅁㄷ은 △ㄹㄴㄷ의 절반입니다.</li><li>사다리꼴에서 △ㄱㄹㅁ을 빼면 △ㄱㄴㅁ과 △ㄹㅁㄷ이 남습니다. 두 넓이의 합은 △ㄱㄴㄹ과 △ㄹㄴㄷ의 넓이 합의 절반, 즉 사다리꼴 넓이의 절반이므로 △ㄱㄹㅁ도 나머지 절반입니다.</li><li>사다리꼴의 넓이는 (${top}+${bottom})×${height}÷2=${(top+bottom)*height/2}cm²입니다. 따라서 △ㄱㄹㅁ의 넓이는 ${(top+bottom)*height/2}÷2=${answer}cm²입니다.</li></ol></div>`;
-    return result("5-2-u3-e4-mission-6",variant,offset,prompt,`${answer}cm²`,solution,{top,bottom,height,midpointWidth,answer},false,triangleAreaAnswerVisual("삼각형 넓이",`${answer}cm²`));
+    return result(original ? "5-2-u3-e4-mission-6-original" : "5-2-u3-e4-mission-6",variant,offset,prompt,`${answer}cm²`,solution,{top,bottom,height,midpointWidth,answer},false,triangleAreaAnswerVisual("삼각형 넓이",`${answer}cm²`));
   }
 
-  function buildMission1(variant, offset) {
-    const alpha = squareAlphas[variant] + difficultyDeltas[offset + 1];
+  function buildMission1(variant, offset, original = false) {
+    const alpha = original ? 20 : squareAlphas[variant] + difficultyDeltas[offset + 1];
     const beta = 45 - alpha;
     const answer = 90 - alpha;
     const prompt = `<div class="source52-p31-question"><p>정사각형 ㄱㄴㄷㄹ에서 점 ㅁ은 변 ㄱㄴ 위에, 점 ㅂ은 변 ㄴㄷ 위에 있습니다. ∠ㄱㄹㅁ=${alpha}°, ∠ㄷㄹㅂ=${beta}°일 때 ∠ㄹㅁㅂ을 구하세요.</p>${squareDiagram(alpha,beta)}</div>`;
     const solution = `<div class="source52-p31-solution"><p>풀이에 필요한 점 ㅅ과 점 ㅇ은 그림과 같이 잡습니다.</p>${squareProofDiagram(alpha,beta)}<ol><li>대각선 ㄴㄹ에 대해 점 ㅁ을 대칭이동한 점을 ㅅ이라 둡니다. △ㄴㄹㅁ과 △ㄴㄹㅅ은 ㄴㄹ을 공통으로 하고 ㄴㅁ=ㄴㅅ, 두 변 사이의 각이 각각 45°이므로 합동입니다. 따라서 ∠ㄴㄹㅅ=45°−${alpha}°=${beta}°이고, ∠ㅅㄹㄷ=${alpha}°입니다.</li><li>ㄴㄱ을 ㄱ 너머로 연장하고 ㄱㅇ=ㄷㅂ이 되게 점 ㅇ을 잡습니다. △ㄹㄷㅂ과 △ㄹㄱㅇ은 두 변과 그 사이의 각이 각각 같아 합동이므로 ㄹㅂ=ㄹㅇ, ∠ㄱㄹㅇ=${beta}°입니다.</li><li>∠ㅂㄹㅁ=90°−${alpha}°−${beta}°=45°이고 ∠ㅁㄹㅇ=${alpha}°+${beta}°=45°입니다. ㄹㅂ=ㄹㅇ, ㄹㅁ은 공통이고 두 변 사이의 각도 45°로 같으므로 △ㄹㅂㅁ과 △ㄹㅇㅁ은 합동입니다. 직각삼각형 ㄹㄱㅇ에서 ∠ㄹㅇㄱ=90°−${beta}°이고 ㄱ, ㅇ, ㅁ이 한 직선 위에 있으므로 △ㄹㅇㅁ의 나머지 각은 ∠ㄹㅁㅇ=90°−${alpha}°입니다. 따라서 ∠ㄹㅁㅂ=∠ㄹㅁㅇ=90°−${alpha}°=<b>${answer}°</b>입니다.</li></ol></div>`;
-    return result("5-2-u3-e4-mission-1", variant, offset, prompt, `${answer}°`, solution, { alpha, beta, answer }, false, answerVisual("정사각형 안의 목표각", `${answer}°`, "∠ㄹㅁㅂ"));
+    return result(original ? "5-2-u3-e4-mission-1-original" : "5-2-u3-e4-mission-1", variant, offset, prompt, `${answer}°`, solution, { alpha, beta, answer }, false, answerVisual("정사각형 안의 목표각", `${answer}°`, "∠ㄹㅁㅂ"));
   }
 
-  function buildMission2(variant, offset) {
-    const vertexAngle = circleBaseVertices[variant] + 3 * difficultyDeltas[offset + 1];
+  function buildMission2(variant, offset, original = false) {
+    const vertexAngle = original ? 60 : circleBaseVertices[variant] + 3 * difficultyDeltas[offset + 1];
     const arcRM = 180 - 2 * vertexAngle;
     const equalArc = (180 - arcRM) / 3;
     const answer = 180 - (arcRM + equalArc) / 2;
-    const prompt = `<div class="source52-p31-question"><p>중심이 ㄷ인 반원의 호 위에 ㄱ, ㄹ, ㅁ, ㅂ, ㄴ이 차례로 놓여 있습니다. ㄷㄹ=ㄷㅁ이고, ㄱㄹ=ㅁㅂ이며, ∠ㅁㄷㅂ=∠ㅂㄷㄴ입니다. ∠ㄷㄹㅁ=${vertexAngle}°일 때 ∠ㄹㅁㅂ을 구하세요.</p>${semicircleDiagram(vertexAngle,equalArc,arcRM)}</div>`;
+    const prompt = `<div class="source52-p31-question"><p>중심이 ㄷ인 반원의 호 위에 ㄱ, ㄹ, ㅁ, ㅂ, ㄴ이 차례로 놓여 있습니다. ㄷㄹ=ㄷㅁ이고, ㄱㄹ=ㅁㅂ이며, ∠ㅁㄷㅂ=∠ㅂㄷㄴ입니다. ∠ㄷㄹㅁ=${vertexAngle}°일 때 ∠ㄹㅁㅂ을 구하세요.</p>${semicircleDiagram(vertexAngle,equalArc,arcRM,!original)}</div>`;
     const solution = `<div class="source52-p31-solution"><ol><li>ㄷㄹ과 ㄷㅁ은 반지름이므로 △ㄷㄹㅁ은 이등변삼각형입니다. 두 밑각은 각각 ${vertexAngle}°이므로 ∠ㄹㄷㅁ=180°−${vertexAngle}°−${vertexAngle}°=${arcRM}°입니다.</li><li>ㄷㄱ, ㄷㄹ, ㄷㅁ, ㄷㅂ은 모두 반지름이고 ㄱㄹ=ㅁㅂ이므로 △ㄷㄱㄹ과 △ㄷㅁㅂ은 세 변의 길이가 각각 같아 합동입니다. 따라서 ∠ㄱㄷㄹ=∠ㅁㄷㅂ이고, 문제에서 ∠ㅁㄷㅂ=∠ㅂㄷㄴ이므로 이 세 각은 같습니다.</li><li>그 세 각을 각각 x°라 하면 반원에서 3x+${arcRM}=180입니다. 따라서 x=${fmt(equalArc)}이고 ∠ㅁㄷㅂ=${fmt(equalArc)}°입니다.</li><li>△ㄷㅁㅂ도 두 반지름이 같은 이등변삼각형이므로 ∠ㄷㅁㅂ=(180°−${fmt(equalArc)}°)÷2=${fmt((180-equalArc)/2)}°입니다. 그림에서 ㄷㅁ은 ∠ㄹㅁㅂ 안에 있으므로 ∠ㄹㅁㅂ=${vertexAngle}°+${fmt((180-equalArc)/2)}°=${fmt(answer)}°입니다.</li></ol></div>`;
-    const illustratedSolution = solution.replace("</ol></div>", `</ol>${semicircleDiagram(vertexAngle,equalArc,arcRM)}</div>`);
-    return result("5-2-u3-e4-mission-2", variant, offset, prompt, `${fmt(answer)}°`, illustratedSolution, { vertexAngle, centralArc: arcRM, equalArc, answer }, false, answerVisual("반원 속 목표각", `${fmt(answer)}°`));
+    const illustratedSolution = solution.replace("</ol></div>", `</ol>${semicircleDiagram(vertexAngle,equalArc,arcRM,true,!original)}</div>`);
+    return result(original ? "5-2-u3-e4-mission-2-original" : "5-2-u3-e4-mission-2", variant, offset, prompt, `${fmt(answer)}°`, illustratedSolution, { vertexAngle, centralArc: arcRM, equalArc, answer }, false, answerVisual("반원 속 목표각", `${fmt(answer)}°`, original ? "∠ㄹㅁㅂ" : "㉠"));
   }
 
   function buildMission3(variant, offset) {
@@ -257,8 +286,8 @@
     return `<svg class="source52-p31-diagram source52-p31-square-trisection" data-source52-figure="square-trisection-inner-area" data-k="${k}" data-side-length="${3*k}" data-outer-area="${outerArea}" data-g="${coords(g)}" data-n="${coords(n)}" data-d="${coords(d)}" data-r="${coords(r)}" data-m="${coords(m)}" data-b="${coords(b)}" data-s="${coords(s)}" data-o="${coords(o)}" viewBox="0 0 420 365" role="img" aria-label="넓이가 ${outerArea}제곱센티미터인 정사각형의 각 변을 삼등분한 점을 이어 만든 작은 정사각형의 넓이 그림" xmlns="http://www.w3.org/2000/svg">${triangle([g,m,b])}${triangle([r,m,o])}${triangle([d,o,s])}${triangle([n,s,b])}<polygon class="source52-area-target" points="${polygon}"/><path d="M${coords(g)} L${coords(r)} L${coords(d)} L${coords(n)} Z"/><path d="M${coords(m)} L${coords(b)} L${coords(s)} L${coords(o)} Z"/><text x="48" y="38">ㄱ</text><text x="356" y="38">ㄹ</text><text x="356" y="342">ㄷ</text><text x="48" y="342">ㄴ</text><text x="245" y="28">ㅁ</text><text x="54" y="140">ㅂ</text><text x="154" y="352">ㅅ</text><text x="356" y="232">ㅇ</text></svg>`;
   }
 
-  function buildMission4(variant, offset) {
-    const k = [8, 11, 14][variant] + offset;
+  function buildMission4(variant, offset, original = false) {
+    const k = original ? 5 : [8, 11, 14][variant] + offset;
     const side = 3 * k;
     const outerArea = side * side;
     const trisectedLength = k;
@@ -266,7 +295,7 @@
     const answer = outerArea - 4 * cornerArea;
     const prompt = `<div class="source52-p31-question"><p>넓이가 ${outerArea}cm²인 정사각형 ㄱㄴㄷㄹ의 각 변의 삼등분점을 이어 작은 정사각형 ㅁㅂㅅㅇ을 그렸습니다. 작은 정사각형 ㅁㅂㅅㅇ의 넓이를 구하세요.</p>${trisectionSquareDiagram(k, outerArea, answer)}</div>`;
     const solution = `<div class="source52-p31-solution"><ol><li>바깥 정사각형의 넓이는 ${outerArea}cm²=${side}cm×${side}cm이므로 한 변은 ${side}cm입니다. 한 변을 3등분한 길이는 ${side}÷3=${trisectedLength}cm이므로, 각 모서리의 삼각형 두 변은 ${trisectedLength}cm와 ${2*trisectedLength}cm입니다.</li><li>모서리의 직각삼각형 하나의 넓이는 ${trisectedLength}×${2*trisectedLength}÷2=${cornerArea}cm²입니다. 이런 삼각형은 네 개이므로 넓이의 합은 ${cornerArea}×4=${4*cornerArea}cm²입니다.</li><li>작은 정사각형의 넓이는 바깥 정사각형에서 네 삼각형의 넓이를 뺀 값입니다.<br>${outerArea}−${4*cornerArea}=${answer}cm²</li></ol></div>`;
-    return result("5-2-u3-e4-mission-4", variant, offset, prompt, `${answer}cm²`, solution, { k, side, outerArea, trisectedLength, cornerArea, answer }, false, areaAnswerVisual("작은 정사각형 넓이", `${answer}cm²`));
+    return result(original ? "5-2-u3-e4-mission-4-original" : "5-2-u3-e4-mission-4", variant, offset, prompt, `${answer}cm²`, solution, { k, side, outerArea, trisectedLength, cornerArea, answer }, false, areaAnswerVisual("작은 정사각형 넓이", `${answer}cm²`));
   }
 
   function answerVisual(label, answer, marker = "㉠") {
@@ -283,7 +312,7 @@
 
   function result(sourceItemId, variant, offset, prompt, answer, solution, answerModel, reviewLocked, answerVisual) {
     const definition = definitions.find(item => item.sourceItemId === sourceItemId);
-    const variantCount = ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
+    const variantCount = sourceItemId.endsWith("-original") ? 1 : ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
     return Object.freeze({
       prompt: `<div data-source-item="${sourceItemId}" data-source-item-id="${sourceItemId}" data-pool-index="${variant}" data-variant="${variant}" data-difficulty-offset="${offset}" data-level="${offset+1}">${prompt}</div>`,
       answer,
@@ -304,7 +333,7 @@
   }
 
   function getQuestion(sourceItemId, variant = 0, difficultyOffset = 0) {
-    const variantCount = ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
+    const variantCount = sourceItemId.endsWith("-original") ? 1 : ["5-2-u3-e4-mission-6", "5-2-u3-e4-example-2"].includes(sourceItemId) ? 4 : 3;
     if (!Number.isSafeInteger(variant) || variant < 0 || variant >= variantCount || ![-1,0,1].includes(difficultyOffset)) return null;
     if (sourceItemId === definitions[0].sourceItemId) return buildEquilateralExample2(variant,difficultyOffset);
     if (sourceItemId === definitions[1].sourceItemId) return buildMission1(variant,difficultyOffset);
@@ -313,6 +342,12 @@
     if (sourceItemId === definitions[4].sourceItemId) return buildMission4(variant,difficultyOffset);
     if (sourceItemId === definitions[5].sourceItemId) return buildMission5(variant,difficultyOffset);
     if (sourceItemId === definitions[6].sourceItemId) return buildMission6(variant,difficultyOffset);
+    if (sourceItemId === definitions[7].sourceItemId) return buildMission6(0,0,true);
+    if (sourceItemId === definitions[8].sourceItemId) return buildMission3Original();
+    if (sourceItemId === definitions[9].sourceItemId) return buildMission4(0,0,true);
+    if (sourceItemId === definitions[10].sourceItemId) return buildMission5(0,0,true);
+    if (sourceItemId === definitions[11].sourceItemId) return buildMission1(0,0,true);
+    if (sourceItemId === definitions[12].sourceItemId) return buildMission2(0,0,true);
     return null;
   }
   const keyFor = sourceItemId => definitions.find(item => item.sourceItemId === sourceItemId)?.generatorKey || "";

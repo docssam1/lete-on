@@ -82,6 +82,8 @@ function serve(){
   });
 
   const fails = [];
+
+  const widgetSkipped = [];
   let done = 0;
 
   for(const t of targets){
@@ -97,6 +99,8 @@ function serve(){
       try { probs = NM_EXAM.buildProblems(id, lv, N, NM_RNG.hashSeed(SEED)); }
       catch(e){ return { err: '생성 실패: ' + e.message }; }
       if(!probs || probs.length !== N) return { err: '문항 수 부족' };
+      /* 산점도 직접 찍기(MD87 plot)는 글자 입력이 아니라 그림 위를 눌러 답한다 — 글자 입력 검사 대상이 아니다(2026-11-04). 화면 채점은 NM_SCATTER_ANSWER.matches */
+      if(probs.some(p => p && p.scatterPlot && p.scatterPlot.mode === 'plot')) return { widget: 'scatter-plot' };
 
       /* 엔진이 아는 정답을 사람이 치듯 문자열로 만든다 */
       const typed = probs.map(p => Array.isArray(p.answer)
@@ -145,7 +149,8 @@ function serve(){
     }, { id: t.id, lv: t.lv });
 
     const tag = `${t.id}L${t.lv} ${t.name}/${t.lvLabel}`;
-    if(r.err) fails.push(`${tag} — ${r.err}`);
+    if(r.widget){ widgetSkipped.push(tag + ' (' + r.widget + ')'); }
+    else if(r.err) fails.push(`${tag} — ${r.err}`);
     else if(r.score !== r.total)
       fails.push(`${tag} — 정답을 그대로 넣었는데 ${r.score}/${r.total} (입력 "${r.typed[0]}" → 저장 "${r.answers[0]}")`);
 

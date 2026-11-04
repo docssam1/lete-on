@@ -1,11 +1,12 @@
 /* 2027 entry guides checked 2026-11-02. Dates are fixed civil dates in Korea,
  * never offsets from a student's study start. Concise editorial summaries only.
- * Scope: representative Seoul/Gyeonggi/Incheon guides, not a national catalogue.
+ * Scope: selected official school guides, not a national catalogue.
  */
 (function(g){'use strict';
 const sources={
  gs:{title:'경기과학고 2027 입학전형 요항',url:'https://gs-h.goesw.kr/dext5editordata/2026/04/20260402_151825822_26726.pdf',pages:'PDF 1~5쪽 · 일정은 3쪽'},
  sangsan:{title:'상산고 2027 신입생 입학전형 요강',url:'https://school.jbedu.kr/sangsan/M010403/view/6870211.do',document:'https://school.jbedu.kr/_cmm/fileDownload/sangsan/M010403/d07b8c8ba333c02a86136c918ae18076.do',pages:'요강 1~8쪽 · 전형 일정 1쪽'},
+ minjok:{title:'민사고 2027 신입생 모집요강',url:'https://www.minjok.hs.kr/board/bbs513/1437',document:'https://www.minjok.hs.kr/uploads/rolling/1788219410_d37e4027975b54b9b67d.pdf',pages:'요강 1~4·13~15쪽 · 일정 1쪽'},
  hana:{title:'하나고 2027 신입생 입학전형 요강',url:'https://www.hana.hs.kr/assets/brochure/2027학년도_하나고등학교_신입생_입학전형_요강.pdf',pages:'PDF 4·13~16쪽 · 일정은 13쪽'},
  dongtan:{title:'동탄국제고 2027 신입생 전형요강',url:'https://www.dtg.hs.kr/sys/data/file/020203/1794815826_tXkKfjEO_2027ED9599EB8584EB8F84_EC8BA0EC9E85EC839D_EC9E85ED9599ECA084ED9895_EC9A94EAB095_202609031033_70.pdf',pages:'요강 5·8·10~12·17~18쪽'},
  sshs:{title:'서울과학고 2027 모집요강·전형 공지',url:'https://admission-sshs.info/notification',pages:'모집요강 2~6쪽 · 3단계/합격예정자 후속 공지'},
@@ -24,6 +25,11 @@ const schools=[
  {id:'sangsan',name:'상산고',type:'자사고',goal:'private',region:'전국·전북 지역인재',year:2027,source:'sangsan',checked:'2026-11-03',
  eligibility:'중학교 졸업(예정)자 등 요강의 학력 조건을 갖춘 학생. 학교생활우수자·지역인재 등 지원 영역을 구분합니다.',regional:'전국 지원과 전북 지역인재의 자격·모집 구분을 각각 확인합니다.',grades:'중2-1 20%, 중2-2 30%, 중3-1 50%. 수학·국어·영어·과학·사회 5개 교과를 반영합니다.',attendance:'11월 27일까지의 중학교 재학 기간을 기준으로 미인정 출결을 산출하고 교과 총점에서 감점합니다.',documents:'온라인 원서와 학생부 등 영역별 서류. 우편은 12월 7일 16시 도착, 방문은 12월 7일 당일만 가능합니다.',interview:'창의융합·인성독서 면접. 1단계 교과 320점에서 출결 감점, 2단계 면접 80점을 합산합니다.',duplicates:'후기 자사고입니다. 전기·후기 이중지원 제한과 불합격 시 일반고 배정 절차를 거주 교육청 기준으로 확인합니다.',caution:'온라인 원서 13시와 서류 도착 16시 마감을 구분합니다. 합격자 소집·등록도 별도로 챙깁니다.',
  events:[event('apply','온라인 입학지원서 접수','2026-12-02','2026-12-07','마감 13:00'),event('mail','우편 서류 제출','2026-12-02','2026-12-07','마감일 16:00 도착'),event('visit','방문 서류 제출','2026-12-07',null,'09:00~16:00 · 당일만'),event('stage1-result','1단계 합격 발표','2026-12-11',null,'17:00'),event('interview','2단계 면접','2026-12-17','2026-12-18'),event('result','최종 합격 발표','2026-12-29',null,'17:00'),event('gather','합격자 소집','2027-01-02'),event('register','합격자 등록','2027-01-18','2027-01-20','마감 17:00')],undated:[]},
+ {id:'minjok',name:'민사고',type:'자사고',goal:'private',region:'전국·강원인재',year:2027,source:'minjok',checked:'2026-11-04',
+ eligibility:'중학교 졸업(예정) 등 동등 학력으로 영어상용정책과 영어 수업에 참여할 수 있는 학생. 고교 재학생·휴학생·졸업자는 지원할 수 없습니다.',regional:'일반·사회통합은 전국 모집. 강원인재는 강원 중학교 졸업예정자 등 별도 자격이며, 거주 조건 적용자는 2026년 10월 30일 이전 전 가족 거주 요건을 확인합니다.',
+ grades:'중2-1·2-2·중3-1·3-2를 20·20·30·30% 반영. 국어·수학·영어 외 사회/역사·과학·체육·음악/미술도 반영합니다. 1단계 교과 40점·출결 감점입니다.',attendance:'2026년 11월 20일까지의 미인정 출결 반영. 미인정 결석 1일당 0.2점, 지각·조퇴·결과 합계 3회는 결석 1일로 계산합니다.',
+ documents:'온라인 원서·교과성적·자기소개서와 우편 원서 출력본·동의서·학생부Ⅱ 2부 등. 우편은 도착일이 아닌 12월 10일 소인까지 유효합니다.',interview:'1단계 2배수 이내. 2단계는 1단계 40점＋면접 60점 및 체력검사 심의. 자기주도학습·지원동기·인성을 개별 면접으로 평가합니다.',duplicates:'전기고 합격자와 다른 자사고·외고·국제고 지원자는 지원할 수 없습니다. 민사고 내 전형 간 중복지원도 금지합니다.',caution:'온라인은 12월 10일 정오 마감. 우편 소인 기준과 체력검사·등록을 별도로 챙깁니다. 자기소개서 기재 배제 사항을 확인합니다.',
+ events:[event('apply','온라인 원서·자기소개서 제출','2026-12-08','2026-12-10','09:00 시작 · 마감 12:00(정오)'),event('mail','우편 서류 제출','2026-12-08','2026-12-10','12월 10일 소인까지 유효 · 도착 기준 아님'),event('stage1-result','면접 대상자 발표','2026-12-17',null,'10:00'),event('interview','면접·체력검사','2026-12-21','2026-12-22'),event('result','최종 합격 발표','2026-12-31',null,'12:00(정오)'),event('register','합격자 등록','2027-01-04','2027-01-06')],undated:[]},
  {id:'hana',name:'하나고',type:'자사고',goal:'private',region:'서울·일부 전국 예외',year:2027,source:'hana',checked:'2026-11-03',
  eligibility:'서울 중학교 졸업예정자 등 공통 자격을 확인합니다. 졸업자·동등학력자 등은 전 가족 서울 실거주 조건이 있습니다.',regional:'서울 중심 모집. 사회통합 중 다문화가족·군인 자녀는 전국 지원 예외가 있습니다.',grades:'중2·3의 4개 학기 국어·사회/역사·수학·과학·영어. 교과 40점·출결 감점과 서류·면접을 반영합니다.',attendance:'11월 13일까지 재학 기간 기준. 미인정 결석 1일당 0.1점 감점, 지각·조퇴·결과 3회를 결석 1일로 봅니다.',documents:'1차 원서·학생부 등 전형별 증빙, 면접 대상자의 2차 온라인 자기소개서. 우편은 도착 마감입니다.',interview:'서류 20점·면접 40점과 체력검사 감점. 자기주도학습·인성 경험을 준비합니다.',duplicates:'전형료 결제 후 다른 외고·국제고·자사고 등에 지원하면 이중지원으로 불합격 처리됩니다.',caution:'온라인 원서 13시·서류 15시 마감. 자기소개서 제출과 체력검사를 면접과 함께 챙깁니다.',
  events:[event('apply','온라인 원서·전형료 결제','2026-12-03','2026-12-07','00:00 시작 · 마감 13:00'),event('docs','1차 서류 제출','2026-12-03','2026-12-07','마감 15:00 · 주말 제외'),event('stage1-result','1단계 합격 발표','2026-12-10',null,'17:00'),event('essay','자기소개서 제출','2026-12-10','2026-12-14','17:00 시작 · 마감 10:00'),event('interview','면접·체력검사','2026-12-21','2026-12-22','시간·장소 학교 후속 공지'),event('result','최종 합격 발표','2026-12-30'),event('gather','입학 신고·예비 소집','2027-01-09'),event('register','등록금 납부','2027-01-20','2027-01-22')],undated:[]},
@@ -67,5 +73,5 @@ const schools=[
  events:[event('apply','일반고 원서 제출','2026-12-03','2026-12-07','출신 중학교 등 지정 접수처'),event('eligible','배정대상자 발표','2027-01-06'),event('assignment','배정학교 발표','2027-01-28'),event('register','입학 등록','2027-01-28','2027-01-29')],undated:[]}
 ];
 for(const s of schools){s.checked=s.checked||'2026-11-02';s.revision=s.year+'-'+s.checked;}
-g.PlannerHighschoolData=Object.freeze({checked:'2026-11-03',year:2027,sources,schools});
+g.PlannerHighschoolData=Object.freeze({checked:'2026-11-04',year:2027,sources,schools});
 })(window);

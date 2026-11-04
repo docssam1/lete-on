@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 const context={window:{},console};vm.createContext(context);
-for(const f of ['planner.js','demo-content.js','planner-intake.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),context);
+for(const f of ['planner.js','demo-content.js','planner-intake.js','planner-curriculum.js','planner-learning-evidence.js','planner-goal-curriculum.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),context);
 const {Planner:P,PlannerIntake:I,DemoContent:D}=context.window;
 const fields={grade:'2',mon:'10',band:'B',speed:'2'};
 const answer={age:'9',thinkingExperience:'yes',thinking:'1031 초급',thinkingStatus:'done',schoolCourse:'elem',schoolBook:'디딤돌 응용',school:'2-1',schoolStatus:'progress',deepCourse:'elem',deepBook:'최상위 S',deepStage:'1-2',deepStatus:'progress',calc:'기적의 계산법 4권',calcStatus:'done',hw:'0',gifted:'0'};
@@ -163,7 +163,7 @@ function storageFixture(saved){
  els.hw.options=[{value:'57'}];
  const storageKey='gfield.demo2.v1',stored=new Map([[storageKey,JSON.stringify(saved)]]);let asked=null;
  const c={I,console,answers:{},history:[],manualPeriods:{},pendingStatus:{},legacyDraft:null,state:{},completed:false,question:'age',draftIds:['grade','mon','band','speed','hw','comp','compLeft','calc','calcLeft'],
-  restoredRoadmapMode:null,standardPattern:null,standardAccepted:false,
+  restoredRoadmapMode:null,standardPattern:null,standardAccepted:false,CP:context.window.PlannerCurriculum,curriculumState:null,LE:context.window.PlannerLearningEvidence,GP:context.window.PlannerGoalCurriculum,learningEvidence:null,goalCurricula:null,
   $:id=>els[id]||(els[id]={value:'',type:'select-one',options:[]}),
   PlannerStorage:{getItem:key=>stored.get(key)??null,setItem:(key,value)=>{stored.set(key,String(value));}},
   questionOrder:()=>I.order(c.answers,c.intakeFields()),storageKey,hwOptions(){},setSeg(){},draw(){},finish(){},ask(key){asked=key;},

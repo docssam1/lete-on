@@ -116,6 +116,7 @@
     .geometry-diagram.source42-pp .pp-name{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:20px;dominant-baseline:middle}
     .geometry-diagram.source42-pp .pp-note{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:18px;dominant-baseline:middle}
     .geometry-diagram.source42-pp .pp-small{font-size:18px}
+    .geometry-diagram.source42-pp[data-model-kind="여러 직선에서 평행선 찾기"] .pp-small,.geometry-diagram.source42-pp[data-model-kind="여러 직선에서 평행선 찾기"] .pp-name{font-size:22px}
     .geometry-diagram.source42-pp .pp-value{text-anchor:middle;dominant-baseline:middle}
   </style>`;
 
@@ -123,8 +124,8 @@
   const svgPolyline = (points, className = "pp-line", attributes = "") => `<polyline class="${className}" points="${points.map(pathPoint).join(" ")}"${attributes}/>`;
   const svgText = (position, value, className = "pp-value", anchor = "middle", attributes = "") => `<text class="${className}" data-layout-role="label" x="${round(position.x)}" y="${round(position.y)}" text-anchor="${anchor}"${attributes}>${esc(value)}</text>`;
   const svgPlateText = (position, value, className = "pp-value pp-small") => {
-    const width = Math.max(30, String(value).length * 10 + 12);
-    return `<rect x="${round(position.x - width / 2)}" y="${round(position.y - 13)}" width="${round(width)}" height="26" fill="#fff"/>${svgText(position, value, className, "middle", ` data-layout-overlap-ok="true"`)}`;
+    const width = Math.max(36, String(value).length * 12 + 12);
+    return `<rect x="${round(position.x - width / 2)}" y="${round(position.y - 15)}" width="${round(width)}" height="30" style="fill:#fff;stroke:none"/>${svgText(position, value, className, "middle", ` data-layout-overlap-ok="true"`)}`;
   };
   const rightMark = (vertex, firstAngle, secondAngle, size = 11) => {
     const a = pointAt(vertex, firstAngle, size);
@@ -379,7 +380,7 @@
     const connectorEnd = targetB;
     const measuredLines = [
       { definition: definitions[4], travel: -76, side: -1, value: facts.distractors[0] },
-      { definition: definitions[5], travel: -82, side: 1, value: facts.distractors[1] },
+      { definition: definitions[5], travel: -25, side: 1, value: facts.distractors[1] },
       { definition: definitions[6], travel: 84, side: 1, value: facts.distractors[2] },
       { definition: definitions[2], travel: -116, side: -1, value: facts.distractors[3] },
       { definition: definitions[3], travel: 96, side: 1, value: facts.distractors[4] }

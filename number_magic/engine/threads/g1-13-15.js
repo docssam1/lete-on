@@ -665,7 +665,7 @@
       const pairs = enumPairs(whole, minPart, caps, ordered, cmp);
       const example = pick(rng, pairs);
       const fr = pick(rng, FRUITS);
-      if (!prompt) prompt = T3(`${josa(fr[1], '을', '를')} ${whole}개 두 접시에 나눠 담는 방법을 모두 찾아요. 순서가 달라도 같은 방법이에요`,
+      if (!prompt) prompt = T3(`${josa(fr[1], '을', '를')} ${whole}개 두 접시에 나눠 담는 방법을 모두 찾아요. 순서가 달라도 같은 방법이에요.`,
         `Find every way to share ${whole} ${fr[2]} between two plates. The same two numbers in a different order count once`,
         `找出把${whole}个${fr[3]}分到两个盘子里的所有方法。两个数一样只是顺序不同算同一种`);
       return {

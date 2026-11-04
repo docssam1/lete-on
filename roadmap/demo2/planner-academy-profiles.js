@@ -40,11 +40,11 @@ add('kiparang','기파랑문해원','국어학원',['elementary','middle'],'문�
  '읽을 책, 지문 과제, 시험 뒤 보완 수업을 모두 포함해 한 주를 잡습니다. 글을 길게 쓰는 힘도 필요하다면 실제 글쓰기 횟수와 첨삭 후 고쳐 쓰기를 물어보세요.',
  '독서량은 있는데 문제를 감으로 고른다면 지문과 선택지의 근거를 연결하는 공부가 필요합니다. 학년을 앞당기기보다 수업의 읽기·어휘·문법을 따라갈 준비부터 보세요.',
  ['독서·지문 분석·글쓰기의 수업 비중은 각각 어떤가요?','오답의 근거를 아이가 직접 설명하나요?','시험·과제 보완과 중등 내신은 어떻게 운영하나요?'],['korean-academy-choice']);
-add('thousand','천개의고원','국어학원',['elementary','middle'],'책을 읽고 생각을 정리해 쓰기 · 중등 내신 연결 확인',
- '초등 고학년의 독서·글쓰기에서 중등 국어로 이어갈 때 살펴볼 곳입니다. 책을 읽는 과제, 수업 중 원고지 글쓰기, 학교 시험 준비가 어떻게 연결되는지 비교하세요.',
+add('thousand','천개의고원','국어학원',['elementary','middle'],'국어학원 · 천고 · 독서·문법·글쓰기와 중등 내신',
+ '천개의고원은 이 안내에서 국어학원으로 분류합니다. 독서·글쓰기와 문법·학교 국어를 나누어 살펴보세요. 공식 홈페이지는 초4·5·6 독서탐구반과 중등 독서국어·독서심화반 등을 구분해 안내합니다. 원고지 쓰기와 내신 지원의 실제 운영은 해당 반에서 확인합니다.',
  '책을 끝까지 읽고 내용과 자기 생각을 구분해 말할 수 있는지 보세요. 읽는 것은 괜찮지만 글을 시작하기 어렵다면 수업에서 구성과 고쳐 쓰기를 얼마나 도와주는지 확인합니다.',
  '독서 과제와 수업 중 글쓰기, 집에서 마칠 과제를 구분하세요. 중학생은 본인 학교의 교과서·문법·서술형을 지원하는지 따로 확인해야 합니다.',
- '책을 읽고 말하는 데서 끝나지 않고 자기 글이 남는지 보세요. 내신 대비 기간은 학교 일정과 지원 범위에 맞춰 잡습니다. 대화에 나온 특정 준비 주수를 모든 반에 적용하지 않습니다.',
+ '책을 읽고 말하는 데서 끝나지 않고 자기 글이 남는지 보세요. 내신 대비 기간은 학교 일정과 지원 범위에 맞춰 잡습니다. 글쓰기를 다룬다는 이유로 논술만 하는 학원으로 묶거나, 대화에 나온 내신 준비 주수를 모든 반에 적용하지 않습니다.',
  ['어떤 책을 읽고 수업에서 어떤 글을 쓰나요?','첨삭을 받은 뒤 다시 고쳐 쓰는 과정이 있나요?','우리 학교 내신을 맡으며 시험 전에 어떻게 전환하나요?'],['korean-academy-choice']);
 add('jini','지니국어','국어학원',['elementary','middle'],'중등 국어·내신 준비와 과제·보완 수업 확인',
  '중등 국어와 학교별 내신을 함께 준비하려 할 때 살펴볼 곳입니다. 초등 고학년에서 고려하더라도 지원 가능한 학년·학교와 실제 반의 공부 범위부터 확인합니다.',
@@ -102,13 +102,31 @@ for(const [id,name,focus,learning,question] of english){
   [question,'주당 원서 분량과 집에서 마칠 과제는 무엇인가요?','반 배정 후 적응과 과제 부담을 보고 조정할 수 있나요?'],['english-academies','english-reading-gap','english-writing']);
 }
 const posts=[
- {id:'korean-academy-choice',stage:'elementary',stages:['elementary','middle'],tag:'국어학원 · 목적별 선택',title:'지니·MSC·기파랑, 같은 국어 학원으로 보면 헷갈립니다.',focus:'독서·토론·글쓰기 / 지문 분석 / 학교 내신을 나눠 보세요.',body:'책을 읽고 생각을 넓히는 공부, 지문에서 근거를 찾아 선택지를 판단하는 공부, 문법·서술형을 포함한 내신 준비는 목적이 다릅니다. 한 곳에 다니면 세 가지가 모두 해결되는지 실제 수업과 과제를 확인해야 합니다.',advice:'책을 끝까지 읽기 어려우면 도서 난도와 읽는 시간을 먼저 보고, 글쓰기가 약하면 첨삭과 고쳐 쓰기를 확인하세요. 중학생은 본인 학교의 내신 지원과 시험 전 시간표까지 비교합니다. 특정 학원의 대기 인원이나 한 번의 합격 결과보다 지금 부족한 공부가 무엇인지가 먼저입니다.',questions:['읽은 내용을 설명하는 힘과 문제를 푸는 힘 중 어디가 부족한가요?','수업에서 쓴 글을 다시 고쳐 보는 과정이 있나요?','학교 시험 준비와 평소 독서·문법은 어떻게 이어가나요?']},
+ {id:'korean-academy-choice',stage:'elementary',stages:['elementary','middle'],tag:'국어학원 · 목적별 선택',title:'천개의고원·기파랑·지니·MSC, 무엇이 다를까요?',focus:'독서·토론·글쓰기 / 지문 분석 / 학교 내신을 나눠 보세요.',body:'천개의고원에서 독서·글쓰기를 이어가다가 문제 풀이를 보완하려고 기파랑을 고민한 경우도 있고, 기파랑에서 문제 풀이를 익힌 뒤 글쓰기를 보완하려고 천개의고원을 고민한 경우도 있었습니다. 정해진 학원 이동 순서가 있는 것은 아닙니다. 책을 읽고 생각을 넓히는 공부, 지문에서 근거를 찾아 선택지를 판단하는 공부, 문법·서술형을 포함한 내신 준비는 목적이 다릅니다. 한 곳에 다니면 세 가지가 모두 해결되는지 실제 수업과 과제를 확인해야 합니다.',advice:'책을 끝까지 읽기 어려우면 도서 난도와 읽는 시간을 먼저 보고, 글쓰기가 약하면 첨삭과 고쳐 쓰기를 확인하세요. 중학생은 본인 학교의 내신 지원과 시험 전 시간표까지 비교합니다. 특정 학원의 대기 인원이나 한 번의 합격 결과보다 지금 부족한 공부가 무엇인지가 먼저입니다.',questions:['읽은 내용을 설명하는 힘과 문제를 푸는 힘 중 어디가 부족한가요?','수업에서 쓴 글을 다시 고쳐 보는 과정이 있나요?','학교 시험 준비와 평소 독서·문법은 어떻게 이어가나요?']},
  {id:'unfamiliar-problems',stage:'elementary',tag:'황소 · 문제 해결',title:'배운 문제는 푸는데, 처음 보는 문제에서 멈춘다면?',focus:'조건 읽기 → 시도 남기기 → 필요한 도움 → 혼자 재풀이',body:'교재의 진도와 반 이름만으로 낯선 문제를 해결하는 힘까지 알 수는 없습니다. 답을 구하기 전에 무엇을 묻는지, 주어진 조건은 무엇인지 아이가 자기 말로 설명하게 해 보세요. 그림·표·간단한 수로 시도한 흔적도 남깁니다.',advice:'바로 풀이를 알려주기보다 어디까지 이해했는지 먼저 듣고, 막힌 부분에 필요한 도움을 줍니다. 설명을 들은 뒤에는 답을 가리고 다시 풀어야 합니다. 오래 붙잡고 있는 시간만 늘리기보다 조건을 읽고 시도하는 방법을 익히세요.',questions:['문제를 읽자마자 식이나 답만 보려고 하나요?','힌트 없이 시도한 그림·표·풀이가 남아 있나요?','설명을 들은 문제를 혼자 다시 풀 수 있나요?']},
  {id:'after-selection',stage:'elementary',tag:'황소 · 선발 이후',title:'선발 결과가 나온 뒤, 다음 공부는 어떻게 잡을까요?',focus:'시험의 결과와 평소 공부를 함께 보고 다음 한 달 정하기',body:'시험에서 느낀 난도나 맞힌 것 같은 문제 수만으로 결과를 단정하지 않습니다. 발표 뒤에는 입반 수업과 과제, 지금 공부의 빈틈을 함께 살펴보세요. 기대와 다른 결과가 나와도 교과·연산을 모두 멈추고 시험 준비만 반복할 필요는 없습니다.',advice:'먼저 일상과 수면을 회복하고, 어려웠던 이유를 개념·계산·조건 읽기·시간으로 나눠 보세요. 입반한다면 첫 달의 과제 적응을, 다시 준비한다면 보완할 범위와 다음 점검일을 정합니다.',questions:['시험 전 평소 교과와 연산에 빈틈이 있었나요?','새 반의 한 주 과제와 다른 과목을 함께 감당할 수 있나요?','다음 한 달에 고칠 것을 한두 가지로 정했나요?']}
 ];
+// The user's November discussion overlaps earlier supplied material. These
+// are contextual observations, not extra independent proof or academy rules.
+const experienceNotes={
+ thousand:[
+  ['초등 고학년 글쓰기','초5·6 수업에서 원고지 글을 매번 쓰고 온다는 재원 경험이 있었습니다. 실제 쓰는 분량, 첨삭과 고쳐 쓰기까지 있는지는 배정반에 확인하세요.'],
+  ['중등 독서·문법과 내신','평소 독서·문법을 공부하고 학교 시험 전 약 4~5주는 내신으로 전환했다는 경험이 있었습니다. 이 기간과 지원 학교를 모든 지점·반의 공통 규정으로 쓰지는 않습니다.'],
+  ['과제와 병행 부담','과제가 상대적으로 여유 있어 수학과 병행하기 괜찮았다는 의견이 있었습니다. 독서 시간과 학교 시험 준비까지 합쳐 우리 아이의 실제 부담을 확인하세요.'],
+  ['맞는 목적과 입학 대기','아이가 좋아하며 다닌다는 경험과 효과를 크게 느끼지 못했다는 의견이 함께 있었습니다. 대기 길이보다 필요한 국어 공부와 맞는지를 보세요. 대기 신청일·방법·입학 가능 여부는 해당 학년의 현재 안내로 확인합니다.']
+ ],
+ kiparang:[['문제 풀이와 글쓰기 구분','지문·선택지와 명제 판단 연습이 도움 되었다는 의견, 문제 풀이는 나아졌지만 글쓰기를 더 보완하고 싶다는 경험이 있었습니다. 독서·글쓰기까지 모두 해결된 것으로 보지 않고 필요한 연습을 확인합니다.']],
+ jini:[['중등 전환과 과제 부담','중등 내신과 연결해 고려하거나 과제 부담이 크다고 느낀 경험이 있었습니다. 입학할 학년·시기를 일괄 추천하지 않고, 이번 모집 대상·지원 학교·보완 수업과 과제량을 확인합니다.']],
+ msc:[['도서 난도와 토론 참여','책을 좋아하면 생각을 넓히고 토론·발표하기 좋지만 도서가 어렵게 느껴질 수 있다는 의견이 있었습니다. 지문 문제 풀이가 주목적이라면 실제 수업에서 다루는 비중을 따로 확인합니다.']]
+};
+for(const [id,items]of Object.entries(experienceNotes)){
+ const x=profiles.find(p=>p.id==='academy-'+id);if(x)x.experience={label:'학부모 경험 · 제공 대화 요약',items:items.map(([title,text])=>({title,text})),note:'개인 경험과 의견을 익명으로 정리했습니다. 현재 학원의 공식 규정이나 성적 향상 보장이 아닙니다.'};
+}
+const thousand=profiles.find(p=>p.id==='academy-thousand');
+thousand.verified={checkedOn:'2026-11-04',text:'공식 홈페이지에서 초4·5·6 독서탐구반과 중등 독서국어·독서심화반 안내를 확인했습니다. 현재 대기 접수일이나 모든 반의 과제량을 확인한 것은 아닙니다.',links:[{label:'공식 홈페이지 · 과정 안내',url:'https://nonsul4us.com/SEDO/main.asp'},{label:'중등부 과정 안내',url:'https://nonsul4us.com/SEDO/homepage/pageview/pageview.asp?CateCode=INTRO27'}]};
 function freeze(x){if(x&&typeof x==='object'){Object.values(x).forEach(freeze);Object.freeze(x);}return x;}freeze(profiles);freeze(posts);
-function render(x){if(!x?.academyProfile)return '';const nute=g.PlannerNuteGuide?.academies.find(a=>'academy-'+a.id===x.id);
- return '<section class="ast-profile"><dl><div><dt>아이에게 맞는지 보려면</dt><dd>'+esc(x.fit)+'</dd></div><div><dt>수업 밖 공부와 시간</dt><dd>'+esc(x.burden)+'</dd></div></dl>'+(nute?'<div class="ast-profile-courses"><h3>지원할 과정과 준비 범위</h3>'+nute.courses.map(c=>'<article><h4>'+esc(c.name)+'</h4><p>'+esc(c.range)+'</p><p>'+esc(c.ready)+'</p>'+(c.cutoff?'<p class="ast-profile-cut"><strong>'+esc(c.cutoff.label)+'</strong>'+(c.cutoff.note?'<br>'+esc(c.cutoff.note):'')+'</p>':'')+'</article>').join('')+'</div>':'')+'<p class="ast-profile-note">이전 설명회·안내와 상담에서 살펴본 내용을 정리했습니다. 지원할 지점·학년·반의 현재 교재와 수업·과제는 등록 전에 확인하세요.</p></section>';
+function render(x){if(!x?.academyProfile)return '';const experience=x.experience?'<section class="ast-experience"><h3>'+esc(x.experience.label)+'</h3>'+x.experience.items.map(i=>'<article><h4>'+esc(i.title)+'</h4><p>'+esc(i.text)+'</p></article>').join('')+'<p class="ast-profile-note">'+esc(x.experience.note)+'</p></section>':'',verified=x.verified?'<section class="ast-profile-verified"><h3>공식 안내에서 확인한 내용</h3><p>'+esc(x.verified.text)+'</p><p>'+x.verified.links.map(l=>'<a href="'+esc(l.url)+'" target="_blank" rel="noopener noreferrer">'+esc(l.label)+' ↗</a>').join(' · ')+'</p><small>확인일 '+esc(x.verified.checkedOn)+'</small></section>':'';const nute=g.PlannerNuteGuide?.academies.find(a=>'academy-'+a.id===x.id);
+ return '<section class="ast-profile"><dl><div><dt>아이에게 맞는지 보려면</dt><dd>'+esc(x.fit)+'</dd></div><div><dt>수업 밖 공부와 시간</dt><dd>'+esc(x.burden)+'</dd></div></dl>'+verified+experience+(nute?'<div class="ast-profile-courses"><h3>지원할 과정과 준비 범위</h3>'+nute.courses.map(c=>'<article><h4>'+esc(c.name)+'</h4><p>'+esc(c.range)+'</p><p>'+esc(c.ready)+'</p>'+(c.cutoff?'<p class="ast-profile-cut"><strong>'+esc(c.cutoff.label)+'</strong>'+(c.cutoff.note?'<br>'+esc(c.cutoff.note):'')+'</p>':'')+'</article>').join('')+'</div>':'')+'<p class="ast-profile-note">이전 설명회·안내와 상담에서 살펴본 내용을 정리했습니다. 지원할 지점·학년·반의 현재 교재와 수업·과제는 등록 전에 확인하세요.</p></section>';
 }
 g.PlannerAcademyProfiles=Object.freeze({profiles,posts,render});
 })(window);

@@ -237,7 +237,7 @@
     if (kind === "mission-4") return `직선 가와 나는 서로 평행합니다. 각 ㄱㄴㄷ의 크기가 각 ㄷㄴㄹ의 크기의 ${data.ratio}배일 때, ㉠의 크기를 구하세요.`;
     if (kind === "mission-5") return "선분 ㄱㅂ과 ㄷㄹ, 선분 ㄱㄴ과 ㅁㄹ, 선분 ㄴㄷ과 ㅂㅁ은 각각 서로 평행합니다. ㉠의 크기를 구하세요.";
     if (kind === "mission-6") return "선분 ㅂㄴ과 ㄹㅅ은 서로 평행합니다. ㉠의 크기를 구하세요.";
-    return `직선 가와 나는 서로 평행합니다. ${kind === "example-3-1" ? "㉠과 ㉡의 크기의 차" : ["example-3-2", "mission-3"].includes(kind) ? "㉠과 ㉡의 크기의 합" : "㉠의 크기"}를 구하세요.`;
+    return `직선 가와 나는 서로 평행합니다. ${kind === "example-3-1" ? "㉠과 ㉡의 크기의 차를" : ["example-3-2", "mission-3"].includes(kind) ? "㉠과 ㉡의 크기의 합을" : "㉠의 크기를"} 구하세요.`;
   };
   const solutionFor = (kind, d, f) => {
     switch (kind) {

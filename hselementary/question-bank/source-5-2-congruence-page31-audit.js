@@ -33,7 +33,7 @@ const areaPoolSignatures = new Set();
 const midpointPoolSignatures = new Set();
 const trisectionPoolSignatures = new Set();
 for (const def of source.definitions) {
-  const variantCount = /(?:mission-6|example-2)$/.test(def.sourceItemId) ? 4 : 3;
+  const variantCount = def.sourceItemId.endsWith("-original") ? 1 : /(?:mission-6|example-2)$/.test(def.sourceItemId) ? 4 : 3;
   for (let variant = 0; variant < variantCount; variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
       const item = source.getQuestion(def.sourceItemId, variant, difficultyOffset);
@@ -41,14 +41,70 @@ for (const def of source.definitions) {
       assert.equal(item.sourceItemId, def.sourceItemId);
       assert.equal(item.verifiedVariantCount, variantCount);
       assert.equal(item.verifiedPoolIndex, variant);
-      assert.equal(item.difficultyOffset, difficultyOffset);
+      assert.equal(item.difficultyOffset, def.sourceItemId.endsWith("-original") ? 0 : difficultyOffset);
       assert.equal(item.answerVisualStatus, "verified-reconstruction");
       assert.match(item.answerVisual, /<svg[\s\S]*<\/svg>/);
       assert.match(item.prompt, /<svg[\s\S]*<\/svg>/);
       assert.doesNotMatch(item.prompt, /data-source-answer|정답은|답은/);
       assert.match(item.solution, /data-source-answer/);
 
-      if (def.sourceItemId.endsWith("example-2")) {
+      if (def.sourceItemId.endsWith("mission-3-original")) {
+        const svg = item.prompt.match(/<svg[\s\S]*?<\/svg>/)[0];
+        const pt = name => { const [x,y] = svg.match(new RegExp(`data-${name}="([^"]+)"`))[1].split(",").map(Number); return {x,y}; };
+        const g=pt("g"), n=pt("n"), d=pt("d"), r=pt("r"), m=pt("m");
+        for (const [a,b,c] of [[g,n,d],[d,r,m]]) assert(Math.abs(distance(a,b)-distance(b,c))<.03 && Math.abs(distance(b,c)-distance(c,a))<.03);
+        assert(Math.abs(angleAt(n,m,d)-140)<.02);
+        assert(Math.abs(angleAt(g,r,m)-160)<.02);
+        assert.equal(item.answer,"160°");
+        assert.match(item.prompt,/㉮/);
+        assert.equal(item.publisherKeyVerified,false);
+      } else if (def.sourceItemId.endsWith("mission-4-original")) {
+        const svg=item.prompt.match(/<svg[\s\S]*?<\/svg>/)[0];
+        const pt = name => { const [x,y] = svg.match(new RegExp(`data-${name}="([^"]+)"`))[1].split(",").map(Number); return {x,y}; };
+        const g=pt("g"),n=pt("n"),d=pt("d"),r=pt("r"), inner=["m","b","s","o"].map(pt);
+        const area = polygon => Math.abs(polygon.reduce((sum,p,i)=>{const q=polygon[(i+1)%polygon.length];return sum+p.x*q.y-p.y*q.x},0))/2;
+        const outer=area([g,n,d,r]), inside=area(inner);
+        assert(Math.abs(inside/outer-5/9)<1e-9);
+        assert(inner.every((p,i)=>Math.abs(distance(p,inner[(i+1)%4])-distance(inner[(i+1)%4],inner[(i+2)%4]))<1e-9));
+        assert.deepEqual([item.answerModel.k,item.answerModel.outerArea,item.answerModel.answer],[5,225,125]);
+        assert.equal(item.answer,"125cm²");
+        assert.equal(item.publisherKeyVerified,false);
+      } else if (def.sourceItemId.endsWith("mission-5-original")) {
+        const svg=item.prompt.match(/<svg[\s\S]*?<\/svg>/)[0];
+        const pt=name=>{const [x,y]=svg.match(new RegExp(`data-${name}="([^"]+)"`))[1].split(",").map(Number);return {x,y}};
+        const g=pt("g"), n=pt("n"), d=pt("d"), r=pt("r"), m=pt("m");
+        const area=(a,b,c)=>Math.abs((b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x))/2;
+        const scale=distance(g,n)/16;
+        assert(Math.abs(area(g,d,m)/(scale*scale)-160)<.03);
+        assert(Math.abs(distance(g,n)-distance(d,r))<.03);
+        assert(Math.abs(distance(n,d)-distance(r,m))<.03);
+        assert.deepEqual([item.answerModel.height,item.answerModel.width,item.answerModel.answer],[16,8,160]);
+        assert.equal(item.answer,"160cm²");
+        assert.equal(item.publisherKeyVerified,false);
+      } else if (def.sourceItemId.endsWith("mission-1-original")) {
+        const g={x:0,y:1},n={x:1,y:1},d={x:1,y:0},r={x:0,y:0};
+        const m={x:0,y:1-Math.tan(20*Math.PI/180)},b={x:1-Math.tan(25*Math.PI/180),y:0};
+        assert(Math.abs(angleAt(n,m,b)-70)<1e-8);
+        assert.deepEqual([item.answerModel.alpha,item.answerModel.beta,item.answerModel.answer],[20,25,70]);
+        assert.equal(item.answer,"70°");
+        assert.equal(item.publisherKeyVerified,false);
+      } else if (def.sourceItemId.endsWith("mission-2-original")) {
+        const onCircle=degree=>({x:Math.cos(degree*Math.PI/180),y:Math.sin(degree*Math.PI/180)});
+        const d={x:0,y:0},r=onCircle(140),m=onCircle(80),b=onCircle(40);
+        assert(Math.abs(angleAt(d,r,m)-60)<1e-8);
+        assert(Math.abs(angleAt(r,m,b)-130)<1e-8);
+        assert.deepEqual([item.answerModel.vertexAngle,item.answerModel.centralArc,item.answerModel.equalArc,item.answerModel.answer],[60,60,40,130]);
+        assert.equal(item.answer,"130°");
+        assert.doesNotMatch(item.prompt,/>x<|>㉠</);
+        assert.match(item.answerVisual, /∠ㄹㅁㅂ/);
+        assert.doesNotMatch(item.answerVisual, /㉠/);
+        assert.doesNotMatch(item.solution, />㉠</);
+        assert.equal(item.publisherKeyVerified,false);
+      } else if (def.sourceItemId.endsWith("mission-6-original")) {
+        assert.deepEqual([item.answerModel.top, item.answerModel.bottom, item.answerModel.height], [10, 8, 6]);
+        assert.equal(item.answer, "27cm²");
+        assert.match(item.solution, /넓이 합의 절반/);
+      } else if (def.sourceItemId.endsWith("example-2")) {
         const { alpha, beta, firstAtN, secondAtN, target, rotationDegrees } = item.answerModel;
         assert.equal(firstAtN, 60-alpha);
         assert.equal(secondAtN, alpha);
@@ -123,6 +179,15 @@ for (const def of source.definitions) {
         const r = { x: dm * Math.cos((delta - 60) * Math.PI / 180), y: -dm * Math.sin((delta - 60) * Math.PI / 180) };
         const shown = angleAt(g, r, { x: m.x, y: -m.y });
         assert.ok(Math.abs(shown - (300 - targetAngle)) < 1e-8, "shown target angle matches the answer");
+        const svg = item.prompt.match(/<svg[\s\S]*?<\/svg>/)[0];
+        const [vx,vy,vw,vh] = svg.match(/viewBox="([^"]+)"/)[1].split(/\s+/).map(Number);
+        const scale = 146, origin = {x:80,y:175};
+        for (const p of [d,n,g,r,{x:m.x,y:-m.y}]) {
+          const x=origin.x+p.x*scale, y=origin.y+p.y*scale;
+          assert(x >= vx+20 && x <= vx+vw-20 && y >= vy+20 && y <= vy+vh-20, "diagram vertices have room for labels");
+        }
+        assert(vw < 360 && vh < 390, "diagram viewBox should not contain excessive empty space");
+
         assert.equal(item.answer, `${300 - targetAngle}°`);
         assert.match(item.prompt, /∠ㄱㄹㅁ/);
       } else if (def.sourceItemId.endsWith("mission-4")) {
@@ -299,7 +364,7 @@ for (const type of sourceTypes) {
     continue;
   }
   assert.equal(window.HSE_GENERATORS.generatorKey(type), type.generatorKey);
-  for (let variant = 0; variant < (/(?:mission-6|example-2)$/.test(type.sourceItemId) ? 4 : 3); variant += 1) {
+  for (let variant = 0; variant < (type.sourceItemId.endsWith("-original") ? 1 : /(?:mission-6|example-2)$/.test(type.sourceItemId) ? 4 : 3); variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
       const generated = window.HSE_GENERATORS.generate(type, 1, difficultyOffset, "audit", variant);
       assert.ok(generated, `HSE_GENERATORS rejected ${type.id}`);

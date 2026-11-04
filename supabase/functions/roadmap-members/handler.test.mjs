@@ -114,3 +114,13 @@ test('plan payloads exclude credentials and derive owner from the verified sessi
  assert.equal((await h.request({action:'plan-save',revision:-1,document:{}},headers)).status,400);
  assert.equal((await harness({noSession:true}).request({action:'plan-get'},headers)).status,401);
 });
+
+
+test('the dedicated roadmap hostname supports preflight while lookalikes and unverified sessions stay rejected',async()=>{
+ const h=harness({noSession:true});
+ const r=await h.handler(new Request('https://example.invalid',{method:'OPTIONS',headers:{origin:'https://roadmap.gfieldacademy.net'}}));
+ assert.equal(r.status,204);assert.equal(r.headers.get('access-control-allow-origin'),'https://roadmap.gfieldacademy.net');
+ assert.equal(h.calls.length,0);
+ const denied=await h.request({action:'status'},{origin:'https://roadmap.gfieldacademy.net','x-roadmap-session':'a'.repeat(64)});assert.equal(denied.status,401);
+ const other=await h.handler(new Request('https://example.invalid',{method:'OPTIONS',headers:{origin:'https://roadmap.gfieldacademy.net.example.invalid'}}));assert.equal(other.status,403);assert.equal(other.headers.get('access-control-allow-origin'),null);
+});

@@ -58,3 +58,8 @@
     break-inside: avoid;
   }
 }
+@media print {
+  .source52-population-bar-question, .source52-population-bar-solution { color:#191511; font-family:"Noto Serif KR", "Batang", serif; }
+  .source52-population-bar-table th, .source52-population-bar-table td { color:#191511; border-color:#777; padding:5px 6px; }
+  .source52-population-bar-table thead th { background:#f2f2f2; }
+}

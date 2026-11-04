@@ -23,13 +23,15 @@ function restoreTools(){
  for(const tools of root.querySelectorAll('.prn-tools')){const body=tools.querySelector('.prn-tools-body');tools.replaceWith(...body.childNodes);}
 }
 function globalControls(){
- if(globalMenu)return;
+ if(globalMenu){const body=globalMenu.querySelector('.prn-global-body');for(const selector of ['.member-account-link','.cloud-status','.docssam-contact-link'])move(top.querySelector(selector),body);return;}
  globalMenu=doc.createElement('details');globalMenu.className='prn-global';
  const summary=doc.createElement('summary');summary.textContent='메뉴';summary.setAttribute('aria-label','학원가 이야기·선배 로드맵·인쇄 메뉴');
  const body=doc.createElement('div');body.className='prn-global-body';globalMenu.append(summary,body);top.append(globalMenu);
  for(const id of ['openAcademyStories','openCase','openSet','atlasExpand','openReport'])move(doc.getElementById(id),body);
  // Keep the account link reachable without adding another row to the compact rail.
  const account=top.querySelector('.member-account-link');if(account)move(account,body);
+ const contact=top.querySelector('.docssam-contact-link');if(contact)move(contact,body);
+ const save=top.querySelector('.cloud-status');if(save)move(save,body);
  const current=doc.createElement('button');current.type='button';current.dataset.prnCurrent='true';current.textContent='현재 공부 확인';body.append(current);
  const panes=doc.querySelector('.mobile-workspace-nav');move(panes,top);
  for(const button of panes?.querySelectorAll('button')||[]){
@@ -44,7 +46,7 @@ function toolsFor(results){
   if(!candidates.length)return;
   tools=doc.createElement('details');tools.className='prn-tools';
   const summary=doc.createElement('summary'),title=doc.createElement('span'),label=doc.createElement('span');
-  title.className='prn-title';label.className='prn-tools-label';label.textContent='단계·비교';summary.append(title,label);
+  title.className='prn-title';label.className='prn-tools-label';label.textContent='로드맵 메뉴';summary.append(title,label);
   const body=doc.createElement('div');body.className='prn-tools-body';body.append(...candidates);tools.append(summary,body);results.prepend(tools);
  }
  const title=doc.getElementById('journeyTitle')?.textContent||'우리 아이의 로드맵';
@@ -53,12 +55,13 @@ function toolsFor(results){
 function syncOrientation(){
  const vertical=doc.body.dataset.responsiveWorkspace==='landscape'&&!doc.body.classList.contains('atlas-is-fullscreen');
  root.querySelector('.workspace-tabs')?.setAttribute('aria-orientation',vertical?'vertical':'horizontal');
+ if(vertical&&globalMenu)doc.body.style.setProperty('--prn-tabs-start',Math.ceil(globalMenu.getBoundingClientRect().bottom+8)+'px');else doc.body.style.removeProperty('--prn-tabs-start');
 }
 function sync(){
  frame=0;
  const results=root.querySelector('.workspace-results'),view=doc.getElementById('vmap');
  const active=!printing&&compact.matches&&!doc.body.classList.contains('questioning')&&view?.classList.contains('on')&&!!results?.querySelector('.workspace-tabs');
- if(!active){delete doc.body.dataset.responsiveWorkspace;closeCurrent();restoreTools();restoreGlobal();syncOrientation();return;}
+ if(!active){delete doc.body.dataset.responsiveWorkspace;closeCurrent();restoreTools();restoreGlobal();if(!printing&&view?.classList.contains('on')&&results?.querySelector('.workspace-tabs'))toolsFor(results);syncOrientation();return;}
  doc.body.dataset.responsiveWorkspace=landscape.matches?'landscape':'portrait';
  const canChoose=doc.body.dataset.planMode!=='standard'||doc.body.dataset.referenceFlow==='true'||doc.body.dataset.languageFlow==='true';
  doc.body.dataset.responsiveChoice=String(canChoose);globalControls();toolsFor(results);
@@ -73,7 +76,7 @@ doc.addEventListener('click',e=>{
  if(e.target.closest('[data-prn-current-close]')){closeCurrent();globalMenu?.querySelector('summary').focus();return;}
  if(!e.target.closest('#planningOverview'))closeCurrent();
  const menu=e.target.closest('.prn-global,.prn-tools');
- if(e.target.closest('.prn-global-body button')){closeMenus();return;}
+ if(e.target.closest('.prn-global-body button,.prn-global-body a,.prn-tools-body button')){closeMenus();return;}
  if(!menu)closeMenus();else closeMenus(menu);
 });
 doc.addEventListener('keydown',e=>{
@@ -83,6 +86,7 @@ doc.addEventListener('keydown',e=>{
  e.preventDefault();menu.open=false;menu.querySelector('summary').focus();
 });
 new MutationObserver(schedule).observe(root,{childList:true});
+new MutationObserver(schedule).observe(top,{childList:true});
 new MutationObserver(schedule).observe(doc.body,{attributes:true,attributeFilter:['class','data-plan-mode','data-reference-flow','data-language-flow','data-workspace-pane']});
 compact.addEventListener('change',schedule);landscape.addEventListener('change',schedule);g.addEventListener('resize',schedule);
 g.addEventListener('beforeprint',()=>{printing=true;sync();});g.addEventListener('afterprint',()=>{printing=false;schedule();});

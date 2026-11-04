@@ -2147,6 +2147,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   // Original examples use distinct IDs; the existing numerical practice remains intact.
   const source52Range = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u1");
   const source52RangeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s1");
+  const source52PackingPracticeGroup = source52Range?.subunits.find(subunit => subunit.id === "5-2-u1-s3");
+  if (source52PackingPracticeGroup && !source52PackingPracticeGroup.types.some(t=>t.id==="5-2-u1-practice-37-packing-time-similar")) {
+    const id="5-2-u1-practice-37-packing-time-similar",name="사과를 포장하는 데 걸리는 시간 · 유사문항";
+    const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52PackingPracticeGroup.types.push({id,number:source52PackingPracticeGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u1-practice-37-original",sourceItemLabel:"확인학습 37번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:67,sourcePrintedPage:72,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U1P72Q37PackingTimeSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"한 사람이 차례로 포장한다는 조건을 명시하고 수치를 바꾼 별도 유사문항입니다. 원문 정답 확정과 구분합니다."});
+  }
+  if (source52RangeGroup && !source52RangeGroup.types.some(t=>t.id==="5-2-u1-practice-8-bus-range-similar")) {
+    const id="5-2-u1-practice-8-bus-range-similar",name="버스 대수로 회원 수의 범위 구하기 · 유사문항";
+    const typeNumber=Math.max(0,...source52Range.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52RangeGroup.types.push({id,number:source52RangeGroup.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u1-practice-8-original",sourceItemLabel:"확인학습 8번 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:63,sourcePrintedPage:68,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U1P68Q8BusRangeSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문에 없는 버스 대수의 상한 조건을 명시한 별도 유사문항입니다. 원문 정답 확정과 구분합니다."});
+  }
   // 확인학습 is separate from the original exploration/mission inventory.
   if (source52RangeGroup) for (const [n,name] of [[36,"서로 다른 포장 단위의 구매 비용 비교 · 확인학습 원문"],[38,"선물상자 포장에 필요한 끈의 최소 비용 · 확인학습 원문"],[18,"두 게임 선호와 학생 수의 범위 · 확인학습 원문"],[19,"레몬을 나누어 담을 상자 수의 범위 · 확인학습 원문"],[20,"두 포장 조건과 달걀 수 · 확인학습 원문"],[22,"올림한 수와 버림한 수의 차 · 확인학습 원문"],[10,"곱과 나눗셈으로 나타낸 수의 범위 역산 · 확인학습 원문"],[14,"4의 배수의 개수로 상한의 범위 구하기 · 확인학습 원문"],[15,"자릿수 조건을 만족하는 다섯 자리 수 · 확인학습 원문"],[16,"두 좌석 조건을 모두 만족하는 학생 수 · 확인학습 원문"],[1,"초과와 이하를 수직선에 나타내기 · 확인학습 원문"],[2,"두 범위의 공통 부분과 자연수 · 확인학습 원문"],[3,"허용 범위 밖의 몸무게를 수직선에 나타내기 · 확인학습 원문"],[9,"상자 무게를 포함해 필요한 사과 수 구하기 · 확인학습 원문"],[4,"범위에 속하는 자연수의 개수와 합 · 확인학습 원문"],[5,"속도 단속 조건을 만족하는 범위 · 확인학습 원문"],[6,"두 자리 수 사이 자연수의 개수와 최댓값 · 확인학습 원문"],[7,"철사를 쓰고 남는 길이의 범위 · 확인학습 원문"],[12,"한 모둠 인원 조건과 모둠 수의 범위 · 확인학습 원문"],[21,"올림·버림·반올림 표 완성하기 · 확인학습 원문"],[23,"세 가지 어림의 결과가 같은 수 · 확인학습 원문"],[24,"수 카드로 목표에 가장 가까운 수와 반올림 · 확인학습 원문"],[25,"여러 자리 수 카드를 이어 만든 수의 차 · 확인학습 원문"],[26,"수 카드로 두 기준에 가까운 수의 차 · 확인학습 원문"],[27,"반올림 결과가 50000인 다섯 자리 수의 개수 · 확인학습 원문"],[28,"어림 조건과 자리 관계를 만족하는 수 · 확인학습 원문"],[29,"앉을 사람 수에 필요한 의자 수 · 확인학습 원문"],[30,"구슬 포장에 필요한 상자 비용 · 확인학습 원문"],[31,"빵을 만들 재료의 봉지와 병 수 · 확인학습 원문"],[33,"무게 제한이 있는 트럭에 상자 더 싣기 · 확인학습 원문"],[34,"계단 모양 도형의 둘레와 반올림 · 확인학습 원문"],[35,"여러 종류의 돈을 5000원권으로 바꾸기 · 확인학습 원문"],[39,"요일에 따른 달걀 수와 상자 수 · 확인학습 원문"],[40,"영화표 묶음으로 최소 비용 구하기 · 확인학습 원문"],[41,"버림한 인구수의 범위 · 확인학습 원문"],[42,"반올림한 초콜릿과 사탕 수의 합 · 확인학습 원문"],[43,"반올림과 버림 조건의 자연수 개수 합 · 확인학습 원문"],[44,"버림과 반올림 조건에 맞는 구슬 수 · 확인학습 원문"],[45,"올림과 반올림 조건에 맞는 자연수의 개수 · 확인학습 원문"],[46,"어림한 남자 수와 여자 수의 최대 차 · 확인학습 원문"],[47,"세 가지 어림 조건에 맞는 자연수 모두 구하기 · 확인학습 원문"],[48,"만의 자리 세 어림 조건에 맞는 자연수의 개수 · 확인학습 원문"],[49,"반올림한 입장객 수와 형광봉 부족량 · 확인학습 원문"],[50,"두 어림 조건과 자리 관계에 맞는 자연수 · 확인학습 원문"],[51,"각각 올림한 합과 원래 수의 범위 · 확인학습 원문"],[52,"나눈 몫을 버림한 조건의 최댓값과 최솟값 차 · 확인학습 원문"],[53,"곱한 수를 올림한 조건에 맞는 자연수의 개수 · 확인학습 원문"],[54,"두 나눈 몫의 어림 조건에 맞는 자연수의 개수 · 확인학습 원문"],[55,"입장객 수 표의 빈칸에 들어갈 숫자 · 확인학습 원문"],[56,"반올림한 도시별 인구 그래프와 실제 인구의 최대 차 · 확인학습 원문"],[17,"최대한 산 공책 수로 가격의 범위 구하기 · 확인학습 원문"]]) {
     const targetGroup=n>=41?source52Range.subunits.find(group=>group.id === "5-2-u1-s4"):n>=29?source52Range.subunits.find(group=>group.id === "5-2-u1-s3"):n>=21?source52Range.subunits.find(group=>group.id === "5-2-u1-s2"):source52RangeGroup;
@@ -2242,6 +2253,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   // Directly reviewed source items; existing locked types remain intact.
   const source52Cuboid = semesters.find(item => item.id === "5-2")?.units.find(unit => unit.id === "5-2-u5");
   const source52CuboidViewPractice = source52Cuboid?.subunits.find(subunit => subunit.id === "5-2-u5-s3");
+  if (source52CuboidViewPractice && !source52CuboidViewPractice.types.some(t=>t.id==="5-2-u5-practice-44-clarified-similar")) {
+    const id="5-2-u5-practice-44-clarified-similar",name="오른쪽 면을 밝힌 정육면체 무늬 · 유사문항";
+    const typeNumber=Math.max(0,...source52Cuboid.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CuboidViewPractice.types.push({id,number:source52CuboidViewPractice.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u5-practice-44-original",sourceItemLabel:"확인학습 44번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:107,alternateSourcePdfPage:108,sourcePrintedPage:113,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 윗면만으로 앞면이 유일하지 않아 보류합니다. 유사문항은 오른쪽 면을 명시하고 정육면체 회전을 독립 검증했습니다.",generatorKey:"source52U5P113Q44ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   if (source52CuboidViewPractice) for (const [n,name] of [[45,"직육면체 표면의 선을 전개도로 옮기기 · 확인학습 원문"],[47,"무늬와 띠 방향이 주어진 상자의 전개도 · 확인학습 원문"],[48,"무늬가 있는 전개도를 접은 모양 고르기 · 확인학습 원문"],[41,"두 전개도의 대응 면을 이용한 세 수의 곱 · 확인학습 원문"],[42,"한 꼭짓점에 만나는 세 면의 수의 합 최댓값 · 확인학습 원문"],[43,"전개도의 화살표를 겨냥도에 옮기기 · 확인학습 원문"],[46,"한 꼭짓점에서 만나는 세 면의 수의 곱 최댓값 · 확인학습 원문"],[36,"기울인 물그릇에서 물이 닿는 부분 · 확인학습 원문"],[38,"전개도의 테이프 자리를 겨냥도로 옮기기 · 확인학습 원문"],[37,"정육면체 세 면의 선을 전개도로 옮기기 · 확인학습 원문"],[39,"직육면체 표면의 선을 전개도로 옮기기 · 확인학습 원문"],[33,"겨냥도와 전개도의 꼭짓점 대응 · 확인학습 원문"],[34,"직육면체 전개도에서 맞닿는 선분 · 확인학습 원문"],[35,"정육면체의 선을 전개도로 옮기기 · 확인학습 원문"]]) {
     const id=`5-2-u5-practice-${n}-original`;
     if (source52CuboidViewPractice.types.some(type=>type.id===id)) continue;
@@ -2649,6 +2666,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52Average = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u6");
   const source52AverageFirst = source52Average?.subunits.find(subunit => subunit.name === "평균 구하기");
+  if (source52AverageFirst && !source52AverageFirst.types.some(t=>t.id==="5-2-u6-practice-15-clarified-similar")) {
+    const id="5-2-u6-practice-15-clarified-similar",name="직원 변화 조건을 밝힌 평균 나이 · 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52AverageFirst.types.push({id,number:source52AverageFirst.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-15-original",sourceItemLabel:"확인학습 15번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:111,alternateSourcePdfPage:112,sourcePrintedPage:117,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 기존 직원의 퇴사 여부와 나이 변화가 명시되지 않아 보류합니다. 별도 유사문항에서는 재직과 나이 변화 조건을 명시하고 네 변형의 평균을 검산했습니다.",generatorKey:"source52U6P117Q15ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+
   if (source52AverageFirst) for (const [n,name] of [[13,"세 쌍의 평균으로 세 수의 평균 구하기 · 확인학습 원문"],[14,"마지막 점수 추가 전후 평균으로 시험 횟수 구하기 · 확인학습 원문"],[16,"두 집단과 전체 평균으로 인원 구하기 · 확인학습 원문"],[9,"도수표와 평균으로 빠진 인원 구하기 · 확인학습 원문"],[10,"평균 키와 한 명이 더해진 뒤의 키 · 확인학습 원문"],[11,"목표 평균 이상이 되기 위한 한 기록의 최솟값 · 확인학습 원문"],[12,"네 점수의 평균과 두 점수 차 · 확인학습 원문"],[5,"가족 수 도수표의 가중평균 · 확인학습 원문"],[6,"목표 평균에 필요한 다음 점수 · 확인학습 원문"],[7,"기존 평균에 한 수를 더한 평균 · 확인학습 원문"],[8,"두 평균과 점수 차로 세 번의 점수 찾기 · 확인학습 원문"],[1,"평균과 두 점수 차로 비어 있는 두 점수 찾기 · 확인학습 원문"],[2,"겹치는 세 수의 평균으로 가운데 수 찾기 · 확인학습 원문"],[3,"두 집단의 평균과 전체 평균으로 인원 구하기 · 확인학습 원문"],[4,"두 쌍의 평균과 두 수의 차로 세 수 찾기 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52AverageFirst.types.some(type=>type.id===id)) continue;
@@ -2761,6 +2784,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52AverageApplication = source52Average?.subunits.find(subunit => subunit.name === "평균의 활용");
+  if (source52AverageApplication && !source52AverageApplication.types.some(t=>t.id==="5-2-u6-practice-24-clarified-similar")) {
+    const id="5-2-u6-practice-24-clarified-similar",name="구간 요금을 합산하는 요금표와 평균 · 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52AverageApplication.types.push({id,number:source52AverageApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-24-original",sourceItemLabel:"확인학습 24번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:112,alternateSourcePdfPage:113,sourcePrintedPage:118,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 구간 요금의 합산 규칙이 명시되지 않아 보류합니다. 별도 유사문항은 합산 규칙을 명시하고 표의 요금과 평균을 독립 검산했습니다.",generatorKey:"source52U6P118Q24ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   if (source52AverageApplication) for (const [n,name] of [[29,"등간격 세 수의 평균 · 확인학습 원문"],[30,"세 물건을 제외하기 전후의 평균으로 개수 구하기 · 확인학습 원문"],[32,"겹치는 과목 평균으로 특정 과목 점수 구하기 · 확인학습 원문"],[25,"점수 정정 전후의 평균 차로 인원 구하기 · 확인학습 원문"],[26,"사흘 평균에서 빠진 날의 쪽수 구하기 · 확인학습 원문"],[27,"인원과 작업 시간을 반영한 시간당 평균 작업량 · 확인학습 원문"],[28,"새 기록 추가 전후의 평균으로 시도 횟수 구하기 · 확인학습 원문"],[21,"두 집단의 가중평균 · 확인학습 원문"],[22,"두 집단의 가중평균과 반올림 · 확인학습 원문"],[23,"두 평균과 차를 이용한 일별 쪽수 · 확인학습 원문"],[17,"걸은 거리당 평균 시간 · 확인학습 원문"],[18,"시간당 평균 생산량과 한 달 판매액 · 확인학습 원문"],[19,"두 집단의 평균으로 인원 비 구하기 · 확인학습 원문"],[20,"총점별 인원과 문항별 정답 인원 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52AverageApplication.types.some(type=>type.id===id)) continue;
@@ -2847,6 +2876,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Count = source52Average?.subunits.find(subunit => subunit.name === "사건의 가짓수");
+  if (source52Count && !source52Count.types.some(t=>t.id==="5-2-u6-practice-37-clarified-similar")) {
+    const id="5-2-u6-practice-37-clarified-similar",name="도시를 다시 지나지 않는 경로 수 · 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-37-original",sourceItemLabel:"확인학습 37번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:114,alternateSourcePdfPage:115,sourcePrintedPage:120,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 도시 재방문 여부가 명시되지 않아 보류합니다. 별도 유사문항은 재방문을 금지하고 경로를 독립 열거했습니다.",generatorKey:"source52U6P120Q37ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+
   if (source52Count) for (const [n,name] of [[42,"집에서 두 장소를 한 번씩 들러 돌아오는 경로 · 확인학습 원문"],[46,"부모끼리와 자녀끼리 이웃하는 다섯 명의 배열 · 확인학습 원문"],[47,"B 또는 C를 지나는 격자 최단경로 · 확인학습 원문"],[48,"둘레가 7인 자연수 변의 삼각형 · 확인학습 원문"],[41,"부모가 양 끝에 서는 가족사진 배열 · 확인학습 원문"],[43,"바지와 셔츠를 한 벌씩 고르기 · 확인학습 원문"],[44,"다섯 숫자 카드로 만드는 세 자리 홀수 · 확인학습 원문"],[45,"숫자 카드로 만드는 35 이상의 두 자리 수 · 확인학습 원문"],[38,"자음과 모음을 하나씩 골라 글자 만들기 · 확인학습 원문"],[39,"최우수 한 팀과 우수 두 팀 선정 · 확인학습 원문"],[40,"다섯 명이 줄 설 때 두 명이 이웃하는 경우 · 확인학습 원문"],[33,"지점 재방문이 없는 여러 경로의 수 · 확인학습 원문"],[34,"전구 다섯 개의 켜짐과 꺼짐으로 신호 만들기 · 확인학습 원문"],[35,"1~20 중 5 또는 6의 배수 찾기 · 확인학습 원문"],[36,"세 사람의 가위바위보에서 낼 수 있는 경우 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52Count.types.some(type=>type.id===id)) continue;
@@ -2857,15 +2892,15 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52Count) for (const [i,name] of ["직육면체 모서리의 길 세기","두 주사위 눈의 합과 배수","경유점을 지나는 격자 최단 경로","여러 갈래 길의 수","한 무리가 이웃하여 줄 서기"].entries()) {
     const id = i ? `5-2-u6-e3-example-${i}` : "5-2-u6-e3-exploration";
     const typeNumber = Math.max(0,...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
-    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,
-      sourceItemLabel:i ? `예제 3-${i}` : "개념탐구 3",sourceSection:i ? "example" : "exploration",sourceTier:"advanced",sourcePdfPage:58,sourcePrintedPage:62,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,
+    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name:`${name} · 유사문항`,label:`${name} · 유사문항`,difficultyBand:0,sourceItemId:id,
+      sourceItemLabel:i ? `예제 3-${i} 기반 유사문항` : "개념탐구 3 기반 유사문항",sourceSection:i ? "example" : "exploration",sourceTier:"advanced",sourcePdfPage:58,sourcePrintedPage:62,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,
       generatorKey:i ? `source52CountPage62Example${i}` : "source52CountPage62Exploration",generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
   }
 
   if (source52Count) for (const [n,name] of [[1,"자기 자리를 피하는 자리 배치"],[2,"두 주사위의 곱과 기준"],[3,"개수 제한 안에서 동전 조합하기"],[4,"B를 지나는 격자 최단 경로"],[6,"두 사람이 이웃하는 줄 세우기"]]) {
     const id = `5-2-u6-e3-mission-${n}`;
     const typeNumber = Math.max(0,...source52Average.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
-    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`Mission ${n}`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:59,sourcePrintedPage:63,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52CountPage63Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    source52Count.types.push({id,number:source52Count.types.length+1,typeNumber,name:`${name} · 유사문항`,label:`${name} · 유사문항`,difficultyBand:0,sourceItemId:id,sourceItemLabel:`Mission ${n} 기반 유사문항`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:59,sourcePrintedPage:63,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52CountPage63Mission${n}`,generationMode:"fixed-verified-pool",verifiedVariantTarget:3,verifiedVariantCount:3,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
   }
 
   if (source52Count) {
@@ -2886,6 +2921,26 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     if (source52Probability.types.some(type=>type.id===id)) continue;
     const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
     source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:n<=56?116:117,alternateSourcePdfPage:n<=56?117:118,sourcePrintedPage:n<=56?122:123,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U6Page116Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n===58,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문을 대조하고 동등 가능성을 전제로 독립 계산했습니다. 출판사 공식 답안은 미확인입니다."});
+  }
+  if (source52Probability && !source52Probability.types.some(t=>t.id==="5-2-u6-practice-64-clarified-similar")) {
+    const id="5-2-u6-practice-64-clarified-similar",name="격자에서 정사각형을 고를 가능성 · 조건 명시 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-64-original",sourceItemLabel:"확인학습 64번 조건 명시 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:117,alternateSourcePdfPage:118,sourcePrintedPage:123,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 선택 방식은 미확인입니다. 별도 유사문항은 각 직사각형을 같은 가능성으로 고르도록 명시하고 독립 열거했습니다.",generatorKey:"source52U6P123Q64ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+  if (source52Probability && !source52Probability.types.some(t=>t.id==="5-2-u6-practice-51-clarified-similar")) {
+    const id="5-2-u6-practice-51-clarified-similar",name="추첨한 두 대표가 모두 남학생일 가능성 · 조건 명시 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-51-original",sourceItemLabel:"확인학습 51번 조건 명시 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:116,alternateSourcePdfPage:117,sourcePrintedPage:122,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 선택 방식은 미확인입니다. 별도 유사문항은 두 대표를 공평하게 추첨하도록 명시하고 독립 열거했습니다.",generatorKey:"source52U6P122Q51ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+  if (source52Probability && !source52Probability.types.some(t=>t.id==="5-2-u6-practice-56-clarified-similar")) {
+    const id="5-2-u6-practice-56-clarified-similar",name="키가 작은 순서대로 설 가능성 · 조건 명시 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-56-original",sourceItemLabel:"확인학습 56번 조건 명시 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:116,alternateSourcePdfPage:117,sourcePrintedPage:122,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 키 순서 방향은 미확인입니다. 별도 유사문항은 작은 순서와 균등 배열을 명시하고 독립 열거했습니다.",generatorKey:"source52U6P122Q56ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+  if (source52Probability && !source52Probability.types.some(t=>t.id==="5-2-u6-practice-60-clarified-similar")) {
+    const id="5-2-u6-practice-60-clarified-similar",name="가위바위보 승부가 결정될 가능성 · 조건 명시 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-60-original",sourceItemLabel:"확인학습 60번 조건 명시 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:117,alternateSourcePdfPage:118,sourcePrintedPage:123,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 선택 분포는 미확인입니다. 별도 유사문항은 각 선택의 동등 가능성과 독립을 명시하고 독립 열거했습니다.",generatorKey:"source52U6P123Q60ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
   if (source52Probability) for (const [n,name] of [[49,"숫자 카드가 범위에 속할 가능성 · 확인학습 원문"],[50,"동전 네 개 중 앞면이 적어도 하나일 가능성 · 확인학습 원문"],[52,"서로 다른 동전 네 개가 모두 앞면일 가능성 · 확인학습 원문"],[53,"주사위 세 개가 모두 짝수일 가능성 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
@@ -3094,17 +3149,61 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52CongruenceUnit = semesters.find(s => s.id === "5-2")?.units.find(u => u.id === "5-2-u3");
   const source52SymmetryApplication = source52CongruenceUnit?.subunits.find(s => s.name === "선대칭의 활용");
+
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t=>t.id==="5-2-u3-practice-80-clarified-similar")) {
+    const id="5-2-u3-practice-80-clarified-similar",name="겹치지 않는 구멍의 수 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-80-original",sourceItemLabel:"확인학습 80번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:90,alternateSourcePdfPage:89,sourcePrintedPage:94,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 구멍의 겹침 여부가 명시되지 않아 보류합니다. 별도 유사문항에서 겹치지 않는 조건과 변형 접기 횟수를 밝히고 매번 생기는 구멍 수를 독립 계산했습니다.",generatorKey:"source52U3P94Q80ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+
+
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t=>t.id==="5-2-u3-practice-62-clarified-similar")) {
+    const id="5-2-u3-practice-62-clarified-similar",name="도형의 성질을 밝힌 대칭축 개수 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-62-original",sourceItemLabel:"확인학습 62번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:88,alternateSourcePdfPage:87,sourcePrintedPage:92,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 정다각형 등 도형의 정확한 성질이 명시되지 않아 보류합니다. 별도 유사문항에서 여섯 도형의 성질을 밝히고 대칭축을 각각 확인했습니다.",generatorKey:"source52U3P92Q62ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t=>t.id==="5-2-u3-practice-64-clarified-similar")) {
+    const id="5-2-u3-practice-64-clarified-similar",name="수직 대칭축으로 겹친 사각형 넓이 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-64-original",sourceItemLabel:"확인학습 64번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:88,alternateSourcePdfPage:87,sourcePrintedPage:92,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 축의 수직 관계가 명시되지 않아 보류하며, 별도 유사문항에서 수직 조건과 변형 길이를 명시하고 겹친 넓이를 독립 검산했습니다.",generatorKey:"source52U3P92Q64ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52SymmetryApplication) for (const [n,name,key] of [[67,"대칭축이 밑변에 수직인 정삼각형 둘레 · 유사문항","source52U3P93Q67ClarifiedSimilar"],[69,"대각선에 평행한 축으로 완성한 마름모 둘레 · 유사문항","source52U3P93Q69ClarifiedSimilar"]]) {
+    const id=`5-2-u3-practice-${n}-clarified-similar`;if (source52SymmetryApplication.types.some(t=>t.id===id)) continue;
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-practice-${n}-original`,sourceItemLabel:`확인학습 ${n}번 조건 보완 유사문항`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:89,alternateSourcePdfPage:88,sourcePrintedPage:93,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 축의 관계가 명시되지 않아 보류하며 별도 유사문항에서 필요한 수직·평행 조건과 변형 길이를 명시하고 둘레를 독립 검산했습니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t=>t.id==="5-2-u3-practice-68-clarified-similar")) {
+    const id="5-2-u3-practice-68-clarified-similar",name="같은 변을 밝힌 선대칭 삼각형 넓이 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-68-original",sourceItemLabel:"확인학습 68번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:89,alternateSourcePdfPage:88,sourcePrintedPage:93,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 이등변 조건은 같은 변이 불명확하여 보류합니다. 별도 유사문항에서 ㄱㄴ=ㄱㄷ을 명시하고 변형 길이와 넓이를 독립 검산했습니다.",generatorKey:"source52U3P93Q68ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
+  if (source52SymmetryApplication) for (const [id,name,label,key,section,visual] of [["5-2-u3-e6-exploration-original","직사각형 거울방의 빛 경로와 넓이 · 원문","개념탐구 6 원문","source52MirrorPathPage34Original","exploration",true],["5-2-u3-e6-example-3-original","10부터 1000까지 대칭수의 개수 · 원문","예제 6-3 원문","source52PalindromePage34Original","example",false]]) {
+    if (!source52SymmetryApplication.types.some(t=>t.id===id)) source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:label,sourceSection:section,sourcePdfPage:30,alternateSourcePdfPage:29,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 수치·조건을 대조하고 거울 반사 경로와 대칭수 전수를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:visual,...(visual?{answerVisualStatus:"verified-reconstruction"}:{})});
+  }
   if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t => t.id === "5-2-u3-e6-exploration-mirror-synthetic")) {
     const id="5-2-u3-e6-exploration-mirror-synthetic",name="거울에 반사된 빛의 경로와 넓이 · 연습";
     source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 6 구조 연습",sourceSection:"exploration",sourcePdfPage:30,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 경로와 넓이를 독립 검증했습니다.",generatorKey:"source52MirrorPathSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t => t.id === "5-2-u3-e6-example-1-original")) {
+    const id="5-2-u3-e6-example-1-original",name="종이를 접어 자른 조각의 수 · 원문";
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 6-1 원문",sourceSection:"example",sourcePdfPage:30,alternateSourcePdfPage:29,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 접는 순서와 가운데 가로·대각 절단선을 대조하고 펼친 조각을 독립 분할 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52FoldCutPage34Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t => t.id === "5-2-u3-e6-example-1-fold-cut-synthetic")) {
     const id="5-2-u3-e6-example-1-fold-cut-synthetic",name="접어 자른 종이의 조각 수 · 연습";
     source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e6-example-1",sourceItemLabel:"예제 6-1 구조 연습",sourceSection:"example",sourcePdfPage:30,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"서로 다른 절단 위치의 창작 문항을 펼친 그림과 독립 분할로 검산했습니다.",generatorKey:"source52FoldCutCountSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t => t.id === "5-2-u3-e6-example-2-original")) {
+    const id="5-2-u3-e6-example-2-original",name="접은 직사각형을 잘라 펼친 넓이 · 원문";
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 6-2 원문",sourceSection:"example",sourcePdfPage:30,alternateSourcePdfPage:29,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 12×16cm 종이와 접는 순서·삼등분 표시를 대조하고 잘라 낸 넓이 96cm²를 독립 추적했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52FoldRectanglePage34Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t => t.id === "5-2-u3-e6-example-2-fold-area-synthetic")) {
     const id="5-2-u3-e6-example-2-fold-area-synthetic",name="접은 직사각형을 자른 넓이 · 연습";
     source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e6-example-2",sourceItemLabel:"예제 6-2 구조 연습",sourceSection:"example",sourcePdfPage:30,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 직사각형의 접기 좌표와 위쪽 8겹·아래 띠 2겹 넓이를 독립 검산했습니다.",generatorKey:"source52FoldRectangleAreaSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t => t.id === "5-2-u3-e6-example-4-original")) {
+    const id="5-2-u3-e6-example-4-original",name="두 거울 사이 빛의 반사 횟수 · 원문";
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 6-4 원문",sourceSection:"example",sourcePdfPage:30,alternateSourcePdfPage:29,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 8°·18°와 ㄱ에서 반사한 후 돌아오기 전의 중간 반사 횟수를 대조하고 17회를 독립 광선 추적했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52TwoMirrorPage34Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t => t.id === "5-2-u3-e6-example-4-two-mirror-synthetic")) {
     const id="5-2-u3-e6-example-4-two-mirror-synthetic",name="두 거울 사이의 반사 횟수 · 연습";
@@ -3114,6 +3213,14 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e6-mission-1-fold-fourths-synthetic",name="네 등분해 자른 종이의 넓이 · 연습";
     source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e6-mission-1",sourceItemLabel:"Mission 1 구조 연습",sourceSection:"mission",sourcePdfPage:31,sourcePrintedPage:35,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 직사각형의 네 등분 절단과 위쪽 8겹·아래 띠 2겹을 독립 검산했습니다.",generatorKey:"source52FoldFourthsAreaSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52SymmetryApplication) for (const [n,name,key] of [[1,"네 등분해 자른 종이의 넓이 · 원문","source52FoldFourthsPage35Original"],[3,"두 벽에서 돌아온 공의 처음 각 · 원문","source52WedgeBallPage35Original"]]) {
+    const id=`5-2-u3-e6-mission-${n}-original`;
+    if (!source52SymmetryApplication.types.some(t=>t.id===id)) source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourcePdfPage:31,alternateSourcePdfPage:30,sourcePrintedPage:35,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 수치·접기와 반사 경로를 대조하고 독립 계산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52SymmetryApplication) for (const [n,name,key,visual] of [[2,"시각을 이어 쓴 대칭수 · 원문","source52ClockPalindromePage35Original",false],[5,"숫자 1이 포함된 거울수 · 원문","source52IncludedPalindromePage35Original",false],[6,"직사각형 거울의 반사와 도착 코너 · 원문","source52LaserCornerPage35Original",true]]) {
+    const id=`5-2-u3-e6-mission-${n}-original`;
+    if (!source52SymmetryApplication.types.some(t=>t.id===id)) source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourcePdfPage:31,alternateSourcePdfPage:30,sourcePrintedPage:35,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 범위·수치와 도형을 대조하고 전체 경우와 광선 경로를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:visual,...(visual?{answerVisualStatus:"verified-reconstruction"}:{})});
+  }
   if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t => t.id === "5-2-u3-e6-mission-2-clock-palindrome-synthetic")) {
     const id="5-2-u3-e6-mission-2-clock-palindrome-synthetic",name="시각을 이어 쓴 대칭수 세기 · 연습";
     source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e6-mission-2",sourceItemLabel:"Mission 2 구조 연습",sourceSection:"mission",sourcePdfPage:31,sourcePrintedPage:35,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"분을 두 자리로 쓰는 창작 시각 범위와 양 끝을 독립 전수 검산했습니다.",generatorKey:"source52ClockPalindromeSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
@@ -3121,6 +3228,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t => t.id === "5-2-u3-e6-mission-3-wedge-ball-synthetic")) {
     const id="5-2-u3-e6-mission-3-wedge-ball-synthetic",name="두 벽에서 돌아온 공의 처음 각 · 연습";
     source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e6-mission-3",sourceItemLabel:"Mission 3 구조 연습",sourceSection:"mission",sourcePdfPage:31,sourcePrintedPage:35,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 벽 각도의 수직 충돌과 역경로를 좌표로 독립 검산했습니다.",generatorKey:"source52WedgeBallReturnSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t=>t.id==="5-2-u3-e6-mission-4-original")) {
+    const id="5-2-u3-e6-mission-4-original",name="세 번 접어 자른 색종이의 조각 수 · 원문";
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 4 원문",sourceSection:"mission",sourcePdfPage:31,alternateSourcePdfPage:30,sourcePrintedPage:35,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 접기 순서와 두 절단 영역을 대조하고 펼친 조각의 연결 관계를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52FoldedTrianglePage35Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t => t.id === "5-2-u3-e6-mission-4-folded-triangle-synthetic")) {
     const id="5-2-u3-e6-mission-4-folded-triangle-synthetic",name="세 번 접어 자른 종이의 조각 수 · 연습";
@@ -3139,6 +3250,32 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 6-3 구조 연습",sourceSection:"example",sourcePdfPage:30,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 범위의 대칭수를 전수 검사했습니다.",generatorKey:"source52PalindromeSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
   const source52PointApplication = source52CongruenceUnit?.subunits.find(s => s.name === "점대칭의 활용");
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-practice-111-clarified-similar")) {
+    const id="5-2-u3-practice-111-clarified-similar",name="크기를 밝힌 직사각형의 점대칭 사각형 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-111-original",sourceItemLabel:"확인학습 111번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:94,alternateSourcePdfPage:94,sourcePrintedPage:99,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 직사각형 비율이 명확하지 않아 보류합니다. 유사문항은 6cm와 4cm로 고정하고 점대칭 사각형과 합동을 독립 열거했습니다.",generatorKey:"source52U3P99Q111ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-practice-98-clarified-similar")) {
+    const id="5-2-u3-practice-98-clarified-similar",name="중심과 연결선을 밝힌 점대칭 넓이 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-98-original",sourceItemLabel:"확인학습 98번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:92,alternateSourcePdfPage:92,sourcePrintedPage:97,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 중심과 연결선이 정해지지 않아 보류합니다. 별도 유사문항은 격자 중심과 연결 방법, 한 칸의 넓이를 명시하고 넓이를 독립 검산했습니다.",generatorKey:"source52U3P97Q98ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-e8-mission-5-original")) {
+    const id="5-2-u3-e8-mission-5-original",name="점대칭이 되는 네 자리 수 세기 · 원문";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 5 원문",sourceSection:"mission",sourcePdfPage:35,alternateSourcePdfPage:34,sourcePrintedPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 보기 1691과 숫자 모양을 대조하고 0·1·8과 6↔9 회전 대응 기준으로 네 자리 수를 전수 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52RotatedFourDigitsPage39Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false});
+  }
+
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-e8-mission-4-original")) {
+    const id="5-2-u3-e8-mission-4-original",name="삼각형 격자를 합동인 두 조각으로 자르기 · 원문";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 4 원문",sourceSection:"mission",sourcePdfPage:35,alternateSourcePdfPage:34,sourcePrintedPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 32삼각형 격자와 시작점을 대조했습니다. 두 조각을 만드는 겹치지 않는 단일 자름선 해석을 전수 검산했으며 출판사 공식 답안은 미확인입니다.",generatorKey:"source52TriangleCutsPage39Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-e8-mission-3-original")) {
+    const id="5-2-u3-e8-mission-3-original",name="점판에서 합동인 두 조각 만들기 · 원문";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 3 원문",sourceSection:"mission",sourcePdfPage:35,alternateSourcePdfPage:34,sourcePrintedPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 보기와 회전·뒤집기 중복 기준을 대조했습니다. 두 조각을 만드는 겹치지 않는 단일 자름선 해석을 전수 검산했으며 출판사 공식 답안은 미확인입니다.",generatorKey:"source52DotCutPage39Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-mission-3-dot-cut-synthetic")) {
     const id="5-2-u3-e8-mission-3-dot-cut-synthetic",name="점판을 잘라 합동 조각 만들기 · 연습";
     source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-mission-3",sourceItemLabel:"Mission 3 조건 명시 연습",sourceSection:"mission",sourcePdfPage:35,sourcePrintedPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"조건을 명시한 점판의 자름선과 합동 조각 모양을 독립 전수 검산했습니다.",generatorKey:"source52DotCutSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
@@ -3147,25 +3284,49 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e8-mission-6-flower-ring-synthetic",name="원형 꽃잎 떼기 승리 전략 · 연습";
     source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-mission-6",sourceItemLabel:"Mission 6 구조 연습",sourceSection:"mission",sourcePdfPage:35,sourcePrintedPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원형 게임의 첫 대응과 대칭 전략을 독립 전수 검산했습니다.",generatorKey:"source52FlowerRingSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-e8-exploration-8-original")) {
+    const id="5-2-u3-e8-exploration-8-original",name="계단 도형을 직선으로 이등분 · 원문";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 8 원문",sourceSection:"exploration",sourcePdfPage:34,alternateSourcePdfPage:33,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 직각 계단 윤곽을 대조하고 두 직사각형 중심을 잇는 작도 예의 넓이 이등분을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52StaircaseHalfPage38Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-exploration-staircase-half-synthetic")) {
     const id="5-2-u3-e8-exploration-staircase-half-synthetic",name="계단 도형의 넓이를 반으로 나누기";
     source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-exploration",sourceItemLabel:"개념탐구 8 구조 연습",sourceSection:"exploration",sourcePdfPage:34,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"두 직사각형의 중심을 지나는 선과 넓이를 독립 검산한 창작 연습입니다.",generatorKey:"source52StaircaseHalfSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-e8-mission-2-original")) {
+    const id="5-2-u3-e8-mission-2-original",name="평행사변형과 직사각형의 넓이 이등분 · 원문";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 2 원문",sourceSection:"mission",sourcePdfPage:35,alternateSourcePdfPage:34,sourcePrintedPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 붙임 도형을 대조하고 두 중심을 잇는 작도 예의 넓이 이등분을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52CompositeHalfPage39Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-mission-2-half-synthetic")) {
     const id="5-2-u3-e8-mission-2-half-synthetic",name="붙인 도형의 넓이를 반으로 나누기 · 연습";
     source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-mission-2",sourceItemLabel:"Mission 2 구조 연습",sourceSection:"mission",sourcePdfPage:35,sourcePrintedPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 도형의 두 중심을 잇는 넓이 이등분선을 독립 검증했습니다.",generatorKey:"source52CompositeHalfSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-e8-example-8-4-original")) {
+    const id="5-2-u3-e8-example-8-4-original",name="바둑돌 세 개 게임의 이기는 첫 수 · 원문";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 8-4 원문",sourceSection:"example",sourcePdfPage:34,alternateSourcePdfPage:33,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 말판과 세 돌의 위치를 대조하고 첫 수와 후속 빈칸 대응 전략을 전수 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52StoneGamePage38Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-example-4-stone-synthetic")) {
     const id="5-2-u3-e8-example-4-stone-synthetic",name="바둑돌을 왼쪽으로 옮기는 게임 · 연습";
     source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-example-4",sourceItemLabel:"예제 8-4 구조 연습",sourceSection:"example",sourcePdfPage:34,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 말판의 모든 첫 수와 승리 전략을 독립 검증했습니다.",generatorKey:"source52StoneGameSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-e8-example-8-2-original")) {
+    const id="5-2-u3-e8-example-8-2-original",name="4×4 정사각형의 합동 두 조각 · 원문";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 8-2 원문",sourceSection:"example",sourcePdfPage:34,alternateSourcePdfPage:33,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 4×4 점선과 조각 모양 중복 기준을 대조하고 연결된 합동 분할을 전수 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52CongruentCutsPage38Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-example-2-cut-synthetic")) {
     const id="5-2-u3-e8-example-2-cut-synthetic",name="격자를 합동 두 조각으로 나누기 · 연습";
     source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-example-2",sourceItemLabel:"예제 8-2 구조 연습",sourceSection:"example",sourcePdfPage:34,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 격자의 합동 조각과 방법 수를 독립 전수 검증했습니다.",generatorKey:"source52CongruentGridSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-e8-mission-1-original")) {
+    const id="5-2-u3-e8-mission-1-original",name="두 중심으로 삼각형 점대칭 이동 · 원문";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 1 원문",sourceSection:"mission",sourcePdfPage:35,alternateSourcePdfPage:34,sourcePrintedPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 모눈 위 세 꼭짓점과 두 중심을 대조하고 두 차례 대응점의 중점과 합성 이동을 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52DoublePointPage39Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-mission-1-double-point-synthetic")) {
     const id="5-2-u3-e8-mission-1-double-point-synthetic",name="두 점을 중심으로 차례로 점대칭 그리기 · 연습";
     source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e8-mission-1",sourceItemLabel:"Mission 1 구조 연습",sourceSection:"mission",sourcePdfPage:35,sourcePrintedPage:39,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 삼각형의 두 단계 대응점을 중점과 평행이동으로 독립 검증했습니다.",generatorKey:"source52DoublePointSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-e8-example-8-3-original")) {
+    const id="5-2-u3-e8-example-8-3-original",name="선대칭과 점대칭 도형의 겹친 넓이 · 원문";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 8-3 원문",sourceSection:"example",sourcePdfPage:34,alternateSourcePdfPage:33,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 돌출 도형과 4·6·12cm 표시를 대조하고 두 변환의 겹친 영역을 좌표로 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52DoubleSymmetryPage38Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-example-3-overlap-synthetic")) {
     const id="5-2-u3-e8-example-3-overlap-synthetic",name="선대칭과 점대칭 도형의 겹친 넓이 · 연습";
@@ -3181,6 +3342,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceTier:"advanced",sourceItemId:id,sourceItemLabel:"개념탐구 5 원문",sourceSection:"exploration",sourcePdfPage:28,alternateSourcePdfPage:27,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52SymmetryGridPage32Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 색 배열과 회전·뒤집기 조건을 대조하고 가능한 배열을 전수 검사했습니다. 출판사 공식 답안은 미확인입니다."});
   }
+  if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-example-1-original")) {
+    const id="5-2-u3-e5-example-1-original",name="기울어진 축에 사각형 대칭으로 그리기 · 원문";
+    source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 5-1 원문",sourceSection:"example",sourcePdfPage:28,alternateSourcePdfPage:27,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 모눈·사각형 꼭짓점과 대칭축을 대조하고 네 대응점의 수직·등거리를 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52SlantedReflectionPage32Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-example-1-reflection-synthetic")) {
     const id="5-2-u3-e5-example-1-reflection-synthetic",name="기울어진 축에 사각형 반사하기 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 5-1 구조 연습",sourceSection:"example",sourcePdfPage:28,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 도형의 대응점을 독립 검증했습니다.",generatorKey:"source52SlantedReflectionSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
@@ -3188,6 +3353,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-exploration-grid-synthetic")) {
     const id="5-2-u3-e5-exploration-grid-synthetic",name="대칭축이 하나인 색 배열 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 5 구조 연습",sourceSection:"exploration",sourcePdfPage:28,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 색 배열을 전수 검사했습니다.",generatorKey:"source52SymmetryGridSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-example-2-original")) {
+    const id="5-2-u3-e5-example-2-original",name="선대칭 사각형과 삼각형의 각 · 원문";
+    source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 5-2 원문",sourceSection:"example",sourcePdfPage:28,alternateSourcePdfPage:27,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 대칭도형과 48°·68°를 대조하고 82°를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52SymmetryKitePage32Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-example-2-axis-synthetic")) {
     const id="5-2-u3-e5-example-2-axis-synthetic",name="대칭축과 이등변삼각형의 각 · 연습";
@@ -3197,25 +3366,49 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e5-example-3-reflection-synthetic",name="두 직선에 차례로 대칭시키기 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 5-3 구조 연습",sourceSection:"example",sourcePdfPage:28,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"두 직선에 차례로 반사한 창작 도형과 목표각을 독립 검산했습니다.",generatorKey:"source52DoubleReflectionSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-example-4-original")) {
+    const id="5-2-u3-e5-example-4-original",name="모눈 위 두 원의 대칭축 그리기 · 원문";
+    source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 5-4 원문",sourceSection:"example",sourcePdfPage:28,alternateSourcePdfPage:27,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 16×12 모눈과 두 중심·반지름을 대조하고 수직이등분선을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52CircleAxisPage32Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-example-4-circle-axis-synthetic")) {
     const id="5-2-u3-e5-example-4-circle-axis-synthetic",name="두 원을 서로 옮기는 대칭축 그리기 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 5-4 구조 연습",sourceSection:"example",sourcePdfPage:28,sourcePrintedPage:32,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"두 원의 중심과 수직이등분선을 독립 검산했습니다.",generatorKey:"source52CircleAxisSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-1-original")) {
+    const id="5-2-u3-e5-mission-1-original",name="정팔각형의 대각선 대칭 위치 · 원문";
+    source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 1 원문",sourceSection:"mission",sourcePdfPage:29,alternateSourcePdfPage:28,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 꼭짓점·색칠 영역·일곱 보기를 대조하고 네 대각선의 대응 위치를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52OctagonPage33Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-1-octagon-synthetic")) {
     const id="5-2-u3-e5-mission-1-octagon-synthetic",name="정팔각형 대칭 위치 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 1 구조 연습",sourceSection:"mission",sourcePdfPage:29,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"네 대각선에 대한 꼭짓점 반사와 보기별 정답을 독립 검산했습니다.",generatorKey:"source52OctagonReflectionSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-2-original")) {
+    const id="5-2-u3-e5-mission-2-original",name="선대칭 도형에서 겹치지 않는 넓이 · 원문";
+    source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 2 원문",sourceSection:"mission",sourcePdfPage:29,alternateSourcePdfPage:28,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 4cm 모눈과 다각형을 대조하고 겹친 넓이 및 양쪽 비겹침 496cm²를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52ReflectionAreaPage33Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-2-reflection-area-synthetic")) {
     const id="5-2-u3-e5-mission-2-reflection-area-synthetic",name="반사한 삼각형의 겹치지 않는 넓이 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e5-mission-2",sourceItemLabel:"Mission 2 구조 연습",sourceSection:"mission",sourcePdfPage:29,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 양쪽 비겹침 넓이 구조를 대조하고 창작 삼각형의 넓이를 독립 검산했습니다.",generatorKey:"source52ReflectionAreaSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-3-original")) {
+    const id="5-2-u3-e5-mission-3-original",name="모눈 육각형을 선대칭으로 그리기 · 원문";
+    source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 3 원문",sourceSection:"mission",sourcePdfPage:29,alternateSourcePdfPage:28,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 모눈·육각형 꼭짓점과 대칭축을 대조하고 여섯 대응점을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52HexagonPage33Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-3-hexagon-synthetic")) {
     const id="5-2-u3-e5-mission-3-hexagon-synthetic",name="기울어진 축에 육각형 반사하기 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e5-mission-3",sourceItemLabel:"Mission 3 구조 연습",sourceSection:"mission",sourcePdfPage:29,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 육각형의 여섯 대응점과 축 위 고정점을 독립 검산했습니다.",generatorKey:"source52HexagonReflectionSynthetic",automaticGrading:false,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-4-original")) {
+    const id="5-2-u3-e5-mission-4-original",name="세 번의 선대칭 이동과 각 · 원문";
+    source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 4 원문",sourceSection:"mission",sourcePdfPage:29,alternateSourcePdfPage:28,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 15°·30°와 세 번의 이동 순서를 대조하고 목표각 150°를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52TripleReflectionPage33Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-4-triple-reflection-synthetic")) {
     const id="5-2-u3-e5-mission-4-triple-reflection-synthetic",name="세 번 대칭 이동해 각도 구하기 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e5-mission-4",sourceItemLabel:"Mission 4 구조 연습",sourceSection:"mission",sourcePdfPage:29,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 반사 순서와 구별되는 창작 각도를 대조하고 좌표 반사와 각 분할로 독립 검산했습니다.",generatorKey:"source52TripleReflectionSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52LineSymmetry) for (const [n,name,key] of [[5,"겹친 정사각형의 둘레 · 원문","source52SymmetricSquarePage33Original"],[6,"이등변삼각형의 대칭축과 각 · 원문","source52IsoscelesAxisPage33Original"]]) {
+    const id=`5-2-u3-e5-mission-${n}-original`;
+    if (!source52LineSymmetry.types.some(t=>t.id===id)) source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourcePdfPage:29,alternateSourcePdfPage:28,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 그림과 수치를 대조하고 대칭과 넓이·각 관계를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-5-square-perimeter-synthetic")) {
     const id="5-2-u3-e5-mission-5-square-perimeter-synthetic",name="겹친 정사각형의 넓이와 둘레 · 연습";
@@ -3224,6 +3417,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52LineSymmetry && !source52LineSymmetry.types.some(t => t.id === "5-2-u3-e5-mission-6-isosceles-axis-synthetic")) {
     const id="5-2-u3-e5-mission-6-isosceles-axis-synthetic",name="이등변삼각형의 대칭축과 각 · 연습";
     source52LineSymmetry.types.push({id,number:source52LineSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e5-mission-6",sourceItemLabel:"Mission 6 구조 연습",sourceSection:"mission",sourcePdfPage:29,sourcePrintedPage:33,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 각과 구별되는 창작 삼각형의 두 이등변 조건, 축 및 목표각을 좌표로 검산했습니다.",generatorKey:"source52IsoscelesAxisAngleSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52PointApplication && !source52PointApplication.types.some(t=>t.id==="5-2-u3-e8-example-8-1-original")) {
+    const id="5-2-u3-e8-example-8-1-original",name="원 안 A와 B의 넓이 차 · 원문";
+    source52PointApplication.types.push({id,number:source52PointApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 8-1 원문",sourceSection:"example",sourcePdfPage:34,alternateSourcePdfPage:33,sourcePrintedPage:38,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 두 현과 중심 거리·A B 위치를 대조하고 넓이 차를 대칭 및 독립 표본으로 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52CircleDifferencePage38Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52PointApplication && !source52PointApplication.types.some(t => t.id === "5-2-u3-e8-example-1-circle-difference-synthetic")) {
     const id="5-2-u3-e8-example-1-circle-difference-synthetic",name="원 안 두 영역의 넓이 차";
@@ -3250,6 +3447,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
     source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceTier:"advanced",sourceItemId:id,sourceItemLabel:"Mission 6 원문",sourceSection:"mission",sourcePdfPage:33,alternateSourcePdfPage:32,sourcePrintedPage:37,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52TwoCentersTrianglePage37Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문의 세 격자점과 두 대칭점을 대조하고 삼각형 넓이를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
+  if (source52PointSymmetry && !source52PointSymmetry.types.some(t=>t.id==="5-2-u3-e7-example-7-4-original")) {
+    const id="5-2-u3-e7-example-7-4-original",name="겹친 평행사변형의 색칠한 둘레 · 원문";
+    source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 7-4 원문",sourceSection:"example",sourcePdfPage:32,alternateSourcePdfPage:31,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 길이와 3cm 수직 위치를 대조하고 겹친 부분의 넓이와 둘레를 독립 좌표로 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52ShadedParallelogramPage36Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52PointSymmetry && !source52PointSymmetry.types.some(t => t.id === "5-2-u3-e7-example-4-shaded-parallelogram-synthetic")) {
     const id="5-2-u3-e7-example-4-shaded-parallelogram-synthetic",name="색칠한 평행사변형의 둘레";
     source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e7-example-4",sourceItemLabel:"예제 7-4 구조 연습",sourceSection:"example",sourcePdfPage:32,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"두 점대칭 평행사변형의 겹친 영역과 둘레를 검산한 창작 연습입니다.",generatorKey:"source52ShadedParallelogramSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
@@ -3258,9 +3459,17 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e7-mission-4-grid-construction-synthetic",name="정해진 넓이의 점대칭도형 그리기";
     source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e7-mission-4",sourceItemLabel:"Mission 4 구조 연습",sourceSection:"mission",sourcePdfPage:33,sourcePrintedPage:37,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"주어진 선을 포함하는 점대칭 작도 예와 넓이를 독립 검산했습니다.",generatorKey:"source52GridConstructionSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52PointSymmetry && !source52PointSymmetry.types.some(t=>t.id==="5-2-u3-e7-example-7-3-original")) {
+    const id="5-2-u3-e7-example-7-3-original",name="네 글자와 칸의 점대칭 작도 · 원문";
+    source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 7-3 원문",sourceSection:"example",sourcePdfPage:32,alternateSourcePdfPage:31,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 네 칸과 각 글자 획을 대조하고 대칭 중심을 기준으로 반 바퀴 회전해 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52LetterRotationPage36Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52PointSymmetry && !source52PointSymmetry.types.some(t => t.id === "5-2-u3-e7-example-3-letter-rotation-synthetic")) {
     const id="5-2-u3-e7-example-3-letter-rotation-synthetic",name="칸과 글자를 점대칭으로 옮기기";
     source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e7-example-3",sourceItemLabel:"예제 7-3 구조 연습",sourceSection:"example",sourcePdfPage:32,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"고정한 글자 획과 네모칸의 반 바퀴 회전을 검산한 창작 연습입니다.",generatorKey:"source52PointLettersSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52PointSymmetry && !source52PointSymmetry.types.some(t=>t.id==="5-2-u3-e7-example-7-2-original")) {
+    const id="5-2-u3-e7-example-7-2-original",name="점판의 점대칭도형 완성과 넓이 · 원문";
+    source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 7-2 원문",sourceSection:"example",sourcePdfPage:32,alternateSourcePdfPage:31,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 점판과 선분을 대조하고 완성 도형의 넓이를 독립 격자 및 좌표 계산으로 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52DotboardPage36Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52PointSymmetry && !source52PointSymmetry.types.some(t => t.id === "5-2-u3-e7-example-2-dotboard-area-synthetic")) {
     const id="5-2-u3-e7-example-2-dotboard-area-synthetic",name="점판에 점대칭도형을 완성한 넓이";
@@ -3278,6 +3487,10 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e7-mission-2-arrow-overlap-synthetic",name="반 바퀴 돌린 화살표의 겹친 넓이";
     source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e7-mission-2",sourceItemLabel:"Mission 2 구조 연습",sourceSection:"mission",sourcePdfPage:33,sourcePrintedPage:37,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"화살표 회전과 겹친 영역을 독립 검산한 창작 연습입니다.",generatorKey:"source52ArrowOverlapSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52PointSymmetry && !source52PointSymmetry.types.some(t=>t.id==="5-2-u3-e7-mission-1-original")) {
+    const id="5-2-u3-e7-mission-1-original",name="6952의 점대칭과 덧셈 · 원문";
+    source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 1 원문",sourceSection:"mission",sourcePdfPage:33,alternateSourcePdfPage:32,sourcePrintedPage:37,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 숫자 획과 빈칸 위치를 대조하고 반 바퀴 회전한 수와 덧셈을 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52RotatedAdditionPage37Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52PointSymmetry && !source52PointSymmetry.types.some(t => t.id === "5-2-u3-e7-mission-1-rotated-addition-synthetic")) {
     const id="5-2-u3-e7-mission-1-rotated-addition-synthetic",name="반 바퀴 돌린 수와 처음 수의 합";
     source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e7-mission-1",sourceItemLabel:"Mission 1 구조 연습",sourceSection:"mission",sourcePdfPage:33,sourcePrintedPage:37,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"숫자 획의 회전과 덧셈을 독립 검산한 창작 연습입니다.",generatorKey:"source52RotatedAdditionSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
@@ -3286,15 +3499,62 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u3-e7-mission-6-triangle-area-synthetic",name="두 대칭점으로 만든 삼각형의 넓이";
     source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e7-mission-6",sourceItemLabel:"Mission 6 구조 연습",sourceSection:"mission",sourcePdfPage:33,sourcePrintedPage:37,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"두 중심의 대응점과 삼각형 넓이를 검산한 창작 연습입니다.",generatorKey:"source52TwoCentersTriangleAreaSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52PointSymmetry && !source52PointSymmetry.types.some(t=>t.id==="5-2-u3-e7-example-7-1-original")) {
+    const id="5-2-u3-e7-example-7-1-original",name="두 중심으로 사각형 점대칭 이동 · 원문";
+    source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 7-1 원문",sourceSection:"example",sourcePdfPage:32,alternateSourcePdfPage:31,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 모눈 위 네 꼭짓점과 두 중심을 대조하고 두 차례의 대응점 중점을 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52TwoCentersPage36Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52PointSymmetry && !source52PointSymmetry.types.some(t => t.id === "5-2-u3-e7-example-1-quadrilateral-synthetic")) {
     const id="5-2-u3-e7-example-1-quadrilateral-synthetic",name="두 중심으로 사각형 차례로 옮기기";
     source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e7-example-1",sourceItemLabel:"예제 7-1 구조 연습",sourceSection:"example",sourcePdfPage:32,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"사각형의 두 단계 점대칭 작도를 독립 검산한 창작 연습입니다.",generatorKey:"source52TwoCentersQuadrilateralSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52PointSymmetry && !source52PointSymmetry.types.some(t=>t.id==="5-2-u3-e7-exploration-7-original")) {
+    const id="5-2-u3-e7-exploration-7-original",name="여섯 정사각형의 점대칭 모양 · 원문";
+    source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 7 원문",sourceSection:"exploration",sourcePdfPage:32,alternateSourcePdfPage:31,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 두 예시와 회전·뒤집기 중복 조건을 대조하고 여섯 칸 모양을 독립 열거했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:"source52PointPolyominoPage36Original",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   if (source52PointSymmetry && !source52PointSymmetry.types.some(t => t.id === "5-2-u3-e7-exploration-polyomino-synthetic")) {
     const id="5-2-u3-e7-exploration-polyomino-synthetic",name="정사각형을 붙인 점대칭 모양 · 연습";
     source52PointSymmetry.types.push({id,number:source52PointSymmetry.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e7-exploration",sourceItemLabel:"개념탐구 7 구조 연습",sourceSection:"exploration",sourcePdfPage:32,sourcePrintedPage:36,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"창작 칸 수별 연결·점대칭 모양과 회전·뒤집기 중복을 독립 열거했습니다.",generatorKey:"source52PointPolyominoSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
   const source52CongruenceFirst = source52CongruenceUnit?.subunits.find(s => s.name === "조건에 맞는 삼각형 그리기");
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-practice-53-clarified-similar")) {
+    const id="5-2-u3-practice-53-clarified-similar",name="중심을 밝힌 정십이각형의 넓이 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-53-original",sourceItemLabel:"확인학습 53번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:86,alternateSourcePdfPage:86,sourcePrintedPage:91,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 내부 점의 중심 조건이 명시되지 않아 보류합니다. 별도 유사문항은 중심과 반지름을 명시하고 넓이를 독립 계산했습니다.",generatorKey:"source52U3P91Q53ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-practice-54-clarified-similar")) {
+    const id="5-2-u3-practice-54-clarified-similar",name="두 정삼각형의 회전과 길이 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-54-original",sourceItemLabel:"확인학습 54번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:86,alternateSourcePdfPage:86,sourcePrintedPage:91,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 7cm는 다른 조건과 충돌하여 원문은 보류합니다. 별도 유사문항은 충돌하는 수치를 제거하고 주어진 길이를 바꾸어 회전 및 좌표로 검산했습니다.",generatorKey:"source52U3P91Q54ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-practice-39-clarified-similar")) {
+    const id="5-2-u3-practice-39-clarified-similar",name="합동 사다리꼴의 겹침 둘레 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-39-original",sourceItemLabel:"확인학습 39번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:84,alternateSourcePdfPage:84,sourcePrintedPage:89,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 사다리꼴 높이와 빗변 수치가 충돌하여 보류합니다. 별도 유사문항은 3-4-5 직각삼각형을 이용한 일관된 수치와 겹침 둘레를 독립 검산했습니다.",generatorKey:"source52U3P89Q39ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-practice-16-clarified-similar")) {
+    const id="5-2-u3-practice-16-clarified-similar",name="볼록 사각형의 합동을 보장하는 조건 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-16-original",sourceItemLabel:"확인학습 16번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:81,alternateSourcePdfPage:81,sourcePrintedPage:86,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 볼록성과 항상 보장하는 조건인지가 명시되지 않아 보류합니다. 유사문항에서 이를 명시하고 가능한 조건과 반례를 독립 검산했습니다.",generatorKey:"source52U3P86Q16ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+  if (source52CongruenceFirst) for (const [n,name] of [[2,"자와 컴퍼스로 삼각형 옮겨 그리기 · 원문 그림 재구성"],[3,"자와 컴퍼스로 사각형 옮겨 그리기 · 원문 그림 재구성"]]) {
+    const id=`5-2-u3-e1-mission-${n}-original`;
+    if (source52CongruenceFirst.types.some(t=>t.id===id)) continue;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e1-mission-${n}`,sourceItemLabel:`Mission ${n} 원문 그림 재구성`,sourceSection:"mission",sourcePdfPage:21,alternateSourcePdfPage:20,sourcePrintedPage:25,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page25OriginalCopyMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원본 도형의 외곽을 재구성하고 문제와 답 그림의 합동 및 작도 과정을 검증했습니다. 공식 답안은 미확인입니다."});
+  }
+  if (source52CongruenceFirst) for (const [n,name] of [[1,"두 변과 사이각이 주어진 삼각형의 작도 순서 · 원문"],[4,"한 변과 각이 주어진 마름모 작도 · 원문"],[5,"삼각형의 합동을 결정하는 추가 조건 · 원문 그림 재구성"],[6,"사각형의 합동을 결정하는 추가 조건 · 원문 그림 재구성"]]) {
+    const id=`5-2-u3-e1-mission-${n}-original`;
+    if (source52CongruenceFirst.types.some(t=>t.id===id)) continue;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e1-mission-${n}`,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourcePdfPage:21,alternateSourcePdfPage:20,sourcePrintedPage:25,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page25OriginalMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:n!==5&&n!==6,answerVisualStatus:n===5||n===6?"not-required":"verified-reconstruction",reviewReason:"원본 작도 순서와 도형 조건을 대조하고 작도 과정을 독립 검증했습니다. 공식 답안은 미확인입니다."});
+  }
+  if (source52CongruenceFirst) for (const [n,name] of [[1,"자와 컴퍼스로 삼각형 옮겨 그리기 · 원문 그림 재구성"],[2,"자와 컴퍼스로 사각형 옮겨 그리기 · 원문 그림 재구성"]]) {
+    const id=`5-2-u3-e1-example-${n}-original`;
+    if (source52CongruenceFirst.types.some(t=>t.id===id)) continue;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e1-example-${n}`,sourceItemLabel:`예제 1-${n} 원문 그림 재구성`,sourceSection:"example",sourcePdfPage:20,alternateSourcePdfPage:19,sourcePrintedPage:24,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page24OriginalCopyExample${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원본 도형의 외곽을 재구성하고 문제와 답 그림의 합동 및 작도 과정을 검증했습니다. 공식 답안은 미확인입니다."});
+  }
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-e1-exploration-original")) {
+    const id="5-2-u3-e1-exploration-original",name="삼각형이 한 가지로 정해지는 조건 · 원문";
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e1-exploration",sourceItemLabel:"개념탐구 1 원문",sourceSection:"exploration",sourcePdfPage:20,alternateSourcePdfPage:19,sourcePrintedPage:24,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page24OriginalExploration",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원본 여섯 조건과 삼각형의 유일성 및 두 작도 해를 독립 검증했습니다. 공식 답안은 미확인입니다."});
+  }
   if (source52CongruenceFirst) {
     const index = source52CongruenceFirst.types.findIndex(t => t.id === "5-2-u3-t1");
     if (index >= 0) {
@@ -3346,6 +3606,18 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t => t.id === "5-2-u3-e1-mission-6")) {
     const id="5-2-u3-e1-mission-6",name="세 변과 한 각으로 사각형을 정하는 조건";
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 6 유사문항",sourceSection:"mission",sourcePdfPage:21,sourcePrintedPage:25,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 볼록 사각형의 유일성과 반례을 검증했습니다.",generatorKey:"source52QuadrilateralConditionsSyntheticPage25Mission6",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+
+  if (source52CongruenceFirst) for (const [n,name] of [["exploration","삼각형의 성립과 합동 조건 · 원문"],["example-1","세 변을 골라 삼각형 만들기 · 원문"],["example-2","양 끝각을 골라 삼각형 만들기 · 원문"],["example-3","두 정삼각형에서 합동인 도형 찾기 · 원문 그림 재구성"]]) {
+    const id=`5-2-u3-e2-${n}-original`;
+    if (source52CongruenceFirst.types.some(t=>t.id===id)) continue;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e2-${n}`,sourceItemLabel:n==="exploration"?"개념탐구 2 원문":`예제 2-${n.slice(-1)} 원문`,sourceSection:n==="exploration"?"exploration":"example",sourcePdfPage:22,alternateSourcePdfPage:21,sourcePrintedPage:26,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page26Original${n.replace(/[^a-z0-9]/g,"_")}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건을 대조하고 삼각형 성립과 경우의 수를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+  if (source52CongruenceFirst) for (const [n,name] of [[1,"삼각형을 결정할 수 없는 조건 · 원문"],[2,"삼각형의 나머지 변이 될 수 있는 길이 · 원문"],[3,"양 끝각을 골라 삼각형 세기 · 원문"],[4,"서로 다른 세 변을 만드는 자연수 · 원문"],[5,"두 정삼각형에서 합동인 도형 찾기 · 원문 그림 재구성"],[6,"여섯 조각 중 합동인 삼각형 세기 · 원문 범위 명시"]]) {
+    const id=`5-2-u3-e2-mission-${n}-${n===6?"scope":"original"}`;
+    if (source52CongruenceFirst.types.some(t=>t.id===id)) continue;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e2-mission-${n}`,sourceItemLabel:n===6?"Mission 6 원문 범위 명시":`Mission ${n} 원문`,sourceSection:"mission",sourcePdfPage:23,alternateSourcePdfPage:22,sourcePrintedPage:27,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page27OriginalMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:n===6?"원문의 세기 범위를 여섯 조각으로 명시한 문항이며 대칭 합동을 독립 검산했습니다. 공식 답안은 미확인입니다.":"원문 조건을 대조하고 삼각형 성립과 경우의 수를 독립 검산했습니다. 공식 답안은 미확인입니다."});
   }
 
   if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-e2-exploration")) {
@@ -3404,6 +3676,33 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CongruenceApplicationOne = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ①");
+  if (source52CongruenceApplicationOne) for (const [n,name] of [[1,"합동인 이등변삼각형의 각 · 원문 조건 명시"],[4,"직사각형을 두 번 접은 각 · 원문 접는 선 명시"]]) {
+    const id=`5-2-u3-e3-mission-${n}-scope`;
+    if (source52CongruenceApplicationOne.types.some(t=>t.id===id)) continue;
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e3-mission-${n}`,sourceItemLabel:n===1?"Mission 1 원문 조건 명시":"Mission 4 원문 접는 선 명시",sourceSection:"mission",sourcePdfPage:25,alternateSourcePdfPage:24,sourcePrintedPage:29,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page29ExplicitMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:n===1?"원문에 같은 변의 위치가 표시되지 않아 그림에 맞는 조건을 명시한 별도 문항입니다. 공식 답안은 미확인입니다.":"원문 그림의 접는 선과 점의 대응을 지문에 명시한 별도 문항입니다. 공식 답안은 미확인입니다."});
+  }
+
+
+  if (source52CongruenceApplicationOne) for (const [n,name] of [[2,"두 정사각형이 겹친 넓이 · 원문 그림 재구성"],[3,"이등변삼각형을 회전한 뒤의 각 · 원문 그림 재구성"],[5,"정삼각형의 같은 거리와 안쪽 각 · 원문 그림 재구성"],[6,"정삼각형에서 두 선이 만나는 각 · 원문 그림 재구성"]]) {
+    const id=`5-2-u3-e3-mission-${n}-original`;
+    if (source52CongruenceApplicationOne.types.some(t=>t.id===id)) continue;
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e3-mission-${n}`,sourceItemLabel:`Mission ${n} 원문 그림 재구성`,sourceSection:"mission",sourcePdfPage:25,alternateSourcePdfPage:24,sourcePrintedPage:29,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page29OriginalMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 그림과 수치를 대조하고 넓이와 합동, 각도를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+
+  if (source52CongruenceApplicationOne && !source52CongruenceApplicationOne.types.some(t=>t.id==="5-2-u3-e3-exploration-scope")) {
+    const id="5-2-u3-e3-exploration-scope",name="합동인 이등변삼각형의 각 · 원문 조건 명시";
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e3-exploration",sourceItemLabel:"개념탐구 3 원문 조건 명시",sourceSection:"exploration",sourcePdfPage:24,alternateSourcePdfPage:23,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page28ExplorationExplicitSides",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문은 이등변의 같은 변을 표시하지 않아 여러 해석이 가능하므로 그림에 맞는 같은 변을 명시한 별도 문항입니다. 공식 답안은 미확인입니다."});
+  }
+
+
+  if (source52CongruenceApplicationOne) for (const [n,name] of [[1,"겹친 정사각형의 넓이 · 원문 그림 재구성"],[2,"겹친 정사각형에서 선분의 길이 · 원문 그림 재구성"],[3,"직각삼각형을 돌린 뒤의 각 · 원문 그림 재구성"],[4,"직사각형을 두 번 접은 각 · 원문 그림 재구성"]]) {
+    const id=`5-2-u3-e3-example-${n}-original`;
+    if (source52CongruenceApplicationOne.types.some(t=>t.id===id)) continue;
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e3-example-${n}`,sourceItemLabel:`예제 3-${n} 원문 그림 재구성`,sourceSection:"example",sourcePdfPage:24,alternateSourcePdfPage:23,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page28OriginalExample${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 도형과 표시를 대조하고 대응과 각도, 넓이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+
   if (source52CongruenceApplicationOne && !source52CongruenceApplicationOne.types.some(t => t.id === "5-2-u3-e3-exploration-synthetic")) {
     const id="5-2-u3-e3-exploration-synthetic",name="합동 이등변삼각형과 교차각";
     source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 3 유사문항",sourceSection:"exploration",sourcePdfPage:24,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"대응점과 이등변 조건을 명시한 창작 문항을 독립 검산했습니다.",generatorKey:"source52CongruentIsoscelesPage28ExplorationSynthetic",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
@@ -3460,6 +3759,49 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CongruenceApplicationTwo = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ②");
+  if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t=>t.id==="5-2-u3-e4-exploration-original")) {
+    const id="5-2-u3-e4-exploration-original",name="정사각형 속 두 각 · 원문 그림 재구성";
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e4-exploration",sourceItemLabel:"개념탐구 4 원문 그림 재구성",sourceSection:"exploration",sourcePdfPage:26,alternateSourcePdfPage:25,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page30OriginalExploration",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 그림과 각도를 대조하고 정사각형의 합동을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+  if (source52CongruenceApplicationTwo) for (const [n,name] of [[1,"같은 현이 있는 원의 각 · 원문 그림 재구성"],[3,"사다리꼴의 중점과 선분의 길이 · 원문 그림 재구성"],[4,"두 정삼각형과 이등변삼각형의 각 · 원문 그림 재구성"]]) {
+    const id=`5-2-u3-e4-example-${n}-original`;
+    if (source52CongruenceApplicationTwo.types.some(t=>t.id===id)) continue;
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e4-example-${n}`,sourceItemLabel:`예제 4-${n} 원문 그림 재구성`,sourceSection:"example",sourcePdfPage:26,alternateSourcePdfPage:25,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page30OriginalExample${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 그림과 수치를 대조하고 같은 현 및 사다리꼴의 합동을 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+
+  if (source52CongruenceApplicationTwo) {
+    const id="5-2-u3-e4-mission-6-original", name="사다리꼴 중점 삼각형의 넓이 · 원문";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 6 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:27,alternateSourcePdfPage:26,sourcePrintedPage:31,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 윗변 10cm, 아랫변 8cm, 높이 6cm와 중점을 대조했습니다. 색칠 삼각형은 사다리꼴의 절반이므로 독립 계산한 넓이는 27cm²입니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52TrapezoidMidpointPage31Mission6Original",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",implementationStatus:"fixed-verified-pool"});
+  }
+
+  if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t=>t.id==="5-2-u3-e4-mission-3-original")) {
+    const id="5-2-u3-e4-mission-3-original", name="두 정삼각형의 회전과 각 ㉮ · 원문";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 3 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:27,alternateSourcePdfPage:26,sourcePrintedPage:31,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 140도와 목표각 ㉮를 대조하고 정삼각형 회전으로 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52EquilateralRotationPage31Mission3Original",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",implementationStatus:"fixed-verified-pool"});
+  }
+
+  if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t=>t.id==="5-2-u3-e4-mission-4-original")) {
+    const id="5-2-u3-e4-mission-4-original", name="삼등분점을 이은 작은 정사각형의 넓이 · 원문";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 4 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:27,alternateSourcePdfPage:26,sourcePrintedPage:31,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 225cm²와 각 변의 삼등분점 그림을 대조하고 면적 분할로 독립 계산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52SquareTrisectionAreaPage31Mission4Original",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",implementationStatus:"fixed-verified-pool"});
+  }
+
+  if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t=>t.id==="5-2-u3-e4-mission-5-original")) {
+    const id="5-2-u3-e4-mission-5-original", name="합동인 삼각형 사이의 넓이 · 원문";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 5 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:27,alternateSourcePdfPage:26,sourcePrintedPage:31,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 합동 관계, 길이 16cm·8cm 및 목표 삼각형을 대조하고 넓이를 독립 계산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52CongruentTriangleAreaPage31Mission5Original",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",implementationStatus:"fixed-verified-pool"});
+  }
+
+  if (source52CongruenceApplicationTwo) for (const [n,name,generatorKey] of [[1,"정사각형 속 20°와 25°의 각 · 원문","source52SquareAnglePage31Mission1Original"],[2,"반원의 같은 현과 중심각 · 원문","source52SemicircleAnglePage31Mission2Original"]]) {
+    const id=`5-2-u3-e4-mission-${n}-original`;
+    if (source52CongruenceApplicationTwo.types.some(t=>t.id===id)) continue;
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:27,alternateSourcePdfPage:26,sourcePrintedPage:31,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 그림과 각도를 대조하고 합동과 각의 합으로 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey,generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",implementationStatus:"fixed-verified-pool"});
+  }
+
   if (source52CongruenceApplicationTwo && !source52CongruenceApplicationTwo.types.some(t => t.id === "5-2-u3-e4-example-1")) {
     const id="5-2-u3-e4-example-1",name="원에서 같은 현과 중심각";
     source52CongruenceApplicationTwo.types.push({id,number:source52CongruenceApplicationTwo.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"예제 4-1 유사문항",sourceSection:"example",sourcePdfPage:26,sourcePrintedPage:30,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 도형의 현, 반지름과 중심각을 검증했습니다.",generatorKey:"source52EqualChordsCenterAnglesSyntheticPage30Example41",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
@@ -3524,6 +3866,27 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52Unit2 = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u2");
   const source52Unit2First = source52Unit2?.subunits.find(subunit => subunit.name === "분수와 자연수의 곱셈");
 
+  if (source52Unit2First) for (const [n,name] of [[1,"반복해서 더한 값과 분수만큼의 관계 · 원문"],[2,"분수 조건으로 두 수의 합 찾기 · 원문"]]) {
+    const id=`5-2-u2-e1-exploration-${n}-original`;
+    if (source52Unit2First.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:"5-2-u2-e1-exploration",sourceItemLabel:`개념탐구 1 (${n}) 원문`,sourceSection:"exploration",sourceTier:"advanced",sourcePdfPage:10,alternateSourcePdfPage:9,sourcePrintedPage:14,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page14OriginalExploration${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+  if (source52Unit2First) for (const [n,name] of [[1,"피아노를 칠 수 있는 학생 수 · 원문"],[2,"같은 방향 두 자동차 사이의 거리 · 원문"],[3,"빠른 시계와 느린 시계의 시각 차 · 원문"],[4,"기약분수 조건을 만족하는 자연수의 합 · 원문"]]) {
+    const id=`5-2-u2-e1-example-${n}-original`;
+    if (source52Unit2First.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e1-example-${n}`,sourceItemLabel:`예제 1-${n} 원문`,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:10,alternateSourcePdfPage:9,sourcePrintedPage:14,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page14OriginalExample${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n===1||n===4,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+  if (source52Unit2First) for (const [n,name] of [[1,"분수와 자연수의 곱 여섯 식 · 원문"],[2,"놀이 기구를 타지 않은 여학생 수 · 원문"],[3,"느린 시계가 가리키는 시각 · 원문"],[5,"두 진분수의 곱이 자연수가 되는 수 · 원문"],[6,"분수 부등식에 알맞은 자연수의 합 · 원문"]]) {
+    const id=`5-2-u2-e1-mission-${n}-original`;
+    if (source52Unit2First.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2First.types.push({id,number:source52Unit2First.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e1-mission-${n}`,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:11,alternateSourcePdfPage:10,sourcePrintedPage:15,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page15OriginalMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n!==1&&n!==3&&n!==5,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
   if (source52Unit2First) for (const [n,name] of [[1,"두 집단의 분수만큼 더하기"],[2,"같은 방향 자동차 거리 차"]]) {
     const id = `5-2-u2-e1-example-${n}-synthetic`;
     const typeNumber = Math.max(0,...source52Unit2.subunits.flatMap(subunit => subunit.types.map(type => Number(type.typeNumber) || 0)))+1;
@@ -3561,6 +3924,21 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Product = source52Unit2?.subunits.find(subunit => subunit.name === "분수끼리의 곱셈");
+  if (source52Unit2Product) for (const [n,name] of [[1,"분수 곱셈 다섯 식 계산 · 원문"],[2,"거리의 몇 배로 소방서까지의 거리 구하기 · 원문"],[3,"규칙에 따라 늘어놓은 분수의 순서 · 원문"],[4,"규칙적으로 나열된 분수 백 개의 곱 · 원문"],[5,"세 번째로 튀어 오를 때까지 공의 이동 거리 · 원문"]]) {
+    const id=`5-2-u2-e2-mission-${n}-original`;
+    if (source52Unit2Product.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e2-mission-${n}`,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:13,alternateSourcePdfPage:12,sourcePrintedPage:17,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page17OriginalMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n===2||n===3,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+  if (source52Unit2Product) for (const [suffix,name] of [["exploration-1","물통에 들어 있는 물의 양 · 원문"],["exploration-2","두 분수 곱의 합 계산 · 원문"],["example-1","연속된 분수의 곱과 약분 · 원문"],["example-2","넓이의 비로 나눈 직사각형 · 원문"],["example-3","두 번째로 튀어 오를 때까지 움직인 거리 · 원문"],["example-4","직각이등변삼각형 속 정사각형 여섯 개 · 원문"]]) {
+    const id=`5-2-u2-e2-${suffix}-original`;
+    if (source52Unit2Product.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    const exploration=suffix.startsWith("exploration"), n=suffix.slice(-1);
+    source52Unit2Product.types.push({id,number:source52Unit2Product.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:exploration?"5-2-u2-e2-exploration":`5-2-u2-e2-${suffix}`,sourceItemLabel:exploration?`개념탐구 2 (${n}) 원문`:`예제 2-${n} 원문`,sourceSection:exploration?"exploration":"example",sourceTier:"advanced",sourcePdfPage:12,alternateSourcePdfPage:11,sourcePrintedPage:16,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page16Original${exploration?"Exploration":"Example"}${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:suffix==="example-1",answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 수치와 그림 및 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
   if (source52Unit2Product) for (const [suffix,name,label,section,key] of [
     ["exploration-1","전체 용량의 분수만큼 물의 양","개념탐구 2 (1) 유사문항","exploration","source52U2Page16Exploration21"],
     ["exploration-2","두 분수 곱의 합","개념탐구 2 (2) 유사문항","exploration","source52U2Page16Exploration22"],
@@ -3592,6 +3970,21 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Equation = source52Unit2?.subunits.find(subunit => subunit.name === "식 세워 풀기");
+  if (source52Unit2Equation) for (const [n,name] of [[1,"가로와 세로의 비로 직사각형 넓이 구하기 · 원문"],[2,"걸은 거리로 기차와 버스를 탄 거리 구하기 · 원문"],[3,"남은 사탕 수로 가 사탕 수 구하기 · 원문"],[4,"연필과 볼펜의 가격 관계 · 원문"],[5,"세 사람이 딴 사과 수와 전체의 관계 · 원문"],[6,"준 쌀과 남은 쌀의 관계 · 원문"]]) {
+    const id=`5-2-u2-e3-mission-${n}-original`;
+    if (source52Unit2Equation.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Equation.types.push({id,number:source52Unit2Equation.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e3-mission-${n}`,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:15,alternateSourcePdfPage:14,sourcePrintedPage:19,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page19OriginalMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n!==2,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+  if (source52Unit2Equation) for (const [suffix,name] of [["exploration","두 막대로 수영장 깊이 구하기 · 원문"],["example-1","네 번 튀어 오른 높이로 처음 높이 구하기 · 원문"],["example-2","5학년 수상 남학생이 전체에서 차지하는 분수 · 원문"],["example-3","꽃을 심은 넓이로 전체 꽃밭 넓이 구하기 · 원문"],["example-4","같은 분수값과 합으로 두 금액 구하기 · 원문"]]) {
+    const id=`5-2-u2-e3-${suffix}-original`;
+    if (source52Unit2Equation.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    const exploration=suffix==="exploration";
+    source52Unit2Equation.types.push({id,number:source52Unit2Equation.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e3-${suffix}`,sourceItemLabel:exploration?"개념탐구 3 원문":`예제 3-${suffix.slice(-1)} 원문`,sourceSection:exploration?"exploration":"example",sourceTier:"advanced",sourcePdfPage:14,alternateSourcePdfPage:13,sourcePrintedPage:18,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page18Original${exploration?"Exploration":`Example${suffix.slice(-1)}`}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:!['example-2','example-4'].includes(suffix),answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
   if (source52Unit2Equation) for (const [suffix,name,label,section,key] of [
     ["exploration","두 막대의 잠긴 길이로 깊이 구하기","개념탐구 3 유사문항","exploration","source52U2Page18Exploration3"],
     ["example-1","반동 높이에서 처음 높이 역산","예제 3-1 유사문항","example","source52U2Page18Example31"],
@@ -3616,6 +4009,21 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Application = source52Unit2?.subunits.find(subunit => subunit.name === "분수의 곱셈 응용 문제");
+  if (source52Unit2Application) for (const [n,name] of [[1,"네 분수를 한 번씩 써서 가장 큰 값 만들기 · 원문"],[2,"세 기약 진분수의 곱과 세 자리 수 · 원문"],[3,"두 기약 진분수의 곱에서 두 수의 합 · 원문"],[4,"곱의 결과가 자연수인 빈칸 수의 합 · 원문"],[5,"다섯 등분한 수직선 위 가의 위치 · 원문"],[6,"세 곱을 자연수로 만드는 분수 중 9에 가까운 수 · 원문"]]) {
+    const id=`5-2-u2-e4-mission-${n}-original`;
+    if (source52Unit2Application.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Application.types.push({id,number:source52Unit2Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e4-mission-${n}`,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:17,alternateSourcePdfPage:16,sourcePrintedPage:21,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page21OriginalMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n>=2&&n<=4,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+  if (source52Unit2Application) for (const [suffix,name] of [["exploration","세 분수의 곱을 모두 자연수로 만드는 가장 작은 분수 · 원문"],["example-1","꽃밭 넓이와 가로로 세로의 분자·분모 구하기 · 원문"],["example-2","여덟 등분한 직사각형과 수직선 · 원문"],["example-3","곱이 20보다 작은 자연수가 되는 기약분수 · 원문"],["example-4","곱이 1/2인 기약분수 두 개의 쌍 · 원문"]]) {
+    const id=`5-2-u2-e4-${suffix}-original`;
+    if (source52Unit2Application.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    const exploration=suffix==="exploration";
+    source52Unit2Application.types.push({id,number:source52Unit2Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e4-${suffix}`,sourceItemLabel:exploration?"개념탐구 4 원문":`예제 4-${suffix.slice(-1)} 원문`,sourceSection:exploration?"exploration":"example",sourceTier:"advanced",sourcePdfPage:16,alternateSourcePdfPage:15,sourcePrintedPage:20,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page20Original${exploration?"Exploration":`Example${suffix.slice(-1)}`}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:['example-1','example-4'].includes(suffix),answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
   if (source52Unit2Application) for (const [suffix,name,label,section,key] of [
     ["exploration","세 분수에 곱해 자연수가 되는 가장 작은 분수","개념탐구 4 유사문항","exploration","source52U2Page20Exploration4"],
     ["example-1","부분 넓이로 직사각형 세로 구하기","예제 4-1 유사문항","example","source52U2Page20Example41"],
@@ -3916,6 +4324,176 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   if (source52DecimalUnit) {
     const type=source52DecimalUnit.subunits.flatMap(group=>group.types).find(item=>item.id==="5-2-u4-t2-6");
     if (type) Object.assign(type,{name:`${type.name} · 유사문항`,label:`${type.label} · 유사문항`,sourceItemId:"5-2-u4-practice-25-part5-distribution-similar",sourceParentItemId:"5-2-u4-practice-25-original",sourceItemLabel:"확인학습 25번 (5) 기반 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:null,alternateSourcePdfPage:99,sourcePrintedPage:104,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U4DecimalDistributionSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 25번 (5)의 세 항과 1·2·3배 공통인 수 구조를 대조하고 변형별 답을 독립 계산했습니다."});
+  }
+
+  // 이 생성기들은 원문을 재현하지 않고 조건을 바꾼 유사문항을 만든다.
+  if (source52Average) {
+    const syntheticIds = new Set([
+      "5-2-u6-e1-exploration", ...[1,2,3,4].map(n=>`5-2-u6-e1-example-${n}`),
+      ...[1,2,3,4,5,6].map(n=>`5-2-u6-e1-mission-${n}`),
+      "5-2-u6-e2-exploration", ...[1,2,4].map(n=>`5-2-u6-e2-example-${n}`),
+      ...[1,2,3,5,6].map(n=>`5-2-u6-e2-mission-${n}`),
+      "5-2-u6-e4-exploration", ...[1,2,4].map(n=>`5-2-u6-e4-example-${n}`),
+      ...[1,2,3,4,5,6].map(n=>`5-2-u6-e4-mission-${n}`)
+    ]);
+    for (const type of source52Average.subunits.flatMap(group=>group.types)) {
+      if (!syntheticIds.has(type.id)) continue;
+      if (!type.name.includes("유사문항")) type.name += " · 유사문항";
+      if (!type.label.includes("유사문항")) type.label += " · 유사문항";
+      if (!type.sourceItemLabel.includes("유사문항")) type.sourceItemLabel += " 기반 유사문항";
+    }
+  }
+
+  {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+    const group=unit?.subunits.find(g=>g.name==="어림하기의 활용 · Mission 1 원문 연결");
+    const id="5-2-u1-e3-mission-2-perimeter-original", name="ㄱ자 도형의 둘레 어림 · 원문";
+    if (group && !group.types.some(t=>t.id===id)) {
+      const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 2 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:7,alternateSourcePdfPage:4,sourcePrintedPage:9,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 도형과 조건을 대조하고 둘레와 어림을 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52ApplicationMissionTwoPerimeterOriginal",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+    const group=unit?.subunits.find(g=>g.name==="어림하기의 활용 · Mission 1 원문 연결");
+    const id="5-2-u1-e3-mission-4-mat-cost-original", name="마트별 스케치북 구매 비용 · 원문";
+    if (group && !group.types.some(t=>t.id===id)) {
+      const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 4 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:7,alternateSourcePdfPage:4,sourcePrintedPage:9,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 표와 조건을 대조하고 각 마트의 구매 묶음과 비용을 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52ApplicationMissionFourSupplyCostOriginal",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+    const group=unit?.subunits.find(g=>g.name==="어림하기의 활용 · Mission 1 원문 연결");
+    const id="5-2-u1-e3-mission-5-bar-graph-length-original", name="도시 인구와 막대 길이 · 원문";
+    if (group && !group.types.some(t=>t.id===id)) {
+      const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 5 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:7,alternateSourcePdfPage:4,sourcePrintedPage:9,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 인구 자료와 축척을 대조하고 반올림과 길이를 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52ApplicationMissionFivePopulationBarLengthOriginal",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+    const group=unit?.subunits.find(g=>g.name==="어림하기의 활용 · Mission 1 원문 연결");
+    const id="5-2-u1-e3-mission-6-citrus-sales-original", name="감귤 상자와 판매금액 · 원문";
+    if (group && !group.types.some(t=>t.id===id)) {
+      const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 6 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:7,alternateSourcePdfPage:4,sourcePrintedPage:9,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 수확량과 포장 조건을 대조하고 완성 상자와 판매금액을 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52ApplicationMissionSixCitrusSalesOriginal",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+    const group=unit?.subunits.find(g=>g.name==="어림한 수의 범위 · 개념탐구 4 및 예제 4-1–4-3");
+    const rows=[
+      ["5-2-u1-e4-exploration-rounded-range-original","올림·버림·반올림의 공통 범위 · 원문","개념탐구 4 원문","exploration","source52RoundedRangeExploration4Original"],
+      ["5-2-u1-e4-example-1-original","어림 조건을 만족하는 가장 작은 자연수 · 원문","예제 4-1 원문","example","source52RoundedRangeExample41Original"]
+    ];
+    if (group) for (const [id,name,sourceItemLabel,sourceSection,generatorKey] of rows) {
+      if (group.types.some(t=>t.id===id)) continue;
+      const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel,sourceSection,sourceTier:"advanced",sourcePdfPage:8,alternateSourcePdfPage:5,sourcePrintedPage:10,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 어림 조건과 범위를 대조하고 가능한 자연수를 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey,generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+    const group=unit?.subunits.find(g=>g.name==="어림한 수의 범위 · 개념탐구 4 및 예제 4-1–4-3");
+    const rows=[
+      ["5-2-u1-e4-example-2-original","두 몫을 어림한 자연수의 범위 · 원문","예제 4-2 원문","source52RoundedRangeExample42Original"],
+      ["5-2-u1-e4-example-3-original","합과 차를 어림한 큰 수의 범위 · 원문","예제 4-3 원문","source52RoundedRangeExample43Original"]
+    ];
+    if (group) for (const [id,name,sourceItemLabel,generatorKey] of rows) {
+      if (group.types.some(t=>t.id===id)) continue;
+      const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:8,alternateSourcePdfPage:5,sourcePrintedPage:10,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 조건을 대조하고 양 끝의 포함 여부와 가능한 범위를 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey,generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+    const group=unit?.subunits.find(g=>g.name==="어림한 수의 범위 · 개념탐구 4 및 예제 4-1–4-3");
+    const id="5-2-u1-e4-example-4-original", name="남녀 인구 그래프와 실제 인구 차 · 원문";
+    if (group && !group.types.some(t=>t.id===id)) {
+      const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"예제 4-4 원문",sourceSection:"example",sourceTier:"advanced",sourcePdfPage:8,alternateSourcePdfPage:5,sourcePrintedPage:10,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 그래프의 두 선과 연도별 점을 대조하고 모든 해의 가능한 실제 인구 차를 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52RoundedRangeExample44Original",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+    const group=unit?.subunits.find(g=>g.name==="어림한 수의 범위 · 개념탐구 4 및 예제 4-1–4-3");
+    const id="5-2-u1-e4-mission-1-rounded-count-original", name="반올림과 올림의 공통 자연수 개수 · 원문";
+    if (group && !group.types.some(t=>t.id===id)) {
+      const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 1 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:9,alternateSourcePdfPage:6,sourcePrintedPage:11,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 반올림과 올림 조건을 대조하고 공통 자연수를 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52RoundedCountMission1Original",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
+  // 생성기에서 원문 수치 대신 창작 변형을 내는 유형을 구분한다.
+  {
+    const variantIds = new Set([
+      "5-2-u1-e3-mission-1-box-count",
+      "5-2-u1-e3-mission-2-perimeter",
+      "5-2-u1-e3-mission-3-cube-box-count",
+      "5-2-u1-e3-mission-4-mat-cost",
+      "5-2-u1-e3-mission-5-bar-graph-length",
+      "5-2-u1-e3-mission-6-citrus-sales",
+      "5-2-u1-e4-exploration-rounded-range",
+      "5-2-u1-e4-example-1",
+      "5-2-u1-e4-example-2",
+      "5-2-u1-e4-example-3",
+      "5-2-u1-e4-example-4",
+      "5-2-u1-e4-mission-1-rounded-count",
+      "5-2-u1-e3-example-1",
+      "5-2-u1-e3-example-2",
+      "5-2-u3-e1-exploration",
+      "5-2-u3-e1-example-3",
+      "5-2-u3-e1-example-4",
+      "5-2-u3-e1-example-2",
+      "5-2-u3-e1-mission-1",
+      "5-2-u4-e1-exploration",
+      "5-2-u4-e1-example-1",
+      "5-2-u4-e1-example-2",
+      "5-2-u4-e1-example-3",
+      "5-2-u4-e1-mission-4",
+      "5-2-u4-e1-example-4",
+      "5-2-u4-e1-mission-1",
+      "5-2-u4-e1-mission-2",
+      "5-2-u4-e1-mission-3",
+      "5-2-u4-e1-mission-6",
+      "5-2-u4-e1-mission-5",
+      "5-2-u4-e2-exploration",
+      "5-2-u4-e2-example-2",
+      "5-2-u4-e2-example-4",
+      "5-2-u4-e2-example-1",
+      "5-2-u4-e2-example-3",
+      "5-2-u4-e2-mission-1",
+      "5-2-u4-e2-mission-2",
+      "5-2-u4-e2-mission-3",
+      "5-2-u4-e2-mission-4",
+      "5-2-u4-e2-mission-5",
+      "5-2-u4-e2-mission-6"
+]);
+    const grade52 = semesters.find(semester=>semester.id === "5-2");
+    for (const type of grade52?.units.flatMap(unit=>unit.subunits.flatMap(group=>group.types)) || []) {
+      if (!variantIds.has(type.id)) continue;
+      if (!type.name.includes("유사문항")) type.name += " · 유사문항";
+      if (!type.label.includes("유사문항")) type.label += " · 유사문항";
+      if (type.sourceItemLabel && !type.sourceItemLabel.includes("유사문항")) type.sourceItemLabel += " 기반 유사문항";
+    }
+  }
+
+  // 출처에 유사문항으로 분류된 유형은 인쇄 제목에도 그 구분이 보여야 한다.
+  {
+    const grade52 = semesters.find(semester=>semester.id === "5-2");
+    for (const type of grade52?.units.flatMap(unit=>unit.subunits.flatMap(group=>group.types)) || []) {
+      if (!type.sourceVerified || type.reviewLocked || !type.sourceItemLabel?.includes("유사문항")) continue;
+      if (!/유사문항|연습/.test(type.name)) type.name += " · 유사문항";
+      if (type.label && !/유사문항|연습/.test(type.label)) type.label += " · 유사문항";
+    }
   }
 
   semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {

@@ -47,4 +47,14 @@ assert.equal(new Set(tested.map(item => `${item.total}:${item.boxSize}:${item.bo
 for (const invalid of [-1, 3, 1.2]) assert.equal(api.getQuestion(invalid, 0), null);
 for (const invalid of [-2, 2, 1.2]) assert.equal(api.getQuestion(0, invalid), null);
 
+const sourceQuestion=api.getOriginal(0,0);
+assert.equal(sourceQuestion.sourceItemId,"5-2-u1-e3-mission-6-citrus-sales-original");
+assert.deepEqual(sourceQuestion.questionModel.harvest,[4283,3976,4015]);
+assert.equal(sourceQuestion.answerModel.total,12274);
+assert.equal(sourceQuestion.answerModel.fullBoxes,24);
+assert.equal(sourceQuestion.answerModel.unpacked,274);
+assert.equal(sourceQuestion.answerModel.revenue,3600000);
+assert.equal(sourceQuestion.verifiedVariantCount,1);
+assert.equal(api.getOriginal(1,0),null);
+assert.equal(api.getOriginal(0,-1).answer,sourceQuestion.answer);
 console.log(JSON.stringify({ status: "passed", sourceItemId, independentSourceAnswer: "3,600,000원", sourceTotal: originalTotal, fullSourceBoxes: 24, unpackedSourceCount: 274, configurations: tested.length, originalValuesExcludedFromPools: true, publisherKeyVerified: false }));

@@ -1,0 +1,13 @@
+.p28original-question .source52-p28e31-diagram .source52-p28e31-measure,
+.p28original-question .source52-p28e32-diagram .source52-p28e32-measure,
+.p28original-question .source52-p28e32-diagram .source52-p28e32-angle-label { font-size:30px; }
+.p28original-question .source52-p28e32-diagram .source52-p28e32-point-label { font-size:30px; }
+@media print {
+ .p28original-question,.p28original-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10.5pt; }
+ #problemView .print-page--four-up .p28original-question svg { width:auto !important; max-width:100%; max-height:54mm; }
+}
+
+.p28e32-original-answer .source52-p28e32-measure, .p28e32-original-answer .source52-p28e32-angle-label, .p28e32-original-answer .source52-p28e32-answer-label, .p28e32-original-answer .source52-p28e32-point-label { font-size:26px !important; }
+
+.p28original-question .p28e33-rotated .p28e33-line { stroke:#191511; stroke-dasharray:none; }
+.p28original-question .p28e34-diagram .given { font-size:21px; }

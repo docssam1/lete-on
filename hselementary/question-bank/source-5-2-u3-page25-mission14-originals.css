@@ -1,0 +1,12 @@
+.p25steps-figure { display:block; width:100%; max-width:340px; height:auto; margin:.35em auto; }
+.p25rhombus-answer { display:block; width:47.5mm; max-width:100%; height:auto; margin:.4em auto; }
+.solution-answer-visual > svg.p25rhombus-answer { width:47.5mm; max-width:100%; max-height:none; }
+@media print { .p25original-question,.p25original-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10.5pt; } #problemView .print-page--four-up .question-prompt svg.p25steps-figure { width:auto !important; max-height:50mm; } }
+
+.p25m5-figure { display:block; width:100%; max-width:240px; height:auto; margin:.2em auto; }
+.p25m5-choices { display:grid; grid-template-columns:1fr 1fr; gap:.1em .3em; }
+@media print { #problemView .print-page--four-up .question-prompt svg.p25m5-figure { width:auto !important; max-height:33mm; } }
+
+.p25m6-figure { display:block; width:100%; max-width:230px; height:auto; margin:.2em auto; }
+.p25m6-choices { display:grid; grid-template-columns:1fr 1fr; gap:.1em .3em; }
+@media print { #problemView .print-page--four-up .question-prompt svg.p25m6-figure { width:auto !important; max-height:40mm; } }

@@ -704,7 +704,7 @@ test("personal resolve returns a canonical frozen plan only, including selected 
 
 test("personal resolve fails closed on invalid known fields or conflicting snapshots; no silent old-plan fallback", async () => {
   const badPlans = [
-    null, [], {}, personalSettings({ courseKey: "C74" }), personalSettings({ sessionIndex: 12 }),
+    null, [], {}, personalSettings({ courseKey: "C74" }), personalSettings({ sessionIndex: 13 }),
     personalSettings({ sessionIndex: "11" }), personalSettings({ sessionIndex: 1.1 }), personalSettings({ speed: 2 }),
     personalSettings({ speed: "1" }), personalSettings({ amount: null }), personalSettings({ cadence: "w3" }),
     personalSettings({ pace: "p5" }), personalSettings({ pace: undefined }), personalSettings({ startDate: "2026-02-29" }),
@@ -715,7 +715,7 @@ test("personal resolve fails closed on invalid known fields or conflicting snaps
     personalSettings({ extensionAnchor: { grade: 2, index: 0 } }),
     personalSettings({ extensionAnchor: { grade: 1, index: 0, resume: null } }),
     personalSettings({ extensionAnchor: { grade: 1, index: 0, resume: { courseKey: "C35", sessionIndex: 1 } } }),
-    personalSettings({ extensionAnchor: { grade: 1, index: 0, resume: { courseKey: "C32", sessionIndex: 9 } } }),
+    personalSettings({ extensionAnchor: { grade: 1, index: 0, resume: { courseKey: "C32", sessionIndex: 11 } } }),
   ];
   for (const plan of badPlans) {
     const t = setup({ rpc: async () => ({ data: { config: personalConfig(personalSettings(), { learningPlan: plan }) } }) });

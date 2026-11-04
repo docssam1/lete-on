@@ -1,0 +1,10 @@
+/* A quiet header action; no extra content row or floating panel. */
+.docssam-contact-link{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex:none;min-height:44px;padding:0 12px;border:1px solid #dccb56;border-radius:999px;background:#fff8c8;color:#342b17;text-decoration:none;font-family:inherit;font-size:13px;font-weight:600;line-height:1.4;white-space:nowrap;box-sizing:border-box}
+.docssam-contact-link svg{display:block;width:19px;height:19px;fill:currentColor;flex:none}.docssam-contact-link:hover{background:#fee98a;text-decoration:none}.docssam-contact-link:focus-visible{outline:3px solid #547ac7;outline-offset:3px}
+.account-nav .docssam-contact-link{padding:0 12px;font-size:13px;color:#342b17;line-height:1.4}.account-nav .docssam-contact-link:last-child{display:inline-flex}
+body.roadmap-studio.integrated-planner.premium-planner .top>.docssam-contact-link{margin-left:auto;min-width:44px;max-width:180px;font-size:12px;background:#fff1a6;border-color:#f4db6a;color:#302914;order:0}
+.prn-global-body .docssam-contact-link{display:flex;font-size:13px;min-height:44px}.prn-global-body .docssam-contact-link span{display:inline}
+@media(max-width:1200px){body.roadmap-studio .top>.docssam-contact-link{width:44px;padding:0}body.roadmap-studio .top>.docssam-contact-link span{display:none}}
+@media(max-width:600px){.member-landing .member-header{gap:10px;padding-inline:16px}.member-landing .member-brand img{width:96px}.account-nav{gap:10px}.account-nav>a[href="#introduction"],.account-nav>a[href="#seniorExample"],.account-nav>a[href="privacy.html"]{display:none}.account-nav .docssam-contact-link{font-size:12px;padding-inline:10px}}
+@media(max-width:370px){.account-nav>a[href="#accountEntry"]{display:none}}
+@media print{.docssam-contact-link{display:none!important}}

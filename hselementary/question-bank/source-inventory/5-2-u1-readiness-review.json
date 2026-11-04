@@ -101,7 +101,9 @@
           "classification": "버스 대수의 하한과 인원 범위",
           "candidate": "135명 초과",
           "reviewNote": "적어도 4대라는 조건만으로는 상한이 없다. 180명 이하를 결론 내리려면 4대로 충분하다는 추가 조건이 필요하므로 출판사 의도 및 답안 확인 전 보류한다.",
-          "status": "source-ambiguity-answer-key-pending"
+          "status": "source-ambiguity-answer-key-pending",
+          "similarRuntimeTypeId": "5-2-u1-practice-8-bus-range-similar",
+          "similarNote": "5대면 모두 탈 수 있다는 상한 조건을 추가한 별도 유사문항이며 원문 정답 확정과 구분한다."
         }
       ]
     },
@@ -382,7 +384,9 @@
           "classification": "완전 포장 단위와 소요 시간",
           "candidate": "336분",
           "reviewNote": "상자를 차례로 포장한다고 보면 42상자와 남은 27개이며 남은 사과는 포장하지 않는다. 병렬 작업 여부는 명시되지 않았다.",
-          "status": "source-reviewed-answer-key-pending"
+          "status": "source-reviewed-answer-key-pending",
+          "similarRuntimeTypeId": "5-2-u1-practice-37-packing-time-similar",
+          "similarNote": "한 사람이 차례로 포장한다는 조건을 명시하고 수치를 바꾼 별도 유사문항이다. 원문과 구분한다."
         },
         {
           "number": 38,

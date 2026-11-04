@@ -7,6 +7,18 @@ const { execFileSync } = require("node:child_process");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8918";
 const numbers = [73, 75, 76, 77];
+const closure = new Set(['40,10']);
+for (let changed=true; changed;) {
+  changed=false;
+  for (const point of [...closure]) {
+    const [x,y]=point.split(',').map(Number);
+    for (const [a,b] of [[100-x,y],[x,100-y],[y,x]]) {
+      const key=`${a},${b}`; if (!closure.has(key)) { closure.add(key); changed=true; }
+    }
+  }
+}
+assert.deepEqual([...closure].sort(), ['40,10','60,10','90,40','90,60','60,90','40,90','10,60','10,40'].sort());
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
@@ -63,11 +75,11 @@ const numbers = [73, 75, 76, 77];
       const circles = await q76.locator('svg.u3p94-fold76 circle').count();
       assert.equal(circles, 31, 'one punched hole and the four source choices');
       const punch = q76.locator('svg.u3p94-fold76 circle').first();
-      assert.equal(await punch.getAttribute('cx'), '294');
-      assert.equal(await punch.getAttribute('cy'), '23'); // maps to (45,5) before the reverse folds
+      assert.equal(await punch.getAttribute('cx'), '291');
+      assert.equal(await punch.getAttribute('cy'), '26'); // maps to (40,10) before the reverse folds
       const answerCircles = await page.locator('#solutionView .solution-item:has([data-source-answer="5-2-u3-practice-76-original"]) svg circle').evaluateAll(es=>es.map(e=>[Number(e.getAttribute('cx')),Number(e.getAttribute('cy'))]));
       assert.equal(answerCircles.length, 8);
-      const expected = [[45,5],[55,5],[95,45],[95,55],[55,95],[45,95],[5,55],[5,45]].map(([x,y])=>`${20+x*1.2},${20+y*1.2}`).sort();
+      const expected = [[40,10],[60,10],[90,40],[90,60],[60,90],[40,90],[10,60],[10,40]].map(([x,y])=>`${20+x*1.2},${20+y*1.2}`).sort();
       assert.deepEqual(answerCircles.map(([x,y])=>`${x},${y}`).sort(),expected);
       const file = path.join(process.env.MAC_CHECK_OUTPUT || os.tmpdir(), `hse-p94-q76-${width}.pdf`);
       await page.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
