@@ -2063,3 +2063,8 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - `amc10b-2012-global-item-response-partial.csv`와 응답 reference에 10문항을 추가하고 coverage에 `partial`/10을 기록했다. 일부 퍼센트는 정수 반올림이며 unreadable 응답률을 따로 보고하지 않아 미상으로 저장한다. 문항별 출처 URL을 원자료 표에 보존했다. 2012 AMC 10B 15문항 및 12B는 아직 미확인이다.
 - 미검증: 점수 분포 또는 exact-grade Grade 7 비교는 이번 검색에서 추가로 발견되지 않았다. 전역 문항 응답 분포를 학생의 학년 등급·개념 결손으로 해석하지 않는다. 원본 인쇄·정답·풀이 링크는 기존 연도/폼 카탈로그 그대로다.
 - 관련 문서: `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`; source/data coverage 및 README 갱신. 다음은 2012 AMC 12B와 나머지 2012 10B 문항의 연례 보고서/결과 통계를 찾는다. No push, deployment, or Drive sync.
+### 2026-11-05 · 연도별 AMC 응답표 웹 검색 후속
+
+- 웹에서 2012 AMC 10B/12B 및 2016 AMC 8 자료를 다시 조사했다. 2012 AMC 10B는 이미 확보한 문항 외에 같은 35,086명 코호트 응답률의 재게시/검색 인덱스 결과만 확인됐고, 새 독립 문항·표본은 나오지 않았다. 2012 AMC 12B 전체 응시자 문항별 표도 찾지 못했다. 학년별 문항 응답은 페이지에서 제공되지 않으므로 전체 응답률을 7학년 진단처럼 해석하지 않는다.
+- 2008 MAA 고교 결과집은 AMC 12A/B·AMC 10A/B 전체 응시자 응답표의 인쇄 페이지(252–255)를 특정하지만, 접근 가능한 미러에 읽을 수 있는 선택지 행이 없다. 수치를 추정하지 않고 해당 폼은 미확인으로 유지한다. 2016 AMC 8도 이번 검색에서 국가 문항 응답률/Grade 7 표는 추가로 회수하지 못했다.
+- 상세 검색 경로와 제외 사유: `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. 새 숫자 데이터는 추가하지 않았다. `raw_youtube.txt` 보존. 다음은 연도·폼별로 실제 읽을 수 있는 MAA 보고서 표/공개 이미지가 있는 경로를 더 찾고, 원본 시험·키·풀이 카탈로그와 통계 커버리지를 계속 분리해 메운다.
