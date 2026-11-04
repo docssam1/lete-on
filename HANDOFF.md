@@ -1585,3 +1585,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 해당 25개 행은 이미 `amc8-2010-item-response-percent.csv`와 AMC 8 문항 복습 조회에 반영돼 있었다. 한국 표본으로 정확히 표시되어 있어 중복 행이나 별도 선택지를 추가하지 않았다. MAA Wayback 통계 디렉터리도 확인했으나 회수된 문항 난도 PDF는 California 표본이었고, 이 디렉터리 경로에서는 전체/미국 문항 응답표를 찾지 못했다. 이를 한국 응답률과 합치지 않는다.
 - 검색 기록·범위는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 추가했다. AMC 시험지/답/전문 풀이는 이미 연도별 LIVE 원본 카탈로그에서 인쇄/학습으로 연결되어 있으므로 복사해 저장하지 않는다.
 - 검증: `amc8-item-response-reference.test.cjs` 전체 contract를 node_repl에서 실행해 통과. `git diff --check` 확인 후 로컬 문서 변경만 커밋 예정. `raw_youtube.txt` untouched; no push, deployment, or Drive sync.
+
+## 2026-11-04 · AMC 8 과거 학년별 결과 비교표
+
+- 웹 재검색 근거를 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 추가했다: 2009 MAA 보고서 사본, 2019 MAA Overall score report 이미지 재게시, 2022 MAA Overall score-grade report 재게시.
+- 구현: `competition/amc8-global-grade-score-reference.js`에 동일 연도별 `comparisonFor` 추가, `competition-paper-review.html/js/css` 결과 영역에 학년 그룹별 점수 이하 비율·표본 수 표 추가. 선택한 학년 행에는 “입력 학년”을 텍스트로 표시한다. 2009의 4–5학년, 2019/2022의 5학년 이하 원자료 그룹은 분리하지 않는다. 학년 미상 행은 비교하지 않는다. 공식 percentile이나 현재 실력 등급으로 표현하지 않는다.
+- 검수: node_repl에서 9개 데이터 assertion 통과. 시스템 쉘에 Node가 없어 `node --test`를 실행하지 못했다. CUA 브라우저 탭 접근이 URL 정책에서 차단되어 실제 화면 수동 QA는 보류다. HTML 구조·JS 연결·CSS overflow fallback·캐시 버전·`git diff --check`를 검사한다.
+- 현재 작업 브랜치 `codex/boarding-g7-nsa-mac-20261017`, head 당시 `4421e9ab4`. `raw_youtube.txt`는 미추적 사용자 파일로 그대로 두고, 이번 커밋에는 프로젝트 파일만 포함한다. 로컬 수정만; push·배포·Drive 동기화 없음.

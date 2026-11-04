@@ -77,5 +77,40 @@
     });
   }
 
-  return Object.freeze({ referenceFor: referenceFor });
+  function comparisonFor(year, grade, score) {
+    const selectedYear = Number(year);
+    const selectedGrade = Number(grade);
+    const selectedScore = Number(score);
+    const distribution = distributions[selectedYear];
+    if (!distribution || !Number.isInteger(selectedGrade) || selectedGrade < 4 || selectedGrade > 8 || !Number.isInteger(selectedScore) || selectedScore < 0 || selectedScore > 25) return null;
+    const selectedGroup = selectedGrade === 4 || selectedGrade === 5 ? ([2019, 2022].includes(selectedYear) ? "<=5" : "4-5") : String(selectedGrade);
+    const rows = Object.keys(distribution.gradeGroups).filter(function (group) { return group !== "unknown"; }).sort(function (left, right) {
+      const leftOrder = left === "4-5" || left === "<=5" ? 5 : Number(left);
+      const rightOrder = right === "4-5" || right === "<=5" ? 5 : Number(right);
+      return leftOrder - rightOrder;
+    }).map(function (group) {
+      const data = distribution.gradeGroups[group];
+      const lowerCount = data.counts.slice(0, selectedScore).reduce(function (sum, count) { return sum + count; }, 0);
+      const gradeLabel = group === "4-5" || group === "<=5" ? (group === "4-5" ? "4–5학년" : "5학년 이하") : `${group}학년`;
+      return Object.freeze({
+        gradeGroup: group,
+        gradeLabel: gradeLabel,
+        selected: group === selectedGroup,
+        strictlyLowerCount: lowerCount,
+        strictlyLowerShare: lowerCount / data.participants * 100,
+        gradeParticipants: data.participants,
+        reportedMean: data.mean
+      });
+    });
+    return Object.freeze({
+      year: selectedYear,
+      score: selectedScore,
+      population: distribution.population,
+      sourceUrl: distribution.sourceUrl,
+      reportUrl: distribution.reportUrl,
+      rows: Object.freeze(rows)
+    });
+  }
+
+  return Object.freeze({ referenceFor: referenceFor, comparisonFor: comparisonFor });
 });

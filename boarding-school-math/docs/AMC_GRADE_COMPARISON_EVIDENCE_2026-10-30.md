@@ -648,3 +648,10 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 2016 AMC 8 national grade mean/score table과 national item-response report를 연도명·보고서 제목·`Item Difficulty` 문구로 검색했지만, 이번 검색에서 검수 가능한 MAA 전국 원표를 회수하지 못했다. [LIVE의 2016 원본 회차 페이지](https://live.poshenloh.com/past-contests/amc8/2016)는 실제 문제 풀이 자료이며 응시자 답안 분포표의 대체물이 아니다.
 - [MAA 2015 AMC 8 Teacher Manual 사본](https://www.scribd.com/document/435100141/2015-AMC8-TeacherManual)은 응시 학교별 결과 보고서에 `Tables of Item Difficulty for the participants in your school`가 포함됨을 설명한다. 이는 학교 단위 결과 기능의 증거이지, 2016년 전국 코호트 응답 자료가 공개되었다는 증거는 아니다.
 - 기존 2016 전국 학년 통계는 `no-grade-table-recovered`로 둔다. 학교별 결과가 새로 확보되더라도 전국 수치와 별도로 보관하고 학년 비교 기준으로 합치지 않는다.
+
+## 2026-11-04 웹 재검색 및 AMC 8 학년 비교 결과표
+
+- 다시 검색한 [2009 MAA AMC 8 25th Annual 보고서 사본](https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html)은 Table 2의 기록 학년 그룹(4–5, 6, 7, 8)과 점수별 빈도 근거를 제공한다. 검색 결과로 원표의 그룹 구성을 재확인했으며, 학년 빈도 전사본은 보고서의 합계·평균과 교차 대조된 기존 데이터를 사용한다. 모집단 설명은 보고서에 기록된 학교 응시자다.
+- [2019 AMC 8 점수 보고서 재게시](https://bj.xdf.cn/zixun/beimei/97334.html)는 MAA Overall 성적 보고서의 학년별 score report image를 가리킨다. [2022 MAA Overall 학년 점수표 재게시](https://www.think-matrix.com/math_planet/awards_setting_and_historical_result/)는 `<5 grade`, 6, 7, 8, 학년 미상 그룹을 구분한다. 화면에서는 원자료처럼 5학년 이하 그룹을 그대로 두고 학년 미상 그룹은 비교행에서 제외한다. 2019·2022 재게시본의 숫자는 기존 CSV 및 요약 평균과 대조 완료된 전사값이며, 독립된 최신 전국 규준으로 표현하지 않는다.
+- 2009·2019·2022 동일 연도 안에서 입력 점수보다 낮은 응시 비율과 각 그룹 표본 수를 나란히 볼 수 있도록 `comparisonFor(year, grade, score)`와 결과표를 추가했다. 선택 학년은 “선택 그룹” 문구로 식별한다. 다른 연도·시험, 서로 다른 모집단, 원자료에 없는 개별 4학년/5학년 행을 합산/분리하지 않는다. 화면에도 공식 percentile·현재 능력 등급이 아니라는 경계를 유지한다.
+- 검수는 데이터 모듈의 9개 핵심 assertion(그룹 순서/표기, 입력 그룹, 세 연도 계산값, 유효하지 않은 연도·학년·점수 차단)을 node_repl에서 수행했다. 시스템 쉘에 Node 실행기가 없어 `node --test` 브라우저 테스트는 실행하지 못했다. CUA의 브라우저 탭 접근이 URL 정책에 차단되어 결과 화면 수동 검수도 하지 못했다. HTML/JS/CSS 정적 연결, 캐시 버전, 표의 접근 가능한 행/열 제목 및 `git diff --check`를 추가 확인한다.

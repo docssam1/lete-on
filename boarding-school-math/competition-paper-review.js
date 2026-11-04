@@ -872,7 +872,14 @@
     const globalGradeScore = selectedFormat().id === "amc8" && result.complete && result.scoreEstimate && globalGradeScoreReference
       ? globalGradeScoreReference.referenceFor(selectedYear, grade, result.scoreEstimate.points)
       : null;
+    const globalGradeComparison = selectedFormat().id === "amc8" && result.complete && result.scoreEstimate && globalGradeScoreReference
+      ? globalGradeScoreReference.comparisonFor(selectedYear, grade, result.scoreEstimate.points)
+      : null;
     globalGradeScoreSection.hidden = !globalGradeScore;
+    const globalGradeComparisonWrap = $("amc8-global-grade-comparison-wrap");
+    const globalGradeComparisonBody = $("amc8-global-grade-comparison-body");
+    globalGradeComparisonWrap.hidden = !globalGradeComparison;
+    globalGradeComparisonBody.replaceChildren();
     if (globalGradeScore) {
       setText("amc8-global-grade-score-summary", `${globalGradeScore.year} AMC 8 · ${globalGradeScore.gradeLabel} · ${globalGradeScore.score}/25점 · 해당 점수 ${globalGradeScore.participantsAtScore.toLocaleString("en-US")}명 · 학년 표본 ${globalGradeScore.gradeParticipants.toLocaleString("en-US")}명`);
       setText("amc8-global-grade-score-value", `점수보다 낮은 응시자 ${globalGradeScore.strictlyLowerShare.toFixed(2)}% · ${globalGradeScore.strictlyLowerCount.toLocaleString("en-US")}/${globalGradeScore.gradeParticipants.toLocaleString("en-US")}명`);
@@ -884,6 +891,19 @@
       setText("amc8-global-grade-score-note", globalScoreNote[globalGradeScore.year] || "");
       $("amc8-global-grade-score-source").href = globalGradeScore.sourceUrl;
       $("amc8-global-grade-report-source").href = globalGradeScore.reportUrl;
+    }
+    if (globalGradeComparison) {
+      globalGradeComparison.rows.forEach(function (datum) {
+        const row = document.createElement("tr");
+        if (datum.selected) row.className = "is-current";
+        const gradeCell = document.createElement("th"); gradeCell.scope = "row";
+        gradeCell.textContent = datum.selected ? `${datum.gradeLabel} · 선택 그룹` : datum.gradeLabel;
+        const shareCell = document.createElement("td");
+        shareCell.textContent = `${datum.strictlyLowerShare.toFixed(2)}% · ${datum.strictlyLowerCount.toLocaleString("en-US")}명`;
+        const countCell = document.createElement("td"); countCell.textContent = `${datum.gradeParticipants.toLocaleString("en-US")}명`;
+        row.append(gradeCell, shareCell, countCell);
+        globalGradeComparisonBody.append(row);
+      });
     }
     const aimeReference = window.GFIELDAimeScoreDistributionReference;
     const aimeCohort = $("aime-cohort-reference");

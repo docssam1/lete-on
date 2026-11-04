@@ -47,6 +47,28 @@ test("the same-grade score location reports a strict lower-score share, not a pe
   assert.equal(reference.referenceFor(2009, 7, 26), null);
 });
 
+test("cross-grade comparison uses only the selected year's reported grade groups", function () {
+  const comparison2009 = reference.comparisonFor(2009, 7, 21);
+  assert.deepEqual(comparison2009.rows.map(function (row) { return row.gradeLabel; }), ["4–5학년", "6학년", "7학년", "8학년"]);
+  assert.deepEqual(comparison2009.rows.map(function (row) { return row.selected; }), [false, false, true, false]);
+  assert.equal(comparison2009.rows[2].strictlyLowerCount, 49598);
+  assert.equal(comparison2009.rows[2].gradeParticipants, 50218);
+  assert.equal(comparison2009.rows.some(function (row) { return row.gradeLabel === "unknown"; }), false);
+
+  const comparison2019 = reference.comparisonFor(2019, 5, 20);
+  assert.deepEqual(comparison2019.rows.map(function (row) { return row.gradeLabel; }), ["5학년 이하", "6학년", "7학년", "8학년"]);
+  assert.equal(comparison2019.rows[0].selected, true);
+  assert.equal(comparison2019.rows[0].gradeParticipants, 4396);
+
+  const comparison2022 = reference.comparisonFor(2022, 7, 20);
+  assert.equal(comparison2022.rows.length, 4);
+  assert.equal(comparison2022.rows[2].strictlyLowerCount, 21833);
+  assert.equal(comparison2022.rows[2].strictlyLowerShare.toFixed(2), "97.07");
+  assert.equal(reference.comparisonFor(2018, 7, 20), null);
+  assert.equal(reference.comparisonFor(2022, 3, 20), null);
+  assert.equal(reference.comparisonFor(2022, 7, 26), null);
+});
+
 test("2019 MAA overall grade distributions reconcile to the report image summary", function () {
   const expected = { "<=5": [4396, "8.48"], "6": [18245, "8.50"], "7": [30327, "9.35"], "8": [40167, "10.06"], "unknown": [1485, "8.09"] };
   Object.entries(expected).forEach(function ([gradeGroup, [participants, mean]]) {
@@ -97,10 +119,12 @@ test("review results keep the 2009 all-school distribution separate from the Kor
   const html = fs.readFileSync(path.join(__dirname, "../competition-paper-review.html"), "utf8");
   const script = fs.readFileSync(path.join(__dirname, "../competition-paper-review.js"), "utf8");
   assert.match(html, /amc8-global-grade-score-reference\.js/);
-  assert.match(html, /AMC 8 전체 응시 기록 · 같은 학년 점수 위치/);
+  assert.match(html, /AMC 8 과거 학년별 점수 기록/);
   assert.match(html, /공식 percentile이나 현재 기준·실력 등급은 아닙니다/);
+  assert.match(html, /같은 점수 · 보고서 학년 그룹 비교/);
   assert.match(script, /GFIELDAMC8GlobalGradeScoreReference/);
   assert.match(script, /strictlyLowerShare/);
+  assert.match(script, /comparisonFor\(selectedYear, grade, result\.scoreEstimate\.points\)/);
   assert.match(script, /2019 MAA Overall 성적 보고서 이미지/);
   assert.match(script, /2022 MAA Overall 점수×학년 보고서 이미지/);
 });
