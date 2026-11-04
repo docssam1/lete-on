@@ -60,7 +60,7 @@
     if (!format) return null;
     const archive = paperLibrary && paperLibrary.archiveFor(format.id);
     const selectedYear = archive ? Number($("archive-year").value || params.get("year")) : NaN;
-    if (archive && Number.isInteger(selectedYear)) return paperLibrary.formatFor(format.id, selectedYear);
+    if (archive && Number.isInteger(selectedYear)) return paperLibrary.formatFor(format.id, selectedYear, $("archive-form").value || params.get("form") || "");
     return { title: format.title, itemCount: format.itemCount, durationMinutes: null, scoring: null, rawOnly: false, formatNote: "" };
   }
   function option(value, title) { const node = document.createElement("option"); node.value = value; node.textContent = title; return node; }
@@ -80,7 +80,7 @@
       const requestedYear = Number(params.get("year"));
       yearSelect.value = archive.years.includes(requestedYear) ? String(requestedYear) : String(archive.years[0]);
       const syncArchivePaperLabel = function () {
-        const selectedPaperMeta = paperLibrary.formatFor(format.id, Number(yearSelect.value));
+        const selectedPaperMeta = paperLibrary.formatFor(format.id, Number(yearSelect.value), formSelect.value);
         const autoLabel = `${yearSelect.value} ${selectedPaperMeta ? selectedPaperMeta.title : format.title}${format.id === "amc8" ? "" : formSelect.value ? ` ${formSelect.value}` : ""}`;
         const paperLabel = $("review-paper-label");
         if (!paperLabel.value.trim() || paperLabel.value === paperLabel.dataset.archiveDefault) paperLabel.value = autoLabel;
@@ -89,7 +89,7 @@
       const syncArchiveActions = function () {
         const year = Number(yearSelect.value);
         const form = formSelect.value;
-        const meta = paperLibrary.formatFor(format.id, year);
+        const meta = paperLibrary.formatFor(format.id, year, form);
         const label = `${year} ${meta ? meta.title : format.title}${form ? ` ${paperLibrary.formLabel(format.id, year, form)}` : ""}`;
         $("archive-open-link").href = paperLibrary.archiveRoute(format.id, year, form);
         $("archive-open-link").textContent = `${label} · 온라인 회차 ↗`;
@@ -681,6 +681,16 @@
       scorePolicyLink.textContent = isHistoricalAhsm ? "AHSME 시험 형식의 역사 · AMS/MAA ↗" : "MAA 2026–27 공식 채점 안내 ↗";
     }
     if (result.scoreEstimate) setText("score-estimate-value", `${result.scoreEstimate.label} · ${result.scoreEstimate.points} / ${result.scoreEstimate.max}`);
+    const scoreEstimateDetails = $("score-estimate").querySelector("span");
+    if (scoreEstimateDetails) scoreEstimateDetails.textContent = result.scoreEstimate && result.scoreEstimate.adjustmentNote
+      ? `${result.scoreEstimate.adjustmentNote} 공식 총점 보정과 선택 답안의 학습용 문항 분석은 구분됩니다.`
+      : "선택한 원본 시험지의 답안에 직접 대조해 입력한 참고 집계예요. 공식 성적과 응시 자격은 해당 연도·지역의 MAA 안내를 확인하세요.";
+    const scoreAdjustmentSource = $("score-estimate-adjustment-source");
+    if (scoreAdjustmentSource) {
+      scoreAdjustmentSource.hidden = !result.scoreEstimate || !result.scoreEstimate.adjustmentSourceUrl;
+      scoreAdjustmentSource.href = result.scoreEstimate && result.scoreEstimate.adjustmentSourceUrl || "";
+      scoreAdjustmentSource.textContent = "무효 문항 안내 ↗";
+    }
     const amcReference = window.GFIELDAMCScoreDistributionReference;
     const amcCohortSection = $("amc-cohort-reference");
     const selectedForm = $("archive-form").value || params.get("form") || "";

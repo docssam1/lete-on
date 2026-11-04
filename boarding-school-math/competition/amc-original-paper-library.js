@@ -28,7 +28,7 @@
     return archive ? archive.years.reduce(function (total, year) { return total + formsFor(programId, year).length; }, 0) : 0;
   }
 
-  function formatFor(programId, year) {
+  function formatFor(programId, year, form) {
     const archive = archiveFor(programId);
     const selectedYear = Number(year);
     if (!archive || !archive.years.includes(selectedYear)) return null;
@@ -48,7 +48,11 @@
         : selectedYear < 2007
           ? Object.freeze({ correct: 6, wrong: 0, blank: 2.5, max: 150, label: `${archive.title} 원본 점수` })
           : Object.freeze({ correct: 6, wrong: 0, blank: 1.5, max: 150, label: `${archive.title} 원본 점수` });
-      return Object.freeze({ title: archive.title, itemCount: 25, durationMinutes: 75, scoring: scoring, rawOnly: false, formatNote: "해당 연도 공식 배점으로 계산합니다." });
+      const selectedForm = String(form || "").toUpperCase();
+      const scoreAdjustment = programId === "amc12" && selectedYear === 2025 && selectedForm === "A"
+        ? Object.freeze({ pointsByQuestion: Object.freeze({ 25: 6 }), note: "2025 AMC 12A 25번은 무효 문항입니다. 공식 점수에는 답과 관계없이 6점을 반영합니다. 풀이 기록은 학습용으로 따로 확인하세요.", sourceUrl: "https://live.poshenloh.com/past-contests/amc12/2025A/problem/25" })
+        : null;
+      return Object.freeze({ title: archive.title, itemCount: 25, durationMinutes: 75, scoring: scoring, scoreAdjustment: scoreAdjustment, rawOnly: false, formatNote: scoreAdjustment ? scoreAdjustment.note : "해당 연도 공식 배점으로 계산합니다." });
     }
     if (programId === "amc8") {
       const title = selectedYear < 1999 ? "AJHSME" : archive.title;

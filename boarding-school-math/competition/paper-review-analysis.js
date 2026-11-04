@@ -111,8 +111,17 @@
       scoreEstimate = null;
     } else if (counts.unmarked === 0 && (program === "amc10" || program === "amc12") && paperFormat && paperFormat.scoring) {
       const scoring = paperFormat.scoring;
-      const points = (scoring.base || 0) + counts.correct * scoring.correct + counts.wrong * (scoring.wrong || 0) + counts.blank * scoring.blank;
-      scoreEstimate = Object.freeze({ points: points, max: scoring.max, label: scoring.label });
+      let points = (scoring.base || 0) + counts.correct * scoring.correct + counts.wrong * (scoring.wrong || 0) + counts.blank * scoring.blank;
+      const scoreAdjustment = paperFormat.scoreAdjustment;
+      if (scoreAdjustment && scoreAdjustment.pointsByQuestion) {
+        Object.keys(scoreAdjustment.pointsByQuestion).forEach(function (question) {
+          const entry = entries[Number(question) - 1];
+          if (!entry) return;
+          const ordinaryPoints = entry.status === "correct" ? scoring.correct : entry.status === "blank" ? scoring.blank : scoring.wrong || 0;
+          points += scoreAdjustment.pointsByQuestion[question] - ordinaryPoints;
+        });
+      }
+      scoreEstimate = Object.freeze({ points: points, max: scoring.max, label: scoring.label, adjustmentNote: scoreAdjustment ? scoreAdjustment.note : "", adjustmentSourceUrl: scoreAdjustment ? scoreAdjustment.sourceUrl : "" });
     } else if (counts.unmarked === 0 && itemCount === 25 && (program === "amc10" || program === "amc12")) {
       scoreEstimate = Object.freeze({ points: counts.correct * 6 + counts.blank * 1.5, max: itemCount * 6, label: `${program === "amc10" ? "AMC 10" : "AMC 12"} 참고 원점수` });
     } else if (counts.unmarked === 0 && itemCount === 15 && program === "aime") {
