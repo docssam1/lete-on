@@ -779,8 +779,9 @@
       const formatLabel = selectedFormat().id === "amc8" ? "AMC 8" : `${selectedFormat().title} ${selectedForm}`;
       const isUsForumTranscription = gradeReference.sourceStatus === "secondary-forum-transcription-of-MAA-us-grade-report";
       const globalReport = gradeReference.sourceStatus === "secondary-international-administrator-report";
+      const webIndexedAdministratorReport = gradeReference.sourceStatus === "secondary-international-administrator-report-web-indexed-text";
       const reproducedMaaImage = gradeReference.sourceStatus === "secondary-reproduction-of-MAA-grade-report-image-apple-vision-and-visual-check";
-      const reportPopulation = globalReport && gradeReference.population.indexOf("United States and Canada") === 0 ? "미국·캐나다 참가자" : globalReport ? "세계 참가자" : "";
+      const reportPopulation = (globalReport || webIndexedAdministratorReport) && gradeReference.population.indexOf("United States and Canada") === 0 ? "미국·캐나다 참가자" : (globalReport || webIndexedAdministratorReport) ? "세계 참가자" : "";
       const maaImageScope = reproducedMaaImage && gradeReference.population.indexOf("MAA report Overall") === 0 ? " · MAA 보고서 Location: Overall" : "";
       setText("amc-grade-reference-summary", `Grade ${grade} · ${selectedYear} ${formatLabel} · 기록된 학년 참가자 ${gradeReference.participants.toLocaleString("en-US")}명${isUsForumTranscription ? " · 미국 위치 기준" : reportPopulation ? ` · ${reportPopulation} 보고서` : maaImageScope}${gradeReference.note ? ` · ${gradeReference.note}` : ""}`);
       const plot = $("amc-grade-reference-plot");
@@ -804,7 +805,7 @@
       gradeReferenceSource.href = gradeReference.sourceUrl;
       const secondarySource = gradeReference.sourceStatus === "secondary-school-publication-reporting-national-grade-statistic";
       const forumTranscription = gradeReference.sourceStatus === "secondary-forum-transcription-of-MAA-us-grade-report";
-      gradeReferenceSource.textContent = secondarySource ? "학교 공개 통계 원문 ↗" : forumTranscription ? "MAA 표 전사 원문 ↗" : globalReport ? "99CEF 통계 보고서 ↗" : reproducedMaaImage ? "MAA 통계 이미지 재게시 ↗" : "원자료 보고서 ↗";
+      gradeReferenceSource.textContent = secondarySource ? "학교 공개 통계 원문 ↗" : forumTranscription ? "MAA 표 전사 원문 ↗" : globalReport ? "99CEF 통계 보고서 ↗" : webIndexedAdministratorReport ? "GEMT 보고서 검색 원문 ↗" : reproducedMaaImage ? "MAA 통계 이미지 재게시 ↗" : "원자료 보고서 ↗";
       setText("amc-grade-reference-source-note", secondarySource
         ? "학교가 공개한 전국 학년별 통계의 재인용입니다. MAA 원본 보고서 파일을 확보하지 못했습니다. 이 표본 평균은 현재 기준점·백분위·능력 등급이 아닙니다. "
           : globalReport
@@ -815,6 +816,8 @@
           ? "포럼에 전사된 MAA 학년 평균표입니다. 표의 Location은 United States이며 MAA 원본 보고서는 회수하지 못했습니다. 미국 응시집단의 당시 평균 비교이며 전국 전체·백분위·현재 능력 등급이 아닙니다. "
           : reproducedMaaImage
           ? "재게시된 MAA 학년·성별 평균표 이미지에서 전사한 과거 통계입니다. Location 표기와 지리적 모집단은 원 이미지에 명시된 범위만 적용합니다. 해당 연도·기록 학년의 평균이며 백분위·현재 규준·능력 등급이 아닙니다. "
+          : webIndexedAdministratorReport
+          ? "GEMT 연례 분석 보고서의 웹 검색 색인 텍스트에서 옮긴 세계 참가자 통계입니다. PDF 페이지 이미지를 직접 대조하지 못했으며 원문 색인 전사 수준으로 표시합니다. 같은 연도·시험형·기록 학년의 과거 평균이며 백분위·현재 규준·능력 등급이 아닙니다. "
           : "같은 연도·시험형·기록 학년이 확인되는 과거 응시 집단 평균입니다. 현재 기준점이나 능력 등급이 아니며, 다른 연도·시험형으로 비교하지 않습니다. 표본과 범위는 연결된 출처 기준입니다. ");
     }
     const overallCohortReference = window.GFIELDAMC8OverallCohortReference;

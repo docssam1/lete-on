@@ -1,3 +1,9 @@
+### 2026-11-04 AMC12B 2013/2014 grade comparison added
+
+GEMT annual AMC10B/AMC12B report text indexed by web search contained the AMC12B Global grade tables (printed p.13 in 2013 and p.12 in 2014). Added `amc12b-grade-means-2013-2014.csv`, exact-grade runtime lookup, and annual coverage rows. The PDF was not downloaded/rendered locally, so the data status and result-panel note explicitly identify it as web-indexed text, distinct from visually verified PDF tables. Taiwan values remain excluded. The 2014 Grade 11 count indexed as `17.303` was normalized to 17,303 after category counts reconciled with total n=33,247. 2013 group counts reconcile to total n=30,249, while the count-weighted subgroup mean 64.56 differs from printed overall mean 64.08; both are preserved and the mismatch appears in the result source note.
+
+Grade 7/12 year/form-matched lookups are available; these are historical cohort means, not current level or percentile judgments. Focused runtime and browser validation passed for the 2014 B Grade 11 result panel (n=17,303; mean 67.92/150); 2013 source discrepancy is logged. Evidence is in `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. This work is local and remains to be committed. Current base commit `0d0c5c14`; preserve the untracked user file `raw_youtube.txt`.
+
 ### 2026-11-04 공식 웹 검색으로 연도별 AMC 원본 아카이브 재대조
 
 사용자 지시에 따라 AMC 샘플 예시가 아니라 LIVE by Po-Shen Loh의 실제 기출 아카이브를 웹에서 확인했다. 아카이브는 MAA의 공식 법적 허가를 받아 실제 시험을 싣는다고 명시하고, 무료 인쇄용 PDF·온라인 풀이·문항별 professional solution을 제공한다. 웹 색인에는 AMC 8 41회(1985–2026, 2021 없음), AMC 10 52회(2000–2025), AMC 12 102회(1950–2025), AIME 71회(1983–2026)로 총 266회가 표시된다.
