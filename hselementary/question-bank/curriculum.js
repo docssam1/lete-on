@@ -3465,6 +3465,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-53-original",sourceItemLabel:"확인학습 53번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:86,alternateSourcePdfPage:86,sourcePrintedPage:91,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 내부 점의 중심 조건이 명시되지 않아 보류합니다. 별도 유사문항은 중심과 반지름을 명시하고 넓이를 독립 계산했습니다.",generatorKey:"source52U3P91Q53ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
   }
+  if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-practice-54-clarified-similar")) {
+    const id="5-2-u3-practice-54-clarified-similar",name="두 정삼각형의 회전과 길이 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-54-original",sourceItemLabel:"확인학습 54번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:86,alternateSourcePdfPage:86,sourcePrintedPage:91,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 7cm는 다른 조건과 충돌하여 원문은 보류합니다. 별도 유사문항은 충돌하는 수치를 제거하고 주어진 길이를 바꾸어 회전 및 좌표로 검산했습니다.",generatorKey:"source52U3P91Q54ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52CongruenceFirst) for (const [n,name] of [[2,"자와 컴퍼스로 삼각형 옮겨 그리기 · 원문 그림 재구성"],[3,"자와 컴퍼스로 사각형 옮겨 그리기 · 원문 그림 재구성"]]) {
     const id=`5-2-u3-e1-mission-${n}-original`;
     if (source52CongruenceFirst.types.some(t=>t.id===id)) continue;
