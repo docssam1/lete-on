@@ -1,8 +1,14 @@
+### 2026-11-04 AMC 8 2022 MAA 학년 평균 이미지 회수·연도별 비교 연결
+
+2022년 `Grade and Gender Average AMC 8 2022`의 `Location: Overall` 표 이미지를 川观新闻/南方窗 재게시 기사에서 회수했다. Apple Vision OCR 전사와 이미지 픽셀을 대조했다. Grade 5–8의 평균은 8.98 (n=3,231), 8.78 (n=14,258), 9.57 (n=22,493), 10.38 (n=29,236). `<=4` 및 `UNK`를 포함한 6개 표본 합계 71,017, 가중 평균은 9.69097로 보고서 전체 평균 9.69와 반올림 일치한다. 이미지가 `Overall`로만 범위를 표시하고 지리적 범위를 정의하지 않아 현재 미국·캐나다 규준이라고 하지 않는다. 불완전한 성별 합계는 사용하지 않는다.
+
+Grade 5–8을 [`amc8-grade-means-2022-maa-overall.csv`](boarding-school-math/competition/historical-amc-grade/amc8-grade-means-2022-maa-overall.csv)와 `amc-historical-grade-reference.js`에 추가하고, 2022 AMC 8 coverage를 갱신했다. 결과 화면 cache key도 올렸다. 근거·OCR 원본 링크: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. `raw_youtube.txt`는 보존한다.
+
 ### 2026-11-04 AMC 8 2016 보고서 본문·2022 학년 자료 재검색
 
 2016 MAA 통계 메뉴의 AMC 8 보고서 ID 63은 확인했지만, 보존 페이지의 ReportViewer 본문은 복구되지 않았다. 99CEF 연도 요약 PDF와 MAA Michigan Section 뉴스레터는 전체 평균만 싣고 학년별 행은 제공하지 않는다. 이 두 출처의 2016 응시자 수(108,227 / 108,295)가 달라 그대로 분리한다. Bard Math Circle 2016 결과는 지역 행사 n=35라 전국 학년 비교에서 제외한다.
 
-추가 웹 검색에서 川观新闻 재게시 기사에 실린 2022 AMC 8 Grade 5 통계(3,231명, 평균 8.98)를 확인했다. 원 표/이미지와 모집단 범위가 검색된 자료에 남아 있지 않아 기준선 데이터로 저장하지 않았다. 완전한 원본 연도별 학년 표를 계속 찾는다. 출처 및 구분은 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 추가했다. 로컬 변경만; `raw_youtube.txt`는 기존 미커밋 파일로 보존한다.
+2022년 단일 Grade 5 인용값과 모집단 불명 상태를 먼저 확인했지만, 다음 검색에서 동일 기사에 임베드된 MAA `Overall` grade-average 이미지가 연결된 것을 찾아 회수·전사했다(상단 기록 참조). 로컬 변경만; `raw_youtube.txt`는 기존 미커밋 파일로 보존한다.
 
 ### 2026-11-04 AMC 8 연도별 학년 통계 웹 검색 추가 확인
 
