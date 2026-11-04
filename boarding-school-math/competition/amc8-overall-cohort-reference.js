@@ -16,6 +16,7 @@
     2015: ["Global", 149844, 94, 2669, 8.55],
     2016: ["United States and Canada", 108227, 268, 3104, 9.36], 2017: ["United States and Canada", 81386, 56, 1185, 9.05],
     2018: ["United States and Canada", 98389, 45, 866, 8.51], 2019: ["United States and Canada", 94634, 151, 2958, 9.43],
+    2022: ["MAA Overall reported-grade cohort", 71017, 131, 2404, 9.69],
     // MAA Wisconsin Section reports the U.S. mean, but not the participant count or score-frequency totals.
     2020: ["United States", null, null, null, 10.01, "https://sections.maa.org/wisconsin/news/MAAWINewsFall21v2.pdf"]
   });
@@ -31,6 +32,14 @@
   const amc8_2014_source_url = "https://www.99cef.org.tw/userfiles/2014AMC8Summary.pdf";
   const amc8_2015_global_score_counts = Object.freeze([576,1067,2954,6213,9973,13178,16240,17112,16185,14464,12280,9561,7363,5660,4201,3169,2471,1912,1447,1149,882,650,463,357,223,94]);
   const amc8_2015_source_url = "https://www.99cef.org.tw/userfiles/2015AMC8Report.pdf";
+  const amc8_2017_global_score_counts = Object.freeze([290,438,1279,2823,4574,6377,7704,8518,8231,7760,6964,5907,4935,3950,3151,2429,1852,1430,939,650,379,296,185,154,115,56]);
+  const amc8_2017_source_url = "https://www.99cef.org.tw/userfiles/2017AMC8Report.pdf";
+  const amc8_2018_global_score_counts = Object.freeze([397,571,1603,3250,5898,8402,10440,11599,11465,10355,8826,7126,5377,3888,2808,1949,1464,972,663,470,283,215,157,96,70,45]);
+  const amc8_2018_source_url = "https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf";
+  const amc8_2019_global_score_counts = Object.freeze([405,364,1219,2839,4998,7423,9175,9778,9762,8719,7450,6273,5232,4352,3639,2923,2425,1993,1543,1150,918,698,523,395,273,151]);
+  const amc8_2019_source_url = "https://bj.xdf.cn/zixun/beimei/97334.html";
+  const amc8_2022_overall_score_counts = Object.freeze([2528,484,965,1863,3116,4232,5156,5982,6300,6130,5887,5274,4544,3946,3198,2669,2186,1760,1315,1078,790,599,401,290,193,131]);
+  const amc8_2022_source_url = "https://yach-doc-shimo.zhiyinlou.com/uploader/f/Ua2Ju3KZtSXEM7uP.png";
 
   function referenceFor(year, score) {
     const values = rows[Number(year)];
@@ -40,7 +49,11 @@
     const scoreCountData = selectedYear === 2012 ? amc8_2012_global_score_counts
       : selectedYear === 2013 ? amc8_2013_global_score_counts
       : selectedYear === 2014 ? amc8_2014_global_score_counts
-      : selectedYear === 2015 ? amc8_2015_global_score_counts : null;
+      : selectedYear === 2015 ? amc8_2015_global_score_counts
+      : selectedYear === 2017 ? amc8_2017_global_score_counts
+      : selectedYear === 2018 ? amc8_2018_global_score_counts
+      : selectedYear === 2019 ? amc8_2019_global_score_counts
+      : selectedYear === 2022 ? amc8_2022_overall_score_counts : null;
     const distributionParticipants = scoreCountData ? scoreCountData.reduce(function (sum, count) { return sum + count; }, 0) : null;
     const strictlyLowerShare = scoreCountData
       ? scoreCountData.slice(0, points).reduce(function (sum, count) { return sum + count; }, 0) / distributionParticipants * 100
@@ -51,7 +64,11 @@
       sourceUrl: selectedYear === 2012 ? amc8_2012_source_url
         : selectedYear === 2013 ? amc8_2013_source_url
         : selectedYear === 2014 ? amc8_2014_source_url
-        : selectedYear === 2015 ? amc8_2015_source_url : values[5] || sourceUrl });
+        : selectedYear === 2015 ? amc8_2015_source_url
+        : selectedYear === 2017 ? amc8_2017_source_url
+        : selectedYear === 2018 ? amc8_2018_source_url
+        : selectedYear === 2019 ? amc8_2019_source_url
+        : selectedYear === 2022 ? amc8_2022_source_url : values[5] || sourceUrl });
   }
 
   return Object.freeze({ referenceFor: referenceFor });

@@ -852,7 +852,7 @@
       : null;
     overallCohortSection.hidden = !overallCohort;
     if (overallCohort) {
-      const populationLabel = overallCohort.population === "Global" ? "세계 응시자" : overallCohort.population === "United States" ? "미국 응시자" : "미국·캐나다 응시자";
+      const populationLabel = overallCohort.population === "Global" ? "세계 응시자" : overallCohort.population === "United States" ? "미국 응시자" : overallCohort.population === "MAA Overall reported-grade cohort" ? "MAA 전체 보고서 표본" : "미국·캐나다 응시자";
       const cohortDetails = overallCohort.participants === null
         ? `${populationLabel} 평균 ${overallCohort.meanScore.toFixed(2)}점`
         : `${populationLabel} ${overallCohort.participants.toLocaleString("en-US")}명 · 평균 ${overallCohort.meanScore.toFixed(2)}점 · 만점 ${overallCohort.perfectScores.toLocaleString("en-US")}명 · 20점 이상 ${overallCohort.scoreAtLeast20.toLocaleString("en-US")}명`;
@@ -869,6 +869,14 @@
         setText("amc8-overall-cohort-note", `2014년 보고서의 점수별 빈도 합계는 ${overallCohort.distributionParticipants.toLocaleString("en-US")}명으로, 같은 보고서의 전체 참가자 수 ${overallCohort.participants.toLocaleString("en-US")}명보다 560명 적습니다. 점수보다 낮은 비율은 99CEF 점수표의 빈도 합계를 분모로 계산했으며, 전체 평균·만점·20점 이상 통계는 보고서 요약 값을 그대로 따로 표시합니다. 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 코호트는 별도 기록으로 보존합니다. `);
       } else if (overallCohort.year === 2015) {
         setText("amc8-overall-cohort-note", "2015년은 99CEF 연례 보고서의 Global 점수 빈도표(n=149,844)를 사용합니다. 점수별 인원 합은 전체 참가자 수와 일치하며, 점수보다 낮은 비율은 동점을 제외해 직접 계산한 역사적 위치입니다. 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 코호트는 별도 기록으로 보존합니다. ");
+      } else if (overallCohort.year === 2017) {
+        setText("amc8-overall-cohort-note", "2017년은 99CEF 보고서의 美加(Global North America) 점수 빈도표(n=81,386)를 연결했습니다. 분포표의 가중평균은 9.064점(반올림 9.06)이며, 같은 보고서 요약에는 9.05점으로 적혀 있습니다. 둘을 합치지 않고 평균은 요약값, 점수 위치는 원빈도표로 계산합니다. 이 비율은 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 응시자는 별도 코호트입니다. ");
+      } else if (overallCohort.year === 2018) {
+        setText("amc8-overall-cohort-note", "2018년은 99CEF 보고서 본문의 美加(Global North America) 점수 빈도표를 사용합니다. PDF 파일의 제목 메타데이터는 2009로 잘못 표시되지만, 본문은 2018 34회 대회로 표기하고 인원 합계도 98,389명으로 보고서 요약과 일치합니다. 이 자료는 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 응시자는 별도 코호트입니다. ");
+      } else if (overallCohort.year === 2019) {
+        setText("amc8-overall-cohort-note", `2019년 MAA 점수표의 보고 학년 그룹(5학년 이하, 6–8학년, 미기재)을 합한 분포는 ${overallCohort.distributionParticipants.toLocaleString("en-US")}명입니다. 99CEF 회고 요약의 미국·캐나다 참가자 수 ${overallCohort.participants.toLocaleString("en-US")}명과 14명 차이가 나므로 분포 비율은 점수표 합계를 분모로 계산합니다. 원본 MAA 표 이미지는 제3자 게시물에서 확인했습니다. 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. `);
+      } else if (overallCohort.year === 2022) {
+        setText("amc8-overall-cohort-note", "2022 MAA 전체(Overall) 보고서 이미지의 학년별 점수 빈도를 합산했습니다. 다섯 학년 그룹의 점수별 인원 합은 보고서 표의 All 열과 일치하며, 표본의 지역 범위는 이미지에서 확인되지 않습니다. 이 점수 위치는 공식 percentile·현재 규준·실력 등급이 아니며, Grade 7 순위로 해석하지 않습니다. 원 이미지는 2차 게시본입니다. ");
       }
       $("amc8-overall-cohort-source").href = overallCohort.sourceUrl;
     }
