@@ -84,7 +84,7 @@
 22,C,3.85,5.50,14.37,4.95,3.74,67.57,0.02
 23,D,10.07,9.52,10.95,5.28,2.70,61.44,0.04
 24,E,3.48,5.23,7.86,5.70,4.73,72.98,0.02
-25,B,4.78,5.56,3.39,6.78,5.05,74.43,0.01`.trim(), respondentCount: 40750, excludedQuestions: [8, 17], population: "2010 AMC10B Global official-student response cohort", sourceUrl: "https://www.scribd.com/doc/58090065/2010-AMC-HS-Summary", sourceStatus: "MAA-authored 2010 AMC 10/12 Results Summary; printed p.196, Table IX; transcribed from web-indexed text; all 25 keys checked against LIVE; cohort n=40750; Q8/Q17 response shares total 99.91%/99.92%, retained in source and excluded from comparison" }),
+25,B,4.78,5.56,3.39,6.78,5.05,74.43,0.01`.trim(), respondentCount: 40750, excludedQuestions: [8, 17], population: "2010 AMC10B Global official-student response cohort", sourceUrl: "https://pdfcoffee.com/2010hssummary-pdf-free.html", sourceStatus: "MAA-authored 2010 AMC 10/12 Results Summary; printed p.196, Table IX; transcribed from web-indexed text and independently matched against an accessible alternate mirror; all 25 keys checked against LIVE; cohort n=40750; Q8/Q17 response shares total 99.91%/99.92%, retained in source and excluded from comparison" }),
     "amc12-2010-B": Object.freeze({ raw: `
 1,C,4.47,4.48,85.48,2.78,1.67,1.12,0.00
 2,A,88.09,2.30,8.31,0.44,0.31,0.54,0.01
