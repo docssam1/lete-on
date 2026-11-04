@@ -3670,6 +3670,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Equation = source52Unit2?.subunits.find(subunit => subunit.name === "식 세워 풀기");
+  if (source52Unit2Equation) for (const [n,name] of [[1,"가로와 세로의 비로 직사각형 넓이 구하기 · 원문"],[2,"걸은 거리로 기차와 버스를 탄 거리 구하기 · 원문"],[3,"남은 사탕 수로 가 사탕 수 구하기 · 원문"],[4,"연필과 볼펜의 가격 관계 · 원문"],[5,"세 사람이 딴 사과 수와 전체의 관계 · 원문"],[6,"준 쌀과 남은 쌀의 관계 · 원문"]]) {
+    const id=`5-2-u2-e3-mission-${n}-original`;
+    if (source52Unit2Equation.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Equation.types.push({id,number:source52Unit2Equation.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e3-mission-${n}`,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:15,alternateSourcePdfPage:14,sourcePrintedPage:19,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page19OriginalMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n!==2,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
   if (source52Unit2Equation) for (const [suffix,name] of [["exploration","두 막대로 수영장 깊이 구하기 · 원문"],["example-1","네 번 튀어 오른 높이로 처음 높이 구하기 · 원문"],["example-2","5학년 수상 남학생이 전체에서 차지하는 분수 · 원문"],["example-3","꽃을 심은 넓이로 전체 꽃밭 넓이 구하기 · 원문"],["example-4","같은 분수값과 합으로 두 금액 구하기 · 원문"]]) {
     const id=`5-2-u2-e3-${suffix}-original`;
     if (source52Unit2Equation.types.some(type=>type.id===id)) continue;
