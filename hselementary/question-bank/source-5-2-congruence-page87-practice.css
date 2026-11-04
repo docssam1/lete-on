@@ -38,3 +38,12 @@
 .u3p95-fold84{display:block;width:100%;max-width:300px;height:auto;margin:.2em auto}
 #solutionView .u3p95-fold84-answer{display:block;width:min(210px,100%);height:auto;margin:auto}
 @media print { #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-84-original"] svg.u3p95-fold84{max-height:255px} }
+
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-6-original"] svg.u3p89-figure {
+    width: 75mm !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 59mm !important;
+  }
+}
