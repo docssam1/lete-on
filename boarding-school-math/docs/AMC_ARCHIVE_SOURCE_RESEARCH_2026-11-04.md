@@ -231,3 +231,10 @@ Fetched the four year-matched MAA K-12 EduView `Score Distribution` reports dire
 | 2026 AMC 8 | 24 / 23 / 21 | 12.42 ± 4.72 | 80,983 | 2,129 |
 
 The MAA 2025 report says 11.74 rather than 11.75 in some secondary summaries. The MAA 2026 report page returns 80,983 students; other search-result reproductions show nearby but different totals, so they are not merged. These statistics are whole-report cohort cutoffs and summaries, not grade norms or individual percentiles. The live MAA portal is the source; it does not provide a static historic PDF from these report pages.
+
+
+## 2002–2004 AMC 8 score-frequency search follow-up (2026-11-05)
+
+Searched for 2002 and 2003 national score-frequency tables and inspected the MAA-authored 56th Annual report's AMC 8 section for 2004. The accessible 2004 section (printed pp. 28–30) reports answer-form/school totals, perfect papers, overall and recorded-grade averages, and award recipients, but I did not find a 0–25 score-frequency table in that section. Its MAA 2004 grade means/overall summary are already recorded in the project; they cannot reconstruct the score frequencies. Search results for 2002 surfaced the original MAA-branded problem/solutions pamphlet, not a results table.
+
+Sources: [56th Annual AMC report copy, 2004 AMC 8 section](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions), [2002 AMC 8 MAA solutions pamphlet copy](https://f.hubspotusercontent30.net/hubfs/981338/Math%20Competition%20Problems_PDFS/2002AMC8-solutions.pdf). These web copies help identify the published record but do not establish that no other archive exists. No frequencies were inferred or entered; continue looking for the 2002–2004 MAA results summaries or contemporaneous score-report images.

@@ -1,3 +1,9 @@
+### 2026-11-05 · AMC 8 2002–2004 frequency-table search
+
+- Searched web archives for 2002/2003 national AMC 8 score frequencies and inspected the MAA-authored 56th annual report's 2004 AMC 8 section. The accessible 2004 section prints cohort totals, perfect score count, overall/grade means and award recipients, but no 0–25 frequency table was found there. A 2002 result search returned an MAA-branded problems/solutions pamphlet, not statistics.
+- Logged the bounded search and source links in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. Existing 2002–2004 cohort summaries remain averages/counts only; do not derive score distributions from them. Continue searching alternate annual-result archives or contemporaneous reports.
+- No new numeric data imported. `raw_youtube.txt` remains untouched.
+
 ### 2026-11-05 · Recent AMC 8 MAA score distributions fetched directly
 
 - Retrieved the official MAA K-12 EduView score distribution pages for AMC 8 2023–2026 and saved the full visible summary rows (percentile boundaries, mean, SD, student/school counts) in `boarding-school-math/competition/historical-amc-grade/amc8-score-distribution-2023-2026-maa.csv`. Direct report URLs and the data are documented in `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md` and the data README.
