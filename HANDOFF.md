@@ -1,3 +1,10 @@
+### 2026-11-05 · 연도별 AMC 10/12 성과 연구 및 MAA 보고 경로 추가 확인
+
+- 웹 검색으로 2007–2011 AMC 10/12 문항 정답률을 다룬 UWF 고교생 연구와 현재 MAA EduView 연도·회차별 전체 점수분포 화면을 확인했다. 연구 표본은 Northwest Florida 시험센터 970명(AMC 10 응시 Grade 9–10 n=487, AMC 12 응시 Grade 11–12 n=483)이며 전국 자료가 아니다. 웹 PDF 도표 텍스트가 열/소수점 일부를 손상시켜 모든 문항 수치를 전사하지 않았다.
+- MAA EduView는 2022/23–2025/26의 AMC 10/12 A/B 및 AMC 8 회차별 전체 참가자 점수선·평균·표준편차·응시자/학교 수를 제공하지만, 공개 화면에 학년별 분포나 문항별 정답률은 없다. 옛 `generalreports.aspx` grade-percentile 보고서는 경로를 확인했으나 현재 원문 호스트가 HTTP 521을 반환했다.
+- 조사 내용과 직접 출처는 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 기록했다. UWF의 지역 표본은 전국·학생 진단에 사용하지 않으며, 한국 school/host report는 모집단이 일치하는 경우에만 추후 별도 검토한다. 검색에서 확인된 개인 식별 자료는 저장하지 않는다.
+- 변경은 검색 근거 기록뿐이다. `raw_youtube.txt`는 그대로 두고, 아직 원문 grade-percentile 표나 새 숫자 데이터는 추가하지 않았다. `git diff --check` 후 로컬 커밋을 진행한다. Push, 배포, Drive 동기화는 하지 않는다.
+
 ### 2026-11-05 · 2016 AMC 8 whole-cohort summary extended
 
 - Web search recovered the correct BEAM result post dated 2017-02-25, which identifies the prior November contest as 2016 and reports n=108,295, median 9, and top-quartile boundary 12. These align in population with the MAA Michigan Section Spring 2017 newsletter, which reports 108,295, 1,875 schools, mean 9.36, and top-1% boundary 22.

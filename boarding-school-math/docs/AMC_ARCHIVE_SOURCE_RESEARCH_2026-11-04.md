@@ -1,5 +1,13 @@
 # AMC 원본 연도별 자료 출처 확인 · 2026-11-04
 
+## 2026-11-05 · 연도별 AMC 10/12 문항 성과 연구와 MAA 점수 보고서 경로
+
+웹에서 Josaphat A. Uvah와 Kuiyuan Li의 연구 *An Assessment of Math Proficiency Among High School Students in Northwest Florida*를 확인했다. 이 연구는 2007–2011년 University of West Florida 시험센터의 AMC 응시자 970명을 다루며, AMC 10 응시자 487명은 9–10학년, AMC 12 응시자 483명은 11–12학년이라고 명시한다. AMC 10/12 각 회차의 문항 정답 비율 도표와 몇 문항의 주제·정답 비율을 싣고 있다. 모집단은 미국 전국 코호트가 아니며, 학년은 두 학년씩 묶여 있고, 도표의 웹 텍스트 추출은 열 정렬과 소수점 일부가 손상돼 모든 25문항 수치를 안전하게 옮길 수 없다. 그러므로 이 연구는 주제 탐색용으로만 기록하고 전국 성취도 비교·개인 진단·runtime 문항 통계에는 넣지 않는다. [연구 PDF](https://pdfs.semanticscholar.org/225a/5dcca990cd964f0a63aabaf0e56f5ddb135f.pdf) · [AMS 초록](https://www.jointmathematicsmeetings.org/amsmtgs/2141_abstracts/1086-va-1198.pdf).
+
+MAA K–12 EduView의 [공개 Score Distribution 보고서](https://maa.edvistas.com/eduview/report.aspx?mode=6&view=1561)는 2022/23–2025/26의 시험별 전체 응시 집단에 대해 상위 백분위 점수선, 최고점, 평균, 표준편차, 학생·학교 수를 제공한다. AMC 10/12는 A/B 회차가 분리되어 있다. 이 표는 학년별 행이나 문항 응답 분포를 포함하지 않으므로, 전체 코호트의 같은 연도·시험형 점수 비교에만 쓴다. MAA 예전 `generalreports.aspx` 성적표 안내에서 언급되는 `Contest Score Grade Report with Percentile`는 이번 검색에서 링크와 존재 여부를 확인했지만, 해당 원본 보고서 본문은 호스트 오류(HTTP 521)로 가져오지 못했다. 2011 AMC 8 한국 결과 재게시본처럼 실제 Grade×Score 표와 학생 식별 정보를 함께 포함하는 페이지도 검색됐으나, 공개 학생 이름·학교 정보는 저장하지 않고 기존의 익명 집계 데이터만 사용한다. [MAA 보고서 화면](https://maa.edvistas.com/eduview/report.aspx?mode=6&view=1561) · [과거 보고서 선택 안내가 인용된 질의응답](https://talk.collegeconfidential.com/t/amc-10a/1785094) · [2011 한국 AMC 8 결과 재게시본](https://www.amcstudy.net/79).
+
+따라서 다음 검색은 `school report`·`host report`의 문항 비율을 전국 규준으로 취급하지 않고, MAA의 연도별 성적표 원본을 회수해 grade-score 누적 분포를 확보하는 데 집중한다. 공식 MAA 현재형 점수분포와 과거 연도별 지역/국제 참가 보고서는 모집단 표시와 함께 각각 보관하며, 학교·국가·미국 전체 수치는 합치지 않는다.
+
 ## 2026-11-05 · 2013 AMC 10B/12B 문항 통계표 추가
 
 GEMT 2013 AMC10B/12B 분석 보고서의 Global 응답표를 웹에서 회수해 기존 문항 복습 참조에 연결했다(AMC10B 인쇄 p.9, AMC12B p.18). 각 표에는 25문항의 A–E 선택률, 미응답률, 판독 불가 비율이 있다. 두 시험의 25개 정답 표시는 LIVE 답안표와 모두 일치한다. Global 응시 집단은 AMC10B n=34,740, AMC12B n=30,249다. AMC10B 학년별 행은 34,738명으로 총원보다 2명 적어 양쪽 원자료 수치를 각각 보존했다. Taiwan 응답률 표본은 Global과 합치지 않았다.
