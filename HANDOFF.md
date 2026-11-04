@@ -1,3 +1,13 @@
+### 2026-11-04 MAA AMC 10·12 영역별 보충 세트 연결 및 연도 원본 목록 재점검
+
+MAA 공식 Problem Sets 허브는 AMC 10과 AMC 12 각각 Algebra, Geometry, Probability, Functions, Number Sense & Theory의 5개 단원별 세트를 싣고, 각 상세 페이지에는 문제·풀이·확장 연습이 첨부되어 있다. AMC 8은 전략별 세트 8종이다. 오답 원인으로 개념/접근 아이디어를 선택했을 때 AMC 10·12는 해당 문항에 기록된 영역의 MAA 세트만 결과 화면에 보여 주도록 연결했다. 이는 오답 문항의 정답 풀이를 자동 분류한 것이 아니라고 분명히 안내한다. AMC 8은 접근 아이디어 오답에만 8개 전략 자료를 제안한다. AIME·다른 대회에는 이 AMC 자료를 표시하지 않는다.
+
+연도 카탈로그를 구조적으로 다시 확인했다: AMC 8 41회(1985–2026, 2021 회차 없음), AMC 10 52개 A/B 원본(2000–2025), AMC 12/AHSME 102개 원본(1950–2025), AIME 71개 원본(1983–2026). 시험지·정답표·전문 풀이 URL 누락과 중복 키가 없다. 연도 수, 폼, 점수표 표본을 섞어 일반화하지 않는다.
+
+수동 브라우저 검수: AMC 8 2022 접근 아이디어 오답 → 8개 전략 링크, AMC 10 2022 개념 오답 → 기록 영역에 맞는 Number Sense & Theory 링크 1개, AMC 12 2022 개념 오답 → AMC 12 영역별 세트 링크를 각각 확인했다. 기존 LIVE 연도별 시험지 인쇄·답안·전문 풀이 및 지필드 후속 모의고사 링크가 유지된다. `git diff --check` 통과. 테스트 스위트는 실행하지 않았다.
+
+MAA 허브와 상세 페이지는 문제·풀이·확장 연습이 실린다고 표시하며, PDF 다운로드 전에 저작권 약관 동의를 요구한다. 파일을 복사하지 않고 공식 링크로 연결한다. 출처: [MAA Problem Sets 허브](https://connect.maa.org/viewdocument/problem-sets?CommunityKey=23b1e210-33fb-4cc6-b294-019eb20eba58&tab=librarydocuments), [AMC 10 Algebra 문제·풀이·확장](https://connect.maa.org/viewdocument/amc-10-algebra?CommunityKey=23b1e210-33fb-4cc6-b294-019eb20eba58&tab=librarydocuments). 로컬 변경만, push·배포·Drive 동기화 없음.
+
 ### 2026-11-04 MAA 공식 전략 세트를 AMC 8 오답 복습에 연결
 
 MAA 공식 AMC 8 전략별 문제 세트 8종을 `competition-paper-review.html` 결과 화면에 연결했다. AMC 8에서 오답 이유를 ‘접근 아이디어’로 표시했을 때만 접을 수 있는 자료 영역을 보여 준다. 제목·원문 링크만 제공하고, 어떤 전략이 특정 문항의 풀이인지 자동 판정하지 않는다. 다른 대회 결과에는 AMC 8 전략 세트를 섞지 않는다.
