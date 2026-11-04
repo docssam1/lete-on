@@ -109,7 +109,7 @@ Internet Archive CDX를 통해 `amc.maa.org/amc8/2016/stats/*`, `amc.maa.org/amc
 2026-11-04 웹 대조 결과를 아래 조사 CSV로 전사했다. CSV는 화면 노출용 규준표가 아니라 연도·시험형·학년군 단위 근거 보관본이다. AMC 8 2001–2002 값은 MAA 작성 2008 보고서 표 2, 2003–2009 값은 MAA 작성 2009 보고서 표 2와 대조했다. AMC 10/12 2007–2010과 2011 값은 MAA 작성 연례 통계 사본의 해당 표/Grand Statistics 항목과 대조했다. 보고서 사본은 제3자 호스트에 있으므로 primary-host capture 상태를 별도로 남겼다.
 
 - `../competition/historical-amc-grade/amc8-grade-means-2001-2009.csv` — AMC 8 recorded grades 4–5, 6, 7, 8; participant counts and means.
-- `../competition/historical-amc-grade/amc10-12-grade-means-2003-2011.csv` — AMC 10 and AMC 12 A/B form, grade-group counts and means (198 rows).
+- `../competition/historical-amc-grade/amc10-12-grade-means-2002-2011.csv` — AMC 10 and AMC 12 A/B form, grade-group counts and means (220 rows).
 - `../competition/historical-amc-grade/amc-grade-reference-coverage-by-paper.csv` — one status row for each of the 266 year/form original-paper records, separating recovered grade-mean tables, grade-score distributions, and uncollected coverage.
 - 두 평균 파일은 연도/시험/폼이 다르면 수치를 합치거나 서로 환산하지 않는다. 회차 coverage manifest는 현재 원본 카탈로그와의 대응표이지 성적 데이터가 아니다. 수치 표본은 현재 시험을 대표하지 않고, score-to-grade placement, ability level, percentile, AMC qualification을 의미하지 않는다.
 
@@ -224,7 +224,7 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 ## 2026-11-04 웹 검색 추가: 2002–2006 AMC 10/12 전체 평균
 
 - [MAA 작성 2005 AMC 10/12 연례 보고서 사본](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions)의 Table I에서 2002–2005 AMC 10/12 전체 응시 평균을 회차별로 확인했다. [MAA 작성 2008 AMC 고교 연례 보고서 사본](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions)의 Table I·II에서는 2006 AMC 12 A/B와 AMC 10 A/B 전체 응시 평균을 확인했다. 두 보고서는 MAA 저작물이지만 현재 접근 가능한 파일은 제3자 호스팅 사본이다.
-- AMC 10은 2002A 68.5, 2003 A/B 74.4/79.6, 2004 A/B 69.1/80.4, 2005 A/B 74.7/77.9, 2006 A/B 79.0/68.5; AMC 12는 2002 A/B 72.7/80.8, 2003 77.8/76.6, 2004 73.9/84.5, 2005 78.7/83.4, 2006 85.7/85.5로 전사했다. 2002 AMC 10 B는 MAA 보고서의 텍스트 전사에서 해당 평균 셀이 `68.5`로 추출되지만 공개 연도표는 `74.9`로 달라 값 연결을 보류했다. 2002 AMC 10 B 행은 원문 표의 시각 검증 전까지 만들지 않는다.
+- AMC 10은 2002A 68.5, 2002B 74.9, 2003 A/B 74.4/79.6, 2004 A/B 69.1/80.4, 2005 A/B 74.7/77.9, 2006 A/B 79.0/68.5; AMC 12는 2002 A/B 72.7/80.8, 2003 77.8/76.6, 2004 73.9/84.5, 2005 78.7/83.4, 2006 85.7/85.5로 확인했다. 2002 AMC 10 B 전체 평균은 MAA 원본 Table I 시각 대조와 grade-count 가중 평균(74.86→74.9), 그리고 공개 연도표가 모두 일치한다. 2002 AMC 10 B 학년별 셀은 Table II에서 인원과 평균이 함께 확인되는 학년만 사용한다.
 - 추가한 값은 평균만 표시한다. 역사적 Top 1%·Top 5% 경계나 학년 규준을 만들어 붙이지 않는다. 2000–2001 전체 평균은 이 시점에는 미수록으로 남겼고, 이후 2차 통계표에서 확인한 값은 아래 절에 출처 등급을 별도로 명시해 추가했다. 2010 보고서의 `School Winner Scores` 역사표는 학교별 우승자 평균이므로 전체 참가자 평균으로 재사용하지 않았다.
 - 검수: AMC 10/12 2006 값은 두 공개 연도표와 MAA 보고서 표가 일치하는 값만 채택했다. 연례 보고서 Table I/II의 모집단 정의와 2010의 학교 우승자 별도 표를 구분했다. 코드 참조 테스트에 2002–2006 회차·폼, 미확인 2002 AMC 10 B 차단, Top 1% 미생성 확인을 추가했다.
 
@@ -306,7 +306,7 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 ## 2026-11-04 후속 검색: AMC 10 학년별 원자료 회수 상태
 
 - [MAA 역사 통계 페이지의 2022년 Internet Archive 캡처](https://web.archive.org/web/20220204191809/http://amc-reg.maa.org/reports/generalreports.aspx)에서 2009–2021년 contest report 목록과 `Contest Score Grade Report with Percentile` 항목을 확인했다. 이 목록은 AMC 10/12의 A/B, 2021 봄·가을 회차를 나눠 보여준다. 현재 MAA 호스트는 브라우저에서 521 오류를 반환했다. Internet Archive 캡처에서 2021 AMC 10A를 선택해 봤지만 보고서 본문이 보존되어 있지 않아 학년별 점수표를 회수하지 못했다.
-- [2010 MAA High School Summary 재게시본](https://www.scribd.com/document/51428451/2010-HS-summary)은 2007–2010 AMC 10/12 폼별 Grade 10, Grade 9, `Grade 8 and below`, 학년 미기록의 참가 인원과 평균을 싣는다. 이 자료에서 Grade 7을 따로 분리할 수 없으며, 해당 2007–2010 집계는 기존 [`amc10-12-grade-means-2003-2011.csv`](../competition/historical-amc-grade/amc10-12-grade-means-2003-2011.csv)에 이미 포함돼 있다. 2011은 앞서 기록한 Internet Archive 보존 MAA 보고서다.
+- [2010 MAA High School Summary 재게시본](https://www.scribd.com/document/51428451/2010-HS-summary)은 2007–2010 AMC 10/12 폼별 Grade 10, Grade 9, `Grade 8 and below`, 학년 미기록의 참가 인원과 평균을 싣는다. 이 자료에서 Grade 7을 따로 분리할 수 없으며, 해당 2007–2010 집계는 기존 [`amc10-12-grade-means-2002-2011.csv`](../competition/historical-amc-grade/amc10-12-grade-means-2002-2011.csv)에 이미 포함돼 있다. 2011은 앞서 기록한 Internet Archive 보존 MAA 보고서다.
 - [2019 AMC 10A Grade 7 전국 평균 59.72 (1,982명)](https://www.archimedean.org/amc-grade-7-student-sailalitha-kodukula-makes-history/)가 현재 AMC 10 전국 기준선에서 사용할 수 있는 정확 학년·폼 일치 자료다. 학교가 MAA 통계를 인용한 2차 출처이며, 앱에서 오직 2019 AMC 10A · Grade 7에 한해 평균과 표본 수를 보여준다.
 - 2021 Grade 7 점수 경계 수치는 검색에서 교육자 포럼 게시물로만 재발견했다. MAA 보고서 본문을 회수하지 못했고 포럼은 원자료가 아니므로 수치·백분율·상위권 인원은 제품 데이터에 추가하지 않았다. AMC 10/12의 2007–2011 학년별 평균, 2012–2021 전체 응시자 평균·상위 경계는 학년별 결과와 별개로 취급한다.
 - 따라서 이번 검색으로 새 전국 학년별 행은 추가하지 않았다. 근거가 있는 현행 데이터만 유지하고, 이후 MAA 연도별 Grade Report 본문 또는 원본 보고서를 확보할 때 연도·폼·학년·표본 수를 확인해 차례로 보강한다.
@@ -314,7 +314,7 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 ### 2026-11-05 · 2005 AMC 10/12 네 폼의 기록 학년 평균 추가
 
 - 2005 AMC 10A/B와 AMC 12A/B의 폼별 학년 참가 인원·평균은 [56th annual report copy](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions)와 [2008 MAA High School Summary copy](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions)의 비교표를 함께 확인해 전사했다. 두 자료 모두 MAA 작성 보고서의 제3자 호스팅 사본이다.
-- `amc10-12-grade-means-2003-2011.csv`에 총 22개 행이 추가되었다. 학년별 참가 인원 합은 공식 참가자 수와 일치하며, 반올림된 학년 평균의 가중평균은 보고서 전체 평균(10A 74.7, 10B 77.9, 12A 78.7, 12B 83.4)과 일치한다. exact grade는 AMC 10의 8–10학년, AMC 12의 8–13학년이며 `unknown`은 별도 보존했다.
+- `amc10-12-grade-means-2002-2011.csv`에 총 22개 행이 추가되었다. 학년별 참가 인원 합은 공식 참가자 수와 일치하며, 반올림된 학년 평균의 가중평균은 보고서 전체 평균(10A 74.7, 10B 77.9, 12A 78.7, 12B 83.4)과 일치한다. exact grade는 AMC 10의 8–10학년, AMC 12의 8–13학년이며 `unknown`은 별도 보존했다.
 - `amc-historical-grade-reference.js`가 같은 연도·폼·학년 선택에서만 해당 기록 평균을 반환하도록 연결했고, 네 AMC 원본 행을 coverage manifest에서 staged로 표시했다. 이 표본은 보고서의 기록 학년 응시자 집단이며 국내/국제 범위가 학년 표에서 분리되지 않는다. 현재 규준, 백분위, 실력 레벨, AIME 자격 예측으로 해석하지 않는다.
 
 | 시험 연도 | 구분 | A | B | 출처에 실린 항목 |
@@ -732,7 +732,7 @@ This web extraction identifies the table and years but interleaves its multi-col
 - 검색에서 MAA의 56th Annual AMC 보고서 전문을 제공하는 [Doczz 보관본](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions)을 다시 확인했다. 목차는 Table II를 `Participation and Average Score by Recorded Grade Levels`로 명시하고, 본문은 2002–2005 학년별 참여 수 및 평균 표가 있음을 보여 준다. 인접한 Table I에는 2003–2005 각 폼의 공식 전체 참가자 수와 평균이 있어 교차 검산 기준을 제공한다.
 - 원 보고서의 옛 UNL 호스트 주소 `2005-HSsummary.pdf`에 대응하는 [Archive-It 보존 URL](https://wayback.archive-it.org/all/20081031153754/http://www.unl.edu/amc/d-publication/d1-pubarchive/2004-5pub/2005-HSsummary.pdf)도 찾았다. 현재 직접 회수는 Archive-It 세션 확인 페이지에서 멈췄다. 해당 보호 절차를 자동 우회하지 않는다.
 - Doczz의 검색 가능한 텍스트는 Table II의 여러 폼·학년 열을 행 단위 텍스트로 풀면서 인접 열 값을 섞는다. 보고서가 표의 존재와 해당 연도를 증명하지만, 2003/04 grade-by-form 셀을 신뢰성 있게 특정하기에 충분하지 않아 숫자는 추가하지 않았다. 인쇄 페이지 이미지/PDF를 확보한 뒤 표 구조를 눈으로 확인하고, 기존 원칙대로 학년 표본 합계 및 가중 평균을 전체 폼 통계와 대조해야 한다.
-- 별도로 [MAA 2010 High School Summary 재게시본](https://www.scribd.com/document/51428451/2010-HS-summary)의 표 I–II를 확인했다. 이는 AMC 12 2007–2010 및 AMC 10 2007–2010의 학년별 인원·평균과 전체 통계를 포함하지만, 해당 연도는 기존 `amc10-12-grade-means-2003-2011.csv`의 범위와 중복된다. 새 행은 넣지 않았다. 이 사본은 2003/04 셀을 복구하는 데 도움이 되지 않는다.
+- 별도로 [MAA 2010 High School Summary 재게시본](https://www.scribd.com/document/51428451/2010-HS-summary)의 표 I–II를 확인했다. 이는 AMC 12 2007–2010 및 AMC 10 2007–2010의 학년별 인원·평균과 전체 통계를 포함하지만, 해당 연도는 기존 `amc10-12-grade-means-2002-2011.csv`의 범위와 중복된다. 새 행은 넣지 않았다. 이 사본은 2003/04 셀을 복구하는 데 도움이 되지 않는다.
 - 이번 검색으로 MAA 작성 보고서에서 학년별 참여·평균 표가 실제로 실렸다는 원문 근거와 Archive-It의 보존 경로를 확인했다. 2003/04 정확한 전사 및 출시 가능한 비교 기준은 여전히 미완료다.
 
 ## 2026-11-05 웹 검색: 인쇄 연례보고서 아카이브 확인
@@ -747,6 +747,13 @@ This web extraction identifies the table and years but interleaves its multi-col
 
 앞서 보고서 텍스트 미러만으로 수치 전사를 보류한 항목을 공개 Internet Archive 원본 캡처로 해결했다. [2005 MAA High School Summary 보존 PDF](https://web.archive.org/web/20081031153754id_/http://www.unl.edu/amc/d-publication/d1-pubarchive/2004-5pub/2005-HSsummary.pdf)는 인쇄 쪽 8(Table II, PDF 쪽 10)에 2002–2005 AMC 10A/B와 AMC 12A/B의 기록 학년별 참가 수·평균을 싣고 있다. [MAA 작성 보고서의 검색 가능한 미러](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions)로 표 제목과 연도를 대조하고, 보존 PDF 쪽을 macOS Apple Vision OCR한 뒤 표의 열·행을 이미지에서 확인했다.
 
-`competition/historical-amc-grade/amc10-12-grade-means-2003-2011.csv`에는 AMC 10 2003/04 각 폼의 Grade 8, 9, 10, unknown, AMC 12 각 폼의 Grade 8–13, unknown, 총 44개 기록을 추가했다. 반올림된 학년 평균에 참가 수를 곱해 가중한 결과는 표 I의 폼 전체 평균과 일치한다: AMC 10 2003A/B 74.4/79.6, 2004A/B 69.1/80.4; AMC 12 2003A/B 77.8/76.6, 2004A/B 73.9/84.5. 참가자 수·평균은 MAA 보고서의 기록 학년 표본이며, 보고서가 미국/국제 참가자를 별도 분리하지 않으므로 국가별 규준으로 부르지 않는다.
+`competition/historical-amc-grade/amc10-12-grade-means-2002-2011.csv`에는 2002 AMC 10/12 A/B의 인원·평균이 모두 보이는 학년 22개 기록과 AMC 10 2003/04, AMC 12 2003/04 총 44개 기록을 추가했다. 반올림된 학년 평균에 참가 수를 곱해 가중한 결과는 표 I의 폼 전체 평균과 일치한다: AMC 10 2003A/B 74.4/79.6, 2004A/B 69.1/80.4; AMC 12 2003A/B 77.8/76.6, 2004A/B 73.9/84.5. 참가자 수·평균은 MAA 보고서의 기록 학년 표본이며, 보고서가 미국/국제 참가자를 별도 분리하지 않으므로 국가별 규준으로 부르지 않는다.
 
 `amc-grade-reference-coverage-by-paper.csv`의 8개 회차 상태를 전사 완료로 바꾸고, 브라우저의 정확 연도·폼·학년 조회 자료와 캐시 키를 갱신했다. 숫자가 인쇄되지 않은 AMC 10의 상위 학년 조합은 평균을 만들거나 보간하지 않았다. 기존 Doczz 검색결과의 열 혼합 때문에 멈춰 있던 검증 상태를 보존 PDF 페이지와 가중평균 검산으로 대체했다.
+
+
+### 2002 AMC 10/12 recorded-grade comparison (2026-11-05)
+
+Web search located the MAA-authored 56th Annual report and its preserved Internet Archive PDF. Table II (printed p. 8 / PDF p. 10) publishes 2002 AMC 10 A/B and AMC 12 A/B grade counts and means. Added 22 exact count-and-mean records to the year-organized grade-reference CSV and connected them to the exact year/form lookup. Weighted means of the rounded group means reconcile to Table I: AMC 10A 68.45→68.5 (n=77,302), AMC 10B 74.86→74.9 (n=24,800), AMC 12A 72.65→72.7 (n=103,070), and AMC 12B 80.77→80.8 (known grade groups n=33,161; the Table I overall n is 33,407). Means with no printed participant count are omitted: AMC 10 Grade 11 (both forms) and AMC 12 Grade 13 form B. The cohort is not separated into domestic and international participants.
+
+Sources: [preserved MAA report PDF](https://web.archive.org/web/20081031153754id_/http://www.unl.edu/amc/d-publication/d1-pubarchive/2004-5pub/2005-HSsummary.pdf), [searchable copy of the MAA-authored report](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions), and [year-by-year AMC historical mean table](https://uploads.strikinglycdn.com/files/8d7768ae-a5da-4b71-bb83-958231edc445/12446545885.pdf).
