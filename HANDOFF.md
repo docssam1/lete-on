@@ -1242,3 +1242,9 @@ Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. S
 - 런타임은 2013·2014 Global 전체집단 분포를 모든 선택 학년에 공통으로 보여준다. 2013 MEC 63명/55명 학년별 학교 표본은 provenance로만 두어 Global 응답 테이블을 덮지 않게 했다. 2015 단일 학교 표본도 기존에 Global 우선 처리되어 있다. cache query `20261104-10`으로 갱신했다.
 - 기존 Node 회귀 검사 파일의 2013/2015 학교 표본 기대값을 Global runtime에 맞춰 변경했다. bundled Node REPL에서 수정 모듈을 불러 2012–2015 연도별 25문항, 2013/14 50개 키, 표본수, 연도별 런타임 참조 및 2013 Global Q20 자동 제외를 확인했고 이상 없음. Node CLI는 이 셸에 없어 `.cjs` 전체 테스트는 직접 실행하지 못했다. CSV 100행은 각 모집단에서 25개씩 확인했고 비율 합계는 2013 Global Q20만 99.59%로 불일치, Taiwan Q25는 원 보고서 B 선택 52.17%로 교정 후 합계 허용오차 통과; Q20은 원자료 보존 및 runtime 제외. `git -c core.whitespace=cr-at-eol diff --check` 통과. 2013/14 원 PDF 링크는 웹 도구로 본문 확인했으나 terminal HTTP는 404를 반환했고 UI 검수는 아직 하지 않았다.
 - 다음: 검증 후 이 추가분을 커밋. 이어 AMC 8 2016 및 MAA legacy report body를 웹에서 계속 찾는다. `raw_youtube.txt` 미추적 파일은 건드리거나 스테이징하지 않는다. push/deploy/Drive sync 없음.
+
+### 2026-11-04 · AMC 8 2016·2020 학년 통계 검색 후속
+
+- 웹에서 MAA 과거 report 메뉴의 2016 AMC 8 ID 63과 LIVE 2016 원본 답안 페이지를 확인했으나 MAA ReportViewer 본문/전국 학년표는 확보하지 못했다. 발견된 Bard 2016 집단은 35명 행사 표본이며, Ivy League 게시물도 준비반·지역 인원 통계라 전국 Grade mean으로 쓰지 않았다.
+- 2020도 Bard 행사 학년 평균만 찾았고, MAA 공개 전국 학년표는 회수하지 못했다. Think Academy 2차 안내의 전체 평균·컷오프는 학년별 Grade Report로 오인하지 않는다. 기존 coverage는 2016/2020 `no-grade-table-recovered`를 유지한다. 탐색 및 출처 판단은 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 남겼다.
+- 다음은 AMC 8 2016/2020의 MAA Grade Report 원문 본문 또는 독립적으로 확인 가능한 연도별 전체 점수분포를 검색하고, 확인되는 범위에서 해당 모집단만 별도 비교에 추가한다. 원본 모집단·연도·학년이 불명확한 학원 표본은 전국 규준으로 확대하지 않는다. 2013/14 문항응답 업데이트는 커밋 `627c10c6`; `raw_youtube.txt`는 미추적 사용자 파일로 그대로 둔다.
