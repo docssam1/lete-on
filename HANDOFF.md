@@ -1636,3 +1636,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - LIVE의 MAA 허가 페이지에서 2005 실제 시험 25문항, 인쇄 PDF, 답안, 전문 풀이를 확인했다. 연도별 원본 카탈로그에 이미 등록된 자료와 일치한다.
 - MAA 2007 요약 보고서 Table 1–2는 2005년 전체 평균과 4–5, 6, 7, 8학년별 참가자 수/평균을 제공하지만, 해당 보고서에서 0–25 학년별 점수 빈도는 확인되지 않았다. 평균을 점수 분포나 percentile로 만들어내지 않고 기존 평균 비교 레이어에만 둔다.
 - 출처: [LIVE 2005 AMC 8 시험·출력·정답·전문 풀이](https://live.poshenloh.com/past-contests/amc8/2005), [MAA 2007 보고서의 2005 요약표](https://www.scribd.com/document/618492777/2007-AMC-8-Summary-of-Results-and-Awards-PDFDrive). 상세 검색 결론은 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 기록했다. `raw_youtube.txt` 보존; push·배포·Drive 동기화 없음.
+
+## 2026-11-04 웹 검색: 최근 AMC 8 비교자료 공개 범위와 결과 안내
+
+- 재검색 출처: [MAA AMC 학생 포털 가이드](https://maa.org/wp-content/uploads/2025/06/Guide-to-the-AMC-Student-Portal.pdf), [MAA 2024–25 AMC 8 교사용 매뉴얼](https://maa.org/wp-content/uploads/2024/09/2024-25-AMC-8-Teachers-Manual-FINAL.pdf), [2025 AMC 8 전체 점수 요약 재게시본](https://www.scribd.com/document/853921775/Contest-Score-Report-2025-AMC8), [2022–2026 연도별 요약](https://beyondgradestem.com/competitions/amc-8/scores/). MAA 포털은 학생 본인의 2022–23 이후 과거 성적을 제공하며, 교사용 매뉴얼은 호스트의 학생 점수 보고 흐름을 설명한다. 웹에서 회수한 이 자료들은 공개 전국 학년×점수 표와 다르다.
+- 2025 제3자 점수 요약은 평균 11.74, 다른 제3자 요약은 11.75를 기재한다. 차이를 조정해 단일값으로 만들지 않고, 학년 분포나 백분위도 추론하지 않는다. `amc-grade-reference-coverage-by-paper.csv`의 2025·2026 출처/coverage note를 갱신했고, 두 연도는 계속 `no-grade-table-recovered`로 관리한다. 이는 현재 검색에서 표를 회수하지 못했다는 상태지, 다른 곳에도 없다는 단정이 아니다.
+- 완료된 AMC 결과에서 정확히 같은 연도·시험형·학년의 비교 데이터가 연결되지 않으면 설명 문구를 결과 패널에 표시한다. 브라우저에서 2026 AMC 8 Grade 7에 25/25 입력 후 문구 표시를 확인했고, 2022 AMC 8의 기존 Grade 7 평균 비교가 나타날 때는 문구가 숨겨지는 것을 확인했다. 레이아웃은 1280px 폭에서 가로 넘침 없이 표시됐다.
+- `git diff --check` 통과. 자동 Playwright 테스트는 Node CLI 부재로 돌리지 않았다. CUA 브라우저 검수로 두 데이터 경로를 수동 확인했다. 기존 untracked `raw_youtube.txt`는 그대로 두며 stage하지 않는다.

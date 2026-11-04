@@ -927,6 +927,9 @@
         globalGradeComparisonBody.append(row);
       });
     }
+    const gradeComparisonUnavailable = $("amc-grade-comparison-unavailable");
+    const hasGradeComparisonReference = Boolean(gradeReference || koreaPercentile || koreaGradeMean || globalGradeScore);
+    gradeComparisonUnavailable.hidden = !(result.complete && result.scoreEstimate && ["amc8", "amc10", "amc12"].includes(selectedFormat().id) && !hasGradeComparisonReference);
     const aimeReference = window.GFIELDAimeScoreDistributionReference;
     const aimeCohort = $("aime-cohort-reference");
     const aimeKeyYear = Number($("archive-year").value || params.get("year"));

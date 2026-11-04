@@ -241,7 +241,7 @@ test("Grade 9 AMC 10 review shows the matching 2025 A cohort and rejects grade-r
   await page.close();
 });
 
-test("AMC cohort reference stays hidden for incomplete or unavailable paper-year records", async function () {
+test("AMC result explains when grade comparison is unavailable and hides the note when a grade reference exists", async function () {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(`${url}?grade=7&program=amc8&year=2026`, { waitUntil: "networkidle" });
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
@@ -253,12 +253,16 @@ test("AMC cohort reference stays hidden for incomplete or unavailable paper-year
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#amc-cohort-reference").isVisible(), true);
   assert.match(await page.locator("#amc-cohort-summary").innerText(), /2026 AMC 8 · 25 \/ 25점/);
+  assert.equal(await page.locator("#amc-grade-comparison-unavailable").isVisible(), true);
+  assert.match(await page.locator("#amc-grade-comparison-unavailable").innerText(), /학년별 비교 자료는 이 화면에 연결되어 있지 않습니다/);
   await page.locator("#archive-year").selectOption("2022");
   for (let question = 1; question <= 25; question += 1) {
     await page.locator(`[data-question="${question}"][data-field="status"]`).selectOption("correct");
   }
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#amc-cohort-reference").isHidden(), true);
+  assert.equal(await page.locator("#amc-grade-reference").isVisible(), true);
+  assert.equal(await page.locator("#amc-grade-comparison-unavailable").isHidden(), true);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [1280, 1280]);
   await page.close();
 });

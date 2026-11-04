@@ -74,6 +74,7 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .score-estimate { margin: 14px 0 0; padding: 14px; display: grid; gap: 6px; border-left: 4px solid var(--review-accent); background: var(--review-accent-soft); }
 .score-estimate[hidden] { display: none; }
 .score-estimate-note, .report-evidence-note { margin: 8px 0 14px; color: #566274; font-size: .82rem; line-height: 1.55; }
+.amc-grade-comparison-unavailable { margin-top: 18px; padding-top: 10px; border-top: 1px solid #d8dee8; }
 .score-estimate-note[hidden] { display: none; }
 .score-estimate strong { color: var(--review-accent-strong); font-size: 1rem; }
 .score-estimate span { color: #354255; font-size: .8rem; line-height: 1.5; }
