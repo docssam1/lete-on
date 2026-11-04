@@ -625,3 +625,10 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 25개 정답 표시를 [LIVE의 MAA 허가 2011 AMC 8 정답표](https://live.poshenloh.com/past-contests/amc8/2011/answers)와 하나씩 대조했다. 기존 `amc8-2010-item-response-percent.csv`에 저장된 2011년 25행과 Q4 등 대표 셀, n=899가 페이지 수치와 일치하며, CSV의 `South Korea reported cohort` 표기도 맞다. 이 행들은 이미 런타임 조회에 연결되어 있으므로 중복 데이터는 추가하지 않았다.
 - MAA 공식 사이트의 [2011 AMC 8 보존 통계 페이지](https://web.archive.org/web/20130204052822id_/http://amc.maa.org/amc8/2011/stats/2011-amc8stats.shtml)도 CDX 보존 인덱스에서 확인했다. 현재 보존된 디렉터리에서 Item Difficulty PDF로 검색되는 파일은 California 위치 보고서였고, `Overall` 또는 United States 문항 응답 PDF는 이 경로에서 회수하지 못했다. 따라서 AMC Study의 899명 한국 표본을 MAA 전체 응시자 표처럼 대체하거나 표기하지 않는다. 이는 해당 MAA 자료가 다른 경로에 없다는 뜻은 아니다.
 - 같은 2011년 화면에서 한국 점수·학년 백분위 표는 별도 historical cohort reference로 유지한다. 문항별 응답 분포, 학년별 점수 위치, 공식 답안·풀이의 출처와 목적은 각각 다르므로 한 수치로 합치지 않는다.
+
+## 2026-11-04 웹 검색: 2004 AMC 8 응답 통계 원표 후보
+
+- 2004 AMC 8의 실제 시험지, 답안, 문항별 professional solutions는 MAA 사용 허가를 밝힌 [LIVE 2004 AMC 8 페이지](https://live.poshenloh.com/past-contests/amc8/2004)에서 연도별로 확인할 수 있다. 페이지에는 인쇄용 시험지와 정답·풀이가 연결되어 있다.
+- 별도 [2004 AMC 8 Results and Statistics 표 사본](https://www.scribd.com/doc/57421446/2004AMC8stats)은 154,590명 코호트의 학년별 평균표와 25문항 A–E 선택·미응답·판독불가 비율표를 싣는다. 같은 표의 전국 통계 및 Grade 4–5/6/7/8 평균은 MAA 작성 56th Annual AMC 요약의 [검색 가능한 사본](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions)으로 교차 확인했다. 이 2004 학년 평균은 기존 `amc8-grade-means-2001-2009.csv`에 이미 있으므로 중복하지 않는다.
+- 응답표는 스캔 이미지다. 웹 색인과 뷰어의 텍스트 추출은 열 순서가 섞이고 행 경계가 불분명한 구간이 있어, 이번 확인에서는 응답률을 CSV나 런타임에 전사하지 않았다. 숫자 후보는 원본 이미지의 A–E/OMITS/? 열을 Apple Vision으로 판독한 뒤 LIVE 정답 25개와 대조하고, 각 행 합계 검증을 통과해야 추가한다.
+- 따라서 현재 완료 상태는 “연도별 시험지·정답·풀이 링크 확인”과 “2004 전국 통계표 존재 확인”까지다. 2004 응답률의 원본 이미지 기반 전사·검증은 미완료이며, 화면에 보이는 연구 자료를 전국 학년 규준이나 개인 진단으로 바꾸지 않는다.
