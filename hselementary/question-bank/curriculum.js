@@ -3378,6 +3378,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"Mission 6 유사문항",sourceSection:"mission",sourcePdfPage:21,sourcePrintedPage:25,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 구조를 대조하고 창작 볼록 사각형의 유일성과 반례을 검증했습니다.",generatorKey:"source52QuadrilateralConditionsSyntheticPage25Mission6",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
   }
 
+  if (source52CongruenceFirst) for (const [n,name] of [["exploration","삼각형의 성립과 합동 조건 · 원문"],["example-1","세 변을 골라 삼각형 만들기 · 원문"],["example-2","양 끝각을 골라 삼각형 만들기 · 원문"]]) {
+    const id=`5-2-u3-e2-${n}-original`;
+    if (source52CongruenceFirst.types.some(t=>t.id===id)) continue;
+    source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e2-${n}`,sourceItemLabel:n==="exploration"?"개념탐구 2 원문":`예제 2-${n.slice(-1)} 원문`,sourceSection:n==="exploration"?"exploration":"example",sourcePdfPage:22,alternateSourcePdfPage:21,sourcePrintedPage:26,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page26Original${n.replace(/[^a-z0-9]/g,"_")}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문 조건을 대조하고 삼각형 성립과 경우의 수를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
   if (source52CongruenceFirst && !source52CongruenceFirst.types.some(t=>t.id==="5-2-u3-e2-exploration")) {
     const id="5-2-u3-e2-exploration",name="삼각형 결정 조건 · 연습";
     source52CongruenceFirst.types.push({id,number:source52CongruenceFirst.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:"개념탐구 2 유사문항",sourceSection:"exploration",sourcePdfPage:22,sourcePrintedPage:26,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 다섯 조건의 구조를 대조하고 창작 조건의 성립성과 두 교점을 독립 검산했습니다.",generatorKey:"source52TriangleDeterminacyPage26Exploration2",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:3,verifiedVariantTarget:3,answerVisualRequired:false,answerVisualStatus:"not-required"});
