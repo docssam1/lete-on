@@ -3106,6 +3106,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52CongruenceUnit = semesters.find(s => s.id === "5-2")?.units.find(u => u.id === "5-2-u3");
   const source52SymmetryApplication = source52CongruenceUnit?.subunits.find(s => s.name === "선대칭의 활용");
 
+  if (source52SymmetryApplication) for (const [n,name,key] of [[67,"대칭축이 밑변에 수직인 정삼각형 둘레 · 유사문항","source52U3P93Q67ClarifiedSimilar"],[69,"대각선에 평행한 축으로 완성한 마름모 둘레 · 유사문항","source52U3P93Q69ClarifiedSimilar"]]) {
+    const id=`5-2-u3-practice-${n}-clarified-similar`;if (source52SymmetryApplication.types.some(t=>t.id===id)) continue;
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-practice-${n}-original`,sourceItemLabel:`확인학습 ${n}번 조건 보완 유사문항`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:89,alternateSourcePdfPage:88,sourcePrintedPage:93,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 축의 관계가 명시되지 않아 보류하며 별도 유사문항에서 필요한 수직·평행 조건과 변형 길이를 명시하고 둘레를 독립 검산했습니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
   if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t=>t.id==="5-2-u3-practice-68-clarified-similar")) {
     const id="5-2-u3-practice-68-clarified-similar",name="같은 변을 밝힌 선대칭 삼각형 넓이 · 유사문항";
     const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
