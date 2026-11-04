@@ -2,6 +2,11 @@
 
 확인일: 2026-10-30 (KST)
 
+## 2026-11-04 웹 검색: AMC 8 2000 통계 경로 확인
+
+- AMC 8 2000 통계의 구형 MAA 경로 `amc.maa.org/amc8/2000/*`를 Internet Archive CDX에서 조회했다. 와일드카드 검색 결과는 빈 목록이었고, `.../stats/*` 하위 경로 조회는 Archive 서버에서 503 오류를 반환해 확인되지 않았다. 조회한 기본 경로에 보존 캡처가 없다는 범위로만 기록하며, 다른 호스트·URL에 보고서가 없다는 뜻은 아니다.
+- 이에 따라 2000 회차의 `no-grade-table-recovered` 상태를 유지하고 검색 범위를 coverage manifest에 적었다. 연도별 원본 문제·답·풀이 자료와 통계 회수 상태는 별도로 관리한다.
+
 ## 2026-11-04 웹 검색: AMC 8 2023–2024 공개 통계 범위
 
 - MAA Wisconsin Spring 2023 뉴스레터는 AMC 8이 2023-01-17–23에 시행됐고, 당시 더 빠른 점수 보고 체계로 바뀌었지만 일반 AMC 데이터는 아직 제공되지 않았다고 기록한다. [MAA-WI Spring 2023 Contests Report](https://www.wisconsin.maa.org/s/MAA-WI-Newsletter-2023-01-Spring.pdf). 이는 해당 발행 시점의 상황이다.

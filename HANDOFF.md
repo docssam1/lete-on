@@ -1515,3 +1515,9 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 검증: coverage CSV를 266개 회차로 파싱했고, 행별 14개 필드·2023/2024 출처 연결을 확인했다. `git diff --check` 통과. 이번 변경은 근거 문서/출처 인벤토리만이며 결과 비교 로직과 원본 시험 콘텐츠는 바꾸지 않았다. `raw_youtube.txt` 보존·제외. 로컬 전용, push·배포·Drive 동기화 없음.
 
 출처: [MAA-WI Spring 2023](https://www.wisconsin.maa.org/s/MAA-WI-Newsletter-2023-01-Spring.pdf), [MAA-WI Spring 2024](https://www.wisconsin.maa.org/s/MAA-WI-Newsletter-2024-01-Spring.pdf), [MAA-WI Fall 2024](https://www.wisconsin.maa.org/s/MAA-WI-Newsletter-2024-02-Fall.pdf), [2023 AMC 8 whole-cohort report repost](https://www.scribd.com/document/853921825/Contest-Score-Report-2023-AMC8).
+
+### 2026-11-04 · AMC 8 2000 MAA 통계 아카이브 경로 확인
+
+AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/2000/*`를 조회했고 빈 목록을 받았다. `.../stats/*` 하위 경로는 Archive 서버 503으로 확인할 수 없었다. 이 검색 경로에서 보존 캡처를 못 찾았다는 한계로만 기록하고, 해당 보고서가 없다고 단정하지 않았다. AMC grade coverage CSV에는 검색 범위/결과를 적되 2000은 `no-grade-table-recovered` 상태로 유지한다. 상세: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`.
+
+검증: coverage CSV 266행·14필드 파싱과 2000 note 필드를 확인했고 `git diff --check` 통과. `raw_youtube.txt` untouched. 로컬 전용; push/deploy/Drive sync 없음.
