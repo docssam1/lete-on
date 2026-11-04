@@ -105,3 +105,8 @@
   #problemView .source52-perimeter-question,
   #solutionView .source52-perimeter-solution { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
 }
+
+@media print {
+  #problemView .source52-citrus-sales-question,
+  #solutionView .source52-citrus-sales-solution { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+}
