@@ -1,4 +1,6 @@
 # Historical AMC grade-level results — source staging
+`amc10-12-2007-item-response.csv` records all 25 A–E answer-choice shares and omitted-response rates for the 2007 AMC 10A/10B and AMC 12A/12B forms (100 question rows total). The MAA-authored 58th annual report prints these all-official-student response tables in Table IX, pp. 262–265. The preserved PDF text was checked against the page images; all 100 starred answers match the corresponding LIVE year/form key. Shares are stored as printed, including small rounding differences from 100%; the report has no separate unreadable-response rate, so that field is blank. These are whole-form historical response cohorts, not grade-specific diagnostic norms or individual misconception labels. Original papers, answer keys, and solutions remain linked by year and form in the coverage manifest.
+
 
 The year-by-year original-paper catalog links AMC 8 (1985–2026, excluding 2021), AMC 10/12, and AIME papers to LIVE by Po-Shen Loh. Its archive page states that the MAA has authorized the use of the contest problems and offers printable exam PDFs, answer keys, and solutions by year/form. GFIELD stores source routes and metadata rather than duplicating the copyrighted exam text. The archive was checked against the linked year list on 2026-11-05: https://live.poshenloh.com/past-contests .
 

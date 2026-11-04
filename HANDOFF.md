@@ -2120,3 +2120,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 원문 대조 수정: AMC 10A ≤8/unknown 인원 3,659/8,207로 정정; AMC 10B 11학년 n=2, 평균 39.8 행 추가 및 grade coverage 업데이트; AMC 12B 9학년 평균을 인쇄값 76.9로 정리. 네 폼 학년 집단 n 합계가 공식 인원과 맞고 가중 평균이 폼 평균(67.9, 61.5, 66.8, 73.1)에 반올림 일치함을 확인했다.
 - 보고서 인쇄 pp.262–265에 네 폼 전체 응시자 문항응답표가 있어 원문을 회수했다. 100개 문항 비율 전사와 LIVE 키 교차검증은 다음 단계이며 아직 runtime/csv에 넣지 않았고 response coverage는 계속 0/25다. 근거: `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`의 2007 section.
 - `git diff --check` 통과, CSV/런타임 JSON의 2007 표본수·평균·원문 출처를 대조했다. `raw_youtube.txt`는 사용자 미추적 파일로 보존. 로컬 변경만, push·배포·Drive 동기화 없음.
+
+
+### 2026-11-05 · 2007 AMC 10/12 문항별 응답분포 추가
+
+- MAA의 58th annual report Table IX(pp.262–265)에서 AMC 10A/B·12A/B 네 폼의 문항별 A–E 선택률과 공란률을 연도·폼별로 전사했다: `boarding-school-math/competition/historical-amc-grade/amc10-12-2007-item-response.csv` (100행). Runtime reference와 paper coverage manifest를 연결해 네 폼 모두 25/25로 표시한다.
+- 100개 별표 정답을 LIVE 해당 연도·폼 answer key와 대조했다. A–E 및 공란 비율은 원문 그대로 보존했으며 합계는 인쇄 반올림에 따라 99.93–100.07%다. 보고서에 별도 unreadable 비율은 없어 빈 값으로 둔다. 공식 응시자 cohort n: AMC12A 93,179; AMC12B 33,489; AMC10A 73,769; AMC10B 24,008. 이 응답률은 폼 전체의 과거 선택 경향이지 학년별 규준이나 단독 개인 진단 판정이 아니다.
+- README와 출처 연구 기록을 갱신했다. `raw_youtube.txt`는 손대지 않는다. 다음 연도는 MAA 연례 원문을 계속 검색해 year/form coverage에 추가하고, 원문 응시분포와 답안 키가 일치할 때만 진단 자료로 연결한다.
