@@ -56,3 +56,18 @@
     max-height: 46mm !important;
   }
 }
+
+[data-source-item-id="5-2-u3-practice-34-original"] svg.u3p89-figure text {
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-34-original"] svg.u3p89-figure {
+    width: 68mm !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 58mm !important;
+  }
+}
