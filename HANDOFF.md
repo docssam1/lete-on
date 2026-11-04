@@ -1829,3 +1829,9 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 2016 결과를 다룬 Ivy League Education Center 글은 2016-11-15 대회를 명시하지만 208,137 worldwide / 196,019 USA, 평균 9.35를 보고해 99CEF 108,227 및 MAA Michigan 108,295와 크게 다르다. 표본 범위를 설명할 원본 MAA 표를 회수하지 못해 이 secondary claim은 충돌 메모에만 남기고 런타임 비교 수치로 쓰지 않았다.
 - 검색 확인 범위와 정정은 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 기록했다. 정확한 2016 점수 빈도와 전국 Grade 7 norm은 아직 미회수이며, 출처 충돌이 해소될 때까지 기존 2016 전체 요약도 소스별로 구분한다. `raw_youtube.txt`는 보호하고, 변경은 로컬 전용이다.
 - 2016 결과 화면에는 99CEF·MAA Michigan·Ivy의 참가자/평균 수치를 하나의 norm처럼 합치지 않는 출처 충돌 주석을 추가했다. 결과 렌더링 중 주석의 `textContent`가 내부 출처 링크를 제거하던 DOM 구조도 바로잡았다. 로컬 화면에서 25개 답 대조 후 25/25 결과, Grade 7 전국 기준 미확인 문구, 해당 연도 통계 원문 링크가 함께 보이는 것을 확인했다. `git diff --check` 통과; 테스트 실행·push·배포·Drive 동기화 없음.
+
+## 2026-11-05 후속 검색 · AMC 10/12B Grade 7 비교자료 범위
+
+- 2017 AMC 10/12B 검색에서 Bard Math Circle의 지역 결과만 찾았다: Grade 7 n=3 평균 64.5, Grade 8 n=5 평균 82.2. 표본이 작고 단일 지역 행사이므로 전국 Grade 7 규준·등급 비교에 쓰지 않는다.
+- MAA Wisconsin Section의 2021 가을 뉴스레터는 2017년 Wisconsin 전체 응시자 수(AMC 10 n=540, AMC 12 n=690)와 별도 주 전체 평균(10B 55.32, 12B 61.59)을 제공하지만 학년별 값은 없다. 지역 전체 평균으로만 구분한다.
+- 조사 근거를 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 추가했다. 2017 B형 전국 학년 표는 여전히 미회수이며, 런타임에는 소표본 지역값을 넣지 않았다. 다음: 공개 MAA/지역별 원자료를 연도·폼·모집단 기준으로 계속 조사하고 확인된 범위만 기능에 연결한다. `raw_youtube.txt` 보호; push·배포·Drive 동기화 없음.
