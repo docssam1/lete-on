@@ -3106,6 +3106,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   const source52CongruenceUnit = semesters.find(s => s.id === "5-2")?.units.find(u => u.id === "5-2-u3");
   const source52SymmetryApplication = source52CongruenceUnit?.subunits.find(s => s.name === "선대칭의 활용");
 
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t=>t.id==="5-2-u3-practice-62-clarified-similar")) {
+    const id="5-2-u3-practice-62-clarified-similar",name="도형의 성질을 밝힌 대칭축 개수 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-62-original",sourceItemLabel:"확인학습 62번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:88,alternateSourcePdfPage:87,sourcePrintedPage:92,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 정다각형 등 도형의 정확한 성질이 명시되지 않아 보류합니다. 별도 유사문항에서 여섯 도형의 성질을 밝히고 대칭축을 각각 확인했습니다.",generatorKey:"source52U3P92Q62ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
   if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t=>t.id==="5-2-u3-practice-64-clarified-similar")) {
     const id="5-2-u3-practice-64-clarified-similar",name="수직 대칭축으로 겹친 사각형 넓이 · 유사문항";
     const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
