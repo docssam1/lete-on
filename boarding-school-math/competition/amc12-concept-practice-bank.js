@@ -482,6 +482,62 @@
       hint: "다음 차이는 11보다 2 큰 수입니다.",
       solution: ["연속한 항의 차이는 5, 7, 9, 11입니다.", "다음 차이는 13이므로 다음 항은 35+13=48입니다."],
       connection: "이 수열의 n번째 항을 n을 사용한 식으로 나타낼 수 있나요?"
+    },
+    {
+      id: "amc12-gap-inscribed-circle-probability-01", sourceConcepts: ["geometric-probability", "circle-area"], domain: "확률", stage: "연결", title: "정사각형 안의 원에 점이 들어갈 확률",
+      prompt: "한 변의 길이가 2인 정사각형 안에 내접원이 있습니다. 정사각형 안에서 점 하나를 무작위로 고를 때, 점이 원 안에 있을 확률은 얼마인가요?",
+      choices: ["π/8", "π/4", "1/2", "3π/4", "π"], answer: 1,
+      hint: "점이 원 안에 있을 확률은 원의 넓이를 정사각형의 넓이로 나눈 값입니다.",
+      solution: ["정사각형의 넓이는 2²=4입니다.", "내접원의 지름은 2이므로 반지름은 1, 원의 넓이는 π입니다.", "확률은 넓이의 비이므로 π/4입니다."],
+      connection: "정사각형의 한 변을 10배로 키우고 원을 계속 내접시키면 이 확률이 달라지나요?"
+    },
+    {
+      id: "amc12-gap-number-base-equation-01", sourceConcepts: ["number-base"], domain: "정수론", stage: "개념 연결", title: "자리값 식으로 진법 구하기",
+      prompt: "세 자리 수 132_b를 십진수로 나타내면 42입니다. 밑 b는 얼마인가요?",
+      choices: ["4", "5", "6", "7", "8"], answer: 1,
+      hint: "132_b는 b²+3b+2와 같은 값입니다.",
+      solution: ["132_b=b²+3b+2이므로 b²+3b+2=42입니다.", "b²+3b−40=0이고 (b+8)(b−5)=0입니다.", "진법의 밑은 3보다 커야 하므로 b=5입니다."],
+      connection: "같은 방식으로 121_b가 십진수 16일 때 b를 구해 보세요."
+    },
+    {
+      id: "amc12-gap-space-diagonal-01", sourceConcepts: ["3d-geometry", "pythagorean-theorem"], domain: "기하", stage: "유형", title: "직육면체의 공간 대각선 구하기",
+      prompt: "모서리 길이가 3, 4, 12인 직육면체의 공간 대각선 길이는 얼마인가요?",
+      choices: ["12", "13", "14", "15", "19"], answer: 1,
+      hint: "공간 대각선의 제곱은 세 모서리 길이의 제곱의 합입니다.",
+      solution: ["공간 대각선의 길이를 d라 하면 d²=3²+4²+12²입니다.", "d²=9+16+144=169이므로 d=13입니다."],
+      connection: "직육면체의 부피가 3×4×12인 것과 공간 대각선 길이를 구하는 계산이 어떻게 다른가요?"
+    },
+    {
+      id: "amc12-gap-no-repeat-code-count-01", sourceConcepts: ["basic-counting", "permutations"], domain: "경우의 수", stage: "유형", title: "중복 없는 숫자 코드 세기",
+      prompt: "첫 자리는 0이 될 수 없고 숫자를 반복하지 않는 다섯 자리 코드를 0부터 9까지의 숫자로 만들 때, 가능한 코드는 몇 개인가요?",
+      choices: ["22,680", "27,216", "30,240", "32,400", "45,360"], answer: 1,
+      hint: "첫 자리를 정한 다음에는 남은 숫자 중에서 차례대로 고릅니다.",
+      solution: ["첫 자리는 0을 제외한 9가지입니다.", "둘째 자리는 남은 숫자 9가지, 셋째부터 다섯째 자리는 각각 8, 7, 6가지입니다.", "곱의 법칙에 따라 9×9×8×7×6=27,216가지입니다."],
+      connection: "첫 자리도 0을 허용하면 코드 수가 몇 개 늘어나나요?"
+    },
+    {
+      id: "amc12-gap-roots-of-unity-sum-01", sourceConcepts: ["roots-of-unity"], domain: "대수", stage: "개념 연결", title: "단위근의 거듭제곱 합 구하기",
+      prompt: "z⁵=1이고 z≠1인 복소수 z에 대하여 1+z+z²+z³+z⁴의 값은 얼마인가요?",
+      choices: ["−1", "0", "1", "z", "5"], answer: 1,
+      hint: "1+z+z²+z³+z⁴는 1−z⁵를 1−z로 나눈 식입니다.",
+      solution: ["등비급수의 합에 따라 1+z+z²+z³+z⁴=(1−z⁵)/(1−z)입니다.", "z⁵=1이므로 분자는 0입니다.", "z≠1이라 분모는 0이 아니므로 합은 0입니다."],
+      connection: "zⁿ=1이고 z≠1일 때 1+z+⋯+zⁿ⁻¹의 합은 무엇인가요?"
+    },
+    {
+      id: "amc12-gap-counterexample-prime-polynomial-01", sourceConcepts: ["counterexample", "prime"], domain: "정수론", stage: "연결", title: "소수라는 주장에 반례 찾기",
+      prompt: "‘모든 음이 아닌 정수 n에 대해 n²+n+41은 소수이다’라는 주장을 반박하는 값은 무엇인가요? 보기 중 해당 식이 합성수가 되는 n을 고르세요.",
+      choices: ["0", "1", "2", "5", "40"], answer: 4,
+      hint: "n=40을 대입하면 제곱수로 인수분해되는지 살펴보세요.",
+      solution: ["n=40이면 n²+n+41=40²+40+41=1681입니다.", "1681=41²이므로 합성수입니다.", "따라서 n=40은 주장을 반박하는 반례입니다."],
+      connection: "반례 하나로 모든 n에 대한 주장을 왜 반박할 수 있는지 설명해 보세요."
+    },
+    {
+      id: "amc12-gap-distance-unit-conversion-01", sourceConcepts: ["unit-conversion", "distance-rate-and-time"], domain: "대수", stage: "유형", title: "분 단위 시간을 시간 단위로 바꾸어 거리 계산하기",
+      prompt: "자동차가 시속 72km로 25분 동안 일정하게 달립니다. 이동 거리는 몇 km인가요?",
+      choices: ["24", "28", "30", "32", "36"], answer: 2,
+      hint: "25분을 시간 단위로 바꾸고 거리=속력×시간을 사용하세요.",
+      solution: ["25분은 25/60시간, 즉 5/12시간입니다.", "이동 거리는 72×5/12=30km입니다."],
+      connection: "같은 속력으로 40분 동안 달리면 몇 km를 이동하나요?"
     }
   ];
 

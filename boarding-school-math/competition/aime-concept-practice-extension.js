@@ -264,6 +264,78 @@
       hint: "두 수의 합이 홀수이려면 한 수는 짝수, 다른 수는 홀수여야 합니다.",
       solution: ["1부터 20까지 홀수는 10개, 짝수도 10개입니다.", "홀수 하나와 짝수 하나를 고르는 방법은 10×10=100가지입니다.", "서로 다른 홀짝 수를 고르면 작은 수가 x, 큰 수가 y로 정해지므로 각 조합은 조건을 만족하는 순서쌍 하나와 대응합니다."],
       connection: "x와 y가 서로 다른 홀짝 집합에서 선택될 때 x<y 조건을 세는 순서에 어떻게 반영했나요?"
+    },
+    {
+      id: "aime-gap-complex-rotation-reflection-01", sourceConcepts: ["transformation"], domain: "대수", stage: "연결", title: "복소평면에서 회전과 반사 적용하기",
+      prompt: "복소수 z=3+4i를 원점 중심으로 90° 반시계 방향 회전한 뒤 실수축에 대하여 반사합니다. 변환된 복소수의 허수부의 절댓값을 구하세요.",
+      answer: 3,
+      hint: "90° 반시계 회전은 i를 곱하는 것과 같고, 실수축 반사는 켤레복소수를 취하는 것과 같습니다.",
+      solution: ["회전하면 iz=i(3+4i)=−4+3i입니다.", "실수축에 대하여 반사하면 허수부의 부호가 바뀌므로 변환 결과는 −4−3i이고, 허수부의 절댓값은 3입니다."],
+      connection: "반사를 먼저 하고 회전을 나중에 하면 결과가 같은지 계산해 보세요."
+    },
+    {
+      id: "aime-gap-second-difference-pattern-01", sourceConcepts: ["pattern-recognition"], domain: "대수", stage: "유형", title: "차이의 규칙으로 수열 이어가기",
+      prompt: "수열 1, 5, 12, 22, 35에서 연속한 항의 차이가 4, 7, 10, 13으로 3씩 증가합니다. 이 규칙을 이어 다음 항을 구하세요.",
+      answer: 51,
+      hint: "다음 항을 구하려면 직전 항에 다음 차이를 더하면 됩니다.",
+      solution: ["연속한 항의 차이는 4, 7, 10, 13으로 매번 3씩 증가합니다.", "다음 차이는 16이므로 다음 항은 35+16=51입니다."],
+      connection: "이 수열의 n번째 항을 이차식으로 나타내면 어떤 식이 되나요?"
+    },
+    {
+      id: "aime-gap-regular-polygon-interior-angle-01", sourceConcepts: ["regular-polygon"], domain: "기하", stage: "개념 연결", title: "내각으로 정다각형의 변 수 찾기",
+      prompt: "정다각형의 한 내각의 크기가 150°입니다. 이 다각형의 변은 몇 개입니까?",
+      answer: 12,
+      hint: "한 내각의 크기와 한 외각의 크기를 합하면 180°입니다.",
+      solution: ["한 외각은 180°−150°=30°입니다.", "정다각형의 외각의 합은 360°이므로 변의 수는 360°÷30°=12입니다."],
+      connection: "내각이 165°인 정다각형은 몇 개의 변을 가지는지 구해 보세요."
+    },
+    {
+      id: "aime-gap-telescoping-reciprocals-01", sourceConcepts: ["telescoping", "partial-fractions"], domain: "대수", stage: "유형", title: "망원합으로 분수 합 구하기",
+      prompt: "100×(1/2+1/6+1/12+⋯+1/990)의 값을 구하세요. 각 항은 1/(k(k+1)) 꼴이며 k는 1부터 99까지입니다.",
+      answer: 99,
+      hint: "각 항을 1/k−1/(k+1) 꼴로 나누어 써 보세요.",
+      solution: ["1/(k(k+1))=1/k−1/(k+1)입니다.", "따라서 괄호 안의 합은 (1−1/2)+(1/2−1/3)+⋯+(1/99−1/100)=1−1/100=99/100입니다.", "전체 식은 100×99/100=99입니다."],
+      connection: "합의 마지막 항이 1/(n(n+1))이면 전체 합은 n/(n+1)임을 일반적으로 보여 보세요."
+    },
+    {
+      id: "aime-gap-power-of-point-secant-01", sourceConcepts: ["power-of-a-point", "circle"], domain: "기하", stage: "개념 연결", title: "두 할선의 길이 관계로 미지수 구하기",
+      prompt: "원 밖의 점 P에서 두 할선을 그었습니다. 첫 번째 할선에서 PA=3, PB=12이고, 두 번째 할선에서 PC=4, PD=x입니다. P가 각 할선에서 먼저 만나는 점은 A와 C일 때 x를 구하세요.",
+      answer: 9,
+      hint: "두 할선의 바깥 부분과 전체 길이를 곱한 값이 서로 같습니다.",
+      solution: ["할선 정리에 따라 PA×PB=PC×PD입니다.", "3×12=4×x이므로 36=4x입니다.", "따라서 x=9입니다."],
+      connection: "한 할선의 바깥 부분이 5이고 전체 길이가 20, 다른 할선의 바깥 부분이 8이면 전체 길이는 얼마인가요?"
+    },
+    {
+      id: "aime-gap-roots-of-unity-geometric-sum-01", sourceConcepts: ["roots-of-unity"], domain: "대수", stage: "연결", title: "단위근 거듭제곱의 합 0 확인하기",
+      prompt: "복소수 z가 z⁸=1과 z≠1을 만족합니다. 1+z+z²+⋯+z⁷의 값을 구하세요.",
+      answer: 0,
+      hint: "등비수열 합 공식을 사용해 분자와 분모를 확인합니다.",
+      solution: ["1+z+⋯+z⁷=(1−z⁸)/(1−z)입니다.", "z⁸=1이므로 분자는 0이고, z≠1이므로 분모는 0이 아닙니다.", "따라서 합은 0입니다."],
+      connection: "z가 1이면 분수 형태의 등비수열 공식을 바로 쓸 수 없는 이유는 무엇인가요?"
+    },
+    {
+      id: "aime-gap-regular-graph-degree-sum-01", sourceConcepts: ["graph-theory", "basic-counting"], domain: "경우의 수", stage: "유형", title: "꼭짓점 차수의 합으로 변 수 세기",
+      prompt: "단순 그래프에 꼭짓점이 10개 있고 각 꼭짓점의 차수가 모두 5입니다. 그래프의 변은 몇 개인가요?",
+      answer: 25,
+      hint: "모든 꼭짓점의 차수를 더하면 각 변이 양 끝에서 두 번 세어집니다.",
+      solution: ["차수의 합은 10×5=50입니다.", "각 변은 양 끝 꼭짓점에서 한 번씩 세어지므로 변의 수는 차수의 합의 절반입니다.", "따라서 변은 50÷2=25개입니다."],
+      connection: "차수의 합이 항상 짝수여야 하는 이유를 변 하나씩 세어 설명해 보세요."
+    },
+    {
+      id: "aime-gap-symmetric-cubes-identity-01", sourceConcepts: ["symmetry-algebra", "algebraic-manipulation"], domain: "대수", stage: "개념 연결", title: "대칭식으로 세제곱의 합 구하기",
+      prompt: "실수 x와 y가 x+y=5, xy=6을 만족합니다. x³+y³의 값을 구하세요.",
+      answer: 35,
+      hint: "(x+y)³을 전개해 x³+y³와 xy(x+y)를 연결하세요.",
+      solution: ["항등식 x³+y³=(x+y)³−3xy(x+y)를 사용합니다.", "주어진 값을 넣으면 5³−3×6×5입니다.", "125−90=35이므로 답은 35입니다."],
+      connection: "x⁴+y⁴도 x+y와 xy만으로 나타낼 수 있는지 식을 만들어 보세요."
+    },
+    {
+      id: "aime-gap-cyclic-quadrilateral-angle-01", sourceConcepts: ["angle-chasing", "cyclic-quadrilateral"], domain: "기하", stage: "유형", title: "원에 내접한 사각형의 마주 보는 각",
+      prompt: "원에 내접한 사각형의 서로 마주 보는 두 각의 크기가 (3x+10)°와 (2x+20)°입니다. x의 값을 구하세요.",
+      answer: 30,
+      hint: "원에 내접한 사각형에서 마주 보는 두 내각의 합은 180°입니다.",
+      solution: ["마주 보는 각의 합이 180°이므로 (3x+10)+(2x+20)=180입니다.", "5x+30=180이므로 5x=150입니다.", "따라서 x=30입니다."],
+      connection: "원에 내접한 사각형의 한 외각은 맞은편 내각과 어떤 관계가 있나요?"
     }
   ];
 
