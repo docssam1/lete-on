@@ -2660,6 +2660,12 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52Average = semesters.find(semester => semester.id === "5-2")?.units.find(unit => unit.id === "5-2-u6");
   const source52AverageFirst = source52Average?.subunits.find(subunit => subunit.name === "평균 구하기");
+  if (source52AverageFirst && !source52AverageFirst.types.some(t=>t.id==="5-2-u6-practice-15-clarified-similar")) {
+    const id="5-2-u6-practice-15-clarified-similar",name="직원 변화 조건을 밝힌 평균 나이 · 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52AverageFirst.types.push({id,number:source52AverageFirst.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-15-original",sourceItemLabel:"확인학습 15번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:111,alternateSourcePdfPage:112,sourcePrintedPage:117,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문은 기존 직원의 퇴사 여부와 나이 변화가 명시되지 않아 보류합니다. 별도 유사문항에서는 재직과 나이 변화 조건을 명시하고 네 변형의 평균을 검산했습니다.",generatorKey:"source52U6P117Q15ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:4,verifiedVariantTarget:4,automaticGrading:true,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
+
   if (source52AverageFirst) for (const [n,name] of [[13,"세 쌍의 평균으로 세 수의 평균 구하기 · 확인학습 원문"],[14,"마지막 점수 추가 전후 평균으로 시험 횟수 구하기 · 확인학습 원문"],[16,"두 집단과 전체 평균으로 인원 구하기 · 확인학습 원문"],[9,"도수표와 평균으로 빠진 인원 구하기 · 확인학습 원문"],[10,"평균 키와 한 명이 더해진 뒤의 키 · 확인학습 원문"],[11,"목표 평균 이상이 되기 위한 한 기록의 최솟값 · 확인학습 원문"],[12,"네 점수의 평균과 두 점수 차 · 확인학습 원문"],[5,"가족 수 도수표의 가중평균 · 확인학습 원문"],[6,"목표 평균에 필요한 다음 점수 · 확인학습 원문"],[7,"기존 평균에 한 수를 더한 평균 · 확인학습 원문"],[8,"두 평균과 점수 차로 세 번의 점수 찾기 · 확인학습 원문"],[1,"평균과 두 점수 차로 비어 있는 두 점수 찾기 · 확인학습 원문"],[2,"겹치는 세 수의 평균으로 가운데 수 찾기 · 확인학습 원문"],[3,"두 집단의 평균과 전체 평균으로 인원 구하기 · 확인학습 원문"],[4,"두 쌍의 평균과 두 수의 차로 세 수 찾기 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52AverageFirst.types.some(type=>type.id===id)) continue;
