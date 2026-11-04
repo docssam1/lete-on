@@ -1474,3 +1474,8 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 
 - 연도별 출처 CSV 266행에서 온라인 회차, 인쇄 PDF, 정답표, 전문 풀이 URL 총 1,064개를 HEAD로 확인했다. 모두 HTTP 2xx: AMC 8 164개, AMC 10 208개, AMC 12/AHSME 408개, AIME 284개. 따라서 저장된 연도·폼 라우트의 공개 접근은 현 시점 전부 확인됐다.
 - 이는 접근 가능 여부 검사이며 PDF를 내려받거나 인쇄 레이아웃을 266개 모두 시각 검수한 것은 아니다. 연도별 카탈로그 문서에 동일한 범위/한계를 기록했다. `raw_youtube.txt` untouched. Local only; no push, deployment, or Drive sync.
+
+## 2026-11-04 후속 검색: 2016 AMC 8 MAA grade-report 보존본
+
+- Internet Archive CDX에 2016 AMC8 stats/report로 추정되는 네 URL 패턴을 조회했으나 일치 캡처가 없었다. 이 경로들에서 못 찾았다는 범위로만 기록하며 다른 경로 자료까지 없다고 단정하지 않는다. 학년 평균 값은 새로 추가하지 않았고 `no-grade-table-recovered`를 유지했다.
+- 세부 검색 패턴과 자료 상태는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`의 같은 날짜 항목에 남겼다.
