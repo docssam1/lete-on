@@ -1,0 +1,4 @@
+.u2p21-figure { display:block; width:100%; max-width:340px; height:auto; margin:.4em auto; }
+@media print { .p21original-question, .p21original-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10.5pt; } .u2p21-figure { max-height:38mm; } }
+.u2p21-expression { display:flex; align-items:center; gap:.35em; }
+.u2p21-blank { display:inline-block; width:1.8em; height:1.8em; border:1px solid #191511; vertical-align:middle; }
