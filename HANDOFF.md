@@ -1898,3 +1898,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - AMC 8에 자릿값을 이용한 연립식, 정삼각형의 높이·넓이 문항을 추가했다. AMC 10에는 표 가격 연립식과 두 원의 공통 외접선, AMC 12에는 합이 고정된 정수 곱 최적화와 보트 왕복 속력, AIME에는 바닥 함수 합의 범위 좁히기와 제곱의 나눗셈 조건 문항을 추가했다. 모두 지필드 창작이며 힌트·풀이·연결 질문을 포함한다.
 - 갱신된 태그 교집합은 AMC 8 976/1,025 (95.2%), AMC 10 1,186/1,300 (91.2%), AMC 12 2,552/3,110 (82.1%), AIME 978/1,065 (91.8%)다. 후속 은행의 창작 문항 수는 각각 43, 37, 43, 38개다. 해당 백분율은 단일 태그 공유 여부만 센다.
 - 수정: 위 네 대회 practice bank 파일, 각 연습 페이지의 캐시 키, `competition/historical-amc-grade/README.md`, 이 인수인계. 수치·개수는 6,500행 원본 인벤토리와 현행 연습 bank 태그를 재집계했다. 문제 풀이를 손으로 대조하고 `git diff --check`만 실행; tests 미실행. 다음 상위 공백은 AMC 8 net/3D geometry·tiling, AMC 10 regular polygon/rectangle, AMC 12 difference of squares/place value/angle chasing, AIME number base/tangent-circle geometry다. 계속 진행한다. `raw_youtube.txt` 보호; push·배포·Drive 동기화 없음.
+
+### 2026-11-05 · 웹 원본 재확인 및 AMC 8 개념 공백 보완
+
+- LIVE 연도별 아카이브와 MAA AMC 안내를 웹에서 다시 확인했다. LIVE는 MAA의 사용 허가를 명시하며, 현재 AMC 8 41회·AMC 10 52회·AMC 12 102회·AIME 71회, 총 266개 연도/형식 시험지를 열거한다. 각 종목 페이지에서 실제 시험지 PDF·정답표·전문 풀이와 문항별 개념·힌트·풀이 링크를 확인했다. `amc-original-source-catalog.csv`의 266행은 각 행에 인쇄 PDF, 정답, 전문 풀이 링크가 모두 채워져 있다. 출처 확인: [LIVE 아카이브](https://live.poshenloh.com/past-contests), [MAA AMC 형식 안내](https://maa.org/student-programs/amc/), [2004 AMC 8 회차](https://live.poshenloh.com/past-contests/amc8/2004), [2003 AMC 10A 회차](https://live.poshenloh.com/past-contests/amc10/2003A).
+- AMC 8 후속 연습에 정육면체 전개도와 체스판 도미노 타일링 불변량 문항을 추가했다. 저장소는 원본 시험 텍스트를 복제하지 않고 회차별 원문/인쇄/정답/해설 출처를 연결하며, 이 두 문항은 지필드가 새로 쓴 후속 연습이다.
+- 현재 후속 bank는 AMC 8 45, AMC 10 37, AMC 12 43, AIME 38문항이다. 최소 한 원본 개념 태그가 연결되는 원본 문항은 각각 983/1,025 (95.9%), 1,186/1,300 (91.2%), 2,552/3,110 (82.1%), 978/1,065 (91.8%)다. 태그 일치만 잰 수치로 난이도 동등성이나 학년 판정은 뜻하지 않는다. 두 새 문항의 답과 설명을 직접 점검했고 `git diff --check`를 실행했다. 테스트는 실행하지 않았다.
+- `raw_youtube.txt`는 보존한다. 로컬 커밋만 가능하며 푸시·배포·Drive 동기화는 하지 않았다. 다음 작업은 가장 자주 남은 원본 개념 태그에 맞춰 새 문제를 보완하고, 실제 회차 페이지의 선택·답 입력·해설·연습 연결 흐름을 이어 검토한다.
