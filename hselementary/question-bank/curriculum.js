@@ -3984,7 +3984,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const id="5-2-u1-e3-mission-2-perimeter-original", name="ㄱ자 도형의 둘레 어림 · 원문";
     if (group && !group.types.some(t=>t.id===id)) {
       const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
-      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 2 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:7,alternateSourcePdfPage:4,sourcePrintedPage:9,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 전체 세로 2cm 4mm와 가로 48mm, 도형을 대조하고 둘레와 어림을 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52ApplicationMissionTwoPerimeterOriginal",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 2 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:7,alternateSourcePdfPage:4,sourcePrintedPage:9,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 도형과 조건을 대조하고 둘레와 어림을 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52ApplicationMissionTwoPerimeterOriginal",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
     }
   }
 
