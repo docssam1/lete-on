@@ -47,3 +47,12 @@
     max-height: 59mm !important;
   }
 }
+
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-practice-11-original"] svg.u3p89-figure {
+    width: 75mm !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 46mm !important;
+  }
+}
