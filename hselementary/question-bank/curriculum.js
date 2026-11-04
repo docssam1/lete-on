@@ -3105,6 +3105,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
 
   const source52CongruenceUnit = semesters.find(s => s.id === "5-2")?.units.find(u => u.id === "5-2-u3");
   const source52SymmetryApplication = source52CongruenceUnit?.subunits.find(s => s.name === "선대칭의 활용");
+
+  if (source52SymmetryApplication && !source52SymmetryApplication.types.some(t=>t.id==="5-2-u3-practice-68-clarified-similar")) {
+    const id="5-2-u3-practice-68-clarified-similar",name="같은 변을 밝힌 선대칭 삼각형 넓이 · 유사문항";
+    const typeNumber=Math.max(0,...source52CongruenceUnit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+    source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-practice-68-original",sourceItemLabel:"확인학습 68번 조건 보완 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:89,alternateSourcePdfPage:88,sourcePrintedPage:93,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 이등변 조건은 같은 변이 불명확하여 보류합니다. 별도 유사문항에서 ㄱㄴ=ㄱㄷ을 명시하고 변형 길이와 넓이를 독립 검산했습니다.",generatorKey:"source52U3P93Q68ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction"});
+  }
+
   if (source52SymmetryApplication) for (const [id,name,label,key,section,visual] of [["5-2-u3-e6-exploration-original","직사각형 거울방의 빛 경로와 넓이 · 원문","개념탐구 6 원문","source52MirrorPathPage34Original","exploration",true],["5-2-u3-e6-example-3-original","10부터 1000까지 대칭수의 개수 · 원문","예제 6-3 원문","source52PalindromePage34Original","example",false]]) {
     if (!source52SymmetryApplication.types.some(t=>t.id===id)) source52SymmetryApplication.types.push({id,number:source52SymmetryApplication.types.length+1,name,label:name,sourceItemId:id,sourceItemLabel:label,sourceSection:section,sourcePdfPage:30,alternateSourcePdfPage:29,sourcePrintedPage:34,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 수치·조건을 대조하고 거울 반사 경로와 대칭수 전수를 독립 검산했습니다. 출판사 공식 답안은 미확인입니다.",generatorKey:key,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:visual,...(visual?{answerVisualStatus:"verified-reconstruction"}:{})});
   }
