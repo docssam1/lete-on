@@ -1808,3 +1808,11 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 2004=50은 MAA 작성 2005 연례 보고서의 `Table III: 2004 AMC 8 National Statistics`에서 154,590개 답안지·평균 9.94와 함께 직접 교차 확인한다. 2002–2004 전체 점수 빈도는 이번 검색에서도 회수되지 않아 점수 백분위/분포 진단은 만들지 않는다.
 - 수정 파일: `boarding-school-math/competition/historical-amc-grade/amc8-overall-cohort-summary-2002-2020.csv`, `boarding-school-math/competition/amc8-overall-cohort-reference.js`, `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. 출처: [MAA 2006 AMC 8 report, Table 1](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary), [MAA 2005 annual report, 2004 AMC 8 Table III](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions).
 - 검수: Python으로 CSV와 런타임의 2002–2004 perfect-paper 값 일치(126/192/50)를 확인했고 `git diff --check` 통과. `raw_youtube.txt` untouched; no push/deployment/Drive sync. 다음: AMC 8 2002–04의 전체 점수 빈도와 미회수 연도 통계를 계속 검색하고, 공개 자료로 확인되지 않은 값은 제품에 추정 입력하지 않는다.
+
+## 2026-11-05 웹 검색: 2013–2015 AMC 8 세계·대만 점수표 회수
+
+- 99CEF 원보고서에서 2013 Table III(p.7), 2014 Table III(p.8), 2015 Table III(p.9)의 점수 0–25 빈도를 회수했다. 이 연도는 기존 런타임에 배열만 있었으므로 `amc8-2013-2015-global-taiwan-score-counts.csv`에 Global과 Taiwan 행을 모두 분리해 원자료화했다. score lookup은 Global 배열만 사용한다.
+- 2013 Global n=149,709, 가중평균 10.69755, 20+=6,531, 만점 369. 본문 narrative는 만점 364라고도 적지만 detailed score table 및 후향 연도표는 369여서 score table 수치를 유지했다. 2015 Global n=149,844, 가중평균 8.55448; Taiwan n=9,017, 가중평균 11.42376.
+- 2014 Global 빈도 합은 144,177로 요약 전체 n=144,737보다 560 적고, 빈도가중평균은 11.46204인데 보고서 평균은 11.44다. 원자료는 수정하지 않고 유지했으며 결과 안내에 분모와 평균 차이를 추가했다. 대만 점수표 합은 보고된 대만 n=9,199와 일치한다.
+- 수정: `amc8-overall-cohort-reference.js` 주석, `competition-paper-review.js`의 2014 결과 고지, 전체코호트 README, 조사 기록, CSV. 출처: [2013 보고서](https://www.99cef.org.tw/userfiles/2013AMC8Report.pdf), [2014 보고서](https://www.99cef.org.tw/userfiles/2014AMC8Summary.pdf), [2015 보고서](https://www.99cef.org.tw/userfiles/2015AMC8Report.pdf).
+- 검수 완료: 3개 연도 × 2개 모집단 score 0–25 행 완비, 각 모집단별 합계·가중평균·20+·만점 재계산, Global 2013–2015 배열과 CSV 완전 일치, 2014 결과 고지 수치 확인, `git diff --check` 통과. 연도별 원본 시험지 카탈로그도 LIVE 공개 색인과 대조해 266 회차 및 각 회차의 온라인 문제·인쇄 PDF·정답표·풀이 링크를 확인했다. MAA 공개 안내에 따라 수익 목적 원문 재배포에는 별도 서면 허가가 필요하다고 조사 문서에 기록했다. 다음: 이 로컬 변경 묶음 커밋 후 AMC 8 점수 빈도 공백(2012, 2016, 2020, 2023–2026)을 순서대로 추가 조사한다. untracked `raw_youtube.txt`는 계속 보호한다.

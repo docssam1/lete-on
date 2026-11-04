@@ -7,7 +7,7 @@
 - [LIVE by Po-Shen Loh 공개 경시 아카이브](https://live.poshenloh.com/past-contests): AMC 8, AMC 10, AMC 12, AIME를 연도와 A/B 또는 I/II형으로 나눈 원본·인쇄·답안·풀이 경로를 제공한다. 사이트는 MAA의 공식 이용 허가를 명시한다.
 - [MAA AMC 공식 소개](https://maa.org/student-programs/amc/): 현재 AMC 프로그램과 각 시험 설명을 확인하는 공식 기준 페이지다.
 - [MAA 2023 AMC 8 sample competition](https://maa.org/resource/sample-competition-2023-amc-8/): MAA가 직접 공개한 2023 AMC 8 문제·해설 자료다. 한 회차의 샘플이므로 전체 연도 아카이브를 대신하지 않는다.
-- [MAA 공식 2022 AMC 10A 풀이 PDF](https://maa.org/wp-content/uploads/2024/08/2022-AMC-10A-solutions.pdf)와 [2024 AMC 8 공식 풀이 PDF](https://981338.fs1.hubspotusercontent-na1.net/hubfs/981338/Blogs/AMC%208%20Problems%20and%20Solutions/AMC%208%20Solutions%202024.pdf)는 공식 풀이 형식과 교육 목적 공유 조건을 확인하는 표본이다.
+- [MAA 공식 2022 AMC 10A 풀이 PDF](https://maa.org/wp-content/uploads/2024/08/2022-AMC-10A-solutions.pdf)와 [2024 AMC 8 공식 풀이 PDF](https://981338.fs1.hubspotusercontent-na1.net/hubfs/981338/Blogs/AMC%208%20Problems%20and%20Solutions/AMC%208%20Solutions%202024.pdf)는 공식 풀이 형식과 교육 목적 공유 조건을 확인하는 표본이다. 추가 확인한 [2023 MAA 공식 풀이 PDF](https://maa.org/wp-content/uploads/2024/08/2023_AMC8_Solutions_.pdf)는 교육 목적의 공유를 권장하지만, 수익 창출 목적의 문제·풀이 게시/복제/전달에는 MAA의 서면 허가가 필요하다고 명시한다. LIVE 호스트의 허가가 GFIELD의 재배포 허가를 뜻하지 않으므로 현재는 원본 링크를 연결하고 원문 복제는 하지 않는다.
 
 ## 과거 시험명 정정
 
@@ -179,6 +179,16 @@ For 2008, Table 8 counts total 148,478. The report then separately states that 2
 The MAA-authored 2006 AMC 8 annual report's Table 1 lists the overall cohort summaries: 2002: 157,778 answer forms, mean 11.09, 126 perfect papers; 2003: 158,309, mean 10.27, 192 perfect; 2004: 154,590, mean 9.94, 50 perfect. The flattened web-indexed text had merged the perfect-paper counts across adjacent year columns as `50192126`, which was initially misread as 501 / 92 / 126. The 2004 count is independently explicit in the MAA-authored 2005 report's Table III. Correct the runtime and CSV to 50 / 192 / 126. The same-year Table 2 supplies recorded-grade group counts and means; these overall summary fields are not substituted for grade-specific comparison. No whole-score frequency table was recovered for 2002–2004, so no percentile or score position is derived. The MAA report states that AMC 8 has no established norms and is comparable to neither classroom nor placement tests. Sources: https://studylib.net/doc/28486602/618492772-2006-amc-8-summary and https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions .
 
 The LIVE by Po-Shen Loh archive index was also checked on 2026-11-05. It states that MAA authorized use of the actual contest problems and links AMC 8 papers by year, including printable exam PDFs, answer keys, and solutions. GFIELD retains source routes and metadata rather than duplicating copyrighted exam text. Index: https://live.poshenloh.com/past-contests .
+
+## AMC 8 exact score-band tables: 2013–2015
+
+The 99CEF annual reports for 2013, 2014, and 2015 each provide score-band counts from 25 down to 0 for Global and Taiwan. The transcribed rows are preserved separately in `competition/historical-amc-grade/amc8-2013-2015-global-taiwan-score-counts.csv`; the app lookup uses only the Global counts. Report URLs and printed page numbers are stored per row.
+
+- 2013: Table III (printed p.7), Global counts total 149,709 and yield a weighted mean of 10.69755, consistent with the report's 10.70. The table gives 369 perfect-score papers and 6,531 scores at least 20. A narrative paragraph elsewhere says 364 perfect scores; the 2019 retrospective table and the 2013 frequency table agree on 369, so score lookup follows the detailed frequency table. Taiwan is a distinct 9,811-person cohort.
+- 2014: Table III (printed p.8), Taiwan rows total 9,199. Global rows total 144,177, which is 560 below the same report's overall n=144,737. Weighted mean from the exact frequency rows is 11.46204, while the report summary says 11.44; the source's cumulative table still says 100% at zero and 4.82% at scores 20–25. Retain the printed counts and summary separately. The app uses 144,177 as the denominator for frequency-derived score position, and the result note shows the 560-person and mean discrepancies.
+- 2015: Table III (printed p.9), Global counts total 149,844 and weighted mean 8.55448, consistent with 8.55. Taiwan counts total 9,017 and weighted mean 11.42376, consistent with 11.42. Both population columns remain separate.
+
+These are year-specific whole-cohort score positions derived from historical reports, not official percentile ranks, grade norms, current standards, or ability labels. Sources: https://www.99cef.org.tw/userfiles/2013AMC8Report.pdf, https://www.99cef.org.tw/userfiles/2014AMC8Summary.pdf, https://www.99cef.org.tw/userfiles/2015AMC8Report.pdf .
 
 ## 2006 AMC 8 overall score distribution recovered
 

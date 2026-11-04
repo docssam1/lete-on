@@ -900,7 +900,7 @@
       } else if (overallCohort.year === 2013) {
         setText("amc8-overall-cohort-note", "2013년은 99CEF 당시 상세 보고서의 Global 점수별 빈도(n=149,709)와 평균 10.70점을 사용합니다. 점수보다 낮은 응시자 비율은 동점을 제외해 해당 빈도표에서 계산한 역사적 위치이며, 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 코호트는 별도 기록으로 보존합니다. ");
       } else if (overallCohort.year === 2014) {
-        setText("amc8-overall-cohort-note", `2014년 보고서의 점수별 빈도 합계는 ${overallCohort.distributionParticipants.toLocaleString("en-US")}명으로, 같은 보고서의 전체 참가자 수 ${overallCohort.participants.toLocaleString("en-US")}명보다 560명 적습니다. 점수보다 낮은 비율은 99CEF 점수표의 빈도 합계를 분모로 계산했으며, 전체 평균·만점·20점 이상 통계는 보고서 요약 값을 그대로 따로 표시합니다. 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 코호트는 별도 기록으로 보존합니다. `);
+        setText("amc8-overall-cohort-note", `2014년 보고서의 점수별 빈도 합계는 ${overallCohort.distributionParticipants.toLocaleString("en-US")}명으로, 같은 보고서의 전체 참가자 수 ${overallCohort.participants.toLocaleString("en-US")}명보다 560명 적습니다. 빈도표 가중평균은 11.46점, 보고서 요약 평균은 11.44점입니다. 점수보다 낮은 비율은 빈도표의 인원 합계를 분모로 계산했으며, 전체 평균·만점·20점 이상 통계는 보고서 요약 값을 그대로 따로 표시합니다. 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 코호트는 별도 기록으로 보존합니다. `);
       } else if (overallCohort.year === 2015) {
         setText("amc8-overall-cohort-note", "2015년은 99CEF 연례 보고서의 Global 점수 빈도표(n=149,844)를 사용합니다. 점수별 인원 합은 전체 참가자 수와 일치하며, 점수보다 낮은 비율은 동점을 제외해 직접 계산한 역사적 위치입니다. 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 코호트는 별도 기록으로 보존합니다. ");
       } else if (overallCohort.year === 2017) {
