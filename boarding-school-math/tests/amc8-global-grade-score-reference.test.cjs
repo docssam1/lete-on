@@ -14,6 +14,10 @@ const rows2019 = fs.readFileSync(path.join(__dirname, "../competition/historical
   const [year, , gradeGroup, score, participantsAtScore, gradeParticipants] = line.split(",");
   return { year: Number(year), gradeGroup, score: Number(score), participantsAtScore: Number(participantsAtScore), gradeParticipants: Number(gradeParticipants) };
 });
+const rows2022 = fs.readFileSync(path.join(__dirname, "../competition/historical-amc-grade/amc8-2022-global-grade-score-counts.csv"), "utf8").trim().split(/\r?\n/).slice(1).map(function (line) {
+  const [year, , gradeGroup, score, participantsAtScore, gradeParticipants] = line.split(",");
+  return { year: Number(year), gradeGroup, score: Number(score), participantsAtScore: Number(participantsAtScore), gradeParticipants: Number(gradeParticipants) };
+});
 
 test("2009 AMC 8 global grade counts reconcile to the annual report totals and means", function () {
   const expected = { "4-5": [3874, "9.45"], "6": [20688, "9.17"], "7": [50218, "10.08"], "8": [73220, "10.82"] };
@@ -65,6 +69,30 @@ test("2019 MAA overall grade distributions reconcile to the report image summary
   assert.equal(reference.referenceFor(2018, 7, 20), null);
 });
 
+test("2022 MAA Overall score-grade counts reconcile to the report image and grade means", function () {
+  const expected = { "<=5": [4336, "8.96"], "6": [14258, "8.78"], "7": [22493, "9.57"], "8": [29236, "10.38"], unknown: [694, "7.87"] };
+  Object.entries(expected).forEach(function ([gradeGroup, [participants, mean]]) {
+    const gradeRows = rows2022.filter(function (row) { return row.gradeGroup === gradeGroup; });
+    assert.equal(gradeRows.length, 26, `${gradeGroup} must include scores 0–25`);
+    assert.equal(gradeRows.reduce(function (sum, row) { return sum + row.participantsAtScore; }, 0), participants);
+    assert.ok(gradeRows.every(function (row) { return row.gradeParticipants === participants; }));
+    const weightedMean = gradeRows.reduce(function (sum, row) { return sum + row.score * row.participantsAtScore; }, 0) / participants;
+    assert.equal(weightedMean.toFixed(2), mean);
+  });
+  assert.equal(rows2022.length, 130);
+  const imageAllCounts = [131,193,290,401,599,790,1078,1315,1760,2186,2669,3198,3946,4544,5274,5887,6130,6300,5982,5156,4232,3116,1863,965,484,2528];
+  imageAllCounts.reverse().forEach(function (count, score) {
+    assert.equal(rows2022.filter(function (row) { return row.score === score; }).reduce(function (sum, row) { return sum + row.participantsAtScore; }, 0), count);
+  });
+  const grade7 = reference.referenceFor(2022, 7, 20);
+  assert.equal(grade7.gradeParticipants, 22493);
+  assert.equal(grade7.participantsAtScore, 204);
+  assert.equal(grade7.strictlyLowerCount, 21833);
+  assert.equal(grade7.strictlyLowerShare.toFixed(2), "97.07");
+  assert.equal(reference.referenceFor(2022, 5, 20).gradeLabel, "5학년 이하");
+  assert.equal(reference.referenceFor(2022, 3, 20), null);
+});
+
 test("review results keep the 2009 all-school distribution separate from the Korea cohort", function () {
   const html = fs.readFileSync(path.join(__dirname, "../competition-paper-review.html"), "utf8");
   const script = fs.readFileSync(path.join(__dirname, "../competition-paper-review.js"), "utf8");
@@ -74,4 +102,5 @@ test("review results keep the 2009 all-school distribution separate from the Kor
   assert.match(script, /GFIELDAMC8GlobalGradeScoreReference/);
   assert.match(script, /strictlyLowerShare/);
   assert.match(script, /2019 MAA Overall 성적 보고서 이미지/);
+  assert.match(script, /2022 MAA Overall 점수×학년 보고서 이미지/);
 });

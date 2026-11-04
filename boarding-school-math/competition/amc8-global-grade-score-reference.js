@@ -5,7 +5,8 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  // Counts transcribed from MAA reported tables; totals and rounded means independently reconcile.
+  // Counts transcribed from tables labeled as MAA reports; the 2022 image is a secondary repost.
+  // Totals and rounded means reconcile to the corresponding report tables.
   // These historical cohorts are not presented as current norms or validated ability levels.
   const distributions = Object.freeze({
     2009: Object.freeze({
@@ -32,6 +33,19 @@
         "8": Object.freeze({ participants: 40167, mean: 10.06, counts: Object.freeze([113, 101, 383, 933, 1636, 2702, 3467, 3870, 4091, 3794, 3238, 2788, 2381, 2081, 1769, 1398, 1182, 1028, 799, 630, 535, 418, 306, 244, 181, 99]) }),
         unknown: Object.freeze({ participants: 1485, mean: 8.09, counts: Object.freeze([70, 10, 26, 56, 122, 143, 136, 168, 150, 105, 129, 76, 71, 59, 39, 31, 23, 25, 16, 12, 9, 3, 2, 2, 2, 0]) })
       })
+    }),
+    2022: Object.freeze({
+      reportUrl: "https://www.think-matrix.com/math_planet/awards_setting_and_historical_result",
+      sourceUrl: "https://yach-doc-shimo.zhiyinlou.com/uploader/f/Ua2Ju3KZtSXEM7uP.png",
+      sourceStatus: "secondary-reproduction-of-MAA-overall-score-grade-report-image-visually-transcribed-and-reconciled-to-grade-means",
+      population: "2022 AMC 8 MAA Overall reported-grade cohort",
+      gradeGroups: Object.freeze({
+        "<=5": Object.freeze({ participants: 4336, mean: 8.96, counts: Object.freeze([253,45,98,175,240,304,379,351,333,345,276,245,238,211,164,155,151,117,81,63,52,26,18,12,1,3]) }),
+        "6": Object.freeze({ participants: 14258, mean: 8.78, counts: Object.freeze([573,125,249,547,846,1058,1196,1407,1369,1180,1125,970,805,626,545,405,336,288,186,150,104,70,38,31,22,7]) }),
+        "7": Object.freeze({ participants: 22493, mean: 9.57, counts: Object.freeze([793,171,304,573,1003,1330,1650,1931,2067,2080,1907,1672,1408,1235,978,834,669,517,375,336,204,183,112,92,47,22]) }),
+        "8": Object.freeze({ participants: 29236, mean: 10.38, counts: Object.freeze([869,138,294,541,994,1470,1868,2218,2451,2466,2524,2348,2056,1839,1495,1264,1019,832,669,524,429,319,233,155,122,99]) }),
+        unknown: Object.freeze({ participants: 694, mean: 7.87, counts: Object.freeze([40,5,20,27,33,70,63,75,80,59,55,39,37,35,16,11,11,6,4,5,1,1,0,0,1,0]) })
+      })
     })
   });
 
@@ -41,7 +55,7 @@
     const selectedScore = Number(score);
     const distribution = distributions[selectedYear];
     if (!distribution || !Number.isInteger(selectedScore) || selectedScore < 0 || selectedScore > 25) return null;
-    const group = selectedGrade === 4 || selectedGrade === 5 ? (selectedYear === 2019 ? "<=5" : "4-5") : String(selectedGrade);
+    const group = selectedGrade === 4 || selectedGrade === 5 ? ([2019, 2022].includes(selectedYear) ? "<=5" : "4-5") : String(selectedGrade);
     const data = distribution.gradeGroups[group];
     if (!data || !Number.isInteger(selectedGrade) || selectedGrade < 4 || selectedGrade > 8) return null;
     const lowerCount = data.counts.slice(0, selectedScore).reduce(function (sum, count) { return sum + count; }, 0);
@@ -49,7 +63,7 @@
       year: selectedYear,
       grade: selectedGrade,
       gradeGroup: group,
-      gradeLabel: group === "4-5" || group === "<=5" ? (selectedYear === 2019 ? "5학년 이하" : "4–5학년") : `${group}학년`,
+      gradeLabel: group === "4-5" || group === "<=5" ? (selectedYear === 2019 ? "5학년 이하" : selectedYear === 2022 ? "5학년 이하" : "4–5학년") : `${group}학년`,
       score: selectedScore,
       participantsAtScore: data.counts[selectedScore],
       gradeParticipants: data.participants,
