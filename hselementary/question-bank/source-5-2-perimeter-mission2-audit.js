@@ -35,6 +35,17 @@ for (let variant = 0; variant < api.pools.length; variant++) {
   }
 }
 
+const original=api.getOriginal(0,0);
+assert.equal(original.sourceItemId, "5-2-u1-e3-mission-2-perimeter-original");
+assert.deepEqual(original.questionModel, {totalHeightMm:24,totalWidthMm:48});
+assert.equal(original.answerModel.perimeterMm,144);
+assert.equal(original.answer,"14cm");
+assert.match(original.prompt,/2cm 4mm/);
+assert.match(original.prompt,/48mm/);
+assert.equal(original.verifiedVariantCount,1);
+assert.equal(api.getOriginal(1,0),null);
+assert.equal(api.getOriginal(0,-1).answer,"14cm");
+
 const sourceHeightMm = 24;
 const sourceWidthMm = 48;
 const sourcePerimeterMm = 2 * (sourceHeightMm + sourceWidthMm);
@@ -50,4 +61,4 @@ assert.equal(new Set(cases.map(item => `${item.height}:${item.width}`)).size, 9)
 for (const invalid of [-1, 3, 1.5]) assert.equal(api.getQuestion(invalid, 0), null);
 for (const invalid of [-2, 2, 1.5]) assert.equal(api.getQuestion(0, invalid), null);
 
-console.log(JSON.stringify({ status: "passed", sourceItemId, configurations: cases.length, sourceDimensionsKeptPrivate: true, independentlyCalculatedSourcePerimeterMm: 144, exactSourcePerimeterCm: 14.4, roundedNaturalCentimeters: 14, allGeneratedPoolsSynthetic: true, publisherKeyVerified: false }));
+console.log(JSON.stringify({ status: "passed", sourceItemId, configurations: cases.length, originalSourceSeparatelyAvailable: true, independentlyCalculatedSourcePerimeterMm: 144, exactSourcePerimeterCm: 14.4, roundedNaturalCentimeters: 14, allGeneratedPoolsSynthetic: true, publisherKeyVerified: false }));

@@ -100,3 +100,8 @@
 @media print {
   #problemView .print-page--four-up .question-prompt .u4p106-wall { max-height: 205px; }
 }
+
+@media print {
+  #problemView .source52-perimeter-question,
+  #solutionView .source52-perimeter-solution { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+}
