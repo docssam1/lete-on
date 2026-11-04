@@ -74,4 +74,14 @@ for (const pool of api.pools) {
 for (const invalid of [-1, 3, 1.2]) assert.equal(api.getQuestion(invalid, 0), null);
 for (const invalid of [-2, 2, 1.2]) assert.equal(api.getQuestion(0, invalid), null);
 
+const sourceQuestion=api.getOriginal(0,0);
+assert.equal(sourceQuestion.sourceItemId,"5-2-u1-e3-mission-4-mat-cost-original");
+assert.equal(sourceQuestion.questionModel.students,652);
+assert.deepEqual(sourceQuestion.answerModel.marts.map(m=>m.bundles),[44,28]);
+assert.deepEqual(sourceQuestion.answerModel.marts.map(m=>m.cost),[396000,364000]);
+assert.equal(sourceQuestion.answerModel.savings,32000);
+assert.equal(sourceQuestion.answerModel.cheapestMart,"나");
+assert.equal(sourceQuestion.verifiedVariantCount,1);
+assert.equal(api.getOriginal(1,0),null);
+assert.equal(api.getOriginal(0,-1).answer,sourceQuestion.answer);
 console.log(JSON.stringify({ status: "passed", sourceItemId, originalCosts, originalSavings: 32000, configurations: tested.length, allNineHaveUniqueCheaperMart: true, sourceValuesExcludedFromPools: true, publisherKeyVerified: false }));
