@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 const w={},c=vm.createContext({window:w,console,URL,Intl});
-for(const f of ['planner-highschool-data.js','planner-highschool.js','planner-school-goals.js','planner-science.js','planner-college-data.js','planner-admissions-evidence.js','planner-college.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),c,{filename:f});
+for(const f of ['planner-highschool-data.js','planner-highschool-profiles.js','planner-highschool.js','planner-school-goals.js','planner-science.js','planner-college-data.js','planner-admissions-evidence.js','planner-college.js'])vm.runInContext(readFileSync(new URL(f,import.meta.url),'utf8'),c,{filename:f});
 const A=w.PlannerHighschool,D=w.PlannerHighschoolData,Q=w.PlannerSchoolGoals,S=w.PlannerScience,plain=x=>JSON.parse(JSON.stringify(x));
 test('all six school paths have complete official guide fields and valid fixed dates',()=>{
  assert.equal(new Set(D.schools.map(s=>s.goal)).size,6);
@@ -28,7 +28,31 @@ test('dates distinguish completed, current and future calendar days without movi
  assert.equal(A.phase({start:'2026-09-02',end:'2026-10-30'},'2026-11-02'),'past');assert.equal(A.phase({start:'2026-11-02',end:'2026-11-04'},'2026-11-02'),'active');assert.equal(A.phase({start:'2026-11-06',end:'2026-11-06'},'2026-11-02'),'upcoming');
 });
 test('expanded guides keep school-specific deadlines and freshness checks without shifting year',()=>{
- assert.equal(D.schools.length,10);for(const id of ['gs','sangsan','hana','dongtan'])assert.equal(D.schools.find(s=>s.id===id).checked,'2026-11-03');
+ assert.equal(D.schools.length,11);for(const id of ['gs','sangsan','hana','dongtan'])assert.equal(D.schools.find(s=>s.id===id).checked,'2026-11-03');
  const gs=D.schools.find(s=>s.id==='gs'),ss=D.schools.find(s=>s.id==='sangsan');assert.equal(gs.goal,'giftedSchool');assert.equal(gs.events.find(e=>e.id==='record').start,'2026-11-16');assert.match(ss.events.find(e=>e.id==='apply').time,/13:00/);assert.match(ss.events.find(e=>e.id==='mail').time,/16:00/);
  assert.equal(A.freshness(gs,'2026-11-03').due,false);assert.equal(A.freshness(gs,'2026-11-10').due,true);assert.equal(A.freshness(gs,'2026-12-20').due,true);assert.equal(A.calendar({year:2028,schools:['gs','sangsan','hana','dongtan']}).length,0);
+});
+test('private school candidates include the three requested schools together and preserve saved selection',()=>{
+ const chosen=['hafs','minjok','sangsan'],state=A.restore({year:2027,schools:chosen,tab:'profile'});
+ assert.deepEqual(plain(state.schools),chosen);assert.equal(state.tab,'profile');
+ const html=A.render(state),group=html.slice(html.indexOf('<legend>자사고</legend>'),html.indexOf('</fieldset>',html.indexOf('<legend>자사고</legend>')));
+ for(const id of chosen)assert.ok(group.includes('data-ha-school="'+id+'" aria-pressed="true"'));
+ assert.match(html,/민사고/);assert.match(html,/국내대학 등록 인원/);
+ const next=A.choose(state,'tab','papers');assert.deepEqual(plain(next.schools),chosen);assert.equal(A.restore(next).tab,'papers');
+ assert.deepEqual(plain(A.choose(next,'school','hana').schools),chosen);
+});
+test('Minjok postmark deadline is distinct from receipt deadlines and future dates stay unpublished',()=>{
+ const s=D.schools.find(s=>s.id==='minjok');assert.match(s.events.find(e=>e.id==='apply').time,/12:00/);assert.match(s.events.find(e=>e.id==='mail').time,/소인/);assert.match(s.documents,/도착일이 아닌/);
+ assert.equal(s.events.find(e=>e.id==='register').start,'2027-01-04');assert.match(s.grades,/20·20·30·30/);assert.match(s.grades,/체육/);
+ assert.equal(A.calendar({year:2028,schools:['minjok']}).length,0);
+});
+test('school profiles retain outcome cohorts and distinguish real papers from interview guidance and authored prompts',()=>{
+ const P=w.PlannerHighschoolProfiles,source=JSON.stringify(D),gs=P.profiles.gs,min=P.profiles.minjok;
+ for(const s of D.schools){const p=P.profiles[s.id];assert.ok(p);assert.ok(p.character.length);assert.ok(p.action);for(const o of p.outcomes){assert.ok(o.year);assert.ok(o.kind);assert.ok(o.note);assert.ok(o.source.url.startsWith('https://'));for(const[,n]of o.metrics)assert.ok(Number.isInteger(n)&&n>=0);}}
+ assert.deepEqual(plain(gs.outcomes.map(o=>o.year)),['2023 졸업반','2024 졸업반','2025 졸업반']);assert.equal(gs.outcomes[2].metrics.find(([k])=>k==='서울대')[1],69);
+ assert.match(min.outcomes[0].kind,/등록/);assert.equal(min.outcomes[0].metrics.find(([k])=>k==='국내 등록 합계')[1],95);
+ const papers=A.render({year:2027,schools:['sshs','gs','minjok'],tab:'papers'});
+ for(const t of ['2단계','공식 기출','2026학년도','실제 기출 아님','실제 면접 문항 원문은 확보하지 못했'])assert.ok(papers.includes(t),t);
+ assert.match(papers,/https:\/\/admission-sshs.info\/24/);assert.match(papers,/nttSn=541400/);assert.equal(JSON.stringify(D),source);
+ const profile=A.render({schools:['gs'],tab:'profile'});assert.match(profile,/2025 졸업반/);assert.match(profile,/진학률을 계산하지/);
 });
