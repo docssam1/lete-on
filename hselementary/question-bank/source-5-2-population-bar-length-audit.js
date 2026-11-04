@@ -50,4 +50,13 @@ assert(!cases.some(item => item.lengthsCm.join(",") === sourceLengthsCm.join(","
 for (const variant of [-1, 3, 1.5]) assert.equal(api.getQuestion(variant, 0), null);
 for (const difficulty of [-2, 2, 1.5]) assert.equal(api.getQuestion(0, difficulty), null);
 
+const sourceQuestion=api.getOriginal(0,0);
+assert.equal(sourceQuestion.sourceItemId,"5-2-u1-e3-mission-5-bar-graph-length-original");
+assert.deepEqual(sourceQuestion.questionModel.cities.map(c=>c.population),sourcePopulations);
+assert.deepEqual(sourceQuestion.answerModel.cities.map(c=>c.lengthCm),sourceLengthsCm);
+assert.deepEqual(sourceQuestion.questionModel.cities.map(c=>c.city),["부산광역시","인천광역시","대전광역시"]);
+assert.doesNotMatch(sourceQuestion.prompt,/<svg|<table/);
+assert.equal(sourceQuestion.verifiedVariantCount,1);
+assert.equal(api.getOriginal(1,0),null);
+assert.equal(api.getOriginal(0,-1).answer,sourceQuestion.answer);
 console.log(JSON.stringify({ status: "passed", sourceItemId, originalRounded: sourceRounded, originalLengthsCm: sourceLengthsCm, configurations: cases.length, distinctConfigurations: new Set(cases.map(item => item.populations.join(","))).size, sourceValuesExcludedFromPools: true, publisherKeyVerified: false }));

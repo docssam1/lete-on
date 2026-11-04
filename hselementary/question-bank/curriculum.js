@@ -3998,6 +3998,16 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     }
   }
 
+  {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+    const group=unit?.subunits.find(g=>g.name==="어림하기의 활용 · Mission 1 원문 연결");
+    const id="5-2-u1-e3-mission-5-bar-graph-length-original", name="도시 인구와 막대 길이 · 원문";
+    if (group && !group.types.some(t=>t.id===id)) {
+      const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:"Mission 5 원문",sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:7,alternateSourcePdfPage:4,sourcePrintedPage:9,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 인구 자료와 축척을 대조하고 반올림과 길이를 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey:"source52ApplicationMissionFivePopulationBarLengthOriginal",generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
   // 생성기에서 원문 수치 대신 창작 변형을 내는 유형을 구분한다.
   {
     const variantIds = new Set([
