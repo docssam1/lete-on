@@ -2922,6 +2922,11 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
     source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel:`확인학습 ${n}번 원문`,sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:n<=56?116:117,alternateSourcePdfPage:n<=56?117:118,sourcePrintedPage:n<=56?122:123,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U6Page116Practice${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n===58,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원문을 대조하고 동등 가능성을 전제로 독립 계산했습니다. 출판사 공식 답안은 미확인입니다."});
   }
+  if (source52Probability && !source52Probability.types.some(t=>t.id==="5-2-u6-practice-64-clarified-similar")) {
+    const id="5-2-u6-practice-64-clarified-similar",name="격자에서 정사각형을 고를 가능성 · 조건 명시 유사문항";
+    const typeNumber=Math.max(0,...source52Average.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Probability.types.push({id,number:source52Probability.types.length+1,typeNumber,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u6-practice-64-original",sourceItemLabel:"확인학습 64번 조건 명시 유사문항",sourceSection:"practice",sourceTier:"advanced",sourcePdfPage:117,alternateSourcePdfPage:118,sourcePrintedPage:123,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문의 선택 방식은 미확인입니다. 별도 유사문항은 각 직사각형을 같은 가능성으로 고르도록 명시하고 독립 열거했습니다.",generatorKey:"source52U6P123Q64ClarifiedSimilar",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required"});
+  }
   if (source52Probability) for (const [n,name] of [[49,"숫자 카드가 범위에 속할 가능성 · 확인학습 원문"],[50,"동전 네 개 중 앞면이 적어도 하나일 가능성 · 확인학습 원문"],[52,"서로 다른 동전 네 개가 모두 앞면일 가능성 · 확인학습 원문"],[53,"주사위 세 개가 모두 짝수일 가능성 · 확인학습 원문"]]) {
     const id=`5-2-u6-practice-${n}-original`;
     if (source52Probability.types.some(type=>type.id===id)) continue;
