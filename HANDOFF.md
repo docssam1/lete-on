@@ -2001,3 +2001,14 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 연도 색인을 정적으로 대조했다: 266개 회차 키가 모두 고유하고, 모든 행에 인쇄 PDF·정답표·전문 풀이 주소가 있다. 구성은 AMC 8 41, AMC 10 52, AMC 12 102, AIME 71. 학년 비교 커버리지 파일도 같은 266회차를 갖고 있으며, 비교 자료가 없는 연도를 빈 규준으로 두지 않고 명시 상태로 구분한다.
 - 이 점검으로 문서만 갱신했다. `git diff --check`를 수행했고 테스트는 실행하지 않았다. `raw_youtube.txt` 보존; 로컬 커밋만 가능하며 push·배포·Drive 동기화 없음. 다음은 기존 연도 색인의 회차별 커버리지와 공식 통계가 있는 해/폼만 비교 지표가 표시되는지 계속 감사하고, 누락된 실제 원자료를 검색한다.
 - 출처: [LIVE 연도별 공식 AMC/AIME 시험지·답안·풀이 아카이브](https://live.poshenloh.com/past-contests), [2008 MAA AMC 8 결과 보고서 공개 사본](https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america), [AMC 통계 보고서 디지털 아카이브 설명](https://sites.google.com/view/ian-calaway/amc-archive/), [2008 고교 요약집 공개 미러](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions).
+### 2026-11-05 · 2011 대만 문항 반응표와 LIVE 답안키 불일치
+
+- 웹에서 회수한 [99CEF 2011 AMC 8 보고서](https://www.99cef.org.tw/userfiles/2011AMC8Summary.pdf)의 세계 점수분포와 Grade 7 평균(n=50,176; 10.66)은 해당 모집단의 별도 연도 통계로 유지한다. 그러나 보고서 p.10 대만 응답표(n=9,896)의 정답 표시가 [LIVE 2011 정답표](https://live.poshenloh.com/past-contests/amc8/2011/answers)와 일치하지 않는다(Q1 A/E, Q2 C/E). 표가 다른 폼/응답코드인지 또는 오류인지 공개 자료만으로 판단할 수 없어, 대만 응답을 LIVE 문항에 연결하지 않는다.
+- 롤백: 임시 대만 응답 CSV와 런타임 선택기/표시를 제거했다. README와 조사 기록에 불일치·제외 사유를 남겼다. `raw_youtube.txt`는 그대로 보호했다.
+- `git diff --check`로 문서 변경을 확인한다. 별도 테스트는 실행하지 않았다. 로컬 변경만 유지하며 push·배포·동기화는 하지 않는다.
+
+### 2026-11-05 · 2008 AIME 학년표 웹 검색 후속
+
+- MAA 작성 2008 고교 결과집의 목차는 AIME I/II 학년별 점수 분포가 인쇄 pp.261–262에 있다고 확인하지만, 공개 검색 미러에서 해당 표 행은 노출되지 않는다. 보고서 본문이 확인해 주는 것은 두 회차 합계 8,584명 및 I 평균 4.77, II 평균 5.27이다.
+- 검색 결과의 상세 학년표(총 3,618/2,904명, 평균 4.12/5.91)는 2010 AIME이며 기존 데이터와 일치한다. 2008로 잘못 옮기지 않았고, coverage 상태는 `aime-grade-table-located-not-transcribed`로 유지한다. 상세 검색 기록은 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 있다.
+- 출처: [2008 MAA 고교 결과집 미러](https://studylib.net/doc/8366398/2008-high-school-summary---american-mathematics-competitions), [2010 MAA 고교 결과집 미러](https://www.scribd.com/document/51428451/2010-HS-summary), [연구자 AMC archive](https://sites.google.com/view/ian-calaway/amc-archive/).
