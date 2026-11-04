@@ -1440,3 +1440,10 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - 이전 AMC 8 창작 연습 9문항에 10개를 더했다: 체계적 나열, 중점 정사각형 넓이, 할인 후 세금, 평균과 중앙값, 약수 개수, 소수 곱, 역순 풀이, 정육면체 겉넓이, 완전제곱수, 짝짓기 합. 전체 연습 연결은 AMC 8 원본 개념 인벤토리 1,025문항 중 843개에서 917개로 늘었다. 이 값은 LIVE 태그 교차 범위이지 분류 정확도나 진단 성능이 아니다.
 - 신규 10문항의 태그는 원본 175개 태그 사전에 모두 존재한다. 정답·보기·필수 필드·고유 ID를 확인했다. localhost에 2025 AMC 8 Q1 복습 조건을 열어 신규 10개 전부가 표시되는 것과 연도·문항 원본 링크, 선택지 응답, 정답 피드백, 풀이 표시를 확인했다.
 - 변경: `amc8-concept-practice-extension.js`, `amc8-topic-practice.js`, `amc8-topic-practice.html`, 본 인수인계. 고정 AMC 8 모의 25문항과 원본 시험 데이터는 수정하지 않았다. `raw_youtube.txt`는 사용자 파일로 보존·제외. Local only; no push, deployment, or Drive sync.
+
+## 2026-11-04 연도·폼별 원본 출력 및 해설 경로 대조
+
+- 웹 검색으로 2024 AMC 10A, 2019 AMC 12B, 2025 AIME I의 LIVE 연도·폼 페이지 및 해설 페이지를 각각 확인했다. LIVE 페이지는 실제 원본 문항과 답안·풀이로 연결된다. 2025 AMC 8은 별도 인쇄 시험지 PDF와 인쇄 풀이 PDF가 직접 검색된다.
+- `amc-original-paper-library.js`의 생성 경로를 위 네 사례로 실행해 시험지 PDF, 정답, 해설 URL이 LIVE 실제 연도·폼 주소와 일치하는 것을 대조했다. 예시: `amc10-2024A-exam.pdf`, `amc12/2019B/solutions`, `aime/2025I/solutions`, `amc8-2025-solutions.pdf`.
+- 확인된 출처: [2024 AMC 10A](https://live.poshenloh.com/past-contests/amc10/2024A), [2019 AMC 12B 풀이](https://live.poshenloh.com/past-contests/amc12/2019B/solutions), [2025 AIME I 풀이](https://live.poshenloh.com/past-contests/aime/2025I/solutions), [2025 AMC 8 인쇄 시험지](https://live.poshenloh.com/images/past-contests/pdf/amc8-2025-exam.pdf), [2025 AMC 8 인쇄 풀이](https://live.poshenloh.com/images/past-contests/pdf/amc8-2025-solutions.pdf).
+- 로컬 카탈로그 코드는 수정할 필요가 없었다. 검증은 경로 생성 확인이며 모든 과거 PDF를 한꺼번에 다운로드하거나 시각 검사했다는 뜻은 아니다.
