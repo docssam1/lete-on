@@ -1878,3 +1878,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 
 - TestDaily 재게시 MAA 점수 보고서 이미지를 Apple Vision OCR 및 시각 대조했다. 상위 1/5/25/50/75% 경계 21/18/13/10/7, 최고점 25, 만점 57, 평균 10.00, 표준편차 4.69, 응시자 56,136명, 학교 1,408곳이 기존 런타임 기록과 일치했다. 화면의 보고서 이미지 직접 링크를 추가했다.
 - 그래프는 정확한 점수별 인원수를 보여주지 않는다. 56,136명 점수보고서 모집단은 별도 응답률표 52,517명 및 학년별 이미지 56,099명과 계속 분리한다. 근거는 조사 기록의 “2020 AMC 8 MAA score-report image OCR cross-check”.
+
+### 2026-11-05 · AMC 8 연도별 문제·학년통계 커버리지 연결
+
+- 웹에서 [LIVE AMC archive](https://live.poshenloh.com/past-contests)를 확인했다. MAA 사용 허가를 명시하고, 1985–2026 AMC 8 시험지 41개를 연도별로 제공하며 각 시험의 인쇄용 PDF·정답표·풀이를 제공한다. 2021 AMC 8은 시행되지 않아 목록에 없다. [MAA 2023 원본](https://maa.org/wp-content/uploads/2024/08/2023-Problems-AMC8-PDF.pdf)과 [MAA AMC 개요](https://maa.org/student-programs/amc/)도 시험 형식과 연례 운영을 대조했다.
+- `amc-grade-reference-coverage-by-paper.csv`에 AMC 8 2004–2026 연도별 행 22개를 더했다. 기존 `amc8-grade-means-*.csv`의 보고서 링크·정확 학년·묶음 학년을 연결한 해는 2004–2015, 2017–2020, 2022다. 묶음 학년은 개별 학년 평균으로 간주하지 않는다.
+- 2016 및 2023–2026은 전체 응시자 점수 요약만 확인되어 학년별 평균은 미회수 상태로 유지했다. 2017–2019는 미국·캐나다 응시자 표이므로 US-only라고 표시하지 않는다. 관련 근거는 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`에 기록.
+- 다음에는 AMC 10/12 원본 시험지의 연도·A/B 형과 문항별 응답률 자료를 대조해 학년별 진단에 연결할 후보를 정리한다. `raw_youtube.txt` 보존; 푸시·배포·Drive 동기화 없음.
