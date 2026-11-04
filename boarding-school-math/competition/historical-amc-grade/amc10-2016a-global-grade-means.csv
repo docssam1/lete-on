@@ -1,0 +1,7 @@
+year,contest,form,population,grade_group,participants,mean_score,max_score,source_status,source_url,source_note
+2016,AMC10,A,Global,10,32857,66.17,150,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2016AMC10A12AReport.pdf,"99CEF 2016 AMC10A analysis report, global aggregate; exact grade as recorded"
+2016,AMC10,A,Global,9,23455,61.37,150,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2016AMC10A12AReport.pdf,"99CEF 2016 AMC10A analysis report, global aggregate; exact grade as recorded"
+2016,AMC10,A,Global,8,4649,75.68,150,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2016AMC10A12AReport.pdf,"99CEF 2016 AMC10A analysis report, global aggregate; exact grade as recorded"
+2016,AMC10,A,Global,7,2327,74.97,150,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2016AMC10A12AReport.pdf,"99CEF 2016 AMC10A analysis report, global aggregate; exact grade as recorded"
+2016,AMC10,A,Global,<=6,1010,69.85,150,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2016AMC10A12AReport.pdf,"Grade 6 and below are combined; do not match to exact Grade 6"
+2016,AMC10,A,Global,unknown,1701,63.17,150,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2016AMC10A12AReport.pdf,"Grade not recorded; excluded from exact-grade comparison"
