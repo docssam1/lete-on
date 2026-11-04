@@ -1521,3 +1521,11 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/2000/*`를 조회했고 빈 목록을 받았다. `.../stats/*` 하위 경로는 Archive 서버 503으로 확인할 수 없었다. 이 검색 경로에서 보존 캡처를 못 찾았다는 한계로만 기록하고, 해당 보고서가 없다고 단정하지 않았다. AMC grade coverage CSV에는 검색 범위/결과를 적되 2000은 `no-grade-table-recovered` 상태로 유지한다. 상세: `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`.
 
 검증: coverage CSV 266행·14필드 파싱과 2000 note 필드를 확인했고 `git diff --check` 통과. `raw_youtube.txt` untouched. 로컬 전용; push/deploy/Drive sync 없음.
+
+## 2026-11-04 웹 검색: AMC 8 2006 문항 응답 진단 자료 추가
+
+- 웹에서 MAA authored 2006 report copy를 확인: 147,210 cohort의 item response percentage table 및 2006 AMC 8 grade score means. Grade 5–8 mean/counts 8.21/1,853; 8.51/6,639; 9.82/48,479; 10.75/78,038는 기존 `amc8-grade-means-2001-2009.csv`에 이미 있었다.
+- 25-item response table을 `boarding-school-math/competition/historical-amc-grade/amc8-2006-item-response-percent.csv`로 옮기고 AMC 8 response lookup에 2006 데이터를 연결했다. LIVE answer key와 25개 키를 대조했다. Report가 unreadable percentage를 별도 제공하지 않아 CSV는 빈칸으로 둔다. 총 8문항이 응답률 합계 불일치로 런타임에서 숨겨지고, Q18/19도 복수 correct markers가 인쇄돼 있다.
+- 갱신 파일: response lookup JS, lookup script cache version, item-response CSV, coverage CSV, historical-data README, evidence doc, this handoff. `raw_youtube.txt` 보존/제외. 검증은 CSV row/value reconciliation, lookup test, `git diff --check` 후 local commit 예정. 원본 AMC 문항·풀이 복사는 없음. No push/deploy/Drive sync.
+
+출처: [2006 response table](https://www.judymlevine.com/uploads/5/4/6/7/5467082/2006_amc_8_ws-25.pdf), [LIVE 2006 answer key and solutions](https://live.poshenloh.com/past-contests/amc8/2006/answers), [MAA 2006 annual report copy](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary).

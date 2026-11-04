@@ -10,6 +10,34 @@
   // The 2009 response table marks D and E correct for item 12, while LIVE's key lists D.
   // Preserve the MAA table's accepted response rates without replacing the official key.
   // AMC Study's own red prediction marks are intentionally excluded.
+  // MAA-authored 2006 response table. Rows that do not reconcile to 100%, including
+  // items 18–19 with multiple correct-response markers, are suppressed at lookup.
+  const raw2006 = `
+1,D,0.29,0.75,3.72,93.95,1.04,0.24,
+2,C,4.27,3.19,85.73,1.86,4.00,0.94,
+3,A,46.39,6.90,23.37,12.12,9.70,1.47,
+4,B,4.01,66.91,12.38,10.93,5.23,0.49,
+5,D,9.25,4.25,5.17,63.37,15.94,1.96,
+6,C,5.35,20.68,55.10,7.37,10.80,0.68,
+7,B,38.54,20.87,10.46,13.17,15.02,1.28,
+8,E,11.50,5.32,11.40,10.77,59.60,1.25,
+9,C,25.91,14.71,36.92,9.90,9.57,2.92,
+10,A,23.19,32.47,23.28,10.66,8.61,1.74,
+11,C,20.01,32.54,17.51,17.73,8.62,3.49,
+12,D,4.72,5.90,35.63,43.32,9.12,1.25,
+13,D,8.10,16.72,28.65,26.59,16.55,3.27,
+14,B,6.41,79.27,4.52,4.95,3.36,1.44,
+15,C,19.94,10.27,43.67,12.26,9.53,4.22,
+16,E,16.18,19.11,21.65,12.89,23.46,6.63,
+17,B,7.94,26.89,11.81,35.86,13.14,4.24,
+18,D,9.83,12.76,22.29,22.81,25.94,6.22,
+19,D,9.23,14.00,12.50,52.37,5.59,6.14,
+20,C,11.44,21.14,31.90,16.60,11.17,7.61,
+21,A,19.59,14.62,18.69,20.98,16.58,9.40,
+22,D,19.46,29.02,17.58,17.16,6.92,9.70,
+23,A,20.76,15.40,18.42,11.67,22.56,10.87,
+24,A,15.39,16.15,16.01,17.68,12.09,12.55,
+25,B,15.48,12.58,19.72,15.17,14.68,13.30,`.trim();
   const raw2010 = `
 1,C,1.13,2.85,94.41,0.98,0.33,0.29,0.01
 2,D,4.53,1.85,2.21,70.34,20.12,0.89,0.05
@@ -360,6 +388,7 @@
 24,B,10.00,50.00,0.00,20.00,0.00,20.00,0.00
 25,C,60.00,10.00,10.00,0.00,0.00,20.00,0.00`.trim();
   const sources = Object.freeze({
+    2006: Object.freeze({ raw: raw2006, respondentCount: 147210, population: "2006 AMC 8 reported MAA response cohort", sourceUrl: "https://www.judymlevine.com/uploads/5/4/6/7/5467082/2006_amc_8_ws-25.pdf", sourceStatus: "MAA-authored item-response table in secondary-hosted report; non-reconciling rows suppressed; rows 18–19 have multiple marked keys", excludedQuestions: Object.freeze([18, 19]) }),
     2009: Object.freeze({ raw: raw2009, respondentCount: 741, population: "2009 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/43", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),
     2010: Object.freeze({ raw: raw2010, respondentCount: 153211, population: "2010 AMC 8 MAA-reported student response cohort", sourceUrl: "https://www.amcstudy.net/71", sourceStatus: "secondary-image-transcription-apple-vision-reviewed" }),
     2011: Object.freeze({ raw: raw2011, respondentCount: 899, population: "2011 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/79", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),
@@ -387,7 +416,7 @@
         acceptedAnswers: acceptedAnswers,
         responsePercent: percentages,
         omittedPercent: Number(values[7]),
-        unreadablePercent: Number(values[8]),
+        unreadablePercent: values[8] === "" ? null : Number(values[8]),
         correctResponsePercent: acceptedAnswers.reduce(function (sum, answer) { return sum + percentages[answer]; }, 0),
         respondentCount: respondentCount
       });
@@ -407,6 +436,7 @@
     const questions = source && source.raw ? parseQuestions(source.raw, source.respondentCount) : questionsByYear[selectedYear];
     if (!source || !Number.isInteger(Number(question)) || Number(question) < 1 || Number(question) > questions.length) return null;
     const item = questions[Number(question) - 1];
+    if (yearSource.excludedQuestions && yearSource.excludedQuestions.includes(item.number)) return null;
     const responseTotal = Object.values(item.responsePercent).reduce(function (sum, value) { return sum + value; }, item.omittedPercent + item.unreadablePercent);
     // Do not display a response-rate row that fails its source's 100% reconciliation.
     if (Math.abs(responseTotal - 100) >= 0.15) return null;
