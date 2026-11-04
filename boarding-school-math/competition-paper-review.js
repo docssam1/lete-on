@@ -73,6 +73,8 @@
     if (archive) {
       const yearSelect = $("archive-year");
       const formSelect = $("archive-form");
+      const responsePopulationField = $("archive-response-population-field");
+      const responsePopulationSelect = $("archive-response-population");
       yearSelect.replaceChildren();
       archive.years.forEach(function (year) { yearSelect.append(option(String(year), String(year))); });
       const requestedYear = Number(params.get("year"));
@@ -100,6 +102,7 @@
       };
       const renderArchiveRoute = function () {
         const year = Number(yearSelect.value);
+        responsePopulationField.hidden = !(format.id === "amc8" && year === 2009);
         const forms = paperLibrary.formsFor(format.id, year);
         $("archive-form-field").hidden = format.id === "amc8" || forms.length === 1;
         formSelect.replaceChildren();
@@ -112,6 +115,9 @@
         updateUrl();
       };
       yearSelect.onchange = function () { renderArchiveRoute(); renderMarks(); };
+      responsePopulationSelect.onchange = function () {
+        if (!document.querySelector(".review-report").hidden) resetReport("응답 비교 집단을 바꿨어요");
+      };
       formSelect.onchange = function () {
         syncArchiveActions();
         syncArchivePaperLabel();
@@ -964,7 +970,8 @@
     const amc10And12ItemResponseReference = window.GFIELDAMC10_12ItemResponseReference;
     const responseForItem = function (question, answer) {
       if (selectedFormat().id === "amc8" && itemResponseReference) {
-        return itemResponseReference.responseFor(selectedYear, question, answer, grade);
+        const populationId = selectedYear === 2009 && $("archive-response-population").value === "maa-national" ? "maa-national" : undefined;
+        return itemResponseReference.responseFor(selectedYear, question, answer, grade, populationId);
       }
       if (["amc10", "amc12"].includes(selectedFormat().id) && amc10And12ItemResponseReference) {
         return amc10And12ItemResponseReference.responseFor(selectedFormat().id, selectedYear, $("archive-form").value || params.get("form") || "", question, answer);
@@ -975,7 +982,7 @@
     const showItemResponses = Boolean(cohortForYear);
     const isSchoolCohort = Boolean(cohortForYear && /school cohort/i.test(cohortForYear.sourceStatus));
     $("report-review-items-note").textContent = showItemResponses
-      ? `직접 표시한 오답과 미응답입니다. ${cohortForYear.population}의 문항별 응답 비율을 참고로 보여 줍니다. ${isSchoolCohort ? "특정 학교 응시집단 표본이며 전국 학년 기준이 아닙니다." : "당시 해당 집단의 기록이며 학년별 비교나 현재 기준은 아닙니다."}`
+      ? `직접 표시한 오답과 미응답입니다. ${cohortForYear.population}의 문항별 응답 비율을 참고로 보여 줍니다. ${selectedYear === 2009 && cohortForYear.respondentCount === 151367 ? "MAA 보고서 Table 8은 151,367명, 같은 보고서 Table 1은 150,733명으로 서로 다르게 적습니다. 셀 추출이 불완전한 5문항은 표시하지 않습니다." : isSchoolCohort ? "특정 학교 응시집단 표본이며 전국 학년 기준이 아닙니다." : "당시 해당 집단의 기록이며 학년별 비교나 현재 기준은 아닙니다."}`
       : "직접 표시한 오답과 미응답입니다. 각 문항의 원본 개념·힌트·해설을 확인한 뒤 지필드 유사 유형으로 이어갈 수 있어요.";
     result.reviewItems.forEach(function (item) {
       const itemReference = showItemResponses ? responseForItem(item.number, item.answer) : null;

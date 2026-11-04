@@ -1562,5 +1562,5 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 
 - [MAA 25th Annual AMC 8 Summary 재게시본](https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html)의 검색 색인에 Table 8 전체 항목 응답 텍스트가 잡힌다. Table 8은 151,367명을 적지만, 같은 보고서 Table 1은 answer forms received 150,733명을 적는다. 불일치를 그대로 보존했고 어느 쪽도 임의로 정정하지 않았다.
 - 보고서 PDF viewer는 손상/유효하지 않은 PDF 오류로 열리지 않았다. Apple Vision OCR 시각 대조는 진행할 수 없었으므로 추출 셀 배열이 깨진 3, 4, 9, 12, 17번을 제품 조회에서 제외했다. 나머지 20문항을 `amc8-2009-maa-national-item-response-percent.csv`에 기록하고 LIVE 2009 답안표와 대조했다.
-- 런타임은 `responseFor(2009, question, answer, grade, "maa-national")`로 이 MAA 전국 코호트를 명시적으로 선택할 수 있다. 기존 2009 기본 조회는 한국 n=741 그대로다. UI에는 아직 모집단 선택 컨트롤이 연결되지 않아 새 MAA 전국표는 API 대체 조회 자료로 추가된 상태다.
+- 런타임은 `responseFor(2009, question, answer, grade, "maa-national")`로 이 MAA 전국 코호트를 명시적으로 선택할 수 있다. 기존 2009 기본 조회는 한국 n=741 그대로다. 2009 AMC 8 원본 선택 화면에 한국 741명 / MAA Table 8 모집단 선택을 연결했다. MAA 전국 표본 선택 시 결과 영역에 보고서 내부 숫자 차와 제외 문항 수를 함께 알린다.
 - 검수: 20개 CSV 행의 퍼센트 합계(0.15%p 허용), 정답 비율, 연도별 25개 질문 인덱스, 제외 문항 null 응답, 한국 기본값 보존을 확인했다. 기존 전체 CJS 테스트 실행기는 이 쉘에 없어서 전체 contract 파일 실행은 못했고, 핵심 lookup 검증은 node_repl에서 별도로 돌렸다. `git diff --check` 통과.
