@@ -1447,3 +1447,10 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 - `amc-original-paper-library.js`의 생성 경로를 위 네 사례로 실행해 시험지 PDF, 정답, 해설 URL이 LIVE 실제 연도·폼 주소와 일치하는 것을 대조했다. 예시: `amc10-2024A-exam.pdf`, `amc12/2019B/solutions`, `aime/2025I/solutions`, `amc8-2025-solutions.pdf`.
 - 확인된 출처: [2024 AMC 10A](https://live.poshenloh.com/past-contests/amc10/2024A), [2019 AMC 12B 풀이](https://live.poshenloh.com/past-contests/amc12/2019B/solutions), [2025 AIME I 풀이](https://live.poshenloh.com/past-contests/aime/2025I/solutions), [2025 AMC 8 인쇄 시험지](https://live.poshenloh.com/images/past-contests/pdf/amc8-2025-exam.pdf), [2025 AMC 8 인쇄 풀이](https://live.poshenloh.com/images/past-contests/pdf/amc8-2025-solutions.pdf).
 - 로컬 카탈로그 코드는 수정할 필요가 없었다. 검증은 경로 생성 확인이며 모든 과거 PDF를 한꺼번에 다운로드하거나 시각 검사했다는 뜻은 아니다.
+
+## 2026-11-04 웹 검색 반영: 2021 AMC 봄·가을 폼 표기
+
+- LIVE 연도별 원본 페이지에서 2021 AMC 10/12의 네 회차를 확인했다. 저장 코드 A/B는 봄 A/B, C/D는 가을 A/B다. 각 LIVE 페이지에 인쇄 PDF·답안표·전문 풀이 링크가 있고, MAA 공식 사용 허가 문구가 표시된다: [10A 봄](https://live.poshenloh.com/past-contests/amc10/2021A), [10B 봄](https://live.poshenloh.com/past-contests/amc10/2021B), [10A 가을](https://live.poshenloh.com/past-contests/amc10/2021C), [10B 가을](https://live.poshenloh.com/past-contests/amc10/2021D), [12A 가을](https://live.poshenloh.com/past-contests/amc12/2021C), [12B 가을](https://live.poshenloh.com/past-contests/amc12/2021D). 전체 연도별 목록은 [LIVE past contests](https://live.poshenloh.com/past-contests)에서 확인했다.
+- 기존 카탈로그는 네 시험지를 모두 보유하지만 화면에 단순히 “A형/B형/C형/D형”으로만 표시했다. `formLabel`을 추가해 봄/가을의 실제 시험 이름과 LIVE 자료 코드를 함께 표시하고, 링크 제목에도 동일한 이름을 넣었다. 원본 문항·PDF는 계속 LIVE 제공처에서 연다.
+- 검증: JS 런타임에서 2021 AMC 10 네 선택지 표기, AMC 12 가을 D 연결, 다른 연도의 기존 폼 표기, 단일 AMC 8 표기를 확인했다. 전체 연도별 경로 개수 266, review 스크립트 문법, `git diff --check` 통과. localhost는 현재 연결되지 않아 화면 브라우저 검수는 못 했다.
+- 관련 파일: `boarding-school-math/competition/amc-original-paper-library.js`, `boarding-school-math/competition-paper-review.js`, 해당 라이브러리 테스트. `raw_youtube.txt`는 사용자 원자료로 제외한다. Local only; no push, deployment, or Drive sync.

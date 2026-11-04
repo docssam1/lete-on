@@ -88,7 +88,7 @@
         const year = Number(yearSelect.value);
         const form = formSelect.value;
         const meta = paperLibrary.formatFor(format.id, year);
-        const label = `${year} ${meta ? meta.title : format.title}${form ? ` ${form}` : ""}`;
+        const label = `${year} ${meta ? meta.title : format.title}${form ? ` ${paperLibrary.formLabel(format.id, year, form)}` : ""}`;
         $("archive-open-link").href = paperLibrary.archiveRoute(format.id, year, form);
         $("archive-open-link").textContent = `${label} · 온라인 회차 ↗`;
         $("archive-print-link").href = paperLibrary.printRoute(format.id, year, form);
@@ -103,7 +103,7 @@
         const forms = paperLibrary.formsFor(format.id, year);
         $("archive-form-field").hidden = format.id === "amc8" || forms.length === 1;
         formSelect.replaceChildren();
-        forms.forEach(function (form) { formSelect.append(option(form, form ? `${form}형` : "단일 시험지")); });
+        forms.forEach(function (form) { formSelect.append(option(form, paperLibrary.formLabel(format.id, year, form))); });
         formSelect.value = forms.includes(params.get("form")) ? params.get("form") : forms[0];
         syncArchiveActions();
         $("archive-route-note").textContent = `LIVE 연도별 색인 ${paperLibrary.contestCount(format.id)}회 중 선택한 원본이에요. 시험지 PDF·정답표·전문 풀이를 열고, 아래 문항별 링크에서 개념과 해설을 확인하세요.`;

@@ -64,6 +64,18 @@
     return `https://live.poshenloh.com/past-contests/${archive.path}/${Number(year)}${suffix}`;
   }
 
+  function formLabel(programId, year, form) {
+    const selectedYear = Number(year);
+    const selectedForm = String(form || "").toUpperCase();
+    if (!selectedForm) return "단일 시험지";
+    if (selectedYear === 2021 && (programId === "amc10" || programId === "amc12")) {
+      const originalForm = selectedForm === "C" ? "A" : selectedForm === "D" ? "B" : selectedForm;
+      const session = selectedForm === "C" || selectedForm === "D" ? "가을" : "봄";
+      return `${originalForm}형 · ${session} (자료 코드 ${selectedForm})`;
+    }
+    return `${selectedForm}형`;
+  }
+
   function printRoute(programId, year, form) {
     const route = archiveRoute(programId, year, form);
     if (!route || route === "https://live.poshenloh.com/past-contests") return "";
@@ -92,5 +104,5 @@
     return route && route !== "https://live.poshenloh.com/past-contests" ? `${route}/problem/${number}` : "";
   }
 
-  return Object.freeze({ schemaVersion: "2.4.0", archives: archives, archiveFor: archiveFor, formsFor: formsFor, contestCount: contestCount, archiveRoute: archiveRoute, printRoute: printRoute, answerRoute: answerRoute, solutionsRoute: solutionsRoute, problemRoute: problemRoute, formatFor: formatFor });
+  return Object.freeze({ schemaVersion: "2.4.0", archives: archives, archiveFor: archiveFor, formsFor: formsFor, contestCount: contestCount, formLabel: formLabel, archiveRoute: archiveRoute, printRoute: printRoute, answerRoute: answerRoute, solutionsRoute: solutionsRoute, problemRoute: problemRoute, formatFor: formatFor });
 });

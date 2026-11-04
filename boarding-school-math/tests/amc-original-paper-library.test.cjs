@@ -50,6 +50,11 @@ test("year and form routes cover the full authorized AMC archive", function () {
   assert.equal(library.problemRoute("amc10", 2021, "D", 25), "https://live.poshenloh.com/past-contests/amc10/2021D/problem/25");
   assert.equal(library.problemRoute("amc12", 1950, "", 50), "https://live.poshenloh.com/past-contests/amc12/1950/problem/50");
   assert.equal(library.problemRoute("aime", 2026, "II", 15), "https://live.poshenloh.com/past-contests/aime/2026II/problem/15");
+  assert.equal(library.formLabel("amc10", 2021, "A"), "A형 · 봄 (자료 코드 A)");
+  assert.equal(library.formLabel("amc10", 2021, "C"), "A형 · 가을 (자료 코드 C)");
+  assert.equal(library.formLabel("amc12", 2021, "D"), "B형 · 가을 (자료 코드 D)");
+  assert.equal(library.formLabel("amc8", 2025, ""), "단일 시험지");
+  assert.equal(library.formLabel("amc12", 2025, "B"), "B형");
   assert.equal(library.problemRoute("amc8", 2023, "", 26), "");
   assert.equal(library.problemRoute("aime", 2026, "III", 1), "");
   assert.equal(library.problemRoute("amc10", 2025, "D", 1), "");
