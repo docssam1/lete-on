@@ -3446,6 +3446,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52CongruenceApplicationOne = source52CongruenceUnit?.subunits.find(s => s.name === "합동의 활용 ①");
+  if (source52CongruenceApplicationOne) for (const [n,name] of [[2,"두 정사각형이 겹친 넓이 · 원문 그림 재구성"],[3,"이등변삼각형을 회전한 뒤의 각 · 원문 그림 재구성"]]) {
+    const id=`5-2-u3-e3-mission-${n}-original`;
+    if (source52CongruenceApplicationOne.types.some(t=>t.id===id)) continue;
+    source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:`5-2-u3-e3-mission-${n}`,sourceItemLabel:`Mission ${n} 원문 그림 재구성`,sourceSection:"mission",sourcePdfPage:25,alternateSourcePdfPage:24,sourcePrintedPage:29,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U3Page29OriginalMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문 그림과 수치를 대조하고 넓이 및 회전 각도를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
+
   if (source52CongruenceApplicationOne && !source52CongruenceApplicationOne.types.some(t=>t.id==="5-2-u3-e3-exploration-scope")) {
     const id="5-2-u3-e3-exploration-scope",name="합동인 이등변삼각형의 각 · 원문 조건 명시";
     source52CongruenceApplicationOne.types.push({id,number:source52CongruenceApplicationOne.types.length+1,name,label:name,sourceItemId:id,sourceParentItemId:"5-2-u3-e3-exploration",sourceItemLabel:"개념탐구 3 원문 조건 명시",sourceSection:"exploration",sourcePdfPage:24,alternateSourcePdfPage:23,sourcePrintedPage:28,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:"source52U3Page28ExplorationExplicitSides",generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:true,answerVisualStatus:"verified-reconstruction",reviewReason:"원문은 이등변의 같은 변을 표시하지 않아 여러 해석이 가능하므로 그림에 맞는 같은 변을 명시한 별도 문항입니다. 공식 답안은 미확인입니다."});
