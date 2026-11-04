@@ -1,0 +1,21 @@
+'use strict';
+// Independent exact arithmetic for printed page 80, questions 41–48.
+const assert=require('node:assert/strict');
+const source=require('./source-5-2-fraction-page76-practice.js');
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+const f=(n,d=1)=>{const g=gcd(n,d);return [n/g,d/g]};
+const add=(a,b)=>f(a[0]*b[1]+b[0]*a[1],a[1]*b[1]);
+const mul=(a,b)=>f(a[0]*b[0],a[1]*b[1]);
+const eq=(a,n,d=1)=>assert.deepEqual(a,f(n,d));
+eq(mul(add(f(16,3),f(32,5)),f(5,2)),88,3);
+eq(mul(add(f(23,8),f(7,2)),f(11,6)),187,16);
+eq(mul(add(f(8,3),f(21,4)),f(28,5)),133,3);
+eq(mul(f(1080,120),f(255)),2295);
+eq(mul(f(22*24,2),f(11,24)),121);
+eq(mul(add(f(135,16),f(-7)),f(7)),161,16);
+const larger=mul(add(f(2,3),f(1,6)),f(1,2)),smaller=add(f(2,3),mul(f(-1),larger)),product=mul(larger,smaller);
+eq(product,5,48);assert.equal(product[0]*product[1],240);
+eq(mul(f(4,3),f(2,3)),8,9);
+assert.deepEqual(Array.from({length:8},(_,i)=>source.build(i+41).answer),['29 1/3km','11 11/16km','44 1/3km','2295m','121명','10 1/16','240','8/9배']);
+assert.match(source.build(42).solution,/한 시간에 서로/);
+console.log('PASS: p80 questions 41–48, independent exact arithmetic and hourly distance wording');
