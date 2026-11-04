@@ -118,3 +118,10 @@
   #problemView [data-source-item-id="5-2-u1-e4-example-1"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
   #problemView [data-source-item-id="5-2-u1-e4-example-1-original"] ul { margin: .3em 0 0; padding-left: 1.4em; }
 }
+
+@media print {
+  #problemView [data-source-item-id="5-2-u1-e4-example-2-original"],
+  #problemView [data-source-item-id="5-2-u1-e4-example-3-original"],
+  #problemView [data-source-item-id="5-2-u1-e4-example-2"],
+  #problemView [data-source-item-id="5-2-u1-e4-example-3"] { font-family:"Noto Serif KR", "Batang", serif; font-weight:400; }
+}

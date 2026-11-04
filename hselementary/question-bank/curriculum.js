@@ -4032,6 +4032,20 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
     }
   }
 
+  {
+    const unit=semesters.find(s=>s.id==="5-2")?.units.find(u=>u.id==="5-2-u1");
+    const group=unit?.subunits.find(g=>g.name==="어림한 수의 범위 · 개념탐구 4 및 예제 4-1–4-3");
+    const rows=[
+      ["5-2-u1-e4-example-2-original","두 몫을 어림한 자연수의 범위 · 원문","예제 4-2 원문","source52RoundedRangeExample42Original"],
+      ["5-2-u1-e4-example-3-original","합과 차를 어림한 큰 수의 범위 · 원문","예제 4-3 원문","source52RoundedRangeExample43Original"]
+    ];
+    if (group) for (const [id,name,sourceItemLabel,generatorKey] of rows) {
+      if (group.types.some(t=>t.id===id)) continue;
+      const typeNumber=Math.max(0,...unit.subunits.flatMap(g=>g.types.map(t=>Number(t.typeNumber)||0)))+1;
+      group.types.push({id,number:group.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceItemLabel,sourceSection:"example",sourceTier:"advanced",sourcePdfPage:8,alternateSourcePdfPage:5,sourcePrintedPage:10,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,reviewReason:"원문 조건을 대조하고 양 끝의 포함 여부와 가능한 범위를 독립 검산했습니다. 출판사 공식 정답은 미확인입니다.",generatorKey,generationMode:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:false,answerVisualRequired:false,answerVisualStatus:"not-required",implementationStatus:"fixed-verified-pool"});
+    }
+  }
+
   // 생성기에서 원문 수치 대신 창작 변형을 내는 유형을 구분한다.
   {
     const variantIds = new Set([
