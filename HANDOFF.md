@@ -1248,3 +1248,9 @@ Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. S
 - 웹에서 MAA 과거 report 메뉴의 2016 AMC 8 ID 63과 LIVE 2016 원본 답안 페이지를 확인했으나 MAA ReportViewer 본문/전국 학년표는 확보하지 못했다. 발견된 Bard 2016 집단은 35명 행사 표본이며, Ivy League 게시물도 준비반·지역 인원 통계라 전국 Grade mean으로 쓰지 않았다.
 - 2020도 Bard 행사 학년 평균만 찾았고, MAA 공개 전국 학년표는 회수하지 못했다. Think Academy 2차 안내의 전체 평균·컷오프는 학년별 Grade Report로 오인하지 않는다. 기존 coverage는 2016/2020 `no-grade-table-recovered`를 유지한다. 탐색 및 출처 판단은 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 남겼다.
 - 다음은 AMC 8 2016/2020의 MAA Grade Report 원문 본문 또는 독립적으로 확인 가능한 연도별 전체 점수분포를 검색하고, 확인되는 범위에서 해당 모집단만 별도 비교에 추가한다. 원본 모집단·연도·학년이 불명확한 학원 표본은 전국 규준으로 확대하지 않는다. 2013/14 문항응답 업데이트는 커밋 `627c10c6`; `raw_youtube.txt`는 미추적 사용자 파일로 그대로 둔다.
+
+### 2026-11-04 · AMC 8 2011 MAA 학년표 웹 재조사
+
+- 웹 검색으로 당시 MAA 결과 요약 보존본, 전국 `Grade_and_Gender_Average.pdf` 경로를 인용한 동시대 게시물, 2011 참가 규모를 제시한 Connecticut 교육 자료를 확인했다. 보고서의 전체 전국 학년표/PDF는 회수되지 않았다. 검색 색인상의 초기 25·24점 학년 건수는 잠정 부분 집계이므로 규준으로 추가하지 않았다.
+- 추가한 것은 커버리지 표의 직접 보고서 경로·회수 상태와 증거 문서의 출처·분모 주의사항이다. 한국 2011 학년 평균 n=899는 기존 별도 한국 모집단 CSV에 이미 있으며 전국 통계와 섞지 않는다. CT 자료의 총원 153,485와 99CEF 최종 전체 요약의 152,745가 달라 전국 학년 평균을 역산하지 않는다.
+- 변경 파일: `boarding-school-math/competition/historical-amc-grade/amc-grade-reference-coverage-by-paper.csv`, `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`. 다음은 2016·2020 및 MAA legacy report body의 공개 원자료 검색을 이어간다. `raw_youtube.txt` 미추적 원본은 보존·제외.

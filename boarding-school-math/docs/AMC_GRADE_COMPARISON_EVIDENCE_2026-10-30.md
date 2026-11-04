@@ -431,6 +431,13 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - MAA의 과거 AMC 보고 메뉴 캡처는 2010–2021 연도별 보고서 선택 ID와 날짜를 보존하지만 본문 데이터가 아니라 메뉴만 담고 있다. 해당 ID를 학년 통계로 해석하지 않는다. 현재 검색에서 2012–2020 한국 참가집단 Grade 5–8 빈도표 원문은 추가로 회수하지 못했다. 이 상태는 ‘미발견’이며 자료가 존재하지 않는다는 뜻은 아니다.
 - 공개된 현대 점수 보고와 과거 학년표를 구분한다. 2022년 이후 MAA 공개 요약 통계만으로 학년별 백분위·평균을 채우지 않는다. 과거 상세 breakdown이 더는 공개되지 않는다고 말하는 사용자 보고는 있으나, 보존된 MAA report body가 확보되기 전에는 이를 공식 정책 문구로 단정하지 않는다.
 
+## 2026-11-04 · AMC 8 2011 전국 학년표 및 참가집단 재검색
+
+- MAA의 [2011 AMC 8 결과 요약 페이지 보존본](https://web.archive.org/web/20111125032909/http://amc.maa.org/amc8/2011/stats/2011-amc8stats.shtml)은 11월 23일 현재 수치를 매일 갱신 중이라고 명시하고 Summary Report 이미지를 포함한다. 동시대 포럼 글은 MAA의 `Grade_and_Gender_Average.pdf` 전국 보고서 경로를 직접 인용하고, 검색 색인에는 25점과 24점의 학년별 건수가 남아 있다. 다만 원 PDF/전체 표 본문은 확인한 Wayback 및 검색 결과에서 회수되지 않았다. 해당 초기 행은 일부 점수만의 잠정 건수여서 완결된 분포·평균이나 최종 국가 규준으로 사용하지 않는다. [동시대 포럼의 원래 경로 인용](https://giftedissues.davidsongifted.org/bb/ubbthreads.php/topics/117085/3.html).
+- [2011 참가자 안내용 Connecticut 교육 자료](https://portal.ct.gov/-/media/SDE/CT-Core-Standards/2015/02/Connecting_Claims_Math_6-12_Participant_Guide.pdf)는 전체 응시자 153,485명, 7학년 50,433명, 8학년 72,648명을 서술한다. 이는 연도·학년별 참가 규모 정보이지 점수 통계가 아니다. 99CEF가 재수록한 최종 전체 보고 요약은 2011 전체를 152,745명으로 집계해 분모 차이가 있으므로, 학년별 점수 평균을 역산하거나 두 분모를 합치지 않는다.
+- [AMC Study의 2011 한국 참가 결과표](https://www.amcstudy.net/79)는 별도 한국 모집단 899명에서 5학년 이하 4명/7.25, 5학년 68명/13.16, 6학년 252명/11.67, 7학년 315명/13.92, 8학년 255명/14.20의 평균을 제공한다. 이 행은 이미 `amc8-korea-grade-means-2009-2011.csv`에 한국 참가집단으로 저장돼 있다. 2011 전국 Grade mean의 대체값으로 취급하지 않는다.
+- 결과: [`amc-grade-reference-coverage-by-paper.csv`](../competition/historical-amc-grade/amc-grade-reference-coverage-by-paper.csv)의 AMC 8 2011 상태는 `no-grade-table-recovered`로 유지했다. 해당 연도 전국 학년별 평균·분포를 회수하기 위한 MAA 원보고 경로와 분모 주의점을 보강했다.
+
 
 ### 2026-11-04 · 웹 검색: 2013 AMC 8 세계·대만 학년별 평균
 
