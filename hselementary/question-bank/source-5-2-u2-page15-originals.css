@@ -1,1 +1,3 @@
 @media print { .p15original-question, .p15original-solution { font-family: "Noto Serif KR", "Batang", serif; font-size: 10.5pt; } }
+.p15-mission-one-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.65em 1em; margin:.65em 0; }
+.p15-mission-one-grid > span { white-space:nowrap; }
