@@ -9,6 +9,30 @@
   // Totals and rounded means reconcile to the corresponding report tables.
   // These historical cohorts are not presented as current norms or validated ability levels.
   const distributions = Object.freeze({
+    2007: Object.freeze({
+      reportUrl: "https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards",
+      sourceUrl: "https://studylib.net/doc/8198991/2007-amc-8-summary-of-results-and-awards",
+      sourceStatus: "secondary-transcription-of-MAA-annual-report-grade-score-table-reconciled-to-counts-and-means",
+      population: "2007 AMC 8 MAA annual-report recorded-grade participants; domestic/international scope not distinguished in grade table",
+      gradeGroups: Object.freeze({
+        "4-5": Object.freeze({ participants: 3170, mean: 8.48, counts: Object.freeze([57, 27, 99, 166, 229, 286, 308, 311, 268, 253, 222, 210, 174, 144, 100, 78, 65, 53, 39, 31, 21, 11, 9, 5, 2, 2]) }),
+        "6": Object.freeze({ participants: 18687, mean: 8.19, counts: Object.freeze([72, 162, 433, 835, 1313, 1709, 2093, 2241, 2091, 1831, 1563, 1169, 904, 653, 451, 355, 242, 163, 125, 92, 65, 47, 31, 27, 13, 7]) }),
+        "7": Object.freeze({ participants: 49594, mean: 9.51, counts: Object.freeze([127, 185, 523, 1193, 2064, 3132, 4161, 4868, 5247, 5318, 4908, 4350, 3470, 2650, 2040, 1508, 1129, 804, 625, 400, 313, 233, 152, 104, 58, 32]) }),
+        "8": Object.freeze({ participants: 76907, mean: 10.60, counts: Object.freeze([158, 168, 423, 1061, 2111, 3227, 4633, 6008, 7182, 8006, 7973, 7435, 6323, 5268, 4192, 3058, 2488, 2019, 1569, 1175, 855, 667, 420, 253, 150, 85]) })
+      })
+    }),
+    2008: Object.freeze({
+      reportUrl: "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america",
+      sourceUrl: "https://studylib.net/doc/8198989/maa-amc-8---mathematical-association-of-america",
+      sourceStatus: "secondary-transcription-of-MAA-annual-report-grade-score-table-reconciled-to-counts-and-means",
+      population: "2008 AMC 8 MAA annual-report recorded-grade participants; domestic/international scope not distinguished in grade table",
+      gradeGroups: Object.freeze({
+        "4-5": Object.freeze({ participants: 2698, mean: 10.75, counts: Object.freeze([6, 4, 14, 51, 108, 140, 201, 237, 227, 241, 199, 198, 183, 164, 132, 133, 107, 95, 69, 48, 46, 35, 38, 14, 7, 1]) }),
+        "6": Object.freeze({ participants: 19726, mean: 9.88, counts: Object.freeze([46, 18, 94, 279, 589, 1141, 1542, 2073, 2224, 2219, 2035, 1765, 1430, 1062, 787, 598, 489, 329, 271, 219, 159, 142, 88, 62, 40, 25]) }),
+        "7": Object.freeze({ participants: 48889, mean: 11.18, counts: Object.freeze([88, 26, 134, 360, 870, 1629, 2673, 3617, 4569, 5063, 4975, 4737, 4092, 3400, 2729, 2203, 1766, 1425, 1179, 926, 774, 574, 439, 355, 196, 90]) }),
+        "8": Object.freeze({ participants: 75002, mean: 12.07, counts: Object.freeze([99, 39, 119, 344, 915, 1855, 3101, 4421, 5587, 6515, 7309, 7191, 6534, 5828, 4978, 4229, 3354, 2809, 2395, 1986, 1572, 1284, 1028, 813, 480, 217]) })
+      })
+    }),
     2009: Object.freeze({
       reportUrl: "https://pdfcoffee.com/maa-amc-8-25-annual-pdf-free.html",
       sourceUrl: "https://www.321ww.org/archiver/tid-4605419.html",

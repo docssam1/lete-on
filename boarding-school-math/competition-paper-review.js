@@ -903,6 +903,8 @@
       setText("amc8-global-grade-score-summary", `${globalGradeScore.year} AMC 8 · ${globalGradeScore.gradeLabel} · ${globalGradeScore.score}/25점 · 해당 점수 ${globalGradeScore.participantsAtScore.toLocaleString("en-US")}명 · 학년 표본 ${globalGradeScore.gradeParticipants.toLocaleString("en-US")}명`);
       setText("amc8-global-grade-score-value", `점수보다 낮은 응시자 ${globalGradeScore.strictlyLowerShare.toFixed(2)}% · ${globalGradeScore.strictlyLowerCount.toLocaleString("en-US")}/${globalGradeScore.gradeParticipants.toLocaleString("en-US")}명`);
       const globalScoreNote = {
+        2007: "2007 MAA 연례 보고서 Table 7의 기록 학년별 점수 분포입니다. 4–5학년은 원자료의 묶음입니다. MAA 원본 보고서의 웹 보관 사본에서 전사했으며 현재 규준이 아닙니다.",
+        2008: "2008 MAA 연례 보고서 Table 7의 기록 학년별 점수 분포입니다. 4–5학년은 원자료의 묶음입니다. MAA 원본 보고서의 웹 보관 사본에서 전사했으며 현재 규준이 아닙니다.",
         2009: "2009년 MAA 연례 보고서에 제시된 전체 응시학교의 기록 학년별 점수 분포입니다. 4–5학년은 원자료의 묶음입니다.",
         2019: "2019 MAA Overall 성적 보고서 이미지의 학년별 점수 빈도입니다. Grade 5 이하는 원자료에서 한 그룹으로 묶인 표본이며, Grade 6–8은 각각 따로 보고됐습니다. 학년 미기록 표본은 학년 비교에서 제외했으며, 그룹별 표본 수와 가중 평균을 보고서 요약과 대조했습니다.",
         2022: "2022 MAA Overall 점수×학년 보고서 이미지의 전사 자료입니다. Grade 5 이하는 원자료의 묶음이고 Grade 6–8은 각각 따로 보고됐습니다. 학년 미기재 표본은 비교에서 제외했습니다. 그룹별 합계와 점수 0–25의 전체 빈도 합을 이미지와 대조했고, 학년 평균은 별도 MAA Overall 평균표와 소수 둘째 자리까지 일치하는지 확인했습니다. 이미지는 Think Matrix 재게시본입니다."
