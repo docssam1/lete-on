@@ -1,3 +1,10 @@
+### 2026-11-05 · 2006 AMC 10/12 response tables recovered
+
+- Added MAA 57th annual report item-response tables for 2006 AMC 10A, 12A, and 12B to the runtime reference, raw CSV, and year/form coverage manifest. Source PDF is the Internet Archive copy of the MAA-authored annual report; all 75 answer markers were cross-checked against LIVE keys.
+- 10A Q9 and 12B Q18 response shares do not sum to 100% (90.98% and 109.00%); retained source values but excluded those questions from response comparison. 12B respondent count is printed `xxx,xxx` in Table X; manifest/runtime use 50,147 from Table VI. The 10B table in this report is explicitly 2005 and remains unassigned to 2006.
+- Static validation still required before commit: check the CSV/runtime values, exclusions, response counts, manifest uniqueness and `git diff --check`. `raw_youtube.txt` is user-owned and remains unstaged. No tests, push, deployment, or Drive sync.
+- Next: continue web search for year-matched MAA/national AMC 10/12 response tables, starting with the 2009 gap; keep venue/school samples and misdated tables separate.
+
 ### 2026-11-05 · MAA AMC 10/12 점수분포 연도별 원문 교차확인
 
 - 웹 검색 후 MAA K–12 EduView 공개 보고서에서 2022–2025 AMC 10/12 A/B 16개 회차의 점수분포 행을 확인했다. 전체 점수선, 평균·표준편차, 학생/학교 수와 회차별 원문 URL을 `boarding-school-math/competition/historical-amc-grade/amc10-12-score-distribution-2022-2025-maa.csv`에 정리했다.
