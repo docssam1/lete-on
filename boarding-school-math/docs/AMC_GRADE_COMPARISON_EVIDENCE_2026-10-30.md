@@ -758,9 +758,9 @@ Web search located the MAA-authored 56th Annual report and its preserved Interne
 
 Sources: [preserved MAA report PDF](https://web.archive.org/web/20081031153754id_/http://www.unl.edu/amc/d-publication/d1-pubarchive/2004-5pub/2005-HSsummary.pdf), [searchable copy of the MAA-authored report](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions), and [year-by-year AMC historical mean table](https://uploads.strikinglycdn.com/files/8d7768ae-a5da-4b71-bb83-958231edc445/12446545885.pdf).
 
-## 2026-11-05 웹 검색: 2005 AMC 8 전체 점수분포 표 발견, 반영 보류
+## 2026-11-05 웹 검색: 2005 AMC 8 전체 점수분포 표 연결
 
-- MAA 작성 2006 AMC 8 Summary의 Table 6 `AMC 8 score comparison`은 2005·2006년 전체 응시집단의 점수 0–25별 응시자 수를 싣는다. 2005 숫자는 [보고서 재게시본의 표 본문](https://www.scribd.com/document/618492772/2006-Amc-8-Summary)에서 확인했고, 26개 빈도 합은 Table 1의 2005 answer forms received 143,428명과 일치한다.
-- 단, 빈도 가중평균은 9.8451점으로 Table 1/2에 기록된 평균 9.835와 0.0101점 차이가 난다. 먼저 표 이미지의 숫자를 Apple Vision/OCR과 눈으로 대조하고, 원본 페이지·다른 MAA 표본 정의를 확인할 때까지 점수분포 CSV와 런타임 비교기에 넣지 않는다. 보고된 9.835를 빈도에 맞추려고 숫자를 임의 수정하지 않는다.
-- 이 표가 검증되면 비교 가능한 것은 2005년 전체 응시 코호트 점수 위치뿐이다. 학년별 점수분포는 Table 6에 없으며, 기존 2005 기록 학년별 평균과 전체 코호트 빈도를 같은 지표로 합치지 않는다. MAA 보고서는 AMC 8에 확립된 규준이 없다고 명시한다.
-- 교차 출처: [2006 MAA 보고서의 전체 평균·학년 평균·응시자 수](https://www.scribd.com/document/618492772/2006-Amc-8-Summary), [MAA Wisconsin Section의 2005 전국 평균 9.835 언급](https://sections.maa.org/wisconsin/news/MAAWINewsFall06.pdf).
+- MAA 작성 2006 AMC 8 Summary의 Table 6 `AMC 8 score comparison`은 2005·2006년 전체 응시집단의 점수 0–25별 인원 수를 싣는다. 2005 숫자는 searchable report text에서 확인했고, 26개 빈도 합은 Table 1의 answer forms received 143,428명과 일치한다. 인쇄 p.160.
+- 빈도 가중평균 9.8451은 Table 1/2의 보고 평균 9.835보다 0.0101점 높다. 임의로 셀을 고치지 않고 빈도표와 보고 평균을 따로 연결했다. 점수 위치는 빈도표 분모를, 평균 비교는 MAA 보고 평균을 사용하며 paper-review 결과에 출처 차이를 고지한다. 표의 image scan을 확보하지 못해 Apple Vision OCR 시각 검수는 하지 않았으며, 데이터 상태는 web-indexed text transcription이다.
+- 새 `amc8-2005-overall-score-counts.csv`와 연동 로직은 전체 응시 코호트 비교만 지원한다. Table 6에는 학년별 점수 빈도가 없으므로 이를 기존 2005 recorded-grade means와 합치지 않는다. MAA 보고서는 AMC 8에 확립된 규준이 없다고 설명하므로, 해당 표시도 공식 percentile·학년 등급이 아니다.
+- 출처: [2006 MAA report, Scribd](https://www.scribd.com/document/618492772/2006-Amc-8-Summary), [대체 검색 텍스트, StudyLib](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary), [MAA Wisconsin Section newsletter](https://sections.maa.org/wisconsin/news/MAAWINewsFall06.pdf).

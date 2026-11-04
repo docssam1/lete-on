@@ -1768,8 +1768,8 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 99CEF 안내는 해당 기관이 발급하는 중국어 성적표에 Taiwan 지역 평균·점수 구간이 포함된다고 설명한다. 지역 모집단 자료는 전체/global 및 미국·캐나다 표와 구분해야 한다. 새 웹 검색에서도 2021–2025 AMC10/12 공개 학년별 global 표는 회수하지 못해 coverage CSV의 `no-grade-table-recovered` 상태를 유지했다.
 - 근거: [99CEF 2025 award notice](https://www.99cef.org.tw/12784/), [99CEF score report scope FAQ](https://www.99cef.org.tw/maa-amc/). 기존 런타임 점수값 변경은 없으며, 최신 AMC 10A 컷은 앞선 커밋 `469bdc709`에서 MAA 원문과 일치하도록 수정됐다.
 
-## 2026-11-05 웹 검색 이어서: 2005 AMC 8 전체 점수표 이상치 보류
+## 2026-11-05 웹 검색: 2005 AMC 8 점수 빈도 연결
 
-- 웹에서 MAA 작성 2006 AMC 8 보고서 Table 6의 2005 전체 응시자 0–25점 빈도를 찾았다. 26개 빈도의 합 143,428명은 보고서 Table 1과 일치하지만 빈도 가중평균은 9.8451이고, MAA의 Table 1/2·Wisconsin Section 재인용 전국 평균은 9.835다.
-- `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 원문 링크와 보류 사유를 기록했다. 점수 빈도는 임의 수정하지 않았고 제품 데이터로 아직 반영하지 않았다. 다음에는 원 보고서 인쇄 페이지 이미지를 Apple Vision과 시각 확인으로 대조하고, 평균/표본 정의 차이를 해결한 뒤에만 전체 코호트 비교기에 추가한다.
-- 이번 turn에는 코드/데이터 런타임 변경 없음. `raw_youtube.txt`는 미추적 사용자 파일로 그대로 보존. Push·배포·Drive 동기화 없음.
+- MAA 작성 2006 AMC 8 Summary의 Table 6(인쇄 p.160)을 searchable report text에서 회수했다. 2005년 0–25점 26개 빈도를 새 `boarding-school-math/competition/historical-amc-grade/amc8-2005-overall-score-counts.csv`에 기록했다. 합계 143,428명, 점수 20+ 2,548명, 만점 77명으로 Table 1과 일치한다. 빈도 가중평균 9.8451은 Table 1의 9.835와 0.0101점 다르므로 숫자를 수정하지 않고 화면에 분리 고지한다. 점수 위치는 빈도표로, 평균은 보고서 요약으로 표시한다.
+- `amc8-overall-cohort-reference.js`, paper review 결과 문구, 전체 코호트 README와 조사 노트를 갱신했다. source status는 MAA 원보고서의 제3자 rehost에서 온 web-indexed transcription이며 인쇄 이미지 Apple Vision 대조는 아직 안 됐다. 2005 학년별 점수분포는 복구된 것이 아니며 기존 grade mean과 별개다.
+- 검색 출처: [Scribd의 MAA 2006 보고서 본문](https://www.scribd.com/document/618492772/2006-Amc-8-Summary), [StudyLib 대체 본문](https://studylib.net/doc/28486602/618492772-2006-amc-8-summary). 수동 합계·가중평균 계산과 브라우저 로직의 샘플 조회를 확인하고 `git diff --check`를 실행한다. `raw_youtube.txt`는 보존. Push·배포·Drive 동기화 없음.

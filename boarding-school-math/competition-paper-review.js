@@ -876,7 +876,9 @@
       const meanComparison = difference === 0 ? "전체 응시자 평균과 같은 점수" : `전체 응시자 평균보다 ${Math.abs(difference).toFixed(2)}점 ${difference > 0 ? "높아요" : "낮아요"}`;
       const scorePosition = overallCohort.strictlyLowerShare === null ? "" : ` · 당시 ${overallCohort.population === "Global" ? "세계" : "해당 모집단"} 응시자 중 이 점수보다 낮은 점수 ${overallCohort.strictlyLowerShare.toFixed(2)}% (동점 제외, 보고서 빈도로 계산)`;
       setText("amc8-overall-cohort-result", `${meanComparison}${scorePosition}`);
-      if (overallCohort.year === 2012) {
+      if (overallCohort.year === 2005) {
+        setText("amc8-overall-cohort-note", `2005년은 MAA 2006 연례 보고서 Table 6의 점수별 빈도표를 연결했습니다. 빈도 합계는 Table 1 참가자 수 ${overallCohort.participants.toLocaleString("en-US")}명과 일치합니다. 다만 이 빈도로 계산한 평균은 9.845점이고, Table 1에 적힌 평균은 9.835점으로 약 0.01점 차이가 있습니다. 그래서 점수 위치는 표의 빈도 합계 기준으로, 평균 비교는 보고서 기재 평균 기준으로 따로 표시합니다. 역사적 전체 응시자 비교이며 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. `);
+      } else if (overallCohort.year === 2012) {
         setText("amc8-overall-cohort-note", "2012년은 99CEF의 당시 상세 보고서(세계 151,117명, 평균 10.64점)와 점수별 빈도를 사용합니다. 99CEF의 2019년 회고표에는 150,360명·평균 10.66점이 기재되어 있어 이 보고서와 수치가 다릅니다. 서로 섞거나 조정하지 않고, 이 비교는 연결된 2012년 보고서 값 그대로 표시합니다. 점수보다 낮은 응시자 비율은 표의 점수 빈도로 계산한 역사적 위치이며, 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. ");
       } else if (overallCohort.year === 2013) {
         setText("amc8-overall-cohort-note", "2013년은 99CEF 당시 상세 보고서의 Global 점수별 빈도(n=149,709)와 평균 10.70점을 사용합니다. 점수보다 낮은 응시자 비율은 동점을 제외해 해당 빈도표에서 계산한 역사적 위치이며, 공식 percentile·학년 순위·현재 규준·실력 등급이 아닙니다. 대만 코호트는 별도 기록으로 보존합니다. ");

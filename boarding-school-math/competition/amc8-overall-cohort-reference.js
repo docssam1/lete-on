@@ -8,7 +8,7 @@
   // Whole-cohort comparison only. Population labels follow the cited source.
   const sourceUrl = "https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf";
   const rows = Object.freeze({
-    2005: ["Global", 143428, 77, 2548, 9.84], 2006: ["Global", 147210, 289, 4428, 10.14],
+    2005: ["Global", 143428, 77, 2548, 9.835, "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary"], 2006: ["Global", 147210, 289, 4428, 10.14],
     2007: ["Global", 150618, 129, 3593, 9.87], 2008: ["Global", 148731, 329, 8513, 11.45],
     2009: ["Global", 150733, 163, 3450, 10.28], 2010: ["Global", 153211, 499, 5849, 9.98],
     2011: ["Global", 152745, 284, 6709, 10.76], 2012: ["Global", 151117, 213, 6445, 10.64],
@@ -20,6 +20,10 @@
     // MAA Wisconsin Section reports the U.S. mean, but not the participant count or score-frequency totals.
     2020: ["United States", null, null, null, 10.01, "https://sections.maa.org/wisconsin/news/MAAWINewsFall21v2.pdf"]
   });
+  // MAA's 2006 report Table 6 prints every 2005 score count; its weighted mean (9.8451)
+  // differs from Table 1's reported 9.835, so expose count-based position with a visible caveat.
+  const amc8_2005_score_counts = Object.freeze([385,425,1341,3112,5511,8123,11017,12938,13915,14519,13907,13103,11080,9085,7168,5357,3847,2762,1926,1359,959,657,414,257,184,77]);
+  const amc8_2005_source_url = "https://studylib.net/doc/28486602/618492772-2006-amc-8-summary";
   // The contemporary 99CEF 2012 report includes a complete Global score-count table.
   // Keep its distinct source population/results instead of blending in the later retrospective table.
   const amc8_2012_global_score_counts = Object.freeze([335,203,729,1876,3925,6726,10132,13235,15288,15435,14904,13459,11043,8924,7432,6012,4866,4075,3302,2771,2136,1674,1148,760,514,213]);
@@ -48,7 +52,8 @@
     const points = Number(score);
     if (!values || !Number.isInteger(points) || points < 0 || points > 25) return null;
     const selectedYear = Number(year);
-    const scoreCountData = selectedYear === 2012 ? amc8_2012_global_score_counts
+    const scoreCountData = selectedYear === 2005 ? amc8_2005_score_counts
+      : selectedYear === 2012 ? amc8_2012_global_score_counts
       : selectedYear === 2013 ? amc8_2013_global_score_counts
       : selectedYear === 2014 ? amc8_2014_global_score_counts
       : selectedYear === 2015 ? amc8_2015_global_score_counts
@@ -63,7 +68,8 @@
     return Object.freeze({ year: selectedYear, population: values[0], participants: values[1], perfectScores: values[2],
       scoreAtLeast20: values[3], meanScore: values[4], learnerScore: points, differenceFromMean: points - values[4],
       strictlyLowerShare: strictlyLowerShare, distributionParticipants: distributionParticipants, scoreAtLearner: scoreCountData ? scoreCountData[points] : null,
-      sourceUrl: selectedYear === 2012 ? amc8_2012_source_url
+      sourceUrl: selectedYear === 2005 ? amc8_2005_source_url
+        : selectedYear === 2012 ? amc8_2012_source_url
         : selectedYear === 2013 ? amc8_2013_source_url
         : selectedYear === 2014 ? amc8_2014_source_url
         : selectedYear === 2015 ? amc8_2015_source_url
