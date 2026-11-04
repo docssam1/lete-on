@@ -242,6 +242,22 @@
       hint: "두 원의 둘레를 각각 2πr로 나타내고 큰 쪽에서 작은 쪽을 빼요.",
       solution: ["반지름 7cm인 원의 둘레는 2π × 7 = 14πcm입니다.", "반지름 4cm인 원의 둘레는 2π × 4 = 8πcm입니다.", "둘레의 차는 14π − 8π = 6πcm입니다."],
       connection: "두 원의 반지름이 모두 3배가 되면 둘레의 차는 몇 배가 되나요?"
+    },
+    {
+      id: "amc8-g7-practice-coordinate-rotation-01", domain: "geometry", sourceConcepts: ["transformation", "coordinate-geometry"], standard: "기하·공간", focus: "원점을 중심으로 한 회전 좌표 읽기", stage: "유형",
+      prompt: "점 (2, −3)을 원점을 중심으로 반시계 방향으로 90° 회전했습니다. 회전한 점의 좌표는 무엇인가요?",
+      choices: ["(−3, −2)", "(−2, 3)", "(3, 2)", "(3, −2)", "(−3, 2)"], answer: 2,
+      hint: "반시계 방향 90° 회전은 (x, y)를 (−y, x)로 바꾸어요.",
+      solution: ["회전 규칙은 (x, y) → (−y, x)입니다.", "(2, −3)을 대입하면 (−(−3), 2)입니다.", "따라서 회전한 점은 (3, 2)입니다."],
+      connection: "같은 점을 시계 방향으로 90° 회전하면 좌표가 어떻게 되나요?"
+    },
+    {
+      id: "amc8-g7-practice-permutation-01", domain: "counting", sourceConcepts: ["permutations", "arrangements-with-restrictions"], standard: "경우의 수·확률", focus: "서로 다른 세 글자를 순서 있게 고르기", stage: "개념 연결",
+      prompt: "A, B, C, D 네 글자 중 서로 다른 세 글자를 골라 순서 있게 나열하는 방법은 모두 몇 가지인가요?",
+      choices: ["12가지", "18가지", "24가지", "36가지", "64가지"], answer: 2,
+      hint: "첫째 자리는 4가지, 둘째 자리는 남은 3가지, 셋째 자리는 남은 2가지예요.",
+      solution: ["첫째 자리에 올 글자는 4가지입니다.", "둘째 자리는 남은 글자 중 3가지, 셋째 자리는 남은 글자 중 2가지입니다.", "곱의 법칙으로 4 × 3 × 2 = 24가지입니다."],
+      connection: "순서를 무시하고 세 글자만 고른다면 왜 같은 세 글자를 여러 번 세게 되나요?"
     }
   ];
 

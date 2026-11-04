@@ -1919,3 +1919,10 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 커버리지 집계: AMC 8 987/1,025 (96.3%), AMC 10 1,205/1,300 (92.7%), AMC 12 2,633/3,110 (84.7%), AIME 995/1,065 (93.4%). bank 문항 수는 각각 47, 41, 48, 42개다. 한 원본 문항의 공개 개념 태그 중 하나 이상이 bank와 겹치는지를 센 수치다.
 - 이어서 남는 높은 빈도 태그: AMC 8 transformation·permutations·telescoping; AMC 10 systematic-listing·dice-probability·difference-of-squares·recursion; AMC 12 volume·logical-deduction·tangent-line·perfect-square; AIME complementary-counting·volume·tangent-line·greatest-common-divisor. 해당 개념으로 계속 확장한다.
 - 수정: AMC 8 extension과 페이지 캐시 키, AMC 10/12/AIME bank, historical AMC README, 이 인수인계. 새 태그를 원본 인벤토리와 대조하고 풀이·정답을 직접 검산했다. `git diff --check` 실행; 테스트는 실행하지 않는다. `raw_youtube.txt` 보호; 로컬 커밋만, push·배포·Drive 동기화 없음.
+
+### 2026-11-05 · 경시 원본 태그 연결 추가 보완
+
+- AMC 8 좌표 회전·순열, AMC 10 체계적 목록·두 주사위 확률, AMC 12 원기둥/원뿔 부피·참거짓 논리, AIME 이진 수열의 여집합 세기·최대공약수 조건 순서쌍 문항을 추가했다. 모두 지필드 새 연습이다.
+- 커버리지: AMC 8 990/1,025 (96.6%), AMC 10 1,217/1,300 (93.6%), AMC 12 2,681/3,110 (86.2%), AIME 1,006/1,065 (94.5%). bank 49/43/50/44문항. 전체 사용 태그가 해당 대회의 원본 문항 태그 인벤토리에 존재하는 것도 확인했다.
+- 다음 고빈도 공백: AMC 8 telescoping·cryptarithm·dice-probability; AMC 10 difference-of-squares·recursion·right-triangle; AMC 12 tangent-line·perfect-square·money; AIME volume·tangent-line·equilateral-triangle·chord. 계속 보완한다.
+- 수정: AMC 8/10/12/AIME 연습 bank, AMC 8·10·12·AIME 연습 페이지 캐시 키, historical AMC README, 인수인계. `git diff --check`와 원본 태그/문항 중첩 재집계 실행; 별도 테스트는 실행하지 않는다. 새 문항 답과 풀이를 직접 계산해 확인했다. `raw_youtube.txt` 보호; 로컬 커밋만, push·배포·Drive 동기화 없음.
