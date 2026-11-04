@@ -1,0 +1,2 @@
+.u2p20-figure { display:block; width:100%; max-width:340px; height:auto; margin:.4em auto; }
+@media print { .p20original-question, .p20original-solution { font-family:"Noto Serif KR", "Batang", serif; font-size:10.5pt; } .u2p20-figure { max-height:45mm; } }
