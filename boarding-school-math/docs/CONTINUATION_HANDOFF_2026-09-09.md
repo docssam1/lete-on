@@ -1012,3 +1012,9 @@ MAA 역사 통계의 2022 Internet Archive 화면은 2009–2021별 Grade Report
 MAA 56th Annual report의 [Doczz 검색 가능 보관본](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions)에서 2002–2005 recorded grade별 참여·평균 Table II와 Table I의 전체 폼 참가 수·평균이 함께 있음을 확인했다. 오래된 UNL PDF의 [Archive-It 보존 주소](https://wayback.archive-it.org/all/20081031153754/http://www.unl.edu/amc/d-publication/d1-pubarchive/2004-5pub/2005-HSsummary.pdf)도 찾았으나 직접 열기는 세션 확인에서 멈췄다. Doczz HTML 텍스트는 다단 표 열 순서를 섞으므로 2003/04 수치를 추정하지 않았다. MAA 작성 2010 High School Summary의 Scribd 사본은 2007–2010 폼별 학년 인원/평균을 제공하지만 현재 데이터와 중복된다. 근거와 제한을 `docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 상세 기록했다.
 
 다음 작업: 56th report의 인쇄 8쪽을 시각적으로 읽을 수 있는 허용된 사본을 더 찾거나, 원표 이미지 확보 후 Apple Vision OCR과 육안 확인을 병행한다. 행·열을 확인하고 grade-count 합계 및 weighted-mean 대조가 완료될 때까지 2003/04 grade baseline은 만들지 않는다. Branch `codex/boarding-g7-nsa-mac-20261017`; latest before this entry `03102e5f7`. Changed files are documentation only. `raw_youtube.txt` stays untracked and untouched. No remote, Drive, Claude API, paid call, test, or deployment.
+
+### 2026-11-05 AMC 인쇄 보고서 아카이브 공개 범위 확인
+
+[Ian Calaway의 AMC archive 안내](https://sites.google.com/view/ian-calaway/amc-archive/)는 1980–2010 고교 연례보고서의 디지털 아카이브 보유를 밝히지만, 웹 페이지에서 공개 연결된 파일은 1968년 보고서와 1990년 서문 발췌뿐이다. 검색에 나타난 연도별 `Yearbooks` Drive 폴더의 2004.pdf는 Apple Vision으로 앞부분을 확인한 결과 지역 학교 연감이었다. AMC 자료가 아니므로 제외했다. 저자의 [논문](https://icalaway.github.io/job-market-paper/Calaway_JMP.pdf)은 1980–2010을 종이 보고서에서 수집했고 상위 점수자 명단에 학년이 포함된다고 설명하지만, 이 명단이나 개인 데이터는 공개 재사용 가능한 학년 규준이 아니다. 2003/04 학년 셀은 시각 검수 가능한 연례보고서 표가 확보될 때까지 비워둔다. 상세 내용은 `docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`에 추가.
+
+이번 확인에서 `/tmp/AMC_Annual_Summary_2004_Calaway.pdf`는 검색 결과와 무관한 지역 고등학교 연감으로 확인되어 제품 데이터에 사용하지 않았다. PDF 검수 SKILL은 읽고 사용했으며 별도 산출 PDF는 만들지 않았다. Repo에는 두 인수인계 문서만 추가 편집한다. Branch `codex/boarding-g7-nsa-mac-20261017`, previous commit `1bf430aba`. `raw_youtube.txt`는 그대로 둔다.

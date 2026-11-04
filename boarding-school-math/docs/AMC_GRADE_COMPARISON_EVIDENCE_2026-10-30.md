@@ -734,3 +734,10 @@ This web extraction identifies the table and years but interleaves its multi-col
 - Doczz의 검색 가능한 텍스트는 Table II의 여러 폼·학년 열을 행 단위 텍스트로 풀면서 인접 열 값을 섞는다. 보고서가 표의 존재와 해당 연도를 증명하지만, 2003/04 grade-by-form 셀을 신뢰성 있게 특정하기에 충분하지 않아 숫자는 추가하지 않았다. 인쇄 페이지 이미지/PDF를 확보한 뒤 표 구조를 눈으로 확인하고, 기존 원칙대로 학년 표본 합계 및 가중 평균을 전체 폼 통계와 대조해야 한다.
 - 별도로 [MAA 2010 High School Summary 재게시본](https://www.scribd.com/document/51428451/2010-HS-summary)의 표 I–II를 확인했다. 이는 AMC 12 2007–2010 및 AMC 10 2007–2010의 학년별 인원·평균과 전체 통계를 포함하지만, 해당 연도는 기존 `amc10-12-grade-means-2005-2011.csv`의 범위와 중복된다. 새 행은 넣지 않았다. 이 사본은 2003/04 셀을 복구하는 데 도움이 되지 않는다.
 - 이번 검색으로 MAA 작성 보고서에서 학년별 참여·평균 표가 실제로 실렸다는 원문 근거와 Archive-It의 보존 경로를 확인했다. 2003/04 정확한 전사 및 출시 가능한 비교 기준은 여전히 미완료다.
+
+## 2026-11-05 웹 검색: 인쇄 연례보고서 아카이브 확인
+
+- [Ian Calaway의 AMC 보고서 아카이브 안내](https://sites.google.com/view/ian-calaway/amc-archive/)는 고교 AMC Summary of Results and Awards의 1980–2010 인쇄본을 수집·디지털화했고, 이후 디지털 결과를 2011–2022까지 정리했다고 밝힌다. 이 페이지에서 공개로 연결된 파일은 1968년 보고서 한 권과 1990년 서문 발췌 두 개뿐이었다. 2005 보고서 인쇄면을 바로 볼 수 있는 공개 링크는 찾지 못했다.
+- 검색에서 `Yearbooks`라는 이름의 공개 Google Drive 폴더가 연도별 PDF를 제공하는 것처럼 나타났으나, 2004 파일을 내려받아 첫 페이지와 앞부분 10쪽을 Apple Vision으로 읽어 보니 AMC 통계 보고서가 아니라 지역 고등학교의 학생 연감이었다. AMC 원자료가 아니므로 데이터 출처에서 제외했고 저장소에는 넣지 않았다.
+- 저자의 [Early Mentors 논문](https://icalaway.github.io/job-market-paper/Calaway_JMP.pdf)은 1980–2010 결과를 종이 연례보고서에서 직접 수집하고 2011–2020은 AMC 디지털 아카이브에서 수집했으며, 고득점 학생 명단에 학년이 포함된다고 설명한다. 이 설명은 보고서 아카이브의 범위를 뒷받침하지만, 원자료 데이터셋의 공개나 재사용 허가를 뜻하지 않는다. 개인 점수·명단은 비교 기준 데이터로 가져오지 않는다.
+- 현재 확인된 가장 유용한 출처는 계속 [MAA 작성 56th Annual 보고서의 Doczz 텍스트 보관본](https://doczz.net/doc/1401277/56th-annual---american-mathematics-competitions)이다. 이 보관본에서 표의 존재와 공식 전체 평균은 확인되지만 multi-column 학년 셀의 원본 시각 구조는 확인 불가다. 2003/04 숫자는 계속 보류한다.
