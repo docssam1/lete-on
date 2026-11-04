@@ -3709,6 +3709,13 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
   }
 
   const source52Unit2Application = source52Unit2?.subunits.find(subunit => subunit.name === "분수의 곱셈 응용 문제");
+  if (source52Unit2Application) for (const [n,name] of [[1,"네 분수를 한 번씩 써서 가장 큰 값 만들기 · 원문"],[2,"세 기약 진분수의 곱과 세 자리 수 · 원문"],[3,"두 기약 진분수의 곱에서 두 수의 합 · 원문"],[4,"곱의 결과가 자연수인 빈칸 수의 합 · 원문"],[5,"다섯 등분한 수직선 위 가의 위치 · 원문"],[6,"세 곱을 자연수로 만드는 분수 중 9에 가까운 수 · 원문"]]) {
+    const id=`5-2-u2-e4-mission-${n}-original`;
+    if (source52Unit2Application.types.some(type=>type.id===id)) continue;
+    const typeNumber=Math.max(0,...source52Unit2.subunits.flatMap(group=>group.types.map(type=>Number(type.typeNumber)||0)))+1;
+    source52Unit2Application.types.push({id,number:source52Unit2Application.types.length+1,typeNumber,name,label:name,difficultyBand:0,sourceItemId:id,sourceParentItemId:`5-2-u2-e4-mission-${n}`,sourceItemLabel:`Mission ${n} 원문`,sourceSection:"mission",sourceTier:"advanced",sourcePdfPage:17,alternateSourcePdfPage:16,sourcePrintedPage:21,sourceVerified:true,publisherKeyVerified:false,reviewLocked:false,generatorKey:`source52U2Page21OriginalMission${n}`,generationMode:"fixed-verified-pool",implementationStatus:"fixed-verified-pool",verifiedVariantCount:1,verifiedVariantTarget:1,automaticGrading:n>=2&&n<=4,answerVisualRequired:false,answerVisualStatus:"not-required",reviewReason:"원본 조건과 풀이를 독립 검산했습니다. 공식 답안은 미확인입니다."});
+  }
+
   if (source52Unit2Application) for (const [suffix,name] of [["exploration","세 분수의 곱을 모두 자연수로 만드는 가장 작은 분수 · 원문"],["example-1","꽃밭 넓이와 가로로 세로의 분자·분모 구하기 · 원문"],["example-2","여덟 등분한 직사각형과 수직선 · 원문"],["example-3","곱이 20보다 작은 자연수가 되는 기약분수 · 원문"],["example-4","곱이 1/2인 기약분수 두 개의 쌍 · 원문"]]) {
     const id=`5-2-u2-e4-${suffix}-original`;
     if (source52Unit2Application.types.some(type=>type.id===id)) continue;
