@@ -1599,3 +1599,12 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - `amc-historical-grade-reference.js`의 비교 API는 프로그램·연도·시험형·선택 기록의 source URL/status와 모집단 범위를 맞춰 그룹만 반환한다. `<=8`, `4–5` 등의 원자료 그룹을 그대로 표시하고 unknown을 제외한다. 결과 화면은 점수 평균과 표본 수를 비교표에 넣고, 기존 응시 점수 대 해당 학년 평균을 유지한다.
 - 확인: Node REPL에서 238개 정확 학년 레코드 provenance/group assertions 통과. 로컬 브라우저에서 2009 AMC 8과 2011 AMC 10A 결과표 행을 실제 렌더링해 확인. `node --test`는 쉘 Node 없음으로 미실행. 브라우저 자동 테스트 사양에 2009 AMC 8·2011 AMC 10A 표를 추가했다.
 - 이전 커밋 `46156641b`; 이번 변경은 별도 로컬 커밋 예정. `raw_youtube.txt` untouched. No push/deployment/Drive sync.
+
+## 2026-11-04 · 웹 검색으로 경시 원본 연도와 시험명 정리
+
+- LIVE의 연도별 AMC/AIME 아카이브에 연결된 266개 회차에서 인쇄 시험지, 답안, 풀이 경로가 모두 존재하는지 확인했다. 원문은 저장소로 복사하지 않고 출처 링크와 연도별 메타데이터로 연결한다.
+- 검색으로 MAA의 명칭 전환 자료를 확인했다. AMC 8 전신 AJHSME는 1985–1998, AMC 8은 1999부터다. 1985–1998 `amc8` archive titles를 `AJHSME`로 바로잡고, 진단 화면의 해당 연도 표기도 원시험명으로 출력한다. 경로, 연도별 답 입력과 채점은 바꾸지 않았다.
+- 지속 문서: `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`. 자료 권리는 MAA의 공식 교육 공유 안내와 수익 목적 복제 제한을 함께 기록했다.
+- 확인: 266개 행과 필수 링크 4종, 14개 AJHSME 제목, JS syntax 경로와 `git diff --check`. `raw_youtube.txt` 보존·제외. 로컬 변경만; push·배포·Drive 동기화 없음.
+
+출처: [MAA FOCUS 1999 명칭 전환](https://old.maa.org/sites/default/files/pdf/pubs/focus/past_issues/FOCUS_19_6.pdf), [MAA FOCUS 2004 AHSME 개편](https://old.maa.org/sites/default/files/pdf/pubs/mar04.pdf), [LIVE 연도별 공식 허가 아카이브](https://live.poshenloh.com/past-contests), [MAA 2024 AMC 8 풀이 PDF의 이용 안내](https://981338.fs1.hubspotusercontent-na1.net/hubfs/981338/Blogs/AMC%208%20Problems%20and%20Solutions/AMC%208%20Solutions%202024.pdf).

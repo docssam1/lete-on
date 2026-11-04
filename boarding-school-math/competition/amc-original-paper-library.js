@@ -50,7 +50,10 @@
           : Object.freeze({ correct: 6, wrong: 0, blank: 1.5, max: 150, label: `${archive.title} 원본 점수` });
       return Object.freeze({ title: archive.title, itemCount: 25, durationMinutes: 75, scoring: scoring, rawOnly: false, formatNote: "해당 연도 공식 배점으로 계산합니다." });
     }
-    if (programId === "amc8") return Object.freeze({ title: archive.title, itemCount: 25, durationMinutes: 40, scoring: Object.freeze({ correct: 1, wrong: 0, blank: 0, max: 25, label: "AMC 8 정답 수" }), rawOnly: false, formatNote: "정답 수로 표시합니다." });
+    if (programId === "amc8") {
+      const title = selectedYear < 1999 ? "AJHSME" : archive.title;
+      return Object.freeze({ title: title, itemCount: 25, durationMinutes: 40, scoring: Object.freeze({ correct: 1, wrong: 0, blank: 0, max: 25, label: `${title} 정답 수` }), rawOnly: false, formatNote: "정답 수로 표시합니다." });
+    }
     if (programId === "aime") return Object.freeze({ title: archive.title, itemCount: 15, durationMinutes: 180, scoring: Object.freeze({ correct: 1, wrong: 0, blank: 0, max: 15, label: "AIME 원본 정답 수" }), rawOnly: false, formatNote: "정답 수로 표시합니다." });
     return null;
   }
