@@ -917,16 +917,24 @@
     const reviewList = $("report-review-items-list");
     reviewList.replaceChildren();
     const itemResponseReference = window.GFIELDAMC8ItemResponseReference;
-    const cohortForYear = selectedFormat().id === "amc8" && itemResponseReference
-      ? itemResponseReference.responseFor(selectedYear, 1, "", grade)
-      : null;
+    const amc10And12ItemResponseReference = window.GFIELDAMC10_12ItemResponseReference;
+    const responseForItem = function (question, answer) {
+      if (selectedFormat().id === "amc8" && itemResponseReference) {
+        return itemResponseReference.responseFor(selectedYear, question, answer, grade);
+      }
+      if (["amc10", "amc12"].includes(selectedFormat().id) && amc10And12ItemResponseReference) {
+        return amc10And12ItemResponseReference.responseFor(selectedFormat().id, selectedYear, $("archive-form").value || params.get("form") || "", question, answer);
+      }
+      return null;
+    };
+    const cohortForYear = responseForItem(1, "");
     const showItemResponses = Boolean(cohortForYear);
     const isSchoolCohort = Boolean(cohortForYear && /school cohort/i.test(cohortForYear.sourceStatus));
     $("report-review-items-note").textContent = showItemResponses
       ? `직접 표시한 오답과 미응답입니다. ${cohortForYear.population}의 문항별 응답 비율을 참고로 보여 줍니다. ${isSchoolCohort ? "특정 학교 응시집단 표본이며 전국 학년 기준이 아닙니다." : "당시 해당 집단의 기록이며 학년별 비교나 현재 기준은 아닙니다."}`
       : "직접 표시한 오답과 미응답입니다. 각 문항의 원본 개념·힌트·해설을 확인한 뒤 지필드 유사 유형으로 이어갈 수 있어요.";
     result.reviewItems.forEach(function (item) {
-      const itemReference = showItemResponses ? itemResponseReference.responseFor(selectedYear, item.number, item.answer, grade) : null;
+      const itemReference = showItemResponses ? responseForItem(item.number, item.answer) : null;
       const row = document.createElement("li");
       const domain = domains.find(function (entry) { return entry.id === item.domain; });
       const reason = reasons.find(function (entry) { return entry.id === item.reason; });
@@ -944,8 +952,8 @@
         const commonDistractor = itemReference.mostCommonDistractor;
         const acceptedAnswerNote = itemReference.acceptedAnswers.length > 1 ? ` · 인정 답 ${itemReference.acceptedAnswers.join("·")}` : "";
         population.textContent = item.answer
-            ? `${selectedYear} 응답 집계 · 정답률 ${itemReference.correctResponsePercent.toFixed(2)}% · ${item.answer} 선택 ${itemReference.selectedResponsePercent.toFixed(2)}%${acceptedAnswerNote}`
-            : `${selectedYear} 응답 집계 · 정답 ${itemReference.acceptedAnswers.join("·")} · 정답률 ${itemReference.correctResponsePercent.toFixed(2)}% · 최다 오답 ${commonDistractor.answer} ${commonDistractor.percent.toFixed(2)}%`;
+            ? `${itemReference.program ? `${selectedYear} ${selectedFormat().title} ${itemReference.form}` : selectedYear} 응답 집계 · 정답률 ${itemReference.correctResponsePercent.toFixed(2)}% · ${item.answer} 선택 ${itemReference.selectedResponsePercent.toFixed(2)}%${acceptedAnswerNote}`
+            : `${itemReference.program ? `${selectedYear} ${selectedFormat().title} ${itemReference.form}` : selectedYear} 응답 집계 · 정답 ${itemReference.acceptedAnswers.join("·")} · 정답률 ${itemReference.correctResponsePercent.toFixed(2)}% · 최다 오답 ${commonDistractor.answer} ${commonDistractor.percent.toFixed(2)}%`;
         row.append(population);
       }
       if (paperLibrary && ["amc8", "amc10", "amc12", "aime"].includes(selectedFormat().id)) {
@@ -970,7 +978,7 @@
         sourceLink.target = "_blank";
         sourceLink.rel = "noopener noreferrer";
         sourceLink.textContent = "문항 응답 집계 출처 ↗";
-        sourceLink.setAttribute("aria-label", `${selectedYear} AMC 8 ${item.number}번 문항 응답 집계 출처 열기`);
+        sourceLink.setAttribute("aria-label", `${selectedYear} ${selectedFormat().title}${selectedForm ? ` ${selectedForm}` : ""} ${item.number}번 문항 응답 집계 출처 열기`);
         row.append(sourceLink);
       }
       reviewList.append(row);

@@ -116,6 +116,60 @@
 23,C,9.34,15.86,26.67,21.22,12.41,14.29,0.21
 24,D,15.51,19.80,22.67,17.37,9.91,14.59,0.14
 25,B,12.43,24.12,13.61,18.86,13.08,17.82,0.08`.trim();
+  // 2018 99CEF report, US/Canada item-response table (page 8 of the archived PDF).
+  const raw2018 = `
+1,A,72.05,14.50,3.95,4.18,4.23,1.07,0.02
+2,D,4.65,4.46,12.89,65.60,10.78,1.57,0.03
+3,D,9.77,7.14,7.06,49.15,25.94,0.81,0.12
+4,C,7.84,3.04,83.95,2.05,2.38,0.72,0.03
+5,E,15.08,28.74,13.58,16.23,21.81,4.49,0.08
+6,C,11.78,7.09,59.33,15.46,4.53,1.78,0.05
+7,B,9.36,61.30,10.14,8.04,8.85,2.24,0.07
+8,C,8.13,28.64,43.12,11.21,6.83,2.01,0.06
+9,B,8.66,36.63,12.52,20.47,18.92,2.67,0.13
+10,C,17.22,13.92,36.88,13.38,13.96,4.57,0.07
+11,C,26.66,14.32,28.49,9.49,17.16,3.79,0.09
+12,B,20.65,27.82,13.14,22.99,12.04,3.24,0.11
+13,A,19.34,21.43,21.34,15.83,15.82,6.06,0.16
+14,D,21.88,19.54,15.81,22.43,13.77,6.39,0.17
+15,D,6.88,10.84,16.13,23.56,34.85,7.48,0.26
+16,C,22.18,26.31,27.28,10.73,4.74,8.65,0.10
+17,A,21.19,21.32,20.10,18.97,8.81,9.46,0.15
+18,E,10.10,18.41,22.65,23.90,14.75,9.96,0.23
+19,C,14.14,25.49,27.74,14.43,8.90,9.08,0.22
+20,A,24.54,13.86,20.06,16.91,11.65,12.83,0.15
+21,E,12.59,18.40,24.30,19.43,10.77,14.27,0.23
+22,B,13.86,24.73,22.17,15.44,8.74,14.81,0.26
+23,D,17.90,18.34,19.15,16.72,12.52,15.03,0.34
+24,C,13.21,16.46,18.29,20.51,14.01,17.37,0.14
+25,E,11.21,16.13,20.80,19.49,13.82,18.46,0.10`.trim();
+  // 2019 99CEF analysis report, US/Canada item-response table (printed page 8).
+  const raw2019 = `
+1,D,5.81,3.38,5.70,80.52,4.00,0.58,0.01
+2,E,2.68,5.65,5.20,4.25,81.14,1.00,0.09
+3,E,18.91,4.71,7.48,5.02,62.26,1.49,0.13
+4,D,5.04,8.39,16.90,38.05,26.35,5.19,0.08
+5,B,36.09,52.04,5.18,2.99,2.82,0.80,0.08
+6,C,17.49,14.79,42.05,15.81,6.85,2.93,0.08
+7,A,37.59,8.60,15.84,19.20,16.10,2.57,0.11
+8,E,5.11,5.33,5.96,33.48,47.83,2.14,0.14
+9,B,5.76,36.34,43.96,8.97,2.45,2.47,0.05
+10,B,15.35,39.53,18.75,16.19,6.43,3.69,0.06
+11,D,18.83,9.11,25.49,39.47,3.89,3.12,0.09
+12,A,73.24,4.84,6.97,6.79,5.82,2.21,0.13
+13,A,25.79,13.41,16.81,13.62,24.43,5.75,0.19
+14,C,21.36,16.27,38.05,10.35,9.05,4.80,0.12
+15,B,8.18,35.11,16.01,18.07,15.30,7.20,0.13
+16,D,20.71,20.73,20.29,20.13,6.65,11.37,0.12
+17,B,13.32,28.01,26.18,12.68,9.71,9.89,0.19
+18,C,17.75,18.82,22.45,13.02,17.32,10.35,0.29
+19,C,11.51,12.38,29.03,17.82,15.54,13.49,0.23
+20,D,11.68,24.26,25.52,20.16,6.46,11.74,0.19
+21,E,12.06,17.18,20.67,17.56,17.19,15.04,0.29
+22,E,21.62,14.38,18.76,14.79,14.84,15.28,0.32
+23,B,11.10,23.60,20.34,15.07,13.07,16.39,0.42
+24,B,13.18,18.49,20.83,19.05,10.62,17.65,0.18
+25,C,12.44,20.17,20.20,19.05,11.24,16.78,0.12`.trim();
   // MAA-generated school report, Mathematics Ed Clinic, 2013 AMC 8.
   // Preserve the report's two exact-grade cohorts separately; these are not national norms.
   const raw2013Grade7 = `
@@ -202,6 +256,8 @@
     2010: Object.freeze({ raw: raw2010, respondentCount: 153211, population: "2010 AMC 8 MAA-reported student response cohort", sourceUrl: "https://www.amcstudy.net/71", sourceStatus: "secondary-image-transcription-apple-vision-reviewed" }),
     2011: Object.freeze({ raw: raw2011, respondentCount: 899, population: "2011 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/79", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),
     2017: Object.freeze({ raw: raw2017, respondentCount: 81386, population: "2017 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20180324183042id_/http://www.99cef.org.tw/userfiles/2017AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
+    2018: Object.freeze({ raw: raw2018, respondentCount: 98389, population: "2018 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20210121195421id_/https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
+    2019: Object.freeze({ raw: raw2019, respondentCount: 94634, population: "2019 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20210121214419id_/https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
     2013: Object.freeze({ byGrade: Object.freeze({
       7: Object.freeze({ raw: raw2013Grade7, respondentCount: 63, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 7 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" }),
       8: Object.freeze({ raw: raw2013Grade8, respondentCount: 55, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 8 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" })

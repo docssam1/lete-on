@@ -375,3 +375,20 @@ MAA 페이지 자체의 설명 문구는 `Contest Score Grade Report with Percen
 - 페이지의 보고서 설명은 AMC 8/10/12 모두 `Contest Score Grade Report with Percentile`을 점수별·학년별 인원과 누적 백분위가 있는 표로, `Grade and Gender Average`를 학년·성별 요약표로 명시한다. 따라서 해당 연도별 보고서 선택 경로가 보존된 것은 확인했으나, 값 자체는 아직 회수한 것이 아니다.
 - [`maa-historical-report-menu-2022-02-04.csv`](../competition/historical-amc-grade/maa-historical-report-menu-2022-02-04.csv)에 보고서 ID·레이블·날짜·해당 앱 회차를 정리했다. 266개 원본 회차 coverage manifest에는 보관 메뉴 ID와 본문 상태를 추가했다. 이 정적 캡처에서는 SQL ReportViewer 보고서 본문이 불러와지지 않아 67개 연결 원본의 본문 상태를 모두 `menu-entry-preserved; ReportViewer body not preserved`로 표시한다. 메뉴 ID는 조사 경로이지 학년 통계 근거가 아니며, 수치·학년 규준·백분위로 노출하지 않는다.
 - 다음 조사 방향: 보존 메뉴 ID를 이용해 MAA 원본 보고서/PDF나 다른 동시대 MAA 보고서 사본을 연도·회차 단위로 찾는다. 원본 보고서 본문이나 독립 대조 가능한 전체 전사가 확인되는 경우에만 점수별 빈도/학년 평균 CSV를 추가한다.
+
+### 2026-11-04 웹 검색 추가: 2018·2019 AMC 8 학년 평균 및 문항 응답률
+
+- 99CEF의 [2018 AMC 8 분석 보고서 보존본](https://web.archive.org/web/20210121195421id_/https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf) 2쪽 통계표에서 US/Canada Grade 5는 3,157명·7.89/25, Grade 6은 18,649명·7.95, Grade 8은 43,114명·8.89로 확인했다. Grade 7 인원은 30,617명이며 평균 칸은 원문에 `8350`으로 찍혀 소수점이 없다. 숫자를 보정하지 않고 Grade 7 평균 조회에서 제외했다. `<=4` 879명·7.49, unknown 1,973명·7.34를 포함한 US/Canada 집계 인원은 98,389명으로 보고서 합계와 맞는다. 대만 행은 분리 보존했다.
+- 같은 2018 보고서 8쪽 US/Canada 응답률 표의 25문항 A–E 선택, 무응답, 판독 불명 백분율을 옮겼다. 별표 정답 25개는 LIVE 답안키와 대조했다. 이 문항 분포는 해당 연도 전체 US/Canada 집단 자료이며 학년별 정답률로 읽지 않는다.
+- 99CEF의 [2019 AMC 8 분석 보고서 보존본](https://web.archive.org/web/20210121214419id_/https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf) 3쪽 표에는 2019-12-25 기준 US/Canada Grade 5 3,499명·8.50, Grade 6 18,247명·8.50, Grade 7 30,332명·9.35, Grade 8 40,175명·10.06이 실려 있다. `<=4` 896명·8.40과 unknown 1,485명·9.43을 보존하고 exact Grade 5–8만 조회에 연결했다. 대만은 별도 집단으로 보존했다.
+- 같은 2019 보고서 8쪽 US/Canada 문항 응답표 전체를 `amc8-2019-uscan-item-response.csv`와 답안 참조 파일에 전사했다. 별표 키는 [LIVE의 2019 answer key](https://live.poshenloh.com/past-contests/amc8/2019/answers) 25개와 모두 일치했다. 페이지의 표본은 94,634명이다.
+- 모집단 수가 출처마다 다르다. 99CEF 2019 보고서는 US/Canada 응답 표본 94,634명, 기존 MAA Overall 점수별 빈도표는 기록 행 합 94,620명, 별도 점수요약 재게시물은 총 94,675명을 싣는다. 이 숫자는 서로 다른 보고 산출물에 그대로 보존하고 하나로 합치지 않았다.
+- 점검: 2018·2019 원문 PDF 통계표와 문항 응답표를 화면 렌더링으로 확인하고 문항별 별표를 LIVE 정답키와 대조했다. 문항 응답 행 25개, 선택지·무응답·판독불명 비율 합계, 학년별 인원 합계를 확인했다. 2018 Grade 7은 원문 값 표기 때문에 조회 차단을 확인했다. 자동화 테스트는 실행하지 않았다.
+
+### 2026-11-04 웹 검색 추가: 2020 AMC 10A·12A 학년 평균 및 문항 응답률
+
+- 웹 검색에서 [99CEF 2020 AMC 10A/12A 분석 보고서](https://www.99cef.org.tw/userfiles/2020AMC10A12AReport.pdf)를 회수했다. 검색 색인에는 2020 보고서 표의 회차·전체 모집단·평균이 나타나며, Internet Archive 보존본으로 내려받아 Apple Vision OCR을 보조로 사용하고 표 이미지를 직접 확인했다. 99CEF 원 URL은 현재 요청 시 다른 연도 PDF로 리디렉션될 수 있어, 데이터는 고정된 [2021-01-21 보존 PDF](https://web.archive.org/web/20210121212429id_/https://www.99cef.org.tw/userfiles/2020AMC10A12AReport.pdf)를 출처로 연결했다.
+- 보고서 인쇄 5쪽 AMC 10A 통계표는 미국·캐나다 모집단 n=36,010, Taiwan n=5,113으로 분리한다. 미국·캐나다 학년별 원문은 Grade 10 14,816명·63.52/150, Grade 9 13,371명·62.09, Grade 8 3,866명·72.43, Grade 7 2,071명·70.17, Grade 6 이하 1,147명·67.05, 미기입 739명·58.91이다. 앱 비교에는 원문이 별도 행으로 표시한 exact Grade 7–10만 연결했다.
+- 인쇄 14쪽 AMC 12A 통계표는 미국·캐나다 n=27,416, Taiwan n=4,715로 구분한다. 미국·캐나다 exact Grade 12–5 표본은 각각 20/61.73, 10,075/61.83, 14,677/60.81, 1,582/62.94, 473/66.37, 100/73.17, 32/69.61, 7/74.36이다(인원/평균 점수). 5·6학년 행도 원문에서 개별 학년으로 인쇄되어 묶음으로 합치지 않았다. 소표본은 숨기거나 확장해 해석하지 않고 표본 수와 함께 노출한다.
+- 같은 보고서 인쇄 10쪽(AMC 10A)과 19쪽(AMC 12A)의 US/Canada 표에서 25문항별 A–E 선택률·무응답·판독불명률을 전사했다. 별표로 표시된 50개 키를 [LIVE 2020 AMC 10A 답안표](https://live.poshenloh.com/past-contests/amc10/2020A/answers)와 [LIVE 2020 AMC 12A 답안표](https://live.poshenloh.com/past-contests/amc12/2020A/answers) 전 문항과 대조했다. `amc10-12-2020-item-response.csv` 원자료와 브라우저 참조 모듈을 만들고 결과 화면에서는 해당 폼과 US/Canada 전체 응답 코호트만 보여준다. 이 분포는 학년별 정답률이 아니다.
+- 검수: 2020 AMC 10A/12A 각 25개 응답 행을 화면 데이터와 대조하고 A–E·무응답·판독불명 합계를 확인했다. 99CEF 학년별 인원 합계도 보고서 전체와 일치한다. AMC 10A Grade 7 n=2,071 / 평균 70.17, AMC 12A Grade 10 n=14,677 / 평균 60.81을 각각 정확한 연도·폼의 브라우저 결과에서 확인했다. 응답 입력·채점 흐름에서 10A Q1(E 정답)과 12A Q1(C 정답) 모두 대조되었고, 결과에 해당 폼의 응답률·해당 Grade 평균·공식 원본 풀이 링크가 표시됐다. 테스트 답은 임시 브라우저 화면에만 입력했고 저장하지 않았다. 출처 링크의 보조 설명이 대회 이름을 정확히 표시하는지 고쳤다. 시험 원문 문구를 새 데이터 파일에 복사하지 않았다.
