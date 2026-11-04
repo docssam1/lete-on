@@ -24,3 +24,9 @@ MAA 공식 풀이 PDF는 교사의 교육 목적 공유를 허용하는 안내�
 ## 2026–27 현행 AIME 안내 재확인
 
 2026-11-04 웹 검색에서 [MAA AIME 안내](https://maa.org/maa-invitational-competitions/)와 [2027 시험장 변경 공지](https://maa.org/news/maa-announces-official-testing-centers-for-the-2027-american-invitational-mathematics-examination/)를 확인했다. 미국·캐나다의 2026–27 점수 기준은 AMC 10 100점, AMC 12 85점이며, 나이 등 별도 자격을 충족해야 한다. 2027년부터 AIME는 Pearson 시험장에서 시행하고 13세 미만 학생은 응시할 수 없다. MAA는 2027 USAJMO/USAMO 선발이 주로 AIME 점수를 기반으로 하며 AMC 점수는 선발 요소가 아니라고 안내한다. 이 새 기준은 과거 연도별 AIME 컷과 다른 시기·용도다. 국제 응시자는 국가·지역의 International Group Leader 안내를 확인해야 한다.
+
+## 2023 AMC 8 공식 인쇄본·풀이 링크 보강 (2026-11-04)
+
+MAA의 [2023 AMC 8 공개 페이지](https://maa.org/resource/sample-competition-2023-amc-8/)에서 [공식 문제 PDF](https://maa.org/wp-content/uploads/2024/08/2023-Problems-AMC8-PDF.pdf)와 [공식 풀이 PDF](https://maa.org/wp-content/uploads/2024/08/2023_AMC8_Solutions_.pdf)를 따라가 내용을 확인했다. 문제 PDF는 25문항, 40분, 2023년 1월 시행 표기와 MAA 저작권 고지를 포함한다. 연도별 원본 카탈로그에서 이 두 경로를 직접 연결하고, 답안표는 기존 LIVE 답안 링크를 유지했다. 원문은 저장소로 복사하지 않았다.
+
+2023년 전체 응시자 평균 10.26 및 74,380명이라는 공개 검색 결과도 확인했으나 제3자 재게시본뿐이었고, 검색 결과의 다른 수치들과 출처 차이를 해소하지 못했다. 따라서 이번에는 해당 평균을 런타임 기준값으로 추가하지 않았다. 학년별 평균·점수분포도 확인하지 못했으므로 Grade 7 비교값이나 등급은 만들지 않는다. [MAA 공식 페이지](https://maa.org/resource/sample-competition-2023-amc-8/)는 문제와 풀이를 공개하며, 성적 규준표를 제공하지 않는다.

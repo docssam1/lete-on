@@ -1649,3 +1649,11 @@ AMC 8 2000 통계 공백을 위해 Internet Archive CDX에서 `amc.maa.org/amc8/
 - 99CEF의 [2011 AMC 8 Summary PDF](https://www.99cef.org.tw/userfiles/2011AMC8Summary.pdf)에서 `27th AMC8 2011` 세계 표를 회수했다: <=4 n=938 / 8.31, Grade 5 n=3,456 / 9.30, Grade 6 n=22,879 / 9.33, Grade 7 n=50,176 / 10.66, Grade 8 n=72,230 / 11.45. 이는 MAA 호스팅 원본이 아닌 국제 주관자 보고서로, 현재는 웹 색인의 PDF 표 텍스트에서 전사했다.
 - 등재 학년 표본은 149,679명, 전체 152,745명보다 3,066명 적다. 누락 학년을 보정하지 않았다. 전체 cohort 평균 10.76과 비교 가능한 과거 Grade 7 평균은 표시하되, 이를 학년별 점수 분포·백분위라고 부르지 않는다. 한국 AMC Study n=899 자료는 별도 모집단이다.
 - `amc8-grade-means-2011-99cef.csv`, `amc-historical-grade-reference.js`, 연도별 coverage CSV, README와 근거 문서를 갱신했다. Grade 4 이하 그룹은 그룹 그대로 두고 개별 학년 조회에 쓰지 않는다. 다음은 2012 이후의 빠진 공개 학년표 추적이다.
+
+## 2026-11-04 웹 검색: AMC 원본과 학년 규준 분리
+
+- MAA의 [2023 AMC 8 공식 공개 페이지](https://maa.org/resource/sample-competition-2023-amc-8/)에서 [문제 PDF](https://maa.org/wp-content/uploads/2024/08/2023-Problems-AMC8-PDF.pdf)와 [풀이 PDF](https://maa.org/wp-content/uploads/2024/08/2023_AMC8_Solutions_.pdf)를 직접 열어 시험 연도, 25문항·40분, 저작권/보안 안내를 확인했다. 연도별 출처 카탈로그의 2023 AMC 8 행을 이 공식 MAA 링크로 보강했고, 답안표는 기존 LIVE 링크를 유지했다. 원문은 복사하지 않았다.
+- 2023 AMC 8 전체 점수 요약은 제3자 재게시본에서 평균 10.26, n=74,380으로 검색되지만 다른 공개 요약값과 차이가 해소되지 않아 런타임 자료로 넣지 않았다. 공식 문제·풀이 페이지에는 학년별 점수표가 없다.
+- 2012 AMC 10/12 학년 평균 검색은 등록/교사용 매뉴얼과 시험 자료만 회수했고, 국가 단위 학년별 성적 표는 회수하지 못했다. 2016 AMC 8 Bard 결과는 지역 학원 35명 표본이며 학년별 n도 없어 전국 비교에서 제외했다.
+- 확인: 연도별 출처 카탈로그 266행 유지, 2023 AMC 8 다섯 링크 HTTPS 확인, CSV 파싱, diff whitespace 검사(카탈로그는 저장소의 CRLF 형식 예외 확인). raw_youtube.txt 그대로 미추적 보존; push·배포·Drive 동기화 없음.
+- 다음: 아직 미회수인 2012 이후 AMC 8 학년표와 AMC 10/12 연도별 통계를 출처별로 계속 검색한다. 평균만 발견되면 평균 지표에만, 학년 그룹의 표본과 모집단이 명시된 경우에만 학년 비교에 연결한다.
