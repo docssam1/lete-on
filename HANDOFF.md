@@ -1219,3 +1219,18 @@ Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. S
 웹에서 99CEF의 2013·2014 AMC 8 분석 보고서 원문을 찾아 Global·Taiwan의 Grade 5–8 평균·인원을 분리 전사했다. 원 CSV에는 두 모집단과 `<=4` 묶음값을 모두 보존하고, 복습 화면 lookup에는 Global 정확 Grade 5–8만 연결했다. 2013 Global 학년 행은 146,766명/전체 149,709명, 2014는 141,795명/전체 144,737명이며 각각 학년 미기재 2,943명과 2,942명을 할당하지 않았다. 대만 표본은 각 연도 전체와 합계가 일치한다.
 
 검증: 두 연도 각각 원 CSV 10행, 모집단별 인원 합계, runtime lookup Grade 5–8 4행, coverage CSV 266행을 정적 확인했고 `git diff --check` 통과. JavaScript 엔진 CLI가 이 실행 환경에 없어 실제 JS 실행은 미실시. 브라우저는 기존 localhost 경로에서 이 checkout을 제공하지 않았고, file URL은 브라우저 보안 정책이 차단해 화면 상호작용 검수는 보류. 현재 연도별 공개 AMC8 grade-mean lookup에는 2013–2014 빈칸이 채워졌고, 2015–2016은 표본에 근거한 전체 학년 보고서가 더 확보될 때까지 미등록으로 둔다. 변경은 로컬 커밋; push·배포·Drive 동기화 없음. `raw_youtube.txt`는 미추적 사용자 파일로 제외.
+
+
+### 2026-11-04 AMC 8 2015 연도 자료 추가
+
+추가 웹 검색에서 99CEF 2015 AMC 8 분석 보고서를 회수했다. Global·Taiwan 학년별 인원/평균을 모두 원 CSV에 남기고, Global Grade 5–8 평균만 해당 연도 lookup에 연결했다. Global 전체와 기록 학년 표 차이는 2,454명으로 명시한다. 보고서의 25문항 Global·Taiwan 선택률·공란·판독불가 비율도 별도 CSV로 보존했고, 정답 표식 25개를 LIVE 답안표와 대조했다. 화면에는 전체 Global 반응률만 제공한다.
+
+정적 검증: 2015 평균표 10행, 문항반응표 50행(두 모집단 × 25문항), Global 응답 lookup 25행, 퍼센트 합계 허용오차, 답안키 대조 및 coverage CSV 266행을 검사한다. 실제 브라우저 상호작용은 이 checkout의 localhost 경로를 확보하지 못해 계속 보류. 이 다음은 추가 AMC8 2016/이전 보고서 원문 검색과 2011–2020 MAA report-body 복구 탐색이다.
+
+
+### 2026-11-04 · AMC 8 2012/2015 웹 원자료 후속 반영
+
+- 검색으로 99CEF의 2012 상세 보고서와 2015 보고서를 다시 확인했다. 2012/2015 Global 정확 Grade 5–8 평균을 연도별 lookup에 넣고, Taiwan·묶음학년·unknown 행은 별도 CSV로 보존했다. 원본 LIVE 답안표에 각 연도 25개 정답을 대조했고 2012/2015 Global 문항 응답 자료를 lookup으로 연결했다. 2012의 Global·Taiwan 반응률 50행과 2015의 50행을 각각 CSV로 보관한다.
+- 2012 상세 보고서 전체(151,117/평균10.64)와 별도 연도표(150,360/10.66)는 서로 다른 보고 수치라 구분해 남겼다. coverage/근거 문서에 차이를 명시했다. 2016 검색에서 확인한 Bard 행사 표본(35명)은 전국 기준에 사용하지 않았다.
+- 검수: Node REPL에서 AMC 8 2012/2015 Grade 5–8 reference 8개를 로드하고 2012 Global, 2015 Grade 6/7 모두 Global 반응표을 확인했다. 2012/2015 Global 25개 answer key가 LIVE와 일치한다. 반응률 총합은 2012 Global과 2015 Global/Taiwan에서 100%±0.06 안에 든다. 2012 Taiwan Q12 text extraction은 95.01%로 합계 불일치해 미검증 표시했고 앱은 Global만 쓴다. `git -c core.whitespace=cr-at-eol diff --check` 통과. 웹 화면 브라우저는 현재 checkout을 제공하는 localhost 경로를 확인하지 못했으므로 UI 검수를 주장하지 않는다.
+- 작업 위치: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`, parent commit `ee14f04f4`. 로컬 변경 미커밋. `raw_youtube.txt` 사용자 원본 제외. push/deploy/Drive sync 없음. 다음은 정적 검수 후 추가 연도별 원문 검색(AMC 8 2016, 2011 및 MAA legacy report body)이다.

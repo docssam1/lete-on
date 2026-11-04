@@ -89,6 +89,61 @@
 23,D,13.57,21.25,23.03,19.69,16.24,6.23,0.00
 24,A,29.81,16.91,16.69,22.02,8.34,6.23,0.00
 25,A,40.04,12.90,17.69,13.90,9.79,5.67,0.00`.trim();
+  // 2012 99CEF report, Global response table; answer key checked against LIVE.
+  const raw2012 = `
+1,E,2.24,1.02,0.84,5.10,90.49,0.29,0.02
+2,B,4.96,66.34,8.94,3.98,14.95,0.79,0.03
+3,B,2.68,85.74,3.90,3.42,3.51,0.72,0.03
+4,C,4.86,14.79,64.67,12.37,2.70,0.55,0.05
+5,E,1.00,1.51,6.88,12.49,77.32,0.61,0.17
+6,E,9.79,27.40,10.74,11.53,38.70,1.75,0.09
+7,B,9.82,35.83,13.95,15.38,23.76,1.17,0.09
+8,D,7.92,3.45,14.62,27.34,45.52,1.02,0.14
+9,C,11.65,16.53,50.32,7.23,11.26,2.93,0.08
+10,D,15.68,13.94,16.50,33.14,18.85,1.82,0.08
+11,D,9.39,17.93,13.90,49.95,6.05,2.71,0.07
+12,A,28.21,23.68,12.15,13.06,19.52,3.28,0.09
+13,C,10.19,12.13,54.74,10.38,8.59,3.88,0.08
+14,B,14.66,56.67,7.02,6.67,11.55,3.29,0.13
+15,D,18.31,14.34,21.03,28.78,10.95,6.49,0.10
+16,C,7.20,13.88,30.22,14.70,29.17,4.66,0.16
+17,B,13.48,35.79,21.52,14.38,7.52,7.17,0.13
+18,A,21.02,18.35,22.56,16.34,12.17,9.43,0.13
+19,C,2.92,4.35,21.96,9.35,55.46,5.50,0.46
+20,B,21.13,43.54,10.78,9.76,7.56,7.12,0.10
+21,D,13.39,11.65,24.75,27.00,12.85,10.22,0.16
+22,D,14.33,23.35,22.88,17.77,10.47,10.94,0.23
+23,C,14.48,10.10,25.56,22.81,14.55,12.24,0.24
+24,A,32.04,12.54,22.47,11.74,8.61,12.44,0.14
+25,C,12.30,24.39,21.31,12.71,16.42,12.73,0.12`.trim();
+  // 2015 99CEF report, Global response table; LIVE answer key checked.
+  const raw2015 = `
+1,A,42.56,37.70,12.15,5.16,2.00,0.43,0.01
+2,D,1.85,11.81,4.68,74.94,5.68,1.02,0.03
+3,D,5.00,21.68,5.46,62.32,4.36,1.13,0.05
+4,E,8.45,4.32,6.82,16.62,62.80,0.87,0.13
+5,A,57.45,8.99,18.21,6.46,7.20,1.58,0.11
+6,B,8.15,38.92,7.65,35.52,6.34,3.38,0.03
+7,E,6.58,11.76,20.50,19.27,40.07,1.67,0.15
+8,D,15.61,21.75,25.75,26.46,6.91,3.48,0.05
+9,D,43.47,7.07,7.44,33.82,6.83,1.29,0.07
+10,B,14.16,27.52,26.23,14.47,11.47,6.10,0.06
+11,B,22.97,32.76,14.19,12.93,13.70,3.36,0.09
+12,C,10.12,49.34,18.96,13.50,6.53,1.47,0.08
+13,D,12.96,16.99,20.79,32.16,12.62,4.35,0.13
+14,D,20.03,12.47,22.15,32.17,9.07,3.94,0.16
+15,D,17.83,16.96,17.61,33.30,8.85,5.37,0.09
+16,B,24.80,11.01,13.25,8.55,36.43,5.80,0.16
+17,D,13.64,23.00,21.88,24.00,10.23,7.13,0.12
+18,B,14.07,32.11,22.90,13.32,8.31,9.17,0.12
+19,A,33.04,22.98,15.16,16.91,3.84,7.92,0.15
+20,D,15.75,17.08,20.25,23.16,13.06,10.53,0.16
+21,C,13.49,13.41,29.31,21.24,9.26,13.14,0.15
+22,C,10.87,25.81,26.15,17.09,6.64,13.24,0.20
+23,D,16.10,14.11,23.53,21.02,9.73,15.26,0.26
+24,B,16.90,24.29,20.10,13.65,8.11,16.83,0.13
+25,C,34.04,13.09,14.48,11.28,10.74,16.27,0.10
+`.trim();
   // 2017 99CEF analysis report table explicitly labels the response cohort 美加 (US and Canada).
   const raw2017 = `
 1,A,66.95,0.41,2.12,28.68,1.57,0.25,0.03
@@ -255,6 +310,7 @@
     2009: Object.freeze({ raw: raw2009, respondentCount: 741, population: "2009 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/43", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),
     2010: Object.freeze({ raw: raw2010, respondentCount: 153211, population: "2010 AMC 8 MAA-reported student response cohort", sourceUrl: "https://www.amcstudy.net/71", sourceStatus: "secondary-image-transcription-apple-vision-reviewed" }),
     2011: Object.freeze({ raw: raw2011, respondentCount: 899, population: "2011 AMC 8 South Korea reported participant cohort", sourceUrl: "https://www.amcstudy.net/79", sourceStatus: "secondary-html-transcription-of-MAA-result-table" }),
+    2012: Object.freeze({ raw: raw2012, respondentCount: 151117, population: "2012 AMC 8 global participant response cohort", sourceUrl: "https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; Global response cohort" }),
     2017: Object.freeze({ raw: raw2017, respondentCount: 81386, population: "2017 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20180324183042id_/http://www.99cef.org.tw/userfiles/2017AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
     2018: Object.freeze({ raw: raw2018, respondentCount: 98389, population: "2018 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20210121195421id_/https://www.99cef.org.tw/userfiles/2018AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
     2019: Object.freeze({ raw: raw2019, respondentCount: 94634, population: "2019 AMC 8 United States and Canada participant response cohort", sourceUrl: "https://web.archive.org/web/20210121214419id_/https://www.99cef.org.tw/userfiles/2019AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; US and Canada response cohort" }),
@@ -262,9 +318,7 @@
       7: Object.freeze({ raw: raw2013Grade7, respondentCount: 63, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 7 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" }),
       8: Object.freeze({ raw: raw2013Grade8, respondentCount: 55, population: "2013 AMC 8 Mathematics Ed Clinic reported Grade 8 school cohort", sourceUrl: "https://asiamathsalliance.com/amc8/results/MEC.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; school cohort, not national norm" })
     }) }),
-    2015: Object.freeze({ byGrade: Object.freeze({
-      7: Object.freeze({ raw: raw2015Grade7, respondentCount: 10, population: "2015 AMC 8 Singapore school reported Grade 7 cohort", sourceUrl: "https://asiamathsalliance.com/2015/amc8/03057F.pdf", sourceStatus: "MAA school report reproduced by Asia Maths Alliance; one Singapore school cohort, not national norm" })
-    }) })
+    2015: Object.freeze({ raw: raw2015, respondentCount: 149844, population: "2015 AMC 8 global participant response cohort", sourceUrl: "https://www.99cef.org.tw/userfiles/2015AMC8Report.pdf", sourceStatus: "99CEF AMC 8 analysis report; Global response cohort" })
   });
   function parseQuestions(raw, respondentCount) {
     return Object.freeze(raw.split("\n").map(function (line) {
@@ -294,7 +348,7 @@
   function responseFor(year, question, answer, grade) {
     const selectedYear = Number(year);
     const yearSource = sources[selectedYear];
-    const source = yearSource && yearSource.byGrade ? yearSource.byGrade[Number(grade)] : yearSource;
+    const source = yearSource && yearSource.byGrade && yearSource.byGrade[Number(grade)] || yearSource;
     if (!source || !source.raw) return null;
     const questions = source && source.raw ? parseQuestions(source.raw, source.respondentCount) : questionsByYear[selectedYear];
     if (!source || !Number.isInteger(Number(question)) || Number(question) < 1 || Number(question) > questions.length) return null;

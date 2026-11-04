@@ -444,3 +444,17 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - [99CEF의 2014 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2014AMC8Summary.pdf) 7쪽 종합통계표에서 Global과 Taiwan의 Grade 5–8 표본 수·평균을 확인했다. Global: Grade 5 n=3,441 평균 10.44, Grade 6 n=22,617 평균 10.60, Grade 7 n=46,697 평균 11.30, Grade 8 n=68,036 평균 11.98. Taiwan 값은 별도 모집단이며 섞지 않는다.
 - Global `Grade 4 and below`는 n=1,004 평균 9.67로 묶여 있어 개별 학년에 배정하지 않는다. 전체 n=144,737 중 기록된 학년 행 합은 141,795이며 차이 2,942명은 학년 미기재다. Taiwan 학년 행 합은 보고서 전체 n=9,199와 일치한다.
 - [`amc8-grade-means-2014-99cef.csv`](../competition/historical-amc-grade/amc8-grade-means-2014-99cef.csv)에 두 모집단 행을 모두 보존하고, 화면 lookup에는 Global 정확 Grade 5–8만 연결했다. 해당 연도 원본 결과·응시 학년이 일치할 때에만 과거 평균을 표시한다.
+
+### 2026-11-04 · 웹 검색: 2015 AMC 8 학년 평균·문항 반응표
+
+- [99CEF의 2015 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2015AMC8Report.pdf) 8쪽 표에서 Global Grade 5–8은 n=3,785/25,445/49,505/67,530, 평균 7.85/7.72/8.49/9.03이다. Taiwan 열도 별도 행으로 원 CSV에 보존했다. Grade 4 이하 묶음은 Global 1,125명/7.21점, Taiwan 26명/5.92점으로 개별 학년에 배정하지 않는다. Global 전체 149,844명 중 기재된 학년 행 합은 147,390명이라 2,454명은 학년 미기재다. Taiwan 학년 합은 보고서 전체 9,017명과 일치한다.
+- 같은 보고서 13–14쪽에서 Global·Taiwan의 25문항별 A–E 선택 비율, 공란, 판독불가 비율을 각각 회수해 [amc8-2015-global-taiwan-item-response.csv](../competition/historical-amc-grade/amc8-2015-global-taiwan-item-response.csv)에 저장했다. 정답 별표 25개는 [LIVE 2015 AMC 8 답안표](https://live.poshenloh.com/past-contests/amc8/2015/answers)와 전부 대조했다. 복습 화면은 전체 참가자 Global 반응률만 연결하며 Grade별 응답률이나 현재 규준으로 표시하지 않는다. Taiwan 표는 별도 원자료 행으로 보존한다.
+- 결과 lookup에는 Global exact Grade 5–8의 과거 평균을 같은 2015 AMC 8·응시 학년에서만 표시한다. 대회 점수·문항 응답과 학년 평균은 별도 지표다.
+
+
+### 2026-11-04 · Web search: 2012 AMC 8 detailed report recovered
+
+- [99CEF 2012 AMC 8 detailed analysis report](https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf) p.6 reports Global Grade 5–8 counts/means of 3,143/9.72, 20,279/9.73, 50,431/10.46, and 73,145/11.14. The grouped `<=4` row is 1,039/9.25; unknown grade is 3,080/9.36. The detailed report totals 151,117/10.64; Taiwan is a separate cohort.
+- The same report's Global 25-item answer-choice table is connected to the review lookup, and both Global/Taiwan tables are preserved in `amc8-2012-global-taiwan-item-response.csv`. Its 25 answer markers were checked against the [LIVE 2012 answer key](https://live.poshenloh.com/past-contests/amc8/2012/answers). The screen uses only the Global cohort. Taiwan Q12 in text extraction totals 95.01%; the source PDF URL currently returns 404, so that cell is flagged and excluded from app lookup rather than silently adjusted.
+- The 2019 report's retrospective annual-comparison table prints 2012 overall n=150,360 and mean 10.66, unlike the 2012 detailed report's own total (151,117/10.64). The grade and response lookup uses the detailed report only; the two report-specific figures are preserved separately and not merged or silently corrected.
+- Search results for 2016 included a Bard Math Circle report for 35 test takers. This local-event cohort was excluded from national comparisons. Continue searching for a complete 2016 report.

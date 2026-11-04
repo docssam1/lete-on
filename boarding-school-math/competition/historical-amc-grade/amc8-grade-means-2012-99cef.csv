@@ -1,0 +1,12 @@
+year,contest,population,grade_group,participants,mean_score,max_score,source_status,source_url,source_note
+2012,AMC8,Global,<=4,1039,9.25,25,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf,99CEF detailed report p.6; grouped grade <=4; global detailed report n=151117
+2012,AMC8,Global,5,3143,9.72,25,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf,99CEF detailed report p.6; exact grade as recorded; unknown grade 3080; global detailed report n=151117
+2012,AMC8,Global,6,20279,9.73,25,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf,99CEF detailed report p.6; exact grade as recorded; unknown grade 3080; global detailed report n=151117
+2012,AMC8,Global,7,50431,10.46,25,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf,99CEF detailed report p.6; exact grade as recorded; unknown grade 3080; global detailed report n=151117
+2012,AMC8,Global,8,73145,11.14,25,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf,99CEF detailed report p.6; exact grade as recorded; unknown grade 3080; global detailed report n=151117
+2012,AMC8,Global,unknown,3080,9.36,25,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf,99CEF detailed report p.6; unknown grade aggregate; global detailed report n=151117
+2012,AMC8,Taiwan,<=4,22,10.27,25,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf,99CEF detailed report p.6; grouped grade <=4; Taiwan separate from Global
+2012,AMC8,Taiwan,5,74,11.46,25,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf,99CEF detailed report p.6; exact grade as recorded; Taiwan separate from Global
+2012,AMC8,Taiwan,6,384,14.28,25,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf,99CEF detailed report p.6; exact grade as recorded; Taiwan separate from Global
+2012,AMC8,Taiwan,7,4319,14.61,25,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf,99CEF detailed report p.6; exact grade as recorded; Taiwan separate from Global
+2012,AMC8,Taiwan,8,7751,16.06,25,secondary-international-administrator-report,https://www.99cef.org.tw/userfiles/2012_AMC8_Report.pdf,99CEF detailed report p.6; exact grade as recorded; Taiwan separate from Global
