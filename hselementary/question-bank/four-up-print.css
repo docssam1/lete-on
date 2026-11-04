@@ -160,3 +160,8 @@
 @media print {
   #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-example-2-original"] svg { max-height:210px; }
 }
+
+@media print {
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-mission-5-original"] svg,
+  #problemView .print-page--four-up [data-source-item-id="5-2-u3-e5-mission-6-original"] svg { max-height:200px; }
+}
