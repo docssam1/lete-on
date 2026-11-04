@@ -2,6 +2,13 @@
 
 Updated: 2026-11-04 KST (Mac continuation; older release evidence retained below)
 
+## AMC/AIME 웹 자료 조사 업데이트 — 2026-11-04
+
+- 찾아낸 추가 자료: NeurIPS 2024 Easy2Hard-Bench 논문과 Hugging Face E2H-AMC 공개 데이터셋. 공식 MAA 보고서의 문항 난도와 AoPS 난도값을 함께 사용한다고 밝히지만, AMC 8 연도별 행 수가 25문항을 채우지 않는 회차가 많다. 1999–2022 중 2018만 25/25이며, AMC 10/12도 폼별 행 수가 크게 달라 전체 연도 자료로 쓰기 어렵다.
+- 제품 통계로 행을 가져오지 않았다. 일부 문항만 있는 자료를 전체 시험 통계나 학생 진단·등급 비교로 노출하지 않기 위해서다. 논문은 AIME 2012–2022 일부/전체 문항 데이터를 포함하지만 이를 응시자 반응률이나 연도별 점수 기준으로 보지 않는다. 데이터셋에는 시험 문항·답·풀이 텍스트도 있어 이 저장소에는 전사하지 않았다.
+- 기존 266회차 원본 카탈로그(연도/폼별 인쇄 시험지·답안·풀이 링크)는 계속 사용한다. 전체 응시자 또는 모집단이 명시된 연도별 통계만 별도 연결한다. 상세 행 수·출처·제한은 `boarding-school-math/docs/AMC_ARCHIVE_SOURCE_RESEARCH_2026-11-04.md`의 “공개 AMC/AIME 문항 난도 데이터셋의 연도별 완전성 확인” 절에 기록했다.
+- 다음 조사: 빠진 전체 문항 응답표나 정확한 연도별 점수 분포를 직접 제공하는 MAA 연례 보고서/보존본을 연도·시험형별로 계속 찾는다. 현 MAA legacy reports endpoint는 이 환경에서 Cloudflare 521을 반환했다. 이 검색 결과 자체는 지필드 등급 비교나 경시 진단 타당도 검증이 아니다.
+
 ## Current Mac status — 2026-11-04
 
 - Verified worktree: `/Users/docssam/Developer/GFIELD/continuations/boarding-school`, branch `codex/boarding-g7-nsa-mac-20261017`, latest committed application change `9058fa364` (`Add sourced AMC10 grade comparison`). AMC 10 wrong/unanswered source-concept links and GFIELD-authored practice are already committed. The only untracked item is the preserved `raw_youtube.txt`; it remains untouched. Earlier relevant implementation includes `d64946adb` (`Render fractions and add Algebra 1 to paper builder`), the Grade 7 plan, contest-comparison, G·MAP artwork, and GFIELD Algebra 1 authoring work recorded below. Local only; nothing was pushed or deployed.
