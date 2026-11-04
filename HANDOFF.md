@@ -1377,3 +1377,11 @@ GEMT 2014 AMC10B/12B 연례 보고서에서 2014 AMC10B Global 학년별 행을 
 웹 검색으로 99CEF 2011 AMC10/12 분석 보고서를 찾고, 현재 99CEF 경로가 2010 보고서로 리다이렉트되어 Internet Archive의 2014-10-05 원본 PDF를 확보했다. PDFKit으로 AMC10 글로벌 응답표(인쇄 p.10)와 AMC12 글로벌 응답표(p.22)를 추출하고 페이지 이미지를 육안 대조했다. 보고서는 시험형식에 A/B 접미사를 표기하지 않으나, 글로벌 응시자 수 70,919 / 74,665와 50개 정답 별표가 각각 LIVE 2011A 코호트·정답키와 일치해 A형으로 등록했다. 두 표의 인원수는 각 점수구간 합계와도 일치한다. 대만 응답표를 글로벌 자료에 혼합하지 않았다. 2011 A형 CSV 2개와 런타임 참조를 추가하고 데이터 README 및 브라우저 캐시 버전을 갱신했다. CSV와 런타임 50개 문항, 정답키, 응답률 행 합계를 검수한 뒤 로컬 커밋한다. `raw_youtube.txt`는 staging 대상에서 제외한다.
 
 2010 99CEF AMC10/12 보고서도 공식 사이트 검색 색인에서 찾아 Global 응답표를 수집했다. 원본 PDF URL은 직접 다운로드 시 404를 반환해 웹 색인의 PDF 텍스트를 사용했고, 이 한계를 CSV·런타임·README에 명시했다. 보고서의 A/B 미표기 표본 수 62,254 / 67,155가 MAA 2010 A형 공식 응시자 수와 맞고, 각 25문항 정답 별표가 LIVE 2010A 키와 일치한다. 2010 AMC10A Q23은 원문 선택지·미응답·판독불가 합이 100.20%여서 인쇄값은 보존하고 해당 문항만 화면 비교에서 숨긴다. 2010 A형 CSV 2개, 런타임 연결, README, 캐시 버전을 갱신했다. 화면 lookup·정답·합계 검수 후 로컬 커밋한다. `raw_youtube.txt`는 staging 대상에서 제외한다.
+## 2026-11-04 웹 검색 반영: 2019 AMC 10B·12B cohort report
+
+- `amc-score-distribution-reference.js`의 2019B AMC10/12 행에 공개된 MAA 형식 점수보고서 사본의 공식 표기 점수 경계, 평균, 표준편차, 인원수, 학교수를 연결했다. 문제풀이 페이지의 데이터 캐시 버전도 갱신.
+- 출처: `https://mathcontest.org/sites/default/files/AMC10B-2019-Score-Distribution.pdf`, `https://mathcontest.org/sites/default/files/AMC12B-2019-Score-Distribution.pdf`. 검수: PDFKit 추출 텍스트를 웹 PDF 본문과 수치 대조.
+- 이 점수보고서는 전체 코호트 통계이며 학년 분포가 없다. 2019 AMC10A Grade 7 평균은 Archimedean Schools의 2차 게시 통계(59.72, n=1,982)로 계속 별도 취급.
+- 관련 한계와 출처는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md` 및 historical-amc-grade README에 기록.
+- 런타임에서 두 연도·폼 lookup의 score boundary, 평균, 표준편차, 인원수, 학교수, 출처 URL을 직접 확인했고 `git diff --check` 통과.
+- `raw_youtube.txt` untouched. Local-only; no push, deployment, Drive sync. Next: find more year/form official score-report copies and pursue missing primary grade-level tables without mixing overall and grade cohorts.

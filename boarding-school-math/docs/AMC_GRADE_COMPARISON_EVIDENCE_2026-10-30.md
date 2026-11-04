@@ -547,3 +547,10 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - 웹에서 99CEF의 [2016 AMC10A/12A 분석 보고서](https://www.99cef.org.tw/userfiles/2016AMC10A12AReport.pdf)를 찾아 Global 모집단 답변표를 회수했다. AMC10A는 인쇄 p.11, AMC12A는 p.22에 A–E 선택·무응답·판독불가 비율이 있다. Global 총 인원은 각각 65,999명과 55,279명이다. Taiwan 표는 혼합하지 않았다.
 - 25개 정답 별표는 [LIVE 2016 AMC10A](https://live.poshenloh.com/past-contests/amc10/2016A) 및 [LIVE 2016 AMC12A](https://live.poshenloh.com/past-contests/amc12/2016A)와 대조했다. 마지막 판독불가 비율은 검색 텍스트에서 행이 복제·깨져 보여 이어진 깨끗한 중복 값(AMC10A Q25 0.01%, AMC12A Q25 0.02%)을 CSV에 기록하고 전사 주석을 붙였다.
 - CSV 2개와 기존 AMC10/12 응답 lookup에 반영했다. 이는 과거 전체 Global 응답률이며 Grade 7 비교 기준, 현재 규준, 개인의 오개념 판정이 아니다. PDF는 검색 인덱스 텍스트에서 전사했으며 로컬 렌더·Vision 대조는 아직 하지 않았다.
+## 2026-11-04 웹 검색: 2019 AMC 10B·12B 전체 점수보고서 보강
+
+- mathcontest.org에 재게시된 MAA 형식의 2019 AMC 10B·12B Contest Score Report 1페이지 PDF를 찾아 점수 경계, 평균, 표준편차, 전체 응시자 수와 학교 수를 기존 동일 연도·폼 조회 자료에 연결했다.
+- AMC 10B: 상위 1% 121.5, AIME 자격선/상위 2.5% 108, 상위 5% 102, 상위 25/50/75% 73.5/54/40.5, 평균 58.42, 표준편차 23.52, n=23,832, 학교 1,375.
+- AMC 12B: 상위 1% 123, 상위 5% 94.5, 상위 25/50/75% 66/52.5/42, 평균 56.73, 표준편차 21.32, n=19,116, 학교 1,459.
+- 두 자료 모두 전체 응시 집단 통계이며 학년별 점수 분포나 Grade 7 기준을 제공하지 않는다. AMC 10A의 Grade 7 평균 59.72 (n=1,982)는 별도 학교 게시 자료를 근거로 유지하고, 두 자료를 전국 Grade 7 규준 또는 개인 백분위로 합치지 않았다.
+- 출처: [MAA 형식 2019 AMC 10B score report 사본](https://mathcontest.org/sites/default/files/AMC10B-2019-Score-Distribution.pdf), [MAA 형식 2019 AMC 12B score report 사본](https://mathcontest.org/sites/default/files/AMC12B-2019-Score-Distribution.pdf). 이전 연도 요약 출처는 각 항목의 교차 확인 링크로 보존했다.
