@@ -1213,3 +1213,9 @@ Searched 2016–2024 AMC 8 MAA Overall grade score reports and recent cutoffs. S
 - 2011 AMC 8 한국 MAA 결과 재게시에는 학년 평균, 점수별 학년 빈도/백분위, 문항별 응답률이 함께 있다. 이 자료는 기존 한국 집단 CSV에 이미 전사되어 있어 중복 수치를 추가하지 않았고, 개인 수상자 명단은 가져오지 않았다.
 - 검색 근거·범위는 `boarding-school-math/docs/AMC_GRADE_COMPARISON_EVIDENCE_2026-10-30.md`의 `연도별 AMC 8/10 현지 보고서 구분` 절에 기록했다. 새로운 전국 학년 행은 없으며 MAA 메뉴 ID에 대응하는 원 보고서 본문 확보를 다음 검색 작업으로 유지한다.
 - `git diff --check` 완료 후 이 문서 기록을 별도 로컬 커밋으로 보관한다. `raw_youtube.txt` 미추적 원본은 건드리지 않았다. push·배포·Drive 동기화 없음.
+
+### 2026-11-04 AMC 8 학년 평균 연도자료 추가
+
+웹에서 99CEF의 2013·2014 AMC 8 분석 보고서 원문을 찾아 Global·Taiwan의 Grade 5–8 평균·인원을 분리 전사했다. 원 CSV에는 두 모집단과 `<=4` 묶음값을 모두 보존하고, 복습 화면 lookup에는 Global 정확 Grade 5–8만 연결했다. 2013 Global 학년 행은 146,766명/전체 149,709명, 2014는 141,795명/전체 144,737명이며 각각 학년 미기재 2,943명과 2,942명을 할당하지 않았다. 대만 표본은 각 연도 전체와 합계가 일치한다.
+
+검증: 두 연도 각각 원 CSV 10행, 모집단별 인원 합계, runtime lookup Grade 5–8 4행, coverage CSV 266행을 정적 확인했고 `git diff --check` 통과. JavaScript 엔진 CLI가 이 실행 환경에 없어 실제 JS 실행은 미실시. 브라우저는 기존 localhost 경로에서 이 checkout을 제공하지 않았고, file URL은 브라우저 보안 정책이 차단해 화면 상호작용 검수는 보류. 현재 연도별 공개 AMC8 grade-mean lookup에는 2013–2014 빈칸이 채워졌고, 2015–2016은 표본에 근거한 전체 학년 보고서가 더 확보될 때까지 미등록으로 둔다. 변경은 로컬 커밋; push·배포·Drive 동기화 없음. `raw_youtube.txt`는 미추적 사용자 파일로 제외.

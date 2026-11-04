@@ -430,3 +430,17 @@ Internet Archive에서 보존한 [MAA 2010 Korea 통계 원문](https://web.arch
 - [MAA의 현재 EduView score distribution](https://maa.edvistas.com/eduview/report.aspx?view=1561&mode=6)은 선택된 회차의 상위 점수선, 평균, 표준편차, 응시자·학교 수, 점수 분포를 보여준다. 확인 시 기본 회차는 AIME I 2026이었다. 이 자료는 대회별 전체 점수 분포 자료로, 여기서 개인의 학년별 AMC 8 순위를 산출할 수는 없다.
 - MAA의 과거 AMC 보고 메뉴 캡처는 2010–2021 연도별 보고서 선택 ID와 날짜를 보존하지만 본문 데이터가 아니라 메뉴만 담고 있다. 해당 ID를 학년 통계로 해석하지 않는다. 현재 검색에서 2012–2020 한국 참가집단 Grade 5–8 빈도표 원문은 추가로 회수하지 못했다. 이 상태는 ‘미발견’이며 자료가 존재하지 않는다는 뜻은 아니다.
 - 공개된 현대 점수 보고와 과거 학년표를 구분한다. 2022년 이후 MAA 공개 요약 통계만으로 학년별 백분위·평균을 채우지 않는다. 과거 상세 breakdown이 더는 공개되지 않는다고 말하는 사용자 보고는 있으나, 보존된 MAA report body가 확보되기 전에는 이를 공식 정책 문구로 단정하지 않는다.
+
+
+### 2026-11-04 · 웹 검색: 2013 AMC 8 세계·대만 학년별 평균
+
+- [99CEF의 2013 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2013AMC8Report.pdf) 6쪽 표에서 전체·대만 열의 학년별 인원과 평균을 확인했다. Global Grade 5–8은 각각 n=3,387/22,225/48,196/72,066, 평균 9.64/9.66/10.60/11.22점이다. 대만 Grade 5–8은 별도 집단이며 각각 n=89/248/3,288/6,173, 평균 13.22/14.25/15.57/16.65점이다. 두 집단을 합산하지 않는다.
+- 같은 표의 Global `Grade 4 and below`는 n=892, 평균 8.63으로 묶여 있어 특정 학년에 배정하지 않는다. 보고서의 Global 전체 n=149,709 대비 명시 학년 행 합은 146,766으로 2,943명이 학년 미기재다. 대만 표의 다섯 학년 행 합은 9,811로 보고된 대만 전체와 일치한다.
+- 원자료는 [`amc8-grade-means-2013-99cef.csv`](../competition/historical-amc-grade/amc8-grade-means-2013-99cef.csv)에 Global·Taiwan 행 전체를 보존한다. 결과 화면 lookup에는 Global 정확 Grade 5–8만 추가하고, 같은 2013 AMC 8·응시 학년과 맞을 때에만 표시한다. 99CEF 2차 보고서의 과거 집단 평균으로 표기하며, 현재 학년 등급·백분위·실력 예측으로 확장하지 않는다.
+
+
+### 2026-11-04 · 웹 검색: 2014 AMC 8 세계·대만 학년별 평균
+
+- [99CEF의 2014 AMC 8 분석 보고서](https://www.99cef.org.tw/userfiles/2014AMC8Summary.pdf) 7쪽 종합통계표에서 Global과 Taiwan의 Grade 5–8 표본 수·평균을 확인했다. Global: Grade 5 n=3,441 평균 10.44, Grade 6 n=22,617 평균 10.60, Grade 7 n=46,697 평균 11.30, Grade 8 n=68,036 평균 11.98. Taiwan 값은 별도 모집단이며 섞지 않는다.
+- Global `Grade 4 and below`는 n=1,004 평균 9.67로 묶여 있어 개별 학년에 배정하지 않는다. 전체 n=144,737 중 기록된 학년 행 합은 141,795이며 차이 2,942명은 학년 미기재다. Taiwan 학년 행 합은 보고서 전체 n=9,199와 일치한다.
+- [`amc8-grade-means-2014-99cef.csv`](../competition/historical-amc-grade/amc8-grade-means-2014-99cef.csv)에 두 모집단 행을 모두 보존하고, 화면 lookup에는 Global 정확 Grade 5–8만 연결했다. 해당 연도 원본 결과·응시 학년이 일치할 때에만 과거 평균을 표시한다.
